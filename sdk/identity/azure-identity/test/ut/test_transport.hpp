@@ -7,7 +7,7 @@
 
 #include <azure/core/http/transport.hpp>
 
-class TestTransport final : public Azure::Core::Http::HttpTransport {
+class TestTransport : public Azure::Core::Http::HttpTransport {
 public:
   typedef std::function<std::unique_ptr<Azure::Core::Http::RawResponse>(
       Azure::Core::Http::Request& request,

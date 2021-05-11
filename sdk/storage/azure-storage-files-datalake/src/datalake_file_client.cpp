@@ -378,7 +378,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     protocolLayerOptions.ExpiryOrigin = expiryOrigin;
     if (options.ExpiresOn.HasValue() && options.TimeToExpire.HasValue())
     {
-      // ExpiresOn and TimeToExpire should be mutually exclusive.
+      // ExpiresOn and TimeToExpire should be mutually exlusive.
       std::abort();
     }
     if (options.ExpiresOn.HasValue())

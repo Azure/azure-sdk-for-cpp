@@ -106,7 +106,7 @@ namespace Azure { namespace Core { namespace Http {
   /**
    * @brief CURL HTTP connection.
    */
-  class CurlConnection final : public CurlNetworkConnection {
+  class CurlConnection : public CurlNetworkConnection {
   private:
     CURL* m_handle;
     curl_socket_t m_curlSocket;

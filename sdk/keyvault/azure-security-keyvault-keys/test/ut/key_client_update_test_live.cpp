@@ -10,7 +10,7 @@
 #include "key_client_base_test.hpp"
 
 #include <azure/core/datetime.hpp>
-#include <azure/keyvault/key_vault_keys.hpp>
+#include <azure/keyvault/key_vault.hpp>
 #include <azure/keyvault/keys/details/key_constants.hpp>
 
 #include <string>

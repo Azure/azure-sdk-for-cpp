@@ -71,7 +71,7 @@ namespace Azure { namespace Storage { namespace Test {
     return result;
   }
 
-  TEST_F(DataLakeServiceClientTest, ListFileSystemsSegment)
+  TEST_F(DataLakeServiceClientTest, ListFileSystemsSegement)
   {
     {
       // Normal list without prefix.

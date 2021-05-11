@@ -35,7 +35,7 @@ namespace Azure { namespace Core { namespace Http {
     constexpr static int64_t DefaultUploadChunkSize = 1024 * 64;
     constexpr static int64_t MaximumUploadChunkSize = 1024 * 1024;
 
-    struct HandleManager final
+    struct HandleManager
     {
       Context const& m_context;
       Request& m_request;
@@ -75,7 +75,7 @@ namespace Azure { namespace Core { namespace Http {
       }
     };
 
-    class WinHttpStream final : public Azure::Core::IO::BodyStream {
+    class WinHttpStream : public Azure::Core::IO::BodyStream {
     private:
       std::unique_ptr<HandleManager> m_handleManager;
       bool m_isEOF;
@@ -127,7 +127,7 @@ namespace Azure { namespace Core { namespace Http {
    * transport.
    *
    */
-  struct WinHttpTransportOptions final
+  struct WinHttpTransportOptions
   {
     // Empty struct reserved for future options.
   };
@@ -137,7 +137,7 @@ namespace Azure { namespace Core { namespace Http {
    * receiving requests and responses over the wire.
    *
    */
-  class WinHttpTransport final : public HttpTransport {
+  class WinHttpTransport : public HttpTransport {
   private:
     WinHttpTransportOptions m_options;
 

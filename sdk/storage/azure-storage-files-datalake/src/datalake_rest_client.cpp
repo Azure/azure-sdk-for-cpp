@@ -33,7 +33,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     const PathGetPropertiesAction PathGetPropertiesAction::GetAccessControl("getAccessControl");
     const PathGetPropertiesAction PathGetPropertiesAction::GetStatus("getStatus");
 
-    const FileSystemResource FileSystemResource::Filesystem("filesystem");
+    const FileSystemResourceType FileSystemResourceType::Filesystem("filesystem");
 
     const PathSetAccessControlRecursiveMode PathSetAccessControlRecursiveMode::Set("set");
     const PathSetAccessControlRecursiveMode PathSetAccessControlRecursiveMode::Modify("modify");

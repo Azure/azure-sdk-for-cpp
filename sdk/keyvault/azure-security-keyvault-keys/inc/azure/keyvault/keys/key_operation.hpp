@@ -19,7 +19,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
    * @brief An operation that can be performed with the key.
    *
    */
-  class KeyOperation final {
+  class KeyOperation {
   private:
     std::string m_operation;
 

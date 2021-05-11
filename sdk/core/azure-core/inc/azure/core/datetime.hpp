@@ -17,7 +17,7 @@
 namespace Azure {
 
 namespace _detail {
-  class Clock final {
+  class Clock {
   public:
     using rep = int64_t;
     using period = std::ratio<1, 10000000>;
@@ -28,7 +28,7 @@ namespace _detail {
     // system_clock is not a steady clock. It is calendar-based, which means it can be adjusted,
     // and it may go backwards in time after adjustments, or jump forward faster than the actual
     // time passes, if you catch the moment before and after syncing the clock.
-    // Steady clock would be good for measuring elapsed time without reboots (or hibernation?).
+    // Steady clock would be good for measuring elapsed time without reboots (or hybernation?).
     // Steady clock's epoch = boot time, and it would only go forward in steady fashion, after the
     // system has started.
     // Using this clock in combination with system_clock is common scenario.
@@ -51,7 +51,7 @@ namespace _detail {
  * for the date range and precision.
  * @remark This class is supposed to be able to handle a DateTime that comes over the wire.
  */
-class DateTime final : public _detail::Clock::time_point {
+class DateTime : public _detail::Clock::time_point {
 
 private:
   AZ_CORE_DLLEXPORT static DateTime const SystemClockEpoch;

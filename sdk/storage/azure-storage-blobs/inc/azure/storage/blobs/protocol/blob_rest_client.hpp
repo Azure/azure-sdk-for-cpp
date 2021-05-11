@@ -1831,6 +1831,7 @@ namespace Azure { namespace Storage { namespace Blobs {
        * blob.
        */
       Azure::DateTime LastModified;
+      std::string ContentType;
       /**
        * Size of the blob.
        */
@@ -1844,6 +1845,26 @@ namespace Azure { namespace Storage { namespace Blobs {
        */
       std::vector<BlobBlock> UncommittedBlocks;
     }; // struct GetBlockListResult
+
+    struct GetPageRangesResult
+    {
+      /**
+       * The ETag contains a value that you can use to perform operations conditionally.
+       */
+      Azure::ETag ETag;
+      /**
+       * The date and time the container was last modified. Any operation that modifies the blob,
+       * including an update of the metadata or properties, changes the last-modified time of the
+       * blob.
+       */
+      Azure::DateTime LastModified;
+      /**
+       * Size of the blob.
+       */
+      int64_t BlobSize = 0;
+      std::vector<Azure::Core::Http::HttpRange> PageRanges;
+      std::vector<Azure::Core::Http::HttpRange> ClearRanges;
+    }; // struct GetPageRangesResult
 
     enum class ListBlobContainersIncludeFlags
     {
@@ -2492,28 +2513,6 @@ namespace Azure { namespace Storage { namespace Blobs {
       {
         std::map<std::string, std::string> Tags;
       }; // struct GetBlobTagsResult
-    } // namespace _detail
-
-    namespace _detail {
-      struct GetPageRangesResult
-      {
-        /**
-         * The ETag contains a value that you can use to perform operations conditionally.
-         */
-        Azure::ETag ETag;
-        /**
-         * The date and time the container was last modified. Any operation that modifies the blob,
-         * including an update of the metadata or properties, changes the last-modified time of the
-         * blob.
-         */
-        Azure::DateTime LastModified;
-        /**
-         * Size of the blob.
-         */
-        int64_t BlobSize = 0;
-        std::vector<Azure::Core::Http::HttpRange> PageRanges;
-        std::vector<Azure::Core::Http::HttpRange> ClearRanges;
-      }; // struct GetPageRangesResult
     } // namespace _detail
 
     namespace _detail {
@@ -8966,6 +8965,7 @@ namespace Azure { namespace Storage { namespace Blobs {
           response.ETag = Azure::ETag(httpResponse.GetHeaders().at("etag"));
           response.LastModified = Azure::DateTime::Parse(
               httpResponse.GetHeaders().at("last-modified"), Azure::DateTime::DateFormat::Rfc1123);
+          response.ContentType = httpResponse.GetHeaders().at("content-type");
           response.BlobSize = std::stoll(httpResponse.GetHeaders().at("x-ms-blob-content-length"));
           return Azure::Response<GetBlockListResult>(std::move(response), std::move(pHttpResponse));
         }
@@ -9917,7 +9917,7 @@ namespace Azure { namespace Storage { namespace Blobs {
           Azure::Nullable<std::string> IfTags;
         }; // struct GetPageBlobPageRangesOptions
 
-        static Azure::Response<Models::_detail::GetPageRangesResult> GetPageRanges(
+        static Azure::Response<GetPageRangesResult> GetPageRanges(
             Azure::Core::Http::_internal::HttpPipeline& pipeline,
             const Azure::Core::Url& url,
             const GetPageBlobPageRangesOptions& options,
@@ -9982,7 +9982,7 @@ namespace Azure { namespace Storage { namespace Blobs {
           }
           auto pHttpResponse = pipeline.Send(request, context);
           Azure::Core::Http::RawResponse& httpResponse = *pHttpResponse;
-          Models::_detail::GetPageRangesResult response;
+          GetPageRangesResult response;
           auto http_status_code
               = static_cast<std::underlying_type<Azure::Core::Http::HttpStatusCode>::type>(
                   httpResponse.GetStatusCode());
@@ -9994,13 +9994,13 @@ namespace Azure { namespace Storage { namespace Blobs {
             const auto& httpResponseBody = httpResponse.GetBody();
             _internal::XmlReader reader(
                 reinterpret_cast<const char*>(httpResponseBody.data()), httpResponseBody.size());
-            response = GetPageRangesResultInternalFromXml(reader);
+            response = GetPageRangesResultFromXml(reader);
           }
           response.ETag = Azure::ETag(httpResponse.GetHeaders().at("etag"));
           response.LastModified = Azure::DateTime::Parse(
               httpResponse.GetHeaders().at("last-modified"), Azure::DateTime::DateFormat::Rfc1123);
           response.BlobSize = std::stoll(httpResponse.GetHeaders().at("x-ms-blob-content-length"));
-          return Azure::Response<Models::_detail::GetPageRangesResult>(
+          return Azure::Response<GetPageRangesResult>(
               std::move(response), std::move(pHttpResponse));
         }
 
@@ -10082,10 +10082,9 @@ namespace Azure { namespace Storage { namespace Blobs {
         }
 
       private:
-        static Models::_detail::GetPageRangesResult GetPageRangesResultInternalFromXml(
-            _internal::XmlReader& reader)
+        static GetPageRangesResult GetPageRangesResultFromXml(_internal::XmlReader& reader)
         {
-          Models::_detail::GetPageRangesResult ret;
+          GetPageRangesResult ret;
           enum class XmlTagName
           {
             k_PageList,

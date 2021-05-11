@@ -68,7 +68,7 @@ function Update-Version(
         -ReplaceLatestEntryTitle $ReplaceLatestEntryTitle
 }
 
-$versionHppLocation = Get-VersionHppLocation `
+$versionHppLocation = Get-VersionHppLocaiton `
     -ServiceDirectory $ServiceDirectory `
     -PackageName $PackageName
 

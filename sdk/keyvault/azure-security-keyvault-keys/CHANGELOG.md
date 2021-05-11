@@ -5,7 +5,6 @@
 ### New Features
 
 - Added support for importing and deserializing EC and OCT keys.
-- Added cryptography client.
 - Added `CreateFromResumeToken()` to `DeletedKeyOperation` and `RecoverKeyOperation`.
 
 ### Breaking Changes

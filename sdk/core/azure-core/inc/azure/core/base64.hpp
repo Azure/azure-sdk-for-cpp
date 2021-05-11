@@ -18,7 +18,7 @@ namespace Azure { namespace Core {
    *@brief Used to convert one form of data  into another, for example encoding binary data into
    *base 64 text.
    */
-  class Convert final {
+  class Convert {
   private:
     // This type currently only contains static methods and hence disallowing instance creation.
     Convert() = default;

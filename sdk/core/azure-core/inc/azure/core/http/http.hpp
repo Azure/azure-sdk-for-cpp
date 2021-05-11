@@ -36,14 +36,6 @@ namespace Azure { namespace Core { namespace Test {
   class TestHttp_RequestStartTry_Test;
   class TestURL_getters_Test;
   class TestURL_query_parameter_Test;
-  class TransportAdapter_headWithStream_Test;
-  class TransportAdapter_putWithStream_Test;
-  class TransportAdapter_deleteRequestWithStream_Test;
-  class TransportAdapter_patchWithStream_Test;
-  class TransportAdapter_putWithStreamOnFail_Test;
-  class TransportAdapter_SizePutFromFile_Test;
-  class TransportAdapter_SizePutFromFileDefault_Test;
-  class TransportAdapter_SizePutFromFileBiggerPage_Test;
 }}} // namespace Azure::Core::Test
 #endif
 
@@ -53,7 +45,7 @@ namespace Azure { namespace Core { namespace Http {
   /**
    * @brief HTTP transport layer error.
    */
-  class TransportException final : public Azure::Core::RequestFailedException {
+  class TransportException : public Azure::Core::RequestFailedException {
   public:
     /**
      * @brief An error while sending the HTTP request with the transport adapter.
@@ -74,7 +66,7 @@ namespace Azure { namespace Core { namespace Http {
    * `Offset + Length - 1` inclusively.
    *
    */
-  struct HttpRange final
+  struct HttpRange
   {
     /**
      * @brief The starting point of the HTTP Range.
@@ -92,7 +84,7 @@ namespace Azure { namespace Core { namespace Http {
   /**
    * HTTP request method.
    */
-  class HttpMethod final {
+  class HttpMethod {
   public:
     HttpMethod() = delete;
     explicit HttpMethod(std::string value) : m_value(std::move(value)) {}
@@ -118,7 +110,7 @@ namespace Azure { namespace Core { namespace Http {
   /**
    * @brief HTTP request.
    */
-  class Request final {
+  class Request {
     friend class Azure::Core::Http::Policies::_internal::RetryPolicy;
 #if defined(TESTING_BUILD)
     // make tests classes friends to validate set Retry
@@ -127,15 +119,6 @@ namespace Azure { namespace Core { namespace Http {
     friend class Azure::Core::Test::TestHttp_RequestStartTry_Test;
     friend class Azure::Core::Test::TestURL_getters_Test;
     friend class Azure::Core::Test::TestURL_query_parameter_Test;
-    // make tests classes friends to validate private Request ctor that takes both stream and bool
-    friend class Azure::Core::Test::TransportAdapter_headWithStream_Test;
-    friend class Azure::Core::Test::TransportAdapter_putWithStream_Test;
-    friend class Azure::Core::Test::TransportAdapter_deleteRequestWithStream_Test;
-    friend class Azure::Core::Test::TransportAdapter_patchWithStream_Test;
-    friend class Azure::Core::Test::TransportAdapter_putWithStreamOnFail_Test;
-    friend class Azure::Core::Test::TransportAdapter_SizePutFromFile_Test;
-    friend class Azure::Core::Test::TransportAdapter_SizePutFromFileDefault_Test;
-    friend class Azure::Core::Test::TransportAdapter_SizePutFromFileBiggerPage_Test;
 #endif
 
   private:
@@ -148,32 +131,32 @@ namespace Azure { namespace Core { namespace Http {
 
     // flag to know where to insert header
     bool m_retryModeEnabled{false};
-    bool m_shouldBufferResponse{true};
+    bool m_isBufferedDownload{true};
 
     // Expected to be called by a Retry policy to reset all headers set after this function was
     // previously called
     void StartTry();
 
+  public:
     /**
      * @brief Construct an #Azure::Core::Http::Request.
      *
      * @param httpMethod HTTP method.
      * @param url URL.
      * @param bodyStream #Azure::Core::IO::BodyStream.
-     * @param shouldBufferResponse A boolean value indicating whether the returned response should
-     * be buffered or returned as a body stream instead.
+     * @param bufferedDownload A boolean value indicating whether download should use a buffer
+     * for the response or return a body stream instead.
      */
     explicit Request(
         HttpMethod httpMethod,
         Url url,
         Azure::Core::IO::BodyStream* bodyStream,
-        bool shouldBufferResponse)
+        bool bufferedDownload)
         : m_method(std::move(httpMethod)), m_url(std::move(url)), m_bodyStream(bodyStream),
-          m_retryModeEnabled(false), m_shouldBufferResponse(shouldBufferResponse)
+          m_retryModeEnabled(false), m_isBufferedDownload(bufferedDownload)
     {
     }
 
-  public:
     /**
      * @brief Construct an #Azure::Core::Http::Request.
      *
@@ -191,10 +174,10 @@ namespace Azure { namespace Core { namespace Http {
      *
      * @param httpMethod HTTP method.
      * @param url URL.
-     * @param shouldBufferResponse A boolean value indicating whether the returned response should
-     * be buffered or returned as a body stream instead.
+     * @param bufferedDownload A boolean value indicating whether download should use a buffer
+     * for the response or return a body stream instead.
      */
-    explicit Request(HttpMethod httpMethod, Url url, bool shouldBufferResponse);
+    explicit Request(HttpMethod httpMethod, Url url, bool bufferedDownload);
 
     /**
      * @brief Construct an #Azure::Core::Http::Request.
@@ -241,10 +224,10 @@ namespace Azure { namespace Core { namespace Http {
     Azure::Core::IO::BodyStream* GetBodyStream() { return this->m_bodyStream; }
 
     /**
-     * @brief A value indicating whether the returned raw response for this request will be buffered
-     * within a memory buffer or if it will be returned as a body stream instead.
+     * @brief A value indicating whether download will return the raw response within a memory
+     * buffer or if it will provide a body stream instead.
      */
-    bool ShouldBufferResponse() { return this->m_shouldBufferResponse; }
+    bool IsBufferedDownload() { return this->m_isBufferedDownload; }
 
     /**
      * @brief Get URL.
@@ -258,7 +241,7 @@ namespace Azure { namespace Core { namespace Http {
   };
 
   namespace _detail {
-    struct RawResponseHelpers final
+    struct RawResponseHelpers
     {
       /**
        * @brief Insert a header into \p headers checking that \p headerName does not contain invalid
@@ -308,7 +291,7 @@ namespace Azure { namespace Core { namespace Http {
 
   namespace _internal {
 
-    struct HttpShared final
+    struct HttpShared
     {
       AZ_CORE_DLLEXPORT static char const ContentType[];
       AZ_CORE_DLLEXPORT static char const ApplicationJson[];

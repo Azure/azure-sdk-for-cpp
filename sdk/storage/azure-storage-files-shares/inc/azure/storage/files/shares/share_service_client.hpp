@@ -82,7 +82,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
      * @param properties The properties of the service that is to be set.
      * @param options Optional parameters to set the properties of the service.
      * @param context Context for cancelling long running operations.
-     * @return Azure::Response<Models::SetServicePropertiesResult> The information returned
+     * @return Azure::Response<Models::SetServicePropertiesResult> The infromation returned
      * when setting the service properties.
      */
     Azure::Response<Models::SetServicePropertiesResult> SetProperties(

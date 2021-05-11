@@ -10,7 +10,7 @@
 #include "mocked_transport_adapter_test.hpp"
 
 #include <azure/core/internal/strings.hpp>
-#include <azure/keyvault/key_vault_keys.hpp>
+#include <azure/keyvault/key_vault.hpp>
 
 #include <string>
 

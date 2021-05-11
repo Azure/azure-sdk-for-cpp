@@ -25,11 +25,11 @@ namespace Azure { namespace Core {
         std::string queryStr;
         if (!encodedQueryParameters.empty())
         {
-          auto separator = '?';
+          auto separ = '?';
           for (const auto& q : encodedQueryParameters)
           {
-            queryStr += separator + q.first + '=' + q.second;
-            separator = '&';
+            queryStr += separ + q.first + '=' + q.second;
+            separ = '&';
           }
         }
 
@@ -43,7 +43,7 @@ namespace Azure { namespace Core {
    * It can be parsed and initialized from a string that contains all URL components (scheme, host,
    * path, etc.). Authority is not currently supported.
    */
-  class Url final {
+  class Url {
   private:
     std::string m_scheme;
     std::string m_host;

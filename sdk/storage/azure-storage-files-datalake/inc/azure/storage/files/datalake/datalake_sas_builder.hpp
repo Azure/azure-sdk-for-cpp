@@ -222,7 +222,7 @@ namespace Azure { namespace Storage { namespace Sas {
     std::string Path;
 
     /**
-     * @brief Defines whether or not the Path is a directory. If this value is set to true, the Path
+     * @brief Defines whether ornot the Path is a directory. If this value is set to true, the Path
      * is a directory for a directory SAS. If set to false or default, the Path is a file for a file
      * SAS.
      */
@@ -327,7 +327,7 @@ namespace Azure { namespace Storage { namespace Sas {
      * @brief Uses an account's user delegation key to sign this shared access signature, to
      * produce the proper SAS query parameters for authentication requests.
      *
-     * @param userDelegationKey UserDelegationKey returned from
+     * @param userDelegationKey UserDelegationKey retruned from
      * BlobServiceClient.GetUserDelegationKey.
      * @param accountName The name of the storage account.
      * @return The SAS query parameters used for authenticating requests.

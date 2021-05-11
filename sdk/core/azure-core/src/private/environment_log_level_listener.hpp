@@ -19,7 +19,7 @@
 
 namespace Azure { namespace Core { namespace Diagnostics { namespace _detail {
 
-  class EnvironmentLogLevelListener final {
+  class EnvironmentLogLevelListener {
     EnvironmentLogLevelListener() = delete;
     ~EnvironmentLogLevelListener() = delete;
 

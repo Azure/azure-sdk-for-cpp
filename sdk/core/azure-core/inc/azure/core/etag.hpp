@@ -18,7 +18,7 @@ namespace Azure {
 /**
  * @brief Represents an HTTP validator.
  */
-class ETag final {
+class ETag {
   // ETag is a validator based on https://tools.ietf.org/html/rfc7232#section-2.3.2
 private:
   Azure::Nullable<std::string> m_value;

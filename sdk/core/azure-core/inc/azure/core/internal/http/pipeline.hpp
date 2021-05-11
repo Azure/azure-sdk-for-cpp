@@ -29,7 +29,7 @@ namespace Azure { namespace Core { namespace Http { namespace _internal {
    *
    * @remark See #policy.hpp
    */
-  class HttpPipeline final {
+  class HttpPipeline {
   protected:
     std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>> m_policies;
 

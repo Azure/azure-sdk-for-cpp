@@ -25,7 +25,7 @@ namespace Azure { namespace Core {
    * @brief An exception that gets thrown when some operation is cancelled.
    *
    */
-  class OperationCancelledException final : public std::runtime_error {
+  class OperationCancelledException : public std::runtime_error {
   public:
     /**
      * @brief Construct with message string as description.
@@ -40,7 +40,7 @@ namespace Azure { namespace Core {
   /**
    * @brief A context is a node within a tree that represents deadlines and key/value pairs.
    */
-  class Context final {
+  class Context {
   public:
     /**
      * @brief A context key.
@@ -60,7 +60,7 @@ namespace Azure { namespace Core {
     };
 
   private:
-    struct ContextSharedState final
+    struct ContextSharedState
     {
       std::shared_ptr<ContextSharedState> Parent;
       std::atomic<DateTime::rep> Deadline;

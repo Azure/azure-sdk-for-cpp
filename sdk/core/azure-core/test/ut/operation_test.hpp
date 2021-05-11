@@ -16,7 +16,7 @@ namespace Azure { namespace Core { namespace Test {
 
   class StringClient;
 
-  class StringOperation final : public Operation<std::string> {
+  class StringOperation : public Operation<std::string> {
 
   private:
     std::string m_operationToken;
@@ -97,7 +97,7 @@ namespace Azure { namespace Core { namespace Test {
     }
   };
 
-  class StringClient final {
+  class StringClient {
   public:
     StringOperation StartStringUpdate()
     {

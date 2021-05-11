@@ -21,7 +21,7 @@ namespace Azure { namespace Core {
   /**
    * @brief Long-running operation states.
    */
-  class OperationStatus final {
+  class OperationStatus {
     std::string m_value;
 
   public:

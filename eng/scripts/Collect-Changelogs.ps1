@@ -3,7 +3,7 @@
 
 #############  Collect Changelog script ###################
 #
-# This script helps to create the Language release notes by collecting each service's release notes
+# This script helps to create the Language release notes by collectiong each service's release notes
 # and generating a single unified release notes doc with the required format and links to be published.
 #
 # Usage:

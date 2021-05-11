@@ -35,10 +35,10 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
   } // namespace Models
   namespace _detail {
-    const FileRangeWrite FileRangeWrite::Update("update");
-    const FileRangeWrite FileRangeWrite::Clear("clear");
+    const FileRangeWriteType FileRangeWriteType::Update("update");
+    const FileRangeWriteType FileRangeWriteType::Clear("clear");
 
-    const FileRangeWriteFromUrl FileRangeWriteFromUrl::Update("update");
+    const FileRangeWriteFromUrlType FileRangeWriteFromUrlType::Update("update");
 
     const LeaseAction LeaseAction::Acquire("acquire");
     const LeaseAction LeaseAction::Release("release");
