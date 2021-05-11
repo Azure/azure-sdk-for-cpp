@@ -20,7 +20,7 @@ void SendRequest(LogOptions const& logOptions)
   using namespace Azure::Core::Http::Policies;
   using namespace Azure::Core::Http::Policies::_internal;
 
-  class TestTransportPolicy final : public HttpPolicy {
+  class TestTransportPolicy : public HttpPolicy {
   public:
     std::unique_ptr<HttpPolicy> Clone() const override
     {
@@ -71,7 +71,7 @@ void SendRequest(LogOptions const& logOptions)
   }
 }
 
-class TestLogger final {
+class TestLogger {
 private:
   static void Deinitialize()
   {
@@ -83,7 +83,7 @@ private:
   void operator=(TestLogger const&) = delete;
 
 public:
-  struct LogMessage final
+  struct LogMessage
   {
     Logger::Level Level;
     std::string Message;

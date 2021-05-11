@@ -23,7 +23,7 @@ namespace Azure {
      * @brief Parameters for verify a key.
      *
      */
-    struct KeyVerifyParameters final
+    struct KeyVerifyParameters
     {
       std::string Algorithm;
       std::vector<uint8_t> Digest;

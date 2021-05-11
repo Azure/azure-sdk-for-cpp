@@ -20,7 +20,7 @@
 
 namespace Azure { namespace Security { namespace KeyVault { namespace Keys { namespace _detail {
   /***************** KeyVault Key *****************/
-  struct KeyVaultKeySerializer final
+  struct KeyVaultKeySerializer
   {
     // Creates a new key based on a name and an http raw response.
     static KeyVaultKey KeyVaultKeyDeserialize(
@@ -83,7 +83,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys { nam
   };
 
   /**************** Deleted Key *******************/
-  struct DeletedKeySerializer final
+  struct DeletedKeySerializer
   {
     static DeletedKey DeletedKeyDeserialize(
         std::string const& name,
@@ -91,13 +91,13 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys { nam
   };
 
   /**************** Import Key Options ***********/
-  struct ImportKeyOptionsSerializer final
+  struct ImportKeyOptionsSerializer
   {
     static std::string ImportKeyOptionsSerialize(ImportKeyOptions const& importKeyOptions);
   };
 
   /**************** Key Properties ************/
-  struct KeyPropertiesPageResultSerializer final
+  struct KeyPropertiesPageResultSerializer
   {
     static KeyPropertiesPageResult KeyPropertiesPageResultDeserialize(
         Azure::Core::Http::RawResponse const& rawResponse);
@@ -106,7 +106,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys { nam
   };
 
   /**************** JWK  ************/
-  struct JsonWebKeySerializer final
+  struct JsonWebKeySerializer
   {
     static void JsonWebKeySerialize(
         JsonWebKey const& jwk,

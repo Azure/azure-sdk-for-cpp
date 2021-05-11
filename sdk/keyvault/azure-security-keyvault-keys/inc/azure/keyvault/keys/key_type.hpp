@@ -19,7 +19,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
    * @brief The JsonWebKey types.
    *
    */
-  class KeyVaultKeyType final {
+  class KeyVaultKeyType {
   private:
     std::string m_value;
 

@@ -23,7 +23,7 @@ namespace Azure {
      * @brief Parameters for sign a key.
      *
      */
-    struct KeySignParameters final
+    struct KeySignParameters
     {
       std::string Algorithm;
       std::vector<uint8_t> Digest;

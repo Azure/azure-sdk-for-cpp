@@ -24,7 +24,6 @@ namespace Azure { namespace Core { namespace _internal {
    */
   struct ClientOptions
   {
-    virtual ~ClientOptions() = default;
 
     /**
      * @brief Define policies to be called one time for every Http request from an sdk client.

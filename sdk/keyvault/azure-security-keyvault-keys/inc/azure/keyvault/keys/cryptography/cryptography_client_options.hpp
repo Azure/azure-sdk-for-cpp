@@ -24,7 +24,7 @@ namespace Azure {
    * @brief Represent the Key Vault Keys Service Version.
    *
    */
-  class ServiceVersion final {
+  class ServiceVersion {
   private:
     std::string m_version;
 
@@ -73,7 +73,7 @@ namespace Azure {
    * operations on Key Vault.
    *
    */
-  struct CryptographyClientOptions final : public Azure::Core::_internal::ClientOptions
+  struct CryptographyClientOptions : public Azure::Core::_internal::ClientOptions
   {
     /**
      * @brief Gets the #ServiceVersion of the service API used when making requests. For more

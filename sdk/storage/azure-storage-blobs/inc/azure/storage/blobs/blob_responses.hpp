@@ -240,7 +240,7 @@ namespace Azure { namespace Storage {
       ListBlobContainersOptions m_operationOptions;
 
       friend class BlobServiceClient;
-      friend class Azure::Core::PagedResponse<ListBlobContainersPagedResponse>;
+      friend class PagedResponse<ListBlobContainersPagedResponse>;
       friend class Files::DataLake::ListFileSystemsPagedResponse;
     };
 
@@ -268,7 +268,7 @@ namespace Azure { namespace Storage {
       std::string m_tagFilterSqlExpression;
 
       friend class BlobServiceClient;
-      friend class Azure::Core::PagedResponse<FindBlobsByTagsPagedResponse>;
+      friend class PagedResponse<FindBlobsByTagsPagedResponse>;
     };
 
     /**
@@ -303,7 +303,7 @@ namespace Azure { namespace Storage {
       ListBlobsOptions m_operationOptions;
 
       friend class BlobContainerClient;
-      friend class Azure::Core::PagedResponse<ListBlobsPagedResponse>;
+      friend class PagedResponse<ListBlobsPagedResponse>;
     };
 
     /**
@@ -351,7 +351,7 @@ namespace Azure { namespace Storage {
       std::string m_delimiter;
 
       friend class BlobContainerClient;
-      friend class Azure::Core::PagedResponse<ListBlobsByHierarchyPagedResponse>;
+      friend class PagedResponse<ListBlobsByHierarchyPagedResponse>;
     };
 
     /**
@@ -387,7 +387,7 @@ namespace Azure { namespace Storage {
       GetPageRangesOptions m_operationOptions;
 
       friend class PageBlobClient;
-      friend class Azure::Core::PagedResponse<GetPageRangesPagedResponse>;
+      friend class PagedResponse<GetPageRangesPagedResponse>;
     };
 
     /**
@@ -431,7 +431,7 @@ namespace Azure { namespace Storage {
       Azure::Nullable<std::string> m_previousSnapshotUrl;
 
       friend class PageBlobClient;
-      friend class Azure::Core::PagedResponse<GetPageRangesDiffPagedResponse>;
+      friend class PagedResponse<GetPageRangesDiffPagedResponse>;
     };
 
   } // namespace Blobs

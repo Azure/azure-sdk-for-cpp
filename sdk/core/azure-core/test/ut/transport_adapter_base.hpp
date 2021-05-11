@@ -24,7 +24,7 @@ namespace Azure { namespace Core { namespace Test {
     constexpr static const char AzureSdkHttpbinServer[] = "azuresdkforcpp.azurewebsites.net";
   } // namespace _detail
 
-  struct AzureSdkHttpbinServer final
+  struct AzureSdkHttpbinServer
   {
     inline static std::string Get()
     {
@@ -55,7 +55,7 @@ namespace Azure { namespace Core { namespace Test {
     inline static std::string Schema() { return std::string(_detail::AzureSdkHttpbinServerSchema); }
   };
 
-  struct TransportAdaptersTestParameter final
+  struct TransportAdaptersTestParameter
   {
     std::string Suffix;
     Azure::Core::Http::Policies::TransportOptions TransportAdapter;

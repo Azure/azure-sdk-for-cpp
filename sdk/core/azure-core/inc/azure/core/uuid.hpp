@@ -24,7 +24,7 @@ namespace Azure { namespace Core {
   /**
    * @brief Universally unique identifier.
    */
-  class Uuid final {
+  class Uuid {
 
   private:
     static constexpr int UuidSize = 16;

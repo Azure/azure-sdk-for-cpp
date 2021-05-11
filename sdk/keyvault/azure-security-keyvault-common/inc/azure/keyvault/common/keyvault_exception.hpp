@@ -20,7 +20,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace _detail {
    * @brief Container for static methods to parse keyvault payloads to Azure Core Exception.
    *
    */
-  struct KeyVaultException final
+  struct KeyVaultException
   {
     /**
      * @brief Parsed the http payload into an #Azure::Core::RequestFailedException

@@ -24,7 +24,7 @@ namespace Azure {
    * @brief An algorithm used for encryption and decryption.
    *
    */
-  class EncryptionAlgorithm final {
+  class EncryptionAlgorithm {
   private:
     std::string m_value;
 

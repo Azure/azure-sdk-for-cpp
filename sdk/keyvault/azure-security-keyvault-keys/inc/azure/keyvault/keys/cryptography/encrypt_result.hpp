@@ -23,7 +23,7 @@ namespace Azure {
    * @brief Represents information about an encryption operation.
    *
    */
-  struct EncryptResult final
+  struct EncryptResult
   {
     /**
      * @brief Gets the key identifier of the #KeyVaultKey used to encrypt. This must be stored

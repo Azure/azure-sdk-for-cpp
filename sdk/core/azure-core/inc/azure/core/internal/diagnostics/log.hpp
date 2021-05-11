@@ -10,7 +10,7 @@
 #include <type_traits>
 
 namespace Azure { namespace Core { namespace Diagnostics { namespace _internal {
-  class Log final {
+  class Log {
     using LogLevelInt = std::underlying_type<Logger::Level>::type;
 
     static_assert(

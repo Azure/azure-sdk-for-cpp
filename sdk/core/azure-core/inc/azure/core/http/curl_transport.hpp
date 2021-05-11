@@ -21,7 +21,7 @@ namespace Azure { namespace Core { namespace Http {
    * https://curl.haxx.se/libcurl/c/CURLOPT_SSL_OPTIONS.html
    *
    */
-  struct CurlTransportSslOptions final
+  struct CurlTransportSslOptions
   {
     /**
      * @brief This option can enable the revocation list check.
@@ -38,7 +38,7 @@ namespace Azure { namespace Core { namespace Http {
    * @brief Set the curl connection options like a proxy and CA path.
    *
    */
-  struct CurlTransportOptions final
+  struct CurlTransportOptions
   {
     /**
      * @brief The string for the proxy is passed directly to the libcurl handle without any parsing
@@ -95,7 +95,7 @@ namespace Azure { namespace Core { namespace Http {
    * @brief Concrete implementation of an HTTP Transport that uses libcurl.
    *
    */
-  class CurlTransport final : public HttpTransport {
+  class CurlTransport : public HttpTransport {
   private:
     CurlTransportOptions m_options;
 

@@ -40,8 +40,6 @@ namespace Azure { namespace Core {
     PagedResponse& operator=(PagedResponse&&) = default;
 
   public:
-    virtual ~PagedResponse() = default;
-
     /**
      * @brief Defines the token used to fetch the current page.
      *

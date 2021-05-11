@@ -23,7 +23,7 @@ namespace Azure { namespace Core { namespace Credentials {
   /**
    * @brief Represents an access token.
    */
-  struct AccessToken final
+  struct AccessToken
   {
     /**
      * @brief Token string.
@@ -39,7 +39,7 @@ namespace Azure { namespace Core { namespace Credentials {
   /**
    * @brief Defines context for getting token.
    */
-  struct TokenRequestContext final
+  struct TokenRequestContext
   {
     /**
      * @brief Authentication scopes.
@@ -77,7 +77,7 @@ namespace Azure { namespace Core { namespace Credentials {
   /**
    * @brief An exception that gets thrown when authentication error occurs.
    */
-  class AuthenticationException final : public std::exception {
+  class AuthenticationException : public std::exception {
     std::string m_message;
 
   public:
