@@ -2,6 +2,9 @@
 
 ## 1.0.0-beta.6 (Unreleased)
 
+### Breaking Changes
+
+- Added `final` specifier to classes and structures that are are not expected to be inheritable at the moment.
 
 ## 1.0.0-beta.5 (2021-04-07)
 

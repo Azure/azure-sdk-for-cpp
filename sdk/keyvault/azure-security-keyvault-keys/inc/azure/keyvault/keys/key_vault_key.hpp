@@ -25,6 +25,10 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
    */
   struct KeyVaultKey
   {
+    /**
+     * @brief Destructor.
+     *
+     */
     virtual ~KeyVaultKey() = default;
 
     /**
