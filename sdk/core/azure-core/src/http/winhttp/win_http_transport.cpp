@@ -288,6 +288,41 @@ void WinHttpTransport::Upload(std::unique_ptr<_detail::HandleManager>& handleMan
   auto streamBody = handleManager->m_request.GetBodyStream();
   int64_t streamLength = streamBody->Length();
 
+  // Special case MemoryBodyStream to avoid an extra data copy while sending data over the wire.
+  Azure::Core::IO::MemoryBodyStream* mbs
+      = dynamic_cast<Azure::Core::IO::MemoryBodyStream*>(streamBody);
+  if (mbs)
+  {
+    int64_t uploadChunkSize = _detail::MaximumUploadChunkSize;
+
+    int64_t offset = 0;
+    while (streamLength > 0)
+    {
+      if (streamLength < uploadChunkSize)
+      {
+        uploadChunkSize = streamLength;
+      }
+
+      DWORD dwBytesWritten = 0;
+
+      handleManager->m_context.ThrowIfCancelled();
+
+      // Write data to the server.
+      if (!WinHttpWriteData(
+              handleManager->m_requestHandle,
+              mbs->m_data + offset,
+              static_cast<DWORD>(uploadChunkSize),
+              &dwBytesWritten))
+      {
+        GetErrorAndThrow("Error while uploading/sending data.");
+      }
+
+      streamLength -= uploadChunkSize;
+      offset += uploadChunkSize;
+    }
+    return;
+  }
+
   // Consider using `MaximumUploadChunkSize` here, after some perf measurements
   int64_t uploadChunkSize = _detail::DefaultUploadChunkSize;
   if (streamLength < _detail::MaximumUploadChunkSize)

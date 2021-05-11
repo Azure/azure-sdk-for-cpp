@@ -116,13 +116,14 @@ namespace Azure { namespace Core { namespace IO {
    */
   class MemoryBodyStream final : public BodyStream {
   private:
-    const uint8_t* m_data;
     int64_t m_length;
     int64_t m_offset = 0;
 
     int64_t OnRead(uint8_t* buffer, int64_t count, Azure::Core::Context const& context) override;
 
   public:
+    const uint8_t* m_data;
+
     // Forbid constructor for rval so we don't end up storing dangling ptr
     MemoryBodyStream(std::vector<uint8_t> const&&) = delete;
 
