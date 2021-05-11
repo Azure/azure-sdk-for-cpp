@@ -16,7 +16,7 @@
 
 namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
 
-  class ServiceVersion final {
+  class ServiceVersion {
   private:
     std::string m_version;
 
@@ -64,7 +64,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
    * @brief Define the options to create an SDK Keys client.
    *
    */
-  struct KeyClientOptions final : public Azure::Core::_internal::ClientOptions
+  struct KeyClientOptions : public Azure::Core::_internal::ClientOptions
   {
     ServiceVersion Version;
 

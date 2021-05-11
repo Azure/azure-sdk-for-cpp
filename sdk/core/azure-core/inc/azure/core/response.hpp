@@ -22,7 +22,7 @@ namespace Azure {
  *
  * @tparam T A specific type of value to get from the raw HTTP response.
  */
-template <class T> class Response final {
+template <class T> class Response {
 
 public:
   /// The value returned by the service.

@@ -21,7 +21,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Common { n
   /**
    * @brief Provides version information.
    */
-  class PackageVersion final {
+  class PackageVersion {
   public:
     /// Major numeric identifier.
     static constexpr int Major = AZURE_SECURITY_KEYVAULT_COMMON_VERSION_MAJOR;

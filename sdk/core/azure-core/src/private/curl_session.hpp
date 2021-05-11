@@ -39,7 +39,7 @@ namespace Azure { namespace Core { namespace Http {
    * @remarks This component is expected to be used by an HTTP Transporter to ensure that
    * transporter to be reusable in multiple pipelines while every call to network is unique.
    */
-  class CurlSession final : public Azure::Core::IO::BodyStream {
+  class CurlSession : public Azure::Core::IO::BodyStream {
 #ifdef TESTING_BUILD
     // Give access to private to this tests class
     friend class Azure::Core::Test::CurlConnectionPool_connectionPoolTest_Test;
@@ -98,7 +98,7 @@ namespace Azure { namespace Core { namespace Http {
      * component. A libcurl session will use this component to build and return the HTTP
      * RawResponse with a body stream to the pipeline.
      */
-    class ResponseBufferParser final {
+    class ResponseBufferParser {
     private:
       /**
        * @brief Controls what the parser is expecting during the reading process

@@ -17,7 +17,7 @@
 namespace Azure {
 
 namespace _detail {
-  class Clock final {
+  class Clock {
   public:
     using rep = int64_t;
     using period = std::ratio<1, 10000000>;
@@ -51,7 +51,7 @@ namespace _detail {
  * for the date range and precision.
  * @remark This class is supposed to be able to handle a DateTime that comes over the wire.
  */
-class DateTime final : public _detail::Clock::time_point {
+class DateTime : public _detail::Clock::time_point {
 
 private:
   AZ_CORE_DLLEXPORT static DateTime const SystemClockEpoch;

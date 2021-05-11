@@ -23,7 +23,7 @@ namespace Azure {
      * @brief Parameters for wrap a key.
      *
      */
-    struct KeyWrapParameters final
+    struct KeyWrapParameters
     {
       std::string Algorithm;
       std::vector<uint8_t> Key;

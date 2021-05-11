@@ -13,9 +13,9 @@ using namespace Azure::Identity;
 
 namespace {
 
-struct CredentialResult final
+struct CredentialResult
 {
-  struct RequestInfo final
+  struct RequestInfo
   {
     std::string AbsoluteUrl;
     Azure::Core::CaseInsensitiveMap Headers;

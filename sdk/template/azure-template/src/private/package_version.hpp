@@ -20,7 +20,7 @@ namespace Azure { namespace Template { namespace _detail {
   /**
    * @brief Provides version information.
    */
-  class PackageVersion final {
+  class PackageVersion {
   public:
     /// Major numeric identifier.
     static constexpr int Major = AZURE_TEMPLATE_VERSION_MAJOR;

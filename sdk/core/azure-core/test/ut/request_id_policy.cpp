@@ -12,7 +12,7 @@ using namespace Azure::Core::Http::Policies;
 using namespace Azure::Core::Http::Policies::_internal;
 
 namespace {
-class NoOpPolicy final : public HttpPolicy {
+class NoOpPolicy : public HttpPolicy {
 public:
   std::unique_ptr<HttpPolicy> Clone() const override { return std::make_unique<NoOpPolicy>(*this); }
 

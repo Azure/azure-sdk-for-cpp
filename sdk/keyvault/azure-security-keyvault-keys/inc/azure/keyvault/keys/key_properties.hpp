@@ -22,7 +22,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
    * properties.
    *
    */
-  struct KeyProperties final
+  struct KeyProperties
   {
     /**
      * @brief The name of the key.

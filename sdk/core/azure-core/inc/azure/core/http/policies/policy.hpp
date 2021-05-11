@@ -37,7 +37,7 @@ namespace Azure { namespace Core { namespace Http { namespace Policies {
    * @brief Telemetry options.
    *
    */
-  struct TelemetryOptions final
+  struct TelemetryOptions
   {
     /**
      * @brief The Application ID is the last part of the user agent for telemetry.
@@ -52,7 +52,7 @@ namespace Azure { namespace Core { namespace Http { namespace Policies {
   /**
    * @brief Retry options.
    */
-  struct RetryOptions final
+  struct RetryOptions
   {
     /**
      * @brief Maximum number of attempts to retry.
@@ -84,7 +84,7 @@ namespace Azure { namespace Core { namespace Http { namespace Policies {
   /**
    * @brief Log options.
    */
-  struct LogOptions final
+  struct LogOptions
   {
     /**
      * @brief HTTP query parameters that are allowed to be logged.
@@ -101,7 +101,7 @@ namespace Azure { namespace Core { namespace Http { namespace Policies {
    * @brief Transport options.
    *
    */
-  struct TransportOptions final
+  struct TransportOptions
   {
     /**
      * @brief Set the #Azure::Core::Http::HttpTransport that the transport policy will use to send
@@ -165,7 +165,7 @@ namespace Azure { namespace Core { namespace Http { namespace Policies {
    * @brief Represents the next HTTP policy in the stack sequence of policies.
    *
    */
-  class NextHttpPolicy final {
+  class NextHttpPolicy {
     const std::size_t m_index;
     const std::vector<std::unique_ptr<HttpPolicy>>& m_policies;
 
@@ -203,7 +203,7 @@ namespace Azure { namespace Core { namespace Http { namespace Policies {
      * @brief Applying this policy sends an HTTP request over the wire.
      * @remark This policy must be the bottom policy in the stack of the HTTP policy stack.
      */
-    class TransportPolicy final : public HttpPolicy {
+    class TransportPolicy : public HttpPolicy {
     private:
       TransportOptions m_options;
 
@@ -232,11 +232,7 @@ namespace Azure { namespace Core { namespace Http { namespace Policies {
     /**
      * @brief HTTP retry policy.
      */
-    class RetryPolicy
-#if !defined(TESTING_BUILD)
-        final
-#endif
-        : public HttpPolicy {
+    class RetryPolicy : public HttpPolicy {
     private:
       RetryOptions m_retryOptions;
 
@@ -256,7 +252,7 @@ namespace Azure { namespace Core { namespace Http { namespace Policies {
       std::unique_ptr<RawResponse> Send(
           Request& request,
           NextHttpPolicy nextHttpPolicy,
-          Context const& ctx) const final;
+          Context const& ctx) const override;
 
       /**
        * @brief Get the Retry Count from the context.
@@ -292,7 +288,7 @@ namespace Azure { namespace Core { namespace Http { namespace Policies {
      * @details Applies an HTTP header with a unique ID to each HTTP request, so that each
      * individual request can be traced for troubleshooting.
      */
-    class RequestIdPolicy final : public HttpPolicy {
+    class RequestIdPolicy : public HttpPolicy {
     private:
       constexpr static const char* RequestIdHeader = "x-ms-client-request-id";
 
@@ -326,7 +322,7 @@ namespace Azure { namespace Core { namespace Http { namespace Policies {
      * includes Azure SDK version information, and operating system information.
      * @remark See https://azure.github.io/azure-sdk/general_azurecore.html#telemetry-policy.
      */
-    class TelemetryPolicy final : public HttpPolicy {
+    class TelemetryPolicy : public HttpPolicy {
     private:
       std::string const m_telemetryId;
 
@@ -365,7 +361,7 @@ namespace Azure { namespace Core { namespace Http { namespace Policies {
     /**
      * @brief Bearer Token authentication policy.
      */
-    class BearerTokenAuthenticationPolicy final : public HttpPolicy {
+    class BearerTokenAuthenticationPolicy : public HttpPolicy {
     private:
       std::shared_ptr<Credentials::TokenCredential const> const m_credential;
       Credentials::TokenRequestContext m_tokenRequestContext;
@@ -409,7 +405,7 @@ namespace Azure { namespace Core { namespace Http { namespace Policies {
      * @details Logs every HTTP request and response.
      * @remark See Azure::Core::Diagnostics::Logger.
      */
-    class LogPolicy final : public HttpPolicy {
+    class LogPolicy : public HttpPolicy {
       LogOptions m_options;
 
     public:

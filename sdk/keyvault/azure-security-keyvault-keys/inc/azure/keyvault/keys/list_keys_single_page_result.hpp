@@ -28,7 +28,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
    * @brief Define a single page to list the keys from the Key Vault.
    *
    */
-  class KeyPropertiesPageResult final : public Azure::Core::PagedResponse<KeyPropertiesPageResult> {
+  class KeyPropertiesPageResult : public Azure::Core::PagedResponse<KeyPropertiesPageResult> {
   private:
     friend class KeyClient;
     friend class Azure::Core::PagedResponse<KeyPropertiesPageResult>;
@@ -77,7 +77,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
    * @brief Define a single page containing the deleted keys from the Key Vault.
    *
    */
-  class DeletedKeyPageResult final : public Azure::Core::PagedResponse<DeletedKeyPageResult> {
+  class DeletedKeyPageResult : public Azure::Core::PagedResponse<DeletedKeyPageResult> {
   private:
     friend class KeyClient;
     friend class Azure::Core::PagedResponse<DeletedKeyPageResult>;
@@ -124,7 +124,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
    * @brief The options for calling an operation #GetPropertiesOfKeys.
    *
    */
-  struct GetPropertiesOfKeysOptions final
+  struct GetPropertiesOfKeysOptions
       : public Azure::Security::KeyVault::_internal::GetPageResultOptions
   {
   };
@@ -133,7 +133,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
    * @brief The options for calling an operation #GetPropertiesOfKeyVersions.
    *
    */
-  struct GetPropertiesOfKeyVersionsOptions final
+  struct GetPropertiesOfKeyVersionsOptions
       : public Azure::Security::KeyVault::_internal::GetPageResultOptions
   {
   };
@@ -142,8 +142,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
    * @brief The options for calling an operation #GetDeletedKeys.
    *
    */
-  struct GetDeletedKeysOptions final
-      : public Azure::Security::KeyVault::_internal::GetPageResultOptions
+  struct GetDeletedKeysOptions : public Azure::Security::KeyVault::_internal::GetPageResultOptions
   {
   };
 }}}} // namespace Azure::Security::KeyVault::Keys

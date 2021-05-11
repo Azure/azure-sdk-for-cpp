@@ -16,7 +16,7 @@ using namespace Azure::Core::_internal;
 using namespace Azure::Core::Http;
 using namespace Azure::Core::Http::Policies;
 
-struct FakeTransport final : public HttpTransport
+struct FakeTransport : public HttpTransport
 {
   std::unique_ptr<RawResponse> Send(Request& request, Context const& context) override
   {
@@ -26,7 +26,7 @@ struct FakeTransport final : public HttpTransport
   }
 };
 
-struct PerCallPolicy final : public HttpPolicy
+struct PerCallPolicy : public HttpPolicy
 {
   std::unique_ptr<RawResponse> Send(Request& request, NextHttpPolicy policy, Context const& context)
       const override
@@ -43,7 +43,7 @@ struct PerCallPolicy final : public HttpPolicy
   }
 };
 
-struct PerRetryPolicy final : public HttpPolicy
+struct PerRetryPolicy : public HttpPolicy
 {
   std::unique_ptr<RawResponse> Send(Request& request, NextHttpPolicy policy, Context const& context)
       const override
@@ -124,7 +124,7 @@ TEST(ClientOptions, copyWithConstructor)
 
 TEST(ClientOptions, copyDerivedClassConstructor)
 {
-  struct ServiceClientOptions final : ClientOptions
+  struct ServiceClientOptions : ClientOptions
   {
     std::string ApiVersion;
   };
@@ -162,7 +162,7 @@ TEST(ClientOptions, copyDerivedClassConstructor)
 
 TEST(ClientOptions, copyDerivedClassOperator)
 {
-  struct ServiceClientOptions final : ClientOptions
+  struct ServiceClientOptions : ClientOptions
   {
     std::string ApiVersion;
   };
@@ -200,7 +200,7 @@ TEST(ClientOptions, copyDerivedClassOperator)
 
 TEST(ClientOptions, moveConstruct)
 {
-  struct ServiceClientOptions final : ClientOptions
+  struct ServiceClientOptions : ClientOptions
   {
     std::string ApiVersion;
   };

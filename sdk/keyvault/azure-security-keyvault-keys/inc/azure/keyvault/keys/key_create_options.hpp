@@ -29,8 +29,6 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
    */
   struct CreateKeyOptions
   {
-    virtual ~CreateKeyOptions() = default;
-
     /**
      * @brief Define the supported operations for the key.
      *
@@ -66,7 +64,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
    * @brief The properties needed to create an Elliptic Curve key.
    *
    */
-  class CreateEcKeyOptions final : public CreateKeyOptions {
+  class CreateEcKeyOptions : public CreateKeyOptions {
   private:
     std::string m_name;
     bool m_hardwareProtected;
@@ -132,7 +130,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
    * @brief The properties needed to create an RSA key.
    *
    */
-  class CreateRsaKeyOptions final : public CreateKeyOptions {
+  class CreateRsaKeyOptions : public CreateKeyOptions {
   private:
     std::string m_name;
     bool m_hardwareProtected;
@@ -204,7 +202,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
    * @brief The properties needed to create an AES key.
    *
    */
-  class CreateOctKeyOptions final : public CreateKeyOptions {
+  class CreateOctKeyOptions : public CreateKeyOptions {
   private:
     std::string m_name;
     bool m_hardwareProtected;

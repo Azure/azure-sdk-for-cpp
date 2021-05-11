@@ -27,7 +27,7 @@ namespace Azure {
    * @brief An algorithm used for signing and verification.
    *
    */
-  class SignatureAlgorithm final {
+  class SignatureAlgorithm {
   private:
     std::string m_value;
 
