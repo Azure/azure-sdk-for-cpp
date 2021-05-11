@@ -9,6 +9,7 @@
 
 #pragma once
 
+#include <azure/core/io/body_stream.hpp>
 #include <azure/perf.hpp>
 
 #include "azure/storage/blobs/test/blob_base_test.hpp"
@@ -32,6 +33,19 @@ namespace Azure { namespace Storage { namespace Blobs { namespace Test {
      * @param options The test options.
      */
     DownloadBlob(Azure::Perf::TestOptions options) : BlobsTest(options) {}
+
+    /**
+     * @brief Upload 5Mb to be downloaded in the test
+     *
+     */
+    void Setup() override
+    {
+      // Call base to create blob client
+      BlobsTest::Setup();
+      auto rawData = std::make_unique<std::vector<uint8_t>>(1024 * 1024 * 5);
+      auto content = Azure::Core::IO::MemoryBodyStream(*rawData);
+      m_blobClient->Upload(content);
+    }
 
     /**
      * @brief Define the test
