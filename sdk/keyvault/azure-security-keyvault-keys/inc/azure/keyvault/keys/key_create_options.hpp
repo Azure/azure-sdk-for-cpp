@@ -29,6 +29,10 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
    */
   struct CreateKeyOptions
   {
+    /**
+     * @brief Destructor.
+     *
+     */
     virtual ~CreateKeyOptions() = default;
 
     /**

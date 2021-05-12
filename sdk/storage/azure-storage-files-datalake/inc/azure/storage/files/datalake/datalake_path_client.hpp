@@ -23,6 +23,10 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
 
   class DataLakePathClient {
   public:
+    /**
+     * @brief Destructor.
+     *
+     */
     virtual ~DataLakePathClient() = default;
 
     /**

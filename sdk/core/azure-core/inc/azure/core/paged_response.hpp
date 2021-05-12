@@ -40,6 +40,10 @@ namespace Azure { namespace Core {
     PagedResponse& operator=(PagedResponse&&) = default;
 
   public:
+    /**
+     * @brief Destructor.
+     *
+     */
     virtual ~PagedResponse() = default;
 
     /**

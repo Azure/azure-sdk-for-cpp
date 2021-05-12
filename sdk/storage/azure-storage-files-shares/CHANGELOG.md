@@ -8,6 +8,7 @@
 
 ### Breaking Changes
 
+- Added `final` specifier to classes and structures that are are not expected to be inheritable at the moment.
 - Renamed `HasMorePages()` in paged response to `HasPage()`.
 - `ShareLeaseClient::Change()` updates internal lease id.
 - `ShareItem::ShareMetadata` was renamed to `ShareItem::Metadata`.

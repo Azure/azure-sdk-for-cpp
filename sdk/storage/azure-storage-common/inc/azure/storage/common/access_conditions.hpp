@@ -17,6 +17,10 @@ namespace Azure { namespace Storage {
    */
   struct LeaseAccessConditions
   {
+    /**
+     * @brief Destructor.
+     *
+     */
     virtual ~LeaseAccessConditions() = default;
 
     /**

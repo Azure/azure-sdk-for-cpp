@@ -61,6 +61,10 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
     std::shared_ptr<Azure::Security::KeyVault::_internal::KeyVaultPipeline> m_pipeline;
 
   public:
+    /**
+     * @brief Destructor.
+     *
+     */
     virtual ~KeyClient() = default;
 
     /**
