@@ -36,7 +36,7 @@ namespace Azure { namespace Storage { namespace _internal {
         // forget about the inner stream. We will need to request a new one
         // As m_inner is unique_pr, it will be destructed on reassignment (cleaning up network
         // session).
-        this->m_inner.release();
+        this->m_inner.reset();
         (void)e; // todo: maybe log the exception in the future?
         if (intent == this->m_options.MaxRetryRequests)
         {
