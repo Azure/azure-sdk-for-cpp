@@ -16,9 +16,9 @@
 namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
   /**
-   * @brief Client options used to initalize share clients.
+   * @brief Client options used to initialize share clients.
    */
-  struct ShareClientOptions : Azure::Core::_internal::ClientOptions
+  struct ShareClientOptions final : Azure::Core::_internal::ClientOptions
   {
     /**
      * API version used by this client.
@@ -30,7 +30,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
    * @brief Optional parameters for
    * #Azure::Storage::Files::Shares::ShareServiceClient::ListShares.
    */
-  struct ListSharesOptions
+  struct ListSharesOptions final
   {
     /**
      * Filters the results to return only entries whose name begins with the specified
@@ -63,7 +63,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
    * @brief Optional parameters for
    * #Azure::Storage::Files::Shares::ShareServiceClient::SetProperties.
    */
-  struct SetServicePropertiesOptions
+  struct SetServicePropertiesOptions final
   {
   };
 
@@ -71,14 +71,14 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
    * @brief Optional parameters for
    * #Azure::Storage::Files::Shares::ShareServiceClient::GetProperties.
    */
-  struct GetServicePropertiesOptions
+  struct GetServicePropertiesOptions final
   {
   };
 
   /**
    * @brief Optional parameters for #Azure::Storage::Files::Shares::ShareClient::Create.
    */
-  struct CreateShareOptions
+  struct CreateShareOptions final
   {
     /**
      * A name-value pair to associate with a file storage object.
@@ -100,7 +100,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
   /**
    * @brief Optional parameters for #Azure::Storage::Files::Shares::ShareClient::Delete.
    */
-  struct DeleteShareOptions
+  struct DeleteShareOptions final
   {
     /**
      * Specifies the option include to delete the base share and all of its snapshots.
@@ -111,7 +111,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
   /**
    * @brief Optional parameters for #Azure::Storage::Files::Shares::ShareClient::CreateSnapshot.
    */
-  struct CreateShareSnapshotOptions
+  struct CreateShareSnapshotOptions final
   {
     /**
      * The metadata to be set on the snapshot of the share.
@@ -122,14 +122,14 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
   /**
    * @brief Optional parameters for #Azure::Storage::Files::Shares::ShareClient::GetProperties.
    */
-  struct GetSharePropertiesOptions
+  struct GetSharePropertiesOptions final
   {
   };
 
   /**
    * @brief Optional parameters for #Azure::Storage::Files::Shares::ShareClient::SetProperties.
    */
-  struct SetSharePropertiesOptions
+  struct SetSharePropertiesOptions final
   {
     /**
      * Specifies the access tier of the share. This is only valid for standard file account
@@ -146,49 +146,49 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
   /**
    * @brief Optional parameters for #Azure::Storage::Files::Shares::ShareClient::SetMetadata.
    */
-  struct SetShareMetadataOptions
+  struct SetShareMetadataOptions final
   {
   };
 
   /**
    * @brief Optional parameters for #Azure::Storage::Files::Shares::ShareClient::GetAccessPolicy.
    */
-  struct GetShareAccessPolicyOptions
+  struct GetShareAccessPolicyOptions final
   {
   };
 
   /**
    * @brief Optional parameters for #Azure::Storage::Files::Shares::ShareClient::SetAccessPolicy.
    */
-  struct SetShareAccessPolicyOptions
+  struct SetShareAccessPolicyOptions final
   {
   };
 
   /**
    * @brief Optional parameters for #Azure::Storage::Files::Shares::ShareClient::GetStatistics.
    */
-  struct GetShareStatisticsOptions
+  struct GetShareStatisticsOptions final
   {
   };
 
   /**
    * @brief Optional parameters for #Azure::Storage::Files::Shares::ShareClient::CreatePermission.
    */
-  struct CreateSharePermissionOptions
+  struct CreateSharePermissionOptions final
   {
   };
 
   /**
    * @brief Optional parameters for #Azure::Storage::Files::Shares::ShareClient::GetPermission.
    */
-  struct GetSharePermissionOptions
+  struct GetSharePermissionOptions final
   {
   };
 
   /**
    * @brief Optional parameters for #Azure::Storage::Files::Shares::ShareDirectoryClient::Create.
    */
-  struct CreateDirectoryOptions
+  struct CreateDirectoryOptions final
   {
     /**
      * A name-value pair to associate with a directory object.
@@ -210,7 +210,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
   /**
    * @brief Optional parameters for #Azure::Storage::Files::Shares::ShareDirectoryClient::Delete.
    */
-  struct DeleteDirectoryOptions
+  struct DeleteDirectoryOptions final
   {
   };
 
@@ -218,7 +218,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
    * @brief Optional parameters for
    * #Azure::Storage::Files::Shares::ShareDirectoryClient::GetProperties.
    */
-  struct GetDirectoryPropertiesOptions
+  struct GetDirectoryPropertiesOptions final
   {
   };
 
@@ -226,7 +226,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
    * @brief Optional parameters for
    * #Azure::Storage::Files::Shares::ShareDirectoryClient::SetProperties.
    */
-  struct SetDirectoryPropertiesOptions
+  struct SetDirectoryPropertiesOptions final
   {
     /**
      * If specified the permission (security descriptor) shall be set for the directory.
@@ -241,7 +241,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
    * @brief Optional parameters for
    * #Azure::Storage::Files::Shares::ShareDirectoryClient::SetMetadata.
    */
-  struct SetDirectoryMetadataOptions
+  struct SetDirectoryMetadataOptions final
   {
   };
 
@@ -249,7 +249,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
    * @brief Optional parameters for
    * #Azure::Storage::Files::Shares::ShareDirectoryClient::ListFilesAndDirectories.
    */
-  struct ListFilesAndDirectoriesOptions
+  struct ListFilesAndDirectoriesOptions final
   {
     /**
      * Filters the results to return only entries whose name begins with the specified
@@ -277,7 +277,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
    * @brief Optional parameters for
    * #Azure::Storage::Files::Shares::ShareDirectoryClient::ListHandles.
    */
-  struct ListDirectoryHandlesOptions
+  struct ListDirectoryHandlesOptions final
   {
     /**
      * A string value that identifies the portion of the list to be returned with the next
@@ -305,7 +305,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
    * @brief Optional parameters for
    * #Azure::Storage::Files::Shares::ShareDirectoryClient::ForceCloseHandle.
    */
-  struct ForceCloseDirectoryHandleOptions
+  struct ForceCloseDirectoryHandleOptions final
   {
   };
 
@@ -313,7 +313,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
    * @brief Optional parameters for
    * #Azure::Storage::Files::Shares::ShareDirectoryClient::ForceCloseAllHandles.
    */
-  struct ForceCloseAllDirectoryHandlesOptions
+  struct ForceCloseAllDirectoryHandlesOptions final
   {
     /**
      * A string value that identifies the portion of the list to be returned with the next
@@ -333,7 +333,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
   /**
    * @brief Optional parameters for #Azure::Storage::Files::Shares::ShareFileClient::Create.
    */
-  struct CreateFileOptions
+  struct CreateFileOptions final
   {
     /**
      * This permission is the security descriptor for the file specified in the Security
@@ -365,7 +365,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
   /**
    * @brief Optional parameters for #Azure::Storage::Files::Shares::ShareFileClient::Delete.
    */
-  struct DeleteFileOptions
+  struct DeleteFileOptions final
   {
     /**
      * The operation will only succeed if the access condition is met.
@@ -376,7 +376,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
   /**
    * @brief Optional parameters for #Azure::Storage::Files::Shares::ShareFileClient::Download.
    */
-  struct DownloadFileOptions
+  struct DownloadFileOptions final
   {
     /**
      * Downloads only the bytes of the file from this range.
@@ -398,7 +398,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
   /**
    * @brief Optional parameters for #Azure::Storage::Files::Shares::ShareFileClient::StartCopy.
    */
-  struct StartFileCopyOptions
+  struct StartFileCopyOptions final
   {
     /**
      * A name-value pair to associate with a file storage object.
@@ -443,7 +443,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
   /**
    * @brief Optional parameters for #Azure::Storage::Files::Shares::ShareFileClient::AbortCopy.
    */
-  struct AbortFileCopyOptions
+  struct AbortFileCopyOptions final
   {
     /**
      * The operation will only succeed if the access condition is met.
@@ -454,7 +454,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
   /**
    * @brief Optional parameters for #Azure::Storage::Files::Shares::ShareFileClient::GetProperties.
    */
-  struct GetFilePropertiesOptions
+  struct GetFilePropertiesOptions final
   {
     /**
      * The operation will only succeed if the access condition is met.
@@ -465,7 +465,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
   /**
    * @brief Optional parameters for #Azure::Storage::Files::Shares::ShareFileClient::SetProperties.
    */
-  struct SetFilePropertiesOptions
+  struct SetFilePropertiesOptions final
   {
     /**
      * This permission is the security descriptor for the file specified in the Security
@@ -487,7 +487,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
   /**
    * @brief Optional parameters for #Azure::Storage::Files::Shares::ShareFileClient::SetMetadata.
    */
-  struct SetFileMetadataOptions
+  struct SetFileMetadataOptions final
   {
     /**
      * The operation will only succeed if the access condition is met.
@@ -498,7 +498,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
   /**
    * @brief Optional parameters for #Azure::Storage::Files::Shares::ShareFileClient::UploadRange.
    */
-  struct UploadFileRangeOptions
+  struct UploadFileRangeOptions final
   {
     /**
      * An MD5 hash of the content. This hash is used to verify the integrity of the data
@@ -517,7 +517,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
   /**
    * @brief Optional parameters for #Azure::Storage::Files::Shares::ShareFileClient::ClearRange.
    */
-  struct ClearFileRangeOptions
+  struct ClearFileRangeOptions final
   {
     /**
      * The operation will only succeed if the access condition is met.
@@ -529,7 +529,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
    * @brief Optional parameters for
    * #Azure::Storage::Files::Shares::ShareFileClient::UploadRangeFromUri.
    */
-  struct UploadFileRangeFromUriOptions
+  struct UploadFileRangeFromUriOptions final
   {
     /**
      * Specify the hash calculated for the range of bytes that must be read from the copy
@@ -551,7 +551,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
   /**
    * @brief Optional parameters for #Azure::Storage::Files::Shares::ShareFileClient::GetRangeList.
    */
-  struct GetFileRangeListOptions
+  struct GetFileRangeListOptions final
   {
     /**
      * The range to be get from service.
@@ -567,7 +567,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
   /**
    * @brief Optional parameters for #Azure::Storage::Files::Shares::ShareFileClient::ListHandles.
    */
-  struct ListFileHandlesOptions
+  struct ListFileHandlesOptions final
   {
     /**
      * A string value that identifies the portion of the list to be returned with the next
@@ -589,7 +589,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
    * @brief Optional parameters for
    * #Azure::Storage::Files::Shares::ShareFileClient::ForceCloseHandle.
    */
-  struct ForceCloseFileHandleOptions
+  struct ForceCloseFileHandleOptions final
   {
   };
 
@@ -597,7 +597,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
    * @brief Optional parameters for
    * #Azure::Storage::Files::Shares::ShareFileClient::ForceCloseAllHandles.
    */
-  struct ForceCloseAllFileHandlesOptions
+  struct ForceCloseAllFileHandlesOptions final
   {
     /**
      * A string value that identifies the portion of the list to be returned with the next
@@ -611,7 +611,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
   /**
    * @brief Optional parameters for #Azure::Storage::Files::Shares::ShareFileClient::DownloadTo.
    */
-  struct DownloadFileToOptions
+  struct DownloadFileToOptions final
   {
     /**
      * Downloads only the bytes of the file from this range.
@@ -645,7 +645,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
   /**
    * @brief Optional parameters for #Azure::Storage::Files::Shares::ShareFileClient::UploadFrom.
    */
-  struct UploadFileFromOptions
+  struct UploadFileFromOptions final
   {
     /**
      * The standard HTTP header system properties to set.
@@ -696,28 +696,28 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
   /**
    * @brief Optional parameters for #Azure::Storage::Files::Shares::ShareLeaseClient::Acquire.
    */
-  struct AcquireLeaseOptions
+  struct AcquireLeaseOptions final
   {
   };
 
   /**
    * @brief Optional parameters for #Azure::Storage::Files::Shares::ShareLeaseClient::Change.
    */
-  struct ChangeLeaseOptions
+  struct ChangeLeaseOptions final
   {
   };
 
   /**
    * @brief Optional parameters for #Azure::Storage::Files::Shares::ShareLeaseClient::Release.
    */
-  struct ReleaseLeaseOptions
+  struct ReleaseLeaseOptions final
   {
   };
 
   /**
    * @brief Optional parameters for #Azure::Storage::Files::Shares::ShareLeaseClient::Break.
    */
-  struct BreakLeaseOptions
+  struct BreakLeaseOptions final
   {
     /**
      * Proposed duration the lease should continue before it is broken, in seconds,
@@ -732,7 +732,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
   /**
    * @brief Optional parameters for #Azure::Storage::Files::Shares::ShareLeaseClient::Renew.
    */
-  struct RenewLeaseOptions
+  struct RenewLeaseOptions final
   {
   };
 }}}} // namespace Azure::Storage::Files::Shares

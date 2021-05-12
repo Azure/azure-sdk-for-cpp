@@ -232,7 +232,7 @@ TEST(Context, MatchingKeys)
   EXPECT_TRUE(valueT3 == 456);
 }
 
-struct SomeStructForContext
+struct SomeStructForContext final
 {
   int someField = 12345;
 };
@@ -260,7 +260,7 @@ TEST(Context, Ptr)
 
 TEST(Context, NestedClassPtr)
 {
-  class TestClass {
+  class TestClass final {
   private:
     int* m_instanceCount;
 
@@ -455,4 +455,48 @@ TEST(Context, PreCondition)
 #else
   ASSERT_DEATH(c2.TryGetValue<int>(key, value), "Type mismatch for Context::TryGetValue");
 #endif
+}
+
+TEST(Context, KeyTypePairPrecondition)
+{
+  Context context;
+  Context::Key const key;
+  Context::Key const keyNotFound;
+
+  std::string s("Test String");
+
+  // New context from previous
+  auto c2 = context.WithValue(key, 123);
+  auto c3 = c2.WithValue(key, s);
+
+  int intValue = -1;
+  std::string strValue = "previous value";
+
+  EXPECT_FALSE(c2.TryGetValue<std::string>(keyNotFound, strValue));
+  EXPECT_FALSE(c2.TryGetValue<int>(keyNotFound, intValue));
+
+#if defined(NDEBUG)
+  // Release build won't provide assert msg
+  ASSERT_DEATH(c2.TryGetValue<std::string>(key, strValue), "");
+#else
+  ASSERT_DEATH(
+      c2.TryGetValue<std::string>(key, strValue), "Type mismatch for Context::TryGetValue");
+#endif
+
+  EXPECT_TRUE(strValue == "previous value");
+
+  EXPECT_TRUE(c2.TryGetValue<int>(key, intValue));
+  EXPECT_TRUE(intValue == 123);
+
+#if defined(NDEBUG)
+  // Release build won't provide assert msg
+  ASSERT_DEATH(c3.TryGetValue<int>(key, intValue), "");
+#else
+  ASSERT_DEATH(c3.TryGetValue<int>(key, intValue), "Type mismatch for Context::TryGetValue");
+#endif
+
+  EXPECT_TRUE(intValue == 123);
+
+  EXPECT_TRUE(c3.TryGetValue<std::string>(key, strValue));
+  EXPECT_TRUE(strValue == s);
 }

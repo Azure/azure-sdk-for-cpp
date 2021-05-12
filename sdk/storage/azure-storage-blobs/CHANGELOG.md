@@ -7,6 +7,8 @@
 - Renamed `HasMorePages()` in paged response to `HasPage()`.
 - Default chunk size for concurrent upload was changed to nullable.
 - `BlobLeaseClient::Change()` updates internal lease id.
+- Removed `ContentType` from `GetBlockListResult`.
+- Moved `GetPageRangesResult` to detail namespace.
 
 ## 12.0.0-beta.10 (2021-04-16)
 
@@ -62,7 +64,7 @@
   - Renamed `StartCopyBlobFromUriOptions` to `StartBlobCopyFromUriOptions`.
   - Renamed `StartCopyPageBlobIncrementalOptions` to `StartBlobCopyIncrementalOptions`.
 - Removed `Blob` from the name of lease options and return types, like `AcquireBlobLeaseOptions` was renamed to `AcquireLeaseOptions`.
-- Removed `Blob` prefix from the name of structs `BlobGeoReplication`, `BlobLeaseStatus`, `BlobLeaseState`, `BlobLeaseDurationType`, `BlobAnalyticsLogging`, `BlobMetrics`, `BlobCorsRule`, `BlobRetentionPolicy`, `BlobStaticWebsite`, `BlobArchiveStatus` and `BlobGeoReplictionStatus`.
+- Removed `Blob` prefix from the name of structs `BlobGeoReplication`, `BlobLeaseStatus`, `BlobLeaseState`, `BlobLeaseDurationType`, `BlobAnalyticsLogging`, `BlobMetrics`, `BlobCorsRule`, `BlobRetentionPolicy`, `BlobStaticWebsite`, `BlobArchiveStatus` and `BlobGeoReplicationStatus`.
 - Removed `RequestId` from return types.
 - Changed `BodyStream` parameter of `UploadBlob`, `Upload`, `UploadPages` and `AppendBlock`functions from pointer to reference.
 - Renamed access tier members in return types and options from `Tier` to `AccessTier`.
@@ -209,7 +211,7 @@
 
 - Bump up API version to 2020-02-10.
 - Support for Last Accessting Time.
-- Add TagCount and ExiryTime in the responses of getting propertites and downloading blobs.
+- Add TagCount and ExpiryTime in the responses of getting properties and downloading blobs.
 
 ### Breaking Changes
 

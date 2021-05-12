@@ -10,7 +10,7 @@
 #include <gtest/gtest.h>
 
 #include <azure/core.hpp>
-#include <azure/keyvault/key_vault.hpp>
+#include <azure/keyvault/key_vault_keys.hpp>
 
 #include <cstdio>
 
@@ -32,7 +32,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys { nam
   } // namespace _detail
 
   // A transport adapter which only echo a request headers back as a response.
-  class MockedTransportAdapter : public Azure::Core::Http::HttpTransport {
+  class MockedTransportAdapter final : public Azure::Core::Http::HttpTransport {
     std::unique_ptr<Azure::Core::Http::RawResponse> Send(
         Azure::Core::Http::Request& request,
         Azure::Core::Context const& context) override
@@ -54,7 +54,8 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys { nam
   }; // namespace Test
 
   // A derived class with no credential and authentication
-  class KeyClientWithNoAuthenticationPolicy : public Azure::Security::KeyVault::Keys::KeyClient {
+  class KeyClientWithNoAuthenticationPolicy final
+      : public Azure::Security::KeyVault::Keys::KeyClient {
   public:
     explicit KeyClientWithNoAuthenticationPolicy(
         std::string const& vaultUrl,

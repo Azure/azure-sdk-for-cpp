@@ -20,7 +20,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares { names
   /**
    * @brief Provides version information.
    */
-  class PackageVersion {
+  class PackageVersion final {
   public:
     /// Major numeric identifier.
     static constexpr int Major = AZURE_STORAGE_FILES_SHARES_VERSION_MAJOR;

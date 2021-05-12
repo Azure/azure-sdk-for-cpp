@@ -25,8 +25,8 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
    * @brief Represents a JSON Web Key as defined in http://tools.ietf.org/html/rfc7517.
    *
    */
-  struct JsonWebKey
-  {
+  class JsonWebKey final {
+  public:
     /**
      * @brief The Identifier of the key. This is not limited to a Url.
      *
@@ -100,6 +100,34 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
     std::vector<uint8_t> X;
     /// Gets the Y coordinate for the elliptic curve point.
     std::vector<uint8_t> Y;
+
+    bool HasPrivateKey() const
+    {
+      if (KeyType == KeyVaultKeyType::Rsa || KeyType == KeyVaultKeyType::Ec
+          || KeyType == KeyVaultKeyType::RsaHsm || KeyType == KeyVaultKeyType::EcHsm)
+      {
+        return D.size() > 0;
+      }
+
+      if (KeyType == KeyVaultKeyType::Oct)
+      {
+        return K.size() > 0;
+      }
+
+      return false;
+    }
+
+    bool SupportsOperation(KeyOperation operation) const
+    {
+      for (auto supportedOperation : m_keyOps)
+      {
+        if (operation == supportedOperation)
+        {
+          return true;
+        }
+      }
+      return false;
+    }
 
   private:
     std::vector<KeyOperation> m_keyOps;

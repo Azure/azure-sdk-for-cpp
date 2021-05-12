@@ -16,7 +16,7 @@
 
 namespace Azure {
 namespace _detail {
-  struct NontrivialEmptyType
+  struct NontrivialEmptyType final
   {
     constexpr NontrivialEmptyType() noexcept {}
   };
@@ -27,7 +27,7 @@ namespace _detail {
  *
  * @tparam T A type to represent contained values.
  */
-template <class T> class Nullable {
+template <class T> class Nullable final {
   union
   {
     _detail::NontrivialEmptyType m_disengaged; // due to constexpr rules for the default constructor

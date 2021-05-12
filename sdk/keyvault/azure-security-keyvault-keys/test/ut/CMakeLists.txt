@@ -43,6 +43,7 @@ add_executable (
   key_client_get_test_live.cpp
   key_client_import_test_live.cpp
   key_client_update_test_live.cpp
+  key_cryptographic_client_test_live.cpp
   main.cpp
   key_client_base_test.hpp
 )

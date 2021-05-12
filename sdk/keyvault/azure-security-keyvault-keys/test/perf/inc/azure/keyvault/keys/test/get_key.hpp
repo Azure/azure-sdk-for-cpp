@@ -12,7 +12,7 @@
 #include <azure/perf.hpp>
 
 #include <azure/identity.hpp>
-#include <azure/keyvault/key_vault.hpp>
+#include <azure/keyvault/key_vault_keys.hpp>
 
 #include <memory>
 #include <string>

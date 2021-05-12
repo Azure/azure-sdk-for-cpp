@@ -32,7 +32,7 @@ namespace Azure { namespace Storage {
       /**
        * @brief Response type for #Azure::Storage::Blobs::BlobClient::DownloadTo.
        */
-      struct DownloadBlobToResult
+      struct DownloadBlobToResult final
       {
         /**
          * The blob's type.
@@ -65,7 +65,7 @@ namespace Azure { namespace Storage {
       /**
        * @brief Response type for #Azure::Storage::Blobs::BlobLeaseClient::Acquire.
        */
-      struct AcquireLeaseResult
+      struct AcquireLeaseResult final
       {
         /**
          * The ETag contains a value that you can use to perform operations conditionally.
@@ -88,7 +88,7 @@ namespace Azure { namespace Storage {
       /**
        * @brief Response type for #Azure::Storage::Blobs::BlobLeaseClient::Break.
        */
-      struct BreakLeaseResult
+      struct BreakLeaseResult final
       {
         /**
          * The ETag contains a value that you can use to perform operations conditionally.
@@ -104,7 +104,7 @@ namespace Azure { namespace Storage {
       /**
        * @brief Response type for #Azure::Storage::Blobs::BlobLeaseClient::Change.
        */
-      struct ChangeLeaseResult
+      struct ChangeLeaseResult final
       {
         /**
          * The ETag contains a value that you can use to perform operations conditionally.
@@ -127,7 +127,7 @@ namespace Azure { namespace Storage {
       /**
        * @brief Response type for #Azure::Storage::Blobs::BlobLeaseClient::Release.
        */
-      struct ReleaseLeaseResult
+      struct ReleaseLeaseResult final
       {
         /**
          * The ETag contains a value that you can use to perform operations conditionally.
@@ -143,7 +143,7 @@ namespace Azure { namespace Storage {
       /**
        * @brief Response type for #Azure::Storage::Blobs::BlobLeaseClient::Renew.
        */
-      struct RenewLeaseResult
+      struct RenewLeaseResult final
       {
         /**
          * The ETag contains a value that you can use to perform operations conditionally.
@@ -168,7 +168,7 @@ namespace Azure { namespace Storage {
     /**
      * @brief A long-running operation to copy a blob.
      */
-    class StartBlobCopyOperation : public Azure::Core::Operation<Models::BlobProperties> {
+    class StartBlobCopyOperation final : public Azure::Core::Operation<Models::BlobProperties> {
     public:
       /**
        * @brief Get the #Azure::Storage::Blobs::Models::BlobProperties object, which includes the
@@ -215,7 +215,7 @@ namespace Azure { namespace Storage {
     /**
      * @brief Response type for #Azure::Storage::Blobs::BlobServiceClient::ListBlobContainers.
      */
-    class ListBlobContainersPagedResponse
+    class ListBlobContainersPagedResponse final
         : public Azure::Core::PagedResponse<ListBlobContainersPagedResponse> {
     public:
       /**
@@ -240,14 +240,14 @@ namespace Azure { namespace Storage {
       ListBlobContainersOptions m_operationOptions;
 
       friend class BlobServiceClient;
-      friend class PagedResponse<ListBlobContainersPagedResponse>;
+      friend class Azure::Core::PagedResponse<ListBlobContainersPagedResponse>;
       friend class Files::DataLake::ListFileSystemsPagedResponse;
     };
 
     /**
      * @brief Response type for #Azure::Storage::Blobs::BlobServiceClient::FindBlobsByTags.
      */
-    class FindBlobsByTagsPagedResponse
+    class FindBlobsByTagsPagedResponse final
         : public Azure::Core::PagedResponse<FindBlobsByTagsPagedResponse> {
     public:
       /**
@@ -268,13 +268,13 @@ namespace Azure { namespace Storage {
       std::string m_tagFilterSqlExpression;
 
       friend class BlobServiceClient;
-      friend class PagedResponse<FindBlobsByTagsPagedResponse>;
+      friend class Azure::Core::PagedResponse<FindBlobsByTagsPagedResponse>;
     };
 
     /**
      * @brief Response type for #Azure::Storage::Blobs::BlobContainerClient::ListBlobs.
      */
-    class ListBlobsPagedResponse : public Azure::Core::PagedResponse<ListBlobsPagedResponse> {
+    class ListBlobsPagedResponse final : public Azure::Core::PagedResponse<ListBlobsPagedResponse> {
     public:
       /**
        * Service endpoint.
@@ -303,13 +303,13 @@ namespace Azure { namespace Storage {
       ListBlobsOptions m_operationOptions;
 
       friend class BlobContainerClient;
-      friend class PagedResponse<ListBlobsPagedResponse>;
+      friend class Azure::Core::PagedResponse<ListBlobsPagedResponse>;
     };
 
     /**
      * @brief Response type for #Azure::Storage::Blobs::BlobContainerClient::ByHierarchy.
      */
-    class ListBlobsByHierarchyPagedResponse
+    class ListBlobsByHierarchyPagedResponse final
         : public Azure::Core::PagedResponse<ListBlobsByHierarchyPagedResponse> {
     public:
       /**
@@ -351,13 +351,13 @@ namespace Azure { namespace Storage {
       std::string m_delimiter;
 
       friend class BlobContainerClient;
-      friend class PagedResponse<ListBlobsByHierarchyPagedResponse>;
+      friend class Azure::Core::PagedResponse<ListBlobsByHierarchyPagedResponse>;
     };
 
     /**
      * @brief Response type for #Azure::Storage::Blobs::PageBlobClient::GetPageRanges.
      */
-    class GetPageRangesPagedResponse
+    class GetPageRangesPagedResponse final
         : public Azure::Core::PagedResponse<GetPageRangesPagedResponse> {
     public:
       /**
@@ -387,14 +387,14 @@ namespace Azure { namespace Storage {
       GetPageRangesOptions m_operationOptions;
 
       friend class PageBlobClient;
-      friend class PagedResponse<GetPageRangesPagedResponse>;
+      friend class Azure::Core::PagedResponse<GetPageRangesPagedResponse>;
     };
 
     /**
      * @brief Response type for #Azure::Storage::Blobs::PageBlobClient::GetPageRangesDiff and
      * #Azure::Storage::Blobs::PageBlobClient::GetManagedDiskPageRangesDiff.
      */
-    class GetPageRangesDiffPagedResponse
+    class GetPageRangesDiffPagedResponse final
         : public Azure::Core::PagedResponse<GetPageRangesDiffPagedResponse> {
     public:
       /**
@@ -431,7 +431,7 @@ namespace Azure { namespace Storage {
       Azure::Nullable<std::string> m_previousSnapshotUrl;
 
       friend class PageBlobClient;
-      friend class PagedResponse<GetPageRangesDiffPagedResponse>;
+      friend class Azure::Core::PagedResponse<GetPageRangesDiffPagedResponse>;
     };
 
   } // namespace Blobs

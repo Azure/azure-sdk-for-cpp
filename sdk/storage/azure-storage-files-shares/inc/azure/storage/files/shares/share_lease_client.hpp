@@ -15,7 +15,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
   /**
    * @brief ShareLeaseClient allows you to manipulate Azure Storage leases on shares and files.
    */
-  class ShareLeaseClient {
+  class ShareLeaseClient final {
   public:
     /**
      * @brief Initializes a new instance of the ShareLeaseClient.

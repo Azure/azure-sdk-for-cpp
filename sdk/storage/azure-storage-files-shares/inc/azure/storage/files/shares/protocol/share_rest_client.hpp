@@ -34,7 +34,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     /**
      * @brief The common HTTP headers.
      */
-    struct FileHttpHeaders
+    struct FileHttpHeaders final
     {
 
       /**
@@ -71,7 +71,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     /**
      * @brief The SMB related properties of the file.
      */
-    struct FileSmbProperties
+    struct FileSmbProperties final
     {
       /**
        * Permission key of the directory or file.
@@ -114,7 +114,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     /**
      * @brief Specifies the access tier of the share.
      */
-    class AccessTier {
+    class AccessTier final {
     public:
       AccessTier() = default;
       explicit AccessTier(std::string value) : m_value(std::move(value)) {}
@@ -136,7 +136,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
      * using the value which is defined by the header value of x-ms-file-permission or
      * x-ms-file-permission-key.
      */
-    class PermissionCopyMode {
+    class PermissionCopyMode final {
     public:
       PermissionCopyMode() = default;
       explicit PermissionCopyMode(std::string value) : m_value(std::move(value)) {}
@@ -154,7 +154,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     /**
      * @brief Specifies the option include to delete the base share and all of its snapshots.
      */
-    class DeleteSnapshotsOption {
+    class DeleteSnapshotsOption final {
     public:
       DeleteSnapshotsOption() = default;
       explicit DeleteSnapshotsOption(std::string value) : m_value(std::move(value)) {}
@@ -171,7 +171,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     /**
      * @brief An Access policy.
      */
-    struct AccessPolicy
+    struct AccessPolicy final
     {
       /**
        * The date-time the policy is active.
@@ -195,7 +195,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
      * same-origin policy that prevents a web page from calling APIs in a different domain; CORS
      * provides a secure way to allow one domain (the origin domain) to call APIs in another domain.
      */
-    struct CorsRule
+    struct CorsRule final
     {
       /**
        * The origin domains that are permitted to make a request against the storage service via
@@ -232,7 +232,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     /**
      * @brief A listed directory item.
      */
-    struct DirectoryItem
+    struct DirectoryItem final
     {
       /**
        * The name of the directory.
@@ -243,7 +243,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     /**
      * @brief The detailed information of the file.
      */
-    struct FileItemDetails
+    struct FileItemDetails final
     {
       /**
        * Content length of the file. This value may not be up-to-date since an SMB client may have
@@ -257,7 +257,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     /**
      * @brief A listed file item.
      */
-    struct FileItem
+    struct FileItem final
     {
       /**
        * The name of the file.
@@ -273,7 +273,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     /**
      * @brief A listed Azure Storage handle item.
      */
-    struct HandleItem
+    struct HandleItem final
     {
       /**
        * XSMB service handle ID
@@ -320,7 +320,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
      * @brief When a file or share is leased, specifies whether the lease is of infinite or fixed
      * duration.
      */
-    class LeaseDuration {
+    class LeaseDuration final {
     public:
       LeaseDuration() = default;
       explicit LeaseDuration(std::string value) : m_value(std::move(value)) {}
@@ -338,7 +338,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     /**
      * @brief Lease state of the file or share.
      */
-    class LeaseState {
+    class LeaseState final {
     public:
       LeaseState() = default;
       explicit LeaseState(std::string value) : m_value(std::move(value)) {}
@@ -359,7 +359,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     /**
      * @brief The current lease status of the file or share.
      */
-    class LeaseStatus {
+    class LeaseStatus final {
     public:
       LeaseStatus() = default;
       explicit LeaseStatus(std::string value) : m_value(std::move(value)) {}
@@ -377,7 +377,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     /**
      * @brief Details of the share properties.
      */
-    struct ShareItemDetails
+    struct ShareItemDetails final
     {
       /**
        * Returns the date and time the share was last modified. Any operation that modifies the
@@ -461,7 +461,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     /**
      * @brief A listed Azure Storage share item.
      */
-    struct ShareItem
+    struct ShareItem final
     {
       /**
        * The name of the share.
@@ -497,7 +497,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     /**
      * @brief The retention policy.
      */
-    struct RetentionPolicy
+    struct RetentionPolicy final
     {
       /**
        * Indicates whether a retention policy is enabled for the File service. If false, metrics
@@ -516,7 +516,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     /**
      * @brief Storage Analytics metrics for file service.
      */
-    struct Metrics
+    struct Metrics final
     {
       /**
        * The version of Storage Analytics to configure.
@@ -542,7 +542,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     /**
      * @brief Settings for SMB multichannel
      */
-    struct SmbMultichannel
+    struct SmbMultichannel final
     {
       /**
        * If SMB multichannel is enabled.
@@ -553,7 +553,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     /**
      * @brief Settings for SMB protocol.
      */
-    struct SmbSettings
+    struct SmbSettings final
     {
       /**
        * Settings for SMB Multichannel.
@@ -564,7 +564,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     /**
      * @brief Protocol settings
      */
-    struct ProtocolSettings
+    struct ProtocolSettings final
     {
       /**
        * Settings for SMB protocol.
@@ -575,7 +575,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     /**
      * @brief Signed identifier.
      */
-    struct SignedIdentifier
+    struct SignedIdentifier final
     {
       /**
        * A unique id.
@@ -591,7 +591,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     /**
      * @brief Storage service properties.
      */
-    struct ShareServiceProperties
+    struct ShareServiceProperties final
     {
       /**
        * A summary of request statistics grouped by API in hourly aggregates for files.
@@ -617,7 +617,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     /**
      * @brief State of the copy operation identified by 'x-ms-copy-id'.
      */
-    class CopyStatus {
+    class CopyStatus final {
     public:
       CopyStatus() = default;
       explicit CopyStatus(std::string value) : m_value(std::move(value)) {}
@@ -637,14 +637,14 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     /**
      * @brief The serialized return result for operation: SetServiceProperties
      */
-    struct SetServicePropertiesResult
+    struct SetServicePropertiesResult final
     {
     };
 
     /**
      * @brief The serialized return result for operation: CreateShare
      */
-    struct CreateShareResult
+    struct CreateShareResult final
     {
 
       /**
@@ -668,7 +668,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     /**
      * @brief The serialized return result for operation: GetShareProperties
      */
-    struct ShareProperties
+    struct ShareProperties final
     {
 
       /**
@@ -748,7 +748,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     /**
      * @brief The serialized return result for operation: DeleteShare
      */
-    struct DeleteShareResult
+    struct DeleteShareResult final
     {
 
       /**
@@ -760,7 +760,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     /**
      * @brief The serialized return result for operation: AcquireLease
      */
-    struct AcquireLeaseResult
+    struct AcquireLeaseResult final
     {
 
       /**
@@ -784,7 +784,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     /**
      * @brief The serialized return result for operation: ReleaseLease
      */
-    struct ReleaseLeaseResult
+    struct ReleaseLeaseResult final
     {
 
       /**
@@ -803,7 +803,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     /**
      * @brief The serialized return result for operation: ChangeLease
      */
-    struct ChangeLeaseResult
+    struct ChangeLeaseResult final
     {
 
       /**
@@ -827,7 +827,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     /**
      * @brief The serialized return result for operation: RenewLease
      */
-    struct RenewLeaseResult
+    struct RenewLeaseResult final
     {
 
       /**
@@ -851,7 +851,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     /**
      * @brief The serialized return result for operation: BreakLease
      */
-    struct BreakLeaseResult
+    struct BreakLeaseResult final
     {
 
       /**
@@ -870,7 +870,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     /**
      * @brief The serialized return result for operation: CreateShareSnapshot
      */
-    struct CreateShareSnapshotResult
+    struct CreateShareSnapshotResult final
     {
 
       /**
@@ -904,7 +904,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     /**
      * @brief The serialized return result for operation: CreateSharePermission
      */
-    struct CreateSharePermissionResult
+    struct CreateSharePermissionResult final
     {
 
       /**
@@ -916,7 +916,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     /**
      * @brief The serialized return result for operation: SetShareProperties
      */
-    struct SetSharePropertiesResult
+    struct SetSharePropertiesResult final
     {
 
       /**
@@ -935,7 +935,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     /**
      * @brief The serialized return result for operation: SetShareMetadata
      */
-    struct SetShareMetadataResult
+    struct SetShareMetadataResult final
     {
 
       /**
@@ -954,7 +954,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     /**
      * @brief The serialized return result for operation: GetShareAccessPolicy
      */
-    struct ShareAccessPolicy
+    struct ShareAccessPolicy final
     {
       std::vector<SignedIdentifier> SignedIdentifiers;
     };
@@ -962,7 +962,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     /**
      * @brief The serialized return result for operation: SetShareAccessPolicy
      */
-    struct SetShareAccessPolicyResult
+    struct SetShareAccessPolicyResult final
     {
 
       /**
@@ -981,7 +981,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     /**
      * @brief The serialized return result for operation: GetShareStatistics
      */
-    struct ShareStatistics
+    struct ShareStatistics final
     {
       /**
        * The approximate size of the data stored in bytes. Note that this value may not include all
@@ -1005,7 +1005,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     /**
      * @brief The serialized return result for operation: CreateDirectory
      */
-    struct CreateDirectoryResult
+    struct CreateDirectoryResult final
     {
 
       /**
@@ -1039,7 +1039,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     /**
      * @brief The serialized return result for operation: GetDirectoryProperties
      */
-    struct DirectoryProperties
+    struct DirectoryProperties final
     {
 
       /**
@@ -1073,7 +1073,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     /**
      * @brief The serialized return result for operation: DeleteDirectory
      */
-    struct DeleteDirectoryResult
+    struct DeleteDirectoryResult final
     {
 
       /**
@@ -1085,7 +1085,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     /**
      * @brief The serialized return result for operation: SetDirectoryProperties
      */
-    struct SetDirectoryPropertiesResult
+    struct SetDirectoryPropertiesResult final
     {
 
       /**
@@ -1114,7 +1114,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     /**
      * @brief The serialized return result for operation: SetDirectoryMetadata
      */
-    struct SetDirectoryMetadataResult
+    struct SetDirectoryMetadataResult final
     {
 
       /**
@@ -1131,7 +1131,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     /**
      * @brief The serialized return result for operation: CreateFile
      */
-    struct CreateFileResult
+    struct CreateFileResult final
     {
 
       /**
@@ -1165,7 +1165,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     /**
      * @brief The serialized return result for operation: GetFileProperties
      */
-    struct FileProperties
+    struct FileProperties final
     {
 
       /**
@@ -1265,7 +1265,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     /**
      * @brief The serialized return result for operation: DeleteFile
      */
-    struct DeleteFileResult
+    struct DeleteFileResult final
     {
 
       /**
@@ -1277,7 +1277,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     /**
      * @brief The serialized return result for operation: SetFileProperties
      */
-    struct SetFilePropertiesResult
+    struct SetFilePropertiesResult final
     {
 
       /**
@@ -1306,7 +1306,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     /**
      * @brief The serialized return result for operation: SetFileMetadata
      */
-    struct SetFileMetadataResult
+    struct SetFileMetadataResult final
     {
 
       /**
@@ -1323,7 +1323,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     /**
      * @brief The serialized return result for operation: UploadFileRange
      */
-    struct UploadFileRangeResult
+    struct UploadFileRangeResult final
     {
 
       /**
@@ -1354,7 +1354,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     /**
      * @brief The serialized return result for operation: UploadFileRangeFromUri
      */
-    struct UploadFileRangeFromUriResult
+    struct UploadFileRangeFromUriResult final
     {
 
       /**
@@ -1385,7 +1385,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     /**
      * @brief The serialized return result for operation: GetFileRangeList
      */
-    struct GetFileRangeListResult
+    struct GetFileRangeListResult final
     {
       /**
        * Ranges of the file.
@@ -1418,7 +1418,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     /**
      * @brief The serialized return result for operation: AbortFileCopy
      */
-    struct AbortFileCopyResult
+    struct AbortFileCopyResult final
     {
     };
 
@@ -1596,7 +1596,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
      * @brief Only update is supported: - Update: Writes the bytes downloaded from the source url
      * into the specified range.
      */
-    class FileRangeWriteFromUrl {
+    class FileRangeWriteFromUrl final {
     public:
       FileRangeWriteFromUrl() = default;
       explicit FileRangeWriteFromUrl(std::string value) : m_value(std::move(value)) {}
@@ -1613,7 +1613,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     /**
      * @brief Abstract for entries that can be listed from Directory.
      */
-    struct FilesAndDirectoriesListSinglePage
+    struct FilesAndDirectoriesListSinglePage final
     {
       /**
        * An array of the directory items returned.
@@ -1629,7 +1629,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     /**
      * @brief An enumeration of directories and files.
      */
-    struct ListFilesAndDirectoriesSinglePageResponse
+    struct ListFilesAndDirectoriesSinglePageResponse final
     {
       /**
        * The service's endpoint.
@@ -1675,7 +1675,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     /**
      * @brief An enumeration of handles.
      */
-    struct ListHandlesResponse
+    struct ListHandlesResponse final
     {
       /**
        * An array contains all the handles returned.
@@ -1691,7 +1691,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     /**
      * @brief An enumeration of shares.
      */
-    struct ListSharesResponse
+    struct ListSharesResponse final
     {
       /**
        * The service's endpoint.
@@ -1722,7 +1722,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     /**
      * @brief An Azure Storage file range.
      */
-    struct FileRange
+    struct FileRange final
     {
       /**
        * Start of the range.
@@ -1738,7 +1738,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     /**
      * @brief An Azure Storage file clear range.
      */
-    struct ClearRange
+    struct ClearRange final
     {
       /**
        * Start of the range.
@@ -1754,7 +1754,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     /**
      * @brief The list of file ranges
      */
-    struct RangeList
+    struct RangeList final
     {
       /**
        * Ranges of the file.
@@ -1770,7 +1770,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     /**
      * @brief Stats for the share.
      */
-    struct ShareStats
+    struct ShareStats final
     {
       /**
        * The approximate size of the data stored in bytes. Note that this value may not include all
@@ -1782,7 +1782,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     /**
      * @brief A permission (a security descriptor) at the share level.
      */
-    struct SharePermission
+    struct SharePermission final
     {
       /**
        * The permission in the Security Descriptor Definition Language (SDDL).
@@ -1793,7 +1793,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     /**
      * @brief Describes what lease action to take.
      */
-    class LeaseAction {
+    class LeaseAction final {
     public:
       LeaseAction() = default;
       explicit LeaseAction(std::string value) : m_value(std::move(value)) {}
@@ -1818,7 +1818,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
      * storage for that range. To clear a range, set the Content-Length header to zero, and set the
      * Range header to a value that indicates the range to clear, up to maximum file size.
      */
-    class FileRangeWrite {
+    class FileRangeWrite final {
     public:
       FileRangeWrite() = default;
       explicit FileRangeWrite(std::string value) : m_value(std::move(value)) {}
@@ -1833,7 +1833,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       std::string m_value;
     }; // extensible enum FileRangeWrite
 
-    struct ServiceGetPropertiesResult
+    struct ServiceGetPropertiesResult final
     {
       /**
        * A summary of request statistics grouped by API in hourly aggregates for files.
@@ -1856,7 +1856,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       Azure::Nullable<ProtocolSettings> Protocol;
     };
 
-    struct ServiceListSharesSinglePageResult
+    struct ServiceListSharesSinglePageResult final
     {
       /**
        * The service's endpoint.
@@ -1884,7 +1884,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       Azure::Nullable<std::string> ContinuationToken;
     };
 
-    struct ShareGetPermissionResult
+    struct ShareGetPermissionResult final
     {
       /**
        * The permission in the Security Descriptor Definition Language (SDDL).
@@ -1892,7 +1892,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       std::string FilePermission;
     };
 
-    struct ShareRestoreResult
+    struct ShareRestoreResult final
     {
 
       /**
@@ -1908,7 +1908,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       DateTime LastModified;
     };
 
-    struct DirectoryListFilesAndDirectoriesSinglePageResult
+    struct DirectoryListFilesAndDirectoriesSinglePageResult final
     {
       /**
        * The service's endpoint.
@@ -1956,7 +1956,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       FileHttpHeaders HttpHeaders;
     };
 
-    struct DirectoryListHandlesResult
+    struct DirectoryListHandlesResult final
     {
       /**
        * An array contains all the handles returned.
@@ -1974,7 +1974,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       FileHttpHeaders HttpHeaders;
     };
 
-    struct DirectoryForceCloseHandlesResult
+    struct DirectoryForceCloseHandlesResult final
     {
 
       /**
@@ -1994,7 +1994,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       int32_t NumberOfHandlesFailedToClose = int32_t();
     };
 
-    struct FileDownloadResult
+    struct FileDownloadResult final
     {
       std::unique_ptr<Azure::Core::IO::BodyStream> BodyStream;
 
@@ -2111,7 +2111,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       Azure::Nullable<Models::LeaseStatus> LeaseStatus;
     };
 
-    struct FileAcquireLeaseResult
+    struct FileAcquireLeaseResult final
     {
 
       /**
@@ -2133,7 +2133,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       std::string LeaseId;
     };
 
-    struct FileReleaseLeaseResult
+    struct FileReleaseLeaseResult final
     {
 
       /**
@@ -2150,7 +2150,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       DateTime LastModified;
     };
 
-    struct FileChangeLeaseResult
+    struct FileChangeLeaseResult final
     {
 
       /**
@@ -2172,7 +2172,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       std::string LeaseId;
     };
 
-    struct FileBreakLeaseResult
+    struct FileBreakLeaseResult final
     {
 
       /**
@@ -2194,7 +2194,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       Azure::Nullable<std::string> LeaseId;
     };
 
-    struct FileStartCopyResult
+    struct FileStartCopyResult final
     {
 
       /**
@@ -2221,7 +2221,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       Models::CopyStatus CopyStatus;
     };
 
-    struct FileListHandlesResult
+    struct FileListHandlesResult final
     {
       /**
        * An array contains all the handles returned.
@@ -2239,7 +2239,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       FileHttpHeaders HttpHeaders;
     };
 
-    struct FileForceCloseHandlesResult
+    struct FileForceCloseHandlesResult final
     {
 
       /**
@@ -2259,7 +2259,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       int32_t NumberOfHandlesFailedToClose = int32_t();
     };
 
-    class ShareRestClient {
+    class ShareRestClient final {
     private:
       static Azure::Core::Http::HttpRange HttpRangeFromXml(_internal::XmlReader& reader)
       {
@@ -2313,9 +2313,9 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       }
 
     public:
-      class Service {
+      class Service final {
       public:
-        struct SetPropertiesOptions
+        struct SetPropertiesOptions final
         {
           ShareServiceProperties ServiceProperties;
           Azure::Nullable<int32_t> Timeout;
@@ -2353,7 +2353,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           return SetPropertiesParseResult(context, pipeline.Send(request, context));
         }
 
-        struct GetPropertiesOptions
+        struct GetPropertiesOptions final
         {
           Azure::Nullable<int32_t> Timeout;
           std::string ApiVersionParameter = _detail::DefaultServiceApiVersion;
@@ -2379,7 +2379,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           return GetPropertiesParseResult(context, pipeline.Send(request, context));
         }
 
-        struct ListSharesSinglePageOptions
+        struct ListSharesSinglePageOptions final
         {
           Azure::Nullable<std::string> Prefix;
           Azure::Nullable<std::string> ContinuationToken;
@@ -3711,9 +3711,9 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         }
       };
 
-      class Share {
+      class Share final {
       public:
-        struct CreateOptions
+        struct CreateOptions final
         {
           Azure::Nullable<int32_t> Timeout;
           Storage::Metadata Metadata;
@@ -3755,7 +3755,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           return CreateParseResult(context, pipeline.Send(request, context));
         }
 
-        struct GetPropertiesOptions
+        struct GetPropertiesOptions final
         {
           Azure::Nullable<std::string> ShareSnapshot;
           Azure::Nullable<int32_t> Timeout;
@@ -3792,7 +3792,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           return GetPropertiesParseResult(context, pipeline.Send(request, context));
         }
 
-        struct DeleteOptions
+        struct DeleteOptions final
         {
           Azure::Nullable<std::string> ShareSnapshot;
           Azure::Nullable<int32_t> Timeout;
@@ -3835,7 +3835,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           return DeleteParseResult(context, pipeline.Send(request, context));
         }
 
-        struct AcquireLeaseOptions
+        struct AcquireLeaseOptions final
         {
           Azure::Nullable<int32_t> Timeout;
           int32_t LeaseDuration = int32_t();
@@ -3880,7 +3880,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           return AcquireLeaseParseResult(context, pipeline.Send(request, context));
         }
 
-        struct ReleaseLeaseOptions
+        struct ReleaseLeaseOptions final
         {
           Azure::Nullable<int32_t> Timeout;
           std::string LeaseIdRequired;
@@ -3917,7 +3917,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           return ReleaseLeaseParseResult(context, pipeline.Send(request, context));
         }
 
-        struct ChangeLeaseOptions
+        struct ChangeLeaseOptions final
         {
           Azure::Nullable<int32_t> Timeout;
           std::string LeaseIdRequired;
@@ -3960,7 +3960,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           return ChangeLeaseParseResult(context, pipeline.Send(request, context));
         }
 
-        struct RenewLeaseOptions
+        struct RenewLeaseOptions final
         {
           Azure::Nullable<int32_t> Timeout;
           std::string LeaseIdRequired;
@@ -3997,7 +3997,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           return RenewLeaseParseResult(context, pipeline.Send(request, context));
         }
 
-        struct BreakLeaseOptions
+        struct BreakLeaseOptions final
         {
           Azure::Nullable<int32_t> Timeout;
           Azure::Nullable<int32_t> LeaseBreakPeriod;
@@ -4044,7 +4044,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           return BreakLeaseParseResult(context, pipeline.Send(request, context));
         }
 
-        struct CreateSnapshotOptions
+        struct CreateSnapshotOptions final
         {
           Azure::Nullable<int32_t> Timeout;
           Storage::Metadata Metadata;
@@ -4076,7 +4076,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           return CreateSnapshotParseResult(context, pipeline.Send(request, context));
         }
 
-        struct CreatePermissionOptions
+        struct CreatePermissionOptions final
         {
           Azure::Nullable<int32_t> Timeout;
           std::string ApiVersionParameter = _detail::DefaultServiceApiVersion;
@@ -4113,7 +4113,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           return CreatePermissionParseResult(context, pipeline.Send(request, context));
         }
 
-        struct GetPermissionOptions
+        struct GetPermissionOptions final
         {
           std::string FilePermissionKeyRequired;
           Azure::Nullable<int32_t> Timeout;
@@ -4142,7 +4142,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           return GetPermissionParseResult(context, pipeline.Send(request, context));
         }
 
-        struct SetPropertiesOptions
+        struct SetPropertiesOptions final
         {
           Azure::Nullable<int32_t> Timeout;
           std::string ApiVersionParameter = _detail::DefaultServiceApiVersion;
@@ -4186,7 +4186,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           return SetPropertiesParseResult(context, pipeline.Send(request, context));
         }
 
-        struct SetMetadataOptions
+        struct SetMetadataOptions final
         {
           Azure::Nullable<int32_t> Timeout;
           Storage::Metadata Metadata;
@@ -4223,7 +4223,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           return SetMetadataParseResult(context, pipeline.Send(request, context));
         }
 
-        struct GetAccessPolicyOptions
+        struct GetAccessPolicyOptions final
         {
           Azure::Nullable<int32_t> Timeout;
           std::string ApiVersionParameter = _detail::DefaultServiceApiVersion;
@@ -4255,7 +4255,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           return GetAccessPolicyParseResult(context, pipeline.Send(request, context));
         }
 
-        struct SetAccessPolicyOptions
+        struct SetAccessPolicyOptions final
         {
           std::vector<SignedIdentifier> ShareAcl;
           Azure::Nullable<int32_t> Timeout;
@@ -4299,7 +4299,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           return SetAccessPolicyParseResult(context, pipeline.Send(request, context));
         }
 
-        struct GetStatisticsOptions
+        struct GetStatisticsOptions final
         {
           Azure::Nullable<int32_t> Timeout;
           std::string ApiVersionParameter = _detail::DefaultServiceApiVersion;
@@ -4330,7 +4330,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           return GetStatisticsParseResult(context, pipeline.Send(request, context));
         }
 
-        struct RestoreOptions
+        struct RestoreOptions final
         {
           Azure::Nullable<int32_t> Timeout;
           std::string ApiVersionParameter = _detail::DefaultServiceApiVersion;
@@ -5167,9 +5167,9 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         }
       };
 
-      class Directory {
+      class Directory final {
       public:
-        struct CreateOptions
+        struct CreateOptions final
         {
           Azure::Nullable<int32_t> Timeout;
           Storage::Metadata Metadata;
@@ -5216,7 +5216,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           return CreateParseResult(context, pipeline.Send(request, context));
         }
 
-        struct GetPropertiesOptions
+        struct GetPropertiesOptions final
         {
           Azure::Nullable<std::string> ShareSnapshot;
           Azure::Nullable<int32_t> Timeout;
@@ -5248,7 +5248,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           return GetPropertiesParseResult(context, pipeline.Send(request, context));
         }
 
-        struct DeleteOptions
+        struct DeleteOptions final
         {
           Azure::Nullable<int32_t> Timeout;
           std::string ApiVersionParameter = _detail::DefaultServiceApiVersion;
@@ -5272,7 +5272,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           return DeleteParseResult(context, pipeline.Send(request, context));
         }
 
-        struct SetPropertiesOptions
+        struct SetPropertiesOptions final
         {
           Azure::Nullable<int32_t> Timeout;
           std::string ApiVersionParameter = _detail::DefaultServiceApiVersion;
@@ -5318,7 +5318,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           return SetPropertiesParseResult(context, pipeline.Send(request, context));
         }
 
-        struct SetMetadataOptions
+        struct SetMetadataOptions final
         {
           Azure::Nullable<int32_t> Timeout;
           Storage::Metadata Metadata;
@@ -5350,7 +5350,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           return SetMetadataParseResult(context, pipeline.Send(request, context));
         }
 
-        struct ListFilesAndDirectoriesSinglePageOptions
+        struct ListFilesAndDirectoriesSinglePageOptions final
         {
           Azure::Nullable<std::string> Prefix;
           Azure::Nullable<std::string> ShareSnapshot;
@@ -5412,7 +5412,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
               context, pipeline.Send(request, context));
         }
 
-        struct ListHandlesOptions
+        struct ListHandlesOptions final
         {
           Azure::Nullable<std::string> ContinuationToken;
           Azure::Nullable<int32_t> MaxResults;
@@ -5466,7 +5466,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           return ListHandlesParseResult(context, pipeline.Send(request, context));
         }
 
-        struct ForceCloseHandlesOptions
+        struct ForceCloseHandlesOptions final
         {
           Azure::Nullable<int32_t> Timeout;
           Azure::Nullable<std::string> ContinuationToken;
@@ -6323,9 +6323,9 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         }
       };
 
-      class File {
+      class File final {
       public:
-        struct CreateOptions
+        struct CreateOptions final
         {
           Azure::Nullable<int32_t> Timeout;
           std::string ApiVersionParameter = _detail::DefaultServiceApiVersion;
@@ -6418,7 +6418,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           return CreateParseResult(context, pipeline.Send(request, context));
         }
 
-        struct DownloadOptions
+        struct DownloadOptions final
         {
           Azure::Nullable<int32_t> Timeout;
           std::string ApiVersionParameter = _detail::DefaultServiceApiVersion;
@@ -6459,7 +6459,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           return DownloadParseResult(context, pipeline.Send(request, context));
         }
 
-        struct GetPropertiesOptions
+        struct GetPropertiesOptions final
         {
           Azure::Nullable<std::string> ShareSnapshot;
           Azure::Nullable<int32_t> Timeout;
@@ -6495,7 +6495,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           return GetPropertiesParseResult(context, pipeline.Send(request, context));
         }
 
-        struct DeleteOptions
+        struct DeleteOptions final
         {
           Azure::Nullable<int32_t> Timeout;
           std::string ApiVersionParameter = _detail::DefaultServiceApiVersion;
@@ -6523,7 +6523,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           return DeleteParseResult(context, pipeline.Send(request, context));
         }
 
-        struct SetHttpHeadersOptions
+        struct SetHttpHeadersOptions final
         {
           Azure::Nullable<int32_t> Timeout;
           std::string ApiVersionParameter = _detail::DefaultServiceApiVersion;
@@ -6621,7 +6621,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           return SetHttpHeadersParseResult(context, pipeline.Send(request, context));
         }
 
-        struct SetMetadataOptions
+        struct SetMetadataOptions final
         {
           Azure::Nullable<int32_t> Timeout;
           Storage::Metadata Metadata;
@@ -6657,7 +6657,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           return SetMetadataParseResult(context, pipeline.Send(request, context));
         }
 
-        struct AcquireLeaseOptions
+        struct AcquireLeaseOptions final
         {
           Azure::Nullable<int32_t> Timeout;
           int32_t LeaseDuration = int32_t();
@@ -6694,7 +6694,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           return AcquireLeaseParseResult(context, pipeline.Send(request, context));
         }
 
-        struct ReleaseLeaseOptions
+        struct ReleaseLeaseOptions final
         {
           Azure::Nullable<int32_t> Timeout;
           std::string LeaseIdRequired;
@@ -6723,7 +6723,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           return ReleaseLeaseParseResult(context, pipeline.Send(request, context));
         }
 
-        struct ChangeLeaseOptions
+        struct ChangeLeaseOptions final
         {
           Azure::Nullable<int32_t> Timeout;
           std::string LeaseIdRequired;
@@ -6758,7 +6758,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           return ChangeLeaseParseResult(context, pipeline.Send(request, context));
         }
 
-        struct BreakLeaseOptions
+        struct BreakLeaseOptions final
         {
           Azure::Nullable<int32_t> Timeout;
           Azure::Nullable<std::string> LeaseIdOptional;
@@ -6790,7 +6790,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           return BreakLeaseParseResult(context, pipeline.Send(request, context));
         }
 
-        struct UploadRangeOptions
+        struct UploadRangeOptions final
         {
           Azure::Nullable<int32_t> Timeout;
           std::string XMsRange;
@@ -6835,7 +6835,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           return UploadRangeParseResult(context, pipeline.Send(request, context));
         }
 
-        struct UploadRangeFromUrlOptions
+        struct UploadRangeFromUrlOptions final
         {
           Azure::Nullable<int32_t> Timeout;
           std::string TargetRange;
@@ -6906,7 +6906,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           return UploadRangeFromUrlParseResult(context, pipeline.Send(request, context));
         }
 
-        struct GetRangeListOptions
+        struct GetRangeListOptions final
         {
           Azure::Nullable<std::string> ShareSnapshot;
           Azure::Nullable<std::string> PrevShareSnapshot;
@@ -6955,7 +6955,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           return GetRangeListParseResult(context, pipeline.Send(request, context));
         }
 
-        struct StartCopyOptions
+        struct StartCopyOptions final
         {
           Azure::Nullable<int32_t> Timeout;
           std::string ApiVersionParameter = _detail::DefaultServiceApiVersion;
@@ -7044,7 +7044,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           return StartCopyParseResult(context, pipeline.Send(request, context));
         }
 
-        struct AbortCopyOptions
+        struct AbortCopyOptions final
         {
           std::string CopyId;
           Azure::Nullable<int32_t> Timeout;
@@ -7079,7 +7079,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           return AbortCopyParseResult(context, pipeline.Send(request, context));
         }
 
-        struct ListHandlesOptions
+        struct ListHandlesOptions final
         {
           Azure::Nullable<std::string> ContinuationToken;
           Azure::Nullable<int32_t> MaxResults;
@@ -7126,7 +7126,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           return ListHandlesParseResult(context, pipeline.Send(request, context));
         }
 
-        struct ForceCloseHandlesOptions
+        struct ForceCloseHandlesOptions final
         {
           Azure::Nullable<int32_t> Timeout;
           Azure::Nullable<std::string> ContinuationToken;

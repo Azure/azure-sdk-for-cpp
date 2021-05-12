@@ -22,7 +22,7 @@ namespace Azure { namespace Storage { namespace Common { namespace _detail {
   /**
    * @brief Provides version information.
    */
-  class PackageVersion {
+  class PackageVersion final {
   public:
     /// Major numeric identifier.
     static constexpr int Major = AZURE_STORAGE_COMMON_VERSION_MAJOR;

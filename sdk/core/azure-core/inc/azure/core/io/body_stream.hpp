@@ -114,7 +114,7 @@ namespace Azure { namespace Core { namespace IO {
   /**
    * @brief #Azure::Core::IO::BodyStream providing data from an initialized memory buffer.
    */
-  class MemoryBodyStream : public BodyStream {
+  class MemoryBodyStream final : public BodyStream {
   private:
     const uint8_t* m_data;
     int64_t m_length;
@@ -157,7 +157,7 @@ namespace Azure { namespace Core { namespace IO {
      * @brief A concrete implementation of  #Azure::Core::IO::BodyStream used for reading data from
      * a file from any offset and length within it.
      */
-    class RandomAccessFileBodyStream : public BodyStream {
+    class RandomAccessFileBodyStream final : public BodyStream {
     private:
       // immutable
 #if defined(AZ_PLATFORM_POSIX)
@@ -234,7 +234,7 @@ namespace Azure { namespace Core { namespace IO {
    * @brief A concrete implementation of #Azure::Core::IO::BodyStream used for reading data from a
    * file.
    */
-  class FileBodyStream : public BodyStream {
+  class FileBodyStream final : public BodyStream {
   private:
     // immutable
 #if defined(AZ_PLATFORM_WINDOWS)

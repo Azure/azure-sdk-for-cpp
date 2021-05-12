@@ -15,7 +15,7 @@ namespace Azure { namespace Storage { namespace Blobs {
   /**
    * @brief BlobLeaseClient allows you to manipulate Azure Storage leases on containers and blobs.
    */
-  class BlobLeaseClient {
+  class BlobLeaseClient final {
   public:
     /**
      * @brief Initializes a new instance of the BlobLeaseClient.

@@ -28,8 +28,8 @@
 using namespace Azure::Identity;
 
 namespace {
-class EnvironmentOverride {
-  class Environment {
+class EnvironmentOverride final {
+  class Environment final {
     static void SetVariable(std::string const& name, std::string const& value)
     {
 #if defined(_MSC_VER)
@@ -112,7 +112,7 @@ public:
   }
 };
 
-struct CredentialResult
+struct CredentialResult final
 {
   struct
   {

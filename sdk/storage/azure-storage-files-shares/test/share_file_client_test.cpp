@@ -802,7 +802,7 @@ namespace Azure { namespace Storage { namespace Test {
   TEST_F(FileShareFileClientTest, StorageExceptionAdditionalInfo)
   {
     Azure::Storage::Files::Shares::ShareClientOptions options;
-    class InvalidQueryParameterPolicy : public Azure::Core::Http::Policies::HttpPolicy {
+    class InvalidQueryParameterPolicy final : public Azure::Core::Http::Policies::HttpPolicy {
     public:
       ~InvalidQueryParameterPolicy() override {}
 

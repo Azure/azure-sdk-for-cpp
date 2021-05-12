@@ -122,7 +122,7 @@ namespace Azure { namespace Core { namespace Cryptography {
    * @brief Represents the class for the MD5 hash function which maps binary data of an arbitrary
    * length to small binary data of a fixed length.
    */
-  class Md5Hash : public Hash {
+  class Md5Hash final : public Hash {
 
   public:
     /**

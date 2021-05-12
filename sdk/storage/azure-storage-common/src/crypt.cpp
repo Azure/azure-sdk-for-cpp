@@ -88,7 +88,7 @@ namespace Azure { namespace Storage {
       Sha256,
     };
 
-    struct AlgorithmProviderInstance
+    struct AlgorithmProviderInstance final
     {
       BCRYPT_ALG_HANDLE Handle;
       std::size_t ContextSize;
@@ -103,7 +103,7 @@ namespace Azure { namespace Storage {
         }
         else
         {
-          throw std::runtime_error("unknwon algorithm type");
+          throw std::runtime_error("unknown algorithm type");
         }
 
         unsigned long algorithmFlags = 0;

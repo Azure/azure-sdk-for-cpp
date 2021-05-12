@@ -9,7 +9,7 @@
 ### Breaking Changes
 
 - Removed `Context::GetApplicationContext()` in favor of a new static data member `Context::ApplicationContext`.
-- Renamed `Request::IsDownloadViaStream()` to `IsBufferedDownload()`.
+- Renamed `Request::IsDownloadViaStream()` to `ShouldBufferResponse()`.
 - Removed the `Azure::Core::Http::Request` ctor overload that takes both a `bodyStream` and a `bufferedDownload` boolean since it is not useful.
 
 ### Bug Fixes

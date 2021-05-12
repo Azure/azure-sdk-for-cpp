@@ -23,6 +23,8 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
 
   class DataLakePathClient {
   public:
+    virtual ~DataLakePathClient() = default;
+
     /**
      * @brief Create from connection string
      * @param connectionString Azure Storage connection string.
@@ -107,7 +109,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
 
     /**
      * @brief Deletes the resource the path points to.
-     * @param options Optional parameters to delete the reource the path points to.
+     * @param options Optional parameters to delete the resource the path points to.
      * @param context Context for cancelling long running operations.
      * @return Azure::Response<Models::DeletePathResult> which is current empty but
      * preserved for future usage.
@@ -119,7 +121,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
 
     /**
      * @brief Deletes the resource the path points to if it exists.
-     * @param options Optional parameters to delete the reource the path points to.
+     * @param options Optional parameters to delete the resource the path points to.
      * @param context Context for cancelling long running operations.
      * @return Azure::Response<Models::DeletePathResult> which is current empty but
      * preserved for future usage. The result will only valid if the delete operation is successful.

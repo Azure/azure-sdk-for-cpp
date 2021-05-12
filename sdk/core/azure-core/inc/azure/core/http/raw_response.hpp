@@ -20,7 +20,7 @@ namespace Azure { namespace Core { namespace Http {
   /**
    * @brief Raw HTTP response.
    */
-  class RawResponse {
+  class RawResponse final {
 
   private:
     int32_t m_majorVersion;

@@ -11,7 +11,7 @@
 
 namespace Azure { namespace Storage { namespace _internal {
 
-  struct XmlGlobalInitializer
+  struct XmlGlobalInitializer final
   {
     XmlGlobalInitializer() { xmlInitParser(); }
     ~XmlGlobalInitializer() { xmlCleanupParser(); }
