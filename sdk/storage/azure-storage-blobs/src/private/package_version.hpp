@@ -20,7 +20,7 @@ namespace Azure { namespace Storage { namespace Blobs { namespace _detail {
   /**
    * @brief Provides version information.
    */
-  class PackageVersion {
+  class PackageVersion final {
   public:
     /// Major numeric identifier.
     static constexpr int Major = AZURE_STORAGE_BLOBS_VERSION_MAJOR;

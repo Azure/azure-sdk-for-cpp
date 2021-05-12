@@ -88,7 +88,7 @@ namespace Azure { namespace Storage {
       Sha256,
     };
 
-    struct AlgorithmProviderInstance
+    struct AlgorithmProviderInstance final
     {
       BCRYPT_ALG_HANDLE Handle;
       std::size_t ContextSize;

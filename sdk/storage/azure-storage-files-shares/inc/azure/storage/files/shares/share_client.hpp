@@ -18,7 +18,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
   class ShareDirectoryClient;
 
-  class ShareClient {
+  class ShareClient final {
   public:
     /**
      * @brief Create A ShareClient from connection string to manage a File Share resource.

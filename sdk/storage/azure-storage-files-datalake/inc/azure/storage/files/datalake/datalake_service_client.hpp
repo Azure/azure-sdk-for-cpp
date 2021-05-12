@@ -20,7 +20,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
 
   class DataLakeFileSystemClient;
 
-  class DataLakeServiceClient {
+  class DataLakeServiceClient final {
   public:
     /**
      * @brief Create from connection string

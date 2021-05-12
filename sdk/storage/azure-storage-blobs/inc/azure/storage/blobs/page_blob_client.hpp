@@ -20,7 +20,7 @@ namespace Azure { namespace Storage { namespace Blobs {
    * specifying an offset and a range that align to 512-byte page boundaries. Writes to page blobs
    * happen in-place and are immediately committed to the blob.
    */
-  class PageBlobClient : public BlobClient {
+  class PageBlobClient final : public BlobClient {
   public:
     /**
      * @brief Initialize a new instance of PageBlobClient.

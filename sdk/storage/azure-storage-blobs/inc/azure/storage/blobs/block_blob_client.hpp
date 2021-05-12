@@ -28,7 +28,7 @@ namespace Azure { namespace Storage { namespace Blobs {
    * specifically committed or discarded. Writing a block does not update the last modified time of
    * an existing blob.
    */
-  class BlockBlobClient : public BlobClient {
+  class BlockBlobClient final : public BlobClient {
   public:
     /**
      * @brief Initialize a new instance of BlockBlobClient.

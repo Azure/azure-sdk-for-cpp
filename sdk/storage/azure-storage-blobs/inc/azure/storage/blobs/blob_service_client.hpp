@@ -17,7 +17,7 @@ namespace Azure { namespace Storage { namespace Blobs {
    * The BlobServiceClient allows you to manipulate Azure Storage service resources and blob
    * containers. The storage account provides the top-level namespace for the Blob service.
    */
-  class BlobServiceClient {
+  class BlobServiceClient final {
   public:
     /**
      * @brief Initialize a new instance of BlobServiceClient.

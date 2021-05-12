@@ -32,7 +32,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     /**
      * @brief The common HTTP headers.
      */
-    struct PathHttpHeaders
+    struct PathHttpHeaders final
     {
 
       /**
@@ -69,7 +69,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     /**
      * @brief The failed entries when setting the Acl.
      */
-    struct AclFailedEntry
+    struct AclFailedEntry final
     {
       /**
        * The name of the failed entry.
@@ -87,7 +87,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
       std::string ErrorMessage;
     };
 
-    struct PathItem
+    struct PathItem final
     {
       /**
        * The name of the path item.
@@ -134,7 +134,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     /**
      * @brief The public access type of a file system.
      */
-    class PublicAccessType {
+    class PublicAccessType final {
     public:
       PublicAccessType() = default;
       explicit PublicAccessType(std::string value) : m_value(std::move(value)) {}
@@ -154,7 +154,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
      * @brief Required only for Create File and Create Directory. The value must be "file" or
      * "directory".
      */
-    class PathResourceType {
+    class PathResourceType final {
     public:
       PathResourceType() = default;
       explicit PathResourceType(std::string value) : m_value(std::move(value)) {}
@@ -173,7 +173,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
      * @brief When a resource is leased, specifies whether the lease is of infinite or fixed
      * duration.
      */
-    class LeaseDuration {
+    class LeaseDuration final {
     public:
       LeaseDuration() = default;
       explicit LeaseDuration(std::string value) : m_value(std::move(value)) {}
@@ -191,7 +191,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     /**
      * @brief Lease state of the resource.
      */
-    class LeaseState {
+    class LeaseState final {
     public:
       LeaseState() = default;
       explicit LeaseState(std::string value) : m_value(std::move(value)) {}
@@ -212,7 +212,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     /**
      * @brief The lease status of the resource.
      */
-    class LeaseStatus {
+    class LeaseStatus final {
     public:
       LeaseStatus() = default;
       explicit LeaseStatus(std::string value) : m_value(std::move(value)) {}
@@ -230,7 +230,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     /**
      * @brief The serialized return result for operation: SetPathAccessControlList
      */
-    struct SetPathAccessControlListResult
+    struct SetPathAccessControlListResult final
     {
 
       /**
@@ -248,7 +248,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     /**
      * @brief The serialized return result for operation: FlushFile
      */
-    struct FlushFileResult
+    struct FlushFileResult final
     {
 
       /**
@@ -271,7 +271,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     /**
      * @brief The serialized return result for operation: AppendFile
      */
-    struct AppendFileResult
+    struct AppendFileResult final
     {
 
       /**
@@ -355,7 +355,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     /**
      * @brief The value must be "filesystem" for all filesystem operations.
      */
-    class FileSystemResource {
+    class FileSystemResource final {
     public:
       FileSystemResource() = default;
       explicit FileSystemResource(std::string value) : m_value(std::move(value)) {}
@@ -375,7 +375,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
      * "remove" removes one or more POSIX access control rights  that were present earlier on files
      * and directories
      */
-    class PathSetAccessControlRecursiveMode {
+    class PathSetAccessControlRecursiveMode final {
     public:
       PathSetAccessControlRecursiveMode() = default;
       explicit PathSetAccessControlRecursiveMode(std::string value) : m_value(std::move(value)) {}
@@ -397,7 +397,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
       std::string m_value;
     }; // extensible enum PathSetAccessControlRecursiveMode
 
-    struct SetAccessControlRecursiveResponse
+    struct SetAccessControlRecursiveResponse final
     {
       int32_t NumberOfSuccessfulDirectories = int32_t();
 
@@ -411,7 +411,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     /**
      * @brief The items returned when listing paths.
      */
-    struct PathList
+    struct PathList final
     {
       std::vector<PathItem> Items;
     };
@@ -421,7 +421,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
      * of the rename operation. The value must be "legacy" or "posix", and the default value will be
      * "posix".
      */
-    class PathRenameMode {
+    class PathRenameMode final {
     public:
       PathRenameMode() = default;
       explicit PathRenameMode(std::string value) : m_value(std::move(value)) {}
@@ -442,7 +442,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
      * response headers (Hierarchical Namespace must be enabled for the account), otherwise the
      * properties are returned.
      */
-    class PathGetPropertiesAction {
+    class PathGetPropertiesAction final {
     public:
       PathGetPropertiesAction() = default;
       explicit PathGetPropertiesAction(std::string value) : m_value(std::move(value)) {}
@@ -460,7 +460,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
       std::string m_value;
     }; // extensible enum PathGetPropertiesAction
 
-    struct FileSystemListPathsResult
+    struct FileSystemListPathsResult final
     {
       std::vector<PathItem> Items;
 
@@ -473,7 +473,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
       Azure::Nullable<std::string> ContinuationToken;
     };
 
-    struct PathCreateResult
+    struct PathCreateResult final
     {
 
       /**
@@ -493,7 +493,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
       Azure::Nullable<int64_t> ContentLength;
     };
 
-    struct PathGetPropertiesResult
+    struct PathGetPropertiesResult final
     {
 
       /**
@@ -571,7 +571,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
       Azure::Nullable<Models::LeaseStatus> LeaseStatus;
     };
 
-    struct PathDeleteResult
+    struct PathDeleteResult final
     {
 
       /**
@@ -584,7 +584,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
       Azure::Nullable<std::string> ContinuationToken;
     };
 
-    struct PathSetAccessControlRecursiveResult
+    struct PathSetAccessControlRecursiveResult final
     {
       int32_t NumberOfSuccessfulDirectories = int32_t();
       int32_t NumberOfSuccessfulFiles = int32_t();
@@ -602,11 +602,11 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
       Azure::Nullable<std::string> ContinuationToken;
     };
 
-    class DataLakeRestClient {
+    class DataLakeRestClient final {
     public:
-      class FileSystem {
+      class FileSystem final {
       public:
-        struct ListPathsOptions
+        struct ListPathsOptions final
         {
           FileSystemResource Resource;
           Azure::Nullable<int32_t> Timeout;
@@ -738,9 +738,9 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
         }
       };
 
-      class Path {
+      class Path final {
       public:
-        struct CreateOptions
+        struct CreateOptions final
         {
           Azure::Nullable<int32_t> Timeout;
           std::string ApiVersionParameter = _detail::DefaultServiceApiVersion;
@@ -894,7 +894,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
           return CreateParseResult(context, pipeline.Send(request, context));
         }
 
-        struct GetPropertiesOptions
+        struct GetPropertiesOptions final
         {
           Azure::Nullable<int32_t> Timeout;
           std::string ApiVersionParameter = _detail::DefaultServiceApiVersion;
@@ -965,7 +965,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
           return GetPropertiesParseResult(context, pipeline.Send(request, context));
         }
 
-        struct DeleteOptions
+        struct DeleteOptions final
         {
           Azure::Nullable<int32_t> Timeout;
           std::string ApiVersionParameter = _detail::DefaultServiceApiVersion;
@@ -1032,7 +1032,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
           return DeleteParseResult(context, pipeline.Send(request, context));
         }
 
-        struct SetAccessControlOptions
+        struct SetAccessControlOptions final
         {
           Azure::Nullable<int32_t> Timeout;
           Azure::Nullable<std::string> LeaseIdOptional;
@@ -1111,7 +1111,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
           return SetAccessControlParseResult(context, pipeline.Send(request, context));
         }
 
-        struct SetAccessControlRecursiveOptions
+        struct SetAccessControlRecursiveOptions final
         {
           Azure::Nullable<int32_t> Timeout;
           Azure::Nullable<std::string> ContinuationToken;
@@ -1170,7 +1170,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
           return SetAccessControlRecursiveParseResult(context, pipeline.Send(request, context));
         }
 
-        struct FlushDataOptions
+        struct FlushDataOptions final
         {
           Azure::Nullable<int32_t> Timeout;
           Azure::Nullable<int64_t> Position;
@@ -1290,7 +1290,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
           return FlushDataParseResult(context, pipeline.Send(request, context));
         }
 
-        struct AppendDataOptions
+        struct AppendDataOptions final
         {
           Azure::Nullable<int64_t> Position;
           Azure::Nullable<int32_t> Timeout;

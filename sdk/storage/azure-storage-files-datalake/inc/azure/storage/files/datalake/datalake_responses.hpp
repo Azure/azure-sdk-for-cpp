@@ -26,7 +26,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     /**
      * @brief The detailed information of a file system.
      */
-    struct FileSystemItemDetails
+    struct FileSystemItemDetails final
     {
       /**
        * An HTTP entity tag associated with the file system.
@@ -77,7 +77,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     /**
      * @brief The file system item returned when listing the file systems.
      */
-    struct FileSystemItem
+    struct FileSystemItem final
     {
       /**
        * The name of the file system.
@@ -95,7 +95,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     /**
      * @brief The access policy of a file system.
      */
-    struct FileSystemAccessPolicy
+    struct FileSystemAccessPolicy final
     {
       /**
        * The public access type of the file system.
@@ -113,7 +113,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     /**
      * @brief The properties of a file system.
      */
-    struct FileSystemProperties
+    struct FileSystemProperties final
     {
       /**
        * An HTTP entity tag associated with the file system.
@@ -134,7 +134,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     /**
      * @brief The information returned when creating the file system.
      */
-    struct CreateFileSystemResult
+    struct CreateFileSystemResult final
     {
       /**
        * If the object is created.
@@ -155,7 +155,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     /**
      * @brief The information returned when deleting the file system.
      */
-    struct DeleteFileSystemResult
+    struct DeleteFileSystemResult final
     {
       /**
        * If the object is deleted.
@@ -166,7 +166,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     /**
      * @brief The information returned when setting the filesystem's metadata
      */
-    struct SetFileSystemMetadataResult
+    struct SetFileSystemMetadataResult final
     {
       /**
        * An HTTP entity tag associated with the file system.
@@ -184,7 +184,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     /**
      * @brief The information returned when deleting the path.
      */
-    struct DeletePathResult
+    struct DeletePathResult final
     {
       /**
        * If the object is deleted.
@@ -203,7 +203,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     /**
      * @brief An access control object.
      */
-    struct Acl
+    struct Acl final
     {
       /**
        * The scope of the ACL.
@@ -257,7 +257,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     /**
      * @brief The properties of the path.
      */
-    struct PathProperties
+    struct PathProperties final
     {
       /**
        * An HTTP entity tag associated with the path.
@@ -393,7 +393,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     /**
      * @brief The access control list of a path.
      */
-    struct PathAccessControlList
+    struct PathAccessControlList final
     {
       /**
        * The owner of the path.
@@ -419,7 +419,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     /**
      * @brief The information returned when setting the path's Http headers.
      */
-    struct SetPathHttpHeadersResult
+    struct SetPathHttpHeadersResult final
     {
       /**
        * An HTTP entity tag associated with the path.
@@ -435,7 +435,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     /**
      * @brief The information returned when setting the path's metadata.
      */
-    struct SetPathMetadataResult
+    struct SetPathMetadataResult final
     {
       /**
        * An HTTP entity tag associated with the path.
@@ -451,7 +451,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     /**
      * @brief The information returned when creating a path.
      */
-    struct CreatePathResult
+    struct CreatePathResult final
     {
       /**
        * A boolean indicates if the path is created.
@@ -485,7 +485,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     /**
      * @brief The detailed information returned when downloading a file.
      */
-    struct DownloadFileDetails
+    struct DownloadFileDetails final
     {
       /**
        * An HTTP entity tag associated with the file.
@@ -596,7 +596,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     /**
      * @brief The content and information returned when downloading a file.
      */
-    struct DownloadFileResult
+    struct DownloadFileResult final
     {
       /**
        * The body of the downloaded result.
@@ -627,7 +627,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     /**
      * @brief The information returned when deleting a file.
      */
-    struct DeleteFileResult
+    struct DeleteFileResult final
     {
       /**
        * A boolean indicates if the file is deleted.
@@ -638,7 +638,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     /**
      * @brief The information returned when downloading a file to a specific destination.
      */
-    struct DownloadFileToResult
+    struct DownloadFileToResult final
     {
       /**
        * The size of the file.
@@ -669,7 +669,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
    * @brief Response type for
    * #Azure::Storage::Files::DataLake::DataLakeServiceClient::ListFileSystems.
    */
-  class ListFileSystemsPagedResponse
+  class ListFileSystemsPagedResponse final
       : public Azure::Core::PagedResponse<ListFileSystemsPagedResponse> {
   public:
     /**
@@ -699,7 +699,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
    * @brief Response type for #Azure::Storage::Files::DataLake::DataLakeFileSystemClient::ListPaths
    * and #Azure::Storage::Files::DataLake::DataLakeDirectoryClient::ListPaths.
    */
-  class ListPathsPagedResponse : public Azure::Core::PagedResponse<ListPathsPagedResponse> {
+  class ListPathsPagedResponse final : public Azure::Core::PagedResponse<ListPathsPagedResponse> {
   public:
     /**
      * Path items.
@@ -721,7 +721,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
    * @brief Response type for
    * #Azure::Storage::Files::DataLake::DataLakePathClient::SetAccessControlListRecursive.
    */
-  class SetPathAccessControlListRecursivePagedResponse
+  class SetPathAccessControlListRecursivePagedResponse final
       : public Azure::Core::PagedResponse<SetPathAccessControlListRecursivePagedResponse> {
   public:
     /**
