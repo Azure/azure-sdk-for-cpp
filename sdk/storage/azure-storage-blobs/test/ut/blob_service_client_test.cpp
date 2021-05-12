@@ -353,7 +353,7 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_THROW(containerClient.Value.GetProperties(), StorageException);
   }
 
-  TEST_F(BlobServiceClientTest, UndeleteBlobContainer)
+  TEST_F(BlobServiceClientTest, DISABLED_UndeleteBlobContainer)
   {
     std::string containerName = LowercaseRandomString();
     auto containerClient = m_blobServiceClient.GetBlobContainerClient(containerName);
