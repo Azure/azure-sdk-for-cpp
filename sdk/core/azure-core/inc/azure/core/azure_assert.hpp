@@ -44,10 +44,12 @@
 
 #include <cassert>
 
+#define AZURE_ASSERT(exp) assert((exp))
 #define AZURE_ASSERT_MSG(exp, msg) assert(((void)msg, (exp)))
 
 #endif
 
 [[noreturn]] void AzureNoReturnPath(std::string const& msg);
 
+#define AZURE_ASSERT_FALSE(exp) AZURE_ASSERT(!(exp))
 #define AZURE_UNREACHABLE_CODE AzureNoReturnPath("unreachable code!")
