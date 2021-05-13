@@ -293,11 +293,6 @@ namespace Azure { namespace Storage { namespace Blobs {
    */
   struct UndeleteBlobContainerOptions final
   {
-    /**
-     * @brief Use this parameter if you would like to restore the container under a
-     * different name.
-     */
-    Azure::Nullable<std::string> DestinationBlobContainerName;
   };
 
   /**
