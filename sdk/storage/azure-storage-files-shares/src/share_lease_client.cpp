@@ -74,6 +74,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     if (m_fileClient.HasValue())
     {
       AZURE_ASSERT_MSG(false, "Share lease doesn't support renew");
+      AZURE_NOT_IMPLEMENTED();
     }
     else if (m_shareClient.HasValue())
     {

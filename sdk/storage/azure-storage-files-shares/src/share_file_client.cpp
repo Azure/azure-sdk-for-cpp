@@ -351,7 +351,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         }
         else
         {
-          AZURE_ASSERT(false, "Either FilePermission or FilePermissionKey must be set");
+          AZURE_ASSERT_MSG(false, "Either FilePermission or FilePermissionKey must be set");
         }
       }
     }
@@ -1073,7 +1073,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       const UploadFileRangeFromUriOptions& options,
       const Azure::Core::Context& context) const
   {
-    AZURE_ASSERT(sourceRange.Length.HasValue(), "Source length cannot be null");
+    AZURE_ASSERT_MSG(sourceRange.Length.HasValue(), "Source length cannot be null");
     int64_t rangeLength = sourceRange.Length.Value();
 
     auto protocolLayerOptions = _detail::ShareRestClient::File::UploadRangeFromUrlOptions();
