@@ -105,7 +105,7 @@ namespace Azure { namespace Core {
 
     /**
      * @brief Returns the current #Azure::Core::OperationStatus of the long-running operation.
-     * 
+     *
      */
     OperationStatus Status() const noexcept { return m_status; }
 

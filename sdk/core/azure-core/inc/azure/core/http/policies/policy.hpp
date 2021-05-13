@@ -51,31 +51,31 @@ namespace Azure { namespace Core { namespace Http { namespace Policies {
 
   /**
    * @brief Retry options.
-   * 
+   *
    */
   struct RetryOptions final
   {
     /**
      * @brief Maximum number of attempts to retry.
-     * 
+     *
      */
     int32_t MaxRetries = 3;
 
     /**
      * @brief Mimimum amount of time between retry attempts.
-     * 
+     *
      */
     std::chrono::milliseconds RetryDelay = std::chrono::seconds(4);
 
     /**
      * @brief Mimimum amount of time between retry attempts.
-     * 
+     *
      */
     decltype(RetryDelay) MaxRetryDelay = std::chrono::minutes(2);
 
     /**
      * @brief HTTP status codes to retry on.
-     * 
+     *
      */
     std::set<HttpStatusCode> StatusCodes{
         HttpStatusCode::RequestTimeout,
@@ -88,19 +88,19 @@ namespace Azure { namespace Core { namespace Http { namespace Policies {
 
   /**
    * @brief Log options.
-   * 
+   *
    */
   struct LogOptions final
   {
     /**
      * @brief HTTP query parameters that are allowed to be logged.
-     * 
+     *
      */
     std::set<std::string> AllowedHttpQueryParameters;
 
     /**
      * @brief HTTP headers that are allowed to be logged.
-     * 
+     *
      */
     Azure::Core::CaseInsensitiveSet AllowedHttpHeaders = _detail::g_defaultAllowedHttpHeaders;
   };
@@ -239,7 +239,7 @@ namespace Azure { namespace Core { namespace Http { namespace Policies {
 
     /**
      * @brief HTTP retry policy.
-     * 
+     *
      */
     class RetryPolicy
 #if !defined(TESTING_BUILD)
@@ -308,7 +308,7 @@ namespace Azure { namespace Core { namespace Http { namespace Policies {
     public:
       /**
        * @brief Constructs HTTP request ID policy.
-       * 
+       *
        */
       explicit RequestIdPolicy() {}
 
@@ -374,7 +374,7 @@ namespace Azure { namespace Core { namespace Http { namespace Policies {
 
     /**
      * @brief Bearer Token authentication policy.
-     * 
+     *
      */
     class BearerTokenAuthenticationPolicy final : public HttpPolicy {
     private:
@@ -426,7 +426,7 @@ namespace Azure { namespace Core { namespace Http { namespace Policies {
     public:
       /**
        * @brief Constructs HTTP logging policy.
-       * 
+       *
        */
       explicit LogPolicy(LogOptions options) : m_options(std::move(options)) {}
 

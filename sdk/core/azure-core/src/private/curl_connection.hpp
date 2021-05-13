@@ -155,7 +155,7 @@ namespace Azure { namespace Core { namespace Http {
 
       /**
        * @brief Update last usage time for the connection.
-       * 
+       *
        */
       void UpdateLastUsageTime() override
       {

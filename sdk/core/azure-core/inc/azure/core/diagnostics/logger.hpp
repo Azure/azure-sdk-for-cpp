@@ -15,13 +15,13 @@
 namespace Azure { namespace Core { namespace Diagnostics {
   /**
    * @brief Log message handler.
-   * 
+   *
    */
   class Logger final {
   public:
     /**
      * @brief Log message level.
-     * 
+     *
      */
     // https://github.com/Azure/azure-sdk-for-java/blob/master/sdk/core/azure-core/src/main/java/com/azure/core/util/logging/LogLevel.java
     enum class Level : int
