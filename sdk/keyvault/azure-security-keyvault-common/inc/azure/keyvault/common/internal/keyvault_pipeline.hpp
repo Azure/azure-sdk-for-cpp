@@ -25,6 +25,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace _internal 
 
   /**
    * @brief The HTTP pipeline used by KeyVault clients.
+   *
    */
   class KeyVaultPipeline final {
     Azure::Core::Url m_vaultUrl;

@@ -64,11 +64,13 @@ namespace Azure { namespace Core { namespace Http {
 
     /**
      * @brief Update last usage time for the connection.
+     *
      */
     virtual void UpdateLastUsageTime() = 0;
 
     /**
      * @brief Checks whether this CURL connection is expired.
+     *
      */
     virtual bool IsExpired() = 0;
 
@@ -105,6 +107,7 @@ namespace Azure { namespace Core { namespace Http {
 
   /**
    * @brief CURL HTTP connection.
+   *
    */
   class CurlConnection final : public CurlNetworkConnection {
   private:
@@ -152,6 +155,7 @@ namespace Azure { namespace Core { namespace Http {
 
       /**
        * @brief Update last usage time for the connection.
+       * 
        */
       void UpdateLastUsageTime() override
       {

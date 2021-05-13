@@ -19,6 +19,7 @@
 namespace Azure { namespace Identity { namespace _detail {
   /**
    * @brief Provides version information.
+   * 
    */
   class PackageVersion final {
   public:

@@ -24,6 +24,7 @@ namespace Azure { namespace Identity {
 
   /**
    * @brief Defines options for token authentication.
+   *
    */
   struct ClientSecretCredentialOptions final
       : public Azure::Core::Credentials::TokenCredentialOptions

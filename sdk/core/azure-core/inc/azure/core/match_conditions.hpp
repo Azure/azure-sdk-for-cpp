@@ -16,6 +16,7 @@ namespace Azure {
 
 /**
  * @brief Specifies HTTP options for conditional requests.
+ *
  */
 struct MatchConditions
 {
@@ -23,6 +24,7 @@ struct MatchConditions
 
   /**
    * @brief Optionally limit requests to resources that match the value specified.
+   *
    */
   ETag IfMatch;
 

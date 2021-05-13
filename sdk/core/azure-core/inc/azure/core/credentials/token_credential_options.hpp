@@ -13,6 +13,7 @@
 namespace Azure { namespace Core { namespace Credentials {
   /**
    * @brief Defines options for #Azure::Core::Credentials::TokenCredential.
+   *
    */
   struct TokenCredentialOptions : public Azure::Core::_internal::ClientOptions
   {

@@ -39,11 +39,13 @@ namespace Azure { namespace Core {
 
   /**
    * @brief A context is a node within a tree that represents deadlines and key/value pairs.
+   *
    */
   class Context final {
   public:
     /**
      * @brief A context key.
+     *
      */
     class Key final {
       Key const* m_uniqueAddress;
@@ -114,11 +116,13 @@ namespace Azure { namespace Core {
   public:
     /**
      * @brief Construct a new context with no deadline, and no value associated.
+     *
      */
     Context() : m_contextSharedState(std::make_shared<ContextSharedState>()) {}
 
     /**
      * @brief Copy constructor.
+     *
      */
     Context& operator=(const Context&) = default;
 
@@ -188,6 +192,7 @@ namespace Azure { namespace Core {
 
     /**
      * @brief Cancels the context.
+     *
      */
     void Cancel()
     {
@@ -203,6 +208,7 @@ namespace Azure { namespace Core {
 
     /**
      * @brief Throw an exception if the context was cancelled.
+     *
      */
     void ThrowIfCancelled() const
     {
@@ -214,6 +220,7 @@ namespace Azure { namespace Core {
 
     /**
      * @brief The application context (root).
+     *
      */
     static AZ_CORE_DLLEXPORT Context ApplicationContext;
   };
