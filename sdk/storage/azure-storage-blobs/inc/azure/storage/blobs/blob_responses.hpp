@@ -189,8 +189,7 @@ namespace Azure { namespace Storage {
     private:
       std::string GetResumeToken() const override
       {
-        // Not supported
-        std::abort();
+        AZURE_NOT_IMPLEMENTED();
       }
 
       std::unique_ptr<Azure::Core::Http::RawResponse> PollInternal(
