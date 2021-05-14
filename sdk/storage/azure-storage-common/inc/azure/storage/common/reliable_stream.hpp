@@ -22,7 +22,7 @@ namespace Azure { namespace Storage { namespace _internal {
    * ReliableStream uses an HTTPGetter callback (provided on constructor) to get a bodyStream
    * starting on last known offset to resume a fail Read() operation.
    *
-   * @remark An HTTPGetter callback is expected to verify the initial `eTag` from first http request
+   * @remark An HTTPGetter callback is expected to verify the initial `eTag` from first HTTP request
    * to ensure read operation will continue on the same content.
    *
    * @remark An HTTPGetter callback is expected to calculate and set the range header based on the

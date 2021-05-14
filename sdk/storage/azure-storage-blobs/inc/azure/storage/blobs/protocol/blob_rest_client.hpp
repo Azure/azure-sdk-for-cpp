@@ -76,7 +76,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     struct BlobBlock final
     {
       /**
-       * Base64 encoded block id.
+       * Base64 encoded block ID.
        */
       std::string Name;
       /**
@@ -994,7 +994,7 @@ namespace Azure { namespace Storage { namespace Blobs {
        */
       Azure::Nullable<std::string> CopySource;
       /**
-       * State of the copy operation identified by the copy id. Possible values include success,
+       * State of the copy operation identified by the copy ID. Possible values include success,
        * pending, aborted, failed etc. This value is null if this blob has never been the
        * destination of a copy operation, or if this blob has been modified after a concluded copy
        * operation.
@@ -1368,7 +1368,7 @@ namespace Azure { namespace Storage { namespace Blobs {
        */
       Azure::Nullable<std::string> CopySource;
       /**
-       * State of the copy operation identified by the copy id. Possible values include success,
+       * State of the copy operation identified by the copy ID. Possible values include success,
        * pending, aborted, failed etc. This value is null if this blob has never been the
        * destination of a copy operation, or if this blob has been modified after a concluded copy
        * operation.
@@ -2647,7 +2647,7 @@ namespace Azure { namespace Storage { namespace Blobs {
          */
         std::string CopyId;
         /**
-         * State of the copy operation identified by the copy id. Possible values include success,
+         * State of the copy operation identified by the copy ID. Possible values include success,
          * pending, aborted, failed etc. This value is null if this blob has never been the
          * destination of a copy operation, or if this blob has been modified after a concluded copy
          * operation.
@@ -2681,7 +2681,7 @@ namespace Azure { namespace Storage { namespace Blobs {
          */
         std::string CopyId;
         /**
-         * State of the copy operation identified by the copy id. Possible values include success,
+         * State of the copy operation identified by the copy ID. Possible values include success,
          * pending, aborted, failed etc. This value is null if this blob has never been the
          * destination of a copy operation, or if this blob has been modified after a concluded copy
          * operation.

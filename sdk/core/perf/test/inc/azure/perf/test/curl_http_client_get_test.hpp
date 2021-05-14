@@ -33,7 +33,7 @@ namespace Azure { namespace Perf { namespace Test {
     CurlHttpClientGetTest(Azure::Perf::TestOptions options) : HttpClientGetTest(options) {}
 
     /**
-     * @brief Set up the http client
+     * @brief Set up the HTTP client
      *
      */
     void GlobalSetup() override
@@ -50,7 +50,7 @@ namespace Azure { namespace Perf { namespace Test {
     {
       return {
           "curlHttpClientGet",
-          "Send an Http Get request to a configurable url using libcurl.",
+          "Send an HTTP GET request to a configurable URL using libcurl.",
           [](Azure::Perf::TestOptions options) {
             return std::make_unique<Azure::Perf::Test::CurlHttpClientGetTest>(options);
           }};

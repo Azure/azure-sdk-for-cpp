@@ -79,7 +79,7 @@ Here's an example application to help you get started:
 
 using namespace Azure::Storage::Blobs;
 
-// Get the required connection string/key from an environment variable or Azure KeyVault.
+// Get the required connection string/key from an environment variable or Azure Key Vault.
 std::string GetConnectionString();
 
 int main()
@@ -154,7 +154,7 @@ The following SDK library releases are available on [vcpkg](https://github.com/m
 
 - For reference documentation visit the [Azure SDK for C++ documentation](https://azure.github.io/azure-sdk-for-cpp).
 - For tutorials, samples, quick starts and other documentation, visit [Azure for C++ Developers](https://docs.microsoft.com/azure/).
-- File an issue via [Github Issues](https://github.com/Azure/azure-sdk-for-cpp/issues/new/choose).
+- File an issue via [GitHub Issues](https://github.com/Azure/azure-sdk-for-cpp/issues/new/choose).
 
 ## Navigating the repository
 
@@ -164,7 +164,7 @@ The master branch has the most recent code with new features and bug fixes. It d
 
 ### Release branches (Release tagging)
 
-For each package we release there will be a unique git tag created that contains the name and the version of the package to mark the commit of the code that produced the package. This tag will be used for servicing via hotfix branches as well as debugging the code for a particular beta or stable release version.
+For each package we release there will be a unique Git tag created that contains the name and the version of the package to mark the commit of the code that produced the package. This tag will be used for servicing via hotfix branches as well as debugging the code for a particular beta or stable release version.
 Format of the release tags are `<package-name>_<package-version>`. For more information please see [our branching strategy](https://github.com/Azure/azure-sdk/blob/master/docs/policies/repobranching.md#release-tagging).
 
 ## Contributing

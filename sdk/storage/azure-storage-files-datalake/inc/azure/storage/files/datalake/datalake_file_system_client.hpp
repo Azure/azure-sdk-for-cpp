@@ -83,10 +83,10 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     DataLakeDirectoryClient GetDirectoryClient(const std::string& directoryName) const;
 
     /**
-     * @brief Gets the filesystem's primary url endpoint. This is the endpoint used for blob
+     * @brief Gets the filesystem's primary URL endpoint. This is the endpoint used for blob
      * storage available features in DataLake.
      *
-     * @return The filesystem's primary url endpoint.
+     * @return The filesystem's primary URL endpoint.
      */
     std::string GetUrl() const { return m_blobContainerClient.GetUrl(); }
 

@@ -578,7 +578,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     struct SignedIdentifier final
     {
       /**
-       * A unique id.
+       * A unique ID.
        */
       std::string Id;
 
@@ -1186,7 +1186,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       int64_t FileSize = int64_t();
 
       /**
-       * The Http Headers of the object.
+       * The HTTP headers of the object.
        */
       FileHttpHeaders HttpHeaders;
 
@@ -1593,7 +1593,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     constexpr static const char* HeaderTransactionalContentHashCrc64 = "x-ms-content-crc64";
 
     /**
-     * @brief Only update is supported: - Update: Writes the bytes downloaded from the source url
+     * @brief Only update is supported: - Update: Writes the bytes downloaded from the source URL
      * into the specified range.
      */
     class FileRangeWriteFromUrl final {
@@ -1951,7 +1951,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       Azure::Nullable<std::string> ContinuationToken;
 
       /**
-       * The Http Headers of the object.
+       * The HTTP headers of the object.
        */
       FileHttpHeaders HttpHeaders;
     };
@@ -1969,7 +1969,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       Azure::Nullable<std::string> ContinuationToken;
 
       /**
-       * The Http Headers of the object.
+       * The HTTP headers of the object.
        */
       FileHttpHeaders HttpHeaders;
     };
@@ -2010,7 +2010,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       Storage::Metadata Metadata;
 
       /**
-       * The Http Headers of the object.
+       * The HTTP headers of the object.
        */
       FileHttpHeaders HttpHeaders;
 
@@ -2234,7 +2234,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       Azure::Nullable<std::string> ContinuationToken;
 
       /**
-       * The Http Headers of the object.
+       * The HTTP headers of the object.
        */
       FileHttpHeaders HttpHeaders;
     };

@@ -56,9 +56,9 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     AZ_STORAGE_FILES_DATALAKE_DLLEXPORT const static std::chrono::seconds InfiniteLeaseDuration;
 
     /**
-     * @brief Get lease id of this lease client.
+     * @brief Get lease ID of this lease client.
      *
-     * @return Lease id of this lease client.
+     * @return Lease ID of this lease client.
      */
     std::string GetLeaseId() { return m_blobLeaseClient.GetLeaseId(); }
 

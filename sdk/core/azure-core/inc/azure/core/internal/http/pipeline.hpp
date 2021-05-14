@@ -58,7 +58,7 @@ namespace Azure { namespace Core { namespace Http { namespace _internal {
     }
 
     /**
-     * @brief Construct a new Http Pipeline object from clientOptions.
+     * @brief Construct a new HTTP Pipeline object from clientOptions.
      *
      * @remark The client options includes per retry and per call policies which are merged with the
      * service-specific per retry policies.

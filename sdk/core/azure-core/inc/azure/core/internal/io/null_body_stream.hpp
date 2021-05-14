@@ -3,7 +3,7 @@
 
 /**
  * @file
- * @brief A null body stream for Http requests without a payload.
+ * @brief A null body stream for HTTP requests without a payload.
  */
 
 #pragma once

@@ -6,7 +6,7 @@
   "version-semver": "@AZ_LIBRARY_VERSION@",
   "description": [
     "Microsoft Azure Common Key Vault SDK for C++",
-    "This library provides common Azure KeyVault-related abstractions for Azure SDK."
+    "This library provides common Azure Key Vault related abstractions for Azure SDK."
   ],
   "homepage": "https://github.com/Azure/azure-sdk-for-cpp/tree/master/sdk/keyvault/azure-security-keyvault-common",
   "license": "MIT",

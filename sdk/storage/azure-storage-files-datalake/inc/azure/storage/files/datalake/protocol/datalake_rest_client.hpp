@@ -502,7 +502,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
       Azure::Nullable<std::string> AcceptRanges;
 
       /**
-       * The Http Headers of the object.
+       * The HTTP headers of the object.
        */
       PathHttpHeaders HttpHeaders;
 
@@ -526,7 +526,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
       /**
        * The user-defined properties associated with the file or directory, in the format of a
        * comma-separated list of name and value pairs "n1=v1, n2=v2, ...", where each value is a
-       * base64 encoded string. Note that the string may only contain ASCII characters in the
+       * Base64 encoded string. Note that the string may only contain ASCII characters in the
        * ISO-8859-1 character set.
        */
       Azure::Nullable<std::string> Properties;

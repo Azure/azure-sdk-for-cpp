@@ -7,10 +7,10 @@
  * Vault.
  *
  * @remark The following environment variables must be set before running the sample.
- * - AZURE_KEYVAULT_URL:  To the KeyVault account url.
- * - AZURE_TENANT_ID:     Tenant id for the Azure account.
- * - AZURE_CLIENT_ID:     The client id to authenticate the request.
- * - AZURE_CLIENT_SECRET: The secret id from the client id.
+ * - AZURE_KEYVAULT_URL:  To the Key Vault account URL.
+ * - AZURE_TENANT_ID:     Tenant ID for the Azure account.
+ * - AZURE_CLIENT_ID:     The Client ID to authenticate the request.
+ * - AZURE_CLIENT_SECRET: The client secret.
  *
  */
 
@@ -110,8 +110,8 @@ int main()
       }
     }
 
-    // If the keyvault is soft-delete enabled, then for permanent deletion, deleted keys needs to be
-    // purged.
+    // If the Key Vault is soft-delete enabled, then for permanent deletion, deleted keys needs to
+    // be purged.
     keyClient.PurgeDeletedKey(rsaKeyName);
     keyClient.PurgeDeletedKey(ecKeyName);
   }
@@ -122,7 +122,7 @@ int main()
   }
   catch (Azure::Core::RequestFailedException const& e)
   {
-    std::cout << "KeyVault Client Exception happened:" << std::endl << e.Message << std::endl;
+    std::cout << "Key Vault Client Exception happened:" << std::endl << e.Message << std::endl;
     return 1;
   }
 

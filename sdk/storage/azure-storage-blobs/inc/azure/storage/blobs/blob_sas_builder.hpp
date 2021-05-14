@@ -224,7 +224,7 @@ namespace Azure { namespace Storage { namespace Sas {
     std::string Snapshot;
 
     /**
-     * @brief The id of the blob version being made accessible, or empty for a container
+     * @brief The ID of the blob version being made accessible, or empty for a container
      * SAS, blob SAS and blob snapshot SAS.
      */
     std::string BlobVersionId;

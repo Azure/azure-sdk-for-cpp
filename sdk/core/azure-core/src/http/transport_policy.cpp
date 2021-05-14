@@ -19,7 +19,7 @@ using namespace Azure::Core::Http::Policies::_internal;
 
 std::shared_ptr<HttpTransport> Azure::Core::Http::Policies::_detail::GetTransportAdapter()
 {
-  // The order of these checks is important so that WinHttp is picked over Curl on Windows, when
+  // The order of these checks is important so that WinHTTP is picked over libcurl on Windows, when
   // both are defined.
 #if defined(BUILD_TRANSPORT_CUSTOM_ADAPTER)
   return ::AzureSdkGetCustomHttpTransport();

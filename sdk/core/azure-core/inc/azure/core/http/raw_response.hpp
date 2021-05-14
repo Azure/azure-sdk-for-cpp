@@ -3,7 +3,7 @@
 
 /**
  * @file
- * @brief Define the Http raw response.
+ * @brief Define the HTTP raw response.
  */
 
 #pragma once
@@ -108,7 +108,7 @@ namespace Azure { namespace Core { namespace Http {
      */
     void SetBody(std::vector<uint8_t> body) { this->m_body = std::move(body); }
 
-    // adding getters for version and stream body. Clang will complain on Mac if we have unused
+    // adding getters for version and stream body. Clang will complain on macOS if we have unused
     // fields in a class
 
     /**

@@ -44,7 +44,7 @@ namespace Azure { namespace Identity {
 
   /**
    * @brief This class is used by Azure SDK clients to authenticate with the Azure service using a
-   * tenant ID, client ID and client secret.
+   * Tenant ID, Client ID and client secret.
    */
   class ClientSecretCredential final : public Core::Credentials::TokenCredential {
   private:
@@ -59,7 +59,7 @@ namespace Azure { namespace Identity {
      *
      * @param tenantId Tenant ID.
      * @param clientId Client ID.
-     * @param clientSecret Client Secret.
+     * @param clientSecret Client secret.
      * @param options #Azure::Identity::ClientSecretCredentialOptions.
      */
     explicit ClientSecretCredential(

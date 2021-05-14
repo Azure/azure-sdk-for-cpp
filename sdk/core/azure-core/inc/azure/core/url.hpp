@@ -203,7 +203,7 @@ namespace Azure { namespace Core {
     /**
      * @brief Get the port number set for the URL.
      *
-     * @remark If the port was not set for the url, the returned port is 0. An HTTP request cannot
+     * @remark If the port was not set for the URL, the returned port is 0. An HTTP request cannot
      * be performed to port zero, an HTTP client is expected to set the default port depending on
      * the request's schema when the port was not defined in the URL.
      *

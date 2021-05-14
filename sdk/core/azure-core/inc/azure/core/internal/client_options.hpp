@@ -31,13 +31,13 @@ namespace Azure { namespace Core { namespace _internal {
     virtual ~ClientOptions() = default;
 
     /**
-     * @brief Define policies to be called one time for every Http request from an sdk client.
+     * @brief Define policies to be called one time for every HTTP request from an SDK client.
      *
      */
     std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>> PerOperationPolicies;
 
     /**
-     * @brief Define policies to be called each time and sdk client tries to send the Http request.
+     * @brief Define policies to be called each time and SDK client tries to send the HTTP request.
      *
      */
     std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>> PerRetryPolicies;

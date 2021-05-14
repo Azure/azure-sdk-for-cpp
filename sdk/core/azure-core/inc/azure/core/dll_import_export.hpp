@@ -30,7 +30,7 @@
 // is being built as a DLL, AZ_xxx_DLL is defined. It is also being propagated to any code that
 // consumes Azure SDK code via CMake, i.e. anything in the build tree of the Azure SDK when building
 // the entire SDK, OR if a customer code consumes SDK via fetchcontent. In case that the SDK is
-// being distributed as a package, i.e. VcPkg, the install step (defined in az_vcpkg_export()) will
+// being distributed as a package, i.e. vcpkg, the install step (defined in az_vcpkg_export()) will
 // take care of patching the installed header to carry the knowledge that the library was built as
 // DLL (and if it was built as both static and dynamic library, there will be no collision because
 // each installation has its own header installation directory).

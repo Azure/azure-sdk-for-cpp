@@ -83,7 +83,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         const BlobClientOptions& options = BlobClientOptions());
 
     /**
-     * @brief Initializes a new instance of the AppendBlobClient class with an identical url
+     * @brief Initializes a new instance of the AppendBlobClient class with an identical URL
      * source but the specified snapshot timestamp.
      *
      * @param snapshot The snapshot

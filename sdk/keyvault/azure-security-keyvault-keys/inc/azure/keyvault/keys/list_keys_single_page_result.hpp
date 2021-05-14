@@ -44,7 +44,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
      *
      * @param keyProperties A previously created #KeyPropertiesPageResult that is used to init this
      * instance.
-     * @param rawResponse The Http raw response from where the #KeyPropertiesPageResult was parsed.
+     * @param rawResponse The HTTP raw response from where the #KeyPropertiesPageResult was parsed.
      * @param keyClient A key client required for getting the next pages.
      * @param keyName When \p keyName is set, the response is listing key versions. Otherwise, the
      * response is for listing keys from the Key Vault.
@@ -92,7 +92,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
      *
      * @param deletedKeyProperties A previously created #DeletedKeyPageResult that is used to init
      * this new instance.
-     * @param rawResponse The Http raw response from where the #DeletedKeyPageResult was parsed.
+     * @param rawResponse The HTTP raw response from where the #DeletedKeyPageResult was parsed.
      * @param keyClient A key client required for getting the next pages.
      * @param keyName When \p keyName is set, the response is listing key versions. Otherwise, the
      * response is for listing keys from the Key Vault.

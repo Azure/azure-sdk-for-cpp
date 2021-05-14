@@ -190,7 +190,7 @@ namespace Azure { namespace Core { namespace Test {
     policies.emplace_back(std::move(transportPolicy));
     Azure::Core::Http::_internal::HttpPipeline pipeline(policies);
 
-    // Use https
+    // Use HTTPS
     Azure::Core::Url url(AzureSdkHttpbinServer::Get());
     Azure::Core::Http::Request request(Azure::Core::Http::HttpMethod::Get, url);
 
@@ -222,7 +222,7 @@ namespace Azure { namespace Core { namespace Test {
     policies.emplace_back(std::move(transportPolicy));
     Azure::Core::Http::_internal::HttpPipeline pipeline(policies);
 
-    // Use https
+    // Use HTTPS
     Azure::Core::Url url(AzureSdkHttpbinServer::Get());
     Azure::Core::Http::Request request(Azure::Core::Http::HttpMethod::Get, url);
 
