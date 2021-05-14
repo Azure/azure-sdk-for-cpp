@@ -141,6 +141,7 @@ namespace Azure { namespace Core {
     /**
      * @brief Create a context without a deadline, but with \p key and \p value associated with it.
      *
+     * @tparam T The type of the value to be stored with the key.
      * @param key A key to associate with this context.
      * @param value A value to associate with this context.
      *
@@ -165,6 +166,7 @@ namespace Azure { namespace Core {
      * @brief Try to get a value associated with a \p key parameter within this context or the
      * branch of contexts this context belongs to.
      *
+     * @tparam T The type of the value to be retrieved.
      * @param key A key associated with a context to find.
      * @param outputValue A reference to the value corresponding to the \p key to be set, if found
      * within the context tree.
@@ -201,13 +203,13 @@ namespace Azure { namespace Core {
     }
 
     /**
-     * @brief Check if the context is cancelled.
+     * @brief Checks if the context is cancelled.
      * @return `true` if this context is cancelled, `false` otherwise.
      */
     bool IsCancelled() const noexcept { return GetDeadline() < std::chrono::system_clock::now(); }
 
     /**
-     * @brief Throw an exception if the context was cancelled.
+     * @brief Throws an exception if the context is cancelled.
      *
      */
     void ThrowIfCancelled() const

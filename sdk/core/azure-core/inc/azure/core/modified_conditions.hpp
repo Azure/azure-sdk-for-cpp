@@ -22,7 +22,7 @@ namespace Azure {
 struct ModifiedConditions
 {
   /**
-   * @brief Destructor.
+   * @brief Destructs the ModifiedConditions.
    *
    */
   virtual ~ModifiedConditions() = default;
