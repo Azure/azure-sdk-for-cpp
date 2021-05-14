@@ -24,7 +24,7 @@
 namespace Azure { namespace Security { namespace KeyVault { namespace _internal {
 
   /**
-   * @brief The HTTP pipeline used by KeyVault clients.
+   * @brief The HTTP pipeline used by Key Vault clients.
    */
   class KeyVaultPipeline final {
     Azure::Core::Url m_vaultUrl;
@@ -56,7 +56,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace _internal 
         std::vector<std::string> const& path) const;
 
     /**
-     * @brief Start the http transfer based on the \p request.
+     * @brief Start the HTTP transfer based on the \p request.
      *
      * @param context The context for per-operation options or cancellation.
      * @param request The HTTP request to be sent.
@@ -70,9 +70,9 @@ namespace Azure { namespace Security { namespace KeyVault { namespace _internal 
     /**
      * @brief Construct a new Key Vault Pipeline.
      *
-     * @param vaultUrl The url address for the Key Vault.
-     * @param apiVersion The service Api version.
-     * @param pipeline The Http pipeline for sending requests with.
+     * @param vaultUrl The URL address for the Key Vault.
+     * @param apiVersion The service API version.
+     * @param pipeline The HTTP pipeline for sending requests with.
      */
     explicit KeyVaultPipeline(
         Azure::Core::Url vaultUrl,
@@ -172,9 +172,9 @@ namespace Azure { namespace Security { namespace KeyVault { namespace _internal 
      * checking the respone code.
      *
      * @param context A context for cancellation.
-     * @param method The Http method for the request.
+     * @param method The HTTP method for the request.
      * @param path The path for the request.
-     * @return A unique ptr to an Http raw response.
+     * @return A unique ptr to an HTTP raw response.
      */
     std::unique_ptr<Azure::Core::Http::RawResponse> Send(
         Azure::Core::Context const& context,

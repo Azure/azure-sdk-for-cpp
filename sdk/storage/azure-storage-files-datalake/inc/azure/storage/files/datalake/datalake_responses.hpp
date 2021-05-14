@@ -216,7 +216,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
       std::string Type;
 
       /**
-       * The id of the ACL.
+       * The ID of the ACL.
        */
       std::string Id;
 
@@ -300,7 +300,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
       Azure::Nullable<Models::LeaseStatus> LeaseStatus;
 
       /**
-       * The common http headers of the path.
+       * The common HTTP headers of the path.
        */
       PathHttpHeaders HttpHeaders;
 
@@ -417,7 +417,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     };
 
     /**
-     * @brief The information returned when setting the path's Http headers.
+     * @brief The information returned when setting the path's HTTP headers.
      */
     struct SetPathHttpHeadersResult final
     {
@@ -513,7 +513,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
       Models::LeaseStatus LeaseStatus;
 
       /**
-       * The common Http headers of the file.
+       * The common HTTP headers of the file.
        */
       PathHttpHeaders HttpHeaders;
 

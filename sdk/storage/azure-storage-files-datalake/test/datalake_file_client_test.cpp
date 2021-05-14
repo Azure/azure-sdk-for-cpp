@@ -192,7 +192,7 @@ namespace Azure { namespace Storage { namespace Test {
     }
 
     {
-      // Http headers works.
+      // HTTP headers works.
       auto httpHeader = GetInterestingHttpHeaders();
       std::vector<Files::DataLake::DataLakeFileClient> fileClient;
       for (int32_t i = 0; i < 2; ++i)

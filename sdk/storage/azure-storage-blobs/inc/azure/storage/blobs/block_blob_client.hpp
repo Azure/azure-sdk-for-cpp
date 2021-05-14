@@ -50,7 +50,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     /**
      * @brief Initialize a new instance of BlockBlobClient.
      *
-     * @param blobUrl A url
+     * @param blobUrl A URL
      * referencing the blob that includes the name of the account, the name of the container, and
      * the name of the blob.
      * @param credential The shared key credential used to sign
@@ -66,7 +66,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     /**
      * @brief Initialize a new instance of BlockBlobClient.
      *
-     * @param blobUrl A url
+     * @param blobUrl A URL
      * referencing the blob that includes the name of the account, the name of the container, and
      * the name of the blob.
      * @param credential The token credential used to sign requests.
@@ -81,7 +81,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     /**
      * @brief Initialize a new instance of BlockBlobClient.
      *
-     * @param blobUrl A url
+     * @param blobUrl A URL
      * referencing the blob that includes the name of the account, the name of the container, and
      * the name of the blob, and possibly also a SAS token.
      * @param options Optional client
@@ -93,7 +93,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         const BlobClientOptions& options = BlobClientOptions());
 
     /**
-     * @brief Initializes a new instance of the BlockBlobClient class with an identical url
+     * @brief Initializes a new instance of the BlockBlobClient class with an identical URL
      * source but the specified snapshot timestamp.
      *
      * @param snapshot The snapshot

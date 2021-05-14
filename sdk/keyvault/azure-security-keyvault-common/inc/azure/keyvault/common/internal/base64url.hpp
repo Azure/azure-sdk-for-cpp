@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: MIT
 
 /**
- * @brief Provides helper method for base64url.
+ * @brief Provides helper method for Base64URL.
  *
  */
 
@@ -16,7 +16,7 @@
 namespace Azure { namespace Security { namespace KeyVault { namespace _internal {
 
   /**
-   * @brief Provides conversion methods for base64url.
+   * @brief Provides conversion methods for Base64URL.
    */
   struct Base64Url final
   {
@@ -51,7 +51,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace _internal 
           base64url.append("=");
           break;
         default:
-          throw new std::invalid_argument("Unexpected base64 encoding in the http response.");
+          throw new std::invalid_argument("Unexpected Base64URL encoding in the HTTP response.");
       }
       return Azure::Core::Convert::Base64Decode(base64url);
     }

@@ -127,7 +127,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       Nullable<Storage::ContentHash> TransactionalContentHash;
 
       /**
-       * The common Http headers of the file.
+       * The common HTTP headers of the file.
        */
       FileHttpHeaders HttpHeaders;
 
@@ -174,7 +174,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       Azure::Core::Http::HttpRange ContentRange;
 
       /**
-       * The common Http headers of the file.
+       * The common HTTP headers of the file.
        */
       FileHttpHeaders HttpHeaders;
 

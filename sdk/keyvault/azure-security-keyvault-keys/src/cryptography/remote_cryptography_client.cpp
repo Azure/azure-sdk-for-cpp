@@ -30,7 +30,7 @@ RemoteCryptographyClient::RemoteCryptographyClient(
     CryptographyClientOptions options)
 {
   auto apiVersion = options.Version.ToString();
-  // Remote client is init with the url to a key vault key.
+  // Remote client is init with the URL to a key vault key.
   KeyId = Azure::Core::Url(keyId);
   std::vector<std::unique_ptr<HttpPolicy>> perRetrypolicies;
   {
@@ -51,7 +51,7 @@ RemoteCryptographyClient::RemoteCryptographyClient(
 Azure::Response<KeyVaultKey> RemoteCryptographyClient::GetKey(
     Azure::Core::Context const& context) const
 {
-  // The remote crypto client is created with a key vault key url, hence, no path is required to get
+  // The remote crypto client is created with a Key Vault key URL, hence, no path is required to get
   // the key from the server.
   return Pipeline->SendRequest<KeyVaultKey>(
       context,

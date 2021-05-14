@@ -70,7 +70,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
     /**
      * @brief Construct a new Key Client object
      *
-     * @param vaultUrl The url address where the client will send the requests to.
+     * @param vaultUrl The URL address where the client will send the requests to.
      * @param credential The authentication method to use.
      * @param options The options to customize the client behavior.
      */

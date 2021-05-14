@@ -35,7 +35,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     /**
      * @brief Initialize a new instance of BlobServiceClient.
      *
-     * @param serviceUrl A url referencing the blob that includes the name of the account.
+     * @param serviceUrl A URL referencing the blob that includes the name of the account.
      * @param credential The shared key credential used to sign requests.
      * @param options Optional client options that define the transport pipeline policies for
      * authentication, retries, etc., that are applied to every request.
@@ -48,7 +48,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     /**
      * @brief Initialize a new instance of BlobServiceClient.
      *
-     * @param serviceUrl A url referencing the blob that includes the name of the account.
+     * @param serviceUrl A URL referencing the blob that includes the name of the account.
      * @param credential The token credential used to sign requests.
      * @param options Optional client options that define the transport pipeline policies for
      * authentication, retries, etc., that are applied to every request.
@@ -61,7 +61,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     /**
      * @brief Initialize a new instance of BlobServiceClient.
      *
-     * @param serviceUrl A url referencing the blob that includes the name of the account, and
+     * @param serviceUrl A URL referencing the blob that includes the name of the account, and
      * possibly also a SAS token.
      * @param options Optional client options that define the transport pipeline policies for
      * authentication, retries, etc., that are applied to every request.
@@ -71,7 +71,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         const BlobClientOptions& options = BlobClientOptions());
 
     /**
-     * @brief Creates a new BlobContainerClient object with the same url as this BlobServiceClient.
+     * @brief Creates a new BlobContainerClient object with the same URL as this BlobServiceClient.
      * The new BlobContainerClient uses the same request policy pipeline as this BlobServiceClient.
      *
      * @return A new BlobContainerClient instance.
@@ -79,9 +79,9 @@ namespace Azure { namespace Storage { namespace Blobs {
     BlobContainerClient GetBlobContainerClient(const std::string& blobContainerName) const;
 
     /**
-     * @brief Gets the blob service's primary url endpoint.
+     * @brief Gets the blob service's primary URL endpoint.
      *
-     * @return the blob service's primary url endpoint.
+     * @return the blob service's primary URL endpoint.
      */
     std::string GetUrl() const { return m_serviceUrl.GetAbsoluteUrl(); }
 

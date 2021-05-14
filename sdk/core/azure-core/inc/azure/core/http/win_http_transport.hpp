@@ -133,7 +133,7 @@ namespace Azure { namespace Core { namespace Http {
   };
 
   /**
-   * @brief Concrete implementation of an HTTP transport that uses WinHttp when sending and
+   * @brief Concrete implementation of an HTTP transport that uses WinHTTP when sending and
    * receiving requests and responses over the wire.
    *
    */
@@ -157,7 +157,7 @@ namespace Azure { namespace Core { namespace Http {
 
   public:
     /**
-     * @brief Construct a new WinHttp Transport object.
+     * @brief Construct a new WinHTTP Transport object.
      *
      * @param options Optional parameter to override the default settings.
      */
@@ -167,7 +167,7 @@ namespace Azure { namespace Core { namespace Http {
     }
 
     /**
-     * @brief Implements the Http transport interface to send an HTTP Request and produce an HTTP
+     * @brief Implements the HTTP transport interface to send an HTTP Request and produce an HTTP
      * RawResponse.
      *
      * @param context #Azure::Core::Context so that operation can be cancelled.

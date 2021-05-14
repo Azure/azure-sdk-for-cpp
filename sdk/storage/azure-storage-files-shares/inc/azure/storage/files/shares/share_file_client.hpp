@@ -57,14 +57,14 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         const ShareClientOptions& options = ShareClientOptions());
 
     /**
-     * @brief Gets the file's primary url endpoint.
+     * @brief Gets the file's primary URL endpoint.
      *
-     * @return The file's primary url endpoint.
+     * @return The file's primary URL endpoint.
      */
     std::string GetUrl() const { return m_shareFileUrl.GetAbsoluteUrl(); }
 
     /**
-     * @brief Initializes a new instance of the ShareFileClient class with an identical url
+     * @brief Initializes a new instance of the ShareFileClient class with an identical URL
      * source but the specified share snapshot timestamp.
      *
      * @param shareSnapshot The snapshot identifier for the share snapshot.
@@ -231,7 +231,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
     /**
      * @brief Sets the properties of the file, or resize a file specifying NewSize in options.
-     * @param httpHeaders The Http headers to be set to the file.
+     * @param httpHeaders The HTTP headers to be set to the file.
      * @param smbProperties The SMB properties to be set to the file.
      * @param options Optional parameters to set this file's properties.
      * @param context Context for cancelling long running operations.

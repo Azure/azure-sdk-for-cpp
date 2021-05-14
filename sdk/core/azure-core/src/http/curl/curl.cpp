@@ -336,7 +336,7 @@ CURLcode CurlSession::Perform(Context const& context)
   // Set the session state
   m_sessionState = SessionState::PERFORM;
 
-  // LibCurl settings after connection is open (headers)
+  // libcurl settings after connection is open (headers)
   {
     auto headers = this->m_request.GetHeaders();
     auto hostHeader = headers.find("Host");
@@ -424,7 +424,7 @@ static std::unique_ptr<RawResponse> CreateHTTPResponse(
     uint8_t const* const begin,
     uint8_t const* const last)
 {
-  // set response code, http version and reason phrase (i.e. HTTP/1.1 200 OK)
+  // set response code, HTTP version and reason phrase (i.e. HTTP/1.1 200 OK)
   auto start = begin + 5; // HTTP = 4, / = 1, moving to 5th place for version
   auto end = std::find(start, last, '.');
   auto majorVersion = std::stoi(std::string(start, end));
@@ -442,7 +442,7 @@ static std::unique_ptr<RawResponse> CreateHTTPResponse(
   auto reasonPhrase = std::string(start, end); // remove \r
 
   // allocate the instance of response to heap with shared ptr
-  // So this memory gets delegated outside Curl Transport as a shared ptr so memory will be
+  // So this memory gets delegated outside CurlTransport as a shared_ptr so memory will be
   // eventually released
   return std::make_unique<RawResponse>(
       static_cast<uint16_t>(majorVersion),
@@ -547,7 +547,7 @@ CURLcode CurlSession::UploadBody(Context const& context)
   return sendResult;
 }
 
-// custom sending to wire an http request
+// custom sending to wire an HTTP request
 CURLcode CurlSession::SendRawHttp(Context const& context)
 {
   // something like GET /path HTTP1.0 \r\nheaders\r\n

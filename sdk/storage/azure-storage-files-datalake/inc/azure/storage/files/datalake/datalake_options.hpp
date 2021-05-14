@@ -287,7 +287,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     Azure::Nullable<Storage::ContentHash> ContentHash;
 
     /**
-     * Specify the http headers for this path.
+     * Specify the HTTP headers for this path.
      */
     Models::PathHttpHeaders HttpHeaders;
 
@@ -371,7 +371,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
   struct CreatePathOptions final
   {
     /**
-     * Specify the http headers for this path.
+     * Specify the HTTP headers for this path.
      */
     Models::PathHttpHeaders HttpHeaders;
 

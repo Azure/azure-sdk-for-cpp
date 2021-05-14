@@ -66,7 +66,7 @@ auto operationResult = client.StartLongRunningOperation(...);
 
 while (true)
 {
-    // Get a read-only ref to the Http raw response after polling. Poll will update the status.
+    // Get a read-only ref to the HTTP raw response after polling. Poll will update the status.
     auto& response = operationResult.Poll();
 
     if(operationResult.IsDone()) {
@@ -74,7 +74,7 @@ while (true)
         break;
     }
 
-    // Read the http headers in the response
+    // Read the HTTP headers in the response
     for (auto& header : response.GetHeaders()) {
         // ... consumer-code
     }
@@ -93,11 +93,11 @@ auto valueT = operationResult.Value();
 
 ## Operation\<T> lifetime
 
-The `Operation<T>` holds an Http raw response. Each Operation\<T> derived class defines the moment when the Http raw response is moved to the Operation. This means that an Operation can be created without initially holding an Http raw response. In this case, calling `GetRawResponse` method from the Operation will `throw` as no http raw response has been set for it yet.
+The `Operation<T>` holds an HTTP raw response. Each Operation\<T> derived class defines the moment when the HTTP raw response is moved to the Operation. This means that an Operation can be created without initially holding an HTTP raw response. In this case, calling `GetRawResponse` method from the Operation will `throw` as no HTTP raw response has been set for it yet.
 
 The concrete Operation class defines since when the `GetRawResponse` can be called, we need to review each derived class to know at what time it is valid or not to call `GetRawResponse`.
 
-The code below show two examples of Operation derive classes. The first one requires an http raw response to be created, ensuring that `GetRawResponse` can be called at any moment after the Operation is created. The second class does not set an http raw response when it is init, which means that `GetRawResponse` can only be called after calling `Poll`, otherwise it will throw.
+The code below show two examples of Operation derive classes. The first one requires an HTTP raw response to be created, ensuring that `GetRawResponse` can be called at any moment after the Operation is created. The second class does not set an HTTP raw response when it is init, which means that `GetRawResponse` can only be called after calling `Poll`, otherwise it will throw.
 
 ```cpp
 /**
@@ -105,30 +105,30 @@ The code below show two examples of Operation derive classes. The first one requ
  *
  */
 
-// The operation can only be constructed based on an http raw response.
+// The operation can only be constructed based on an HTTP raw response.
 class OperationA : public Azure::Core::Operation<Model> {
 public:
     OperationA(Azure::Core::Http::RawResponse rawResponse);
 };
 
-// This operation can be created with empty http raw response.
+// This operation can be created with empty HTTP raw response.
 class OperationB : public Azure::Core::Operation<Model> {
 public:
     OperationB();
 };
 
 void main() {
-    // Getting the Http raw response from OperationA is safe all the time.
+    // Getting the HTTP raw response from OperationA is safe all the time.
     OperationA operationA(Azure::Core::Http::RawResponse(...));
     auto& httpRawResponse = operationA.GetRawResponse();
 
     // But operationB will throw
     OperationB operationB();
-    // will throw, http raw response not yet set.
+    // will throw, HTTP raw response not yet set.
     auto&  httpRawResponse = operationB.GetRawResponse();
 }
 ```
 
-The reason why the Operation\<T> is not asking all derived classes to be init based on an Http raw response is by design to allow each concrete operation to define its behavior up to the first `Poll()` call.
+The reason why the Operation\<T> is not asking all derived classes to be init based on an HTTP raw response is by design to allow each concrete operation to define its behavior up to the first `Poll()` call.
 
-The Operation\<T> will maintain the ownership of the Http raw response and the value (once created). This means that `Extract` is not supported by the operation and calling `GetRawResponse()` and `Value()` will return read-only reference to its internal members.
+The Operation\<T> will maintain the ownership of the HTTP raw response and the value (once created). This means that `Extract` is not supported by the operation and calling `GetRawResponse()` and `Value()` will return read-only reference to its internal members.
