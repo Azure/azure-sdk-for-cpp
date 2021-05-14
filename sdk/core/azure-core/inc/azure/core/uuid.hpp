@@ -28,7 +28,7 @@ namespace Azure { namespace Core {
   class Uuid final {
 
   private:
-    static constexpr int UuidSize = 16;
+    static constexpr int32_t UuidSize = 16;
 
     uint8_t m_uuid[UuidSize];
     // The UUID reserved variants.
@@ -86,13 +86,13 @@ namespace Azure { namespace Core {
 #if defined(AZ_PLATFORM_WINDOWS)
       std::random_device rd;
 
-      for (int i = 0; i < UuidSize; i += 4)
+      for (size_t i = 0; i < UuidSize; i += 4)
       {
         const uint32_t x = rd();
         std::memcpy(uuid + i, &x, 4);
       }
 #elif defined(AZ_PLATFORM_POSIX)
-      int ret = RAND_bytes(uuid, UuidSize);
+      size_t ret = RAND_bytes(uuid, UuidSize);
       if (ret <= 0)
       {
         abort();
