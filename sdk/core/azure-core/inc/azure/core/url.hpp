@@ -189,6 +189,7 @@ namespace Azure { namespace Core {
     /************** API to read values from Url ***************/
     /**
      * @brief Get URL host.
+     *
      */
     const std::string& GetHost() const { return m_host; }
 
@@ -224,6 +225,7 @@ namespace Azure { namespace Core {
 
     /**
      * @brief Get the URL scheme.
+     *
      */
     const std::string& GetScheme() const { return m_scheme; };
 

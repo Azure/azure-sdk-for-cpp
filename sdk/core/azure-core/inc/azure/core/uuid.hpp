@@ -23,6 +23,7 @@
 namespace Azure { namespace Core {
   /**
    * @brief Universally unique identifier.
+   *
    */
   class Uuid final {
 
@@ -76,6 +77,7 @@ namespace Azure { namespace Core {
 
     /**
      * @brief Create a new random UUID.
+     *
      */
     static Uuid CreateUuid()
     {
