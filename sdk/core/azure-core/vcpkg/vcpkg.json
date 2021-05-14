@@ -29,7 +29,7 @@
   ],
   "features": {
     "curl": {
-      "description": "LibCURL HTTP transport implementation",
+      "description": "Libcurl HTTP transport implementation",
       "dependencies": [
         {
           "name": "azure-core-cpp",

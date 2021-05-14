@@ -58,9 +58,9 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         const ShareClientOptions& options = ShareClientOptions());
 
     /**
-     * @brief Gets the directory's primary url endpoint.
+     * @brief Gets the directory's primary URL endpoint.
      *
-     * @return The directory's primary url endpoint.
+     * @return The directory's primary URL endpoint.
      */
     std::string GetUrl() const { return m_shareDirectoryUrl.GetAbsoluteUrl(); }
 
@@ -82,7 +82,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     ShareFileClient GetFileClient(const std::string& fileName) const;
 
     /**
-     * @brief Initializes a new instance of the ShareDirectoryClient class with an identical url
+     * @brief Initializes a new instance of the ShareDirectoryClient class with an identical URL
      * source but the specified share snapshot timestamp.
      *
      * @param shareSnapshot The snapshot identifier for a share snapshot.

@@ -27,7 +27,7 @@ TEST_F(MockedTransportAdapterTest, keyvaultTelemetryId)
   // The fake response from the mocked transport adapter is good for parsing a Key back
   auto response = m_client->GetKey("name");
 
-  // The response is an echo of the sent headers. Let's find the telemetry id
+  // The response is an echo of the sent headers. Let's find the telemetry ID
   auto foundHeader = false;
   for (auto& header : response.RawResponse->GetHeaders())
   {

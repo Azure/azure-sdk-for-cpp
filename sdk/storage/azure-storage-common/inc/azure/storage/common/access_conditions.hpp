@@ -25,7 +25,7 @@ namespace Azure { namespace Storage {
 
     /**
      * @brief Specify this header to perform the operation only if the resource has an
-     * active lease mathing this id.
+     * active lease mathing this ID.
      */
     Azure::Nullable<std::string> LeaseId;
   };

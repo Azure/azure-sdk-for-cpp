@@ -418,7 +418,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
     /**
      * Specifies the option to copy file security descriptor from source file or to set it
-     * using the value which is defined by the smb properties.
+     * using the value which is defined by the SMB properties.
      */
     Azure::Nullable<Models::PermissionCopyMode> PermissionCopyMode;
 

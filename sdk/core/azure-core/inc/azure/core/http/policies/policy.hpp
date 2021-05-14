@@ -116,7 +116,7 @@ namespace Azure { namespace Core { namespace Http { namespace Policies {
      * and receive requests and responses over the wire.
      *
      * @remark When no option is set, the default transport adapter on non-Windows platforms is
-     * the curl transport adapter and winhttp transport adapter on Windows.
+     * the libcurl transport adapter and WinHTTP transport adapter on Windows.
      *
      * @remark When using a custom transport adapter, the implementation for
      * `AzureSdkGetCustomHttpTransport` must be linked in the end-user application.

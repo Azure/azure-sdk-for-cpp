@@ -9,7 +9,7 @@ To create a new `KeyClient` to create, get, update, or delete keys, you need the
 
 Key Vault Keys client for C++ currently supports the `ClientSecretCredential` for authenticating.
 
-In the sample below, you can create a credential by setting the tenant id, client id and client secret as environment variables.
+In the sample below, you can create a credential by setting the Tenant ID, Client ID and client secret as environment variables.
 
 ```cpp Snippet:KeysSample1CreateCredential
   auto tenantId = std::getenv("AZURE_TENANT_ID");

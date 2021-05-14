@@ -50,9 +50,9 @@ After Vcpkg is initialized and bootstrapped, you can install the dependencies:
 vcpkg.exe install libxml2:x64-windows-static curl:x64-windows-static
 ```
 
-#### Unix Platforms
+#### POSIX Platforms
 
-You can use the package manager on different Unix platforms to install the dependencies. The dependencies to be installed are:
+You can use the package manager on different POSIX platforms to install the dependencies. The dependencies to be installed are:
 
   - CMake 3.13.0 or higher.
   - libxml2.
@@ -85,7 +85,7 @@ If Vcpkg is not globally integrated, then you need to open CMakeSettings.json an
 Then you can build Azure Storage libraries by selecting the target in Visual Studio, or simply build all.
 The libraries will be in `<ProjectRoot>\out\build\<Configuration>\sdk\<LibraryName>` respectively.
 
-#### Unix Platforms
+#### POSIX Platforms
 
 You can run the following command in a new folder created under the downloaded code's root folder to build the code.
 

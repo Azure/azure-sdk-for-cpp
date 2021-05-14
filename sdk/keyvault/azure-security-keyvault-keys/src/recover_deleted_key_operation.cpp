@@ -51,7 +51,7 @@ Azure::Security::KeyVault::Keys::RecoverDeletedKeyOperation::PollInternal(
   }
 
   // To ensure the success of calling Poll multiple times, even after operation is completed, a
-  // copy of the raw http response is returned instead of transfering the ownership of the raw
+  // copy of the raw HTTP response is returned instead of transfering the ownership of the raw
   // response inside the Operation.
   return rawResponse;
 }

@@ -60,9 +60,9 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     ShareClient GetShareClient(const std::string& shareName) const;
 
     /**
-     * @brief Gets the file share service's primary url endpoint.
+     * @brief Gets the file share service's primary URL endpoint.
      *
-     * @return The file share service's primary url endpoint.
+     * @return The file share service's primary URL endpoint.
      */
     std::string GetUrl() const { return m_serviceUrl.GetAbsoluteUrl(); }
 

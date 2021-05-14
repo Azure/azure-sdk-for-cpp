@@ -56,7 +56,7 @@ Url::Url(const std::string& url)
 
   if (pos != url.end() && (*pos != '/') && (*pos != '?'))
   {
-    // only char `\` or `?` is valid after the port (or the end of the url). Any other char is an
+    // only char `\` or `?` is valid after the port (or the end of the URL). Any other char is an
     // invalid input
     throw std::invalid_argument("The port number contains invalid characters.");
   }
@@ -105,7 +105,7 @@ std::string Url::Decode(const std::string& value)
     {
       if (i + 2 >= value.size() || hexTable[value[i + 1]] < 0 || hexTable[value[i + 2]] < 0)
       {
-        throw std::runtime_error("failed when decoding url component");
+        throw std::runtime_error("failed when decoding URL component");
       }
       int v = (hexTable[value[i + 1]] << 4) + hexTable[value[i + 2]];
       decodedValue += static_cast<std::string::value_type>(v);
