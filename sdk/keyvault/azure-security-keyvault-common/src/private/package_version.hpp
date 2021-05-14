@@ -20,6 +20,7 @@
 namespace Azure { namespace Security { namespace KeyVault { namespace Common { namespace _detail {
   /**
    * @brief Provides version information.
+   *
    */
   class PackageVersion final {
   public:

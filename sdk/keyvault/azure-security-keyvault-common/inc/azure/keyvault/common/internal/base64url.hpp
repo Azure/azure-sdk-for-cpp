@@ -17,6 +17,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace _internal 
 
   /**
    * @brief Provides conversion methods for Base64URL.
+   *
    */
   struct Base64Url final
   {

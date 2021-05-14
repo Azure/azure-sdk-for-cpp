@@ -19,6 +19,7 @@
 namespace Azure { namespace Core { namespace _detail {
   /**
    * @brief Provides version information.
+   *
    */
   class PackageVersion final {
   public:

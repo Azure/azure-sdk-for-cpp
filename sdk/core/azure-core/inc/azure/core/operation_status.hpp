@@ -20,6 +20,7 @@ namespace Azure { namespace Core {
 
   /**
    * @brief Long-running operation states.
+   *
    */
   class OperationStatus final {
     std::string m_value;
@@ -68,27 +69,33 @@ namespace Azure { namespace Core {
 
     /**
      * @brief The `std::string` representation of the operation status.
+     *
      */
     const std::string& Get() const noexcept { return m_value; }
 
     /**
      * @brief The #Azure::Core::Operation is Not Started.
+     *
      */
     AZ_CORE_DLLEXPORT static const OperationStatus NotStarted;
     /**
      * @brief The #Azure::Core::Operation is Running.
+     *
      */
     AZ_CORE_DLLEXPORT static const OperationStatus Running;
     /**
      * @brief The #Azure::Core::Operation Succeeded.
+     *
      */
     AZ_CORE_DLLEXPORT static const OperationStatus Succeeded;
     /**
      * @brief The #Azure::Core::Operation was Cancelled.
+     *
      */
     AZ_CORE_DLLEXPORT static const OperationStatus Cancelled;
     /**
      * @brief The #Azure::Core::Operation Failed.
+     *
      */
     AZ_CORE_DLLEXPORT static const OperationStatus Failed;
   };

@@ -39,6 +39,7 @@ template <class T> class Nullable final {
 public:
   /**
    * @brief Construct a #Azure::Nullable that represents the absence of value.
+   *
    */
   constexpr Nullable() : m_disengaged{}, m_hasValue(false) {}
 
@@ -74,6 +75,7 @@ public:
 
   /**
    * @brief Destroy the contained value, if there is one.
+   *
    */
   ~Nullable()
   {
@@ -85,6 +87,7 @@ public:
 
   /**
    * @brief Destroy any contained value, if there is one.
+   *
    */
   void Reset() noexcept /* enforces termination */
   {
@@ -218,6 +221,7 @@ public:
 
   /**
    * @brief Get the contained value.
+   *
    */
   const T& Value() const& noexcept
   {
@@ -228,6 +232,7 @@ public:
 
   /**
    * @brief Get the contained value reference.
+   *
    */
   T& Value() & noexcept
   {
@@ -238,6 +243,7 @@ public:
 
   /**
    * @brief Get the contained value (as rvalue reference).
+   *
    */
   T&& Value() && noexcept
   {
@@ -250,6 +256,7 @@ public:
 
   /**
    * @brief `operator bool` on the condition of #Azure::Nullable::HasValue.
+   *
    */
   constexpr explicit operator bool() const noexcept { return HasValue(); }
 

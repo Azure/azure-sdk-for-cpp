@@ -26,17 +26,17 @@ Some operations take a long time to complete and require polling for their statu
 
 You can intermittently poll whether the operation has finished by using the `Poll()` method on the returned `Operation<T>` and track progress of the operation using `Value()`. Alternatively, if you just want to wait until the operation completes, you can use `PollUntilDone()`.
 
-```C++
+```{.cpp}
 SomeServiceClient client;
 
 auto operation = *client.StartSomeLongRunningOperation();
 
 while (!operation.IsDone())
-{ 
+{
   std::unique_ptr<Http::RawResponse> response = operation.Poll();
 
   auto partialResult = operation.Value();
-  
+
   // Your per-polling custom logic goes here, such as logging progress.
 
   // You can also try to abort the operation if it doesn't complete in time.
@@ -50,11 +50,12 @@ auto finalResult = operation.Value();
 
 ### HTTP Transport adapter
 
-Out of the box, the Azure SDK for C++ supports the libcurl and WinHTTP libraries as HTTP stacks for communicating with Azure services over the network. The SDK also provides a mechanism for `customer-implemented` *HTTP transport adapter*. [You can learn more about the transport adapter in this doc](https://github.com/Azure/azure-sdk-for-cpp/blob/master/doc/HttpTransportAdapter.md#http-transport-adapter).
+Out of the box, the Azure SDK for C++ supports the libcurl and WinHTTP libraries as HTTP stacks for communicating with Azure services over the network. The SDK also provides a mechanism for `customer-implemented` _HTTP transport adapter_. [You can learn more about the transport adapter in this doc](https://github.com/Azure/azure-sdk-for-cpp/blob/master/doc/HttpTransportAdapter.md#http-transport-adapter).
 
 ## Troubleshooting
 
 Three main ways of troubleshooting failures are:
+
 - Inspecting exceptions
 - Enabling logging (`Available in future release`)
 - Distributed tracing (`Available in future release`)
@@ -64,9 +65,10 @@ Three main ways of troubleshooting failures are:
 Explore and install available Azure SDK libraries.
 
 ## Contributing
+
 For details on contributing to this repository, see the [contributing guide][azure_sdk_for_cpp_contributing].
 
-This project welcomes contributions and suggestions.  Most contributions require you to agree to a
+This project welcomes contributions and suggestions. Most contributions require you to agree to a
 Contributor License Agreement (CLA) declaring that you have the right to, and actually do, grant us
 the rights to use your contribution. For details, visit https://cla.microsoft.com.
 
@@ -78,16 +80,17 @@ This project has adopted the [Microsoft Open Source Code of Conduct](https://ope
 For more information see the [Code of Conduct FAQ](https://opensource.microsoft.com/codeofconduct/faq/) or
 contact [opencode@microsoft.com](mailto:opencode@microsoft.com) with any additional questions or comments.
 
-### Additional Helpful Links for Contributors  
+### Additional Helpful Links for Contributors
 
-Many people all over the world have helped make this project better.  You'll want to check out:
+Many people all over the world have helped make this project better. You'll want to check out:
 
-* [What are some good first issues for new contributors to the repo?](https://github.com/azure/azure-sdk-for-cpp/issues?q=is%3Aopen+is%3Aissue+label%3A%22up+for+grabs%22)
-* [How to build and test your change][azure_sdk_for_cpp_contributing_developer_guide]
-* [How you can make a change happen!][azure_sdk_for_cpp_contributing_pull_requests]
-* Frequently Asked Questions (FAQ) and Conceptual Topics in the detailed [Azure SDK for C++ wiki](https://github.com/azure/azure-sdk-for-cpp/wiki).
+- [What are some good first issues for new contributors to the repo?](https://github.com/azure/azure-sdk-for-cpp/issues?q=is%3Aopen+is%3Aissue+label%3A%22up+for+grabs%22)
+- [How to build and test your change][azure_sdk_for_cpp_contributing_developer_guide]
+- [How you can make a change happen!][azure_sdk_for_cpp_contributing_pull_requests]
+- Frequently Asked Questions (FAQ) and Conceptual Topics in the detailed [Azure SDK for C++ wiki](https://github.com/azure/azure-sdk-for-cpp/wiki).
 
 <!-- ### Community-->
+
 ### Reporting security issues and security bugs
 
 Security issues and bugs should be reported privately, via email, to the Microsoft Security Response Center (MSRC) <secure@microsoft.com>. You should receive a response within 24 hours. If for some reason you do not, please follow up via email to ensure we received your original message. Further information, including the MSRC PGP key, can be found in the [Security TechCenter](https://www.microsoft.com/msrc/faqs-report-an-issue).
@@ -97,6 +100,7 @@ Security issues and bugs should be reported privately, via email, to the Microso
 Azure SDK for C++ is licensed under the [MIT](https://github.com/Azure/azure-sdk-for-cpp/blob/master/sdk/core/azure-core/LICENSE) license.
 
 <!-- LINKS -->
+
 [azure_sdk_for_cpp_contributing]: https://github.com/Azure/azure-sdk-for-cpp/blob/master/CONTRIBUTING.md
 [azure_sdk_for_cpp_contributing_developer_guide]: https://github.com/Azure/azure-sdk-for-cpp/blob/master/CONTRIBUTING.md#developer-guide
 [azure_sdk_for_cpp_contributing_pull_requests]: https://github.com/Azure/azure-sdk-for-cpp/blob/master/CONTRIBUTING.md#pull-requests

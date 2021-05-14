@@ -42,6 +42,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
   {
     /**
      * @brief Specify the key version to get.
+     *
      */
     std::string Version;
   };

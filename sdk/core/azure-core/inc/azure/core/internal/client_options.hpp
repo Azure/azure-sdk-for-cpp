@@ -87,16 +87,19 @@ namespace Azure { namespace Core { namespace _internal {
 
     /**
      * @brief Specify the number of retries and other retry-related options.
+     *
      */
     Azure::Core::Http::Policies::RetryOptions Retry;
 
     /**
      * @brief Customized HTTP client. We're going to use the default one if this is empty.
+     *
      */
     Azure::Core::Http::Policies::TransportOptions Transport;
 
     /**
      * @brief Telemetry options.
+     *
      */
     Azure::Core::Http::Policies::TelemetryOptions Telemetry;
 

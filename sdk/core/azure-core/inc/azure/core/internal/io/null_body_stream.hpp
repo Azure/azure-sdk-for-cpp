@@ -36,6 +36,7 @@ namespace Azure { namespace Core { namespace IO { namespace _internal {
 
     /**
      * @brief Gets a singleton instance of a #Azure::Core::IO::_internal::NullBodyStream.
+     *
      */
     static NullBodyStream* GetNullBodyStream()
     {
