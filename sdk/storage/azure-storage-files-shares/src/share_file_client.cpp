@@ -1100,7 +1100,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     if (options.SourceAccessCondition.IfNoneMatchContentHash.HasValue())
     {
       AZURE_ASSERT_MSG(
-          options.SourceAccessCondition.IfMatchContentHash.Value().Algorithm
+          options.SourceAccessCondition.IfNoneMatchContentHash.Value().Algorithm
               == HashAlgorithm::Crc64,
           "This operation only supports CRC64 Source-If-None-Match condition");
     }
