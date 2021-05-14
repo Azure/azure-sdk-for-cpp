@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: MIT
 
 /**
- * @brief Validates the Azure Core transport adapters with fault responses from server.
+ * @brief Validates the Azure Storage blobs SDK client with fault responses from server.
  *
  * @note This test requires the Http-fault-injector
  * (https://github.com/Azure/azure-sdk-tools/tree/master/tools/http-fault-injector) running. Follow
@@ -10,7 +10,12 @@
  *
  */
 
-#include <azure/core.hpp>
+#if defined(_MSC_VER)
+// For using std::getenv()
+#define _CRT_SECURE_NO_WARNINGS
+#endif
+
+#include <azure/storage/blobs.hpp>
 
 #if defined(BUILD_CURL_HTTP_TRANSPORT_ADAPTER)
 #include <azure/core/http/curl_transport.hpp>
@@ -83,24 +88,26 @@ int main()
   auto implementationClient = std::make_shared<Azure::Core::Http::WinHttpTransport>(winHttpOptions);
 #endif
 
+  std::string connectionString(std::getenv("STORAGE_CONNECTION_STRING"));
+
+  // Set the options for the FaultInjectorClient
   FaultInjectionClientOptions options;
   options.m_url = Azure::Core::Url("https://localhost:7778");
   options.m_transport = implementationClient;
-  FaultInjectionClient client(options);
+
+  // Set the FaultInjectorClient as the transport adapter for the blobs client.
+  Azure::Storage::Blobs::BlobClientOptions blobClientOptions;
+  blobClientOptions.Transport.Transport = std::make_shared<FaultInjectionClient>(options);
+
+  auto blobClient = Azure::Storage::Blobs::BlobClient::CreateFromConnectionString(
+      connectionString, "sample", "sample.txt", blobClientOptions);
 
   std::cout << "Sending request..." << std::endl;
 
-  Azure::Core::Context context;
-  auto request = Azure::Core::Http::Request(
-      Azure::Core::Http::HttpMethod::Get, Azure::Core::Url("https://www.example.org"));
-  auto response = client.Send(request, context);
-  // Make sure to pull all bytes from network.
-  auto body = response->ExtractBodyStream()->ReadToEnd();
+  auto response = blobClient.Download();
+  auto content = response.Value.BodyStream->ReadToEnd();
 
-  std::cout << "Status Code: "
-            << static_cast<typename std::underlying_type<Azure::Core::Http::HttpStatusCode>::type>(
-                   response->GetStatusCode())
-            << std::endl;
+  std::cout << "Content: " << std::string(content.begin(), content.end()) << std::endl;
 
   return 0;
 }
