@@ -3,7 +3,7 @@
 
 /**
  * @file
- * @brief #Azure::Core::Http::HttpTransport implementation via WinHttp.
+ * @brief #Azure::Core::Http::HttpTransport implementation via WinHTTP.
  */
 
 #pragma once
