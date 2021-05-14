@@ -31,6 +31,10 @@ namespace Azure { namespace Storage { namespace Blobs {
    */
   struct TagAccessConditions
   {
+    /**
+     * @brief Destructor.
+     *
+     */
     virtual ~TagAccessConditions() = default;
 
     /**

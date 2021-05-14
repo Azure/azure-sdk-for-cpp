@@ -24,6 +24,10 @@ namespace Azure { namespace Core { namespace _internal {
    */
   struct ClientOptions
   {
+    /**
+     * @brief Destructor.
+     *
+     */
     virtual ~ClientOptions() = default;
 
     /**

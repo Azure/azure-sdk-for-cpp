@@ -10,6 +10,7 @@
 
 ### Breaking Changes
 
+- Added `final` specifier to classes and structures that are are not expected to be inheritable at the moment.
 - Renamed `GetPropertiesOfKeysSinglePage()` to `GetPropertiesOfKeys()`.
 - Renamed `GetPropertiesOfKeyVersionsSinglePage()` to `GetPropertiesOfKeyVersions()`.
 - Renamed `GetDeletedKeysSinglePage()` to `GetDeletedKeys()`.
