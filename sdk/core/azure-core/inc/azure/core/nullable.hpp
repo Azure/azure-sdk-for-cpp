@@ -74,7 +74,7 @@ public:
   }
 
   /**
-   * @brief Destroy the contained value, if there is one.
+   * @brief Destructs the Nullable, destructs the contained value if there is one.
    *
    */
   ~Nullable()
@@ -86,7 +86,7 @@ public:
   }
 
   /**
-   * @brief Destroy any contained value, if there is one.
+   * @brief Destructs the contained value, if there is one.
    *
    */
   void Reset() noexcept /* enforces termination */
@@ -99,7 +99,7 @@ public:
   }
 
   /**
-   * @brief Exchange the contents.
+   * @brief Exchanges the contents.
    *
    * @param other An instance to exchange the contents with.
    */
