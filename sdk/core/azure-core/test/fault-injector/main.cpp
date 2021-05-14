@@ -16,6 +16,10 @@
 #include <azure/core/http/curl_transport.hpp>
 #endif
 
+#if defined(BUILD_TRANSPORT_WINHTTP_ADAPTER)
+#include "azure/core/http/win_http_transport.hpp"
+#endif
+
 #include <iostream>
 #include <memory>
 #include <vector>
@@ -59,18 +63,24 @@ public:
       redirectRequest.SetHeader(
           "Host", url.GetHost() + (port != 0 ? ":" + std::to_string(port) : ""));
     }
-    
+
     return m_options.m_transport->Send(redirectRequest, context);
   }
 };
 
 int main()
 {
-  /* The transport adapter must allow insecure SSL certs*/
+  /* The transport adapter must allow insecure SSL certs.
+  If both curl and winHttp are available, curl is prefered for this test.for*/
 #if defined(BUILD_CURL_HTTP_TRANSPORT_ADAPTER)
   Azure::Core::Http::CurlTransportOptions curlOptions;
   curlOptions.SslVerifyPeer = false;
   auto implementationClient = std::make_shared<Azure::Core::Http::CurlTransport>(curlOptions);
+
+#elif (BUILD_TRANSPORT_WINHTTP_ADAPTER)
+  // TODO: make winHTTP to support insecure SSL certs
+  Azure::Core::Http::WinHttpTransportOptions winHttpOptions;
+  auto implementationClient = std::make_shared<Azure::Core::Http::WinHttpTransport>(winHttpOptions);
 #endif
 
   FaultInjectionClientOptions options;
