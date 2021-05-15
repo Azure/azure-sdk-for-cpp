@@ -27,30 +27,30 @@ namespace Azure { namespace Core {
 
   public:
     /**
-     * @brief Construct an #Azure::Core::OperationStatus with \p value.
+     * @brief Constructs an #Azure::Core::OperationStatus with \p value.
      *
      * @param value The value to initialize with.
      */
     explicit OperationStatus(const std::string& value) : m_value(value) {}
     /**
-     * @brief Construct an #Azure::Core::OperationStatus with \p value.
+     * @brief Constructs an #Azure::Core::OperationStatus with \p value.
      *
      * @param value The value to initialize with.
      */
     explicit OperationStatus(std::string&& value) : m_value(std::move(value)) {}
     /**
-     * @brief Construct an #Azure::Core::OperationStatus with \p value.
+     * @brief Constructs an #Azure::Core::OperationStatus with \p value.
      *
      * @param value The value to initialize with.
      */
     explicit OperationStatus(const char* value) : m_value(value) {}
 
     /**
-     * @brief Compare two #Azure::Core::OperationStatus objects for equality.
+     * @brief Compares two #Azure::Core::OperationStatus objects for equality.
      *
      * @param other An #Azure::Core::OperationStatus to compare with.
      *
-     * @return `true` if the states have the same string representation. `false` otherwise.
+     * @return `true` if the states have the same string representation, otherwise `false`.
      */
     bool operator==(const OperationStatus& other) const noexcept
     {
@@ -59,16 +59,16 @@ namespace Azure { namespace Core {
     }
 
     /**
-     * @brief Compare two #Azure::Core::OperationStatus objects for equality.
+     * @brief Compares two #Azure::Core::OperationStatus objects for equality.
      *
      * @param other A #Azure::Core::OperationStatus to compare with.
      *
-     * @return `false` if the states have the same string representation. `true` otherwise.
+     * @return `false` if the states have the same string representation, otherwise `true`.
      */
     bool operator!=(const OperationStatus& other) const noexcept { return !(*this == other); }
 
     /**
-     * @brief The `std::string` representation of the operation status.
+     * @brief Gets the `std::string` representation of the operation status.
      *
      */
     const std::string& Get() const noexcept { return m_value; }

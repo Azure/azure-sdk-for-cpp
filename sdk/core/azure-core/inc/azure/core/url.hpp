@@ -3,7 +3,7 @@
 
 /**
  * @file
- * @brief Define an Uniform Resource Location (URL).
+ * @brief Uniform Resource Location (URL).
  */
 
 #pragma once
@@ -39,7 +39,7 @@ namespace Azure { namespace Core {
   } // namespace _detail
 
   /**
-   * @brief Url represents the location where a request will be performed.
+   * @brief Represents the location where a request will be performed.
    * It can be parsed and initialized from a string that contains all URL components (scheme, host,
    * path, etc.). Authority is not currently supported.
    */
@@ -95,7 +95,7 @@ namespace Azure { namespace Core {
     Url() {}
 
     /**
-     * @brief Construct a URL from a URL-encoded string.
+     * @brief Constructs a URL from a URL-encoded string.
      *
      * @param encodedUrl URL string that has all its expected parts already URL-encoded.
      */
@@ -105,35 +105,35 @@ namespace Azure { namespace Core {
     /******** API for building Url from scratch. Override state ********/
 
     /**
-     * @brief Set URL scheme.
+     * @brief Sets URL scheme.
      *
      * @param scheme URL scheme.
      */
     void SetScheme(const std::string& scheme) { m_scheme = scheme; }
 
     /**
-     * @brief Set URL host.
+     * @brief Sets URL host.
      *
      * @param host URL host.
      */
     void SetHost(const std::string& encodedHost) { m_host = encodedHost; }
 
     /**
-     * @brief Set URL port.
+     * @brief Sets URL port.
      *
      * @param port URL port.
      */
     void SetPort(uint16_t port) { m_port = port; }
 
     /**
-     * @brief Set URL path.
+     * @brief Sets URL path.
      *
      * @param path URL path.
      */
     void SetPath(const std::string& encodedPath) { m_encodedPath = encodedPath; }
 
     /**
-     * @brief Set the query parameters from an existing query parameter map.
+     * @brief Sets the query parameters from an existing query parameter map.
      *
      * @remark Keys and values in \p queryParameters are expected to be URL-encoded.
      *
@@ -148,7 +148,7 @@ namespace Azure { namespace Core {
     // ===== APIs for mutating URL state: ======
 
     /**
-     * @brief Append an element of URL path.
+     * @brief Appends an element of URL path.
      *
      * @param path URL path element to append.
      */
@@ -166,7 +166,7 @@ namespace Azure { namespace Core {
      * will be encoded before adding to the URL. Use \p isValueEncoded = true when the
      * value is already encoded.
      *
-     * @remark This function overrides the value of existing query parameters.
+     * @remark Overrides the value of existing query parameters.
      *
      * @param encodedKey Name of the query parameter, already encoded.
      * @param encodedValue Value of the query parameter, already encoded.
@@ -188,7 +188,7 @@ namespace Azure { namespace Core {
 
     /************** API to read values from Url ***************/
     /**
-     * @brief Get URL host.
+     * @brief Gets URL host.
      *
      */
     const std::string& GetHost() const { return m_host; }
@@ -201,7 +201,7 @@ namespace Azure { namespace Core {
     const std::string& GetPath() const { return m_encodedPath; }
 
     /**
-     * @brief Get the port number set for the URL.
+     * @brief Gets the port number set for the URL.
      *
      * @remark If the port was not set for the URL, the returned port is 0. An HTTP request cannot
      * be performed to port zero, an HTTP client is expected to set the default port depending on
@@ -212,7 +212,7 @@ namespace Azure { namespace Core {
     uint16_t GetPort() const { return m_port; }
 
     /**
-     * @brief Get a copy of the list of query parameters from the URL.
+     * @brief Gets a copy of the list of query parameters from the URL.
      *
      * @remark The query parameters are URL-encoded.
      *
@@ -224,20 +224,20 @@ namespace Azure { namespace Core {
     }
 
     /**
-     * @brief Get the URL scheme.
+     * @brief Gets the URL scheme.
      *
      */
     const std::string& GetScheme() const { return m_scheme; };
 
     /**
-     * @brief Get the path and query parameters.
+     * @brief Gets the path and query parameters.
      *
      * @return Relative URL with URL-encoded query parameters.
      */
     std::string GetRelativeUrl() const;
 
     /**
-     * @brief Get Scheme, host, path and query parameters.
+     * @brief Gets Scheme, host, path and query parameters.
      *
      * @return Absolute URL with URL-encoded query parameters.
      */

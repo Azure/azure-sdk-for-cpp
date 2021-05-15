@@ -72,17 +72,21 @@ namespace Azure { namespace Core {
     }
 
   public:
+    /**
+     * @brief Destructs the Operation.
+     *
+     */
     virtual ~Operation() {}
 
     /**
      * @brief Final result of the long-running operation.
      *
-     * @return Response<T> the final result of the long-running operation.
+     * @return T the final result of the long-running operation.
      */
     virtual T Value() const = 0;
 
     /**
-     * @brief Gets an token representing the operation that can be used to poll for the status of
+     * @brief Gets a token representing the operation that can be used to poll for the status of
      * the long-running operation.
      *
      * @return std::string The resume token.
@@ -90,7 +94,7 @@ namespace Azure { namespace Core {
     virtual std::string GetResumeToken() const = 0;
 
     /**
-     * @brief Get the raw HTTP response.
+     * @brief Gets the raw HTTP response.
      * @return A reference to an #Azure::Core::Http::RawResponse.
      * @note Does not give up ownership of the RawResponse.
      */
@@ -104,15 +108,15 @@ namespace Azure { namespace Core {
     };
 
     /**
-     * @brief Returns the current #Azure::Core::OperationStatus of the long-running operation.
+     * @brief Gets the current #Azure::Core::OperationStatus of the long-running operation.
      *
      */
     OperationStatus Status() const noexcept { return m_status; }
 
     /**
-     * @brief Returns true if the long-running operation completed.
+     * @brief Checks if the long-running operation is completed.
      *
-     * @return `true` if the long-running operation is done. `false` otherwise.
+     * @return `true` if the long-running operation is done, otherwise `false`.
      */
     bool IsDone() const noexcept
     {
@@ -122,15 +126,16 @@ namespace Azure { namespace Core {
     }
 
     /**
-     * @brief Returns true if the long-running operation completed successfully and has produced a
-     * final result.  The final result is accessible from Value().
+     * @brief Checks if the long-running operation completed successfully and has produced a
+     * final result.
+     * @note The final result is accessible from Value().
      *
-     * @return `true` if the long-running operation completed successfully. `false` otherwise.
+     * @return `true` if the long-running operation completed successfully; otherwise, `false`.
      */
     bool HasValue() const noexcept { return (m_status == OperationStatus::Succeeded); }
 
     /**
-     * @brief Calls the server to get updated status of the long-running operation.
+     * @brief Gets updated status of the long-running operation.
      *
      * @return An HTTP #Azure::Core::Http::RawResponse returned from the service.
      */
@@ -142,9 +147,9 @@ namespace Azure { namespace Core {
     }
 
     /**
-     * @brief Calls the server to get updated status of the long-running operation.
+     * @brief Gets updated status of the long-running operation.
      *
-     * @param context #Azure::Core::Context allows the user to cancel the long-running operation.
+     * @param context #Azure::Core::Context allows canceling of the long-running operation.
      *
      * @return An HTTP #Azure::Core::Http::RawResponse returned from the service.
      */
@@ -156,7 +161,7 @@ namespace Azure { namespace Core {
     }
 
     /**
-     * @brief Periodically calls the server till the long-running operation completes.
+     * @brief Periodically polls till the long-running operation completes.
      *
      * @param period Time in milliseconds to wait between polls.
      *
@@ -170,10 +175,10 @@ namespace Azure { namespace Core {
     }
 
     /**
-     * @brief Periodically calls the server till the long-running operation completes;
+     * @brief Periodically polls till the long-running operation completes;
      *
      * @param period Time in milliseconds to wait between polls.
-     * @param context #Azure::Core::Context allows the user to cancel the long-running operation.
+     * @param context #Azure::Core::Context allows canceling of the long-running operation.
      *
      * @return Response<T> the final result of the long-running operation.
      */
