@@ -104,6 +104,8 @@ if(BUILD_TESTING)
   )
 
   target_link_libraries(azure-storage-test PRIVATE azure-storage-blobs)
+
+  add_subdirectory(test/fault-injector)
 endif()
 
 if(BUILD_STORAGE_SAMPLES)
