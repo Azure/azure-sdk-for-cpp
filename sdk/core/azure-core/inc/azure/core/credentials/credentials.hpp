@@ -61,7 +61,8 @@ namespace Azure { namespace Core { namespace Credentials {
     /**
      * @brief Gets an authentication token.
      *
-     * @param tokenRequestContext #Azure::Core::Credentials::TokenRequestContext to get the token in.
+     * @param tokenRequestContext #Azure::Core::Credentials::TokenRequestContext to get the token
+     * in.
      * @param context #Azure::Core::Context so that operation can be cancelled.
      *
      * @throw Azure::Core::Credentials::AuthenticationException Authentication error occurred.
