@@ -105,7 +105,7 @@ constexpr int8_t const MaxDaysPerMonth[12] = {31, 29, 31, 30, 31, 30, 31, 31, 30
 constexpr int16_t DayOfYear(int16_t year, int8_t month, int8_t day)
 {
   int16_t daysInPrevMonths = 0;
-  for (size_t i = 1; i < month; ++i)
+  for (int i = 1; i < month; ++i)
   {
     daysInPrevMonths += MaxDaysPerMonth[i - 1];
   }

@@ -92,7 +92,7 @@ namespace Azure { namespace Core {
         std::memcpy(uuid + i, &x, 4);
       }
 #elif defined(AZ_PLATFORM_POSIX)
-      size_t ret = RAND_bytes(uuid, UuidSize);
+      int ret = RAND_bytes(uuid, UuidSize);
       if (ret <= 0)
       {
         abort();
