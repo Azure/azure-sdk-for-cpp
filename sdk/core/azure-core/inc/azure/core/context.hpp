@@ -28,7 +28,7 @@ namespace Azure { namespace Core {
   class OperationCancelledException final : public std::runtime_error {
   public:
     /**
-     * @brief Constructs an OperationCancelledException with message string as the description.
+     * @brief Constructs an `OperationCancelledException` with message string as the description.
      *
      * @param message The description for the exception.
      */
@@ -44,7 +44,7 @@ namespace Azure { namespace Core {
   class Context final {
   public:
     /**
-     * @brief A key used to store and retrieve data in a Context object.
+     * @brief A key used to store and retrieve data in an #Azure::Core::Context object.
      *
      */
     class Key final {
@@ -52,13 +52,13 @@ namespace Azure { namespace Core {
 
     public:
       /**
-       * @brief Constructs a Key
+       * @brief Constructs a `Key`.
        *
        */
       Key() : m_uniqueAddress(this) {}
 
       /**
-       * @brief Compare with \p other `Azure::Core::Context::Key` for equality.
+       * @brief Compares with \p other `Azure::Core::Context::Key` for equality.
        * @param other Other `Azure::Core::Context::Key` to compare with.
        * @return `true` if instances are equal; otherwise, `false`.
        */
@@ -68,7 +68,7 @@ namespace Azure { namespace Core {
       }
 
       /**
-       * @brief Compare with \p other `Azure::Core::Context::Key` for equality.
+       * @brief Compares with \p other `Azure::Core::Context::Key` for equality.
        * @param other Other `Azure::Core::Context::Key` to compare with.
        * @return `false` if instances are equal; otherwise, `true`.
        */
@@ -171,8 +171,8 @@ namespace Azure { namespace Core {
      * @brief Gets the deadline for this context or the branch of contexts this context
      * belongs to.
      *
-     * @return The deadline associated with the context;
-     * @return `Azure::DateTime::max()` if no deadline is specified.
+     * @return The deadline associated with the context; `Azure::DateTime::max()` if no deadline is
+     * specified.
      *
      */
     DateTime GetDeadline() const;
@@ -186,7 +186,7 @@ namespace Azure { namespace Core {
      * @param outputValue A reference to the value corresponding to the \p key to be set, if found
      * within the context tree.
      *
-     * @return `true` if Key is found, with \p outputValue set to the value associated with the
+     * @return `true` if \p key is found, with \p outputValue set to the value associated with the
      * key found; otherwise, `false`.
      *
      * @note The \p outputValue is left unmodified if the \p key is not found.

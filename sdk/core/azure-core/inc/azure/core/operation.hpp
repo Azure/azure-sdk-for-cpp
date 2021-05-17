@@ -73,7 +73,7 @@ namespace Azure { namespace Core {
 
   public:
     /**
-     * @brief Destructs the Operation.
+     * @brief Destructs the `Operation`.
      *
      */
     virtual ~Operation() {}
@@ -128,7 +128,7 @@ namespace Azure { namespace Core {
     /**
      * @brief Checks if the long-running operation completed successfully and has produced a
      * final result.
-     * @note The final result is accessible from Value().
+     * @note The final result is accessible from `Value()`.
      *
      * @return `true` if the long-running operation completed successfully; otherwise, `false`.
      */

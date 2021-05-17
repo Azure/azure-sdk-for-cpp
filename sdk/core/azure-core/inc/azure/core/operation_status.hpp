@@ -27,30 +27,30 @@ namespace Azure { namespace Core {
 
   public:
     /**
-     * @brief Constructs an #Azure::Core::OperationStatus with \p value.
+     * @brief Constructs an `OperationStatus` with \p value.
      *
      * @param value The value to initialize with.
      */
     explicit OperationStatus(const std::string& value) : m_value(value) {}
     /**
-     * @brief Constructs an #Azure::Core::OperationStatus with \p value.
+     * @brief Constructs an `OperationStatus` with \p value.
      *
      * @param value The value to initialize with.
      */
     explicit OperationStatus(std::string&& value) : m_value(std::move(value)) {}
     /**
-     * @brief Constructs an #Azure::Core::OperationStatus with \p value.
+     * @brief Constructs an `OperationStatus` with \p value.
      *
      * @param value The value to initialize with.
      */
     explicit OperationStatus(const char* value) : m_value(value) {}
 
     /**
-     * @brief Compares two #Azure::Core::OperationStatus objects for equality.
+     * @brief Compares two `OperationStatus` objects for equality.
      *
-     * @param other An #Azure::Core::OperationStatus to compare with.
+     * @param other An `OperationStatus` to compare with.
      *
-     * @return `true` if the states have the same string representation, otherwise `false`.
+     * @return `true` if the states have the same string representation; otherwise,`false`.
      */
     bool operator==(const OperationStatus& other) const noexcept
     {
@@ -59,11 +59,11 @@ namespace Azure { namespace Core {
     }
 
     /**
-     * @brief Compares two #Azure::Core::OperationStatus objects for equality.
+     * @brief Compares two `OperationStatus` objects for equality.
      *
-     * @param other A #Azure::Core::OperationStatus to compare with.
+     * @param other A `OperationStatus` to compare with.
      *
-     * @return `false` if the states have the same string representation, otherwise `true`.
+     * @return `false` if the states have the same string representation; otherwise, `true`.
      */
     bool operator!=(const OperationStatus& other) const noexcept { return !(*this == other); }
 

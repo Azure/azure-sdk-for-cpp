@@ -3,7 +3,7 @@
 
 /**
  * @file
- * @brief Uniform Resource Location (URL).
+ * @brief Uniform Resource Locator (URL).
  */
 
 #pragma once
@@ -62,7 +62,7 @@ namespace Azure { namespace Core {
      * @brief Finds the first '?' symbol and parses everything after it as query parameters.
      * separated by '&'.
      *
-     * @param encodedQueryParameters String containing one or more query parameters.
+     * @param encodedQueryParameters `std::string` containing one or more query parameters.
      */
     void AppendQueryParameters(const std::string& encodedQueryParameters);
 
@@ -71,7 +71,7 @@ namespace Azure { namespace Core {
      * @brief Decodes \p value by transforming all escaped characters to it's non-encoded value.
      *
      * @param value URL-encoded string.
-     * @return std::string with non-URL encoded values.
+     * @return `std::string` with non-URL encoded values.
      */
     static std::string Decode(const std::string& value);
 
@@ -97,7 +97,8 @@ namespace Azure { namespace Core {
     /**
      * @brief Constructs a URL from a URL-encoded string.
      *
-     * @param encodedUrl URL string that has all its expected parts already URL-encoded.
+     * @param encodedUrl A URL-encoded string.
+     * @note encodedUrl is expected to have all parts URL-encoded.
      */
     explicit Url(const std::string& encodedUrl);
 
@@ -135,7 +136,7 @@ namespace Azure { namespace Core {
     /**
      * @brief Sets the query parameters from an existing query parameter map.
      *
-     * @remark Keys and values in \p queryParameters are expected to be URL-encoded.
+     * @note Keys and values in \p queryParameters are expected to be URL-encoded.
      *
      * @param queryParameters
      */

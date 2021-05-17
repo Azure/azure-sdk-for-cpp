@@ -41,7 +41,7 @@ namespace Azure { namespace Core {
 
   public:
     /**
-     * @brief Destructs PagedResponse.
+     * @brief Destructs `PagedResponse`.
      *
      */
     virtual ~PagedResponse() = default;
@@ -55,9 +55,9 @@ namespace Azure { namespace Core {
     /**
      * @brief The token for getting the next page.
      *
-     * @remark If there are no more pages, this field becomes an empty string.
+     * @note If there are no more pages, this field becomes an empty string.
      *
-     * @remark Assumes all services will include NextPageToken in the payload, it is set to either
+     * @note Assumes all services will include NextPageToken in the payload, it is set to either
      * null or empty for the last page or to a value used for getting the next page.
      *
      */
@@ -73,6 +73,7 @@ namespace Azure { namespace Core {
      * @brief Checks if a page exists.
      *
      * @note Returns false after the last page.
+     * @return `true` if there are additional pages; otherwise, `false`.
      *
      */
     bool HasPage() const { return m_hasPage; }
@@ -80,7 +81,7 @@ namespace Azure { namespace Core {
     /**
      * @brief Moves to the next page of the response.
      *
-     * @note Calling this method on the last page will set #HasPage() to false.
+     * @note Calling this method on the last page will set #HasPage() to `false`.
      *
      * @param context An #Azure::Core::Context which can be used to cancel the operation.
      */
