@@ -780,9 +780,9 @@ void CurlSession::ReadCRLF(Context const& context)
 }
 
 // Read from curl session
-int64_t CurlSession::OnRead(uint8_t* buffer, int64_t count, Context const& context)
+int64_t CurlSession::OnRead(uint8_t* buffer, size_t count, Context const& context)
 {
-  if (count <= 0 || this->IsEOF())
+  if (count == 0 || this->IsEOF())
   {
     return 0;
   }
@@ -808,9 +808,9 @@ int64_t CurlSession::OnRead(uint8_t* buffer, int64_t count, Context const& conte
   }
 
   auto totalRead = int64_t();
-  auto readRequestLength = this->m_isChunkedResponseType
-      ? (std::min)(this->m_chunkSize - this->m_sessionTotalRead, count)
-      : count;
+  int64_t readRequestLength = this->m_isChunkedResponseType
+      ? (std::min)(this->m_chunkSize - this->m_sessionTotalRead, static_cast<int64_t>(count))
+      : static_cast<int64_t>(count);
 
   // For responses with content-length, avoid trying to read beyond Content-length or
   // libcurl could return a second response as BadRequest.

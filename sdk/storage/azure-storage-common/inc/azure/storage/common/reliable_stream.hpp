@@ -42,7 +42,7 @@ namespace Azure { namespace Storage { namespace _internal {
     // Options to use when getting a new bodyStream like current offset
     int64_t m_retryOffset;
 
-    int64_t OnRead(uint8_t* buffer, int64_t count, Azure::Core::Context const& context) override;
+    int64_t OnRead(uint8_t* buffer, size_t count, Azure::Core::Context const& context) override;
 
   public:
     explicit ReliableStream(

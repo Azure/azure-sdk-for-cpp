@@ -28,7 +28,7 @@ using namespace Azure::Core::IO::_internal;
 
 int64_t RandomAccessFileBodyStream::OnRead(
     uint8_t* buffer,
-    int64_t count,
+    size_t count,
     Azure::Core::Context const&)
 {
 
@@ -60,7 +60,8 @@ int64_t RandomAccessFileBodyStream::OnRead(
       // at most 4Gb to be read
       static_cast<DWORD>(std::min(
           static_cast<uint64_t>(0xFFFFFFFFUL),
-          static_cast<uint64_t>(std::min(count, (this->m_length - this->m_offset))))),
+          static_cast<uint64_t>(
+              std::min(static_cast<int64_t>(count), (this->m_length - this->m_offset))))),
       &numberOfBytesRead,
       &o);
 

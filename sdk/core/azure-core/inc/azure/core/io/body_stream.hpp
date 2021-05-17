@@ -42,7 +42,7 @@ namespace Azure { namespace Core { namespace IO {
      *
      * @return Number of bytes read.
      */
-    virtual int64_t OnRead(uint8_t* buffer, int64_t count, Azure::Core::Context const& context) = 0;
+    virtual int64_t OnRead(uint8_t* buffer, size_t count, Azure::Core::Context const& context) = 0;
 
   public:
     /// Destructor.
@@ -79,7 +79,7 @@ namespace Azure { namespace Core { namespace IO {
      */
     int64_t Read(
         uint8_t* buffer,
-        int64_t count,
+        size_t count,
         Azure::Core::Context const& context = Azure::Core::Context())
     {
       context.ThrowIfCancelled();
@@ -98,7 +98,7 @@ namespace Azure { namespace Core { namespace IO {
      */
     int64_t ReadToCount(
         uint8_t* buffer,
-        int64_t count,
+        size_t count,
         Azure::Core::Context const& context = Azure::Core::Context());
 
     /**
@@ -119,10 +119,10 @@ namespace Azure { namespace Core { namespace IO {
   class MemoryBodyStream final : public BodyStream {
   private:
     const uint8_t* m_data;
-    int64_t m_length;
+    size_t m_length;
     int64_t m_offset = 0;
 
-    int64_t OnRead(uint8_t* buffer, int64_t count, Azure::Core::Context const& context) override;
+    int64_t OnRead(uint8_t* buffer, size_t count, Azure::Core::Context const& context) override;
 
   public:
     // Forbid constructor for rval so we don't end up storing dangling ptr
@@ -134,7 +134,7 @@ namespace Azure { namespace Core { namespace IO {
      * @param buffer Vector of bytes with the contents to provide the data from to the readers.
      */
     MemoryBodyStream(std::vector<uint8_t> const& buffer)
-        : MemoryBodyStream(buffer.data(), static_cast<int64_t>(buffer.size()))
+        : MemoryBodyStream(buffer.data(), buffer.size())
     {
     }
 
@@ -145,7 +145,7 @@ namespace Azure { namespace Core { namespace IO {
      * from to the readers.
      * @param length Size of the buffer.
      */
-    explicit MemoryBodyStream(const uint8_t* data, int64_t length) : m_data(data), m_length(length)
+    explicit MemoryBodyStream(const uint8_t* data, size_t length) : m_data(data), m_length(length)
     {
     }
 
@@ -172,7 +172,7 @@ namespace Azure { namespace Core { namespace IO {
       // mutable
       int64_t m_offset;
 
-      int64_t OnRead(uint8_t* buffer, int64_t count, Azure::Core::Context const& context) override;
+      int64_t OnRead(uint8_t* buffer, size_t count, Azure::Core::Context const& context) override;
 
     public:
 #if defined(AZ_PLATFORM_POSIX)
@@ -247,7 +247,7 @@ namespace Azure { namespace Core { namespace IO {
     // mutable
     std::unique_ptr<_internal::RandomAccessFileBodyStream> m_randomAccessFileBodyStream;
 
-    int64_t OnRead(uint8_t* buffer, int64_t count, Azure::Core::Context const& context) override;
+    int64_t OnRead(uint8_t* buffer, size_t count, Azure::Core::Context const& context) override;
 
   public:
     /**
