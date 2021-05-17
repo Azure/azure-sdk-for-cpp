@@ -173,7 +173,7 @@ namespace Azure { namespace Core {
      *
      * @return The deadline associated with the context;
      * @return `Azure::DateTime::max()` if no deadline is specified.
-     * 
+     *
      */
     DateTime GetDeadline() const;
 

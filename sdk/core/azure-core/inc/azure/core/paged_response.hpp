@@ -73,7 +73,7 @@ namespace Azure { namespace Core {
      * @brief Checks if a page exists.
      *
      * @note Returns false after the last page.
-     * 
+     *
      */
     bool HasPage() const { return m_hasPage; }
 
