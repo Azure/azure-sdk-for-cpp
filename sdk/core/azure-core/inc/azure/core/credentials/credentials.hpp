@@ -99,6 +99,8 @@ namespace Azure { namespace Core { namespace Credentials {
     /**
      * Gets the explanatory string.
      *
+     * @note See https://en.cppreference.com/w/cpp/error/exception/what.
+     *
      * @return C string with explanatory information.
      */
     char const* what() const noexcept override { return m_message.c_str(); }
