@@ -3,12 +3,18 @@
 
 /**
  * @file
- * @brief This file defines a macro for DLL export.
+ * @brief DLL export macro.
  */
 
 // For explanation, see the comment in azure/core/dll_import_export.hpp
 
 #pragma once
+
+/**
+ * @def AZ_STORAGE_FILES_DATALAKE_DLLEXPORT
+ * @brief Applies DLL export attribute, when applicable.
+ * @note See https://docs.microsoft.com/cpp/cpp/dllexport-dllimport?view=msvc-160.
+ */
 
 #if defined(AZ_STORAGE_FILES_DATALAKE_DLL) \
     || (0 /*@AZ_STORAGE_FILES_DATALAKE_DLL_INSTALLED_AS_PACKAGE@*/)

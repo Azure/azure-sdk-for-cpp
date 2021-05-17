@@ -3,12 +3,18 @@
 
 /**
  * @file
- * @brief This file defines a macro for DLL export.
+ * @brief DLL export macro.
  */
 
 // For explanation, see the comment in azure/core/dll_import_export.hpp
 
 #pragma once
+
+/**
+ * @def AZ_TEMPLATE_DLLEXPORT
+ * @brief Applies DLL export attribute, when applicable.
+ * @note See https://docs.microsoft.com/cpp/cpp/dllexport-dllimport?view=msvc-160.
+ */
 
 #if defined(AZ_TEMPLATE_DLL) || (0 /*@AZ_TEMPLATE_DLL_INSTALLED_AS_PACKAGE@*/)
 #define AZ_TEMPLATE_BUILT_AS_DLL 1
@@ -31,3 +37,17 @@
 #endif // AZ_STORAGE_BLOBS_BUILT_AS_DLL
 
 #undef AZ_TEMPLATE_BUILT_AS_DLL
+
+/**
+ * @brief Azure SDK abstractions.
+ *
+ */
+namespace Azure {
+
+/**
+ * @brief Azure Template SDK abstractions.
+ *
+ */
+namespace Template {
+}
+} // namespace Azure

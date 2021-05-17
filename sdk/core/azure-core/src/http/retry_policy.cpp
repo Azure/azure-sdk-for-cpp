@@ -108,14 +108,14 @@ int32_t RetryPolicy::GetRetryCount(Context const& context)
 
 std::unique_ptr<RawResponse> RetryPolicy::Send(
     Request& request,
-    NextHttpPolicy nextHttpPolicy,
-    Context const& ctx) const
+    NextHttpPolicy nextPolicy,
+    Context const& context) const
 {
   using Azure::Core::Diagnostics::Logger;
   using Azure::Core::Diagnostics::_internal::Log;
   // retryCount needs to be apart from RetryNumber attempt.
   int32_t retryCount = 0;
-  auto retryContext = ctx.WithValue(RetryKey, &retryCount);
+  auto retryContext = context.WithValue(RetryKey, &retryCount);
 
   for (int32_t attempt = 1;; ++attempt)
   {
@@ -126,7 +126,7 @@ std::unique_ptr<RawResponse> RetryPolicy::Send(
 
     try
     {
-      auto response = nextHttpPolicy.Send(request, retryContext);
+      auto response = nextPolicy.Send(request, retryContext);
 
       // If we are out of retry attempts, if a response is non-retriable (or simply 200 OK, i.e
       // doesn't need to be retried), then ShouldRetry returns false.
@@ -164,7 +164,7 @@ std::unique_ptr<RawResponse> RetryPolicy::Send(
     // we proceed immediately if it is 0.
     if (retryAfter.count() > 0)
     {
-      ctx.ThrowIfCancelled();
+      context.ThrowIfCancelled();
       std::this_thread::sleep_for(retryAfter);
     }
 
