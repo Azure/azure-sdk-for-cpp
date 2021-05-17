@@ -114,7 +114,7 @@ public:
         break;
     }
     // Unknown comparison
-    AZURE_UNREACHABLE_CODE;
+    AZURE_UNREACHABLE_CODE();
   }
 
   /**

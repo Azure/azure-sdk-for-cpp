@@ -187,11 +187,7 @@ namespace Azure { namespace Storage {
       ~StartBlobCopyOperation() override {}
 
     private:
-      std::string GetResumeToken() const override
-      {
-        // Not supported
-        std::abort();
-      }
+      std::string GetResumeToken() const override { AZURE_NOT_IMPLEMENTED(); }
 
       std::unique_ptr<Azure::Core::Http::RawResponse> PollInternal(
           const Azure::Core::Context& context) override;
