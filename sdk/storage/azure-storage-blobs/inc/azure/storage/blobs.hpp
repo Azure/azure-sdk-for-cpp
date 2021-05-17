@@ -8,14 +8,10 @@
 
 #pragma once
 
-#include "azure/storage/blobs/protocol/blob_rest_client.hpp"
-
 #include "azure/storage/blobs/append_blob_client.hpp"
 #include "azure/storage/blobs/blob_client.hpp"
 #include "azure/storage/blobs/blob_container_client.hpp"
 #include "azure/storage/blobs/blob_lease_client.hpp"
-#include "azure/storage/blobs/blob_options.hpp"
-#include "azure/storage/blobs/blob_responses.hpp"
 #include "azure/storage/blobs/blob_sas_builder.hpp"
 #include "azure/storage/blobs/blob_service_client.hpp"
 #include "azure/storage/blobs/block_blob_client.hpp"
