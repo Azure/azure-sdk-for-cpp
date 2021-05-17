@@ -14,7 +14,8 @@ using namespace Azure::Core::Diagnostics::_internal;
 
 namespace {
 static std::shared_timed_mutex g_logListenerMutex;
-static Logger::Listener g_logListener(_detail::EnvironmentLogLevelListener::GetLogListener());
+static std::function<void(Logger::Level level, std::string const& message)> g_logListener(
+    _detail::EnvironmentLogLevelListener::GetLogListener());
 } // namespace
 
 std::atomic<bool> Log::g_isLoggingEnabled(
