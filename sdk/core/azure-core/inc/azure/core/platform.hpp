@@ -3,7 +3,7 @@
 
 /**
  * @file
- * @brief Defines platform-specific macros.
+ * @brief Platform-specific macros.
  */
 
 // The proper way to check for "UWP/NOT UWP" (*):
