@@ -42,7 +42,8 @@ void Log::Write(Logger::Level level, std::string const& message)
   }
 }
 
-void Logger::SetListener(Logger::Listener listener)
+void Logger::SetListener(
+    std::function<void(Logger::Level level, std::string const& message)> listener)
 {
   std::unique_lock<std::shared_timed_mutex> loggerLock(g_logListenerMutex);
   g_logListener = std::move(listener);
