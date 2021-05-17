@@ -61,7 +61,7 @@ struct TestContextTreeIntegrity final : public Azure::Core::Http::Policies::Http
       Azure::Core::Context const& context) const override
   {
     std::string valueHolder;
-    EXPECT_TRUE(ctx.TryGetValue<std::string>(TheKey, valueHolder));
+    EXPECT_TRUE(context.TryGetValue<std::string>(TheKey, valueHolder));
     EXPECT_EQ("TheValue", valueHolder);
     return nextPolicy.Send(request, context);
   }
