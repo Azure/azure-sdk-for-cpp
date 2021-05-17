@@ -78,7 +78,7 @@ namespace Azure { namespace Core {
     /**
      * @brief Encodes \p value by escaping characters to the form of %HH where HH are hex digits.
      *
-     * @remark \p doNotEncodeSymbols arg can be used to explicitly ask this function to skip
+     * @note \p doNotEncodeSymbols arg can be used to explicitly ask this function to skip
      * characters from encoding. For instance, using this `= -` input would prevent encoding `=`, `
      * ` and `-`.
      *
@@ -166,7 +166,7 @@ namespace Azure { namespace Core {
      * will be encoded before adding to the URL. Use \p isValueEncoded = true when the
      * value is already encoded.
      *
-     * @remark Overrides the value of existing query parameters.
+     * @note Overrides the value of existing query parameters.
      *
      * @param encodedKey Name of the query parameter, already encoded.
      * @param encodedValue Value of the query parameter, already encoded.
@@ -203,7 +203,7 @@ namespace Azure { namespace Core {
     /**
      * @brief Gets the port number set for the URL.
      *
-     * @remark If the port was not set for the URL, the returned port is 0. An HTTP request cannot
+     * @note If the port was not set for the URL, the returned port is 0. An HTTP request cannot
      * be performed to port zero, an HTTP client is expected to set the default port depending on
      * the request's schema when the port was not defined in the URL.
      *
@@ -214,7 +214,7 @@ namespace Azure { namespace Core {
     /**
      * @brief Gets a copy of the list of query parameters from the URL.
      *
-     * @remark The query parameters are URL-encoded.
+     * @note The query parameters are URL-encoded.
      *
      * @return A copy of the query parameters map.
      */

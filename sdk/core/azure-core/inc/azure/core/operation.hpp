@@ -81,7 +81,7 @@ namespace Azure { namespace Core {
     /**
      * @brief Final result of the long-running operation.
      *
-     * @return T the final result of the long-running operation.
+     * @return The final result of the long-running operation.
      */
     virtual T Value() const = 0;
 

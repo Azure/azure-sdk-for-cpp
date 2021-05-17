@@ -66,7 +66,7 @@ namespace Azure { namespace Core {
     std::unique_ptr<Azure::Core::Http::RawResponse> RawResponse;
 
     /**
-     * @brief Constructs a new RequestFailedException object.
+     * @brief Constructs a new `RequestFailedException` object.
      *
      * @note An Exception without an HTTP raw response represents an exception that happened
      * before sending the request to the server.
@@ -79,7 +79,7 @@ namespace Azure { namespace Core {
     }
 
     /**
-     * @brief Constructs a new RequestFailedException object with an HTTP raw response.
+     * @brief Constructs a new `RequestFailedException` object with an HTTP raw response.
      *
      * @note The HTTP raw response is parsed to populate information expected from all Azure
      * Services like the status code, reason phrase and some headers like the request ID. A concrete

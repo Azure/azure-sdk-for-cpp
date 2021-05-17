@@ -58,9 +58,9 @@ namespace Azure { namespace Core {
       Key() : m_uniqueAddress(this) {}
 
       /**
-       * @brief Compare with \p other #Azure::Core::Context::Key for equality.
-       * @param other Other #Azure::Core::Context::Key to compare with.
-       * @return `true` if #Azure::Core::Context::Key instances are equal; otherwise, `false`.
+       * @brief Compare with \p other `Azure::Core::Context::Key` for equality.
+       * @param other Other `Azure::Core::Context::Key` to compare with.
+       * @return `true` if instances are equal; otherwise, `false`.
        */
       bool operator==(Key const& other) const
       {
@@ -68,9 +68,9 @@ namespace Azure { namespace Core {
       }
 
       /**
-       * @brief Compare with \p other #Azure::Core::Context::Key for equality.
-       * @param other Other #Azure::Core::Context::Key to compare with.
-       * @return `false` if #Azure::Core::Context::Key instances are equal; otherwise, `true`.
+       * @brief Compare with \p other `Azure::Core::Context::Key` for equality.
+       * @param other Other `Azure::Core::Context::Key` to compare with.
+       * @return `false` if instances are equal; otherwise, `true`.
        */
       bool operator!=(Key const& other) const { return !(*this == other); }
     };
@@ -224,7 +224,8 @@ namespace Azure { namespace Core {
     bool IsCancelled() const noexcept { return GetDeadline() < std::chrono::system_clock::now(); }
 
     /**
-     * @brief Throws an #Azure::Core::OperationCancelledException if the context is cancelled.
+     * @brief Checks if the context is cancelled.
+     * @throw #Azure::Core::OperationCancelledException if the context is cancelled.
      *
      */
     void ThrowIfCancelled() const

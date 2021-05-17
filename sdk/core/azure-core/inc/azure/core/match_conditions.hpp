@@ -21,7 +21,7 @@ namespace Azure {
 struct MatchConditions
 {
   /**
-   * @brief Destructs the MatchConditions.
+   * @brief Destructs the `MatchConditions`.
    *
    */
   virtual ~MatchConditions() = default;
