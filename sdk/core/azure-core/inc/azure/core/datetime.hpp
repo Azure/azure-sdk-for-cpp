@@ -115,7 +115,6 @@ public:
 
   /**
    * @brief Construct an instance of #Azure::DateTime from base class.
-   *
    */
   constexpr DateTime(time_point const& timePoint) : time_point(timePoint) {}
 
@@ -140,7 +139,6 @@ public:
 
   /**
    * @brief Defines the format applied to the fraction part of any #Azure::DateTime.
-   *
    */
   enum class TimeFractionFormat
   {
@@ -157,7 +155,6 @@ public:
 
   /**
    * @brief Defines the supported date and time string formats.
-   *
    */
   enum class DateFormat
   {
