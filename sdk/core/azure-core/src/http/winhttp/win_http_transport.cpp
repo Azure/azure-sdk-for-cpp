@@ -289,12 +289,12 @@ void WinHttpTransport::Upload(std::unique_ptr<_detail::HandleManager>& handleMan
   int64_t streamLength = streamBody->Length();
 
   // Consider using `MaximumUploadChunkSize` here, after some perf measurements
-  int64_t uploadChunkSize = _detail::DefaultUploadChunkSize;
+  size_t uploadChunkSize = _detail::DefaultUploadChunkSize;
   if (streamLength < _detail::MaximumUploadChunkSize)
   {
-    uploadChunkSize = streamLength;
+    uploadChunkSize = static_cast<size_t>(streamLength);
   }
-  auto unique_buffer = std::make_unique<uint8_t[]>(static_cast<size_t>(uploadChunkSize));
+  auto unique_buffer = std::make_unique<uint8_t[]>(uploadChunkSize);
 
   while (true)
   {

@@ -824,9 +824,12 @@ size_t CurlSession::OnRead(uint8_t* buffer, size_t count, Context const& context
   if (this->m_bodyStartInBuffer >= 0)
   {
     // still have data to take from innerbuffer
+    // TODO: Change the fields to be size_t for a less error-prone implementation
+    // The casts here are safe to do because we know the buffers and the offset are within the
+    // range.
     Azure::Core::IO::MemoryBodyStream innerBufferMemoryStream(
         this->m_readBuffer + this->m_bodyStartInBuffer,
-        this->m_innerBufferSize - this->m_bodyStartInBuffer);
+        static_cast<size_t>(this->m_innerBufferSize - this->m_bodyStartInBuffer));
 
     totalRead = innerBufferMemoryStream.Read(buffer, readRequestLength, context);
     this->m_bodyStartInBuffer += totalRead;
