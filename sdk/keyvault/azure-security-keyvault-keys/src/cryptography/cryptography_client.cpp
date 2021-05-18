@@ -34,10 +34,10 @@ inline std::vector<uint8_t> CreateDigest(
   auto heapBuffer = std::make_unique<std::vector<uint8_t>>(DefaultStreamDigestReadSize);
   auto* buffer = heapBuffer.get()->data();
   auto hashAlgorithm = algorithm.GetHashAlgorithm();
-  for (uint64_t read = data.Read(buffer, DefaultStreamDigestReadSize); read > 0;
+  for (size_t read = data.Read(buffer, DefaultStreamDigestReadSize); read > 0;
        read = data.Read(buffer, DefaultStreamDigestReadSize))
   {
-    hashAlgorithm->Append(buffer, static_cast<size_t>(read));
+    hashAlgorithm->Append(buffer, read);
   }
   return hashAlgorithm->Final();
 }

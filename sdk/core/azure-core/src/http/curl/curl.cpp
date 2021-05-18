@@ -531,14 +531,13 @@ CURLcode CurlSession::UploadBody(Context const& context)
 
   while (true)
   {
-    auto rawRequestLen
+    size_t rawRequestLen
         = streamBody->Read(unique_buffer.get(), _detail::DefaultUploadChunkSize, context);
     if (rawRequestLen == 0)
     {
       break;
     }
-    sendResult = m_connection->SendBuffer(
-        unique_buffer.get(), static_cast<size_t>(rawRequestLen), context);
+    sendResult = m_connection->SendBuffer(unique_buffer.get(), rawRequestLen, context);
     if (sendResult != CURLE_OK)
     {
       return sendResult;
@@ -884,7 +883,7 @@ void CurlConnection::Shutdown()
 }
 
 // Read from socket and return the number of bytes taken from socket
-int64_t CurlConnection::ReadFromSocket(uint8_t* buffer, int64_t bufferSize, Context const& context)
+size_t CurlConnection::ReadFromSocket(uint8_t* buffer, size_t bufferSize, Context const& context)
 {
   // loop until read result is not CURLE_AGAIN
   // Next loop is expected to be called at most 2 times:
@@ -899,7 +898,7 @@ int64_t CurlConnection::ReadFromSocket(uint8_t* buffer, int64_t bufferSize, Cont
   size_t readBytes = 0;
   for (CURLcode readResult = CURLE_AGAIN; readResult == CURLE_AGAIN;)
   {
-    readResult = curl_easy_recv(m_handle, buffer, static_cast<size_t>(bufferSize), &readBytes);
+    readResult = curl_easy_recv(m_handle, buffer, bufferSize, &readBytes);
 
     switch (readResult)
     {

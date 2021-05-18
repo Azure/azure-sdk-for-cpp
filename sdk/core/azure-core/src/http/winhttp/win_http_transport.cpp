@@ -298,7 +298,7 @@ void WinHttpTransport::Upload(std::unique_ptr<_detail::HandleManager>& handleMan
 
   while (true)
   {
-    auto rawRequestLen
+    size_t rawRequestLen
         = streamBody->Read(unique_buffer.get(), uploadChunkSize, handleManager->m_context);
     if (rawRequestLen == 0)
     {

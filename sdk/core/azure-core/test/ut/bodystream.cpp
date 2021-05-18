@@ -97,7 +97,7 @@ TEST(FileBodyStream, Read)
   // ReadToCount
   std::vector<uint8_t> buffer(FileSize * 2);
 
-  int64_t readSize = stream.ReadToCount(buffer.data(), 10);
+  size_t readSize = stream.ReadToCount(buffer.data(), 10);
   EXPECT_EQ(readSize, 10);
   EXPECT_EQ(buffer[10], 0);
 
