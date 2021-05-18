@@ -37,7 +37,7 @@ int64_t RandomAccessFileBodyStream::OnRead(
   auto numberOfBytesRead = pread(
       this->m_fileDescriptor,
       buffer,
-      std::min(count, this->m_length - this->m_offset),
+      std::min(static_cast<int64_t>(count), this->m_length - this->m_offset),
       this->m_baseOffset + this->m_offset);
 
   if (numberOfBytesRead < 0)
