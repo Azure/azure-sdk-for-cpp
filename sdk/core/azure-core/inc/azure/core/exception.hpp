@@ -109,7 +109,8 @@ namespace Azure { namespace Core {
 
     /**
      * @brief Constructs a new `RequestFailedException`.
-     * @note Transfers ownership of the #Azure::Core::Http::RawResponse to the new `RequestFailedException`.
+     * @note Transfers ownership of the #Azure::Core::Http::RawResponse to the new
+     * `RequestFailedException`.
      *
      * @param other An rvalue reference for moving the `RequestFailedException`.
      */
