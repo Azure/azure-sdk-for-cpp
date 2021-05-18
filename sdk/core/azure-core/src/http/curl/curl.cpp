@@ -831,7 +831,10 @@ size_t CurlSession::OnRead(uint8_t* buffer, size_t count, Context const& context
         this->m_readBuffer + this->m_bodyStartInBuffer,
         static_cast<size_t>(this->m_innerBufferSize - this->m_bodyStartInBuffer));
 
-    totalRead = innerBufferMemoryStream.Read(buffer, readRequestLength, context);
+    // From code inspection, it is guaranteed that the readRequestLength will fit within size_t
+    // since count is bounded by size_t.
+    totalRead
+        = innerBufferMemoryStream.Read(buffer, static_cast<size_t>(readRequestLength), context);
     this->m_bodyStartInBuffer += totalRead;
     this->m_sessionTotalRead += totalRead;
 
