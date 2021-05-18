@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: MIT
 
 /**
- * @brief General purpose header for Key Vault keys functionality.
+ * @brief Includes all public headers from Azure Key Vault Keys SDK library.
  *
  */
 
@@ -10,6 +10,15 @@
 
 #include "azure/keyvault/keys/cryptography/cryptography_client.hpp"
 #include "azure/keyvault/keys/cryptography/cryptography_client_options.hpp"
+#include "azure/keyvault/keys/cryptography/decrypt_parameters.hpp"
+#include "azure/keyvault/keys/cryptography/decrypt_result.hpp"
+#include "azure/keyvault/keys/cryptography/encryption_algorithm.hpp"
+#include "azure/keyvault/keys/cryptography/key_wrap_algorithm.hpp"
+#include "azure/keyvault/keys/cryptography/sign_result.hpp"
+#include "azure/keyvault/keys/cryptography/signature_algorithm.hpp"
+#include "azure/keyvault/keys/cryptography/unwrap_result.hpp"
+#include "azure/keyvault/keys/cryptography/verify_result.hpp"
+#include "azure/keyvault/keys/cryptography/wrap_result.hpp"
 #include "azure/keyvault/keys/delete_key_operation.hpp"
 #include "azure/keyvault/keys/deleted_key.hpp"
 #include "azure/keyvault/keys/dll_import_export.hpp"

@@ -1,6 +1,11 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
 
+/**
+ * @brief Includes all public headers from Azure Storage Files Data Lake SDK library.
+ *
+ */
+
 #pragma once
 
 #include "azure/storage/files/datalake/datalake_directory_client.hpp"
