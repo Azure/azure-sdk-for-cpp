@@ -94,9 +94,10 @@ namespace Azure { namespace Core {
         std::unique_ptr<Azure::Core::Http::RawResponse> rawResponse);
 
     /**
-     * @brief Copy a RequestFailedException to construct a new one.
+     * @brief Constructs a new `RequestFailedException` by copy.
+     * @note Copies the #Azure::Core::Http::RawResponse into the new `RequestFailedException`.
      *
-     * @param other The one to be copied.
+     * @param other The `RequestFailedException` to be copied.
      */
     RequestFailedException(const RequestFailedException& other)
         : std::runtime_error(other.Message), StatusCode(other.StatusCode),
@@ -107,9 +108,10 @@ namespace Azure { namespace Core {
     }
 
     /**
-     * @brief Move a RequestFailedException to construct a new one.
+     * @brief Constructs a new `RequestFailedException`.
+     * @note Transfers ownership of the #Azure::Core::Http::RawResponse to the new `RequestFailedException`.
      *
-     * @param other The one to be moved.
+     * @param other An rvalue reference for moving the `RequestFailedException`.
      */
     RequestFailedException(RequestFailedException&& other) = default;
   };

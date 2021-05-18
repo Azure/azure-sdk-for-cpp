@@ -82,7 +82,8 @@ namespace Azure { namespace Core { namespace Http {
     }
 
     /**
-     * @brief Move a raw response to construct a new one.
+     * @brief Constructs a new `RawResponse`.
+     * @note Transfers ownership of the `RawResponse` to the new `RawResponse`.
      *
      * @param response An rvalue reference for moving the raw response.
      */
