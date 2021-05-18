@@ -76,9 +76,17 @@ namespace Azure { namespace Core { namespace Http {
             response.m_statusCode,
             response.m_reasonPhrase)
     {
+      AZURE_ASSERT(m_bodyStream == nullptr);
       // Copy body
       m_body = response.GetBody();
     }
+
+    /**
+     * @brief Move a raw response to construct a new one.
+     *
+     * @param response An rvalue reference for moving the raw response.
+     */
+    RawResponse(RawResponse&& response) = default;
 
     // ===== Methods used to build HTTP response =====
 
