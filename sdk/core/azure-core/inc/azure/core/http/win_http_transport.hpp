@@ -104,7 +104,7 @@ namespace Azure { namespace Core { namespace Http {
        * @param count The number of bytes to read from the network.
        * @return The actual number of bytes read from the network.
        */
-      int64_t OnRead(uint8_t* buffer, int64_t count, Azure::Core::Context const& context) override;
+      size_t OnRead(uint8_t* buffer, size_t count, Azure::Core::Context const& context) override;
 
     public:
       WinHttpStream(std::unique_ptr<HandleManager> handleManager, int64_t contentLength)

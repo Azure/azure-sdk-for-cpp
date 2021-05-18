@@ -42,7 +42,7 @@ namespace Azure { namespace Core { namespace IO {
      *
      * @return Number of bytes read.
      */
-    virtual int64_t OnRead(uint8_t* buffer, size_t count, Azure::Core::Context const& context) = 0;
+    virtual size_t OnRead(uint8_t* buffer, size_t count, Azure::Core::Context const& context) = 0;
 
   public:
     /// Destructor.
@@ -120,9 +120,9 @@ namespace Azure { namespace Core { namespace IO {
   private:
     const uint8_t* m_data;
     size_t m_length;
-    int64_t m_offset = 0;
+    size_t m_offset = 0;
 
-    int64_t OnRead(uint8_t* buffer, size_t count, Azure::Core::Context const& context) override;
+    size_t OnRead(uint8_t* buffer, size_t count, Azure::Core::Context const& context) override;
 
   public:
     // Forbid constructor for rval so we don't end up storing dangling ptr
@@ -172,7 +172,7 @@ namespace Azure { namespace Core { namespace IO {
       // mutable
       int64_t m_offset;
 
-      int64_t OnRead(uint8_t* buffer, size_t count, Azure::Core::Context const& context) override;
+      size_t OnRead(uint8_t* buffer, size_t count, Azure::Core::Context const& context) override;
 
     public:
 #if defined(AZ_PLATFORM_POSIX)
@@ -247,7 +247,7 @@ namespace Azure { namespace Core { namespace IO {
     // mutable
     std::unique_ptr<_internal::RandomAccessFileBodyStream> m_randomAccessFileBodyStream;
 
-    int64_t OnRead(uint8_t* buffer, size_t count, Azure::Core::Context const& context) override;
+    size_t OnRead(uint8_t* buffer, size_t count, Azure::Core::Context const& context) override;
 
   public:
     /**

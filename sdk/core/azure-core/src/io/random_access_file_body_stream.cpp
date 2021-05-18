@@ -26,7 +26,7 @@
 using Azure::Core::Context;
 using namespace Azure::Core::IO::_internal;
 
-int64_t RandomAccessFileBodyStream::OnRead(
+size_t RandomAccessFileBodyStream::OnRead(
     uint8_t* buffer,
     size_t count,
     Azure::Core::Context const&)
@@ -34,6 +34,7 @@ int64_t RandomAccessFileBodyStream::OnRead(
 
 #if defined(AZ_PLATFORM_POSIX)
 
+  // Returning ssize_t from pread as a size_t is fine since we do a `< 0` check below and throw.
   auto numberOfBytesRead = pread(
       this->m_fileDescriptor,
       buffer,

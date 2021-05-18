@@ -580,9 +580,9 @@ std::unique_ptr<RawResponse> WinHttpTransport::Send(Request& request, Context co
 }
 
 // Read the response from the sent request.
-int64_t _detail::WinHttpStream::OnRead(uint8_t* buffer, int64_t count, Context const& context)
+size_t _detail::WinHttpStream::OnRead(uint8_t* buffer, size_t count, Context const& context)
 {
-  if (count <= 0 || this->m_isEOF)
+  if (count == 0 || this->m_isEOF)
   {
     return 0;
   }

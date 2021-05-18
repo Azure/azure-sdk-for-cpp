@@ -780,7 +780,7 @@ void CurlSession::ReadCRLF(Context const& context)
 }
 
 // Read from curl session
-int64_t CurlSession::OnRead(uint8_t* buffer, size_t count, Context const& context)
+size_t CurlSession::OnRead(uint8_t* buffer, size_t count, Context const& context)
 {
   if (count == 0 || this->IsEOF())
   {

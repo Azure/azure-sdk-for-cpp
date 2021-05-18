@@ -10,7 +10,7 @@ using Azure::Core::IO::BodyStream;
 
 namespace Azure { namespace Storage { namespace _internal {
 
-  int64_t ReliableStream::OnRead(uint8_t* buffer, size_t count, Context const& context)
+  size_t ReliableStream::OnRead(uint8_t* buffer, size_t count, Context const& context)
   {
     (void)context;
     for (int64_t intent = 1;; intent++)
