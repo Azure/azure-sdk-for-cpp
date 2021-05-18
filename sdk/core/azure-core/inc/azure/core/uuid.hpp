@@ -28,7 +28,7 @@ namespace Azure { namespace Core {
   class Uuid final {
 
   private:
-    static constexpr int32_t UuidSize = 16;
+    static constexpr size_t UuidSize = 16;
 
     uint8_t m_uuid[UuidSize];
     // The UUID reserved variants.
@@ -92,7 +92,8 @@ namespace Azure { namespace Core {
         std::memcpy(uuid + i, &x, 4);
       }
 #elif defined(AZ_PLATFORM_POSIX)
-      int ret = RAND_bytes(uuid, UuidSize);
+      // This static cast is safe since we know Uuid size, which is a const, will always fit an int.
+      int ret = RAND_bytes(uuid, static_cast<int>(UuidSize));
       if (ret <= 0)
       {
         abort();
