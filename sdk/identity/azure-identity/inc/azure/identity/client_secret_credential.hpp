@@ -3,7 +3,7 @@
 
 /**
  * @file
- * @brief Client Secret Credential.
+ * @brief Client Secret Credential and options.
  */
 
 #pragma once
@@ -23,7 +23,7 @@ namespace Azure { namespace Identity {
   }
 
   /**
-   * @brief Defines options for token authentication.
+   * @brief Options for token authentication.
    *
    */
   struct ClientSecretCredentialOptions final
@@ -32,8 +32,7 @@ namespace Azure { namespace Identity {
   public:
     /**
      * @brief Authentication authority URL.
-     * @details Default value is Azure AD global authority -
-     * "https://login.microsoftonline.com/".
+     * @note Default value is Azure AD global authority (https://login.microsoftonline.com/).
      *
      * @note Example of a \p authority string: "https://login.microsoftonline.us/". See national
      * clouds' Azure AD authentication endpoints:
@@ -43,8 +42,8 @@ namespace Azure { namespace Identity {
   };
 
   /**
-   * @brief This class is used by Azure SDK clients to authenticate with the Azure service using a
-   * Tenant ID, Client ID and client secret.
+   * @brief Client Secret Credential authenticates with the Azure services using a Tenant ID, Client
+   * ID and a client secret.
    */
   class ClientSecretCredential final : public Core::Credentials::TokenCredential {
   private:
@@ -55,7 +54,7 @@ namespace Azure { namespace Identity {
 
   public:
     /**
-     * @brief Construct a Client Secret credential.
+     * @brief Constructs a Client Secret Credential.
      *
      * @param tenantId Tenant ID.
      * @param clientId Client ID.
@@ -73,7 +72,7 @@ namespace Azure { namespace Identity {
     }
 
     /**
-     * @brief Construct a Client Secret credential.
+     * @brief Constructs a Client Secret Credential.
      *
      * @param tenantId Tenant ID.
      * @param clientId Client ID.
@@ -92,6 +91,15 @@ namespace Azure { namespace Identity {
       static_cast<Azure::Core::Credentials::TokenCredentialOptions&>(m_options) = options;
     }
 
+    /**
+     * @brief Gets an authentication token.
+     *
+     * @param tokenRequestContext #Azure::Core::Credentials::TokenRequestContext to get the token
+     * in.
+     * @param context #Azure::Core::Context so that operation can be cancelled.
+     *
+     * @throw Azure::Core::Credentials::AuthenticationException Authentication error occurred.
+     */
     Core::Credentials::AccessToken GetToken(
         Core::Credentials::TokenRequestContext const& tokenRequestContext,
         Core::Context const& context) const override;

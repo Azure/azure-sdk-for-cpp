@@ -20,11 +20,11 @@ namespace Azure { namespace Storage { namespace Test {
 
     std::unique_ptr<Core::Http::RawResponse> Send(
         Core::Http::Request& request,
-        Core::Http::Policies::NextHttpPolicy nextHttpPolicy,
+        Core::Http::Policies::NextHttpPolicy nextPolicy,
         Core::Context const& context) const override
     {
       m_callback(request);
-      return nextHttpPolicy.Send(request, context);
+      return nextPolicy.Send(request, context);
     }
 
     std::unique_ptr<HttpPolicy> Clone() const override
