@@ -1,6 +1,11 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
 
+/**
+ * @brief Includes all public headers from Azure Identity SDK library.
+ *
+ */
+
 #pragma once
 
 #include "azure/identity/client_secret_credential.hpp"

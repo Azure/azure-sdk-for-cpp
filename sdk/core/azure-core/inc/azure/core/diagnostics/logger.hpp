@@ -3,8 +3,7 @@
 
 /**
  * @file
- * @brief This header defines the types and functions your application uses to be notified of Azure
- * SDK client library log messages.
+ * @brief Handling log messages from Azure SDK.
  */
 
 #pragma once
@@ -40,18 +39,18 @@ namespace Azure { namespace Core { namespace Diagnostics {
     };
 
     /**
-     * @brief Set the function that will be invoked to report an SDK log message.
+     * @brief Sets the function that will be invoked to report an Azure SDK log message.
      *
-     * @param listener An #Azure::Core::Diagnostics::Logger::Listener function that will be invoked
-     * when the SDK reports a log message. If `nullptr`, no function will be invoked.
+     * @param listener A callback function that will be invoked when the SDK reports a log message.
+     * If `nullptr`, no function will be invoked.
      */
     static void SetListener(std::function<void(Level level, std::string const& message)> listener);
 
     /**
-     * @brief Sets the #Azure::Core::Diagnostics::Logger::Level an application is interested in
-     * receiving.
+     * @brief Sets the log message level an application is interested in receiving.
      *
-     * @param level Maximum log level.
+     * @param level The most verbose level to receive log messages for. Least verbose levels will be
+     * included, more verbose levels will be not.
      */
     static void SetLevel(Level level);
 

@@ -156,8 +156,8 @@ Azure::Core::CaseInsensitiveSet const
 
 std::unique_ptr<RawResponse> LogPolicy::Send(
     Request& request,
-    NextHttpPolicy nextHttpPolicy,
-    Context const& ctx) const
+    NextHttpPolicy nextPolicy,
+    Context const& context) const
 {
   using Azure::Core::Diagnostics::Logger;
   using Azure::Core::Diagnostics::_internal::Log;
@@ -168,11 +168,11 @@ std::unique_ptr<RawResponse> LogPolicy::Send(
   }
   else
   {
-    return nextHttpPolicy.Send(request, ctx);
+    return nextPolicy.Send(request, context);
   }
 
   auto const start = std::chrono::system_clock::now();
-  auto response = nextHttpPolicy.Send(request, ctx);
+  auto response = nextPolicy.Send(request, context);
   auto const end = std::chrono::system_clock::now();
 
   Log::Write(

@@ -42,8 +42,8 @@ namespace Azure { namespace Core {
 
   public:
     /**
-     * Gets UUID as a string.
-     * @details A string is in canonical format (4-2-2-2-6 lowercase hex and dashes only)
+     * @brief Gets Uuid as a string.
+     * @details A string is in canonical format (4-2-2-2-6 lowercase hex and dashes only).
      */
     std::string ToString()
     {
@@ -76,7 +76,7 @@ namespace Azure { namespace Core {
     }
 
     /**
-     * @brief Create a new random UUID.
+     * @brief Creates a new random UUID.
      *
      */
     static Uuid CreateUuid()
