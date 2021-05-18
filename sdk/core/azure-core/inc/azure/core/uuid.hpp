@@ -28,7 +28,7 @@ namespace Azure { namespace Core {
   class Uuid final {
 
   private:
-    static constexpr int UuidSize = 16;
+    static constexpr size_t UuidSize = 16;
 
     uint8_t m_uuid[UuidSize];
     // The UUID reserved variants.
@@ -42,8 +42,8 @@ namespace Azure { namespace Core {
 
   public:
     /**
-     * Gets UUID as a string.
-     * @details A string is in canonical format (4-2-2-2-6 lowercase hex and dashes only)
+     * @brief Gets Uuid as a string.
+     * @details A string is in canonical format (4-2-2-2-6 lowercase hex and dashes only).
      */
     std::string ToString()
     {
@@ -76,7 +76,7 @@ namespace Azure { namespace Core {
     }
 
     /**
-     * @brief Create a new random UUID.
+     * @brief Creates a new random UUID.
      *
      */
     static Uuid CreateUuid()
@@ -86,13 +86,14 @@ namespace Azure { namespace Core {
 #if defined(AZ_PLATFORM_WINDOWS)
       std::random_device rd;
 
-      for (int i = 0; i < UuidSize; i += 4)
+      for (size_t i = 0; i < UuidSize; i += 4)
       {
         const uint32_t x = rd();
         std::memcpy(uuid + i, &x, 4);
       }
 #elif defined(AZ_PLATFORM_POSIX)
-      int ret = RAND_bytes(uuid, UuidSize);
+      // This static cast is safe since we know Uuid size, which is a const, will always fit an int.
+      int ret = RAND_bytes(uuid, static_cast<int>(UuidSize));
       if (ret <= 0)
       {
         abort();

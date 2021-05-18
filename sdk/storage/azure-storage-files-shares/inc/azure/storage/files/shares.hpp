@@ -1,6 +1,11 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
 
+/**
+ * @brief Includes all public headers from Azure Storage Files Shares SDK library.
+ *
+ */
+
 #pragma once
 
 #include "azure/storage/files/shares/dll_import_export.hpp"

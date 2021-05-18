@@ -123,7 +123,8 @@ Logger::Level EnvironmentLogLevelListener::GetLogLevel(Logger::Level defaultValu
   return envLogLevelPtr ? *envLogLevelPtr : defaultValue;
 }
 
-Logger::Listener EnvironmentLogLevelListener::GetLogListener()
+std::function<void(Logger::Level level, std::string const& message)>
+EnvironmentLogLevelListener::GetLogListener()
 {
   bool const isEnvLogLevelSet = GetEnvironmentLogLevel() != nullptr;
   if (!isEnvLogLevelSet)
@@ -131,13 +132,14 @@ Logger::Listener EnvironmentLogLevelListener::GetLogListener()
     return nullptr;
   }
 
-  static Logger::Listener const consoleLogger = [](auto level, auto message) {
-    std::cerr << '['
-              << Azure::DateTime(std::chrono::system_clock::now())
-                     .ToString(
-                         DateTime::DateFormat::Rfc3339, DateTime::TimeFractionFormat::AllDigits)
-              << "] " << LogLevelToConsoleString(level) << " : " << message << std::endl;
-  };
+  static std::function<void(Logger::Level level, std::string const& message)> const consoleLogger =
+      [](auto level, auto message) {
+        std::cerr << '['
+                  << Azure::DateTime(std::chrono::system_clock::now())
+                         .ToString(
+                             DateTime::DateFormat::Rfc3339, DateTime::TimeFractionFormat::AllDigits)
+                  << "] " << LogLevelToConsoleString(level) << " : " << message << std::endl;
+      };
 
   return consoleLogger;
 }

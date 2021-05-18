@@ -20,8 +20,8 @@ namespace Azure { namespace Storage { namespace _internal {
 
     std::unique_ptr<Core::Http::RawResponse> Send(
         Core::Http::Request& request,
-        Core::Http::Policies::NextHttpPolicy nextHttpPolicy,
-        Core::Context const& ctx) const override;
+        Core::Http::Policies::NextHttpPolicy nextPolicy,
+        Core::Context const& context) const override;
   };
 
 }}} // namespace Azure::Storage::_internal

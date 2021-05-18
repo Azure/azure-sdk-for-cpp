@@ -66,10 +66,10 @@ namespace Azure { namespace Core {
     std::unique_ptr<Azure::Core::Http::RawResponse> RawResponse;
 
     /**
-     * @brief Construct a new Request Failed Exception object.
+     * @brief Constructs a new `RequestFailedException` object.
      *
-     * @remark An Exception without an HTTP raw response represent an exception happend
-     * before sending the request to the server. There is no response yet.
+     * @note An Exception without an HTTP raw response represents an exception that happened
+     * before sending the request to the server.
      *
      * @param message The error description.
      */
@@ -79,12 +79,12 @@ namespace Azure { namespace Core {
     }
 
     /**
-     * @brief Construct a new Request Failed Exception object with an HTTP raw response.
+     * @brief Constructs a new `RequestFailedException` object with an HTTP raw response.
      *
-     * @remark The HTTP raw response is parsed to get the always expected information for all Azure
+     * @note The HTTP raw response is parsed to populate information expected from all Azure
      * Services like the status code, reason phrase and some headers like the request ID. A concrete
      * Service exception which derives from this exception uses its constructor to parse the HTTP
-     * raw response and assing the service specific values to the exception.
+     * raw response adding the service specific values to the exception.
      *
      * @param message The error description.
      * @param rawResponse The HTTP raw response from the service.
@@ -92,5 +92,28 @@ namespace Azure { namespace Core {
     explicit RequestFailedException(
         const std::string& message,
         std::unique_ptr<Azure::Core::Http::RawResponse> rawResponse);
+
+    /**
+     * @brief Constructs a new `RequestFailedException` by copying from an existing one.
+     * @note Copies the #Azure::Core::Http::RawResponse into the new `RequestFailedException`.
+     *
+     * @param other The `RequestFailedException` to be copied.
+     */
+    RequestFailedException(const RequestFailedException& other)
+        : std::runtime_error(other.Message), StatusCode(other.StatusCode),
+          ReasonPhrase(other.ReasonPhrase), ClientRequestId(other.ClientRequestId),
+          RequestId(other.RequestId), ErrorCode(other.ErrorCode), Message(other.Message),
+          RawResponse(std::make_unique<Azure::Core::Http::RawResponse>(*other.RawResponse))
+    {
+    }
+
+    /**
+     * @brief Constructs a new `RequestFailedException`.
+     * @note Transfers ownership of the #Azure::Core::Http::RawResponse to the new
+     * `RequestFailedException`.
+     *
+     * @param other An rvalue reference for moving the `RequestFailedException`.
+     */
+    RequestFailedException(RequestFailedException&& other) = default;
   };
 }} // namespace Azure::Core
