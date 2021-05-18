@@ -802,7 +802,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       while (length > 0)
       {
         int64_t readSize = std::min(static_cast<int64_t>(bufferSize), length);
-        int64_t bytesRead = stream.ReadToCount(buffer.data(), readSize, context);
+        size_t bytesRead = stream.ReadToCount(buffer.data(), readSize, context);
         if (bytesRead != readSize)
         {
           throw Azure::Core::RequestFailedException("error when reading body stream");

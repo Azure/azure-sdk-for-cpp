@@ -101,7 +101,7 @@ namespace Azure { namespace Storage { namespace _internal {
 
   FileWriter::~FileWriter() { CloseHandle(static_cast<HANDLE>(m_handle)); }
 
-  void FileWriter::Write(const uint8_t* buffer, int64_t length, int64_t offset)
+  void FileWriter::Write(const uint8_t* buffer, size_t length, int64_t offset)
   {
     if (length > std::numeric_limits<DWORD>::max())
     {
@@ -155,15 +155,13 @@ namespace Azure { namespace Storage { namespace _internal {
 
   FileWriter::~FileWriter() { close(m_handle); }
 
-  void FileWriter::Write(const uint8_t* buffer, int64_t length, int64_t offset)
+  void FileWriter::Write(const uint8_t* buffer, size_t length, int64_t offset)
   {
-    if (static_cast<uint64_t>(length) > std::numeric_limits<size_t>::max()
-        || offset > static_cast<int64_t>(std::numeric_limits<off_t>::max()))
+    if (offset > static_cast<int64_t>(std::numeric_limits<off_t>::max()))
     {
       throw std::runtime_error("failed to write file");
     }
-    ssize_t bytesWritten
-        = pwrite(m_handle, buffer, static_cast<size_t>(length), static_cast<off_t>(offset));
+    ssize_t bytesWritten = pwrite(m_handle, buffer, length, static_cast<off_t>(offset));
     if (bytesWritten != length)
     {
       throw std::runtime_error("failed to write file");
