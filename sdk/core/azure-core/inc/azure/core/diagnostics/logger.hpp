@@ -39,20 +39,12 @@ namespace Azure { namespace Core { namespace Diagnostics {
     };
 
     /**
-     * @brief A callback function to receive Azure SDK log messages.
-     *
-     * @param level The log message level.
-     * @param message The log message text.
-     */
-    typedef std::function<void(Level level, std::string const& message)> Listener;
-
-    /**
      * @brief Sets the function that will be invoked to report an Azure SDK log message.
      *
      * @param listener A callback function that will be invoked when the SDK reports a log message.
      * If `nullptr`, no function will be invoked.
      */
-    static void SetListener(Listener listener);
+    static void SetListener(std::function<void(Level level, std::string const& message)> listener);
 
     /**
      * @brief Sets the log message level an application is interested in receiving.
