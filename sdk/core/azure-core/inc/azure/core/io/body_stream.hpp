@@ -77,7 +77,7 @@ namespace Azure { namespace Core { namespace IO {
      *
      * @return Number of bytes read.
      */
-    int64_t Read(
+    size_t Read(
         uint8_t* buffer,
         size_t count,
         Azure::Core::Context const& context = Azure::Core::Context())
@@ -96,7 +96,7 @@ namespace Azure { namespace Core { namespace IO {
      *
      * @return Number of bytes read.
      */
-    int64_t ReadToCount(
+    size_t ReadToCount(
         uint8_t* buffer,
         size_t count,
         Azure::Core::Context const& context = Azure::Core::Context());

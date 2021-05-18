@@ -40,16 +40,16 @@ static_assert(sizeof(void*) >= sizeof(HANDLE), "We must be able to cast HANDLE t
 #endif
 
 // Keep reading until buffer is all fill out of the end of stream content is reached
-int64_t BodyStream::ReadToCount(uint8_t* buffer, size_t count, Context const& context)
+size_t BodyStream::ReadToCount(uint8_t* buffer, size_t count, Context const& context)
 {
-  int64_t totalRead = 0;
+  size_t totalRead = 0;
 
   for (;;)
   {
-    int64_t readBytes = this->Read(buffer + totalRead, count - totalRead, context);
+    size_t readBytes = this->Read(buffer + totalRead, count - totalRead, context);
     totalRead += readBytes;
     // Reach all of buffer size
-    if (totalRead == static_cast<int64_t>(count) || readBytes == 0)
+    if (totalRead == count || readBytes == 0)
     {
       return totalRead;
     }
@@ -58,13 +58,13 @@ int64_t BodyStream::ReadToCount(uint8_t* buffer, size_t count, Context const& co
 
 std::vector<uint8_t> BodyStream::ReadToEnd(Context const& context)
 {
-  constexpr int64_t chunkSize = 1024 * 8;
+  constexpr size_t chunkSize = 1024 * 8;
   auto buffer = std::vector<uint8_t>();
 
   for (auto chunkNumber = 0;; chunkNumber++)
   {
     buffer.resize((static_cast<decltype(buffer)::size_type>(chunkNumber) + 1) * chunkSize);
-    int64_t readBytes
+    size_t readBytes
         = this->ReadToCount(buffer.data() + (chunkNumber * chunkSize), chunkSize, context);
 
     if (readBytes < chunkSize)

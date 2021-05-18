@@ -807,7 +807,7 @@ size_t CurlSession::OnRead(uint8_t* buffer, size_t count, Context const& context
     }
   }
 
-  auto totalRead = int64_t();
+  auto totalRead = size_t();
   int64_t readRequestLength = this->m_isChunkedResponseType
       ? (std::min)(this->m_chunkSize - this->m_sessionTotalRead, static_cast<int64_t>(count))
       : static_cast<int64_t>(count);
