@@ -184,7 +184,7 @@ namespace Azure { namespace Core { namespace Http {
        * @return return the numbers of bytes pulled from socket. It can be less than what it was
        * requested.
        */
-      int64_t ReadFromSocket(uint8_t* buffer, int64_t bufferSize, Context const& context) override;
+      size_t ReadFromSocket(uint8_t* buffer, size_t bufferSize, Context const& context) override;
 
       /**
        * @brief This method will use libcurl socket to write all the bytes from buffer.
