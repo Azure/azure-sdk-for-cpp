@@ -42,6 +42,8 @@ static_assert(sizeof(void*) >= sizeof(HANDLE), "We must be able to cast HANDLE t
 // Keep reading until buffer is all fill out of the end of stream content is reached
 size_t BodyStream::ReadToCount(uint8_t* buffer, size_t count, Context const& context)
 {
+  AZURE_ASSERT(buffer || count == 0);
+
   size_t totalRead = 0;
 
   for (;;)
@@ -89,6 +91,8 @@ size_t MemoryBodyStream::OnRead(uint8_t* buffer, size_t count, Context const& co
 
 FileBodyStream::FileBodyStream(const std::string& filename)
 {
+  AZURE_ASSERT_MSG(filename.size() > 0, "The file name must not be an empty string.");
+
 #if defined(AZ_PLATFORM_WINDOWS)
   HANDLE fileHandle = INVALID_HANDLE_VALUE;
   try
