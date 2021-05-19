@@ -82,8 +82,7 @@ namespace Azure { namespace Core { namespace IO {
         int64_t count,
         Azure::Core::Context const& context = Azure::Core::Context())
     {
-      AZURE_ASSERT_MSG(
-          buffer && count >= 0, "Count cannot be negative, and the buffer pointer cannot be null.");
+      AZURE_ASSERT(buffer && count >= 0);
 
       context.ThrowIfCancelled();
       return OnRead(buffer, count, context);
@@ -149,8 +148,7 @@ namespace Azure { namespace Core { namespace IO {
      */
     explicit MemoryBodyStream(const uint8_t* data, int64_t length) : m_data(data), m_length(length)
     {
-      AZURE_ASSERT_MSG(
-          data && length >= 0, "Length cannot be negative, and the data pointer cannot be null.");
+      AZURE_ASSERT(data != nullptr || length == 0);
     }
 
     int64_t Length() const override { return this->m_length; }
@@ -197,9 +195,7 @@ namespace Azure { namespace Core { namespace IO {
       RandomAccessFileBodyStream(int fileDescriptor, int64_t offset, int64_t length)
           : m_fileDescriptor(fileDescriptor), m_baseOffset(offset), m_length(length), m_offset(0)
       {
-        AZURE_ASSERT_MSG(
-            fileDescriptor > 0 && offset >= 0 && length >= 0,
-            "Offset and length cannot be negative, and the file handle must be valid.");
+        AZURE_ASSERT(fileDescriptor >= 0 && offset >= 0 && length >= 0);
       }
 
       RandomAccessFileBodyStream() : m_fileDescriptor(0), m_baseOffset(0), m_length(0), m_offset(0)
@@ -224,9 +220,7 @@ namespace Azure { namespace Core { namespace IO {
       RandomAccessFileBodyStream(void* fileHandle, int64_t offset, int64_t length)
           : m_filehandle(fileHandle), m_baseOffset(offset), m_length(length), m_offset(0)
       {
-        AZURE_ASSERT_MSG(
-            fileHandle && offset >= 0 && length >= 0,
-            "Offset and length cannot be negative, and the file handle must be valid.");
+        AZURE_ASSERT(fileHandle && offset >= 0 && length >= 0);
       }
 
       RandomAccessFileBodyStream() : m_filehandle(NULL), m_baseOffset(0), m_length(0), m_offset(0)
