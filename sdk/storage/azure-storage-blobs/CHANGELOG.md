@@ -11,6 +11,7 @@
 - Removed `ContentType` from `GetBlockListResult`.
 - Moved `GetPageRangesResult` to detail namespace.
 - `BlobServiceClient::UndeleteBlobContainer` doesn't support restoring a deleted container under a different name anymore.
+- Changed the type of block count to `int32_t`.
 
 ## 12.0.0-beta.10 (2021-04-16)
 
