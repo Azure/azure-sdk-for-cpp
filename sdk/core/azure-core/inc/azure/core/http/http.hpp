@@ -187,6 +187,7 @@ namespace Azure { namespace Core { namespace Http {
     explicit Request(HttpMethod httpMethod, Url url, Azure::Core::IO::BodyStream* bodyStream)
         : Request(httpMethod, std::move(url), bodyStream, true)
     {
+      AZURE_ASSERT_MSG(bodyStream, "The bodyStream pointer cannot be null.");
     }
 
     /**

@@ -163,7 +163,9 @@ namespace Azure { namespace Storage { namespace Blobs {
     };
 
     auto uploadBlockFunc = [&](int64_t offset, int64_t length, int64_t chunkId, int64_t numChunks) {
-      Azure::Core::IO::MemoryBodyStream contentStream(buffer + offset, length);
+      // TODO: Investigate changing lambda parameters to be size_t, unless they need to be int64_t
+      // for some reason.
+      Azure::Core::IO::MemoryBodyStream contentStream(buffer + offset, static_cast<size_t>(length));
       StageBlockOptions chunkOptions;
       auto blockInfo = StageBlock(getBlockId(chunkId), contentStream, chunkOptions, context);
       if (chunkId == numChunks - 1)

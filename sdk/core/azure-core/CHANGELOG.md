@@ -12,12 +12,17 @@
 - Removed `Context::GetApplicationContext()` in favor of a new static data member `Context::ApplicationContext`.
 - Renamed `Request::IsDownloadViaStream()` to `ShouldBufferResponse()`.
 - Removed the `Azure::Core::Http::Request` ctor overload that takes both a `bodyStream` and a `bufferedDownload` boolean since it is not useful.
+- Changed integer size parameters for buffers from `int64_t` to `size_t` in various places such as `Azure::Core::IO::BodyStream::Read()` APIs.
 - Removed the `Azure::Core::Diagnostics::Logger::Listener` typedef.
 
 ### Bug Fixes
 
 - Do not re-use a libcurl connection to same host but different port.
 - Ensure uniqueness of `Azure::Core::Uuid` on POSIX platforms.
+
+### Other Changes and Improvements
+
+- Modified precondition validation of function arguments to now result in assert failures rather than throwing an exception.
 
 ## 1.0.0-beta.8 (2021-04-07)
 

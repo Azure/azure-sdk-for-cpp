@@ -131,7 +131,7 @@ namespace Azure { namespace Storage { namespace Test {
                   static_cast<int64_t>(m_primaryContent->length()) - requestOffset, requestLength);
               auto bodyStream = std::make_unique<Core::IO::MemoryBodyStream>(
                   reinterpret_cast<const uint8_t*>(m_primaryContent->data() + requestOffset),
-                  bodyLength);
+                  static_cast<size_t>(bodyLength));
               response->SetBodyStream(std::move(bodyStream));
               response->SetHeader("content-length", std::to_string(bodyLength));
               response->SetHeader("etag", m_primaryETag.ToString());
@@ -161,7 +161,7 @@ namespace Azure { namespace Storage { namespace Test {
                 static_cast<int64_t>(m_secondaryContent->length()) - requestOffset, requestLength);
             auto bodyStream = std::make_unique<Core::IO::MemoryBodyStream>(
                 reinterpret_cast<const uint8_t*>(m_secondaryContent->data() + requestOffset),
-                bodyLength);
+                static_cast<size_t>(bodyLength));
             response->SetBodyStream(std::move(bodyStream));
             response->SetHeader("content-length", std::to_string(bodyLength));
             response->SetHeader("etag", m_secondaryETag.ToString());

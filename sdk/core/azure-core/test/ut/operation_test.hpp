@@ -21,7 +21,7 @@ namespace Azure { namespace Core { namespace Test {
   private:
     std::string m_operationToken;
     std::string m_value;
-    int m_count = 0;
+    int32_t m_count = 0;
 
   private:
     std::unique_ptr<Http::RawResponse> PollInternal(Context const&) override
