@@ -127,8 +127,8 @@ namespace Azure { namespace Storage { namespace Test {
     const uint8_t* ptr = reinterpret_cast<const uint8_t*>(data.data());
     Crc64Hash instance;
 
-    EXPECT_THROW(instance.Final(nullptr, 1), std::invalid_argument);
-    EXPECT_THROW(instance.Append(nullptr, 1), std::invalid_argument);
+    ASSERT_DEATH(instance.Final(nullptr, 1), "");
+    ASSERT_DEATH(instance.Append(nullptr, 1), "");
 
     EXPECT_EQ(
         Azure::Core::Convert::Base64Encode(instance.Final(ptr, data.length())), "AAAAAAAAAAA=");
