@@ -646,7 +646,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
   Azure::Response<Models::DownloadFileToResult> ShareFileClient::DownloadTo(
       uint8_t* buffer,
-      std::size_t bufferSize,
+      size_t bufferSize,
       const DownloadFileToOptions& options,
       const Azure::Core::Context& context) const
   {
@@ -688,7 +688,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     }
     firstChunkLength = std::min(firstChunkLength, fileRangeSize);
 
-    if (static_cast<std::size_t>(fileRangeSize) > bufferSize)
+    if (static_cast<size_t>(fileRangeSize) > bufferSize)
     {
       throw Azure::Core::RequestFailedException(
           "buffer is not big enough, file range size is " + std::to_string(fileRangeSize));
@@ -798,7 +798,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
                                int64_t offset,
                                int64_t length,
                                const Azure::Core::Context& context) {
-      constexpr std::size_t bufferSize = 4 * 1024 * 1024;
+      constexpr size_t bufferSize = 4 * 1024 * 1024;
       std::vector<uint8_t> buffer(bufferSize);
       while (length > 0)
       {
@@ -865,7 +865,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
   Azure::Response<Models::UploadFileFromResult> ShareFileClient::UploadFrom(
       const uint8_t* buffer,
-      std::size_t bufferSize,
+      size_t bufferSize,
       const UploadFileFromOptions& options,
       const Azure::Core::Context& context) const
   {
@@ -949,7 +949,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     };
 
     int64_t chunkSize = options.TransferOptions.ChunkSize;
-    if (bufferSize < static_cast<std::size_t>(options.TransferOptions.SingleUploadThreshold))
+    if (bufferSize < static_cast<size_t>(options.TransferOptions.SingleUploadThreshold))
     {
       chunkSize = bufferSize;
     }

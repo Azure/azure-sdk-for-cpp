@@ -74,12 +74,12 @@ namespace Azure { namespace Storage { namespace Test {
 
   Storage::Metadata RandomMetadata(size_t size = 5);
 
-  void RandomBuffer(char* buffer, std::size_t length);
-  inline void RandomBuffer(uint8_t* buffer, std::size_t length)
+  void RandomBuffer(char* buffer, size_t length);
+  inline void RandomBuffer(uint8_t* buffer, size_t length)
   {
     RandomBuffer(reinterpret_cast<char*>(buffer), length);
   }
-  std::vector<uint8_t> RandomBuffer(std::size_t length);
+  std::vector<uint8_t> RandomBuffer(size_t length);
 
   inline std::vector<uint8_t> ReadBodyStream(std::unique_ptr<Azure::Core::IO::BodyStream>& stream)
   {

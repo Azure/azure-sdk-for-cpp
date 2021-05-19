@@ -139,7 +139,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      */
     Azure::Response<Models::UploadBlockBlobFromResult> UploadFrom(
         const uint8_t* buffer,
-        std::size_t bufferSize,
+        size_t bufferSize,
         const UploadBlockBlobFromOptions& options = UploadBlockBlobFromOptions(),
         const Azure::Core::Context& context = Azure::Core::Context()) const;
 

@@ -218,7 +218,7 @@ namespace Azure { namespace Storage { namespace Blobs {
 
   Azure::Response<Models::DownloadBlobToResult> BlobClient::DownloadTo(
       uint8_t* buffer,
-      std::size_t bufferSize,
+      size_t bufferSize,
       const DownloadBlobToOptions& options,
       const Azure::Core::Context& context) const
   {
@@ -258,7 +258,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     }
     firstChunkLength = std::min(firstChunkLength, blobRangeSize);
 
-    if (static_cast<std::size_t>(blobRangeSize) > bufferSize)
+    if (static_cast<size_t>(blobRangeSize) > bufferSize)
     {
       throw Azure::Core::RequestFailedException(
           "buffer is not big enough, blob range size is " + std::to_string(blobRangeSize));
@@ -374,7 +374,7 @@ namespace Azure { namespace Storage { namespace Blobs {
                                int64_t offset,
                                int64_t length,
                                const Azure::Core::Context& context) {
-      constexpr std::size_t bufferSize = 4 * 1024 * 1024;
+      constexpr size_t bufferSize = 4 * 1024 * 1024;
       std::vector<uint8_t> buffer(bufferSize);
       while (length > 0)
       {
