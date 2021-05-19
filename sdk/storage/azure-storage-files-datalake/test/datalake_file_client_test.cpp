@@ -413,7 +413,7 @@ namespace Azure { namespace Storage { namespace Test {
       std::string tempFilename = RandomString();
       {
         Azure::Storage::_internal::FileWriter fileWriter(tempFilename);
-        fileWriter.Write(fileContent.data(), fileSize, 0);
+        fileWriter.Write(fileContent.data(), static_cast<size_t>(fileSize), 0);
       }
       auto res = fileClient.UploadFrom(tempFilename, options);
       auto lastModified = fileClient.GetProperties().Value.LastModified;
