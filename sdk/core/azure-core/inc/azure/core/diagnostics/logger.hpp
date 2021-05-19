@@ -14,7 +14,6 @@
 namespace Azure { namespace Core { namespace Diagnostics {
   /**
    * @brief Log message handler.
-   *
    */
   class Logger final {
   public:

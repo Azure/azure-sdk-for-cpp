@@ -40,8 +40,9 @@ namespace Azure { namespace Core {
 
   /**
    * @brief Represents the location where a request will be performed.
-   * It can be parsed and initialized from a string that contains all URL components (scheme, host,
-   * path, etc.). Authority is not currently supported.
+   *
+   * @details It can be parsed and initialized from a string that contains all URL components
+   * (scheme, host, path, etc.). Authority is not currently supported.
    */
   class Url final {
   private:

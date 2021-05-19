@@ -38,6 +38,10 @@ function(generate_documentation PROJECT_NAME PROJECT_VERSION)
         # Use MathJax instead of latex to render formulas
         set(DOXYGEN_USE_MATHJAX YES)
 
+        set(DOXYGEN_REPEAT_BRIEF NO)
+        #set(DOXYGEN_ALWAYS_DETAILED_SEC NO)
+        #set(DOXYGEN_BRIEF_MEMBER_DESC YES)
+
         doxygen_add_docs(${PROJECT_NAME}-docs
             ALL
             COMMENT "Generate documentation for ${PROJECT_NAME}")

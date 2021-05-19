@@ -23,7 +23,6 @@
 namespace Azure { namespace Core {
   /**
    * @brief Universally unique identifier.
-   *
    */
   class Uuid final {
 
