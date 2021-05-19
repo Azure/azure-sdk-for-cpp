@@ -796,15 +796,14 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     auto bodyStreamToFile = [](Azure::Core::IO::BodyStream& stream,
                                _internal::FileWriter& fileWriter,
                                int64_t offset,
-                               int64_t length,
+                               size_t length,
                                const Azure::Core::Context& context) {
       constexpr size_t bufferSize = 4 * 1024 * 1024;
       std::vector<uint8_t> buffer(bufferSize);
       while (length > 0)
       {
-        int64_t readSize = std::min(static_cast<int64_t>(bufferSize), length);
-        int64_t bytesRead
-            = stream.ReadToCount(buffer.data(), static_cast<size_t>(readSize), context);
+        size_t readSize = std::min(bufferSize, length);
+        size_t bytesRead = stream.ReadToCount(buffer.data(), readSize, context);
         if (bytesRead != readSize)
         {
           throw Azure::Core::RequestFailedException("error when reading body stream");
@@ -815,7 +814,12 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       }
     };
 
-    bodyStreamToFile(*(firstChunk.Value.BodyStream), fileWriter, 0, firstChunkLength, context);
+    bodyStreamToFile(
+        *(firstChunk.Value.BodyStream),
+        fileWriter,
+        0,
+        static_cast<size_t>(firstChunkLength),
+        context);
     firstChunk.Value.BodyStream.reset();
 
     auto returnTypeConverter = [](Azure::Response<Models::DownloadFileResult>& response) {
@@ -840,7 +844,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
                 *(chunk.Value.BodyStream),
                 fileWriter,
                 offset - firstChunkOffset,
-                chunkOptions.Range.Value().Length.Value(),
+                static_cast<size_t>(chunkOptions.Range.Value().Length.Value()),
                 context);
 
             if (chunkId == numChunks - 1)
