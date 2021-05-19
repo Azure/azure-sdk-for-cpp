@@ -64,7 +64,6 @@ TEST(BodyStream, Rewind)
 TEST(BodyStream, BadInput)
 {
   TestBodyStream tb;
-  // Release build won't provide assert msg
   ASSERT_DEATH(tb.Read(NULL, 1), "");
   ASSERT_DEATH(tb.Read(NULL, 1, Azure::Core::Context::ApplicationContext), "");
   ASSERT_DEATH(tb.ReadToCount(NULL, 1), "");
@@ -73,7 +72,6 @@ TEST(BodyStream, BadInput)
 
 TEST(MemoryBodyStream, BadInput)
 {
-  // Release build won't provide assert msg
   ASSERT_DEATH(MemoryBodyStream(NULL, 1), "");
 }
 

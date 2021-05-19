@@ -103,7 +103,6 @@ TEST(Md5Hash, ExpectThrow)
   const uint8_t* ptr = reinterpret_cast<const uint8_t*>(data.c_str());
   Md5Hash instance;
 
-  // Release build won't provide assert msg
   ASSERT_DEATH(instance.Final(nullptr, 1), "");
   ASSERT_DEATH(instance.Append(nullptr, 1), "");
 
