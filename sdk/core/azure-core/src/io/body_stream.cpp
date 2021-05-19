@@ -90,7 +90,7 @@ int64_t MemoryBodyStream::OnRead(uint8_t* buffer, int64_t count, Context const& 
 FileBodyStream::FileBodyStream(const std::string& filename)
 {
 #if defined(AZ_PLATFORM_WINDOWS)
-  HANDLE fileHandle;
+  HANDLE fileHandle = INVALID_HANDLE_VALUE;
   try
   {
 #if !defined(WINAPI_PARTITION_DESKTOP) \
@@ -128,7 +128,10 @@ FileBodyStream::FileBodyStream(const std::string& filename)
   }
   catch (std::exception&)
   {
-    CloseHandle(fileHandle);
+    if (fileHandle != INVALID_HANDLE_VALUE)
+    {
+      CloseHandle(fileHandle);
+    }
     throw;
   }
 
