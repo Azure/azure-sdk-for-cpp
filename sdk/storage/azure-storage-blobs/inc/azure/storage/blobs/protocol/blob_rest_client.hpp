@@ -936,7 +936,7 @@ namespace Azure { namespace Storage { namespace Blobs {
        * The number of committed blocks present in the blob. This value is null for block blobs or
        * page blobs.
        */
-      Azure::Nullable<int64_t> CommittedBlockCount;
+      Azure::Nullable<int32_t> CommittedBlockCount;
       /**
        * If the blob has been sealed. This value is null for block blobs or page blobs.
        */
@@ -1120,7 +1120,7 @@ namespace Azure { namespace Storage { namespace Blobs {
        * The number of committed blocks present in the blob. This value is null for block blobs or
        * page blobs.
        */
-      int64_t CommittedBlockCount = 0;
+      int32_t CommittedBlockCount = 0;
       /**
        * True if the blob data and metadata are completely encrypted using the specified algorithm.
        * Otherwise, the value is set to false (when the blob is unencrypted, or if only parts of the
@@ -1164,7 +1164,7 @@ namespace Azure { namespace Storage { namespace Blobs {
        * The number of committed blocks present in the blob. This value is null for block blobs or
        * page blobs.
        */
-      int64_t CommittedBlockCount = 0;
+      int32_t CommittedBlockCount = 0;
       /**
        * True if the blob data and metadata are completely encrypted using the specified algorithm.
        * Otherwise, the value is set to false (when the blob is unencrypted, or if only parts of the
@@ -6522,7 +6522,7 @@ namespace Azure { namespace Storage { namespace Blobs {
           if (x_ms_blob_committed_block_count__iterator != httpResponse.GetHeaders().end())
           {
             response.Details.CommittedBlockCount
-                = std::stoll(x_ms_blob_committed_block_count__iterator->second);
+                = std::stoi(x_ms_blob_committed_block_count__iterator->second);
           }
           auto x_ms_blob_sealed__iterator = httpResponse.GetHeaders().find("x-ms-blob-sealed");
           if (x_ms_blob_sealed__iterator != httpResponse.GetHeaders().end())
@@ -10552,7 +10552,7 @@ namespace Azure { namespace Storage { namespace Blobs {
           response.AppendOffset
               = std::stoll(httpResponse.GetHeaders().at("x-ms-blob-append-offset"));
           response.CommittedBlockCount
-              = std::stoll(httpResponse.GetHeaders().at("x-ms-blob-committed-block-count"));
+              = std::stoi(httpResponse.GetHeaders().at("x-ms-blob-committed-block-count"));
           response.IsServerEncrypted
               = httpResponse.GetHeaders().at("x-ms-request-server-encrypted") == "true";
           auto x_ms_encryption_key_sha256__iterator
@@ -10729,7 +10729,7 @@ namespace Azure { namespace Storage { namespace Blobs {
           response.AppendOffset
               = std::stoll(httpResponse.GetHeaders().at("x-ms-blob-append-offset"));
           response.CommittedBlockCount
-              = std::stoll(httpResponse.GetHeaders().at("x-ms-blob-committed-block-count"));
+              = std::stoi(httpResponse.GetHeaders().at("x-ms-blob-committed-block-count"));
           response.IsServerEncrypted
               = httpResponse.GetHeaders().at("x-ms-request-server-encrypted") == "true";
           auto x_ms_encryption_key_sha256__iterator
