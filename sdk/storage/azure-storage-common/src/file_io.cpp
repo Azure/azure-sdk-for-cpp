@@ -162,7 +162,7 @@ namespace Azure { namespace Storage { namespace _internal {
       throw std::runtime_error("failed to write file");
     }
     ssize_t bytesWritten = pwrite(m_handle, buffer, length, static_cast<off_t>(offset));
-    if (bytesWritten != length)
+    if (bytesWritten < 0 || static_cast<size_t>(bytesWritten) != length)
     {
       throw std::runtime_error("failed to write file");
     }
