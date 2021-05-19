@@ -25,7 +25,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
    * @brief A key resource and its properties.
    *
    */
-  struct ImportKeyOptions
+  struct ImportKeyOptions final
   {
     /**
      * @brief The cryptographic key, the key type, and the operations you can perform using the key.

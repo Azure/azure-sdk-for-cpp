@@ -48,7 +48,7 @@ namespace Azure { namespace Core { namespace Test {
    * this is why we need to duplicate each case based on the transport adapters built.
    */
 #if defined(BUILD_TRANSPORT_WINHTTP_ADAPTER) && defined(BUILD_CURL_HTTP_TRANSPORT_ADAPTER)
-  /* WinHttp + LibCurl */
+  /* WinHTTP + libcurl */
   INSTANTIATE_TEST_SUITE_P(
       Test,
       TransportAdapter,
@@ -58,7 +58,7 @@ namespace Azure { namespace Core { namespace Test {
       GetSuffix);
 
 #elif defined(BUILD_TRANSPORT_WINHTTP_ADAPTER)
-  /* WinHttp */
+  /* WinHTTP */
   INSTANTIATE_TEST_SUITE_P(
       Test,
       TransportAdapter,
@@ -67,7 +67,7 @@ namespace Azure { namespace Core { namespace Test {
       GetSuffix);
 
 #elif defined(BUILD_CURL_HTTP_TRANSPORT_ADAPTER)
-  /* LibCurl */
+  /* libcurl */
   INSTANTIATE_TEST_SUITE_P(
       Test,
       TransportAdapter,

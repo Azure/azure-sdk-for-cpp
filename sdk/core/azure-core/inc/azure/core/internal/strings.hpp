@@ -18,9 +18,9 @@ namespace Azure { namespace Core { namespace _internal {
    * operations.
    *
    */
-  struct StringExtensions
+  struct StringExtensions final
   {
-    struct CaseInsensitiveComparator
+    struct CaseInsensitiveComparator final
     {
       bool operator()(const std::string& lhs, const std::string& rhs) const
       {

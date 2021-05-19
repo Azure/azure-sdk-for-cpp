@@ -16,12 +16,12 @@ namespace Azure { namespace Core { namespace Test {
 
   class StringClient;
 
-  class StringOperation : public Operation<std::string> {
+  class StringOperation final : public Operation<std::string> {
 
   private:
     std::string m_operationToken;
     std::string m_value;
-    int m_count = 0;
+    int32_t m_count = 0;
 
   private:
     std::unique_ptr<Http::RawResponse> PollInternal(Context const&) override
@@ -97,7 +97,7 @@ namespace Azure { namespace Core { namespace Test {
     }
   };
 
-  class StringClient {
+  class StringClient final {
   public:
     StringOperation StartStringUpdate()
     {

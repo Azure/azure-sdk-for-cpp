@@ -5,7 +5,7 @@
 set(AZ_ROOT_DIR "${CMAKE_CURRENT_LIST_DIR}/..")
 
 macro(az_vcpkg_integrate)
-  # VCPKG Integration
+  # vcpkg Integration
   if(DEFINED ENV{VCPKG_ROOT} AND NOT DEFINED CMAKE_TOOLCHAIN_FILE)
     set(CMAKE_TOOLCHAIN_FILE "$ENV{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake"
         CACHE STRING "")
@@ -42,7 +42,7 @@ macro(az_vcpkg_portfile_prep targetName fileName contentToRemove)
   file (WRITE "${CMAKE_BINARY_DIR}/vcpkg_prep/${targetName}/${fileName}" ${fileContents})
   unset(fileContents)
 
-  # Produce the files to help with the VcPkg release.
+  # Produce the files to help with the vcpkg release.
   # Go to the /out/build/<cfg>/vcpkg directory, and copy (merge) "ports" folder to the vcpkg repo.
   # Then, update the portfile.cmake file SHA512 from "1" to the actual hash (a good way to do it is to uninstall a package,
   # clean vcpkg/downloads, vcpkg/buildtrees, run "vcpkg install <pkg>", and get the SHA from the error message).

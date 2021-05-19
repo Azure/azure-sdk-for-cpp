@@ -25,14 +25,14 @@ namespace Azure { namespace Core { namespace Http {
     // Run time error template
     constexpr static const char* DefaultFailedToGetNewConnectionTemplate
         = "Fail to get a new connection for: ";
-    constexpr static int DefaultMaxOpenNewConnectionIntentsAllowed = 10;
+    constexpr static int32_t DefaultMaxOpenNewConnectionIntentsAllowed = 10;
     // After 3 connections are received from the pool and failed to send a request, the next
     // connections would ask the pool to be clean and spawn new connection.
-    constexpr static int RequestPoolResetAfterConnectionFailed = 3;
+    constexpr static int32_t RequestPoolResetAfterConnectionFailed = 3;
     // 90 sec -> cleaner wait time before next clean routine
-    constexpr static int DefaultCleanerIntervalMilliseconds = 1000 * 90;
+    constexpr static int32_t DefaultCleanerIntervalMilliseconds = 1000 * 90;
     // 60 sec -> expired connection is when it waits for 60 sec or more and it's not re-used
-    constexpr static int DefaultConnectionExpiredMilliseconds = 1000 * 60;
+    constexpr static int32_t DefaultConnectionExpiredMilliseconds = 1000 * 60;
     // Define the maximun allowed connections per host-index in the pool. If this number is reached
     // for the host-index, next connections trying to be added to the pool will be ignored.
     constexpr static size_t MaxConnectionsPerIndex = 1024;
@@ -64,11 +64,13 @@ namespace Azure { namespace Core { namespace Http {
 
     /**
      * @brief Update last usage time for the connection.
+     *
      */
     virtual void UpdateLastUsageTime() = 0;
 
     /**
      * @brief Checks whether this CURL connection is expired.
+     *
      */
     virtual bool IsExpired() = 0;
 
@@ -78,7 +80,7 @@ namespace Azure { namespace Core { namespace Http {
      * there is no more data to get from the socket.
      *
      */
-    virtual int64_t ReadFromSocket(uint8_t* buffer, int64_t bufferSize, Context const& context) = 0;
+    virtual size_t ReadFromSocket(uint8_t* buffer, size_t bufferSize, Context const& context) = 0;
 
     /**
      * @brief This method will use libcurl socket to write all the bytes from buffer.
@@ -105,8 +107,9 @@ namespace Azure { namespace Core { namespace Http {
 
   /**
    * @brief CURL HTTP connection.
+   *
    */
-  class CurlConnection : public CurlNetworkConnection {
+  class CurlConnection final : public CurlNetworkConnection {
   private:
     CURL* m_handle;
     curl_socket_t m_curlSocket;
@@ -152,6 +155,7 @@ namespace Azure { namespace Core { namespace Http {
 
       /**
        * @brief Update last usage time for the connection.
+       *
        */
       void UpdateLastUsageTime() override
       {
@@ -180,7 +184,7 @@ namespace Azure { namespace Core { namespace Http {
        * @return return the numbers of bytes pulled from socket. It can be less than what it was
        * requested.
        */
-      int64_t ReadFromSocket(uint8_t* buffer, int64_t bufferSize, Context const& context) override;
+      size_t ReadFromSocket(uint8_t* buffer, size_t bufferSize, Context const& context) override;
 
       /**
        * @brief This method will use libcurl socket to write all the bytes from buffer.

@@ -18,7 +18,7 @@ namespace Azure { namespace Storage { namespace _internal {
     End,
   };
 
-  struct XmlNode
+  struct XmlNode final
   {
     explicit XmlNode(XmlNodeType type, const char* name = nullptr, const char* value = nullptr)
         : Type(type), Name(name), Value(value)
@@ -29,7 +29,7 @@ namespace Azure { namespace Storage { namespace _internal {
     const char* Value;
   };
 
-  class XmlReader {
+  class XmlReader final {
   public:
     explicit XmlReader(const char* data, std::size_t length);
     ~XmlReader();
@@ -41,7 +41,7 @@ namespace Azure { namespace Storage { namespace _internal {
     bool m_readingAttributes = false;
   };
 
-  class XmlWriter {
+  class XmlWriter final {
   public:
     explicit XmlWriter();
     ~XmlWriter();

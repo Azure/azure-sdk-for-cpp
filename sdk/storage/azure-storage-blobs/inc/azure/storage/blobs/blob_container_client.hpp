@@ -17,7 +17,7 @@ namespace Azure { namespace Storage { namespace Blobs {
    * The BlobContainerClient allows you to manipulate Azure Storage containers and their
    * blobs.
    */
-  class BlobContainerClient {
+  class BlobContainerClient final {
   public:
     /**
      * @brief Initialize a new instance of BlobContainerClient.
@@ -80,7 +80,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         const BlobClientOptions& options = BlobClientOptions());
 
     /**
-     * @brief Create a new BlobClient object by appending blobName to the end of url. The
+     * @brief Create a new BlobClient object by appending blobName to the end of URL. The
      * new BlobClient uses the same request policy pipeline as this BlobContainerClient.
      *
      * @param blobName The name of the blob.
@@ -89,7 +89,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     BlobClient GetBlobClient(const std::string& blobName) const;
 
     /**
-     * @brief Create a new BlockBlobClient object by appending blobName to the end of url.
+     * @brief Create a new BlockBlobClient object by appending blobName to the end of URL.
      * The new BlockBlobClient uses the same request policy pipeline as this BlobContainerClient.
      *
      * @param blobName The name of the blob.
@@ -98,7 +98,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     BlockBlobClient GetBlockBlobClient(const std::string& blobName) const;
 
     /**
-     * @brief Create a new AppendBlobClient object by appending blobName to the end of url.
+     * @brief Create a new AppendBlobClient object by appending blobName to the end of URL.
      * The new AppendBlobClient uses the same request policy pipeline as this BlobContainerClient.
      *
      * @param blobName The name of the blob.
@@ -107,7 +107,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     AppendBlobClient GetAppendBlobClient(const std::string& blobName) const;
 
     /**
-     * @brief Create a new PageBlobClient object by appending blobName to the end of url.
+     * @brief Create a new PageBlobClient object by appending blobName to the end of URL.
      * The new PageBlobClient uses the same request policy pipeline as this BlobContainerClient.
      *
      * @param blobName The name of the blob.
@@ -116,10 +116,10 @@ namespace Azure { namespace Storage { namespace Blobs {
     PageBlobClient GetPageBlobClient(const std::string& blobName) const;
 
     /**
-     * @brief Gets the container's primary url endpoint.
+     * @brief Gets the container's primary URL endpoint.
      *
      * @return The
-     * container's primary url endpoint.
+     * container's primary URL endpoint.
      */
     std::string GetUrl() const { return m_blobContainerUrl.GetAbsoluteUrl(); }
 

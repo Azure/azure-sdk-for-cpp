@@ -30,7 +30,7 @@ namespace Azure {
         namespace Cryptography {
   namespace _detail {
 
-    struct RemoteCryptographyClient
+    struct RemoteCryptographyClient final
         : public Azure::Security::KeyVault::Keys::Cryptography::_detail::CryptographyProvider
     {
 

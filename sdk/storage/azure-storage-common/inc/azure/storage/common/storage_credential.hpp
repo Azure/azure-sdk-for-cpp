@@ -26,7 +26,7 @@ namespace Azure { namespace Storage {
    * @brief A StorageSharedKeyCredential is a credential backed by a storage account's name and
    * one of its access keys.
    */
-  class StorageSharedKeyCredential {
+  class StorageSharedKeyCredential final {
   public:
     /**
      * @brief Initializes a new instance of the StorageSharedKeyCredential.

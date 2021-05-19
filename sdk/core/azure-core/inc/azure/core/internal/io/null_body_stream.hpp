@@ -3,7 +3,7 @@
 
 /**
  * @file
- * @brief A null body stream for Http requests without a payload.
+ * @brief A null body stream for HTTP requests without a payload.
  */
 
 #pragma once
@@ -16,9 +16,9 @@ namespace Azure { namespace Core { namespace IO { namespace _internal {
    * @brief Empty #Azure::Core::IO::BodyStream.
    * @remark Used for requests with no body.
    */
-  class NullBodyStream : public BodyStream {
+  class NullBodyStream final : public BodyStream {
   private:
-    int64_t OnRead(uint8_t* buffer, int64_t count, Azure::Core::Context const& context) override
+    size_t OnRead(uint8_t* buffer, size_t count, Azure::Core::Context const& context) override
     {
       (void)context;
       (void)buffer;
@@ -36,6 +36,7 @@ namespace Azure { namespace Core { namespace IO { namespace _internal {
 
     /**
      * @brief Gets a singleton instance of a #Azure::Core::IO::_internal::NullBodyStream.
+     *
      */
     static NullBodyStream* GetNullBodyStream()
     {

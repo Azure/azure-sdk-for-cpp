@@ -23,7 +23,7 @@ using namespace Azure::Core::Http::Policies;
 using namespace Azure::Core::Http::Policies::_internal;
 
 namespace {
-struct RequestWithContinuationToken
+struct RequestWithContinuationToken final
 {
   std::vector<std::string> Path;
   std::unique_ptr<std::map<std::string, std::string>> Query;
@@ -37,8 +37,8 @@ static inline RequestWithContinuationToken BuildRequestFromContinuationToken(
   request.Path = defaultPath;
   if (options.NextPageToken)
   {
-    // Using a continuation token requires to send the request to the continuation token url instead
-    // of the default url which is used only for the first page.
+    // Using a continuation token requires to send the request to the continuation token URL instead
+    // of the default URL which is used only for the first page.
     Azure::Core::Url nextPageUrl(options.NextPageToken.Value());
     request.Query
         = std::make_unique<std::map<std::string, std::string>>(nextPageUrl.GetQueryParameters());

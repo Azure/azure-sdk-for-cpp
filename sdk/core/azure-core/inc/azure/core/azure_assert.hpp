@@ -52,5 +52,5 @@
 [[noreturn]] void AzureNoReturnPath(std::string const& msg);
 
 #define AZURE_ASSERT_FALSE(exp) AZURE_ASSERT(!(exp))
-#define AZURE_UNREACHABLE_CODE AzureNoReturnPath("unreachable code!")
-#define AZURE_NOT_IMPLEMENTED AzureNoReturnPath("not implemented code!")
+#define AZURE_UNREACHABLE_CODE() AzureNoReturnPath("unreachable code!")
+#define AZURE_NOT_IMPLEMENTED() AzureNoReturnPath("not implemented code!")

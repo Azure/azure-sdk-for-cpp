@@ -30,7 +30,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
    * @brief Define a model for a purged key.
    *
    */
-  struct PurgedKey
+  struct PurgedKey final
   {
   };
 
@@ -38,10 +38,11 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
    * @brief Optional parameters for KeyVaultClient::GetKey
    *
    */
-  struct GetKeyOptions
+  struct GetKeyOptions final
   {
     /**
      * @brief Specify the key version to get.
+     *
      */
     std::string Version;
   };
@@ -51,16 +52,26 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
    * Vault. The client supports creating, retrieving, updating, deleting, purging, backing up,
    * restoring, and listing the KeyVaultKey.
    */
-  class KeyClient {
+  class KeyClient
+#if !defined(TESTING_BUILD)
+      final
+#endif
+  {
   protected:
     // Using a shared pipeline for a client to share it with LRO (like delete key)
     std::shared_ptr<Azure::Security::KeyVault::_internal::KeyVaultPipeline> m_pipeline;
 
   public:
     /**
+     * @brief Destructor.
+     *
+     */
+    virtual ~KeyClient() = default;
+
+    /**
      * @brief Construct a new Key Client object
      *
-     * @param vaultUrl The url address where the client will send the requests to.
+     * @param vaultUrl The URL address where the client will send the requests to.
      * @param credential The authentication method to use.
      * @param options The options to customize the client behavior.
      */

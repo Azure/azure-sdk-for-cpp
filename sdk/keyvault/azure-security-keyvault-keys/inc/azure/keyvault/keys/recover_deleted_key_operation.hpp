@@ -29,7 +29,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
    * @brief A long running operation to recover a key.
    *
    */
-  class RecoverDeletedKeyOperation : public Azure::Core::Operation<KeyVaultKey> {
+  class RecoverDeletedKeyOperation final : public Azure::Core::Operation<KeyVaultKey> {
   private:
     /* RecoverDeletedKeyOperation can be constructed only by friends classes (internal creation).
      * The constructor is private and requires internal components.*/
@@ -93,7 +93,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
     /**
      * @brief Get the #Azure::Security::KeyVault::Keys::KeyVaultKey object.
      *
-     * @remark The deleted key contains the recovery id if the key can be recovered.
+     * @remark The deleted key contains the recovery ID if the key can be recovered.
      *
      * @return A deleted key object.
      */

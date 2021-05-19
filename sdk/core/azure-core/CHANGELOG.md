@@ -8,9 +8,12 @@
 
 ### Breaking Changes
 
+- Added `final` specifier to classes and structures that are are not expected to be inheritable at the moment.
 - Removed `Context::GetApplicationContext()` in favor of a new static data member `Context::ApplicationContext`.
 - Renamed `Request::IsDownloadViaStream()` to `ShouldBufferResponse()`.
 - Removed the `Azure::Core::Http::Request` ctor overload that takes both a `bodyStream` and a `bufferedDownload` boolean since it is not useful.
+- Changed integer size parameters for buffers from `int64_t` to `size_t` in various places such as `Azure::Core::IO::BodyStream::Read()` APIs.
+- Removed the `Azure::Core::Diagnostics::Logger::Listener` typedef.
 
 ### Bug Fixes
 

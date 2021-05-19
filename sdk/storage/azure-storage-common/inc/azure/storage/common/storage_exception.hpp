@@ -16,7 +16,7 @@ namespace Azure { namespace Storage {
   /**
    * @brief An exception thrown when storage service request fails.
    */
-  struct StorageException : public Azure::Core::RequestFailedException
+  struct StorageException final : public Azure::Core::RequestFailedException
   {
     /**
      * @brief Constructs a #StorageException with a message.

@@ -28,7 +28,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
    * @brief Define a single page to list the keys from the Key Vault.
    *
    */
-  class KeyPropertiesPageResult : public Azure::Core::PagedResponse<KeyPropertiesPageResult> {
+  class KeyPropertiesPageResult final : public Azure::Core::PagedResponse<KeyPropertiesPageResult> {
   private:
     friend class KeyClient;
     friend class Azure::Core::PagedResponse<KeyPropertiesPageResult>;
@@ -44,7 +44,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
      *
      * @param keyProperties A previously created #KeyPropertiesPageResult that is used to init this
      * instance.
-     * @param rawResponse The Http raw response from where the #KeyPropertiesPageResult was parsed.
+     * @param rawResponse The HTTP raw response from where the #KeyPropertiesPageResult was parsed.
      * @param keyClient A key client required for getting the next pages.
      * @param keyName When \p keyName is set, the response is listing key versions. Otherwise, the
      * response is for listing keys from the Key Vault.
@@ -77,7 +77,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
    * @brief Define a single page containing the deleted keys from the Key Vault.
    *
    */
-  class DeletedKeyPageResult : public Azure::Core::PagedResponse<DeletedKeyPageResult> {
+  class DeletedKeyPageResult final : public Azure::Core::PagedResponse<DeletedKeyPageResult> {
   private:
     friend class KeyClient;
     friend class Azure::Core::PagedResponse<DeletedKeyPageResult>;
@@ -92,7 +92,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
      *
      * @param deletedKeyProperties A previously created #DeletedKeyPageResult that is used to init
      * this new instance.
-     * @param rawResponse The Http raw response from where the #DeletedKeyPageResult was parsed.
+     * @param rawResponse The HTTP raw response from where the #DeletedKeyPageResult was parsed.
      * @param keyClient A key client required for getting the next pages.
      * @param keyName When \p keyName is set, the response is listing key versions. Otherwise, the
      * response is for listing keys from the Key Vault.
@@ -124,7 +124,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
    * @brief The options for calling an operation #GetPropertiesOfKeys.
    *
    */
-  struct GetPropertiesOfKeysOptions
+  struct GetPropertiesOfKeysOptions final
       : public Azure::Security::KeyVault::_internal::GetPageResultOptions
   {
   };
@@ -133,7 +133,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
    * @brief The options for calling an operation #GetPropertiesOfKeyVersions.
    *
    */
-  struct GetPropertiesOfKeyVersionsOptions
+  struct GetPropertiesOfKeyVersionsOptions final
       : public Azure::Security::KeyVault::_internal::GetPageResultOptions
   {
   };
@@ -142,7 +142,8 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
    * @brief The options for calling an operation #GetDeletedKeys.
    *
    */
-  struct GetDeletedKeysOptions : public Azure::Security::KeyVault::_internal::GetPageResultOptions
+  struct GetDeletedKeysOptions final
+      : public Azure::Security::KeyVault::_internal::GetPageResultOptions
   {
   };
 }}}} // namespace Azure::Security::KeyVault::Keys

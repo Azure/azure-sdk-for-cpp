@@ -21,7 +21,7 @@ namespace Azure { namespace Core { namespace Json { namespace _internal {
    * @brief Define a wrapper for working with Json containing optional fields.
    *
    */
-  struct JsonOptional
+  struct JsonOptional final
   {
     /**
      * @brief If the optional key \p key is present in the json node \p jsonKey set the value of \p

@@ -8,7 +8,7 @@
 #include <vector>
 
 namespace {
-class NoOpPolicy : public Azure::Core::Http::Policies::HttpPolicy {
+class NoOpPolicy final : public Azure::Core::Http::Policies::HttpPolicy {
 public:
   std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy> Clone() const override
   {
@@ -26,7 +26,7 @@ public:
 
 // A policy to test retry state
 static int retryCounterState = 0;
-struct TestRetryPolicySharedState : public Azure::Core::Http::Policies::HttpPolicy
+struct TestRetryPolicySharedState final : public Azure::Core::Http::Policies::HttpPolicy
 {
   std::unique_ptr<HttpPolicy> Clone() const override
   {
@@ -35,19 +35,20 @@ struct TestRetryPolicySharedState : public Azure::Core::Http::Policies::HttpPoli
 
   std::unique_ptr<Azure::Core::Http::RawResponse> Send(
       Azure::Core::Http::Request& request,
-      Azure::Core::Http::Policies::NextHttpPolicy nextHttpPolicy,
-      Azure::Core::Context const& ctx) const override
+      Azure::Core::Http::Policies::NextHttpPolicy nextPolicy,
+      Azure::Core::Context const& context) const override
   {
     EXPECT_EQ(
-        retryCounterState, Azure::Core::Http::Policies::_internal::RetryPolicy::GetRetryCount(ctx));
+        retryCounterState,
+        Azure::Core::Http::Policies::_internal::RetryPolicy::GetRetryCount(context));
     retryCounterState += 1;
-    return nextHttpPolicy.Send(request, ctx);
+    return nextPolicy.Send(request, context);
   }
 };
 
 Azure::Core::Context::Key const TheKey;
 
-struct TestContextTreeIntegrity : public Azure::Core::Http::Policies::HttpPolicy
+struct TestContextTreeIntegrity final : public Azure::Core::Http::Policies::HttpPolicy
 {
   std::unique_ptr<HttpPolicy> Clone() const override
   {
@@ -56,17 +57,17 @@ struct TestContextTreeIntegrity : public Azure::Core::Http::Policies::HttpPolicy
 
   std::unique_ptr<Azure::Core::Http::RawResponse> Send(
       Azure::Core::Http::Request& request,
-      Azure::Core::Http::Policies::NextHttpPolicy nextHttpPolicy,
-      Azure::Core::Context const& ctx) const override
+      Azure::Core::Http::Policies::NextHttpPolicy nextPolicy,
+      Azure::Core::Context const& context) const override
   {
     std::string valueHolder;
-    EXPECT_TRUE(ctx.TryGetValue<std::string>(TheKey, valueHolder));
+    EXPECT_TRUE(context.TryGetValue<std::string>(TheKey, valueHolder));
     EXPECT_EQ("TheValue", valueHolder);
-    return nextHttpPolicy.Send(request, ctx);
+    return nextPolicy.Send(request, context);
   }
 };
 
-class SuccessAfter : public Azure::Core::Http::Policies::HttpPolicy {
+class SuccessAfter final : public Azure::Core::Http::Policies::HttpPolicy {
 private:
   int m_successAfter; // Always success
 

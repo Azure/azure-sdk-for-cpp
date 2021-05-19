@@ -166,10 +166,9 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     }
     if (!options.HttpHeaders.ContentHash.Value.empty())
     {
-      if (options.HttpHeaders.ContentHash.Algorithm != HashAlgorithm::Md5)
-      {
-        std::abort();
-      }
+      AZURE_ASSERT_MSG(
+          options.HttpHeaders.ContentHash.Algorithm == HashAlgorithm::Md5,
+          "This operation only supports MD5 content hash");
       protocolLayerOptions.ContentMd5 = options.HttpHeaders.ContentHash;
     }
     protocolLayerOptions.LeaseIdOptional = options.AccessConditions.LeaseId;
@@ -241,13 +240,12 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     }
     if (options.RangeHashAlgorithm.HasValue())
     {
+      AZURE_ASSERT_MSG(
+          options.RangeHashAlgorithm.Value() == HashAlgorithm::Md5,
+          "This operation only supports MD5 content hash");
       if (options.RangeHashAlgorithm.Value() == HashAlgorithm::Md5)
       {
         protocolLayerOptions.GetRangeContentMd5 = true;
-      }
-      else
-      {
-        std::abort();
       }
     }
     protocolLayerOptions.LeaseIdOptional = options.AccessConditions.LeaseId;
@@ -353,9 +351,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         }
         else
         {
-          // FilePermission or FilePermissionKey must be set if FilePermissionCopyMode is set to
-          // PermissionCopyModeType::Override.
-          std::abort();
+          AZURE_ASSERT_MSG(false, "Either FilePermission or FilePermissionKey must be set");
         }
       }
     }
@@ -490,10 +486,11 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     protocolLayerOptions.ContentLength = content.Length();
     protocolLayerOptions.XMsRange = std::string("bytes=") + std::to_string(offset)
         + std::string("-") + std::to_string(offset + content.Length() - 1);
-    if (options.TransactionalContentHash.HasValue()
-        && options.TransactionalContentHash.Value().Algorithm != HashAlgorithm::Md5)
+    if (options.TransactionalContentHash.HasValue())
     {
-      std::abort();
+      AZURE_ASSERT_MSG(
+          options.TransactionalContentHash.Value().Algorithm == HashAlgorithm::Md5,
+          "This operation only supports MD5 content hash");
     }
     protocolLayerOptions.ContentMd5 = options.TransactionalContentHash;
     protocolLayerOptions.LeaseIdOptional = options.AccessConditions.LeaseId;
@@ -697,7 +694,8 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           "buffer is not big enough, file range size is " + std::to_string(fileRangeSize));
     }
 
-    int64_t bytesRead = firstChunk.Value.BodyStream->ReadToCount(buffer, firstChunkLength, context);
+    int64_t bytesRead = firstChunk.Value.BodyStream->ReadToCount(
+        buffer, static_cast<size_t>(firstChunkLength), context);
     if (bytesRead != firstChunkLength)
     {
       throw Azure::Core::RequestFailedException("error when reading body stream");
@@ -724,7 +722,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
             auto chunk = Download(chunkOptions, context);
             int64_t bytesRead = chunk.Value.BodyStream->ReadToCount(
                 buffer + (offset - firstChunkOffset),
-                chunkOptions.Range.Value().Length.Value(),
+                static_cast<size_t>(chunkOptions.Range.Value().Length.Value()),
                 context);
             if (bytesRead != chunkOptions.Range.Value().Length.Value())
             {
@@ -805,7 +803,8 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       while (length > 0)
       {
         int64_t readSize = std::min(static_cast<int64_t>(bufferSize), length);
-        int64_t bytesRead = stream.ReadToCount(buffer.data(), readSize, context);
+        int64_t bytesRead
+            = stream.ReadToCount(buffer.data(), static_cast<size_t>(readSize), context);
         if (bytesRead != readSize)
         {
           throw Azure::Core::RequestFailedException("error when reading body stream");
@@ -930,10 +929,9 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     }
     if (!options.HttpHeaders.ContentHash.Value.empty())
     {
-      if (options.HttpHeaders.ContentHash.Algorithm != HashAlgorithm::Md5)
-      {
-        std::abort();
-      }
+      AZURE_ASSERT_MSG(
+          options.HttpHeaders.ContentHash.Algorithm == HashAlgorithm::Md5,
+          "This operation only supports MD5 content hash");
       protocolLayerOptions.ContentMd5 = options.HttpHeaders.ContentHash;
     }
     protocolLayerOptions.Metadata = options.Metadata;
@@ -943,7 +941,9 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     auto uploadPageFunc = [&](int64_t offset, int64_t length, int64_t chunkId, int64_t numChunks) {
       (void)chunkId;
       (void)numChunks;
-      Azure::Core::IO::MemoryBodyStream contentStream(buffer + offset, length);
+      // TODO: Investigate changing lambda parameters to be size_t, unless they need to be int64_t
+      // for some reason.
+      Azure::Core::IO::MemoryBodyStream contentStream(buffer + offset, static_cast<size_t>(length));
       UploadFileRangeOptions uploadRangeOptions;
       UploadRange(offset, contentStream, uploadRangeOptions, context);
     };
@@ -1033,10 +1033,9 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     }
     if (!options.HttpHeaders.ContentHash.Value.empty())
     {
-      if (options.HttpHeaders.ContentHash.Algorithm != HashAlgorithm::Md5)
-      {
-        std::abort();
-      }
+      AZURE_ASSERT_MSG(
+          options.HttpHeaders.ContentHash.Algorithm == HashAlgorithm::Md5,
+          "This operation only supports MD5 content hash");
       protocolLayerOptions.ContentMd5 = options.HttpHeaders.ContentHash;
     }
     protocolLayerOptions.Metadata = options.Metadata;
@@ -1078,11 +1077,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       const UploadFileRangeFromUriOptions& options,
       const Azure::Core::Context& context) const
   {
-    if (!sourceRange.Length.HasValue())
-    {
-      // sourceRange must have length to perform this operation.
-      std::abort();
-    }
+    AZURE_ASSERT_MSG(sourceRange.Length.HasValue(), "Source length cannot be null");
     int64_t rangeLength = sourceRange.Length.Value();
 
     auto protocolLayerOptions = _detail::ShareRestClient::File::UploadRangeFromUrlOptions();
@@ -1091,26 +1086,27 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     protocolLayerOptions.ContentLength = 0;
     protocolLayerOptions.CopySource = sourceUri;
     protocolLayerOptions.LeaseIdOptional = options.AccessConditions.LeaseId;
-    if (options.TransactionalContentHash.HasValue()
-        && options.TransactionalContentHash.Value().Algorithm == HashAlgorithm::Md5)
+    if (options.TransactionalContentHash.HasValue())
     {
-      // SourceContentHash now only supports Crc64 hash algorithm.
-      std::abort();
+      AZURE_ASSERT_MSG(
+          options.TransactionalContentHash.Value().Algorithm == HashAlgorithm::Crc64,
+          "This operation only supports CRC64 content hash");
     }
     protocolLayerOptions.SourceContentCrc64 = options.TransactionalContentHash;
-    if (options.SourceAccessCondition.IfMatchContentHash.HasValue()
-        && options.SourceAccessCondition.IfMatchContentHash.Value().Algorithm == HashAlgorithm::Md5)
+    if (options.SourceAccessCondition.IfMatchContentHash.HasValue())
     {
-      // IfMatchContentHash now only supports Crc64 hash algorithm.
-      std::abort();
+      AZURE_ASSERT_MSG(
+          options.SourceAccessCondition.IfMatchContentHash.Value().Algorithm
+              == HashAlgorithm::Crc64,
+          "This operation only supports CRC64 Source-If-Match condition");
     }
     protocolLayerOptions.SourceIfMatchCrc64 = options.SourceAccessCondition.IfMatchContentHash;
-    if (options.SourceAccessCondition.IfNoneMatchContentHash.HasValue()
-        && options.SourceAccessCondition.IfNoneMatchContentHash.Value().Algorithm
-            == HashAlgorithm::Md5)
+    if (options.SourceAccessCondition.IfNoneMatchContentHash.HasValue())
     {
-      // IfNoneMatchContentHash now only supports Crc64 hash algorithm.
-      std::abort();
+      AZURE_ASSERT_MSG(
+          options.SourceAccessCondition.IfNoneMatchContentHash.Value().Algorithm
+              == HashAlgorithm::Crc64,
+          "This operation only supports CRC64 Source-If-None-Match condition");
     }
     protocolLayerOptions.SourceIfNoneMatchCrc64
         = options.SourceAccessCondition.IfNoneMatchContentHash;

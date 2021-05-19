@@ -19,13 +19,13 @@
 
 namespace Azure { namespace Core { namespace Diagnostics { namespace _detail {
 
-  class EnvironmentLogLevelListener {
+  class EnvironmentLogLevelListener final {
     EnvironmentLogLevelListener() = delete;
     ~EnvironmentLogLevelListener() = delete;
 
   public:
     static Logger::Level GetLogLevel(Logger::Level defaultValue);
-    static Logger::Listener GetLogListener();
+    static std::function<void(Logger::Level level, std::string const& message)> GetLogListener();
   };
 
 #if (defined(WINAPI_PARTITION_DESKTOP) && !WINAPI_PARTITION_DESKTOP) // See azure/core/platform.hpp
@@ -35,6 +35,10 @@ namespace Azure { namespace Core { namespace Diagnostics { namespace _detail {
     return defaultValue;
   }
 
-  inline Logger::Listener EnvironmentLogLevelListener::GetLogListener() { return nullptr; }
+  inline std::function<void(Logger::Level level, std::string const& message)>
+  EnvironmentLogLevelListener::GetLogListener()
+  {
+    return nullptr;
+  }
 #endif
 }}}} // namespace Azure::Core::Diagnostics::_detail

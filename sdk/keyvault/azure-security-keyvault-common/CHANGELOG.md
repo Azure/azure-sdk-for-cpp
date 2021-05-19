@@ -4,6 +4,7 @@
 
 ### Breaking Changes
 
+- Added `final` specifier to classes and structures that are are not expected to be inheritable at the moment.
 - Removed `KeyVaultException`.
 - Removed `ClientOptions`.
 

@@ -19,7 +19,7 @@ namespace Azure { namespace Storage { namespace _internal {
     return context.WithValue(SecondaryHostReplicaStatusKey, std::make_shared<bool>(true));
   }
 
-  class StorageSwitchToSecondaryPolicy : public Azure::Core::Http::Policies::HttpPolicy {
+  class StorageSwitchToSecondaryPolicy final : public Azure::Core::Http::Policies::HttpPolicy {
   public:
     explicit StorageSwitchToSecondaryPolicy(std::string primaryHost, std::string secondaryHost)
         : m_primaryHost(std::move(primaryHost)), m_secondaryHost(std::move(secondaryHost))
@@ -33,8 +33,8 @@ namespace Azure { namespace Storage { namespace _internal {
 
     std::unique_ptr<Azure::Core::Http::RawResponse> Send(
         Azure::Core::Http::Request& request,
-        Azure::Core::Http::Policies::NextHttpPolicy nextHttpPolicy,
-        const Azure::Core::Context& ctx) const override;
+        Azure::Core::Http::Policies::NextHttpPolicy nextPolicy,
+        const Azure::Core::Context& context) const override;
 
   private:
     std::string m_primaryHost;

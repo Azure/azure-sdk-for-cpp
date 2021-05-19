@@ -13,8 +13,8 @@ namespace Azure { namespace Storage { namespace _internal {
 
   std::unique_ptr<Core::Http::RawResponse> StoragePerRetryPolicy::Send(
       Core::Http::Request& request,
-      Core::Http::Policies::NextHttpPolicy nextHttpPolicy,
-      Core::Context const& ctx) const
+      Core::Http::Policies::NextHttpPolicy nextPolicy,
+      Core::Context const& context) const
   {
     const char* HttpHeaderDate = "Date";
     const char* HttpHeaderXMsDate = "x-ms-date";
@@ -30,7 +30,7 @@ namespace Azure { namespace Storage { namespace _internal {
     }
 
     const char* HttpHeaderTimeout = "timeout";
-    auto cancelTimepoint = ctx.GetDeadline();
+    auto cancelTimepoint = context.GetDeadline();
     if (cancelTimepoint == Azure::DateTime::max())
     {
       request.GetUrl().RemoveQueryParameter(HttpHeaderTimeout);
@@ -45,7 +45,7 @@ namespace Azure { namespace Storage { namespace _internal {
       request.GetUrl().AppendQueryParameter(
           HttpHeaderTimeout, std::to_string(std::max(numSeconds, int64_t(1))));
     }
-    return nextHttpPolicy.Send(request, ctx);
+    return nextPolicy.Send(request, context);
   }
 
 }}} // namespace Azure::Storage::_internal

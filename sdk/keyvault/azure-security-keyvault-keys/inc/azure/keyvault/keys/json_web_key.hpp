@@ -25,7 +25,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
    * @brief Represents a JSON Web Key as defined in http://tools.ietf.org/html/rfc7517.
    *
    */
-  class JsonWebKey {
+  class JsonWebKey final {
   public:
     /**
      * @brief The Identifier of the key. This is not limited to a Url.

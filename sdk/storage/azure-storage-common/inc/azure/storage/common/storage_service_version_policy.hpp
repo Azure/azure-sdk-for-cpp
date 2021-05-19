@@ -12,7 +12,7 @@
 
 namespace Azure { namespace Storage { namespace _internal {
 
-  class StorageServiceVersionPolicy : public Azure::Core::Http::Policies::HttpPolicy {
+  class StorageServiceVersionPolicy final : public Azure::Core::Http::Policies::HttpPolicy {
   public:
     explicit StorageServiceVersionPolicy(std::string apiVersion)
         : m_apiVersion(std::move(apiVersion))
@@ -26,11 +26,11 @@ namespace Azure { namespace Storage { namespace _internal {
 
     std::unique_ptr<Azure::Core::Http::RawResponse> Send(
         Azure::Core::Http::Request& request,
-        Azure::Core::Http::Policies::NextHttpPolicy nextHttpPolicy,
-        const Azure::Core::Context& ctx) const override
+        Azure::Core::Http::Policies::NextHttpPolicy nextPolicy,
+        const Azure::Core::Context& context) const override
     {
       request.SetHeader(HttpHeaderXMsVersion, m_apiVersion);
-      return nextHttpPolicy.Send(request, ctx);
+      return nextPolicy.Send(request, context);
     }
 
   private:

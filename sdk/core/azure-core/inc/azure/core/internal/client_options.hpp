@@ -24,15 +24,20 @@ namespace Azure { namespace Core { namespace _internal {
    */
   struct ClientOptions
   {
+    /**
+     * @brief Destructor.
+     *
+     */
+    virtual ~ClientOptions() = default;
 
     /**
-     * @brief Define policies to be called one time for every Http request from an sdk client.
+     * @brief Define policies to be called one time for every HTTP request from an SDK client.
      *
      */
     std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>> PerOperationPolicies;
 
     /**
-     * @brief Define policies to be called each time and sdk client tries to send the Http request.
+     * @brief Define policies to be called each time and SDK client tries to send the HTTP request.
      *
      */
     std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>> PerRetryPolicies;
@@ -82,16 +87,19 @@ namespace Azure { namespace Core { namespace _internal {
 
     /**
      * @brief Specify the number of retries and other retry-related options.
+     *
      */
     Azure::Core::Http::Policies::RetryOptions Retry;
 
     /**
      * @brief Customized HTTP client. We're going to use the default one if this is empty.
+     *
      */
     Azure::Core::Http::Policies::TransportOptions Transport;
 
     /**
      * @brief Telemetry options.
+     *
      */
     Azure::Core::Http::Policies::TelemetryOptions Telemetry;
 

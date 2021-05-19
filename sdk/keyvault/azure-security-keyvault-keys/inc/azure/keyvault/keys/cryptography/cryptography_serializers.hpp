@@ -35,41 +35,41 @@ namespace Azure {
   namespace _detail {
 
     /***************** Encrypt Result *****************/
-    struct EncryptResultSerializer
+    struct EncryptResultSerializer final
     {
       static EncryptResult EncryptResultDeserialize(
           Azure::Core::Http::RawResponse const& rawResponse);
     };
 
     /***************** Encrypt Parameters *****************/
-    struct EncryptParametersSerializer
+    struct EncryptParametersSerializer final
     {
       static std::string EncryptParametersSerialize(
           Azure::Security::KeyVault::Keys::Cryptography::EncryptParameters const& parameters);
     };
 
     /***************** Decrypt Result *****************/
-    struct DecryptResultSerializer
+    struct DecryptResultSerializer final
     {
       static DecryptResult DecryptResultDeserialize(
           Azure::Core::Http::RawResponse const& rawResponse);
     };
 
     /***************** Encrypt Parameters *****************/
-    struct DecryptParametersSerializer
+    struct DecryptParametersSerializer final
     {
       static std::string DecryptParametersSerialize(
           Azure::Security::KeyVault::Keys::Cryptography::DecryptParameters const& parameters);
     };
 
     /***************** WrapKey Result *****************/
-    struct WrapResultSerializer
+    struct WrapResultSerializer final
     {
       static WrapResult WrapResultDeserialize(Azure::Core::Http::RawResponse const& rawResponse);
     };
 
     /***************** WrapKey Parameters *****************/
-    struct KeyWrapParametersSerializer
+    struct KeyWrapParametersSerializer final
     {
       static std::string KeyWrapParametersSerialize(
           Azure::Security::KeyVault::Keys::Cryptography::_detail::KeyWrapParameters const&
@@ -77,20 +77,20 @@ namespace Azure {
     };
 
     /***************** UnwrapKey Result *****************/
-    struct UnwrapResultSerializer
+    struct UnwrapResultSerializer final
     {
       static UnwrapResult UnwrapResultDeserialize(
           Azure::Core::Http::RawResponse const& rawResponse);
     };
 
     /***************** Sign Result *****************/
-    struct SignResultSerializer
+    struct SignResultSerializer final
     {
       static SignResult SignResultDeserialize(Azure::Core::Http::RawResponse const& rawResponse);
     };
 
     /***************** Key sign Parameters *****************/
-    struct KeySignParametersSerializer
+    struct KeySignParametersSerializer final
     {
       static std::string KeySignParametersSerialize(
           Azure::Security::KeyVault::Keys::Cryptography::_detail::KeySignParameters const&
@@ -98,14 +98,14 @@ namespace Azure {
     };
 
     /***************** Verify Result *****************/
-    struct VerifyResultSerializer
+    struct VerifyResultSerializer final
     {
       static VerifyResult VerifyResultDeserialize(
           Azure::Core::Http::RawResponse const& rawResponse);
     };
 
     /***************** Key Verify Parameters *****************/
-    struct KeyVerifyParametersSerializer
+    struct KeyVerifyParametersSerializer final
     {
       static std::string KeyVerifyParametersSerialize(
           Azure::Security::KeyVault::Keys::Cryptography::_detail::KeyVerifyParameters const&

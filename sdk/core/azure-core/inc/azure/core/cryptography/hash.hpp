@@ -48,6 +48,7 @@ namespace Azure { namespace Core { namespace Cryptography {
   public:
     /**
      * @brief Construct a default instance of #Azure::Core::Cryptography::Hash.
+     *
      */
     Hash() = default;
 
@@ -95,6 +96,7 @@ namespace Azure { namespace Core { namespace Cryptography {
 
     /**
      * @brief Cleanup any state when destroying the instance of #Azure::Core::Cryptography::Hash.
+     *
      */
     virtual ~Hash() = default;
 
@@ -110,16 +112,18 @@ namespace Azure { namespace Core { namespace Cryptography {
    * @brief Represents the class for the MD5 hash function which maps binary data of an arbitrary
    * length to small binary data of a fixed length.
    */
-  class Md5Hash : public Hash {
+  class Md5Hash final : public Hash {
 
   public:
     /**
      * @brief Construct a default instance of #Azure::Core::Cryptography::Md5Hash.
+     *
      */
     Md5Hash();
 
     /**
      * @brief Cleanup any state when destroying the instance of #Azure::Core::Cryptography::Md5Hash.
+     *
      */
     ~Md5Hash() override;
 

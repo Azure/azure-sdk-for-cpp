@@ -8,6 +8,8 @@
 
 #pragma once
 
+#include <cstdint>
+
 #define AZURE_CORE_VERSION_MAJOR 1
 #define AZURE_CORE_VERSION_MINOR 0
 #define AZURE_CORE_VERSION_PATCH 0
@@ -19,17 +21,18 @@
 namespace Azure { namespace Core { namespace _detail {
   /**
    * @brief Provides version information.
+   *
    */
-  class PackageVersion {
+  class PackageVersion final {
   public:
     /// Major numeric identifier.
-    static constexpr int Major = AZURE_CORE_VERSION_MAJOR;
+    static constexpr int32_t Major = AZURE_CORE_VERSION_MAJOR;
 
     /// Minor numeric identifier.
-    static constexpr int Minor = AZURE_CORE_VERSION_MINOR;
+    static constexpr int32_t Minor = AZURE_CORE_VERSION_MINOR;
 
     /// Patch numeric identifier.
-    static constexpr int Patch = AZURE_CORE_VERSION_PATCH;
+    static constexpr int32_t Patch = AZURE_CORE_VERSION_PATCH;
 
     /// Indicates whether the SDK is in a pre-release state.
     static constexpr bool IsPreRelease = sizeof(AZURE_CORE_VERSION_PRERELEASE) != sizeof("");

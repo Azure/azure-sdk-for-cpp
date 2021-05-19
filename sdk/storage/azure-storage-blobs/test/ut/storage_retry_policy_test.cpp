@@ -11,7 +11,7 @@
 
 namespace Azure { namespace Storage { namespace Test {
 
-  class MockTransportPolicy : public Core::Http::Policies::HttpPolicy {
+  class MockTransportPolicy final : public Core::Http::Policies::HttpPolicy {
   public:
     MockTransportPolicy() {}
 
@@ -38,11 +38,11 @@ namespace Azure { namespace Storage { namespace Test {
 
     std::unique_ptr<Core::Http::RawResponse> Send(
         Core::Http::Request& request,
-        Core::Http::Policies::NextHttpPolicy nextHttpPolicy,
+        Core::Http::Policies::NextHttpPolicy nextPolicy,
         Core::Context const& context) const override
     {
       (void)context;
-      (void)nextHttpPolicy;
+      (void)nextPolicy;
 
       const auto requestHeaders = request.GetHeaders();
       int64_t requestOffset = 0;
@@ -131,7 +131,7 @@ namespace Azure { namespace Storage { namespace Test {
                   static_cast<int64_t>(m_primaryContent->length()) - requestOffset, requestLength);
               auto bodyStream = std::make_unique<Core::IO::MemoryBodyStream>(
                   reinterpret_cast<const uint8_t*>(m_primaryContent->data() + requestOffset),
-                  bodyLength);
+                  static_cast<size_t>(bodyLength));
               response->SetBodyStream(std::move(bodyStream));
               response->SetHeader("content-length", std::to_string(bodyLength));
               response->SetHeader("etag", m_primaryETag.ToString());
@@ -161,7 +161,7 @@ namespace Azure { namespace Storage { namespace Test {
                 static_cast<int64_t>(m_secondaryContent->length()) - requestOffset, requestLength);
             auto bodyStream = std::make_unique<Core::IO::MemoryBodyStream>(
                 reinterpret_cast<const uint8_t*>(m_secondaryContent->data() + requestOffset),
-                bodyLength);
+                static_cast<size_t>(bodyLength));
             response->SetBodyStream(std::move(bodyStream));
             response->SetHeader("content-length", std::to_string(bodyLength));
             response->SetHeader("etag", m_secondaryETag.ToString());

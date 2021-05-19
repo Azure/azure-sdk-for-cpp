@@ -3,12 +3,18 @@
 
 /**
  * @file
- * @brief This file defines a macro for DLL export.
+ * @brief DLL export macro.
  */
 
 // For explanation, see the comment in azure/core/dll_import_export.hpp
 
 #pragma once
+
+/**
+ * @def AZ_SECURITY_KEYVAULT_COMMON_DLLEXPORT
+ * @brief Applies DLL export attribute, when applicable.
+ * @note See https://docs.microsoft.com/cpp/cpp/dllexport-dllimport?view=msvc-160.
+ */
 
 #if defined(AZ_SECURITY_KEYVAULT_COMMON_DLL) \
     || (0 /*@AZ_SECURITY_KEYVAULT_COMMON_DLL_INSTALLED_AS_PACKAGE@*/)

@@ -26,7 +26,8 @@
 namespace Azure { namespace Core { namespace IO {
 
   /**
-   *@brief Used to read data to/from a service.
+   * @brief Used to read data to/from a service.
+   *
    */
   class BodyStream {
   private:
@@ -41,7 +42,7 @@ namespace Azure { namespace Core { namespace IO {
      *
      * @return Number of bytes read.
      */
-    virtual int64_t OnRead(uint8_t* buffer, int64_t count, Azure::Core::Context const& context) = 0;
+    virtual size_t OnRead(uint8_t* buffer, size_t count, Azure::Core::Context const& context) = 0;
 
   public:
     /// Destructor.
@@ -77,9 +78,9 @@ namespace Azure { namespace Core { namespace IO {
      *
      * @return Number of bytes read.
      */
-    int64_t Read(
+    size_t Read(
         uint8_t* buffer,
-        int64_t count,
+        size_t count,
         Azure::Core::Context const& context = Azure::Core::Context())
     {
       AZURE_ASSERT(buffer && count >= 0);
@@ -98,9 +99,9 @@ namespace Azure { namespace Core { namespace IO {
      *
      * @return Number of bytes read.
      */
-    int64_t ReadToCount(
+    size_t ReadToCount(
         uint8_t* buffer,
-        int64_t count,
+        size_t count,
         Azure::Core::Context const& context = Azure::Core::Context());
 
     /**
@@ -116,14 +117,15 @@ namespace Azure { namespace Core { namespace IO {
 
   /**
    * @brief #Azure::Core::IO::BodyStream providing data from an initialized memory buffer.
+   *
    */
-  class MemoryBodyStream : public BodyStream {
+  class MemoryBodyStream final : public BodyStream {
   private:
     const uint8_t* m_data;
-    int64_t m_length;
-    int64_t m_offset = 0;
+    size_t m_length;
+    size_t m_offset = 0;
 
-    int64_t OnRead(uint8_t* buffer, int64_t count, Azure::Core::Context const& context) override;
+    size_t OnRead(uint8_t* buffer, size_t count, Azure::Core::Context const& context) override;
 
   public:
     // Forbid constructor for rval so we don't end up storing dangling ptr
@@ -135,7 +137,7 @@ namespace Azure { namespace Core { namespace IO {
      * @param buffer Vector of bytes with the contents to provide the data from to the readers.
      */
     MemoryBodyStream(std::vector<uint8_t> const& buffer)
-        : MemoryBodyStream(buffer.data(), static_cast<int64_t>(buffer.size()))
+        : MemoryBodyStream(buffer.data(), buffer.size())
     {
     }
 
@@ -146,7 +148,7 @@ namespace Azure { namespace Core { namespace IO {
      * from to the readers.
      * @param length Size of the buffer.
      */
-    explicit MemoryBodyStream(const uint8_t* data, int64_t length) : m_data(data), m_length(length)
+    explicit MemoryBodyStream(const uint8_t* data, size_t length) : m_data(data), m_length(length)
     {
       AZURE_ASSERT(data != nullptr || length == 0);
     }
@@ -161,7 +163,7 @@ namespace Azure { namespace Core { namespace IO {
      * @brief A concrete implementation of  #Azure::Core::IO::BodyStream used for reading data from
      * a file from any offset and length within it.
      */
-    class RandomAccessFileBodyStream : public BodyStream {
+    class RandomAccessFileBodyStream final : public BodyStream {
     private:
       // immutable
 #if defined(AZ_PLATFORM_POSIX)
@@ -174,7 +176,7 @@ namespace Azure { namespace Core { namespace IO {
       // mutable
       int64_t m_offset;
 
-      int64_t OnRead(uint8_t* buffer, int64_t count, Azure::Core::Context const& context) override;
+      size_t OnRead(uint8_t* buffer, size_t count, Azure::Core::Context const& context) override;
 
     public:
 #if defined(AZ_PLATFORM_POSIX)
@@ -240,7 +242,7 @@ namespace Azure { namespace Core { namespace IO {
    * @brief A concrete implementation of #Azure::Core::IO::BodyStream used for reading data from a
    * file.
    */
-  class FileBodyStream : public BodyStream {
+  class FileBodyStream final : public BodyStream {
   private:
     // immutable
 #if defined(AZ_PLATFORM_WINDOWS)
@@ -251,7 +253,7 @@ namespace Azure { namespace Core { namespace IO {
     // mutable
     std::unique_ptr<_internal::RandomAccessFileBodyStream> m_randomAccessFileBodyStream;
 
-    int64_t OnRead(uint8_t* buffer, int64_t count, Azure::Core::Context const& context) override;
+    size_t OnRead(uint8_t* buffer, size_t count, Azure::Core::Context const& context) override;
 
   public:
     /**

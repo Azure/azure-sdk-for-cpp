@@ -11,6 +11,7 @@ const std::string& GetConnectionString();
 
 class Sample {
 public:
+  virtual ~Sample() = default;
   static const std::map<std::string, std::function<void()>>& samples() { return m_samples(); }
 
 protected:
@@ -30,7 +31,7 @@ private:
 #define SAMPLE(NAME, FUNCTION) \
   void FUNCTION(); \
 \
-  class Sample##NAME : public Sample { \
+  class Sample##NAME final : public Sample { \
   public: \
     Sample##NAME() { add_sample(#NAME, FUNCTION); } \
   }; \

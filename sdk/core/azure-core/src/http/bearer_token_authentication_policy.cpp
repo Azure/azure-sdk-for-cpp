@@ -12,7 +12,7 @@ using namespace Azure::Core::Http::Policies::_internal;
 
 std::unique_ptr<RawResponse> BearerTokenAuthenticationPolicy::Send(
     Request& request,
-    NextHttpPolicy policy,
+    NextHttpPolicy nextPolicy,
     Context const& context) const
 {
   {
@@ -27,5 +27,5 @@ std::unique_ptr<RawResponse> BearerTokenAuthenticationPolicy::Send(
     request.SetHeader("authorization", "Bearer " + m_accessToken.Token);
   }
 
-  return policy.Send(request, context);
+  return nextPolicy.Send(request, context);
 }

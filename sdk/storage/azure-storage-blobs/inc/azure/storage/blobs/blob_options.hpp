@@ -21,8 +21,8 @@ namespace Azure { namespace Storage { namespace Blobs {
   /**
    * @brief Specifies access conditions for a container.
    */
-  struct BlobContainerAccessConditions : public Azure::ModifiedConditions,
-                                         public LeaseAccessConditions
+  struct BlobContainerAccessConditions final : public Azure::ModifiedConditions,
+                                               public LeaseAccessConditions
   {
   };
 
@@ -31,6 +31,12 @@ namespace Azure { namespace Storage { namespace Blobs {
    */
   struct TagAccessConditions
   {
+    /**
+     * @brief Destructor.
+     *
+     */
+    virtual ~TagAccessConditions() = default;
+
     /**
      * @brief Optional SQL statement to apply to the tags of the Blob. Refer to
      * https://docs.microsoft.com/en-us/rest/api/storageservices/specifying-conditional-headers-for-blob-service-operations#tags-predicate-syntax
@@ -52,16 +58,16 @@ namespace Azure { namespace Storage { namespace Blobs {
   /**
    * @brief Specifies access conditions for blob lease operations.
    */
-  struct LeaseBlobAccessConditions : public Azure::ModifiedConditions,
-                                     public Azure::MatchConditions,
-                                     public TagAccessConditions
+  struct LeaseBlobAccessConditions final : public Azure::ModifiedConditions,
+                                           public Azure::MatchConditions,
+                                           public TagAccessConditions
   {
   };
 
   /**
    * @brief Specifies access conditions for a append blob.
    */
-  struct AppendBlobAccessConditions : public BlobAccessConditions
+  struct AppendBlobAccessConditions final : public BlobAccessConditions
   {
     /**
      * @brief Ensures that the AppendBlock operation succeeds only if the append blob's size
@@ -79,7 +85,7 @@ namespace Azure { namespace Storage { namespace Blobs {
   /**
    * @brief Specifies access conditions for a page blob.
    */
-  struct PageBlobAccessConditions : public BlobAccessConditions
+  struct PageBlobAccessConditions final : public BlobAccessConditions
   {
     /**
      * @brief IfSequenceNumberLessThan ensures that the page blob operation succeeds only if
@@ -104,7 +110,7 @@ namespace Azure { namespace Storage { namespace Blobs {
    * @brief Wrapper for an encryption key to be used with client provided key server-side
    * encryption.
    */
-  struct EncryptionKey
+  struct EncryptionKey final
   {
     /**
      * @brief Base64 encoded string of the AES256 encryption key.
@@ -125,7 +131,7 @@ namespace Azure { namespace Storage { namespace Blobs {
   /**
    * @brief Client options used to initialize all kinds of blob clients.
    */
-  struct BlobClientOptions : Azure::Core::_internal::ClientOptions
+  struct BlobClientOptions final : Azure::Core::_internal::ClientOptions
   {
     /**
      * @brief Holds the customer provided key used when making requests.
@@ -155,7 +161,7 @@ namespace Azure { namespace Storage { namespace Blobs {
   /**
    * @brief Optional parameters for #Azure::Storage::Blobs::BlobServiceClient::ListBlobContainers.
    */
-  struct ListBlobContainersOptions
+  struct ListBlobContainersOptions final
   {
     /**
      * @brief Specifies a string that filters the results to return only containers whose
@@ -187,7 +193,7 @@ namespace Azure { namespace Storage { namespace Blobs {
   /**
    * @brief Optional parameters for #Azure::Storage::Blobs::BlobServiceClient::GetUserDelegationKey.
    */
-  struct GetUserDelegationKeyOptions
+  struct GetUserDelegationKeyOptions final
   {
     /**
      * @brief Start time for the key's validity. The time should be specified in UTC, and
@@ -199,35 +205,35 @@ namespace Azure { namespace Storage { namespace Blobs {
   /**
    * @brief Optional parameters for #Azure::Storage::Blobs::BlobServiceClient::SetProperties.
    */
-  struct SetServicePropertiesOptions
+  struct SetServicePropertiesOptions final
   {
   };
 
   /**
    * @brief Optional parameters for #Azure::Storage::Blobs::BlobServiceClient::GetProperties.
    */
-  struct GetServicePropertiesOptions
+  struct GetServicePropertiesOptions final
   {
   };
 
   /**
    * @brief Optional parameters for #Azure::Storage::Blobs::BlobServiceClient::GetAccountInfo.
    */
-  struct GetAccountInfoOptions
+  struct GetAccountInfoOptions final
   {
   };
 
   /**
    * @brief Optional parameters for #Azure::Storage::Blobs::BlobServiceClient::GetStatistics.
    */
-  struct GetBlobServiceStatisticsOptions
+  struct GetBlobServiceStatisticsOptions final
   {
   };
 
   /**
    * @brief Optional parameters for #Azure::Storage::Blobs::BlobServiceClient::FindBlobsByTags.
    */
-  struct FindBlobsByTagsOptions
+  struct FindBlobsByTagsOptions final
   {
     /**
      * @brief A string value that identifies the portion of the result set to be returned
@@ -246,7 +252,7 @@ namespace Azure { namespace Storage { namespace Blobs {
   /**
    * @brief Optional parameters for #Azure::Storage::Blobs::BlobContainerClient::Create.
    */
-  struct CreateBlobContainerOptions
+  struct CreateBlobContainerOptions final
   {
     /**
      * @brief Specifies whether data in the container may be accessed publicly and the level
@@ -274,7 +280,7 @@ namespace Azure { namespace Storage { namespace Blobs {
   /**
    * @brief Optional parameters for #Azure::Storage::Blobs::BlobContainerClient::Delete.
    */
-  struct DeleteBlobContainerOptions
+  struct DeleteBlobContainerOptions final
   {
     /**
      * @brief Optional conditions that must be met to perform this operation.
@@ -285,19 +291,14 @@ namespace Azure { namespace Storage { namespace Blobs {
   /**
    * @brief Optional parameters for #Azure::Storage::Blobs::BlobContainerClient::Undelete.
    */
-  struct UndeleteBlobContainerOptions
+  struct UndeleteBlobContainerOptions final
   {
-    /**
-     * @brief Use this parameter if you would like to restore the container under a
-     * different name.
-     */
-    Azure::Nullable<std::string> DestinationBlobContainerName;
   };
 
   /**
    * @brief Optional parameters for #Azure::Storage::Blobs::BlobContainerClient::GetProperties.
    */
-  struct GetBlobContainerPropertiesOptions
+  struct GetBlobContainerPropertiesOptions final
   {
     /**
      * @brief Optional conditions that must be met to perform this operation.
@@ -308,7 +309,7 @@ namespace Azure { namespace Storage { namespace Blobs {
   /**
    * @brief Optional parameters for #Azure::Storage::Blobs::BlobContainerClient::SetMetadata.
    */
-  struct SetBlobContainerMetadataOptions
+  struct SetBlobContainerMetadataOptions final
   {
     /**
      * @brief Optional conditions that must be met to perform this operation.
@@ -327,7 +328,7 @@ namespace Azure { namespace Storage { namespace Blobs {
    * @brief Optional parameters for #Azure::Storage::Blobs::BlobContainerClient::ListBlobs and
    * #Azure::Storage::Blobs::BlobContainerClient::ListBlobsByHierarchy.
    */
-  struct ListBlobsOptions
+  struct ListBlobsOptions final
   {
     /**
      * @brief Specifies a string that filters the results to return only blobs whose
@@ -359,7 +360,7 @@ namespace Azure { namespace Storage { namespace Blobs {
   /**
    * @brief Optional parameters for #Azure::Storage::Blobs::BlobContainerClient::GetAccessPolicy.
    */
-  struct GetBlobContainerAccessPolicyOptions
+  struct GetBlobContainerAccessPolicyOptions final
   {
     /**
      * @brief Optional conditions that must be met to perform this operation.
@@ -370,7 +371,7 @@ namespace Azure { namespace Storage { namespace Blobs {
   /**
    * @brief Optional parameters for #Azure::Storage::Blobs::BlobContainerClient::SetAccessPolicy.
    */
-  struct SetBlobContainerAccessPolicyOptions
+  struct SetBlobContainerAccessPolicyOptions final
   {
     /**
      * @brief Specifies whether data in the container may be accessed publicly and the level
@@ -393,7 +394,7 @@ namespace Azure { namespace Storage { namespace Blobs {
   /**
    * @brief Optional parameters for #Azure::Storage::Blobs::BlobClient::GetProperties.
    */
-  struct GetBlobPropertiesOptions
+  struct GetBlobPropertiesOptions final
   {
     /**
      * @brief Optional conditions that must be met to perform this operation.
@@ -404,7 +405,7 @@ namespace Azure { namespace Storage { namespace Blobs {
   /**
    * @brief Optional parameters for #Azure::Storage::Blobs::BlobClient::SetHttpHeaders.
    */
-  struct SetBlobHttpHeadersOptions
+  struct SetBlobHttpHeadersOptions final
   {
     /**
      * @brief Optional conditions that must be met to perform this operation.
@@ -415,7 +416,7 @@ namespace Azure { namespace Storage { namespace Blobs {
   /**
    * @brief Optional parameters for #Azure::Storage::Blobs::BlobClient::SetMetadata.
    */
-  struct SetBlobMetadataOptions
+  struct SetBlobMetadataOptions final
   {
     /**
      * @brief Optional conditions that must be met to perform this operation.
@@ -426,7 +427,7 @@ namespace Azure { namespace Storage { namespace Blobs {
   /**
    * @brief Optional parameters for #Azure::Storage::Blobs::BlobClient::SetAccessTier.
    */
-  struct SetBlobAccessTierOptions
+  struct SetBlobAccessTierOptions final
   {
     /**
      * @brief Indicates the priority with which to rehydrate an archived blob. The priority
@@ -439,7 +440,7 @@ namespace Azure { namespace Storage { namespace Blobs {
   /**
    * @brief Optional parameters for #Azure::Storage::Blobs::BlobClient::StartCopyFromUri.
    */
-  struct StartBlobCopyFromUriOptions
+  struct StartBlobCopyFromUriOptions final
   {
     /**
      * @brief Specifies user-defined name-value pairs associated with the blob. If no
@@ -481,7 +482,7 @@ namespace Azure { namespace Storage { namespace Blobs {
   /**
    * @brief Optional parameters for #Azure::Storage::Blobs::BlobClient::AbortCopyFromUri.
    */
-  struct AbortBlobCopyFromUriOptions
+  struct AbortBlobCopyFromUriOptions final
   {
     /**
      * @brief Optional conditions that must be met to perform this operation.
@@ -492,7 +493,7 @@ namespace Azure { namespace Storage { namespace Blobs {
   /**
    * @brief Optional parameters for #Azure::Storage::Blobs::BlobClient::Download.
    */
-  struct DownloadBlobOptions
+  struct DownloadBlobOptions final
   {
     /**
      * @brief Downloads only the bytes of the blob in the specified range.
@@ -514,7 +515,7 @@ namespace Azure { namespace Storage { namespace Blobs {
   /**
    * @brief Optional parameters for #Azure::Storage::Blobs::BlobClient::DownloadTo.
    */
-  struct DownloadBlobToOptions
+  struct DownloadBlobToOptions final
   {
     /**
      * @brief Downloads only the bytes of the blob in the specified range.
@@ -541,14 +542,14 @@ namespace Azure { namespace Storage { namespace Blobs {
       /**
        * @brief The maximum number of threads that may be used in a parallel transfer.
        */
-      int Concurrency = 5;
+      int32_t Concurrency = 5;
     } TransferOptions;
   };
 
   /**
    * @brief Optional parameters for #Azure::Storage::Blobs::BlobClient::CreateSnapshot.
    */
-  struct CreateBlobSnapshotOptions
+  struct CreateBlobSnapshotOptions final
   {
     /**
      * @brief Specifies user-defined name-value pairs associated with the blob. If no
@@ -567,7 +568,7 @@ namespace Azure { namespace Storage { namespace Blobs {
   /**
    * @brief Optional parameters for #Azure::Storage::Blobs::BlobClient::Delete.
    */
-  struct DeleteBlobOptions
+  struct DeleteBlobOptions final
   {
     /**
      * @brief Specifies to delete either the base blob
@@ -585,14 +586,14 @@ namespace Azure { namespace Storage { namespace Blobs {
   /**
    * @brief Optional parameters for #Azure::Storage::Blobs::BlobClient::Undelete.
    */
-  struct UndeleteBlobOptions
+  struct UndeleteBlobOptions final
   {
   };
 
   /**
    * @brief Optional parameters for #Azure::Storage::Blobs::BlobLeaseClient::Acquire.
    */
-  struct AcquireLeaseOptions
+  struct AcquireLeaseOptions final
   {
     /**
      * @brief Optional conditions that must be met to perform this operation.
@@ -603,7 +604,7 @@ namespace Azure { namespace Storage { namespace Blobs {
   /**
    * @brief Optional parameters for #Azure::Storage::Blobs::BlobLeaseClient::Renew.
    */
-  struct RenewLeaseOptions
+  struct RenewLeaseOptions final
   {
     /**
      * @brief Optional conditions that must be met to perform this operation.
@@ -614,7 +615,7 @@ namespace Azure { namespace Storage { namespace Blobs {
   /**
    * @brief Optional parameters for #Azure::Storage::Blobs::BlobLeaseClient::Change.
    */
-  struct ChangeLeaseOptions
+  struct ChangeLeaseOptions final
   {
     /**
      * @brief Optional conditions that must be met to perform this operation.
@@ -625,7 +626,7 @@ namespace Azure { namespace Storage { namespace Blobs {
   /**
    * @brief Optional parameters for #Azure::Storage::Blobs::BlobLeaseClient::Release.
    */
-  struct ReleaseLeaseOptions
+  struct ReleaseLeaseOptions final
   {
     /**
      * @brief Optional conditions that must be met to perform this operation.
@@ -636,7 +637,7 @@ namespace Azure { namespace Storage { namespace Blobs {
   /**
    * @brief Optional parameters for #Azure::Storage::Blobs::BlobLeaseClient::Break.
    */
-  struct BreakLeaseOptions
+  struct BreakLeaseOptions final
   {
     /**
      * @brief Proposed duration the lease should continue before it is broken, in seconds,
@@ -656,7 +657,7 @@ namespace Azure { namespace Storage { namespace Blobs {
   /**
    * @brief Optional parameters for #Azure::Storage::Blobs::BlobClient::SetTags.
    */
-  struct SetBlobTagsOptions
+  struct SetBlobTagsOptions final
   {
     /**
      * @brief Optional conditions that must be met to perform this operation.
@@ -667,7 +668,7 @@ namespace Azure { namespace Storage { namespace Blobs {
   /**
    * @brief Optional parameters for #Azure::Storage::Blobs::BlobClient::GetTags.
    */
-  struct GetBlobTagsOptions
+  struct GetBlobTagsOptions final
   {
     /**
      * @brief Optional conditions that must be met to perform this operation.
@@ -678,7 +679,7 @@ namespace Azure { namespace Storage { namespace Blobs {
   /**
    * @brief Optional parameters for #Azure::Storage::Blobs::BlockBlobClient::Upload.
    */
-  struct UploadBlockBlobOptions
+  struct UploadBlockBlobOptions final
   {
     /**
      * @brief Hash of the blob content. This hash is used to verify the integrity of
@@ -711,7 +712,7 @@ namespace Azure { namespace Storage { namespace Blobs {
   /**
    * @brief Optional parameters for #Azure::Storage::Blobs::BlockBlobClient::UploadFrom.
    */
-  struct UploadBlockBlobFromOptions
+  struct UploadBlockBlobFromOptions final
   {
     /**
      * @brief The standard HTTP header system properties to set.
@@ -748,14 +749,14 @@ namespace Azure { namespace Storage { namespace Blobs {
       /**
        * @brief The maximum number of threads that may be used in a parallel transfer.
        */
-      int Concurrency = 5;
+      int32_t Concurrency = 5;
     } TransferOptions;
   };
 
   /**
    * @brief Optional parameters for #Azure::Storage::Blobs::BlockBlobClient::StageBlock.
    */
-  struct StageBlockOptions
+  struct StageBlockOptions final
   {
     /**
      * @brief Hash of the blob content. This hash is used to verify the integrity of
@@ -773,7 +774,7 @@ namespace Azure { namespace Storage { namespace Blobs {
   /**
    * @brief Optional parameters for #Azure::Storage::Blobs::BlockBlobClient::StageBlockFromUri.
    */
-  struct StageBlockFromUriOptions
+  struct StageBlockFromUriOptions final
   {
     /**
      * @brief Uploads only the bytes of the source blob in the specified range.
@@ -803,7 +804,7 @@ namespace Azure { namespace Storage { namespace Blobs {
   /**
    * @brief Optional parameters for #Azure::Storage::Blobs::BlockBlobClient::CommitBlockList.
    */
-  struct CommitBlockListOptions
+  struct CommitBlockListOptions final
   {
     /**
      * @brief The standard HTTP header system properties to set.
@@ -829,7 +830,7 @@ namespace Azure { namespace Storage { namespace Blobs {
   /**
    * @brief Optional parameters for #Azure::Storage::Blobs::BlockBlobClient::GetBlockList.
    */
-  struct GetBlockListOptions
+  struct GetBlockListOptions final
   {
     /**
      * @brief Specifies whether to return the list of committed blocks, the list of uncommitted
@@ -848,7 +849,7 @@ namespace Azure { namespace Storage { namespace Blobs {
   /**
    * @brief Optional parameters for #Azure::Storage::Blobs::AppendBlobClient::Create.
    */
-  struct CreateAppendBlobOptions
+  struct CreateAppendBlobOptions final
   {
     /**
      * @brief The standard HTTP header system properties to set.
@@ -869,7 +870,7 @@ namespace Azure { namespace Storage { namespace Blobs {
   /**
    * @brief Optional parameters for #Azure::Storage::Blobs::AppendBlobClient::AppendBlock.
    */
-  struct AppendBlockOptions
+  struct AppendBlockOptions final
   {
     /**
      * @brief Hash of the blob content. This hash is used to verify the integrity of
@@ -887,7 +888,7 @@ namespace Azure { namespace Storage { namespace Blobs {
   /**
    * @brief Optional parameters for #Azure::Storage::Blobs::AppendBlobClient::AppendBlockFromUri.
    */
-  struct AppendBlockFromUriOptions
+  struct AppendBlockFromUriOptions final
   {
     /**
      * @brief Uploads only the bytes of the source blob in the specified range.
@@ -910,7 +911,7 @@ namespace Azure { namespace Storage { namespace Blobs {
   /**
    * @brief Optional parameters for #Azure::Storage::Blobs::AppendBlobClient::Seal.
    */
-  struct SealAppendBlobOptions
+  struct SealAppendBlobOptions final
   {
     /**
      * @brief Optional conditions that must be met to perform this operation.
@@ -921,7 +922,7 @@ namespace Azure { namespace Storage { namespace Blobs {
   /**
    * @brief Optional parameters for #Azure::Storage::Blobs::PageBlobClient::Create.
    */
-  struct CreatePageBlobOptions
+  struct CreatePageBlobOptions final
   {
     /**
      * @brief The sequence number is a user-controlled value that you can use to track requests. The
@@ -953,7 +954,7 @@ namespace Azure { namespace Storage { namespace Blobs {
   /**
    * @brief Optional parameters for #Azure::Storage::Blobs::PageBlobClient::UploadPages.
    */
-  struct UploadPagesOptions
+  struct UploadPagesOptions final
   {
     /**
      * @brief Hash of the blob content. This hash is used to verify the integrity of
@@ -971,7 +972,7 @@ namespace Azure { namespace Storage { namespace Blobs {
   /**
    * @brief Optional parameters for #Azure::Storage::Blobs::PageBlobClient::UploadPagesFromUri.
    */
-  struct UploadPagesFromUriOptions
+  struct UploadPagesFromUriOptions final
   {
     /**
      * @brief Hash of the blob content. This hash is used to verify the integrity of
@@ -989,7 +990,7 @@ namespace Azure { namespace Storage { namespace Blobs {
   /**
    * @brief Optional parameters for #Azure::Storage::Blobs::PageBlobClient::ClearPages.
    */
-  struct ClearPagesOptions
+  struct ClearPagesOptions final
   {
     /**
      * @brief Optional conditions that must be met to perform this operation.
@@ -1000,7 +1001,7 @@ namespace Azure { namespace Storage { namespace Blobs {
   /**
    * @brief Optional parameters for #Azure::Storage::Blobs::PageBlobClient::Resize.
    */
-  struct ResizePageBlobOptions
+  struct ResizePageBlobOptions final
   {
     /**
      * @brief Optional conditions that must be met to perform this operation.
@@ -1011,7 +1012,7 @@ namespace Azure { namespace Storage { namespace Blobs {
   /**
    * @brief Optional parameters for #Azure::Storage::Blobs::PageBlobClient::GetPageRanges.
    */
-  struct GetPageRangesOptions
+  struct GetPageRangesOptions final
   {
     /**
      * @brief Optionally specifies the range of bytes over which to list ranges, inclusively. If
@@ -1028,7 +1029,7 @@ namespace Azure { namespace Storage { namespace Blobs {
   /**
    * @brief Optional parameters for #Azure::Storage::Blobs::PageBlobClient::StartCopyIncremental.
    */
-  struct StartBlobCopyIncrementalOptions
+  struct StartBlobCopyIncrementalOptions final
   {
     /**
      * @brief Optional conditions that must be met to perform this operation.

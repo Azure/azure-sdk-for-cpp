@@ -16,7 +16,7 @@
 
 // The next includes are from Azure Core private headers.
 // That's why the path starts from `private/`
-// They are included to test the connection pool from the curl transport adapter implementation.
+// They are included to test the connection pool from the libcurl transport adapter implementation.
 #include <private/curl_connection.hpp>
 #include <private/curl_connection_pool.hpp>
 #include <private/curl_session.hpp>
@@ -285,7 +285,7 @@ namespace Azure { namespace Core { namespace Test {
 
 #endif
       // Test max connections in pool. Try to add 2k connections to the pool.
-      // Using fake connections to avoid opening real http connections :)
+      // Using fake connections to avoid opening real HTTP connections :)
       //   {
       //     using ::testing::_;
       //     using ::testing::Return;

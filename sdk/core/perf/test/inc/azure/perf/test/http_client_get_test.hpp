@@ -41,7 +41,7 @@ namespace Azure { namespace Perf { namespace Test {
     HttpClientGetTest(Azure::Perf::TestOptions options) : PerfTest(options) {}
 
     /**
-     * @brief Get and set the url option
+     * @brief Get and set the URL option
      *
      */
     void Setup() override
@@ -70,7 +70,7 @@ namespace Azure { namespace Perf { namespace Test {
      */
     std::vector<Azure::Perf::TestOption> GetTestOptions() override
     {
-      return {{"url", {"--url"}, "Url to send the http request. *Required parameter.", 1, true}};
+      return {{"url", {"--url"}, "Url to send the HTTP request. *Required parameter.", 1, true}};
     }
   };
 

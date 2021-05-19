@@ -252,10 +252,9 @@ namespace Azure { namespace Storage { namespace Blobs {
       const UndeleteBlobContainerOptions& options,
       const Azure::Core::Context& context) const
   {
-    std::string destinationBlobContainerName = options.DestinationBlobContainerName.HasValue()
-        ? options.DestinationBlobContainerName.Value()
-        : deletedBlobContainerName;
-    auto blobContainerClient = GetBlobContainerClient(destinationBlobContainerName);
+    (void)options;
+
+    auto blobContainerClient = GetBlobContainerClient(deletedBlobContainerName);
 
     _detail::BlobRestClient::BlobContainer::UndeleteBlobContainerOptions protocolLayerOptions;
     protocolLayerOptions.DeletedBlobContainerName = deletedBlobContainerName;

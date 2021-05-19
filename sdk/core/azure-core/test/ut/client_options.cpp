@@ -16,7 +16,7 @@ using namespace Azure::Core::_internal;
 using namespace Azure::Core::Http;
 using namespace Azure::Core::Http::Policies;
 
-struct FakeTransport : public HttpTransport
+struct FakeTransport final : public HttpTransport
 {
   std::unique_ptr<RawResponse> Send(Request& request, Context const& context) override
   {
@@ -26,13 +26,15 @@ struct FakeTransport : public HttpTransport
   }
 };
 
-struct PerCallPolicy : public HttpPolicy
+struct PerCallPolicy final : public HttpPolicy
 {
-  std::unique_ptr<RawResponse> Send(Request& request, NextHttpPolicy policy, Context const& context)
-      const override
+  std::unique_ptr<RawResponse> Send(
+      Request& request,
+      NextHttpPolicy nextPolicy,
+      Context const& context) const override
   {
     (void)request;
-    (void)policy;
+    (void)nextPolicy;
     (void)context;
     return std::make_unique<RawResponse>(3, 3, HttpStatusCode::Gone, "IamAPerCallPolicy");
   }
@@ -43,13 +45,15 @@ struct PerCallPolicy : public HttpPolicy
   }
 };
 
-struct PerRetryPolicy : public HttpPolicy
+struct PerRetryPolicy final : public HttpPolicy
 {
-  std::unique_ptr<RawResponse> Send(Request& request, NextHttpPolicy policy, Context const& context)
-      const override
+  std::unique_ptr<RawResponse> Send(
+      Request& request,
+      NextHttpPolicy nextPolicy,
+      Context const& context) const override
   {
     (void)request;
-    (void)policy;
+    (void)nextPolicy;
     (void)context;
     return std::make_unique<RawResponse>(6, 6, HttpStatusCode::ResetContent, "IamAPerRetryPolicy");
   }
@@ -124,7 +128,7 @@ TEST(ClientOptions, copyWithConstructor)
 
 TEST(ClientOptions, copyDerivedClassConstructor)
 {
-  struct ServiceClientOptions : ClientOptions
+  struct ServiceClientOptions final : ClientOptions
   {
     std::string ApiVersion;
   };
@@ -162,7 +166,7 @@ TEST(ClientOptions, copyDerivedClassConstructor)
 
 TEST(ClientOptions, copyDerivedClassOperator)
 {
-  struct ServiceClientOptions : ClientOptions
+  struct ServiceClientOptions final : ClientOptions
   {
     std::string ApiVersion;
   };
@@ -200,7 +204,7 @@ TEST(ClientOptions, copyDerivedClassOperator)
 
 TEST(ClientOptions, moveConstruct)
 {
-  struct ServiceClientOptions : ClientOptions
+  struct ServiceClientOptions final : ClientOptions
   {
     std::string ApiVersion;
   };

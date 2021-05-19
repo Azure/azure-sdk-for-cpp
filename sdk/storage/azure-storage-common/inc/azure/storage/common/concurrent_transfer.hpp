@@ -18,7 +18,7 @@ namespace Azure { namespace Storage { namespace _internal {
       int64_t length,
       int64_t chunkSize,
       int concurrency,
-      // offset, length, chunk id, number of chunks
+      // offset, length, chunk ID, number of chunks
       std::function<void(int64_t, int64_t, int64_t, int64_t)> transferFunc)
   {
     std::atomic<int> numWorkingThreads{concurrency};
@@ -62,11 +62,6 @@ namespace Azure { namespace Storage { namespace _internal {
     for (auto& handle : threadHandles)
     {
       handle.get();
-    }
-
-    if (numWorkingThreads != 0)
-    {
-      std::abort();
     }
   }
 

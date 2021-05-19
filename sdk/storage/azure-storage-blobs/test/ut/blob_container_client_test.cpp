@@ -774,7 +774,7 @@ namespace Azure { namespace Storage { namespace Test {
 
     std::vector<uint8_t> contentData(512);
     int64_t contentSize = static_cast<int64_t>(contentData.size());
-    auto content = Azure::Core::IO::MemoryBodyStream(contentData.data(), contentSize);
+    auto content = Azure::Core::IO::MemoryBodyStream(contentData.data(), contentData.size());
 
     std::string blobName = RandomString();
     auto appendBlobClient = Azure::Storage::Blobs::AppendBlobClient::CreateFromConnectionString(

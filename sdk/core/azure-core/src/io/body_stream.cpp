@@ -40,16 +40,15 @@ static_assert(sizeof(void*) >= sizeof(HANDLE), "We must be able to cast HANDLE t
 #endif
 
 // Keep reading until buffer is all fill out of the end of stream content is reached
-int64_t BodyStream::ReadToCount(uint8_t* buffer, int64_t count, Context const& context)
+size_t BodyStream::ReadToCount(uint8_t* buffer, size_t count, Context const& context)
 {
-  AZURE_ASSERT_MSG(
-      buffer && count >= 0, "Count cannot be negative, and the buffer pointer cannot be null.");
+  AZURE_ASSERT(buffer || count == 0);
 
-  int64_t totalRead = 0;
+  size_t totalRead = 0;
 
   for (;;)
   {
-    int64_t readBytes = this->Read(buffer + totalRead, count - totalRead, context);
+    size_t readBytes = this->Read(buffer + totalRead, count - totalRead, context);
     totalRead += readBytes;
     // Reach all of buffer size
     if (totalRead == count || readBytes == 0)
@@ -61,13 +60,13 @@ int64_t BodyStream::ReadToCount(uint8_t* buffer, int64_t count, Context const& c
 
 std::vector<uint8_t> BodyStream::ReadToEnd(Context const& context)
 {
-  constexpr int64_t chunkSize = 1024 * 8;
+  constexpr size_t chunkSize = 1024 * 8;
   auto buffer = std::vector<uint8_t>();
 
   for (auto chunkNumber = 0;; chunkNumber++)
   {
     buffer.resize((static_cast<decltype(buffer)::size_type>(chunkNumber) + 1) * chunkSize);
-    int64_t readBytes
+    size_t readBytes
         = this->ReadToCount(buffer.data() + (chunkNumber * chunkSize), chunkSize, context);
 
     if (readBytes < chunkSize)
@@ -78,10 +77,10 @@ std::vector<uint8_t> BodyStream::ReadToEnd(Context const& context)
   }
 }
 
-int64_t MemoryBodyStream::OnRead(uint8_t* buffer, int64_t count, Context const& context)
+size_t MemoryBodyStream::OnRead(uint8_t* buffer, size_t count, Context const& context)
 {
   (void)context;
-  int64_t copy_length = std::min(count, static_cast<int64_t>(this->m_length - this->m_offset));
+  size_t copy_length = std::min(count, this->m_length - this->m_offset);
   // Copy what's left or just the count
   std::memcpy(buffer, this->m_data + m_offset, static_cast<size_t>(copy_length));
   // move position
@@ -180,7 +179,7 @@ FileBodyStream::~FileBodyStream()
 #endif
 }
 
-int64_t FileBodyStream::OnRead(uint8_t* buffer, int64_t count, Azure::Core::Context const& context)
+size_t FileBodyStream::OnRead(uint8_t* buffer, size_t count, Azure::Core::Context const& context)
 {
   return m_randomAccessFileBodyStream->Read(buffer, count, context);
 }

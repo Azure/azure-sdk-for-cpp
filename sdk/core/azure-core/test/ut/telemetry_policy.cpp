@@ -13,14 +13,16 @@ using namespace Azure::Core::Http::Policies::_internal;
 
 namespace {
 
-class NoOpPolicy : public HttpPolicy {
+class NoOpPolicy final : public HttpPolicy {
 private:
-  std::unique_ptr<RawResponse> Send(Request& request, NextHttpPolicy policy, Context const& context)
-      const override
+  std::unique_ptr<RawResponse> Send(
+      Request& request,
+      NextHttpPolicy nextPolicy,
+      Context const& context) const override
   {
     (void)context;
     (void)request;
-    (void)policy;
+    (void)nextPolicy;
 
     return std::unique_ptr<RawResponse>();
   };

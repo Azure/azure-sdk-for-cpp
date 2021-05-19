@@ -18,7 +18,7 @@ namespace Azure { namespace Storage { namespace Blobs {
    * Updating or deleting of existing blocks is not supported. Unlike a block blob, an append blob
    * does not expose its block IDs.
    */
-  class AppendBlobClient : public BlobClient {
+  class AppendBlobClient final : public BlobClient {
   public:
     /**
      * @brief Initialize a new instance of AppendBlobClient.
@@ -83,7 +83,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         const BlobClientOptions& options = BlobClientOptions());
 
     /**
-     * @brief Initializes a new instance of the AppendBlobClient class with an identical url
+     * @brief Initializes a new instance of the AppendBlobClient class with an identical URL
      * source but the specified snapshot timestamp.
      *
      * @param snapshot The snapshot
