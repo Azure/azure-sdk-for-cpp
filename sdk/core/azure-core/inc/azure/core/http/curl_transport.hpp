@@ -36,7 +36,6 @@ namespace Azure { namespace Core { namespace Http {
 
   /**
    * @brief Set the libcurl connection options like a proxy and CA path.
-   *
    */
   struct CurlTransportOptions final
   {
@@ -93,7 +92,6 @@ namespace Azure { namespace Core { namespace Http {
 
   /**
    * @brief Concrete implementation of an HTTP Transport that uses libcurl.
-   *
    */
   class CurlTransport final : public HttpTransport {
   private:

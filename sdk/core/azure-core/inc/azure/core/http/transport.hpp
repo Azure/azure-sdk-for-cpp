@@ -15,7 +15,6 @@ namespace Azure { namespace Core { namespace Http {
 
   /**
    * @brief Base class for all HTTP transport implementations.
-   *
    */
   class HttpTransport {
   public:

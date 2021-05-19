@@ -37,7 +37,6 @@ struct FaultInjectionClientOptions
 
 /**
  * @brief An special http policy to redirect requests to the Fault injector server.
- *
  */
 class FaultInjectionClient : public Azure::Core::Http::HttpTransport {
 private:

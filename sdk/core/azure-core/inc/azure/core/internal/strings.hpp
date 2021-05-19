@@ -16,7 +16,6 @@ namespace Azure { namespace Core { namespace _internal {
   /**
    * @brief Extend the functionality of std::string by offering static methods for string
    * operations.
-   *
    */
   struct StringExtensions final
   {

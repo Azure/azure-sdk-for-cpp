@@ -52,7 +52,6 @@ namespace Azure { namespace Core { namespace Http {
   /*********************  Exceptions  **********************/
   /**
    * @brief HTTP transport layer error.
-   *
    */
   class TransportException final : public Azure::Core::RequestFailedException {
   public:
@@ -73,7 +72,6 @@ namespace Azure { namespace Core { namespace Http {
   /**
    * @brief Defines a range of bytes within an HTTP resource, starting at an `Offset` and ending at
    * `Offset + Length - 1` inclusively.
-   *
    */
   struct HttpRange final
   {
@@ -92,7 +90,6 @@ namespace Azure { namespace Core { namespace Http {
 
   /**
    * HTTP request method.
-   *
    */
   class HttpMethod final {
   public:
@@ -119,7 +116,6 @@ namespace Azure { namespace Core { namespace Http {
 
   /**
    * @brief HTTP request.
-   *
    */
   class Request final {
     friend class Azure::Core::Http::Policies::_internal::RetryPolicy;

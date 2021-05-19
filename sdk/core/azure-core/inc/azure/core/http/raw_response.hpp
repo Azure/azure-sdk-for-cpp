@@ -19,7 +19,6 @@
 namespace Azure { namespace Core { namespace Http {
   /**
    * @brief Raw HTTP response.
-   *
    */
   class RawResponse final {
 
