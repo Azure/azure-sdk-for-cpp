@@ -64,53 +64,17 @@ TEST(BodyStream, Rewind)
 TEST(BodyStream, BadInput)
 {
   TestBodyStream tb;
-  std::vector<uint8_t> buffer(10);
-#if defined(NDEBUG)
   // Release build won't provide assert msg
-  ASSERT_DEATH(tb.Read(NULL, 0), "");
-  ASSERT_DEATH(tb.Read(NULL, -1), "");
-  ASSERT_DEATH(tb.Read(buffer.data(), -1), "");
-  ASSERT_DEATH(tb.ReadToCount(NULL, 0, Azure::Core::Context::ApplicationContext), "");
-  ASSERT_DEATH(tb.ReadToCount(NULL, -1, Azure::Core::Context::ApplicationContext), "");
-  ASSERT_DEATH(tb.ReadToCount(buffer.data(), -1, Azure::Core::Context::ApplicationContext), "");
-#else
-  ASSERT_DEATH(
-      tb.Read(NULL, 0), "Count cannot be negative, and the buffer pointer cannot be null.");
-  ASSERT_DEATH(
-      tb.Read(NULL, -1), "Count cannot be negative, and the buffer pointer cannot be null.");
-  ASSERT_DEATH(
-      tb.Read(buffer.data(), -1),
-      "Count cannot be negative, and the buffer pointer cannot be null.");
-  ASSERT_DEATH(
-      tb.ReadToCount(NULL, 0, Azure::Core::Context::ApplicationContext),
-      "Count cannot be negative, and the buffer pointer cannot be null.");
-  ASSERT_DEATH(
-      tb.ReadToCount(NULL, -1, Azure::Core::Context::ApplicationContext),
-      "Count cannot be negative, and the buffer pointer cannot be null.");
-  ASSERT_DEATH(
-      tb.ReadToCount(buffer.data(), -1, Azure::Core::Context::ApplicationContext),
-      "Count cannot be negative, and the buffer pointer cannot be null.");
-#endif
+  ASSERT_DEATH(tb.Read(NULL, 1), "");
+  ASSERT_DEATH(tb.Read(NULL, 1, Azure::Core::Context::ApplicationContext), "");
+  ASSERT_DEATH(tb.ReadToCount(NULL, 1), "");
+  ASSERT_DEATH(tb.ReadToCount(NULL, 1, Azure::Core::Context::ApplicationContext), "");
 }
 
 TEST(MemoryBodyStream, BadInput)
 {
-  std::vector<uint8_t> buffer(10);
-#if defined(NDEBUG)
   // Release build won't provide assert msg
-  ASSERT_DEATH(MemoryBodyStream(NULL, 0), "");
-  ASSERT_DEATH(MemoryBodyStream(NULL, -1), "");
-  ASSERT_DEATH(MemoryBodyStream(buffer.data(), -1), "");
-#else
-  ASSERT_DEATH(
-      MemoryBodyStream(NULL, 0), "Length cannot be negative, and the data pointer cannot be null.");
-  ASSERT_DEATH(
-      MemoryBodyStream(NULL, -1),
-      "Length cannot be negative, and the data pointer cannot be null.");
-  ASSERT_DEATH(
-      MemoryBodyStream(buffer.data(), -1),
-      "Length cannot be negative, and the data pointer cannot be null.");
-#endif
+  ASSERT_DEATH(MemoryBodyStream(NULL, 1), "");
 }
 
 TEST(FileBodyStream, BadInput)

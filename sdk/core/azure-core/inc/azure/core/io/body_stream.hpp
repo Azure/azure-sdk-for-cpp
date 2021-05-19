@@ -83,7 +83,7 @@ namespace Azure { namespace Core { namespace IO {
         size_t count,
         Azure::Core::Context const& context = Azure::Core::Context())
     {
-      AZURE_ASSERT(buffer && count >= 0);
+      AZURE_ASSERT(buffer || count == 0);
 
       context.ThrowIfCancelled();
       return OnRead(buffer, count, context);
@@ -150,7 +150,7 @@ namespace Azure { namespace Core { namespace IO {
      */
     explicit MemoryBodyStream(const uint8_t* data, size_t length) : m_data(data), m_length(length)
     {
-      AZURE_ASSERT(data != nullptr || length == 0);
+      AZURE_ASSERT(data || length == 0);
     }
 
     int64_t Length() const override { return this->m_length; }
