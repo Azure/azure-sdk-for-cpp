@@ -694,7 +694,8 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           "buffer is not big enough, file range size is " + std::to_string(fileRangeSize));
     }
 
-    int64_t bytesRead = firstChunk.Value.BodyStream->ReadToCount(buffer, firstChunkLength, context);
+    int64_t bytesRead = firstChunk.Value.BodyStream->ReadToCount(
+        buffer, static_cast<size_t>(firstChunkLength), context);
     if (bytesRead != firstChunkLength)
     {
       throw Azure::Core::RequestFailedException("error when reading body stream");
@@ -721,7 +722,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
             auto chunk = Download(chunkOptions, context);
             int64_t bytesRead = chunk.Value.BodyStream->ReadToCount(
                 buffer + (offset - firstChunkOffset),
-                chunkOptions.Range.Value().Length.Value(),
+                static_cast<size_t>(chunkOptions.Range.Value().Length.Value()),
                 context);
             if (bytesRead != chunkOptions.Range.Value().Length.Value())
             {
@@ -802,7 +803,8 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       while (length > 0)
       {
         int64_t readSize = std::min(static_cast<int64_t>(bufferSize), length);
-        int64_t bytesRead = stream.ReadToCount(buffer.data(), readSize, context);
+        int64_t bytesRead
+            = stream.ReadToCount(buffer.data(), static_cast<size_t>(readSize), context);
         if (bytesRead != readSize)
         {
           throw Azure::Core::RequestFailedException("error when reading body stream");
@@ -939,7 +941,9 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     auto uploadPageFunc = [&](int64_t offset, int64_t length, int64_t chunkId, int64_t numChunks) {
       (void)chunkId;
       (void)numChunks;
-      Azure::Core::IO::MemoryBodyStream contentStream(buffer + offset, length);
+      // TODO: Investigate changing lambda parameters to be size_t, unless they need to be int64_t
+      // for some reason.
+      Azure::Core::IO::MemoryBodyStream contentStream(buffer + offset, static_cast<size_t>(length));
       UploadFileRangeOptions uploadRangeOptions;
       UploadRange(offset, contentStream, uploadRangeOptions, context);
     };

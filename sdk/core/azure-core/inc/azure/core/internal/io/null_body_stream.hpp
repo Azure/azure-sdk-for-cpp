@@ -18,7 +18,7 @@ namespace Azure { namespace Core { namespace IO { namespace _internal {
    */
   class NullBodyStream final : public BodyStream {
   private:
-    int64_t OnRead(uint8_t* buffer, int64_t count, Azure::Core::Context const& context) override
+    size_t OnRead(uint8_t* buffer, size_t count, Azure::Core::Context const& context) override
     {
       (void)context;
       (void)buffer;
