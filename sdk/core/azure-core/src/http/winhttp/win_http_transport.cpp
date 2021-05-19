@@ -289,16 +289,16 @@ void WinHttpTransport::Upload(std::unique_ptr<_detail::HandleManager>& handleMan
   int64_t streamLength = streamBody->Length();
 
   // Consider using `MaximumUploadChunkSize` here, after some perf measurements
-  int64_t uploadChunkSize = _detail::DefaultUploadChunkSize;
+  size_t uploadChunkSize = _detail::DefaultUploadChunkSize;
   if (streamLength < _detail::MaximumUploadChunkSize)
   {
-    uploadChunkSize = streamLength;
+    uploadChunkSize = static_cast<size_t>(streamLength);
   }
-  auto unique_buffer = std::make_unique<uint8_t[]>(static_cast<size_t>(uploadChunkSize));
+  auto unique_buffer = std::make_unique<uint8_t[]>(uploadChunkSize);
 
   while (true)
   {
-    auto rawRequestLen
+    size_t rawRequestLen
         = streamBody->Read(unique_buffer.get(), uploadChunkSize, handleManager->m_context);
     if (rawRequestLen == 0)
     {
@@ -580,9 +580,9 @@ std::unique_ptr<RawResponse> WinHttpTransport::Send(Request& request, Context co
 }
 
 // Read the response from the sent request.
-int64_t _detail::WinHttpStream::OnRead(uint8_t* buffer, int64_t count, Context const& context)
+size_t _detail::WinHttpStream::OnRead(uint8_t* buffer, size_t count, Context const& context)
 {
-  if (count <= 0 || this->m_isEOF)
+  if (count == 0 || this->m_isEOF)
   {
     return 0;
   }
