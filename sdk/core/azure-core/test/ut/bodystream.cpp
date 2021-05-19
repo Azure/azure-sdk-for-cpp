@@ -70,10 +70,7 @@ TEST(BodyStream, BadInput)
   ASSERT_DEATH(tb.ReadToCount(NULL, 1, Azure::Core::Context::ApplicationContext), "");
 }
 
-TEST(MemoryBodyStream, BadInput)
-{
-  ASSERT_DEATH(MemoryBodyStream(NULL, 1), "");
-}
+TEST(MemoryBodyStream, BadInput) { ASSERT_DEATH(MemoryBodyStream(NULL, 1), ""); }
 
 TEST(FileBodyStream, BadInput)
 {
