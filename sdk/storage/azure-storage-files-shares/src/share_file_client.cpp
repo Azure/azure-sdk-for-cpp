@@ -939,7 +939,9 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     auto uploadPageFunc = [&](int64_t offset, int64_t length, int64_t chunkId, int64_t numChunks) {
       (void)chunkId;
       (void)numChunks;
-      Azure::Core::IO::MemoryBodyStream contentStream(buffer + offset, length);
+      // TODO: Investigate changing lambda parameters to be size_t, unless they need to be int64_t
+      // for some reason.
+      Azure::Core::IO::MemoryBodyStream contentStream(buffer + offset, static_cast<size_t>(length));
       UploadFileRangeOptions uploadRangeOptions;
       UploadRange(offset, contentStream, uploadRangeOptions, context);
     };
