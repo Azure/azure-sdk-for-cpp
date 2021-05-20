@@ -3,7 +3,7 @@
 
 #include <azure/perf.hpp>
 
-#include "azure/identity/test/secret_credential.hpp"
+#include "azure/identity/test/secret_credential_test.hpp"
 
 int main(int argc, char** argv)
 {

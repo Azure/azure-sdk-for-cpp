@@ -21,7 +21,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED True)
 
 if(BUILD_TRANSPORT_CURL)
   SET(CURL_OPTIONS_TESTS curl_options_test.cpp)
-  SET(CURL_SESSION_TESTS curl_session_test_test.cpp)
+  SET(CURL_SESSION_TESTS curl_session_test_test.cpp curl_session_test.hpp)
   SET(CURL_CONNECTION_POOL_TESTS curl_connection_pool_test.cpp)
 endif()
 
@@ -46,6 +46,7 @@ add_executable (
     datetime_test.cpp
     etag_test.cpp
     http_test.cpp
+    http_test.hpp
     http_method_test.cpp
     json_test.cpp
     log_policy_test.cpp
@@ -56,6 +57,7 @@ add_executable (
     modified_conditions_test.cpp
     nullable_test.cpp
     operation_test.cpp
+    operation_test.hpp
     operation_status_test.cpp
     pipeline_test.cpp
     policy_test.cpp
@@ -66,6 +68,7 @@ add_executable (
     string_test.cpp
     telemetry_policy_test.cpp
     transport_adapter_base_test.cpp
+    transport_adapter_base_test.hpp
     transport_adapter_implementation_test.cpp
     url_test.cpp
     uuid_test.cpp

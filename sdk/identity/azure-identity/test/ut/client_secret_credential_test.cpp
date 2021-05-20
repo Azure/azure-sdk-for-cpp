@@ -5,7 +5,7 @@
 
 #include <azure/core/io/body_stream.hpp>
 
-#include "test_transport.hpp"
+#include "test_transport_test.hpp"
 
 #include <gtest/gtest.h>
 
