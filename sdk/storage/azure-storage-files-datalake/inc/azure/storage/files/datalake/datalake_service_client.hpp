@@ -83,7 +83,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
      * systems may make multiple requests to the service while fetching all the values. File systems
      * are ordered lexicographically by name.
      * @param options Optional parameters to list the file systems.
-     * @param context Context for cancelling long running operations.
+     * @contextParameter
      * @return ListFileSystemsPagedResponse describing the file systems in the storage account.
      * @remark This request is sent to blob endpoint.
      */
@@ -98,7 +98,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
      * @param expiresOn Expiration of the key's validity. The time should be specified in UTC, and
      * will be truncated to second.
      * @param options Optional parameters to execute this function.
-     * @param context Context for cancelling long running operations.
+     * @contextParameter
      * @return Azure::Response<Models::UserDelegationKey> containing the user delegation key.
      * @remark This request is sent to blob endpoint.
      */

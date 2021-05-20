@@ -92,7 +92,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
      * @brief Create a directory. By default, the destination is overwritten and
      *        if the destination already exists and has a lease the lease is broken.
      * @param options Optional parameters to create the directory the path points to.
-     * @param context Context for cancelling long running operations.
+     * @contextParameter
      * @return Azure::Response<Models::CreateDirectoryResult> containing the
      * information of the created directory
      * @remark This request is sent to dfs endpoint.
@@ -107,7 +107,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     /**
      * @brief Create a directory. If it already exists, nothing will happen.
      * @param options Optional parameters to create the directory the path points to.
-     * @param context Context for cancelling long running operations.
+     * @contextParameter
      * @return Azure::Response<Models::CreateDirectoryResult> containing the
      * information of the created directory
      * @remark This request is sent to dfs endpoint.
@@ -126,7 +126,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
      * @param fileName The file that gets renamed.
      * @param destinationFilePath The path of the file the source file is renaming to.
      * @param options Optional parameters to rename a file.
-     * @param context Context for cancelling long running operations.
+     * @contextParameter
      * @return Azure::Response<DataLakeFileClient> The client targets the renamed file.
      * @remark This request is sent to dfs endpoint.
      */
@@ -142,7 +142,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
      * @param subdirectoryName The subdirectory that gets renamed.
      * @param destinationDirectoryPath The destinationPath the source subdirectory is renaming to.
      * @param options Optional parameters to rename a directory.
-     * @param context Context for cancelling long running operations.
+     * @contextParameter
      * @return Azure::Response<DataLakeDirectoryClient> The client targets the renamed
      * directory.
      * @remark This request is sent to dfs endpoint.
@@ -156,7 +156,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     /**
      * @brief Deletes the empty directory. Throws exception if directory is not empty.
      * @param options Optional parameters to delete the directory the path points to.
-     * @param context Context for cancelling long running operations.
+     * @contextParameter
      * @return Azure::Response<Models::DeleteDirectoryResult> containing the information
      * returned when deleting the directory.
      * @remark This request is sent to dfs endpoint.
@@ -172,7 +172,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
      * @brief Deletes the empty directory if it already exists. Throws exception if directory is not
      * empty.
      * @param options Optional parameters to delete the directory the path points to.
-     * @param context Context for cancelling long running operations.
+     * @contextParameter
      * @return Azure::Response<Models::DeleteDirectoryResult> containing the information
      * returned when deleting the directory.
      * @remark This request is sent to dfs endpoint.
@@ -187,7 +187,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     /**
      * @brief Deletes the directory and all its subdirectories and files.
      * @param options Optional parameters to delete the directory the path points to.
-     * @param context Context for cancelling long running operations.
+     * @contextParameter
      * @return Azure::Response<Models::DeleteDirectoryResult> containing the information
      * returned when deleting the directory.
      * @remark This request is sent to dfs endpoint.
@@ -202,7 +202,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     /**
      * @brief Deletes the directory and all its subdirectories and files if the directory exists.
      * @param options Optional parameters to delete the directory the path points to.
-     * @param context Context for cancelling long running operations.
+     * @contextParameter
      * @return Azure::Response<Models::DeleteDirectoryResult> containing the information
      * returned when deleting the directory.
      * @remark This request is sent to dfs endpoint.
@@ -220,7 +220,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
      * @param recursive If "true", all paths are listed; otherwise, the list will only
      *                  include paths that share the same root.
      * @param options Optional parameters to list the paths in file system.
-     * @param context Context for cancelling long running operations.
+     * @contextParameter
      * @return ListPathsPagedResponse describing the paths in a directory.
      * @remark This request is sent to dfs endpoint.
      */

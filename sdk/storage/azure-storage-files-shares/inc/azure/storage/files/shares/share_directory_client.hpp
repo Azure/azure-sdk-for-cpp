@@ -95,7 +95,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     /**
      * @brief Creates the directory.
      * @param options Optional parameters to create this directory.
-     * @param context Context for cancelling long running operations.
+     * @contextParameter
      * @return Azure::Response<Models::CreateDirectoryResult> containing the information
      * returned when creating the directory.
      */
@@ -106,7 +106,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     /**
      * @brief Creates the directory if it does not exist.
      * @param options Optional parameters to create this directory.
-     * @param context Context for cancelling long running operations.
+     * @contextParameter
      * @return Azure::Response<Models::CreateDirectoryResult> containing the information
      * returned when creating the directory if successfully created.
      */
@@ -117,7 +117,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     /**
      * @brief Deletes the directory.
      * @param options Optional parameters to delete this directory.
-     * @param context Context for cancelling long running operations.
+     * @contextParameter
      * @return Azure::Response<Models::DeleteDirectoryResult> containing the information
      * returned when deleting the directory. Currently empty but preserved for future usage.
      */
@@ -128,7 +128,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     /**
      * @brief Deletes the directory if it exists.
      * @param options Optional parameters to delete this directory.
-     * @param context Context for cancelling long running operations.
+     * @contextParameter
      * @return Azure::Response<Models::DeleteDirectoryResult> containing the information
      * returned when deleting the directory. Currently empty but preserved for future usage.
      * Only when the delete operation if successful, the returned information other than 'Deleted'
@@ -141,7 +141,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     /**
      * @brief Gets the properties of the directory.
      * @param options Optional parameters to get this directory's properties.
-     * @param context Context for cancelling long running operations.
+     * @contextParameter
      * @return Azure::Response<Models::DirectoryProperties> containing the
      * properties of the directory returned from the server.
      */
@@ -153,7 +153,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
      * @brief Sets the properties of the directory.
      * @param smbProperties The SMB properties to be set to the directory.
      * @param options Optional parameters to set this directory's properties.
-     * @param context Context for cancelling long running operations.
+     * @contextParameter
      * @return Azure::Response<Models::SetDirectoryPropertiesResult> containing the
      * properties of the directory returned from the server.
      */
@@ -167,7 +167,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
      * @param metadata User-defined metadata to be stored with the directory. Note that the string
      *                 may only contain ASCII characters in the ISO-8859-1 character set.
      * @param options Optional parameters to set this directory's metadata.
-     * @param context Context for cancelling long running operations.
+     * @contextParameter
      * @return Azure::Response<Models::SetDirectoryMetadataResult> containing the
      * information of the directory returned from the server.
      */
@@ -181,7 +181,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
      * files and directories may make multiple requests to the service while fetching all the
      * values.
      * @param options Optional parameters to list the files and directories under this directory.
-     * @param context Context for cancelling long running operations.
+     * @contextParameter
      * @return ListFilesAndDirectoriesPagedResponse describing the items in the directory.
      */
     ListFilesAndDirectoriesPagedResponse ListFilesAndDirectories(
@@ -192,7 +192,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
      * @brief Returns a sequence of the open handles on a directory or a file. Enumerating the
      * handles may make multiple requests to the service while fetching all the values.
      * @param options Optional parameters to list this directory's open handles.
-     * @param context Context for cancelling long running operations.
+     * @contextParameter
      * @return ListDirectoryHandlesPagedResponse describing the handles in the directory.
      */
     ListDirectoryHandlesPagedResponse ListHandles(
@@ -203,7 +203,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
      * @brief Closes a handle opened on a directory at the service.
      * @param handleId The ID of the handle to be closed.
      * @param options Optional parameters to close one of this directory's open handles.
-     * @param context Context for cancelling long running operations.
+     * @contextParameter
      * @return Azure::Response<Models::ForceCloseDirectoryHandleResult> containing the
      * information of the closed handle. Current empty but preserved for future usage.
      */
@@ -216,7 +216,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
      * @brief Closes all handles opened on a directory at the service. Optionally supports
      * recursively closing handles on subresources.
      * @param options Optional parameters to close all this directory's open handles.
-     * @param context Context for cancelling long running operations.
+     * @contextParameter
      * @return ForceCloseAllDirectoryHandlesPagedResponse containing the information of the closed
      * handles.
      */

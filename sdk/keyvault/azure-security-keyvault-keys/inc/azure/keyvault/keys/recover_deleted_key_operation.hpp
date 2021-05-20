@@ -115,7 +115,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
      *
      * @param resumeToken A previously generated token used to resume the polling of the operation.
      * @param client A #KeyClient that is used for getting status updates.
-     * @param context A #Azure::Core::Context controlling the request lifetime.
+     * @contextParameter
      * @return DeleteKeyOperation
      */
     static RecoverDeletedKeyOperation CreateFromResumeToken(

@@ -96,7 +96,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
      *
      * @param name The name of the key.
      * @param options Optional parameters for this operation.
-     * @param context The context for the operation can be used for request cancellation.
+     * @contextParameter
      * @return The Key wrapped in the Response.
      */
     Azure::Response<KeyVaultKey> GetKey(
@@ -114,7 +114,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
      * #Azure::Security::KeyVault::Keys::KeyVaultKeyType.
      * @param options Optional parameters for this operation. See
      * #Azure::Security::KeyVault::Keys::CreateKeyOptions.
-     * @param context The context for the operation can be used for request cancellation.
+     * @contextParameter
      * @return The Key wrapped in the Response.
      */
     Azure::Response<KeyVaultKey> CreateKey(
@@ -132,7 +132,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
      *
      * @param ecKeyOptions The key options object containing information about the Elliptic Curve
      * key being created.
-     * @param context A #Azure::Core::Context controlling the request lifetime.
+     * @contextParameter
      * @return The Key wrapped in the Response.
      */
     Azure::Response<KeyVaultKey> CreateEcKey(
@@ -148,7 +148,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
      *
      * @param rsaKeyOptions The key options object containing information about the RSA key being
      * created.
-     * @param context A #Azure::Core::Context controlling the request lifetime.
+     * @contextParameter
      * @return The Key wrapped in the Response.
      */
     Azure::Response<KeyVaultKey> CreateRsaKey(
@@ -164,7 +164,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
      *
      * @param octKeyOptions The key options object containing information about the AES key being
      * created.
-     * @param context A #Azure::Core::Context controlling the request lifetime.
+     * @contextParameter
      * @return The Key wrapped in the Response.
      */
     Azure::Response<KeyVaultKey> CreateOctKey(
@@ -187,7 +187,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
      *
      * @param options The #GetPropertiesOfKeysOptions object to for setting the operation
      * up.
-     * @param context A #Azure::Core::Context controlling the request lifetime.
+     * @contextParameter
      */
     KeyPropertiesPageResult GetPropertiesOfKeys(
         GetPropertiesOfKeysOptions const& options = GetPropertiesOfKeysOptions(),
@@ -209,7 +209,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
      * @param name The name of the key.
      * @param options The #GetPropertiesOfKeyVersionsOptions object to for setting the
      * operation up.
-     * @param context A #Azure::Core::Context controlling the request lifetime.
+     * @contextParameter
      */
     KeyPropertiesPageResult GetPropertiesOfKeyVersions(
         std::string const& name,
@@ -225,7 +225,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
      * requires the keys/delete permission.
      *
      * @param name The name of the key.
-     * @param context A cancellation token controlling the request lifetime.
+     * @contextParameter
      * @return A #Azure::Security::KeyVault::Keys::DeleteKeyOperation to wait on this long-running
      * operation. If the key is soft delete-enabled, you only need to wait for the operation to
      * complete if you need to recover or purge the key; otherwise, the key is deleted automatically
@@ -243,7 +243,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
      * soft-delete enabled vault. This operation requires the keys/get permission.
      *
      * @param name The name of the key.
-     * @param context A #Azure::Core::Context controlling the request lifetime.
+     * @contextParameter
      * @return Azure::Response<DeletedKey>
      */
     Azure::Response<DeletedKey> GetDeletedKey(
@@ -265,7 +265,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
      * next page of the response if there is a next page.
      *
      * @param options The #GetDeletedKeysOptions object to for setting the operation up.
-     * @param context A #Azure::Core::Context controlling the request lifetime.
+     * @contextParameter
      * @return Azure::Response<DeletedKeyPageResult>
      */
     DeletedKeyPageResult GetDeletedKeys(
@@ -280,7 +280,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
      * soft-delete enabled vault. This operation requires the keys/purge permission.
      *
      * @param name The name of the key.
-     * @param context A #Azure::Core::Context controlling the request lifetime.
+     * @contextParameter
      */
     Azure::Response<PurgedKey> PurgeDeletedKey(
         std::string const& name,
@@ -296,7 +296,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
      * permission.
      *
      * @param name The name of the key.
-     * @param context A #Azure::Core::Context controlling the request lifetime.
+     * @contextParameter
      * @return Azure::Security::KeyVault::Keys::RecoverDeletedKeyOperation
      */
     Azure::Security::KeyVault::Keys::RecoverDeletedKeyOperation StartRecoverDeletedKey(
@@ -314,7 +314,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
      * @param properties The #KeyProperties object with updated properties.
      * @param keyOperations Optional list of supported #KeyOperation. If no operation list provided,
      * no changes will be made to existing key operations.
-     * @param context A #Azure::Core::Context controlling the request lifetime.
+     * @contextParameter
      * @return Azure::Response<KeyVaultKey>
      */
     Azure::Response<KeyVaultKey> UpdateKeyProperties(
@@ -339,7 +339,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
      * key/backup permission.
      *
      * @param name The name of the key.
-     * @param context A #Azure::Core::Context controlling the request lifetime.
+     * @contextParameter
      */
     Azure::Response<std::vector<uint8_t>> BackupKey(
         std::string const& name,
@@ -361,7 +361,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
      * permission.
      *
      * @param backup The backup blob associated with a key.
-     * @param context A #Azure::Core::Context controlling the request lifetime.
+     * @contextParameter
      */
     Azure::Response<KeyVaultKey> RestoreKeyBackup(
         std::vector<uint8_t> const& backup,
@@ -377,7 +377,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
      *
      * @param name The name of the key.
      * @param keyMaterial The #JsonWebKey being imported.
-     * @param context A #Azure::Core::Context controlling the request lifetime.
+     * @contextParameter
      * @return Azure::Response<KeyVaultKey>
      */
     Azure::Response<KeyVaultKey> ImportKey(
@@ -395,7 +395,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
      *
      * @param importKeyOptions The key import configuration object containing information about the
      * #JsonWebKey being imported.
-     * @param context A #Azure::Core::Context controlling the request lifetime.
+     * @contextParameter
      */
     Azure::Response<KeyVaultKey> ImportKey(
         ImportKeyOptions const& importKeyOptions,

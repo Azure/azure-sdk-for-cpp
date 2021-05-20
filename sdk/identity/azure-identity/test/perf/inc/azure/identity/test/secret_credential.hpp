@@ -56,7 +56,7 @@ namespace Azure { namespace Identity { namespace Test {
     /**
      * @brief Define the test
      *
-     * @param context The cancellation token.
+     * @contextParameter
      */
     void Run(Azure::Core::Context const& context) override
     {

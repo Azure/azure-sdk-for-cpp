@@ -23,8 +23,9 @@ elseif(CMAKE_CXX_COMPILER_ID MATCHES "Clang")
   if(WARNINGS_AS_ERRORS)
     set(WARNINGS_AS_ERRORS_FLAG "-Werror")
   endif()
-
-  add_compile_options(-fno-operator-names -Wold-style-cast -Xclang -Wall -Wextra -pedantic  ${WARNINGS_AS_ERRORS_FLAG} -Wdocumentation -Wdocumentation-unknown-command -Wcast-qual)
+  # using `Wno-documentation-unknown-command` to support doxygen aliases.
+  # All other checks from -Wdocumentation will still work.
+  add_compile_options(-fno-operator-names -Wold-style-cast -Xclang -Wall -Wextra -pedantic  ${WARNINGS_AS_ERRORS_FLAG} -Wdocumentation -Wdocumentation-unknown-command -Wcast-qual -Wno-documentation-unknown-command)
 else()
   if(WARNINGS_AS_ERRORS)
     set(WARNINGS_AS_ERRORS_FLAG "-Werror")

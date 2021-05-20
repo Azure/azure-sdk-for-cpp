@@ -284,7 +284,7 @@ namespace Azure { namespace Core { namespace Http {
      * @brief Function used when working with Streams to manually write from the HTTP Request to
      * the wire.
      *
-     * @param context #Azure::Core::Context so that operation can be cancelled.
+     * @contextParameter
      *
      * @return CURL_OK when response is sent successfully.
      */
@@ -293,7 +293,7 @@ namespace Azure { namespace Core { namespace Http {
     /**
      * @brief Upload body.
      *
-     * @param context #Azure::Core::Context so that operation can be cancelled.
+     * @contextParameter
      *
      * @return Curl code.
      */
@@ -303,7 +303,7 @@ namespace Azure { namespace Core { namespace Http {
      * @brief This function is used after sending an HTTP request to the server to read the HTTP
      * RawResponse from wire until the end of headers only.
      *
-     * @param context #Azure::Core::Context so that operation can be cancelled.
+     * @contextParameter
      * @param reuseInternalBuffer Indicates whether the internal buffer should be reused.
      */
     void ReadStatusLineAndHeadersFromRawResponse(
@@ -314,7 +314,7 @@ namespace Azure { namespace Core { namespace Http {
      * @brief Reads from inner buffer or from Wire until chunkSize is parsed and converted to
      * unsigned long long
      *
-     * @param context #Azure::Core::Context so that operation can be cancelled.
+     * @contextParameter
      */
     void ParseChunkSize(Context const& context);
 
@@ -357,7 +357,7 @@ namespace Azure { namespace Core { namespace Http {
      * @brief Implement #Azure::Core::IO::BodyStream::OnRead(). Calling this function pulls data
      * from the wire.
      *
-     * @param context #Azure::Core::Context so that operation can be cancelled.
+     * @contextParameter
      * @param buffer Buffer where data from wire is written to.
      * @param count The number of bytes to read from the network.
      * @return The actual number of bytes read from the network.
@@ -394,7 +394,7 @@ namespace Azure { namespace Core { namespace Http {
      * @brief Function will use the HTTP request received in constructor to perform a network call
      * based on the HTTP request configuration.
      *
-     * @param context #Azure::Core::Context so that operation can be cancelled.
+     * @contextParameter
      * @return CURLE_OK when the network call is completed successfully.
      */
     CURLcode Perform(Context const& context);

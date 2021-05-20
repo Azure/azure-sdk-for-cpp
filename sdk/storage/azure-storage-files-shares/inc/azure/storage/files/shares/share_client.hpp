@@ -80,7 +80,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     /**
      * @brief Creates the file share.
      * @param options Optional parameters to create this file share.
-     * @param context Context for cancelling long running operations.
+     * @contextParameter
      * @return Azure::Response<Models::CreateShareResult> containing the information including
      * the version and modified time of a share.
      */
@@ -92,7 +92,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
      * @brief Creates the file share if it does not exist, nothing will happen if the file share
      * already exists.
      * @param options Optional parameters to create this file share.
-     * @param context Context for cancelling long running operations.
+     * @contextParameter
      * @return Azure::Response<Models::CreateShareResult> containing the information including
      * the version and modified time of a share if it is successfully created.
      */
@@ -103,7 +103,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     /**
      * @brief Deletes the file share.
      * @param options Optional parameters to delete this file share.
-     * @param context Context for cancelling long running operations.
+     * @contextParameter
      * @return Azure::Response<Models::DeleteShareResult> currently empty and reserved for
      * future usage.
      */
@@ -114,7 +114,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     /**
      * @brief Deletes the file share if it exists.
      * @param options Optional parameters to delete this file share.
-     * @param context Context for cancelling long running operations.
+     * @contextParameter
      * @return Azure::Response<Models::DeleteShareResult> currently empty and reserved for
      * future usage.
      */
@@ -125,7 +125,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     /**
      * @brief Creates a snapshot for the share.
      * @param options Optional parameters to create the share snapshot.
-     * @param context Context for cancelling long running operations.
+     * @contextParameter
      * @return Azure::Response<Models::CreateShareSnapshotResult> containing the information
      * for ths snapshot.
      */
@@ -136,7 +136,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     /**
      * @brief Sets the properties of the share.
      * @param options Optional parameters to set the share properties.
-     * @param context Context for cancelling long running operations.
+     * @contextParameter
      * @return Azure::Response<Models::SetSharePropertiesResult> containing the information
      * including the version and modified time of a share.
      */
@@ -147,7 +147,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     /**
      * @brief Gets the properties of the share.
      * @param options Optional parameters to get the share properties.
-     * @param context Context for cancelling long running operations.
+     * @contextParameter
      * @return Azure::Response<Models::ShareProperties> containing the properties for
      * ths share or one of its snapshot.
      */
@@ -159,7 +159,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
      * @brief Sets the metadata to the share.
      * @param metadata A name-value pair to associate with a file storage 'Share' object..
      * @param options Optional parameters to set the share metadata.
-     * @param context Context for cancelling long running operations.
+     * @contextParameter
      * @return Azure::Response<Models::SetShareMetadataResult> containing the information
      * including the version and modified time of a share.
      */
@@ -171,7 +171,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     /**
      * @brief Gets the access policy of the share.
      * @param options Optional parameters to get the share's access policy.
-     * @param context Context for cancelling long running operations.
+     * @contextParameter
      * @return Azure::Response<Models::ShareAccessPolicy> containing the access
      * policy of the share.
      */
@@ -183,7 +183,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
      * @brief Sets the access policy of the share.
      * @param accessPolicy Specifies the access policy to be set to the share.
      * @param options Optional parameters to Set the share's access policy.
-     * @param context Context for cancelling long running operations.
+     * @contextParameter
      * @return Azure::Response<Models::SetShareAccessPolicyResult> containing the information
      * including the version and modified time of a share.
      */
@@ -195,7 +195,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     /**
      * @brief Gets the stats of the share.
      * @param options Optional parameters to get share's statistics.
-     * @param context Context for cancelling long running operations.
+     * @contextParameter
      * @return Azure::Response<Models::ShareStatistics> containing the information
      * including the bytes used in by the share, the version and modified time of a share.
      */
@@ -207,7 +207,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
      * @brief Creates a permission on the share.
      * @param permission Specifies the permission to be created on the share.
      * @param options Optional parameters to create the share's permission.
-     * @param context Context for cancelling long running operations.
+     * @contextParameter
      * @return Azure::Response<Models::CreateSharePermissionResult> containing the information
      * including the permission key of the permission.
      */
@@ -220,7 +220,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
      * @brief Gets the permission of the share using the specific key.
      * @param permissionKey The permission key of a permission.
      * @param options Optional parameters to get share's permission.
-     * @param context Context for cancelling long running operations.
+     * @contextParameter
      * @return Azure::Response<std::string> containing the permission string with specified key.
      */
     Azure::Response<std::string> GetPermission(

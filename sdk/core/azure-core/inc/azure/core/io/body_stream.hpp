@@ -38,7 +38,7 @@ namespace Azure { namespace Core { namespace IO {
      *
      * @param buffer Pointer to a byte buffer to read the data into.
      * @param count Size of the buffer to read the data into.
-     * @param context #Azure::Core::Context so that operation can be cancelled.
+     * @contextParameter
      *
      * @return Number of bytes read.
      */
@@ -74,7 +74,7 @@ namespace Azure { namespace Core { namespace IO {
      *
      * @param buffer Pointer to a first byte of the byte buffer to read the data into.
      * @param count Size of the buffer to read the data into.
-     * @param context #Azure::Core::Context so that operation can be cancelled.
+     * @contextParameter
      *
      * @return Number of bytes read.
      */
@@ -95,7 +95,7 @@ namespace Azure { namespace Core { namespace IO {
      *
      * @param buffer Pointer to a first byte of the byte buffer to read the data into.
      * @param count Size of the buffer to read the data into.
-     * @param context #Azure::Core::Context so that operation can be cancelled.
+     * @contextParameter
      *
      * @return Number of bytes read.
      */
@@ -108,7 +108,7 @@ namespace Azure { namespace Core { namespace IO {
      * @brief Read #Azure::Core::IO::BodyStream until the stream is read to end, allocating memory
      * for the entirety of contents.
      *
-     * @param context #Azure::Core::Context so that operation can be cancelled.
+     * @contextParameter
      *
      * @return A vector of bytes containing the entirety of data read from the \p body.
      */

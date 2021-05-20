@@ -61,7 +61,7 @@ enum class PollSocketDirection
  * @param socketFileDescriptor socket descriptor.
  * @param direction poll events for read or write socket.
  * @param timeout  return if polling for more than \p timeout
- * @param context The context while polling that can be use to cancel waiting for socket.
+ * @contextParameter
  *
  * @return int with negative 1 upon any error, 0 on timeout or greater than zero if events were
  * detected (socket ready to be written/read)

@@ -27,7 +27,7 @@ namespace Azure { namespace Core { namespace Http {
      * @brief Send an HTTP request over the wire.
      *
      * @param request An #Azure::Core::Http::Request to send.
-     * @param context #Azure::Core::Context so that operation can be cancelled.
+     * @contextParameter
      */
     // TODO - Should this be const
     virtual std::unique_ptr<RawResponse> Send(Request& request, Context const& context) = 0;

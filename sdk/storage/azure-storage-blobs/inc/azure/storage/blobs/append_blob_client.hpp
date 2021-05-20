@@ -108,7 +108,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      * overwritten with the newly initialized append blob.
      *
      * @param options Optional parameters to execute this function.
-     * @param context Context for cancelling long running operations.
+     * @contextParameter
      * @return A CreateAppendBlobResult describing the newly created append blob.
      */
     Azure::Response<Models::CreateAppendBlobResult> Create(
@@ -120,7 +120,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      * exists.
      *
      * @param options Optional parameters to execute this function.
-     * @param context Context for cancelling long running operations.
+     * @contextParameter
      * @return A CreateAppendBlobResult describing the newly created append blob.
      * CreateAppendBlobResult.Created is false if the blob already exists.
      */
@@ -134,7 +134,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      *
      * @param content A BodyStream containing the content of the block to append.
      * @param options Optional parameters to execute this function.
-     * @param context Context for cancelling long running operations.
+     * @contextParameter
      * @return A AppendBlockResult describing the state of the updated append blob.
      */
     Azure::Response<Models::AppendBlockResult> AppendBlock(
@@ -151,7 +151,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      * must either be public or must be authenticated via a shared access signature. If the source
      * blob is public, no authentication is required to perform the operation.
      * @param options Optional parameters to execute this function.
-     * @param context Context for cancelling long running operations.
+     * @contextParameter
      * @return A AppendBlockFromUriResult describing the state of the updated append blob.
      */
     Azure::Response<Models::AppendBlockFromUriResult> AppendBlockFromUri(
@@ -163,7 +163,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @brief Seals the append blob, making it read only. Any subsequent appends will fail.
      *
      * @param options Optional parameters to execute this function.
-     * @param context Context for cancelling long running operations.
+     * @contextParameter
      * @return A SealAppendBlobResult describing the state of the sealed append blob.
      */
     Azure::Response<Models::SealAppendBlobResult> Seal(

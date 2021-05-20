@@ -94,7 +94,7 @@ namespace Azure {
      *
      * @param parameters An #EncryptParameters containing the data to encrypt and other parameters
      * for algorithm-dependent encryption.
-     * @param context A #Azure::Core::Context to cancel the operation.
+     * @contextParameter
      * @return An #EncryptResult containing the encrypted data along with all other information
      * needed to decrypt it. This information should be stored with the encrypted data.
      */
@@ -107,7 +107,7 @@ namespace Azure {
      *
      * @param algorithm The #EncryptionAlgorithm to use.
      * @param plaintext The data to encrypt.
-     * @param context A #Azure::Core::Context to cancel the operation.
+     * @contextParameter
      * @return An #EncryptResult containing the encrypted data along with all other information
      * needed to decrypt it. This information should be stored with the encrypted data.
      */
@@ -124,7 +124,7 @@ namespace Azure {
      *
      * @param parameters A #DecryptParameters containing the data to decrypt and other parameters
      * for algorithm-dependent Decryption.
-     * @param context A #Azure::Core::Context to cancel the operation.
+     * @contextParameter
      * @return An #DecryptResult containing the decrypted data along with all other information
      * needed to decrypt it. This information should be stored with the Decrypted data.
      */
@@ -137,7 +137,7 @@ namespace Azure {
      *
      * @param algorithm The #EncryptionAlgorithm to use.
      * @param ciphertext The encrypted data to decrypt..
-     * @param context A #Azure::Core::Context to cancel the operation.
+     * @contextParameter
      * @return An #DecryptResult containing the Decrypted data along with all other information
      * needed to decrypt it. This information should be stored with the Decrypted data.
      */
@@ -154,7 +154,7 @@ namespace Azure {
      *
      * @param algorithm The #KeyWrapAlgorithm to use.
      * @param key The key to encrypt.
-     * @param context A #Azure::Core::Context to cancel the operation.
+     * @contextParameter
      * @return The result of the wrap operation. The returned #WrapResult contains the wrapped key
      * along with all other information needed to unwrap it. This information should be stored with
      * the wrapped key.
@@ -169,7 +169,7 @@ namespace Azure {
      *
      * @param algorithm The #KeyWrapAlgorithm to use.
      * @param encryptedKey The encrypted key.
-     * @param context A #Azure::Core::Context to cancel the operation.
+     * @contextParameter
      * @return The result of the unwrap operation. The returned #UnwrapResult contains the key along
      * with information regarding the algorithm and key used to unwrap it.
      */
@@ -184,7 +184,7 @@ namespace Azure {
      * @param algorithm The #SignatureAlgorithm to use.
      * @param digest The pre-hashed digest to sign. The hash algorithm used to compute the digest
      * must be compatable with the specified algorithm.
-     * @param context A #Azure::Core::Context to cancel the operation.
+     * @contextParameter
      * @return The result of the sign operation. The returned #SignResult contains the signature
      * along with all other information needed to verify it. This information should be stored with
      * the signature.
@@ -199,7 +199,7 @@ namespace Azure {
      *
      * @param algorithm The #SignatureAlgorithm to use.
      * @param data The data to sign.
-     * @param context A #Azure::Core::Context to cancel the operation.
+     * @contextParameter
      * @return The result of the sign operation. The returned #SignResult contains the signature
      * along with all other information needed to verify it. This information should be stored with
      * the signature.
@@ -214,7 +214,7 @@ namespace Azure {
      *
      * @param algorithm The #SignatureAlgorithm to use.
      * @param data The data to sign.
-     * @param context A #Azure::Core::Context to cancel the operation.
+     * @contextParameter
      * @return The result of the sign operation. The returned #SignResult contains the signature
      * along with all other information needed to verify it. This information should be stored with
      * the signature.
@@ -232,7 +232,7 @@ namespace Azure {
      * @param digest The pre-hashed digest corresponding to the signature. The hash algorithm used
      * to compute the digest must be compatable with the specified algorithm.
      * @param signature The signature to verify.
-     * @param context A #Azure::Core::Context to cancel the operation.
+     * @contextParameter
      * @return The result of the verify operation. If the signature is valid the
      * #VerifyResult.IsValid property of the returned #VerifyResult will be set to true.
      */
@@ -249,7 +249,7 @@ namespace Azure {
      * the data.
      * @param data The data corresponding to the signature.
      * @param signature The signature to verify.
-     * @param context A #Azure::Core::Context to cancel the operation.
+     * @contextParameter
      * @return The result of the verify operation. If the signature is valid the
      * #VerifyResult.IsValid property of the returned #VerifyResult will be set to true.
      */
@@ -266,7 +266,7 @@ namespace Azure {
      * the data.
      * @param data The data corresponding to the signature.
      * @param signature The signature to verify.
-     * @param context A #Azure::Core::Context to cancel the operation.
+     * @contextParameter
      * @return The result of the verify operation. If the signature is valid the
      * #VerifyResult.IsValid property of the returned #VerifyResult will be set to true.
      */

@@ -70,7 +70,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
      * @brief Returns a paginated collection of the shares in the storage account. Enumerating the
      * shares may make multiple requests to the service while fetching all the values.
      * @param options Optional parameters to list the shares.
-     * @param context Context for cancelling long running operations.
+     * @contextParameter
      * @return ListSharesPagedResponse describing the shares in this storage account.
      */
     ListSharesPagedResponse ListShares(
@@ -81,7 +81,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
      * @brief Set the service's properties.
      * @param properties The properties of the service that is to be set.
      * @param options Optional parameters to set the properties of the service.
-     * @param context Context for cancelling long running operations.
+     * @contextParameter
      * @return Azure::Response<Models::SetServicePropertiesResult> The information returned
      * when setting the service properties.
      */
@@ -93,7 +93,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     /**
      * @brief Get the service's properties.
      * @param options Optional parameters to get the properties of the service.
-     * @param context Context for cancelling long running operations.
+     * @contextParameter
      * @return Azure::Response<Models::FileServiceProperties> The properties of the service.
      */
     Azure::Response<Models::ShareServiceProperties> GetProperties(

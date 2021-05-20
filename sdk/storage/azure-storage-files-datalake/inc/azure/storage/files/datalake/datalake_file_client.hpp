@@ -87,7 +87,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
      *                 written, and there must not be a request entity body included with the
      *                 request.
      * @param options Optional parameters to append data to the resource the path points to.
-     * @param context Context for cancelling long running operations.
+     * @contextParameter
      * @return Azure::Response<Models::AppendFileResult> containing the
      * information returned when appending some data to the path.
      * @remark This request is sent to dfs endpoint.
@@ -109,7 +109,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
      *                 written, and there must not be a request entity body included with the
      *                 request.
      * @param options Optional parameters to flush data to the resource the path points to.
-     * @param context Context for cancelling long running operations.
+     * @contextParameter
      * @return Azure::Response<Models::FlushFileResult> containing the information
      * returned when flushing the data appended to the path.
      * @remark This request is sent to dfs endpoint.
@@ -123,7 +123,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
      * @brief Create a file. By default, the destination is overwritten and
      *        if the destination already exists and has a lease the lease is broken.
      * @param options Optional parameters to create the resource the path points to.
-     * @param context Context for cancelling long running operations.
+     * @contextParameter
      * @return Azure::Response<Models::CreateFileResult> containing the information
      * returned when creating the file.
      * @remark This request is sent to dfs endpoint.
@@ -138,7 +138,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     /**
      * @brief Create a file. If it already exists, it will remain unchanged.
      * @param options Optional parameters to create the resource the path points to.
-     * @param context Context for cancelling long running operations.
+     * @contextParameter
      * @return Azure::Response<Models::CreateFileResult> containing the information
      * returned when creating the file.
      * @remark This request is sent to dfs endpoint.
@@ -154,7 +154,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     /**
      * @brief Deletes the file.
      * @param options Optional parameters to delete the file the path points to.
-     * @param context Context for cancelling long running operations.
+     * @contextParameter
      * @return Azure::Response<Models::DeleteFileResult>
      * @remark This request is sent to dfs endpoint.
      */
@@ -165,7 +165,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     /**
      * @brief Deletes the file if it already exists.
      * @param options Optional parameters to delete the file the path points to.
-     * @param context Context for cancelling long running operations.
+     * @contextParameter
      * @return Azure::Response<Models::DeleteFileResult>
      * @remark This request is sent to dfs endpoint.
      */
@@ -178,7 +178,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
      * supported.
      * @param options Optional parameters to download the content from the resource the path points
      * to.
-     * @param context Context for cancelling long running operations.
+     * @contextParameter
      * @return Azure::Response<Models::DownloadFileResult> containing the information
      * and content returned when downloading from a file.
      * @remark This request is sent to blob endpoint.
@@ -193,7 +193,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
      * @param buffer A memory buffer containing the content to upload.
      * @param bufferSize Size of the memory buffer.
      * @param options Optional parameters to execute this function.
-     * @param context Context for cancelling long running operations.
+     * @contextParameter
      * @return Azure::Response<UploadFileFromResult> containing the information
      * returned when uploading a file from a buffer.
      * @remark This request is sent to blob endpoint.
@@ -209,7 +209,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
      * an existing file overwrites any existing metadata on the file.
      * @param fileName A file containing the content to upload.
      * @param options Optional parameters to execute this function.
-     * @param context Context for cancelling long running operations.
+     * @contextParameter
      * @return Azure::Response<Models::UploadFileFromResult> containing the
      * information returned when uploading a file from a local file.
      * @remark This request is sent to blob endpoint.
@@ -226,7 +226,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
      * @param bufferSize Size of the memory buffer. Size must be larger or equal to size of the file
      * or file range.
      * @param options Optional parameters to execute this function.
-     * @param context Context for cancelling long running operations.
+     * @contextParameter
      * @return Azure::Response<Models::DownloadFileToResult> containing the
      * information returned when downloading a file to a local buffer.
      * @remark This request is sent to blob endpoint.
@@ -242,7 +242,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
      * requests.
      * @param fileName A file path to write the downloaded content to.
      * @param options Optional parameters to execute this function.
-     * @param context Context for cancelling long running operations.
+     * @contextParameter
      * @return Azure::Response<Models::DownloadFileToResult> containing the
      * information returned when downloading a file to a local file.
      * @remark This request is sent to blob endpoint.
@@ -256,7 +256,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
      * @brief Schedules the file for deletion.
      * @param expiryOrigin Specify the origin of expiry.
      * @param options Optional parameters to schedule the file for deletion.
-     * @param context Context for cancelling long running operations.
+     * @contextParameter
      * @return Azure::Response<Models::ScheduleFileDeletionResult> containing the
      * information and content returned when schedule the file for deletion.
      * @remark This request is sent to blob endpoint.

@@ -35,7 +35,7 @@ namespace Azure { namespace Perf {
     /**
      * @brief Start the performance application.
      *
-     * @param context The strategy for cancelling the test execution.
+     * @contextParameter
      * @param tests The list of tests that the application can run.
      * @param argc The number of command line arguments.
      * @param argv The reference to the first null terminated command line argument.

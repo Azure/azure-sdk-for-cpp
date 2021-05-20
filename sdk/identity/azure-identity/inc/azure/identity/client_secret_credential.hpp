@@ -96,7 +96,7 @@ namespace Azure { namespace Identity {
      *
      * @param tokenRequestContext #Azure::Core::Credentials::TokenRequestContext to get the token
      * in.
-     * @param context #Azure::Core::Context so that operation can be cancelled.
+     * @contextParameter
      *
      * @throw Azure::Core::Credentials::AuthenticationException Authentication error occurred.
      */

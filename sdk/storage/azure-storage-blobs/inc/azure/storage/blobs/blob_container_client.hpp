@@ -128,7 +128,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      * same name already exists, the operation fails.
      *
      * @param options Optional parameters to execute this function.
-     * @param context Context for cancelling long running operations.
+     * @contextParameter
      * @return A CreateBlobContainerResult describing the newly created blob container.
      */
     Azure::Response<Models::CreateBlobContainerResult> Create(
@@ -140,7 +140,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      * same name already exists, it is not changed.
      *
      * @param options Optional parameters to execute this function.
-     * @param context Context for cancelling long running operations.
+     * @contextParameter
      * @return A CreateBlobContainerResult describing the newly created blob container if the
      * container doesn't exist. CreateBlobContainerResult.Created is false if the container already
      * exists.
@@ -154,7 +154,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      * contained within it are later deleted during garbage collection.
      *
      * @param options Optional parameters to execute this function.
-     * @param context Context for cancelling long running operations.
+     * @contextParameter
      * @return A DeleteBlobContainerResult if successful.
      */
     Azure::Response<Models::DeleteBlobContainerResult> Delete(
@@ -166,7 +166,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      * contained within it are later deleted during garbage collection.
      *
      * @param options Optional parameters to execute this function.
-     * @param context Context for cancelling long running operations.
+     * @contextParameter
      * @return A DeleteBlobContainerResult if the container exists.
      * DeleteBlobContainerResult.Deleted is false if the container doesn't exist.
      */
@@ -179,7 +179,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      * container. The data returned does not include the container's list of blobs.
      *
      * @param options Optional parameters to execute this function.
-     * @param context Context for cancelling long running operations.
+     * @contextParameter
      * @return A BlobContainerProperties describing the container and its properties.
      */
     Azure::Response<Models::BlobContainerProperties> GetProperties(
@@ -191,7 +191,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      *
      * @param metadata Custom metadata to set for this container.
      * @param options Optional parameters to execute this function.
-     * @param context Context for cancelling long running operations.
+     * @contextParameter
      * @return A SetBlobContainerMetadataResult if successful.
      */
     Azure::Response<Models::SetBlobContainerMetadataResult> SetMetadata(
@@ -205,7 +205,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      * lexicographically by name.
      *
      * @param options Optional parameters to execute this function.
-     * @param context Context for cancelling long running operations.
+     * @contextParameter
      * @return A ListBlobsPagedResponse describing the blobs in the container.
      */
     ListBlobsPagedResponse ListBlobs(
@@ -221,7 +221,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @param delimiter This can be used to to traverse a virtual hierarchy of blobs as though it
      * were a file system. The delimiter may be a single character or a string.
      * @param options Optional parameters to execute this function.
-     * @param context Context for cancelling long running operations.
+     * @contextParameter
      * @return A ListBlobsByHierarchyPagedResponse describing the blobs in the container.
      */
     ListBlobsByHierarchyPagedResponse ListBlobsByHierarchy(
@@ -234,7 +234,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      * container data may be accessed publicly.
      *
      * @param options Optional parameters to execute this function.
-     * @param context Context for cancelling long running operations.
+     * @contextParameter
      * @return A BlobContainerAccessPolicy describing the container's access policy.
      */
     Azure::Response<Models::BlobContainerAccessPolicy> GetAccessPolicy(
@@ -246,7 +246,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      * whether blob container data may be accessed publicly.
      *
      * @param options Optional parameters to execute this function.
-     * @param context Context for cancelling long running operations.
+     * @contextParameter
      * @return A SetBlobContainerAccessPolicyResult describing the updated container.
      */
     Azure::Response<Models::SetBlobContainerAccessPolicyResult> SetAccessPolicy(
@@ -260,7 +260,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      *
      * @param blobName The name of the blob to delete.
      * @param options Optional parameters to execute this function.
-     * @param context Context for cancelling long running operations.
+     * @contextParameter
      * @return A DeleteBlobResult on successfully deleting.
      */
     Azure::Response<Models::DeleteBlobResult> DeleteBlob(
@@ -276,7 +276,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @param blobName The name of the blob to create.
      * @param content A BodyStream containing the content to upload.
      * @param options Optional parameters to execute this function.
-     * @param context Context for cancelling long running operations.
+     * @contextParameter
      * @return A BlockBlobClient referencing the newly created block blob.
      */
     Azure::Response<BlockBlobClient> UploadBlob(

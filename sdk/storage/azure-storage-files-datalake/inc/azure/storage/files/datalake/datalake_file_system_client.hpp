@@ -93,7 +93,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     /**
      * @brief Creates the file system.
      * @param options Optional parameters to create this file system.
-     * @param context Context for cancelling long running operations.
+     * @contextParameter
      * @return Azure::Response<Models::CreateFileSystemResult> containing the
      * information of create a file system.
      * @remark This request is sent to blob endpoint.
@@ -105,7 +105,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     /**
      * @brief Creates the file system if it does not exists.
      * @param options Optional parameters to create this file system.
-     * @param context Context for cancelling long running operations.
+     * @contextParameter
      * @return Azure::Response<Models::CreateFileSystemResult> containing the
      * information of create a file system. Only valid when successfully created the file system.
      * @remark This request is sent to blob endpoint.
@@ -117,7 +117,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     /**
      * @brief Deletes the file system.
      * @param options Optional parameters to delete this file system.
-     * @param context Context for cancelling long running operations.
+     * @contextParameter
      * @return Azure::Response<Models::DeleteFileSystemResult> containing the
      * information returned when deleting file systems.
      * @remark This request is sent to blob endpoint.
@@ -129,7 +129,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     /**
      * @brief Deletes the file system if it exists.
      * @param options Optional parameters to delete this file system.
-     * @param context Context for cancelling long running operations.
+     * @contextParameter
      * @return Azure::Response<Models::DeleteFileSystemResult> containing the
      * information returned when deleting file systems. Only valid when successfully deleted the
      * file system.
@@ -144,7 +144,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
      * @param metadata User-defined metadata to be stored with the filesystem. Note that the string
      *                 may only contain ASCII characters in the ISO-8859-1 character set.
      * @param options Optional parameters to set the metadata to this file system.
-     * @param context Context for cancelling long running operations.
+     * @contextParameter
      * @return Azure::Response<Models::SetFileSystemMetadataResult> containing the
      * information returned when setting the metadata onto the file system.
      * @remark This request is sent to blob endpoint.
@@ -157,7 +157,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     /**
      * @brief Gets the properties of file system.
      * @param options Optional parameters to get the metadata of this file system.
-     * @param context Context for cancelling long running operations.
+     * @contextParameter
      * @return Azure::Response<Models::FileSystemProperties> containing the
      * information when getting the file system's properties.
      * @remark This request is sent to blob endpoint.
@@ -172,7 +172,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
      * @param recursive If "true", all paths are listed; otherwise, only paths at the root of the
      *                  filesystem are listed.
      * @param options Optional parameters to list the paths in file system.
-     * @param context Context for cancelling long running operations.
+     * @contextParameter
      * @return ListPathsPagedResponse describing the paths in this filesystem.
      * @remark This request is sent to dfs endpoint.
      */
@@ -186,7 +186,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
      * file system data may be accessed publicly.
      *
      * @param options Optional parameters to execute this function.
-     * @param context Context for cancelling long running operations.
+     * @contextParameter
      * @return A FileSystemAccessPolicy describing the container's access policy.
      * @remark This request is sent to blob endpoint.
      */
@@ -199,7 +199,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
      * whether file system's data may be accessed publicly.
      *
      * @param options Optional parameters to execute this function.
-     * @param context Context for cancelling long running operations.
+     * @contextParameter
      * @return A SetFileSystemAccessPolicyResult describing the updated file system.
      * @remark This request is sent to blob endpoint.
      */
@@ -213,7 +213,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
      * @param fileName The file that gets renamed.
      * @param destinationFilePath The path of the file the source file is renaming to.
      * @param options Optional parameters to rename a file
-     * @param context Context for cancelling long running operations.
+     * @contextParameter
      * @return Azure::Response<DataLakeFileClient> The client targets the renamed file.
      * @remark This request is sent to dfs endpoint.
      */
@@ -229,7 +229,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
      * @param directoryName The directory that gets renamed.
      * @param destinationDirectoryPath The destinationPath the source directory is renaming to.
      * @param options Optional parameters to rename a directory.
-     * @param context Context for cancelling long running operations.
+     * @contextParameter
      * @return Azure::Response<DataLakeDirectoryClient> The client targets the renamed
      * directory.
      * @remark This request is sent to dfs endpoint.

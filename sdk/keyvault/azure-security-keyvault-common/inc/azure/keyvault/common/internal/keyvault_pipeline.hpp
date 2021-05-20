@@ -59,7 +59,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace _internal 
     /**
      * @brief Start the HTTP transfer based on the \p request.
      *
-     * @param context The context for per-operation options or cancellation.
+     * @contextParameter
      * @param request The HTTP request to be sent.
      * @return The raw response from the network.
      */
@@ -87,7 +87,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace _internal 
      * @brief Create and send the HTTP request. Uses the \p factoryFn function to create
      * the response type.
      *
-     * @param context The context for per-operation options or cancellation.
+     * @contextParameter
      * @param method The method for the request.
      * @param factoryFn The function to deserialize and produce T from the raw response.
      * @param path A path for the request represented as a vector of strings.
@@ -121,7 +121,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace _internal 
      * @brief Create and send the HTTP request with payload content. Uses the \p factoryFn function
      * to create the response type.
      *
-     * @param context The context for per-operation options or cancellation.
+     * @contextParameter
      * @param method The method for the request.
      * @param content The HTTP payload.
      * @param factoryFn The function to deserialize and produce T from the raw response.
@@ -172,7 +172,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace _internal 
      * @brief Create a key vault request and send it using the Azure Core pipeline directly to avoid
      * checking the respone code.
      *
-     * @param context A context for cancellation.
+     * @contextParameter
      * @param method The HTTP method for the request.
      * @param path The path for the request.
      * @return A unique ptr to an HTTP raw response.

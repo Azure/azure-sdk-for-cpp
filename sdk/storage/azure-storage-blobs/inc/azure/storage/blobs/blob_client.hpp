@@ -154,7 +154,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      * properties for the blob. It does not return the content of the blob.
      *
      * @param options Optional parameters to execute this function.
-     * @param context Context for cancelling long running operations.
+     * @contextParameter
      * @return A BlobProperties describing the blob's properties.
      */
     Azure::Response<Models::BlobProperties> GetProperties(
@@ -166,7 +166,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      *
      * @param httpHeaders The standard HTTP header system properties to set.
      * @param options Optional parameters to execute this function.
-     * @param context Context for cancelling long running operations.
+     * @contextParameter
      * @return A SetBlobHttpHeadersResult describing the updated blob.
      */
     Azure::Response<Models::SetBlobHttpHeadersResult> SetHttpHeaders(
@@ -180,7 +180,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      *
      * @param metadata Custom metadata to set for this blob.
      * @param options Optional parameters to execute this function.
-     * @param context Context for cancelling long running operations.
+     * @contextParameter
      * @return A SetBlobMetadataResult describing the updated blob.
      */
     Azure::Response<Models::SetBlobMetadataResult> SetMetadata(
@@ -194,7 +194,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      *
      * @param accessTier Indicates the tier to be set on the blob.
      * @param options Optional parameters to execute this function.
-     * @param context Context for cancelling long running operations.
+     * @contextParameter
      * @return A SetBlobAccessTierResult on successfully setting the tier.
      */
     Azure::Response<Models::SetBlobAccessTierResult> SetAccessTier(
@@ -212,7 +212,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      * public or must be authenticated via a shared access signature. If the source blob is public,
      * no authentication is required to perform the copy operation.
      * @param options Optional parameters to execute this function.
-     * @param context Context for cancelling long running operations.
+     * @contextParameter
      * @return A StartBlobCopyOperation describing the state of the copy operation.
      */
     StartBlobCopyOperation StartCopyFromUri(
@@ -226,7 +226,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      *
      * @param copyId ID of the copy operation to abort.
      * @param options Optional parameters to execute this function.
-     * @param context Context for cancelling long running operations.
+     * @contextParameter
      * @return A AbortBlobCopyFromUriResult on successfully aborting.
      */
     Azure::Response<Models::AbortBlobCopyFromUriResult> AbortCopyFromUri(
@@ -239,7 +239,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      * properties.
      *
      * @param options Optional parameters to execute this function.
-     * @param context Context for cancelling long running operations.
+     * @contextParameter
      * @return A DownloadBlobResult describing the downloaded blob.
      * BlobDownloadResponse.BodyStream contains the blob's data.
      */
@@ -255,7 +255,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @param bufferSize Size of the memory buffer. Size must be larger or equal to size of the blob
      * or blob range.
      * @param options Optional parameters to execute this function.
-     * @param context Context for cancelling long running operations.
+     * @contextParameter
      * @return A DownloadBlobToResult describing the downloaded blob.
      */
     Azure::Response<Models::DownloadBlobToResult> DownloadTo(
@@ -270,7 +270,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      *
      * @param fileName A file path to write the downloaded content to.
      * @param options Optional parameters to execute this function.
-     * @param context Context for cancelling long running operations.
+     * @contextParameter
      * @return A DownloadBlobToResult describing the downloaded blob.
      */
     Azure::Response<Models::DownloadBlobToResult> DownloadTo(
@@ -282,7 +282,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @brief Creates a read-only snapshot of a blob.
      *
      * @param options Optional parameters to execute this function.
-     * @param context Context for cancelling long running operations.
+     * @contextParameter
      * @return A CreateBlobSnapshotResult describing the new blob snapshot.
      */
     Azure::Response<Models::CreateBlobSnapshotResult> CreateSnapshot(
@@ -295,7 +295,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      * snapshots. You can delete both at the same time using DeleteBlobOptions.DeleteSnapshots.
      *
      * @param options Optional parameters to execute this function.
-     * @param context Context for cancelling long running operations.
+     * @contextParameter
      * @return A DeleteBlobResult on successfully deleting.
      */
     Azure::Response<Models::DeleteBlobResult> Delete(
@@ -306,7 +306,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @brief Marks the specified blob or snapshot for deletion if it exists.
      *
      * @param options Optional parameters to execute this function.
-     * @param context Context for cancelling long running operations.
+     * @contextParameter
      * @return A DeleteBlobResult on successfully deleting. DeleteBlobResult.Deleted is false if the
      * blob doesn't exist.
      */
@@ -319,7 +319,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      * soft deleted snapshots.
      *
      * @param options Optional parameters to execute this function.
-     * @param context Context for cancelling long running operations.
+     * @contextParameter
      * @return A UndeleteBlobResult on successfully deleting.
      */
     Azure::Response<Models::UndeleteBlobResult> Undelete(
@@ -331,7 +331,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      *
      * @param tags The tags to set on the blob.
      * @param options Optional parameters to execute this function.
-     * @param context Context for cancelling long running operations.
+     * @contextParameter
      * @return A SetBlobTagsInfo on successfully setting tags.
      */
     Azure::Response<Models::SetBlobTagsResult> SetTags(
@@ -343,7 +343,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @brief Gets the tags associated with the underlying blob.
      *
      * @param options Optional parameters to execute this function.
-     * @param context Context for cancelling long running operations.
+     * @contextParameter
      * @return BlobTags on successfully getting tags.
      */
     Azure::Response<std::map<std::string, std::string>> GetTags(

@@ -78,7 +78,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
      * @brief Creates the file.
      * @param fileSize Size of the file in bytes.
      * @param options Optional parameters to create this file.
-     * @param context Context for cancelling long running operations.
+     * @contextParameter
      * @return Azure::Response<CreateFileResult> containing the information returned when
      * creating the file.
      */
@@ -90,7 +90,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     /**
      * @brief Deletes the file.
      * @param options Optional parameters to delete this file.
-     * @param context Context for cancelling long running operations.
+     * @contextParameter
      * @return Azure::Response<DeleteFileResult> containing the information returned when
      * deleting the file.
      */
@@ -101,7 +101,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     /**
      * @brief Deletes the file if it exists.
      * @param options Optional parameters to delete this file.
-     * @param context Context for cancelling long running operations.
+     * @contextParameter
      * @return Azure::Response<DeleteFileResult> containing the information returned when
      * deleting the file. Only valid when successfully deleted.
      */
@@ -113,7 +113,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
      * @brief Open a stream for the file's content, or a range of the file's content that can be
      * used to download the server end data.
      * @param options Optional parameters to get the content of this file.
-     * @param context Context for cancelling long running operations.
+     * @contextParameter
      * @return Azure::Response<Models::DownloadFileResult> containing the range or full
      * content and the information of the file.
      */
@@ -129,7 +129,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
      * @param bufferSize Size of the memory buffer. Size must be larger or equal to size of the file
      * or file range.
      * @param options Optional parameters to execute this function.
-     * @param context Context for cancelling long running operations.
+     * @contextParameter
      * @return Azure::Response<Models::DownloadFileToResult> containing the information
      * of the downloaded file/file range.
      */
@@ -145,7 +145,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
      *
      * @param fileName A file path to write the downloaded content to.
      * @param options Optional parameters to execute this function.
-     * @param context Context for cancelling long running operations.
+     * @contextParameter
      * @return Azure::Response<Models::DownloadFileToResult> containing the information
      * of the downloaded file/file range.
      */
@@ -161,7 +161,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
      * @param buffer A memory buffer containing the content to upload.
      * @param bufferSize Size of the memory buffer.
      * @param options Optional parameters to execute this function.
-     * @param context Context for cancelling long running operations.
+     * @contextParameter
      * @return Azure::Response<Models::UploadFileFromResult> describing the state of the
      * updated file.
      */
@@ -177,7 +177,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
      *
      * @param fileName A file containing the content to upload.
      * @param options Optional parameters to execute this function.
-     * @param context Context for cancelling long running operations.
+     * @contextParameter
      * @return Azure::Response<Models::UploadFileFromResult> describing the state of the
      * updated file.
      */
@@ -196,7 +196,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
      * public file, no authentication is required to perform the copy operation. A file in a share
      * snapshot can also be specified as a copy source.
      * @param options Optional parameters to copy the content of this file.
-     * @param context Context for cancelling long running operations.
+     * @contextParameter
      * @return StartFileCopyOperation containing the copy related information.
      */
     StartFileCopyOperation StartCopy(
@@ -209,7 +209,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
      * @param copyId The copy identifier provided in the StartCopyShareFileResult of the original
      * StartCopy operation.
      * @param options Optional parameters to abort copying the content of this file.
-     * @param context Context for cancelling long running operations.
+     * @contextParameter
      * @return Azure::Response<Models::AbortFileCopyResult> containing the abort copy
      * related information, current empty but preserved for future usage.
      */
@@ -221,7 +221,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     /**
      * @brief Gets the properties of a file.
      * @param options Optional parameters to get the properties of this file.
-     * @param context Context for cancelling long running operations.
+     * @contextParameter
      * @return Azure::Response<Models::FileProperties> containing the file
      * properties.
      */
@@ -234,7 +234,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
      * @param httpHeaders The HTTP headers to be set to the file.
      * @param smbProperties The SMB properties to be set to the file.
      * @param options Optional parameters to set this file's properties.
-     * @param context Context for cancelling long running operations.
+     * @contextParameter
      * @return Azure::Response<Models::SetFilePropertiesResult> containing the properties
      * of the file returned from the server.
      */
@@ -249,7 +249,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
      * @param metadata User-defined metadata to be stored with the file. Note that the string
      *                 may only contain ASCII characters in the ISO-8859-1 character set.
      * @param options Optional parameters to set this file's metadata.
-     * @param context Context for cancelling long running operations.
+     * @contextParameter
      * @return Azure::Response<Models::SetFileMetadataResult> containing the information
      * of the file returned from the server.
      */
@@ -262,7 +262,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
      * @brief Uploads some data to a range of the file.
      * @param offset Specifies the starting offset for the content to be written as a range.
      * @param content A BodyStream containing the content of the range to upload.
-     * @param context Context for cancelling long running operations.
+     * @contextParameter
      * @return Azure::Response<Models::UploadFileRange> containing the information of the
      * uploaded range and the file returned from the server.
      */
@@ -276,7 +276,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
      * @brief Clears some range of data within the file.
      * @param offset Specifies the starting offset for the content to be cleared within the file.
      * @param length Specifies the length for the content to be cleared within the file.
-     * @param context Context for cancelling long running operations.
+     * @contextParameter
      * @return Azure::Response<Models::ClearFileRangeResult> containing the information
      * of the cleared range returned from the server.
      */
@@ -288,7 +288,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
     /**
      * @brief Gets the list of valid range from the file within specified range.
-     * @param context Context for cancelling long running operations.
+     * @contextParameter
      * @return Azure::Response<Models::GetFileRangeListResult> containing the valid
      * ranges within the file for the specified range.
      */
@@ -300,7 +300,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
      * @brief Gets the list of valid range from the file within specified range that have changed
      * since previousShareSnapshot was taken.
      * @param previousShareSnapshot Specifies the previous snapshot.
-     * @param context Context for cancelling long running operations.
+     * @contextParameter
      * @return Azure::Response<Models::GetFileRangeListResult> containing the valid
      * ranges within the file for the specified range.
      */
@@ -313,7 +313,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
      * @brief Returns a sequence of the open handles on a directory or a file. Enumerating the
      * handles may make multiple requests to the service while fetching all the values.
      * @param options Optional parameters to list this file's open handles.
-     * @param context Context for cancelling long running operations.
+     * @contextParameter
      * @return ListFileHandlesPagedResponse describing the handles of the file.
      */
     ListFileHandlesPagedResponse ListHandles(
@@ -324,7 +324,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
      * @brief Closes a handle opened on a file at the service.
      * @param handleId The ID of the handle to be closed.
      * @param options Optional parameters to close one of this file's open handles.
-     * @param context Context for cancelling long running operations.
+     * @contextParameter
      * @return Azure::Response<Models::ForceCloseFileHandleResult> containing the
      * information of the closed handle. Current empty but preserved for future usage.
      */
@@ -336,7 +336,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     /**
      * @brief Closes all handles opened on a file at the service.
      * @param options Optional parameters to close all this file's open handles.
-     * @param context Context for cancelling long running operations.
+     * @contextParameter
      * @return ForceCloseAllFileHandlesPagedResponse containing the information of the closed
      * handles.
      */
@@ -350,7 +350,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
      * @param sourceUri The source URI of the content to be uploaded.
      * @param sourceRange The source URI's range to be uploaded to file.
      * @param options Optional parameters to upload a range to file.
-     * @param context Context for cancelling long running operations.
+     * @contextParameter
      * @return Azure::Response<Models::UploadFileRangeFromUriResult> containing the returned
      * information.
      */

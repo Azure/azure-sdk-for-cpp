@@ -161,7 +161,7 @@ namespace Azure { namespace Core { namespace Http { namespace Policies {
      *
      * @param request An HTTP request being sent.
      * @param nextPolicy The next HTTP to invoke after this policy has been applied.
-     * @param context #Azure::Core::Context so that operation can be cancelled.
+     * @contextParameter
      *
      * @return An HTTP response after this policy, and all subsequent HTTP policies in the stack
      * sequence of policies have been applied.
@@ -218,7 +218,7 @@ namespace Azure { namespace Core { namespace Http { namespace Policies {
      * @brief Applies this HTTP policy.
      *
      * @param request An HTTP request being sent.
-     * @param context #Azure::Core::Context so that operation can be cancelled.
+     * @contextParameter
      *
      * @return An HTTP response after this policy, and all subsequent HTTP policies in the stack
      * sequence of policies have been applied.
@@ -296,7 +296,7 @@ namespace Azure { namespace Core { namespace Http { namespace Policies {
        * a request by the #RetryPolicy. Any subsequent retry will be referenced with a number
        * greater than 0.
        *
-       * @param context The context used to call send request.
+       * @contextParameter
        * @return A positive number indicating the current intent to send the request.
        */
       static int32_t GetRetryCount(Context const& context);

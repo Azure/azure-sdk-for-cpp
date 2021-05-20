@@ -91,7 +91,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      * Containers are ordered lexicographically by name.
      *
      * @param options Optional parameters to execute this function.
-     * @param context Context for cancelling long running operations.
+     * @contextParameter
      * @return A ListBlobContainersPagedResponse describing the blob containers in the
      * storage account.
      */
@@ -106,7 +106,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @param expiresOn Expiration of the key's validity. The time should be specified in UTC, and
      * will be truncated to second.
      * @param options Optional parameters to execute this function.
-     * @param context Context for cancelling long running operations.
+     * @contextParameter
      * @return A deserialized UserDelegationKey instance.
      */
     Azure::Response<Models::UserDelegationKey> GetUserDelegationKey(
@@ -123,7 +123,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @param
      * properties The blob service properties.
      * @param options Optional parameters to execute this function.
-     * @param context Context for cancelling long running operations.
+     * @contextParameter
      * @return A SetServicePropertiesResult on successfully setting the properties.
      */
     Azure::Response<Models::SetServicePropertiesResult> SetProperties(
@@ -136,7 +136,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      * for Storage Analytics and CORS (Cross-Origin Resource Sharing) rules.
      *
      * @param options Optional parameters to execute this function.
-     * @param context Context for cancelling long running operations.
+     * @contextParameter
      * @return A BlobServiceProperties describing the service properties.
      */
     Azure::Response<Models::BlobServiceProperties> GetProperties(
@@ -147,7 +147,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @brief Returns the sku name and account kind for the specified account.
      *
      * @param options Optional parameters to execute this function.
-     * @param context Context for cancelling long running operations.
+     * @contextParameter
      * @return AccountInfo describing the account.
      */
     Azure::Response<Models::AccountInfo> GetAccountInfo(
@@ -160,7 +160,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      * enabled for the storage account.
      *
      * @param options Optional parameters to execute this function.
-     * @param context Context for cancelling long running operations.
+     * @contextParameter
      * @return A ServiceStatistics describing the service replication statistics.
      */
     Azure::Response<Models::ServiceStatistics> GetStatistics(
@@ -178,7 +178,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      * for the value of the where query parameter, however, only a subset of the OData filter syntax
      * is supported in the Blob service.
      * @param options Optional parameters to execute this function.
-     * @param context Context for cancelling long running operations.
+     * @contextParameter
      * @return A FindBlobsByTagsPagedResponse describing the blobs.
      */
     FindBlobsByTagsPagedResponse FindBlobsByTags(
@@ -192,7 +192,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      *
      * @param blobContainerName The name of the container to create.
      * @param options Optional parameters to execute this function.
-     * @param context Context for cancelling long running operations.
+     * @contextParameter
      * @return A BlobContainerClient referencing the newly created container.
      */
     Azure::Response<BlobContainerClient> CreateBlobContainer(
@@ -206,7 +206,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      *
      * @param blobContainerName The name of the container to delete.
      * @param options Optional parameters to execute this function.
-     * @param context Context for cancelling long running operations.
+     * @contextParameter
      * @return A DeleteBlobContainerResult if successful.
      */
     Azure::Response<Models::DeleteBlobContainerResult> DeleteBlobContainer(
@@ -220,7 +220,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @param deletedBlobContainerName The name of the previously deleted container.
      * @param deletedBlobContainerVersion The version of the previously deleted container.
      * @param options Optional parameters to execute this function.
-     * @param context Context for cancelling long running operations.
+     * @contextParameter
      * @return A BlobContainerClient referencing the undeleted container.
      */
     Azure::Response<BlobContainerClient> UndeleteBlobContainer(

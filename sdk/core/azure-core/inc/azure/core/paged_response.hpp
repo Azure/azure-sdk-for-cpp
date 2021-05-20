@@ -83,7 +83,7 @@ namespace Azure { namespace Core {
      *
      * @note Calling this method on the last page will set #HasPage() to `false`.
      *
-     * @param context An #Azure::Core::Context which can be used to cancel the operation.
+     * @contextParameter
      */
     void MoveToNextPage(const Azure::Core::Context& context = Azure::Core::Context())
     {

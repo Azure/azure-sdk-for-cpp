@@ -38,6 +38,10 @@ function(generate_documentation PROJECT_NAME PROJECT_VERSION)
         # Use MathJax instead of latex to render formulas
         set(DOXYGEN_USE_MATHJAX YES)
 
+        #####  Doxygen Aliases. Define general docs for consistency and re-usability
+        # @param context ...
+        set(DOXYGEN_ALIASES "contextParameter=@param context A #Azure::Core::Context controlling the request lifetime.")
+
         doxygen_add_docs(${PROJECT_NAME}-docs
             ALL
             COMMENT "Generate documentation for ${PROJECT_NAME}")

@@ -58,7 +58,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
      * a lease that never expires. A non-infinite lease can be between 15 and 60 seconds. A lease
      * duration cannot be changed using renew or change.
      * @param options Optional parameters to execute this function.
-     * @param context Context for cancelling long running operations.
+     * @contextParameter
      * @return An AcquireLeaseResult describing the lease.
      */
     Azure::Response<Models::AcquireLeaseResult> Acquire(
@@ -70,7 +70,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
      * @brief Releases the file or share's previously-acquired lease.
      *
      * @param options Optional parameters to execute this function.
-     * @param context Context for cancelling long running operations.
+     * @contextParameter
      * @return A ReleaseLeaseResult describing the updated share or file.
      */
     Azure::Response<Models::ReleaseLeaseResult> Release(
@@ -82,7 +82,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
      *
      * @param proposedLeaseId Proposed lease ID, in a GUID string format.
      * @param options Optional parameters to execute this function.
-     * @param context Context for cancelling long running operations.
+     * @contextParameter
      * @return A ChangeLeaseResult describing the updated lease.
      * @remarks The current ShareLeaseClient becomes invalid if this operation succeeds.
      */
@@ -95,7 +95,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
      * @brief Breaks the previously-acquired lease.
      *
      * @param options Optional parameters to execute this function.
-     * @param context Context for cancelling long running operations.
+     * @contextParameter
      * @return A BreakLeaseResult describing the broken lease.
      */
     Azure::Response<Models::BreakLeaseResult> Break(
@@ -118,7 +118,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
      * @brief Renews the file or share's previously-acquired lease.
      *
      * @param options Optional parameters to execute this function.
-     * @param context Context for cancelling long running operations.
+     * @contextParameter
      * @return A RenewLeaseResult describing the lease.
      */
     Azure::Response<Models::RenewLeaseResult> Renew(

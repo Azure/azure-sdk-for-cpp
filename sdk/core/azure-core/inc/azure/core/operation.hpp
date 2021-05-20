@@ -149,7 +149,7 @@ namespace Azure { namespace Core {
     /**
      * @brief Gets updated status of the long-running operation.
      *
-     * @param context #Azure::Core::Context allows canceling of the long-running operation.
+     * @contextParameter
      *
      * @return An HTTP #Azure::Core::Http::RawResponse returned from the service.
      */
@@ -175,10 +175,10 @@ namespace Azure { namespace Core {
     }
 
     /**
-     * @brief Periodically polls till the long-running operation completes;
+     * @brief Periodically polls till the long-running operation completes.
      *
      * @param period Time in milliseconds to wait between polls.
-     * @param context #Azure::Core::Context allows canceling of the long-running operation.
+     * @contextParameter
      *
      * @return Response<T> the final result of the long-running operation.
      */

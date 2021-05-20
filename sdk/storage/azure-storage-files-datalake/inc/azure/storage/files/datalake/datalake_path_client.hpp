@@ -86,7 +86,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
      * @brief Creates a file or directory. By default, the destination is overwritten and
      *        if the destination already exists and has a lease the lease is broken.
      * @param options Optional parameters to create the resource the path points to.
-     * @param context Context for cancelling long running operations.
+     * @contextParameter
      * @return Azure::Response<Models::CreatePathResult> containing the information
      * returned when creating a path.
      * @remark This request is sent to dfs endpoint.
@@ -100,7 +100,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
      * @brief Creates a file or directory. By default, the destination is not changed if it already
      * exists.
      * @param options Optional parameters to create the resource the path points to.
-     * @param context Context for cancelling long running operations.
+     * @contextParameter
      * @return Azure::Response<Models::CreatePathResult> containing the information
      * returned when creating a path, the information will only be valid when the create operation
      * is successful.
@@ -114,7 +114,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     /**
      * @brief Deletes the resource the path points to.
      * @param options Optional parameters to delete the resource the path points to.
-     * @param context Context for cancelling long running operations.
+     * @contextParameter
      * @return Azure::Response<Models::DeletePathResult> which is current empty but
      * preserved for future usage.
      * @remark This request is sent to dfs endpoint.
@@ -126,7 +126,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     /**
      * @brief Deletes the resource the path points to if it exists.
      * @param options Optional parameters to delete the resource the path points to.
-     * @param context Context for cancelling long running operations.
+     * @contextParameter
      * @return Azure::Response<Models::DeletePathResult> which is current empty but
      * preserved for future usage. The result will only valid if the delete operation is successful.
      * @remark This request is sent to dfs endpoint.
@@ -144,7 +144,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
      *             permissions.
      * @param options Optional parameters to set an access control to the resource the path points
      *                to.
-     * @param context Context for cancelling long running operations.
+     * @contextParameter
      * @return Azure::Response<Models::SetPathAccessControlListResult> containing the
      * information returned when setting path's access control.
      * @remark This request is sent to dfs endpoint.
@@ -160,7 +160,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
      *        access control.
      * @param permissions Sets the permissions on the path
      * @param options Optional parameters to set permissions to the resource the path points to.
-     * @param context Context for cancelling long running operations.
+     * @contextParameter
      * @return Azure::Response<Models::SetPathPermissionsResult> containing the
      * information returned when setting path's permissions.
      * @remark This request is sent to dfs endpoint.
@@ -174,7 +174,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
      * @brief Sets the properties of a resource the path points to.
      * @param options Optional parameters to set the HTTP headers to the resource the path points
      * to.
-     * @param context Context for cancelling long running operations.
+     * @contextParameter
      * @return Azure::Response<SetPathHttpHeadersResult> containing the information
      * returned when setting the path's HTTP headers.
      * @remark This request is sent to blob endpoint.
@@ -190,7 +190,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
      *        access control list for a path.
      * @param options Optional parameters to get the properties from the resource the path points
      *                to.
-     * @param context Context for cancelling long running operations.
+     * @contextParameter
      * @return Azure::Response<Models::PathProperties> containing the
      * properties of the path.
      * @remark This request is sent to blob endpoint.
@@ -202,7 +202,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     /**
      * @brief Returns all access control list stored for the given path.
      * @param options Optional parameters to get the ACLs from the resource the path points to.
-     * @param context Context for cancelling long running operations.
+     * @contextParameter
      * @return Azure::Response<Models::GetPathAccessControlListResult> containing the
      * access control list of the path.
      * @remark This request is sent to dfs endpoint.
@@ -216,7 +216,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
      * @param metadata User-defined metadata to be stored with the filesystem. Note that the string
      *                 may only contain ASCII characters in the ISO-8859-1 character set.
      * @param options Optional parameters to set the metadata to the resource the path points to.
-     * @param context Context for cancelling long running operations.
+     * @contextParameter
      * @return Azure::Response<Models::SetPathMetadataResult> containing the
      * information returned when setting the metadata.
      * @remark This request is sent to blob endpoint.
@@ -233,7 +233,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
      * entry (ACE) consists of a scope, a type, a user or group identifier, and permissions.
      * @param options Optional parameters to set an access control recursively to the resource the
      * directory points to.
-     * @param context Context for cancelling long running operations.
+     * @contextParameter
      * @return SetPathAccessControlListRecursivePagedResponse containing summary stats of the
      * operation.
      * @remark This request is sent to dfs endpoint.
@@ -255,7 +255,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
      * entry (ACE) consists of a scope, a type, a user or group identifier, and permissions.
      * @param options Optional parameters to set an access control recursively to the resource the
      * directory points to.
-     * @param context Context for cancelling long running operations.
+     * @contextParameter
      * @return UpdatePathAccessControlListRecursivePagedResponse containing summary stats of the
      * operation.
      * @remark This request is sent to dfs endpoint.
@@ -277,7 +277,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
      * entry (ACE) consists of a scope, a type, a user or group identifier, and permissions.
      * @param options Optional parameters to set an access control recursively to the resource the
      * directory points to.
-     * @param context Context for cancelling long running operations.
+     * @contextParameter
      * @return RemovePathAccessControlListRecursivePagedResponse containing summary stats of the
      * operation.
      * @remark This request is sent to dfs endpoint.
