@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
 
-#include "transport_adapter_base.hpp"
+#include "transport_adapter_base_test.hpp"
 #include <azure/core/context.hpp>
 #include <azure/core/http/policies/policy.hpp>
 #include <azure/core/response.hpp>
@@ -21,7 +21,7 @@
 #include <private/curl_connection_pool.hpp>
 #include <private/curl_session.hpp>
 
-#include "curl_session.hpp"
+#include "curl_session_test.hpp"
 
 using testing::ValuesIn;
 using namespace Azure::Core::Http::_detail;

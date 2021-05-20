@@ -20,9 +20,9 @@ set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 
 if(BUILD_TRANSPORT_CURL)
-  SET(CURL_OPTIONS_TESTS curl_options.cpp)
-  SET(CURL_SESSION_TESTS curl_session_test.cpp)
-  SET(CURL_CONNECTION_POOL_TESTS curl_connection_pool.cpp)
+  SET(CURL_OPTIONS_TESTS curl_options_test.cpp)
+  SET(CURL_SESSION_TESTS curl_session_test_test.cpp)
+  SET(CURL_CONNECTION_POOL_TESTS curl_connection_pool_test.cpp)
 endif()
 
 if(RUN_LONG_UNIT_TESTS)
@@ -33,42 +33,42 @@ include(GoogleTest)
 
 add_executable (
   azure-core-test
-    base64.cpp
-    bearer_token_authentication_policy.cpp
-    bodystream.cpp
-    case_insensitive_containers.cpp
-    client_options.cpp
-    context.cpp
+    azure_core_test.cpp
+    base64_test.cpp
+    bearer_token_authentication_policy_test.cpp
+    bodystream_test.cpp
+    case_insensitive_containers_test.cpp
+    client_options_test.cpp
+    context_test.cpp
     ${CURL_CONNECTION_POOL_TESTS}
     ${CURL_OPTIONS_TESTS}
     ${CURL_SESSION_TESTS}
-    datetime.cpp
-    etag.cpp
-    http.cpp
-    http_method.cpp
-    json.cpp
-    log_policy.cpp
-    logging.cpp
-    macro_guard.cpp
-    main.cpp
-    match_conditions.cpp
-    md5.cpp
-    modified_conditions.cpp
-    nullable.cpp
-    operation.cpp
-    operation_status.cpp
-    pipeline.cpp
-    policy.cpp
-    request_id_policy.cpp
-    response_t.cpp
-    retry_policy.cpp
-    simplified_header.cpp
-    string.cpp
-    telemetry_policy.cpp
-    transport_adapter_base.cpp
-    transport_adapter_implementation.cpp
-    url.cpp
-    uuid.cpp
+    datetime_test.cpp
+    etag_test.cpp
+    http_test.cpp
+    http_method_test.cpp
+    json_test.cpp
+    log_policy_test.cpp
+    logging_test.cpp
+    macro_guard_test.cpp
+    match_conditions_test.cpp
+    md5_test.cpp
+    modified_conditions_test.cpp
+    nullable_test.cpp
+    operation_test.cpp
+    operation_status_test.cpp
+    pipeline_test.cpp
+    policy_test.cpp
+    request_id_policy_test.cpp
+    response_t_test.cpp
+    retry_policy_test.cpp
+    simplified_header_test.cpp
+    string_test.cpp
+    telemetry_policy_test.cpp
+    transport_adapter_base_test.cpp
+    transport_adapter_implementation_test.cpp
+    url_test.cpp
+    uuid_test.cpp
 )
 
 if (MSVC)
@@ -95,7 +95,7 @@ target_link_libraries(azure-core-test PRIVATE azure-core gtest gmock)
 ## Global context test
 add_executable (
   azure-core-global-context-test
-  global_context.cpp
+  global_context_test.cpp
 )
 if (MSVC)
   # Disable gtest warnings for MSVC
@@ -117,7 +117,7 @@ if(BUILD_TRANSPORT_CURL)
   # without getting errors.
   add_executable (
     azure-core-libcurl-test
-    azure_libcurl_core_main.cpp
+    azure_libcurl_core_main_test.cpp
   )
 
   if (MSVC)

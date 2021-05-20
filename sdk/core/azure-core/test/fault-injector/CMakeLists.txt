@@ -11,7 +11,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED True)
 
 add_executable (
   azure-core-test-fault-injector
-    main.cpp
+  fault_injector_test.cpp
 )
 
 target_link_libraries(azure-core-test-fault-injector PRIVATE azure-core)

@@ -3,7 +3,7 @@
 
 #include <azure/perf.hpp>
 
-#include "azure/core/test/nullable.hpp"
+#include "azure/core/test/nullable_test.hpp"
 
 #include <vector>
 
