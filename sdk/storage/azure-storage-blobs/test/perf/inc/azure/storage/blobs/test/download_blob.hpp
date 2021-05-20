@@ -42,7 +42,8 @@ namespace Azure { namespace Storage { namespace Blobs { namespace Test {
     {
       // Call base to create blob client
       BlobsTest::Setup();
-      auto rawData = std::make_unique<std::vector<uint8_t>>(1024 * 1024 * 5);
+      long size = m_options.GetMandatoryOption<long>("Size");
+      auto rawData = std::make_unique<std::vector<uint8_t>>(size);
       auto content = Azure::Core::IO::MemoryBodyStream(*rawData);
       m_blobClient->Upload(content);
     }
@@ -60,7 +61,8 @@ namespace Azure { namespace Storage { namespace Blobs { namespace Test {
      */
     std::vector<Azure::Perf::TestOption> GetTestOptions() override
     {
-      return Azure::Storage::Blobs::Test::BlobsTest::GetTestOptions();
+      // TODO: Merge with base options
+      return { {"Size", {"--size"}, "Size of payload (in bytes)", 1, true} };
     }
 
     /**
