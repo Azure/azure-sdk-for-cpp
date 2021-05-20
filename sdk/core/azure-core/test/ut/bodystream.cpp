@@ -26,14 +26,22 @@ using namespace Azure::Core;
 
 // Used to test virtual, default behavior of BodyStream.
 class TestBodyStream final : public BodyStream {
-  int64_t OnRead(uint8_t*, int64_t, Context const&) override { return 0; }
+  size_t OnRead(uint8_t*, size_t, Context const&) override { return 0; }
   int64_t Length() const override { return 0; }
 };
 
 TEST(BodyStream, Rewind)
 {
   TestBodyStream tb;
-  EXPECT_THROW(tb.Rewind(), std::logic_error);
+
+#if defined(NDEBUG)
+  // Release build won't provide assert msg
+  ASSERT_DEATH(tb.Rewind(), "");
+#else
+  ASSERT_DEATH(
+      tb.Rewind(),
+      "The specified BodyStream doesn't support Rewind which is required to guarantee fault ");
+#endif
 
   std::string testDataPath(AZURE_TEST_DATA_PATH);
 
@@ -53,9 +61,26 @@ TEST(BodyStream, Rewind)
   EXPECT_NO_THROW(ms.Rewind());
 }
 
+TEST(BodyStream, BadInput)
+{
+  TestBodyStream tb;
+  ASSERT_DEATH(tb.Read(NULL, 1), "");
+  ASSERT_DEATH(tb.Read(NULL, 1, Azure::Core::Context::ApplicationContext), "");
+  ASSERT_DEATH(tb.ReadToCount(NULL, 1), "");
+  ASSERT_DEATH(tb.ReadToCount(NULL, 1, Azure::Core::Context::ApplicationContext), "");
+}
+
+TEST(MemoryBodyStream, BadInput) { ASSERT_DEATH(MemoryBodyStream(NULL, 1), ""); }
+
 TEST(FileBodyStream, BadInput)
 {
-  EXPECT_THROW(Azure::Core::IO::FileBodyStream(""), std::runtime_error);
+#if defined(NDEBUG)
+  // Release build won't provide assert msg
+  ASSERT_DEATH(FileBodyStream(""), "");
+#else
+  ASSERT_DEATH(FileBodyStream(""), "The file name must not be an empty string.");
+#endif
+
   EXPECT_THROW(Azure::Core::IO::FileBodyStream("FileNotFound"), std::runtime_error);
 }
 
@@ -97,7 +122,7 @@ TEST(FileBodyStream, Read)
   // ReadToCount
   std::vector<uint8_t> buffer(FileSize * 2);
 
-  int64_t readSize = stream.ReadToCount(buffer.data(), 10);
+  size_t readSize = stream.ReadToCount(buffer.data(), 10);
   EXPECT_EQ(readSize, 10);
   EXPECT_EQ(buffer[10], 0);
 

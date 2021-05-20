@@ -52,6 +52,7 @@ namespace Azure { namespace Core { namespace Http {
   /*********************  Exceptions  **********************/
   /**
    * @brief HTTP transport layer error.
+   *
    */
   class TransportException final : public Azure::Core::RequestFailedException {
   public:
@@ -91,6 +92,7 @@ namespace Azure { namespace Core { namespace Http {
 
   /**
    * HTTP request method.
+   *
    */
   class HttpMethod final {
   public:
@@ -117,6 +119,7 @@ namespace Azure { namespace Core { namespace Http {
 
   /**
    * @brief HTTP request.
+   *
    */
   class Request final {
     friend class Azure::Core::Http::Policies::_internal::RetryPolicy;
@@ -184,6 +187,7 @@ namespace Azure { namespace Core { namespace Http {
     explicit Request(HttpMethod httpMethod, Url url, Azure::Core::IO::BodyStream* bodyStream)
         : Request(httpMethod, std::move(url), bodyStream, true)
     {
+      AZURE_ASSERT_MSG(bodyStream, "The bodyStream pointer cannot be null.");
     }
 
     /**
@@ -227,16 +231,19 @@ namespace Azure { namespace Core { namespace Http {
     // Methods used by transport layer (and logger) to send request
     /**
      * @brief Get HTTP method.
+     *
      */
     HttpMethod GetMethod() const;
 
     /**
      * @brief Get HTTP headers.
+     *
      */
     CaseInsensitiveMap GetHeaders() const;
 
     /**
      * @brief Get HTTP body as #Azure::Core::IO::BodyStream.
+     *
      */
     Azure::Core::IO::BodyStream* GetBodyStream() { return this->m_bodyStream; }
 
@@ -248,11 +255,13 @@ namespace Azure { namespace Core { namespace Http {
 
     /**
      * @brief Get URL.
+     *
      */
     Url& GetUrl() { return this->m_url; }
 
     /**
      * @brief Get URL.
+     *
      */
     Url const& GetUrl() const { return this->m_url; }
   };

@@ -22,15 +22,15 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys { nam
   /***************** KeyVault Key *****************/
   struct KeyVaultKeySerializer final
   {
-    // Creates a new key based on a name and an http raw response.
+    // Creates a new key based on a name and an HTTP raw response.
     static KeyVaultKey KeyVaultKeyDeserialize(
         std::string const& name,
         Azure::Core::Http::RawResponse const& rawResponse);
 
-    // Create from http raw response only.
+    // Create from HTTP raw response only.
     static KeyVaultKey KeyVaultKeyDeserialize(Azure::Core::Http::RawResponse const& rawResponse);
 
-    // Updates a Key based on an Http raw response.
+    // Updates a Key based on an HTTP raw response.
     static void KeyVaultKeyDeserialize(
         KeyVaultKey& key,
         Azure::Core::Http::RawResponse const& rawResponse);

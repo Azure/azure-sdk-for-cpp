@@ -16,7 +16,7 @@ namespace Azure { namespace Storage {
    * @brief The class for the CRC64 hash function which maps binary data of an arbitrary length to
    * small binary data of a fixed length.
    */
-  class Crc64Hash : public Azure::Core::Cryptography::Hash {
+  class Crc64Hash final : public Azure::Core::Cryptography::Hash {
   public:
     /**
      * @brief Concatenates another #Crc64 instance after this instance. This operation has the same

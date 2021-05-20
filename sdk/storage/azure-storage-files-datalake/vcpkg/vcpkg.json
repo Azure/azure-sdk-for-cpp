@@ -12,7 +12,7 @@
   "license": "MIT",
   "dependencies": [
     {
-      "name": "azure-storage-common-cpp",
+      "name": "azure-storage-blobs-cpp",
       "default-features": false
     },
     {

@@ -25,7 +25,7 @@ RUN apt-get update \
         openssh-client \
         less \
         #
-        # Azure sdk for C++ dev env
+        # Azure SDK for C++ dev env
         make \
         cmake \
         build-essential \

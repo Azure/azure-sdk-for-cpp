@@ -1,6 +1,6 @@
 # Libcurl Transport Adapter
 
-The Azure SDK for C++ provides an http transport adapter implementation using the well known libcurl library. There are some general guidelines that you should know if you decide to use this implementation.
+The Azure SDK for C++ provides an HTTP transport adapter implementation using the well known libcurl library. There are some general guidelines that you should know if you decide to use this implementation.
 
 ## Global init and clean up
 

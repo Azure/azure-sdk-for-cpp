@@ -42,6 +42,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
   {
     /**
      * @brief Specify the key version to get.
+     *
      */
     std::string Version;
   };
@@ -61,12 +62,16 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
     std::shared_ptr<Azure::Security::KeyVault::_internal::KeyVaultPipeline> m_pipeline;
 
   public:
+    /**
+     * @brief Destructor.
+     *
+     */
     virtual ~KeyClient() = default;
 
     /**
      * @brief Construct a new Key Client object
      *
-     * @param vaultUrl The url address where the client will send the requests to.
+     * @param vaultUrl The URL address where the client will send the requests to.
      * @param credential The authentication method to use.
      * @param options The options to customize the client behavior.
      */

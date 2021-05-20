@@ -25,11 +25,13 @@ namespace Azure { namespace Security { namespace KeyVault {
   public:
     /**
      * @brief Construct a default instance of #SHA256.
+     *
      */
     SHA256();
 
     /**
      * @brief Cleanup any state when destroying the instance of #SHA256.
+     *
      */
     ~SHA256(){};
 
@@ -75,11 +77,13 @@ namespace Azure { namespace Security { namespace KeyVault {
   public:
     /**
      * @brief Construct a default instance of #SHA384.
+     *
      */
     SHA384();
 
     /**
      * @brief Cleanup any state when destroying the instance of #SHA384.
+     *
      */
     ~SHA384(){};
 
@@ -125,11 +129,13 @@ namespace Azure { namespace Security { namespace KeyVault {
   public:
     /**
      * @brief Construct a default instance of #SHA512.
+     *
      */
     SHA512();
 
     /**
      * @brief Cleanup any state when destroying the instance of #SHA512.
+     *
      */
     ~SHA512(){};
 

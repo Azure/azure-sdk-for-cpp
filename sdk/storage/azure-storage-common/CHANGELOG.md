@@ -1,8 +1,18 @@
 # Release History
 
-## 12.0.0-beta.11 (Unreleased)
+## 12.0.0-beta.12 (Unreleased)
 
+
+## 12.0.0-beta.11 (2021-05-19)
+
+### Breaking Changes
+
+- Added `final` specifier to classes and structures that are are not expected to be inheritable at the moment.
 - Removed `Azure::PagedResponse<T>`.
+
+### Bug Fixes
+
+- Fixed a stream leak issue in `ReliableStream`.
 
 ## 12.0.0-beta.10 (2021-04-16)
 

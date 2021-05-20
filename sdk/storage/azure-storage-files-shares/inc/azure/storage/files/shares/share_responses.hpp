@@ -21,14 +21,14 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     /**
      * @brief The information returned when forcing the directory handles to close.
      */
-    struct ForceCloseDirectoryHandleResult
+    struct ForceCloseDirectoryHandleResult final
     {
     };
 
     /**
      * @brief The detailed information returned when downloading a file.
      */
-    struct DownloadFileDetails
+    struct DownloadFileDetails final
     {
       /**
        * An HTTP entity tag associated with the file.
@@ -104,7 +104,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     /**
      * @brief The content and information returned when downloading a file.
      */
-    struct DownloadFileResult
+    struct DownloadFileResult final
     {
       /**
        * The body of the downloaded result.
@@ -127,7 +127,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       Nullable<Storage::ContentHash> TransactionalContentHash;
 
       /**
-       * The common Http headers of the file.
+       * The common HTTP headers of the file.
        */
       FileHttpHeaders HttpHeaders;
 
@@ -140,7 +140,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     /**
      * @brief The information returned when clearing a range in the file.
      */
-    struct ClearFileRangeResult
+    struct ClearFileRangeResult final
     {
       /**
        * An HTTP entity tag associated with the file.
@@ -161,7 +161,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     /**
      * @brief The information returned when downloading a file to a destination.
      */
-    struct DownloadFileToResult
+    struct DownloadFileToResult final
     {
       /**
        * The size of the file.
@@ -174,7 +174,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       Azure::Core::Http::HttpRange ContentRange;
 
       /**
-       * The common Http headers of the file.
+       * The common HTTP headers of the file.
        */
       FileHttpHeaders HttpHeaders;
 
@@ -187,14 +187,14 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     /**
      * @brief The information returned when forcing a file handle to close.
      */
-    struct ForceCloseFileHandleResult
+    struct ForceCloseFileHandleResult final
     {
     };
 
     /**
      * @brief The information returned when uploading a file from a source.
      */
-    struct UploadFileFromResult
+    struct UploadFileFromResult final
     {
       /**
        * A boolean indicates if the service is encrypted.
@@ -207,7 +207,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
   /**
    * @brief A long-running operation to copy a file.
    */
-  class StartFileCopyOperation : public Azure::Core::Operation<Models::FileProperties> {
+  class StartFileCopyOperation final : public Azure::Core::Operation<Models::FileProperties> {
   public:
     /**
      * @brief Get the #Azure::Storage::Files::Shares::Models::FileProperties object which includes
@@ -226,11 +226,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     ~StartFileCopyOperation() override {}
 
   private:
-    std::string GetResumeToken() const override
-    {
-      // Not supported
-      std::abort();
-    }
+    std::string GetResumeToken() const override { AZURE_NOT_IMPLEMENTED(); }
 
     std::unique_ptr<Azure::Core::Http::RawResponse> PollInternal(
         const Azure::Core::Context& context) override;
@@ -253,7 +249,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
   /**
    * @brief Response type for #Azure::Storage::Files::Shares::ShareServiceClient::ListShares.
    */
-  class ListSharesPagedResponse : public Azure::Core::PagedResponse<ListSharesPagedResponse> {
+  class ListSharesPagedResponse final : public Azure::Core::PagedResponse<ListSharesPagedResponse> {
   public:
     /**
      * Service endpoint.
@@ -282,7 +278,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
    * @brief Response type for
    * #Azure::Storage::Files::Shares::ShareDirectoryClient::ListFilesAndDirectories.
    */
-  class ListFilesAndDirectoriesPagedResponse
+  class ListFilesAndDirectoriesPagedResponse final
       : public Azure::Core::PagedResponse<ListFilesAndDirectoriesPagedResponse> {
   public:
     /**
@@ -327,7 +323,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
   /**
    * @brief Response type for #Azure::Storage::Files::Shares::ShareFileClient::ListHandles.
    */
-  class ListFileHandlesPagedResponse
+  class ListFileHandlesPagedResponse final
       : public Azure::Core::PagedResponse<ListFileHandlesPagedResponse> {
   public:
     /**
@@ -348,7 +344,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
   /**
    * @brief Response type for #Azure::Storage::Files::Shares::ShareFileClient::ForceCloseAllHandles.
    */
-  class ForceCloseAllFileHandlesPagedResponse
+  class ForceCloseAllFileHandlesPagedResponse final
       : public Azure::Core::PagedResponse<ForceCloseAllFileHandlesPagedResponse> {
   public:
     /**
@@ -356,7 +352,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
      */
     int32_t NumberOfHandlesClosed = 0;
     /**
-     * Number of file handles that fialed to close.
+     * Number of file handles that failed to close.
      */
     int32_t NumberOfHandlesFailedToClose = 0;
 
@@ -373,7 +369,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
   /**
    * @brief Response type for #Azure::Storage::Files::Shares::ShareDirectoryClient::ListHandles.
    */
-  class ListDirectoryHandlesPagedResponse
+  class ListDirectoryHandlesPagedResponse final
       : public Azure::Core::PagedResponse<ListDirectoryHandlesPagedResponse> {
   public:
     /**
@@ -395,7 +391,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
    * @brief Response type for
    * #Azure::Storage::Files::Shares::ShareDirectoryClient::ForceCloseAllHandles.
    */
-  class ForceCloseAllDirectoryHandlesPagedResponse
+  class ForceCloseAllDirectoryHandlesPagedResponse final
       : public Azure::Core::PagedResponse<ForceCloseAllDirectoryHandlesPagedResponse> {
   public:
     /**

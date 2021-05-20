@@ -24,6 +24,12 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
   class DataLakePathClient {
   public:
     /**
+     * @brief Destructor.
+     *
+     */
+    virtual ~DataLakePathClient() = default;
+
+    /**
      * @brief Create from connection string
      * @param connectionString Azure Storage connection string.
      * @param fileSystemName The name of a file system.
@@ -69,10 +75,10 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
         const DataLakeClientOptions& options = DataLakeClientOptions());
 
     /**
-     * @brief Gets the path's primary url endpoint. This is the endpoint used for blob
+     * @brief Gets the path's primary URL endpoint. This is the endpoint used for blob
      * storage available features in DataLake.
      *
-     * @return The path's primary url endpoint.
+     * @return The path's primary URL endpoint.
      */
     std::string GetUrl() const { return m_blobClient.GetUrl(); }
 
@@ -166,11 +172,11 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
 
     /**
      * @brief Sets the properties of a resource the path points to.
-     * @param options Optional parameters to set the http headers to the resource the path points
+     * @param options Optional parameters to set the HTTP headers to the resource the path points
      * to.
      * @param context Context for cancelling long running operations.
      * @return Azure::Response<SetPathHttpHeadersResult> containing the information
-     * returned when setting the path's Http headers.
+     * returned when setting the path's HTTP headers.
      * @remark This request is sent to blob endpoint.
      */
     Azure::Response<Models::SetPathHttpHeadersResult> SetHttpHeaders(

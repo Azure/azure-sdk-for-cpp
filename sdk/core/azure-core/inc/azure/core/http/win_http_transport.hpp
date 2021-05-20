@@ -3,7 +3,7 @@
 
 /**
  * @file
- * @brief #Azure::Core::Http::HttpTransport implementation via WinHttp.
+ * @brief #Azure::Core::Http::HttpTransport implementation via WinHTTP.
  */
 
 #pragma once
@@ -32,8 +32,8 @@ namespace Azure { namespace Core { namespace Http {
 
   namespace _detail {
 
-    constexpr static int64_t DefaultUploadChunkSize = 1024 * 64;
-    constexpr static int64_t MaximumUploadChunkSize = 1024 * 1024;
+    constexpr static size_t DefaultUploadChunkSize = 1024 * 64;
+    constexpr static size_t MaximumUploadChunkSize = 1024 * 1024;
 
     struct HandleManager final
     {
@@ -104,7 +104,7 @@ namespace Azure { namespace Core { namespace Http {
        * @param count The number of bytes to read from the network.
        * @return The actual number of bytes read from the network.
        */
-      int64_t OnRead(uint8_t* buffer, int64_t count, Azure::Core::Context const& context) override;
+      size_t OnRead(uint8_t* buffer, size_t count, Azure::Core::Context const& context) override;
 
     public:
       WinHttpStream(std::unique_ptr<HandleManager> handleManager, int64_t contentLength)
@@ -133,7 +133,7 @@ namespace Azure { namespace Core { namespace Http {
   };
 
   /**
-   * @brief Concrete implementation of an HTTP transport that uses WinHttp when sending and
+   * @brief Concrete implementation of an HTTP transport that uses WinHTTP when sending and
    * receiving requests and responses over the wire.
    *
    */
@@ -157,7 +157,7 @@ namespace Azure { namespace Core { namespace Http {
 
   public:
     /**
-     * @brief Construct a new WinHttp Transport object.
+     * @brief Construct a new WinHTTP Transport object.
      *
      * @param options Optional parameter to override the default settings.
      */
@@ -167,7 +167,7 @@ namespace Azure { namespace Core { namespace Http {
     }
 
     /**
-     * @brief Implements the Http transport interface to send an HTTP Request and produce an HTTP
+     * @brief Implements the HTTP transport interface to send an HTTP Request and produce an HTTP
      * RawResponse.
      *
      * @param context #Azure::Core::Context so that operation can be cancelled.

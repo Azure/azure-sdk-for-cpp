@@ -3,7 +3,7 @@
 
 /**
  * @file
- * @brief Environment Credential.
+ * @brief Environment Credential initializes an Azure credential from system environment variables.
  */
 
 #pragma once
@@ -15,16 +15,18 @@
 
 namespace Azure { namespace Identity {
   /**
-   * @brief An environment credential.
+   * @brief Environment Credential initializes an Azure credential, based on the system environment
+   * variables being set.
+   *
    */
   class EnvironmentCredential final : public Core::Credentials::TokenCredential {
     std::unique_ptr<TokenCredential> m_credentialImpl;
 
   public:
     /**
-     * Constructs an environment credential.
+     * @brief Constructs an Environment Credential.
      *
-     * @details May read from the following environment variables:
+     * @note May read from the following environment variables:
      * - AZURE_TENANT_ID
      * - AZURE_CLIENT_ID
      * - AZURE_CLIENT_SECRET
@@ -36,6 +38,15 @@ namespace Azure { namespace Identity {
         Azure::Core::Credentials::TokenCredentialOptions options
         = Azure::Core::Credentials::TokenCredentialOptions());
 
+    /**
+     * @brief Gets an authentication token.
+     *
+     * @param tokenRequestContext #Azure::Core::Credentials::TokenRequestContext to get the token
+     * in.
+     * @param context #Azure::Core::Context so that operation can be cancelled.
+     *
+     * @throw Azure::Core::Credentials::AuthenticationException Authentication error occurred.
+     */
     Core::Credentials::AccessToken GetToken(
         Core::Credentials::TokenRequestContext const& tokenRequestContext,
         Core::Context const& context) const override;

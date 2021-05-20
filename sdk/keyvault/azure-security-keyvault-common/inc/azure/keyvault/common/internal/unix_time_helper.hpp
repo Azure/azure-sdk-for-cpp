@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: MIT
 
 /**
- * @brief Provides helper method for using unix time.
+ * @brief Provides helper method for using POSIX time.
  *
  */
 
@@ -15,15 +15,16 @@
 namespace Azure { namespace Security { namespace KeyVault { namespace _internal {
 
   /**
-   * @brief Provides convertion methods for unix time to Azure Core Datetime.
+   * @brief Provides convertion methods for POSIX time to Azure Core #Azure::Core::DateTime.
+   *
    */
   class UnixTimeConverter final {
   public:
     /**
-     * @brief Converts unix time to a #Azure::Core::Datetime.
+     * @brief Converts POSIX time to a #Azure::Core::Datetime.
      *
      * @param unixTime The number of seconds since 1970.
-     * @return Calculated Datetime.
+     * @return Calculated #Azure::Core::DateTime.
      */
     static inline Azure::DateTime UnixTimeToDatetime(uint64_t unixTime)
     {
@@ -31,13 +32,13 @@ namespace Azure { namespace Security { namespace KeyVault { namespace _internal 
     }
 
     /**
-     * @brief Converts a #Azure::Core::Datetime to unix time.
+     * @brief Converts an #Azure::Core::DateTime to POSIX time.
      *
      * @param dateTime The date time to convert.
      */
     static inline uint64_t DatetimeToUnixTime(Azure::DateTime dateTime)
     {
-      //  This count starts at the Unix Epoch which was January 1st, 1970 at UTC.
+      //  This count starts at the Unix epoch which is January 1st, 1970 UTC.
       auto secondsSince1970
           = std::chrono::duration_cast<std::chrono::seconds>(dateTime - Azure::DateTime(1970));
       return secondsSince1970.count();

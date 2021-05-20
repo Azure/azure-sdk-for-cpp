@@ -35,7 +35,7 @@ For general suggestions about Azure, use our [Azure feedback forum](https://feed
 
 #### Windows
 
-#### Unix Platforms
+#### POSIX Platforms
 
 ### Build from Source
 

@@ -12,7 +12,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED True)
 #
 include(FetchContent)
 FetchContent_Declare(azuresdkforcpp
-    # Set the SDK url path and release TAG
+    # Set the SDK URL path and release tag
     GIT_REPOSITORY      https://github.com/Azure/azure-sdk-for-cpp.git
     GIT_TAG             azure-storage-files-datalake_12.0.0-beta.6)
 FetchContent_GetProperties(azuresdkforcpp)

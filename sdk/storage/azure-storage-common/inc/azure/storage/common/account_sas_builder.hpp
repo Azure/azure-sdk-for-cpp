@@ -205,7 +205,7 @@ namespace Azure { namespace Storage { namespace Sas {
    * @brief AccountSasBuilder is used to generate an account level Shared Access Signature
    * (SAS) for Azure Storage services.
    */
-  struct AccountSasBuilder
+  struct AccountSasBuilder final
   {
     /**
      * @brief The optional signed protocol field specifies the protocol permitted for a

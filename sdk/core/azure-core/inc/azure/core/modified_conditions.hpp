@@ -17,9 +17,14 @@ namespace Azure {
 
 /**
  * @brief Specifies HTTP options for conditional requests based on modification time.
+ *
  */
 struct ModifiedConditions
 {
+  /**
+   * @brief Destructs the ModifiedConditions.
+   *
+   */
   virtual ~ModifiedConditions() = default;
 
   /**
@@ -30,6 +35,7 @@ struct ModifiedConditions
 
   /**
    * @brief Optionally limit requests to resources that have remained unmodified.
+   *
    */
   Azure::Nullable<Azure::DateTime> IfUnmodifiedSince;
 };

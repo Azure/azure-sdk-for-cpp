@@ -29,7 +29,7 @@ namespace Azure { namespace Perf { namespace Test {
     WinHttpClientGetTest(Azure::Perf::TestOptions options) : HttpClientGetTest(options) {}
 
     /**
-     * @brief Set up the http client
+     * @brief Set up the HTTP client
      *
      */
     void GlobalSetup() override
@@ -46,7 +46,7 @@ namespace Azure { namespace Perf { namespace Test {
     {
       return {
           "winHttpClientGet",
-          "Send an Http Get request to a configurable url using winHttp.",
+          "Send an HTTP GET request to a configurable URL using WinHTTP.",
           [](Azure::Perf::TestOptions options) {
             return std::make_unique<Azure::Perf::Test::WinHttpClientGetTest>(options);
           }};

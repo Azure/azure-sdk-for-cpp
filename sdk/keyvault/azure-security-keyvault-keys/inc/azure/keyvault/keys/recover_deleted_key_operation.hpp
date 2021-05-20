@@ -93,7 +93,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
     /**
      * @brief Get the #Azure::Security::KeyVault::Keys::KeyVaultKey object.
      *
-     * @remark The deleted key contains the recovery id if the key can be recovered.
+     * @remark The deleted key contains the recovery ID if the key can be recovered.
      *
      * @return A deleted key object.
      */

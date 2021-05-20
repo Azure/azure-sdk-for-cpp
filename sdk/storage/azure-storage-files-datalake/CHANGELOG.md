@@ -1,6 +1,9 @@
 # Release History
 
-## 12.0.0-beta.11 (Unreleased)
+## 12.0.0-beta.12 (Unreleased)
+
+
+## 12.0.0-beta.11 (2021-05-19)
 
 ### New Features
 
@@ -8,6 +11,7 @@
 
 ### Breaking Changes
 
+- Added `final` specifier to classes and structures that are are not expected to be inheritable at the moment.
 - Renamed `HasMorePages()` in paged response to `HasPage()`.
 - Default chunk size for concurrent upload was changed to nullable.
 - `DataLakeLeaseClient::Change()` updates internal lease id.

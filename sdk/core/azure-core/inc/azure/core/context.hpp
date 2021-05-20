@@ -22,13 +22,13 @@
 namespace Azure { namespace Core {
 
   /**
-   * @brief An exception that gets thrown when some operation is cancelled.
+   * @brief An exception thrown when an operation is cancelled.
    *
    */
   class OperationCancelledException final : public std::runtime_error {
   public:
     /**
-     * @brief Construct with message string as description.
+     * @brief Constructs an `OperationCancelledException` with message string as the description.
      *
      * @param message The description for the exception.
      */
@@ -39,23 +39,39 @@ namespace Azure { namespace Core {
 
   /**
    * @brief A context is a node within a tree that represents deadlines and key/value pairs.
+   *
    */
   class Context final {
   public:
     /**
-     * @brief A context key.
+     * @brief A key used to store and retrieve data in an #Azure::Core::Context object.
+     *
      */
     class Key final {
       Key const* m_uniqueAddress;
 
     public:
+      /**
+       * @brief Constructs a `Key`.
+       *
+       */
       Key() : m_uniqueAddress(this) {}
 
+      /**
+       * @brief Compares with \p other `Azure::Core::Context::Key` for equality.
+       * @param other Other `Azure::Core::Context::Key` to compare with.
+       * @return `true` if instances are equal; otherwise, `false`.
+       */
       bool operator==(Key const& other) const
       {
         return this->m_uniqueAddress == other.m_uniqueAddress;
       }
 
+      /**
+       * @brief Compares with \p other `Azure::Core::Context::Key` for equality.
+       * @param other Other `Azure::Core::Context::Key` to compare with.
+       * @return `false` if instances are equal; otherwise, `true`.
+       */
       bool operator!=(Key const& other) const { return !(*this == other); }
     };
 
@@ -113,17 +129,19 @@ namespace Azure { namespace Core {
 
   public:
     /**
-     * @brief Construct a new context with no deadline, and no value associated.
+     * @brief Constructs a new context with no deadline, and no value associated.
+     *
      */
     Context() : m_contextSharedState(std::make_shared<ContextSharedState>()) {}
 
     /**
      * @brief Copy constructor.
+     *
      */
     Context& operator=(const Context&) = default;
 
     /**
-     * @brief Create a context with a deadline.
+     * @brief Creates a context with a deadline.
      *
      * @param deadline A point in time after which a context expires.
      *
@@ -135,8 +153,9 @@ namespace Azure { namespace Core {
     }
 
     /**
-     * @brief Create a context without a deadline, but with \p key and \p value associated with it.
+     * @brief Creates a context without a deadline, but with \p key and \p value associated with it.
      *
+     * @tparam T The type of the value to be stored with the key.
      * @param key A key to associate with this context.
      * @param value A value to associate with this context.
      *
@@ -149,26 +168,28 @@ namespace Azure { namespace Core {
     }
 
     /**
-     * @brief Get a deadline associated with this context or the branch of contexts this context
+     * @brief Gets the deadline for this context or the branch of contexts this context
      * belongs to.
      *
-     * @return A deadline associated with the context found; `Azure::DateTime::max()` value if a
-     * specific value can't be found.
+     * @return The deadline associated with the context; `Azure::DateTime::max()` if no deadline is
+     * specified.
+     *
      */
     DateTime GetDeadline() const;
 
     /**
-     * @brief Try to get a value associated with a \p key parameter within this context or the
+     * @brief Gets the value associated with a \p key parameter within this context or the
      * branch of contexts this context belongs to.
      *
+     * @tparam T The type of the value to be retrieved.
      * @param key A key associated with a context to find.
      * @param outputValue A reference to the value corresponding to the \p key to be set, if found
      * within the context tree.
      *
-     * @return If found, returns `true`, with \p outputValue set to the value associated with the
-     * key found; otherwise returns `false`.
+     * @return `true` if \p key is found, with \p outputValue set to the value associated with the
+     * key found; otherwise, `false`.
      *
-     * @remark The \p outputValue is left unmodified it the \p key is not found.
+     * @note The \p outputValue is left unmodified if the \p key is not found.
      */
     template <class T> bool TryGetValue(Key const& key, T& outputValue) const
     {
@@ -188,6 +209,7 @@ namespace Azure { namespace Core {
 
     /**
      * @brief Cancels the context.
+     *
      */
     void Cancel()
     {
@@ -196,13 +218,15 @@ namespace Azure { namespace Core {
     }
 
     /**
-     * @brief Check if the context is cancelled.
-     * @return `true` if this context is cancelled, `false` otherwise.
+     * @brief Checks if the context is cancelled.
+     * @return `true` if this context is cancelled; otherwise, `false`.
      */
     bool IsCancelled() const noexcept { return GetDeadline() < std::chrono::system_clock::now(); }
 
     /**
-     * @brief Throw an exception if the context was cancelled.
+     * @brief Checks if the context is cancelled.
+     * @throw #Azure::Core::OperationCancelledException if the context is cancelled.
+     *
      */
     void ThrowIfCancelled() const
     {
@@ -214,6 +238,7 @@ namespace Azure { namespace Core {
 
     /**
      * @brief The application context (root).
+     *
      */
     static AZ_CORE_DLLEXPORT Context ApplicationContext;
   };

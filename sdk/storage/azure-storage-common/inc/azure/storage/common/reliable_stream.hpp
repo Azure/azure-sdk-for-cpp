@@ -11,7 +11,7 @@
 namespace Azure { namespace Storage { namespace _internal {
 
   // Options used by reliable stream
-  struct ReliableStreamOptions
+  struct ReliableStreamOptions final
   {
     // configures the maximun retries to be done.
     int64_t MaxRetryRequests;
@@ -22,14 +22,14 @@ namespace Azure { namespace Storage { namespace _internal {
    * ReliableStream uses an HTTPGetter callback (provided on constructor) to get a bodyStream
    * starting on last known offset to resume a fail Read() operation.
    *
-   * @remark An HTTPGetter callback is expected to verify the initial `eTag` from first http request
+   * @remark An HTTPGetter callback is expected to verify the initial `eTag` from first HTTP request
    * to ensure read operation will continue on the same content.
    *
    * @remark An HTTPGetter callback is expected to calculate and set the range header based on the
    * offset provided by the ReliableStream.
    *
    */
-  class ReliableStream : public Azure::Core::IO::BodyStream {
+  class ReliableStream final : public Azure::Core::IO::BodyStream {
   private:
     // initial bodyStream.
     std::unique_ptr<Azure::Core::IO::BodyStream> m_inner;
@@ -42,7 +42,7 @@ namespace Azure { namespace Storage { namespace _internal {
     // Options to use when getting a new bodyStream like current offset
     int64_t m_retryOffset;
 
-    int64_t OnRead(uint8_t* buffer, int64_t count, Azure::Core::Context const& context) override;
+    size_t OnRead(uint8_t* buffer, size_t count, Azure::Core::Context const& context) override;
 
   public:
     explicit ReliableStream(

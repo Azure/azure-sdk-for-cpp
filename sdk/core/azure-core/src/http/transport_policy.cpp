@@ -19,7 +19,7 @@ using namespace Azure::Core::Http::Policies::_internal;
 
 std::shared_ptr<HttpTransport> Azure::Core::Http::Policies::_detail::GetTransportAdapter()
 {
-  // The order of these checks is important so that WinHttp is picked over Curl on Windows, when
+  // The order of these checks is important so that WinHTTP is picked over libcurl on Windows, when
   // both are defined.
 #if defined(BUILD_TRANSPORT_CUSTOM_ADAPTER)
   return ::AzureSdkGetCustomHttpTransport();
@@ -34,11 +34,11 @@ std::shared_ptr<HttpTransport> Azure::Core::Http::Policies::_detail::GetTranspor
 
 std::unique_ptr<RawResponse> TransportPolicy::Send(
     Request& request,
-    NextHttpPolicy nextHttpPolicy,
-    Context const& ctx) const
+    NextHttpPolicy nextPolicy,
+    Context const& context) const
 {
-  (void)nextHttpPolicy;
-  ctx.ThrowIfCancelled();
+  (void)nextPolicy;
+  context.ThrowIfCancelled();
 
   /*
    * The transport policy is always the last policy.
@@ -57,7 +57,7 @@ std::unique_ptr<RawResponse> TransportPolicy::Send(
    ***********************************************************************************
    *
    */
-  auto response = m_options.Transport->Send(request, ctx);
+  auto response = m_options.Transport->Send(request, context);
   auto statusCode = static_cast<typename std::underlying_type<Http::HttpStatusCode>::type>(
       response->GetStatusCode());
 
@@ -71,7 +71,7 @@ std::unique_ptr<RawResponse> TransportPolicy::Send(
   // At this point, either the request is `shouldBufferResponse` or it return with an error code.
   // The entire payload needs must be downloaded to the response's buffer.
   auto bodyStream = response->ExtractBodyStream();
-  response->SetBody(bodyStream->ReadToEnd(ctx));
+  response->SetBody(bodyStream->ReadToEnd(context));
 
   // BodyStream is moved out of response. This makes transport implementation to clean any active
   // session with sockets or internal state.

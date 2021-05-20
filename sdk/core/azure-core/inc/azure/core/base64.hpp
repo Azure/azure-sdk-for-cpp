@@ -4,7 +4,7 @@
 /**
  * @file
  * @brief Utility functions to help convert between binary data and UTF-8 encoded text that is
- * represented in base 64.
+ * represented in Base64.
  */
 
 #pragma once
@@ -15,8 +15,8 @@
 namespace Azure { namespace Core {
 
   /**
-   *@brief Used to convert one form of data  into another, for example encoding binary data into
-   *base 64 text.
+   * @brief Used to convert one form of data  into another, for example encoding binary data into
+   * Base64 text.
    */
   class Convert final {
   private:
@@ -25,17 +25,17 @@ namespace Azure { namespace Core {
 
   public:
     /**
-     * @brief Encodes the vector of binary data into UTF-8 encoded text represented as base 64.
+     * @brief Encodes the vector of binary data into UTF-8 encoded text represented as Base64.
      *
      * @param data The input vector that contains binary data that needs to be encoded.
-     * @return The UTF-8 encoded text in base 64.
+     * @return The UTF-8 encoded text in Base64.
      */
     static std::string Base64Encode(const std::vector<uint8_t>& data);
 
     /**
-     * @brief Decodes the UTF-8 encoded text represented as base 64 into binary data.
+     * @brief Decodes the UTF-8 encoded text represented as Base64 into binary data.
      *
-     * @param text The input UTF-8 encoded text in base 64 that needs to be decoded.
+     * @param text The input UTF-8 encoded text in Base64 that needs to be decoded.
      * @return The decoded binary data.
      */
     static std::vector<uint8_t> Base64Decode(const std::string& text);

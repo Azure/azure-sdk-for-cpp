@@ -1,6 +1,6 @@
 # Azure Template Package client library for C++
 
-Azure Template Package client library for C++ (`azure-template`)  matches necessary patterns that the development team has established to create a unified sdk written in the C++ programming language. These libraries follow the Azure SDK Design Guidelines for C++.
+Azure Template Package client library for C++ (`azure-template`)  matches necessary patterns that the development team has established to create a unified SDK written in the C++ programming language. These libraries follow the Azure SDK Design Guidelines for C++.
 
 The library allows client libraries to expose common functionality in a consistent fashion.  Once you learn how to use these APIs in one client library, you will know how to use them in other client libraries.
 
