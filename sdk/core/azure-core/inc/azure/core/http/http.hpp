@@ -51,7 +51,8 @@ namespace Azure { namespace Core { namespace Http {
 
   /*********************  Exceptions  **********************/
   /**
-   * @brief HTTP transport layer error.
+   * @brief Provides consistent interface to handle errors occurred while performing an HTTP
+   * Request.
    */
   class TransportException final : public Azure::Core::RequestFailedException {
   public:
@@ -70,8 +71,9 @@ namespace Azure { namespace Core { namespace Http {
   };
 
   /**
-   * @brief Defines a range of bytes within an HTTP resource, starting at an `Offset` and ending at
-   * `Offset + Length - 1` inclusively.
+   * @brief Defines a range of bytes within an HTTP resource.
+   *
+   * @note Starts at an `Offset` and ends at `Offset + Length - 1` inclusively.
    */
   struct HttpRange final
   {
@@ -89,21 +91,77 @@ namespace Azure { namespace Core { namespace Http {
   };
 
   /**
-   * HTTP request method.
+   * @brief The method to be performed on the resource identified by the Request.
    */
   class HttpMethod final {
   public:
     HttpMethod() = delete;
+
+    /**
+     * @brief Construct a new HTTP Method from a given string.
+     *
+     * @details The HttpMethod won't check if the given string is a known method defined as per any
+     * RFC.
+     *
+     * @param value A given string to represent the HTTP Method.
+     */
     explicit HttpMethod(std::string value) : m_value(std::move(value)) {}
+
+    /**
+     * @brief Equal operator enables comparing two HttpMethod.
+     *
+     * @param other Some HttpMethod instance to be compared.
+     * @return `true` if instances are equal; otherwise, `false`.
+     */
     bool operator==(const HttpMethod& other) const { return m_value == other.m_value; }
+
+    /**
+     * @brief The non-equals operator allows comparing two HttpMethod.
+     *
+     * @param other Some HttpMethod instance to be compared.
+     * @return `false` if instances are equal; otherwise, `true`.
+     */
     bool operator!=(const HttpMethod& other) const { return !(*this == other); }
+
+    /**
+     * @brief Returns the HttpMethod represented as a string.
+     */
     const std::string& ToString() const { return m_value; }
 
+    /**
+     * @brief The representation of a Get HttpMethod based on [RFC 2616]
+     * (https://datatracker.ietf.org/doc/html/rfc2616#section-9.3).
+     */
     AZ_CORE_DLLEXPORT const static HttpMethod Get;
+
+    /**
+     * @brief The representation of a Head HttpMethod based on [RFC 2616]
+     * (https://datatracker.ietf.org/doc/html/rfc2616#section-9.4).
+     */
     AZ_CORE_DLLEXPORT const static HttpMethod Head;
+
+    /**
+     * @brief The representation of a Post HttpMethod based on [RFC 2616]
+     * (https://datatracker.ietf.org/doc/html/rfc2616#section-9.5).
+     */
     AZ_CORE_DLLEXPORT const static HttpMethod Post;
+
+    /**
+     * @brief The representation of a Put HttpMethod based on [RFC 2616]
+     * (https://datatracker.ietf.org/doc/html/rfc2616#section-9.6).
+     */
     AZ_CORE_DLLEXPORT const static HttpMethod Put;
+
+    /**
+     * @brief The representation of a `Delete` HttpMethod based on [RFC 2616]
+     * (https://datatracker.ietf.org/doc/html/rfc2616#section-9.7).
+     */
     AZ_CORE_DLLEXPORT const static HttpMethod Delete;
+
+    /**
+     * @brief The representation of a `Patch` HttpMethod based on [RFC 5789]
+     * (https://datatracker.ietf.org/doc/html/rfc5789).
+     */
     AZ_CORE_DLLEXPORT const static HttpMethod Patch;
 
   private:
@@ -115,7 +173,10 @@ namespace Azure { namespace Core { namespace Http {
   }} // namespace Policies::_internal
 
   /**
-   * @brief HTTP request.
+   * @brief A request message from a client to a server.
+   *
+   * @details Includes, within the first line of the message, the HttpMethod to be applied to the
+   * resource, the URL of the resource, and the protocol version in use.
    */
   class Request final {
     friend class Azure::Core::Http::Policies::_internal::RetryPolicy;

@@ -134,7 +134,7 @@ public:
    */
   bool HasValue() const { return m_value.HasValue(); }
 
-  /*
+  /**
    * @brief Returns the resource metadata represented as a string.
    * @return #std::string
    */

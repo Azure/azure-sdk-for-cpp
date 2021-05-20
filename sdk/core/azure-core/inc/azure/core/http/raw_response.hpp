@@ -18,7 +18,8 @@
 
 namespace Azure { namespace Core { namespace Http {
   /**
-   * @brief Raw HTTP response.
+   * @brief After receiving and interpreting a request message, a server responds with an HTTP
+   * response message.
    */
   class RawResponse final {
 
