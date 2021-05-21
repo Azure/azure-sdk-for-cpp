@@ -10,12 +10,12 @@ set(CMAKE_CXX_STANDARD_REQUIRED True)
 set(
   AZURE_STORAGE_BLOBS_PERF_TEST_HEADER
   inc/azure/storage/blobs/test/blob_base_test.hpp
-  inc/azure/storage/blobs/test/download_blob.hpp
+  inc/azure/storage/blobs/test/download_blob_test.hpp
 )
 
 set(
   AZURE_STORAGE_BLOBS_PERF_TEST_SOURCE
-    src/main.cpp
+    src/azure_storage_blobs_perf_test.cpp
 )
 
 # Name the binary to be created.

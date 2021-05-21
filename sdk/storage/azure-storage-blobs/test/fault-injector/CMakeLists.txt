@@ -11,7 +11,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED True)
 
 add_executable (
   azure-storage-blobs-test-fault-injector
-    main.cpp
+    azure_storage_blobs_fault_injector_test.cpp
 )
 
 target_link_libraries(azure-storage-blobs-test-fault-injector PRIVATE azure-storage-blobs)

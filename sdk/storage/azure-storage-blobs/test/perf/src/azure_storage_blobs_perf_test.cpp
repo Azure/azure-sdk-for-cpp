@@ -3,7 +3,7 @@
 
 #include <azure/perf.hpp>
 
-#include "azure/storage/blobs/test/download_blob.hpp"
+#include "azure/storage/blobs/test/download_blob_test.hpp"
 
 int main(int argc, char** argv)
 {
