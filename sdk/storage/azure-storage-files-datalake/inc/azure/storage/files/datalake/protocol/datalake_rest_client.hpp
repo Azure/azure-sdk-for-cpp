@@ -265,7 +265,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
       /**
        * The size of the resource in bytes.
        */
-      int64_t ContentLength = int64_t();
+      int64_t FileSize = int64_t();
     };
 
     /**
@@ -1634,8 +1634,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
             if (response.GetHeaders().find(_detail::HeaderContentLength)
                 != response.GetHeaders().end())
             {
-              result.ContentLength
-                  = std::stoll(response.GetHeaders().at(_detail::HeaderContentLength));
+              result.FileSize = std::stoll(response.GetHeaders().at(_detail::HeaderContentLength));
             }
             return Azure::Response<Models::FlushFileResult>(
                 std::move(result), std::move(responsePtr));

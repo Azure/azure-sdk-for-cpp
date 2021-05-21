@@ -15,6 +15,7 @@
 - Renamed `HasMorePages()` in paged response to `HasPage()`.
 - Default chunk size for concurrent upload was changed to nullable.
 - `DataLakeLeaseClient::Change()` updates internal lease id.
+- Renamed `ContentLength` in `FlushFileResult` to `FileSize`.
 
 ## 12.0.0-beta.10 (2021-04-16)
 
