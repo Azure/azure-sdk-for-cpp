@@ -25,6 +25,8 @@ namespace Azure { namespace Storage { namespace Blobs { namespace Test {
    *
    */
   class DownloadBlob : public Azure::Storage::Blobs::Test::BlobsTest {
+  private:
+    std::unique_ptr<std::vector<uint8_t>> m_downloadBuffer;
 
   public:
     /**
@@ -42,10 +44,10 @@ namespace Azure { namespace Storage { namespace Blobs { namespace Test {
     {
       // Call base to create blob client
       BlobsTest::Setup();
-      
+
       long size = m_options.GetMandatoryOption<long>("Size");
-      // Allocate a buffer in heap of length `size`. The buffer is destroyed when this instance is out of scope.
-      std::vector<uint8_t> downloadBuffer(size);
+
+      m_downloadBuffer = std::make_unique<std::vector<uint8_t>>(size);
 
       auto rawData = std::make_unique<std::vector<uint8_t>>(size);
       auto content = Azure::Core::IO::MemoryBodyStream(*rawData);
@@ -56,8 +58,9 @@ namespace Azure { namespace Storage { namespace Blobs { namespace Test {
      * @brief Define the test
      *
      */
-    void Run(Azure::Core::Context const&) override {
-      m_blobClient->DownloadTo(downloadBuffer->data(), downloadBuffer->size());
+    void Run(Azure::Core::Context const&) override
+    {
+      m_blobClient->DownloadTo(m_downloadBuffer->data(), m_downloadBuffer->size());
     }
 
     /**
