@@ -53,15 +53,15 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_EQ(Azure::Core::Convert::Base64Encode(ComputeHash("")), "AAAAAAAAAAA=");
     EXPECT_EQ(Azure::Core::Convert::Base64Encode(ComputeHash("Hello Azure!")), "DtjZpL9/o8c=");
 
-    auto data = RandomBuffer(static_cast<std::size_t>(16_MB));
+    auto data = RandomBuffer(static_cast<size_t>(16_MB));
     {
       Crc64Hash crc64Single;
       Crc64Hash crc64Streaming;
 
-      std::size_t length = 0;
+      size_t length = 0;
       while (length < data.size())
       {
-        std::size_t s = static_cast<std::size_t>(RandomInt(0, 4_MB));
+        size_t s = static_cast<size_t>(RandomInt(0, 4_MB));
         s = std::min(s, data.size() - length);
         crc64Streaming.Append(&data[length], s);
         crc64Streaming.Append(&data[length], 0);
@@ -80,7 +80,7 @@ namespace Azure { namespace Storage { namespace Test {
         Crc64Hash instance2;
         for (auto i = RandomInt(0, 5); i > 0; --i)
         {
-          std::size_t s = static_cast<std::size_t>(RandomInt(0, 512_KB));
+          size_t s = static_cast<size_t>(RandomInt(0, 512_KB));
           std::string data2;
           data2.resize(s);
           RandomBuffer(&data2[0], s);
@@ -103,7 +103,7 @@ namespace Azure { namespace Storage { namespace Test {
           break;
         }
         case 2: {
-          std::size_t s = static_cast<std::size_t>(RandomInt(0, 512_KB));
+          size_t s = static_cast<size_t>(RandomInt(0, 512_KB));
           std::string data2;
           data2.resize(s);
           RandomBuffer(&data2[0], s);

@@ -1473,7 +1473,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           "deleted",
       };
       std::string result;
-      for (std::size_t i = 0; i < sizeof(value_list) / sizeof(ListSharesIncludeFlags); ++i)
+      for (size_t i = 0; i < sizeof(value_list) / sizeof(ListSharesIncludeFlags); ++i)
       {
         if ((val & value_list[i]) == value_list[i])
         {

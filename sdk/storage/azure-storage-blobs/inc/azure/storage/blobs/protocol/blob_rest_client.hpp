@@ -2726,7 +2726,7 @@ namespace Azure { namespace Storage { namespace Blobs {
           "deleted",
       };
       std::string ret;
-      for (std::size_t i = 0; i < sizeof(value_list) / sizeof(ListBlobContainersIncludeFlags); ++i)
+      for (size_t i = 0; i < sizeof(value_list) / sizeof(ListBlobContainersIncludeFlags); ++i)
       {
         if ((val & value_list[i]) == value_list[i])
         {
@@ -2759,7 +2759,7 @@ namespace Azure { namespace Storage { namespace Blobs {
           "uncommittedblobs",
       };
       std::string ret;
-      for (std::size_t i = 0; i < sizeof(value_list) / sizeof(ListBlobsIncludeFlags); ++i)
+      for (size_t i = 0; i < sizeof(value_list) / sizeof(ListBlobsIncludeFlags); ++i)
       {
         if ((val & value_list[i]) == value_list[i])
         {

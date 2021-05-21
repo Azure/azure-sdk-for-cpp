@@ -260,7 +260,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      */
     Azure::Response<Models::DownloadBlobToResult> DownloadTo(
         uint8_t* buffer,
-        std::size_t bufferSize,
+        size_t bufferSize,
         const DownloadBlobToOptions& options = DownloadBlobToOptions(),
         const Azure::Core::Context& context = Azure::Core::Context()) const;
 

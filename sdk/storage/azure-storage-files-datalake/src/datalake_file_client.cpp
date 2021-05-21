@@ -271,7 +271,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
 
   Azure::Response<Models::UploadFileFromResult> DataLakeFileClient::UploadFrom(
       const uint8_t* buffer,
-      std::size_t bufferSize,
+      size_t bufferSize,
       const UploadFileFromOptions& options,
       const Azure::Core::Context& context) const
   {
@@ -287,7 +287,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
 
   Azure::Response<Models::DownloadFileToResult> DataLakeFileClient::DownloadTo(
       uint8_t* buffer,
-      std::size_t bufferSize,
+      size_t bufferSize,
       const DownloadFileToOptions& options,
       const Azure::Core::Context& context) const
   {

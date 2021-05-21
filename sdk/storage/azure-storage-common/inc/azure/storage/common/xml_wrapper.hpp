@@ -31,7 +31,7 @@ namespace Azure { namespace Storage { namespace _internal {
 
   class XmlReader final {
   public:
-    explicit XmlReader(const char* data, std::size_t length);
+    explicit XmlReader(const char* data, size_t length);
     ~XmlReader();
 
     XmlNode Read();
