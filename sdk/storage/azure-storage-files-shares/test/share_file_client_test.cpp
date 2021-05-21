@@ -328,7 +328,7 @@ namespace Azure { namespace Storage { namespace Test {
 
   TEST_F(FileShareFileClientTest, ConcurrentUpload)
   {
-    std::vector<uint8_t> fileContent = RandomBuffer(static_cast<std::size_t>(8_MB));
+    std::vector<uint8_t> fileContent = RandomBuffer(static_cast<size_t>(8_MB));
 
     auto testUploadFromBuffer = [&](int concurrency, int64_t fileSize) {
       auto fileClient = m_fileShareDirectoryClient->GetFileClient(RandomString());
@@ -339,18 +339,17 @@ namespace Azure { namespace Storage { namespace Test {
       options.HttpHeaders = GetInterestingHttpHeaders();
       options.Metadata = RandomMetadata();
 
-      auto res
-          = fileClient.UploadFrom(fileContent.data(), static_cast<std::size_t>(fileSize), options);
+      auto res = fileClient.UploadFrom(fileContent.data(), static_cast<size_t>(fileSize), options);
 
       auto properties = fileClient.GetProperties().Value;
       EXPECT_EQ(properties.FileSize, fileSize);
       EXPECT_EQ(properties.Metadata, options.Metadata);
-      std::vector<uint8_t> downloadContent(static_cast<std::size_t>(fileSize), '\x00');
-      fileClient.DownloadTo(downloadContent.data(), static_cast<std::size_t>(fileSize));
+      std::vector<uint8_t> downloadContent(static_cast<size_t>(fileSize), '\x00');
+      fileClient.DownloadTo(downloadContent.data(), static_cast<size_t>(fileSize));
       EXPECT_EQ(
           downloadContent,
           std::vector<uint8_t>(
-              fileContent.begin(), fileContent.begin() + static_cast<std::size_t>(fileSize)));
+              fileContent.begin(), fileContent.begin() + static_cast<size_t>(fileSize)));
     };
 
     auto testUploadFromFile = [&](int concurrency, int64_t fileSize) {
@@ -365,7 +364,7 @@ namespace Azure { namespace Storage { namespace Test {
       std::string tempFilename = RandomString();
       {
         Azure::Storage::_internal::FileWriter fileWriter(tempFilename);
-        fileWriter.Write(fileContent.data(), fileSize, 0);
+        fileWriter.Write(fileContent.data(), static_cast<size_t>(fileSize), 0);
       }
 
       auto res = fileClient.UploadFrom(tempFilename, options);
@@ -373,12 +372,12 @@ namespace Azure { namespace Storage { namespace Test {
       auto properties = fileClient.GetProperties().Value;
       EXPECT_EQ(properties.FileSize, fileSize);
       EXPECT_EQ(properties.Metadata, options.Metadata);
-      std::vector<uint8_t> downloadContent(static_cast<std::size_t>(fileSize), '\x00');
-      fileClient.DownloadTo(downloadContent.data(), static_cast<std::size_t>(fileSize));
+      std::vector<uint8_t> downloadContent(static_cast<size_t>(fileSize), '\x00');
+      fileClient.DownloadTo(downloadContent.data(), static_cast<size_t>(fileSize));
       EXPECT_EQ(
           downloadContent,
           std::vector<uint8_t>(
-              fileContent.begin(), fileContent.begin() + static_cast<std::size_t>(fileSize)));
+              fileContent.begin(), fileContent.begin() + static_cast<size_t>(fileSize)));
 
       DeleteFile(tempFilename);
     };
@@ -388,7 +387,7 @@ namespace Azure { namespace Storage { namespace Test {
     {
       for (int64_t l : {0ULL, 512ULL, 1_KB, 4_KB, 1_MB, 4_MB + 512})
       {
-        ASSERT_GE(fileContent.size(), static_cast<std::size_t>(l));
+        ASSERT_GE(fileContent.size(), static_cast<size_t>(l));
         futures.emplace_back(std::async(std::launch::async, testUploadFromBuffer, c, l));
         futures.emplace_back(std::async(std::launch::async, testUploadFromFile, c, l));
       }
@@ -442,7 +441,7 @@ namespace Azure { namespace Storage { namespace Test {
           expectedData.clear();
         }
       }
-      downloadBuffer.resize(static_cast<std::size_t>(downloadSize), '\x00');
+      downloadBuffer.resize(static_cast<size_t>(downloadSize), '\x00');
       Files::Shares::DownloadFileToOptions options;
       options.TransferOptions.Concurrency = concurrency;
       if (offset.HasValue())
@@ -464,7 +463,7 @@ namespace Azure { namespace Storage { namespace Test {
       {
         auto res = m_fileClient->DownloadTo(downloadBuffer.data(), downloadBuffer.size(), options);
         EXPECT_EQ(res.Value.ContentRange.Length.Value(), actualDownloadSize);
-        downloadBuffer.resize(static_cast<std::size_t>(res.Value.ContentRange.Length.Value()));
+        downloadBuffer.resize(static_cast<size_t>(res.Value.ContentRange.Length.Value()));
         EXPECT_EQ(downloadBuffer, expectedData);
       }
       else
@@ -605,11 +604,11 @@ namespace Azure { namespace Storage { namespace Test {
       for (int64_t length : {1ULL, 2ULL, 4_KB, 5_KB, 8_KB, 11_KB, 20_KB})
       {
         std::vector<uint8_t> downloadBuffer;
-        downloadBuffer.resize(static_cast<std::size_t>(length - 1));
+        downloadBuffer.resize(static_cast<size_t>(length - 1));
         options.Range.Value().Length = length;
         EXPECT_THROW(
             m_fileClient->DownloadTo(
-                downloadBuffer.data(), static_cast<std::size_t>(length - 1), options),
+                downloadBuffer.data(), static_cast<size_t>(length - 1), options),
             std::runtime_error);
       }
     }
@@ -725,9 +724,8 @@ namespace Azure { namespace Storage { namespace Test {
     fileClient.Create(fileSize);
     EXPECT_NO_THROW(fileClient.UploadRange(0, memBodyStream));
     EXPECT_NO_THROW(fileClient.ClearRange(fileSize / 2, fileSize / 2));
-    std::vector<uint8_t> downloadContent(static_cast<std::size_t>(fileSize), '\x00');
-    EXPECT_NO_THROW(
-        fileClient.DownloadTo(downloadContent.data(), static_cast<std::size_t>(fileSize)));
+    std::vector<uint8_t> downloadContent(static_cast<size_t>(fileSize), '\x00');
+    EXPECT_NO_THROW(fileClient.DownloadTo(downloadContent.data(), static_cast<size_t>(fileSize)));
     EXPECT_EQ(halfContent, downloadContent);
 
     EXPECT_NO_THROW(fileClient.ClearRange(512, 512));
@@ -755,9 +753,8 @@ namespace Azure { namespace Storage { namespace Test {
     fileClient.Create(fileSize);
     EXPECT_NO_THROW(fileClient.UploadRange(0, memBodyStream));
     EXPECT_NO_THROW(fileClient.ClearRange(fileSize / 2, fileSize / 2));
-    std::vector<uint8_t> downloadContent(static_cast<std::size_t>(fileSize), '\x00');
-    EXPECT_NO_THROW(
-        fileClient.DownloadTo(downloadContent.data(), static_cast<std::size_t>(fileSize)));
+    std::vector<uint8_t> downloadContent(static_cast<size_t>(fileSize), '\x00');
+    EXPECT_NO_THROW(fileClient.DownloadTo(downloadContent.data(), static_cast<size_t>(fileSize)));
     EXPECT_EQ(halfContent, downloadContent);
 
     auto snapshot1 = m_shareClient->CreateSnapshot().Value.Snapshot;

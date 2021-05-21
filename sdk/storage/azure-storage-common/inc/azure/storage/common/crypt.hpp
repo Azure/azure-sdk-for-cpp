@@ -32,8 +32,8 @@ namespace Azure { namespace Storage {
     uint64_t m_context = 0ULL;
     uint64_t m_length = 0ULL;
 
-    void OnAppend(const uint8_t* data, std::size_t length) override;
-    std::vector<uint8_t> OnFinal(const uint8_t* data, std::size_t length) override;
+    void OnAppend(const uint8_t* data, size_t length) override;
+    std::vector<uint8_t> OnFinal(const uint8_t* data, size_t length) override;
   };
 
   namespace _internal {

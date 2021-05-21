@@ -2,6 +2,10 @@
 
 ## 12.0.0-beta.12 (Unreleased)
 
+### Breaking Changes
+
+- Renamed `ContentLength` in `FileItemDetails` to `FileSize`.
+
 
 ## 12.0.0-beta.11 (2021-05-19)
 

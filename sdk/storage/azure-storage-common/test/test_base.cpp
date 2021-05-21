@@ -187,7 +187,7 @@ namespace Azure { namespace Storage { namespace Test {
   static char RandomChar()
   {
     const char charset[] = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
-    std::uniform_int_distribution<std::size_t> distribution(0, sizeof(charset) - 2);
+    std::uniform_int_distribution<size_t> distribution(0, sizeof(charset) - 2);
     return charset[distribution(random_generator)];
   }
 
@@ -216,12 +216,12 @@ namespace Azure { namespace Storage { namespace Test {
     return result;
   }
 
-  void RandomBuffer(char* buffer, std::size_t length)
+  void RandomBuffer(char* buffer, size_t length)
   {
     char* start_addr = buffer;
     char* end_addr = buffer + length;
 
-    const std::size_t rand_int_size = sizeof(uint64_t);
+    const size_t rand_int_size = sizeof(uint64_t);
 
     while (uintptr_t(start_addr) % rand_int_size != 0 && start_addr < end_addr)
     {
@@ -250,9 +250,9 @@ namespace Azure { namespace Storage { namespace Test {
     }
     fseek(fin, 0, SEEK_END);
     int64_t fileSize = ftell(fin);
-    std::vector<uint8_t> fileContent(static_cast<std::size_t>(fileSize));
+    std::vector<uint8_t> fileContent(static_cast<size_t>(fileSize));
     fseek(fin, 0, SEEK_SET);
-    std::size_t elementsRead = fread(fileContent.data(), static_cast<size_t>(fileSize), 1, fin);
+    size_t elementsRead = fread(fileContent.data(), static_cast<size_t>(fileSize), 1, fin);
     if (elementsRead != 1 && fileSize != 0)
     {
       throw std::runtime_error("failed to read file");
@@ -263,7 +263,7 @@ namespace Azure { namespace Storage { namespace Test {
 
   void DeleteFile(const std::string& filename) { std::remove(filename.data()); }
 
-  std::vector<uint8_t> RandomBuffer(std::size_t length)
+  std::vector<uint8_t> RandomBuffer(size_t length)
   {
     std::vector<uint8_t> result(length);
     char* dataPtr = reinterpret_cast<char*>(&result[0]);

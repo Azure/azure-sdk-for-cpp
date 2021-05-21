@@ -251,7 +251,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
        * handle is closed or the op-lock is broken. To retrieve current property values, call Get
        * File Properties.
        */
-      int64_t ContentLength = int64_t();
+      int64_t FileSize = int64_t();
     };
 
     /**
@@ -1473,7 +1473,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           "deleted",
       };
       std::string result;
-      for (std::size_t i = 0; i < sizeof(value_list) / sizeof(ListSharesIncludeFlags); ++i)
+      for (size_t i = 0; i < sizeof(value_list) / sizeof(ListSharesIncludeFlags); ++i)
       {
         if ((val & value_list[i]) == value_list[i])
         {
@@ -5805,7 +5805,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
             {
               if (path.size() == 1 && path[0] == XmlTagName::ContentLength)
               {
-                result.ContentLength = std::stoll(node.Value);
+                result.FileSize = std::stoll(node.Value);
               }
             }
           }

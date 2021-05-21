@@ -391,7 +391,7 @@ namespace Azure { namespace Storage { namespace Test {
             result.first.end(),
             [&name](const Files::Shares::Models::FileItem& item) { return item.Name == name; });
         EXPECT_EQ(iter->Name, name);
-        EXPECT_EQ(1024, iter->Details.ContentLength);
+        EXPECT_EQ(1024, iter->Details.FileSize);
         EXPECT_NE(result.first.end(), iter);
       }
       for (const auto& name : directoryNameSetB)
