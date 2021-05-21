@@ -2,6 +2,10 @@
 
 ## 12.0.0-beta.12 (Unreleased)
 
+### Breaking Changes
+
+- Renamed `ContentLength` in `FileItemDetails` to `FileSize`.
+
 
 ## 12.0.0-beta.11 (2021-05-19)
 
@@ -15,7 +19,6 @@
 - Renamed `HasMorePages()` in paged response to `HasPage()`.
 - `ShareLeaseClient::Change()` updates internal lease id.
 - `ShareItem::ShareMetadata` was renamed to `ShareItem::Metadata`.
-- Renamed `ContentLength` in `FileItemDetails` to `FileSize`.
 
 ## 12.0.0-beta.10 (2021-04-16)
 
