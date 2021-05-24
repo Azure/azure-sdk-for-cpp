@@ -157,13 +157,11 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     protocolLayerOptions.RetainUncommittedData = options.RetainUncommittedData;
     protocolLayerOptions.Close = options.Close;
     protocolLayerOptions.ContentLength = 0;
-    if (options.ContentHash.HasValue())
+    if (options.ContentHash.HasValue()
+        && options.ContentHash.Value().Algorithm == HashAlgorithm::Md5)
     {
-      AZURE_ASSERT_MSG(
-          options.ContentHash.Value().Algorithm == HashAlgorithm::Md5,
-          "This operation only supports MD5 content hash.");
+      protocolLayerOptions.ContentMd5 = options.ContentHash;
     }
-    protocolLayerOptions.ContentMd5 = options.ContentHash;
     protocolLayerOptions.LeaseIdOptional = options.AccessConditions.LeaseId;
     protocolLayerOptions.CacheControl = options.HttpHeaders.CacheControl;
     protocolLayerOptions.ContentType = options.HttpHeaders.ContentType;
@@ -377,9 +375,6 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
   {
     Blobs::_detail::BlobRestClient::Blob::SetBlobExpiryOptions protocolLayerOptions;
     protocolLayerOptions.ExpiryOrigin = expiryOrigin;
-    AZURE_ASSERT_MSG(
-        !(options.ExpiresOn.HasValue() && options.TimeToExpire.HasValue()),
-        "ExpiresOn and TimeToExpire are mutually exclusive");
 
     if (options.ExpiresOn.HasValue())
     {
