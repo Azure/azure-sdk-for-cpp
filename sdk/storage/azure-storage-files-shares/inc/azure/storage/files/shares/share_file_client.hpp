@@ -135,7 +135,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
      */
     Azure::Response<Models::DownloadFileToResult> DownloadTo(
         uint8_t* buffer,
-        std::size_t bufferSize,
+        size_t bufferSize,
         const DownloadFileToOptions& options = DownloadFileToOptions(),
         const Azure::Core::Context& context = Azure::Core::Context()) const;
 
@@ -167,7 +167,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
      */
     Azure::Response<Models::UploadFileFromResult> UploadFrom(
         const uint8_t* buffer,
-        std::size_t bufferSize,
+        size_t bufferSize,
         const UploadFileFromOptions& options = UploadFileFromOptions(),
         const Azure::Core::Context& context = Azure::Core::Context()) const;
 

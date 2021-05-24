@@ -39,7 +39,7 @@ namespace Azure { namespace Storage { namespace _internal {
 
     FileHandle GetHandle() const { return m_handle; }
 
-    void Write(const uint8_t* buffer, int64_t length, int64_t offset);
+    void Write(const uint8_t* buffer, size_t length, int64_t offset);
 
   private:
     FileHandle m_handle;

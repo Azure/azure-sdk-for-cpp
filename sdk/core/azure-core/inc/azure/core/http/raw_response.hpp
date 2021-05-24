@@ -81,13 +81,10 @@ namespace Azure { namespace Core { namespace Http {
       m_body = response.GetBody();
     }
 
-    /**
-     * @brief Constructs a new `RawResponse`.
-     * @note Transfers ownership of the `RawResponse` to the new `RawResponse`.
-     *
-     * @param response An rvalue reference for moving the raw response.
-     */
     RawResponse(RawResponse&& response) = default;
+    RawResponse& operator=(RawResponse const&) = delete;
+    RawResponse& operator=(RawResponse&&) = delete;
+    ~RawResponse() = default;
 
     // ===== Methods used to build HTTP response =====
 

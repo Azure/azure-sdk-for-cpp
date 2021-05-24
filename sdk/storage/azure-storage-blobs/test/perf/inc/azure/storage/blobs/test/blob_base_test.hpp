@@ -9,6 +9,7 @@
 
 #pragma once
 
+#include <azure/core/uuid.hpp>
 #include <azure/perf.hpp>
 
 #include <azure/storage/blobs.hpp>
@@ -38,9 +39,15 @@ namespace Azure { namespace Storage { namespace Blobs { namespace Test {
      */
     void Setup() override
     {
-      m_connectionString = m_options.GetMandatoryOption<std::string>("connectionString");
-      m_containerName = m_options.GetMandatoryOption<std::string>("ContainerName");
-      m_blobName = m_options.GetMandatoryOption<std::string>("BlobName");
+      // Get connection string from env
+      const static std::string envConnectionString = std::getenv("STORAGE_CONNECTION_STRING");
+      m_connectionString = envConnectionString;
+
+      // Generate random container and blob names.
+      m_containerName = "container" + Azure::Core::Uuid::CreateUuid().ToString();
+      m_blobName = "blob" + Azure::Core::Uuid::CreateUuid().ToString();
+
+      // Create client, container and blobClient
       m_containerClient = std::make_unique<Azure::Storage::Blobs::BlobContainerClient>(
           Azure::Storage::Blobs::BlobContainerClient::CreateFromConnectionString(
               m_connectionString, m_containerName));
@@ -48,6 +55,8 @@ namespace Azure { namespace Storage { namespace Blobs { namespace Test {
       m_blobClient = std::make_unique<Azure::Storage::Blobs::BlockBlobClient>(
           m_containerClient->GetBlockBlobClient(m_blobName));
     }
+
+    void Cleanup() override { m_containerClient->DeleteIfExists(); };
 
     /**
      * @brief Construct a new BlobsTest test.
@@ -61,18 +70,7 @@ namespace Azure { namespace Storage { namespace Blobs { namespace Test {
      *
      * @return The list of test options.
      */
-    std::vector<Azure::Perf::TestOption> GetTestOptions() override
-    {
-      return {
-          {"connectionString",
-           {"--connectionString"},
-           "The Storage account connection string.",
-           1,
-           true,
-           true},
-          {"ContainerName", {"--containerName"}, "The name of a blob container", 1, true},
-          {"BlobName", {"--blobName"}, "The name of a blob.", 1, true}};
-    }
+    std::vector<Azure::Perf::TestOption> GetTestOptions() override { return {}; }
   };
 
 }}}} // namespace Azure::Storage::Blobs::Test

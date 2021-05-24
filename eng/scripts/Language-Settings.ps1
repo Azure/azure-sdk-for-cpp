@@ -1,7 +1,7 @@
 $Language = "cpp"
 $LanguageDisplayName = "C++"
 $PackageRepository = "CPP"
-$packagePattern = "*.json"
+$packagePattern = "package-info.json"
 $MetadataUri = "https://raw.githubusercontent.com/Azure/azure-sdk/master/_data/releases/latest/cpp-packages.csv"
 $BlobStorageUrl = "https://azuresdkdocs.blob.core.windows.net/%24web?restype=container&comp=list&prefix=cpp%2F&delimiter=%2F"
 

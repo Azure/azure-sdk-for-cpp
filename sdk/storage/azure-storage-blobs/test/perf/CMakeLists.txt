@@ -31,6 +31,11 @@ target_include_directories(
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/inc>
 )
 
+if (MSVC)
+    # allow msvc to use getenv()
+    target_compile_options(azure-storage-blobs-perf PUBLIC /wd4996)
+endif()
+
 # link the `azure-perf` lib together with any other library which will be used for the tests. 
 target_link_libraries(azure-storage-blobs-perf PRIVATE azure-storage-blobs azure-perf)
 # Make sure the project will appear in the test folder for Visual Studio CMake view

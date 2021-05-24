@@ -371,7 +371,7 @@ namespace Azure { namespace Storage { namespace Test {
 
   TEST_F(DataLakeFileClientTest, ConcurrentUploadDownload)
   {
-    std::vector<uint8_t> fileContent = RandomBuffer(static_cast<std::size_t>(8_MB));
+    std::vector<uint8_t> fileContent = RandomBuffer(static_cast<size_t>(8_MB));
 
     auto testUploadFromBuffer = [&](int concurrency, int64_t fileSize) {
       auto fileClient = m_fileSystemClient->GetFileClient(RandomString());
@@ -381,8 +381,7 @@ namespace Azure { namespace Storage { namespace Test {
       options.TransferOptions.Concurrency = concurrency;
       options.HttpHeaders = GetInterestingHttpHeaders();
       options.Metadata = RandomMetadata();
-      auto res
-          = fileClient.UploadFrom(fileContent.data(), static_cast<std::size_t>(fileSize), options);
+      auto res = fileClient.UploadFrom(fileContent.data(), static_cast<size_t>(fileSize), options);
       auto lastModified = fileClient.GetProperties().Value.LastModified;
       EXPECT_TRUE(res.Value.ETag.HasValue());
       EXPECT_TRUE(IsValidTime(res.Value.LastModified));
@@ -394,12 +393,12 @@ namespace Azure { namespace Storage { namespace Test {
       EXPECT_EQ(properties.ETag, res.Value.ETag);
       EXPECT_TRUE(IsValidTime(res.Value.LastModified));
       EXPECT_EQ(properties.LastModified, res.Value.LastModified);
-      std::vector<uint8_t> downloadContent(static_cast<std::size_t>(fileSize), '\x00');
-      fileClient.DownloadTo(downloadContent.data(), static_cast<std::size_t>(fileSize));
+      std::vector<uint8_t> downloadContent(static_cast<size_t>(fileSize), '\x00');
+      fileClient.DownloadTo(downloadContent.data(), static_cast<size_t>(fileSize));
       EXPECT_EQ(
           downloadContent,
           std::vector<uint8_t>(
-              fileContent.begin(), fileContent.begin() + static_cast<std::size_t>(fileSize)));
+              fileContent.begin(), fileContent.begin() + static_cast<size_t>(fileSize)));
     };
 
     auto testUploadFromFile = [&](int concurrency, int64_t fileSize) {
@@ -414,7 +413,7 @@ namespace Azure { namespace Storage { namespace Test {
       std::string tempFilename = RandomString();
       {
         Azure::Storage::_internal::FileWriter fileWriter(tempFilename);
-        fileWriter.Write(fileContent.data(), fileSize, 0);
+        fileWriter.Write(fileContent.data(), static_cast<size_t>(fileSize), 0);
       }
       auto res = fileClient.UploadFrom(tempFilename, options);
       auto lastModified = fileClient.GetProperties().Value.LastModified;
@@ -427,12 +426,12 @@ namespace Azure { namespace Storage { namespace Test {
       EXPECT_EQ(properties.Metadata, options.Metadata);
       EXPECT_EQ(properties.ETag, res.Value.ETag);
       EXPECT_EQ(properties.LastModified, res.Value.LastModified);
-      std::vector<uint8_t> downloadContent(static_cast<std::size_t>(fileSize), '\x00');
-      fileClient.DownloadTo(downloadContent.data(), static_cast<std::size_t>(fileSize));
+      std::vector<uint8_t> downloadContent(static_cast<size_t>(fileSize), '\x00');
+      fileClient.DownloadTo(downloadContent.data(), static_cast<size_t>(fileSize));
       EXPECT_EQ(
           downloadContent,
           std::vector<uint8_t>(
-              fileContent.begin(), fileContent.begin() + static_cast<std::size_t>(fileSize)));
+              fileContent.begin(), fileContent.begin() + static_cast<size_t>(fileSize)));
       std::string tempFileDestinationName = RandomString();
       fileClient.DownloadTo(tempFileDestinationName);
       Azure::Storage::_internal::FileReader fileReader(tempFileDestinationName);
@@ -448,7 +447,7 @@ namespace Azure { namespace Storage { namespace Test {
       for (int64_t l :
            {0ULL, 1ULL, 2ULL, 2_KB, 4_KB, 999_KB, 1_MB, 2_MB - 1, 3_MB, 5_MB, 8_MB - 1234, 8_MB})
       {
-        ASSERT_GE(fileContent.size(), static_cast<std::size_t>(l));
+        ASSERT_GE(fileContent.size(), static_cast<size_t>(l));
         futures.emplace_back(std::async(std::launch::async, testUploadFromBuffer, c, l));
         futures.emplace_back(std::async(std::launch::async, testUploadFromFile, c, l));
       }
@@ -491,7 +490,7 @@ namespace Azure { namespace Storage { namespace Test {
     {
       // Create from Anonymous credential.
       std::vector<uint8_t> blobContent;
-      blobContent.resize(static_cast<std::size_t>(1_MB));
+      blobContent.resize(static_cast<size_t>(1_MB));
       RandomBuffer(reinterpret_cast<char*>(&blobContent[0]), blobContent.size());
       auto objectName = RandomString(10);
       auto containerClient = Azure::Storage::Blobs::BlobContainerClient::CreateFromConnectionString(
