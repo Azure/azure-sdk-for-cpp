@@ -597,6 +597,8 @@ namespace Azure { namespace Storage { namespace Blobs {
   {
     /**
      * @brief Optional conditions that must be met to perform this operation.
+     *
+     * @note Blob container lease doesn't support If-Match, If-None-Match or tag condition.
      */
     LeaseBlobAccessConditions AccessConditions;
   };
@@ -608,6 +610,8 @@ namespace Azure { namespace Storage { namespace Blobs {
   {
     /**
      * @brief Optional conditions that must be met to perform this operation.
+     *
+     * @note Blob container lease doesn't support If-Match, If-None-Match or tag condition.
      */
     LeaseBlobAccessConditions AccessConditions;
   };
