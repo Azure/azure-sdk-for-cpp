@@ -100,7 +100,7 @@ namespace Azure { namespace Core { namespace Http {
     /**
      * @brief Construct a new HTTP Method from a given string.
      *
-     * @details The HttpMethod won't check if the given string is a known method defined as per any
+     * @note The HttpMethod won't check if the given string is a known method defined as per any
      * RFC.
      *
      * @param value A given string to represent the HTTP Method.
