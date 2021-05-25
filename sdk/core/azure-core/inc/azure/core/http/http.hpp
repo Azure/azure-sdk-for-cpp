@@ -51,7 +51,7 @@ namespace Azure { namespace Core { namespace Http {
 
   /*********************  Exceptions  **********************/
   /**
-   * @brief Provides consistent interface to handle errors occurred while performing an HTTP
+   * @brief Consistent interface to handle errors occurred while performing an HTTP
    * Request.
    */
   class TransportException final : public Azure::Core::RequestFailedException {
@@ -71,7 +71,7 @@ namespace Azure { namespace Core { namespace Http {
   };
 
   /**
-   * @brief Defines a range of bytes within an HTTP resource.
+   * @brief The range of bytes within an HTTP resource.
    *
    * @note Starts at an `Offset` and ends at `Offset + Length - 1` inclusively.
    */
@@ -98,27 +98,26 @@ namespace Azure { namespace Core { namespace Http {
     HttpMethod() = delete;
 
     /**
-     * @brief Construct a new HTTP Method from a given string.
+     * @brief Constructs a new HttpMethod from a given string.
      *
-     * @note The HttpMethod won't check if the given string is a known method defined as per any
-     * RFC.
+     * @note Won't check if \p value is a known HttpMethod defined as per any RFC.
      *
-     * @param value A given string to represent the HTTP Method.
+     * @param value A given string to represent the HttpMethod.
      */
     explicit HttpMethod(std::string value) : m_value(std::move(value)) {}
 
     /**
-     * @brief Equal operator enables comparing two HttpMethod.
+     * @brief Compares two instances of `HttpMethod` for equality.
      *
-     * @param other Some HttpMethod instance to be compared.
+     * @param other Some `HttpMethod` instance to compare with.
      * @return `true` if instances are equal; otherwise, `false`.
      */
     bool operator==(const HttpMethod& other) const { return m_value == other.m_value; }
 
     /**
-     * @brief The non-equals operator allows comparing two HttpMethod.
+     * @brief Compares two instances of `HttpMethod` for equality.
      *
-     * @param other Some HttpMethod instance to be compared.
+     * @param other Some `HttpMethod` instance to compare with.
      * @return `false` if instances are equal; otherwise, `true`.
      */
     bool operator!=(const HttpMethod& other) const { return !(*this == other); }
@@ -129,37 +128,37 @@ namespace Azure { namespace Core { namespace Http {
     const std::string& ToString() const { return m_value; }
 
     /**
-     * @brief The representation of a Get HttpMethod based on [RFC 2616]
+     * @brief The representation of a `GET` HttpMethod based on [RFC 2616]
      * (https://datatracker.ietf.org/doc/html/rfc2616#section-9.3).
      */
     AZ_CORE_DLLEXPORT const static HttpMethod Get;
 
     /**
-     * @brief The representation of a Head HttpMethod based on [RFC 2616]
+     * @brief The representation of a `HEAD` HttpMethod based on [RFC 2616]
      * (https://datatracker.ietf.org/doc/html/rfc2616#section-9.4).
      */
     AZ_CORE_DLLEXPORT const static HttpMethod Head;
 
     /**
-     * @brief The representation of a Post HttpMethod based on [RFC 2616]
+     * @brief The representation of a `POST` HttpMethod based on [RFC 2616]
      * (https://datatracker.ietf.org/doc/html/rfc2616#section-9.5).
      */
     AZ_CORE_DLLEXPORT const static HttpMethod Post;
 
     /**
-     * @brief The representation of a Put HttpMethod based on [RFC 2616]
+     * @brief The representation of a `PUT` HttpMethod based on [RFC 2616]
      * (https://datatracker.ietf.org/doc/html/rfc2616#section-9.6).
      */
     AZ_CORE_DLLEXPORT const static HttpMethod Put;
 
     /**
-     * @brief The representation of a `Delete` HttpMethod based on [RFC 2616]
+     * @brief The representation of a `DELETE` HttpMethod based on [RFC 2616]
      * (https://datatracker.ietf.org/doc/html/rfc2616#section-9.7).
      */
     AZ_CORE_DLLEXPORT const static HttpMethod Delete;
 
     /**
-     * @brief The representation of a `Patch` HttpMethod based on [RFC 5789]
+     * @brief The representation of a `PATCH` HttpMethod based on [RFC 5789]
      * (https://datatracker.ietf.org/doc/html/rfc5789).
      */
     AZ_CORE_DLLEXPORT const static HttpMethod Patch;
@@ -217,7 +216,7 @@ namespace Azure { namespace Core { namespace Http {
     /**
      * @brief Construct an #Azure::Core::Http::Request.
      *
-     * @param httpMethod HTTP method.
+     * @param httpMethod HttpMethod.
      * @param url URL.
      * @param bodyStream #Azure::Core::IO::BodyStream.
      * @param shouldBufferResponse A boolean value indicating whether the returned response should
@@ -237,7 +236,7 @@ namespace Azure { namespace Core { namespace Http {
     /**
      * @brief Construct an #Azure::Core::Http::Request.
      *
-     * @param httpMethod HTTP method.
+     * @param httpMethod HttpMethod.
      * @param url URL.
      * @param bodyStream #Azure::Core::IO::BodyStream.
      */
@@ -250,7 +249,7 @@ namespace Azure { namespace Core { namespace Http {
     /**
      * @brief Construct an #Azure::Core::Http::Request.
      *
-     * @param httpMethod HTTP method.
+     * @param httpMethod HttpMethod.
      * @param url URL.
      * @param shouldBufferResponse A boolean value indicating whether the returned response should
      * be buffered or returned as a body stream instead.
@@ -260,7 +259,7 @@ namespace Azure { namespace Core { namespace Http {
     /**
      * @brief Construct an #Azure::Core::Http::Request.
      *
-     * @param httpMethod HTTP method.
+     * @param httpMethod HttpMethod.
      * @param url URL.
      */
     explicit Request(HttpMethod httpMethod, Url url);
@@ -287,7 +286,7 @@ namespace Azure { namespace Core { namespace Http {
 
     // Methods used by transport layer (and logger) to send request
     /**
-     * @brief Get HTTP method.
+     * @brief Get HttpMethod.
      *
      */
     HttpMethod GetMethod() const;
