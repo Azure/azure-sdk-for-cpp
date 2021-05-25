@@ -9,9 +9,11 @@
 #include <stdexcept>
 #include <string>
 
+#include <azure/storage/common/storage_credential.hpp>
+
 #include "samples_common.hpp"
 
-const std::string& GetConnectionString()
+std::string GetConnectionString()
 {
   const static std::string ConnectionString = "";
 
@@ -25,6 +27,16 @@ const std::string& GetConnectionString()
     return envConnectionString;
   }
   throw std::runtime_error("Cannot find connection string");
+}
+
+std::string GetAccountName()
+{
+  return Azure::Storage::_internal::ParseConnectionString(GetConnectionString()).AccountName;
+}
+
+std::string GetAccountKey()
+{
+  return Azure::Storage::_internal::ParseConnectionString(GetConnectionString()).AccountKey;
 }
 
 int main(int argc, char** argv)
