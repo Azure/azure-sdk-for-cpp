@@ -128,32 +128,32 @@ namespace Azure { namespace Core { namespace Http {
     const std::string& ToString() const { return m_value; }
 
     /**
-     * @brief The representation of a `GET` HttpMethod based on [RFC 2616]
-     * (https://datatracker.ietf.org/doc/html/rfc2616#section-9.3).
+     * @brief The representation of a `GET` HttpMethod based on [RFC 7231]
+     * (https://datatracker.ietf.org/doc/html/rfc7231#section-4.3.1).
      */
     AZ_CORE_DLLEXPORT const static HttpMethod Get;
 
     /**
-     * @brief The representation of a `HEAD` HttpMethod based on [RFC 2616]
-     * (https://datatracker.ietf.org/doc/html/rfc2616#section-9.4).
+     * @brief The representation of a `HEAD` HttpMethod based on [RFC 7231]
+     * (https://datatracker.ietf.org/doc/html/rfc7231#section-4.3.2).
      */
     AZ_CORE_DLLEXPORT const static HttpMethod Head;
 
     /**
-     * @brief The representation of a `POST` HttpMethod based on [RFC 2616]
-     * (https://datatracker.ietf.org/doc/html/rfc2616#section-9.5).
+     * @brief The representation of a `POST` HttpMethod based on [RFC 7231]
+     * (https://datatracker.ietf.org/doc/html/rfc7231#section-4.3.3).
      */
     AZ_CORE_DLLEXPORT const static HttpMethod Post;
 
     /**
-     * @brief The representation of a `PUT` HttpMethod based on [RFC 2616]
-     * (https://datatracker.ietf.org/doc/html/rfc2616#section-9.6).
+     * @brief The representation of a `PUT` HttpMethod based on [RFC 7231]
+     * (https://datatracker.ietf.org/doc/html/rfc7231#section-4.3.4).
      */
     AZ_CORE_DLLEXPORT const static HttpMethod Put;
 
     /**
-     * @brief The representation of a `DELETE` HttpMethod based on [RFC 2616]
-     * (https://datatracker.ietf.org/doc/html/rfc2616#section-9.7).
+     * @brief The representation of a `DELETE` HttpMethod based on [RFC 7231]
+     * (https://datatracker.ietf.org/doc/html/rfc7231#section-4.3.5).
      */
     AZ_CORE_DLLEXPORT const static HttpMethod Delete;
 
