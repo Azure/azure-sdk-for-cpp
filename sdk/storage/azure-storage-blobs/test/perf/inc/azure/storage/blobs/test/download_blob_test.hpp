@@ -9,6 +9,7 @@
 
 #pragma once
 
+#include <azure/core/io/body_stream.hpp>
 #include <azure/perf.hpp>
 
 #include "azure/storage/blobs/test/blob_base_test.hpp"
@@ -24,6 +25,8 @@ namespace Azure { namespace Storage { namespace Blobs { namespace Test {
    *
    */
   class DownloadBlob : public Azure::Storage::Blobs::Test::BlobsTest {
+  private:
+    std::unique_ptr<std::vector<uint8_t>> m_downloadBuffer;
 
   public:
     /**
@@ -34,10 +37,31 @@ namespace Azure { namespace Storage { namespace Blobs { namespace Test {
     DownloadBlob(Azure::Perf::TestOptions options) : BlobsTest(options) {}
 
     /**
+     * @brief Upload 5Mb to be downloaded in the test
+     *
+     */
+    void Setup() override
+    {
+      // Call base to create blob client
+      BlobsTest::Setup();
+
+      long size = m_options.GetMandatoryOption<long>("Size");
+
+      m_downloadBuffer = std::make_unique<std::vector<uint8_t>>(size);
+
+      auto rawData = std::make_unique<std::vector<uint8_t>>(size);
+      auto content = Azure::Core::IO::MemoryBodyStream(*rawData);
+      m_blobClient->Upload(content);
+    }
+
+    /**
      * @brief Define the test
      *
      */
-    void Run(Azure::Core::Context const&) override { auto blob = m_blobClient->Download(); }
+    void Run(Azure::Core::Context const&) override
+    {
+      m_blobClient->DownloadTo(m_downloadBuffer->data(), m_downloadBuffer->size());
+    }
 
     /**
      * @brief Define the test options for the test.
@@ -46,7 +70,8 @@ namespace Azure { namespace Storage { namespace Blobs { namespace Test {
      */
     std::vector<Azure::Perf::TestOption> GetTestOptions() override
     {
-      return Azure::Storage::Blobs::Test::BlobsTest::GetTestOptions();
+      // TODO: Merge with base options
+      return {{"Size", {"--size"}, "Size of payload (in bytes)", 1, true}};
     }
 
     /**

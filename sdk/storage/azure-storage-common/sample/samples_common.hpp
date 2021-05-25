@@ -7,7 +7,9 @@
 #include <map>
 #include <string>
 
-const std::string& GetConnectionString();
+std::string GetConnectionString();
+std::string GetAccountName();
+std::string GetAccountKey();
 
 class Sample {
 public:

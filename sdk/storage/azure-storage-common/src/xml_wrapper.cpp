@@ -19,11 +19,11 @@ namespace Azure { namespace Storage { namespace _internal {
 
   static void XmlGlobalInitialize() { static XmlGlobalInitializer globalInitializer; }
 
-  XmlReader::XmlReader(const char* data, std::size_t length)
+  XmlReader::XmlReader(const char* data, size_t length)
   {
     XmlGlobalInitialize();
 
-    if (length > static_cast<std::size_t>(std::numeric_limits<int>::max()))
+    if (length > static_cast<size_t>(std::numeric_limits<int>::max()))
     {
       throw std::runtime_error("xml data too big");
     }
