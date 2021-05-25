@@ -13,12 +13,12 @@ include(GoogleTest)
 
 add_executable (
   azure-identity-test
-    client_secret_credential.cpp
-    environment_credential.cpp
-    macro_guard.cpp
-    main.cpp
-    simplified_header.cpp
-    test_transport.hpp
+    azure_identity_test.cpp
+    client_secret_credential_test.cpp
+    environment_credential_test.cpp
+    macro_guard_test.cpp
+    simplified_header_test.cpp
+    test_transport_test.hpp
 )
 
 if (MSVC)

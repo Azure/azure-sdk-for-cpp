@@ -38,7 +38,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     /**
      * @brief Extensible enum that used to identify the account kind.
      */
-    class AccountKind {
+    class AccountKind final {
     public:
       AccountKind() = default;
       explicit AccountKind(std::string value) : m_value(std::move(value)) {}
@@ -73,10 +73,10 @@ namespace Azure { namespace Storage { namespace Blobs {
     /**
      * @brief Describes a sinlge block in block blob.
      */
-    struct BlobBlock
+    struct BlobBlock final
     {
       /**
-       * Base64 encoded block id.
+       * Base64 encoded block ID.
        */
       std::string Name;
       /**
@@ -88,7 +88,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     /**
      * @brief Extensible enum used to identify copy status of a copy operation.
      */
-    class CopyStatus {
+    class CopyStatus final {
     public:
       CopyStatus() = default;
       explicit CopyStatus(std::string value) : m_value(std::move(value)) {}
@@ -111,7 +111,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     /**
      * @brief Extensible enum used to identify the status of secondary storage endpoint.
      */
-    class GeoReplicationStatus {
+    class GeoReplicationStatus final {
     public:
       GeoReplicationStatus() = default;
       explicit GeoReplicationStatus(std::string value) : m_value(std::move(value)) {}
@@ -138,7 +138,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     /**
      * @brief Extensible enum used to identify the lease is of inifinite or fixed duration.
      */
-    class LeaseDurationType {
+    class LeaseDurationType final {
     public:
       LeaseDurationType() = default;
       explicit LeaseDurationType(std::string value) : m_value(std::move(value)) {}
@@ -161,7 +161,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     /**
      * @brief Extensible enum used to identify the state of lease.
      */
-    class LeaseState {
+    class LeaseState final {
     public:
       LeaseState() = default;
       explicit LeaseState(std::string value) : m_value(std::move(value)) {}
@@ -197,7 +197,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     /**
      * @brief Extensible enum used to identify the status of lease.
      */
-    class LeaseStatus {
+    class LeaseStatus final {
     public:
       LeaseStatus() = default;
       explicit LeaseStatus(std::string value) : m_value(std::move(value)) {}
@@ -220,7 +220,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     /**
      * @brief Extensible enum used to identify object replication status.
      */
-    class ObjectReplicationStatus {
+    class ObjectReplicationStatus final {
     public:
       ObjectReplicationStatus() = default;
       explicit ObjectReplicationStatus(std::string value) : m_value(std::move(value)) {}
@@ -247,7 +247,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @brief Extensible enum used to indicates whether data in the container may be accessed
      * publicly and the level of access.
      */
-    class PublicAccessType {
+    class PublicAccessType final {
     public:
       PublicAccessType() = default;
       explicit PublicAccessType(std::string value) : m_value(std::move(value)) {}
@@ -278,7 +278,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     /**
      * @brief Determines how long the associated data should persist.
      */
-    struct RetentionPolicy
+    struct RetentionPolicy final
     {
       /**
        * Indicates whether this retention policy is enabled.
@@ -294,7 +294,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     /**
      * @brief Describes how you reference an ACL in a blob container.
      */
-    struct SignedIdentifier
+    struct SignedIdentifier final
     {
       /**
        * A unique ID for this signed identifier.
@@ -317,7 +317,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     /**
      * @brief Extensible enum that used to identify the sku of a storage account.
      */
-    class SkuName {
+    class SkuName final {
     public:
       SkuName() = default;
       explicit SkuName(std::string value) : m_value(std::move(value)) {}
@@ -365,7 +365,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @brief Blob information from the result of
      * #Azure::Storage::Blobs::BlobServiceClient::FindBlobsByTags.
      */
-    struct TaggedBlobItem
+    struct TaggedBlobItem final
     {
       /**
        * Blob name.
@@ -380,7 +380,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     /**
      * @brief Azure analytics logging settings.
      */
-    struct AnalyticsLogging
+    struct AnalyticsLogging final
     {
       /**
        * The version of storage analytics to configure.
@@ -407,7 +407,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     /**
      * @brief Detailed information of a blob container.
      */
-    struct BlobContainerItemDetails
+    struct BlobContainerItemDetails final
     {
       /**
        * The ETag contains a value that you can use to perform operations conditionally.
@@ -471,7 +471,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     /**
      * @brief Settings for a CORS rule.
      */
-    struct CorsRule
+    struct CorsRule final
     {
       /**
        * A comma-separated list of origin domains that are allowed via CORS, or "*" if all domains
@@ -500,7 +500,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     /**
      * @brief Geo-replication information for the secondary storage endpoint.
      */
-    struct GeoReplication
+    struct GeoReplication final
     {
       /**
        * Status of the secondary storage endpoint.
@@ -517,7 +517,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     /**
      * @brief Summary of request statistics grouped by API in hour or minute aggregates for blobs.
      */
-    struct Metrics
+    struct Metrics final
     {
       /**
        * The version of storage analytics to configure.
@@ -540,7 +540,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     /**
      * @brief Contains the object replication rule ID and replication status of a blob.
      */
-    struct ObjectReplicationRule
+    struct ObjectReplicationRule final
     {
       /**
        * Rule ID.
@@ -555,7 +555,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     /**
      * @brief The properties that enable a storage account to host a static website.
      */
-    struct StaticWebsite
+    struct StaticWebsite final
     {
       /**
        * Indicates whether this storage account is hosting a static website.
@@ -578,7 +578,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     /**
      * @brief Extensible enum used to identify access tier of a blob.
      */
-    class AccessTier {
+    class AccessTier final {
     public:
       AccessTier() = default;
       explicit AccessTier(std::string value) : m_value(std::move(value)) {}
@@ -663,7 +663,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @brief Extensible enum used to identify the destination tier when a blob is being rehydrated
      * and is not complete.
      */
-    class ArchiveStatus {
+    class ArchiveStatus final {
     public:
       ArchiveStatus() = default;
       explicit ArchiveStatus(std::string value) : m_value(std::move(value)) {}
@@ -687,7 +687,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @brief A container item from the result of
      * #Azure::Storage::Blobs::BlobServiceClient::ListBlobContainers.
      */
-    struct BlobContainerItem
+    struct BlobContainerItem final
     {
       /**
        * Blob container name.
@@ -710,7 +710,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     /**
      * @brief Standard HTTP properties supported by containers and blobs.
      */
-    struct BlobHttpHeaders
+    struct BlobHttpHeaders final
     {
       /**
        * MIME content type of the blob.
@@ -742,7 +742,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     /**
      * @brief Extensible enum used to identify blob type.
      */
-    class BlobType {
+    class BlobType final {
     public:
       BlobType() = default;
       explicit BlobType(std::string value) : m_value(std::move(value)) {}
@@ -772,7 +772,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      * the source blob. The policy id for the destination blob is set in
      * ObjectReplicationDestinationPolicyId of the respective method responses.
      */
-    struct ObjectReplicationPolicy
+    struct ObjectReplicationPolicy final
     {
       /**
        * The policy ID.
@@ -787,7 +787,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     /**
      * @brief Extensible enum used to identify rehydrate priority.
      */
-    class RehydratePriority {
+    class RehydratePriority final {
     public:
       RehydratePriority() = default;
       explicit RehydratePriority(std::string value) : m_value(std::move(value)) {}
@@ -810,7 +810,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     /**
      * @brief Detailed information of a blob.
      */
-    struct BlobItemDetails
+    struct BlobItemDetails final
     {
       /**
        * System properties of the blob.
@@ -895,7 +895,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     /**
      * @brief Detailed information of a downloaded blob.
      */
-    struct DownloadBlobDetails
+    struct DownloadBlobDetails final
     {
       /**
        * The ETag contains a value that you can use to perform operations conditionally.
@@ -936,7 +936,7 @@ namespace Azure { namespace Storage { namespace Blobs {
        * The number of committed blocks present in the blob. This value is null for block blobs or
        * page blobs.
        */
-      Azure::Nullable<int64_t> CommittedBlockCount;
+      Azure::Nullable<int32_t> CommittedBlockCount;
       /**
        * If the blob has been sealed. This value is null for block blobs or page blobs.
        */
@@ -994,7 +994,7 @@ namespace Azure { namespace Storage { namespace Blobs {
        */
       Azure::Nullable<std::string> CopySource;
       /**
-       * State of the copy operation identified by the copy id. Possible values include success,
+       * State of the copy operation identified by the copy ID. Possible values include success,
        * pending, aborted, failed etc. This value is null if this blob has never been the
        * destination of a copy operation, or if this blob has been modified after a concluded copy
        * operation.
@@ -1030,7 +1030,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     /**
      * @brief A blob item from the result of #Azure::Storage::Blobs::BlobContainerClient::ListBlobs.
      */
-    struct BlobItem
+    struct BlobItem final
     {
       std::string Name;
       /**
@@ -1068,14 +1068,14 @@ namespace Azure { namespace Storage { namespace Blobs {
     /**
      * @brief Response type for #Azure::Storage::Blobs::BlobClient::AbortCopy.
      */
-    struct AbortBlobCopyFromUriResult
+    struct AbortBlobCopyFromUriResult final
     {
     }; // struct AbortBlobCopyFromUriResult
 
     /**
      * @brief Storage account information.
      */
-    struct AccountInfo
+    struct AccountInfo final
     {
       /**
        * The SKU name of the storage account. See
@@ -1096,7 +1096,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     /**
      * @brief Response type for #Azure::Storage::Blobs::AppendBlobClient::AppendBlockFromUri.
      */
-    struct AppendBlockFromUriResult
+    struct AppendBlockFromUriResult final
     {
       /**
        * The ETag contains a value that you can use to perform operations conditionally.
@@ -1120,7 +1120,7 @@ namespace Azure { namespace Storage { namespace Blobs {
        * The number of committed blocks present in the blob. This value is null for block blobs or
        * page blobs.
        */
-      int64_t CommittedBlockCount = 0;
+      int32_t CommittedBlockCount = 0;
       /**
        * True if the blob data and metadata are completely encrypted using the specified algorithm.
        * Otherwise, the value is set to false (when the blob is unencrypted, or if only parts of the
@@ -1140,7 +1140,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     /**
      * @brief Response type for #Azure::Storage::Blobs::AppendBlobClient::AppendBlock.
      */
-    struct AppendBlockResult
+    struct AppendBlockResult final
     {
       /**
        * The ETag contains a value that you can use to perform operations conditionally.
@@ -1164,7 +1164,7 @@ namespace Azure { namespace Storage { namespace Blobs {
        * The number of committed blocks present in the blob. This value is null for block blobs or
        * page blobs.
        */
-      int64_t CommittedBlockCount = 0;
+      int32_t CommittedBlockCount = 0;
       /**
        * True if the blob data and metadata are completely encrypted using the specified algorithm.
        * Otherwise, the value is set to false (when the blob is unencrypted, or if only parts of the
@@ -1184,7 +1184,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     /**
      * @brief Access policy for a blob container.
      */
-    struct BlobContainerAccessPolicy
+    struct BlobContainerAccessPolicy final
     {
       /**
        * Indicates whether data in the container may be accessed publicly and the level of access.
@@ -1199,7 +1199,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     /**
      * @brief Properties of a blob container.
      */
-    struct BlobContainerProperties
+    struct BlobContainerProperties final
     {
       /**
        * The ETag contains a value that you can use to perform operations conditionally.
@@ -1253,7 +1253,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     /**
      * @brief Properties of a blob.
      */
-    struct BlobProperties
+    struct BlobProperties final
     {
       /**
        * The ETag contains a value that you can use to perform operations conditionally.
@@ -1368,7 +1368,7 @@ namespace Azure { namespace Storage { namespace Blobs {
        */
       Azure::Nullable<std::string> CopySource;
       /**
-       * State of the copy operation identified by the copy id. Possible values include success,
+       * State of the copy operation identified by the copy ID. Possible values include success,
        * pending, aborted, failed etc. This value is null if this blob has never been the
        * destination of a copy operation, or if this blob has been modified after a concluded copy
        * operation.
@@ -1424,7 +1424,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     /**
      * @brief Properties of blob service.
      */
-    struct BlobServiceProperties
+    struct BlobServiceProperties final
     {
       /**
        * Azure analytics logging settings.
@@ -1460,7 +1460,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     /**
      * @brief Extensible enum used to specify blocks to list.
      */
-    class BlockListType {
+    class BlockListType final {
     public:
       BlockListType() = default;
       explicit BlockListType(std::string value) : m_value(std::move(value)) {}
@@ -1487,7 +1487,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     /**
      * @brief Extensible enum used to specify how the service should look for a block ID.
      */
-    class BlockType {
+    class BlockType final {
     public:
       BlockType() = default;
       explicit BlockType(std::string value) : m_value(std::move(value)) {}
@@ -1515,7 +1515,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     /**
      * @brief Response type for #Azure::Storage::Blobs::PageBlobClient::ClearPages.
      */
-    struct ClearPagesResult
+    struct ClearPagesResult final
     {
       /**
        * The ETag contains a value that you can use to perform operations conditionally.
@@ -1537,7 +1537,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     /**
      * @brief Response type for #Azure::Storage::Blobs::BlockBlobClient::CommitBlockList.
      */
-    struct CommitBlockListResult
+    struct CommitBlockListResult final
     {
       /**
        * The ETag contains a value that you can use to perform operations conditionally.
@@ -1577,7 +1577,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     /**
      * @brief Response type for #Azure::Storage::Blobs::AppendBlobClient::Create.
      */
-    struct CreateAppendBlobResult
+    struct CreateAppendBlobResult final
     {
       /**
        * Indicates if the append blob was successfully created in this operation.
@@ -1617,7 +1617,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     /**
      * @brief Response type for #Azure::Storage::Blobs::BlobContainerClient::Create.
      */
-    struct CreateBlobContainerResult
+    struct CreateBlobContainerResult final
     {
       /**
        * Indicates if the container was successfully created in this operation.
@@ -1638,7 +1638,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     /**
      * @brief Response type for #Azure::Storage::Blobs::BlobClient::CreateSnapshot.
      */
-    struct CreateBlobSnapshotResult
+    struct CreateBlobSnapshotResult final
     {
       std::string Snapshot;
       /**
@@ -1675,7 +1675,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     /**
      * @brief Response type for #Azure::Storage::Blobs::PageBlobClient::Create.
      */
-    struct CreatePageBlobResult
+    struct CreatePageBlobResult final
     {
       /**
        * Indicates if the page blob was successfully created in this operation.
@@ -1720,7 +1720,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     /**
      * @brief Response type for #Azure::Storage::Blobs::BlobContainerClient::Delete.
      */
-    struct DeleteBlobContainerResult
+    struct DeleteBlobContainerResult final
     {
       /**
        * Indicates if the container was successfully deleted in this operation.
@@ -1731,7 +1731,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     /**
      * @brief Response type for #Azure::Storage::Blobs::BlobClient::Delete.
      */
-    struct DeleteBlobResult
+    struct DeleteBlobResult final
     {
       /**
        * Indicates if the blob was successfully deleted in this operation.
@@ -1743,7 +1743,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @brief Extensible enum used to specify whether base blob should be deleted in a delete blob
      * operation.
      */
-    class DeleteSnapshotsOption {
+    class DeleteSnapshotsOption final {
     public:
       DeleteSnapshotsOption() = default;
       explicit DeleteSnapshotsOption(std::string value) : m_value(std::move(value)) {}
@@ -1766,7 +1766,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     /**
      * @brief Response type for #Azure::Storage::Blobs::BlobClient::Download.
      */
-    struct DownloadBlobResult
+    struct DownloadBlobResult final
     {
       /**
        * Content of the blob or blob range.
@@ -1797,7 +1797,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     /**
      * @brief Extensible enum used to identify encryption algorithm.
      */
-    class EncryptionAlgorithmType {
+    class EncryptionAlgorithmType final {
     public:
       EncryptionAlgorithmType() = default;
       explicit EncryptionAlgorithmType(std::string value) : m_value(std::move(value)) {}
@@ -1819,7 +1819,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     /**
      * @brief Response type for #Azure::Storage::Blobs::BlockBlobClient::GetBlockList.
      */
-    struct GetBlockListResult
+    struct GetBlockListResult final
     {
       /**
        * The ETag contains a value that you can use to perform operations conditionally.
@@ -1954,7 +1954,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     /**
      * @brief Azure::Storage::Blobs::PageBlobClient::Resize.
      */
-    struct ResizePageBlobResult
+    struct ResizePageBlobResult final
     {
       /**
        * The ETag contains a value that you can use to perform operations conditionally.
@@ -1976,7 +1976,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     /**
      * @brief Extensible enum used to specify when a file's expiration time should be relative to.
      */
-    class ScheduleBlobExpiryOriginType {
+    class ScheduleBlobExpiryOriginType final {
     public:
       ScheduleBlobExpiryOriginType() = default;
       explicit ScheduleBlobExpiryOriginType(std::string value) : m_value(std::move(value)) {}
@@ -2010,7 +2010,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     /**
      * @brief Response type for #Azure::Storage::Blobs::AppendBlobClient::Seal.
      */
-    struct SealAppendBlobResult
+    struct SealAppendBlobResult final
     {
       /**
        * The ETag contains a value that you can use to perform operations conditionally.
@@ -2031,7 +2031,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     /**
      * @brief Statistics for the storage service.
      */
-    struct ServiceStatistics
+    struct ServiceStatistics final
     {
       /**
        * Geo-replication information for the secondary storage endpoint.
@@ -2042,14 +2042,14 @@ namespace Azure { namespace Storage { namespace Blobs {
     /**
      * @brief Response type for #Azure::Storage::Blobs::BlobClient::SetAccessTier.
      */
-    struct SetBlobAccessTierResult
+    struct SetBlobAccessTierResult final
     {
     }; // struct SetBlobAccessTierResult
 
     /**
      * @brief Response type for #Azure::Storage::Blobs::BlobContainerClient::SetAccessPolicy.
      */
-    struct SetBlobContainerAccessPolicyResult
+    struct SetBlobContainerAccessPolicyResult final
     {
       /**
        * The ETag contains a value that you can use to perform operations conditionally.
@@ -2066,7 +2066,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     /**
      * @brief Response type for #Azure::Storage::Blobs::BlobContainerClient::SetMetadata.
      */
-    struct SetBlobContainerMetadataResult
+    struct SetBlobContainerMetadataResult final
     {
       /**
        * The ETag contains a value that you can use to perform operations conditionally.
@@ -2084,14 +2084,14 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @brief Response type for
      * #Azure::Storage::Files::DataLake::DataLakeFileClient::ScheduleDeletion.
      */
-    struct SetBlobExpiryResult
+    struct SetBlobExpiryResult final
     {
     }; // struct SetBlobExpiryResult
 
     /**
      * @brief Response type for #Azure::Storage::Blobs::BlobClient::SetHttpHeaders.
      */
-    struct SetBlobHttpHeadersResult
+    struct SetBlobHttpHeadersResult final
     {
       /**
        * The ETag contains a value that you can use to perform operations conditionally.
@@ -2113,7 +2113,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     /**
      * @brief Response type for #Azure::Storage::Blobs::BlobClient::SetMetadata.
      */
-    struct SetBlobMetadataResult
+    struct SetBlobMetadataResult final
     {
       /**
        * The ETag contains a value that you can use to perform operations conditionally.
@@ -2135,21 +2135,21 @@ namespace Azure { namespace Storage { namespace Blobs {
     /**
      * @brief Response type for #Azure::Storage::Blobs::BlobClient::SetTags.
      */
-    struct SetBlobTagsResult
+    struct SetBlobTagsResult final
     {
     }; // struct SetBlobTagsResult
 
     /**
      * @brief Response type for #Azure::Storage::Blobs::BlobServiceClient::SetProperties.
      */
-    struct SetServicePropertiesResult
+    struct SetServicePropertiesResult final
     {
     }; // struct SetServicePropertiesResult
 
     /**
      * @brief Response type for #Azure::Storage::Blobs::BlockBlobClient::StageBlockFromUri.
      */
-    struct StageBlockFromUriResult
+    struct StageBlockFromUriResult final
     {
       /**
        * The request may return a CRC64 or MD5 hash for the downloaded range of data.
@@ -2174,7 +2174,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     /**
      * @brief Response type for #Azure::Storage::Blobs::BlockBlobClient::StageBlock.
      */
-    struct StageBlockResult
+    struct StageBlockResult final
     {
       /**
        * The request may return a CRC64 or MD5 hash for the downloaded range of data.
@@ -2199,14 +2199,14 @@ namespace Azure { namespace Storage { namespace Blobs {
     /**
      * @brief Response type for #Azure::Storage::Blobs::BlobClient::Undelete.
      */
-    struct UndeleteBlobResult
+    struct UndeleteBlobResult final
     {
     }; // struct UndeleteBlobResult
 
     /**
      * @brief Response type for #Azure::Storage::Blobs::BlockBlobClient::Upload.
      */
-    struct UploadBlockBlobResult
+    struct UploadBlockBlobResult final
     {
       /**
        * The ETag contains a value that you can use to perform operations conditionally.
@@ -2246,7 +2246,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     /**
      * @brief Response type for #Azure::Storage::Blobs::PageBlobClient::UploadPagesFromUri.
      */
-    struct UploadPagesFromUriResult
+    struct UploadPagesFromUriResult final
     {
       /**
        * The ETag contains a value that you can use to perform operations conditionally.
@@ -2286,7 +2286,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     /**
      * @brief Response type for #Azure::Storage::Blobs::PageBlobClient::UploadPages.
      */
-    struct UploadPagesResult
+    struct UploadPagesResult final
     {
       /**
        * The ETag contains a value that you can use to perform operations conditionally.
@@ -2326,7 +2326,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     /**
      * @brief A user delegation key that can be used to sign user delegation SAS.
      */
-    struct UserDelegationKey
+    struct UserDelegationKey final
     {
       /**
        * The immutable identifier for an object in the Microsoft identity system.
@@ -2359,7 +2359,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     }; // struct UserDelegationKey
 
     namespace _detail {
-      struct AcquireBlobContainerLeaseResult
+      struct AcquireBlobContainerLeaseResult final
       {
         /**
          * The ETag contains a value that you can use to perform operations conditionally.
@@ -2379,7 +2379,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     } // namespace _detail
 
     namespace _detail {
-      struct AcquireBlobLeaseResult
+      struct AcquireBlobLeaseResult final
       {
         /**
          * The ETag contains a value that you can use to perform operations conditionally.
@@ -2399,7 +2399,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     } // namespace _detail
 
     namespace _detail {
-      struct BreakBlobContainerLeaseResult
+      struct BreakBlobContainerLeaseResult final
       {
         /**
          * The ETag contains a value that you can use to perform operations conditionally.
@@ -2419,7 +2419,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     } // namespace _detail
 
     namespace _detail {
-      struct BreakBlobLeaseResult
+      struct BreakBlobLeaseResult final
       {
         /**
          * The ETag contains a value that you can use to perform operations conditionally.
@@ -2439,7 +2439,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     } // namespace _detail
 
     namespace _detail {
-      struct ChangeBlobContainerLeaseResult
+      struct ChangeBlobContainerLeaseResult final
       {
         /**
          * The ETag contains a value that you can use to perform operations conditionally.
@@ -2459,7 +2459,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     } // namespace _detail
 
     namespace _detail {
-      struct ChangeBlobLeaseResult
+      struct ChangeBlobLeaseResult final
       {
         /**
          * The ETag contains a value that you can use to perform operations conditionally.
@@ -2479,7 +2479,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     } // namespace _detail
 
     namespace _detail {
-      struct FindBlobsByTagsResult
+      struct FindBlobsByTagsResult final
       {
         std::string ServiceEndpoint;
         Azure::Nullable<std::string> ContinuationToken;
@@ -2488,14 +2488,14 @@ namespace Azure { namespace Storage { namespace Blobs {
     } // namespace _detail
 
     namespace _detail {
-      struct GetBlobTagsResult
+      struct GetBlobTagsResult final
       {
         std::map<std::string, std::string> Tags;
       }; // struct GetBlobTagsResult
     } // namespace _detail
 
     namespace _detail {
-      struct GetPageRangesResult
+      struct GetPageRangesResult final
       {
         /**
          * The ETag contains a value that you can use to perform operations conditionally.
@@ -2517,7 +2517,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     } // namespace _detail
 
     namespace _detail {
-      struct ListBlobContainersResult
+      struct ListBlobContainersResult final
       {
         std::string ServiceEndpoint;
         std::string Prefix;
@@ -2527,7 +2527,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     } // namespace _detail
 
     namespace _detail {
-      struct ListBlobsByHierarchyResult
+      struct ListBlobsByHierarchyResult final
       {
         std::string ServiceEndpoint;
         std::string BlobContainerName;
@@ -2540,7 +2540,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     } // namespace _detail
 
     namespace _detail {
-      struct ListBlobsResult
+      struct ListBlobsResult final
       {
         std::string ServiceEndpoint;
         std::string BlobContainerName;
@@ -2551,7 +2551,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     } // namespace _detail
 
     namespace _detail {
-      struct ReleaseBlobContainerLeaseResult
+      struct ReleaseBlobContainerLeaseResult final
       {
         /**
          * The ETag contains a value that you can use to perform operations conditionally.
@@ -2567,7 +2567,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     } // namespace _detail
 
     namespace _detail {
-      struct ReleaseBlobLeaseResult
+      struct ReleaseBlobLeaseResult final
       {
         /**
          * The ETag contains a value that you can use to perform operations conditionally.
@@ -2588,7 +2588,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     } // namespace _detail
 
     namespace _detail {
-      struct RenewBlobContainerLeaseResult
+      struct RenewBlobContainerLeaseResult final
       {
         /**
          * The ETag contains a value that you can use to perform operations conditionally.
@@ -2608,7 +2608,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     } // namespace _detail
 
     namespace _detail {
-      struct RenewBlobLeaseResult
+      struct RenewBlobLeaseResult final
       {
         /**
          * The ETag contains a value that you can use to perform operations conditionally.
@@ -2628,7 +2628,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     } // namespace _detail
 
     namespace _detail {
-      struct StartBlobCopyFromUriResult
+      struct StartBlobCopyFromUriResult final
       {
         /**
          * The ETag contains a value that you can use to perform operations conditionally.
@@ -2647,7 +2647,7 @@ namespace Azure { namespace Storage { namespace Blobs {
          */
         std::string CopyId;
         /**
-         * State of the copy operation identified by the copy id. Possible values include success,
+         * State of the copy operation identified by the copy ID. Possible values include success,
          * pending, aborted, failed etc. This value is null if this blob has never been the
          * destination of a copy operation, or if this blob has been modified after a concluded copy
          * operation.
@@ -2662,7 +2662,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     } // namespace _detail
 
     namespace _detail {
-      struct StartBlobCopyIncrementalResult
+      struct StartBlobCopyIncrementalResult final
       {
         /**
          * The ETag contains a value that you can use to perform operations conditionally.
@@ -2681,7 +2681,7 @@ namespace Azure { namespace Storage { namespace Blobs {
          */
         std::string CopyId;
         /**
-         * State of the copy operation identified by the copy id. Possible values include success,
+         * State of the copy operation identified by the copy ID. Possible values include success,
          * pending, aborted, failed etc. This value is null if this blob has never been the
          * destination of a copy operation, or if this blob has been modified after a concluded copy
          * operation.
@@ -2696,14 +2696,14 @@ namespace Azure { namespace Storage { namespace Blobs {
     } // namespace _detail
 
     namespace _detail {
-      struct SubmitBlobBatchResult
+      struct SubmitBlobBatchResult final
       {
         std::string ContentType;
       }; // struct SubmitBlobBatchResult
     } // namespace _detail
 
     namespace _detail {
-      struct UndeleteBlobContainerResult
+      struct UndeleteBlobContainerResult final
       {
       }; // struct UndeleteBlobContainerResult
     } // namespace _detail
@@ -2726,7 +2726,7 @@ namespace Azure { namespace Storage { namespace Blobs {
           "deleted",
       };
       std::string ret;
-      for (std::size_t i = 0; i < sizeof(value_list) / sizeof(ListBlobContainersIncludeFlags); ++i)
+      for (size_t i = 0; i < sizeof(value_list) / sizeof(ListBlobContainersIncludeFlags); ++i)
       {
         if ((val & value_list[i]) == value_list[i])
         {
@@ -2759,7 +2759,7 @@ namespace Azure { namespace Storage { namespace Blobs {
           "uncommittedblobs",
       };
       std::string ret;
-      for (std::size_t i = 0; i < sizeof(value_list) / sizeof(ListBlobsIncludeFlags); ++i)
+      for (size_t i = 0; i < sizeof(value_list) / sizeof(ListBlobsIncludeFlags); ++i)
       {
         if ((val & value_list[i]) == value_list[i])
         {
@@ -2773,11 +2773,11 @@ namespace Azure { namespace Storage { namespace Blobs {
       return ret;
     }
 
-    class BlobRestClient {
+    class BlobRestClient final {
     public:
-      class Service {
+      class Service final {
       public:
-        struct ListBlobContainersOptions
+        struct ListBlobContainersOptions final
         {
           Azure::Nullable<int32_t> Timeout;
           Azure::Nullable<std::string> Prefix;
@@ -2843,7 +2843,7 @@ namespace Azure { namespace Storage { namespace Blobs {
               std::move(response), std::move(pHttpResponse));
         }
 
-        struct GetUserDelegationKeyOptions
+        struct GetUserDelegationKeyOptions final
         {
           Azure::Nullable<int32_t> Timeout;
           Azure::DateTime StartsOn;
@@ -2896,7 +2896,7 @@ namespace Azure { namespace Storage { namespace Blobs {
           return Azure::Response<UserDelegationKey>(std::move(response), std::move(pHttpResponse));
         }
 
-        struct GetServicePropertiesOptions
+        struct GetServicePropertiesOptions final
         {
           Azure::Nullable<int32_t> Timeout;
         }; // struct GetServicePropertiesOptions
@@ -2937,7 +2937,7 @@ namespace Azure { namespace Storage { namespace Blobs {
               std::move(response), std::move(pHttpResponse));
         }
 
-        struct SetServicePropertiesOptions
+        struct SetServicePropertiesOptions final
         {
           Azure::Nullable<int32_t> Timeout;
           BlobServiceProperties Properties;
@@ -2984,7 +2984,7 @@ namespace Azure { namespace Storage { namespace Blobs {
               std::move(response), std::move(pHttpResponse));
         }
 
-        struct GetAccountInfoOptions
+        struct GetAccountInfoOptions final
         {
           Azure::Nullable<int32_t> Timeout;
         }; // struct GetAccountInfoOptions
@@ -3022,7 +3022,7 @@ namespace Azure { namespace Storage { namespace Blobs {
           return Azure::Response<AccountInfo>(std::move(response), std::move(pHttpResponse));
         }
 
-        struct GetServiceStatisticsOptions
+        struct GetServiceStatisticsOptions final
         {
           Azure::Nullable<int32_t> Timeout;
         }; // struct GetServiceStatisticsOptions
@@ -3062,7 +3062,7 @@ namespace Azure { namespace Storage { namespace Blobs {
           return Azure::Response<ServiceStatistics>(std::move(response), std::move(pHttpResponse));
         }
 
-        struct FindBlobsByTagsOptions
+        struct FindBlobsByTagsOptions final
         {
           Azure::Nullable<int32_t> Timeout;
           std::string Where;
@@ -4557,9 +4557,9 @@ namespace Azure { namespace Storage { namespace Blobs {
 
       }; // class Service
 
-      class BlobContainer {
+      class BlobContainer final {
       public:
-        struct CreateBlobContainerOptions
+        struct CreateBlobContainerOptions final
         {
           Azure::Nullable<int32_t> Timeout;
           PublicAccessType AccessType = PublicAccessType::None;
@@ -4620,7 +4620,7 @@ namespace Azure { namespace Storage { namespace Blobs {
               std::move(response), std::move(pHttpResponse));
         }
 
-        struct DeleteBlobContainerOptions
+        struct DeleteBlobContainerOptions final
         {
           Azure::Nullable<int32_t> Timeout;
           Azure::Nullable<std::string> LeaseId;
@@ -4673,7 +4673,7 @@ namespace Azure { namespace Storage { namespace Blobs {
               std::move(response), std::move(pHttpResponse));
         }
 
-        struct UndeleteBlobContainerOptions
+        struct UndeleteBlobContainerOptions final
         {
           Azure::Nullable<int32_t> Timeout;
           std::string DeletedBlobContainerName;
@@ -4713,7 +4713,7 @@ namespace Azure { namespace Storage { namespace Blobs {
               std::move(response), std::move(pHttpResponse));
         }
 
-        struct GetBlobContainerPropertiesOptions
+        struct GetBlobContainerPropertiesOptions final
         {
           Azure::Nullable<int32_t> Timeout;
           Azure::Nullable<std::string> LeaseId;
@@ -4782,7 +4782,7 @@ namespace Azure { namespace Storage { namespace Blobs {
               std::move(response), std::move(pHttpResponse));
         }
 
-        struct SetBlobContainerMetadataOptions
+        struct SetBlobContainerMetadataOptions final
         {
           Azure::Nullable<int32_t> Timeout;
           Storage::Metadata Metadata;
@@ -4838,7 +4838,7 @@ namespace Azure { namespace Storage { namespace Blobs {
               std::move(response), std::move(pHttpResponse));
         }
 
-        struct ListBlobsOptions
+        struct ListBlobsOptions final
         {
           Azure::Nullable<int32_t> Timeout;
           Azure::Nullable<std::string> Prefix;
@@ -4904,7 +4904,7 @@ namespace Azure { namespace Storage { namespace Blobs {
               std::move(response), std::move(pHttpResponse));
         }
 
-        struct ListBlobsByHierarchyOptions
+        struct ListBlobsByHierarchyOptions final
         {
           Azure::Nullable<int32_t> Timeout;
           Azure::Nullable<std::string> Prefix;
@@ -4976,7 +4976,7 @@ namespace Azure { namespace Storage { namespace Blobs {
               std::move(response), std::move(pHttpResponse));
         }
 
-        struct GetBlobContainerAccessPolicyOptions
+        struct GetBlobContainerAccessPolicyOptions final
         {
           Azure::Nullable<int32_t> Timeout;
           Azure::Nullable<std::string> LeaseId;
@@ -5024,7 +5024,7 @@ namespace Azure { namespace Storage { namespace Blobs {
               std::move(response), std::move(pHttpResponse));
         }
 
-        struct SetBlobContainerAccessPolicyOptions
+        struct SetBlobContainerAccessPolicyOptions final
         {
           Azure::Nullable<int32_t> Timeout;
           PublicAccessType AccessType = PublicAccessType::None;
@@ -5098,7 +5098,7 @@ namespace Azure { namespace Storage { namespace Blobs {
               std::move(response), std::move(pHttpResponse));
         }
 
-        struct AcquireBlobContainerLeaseOptions
+        struct AcquireBlobContainerLeaseOptions final
         {
           Azure::Nullable<int32_t> Timeout;
           std::chrono::seconds LeaseDuration;
@@ -5160,7 +5160,7 @@ namespace Azure { namespace Storage { namespace Blobs {
               std::move(response), std::move(pHttpResponse));
         }
 
-        struct RenewBlobContainerLeaseOptions
+        struct RenewBlobContainerLeaseOptions final
         {
           Azure::Nullable<int32_t> Timeout;
           std::string LeaseId;
@@ -5217,7 +5217,7 @@ namespace Azure { namespace Storage { namespace Blobs {
               std::move(response), std::move(pHttpResponse));
         }
 
-        struct ChangeBlobContainerLeaseOptions
+        struct ChangeBlobContainerLeaseOptions final
         {
           Azure::Nullable<int32_t> Timeout;
           std::string LeaseId;
@@ -5276,7 +5276,7 @@ namespace Azure { namespace Storage { namespace Blobs {
               std::move(response), std::move(pHttpResponse));
         }
 
-        struct ReleaseBlobContainerLeaseOptions
+        struct ReleaseBlobContainerLeaseOptions final
         {
           Azure::Nullable<int32_t> Timeout;
           std::string LeaseId;
@@ -5332,7 +5332,7 @@ namespace Azure { namespace Storage { namespace Blobs {
               std::move(response), std::move(pHttpResponse));
         }
 
-        struct BreakBlobContainerLeaseOptions
+        struct BreakBlobContainerLeaseOptions final
         {
           Azure::Nullable<int32_t> Timeout;
           Azure::Nullable<std::chrono::seconds> BreakPeriod;
@@ -6258,9 +6258,9 @@ namespace Azure { namespace Storage { namespace Blobs {
 
       }; // class BlobContainer
 
-      class Blob {
+      class Blob final {
       public:
-        struct DownloadBlobOptions
+        struct DownloadBlobOptions final
         {
           Azure::Nullable<int32_t> Timeout;
           Azure::Nullable<Azure::Core::Http::HttpRange> Range;
@@ -6522,7 +6522,7 @@ namespace Azure { namespace Storage { namespace Blobs {
           if (x_ms_blob_committed_block_count__iterator != httpResponse.GetHeaders().end())
           {
             response.Details.CommittedBlockCount
-                = std::stoll(x_ms_blob_committed_block_count__iterator->second);
+                = std::stoi(x_ms_blob_committed_block_count__iterator->second);
           }
           auto x_ms_blob_sealed__iterator = httpResponse.GetHeaders().find("x-ms-blob-sealed");
           if (x_ms_blob_sealed__iterator != httpResponse.GetHeaders().end())
@@ -6616,7 +6616,7 @@ namespace Azure { namespace Storage { namespace Blobs {
           return Azure::Response<DownloadBlobResult>(std::move(response), std::move(pHttpResponse));
         }
 
-        struct DeleteBlobOptions
+        struct DeleteBlobOptions final
         {
           Azure::Nullable<int32_t> Timeout;
           Azure::Nullable<DeleteSnapshotsOption> DeleteSnapshots;
@@ -6703,7 +6703,7 @@ namespace Azure { namespace Storage { namespace Blobs {
           return DeleteCreateResponse(std::move(pHttpResponse), context);
         }
 
-        struct SetBlobExpiryOptions
+        struct SetBlobExpiryOptions final
         {
           Azure::Nullable<int32_t> Timeout;
           ScheduleBlobExpiryOriginType ExpiryOrigin;
@@ -6745,7 +6745,7 @@ namespace Azure { namespace Storage { namespace Blobs {
               std::move(response), std::move(pHttpResponse));
         }
 
-        struct UndeleteBlobOptions
+        struct UndeleteBlobOptions final
         {
           Azure::Nullable<int32_t> Timeout;
         }; // struct UndeleteBlobOptions
@@ -6779,7 +6779,7 @@ namespace Azure { namespace Storage { namespace Blobs {
           return Azure::Response<UndeleteBlobResult>(std::move(response), std::move(pHttpResponse));
         }
 
-        struct GetBlobPropertiesOptions
+        struct GetBlobPropertiesOptions final
         {
           Azure::Nullable<int32_t> Timeout;
           Azure::Nullable<std::string> EncryptionKey;
@@ -7106,7 +7106,7 @@ namespace Azure { namespace Storage { namespace Blobs {
           return Azure::Response<BlobProperties>(std::move(response), std::move(pHttpResponse));
         }
 
-        struct SetBlobHttpHeadersOptions
+        struct SetBlobHttpHeadersOptions final
         {
           Azure::Nullable<int32_t> Timeout;
           BlobHttpHeaders HttpHeaders;
@@ -7212,7 +7212,7 @@ namespace Azure { namespace Storage { namespace Blobs {
               std::move(response), std::move(pHttpResponse));
         }
 
-        struct SetBlobMetadataOptions
+        struct SetBlobMetadataOptions final
         {
           Azure::Nullable<int32_t> Timeout;
           Storage::Metadata Metadata;
@@ -7312,7 +7312,7 @@ namespace Azure { namespace Storage { namespace Blobs {
               std::move(response), std::move(pHttpResponse));
         }
 
-        struct SetBlobAccessTierOptions
+        struct SetBlobAccessTierOptions final
         {
           Azure::Nullable<int32_t> Timeout;
           Models::AccessTier AccessTier;
@@ -7376,7 +7376,7 @@ namespace Azure { namespace Storage { namespace Blobs {
           return SetAccessTierCreateResponse(std::move(pHttpResponse), context);
         }
 
-        struct StartBlobCopyFromUriOptions
+        struct StartBlobCopyFromUriOptions final
         {
           Azure::Nullable<int32_t> Timeout;
           Storage::Metadata Metadata;
@@ -7514,7 +7514,7 @@ namespace Azure { namespace Storage { namespace Blobs {
               std::move(response), std::move(pHttpResponse));
         }
 
-        struct AbortBlobCopyFromUriOptions
+        struct AbortBlobCopyFromUriOptions final
         {
           Azure::Nullable<int32_t> Timeout;
           std::string CopyId;
@@ -7558,7 +7558,7 @@ namespace Azure { namespace Storage { namespace Blobs {
               std::move(response), std::move(pHttpResponse));
         }
 
-        struct CreateBlobSnapshotOptions
+        struct CreateBlobSnapshotOptions final
         {
           Azure::Nullable<int32_t> Timeout;
           Storage::Metadata Metadata;
@@ -7679,7 +7679,7 @@ namespace Azure { namespace Storage { namespace Blobs {
               std::move(response), std::move(pHttpResponse));
         }
 
-        struct GetBlobTagsOptions
+        struct GetBlobTagsOptions final
         {
           Azure::Nullable<int32_t> Timeout;
           Azure::Nullable<std::string> IfTags;
@@ -7724,7 +7724,7 @@ namespace Azure { namespace Storage { namespace Blobs {
               std::move(response), std::move(pHttpResponse));
         }
 
-        struct SetBlobTagsOptions
+        struct SetBlobTagsOptions final
         {
           Azure::Nullable<int32_t> Timeout;
           std::map<std::string, std::string> Tags;
@@ -7775,7 +7775,7 @@ namespace Azure { namespace Storage { namespace Blobs {
           return Azure::Response<SetBlobTagsResult>(std::move(response), std::move(pHttpResponse));
         }
 
-        struct AcquireBlobLeaseOptions
+        struct AcquireBlobLeaseOptions final
         {
           Azure::Nullable<int32_t> Timeout;
           std::chrono::seconds LeaseDuration;
@@ -7851,7 +7851,7 @@ namespace Azure { namespace Storage { namespace Blobs {
               std::move(response), std::move(pHttpResponse));
         }
 
-        struct RenewBlobLeaseOptions
+        struct RenewBlobLeaseOptions final
         {
           Azure::Nullable<int32_t> Timeout;
           std::string LeaseId;
@@ -7922,7 +7922,7 @@ namespace Azure { namespace Storage { namespace Blobs {
               std::move(response), std::move(pHttpResponse));
         }
 
-        struct ChangeBlobLeaseOptions
+        struct ChangeBlobLeaseOptions final
         {
           Azure::Nullable<int32_t> Timeout;
           std::string LeaseId;
@@ -7995,7 +7995,7 @@ namespace Azure { namespace Storage { namespace Blobs {
               std::move(response), std::move(pHttpResponse));
         }
 
-        struct ReleaseBlobLeaseOptions
+        struct ReleaseBlobLeaseOptions final
         {
           Azure::Nullable<int32_t> Timeout;
           std::string LeaseId;
@@ -8071,7 +8071,7 @@ namespace Azure { namespace Storage { namespace Blobs {
               std::move(response), std::move(pHttpResponse));
         }
 
-        struct BreakBlobLeaseOptions
+        struct BreakBlobLeaseOptions final
         {
           Azure::Nullable<int32_t> Timeout;
           Azure::Nullable<std::chrono::seconds> BreakPeriod;
@@ -8278,9 +8278,9 @@ namespace Azure { namespace Storage { namespace Blobs {
 
       }; // class Blob
 
-      class BlockBlob {
+      class BlockBlob final {
       public:
-        struct UploadBlockBlobOptions
+        struct UploadBlockBlobOptions final
         {
           Azure::Nullable<int32_t> Timeout;
           Azure::Nullable<ContentHash> TransactionalContentHash;
@@ -8472,7 +8472,7 @@ namespace Azure { namespace Storage { namespace Blobs {
               std::move(response), std::move(pHttpResponse));
         }
 
-        struct StageBlockOptions
+        struct StageBlockOptions final
         {
           Azure::Nullable<int32_t> Timeout;
           std::string BlockId;
@@ -8591,7 +8591,7 @@ namespace Azure { namespace Storage { namespace Blobs {
           return Azure::Response<StageBlockResult>(std::move(response), std::move(pHttpResponse));
         }
 
-        struct StageBlockFromUriOptions
+        struct StageBlockFromUriOptions final
         {
           Azure::Nullable<int32_t> Timeout;
           std::string BlockId;
@@ -8750,7 +8750,7 @@ namespace Azure { namespace Storage { namespace Blobs {
               std::move(response), std::move(pHttpResponse));
         }
 
-        struct CommitBlockListOptions
+        struct CommitBlockListOptions final
         {
           Azure::Nullable<int32_t> Timeout;
           std::vector<std::pair<BlockType, std::string>> BlockList;
@@ -8914,7 +8914,7 @@ namespace Azure { namespace Storage { namespace Blobs {
               std::move(response), std::move(pHttpResponse));
         }
 
-        struct GetBlockListOptions
+        struct GetBlockListOptions final
         {
           Azure::Nullable<int32_t> Timeout;
           BlockListType ListType = BlockListType::Committed;
@@ -9117,9 +9117,9 @@ namespace Azure { namespace Storage { namespace Blobs {
 
       }; // class BlockBlob
 
-      class PageBlob {
+      class PageBlob final {
       public:
-        struct CreatePageBlobOptions
+        struct CreatePageBlobOptions final
         {
           Azure::Nullable<int32_t> Timeout;
           int64_t BlobSize = -1;
@@ -9280,7 +9280,7 @@ namespace Azure { namespace Storage { namespace Blobs {
               std::move(response), std::move(pHttpResponse));
         }
 
-        struct UploadPageBlobPagesOptions
+        struct UploadPageBlobPagesOptions final
         {
           Azure::Nullable<int32_t> Timeout;
           Azure::Core::Http::HttpRange Range;
@@ -9462,7 +9462,7 @@ namespace Azure { namespace Storage { namespace Blobs {
           return Azure::Response<UploadPagesResult>(std::move(response), std::move(pHttpResponse));
         }
 
-        struct UploadPageBlobPagesFromUriOptions
+        struct UploadPageBlobPagesFromUriOptions final
         {
           Azure::Nullable<int32_t> Timeout;
           std::string SourceUri;
@@ -9655,7 +9655,7 @@ namespace Azure { namespace Storage { namespace Blobs {
               std::move(response), std::move(pHttpResponse));
         }
 
-        struct ClearPageBlobPagesOptions
+        struct ClearPageBlobPagesOptions final
         {
           Azure::Nullable<int32_t> Timeout;
           Azure::Core::Http::HttpRange Range;
@@ -9783,7 +9783,7 @@ namespace Azure { namespace Storage { namespace Blobs {
           return Azure::Response<ClearPagesResult>(std::move(response), std::move(pHttpResponse));
         }
 
-        struct ResizePageBlobOptions
+        struct ResizePageBlobOptions final
         {
           Azure::Nullable<int32_t> Timeout;
           int64_t BlobSize = -1;
@@ -9903,7 +9903,7 @@ namespace Azure { namespace Storage { namespace Blobs {
               std::move(response), std::move(pHttpResponse));
         }
 
-        struct GetPageBlobPageRangesOptions
+        struct GetPageBlobPageRangesOptions final
         {
           Azure::Nullable<int32_t> Timeout;
           Azure::Nullable<std::string> PreviousSnapshot;
@@ -10004,7 +10004,7 @@ namespace Azure { namespace Storage { namespace Blobs {
               std::move(response), std::move(pHttpResponse));
         }
 
-        struct StartBlobCopyIncrementalOptions
+        struct StartBlobCopyIncrementalOptions final
         {
           Azure::Nullable<int32_t> Timeout;
           std::string CopySource;
@@ -10257,9 +10257,9 @@ namespace Azure { namespace Storage { namespace Blobs {
 
       }; // class PageBlob
 
-      class AppendBlob {
+      class AppendBlob final {
       public:
-        struct CreateAppendBlobOptions
+        struct CreateAppendBlobOptions final
         {
           Azure::Nullable<int32_t> Timeout;
           BlobHttpHeaders HttpHeaders;
@@ -10407,7 +10407,7 @@ namespace Azure { namespace Storage { namespace Blobs {
               std::move(response), std::move(pHttpResponse));
         }
 
-        struct AppendBlockOptions
+        struct AppendBlockOptions final
         {
           Azure::Nullable<int32_t> Timeout;
           Azure::Nullable<ContentHash> TransactionalContentHash;
@@ -10552,7 +10552,7 @@ namespace Azure { namespace Storage { namespace Blobs {
           response.AppendOffset
               = std::stoll(httpResponse.GetHeaders().at("x-ms-blob-append-offset"));
           response.CommittedBlockCount
-              = std::stoll(httpResponse.GetHeaders().at("x-ms-blob-committed-block-count"));
+              = std::stoi(httpResponse.GetHeaders().at("x-ms-blob-committed-block-count"));
           response.IsServerEncrypted
               = httpResponse.GetHeaders().at("x-ms-request-server-encrypted") == "true";
           auto x_ms_encryption_key_sha256__iterator
@@ -10571,7 +10571,7 @@ namespace Azure { namespace Storage { namespace Blobs {
           return Azure::Response<AppendBlockResult>(std::move(response), std::move(pHttpResponse));
         }
 
-        struct AppendBlockFromUriOptions
+        struct AppendBlockFromUriOptions final
         {
           Azure::Nullable<int32_t> Timeout;
           std::string SourceUri;
@@ -10729,7 +10729,7 @@ namespace Azure { namespace Storage { namespace Blobs {
           response.AppendOffset
               = std::stoll(httpResponse.GetHeaders().at("x-ms-blob-append-offset"));
           response.CommittedBlockCount
-              = std::stoll(httpResponse.GetHeaders().at("x-ms-blob-committed-block-count"));
+              = std::stoi(httpResponse.GetHeaders().at("x-ms-blob-committed-block-count"));
           response.IsServerEncrypted
               = httpResponse.GetHeaders().at("x-ms-request-server-encrypted") == "true";
           auto x_ms_encryption_key_sha256__iterator
@@ -10749,7 +10749,7 @@ namespace Azure { namespace Storage { namespace Blobs {
               std::move(response), std::move(pHttpResponse));
         }
 
-        struct SealAppendBlobOptions
+        struct SealAppendBlobOptions final
         {
           Azure::Nullable<int32_t> Timeout;
           Azure::Nullable<std::string> LeaseId;
@@ -10830,9 +10830,9 @@ namespace Azure { namespace Storage { namespace Blobs {
       private:
       }; // class AppendBlob
 
-      class BlobBatch {
+      class BlobBatch final {
       public:
-        struct SubmitBlobBatchOptions
+        struct SubmitBlobBatchOptions final
         {
           Azure::Nullable<int32_t> Timeout;
           std::string ContentType;

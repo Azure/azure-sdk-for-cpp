@@ -21,7 +21,7 @@ int main(int argc, char* argv[])
   (void)argc;
   (void)argv;
 
-  /**************** Container sdk client ************************/
+  /**************** Container SDK client ************************/
   /****************   Create container  ************************/
   try
   {
@@ -30,8 +30,8 @@ int main(int argc, char* argv[])
 
     containerClient.CreateIfNotExists();
 
-    /**************** Container sdk client ************************/
-    /****************      list Blobs (one page) ******************/
+    /**************** Container SDK client ************************/
+    /****************      list blobs (one page) ******************/
     auto response = containerClient.ListBlobsSinglePage();
     auto blobListPage = response.Value;
     for (auto blob : blobListPage.Items)

@@ -3,12 +3,18 @@
 
 /**
  * @file
- * @brief This file defines a macro for DLL export.
+ * @brief DLL export macro.
  */
 
 // For explanation, see the comment in azure/core/dll_import_export.hpp
 
 #pragma once
+
+/**
+ * @def AZ_STORAGE_FILES_SHARES_DLLEXPORT
+ * @brief Applies DLL export attribute, when applicable.
+ * @note See https://docs.microsoft.com/cpp/cpp/dllexport-dllimport?view=msvc-160.
+ */
 
 #if defined(AZ_STORAGE_FILES_SHARES_DLL) \
     || (0 /*@AZ_STORAGE_FILES_SHARES_DLL_INSTALLED_AS_PACKAGE@*/)
@@ -27,8 +33,8 @@
 #else // !defined(_MSC_VER)
 #define AZ_STORAGE_FILES_SHARES_DLLEXPORT
 #endif // _MSC_VER
-#else // !AZ_STORAGE_BLOBS_BUILT_AS_DLL
+#else // !AZ_STORAGE_FILES_SHARES_BUILT_AS_DLL
 #define AZ_STORAGE_FILES_SHARES_DLLEXPORT
-#endif // AZ_STORAGE_BLOBS_BUILT_AS_DLL
+#endif // AZ_STORAGE_FILES_SHARES_BUILT_AS_DLL
 
 #undef AZ_STORAGE_FILES_SHARES_BUILT_AS_DLL

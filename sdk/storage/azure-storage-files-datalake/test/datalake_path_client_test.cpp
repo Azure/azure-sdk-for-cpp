@@ -123,7 +123,7 @@ namespace Azure { namespace Storage { namespace Test {
   TEST_F(DataLakePathClientTest, PathHttpHeaders)
   {
     {
-      // Http headers works with create.
+      // HTTP headers works with create.
       auto httpHeader = GetInterestingHttpHeaders();
       std::vector<Files::DataLake::DataLakePathClient> pathClient;
       for (int32_t i = 0; i < 2; ++i)
@@ -145,7 +145,7 @@ namespace Azure { namespace Storage { namespace Test {
     }
 
     {
-      // Http headers works with SetHttpHeaders.
+      // HTTP headers works with SetHttpHeaders.
       auto httpHeader = GetInterestingHttpHeaders();
       std::vector<Files::DataLake::DataLakePathClient> pathClient;
       for (int32_t i = 0; i < 2; ++i)
@@ -166,7 +166,7 @@ namespace Azure { namespace Storage { namespace Test {
     }
 
     {
-      // Set http headers work with last modified access condition.
+      // Set HTTP headers work with last modified access condition.
       auto response = m_pathClient->GetProperties();
       Files::DataLake::SetPathHttpHeadersOptions options1;
       options1.AccessConditions.IfModifiedSince = response.Value.LastModified;
@@ -178,7 +178,7 @@ namespace Azure { namespace Storage { namespace Test {
     }
 
     {
-      // Set http headers work with last modified access condition.
+      // Set HTTP headers work with last modified access condition.
       auto response = m_pathClient->GetProperties();
       Files::DataLake::SetPathHttpHeadersOptions options1;
       options1.AccessConditions.IfNoneMatch = response.Value.ETag;

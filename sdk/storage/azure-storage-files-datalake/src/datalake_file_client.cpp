@@ -157,10 +157,11 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     protocolLayerOptions.RetainUncommittedData = options.RetainUncommittedData;
     protocolLayerOptions.Close = options.Close;
     protocolLayerOptions.ContentLength = 0;
-    if (options.ContentHash.HasValue()
-        && options.ContentHash.Value().Algorithm != HashAlgorithm::Md5)
+    if (options.ContentHash.HasValue())
     {
-      std::abort();
+      AZURE_ASSERT_MSG(
+          options.ContentHash.Value().Algorithm == HashAlgorithm::Md5,
+          "This operation only supports MD5 content hash.");
     }
     protocolLayerOptions.ContentMd5 = options.ContentHash;
     protocolLayerOptions.LeaseIdOptional = options.AccessConditions.LeaseId;
@@ -270,7 +271,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
 
   Azure::Response<Models::UploadFileFromResult> DataLakeFileClient::UploadFrom(
       const uint8_t* buffer,
-      std::size_t bufferSize,
+      size_t bufferSize,
       const UploadFileFromOptions& options,
       const Azure::Core::Context& context) const
   {
@@ -286,7 +287,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
 
   Azure::Response<Models::DownloadFileToResult> DataLakeFileClient::DownloadTo(
       uint8_t* buffer,
-      std::size_t bufferSize,
+      size_t bufferSize,
       const DownloadFileToOptions& options,
       const Azure::Core::Context& context) const
   {
@@ -376,11 +377,10 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
   {
     Blobs::_detail::BlobRestClient::Blob::SetBlobExpiryOptions protocolLayerOptions;
     protocolLayerOptions.ExpiryOrigin = expiryOrigin;
-    if (options.ExpiresOn.HasValue() && options.TimeToExpire.HasValue())
-    {
-      // ExpiresOn and TimeToExpire should be mutually exclusive.
-      std::abort();
-    }
+    AZURE_ASSERT_MSG(
+        !(options.ExpiresOn.HasValue() && options.TimeToExpire.HasValue()),
+        "ExpiresOn and TimeToExpire are mutually exclusive");
+
     if (options.ExpiresOn.HasValue())
     {
       protocolLayerOptions.ExpiryTime

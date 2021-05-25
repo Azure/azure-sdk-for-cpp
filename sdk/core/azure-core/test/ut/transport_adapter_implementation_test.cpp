@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
 
-#include "transport_adapter_base.hpp"
+#include "transport_adapter_base_test.hpp"
 
 #include <azure/core/http/policies/policy.hpp>
 #include <azure/core/http/transport.hpp>
@@ -48,7 +48,7 @@ namespace Azure { namespace Core { namespace Test {
    * this is why we need to duplicate each case based on the transport adapters built.
    */
 #if defined(BUILD_TRANSPORT_WINHTTP_ADAPTER) && defined(BUILD_CURL_HTTP_TRANSPORT_ADAPTER)
-  /* WinHttp + LibCurl */
+  /* WinHTTP + libcurl */
   INSTANTIATE_TEST_SUITE_P(
       Test,
       TransportAdapter,
@@ -58,7 +58,7 @@ namespace Azure { namespace Core { namespace Test {
       GetSuffix);
 
 #elif defined(BUILD_TRANSPORT_WINHTTP_ADAPTER)
-  /* WinHttp */
+  /* WinHTTP */
   INSTANTIATE_TEST_SUITE_P(
       Test,
       TransportAdapter,
@@ -67,7 +67,7 @@ namespace Azure { namespace Core { namespace Test {
       GetSuffix);
 
 #elif defined(BUILD_CURL_HTTP_TRANSPORT_ADAPTER)
-  /* LibCurl */
+  /* libcurl */
   INSTANTIATE_TEST_SUITE_P(
       Test,
       TransportAdapter,

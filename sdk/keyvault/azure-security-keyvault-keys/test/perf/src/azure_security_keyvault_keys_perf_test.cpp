@@ -3,7 +3,7 @@
 
 #include <azure/perf.hpp>
 
-#include "azure/keyvault/keys/test/get_key.hpp"
+#include "azure/keyvault/keys/test/get_key_test.hpp"
 
 int main(int argc, char** argv)
 {

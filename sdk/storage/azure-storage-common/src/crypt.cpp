@@ -88,11 +88,11 @@ namespace Azure { namespace Storage {
       Sha256,
     };
 
-    struct AlgorithmProviderInstance
+    struct AlgorithmProviderInstance final
     {
       BCRYPT_ALG_HANDLE Handle;
-      std::size_t ContextSize;
-      std::size_t HashLength;
+      size_t ContextSize;
+      size_t HashLength;
 
       AlgorithmProviderInstance(AlgorithmType type)
       {
@@ -910,7 +910,7 @@ namespace Azure { namespace Storage {
     return vr[0] ^ vr[1];
   }
 
-  void Crc64Hash::OnAppend(const uint8_t* data, std::size_t length)
+  void Crc64Hash::OnAppend(const uint8_t* data, size_t length)
   {
     m_length += length;
 
@@ -1087,12 +1087,12 @@ namespace Azure { namespace Storage {
     m_context ^= other.m_context;
   }
 
-  std::vector<uint8_t> Crc64Hash::OnFinal(const uint8_t* data, std::size_t length)
+  std::vector<uint8_t> Crc64Hash::OnFinal(const uint8_t* data, size_t length)
   {
     OnAppend(data, length);
     std::vector<uint8_t> binary;
     binary.resize(sizeof(m_context));
-    for (std::size_t i = 0; i < sizeof(m_context); ++i)
+    for (size_t i = 0; i < sizeof(m_context); ++i)
     {
       binary[i] = (m_context >> (8 * i)) & 0xff;
     }

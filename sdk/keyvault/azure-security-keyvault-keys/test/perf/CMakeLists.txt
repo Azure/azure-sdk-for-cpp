@@ -9,12 +9,12 @@ set(CMAKE_CXX_STANDARD_REQUIRED True)
 
 set(
   AZURE_KEYVAULT_KEY_PERF_TEST_HEADER
-  inc/azure/keyvault/keys/test/get_key.hpp
+  inc/azure/keyvault/keys/test/get_key_test.hpp
 )
 
 set(
   AZURE_KEYVAULT_KEY_PERF_TEST_SOURCE
-    src/main.cpp
+    src/azure_security_keyvault_keys_perf_test.cpp
 )
 
 # Name the binary to be created.

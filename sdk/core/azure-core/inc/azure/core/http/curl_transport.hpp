@@ -15,7 +15,7 @@
 namespace Azure { namespace Core { namespace Http {
 
   /**
-   * @brief The available options to set libcurl ssl options.
+   * @brief The available options to set libcurl SSL options.
    *
    * @remark The SDK will map the enum option to libcurl's specific option. See more info here:
    * https://curl.haxx.se/libcurl/c/CURLOPT_SSL_OPTIONS.html
@@ -26,7 +26,7 @@ namespace Azure { namespace Core { namespace Http {
     /**
      * @brief This option can enable the revocation list check.
      *
-     * @remark Libcurl does revocation list check by default for ssl backends that supports this
+     * @remark Libcurl does revocation list check by default for SSL backends that supports this
      * feature. However, the Azure SDK overrides libcurl's behavior and disables the revocation list
      * check by default.
      *
@@ -35,7 +35,7 @@ namespace Azure { namespace Core { namespace Http {
   };
 
   /**
-   * @brief Set the curl connection options like a proxy and CA path.
+   * @brief Set the libcurl connection options like a proxy and CA path.
    *
    */
   struct CurlTransportOptions final
@@ -72,7 +72,7 @@ namespace Azure { namespace Core { namespace Http {
      */
     bool HttpKeepAlive = true;
     /**
-     * @brief This option determines whether curl verifies the authenticity of the peer's
+     * @brief This option determines whether libcurl verifies the authenticity of the peer's
      * certificate.
      *
      * @remark The default value is `true`. More about this option:
@@ -101,7 +101,7 @@ namespace Azure { namespace Core { namespace Http {
 
   public:
     /**
-     * @brief Construct a new Curl Transport object.
+     * @brief Construct a new CurlTransport object.
      *
      * @param options Optional parameter to override the default options.
      */

@@ -176,7 +176,7 @@ namespace Azure { namespace Storage { namespace Sas {
    * @brief DataLakeSasBuilder is used to generate a Shared Access Signature (SAS) for an Azure
    * Storage DataLake filesystem or path.
    */
-  struct DataLakeSasBuilder
+  struct DataLakeSasBuilder final
   {
     /**
      * @brief The optional signed protocol field specifies the protocol permitted for a

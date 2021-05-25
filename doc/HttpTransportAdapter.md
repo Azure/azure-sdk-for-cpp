@@ -13,7 +13,7 @@ The Azure SDK for C++ provides two HTTP transport adapters as part of the azure-
 | --- |
 | Linux |
 | Windows |
-| MacOS |
+| macOS |
 
 </center>
 

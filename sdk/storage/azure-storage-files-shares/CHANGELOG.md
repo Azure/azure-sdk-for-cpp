@@ -1,6 +1,13 @@
 # Release History
 
-## 12.0.0-beta.11 (Unreleased)
+## 12.0.0-beta.12 (Unreleased)
+
+### Breaking Changes
+
+- Renamed `ContentLength` in `FileItemDetails` to `FileSize`.
+
+
+## 12.0.0-beta.11 (2021-05-19)
 
 ### New Features
 
@@ -8,6 +15,7 @@
 
 ### Breaking Changes
 
+- Added `final` specifier to classes and structures that are are not expected to be inheritable at the moment.
 - Renamed `HasMorePages()` in paged response to `HasPage()`.
 - `ShareLeaseClient::Change()` updates internal lease id.
 - `ShareItem::ShareMetadata` was renamed to `ShareItem::Metadata`.

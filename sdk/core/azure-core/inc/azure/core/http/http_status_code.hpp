@@ -13,6 +13,7 @@
 namespace Azure { namespace Core { namespace Http {
   /**
    * @brief Defines the possible HTTP status codes.
+   *
    */
   enum class HttpStatusCode
   {

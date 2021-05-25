@@ -22,7 +22,7 @@ mkdir build
 cd build
 
 # Generate and build
-# This code assumes that the SDK dependencies were installed with VCPKG
+# This code assumes that the SDK dependencies were installed with vcpkg
 cmake -DCMAKE_TOOLCHAIN_FILE=path/to/vcpkg/scripts/buildsystems/vcpkg.cmake ..
 cmake -build .
 ```

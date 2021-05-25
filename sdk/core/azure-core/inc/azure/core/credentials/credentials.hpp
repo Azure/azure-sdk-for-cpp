@@ -21,43 +21,51 @@
 namespace Azure { namespace Core { namespace Credentials {
 
   /**
-   * @brief Represents an access token.
+   * @brief An access token is used to authenticate requests.
+   *
    */
   struct AccessToken final
   {
     /**
      * @brief Token string.
+     *
      */
     std::string Token;
 
     /**
-     * @brief Token expiration.
+     * @brief A point in time after which the token expires.
+     *
      */
     DateTime ExpiresOn;
   };
 
   /**
-   * @brief Defines context for getting token.
+   * @brief Context for getting token.
+   *
    */
   struct TokenRequestContext final
   {
     /**
      * @brief Authentication scopes.
+     *
      */
     std::vector<std::string> Scopes;
   };
 
   /**
-   * @brief Token credential.
+   * @brief A base type of credential that uses Azure::Core::AccessToken to authenticate requests.
+   *
    */
   class TokenCredential {
   public:
     /**
-     * @brief Get an authentication token.
+     * @brief Gets an authentication token.
      *
-     * @param tokenRequestContext Context to get the token in.
+     * @param tokenRequestContext #Azure::Core::Credentials::TokenRequestContext to get the token
+     * in.
      * @param context #Azure::Core::Context so that operation can be cancelled.
      *
+     * @throw Azure::Core::Credentials::AuthenticationException Authentication error occurred.
      */
     virtual AccessToken GetToken(
         TokenRequestContext const& tokenRequestContext,
@@ -75,21 +83,24 @@ namespace Azure { namespace Core { namespace Credentials {
   };
 
   /**
-   * @brief An exception that gets thrown when authentication error occurs.
+   * @brief An exception that gets thrown when an authentication error occurs.
+   *
    */
   class AuthenticationException final : public std::exception {
     std::string m_message;
 
   public:
     /**
-     * @brief Construct with message string.
+     * @brief Constructs with message string.
      *
      * @param message Message string.
      */
     explicit AuthenticationException(std::string message) : m_message(std::move(message)) {}
 
     /**
-     * Get the explanatory string.
+     * Gets the explanatory string.
+     *
+     * @note See https://en.cppreference.com/w/cpp/error/exception/what.
      *
      * @return C string with explanatory information.
      */

@@ -1,16 +1,15 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
 
-#pragma once
-
 /**
- * @brief Add all non-optional headers from Azure Core.
- *
- * @remark The transport adapter headers are not included and are expected to be manually included.
- *
+ * @brief Includes all public headers from Azure Core SDK library.
+ * @note The transport adapter headers are not included.
  */
 
+#pragma once
+
 // azure/core
+#include "azure/core/azure_assert.hpp"
 #include "azure/core/base64.hpp"
 #include "azure/core/case_insensitive_containers.hpp"
 #include "azure/core/context.hpp"
@@ -23,6 +22,7 @@
 #include "azure/core/nullable.hpp"
 #include "azure/core/operation.hpp"
 #include "azure/core/operation_status.hpp"
+#include "azure/core/paged_response.hpp"
 #include "azure/core/platform.hpp"
 #include "azure/core/response.hpp"
 #include "azure/core/url.hpp"

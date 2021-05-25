@@ -118,7 +118,7 @@ namespace Azure { namespace Storage { namespace Blobs {
 
   Azure::Response<Models::UploadBlockBlobFromResult> BlockBlobClient::UploadFrom(
       const uint8_t* buffer,
-      std::size_t bufferSize,
+      size_t bufferSize,
       const UploadBlockBlobFromOptions& options,
       const Azure::Core::Context& context) const
   {
@@ -127,7 +127,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     constexpr int64_t MaxBlockNumber = 50000;
     constexpr int64_t BlockGrainSize = 1 * 1024 * 1024;
 
-    if (bufferSize <= static_cast<std::size_t>(options.TransferOptions.SingleUploadThreshold))
+    if (bufferSize <= static_cast<size_t>(options.TransferOptions.SingleUploadThreshold))
     {
       Azure::Core::IO::MemoryBodyStream contentStream(buffer, bufferSize);
       UploadBlockBlobOptions uploadBlockBlobOptions;
@@ -155,7 +155,7 @@ namespace Azure { namespace Storage { namespace Blobs {
 
     std::vector<std::string> blockIds;
     auto getBlockId = [](int64_t id) {
-      constexpr std::size_t BlockIdLength = 64;
+      constexpr size_t BlockIdLength = 64;
       std::string blockId = std::to_string(id);
       blockId = std::string(BlockIdLength - blockId.length(), '0') + blockId;
       return Azure::Core::Convert::Base64Encode(
@@ -163,19 +163,21 @@ namespace Azure { namespace Storage { namespace Blobs {
     };
 
     auto uploadBlockFunc = [&](int64_t offset, int64_t length, int64_t chunkId, int64_t numChunks) {
-      Azure::Core::IO::MemoryBodyStream contentStream(buffer + offset, length);
+      // TODO: Investigate changing lambda parameters to be size_t, unless they need to be int64_t
+      // for some reason.
+      Azure::Core::IO::MemoryBodyStream contentStream(buffer + offset, static_cast<size_t>(length));
       StageBlockOptions chunkOptions;
       auto blockInfo = StageBlock(getBlockId(chunkId), contentStream, chunkOptions, context);
       if (chunkId == numChunks - 1)
       {
-        blockIds.resize(static_cast<std::size_t>(numChunks));
+        blockIds.resize(static_cast<size_t>(numChunks));
       }
     };
 
     _internal::ConcurrentTransfer(
         0, bufferSize, chunkSize, options.TransferOptions.Concurrency, uploadBlockFunc);
 
-    for (std::size_t i = 0; i < blockIds.size(); ++i)
+    for (size_t i = 0; i < blockIds.size(); ++i)
     {
       blockIds[i] = getBlockId(static_cast<int64_t>(i));
     }
@@ -221,7 +223,7 @@ namespace Azure { namespace Storage { namespace Blobs {
 
     std::vector<std::string> blockIds;
     auto getBlockId = [](int64_t id) {
-      constexpr std::size_t BlockIdLength = 64;
+      constexpr size_t BlockIdLength = 64;
       std::string blockId = std::to_string(id);
       blockId = std::string(BlockIdLength - blockId.length(), '0') + blockId;
       return Azure::Core::Convert::Base64Encode(
@@ -237,7 +239,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       auto blockInfo = StageBlock(getBlockId(chunkId), contentStream, chunkOptions, context);
       if (chunkId == numChunks - 1)
       {
-        blockIds.resize(static_cast<std::size_t>(numChunks));
+        blockIds.resize(static_cast<size_t>(numChunks));
       }
     };
 
@@ -264,7 +266,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         options.TransferOptions.Concurrency,
         uploadBlockFunc);
 
-    for (std::size_t i = 0; i < blockIds.size(); ++i)
+    for (size_t i = 0; i < blockIds.size(); ++i)
     {
       blockIds[i] = getBlockId(static_cast<int64_t>(i));
     }

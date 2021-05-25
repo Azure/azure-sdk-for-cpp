@@ -104,6 +104,8 @@ if(BUILD_TESTING)
   )
 
   target_link_libraries(azure-storage-test PRIVATE azure-storage-blobs)
+
+  add_subdirectory(test/fault-injector)
 endif()
 
 if(BUILD_STORAGE_SAMPLES)
@@ -111,6 +113,8 @@ if(BUILD_STORAGE_SAMPLES)
     azure-storage-sample
       PRIVATE
         sample/blob_getting_started.cpp
+        sample/blob_list_operation.cpp
+        sample/blob_sas.cpp
   )
 
   target_link_libraries(azure-storage-sample PRIVATE azure-storage-blobs)

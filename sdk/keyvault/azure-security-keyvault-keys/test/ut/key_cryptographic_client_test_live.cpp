@@ -29,7 +29,7 @@ TEST_F(KeyVaultClientTest, RemoteEncrypt)
   rsaKeyOptions.KeySize = 2048;
   auto rsaKey = keyClient.CreateRsaKey(rsaKeyOptions).Value;
 
-  // init crypto client from key id. The remote client will get the key and try to create a local
+  // init crypto client from key ID. The remote client will get the key and try to create a local
   // crypto client.
   CryptographyClient cryptoClient(rsaKey.Id(), m_credential);
 
@@ -58,7 +58,7 @@ TEST_F(KeyVaultClientTest, RemoteWrap)
   rsaKeyOptions.KeySize = 2048;
   auto rsaKey = keyClient.CreateRsaKey(rsaKeyOptions).Value;
 
-  // init crypto client from key id. The remote client will get the key and try to create a local
+  // init crypto client from key ID. The remote client will get the key and try to create a local
   // crypto client.
   CryptographyClient cryptoClient(rsaKey.Id(), m_credential);
 
@@ -87,7 +87,7 @@ TEST_F(KeyVaultClientTest, RemoteSignVerifyRSA256)
   rsaKeyOptions.KeySize = 2048;
   auto rsaKey = keyClient.CreateRsaKey(rsaKeyOptions).Value;
 
-  // init crypto client from key id. The remote client will get the key and try to create a local
+  // init crypto client from key ID. The remote client will get the key and try to create a local
   // crypto client.
   CryptographyClient cryptoClient(rsaKey.Id(), m_credential);
   std::string digestSource("A single block of plaintext");
@@ -191,7 +191,7 @@ TEST_F(KeyVaultClientTest, RemoteSignVerifyRSA384)
   rsaKeyOptions.KeySize = 2048;
   auto rsaKey = keyClient.CreateRsaKey(rsaKeyOptions).Value;
 
-  // init crypto client from key id. The remote client will get the key and try to create a local
+  // init crypto client from key ID. The remote client will get the key and try to create a local
   // crypto client.
   CryptographyClient cryptoClient(rsaKey.Id(), m_credential);
   std::string digestSource("A single block of plaintext");
@@ -242,7 +242,7 @@ TEST_F(KeyVaultClientTest, RemoteSignVerifyDataRSA256)
   rsaKeyOptions.KeySize = 2048;
   auto rsaKey = keyClient.CreateRsaKey(rsaKeyOptions).Value;
 
-  // init crypto client from key id. The remote client will get the key and try to create a local
+  // init crypto client from key ID. The remote client will get the key and try to create a local
   // crypto client.
   CryptographyClient cryptoClient(rsaKey.Id(), m_credential);
   uint8_t dataSource[] = "A single block of plaintext";

@@ -24,52 +24,52 @@ namespace Azure { namespace Core {
   class RequestFailedException : public std::runtime_error {
   public:
     /**
-     * @brief The Http response code.
+     * @brief The HTTP response code.
      *
      */
     Azure::Core::Http::HttpStatusCode StatusCode = Azure::Core::Http::HttpStatusCode::None;
 
     /**
-     * @brief The Http reason phrase from the response.
+     * @brief The HTTP reason phrase from the response.
      *
      */
     std::string ReasonPhrase;
 
     /**
-     * @brief The client request header from the Http response.
+     * @brief The client request header from the HTTP response.
      *
      */
     std::string ClientRequestId;
 
     /**
-     * @brief The request id header from the Http response.
+     * @brief The request ID header from the HTTP response.
      *
      */
     std::string RequestId;
 
     /**
-     * @brief The error code from service returned in the Http response.
+     * @brief The error code from service returned in the HTTP response.
      *
      */
     std::string ErrorCode;
 
     /**
-     * @brief The error message from the service returned in the Http response.
+     * @brief The error message from the service returned in the HTTP response.
      *
      */
     std::string Message;
 
     /**
-     * @brief The entire Http raw response.
+     * @brief The entire HTTP raw response.
      *
      */
     std::unique_ptr<Azure::Core::Http::RawResponse> RawResponse;
 
     /**
-     * @brief Construct a new Request Failed Exception object.
+     * @brief Constructs a new `RequestFailedException` object.
      *
-     * @remark An Exception without an Http raw response represent an exception happend
-     * before sending the request to the server. There is no response yet.
+     * @note An Exception without an HTTP raw response represents an exception that happened
+     * before sending the request to the server.
      *
      * @param message The error description.
      */
@@ -79,18 +79,37 @@ namespace Azure { namespace Core {
     }
 
     /**
-     * @brief Construct a new Request Failed Exception object with an Http raw response.
+     * @brief Constructs a new `RequestFailedException` object with an HTTP raw response.
      *
-     * @remark The Http raw response is parsed to get the always expected information for all Azure
-     * Services like the status code, reason phrase and some headers like the request id. A concrete
-     * Service exception which derives from this exception uses its constructor to parse the Http
-     * raw response and assing the service specific values to the exception.
+     * @note The HTTP raw response is parsed to populate information expected from all Azure
+     * Services like the status code, reason phrase and some headers like the request ID. A concrete
+     * Service exception which derives from this exception uses its constructor to parse the HTTP
+     * raw response adding the service specific values to the exception.
      *
      * @param message The error description.
-     * @param rawResponse The Http raw response from the service.
+     * @param rawResponse The HTTP raw response from the service.
      */
     explicit RequestFailedException(
         const std::string& message,
         std::unique_ptr<Azure::Core::Http::RawResponse> rawResponse);
+
+    /**
+     * @brief Constructs a new `RequestFailedException` by copying from an existing one.
+     * @note Copies the #Azure::Core::Http::RawResponse into the new `RequestFailedException`.
+     *
+     * @param other The `RequestFailedException` to be copied.
+     */
+    RequestFailedException(const RequestFailedException& other)
+        : std::runtime_error(other.Message), StatusCode(other.StatusCode),
+          ReasonPhrase(other.ReasonPhrase), ClientRequestId(other.ClientRequestId),
+          RequestId(other.RequestId), ErrorCode(other.ErrorCode), Message(other.Message),
+          RawResponse(std::make_unique<Azure::Core::Http::RawResponse>(*other.RawResponse))
+    {
+    }
+
+    RequestFailedException(RequestFailedException&& other) = default;
+    RequestFailedException& operator=(const RequestFailedException&) = delete;
+    RequestFailedException& operator=(RequestFailedException&&) = delete;
+    ~RequestFailedException() = default;
   };
 }} // namespace Azure::Core

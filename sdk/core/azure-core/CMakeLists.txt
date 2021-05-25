@@ -170,6 +170,7 @@ if(BUILD_TESTING)
   if(DEFINED ENV{AZURE_CORE_ENABLE_JSON_TESTS})
     add_subdirectory(test/nlohmann-json-test)
   endif()
+  add_subdirectory(test/fault-injector)
 endif()
 
 if (BUILD_PERFORMANCE_TESTS)

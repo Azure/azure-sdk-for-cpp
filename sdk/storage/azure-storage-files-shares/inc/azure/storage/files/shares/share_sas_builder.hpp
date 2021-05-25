@@ -125,7 +125,7 @@ namespace Azure { namespace Storage { namespace Sas {
    * @brief ShareSasBuilder is used to generate a Shared Access Signature (SAS) for an Azure
    * Storage share or file.
    */
-  struct ShareSasBuilder
+  struct ShareSasBuilder final
   {
     /**
      * @brief The optional signed protocol field specifies the protocol permitted for a

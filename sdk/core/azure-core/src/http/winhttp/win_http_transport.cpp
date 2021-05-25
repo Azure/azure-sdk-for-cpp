@@ -323,16 +323,16 @@ void WinHttpTransport::Upload(std::unique_ptr<_detail::HandleManager>& handleMan
   int64_t streamLength = streamBody->Length();
 
   // Consider using `MaximumUploadChunkSize` here, after some perf measurements
-  int64_t uploadChunkSize = _detail::DefaultUploadChunkSize;
+  size_t uploadChunkSize = _detail::DefaultUploadChunkSize;
   if (streamLength < _detail::MaximumUploadChunkSize)
   {
-    uploadChunkSize = streamLength;
+    uploadChunkSize = static_cast<size_t>(streamLength);
   }
-  auto unique_buffer = std::make_unique<uint8_t[]>(static_cast<size_t>(uploadChunkSize));
+  auto unique_buffer = std::make_unique<uint8_t[]>(uploadChunkSize);
 
   while (true)
   {
-    auto rawRequestLen
+    size_t rawRequestLen
         = streamBody->Read(unique_buffer.get(), uploadChunkSize, handleManager->m_context);
     if (rawRequestLen == 0)
     {
@@ -614,50 +614,23 @@ std::unique_ptr<RawResponse> WinHttpTransport::Send(Request& request, Context co
 }
 
 // Read the response from the sent request.
-int64_t _detail::WinHttpStream::OnRead(uint8_t* buffer, int64_t count, Context const& context)
+size_t _detail::WinHttpStream::OnRead(uint8_t* buffer, size_t count, Context const& context)
 {
-  if (count <= 0 || this->m_isEOF)
+  if (count == 0 || this->m_isEOF)
   {
     return 0;
   }
 
-  DWORD numberOfBytesRead = 0;
-
   // No need to check for context cancellation before the first I/O because the base class
   // BodyStream::Read already does that.
+  (void)context;
 
-  // Check for available data.
-  DWORD numberOfBytesAvailable = 0;
-  if (!WinHttpQueryDataAvailable(this->m_handleManager->m_requestHandle, &numberOfBytesAvailable))
-  {
-    // Errors include:
-    // ERROR_WINHTTP_CONNECTION_ERROR
-    // ERROR_WINHTTP_INCORRECT_HANDLE_STATE
-    // ERROR_WINHTTP_INCORRECT_HANDLE_TYPE
-    // ERROR_WINHTTP_INTERNAL_ERROR
-    // ERROR_WINHTTP_OPERATION_CANCELLED
-    // ERROR_WINHTTP_TIMEOUT
-    // ERROR_NOT_ENOUGH_MEMORY
-
-    DWORD error = GetLastError();
-    throw Azure::Core::Http::TransportException(
-        "Error while querying how much data is available to read. Error Code: "
-        + std::to_string(error) + ".");
-  }
-
-  DWORD numberOfBytesToRead = numberOfBytesAvailable;
-  if (numberOfBytesAvailable > count)
-  {
-    numberOfBytesToRead = static_cast<DWORD>(count);
-  }
-
-  // Check context cancellation again before the next I/O
-  context.ThrowIfCancelled();
+  DWORD numberOfBytesRead = 0;
 
   if (!WinHttpReadData(
           this->m_handleManager->m_requestHandle,
           (LPVOID)(buffer),
-          numberOfBytesToRead,
+          static_cast<DWORD>(count),
           &numberOfBytesRead))
   {
     // Errors include:

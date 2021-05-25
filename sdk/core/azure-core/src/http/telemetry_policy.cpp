@@ -24,6 +24,7 @@ namespace Azure { namespace Core { namespace _internal {
 
   /**
    * @brief HkeyHolder ensures native handle resource is released.
+   *
    */
   class HkeyHolder final {
   private:
@@ -158,9 +159,9 @@ std::string TelemetryPolicy::BuildTelemetryId(
 
 std::unique_ptr<RawResponse> TelemetryPolicy::Send(
     Request& request,
-    NextHttpPolicy nextHttpPolicy,
-    Context const& ctx) const
+    NextHttpPolicy nextPolicy,
+    Context const& context) const
 {
   request.SetHeader("User-Agent", m_telemetryId);
-  return nextHttpPolicy.Send(request, ctx);
+  return nextPolicy.Send(request, context);
 }

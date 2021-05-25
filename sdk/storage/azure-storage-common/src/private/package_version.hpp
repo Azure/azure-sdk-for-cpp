@@ -13,7 +13,7 @@
 #define AZURE_STORAGE_COMMON_VERSION_MAJOR 12
 #define AZURE_STORAGE_COMMON_VERSION_MINOR 0
 #define AZURE_STORAGE_COMMON_VERSION_PATCH 0
-#define AZURE_STORAGE_COMMON_VERSION_PRERELEASE "beta.11"
+#define AZURE_STORAGE_COMMON_VERSION_PRERELEASE "beta.12"
 
 #define AZURE_STORAGE_COMMON_VERSION_ITOA_HELPER(i) #i
 #define AZURE_STORAGE_COMMON_VERSION_ITOA(i) AZURE_STORAGE_COMMON_VERSION_ITOA_HELPER(i)
@@ -22,7 +22,7 @@ namespace Azure { namespace Storage { namespace Common { namespace _detail {
   /**
    * @brief Provides version information.
    */
-  class PackageVersion {
+  class PackageVersion final {
   public:
     /// Major numeric identifier.
     static constexpr int Major = AZURE_STORAGE_COMMON_VERSION_MAJOR;

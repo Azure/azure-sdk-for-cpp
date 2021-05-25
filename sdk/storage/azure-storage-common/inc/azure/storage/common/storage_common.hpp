@@ -37,7 +37,7 @@ namespace Azure { namespace Storage {
   /**
    * @brief Hash used to check content integrity.
    */
-  struct ContentHash
+  struct ContentHash final
   {
     /**
      * @brief Binary hash value.

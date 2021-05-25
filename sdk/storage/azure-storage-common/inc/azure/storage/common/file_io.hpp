@@ -16,7 +16,7 @@ namespace Azure { namespace Storage { namespace _internal {
   using FileHandle = int;
 #endif
 
-  class FileReader {
+  class FileReader final {
   public:
     FileReader(const std::string& filename);
 
@@ -31,7 +31,7 @@ namespace Azure { namespace Storage { namespace _internal {
     int64_t m_fileSize;
   };
 
-  class FileWriter {
+  class FileWriter final {
   public:
     FileWriter(const std::string& filename);
 
@@ -39,7 +39,7 @@ namespace Azure { namespace Storage { namespace _internal {
 
     FileHandle GetHandle() const { return m_handle; }
 
-    void Write(const uint8_t* buffer, int64_t length, int64_t offset);
+    void Write(const uint8_t* buffer, size_t length, int64_t offset);
 
   private:
     FileHandle m_handle;

@@ -218,7 +218,7 @@ namespace Azure { namespace Storage { namespace Test {
       Blobs::StartBlobCopyFromUriOptions options;
       options.SourceAccessConditions.LeaseId = Blobs::BlobLeaseClient::CreateUniqueLeaseId();
       /*
-      don't know why, the copy operation also succeeds even if the lease id doesn't match.
+      don't know why, the copy operation also succeeds even if the lease ID doesn't match.
       EXPECT_THROW(
           destBlobClient.StartCopyFromUri(sourceBlobClient.GetUrl(), options), StorageException);
       */

@@ -3,7 +3,7 @@
 
 /**
  * @file
- * @brief This file defines a macro for DLL export.
+ * @brief DLL export macro.
  */
 
 // Everything below applies to Windows builds when building the SDK library as DLL.
@@ -30,7 +30,7 @@
 // is being built as a DLL, AZ_xxx_DLL is defined. It is also being propagated to any code that
 // consumes Azure SDK code via CMake, i.e. anything in the build tree of the Azure SDK when building
 // the entire SDK, OR if a customer code consumes SDK via fetchcontent. In case that the SDK is
-// being distributed as a package, i.e. VcPkg, the install step (defined in az_vcpkg_export()) will
+// being distributed as a package, i.e. vcpkg, the install step (defined in az_vcpkg_export()) will
 // take care of patching the installed header to carry the knowledge that the library was built as
 // DLL (and if it was built as both static and dynamic library, there will be no collision because
 // each installation has its own header installation directory).
@@ -67,6 +67,12 @@
 
 #pragma once
 
+/**
+ * @def AZ_CORE_DLLEXPORT
+ * @brief Applies DLL export attribute, when applicable.
+ * @note See https://docs.microsoft.com/cpp/cpp/dllexport-dllimport?view=msvc-160.
+ */
+
 #if defined(AZ_CORE_DLL) || (0 /*@AZ_CORE_DLL_INSTALLED_AS_PACKAGE@*/)
 #define AZ_CORE_BUILT_AS_DLL 1
 #else
@@ -88,3 +94,59 @@
 #endif // AZ_CORE_BUILT_AS_DLL
 
 #undef AZ_CORE_BUILT_AS_DLL
+
+/**
+ * @brief Azure SDK abstractions.
+ *
+ */
+namespace Azure {
+
+/**
+ * @brief Abstractions commonly used by Azure SDK client libraries.
+ *
+ */
+namespace Core {
+
+  /**
+   * @brief Credential-related abstractions.
+   *
+   */
+  namespace Credentials {
+  }
+
+  /**
+   * @brief Cryptography-related abstractions.
+   *
+   */
+  namespace Cryptography {
+  }
+
+  /**
+   * @brief Diagnostics-related abstractions, such as logging.
+   *
+   */
+  namespace Diagnostics {
+  }
+
+  /**
+   * @brief Abstractions related to HTTP transport layer.
+   *
+   */
+  namespace Http {
+
+    /**
+     * @brief Abstractions related to controlling the behavior of HTTP requests.
+     *
+     */
+    namespace Policies {
+    }
+  } // namespace Http
+
+  /**
+   * @brief Abstractions related to communications with Azure.
+   *
+   */
+  namespace IO {
+  }
+} // namespace Core
+} // namespace Azure

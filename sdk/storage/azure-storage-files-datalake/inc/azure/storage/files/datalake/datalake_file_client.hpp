@@ -20,7 +20,7 @@
 
 namespace Azure { namespace Storage { namespace Files { namespace DataLake {
 
-  class DataLakeFileClient : public DataLakePathClient {
+  class DataLakeFileClient final : public DataLakePathClient {
   public:
     /**
      * @brief Create from connection string
@@ -68,10 +68,10 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
         const DataLakeClientOptions& options = DataLakeClientOptions());
 
     /**
-     * @brief Gets the file's primary url endpoint. This is the endpoint used for blob
+     * @brief Gets the file's primary URL endpoint. This is the endpoint used for blob
      * storage available features in DataLake.
      *
-     * @return The file's primary url endpoint.
+     * @return The file's primary URL endpoint.
      */
     std::string GetUrl() const { return m_blobClient.GetUrl(); }
 
@@ -200,7 +200,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
      */
     Azure::Response<Models::UploadFileFromResult> UploadFrom(
         const uint8_t* buffer,
-        std::size_t bufferSize,
+        size_t bufferSize,
         const UploadFileFromOptions& options = UploadFileFromOptions(),
         const Azure::Core::Context& context = Azure::Core::Context()) const;
 
@@ -233,7 +233,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
      */
     Azure::Response<Models::DownloadFileToResult> DownloadTo(
         uint8_t* buffer,
-        std::size_t bufferSize,
+        size_t bufferSize,
         const DownloadFileToOptions& options = DownloadFileToOptions(),
         const Azure::Core::Context& context = Azure::Core::Context()) const;
 

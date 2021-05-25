@@ -16,7 +16,7 @@ namespace Azure { namespace Storage {
    * @brief The class for the CRC64 hash function which maps binary data of an arbitrary length to
    * small binary data of a fixed length.
    */
-  class Crc64Hash : public Azure::Core::Cryptography::Hash {
+  class Crc64Hash final : public Azure::Core::Cryptography::Hash {
   public:
     /**
      * @brief Concatenates another #Crc64 instance after this instance. This operation has the same
@@ -32,8 +32,8 @@ namespace Azure { namespace Storage {
     uint64_t m_context = 0ULL;
     uint64_t m_length = 0ULL;
 
-    void OnAppend(const uint8_t* data, std::size_t length) override;
-    std::vector<uint8_t> OnFinal(const uint8_t* data, std::size_t length) override;
+    void OnAppend(const uint8_t* data, size_t length) override;
+    std::vector<uint8_t> OnFinal(const uint8_t* data, size_t length) override;
   };
 
   namespace _internal {

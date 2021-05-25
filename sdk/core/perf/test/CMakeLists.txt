@@ -20,7 +20,7 @@ set(
 
 set(
   AZURE_PERF_TEST_SOURCE
-    src/main.cpp
+    src/perf_test.cpp
 )
 
 # Name the binary to be created.

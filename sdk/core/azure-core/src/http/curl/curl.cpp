@@ -336,7 +336,7 @@ CURLcode CurlSession::Perform(Context const& context)
   // Set the session state
   m_sessionState = SessionState::PERFORM;
 
-  // LibCurl settings after connection is open (headers)
+  // libcurl settings after connection is open (headers)
   {
     auto headers = this->m_request.GetHeaders();
     auto hostHeader = headers.find("Host");
@@ -424,7 +424,7 @@ static std::unique_ptr<RawResponse> CreateHTTPResponse(
     uint8_t const* const begin,
     uint8_t const* const last)
 {
-  // set response code, http version and reason phrase (i.e. HTTP/1.1 200 OK)
+  // set response code, HTTP version and reason phrase (i.e. HTTP/1.1 200 OK)
   auto start = begin + 5; // HTTP = 4, / = 1, moving to 5th place for version
   auto end = std::find(start, last, '.');
   auto majorVersion = std::stoi(std::string(start, end));
@@ -442,7 +442,7 @@ static std::unique_ptr<RawResponse> CreateHTTPResponse(
   auto reasonPhrase = std::string(start, end); // remove \r
 
   // allocate the instance of response to heap with shared ptr
-  // So this memory gets delegated outside Curl Transport as a shared ptr so memory will be
+  // So this memory gets delegated outside CurlTransport as a shared_ptr so memory will be
   // eventually released
   return std::make_unique<RawResponse>(
       static_cast<uint16_t>(majorVersion),
@@ -531,14 +531,13 @@ CURLcode CurlSession::UploadBody(Context const& context)
 
   while (true)
   {
-    auto rawRequestLen
+    size_t rawRequestLen
         = streamBody->Read(unique_buffer.get(), _detail::DefaultUploadChunkSize, context);
     if (rawRequestLen == 0)
     {
       break;
     }
-    sendResult = m_connection->SendBuffer(
-        unique_buffer.get(), static_cast<size_t>(rawRequestLen), context);
+    sendResult = m_connection->SendBuffer(unique_buffer.get(), rawRequestLen, context);
     if (sendResult != CURLE_OK)
     {
       return sendResult;
@@ -547,7 +546,7 @@ CURLcode CurlSession::UploadBody(Context const& context)
   return sendResult;
 }
 
-// custom sending to wire an http request
+// custom sending to wire an HTTP request
 CURLcode CurlSession::SendRawHttp(Context const& context)
 {
   // something like GET /path HTTP1.0 \r\nheaders\r\n
@@ -780,9 +779,9 @@ void CurlSession::ReadCRLF(Context const& context)
 }
 
 // Read from curl session
-int64_t CurlSession::OnRead(uint8_t* buffer, int64_t count, Context const& context)
+size_t CurlSession::OnRead(uint8_t* buffer, size_t count, Context const& context)
 {
-  if (count <= 0 || this->IsEOF())
+  if (count == 0 || this->IsEOF())
   {
     return 0;
   }
@@ -807,10 +806,10 @@ int64_t CurlSession::OnRead(uint8_t* buffer, int64_t count, Context const& conte
     }
   }
 
-  auto totalRead = int64_t();
-  auto readRequestLength = this->m_isChunkedResponseType
-      ? (std::min)(this->m_chunkSize - this->m_sessionTotalRead, count)
-      : count;
+  auto totalRead = size_t();
+  int64_t readRequestLength = this->m_isChunkedResponseType
+      ? (std::min)(this->m_chunkSize - this->m_sessionTotalRead, static_cast<int64_t>(count))
+      : static_cast<int64_t>(count);
 
   // For responses with content-length, avoid trying to read beyond Content-length or
   // libcurl could return a second response as BadRequest.
@@ -825,11 +824,17 @@ int64_t CurlSession::OnRead(uint8_t* buffer, int64_t count, Context const& conte
   if (this->m_bodyStartInBuffer >= 0)
   {
     // still have data to take from innerbuffer
+    // TODO: Change the fields to be size_t for a less error-prone implementation
+    // The casts here are safe to do because we know the buffers and the offset are within the
+    // range.
     Azure::Core::IO::MemoryBodyStream innerBufferMemoryStream(
         this->m_readBuffer + this->m_bodyStartInBuffer,
-        this->m_innerBufferSize - this->m_bodyStartInBuffer);
+        static_cast<size_t>(this->m_innerBufferSize - this->m_bodyStartInBuffer));
 
-    totalRead = innerBufferMemoryStream.Read(buffer, readRequestLength, context);
+    // From code inspection, it is guaranteed that the readRequestLength will fit within size_t
+    // since count is bounded by size_t.
+    totalRead
+        = innerBufferMemoryStream.Read(buffer, static_cast<size_t>(readRequestLength), context);
     this->m_bodyStartInBuffer += totalRead;
     this->m_sessionTotalRead += totalRead;
 
@@ -884,7 +889,7 @@ void CurlConnection::Shutdown()
 }
 
 // Read from socket and return the number of bytes taken from socket
-int64_t CurlConnection::ReadFromSocket(uint8_t* buffer, int64_t bufferSize, Context const& context)
+size_t CurlConnection::ReadFromSocket(uint8_t* buffer, size_t bufferSize, Context const& context)
 {
   // loop until read result is not CURLE_AGAIN
   // Next loop is expected to be called at most 2 times:
@@ -899,7 +904,7 @@ int64_t CurlConnection::ReadFromSocket(uint8_t* buffer, int64_t bufferSize, Cont
   size_t readBytes = 0;
   for (CURLcode readResult = CURLE_AGAIN; readResult == CURLE_AGAIN;)
   {
-    readResult = curl_easy_recv(m_handle, buffer, static_cast<size_t>(bufferSize), &readBytes);
+    readResult = curl_easy_recv(m_handle, buffer, bufferSize, &readBytes);
 
     switch (readResult)
     {

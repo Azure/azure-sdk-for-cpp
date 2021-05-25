@@ -53,6 +53,7 @@ namespace Azure { namespace Storage { namespace _internal {
     std::string EndpointSuffix
         = getWithDefault(connectionStringMap, "EndpointSuffix", "core.windows.net");
     std::string accountName = getWithDefault(connectionStringMap, "AccountName");
+    connectionStringParts.AccountName = accountName;
 
     std::string endpoint = getWithDefault(connectionStringMap, "BlobEndpoint");
     if (endpoint.empty() && !accountName.empty())
@@ -83,6 +84,7 @@ namespace Azure { namespace Storage { namespace _internal {
     connectionStringParts.QueueServiceUrl = Azure::Core::Url(std::move(endpoint));
 
     std::string accountKey = getWithDefault(connectionStringMap, "AccountKey");
+    connectionStringParts.AccountKey = accountKey;
     if (!accountKey.empty())
     {
       if (accountName.empty())

@@ -25,6 +25,10 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
    */
   struct KeyVaultKey
   {
+    /**
+     * @brief Destructor.
+     *
+     */
     virtual ~KeyVaultKey() = default;
 
     /**
@@ -55,7 +59,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
     /**
      * @brief Get the Key identifier.
      *
-     * @return The key id.
+     * @return The key ID.
      */
     std::string const& Id() const { return Key.Id; }
 

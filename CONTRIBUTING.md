@@ -80,7 +80,7 @@ Follow [vcpkg install guide](https://github.com/microsoft/vcpkg#getting-started)
 
 When using vcpkg, you can set the `VCPKG_ROOT` environment variable to the vcpkg Git repository folder. This would automatically set the CMake variable `CMAKE_TOOLCHAIN_FILE` for you, enabling the project to use any library installed with vcpkg.
 
-The Azure SDK for C++ uses [this vcpkg release version](https://github.com/Azure/azure-sdk-for-cpp/blob/master/eng/vcpkg-commit.txt) for continuos integration (CI) building and testing. Make sure to checkout this version when following the next steps for building and running the Azure SDK for C++. Using a newer vcpkg version might still work, however, if it is tested.
+The Azure SDK for C++ uses [this vcpkg release version](https://github.com/Azure/azure-sdk-for-cpp/blob/master/eng/vcpkg-commit.txt) for continuous integration (CI) building and testing. Make sure to checkout this version when following the next steps for building and running the Azure SDK for C++. Using a newer vcpkg version might still work, however, if it is tested.
 
 ```sh
 # Checking out vcpkg release version before installing dependencies
@@ -90,7 +90,7 @@ cd vcpkg
 # Checkout the vcpkg commit from the vcpkg-commit.txt file (link above)
 git checkout <vcpkg commit>
 
-# build vcpkg (showing linux command, see vcpkg getting started for windows)
+# build vcpkg (showing Linux command, see vcpkg getting started for Windows)
 ./bootstrap-vcpkg.sh
 ./vcpkg install curl libxml2
 ```
@@ -144,7 +144,7 @@ The following CMake options are available for adding/removing project features.
 </tr>
 <tr>
 <td>RUN_LONG_UNIT_TESTS</td>
-<td>Enables the special unit tests which takes more than 3 minutes to run. THis tests are for some specific features like the connection pool for curl transport adapter.</td>
+<td>Enables the special unit tests which takes more than 3 minutes to run. These tests are for some specific features like the connection pool for libcurl transport adapter.</td>
 <td>OFF</td>
 </tr>
 <tr>
@@ -154,7 +154,7 @@ The following CMake options are available for adding/removing project features.
 </tr>
 <tr>
 <td>BUILD_TRANSPORT_CURL</td>
-<td>Build the curl http transport adapter. When building on Posix systems, if no other transport adapter is built, this option will be automatically turned ON</td>
+<td>Build the libcurl HTTP transport adapter. When building on POSIX systems, if no other transport adapter is built, this option will be automatically turned ON</td>
 <td>OFF</td>
 </tr>
 <tr>
@@ -191,7 +191,7 @@ ctest -V
 # Use -N to list test that are part of test set
 ctest -N
 # Use -R to use a regular exp for what to run
-ctest -R Http # runs only Http tests
+ctest -R Http # runs only HTTP tests
 ```
 
 #### Generating Code Coverage reports

@@ -17,6 +17,7 @@ namespace Azure {
 
 /**
  * @brief Represents an HTTP validator.
+ *
  */
 class ETag final {
   // ETag is a validator based on https://tools.ietf.org/html/rfc7232#section-2.3.2
@@ -26,6 +27,7 @@ private:
 public:
   /**
    * @brief The comparison type.
+   *
    */
   enum class ETagComparison
   {
@@ -112,11 +114,12 @@ public:
         break;
     }
     // Unknown comparison
-    AZURE_UNREACHABLE_CODE;
+    AZURE_UNREACHABLE_CODE();
   }
 
   /**
    * @brief Construct an empty (null) #Azure::Core::ETag.
+   *
    */
   ETag() = default;
 

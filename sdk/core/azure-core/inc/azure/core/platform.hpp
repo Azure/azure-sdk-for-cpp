@@ -3,7 +3,7 @@
 
 /**
  * @file
- * @brief Defines platform-specific macros.
+ * @brief Platform-specific macros.
  */
 
 // The proper way to check for "UWP/NOT UWP" (*):
@@ -13,7 +13,7 @@
 // meant to detect as fully-featured Win32 API (i.e. registry access, FileOpen() etc.) = "NOT UWP"
 // (4.) "#else" you are on "UWP" (*)
 // 5. Some features (i.e. WinHTTP) may have support for some non-traditional-Win32 desktops, yet not
-// the entirety of "UWP"(*). For example, WinHttp would currently compile and work on the following:
+// the entirety of "UWP"(*). For example, WinHTTP would currently compile and work on the following:
 // WINAPI_PARTITION_DESKTOP, WINAPI_PARTITION_SYSTEM, WINAPI_PARTITION_GAMES, so more complex
 // conditions are possible (****).
 //
@@ -34,12 +34,12 @@
 // 10 desktop, it has a "Full WIn32 API", it has WINAPI_PARTITION_DESKTOP defined, and
 // WINAPI_PARTITION_DESKTOP evaluates to 1. Otherwise, it is a UWP, which also has
 // WINAPI_PARTITION_DESKTOP defined, but it evaluates as 0.
-// (****) - VcPkg could be limiting the default option, because at the moment it only distinguishes
+// (****) - vcpkg could be limiting the default option, because at the moment it only distinguishes
 // between "UWP" and "Not UWP". So, if we have a default option indicating whether to build WinHTTP,
 // the best we can do is to enable build by default on (windows&!uwp). We can't remove the "!uwp"
 // part, because on some partitions compilation will fail. However, there is always an option for
 // the customer to run "vcpkg install azure-core-cpp[winhttp]" manually, and the build attempt will
-// be made (even if targeting Mac or Linux).
+// be made (even if targeting macOS or Linux).
 
 #pragma once
 

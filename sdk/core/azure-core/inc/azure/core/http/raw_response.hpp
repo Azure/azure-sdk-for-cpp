@@ -3,7 +3,7 @@
 
 /**
  * @file
- * @brief Define the Http raw response.
+ * @brief Define the HTTP raw response.
  */
 
 #pragma once
@@ -19,6 +19,7 @@
 namespace Azure { namespace Core { namespace Http {
   /**
    * @brief Raw HTTP response.
+   *
    */
   class RawResponse final {
 
@@ -75,9 +76,15 @@ namespace Azure { namespace Core { namespace Http {
             response.m_statusCode,
             response.m_reasonPhrase)
     {
+      AZURE_ASSERT(m_bodyStream == nullptr);
       // Copy body
       m_body = response.GetBody();
     }
+
+    RawResponse(RawResponse&& response) = default;
+    RawResponse& operator=(RawResponse const&) = delete;
+    RawResponse& operator=(RawResponse&&) = delete;
+    ~RawResponse() = default;
 
     // ===== Methods used to build HTTP response =====
 
@@ -107,26 +114,30 @@ namespace Azure { namespace Core { namespace Http {
      */
     void SetBody(std::vector<uint8_t> body) { this->m_body = std::move(body); }
 
-    // adding getters for version and stream body. Clang will complain on Mac if we have unused
+    // adding getters for version and stream body. Clang will complain on macOS if we have unused
     // fields in a class
 
     /**
      * @brief Get HTTP status code of the HTTP response.
+     *
      */
     HttpStatusCode GetStatusCode() const;
 
     /**
      * @brief Get HTTP reason phrase code of the HTTP response.
+     *
      */
     std::string const& GetReasonPhrase() const;
 
     /**
      * @brief Get HTTP response headers.
+     *
      */
     CaseInsensitiveMap const& GetHeaders() const;
 
     /**
      * @brief Get HTTP response body as #Azure::Core::IO::BodyStream.
+     *
      */
     std::unique_ptr<Azure::Core::IO::BodyStream> ExtractBodyStream()
     {
@@ -136,11 +147,13 @@ namespace Azure { namespace Core { namespace Http {
 
     /**
      * @brief Get HTTP response body as vector of bytes.
+     *
      */
     std::vector<uint8_t>& GetBody() { return this->m_body; }
 
     /**
      * @brief Get HTTP response body as vector of bytes.
+     *
      */
     std::vector<uint8_t> const& GetBody() const { return this->m_body; }
   };

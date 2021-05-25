@@ -20,7 +20,7 @@ namespace Azure { namespace Storage { namespace Blobs {
    * specifying an offset and a range that align to 512-byte page boundaries. Writes to page blobs
    * happen in-place and are immediately committed to the blob.
    */
-  class PageBlobClient : public BlobClient {
+  class PageBlobClient final : public BlobClient {
   public:
     /**
      * @brief Initialize a new instance of PageBlobClient.
@@ -42,7 +42,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     /**
      * @brief Initialize a new instance of PageBlobClient.
      *
-     * @param blobUrl A url
+     * @param blobUrl A URL
      * referencing the blob that includes the name of the account, the name of the container, and
      * the name of the blob.
      * @param credential The shared key credential used to sign
@@ -58,7 +58,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     /**
      * @brief Initialize a new instance of PageBlobClient.
      *
-     * @param blobUrl A url
+     * @param blobUrl A URL
      * referencing the blob that includes the name of the account, the name of the container, and
      * the name of the blob.
      * @param credential The token credential used to sign requests.
@@ -73,7 +73,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     /**
      * @brief Initialize a new instance of PageBlobClient.
      *
-     * @param blobUrl A url
+     * @param blobUrl A URL
      * referencing the blob that includes the name of the account, the name of the container, and
      * the name of the blob, and possibly also a SAS token.
      * @param options Optional client
@@ -85,7 +85,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         const BlobClientOptions& options = BlobClientOptions());
 
     /**
-     * @brief Initializes a new instance of the PageBlobClient class with an identical url
+     * @brief Initializes a new instance of the PageBlobClient class with an identical URL
      * source but the specified snapshot timestamp.
      *
      * @param snapshot The snapshot
@@ -237,7 +237,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         const Azure::Core::Context& context = Azure::Core::Context()) const;
 
     /**
-     * @brief Returns the list of page ranges that differ between a previous snapshot url and this
+     * @brief Returns the list of page ranges that differ between a previous snapshot URL and this
      * page blob. Changes include both updated and cleared pages. This API only works with managed
      * disk storage accounts.
      *

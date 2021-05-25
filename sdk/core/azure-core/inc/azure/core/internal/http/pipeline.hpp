@@ -58,7 +58,7 @@ namespace Azure { namespace Core { namespace Http { namespace _internal {
     }
 
     /**
-     * @brief Construct a new Http Pipeline object from clientOptions.
+     * @brief Construct a new HTTP Pipeline object from clientOptions.
      *
      * @remark The client options includes per retry and per call policies which are merged with the
      * service-specific per retry policies.
@@ -172,18 +172,18 @@ namespace Azure { namespace Core { namespace Http { namespace _internal {
      * @brief Start the HTTP pipeline.
      *
      * @param request The HTTP request to be processed.
-     * @param ctx #Azure::Core::Context so that operation can be cancelled.
+     * @param context #Azure::Core::Context so that operation can be cancelled.
      *
      * @return HTTP response after the request has been processed.
      */
     std::unique_ptr<Azure::Core::Http::RawResponse> Send(
         Azure::Core::Http::Request& request,
-        Context const& ctx) const
+        Context const& context) const
     {
       // Accessing position zero is fine because pipeline must be constructed with at least one
       // policy.
       return m_policies[0]->Send(
-          request, Azure::Core::Http::Policies::NextHttpPolicy(0, m_policies), ctx);
+          request, Azure::Core::Http::Policies::NextHttpPolicy(0, m_policies), context);
     }
   };
 }}}} // namespace Azure::Core::Http::_internal

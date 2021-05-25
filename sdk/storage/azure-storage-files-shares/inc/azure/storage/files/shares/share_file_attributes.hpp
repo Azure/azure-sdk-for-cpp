@@ -10,7 +10,7 @@
 
 namespace Azure { namespace Storage { namespace Files { namespace Shares { namespace Models {
 
-  class FileAttributes {
+  class FileAttributes final {
   public:
     FileAttributes() = default;
     explicit FileAttributes(const std::string& value);

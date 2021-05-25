@@ -35,13 +35,14 @@ struct TestRetryPolicySharedState final : public Azure::Core::Http::Policies::Ht
 
   std::unique_ptr<Azure::Core::Http::RawResponse> Send(
       Azure::Core::Http::Request& request,
-      Azure::Core::Http::Policies::NextHttpPolicy nextHttpPolicy,
-      Azure::Core::Context const& ctx) const override
+      Azure::Core::Http::Policies::NextHttpPolicy nextPolicy,
+      Azure::Core::Context const& context) const override
   {
     EXPECT_EQ(
-        retryCounterState, Azure::Core::Http::Policies::_internal::RetryPolicy::GetRetryCount(ctx));
+        retryCounterState,
+        Azure::Core::Http::Policies::_internal::RetryPolicy::GetRetryCount(context));
     retryCounterState += 1;
-    return nextHttpPolicy.Send(request, ctx);
+    return nextPolicy.Send(request, context);
   }
 };
 
@@ -56,13 +57,13 @@ struct TestContextTreeIntegrity final : public Azure::Core::Http::Policies::Http
 
   std::unique_ptr<Azure::Core::Http::RawResponse> Send(
       Azure::Core::Http::Request& request,
-      Azure::Core::Http::Policies::NextHttpPolicy nextHttpPolicy,
-      Azure::Core::Context const& ctx) const override
+      Azure::Core::Http::Policies::NextHttpPolicy nextPolicy,
+      Azure::Core::Context const& context) const override
   {
     std::string valueHolder;
-    EXPECT_TRUE(ctx.TryGetValue<std::string>(TheKey, valueHolder));
+    EXPECT_TRUE(context.TryGetValue<std::string>(TheKey, valueHolder));
     EXPECT_EQ("TheValue", valueHolder);
-    return nextHttpPolicy.Send(request, ctx);
+    return nextPolicy.Send(request, context);
   }
 };
 
