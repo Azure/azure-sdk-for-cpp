@@ -20,7 +20,6 @@ namespace Azure { namespace Core { namespace _internal {
   /**
    * @brief  Base type for all client option types, exposes various common client options like Retry
    * and Transport.
-   *
    */
   struct ClientOptions
   {

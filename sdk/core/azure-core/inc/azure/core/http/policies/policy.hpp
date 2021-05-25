@@ -45,7 +45,6 @@ namespace Azure { namespace Core { namespace Http { namespace Policies {
   /**
    * @brief Telemetry options, used to configure telemetry parameters.
    * @note See https://azure.github.io/azure-sdk/general_azurecore.html#telemetry-policy.
-   *
    */
   struct TelemetryOptions final
   {
@@ -121,7 +120,6 @@ namespace Azure { namespace Core { namespace Http { namespace Policies {
 
   /**
    * @brief HTTP transport options parameterize the HTTP transport adapter being used.
-   *
    */
   struct TransportOptions final
   {
@@ -260,7 +258,6 @@ namespace Azure { namespace Core { namespace Http { namespace Policies {
 
     /**
      * @brief HTTP retry policy.
-     *
      */
     class RetryPolicy
 #if !defined(TESTING_BUILD)

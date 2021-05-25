@@ -27,7 +27,6 @@ namespace Azure { namespace Core { namespace IO {
 
   /**
    * @brief Used to read data to/from a service.
-   *
    */
   class BodyStream {
   private:
@@ -117,7 +116,6 @@ namespace Azure { namespace Core { namespace IO {
 
   /**
    * @brief #Azure::Core::IO::BodyStream providing data from an initialized memory buffer.
-   *
    */
   class MemoryBodyStream final : public BodyStream {
   private:

@@ -15,7 +15,6 @@ namespace Azure { namespace Core { namespace Json { namespace _internal {
 
   /**
    * @brief Interface for json-serializable components.
-   *
    */
   class JsonSerializable {
   public:

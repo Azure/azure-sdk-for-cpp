@@ -22,7 +22,6 @@ namespace Azure { namespace Core { namespace Credentials {
 
   /**
    * @brief An access token is used to authenticate requests.
-   *
    */
   struct AccessToken final
   {
@@ -41,7 +40,6 @@ namespace Azure { namespace Core { namespace Credentials {
 
   /**
    * @brief Context for getting token.
-   *
    */
   struct TokenRequestContext final
   {
@@ -54,7 +52,6 @@ namespace Azure { namespace Core { namespace Credentials {
 
   /**
    * @brief A base type of credential that uses Azure::Core::AccessToken to authenticate requests.
-   *
    */
   class TokenCredential {
   public:
@@ -84,7 +81,6 @@ namespace Azure { namespace Core { namespace Credentials {
 
   /**
    * @brief An exception that gets thrown when an authentication error occurs.
-   *
    */
   class AuthenticationException final : public std::exception {
     std::string m_message;
