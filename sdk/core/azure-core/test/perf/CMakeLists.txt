@@ -9,12 +9,12 @@ set(CMAKE_CXX_STANDARD_REQUIRED True)
 
 set(
   AZURE_CORE_PERF_TEST_HEADER
-  inc/azure/core/test/nullable.hpp
+  inc/azure/core/test/nullable_test.hpp
 )
 
 set(
   AZURE_CORE_PERF_TEST_SOURCE
-  src/main.cpp
+  src/azure_core_perf_test.cpp
 )
 
 # Name the binary to be created.

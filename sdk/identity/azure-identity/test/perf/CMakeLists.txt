@@ -9,12 +9,12 @@ set(CMAKE_CXX_STANDARD_REQUIRED True)
 
 set(
   AZURE_IDENTITY_PERF_TEST_HEADER
-  inc/azure/identity/test/secret_credential.hpp
+  inc/azure/identity/test/secret_credential_test.hpp
 )
 
 set(
   AZURE_IDENTITY_PERF_TEST_SOURCE
-    src/main.cpp
+    src/azure_identity_perf_test.cpp
 )
 
 # Name the binary to be created.

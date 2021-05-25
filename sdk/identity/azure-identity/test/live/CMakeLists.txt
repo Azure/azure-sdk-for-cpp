@@ -11,10 +11,10 @@ include(GoogleTest)
 
 add_executable (
   azure-identity-livetest
-  client_secret_credential.cpp
-  environment_credential.cpp
-  getenv.hpp
-  main.cpp
+    azure_identity_live_test.cpp
+    client_secret_credential_test.cpp
+    environment_credential_test.cpp
+    getenv.hpp
 )
 
 if (MSVC)
