@@ -194,23 +194,18 @@ We guarantee that all client instance methods are thread-safe and independent of
 
 <!-- CLIENT COMMON BAR -->
 
-[Client options](https://github.com/Azure/azure-sdk-for-net/blob/master/sdk/core/Azure.Core/README.md#configuring-service-clients-using-clientoptions) |
-[Accessing the response](https://github.com/Azure/azure-sdk-for-net/blob/master/sdk/core/Azure.Core/README.md#accessing-http-response-details-using-responset) |
-[Long-running operations](https://github.com/Azure/azure-sdk-for-net/blob/master/sdk/core/Azure.Core/README.md#consuming-long-running-operations-using-operationt) |
-[Handling failures](https://github.com/Azure/azure-sdk-for-net/blob/master/sdk/core/Azure.Core/README.md#reporting-errors-requestfailedexception) |
-[Diagnostics](https://github.com/Azure/azure-sdk-for-net/blob/master/sdk/core/Azure.Core/samples/Diagnostics.md) |
-[Mocking](https://github.com/Azure/azure-sdk-for-net/blob/master/sdk/core/Azure.Core/README.md#mocking) |
-[Client lifetime](https://devblogs.microsoft.com/azure-sdk/lifetime-management-and-thread-safety-guarantees-of-azure-sdk-net-clients/)
+[Replaceable HTTP transport adapter](https://github.com/Azure/azure-sdk-for-cpp/tree/master/sdk/core/azure-core#http-transport-adapter) |
+[Long-running operations](https://github.com/Azure/azure-sdk-for-cpp/tree/master/sdk/core/azure-core#long-running-operations) |
 
 <!-- CLIENT COMMON BAR -->
 
 ## Examples
 
-The Azure.Security.KeyVault.Keys package supports synchronous and asynchronous APIs.
+The Azure.Security.KeyVault.Keys package supports synchronous APIs.
 
 The following section provides several code snippets using the `client` [created above](#create-keyclient), covering some of the most common Azure Key Vault key service related tasks:
 
-### Sync examples
+### Examples
 
 - [Create a key](#create-a-key)
 - [Retrieve a key](#retrieve-a-key)
@@ -218,69 +213,63 @@ The following section provides several code snippets using the `client` [created
 - [Delete a key](#delete-a-key)
 - [Delete and purge a key](#delete-and-purge-a-key)
 - [List keys](#list-keys)
-- [Encrypt and Decrypt](#encrypt-and-decrypt)
-
-### Async examples
-
-- [Create a key asynchronously](#create-a-key-asynchronously)
-- [List keys asynchronously](#list-keys-asynchronously)
-- [Delete a key asynchronously](#delete-a-key-asynchronously)
+<!-- - [Encrypt and Decrypt](#encrypt-and-decrypt) -->
 
 ### Create a key
 
 Create a key to be stored in the Azure Key Vault. If a key with the same name already exists, then a new version of the key is created.
 
-```C# Snippet:CreateKey
+```cpp
 // Create a key. Note that you can specify the type of key
 // i.e. Elliptic curve, Hardware Elliptic Curve, RSA
-KeyVaultKey key = client.CreateKey("key-name", KeyType.Rsa);
+auto key = client.CreateKey("key-name", KeyVaultKeyType::Rsa);
 
-Console.WriteLine(key.Name);
-Console.WriteLine(key.KeyType);
+std::cout << key.Name();
+std::cout << key.KeyType.ToString();
 
 // Create a software RSA key
-var rsaCreateKey = new CreateRsaKeyOptions("rsa-key-name", hardwareProtected: false);
+auto rsaCreateKey = CreateRsaKeyOptions("rsa-key-name", false);
 KeyVaultKey rsaKey = client.CreateRsaKey(rsaCreateKey);
 
-Console.WriteLine(rsaKey.Name);
-Console.WriteLine(rsaKey.KeyType);
+std::cout << rsaKey.Name();
+std::cout << rsaKey.KeyType.ToString();
 
 // Create a hardware Elliptic Curve key
 // Because only premium Azure Key Vault supports HSM backed keys , please ensure your Azure Key Vault
 // SKU is premium when you set "hardwareProtected" value to true
-var echsmkey = new CreateEcKeyOptions("ec-key-name", hardwareProtected: true);
+auto echsmkey = new CreateEcKeyOptions("ec-key-name", true);
 KeyVaultKey ecKey = client.CreateEcKey(echsmkey);
 
-Console.WriteLine(ecKey.Name);
-Console.WriteLine(ecKey.KeyType);
+std::cout << ecKey.Name();
+std::cout << ecKey.KeyType.ToString();
 ```
 
 ### Retrieve a key
 
 `GetKey` retrieves a key previously stored in the Azure Key Vault.
 
-```C# Snippet:RetrieveKey
+```cpp
 KeyVaultKey key = client.GetKey("key-name");
 
-Console.WriteLine(key.Name);
-Console.WriteLine(key.KeyType);
+std::cout << key.Name();
+std::cout << key.KeyType.ToString();
 ```
 
 ### Update an existing key
 
 `UpdateKeyProperties` updates a key previously stored in the Azure Key Vault.
 
-```C# Snippet:UpdateKey
-KeyVaultKey key = client.CreateKey("key-name", KeyType.Rsa);
+```cpp
+KeyVaultKey key = client.CreateKey("key-name", KeyVaultKeyType::Rsa);
 
 // You can specify additional application-specific metadata in the form of tags.
 key.Properties.Tags["foo"] = "updated tag";
 
 KeyVaultKey updatedKey = client.UpdateKeyProperties(key.Properties);
 
-Console.WriteLine(updatedKey.Name);
-Console.WriteLine(updatedKey.Properties.Version);
-Console.WriteLine(updatedKey.Properties.UpdatedOn);
+std::cout << updatedKey.Name();
+std::cout << updatedKey.Properties.Version;
+std::cout << updatedKey.Properties.UpdatedOn->ToString();
 ```
 
 ### Delete a key
@@ -289,51 +278,54 @@ Console.WriteLine(updatedKey.Properties.UpdatedOn);
 You can retrieve the key immediately without waiting for the operation to complete.
 When [soft-delete][soft_delete] is not enabled for the Azure Key Vault, this operation permanently deletes the key.
 
-```C# Snippet:DeleteKey
+```cpp
 DeleteKeyOperation operation = client.StartDeleteKey("key-name");
 
-DeletedKey key = operation.Value;
-Console.WriteLine(key.Name);
-Console.WriteLine(key.DeletedOn);
+DeletedKey key = operation.Value();
+std::cout << key.Name();
+std::cout << key.DeletedOn->ToString();
 ```
 
 ### Delete and purge a key
 
 You will need to wait for the long-running operation to complete before trying to purge or recover the key.
 
-```C# Snippet:DeleteAndPurgeKey
+```cpp
 DeleteKeyOperation operation = client.StartDeleteKey("key-name");
 
 // You only need to wait for completion if you want to purge or recover the key.
-while (!operation.HasCompleted)
+while (!operation.IsDone())
 {
-    Thread.Sleep(2000);
+  std::this_thread::sleep_for(std::chrono::seconds(2));
 
-    operation.UpdateStatus();
+  operation.Poll();
 }
 
-DeletedKey key = operation.Value;
-client.PurgeDeletedKey(key.Name);
+DeletedKey key = operation.Value();
+client.PurgeDeletedKey(key.Name());
 ```
 
 ### List Keys
 
 This example lists all the keys in the specified Azure Key Vault.
 
-```C# Snippet:ListKeys
+```cpp
 Pageable<KeyProperties> allKeys = client.GetPropertiesOfKeys();
 
-foreach (KeyProperties keyProperties in allKeys)
-{
-    Console.WriteLine(keyProperties.Name);
-}
+for (auto keys = client.GetPropertiesOfKeys(); keys.HasPage(); keys.MoveToNextPage())
+    {
+      for (auto const& key : keys.Items)
+      {
+        std::cout << key.Name;
+      }
+    }
 ```
 
-### Encrypt and Decrypt
+<!-- ### Encrypt and Decrypt
 
 This example creates a `CryptographyClient` and uses it to encrypt and decrypt with a key in Azure Key Vault.
 
-```C# Snippet:EncryptDecrypt
+```cpp
 byte[] plaintext = Encoding.UTF8.GetBytes("A single block of plaintext");
 
 // encrypt the data using the algorithm RSAOAEP
@@ -341,80 +333,24 @@ EncryptResult encryptResult = cryptoClient.Encrypt(EncryptionAlgorithm.RsaOaep, 
 
 // decrypt the encrypted data.
 DecryptResult decryptResult = cryptoClient.Decrypt(EncryptionAlgorithm.RsaOaep, encryptResult.Ciphertext);
-```
-
-### Create a key asynchronously
-
-The asynchronous APIs are identical to their synchronous counterparts, but return with the typical "Async" suffix for asynchronous methods and return a Task.
-
-```C# Snippet:CreateKeyAsync
-// Create a key of any type
-KeyVaultKey key = await client.CreateKeyAsync("key-name", KeyType.Rsa);
-
-Console.WriteLine(key.Name);
-Console.WriteLine(key.KeyType);
-
-// Create a software RSA key
-var rsaCreateKey = new CreateRsaKeyOptions("rsa-key-name", hardwareProtected: false);
-KeyVaultKey rsaKey = await client.CreateRsaKeyAsync(rsaCreateKey);
-
-Console.WriteLine(rsaKey.Name);
-Console.WriteLine(rsaKey.KeyType);
-
-// Create a hardware Elliptic Curve key
-// Because only premium Azure Key Vault supports HSM backed keys , please ensure your Azure Key Vault
-// SKU is premium when you set "hardwareProtected" value to true
-var echsmkey = new CreateEcKeyOptions("ec-key-name", hardwareProtected: true);
-KeyVaultKey ecKey = await client.CreateEcKeyAsync(echsmkey);
-
-Console.WriteLine(ecKey.Name);
-Console.WriteLine(ecKey.KeyType);
-```
-
-### List keys asynchronously
-
-Listing keys does not rely on awaiting the `GetPropertiesOfKeysAsync` method, but returns an `AsyncPageable<KeyProperties>` that you can use with the `await foreach` statement:
-
-```C# Snippet:ListKeysAsync
-AsyncPageable<KeyProperties> allKeys = client.GetPropertiesOfKeysAsync();
-
-await foreach (KeyProperties keyProperties in allKeys)
-{
-    Console.WriteLine(keyProperties.Name);
-}
-```
-
-### Delete a key asynchronously
-
-When deleting a key asynchronously before you purge it, you can await the `WaitForCompletionAsync` method on the operation.
-By default, this loops indefinitely but you can cancel it by passing a `CancellationToken`.
-
-```C# Snippet:DeleteAndPurgeKeyAsync
-DeleteKeyOperation operation = await client.StartDeleteKeyAsync("key-name");
-
-// You only need to wait for completion if you want to purge or recover the key.
-await operation.WaitForCompletionAsync();
-
-DeletedKey key = operation.Value;
-await client.PurgeDeletedKeyAsync(key.Name);
-```
+``` -->
 
 ## Troubleshooting
 
 ### General
 
-When you interact with the Azure Key Vault key client library using the .NET SDK, errors returned by the service correspond to the same HTTP status codes returned for [REST API][keyvault_rest] requests.
+When you interact with the Azure Key Vault key client library using the C++ SDK, errors returned by the service correspond to the same HTTP status codes returned for [REST API][keyvault_rest] requests.
 
 For example, if you try to retrieve a key that doesn't exist in your Azure Key Vault, a `404` error is returned, indicating "Not Found".
 
-```C# Snippet:KeyNotFound
+```cpp
 try
 {
-    KeyVaultKey key = client.GetKey("some_key");
+  KeyVaultKey key = client.GetKey("some_key").Value;
 }
-catch (RequestFailedException ex)
+catch (Azure::Core::RequestFailedException ex)
 {
-    Console.WriteLine(ex.ToString());
+  std::cout << std::underlying_type<Azure::Core::Http::HttpStatusCode>::type(ex.StatusCode);
 }
 ```
 
@@ -469,7 +405,7 @@ Several Azure Key Vault keys client library samples are available to you in this
   - Delete keys from the Key Vault
   - List deleted keys in the Key Vault
 
-- [Sample4_EncryptDecrypt.md][encrypt_decrypt_sample] - Example code for performing cryptographic operations with Azure Key Vault keys, including:
+<!-- - [Sample4_EncryptDecrypt.md][encrypt_decrypt_sample] - Example code for performing cryptographic operations with Azure Key Vault keys, including:
 
   - Encrypt and Decrypt data with the CryptographyClient
 
@@ -479,13 +415,13 @@ Several Azure Key Vault keys client library samples are available to you in this
   - Sign raw data and verify the signature with SignData and VerifyData
 
 - [Sample6_WrapUnwrap.md][wrap_unwrap_sample] - Example code for working with Azure Key Vault keys, including:
-  - Wrap and Unwrap a symmetric key
+  - Wrap and Unwrap a symmetric key -->
 
 ### Additional Documentation
 
 - For more extensive documentation on Azure Key Vault, see the [API reference documentation][keyvault_rest].
-- For Secrets client library see [Secrets client library][secrets_client_library].
-- For Certificates client library see [Certificates client library][certificates_client_library].
+<!-- - For Secrets client library see [Secrets client library][secrets_client_library].
+- For Certificates client library see [Certificates client library][certificates_client_library]. -->
 
 ## Contributing
 
@@ -506,34 +442,28 @@ For more information see the [Code of Conduct FAQ][coc_faq] or contact opencode@
 [azure_cli]: https://docs.microsoft.com/cli/azure
 [azure_identity]: https://github.com/Azure/azure-sdk-for-cpp/tree/master/sdk/identity/azure-identity
 [azure_sub]: https://azure.microsoft.com/free/
-[backup_and_restore_sample]: https://github.com/Azure/azure-sdk-for-net/blob/master/sdk/keyvault/Azure.Security.KeyVault.Keys/samples/Sample2_BackupAndRestore.md
-[certificates_client_library]: https://github.com/Azure/azure-sdk-for-net/tree/master/sdk/keyvault/Azure.Security.KeyVault.Certificates
+[backup_and_restore_sample]: https://github.com/Azure/azure-sdk-for-cpp/blob/master/sdk/keyvault/azure-security-keyvault-keys/samples/sample2_backup_and_restore.md
 [code_of_conduct]: https://opensource.microsoft.com/codeofconduct/
-[get_keys_sample]: https://github.com/Azure/azure-sdk-for-net/blob/master/sdk/keyvault/Azure.Security.KeyVault.Keys/samples/Sample3_GetKeys.md
-[encrypt_decrypt_sample]: https://github.com/Azure/azure-sdk-for-net/blob/master/sdk/keyvault/Azure.Security.KeyVault.Keys/samples/Sample4_EncryptDecrypt.md
-[sign_verify_sample]: https://github.com/Azure/azure-sdk-for-net/blob/master/sdk/keyvault/Azure.Security.KeyVault.Keys/samples/Sample5_SignVerify.md
-[wrap_unwrap_sample]: https://github.com/Azure/azure-sdk-for-net/blob/master/sdk/keyvault/Azure.Security.KeyVault.Keys/samples/Sample6_WrapUnwrap.md
-[hello_world_sample]: https://github.com/Azure/azure-sdk-for-net/blob/master/sdk/keyvault/Azure.Security.KeyVault.Keys/samples/Sample1_HelloWorld.md
-[key_client_class]: https://github.com/Azure/azure-sdk-for-net/blob/master/sdk/keyvault/Azure.Security.KeyVault.Keys/src/KeyClient.cs
+[get_keys_sample]: https://github.com/Azure/azure-sdk-for-cpp/blob/master/sdk/keyvault/azure-security-keyvault-keys/samples/sample3_get_keys.md
+
+<!-- [encrypt_decrypt_sample]: https://github.com/Azure/azure-sdk-for-net/blob/master/sdk/keyvault/Azure.Security.KeyVault.Keys/samples/Sample4_EncryptDecrypt.md -->
+<!-- [sign_verify_sample]: https://github.com/Azure/azure-sdk-for-net/blob/master/sdk/keyvault/Azure.Security.KeyVault.Keys/samples/Sample5_SignVerify.md -->
+<!-- [wrap_unwrap_sample]: https://github.com/Azure/azure-sdk-for-net/blob/master/sdk/keyvault/Azure.Security.KeyVault.Keys/samples/Sample6_WrapUnwrap.md -->
+
+[hello_world_sample]: https://github.com/Azure/azure-sdk-for-cpp/blob/master/sdk/keyvault/azure-security-keyvault-keys/samples/sample1_hello_world.md
+[key_client_class]: https://github.com/Azure/azure-sdk-for-cpp/blob/master/sdk/keyvault/azure-security-keyvault-keys/inc/azure/keyvault/keys/key_client.hpp
 [crypto_client_class]: https://github.com/Azure/azure-sdk-for-cpp/blob/master/sdk/keyvault/azure-security-keyvault-keys/src/cryptography/cryptography_client.cpp
 [key_client_vcpkg_package]: https://github.com/microsoft/vcpkg/tree/master/ports/azure-security-keyvault-keys-cpp
 [key_client_samples]: https://github.com/Azure/azure-sdk-for-cpp/tree/master/sdk/keyvault/azure-security-keyvault-keys/samples
 [key_client_src]: https://github.com/Azure/azure-sdk-for-cpp/tree/master/sdk/keyvault/azure-security-keyvault-keys
 [keyvault_docs]: https://docs.microsoft.com/azure/key-vault/
 [keyvault_rest]: https://docs.microsoft.com/rest/api/keyvault/
-[secrets_client_library]: https://github.com/Azure/azure-sdk-for-net/tree/master/sdk/keyvault/Azure.Security.KeyVault.Secrets
+
+<!-- [secrets_client_library]: https://github.com/Azure/azure-sdk-for-net/tree/master/sdk/keyvault/Azure.Security.KeyVault.Secrets -->
+
 [soft_delete]: https://docs.microsoft.com/azure/key-vault/key-vault-ovw-soft-delete
 [defaultazurecredential]: https://github.com/Azure/azure-sdk-for-cpp/tree/master/sdk/identity/azure-identity#credentials
-[contributing]: https://github.com/Azure/azure-sdk-for-net/blob/master/sdk/keyvault/CONTRIBUTING.md
+[contributing]: https://github.com/Azure/azure-sdk-for-cpp/blob/master/CONTRIBUTING.md
 [coc_faq]: https://opensource.microsoft.com/codeofconduct/faq/
-[migration_guide]: https://github.com/Azure/azure-sdk-for-net/blob/master/sdk/keyvault/Azure.Security.KeyVault.Keys/MigrationGuide.md
 [access_control]: https://docs.microsoft.com/azure/key-vault/managed-hsm/access-control
 [rbac_guide]: https://docs.microsoft.com/azure/key-vault/general/rbac-guide
-
-![Impressions](https://azure-sdk-impressions.azurewebsites.net/api/impressions/azure-sdk-for-net%2Fsdk%2Fkeyvault%2FAzure.Security.KeyVault.Keys%2FREADME.png)
-
-# Azure Key Vault Keys Package client library for C++
-
-### License
-
-Azure SDK for C++ is licensed under the [MIT](https://github.com/Azure/azure-sdk-for-cpp/blob/master/LICENSE.txt) license.
