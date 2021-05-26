@@ -125,7 +125,6 @@ namespace Azure { namespace Core { namespace Http {
   /**
    * @brief Sets the WinHTTP session and connection options used to customize the behavior of the
    * transport.
-   *
    */
   struct WinHttpTransportOptions final
   {
@@ -135,7 +134,6 @@ namespace Azure { namespace Core { namespace Http {
   /**
    * @brief Concrete implementation of an HTTP transport that uses WinHTTP when sending and
    * receiving requests and responses over the wire.
-   *
    */
   class WinHttpTransport final : public HttpTransport {
   private:

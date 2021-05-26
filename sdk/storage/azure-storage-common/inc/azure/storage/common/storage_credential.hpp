@@ -77,6 +77,8 @@ namespace Azure { namespace Storage {
 
     struct ConnectionStringParts
     {
+      std::string AccountName;
+      std::string AccountKey;
       Azure::Core::Url BlobServiceUrl;
       Azure::Core::Url FileServiceUrl;
       Azure::Core::Url QueueServiceUrl;

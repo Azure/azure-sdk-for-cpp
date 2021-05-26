@@ -12,11 +12,12 @@ include(GoogleTest)
 ################## Unit Tests ##########################
 add_executable (
   azure-security-keyvault-keys-test
-  key_client_test.cpp
-  macro_guard.cpp
-  main.cpp
-  mocked_transport_adapter_test.hpp
-  telemetry_header_test.cpp
+    azure_security_keyvault_keys_test.cpp
+    key_client_base_test.hpp
+    key_client_test.cpp
+    macro_guard.cpp
+    mocked_transport_adapter_test.hpp
+    telemetry_header_test.cpp
 )
 
 if (MSVC)
@@ -37,15 +38,15 @@ gtest_discover_tests(azure-security-keyvault-keys-test
 ################## Live Tests ##########################
 add_executable (
   azure-security-keyvault-keys-test-live
-  key_client_backup_test_live.cpp
-  key_client_create_test_live.cpp
-  key_client_delete_test_live.cpp
-  key_client_get_test_live.cpp
-  key_client_import_test_live.cpp
-  key_client_update_test_live.cpp
-  key_cryptographic_client_test_live.cpp
-  main.cpp
-  key_client_base_test.hpp
+    azure_security_keyvault_keys_test.cpp
+    key_client_backup_test_live.cpp
+    key_client_create_test_live.cpp
+    key_client_delete_test_live.cpp
+    key_client_get_test_live.cpp
+    key_client_import_test_live.cpp
+    key_client_update_test_live.cpp
+    key_cryptographic_client_test_live.cpp
+    key_client_base_test.hpp
 )
 
 if (MSVC)

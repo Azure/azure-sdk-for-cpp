@@ -450,7 +450,7 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_EQ(3U, shareItems.size());
     for (const auto& shareItem : shareItems)
     {
-      EXPECT_TRUE(shareClients.find(shareItem.Name) != shareClients.end());
+      EXPECT_NE(shareClients.find(shareItem.Name), shareClients.end());
       properties = shareClients.at(shareItem.Name).GetProperties().Value;
       EXPECT_EQ(true, shareItem.Details.AccessTier.HasValue() && properties.AccessTier.HasValue());
       EXPECT_EQ(shareItem.Details.AccessTier.Value(), properties.AccessTier.Value());

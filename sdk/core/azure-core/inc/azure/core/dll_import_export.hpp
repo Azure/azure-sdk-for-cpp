@@ -97,46 +97,39 @@
 
 /**
  * @brief Azure SDK abstractions.
- *
  */
 namespace Azure {
 
 /**
  * @brief Abstractions commonly used by Azure SDK client libraries.
- *
  */
 namespace Core {
 
   /**
    * @brief Credential-related abstractions.
-   *
    */
   namespace Credentials {
   }
 
   /**
    * @brief Cryptography-related abstractions.
-   *
    */
   namespace Cryptography {
   }
 
   /**
    * @brief Diagnostics-related abstractions, such as logging.
-   *
    */
   namespace Diagnostics {
   }
 
   /**
    * @brief Abstractions related to HTTP transport layer.
-   *
    */
   namespace Http {
 
     /**
      * @brief Abstractions related to controlling the behavior of HTTP requests.
-     *
      */
     namespace Policies {
     }
@@ -144,7 +137,6 @@ namespace Core {
 
   /**
    * @brief Abstractions related to communications with Azure.
-   *
    */
   namespace IO {
   }

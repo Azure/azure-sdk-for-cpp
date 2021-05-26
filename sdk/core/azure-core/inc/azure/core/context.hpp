@@ -23,7 +23,6 @@ namespace Azure { namespace Core {
 
   /**
    * @brief An exception thrown when an operation is cancelled.
-   *
    */
   class OperationCancelledException final : public std::runtime_error {
   public:
@@ -39,13 +38,11 @@ namespace Azure { namespace Core {
 
   /**
    * @brief A context is a node within a tree that represents deadlines and key/value pairs.
-   *
    */
   class Context final {
   public:
     /**
      * @brief A key used to store and retrieve data in an #Azure::Core::Context object.
-     *
      */
     class Key final {
       Key const* m_uniqueAddress;

@@ -17,7 +17,7 @@
 #include <private/curl_connection.hpp>
 #include <private/curl_session.hpp>
 
-#include "transport_adapter_base.hpp"
+#include "transport_adapter_base_test.hpp"
 
 #include <string>
 #include <vector>

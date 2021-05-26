@@ -17,7 +17,6 @@ namespace Azure { namespace Core { namespace Test {
 
   /**
    * @brief Measure the Nullable object performance.
-   *
    */
   class NullableTest : public Azure::Perf::PerfTest {
   public:

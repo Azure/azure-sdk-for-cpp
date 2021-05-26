@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
 
-#include "transport_adapter_base.hpp"
+#include "transport_adapter_base_test.hpp"
 
 #include <azure/core/http/policies/policy.hpp>
 #include <azure/core/http/transport.hpp>

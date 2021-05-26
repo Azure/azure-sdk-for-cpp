@@ -396,7 +396,7 @@ namespace Azure { namespace Storage { namespace Test {
               return (targetAcl.Type == acl.Type) && (targetAcl.Id == acl.Id)
                   && (targetAcl.Scope == acl.Scope);
             });
-        EXPECT_TRUE(iter != resultAcls1.end());
+        EXPECT_NE(iter, resultAcls1.end());
         EXPECT_EQ(iter->Permissions, acl.Permissions);
       }
     }
@@ -423,7 +423,7 @@ namespace Azure { namespace Storage { namespace Test {
               return (targetAcl.Type == acl.Type) && (targetAcl.Id == acl.Id)
                   && (targetAcl.Scope == acl.Scope);
             });
-        EXPECT_TRUE(iter != resultAcls1.end());
+        EXPECT_NE(iter, resultAcls1.end());
         EXPECT_EQ(iter->Permissions, acl.Permissions);
       }
       {
@@ -432,10 +432,10 @@ namespace Azure { namespace Storage { namespace Test {
           return targetAcl.Type == "group";
         };
         auto iter = std::find_if(resultAcls1.begin(), resultAcls1.end(), groupFinder);
-        EXPECT_TRUE(iter != resultAcls1.end());
+        EXPECT_NE(iter, resultAcls1.end());
         EXPECT_EQ("rw-", iter->Permissions);
         iter = std::find_if(resultAcls2.begin(), resultAcls2.end(), groupFinder);
-        EXPECT_TRUE(iter != resultAcls2.end());
+        EXPECT_NE(iter, resultAcls2.end());
         EXPECT_EQ("rw-", iter->Permissions);
       }
       {
@@ -445,10 +445,10 @@ namespace Azure { namespace Storage { namespace Test {
             return targetAcl.Type == "other";
           };
           auto iter = std::find_if(resultAcls1.begin(), resultAcls1.end(), otherFinder);
-          EXPECT_TRUE(iter != resultAcls1.end());
+          EXPECT_NE(iter, resultAcls1.end());
           EXPECT_EQ(originalAcls[3].Permissions, iter->Permissions);
           iter = std::find_if(resultAcls2.begin(), resultAcls2.end(), otherFinder);
-          EXPECT_TRUE(iter != resultAcls2.end());
+          EXPECT_NE(iter, resultAcls2.end());
           EXPECT_EQ(originalAcls[3].Permissions, iter->Permissions);
         }
         {
@@ -456,7 +456,7 @@ namespace Azure { namespace Storage { namespace Test {
             return targetAcl.Type == "user";
           };
           auto iter = std::find_if(resultAcls1.begin(), resultAcls1.end(), userFinder);
-          EXPECT_TRUE(iter != resultAcls1.end());
+          EXPECT_NE(iter, resultAcls1.end());
           if (iter->Id == originalAcls[0].Id)
           {
             EXPECT_EQ(originalAcls[0].Permissions, iter->Permissions);
@@ -466,7 +466,7 @@ namespace Azure { namespace Storage { namespace Test {
             EXPECT_EQ(originalAcls[1].Permissions, iter->Permissions);
           }
           iter = std::find_if(resultAcls2.begin(), resultAcls2.end(), userFinder);
-          EXPECT_TRUE(iter != resultAcls2.end());
+          EXPECT_NE(iter, resultAcls2.end());
           if (iter->Id == originalAcls[0].Id)
           {
             EXPECT_EQ(originalAcls[0].Permissions, iter->Permissions);
@@ -500,7 +500,7 @@ namespace Azure { namespace Storage { namespace Test {
               return (targetAcl.Type == acl.Type) && (targetAcl.Id == acl.Id)
                   && (targetAcl.Scope == acl.Scope);
             });
-        EXPECT_TRUE(iter != resultAcls1.end());
+        EXPECT_NE(iter, resultAcls1.end());
         EXPECT_EQ(iter->Permissions, acl.Permissions);
       }
       {
@@ -509,9 +509,9 @@ namespace Azure { namespace Storage { namespace Test {
           return targetAcl.Type == "user" && targetAcl.Id == "72a3f86f-271f-439e-b031-25678907d381";
         };
         auto iter = std::find_if(resultAcls1.begin(), resultAcls1.end(), userFinder);
-        EXPECT_TRUE(iter == resultAcls1.end());
+        EXPECT_EQ(iter, resultAcls1.end());
         iter = std::find_if(resultAcls2.begin(), resultAcls2.end(), userFinder);
-        EXPECT_TRUE(iter == resultAcls2.end());
+        EXPECT_EQ(iter, resultAcls2.end());
       }
       {
         // verify other has not changed
@@ -520,10 +520,10 @@ namespace Azure { namespace Storage { namespace Test {
             return targetAcl.Type == "other";
           };
           auto iter = std::find_if(resultAcls1.begin(), resultAcls1.end(), otherFinder);
-          EXPECT_TRUE(iter != resultAcls1.end());
+          EXPECT_NE(iter, resultAcls1.end());
           EXPECT_EQ(originalAcls[3].Permissions, iter->Permissions);
           iter = std::find_if(resultAcls2.begin(), resultAcls2.end(), otherFinder);
-          EXPECT_TRUE(iter != resultAcls2.end());
+          EXPECT_NE(iter, resultAcls2.end());
           EXPECT_EQ(originalAcls[3].Permissions, iter->Permissions);
         }
         {
@@ -531,11 +531,11 @@ namespace Azure { namespace Storage { namespace Test {
             return targetAcl.Type == "user";
           };
           auto iter = std::find_if(resultAcls1.begin(), resultAcls1.end(), userFinder);
-          EXPECT_TRUE(iter != resultAcls1.end());
+          EXPECT_NE(iter, resultAcls1.end());
           EXPECT_EQ(originalAcls[1].Id, iter->Id);
           EXPECT_EQ(originalAcls[1].Permissions, iter->Permissions);
           iter = std::find_if(resultAcls2.begin(), resultAcls2.end(), userFinder);
-          EXPECT_TRUE(iter != resultAcls2.end());
+          EXPECT_NE(iter, resultAcls2.end());
           EXPECT_EQ(originalAcls[1].Id, iter->Id);
           EXPECT_EQ(originalAcls[1].Permissions, iter->Permissions);
         }
@@ -576,7 +576,7 @@ namespace Azure { namespace Storage { namespace Test {
               return (targetAcl.Type == acl.Type) && (targetAcl.Id == acl.Id)
                   && (targetAcl.Scope == acl.Scope);
             });
-        EXPECT_TRUE(iter != resultAcls1.end());
+        EXPECT_NE(iter, resultAcls1.end());
         EXPECT_EQ(iter->Permissions, acl.Permissions);
       }
       {
@@ -585,7 +585,7 @@ namespace Azure { namespace Storage { namespace Test {
           return targetAcl.Type == "group";
         };
         auto iter = std::find_if(resultAcls1.begin(), resultAcls1.end(), groupFinder);
-        EXPECT_TRUE(iter != resultAcls1.end());
+        EXPECT_NE(iter, resultAcls1.end());
         EXPECT_EQ("rw-", iter->Permissions);
         EXPECT_EQ("", iter->Id);
         iter = std::find_if(resultAcls2.begin(), resultAcls2.end(), groupFinder);
@@ -598,7 +598,7 @@ namespace Azure { namespace Storage { namespace Test {
           return targetAcl.Type == "other";
         };
         auto iter = std::find_if(resultAcls1.begin(), resultAcls1.end(), otherFinder);
-        EXPECT_TRUE(iter != resultAcls1.end());
+        EXPECT_NE(iter, resultAcls1.end());
         EXPECT_EQ("rw-", iter->Permissions);
         EXPECT_EQ("", iter->Id);
         iter = std::find_if(resultAcls2.begin(), resultAcls2.end(), otherFinder);
@@ -612,9 +612,9 @@ namespace Azure { namespace Storage { namespace Test {
           return targetAcl.Type == "user" && targetAcl.Id == originalAcls[0].Id;
         };
         auto iter = std::find_if(resultAcls1.begin(), resultAcls1.end(), userFinder);
-        EXPECT_TRUE(iter == resultAcls1.end());
+        EXPECT_EQ(iter, resultAcls1.end());
         iter = std::find_if(resultAcls2.begin(), resultAcls2.end(), userFinder);
-        EXPECT_TRUE(iter == resultAcls2.end());
+        EXPECT_EQ(iter, resultAcls2.end());
       }
       {
         // verify user has changed
@@ -622,7 +622,7 @@ namespace Azure { namespace Storage { namespace Test {
           return targetAcl.Type == "user";
         };
         auto iter = std::find_if(resultAcls1.begin(), resultAcls1.end(), userFinder);
-        EXPECT_TRUE(iter != resultAcls1.end());
+        EXPECT_NE(iter, resultAcls1.end());
         EXPECT_EQ("rw-", iter->Permissions);
         EXPECT_EQ("", iter->Id);
         iter = std::find_if(resultAcls2.begin(), resultAcls2.end(), userFinder);

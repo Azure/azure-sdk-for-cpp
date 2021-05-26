@@ -3,14 +3,15 @@
 
 #include <azure/perf.hpp>
 
-#include "azure/identity/test/secret_credential.hpp"
+#include "azure/core/test/nullable_test.hpp"
+
+#include <vector>
 
 int main(int argc, char** argv)
 {
 
   // Create the test list
-  std::vector<Azure::Perf::TestMetadata> tests{
-      Azure::Identity::Test::SecretCredentialTest::GetTestMetadata()};
+  std::vector<Azure::Perf::TestMetadata> tests{Azure::Core::Test::NullableTest::GetTestMetadata()};
 
   Azure::Perf::Program::Run(Azure::Core::Context::ApplicationContext, tests, argc, argv);
 

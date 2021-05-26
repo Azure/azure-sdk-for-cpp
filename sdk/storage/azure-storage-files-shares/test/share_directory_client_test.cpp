@@ -417,7 +417,7 @@ namespace Azure { namespace Storage { namespace Test {
       // List with prefix.
       auto result = ListAllFilesAndDirectories(std::string(), directoryNameA);
       EXPECT_TRUE(result.first.empty());
-      EXPECT_TRUE(result.second.size() == 1U);
+      EXPECT_EQ(result.second.size(), size_t(1));
       EXPECT_EQ(directoryNameA, result.second[0].Name);
     }
     {

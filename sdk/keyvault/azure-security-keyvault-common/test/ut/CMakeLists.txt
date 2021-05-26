@@ -11,9 +11,9 @@ include(GoogleTest)
 
 add_executable (
   azure-security-keyvault-common-test
-  main.cpp
-  pipeline_test.cpp
-  sha.cpp
+    azure_security_keyvault_common_test.cpp
+    pipeline_test.cpp
+    sha_test.cpp
 )
 
 if (MSVC)
