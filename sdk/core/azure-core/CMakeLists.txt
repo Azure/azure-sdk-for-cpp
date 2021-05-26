@@ -148,6 +148,12 @@ if(BUILD_TRANSPORT_WINHTTP)
   target_link_libraries(azure-core PRIVATE winhttp)
 endif()
 
+if (MSVC)
+  # Disable warnings:
+  # - C6101: Returning uninitialized memory '*Mtu' -> libcurl calling WSAGetIPUserMtu from WS2tcpip.h
+  target_compile_options(azure-core PUBLIC /wd6101)
+endif()
+
 get_az_version("${CMAKE_CURRENT_SOURCE_DIR}/src/private/package_version.hpp")
 generate_documentation(azure-core ${AZ_LIBRARY_VERSION})
 
