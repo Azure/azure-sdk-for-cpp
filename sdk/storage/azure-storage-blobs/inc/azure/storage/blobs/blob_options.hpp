@@ -65,7 +65,7 @@ namespace Azure { namespace Storage { namespace Blobs {
   };
 
   /**
-   * @brief Specifies access conditions for a append blob.
+   * @brief Specifies access conditions for an append blob.
    */
   struct AppendBlobAccessConditions final : public BlobAccessConditions
   {

@@ -18,7 +18,7 @@ namespace Azure { namespace Storage { namespace _internal {
       // check if we need to get inner stream
       if (this->m_inner == nullptr)
       {
-        // Get a a bodyStream that starts from last known offset
+        // Get a bodyStream that starts from last known offset
         // if this fails, throw bubbles up
         // As m_inner is unique_pr, it will be destructed on reassignment, cleaning up network
         // session.

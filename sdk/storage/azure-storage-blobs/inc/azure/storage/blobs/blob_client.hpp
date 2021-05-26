@@ -227,7 +227,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @param copyId ID of the copy operation to abort.
      * @param options Optional parameters to execute this function.
      * @param context Context for cancelling long running operations.
-     * @return A AbortBlobCopyFromUriResult on successfully aborting.
+     * @return An AbortBlobCopyFromUriResult on successfully aborting.
      */
     Azure::Response<Models::AbortBlobCopyFromUriResult> AbortCopyFromUri(
         const std::string& copyId,

@@ -135,7 +135,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @param content A BodyStream containing the content of the block to append.
      * @param options Optional parameters to execute this function.
      * @param context Context for cancelling long running operations.
-     * @return A AppendBlockResult describing the state of the updated append blob.
+     * @return An AppendBlockResult describing the state of the updated append blob.
      */
     Azure::Response<Models::AppendBlockResult> AppendBlock(
         Azure::Core::IO::BodyStream& content,
@@ -152,7 +152,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      * blob is public, no authentication is required to perform the operation.
      * @param options Optional parameters to execute this function.
      * @param context Context for cancelling long running operations.
-     * @return A AppendBlockFromUriResult describing the state of the updated append blob.
+     * @return An AppendBlockFromUriResult describing the state of the updated append blob.
      */
     Azure::Response<Models::AppendBlockFromUriResult> AppendBlockFromUri(
         const std::string& sourceUri,
