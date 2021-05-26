@@ -208,7 +208,7 @@ namespace Azure { namespace Storage { namespace Test {
               return (targetAcl.Type == acl.Type) && (targetAcl.Id == acl.Id)
                   && (targetAcl.Scope == acl.Scope);
             });
-        EXPECT_TRUE(iter != resultAcls.end());
+        EXPECT_NE(iter, resultAcls.end());
         EXPECT_EQ(iter->Permissions, acl.Permissions);
       }
     }
