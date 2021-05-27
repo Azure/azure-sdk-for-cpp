@@ -117,13 +117,13 @@ public:
   }
 
   /**
-   * @brief Construct an empty (null) #Azure::Core::ETag.
+   * @brief Constructs an empty (null) `%ETag`.
    *
    */
   ETag() = default;
 
   /**
-   * @brief Construct a #Azure::Core::ETag.
+   * @brief Constructs an `%ETag` with string representation.
    * @param etag The string value representation.
    */
   explicit ETag(std::string etag) : m_value(std::move(etag)) {}
@@ -146,18 +146,18 @@ public:
   }
 
   /**
-   * @brief Compare with \p other #Azure::Core::ETag for equality.
-   * @param other Other #Azure::Core::ETag to compare with.
-   * @return `true` if #Azure::Core::ETag instances are equal according to strong validation,
-   * `false` otherwise.
+   * @brief Compare with \p other `%ETag` for equality.
+   * @param other Other `%ETag` to compare with.
+   * @return `true` if `%ETag` instances are equal according to strong validation, `false`
+   * otherwise.
    */
   bool operator==(const ETag& other) const { return Equals(*this, other, ETagComparison::Strong); }
 
   /**
-   * @brief Compare with \p other #Azure::Core::ETag for inequality.
-   * @param other Other #Azure::Core::ETag to compare with.
-   * @return `true` if #Azure::Core::ETag instances are not equal according to strong validation,
-   * `false` otherwise.
+   * @brief Compare with \p other `%ETag` for inequality.
+   * @param other Other `%ETag` to compare with.
+   * @return `true` if `%ETag` instances are not equal according to strong validation, `false`
+   * otherwise.
    */
   bool operator!=(const ETag& other) const { return !(*this == other); }
 

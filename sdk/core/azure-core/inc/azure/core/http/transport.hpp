@@ -26,18 +26,45 @@ namespace Azure { namespace Core { namespace Http {
      * @brief Send an HTTP request over the wire.
      *
      * @param request An #Azure::Core::Http::Request to send.
-     * @param context #Azure::Core::Context so that operation can be cancelled.
+     * @param context A context to control the request lifetime.
      */
     // TODO - Should this be const
     virtual std::unique_ptr<RawResponse> Send(Request& request, Context const& context) = 0;
 
-    /// Destructor.
+    /**
+     * @brief Destructs `%HttpTransport`.
+     *
+     */
     virtual ~HttpTransport() {}
 
   protected:
+    /**
+     * @brief Constructs a default instance of `%HttpTransport`.
+     *
+     */
     HttpTransport() = default;
+
+    /**
+     * @brief Constructs `%HttpTransport` by copying another instance of `%HttpTransport`.
+     *
+     * @param other An instance to copy.
+     */
     HttpTransport(const HttpTransport& other) = default;
+
+    /**
+     * @brief Constructs `%HttpTransport` by moving another instance of `%HttpTransport`.
+     *
+     * @param other An instance to move in.
+     */
     HttpTransport(HttpTransport&& other) = default;
+
+    /**
+     * @brief Assigns `%HttpTransport` to another instance of `%HttpTransport`.
+     *
+     * @param other An instance to assign.
+     *
+     * @return A reference to this instance.
+     */
     HttpTransport& operator=(const HttpTransport& other) = default;
   };
 

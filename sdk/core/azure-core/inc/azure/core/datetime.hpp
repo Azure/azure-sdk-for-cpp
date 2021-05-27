@@ -85,13 +85,13 @@ private:
 
 public:
   /**
-   * @brief Construct a default instance of #Azure::DateTime (00:00:00.0000000 on January
-   * 1st, 0001).
+   * @brief Constructs a default instance of `%DateTime` (`00:00:00.0000000 on January 1st, 0001`).
+   *
    */
   constexpr DateTime() : time_point() {}
 
   /**
-   * @brief Construct an instance of #Azure::DateTime.
+   * @brief Constructs an instance of `%DateTime`.
    *
    * @param year Year.
    * @param month Month.
@@ -114,15 +114,15 @@ public:
   }
 
   /**
-   * @brief Construct an instance of #Azure::DateTime from base class.
+   * @brief Constructs an instance of `DateTime` from a `time_point`.
    *
    */
   constexpr DateTime(time_point const& timePoint) : time_point(timePoint) {}
 
   /**
-   * @brief Construct an instance of #Azure::DateTime from
-   * `std::chrono::system_clock::time_point`.
+   * @brief Construct an instance of `%DateTime` from `std::chrono::system_clock::time_point`.
    * @param systemTime A value of `std::chrono::system_clock::time_point`.
+   *
    */
   DateTime(std::chrono::system_clock::time_point const& systemTime)
       : DateTime(

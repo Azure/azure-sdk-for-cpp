@@ -60,7 +60,7 @@ namespace Azure { namespace Core { namespace Credentials {
      *
      * @param tokenRequestContext #Azure::Core::Credentials::TokenRequestContext to get the token
      * in.
-     * @param context #Azure::Core::Context so that operation can be cancelled.
+     * @param context A context to control the request lifetime.
      *
      * @throw Azure::Core::Credentials::AuthenticationException Authentication error occurred.
      */
@@ -68,14 +68,30 @@ namespace Azure { namespace Core { namespace Credentials {
         TokenRequestContext const& tokenRequestContext,
         Context const& context) const = 0;
 
-    /// Destructor.
+    /**
+     * @brief Destructs `%TokenCredential`.
+     *
+     */
     virtual ~TokenCredential() = default;
 
   protected:
+    /**
+     * @brief Constructs a default instance of `%TokenCredential`.
+     *
+     */
     TokenCredential() {}
 
   private:
+    /**
+     * @brief `%TokenCredential` does not allow copy construction.
+     *
+     */
     TokenCredential(TokenCredential const&) = delete;
+
+    /**
+     * @brief `%TokenCredential` does not allow assignment.
+     *
+     */
     void operator=(TokenCredential const&) = delete;
   };
 
@@ -87,7 +103,7 @@ namespace Azure { namespace Core { namespace Credentials {
 
   public:
     /**
-     * @brief Constructs with message string.
+     * @brief Constructs `%AuthenticationException` with a message string.
      *
      * @param message Message string.
      */

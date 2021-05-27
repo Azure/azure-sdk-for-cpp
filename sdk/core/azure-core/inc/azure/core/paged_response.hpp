@@ -35,13 +35,27 @@ namespace Azure { namespace Core {
     bool m_hasPage = true;
 
   protected:
+    /**
+     * @brief Constructs a default instance of `%PagedResponse`.
+     *
+     */
     PagedResponse() = default;
+
+    /**
+     * @brief Constructs `%PagedResponse` by moving in another instance.
+     *
+     */
     PagedResponse(PagedResponse&&) = default;
+
+    /**
+     * @brief Assigns another instance of `%PagedResponse` by moving it in.
+     *
+     */
     PagedResponse& operator=(PagedResponse&&) = default;
 
   public:
     /**
-     * @brief Destructs `PagedResponse`.
+     * @brief Destructs `%PagedResponse`.
      *
      */
     virtual ~PagedResponse() = default;
@@ -83,7 +97,7 @@ namespace Azure { namespace Core {
      *
      * @note Calling this method on the last page will set #HasPage() to `false`.
      *
-     * @param context An #Azure::Core::Context which can be used to cancel the operation.
+     * @param context A context to control the request lifetime.
      */
     void MoveToNextPage(const Azure::Core::Context& context = Azure::Core::Context())
     {
