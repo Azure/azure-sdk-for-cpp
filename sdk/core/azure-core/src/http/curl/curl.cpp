@@ -190,7 +190,7 @@ static inline std::string GetHTTPMessagePreBody(Azure::Core::Http::Request const
 static void CleanupThread()
 {
   using namespace Azure::Core::Http::_detail;
-  for (;;)
+  for (bool keepRunning = true; keepRunning;)
   {
     Log::Write(Logger::Level::Verbose, "Clean pool check now...");
     // Won't continue until the ConnectionPoolMutex is released from MoveConnectionBackToPool
@@ -215,6 +215,8 @@ static void CleanupThread()
       return;
     }
 
+    decltype(CurlConnectionPool::g_curlConnectionPool.ConnectionPoolIndex)::mapped_type connectionsToBeCleaned;
+
     Log::Write(Logger::Level::Verbose, "Clean pool - inspect pool");
     // loop the connection pool index - Note: lock is re-taken for the mutex
     // Notes: The size of each host-index is always expected to be greater than 0 because the
@@ -227,17 +229,25 @@ static void CleanupThread()
       // of this, the oldest connection in the pool can be found at the end of the list. Looping the
       // connection pool backwards until a connection that is not expired is found or until all
       // connections are removed.
-      for (auto connection = --(index->second.end());
-           index->second.size() > 0 && connection->get()->IsExpired();
-           connection = index->second.size() > 0 ? --connection : connection)
+      auto& connectionList = index->second;
+      auto connectionIter = connectionList.end();
+      while (connectionIter != connectionList.begin())
       {
-        // remove connection from the pool and update the connection to the next one
-        // which is going to be list.end()
-        Log::Write(Logger::Level::Verbose, "Clean pool - remove connection");
-        connection = index->second.erase(connection);
+        --connectionIter;
+        if ((*connectionIter)->IsExpired())
+        {
+          // remove connection from the pool and update the connection to the next one
+          // which is going to be list.end()
+          connectionsToBeCleaned.emplace_back(std::move(*connectionIter));
+          connectionIter = connectionList.erase(connectionIter);
+        }
+        else
+        {
+          break;
+        }
       }
 
-      if (index->second.size() == 0)
+      if (connectionList.empty())
       {
         Log::Write(Logger::Level::Verbose, "Clean pool - remove index " + index->first);
         index = CurlConnectionPool::g_curlConnectionPool.ConnectionPoolIndex.erase(index);
@@ -254,8 +264,10 @@ static void CleanupThread()
           Logger::Level::Verbose,
           "Clean pool - all connections removed. Return**********************");
       CurlConnectionPool::g_curlConnectionPool.IsCleanThreadRunning = false;
-      return;
+      keepRunning = false;
     }
+    lockForPoolCleaning.unlock();
+    // Do actual connections release work here, without holding the mutex.
   }
 }
 } // namespace
