@@ -52,7 +52,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace _internal 
           base64url.append("=");
           break;
         default:
-          throw new std::invalid_argument("Unexpected Base64URL encoding in the HTTP response.");
+          throw std::invalid_argument("Unexpected Base64URL encoding in the HTTP response.");
       }
       return Azure::Core::Convert::Base64Decode(base64url);
     }
