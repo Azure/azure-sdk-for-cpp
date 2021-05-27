@@ -102,7 +102,10 @@ namespace Azure { namespace Core {
         : std::runtime_error(other.Message), StatusCode(other.StatusCode),
           ReasonPhrase(other.ReasonPhrase), ClientRequestId(other.ClientRequestId),
           RequestId(other.RequestId), ErrorCode(other.ErrorCode), Message(other.Message),
-          RawResponse(std::make_unique<Azure::Core::Http::RawResponse>(*other.RawResponse))
+          RawResponse(
+              other.RawResponse
+                  ? std::make_unique<Azure::Core::Http::RawResponse>(*other.RawResponse)
+                  : nullptr)
     {
     }
 
