@@ -60,6 +60,7 @@ void SendRequest(LogOptions const& logOptions)
 
   request.SetHeader("hEaDeR1", "HvAlUe1");
   request.SetHeader("HeAdEr2", "hVaLuE2");
+  request.SetHeader("x-ms-request-id", "6c536700-4c36-4e22-9161-76e7b3bf8269");
 
   {
     std::vector<std::unique_ptr<HttpPolicy>> policies;
@@ -144,7 +145,8 @@ TEST(LogPolicy, Default)
       "&qparam%25204=REDACTED"
       "&qparam1=REDACTED"
       "\nheader1 : REDACTED"
-      "\nheader2 : REDACTED");
+      "\nheader2 : REDACTED"
+      "\nx-ms-request-id : 6c536700-4c36-4e22-9161-76e7b3bf8269");
 
   EXPECT_TRUE(StartsWith(entry2.Message, "HTTP Response ("));
   EXPECT_TRUE(EndsWith(entry2.Message, "ms) : 200 OKAY"));
@@ -153,7 +155,12 @@ TEST(LogPolicy, Default)
 TEST(LogPolicy, Headers)
 {
   TestLogger const Log;
-  SendRequest(LogOptions({{}, {"HeAder1", "heaDer3"}}));
+
+  {
+    auto logOptions = LogOptions();
+    logOptions.AllowedHttpHeaders.insert({"HeAder1", "heaDer3"});
+    SendRequest(logOptions);
+  }
 
   EXPECT_EQ(Log.Entries.size(), 2);
 
@@ -172,7 +179,8 @@ TEST(LogPolicy, Headers)
       "&qparam%25204=REDACTED"
       "&qparam1=REDACTED"
       "\nheader1 : HvAlUe1"
-      "\nheader2 : REDACTED");
+      "\nheader2 : REDACTED"
+      "\nx-ms-request-id : 6c536700-4c36-4e22-9161-76e7b3bf8269");
 
   EXPECT_TRUE(StartsWith(entry2.Message, "HTTP Response ("));
   EXPECT_TRUE(EndsWith(entry2.Message, "ms) : 200 OKAY"));
@@ -200,7 +208,8 @@ TEST(LogPolicy, QueryParams)
       "&qparam%25204=REDACTED"
       "&qparam1=qVal1"
       "\nheader1 : REDACTED"
-      "\nheader2 : REDACTED");
+      "\nheader2 : REDACTED"
+      "\nx-ms-request-id : REDACTED");
 
   EXPECT_TRUE(StartsWith(entry2.Message, "HTTP Response ("));
   EXPECT_TRUE(EndsWith(entry2.Message, "ms) : 200 OKAY"));
@@ -228,7 +237,8 @@ TEST(LogPolicy, QueryParamsUnencoded)
       "&qparam%25204=REDACTED"
       "&qparam1=REDACTED"
       "\nheader1 : REDACTED"
-      "\nheader2 : REDACTED");
+      "\nheader2 : REDACTED"
+      "\nx-ms-request-id : REDACTED");
 
   EXPECT_TRUE(StartsWith(entry2.Message, "HTTP Response ("));
   EXPECT_TRUE(EndsWith(entry2.Message, "ms) : 200 OKAY"));
@@ -256,7 +266,8 @@ TEST(LogPolicy, QueryParamsEncoded)
       "&qparam%25204=QVAL%25204"
       "&qparam1=REDACTED"
       "\nheader1 : REDACTED"
-      "\nheader2 : REDACTED");
+      "\nheader2 : REDACTED"
+      "\nx-ms-request-id : REDACTED");
 
   EXPECT_TRUE(StartsWith(entry2.Message, "HTTP Response ("));
   EXPECT_TRUE(EndsWith(entry2.Message, "ms) : 200 OKAY"));

@@ -131,7 +131,8 @@ inline std::string GetResponseLogMessage(
 
 Azure::Core::CaseInsensitiveSet const
     Azure::Core::Http::Policies::_detail::g_defaultAllowedHttpHeaders
-    = {"x-ms-client-request-id",
+    = {"x-ms-request-id",
+       "x-ms-client-request-id",
        "x-ms-return-client-request-id",
        "traceparent",
        "Accept",
