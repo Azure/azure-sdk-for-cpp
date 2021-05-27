@@ -30,15 +30,15 @@ namespace Azure { namespace Storage { namespace _internal {
 #if defined(AZ_PLATFORM_WINDOWS)
   FileReader::FileReader(const std::string& filename)
   {
-    int sizeNeeded
-        = MultiByteToWideChar(CP_UTF8, MB_ERR_INVALID_CHARS, filename.data(), -1, nullptr, 0);
+    int sizeNeeded = MultiByteToWideChar(
+        CP_UTF8, MB_ERR_INVALID_CHARS, filename.data(), int(filename.length()), nullptr, 0);
     if (sizeNeeded == 0)
     {
       throw std::runtime_error("invalid filename");
     }
-    std::wstring filenameW(sizeNeeded, L'\0');
+    std::wstring filenameW(sizeNeeded + 1, L'\0');
     if (MultiByteToWideChar(
-            CP_UTF8, MB_ERR_INVALID_CHARS, filename.data(), -1, &filenameW[0], sizeNeeded)
+            CP_UTF8, MB_ERR_INVALID_CHARS, filename.data(), int(filename.length()), &filenameW[0], sizeNeeded)
         == 0)
     {
       throw std::runtime_error("invalid filename");
@@ -79,15 +79,20 @@ namespace Azure { namespace Storage { namespace _internal {
 
   FileWriter::FileWriter(const std::string& filename)
   {
-    int sizeNeeded
-        = MultiByteToWideChar(CP_UTF8, MB_ERR_INVALID_CHARS, filename.data(), -1, nullptr, 0);
+    int sizeNeeded = MultiByteToWideChar(
+        CP_UTF8, MB_ERR_INVALID_CHARS, filename.data(), int(filename.length()), nullptr, 0);
     if (sizeNeeded == 0)
     {
       throw std::runtime_error("invalid filename");
     }
-    std::wstring filenameW(sizeNeeded, L'\0');
+    std::wstring filenameW(sizeNeeded + 1, L'\0');
     if (MultiByteToWideChar(
-            CP_UTF8, MB_ERR_INVALID_CHARS, filename.data(), -1, &filenameW[0], sizeNeeded)
+            CP_UTF8,
+            MB_ERR_INVALID_CHARS,
+            filename.data(),
+            int(filename.length()),
+            &filenameW[0],
+            sizeNeeded)
         == 0)
     {
       throw std::runtime_error("invalid filename");
