@@ -190,7 +190,7 @@ static inline std::string GetHTTPMessagePreBody(Azure::Core::Http::Request const
 static void CleanupThread()
 {
   using namespace Azure::Core::Http::_detail;
-  for (bool keepRunning = true; keepRunning;)
+  for (;;)
   {
     Log::Write(Logger::Level::Verbose, "Clean pool check now...");
     // Won't continue until the ConnectionPoolMutex is released from MoveConnectionBackToPool
@@ -212,7 +212,7 @@ static void CleanupThread()
           Logger::Level::Verbose,
           "Clean pool - no connections on wake - return *************************");
       CurlConnectionPool::g_curlConnectionPool.IsCleanThreadRunning = false;
-      return;
+      break;
     }
 
     decltype(CurlConnectionPool::g_curlConnectionPool
@@ -255,18 +255,10 @@ static void CleanupThread()
       }
       else
       {
-        index = ++index;
+        ++index;
       }
     }
 
-    if (CurlConnectionPool::g_curlConnectionPool.ConnectionPoolIndex.size() == 0)
-    {
-      Log::Write(
-          Logger::Level::Verbose,
-          "Clean pool - all connections removed. Return**********************");
-      CurlConnectionPool::g_curlConnectionPool.IsCleanThreadRunning = false;
-      keepRunning = false;
-    }
     lockForPoolCleaning.unlock();
     // Do actual connections release work here, without holding the mutex.
   }
@@ -1257,7 +1249,7 @@ std::unique_ptr<CurlNetworkConnection> CurlConnectionPool::ExtractOrCreateCurlCo
 
   {
     decltype(CurlConnectionPool::g_curlConnectionPool
-                 .ConnectionPoolIndex)::mapped_type connectionToBeReset;
+                 .ConnectionPoolIndex)::mapped_type connectionsToBeReset;
 
     // Critical section. Needs to own ConnectionPoolMutex before executing
     // Lock mutex to access connection pool. mutex is unlock as soon as lock is out of scope
@@ -1271,7 +1263,7 @@ std::unique_ptr<CurlNetworkConnection> CurlConnectionPool::ExtractOrCreateCurlCo
     {
       if (resetPool)
       {
-        connectionToBeReset = std::move(hostPoolIndex->second);
+        connectionsToBeReset = std::move(hostPoolIndex->second);
         // clean the pool-index as requested in the call. Typically to force a new connection to be
         // created and to discard all current connections in the pool for the host-index. A caller
         // might request this after getting broken/closed connections multiple-times.
