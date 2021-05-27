@@ -130,7 +130,7 @@ FileBodyStream::FileBodyStream(const std::string& filename)
     m_randomAccessFileBodyStream = std::make_unique<_internal::RandomAccessFileBodyStream>(
         _internal::RandomAccessFileBodyStream(m_filehandle, 0, fileSize.QuadPart));
   }
-  catch (std::exception&)
+  catch (...)
   {
     if (fileHandle != INVALID_HANDLE_VALUE)
     {
@@ -156,7 +156,7 @@ FileBodyStream::FileBodyStream(const std::string& filename)
     m_randomAccessFileBodyStream = std::make_unique<_internal::RandomAccessFileBodyStream>(
         _internal::RandomAccessFileBodyStream(m_fileDescriptor, 0, fileSize));
   }
-  catch (std::exception&)
+  catch (...)
   {
     close(m_fileDescriptor);
     throw;

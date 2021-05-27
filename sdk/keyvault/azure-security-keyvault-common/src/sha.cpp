@@ -88,7 +88,7 @@ public:
       }
       default:
         // imposible to get here
-        throw;
+        throw std::exception();
     }
   }
 
