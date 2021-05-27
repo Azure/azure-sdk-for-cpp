@@ -94,7 +94,7 @@ namespace Azure { namespace Storage { namespace Test {
       {
         blobClient0.Delete();
       }
-      catch (StorageException&)
+      catch (const StorageException&)
       {
       }
       auto blobClient = Blobs::AppendBlobClient(blobUrl + sas);
