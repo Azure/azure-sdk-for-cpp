@@ -215,7 +215,8 @@ static void CleanupThread()
       return;
     }
 
-    decltype(CurlConnectionPool::g_curlConnectionPool.ConnectionPoolIndex)::mapped_type connectionsToBeCleaned;
+    decltype(CurlConnectionPool::g_curlConnectionPool
+                 .ConnectionPoolIndex)::mapped_type connectionsToBeCleaned;
 
     Log::Write(Logger::Level::Verbose, "Clean pool - inspect pool");
     // loop the connection pool index - Note: lock is re-taken for the mutex
