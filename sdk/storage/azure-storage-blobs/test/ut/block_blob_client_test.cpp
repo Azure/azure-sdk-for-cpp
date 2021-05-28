@@ -897,7 +897,7 @@ namespace Azure { namespace Storage { namespace Test {
     {
       blockBlobClient.Download();
     }
-    catch (StorageException& e)
+    catch (const StorageException& e)
     {
       exceptionCaught = true;
       EXPECT_EQ(e.StatusCode, Azure::Core::Http::HttpStatusCode::NotFound);

@@ -824,7 +824,7 @@ namespace Azure { namespace Storage { namespace Test {
     {
       fileClient.Create(1024);
     }
-    catch (StorageException& e)
+    catch (const StorageException& e)
     {
       EXPECT_NE(e.StatusCode, Azure::Core::Http::HttpStatusCode::None);
       EXPECT_FALSE(e.ReasonPhrase.empty());

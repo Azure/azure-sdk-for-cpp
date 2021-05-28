@@ -33,7 +33,7 @@ void DataLakeGettingStarted()
     {
       fileSystemClient.Create();
     }
-    catch (Azure::Storage::StorageException& e)
+    catch (const Azure::Storage::StorageException& e)
     {
       if (e.ErrorCode != "ContainerAlreadyExists")
       {

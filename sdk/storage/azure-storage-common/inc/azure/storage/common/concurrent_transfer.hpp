@@ -41,7 +41,7 @@ namespace Azure { namespace Storage { namespace _internal {
         {
           transferFunc(chunkOffset, chunkLength, chunkId, numChunks);
         }
-        catch (std::exception&)
+        catch (const std::exception&)
         {
           if (failed.exchange(true) == false)
           {

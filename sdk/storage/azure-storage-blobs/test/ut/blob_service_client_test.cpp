@@ -395,7 +395,7 @@ namespace Azure { namespace Storage { namespace Test {
             deletedContainerItem.Name, deletedContainerItem.VersionId.Value());
         break;
       }
-      catch (StorageException& e)
+      catch (const StorageException& e)
       {
         if (e.StatusCode == Azure::Core::Http::HttpStatusCode::Conflict
             && e.ReasonPhrase == "The specified container is being deleted.")

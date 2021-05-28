@@ -105,7 +105,7 @@ namespace Azure { namespace Storage { namespace Test {
       {
         fileClient0.Delete();
       }
-      catch (StorageException&)
+      catch (const StorageException&)
       {
       }
       auto fileClient = Files::DataLake::DataLakeFileClient(fileUrl + sas);
@@ -117,7 +117,7 @@ namespace Azure { namespace Storage { namespace Test {
       {
         fileClient0.Delete();
       }
-      catch (StorageException&)
+      catch (const StorageException&)
       {
       }
       std::string newFilename = RandomString();
