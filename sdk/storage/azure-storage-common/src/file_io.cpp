@@ -36,9 +36,14 @@ namespace Azure { namespace Storage { namespace _internal {
     {
       throw std::runtime_error("invalid filename");
     }
-    std::wstring filenameW(sizeNeeded + 1, L'\0');
+    std::wstring filenameW(sizeNeeded, L'\0');
     if (MultiByteToWideChar(
-            CP_UTF8, MB_ERR_INVALID_CHARS, filename.data(), int(filename.length()), &filenameW[0], sizeNeeded)
+            CP_UTF8,
+            MB_ERR_INVALID_CHARS,
+            filename.data(),
+            int(filename.length()),
+            &filenameW[0],
+            sizeNeeded)
         == 0)
     {
       throw std::runtime_error("invalid filename");
@@ -85,7 +90,7 @@ namespace Azure { namespace Storage { namespace _internal {
     {
       throw std::runtime_error("invalid filename");
     }
-    std::wstring filenameW(sizeNeeded + 1, L'\0');
+    std::wstring filenameW(sizeNeeded, L'\0');
     if (MultiByteToWideChar(
             CP_UTF8,
             MB_ERR_INVALID_CHARS,
