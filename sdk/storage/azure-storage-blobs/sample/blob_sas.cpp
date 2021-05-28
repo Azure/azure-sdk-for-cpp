@@ -57,7 +57,7 @@ void BlobSas()
     // Never reach here
     std::abort();
   }
-  catch (Azure::Storage::StorageException&)
+  catch (const Azure::Storage::StorageException&)
   {
   }
 }

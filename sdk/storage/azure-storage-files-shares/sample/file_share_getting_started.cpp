@@ -21,7 +21,7 @@ void FileShareGettingStarted()
   {
     shareClient.Create();
   }
-  catch (std::runtime_error& e)
+  catch (const std::runtime_error& e)
   {
     // The share may already exist
     std::cout << e.what() << std::endl;
