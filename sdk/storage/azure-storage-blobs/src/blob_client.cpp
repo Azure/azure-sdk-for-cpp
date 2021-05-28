@@ -191,10 +191,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         {
           newOptions.Range.Value().Length = options.Range.Value().Length.Value() - retryOffset;
         }
-        if (!newOptions.AccessConditions.IfMatch.HasValue())
-        {
-          newOptions.AccessConditions.IfMatch = eTag;
-        }
+        newOptions.AccessConditions.IfMatch = eTag;
         return std::move(Download(newOptions, context).Value.BodyStream);
       };
 
@@ -291,10 +288,7 @@ namespace Azure { namespace Storage { namespace Blobs {
             chunkOptions.Range = Core::Http::HttpRange();
             chunkOptions.Range.Value().Offset = offset;
             chunkOptions.Range.Value().Length = length;
-            if (!chunkOptions.AccessConditions.IfMatch.HasValue())
-            {
-              chunkOptions.AccessConditions.IfMatch = eTag;
-            }
+            chunkOptions.AccessConditions.IfMatch = eTag;
             auto chunk = Download(chunkOptions, context);
             int64_t bytesRead = chunk.Value.BodyStream->ReadToCount(
                 buffer + (offset - firstChunkOffset),
@@ -417,10 +411,7 @@ namespace Azure { namespace Storage { namespace Blobs {
             chunkOptions.Range = Core::Http::HttpRange();
             chunkOptions.Range.Value().Offset = offset;
             chunkOptions.Range.Value().Length = length;
-            if (!chunkOptions.AccessConditions.IfMatch.HasValue())
-            {
-              chunkOptions.AccessConditions.IfMatch = eTag;
-            }
+            chunkOptions.AccessConditions.IfMatch = eTag;
             auto chunk = Download(chunkOptions, context);
             bodyStreamToFile(
                 *(chunk.Value.BodyStream),
