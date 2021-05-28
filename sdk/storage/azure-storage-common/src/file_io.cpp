@@ -22,9 +22,7 @@
 #include <windows.h>
 #endif
 
-#include <codecvt>
 #include <limits>
-#include <locale>
 #include <stdexcept>
 
 namespace Azure { namespace Storage { namespace _internal {
@@ -32,12 +30,31 @@ namespace Azure { namespace Storage { namespace _internal {
 #if defined(AZ_PLATFORM_WINDOWS)
   FileReader::FileReader(const std::string& filename)
   {
+    int sizeNeeded = MultiByteToWideChar(
+        CP_UTF8, MB_ERR_INVALID_CHARS, filename.data(), int(filename.length()), nullptr, 0);
+    if (sizeNeeded == 0)
+    {
+      throw std::runtime_error("invalid filename");
+    }
+    std::wstring filenameW(sizeNeeded, L'\0');
+    if (MultiByteToWideChar(
+            CP_UTF8,
+            MB_ERR_INVALID_CHARS,
+            filename.data(),
+            int(filename.length()),
+            &filenameW[0],
+            sizeNeeded)
+        == 0)
+    {
+      throw std::runtime_error("invalid filename");
+    }
+
     HANDLE fileHandle;
 
 #if !defined(WINAPI_PARTITION_DESKTOP) \
     || WINAPI_PARTITION_DESKTOP // See azure/core/platform.hpp for explanation.
-    fileHandle = CreateFile(
-        filename.data(),
+    fileHandle = CreateFileW(
+        filenameW.data(),
         GENERIC_READ,
         FILE_SHARE_READ,
         nullptr,
@@ -45,12 +62,7 @@ namespace Azure { namespace Storage { namespace _internal {
         FILE_ATTRIBUTE_NORMAL,
         NULL);
 #else
-    fileHandle = CreateFile2(
-        std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>>().from_bytes(filename).c_str(),
-        GENERIC_READ,
-        FILE_SHARE_READ,
-        OPEN_EXISTING,
-        NULL);
+    fileHandle = CreateFile2(filenameW.data(), GENERIC_READ, FILE_SHARE_READ, OPEN_EXISTING, NULL);
 #endif
     if (fileHandle == INVALID_HANDLE_VALUE)
     {
@@ -72,12 +84,31 @@ namespace Azure { namespace Storage { namespace _internal {
 
   FileWriter::FileWriter(const std::string& filename)
   {
+    int sizeNeeded = MultiByteToWideChar(
+        CP_UTF8, MB_ERR_INVALID_CHARS, filename.data(), int(filename.length()), nullptr, 0);
+    if (sizeNeeded == 0)
+    {
+      throw std::runtime_error("invalid filename");
+    }
+    std::wstring filenameW(sizeNeeded, L'\0');
+    if (MultiByteToWideChar(
+            CP_UTF8,
+            MB_ERR_INVALID_CHARS,
+            filename.data(),
+            int(filename.length()),
+            &filenameW[0],
+            sizeNeeded)
+        == 0)
+    {
+      throw std::runtime_error("invalid filename");
+    }
+
     HANDLE fileHandle;
 
 #if !defined(WINAPI_PARTITION_DESKTOP) \
     || WINAPI_PARTITION_DESKTOP // See azure/core/platform.hpp for explanation.
-    fileHandle = CreateFile(
-        filename.data(),
+    fileHandle = CreateFileW(
+        filenameW.data(),
         GENERIC_WRITE,
         FILE_SHARE_READ | FILE_SHARE_WRITE,
         nullptr,
@@ -86,11 +117,7 @@ namespace Azure { namespace Storage { namespace _internal {
         NULL);
 #else
     fileHandle = CreateFile2(
-        std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>>().from_bytes(filename).c_str(),
-        GENERIC_WRITE,
-        FILE_SHARE_READ | FILE_SHARE_WRITE,
-        CREATE_ALWAYS,
-        NULL);
+        filenameW.data(), GENERIC_WRITE, FILE_SHARE_READ | FILE_SHARE_WRITE, CREATE_ALWAYS, NULL);
 #endif
     if (fileHandle == INVALID_HANDLE_VALUE)
     {
