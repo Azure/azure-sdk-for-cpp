@@ -996,7 +996,7 @@ int64_t CurlSession::ResponseBufferParser::Parse(
         {
           // Should never happen that parser is not statusLIne or Headers and we still try
           // to parse more.
-          throw std::exception();
+          AZURE_UNREACHABLE_CODE();
         }
         // clean internal buffer
         this->m_internalBuffer.clear();
@@ -1034,7 +1034,7 @@ int64_t CurlSession::ResponseBufferParser::Parse(
         {
           // Should never happen that parser is not statusLIne or Headers and we still try
           // to parse more.
-          throw std::exception();
+          AZURE_UNREACHABLE_CODE();
         }
       }
     }

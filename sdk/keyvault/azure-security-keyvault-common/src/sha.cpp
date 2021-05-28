@@ -88,7 +88,7 @@ public:
       }
       default:
         // imposible to get here
-        throw std::exception();
+        AZURE_UNREACHABLE_CODE();
     }
   }
 
