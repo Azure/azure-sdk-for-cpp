@@ -38,8 +38,15 @@ int main()
   auto credential
       = std::make_shared<Azure::Identity::ClientSecretCredential>(tenantId, clientId, clientSecret);
 
-  KeyClient keyClient(std::getenv("AZURE_KEYVAULT_URL"), credential);
-
+  KeyClient client(std::getenv("AZURE_KEYVAULT_URL"), credential);
+  try
+  {
+    KeyVaultKey key = client.GetKey("some_key").Value;
+  }
+  catch (const Azure::Core::RequestFailedException& ex)
+  {
+    std::cout << std::underlying_type<Azure::Core::Http::HttpStatusCode>::type(ex.StatusCode);
+  }
   try
   {
     std::string rsaKeyName("CloudRsaKey-" + Azure::Core::Uuid::CreateUuid().ToString());
