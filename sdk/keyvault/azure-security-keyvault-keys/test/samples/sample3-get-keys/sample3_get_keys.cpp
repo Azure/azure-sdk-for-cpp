@@ -43,7 +43,7 @@ int main()
   {
     KeyVaultKey key = client.GetKey("some_key").Value;
   }
-  catch (Azure::Core::RequestFailedException ex)
+  catch (const Azure::Core::RequestFailedException& ex)
   {
     std::cout << std::underlying_type<Azure::Core::Http::HttpStatusCode>::type(ex.StatusCode);
   }

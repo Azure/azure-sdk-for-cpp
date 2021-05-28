@@ -15,7 +15,7 @@ The Azure Key Vault keys library client supports RSA keys and Elliptic Curve (EC
 
 ### Install the package
 
-Install the Azure Key Vault keys client library for .NET with [vcpkg](https://github.com/microsoft/vcpkg):
+Install the Azure Key Vault keys client library for C++ with [vcpkg](https://github.com/microsoft/vcpkg):
 
 ```PowerShell
 # Windows
@@ -34,11 +34,11 @@ See the final two steps in the next section for details on creating the Key Vaul
 
 ### Authenticate the client
 
-In order to interact with the Key Vault service, you'll need to create an instance of the [KeyClient][key_client_class] class. You need a **vault url**, which you may see as "DNS Name" in the portal,
-and **client secret credentials (client id, client secret, tenant id)** to instantiate a client object.
+In order to interact with the Key Vault service, you'll need to create an instance of the [KeyClient][key_client_class] class. You need a **vault URL**, which you may see as "DNS Name" in the portal,
+and **client secret credentials (client ID, client secret, tenant ID)** to instantiate a client object.
 
-Client secret credential authentication is being used in this getting started section but you can find more ways to authenticate with [Azure identity][azure_identity]. To use the [DefaultAzureCredential][defaultazurecredential] provider shown below,
-or other credential providers provided with the Azure SDK, you should install the Azure.Identity package:
+Client Secret Credential authentication is being used in this Getting Started section, but you can find more ways to authenticate with [Azure Identity][azure_identity]. To use the [DefaultAzureCredential][defaultazurecredential] provider shown below,
+or other credential providers provided with the Azure SDK, you should install the Azure Identity package:
 
 ```PowerShell
 # Windows
@@ -149,7 +149,7 @@ az keyvault security-domain download --hsm-name <your-key-vault-name> --sd-wrapp
 Once you've populated the **AZURE_CLIENT_ID**, **AZURE_CLIENT_SECRET** and **AZURE_TENANT_ID** environment variables and replaced **your-vault-url** with the above returned URI, you can create the [KeyClient][key_client_class]:
 
 ```cpp
-// Create a new key client using the default credential from Azure.Identity using environment variables previously set,
+// Create a new key client using the default credential from Azure Identity using environment variables previously set,
 // including AZURE_CLIENT_ID, AZURE_CLIENT_SECRET, and AZURE_TENANT_ID.
 auto credential = std::make_shared<Azure::Identity::EnvironmentCredential>();
 KeyClient client("AZURE_KEYVAULT_URL", credential);
@@ -166,7 +166,7 @@ key = client.GetKey("key-name");
 Once you've created a `KeyVaultKey` in the Azure Key Vault, you can also create the [CryptographyClient][crypto_client_class]:
 
 ```cpp
-// Create a new cryptography client using the default credential from Azure.Identity using environment variables previously set,
+// Create a new cryptography client using the default credential from Azure Identity using environment variables previously set,
 // including AZURE_CLIENT_ID, AZURE_CLIENT_SECRET, and AZURE_TENANT_ID.
 auto credential = std::make_shared<Azure::Identity::EnvironmentCredential>();
 CryptographyClient cryptoClient(key.Id, credential);
@@ -348,7 +348,7 @@ try
 {
   KeyVaultKey key = client.GetKey("some_key").Value;
 }
-catch (Azure::Core::RequestFailedException ex)
+catch (const Azure::Core::RequestFailedException& ex)
 {
   std::cout << std::underlying_type<Azure::Core::Http::HttpStatusCode>::type(ex.StatusCode);
 }
