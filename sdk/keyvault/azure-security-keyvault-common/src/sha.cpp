@@ -88,7 +88,7 @@ public:
       }
       default:
         // imposible to get here
-        throw;
+        AZURE_UNREACHABLE_CODE();
     }
   }
 
