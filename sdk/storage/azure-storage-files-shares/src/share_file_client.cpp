@@ -272,8 +272,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         auto newResponse = Download(newOptions, context);
         if (eTag != newResponse.Value.Details.ETag)
         {
-          throw Azure::Core::RequestFailedException(
-              "File was changed during the download process.");
+          throw Azure::Core::RequestFailedException("file was modified in the middle of download");
         }
         return std::move(newResponse.Value.BodyStream);
       };
@@ -669,6 +668,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     }
 
     auto firstChunk = Download(firstChunkOptions, context);
+    const Azure::ETag etag = firstChunk.Value.Details.ETag;
 
     int64_t fileSize;
     int64_t fileRangeSize;
@@ -728,6 +728,11 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
             {
               throw Azure::Core::RequestFailedException("error when reading body stream");
             }
+            if (chunk.Value.Details.ETag != etag)
+            {
+              throw Azure::Core::RequestFailedException(
+                  "file was modified in the middle of download");
+            }
 
             if (chunkId == numChunks - 1)
             {
@@ -774,6 +779,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     _internal::FileWriter fileWriter(fileName);
 
     auto firstChunk = Download(firstChunkOptions, context);
+    const Azure::ETag etag = firstChunk.Value.Details.ETag;
 
     int64_t fileSize;
     int64_t fileRangeSize;
@@ -840,6 +846,11 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
             chunkOptions.Range.Value().Offset = offset;
             chunkOptions.Range.Value().Length = length;
             auto chunk = Download(chunkOptions, context);
+            if (chunk.Value.Details.ETag != etag)
+            {
+              throw Azure::Core::RequestFailedException(
+                  "file was modified in the middle of download");
+            }
             bodyStreamToFile(
                 *(chunk.Value.BodyStream),
                 fileWriter,
