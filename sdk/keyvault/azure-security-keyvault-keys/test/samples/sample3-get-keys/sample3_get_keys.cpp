@@ -38,10 +38,10 @@ int main()
   auto credential
       = std::make_shared<Azure::Identity::ClientSecretCredential>(tenantId, clientId, clientSecret);
 
-  KeyClient client(std::getenv("AZURE_KEYVAULT_URL"), credential);
+  KeyClient keyClient(std::getenv("AZURE_KEYVAULT_URL"), credential);
   try
   {
-    KeyVaultKey key = client.GetKey("some_key").Value;
+    KeyVaultKey key = keyClient.GetKey("some_key").Value;
   }
   catch (const Azure::Core::RequestFailedException& ex)
   {
