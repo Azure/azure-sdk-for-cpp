@@ -33,7 +33,12 @@ if(BUILD_TRANSPORT_CURL)
 endif()
 
 if(BUILD_TRANSPORT_CURL)
-  SET(CURL_TRANSPORT_ADAPTER_SRC src/http/curl/curl.cpp)
+  SET(CURL_TRANSPORT_ADAPTER_SRC
+    src/http/curl/curl_connection_pool_private.hpp
+    src/http/curl/curl_connection_private.hpp
+    src/http/curl/curl_session_private.hpp
+    src/http/curl/curl.cpp
+  )
   SET(CURL_TRANSPORT_ADAPTER_INC inc/azure/core/http/curl_transport.hpp)
 endif()
 if(BUILD_TRANSPORT_WINHTTP)
@@ -102,9 +107,6 @@ set(
     src/http/url.cpp
     src/io/body_stream.cpp
     src/io/random_access_file_body_stream.cpp
-    src/private/curl_connection.hpp
-    src/private/curl_connection_pool.hpp
-    src/private/curl_session.hpp
     src/private/environment_log_level_listener.hpp
     src/private/package_version.hpp
     src/base64.cpp

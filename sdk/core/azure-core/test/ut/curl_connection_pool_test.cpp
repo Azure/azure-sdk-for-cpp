@@ -15,11 +15,10 @@
 #include <thread>
 
 // The next includes are from Azure Core private headers.
-// That's why the path starts from `private/`
 // They are included to test the connection pool from the libcurl transport adapter implementation.
-#include <private/curl_connection.hpp>
-#include <private/curl_connection_pool.hpp>
-#include <private/curl_session.hpp>
+#include <http/curl/curl_connection_pool_private.hpp>
+#include <http/curl/curl_connection_private.hpp>
+#include <http/curl/curl_session_private.hpp>
 
 #include "curl_session_test.hpp"
 
