@@ -84,7 +84,7 @@ namespace Azure { namespace Core { namespace Http {
     /**
      * @brief Constructs `%RawResponse` by moving in another instance.
      *
-     * @param response Antoher `%RawResponse` to move in.
+     * @param response Another `%RawResponse` to move in.
      *
      */
     RawResponse(RawResponse&& response) = default;
