@@ -34,7 +34,7 @@ namespace Azure { namespace Storage { namespace _internal {
         CP_UTF8, MB_ERR_INVALID_CHARS, filename.data(), int(filename.length()), nullptr, 0);
     if (sizeNeeded == 0)
     {
-      throw std::runtime_error("invalid filename");
+      throw std::runtime_error("Invalid filename.");
     }
     std::wstring filenameW(sizeNeeded, L'\0');
     if (MultiByteToWideChar(
@@ -46,7 +46,7 @@ namespace Azure { namespace Storage { namespace _internal {
             sizeNeeded)
         == 0)
     {
-      throw std::runtime_error("invalid filename");
+      throw std::runtime_error("Invalid filename.");
     }
 
     HANDLE fileHandle;
@@ -66,7 +66,7 @@ namespace Azure { namespace Storage { namespace _internal {
 #endif
     if (fileHandle == INVALID_HANDLE_VALUE)
     {
-      throw std::runtime_error("failed to open file");
+      throw std::runtime_error("Failed to open file.");
     }
 
     LARGE_INTEGER fileSize;
@@ -74,7 +74,7 @@ namespace Azure { namespace Storage { namespace _internal {
     if (!ret)
     {
       CloseHandle(fileHandle);
-      throw std::runtime_error("failed to get size of file");
+      throw std::runtime_error("Failed to get size of file.");
     }
     m_handle = static_cast<void*>(fileHandle);
     m_fileSize = fileSize.QuadPart;
@@ -88,7 +88,7 @@ namespace Azure { namespace Storage { namespace _internal {
         CP_UTF8, MB_ERR_INVALID_CHARS, filename.data(), int(filename.length()), nullptr, 0);
     if (sizeNeeded == 0)
     {
-      throw std::runtime_error("invalid filename");
+      throw std::runtime_error("Invalid filename.");
     }
     std::wstring filenameW(sizeNeeded, L'\0');
     if (MultiByteToWideChar(
@@ -100,7 +100,7 @@ namespace Azure { namespace Storage { namespace _internal {
             sizeNeeded)
         == 0)
     {
-      throw std::runtime_error("invalid filename");
+      throw std::runtime_error("Invalid filename.");
     }
 
     HANDLE fileHandle;
@@ -121,7 +121,7 @@ namespace Azure { namespace Storage { namespace _internal {
 #endif
     if (fileHandle == INVALID_HANDLE_VALUE)
     {
-      throw std::runtime_error("failed to open file");
+      throw std::runtime_error("Failed to open file.");
     }
     m_handle = static_cast<void*>(fileHandle);
   }
@@ -132,7 +132,7 @@ namespace Azure { namespace Storage { namespace _internal {
   {
     if (length > std::numeric_limits<DWORD>::max())
     {
-      throw std::runtime_error("failed to write file");
+      throw std::runtime_error("Failed to write file.");
     }
 
     OVERLAPPED overlapped;
@@ -149,7 +149,7 @@ namespace Azure { namespace Storage { namespace _internal {
         &overlapped);
     if (!ret)
     {
-      throw std::runtime_error("failed to write file");
+      throw std::runtime_error("Failed to write file.");
     }
   }
 #elif defined(AZ_PLATFORM_POSIX)
@@ -158,13 +158,13 @@ namespace Azure { namespace Storage { namespace _internal {
     m_handle = open(filename.data(), O_RDONLY);
     if (m_handle == -1)
     {
-      throw std::runtime_error("failed to open file");
+      throw std::runtime_error("Failed to open file.");
     }
     m_fileSize = lseek(m_handle, 0, SEEK_END);
     if (m_fileSize == -1)
     {
       close(m_handle);
-      throw std::runtime_error("failed to get size of file");
+      throw std::runtime_error("Failed to get size of file.");
     }
   }
 
@@ -176,7 +176,7 @@ namespace Azure { namespace Storage { namespace _internal {
         filename.data(), O_WRONLY | O_CREAT | O_TRUNC, S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH);
     if (m_handle == -1)
     {
-      throw std::runtime_error("failed to open file");
+      throw std::runtime_error("Failed to open file.");
     }
   }
 
@@ -186,12 +186,12 @@ namespace Azure { namespace Storage { namespace _internal {
   {
     if (offset > static_cast<int64_t>(std::numeric_limits<off_t>::max()))
     {
-      throw std::runtime_error("failed to write file");
+      throw std::runtime_error("Failed to write file.");
     }
     ssize_t bytesWritten = pwrite(m_handle, buffer, length, static_cast<off_t>(offset));
     if (bytesWritten < 0 || static_cast<size_t>(bytesWritten) != length)
     {
-      throw std::runtime_error("failed to write file");
+      throw std::runtime_error("Failed to write file.");
     }
   }
 #endif

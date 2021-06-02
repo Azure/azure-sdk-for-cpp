@@ -258,14 +258,14 @@ namespace Azure { namespace Storage { namespace Blobs {
     if (static_cast<size_t>(blobRangeSize) > bufferSize)
     {
       throw Azure::Core::RequestFailedException(
-          "buffer is not big enough, blob range size is " + std::to_string(blobRangeSize));
+          "Buffer is not big enough, blob range size is " + std::to_string(blobRangeSize) + ".");
     }
 
     int64_t bytesRead = firstChunk.Value.BodyStream->ReadToCount(
         buffer, static_cast<size_t>(firstChunkLength), context);
     if (bytesRead != firstChunkLength)
     {
-      throw Azure::Core::RequestFailedException("error when reading body stream");
+      throw Azure::Core::RequestFailedException("Error when reading body stream.");
     }
     firstChunk.Value.BodyStream.reset();
 
@@ -296,7 +296,7 @@ namespace Azure { namespace Storage { namespace Blobs {
                 context);
             if (bytesRead != chunkOptions.Range.Value().Length.Value())
             {
-              throw Azure::Core::RequestFailedException("error when reading body stream");
+              throw Azure::Core::RequestFailedException("Error when reading body stream.");
             }
 
             if (chunkId == numChunks - 1)
@@ -376,7 +376,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         size_t bytesRead = stream.ReadToCount(buffer.data(), readSize, context);
         if (bytesRead != readSize)
         {
-          throw Azure::Core::RequestFailedException("error when reading body stream");
+          throw Azure::Core::RequestFailedException("Error when reading body stream.");
         }
         fileWriter.Write(buffer.data(), bytesRead, offset);
         length -= bytesRead;

@@ -25,13 +25,13 @@ namespace Azure { namespace Storage { namespace _internal {
 
     if (length > static_cast<size_t>(std::numeric_limits<int>::max()))
     {
-      throw std::runtime_error("xml data too big");
+      throw std::runtime_error("Xml data too big.");
     }
 
     m_reader = xmlReaderForMemory(data, static_cast<int>(length), nullptr, nullptr, 0);
     if (!m_reader)
     {
-      throw std::runtime_error("failed to parse xml");
+      throw std::runtime_error("Failed to parse xml.");
     }
   }
 
@@ -55,7 +55,7 @@ namespace Azure { namespace Storage { namespace _internal {
       }
       else
       {
-        throw std::runtime_error("failed to parse xml");
+        throw std::runtime_error("Failed to parse xml.");
       }
     }
 
@@ -66,7 +66,7 @@ namespace Azure { namespace Storage { namespace _internal {
     }
     if (ret != 1)
     {
-      throw std::runtime_error("failed to parse xml");
+      throw std::runtime_error("Failed to parse xml.");
     }
 
     int type = xmlTextReaderNodeType(reader);
@@ -107,7 +107,7 @@ namespace Azure { namespace Storage { namespace _internal {
     }
     else
     {
-      throw std::runtime_error("unknown type " + std::to_string(type) + " while parsing xml");
+      throw std::runtime_error("Unknown type " + std::to_string(type) + " while parsing xml.");
     }
 
     return Read();
@@ -172,8 +172,8 @@ namespace Azure { namespace Storage { namespace _internal {
     else
     {
       throw std::runtime_error(
-          "unsupported XmlNode type "
-          + std::to_string(static_cast<std::underlying_type<XmlNodeType>::type>(node.Type)));
+          "Unsupported XmlNode type "
+          + std::to_string(static_cast<std::underlying_type<XmlNodeType>::type>(node.Type)) + ".");
     }
   }
 

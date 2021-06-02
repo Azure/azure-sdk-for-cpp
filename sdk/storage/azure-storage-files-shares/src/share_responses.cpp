@@ -50,11 +50,11 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       }
       else if (m_status == Azure::Core::OperationStatus::Failed)
       {
-        throw Azure::Core::RequestFailedException("Operation failed");
+        throw Azure::Core::RequestFailedException("Operation failed.");
       }
       else if (m_status == Azure::Core::OperationStatus::Cancelled)
       {
-        throw Azure::Core::RequestFailedException("Operation was cancelled");
+        throw Azure::Core::RequestFailedException("Operation was cancelled.");
       }
 
       std::this_thread::sleep_for(period);
