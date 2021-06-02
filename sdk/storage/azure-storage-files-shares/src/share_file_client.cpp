@@ -7,15 +7,15 @@
 #include <azure/core/http/policies/policy.hpp>
 #include <azure/core/internal/io/null_body_stream.hpp>
 #include <azure/core/io/body_stream.hpp>
-#include <azure/storage/common/concurrent_transfer.hpp>
-#include <azure/storage/common/constants.hpp>
 #include <azure/storage/common/crypt.hpp>
-#include <azure/storage/common/file_io.hpp>
-#include <azure/storage/common/reliable_stream.hpp>
-#include <azure/storage/common/shared_key_policy.hpp>
+#include <azure/storage/common/internal/concurrent_transfer.hpp>
+#include <azure/storage/common/internal/constants.hpp>
+#include <azure/storage/common/internal/file_io.hpp>
+#include <azure/storage/common/internal/reliable_stream.hpp>
+#include <azure/storage/common/internal/shared_key_policy.hpp>
+#include <azure/storage/common/internal/storage_per_retry_policy.hpp>
+#include <azure/storage/common/internal/storage_service_version_policy.hpp>
 #include <azure/storage/common/storage_common.hpp>
-#include <azure/storage/common/storage_per_retry_policy.hpp>
-#include <azure/storage/common/storage_service_version_policy.hpp>
 
 #include "azure/storage/files/shares/share_constants.hpp"
 

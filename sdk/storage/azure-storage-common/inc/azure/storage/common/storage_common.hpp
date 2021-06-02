@@ -13,10 +13,12 @@
 #include <azure/core/case_insensitive_containers.hpp>
 #include <azure/core/http/policies/policy.hpp>
 
-#include "azure/storage/common/constants.hpp"
-#include "azure/storage/common/storage_per_retry_policy.hpp"
+#include "azure/storage/common/internal/constants.hpp"
+#include "azure/storage/common/internal/storage_per_retry_policy.hpp"
 
 namespace Azure { namespace Storage {
+
+  constexpr static const char* AccountEncryptionKey = "$account-encryption-key";
 
   /**
    * @brief The algorithm used for hash.

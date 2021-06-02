@@ -24,7 +24,7 @@
 #include <azure/core/datetime.hpp>
 #include <azure/core/etag.hpp>
 #include <azure/core/io/body_stream.hpp>
-#include <azure/storage/common/constants.hpp>
+#include <azure/storage/common/internal/constants.hpp>
 #include <azure/storage/common/storage_common.hpp>
 #include <gtest/gtest.h>
 

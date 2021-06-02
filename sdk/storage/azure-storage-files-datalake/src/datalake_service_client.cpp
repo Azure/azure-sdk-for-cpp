@@ -5,13 +5,13 @@
 
 #include <azure/core/http/policies/policy.hpp>
 #include <azure/storage/blobs/protocol/blob_rest_client.hpp>
-#include <azure/storage/common/constants.hpp>
-#include <azure/storage/common/shared_key_policy.hpp>
+#include <azure/storage/common/internal/constants.hpp>
+#include <azure/storage/common/internal/shared_key_policy.hpp>
+#include <azure/storage/common/internal/storage_per_retry_policy.hpp>
+#include <azure/storage/common/internal/storage_service_version_policy.hpp>
+#include <azure/storage/common/internal/storage_switch_to_secondary_policy.hpp>
 #include <azure/storage/common/storage_common.hpp>
 #include <azure/storage/common/storage_credential.hpp>
-#include <azure/storage/common/storage_per_retry_policy.hpp>
-#include <azure/storage/common/storage_service_version_policy.hpp>
-#include <azure/storage/common/storage_switch_to_secondary_policy.hpp>
 
 #include "azure/storage/files/datalake/datalake_file_system_client.hpp"
 #include "azure/storage/files/datalake/datalake_utilities.hpp"

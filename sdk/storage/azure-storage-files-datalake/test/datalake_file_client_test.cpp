@@ -11,8 +11,8 @@
 
 #include <azure/identity/client_secret_credential.hpp>
 #include <azure/storage/blobs.hpp>
-#include <azure/storage/common/file_io.hpp>
-#include <azure/storage/common/shared_key_policy.hpp>
+#include <azure/storage/common/internal/file_io.hpp>
+#include <azure/storage/common/internal/shared_key_policy.hpp>
 #include <azure/storage/files/datalake/datalake_utilities.hpp>
 
 namespace Azure { namespace Storage { namespace Files { namespace DataLake { namespace Models {

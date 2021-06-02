@@ -8,7 +8,7 @@
 
 #include <azure/core/nullable.hpp>
 #include <azure/storage/common/account_sas_builder.hpp>
-#include <azure/storage/common/constants.hpp>
+#include <azure/storage/common/internal/constants.hpp>
 
 namespace Azure { namespace Storage { namespace Sas {
 

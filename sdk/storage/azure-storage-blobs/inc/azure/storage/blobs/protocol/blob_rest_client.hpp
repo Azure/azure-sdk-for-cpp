@@ -21,9 +21,9 @@
 #include <azure/core/nullable.hpp>
 #include <azure/core/response.hpp>
 #include <azure/storage/common/crypt.hpp>
+#include <azure/storage/common/internal/xml_wrapper.hpp>
 #include <azure/storage/common/storage_common.hpp>
 #include <azure/storage/common/storage_exception.hpp>
-#include <azure/storage/common/xml_wrapper.hpp>
 
 #include "azure/storage/blobs/dll_import_export.hpp"
 

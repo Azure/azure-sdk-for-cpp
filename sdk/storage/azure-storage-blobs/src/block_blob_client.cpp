@@ -16,12 +16,12 @@
 #endif
 
 #include <azure/core/io/body_stream.hpp>
-#include <azure/storage/common/concurrent_transfer.hpp>
-#include <azure/storage/common/constants.hpp>
 #include <azure/storage/common/crypt.hpp>
-#include <azure/storage/common/file_io.hpp>
+#include <azure/storage/common/internal/concurrent_transfer.hpp>
+#include <azure/storage/common/internal/constants.hpp>
+#include <azure/storage/common/internal/file_io.hpp>
+#include <azure/storage/common/internal/storage_switch_to_secondary_policy.hpp>
 #include <azure/storage/common/storage_common.hpp>
-#include <azure/storage/common/storage_switch_to_secondary_policy.hpp>
 
 namespace Azure { namespace Storage { namespace Blobs {
 
