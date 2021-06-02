@@ -182,7 +182,7 @@ namespace Azure { namespace Core { namespace Http {
        * Returning a value smaller than the buffer size will likely indicate that the HTTP
        * RawResponse is completed and that the rest of the buffer contains part of the response
        * body.
-       * 
+       *
        */
       int32_t Parse(uint8_t const* const buffer, size_t const bufferSize);
 

@@ -158,7 +158,6 @@ namespace Azure { namespace Core { namespace Test {
     int32_t const payloadSize7 = static_cast<int32_t>(response7.size());
     int32_t const payloadSize8 = static_cast<int32_t>(response8.size());
 
-
     std::string connectionKey("connection-key");
 
     // Can't mock the curMock directly from a unique ptr, heap allocate it first and then make a
