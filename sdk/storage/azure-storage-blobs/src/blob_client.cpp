@@ -367,13 +367,13 @@ namespace Azure { namespace Storage { namespace Blobs {
     auto bodyStreamToFile = [](Azure::Core::IO::BodyStream& stream,
                                _internal::FileWriter& fileWriter,
                                int64_t offset,
-                               size_t length,
+                               int64_t length,
                                const Azure::Core::Context& context) {
       constexpr size_t bufferSize = 4 * 1024 * 1024;
       std::vector<uint8_t> buffer(bufferSize);
       while (length > 0)
       {
-        size_t readSize = std::min(bufferSize, length);
+        size_t readSize = std::min(bufferSize, static_cast<size_t>(length));
         size_t bytesRead = stream.ReadToCount(buffer.data(), readSize, context);
         if (bytesRead != readSize)
         {
@@ -389,7 +389,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         *(firstChunk.Value.BodyStream),
         fileWriter,
         0,
-        static_cast<size_t>(firstChunkLength),
+        firstChunkLength,
         context);
     firstChunk.Value.BodyStream.reset();
 
@@ -418,7 +418,7 @@ namespace Azure { namespace Storage { namespace Blobs {
                 *(chunk.Value.BodyStream),
                 fileWriter,
                 offset - firstChunkOffset,
-                static_cast<size_t>(chunkOptions.Range.Value().Length.Value()),
+                chunkOptions.Range.Value().Length.Value(),
                 context);
 
             if (chunkId == numChunks - 1)
