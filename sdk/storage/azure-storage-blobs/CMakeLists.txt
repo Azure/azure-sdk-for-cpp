@@ -115,6 +115,7 @@ if(BUILD_STORAGE_SAMPLES)
         sample/blob_getting_started.cpp
         sample/blob_list_operation.cpp
         sample/blob_sas.cpp
+        sample/transactional_checksum.cpp
   )
 
   target_link_libraries(azure-storage-sample PRIVATE azure-storage-blobs)
