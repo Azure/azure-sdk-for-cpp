@@ -255,7 +255,8 @@ namespace Azure { namespace Storage { namespace Blobs {
     }
     firstChunkLength = std::min(firstChunkLength, blobRangeSize);
 
-    if (static_cast<size_t>(blobRangeSize) > bufferSize)
+    if (blobRangeSize > std::numeric_limits<size_t>::max()
+        || static_cast<size_t>(blobRangeSize) > bufferSize)
     {
       throw Azure::Core::RequestFailedException(
           "buffer is not big enough, blob range size is " + std::to_string(blobRangeSize));

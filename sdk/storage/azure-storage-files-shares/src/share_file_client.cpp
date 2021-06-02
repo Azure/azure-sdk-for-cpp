@@ -688,7 +688,8 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     }
     firstChunkLength = std::min(firstChunkLength, fileRangeSize);
 
-    if (static_cast<size_t>(fileRangeSize) > bufferSize)
+    if (fileRangeSize > std::numeric_limits<size_t>::max()
+        || static_cast<size_t>(fileRangeSize) > bufferSize)
     {
       throw Azure::Core::RequestFailedException(
           "buffer is not big enough, file range size is " + std::to_string(fileRangeSize));

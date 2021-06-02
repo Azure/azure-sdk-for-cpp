@@ -127,6 +127,10 @@ namespace Azure { namespace Storage { namespace Blobs {
     constexpr int64_t MaxBlockNumber = 50000;
     constexpr int64_t BlockGrainSize = 1 * 1024 * 1024;
 
+    if (options.TransferOptions.SingleUploadThreshold > std::numeric_limits<size_t>::max())
+    {
+      throw Azure::Core::RequestFailedException("Single upload threshold is too big");
+    }
     if (bufferSize <= static_cast<size_t>(options.TransferOptions.SingleUploadThreshold))
     {
       Azure::Core::IO::MemoryBodyStream contentStream(buffer, bufferSize);
@@ -163,8 +167,6 @@ namespace Azure { namespace Storage { namespace Blobs {
     };
 
     auto uploadBlockFunc = [&](int64_t offset, int64_t length, int64_t chunkId, int64_t numChunks) {
-      // TODO: Investigate changing lambda parameters to be size_t, unless they need to be int64_t
-      // for some reason.
       Azure::Core::IO::MemoryBodyStream contentStream(buffer + offset, static_cast<size_t>(length));
       StageBlockOptions chunkOptions;
       auto blockInfo = StageBlock(getBlockId(chunkId), contentStream, chunkOptions, context);

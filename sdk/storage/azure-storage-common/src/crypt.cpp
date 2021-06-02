@@ -151,6 +151,10 @@ namespace Azure { namespace Storage {
 
     std::vector<uint8_t> Sha256(const std::vector<uint8_t>& data)
     {
+      if (data.size() > std::numeric_limits<ULONG>::max())
+      {
+        throw std::runtime_error("Data size is too big.");
+      }
       static AlgorithmProviderInstance AlgorithmProvider(AlgorithmType::Sha256);
 
       std::string context;
@@ -198,6 +202,10 @@ namespace Azure { namespace Storage {
         const std::vector<uint8_t>& data,
         const std::vector<uint8_t>& key)
     {
+      if (data.size() > std::numeric_limits<ULONG>::max())
+      {
+        throw std::runtime_error("Data size is too big.");
+      }
 
       static AlgorithmProviderInstance AlgorithmProvider(AlgorithmType::HmacSha256);
 
