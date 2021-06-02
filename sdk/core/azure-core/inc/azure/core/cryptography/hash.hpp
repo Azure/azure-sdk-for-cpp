@@ -53,7 +53,6 @@ namespace Azure { namespace Core { namespace Cryptography {
     Hash() = default;
 
   public:
-
     /**
      * @brief Used to append partial binary input data to compute the hash in a streaming fashion.
      * @remark Once all the data has been added, call #Azure::Core::Cryptography::Hash::Final() to
