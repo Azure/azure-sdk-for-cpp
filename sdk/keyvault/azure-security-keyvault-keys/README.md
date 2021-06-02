@@ -13,16 +13,21 @@ The Azure Key Vault keys library client supports RSA keys and Elliptic Curve (EC
 
 ## Getting started
 
-### Install the package
+### Include the package
 
-Install the Azure Key Vault keys client library for C++ with [vcpkg](https://github.com/microsoft/vcpkg):
+The easiest way to acquire the C++ SDK is leveraging vcpkg package manager. See the corresponding [Azure SDK for C++ readme section][azsdk_vcpkg_install].
 
-```PowerShell
-# Windows
-vcpkg.exe install azure-security-keyvault-keys-cpp
+To install Azure Security Key Vault Keys package via vcpkg:
 
-# Linux
-./vcpkg install azure-security-keyvault-keys-cpp
+```cmd
+> vcpkg install azure-security-keyvault-keys-cpp
+```
+
+Then, use in your CMake file:
+
+```CMake
+find_package(azure-security-keyvault-keys-cpp CONFIG REQUIRED)
+target_link_libraries(<your project name> PRIVATE Azure::azure-security-keyvault-keys)
 ```
 
 ### Prerequisites
@@ -437,7 +442,7 @@ This project has adopted the [Microsoft Open Source Code of Conduct][code_of_con
 For more information see the [Code of Conduct FAQ][coc_faq] or contact opencode@microsoft.com with any additional questions or comments.
 
 <!-- LINKS -->
-
+[azsdk_vcpkg_install]: https://github.com/Azure/azure-sdk-for-cpp#download--install-the-sdk
 [api_reference]: https://docs.microsoft.com/dotnet/api/azure.security.keyvault.keys
 [azure_cli]: https://docs.microsoft.com/cli/azure
 [azure_identity]: https://github.com/Azure/azure-sdk-for-cpp/tree/master/sdk/identity/azure-identity
