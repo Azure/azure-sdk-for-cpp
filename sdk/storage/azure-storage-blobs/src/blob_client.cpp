@@ -385,12 +385,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       }
     };
 
-    bodyStreamToFile(
-        *(firstChunk.Value.BodyStream),
-        fileWriter,
-        0,
-        firstChunkLength,
-        context);
+    bodyStreamToFile(*(firstChunk.Value.BodyStream), fileWriter, 0, firstChunkLength, context);
     firstChunk.Value.BodyStream.reset();
 
     auto returnTypeConverter = [](Azure::Response<Models::DownloadBlobResult>& response) {
