@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
 
-#include "azure/storage/common/xml_wrapper.hpp"
+#include "azure/storage/common/internal/xml_wrapper.hpp"
 
 #include <limits>
 #include <stdexcept>

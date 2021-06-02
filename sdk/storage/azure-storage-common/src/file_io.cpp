@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
 
-#include "azure/storage/common/file_io.hpp"
+#include "azure/storage/common/internal/file_io.hpp"
 
 #include <azure/core/platform.hpp>
 
