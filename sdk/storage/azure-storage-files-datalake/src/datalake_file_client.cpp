@@ -379,7 +379,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     protocolLayerOptions.ExpiryOrigin = expiryOrigin;
     AZURE_ASSERT_MSG(
         !(options.ExpiresOn.HasValue() && options.TimeToExpire.HasValue()),
-        "ExpiresOn and TimeToExpire are mutually exclusive");
+        "ExpiresOn and TimeToExpire are mutually exclusive.");
 
     if (options.ExpiresOn.HasValue())
     {

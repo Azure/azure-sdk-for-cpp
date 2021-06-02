@@ -253,7 +253,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     blobOptions.AccessConditions.IfModifiedSince = options.AccessConditions.IfModifiedSince;
     AZURE_ASSERT_MSG(
         !options.AccessConditions.IfUnmodifiedSince.HasValue(),
-        "This operation doesn't support If-Unmodified-Since condition");
+        "This operation doesn't support If-Unmodified-Since condition.");
 
     auto result = m_blobContainerClient.SetMetadata(std::move(metadata), blobOptions, context);
     Models::SetFileSystemMetadataResult ret;
