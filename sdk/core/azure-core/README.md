@@ -12,7 +12,7 @@ Typically, you will not need to download `azure-core`; it will be downloaded for
 
 The easiest way to acquire the C++ SDK is leveraging vcpkg package manager. See the corresponding [Azure SDK for C++ readme section][azsdk_vcpkg_install].
 
-To install Azure Identity package via vcpkg:
+To install Azure Core package via vcpkg:
 
 ```cmd
 > vcpkg install azure-core-cpp
