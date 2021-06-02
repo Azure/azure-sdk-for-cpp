@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
 
-#include "azure/storage/common/reliable_stream.hpp"
+#include "azure/storage/common/internal/reliable_stream.hpp"
 
 #include <azure/core/http/http.hpp>
 

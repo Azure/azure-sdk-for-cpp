@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
 
-#include "azure/storage/common/shared_key_policy.hpp"
+#include "azure/storage/common/internal/shared_key_policy.hpp"
 
 #include <algorithm>
 #include <cctype>

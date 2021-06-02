@@ -8,8 +8,8 @@
 #include <azure/core/http/policies/policy.hpp>
 #include <azure/core/internal/json/json.hpp>
 
-#include "azure/storage/common/constants.hpp"
-#include "azure/storage/common/xml_wrapper.hpp"
+#include "azure/storage/common/internal/constants.hpp"
+#include "azure/storage/common/internal/xml_wrapper.hpp"
 
 namespace Azure { namespace Storage {
   StorageException StorageException::CreateFromResponse(
