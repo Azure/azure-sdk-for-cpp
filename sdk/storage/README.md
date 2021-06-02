@@ -20,6 +20,32 @@ The Azure Storage Client Library for C++ allows you to build applications agains
 
 For the best development experience, we recommend that developers use the [CMake projects in Visual Studio](https://docs.microsoft.com/cpp/build/cmake-projects-in-visual-studio?view=vs-2019) to view and build the source code together with its dependencies.
 
+### Include the package
+
+The easiest way to acquire the C++ SDK is leveraging vcpkg package manager. See the corresponding [Azure SDK for C++ readme section][azsdk_vcpkg_install].
+
+To install Azure Storage packages via vcpkg:
+
+```cmd
+> vcpkg install azure-storage-common-cpp azure-storage-blobs-cpp azure-storage-files-datalake-cpp azure-storage-files-shares-cpp
+```
+
+Then, use in your CMake file:
+
+```CMake
+find_package(azure-storage-common-cpp CONFIG REQUIRED)
+target_link_libraries(<your project name> PRIVATE Azure::azure-storage-common)
+
+find_package(azure-storage-blobs-cpp CONFIG REQUIRED)
+target_link_libraries(<your project name> PRIVATE Azure::azure-storage-blobs)
+
+find_package(azure-storage-files-datalake-cpp CONFIG REQUIRED)
+target_link_libraries(<your project name> PRIVATE Azure::azure-storage-files-datalake)
+
+find_package(azure-storage-files-shares-cpp CONFIG REQUIRED)
+target_link_libraries(<your project name> PRIVATE Azure::azure-storage-files-shares)
+```
+
 ## Requirements
 
 To call Azure services, you must first have an Azure subscription. Sign up for a [free trial](https://azure.microsoft.com/pricing/free-trial/) or use your [MSDN subscriber benefits](https://azure.microsoft.com/pricing/member-offers/msdn-benefits-details/).
@@ -116,3 +142,6 @@ To get started with the coding, please visit the following code samples:
 - [How to use Blob Storage from C++](https://github.com/Azure/azure-sdk-for-cpp/blob/master/sdk/storage/azure-storage-blobs/sample/blob_getting_started.cpp)
 - [How to use DataLake Gen 2 Storage from C++](https://github.com/Azure/azure-sdk-for-cpp/blob/master/sdk/storage/azure-storage-files-datalake/sample/datalake_getting_started.cpp)
 - [How to use File Storage from C++](https://github.com/Azure/azure-sdk-for-cpp/blob/master/sdk/storage/azure-storage-files-shares/sample/file_share_getting_started.cpp)
+
+<!-- LINKS -->
+[azsdk_vcpkg_install]: https://github.com/Azure/azure-sdk-for-cpp#download--install-the-sdk
