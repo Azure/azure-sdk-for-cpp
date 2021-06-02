@@ -20,8 +20,8 @@ namespace Azure { namespace Core { namespace Http {
   namespace _detail {
     // libcurl CURL_MAX_WRITE_SIZE is 64k. Using same value for default uploading chunk size.
     // This can be customizable in the HttpRequest
-    constexpr static int64_t DefaultUploadChunkSize = 1024 * 64;
-    constexpr static auto DefaultLibcurlReaderSize = 1024;
+    constexpr static int32_t DefaultUploadChunkSize = 1024 * 64;
+    constexpr static int32_t DefaultLibcurlReaderSize = 1024;
     // Run time error template
     constexpr static const char* DefaultFailedToGetNewConnectionTemplate
         = "Fail to get a new connection for: ";
@@ -35,7 +35,7 @@ namespace Azure { namespace Core { namespace Http {
     constexpr static int32_t DefaultConnectionExpiredMilliseconds = 1000 * 60;
     // Define the maximun allowed connections per host-index in the pool. If this number is reached
     // for the host-index, next connections trying to be added to the pool will be ignored.
-    constexpr static size_t MaxConnectionsPerIndex = 1024;
+    constexpr static int32_t MaxConnectionsPerIndex = 1024;
   } // namespace _detail
 
   /**

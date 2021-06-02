@@ -551,7 +551,7 @@ CURLcode CurlSession::SendRawHttp(Context const& context)
 {
   // something like GET /path HTTP1.0 \r\nheaders\r\n
   auto rawRequest = GetHTTPMessagePreBody(this->m_request);
-  int64_t rawRequestLen = rawRequest.size();
+  auto rawRequestLen = rawRequest.size();
 
   CURLcode sendResult = m_connection->SendBuffer(
       reinterpret_cast<uint8_t const*>(rawRequest.data()),
@@ -576,7 +576,7 @@ void CurlSession::ParseChunkSize(Context const& context)
   // Move to after chunk size
   for (bool keepPolling = true; keepPolling;)
   {
-    for (int64_t index = this->m_bodyStartInBuffer, i = 0; index < this->m_innerBufferSize;
+    for (int32_t index = this->m_bodyStartInBuffer, i = 0; index < this->m_innerBufferSize;
          index++, i++)
     {
       strChunkSize.append(reinterpret_cast<char*>(&this->m_readBuffer[index]), 1);
@@ -585,7 +585,7 @@ void CurlSession::ParseChunkSize(Context const& context)
         // get chunk size. Chunk size comes in Hex value
         try
         {
-          this->m_chunkSize = static_cast<int64_t>(std::stoull(strChunkSize, nullptr, 16));
+          this->m_chunkSize = std::stoull(strChunkSize, nullptr, 16);
         }
         catch (const std::invalid_argument& ex)
         {
@@ -651,12 +651,12 @@ void CurlSession::ReadStatusLineAndHeadersFromRawResponse(
     bool reuseInternalBuffer)
 {
   auto parser = ResponseBufferParser();
-  auto bufferSize = int64_t();
+  auto bufferSize = int32_t();
 
   // Keep reading until all headers were read
   while (!parser.IsParseCompleted())
   {
-    int64_t bytesParsed = 0;
+    int32_t bytesParsed = 0;
     if (reuseInternalBuffer)
     {
       // parse from internal buffer. This means previous read from server got more than one
@@ -944,9 +944,9 @@ size_t CurlConnection::ReadFromSocket(uint8_t* buffer, size_t bufferSize, Contex
 
 std::unique_ptr<RawResponse> CurlSession::ExtractResponse() { return std::move(this->m_response); }
 
-int64_t CurlSession::ResponseBufferParser::Parse(
+size_t CurlSession::ResponseBufferParser::Parse(
     uint8_t const* const buffer,
-    int64_t const bufferSize)
+    size_t const bufferSize)
 {
   if (this->m_parseCompleted)
   {
@@ -954,7 +954,7 @@ int64_t CurlSession::ResponseBufferParser::Parse(
   }
 
   // Read all buffer until \r\n is found
-  int64_t start = 0, index = 0;
+  size_t start = 0, index = 0;
   for (; index < bufferSize; index++)
   {
     if (buffer[index] == '\r')
@@ -1064,9 +1064,9 @@ int64_t CurlSession::ResponseBufferParser::Parse(
 }
 
 // Finds delimiter '\r' as the end of the
-int64_t CurlSession::ResponseBufferParser::BuildStatusCode(
+size_t CurlSession::ResponseBufferParser::BuildStatusCode(
     uint8_t const* const buffer,
-    int64_t const bufferSize)
+    size_t const bufferSize)
 {
   if (this->state != ResponseParserState::StatusLine)
   {
@@ -1115,9 +1115,9 @@ int64_t CurlSession::ResponseBufferParser::BuildStatusCode(
 }
 
 // Finds delimiter '\r' as the end of the
-int64_t CurlSession::ResponseBufferParser::BuildHeader(
+size_t CurlSession::ResponseBufferParser::BuildHeader(
     uint8_t const* const buffer,
-    int64_t const bufferSize)
+    size_t const bufferSize)
 {
   if (this->state != ResponseParserState::Headers)
   {

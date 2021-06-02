@@ -146,7 +146,7 @@ namespace Azure { namespace Core { namespace Http {
        * @param bufferSize Indicates the size of the buffer.
        * @return Returns the index of the last parsed position from buffer.
        */
-      int64_t BuildStatusCode(uint8_t const* const buffer, int64_t const bufferSize);
+      size_t BuildStatusCode(uint8_t const* const buffer, size_t const bufferSize);
 
       /**
        * @brief This method is invoked by the Parsing process if the internal state is set to
@@ -159,7 +159,7 @@ namespace Azure { namespace Core { namespace Http {
        * value is smaller than the body size, means there is part of the body response in the
        * buffer.
        */
-      int64_t BuildHeader(uint8_t const* const buffer, int64_t const bufferSize);
+      size_t BuildHeader(uint8_t const* const buffer, size_t const bufferSize);
 
     public:
       /**
@@ -183,7 +183,7 @@ namespace Azure { namespace Core { namespace Http {
        * RawResponse is completed and that the rest of the buffer contains part of the response
        * body.
        */
-      int64_t Parse(uint8_t const* const buffer, int64_t const bufferSize);
+      size_t Parse(uint8_t const* const buffer, size_t const bufferSize);
 
       /**
        * @brief Indicates when the parser has completed parsing and building the HTTP RawResponse.
@@ -238,16 +238,20 @@ namespace Azure { namespace Core { namespace Http {
      * inner buffer. When a libcurl stream tries to read part of the body, this field will help to
      * decide how much data to take from the inner buffer before pulling more data from network.
      *
+     * @note The index will never be greater than `int32_t` because the size of the inner buffer has
+     * type `int32_t`. See m_innerBufferSize.
      */
-    int64_t m_bodyStartInBuffer = -1;
+    int32_t m_bodyStartInBuffer = -1;
 
     /**
      * @brief Control field to handle the number of bytes containing relevant data within the
      * internal buffer. This is because internal buffer can be set to be size N but after writing
      * from wire into it, it can be holding less then N bytes.
      *
+     * @note Field will never be greater than `int32_t` because the size of the inner buffer has
+     * type `int32_t`. See m_innerBufferSize.
      */
-    int64_t m_innerBufferSize = _detail::DefaultLibcurlReaderSize;
+    int32_t m_innerBufferSize = _detail::DefaultLibcurlReaderSize;
 
     bool m_isChunkedResponseType = false;
 
@@ -264,7 +268,7 @@ namespace Azure { namespace Core { namespace Http {
 
     /**
      * @brief For chunked responses, this field knows the size of the current chuck size server
-     * will de sending
+     * will be sending.
      *
      */
     int64_t m_chunkSize = 0;
