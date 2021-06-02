@@ -18,23 +18,7 @@ void DataLakeGettingStarted()
 
   auto fileSystemClient
       = DataLakeFileSystemClient::CreateFromConnectionString(GetConnectionString(), fileSystemName);
-
-  try
-  {
-    fileSystemClient.Create();
-  }
-  catch (const Azure::Storage::StorageException& e)
-  {
-    if (e.ErrorCode != "ContainerAlreadyExists")
-    {
-      throw;
-    }
-    else
-    {
-      std::cout << "ErrorCode: " + e.ErrorCode << std::endl;
-      std::cout << "ReasonPhrase: " + e.ReasonPhrase << std::endl;
-    }
-  }
+  fileSystemClient.CreateIfNotExists();
 
   // Create a directory.
   auto directoryClient = fileSystemClient.GetDirectoryClient(directoryName);
