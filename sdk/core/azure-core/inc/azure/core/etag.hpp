@@ -73,7 +73,7 @@ public:
    * @param right #Azure::Core::ETag to compare.
    * @param comparisonKind Determines what #Azure::Core::ETag::ETagComparison to perform, default
    * is #Azure::Core::ETag::ETagComparison Strong.
-   * @return `true` if #Azure::Core::ETag matches, `false` otherwise.
+   * @return `true` if `%ETag` matches; otherwise, `false`.
    */
   static bool Equals(
       const ETag& left,
@@ -129,8 +129,8 @@ public:
   explicit ETag(std::string etag) : m_value(std::move(etag)) {}
 
   /**
-   * @brief Whether #Azure::Core::ETag is present.
-   * @return `true` if #Azure::Core::ETag has a value, `false` otherwise.
+   * @brief Whether `%ETag` is present.
+   * @return `true` if `%ETag` has a value; otherwise, `false`.
    */
   bool HasValue() const { return m_value.HasValue(); }
 
@@ -148,22 +148,22 @@ public:
   /**
    * @brief Compare with \p other `%ETag` for equality.
    * @param other Other `%ETag` to compare with.
-   * @return `true` if `%ETag` instances are equal according to strong validation, `false`
-   * otherwise.
+   * @return `true` if `%ETag` instances are equal according to strong validation; otherwise,
+   * `false`.
    */
   bool operator==(const ETag& other) const { return Equals(*this, other, ETagComparison::Strong); }
 
   /**
    * @brief Compare with \p other `%ETag` for inequality.
    * @param other Other `%ETag` to compare with.
-   * @return `true` if `%ETag` instances are not equal according to strong validation, `false`
-   * otherwise.
+   * @return `true` if `%ETag` instances are not equal according to strong validation; otherwise,
+   * `false`.
    */
   bool operator!=(const ETag& other) const { return !(*this == other); }
 
   /**
    * @brief Specifies whether the #Azure::Core::ETag is strong or weak.
-   * @return `true` if #Azure::Core::ETag is a weak validator, `false` otherwise.
+   * @return `true` if #Azure::Core::ETag is a weak validator; otherwise, `false`.
    */
   bool IsWeak() const
   {

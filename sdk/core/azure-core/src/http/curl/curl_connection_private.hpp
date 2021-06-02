@@ -100,7 +100,7 @@ namespace Azure { namespace Core { namespace Http {
     /**
      * @brief Check if the the connection was shut it down.
      *
-     * @return `true` is the connection was shut it down.
+     * @return `true` is the connection was shut it down; otherwise, `false`.
      */
     bool IsShutdown() const { return m_isShutDown; };
   };
@@ -164,7 +164,7 @@ namespace Azure { namespace Core { namespace Http {
 
       /**
        * @brief Checks whether this CURL connection is expired.
-       * @return `true` if this connection is considered expired, `false` otherwise.
+       * @return `true` if this connection is considered expired; otherwise, `false`.
        */
       bool IsExpired() override
       {

@@ -188,7 +188,7 @@ namespace Azure { namespace Core { namespace Http {
       /**
        * @brief Indicates when the parser has completed parsing and building the HTTP RawResponse.
        *
-       * @return `true` if parsing is completed. Otherwise `false`.
+       * @return `true` if parsing is completed; otherwise, `false`.
        */
       bool IsParseCompleted() const { return m_parseCompleted; }
 
@@ -329,7 +329,7 @@ namespace Azure { namespace Core { namespace Http {
 
     /**
      * @brief check whether an end of file has been reached.
-     * @return `true` if end of file has been reached, `false` otherwise.
+     * @return `true` if end of file has been reached; otherwise, `false`.
      */
     bool IsEOF()
     {

@@ -144,7 +144,7 @@ namespace Azure { namespace Core {
     /**
      * @brief Checks if the long-running operation is completed.
      *
-     * @return `true` if the long-running operation is done, otherwise `false`.
+     * @return `true` if the long-running operation is done; otherwise, `false`.
      */
     bool IsDone() const noexcept
     {
