@@ -12,8 +12,8 @@
 #include <azure/storage/common/internal/storage_switch_to_secondary_policy.hpp>
 #include <azure/storage/common/storage_common.hpp>
 
-#include "azure/storage/files/datalake/datalake_constants.hpp"
-#include "azure/storage/files/datalake/datalake_utilities.hpp"
+#include "azure/storage/files/datalake/internal/datalake_constants.hpp"
+#include "azure/storage/files/datalake/internal/datalake_utilities.hpp"
 
 #include "private/package_version.hpp"
 
