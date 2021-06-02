@@ -835,7 +835,7 @@ size_t CurlSession::OnRead(uint8_t* buffer, size_t count, Context const& context
     // since count is bounded by size_t.
     totalRead
         = innerBufferMemoryStream.Read(buffer, static_cast<size_t>(readRequestLength), context);
-    this->m_bodyStartInBuffer += totalRead;
+    this->m_bodyStartInBuffer += static_cast<int32_t>(totalRead);
     this->m_sessionTotalRead += totalRead;
 
     if (this->m_bodyStartInBuffer == this->m_innerBufferSize)
@@ -889,7 +889,7 @@ void CurlConnection::Shutdown()
 }
 
 // Read from socket and return the number of bytes taken from socket
-size_t CurlConnection::ReadFromSocket(uint8_t* buffer, size_t bufferSize, Context const& context)
+int32_t CurlConnection::ReadFromSocket(uint8_t* buffer, size_t bufferSize, Context const& context)
 {
   // loop until read result is not CURLE_AGAIN
   // Next loop is expected to be called at most 2 times:
@@ -939,12 +939,13 @@ size_t CurlConnection::ReadFromSocket(uint8_t* buffer, size_t bufferSize, Contex
 #if defined(AZ_PLATFORM_WINDOWS)
   WinSocketSetBuffSize(m_curlSocket);
 #endif
-  return readBytes;
+  // unlikely to get more than int32_t from socket.
+  return static_cast<int32_t>(readBytes);
 }
 
 std::unique_ptr<RawResponse> CurlSession::ExtractResponse() { return std::move(this->m_response); }
 
-size_t CurlSession::ResponseBufferParser::Parse(
+int32_t CurlSession::ResponseBufferParser::Parse(
     uint8_t const* const buffer,
     size_t const bufferSize)
 {
@@ -954,7 +955,7 @@ size_t CurlSession::ResponseBufferParser::Parse(
   }
 
   // Read all buffer until \r\n is found
-  size_t start = 0, index = 0;
+  int32_t start = 0, index = 0;
   for (; index < bufferSize; index++)
   {
     if (buffer[index] == '\r')
