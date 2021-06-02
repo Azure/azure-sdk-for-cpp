@@ -1380,7 +1380,7 @@ std::unique_ptr<CurlNetworkConnection> CurlConnectionPool::ExtractOrCreateCurlCo
         + std::string(curl_easy_strerror(performResult)));
   }
 
-  return std::make_unique<CurlConnection>(newHandle, std::move(connectionKey));
+  return std::make_unique<CurlConnection>(newHandle, connectionKey);
 }
 
 // Move the connection back to the connection pool. Push it to the front so it becomes the
