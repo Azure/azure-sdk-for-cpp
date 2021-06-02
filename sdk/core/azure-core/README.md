@@ -8,6 +8,23 @@ The library allows client libraries to expose common functionality in a consiste
 
 Typically, you will not need to download `azure-core`; it will be downloaded for you as a dependency of the client libraries. In case you want to download it explicitly (to implement your own client library, for example), you can find the source in here, or use vcpkg to install the package `azure-core-cpp`.
 
+### Include the package
+
+The easiest way to acquire the C++ SDK is leveraging vcpkg package manager. See the corresponding [Azure SDK for C++ readme section][azsdk_vcpkg_install].
+
+To install Azure Identity package via vcpkg:
+
+```cmd
+> vcpkg install azure-core-cpp
+```
+
+Then, use in your CMake file:
+
+```CMake
+find_package(azure-core-cpp CONFIG REQUIRED)
+target_link_libraries(<your project name> PRIVATE Azure::azure-core)
+```
+
 ## Key concepts
 
 The main shared concepts of `Azure::Core` include:
@@ -100,7 +117,7 @@ Security issues and bugs should be reported privately, via email, to the Microso
 Azure SDK for C++ is licensed under the [MIT](https://github.com/Azure/azure-sdk-for-cpp/blob/master/sdk/core/azure-core/LICENSE) license.
 
 <!-- LINKS -->
-
+[azsdk_vcpkg_install]: https://github.com/Azure/azure-sdk-for-cpp#download--install-the-sdk
 [azure_sdk_for_cpp_contributing]: https://github.com/Azure/azure-sdk-for-cpp/blob/master/CONTRIBUTING.md
 [azure_sdk_for_cpp_contributing_developer_guide]: https://github.com/Azure/azure-sdk-for-cpp/blob/master/CONTRIBUTING.md#developer-guide
 [azure_sdk_for_cpp_contributing_pull_requests]: https://github.com/Azure/azure-sdk-for-cpp/blob/master/CONTRIBUTING.md#pull-requests
