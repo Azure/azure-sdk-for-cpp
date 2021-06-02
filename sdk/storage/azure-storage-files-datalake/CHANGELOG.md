@@ -6,6 +6,10 @@
 
 - Renamed `ContentLength` in `FlushFileResult` to `FileSize`.
 
+### Other Changes and Improvements
+
+- Removed `IfUnmodifiedSince` from access conditions of setting filesystem metadata operation.
+
 ## 12.0.0-beta.11 (2021-05-19)
 
 ### New Features
