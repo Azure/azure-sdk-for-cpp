@@ -70,7 +70,7 @@ In order to use the SDK installed via vcpkg with CMake, you can use the toolchai
 
 The **entry point** for most scenarios when using the SDK will be a top-level client type corresponding to the Azure service you want to talk to. For example, sending requests to blob storage can be done via the `Azure::Storage::Blobs::BlobClient` API. All APIs on the client type send HTTP requests to the cloud service and return back an HTTP `Response<T>`.
 
-All the Azure C++ SDK headers needed to be included are located within the `<azure>` folder, with sub-folders corresponding to each service. Similarly, all types and APIs can be found within the `Azure::` namespace. For example, to use functionality form `Azure::Core`, include the following header at the beginning of your application `#include <azure/core.hpp>`.
+All the Azure C++ SDK headers needed to be included are located within the `<azure>` folder, with sub-folders corresponding to each service. Similarly, all types and APIs can be found within the `Azure::` namespace. For example, to use functionality from `Azure::Core`, include the following header at the beginning of your application `#include <azure/core.hpp>`.
 
 Here's an example application to help you get started:
 
@@ -126,12 +126,12 @@ Understanding the key concepts from the `azure-core-cpp` library, which is lever
 
 The main shared concepts of `Azure::Core` include:
 
-- HTTP pipeline and HTTP policies such as retry and logging, which are configurable via service client specific options.
-- Handling streaming data and input/output (I/O) via `BodyStream` along with its derived types.
 - Accessing HTTP response details for the returned model of any SDK client operation, via `Response<T>`.
-- Polling long-running operations (LROs), via `Operation<T>`.
 - Exceptions for reporting errors from service requests in a consistent fashion via the base exception type `RequestFailedException`.
 - Abstractions for Azure SDK credentials (`TokenCredential`).
+- Handling streaming data and input/output (I/O) via `BodyStream` along with its derived types.
+- Polling long-running operations (LROs), via `Operation<T>`.
+- HTTP pipeline and HTTP policies such as retry and logging, which are configurable via service client specific options.
 - Replaceable HTTP transport layer to send requests and receive responses over the network.
 
 #### `Response <T>` Model Types
