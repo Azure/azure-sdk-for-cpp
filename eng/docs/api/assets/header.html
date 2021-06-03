@@ -73,7 +73,7 @@ function populateOptions(optionSelector, otherSelectors) {
       if (responseText) {
         let options = responseText.match(/[^\r\n]+/g);
 
-        if (!(currentVersion() in options)) {
+        if (!options.some(item => item == currentVersion())) {
           // If the current version isn't in the array of options, prepend the
           // current version to the list so it renders on the client side.
           options.unshift(currentVersion());
