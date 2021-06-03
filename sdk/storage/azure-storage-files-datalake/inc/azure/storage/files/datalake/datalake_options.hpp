@@ -141,7 +141,14 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     /**
      * Specify the access condition for the file system.
      */
-    FileSystemAccessConditions AccessConditions;
+    struct : public LeaseAccessConditions
+    {
+      /**
+       * @brief Specify this header to perform the operation only if the resource has been
+       * modified since the specified time. This timestamp will be truncated to second.
+       */
+      Azure::Nullable<Azure::DateTime> IfModifiedSince;
+    } AccessConditions;
   };
 
   /**

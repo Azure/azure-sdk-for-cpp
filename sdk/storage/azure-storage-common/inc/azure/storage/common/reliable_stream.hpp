@@ -14,7 +14,7 @@ namespace Azure { namespace Storage { namespace _internal {
   struct ReliableStreamOptions final
   {
     // configures the maximun retries to be done.
-    int64_t MaxRetryRequests;
+    int32_t MaxRetryRequests;
   };
 
   /**
