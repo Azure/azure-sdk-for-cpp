@@ -26,7 +26,7 @@ std::string GetConnectionString()
   {
     return envConnectionString;
   }
-  throw std::runtime_error("Cannot find connection string");
+  throw std::runtime_error("Cannot find connection string.");
 }
 
 std::string GetAccountName()

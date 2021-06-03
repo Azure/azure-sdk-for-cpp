@@ -55,13 +55,13 @@ namespace Azure { namespace Storage { namespace Blobs {
 
       AZURE_ASSERT_MSG(
           !options.AccessConditions.IfMatch.HasValue(),
-          "Blob container lease doesn't support If-Match condition");
+          "Blob container lease doesn't support If-Match condition.");
       AZURE_ASSERT_MSG(
           !options.AccessConditions.IfNoneMatch.HasValue(),
-          "Blob container lease doesn't support If-None-Match condition");
+          "Blob container lease doesn't support If-None-Match condition.");
       AZURE_ASSERT_MSG(
           !options.AccessConditions.TagConditions.HasValue(),
-          "Blob container lease doesn't support tag condition");
+          "Blob container lease doesn't support tag condition.");
 
       auto response = _detail::BlobRestClient::BlobContainer::AcquireLease(
           *(m_blobContainerClient.Value().m_pipeline),
@@ -120,13 +120,13 @@ namespace Azure { namespace Storage { namespace Blobs {
 
       AZURE_ASSERT_MSG(
           !options.AccessConditions.IfMatch.HasValue(),
-          "Blob container lease doesn't support If-Match condition");
+          "Blob container lease doesn't support If-Match condition.");
       AZURE_ASSERT_MSG(
           !options.AccessConditions.IfNoneMatch.HasValue(),
-          "Blob container lease doesn't support If-None-Match condition");
+          "Blob container lease doesn't support If-None-Match condition.");
       AZURE_ASSERT_MSG(
           !options.AccessConditions.TagConditions.HasValue(),
-          "Blob container lease doesn't support tag condition");
+          "Blob container lease doesn't support tag condition.");
 
       auto response = _detail::BlobRestClient::BlobContainer::RenewLease(
           *(m_blobContainerClient.Value().m_pipeline),
@@ -184,13 +184,13 @@ namespace Azure { namespace Storage { namespace Blobs {
 
       AZURE_ASSERT_MSG(
           !options.AccessConditions.IfMatch.HasValue(),
-          "Blob container lease doesn't support If-Match condition");
+          "Blob container lease doesn't support If-Match condition.");
       AZURE_ASSERT_MSG(
           !options.AccessConditions.IfNoneMatch.HasValue(),
-          "Blob container lease doesn't support If-None-Match condition");
+          "Blob container lease doesn't support If-None-Match condition.");
       AZURE_ASSERT_MSG(
           !options.AccessConditions.TagConditions.HasValue(),
-          "Blob container lease doesn't support tag condition");
+          "Blob container lease doesn't support tag condition.");
 
       auto response = _detail::BlobRestClient::BlobContainer::ReleaseLease(
           *(m_blobContainerClient.Value().m_pipeline),
@@ -256,13 +256,13 @@ namespace Azure { namespace Storage { namespace Blobs {
 
       AZURE_ASSERT_MSG(
           !options.AccessConditions.IfMatch.HasValue(),
-          "Blob container lease doesn't support If-Match condition");
+          "Blob container lease doesn't support If-Match condition.");
       AZURE_ASSERT_MSG(
           !options.AccessConditions.IfNoneMatch.HasValue(),
-          "Blob container lease doesn't support If-None-Match condition");
+          "Blob container lease doesn't support If-None-Match condition.");
       AZURE_ASSERT_MSG(
           !options.AccessConditions.TagConditions.HasValue(),
-          "Blob container lease doesn't support tag condition");
+          "Blob container lease doesn't support tag condition.");
 
       auto response = _detail::BlobRestClient::BlobContainer::ChangeLease(
           *(m_blobContainerClient.Value().m_pipeline),
@@ -325,13 +325,13 @@ namespace Azure { namespace Storage { namespace Blobs {
 
       AZURE_ASSERT_MSG(
           !options.AccessConditions.IfMatch.HasValue(),
-          "Blob container lease doesn't support If-Match condition");
+          "Blob container lease doesn't support If-Match condition.");
       AZURE_ASSERT_MSG(
           !options.AccessConditions.IfNoneMatch.HasValue(),
-          "Blob container lease doesn't support If-None-Match condition");
+          "Blob container lease doesn't support If-None-Match condition.");
       AZURE_ASSERT_MSG(
           !options.AccessConditions.TagConditions.HasValue(),
-          "Blob container lease doesn't support tag condition");
+          "Blob container lease doesn't support tag condition.");
 
       auto response = _detail::BlobRestClient::BlobContainer::BreakLease(
           *(m_blobContainerClient.Value().m_pipeline),

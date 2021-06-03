@@ -168,7 +168,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     {
       AZURE_ASSERT_MSG(
           options.HttpHeaders.ContentHash.Algorithm == HashAlgorithm::Md5,
-          "This operation only supports MD5 content hash");
+          "This operation only supports MD5 content hash.");
       protocolLayerOptions.ContentMd5 = options.HttpHeaders.ContentHash;
     }
     protocolLayerOptions.LeaseIdOptional = options.AccessConditions.LeaseId;
@@ -242,7 +242,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     {
       AZURE_ASSERT_MSG(
           options.RangeHashAlgorithm.Value() == HashAlgorithm::Md5,
-          "This operation only supports MD5 content hash");
+          "This operation only supports MD5 content hash.");
       if (options.RangeHashAlgorithm.Value() == HashAlgorithm::Md5)
       {
         protocolLayerOptions.GetRangeContentMd5 = true;
@@ -272,7 +272,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         auto newResponse = Download(newOptions, context);
         if (eTag != newResponse.Value.Details.ETag)
         {
-          throw Azure::Core::RequestFailedException("file was modified in the middle of download");
+          throw Azure::Core::RequestFailedException("File was modified in the middle of download.");
         }
         return std::move(newResponse.Value.BodyStream);
       };
@@ -350,7 +350,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         }
         else
         {
-          AZURE_ASSERT_MSG(false, "Either FilePermission or FilePermissionKey must be set");
+          AZURE_ASSERT_MSG(false, "Either FilePermission or FilePermissionKey must be set.");
         }
       }
     }
@@ -489,7 +489,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     {
       AZURE_ASSERT_MSG(
           options.TransactionalContentHash.Value().Algorithm == HashAlgorithm::Md5,
-          "This operation only supports MD5 content hash");
+          "This operation only supports MD5 content hash.");
     }
     protocolLayerOptions.ContentMd5 = options.TransactionalContentHash;
     protocolLayerOptions.LeaseIdOptional = options.AccessConditions.LeaseId;
@@ -691,14 +691,14 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     if (static_cast<size_t>(fileRangeSize) > bufferSize)
     {
       throw Azure::Core::RequestFailedException(
-          "buffer is not big enough, file range size is " + std::to_string(fileRangeSize));
+          "Buffer is not big enough, file range size is " + std::to_string(fileRangeSize) + ".");
     }
 
     int64_t bytesRead = firstChunk.Value.BodyStream->ReadToCount(
         buffer, static_cast<size_t>(firstChunkLength), context);
     if (bytesRead != firstChunkLength)
     {
-      throw Azure::Core::RequestFailedException("error when reading body stream");
+      throw Azure::Core::RequestFailedException("Error when reading body stream.");
     }
     firstChunk.Value.BodyStream.reset();
 
@@ -726,12 +726,12 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
                 context);
             if (bytesRead != chunkOptions.Range.Value().Length.Value())
             {
-              throw Azure::Core::RequestFailedException("error when reading body stream");
+              throw Azure::Core::RequestFailedException("Error when reading body stream.");
             }
             if (chunk.Value.Details.ETag != etag)
             {
               throw Azure::Core::RequestFailedException(
-                  "file was modified in the middle of download");
+                  "File was modified in the middle of download.");
             }
 
             if (chunkId == numChunks - 1)
@@ -812,7 +812,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         size_t bytesRead = stream.ReadToCount(buffer.data(), readSize, context);
         if (bytesRead != readSize)
         {
-          throw Azure::Core::RequestFailedException("error when reading body stream");
+          throw Azure::Core::RequestFailedException("Error when reading body stream.");
         }
         fileWriter.Write(buffer.data(), bytesRead, offset);
         length -= bytesRead;
@@ -849,7 +849,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
             if (chunk.Value.Details.ETag != etag)
             {
               throw Azure::Core::RequestFailedException(
-                  "file was modified in the middle of download");
+                  "File was modified in the middle of download.");
             }
             bodyStreamToFile(
                 *(chunk.Value.BodyStream),
@@ -946,7 +946,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     {
       AZURE_ASSERT_MSG(
           options.HttpHeaders.ContentHash.Algorithm == HashAlgorithm::Md5,
-          "This operation only supports MD5 content hash");
+          "This operation only supports MD5 content hash.");
       protocolLayerOptions.ContentMd5 = options.HttpHeaders.ContentHash;
     }
     protocolLayerOptions.Metadata = options.Metadata;
@@ -1050,7 +1050,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     {
       AZURE_ASSERT_MSG(
           options.HttpHeaders.ContentHash.Algorithm == HashAlgorithm::Md5,
-          "This operation only supports MD5 content hash");
+          "This operation only supports MD5 content hash.");
       protocolLayerOptions.ContentMd5 = options.HttpHeaders.ContentHash;
     }
     protocolLayerOptions.Metadata = options.Metadata;
@@ -1092,7 +1092,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       const UploadFileRangeFromUriOptions& options,
       const Azure::Core::Context& context) const
   {
-    AZURE_ASSERT_MSG(sourceRange.Length.HasValue(), "Source length cannot be null");
+    AZURE_ASSERT_MSG(sourceRange.Length.HasValue(), "Source length cannot be null.");
     int64_t rangeLength = sourceRange.Length.Value();
 
     auto protocolLayerOptions = _detail::ShareRestClient::File::UploadRangeFromUrlOptions();
@@ -1105,7 +1105,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     {
       AZURE_ASSERT_MSG(
           options.TransactionalContentHash.Value().Algorithm == HashAlgorithm::Crc64,
-          "This operation only supports CRC64 content hash");
+          "This operation only supports CRC64 content hash.");
     }
     protocolLayerOptions.SourceContentCrc64 = options.TransactionalContentHash;
     if (options.SourceAccessCondition.IfMatchContentHash.HasValue())
@@ -1113,7 +1113,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       AZURE_ASSERT_MSG(
           options.SourceAccessCondition.IfMatchContentHash.Value().Algorithm
               == HashAlgorithm::Crc64,
-          "This operation only supports CRC64 Source-If-Match condition");
+          "This operation only supports CRC64 Source-If-Match condition.");
     }
     protocolLayerOptions.SourceIfMatchCrc64 = options.SourceAccessCondition.IfMatchContentHash;
     if (options.SourceAccessCondition.IfNoneMatchContentHash.HasValue())
@@ -1121,7 +1121,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       AZURE_ASSERT_MSG(
           options.SourceAccessCondition.IfNoneMatchContentHash.Value().Algorithm
               == HashAlgorithm::Crc64,
-          "This operation only supports CRC64 Source-If-None-Match condition");
+          "This operation only supports CRC64 Source-If-None-Match condition.");
     }
     protocolLayerOptions.SourceIfNoneMatchCrc64
         = options.SourceAccessCondition.IfNoneMatchContentHash;

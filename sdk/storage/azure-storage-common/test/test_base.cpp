@@ -246,7 +246,7 @@ namespace Azure { namespace Storage { namespace Test {
     FILE* fin = fopen(filename.data(), "rb");
     if (!fin)
     {
-      throw std::runtime_error("failed to open file");
+      throw std::runtime_error("Failed to open file.");
     }
     fseek(fin, 0, SEEK_END);
     int64_t fileSize = ftell(fin);
@@ -255,7 +255,7 @@ namespace Azure { namespace Storage { namespace Test {
     size_t elementsRead = fread(fileContent.data(), static_cast<size_t>(fileSize), 1, fin);
     if (elementsRead != 1 && fileSize != 0)
     {
-      throw std::runtime_error("failed to read file");
+      throw std::runtime_error("Failed to read file.");
     }
     fclose(fin);
     return fileContent;

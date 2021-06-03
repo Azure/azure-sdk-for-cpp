@@ -150,7 +150,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     }
     if (chunkSize > MaxStageBlockSize)
     {
-      throw Azure::Core::RequestFailedException("Block size is too big");
+      throw Azure::Core::RequestFailedException("Block size is too big.");
     }
 
     std::vector<std::string> blockIds;
@@ -256,7 +256,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     }
     if (chunkSize > MaxStageBlockSize)
     {
-      throw Azure::Core::RequestFailedException("Block size is too big");
+      throw Azure::Core::RequestFailedException("Block size is too big.");
     }
 
     _internal::ConcurrentTransfer(
