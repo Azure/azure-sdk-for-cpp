@@ -103,6 +103,10 @@ int main()
 
 Understanding the key concepts from the `azure-core-cpp` library, which is leveraged by all client libraries will also be helpful in getting started, regardless of which Azure service you want to use. You can find more information about them, with sample code snippets, here: https://github.com/Azure/azure-sdk-for-cpp/tree/master/sdk/core/azure-core#key-concepts
 
+#### Interacting with Azure SDK for C++
+
+Static SDK members should not be accessed and SDK functions should not be called before the static initialization phase is finished.
+
 #### Visual Studio - CMakeSettings.json
 
 When building your application via Visual Studio, you can create and update a `CMakeSettings.json` file and include the following properties to let Visual Studio know where the packages are installed and which triplet needs to be used:
