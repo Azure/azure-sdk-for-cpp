@@ -56,7 +56,7 @@ namespace Azure { namespace Core { namespace Http {
   class TransportException final : public Azure::Core::RequestFailedException {
   public:
     /**
-     * @brief Constructs `%TransportException` with \p message string.
+     * @brief Constructs `%TransportException` with a \p message string.
      *
      * @remark The transport policy will throw this error whenever the transport adapter fail to
      * perform a request.

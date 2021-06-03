@@ -214,7 +214,7 @@ namespace Azure { namespace Core { namespace Http { namespace Policies {
 
   /**
    * @brief The next HTTP policy in the stack sequence of policies.
-   * @note `%NextHttpPolicy` is an abstraction representing a next line in the stack sequence of
+   * @note `%NextHttpPolicy` is an abstraction representing the next policy in the stack sequence of
    * policies, from the caller's perspective.
    * @note Inside the #Azure::Core::Http::Policies::HttpPolicy::Send() function implementation, an
    * object of ths class represent the next HTTP policy in the stack of HTTP policies, relative to
