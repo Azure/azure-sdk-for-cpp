@@ -66,6 +66,128 @@ In order to use the SDK installed via vcpkg with CMake, you can use the toolchai
 > cmake --build [build directory]
 ```
 
+#### Using the SDK within your Application
+
+The **entry point** for most scenarios when using the SDK will be a top-level client type corresponding to the Azure service you want to talk to. For example, sending requests to blob storage can be done via the `Azure::Storage::Blobs::BlobClient` API. All APIs on the client type send HTTP requests to the cloud service and return back an HTTP `Response<T>`.
+
+All the Azure C++ SDK headers needed to be included are located within the `<azure>` folder, with sub-folders corresponding to each service. Similarly, all types and APIs can be found within the `Azure::` namespace. For example, to use functionality form `Azure::Core`, include the following header at the beginning of your application `#include <azure/core.hpp>`.
+
+Here's an example application to help you get started:
+
+```C++
+#include <iostream>
+
+// Include the necessary SDK headers
+#include <azure/core.hpp>
+#include <azure/storage/blobs.hpp>
+
+// Use the appropriate namespace using directives
+using namespace Azure::Storage::Blobs;
+
+// Get the required connection string/key from an environment variable or Azure KeyVault.
+std::string GetConnectionString();
+
+int main()
+{
+    std::string containerName = "testcontainer";
+    std::string blobName = "sample-blob";
+
+    try
+    {
+        // There are many types of client types, use the one that's appropriate
+        // for your scenario, such as BlobContainerClient.
+        BlobClient client = BlobClient::CreateFromConnectionString(
+            GetConnectionString(), containerName, blobName);
+        BlockBlobClient block = client.AsBlockBlobClient();
+
+        // Assuming there is some Azure::Core::IO::BodyStream containing the data to upload.
+        // For example either a MemoryBodyStream or FileBodyStream.
+
+        Azure::Response<Models::UploadBlockBlobResult> response = block.Upload(stream);
+
+        Models::UploadBlockBlobResult model = response.Value;
+        printf("Last modified date of uploaded blob: %s\n", model.LastModified.ToString().c_str());
+
+    }
+    catch (const Azure::Storage::StorageException& e)
+    {
+        printf("Status Code: %d, Reason Phrase: %s\n", (int)e.StatusCode, e.ReasonPhrase.c_str());
+        std::cout << e.what() << std::endl;
+        return 1;
+    }
+    return 0;
+}
+```
+
+#### Key Core concepts
+
+Understanding the key concepts from the `azure-core-cpp` library, which is leveraged by all client libraries will also be helpful in getting started, regardless of which Azure service you want to use.
+
+The main shared concepts of `Azure::Core` include:
+
+- HTTP pipeline and HTTP policies such as retry and logging, which are configurable via service client specific options.
+- Handling streaming data and input/output (I/O) via `BodyStream` along with its derived types.
+- Accessing HTTP response details for the returned model of any SDK client operation, via `Response<T>`.
+- Polling long-running operations (LROs), via `Operation<T>`.
+- Exceptions for reporting errors from service requests in a consistent fashion via the base exception type `RequestFailedException`.
+- Abstractions for Azure SDK credentials (`TokenCredential`).
+- Replaceable HTTP transport layer to send requests and receive responses over the network.
+
+#### `Response <T>` Model Types
+
+Many client library operations **return** the templated `Azure::Core::Response<T>` type from the API calls. This type let's you get the raw HTTP response from the service request call the Azure service APIs make, along with the result of the operation to get more API specific details. This is the templated `T` operation result which can be extracted from the response, using the `Value` field.
+
+```C++
+    std::string containerName = "testcontainer";
+
+    BlobContainerClient containerClient =
+        BlobContainerClient::CreateFromConnectionString(GetConnectionString(), containerName);
+
+    // Azure service operations return a Response<T> templated type
+    Azure::Response<Models::ListBlobsSinglePageResult> blobListOperation =
+        containerClient.ListBlobsSinglePage();
+
+    // You can extract the T, from the returned Response<T>, 
+    // which is typically named with a Result suffix in the type name.
+    Models::ListBlobsSinglePageResult result = blobListOperation.Value;
+
+    // Now you can look at API specific members on the result object that is returned.
+    std::vector<Models::BlobItem> blobList = result.Items;
+    for (auto& blob : blobList)
+    {
+        // Iterate over the blob list within the container.
+    }
+```
+
+#### Long Running Operations
+
+Some operations take a long time to complete and require polling for their status. Methods starting long-running operations return `Operation<T>` types.
+
+You can intermittently poll whether the operation has finished by using the `Poll()` method on the returned `Operation<T>` and track progress of the operation using `Value()`. Alternatively, if you just want to wait until the operation completes, you can use `PollUntilDone()`.
+
+```C++
+	SomeServiceClient client;
+
+	auto operation = client.StartSomeLongRunningOperation();
+
+	while (!operation.IsDone())
+	{
+		std::unique_ptr<Azure::Core::Http::RawResponse> pollResponse = operation.Poll();
+
+		// Only certain long-running service operations give back results with partial progress.
+		auto partialResult = operation.Value();
+
+		// Your per-polling custom logic goes here, such as logging progress.
+
+		// You can also try to abort the operation if it doesn't complete in time.
+		// client.AbortSomeLongRunningOperation(... pass in the operation id ...);
+
+		std::this_thread::sleep_for(std::chrono::milliseconds(1000));
+	};
+
+	auto finalResult = operation.Value();
+```
+
 The **entry point** for most scenarios when using the SDK will be a top-level client type corresponding to the Azure service you want to talk to. For example, sending requests to blob storage can be done via the `Azure::Storage::Blobs::BlobClient` API.
 
 All the Azure C++ SDK headers needed to be included are located within the `<azure>` folder, with sub-folders corresponding to each service. Similarly, all types and APIs can be found within the `Azure::` namespace. For example, to use functionality form `Azure::Core`, include the following header at the beginning of your application `#include <azure/core.hpp>`.
@@ -100,8 +222,6 @@ int main()
   return 0;
 }
 ```
-
-Understanding the key concepts from the `azure-core-cpp` library, which is leveraged by all client libraries will also be helpful in getting started, regardless of which Azure service you want to use. You can find more information about them, with sample code snippets, here: https://github.com/Azure/azure-sdk-for-cpp/tree/master/sdk/core/azure-core#key-concepts
 
 #### Visual Studio - CMakeSettings.json
 
