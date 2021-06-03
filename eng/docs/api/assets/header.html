@@ -34,10 +34,8 @@ function currentVersion() {
 }
 
 function currentPackage() {
-  // C docs are generated as a monolith, the correct path is:
-  // https://azuresdkdocs.blob.core.windows.net/$web/c/docs/{version}/index.html
-  // This sets the "docs" piece of the URL path
-  return "docs";
+  // Filled in by Doxygen template
+  return "$projectname";
 }
 
 function httpGetAsync(targetUrl, callback) {
@@ -75,15 +73,18 @@ function populateOptions(optionSelector, otherSelectors) {
       if (responseText) {
         let options = responseText.match(/[^\r\n]+/g);
 
+        if (!(currentVersion() in options)) {
+          // If the current version isn't in the array of options, prepend the
+          // current version to the list so it renders on the client side.
+          options.unshift(currentVersion());
+        }
+
         populateVersionDropDown(optionSelector, options);
         showSelectors(otherSelectors);
 
         $(optionSelector).change(function() {
           targetVersion = $(this).val();
-
-          url = WINDOW_CONTENTS.slice();
-          url[6] = targetVersion;
-          window.location.href = url.join("/");
+          window.location.href = getPackageUrl(SELECTED_LANGUAGE, currentPackage(), targetVersion);
         });
       }
     });
