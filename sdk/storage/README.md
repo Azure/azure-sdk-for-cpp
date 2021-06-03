@@ -20,32 +20,6 @@ The Azure Storage Client Library for C++ allows you to build applications agains
 
 For the best development experience, we recommend that developers use the [CMake projects in Visual Studio](https://docs.microsoft.com/cpp/build/cmake-projects-in-visual-studio?view=vs-2019) to view and build the source code together with its dependencies.
 
-### Include the package
-
-The easiest way to acquire the C++ SDK is leveraging vcpkg package manager. See the corresponding [Azure SDK for C++ readme section][azsdk_vcpkg_install].
-
-To install Azure Storage packages via vcpkg:
-
-```cmd
-> vcpkg install azure-storage-common-cpp azure-storage-blobs-cpp azure-storage-files-datalake-cpp azure-storage-files-shares-cpp
-```
-
-Then, use in your CMake file:
-
-```CMake
-find_package(azure-storage-common-cpp CONFIG REQUIRED)
-target_link_libraries(<your project name> PRIVATE Azure::azure-storage-common)
-
-find_package(azure-storage-blobs-cpp CONFIG REQUIRED)
-target_link_libraries(<your project name> PRIVATE Azure::azure-storage-blobs)
-
-find_package(azure-storage-files-datalake-cpp CONFIG REQUIRED)
-target_link_libraries(<your project name> PRIVATE Azure::azure-storage-files-datalake)
-
-find_package(azure-storage-files-shares-cpp CONFIG REQUIRED)
-target_link_libraries(<your project name> PRIVATE Azure::azure-storage-files-shares)
-```
-
 ## Requirements
 
 To call Azure services, you must first have an Azure subscription. Sign up for a [free trial](https://azure.microsoft.com/pricing/free-trial/) or use your [MSDN subscriber benefits](https://azure.microsoft.com/pricing/member-offers/msdn-benefits-details/).
@@ -127,9 +101,27 @@ make/ninja install is work in progress.
 WIP
 TODO when ready.
 
-### Via Vcpkg
-WIP
-TODO when ready.
+### Via vcpkg
+The easiest way to acquire the C++ SDK is leveraging vcpkg package manager. See the corresponding [Azure SDK for C++ readme section][azsdk_vcpkg_install].
+
+To install Azure Storage packages via vcpkg:
+
+```cmd
+> vcpkg install azure-storage-blobs-cpp azure-storage-files-datalake-cpp azure-storage-files-shares-cpp
+```
+
+Then, use in your CMake file:
+
+```CMake
+find_package(azure-storage-blobs-cpp CONFIG REQUIRED)
+target_link_libraries(<your project name> PRIVATE Azure::azure-storage-blobs)
+
+find_package(azure-storage-files-datalake-cpp CONFIG REQUIRED)
+target_link_libraries(<your project name> PRIVATE Azure::azure-storage-files-datalake)
+
+find_package(azure-storage-files-shares-cpp CONFIG REQUIRED)
+target_link_libraries(<your project name> PRIVATE Azure::azure-storage-files-shares)
+```
 
 ## Dependencies
 
