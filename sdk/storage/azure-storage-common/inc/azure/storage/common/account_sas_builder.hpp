@@ -9,7 +9,7 @@
 #include <azure/core/datetime.hpp>
 #include <azure/core/nullable.hpp>
 
-#include "azure/storage/common/constants.hpp"
+#include "azure/storage/common/internal/constants.hpp"
 #include "azure/storage/common/storage_credential.hpp"
 
 namespace Azure { namespace Storage { namespace Sas {

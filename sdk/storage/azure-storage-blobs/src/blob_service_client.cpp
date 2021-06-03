@@ -4,12 +4,12 @@
 #include "azure/storage/blobs/blob_service_client.hpp"
 
 #include <azure/core/http/policies/policy.hpp>
-#include <azure/storage/common/constants.hpp>
-#include <azure/storage/common/shared_key_policy.hpp>
+#include <azure/storage/common/internal/constants.hpp>
+#include <azure/storage/common/internal/shared_key_policy.hpp>
+#include <azure/storage/common/internal/storage_per_retry_policy.hpp>
+#include <azure/storage/common/internal/storage_service_version_policy.hpp>
+#include <azure/storage/common/internal/storage_switch_to_secondary_policy.hpp>
 #include <azure/storage/common/storage_common.hpp>
-#include <azure/storage/common/storage_per_retry_policy.hpp>
-#include <azure/storage/common/storage_service_version_policy.hpp>
-#include <azure/storage/common/storage_switch_to_secondary_policy.hpp>
 
 #include "private/package_version.hpp"
 

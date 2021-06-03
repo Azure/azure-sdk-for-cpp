@@ -7,7 +7,7 @@
 #include <thread>
 
 #include <azure/identity/client_secret_credential.hpp>
-#include <azure/storage/files/datalake/datalake_utilities.hpp>
+#include <azure/storage/files/datalake/internal/datalake_utilities.hpp>
 
 namespace Azure { namespace Storage { namespace Test {
 

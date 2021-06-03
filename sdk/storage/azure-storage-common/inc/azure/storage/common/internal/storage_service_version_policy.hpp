@@ -8,8 +8,6 @@
 
 #include <azure/core/http/policies/policy.hpp>
 
-#include "storage_common.hpp"
-
 namespace Azure { namespace Storage { namespace _internal {
 
   class StorageServiceVersionPolicy final : public Azure::Core::Http::Policies::HttpPolicy {

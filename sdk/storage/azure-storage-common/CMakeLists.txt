@@ -33,20 +33,20 @@ set(
   AZURE_STORAGE_COMMON_HEADER
     inc/azure/storage/common/access_conditions.hpp
     inc/azure/storage/common/account_sas_builder.hpp
-    inc/azure/storage/common/concurrent_transfer.hpp
-    inc/azure/storage/common/constants.hpp
     inc/azure/storage/common/crypt.hpp
     inc/azure/storage/common/dll_import_export.hpp
-    inc/azure/storage/common/file_io.hpp
-    inc/azure/storage/common/reliable_stream.hpp
-    inc/azure/storage/common/shared_key_policy.hpp
+    inc/azure/storage/common/internal/concurrent_transfer.hpp
+    inc/azure/storage/common/internal/constants.hpp
+    inc/azure/storage/common/internal/file_io.hpp
+    inc/azure/storage/common/internal/reliable_stream.hpp
+    inc/azure/storage/common/internal/shared_key_policy.hpp
+    inc/azure/storage/common/internal/storage_per_retry_policy.hpp
+    inc/azure/storage/common/internal/storage_service_version_policy.hpp
+    inc/azure/storage/common/internal/storage_switch_to_secondary_policy.hpp
+    inc/azure/storage/common/internal/xml_wrapper.hpp
     inc/azure/storage/common/storage_common.hpp
     inc/azure/storage/common/storage_credential.hpp
     inc/azure/storage/common/storage_exception.hpp
-    inc/azure/storage/common/storage_per_retry_policy.hpp
-    inc/azure/storage/common/storage_service_version_policy.hpp
-    inc/azure/storage/common/storage_switch_to_secondary_policy.hpp
-    inc/azure/storage/common/xml_wrapper.hpp
 )
 
 set(
