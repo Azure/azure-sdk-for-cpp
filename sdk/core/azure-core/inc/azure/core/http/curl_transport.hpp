@@ -111,7 +111,7 @@ namespace Azure { namespace Core { namespace Http {
      * @brief Implements interface to send an HTTP Request and produce an HTTP RawResponse
      *
      * @param request an HTTP Request to be send.
-     * @param context #Azure::Core::Context so that operation can be cancelled.
+     * @param context A context to control the request lifetime.
      *
      * @return unique ptr to an HTTP RawResponse.
      */

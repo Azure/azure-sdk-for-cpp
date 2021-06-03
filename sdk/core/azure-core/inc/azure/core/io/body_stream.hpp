@@ -37,14 +37,17 @@ namespace Azure { namespace Core { namespace IO {
      *
      * @param buffer Pointer to a byte buffer to read the data into.
      * @param count Size of the buffer to read the data into.
-     * @param context #Azure::Core::Context so that operation can be cancelled.
+     * @param context A context to control the request lifetime.
      *
      * @return Number of bytes read.
      */
     virtual size_t OnRead(uint8_t* buffer, size_t count, Azure::Core::Context const& context) = 0;
 
   public:
-    /// Destructor.
+    /**
+     * @brief Destructs `%BodyStream`.
+     *
+     */
     virtual ~BodyStream() = default;
 
     /**
@@ -73,7 +76,7 @@ namespace Azure { namespace Core { namespace IO {
      *
      * @param buffer Pointer to a first byte of the byte buffer to read the data into.
      * @param count Size of the buffer to read the data into.
-     * @param context #Azure::Core::Context so that operation can be cancelled.
+     * @param context A context to control the request lifetime.
      *
      * @return Number of bytes read.
      */
@@ -94,7 +97,7 @@ namespace Azure { namespace Core { namespace IO {
      *
      * @param buffer Pointer to a first byte of the byte buffer to read the data into.
      * @param count Size of the buffer to read the data into.
-     * @param context #Azure::Core::Context so that operation can be cancelled.
+     * @param context A context to control the request lifetime.
      *
      * @return Number of bytes read.
      */
@@ -107,7 +110,7 @@ namespace Azure { namespace Core { namespace IO {
      * @brief Read #Azure::Core::IO::BodyStream until the stream is read to end, allocating memory
      * for the entirety of contents.
      *
-     * @param context #Azure::Core::Context so that operation can be cancelled.
+     * @param context A context to control the request lifetime.
      *
      * @return A vector of bytes containing the entirety of data read from the \p body.
      */
@@ -255,7 +258,7 @@ namespace Azure { namespace Core { namespace IO {
 
   public:
     /**
-     * @brief Construct from a file name.
+     * @brief Constructs `%FileBodyStream` from a file name.
      *
      * @param filename A reference to a file name string used to identify the file, which needs to
      * have the necessary file path specified to locate the file.

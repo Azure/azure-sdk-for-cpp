@@ -21,6 +21,10 @@ namespace Azure { namespace Core {
   class Convert final {
   private:
     // This type currently only contains static methods and hence disallowing instance creation.
+    /**
+     * @brief An instance of `%Convert` class cannot be created.
+     *
+     */
     Convert() = default;
 
   public:

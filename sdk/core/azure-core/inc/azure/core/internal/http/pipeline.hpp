@@ -172,7 +172,7 @@ namespace Azure { namespace Core { namespace Http { namespace _internal {
      * @brief Start the HTTP pipeline.
      *
      * @param request The HTTP request to be processed.
-     * @param context #Azure::Core::Context so that operation can be cancelled.
+     * @param context A context to control the request lifetime.
      *
      * @return HTTP response after the request has been processed.
      */

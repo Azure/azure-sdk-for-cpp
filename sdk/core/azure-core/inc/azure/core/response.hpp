@@ -31,8 +31,7 @@ public:
   std::unique_ptr<Azure::Core::Http::RawResponse> RawResponse;
 
   /**
-   * @brief Initialize an #Azure::Response<T> with the value and raw response returned by the
-   * service.
+   * @brief Constructs a `%Response` with the value and raw response returned by the service.
    *
    * @param value The value returned by the service.
    * @param rawResponse The HTTP response returned by the service.

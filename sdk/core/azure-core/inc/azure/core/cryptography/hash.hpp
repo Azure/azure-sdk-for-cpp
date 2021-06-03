@@ -45,13 +45,14 @@ namespace Azure { namespace Core { namespace Cryptography {
      */
     virtual std::vector<uint8_t> OnFinal(const uint8_t* data, std::size_t length) = 0;
 
-  public:
+  protected:
     /**
-     * @brief Construct a default instance of #Azure::Core::Cryptography::Hash.
+     * @brief Constructs a default instance of `%Hash`.
      *
      */
     Hash() = default;
 
+  public:
     /**
      * @brief Used to append partial binary input data to compute the hash in a streaming fashion.
      * @remark Once all the data has been added, call #Azure::Core::Cryptography::Hash::Final() to
@@ -95,7 +96,7 @@ namespace Azure { namespace Core { namespace Cryptography {
     std::vector<uint8_t> Final() { return Final(nullptr, 0); }
 
     /**
-     * @brief Cleanup any state when destroying the instance of #Azure::Core::Cryptography::Hash.
+     * @brief Destructs `%Hash`.
      *
      */
     virtual ~Hash() = default;
@@ -103,8 +104,16 @@ namespace Azure { namespace Core { namespace Cryptography {
   private:
     bool m_isDone = false;
 
-    // Delete the copy constructor, along with the assignment operator.
+    /**
+     * @brief `%Hash` does not allow copy construction.
+     *
+     */
     Hash(Hash const&) = delete;
+
+    /**
+     * @brief `%Hash` does not allow assignment.
+     *
+     */
     void operator=(Hash const&) = delete;
   };
 
@@ -122,7 +131,7 @@ namespace Azure { namespace Core { namespace Cryptography {
     Md5Hash();
 
     /**
-     * @brief Cleanup any state when destroying the instance of #Azure::Core::Cryptography::Md5Hash.
+     * @brief Destructs `%Md5Hash`.
      *
      */
     ~Md5Hash() override;
