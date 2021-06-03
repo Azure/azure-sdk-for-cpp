@@ -101,9 +101,27 @@ make/ninja install is work in progress.
 WIP
 TODO when ready.
 
-### Via Vcpkg
-WIP
-TODO when ready.
+### Via vcpkg
+The easiest way to acquire the C++ SDK is leveraging vcpkg package manager. See the corresponding [Azure SDK for C++ readme section][azsdk_vcpkg_install].
+
+To install Azure Storage packages via vcpkg:
+
+```cmd
+> vcpkg install azure-storage-blobs-cpp azure-storage-files-datalake-cpp azure-storage-files-shares-cpp
+```
+
+Then, use in your CMake file:
+
+```CMake
+find_package(azure-storage-blobs-cpp CONFIG REQUIRED)
+target_link_libraries(<your project name> PRIVATE Azure::azure-storage-blobs)
+
+find_package(azure-storage-files-datalake-cpp CONFIG REQUIRED)
+target_link_libraries(<your project name> PRIVATE Azure::azure-storage-files-datalake)
+
+find_package(azure-storage-files-shares-cpp CONFIG REQUIRED)
+target_link_libraries(<your project name> PRIVATE Azure::azure-storage-files-shares)
+```
 
 ## Dependencies
 
@@ -116,3 +134,6 @@ To get started with the coding, please visit the following code samples:
 - [How to use Blob Storage from C++](https://github.com/Azure/azure-sdk-for-cpp/blob/master/sdk/storage/azure-storage-blobs/sample/blob_getting_started.cpp)
 - [How to use DataLake Gen 2 Storage from C++](https://github.com/Azure/azure-sdk-for-cpp/blob/master/sdk/storage/azure-storage-files-datalake/sample/datalake_getting_started.cpp)
 - [How to use File Storage from C++](https://github.com/Azure/azure-sdk-for-cpp/blob/master/sdk/storage/azure-storage-files-shares/sample/file_share_getting_started.cpp)
+
+<!-- LINKS -->
+[azsdk_vcpkg_install]: https://github.com/Azure/azure-sdk-for-cpp#download--install-the-sdk
