@@ -45,6 +45,13 @@ namespace Azure { namespace Core { namespace Cryptography {
      */
     virtual std::vector<uint8_t> OnFinal(const uint8_t* data, std::size_t length) = 0;
 
+  protected:
+    /**
+     * @brief Constructs a default instance of `%Hash`.
+     *
+     */
+    Hash() = default;
+
   public:
     /**
      * @brief Used to append partial binary input data to compute the hash in a streaming fashion.
