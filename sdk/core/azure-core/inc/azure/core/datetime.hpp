@@ -114,7 +114,7 @@ public:
   }
 
   /**
-   * @brief Constructs an instance of `DateTime` from a `time_point`.
+   * @brief Constructs an instance of `%DateTime` from a `time_point`.
    *
    */
   constexpr DateTime(time_point const& timePoint) : time_point(timePoint) {}
