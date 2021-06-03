@@ -59,34 +59,35 @@ namespace Azure { namespace Core { namespace Http { namespace Policies {
   };
 
   /**
-   * @brief HTTP request retry options.
+   * @brief The set of options that can be specified to influence how retry attempts are made, and a
+   * failure is eligible to be retried.
    * @note See https://azure.github.io/azure-sdk/general_azurecore.html#retry-policy.
    *
    */
   struct RetryOptions final
   {
     /**
-     * @brief Maximum number of attempts to retry.
+     * @brief The maximum number of retry attempts before giving up.
      *
      */
     int32_t MaxRetries = 3;
 
     /**
-     * @brief Mimimum amount of milliseconds between retry attempts.
+     * @brief The minimum permissible delay between retry attempts.
      * @note See https://en.cppreference.com/w/cpp/chrono/duration.
      *
      */
     std::chrono::milliseconds RetryDelay = std::chrono::seconds(4);
 
     /**
-     * @brief Mimimum amount of milliseconds between retry attempts.
+     * @brief The maximum permissible delay between retry attempts.
      * @note See https://en.cppreference.com/w/cpp/chrono/duration.
      *
      */
     std::chrono::milliseconds MaxRetryDelay = std::chrono::minutes(2);
 
     /**
-     * @brief HTTP status codes to retry on.
+     * @brief The HTTP status codes that indicate when an operation should be retried.
      *
      */
     std::set<HttpStatusCode> StatusCodes{
