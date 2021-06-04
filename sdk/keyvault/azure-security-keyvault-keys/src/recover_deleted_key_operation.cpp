@@ -3,10 +3,10 @@
 
 #include <azure/keyvault/common/internal/keyvault_exception.hpp>
 
-#include "azure/keyvault/keys/details/key_constants.hpp"
 #include "azure/keyvault/keys/details/key_serializers.hpp"
 #include "azure/keyvault/keys/key_client.hpp"
 #include "azure/keyvault/keys/recover_deleted_key_operation.hpp"
+#include "private/key_constants.hpp"
 
 using namespace Azure::Security::KeyVault::Keys;
 using namespace Azure::Security::KeyVault;

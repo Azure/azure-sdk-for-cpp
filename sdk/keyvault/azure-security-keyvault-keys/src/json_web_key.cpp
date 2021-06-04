@@ -4,10 +4,10 @@
 #include <azure/core/internal/json/json_optional.hpp>
 #include <azure/keyvault/common/internal/base64url.hpp>
 
-#include "azure/keyvault/keys/details/key_constants.hpp"
 #include "azure/keyvault/keys/details/key_serializers.hpp"
 #include "azure/keyvault/keys/json_web_key.hpp"
 #include "azure/keyvault/keys/key_curve_name.hpp"
+#include "private/key_constants.hpp"
 
 #include <map>
 #include <string>

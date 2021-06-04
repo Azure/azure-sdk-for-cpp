@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: MIT
 
 #include "azure/keyvault/keys/key_curve_name.hpp"
-#include "azure/keyvault/keys/details/key_constants.hpp"
+#include "private/key_constants.hpp"
 
 namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
 

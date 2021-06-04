@@ -6,9 +6,9 @@
 #include <azure/keyvault/common/internal/keyvault_exception.hpp>
 
 #include "azure/keyvault/keys/delete_key_operation.hpp"
-#include "azure/keyvault/keys/details/key_constants.hpp"
 #include "azure/keyvault/keys/details/key_serializers.hpp"
 #include "azure/keyvault/keys/key_client.hpp"
+#include "private/key_constants.hpp"
 
 using namespace Azure::Security::KeyVault::Keys;
 using namespace Azure::Security::KeyVault;

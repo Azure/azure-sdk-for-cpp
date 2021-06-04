@@ -5,12 +5,12 @@
 #include <azure/core/http/http.hpp>
 #include <azure/core/http/policies/policy.hpp>
 
+#include "../private/key_constants.hpp"
 #include "azure/keyvault/keys/cryptography/cryptography_serializers.hpp"
 #include "azure/keyvault/keys/cryptography/key_sign_parameters.hpp"
 #include "azure/keyvault/keys/cryptography/key_verify_parameters.hpp"
 #include "azure/keyvault/keys/cryptography/key_wrap_parameters.hpp"
 #include "azure/keyvault/keys/cryptography/remote_cryptography_client.hpp"
-#include "azure/keyvault/keys/details/key_constants.hpp"
 #include "azure/keyvault/keys/details/key_serializers.hpp"
 
 #include <memory>

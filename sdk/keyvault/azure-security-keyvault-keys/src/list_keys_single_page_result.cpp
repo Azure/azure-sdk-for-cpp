@@ -2,9 +2,9 @@
 // SPDX-License-Identifier: MIT
 
 #include "azure/keyvault/keys/list_keys_single_page_result.hpp"
-#include "azure/keyvault/keys/details/key_constants.hpp"
 #include "azure/keyvault/keys/details/key_serializers.hpp"
 #include "azure/keyvault/keys/key_client.hpp"
+#include "private/key_constants.hpp"
 
 #include <azure/keyvault/common/internal/unix_time_helper.hpp>
 

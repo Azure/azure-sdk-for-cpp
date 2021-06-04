@@ -7,11 +7,11 @@
 
 #include <azure/keyvault/common/internal/single_page.hpp>
 
-#include "azure/keyvault/keys/details/key_backup.hpp"
-#include "azure/keyvault/keys/details/key_constants.hpp"
 #include "azure/keyvault/keys/details/key_request_parameters.hpp"
 #include "azure/keyvault/keys/details/key_serializers.hpp"
 #include "azure/keyvault/keys/key_client.hpp"
+#include "private/key_backup.hpp"
+#include "private/key_constants.hpp"
 
 #include <memory>
 #include <string>

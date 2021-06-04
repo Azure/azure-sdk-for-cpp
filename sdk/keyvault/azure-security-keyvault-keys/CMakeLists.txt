@@ -52,8 +52,6 @@ set(
     inc/azure/keyvault/keys/cryptography/verify_result.hpp
     inc/azure/keyvault/keys/delete_key_operation.hpp
     inc/azure/keyvault/keys/deleted_key.hpp
-    inc/azure/keyvault/keys/details/key_backup.hpp
-    inc/azure/keyvault/keys/details/key_constants.hpp
     inc/azure/keyvault/keys/details/key_request_parameters.hpp
     inc/azure/keyvault/keys/import_key_options.hpp
     inc/azure/keyvault/keys/json_web_key.hpp
@@ -89,6 +87,8 @@ set(
     src/cryptography/wrap_result.cpp
     src/cryptography/unwrap_result.cpp
     src/cryptography/verify_result.cpp
+    src/private/key_backup.hpp
+    src/private/key_constants.hpp
     src/private/package_version.hpp
     src/delete_key_operation.cpp
     src/deleted_key.cpp
