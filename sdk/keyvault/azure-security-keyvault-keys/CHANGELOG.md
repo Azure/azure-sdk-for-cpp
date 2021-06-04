@@ -2,6 +2,12 @@
 
 ## 4.0.0-beta.3 (Unreleased)
 
+### Breaking Changes
+
+- Updated `MaxPageResults` type to `int32_t` affecting:
+  - GetDeletedKeysOptions.
+  - GetPropertiesOfKeysOptions.
+  - GetPropertiesOfKeyVersionsOptions.
 
 ## 4.0.0-beta.2 (2021-05-18)
 
