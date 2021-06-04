@@ -39,13 +39,13 @@ std::string KeyRequestParameters::Serialize() const
   }
 
   // attributes
-  JsonOptional::SetFromNullable<Azure::DateTime, uint64_t>(
+  JsonOptional::SetFromNullable<Azure::DateTime, int64_t>(
       m_options.ExpiresOn,
       payload[_detail::AttributesPropertyName],
       _detail::ExpPropertyName,
       UnixTimeConverter::DatetimeToUnixTime);
 
-  JsonOptional::SetFromNullable<Azure::DateTime, uint64_t>(
+  JsonOptional::SetFromNullable<Azure::DateTime, int64_t>(
       m_options.NotBefore,
       payload[_detail::AttributesPropertyName],
       _detail::NbfPropertyName,

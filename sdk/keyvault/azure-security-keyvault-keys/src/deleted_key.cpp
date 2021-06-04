@@ -38,12 +38,12 @@ DeletedKey _detail::DeletedKeySerializer::DeletedKeyDeserialize(
     deletedKey.Properties.RecoveryLevel
         = jsonParser[_detail::RecoveryLevelPropertyName].get<std::string>();
   }
-  JsonOptional::SetIfExists<uint64_t, Azure::DateTime>(
+  JsonOptional::SetIfExists<int64_t, Azure::DateTime>(
       deletedKey.DeletedDate,
       jsonParser,
       _detail::DeletedOnPropertyName,
       UnixTimeConverter::UnixTimeToDatetime);
-  JsonOptional::SetIfExists<uint64_t, Azure::DateTime>(
+  JsonOptional::SetIfExists<int64_t, Azure::DateTime>(
       deletedKey.ScheduledPurgeDate,
       jsonParser,
       _detail::ScheduledPurgeDatePropertyName,

@@ -2,6 +2,11 @@
 
 ## 4.0.0-beta.3 (Unreleased)
 
+### Breaking Changes
+
+- Updated `CreateRsaKeyOptions::KeySize` type from `uint64_t` to `int64_t`.
+- Updated `CreateRsaKeyOptions::PublicExponent` type from `uint64_t` to `int64_t`.
+- Updated `CreateOctKeyOptions::KeySize` type from `uint64_t` to `int64_t`.
 
 ## 4.0.0-beta.2 (2021-05-18)
 
