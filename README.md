@@ -68,9 +68,9 @@ In order to use the SDK installed via vcpkg with CMake, you can use the toolchai
 
 #### Using the SDK within your Application
 
-The **entry point** for most scenarios when using the SDK will be a top-level client type corresponding to the Azure service you want to talk to. For example, sending requests to blob storage can be done via the `Azure::Storage::Blobs::BlobClient` API. All APIs on the client type send HTTP requests to the cloud service and return back an HTTP `Response<T>`.
+The **entry point** for most scenarios when using the SDK will be a top-level client type corresponding to the Azure service. For example, sending requests to blob storage can be done via the `Azure::Storage::Blobs::BlobClient` API. All APIs on the client type send HTTP requests to the cloud service and return back an HTTP `Response<T>`.
 
-All the Azure C++ SDK headers needed to be included are located within the `<azure>` folder, with sub-folders corresponding to each service. Similarly, all types and APIs can be found within the `Azure::` namespace. For example, to use functionality from `Azure::Core`, include the following header at the beginning of your application `#include <azure/core.hpp>`.
+Azure C++ SDK headers needed are located within the `<azure>` folder, with sub-folders corresponding to each service. Similarly, all types and APIs can be found within the `Azure::` namespace. For example, to use functionality from `Azure::Core`, include the following header at the beginning of your application `#include <azure/core.hpp>`.
 
 Here's an example application to help you get started:
 
@@ -81,19 +81,22 @@ Here's an example application to help you get started:
 #include <azure/core.hpp>
 #include <azure/storage/blobs.hpp>
 
-// Use the appropriate namespace using directives
+// Add appropriate using namespace directives
 using namespace Azure::Storage;
 using namespace Azure::Storage::Blobs;
 
-// Since they can contain secrets, get the required account name and key string from an environment
-// variable or Azure Key Vault. Leaving this up to the user to implement.
-std::string GetEndPointUrl();
+// Secrets should be stored & retrieved from secure locations such as Azure::KeyVault. For
+// convenience and brevity of samples, the secrets are retrieved from environment variables.
+//
+// Get the required account name and key string from an environment variable. Leaving this up to the
+// user to implement.
+std::string GetEndpointUrl();
 std::string GetAccountName();
 std::string GetAccountKey();
 
 int main()
 {
-  std::string endpointUrl = GetEndPointUrl();
+  std::string endpointUrl = GetEndpointUrl();
   std::string accountName = GetAccountName();
   std::string accountKey = GetAccountKey();
 
@@ -102,12 +105,9 @@ int main()
     auto sharedKeyCredential = std::make_shared<StorageSharedKeyCredential>(
         StorageSharedKeyCredential(accountName, accountKey));
 
-    // There are many types of client types, use the one that's appropriate
-    // for your scenario, such as BlockBlobClient.
     auto blockBlobClient = BlockBlobClient(endpointUrl, sharedKeyCredential);
 
-    // Assuming there is some Azure::Core::IO::BodyStream containing the data to upload.
-    // For example either a MemoryBodyStream or FileBodyStream.
+    // Create some data to upload into the blob.
     std::vector<uint8_t> data = {1, 2, 3, 4};
     Azure::Core::IO::MemoryBodyStream stream(data);
 
@@ -130,7 +130,7 @@ int main()
 
 #### Key Core concepts
 
-Understanding the key concepts from the `Azure Core` library, which is leveraged by all client libraries will also be helpful in getting started, regardless of which Azure service you want to use.
+Understanding the key concepts from the `Azure Core` library, which is leveraged by all client libraries is helpful in getting started, regardless of which Azure service you want to use.
 
 The main shared concepts of `Azure Core` include:
 
@@ -139,7 +139,7 @@ The main shared concepts of `Azure Core` include:
 - Abstractions for Azure SDK credentials (`TokenCredential`).
 - Handling streaming data and input/output (I/O) via `BodyStream` along with its derived types.
 - Polling long-running operations (LROs), via `Operation<T>`.
-- Operations that return collections do so via a `PagedResponse<T>`.
+- Collections are returned via `PagedResponse<T>`.
 - HTTP pipeline and HTTP policies such as retry and logging, which are configurable via service client specific options.
 - Replaceable HTTP transport layer to send requests and receive responses over the network.
 
