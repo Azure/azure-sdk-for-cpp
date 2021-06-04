@@ -82,37 +82,45 @@ Here's an example application to help you get started:
 #include <azure/storage/blobs.hpp>
 
 // Use the appropriate namespace using directives
+using namespace Azure::Storage;
 using namespace Azure::Storage::Blobs;
 
-// Get the required connection string/key from an environment variable or Azure KeyVault.
-std::string GetConnectionString();
+// Since they are secrets, get the required account name and key string from an environment variable
+// or Azure Key Vault.
+// Leaving this up to the user to implement.
+std::string GetAccountName();
+std::string GetAccountKey();
 
 int main()
 {
-  std::string containerName = "testcontainer";
-  std::string blobName = "sample-blob";
+  std::string endpointUrl = "<update to use your storage account url here>";
+  std::string accountName = GetAccountName();
+  std::string accountKey = GetAccountKey();
 
   try
   {
     // There are many types of client types, use the one that's appropriate
-    // for your scenario, such as BlobContainerClient.
-    BlobClient client
-        = BlobClient::CreateFromConnectionString(GetConnectionString(), containerName, blobName);
-    BlockBlobClient block = client.AsBlockBlobClient();
+    // for your scenario, such as BlockBlobClient.
+    auto sharedKeyCredential = std::make_shared<StorageSharedKeyCredential>(
+        StorageSharedKeyCredential(accountName, accountKey));
+
+    auto blockBlobClient = BlockBlobClient(endpointUrl, sharedKeyCredential);
 
     // Assuming there is some Azure::Core::IO::BodyStream containing the data to upload.
     // For example either a MemoryBodyStream or FileBodyStream.
-    std::vector<uint8_t> data;
+    std::vector<uint8_t> data = {1, 2, 3, 4};
     Azure::Core::IO::MemoryBodyStream stream(data);
 
-    Azure::Response<Models::UploadBlockBlobResult> response = block.Upload(stream);
+    Azure::Response<Models::UploadBlockBlobResult> response = blockBlobClient.Upload(stream);
 
     Models::UploadBlockBlobResult model = response.Value;
-    printf("Last modified date of uploaded blob: %s\n", model.LastModified.ToString().c_str());
+    std::cout << "Last modified date of uploaded blob: " << model.LastModified.ToString()
+              << std::endl;
   }
   catch (const Azure::Core::RequestFailedException& e)
   {
-    printf("Status Code: %d, Reason Phrase: %s\n", (int)e.StatusCode, e.ReasonPhrase.c_str());
+    std::cout << "Status Code: " << static_cast<int>(e.StatusCode)
+              << ", Reason Phrase: " << e.ReasonPhrase << std::endl;
     std::cout << e.what() << std::endl;
     return 1;
   }
@@ -122,15 +130,16 @@ int main()
 
 #### Key Core concepts
 
-Understanding the key concepts from the `azure-core-cpp` library, which is leveraged by all client libraries will also be helpful in getting started, regardless of which Azure service you want to use.
+Understanding the key concepts from the `Azure Core` library, which is leveraged by all client libraries will also be helpful in getting started, regardless of which Azure service you want to use.
 
-The main shared concepts of `Azure::Core` include:
+The main shared concepts of `Azure Core` include:
 
 - Accessing HTTP response details for the returned model of any SDK client operation, via `Response<T>`.
 - Exceptions for reporting errors from service requests in a consistent fashion via the base exception type `RequestFailedException`.
 - Abstractions for Azure SDK credentials (`TokenCredential`).
 - Handling streaming data and input/output (I/O) via `BodyStream` along with its derived types.
 - Polling long-running operations (LROs), via `Operation<T>`.
+- Operations that return collections do so via a `PagedResponse<T>`.
 - HTTP pipeline and HTTP policies such as retry and logging, which are configurable via service client specific options.
 - Replaceable HTTP transport layer to send requests and receive responses over the network.
 
@@ -139,50 +148,38 @@ The main shared concepts of `Azure::Core` include:
 Many client library operations **return** the templated `Azure::Core::Response<T>` type from the API calls. This type let's you get the raw HTTP response from the service request call the Azure service APIs make, along with the result of the operation to get more API specific details. This is the templated `T` operation result which can be extracted from the response, using the `Value` field.
 
 ```C++
-  std::string containerName = "testcontainer";
+  // Azure service operations return a Response<T> templated type.
+  Azure::Response<Models::BlobProperties> propertiesResponse = blockBlobClient.GetProperties();
 
-  BlobContainerClient containerClient
-      = BlobContainerClient::CreateFromConnectionString(GetConnectionString(), containerName);
-
-  // Azure service operations return a Response<T> templated type
-  Azure::Response<Models::CreateBlobContainerResult> createResult
-      = containerClient.CreateIfNotExists();
-
-  // You can extract the T, from the returned Response<T>,
+  // You can get the T, from the returned Response<T>,
   // which is typically named with a Result suffix in the type name.
-  Models::CreateBlobContainerResult result = createResult.Value;
+  Models::BlobProperties propertiesModel = propertiesResponse.Value;
 
   // Now you can look at API specific members on the result object that is returned.
-  printf("Did the container get created? %d\n", result.Created);
+  std::cout << "The size of the blob is: " << propertiesModel.BlobSize << std::endl;
 ```
 
 #### Long Running Operations
 
 Some operations take a long time to complete and require polling for their status. Methods starting long-running operations return `Operation<T>` types.
 
-You can intermittently poll whether the operation has finished by using the `Poll()` method on the returned `Operation<T>` and track progress of the operation using `Value()`. Alternatively, if you just want to wait until the operation completes, you can use `PollUntilDone()`.
+You can intermittently poll whether the operation has finished by using the `Poll()` method inside a loop on the returned `Operation<T>` and track progress of the operation using `Value()`, while the operation is not done (using `IsDone()`). Your per-polling custom logic can go in that loop, such as logging progress.Alternatively, if you just want to wait until the operation completes, you can use `PollUntilDone()`.
 
 ```C++
-  SomeServiceClient client;
+  std::string sourceUri = "<a uri to the source blob to copy>";
 
-  auto operation = client.StartSomeLongRunningOperation();
+  // Typically, long running operation APIs have names that begin with Start.
+  StartBlobCopyOperation operation = blockBlobClient.StartCopyFromUri(sourceUri);
 
-  while (!operation.IsDone())
+  // Waits for the operation to finish, checking for status every 1 second.
+  auto copyResponse = operation.PollUntilDone(std::chrono::milliseconds(1000));
+  Models::BlobProperties copyModel = copyResponse.Value;
+
+  // Now you can look at API specific members on the result object that is returned.
+  if (copyModel.CopySource.HasValue())
   {
-    Azure::Core::Http::RawResponse pollResponse = operation.Poll();
-
-    // Only certain long-running service operations give back results with partial progress.
-    auto partialResult = operation.Value();
-
-    // Your per-polling custom logic goes here, such as logging progress.
-
-    // If it is allowed, you can also try to abort the operation if it doesn't complete in time.
-    // client.AbortSomeLongRunningOperation(... pass in the operation id ...);
-
-    std::this_thread::sleep_for(std::chrono::milliseconds(1000));
-  };
-
-  auto finalResult = operation.Value();
+    std::cout << "The source of the copied blob is: " << copyModel.CopySource.Value() << std::endl;
+  }
 ```
 
 #### Visual Studio - CMakeSettings.json
