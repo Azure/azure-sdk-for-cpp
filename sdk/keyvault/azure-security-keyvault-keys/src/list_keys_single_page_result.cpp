@@ -40,22 +40,22 @@ _detail::KeyPropertiesPageResultSerializer::KeyPropertiesPageResultDeserialize(
       auto attributes = key[_detail::AttributesPropertyName];
 
       JsonOptional::SetIfExists(keyProperties.Enabled, attributes, _detail::EnabledPropertyName);
-      JsonOptional::SetIfExists<uint64_t, Azure::DateTime>(
+      JsonOptional::SetIfExists<int64_t, Azure::DateTime>(
           keyProperties.NotBefore,
           attributes,
           _detail::NbfPropertyName,
           UnixTimeConverter::UnixTimeToDatetime);
-      JsonOptional::SetIfExists<uint64_t, Azure::DateTime>(
+      JsonOptional::SetIfExists<int64_t, Azure::DateTime>(
           keyProperties.ExpiresOn,
           attributes,
           _detail::ExpPropertyName,
           UnixTimeConverter::UnixTimeToDatetime);
-      JsonOptional::SetIfExists<uint64_t, Azure::DateTime>(
+      JsonOptional::SetIfExists<int64_t, Azure::DateTime>(
           keyProperties.CreatedOn,
           attributes,
           _detail::CreatedPropertyName,
           UnixTimeConverter::UnixTimeToDatetime);
-      JsonOptional::SetIfExists<uint64_t, Azure::DateTime>(
+      JsonOptional::SetIfExists<int64_t, Azure::DateTime>(
           keyProperties.UpdatedOn,
           attributes,
           _detail::UpdatedPropertyName,
@@ -111,12 +111,12 @@ DeletedKeyPageResult _detail::KeyPropertiesPageResultSerializer::DeletedKeyPageR
           = key[_detail::AttributesPropertyName][_detail::RecoveryLevelPropertyName]
                 .get<std::string>();
     }
-    JsonOptional::SetIfExists<uint64_t, Azure::DateTime>(
+    JsonOptional::SetIfExists<int64_t, Azure::DateTime>(
         deletedKey.DeletedDate,
         key,
         _detail::DeletedOnPropertyName,
         UnixTimeConverter::UnixTimeToDatetime);
-    JsonOptional::SetIfExists<uint64_t, Azure::DateTime>(
+    JsonOptional::SetIfExists<int64_t, Azure::DateTime>(
         deletedKey.ScheduledPurgeDate,
         key,
         _detail::ScheduledPurgeDatePropertyName,

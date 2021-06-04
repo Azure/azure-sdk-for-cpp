@@ -26,7 +26,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace _internal 
      * @param unixTime The number of seconds since 1970.
      * @return Calculated #Azure::Core::DateTime.
      */
-    static inline Azure::DateTime UnixTimeToDatetime(uint64_t unixTime)
+    static inline Azure::DateTime UnixTimeToDatetime(int64_t unixTime)
     {
       return Azure::DateTime(1970) + std::chrono::seconds(unixTime);
     }
@@ -36,7 +36,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace _internal 
      *
      * @param dateTime The date time to convert.
      */
-    static inline uint64_t DatetimeToUnixTime(Azure::DateTime dateTime)
+    static inline int64_t DatetimeToUnixTime(Azure::DateTime dateTime)
     {
       //  This count starts at the Unix epoch which is January 1st, 1970 UTC.
       auto secondsSince1970
