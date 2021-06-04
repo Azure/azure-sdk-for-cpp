@@ -87,12 +87,9 @@ using namespace Azure::Storage::Blobs;
 
 // Secrets should be stored & retrieved from secure locations such as Azure::KeyVault. For
 // convenience and brevity of samples, the secrets are retrieved from environment variables.
-//
-// Get the required account name and key string from an environment variable. Leaving this up to the
-// user to implement.
-std::string GetEndpointUrl();
-std::string GetAccountName();
-std::string GetAccountKey();
+std::string GetEndpointUrl() { return std::getenv("AZURE_STORAGE_ACCOUNT_URL"); }
+std::string GetAccountName() { return std::getenv("AZURE_STORAGE_ACCOUNT_NAME"); }
+std::string GetAccountKey() { return std::getenv("AZURE_STORAGE_ACCOUNT_KEY"); }
 
 int main()
 {
