@@ -36,7 +36,6 @@ set(
     inc/azure/keyvault/keys/cryptography/encrypt_result.hpp
     inc/azure/keyvault/keys/cryptography/encryption_algorithm.hpp
     inc/azure/keyvault/keys/cryptography/key_wrap_algorithm.hpp
-    inc/azure/keyvault/keys/cryptography/key_wrap_parameters.hpp
     inc/azure/keyvault/keys/cryptography/sign_result.hpp
     inc/azure/keyvault/keys/cryptography/signature_algorithm.hpp
     inc/azure/keyvault/keys/cryptography/wrap_result.hpp
@@ -90,6 +89,7 @@ set(
     src/private/key_serializers.hpp
     src/private/key_sign_parameters.hpp
     src/private/key_verify_parameters.hpp
+    src/private/key_wrap_parameters.hpp
     src/private/package_version.hpp
     src/delete_key_operation.cpp
     src/deleted_key.cpp

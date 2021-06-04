@@ -17,13 +17,13 @@
 #include "azure/keyvault/keys/cryptography/decrypt_result.hpp"
 #include "azure/keyvault/keys/cryptography/encrypt_parameters.hpp"
 #include "azure/keyvault/keys/cryptography/encrypt_result.hpp"
-#include "azure/keyvault/keys/cryptography/key_wrap_parameters.hpp"
 #include "azure/keyvault/keys/cryptography/sign_result.hpp"
 #include "azure/keyvault/keys/cryptography/unwrap_result.hpp"
 #include "azure/keyvault/keys/cryptography/verify_result.hpp"
 #include "azure/keyvault/keys/cryptography/wrap_result.hpp"
 #include "key_sign_parameters.hpp"
 #include "key_verify_parameters.hpp"
+#include "key_wrap_parameters.hpp"
 
 #include <string>
 

@@ -10,7 +10,7 @@
 #include "../private/cryptography_serializers.hpp"
 #include "../private/key_sign_parameters.hpp"
 #include "../private/key_verify_parameters.hpp"
-#include "azure/keyvault/keys/cryptography/key_wrap_parameters.hpp"
+#include "../private/key_wrap_parameters.hpp"
 #include "azure/keyvault/keys/internal/cryptography/remote_cryptography_client.hpp"
 
 #include <memory>
