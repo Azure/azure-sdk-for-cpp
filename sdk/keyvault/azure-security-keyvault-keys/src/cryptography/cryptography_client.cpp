@@ -9,7 +9,7 @@
 #include <azure/core/http/policies/policy.hpp>
 
 #include "azure/keyvault/keys/cryptography/cryptography_client.hpp"
-#include "azure/keyvault/keys/cryptography/local_cryptography_provider_factory.hpp"
+#include "azure/keyvault/keys/internal/cryptography/local_cryptography_provider_factory.hpp"
 #include "azure/keyvault/keys/key_operation.hpp"
 
 #include <memory>

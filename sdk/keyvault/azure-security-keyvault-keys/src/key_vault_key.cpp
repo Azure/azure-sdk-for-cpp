@@ -8,9 +8,9 @@
 
 #include <azure/keyvault/common/internal/unix_time_helper.hpp>
 
-#include "azure/keyvault/keys/details/key_serializers.hpp"
 #include "azure/keyvault/keys/key_vault_key.hpp"
 #include "private/key_constants.hpp"
+#include "private/key_serializers.hpp"
 
 using namespace Azure::Security::KeyVault::Keys;
 using namespace Azure::Core::Json::_internal;

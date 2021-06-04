@@ -6,9 +6,9 @@
 
 #include <azure/keyvault/common/internal/unix_time_helper.hpp>
 
-#include "azure/keyvault/keys/details/key_serializers.hpp"
 #include "azure/keyvault/keys/import_key_options.hpp"
 #include "private/key_constants.hpp"
+#include "private/key_serializers.hpp"
 
 #include <string>
 
