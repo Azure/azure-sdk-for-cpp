@@ -99,11 +99,11 @@ int main()
 
   try
   {
-    // There are many types of client types, use the one that's appropriate
-    // for your scenario, such as BlockBlobClient.
     auto sharedKeyCredential = std::make_shared<StorageSharedKeyCredential>(
         StorageSharedKeyCredential(accountName, accountKey));
 
+    // There are many types of client types, use the one that's appropriate
+    // for your scenario, such as BlockBlobClient.
     auto blockBlobClient = BlockBlobClient(endpointUrl, sharedKeyCredential);
 
     // Assuming there is some Azure::Core::IO::BodyStream containing the data to upload.
