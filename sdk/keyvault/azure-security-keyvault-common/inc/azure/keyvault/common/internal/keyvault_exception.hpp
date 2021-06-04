@@ -31,4 +31,4 @@ namespace Azure { namespace Security { namespace KeyVault { namespace _internal 
     static Azure::Core::RequestFailedException CreateException(
         std::unique_ptr<Azure::Core::Http::RawResponse> rawResponse);
   };
-}}}} // namespace Azure::Security::KeyVault::_detail
+}}}} // namespace Azure::Security::KeyVault::_internal

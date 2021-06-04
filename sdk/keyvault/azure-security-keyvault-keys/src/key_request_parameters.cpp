@@ -6,8 +6,8 @@
 
 #include <azure/keyvault/common/internal/unix_time_helper.hpp>
 
-#include "private/key_request_parameters.hpp"
 #include "private/key_constants.hpp"
+#include "private/key_request_parameters.hpp"
 
 #include <string>
 

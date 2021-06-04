@@ -3,9 +3,9 @@
 
 #include <azure/core/internal/json/json.hpp>
 
-#include "azure/keyvault/keys/cryptography/cryptography_serializers.hpp"
-#include "azure/keyvault/keys/cryptography/unwrap_result.hpp"
 #include "../private/key_constants.hpp"
+#include "../private/cryptography_serializers.hpp"
+#include "azure/keyvault/keys/cryptography/unwrap_result.hpp"
 
 #include <azure/keyvault/common/internal/base64url.hpp>
 

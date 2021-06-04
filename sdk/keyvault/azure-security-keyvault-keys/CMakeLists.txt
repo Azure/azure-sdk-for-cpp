@@ -30,14 +30,11 @@ set(
   AZURE_KEYVAULT_KEYS_HEADER
     inc/azure/keyvault/keys/cryptography/cryptography_client_options.hpp
     inc/azure/keyvault/keys/cryptography/cryptography_client.hpp
-    inc/azure/keyvault/keys/cryptography/cryptography_serializers.hpp
     inc/azure/keyvault/keys/cryptography/decrypt_parameters.hpp
     inc/azure/keyvault/keys/cryptography/decrypt_result.hpp
     inc/azure/keyvault/keys/cryptography/encrypt_parameters.hpp
     inc/azure/keyvault/keys/cryptography/encrypt_result.hpp
     inc/azure/keyvault/keys/cryptography/encryption_algorithm.hpp
-    inc/azure/keyvault/keys/cryptography/key_sign_parameters.hpp
-    inc/azure/keyvault/keys/cryptography/key_verify_parameters.hpp
     inc/azure/keyvault/keys/cryptography/key_wrap_algorithm.hpp
     inc/azure/keyvault/keys/cryptography/key_wrap_parameters.hpp
     inc/azure/keyvault/keys/cryptography/sign_result.hpp
@@ -86,10 +83,13 @@ set(
     src/cryptography/wrap_result.cpp
     src/cryptography/unwrap_result.cpp
     src/cryptography/verify_result.cpp
+    src/private/cryptography_serializers.hpp
     src/private/key_backup.hpp
     src/private/key_constants.hpp
     src/private/key_request_parameters.hpp
     src/private/key_serializers.hpp
+    src/private/key_sign_parameters.hpp
+    src/private/key_verify_parameters.hpp
     src/private/package_version.hpp
     src/delete_key_operation.cpp
     src/deleted_key.cpp

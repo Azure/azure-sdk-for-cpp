@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: MIT
 
 #include "../private/key_constants.hpp"
-#include "azure/keyvault/keys/cryptography/cryptography_serializers.hpp"
+#include "../private/cryptography_serializers.hpp"
 #include "azure/keyvault/keys/cryptography/encrypt_parameters.hpp"
 
 #include <azure/keyvault/common/internal/base64url.hpp>

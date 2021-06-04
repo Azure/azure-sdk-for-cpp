@@ -7,9 +7,9 @@
 
 #include "../private/key_constants.hpp"
 #include "../private/key_serializers.hpp"
-#include "azure/keyvault/keys/cryptography/cryptography_serializers.hpp"
-#include "azure/keyvault/keys/cryptography/key_sign_parameters.hpp"
-#include "azure/keyvault/keys/cryptography/key_verify_parameters.hpp"
+#include "../private/cryptography_serializers.hpp"
+#include "../private/key_sign_parameters.hpp"
+#include "../private/key_verify_parameters.hpp"
 #include "azure/keyvault/keys/cryptography/key_wrap_parameters.hpp"
 #include "azure/keyvault/keys/internal/cryptography/remote_cryptography_client.hpp"
 

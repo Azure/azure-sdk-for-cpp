@@ -4,7 +4,7 @@
 #include <azure/core/internal/json/json.hpp>
 
 #include "../private/key_constants.hpp"
-#include "azure/keyvault/keys/cryptography/cryptography_serializers.hpp"
+#include "../private/cryptography_serializers.hpp"
 #include "azure/keyvault/keys/cryptography/sign_result.hpp"
 
 #include <azure/keyvault/common/internal/base64url.hpp>

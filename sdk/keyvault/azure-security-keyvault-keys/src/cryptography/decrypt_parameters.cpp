@@ -3,7 +3,7 @@
 
 #include "azure/keyvault/keys/cryptography/decrypt_parameters.hpp"
 #include "../private/key_constants.hpp"
-#include "azure/keyvault/keys/cryptography/cryptography_serializers.hpp"
+#include "../private/cryptography_serializers.hpp"
 
 #include <azure/keyvault/common/internal/base64url.hpp>
 
