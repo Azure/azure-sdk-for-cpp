@@ -66,34 +66,58 @@ In order to use the SDK installed via vcpkg with CMake, you can use the toolchai
 > cmake --build [build directory]
 ```
 
-The **entry point** for most scenarios when using the SDK will be a top-level client type corresponding to the Azure service you want to talk to. For example, sending requests to blob storage can be done via the `Azure::Storage::Blobs::BlobClient` API.
+#### Using the SDK within your Application
 
-All the Azure C++ SDK headers needed to be included are located within the `<azure>` folder, with sub-folders corresponding to each service. Similarly, all types and APIs can be found within the `Azure::` namespace. For example, to use functionality form `Azure::Core`, include the following header at the beginning of your application `#include <azure/core.hpp>`.
+The **entry point** for most scenarios when using the SDK will be a top-level client type corresponding to the Azure service. For example, sending requests to blob storage can be done via the `Azure::Storage::Blobs::BlobClient` API. All APIs on the client type send HTTP requests to the cloud service and return back an HTTP `Response<T>`.
+
+Azure C++ SDK headers needed are located within the `<azure>` folder, with sub-folders corresponding to each service. Similarly, all types and APIs can be found within the `Azure::` namespace. For example, to use functionality from `Azure::Core`, include the following header at the beginning of your application `#include <azure/core.hpp>`.
 
 Here's an example application to help you get started:
 
 ```C++
 #include <iostream>
+
+// Include the necessary SDK headers
 #include <azure/core.hpp>
 #include <azure/storage/blobs.hpp>
 
+// Add appropriate using namespace directives
+using namespace Azure::Storage;
 using namespace Azure::Storage::Blobs;
 
-// Get the required connection string/key from an environment variable or Azure Key Vault.
-std::string GetConnectionString();
+// Secrets should be stored & retrieved from secure locations such as Azure::KeyVault. For
+// convenience and brevity of samples, the secrets are retrieved from environment variables.
+std::string GetEndpointUrl() { return std::getenv("AZURE_STORAGE_ACCOUNT_URL"); }
+std::string GetAccountName() { return std::getenv("AZURE_STORAGE_ACCOUNT_NAME"); }
+std::string GetAccountKey() { return std::getenv("AZURE_STORAGE_ACCOUNT_KEY"); }
 
 int main()
 {
-  std::string containerName = "testcontainer";
-  std::string blobName = "sample-blob";
+  std::string endpointUrl = GetEndpointUrl();
+  std::string accountName = GetAccountName();
+  std::string accountKey = GetAccountKey();
 
   try
   {
-    auto client = BlobClient::CreateFromConnectionString(
-        GetConnectionString(), containerName, blobName);
+    auto sharedKeyCredential = std::make_shared<StorageSharedKeyCredential>(
+        StorageSharedKeyCredential(accountName, accountKey));
+
+    auto blockBlobClient = BlockBlobClient(endpointUrl, sharedKeyCredential);
+
+    // Create some data to upload into the blob.
+    std::vector<uint8_t> data = {1, 2, 3, 4};
+    Azure::Core::IO::MemoryBodyStream stream(data);
+
+    Azure::Response<Models::UploadBlockBlobResult> response = blockBlobClient.Upload(stream);
+
+    Models::UploadBlockBlobResult model = response.Value;
+    std::cout << "Last modified date of uploaded blob: " << model.LastModified.ToString()
+              << std::endl;
   }
   catch (const Azure::Core::RequestFailedException& e)
   {
+    std::cout << "Status Code: " << static_cast<int>(e.StatusCode)
+              << ", Reason Phrase: " << e.ReasonPhrase << std::endl;
     std::cout << e.what() << std::endl;
     return 1;
   }
@@ -101,7 +125,60 @@ int main()
 }
 ```
 
-Understanding the key concepts from the `azure-core-cpp` library, which is leveraged by all client libraries will also be helpful in getting started, regardless of which Azure service you want to use. You can find more information about them, with sample code snippets, here: https://github.com/Azure/azure-sdk-for-cpp/tree/master/sdk/core/azure-core#key-concepts
+#### Key Core concepts
+
+Understanding the key concepts from the `Azure Core` library, which is leveraged by all client libraries is helpful in getting started, regardless of which Azure service you want to use.
+
+The main shared concepts of `Azure Core` include:
+
+- Accessing HTTP response details for the returned model of any SDK client operation, via `Response<T>`.
+- Exceptions for reporting errors from service requests in a consistent fashion via the base exception type `RequestFailedException`.
+- Abstractions for Azure SDK credentials (`TokenCredential`).
+- Handling streaming data and input/output (I/O) via `BodyStream` along with its derived types.
+- Polling long-running operations (LROs), via `Operation<T>`.
+- Collections are returned via `PagedResponse<T>`.
+- HTTP pipeline and HTTP policies such as retry and logging, which are configurable via service client specific options.
+- Replaceable HTTP transport layer to send requests and receive responses over the network.
+
+#### `Response <T>` Model Types
+
+Many client library operations **return** the templated `Azure::Core::Response<T>` type from the API calls. This type let's you get the raw HTTP response from the service request call the Azure service APIs make, along with the result of the operation to get more API specific details. This is the templated `T` operation result which can be extracted from the response, using the `Value` field.
+
+```C++
+  // Azure service operations return a Response<T> templated type.
+  Azure::Response<Models::BlobProperties> propertiesResponse = blockBlobClient.GetProperties();
+
+  // You can get the T, from the returned Response<T>,
+  // which is typically named with a Result suffix in the type name.
+  Models::BlobProperties propertiesModel = propertiesResponse.Value;
+
+  // Now you can look at API specific members on the result object that is returned.
+  std::cout << "The size of the blob is: " << propertiesModel.BlobSize << std::endl;
+```
+
+#### Long Running Operations
+
+Some operations take a long time to complete and require polling for their status. Methods starting long-running operations return `Operation<T>` types.
+
+You can intermittently poll whether the operation has finished by using the `Poll()` method inside a loop on the returned `Operation<T>` and track progress of the operation using `Value()`, while the operation is not done (using `IsDone()`). Your per-polling custom logic can go in that loop, such as logging progress.Alternatively, if you just want to wait until the operation completes, you can use `PollUntilDone()`.
+
+```C++
+  std::string sourceUri = "<a uri to the source blob to copy>";
+
+  // Typically, long running operation APIs have names that begin with Start.
+  StartBlobCopyOperation operation = blockBlobClient.StartCopyFromUri(sourceUri);
+
+  // Waits for the operation to finish, checking for status every 1 second.
+  auto copyResponse = operation.PollUntilDone(std::chrono::milliseconds(1000));
+  auto propertiesModel = copyResponse.Value;
+
+  // Now you can look at API specific members on the result object that is returned.
+  if (propertiesModel.CopySource.HasValue())
+  {
+    std::cout << "The source of the copied blob is: " << propertiesModel.CopySource.Value()
+              << std::endl;
+  }
+```
 
 #### Interacting with Azure SDK for C++
 
