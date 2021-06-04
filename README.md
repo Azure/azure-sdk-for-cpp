@@ -85,15 +85,15 @@ Here's an example application to help you get started:
 using namespace Azure::Storage;
 using namespace Azure::Storage::Blobs;
 
-// Since they are secrets, get the required account name and key string from an environment variable
-// or Azure Key Vault.
-// Leaving this up to the user to implement.
+// Since they can contain secrets, get the required account name and key string from an environment
+// variable or Azure Key Vault. Leaving this up to the user to implement.
+std::string GetEndPointUrl();
 std::string GetAccountName();
 std::string GetAccountKey();
 
 int main()
 {
-  std::string endpointUrl = "<update to use your storage account url here>";
+  std::string endpointUrl = GetEndPointUrl();
   std::string accountName = GetAccountName();
   std::string accountKey = GetAccountKey();
 
