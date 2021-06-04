@@ -173,12 +173,13 @@ You can intermittently poll whether the operation has finished by using the `Pol
 
   // Waits for the operation to finish, checking for status every 1 second.
   auto copyResponse = operation.PollUntilDone(std::chrono::milliseconds(1000));
-  Models::BlobProperties copyModel = copyResponse.Value;
+  auto propertiesModel = copyResponse.Value;
 
   // Now you can look at API specific members on the result object that is returned.
-  if (copyModel.CopySource.HasValue())
+  if (propertiesModel.CopySource.HasValue())
   {
-    std::cout << "The source of the copied blob is: " << copyModel.CopySource.Value() << std::endl;
+    std::cout << "The source of the copied blob is: " << propertiesModel.CopySource.Value()
+              << std::endl;
   }
 ```
 
