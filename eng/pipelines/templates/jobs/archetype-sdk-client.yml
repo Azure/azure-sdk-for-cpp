@@ -71,6 +71,7 @@ jobs:
         VcpkgInstall: 'curl[ssl] libxml2 openssl'
         VCPKG_DEFAULT_TRIPLET: 'x64-osx'
         CHECK_CLANG_FORMAT: 1
+        BuildArgs: '-j 4'
 
       # Unit testing ON
       Linux_x64_with_unit_test:
@@ -115,6 +116,7 @@ jobs:
         VcpkgInstall: 'curl[ssl] libxml2 openssl'
         VCPKG_DEFAULT_TRIPLET: 'x64-osx'
         CmakeArgs: ' -DBUILD_TESTING=ON -DRUN_LONG_UNIT_TESTS=ON -DBUILD_TRANSPORT_CURL=ON'
+        BuildArgs: '-j 4'
   pool:
     name: $(Pool)
     vmImage: $(OSVmImage)
