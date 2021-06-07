@@ -234,9 +234,7 @@ namespace Azure { namespace Core { namespace Http { namespace Policies {
      * @param policies A vector of unique pointers next in the line to be invoked after the current
      * policy.
      */
-    explicit NextHttpPolicy(
-        size_t index,
-        const std::vector<std::unique_ptr<HttpPolicy>>& policies)
+    explicit NextHttpPolicy(size_t index, const std::vector<std::unique_ptr<HttpPolicy>>& policies)
         : m_index(index), m_policies(policies)
     {
     }

@@ -794,10 +794,7 @@ inline size_t parser_results::count() const { return this->pos.size(); }
 
 inline const char* parser_results::operator[](size_t index) const { return this->pos[index]; }
 
-template <typename T> T parser_results::as(size_t i) const
-{
-  return convert::arg<T>(this->pos[i]);
-}
+template <typename T> T parser_results::as(size_t i) const { return convert::arg<T>(this->pos[i]); }
 
 template <typename T> std::vector<T> parser_results::all_as() const
 {

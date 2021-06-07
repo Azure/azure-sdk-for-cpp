@@ -163,10 +163,7 @@ class Md5OpenSSL final : public Azure::Core::Cryptography::Hash {
 private:
   std::unique_ptr<MD5_CTX> m_context;
 
-  void OnAppend(const uint8_t* data, size_t length)
-  {
-    MD5_Update(m_context.get(), data, length);
-  }
+  void OnAppend(const uint8_t* data, size_t length) { MD5_Update(m_context.get(), data, length); }
 
   std::vector<uint8_t> OnFinal(const uint8_t* data, size_t length)
   {
