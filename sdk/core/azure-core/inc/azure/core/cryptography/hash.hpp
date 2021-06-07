@@ -33,7 +33,7 @@ namespace Azure { namespace Core { namespace Cryptography {
      * calculation.
      * @param length The size of the data provided.
      */
-    virtual void OnAppend(const uint8_t* data, std::size_t length) = 0;
+    virtual void OnAppend(const uint8_t* data, size_t length) = 0;
 
     /**
      * @brief Computes the hash value of the specified binary input data, including any previously
@@ -43,7 +43,7 @@ namespace Azure { namespace Core { namespace Cryptography {
      * @return The computed hash value corresponding to the input provided including any previously
      * appended.
      */
-    virtual std::vector<uint8_t> OnFinal(const uint8_t* data, std::size_t length) = 0;
+    virtual std::vector<uint8_t> OnFinal(const uint8_t* data, size_t length) = 0;
 
   protected:
     /**
@@ -62,7 +62,7 @@ namespace Azure { namespace Core { namespace Cryptography {
      * calculation.
      * @param length The size of the data provided.
      */
-    void Append(const uint8_t* data, std::size_t length)
+    void Append(const uint8_t* data, size_t length)
     {
       AZURE_ASSERT(data || length == 0);
       AZURE_ASSERT_MSG(!m_isDone, "Cannot call Append after calling Final().");
@@ -78,7 +78,7 @@ namespace Azure { namespace Core { namespace Cryptography {
      * @return The computed hash value corresponding to the input provided, including any previously
      * appended.
      */
-    std::vector<uint8_t> Final(const uint8_t* data, std::size_t length)
+    std::vector<uint8_t> Final(const uint8_t* data, size_t length)
     {
       AZURE_ASSERT(data || length == 0);
       AZURE_ASSERT_MSG(!m_isDone, "Cannot call Final() multiple times.");
@@ -147,7 +147,7 @@ namespace Azure { namespace Core { namespace Cryptography {
      * @return The computed MD5 hash value corresponding to the input provided including any
      * previously appended.
      */
-    std::vector<uint8_t> OnFinal(const uint8_t* data, std::size_t length) override;
+    std::vector<uint8_t> OnFinal(const uint8_t* data, size_t length) override;
 
     /**
      * @brief Used to append partial binary input data to compute the MD5 hash in a streaming
@@ -158,7 +158,7 @@ namespace Azure { namespace Core { namespace Cryptography {
      * calculation.
      * @param length The size of the data provided.
      */
-    void OnAppend(const uint8_t* data, std::size_t length) override;
+    void OnAppend(const uint8_t* data, size_t length) override;
   };
 
 }}} // namespace Azure::Core::Cryptography

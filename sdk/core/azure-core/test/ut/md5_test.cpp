@@ -25,11 +25,11 @@ static thread_local std::mt19937_64 random_generator(std::random_device{}());
 static char RandomCharGenerator()
 {
   const char charset[] = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
-  std::uniform_int_distribution<std::size_t> distribution(0, sizeof(charset) - 2);
+  std::uniform_int_distribution<size_t> distribution(0, sizeof(charset) - 2);
   return charset[distribution(random_generator)];
 }
 
-std::vector<uint8_t> RandomBuffer(std::size_t length)
+std::vector<uint8_t> RandomBuffer(size_t length)
 {
   std::vector<uint8_t> result(length);
   char* dataPtr = reinterpret_cast<char*>(&result[0]);
@@ -37,7 +37,7 @@ std::vector<uint8_t> RandomBuffer(std::size_t length)
   char* start_addr = dataPtr;
   char* end_addr = dataPtr + length;
 
-  const std::size_t rand_int_size = sizeof(uint64_t);
+  const size_t rand_int_size = sizeof(uint64_t);
 
   while (uintptr_t(start_addr) % rand_int_size != 0 && start_addr < end_addr)
   {
@@ -72,7 +72,7 @@ TEST(Md5Hash, Basic)
   EXPECT_EQ(
       Azure::Core::Convert::Base64Encode(ComputeHash("Hello Azure!")), "Pz8543xut4RVSbb2g52Mww==");
 
-  auto data = RandomBuffer(static_cast<std::size_t>(16777216));
+  auto data = RandomBuffer(static_cast<size_t>(16777216));
 
   Md5Hash md5Single;
   Md5Hash md5Streaming;
@@ -85,10 +85,10 @@ TEST(Md5Hash, Basic)
   // computed hash value when you have all the data with the streaming approach, and validate they
   // are equal.
 
-  std::size_t length = 0;
+  size_t length = 0;
   while (length < data.size())
   {
-    std::size_t s = static_cast<std::size_t>(RandomInt(0, 4194304));
+    size_t s = static_cast<size_t>(RandomInt(0, 4194304));
     s = std::min(s, data.size() - length);
     md5Streaming.Append(&data[length], s);
     md5Streaming.Append(&data[length], 0);

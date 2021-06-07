@@ -82,18 +82,18 @@ std::string Url::Decode(const std::string& value)
     std::vector<int> t(256, -1);
     for (int i = 0; i < 10; ++i)
     {
-      t[static_cast<std::size_t>('0') + i] = i;
+      t[static_cast<size_t>('0') + i] = i;
     }
     for (int i = 10; i < 16; ++i)
     {
-      t[static_cast<std::size_t>('A') + i - 10] = i;
-      t[static_cast<std::size_t>('a') + i - 10] = i;
+      t[static_cast<size_t>('A') + i - 10] = i;
+      t[static_cast<size_t>('a') + i - 10] = i;
     }
     return t;
   }();
 
   std::string decodedValue;
-  for (std::size_t i = 0; i < value.size();)
+  for (size_t i = 0; i < value.size();)
   {
     char c = value[i];
     if (c == '+')

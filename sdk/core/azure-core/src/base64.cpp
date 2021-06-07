@@ -78,7 +78,7 @@ namespace Azure { namespace Core {
     std::vector<uint8_t> decoded;
     // According to RFC 4648, the encoded length should be ceiling(n / 3) * 4, so we can infer an
     // upper bound here
-    std::size_t maxDecodedLength = text.length() / 4 * 3;
+    size_t maxDecodedLength = text.length() / 4 * 3;
     decoded.resize(maxDecodedLength);
 
     BIO* bio = BIO_new_mem_buf(text.data(), -1);
