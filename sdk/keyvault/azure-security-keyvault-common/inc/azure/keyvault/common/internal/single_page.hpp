@@ -17,6 +17,6 @@ namespace Azure { namespace Security { namespace KeyVault { namespace _internal 
   {
     virtual ~GetPageResultOptions() = default;
     Azure::Nullable<std::string> NextPageToken;
-    Azure::Nullable<uint32_t> MaxPageResults;
+    Azure::Nullable<int32_t> MaxPageResults;
   };
 }}}} // namespace Azure::Security::KeyVault::_internal

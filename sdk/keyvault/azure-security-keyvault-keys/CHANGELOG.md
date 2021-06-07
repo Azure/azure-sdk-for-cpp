@@ -4,6 +4,10 @@
 
 ### Breaking Changes
 
+- Updated `MaxPageResults` type to `int32_t` affecting:
+  - GetDeletedKeysOptions.
+  - GetPropertiesOfKeysOptions.
+  - GetPropertiesOfKeyVersionsOptions.
 - Updated `CreateRsaKeyOptions::KeySize` type from `uint64_t` to `int64_t`.
 - Updated `CreateRsaKeyOptions::PublicExponent` type from `uint64_t` to `int64_t`.
 - Updated `CreateOctKeyOptions::KeySize` type from `uint64_t` to `int64_t`.
