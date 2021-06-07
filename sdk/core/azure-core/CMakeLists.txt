@@ -22,9 +22,11 @@ az_vcpkg_integrate()
 find_package(Threads REQUIRED)
 
 if(BUILD_TRANSPORT_CURL)
-  # min version for `CURLSSLOPT_NO_REVOKE`
-  # https://curl.haxx.se/libcurl/c/CURLOPT_SSL_OPTIONS.html
-  set(CURL_MIN_REQUIRED_VERSION 7.44)
+  if (WIN32)
+    # min version for `CURLSSLOPT_NO_REVOKE`
+    # https://curl.haxx.se/libcurl/c/CURLOPT_SSL_OPTIONS.html
+    set(CURL_MIN_REQUIRED_VERSION 7.44)
+  endif()
   find_package(CURL ${CURL_MIN_REQUIRED_VERSION} CONFIG QUIET)
   if(NOT CURL_FOUND)
     find_package(CURL ${CURL_MIN_REQUIRED_VERSION} REQUIRED)
@@ -130,6 +132,10 @@ target_include_directories(
 
 # make sure that users can consume the project as a library.
 add_library(Azure::azure-core ALIAS azure-core)
+
+if (NOT MSVC)
+  set_source_files_properties(src/base64.cpp PROPERTIES COMPILE_FLAGS -Wno-old-style-cast)
+endif()
 
 # coverage. Has no effect if BUILD_CODE_COVERAGE is OFF
 create_code_coverage(core azure-core azure-core-test)

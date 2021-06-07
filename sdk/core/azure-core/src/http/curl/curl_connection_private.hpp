@@ -132,10 +132,12 @@ namespace Azure { namespace Core { namespace Http {
 #pragma warning(push)
 // C26812: The enum type 'CURLcode' is un-scoped. Prefer 'enum class' over 'enum' (Enum.3)
 #pragma warning(disable : 26812)
-#endif
         auto result = curl_easy_getinfo(m_handle, CURLINFO_ACTIVESOCKET, &m_curlSocket);
-#if defined(_MSC_VER)
 #pragma warning(pop)
+#else
+      long socket;
+      auto result = curl_easy_getinfo(m_handle, CURLINFO_LASTSOCKET, &socket);
+      m_curlSocket = socket;
 #endif
         if (result != CURLE_OK)
         {

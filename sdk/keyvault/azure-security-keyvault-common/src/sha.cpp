@@ -59,7 +59,11 @@ private:
 public:
   SHAWithOpenSSL(SHASize size)
   {
+#if (OPENSSL_VERSION_MAJOR == 1 && OPENSSL_VERSION_MINOR == 0) || OPENSSL_VERSION_MAJOR == 0
+    if ((m_context = EVP_MD_CTX_create()) == NULL)
+#else
     if ((m_context = EVP_MD_CTX_new()) == NULL)
+#endif
     {
       throw std::runtime_error("Crypto error while creating EVP context.");
     }
@@ -92,7 +96,14 @@ public:
     }
   }
 
-  ~SHAWithOpenSSL() { EVP_MD_CTX_free(m_context); }
+  ~SHAWithOpenSSL()
+  {
+#if (OPENSSL_VERSION_MAJOR == 1 && OPENSSL_VERSION_MINOR == 0) || OPENSSL_VERSION_MAJOR == 0
+    EVP_MD_CTX_destroy(m_context);
+#else
+    EVP_MD_CTX_free(m_context);
+#endif
+  }
 };
 
 } // namespace

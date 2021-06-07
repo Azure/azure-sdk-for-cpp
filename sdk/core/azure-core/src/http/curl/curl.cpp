@@ -1358,10 +1358,12 @@ std::unique_ptr<CurlNetworkConnection> CurlConnectionPool::ExtractOrCreateCurlCo
   }
 
   long sslOption = 0;
+#if defined(_MSC_VER)
   if (!options.SslOptions.EnableCertificateRevocationListCheck)
   {
     sslOption |= CURLSSLOPT_NO_REVOKE;
   }
+#endif
 
   if (!SetLibcurlOption(newHandle, CURLOPT_SSL_OPTIONS, sslOption, &result))
   {
