@@ -67,10 +67,11 @@ namespace Azure { namespace Core {
     BIO_flush(bio);
     BUF_MEM* bufferPtr;
     BIO_get_mem_ptr(bio, &bufferPtr);
+    std::string toReturn(bufferPtr->data, bufferPtr->length);
     BIO_set_close(bio, BIO_NOCLOSE);
     BIO_free_all(bio);
 
-    return std::string(bufferPtr->data, bufferPtr->length);
+    return toReturn;
   }
 
   std::vector<uint8_t> Convert::Base64Decode(const std::string& text)
