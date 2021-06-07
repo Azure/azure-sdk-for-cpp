@@ -1,12 +1,12 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
 
-#include <azure/keyvault/common/keyvault_exception.hpp>
+#include <azure/keyvault/common/internal/keyvault_exception.hpp>
 
-#include "azure/keyvault/keys/details/key_constants.hpp"
-#include "azure/keyvault/keys/details/key_serializers.hpp"
 #include "azure/keyvault/keys/key_client.hpp"
 #include "azure/keyvault/keys/recover_deleted_key_operation.hpp"
+#include "private/key_constants.hpp"
+#include "private/key_serializers.hpp"
 
 using namespace Azure::Security::KeyVault::Keys;
 using namespace Azure::Security::KeyVault;
@@ -40,7 +40,7 @@ Azure::Security::KeyVault::Keys::RecoverDeletedKeyOperation::PollInternal(
         break;
       }
       default:
-        throw Azure::Security::KeyVault::_detail::KeyVaultException::CreateException(
+        throw Azure::Security::KeyVault::_internal::KeyVaultException::CreateException(
             std::move(rawResponse));
     }
     if (m_status == Azure::Core::OperationStatus::Succeeded)

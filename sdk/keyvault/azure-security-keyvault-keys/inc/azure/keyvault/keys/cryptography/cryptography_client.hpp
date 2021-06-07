@@ -14,12 +14,12 @@
 #include <azure/core/io/body_stream.hpp>
 
 #include "azure/keyvault/keys/cryptography/cryptography_client_options.hpp"
-#include "azure/keyvault/keys/cryptography/cryptography_provider.hpp"
 #include "azure/keyvault/keys/cryptography/encrypt_parameters.hpp"
 #include "azure/keyvault/keys/cryptography/encrypt_result.hpp"
-#include "azure/keyvault/keys/cryptography/remote_cryptography_client.hpp"
 #include "azure/keyvault/keys/cryptography/sign_result.hpp"
 #include "azure/keyvault/keys/cryptography/wrap_result.hpp"
+#include "azure/keyvault/keys/internal/cryptography/cryptography_provider.hpp"
+#include "azure/keyvault/keys/internal/cryptography/remote_cryptography_client.hpp"
 
 #include <memory>
 #include <string>

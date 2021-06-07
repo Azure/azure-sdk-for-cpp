@@ -12,7 +12,7 @@
 #include <azure/core/base64.hpp>
 #include <azure/core/internal/json/json.hpp>
 #include <azure/keyvault/key_vault_keys.hpp>
-#include <azure/keyvault/keys/details/key_constants.hpp>
+#include <private/key_constants.hpp>
 
 #include <iostream>
 #include <string>

@@ -56,6 +56,9 @@ endif()
 
 target_link_libraries(azure-security-keyvault-keys-test-live PRIVATE azure-security-keyvault-keys azure-identity gtest gmock)
 
+# Adding private headers so we can test the private APIs with no relative paths include.
+target_include_directories (azure-security-keyvault-keys-test-live PRIVATE $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/../../src>)
+
 # gtest_discover_tests will scan the test from azure-core-test and call add_test
 # for each test to ctest. This enables `ctest -r` to run specific tests directly.
 gtest_discover_tests(azure-security-keyvault-keys-test-live

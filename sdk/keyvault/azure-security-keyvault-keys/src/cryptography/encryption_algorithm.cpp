@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: MIT
 
 #include "azure/keyvault/keys/cryptography/encryption_algorithm.hpp"
-#include "azure/keyvault/keys/details/key_constants.hpp"
+#include "../private/key_constants.hpp"
 
 namespace Azure {
   namespace Security {
