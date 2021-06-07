@@ -255,7 +255,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     }
     firstChunkLength = std::min(firstChunkLength, blobRangeSize);
 
-    if (blobRangeSize > std::numeric_limits<size_t>::max()
+    if (static_cast<uint64_t>(blobRangeSize) > std::numeric_limits<size_t>::max()
         || static_cast<size_t>(blobRangeSize) > bufferSize)
     {
       throw Azure::Core::RequestFailedException(
@@ -373,7 +373,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       std::vector<uint8_t> buffer(bufferSize);
       while (length > 0)
       {
-        size_t readSize = std::min(bufferSize, static_cast<size_t>(length));
+        size_t readSize = static_cast<size_t>(std::min<int64_t>(bufferSize, length));
         size_t bytesRead = stream.ReadToCount(buffer.data(), readSize, context);
         if (bytesRead != readSize)
         {

@@ -127,7 +127,8 @@ namespace Azure { namespace Storage { namespace Blobs {
     constexpr int64_t MaxBlockNumber = 50000;
     constexpr int64_t BlockGrainSize = 1 * 1024 * 1024;
 
-    if (options.TransferOptions.SingleUploadThreshold > std::numeric_limits<size_t>::max())
+    if (static_cast<uint64_t>(options.TransferOptions.SingleUploadThreshold)
+        > std::numeric_limits<size_t>::max())
     {
       throw Azure::Core::RequestFailedException("Single upload threshold is too big");
     }
