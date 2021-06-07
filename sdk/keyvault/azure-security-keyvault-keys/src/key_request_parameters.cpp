@@ -6,8 +6,8 @@
 
 #include <azure/keyvault/common/internal/unix_time_helper.hpp>
 
-#include "azure/keyvault/keys/details/key_constants.hpp"
-#include "azure/keyvault/keys/details/key_request_parameters.hpp"
+#include "private/key_constants.hpp"
+#include "private/key_request_parameters.hpp"
 
 #include <string>
 
@@ -39,13 +39,13 @@ std::string KeyRequestParameters::Serialize() const
   }
 
   // attributes
-  JsonOptional::SetFromNullable<Azure::DateTime, uint64_t>(
+  JsonOptional::SetFromNullable<Azure::DateTime, int64_t>(
       m_options.ExpiresOn,
       payload[_detail::AttributesPropertyName],
       _detail::ExpPropertyName,
       UnixTimeConverter::DatetimeToUnixTime);
 
-  JsonOptional::SetFromNullable<Azure::DateTime, uint64_t>(
+  JsonOptional::SetFromNullable<Azure::DateTime, int64_t>(
       m_options.NotBefore,
       payload[_detail::AttributesPropertyName],
       _detail::NbfPropertyName,

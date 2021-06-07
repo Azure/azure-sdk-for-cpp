@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
 
-#include "azure/keyvault/keys/cryptography/rsa_cryptography_provider.hpp"
+#include "azure/keyvault/keys/internal/cryptography/rsa_cryptography_provider.hpp"
 
 #include <memory>
 #include <string>

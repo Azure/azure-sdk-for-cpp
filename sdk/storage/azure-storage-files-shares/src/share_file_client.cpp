@@ -688,7 +688,8 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     }
     firstChunkLength = std::min(firstChunkLength, fileRangeSize);
 
-    if (static_cast<size_t>(fileRangeSize) > bufferSize)
+    if (static_cast<uint64_t>(fileRangeSize) > std::numeric_limits<size_t>::max()
+        || static_cast<size_t>(fileRangeSize) > bufferSize)
     {
       throw Azure::Core::RequestFailedException(
           "Buffer is not big enough, file range size is " + std::to_string(fileRangeSize) + ".");
@@ -802,13 +803,13 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     auto bodyStreamToFile = [](Azure::Core::IO::BodyStream& stream,
                                _internal::FileWriter& fileWriter,
                                int64_t offset,
-                               size_t length,
+                               int64_t length,
                                const Azure::Core::Context& context) {
       constexpr size_t bufferSize = 4 * 1024 * 1024;
       std::vector<uint8_t> buffer(bufferSize);
       while (length > 0)
       {
-        size_t readSize = std::min(bufferSize, length);
+        size_t readSize = static_cast<size_t>(std::min<int64_t>(bufferSize, length));
         size_t bytesRead = stream.ReadToCount(buffer.data(), readSize, context);
         if (bytesRead != readSize)
         {
@@ -820,12 +821,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       }
     };
 
-    bodyStreamToFile(
-        *(firstChunk.Value.BodyStream),
-        fileWriter,
-        0,
-        static_cast<size_t>(firstChunkLength),
-        context);
+    bodyStreamToFile(*(firstChunk.Value.BodyStream), fileWriter, 0, firstChunkLength, context);
     firstChunk.Value.BodyStream.reset();
 
     auto returnTypeConverter = [](Azure::Response<Models::DownloadFileResult>& response) {
@@ -855,7 +851,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
                 *(chunk.Value.BodyStream),
                 fileWriter,
                 offset - firstChunkOffset,
-                static_cast<size_t>(chunkOptions.Range.Value().Length.Value()),
+                chunkOptions.Range.Value().Length.Value(),
                 context);
 
             if (chunkId == numChunks - 1)

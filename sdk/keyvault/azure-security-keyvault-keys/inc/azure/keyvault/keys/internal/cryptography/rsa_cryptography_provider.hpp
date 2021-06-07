@@ -9,7 +9,7 @@
 
 #pragma once
 
-#include "azure/keyvault/keys/cryptography/local_cryptography_provider.hpp"
+#include "azure/keyvault/keys/internal/cryptography/local_cryptography_provider.hpp"
 
 #include <memory>
 #include <string>

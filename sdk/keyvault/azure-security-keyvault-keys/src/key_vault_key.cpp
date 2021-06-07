@@ -8,9 +8,9 @@
 
 #include <azure/keyvault/common/internal/unix_time_helper.hpp>
 
-#include "azure/keyvault/keys/details/key_constants.hpp"
-#include "azure/keyvault/keys/details/key_serializers.hpp"
 #include "azure/keyvault/keys/key_vault_key.hpp"
+#include "private/key_constants.hpp"
+#include "private/key_serializers.hpp"
 
 using namespace Azure::Security::KeyVault::Keys;
 using namespace Azure::Core::Json::_internal;
@@ -59,22 +59,22 @@ void _detail::KeyVaultKeySerializer::KeyVaultKeyDeserialize(
 
     JsonOptional::SetIfExists(key.Properties.Enabled, attributes, _detail::EnabledPropertyName);
 
-    JsonOptional::SetIfExists<uint64_t, Azure::DateTime>(
+    JsonOptional::SetIfExists<int64_t, Azure::DateTime>(
         key.Properties.NotBefore,
         attributes,
         _detail::NbfPropertyName,
         UnixTimeConverter::UnixTimeToDatetime);
-    JsonOptional::SetIfExists<uint64_t, Azure::DateTime>(
+    JsonOptional::SetIfExists<int64_t, Azure::DateTime>(
         key.Properties.ExpiresOn,
         attributes,
         _detail::ExpPropertyName,
         UnixTimeConverter::UnixTimeToDatetime);
-    JsonOptional::SetIfExists<uint64_t, Azure::DateTime>(
+    JsonOptional::SetIfExists<int64_t, Azure::DateTime>(
         key.Properties.CreatedOn,
         attributes,
         _detail::CreatedPropertyName,
         UnixTimeConverter::UnixTimeToDatetime);
-    JsonOptional::SetIfExists<uint64_t, Azure::DateTime>(
+    JsonOptional::SetIfExists<int64_t, Azure::DateTime>(
         key.Properties.UpdatedOn,
         attributes,
         _detail::UpdatedPropertyName,

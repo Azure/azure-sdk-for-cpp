@@ -32,13 +32,13 @@ set(
     inc/azure/keyvault/common/internal/keyvault_pipeline.hpp
     inc/azure/keyvault/common/internal/single_page.hpp
     inc/azure/keyvault/common/internal/unix_time_helper.hpp
-    inc/azure/keyvault/common/keyvault_constants.hpp
-    inc/azure/keyvault/common/keyvault_exception.hpp
+    inc/azure/keyvault/common/internal/keyvault_exception.hpp
     inc/azure/keyvault/common/sha.hpp
 )
 
 set(
   AZURE_KEYVAULT_COMMON_SOURCE
+    src/private/keyvault_constants.hpp
     src/private/package_version.hpp
     src/keyvault_exception.cpp
     src/keyvault_pipeline.cpp

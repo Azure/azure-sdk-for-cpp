@@ -3,8 +3,8 @@
 
 #include <azure/keyvault/common/sha.hpp>
 
+#include "../private/key_constants.hpp"
 #include "azure/keyvault/keys/cryptography/signature_algorithm.hpp"
-#include "azure/keyvault/keys/details/key_constants.hpp"
 
 namespace Azure {
   namespace Security {

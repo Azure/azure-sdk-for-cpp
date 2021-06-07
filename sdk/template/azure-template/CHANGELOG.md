@@ -1,5 +1,9 @@
 # Release History
 
+## 1.0.0 (2021-06-03)
+
+* Validate template project ahead of release
+
 ## 1.0.0-beta.25 (2021-01-12)
 
 * Validate vcpkg publishing automation (part 20)

@@ -6,9 +6,9 @@
 
 #include <azure/keyvault/common/internal/unix_time_helper.hpp>
 
-#include "azure/keyvault/keys/details/key_constants.hpp"
-#include "azure/keyvault/keys/details/key_serializers.hpp"
 #include "azure/keyvault/keys/import_key_options.hpp"
+#include "private/key_constants.hpp"
+#include "private/key_serializers.hpp"
 
 #include <string>
 
@@ -32,7 +32,7 @@ Azure::Security::KeyVault::Keys::_detail::ImportKeyOptionsSerializer::ImportKeyO
       importKeyOptions.HardwareProtected, payload, _detail::HsmPropertyName);
 
   // attributes
-  JsonOptional::SetFromNullable<Azure::DateTime, uint64_t>(
+  JsonOptional::SetFromNullable<Azure::DateTime, int64_t>(
       importKeyOptions.Properties.CreatedOn,
       payload[_detail::AttributesPropertyName],
       _detail::CreatedPropertyName,
@@ -41,12 +41,12 @@ Azure::Security::KeyVault::Keys::_detail::ImportKeyOptionsSerializer::ImportKeyO
       importKeyOptions.Properties.Enabled,
       payload[_detail::AttributesPropertyName],
       _detail::EnabledPropertyName);
-  JsonOptional::SetFromNullable<Azure::DateTime, uint64_t>(
+  JsonOptional::SetFromNullable<Azure::DateTime, int64_t>(
       importKeyOptions.Properties.ExpiresOn,
       payload[_detail::AttributesPropertyName],
       _detail::ExpPropertyName,
       UnixTimeConverter::DatetimeToUnixTime);
-  JsonOptional::SetFromNullable<Azure::DateTime, uint64_t>(
+  JsonOptional::SetFromNullable<Azure::DateTime, int64_t>(
       importKeyOptions.Properties.NotBefore,
       payload[_detail::AttributesPropertyName],
       _detail::NbfPropertyName,
@@ -58,7 +58,7 @@ Azure::Security::KeyVault::Keys::_detail::ImportKeyOptionsSerializer::ImportKeyO
 
   payload[_detail::RecoveryLevelPropertyName] = importKeyOptions.Properties.RecoveryLevel;
 
-  JsonOptional::SetFromNullable<Azure::DateTime, uint64_t>(
+  JsonOptional::SetFromNullable<Azure::DateTime, int64_t>(
       importKeyOptions.Properties.UpdatedOn,
       payload[_detail::AttributesPropertyName],
       _detail::UpdatedPropertyName,

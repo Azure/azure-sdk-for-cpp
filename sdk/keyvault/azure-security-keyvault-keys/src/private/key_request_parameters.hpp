@@ -32,8 +32,8 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys { nam
 
   public:
     Azure::Nullable<KeyCurveName> Curve;
-    Azure::Nullable<uint64_t> KeySize;
-    Azure::Nullable<uint64_t> PublicExponent;
+    Azure::Nullable<int64_t> KeySize;
+    Azure::Nullable<int64_t> PublicExponent;
 
     explicit KeyRequestParameters(
         KeyProperties const& key,

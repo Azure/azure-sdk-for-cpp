@@ -6,8 +6,8 @@
 
 #include <azure/keyvault/common/internal/base64url.hpp>
 
-#include "azure/keyvault/keys/details/key_backup.hpp"
-#include "azure/keyvault/keys/details/key_constants.hpp"
+#include "private/key_backup.hpp"
+#include "private/key_constants.hpp"
 
 #include <string>
 
