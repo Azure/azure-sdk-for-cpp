@@ -16,9 +16,8 @@
 #include "azure/storage/files/datalake/datalake_directory_client.hpp"
 #include "azure/storage/files/datalake/datalake_file_client.hpp"
 #include "azure/storage/files/datalake/datalake_path_client.hpp"
-#include "azure/storage/files/datalake/internal/datalake_constants.hpp"
-#include "azure/storage/files/datalake/internal/datalake_utilities.hpp"
-
+#include "private/datalake_constants.hpp"
+#include "private/datalake_utilities.hpp"
 #include "private/package_version.hpp"
 
 namespace Azure { namespace Storage { namespace Files { namespace DataLake {

@@ -5,7 +5,7 @@
 
 #include "azure/storage/files/datalake/datalake_path_client.hpp"
 #include "azure/storage/files/datalake/datalake_service_client.hpp"
-#include "azure/storage/files/datalake/internal/datalake_utilities.hpp"
+#include "private/datalake_utilities.hpp"
 
 namespace Azure { namespace Storage { namespace Files { namespace DataLake {
   namespace Models {

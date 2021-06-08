@@ -1,12 +1,12 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
 
-#include "azure/storage/files/datalake/internal/datalake_utilities.hpp"
+#include "private/datalake_utilities.hpp"
 
 #include <azure/storage/common/crypt.hpp>
 
-#include "azure/storage/files/datalake/internal/datalake_constants.hpp"
 #include "azure/storage/files/datalake/protocol/datalake_rest_client.hpp"
+#include "private/datalake_constants.hpp"
 
 namespace Azure { namespace Storage { namespace Files { namespace DataLake { namespace _detail {
 
@@ -39,6 +39,16 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake { nam
     Azure::Core::Url result = url;
     result.SetHost(host);
     return result;
+  }
+
+  std::string GetBlobUrlFromUrl(const std::string& url)
+  {
+    return GetBlobUrlFromUrl(Azure::Core::Url(url)).GetAbsoluteUrl();
+  }
+
+  std::string GetDfsUrlFromUrl(const std::string& url)
+  {
+    return GetDfsUrlFromUrl(Azure::Core::Url(url)).GetAbsoluteUrl();
   }
 
   std::string SerializeMetadata(const Storage::Metadata& dataLakePropertiesMap)
