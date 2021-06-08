@@ -14,6 +14,7 @@ set(
   inc/azure/perf/dynamic_test_options.hpp
   inc/azure/perf/options.hpp
   inc/azure/perf/program.hpp
+  inc/azure/perf/random_stream.hpp
   inc/azure/perf/test_metadata.hpp
   inc/azure/perf/test.hpp
   inc/azure/perf/test_options.hpp
@@ -24,6 +25,7 @@ set(
   src/arg_parser.cpp
   src/options.cpp
   src/program.cpp
+  src/random_stream.cpp
 )
 
 add_library(azure-perf ${AZURE_PERFORMANCE_HEADER} ${AZURE_PERFORMANCE_SOURCE})
@@ -42,7 +44,7 @@ endif()
 
 # make sure that users can consume the project as a library.
 add_library (Azure::Perf ALIAS azure-perf)
-target_link_libraries(azure-perf PRIVATE azure-core)
+target_link_libraries(azure-perf PUBLIC azure-core)
 
 set_target_properties(azure-perf PROPERTIES FOLDER "Core")
 

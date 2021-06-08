@@ -40,3 +40,19 @@ target_include_directories(
 target_link_libraries(azure-perf-test PRIVATE azure-core azure-perf)
 # Make sure the project will appear in the test folder for Visual Studio CMake view
 set_target_properties(azure-perf-test PROPERTIES FOLDER "Tests/Core")
+
+# Unit tests
+include(GoogleTest)
+
+add_executable (
+  azure-perf-unit-test
+    src/random_stream_test.cpp
+)
+
+target_link_libraries(azure-perf-unit-test PRIVATE azure-perf gtest gtest_main)
+
+gtest_discover_tests(azure-perf-unit-test
+     TEST_PREFIX azure-perf-unittest.
+     NO_PRETTY_TYPES
+     NO_PRETTY_VALUES)
+
