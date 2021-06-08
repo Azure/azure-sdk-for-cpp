@@ -45,8 +45,8 @@ namespace Azure { namespace Storage { namespace _internal {
       int ret = xmlTextReaderMoveToNextAttribute(reader);
       if (ret == 1)
       {
-        const char* name = reinterpret_cast<const char*>(xmlTextReaderName(reader));
-        const char* value = reinterpret_cast<const char*>(xmlTextReaderValue(reader));
+        const char* name = reinterpret_cast<const char*>(xmlTextReaderConstName(reader));
+        const char* value = reinterpret_cast<const char*>(xmlTextReaderConstValue(reader));
         return XmlNode{XmlNodeType::Attribute, name, value};
       }
       else if (ret == 0)
@@ -74,8 +74,8 @@ namespace Azure { namespace Storage { namespace _internal {
     bool has_value = xmlTextReaderHasValue(reader) == 1;
     bool has_attributes = xmlTextReaderHasAttributes(reader) == 1;
 
-    const char* name = reinterpret_cast<const char*>(xmlTextReaderName(reader));
-    const char* value = reinterpret_cast<const char*>(xmlTextReaderValue(reader));
+    const char* name = reinterpret_cast<const char*>(xmlTextReaderConstName(reader));
+    const char* value = reinterpret_cast<const char*>(xmlTextReaderConstValue(reader));
 
     if (has_attributes)
     {
@@ -98,7 +98,7 @@ namespace Azure { namespace Storage { namespace _internal {
     {
       if (has_value)
       {
-        return XmlNode{XmlNodeType::Text, nullptr, value};
+        return XmlNode{XmlNodeType::Text, std::string(), value};
       }
     }
     else if (type == XML_READER_TYPE_SIGNIFICANT_WHITESPACE)
@@ -139,13 +139,13 @@ namespace Azure { namespace Storage { namespace _internal {
     xmlTextWriterPtr writer = static_cast<xmlTextWriterPtr>(m_writer);
     if (node.Type == XmlNodeType::StartTag)
     {
-      if (!node.Value)
+      if (!node.Value.empty())
       {
-        xmlTextWriterStartElement(writer, BadCast(node.Name));
+        xmlTextWriterStartElement(writer, BadCast(node.Name.data()));
       }
       else
       {
-        xmlTextWriterWriteElement(writer, BadCast(node.Name), BadCast(node.Value));
+        xmlTextWriterWriteElement(writer, BadCast(node.Name.data()), BadCast(node.Value.data()));
       }
     }
     else if (node.Type == XmlNodeType::EndTag)
@@ -154,16 +154,16 @@ namespace Azure { namespace Storage { namespace _internal {
     }
     else if (node.Type == XmlNodeType::SelfClosingTag)
     {
-      xmlTextWriterStartElement(writer, BadCast(node.Name));
+      xmlTextWriterStartElement(writer, BadCast(node.Name.data()));
       xmlTextWriterEndElement(writer);
     }
     else if (node.Type == XmlNodeType::Text)
     {
-      xmlTextWriterWriteString(writer, BadCast(node.Value));
+      xmlTextWriterWriteString(writer, BadCast(node.Value.data()));
     }
     else if (node.Type == XmlNodeType::Attribute)
     {
-      xmlTextWriterWriteAttribute(writer, BadCast(node.Name), BadCast(node.Value));
+      xmlTextWriterWriteAttribute(writer, BadCast(node.Name.data()), BadCast(node.Value.data()));
     }
     else if (node.Type == XmlNodeType::End)
     {
