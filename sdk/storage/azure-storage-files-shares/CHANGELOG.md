@@ -6,6 +6,10 @@
 
 - Renamed `ContentLength` in `FileItemDetails` to `FileSize`.
 
+### Other Changes and Improvements
+
+- Updated some samples.
+- Fixed a read consistency issue.
 
 ## 12.0.0-beta.11 (2021-05-19)
 
