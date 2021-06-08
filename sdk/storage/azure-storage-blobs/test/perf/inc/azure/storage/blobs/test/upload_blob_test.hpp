@@ -69,7 +69,7 @@ namespace Azure { namespace Storage { namespace Blobs { namespace Test {
     std::vector<Azure::Perf::TestOption> GetTestOptions() override
     {
       // TODO: Merge with base options
-      return {{"Size", {"--size"}, "Size of payload (in bytes)", 1, true}};
+      return {{"Size", {"--size", "-s"}, "Size of payload (in bytes)", 1, true}};
     }
 
     /**
