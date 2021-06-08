@@ -66,7 +66,10 @@ namespace Azure { namespace Core {
     BIO_write(bio, data.data(), static_cast<int>(data.size()));
     BIO_flush(bio);
     BUF_MEM* bufferPtr;
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wold-style-cast"
     BIO_get_mem_ptr(bio, &bufferPtr);
+#pragma GCC diagnostic pop
     std::string toReturn(bufferPtr->data, bufferPtr->length);
     BIO_free_all(bio);
 

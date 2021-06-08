@@ -133,10 +133,6 @@ target_include_directories(
 # make sure that users can consume the project as a library.
 add_library(Azure::azure-core ALIAS azure-core)
 
-if (NOT MSVC)
-  set_source_files_properties(src/base64.cpp PROPERTIES COMPILE_FLAGS -Wno-old-style-cast)
-endif()
-
 # coverage. Has no effect if BUILD_CODE_COVERAGE is OFF
 create_code_coverage(core azure-core azure-core-test)
 
