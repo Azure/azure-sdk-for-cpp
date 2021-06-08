@@ -2,6 +2,10 @@
 
 ## 12.0.0 (2021-06-08)
 
+### Other Changes and Improvements
+
+- Added and updated some samples.
+- Fixed a read consistency issue.
 
 ## 12.0.0-beta.11 (2021-05-19)
 
