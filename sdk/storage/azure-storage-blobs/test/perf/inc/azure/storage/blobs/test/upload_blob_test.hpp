@@ -3,7 +3,7 @@
 
 /**
  * @file
- * @brief Test the performance of downloading a block blob.
+ * @brief Test the performance of uploading a block blob.
  *
  */
 
@@ -11,6 +11,7 @@
 
 #include <azure/core/io/body_stream.hpp>
 #include <azure/perf.hpp>
+#include <azure/perf/random_stream.hpp>
 
 #include "azure/storage/blobs/test/blob_base_test.hpp"
 
@@ -21,20 +22,21 @@
 namespace Azure { namespace Storage { namespace Blobs { namespace Test {
 
   /**
-   * @brief A test to measure downloading a blob.
+   * @brief A test to measure uploading a blob.
    *
    */
-  class DownloadBlob : public Azure::Storage::Blobs::Test::BlobsTest {
+  class UploadBlob : public Azure::Storage::Blobs::Test::BlobsTest {
   private:
-    std::unique_ptr<std::vector<uint8_t>> m_downloadBuffer;
+    // C++ can upload and download from contiguos memory or file only
+    std::vector<uint8_t> m_uploadBuffer;
 
   public:
     /**
-     * @brief Construct a new DownloadBlob test.
+     * @brief Construct a new UploadBlob test.
      *
      * @param options The test options.
      */
-    DownloadBlob(Azure::Perf::TestOptions options) : BlobsTest(options) {}
+    UploadBlob(Azure::Perf::TestOptions options) : BlobsTest(options) {}
 
     /**
      * @brief The size to upload on setup is defined by a mandatory parameter.
@@ -46,12 +48,8 @@ namespace Azure { namespace Storage { namespace Blobs { namespace Test {
       BlobsTest::Setup();
 
       long size = m_options.GetMandatoryOption<long>("Size");
-
-      m_downloadBuffer = std::make_unique<std::vector<uint8_t>>(size);
-
-      auto rawData = std::make_unique<std::vector<uint8_t>>(size);
-      auto content = Azure::Core::IO::MemoryBodyStream(*rawData);
-      m_blobClient->Upload(content);
+      m_uploadBuffer = Azure::Perf::RandomStream::Create(size)->ReadToEnd(
+          Azure::Core::Context::ApplicationContext);
     }
 
     /**
@@ -60,7 +58,7 @@ namespace Azure { namespace Storage { namespace Blobs { namespace Test {
      */
     void Run(Azure::Core::Context const&) override
     {
-      m_blobClient->DownloadTo(m_downloadBuffer->data(), m_downloadBuffer->size());
+      m_blobClient->UploadFrom(m_uploadBuffer.data(), m_uploadBuffer.size());
     }
 
     /**
@@ -81,8 +79,8 @@ namespace Azure { namespace Storage { namespace Blobs { namespace Test {
      */
     static Azure::Perf::TestMetadata GetTestMetadata()
     {
-      return {"DownloadBlob", "Download a blob.", [](Azure::Perf::TestOptions options) {
-                return std::make_unique<Azure::Storage::Blobs::Test::DownloadBlob>(options);
+      return {"UploadBlob", "Upload a blob.", [](Azure::Perf::TestOptions options) {
+                return std::make_unique<Azure::Storage::Blobs::Test::UploadBlob>(options);
               }};
     }
   };
