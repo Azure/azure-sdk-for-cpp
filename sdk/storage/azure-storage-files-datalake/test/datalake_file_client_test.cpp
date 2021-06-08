@@ -13,7 +13,6 @@
 #include <azure/storage/blobs.hpp>
 #include <azure/storage/common/internal/file_io.hpp>
 #include <azure/storage/common/internal/shared_key_policy.hpp>
-#include <azure/storage/files/datalake/internal/datalake_utilities.hpp>
 
 namespace Azure { namespace Storage { namespace Files { namespace DataLake { namespace Models {
 

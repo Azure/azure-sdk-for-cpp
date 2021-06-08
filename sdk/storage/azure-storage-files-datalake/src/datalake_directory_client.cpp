@@ -11,7 +11,7 @@
 #include <azure/storage/common/storage_common.hpp>
 
 #include "azure/storage/files/datalake/datalake_file_client.hpp"
-#include "azure/storage/files/datalake/internal/datalake_utilities.hpp"
+#include "private/datalake_utilities.hpp"
 
 namespace Azure { namespace Storage { namespace Files { namespace DataLake {
 
