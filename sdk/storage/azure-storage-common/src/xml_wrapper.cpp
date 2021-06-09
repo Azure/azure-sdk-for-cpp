@@ -139,7 +139,7 @@ namespace Azure { namespace Storage { namespace _internal {
     xmlTextWriterPtr writer = static_cast<xmlTextWriterPtr>(m_writer);
     if (node.Type == XmlNodeType::StartTag)
     {
-      if (!node.Value.empty())
+      if (node.Value.empty())
       {
         xmlTextWriterStartElement(writer, BadCast(node.Name.data()));
       }
