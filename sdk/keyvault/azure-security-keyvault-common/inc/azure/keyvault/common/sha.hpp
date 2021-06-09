@@ -50,7 +50,7 @@ namespace Azure { namespace Security { namespace KeyVault {
      * @return The computed SHA256 hash value corresponding to the input provided including any
      * previously appended.
      */
-    std::vector<uint8_t> OnFinal(const uint8_t* data, std::size_t length) override
+    std::vector<uint8_t> OnFinal(const uint8_t* data, size_t length) override
     {
       return m_portableImplementation->Final(data, length);
     }
@@ -63,7 +63,7 @@ namespace Azure { namespace Security { namespace KeyVault {
      * calculation.
      * @param length The size of the data provided.
      */
-    void OnAppend(const uint8_t* data, std::size_t length) override
+    void OnAppend(const uint8_t* data, size_t length) override
     {
       return m_portableImplementation->Append(data, length);
     }
@@ -102,7 +102,7 @@ namespace Azure { namespace Security { namespace KeyVault {
      * @return The computed SHA384 hash value corresponding to the input provided including any
      * previously appended.
      */
-    std::vector<uint8_t> OnFinal(const uint8_t* data, std::size_t length) override
+    std::vector<uint8_t> OnFinal(const uint8_t* data, size_t length) override
     {
       return m_portableImplementation->Final(data, length);
     }
@@ -115,7 +115,7 @@ namespace Azure { namespace Security { namespace KeyVault {
      * calculation.
      * @param length The size of the data provided.
      */
-    void OnAppend(const uint8_t* data, std::size_t length) override
+    void OnAppend(const uint8_t* data, size_t length) override
     {
       return m_portableImplementation->Append(data, length);
     }
@@ -154,7 +154,7 @@ namespace Azure { namespace Security { namespace KeyVault {
      * @return The computed SHA512 hash value corresponding to the input provided including any
      * previously appended.
      */
-    std::vector<uint8_t> OnFinal(const uint8_t* data, std::size_t length) override
+    std::vector<uint8_t> OnFinal(const uint8_t* data, size_t length) override
     {
       return m_portableImplementation->Final(data, length);
     }
@@ -167,7 +167,7 @@ namespace Azure { namespace Security { namespace KeyVault {
      * calculation.
      * @param length The size of the data provided.
      */
-    void OnAppend(const uint8_t* data, std::size_t length) override
+    void OnAppend(const uint8_t* data, size_t length) override
     {
       return m_portableImplementation->Append(data, length);
     }

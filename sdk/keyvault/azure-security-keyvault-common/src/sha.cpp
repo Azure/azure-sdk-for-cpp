@@ -36,7 +36,7 @@ class SHAWithOpenSSL final : public Azure::Core::Cryptography::Hash {
 private:
   EVP_MD_CTX* m_context;
 
-  std::vector<uint8_t> OnFinal(const uint8_t* data, std::size_t length) override
+  std::vector<uint8_t> OnFinal(const uint8_t* data, size_t length) override
   {
     OnAppend(data, length);
     unsigned int size;
@@ -48,7 +48,7 @@ private:
     return std::vector<uint8_t>(std::begin(finalHash), std::begin(finalHash) + size);
   }
 
-  void OnAppend(const uint8_t* data, std::size_t length) override
+  void OnAppend(const uint8_t* data, size_t length) override
   {
     if (1 != EVP_DigestUpdate(m_context, data, length))
     {
@@ -119,8 +119,8 @@ namespace {
 struct AlgorithmProviderInstance final
 {
   BCRYPT_ALG_HANDLE Handle;
-  std::size_t ContextSize;
-  std::size_t HashLength;
+  size_t ContextSize;
+  size_t HashLength;
 
   AlgorithmProviderInstance(LPCWSTR hashAlgorithm)
   {
@@ -165,9 +165,9 @@ class SHAWithBCrypt final : public Azure::Core::Cryptography::Hash {
 private:
   std::string m_buffer;
   BCRYPT_HASH_HANDLE m_hashHandle = nullptr;
-  std::size_t m_hashLength = 0;
+  size_t m_hashLength = 0;
 
-  std::vector<uint8_t> OnFinal(const uint8_t* data, std::size_t length) override
+  std::vector<uint8_t> OnFinal(const uint8_t* data, size_t length) override
   {
     OnAppend(data, length);
 
@@ -182,7 +182,7 @@ private:
     return hash;
   }
 
-  void OnAppend(const uint8_t* data, std::size_t length) override
+  void OnAppend(const uint8_t* data, size_t length) override
   {
     NTSTATUS status = BCryptHashData(
         m_hashHandle,
