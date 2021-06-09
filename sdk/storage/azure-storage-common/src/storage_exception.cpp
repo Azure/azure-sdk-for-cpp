@@ -77,15 +77,15 @@ namespace Azure { namespace Storage {
           else if (node.Type == _internal::XmlNodeType::StartTag)
           {
             startTagName = node.Name;
-            if (std::strcmp(node.Name.data(), "Error") == 0)
+            if (node.Name == "Error")
             {
               path.emplace_back(XmlTagName::XmlTagError);
             }
-            else if (std::strcmp(node.Name.data(), "Code") == 0)
+            else if (node.Name == "Code")
             {
               path.emplace_back(XmlTagName::XmlTagCode);
             }
-            else if (std::strcmp(node.Name.data(), "Message") == 0)
+            else if (node.Name == "Message")
             {
               path.emplace_back(XmlTagName::XmlTagMessage);
             }
