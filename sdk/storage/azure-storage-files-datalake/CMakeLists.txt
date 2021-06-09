@@ -39,7 +39,6 @@ set(
     inc/azure/storage/files/datalake/datalake_sas_builder.hpp
     inc/azure/storage/files/datalake/datalake_service_client.hpp
     inc/azure/storage/files/datalake/dll_import_export.hpp
-
     inc/azure/storage/files/datalake/protocol/datalake_rest_client.hpp
 )
 
