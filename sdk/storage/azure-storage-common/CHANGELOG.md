@@ -2,6 +2,9 @@
 
 ## 12.1.0-beta.1 (Unreleased)
 
+### Bug Fixes
+
+- Fixed a memory leak issue in xml parser.
 
 ## 12.0.0 (2021-06-08)
 
