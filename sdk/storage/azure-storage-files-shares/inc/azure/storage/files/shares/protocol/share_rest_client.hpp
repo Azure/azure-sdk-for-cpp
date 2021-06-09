@@ -2471,9 +2471,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           {
             writer.Write(_internal::XmlNode{_internal::XmlNodeType::StartTag, "Days"});
             writer.Write(_internal::XmlNode{
-                _internal::XmlNodeType::Text,
-                std::string(),
-                std::to_string(object.Days.Value()).data()});
+                _internal::XmlNodeType::Text, std::string(), std::to_string(object.Days.Value())});
             writer.Write(_internal::XmlNode{_internal::XmlNodeType::EndTag});
           }
         }
@@ -2481,8 +2479,8 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         static void MetricsToXml(_internal::XmlWriter& writer, const Metrics& object)
         {
           writer.Write(_internal::XmlNode{_internal::XmlNodeType::StartTag, "Version"});
-          writer.Write(_internal::XmlNode{
-              _internal::XmlNodeType::Text, std::string(), object.Version.data()});
+          writer.Write(
+              _internal::XmlNode{_internal::XmlNodeType::Text, std::string(), object.Version});
           writer.Write(_internal::XmlNode{_internal::XmlNodeType::EndTag});
           writer.Write(_internal::XmlNode{_internal::XmlNodeType::StartTag, "Enabled"});
           writer.Write(_internal::XmlNode{
@@ -2507,25 +2505,23 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           writer.Write(_internal::XmlNode{_internal::XmlNodeType::StartTag, "CorsRule"});
           writer.Write(_internal::XmlNode{_internal::XmlNodeType::StartTag, "AllowedOrigins"});
           writer.Write(_internal::XmlNode{
-              _internal::XmlNodeType::Text, std::string(), object.AllowedOrigins.data()});
+              _internal::XmlNodeType::Text, std::string(), object.AllowedOrigins});
           writer.Write(_internal::XmlNode{_internal::XmlNodeType::EndTag});
           writer.Write(_internal::XmlNode{_internal::XmlNodeType::StartTag, "AllowedMethods"});
           writer.Write(_internal::XmlNode{
-              _internal::XmlNodeType::Text, std::string(), object.AllowedMethods.data()});
+              _internal::XmlNodeType::Text, std::string(), object.AllowedMethods});
           writer.Write(_internal::XmlNode{_internal::XmlNodeType::EndTag});
           writer.Write(_internal::XmlNode{_internal::XmlNodeType::StartTag, "AllowedHeaders"});
           writer.Write(_internal::XmlNode{
-              _internal::XmlNodeType::Text, std::string(), object.AllowedHeaders.data()});
+              _internal::XmlNodeType::Text, std::string(), object.AllowedHeaders});
           writer.Write(_internal::XmlNode{_internal::XmlNodeType::EndTag});
           writer.Write(_internal::XmlNode{_internal::XmlNodeType::StartTag, "ExposedHeaders"});
           writer.Write(_internal::XmlNode{
-              _internal::XmlNodeType::Text, std::string(), object.ExposedHeaders.data()});
+              _internal::XmlNodeType::Text, std::string(), object.ExposedHeaders});
           writer.Write(_internal::XmlNode{_internal::XmlNodeType::EndTag});
           writer.Write(_internal::XmlNode{_internal::XmlNodeType::StartTag, "MaxAgeInSeconds"});
           writer.Write(_internal::XmlNode{
-              _internal::XmlNodeType::Text,
-              std::string(),
-              std::to_string(object.MaxAgeInSeconds).data()});
+              _internal::XmlNodeType::Text, std::string(), std::to_string(object.MaxAgeInSeconds)});
           writer.Write(_internal::XmlNode{_internal::XmlNodeType::EndTag});
           writer.Write(_internal::XmlNode{_internal::XmlNodeType::EndTag});
         }
@@ -3494,7 +3490,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
             }
             else if (depth == 1 && node.Type == _internal::XmlNodeType::Text)
             {
-              result.emplace(std::move(key), std::string(node.Value));
+              result.emplace(std::move(key), node.Value);
             }
           }
           return result;
@@ -5013,23 +5009,19 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           writer.Write(_internal::XmlNode{
               _internal::XmlNodeType::Text,
               std::string(),
-              object.StartsOn
-                  .ToString(
-                      Azure::DateTime::DateFormat::Rfc3339, DateTime::TimeFractionFormat::AllDigits)
-                  .data()});
+              object.StartsOn.ToString(
+                  Azure::DateTime::DateFormat::Rfc3339, DateTime::TimeFractionFormat::AllDigits)});
           writer.Write(_internal::XmlNode{_internal::XmlNodeType::EndTag});
           writer.Write(_internal::XmlNode{_internal::XmlNodeType::StartTag, "Expiry"});
           writer.Write(_internal::XmlNode{
               _internal::XmlNodeType::Text,
               std::string(),
-              object.ExpiresOn
-                  .ToString(
-                      Azure::DateTime::DateFormat::Rfc3339, DateTime::TimeFractionFormat::AllDigits)
-                  .data()});
+              object.ExpiresOn.ToString(
+                  Azure::DateTime::DateFormat::Rfc3339, DateTime::TimeFractionFormat::AllDigits)});
           writer.Write(_internal::XmlNode{_internal::XmlNodeType::EndTag});
           writer.Write(_internal::XmlNode{_internal::XmlNodeType::StartTag, "Permission"});
-          writer.Write(_internal::XmlNode{
-              _internal::XmlNodeType::Text, std::string(), object.Permission.data()});
+          writer.Write(
+              _internal::XmlNode{_internal::XmlNodeType::Text, std::string(), object.Permission});
           writer.Write(_internal::XmlNode{_internal::XmlNodeType::EndTag});
           writer.Write(_internal::XmlNode{_internal::XmlNodeType::EndTag});
         }
@@ -5040,8 +5032,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         {
           writer.Write(_internal::XmlNode{_internal::XmlNodeType::StartTag, "SignedIdentifier"});
           writer.Write(_internal::XmlNode{_internal::XmlNodeType::StartTag, "Id"});
-          writer.Write(
-              _internal::XmlNode{_internal::XmlNodeType::Text, std::string(), object.Id.data()});
+          writer.Write(_internal::XmlNode{_internal::XmlNodeType::Text, std::string(), object.Id});
           writer.Write(_internal::XmlNode{_internal::XmlNodeType::EndTag});
           AccessPolicyToXml(writer, object.Policy);
           writer.Write(_internal::XmlNode{_internal::XmlNodeType::EndTag});

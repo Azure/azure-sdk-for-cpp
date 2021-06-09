@@ -3155,39 +3155,39 @@ namespace Azure { namespace Storage { namespace Blobs {
             }
             else if (node.Type == _internal::XmlNodeType::StartTag)
             {
-              if (std::strcmp(node.Name.data(), "StorageServiceProperties") == 0)
+              if (node.Name == "StorageServiceProperties")
               {
                 path.emplace_back(XmlTagName::k_StorageServiceProperties);
               }
-              else if (std::strcmp(node.Name.data(), "Logging") == 0)
+              else if (node.Name == "Logging")
               {
                 path.emplace_back(XmlTagName::k_Logging);
               }
-              else if (std::strcmp(node.Name.data(), "HourMetrics") == 0)
+              else if (node.Name == "HourMetrics")
               {
                 path.emplace_back(XmlTagName::k_HourMetrics);
               }
-              else if (std::strcmp(node.Name.data(), "MinuteMetrics") == 0)
+              else if (node.Name == "MinuteMetrics")
               {
                 path.emplace_back(XmlTagName::k_MinuteMetrics);
               }
-              else if (std::strcmp(node.Name.data(), "Cors") == 0)
+              else if (node.Name == "Cors")
               {
                 path.emplace_back(XmlTagName::k_Cors);
               }
-              else if (std::strcmp(node.Name.data(), "CorsRule") == 0)
+              else if (node.Name == "CorsRule")
               {
                 path.emplace_back(XmlTagName::k_CorsRule);
               }
-              else if (std::strcmp(node.Name.data(), "DefaultServiceVersion") == 0)
+              else if (node.Name == "DefaultServiceVersion")
               {
                 path.emplace_back(XmlTagName::k_DefaultServiceVersion);
               }
-              else if (std::strcmp(node.Name.data(), "DeleteRetentionPolicy") == 0)
+              else if (node.Name == "DeleteRetentionPolicy")
               {
                 path.emplace_back(XmlTagName::k_DeleteRetentionPolicy);
               }
-              else if (std::strcmp(node.Name.data(), "StaticWebsite") == 0)
+              else if (node.Name == "StaticWebsite")
               {
                 path.emplace_back(XmlTagName::k_StaticWebsite);
               }
@@ -3282,19 +3282,19 @@ namespace Azure { namespace Storage { namespace Blobs {
             }
             else if (node.Type == _internal::XmlNodeType::StartTag)
             {
-              if (std::strcmp(node.Name.data(), "EnumerationResults") == 0)
+              if (node.Name == "EnumerationResults")
               {
                 path.emplace_back(XmlTagName::k_EnumerationResults);
               }
-              else if (std::strcmp(node.Name.data(), "NextMarker") == 0)
+              else if (node.Name == "NextMarker")
               {
                 path.emplace_back(XmlTagName::k_NextMarker);
               }
-              else if (std::strcmp(node.Name.data(), "Blobs") == 0)
+              else if (node.Name == "Blobs")
               {
                 path.emplace_back(XmlTagName::k_Blobs);
               }
-              else if (std::strcmp(node.Name.data(), "Blob") == 0)
+              else if (node.Name == "Blob")
               {
                 path.emplace_back(XmlTagName::k_Blob);
               }
@@ -3320,7 +3320,7 @@ namespace Azure { namespace Storage { namespace Blobs {
             else if (node.Type == _internal::XmlNodeType::Attribute)
             {
               if (path.size() == 1 && path[0] == XmlTagName::k_EnumerationResults
-                  && std::strcmp(node.Name.data(), "ServiceEndpoint") == 0)
+                  && node.Name == "ServiceEndpoint")
               {
                 ret.ServiceEndpoint = node.Value;
               }
@@ -3363,23 +3363,23 @@ namespace Azure { namespace Storage { namespace Blobs {
             }
             else if (node.Type == _internal::XmlNodeType::StartTag)
             {
-              if (std::strcmp(node.Name.data(), "EnumerationResults") == 0)
+              if (node.Name == "EnumerationResults")
               {
                 path.emplace_back(XmlTagName::k_EnumerationResults);
               }
-              else if (std::strcmp(node.Name.data(), "Prefix") == 0)
+              else if (node.Name == "Prefix")
               {
                 path.emplace_back(XmlTagName::k_Prefix);
               }
-              else if (std::strcmp(node.Name.data(), "NextMarker") == 0)
+              else if (node.Name == "NextMarker")
               {
                 path.emplace_back(XmlTagName::k_NextMarker);
               }
-              else if (std::strcmp(node.Name.data(), "Containers") == 0)
+              else if (node.Name == "Containers")
               {
                 path.emplace_back(XmlTagName::k_Containers);
               }
-              else if (std::strcmp(node.Name.data(), "Container") == 0)
+              else if (node.Name == "Container")
               {
                 path.emplace_back(XmlTagName::k_Container);
               }
@@ -3411,7 +3411,7 @@ namespace Azure { namespace Storage { namespace Blobs {
             else if (node.Type == _internal::XmlNodeType::Attribute)
             {
               if (path.size() == 1 && path[0] == XmlTagName::k_EnumerationResults
-                  && std::strcmp(node.Name.data(), "ServiceEndpoint") == 0)
+                  && node.Name == "ServiceEndpoint")
               {
                 ret.ServiceEndpoint = node.Value;
               }
@@ -3450,11 +3450,11 @@ namespace Azure { namespace Storage { namespace Blobs {
             }
             else if (node.Type == _internal::XmlNodeType::StartTag)
             {
-              if (std::strcmp(node.Name.data(), "StorageServiceStats") == 0)
+              if (node.Name == "StorageServiceStats")
               {
                 path.emplace_back(XmlTagName::k_StorageServiceStats);
               }
-              else if (std::strcmp(node.Name.data(), "GeoReplication") == 0)
+              else if (node.Name == "GeoReplication")
               {
                 path.emplace_back(XmlTagName::k_GeoReplication);
               }
@@ -3512,35 +3512,35 @@ namespace Azure { namespace Storage { namespace Blobs {
             }
             else if (node.Type == _internal::XmlNodeType::StartTag)
             {
-              if (std::strcmp(node.Name.data(), "UserDelegationKey") == 0)
+              if (node.Name == "UserDelegationKey")
               {
                 path.emplace_back(XmlTagName::k_UserDelegationKey);
               }
-              else if (std::strcmp(node.Name.data(), "SignedOid") == 0)
+              else if (node.Name == "SignedOid")
               {
                 path.emplace_back(XmlTagName::k_SignedOid);
               }
-              else if (std::strcmp(node.Name.data(), "SignedTid") == 0)
+              else if (node.Name == "SignedTid")
               {
                 path.emplace_back(XmlTagName::k_SignedTid);
               }
-              else if (std::strcmp(node.Name.data(), "SignedStart") == 0)
+              else if (node.Name == "SignedStart")
               {
                 path.emplace_back(XmlTagName::k_SignedStart);
               }
-              else if (std::strcmp(node.Name.data(), "SignedExpiry") == 0)
+              else if (node.Name == "SignedExpiry")
               {
                 path.emplace_back(XmlTagName::k_SignedExpiry);
               }
-              else if (std::strcmp(node.Name.data(), "SignedService") == 0)
+              else if (node.Name == "SignedService")
               {
                 path.emplace_back(XmlTagName::k_SignedService);
               }
-              else if (std::strcmp(node.Name.data(), "SignedVersion") == 0)
+              else if (node.Name == "SignedVersion")
               {
                 path.emplace_back(XmlTagName::k_SignedVersion);
               }
-              else if (std::strcmp(node.Name.data(), "Value") == 0)
+              else if (node.Name == "Value")
               {
                 path.emplace_back(XmlTagName::k_Value);
               }
@@ -3632,23 +3632,23 @@ namespace Azure { namespace Storage { namespace Blobs {
             }
             else if (node.Type == _internal::XmlNodeType::StartTag)
             {
-              if (std::strcmp(node.Name.data(), "Version") == 0)
+              if (node.Name == "Version")
               {
                 path.emplace_back(XmlTagName::k_Version);
               }
-              else if (std::strcmp(node.Name.data(), "Delete") == 0)
+              else if (node.Name == "Delete")
               {
                 path.emplace_back(XmlTagName::k_Delete);
               }
-              else if (std::strcmp(node.Name.data(), "Read") == 0)
+              else if (node.Name == "Read")
               {
                 path.emplace_back(XmlTagName::k_Read);
               }
-              else if (std::strcmp(node.Name.data(), "Write") == 0)
+              else if (node.Name == "Write")
               {
                 path.emplace_back(XmlTagName::k_Write);
               }
-              else if (std::strcmp(node.Name.data(), "RetentionPolicy") == 0)
+              else if (node.Name == "RetentionPolicy")
               {
                 path.emplace_back(XmlTagName::k_RetentionPolicy);
               }
@@ -3670,15 +3670,15 @@ namespace Azure { namespace Storage { namespace Blobs {
               }
               else if (path.size() == 1 && path[0] == XmlTagName::k_Delete)
               {
-                ret.Delete = std::strcmp(node.Value.data(), "true") == 0;
+                ret.Delete = node.Value == "true";
               }
               else if (path.size() == 1 && path[0] == XmlTagName::k_Read)
               {
-                ret.Read = std::strcmp(node.Value.data(), "true") == 0;
+                ret.Read = node.Value == "true";
               }
               else if (path.size() == 1 && path[0] == XmlTagName::k_Write)
               {
-                ret.Write = std::strcmp(node.Value.data(), "true") == 0;
+                ret.Write = node.Value == "true";
               }
             }
           }
@@ -3730,71 +3730,71 @@ namespace Azure { namespace Storage { namespace Blobs {
             }
             else if (node.Type == _internal::XmlNodeType::StartTag)
             {
-              if (std::strcmp(node.Name.data(), "Name") == 0)
+              if (node.Name == "Name")
               {
                 path.emplace_back(XmlTagName::k_Name);
               }
-              else if (std::strcmp(node.Name.data(), "Properties") == 0)
+              else if (node.Name == "Properties")
               {
                 path.emplace_back(XmlTagName::k_Properties);
               }
-              else if (std::strcmp(node.Name.data(), "Etag") == 0)
+              else if (node.Name == "Etag")
               {
                 path.emplace_back(XmlTagName::k_Etag);
               }
-              else if (std::strcmp(node.Name.data(), "Last-Modified") == 0)
+              else if (node.Name == "Last-Modified")
               {
                 path.emplace_back(XmlTagName::k_LastModified);
               }
-              else if (std::strcmp(node.Name.data(), "PublicAccess") == 0)
+              else if (node.Name == "PublicAccess")
               {
                 path.emplace_back(XmlTagName::k_PublicAccess);
               }
-              else if (std::strcmp(node.Name.data(), "HasImmutabilityPolicy") == 0)
+              else if (node.Name == "HasImmutabilityPolicy")
               {
                 path.emplace_back(XmlTagName::k_HasImmutabilityPolicy);
               }
-              else if (std::strcmp(node.Name.data(), "HasLegalHold") == 0)
+              else if (node.Name == "HasLegalHold")
               {
                 path.emplace_back(XmlTagName::k_HasLegalHold);
               }
-              else if (std::strcmp(node.Name.data(), "LeaseStatus") == 0)
+              else if (node.Name == "LeaseStatus")
               {
                 path.emplace_back(XmlTagName::k_LeaseStatus);
               }
-              else if (std::strcmp(node.Name.data(), "LeaseState") == 0)
+              else if (node.Name == "LeaseState")
               {
                 path.emplace_back(XmlTagName::k_LeaseState);
               }
-              else if (std::strcmp(node.Name.data(), "LeaseDuration") == 0)
+              else if (node.Name == "LeaseDuration")
               {
                 path.emplace_back(XmlTagName::k_LeaseDuration);
               }
-              else if (std::strcmp(node.Name.data(), "DefaultEncryptionScope") == 0)
+              else if (node.Name == "DefaultEncryptionScope")
               {
                 path.emplace_back(XmlTagName::k_DefaultEncryptionScope);
               }
-              else if (std::strcmp(node.Name.data(), "DenyEncryptionScopeOverride") == 0)
+              else if (node.Name == "DenyEncryptionScopeOverride")
               {
                 path.emplace_back(XmlTagName::k_DenyEncryptionScopeOverride);
               }
-              else if (std::strcmp(node.Name.data(), "Metadata") == 0)
+              else if (node.Name == "Metadata")
               {
                 path.emplace_back(XmlTagName::k_Metadata);
               }
-              else if (std::strcmp(node.Name.data(), "Deleted") == 0)
+              else if (node.Name == "Deleted")
               {
                 path.emplace_back(XmlTagName::k_Deleted);
               }
-              else if (std::strcmp(node.Name.data(), "Version") == 0)
+              else if (node.Name == "Version")
               {
                 path.emplace_back(XmlTagName::k_Version);
               }
-              else if (std::strcmp(node.Name.data(), "DeletedTime") == 0)
+              else if (node.Name == "DeletedTime")
               {
                 path.emplace_back(XmlTagName::k_DeletedTime);
               }
-              else if (std::strcmp(node.Name.data(), "RemainingRetentionDays") == 0)
+              else if (node.Name == "RemainingRetentionDays")
               {
                 path.emplace_back(XmlTagName::k_RemainingRetentionDays);
               }
@@ -3837,13 +3837,13 @@ namespace Azure { namespace Storage { namespace Blobs {
                   path.size() == 2 && path[0] == XmlTagName::k_Properties
                   && path[1] == XmlTagName::k_HasImmutabilityPolicy)
               {
-                ret.Details.HasImmutabilityPolicy = std::strcmp(node.Value.data(), "true") == 0;
+                ret.Details.HasImmutabilityPolicy = node.Value == "true";
               }
               else if (
                   path.size() == 2 && path[0] == XmlTagName::k_Properties
                   && path[1] == XmlTagName::k_HasLegalHold)
               {
-                ret.Details.HasLegalHold = std::strcmp(node.Value.data(), "true") == 0;
+                ret.Details.HasLegalHold = node.Value == "true";
               }
               else if (
                   path.size() == 2 && path[0] == XmlTagName::k_Properties
@@ -3873,12 +3873,11 @@ namespace Azure { namespace Storage { namespace Blobs {
                   path.size() == 2 && path[0] == XmlTagName::k_Properties
                   && path[1] == XmlTagName::k_DenyEncryptionScopeOverride)
               {
-                ret.Details.PreventEncryptionScopeOverride
-                    = std::strcmp(node.Value.data(), "true") == 0;
+                ret.Details.PreventEncryptionScopeOverride = node.Value == "true";
               }
               else if (path.size() == 1 && path[0] == XmlTagName::k_Deleted)
               {
-                ret.IsDeleted = std::strcmp(node.Value.data(), "true") == 0;
+                ret.IsDeleted = node.Value == "true";
               }
               else if (path.size() == 1 && path[0] == XmlTagName::k_Version)
               {
@@ -3935,23 +3934,23 @@ namespace Azure { namespace Storage { namespace Blobs {
             }
             else if (node.Type == _internal::XmlNodeType::StartTag)
             {
-              if (std::strcmp(node.Name.data(), "AllowedOrigins") == 0)
+              if (node.Name == "AllowedOrigins")
               {
                 path.emplace_back(XmlTagName::k_AllowedOrigins);
               }
-              else if (std::strcmp(node.Name.data(), "AllowedMethods") == 0)
+              else if (node.Name == "AllowedMethods")
               {
                 path.emplace_back(XmlTagName::k_AllowedMethods);
               }
-              else if (std::strcmp(node.Name.data(), "MaxAgeInSeconds") == 0)
+              else if (node.Name == "MaxAgeInSeconds")
               {
                 path.emplace_back(XmlTagName::k_MaxAgeInSeconds);
               }
-              else if (std::strcmp(node.Name.data(), "ExposedHeaders") == 0)
+              else if (node.Name == "ExposedHeaders")
               {
                 path.emplace_back(XmlTagName::k_ExposedHeaders);
               }
-              else if (std::strcmp(node.Name.data(), "AllowedHeaders") == 0)
+              else if (node.Name == "AllowedHeaders")
               {
                 path.emplace_back(XmlTagName::k_AllowedHeaders);
               }
@@ -4017,11 +4016,11 @@ namespace Azure { namespace Storage { namespace Blobs {
             }
             else if (node.Type == _internal::XmlNodeType::StartTag)
             {
-              if (std::strcmp(node.Name.data(), "Status") == 0)
+              if (node.Name == "Status")
               {
                 path.emplace_back(XmlTagName::k_Status);
               }
-              else if (std::strcmp(node.Name.data(), "LastSyncTime") == 0)
+              else if (node.Name == "LastSyncTime")
               {
                 path.emplace_back(XmlTagName::k_LastSyncTime);
               }
@@ -4078,19 +4077,19 @@ namespace Azure { namespace Storage { namespace Blobs {
             }
             else if (node.Type == _internal::XmlNodeType::StartTag)
             {
-              if (std::strcmp(node.Name.data(), "Version") == 0)
+              if (node.Name == "Version")
               {
                 path.emplace_back(XmlTagName::k_Version);
               }
-              else if (std::strcmp(node.Name.data(), "Enabled") == 0)
+              else if (node.Name == "Enabled")
               {
                 path.emplace_back(XmlTagName::k_Enabled);
               }
-              else if (std::strcmp(node.Name.data(), "IncludeAPIs") == 0)
+              else if (node.Name == "IncludeAPIs")
               {
                 path.emplace_back(XmlTagName::k_IncludeAPIs);
               }
-              else if (std::strcmp(node.Name.data(), "RetentionPolicy") == 0)
+              else if (node.Name == "RetentionPolicy")
               {
                 path.emplace_back(XmlTagName::k_RetentionPolicy);
               }
@@ -4112,11 +4111,11 @@ namespace Azure { namespace Storage { namespace Blobs {
               }
               else if (path.size() == 1 && path[0] == XmlTagName::k_Enabled)
               {
-                ret.IsEnabled = std::strcmp(node.Value.data(), "true") == 0;
+                ret.IsEnabled = node.Value == "true";
               }
               else if (path.size() == 1 && path[0] == XmlTagName::k_IncludeAPIs)
               {
-                ret.IncludeApis = std::strcmp(node.Value.data(), "true") == 0;
+                ret.IncludeApis = node.Value == "true";
               }
             }
           }
@@ -4153,11 +4152,11 @@ namespace Azure { namespace Storage { namespace Blobs {
             }
             else if (node.Type == _internal::XmlNodeType::StartTag)
             {
-              if (std::strcmp(node.Name.data(), "Enabled") == 0)
+              if (node.Name == "Enabled")
               {
                 path.emplace_back(XmlTagName::k_Enabled);
               }
-              else if (std::strcmp(node.Name.data(), "Days") == 0)
+              else if (node.Name == "Days")
               {
                 path.emplace_back(XmlTagName::k_Days);
               }
@@ -4170,7 +4169,7 @@ namespace Azure { namespace Storage { namespace Blobs {
             {
               if (path.size() == 1 && path[0] == XmlTagName::k_Enabled)
               {
-                ret.IsEnabled = std::strcmp(node.Value.data(), "true") == 0;
+                ret.IsEnabled = node.Value == "true";
               }
               else if (path.size() == 1 && path[0] == XmlTagName::k_Days)
               {
@@ -4213,19 +4212,19 @@ namespace Azure { namespace Storage { namespace Blobs {
             }
             else if (node.Type == _internal::XmlNodeType::StartTag)
             {
-              if (std::strcmp(node.Name.data(), "Enabled") == 0)
+              if (node.Name == "Enabled")
               {
                 path.emplace_back(XmlTagName::k_Enabled);
               }
-              else if (std::strcmp(node.Name.data(), "IndexDocument") == 0)
+              else if (node.Name == "IndexDocument")
               {
                 path.emplace_back(XmlTagName::k_IndexDocument);
               }
-              else if (std::strcmp(node.Name.data(), "DefaultIndexDocumentPath") == 0)
+              else if (node.Name == "DefaultIndexDocumentPath")
               {
                 path.emplace_back(XmlTagName::k_DefaultIndexDocumentPath);
               }
-              else if (std::strcmp(node.Name.data(), "ErrorDocument404Path") == 0)
+              else if (node.Name == "ErrorDocument404Path")
               {
                 path.emplace_back(XmlTagName::k_ErrorDocument404Path);
               }
@@ -4238,7 +4237,7 @@ namespace Azure { namespace Storage { namespace Blobs {
             {
               if (path.size() == 1 && path[0] == XmlTagName::k_Enabled)
               {
-                ret.IsEnabled = std::strcmp(node.Value.data(), "true") == 0;
+                ret.IsEnabled = node.Value == "true";
               }
               else if (path.size() == 1 && path[0] == XmlTagName::k_IndexDocument)
               {
@@ -4287,11 +4286,11 @@ namespace Azure { namespace Storage { namespace Blobs {
             }
             else if (node.Type == _internal::XmlNodeType::StartTag)
             {
-              if (std::strcmp(node.Name.data(), "Name") == 0)
+              if (node.Name == "Name")
               {
                 path.emplace_back(XmlTagName::k_Name);
               }
-              else if (std::strcmp(node.Name.data(), "ContainerName") == 0)
+              else if (node.Name == "ContainerName")
               {
                 path.emplace_back(XmlTagName::k_ContainerName);
               }
@@ -4358,21 +4357,17 @@ namespace Azure { namespace Storage { namespace Blobs {
           writer.Write(_internal::XmlNode{
               _internal::XmlNodeType::Text,
               std::string(),
-              options.StartsOn
-                  .ToString(
-                      Azure::DateTime::DateFormat::Rfc3339,
-                      Azure::DateTime::TimeFractionFormat::Truncate)
-                  .data()});
+              options.StartsOn.ToString(
+                  Azure::DateTime::DateFormat::Rfc3339,
+                  Azure::DateTime::TimeFractionFormat::Truncate)});
           writer.Write(_internal::XmlNode{_internal::XmlNodeType::EndTag});
           writer.Write(_internal::XmlNode{_internal::XmlNodeType::StartTag, "Expiry"});
           writer.Write(_internal::XmlNode{
               _internal::XmlNodeType::Text,
               std::string(),
-              options.ExpiresOn
-                  .ToString(
-                      Azure::DateTime::DateFormat::Rfc3339,
-                      Azure::DateTime::TimeFractionFormat::Truncate)
-                  .data()});
+              options.ExpiresOn.ToString(
+                  Azure::DateTime::DateFormat::Rfc3339,
+                  Azure::DateTime::TimeFractionFormat::Truncate)});
           writer.Write(_internal::XmlNode{_internal::XmlNodeType::EndTag});
           writer.Write(_internal::XmlNode{_internal::XmlNodeType::EndTag});
         }
@@ -4413,7 +4408,7 @@ namespace Azure { namespace Storage { namespace Blobs {
             writer.Write(_internal::XmlNode{
                 _internal::XmlNodeType::Text,
                 std::string(),
-                options.DefaultServiceVersion.Value().data()});
+                options.DefaultServiceVersion.Value()});
             writer.Write(_internal::XmlNode{_internal::XmlNodeType::EndTag});
           }
           writer.Write(
@@ -4430,8 +4425,8 @@ namespace Azure { namespace Storage { namespace Blobs {
             const AnalyticsLogging& options)
         {
           writer.Write(_internal::XmlNode{_internal::XmlNodeType::StartTag, "Version"});
-          writer.Write(_internal::XmlNode{
-              _internal::XmlNodeType::Text, std::string(), options.Version.data()});
+          writer.Write(
+              _internal::XmlNode{_internal::XmlNodeType::Text, std::string(), options.Version});
           writer.Write(_internal::XmlNode{_internal::XmlNodeType::EndTag});
           writer.Write(_internal::XmlNode{_internal::XmlNodeType::StartTag, "Delete"});
           writer.Write(_internal::XmlNode{
@@ -4455,25 +4450,25 @@ namespace Azure { namespace Storage { namespace Blobs {
           writer.Write(_internal::XmlNode{_internal::XmlNodeType::StartTag, "CorsRule"});
           writer.Write(_internal::XmlNode{_internal::XmlNodeType::StartTag, "AllowedOrigins"});
           writer.Write(_internal::XmlNode{
-              _internal::XmlNodeType::Text, std::string(), options.AllowedOrigins.data()});
+              _internal::XmlNodeType::Text, std::string(), options.AllowedOrigins});
           writer.Write(_internal::XmlNode{_internal::XmlNodeType::EndTag});
           writer.Write(_internal::XmlNode{_internal::XmlNodeType::StartTag, "AllowedMethods"});
           writer.Write(_internal::XmlNode{
-              _internal::XmlNodeType::Text, std::string(), options.AllowedMethods.data()});
+              _internal::XmlNodeType::Text, std::string(), options.AllowedMethods});
           writer.Write(_internal::XmlNode{_internal::XmlNodeType::EndTag});
           writer.Write(_internal::XmlNode{_internal::XmlNodeType::StartTag, "AllowedHeaders"});
           writer.Write(_internal::XmlNode{
-              _internal::XmlNodeType::Text, std::string(), options.AllowedHeaders.data()});
+              _internal::XmlNodeType::Text, std::string(), options.AllowedHeaders});
           writer.Write(_internal::XmlNode{_internal::XmlNodeType::EndTag});
           writer.Write(_internal::XmlNode{_internal::XmlNodeType::StartTag, "ExposedHeaders"});
           writer.Write(_internal::XmlNode{
-              _internal::XmlNodeType::Text, std::string(), options.ExposedHeaders.data()});
+              _internal::XmlNodeType::Text, std::string(), options.ExposedHeaders});
           writer.Write(_internal::XmlNode{_internal::XmlNodeType::EndTag});
           writer.Write(_internal::XmlNode{_internal::XmlNodeType::StartTag, "MaxAgeInSeconds"});
           writer.Write(_internal::XmlNode{
               _internal::XmlNodeType::Text,
               std::string(),
-              std::to_string(options.MaxAgeInSeconds).data()});
+              std::to_string(options.MaxAgeInSeconds)});
           writer.Write(_internal::XmlNode{_internal::XmlNodeType::EndTag});
           writer.Write(_internal::XmlNode{_internal::XmlNodeType::EndTag});
         }
@@ -4481,8 +4476,8 @@ namespace Azure { namespace Storage { namespace Blobs {
         static void MetricsToXml(_internal::XmlWriter& writer, const Metrics& options)
         {
           writer.Write(_internal::XmlNode{_internal::XmlNodeType::StartTag, "Version"});
-          writer.Write(_internal::XmlNode{
-              _internal::XmlNodeType::Text, std::string(), options.Version.data()});
+          writer.Write(
+              _internal::XmlNode{_internal::XmlNodeType::Text, std::string(), options.Version});
           writer.Write(_internal::XmlNode{_internal::XmlNodeType::EndTag});
           writer.Write(_internal::XmlNode{_internal::XmlNodeType::StartTag, "Enabled"});
           writer.Write(_internal::XmlNode{
@@ -4514,9 +4509,7 @@ namespace Azure { namespace Storage { namespace Blobs {
           {
             writer.Write(_internal::XmlNode{_internal::XmlNodeType::StartTag, "Days"});
             writer.Write(_internal::XmlNode{
-                _internal::XmlNodeType::Text,
-                std::string(),
-                std::to_string(options.Days.Value()).data()});
+                _internal::XmlNodeType::Text, std::string(), std::to_string(options.Days.Value())});
             writer.Write(_internal::XmlNode{_internal::XmlNodeType::EndTag});
           }
         }
@@ -4531,7 +4524,7 @@ namespace Azure { namespace Storage { namespace Blobs {
           {
             writer.Write(_internal::XmlNode{_internal::XmlNodeType::StartTag, "IndexDocument"});
             writer.Write(_internal::XmlNode{
-                _internal::XmlNodeType::Text, std::string(), options.IndexDocument.Value().data()});
+                _internal::XmlNodeType::Text, std::string(), options.IndexDocument.Value()});
             writer.Write(_internal::XmlNode{_internal::XmlNodeType::EndTag});
           }
           if (options.DefaultIndexDocumentPath.HasValue())
@@ -4541,7 +4534,7 @@ namespace Azure { namespace Storage { namespace Blobs {
             writer.Write(_internal::XmlNode{
                 _internal::XmlNodeType::Text,
                 std::string(),
-                options.DefaultIndexDocumentPath.Value().data()});
+                options.DefaultIndexDocumentPath.Value()});
             writer.Write(_internal::XmlNode{_internal::XmlNodeType::EndTag});
           }
           if (options.ErrorDocument404Path.HasValue())
@@ -4549,9 +4542,7 @@ namespace Azure { namespace Storage { namespace Blobs {
             writer.Write(
                 _internal::XmlNode{_internal::XmlNodeType::StartTag, "ErrorDocument404Path"});
             writer.Write(_internal::XmlNode{
-                _internal::XmlNodeType::Text,
-                std::string(),
-                options.ErrorDocument404Path.Value().data()});
+                _internal::XmlNodeType::Text, std::string(), options.ErrorDocument404Path.Value()});
             writer.Write(_internal::XmlNode{_internal::XmlNodeType::EndTag});
           }
         }
@@ -5426,11 +5417,11 @@ namespace Azure { namespace Storage { namespace Blobs {
             }
             else if (node.Type == _internal::XmlNodeType::StartTag)
             {
-              if (std::strcmp(node.Name.data(), "SignedIdentifiers") == 0)
+              if (node.Name == "SignedIdentifiers")
               {
                 path.emplace_back(XmlTagName::k_SignedIdentifiers);
               }
-              else if (std::strcmp(node.Name.data(), "SignedIdentifier") == 0)
+              else if (node.Name == "SignedIdentifier")
               {
                 path.emplace_back(XmlTagName::k_SignedIdentifier);
               }
@@ -5489,35 +5480,35 @@ namespace Azure { namespace Storage { namespace Blobs {
             }
             else if (node.Type == _internal::XmlNodeType::StartTag)
             {
-              if (std::strcmp(node.Name.data(), "EnumerationResults") == 0)
+              if (node.Name == "EnumerationResults")
               {
                 path.emplace_back(XmlTagName::k_EnumerationResults);
               }
-              else if (std::strcmp(node.Name.data(), "Prefix") == 0)
+              else if (node.Name == "Prefix")
               {
                 path.emplace_back(XmlTagName::k_Prefix);
               }
-              else if (std::strcmp(node.Name.data(), "Delimiter") == 0)
+              else if (node.Name == "Delimiter")
               {
                 path.emplace_back(XmlTagName::k_Delimiter);
               }
-              else if (std::strcmp(node.Name.data(), "NextMarker") == 0)
+              else if (node.Name == "NextMarker")
               {
                 path.emplace_back(XmlTagName::k_NextMarker);
               }
-              else if (std::strcmp(node.Name.data(), "Blobs") == 0)
+              else if (node.Name == "Blobs")
               {
                 path.emplace_back(XmlTagName::k_Blobs);
               }
-              else if (std::strcmp(node.Name.data(), "Blob") == 0)
+              else if (node.Name == "Blob")
               {
                 path.emplace_back(XmlTagName::k_Blob);
               }
-              else if (std::strcmp(node.Name.data(), "BlobPrefix") == 0)
+              else if (node.Name == "BlobPrefix")
               {
                 path.emplace_back(XmlTagName::k_BlobPrefix);
               }
-              else if (std::strcmp(node.Name.data(), "Name") == 0)
+              else if (node.Name == "Name")
               {
                 path.emplace_back(XmlTagName::k_Name);
               }
@@ -5562,13 +5553,13 @@ namespace Azure { namespace Storage { namespace Blobs {
             else if (node.Type == _internal::XmlNodeType::Attribute)
             {
               if (path.size() == 1 && path[0] == XmlTagName::k_EnumerationResults
-                  && std::strcmp(node.Name.data(), "ServiceEndpoint") == 0)
+                  && node.Name == "ServiceEndpoint")
               {
                 ret.ServiceEndpoint = node.Value;
               }
               else if (
                   path.size() == 1 && path[0] == XmlTagName::k_EnumerationResults
-                  && std::strcmp(node.Name.data(), "ContainerName") == 0)
+                  && node.Name == "ContainerName")
               {
                 ret.BlobContainerName = node.Value;
               }
@@ -5611,23 +5602,23 @@ namespace Azure { namespace Storage { namespace Blobs {
             }
             else if (node.Type == _internal::XmlNodeType::StartTag)
             {
-              if (std::strcmp(node.Name.data(), "EnumerationResults") == 0)
+              if (node.Name == "EnumerationResults")
               {
                 path.emplace_back(XmlTagName::k_EnumerationResults);
               }
-              else if (std::strcmp(node.Name.data(), "Prefix") == 0)
+              else if (node.Name == "Prefix")
               {
                 path.emplace_back(XmlTagName::k_Prefix);
               }
-              else if (std::strcmp(node.Name.data(), "NextMarker") == 0)
+              else if (node.Name == "NextMarker")
               {
                 path.emplace_back(XmlTagName::k_NextMarker);
               }
-              else if (std::strcmp(node.Name.data(), "Blobs") == 0)
+              else if (node.Name == "Blobs")
               {
                 path.emplace_back(XmlTagName::k_Blobs);
               }
-              else if (std::strcmp(node.Name.data(), "Blob") == 0)
+              else if (node.Name == "Blob")
               {
                 path.emplace_back(XmlTagName::k_Blob);
               }
@@ -5659,13 +5650,13 @@ namespace Azure { namespace Storage { namespace Blobs {
             else if (node.Type == _internal::XmlNodeType::Attribute)
             {
               if (path.size() == 1 && path[0] == XmlTagName::k_EnumerationResults
-                  && std::strcmp(node.Name.data(), "ServiceEndpoint") == 0)
+                  && node.Name == "ServiceEndpoint")
               {
                 ret.ServiceEndpoint = node.Value;
               }
               else if (
                   path.size() == 1 && path[0] == XmlTagName::k_EnumerationResults
-                  && std::strcmp(node.Name.data(), "ContainerName") == 0)
+                  && node.Name == "ContainerName")
               {
                 ret.BlobContainerName = node.Value;
               }
@@ -5732,123 +5723,123 @@ namespace Azure { namespace Storage { namespace Blobs {
             }
             else if (node.Type == _internal::XmlNodeType::StartTag)
             {
-              if (std::strcmp(node.Name.data(), "Name") == 0)
+              if (node.Name == "Name")
               {
                 path.emplace_back(XmlTagName::k_Name);
               }
-              else if (std::strcmp(node.Name.data(), "Deleted") == 0)
+              else if (node.Name == "Deleted")
               {
                 path.emplace_back(XmlTagName::k_Deleted);
               }
-              else if (std::strcmp(node.Name.data(), "Snapshot") == 0)
+              else if (node.Name == "Snapshot")
               {
                 path.emplace_back(XmlTagName::k_Snapshot);
               }
-              else if (std::strcmp(node.Name.data(), "VersionId") == 0)
+              else if (node.Name == "VersionId")
               {
                 path.emplace_back(XmlTagName::k_VersionId);
               }
-              else if (std::strcmp(node.Name.data(), "IsCurrentVersion") == 0)
+              else if (node.Name == "IsCurrentVersion")
               {
                 path.emplace_back(XmlTagName::k_IsCurrentVersion);
               }
-              else if (std::strcmp(node.Name.data(), "Properties") == 0)
+              else if (node.Name == "Properties")
               {
                 path.emplace_back(XmlTagName::k_Properties);
               }
-              else if (std::strcmp(node.Name.data(), "Content-Type") == 0)
+              else if (node.Name == "Content-Type")
               {
                 path.emplace_back(XmlTagName::k_ContentType);
               }
-              else if (std::strcmp(node.Name.data(), "Content-Encoding") == 0)
+              else if (node.Name == "Content-Encoding")
               {
                 path.emplace_back(XmlTagName::k_ContentEncoding);
               }
-              else if (std::strcmp(node.Name.data(), "Content-Language") == 0)
+              else if (node.Name == "Content-Language")
               {
                 path.emplace_back(XmlTagName::k_ContentLanguage);
               }
-              else if (std::strcmp(node.Name.data(), "Content-MD5") == 0)
+              else if (node.Name == "Content-MD5")
               {
                 path.emplace_back(XmlTagName::k_ContentMD5);
               }
-              else if (std::strcmp(node.Name.data(), "Cache-Control") == 0)
+              else if (node.Name == "Cache-Control")
               {
                 path.emplace_back(XmlTagName::k_CacheControl);
               }
-              else if (std::strcmp(node.Name.data(), "Content-Disposition") == 0)
+              else if (node.Name == "Content-Disposition")
               {
                 path.emplace_back(XmlTagName::k_ContentDisposition);
               }
-              else if (std::strcmp(node.Name.data(), "Creation-Time") == 0)
+              else if (node.Name == "Creation-Time")
               {
                 path.emplace_back(XmlTagName::k_CreationTime);
               }
-              else if (std::strcmp(node.Name.data(), "Expiry-Time") == 0)
+              else if (node.Name == "Expiry-Time")
               {
                 path.emplace_back(XmlTagName::k_ExpiryTime);
               }
-              else if (std::strcmp(node.Name.data(), "LastAccessTime") == 0)
+              else if (node.Name == "LastAccessTime")
               {
                 path.emplace_back(XmlTagName::k_LastAccessTime);
               }
-              else if (std::strcmp(node.Name.data(), "Last-Modified") == 0)
+              else if (node.Name == "Last-Modified")
               {
                 path.emplace_back(XmlTagName::k_LastModified);
               }
-              else if (std::strcmp(node.Name.data(), "Etag") == 0)
+              else if (node.Name == "Etag")
               {
                 path.emplace_back(XmlTagName::k_Etag);
               }
-              else if (std::strcmp(node.Name.data(), "Content-Length") == 0)
+              else if (node.Name == "Content-Length")
               {
                 path.emplace_back(XmlTagName::k_ContentLength);
               }
-              else if (std::strcmp(node.Name.data(), "BlobType") == 0)
+              else if (node.Name == "BlobType")
               {
                 path.emplace_back(XmlTagName::k_BlobType);
               }
-              else if (std::strcmp(node.Name.data(), "AccessTier") == 0)
+              else if (node.Name == "AccessTier")
               {
                 path.emplace_back(XmlTagName::k_AccessTier);
               }
-              else if (std::strcmp(node.Name.data(), "AccessTierInferred") == 0)
+              else if (node.Name == "AccessTierInferred")
               {
                 path.emplace_back(XmlTagName::k_AccessTierInferred);
               }
-              else if (std::strcmp(node.Name.data(), "LeaseStatus") == 0)
+              else if (node.Name == "LeaseStatus")
               {
                 path.emplace_back(XmlTagName::k_LeaseStatus);
               }
-              else if (std::strcmp(node.Name.data(), "LeaseState") == 0)
+              else if (node.Name == "LeaseState")
               {
                 path.emplace_back(XmlTagName::k_LeaseState);
               }
-              else if (std::strcmp(node.Name.data(), "LeaseDuration") == 0)
+              else if (node.Name == "LeaseDuration")
               {
                 path.emplace_back(XmlTagName::k_LeaseDuration);
               }
-              else if (std::strcmp(node.Name.data(), "ServerEncrypted") == 0)
+              else if (node.Name == "ServerEncrypted")
               {
                 path.emplace_back(XmlTagName::k_ServerEncrypted);
               }
-              else if (std::strcmp(node.Name.data(), "EncryptionKeySHA256") == 0)
+              else if (node.Name == "EncryptionKeySHA256")
               {
                 path.emplace_back(XmlTagName::k_EncryptionKeySHA256);
               }
-              else if (std::strcmp(node.Name.data(), "Sealed") == 0)
+              else if (node.Name == "Sealed")
               {
                 path.emplace_back(XmlTagName::k_Sealed);
               }
-              else if (std::strcmp(node.Name.data(), "x-ms-blob-sequence-number") == 0)
+              else if (node.Name == "x-ms-blob-sequence-number")
               {
                 path.emplace_back(XmlTagName::k_xmsblobsequencenumber);
               }
-              else if (std::strcmp(node.Name.data(), "Metadata") == 0)
+              else if (node.Name == "Metadata")
               {
                 path.emplace_back(XmlTagName::k_Metadata);
               }
-              else if (std::strcmp(node.Name.data(), "OrMetadata") == 0)
+              else if (node.Name == "OrMetadata")
               {
                 path.emplace_back(XmlTagName::k_OrMetadata);
               }
@@ -5876,7 +5867,7 @@ namespace Azure { namespace Storage { namespace Blobs {
               }
               else if (path.size() == 1 && path[0] == XmlTagName::k_Deleted)
               {
-                ret.IsDeleted = std::strcmp(node.Value.data(), "true") == 0;
+                ret.IsDeleted = node.Value == "true";
               }
               else if (path.size() == 1 && path[0] == XmlTagName::k_Snapshot)
               {
@@ -5888,7 +5879,7 @@ namespace Azure { namespace Storage { namespace Blobs {
               }
               else if (path.size() == 1 && path[0] == XmlTagName::k_IsCurrentVersion)
               {
-                ret.IsCurrentVersion = std::strcmp(node.Value.data(), "true") == 0;
+                ret.IsCurrentVersion = node.Value == "true";
               }
               else if (
                   path.size() == 2 && path[0] == XmlTagName::k_Properties
@@ -5983,7 +5974,7 @@ namespace Azure { namespace Storage { namespace Blobs {
                   path.size() == 2 && path[0] == XmlTagName::k_Properties
                   && path[1] == XmlTagName::k_AccessTierInferred)
               {
-                ret.Details.IsAccessTierInferred = std::strcmp(node.Value.data(), "true") == 0;
+                ret.Details.IsAccessTierInferred = node.Value == "true";
               }
               else if (
                   path.size() == 2 && path[0] == XmlTagName::k_Properties
@@ -6007,7 +5998,7 @@ namespace Azure { namespace Storage { namespace Blobs {
                   path.size() == 2 && path[0] == XmlTagName::k_Properties
                   && path[1] == XmlTagName::k_ServerEncrypted)
               {
-                ret.Details.IsServerEncrypted = std::strcmp(node.Value.data(), "true") == 0;
+                ret.Details.IsServerEncrypted = node.Value == "true";
               }
               else if (
                   path.size() == 2 && path[0] == XmlTagName::k_Properties
@@ -6019,7 +6010,7 @@ namespace Azure { namespace Storage { namespace Blobs {
                   path.size() == 2 && path[0] == XmlTagName::k_Properties
                   && path[1] == XmlTagName::k_Sealed)
               {
-                ret.Details.IsSealed = std::strcmp(node.Value.data(), "true") == 0;
+                ret.Details.IsSealed = node.Value == "true";
               }
               else if (
                   path.size() == 2 && path[0] == XmlTagName::k_Properties
@@ -6065,23 +6056,23 @@ namespace Azure { namespace Storage { namespace Blobs {
             }
             else if (node.Type == _internal::XmlNodeType::StartTag)
             {
-              if (std::strcmp(node.Name.data(), "Id") == 0)
+              if (node.Name == "Id")
               {
                 path.emplace_back(XmlTagName::k_Id);
               }
-              else if (std::strcmp(node.Name.data(), "AccessPolicy") == 0)
+              else if (node.Name == "AccessPolicy")
               {
                 path.emplace_back(XmlTagName::k_AccessPolicy);
               }
-              else if (std::strcmp(node.Name.data(), "Start") == 0)
+              else if (node.Name == "Start")
               {
                 path.emplace_back(XmlTagName::k_Start);
               }
-              else if (std::strcmp(node.Name.data(), "Expiry") == 0)
+              else if (node.Name == "Expiry")
               {
                 path.emplace_back(XmlTagName::k_Expiry);
               }
-              else if (std::strcmp(node.Name.data(), "Permission") == 0)
+              else if (node.Name == "Permission")
               {
                 path.emplace_back(XmlTagName::k_Permission);
               }
@@ -6225,33 +6216,28 @@ namespace Azure { namespace Storage { namespace Blobs {
         {
           writer.Write(_internal::XmlNode{_internal::XmlNodeType::StartTag, "SignedIdentifier"});
           writer.Write(_internal::XmlNode{_internal::XmlNodeType::StartTag, "Id"});
-          writer.Write(
-              _internal::XmlNode{_internal::XmlNodeType::Text, std::string(), options.Id.data()});
+          writer.Write(_internal::XmlNode{_internal::XmlNodeType::Text, std::string(), options.Id});
           writer.Write(_internal::XmlNode{_internal::XmlNodeType::EndTag});
           writer.Write(_internal::XmlNode{_internal::XmlNodeType::StartTag, "AccessPolicy"});
           writer.Write(_internal::XmlNode{_internal::XmlNodeType::StartTag, "Start"});
           writer.Write(_internal::XmlNode{
               _internal::XmlNodeType::Text,
               std::string(),
-              options.StartsOn
-                  .ToString(
-                      Azure::DateTime::DateFormat::Rfc3339,
-                      Azure::DateTime::TimeFractionFormat::AllDigits)
-                  .data()});
+              options.StartsOn.ToString(
+                  Azure::DateTime::DateFormat::Rfc3339,
+                  Azure::DateTime::TimeFractionFormat::AllDigits)});
           writer.Write(_internal::XmlNode{_internal::XmlNodeType::EndTag});
           writer.Write(_internal::XmlNode{_internal::XmlNodeType::StartTag, "Expiry"});
           writer.Write(_internal::XmlNode{
               _internal::XmlNodeType::Text,
               std::string(),
-              options.ExpiresOn
-                  .ToString(
-                      Azure::DateTime::DateFormat::Rfc3339,
-                      Azure::DateTime::TimeFractionFormat::AllDigits)
-                  .data()});
+              options.ExpiresOn.ToString(
+                  Azure::DateTime::DateFormat::Rfc3339,
+                  Azure::DateTime::TimeFractionFormat::AllDigits)});
           writer.Write(_internal::XmlNode{_internal::XmlNodeType::EndTag});
           writer.Write(_internal::XmlNode{_internal::XmlNodeType::StartTag, "Permission"});
-          writer.Write(_internal::XmlNode{
-              _internal::XmlNodeType::Text, std::string(), options.Permissions.data()});
+          writer.Write(
+              _internal::XmlNode{_internal::XmlNodeType::Text, std::string(), options.Permissions});
           writer.Write(_internal::XmlNode{_internal::XmlNodeType::EndTag});
           writer.Write(_internal::XmlNode{_internal::XmlNodeType::EndTag});
           writer.Write(_internal::XmlNode{_internal::XmlNodeType::EndTag});
@@ -8179,11 +8165,11 @@ namespace Azure { namespace Storage { namespace Blobs {
             }
             else if (node.Type == _internal::XmlNodeType::StartTag)
             {
-              if (std::strcmp(node.Name.data(), "Tags") == 0)
+              if (node.Name == "Tags")
               {
                 path.emplace_back(XmlTagName::k_Tags);
               }
-              else if (std::strcmp(node.Name.data(), "TagSet") == 0)
+              else if (node.Name == "TagSet")
               {
                 path.emplace_back(XmlTagName::k_TagSet);
               }
@@ -8222,11 +8208,11 @@ namespace Azure { namespace Storage { namespace Blobs {
             else if (node.Type == _internal::XmlNodeType::StartTag)
             {
               ++depth;
-              if (strcmp(node.Name.data(), "Key") == 0)
+              if (node.Name == "Key")
               {
                 is_key = true;
               }
-              else if (strcmp(node.Name.data(), "Value") == 0)
+              else if (node.Name == "Value")
               {
                 is_value = true;
               }
@@ -8265,12 +8251,10 @@ namespace Azure { namespace Storage { namespace Blobs {
           {
             writer.Write(_internal::XmlNode{_internal::XmlNodeType::StartTag, "Tag"});
             writer.Write(_internal::XmlNode{_internal::XmlNodeType::StartTag, "Key"});
-            writer.Write(
-                _internal::XmlNode{_internal::XmlNodeType::Text, std::string(), i.first.data()});
+            writer.Write(_internal::XmlNode{_internal::XmlNodeType::Text, std::string(), i.first});
             writer.Write(_internal::XmlNode{_internal::XmlNodeType::EndTag});
             writer.Write(_internal::XmlNode{_internal::XmlNodeType::StartTag, "Value"});
-            writer.Write(
-                _internal::XmlNode{_internal::XmlNodeType::Text, std::string(), i.second.data()});
+            writer.Write(_internal::XmlNode{_internal::XmlNodeType::Text, std::string(), i.second});
             writer.Write(_internal::XmlNode{_internal::XmlNodeType::EndTag});
             writer.Write(_internal::XmlNode{_internal::XmlNodeType::EndTag});
           }
@@ -9005,19 +8989,19 @@ namespace Azure { namespace Storage { namespace Blobs {
             }
             else if (node.Type == _internal::XmlNodeType::StartTag)
             {
-              if (std::strcmp(node.Name.data(), "BlockList") == 0)
+              if (node.Name == "BlockList")
               {
                 path.emplace_back(XmlTagName::k_BlockList);
               }
-              else if (std::strcmp(node.Name.data(), "CommittedBlocks") == 0)
+              else if (node.Name == "CommittedBlocks")
               {
                 path.emplace_back(XmlTagName::k_CommittedBlocks);
               }
-              else if (std::strcmp(node.Name.data(), "Block") == 0)
+              else if (node.Name == "Block")
               {
                 path.emplace_back(XmlTagName::k_Block);
               }
-              else if (std::strcmp(node.Name.data(), "UncommittedBlocks") == 0)
+              else if (node.Name == "UncommittedBlocks")
               {
                 path.emplace_back(XmlTagName::k_UncommittedBlocks);
               }
@@ -9076,11 +9060,11 @@ namespace Azure { namespace Storage { namespace Blobs {
             }
             else if (node.Type == _internal::XmlNodeType::StartTag)
             {
-              if (std::strcmp(node.Name.data(), "Name") == 0)
+              if (node.Name == "Name")
               {
                 path.emplace_back(XmlTagName::k_Name);
               }
-              else if (std::strcmp(node.Name.data(), "Size") == 0)
+              else if (node.Name == "Size")
               {
                 path.emplace_back(XmlTagName::k_Size);
               }
@@ -9111,8 +9095,8 @@ namespace Azure { namespace Storage { namespace Blobs {
           writer.Write(_internal::XmlNode{_internal::XmlNodeType::StartTag, "BlockList"});
           for (const auto& i : options.BlockList)
           {
-            writer.Write(_internal::XmlNode{
-                _internal::XmlNodeType::StartTag, i.first.ToString().data(), i.second.data()});
+            writer.Write(
+                _internal::XmlNode{_internal::XmlNodeType::StartTag, i.first.ToString(), i.second});
           }
           writer.Write(_internal::XmlNode{_internal::XmlNodeType::EndTag});
         }
@@ -10116,15 +10100,15 @@ namespace Azure { namespace Storage { namespace Blobs {
             }
             else if (node.Type == _internal::XmlNodeType::StartTag)
             {
-              if (std::strcmp(node.Name.data(), "PageList") == 0)
+              if (node.Name == "PageList")
               {
                 path.emplace_back(XmlTagName::k_PageList);
               }
-              else if (std::strcmp(node.Name.data(), "PageRange") == 0)
+              else if (node.Name == "PageRange")
               {
                 path.emplace_back(XmlTagName::k_PageRange);
               }
-              else if (std::strcmp(node.Name.data(), "ClearRange") == 0)
+              else if (node.Name == "ClearRange")
               {
                 path.emplace_back(XmlTagName::k_ClearRange);
               }
@@ -10167,16 +10151,12 @@ namespace Azure { namespace Storage { namespace Blobs {
             {
               break;
             }
-            else if (
-                node.Type == _internal::XmlNodeType::StartTag
-                && strcmp(node.Name.data(), "Start") == 0)
+            else if (node.Type == _internal::XmlNodeType::StartTag && node.Name == "Start")
             {
               ++depth;
               is_start = true;
             }
-            else if (
-                node.Type == _internal::XmlNodeType::StartTag
-                && strcmp(node.Name.data(), "End") == 0)
+            else if (node.Type == _internal::XmlNodeType::StartTag && node.Name == "End")
             {
               ++depth;
               is_end = true;
@@ -10222,16 +10202,12 @@ namespace Azure { namespace Storage { namespace Blobs {
             {
               break;
             }
-            else if (
-                node.Type == _internal::XmlNodeType::StartTag
-                && strcmp(node.Name.data(), "Start") == 0)
+            else if (node.Type == _internal::XmlNodeType::StartTag && node.Name == "Start")
             {
               ++depth;
               is_start = true;
             }
-            else if (
-                node.Type == _internal::XmlNodeType::StartTag
-                && strcmp(node.Name.data(), "End") == 0)
+            else if (node.Type == _internal::XmlNodeType::StartTag && node.Name == "End")
             {
               ++depth;
               is_end = true;
