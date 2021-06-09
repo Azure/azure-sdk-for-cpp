@@ -1358,7 +1358,7 @@ std::unique_ptr<CurlNetworkConnection> CurlConnectionPool::ExtractOrCreateCurlCo
   }
 
   long sslOption = 0;
-#if defined(_MSC_VER)
+#if LIBCURL_VERSION_MAJOR >= 7 && LIBCURL_VERSION_MINOR >= 44
   if (!options.SslOptions.EnableCertificateRevocationListCheck)
   {
     sslOption |= CURLSSLOPT_NO_REVOKE;
