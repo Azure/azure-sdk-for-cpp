@@ -2,6 +2,8 @@
 
 ## 4.0.0-beta.3 (2021-06-08)
 
+No breaking changes or new features added. Includes only implementation enhancements.
+
 ## 4.0.0-beta.2 (2021-05-18)
 
 ### Breaking Changes
