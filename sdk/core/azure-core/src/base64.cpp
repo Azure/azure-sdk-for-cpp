@@ -68,7 +68,6 @@ namespace Azure { namespace Core {
     BUF_MEM* bufferPtr;
     BIO_get_mem_ptr(bio, &bufferPtr);
     std::string toReturn(bufferPtr->data, bufferPtr->length);
-    BIO_set_close(bio, BIO_NOCLOSE);
     BIO_free_all(bio);
 
     return toReturn;
