@@ -4,7 +4,7 @@
 
 ### Bug Fixes
 
-- Fixed a memory leak issue in xml parser.
+- Fixed a memory leak issue while parsing XML.
 
 ## 12.0.0 (2021-06-08)
 
