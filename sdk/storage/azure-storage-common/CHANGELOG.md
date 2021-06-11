@@ -1,7 +1,16 @@
 # Release History
 
-## 12.0.0-beta.12 (Unreleased)
+## 12.1.0-beta.1 (Unreleased)
 
+### Bug Fixes
+
+- Fixed a memory leak issue while parsing XML.
+
+## 12.0.0 (2021-06-08)
+
+### Other Changes and Improvements
+
+- Fixed a filename encoding issue.
 
 ## 12.0.0-beta.11 (2021-05-19)
 

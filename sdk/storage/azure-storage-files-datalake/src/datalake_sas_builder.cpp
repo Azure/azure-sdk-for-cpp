@@ -24,7 +24,7 @@ namespace Azure { namespace Storage { namespace Sas {
       }
       else
       {
-        throw std::invalid_argument("unknown DataLakeSasResource value");
+        throw std::invalid_argument("Unknown DataLakeSasResource value.");
       }
     }
   } // namespace

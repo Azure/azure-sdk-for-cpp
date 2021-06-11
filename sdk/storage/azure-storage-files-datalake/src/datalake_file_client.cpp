@@ -4,13 +4,13 @@
 #include "azure/storage/files/datalake/datalake_file_client.hpp"
 
 #include <azure/core/http/policies/policy.hpp>
-#include <azure/storage/common/constants.hpp>
 #include <azure/storage/common/crypt.hpp>
-#include <azure/storage/common/shared_key_policy.hpp>
+#include <azure/storage/common/internal/constants.hpp>
+#include <azure/storage/common/internal/shared_key_policy.hpp>
 #include <azure/storage/common/storage_common.hpp>
 
-#include "azure/storage/files/datalake/datalake_constants.hpp"
-#include "azure/storage/files/datalake/datalake_utilities.hpp"
+#include "private/datalake_constants.hpp"
+#include "private/datalake_utilities.hpp"
 
 namespace Azure { namespace Storage { namespace Files { namespace DataLake {
 
@@ -379,7 +379,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     protocolLayerOptions.ExpiryOrigin = expiryOrigin;
     AZURE_ASSERT_MSG(
         !(options.ExpiresOn.HasValue() && options.TimeToExpire.HasValue()),
-        "ExpiresOn and TimeToExpire are mutually exclusive");
+        "ExpiresOn and TimeToExpire are mutually exclusive.");
 
     if (options.ExpiresOn.HasValue())
     {

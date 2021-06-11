@@ -323,19 +323,19 @@ struct option_results
    * @brief
    * Gets the number of times the option shows up.
    */
-  std::size_t count() const;
+  size_t count() const;
 
   /**
    * @brief
    * Gets a single option parse result by index.
    */
-  option_result& operator[](std::size_t index);
+  option_result& operator[](size_t index);
 
   /**
    * @brief
    * Gets a single option result by index.
    */
-  const option_result& operator[](std::size_t index) const;
+  const option_result& operator[](size_t index) const;
 
   /**
    * @brief
@@ -434,19 +434,19 @@ struct parser_results
    * @brief
    * Gets the number of positional arguments.
    */
-  std::size_t count() const;
+  size_t count() const;
 
   /**
    * @brief
    * Gets a positional argument by index.
    */
-  const char* operator[](std::size_t index) const;
+  const char* operator[](size_t index) const;
 
   /**
    * @brief
    * Gets a positional argument converted to the given type.
    */
-  template <typename T> T as(std::size_t i = 0) const;
+  template <typename T> T as(size_t i = 0) const;
 
   /**
    * @brief
@@ -727,11 +727,11 @@ template <> inline option_result::operator bool() const { return this->arg != nu
 
 inline bool option_result::operator!() const { return !static_cast<bool>(*this); }
 
-inline std::size_t option_results::count() const { return this->all.size(); }
+inline size_t option_results::count() const { return this->all.size(); }
 
-inline option_result& option_results::operator[](std::size_t index) { return this->all[index]; }
+inline option_result& option_results::operator[](size_t index) { return this->all[index]; }
 
-inline const option_result& option_results::operator[](std::size_t index) const
+inline const option_result& option_results::operator[](size_t index) const
 {
   return this->all[index];
 }
@@ -790,14 +790,11 @@ catch (const std::out_of_range& e)
   throw unknown_option(msg.str());
 }
 
-inline std::size_t parser_results::count() const { return this->pos.size(); }
+inline size_t parser_results::count() const { return this->pos.size(); }
 
-inline const char* parser_results::operator[](std::size_t index) const { return this->pos[index]; }
+inline const char* parser_results::operator[](size_t index) const { return this->pos[index]; }
 
-template <typename T> T parser_results::as(std::size_t i) const
-{
-  return convert::arg<T>(this->pos[i]);
-}
+template <typename T> T parser_results::as(size_t i) const { return convert::arg<T>(this->pos[i]); }
 
 template <typename T> std::vector<T> parser_results::all_as() const
 {
@@ -1158,7 +1155,7 @@ inline parser_results parser::parse(int argc, const char** argv, bool posOnly) c
         // long_flag_arg is nullptr then we didn't find '='. We need the
         // flag_len to construct long_flag_str below.
         auto long_flag_arg = std::strchr(arg_i_cstr, '=');
-        std::size_t flag_len = arg_i_len;
+        size_t flag_len = arg_i_len;
         if (long_flag_arg != nullptr)
         {
           flag_len = long_flag_arg - arg_i_cstr;
@@ -1216,7 +1213,7 @@ inline parser_results parser::parse(int argc, const char** argv, bool posOnly) c
       // not). So starting after the dash we're going to process each character
       // as if it were a separate flag. Note "sf_idx" stands for "short flag
       // index".
-      for (std::size_t sf_idx = 1; sf_idx < arg_i_len; ++sf_idx)
+      for (size_t sf_idx = 1; sf_idx < arg_i_len; ++sf_idx)
       {
         const auto short_flag = arg_i_cstr[sf_idx];
 
@@ -1468,7 +1465,7 @@ inline std::string construct_line(const std::string& indent, const std::string& 
  * @brief
  * Return a wrapped version of a single line of text.
  */
-inline std::string wrap_line(const std::string& single_line, const std::size_t wrap_width)
+inline std::string wrap_line(const std::string& single_line, const size_t wrap_width)
 {
   auto indentation_spaces = single_line.find_first_not_of(" ");
   if (indentation_spaces == std::string::npos)
@@ -1481,8 +1478,8 @@ inline std::string wrap_line(const std::string& single_line, const std::size_t w
 
   std::string result;
 
-  std::size_t position = 0;
-  std::size_t line_start = 0;
+  size_t position = 0;
+  size_t line_start = 0;
   while (true)
   {
     const auto new_position = line.find_first_of(" ", position);

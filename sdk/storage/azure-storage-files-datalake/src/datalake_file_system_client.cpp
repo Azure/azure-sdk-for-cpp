@@ -5,20 +5,19 @@
 
 #include <azure/core/http/policies/policy.hpp>
 #include <azure/storage/blobs/protocol/blob_rest_client.hpp>
-#include <azure/storage/common/constants.hpp>
 #include <azure/storage/common/crypt.hpp>
-#include <azure/storage/common/shared_key_policy.hpp>
+#include <azure/storage/common/internal/constants.hpp>
+#include <azure/storage/common/internal/shared_key_policy.hpp>
+#include <azure/storage/common/internal/storage_per_retry_policy.hpp>
+#include <azure/storage/common/internal/storage_service_version_policy.hpp>
+#include <azure/storage/common/internal/storage_switch_to_secondary_policy.hpp>
 #include <azure/storage/common/storage_common.hpp>
-#include <azure/storage/common/storage_per_retry_policy.hpp>
-#include <azure/storage/common/storage_service_version_policy.hpp>
-#include <azure/storage/common/storage_switch_to_secondary_policy.hpp>
 
-#include "azure/storage/files/datalake/datalake_constants.hpp"
 #include "azure/storage/files/datalake/datalake_directory_client.hpp"
 #include "azure/storage/files/datalake/datalake_file_client.hpp"
 #include "azure/storage/files/datalake/datalake_path_client.hpp"
-#include "azure/storage/files/datalake/datalake_utilities.hpp"
-
+#include "private/datalake_constants.hpp"
+#include "private/datalake_utilities.hpp"
 #include "private/package_version.hpp"
 
 namespace Azure { namespace Storage { namespace Files { namespace DataLake {
@@ -251,9 +250,6 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
   {
     Blobs::SetBlobContainerMetadataOptions blobOptions;
     blobOptions.AccessConditions.IfModifiedSince = options.AccessConditions.IfModifiedSince;
-    AZURE_ASSERT_MSG(
-        !options.AccessConditions.IfUnmodifiedSince.HasValue(),
-        "This operation doesn't support If-Unmodified-Since condition");
 
     auto result = m_blobContainerClient.SetMetadata(std::move(metadata), blobOptions, context);
     Models::SetFileSystemMetadataResult ret;

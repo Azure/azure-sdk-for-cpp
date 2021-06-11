@@ -4,14 +4,14 @@
 #include "azure/storage/files/datalake/datalake_directory_client.hpp"
 
 #include <azure/core/http/policies/policy.hpp>
-#include <azure/storage/common/constants.hpp>
 #include <azure/storage/common/crypt.hpp>
-#include <azure/storage/common/shared_key_policy.hpp>
+#include <azure/storage/common/internal/constants.hpp>
+#include <azure/storage/common/internal/shared_key_policy.hpp>
+#include <azure/storage/common/internal/storage_switch_to_secondary_policy.hpp>
 #include <azure/storage/common/storage_common.hpp>
-#include <azure/storage/common/storage_switch_to_secondary_policy.hpp>
 
 #include "azure/storage/files/datalake/datalake_file_client.hpp"
-#include "azure/storage/files/datalake/datalake_utilities.hpp"
+#include "private/datalake_utilities.hpp"
 
 namespace Azure { namespace Storage { namespace Files { namespace DataLake {
 

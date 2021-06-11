@@ -17,19 +17,12 @@ void FileShareGettingStarted()
   std::string fileContent = "Hello Azure!";
 
   auto shareClient = ShareClient::CreateFromConnectionString(GetConnectionString(), shareName);
-  try
-  {
-    shareClient.Create();
-  }
-  catch (const std::runtime_error& e)
-  {
-    // The share may already exist
-    std::cout << e.what() << std::endl;
-  }
+  shareClient.CreateIfNotExists();
 
   ShareFileClient fileClient = shareClient.GetRootDirectoryClient().GetFileClient(fileName);
 
-  fileClient.UploadFrom(reinterpret_cast<const uint8_t*>(fileContent.data()), fileContent.size());
+  std::vector<uint8_t> buffer(fileContent.begin(), fileContent.end());
+  fileClient.UploadFrom(buffer.data(), buffer.size());
 
   Azure::Storage::Metadata fileMetadata = {{"key1", "value1"}, {"key2", "value2"}};
   fileClient.SetMetadata(fileMetadata);
@@ -39,9 +32,10 @@ void FileShareGettingStarted()
   {
     std::cout << metadata.first << ":" << metadata.second << std::endl;
   }
-  fileContent.resize(static_cast<size_t>(properties.FileSize));
+  // We know file size is small, so it's safe to cast here.
+  buffer.resize(static_cast<size_t>(properties.FileSize));
 
-  fileClient.DownloadTo(reinterpret_cast<uint8_t*>(&fileContent[0]), fileContent.size());
+  fileClient.DownloadTo(buffer.data(), buffer.size());
 
-  std::cout << fileContent << std::endl;
+  std::cout << std::string(buffer.begin(), buffer.end()) << std::endl;
 }

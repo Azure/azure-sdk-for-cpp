@@ -28,8 +28,7 @@ endif()
 
 set(
   AZURE_STORAGE_FILES_DATALAKE_HEADER
-    inc/azure/storage/files/datalake/protocol/datalake_rest_client.hpp
-    inc/azure/storage/files/datalake/datalake_constants.hpp
+    inc/azure/storage/files/datalake.hpp
     inc/azure/storage/files/datalake/datalake_directory_client.hpp
     inc/azure/storage/files/datalake/datalake_file_client.hpp
     inc/azure/storage/files/datalake/datalake_file_system_client.hpp
@@ -39,13 +38,14 @@ set(
     inc/azure/storage/files/datalake/datalake_responses.hpp
     inc/azure/storage/files/datalake/datalake_sas_builder.hpp
     inc/azure/storage/files/datalake/datalake_service_client.hpp
-    inc/azure/storage/files/datalake/datalake_utilities.hpp
     inc/azure/storage/files/datalake/dll_import_export.hpp
-    inc/azure/storage/files/datalake.hpp
+    inc/azure/storage/files/datalake/protocol/datalake_rest_client.hpp
 )
 
 set(
   AZURE_STORAGE_FILES_DATALAKE_SOURCE
+    src/private/datalake_constants.hpp
+    src/private/datalake_utilities.hpp
     src/private/package_version.hpp
     src/datalake_directory_client.cpp
     src/datalake_file_client.cpp

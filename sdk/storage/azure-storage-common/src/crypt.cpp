@@ -103,7 +103,7 @@ namespace Azure { namespace Storage {
         }
         else
         {
-          throw std::runtime_error("unknown algorithm type");
+          throw std::runtime_error("Unknown algorithm type.");
         }
 
         unsigned long algorithmFlags = 0;
@@ -115,7 +115,7 @@ namespace Azure { namespace Storage {
             = BCryptOpenAlgorithmProvider(&Handle, algorithmId, nullptr, algorithmFlags);
         if (!BCRYPT_SUCCESS(status))
         {
-          throw std::runtime_error("BCryptOpenAlgorithmProvider failed");
+          throw std::runtime_error("BCryptOpenAlgorithmProvider failed.");
         }
         DWORD objectLength = 0;
         DWORD dataLength = 0;
@@ -128,7 +128,7 @@ namespace Azure { namespace Storage {
             0);
         if (!BCRYPT_SUCCESS(status))
         {
-          throw std::runtime_error("BCryptGetProperty failed");
+          throw std::runtime_error("BCryptGetProperty failed.");
         }
         ContextSize = objectLength;
         DWORD hashLength = 0;
@@ -141,7 +141,7 @@ namespace Azure { namespace Storage {
             0);
         if (!BCRYPT_SUCCESS(status))
         {
-          throw std::runtime_error("BCryptGetProperty failed");
+          throw std::runtime_error("BCryptGetProperty failed.");
         }
         HashLength = hashLength;
       }
@@ -151,6 +151,8 @@ namespace Azure { namespace Storage {
 
     std::vector<uint8_t> Sha256(const std::vector<uint8_t>& data)
     {
+      AZURE_ASSERT_MSG(data.size() <= std::numeric_limits<ULONG>::max(), "Data size is too big.");
+
       static AlgorithmProviderInstance AlgorithmProvider(AlgorithmType::Sha256);
 
       std::string context;
@@ -167,7 +169,7 @@ namespace Azure { namespace Storage {
           0);
       if (!BCRYPT_SUCCESS(status))
       {
-        throw std::runtime_error("BCryptCreateHash failed");
+        throw std::runtime_error("BCryptCreateHash failed.");
       }
 
       status = BCryptHashData(
@@ -177,7 +179,7 @@ namespace Azure { namespace Storage {
           0);
       if (!BCRYPT_SUCCESS(status))
       {
-        throw std::runtime_error("BCryptHashData failed");
+        throw std::runtime_error("BCryptHashData failed.");
       }
 
       std::vector<uint8_t> hash;
@@ -186,7 +188,7 @@ namespace Azure { namespace Storage {
           hashHandle, reinterpret_cast<PUCHAR>(&hash[0]), static_cast<ULONG>(hash.size()), 0);
       if (!BCRYPT_SUCCESS(status))
       {
-        throw std::runtime_error("BCryptFinishHash failed");
+        throw std::runtime_error("BCryptFinishHash failed.");
       }
 
       BCryptDestroyHash(hashHandle);
@@ -198,6 +200,7 @@ namespace Azure { namespace Storage {
         const std::vector<uint8_t>& data,
         const std::vector<uint8_t>& key)
     {
+      AZURE_ASSERT_MSG(data.size() <= std::numeric_limits<ULONG>::max(), "Data size is too big.");
 
       static AlgorithmProviderInstance AlgorithmProvider(AlgorithmType::HmacSha256);
 
@@ -215,7 +218,7 @@ namespace Azure { namespace Storage {
           0);
       if (!BCRYPT_SUCCESS(status))
       {
-        throw std::runtime_error("BCryptCreateHash failed");
+        throw std::runtime_error("BCryptCreateHash failed.");
       }
 
       status = BCryptHashData(
@@ -225,7 +228,7 @@ namespace Azure { namespace Storage {
           0);
       if (!BCRYPT_SUCCESS(status))
       {
-        throw std::runtime_error("BCryptHashData failed");
+        throw std::runtime_error("BCryptHashData failed.");
       }
 
       std::vector<uint8_t> hash;
@@ -234,7 +237,7 @@ namespace Azure { namespace Storage {
           hashHandle, reinterpret_cast<PUCHAR>(&hash[0]), static_cast<ULONG>(hash.size()), 0);
       if (!BCRYPT_SUCCESS(status))
       {
-        throw std::runtime_error("BCryptFinishHash failed");
+        throw std::runtime_error("BCryptFinishHash failed.");
       }
 
       BCryptDestroyHash(hashHandle);

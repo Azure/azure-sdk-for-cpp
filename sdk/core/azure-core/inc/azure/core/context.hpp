@@ -49,14 +49,14 @@ namespace Azure { namespace Core {
 
     public:
       /**
-       * @brief Constructs a `Key`.
+       * @brief Constructs a default instance of `%Key`.
        *
        */
       Key() : m_uniqueAddress(this) {}
 
       /**
-       * @brief Compares with \p other `Azure::Core::Context::Key` for equality.
-       * @param other Other `Azure::Core::Context::Key` to compare with.
+       * @brief Compares with \p other `%Key` for equality.
+       * @param other Other `%Key` to compare with.
        * @return `true` if instances are equal; otherwise, `false`.
        */
       bool operator==(Key const& other) const
@@ -65,8 +65,8 @@ namespace Azure { namespace Core {
       }
 
       /**
-       * @brief Compares with \p other `Azure::Core::Context::Key` for equality.
-       * @param other Other `Azure::Core::Context::Key` to compare with.
+       * @brief Compares with \p other `%Key` for equality.
+       * @param other Other `%Key` to compare with.
        * @return `false` if instances are equal; otherwise, `true`.
        */
       bool operator!=(Key const& other) const { return !(*this == other); }
@@ -132,10 +132,13 @@ namespace Azure { namespace Core {
     Context() : m_contextSharedState(std::make_shared<ContextSharedState>()) {}
 
     /**
-     * @brief Copy constructor.
+     * @brief Assigns `%Context` to another `%Context` instance.
      *
+     * @param other Another instance to copy.
+     *
+     * @return A reference to this `%Context`.
      */
-    Context& operator=(const Context&) = default;
+    Context& operator=(const Context& other) = default;
 
     /**
      * @brief Creates a context with a deadline.

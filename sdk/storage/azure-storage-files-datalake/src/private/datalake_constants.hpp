@@ -1,11 +1,10 @@
-
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
 
 #pragma once
 
 namespace Azure { namespace Storage { namespace Files { namespace DataLake { namespace _detail {
-  // Error codes:
+
   constexpr static const char* ContainerAlreadyExists = "ContainerAlreadyExists";
   constexpr static const char* ContainerNotFound = "ContainerNotFound";
   constexpr static const char* DataLakeFilesystemNotFound = "FilesystemNotFound";

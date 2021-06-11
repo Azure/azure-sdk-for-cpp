@@ -7,9 +7,9 @@
 #include <azure/keyvault/common/internal/unix_time_helper.hpp>
 
 #include "azure/keyvault/keys/deleted_key.hpp"
-#include "azure/keyvault/keys/details/key_constants.hpp"
-#include "azure/keyvault/keys/details/key_serializers.hpp"
 #include "azure/keyvault/keys/key_vault_key.hpp"
+#include "private/key_constants.hpp"
+#include "private/key_serializers.hpp"
 
 using namespace Azure::Security::KeyVault::Keys;
 using namespace Azure::Core::Json::_internal;
@@ -38,12 +38,12 @@ DeletedKey _detail::DeletedKeySerializer::DeletedKeyDeserialize(
     deletedKey.Properties.RecoveryLevel
         = jsonParser[_detail::RecoveryLevelPropertyName].get<std::string>();
   }
-  JsonOptional::SetIfExists<uint64_t, Azure::DateTime>(
+  JsonOptional::SetIfExists<int64_t, Azure::DateTime>(
       deletedKey.DeletedDate,
       jsonParser,
       _detail::DeletedOnPropertyName,
       UnixTimeConverter::UnixTimeToDatetime);
-  JsonOptional::SetIfExists<uint64_t, Azure::DateTime>(
+  JsonOptional::SetIfExists<int64_t, Azure::DateTime>(
       deletedKey.ScheduledPurgeDate,
       jsonParser,
       _detail::ScheduledPurgeDatePropertyName,

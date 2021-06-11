@@ -212,8 +212,11 @@ static void CleanupThread()
           Logger::Level::Verbose,
           "Clean pool - no connections on wake - return *************************");
       CurlConnectionPool::g_curlConnectionPool.IsCleanThreadRunning = false;
-      return;
+      break;
     }
+
+    decltype(CurlConnectionPool::g_curlConnectionPool
+                 .ConnectionPoolIndex)::mapped_type connectionsToBeCleaned;
 
     Log::Write(Logger::Level::Verbose, "Clean pool - inspect pool");
     // loop the connection pool index - Note: lock is re-taken for the mutex
@@ -227,35 +230,37 @@ static void CleanupThread()
       // of this, the oldest connection in the pool can be found at the end of the list. Looping the
       // connection pool backwards until a connection that is not expired is found or until all
       // connections are removed.
-      for (auto connection = --(index->second.end());
-           index->second.size() > 0 && connection->get()->IsExpired();
-           connection = index->second.size() > 0 ? --connection : connection)
+      auto& connectionList = index->second;
+      auto connectionIter = connectionList.end();
+      while (connectionIter != connectionList.begin())
       {
-        // remove connection from the pool and update the connection to the next one
-        // which is going to be list.end()
-        Log::Write(Logger::Level::Verbose, "Clean pool - remove connection");
-        connection = index->second.erase(connection);
+        --connectionIter;
+        if ((*connectionIter)->IsExpired())
+        {
+          // remove connection from the pool and update the connection to the next one
+          // which is going to be list.end()
+          connectionsToBeCleaned.emplace_back(std::move(*connectionIter));
+          connectionIter = connectionList.erase(connectionIter);
+        }
+        else
+        {
+          break;
+        }
       }
 
-      if (index->second.size() == 0)
+      if (connectionList.empty())
       {
         Log::Write(Logger::Level::Verbose, "Clean pool - remove index " + index->first);
         index = CurlConnectionPool::g_curlConnectionPool.ConnectionPoolIndex.erase(index);
       }
       else
       {
-        index = ++index;
+        ++index;
       }
     }
 
-    if (CurlConnectionPool::g_curlConnectionPool.ConnectionPoolIndex.size() == 0)
-    {
-      Log::Write(
-          Logger::Level::Verbose,
-          "Clean pool - all connections removed. Return**********************");
-      CurlConnectionPool::g_curlConnectionPool.IsCleanThreadRunning = false;
-      return;
-    }
+    lockForPoolCleaning.unlock();
+    // Do actual connections release work here, without holding the mutex.
   }
 }
 } // namespace
@@ -1244,9 +1249,12 @@ std::unique_ptr<CurlNetworkConnection> CurlConnectionPool::ExtractOrCreateCurlCo
   std::string const connectionKey = GetConnectionKey(host, options);
 
   {
+    decltype(CurlConnectionPool::g_curlConnectionPool
+                 .ConnectionPoolIndex)::mapped_type connectionsToBeReset;
+
     // Critical section. Needs to own ConnectionPoolMutex before executing
     // Lock mutex to access connection pool. mutex is unlock as soon as lock is out of scope
-    std::lock_guard<std::mutex> lock(CurlConnectionPool::ConnectionPoolMutex);
+    std::unique_lock<std::mutex> lock(CurlConnectionPool::ConnectionPoolMutex);
 
     // get a ref to the pool from the map of pools
     auto hostPoolIndex = g_curlConnectionPool.ConnectionPoolIndex.find(connectionKey);
@@ -1256,6 +1264,7 @@ std::unique_ptr<CurlNetworkConnection> CurlConnectionPool::ExtractOrCreateCurlCo
     {
       if (resetPool)
       {
+        connectionsToBeReset = std::move(hostPoolIndex->second);
         // clean the pool-index as requested in the call. Typically to force a new connection to be
         // created and to discard all current connections in the pool for the host-index. A caller
         // might request this after getting broken/closed connections multiple-times.
@@ -1280,6 +1289,7 @@ std::unique_ptr<CurlNetworkConnection> CurlConnectionPool::ExtractOrCreateCurlCo
         return connection;
       }
     }
+    lock.unlock();
   }
 
   // Creating a new connection is thread safe. No need to lock mutex here.
@@ -1381,7 +1391,7 @@ std::unique_ptr<CurlNetworkConnection> CurlConnectionPool::ExtractOrCreateCurlCo
         + std::string(curl_easy_strerror(performResult)));
   }
 
-  return std::make_unique<CurlConnection>(newHandle, std::move(connectionKey));
+  return std::make_unique<CurlConnection>(newHandle, connectionKey);
 }
 
 // Move the connection back to the connection pool. Push it to the front so it becomes the
@@ -1406,15 +1416,19 @@ void CurlConnectionPool::MoveConnectionBackToPool(
 
   Log::Write(Logger::Level::Verbose, "Moving connection to pool...");
 
+  decltype(CurlConnectionPool::g_curlConnectionPool
+               .ConnectionPoolIndex)::mapped_type::value_type connectionToBeRemoved;
+
   // Lock mutex to access connection pool. mutex is unlock as soon as lock is out of scope
-  std::lock_guard<std::mutex> lock(CurlConnectionPool::ConnectionPoolMutex);
+  std::unique_lock<std::mutex> lock(CurlConnectionPool::ConnectionPoolMutex);
   auto& poolId = connection->GetConnectionKey();
   auto& hostPool = g_curlConnectionPool.ConnectionPoolIndex[poolId];
 
-  if (hostPool.size() >= _detail::MaxConnectionsPerIndex)
+  if (hostPool.size() >= _detail::MaxConnectionsPerIndex && !hostPool.empty())
   {
     // Remove the last connection from the pool to insert this one.
     auto lastConnection = --hostPool.end();
+    connectionToBeRemoved = std::move(*lastConnection);
     hostPool.erase(lastConnection);
   }
 
@@ -1441,4 +1455,5 @@ void CurlConnectionPool::MoveConnectionBackToPool(
   {
     Log::Write(Logger::Level::Verbose, "Clean thread running. Won't start a new one.");
   }
+  lock.unlock();
 }

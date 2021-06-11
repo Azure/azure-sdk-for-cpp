@@ -9,7 +9,7 @@
 
 #include <azure/core/cryptography/hash.hpp>
 #include <azure/storage/common/crypt.hpp>
-#include <azure/storage/common/file_io.hpp>
+#include <azure/storage/common/internal/file_io.hpp>
 
 namespace Azure { namespace Storage { namespace Blobs { namespace Models {
 
@@ -436,9 +436,8 @@ namespace Azure { namespace Storage { namespace Test {
         if (actualDownloadSize >= 0)
         {
           expectedData.assign(
-              m_blobContent.begin() + static_cast<std::ptrdiff_t>(offset.Value()),
-              m_blobContent.begin()
-                  + static_cast<std::ptrdiff_t>(offset.Value() + actualDownloadSize));
+              m_blobContent.begin() + static_cast<ptrdiff_t>(offset.Value()),
+              m_blobContent.begin() + static_cast<ptrdiff_t>(offset.Value() + actualDownloadSize));
         }
         else
         {
@@ -451,8 +450,7 @@ namespace Azure { namespace Storage { namespace Test {
         if (actualDownloadSize >= 0)
         {
           expectedData.assign(
-              m_blobContent.begin() + static_cast<std::ptrdiff_t>(offset.Value()),
-              m_blobContent.end());
+              m_blobContent.begin() + static_cast<ptrdiff_t>(offset.Value()), m_blobContent.end());
         }
         else
         {
@@ -509,9 +507,8 @@ namespace Azure { namespace Storage { namespace Test {
         if (actualDownloadSize >= 0)
         {
           expectedData.assign(
-              m_blobContent.begin() + static_cast<std::ptrdiff_t>(offset.Value()),
-              m_blobContent.begin()
-                  + static_cast<std::ptrdiff_t>(offset.Value() + actualDownloadSize));
+              m_blobContent.begin() + static_cast<ptrdiff_t>(offset.Value()),
+              m_blobContent.begin() + static_cast<ptrdiff_t>(offset.Value() + actualDownloadSize));
         }
         else
         {
@@ -524,8 +521,7 @@ namespace Azure { namespace Storage { namespace Test {
         if (actualDownloadSize >= 0)
         {
           expectedData.assign(
-              m_blobContent.begin() + static_cast<std::ptrdiff_t>(offset.Value()),
-              m_blobContent.end());
+              m_blobContent.begin() + static_cast<ptrdiff_t>(offset.Value()), m_blobContent.end());
         }
         else
         {

@@ -1,7 +1,17 @@
 # Release History
 
-## 1.0.0-beta.10 (Unreleased)
+## 1.1.0-beta.1 (Unreleased)
 
+### Bug Fixes
+
+- Fixed a memory leak issue in `Base64Encode()`.
+
+## 1.0.0 (2021-06-04)
+
+### Bug Fixes
+
+- Make `RequestFailedException` copiable so it can be propagated across thread.
+- By default, add `x-ms-request-id` header to the allow list of headers to log.
 
 ## 1.0.0-beta.9 (2021-05-18)
 

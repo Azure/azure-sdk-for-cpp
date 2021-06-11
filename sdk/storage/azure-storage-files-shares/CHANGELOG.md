@@ -1,11 +1,18 @@
 # Release History
 
-## 12.0.0-beta.12 (Unreleased)
+## 12.1.0-beta.1 (Unreleased)
+
+
+## 12.0.0 (2021-06-08)
 
 ### Breaking Changes
 
 - Renamed `ContentLength` in `FileItemDetails` to `FileSize`.
 
+### Other Changes and Improvements
+
+- Updated some samples.
+- Fixed a read consistency issue.
 
 ## 12.0.0-beta.11 (2021-05-19)
 

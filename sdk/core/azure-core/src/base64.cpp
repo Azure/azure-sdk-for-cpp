@@ -67,10 +67,10 @@ namespace Azure { namespace Core {
     BIO_flush(bio);
     BUF_MEM* bufferPtr;
     BIO_get_mem_ptr(bio, &bufferPtr);
-    BIO_set_close(bio, BIO_NOCLOSE);
+    std::string toReturn(bufferPtr->data, bufferPtr->length);
     BIO_free_all(bio);
 
-    return std::string(bufferPtr->data, bufferPtr->length);
+    return toReturn;
   }
 
   std::vector<uint8_t> Convert::Base64Decode(const std::string& text)
@@ -78,7 +78,7 @@ namespace Azure { namespace Core {
     std::vector<uint8_t> decoded;
     // According to RFC 4648, the encoded length should be ceiling(n / 3) * 4, so we can infer an
     // upper bound here
-    std::size_t maxDecodedLength = text.length() / 4 * 3;
+    size_t maxDecodedLength = text.length() / 4 * 3;
     decoded.resize(maxDecodedLength);
 
     BIO* bio = BIO_new_mem_buf(text.data(), -1);

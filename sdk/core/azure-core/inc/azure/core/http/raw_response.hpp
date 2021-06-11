@@ -46,12 +46,12 @@ namespace Azure { namespace Core { namespace Http {
 
   public:
     /**
-     * @brief Construct raw HTTP response.
+     * @brief Constructs `%RawResponse`.
      *
      * @param majorVersion HTTP protocol version major number.
      * @param minorVersion HTTP protocol version minor number.
      * @param statusCode HTTP status code.
-     * @param reasonPhrase HTP reason phrase.
+     * @param reasonPhrase HTTP reason phrase.
      */
     explicit RawResponse(
         int32_t majorVersion,
@@ -63,7 +63,7 @@ namespace Azure { namespace Core { namespace Http {
     }
 
     /**
-     * @brief Copy a raw response to construct a new one.
+     * @brief Constructs `%RawResponse` from another.
      *
      * @remark The body stream won't be copied.
      *
@@ -81,9 +81,30 @@ namespace Azure { namespace Core { namespace Http {
       m_body = response.GetBody();
     }
 
+    /**
+     * @brief Constructs `%RawResponse` by moving in another instance.
+     *
+     * @param response Another `%RawResponse` to move in.
+     *
+     */
     RawResponse(RawResponse&& response) = default;
+
+    /**
+     * @brief `%RawResponse` cannot be assigned.
+     *
+     */
     RawResponse& operator=(RawResponse const&) = delete;
+
+    /**
+     * @brief `%RawResponse` cannot be moved into.
+     *
+     */
     RawResponse& operator=(RawResponse&&) = delete;
+
+    /**
+     * @brief Destructs `%RawResponse`.
+     *
+     */
     ~RawResponse() = default;
 
     // ===== Methods used to build HTTP response =====

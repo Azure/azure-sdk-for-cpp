@@ -4,15 +4,15 @@
 #include "azure/storage/blobs/blob_client.hpp"
 
 #include <azure/core/http/policies/policy.hpp>
-#include <azure/storage/common/concurrent_transfer.hpp>
-#include <azure/storage/common/constants.hpp>
-#include <azure/storage/common/file_io.hpp>
-#include <azure/storage/common/reliable_stream.hpp>
-#include <azure/storage/common/shared_key_policy.hpp>
+#include <azure/storage/common/internal/concurrent_transfer.hpp>
+#include <azure/storage/common/internal/constants.hpp>
+#include <azure/storage/common/internal/file_io.hpp>
+#include <azure/storage/common/internal/reliable_stream.hpp>
+#include <azure/storage/common/internal/shared_key_policy.hpp>
+#include <azure/storage/common/internal/storage_per_retry_policy.hpp>
+#include <azure/storage/common/internal/storage_service_version_policy.hpp>
+#include <azure/storage/common/internal/storage_switch_to_secondary_policy.hpp>
 #include <azure/storage/common/storage_common.hpp>
-#include <azure/storage/common/storage_per_retry_policy.hpp>
-#include <azure/storage/common/storage_service_version_policy.hpp>
-#include <azure/storage/common/storage_switch_to_secondary_policy.hpp>
 
 #include "azure/storage/blobs/append_blob_client.hpp"
 #include "azure/storage/blobs/block_blob_client.hpp"
@@ -255,17 +255,18 @@ namespace Azure { namespace Storage { namespace Blobs {
     }
     firstChunkLength = std::min(firstChunkLength, blobRangeSize);
 
-    if (static_cast<size_t>(blobRangeSize) > bufferSize)
+    if (static_cast<uint64_t>(blobRangeSize) > std::numeric_limits<size_t>::max()
+        || static_cast<size_t>(blobRangeSize) > bufferSize)
     {
       throw Azure::Core::RequestFailedException(
-          "buffer is not big enough, blob range size is " + std::to_string(blobRangeSize));
+          "Buffer is not big enough, blob range size is " + std::to_string(blobRangeSize) + ".");
     }
 
     int64_t bytesRead = firstChunk.Value.BodyStream->ReadToCount(
         buffer, static_cast<size_t>(firstChunkLength), context);
     if (bytesRead != firstChunkLength)
     {
-      throw Azure::Core::RequestFailedException("error when reading body stream");
+      throw Azure::Core::RequestFailedException("Error when reading body stream.");
     }
     firstChunk.Value.BodyStream.reset();
 
@@ -296,7 +297,7 @@ namespace Azure { namespace Storage { namespace Blobs {
                 context);
             if (bytesRead != chunkOptions.Range.Value().Length.Value())
             {
-              throw Azure::Core::RequestFailedException("error when reading body stream");
+              throw Azure::Core::RequestFailedException("Error when reading body stream.");
             }
 
             if (chunkId == numChunks - 1)
@@ -366,17 +367,17 @@ namespace Azure { namespace Storage { namespace Blobs {
     auto bodyStreamToFile = [](Azure::Core::IO::BodyStream& stream,
                                _internal::FileWriter& fileWriter,
                                int64_t offset,
-                               size_t length,
+                               int64_t length,
                                const Azure::Core::Context& context) {
       constexpr size_t bufferSize = 4 * 1024 * 1024;
       std::vector<uint8_t> buffer(bufferSize);
       while (length > 0)
       {
-        size_t readSize = std::min(bufferSize, length);
+        size_t readSize = static_cast<size_t>(std::min<int64_t>(bufferSize, length));
         size_t bytesRead = stream.ReadToCount(buffer.data(), readSize, context);
         if (bytesRead != readSize)
         {
-          throw Azure::Core::RequestFailedException("error when reading body stream");
+          throw Azure::Core::RequestFailedException("Error when reading body stream.");
         }
         fileWriter.Write(buffer.data(), bytesRead, offset);
         length -= bytesRead;
@@ -384,12 +385,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       }
     };
 
-    bodyStreamToFile(
-        *(firstChunk.Value.BodyStream),
-        fileWriter,
-        0,
-        static_cast<size_t>(firstChunkLength),
-        context);
+    bodyStreamToFile(*(firstChunk.Value.BodyStream), fileWriter, 0, firstChunkLength, context);
     firstChunk.Value.BodyStream.reset();
 
     auto returnTypeConverter = [](Azure::Response<Models::DownloadBlobResult>& response) {
@@ -417,7 +413,7 @@ namespace Azure { namespace Storage { namespace Blobs {
                 *(chunk.Value.BodyStream),
                 fileWriter,
                 offset - firstChunkOffset,
-                static_cast<size_t>(chunkOptions.Range.Value().Length.Value()),
+                chunkOptions.Range.Value().Length.Value(),
                 context);
 
             if (chunkId == numChunks - 1)

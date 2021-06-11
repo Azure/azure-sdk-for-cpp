@@ -54,7 +54,17 @@ namespace Azure { namespace Core { namespace Diagnostics {
     static void SetLevel(Level level);
 
   private:
+    /**
+     * @brief An instance of `%Logger` class cannot be created.
+     *
+     */
     Logger() = delete;
+
+    /**
+     * @brief An instance of `%Logger` class cannot be destructed, because no instance can be
+     * created.
+     *
+     */
     ~Logger() = delete;
   };
 }}} // namespace Azure::Core::Diagnostics

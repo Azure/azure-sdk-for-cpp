@@ -36,10 +36,19 @@ namespace Azure { namespace Core {
     std::unique_ptr<Azure::Core::Http::RawResponse> m_rawResponse = nullptr;
     OperationStatus m_status = OperationStatus::NotStarted;
 
+    /**
+     * @brief Constructs a default instance of `%Operation`.
+     *
+     */
     Operation() = default;
 
     // Define how an Operation<T> can be move-constructed from rvalue other. Parameter `other`
     // gave up ownership for the rawResponse.
+    /**
+     * @brief Constructs an instance of `%Operation` by moving in another instance.
+     *
+     * @param other An `%Operation` instance to move in.
+     */
     Operation(Operation&& other)
         : m_rawResponse(std::move(other.m_rawResponse)), m_status(other.m_status)
     {
@@ -47,6 +56,11 @@ namespace Azure { namespace Core {
 
     // Define how an Operation<T> can be copy-constructed from some other Operation reference.
     // Operation will create a clone of the rawResponse from `other`.
+    /**
+     * @brief Constructs an instance of `%Operation` by copying another instance.
+     *
+     * @param other An `%Operation` instance to copy.
+     */
     Operation(Operation const& other)
         : m_rawResponse(std::make_unique<Http::RawResponse>(other.GetRawResponse())),
           m_status(other.m_status)
@@ -55,6 +69,13 @@ namespace Azure { namespace Core {
 
     // Define how an Operation<T> can be move-assigned from rvalue other. Parameter `other`
     // gave up ownership for the rawResponse.
+    /**
+     * @brief Assigns an instance of `%Operation` by moving in another instance.
+     *
+     * @param other An `%Operation` instance to move in.
+     *
+     * @return A reference to this instance.
+     */
     Operation& operator=(Operation&& other)
     {
       this->m_rawResponse = std::move(other.m_rawResponse);
@@ -64,6 +85,13 @@ namespace Azure { namespace Core {
 
     // Define how an Operation<T> can be copy-assigned from some other Operation reference.
     // Operation will create a clone of the rawResponse from `other`.
+    /**
+     * @brief Assigns another `%Operation` instance by copying.
+     *
+     * @param other An `%Operation` instance to copy.
+     *
+     * @return A reference to this instance.
+     */
     Operation& operator=(Operation const& other)
     {
       this->m_rawResponse = std::make_unique<Http::RawResponse>(other.GetRawResponse());
@@ -73,7 +101,7 @@ namespace Azure { namespace Core {
 
   public:
     /**
-     * @brief Destructs the `Operation`.
+     * @brief Destructs the `%Operation`.
      *
      */
     virtual ~Operation() {}
@@ -116,7 +144,7 @@ namespace Azure { namespace Core {
     /**
      * @brief Checks if the long-running operation is completed.
      *
-     * @return `true` if the long-running operation is done, otherwise `false`.
+     * @return `true` if the long-running operation is done; otherwise, `false`.
      */
     bool IsDone() const noexcept
     {
@@ -149,7 +177,7 @@ namespace Azure { namespace Core {
     /**
      * @brief Gets updated status of the long-running operation.
      *
-     * @param context #Azure::Core::Context allows canceling of the long-running operation.
+     * @param context A context to control the request lifetime.
      *
      * @return An HTTP #Azure::Core::Http::RawResponse returned from the service.
      */
@@ -178,7 +206,7 @@ namespace Azure { namespace Core {
      * @brief Periodically polls till the long-running operation completes;
      *
      * @param period Time in milliseconds to wait between polls.
-     * @param context #Azure::Core::Context allows canceling of the long-running operation.
+     * @param context A context to control the request lifetime.
      *
      * @return Response<T> the final result of the long-running operation.
      */

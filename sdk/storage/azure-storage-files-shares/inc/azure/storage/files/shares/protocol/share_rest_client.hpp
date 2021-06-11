@@ -23,9 +23,9 @@
 #include <azure/core/nullable.hpp>
 #include <azure/core/response.hpp>
 #include <azure/storage/common/crypt.hpp>
+#include <azure/storage/common/internal/xml_wrapper.hpp>
 #include <azure/storage/common/storage_common.hpp>
 #include <azure/storage/common/storage_exception.hpp>
-#include <azure/storage/common/xml_wrapper.hpp>
 
 namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
@@ -2275,12 +2275,15 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           {
             break;
           }
-          else if (node.Type == _internal::XmlNodeType::StartTag && strcmp(node.Name, "Start") == 0)
+          else if (
+              node.Type == _internal::XmlNodeType::StartTag
+              && strcmp(node.Name.data(), "Start") == 0)
           {
             ++depth;
             is_start = true;
           }
-          else if (node.Type == _internal::XmlNodeType::StartTag && strcmp(node.Name, "End") == 0)
+          else if (
+              node.Type == _internal::XmlNodeType::StartTag && strcmp(node.Name.data(), "End") == 0)
           {
             ++depth;
             is_end = true;
@@ -2462,13 +2465,13 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         {
           writer.Write(_internal::XmlNode{_internal::XmlNodeType::StartTag, "Enabled"});
           writer.Write(_internal::XmlNode{
-              _internal::XmlNodeType::Text, nullptr, object.Enabled ? "true" : "false"});
+              _internal::XmlNodeType::Text, std::string(), object.Enabled ? "true" : "false"});
           writer.Write(_internal::XmlNode{_internal::XmlNodeType::EndTag});
           if (object.Days.HasValue())
           {
             writer.Write(_internal::XmlNode{_internal::XmlNodeType::StartTag, "Days"});
             writer.Write(_internal::XmlNode{
-                _internal::XmlNodeType::Text, nullptr, std::to_string(object.Days.Value()).data()});
+                _internal::XmlNodeType::Text, std::string(), std::to_string(object.Days.Value())});
             writer.Write(_internal::XmlNode{_internal::XmlNodeType::EndTag});
           }
         }
@@ -2477,18 +2480,18 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         {
           writer.Write(_internal::XmlNode{_internal::XmlNodeType::StartTag, "Version"});
           writer.Write(
-              _internal::XmlNode{_internal::XmlNodeType::Text, nullptr, object.Version.data()});
+              _internal::XmlNode{_internal::XmlNodeType::Text, std::string(), object.Version});
           writer.Write(_internal::XmlNode{_internal::XmlNodeType::EndTag});
           writer.Write(_internal::XmlNode{_internal::XmlNodeType::StartTag, "Enabled"});
           writer.Write(_internal::XmlNode{
-              _internal::XmlNodeType::Text, nullptr, object.Enabled ? "true" : "false"});
+              _internal::XmlNodeType::Text, std::string(), object.Enabled ? "true" : "false"});
           writer.Write(_internal::XmlNode{_internal::XmlNodeType::EndTag});
           if (object.IncludeApis.HasValue())
           {
             writer.Write(_internal::XmlNode{_internal::XmlNodeType::StartTag, "IncludeAPIs"});
             writer.Write(_internal::XmlNode{
                 _internal::XmlNodeType::Text,
-                nullptr,
+                std::string(),
                 object.IncludeApis.Value() ? "true" : "false"});
             writer.Write(_internal::XmlNode{_internal::XmlNodeType::EndTag});
           }
@@ -2502,25 +2505,23 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           writer.Write(_internal::XmlNode{_internal::XmlNodeType::StartTag, "CorsRule"});
           writer.Write(_internal::XmlNode{_internal::XmlNodeType::StartTag, "AllowedOrigins"});
           writer.Write(_internal::XmlNode{
-              _internal::XmlNodeType::Text, nullptr, object.AllowedOrigins.data()});
+              _internal::XmlNodeType::Text, std::string(), object.AllowedOrigins});
           writer.Write(_internal::XmlNode{_internal::XmlNodeType::EndTag});
           writer.Write(_internal::XmlNode{_internal::XmlNodeType::StartTag, "AllowedMethods"});
           writer.Write(_internal::XmlNode{
-              _internal::XmlNodeType::Text, nullptr, object.AllowedMethods.data()});
+              _internal::XmlNodeType::Text, std::string(), object.AllowedMethods});
           writer.Write(_internal::XmlNode{_internal::XmlNodeType::EndTag});
           writer.Write(_internal::XmlNode{_internal::XmlNodeType::StartTag, "AllowedHeaders"});
           writer.Write(_internal::XmlNode{
-              _internal::XmlNodeType::Text, nullptr, object.AllowedHeaders.data()});
+              _internal::XmlNodeType::Text, std::string(), object.AllowedHeaders});
           writer.Write(_internal::XmlNode{_internal::XmlNodeType::EndTag});
           writer.Write(_internal::XmlNode{_internal::XmlNodeType::StartTag, "ExposedHeaders"});
           writer.Write(_internal::XmlNode{
-              _internal::XmlNodeType::Text, nullptr, object.ExposedHeaders.data()});
+              _internal::XmlNodeType::Text, std::string(), object.ExposedHeaders});
           writer.Write(_internal::XmlNode{_internal::XmlNodeType::EndTag});
           writer.Write(_internal::XmlNode{_internal::XmlNodeType::StartTag, "MaxAgeInSeconds"});
           writer.Write(_internal::XmlNode{
-              _internal::XmlNodeType::Text,
-              nullptr,
-              std::to_string(object.MaxAgeInSeconds).data()});
+              _internal::XmlNodeType::Text, std::string(), std::to_string(object.MaxAgeInSeconds)});
           writer.Write(_internal::XmlNode{_internal::XmlNodeType::EndTag});
           writer.Write(_internal::XmlNode{_internal::XmlNodeType::EndTag});
         }
@@ -2532,7 +2533,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           writer.Write(_internal::XmlNode{_internal::XmlNodeType::StartTag, "Multichannel"});
           writer.Write(_internal::XmlNode{_internal::XmlNodeType::StartTag, "Enabled"});
           writer.Write(_internal::XmlNode{
-              _internal::XmlNodeType::Text, nullptr, object.Enabled ? "true" : "false"});
+              _internal::XmlNodeType::Text, std::string(), object.Enabled ? "true" : "false"});
           writer.Write(_internal::XmlNode{_internal::XmlNodeType::EndTag});
           writer.Write(_internal::XmlNode{_internal::XmlNodeType::EndTag});
         }
@@ -2637,11 +2638,11 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
             else if (node.Type == _internal::XmlNodeType::StartTag)
             {
 
-              if (std::strcmp(node.Name, "Days") == 0)
+              if (std::strcmp(node.Name.data(), "Days") == 0)
               {
                 path.emplace_back(XmlTagName::Days);
               }
-              else if (std::strcmp(node.Name, "Enabled") == 0)
+              else if (std::strcmp(node.Name.data(), "Enabled") == 0)
               {
                 path.emplace_back(XmlTagName::Enabled);
               }
@@ -2658,7 +2659,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
               }
               else if (path.size() == 1 && path[0] == XmlTagName::Enabled)
               {
-                result.Enabled = (std::strcmp(node.Value, "true") == 0);
+                result.Enabled = (std::strcmp(node.Value.data(), "true") == 0);
               }
             }
           }
@@ -2699,19 +2700,19 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
             else if (node.Type == _internal::XmlNodeType::StartTag)
             {
 
-              if (std::strcmp(node.Name, "Enabled") == 0)
+              if (std::strcmp(node.Name.data(), "Enabled") == 0)
               {
                 path.emplace_back(XmlTagName::Enabled);
               }
-              else if (std::strcmp(node.Name, "IncludeAPIs") == 0)
+              else if (std::strcmp(node.Name.data(), "IncludeAPIs") == 0)
               {
                 path.emplace_back(XmlTagName::IncludeAPIs);
               }
-              else if (std::strcmp(node.Name, "RetentionPolicy") == 0)
+              else if (std::strcmp(node.Name.data(), "RetentionPolicy") == 0)
               {
                 path.emplace_back(XmlTagName::RetentionPolicy);
               }
-              else if (std::strcmp(node.Name, "Version") == 0)
+              else if (std::strcmp(node.Name.data(), "Version") == 0)
               {
                 path.emplace_back(XmlTagName::Version);
               }
@@ -2730,11 +2731,11 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
             {
               if (path.size() == 1 && path[0] == XmlTagName::Enabled)
               {
-                result.Enabled = (std::strcmp(node.Value, "true") == 0);
+                result.Enabled = (std::strcmp(node.Value.data(), "true") == 0);
               }
               else if (path.size() == 1 && path[0] == XmlTagName::IncludeAPIs)
               {
-                result.IncludeApis = (std::strcmp(node.Value, "true") == 0);
+                result.IncludeApis = (std::strcmp(node.Value.data(), "true") == 0);
               }
               else if (path.size() == 1 && path[0] == XmlTagName::Version)
               {
@@ -2780,23 +2781,23 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
             else if (node.Type == _internal::XmlNodeType::StartTag)
             {
 
-              if (std::strcmp(node.Name, "AllowedHeaders") == 0)
+              if (std::strcmp(node.Name.data(), "AllowedHeaders") == 0)
               {
                 path.emplace_back(XmlTagName::AllowedHeaders);
               }
-              else if (std::strcmp(node.Name, "AllowedMethods") == 0)
+              else if (std::strcmp(node.Name.data(), "AllowedMethods") == 0)
               {
                 path.emplace_back(XmlTagName::AllowedMethods);
               }
-              else if (std::strcmp(node.Name, "AllowedOrigins") == 0)
+              else if (std::strcmp(node.Name.data(), "AllowedOrigins") == 0)
               {
                 path.emplace_back(XmlTagName::AllowedOrigins);
               }
-              else if (std::strcmp(node.Name, "ExposedHeaders") == 0)
+              else if (std::strcmp(node.Name.data(), "ExposedHeaders") == 0)
               {
                 path.emplace_back(XmlTagName::ExposedHeaders);
               }
-              else if (std::strcmp(node.Name, "MaxAgeInSeconds") == 0)
+              else if (std::strcmp(node.Name.data(), "MaxAgeInSeconds") == 0)
               {
                 path.emplace_back(XmlTagName::MaxAgeInSeconds);
               }
@@ -2863,7 +2864,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
             else if (node.Type == _internal::XmlNodeType::StartTag)
             {
 
-              if (std::strcmp(node.Name, "Enabled") == 0)
+              if (std::strcmp(node.Name.data(), "Enabled") == 0)
               {
                 path.emplace_back(XmlTagName::Enabled);
               }
@@ -2876,7 +2877,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
             {
               if (path.size() == 1 && path[0] == XmlTagName::Enabled)
               {
-                result.Enabled = (std::strcmp(node.Value, "true") == 0);
+                result.Enabled = (std::strcmp(node.Value.data(), "true") == 0);
               }
             }
           }
@@ -2914,7 +2915,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
             else if (node.Type == _internal::XmlNodeType::StartTag)
             {
 
-              if (std::strcmp(node.Name, "Multichannel") == 0)
+              if (std::strcmp(node.Name.data(), "Multichannel") == 0)
               {
                 path.emplace_back(XmlTagName::Multichannel);
               }
@@ -2967,7 +2968,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
             else if (node.Type == _internal::XmlNodeType::StartTag)
             {
 
-              if (std::strcmp(node.Name, "SMB") == 0)
+              if (std::strcmp(node.Name.data(), "SMB") == 0)
               {
                 path.emplace_back(XmlTagName::SMB);
               }
@@ -3025,27 +3026,27 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
             else if (node.Type == _internal::XmlNodeType::StartTag)
             {
 
-              if (std::strcmp(node.Name, "Cors") == 0)
+              if (std::strcmp(node.Name.data(), "Cors") == 0)
               {
                 path.emplace_back(XmlTagName::Cors);
               }
-              else if (std::strcmp(node.Name, "CorsRule") == 0)
+              else if (std::strcmp(node.Name.data(), "CorsRule") == 0)
               {
                 path.emplace_back(XmlTagName::CorsRule);
               }
-              else if (std::strcmp(node.Name, "HourMetrics") == 0)
+              else if (std::strcmp(node.Name.data(), "HourMetrics") == 0)
               {
                 path.emplace_back(XmlTagName::HourMetrics);
               }
-              else if (std::strcmp(node.Name, "MinuteMetrics") == 0)
+              else if (std::strcmp(node.Name.data(), "MinuteMetrics") == 0)
               {
                 path.emplace_back(XmlTagName::MinuteMetrics);
               }
-              else if (std::strcmp(node.Name, "ProtocolSettings") == 0)
+              else if (std::strcmp(node.Name.data(), "ProtocolSettings") == 0)
               {
                 path.emplace_back(XmlTagName::ProtocolSettings);
               }
-              else if (std::strcmp(node.Name, "StorageServiceProperties") == 0)
+              else if (std::strcmp(node.Name.data(), "StorageServiceProperties") == 0)
               {
                 path.emplace_back(XmlTagName::StorageServiceProperties);
               }
@@ -3156,7 +3157,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
             else if (node.Type == _internal::XmlNodeType::StartTag)
             {
 
-              if (std::strcmp(node.Name, "LeaseStatus") == 0)
+              if (std::strcmp(node.Name.data(), "LeaseStatus") == 0)
               {
                 path.emplace_back(XmlTagName::LeaseStatus);
               }
@@ -3207,7 +3208,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
             else if (node.Type == _internal::XmlNodeType::StartTag)
             {
 
-              if (std::strcmp(node.Name, "LeaseState") == 0)
+              if (std::strcmp(node.Name.data(), "LeaseState") == 0)
               {
                 path.emplace_back(XmlTagName::LeaseState);
               }
@@ -3258,7 +3259,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
             else if (node.Type == _internal::XmlNodeType::StartTag)
             {
 
-              if (std::strcmp(node.Name, "LeaseDuration") == 0)
+              if (std::strcmp(node.Name.data(), "LeaseDuration") == 0)
               {
                 path.emplace_back(XmlTagName::LeaseDuration);
               }
@@ -3323,63 +3324,63 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
             else if (node.Type == _internal::XmlNodeType::StartTag)
             {
 
-              if (std::strcmp(node.Name, "AccessTier") == 0)
+              if (std::strcmp(node.Name.data(), "AccessTier") == 0)
               {
                 path.emplace_back(XmlTagName::AccessTier);
               }
-              else if (std::strcmp(node.Name, "AccessTierChangeTime") == 0)
+              else if (std::strcmp(node.Name.data(), "AccessTierChangeTime") == 0)
               {
                 path.emplace_back(XmlTagName::AccessTierChangeTime);
               }
-              else if (std::strcmp(node.Name, "AccessTierTransitionState") == 0)
+              else if (std::strcmp(node.Name.data(), "AccessTierTransitionState") == 0)
               {
                 path.emplace_back(XmlTagName::AccessTierTransitionState);
               }
-              else if (std::strcmp(node.Name, "DeletedTime") == 0)
+              else if (std::strcmp(node.Name.data(), "DeletedTime") == 0)
               {
                 path.emplace_back(XmlTagName::DeletedTime);
               }
-              else if (std::strcmp(node.Name, "Etag") == 0)
+              else if (std::strcmp(node.Name.data(), "Etag") == 0)
               {
                 path.emplace_back(XmlTagName::Etag);
               }
-              else if (std::strcmp(node.Name, "Last-Modified") == 0)
+              else if (std::strcmp(node.Name.data(), "Last-Modified") == 0)
               {
                 path.emplace_back(XmlTagName::LastModified);
               }
-              else if (std::strcmp(node.Name, "LeaseDuration") == 0)
+              else if (std::strcmp(node.Name.data(), "LeaseDuration") == 0)
               {
                 path.emplace_back(XmlTagName::LeaseDuration);
               }
-              else if (std::strcmp(node.Name, "LeaseState") == 0)
+              else if (std::strcmp(node.Name.data(), "LeaseState") == 0)
               {
                 path.emplace_back(XmlTagName::LeaseState);
               }
-              else if (std::strcmp(node.Name, "LeaseStatus") == 0)
+              else if (std::strcmp(node.Name.data(), "LeaseStatus") == 0)
               {
                 path.emplace_back(XmlTagName::LeaseStatus);
               }
-              else if (std::strcmp(node.Name, "NextAllowedQuotaDowngradeTime") == 0)
+              else if (std::strcmp(node.Name.data(), "NextAllowedQuotaDowngradeTime") == 0)
               {
                 path.emplace_back(XmlTagName::NextAllowedQuotaDowngradeTime);
               }
-              else if (std::strcmp(node.Name, "ProvisionedEgressMBps") == 0)
+              else if (std::strcmp(node.Name.data(), "ProvisionedEgressMBps") == 0)
               {
                 path.emplace_back(XmlTagName::ProvisionedEgressMBps);
               }
-              else if (std::strcmp(node.Name, "ProvisionedIngressMBps") == 0)
+              else if (std::strcmp(node.Name.data(), "ProvisionedIngressMBps") == 0)
               {
                 path.emplace_back(XmlTagName::ProvisionedIngressMBps);
               }
-              else if (std::strcmp(node.Name, "ProvisionedIops") == 0)
+              else if (std::strcmp(node.Name.data(), "ProvisionedIops") == 0)
               {
                 path.emplace_back(XmlTagName::ProvisionedIops);
               }
-              else if (std::strcmp(node.Name, "Quota") == 0)
+              else if (std::strcmp(node.Name.data(), "Quota") == 0)
               {
                 path.emplace_back(XmlTagName::Quota);
               }
-              else if (std::strcmp(node.Name, "RemainingRetentionDays") == 0)
+              else if (std::strcmp(node.Name.data(), "RemainingRetentionDays") == 0)
               {
                 path.emplace_back(XmlTagName::RemainingRetentionDays);
               }
@@ -3489,7 +3490,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
             }
             else if (depth == 1 && node.Type == _internal::XmlNodeType::Text)
             {
-              result.emplace(std::move(key), std::string(node.Value));
+              result.emplace(std::move(key), node.Value);
             }
           }
           return result;
@@ -3531,27 +3532,27 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
             else if (node.Type == _internal::XmlNodeType::StartTag)
             {
 
-              if (std::strcmp(node.Name, "Deleted") == 0)
+              if (std::strcmp(node.Name.data(), "Deleted") == 0)
               {
                 path.emplace_back(XmlTagName::Deleted);
               }
-              else if (std::strcmp(node.Name, "Metadata") == 0)
+              else if (std::strcmp(node.Name.data(), "Metadata") == 0)
               {
                 path.emplace_back(XmlTagName::Metadata);
               }
-              else if (std::strcmp(node.Name, "Name") == 0)
+              else if (std::strcmp(node.Name.data(), "Name") == 0)
               {
                 path.emplace_back(XmlTagName::Name);
               }
-              else if (std::strcmp(node.Name, "Properties") == 0)
+              else if (std::strcmp(node.Name.data(), "Properties") == 0)
               {
                 path.emplace_back(XmlTagName::Properties);
               }
-              else if (std::strcmp(node.Name, "Snapshot") == 0)
+              else if (std::strcmp(node.Name.data(), "Snapshot") == 0)
               {
                 path.emplace_back(XmlTagName::Snapshot);
               }
-              else if (std::strcmp(node.Name, "Version") == 0)
+              else if (std::strcmp(node.Name.data(), "Version") == 0)
               {
                 path.emplace_back(XmlTagName::Version);
               }
@@ -3575,7 +3576,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
             {
               if (path.size() == 1 && path[0] == XmlTagName::Deleted)
               {
-                result.Deleted = (std::strcmp(node.Value, "true") == 0);
+                result.Deleted = (std::strcmp(node.Value.data(), "true") == 0);
               }
               else if (path.size() == 1 && path[0] == XmlTagName::Name)
               {
@@ -3630,27 +3631,27 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
             else if (node.Type == _internal::XmlNodeType::StartTag)
             {
 
-              if (std::strcmp(node.Name, "EnumerationResults") == 0)
+              if (std::strcmp(node.Name.data(), "EnumerationResults") == 0)
               {
                 path.emplace_back(XmlTagName::EnumerationResults);
               }
-              else if (std::strcmp(node.Name, "MaxResults") == 0)
+              else if (std::strcmp(node.Name.data(), "MaxResults") == 0)
               {
                 path.emplace_back(XmlTagName::MaxResults);
               }
-              else if (std::strcmp(node.Name, "NextMarker") == 0)
+              else if (std::strcmp(node.Name.data(), "NextMarker") == 0)
               {
                 path.emplace_back(XmlTagName::NextMarker);
               }
-              else if (std::strcmp(node.Name, "Prefix") == 0)
+              else if (std::strcmp(node.Name.data(), "Prefix") == 0)
               {
                 path.emplace_back(XmlTagName::Prefix);
               }
-              else if (std::strcmp(node.Name, "Share") == 0)
+              else if (std::strcmp(node.Name.data(), "Share") == 0)
               {
                 path.emplace_back(XmlTagName::Share);
               }
-              else if (std::strcmp(node.Name, "Shares") == 0)
+              else if (std::strcmp(node.Name.data(), "Shares") == 0)
               {
                 path.emplace_back(XmlTagName::Shares);
               }
@@ -3688,7 +3689,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
             else if (node.Type == _internal::XmlNodeType::Attribute)
             {
               if (path.size() == 1 && path[0] == XmlTagName::EnumerationResults
-                  && (std::strcmp(node.Name, "ServiceEndpoint") == 0))
+                  && (std::strcmp(node.Name.data(), "ServiceEndpoint") == 0))
               {
                 result.ServiceEndpoint = node.Value;
               }
@@ -4813,15 +4814,15 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
             else if (node.Type == _internal::XmlNodeType::StartTag)
             {
 
-              if (std::strcmp(node.Name, "Expiry") == 0)
+              if (std::strcmp(node.Name.data(), "Expiry") == 0)
               {
                 path.emplace_back(XmlTagName::Expiry);
               }
-              else if (std::strcmp(node.Name, "Permission") == 0)
+              else if (std::strcmp(node.Name.data(), "Permission") == 0)
               {
                 path.emplace_back(XmlTagName::Permission);
               }
-              else if (std::strcmp(node.Name, "Start") == 0)
+              else if (std::strcmp(node.Name.data(), "Start") == 0)
               {
                 path.emplace_back(XmlTagName::Start);
               }
@@ -4881,11 +4882,11 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
             else if (node.Type == _internal::XmlNodeType::StartTag)
             {
 
-              if (std::strcmp(node.Name, "AccessPolicy") == 0)
+              if (std::strcmp(node.Name.data(), "AccessPolicy") == 0)
               {
                 path.emplace_back(XmlTagName::AccessPolicy);
               }
-              else if (std::strcmp(node.Name, "Id") == 0)
+              else if (std::strcmp(node.Name.data(), "Id") == 0)
               {
                 path.emplace_back(XmlTagName::Id);
               }
@@ -4943,11 +4944,11 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
             else if (node.Type == _internal::XmlNodeType::StartTag)
             {
 
-              if (std::strcmp(node.Name, "SignedIdentifier") == 0)
+              if (std::strcmp(node.Name.data(), "SignedIdentifier") == 0)
               {
                 path.emplace_back(XmlTagName::SignedIdentifier);
               }
-              else if (std::strcmp(node.Name, "SignedIdentifiers") == 0)
+              else if (std::strcmp(node.Name.data(), "SignedIdentifiers") == 0)
               {
                 path.emplace_back(XmlTagName::SignedIdentifiers);
               }
@@ -5007,24 +5008,20 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           writer.Write(_internal::XmlNode{_internal::XmlNodeType::StartTag, "Start"});
           writer.Write(_internal::XmlNode{
               _internal::XmlNodeType::Text,
-              nullptr,
-              object.StartsOn
-                  .ToString(
-                      Azure::DateTime::DateFormat::Rfc3339, DateTime::TimeFractionFormat::AllDigits)
-                  .data()});
+              std::string(),
+              object.StartsOn.ToString(
+                  Azure::DateTime::DateFormat::Rfc3339, DateTime::TimeFractionFormat::AllDigits)});
           writer.Write(_internal::XmlNode{_internal::XmlNodeType::EndTag});
           writer.Write(_internal::XmlNode{_internal::XmlNodeType::StartTag, "Expiry"});
           writer.Write(_internal::XmlNode{
               _internal::XmlNodeType::Text,
-              nullptr,
-              object.ExpiresOn
-                  .ToString(
-                      Azure::DateTime::DateFormat::Rfc3339, DateTime::TimeFractionFormat::AllDigits)
-                  .data()});
+              std::string(),
+              object.ExpiresOn.ToString(
+                  Azure::DateTime::DateFormat::Rfc3339, DateTime::TimeFractionFormat::AllDigits)});
           writer.Write(_internal::XmlNode{_internal::XmlNodeType::EndTag});
           writer.Write(_internal::XmlNode{_internal::XmlNodeType::StartTag, "Permission"});
           writer.Write(
-              _internal::XmlNode{_internal::XmlNodeType::Text, nullptr, object.Permission.data()});
+              _internal::XmlNode{_internal::XmlNodeType::Text, std::string(), object.Permission});
           writer.Write(_internal::XmlNode{_internal::XmlNodeType::EndTag});
           writer.Write(_internal::XmlNode{_internal::XmlNodeType::EndTag});
         }
@@ -5035,7 +5032,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         {
           writer.Write(_internal::XmlNode{_internal::XmlNodeType::StartTag, "SignedIdentifier"});
           writer.Write(_internal::XmlNode{_internal::XmlNodeType::StartTag, "Id"});
-          writer.Write(_internal::XmlNode{_internal::XmlNodeType::Text, nullptr, object.Id.data()});
+          writer.Write(_internal::XmlNode{_internal::XmlNodeType::Text, std::string(), object.Id});
           writer.Write(_internal::XmlNode{_internal::XmlNodeType::EndTag});
           AccessPolicyToXml(writer, object.Policy);
           writer.Write(_internal::XmlNode{_internal::XmlNodeType::EndTag});
@@ -5112,11 +5109,11 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
             else if (node.Type == _internal::XmlNodeType::StartTag)
             {
 
-              if (std::strcmp(node.Name, "ShareStats") == 0)
+              if (std::strcmp(node.Name.data(), "ShareStats") == 0)
               {
                 path.emplace_back(XmlTagName::ShareStats);
               }
-              else if (std::strcmp(node.Name, "ShareUsageBytes") == 0)
+              else if (std::strcmp(node.Name.data(), "ShareUsageBytes") == 0)
               {
                 path.emplace_back(XmlTagName::ShareUsageBytes);
               }
@@ -5741,7 +5738,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
             else if (node.Type == _internal::XmlNodeType::StartTag)
             {
 
-              if (std::strcmp(node.Name, "Name") == 0)
+              if (std::strcmp(node.Name.data(), "Name") == 0)
               {
                 path.emplace_back(XmlTagName::Name);
               }
@@ -5792,7 +5789,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
             else if (node.Type == _internal::XmlNodeType::StartTag)
             {
 
-              if (std::strcmp(node.Name, "Content-Length") == 0)
+              if (std::strcmp(node.Name.data(), "Content-Length") == 0)
               {
                 path.emplace_back(XmlTagName::ContentLength);
               }
@@ -5844,11 +5841,11 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
             else if (node.Type == _internal::XmlNodeType::StartTag)
             {
 
-              if (std::strcmp(node.Name, "Name") == 0)
+              if (std::strcmp(node.Name.data(), "Name") == 0)
               {
                 path.emplace_back(XmlTagName::Name);
               }
-              else if (std::strcmp(node.Name, "Properties") == 0)
+              else if (std::strcmp(node.Name.data(), "Properties") == 0)
               {
                 path.emplace_back(XmlTagName::Properties);
               }
@@ -5907,11 +5904,11 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
             else if (node.Type == _internal::XmlNodeType::StartTag)
             {
 
-              if (std::strcmp(node.Name, "Directory") == 0)
+              if (std::strcmp(node.Name.data(), "Directory") == 0)
               {
                 path.emplace_back(XmlTagName::Directory);
               }
-              else if (std::strcmp(node.Name, "File") == 0)
+              else if (std::strcmp(node.Name.data(), "File") == 0)
               {
                 path.emplace_back(XmlTagName::File);
               }
@@ -5973,23 +5970,23 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
             else if (node.Type == _internal::XmlNodeType::StartTag)
             {
 
-              if (std::strcmp(node.Name, "Entries") == 0)
+              if (std::strcmp(node.Name.data(), "Entries") == 0)
               {
                 path.emplace_back(XmlTagName::Entries);
               }
-              else if (std::strcmp(node.Name, "EnumerationResults") == 0)
+              else if (std::strcmp(node.Name.data(), "EnumerationResults") == 0)
               {
                 path.emplace_back(XmlTagName::EnumerationResults);
               }
-              else if (std::strcmp(node.Name, "MaxResults") == 0)
+              else if (std::strcmp(node.Name.data(), "MaxResults") == 0)
               {
                 path.emplace_back(XmlTagName::MaxResults);
               }
-              else if (std::strcmp(node.Name, "NextMarker") == 0)
+              else if (std::strcmp(node.Name.data(), "NextMarker") == 0)
               {
                 path.emplace_back(XmlTagName::NextMarker);
               }
-              else if (std::strcmp(node.Name, "Prefix") == 0)
+              else if (std::strcmp(node.Name.data(), "Prefix") == 0)
               {
                 path.emplace_back(XmlTagName::Prefix);
               }
@@ -6028,25 +6025,25 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
             else if (node.Type == _internal::XmlNodeType::Attribute)
             {
               if (path.size() == 1 && path[0] == XmlTagName::EnumerationResults
-                  && (std::strcmp(node.Name, "DirectoryPath") == 0))
+                  && (std::strcmp(node.Name.data(), "DirectoryPath") == 0))
               {
                 result.DirectoryPath = node.Value;
               }
               else if (
                   path.size() == 1 && path[0] == XmlTagName::EnumerationResults
-                  && (std::strcmp(node.Name, "ServiceEndpoint") == 0))
+                  && (std::strcmp(node.Name.data(), "ServiceEndpoint") == 0))
               {
                 result.ServiceEndpoint = node.Value;
               }
               else if (
                   path.size() == 1 && path[0] == XmlTagName::EnumerationResults
-                  && (std::strcmp(node.Name, "ShareName") == 0))
+                  && (std::strcmp(node.Name.data(), "ShareName") == 0))
               {
                 result.ShareName = node.Value;
               }
               else if (
                   path.size() == 1 && path[0] == XmlTagName::EnumerationResults
-                  && (std::strcmp(node.Name, "ShareSnapshot") == 0))
+                  && (std::strcmp(node.Name.data(), "ShareSnapshot") == 0))
               {
                 result.ShareSnapshot = node.Value;
               }
@@ -6135,35 +6132,35 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
             else if (node.Type == _internal::XmlNodeType::StartTag)
             {
 
-              if (std::strcmp(node.Name, "ClientIp") == 0)
+              if (std::strcmp(node.Name.data(), "ClientIp") == 0)
               {
                 path.emplace_back(XmlTagName::ClientIp);
               }
-              else if (std::strcmp(node.Name, "FileId") == 0)
+              else if (std::strcmp(node.Name.data(), "FileId") == 0)
               {
                 path.emplace_back(XmlTagName::FileId);
               }
-              else if (std::strcmp(node.Name, "HandleId") == 0)
+              else if (std::strcmp(node.Name.data(), "HandleId") == 0)
               {
                 path.emplace_back(XmlTagName::HandleId);
               }
-              else if (std::strcmp(node.Name, "LastReconnectTime") == 0)
+              else if (std::strcmp(node.Name.data(), "LastReconnectTime") == 0)
               {
                 path.emplace_back(XmlTagName::LastReconnectTime);
               }
-              else if (std::strcmp(node.Name, "OpenTime") == 0)
+              else if (std::strcmp(node.Name.data(), "OpenTime") == 0)
               {
                 path.emplace_back(XmlTagName::OpenTime);
               }
-              else if (std::strcmp(node.Name, "ParentId") == 0)
+              else if (std::strcmp(node.Name.data(), "ParentId") == 0)
               {
                 path.emplace_back(XmlTagName::ParentId);
               }
-              else if (std::strcmp(node.Name, "Path") == 0)
+              else if (std::strcmp(node.Name.data(), "Path") == 0)
               {
                 path.emplace_back(XmlTagName::Path);
               }
-              else if (std::strcmp(node.Name, "SessionId") == 0)
+              else if (std::strcmp(node.Name.data(), "SessionId") == 0)
               {
                 path.emplace_back(XmlTagName::SessionId);
               }
@@ -6246,19 +6243,19 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
             else if (node.Type == _internal::XmlNodeType::StartTag)
             {
 
-              if (std::strcmp(node.Name, "Entries") == 0)
+              if (std::strcmp(node.Name.data(), "Entries") == 0)
               {
                 path.emplace_back(XmlTagName::Entries);
               }
-              else if (std::strcmp(node.Name, "EnumerationResults") == 0)
+              else if (std::strcmp(node.Name.data(), "EnumerationResults") == 0)
               {
                 path.emplace_back(XmlTagName::EnumerationResults);
               }
-              else if (std::strcmp(node.Name, "Handle") == 0)
+              else if (std::strcmp(node.Name.data(), "Handle") == 0)
               {
                 path.emplace_back(XmlTagName::Handle);
               }
-              else if (std::strcmp(node.Name, "NextMarker") == 0)
+              else if (std::strcmp(node.Name.data(), "NextMarker") == 0)
               {
                 path.emplace_back(XmlTagName::NextMarker);
               }
@@ -7975,15 +7972,15 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
             else if (node.Type == _internal::XmlNodeType::StartTag)
             {
 
-              if (std::strcmp(node.Name, "ClearRange") == 0)
+              if (std::strcmp(node.Name.data(), "ClearRange") == 0)
               {
                 path.emplace_back(XmlTagName::ClearRange);
               }
-              else if (std::strcmp(node.Name, "Range") == 0)
+              else if (std::strcmp(node.Name.data(), "Range") == 0)
               {
                 path.emplace_back(XmlTagName::Range);
               }
-              else if (std::strcmp(node.Name, "Ranges") == 0)
+              else if (std::strcmp(node.Name.data(), "Ranges") == 0)
               {
                 path.emplace_back(XmlTagName::Ranges);
               }
@@ -8132,35 +8129,35 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
             else if (node.Type == _internal::XmlNodeType::StartTag)
             {
 
-              if (std::strcmp(node.Name, "ClientIp") == 0)
+              if (std::strcmp(node.Name.data(), "ClientIp") == 0)
               {
                 path.emplace_back(XmlTagName::ClientIp);
               }
-              else if (std::strcmp(node.Name, "FileId") == 0)
+              else if (std::strcmp(node.Name.data(), "FileId") == 0)
               {
                 path.emplace_back(XmlTagName::FileId);
               }
-              else if (std::strcmp(node.Name, "HandleId") == 0)
+              else if (std::strcmp(node.Name.data(), "HandleId") == 0)
               {
                 path.emplace_back(XmlTagName::HandleId);
               }
-              else if (std::strcmp(node.Name, "LastReconnectTime") == 0)
+              else if (std::strcmp(node.Name.data(), "LastReconnectTime") == 0)
               {
                 path.emplace_back(XmlTagName::LastReconnectTime);
               }
-              else if (std::strcmp(node.Name, "OpenTime") == 0)
+              else if (std::strcmp(node.Name.data(), "OpenTime") == 0)
               {
                 path.emplace_back(XmlTagName::OpenTime);
               }
-              else if (std::strcmp(node.Name, "ParentId") == 0)
+              else if (std::strcmp(node.Name.data(), "ParentId") == 0)
               {
                 path.emplace_back(XmlTagName::ParentId);
               }
-              else if (std::strcmp(node.Name, "Path") == 0)
+              else if (std::strcmp(node.Name.data(), "Path") == 0)
               {
                 path.emplace_back(XmlTagName::Path);
               }
-              else if (std::strcmp(node.Name, "SessionId") == 0)
+              else if (std::strcmp(node.Name.data(), "SessionId") == 0)
               {
                 path.emplace_back(XmlTagName::SessionId);
               }
@@ -8243,19 +8240,19 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
             else if (node.Type == _internal::XmlNodeType::StartTag)
             {
 
-              if (std::strcmp(node.Name, "Entries") == 0)
+              if (std::strcmp(node.Name.data(), "Entries") == 0)
               {
                 path.emplace_back(XmlTagName::Entries);
               }
-              else if (std::strcmp(node.Name, "EnumerationResults") == 0)
+              else if (std::strcmp(node.Name.data(), "EnumerationResults") == 0)
               {
                 path.emplace_back(XmlTagName::EnumerationResults);
               }
-              else if (std::strcmp(node.Name, "Handle") == 0)
+              else if (std::strcmp(node.Name.data(), "Handle") == 0)
               {
                 path.emplace_back(XmlTagName::Handle);
               }
-              else if (std::strcmp(node.Name, "NextMarker") == 0)
+              else if (std::strcmp(node.Name.data(), "NextMarker") == 0)
               {
                 path.emplace_back(XmlTagName::NextMarker);
               }

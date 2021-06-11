@@ -65,7 +65,7 @@ namespace Azure { namespace Core {
     std::unique_ptr<Azure::Core::Http::RawResponse> RawResponse;
 
     /**
-     * @brief Constructs a new `RequestFailedException` object.
+     * @brief Constructs a new `%RequestFailedException` with a \p message string.
      *
      * @note An Exception without an HTTP raw response represents an exception that happened
      * before sending the request to the server.
@@ -78,7 +78,7 @@ namespace Azure { namespace Core {
     }
 
     /**
-     * @brief Constructs a new `RequestFailedException` object with an HTTP raw response.
+     * @brief Constructs a new `%RequestFailedException` object with an HTTP raw response.
      *
      * @note The HTTP raw response is parsed to populate information expected from all Azure
      * Services like the status code, reason phrase and some headers like the request ID. A concrete
@@ -93,10 +93,10 @@ namespace Azure { namespace Core {
         std::unique_ptr<Azure::Core::Http::RawResponse> rawResponse);
 
     /**
-     * @brief Constructs a new `RequestFailedException` by copying from an existing one.
+     * @brief Constructs a new `%RequestFailedException` by copying from an existing one.
      * @note Copies the #Azure::Core::Http::RawResponse into the new `RequestFailedException`.
      *
-     * @param other The `RequestFailedException` to be copied.
+     * @param other The `%RequestFailedException` to be copied.
      */
     RequestFailedException(const RequestFailedException& other)
         : std::runtime_error(other.Message), StatusCode(other.StatusCode),
@@ -109,9 +109,29 @@ namespace Azure { namespace Core {
     {
     }
 
+    /**
+     * @brief Constructs a new `%RequestFailedException` by moving in an existing one.
+     * @param other The `%RequestFailedException` to move in.
+     */
     RequestFailedException(RequestFailedException&& other) = default;
+
+    /**
+     * @brief An instance of `%RequestFailedException` class cannot be assigned.
+     *
+     */
     RequestFailedException& operator=(const RequestFailedException&) = delete;
+
+    /**
+     * @brief An instance of `%RequestFailedException` class cannot be moved into another instance
+     * after creation.
+     *
+     */
     RequestFailedException& operator=(RequestFailedException&&) = delete;
+
+    /**
+     * @brief Destructs `%RequestFailedException`.
+     *
+     */
     ~RequestFailedException() = default;
   };
 }} // namespace Azure::Core

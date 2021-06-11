@@ -15,7 +15,7 @@
 #include <stdexcept>
 #include <string>
 
-namespace Azure { namespace Security { namespace KeyVault { namespace _detail {
+namespace Azure { namespace Security { namespace KeyVault { namespace _internal {
   /**
    * @brief Container for static methods to parse Key Vault payloads to Azure Core Exception.
    *
@@ -31,4 +31,4 @@ namespace Azure { namespace Security { namespace KeyVault { namespace _detail {
     static Azure::Core::RequestFailedException CreateException(
         std::unique_ptr<Azure::Core::Http::RawResponse> rawResponse);
   };
-}}}} // namespace Azure::Security::KeyVault::_detail
+}}}} // namespace Azure::Security::KeyVault::_internal

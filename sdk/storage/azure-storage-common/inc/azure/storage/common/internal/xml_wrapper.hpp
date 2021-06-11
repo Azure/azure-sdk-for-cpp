@@ -20,13 +20,17 @@ namespace Azure { namespace Storage { namespace _internal {
 
   struct XmlNode final
   {
-    explicit XmlNode(XmlNodeType type, const char* name = nullptr, const char* value = nullptr)
-        : Type(type), Name(name), Value(value)
+    explicit XmlNode(
+        XmlNodeType type,
+        std::string name = std::string(),
+        std::string value = std::string())
+        : Type(type), Name(std::move(name)), Value(std::move(value))
     {
     }
+
     XmlNodeType Type;
-    const char* Name;
-    const char* Value;
+    std::string Name;
+    std::string Value;
   };
 
   class XmlReader final {

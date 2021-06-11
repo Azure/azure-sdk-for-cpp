@@ -8,8 +8,8 @@
 #include <azure/core/http/policies/policy.hpp>
 #include <azure/core/internal/json/json.hpp>
 
-#include "azure/storage/common/constants.hpp"
-#include "azure/storage/common/xml_wrapper.hpp"
+#include "azure/storage/common/internal/constants.hpp"
+#include "azure/storage/common/internal/xml_wrapper.hpp"
 
 namespace Azure { namespace Storage {
   StorageException StorageException::CreateFromResponse(
@@ -77,15 +77,15 @@ namespace Azure { namespace Storage {
           else if (node.Type == _internal::XmlNodeType::StartTag)
           {
             startTagName = node.Name;
-            if (std::strcmp(node.Name, "Error") == 0)
+            if (node.Name == "Error")
             {
               path.emplace_back(XmlTagName::XmlTagError);
             }
-            else if (std::strcmp(node.Name, "Code") == 0)
+            else if (node.Name == "Code")
             {
               path.emplace_back(XmlTagName::XmlTagCode);
             }
-            else if (std::strcmp(node.Name, "Message") == 0)
+            else if (node.Name == "Message")
             {
               path.emplace_back(XmlTagName::XmlTagMessage);
             }

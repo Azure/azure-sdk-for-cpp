@@ -38,13 +38,13 @@ template <class T> class Nullable final {
 
 public:
   /**
-   * @brief Construct a #Azure::Nullable that represents the absence of value.
+   * @brief Constructs a `%Nullable` that represents the absence of value.
    *
    */
   constexpr Nullable() : m_disengaged{}, m_hasValue(false) {}
 
   /**
-   * @brief Construct a #Azure::Nullable having an \p initialValue.
+   * @brief Constructs a `%Nullable` having an \p initialValue.
    *
    * @param initialValue A non-absent value to initialize with.
    */
@@ -53,7 +53,11 @@ public:
   {
   }
 
-  /// Copy constructor.
+  /**
+   * @brief Constructs a `%Nullable` by copying another `%Nullable`.
+   *
+   * @param other Another `%Nullable` instance to copy.
+   */
   Nullable(const Nullable& other) noexcept(std::is_nothrow_copy_constructible<T>::value)
       : m_hasValue(other.m_hasValue)
   {
@@ -63,7 +67,11 @@ public:
     }
   }
 
-  /// Move constructor.
+  /**
+   * @brief Constructs a `%Nullable` by moving in another `%Nullable`.
+   *
+   * @param other A `%Nullable` instance to move into the instance being constructed.
+   */
   Nullable(Nullable&& other) noexcept(std::is_nothrow_move_constructible<T>::value)
       : m_hasValue(other.m_hasValue)
   {
@@ -74,7 +82,8 @@ public:
   }
 
   /**
-   * @brief Destructs the Nullable, destructs the contained value if there is one.
+   * @brief Destructs the `%Nullable`, calling the destructor for the contained value if there is
+   * one.
    *
    */
   ~Nullable()

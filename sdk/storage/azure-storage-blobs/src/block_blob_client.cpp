@@ -16,12 +16,12 @@
 #endif
 
 #include <azure/core/io/body_stream.hpp>
-#include <azure/storage/common/concurrent_transfer.hpp>
-#include <azure/storage/common/constants.hpp>
 #include <azure/storage/common/crypt.hpp>
-#include <azure/storage/common/file_io.hpp>
+#include <azure/storage/common/internal/concurrent_transfer.hpp>
+#include <azure/storage/common/internal/constants.hpp>
+#include <azure/storage/common/internal/file_io.hpp>
+#include <azure/storage/common/internal/storage_switch_to_secondary_policy.hpp>
 #include <azure/storage/common/storage_common.hpp>
-#include <azure/storage/common/storage_switch_to_secondary_policy.hpp>
 
 namespace Azure { namespace Storage { namespace Blobs {
 
@@ -127,6 +127,11 @@ namespace Azure { namespace Storage { namespace Blobs {
     constexpr int64_t MaxBlockNumber = 50000;
     constexpr int64_t BlockGrainSize = 1 * 1024 * 1024;
 
+    if (static_cast<uint64_t>(options.TransferOptions.SingleUploadThreshold)
+        > std::numeric_limits<size_t>::max())
+    {
+      throw Azure::Core::RequestFailedException("Single upload threshold is too big");
+    }
     if (bufferSize <= static_cast<size_t>(options.TransferOptions.SingleUploadThreshold))
     {
       Azure::Core::IO::MemoryBodyStream contentStream(buffer, bufferSize);
@@ -150,7 +155,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     }
     if (chunkSize > MaxStageBlockSize)
     {
-      throw Azure::Core::RequestFailedException("Block size is too big");
+      throw Azure::Core::RequestFailedException("Block size is too big.");
     }
 
     std::vector<std::string> blockIds;
@@ -163,8 +168,6 @@ namespace Azure { namespace Storage { namespace Blobs {
     };
 
     auto uploadBlockFunc = [&](int64_t offset, int64_t length, int64_t chunkId, int64_t numChunks) {
-      // TODO: Investigate changing lambda parameters to be size_t, unless they need to be int64_t
-      // for some reason.
       Azure::Core::IO::MemoryBodyStream contentStream(buffer + offset, static_cast<size_t>(length));
       StageBlockOptions chunkOptions;
       auto blockInfo = StageBlock(getBlockId(chunkId), contentStream, chunkOptions, context);
@@ -256,7 +259,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     }
     if (chunkSize > MaxStageBlockSize)
     {
-      throw Azure::Core::RequestFailedException("Block size is too big");
+      throw Azure::Core::RequestFailedException("Block size is too big.");
     }
 
     _internal::ConcurrentTransfer(

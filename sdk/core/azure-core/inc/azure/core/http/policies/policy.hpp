@@ -59,34 +59,35 @@ namespace Azure { namespace Core { namespace Http { namespace Policies {
   };
 
   /**
-   * @brief HTTP request retry options.
+   * @brief The set of options that can be specified to influence how retry attempts are made, and a
+   * failure is eligible to be retried.
    * @note See https://azure.github.io/azure-sdk/general_azurecore.html#retry-policy.
    *
    */
   struct RetryOptions final
   {
     /**
-     * @brief Maximum number of attempts to retry.
+     * @brief The maximum number of retry attempts before giving up.
      *
      */
     int32_t MaxRetries = 3;
 
     /**
-     * @brief Mimimum amount of milliseconds between retry attempts.
+     * @brief The minimum permissible delay between retry attempts.
      * @note See https://en.cppreference.com/w/cpp/chrono/duration.
      *
      */
     std::chrono::milliseconds RetryDelay = std::chrono::seconds(4);
 
     /**
-     * @brief Mimimum amount of milliseconds between retry attempts.
+     * @brief The maximum permissible delay between retry attempts.
      * @note See https://en.cppreference.com/w/cpp/chrono/duration.
      *
      */
     std::chrono::milliseconds MaxRetryDelay = std::chrono::minutes(2);
 
     /**
-     * @brief HTTP status codes to retry on.
+     * @brief The HTTP status codes that indicate when an operation should be retried.
      *
      */
     std::set<HttpStatusCode> StatusCodes{
@@ -159,7 +160,7 @@ namespace Azure { namespace Core { namespace Http { namespace Policies {
      *
      * @param request An HTTP request being sent.
      * @param nextPolicy The next HTTP to invoke after this policy has been applied.
-     * @param context #Azure::Core::Context so that operation can be cancelled.
+     * @param context A context to control the request lifetime.
      *
      * @return An HTTP response after this policy, and all subsequent HTTP policies in the stack
      * sequence of policies have been applied.
@@ -169,31 +170,59 @@ namespace Azure { namespace Core { namespace Http { namespace Policies {
         NextHttpPolicy nextPolicy,
         Context const& context) const = 0;
 
-    /// Destructor.
+    /**
+     * @brief Destructs `%HttpPolicy`.
+     *
+     */
     virtual ~HttpPolicy() {}
 
     /**
-     * @brief Creates a clone of this HTTP policy.
-     * @return A clone of this HTTP policy.
+     * @brief Creates a clone of this `%HttpPolicy`.
+     * @return A clone of this `%HttpPolicy`.
      */
     virtual std::unique_ptr<HttpPolicy> Clone() const = 0;
 
   protected:
+    /**
+     * @brief Constructs a default instance of `%HttpPolicy`.
+     *
+     */
     HttpPolicy() = default;
+
+    /**
+     * @brief Constructs a copy of \p other `%HttpPolicy`.
+     * @param other Other `%HttpPolicy` to copy.
+     *
+     */
     HttpPolicy(const HttpPolicy& other) = default;
-    HttpPolicy(HttpPolicy&& other) = default;
+
+    /**
+     * @brief Assigns this `%HttpPolicy` to copy the \p other.
+     * @param other Other `%HttpPolicy` to copy.
+     * @return A reference to this `%HttpPolicy`.
+     *
+     */
     HttpPolicy& operator=(const HttpPolicy& other) = default;
+
+    /**
+     * @brief Contructs `%HttpPolicy` by moving \p other `%HttpPolicy`.
+     * @param other Other `%HttpPolicy` to move.
+     *
+     */
+    HttpPolicy(HttpPolicy&& other) = default;
   };
 
   /**
    * @brief The next HTTP policy in the stack sequence of policies.
+   * @note `%NextHttpPolicy` is an abstraction representing the next policy in the stack sequence of
+   * policies, from the caller's perspective.
    * @note Inside the #Azure::Core::Http::Policies::HttpPolicy::Send() function implementation, an
    * object of ths class represent the next HTTP policy in the stack of HTTP policies, relative to
    * the curent HTTP policy.
    *
    */
   class NextHttpPolicy final {
-    const std::size_t m_index;
+    const size_t m_index;
     const std::vector<std::unique_ptr<HttpPolicy>>& m_policies;
 
   public:
@@ -201,13 +230,11 @@ namespace Azure { namespace Core { namespace Http { namespace Policies {
      * @brief Constructs an abstraction representing a next line in the stack sequence of policies,
      * from the caller's perspective.
      *
-     * @param index An sequential index of this policy in the stack sequence of policies.
-     * @param policies A vector of unique pointers next in the line to be invoked after the
-     * current policy.
+     * @param index A sequential index of this policy in the stack sequence of policies.
+     * @param policies A vector of unique pointers next in the line to be invoked after the current
+     * policy.
      */
-    explicit NextHttpPolicy(
-        std::size_t index,
-        const std::vector<std::unique_ptr<HttpPolicy>>& policies)
+    explicit NextHttpPolicy(size_t index, const std::vector<std::unique_ptr<HttpPolicy>>& policies)
         : m_index(index), m_policies(policies)
     {
     }
@@ -216,7 +243,7 @@ namespace Azure { namespace Core { namespace Http { namespace Policies {
      * @brief Applies this HTTP policy.
      *
      * @param request An HTTP request being sent.
-     * @param context #Azure::Core::Context so that operation can be cancelled.
+     * @param context A context to control the request lifetime.
      *
      * @return An HTTP response after this policy, and all subsequent HTTP policies in the stack
      * sequence of policies have been applied.
@@ -293,7 +320,7 @@ namespace Azure { namespace Core { namespace Http { namespace Policies {
        * a request by the #RetryPolicy. Any subsequent retry will be referenced with a number
        * greater than 0.
        *
-       * @param context The context used to call send request.
+       * @param context A context to control the request lifetime.
        * @return A positive number indicating the current intent to send the request.
        */
       static int32_t GetRetryCount(Context const& context);

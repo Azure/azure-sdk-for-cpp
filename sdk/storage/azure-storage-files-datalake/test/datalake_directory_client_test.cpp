@@ -7,8 +7,7 @@
 #include <thread>
 
 #include <azure/identity/client_secret_credential.hpp>
-#include <azure/storage/common/shared_key_policy.hpp>
-#include <azure/storage/files/datalake/datalake_utilities.hpp>
+#include <azure/storage/common/internal/shared_key_policy.hpp>
 
 namespace Azure { namespace Storage { namespace Test {
 

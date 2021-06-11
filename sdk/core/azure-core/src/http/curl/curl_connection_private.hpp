@@ -100,7 +100,7 @@ namespace Azure { namespace Core { namespace Http {
     /**
      * @brief Check if the the connection was shut it down.
      *
-     * @return `true` is the connection was shut it down.
+     * @return `true` is the connection was shut it down; otherwise, `false`.
      */
     bool IsShutdown() const { return m_isShutDown; };
   };
@@ -164,7 +164,7 @@ namespace Azure { namespace Core { namespace Http {
 
       /**
        * @brief Checks whether this CURL connection is expired.
-       * @return `true` if this connection is considered expired, `false` otherwise.
+       * @return `true` if this connection is considered expired; otherwise, `false`.
        */
       bool IsExpired() override
       {
@@ -178,7 +178,7 @@ namespace Azure { namespace Core { namespace Http {
        * Function will try to keep pulling data from socket until the buffer is all written or until
        * there is no more data to get from the socket.
        *
-       * @param context #Azure::Core::Context so that operation can be cancelled.
+       * @param context A context to control the request lifetime.
        * @param buffer ptr to buffer where to copy bytes from socket.
        * @param bufferSize size of the buffer and the requested bytes to be pulled from wire.
        * @return return the numbers of bytes pulled from socket. It can be less than what it was
@@ -191,7 +191,7 @@ namespace Azure { namespace Core { namespace Http {
        *
        * @remarks Hardcoded timeout is used in case a socket stop responding.
        *
-       * @param context #Azure::Core::Context so that operation can be cancelled.
+       * @param context A context to control the request lifetime.
        * @param buffer ptr to the data to be sent to wire.
        * @param bufferSize size of the buffer to send.
        * @return CURL_OK when response is sent successfully.

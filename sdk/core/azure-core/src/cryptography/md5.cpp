@@ -27,8 +27,8 @@ private:
 
 public:
   BCRYPT_ALG_HANDLE Handle;
-  std::size_t ContextSize;
-  std::size_t HashLength;
+  size_t ContextSize;
+  size_t HashLength;
 
   Md5AlgorithmProvider()
   {
@@ -91,10 +91,10 @@ private:
   // Make sure the initial state of status is non-successful
   NTSTATUS m_status = 0;
   BCRYPT_HASH_HANDLE m_hashHandle = nullptr;
-  std::size_t m_hashLength = 0;
+  size_t m_hashLength = 0;
   std::string m_buffer;
 
-  void OnAppend(const uint8_t* data, std::size_t length)
+  void OnAppend(const uint8_t* data, size_t length)
   {
     if (!BCRYPT_SUCCESS(
             m_status = BCryptHashData(
@@ -107,7 +107,7 @@ private:
     }
   }
 
-  std::vector<uint8_t> OnFinal(const uint8_t* data, std::size_t length)
+  std::vector<uint8_t> OnFinal(const uint8_t* data, size_t length)
   {
     OnAppend(data, length);
 
@@ -163,12 +163,9 @@ class Md5OpenSSL final : public Azure::Core::Cryptography::Hash {
 private:
   std::unique_ptr<MD5_CTX> m_context;
 
-  void OnAppend(const uint8_t* data, std::size_t length)
-  {
-    MD5_Update(m_context.get(), data, length);
-  }
+  void OnAppend(const uint8_t* data, size_t length) { MD5_Update(m_context.get(), data, length); }
 
-  std::vector<uint8_t> OnFinal(const uint8_t* data, std::size_t length)
+  std::vector<uint8_t> OnFinal(const uint8_t* data, size_t length)
   {
     OnAppend(data, length);
     unsigned char hash[MD5_DIGEST_LENGTH];
@@ -191,12 +188,12 @@ Azure::Core::Cryptography::Md5Hash::Md5Hash() : m_implementation(std::make_uniqu
 namespace Azure { namespace Core { namespace Cryptography {
   Md5Hash::~Md5Hash() {}
 
-  void Md5Hash::OnAppend(const uint8_t* data, std::size_t length)
+  void Md5Hash::OnAppend(const uint8_t* data, size_t length)
   {
     m_implementation->Append(data, length);
   }
 
-  std::vector<uint8_t> Md5Hash::OnFinal(const uint8_t* data, std::size_t length)
+  std::vector<uint8_t> Md5Hash::OnFinal(const uint8_t* data, size_t length)
   {
     return m_implementation->Final(data, length);
   }

@@ -74,16 +74,16 @@ static thread_local std::mt19937_64 random_generator(std::random_device{}());
 static char RandomChar()
 {
   const char charset[] = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
-  std::uniform_int_distribution<std::size_t> distribution(0, sizeof(charset) - 2);
+  std::uniform_int_distribution<size_t> distribution(0, sizeof(charset) - 2);
   return charset[distribution(random_generator)];
 }
 
-void RandomBuffer(char* buffer, std::size_t length)
+void RandomBuffer(char* buffer, size_t length)
 {
   char* start_addr = buffer;
   char* end_addr = buffer + length;
 
-  const std::size_t rand_int_size = sizeof(uint64_t);
+  const size_t rand_int_size = sizeof(uint64_t);
 
   while (uintptr_t(start_addr) % rand_int_size != 0 && start_addr < end_addr)
   {
@@ -102,14 +102,14 @@ void RandomBuffer(char* buffer, std::size_t length)
   }
 }
 
-inline void RandomBuffer(uint8_t* buffer, std::size_t length)
+inline void RandomBuffer(uint8_t* buffer, size_t length)
 {
   RandomBuffer(reinterpret_cast<char*>(buffer), length);
 }
 
 TEST(Base64, Roundtrip)
 {
-  for (std::size_t len : {0, 10, 100, 1000, 10000})
+  for (size_t len : {0, 10, 100, 1000, 10000})
   {
     std::vector<uint8_t> data;
     data.resize(len);
