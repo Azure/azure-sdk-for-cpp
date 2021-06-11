@@ -143,68 +143,64 @@ namespace Azure { namespace Core { namespace Http {
 #pragma warning(pop)
 #endif
 #endif
-        if (result != CURLE_OK)
-        {
-          throw Http::TransportException(
-              "Broken connection. Couldn't get the active sockect for it."
-              + std::string(curl_easy_strerror(result)));
-        }
-      }
-
-      /**
-       * @brief Destructor.
-       * @details Cleans up CURL (invokes `curl_easy_cleanup()`).
-       */
-      ~CurlConnection() override { curl_easy_cleanup(this->m_handle); }
-
-      std::string const& GetConnectionKey() const override { return this->m_connectionKey; }
-
-      /**
-       * @brief Update last usage time for the connection.
-       *
-       */
-      void UpdateLastUsageTime() override
+      if (result != CURLE_OK)
       {
-        this->m_lastUseTime = std::chrono::steady_clock::now();
+        throw Http::TransportException(
+            "Broken connection. Couldn't get the active sockect for it."
+            + std::string(curl_easy_strerror(result)));
       }
+    }
 
-      /**
-       * @brief Checks whether this CURL connection is expired.
-       * @return `true` if this connection is considered expired; otherwise, `false`.
-       */
-      bool IsExpired() override
-      {
-        auto connectionOnWaitingTimeMs = std::chrono::duration_cast<std::chrono::milliseconds>(
-            std::chrono::steady_clock::now() - this->m_lastUseTime);
-        return connectionOnWaitingTimeMs.count() >= _detail::DefaultConnectionExpiredMilliseconds;
-      }
+    /**
+     * @brief Destructor.
+     * @details Cleans up CURL (invokes `curl_easy_cleanup()`).
+     */
+    ~CurlConnection() override { curl_easy_cleanup(this->m_handle); }
 
-      /**
-       * @brief This function is used when working with streams to pull more data from the wire.
-       * Function will try to keep pulling data from socket until the buffer is all written or until
-       * there is no more data to get from the socket.
-       *
-       * @param context A context to control the request lifetime.
-       * @param buffer ptr to buffer where to copy bytes from socket.
-       * @param bufferSize size of the buffer and the requested bytes to be pulled from wire.
-       * @return return the numbers of bytes pulled from socket. It can be less than what it was
-       * requested.
-       */
-      size_t ReadFromSocket(uint8_t* buffer, size_t bufferSize, Context const& context) override;
+    std::string const& GetConnectionKey() const override { return this->m_connectionKey; }
 
-      /**
-       * @brief This method will use libcurl socket to write all the bytes from buffer.
-       *
-       * @remarks Hardcoded timeout is used in case a socket stop responding.
-       *
-       * @param context A context to control the request lifetime.
-       * @param buffer ptr to the data to be sent to wire.
-       * @param bufferSize size of the buffer to send.
-       * @return CURL_OK when response is sent successfully.
-       */
-      CURLcode SendBuffer(uint8_t const* buffer, size_t bufferSize, Context const& context)
-          override;
+    /**
+     * @brief Update last usage time for the connection.
+     *
+     */
+    void UpdateLastUsageTime() override { this->m_lastUseTime = std::chrono::steady_clock::now(); }
 
-      void Shutdown() override;
-    };
+    /**
+     * @brief Checks whether this CURL connection is expired.
+     * @return `true` if this connection is considered expired; otherwise, `false`.
+     */
+    bool IsExpired() override
+    {
+      auto connectionOnWaitingTimeMs = std::chrono::duration_cast<std::chrono::milliseconds>(
+          std::chrono::steady_clock::now() - this->m_lastUseTime);
+      return connectionOnWaitingTimeMs.count() >= _detail::DefaultConnectionExpiredMilliseconds;
+    }
+
+    /**
+     * @brief This function is used when working with streams to pull more data from the wire.
+     * Function will try to keep pulling data from socket until the buffer is all written or until
+     * there is no more data to get from the socket.
+     *
+     * @param context A context to control the request lifetime.
+     * @param buffer ptr to buffer where to copy bytes from socket.
+     * @param bufferSize size of the buffer and the requested bytes to be pulled from wire.
+     * @return return the numbers of bytes pulled from socket. It can be less than what it was
+     * requested.
+     */
+    size_t ReadFromSocket(uint8_t* buffer, size_t bufferSize, Context const& context) override;
+
+    /**
+     * @brief This method will use libcurl socket to write all the bytes from buffer.
+     *
+     * @remarks Hardcoded timeout is used in case a socket stop responding.
+     *
+     * @param context A context to control the request lifetime.
+     * @param buffer ptr to the data to be sent to wire.
+     * @param bufferSize size of the buffer to send.
+     * @return CURL_OK when response is sent successfully.
+     */
+    CURLcode SendBuffer(uint8_t const* buffer, size_t bufferSize, Context const& context) override;
+
+    void Shutdown() override;
+  };
 }}} // namespace Azure::Core::Http
