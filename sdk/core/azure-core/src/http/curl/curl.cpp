@@ -862,7 +862,7 @@ size_t CurlSession::OnRead(uint8_t* buffer, size_t count, Context const& context
 
   // Head request have contentLength = 0, so we won't read more, just return 0
   // Also if we have already read all contentLength
-  if (this->m_sessionTotalRead == this->m_contentLength || this->IsEOF())
+  if (this->m_sessionTotalRead == static_cast<size_t>(this->m_contentLength) || this->IsEOF())
   {
     return 0;
   }

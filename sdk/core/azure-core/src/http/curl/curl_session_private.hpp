@@ -263,7 +263,7 @@ namespace Azure { namespace Core { namespace Http {
      * are expecting to.
      *
      */
-    size_t m_contentLength = 0;
+    int64_t m_contentLength = 0;
 
     /**
      * @brief For chunked responses, this field knows the size of the current chuck size server
@@ -336,7 +336,9 @@ namespace Azure { namespace Core { namespace Http {
      */
     bool IsEOF()
     {
-      auto eof = m_isChunkedResponseType ? m_chunkSize == 0 : m_contentLength == m_sessionTotalRead;
+      auto eof = m_isChunkedResponseType
+          ? m_chunkSize == 0
+          : static_cast<size_t>(m_contentLength) == m_sessionTotalRead;
 
       // `IsEOF` is called before trying to move a connection back to the connection pool.
       // If the session state is `PERFORM` it means the request could not complete an upload
