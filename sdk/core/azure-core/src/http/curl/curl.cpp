@@ -831,7 +831,7 @@ size_t CurlSession::OnRead(uint8_t* buffer, size_t count, Context const& context
 
   auto totalRead = size_t();
   size_t readRequestLength = this->m_isChunkedResponseType
-      ? (std::min)(this->m_chunkSize - this->m_sessionTotalRead, count)
+      ? std::min(this->m_chunkSize - this->m_sessionTotalRead, count)
       : count;
 
   // For responses with content-length, avoid trying to read beyond Content-length or
@@ -839,8 +839,8 @@ size_t CurlSession::OnRead(uint8_t* buffer, size_t count, Context const& context
   // https://github.com/Azure/azure-sdk-for-cpp/issues/306
   if (this->m_contentLength > 0)
   {
-    auto remainingBodyContent = this->m_contentLength - this->m_sessionTotalRead;
-    readRequestLength = (std::min)(readRequestLength, remainingBodyContent);
+    size_t remainingBodyContent = this->m_contentLength - this->m_sessionTotalRead;
+    readRequestLength = std::min(readRequestLength, remainingBodyContent);
   }
 
   // Take data from inner buffer if any
