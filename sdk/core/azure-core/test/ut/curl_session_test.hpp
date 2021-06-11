@@ -41,7 +41,7 @@ namespace Azure { namespace Core { namespace Test {
     MOCK_METHOD(void, UpdateLastUsageTime, (), (override));
     MOCK_METHOD(bool, IsExpired, (), (override));
     MOCK_METHOD(
-        int32_t,
+        size_t,
         ReadFromSocket,
         (uint8_t * buffer, size_t bufferSize, Context const& context),
         (override));

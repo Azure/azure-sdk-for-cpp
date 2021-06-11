@@ -184,7 +184,7 @@ namespace Azure { namespace Core { namespace Http {
        * body.
        *
        */
-      int32_t Parse(uint8_t const* const buffer, size_t const bufferSize);
+      size_t Parse(uint8_t const* const buffer, size_t const bufferSize);
 
       /**
        * @brief Indicates when the parser has completed parsing and building the HTTP RawResponse.
@@ -239,20 +239,18 @@ namespace Azure { namespace Core { namespace Http {
      * inner buffer. When a libcurl stream tries to read part of the body, this field will help to
      * decide how much data to take from the inner buffer before pulling more data from network.
      *
-     * @note The index will never be greater than `int32_t` because the size of the inner buffer has
-     * type `int32_t`. See m_innerBufferSize.
+     * @note The initial value is set to the size of the inner buffer as a sentinel that indicate
+     * that the buffer has not data or all data has already taken from it.
      */
-    int32_t m_bodyStartInBuffer = -1;
+    size_t m_bodyStartInBuffer = _detail::DefaultLibcurlReaderSize;
 
     /**
      * @brief Control field to handle the number of bytes containing relevant data within the
      * internal buffer. This is because internal buffer can be set to be size N but after writing
      * from wire into it, it can be holding less then N bytes.
      *
-     * @note Field will never be greater than `int32_t` because the size of the inner buffer has
-     * type `int32_t`. See m_innerBufferSize.
      */
-    int32_t m_innerBufferSize = _detail::DefaultLibcurlReaderSize;
+    size_t m_innerBufferSize = _detail::DefaultLibcurlReaderSize;
 
     bool m_isChunkedResponseType = false;
 
@@ -265,16 +263,16 @@ namespace Azure { namespace Core { namespace Http {
      * are expecting to.
      *
      */
-    int64_t m_contentLength = 0;
+    size_t m_contentLength = 0;
 
     /**
      * @brief For chunked responses, this field knows the size of the current chuck size server
      * will be sending.
      *
      */
-    int64_t m_chunkSize = 0;
+    size_t m_chunkSize = 0;
 
-    int64_t m_sessionTotalRead = 0;
+    size_t m_sessionTotalRead = 0;
 
     /**
      * @brief Internal buffer from a session used to read bytes from a socket. This buffer is only

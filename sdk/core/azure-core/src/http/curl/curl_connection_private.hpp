@@ -20,8 +20,8 @@ namespace Azure { namespace Core { namespace Http {
   namespace _detail {
     // libcurl CURL_MAX_WRITE_SIZE is 64k. Using same value for default uploading chunk size.
     // This can be customizable in the HttpRequest
-    constexpr static int32_t DefaultUploadChunkSize = 1024 * 64;
-    constexpr static int32_t DefaultLibcurlReaderSize = 1024;
+    constexpr static size_t DefaultUploadChunkSize = 1024 * 64;
+    constexpr static size_t DefaultLibcurlReaderSize = 1024;
     // Run time error template
     constexpr static const char* DefaultFailedToGetNewConnectionTemplate
         = "Fail to get a new connection for: ";
@@ -80,7 +80,7 @@ namespace Azure { namespace Core { namespace Http {
      * there is no more data to get from the socket.
      *
      */
-    virtual int32_t ReadFromSocket(uint8_t* buffer, size_t bufferSize, Context const& context) = 0;
+    virtual size_t ReadFromSocket(uint8_t* buffer, size_t bufferSize, Context const& context) = 0;
 
     /**
      * @brief This method will use libcurl socket to write all the bytes from buffer.
@@ -184,7 +184,7 @@ namespace Azure { namespace Core { namespace Http {
        * @return return the numbers of bytes pulled from socket. It can be less than what it was
        * requested.
        */
-      int32_t ReadFromSocket(uint8_t* buffer, size_t bufferSize, Context const& context) override;
+      size_t ReadFromSocket(uint8_t* buffer, size_t bufferSize, Context const& context) override;
 
       /**
        * @brief This method will use libcurl socket to write all the bytes from buffer.
