@@ -590,7 +590,8 @@ void CurlSession::ParseChunkSize(Context const& context)
         // get chunk size. Chunk size comes in Hex value
         try
         {
-          this->m_chunkSize = std::stoull(strChunkSize, nullptr, 16);
+          // Required cast for MSVC x86 
+          this->m_chunkSize = static_cast<size_t>(std::stoull(strChunkSize, nullptr, 16));
         }
         catch (std::invalid_argument const&)
         {
