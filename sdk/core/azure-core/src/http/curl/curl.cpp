@@ -840,7 +840,8 @@ size_t CurlSession::OnRead(uint8_t* buffer, size_t count, Context const& context
   // https://github.com/Azure/azure-sdk-for-cpp/issues/306
   if (this->m_contentLength > 0)
   {
-    size_t remainingBodyContent = this->m_contentLength - this->m_sessionTotalRead;
+    size_t remainingBodyContent
+        = static_cast<size_t>(this->m_contentLength) - this->m_sessionTotalRead;
     readRequestLength = (std::min)(readRequestLength, remainingBodyContent);
   }
 
