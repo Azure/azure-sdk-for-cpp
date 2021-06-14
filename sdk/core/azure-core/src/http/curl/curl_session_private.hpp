@@ -146,7 +146,7 @@ namespace Azure { namespace Core { namespace Http {
        * @param bufferSize Indicates the size of the buffer.
        * @return Returns the index of the last parsed position from buffer.
        */
-      int64_t BuildStatusCode(uint8_t const* const buffer, int64_t const bufferSize);
+      size_t BuildStatusCode(uint8_t const* const buffer, size_t const bufferSize);
 
       /**
        * @brief This method is invoked by the Parsing process if the internal state is set to
@@ -159,7 +159,7 @@ namespace Azure { namespace Core { namespace Http {
        * value is smaller than the body size, means there is part of the body response in the
        * buffer.
        */
-      int64_t BuildHeader(uint8_t const* const buffer, int64_t const bufferSize);
+      size_t BuildHeader(uint8_t const* const buffer, size_t const bufferSize);
 
     public:
       /**
@@ -182,8 +182,9 @@ namespace Azure { namespace Core { namespace Http {
        * Returning a value smaller than the buffer size will likely indicate that the HTTP
        * RawResponse is completed and that the rest of the buffer contains part of the response
        * body.
+       *
        */
-      int64_t Parse(uint8_t const* const buffer, int64_t const bufferSize);
+      size_t Parse(uint8_t const* const buffer, size_t const bufferSize);
 
       /**
        * @brief Indicates when the parser has completed parsing and building the HTTP RawResponse.
@@ -238,8 +239,10 @@ namespace Azure { namespace Core { namespace Http {
      * inner buffer. When a libcurl stream tries to read part of the body, this field will help to
      * decide how much data to take from the inner buffer before pulling more data from network.
      *
+     * @note The initial value is set to the size of the inner buffer as a sentinel that indicate
+     * that the buffer has not data or all data has already taken from it.
      */
-    int64_t m_bodyStartInBuffer = -1;
+    size_t m_bodyStartInBuffer = _detail::DefaultLibcurlReaderSize;
 
     /**
      * @brief Control field to handle the number of bytes containing relevant data within the
@@ -247,7 +250,7 @@ namespace Azure { namespace Core { namespace Http {
      * from wire into it, it can be holding less then N bytes.
      *
      */
-    int64_t m_innerBufferSize = _detail::DefaultLibcurlReaderSize;
+    size_t m_innerBufferSize = _detail::DefaultLibcurlReaderSize;
 
     bool m_isChunkedResponseType = false;
 
@@ -264,12 +267,12 @@ namespace Azure { namespace Core { namespace Http {
 
     /**
      * @brief For chunked responses, this field knows the size of the current chuck size server
-     * will de sending
+     * will be sending.
      *
      */
-    int64_t m_chunkSize = 0;
+    size_t m_chunkSize = 0;
 
-    int64_t m_sessionTotalRead = 0;
+    size_t m_sessionTotalRead = 0;
 
     /**
      * @brief Internal buffer from a session used to read bytes from a socket. This buffer is only
@@ -333,7 +336,9 @@ namespace Azure { namespace Core { namespace Http {
      */
     bool IsEOF()
     {
-      auto eof = m_isChunkedResponseType ? m_chunkSize == 0 : m_contentLength == m_sessionTotalRead;
+      auto eof = m_isChunkedResponseType
+          ? m_chunkSize == 0
+          : static_cast<size_t>(m_contentLength) == m_sessionTotalRead;
 
       // `IsEOF` is called before trying to move a connection back to the connection pool.
       // If the session state is `PERFORM` it means the request could not complete an upload

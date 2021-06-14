@@ -399,7 +399,7 @@ CURLcode CurlSession::Perform(Context const& context)
   }
 
   Log::Write(Logger::Level::Verbose, LogMsgPrefix + "Upload payload");
-  if (this->m_bodyStartInBuffer > 0)
+  if (this->m_bodyStartInBuffer < this->m_innerBufferSize)
   {
     // If internal buffer has more data after the 100-continue means Server return an error.
     // We don't need to upload body, just parse the response from Server and return
@@ -556,7 +556,7 @@ CURLcode CurlSession::SendRawHttp(Context const& context)
 {
   // something like GET /path HTTP1.0 \r\nheaders\r\n
   auto rawRequest = GetHTTPMessagePreBody(this->m_request);
-  int64_t rawRequestLen = rawRequest.size();
+  auto rawRequestLen = rawRequest.size();
 
   CURLcode sendResult = m_connection->SendBuffer(
       reinterpret_cast<uint8_t const*>(rawRequest.data()),
@@ -581,20 +581,20 @@ void CurlSession::ParseChunkSize(Context const& context)
   // Move to after chunk size
   for (bool keepPolling = true; keepPolling;)
   {
-    for (int64_t index = this->m_bodyStartInBuffer, i = 0; index < this->m_innerBufferSize;
-         index++, i++)
+    for (size_t index = this->m_bodyStartInBuffer, iteration = 0; index < this->m_innerBufferSize;
+         index++, iteration++)
     {
       strChunkSize.append(reinterpret_cast<char*>(&this->m_readBuffer[index]), 1);
-      if (i > 1 && this->m_readBuffer[index] == '\n')
+      if (iteration > 1 && this->m_readBuffer[index] == '\n')
       {
         // get chunk size. Chunk size comes in Hex value
         try
         {
-          this->m_chunkSize = static_cast<int64_t>(std::stoull(strChunkSize, nullptr, 16));
+          // Required cast for MSVC x86
+          this->m_chunkSize = static_cast<size_t>(std::stoull(strChunkSize, nullptr, 16));
         }
-        catch (const std::invalid_argument& ex)
+        catch (std::invalid_argument const&)
         {
-          (void)ex;
           // Server can return something like `\n\r\n` for a chunk of zero length data. This is
           // allowed by RFC. `stoull` will throw invalid_argument if there is not at least one hex
           // digit to be parsed. For those cases, we consider the response as zero-length.
@@ -656,23 +656,22 @@ void CurlSession::ReadStatusLineAndHeadersFromRawResponse(
     bool reuseInternalBuffer)
 {
   auto parser = ResponseBufferParser();
-  auto bufferSize = int64_t();
+  auto bufferSize = size_t();
 
   // Keep reading until all headers were read
   while (!parser.IsParseCompleted())
   {
-    int64_t bytesParsed = 0;
+    size_t bytesParsed = 0;
     if (reuseInternalBuffer)
     {
       // parse from internal buffer. This means previous read from server got more than one
       // response. This happens when Server returns a 100-continue plus an error code
       bufferSize = this->m_innerBufferSize - this->m_bodyStartInBuffer;
-      bytesParsed = parser.Parse(
-          this->m_readBuffer + this->m_bodyStartInBuffer, static_cast<size_t>(bufferSize));
+      bytesParsed = parser.Parse(this->m_readBuffer + this->m_bodyStartInBuffer, bufferSize);
       // if parsing from internal buffer is not enough, do next read from wire
       reuseInternalBuffer = false;
       // reset body start
-      this->m_bodyStartInBuffer = -1;
+      this->m_bodyStartInBuffer = _detail::DefaultLibcurlReaderSize;
     }
     else
     {
@@ -687,7 +686,7 @@ void CurlSession::ReadStatusLineAndHeadersFromRawResponse(
             "Connection was closed by the server while trying to read a response");
       }
       // returns the number of bytes parsed up to the body Start
-      bytesParsed = parser.Parse(this->m_readBuffer, static_cast<size_t>(bufferSize));
+      bytesParsed = parser.Parse(this->m_readBuffer, bufferSize);
     }
 
     if (bytesParsed < bufferSize)
@@ -697,7 +696,7 @@ void CurlSession::ReadStatusLineAndHeadersFromRawResponse(
   }
 
   this->m_response = parser.ExtractResponse();
-  this->m_innerBufferSize = static_cast<size_t>(bufferSize);
+  this->m_innerBufferSize = bufferSize;
   this->m_lastStatusCode = this->m_response->GetStatusCode();
 
   // For Head request, set the length of body response to 0.
@@ -709,7 +708,7 @@ void CurlSession::ReadStatusLineAndHeadersFromRawResponse(
       || this->m_lastStatusCode == HttpStatusCode::NoContent)
   {
     this->m_contentLength = 0;
-    this->m_bodyStartInBuffer = -1;
+    this->m_bodyStartInBuffer = _detail::DefaultLibcurlReaderSize;
     return;
   }
 
@@ -724,6 +723,7 @@ void CurlSession::ReadStatusLineAndHeadersFromRawResponse(
     return;
   }
 
+  // No content-length from headers, check transfer-encoding
   this->m_contentLength = -1;
   auto isTransferEncodingHeaderInResponse = headers.find("transfer-encoding");
   if (isTransferEncodingHeaderInResponse != headers.end())
@@ -738,10 +738,17 @@ void CurlSession::ReadStatusLineAndHeadersFromRawResponse(
       this->m_isChunkedResponseType = true;
 
       // Need to move body start after chunk size
-      if (this->m_bodyStartInBuffer == -1)
+      if (this->m_bodyStartInBuffer >= this->m_innerBufferSize)
       { // if nothing on inner buffer, pull from wire
         this->m_innerBufferSize = m_connection->ReadFromSocket(
             this->m_readBuffer, _detail::DefaultLibcurlReaderSize, context);
+        if (this->m_innerBufferSize == 0)
+        {
+          // closed connection, prevent application from keep trying to pull more bytes from the
+          // wire
+          throw TransportException(
+              "Connection was closed by the server while trying to read a response");
+        }
         this->m_bodyStartInBuffer = 0;
       }
 
@@ -758,13 +765,25 @@ void CurlSession::ReadStatusLineAndHeadersFromRawResponse(
   */
 }
 
+/**
+ * @brief Reads data from network and validates the data is equal to \p expected.
+ *
+ * @param expected The data that should came from the wire.
+ * @param context A context to control the request lifetime.
+ */
 void CurlSession::ReadExpected(uint8_t expected, Context const& context)
 {
-  if (this->m_bodyStartInBuffer == -1 || this->m_bodyStartInBuffer == this->m_innerBufferSize)
+  if (this->m_bodyStartInBuffer >= this->m_innerBufferSize)
   {
     // end of buffer, pull data from wire
     this->m_innerBufferSize = m_connection->ReadFromSocket(
         this->m_readBuffer, _detail::DefaultLibcurlReaderSize, context);
+    if (this->m_innerBufferSize == 0)
+    {
+      // closed connection, prevent application from keep trying to pull more bytes from the wire
+      throw TransportException(
+          "Connection was closed by the server while trying to read a response");
+    }
     this->m_bodyStartInBuffer = 0;
   }
   auto data = this->m_readBuffer[this->m_bodyStartInBuffer];
@@ -812,47 +831,40 @@ size_t CurlSession::OnRead(uint8_t* buffer, size_t count, Context const& context
   }
 
   auto totalRead = size_t();
-  int64_t readRequestLength = this->m_isChunkedResponseType
-      ? (std::min)(this->m_chunkSize - this->m_sessionTotalRead, static_cast<int64_t>(count))
-      : static_cast<int64_t>(count);
+  size_t readRequestLength = this->m_isChunkedResponseType
+      ? (std::min)(this->m_chunkSize - this->m_sessionTotalRead, count)
+      : count;
 
   // For responses with content-length, avoid trying to read beyond Content-length or
   // libcurl could return a second response as BadRequest.
   // https://github.com/Azure/azure-sdk-for-cpp/issues/306
   if (this->m_contentLength > 0)
   {
-    auto remainingBodyContent = this->m_contentLength - this->m_sessionTotalRead;
+    size_t remainingBodyContent
+        = static_cast<size_t>(this->m_contentLength) - this->m_sessionTotalRead;
     readRequestLength = (std::min)(readRequestLength, remainingBodyContent);
   }
 
   // Take data from inner buffer if any
-  if (this->m_bodyStartInBuffer >= 0)
+  if (this->m_bodyStartInBuffer < this->m_innerBufferSize)
   {
     // still have data to take from innerbuffer
-    // TODO: Change the fields to be size_t for a less error-prone implementation
-    // The casts here are safe to do because we know the buffers and the offset are within the
-    // range.
     Azure::Core::IO::MemoryBodyStream innerBufferMemoryStream(
         this->m_readBuffer + this->m_bodyStartInBuffer,
-        static_cast<size_t>(this->m_innerBufferSize - this->m_bodyStartInBuffer));
+        this->m_innerBufferSize - this->m_bodyStartInBuffer);
 
     // From code inspection, it is guaranteed that the readRequestLength will fit within size_t
     // since count is bounded by size_t.
-    totalRead
-        = innerBufferMemoryStream.Read(buffer, static_cast<size_t>(readRequestLength), context);
+    totalRead = innerBufferMemoryStream.Read(buffer, readRequestLength, context);
     this->m_bodyStartInBuffer += totalRead;
     this->m_sessionTotalRead += totalRead;
 
-    if (this->m_bodyStartInBuffer == this->m_innerBufferSize)
-    {
-      this->m_bodyStartInBuffer = -1; // read everything from inner buffer already
-    }
     return totalRead;
   }
 
   // Head request have contentLength = 0, so we won't read more, just return 0
   // Also if we have already read all contentLength
-  if (this->m_sessionTotalRead == this->m_contentLength || this->IsEOF())
+  if (this->m_sessionTotalRead == static_cast<size_t>(this->m_contentLength) || this->IsEOF())
   {
     return 0;
   }
@@ -949,9 +961,9 @@ size_t CurlConnection::ReadFromSocket(uint8_t* buffer, size_t bufferSize, Contex
 
 std::unique_ptr<RawResponse> CurlSession::ExtractResponse() { return std::move(this->m_response); }
 
-int64_t CurlSession::ResponseBufferParser::Parse(
+size_t CurlSession::ResponseBufferParser::Parse(
     uint8_t const* const buffer,
-    int64_t const bufferSize)
+    size_t const bufferSize)
 {
   if (this->m_parseCompleted)
   {
@@ -959,7 +971,7 @@ int64_t CurlSession::ResponseBufferParser::Parse(
   }
 
   // Read all buffer until \r\n is found
-  int64_t start = 0, index = 0;
+  size_t start = 0, index = 0;
   for (; index < bufferSize; index++)
   {
     if (buffer[index] == '\r')
@@ -1069,9 +1081,9 @@ int64_t CurlSession::ResponseBufferParser::Parse(
 }
 
 // Finds delimiter '\r' as the end of the
-int64_t CurlSession::ResponseBufferParser::BuildStatusCode(
+size_t CurlSession::ResponseBufferParser::BuildStatusCode(
     uint8_t const* const buffer,
-    int64_t const bufferSize)
+    size_t const bufferSize)
 {
   if (this->state != ResponseParserState::StatusLine)
   {
@@ -1120,9 +1132,9 @@ int64_t CurlSession::ResponseBufferParser::BuildStatusCode(
 }
 
 // Finds delimiter '\r' as the end of the
-int64_t CurlSession::ResponseBufferParser::BuildHeader(
+size_t CurlSession::ResponseBufferParser::BuildHeader(
     uint8_t const* const buffer,
-    int64_t const bufferSize)
+    size_t const bufferSize)
 {
   if (this->state != ResponseParserState::Headers)
   {
