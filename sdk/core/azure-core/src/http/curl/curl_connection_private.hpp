@@ -128,7 +128,7 @@ namespace Azure { namespace Core { namespace Http {
       // Get the socket that libcurl is using from handle. Will use this to wait while
       // reading/writing
       // into wire
-#if !defined(_MSC_VER) && LIBCURL_VERSION_MAJOR <= 7 && LIBCURL_VERSION_MINOR < 45
+#if !defined(_MSC_VER) && (LIBCURL_VERSION_MAJOR == 7 && LIBCURL_VERSION_MINOR < 45 || LIBCURL_VERSION_MAJOR < 7)
       long socket;
       auto result = curl_easy_getinfo(m_handle, CURLINFO_LASTSOCKET, &socket);
       m_curlSocket = socket;
