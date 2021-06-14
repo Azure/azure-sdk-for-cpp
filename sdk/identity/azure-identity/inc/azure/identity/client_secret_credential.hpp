@@ -9,13 +9,12 @@
 #pragma once
 
 #include "azure/identity/dll_import_export.hpp"
+#include "azure/identity/internal/token_credential_impl.hpp"
 
-#include <azure/core/credentials/credentials.hpp>
 #include <azure/core/credentials/token_credential_options.hpp>
-#include <azure/core/http/policies/policy.hpp>
+#include <azure/core/url.hpp>
 
 #include <string>
-#include <utility>
 
 namespace Azure { namespace Identity {
   namespace _detail {
@@ -26,8 +25,7 @@ namespace Azure { namespace Identity {
    * @brief Options for token authentication.
    *
    */
-  struct ClientSecretCredentialOptions final
-      : public Azure::Core::Credentials::TokenCredentialOptions
+  struct ClientSecretCredentialOptions final : public Core::Credentials::TokenCredentialOptions
   {
   public:
     /**
@@ -44,13 +42,23 @@ namespace Azure { namespace Identity {
   /**
    * @brief Client Secret Credential authenticates with the Azure services using a Tenant ID, Client
    * ID and a client secret.
+   *
    */
-  class ClientSecretCredential final : public Core::Credentials::TokenCredential {
+  class ClientSecretCredential final : public _detail::TokenCredentialImpl {
   private:
-    std::string m_tenantId;
-    std::string m_clientId;
-    std::string m_clientSecret;
-    ClientSecretCredentialOptions m_options;
+    Core::Url m_requestUrl;
+    std::string m_requestBody;
+    bool m_isAdfs;
+
+    TokenRequest GetRequest(
+        Core::Credentials::TokenRequestContext const& tokenRequestContext) const final;
+
+    ClientSecretCredential(
+        std::string const& tenantId,
+        std::string const& clientId,
+        std::string const& clientSecret,
+        std::string const& authorityHost,
+        Core::Credentials::TokenCredentialOptions const& options);
 
   public:
     /**
@@ -59,15 +67,14 @@ namespace Azure { namespace Identity {
      * @param tenantId Tenant ID.
      * @param clientId Client ID.
      * @param clientSecret Client secret.
-     * @param options #Azure::Identity::ClientSecretCredentialOptions.
+     * @param options Options for token retrieval.
      */
     explicit ClientSecretCredential(
-        std::string tenantId,
-        std::string clientId,
-        std::string clientSecret,
-        ClientSecretCredentialOptions options)
-        : m_tenantId(std::move(tenantId)), m_clientId(std::move(clientId)),
-          m_clientSecret(std::move(clientSecret)), m_options(std::move(options))
+        std::string const& tenantId,
+        std::string const& clientId,
+        std::string const& clientSecret,
+        ClientSecretCredentialOptions const& options)
+        : ClientSecretCredential(tenantId, clientId, clientSecret, options.AuthorityHost, options)
     {
     }
 
@@ -77,32 +84,22 @@ namespace Azure { namespace Identity {
      * @param tenantId Tenant ID.
      * @param clientId Client ID.
      * @param clientSecret Client Secret.
-     * @param options #Azure::Core::Credentials::TokenCredentialOptions.
+     * @param options Options for token retrieval.
      */
     explicit ClientSecretCredential(
         std::string tenantId,
         std::string clientId,
         std::string clientSecret,
-        Azure::Core::Credentials::TokenCredentialOptions const& options
-        = Azure::Core::Credentials::TokenCredentialOptions())
-        : m_tenantId(std::move(tenantId)), m_clientId(std::move(clientId)),
-          m_clientSecret(std::move(clientSecret))
+        Core::Credentials::TokenCredentialOptions const& options
+        = Core::Credentials::TokenCredentialOptions())
+        : ClientSecretCredential(
+            tenantId,
+            clientId,
+            clientSecret,
+            _detail::g_aadGlobalAuthority,
+            options)
     {
-      static_cast<Azure::Core::Credentials::TokenCredentialOptions&>(m_options) = options;
     }
-
-    /**
-     * @brief Gets an authentication token.
-     *
-     * @param tokenRequestContext #Azure::Core::Credentials::TokenRequestContext to get the token
-     * in.
-     * @param context A context to control the request lifetime.
-     *
-     * @throw Azure::Core::Credentials::AuthenticationException Authentication error occurred.
-     */
-    Core::Credentials::AccessToken GetToken(
-        Core::Credentials::TokenRequestContext const& tokenRequestContext,
-        Core::Context const& context) const override;
   };
 
 }} // namespace Azure::Identity

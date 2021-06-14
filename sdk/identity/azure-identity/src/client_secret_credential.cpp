@@ -3,202 +3,53 @@
 
 #include "azure/identity/client_secret_credential.hpp"
 
-#include <azure/core/http/http.hpp>
-#include <azure/core/internal/http/pipeline.hpp>
-
-#include <chrono>
 #include <sstream>
-
-namespace {
-// Assumes !scopes.empty()
-std::string FormatScopes(std::vector<std::string> const& scopes, bool asResource)
-{
-  if (asResource && scopes.size() == 1)
-  {
-    auto resource = scopes[0];
-    constexpr char suffix[] = "/.default";
-    constexpr int suffixLen = sizeof(suffix) - 1;
-    auto const resourceLen = resource.length();
-
-    // If scopes[0] ends with '/.default', remove it.
-    if (resourceLen >= suffixLen
-        && resource.find(suffix, resourceLen - suffixLen) != std::string::npos)
-    {
-      resource = resource.substr(0, resourceLen - suffixLen);
-    }
-
-    return Azure::Core::Url::Encode(resource);
-  }
-
-  auto scopesIter = scopes.begin();
-  auto scopesStr = Azure::Core::Url::Encode(*scopesIter);
-
-  auto const scopesEnd = scopes.end();
-  for (++scopesIter; scopesIter != scopesEnd; ++scopesIter)
-  {
-    scopesStr += std::string(" ") + Azure::Core::Url::Encode(*scopesIter);
-  }
-
-  return scopesStr;
-}
-} // namespace
 
 using namespace Azure::Identity;
 
 std::string const Azure::Identity::_detail::g_aadGlobalAuthority
     = "https://login.microsoftonline.com/";
 
-Azure::Core::Credentials::AccessToken ClientSecretCredential::GetToken(
-    Azure::Core::Credentials::TokenRequestContext const& tokenRequestContext,
-    Azure::Core::Context const& context) const
+ClientSecretCredential::ClientSecretCredential(
+    std::string const& tenantId,
+    std::string const& clientId,
+    std::string const& clientSecret,
+    std::string const& authorityHost,
+    Azure::Core::Credentials::TokenCredentialOptions const& options)
+    : _detail::TokenCredentialImpl(options), m_isAdfs(tenantId == "adfs")
 {
-  using namespace Azure::Core;
-  using namespace Azure::Core::Credentials;
-  using namespace Azure::Core::IO;
-  using namespace Azure::Core::Http;
-  using namespace Azure::Core::Http::_internal;
+  using Azure::Core::Url;
+  m_requestUrl = Url(authorityHost);
+  m_requestUrl.AppendPath(tenantId);
+  m_requestUrl.AppendPath(m_isAdfs ? "oauth2/token" : "oauth2/v2.0/token");
 
-  static std::string const errorMsgPrefix("ClientSecretCredential::GetToken: ");
-  try
+  std::ostringstream body;
+  body << "grant_type=client_credentials&client_id=" << Url::Encode(clientId)
+       << "&client_secret=" << Url::Encode(clientSecret);
+
+  m_requestBody = body.str();
+}
+
+Azure::Identity::_detail::TokenCredentialImpl::TokenRequest ClientSecretCredential::GetRequest(
+    Azure::Core::Credentials::TokenRequestContext const& tokenRequestContext) const
+{
+  using Azure::Core::Http::HttpMethod;
+
+  std::ostringstream body;
+  body << m_requestBody;
   {
-    auto const isAdfs = m_tenantId == "adfs";
-
-    Url url(m_options.AuthorityHost);
-    url.AppendPath(m_tenantId);
-    url.AppendPath(isAdfs ? "oauth2/token" : "oauth2/v2.0/token");
-
-    std::ostringstream body;
-    body << "grant_type=client_credentials&client_id=" << Url::Encode(m_clientId)
-         << "&client_secret=" << Url::Encode(m_clientSecret);
-
+    auto const& scopes = tokenRequestContext.Scopes;
+    if (!scopes.empty())
     {
-      auto const& scopes = tokenRequestContext.Scopes;
-      if (!scopes.empty())
-      {
-        body << "&scope=" << FormatScopes(scopes, isAdfs);
-      }
+      body << "&scope=" << FormatScopes(scopes, m_isAdfs, true);
     }
-
-    auto const bodyString = body.str();
-    auto bodyStream = std::make_unique<MemoryBodyStream>(
-        reinterpret_cast<uint8_t const*>(bodyString.data()), bodyString.size());
-
-    Request request(HttpMethod::Post, url, bodyStream.get());
-    bodyStream.release();
-
-    request.SetHeader("Content-Type", "application/x-www-form-urlencoded");
-    request.SetHeader("Content-Length", std::to_string(bodyString.size()));
-
-    if (isAdfs)
-    {
-      request.SetHeader("Host", url.GetHost());
-    }
-
-    HttpPipeline httpPipeline(m_options, "Identity-client-secret-credential", "", {}, {});
-
-    std::shared_ptr<RawResponse> response = httpPipeline.Send(request, context);
-
-    if (!response)
-    {
-      throw AuthenticationException(errorMsgPrefix + "null response");
-    }
-
-    auto const statusCode = response->GetStatusCode();
-    if (statusCode != HttpStatusCode::Ok)
-    {
-      std::ostringstream errorMsg;
-      errorMsg << errorMsgPrefix << "error response: "
-               << static_cast<std::underlying_type<HttpStatusCode>::type>(statusCode) << " "
-               << response->GetReasonPhrase();
-
-      throw AuthenticationException(errorMsg.str());
-    }
-
-    auto const& responseBodyVector = response->GetBody();
-    std::string responseBody(responseBodyVector.begin(), responseBodyVector.end());
-
-    // TODO: use JSON parser.
-    auto const responseBodySize = responseBody.size();
-
-    static std::string const jsonExpiresIn = "expires_in";
-    static std::string const jsonAccessToken = "access_token";
-
-    auto responseBodyPos = responseBody.find(':', responseBody.find(jsonExpiresIn));
-    if (responseBodyPos == std::string::npos)
-    {
-      std::ostringstream errorMsg;
-      errorMsg << errorMsgPrefix << "response json: \'" << jsonExpiresIn << "\' not found.";
-
-      throw AuthenticationException(errorMsg.str());
-    }
-
-    for (; responseBodyPos < responseBodySize; ++responseBodyPos)
-    {
-      auto c = responseBody[responseBodyPos];
-      if (c != ':' && c != ' ' && c != '\"' && c != '\'')
-      {
-        break;
-      }
-    }
-
-    long long expiresInSeconds = 0;
-    for (; responseBodyPos < responseBodySize; ++responseBodyPos)
-    {
-      auto c = responseBody[responseBodyPos];
-      if (c < '0' || c > '9')
-      {
-        break;
-      }
-
-      expiresInSeconds = (expiresInSeconds * 10) + (static_cast<long long>(c) - '0');
-    }
-
-    responseBodyPos = responseBody.find(':', responseBody.find(jsonAccessToken));
-    if (responseBodyPos == std::string::npos)
-    {
-      std::ostringstream errorMsg;
-      errorMsg << errorMsgPrefix << "response json: \'" << jsonAccessToken << "\' not found.";
-
-      throw AuthenticationException(errorMsg.str());
-    }
-
-    for (; responseBodyPos < responseBodySize; ++responseBodyPos)
-    {
-      auto c = responseBody[responseBodyPos];
-      if (c != ':' && c != ' ' && c != '\"' && c != '\'')
-      {
-        break;
-      }
-    }
-
-    auto const tokenBegin = responseBodyPos;
-    for (; responseBodyPos < responseBodySize; ++responseBodyPos)
-    {
-      auto c = responseBody[responseBodyPos];
-      if (c == '\"' || c == '\'')
-      {
-        break;
-      }
-    }
-    auto const tokenEnd = responseBodyPos;
-
-    auto const responseBodyBegin = responseBody.begin();
-
-    return {
-        std::string(responseBodyBegin + tokenBegin, responseBodyBegin + tokenEnd),
-        std::chrono::system_clock::now() + std::chrono::seconds(expiresInSeconds),
-    };
   }
-  catch (AuthenticationException const&)
+
+  TokenRequest request(HttpMethod::Post, m_requestUrl, body.str());
+  if (m_isAdfs)
   {
-    throw;
+    request.HttpRequest.SetHeader("Host", m_requestUrl.GetHost());
   }
-  catch (std::exception const& e)
-  {
-    throw AuthenticationException(e.what());
-  }
-  catch (...)
-  {
-    throw AuthenticationException("unknown error");
-  }
+
+  return request;
 }

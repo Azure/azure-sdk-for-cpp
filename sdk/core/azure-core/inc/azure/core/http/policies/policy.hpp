@@ -437,7 +437,7 @@ namespace Azure { namespace Core { namespace Http { namespace Policies {
        * @brief Construct a Bearer Token authentication policy.
        *
        * @param credential An #Azure::Core::TokenCredential to use with this policy.
-       * @param tokenRequestContext #Azure::Core::Credentials::TokenRequestContext.
+       * @param tokenRequestContext A context to get the token in.
        */
       explicit BearerTokenAuthenticationPolicy(
           std::shared_ptr<Credentials::TokenCredential const> credential,

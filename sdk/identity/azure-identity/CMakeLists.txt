@@ -28,17 +28,25 @@ endif()
 
 set(
   AZURE_IDENTITY_HEADER
+    inc/azure/identity/internal/token_credential_impl.hpp
     inc/azure/identity/client_secret_credential.hpp
-    inc/azure/identity/environment_credential.hpp
     inc/azure/identity/dll_import_export.hpp
+    inc/azure/identity/environment_credential.hpp
+    inc/azure/identity/managed_identity_credential.hpp
     inc/azure/identity.hpp
 )
 
 set(
   AZURE_IDENTITY_SOURCE
+    src/private/environment.hpp
+    src/private/managed_identity_source.hpp
     src/private/package_version.hpp
     src/client_secret_credential.cpp
+    src/environment.cpp
     src/environment_credential.cpp
+    src/managed_identity_credential.cpp
+    src/managed_identity_source.cpp
+    src/token_credential_impl.cpp
 )
 
 add_library(azure-identity ${AZURE_IDENTITY_HEADER} ${AZURE_IDENTITY_SOURCE})

@@ -26,6 +26,8 @@ namespace Azure { namespace Identity {
     /**
      * @brief Constructs an Environment Credential.
      *
+     * @param options Options for token retrieval.
+     *
      * @note May read from the following environment variables:
      * - AZURE_TENANT_ID
      * - AZURE_CLIENT_ID
@@ -41,8 +43,7 @@ namespace Azure { namespace Identity {
     /**
      * @brief Gets an authentication token.
      *
-     * @param tokenRequestContext #Azure::Core::Credentials::TokenRequestContext to get the token
-     * in.
+     * @param tokenRequestContext A context to get the token in.
      * @param context A context to control the request lifetime.
      *
      * @throw Azure::Core::Credentials::AuthenticationException Authentication error occurred.
