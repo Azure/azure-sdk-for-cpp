@@ -12,16 +12,12 @@ Familiarity with the legacy client library is assumed. For those new to the Azur
   - [Package and namespaces](#package-and-namespaces)
   - [Authentication](#authentication)
   - [Client structure](#client-structure)
-    - [Migrating from CloudBlockBlob](#migrating-from-cloudblockblob)
-    - [Migrating from CloudBlobDirectory](#migrating-from-cloudblobdirectory)
-    - [Class Conversion Reference](#class-conversion-reference)
 - [Migration samples](#migration-samples)
   - [Creating a Container](#creating-a-container)
   - [Uploading Blobs to a Container](#uploading-blobs-to-a-container)
   - [Downloading Blobs from a Container](#downloading-blobs-from-a-container)
   - [Listing Blobs in a Container](#listing-blobs-in-a-container)
   - [Managing Blob Metadata](#managing-blob-metadata)
-  - [Generate a SAS](#generate-a-sas)
   - [Content Hashes](#content-hashes)
   - [Resiliency](#resiliency)
 - [Additional information](#additional-information)
@@ -64,7 +60,7 @@ The legacy Storage SDK contained a `bearer_token_credential` class that could be
 
 v12
 
-A `TokenCredential` abstract class (different API surface than v11) exists in the [Azure Core](https://github.com/Azure/azure-sdk-for-cpp/tree/master/sdk/core/azure-core) package that all libraries of the new Azure SDK family depend on, and can be used to construct Storage clients. Implementations of this class can be found separately in the [Azure Identity](https://github.com/Azure/azure-sdk-for-cpp/tree/master/sdk/identity/azure-identity) package.
+A `TokenCredential` abstract class (different API surface than v7.5) exists in the [Azure Core](https://github.com/Azure/azure-sdk-for-cpp/tree/master/sdk/core/azure-core) package that all libraries of the new Azure SDK family depend on, and can be used to construct Storage clients. Implementations of this class can be found separately in the [Azure Identity](https://github.com/Azure/azure-sdk-for-cpp/tree/master/sdk/identity/azure-identity) package.
 
 ```C++
 BlobServiceClient serviceClient(serviceUrl, std::make_shared<Azure::Identity::ClientSecretCredential>(tenantId, clientId, clientSecret));
@@ -72,7 +68,7 @@ BlobServiceClient serviceClient(serviceUrl, std::make_shared<Azure::Identity::Cl
 
 #### SAS
 
-This section regards authenticating a client with an existing SAS. For migration samples regarding SAS generation, go to [Generate a SAS](#generate-a-sas).
+This section regards authenticating a client with an existing SAS
 
 v7.5
 
@@ -146,7 +142,7 @@ The hierarchical structure of Azure Blob Storage can be understood by the follow
 
 In the interest of simplifying the API surface, v12 uses three top level clients to match this structure that can be used to interact with a majority of your resources: `BlobServiceClient`, `BlobContainerClient`, and `BlobClient`. Note that blob-type-specific operations can still be accessed by their specific clients, as in v7.5.
 
-#### Migrating from CloudBlobDirectory
+#### Migrating from cloud_blob_directory
 
 Note the absence of a v12 equivalent for v7.5's `cloud_blob_directory`. Directories were an SDK-only concept that did not exist in Azure Blob Storage, and which were not brought forwards into the modern Storage SDK. As shown by the diagram in [Client Structure](#client-structure), containers only contain a flat list of blobs, but those blobs can be named and listed in ways that imply a folder-like structure. See our [Listing Blobs in a Container](#listing-blobs-in-a-container) migration samples later in this guide for more information.
 
@@ -154,7 +150,7 @@ For those whose workloads revolve around manipulating directories and heavily re
 
 #### Class Conversion Reference
 
-The following table lists v11 classes and their v12 equivalents for quick reference.
+The following table lists v7.5 classes and their v12 equivalents for quick reference.
 
 | v7.5 | v12 |
 |-------|--------|
