@@ -238,9 +238,6 @@ std::unique_ptr<ManagedIdentitySource> ImdsManagedIdentitySource::Create(
     std::string const& clientId,
     Azure::Core::Credentials::TokenCredentialOptions const& options)
 {
-  // Ideally, we should probe here, by trying to connect to 169.254.169.254 at port 80 with 1 second
-  // timeout. But Azure Core does not currently have support for raw TCP connections.
-
   return std::unique_ptr<ManagedIdentitySource>(new ImdsManagedIdentitySource(clientId, options));
 }
 
@@ -281,88 +278,4 @@ TokenCredentialImpl::TokenRequest ImdsManagedIdentitySource::GetRequest(
   }
 
   return request;
-  // .NET SDK would handle the response from HTTP 400 and HTTP 502, to have an exception with
-  // message. An equivalent for us would be to override ShouldRetry() with throwing from there /
-  // always returning false. But this is not necessary for us, because we are already wrapping a
-  // response message into AuthenticationException (TokenCredentialImpl::GetToken() does that).
-  // Plus, we do not probe, but try to get the token on first attempt, or throw.
 }
-
-// std::string ServiceFabricManagedIdentitySource::GetIdentityServerThumbprint()
-// {
-//   return Environment::GetVariable("IDENTITY_SERVER_THUMBPRINT");
-// }
-//
-// std::unique_ptr<ManagedIdentitySource> ServiceFabricManagedIdentitySource::Create(
-//     std::string const& clientId,
-//     Azure::Core::Credentials::TokenCredentialOptions const& options)
-// {
-//   constexpr auto EndpointVarName = "IDENTITY_ENDPOINT";
-//   auto identityEndpoint = Environment::GetVariable(EndpointVarName);
-//   auto identityHeader = Environment::GetVariable("IDENTITY_HEADER");
-//
-//   return (identityEndpoint.empty() || identityHeader.empty()
-//           || GetIdentityServerThumbprint().empty())
-//       ? nullptr
-//       : std::unique_ptr<ManagedIdentitySource>(new ServiceFabricManagedIdentitySource(
-//           clientId, options, ParseEndpointUrl(identityEndpoint, EndpointVarName),
-//           identityHeader));
-// }
-//
-// Azure::Core::Credentials::TokenCredentialOptions
-// ServiceFabricManagedIdentitySource::SetServiceFabricTransport(
-//     Azure::Core::Credentials::TokenCredentialOptions const& options)
-// {
-//   auto serviceFabricOptions = options;
-//   // https://stackoverflow.com/questions/62838677/custom-ssl-certificate-validation-with-libcurl
-//   // options.Transport.CertificateValidationCallback = (policyErrors, certHash)[]
-//   //{
-//   //  return (policyErrors == None) || CaseInsensitiveEquals(certHash,
-//   //  GetIdentityServerThumbprint());
-//   //}
-//
-//   return serviceFabricOptions;
-// }
-//
-// ServiceFabricManagedIdentitySource::ServiceFabricManagedIdentitySource(
-//     std::string const& clientId,
-//     Azure::Core::Credentials::TokenCredentialOptions const& options,
-//     Azure::Core::Url endpointUrl,
-//     std::string const& secret)
-//     : ManagedIdentitySource(SetServiceFabricTransport(options)),
-//       m_request(Azure::Core::Http::HttpMethod::Get, std::move(endpointUrl))
-// {
-//   {
-//     using Azure::Core::Url;
-//     auto& url = m_request.GetUrl();
-//
-//     url.AppendQueryParameter("api-version", "2019-07-01-preview");
-//
-//     if (!clientId.empty())
-//     {
-//       url.AppendQueryParameter("client_id", clientId);
-//     }
-//   }
-//
-//   m_request.SetHeader("secret", secret);
-//
-//   throw Azure::Core::Credentials::AuthenticationException(
-//       "Service Fabric Managed Identity Source credential is not supported. "
-//       "Please unset IDENTITY_HEADER or IDENTITY_SERVER_THUMBPRINT environment variables.");
-// }
-//
-// TokenCredentialImpl::TokenRequest ServiceFabricManagedIdentitySource::GetRequest(
-//     Azure::Core::Credentials::TokenRequestContext const& tokenRequestContext) const
-// {
-//   TokenRequest request(m_request);
-//   {
-//     auto const& scopes = tokenRequestContext.Scopes;
-//     if (!scopes.empty())
-//     {
-//       request.HttpRequest.GetUrl().AppendQueryParameter(
-//           "resource", FormatScopes(scopes, true, false));
-//     }
-//   }
-//
-//   return request;
-// }

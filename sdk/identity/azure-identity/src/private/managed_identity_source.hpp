@@ -98,28 +98,4 @@ namespace Azure { namespace Identity { namespace _detail {
     TokenRequest GetRequest(
         Core::Credentials::TokenRequestContext const& tokenRequestContext) const final;
   };
-
-  // class ServiceFabricManagedIdentitySource final : public ManagedIdentitySource {
-  // public:
-  //   static std::unique_ptr<ManagedIdentitySource> Create(
-  //       std::string const& clientId,
-  //       Core::Credentials::TokenCredentialOptions const& options);
-  //
-  // private:
-  //   Core::Http::Request m_request;
-  //
-  //   static std::string GetIdentityServerThumbprint();
-  //
-  //   static Core::Credentials::TokenCredentialOptions SetServiceFabricTransport(
-  //       Core::Credentials::TokenCredentialOptions const& options);
-  //
-  //   explicit ServiceFabricManagedIdentitySource(
-  //       std::string const& clientId,
-  //       Core::Credentials::TokenCredentialOptions const& options,
-  //       Core::Url endpointUrl,
-  //       std::string const& secret);
-  //
-  //   TokenRequest GetRequest(
-  //       Core::Credentials::TokenRequestContext const& tokenRequestContext) const final;
-  // };
 }}} // namespace Azure::Identity::_detail

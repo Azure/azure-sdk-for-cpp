@@ -18,7 +18,6 @@ std::unique_ptr<_detail::ManagedIdentitySource> CreateManagedIdentitySource(
       = {AppServiceManagedIdentitySource::Create,
          CloudShellManagedIdentitySource::Create,
          AzureArcManagedIdentitySource::Create,
-         // ServiceFabricManagedIdentitySource::Create,
          ImdsManagedIdentitySource::Create};
 
   for (auto create : managedIdentitySourceCreate)
