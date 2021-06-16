@@ -2,7 +2,7 @@
 
 This guide intends to assist customers in migrating from legacy versions of the Azure Storage C++ library for Blobs to version 12.
 While this guide is generally applicable to older versions of the SDK, it was written with v7.5 in mind as the starting point.
-It will focus on side-by-side comparisons for similar operations between the [Track1 SDK](https://github.com/Azure/azure-storage-cpp) and [Track2 SDK](https://github.com/Azure/azure-sdk-for-cpp/tree/master/sdk/storage).
+It will focus on side-by-side comparisons for similar operations between the [v7.5 package](https://github.com/Azure/azure-storage-cpp) and [v12 package](https://github.com/Azure/azure-sdk-for-cpp/tree/master/sdk/storage).
 Familiarity with the legacy client library is assumed. For those new to the Azure Storage Blobs client library for C++, please refer to the [Quickstart](https://docs.microsoft.com/azure/storage/blobs/quickstart-blobs-c-plus-plus) for the v12 library rather than this guide.
 
 ## Table of contents
