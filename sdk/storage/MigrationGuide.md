@@ -294,8 +294,6 @@ for (auto blobPage = containerClient.ListBlobs(); blobPage.HasPage(); blobPage.M
 
 See the [list blobs documentation](https://docs.microsoft.com/en-us/azure/storage/blobs/storage-blobs-list?tabs=dotnet#flat-listing-versus-hierarchical-listing) for more information on what a hierarchical listing is.
 
-While manual page iteration as described in the previous section is still applicable to a hierarchical listing, this section will only give examples using lazy enumerables.
-
 v7.5
 
 `list_blobs()` and `list_blobs_segmented()` that were used in a flat listing contain overloads with a boolean parameter `use_flat_blob_listing`, which results in a flat listing when `true`. Provide `false` to perform a hierarchical listing.
