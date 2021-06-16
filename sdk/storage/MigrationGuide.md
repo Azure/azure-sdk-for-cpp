@@ -28,6 +28,8 @@ To understand why we created our version 12 client libraries, you may refer to t
 
 Included are the following:
 - Thread-safe synchronous APIs
+- More comprehensive feature parity
+- Dropped dependency of Boost and cpprestsdk
 - Improved performance
 - Consistent and idiomatic code organization, naming, and API structure, aligned with a set of common guidelines
 - The learning curve associated with the libraries was reduced
