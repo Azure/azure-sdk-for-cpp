@@ -27,16 +27,17 @@
 
 using namespace Azure::Core::Diagnostics;
 using namespace Azure::Core::Diagnostics::_detail;
+using Azure::Core::Diagnostics::_detail::EnvironmentLogLevelListener;
 
 namespace {
 Logger::Level const* GetEnvironmentLogLevel()
 {
   static Logger::Level* envLogLevelPtr = nullptr;
 
-  static bool initialized = false;
-  if (!initialized)
+  
+  if (!EnvironmentLogLevelListener::GetInitialized())
   {
-    initialized = true;
+    EnvironmentLogLevelListener::SetInitialized(true);
 
 #if defined(_MSC_VER)
 #pragma warning(push)
@@ -144,4 +145,7 @@ EnvironmentLogLevelListener::GetLogListener()
   return consoleLogger;
 }
 
+ bool EnvironmentLogLevelListener::GetInitialized() { return initialized; }
+ 
+ void EnvironmentLogLevelListener::SetInitialized(bool value) { initialized = value; }
 #endif
