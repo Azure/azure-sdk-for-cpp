@@ -2,12 +2,12 @@
 // SPDX-License-Identifier: MIT
 
 #include <azure/core/internal/diagnostics/log.hpp>
-#include <private/environment_log_level_listener.hpp>
 #include <gtest/gtest.h>
+#include <private/environment_log_level_listener.hpp>
 
 using Azure::Core::Diagnostics::Logger;
-using Azure::Core::Diagnostics::_internal::Log;
 using Azure::Core::Diagnostics::_detail::EnvironmentLogLevelListener;
+using Azure::Core::Diagnostics::_internal::Log;
 
 TEST(Logger, Levels)
 {

@@ -34,7 +34,6 @@ Logger::Level const* GetEnvironmentLogLevel()
 {
   static Logger::Level* envLogLevelPtr = nullptr;
 
-  
   if (!EnvironmentLogLevelListener::GetInitialized())
   {
     EnvironmentLogLevelListener::SetInitialized(true);
@@ -145,7 +144,7 @@ EnvironmentLogLevelListener::GetLogListener()
   return consoleLogger;
 }
 
- bool EnvironmentLogLevelListener::GetInitialized() { return initialized; }
- 
- void EnvironmentLogLevelListener::SetInitialized(bool value) { initialized = value; }
+bool EnvironmentLogLevelListener::GetInitialized() { return initialized; }
+
+void EnvironmentLogLevelListener::SetInitialized(bool value) { initialized = value; }
 #endif
