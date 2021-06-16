@@ -120,7 +120,7 @@ Note that the URI to your storage account can generally be derived from the acco
 
 v7.5
 ```C++
-cloud_blob_client blob_client(storage_uri(blob_url), storage_credentials(account_name, account_key));
+cloud_blob_client blob_client(storage_uri(blob_service_url), storage_credentials(account_name, account_key));
 ```
 
 v12
