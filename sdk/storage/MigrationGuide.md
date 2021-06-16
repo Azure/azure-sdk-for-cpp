@@ -135,7 +135,7 @@ If you wish to rotate the key within your `BlobServiceClient` (and any derived c
 
 **The legacy SDK used a stateful model.** There were container and blob objects that held state regarding service resources and required the user to manually call their update methods. But blob contents were not a part of this state and had to be uploaded/downloaded whenever they were to be interacted with. This became increasingly confusing over time, and increasingly susceptible to thread safety issues.
 
-The modern SDK has taken a client-based approach. There are no objects designed to be representations of storage resources, but instead clients that act as your mechanism to interact with your storage resources in the cloud. **Clients hold no state of your resources.** This is most noticable when looking at [blob metadata](#managing-blob-metadata).
+The modern SDK has taken a client-based approach. There are no objects designed to be representations of storage resources, but instead clients that act as your mechanism to interact with your storage resources in the cloud. **Clients hold no state of your resources.** (Lease client is an exception.) This is most noticable when looking at [blob metadata](#managing-blob-metadata).
 
 The hierarchical structure of Azure Blob Storage can be understood by the following diagram:  
 ![Blob Storage Hierarchy](https://docs.microsoft.com/azure/storage/blobs/media/storage-blobs-introduction/blob1.png)
