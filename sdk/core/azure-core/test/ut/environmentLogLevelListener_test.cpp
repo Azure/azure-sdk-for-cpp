@@ -24,6 +24,11 @@ TEST(EnvironmentLogLevelListener, LogLevelDefault)
   SetVariable("unknown");
   auto level = EnvironmentLogLevelListener::GetLogLevel(Logger::Level::Verbose);
   EXPECT_EQ(level, Logger::Level::Verbose);
+
+  EnvironmentLogLevelListener::SetInitialized(false);
+  SetVariable("");
+  level = EnvironmentLogLevelListener::GetLogLevel(Logger::Level::Verbose);
+  EXPECT_EQ(level, Logger::Level::Verbose);
 }
 
 TEST(EnvironmentLogLevelListener, LogLevelError)
