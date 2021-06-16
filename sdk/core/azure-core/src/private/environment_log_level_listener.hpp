@@ -19,8 +19,6 @@
 
 namespace Azure { namespace Core { namespace Diagnostics { namespace _detail {
 
-  static bool initialized;
-
   class EnvironmentLogLevelListener final {
     EnvironmentLogLevelListener() = delete;
     ~EnvironmentLogLevelListener() = delete;

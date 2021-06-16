@@ -144,6 +144,8 @@ EnvironmentLogLevelListener::GetLogListener()
   return consoleLogger;
 }
 
+static bool initialized;
+
 bool EnvironmentLogLevelListener::GetInitialized() { return initialized; }
 
 void EnvironmentLogLevelListener::SetInitialized(bool value) { initialized = value; }
