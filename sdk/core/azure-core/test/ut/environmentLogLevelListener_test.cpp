@@ -1,22 +1,25 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
 
-#ifdef __APPLE__
-#define PUTENV(x) putenv((char*)x)
-#else
-#define PUTENV(x) _putenv(std::string(x).c_str());
-#endif // __APPLE__
-
 #include <gtest/gtest.h>
 #include <private/environment_log_level_listener.hpp>
 
 using Azure::Core::Diagnostics::Logger;
 using Azure::Core::Diagnostics::_detail::EnvironmentLogLevelListener;
 
+void SetVariable(std::string const& value)
+{
+#if defined(_MSC_VER)
+  static_cast<void>(_putenv(("AZURE_LOG_LEVEL=" + value).c_str()));
+#else
+  static_cast<void>(setenv(std::string("AZURE_LOG_LEVEL").c_str(), value.c_str(), 1));
+#endif
+}
+
 TEST(EnvironmentLogLevelListener, LogLevelDefault)
 {
   EnvironmentLogLevelListener::SetInitialized(false);
-  PUTENV("AZURE_LOG_LEVEL=goqu");
+  SetVariable("goqu");
   auto level = EnvironmentLogLevelListener::GetLogLevel(Logger::Level::Verbose);
   EXPECT_EQ(level, Logger::Level::Verbose);
 }
@@ -24,17 +27,16 @@ TEST(EnvironmentLogLevelListener, LogLevelDefault)
 TEST(EnvironmentLogLevelListener, LogLevelError)
 {
   EnvironmentLogLevelListener::SetInitialized(false);
-  PUTENV("AZURE_LOG_LEVEL=error");
+  SetVariable("error");
   auto level = EnvironmentLogLevelListener::GetLogLevel(Logger::Level::Verbose);
   EXPECT_EQ(level, Logger::Level::Error);
 
   EnvironmentLogLevelListener::SetInitialized(false);
-  PUTENV("AZURE_LOG_LEVEL=err");
+  SetVariable("err");
   level = EnvironmentLogLevelListener::GetLogLevel(Logger::Level::Verbose);
   EXPECT_EQ(level, Logger::Level::Error);
 
-  EnvironmentLogLevelListener::SetInitialized(false);
-  PUTENV("AZURE_LOG_LEVEL=4");
+  SetVariable("4");
   level = EnvironmentLogLevelListener::GetLogLevel(Logger::Level::Verbose);
   EXPECT_EQ(level, Logger::Level::Error);
 }
@@ -42,17 +44,17 @@ TEST(EnvironmentLogLevelListener, LogLevelError)
 TEST(EnvironmentLogLevelListener, LogLevelWarning)
 {
   EnvironmentLogLevelListener::SetInitialized(false);
-  PUTENV("AZURE_LOG_LEVEL=warning");
+  SetVariable("warning");
   auto level = EnvironmentLogLevelListener::GetLogLevel(Logger::Level::Verbose);
   EXPECT_EQ(level, Logger::Level::Warning);
 
   EnvironmentLogLevelListener::SetInitialized(false);
-  PUTENV("AZURE_LOG_LEVEL=warn");
+  SetVariable("warn");
   level = EnvironmentLogLevelListener::GetLogLevel(Logger::Level::Verbose);
   EXPECT_EQ(level, Logger::Level::Warning);
 
   EnvironmentLogLevelListener::SetInitialized(false);
-  PUTENV("AZURE_LOG_LEVEL=3");
+  SetVariable("3");
   level = EnvironmentLogLevelListener::GetLogLevel(Logger::Level::Verbose);
   EXPECT_EQ(level, Logger::Level::Warning);
 }
@@ -60,22 +62,22 @@ TEST(EnvironmentLogLevelListener, LogLevelWarning)
 TEST(EnvironmentLogLevelListener, LogLevelInformational)
 {
   EnvironmentLogLevelListener::SetInitialized(false);
-  PUTENV("AZURE_LOG_LEVEL=informational");
+  SetVariable("informational");
   auto level = EnvironmentLogLevelListener::GetLogLevel(Logger::Level::Verbose);
   EXPECT_EQ(level, Logger::Level::Informational);
 
   EnvironmentLogLevelListener::SetInitialized(false);
-  PUTENV("AZURE_LOG_LEVEL=info");
+  SetVariable("info");
   level = EnvironmentLogLevelListener::GetLogLevel(Logger::Level::Verbose);
   EXPECT_EQ(level, Logger::Level::Informational);
 
   EnvironmentLogLevelListener::SetInitialized(false);
-  PUTENV("AZURE_LOG_LEVEL=information");
+  SetVariable("information");
   level = EnvironmentLogLevelListener::GetLogLevel(Logger::Level::Verbose);
   EXPECT_EQ(level, Logger::Level::Informational);
 
   EnvironmentLogLevelListener::SetInitialized(false);
-  PUTENV("AZURE_LOG_LEVEL=2");
+  SetVariable("2");
   level = EnvironmentLogLevelListener::GetLogLevel(Logger::Level::Verbose);
   EXPECT_EQ(level, Logger::Level::Informational);
 }
@@ -83,17 +85,17 @@ TEST(EnvironmentLogLevelListener, LogLevelInformational)
 TEST(EnvironmentLogLevelListener, LogLevelVerbose)
 {
   EnvironmentLogLevelListener::SetInitialized(false);
-  PUTENV("AZURE_LOG_LEVEL=verbose");
+  SetVariable("verbose");
   auto level = EnvironmentLogLevelListener::GetLogLevel(Logger::Level::Verbose);
   EXPECT_EQ(level, Logger::Level::Verbose);
 
   EnvironmentLogLevelListener::SetInitialized(false);
-  PUTENV("AZURE_LOG_LEVEL=debug");
+  SetVariable("debug");
   level = EnvironmentLogLevelListener::GetLogLevel(Logger::Level::Verbose);
   EXPECT_EQ(level, Logger::Level::Verbose);
 
   EnvironmentLogLevelListener::SetInitialized(false);
-  PUTENV("AZURE_LOG_LEVEL=1");
+  SetVariable("1");
   level = EnvironmentLogLevelListener::GetLogLevel(Logger::Level::Verbose);
   EXPECT_EQ(level, Logger::Level::Verbose);
 }
