@@ -1,3 +1,5 @@
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// SPDX-License-Identifier: MIT
 
 #ifdef __APPLE__
 #define PUTENV putenv
@@ -54,7 +56,6 @@ TEST(EnvironmentLogLevelListener, LogLevelWarning)
   level = EnvironmentLogLevelListener::GetLogLevel(Logger::Level::Verbose);
   EXPECT_EQ(level, Logger::Level::Warning);
 }
-
 
 TEST(EnvironmentLogLevelListener, LogLevelInformational)
 {
