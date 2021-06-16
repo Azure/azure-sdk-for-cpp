@@ -16,8 +16,7 @@ void SetVariable(std::string const& value)
   static_cast<void>(setenv(std::string("AZURE_LOG_LEVEL").c_str(), value.c_str(), 1));
 #endif
 }
-}// namespace
-
+} // namespace
 
 TEST(EnvironmentLogLevelListener, LogLevelDefault)
 {
@@ -103,7 +102,8 @@ TEST(EnvironmentLogLevelListener, LogLevelVerbose)
   EXPECT_EQ(level, Logger::Level::Verbose);
 }
 
-TEST(EnvironmentLogLevelListener, GetLogListenerVerbose) {
+TEST(EnvironmentLogLevelListener, GetLogListenerVerbose)
+{
   EnvironmentLogLevelListener::SetInitialized(false);
   SetVariable("verbose");
 
