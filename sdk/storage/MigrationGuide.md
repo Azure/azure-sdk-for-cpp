@@ -304,7 +304,7 @@ for (auto iter = container_client.list_blobs(prefix, false, blob_listing_details
         auto blob_client = iter->as_blob();
     }
     else {
-      auto directory_client = iter->as_directory();
+        auto directory_client = iter->as_directory();
     }
 }
 ```
