@@ -290,13 +290,49 @@ for (auto blobPage = containerClient.ListBlobs(); blobPage.HasPage(); blobPage.M
 }
 ```
 
+#### Hierarchical Listing
+
+See the [list blobs documentation](https://docs.microsoft.com/en-us/azure/storage/blobs/storage-blobs-list?tabs=dotnet#flat-listing-versus-hierarchical-listing) for more information on what a hierarchical listing is.
+
+While manual page iteration as described in the previous section is still applicable to a hierarchical listing, this section will only give examples using lazy enumerables.
+
+v7.5
+
+`list_blobs()` and `list_blobs_segmented()` that were used in a flat listing contain overloads with a boolean parameter `use_flat_blob_listing`, which results in a flat listing when `true`. Provide `false` to perform a hierarchical listing.
+
+```C++
+for (auto iter = container_client.list_blobs(prefix, false, blob_listing_details::none, 0, blob_request_options, operation_context)) {
+    if (iter->is_blob()) {
+        auto blob_client = iter->as_blob();
+    }
+    else {
+      auto directory_client = iter->as_directory();
+    }
+}
+```
+
+v12
+
+v12 has explicit methods for listing by hierarchy.
+
+```C++
+for (auto blobPage = containerClient.ListBlobsByHierarchy("/"); blobPage.HasPage(); blobPage.MoveToNextPage()) {
+    for (auto& blob : blobPage.Blobs) {
+
+    }
+    for (auto& blobPrefix : blobPage.BlobPrefixes) {
+
+    }
+}
+```
+
 ### Managing Blob Metadata
 
 On the service, blob metadata is overwritten alongside blob data overwrites. If metadata is not provided on a blob content edit, that is interpreted as a metadata clear. Legacy versions of the SDK mitigated this by maintaining blob metadata internally and sending it for you on appropriate requests. This helped in simple cases, but could fall out of sync and required developers to defensively code against metadata changes in a multi-client scenario anyway.
 
 v12 has abandoned this stateful approach, having users manage their own metadata. While this requires additional code for developers, it ensures you always know how your metadata is being managed and avoid silently corrupting metadata due to SDK caching.
 
-v11 samples:
+v7.5 samples:
 
 The legacy SDK maintained a metadata cache, allowing you to modify metadata on the `cloud_blob` and invoke `upload_metadata()`. Calling `download_attributes()` beforehand refreshed the metadata cache to avoid undoing recent changes.
 
