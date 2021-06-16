@@ -49,7 +49,7 @@ TEST(Logger, Levels)
 TEST(EnvironmentLogLevelListener, LogLevelDefault)
 {
   EnvironmentLogLevelListener::SetInitialized(false);
-  _putenv("AZURE_LOG_LEVEL=goqu");
+  putenv("AZURE_LOG_LEVEL=goqu");
   auto level = EnvironmentLogLevelListener::GetLogLevel(Logger::Level::Verbose);
   EXPECT_EQ(level, Logger::Level::Verbose);
 }
@@ -57,17 +57,17 @@ TEST(EnvironmentLogLevelListener, LogLevelDefault)
 TEST(EnvironmentLogLevelListener, LogLevelError)
 {
   EnvironmentLogLevelListener::SetInitialized(false);
-  _putenv("AZURE_LOG_LEVEL=error");
+  putenv("AZURE_LOG_LEVEL=error");
   auto level = EnvironmentLogLevelListener::GetLogLevel(Logger::Level::Verbose);
   EXPECT_EQ(level, Logger::Level::Error);
 
   EnvironmentLogLevelListener::SetInitialized(false);
-  _putenv("AZURE_LOG_LEVEL=err");
+  putenv("AZURE_LOG_LEVEL=err");
   level = EnvironmentLogLevelListener::GetLogLevel(Logger::Level::Verbose);
   EXPECT_EQ(level, Logger::Level::Error);
 
   EnvironmentLogLevelListener::SetInitialized(false);
-  _putenv("AZURE_LOG_LEVEL=4");
+  putenv("AZURE_LOG_LEVEL=4");
   level = EnvironmentLogLevelListener::GetLogLevel(Logger::Level::Verbose);
   EXPECT_EQ(level, Logger::Level::Error);
 }
@@ -75,17 +75,17 @@ TEST(EnvironmentLogLevelListener, LogLevelError)
 TEST(EnvironmentLogLevelListener, LogLevelWarning)
 {
   EnvironmentLogLevelListener::SetInitialized(false);
-  _putenv("AZURE_LOG_LEVEL=warning");
+  putenv("AZURE_LOG_LEVEL=warning");
   auto level = EnvironmentLogLevelListener::GetLogLevel(Logger::Level::Verbose);
   EXPECT_EQ(level, Logger::Level::Warning);
 
   EnvironmentLogLevelListener::SetInitialized(false);
-  _putenv("AZURE_LOG_LEVEL=warn");
+  putenv("AZURE_LOG_LEVEL=warn");
   level = EnvironmentLogLevelListener::GetLogLevel(Logger::Level::Verbose);
   EXPECT_EQ(level, Logger::Level::Warning);
 
   EnvironmentLogLevelListener::SetInitialized(false);
-  _putenv("AZURE_LOG_LEVEL=3");
+  putenv("AZURE_LOG_LEVEL=3");
   level = EnvironmentLogLevelListener::GetLogLevel(Logger::Level::Verbose);
   EXPECT_EQ(level, Logger::Level::Warning);
 }
@@ -93,22 +93,22 @@ TEST(EnvironmentLogLevelListener, LogLevelWarning)
 TEST(EnvironmentLogLevelListener, LogLevelInformational)
 {
   EnvironmentLogLevelListener::SetInitialized(false);
-  _putenv("AZURE_LOG_LEVEL=informational");
+  putenv("AZURE_LOG_LEVEL=informational");
   auto level = EnvironmentLogLevelListener::GetLogLevel(Logger::Level::Verbose);
   EXPECT_EQ(level, Logger::Level::Informational);
 
   EnvironmentLogLevelListener::SetInitialized(false);
-  _putenv("AZURE_LOG_LEVEL=info");
+  putenv("AZURE_LOG_LEVEL=info");
   level = EnvironmentLogLevelListener::GetLogLevel(Logger::Level::Verbose);
   EXPECT_EQ(level, Logger::Level::Informational);
 
   EnvironmentLogLevelListener::SetInitialized(false);
-  _putenv("AZURE_LOG_LEVEL=information");
+  putenv("AZURE_LOG_LEVEL=information");
   level = EnvironmentLogLevelListener::GetLogLevel(Logger::Level::Verbose);
   EXPECT_EQ(level, Logger::Level::Informational);
 
   EnvironmentLogLevelListener::SetInitialized(false);
-  _putenv("AZURE_LOG_LEVEL=2");
+  putenv("AZURE_LOG_LEVEL=2");
   level = EnvironmentLogLevelListener::GetLogLevel(Logger::Level::Verbose);
   EXPECT_EQ(level, Logger::Level::Informational);
 }
@@ -116,17 +116,17 @@ TEST(EnvironmentLogLevelListener, LogLevelInformational)
 TEST(EnvironmentLogLevelListener, LogLevelVerbose)
 {
   EnvironmentLogLevelListener::SetInitialized(false);
-  _putenv("AZURE_LOG_LEVEL=verbose");
+  putenv("AZURE_LOG_LEVEL=verbose");
   auto level = EnvironmentLogLevelListener::GetLogLevel(Logger::Level::Verbose);
   EXPECT_EQ(level, Logger::Level::Verbose);
 
   EnvironmentLogLevelListener::SetInitialized(false);
-  _putenv("AZURE_LOG_LEVEL=debug");
+  putenv("AZURE_LOG_LEVEL=debug");
   level = EnvironmentLogLevelListener::GetLogLevel(Logger::Level::Verbose);
   EXPECT_EQ(level, Logger::Level::Verbose);
 
   EnvironmentLogLevelListener::SetInitialized(false);
-  _putenv("AZURE_LOG_LEVEL=1");
+  putenv("AZURE_LOG_LEVEL=1");
   level = EnvironmentLogLevelListener::GetLogLevel(Logger::Level::Verbose);
   EXPECT_EQ(level, Logger::Level::Verbose);
 }
