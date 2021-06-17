@@ -43,6 +43,7 @@ TEST(Logger, Levels)
 
   Logger::SetListener(nullptr);
 }
+
 TEST(Logger, Message)
 {
   try
