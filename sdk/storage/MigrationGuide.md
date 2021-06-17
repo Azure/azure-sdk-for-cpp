@@ -42,14 +42,14 @@ Note: The blog post linked above announces deprecation for previous versions of 
 
 Version 12 package names and the namespace roots follow the pattern `Azure::[Area]::[Service]` where v7.5 libraries followed the pattern `azure::[area]::[service]`.
 
-In this case, to install the legacy v7.5 package with vcpkg:
-```bash
-vcpkg install azure-storage-cpp
-```
-
-It is now the following for v12:
+Version 12 packages are installed with:
 ```bash
 vcpkg install azure-storage-blobs-cpp
+```
+
+Previously the v7.5 package was installed with:
+```bash
+vcpkg install azure-storage-cpp
 ```
 
 ### Authentication
