@@ -40,7 +40,7 @@ TEST(EnvironmentCredential, RegularClientSecretCredential)
       {{"https://azure.com/.default"}},
       "{\"expires_in\":3600, \"access_token\":\"ACCESSTOKEN1\"}");
 
-  EXPECT_EQ(actual.Requests.size(), 1);
+  EXPECT_EQ(actual.Requests.size(), 1U);
   auto const& request = actual.Requests[0];
 
   EXPECT_EQ(request.HttpMethod, HttpMethod::Post);
@@ -97,7 +97,7 @@ TEST(EnvironmentCredential, AzureStackClientSecretCredential)
       {{"https://azure.com/.default"}},
       "{\"expires_in\":3600, \"access_token\":\"ACCESSTOKEN1\"}");
 
-  EXPECT_EQ(actual.Requests.size(), 1);
+  EXPECT_EQ(actual.Requests.size(), 1U);
   auto const& request = actual.Requests[0];
 
   EXPECT_EQ(request.AbsoluteUrl, "https://microsoft.com/adfs/oauth2/token");
