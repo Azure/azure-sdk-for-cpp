@@ -19,7 +19,9 @@ add_executable (
     credential_test_helper.hpp
     environment_credential_test.cpp
     macro_guard_test.cpp
+    managed_identity_credential_test.cpp
     simplified_header_test.cpp
+    
 )
 
 if (MSVC)

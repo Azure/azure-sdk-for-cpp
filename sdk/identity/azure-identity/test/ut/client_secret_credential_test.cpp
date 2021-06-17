@@ -7,6 +7,7 @@
 
 #include <gtest/gtest.h>
 
+using Azure::Core::Http::HttpMethod;
 using Azure::Identity::ClientSecretCredential;
 using Azure::Identity::ClientSecretCredentialOptions;
 using Azure::Identity::Test::_detail::CredentialTestHelper;
@@ -31,6 +32,8 @@ TEST(ClientSecretCredential, Regular)
 
   EXPECT_EQ(actual.Requests.size(), 1);
   auto const& request = actual.Requests[0];
+
+  EXPECT_EQ(request.HttpMethod, HttpMethod::Post);
 
   EXPECT_EQ(
       request.AbsoluteUrl,

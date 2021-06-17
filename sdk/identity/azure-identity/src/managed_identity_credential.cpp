@@ -33,6 +33,8 @@ std::unique_ptr<_detail::ManagedIdentitySource> CreateManagedIdentitySource(
 }
 } // namespace
 
+ManagedIdentityCredential::~ManagedIdentityCredential() = default;
+
 ManagedIdentityCredential::ManagedIdentityCredential(
     std::string const& clientId,
     Azure::Core::Credentials::TokenCredentialOptions const& options)

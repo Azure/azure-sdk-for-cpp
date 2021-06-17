@@ -5,6 +5,7 @@
 
 #include <azure/core/case_insensitive_containers.hpp>
 #include <azure/core/credentials/credentials.hpp>
+#include <azure/core/http/http.hpp>
 #include <azure/core/http/http_status_code.hpp>
 #include <azure/core/http/transport.hpp>
 
@@ -39,6 +40,7 @@ namespace Azure { namespace Identity { namespace Test { namespace _detail {
     {
       struct Request final
       {
+        Core::Http::HttpMethod HttpMethod;
         std::string AbsoluteUrl;
         Core::CaseInsensitiveMap Headers;
         std::string Body;

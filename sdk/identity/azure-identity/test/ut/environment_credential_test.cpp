@@ -10,6 +10,7 @@
 using Azure::Core::Context;
 using Azure::Core::Credentials::AuthenticationException;
 using Azure::Core::Credentials::TokenCredentialOptions;
+using Azure::Core::Http::HttpMethod;
 using Azure::Identity::EnvironmentCredential;
 using Azure::Identity::Test::_detail::CredentialTestHelper;
 
@@ -29,7 +30,10 @@ TEST(EnvironmentCredential, RegularClientSecretCredential)
             {{"AZURE_TENANT_ID", "01234567-89ab-cdef-fedc-ba8976543210"},
              {"AZURE_CLIENT_ID", "fedcba98-7654-3210-0123-456789abcdef"},
              {"AZURE_CLIENT_SECRET", "CLIENTSECRET"},
-             {"AZURE_AUTHORITY_HOST", "https://microsoft.com/"}});
+             {"AZURE_AUTHORITY_HOST", "https://microsoft.com/"},
+             {"AZURE_USERNAME", ""},
+             {"AZURE_PASSWORD", ""},
+             {"AZURE_CLIENT_CERTIFICATE_PATH", ""}});
 
         return std::make_unique<EnvironmentCredential>(options);
       },
@@ -38,6 +42,8 @@ TEST(EnvironmentCredential, RegularClientSecretCredential)
 
   EXPECT_EQ(actual.Requests.size(), 1);
   auto const& request = actual.Requests[0];
+
+  EXPECT_EQ(request.HttpMethod, HttpMethod::Post);
 
   EXPECT_EQ(
       request.AbsoluteUrl,
@@ -81,7 +87,10 @@ TEST(EnvironmentCredential, AzureStackClientSecretCredential)
             {{"AZURE_TENANT_ID", "adfs"},
              {"AZURE_CLIENT_ID", "fedcba98-7654-3210-0123-456789abcdef"},
              {"AZURE_CLIENT_SECRET", "CLIENTSECRET"},
-             {"AZURE_AUTHORITY_HOST", "https://microsoft.com/"}});
+             {"AZURE_AUTHORITY_HOST", "https://microsoft.com/"},
+             {"AZURE_USERNAME", ""},
+             {"AZURE_PASSWORD", ""},
+             {"AZURE_CLIENT_CERTIFICATE_PATH", ""}});
 
         return std::make_unique<EnvironmentCredential>(options);
       },

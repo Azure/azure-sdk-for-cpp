@@ -8,6 +8,7 @@
 #include <azure/core/platform.hpp>
 
 #include <stdlib.h>
+#include <type_traits>
 
 #if defined(AZ_PLATFORM_WINDOWS)
 #if !defined(WIN32_LEAN_AND_MEAN)
@@ -119,13 +120,14 @@ CredentialTestHelper::TokenRequestSimulationResult CredentialTestHelper::Simulat
 
   std::vector<TestTransport::SendCallback> callbacks;
   {
-    for (auto i = 0; i < nResponses; ++i)
+    for (std::remove_cv<decltype(nResponses)>::type i = 0; i < nResponses; ++i)
     {
       callbacks.emplace_back([&, i](auto request, auto context) {
         auto const bodyVec = request.GetBodyStream()->ReadToEnd(context);
 
         result.Requests.push_back(
-            {request.GetUrl().GetAbsoluteUrl(),
+            {request.GetMethod(),
+             request.GetUrl().GetAbsoluteUrl(),
              request.GetHeaders(),
              std::string(bodyVec.begin(), bodyVec.end())});
 

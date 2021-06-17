@@ -29,6 +29,12 @@ namespace Azure { namespace Identity {
 
   public:
     /**
+     * @brief Destructs `%TokenCredential`.
+     *
+     */
+    ~ManagedIdentityCredential() override;
+
+    /**
      * @brief Constructs a Managed Identity Credential.
      *
      * @param clientId Client ID.
