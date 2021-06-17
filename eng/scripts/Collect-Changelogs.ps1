@@ -18,7 +18,10 @@
 param(
   [Parameter(Mandatory=$true)]
   [ValidateRange(1, 12)]
-  [int] $Month
+  [int] $Month, 
+
+  [Parameter]
+  [string] $DefaultBranchName = 'main'
 )
 
 $repoRoot = Resolve-Path "$PSScriptRoot/../..";
@@ -47,7 +50,7 @@ Get-ChildItem "$repoRoot/sdk" -Filter CHANGELOG.md -Recurse | Sort-Object -Prope
         $version = $changeLogEntry.ReleaseVersion
         $githubAnchor = $changeLogEntry.ReleaseTitle.Replace("## ", "").Replace(".", "").Replace("(", "").Replace(")", "").Replace(" ", "-")
 
-        $ReleaseNotes += "### $package [Changelog](https://github.com/Azure/azure-sdk-for-cpp/blob/master/sdk/$serviceDirectory/$package/CHANGELOG.md#$githubAnchor)`n"
+        $ReleaseNotes += "### $package [Changelog](https://github.com/Azure/azure-sdk-for-cpp/blob/${DefaultBranchName}/sdk/$serviceDirectory/$package/CHANGELOG.md#$githubAnchor)`n"
         $changeLogEntry.ReleaseContent | %{ 
 
             $ReleaseNotes += $_.Replace("###", "####")

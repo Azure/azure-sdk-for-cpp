@@ -143,6 +143,10 @@ stages:
                       - pwsh: Write-Host "##vso[task.setvariable variable=HasChanges]$true"
                         displayName: Set $(HasChanges) to $true for create-pull-request.yml
 
+                      - template: /eng/common/pipelines/templates/steps/set-default-branch.yml
+                        parameters:
+                          WorkingDirectory: $(Pipeline.Workspace)/vcpkg
+
                       # SkipCheckingForChanges is true to skip the commit step 
                       # (which is already done by Update-VcpkgPort.ps1)
                       - template: /eng/common/pipelines/templates/steps/create-pull-request.yml
@@ -154,7 +158,7 @@ stages:
                           PRTitle: $(PrTitle)
                           PRBody: Update vcpkg ports for Azure SDK release. This release may contain multiple ports.
                           SkipCheckingForChanges: true
-                          BaseBranchName: master
+                          BaseBranchName: $(DefaultBranch)
                           OpenAsDraft: ${{ parameters.TestPipeline }}
                           CloseAfterOpenForTesting: '${{ parameters.TestPipeline }}'
 
