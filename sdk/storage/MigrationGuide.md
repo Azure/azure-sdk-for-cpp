@@ -1,9 +1,9 @@
-# Migration Guide: From Azure Storage Legacy CPP SDK to Azure Stroage CPP SDK
+# Migration Guide: From Azure Storage CPP SDK (v7.5) to Azure Storage CPP SDK
 
 This guide intends to assist customers in migrating from legacy versions of the Azure Storage C++ library for Blobs to version 12.
 While this guide is generally applicable to older versions of the SDK, it was written with v7.5 in mind as the starting point.
-It will focus on side-by-side comparisons for similar operations between the [v7.5 package](https://github.com/Azure/azure-storage-cpp) and [v12 package](https://github.com/Azure/azure-sdk-for-cpp/tree/master/sdk/storage).
-Familiarity with the legacy client library is assumed. For those new to the Azure Storage Blobs client library for C++, please refer to the [Quickstart](https://docs.microsoft.com/azure/storage/blobs/quickstart-blobs-c-plus-plus) for the v12 library rather than this guide.
+It focuses on side-by-side comparisons for similar operations between the [v7.5 package](https://github.com/Azure/azure-storage-cpp) and [v12 package](https://github.com/Azure/azure-sdk-for-cpp/tree/master/sdk/storage).
+Familiarity with the v7.5 client library is assumed. For those new to the Azure Storage Blobs client library for C++, please refer to the [Quickstart](https://docs.microsoft.com/azure/storage/blobs/quickstart-blobs-c-plus-plus) for the v12 library rather than this guide.
 
 ## Table of contents
 
@@ -24,7 +24,7 @@ Familiarity with the legacy client library is assumed. For those new to the Azur
 
 ## Migration benefits
 
-To understand why we created our version 12 client libraries, you may refer to the Tech Community blog post, [Announcing the Azure Storage v12 Client Libraries](https://techcommunity.microsoft.com/t5/azure-storage/announcing-the-azure-storage-v12-client-libraries/ba-p/1482394) or refer to our video [Introducing the New Azure SDKs](https://aka.ms/azsdk/intro).
+Refer to the Tech Community blog post, [Announcing the Azure Storage v12 Client Libraries](https://techcommunity.microsoft.com/t5/azure-storage/announcing-the-azure-storage-v12-client-libraries/ba-p/1482394) or [Introducing the New Azure SDKs](https://aka.ms/azsdk/intro), to understand the benefits of switching to the version 12 client libraries.
 
 Included are the following:
 - Thread-safe synchronous APIs
@@ -40,7 +40,7 @@ Note: The blog post linked above announces deprecation for previous versions of 
 
 ### Package and namespaces
 
-Package names and the namespaces root for version 12 Azure client libraries follow the pattern `Azure::[Area]::[Service]` where the legacy libraries followed the pattern `azure::[area]::[service]`.
+Version 12 package names and the namespace roots follow the pattern `Azure::[Area]::[Service]` where v7.5 libraries followed the pattern `azure::[area]::[service]`.
 
 In this case, to install the legacy v7.5 package with vcpkg:
 ```bash
