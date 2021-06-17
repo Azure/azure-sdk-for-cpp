@@ -60,6 +60,7 @@ stages:
         ServiceDirectory: ${{ parameters.ServiceDirectory }}
         DependsOn:
         - Build
+        - LiveTest
         Artifacts: ${{ parameters.Artifacts }}
         ArtifactName: packages
         ${{ if eq(parameters.ServiceDirectory, 'template') }}:
