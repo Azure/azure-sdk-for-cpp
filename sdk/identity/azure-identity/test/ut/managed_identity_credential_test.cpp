@@ -450,95 +450,100 @@ TEST(ManagedIdentityCredential, AzureArcClientId)
       {"{\"expires_in\":3600, \"access_token\":\"ACCESSTOKEN1\"}"}));
 }
 
-TEST(ManagedIdentityCredential, AzureArcAuthHeaderMalformed)
+TEST(ManagedIdentityCredential, AzureArcAuthHeaderMissing)
 {
   using Azure::Core::Context;
   using Azure::Core::Credentials::AuthenticationException;
   using Azure::Core::Credentials::TokenRequestContext;
 
-  {
-    std::shared_ptr<ManagedIdentityCredential const> credential1;
-    static_cast<void>(CredentialTestHelper::SimulateTokenRequest(
-        [&](auto transport) {
-          TokenCredentialOptions options;
-          options.Transport.Transport = transport;
+  std::shared_ptr<ManagedIdentityCredential const> credential1;
+  static_cast<void>(CredentialTestHelper::SimulateTokenRequest(
+      [&credential1](auto transport) {
+        TokenCredentialOptions options;
+        options.Transport.Transport = transport;
 
-          CredentialTestHelper::EnvironmentOverride const env({
-              {"MSI_ENDPOINT", ""},
-              {"MSI_SECRET", ""},
-              {"IDENTITY_ENDPOINT", "https://visualstudio.com/"},
-              {"IMDS_ENDPOINT", "https://xbox.com/"},
-              {"IDENTITY_HEADER", "CLIENTSECRET"},
-              {"IDENTITY_SERVER_THUMBPRINT", "0123456789abcdef0123456789abcdef01234567"},
-          });
+        CredentialTestHelper::EnvironmentOverride const env({
+            {"MSI_ENDPOINT", ""},
+            {"MSI_SECRET", ""},
+            {"IDENTITY_ENDPOINT", "https://visualstudio.com/"},
+            {"IMDS_ENDPOINT", "https://xbox.com/"},
+            {"IDENTITY_HEADER", "CLIENTSECRET"},
+            {"IDENTITY_SERVER_THUMBPRINT", "0123456789abcdef0123456789abcdef01234567"},
+        });
 
-          credential1.reset(new ManagedIdentityCredential(options));
-          return credential1;
-        },
-        {},
-        {{HttpStatusCode::Unauthorized, "", {}},
-         {HttpStatusCode::Ok, "{\"expires_in\":3600, \"access_token\":\"ACCESSTOKEN1\"}", {}}}));
+        credential1.reset(new ManagedIdentityCredential(options));
+        return credential1;
+      },
+      {},
+      {{HttpStatusCode::Unauthorized, "", {}},
+       {HttpStatusCode::Ok, "{\"expires_in\":3600, \"access_token\":\"ACCESSTOKEN1\"}", {}}}));
 
-    EXPECT_THROW(
-        credential1->GetToken({{"https://azure.com/.default"}}, Context()),
-        AuthenticationException);
-  }
+  EXPECT_THROW(
+      credential1->GetToken({{"https://azure.com/.default"}}, Context()), AuthenticationException);
+}
 
-  {
-    std::shared_ptr<ManagedIdentityCredential const> credential2;
-    static_cast<void>(CredentialTestHelper::SimulateTokenRequest(
-        [&](auto transport) {
-          TokenCredentialOptions options;
-          options.Transport.Transport = transport;
+TEST(ManagedIdentityCredential, AzureArcAuthHeaderNoEquals)
+{
+  using Azure::Core::Context;
+  using Azure::Core::Credentials::AuthenticationException;
+  using Azure::Core::Credentials::TokenRequestContext;
 
-          CredentialTestHelper::EnvironmentOverride const env({
-              {"MSI_ENDPOINT", ""},
-              {"MSI_SECRET", ""},
-              {"IDENTITY_ENDPOINT", "https://visualstudio.com/"},
-              {"IMDS_ENDPOINT", "https://xbox.com/"},
-              {"IDENTITY_HEADER", "CLIENTSECRET"},
-              {"IDENTITY_SERVER_THUMBPRINT", "0123456789abcdef0123456789abcdef01234567"},
-          });
+  std::shared_ptr<ManagedIdentityCredential const> credential2;
+  static_cast<void>(CredentialTestHelper::SimulateTokenRequest(
+      [&credential2](auto transport) {
+        TokenCredentialOptions options;
+        options.Transport.Transport = transport;
 
-          credential2.reset(new ManagedIdentityCredential(options));
-          return credential2;
-        },
-        {},
-        {{HttpStatusCode::Unauthorized, "", {{"WWW-Authenticate", "ABCSECRET1"}}},
-         {HttpStatusCode::Ok, "{\"expires_in\":3600, \"access_token\":\"ACCESSTOKEN1\"}", {}}}));
+        CredentialTestHelper::EnvironmentOverride const env({
+            {"MSI_ENDPOINT", ""},
+            {"MSI_SECRET", ""},
+            {"IDENTITY_ENDPOINT", "https://visualstudio.com/"},
+            {"IMDS_ENDPOINT", "https://xbox.com/"},
+            {"IDENTITY_HEADER", "CLIENTSECRET"},
+            {"IDENTITY_SERVER_THUMBPRINT", "0123456789abcdef0123456789abcdef01234567"},
+        });
 
-    EXPECT_THROW(
-        credential2->GetToken({{"https://azure.com/.default"}}, Context()),
-        AuthenticationException);
-  }
+        credential2.reset(new ManagedIdentityCredential(options));
+        return credential2;
+      },
+      {},
+      {{HttpStatusCode::Unauthorized, "", {{"WWW-Authenticate", "ABCSECRET1"}}},
+       {HttpStatusCode::Ok, "{\"expires_in\":3600, \"access_token\":\"ACCESSTOKEN1\"}", {}}}));
 
-  {
-    std::shared_ptr<ManagedIdentityCredential const> credential3;
-    static_cast<void>(CredentialTestHelper::SimulateTokenRequest(
-        [&](auto transport) {
-          TokenCredentialOptions options;
-          options.Transport.Transport = transport;
+  EXPECT_THROW(
+      credential2->GetToken({{"https://azure.com/.default"}}, Context()), AuthenticationException);
+}
 
-          CredentialTestHelper::EnvironmentOverride const env({
-              {"MSI_ENDPOINT", ""},
-              {"MSI_SECRET", ""},
-              {"IDENTITY_ENDPOINT", "https://visualstudio.com/"},
-              {"IMDS_ENDPOINT", "https://xbox.com/"},
-              {"IDENTITY_HEADER", "CLIENTSECRET"},
-              {"IDENTITY_SERVER_THUMBPRINT", "0123456789abcdef0123456789abcdef01234567"},
-          });
+TEST(ManagedIdentityCredential, AzureArcAuthHeaderTwoEquals)
+{
+  using Azure::Core::Context;
+  using Azure::Core::Credentials::AuthenticationException;
+  using Azure::Core::Credentials::TokenRequestContext;
 
-          credential3.reset(new ManagedIdentityCredential(options));
-          return credential3;
-        },
-        {},
-        {{HttpStatusCode::Unauthorized, "", {{"WWW-Authenticate", "ABC=SECRET1=SECRET2"}}},
-         {HttpStatusCode::Ok, "{\"expires_in\":3600, \"access_token\":\"ACCESSTOKEN1\"}", {}}}));
+  std::shared_ptr<ManagedIdentityCredential const> credential3;
+  static_cast<void>(CredentialTestHelper::SimulateTokenRequest(
+      [&credential3](auto transport) {
+        TokenCredentialOptions options;
+        options.Transport.Transport = transport;
 
-    EXPECT_THROW(
-        credential3->GetToken({{"https://azure.com/.default"}}, Context()),
-        AuthenticationException);
-  }
+        CredentialTestHelper::EnvironmentOverride const env({
+            {"MSI_ENDPOINT", ""},
+            {"MSI_SECRET", ""},
+            {"IDENTITY_ENDPOINT", "https://visualstudio.com/"},
+            {"IMDS_ENDPOINT", "https://xbox.com/"},
+            {"IDENTITY_HEADER", "CLIENTSECRET"},
+            {"IDENTITY_SERVER_THUMBPRINT", "0123456789abcdef0123456789abcdef01234567"},
+        });
+
+        credential3.reset(new ManagedIdentityCredential(options));
+        return credential3;
+      },
+      {},
+      {{HttpStatusCode::Unauthorized, "", {{"WWW-Authenticate", "ABC=SECRET1=SECRET2"}}},
+       {HttpStatusCode::Ok, "{\"expires_in\":3600, \"access_token\":\"ACCESSTOKEN1\"}", {}}}));
+
+  EXPECT_THROW(
+      credential3->GetToken({{"https://azure.com/.default"}}, Context()), AuthenticationException);
 }
 
 TEST(ManagedIdentityCredential, AzureArcInvalidUrl)
