@@ -35,7 +35,8 @@ TEST(circular_stream, basic)
 
   // 4nd read
   count = r_stream->Read(buffer, chunk, Azure::Core::Context::ApplicationContext);
-  EXPECT_EQ(count, 0);
+  size_t expected = 0;
+  EXPECT_EQ(count, expected);
   // should not change buffer
   for (size_t i = 0; i != chunk; i++)
   {
