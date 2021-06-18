@@ -91,10 +91,23 @@ CredentialTestHelper::EnvironmentOverride::EnvironmentOverride(
   SetVariables(environment);
 }
 
+namespace {
+Azure::Core::Credentials::AccessToken GetToken(
+    Azure::Core::Credentials::TokenCredential const& credential,
+    Azure::Core::Credentials::TokenRequestContext const& tokenRequestContext,
+    Azure::Core::Context const& context)
+{
+  return credential.GetToken(tokenRequestContext, context);
+}
+} // namespace
+
+CredentialTestHelper::GetTokenCallback const CredentialTestHelper::DefaultGetToken(GetToken);
+
 CredentialTestHelper::TokenRequestSimulationResult CredentialTestHelper::SimulateTokenRequest(
     CredentialTestHelper::CreateCredentialCallback const& createCredential,
     std::vector<Core::Credentials::TokenRequestContext> const& tokenRequestContexts,
-    std::vector<TokenRequestSimuationServerResponse> const& responses)
+    std::vector<TokenRequestSimuationServerResponse> const& responses,
+    GetTokenCallback getToken)
 {
   using Azure::Core::Context;
   using Azure::Core::Http::HttpStatusCode;
@@ -162,7 +175,7 @@ CredentialTestHelper::TokenRequestSimulationResult CredentialTestHelper::Simulat
   {
     TokenRequestSimulationResult::ResponseInfo response{};
 
-    response.AccessToken = credential->GetToken(tokenRequestContexts.at(i), Context());
+    response.AccessToken = getToken(*credential, tokenRequestContexts.at(i), Context());
     response.EarliestExpiration = earliestExpiration;
     response.LatestExpiration = std::chrono::system_clock::now();
 

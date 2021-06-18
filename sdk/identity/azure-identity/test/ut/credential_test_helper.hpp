@@ -65,18 +65,27 @@ namespace Azure { namespace Identity { namespace Test { namespace _detail {
     };
 
     using CreateCredentialCallback
-        = std::function<std::shared_ptr<Core::Credentials::TokenCredential const>(
+        = std::function<std::unique_ptr<Core::Credentials::TokenCredential const>(
             std::shared_ptr<Azure::Core::Http::HttpTransport> const& transport)>;
 
-    static TokenRequestSimulationResult SimulateTokenRequest(
-        CreateCredentialCallback const& createCredential,
-        std::vector<Core::Credentials::TokenRequestContext> const& tokenRequestContexts,
-        std::vector<TokenRequestSimuationServerResponse> const& responses);
+    using GetTokenCallback = std::function<Core::Credentials::AccessToken(
+        Core::Credentials::TokenCredential const& credential,
+        Core::Credentials::TokenRequestContext const& tokenRequestContext,
+        Core::Context const& context)>;
+
+    static GetTokenCallback const DefaultGetToken;
 
     static TokenRequestSimulationResult SimulateTokenRequest(
         CreateCredentialCallback const& createCredential,
         std::vector<Core::Credentials::TokenRequestContext> const& tokenRequestContexts,
-        std::vector<std::string> const& responseBodies)
+        std::vector<TokenRequestSimuationServerResponse> const& responses,
+        GetTokenCallback getToken = DefaultGetToken);
+
+    static TokenRequestSimulationResult SimulateTokenRequest(
+        CreateCredentialCallback const& createCredential,
+        std::vector<Core::Credentials::TokenRequestContext> const& tokenRequestContexts,
+        std::vector<std::string> const& responseBodies,
+        GetTokenCallback getToken = DefaultGetToken)
     {
       using Core::Http::HttpStatusCode;
       std::vector<TokenRequestSimuationServerResponse> responses;
@@ -85,7 +94,7 @@ namespace Azure { namespace Identity { namespace Test { namespace _detail {
         responses.push_back({HttpStatusCode::Ok, responseBody, {}});
       }
 
-      return SimulateTokenRequest(createCredential, tokenRequestContexts, responses);
+      return SimulateTokenRequest(createCredential, tokenRequestContexts, responses, getToken);
     }
   };
 }}}} // namespace Azure::Identity::Test::_detail

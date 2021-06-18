@@ -21,7 +21,7 @@ TEST(ClientSecretCredential, Regular)
         options.AuthorityHost = "https://microsoft.com/";
         options.Transport.Transport = transport;
 
-        return std::make_shared<ClientSecretCredential>(
+        return std::make_unique<ClientSecretCredential>(
             "01234567-89ab-cdef-fedc-ba8976543210",
             "fedcba98-7654-3210-0123-456789abcdef",
             "CLIENTSECRET",
@@ -71,7 +71,7 @@ TEST(ClientSecretCredential, AzureStack)
         options.AuthorityHost = "https://microsoft.com/";
         options.Transport.Transport = transport;
 
-        return std::make_shared<ClientSecretCredential>(
+        return std::make_unique<ClientSecretCredential>(
             "adfs", "fedcba98-7654-3210-0123-456789abcdef", "CLIENTSECRET", options);
       },
       {{{"https://azure.com/.default"}}},

@@ -33,7 +33,7 @@ TEST(EnvironmentCredential, RegularClientSecretCredential)
              {"AZURE_PASSWORD", ""},
              {"AZURE_CLIENT_CERTIFICATE_PATH", ""}});
 
-        return std::make_shared<EnvironmentCredential>(options);
+        return std::make_unique<EnvironmentCredential>(options);
       },
       {{{"https://azure.com/.default"}}},
       {"{\"expires_in\":3600, \"access_token\":\"ACCESSTOKEN1\"}"});
@@ -92,7 +92,7 @@ TEST(EnvironmentCredential, AzureStackClientSecretCredential)
              {"AZURE_PASSWORD", ""},
              {"AZURE_CLIENT_CERTIFICATE_PATH", ""}});
 
-        return std::make_shared<EnvironmentCredential>(options);
+        return std::make_unique<EnvironmentCredential>(options);
       },
       {{{"https://azure.com/.default"}}},
       {"{\"expires_in\":3600, \"access_token\":\"ACCESSTOKEN1\"}"});
@@ -131,31 +131,31 @@ TEST(EnvironmentCredential, AzureStackClientSecretCredential)
 
 TEST(EnvironmentCredential, Unavailable)
 {
-  using Azure::Core::Context;
+  using Azure::Core::Credentials::AccessToken;
   using Azure::Core::Credentials::AuthenticationException;
-  using Azure::Core::Credentials::TokenCredential;
 
-  CredentialTestHelper::EnvironmentOverride const env(
-      {{"AZURE_TENANT_ID", ""},
-       {"AZURE_CLIENT_ID", ""},
-       {"AZURE_CLIENT_SECRET", ""},
-       {"AZURE_AUTHORITY_HOST", ""},
-       {"AZURE_USERNAME", ""},
-       {"AZURE_PASSWORD", ""},
-       {"AZURE_CLIENT_CERTIFICATE_PATH", ""}});
-
-  std::shared_ptr<EnvironmentCredential const> credential;
   static_cast<void>(CredentialTestHelper::SimulateTokenRequest(
-      [&credential](auto transport) {
+      [](auto transport) {
         TokenCredentialOptions options;
         options.Transport.Transport = transport;
 
-        credential.reset(new EnvironmentCredential(options));
-        return credential;
-      },
-      {},
-      {"{\"expires_in\":3600, \"access_token\":\"ACCESSTOKEN1\"}"}));
+        CredentialTestHelper::EnvironmentOverride const env(
+            {{"AZURE_TENANT_ID", ""},
+             {"AZURE_CLIENT_ID", ""},
+             {"AZURE_CLIENT_SECRET", ""},
+             {"AZURE_AUTHORITY_HOST", ""},
+             {"AZURE_USERNAME", ""},
+             {"AZURE_PASSWORD", ""},
+             {"AZURE_CLIENT_CERTIFICATE_PATH", ""}});
 
-  EXPECT_THROW(
-      credential->GetToken({{"https://azure.com/.default"}}, Context()), AuthenticationException);
+        return std::make_unique<EnvironmentCredential>(options);
+      },
+      {{{"https://azure.com/.default"}}},
+      {"{\"expires_in\":3600, \"access_token\":\"ACCESSTOKEN1\"}"},
+      [](auto& credential, auto& tokenRequestContext, auto& context) {
+        AccessToken token;
+        EXPECT_THROW(
+            token = credential.GetToken(tokenRequestContext, context), AuthenticationException);
+        return token;
+      }));
 }

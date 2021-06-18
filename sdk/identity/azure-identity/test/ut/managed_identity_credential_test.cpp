@@ -29,7 +29,7 @@ TEST(ManagedIdentityCredential, AppService)
             {"IDENTITY_SERVER_THUMBPRINT", "0123456789abcdef0123456789abcdef01234567"},
         });
 
-        return std::make_shared<ManagedIdentityCredential>(options);
+        return std::make_unique<ManagedIdentityCredential>(options);
       },
       {{{"https://azure.com/.default"}}, {{"https://outlook.com/.default"}}},
       std::vector<std::string>{
@@ -95,7 +95,7 @@ TEST(ManagedIdentityCredential, AppServiceClientId)
             {"IDENTITY_SERVER_THUMBPRINT", "0123456789abcdef0123456789abcdef01234567"},
         });
 
-        return std::make_shared<ManagedIdentityCredential>(
+        return std::make_unique<ManagedIdentityCredential>(
             "fedcba98-7654-3210-0123-456789abcdef", options);
       },
       {{{"https://azure.com/.default"}}, {{"https://outlook.com/.default"}}},
@@ -150,6 +150,9 @@ TEST(ManagedIdentityCredential, AppServiceClientId)
 
 TEST(ManagedIdentityCredential, AppServiceInvalidUrl)
 {
+  using Azure::Core::Credentials::AccessToken;
+  using Azure::Core::Credentials::AuthenticationException;
+
   using Azure::Core::Credentials::AuthenticationException;
   static_cast<void>(CredentialTestHelper::SimulateTokenRequest(
       [](auto transport) {
@@ -165,10 +168,10 @@ TEST(ManagedIdentityCredential, AppServiceInvalidUrl)
             {"IDENTITY_SERVER_THUMBPRINT", "0123456789abcdef0123456789abcdef01234567"},
         });
 
-        std::shared_ptr<ManagedIdentityCredential const> appServiceManagedIdentityCredential;
+        std::unique_ptr<ManagedIdentityCredential const> appServiceManagedIdentityCredential;
         EXPECT_THROW(
             appServiceManagedIdentityCredential
-            = std::make_shared<ManagedIdentityCredential>(options),
+            = std::make_unique<ManagedIdentityCredential>(options),
             AuthenticationException);
 
         return appServiceManagedIdentityCredential;
@@ -193,7 +196,7 @@ TEST(ManagedIdentityCredential, CloudShell)
             {"IDENTITY_SERVER_THUMBPRINT", "0123456789abcdef0123456789abcdef01234567"},
         });
 
-        return std::make_shared<ManagedIdentityCredential>(options);
+        return std::make_unique<ManagedIdentityCredential>(options);
       },
       {{{"https://azure.com/.default"}}, {{"https://outlook.com/.default"}}},
       std::vector<std::string>{
@@ -250,7 +253,7 @@ TEST(ManagedIdentityCredential, CloudShellClientId)
             {"IDENTITY_SERVER_THUMBPRINT", "0123456789abcdef0123456789abcdef01234567"},
         });
 
-        return std::make_shared<ManagedIdentityCredential>(
+        return std::make_unique<ManagedIdentityCredential>(
             "fedcba98-7654-3210-0123-456789abcdef", options);
       },
       {{{"https://azure.com/.default"}}, {{"https://outlook.com/.default"}}},
@@ -299,7 +302,9 @@ TEST(ManagedIdentityCredential, CloudShellClientId)
 
 TEST(ManagedIdentityCredential, CloudShellInvalidUrl)
 {
+  using Azure::Core::Credentials::AccessToken;
   using Azure::Core::Credentials::AuthenticationException;
+
   static_cast<void>(CredentialTestHelper::SimulateTokenRequest(
       [](auto transport) {
         TokenCredentialOptions options;
@@ -314,10 +319,10 @@ TEST(ManagedIdentityCredential, CloudShellInvalidUrl)
             {"IDENTITY_SERVER_THUMBPRINT", "0123456789abcdef0123456789abcdef01234567"},
         });
 
-        std::shared_ptr<ManagedIdentityCredential const> cloudShellManagedIdentityCredential;
+        std::unique_ptr<ManagedIdentityCredential const> cloudShellManagedIdentityCredential;
         EXPECT_THROW(
             cloudShellManagedIdentityCredential
-            = std::make_shared<ManagedIdentityCredential>(options),
+            = std::make_unique<ManagedIdentityCredential>(options),
             AuthenticationException);
 
         return cloudShellManagedIdentityCredential;
@@ -342,7 +347,7 @@ TEST(ManagedIdentityCredential, AzureArc)
             {"IDENTITY_SERVER_THUMBPRINT", "0123456789abcdef0123456789abcdef01234567"},
         });
 
-        return std::make_shared<ManagedIdentityCredential>(options);
+        return std::make_unique<ManagedIdentityCredential>(options);
       },
       {{{"https://azure.com/.default"}}, {{"https://outlook.com/.default"}}},
       {{HttpStatusCode::Unauthorized, "", {{"WWW-Authenticate", "ABC=SECRET1"}}},
@@ -423,7 +428,9 @@ TEST(ManagedIdentityCredential, AzureArc)
 
 TEST(ManagedIdentityCredential, AzureArcClientId)
 {
+  using Azure::Core::Credentials::AccessToken;
   using Azure::Core::Credentials::AuthenticationException;
+
   static_cast<void>(CredentialTestHelper::SimulateTokenRequest(
       [](auto transport) {
         TokenCredentialOptions options;
@@ -438,9 +445,9 @@ TEST(ManagedIdentityCredential, AzureArcClientId)
             {"IDENTITY_SERVER_THUMBPRINT", "0123456789abcdef0123456789abcdef01234567"},
         });
 
-        std::shared_ptr<ManagedIdentityCredential const> azureArcManagedIdentityCredential;
+        std::unique_ptr<ManagedIdentityCredential const> azureArcManagedIdentityCredential;
         EXPECT_THROW(
-            azureArcManagedIdentityCredential = std::make_shared<ManagedIdentityCredential>(
+            azureArcManagedIdentityCredential = std::make_unique<ManagedIdentityCredential>(
                 "fedcba98-7654-3210-0123-456789abcdef", options),
             AuthenticationException);
 
@@ -452,13 +459,11 @@ TEST(ManagedIdentityCredential, AzureArcClientId)
 
 TEST(ManagedIdentityCredential, AzureArcAuthHeaderMissing)
 {
-  using Azure::Core::Context;
+  using Azure::Core::Credentials::AccessToken;
   using Azure::Core::Credentials::AuthenticationException;
-  using Azure::Core::Credentials::TokenRequestContext;
 
-  std::shared_ptr<ManagedIdentityCredential const> credential1;
   static_cast<void>(CredentialTestHelper::SimulateTokenRequest(
-      [&credential1](auto transport) {
+      [](auto transport) {
         TokenCredentialOptions options;
         options.Transport.Transport = transport;
 
@@ -471,26 +476,26 @@ TEST(ManagedIdentityCredential, AzureArcAuthHeaderMissing)
             {"IDENTITY_SERVER_THUMBPRINT", "0123456789abcdef0123456789abcdef01234567"},
         });
 
-        credential1.reset(new ManagedIdentityCredential(options));
-        return credential1;
+        return std::make_unique<ManagedIdentityCredential>(options);
       },
-      {},
+      {{{"https://azure.com/.default"}}},
       {{HttpStatusCode::Unauthorized, "", {}},
-       {HttpStatusCode::Ok, "{\"expires_in\":3600, \"access_token\":\"ACCESSTOKEN1\"}", {}}}));
-
-  EXPECT_THROW(
-      credential1->GetToken({{"https://azure.com/.default"}}, Context()), AuthenticationException);
+       {HttpStatusCode::Ok, "{\"expires_in\":3600, \"access_token\":\"ACCESSTOKEN1\"}", {}}},
+      [](auto& credential, auto& tokenRequestContext, auto& context) {
+        AccessToken token;
+        EXPECT_THROW(
+            token = credential.GetToken(tokenRequestContext, context), AuthenticationException);
+        return token;
+      }));
 }
 
 TEST(ManagedIdentityCredential, AzureArcAuthHeaderNoEquals)
 {
-  using Azure::Core::Context;
+  using Azure::Core::Credentials::AccessToken;
   using Azure::Core::Credentials::AuthenticationException;
-  using Azure::Core::Credentials::TokenRequestContext;
 
-  std::shared_ptr<ManagedIdentityCredential const> credential2;
   static_cast<void>(CredentialTestHelper::SimulateTokenRequest(
-      [&credential2](auto transport) {
+      [](auto transport) {
         TokenCredentialOptions options;
         options.Transport.Transport = transport;
 
@@ -503,26 +508,26 @@ TEST(ManagedIdentityCredential, AzureArcAuthHeaderNoEquals)
             {"IDENTITY_SERVER_THUMBPRINT", "0123456789abcdef0123456789abcdef01234567"},
         });
 
-        credential2.reset(new ManagedIdentityCredential(options));
-        return credential2;
+        return std::make_unique<ManagedIdentityCredential>(options);
       },
-      {},
+      {{{"https://azure.com/.default"}}},
       {{HttpStatusCode::Unauthorized, "", {{"WWW-Authenticate", "ABCSECRET1"}}},
-       {HttpStatusCode::Ok, "{\"expires_in\":3600, \"access_token\":\"ACCESSTOKEN1\"}", {}}}));
-
-  EXPECT_THROW(
-      credential2->GetToken({{"https://azure.com/.default"}}, Context()), AuthenticationException);
+       {HttpStatusCode::Ok, "{\"expires_in\":3600, \"access_token\":\"ACCESSTOKEN1\"}", {}}},
+      [](auto& credential, auto& tokenRequestContext, auto& context) {
+        AccessToken token;
+        EXPECT_THROW(
+            token = credential.GetToken(tokenRequestContext, context), AuthenticationException);
+        return token;
+      }));
 }
 
 TEST(ManagedIdentityCredential, AzureArcAuthHeaderTwoEquals)
 {
-  using Azure::Core::Context;
+  using Azure::Core::Credentials::AccessToken;
   using Azure::Core::Credentials::AuthenticationException;
-  using Azure::Core::Credentials::TokenRequestContext;
 
-  std::shared_ptr<ManagedIdentityCredential const> credential3;
   static_cast<void>(CredentialTestHelper::SimulateTokenRequest(
-      [&credential3](auto transport) {
+      [](auto transport) {
         TokenCredentialOptions options;
         options.Transport.Transport = transport;
 
@@ -535,19 +540,22 @@ TEST(ManagedIdentityCredential, AzureArcAuthHeaderTwoEquals)
             {"IDENTITY_SERVER_THUMBPRINT", "0123456789abcdef0123456789abcdef01234567"},
         });
 
-        credential3.reset(new ManagedIdentityCredential(options));
-        return credential3;
+        return std::make_unique<ManagedIdentityCredential>(options);
       },
-      {},
+      {{{"https://azure.com/.default"}}},
       {{HttpStatusCode::Unauthorized, "", {{"WWW-Authenticate", "ABC=SECRET1=SECRET2"}}},
-       {HttpStatusCode::Ok, "{\"expires_in\":3600, \"access_token\":\"ACCESSTOKEN1\"}", {}}}));
-
-  EXPECT_THROW(
-      credential3->GetToken({{"https://azure.com/.default"}}, Context()), AuthenticationException);
+       {HttpStatusCode::Ok, "{\"expires_in\":3600, \"access_token\":\"ACCESSTOKEN1\"}", {}}},
+      [](auto& credential, auto& tokenRequestContext, auto& context) {
+        AccessToken token;
+        EXPECT_THROW(
+            token = credential.GetToken(tokenRequestContext, context), AuthenticationException);
+        return token;
+      }));
 }
 
 TEST(ManagedIdentityCredential, AzureArcInvalidUrl)
 {
+  using Azure::Core::Credentials::AccessToken;
   using Azure::Core::Credentials::AuthenticationException;
 
   static_cast<void>(CredentialTestHelper::SimulateTokenRequest(
@@ -564,10 +572,10 @@ TEST(ManagedIdentityCredential, AzureArcInvalidUrl)
             {"IDENTITY_SERVER_THUMBPRINT", "0123456789abcdef0123456789abcdef01234567"},
         });
 
-        std::shared_ptr<ManagedIdentityCredential const> azureArcManagedIdentityCredential;
+        std::unique_ptr<ManagedIdentityCredential const> azureArcManagedIdentityCredential;
         EXPECT_THROW(
             azureArcManagedIdentityCredential
-            = std::make_shared<ManagedIdentityCredential>(options),
+            = std::make_unique<ManagedIdentityCredential>(options),
             AuthenticationException);
 
         return azureArcManagedIdentityCredential;
@@ -592,7 +600,7 @@ TEST(ManagedIdentityCredential, Imds)
             {"IDENTITY_SERVER_THUMBPRINT", ""},
         });
 
-        return std::make_shared<ManagedIdentityCredential>(options);
+        return std::make_unique<ManagedIdentityCredential>(options);
       },
       {{{"https://azure.com/.default"}}, {{"https://outlook.com/.default"}}},
       std::vector<std::string>{
@@ -658,7 +666,7 @@ TEST(ManagedIdentityCredential, ImdsClientId)
             {"IDENTITY_SERVER_THUMBPRINT", ""},
         });
 
-        return std::make_shared<ManagedIdentityCredential>(
+        return std::make_unique<ManagedIdentityCredential>(
             "fedcba98-7654-3210-0123-456789abcdef", options);
       },
       {{{"https://azure.com/.default"}}, {{"https://outlook.com/.default"}}},
