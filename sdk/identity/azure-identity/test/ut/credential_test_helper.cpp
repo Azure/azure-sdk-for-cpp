@@ -158,7 +158,7 @@ CredentialTestHelper::TokenRequestSimulationResult CredentialTestHelper::Simulat
           return callback(request, context);
         }));
 
-  for (auto i = 0; i < nRequestTimes; ++i)
+  for (std::remove_cv<decltype(nRequestTimes)>::type i = 0; i < nRequestTimes; ++i)
   {
     TokenRequestSimulationResult::ResponseInfo response{};
 
