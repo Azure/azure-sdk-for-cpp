@@ -457,9 +457,9 @@ TEST(ManagedIdentityCredential, AzureArcAuthHeaderMalformed)
   using Azure::Core::Credentials::TokenRequestContext;
 
   {
-    std::shared_ptr<ManagedIdentityCredential const> credential;
+    std::shared_ptr<ManagedIdentityCredential const> credential1;
     static_cast<void>(CredentialTestHelper::SimulateTokenRequest(
-        [&credential](auto transport) {
+        [&](auto transport) {
           TokenCredentialOptions options;
           options.Transport.Transport = transport;
 
@@ -472,21 +472,22 @@ TEST(ManagedIdentityCredential, AzureArcAuthHeaderMalformed)
               {"IDENTITY_SERVER_THUMBPRINT", "0123456789abcdef0123456789abcdef01234567"},
           });
 
-          credential.reset(new ManagedIdentityCredential(options));
-          return credential;
+          credential1.reset(new ManagedIdentityCredential(options));
+          return credential1;
         },
         {},
         {{HttpStatusCode::Unauthorized, "", {}},
          {HttpStatusCode::Ok, "{\"expires_in\":3600, \"access_token\":\"ACCESSTOKEN1\"}", {}}}));
 
     EXPECT_THROW(
-        credential->GetToken({{"https://azure.com/.default"}}, Context()), AuthenticationException);
+        credential1->GetToken({{"https://azure.com/.default"}}, Context()),
+        AuthenticationException);
   }
 
   {
-    std::shared_ptr<ManagedIdentityCredential const> credential;
+    std::shared_ptr<ManagedIdentityCredential const> credential2;
     static_cast<void>(CredentialTestHelper::SimulateTokenRequest(
-        [&credential](auto transport) {
+        [&](auto transport) {
           TokenCredentialOptions options;
           options.Transport.Transport = transport;
 
@@ -499,21 +500,22 @@ TEST(ManagedIdentityCredential, AzureArcAuthHeaderMalformed)
               {"IDENTITY_SERVER_THUMBPRINT", "0123456789abcdef0123456789abcdef01234567"},
           });
 
-          credential.reset(new ManagedIdentityCredential(options));
-          return credential;
+          credential2.reset(new ManagedIdentityCredential(options));
+          return credential2;
         },
         {},
         {{HttpStatusCode::Unauthorized, "", {{"WWW-Authenticate", "ABCSECRET1"}}},
          {HttpStatusCode::Ok, "{\"expires_in\":3600, \"access_token\":\"ACCESSTOKEN1\"}", {}}}));
 
     EXPECT_THROW(
-        credential->GetToken({{"https://azure.com/.default"}}, Context()), AuthenticationException);
+        credential2->GetToken({{"https://azure.com/.default"}}, Context()),
+        AuthenticationException);
   }
 
   {
-    std::shared_ptr<ManagedIdentityCredential const> credential;
+    std::shared_ptr<ManagedIdentityCredential const> credential3;
     static_cast<void>(CredentialTestHelper::SimulateTokenRequest(
-        [&credential](auto transport) {
+        [&](auto transport) {
           TokenCredentialOptions options;
           options.Transport.Transport = transport;
 
@@ -526,15 +528,16 @@ TEST(ManagedIdentityCredential, AzureArcAuthHeaderMalformed)
               {"IDENTITY_SERVER_THUMBPRINT", "0123456789abcdef0123456789abcdef01234567"},
           });
 
-          credential.reset(new ManagedIdentityCredential(options));
-          return credential;
+          credential3.reset(new ManagedIdentityCredential(options));
+          return credential3;
         },
         {},
         {{HttpStatusCode::Unauthorized, "", {{"WWW-Authenticate", "ABC=SECRET1=SECRET2"}}},
          {HttpStatusCode::Ok, "{\"expires_in\":3600, \"access_token\":\"ACCESSTOKEN1\"}", {}}}));
 
     EXPECT_THROW(
-        credential->GetToken({{"https://azure.com/.default"}}, Context()), AuthenticationException);
+        credential3->GetToken({{"https://azure.com/.default"}}, Context()),
+        AuthenticationException);
   }
 }
 
