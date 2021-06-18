@@ -81,25 +81,31 @@ int main()
   Azure::Core::Http::WinHttpTransportOptions winHttpOptions;
   auto implementationClient = std::make_shared<Azure::Core::Http::WinHttpTransport>(winHttpOptions);
 #endif
+  try
+  {
+    FaultInjectionClientOptions options;
+    options.m_url = Azure::Core::Url("https://localhost:7778");
+    options.m_transport = implementationClient;
+    FaultInjectionClient client(options);
 
-  FaultInjectionClientOptions options;
-  options.m_url = Azure::Core::Url("https://localhost:7778");
-  options.m_transport = implementationClient;
-  FaultInjectionClient client(options);
+    std::cout << "Sending request..." << std::endl;
 
-  std::cout << "Sending request..." << std::endl;
+    Azure::Core::Context context;
+    auto request = Azure::Core::Http::Request(
+        Azure::Core::Http::HttpMethod::Get, Azure::Core::Url("https://www.example.org"));
+    auto response = client.Send(request, context);
+    // Make sure to pull all bytes from network.
+    auto body = response->ExtractBodyStream()->ReadToEnd();
 
-  Azure::Core::Context context;
-  auto request = Azure::Core::Http::Request(
-      Azure::Core::Http::HttpMethod::Get, Azure::Core::Url("https://www.example.org"));
-  auto response = client.Send(request, context);
-  // Make sure to pull all bytes from network.
-  auto body = response->ExtractBodyStream()->ReadToEnd();
-
-  std::cout << "Status Code: "
-            << static_cast<typename std::underlying_type<Azure::Core::Http::HttpStatusCode>::type>(
-                   response->GetStatusCode())
-            << std::endl;
-
+    std::cout
+        << "Status Code: "
+        << static_cast<typename std::underlying_type<Azure::Core::Http::HttpStatusCode>::type>(
+               response->GetStatusCode())
+        << std::endl;
+  }
+  catch (std::exception const&)
+  {
+    std::cout << "Check fault injector server is running.";
+  }
   return 0;
 }

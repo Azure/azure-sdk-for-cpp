@@ -21,6 +21,7 @@ namespace Azure { namespace Core { namespace Test {
   {
     std::string response(
         "HTTP/1.1 200 Ok\r\nContent-Type: text/html; charset=UTF-8\r\n\r\n{\r\n\"somejson\":45\r}");
+    int32_t const payloadSize = static_cast<int32_t>(response.size());
 
     // Can't mock the curMock directly from a unique ptr, heap allocate it first and then make a
     // unique ptr for it
@@ -28,8 +29,8 @@ namespace Azure { namespace Core { namespace Test {
     EXPECT_CALL(*curlMock, SendBuffer(_, _, _)).WillOnce(Return(CURLE_OK));
     EXPECT_CALL(*curlMock, ReadFromSocket(_, _, _))
         .WillOnce(DoAll(
-            SetArrayArgument<0>(response.data(), response.data() + response.size()),
-            Return(response.size())));
+            SetArrayArgument<0>(response.data(), response.data() + payloadSize),
+            Return(payloadSize)));
 
     // Create the unique ptr to take care about memory free at the end
     std::unique_ptr<MockCurlNetworkConnection> uniqueCurlMock(curlMock);
@@ -51,6 +52,7 @@ namespace Azure { namespace Core { namespace Test {
     // chunked response with no content and no size
     std::string response("HTTP/1.1 200 Ok\r\ntransfer-encoding: chunked\r\n\r\n\n\r\n");
     std::string connectionKey("connection-key");
+    int32_t const payloadSize = static_cast<int32_t>(response.size());
 
     // Can't mock the curMock directly from a unique ptr, heap allocate it first and then make a
     // unique ptr for it
@@ -58,8 +60,8 @@ namespace Azure { namespace Core { namespace Test {
     EXPECT_CALL(*curlMock, SendBuffer(_, _, _)).WillOnce(Return(CURLE_OK));
     EXPECT_CALL(*curlMock, ReadFromSocket(_, _, _))
         .WillOnce(DoAll(
-            SetArrayArgument<0>(response.data(), response.data() + response.size()),
-            Return(response.size())));
+            SetArrayArgument<0>(response.data(), response.data() + payloadSize),
+            Return(payloadSize)));
     EXPECT_CALL(*curlMock, GetConnectionKey()).WillRepeatedly(ReturnRef(connectionKey));
     EXPECT_CALL(*curlMock, UpdateLastUsageTime());
     EXPECT_CALL(*curlMock, DestructObj());
@@ -89,6 +91,8 @@ namespace Azure { namespace Core { namespace Test {
     std::string response("HTTP/1.1 200 Ok\r\ntransfer-encoding: chunked\r\n\r\n9\r\n");
     std::string response2("123456789\r\n0\r\n\rx");
     std::string connectionKey("connection-key");
+    int32_t const payloadSize = static_cast<int32_t>(response.size());
+    int32_t const payloadSize2 = static_cast<int32_t>(response2.size());
 
     // Can't mock the curMock directly from a unique ptr, heap allocate it first and then make a
     // unique ptr for it
@@ -96,11 +100,11 @@ namespace Azure { namespace Core { namespace Test {
     EXPECT_CALL(*curlMock, SendBuffer(_, _, _)).WillOnce(Return(CURLE_OK));
     EXPECT_CALL(*curlMock, ReadFromSocket(_, _, _))
         .WillOnce(DoAll(
-            SetArrayArgument<0>(response.data(), response.data() + response.size()),
-            Return(response.size())))
+            SetArrayArgument<0>(response.data(), response.data() + payloadSize),
+            Return(payloadSize)))
         .WillOnce(DoAll(
-            SetArrayArgument<0>(response2.data(), response2.data() + response2.size()),
-            Return(response2.size())));
+            SetArrayArgument<0>(response2.data(), response2.data() + payloadSize2),
+            Return(payloadSize2)));
     EXPECT_CALL(*curlMock, GetConnectionKey()).WillRepeatedly(ReturnRef(connectionKey));
     EXPECT_CALL(*curlMock, UpdateLastUsageTime());
     EXPECT_CALL(*curlMock, DestructObj());
@@ -144,6 +148,15 @@ namespace Azure { namespace Core { namespace Test {
     std::string response6("123");
     std::string response7("\r\n0\r\n");
     std::string response8("\r\n");
+    int32_t const payloadSize0 = static_cast<int32_t>(response0.size());
+    int32_t const payloadSize1 = static_cast<int32_t>(response1.size());
+    int32_t const payloadSize2 = static_cast<int32_t>(response2.size());
+    int32_t const payloadSize3 = static_cast<int32_t>(response3.size());
+    int32_t const payloadSize4 = static_cast<int32_t>(response4.size());
+    int32_t const payloadSize5 = static_cast<int32_t>(response5.size());
+    int32_t const payloadSize6 = static_cast<int32_t>(response6.size());
+    int32_t const payloadSize7 = static_cast<int32_t>(response7.size());
+    int32_t const payloadSize8 = static_cast<int32_t>(response8.size());
 
     std::string connectionKey("connection-key");
 
@@ -153,32 +166,32 @@ namespace Azure { namespace Core { namespace Test {
     EXPECT_CALL(*curlMock, SendBuffer(_, _, _)).WillOnce(Return(CURLE_OK));
     EXPECT_CALL(*curlMock, ReadFromSocket(_, _, _))
         .WillOnce(DoAll(
-            SetArrayArgument<0>(response0.data(), response0.data() + response0.size()),
-            Return(response0.size())))
+            SetArrayArgument<0>(response0.data(), response0.data() + payloadSize0),
+            Return(payloadSize0)))
         .WillOnce(DoAll(
-            SetArrayArgument<0>(response1.data(), response1.data() + response1.size()),
-            Return(response1.size())))
+            SetArrayArgument<0>(response1.data(), response1.data() + payloadSize1),
+            Return(payloadSize1)))
         .WillOnce(DoAll(
-            SetArrayArgument<0>(response2.data(), response2.data() + response2.size()),
-            Return(response2.size())))
+            SetArrayArgument<0>(response2.data(), response2.data() + payloadSize2),
+            Return(payloadSize2)))
         .WillOnce(DoAll(
-            SetArrayArgument<0>(response3.data(), response3.data() + response3.size()),
-            Return(response3.size())))
+            SetArrayArgument<0>(response3.data(), response3.data() + payloadSize3),
+            Return(payloadSize3)))
         .WillOnce(DoAll(
-            SetArrayArgument<0>(response4.data(), response4.data() + response4.size()),
-            Return(response4.size())))
+            SetArrayArgument<0>(response4.data(), response4.data() + payloadSize4),
+            Return(payloadSize4)))
         .WillOnce(DoAll(
-            SetArrayArgument<0>(response5.data(), response5.data() + response5.size()),
-            Return(response5.size())))
+            SetArrayArgument<0>(response5.data(), response5.data() + payloadSize5),
+            Return(payloadSize5)))
         .WillOnce(DoAll(
-            SetArrayArgument<0>(response6.data(), response6.data() + response6.size()),
-            Return(response6.size())))
+            SetArrayArgument<0>(response6.data(), response6.data() + payloadSize6),
+            Return(payloadSize6)))
         .WillOnce(DoAll(
-            SetArrayArgument<0>(response7.data(), response7.data() + response7.size()),
-            Return(response7.size())))
+            SetArrayArgument<0>(response7.data(), response7.data() + payloadSize7),
+            Return(payloadSize7)))
         .WillOnce(DoAll(
-            SetArrayArgument<0>(response8.data(), response8.data() + response8.size()),
-            Return(response8.size())));
+            SetArrayArgument<0>(response8.data(), response8.data() + payloadSize8),
+            Return(payloadSize8)));
     EXPECT_CALL(*curlMock, GetConnectionKey()).WillRepeatedly(ReturnRef(connectionKey));
     EXPECT_CALL(*curlMock, UpdateLastUsageTime());
     EXPECT_CALL(*curlMock, DestructObj());
