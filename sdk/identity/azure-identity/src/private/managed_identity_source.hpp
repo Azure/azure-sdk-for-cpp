@@ -37,7 +37,7 @@ namespace Azure { namespace Identity { namespace _detail {
         Core::Url endpointUrl,
         std::string const& secret);
 
-    TokenRequest GetRequest(
+    std::unique_ptr<TokenRequest> CreateRequest(
         Core::Credentials::TokenRequestContext const& tokenRequestContext) const final;
   };
 
@@ -56,7 +56,7 @@ namespace Azure { namespace Identity { namespace _detail {
         Core::Credentials::TokenCredentialOptions const& options,
         Core::Url endpointUrl);
 
-    TokenRequest GetRequest(
+    std::unique_ptr<TokenRequest> CreateRequest(
         Core::Credentials::TokenRequestContext const& tokenRequestContext) const final;
   };
 
@@ -73,13 +73,13 @@ namespace Azure { namespace Identity { namespace _detail {
         Core::Credentials::TokenCredentialOptions const& options,
         Core::Url endpointUrl);
 
-    TokenRequest GetRequest(
+    std::unique_ptr<TokenRequest> CreateRequest(
         Core::Credentials::TokenRequestContext const& tokenRequestContext) const final;
 
-    bool ShouldRetry(
+    std::unique_ptr<TokenRequest> ShouldRetry(
         Core::Http::HttpStatusCode statusCode,
         Core::Http::RawResponse const& response,
-        TokenRequest& request) const final;
+        Core::Credentials::TokenRequestContext const& tokenRequestContext) const final;
   };
 
   class ImdsManagedIdentitySource final : public ManagedIdentitySource {
@@ -95,7 +95,7 @@ namespace Azure { namespace Identity { namespace _detail {
         std::string const& clientId,
         Core::Credentials::TokenCredentialOptions const& options);
 
-    TokenRequest GetRequest(
+    std::unique_ptr<TokenRequest> CreateRequest(
         Core::Credentials::TokenRequestContext const& tokenRequestContext) const final;
   };
 }}} // namespace Azure::Identity::_detail

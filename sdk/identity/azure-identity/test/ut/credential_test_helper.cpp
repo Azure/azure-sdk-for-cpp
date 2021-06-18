@@ -93,8 +93,8 @@ CredentialTestHelper::EnvironmentOverride::EnvironmentOverride(
 
 CredentialTestHelper::TokenRequestSimulationResult CredentialTestHelper::SimulateTokenRequest(
     CredentialTestHelper::CreateCredentialCallback const& createCredential,
-    Core::Credentials::TokenRequestContext const& tokenRequestContext,
-    std::vector<std::pair<Core::Http::HttpStatusCode, std::string>> const& responses)
+    std::vector<Core::Credentials::TokenRequestContext> const& tokenRequestContexts,
+    std::vector<TokenRequestSimuationServerResponse> const& responses)
 {
   using Azure::Core::Context;
   using Azure::Core::Http::HttpStatusCode;
@@ -102,10 +102,12 @@ CredentialTestHelper::TokenRequestSimulationResult CredentialTestHelper::Simulat
   using Azure::Core::IO::MemoryBodyStream;
 
   auto const nResponses = responses.size();
+  auto const nRequestTimes = tokenRequestContexts.size();
 
   TokenRequestSimulationResult result;
   {
     result.Requests.reserve(nResponses);
+    result.Responses.reserve(nRequestTimes);
   }
 
   std::vector<std::vector<uint8_t>> responseBuffers;
@@ -113,11 +115,12 @@ CredentialTestHelper::TokenRequestSimulationResult CredentialTestHelper::Simulat
     responseBuffers.reserve(nResponses);
     for (auto const& response : responses)
     {
-      auto const& responseStr = response.second;
+      auto const& responseStr = response.Body;
       responseBuffers.emplace_back(std::vector<uint8_t>(responseStr.begin(), responseStr.end()));
     }
   }
 
+  std::chrono::system_clock::time_point earliestExpiration = std::chrono::system_clock::now();
   std::vector<TestTransport::SendCallback> callbacks;
   {
     for (std::remove_cv<decltype(nResponses)>::type i = 0; i < nResponses; ++i)
@@ -131,10 +134,17 @@ CredentialTestHelper::TokenRequestSimulationResult CredentialTestHelper::Simulat
              request.GetHeaders(),
              std::string(bodyVec.begin(), bodyVec.end())});
 
-        auto response = std::make_unique<RawResponse>(1, 1, responses.at(i).first, "Test");
+        auto const& serverResponse = responses.at(i);
+
+        auto response = std::make_unique<RawResponse>(1, 1, serverResponse.StatusCode, "Test");
         response->SetBodyStream(std::make_unique<MemoryBodyStream>(responseBuffers.at(i)));
 
-        result.Response.EarliestExpiration = std::chrono::system_clock::now();
+        for (auto const& header : serverResponse.Headers)
+        {
+          response->SetHeader(header.first, header.second);
+        }
+
+        earliestExpiration = std::chrono::system_clock::now();
 
         return response;
       });
@@ -148,8 +158,16 @@ CredentialTestHelper::TokenRequestSimulationResult CredentialTestHelper::Simulat
           return callback(request, context);
         }));
 
-  result.Response.AccessToken = credential->GetToken(tokenRequestContext, Context());
-  result.Response.LatestExpiration = std::chrono::system_clock::now();
+  for (auto i = 0; i < nRequestTimes; ++i)
+  {
+    TokenRequestSimulationResult::ResponseInfo response{};
+
+    response.AccessToken = credential->GetToken(tokenRequestContexts.at(i), Context());
+    response.EarliestExpiration = earliestExpiration;
+    response.LatestExpiration = std::chrono::system_clock::now();
+
+    result.Responses.emplace_back(response);
+  }
 
   return result;
 }

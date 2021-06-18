@@ -19,8 +19,7 @@ TokenCredentialImpl::TokenCredentialImpl(Core::Credentials::TokenCredentialOptio
 
 std::string TokenCredentialImpl::FormatScopes(
     std::vector<std::string> const& scopes,
-    bool asResource,
-    bool urlEncode)
+    bool asResource)
 {
   using Azure::Core::Url;
 
@@ -38,7 +37,7 @@ std::string TokenCredentialImpl::FormatScopes(
       resource = resource.substr(0, resourceLen - suffixLen);
     }
 
-    return urlEncode ? Url::Encode(resource) : resource;
+    return Url::Encode(resource);
   }
 
   auto scopesIter = scopes.begin();
@@ -47,7 +46,7 @@ std::string TokenCredentialImpl::FormatScopes(
   auto const scopesEnd = scopes.end();
   for (++scopesIter; scopesIter != scopesEnd; ++scopesIter)
   {
-    scopesStr += std::string(" ") + (urlEncode ? Url::Encode(*scopesIter) : *scopesIter);
+    scopesStr += std::string(" ") + Url::Encode(*scopesIter);
   }
 
   return scopesStr;
@@ -67,35 +66,34 @@ Azure::Core::Credentials::AccessToken TokenCredentialImpl::GetToken(
   {
     std::unique_ptr<RawResponse> response;
     {
-      auto shouldRetry = false;
-      auto request = GetRequest(tokenRequestContext);
-      do
+      auto request = CreateRequest(tokenRequestContext);
+      for (;;)
       {
-        response = m_httpPipeline.Send(request.HttpRequest, context);
+        response = m_httpPipeline.Send(request->HttpRequest, context);
         if (!response)
         {
           throw AuthenticationException(errorMsgPrefix + "null response");
         }
 
         auto const statusCode = response->GetStatusCode();
-        if (statusCode != HttpStatusCode::Ok)
+        if (statusCode == HttpStatusCode::Ok)
         {
-          if (ShouldRetry(statusCode, *response, request))
-          {
-            response.reset();
-            shouldRetry = true;
-          }
-          else
-          {
-            std::ostringstream errorMsg;
-            errorMsg << errorMsgPrefix << "error response: "
-                     << static_cast<std::underlying_type<HttpStatusCode>::type>(statusCode) << " "
-                     << response->GetReasonPhrase();
-
-            throw AuthenticationException(errorMsg.str());
-          }
+          break;
         }
-      } while (shouldRetry);
+
+        request = ShouldRetry(statusCode, *response, tokenRequestContext);
+        if (request == nullptr)
+        {
+          std::ostringstream errorMsg;
+          errorMsg << errorMsgPrefix << "error response: "
+                   << static_cast<std::underlying_type<HttpStatusCode>::type>(statusCode) << " "
+                   << response->GetReasonPhrase();
+
+          throw AuthenticationException(errorMsg.str());
+        }
+
+        response.reset();
+      }
     }
 
     auto const& responseBodyVector = response->GetBody();

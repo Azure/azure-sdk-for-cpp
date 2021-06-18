@@ -30,7 +30,8 @@ ClientSecretCredential::ClientSecretCredential(
   m_requestBody = body.str();
 }
 
-Azure::Identity::_detail::TokenCredentialImpl::TokenRequest ClientSecretCredential::GetRequest(
+std::unique_ptr<Azure::Identity::_detail::TokenCredentialImpl::TokenRequest>
+ClientSecretCredential::CreateRequest(
     Azure::Core::Credentials::TokenRequestContext const& tokenRequestContext) const
 {
   using Azure::Core::Http::HttpMethod;
@@ -41,14 +42,14 @@ Azure::Identity::_detail::TokenCredentialImpl::TokenRequest ClientSecretCredenti
     auto const& scopes = tokenRequestContext.Scopes;
     if (!scopes.empty())
     {
-      body << "&scope=" << FormatScopes(scopes, m_isAdfs, true);
+      body << "&scope=" << FormatScopes(scopes, m_isAdfs);
     }
   }
 
-  TokenRequest request(HttpMethod::Post, m_requestUrl, body.str());
+  auto request = std::make_unique<TokenRequest>(HttpMethod::Post, m_requestUrl, body.str());
   if (m_isAdfs)
   {
-    request.HttpRequest.SetHeader("Host", m_requestUrl.GetHost());
+    request->HttpRequest.SetHeader("Host", m_requestUrl.GetHost());
   }
 
   return request;

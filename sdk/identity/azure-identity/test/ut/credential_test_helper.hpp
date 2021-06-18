@@ -38,7 +38,7 @@ namespace Azure { namespace Identity { namespace Test { namespace _detail {
 
     struct TokenRequestSimulationResult final
     {
-      struct Request final
+      struct RequestInfo final
       {
         Core::Http::HttpMethod HttpMethod;
         std::string AbsoluteUrl;
@@ -46,33 +46,46 @@ namespace Azure { namespace Identity { namespace Test { namespace _detail {
         std::string Body;
       };
 
-      std::vector<Request> Requests;
-
-      struct
+      struct ResponseInfo
       {
         std::chrono::system_clock::time_point EarliestExpiration;
         std::chrono::system_clock::time_point LatestExpiration;
         Core::Credentials::AccessToken AccessToken;
-      } Response;
+      };
+
+      std::vector<RequestInfo> Requests;
+      std::vector<ResponseInfo> Responses;
+    };
+
+    struct TokenRequestSimuationServerResponse
+    {
+      Core::Http::HttpStatusCode StatusCode;
+      std::string Body;
+      Core::CaseInsensitiveMap Headers;
     };
 
     using CreateCredentialCallback
-        = std::function<std::unique_ptr<Core::Credentials::TokenCredential>(
+        = std::function<std::shared_ptr<Core::Credentials::TokenCredential const>(
             std::shared_ptr<Azure::Core::Http::HttpTransport> const& transport)>;
 
     static TokenRequestSimulationResult SimulateTokenRequest(
         CreateCredentialCallback const& createCredential,
-        Core::Credentials::TokenRequestContext const& tokenRequestContext,
-        std::vector<std::pair<Core::Http::HttpStatusCode, std::string>> const& responses);
+        std::vector<Core::Credentials::TokenRequestContext> const& tokenRequestContexts,
+        std::vector<TokenRequestSimuationServerResponse> const& responses);
 
     static TokenRequestSimulationResult SimulateTokenRequest(
         CreateCredentialCallback const& createCredential,
-        Core::Credentials::TokenRequestContext const& tokenRequestContext,
-        std::string const& responseBody)
+        std::vector<Core::Credentials::TokenRequestContext> const& tokenRequestContexts,
+        std::vector<std::string> const& responseBodies)
     {
       using Core::Http::HttpStatusCode;
-      return SimulateTokenRequest(
-          createCredential, tokenRequestContext, {{HttpStatusCode::Ok, responseBody}});
+      std::vector<TokenRequestSimuationServerResponse> responses;
+      for (auto const& responseBody : responseBodies)
+      {
+        responses.push_back({HttpStatusCode::Ok, responseBody, {}});
+      }
+
+      return SimulateTokenRequest(createCredential, tokenRequestContexts, responses);
     }
   };
 }}}} // namespace Azure::Identity::Test::_detail

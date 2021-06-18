@@ -76,19 +76,19 @@ namespace Azure { namespace Identity { namespace _detail {
   private:
     Core::Http::_internal::HttpPipeline m_httpPipeline;
 
-    virtual TokenRequest GetRequest(
+    virtual std::unique_ptr<TokenRequest> CreateRequest(
         Core::Credentials::TokenRequestContext const& tokenRequestContext) const = 0;
 
-    virtual bool ShouldRetry(
+    virtual std::unique_ptr<TokenRequest> ShouldRetry(
         Core::Http::HttpStatusCode statusCode,
         Core::Http::RawResponse const& response,
-        TokenRequest& request) const
+        Core::Credentials::TokenRequestContext const& tokenRequestContext) const
     {
       static_cast<void>(statusCode);
       static_cast<void>(response);
-      static_cast<void>(request);
+      static_cast<void>(tokenRequestContext);
 
-      return false;
+      return nullptr;
     }
 
   protected:
@@ -109,10 +109,7 @@ namespace Azure { namespace Identity { namespace _detail {
      *
      * @note Does not check for \p scopes being empty.
      */
-    static std::string FormatScopes(
-        std::vector<std::string> const& scopes,
-        bool asResource,
-        bool urlEncode);
+    static std::string FormatScopes(std::vector<std::string> const& scopes, bool asResource);
 
   public:
     /**

@@ -50,7 +50,7 @@ namespace Azure { namespace Identity {
     std::string m_requestBody;
     bool m_isAdfs;
 
-    TokenRequest GetRequest(
+    std::unique_ptr<TokenRequest> CreateRequest(
         Core::Credentials::TokenRequestContext const& tokenRequestContext) const final;
 
     ClientSecretCredential(

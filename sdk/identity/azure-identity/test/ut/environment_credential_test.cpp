@@ -7,8 +7,6 @@
 
 #include <gtest/gtest.h>
 
-using Azure::Core::Context;
-using Azure::Core::Credentials::AuthenticationException;
 using Azure::Core::Credentials::TokenCredentialOptions;
 using Azure::Core::Http::HttpMethod;
 using Azure::Identity::EnvironmentCredential;
@@ -35,13 +33,15 @@ TEST(EnvironmentCredential, RegularClientSecretCredential)
              {"AZURE_PASSWORD", ""},
              {"AZURE_CLIENT_CERTIFICATE_PATH", ""}});
 
-        return std::make_unique<EnvironmentCredential>(options);
+        return std::make_shared<EnvironmentCredential>(options);
       },
-      {{"https://azure.com/.default"}},
-      "{\"expires_in\":3600, \"access_token\":\"ACCESSTOKEN1\"}");
+      {{{"https://azure.com/.default"}}},
+      {"{\"expires_in\":3600, \"access_token\":\"ACCESSTOKEN1\"}"});
 
   EXPECT_EQ(actual.Requests.size(), 1U);
-  auto const& request = actual.Requests[0];
+  EXPECT_EQ(actual.Responses.size(), 1U);
+  auto const& request = actual.Requests.at(0);
+  auto const& response = actual.Responses.at(0);
 
   EXPECT_EQ(request.HttpMethod, HttpMethod::Post);
 
@@ -64,11 +64,11 @@ TEST(EnvironmentCredential, RegularClientSecretCredential)
   EXPECT_NE(request.Headers.find("Content-Type"), request.Headers.end());
   EXPECT_EQ(request.Headers.at("Content-Type"), "application/x-www-form-urlencoded");
 
-  EXPECT_EQ(actual.Response.AccessToken.Token, "ACCESSTOKEN1");
+  EXPECT_EQ(response.AccessToken.Token, "ACCESSTOKEN1");
 
   using namespace std::chrono_literals;
-  EXPECT_GT(actual.Response.AccessToken.ExpiresOn, actual.Response.EarliestExpiration + 3600s);
-  EXPECT_LT(actual.Response.AccessToken.ExpiresOn, actual.Response.LatestExpiration + 3600s);
+  EXPECT_GT(response.AccessToken.ExpiresOn, response.EarliestExpiration + 3600s);
+  EXPECT_LT(response.AccessToken.ExpiresOn, response.LatestExpiration + 3600s);
 }
 
 TEST(EnvironmentCredential, AzureStackClientSecretCredential)
@@ -92,13 +92,15 @@ TEST(EnvironmentCredential, AzureStackClientSecretCredential)
              {"AZURE_PASSWORD", ""},
              {"AZURE_CLIENT_CERTIFICATE_PATH", ""}});
 
-        return std::make_unique<EnvironmentCredential>(options);
+        return std::make_shared<EnvironmentCredential>(options);
       },
-      {{"https://azure.com/.default"}},
-      "{\"expires_in\":3600, \"access_token\":\"ACCESSTOKEN1\"}");
+      {{{"https://azure.com/.default"}}},
+      {"{\"expires_in\":3600, \"access_token\":\"ACCESSTOKEN1\"}"});
 
   EXPECT_EQ(actual.Requests.size(), 1U);
-  auto const& request = actual.Requests[0];
+  EXPECT_EQ(actual.Responses.size(), 1U);
+  auto const& request = actual.Requests.at(0);
+  auto const& response = actual.Responses.at(0);
 
   EXPECT_EQ(request.AbsoluteUrl, "https://microsoft.com/adfs/oauth2/token");
 
@@ -120,15 +122,19 @@ TEST(EnvironmentCredential, AzureStackClientSecretCredential)
   EXPECT_NE(request.Headers.find("Host"), request.Headers.end());
   EXPECT_EQ(request.Headers.at("Host"), "microsoft.com");
 
-  EXPECT_EQ(actual.Response.AccessToken.Token, "ACCESSTOKEN1");
+  EXPECT_EQ(response.AccessToken.Token, "ACCESSTOKEN1");
 
   using namespace std::chrono_literals;
-  EXPECT_GT(actual.Response.AccessToken.ExpiresOn, actual.Response.EarliestExpiration + 3600s);
-  EXPECT_LT(actual.Response.AccessToken.ExpiresOn, actual.Response.LatestExpiration + 3600s);
+  EXPECT_GT(response.AccessToken.ExpiresOn, response.EarliestExpiration + 3600s);
+  EXPECT_LT(response.AccessToken.ExpiresOn, response.LatestExpiration + 3600s);
 }
 
 TEST(EnvironmentCredential, Unavailable)
 {
+  using Azure::Core::Context;
+  using Azure::Core::Credentials::AuthenticationException;
+  using Azure::Core::Credentials::TokenCredential;
+
   CredentialTestHelper::EnvironmentOverride const env(
       {{"AZURE_TENANT_ID", ""},
        {"AZURE_CLIENT_ID", ""},
@@ -138,8 +144,18 @@ TEST(EnvironmentCredential, Unavailable)
        {"AZURE_PASSWORD", ""},
        {"AZURE_CLIENT_CERTIFICATE_PATH", ""}});
 
-  EnvironmentCredential credential;
+  std::shared_ptr<EnvironmentCredential const> credential;
+  static_cast<void>(CredentialTestHelper::SimulateTokenRequest(
+      [&credential](auto transport) {
+        TokenCredentialOptions options;
+        options.Transport.Transport = transport;
+
+        credential.reset(new EnvironmentCredential(options));
+        return credential;
+      },
+      {},
+      {"{\"expires_in\":3600, \"access_token\":\"ACCESSTOKEN1\"}"}));
 
   EXPECT_THROW(
-      credential.GetToken({{"https://azure.com/.default"}}, Context()), AuthenticationException);
+      credential->GetToken({{"https://azure.com/.default"}}, Context()), AuthenticationException);
 }

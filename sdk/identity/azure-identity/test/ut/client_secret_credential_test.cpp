@@ -21,17 +21,19 @@ TEST(ClientSecretCredential, Regular)
         options.AuthorityHost = "https://microsoft.com/";
         options.Transport.Transport = transport;
 
-        return std::make_unique<ClientSecretCredential>(
+        return std::make_shared<ClientSecretCredential>(
             "01234567-89ab-cdef-fedc-ba8976543210",
             "fedcba98-7654-3210-0123-456789abcdef",
             "CLIENTSECRET",
             options);
       },
-      {{"https://azure.com/.default"}},
-      "{\"expires_in\":3600, \"access_token\":\"ACCESSTOKEN1\"}");
+      {{{"https://azure.com/.default"}}},
+      {"{\"expires_in\":3600, \"access_token\":\"ACCESSTOKEN1\"}"});
 
   EXPECT_EQ(actual.Requests.size(), 1U);
-  auto const& request = actual.Requests[0];
+  EXPECT_EQ(actual.Responses.size(), 1U);
+  auto const& request = actual.Requests.at(0);
+  auto const& response = actual.Responses.at(0);
 
   EXPECT_EQ(request.HttpMethod, HttpMethod::Post);
 
@@ -54,11 +56,11 @@ TEST(ClientSecretCredential, Regular)
   EXPECT_NE(request.Headers.find("Content-Type"), request.Headers.end());
   EXPECT_EQ(request.Headers.at("Content-Type"), "application/x-www-form-urlencoded");
 
-  EXPECT_EQ(actual.Response.AccessToken.Token, "ACCESSTOKEN1");
+  EXPECT_EQ(response.AccessToken.Token, "ACCESSTOKEN1");
 
   using namespace std::chrono_literals;
-  EXPECT_GT(actual.Response.AccessToken.ExpiresOn, actual.Response.EarliestExpiration + 3600s);
-  EXPECT_LT(actual.Response.AccessToken.ExpiresOn, actual.Response.LatestExpiration + 3600s);
+  EXPECT_GT(response.AccessToken.ExpiresOn, response.EarliestExpiration + 3600s);
+  EXPECT_LT(response.AccessToken.ExpiresOn, response.LatestExpiration + 3600s);
 }
 
 TEST(ClientSecretCredential, AzureStack)
@@ -69,14 +71,16 @@ TEST(ClientSecretCredential, AzureStack)
         options.AuthorityHost = "https://microsoft.com/";
         options.Transport.Transport = transport;
 
-        return std::make_unique<ClientSecretCredential>(
+        return std::make_shared<ClientSecretCredential>(
             "adfs", "fedcba98-7654-3210-0123-456789abcdef", "CLIENTSECRET", options);
       },
-      {{"https://azure.com/.default"}},
-      "{\"expires_in\":3600, \"access_token\":\"ACCESSTOKEN1\"}");
+      {{{"https://azure.com/.default"}}},
+      {"{\"expires_in\":3600, \"access_token\":\"ACCESSTOKEN1\"}"});
 
   EXPECT_EQ(actual.Requests.size(), 1U);
-  auto const& request = actual.Requests[0];
+  EXPECT_EQ(actual.Responses.size(), 1U);
+  auto const& request = actual.Requests.at(0);
+  auto const& response = actual.Responses.at(0);
 
   EXPECT_EQ(request.AbsoluteUrl, "https://microsoft.com/adfs/oauth2/token");
 
@@ -98,9 +102,9 @@ TEST(ClientSecretCredential, AzureStack)
   EXPECT_NE(request.Headers.find("Host"), request.Headers.end());
   EXPECT_EQ(request.Headers.at("Host"), "microsoft.com");
 
-  EXPECT_EQ(actual.Response.AccessToken.Token, "ACCESSTOKEN1");
+  EXPECT_EQ(response.AccessToken.Token, "ACCESSTOKEN1");
 
   using namespace std::chrono_literals;
-  EXPECT_GT(actual.Response.AccessToken.ExpiresOn, actual.Response.EarliestExpiration + 3600s);
-  EXPECT_LT(actual.Response.AccessToken.ExpiresOn, actual.Response.LatestExpiration + 3600s);
+  EXPECT_GT(response.AccessToken.ExpiresOn, response.EarliestExpiration + 3600s);
+  EXPECT_LT(response.AccessToken.ExpiresOn, response.LatestExpiration + 3600s);
 }
