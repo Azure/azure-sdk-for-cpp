@@ -20,7 +20,7 @@ namespace {
 
 static uint8_t RandomChar()
 {
-  const uint8_t charset[] = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
+  static const uint8_t charset[] = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
   std::uniform_int_distribution<size_t> distribution(0, sizeof(charset) - 2);
   return charset[distribution(random_generator)];
 }
@@ -48,13 +48,15 @@ void RandomBuffer(uint8_t* buffer, size_t length)
   }
 }
 
+static constexpr size_t DefaultRandomStreamBufferSize = 1024 * 1024;
+
 } // namespace
 
 Azure::Perf::RandomStream::CircularStream::CircularStream(size_t size)
-    : m_buffer(std::make_unique<std::vector<uint8_t>>(1024 * 1024)), m_length(size),
-      m_memoryStream(*m_buffer)
+    : m_buffer(std::make_unique<std::vector<uint8_t>>(DefaultRandomStreamBufferSize)),
+      m_length(size), m_memoryStream(*m_buffer)
 {
-  RandomBuffer(m_buffer->data(), 1024 * 1024);
+  RandomBuffer(m_buffer->data(), DefaultRandomStreamBufferSize);
 }
 
 size_t Azure::Perf::RandomStream::CircularStream::OnRead(
