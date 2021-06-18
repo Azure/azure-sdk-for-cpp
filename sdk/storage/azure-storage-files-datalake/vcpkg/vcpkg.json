@@ -8,7 +8,7 @@
     "Microsoft Azure Storage Files Data Lake SDK for C++",
     "This library provides Azure Storage Files Data Lake SDK."
   ],
-  "homepage": "https://github.com/Azure/azure-sdk-for-cpp/tree/master/sdk/storage/azure-storage-files-datalake",
+  "homepage": "https://github.com/Azure/azure-sdk-for-cpp/tree/main/sdk/storage/azure-storage-files-datalake",
   "license": "MIT",
   "dependencies": [
     {

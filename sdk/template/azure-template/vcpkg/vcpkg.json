@@ -9,7 +9,7 @@
     "This is a template library meant to illustrate initial client library development process for Azure SDK.",
     "It is not meant to be published to vcpkg."
   ],
-  "homepage": "https://github.com/Azure/azure-sdk-for-cpp/tree/master/sdk/template/azure-template",
+  "homepage": "https://github.com/Azure/azure-sdk-for-cpp/tree/main/sdk/template/azure-template",
   "license": "MIT",
   "dependencies": [
     {
