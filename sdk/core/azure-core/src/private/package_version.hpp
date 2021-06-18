@@ -1,6 +1,6 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
-
+// Do not merge. Validating PR behavior.
 /**
  * @file
  * @brief Provides version information.
