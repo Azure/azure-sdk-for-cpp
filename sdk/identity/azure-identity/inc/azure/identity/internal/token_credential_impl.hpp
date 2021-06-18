@@ -103,7 +103,6 @@ namespace Azure { namespace Identity { namespace _detail {
      *
      * @param scopes Authentication scopes.
      * @param asResource `true` if \p scopes need to be formatted as a resource.
-     * @param urlEncode `true` if scopes in the string returned must be URL-encoded.
      *
      * @return A string representing scopes so that it can be used in Identity request.
      *
