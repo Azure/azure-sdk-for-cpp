@@ -214,9 +214,10 @@ std::unique_ptr<TokenCredentialImpl::TokenRequest> AzureArcManagedIdentitySource
   }
 
   constexpr auto ChallengeValueSeparator = '=';
-  auto eq = authHeader->second.find(ChallengeValueSeparator);
+  auto const& challenge = authHeader->second;
+  auto eq = challenge.find(ChallengeValueSeparator);
   if (eq == std::string::npos
-      || authHeader->second.find(ChallengeValueSeparator, eq + 1) != std::string::npos)
+      || challenge.find(ChallengeValueSeparator, eq + 1) != std::string::npos)
   {
     throw AuthenticationException(
         "The WWW-Authenticate header in the response from Azure Arc Managed Identity Endpoint "
@@ -224,7 +225,7 @@ std::unique_ptr<TokenCredentialImpl::TokenRequest> AzureArcManagedIdentitySource
   }
 
   auto request = CreateRequest(tokenRequestContext);
-  request->HttpRequest.SetHeader("Authorization", "Basic " + authHeader->second.substr(eq + 1));
+  request->HttpRequest.SetHeader("Authorization", "Basic " + challenge.substr(eq + 1));
 
   return request;
 }

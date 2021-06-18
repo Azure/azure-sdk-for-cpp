@@ -81,6 +81,7 @@ Azure::Core::Credentials::AccessToken TokenCredentialImpl::GetToken(
           break;
         }
 
+        request.reset();
         request = ShouldRetry(statusCode, *response, tokenRequestContext);
         if (request == nullptr)
         {
