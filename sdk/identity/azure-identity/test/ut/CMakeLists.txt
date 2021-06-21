@@ -21,7 +21,6 @@ add_executable (
     macro_guard_test.cpp
     managed_identity_credential_test.cpp
     simplified_header_test.cpp
-    
 )
 
 if (MSVC)

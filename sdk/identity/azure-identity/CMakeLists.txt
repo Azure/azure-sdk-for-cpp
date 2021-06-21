@@ -83,6 +83,7 @@ if(BUILD_TESTING)
     enable_testing ()
   endif()
 
+  add_subdirectory(test/e2e)
   add_subdirectory(test/live)
   add_subdirectory(test/ut)
 endif()
