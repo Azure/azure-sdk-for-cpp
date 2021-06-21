@@ -68,7 +68,7 @@ Now decrypt the encrypted data. Note that the same algorithm must always be used
 DecryptResult decryptResult
     = cryptoClient.Decrypt(EncryptionAlgorithm::RsaOaep, encryptResult.Ciphertext);
 std::cout << " - Decrypted data using the algorithm " << decryptResult.Algorithm.ToString()
-        << " ,with key " << decryptResult.KeyId << ". The resulting decrypted data is: "
+        << ", with key " << decryptResult.KeyId << ". The resulting decrypted data is: "
         << std::string(decryptResult.Plaintext.begin(), decryptResult.Plaintext.end())
         << std::endl;
 ```
