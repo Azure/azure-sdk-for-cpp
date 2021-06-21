@@ -8,7 +8,7 @@
     "Microsoft Azure Storage Blobs SDK for C++",
     "This library provides Azure Storage Blobs SDK."
   ],
-  "homepage": "https://github.com/Azure/azure-sdk-for-cpp/tree/master/sdk/storage/azure-storage-blobs",
+  "homepage": "https://github.com/Azure/azure-sdk-for-cpp/tree/main/sdk/storage/azure-storage-blobs",
   "license": "MIT",
   "dependencies": [
     {

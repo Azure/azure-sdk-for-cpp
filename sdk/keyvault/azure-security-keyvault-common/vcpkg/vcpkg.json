@@ -8,7 +8,7 @@
     "Microsoft Azure Common Key Vault SDK for C++",
     "This library provides common Azure Key Vault related abstractions for Azure SDK."
   ],
-  "homepage": "https://github.com/Azure/azure-sdk-for-cpp/tree/master/sdk/keyvault/azure-security-keyvault-common",
+  "homepage": "https://github.com/Azure/azure-sdk-for-cpp/tree/main/sdk/keyvault/azure-security-keyvault-common",
   "license": "MIT",
   "dependencies": [
     {
