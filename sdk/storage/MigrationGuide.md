@@ -223,8 +223,8 @@ block_blob_client.upload_text("Hello Azure!");
 
 v12
 ```C++
-uint8_t  text[] = "Hello Azure!";
-blockBlobClient.UploadFrom(text, sizeof(text));
+uint8_t text[] = "Hello Azure!";
+blockBlobClient.UploadFrom(text, sizeof(text) - 1);
 ```
 
 ### Downloading Blobs from a Container
