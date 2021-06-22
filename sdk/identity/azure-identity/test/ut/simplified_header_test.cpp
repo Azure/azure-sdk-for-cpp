@@ -17,7 +17,9 @@ class DllExportTest final {
 
 TEST(SimplifiedHeader, identity)
 {
-  EXPECT_NO_THROW(Azure::Identity::ClientSecretCredential clientSecretCredential("", "", ""));
-  EXPECT_NO_THROW(Azure::Identity::EnvironmentCredential environmentCredential);
-  EXPECT_NO_THROW(static_cast<Azure::Identity::ManagedIdentityCredential*>(nullptr));
+  using namespace Azure::Identity;
+
+  EXPECT_NO_THROW(ClientSecretCredential clientSecretCredential("", "", ""));
+  EXPECT_NO_THROW(EnvironmentCredential environmentCredential);
+  EXPECT_NO_THROW(static_cast<void>(static_cast<ManagedIdentityCredential const*>(nullptr)));
 }
