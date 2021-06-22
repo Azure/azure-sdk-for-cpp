@@ -220,6 +220,28 @@ void WinHttpTransport::CreateSessionHandle(std::unique_ptr<_detail::HandleManage
     // ERROR_NOT_ENOUGH_MEMORY
     GetErrorAndThrow("Error while getting a session handle.");
   }
+
+// These options are only available starting from Windows 10 Version 2004, starting 06/09/2020.
+// These are primarily round trip time (RTT) performance optimizations, and hence if they don't get
+// set successfully, we shouldn't fail the request and continue as if the options don't exist.
+// Therefore, we just ignore the error and move on.
+#ifdef WINHTTP_OPTION_TCP_FAST_OPEN
+  BOOL tcp_fast_open = TRUE;
+  WinHttpSetOption(
+      handleManager->m_sessionHandle,
+      WINHTTP_OPTION_TCP_FAST_OPEN,
+      &tcp_fast_open,
+      sizeof(tcp_fast_open));
+#endif
+
+#ifdef WINHTTP_OPTION_TLS_FALSE_START
+  BOOL tcp_false_start = TRUE;
+  WinHttpSetOption(
+      handleManager->m_sessionHandle,
+      WINHTTP_OPTION_TLS_FALSE_START,
+      &tcp_false_start,
+      sizeof(tcp_false_start));
+#endif
 }
 
 void WinHttpTransport::CreateConnectionHandle(
