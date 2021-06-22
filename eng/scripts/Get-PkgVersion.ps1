@@ -7,9 +7,7 @@ param (
     [string] $PackageName
 )
 
-$repoRoot = Resolve-Path "$PSScriptRoot/../..";
-. (Join-Path ${repoRoot} eng common scripts logging.ps1)
-. (Join-Path ${repoRoot} eng scripts SdkVersion-Common.ps1)
+. (Join-Path $PSScriptRoot ".." common scripts common.ps1)
 
 $versionFileLocation = Get-VersionHppLocation `
     -ServiceDirectory $ServiceDirectory `
@@ -19,7 +17,7 @@ if (!$versionFileLocation) {
     $fallbackpath = Join-Path $RepoRoot sdk $ServiceDirectory $PackageName version.txt
     if (!(Test-Path $fallbackpath))
     {
-        LogWarning "Failed to retrieve package version. No version file found."
+        LogWarning "Failed to retrieve package version for '$PackageName'. No version file found."
         return $null
     }
 

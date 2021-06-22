@@ -29,11 +29,11 @@ Param (
     [string] $ServiceDirectory,
     [Parameter(Mandatory=$True)]
     [string] $PackageName,
-    [string] $NewVersionString
+    [string] $NewVersionString,
+    [string] $ReleaseDate
 )
 
-. ${RepoRoot}\common\scripts\SemVer.ps1
-. ${PSScriptRoot}\SdkVersion-Common.ps1
+. (Join-Path $PSScriptRoot ".." common scripts common.ps1)
 
 # Updated Version in version file and changelog using computed or set NewVersionString
 function Update-Version(
@@ -65,7 +65,8 @@ function Update-Version(
         -ServiceDirectory $ServiceDirectory `
         -PackageName $PackageName `
         -Unreleased $Unreleased `
-        -ReplaceLatestEntryTitle $ReplaceLatestEntryTitle
+        -ReplaceLatestEntryTitle $ReplaceLatestEntryTitle `
+        -ReleaseDate $ReleaseDate
 }
 
 $versionHppLocation = Get-VersionHppLocation `
