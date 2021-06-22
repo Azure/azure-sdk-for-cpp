@@ -19,4 +19,5 @@ TEST(SimplifiedHeader, identity)
 {
   EXPECT_NO_THROW(Azure::Identity::ClientSecretCredential clientSecretCredential("", "", ""));
   EXPECT_NO_THROW(Azure::Identity::EnvironmentCredential environmentCredential);
+  EXPECT_NO_THROW(static_cast<Azure::Identity::ManagedIdentityCredential*>(nullptr));
 }
