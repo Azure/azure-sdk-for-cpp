@@ -29,7 +29,7 @@ if (MSVC)
   #             - 'testing::internal::Mutex::StaticConstructorSelector'
   #             - 'testing::TestPartResult::Type'
   #           is unscoped. Prefer 'enum class' over 'enum' (Enum.3)
-  target_compile_options(azure-identity-livetest PUBLIC /wd6326 /wd26495 /wd26812 /wd6101)
+  target_compile_options(azure-identity-livetest PUBLIC /wd6326 /wd26495 /wd26812)
 endif()
 
 target_link_libraries(azure-identity-livetest PRIVATE azure-identity gtest gmock)
