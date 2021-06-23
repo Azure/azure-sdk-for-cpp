@@ -23,6 +23,8 @@ using namespace Azure::Core::Http::Policies;
 using namespace Azure::Core::Http::Policies::_internal;
 
 namespace {
+constexpr static const char KeyVaultServicePackageName[] = "keyvault-keys";
+
 struct RequestWithContinuationToken final
 {
   std::vector<std::string> Path;
@@ -77,7 +79,7 @@ KeyClient::KeyClient(
       Azure::Core::Url(vaultUrl),
       apiVersion,
       Azure::Core::Http::_internal::HttpPipeline(
-          options, "KeyVault", apiVersion, std::move(perRetrypolicies), {}));
+          options, KeyVaultServicePackageName, apiVersion, std::move(perRetrypolicies), {}));
 }
 
 Azure::Response<KeyVaultKey> KeyClient::GetKey(
