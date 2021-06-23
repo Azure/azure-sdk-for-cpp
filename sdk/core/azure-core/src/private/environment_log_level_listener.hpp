@@ -26,6 +26,8 @@ namespace Azure { namespace Core { namespace Diagnostics { namespace _detail {
   public:
     static Logger::Level GetLogLevel(Logger::Level defaultValue);
     static std::function<void(Logger::Level level, std::string const& message)> GetLogListener();
+    static bool IsInitialized();
+    static void SetInitialized(bool value);
   };
 
 #if (defined(WINAPI_PARTITION_DESKTOP) && !WINAPI_PARTITION_DESKTOP) // See azure/core/platform.hpp

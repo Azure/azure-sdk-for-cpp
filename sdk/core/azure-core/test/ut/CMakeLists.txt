@@ -44,6 +44,7 @@ add_executable (
     ${CURL_OPTIONS_TESTS}
     ${CURL_SESSION_TESTS}
     datetime_test.cpp
+    environmentLogLevelListener_test.cpp
     etag_test.cpp
     http_test.cpp
     http_test.hpp
