@@ -5,9 +5,14 @@ $packagePattern = "package-info.json"
 $MetadataUri = "https://raw.githubusercontent.com/Azure/azure-sdk/master/_data/releases/latest/cpp-packages.csv"
 $BlobStorageUrl = "https://azuresdkdocs.blob.core.windows.net/%24web?restype=container&comp=list&prefix=cpp%2F&delimiter=%2F"
 
+$VersionRegex = '(#define AZURE_\w+_VERSION_MAJOR )(?<major>[0-9]+)(\s+#define AZURE_\w+_VERSION_MINOR )(?<minor>[0-9]+)(\s+#define AZURE_\w+_VERSION_PATCH )(?<patch>[0-9]+)(\s+#define AZURE_\w+_VERSION_PRERELEASE )"(?<prerelease>[a-zA-Z0-9.]*)"';
+function Get-VersionHppLocation ($ServiceDirectory, $PackageName) {
+    $versionHppLocation = Get-ChildItem package_version.hpp -Path "$RepoRoot/sdk/$ServiceDirectory/$PackageName" -Recurse
+    Write-Verbose "package_version.hpp location: $versionHppLocation"
+    return $versionHppLocation
+}
 
-
-function Get-cpp-PackageInfoFromRepo($pkgPath, $serviceDirectory) 
+function Get-cpp-PackageInfoFromRepo($pkgPath, $serviceDirectory)
 {
   $pkgName = Split-Path -Leaf $pkgPath
   $packageVersion = & $PSScriptRoot/Get-PkgVersion.ps1 -ServiceDirectory $serviceDirectory -PackageName $pkgName
@@ -15,13 +20,15 @@ function Get-cpp-PackageInfoFromRepo($pkgPath, $serviceDirectory)
   {
     $packageProps = [PackageProps]::new($pkgName, $packageVersion, $pkgPath, $serviceDirectory)
     $packageProps.ArtifactName = $pkgName
+    $packageProps.IsNewSDK = "true"
+    $packageProps.SdkType = "client"
     return $packageProps
   }
   return $null
 }
 
 # Parse out package publishing information from a package-info.json file.
-function Get-cpp-PackageInfoFromPackageFile($pkg, $workingDirectory) 
+function Get-cpp-PackageInfoFromPackageFile($pkg, $workingDirectory)
 {
   $packageInfo = Get-Content -Raw -Path $pkg | ConvertFrom-Json
   $packageArtifactLocation = (Get-ItemProperty $pkg).Directory.FullName
@@ -63,7 +70,7 @@ function Publish-cpp-GithubIODocs ($DocLocation, $PublicArtifactLocation)
   Upload-Blobs -DocDir $DocLocation -PkgName $packageInfo.name -DocVersion $packageInfo.version -ReleaseTag $releaseTag
 }
 
-function Get-cpp-GithubIoDocIndex() 
+function Get-cpp-GithubIoDocIndex()
 {
   # Update the main.js and docfx.json language content
   UpdateDocIndexFiles -appTitleLang "C++"
@@ -77,8 +84,11 @@ function Get-cpp-GithubIoDocIndex()
   GenerateDocfxTocContent -tocContent $tocContent -lang "C++"
 }
 
-function SetPackageVersion ($PackageName, $Version, $ServiceDirectory)
+function SetPackageVersion ($PackageName, $Version, $ServiceDirectory, $ReleaseDate)
 {
-  & "$EngDir/scripts/Update-PkgVersion.ps1" -ServiceDirectory $ServiceDirectory -PackageName $PackageName `
-  -NewVersionString $Version
+  & "$EngDir/scripts/Update-PkgVersion.ps1" `
+    -ServiceDirectory $ServiceDirectory `
+    -PackageName $PackageName `
+    -NewVersionString $Version `
+    -ReleaseDate $ReleaseDate
 }
