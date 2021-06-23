@@ -49,6 +49,12 @@ add_executable (
     src/random_stream_test.cpp
 )
 
+if (MSVC)
+  # Disable warnings
+  # - C6326: Google comparisons 
+  target_compile_options(azure-perf-unit-test PUBLIC /wd6326)
+endif()
+
 target_link_libraries(azure-perf-unit-test PRIVATE azure-perf gtest gtest_main)
 
 gtest_discover_tests(azure-perf-unit-test

@@ -127,6 +127,7 @@ jobs:
   - template: /eng/pipelines/templates/steps/cmake-build.yml
     parameters:
       GenerateArgs: $(CmakeArgs)
+      BuildArgs: "$(BuildArgs)"
 
   - template: /eng/common/TestResources/deploy-test-resources.yml
     parameters:
