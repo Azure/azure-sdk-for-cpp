@@ -152,9 +152,8 @@ endif()
 
 if (MSVC)
   # Disable warnings:
-  # - C6285: (<non-zero constant> || <non-zero constant>) -> VBProject static analysis on Functional header:
-  #          _Is_large, regression from VS version 19.28.29915.0 to 19.29.30037.0
-  target_compile_options(azure-core PUBLIC /wd6285 /wd6101)
+  # - C6101: Returning uninitialized memory '*Mtu' -> libcurl calling WSAGetIPUserMtu from WS2tcpip.h
+  target_compile_options(azure-core PUBLIC /wd6101)
 endif()
 
 get_az_version("${CMAKE_CURRENT_SOURCE_DIR}/src/private/package_version.hpp")
