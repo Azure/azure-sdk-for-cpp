@@ -73,7 +73,10 @@ $versionHppLocation = Get-VersionHppLocation `
     -ServiceDirectory $ServiceDirectory `
     -PackageName $PackageName
 
-Write-Verbose "VERSION FILE: $versionHppLocation"
+if (!$versionHppLocation) {
+    LogError "Failed to retrieve package version for '$ServiceDirectory/$PackageName'. No version file found."
+    exit 1
+}
 
 # Obtain Current Package Version
 if ([System.String]::IsNullOrEmpty($NewVersionString))

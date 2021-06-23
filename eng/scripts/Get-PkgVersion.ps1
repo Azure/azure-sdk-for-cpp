@@ -1,6 +1,5 @@
 [CmdletBinding()]
 param (
-
     [Parameter(Mandatory = $true)]
     [string] $ServiceDirectory,
     [Parameter(Mandatory = $true)]
@@ -14,20 +13,8 @@ $versionFileLocation = Get-VersionHppLocation `
     -PackageName $PackageName
 
 if (!$versionFileLocation) {
-    $fallbackpath = Join-Path $RepoRoot sdk $ServiceDirectory $PackageName version.txt
-    if (!(Test-Path $fallbackpath))
-    {
-        LogWarning "Failed to retrieve package version for '$PackageName'. No version file found."
-        return $null
-    }
-
-    $fallback = Get-Content $fallbackpath
-    if ($fallback) {
-        return $fallback
-    } else {
-        LogWarning "Cannot locate package version"
-        return $null
-    }
+    LogWarning "Failed to retrieve package version for '$ServiceDirectory/$PackageName'. No version file found."
+    return $null
 }
 
 $versionFileContents = Get-Content $versionFileLocation -Raw

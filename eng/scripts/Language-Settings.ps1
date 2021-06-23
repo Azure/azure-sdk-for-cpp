@@ -9,11 +9,6 @@ $VersionRegex = '(#define AZURE_\w+_VERSION_MAJOR )(?<major>[0-9]+)(\s+#define A
 function Get-VersionHppLocation ($ServiceDirectory, $PackageName) {
     $versionHppLocation = Get-ChildItem package_version.hpp -Path "$RepoRoot/sdk/$ServiceDirectory/$PackageName" -Recurse
     Write-Verbose "package_version.hpp location: $versionHppLocation"
-
-    if (!$versionHppLocation) {
-        LogWarning "Could not locate package_version.hpp file in sdk/$ServiceDirectory/$PackageName"
-    }
-
     return $versionHppLocation
 }
 
@@ -25,6 +20,8 @@ function Get-cpp-PackageInfoFromRepo($pkgPath, $serviceDirectory)
   {
     $packageProps = [PackageProps]::new($pkgName, $packageVersion, $pkgPath, $serviceDirectory)
     $packageProps.ArtifactName = $pkgName
+    $packageProps.IsNewSDK = "true"
+    $packageProps.SdkType = "client"
     return $packageProps
   }
   return $null
