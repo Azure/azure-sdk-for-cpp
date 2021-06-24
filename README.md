@@ -1,6 +1,6 @@
 # Azure SDK for C++
 
-[![Build Status](https://dev.azure.com/azure-sdk/public/_apis/build/status/cpp/cpp%20-%20client%20-%20ci?branchName=master)](https://dev.azure.com/azure-sdk/public/_build/latest?definitionId=1611&branchName=master)
+[![Build Status](https://dev.azure.com/azure-sdk/public/_apis/build/status/cpp/cpp%20-%20client%20-%20ci?branchName=main)](https://dev.azure.com/azure-sdk/public/_build/latest?definitionId=1611&branchName=main)
 
 This repository is for active development of the Azure SDK for C++. For consumers of the SDK we recommend visiting our [developer docs](https://azure.github.io/azure-sdk-for-cpp).
 
@@ -239,9 +239,9 @@ The following SDK library releases are available on [vcpkg](https://github.com/m
 
 ## Navigating the repository
 
-### Master branch
+### Main branch
 
-The master branch has the most recent code with new features and bug fixes. It does **not** represent latest released **beta** or **GA** SDK.
+The main branch has the most recent code with new features and bug fixes. It does **not** represent latest released **beta** or **GA** SDK.
 
 ### Release branches (Release tagging)
 
