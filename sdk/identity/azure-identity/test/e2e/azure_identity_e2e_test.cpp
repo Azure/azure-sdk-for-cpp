@@ -71,6 +71,13 @@ int main()
     using Azure::Core::Credentials::TokenCredentialOptions;
     using Azure::Identity::ManagedIdentityCredential;
 
+    // Setting it to AZURE_IDENTITY_TEST_VAULT_URL=https://management.azure.com/ would also work. It
+    // is easier to do so when testing manually, as less setup is needed. But other language SDKs do
+    // coordinated testing using AZURE_IDENTITY_TEST_VAULT_URL environment variable approach, and
+    // accessing a Key Vault, so this code should work for checking access to a Key Vault too.
+    // But, JFYI, if you are not very familiar with setting up a realistic Managed Identity
+    // environment, with Jey Vault and all the access controls, https://management.azure.com/ should
+    // be good enough at least for the smoke test.
     constexpr char const* resourceUrlEnvVarName = "AZURE_IDENTITY_TEST_VAULT_URL";
     auto const resourceUrl = GetEnv(resourceUrlEnvVarName);
     if (resourceUrl.empty())

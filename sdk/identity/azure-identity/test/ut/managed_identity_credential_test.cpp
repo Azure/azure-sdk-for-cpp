@@ -5,6 +5,8 @@
 
 #include "credential_test_helper.hpp"
 
+#include <fstream>
+
 #include <gtest/gtest.h>
 
 using Azure::Core::Credentials::TokenCredentialOptions;
@@ -333,6 +335,20 @@ TEST(ManagedIdentityCredential, CloudShellInvalidUrl)
 
 TEST(ManagedIdentityCredential, AzureArc)
 {
+  {
+    std::ofstream secretFile(
+        "managed_identity_credential_test1.txt", std::ios_base::out | std::ios_base::trunc);
+
+    secretFile << "SECRET1";
+  }
+
+  {
+    std::ofstream secretFile(
+        "managed_identity_credential_test2.txt", std::ios_base::out | std::ios_base::trunc);
+
+    secretFile << "SECRET2";
+  }
+
   auto const actual = CredentialTestHelper::SimulateTokenRequest(
       [](auto transport) {
         TokenCredentialOptions options;
@@ -350,9 +366,13 @@ TEST(ManagedIdentityCredential, AzureArc)
         return std::make_unique<ManagedIdentityCredential>(options);
       },
       {{{"https://azure.com/.default"}}, {{"https://outlook.com/.default"}}},
-      {{HttpStatusCode::Unauthorized, "", {{"WWW-Authenticate", "ABC=SECRET1"}}},
+      {{HttpStatusCode::Unauthorized,
+        "",
+        {{"WWW-Authenticate", "ABC ABC=managed_identity_credential_test1.txt"}}},
        {HttpStatusCode::Ok, "{\"expires_in\":3600, \"access_token\":\"ACCESSTOKEN1\"}", {}},
-       {HttpStatusCode::Unauthorized, "", {{"WWW-Authenticate", "XYZ=SECRET2"}}},
+       {HttpStatusCode::Unauthorized,
+        "",
+        {{"WWW-Authenticate", "XYZ XYZ=managed_identity_credential_test2.txt"}}},
        {HttpStatusCode::Ok, "{\"expires_in\":7200, \"access_token\":\"ACCESSTOKEN2\"}", {}}});
 
   auto const& request0 = actual.Requests.at(0);

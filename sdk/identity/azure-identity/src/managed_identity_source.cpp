@@ -5,6 +5,8 @@
 
 #include "private/environment.hpp"
 
+#include <fstream>
+#include <iterator>
 #include <stdexcept>
 #include <utility>
 
@@ -225,7 +227,12 @@ std::unique_ptr<TokenCredentialImpl::TokenRequest> AzureArcManagedIdentitySource
   }
 
   auto request = CreateRequest(tokenRequestContext);
-  request->HttpRequest.SetHeader("Authorization", "Basic " + challenge.substr(eq + 1));
+  std::ifstream secretFile(challenge.substr(eq + 1));
+  request->HttpRequest.SetHeader(
+      "Authorization",
+      "Basic "
+          + std::string(
+              std::istreambuf_iterator<char>(secretFile), std::istreambuf_iterator<char>()));
 
   return request;
 }
