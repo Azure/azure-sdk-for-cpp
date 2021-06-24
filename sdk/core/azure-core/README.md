@@ -67,7 +67,7 @@ auto finalResult = operation.Value();
 
 ### HTTP Transport adapter
 
-Out of the box, the Azure SDK for C++ supports the libcurl and WinHTTP libraries as HTTP stacks for communicating with Azure services over the network. The SDK also provides a mechanism for `customer-implemented` _HTTP transport adapter_. [You can learn more about the transport adapter in this doc](https://github.com/Azure/azure-sdk-for-cpp/blob/master/doc/HttpTransportAdapter.md#http-transport-adapter).
+Out of the box, the Azure SDK for C++ supports the libcurl and WinHTTP libraries as HTTP stacks for communicating with Azure services over the network. The SDK also provides a mechanism for `customer-implemented` _HTTP transport adapter_. [You can learn more about the transport adapter in this doc](https://github.com/Azure/azure-sdk-for-cpp/blob/main/doc/HttpTransportAdapter.md#http-transport-adapter).
 
 ## Troubleshooting
 
@@ -114,13 +114,13 @@ Security issues and bugs should be reported privately, via email, to the Microso
 
 ### License
 
-Azure SDK for C++ is licensed under the [MIT](https://github.com/Azure/azure-sdk-for-cpp/blob/master/sdk/core/azure-core/LICENSE) license.
+Azure SDK for C++ is licensed under the [MIT](https://github.com/Azure/azure-sdk-for-cpp/blob/main/sdk/core/azure-core/LICENSE) license.
 
 <!-- LINKS -->
 [azsdk_vcpkg_install]: https://github.com/Azure/azure-sdk-for-cpp#download--install-the-sdk
-[azure_sdk_for_cpp_contributing]: https://github.com/Azure/azure-sdk-for-cpp/blob/master/CONTRIBUTING.md
-[azure_sdk_for_cpp_contributing_developer_guide]: https://github.com/Azure/azure-sdk-for-cpp/blob/master/CONTRIBUTING.md#developer-guide
-[azure_sdk_for_cpp_contributing_pull_requests]: https://github.com/Azure/azure-sdk-for-cpp/blob/master/CONTRIBUTING.md#pull-requests
+[azure_sdk_for_cpp_contributing]: https://github.com/Azure/azure-sdk-for-cpp/blob/main/CONTRIBUTING.md
+[azure_sdk_for_cpp_contributing_developer_guide]: https://github.com/Azure/azure-sdk-for-cpp/blob/main/CONTRIBUTING.md#developer-guide
+[azure_sdk_for_cpp_contributing_pull_requests]: https://github.com/Azure/azure-sdk-for-cpp/blob/main/CONTRIBUTING.md#pull-requests
 [azure_sdk_cpp_development_guidelines]: https://azure.github.io/azure-sdk/cpp_introduction.html
 [azure_cli]: https://docs.microsoft.com/cli/azure
 [azure_pattern_circuit_breaker]: https://docs.microsoft.com/azure/architecture/patterns/circuit-breaker

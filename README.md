@@ -8,7 +8,7 @@ This repository is for active development of the Azure SDK for C++. For consumer
 
 For the best development experience, we recommend developers use [CMake projects in Visual Studio](https://docs.microsoft.com/cpp/build/cmake-projects-in-visual-studio?view=vs-2019) to view and build the source code together with its dependencies. You can also use any other text editor of your choice, such as [VS Code](https://code.visualstudio.com/), along with the command line for building your application with the SDK.
 
-You can find additional information for specific libraries by navigating to the appropriate folder in the `/sdk` directory. See the **README.md** file located in the library's project folder, for example, the [Azure Storage client library](https://github.com/Azure/azure-sdk-for-cpp/tree/master/sdk/storage#azure-storage-client-library-for-c).
+You can find additional information for specific libraries by navigating to the appropriate folder in the `/sdk` directory. See the **README.md** file located in the library's project folder, for example, the [Azure Storage client library](https://github.com/Azure/azure-sdk-for-cpp/tree/main/sdk/storage#azure-storage-client-library-for-c).
 
 For API reference docs, tutorials, samples, quick starts, and other documentation, go to [Azure SDK for C++ Developer Docs](https://azure.github.io/azure-sdk-for-cpp).
 
@@ -211,7 +211,7 @@ To call Azure services, you must first have an Azure subscription. Sign up for a
 
 ## Packages available
 
-Each service might have a number of libraries available. These libraries follow the [Azure SDK Design Guidelines for C++](https://azure.github.io/azure-sdk/cpp_introduction.html) and share a number of core features such as HTTP retries, logging, transport protocols, authentication protocols, etc., so that once you learn how to use these features in one client library, you will know how to use them in other client libraries. You can learn about these shared features at [Azure::Core](https://github.com/Azure/azure-sdk-for-cpp/blob/master/sdk/core/azure-core/README.md).
+Each service might have a number of libraries available. These libraries follow the [Azure SDK Design Guidelines for C++](https://azure.github.io/azure-sdk/cpp_introduction.html) and share a number of core features such as HTTP retries, logging, transport protocols, authentication protocols, etc., so that once you learn how to use these features in one client library, you will know how to use them in other client libraries. You can learn about these shared features at [Azure::Core](https://github.com/Azure/azure-sdk-for-cpp/blob/main/sdk/core/azure-core/README.md).
 
 The client libraries can be identified by the naming used for their folder, package, and namespace. Each will start with `azure`, followed by the service category, and then the name of the service. For example `azure-storage-blobs`.
 
@@ -246,11 +246,11 @@ The master branch has the most recent code with new features and bug fixes. It d
 ### Release branches (Release tagging)
 
 For each package we release there will be a unique Git tag created that contains the name and the version of the package to mark the commit of the code that produced the package. This tag will be used for servicing via hotfix branches as well as debugging the code for a particular beta or stable release version.
-Format of the release tags are `<package-name>_<package-version>`. For more information please see [our branching strategy](https://github.com/Azure/azure-sdk/blob/master/docs/policies/repobranching.md#release-tagging).
+Format of the release tags are `<package-name>_<package-version>`. For more information please see [our branching strategy](https://github.com/Azure/azure-sdk/blob/main/docs/policies/repobranching.md#release-tagging).
 
 ## Contributing
 
-For details on contributing to this repository, see the [contributing guide](https://github.com/Azure/azure-sdk-for-cpp/blob/master/CONTRIBUTING.md).
+For details on contributing to this repository, see the [contributing guide](https://github.com/Azure/azure-sdk-for-cpp/blob/main/CONTRIBUTING.md).
 
 This project welcomes contributions and suggestions. Most contributions require you to agree to a Contributor License Agreement (CLA) declaring that you have the right to, and actually do, grant us the rights to use your contribution. For details, view [Microsoft's CLA](https://cla.microsoft.com).
 
@@ -263,8 +263,8 @@ This project has adopted the [Microsoft Open Source Code of Conduct](https://ope
 Many people all over the world have helped make this project better.  You'll want to check out:
 
 - [What are some good first issues for new contributors to the repo?](https://github.com/azure/azure-sdk-for-cpp/issues?q=is%3Aopen+is%3Aissue+label%3A%22up+for+grabs%22)
-- [How to build and test your change](https://github.com/Azure/azure-sdk-for-cpp/blob/master/CONTRIBUTING.md#developer-guide)
-- [How you can make a change happen!](https://github.com/Azure/azure-sdk-for-cpp/blob/master/CONTRIBUTING.md#pull-requests)
+- [How to build and test your change](https://github.com/Azure/azure-sdk-for-cpp/blob/main/CONTRIBUTING.md#developer-guide)
+- [How you can make a change happen!](https://github.com/Azure/azure-sdk-for-cpp/blob/main/CONTRIBUTING.md#pull-requests)
 - Frequently Asked Questions (FAQ) and Conceptual Topics in the detailed [Azure SDK for C++ wiki](https://github.com/azure/azure-sdk-for-cpp/wiki).
 
 <!-- ### Community-->
@@ -274,6 +274,6 @@ Security issues and bugs should be reported privately, via email, to the Microso
 
 ### License
 
-Azure SDK for C++ is licensed under the [MIT](https://github.com/Azure/azure-sdk-for-cpp/blob/master/LICENSE.txt) license.
+Azure SDK for C++ is licensed under the [MIT](https://github.com/Azure/azure-sdk-for-cpp/blob/main/LICENSE.txt) license.
 
 ![Impressions](https://azure-sdk-impressions.azurewebsites.net/api/impressions/azure-sdk-for-cpp%2FREADME.png)

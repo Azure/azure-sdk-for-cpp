@@ -19,7 +19,7 @@ The Azure SDK repository is organized in the following folder structure, with th
 
 ##  Getting Started (a.k.a. `Hello World`) Samples
 
-Each package folder contains a package-specific `README.md` file. Most of these `README` files contain `Hello World` code samples illustrating basic usage of the the APIs contained in the package. For example, you can find `Hello World` samples for the `azure-storage-blobs` package [here](https://github.com/Azure/azure-sdk-for-cpp/blob/master/sdk/storage/README.md#code-samples).
+Each package folder contains a package-specific `README.md` file. Most of these `README` files contain `Hello World` code samples illustrating basic usage of the the APIs contained in the package. For example, you can find `Hello World` samples for the `azure-storage-blobs` package [here](https://github.com/Azure/azure-sdk-for-cpp/blob/main/sdk/storage/README.md#code-samples).
 
 ## Package Samples and How-To Guides
 
@@ -31,12 +31,12 @@ Simple applications that illustrate the different approaches to integrate the Az
 
 ## Sample Applications
 
-Sometimes we want to illustrate how several APIs or even packages work together in a context of a more complete program. For these cases, we created sample applications that you can look at, download, compile, and execute. These application samples are located on 
+Sometimes we want to illustrate how several APIs or even packages work together in a context of a more complete program. For these cases, we created sample applications that you can look at, download, compile, and execute. These application samples are located on
 [https://docs.microsoft.com/samples/](https://docs.microsoft.com/samples/).
 
 ## How-To Guide List
 
-This section lists how-to guides for the most commonly used APIs and most common scenarios, i.e. this section does not attempt to be a complete directory of guides contained in this repository. 
+This section lists how-to guides for the most commonly used APIs and most common scenarios, i.e. this section does not attempt to be a complete directory of guides contained in this repository.
 
 #### General How-To Guides
 

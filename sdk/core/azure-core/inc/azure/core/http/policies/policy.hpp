@@ -31,7 +31,7 @@
  * an HTTP transport implementation provided by Azure SDK with custom implementation.
  *
  * @note See
- * https://github.com/Azure/azure-sdk-for-cpp/blob/master/doc/HttpTransportAdapter.md#building-a-custom-http-transport-adapter.
+ * https://github.com/Azure/azure-sdk-for-cpp/blob/main/doc/HttpTransportAdapter.md#building-a-custom-http-transport-adapter.
  */
 extern std::shared_ptr<Azure::Core::Http::HttpTransport> AzureSdkGetCustomHttpTransport();
 
@@ -132,7 +132,7 @@ namespace Azure { namespace Core { namespace Http { namespace Policies {
      * the libcurl transport adapter and WinHTTP transport adapter on Windows.
      *
      * @note See
-     * https://github.com/Azure/azure-sdk-for-cpp/blob/master/doc/HttpTransportAdapter.md.
+     * https://github.com/Azure/azure-sdk-for-cpp/blob/main/doc/HttpTransportAdapter.md.
      *
      * @remark When using a custom transport adapter, the implementation for
      * `::AzureSdkGetCustomHttpTransport()` must be linked in the end-user application.

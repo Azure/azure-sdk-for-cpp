@@ -16,7 +16,7 @@ package_version.hpp
 New version string to use. Must follow SemVer conventions.
 
 .DESCRIPTION
-This script bumps up package versions following conventions defined at https://github.com/Azure/azure-sdk/blob/master/docs/policies/releases.md#incrementing-after-release-cpp
+This script bumps up package versions following conventions defined at https://github.com/Azure/azure-sdk/blob/main/docs/policies/releases.md#incrementing-after-release-cpp
 
 
 #>

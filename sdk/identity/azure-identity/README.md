@@ -25,10 +25,10 @@ target_link_libraries(<your project name> PRIVATE Azure::azure-identity)
 ## Key concepts
 ### Credentials
 
-A credential is a class which contains or can obtain the data needed for a service client to authenticate requests. Service clients across Azure SDK accept credentials when they are constructed, and service clients use those credentials to authenticate requests to the service. 
+A credential is a class which contains or can obtain the data needed for a service client to authenticate requests. Service clients across Azure SDK accept credentials when they are constructed, and service clients use those credentials to authenticate requests to the service.
 
-The Azure Identity library focuses on OAuth authentication with Azure Active directory, and it offers a variety of credential classes capable of acquiring an AAD token to authenticate service requests. All of the credential classes in this library are implementations of the `TokenCredential` abstract class in [azure-core][azure_core_library], and any of them can be used by to construct service clients capable of authenticating with a `TokenCredential`. 
-    
+The Azure Identity library focuses on OAuth authentication with Azure Active directory, and it offers a variety of credential classes capable of acquiring an AAD token to authenticate service requests. All of the credential classes in this library are implementations of the `TokenCredential` abstract class in [azure-core][azure_core_library], and any of them can be used by to construct service clients capable of authenticating with a `TokenCredential`.
+
 ### Authenticating Service Principals
 
 <table border="1" width="100%">
@@ -94,7 +94,7 @@ This project has adopted the [Microsoft Open Source Code of Conduct](https://ope
 For more information see the [Code of Conduct FAQ](https://opensource.microsoft.com/codeofconduct/faq/) or
 contact [opencode@microsoft.com](mailto:opencode@microsoft.com) with any additional questions or comments.
 
-### Additional Helpful Links for Contributors  
+### Additional Helpful Links for Contributors
 Many people all over the world have helped make this project better.  You'll want to check out:
 
 * [What are some good first issues for new contributors to the repo?](https://github.com/azure/azure-sdk-for-cpp/issues?q=is%3Aopen+is%3Aissue+label%3A%22up+for+grabs%22)
@@ -109,15 +109,15 @@ Security issues and bugs should be reported privately, via email, to the Microso
 
 ### License
 
-Azure SDK for C++ is licensed under the [MIT](https://github.com/Azure/azure-sdk-for-cpp/blob/master/sdk/core/azure-core/LICENSE) license.
+Azure SDK for C++ is licensed under the [MIT](https://github.com/Azure/azure-sdk-for-cpp/blob/main/sdk/core/azure-core/LICENSE) license.
 
 <!-- LINKS -->
 [azsdk_vcpkg_install]: https://github.com/Azure/azure-sdk-for-cpp#download--install-the-sdk
-[azure_sdk_for_cpp_contributing]: https://github.com/Azure/azure-sdk-for-cpp/blob/master/CONTRIBUTING.md
-[azure_sdk_for_cpp_contributing_developer_guide]: https://github.com/Azure/azure-sdk-for-cpp/blob/master/CONTRIBUTING.md#developer-guide
-[azure_sdk_for_cpp_contributing_pull_requests]: https://github.com/Azure/azure-sdk-for-cpp/blob/master/CONTRIBUTING.md#pull-requests
+[azure_sdk_for_cpp_contributing]: https://github.com/Azure/azure-sdk-for-cpp/blob/main/CONTRIBUTING.md
+[azure_sdk_for_cpp_contributing_developer_guide]: https://github.com/Azure/azure-sdk-for-cpp/blob/main/CONTRIBUTING.md#developer-guide
+[azure_sdk_for_cpp_contributing_pull_requests]: https://github.com/Azure/azure-sdk-for-cpp/blob/main/CONTRIBUTING.md#pull-requests
 [azure_sdk_cpp_development_guidelines]: https://azure.github.io/azure-sdk/cpp_introduction.html
-[source]: https://github.com/Azure/azure-sdk-for-cpp/tree/master/sdk/identity/azure-identity
+[source]: https://github.com/Azure/azure-sdk-for-cpp/tree/main/sdk/identity/azure-identity
 [aad_doc]: https://docs.microsoft.com/azure/active-directory/
-[azure_core_library]: https://github.com/Azure/azure-sdk-for-cpp/tree/master/sdk/core
+[azure_core_library]: https://github.com/Azure/azure-sdk-for-cpp/tree/main/sdk/core
 [doxygen]: https://azure.github.io/azure-sdk-for-cpp/

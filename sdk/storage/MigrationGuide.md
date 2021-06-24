@@ -2,7 +2,7 @@
 
 This guide intends to assist customers in migrating from legacy versions of the Azure Storage C++ library for Blobs to version 12.
 While this guide is generally applicable to older versions of the SDK, it was written with v7.5 in mind as the starting point.
-It focuses on side-by-side comparisons for similar operations between the [v7.5 package](https://github.com/Azure/azure-storage-cpp) and [v12 package](https://github.com/Azure/azure-sdk-for-cpp/tree/master/sdk/storage).
+It focuses on side-by-side comparisons for similar operations between the [v7.5 package](https://github.com/Azure/azure-storage-cpp) and [v12 package](https://github.com/Azure/azure-sdk-for-cpp/tree/main/sdk/storage).
 Familiarity with the v7.5 client library is assumed. For those new to the Azure Storage Blobs client library for C++, please refer to the [Quickstart](https://docs.microsoft.com/azure/storage/blobs/quickstart-blobs-c-plus-plus) for the v12 library rather than this guide.
 
 ## Table of contents
@@ -62,7 +62,7 @@ The legacy Storage SDK contained a `bearer_token_credential` class that could be
 
 v12
 
-A `TokenCredential` abstract class (different API surface than v7.5) exists in the [Azure Core](https://github.com/Azure/azure-sdk-for-cpp/tree/master/sdk/core/azure-core) package that all libraries of the new Azure SDK family depend on, and can be used to construct Storage clients. Implementations of this class can be found separately in the [Azure Identity](https://github.com/Azure/azure-sdk-for-cpp/tree/master/sdk/identity/azure-identity) package.
+A `TokenCredential` abstract class (different API surface than v7.5) exists in the [Azure Core](https://github.com/Azure/azure-sdk-for-cpp/tree/main/sdk/core/azure-core) package that all libraries of the new Azure SDK family depend on, and can be used to construct Storage clients. Implementations of this class can be found separately in the [Azure Identity](https://github.com/Azure/azure-sdk-for-cpp/tree/main/sdk/identity/azure-identity) package.
 
 ```C++
 BlobServiceClient serviceClient(serviceUrl, std::make_shared<Azure::Identity::ClientSecretCredential>(tenantId, clientId, clientSecret));
@@ -139,7 +139,7 @@ If you wish to rotate the key within your `BlobServiceClient` (and any derived c
 
 The modern SDK has taken a client-based approach. There are no objects designed to be representations of storage resources, but instead clients that act as your mechanism to interact with your storage resources in the cloud. **Clients hold no state of your resources.** (Lease client is an exception.) This is most noticable when looking at [blob metadata](#managing-blob-metadata).
 
-The hierarchical structure of Azure Blob Storage can be understood by the following diagram:  
+The hierarchical structure of Azure Blob Storage can be understood by the following diagram:
 ![Blob Storage Hierarchy](https://docs.microsoft.com/azure/storage/blobs/media/storage-blobs-introduction/blob1.png)
 
 In the interest of simplifying the API surface, v12 uses three top level clients to match this structure that can be used to interact with a majority of your resources: `BlobServiceClient`, `BlobContainerClient`, and `BlobClient`. Note that blob-type-specific operations can still be accessed by their specific clients, as in v7.5.
@@ -148,7 +148,7 @@ In the interest of simplifying the API surface, v12 uses three top level clients
 
 Note the absence of a v12 equivalent for v7.5's `cloud_blob_directory`. Directories were an SDK-only concept that did not exist in Azure Blob Storage, and which were not brought forwards into the modern Storage SDK. As shown by the diagram in [Client Structure](#client-structure), containers only contain a flat list of blobs, but those blobs can be named and listed in ways that imply a folder-like structure. See our [Listing Blobs in a Container](#listing-blobs-in-a-container) migration samples later in this guide for more information.
 
-For those whose workloads revolve around manipulating directories and heavily relied on the leagacy SDKs abstraction of this structure, consider the [pros and cons of enabling hierarchical namespace](https://docs.microsoft.com/azure/storage/blobs/data-lake-storage-namespace) on your storage account, which would allow switching to the [Data Lake Gen 2 SDK](https://github.com/Azure/azure-sdk-for-cpp/tree/master/sdk/storage/azure-storage-files-datalake), whose migration is not covered in this document.
+For those whose workloads revolve around manipulating directories and heavily relied on the leagacy SDKs abstraction of this structure, consider the [pros and cons of enabling hierarchical namespace](https://docs.microsoft.com/azure/storage/blobs/data-lake-storage-namespace) on your storage account, which would allow switching to the [Data Lake Gen 2 SDK](https://github.com/Azure/azure-sdk-for-cpp/tree/main/sdk/storage/azure-storage-files-datalake), whose migration is not covered in this document.
 
 #### Class Conversion Reference
 

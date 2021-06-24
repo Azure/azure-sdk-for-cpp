@@ -55,7 +55,7 @@ Logger::Level const* GetEnvironmentLogLevel()
 
       // See https://github.com/Azure/azure-sdk-for-java/wiki/Logging-with-Azure-SDK
       // And
-      // https://github.com/Azure/azure-sdk-for-java/blob/master/sdk/core/azure-core/src/main/java/com/azure/core/util/logging/LogLevel.java
+      // https://github.com/Azure/azure-sdk-for-java/blob/main/sdk/core/azure-core/src/main/java/com/azure/core/util/logging/LogLevel.java
 
       static Logger::Level envLogLevel = {};
       envLogLevelPtr = &envLogLevel;

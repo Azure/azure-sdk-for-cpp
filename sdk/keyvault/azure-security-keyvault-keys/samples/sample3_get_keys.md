@@ -1,7 +1,7 @@
 # Listing keys, key versions, and deleted keys
 
 This sample demonstrates how to list keys and versions of a given key, and list deleted keys in a soft delete-enabled Key Vault.
-To get started, you'll need a URI to an Azure Key Vault. See the [README](https://github.com/Azure/azure-sdk-for-cpp/blob/master/sdk/keyvault/azure-security-keyvault-keys/README.md) for links and instructions.
+To get started, you'll need a URI to an Azure Key Vault. See the [README](https://github.com/Azure/azure-sdk-for-cpp/blob/main/sdk/keyvault/azure-security-keyvault-keys/README.md) for links and instructions.
 
 ## Creating a KeyClient
 
@@ -166,6 +166,6 @@ for (auto keysDeletedPage = keyClient.GetDeletedKeys().ExtractValue();;)
 
 To see the full example source, see:
 
-- [sample3_get_keys.cpp](https://github.com/Azure/azure-sdk-for-cpp/blob/master/sdk/keyvault/azure-security-keyvault-keys/test/samples/sample3-get-keys/sample3_get_keys.cpp)
+- [sample3_get_keys.cpp](https://github.com/Azure/azure-sdk-for-cpp/blob/main/sdk/keyvault/azure-security-keyvault-keys/test/samples/sample3-get-keys/sample3_get_keys.cpp)
 
-[defaultazurecredential]: https://github.com/Azure/azure-sdk-for-cpp/blob/master/sdk/identity/azure-identity/README.md
+[defaultazurecredential]: https://github.com/Azure/azure-sdk-for-cpp/blob/main/sdk/identity/azure-identity/README.md

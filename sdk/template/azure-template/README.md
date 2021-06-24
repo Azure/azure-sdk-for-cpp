@@ -6,7 +6,7 @@ The library allows client libraries to expose common functionality in a consiste
 
 ## Getting started
 
-For a rich example of a well formatted readme, please check [here.](https://github.com/Azure/azure-sdk/blob/master/docs/policies/README-TEMPLATE.md) In addition, this is an [example readme](https://github.com/Azure/azure-sdk/blob/master/docs/policies/README-EXAMPLE.md) that should be emulated. Note that the top-level sections in this template align with that of the [template.](https://github.com/Azure/azure-sdk/blob/master/docs/policies/README-TEMPLATE.md)
+For a rich example of a well formatted readme, please check [here.](https://github.com/Azure/azure-sdk/blob/main/docs/policies/README-TEMPLATE.md) In addition, this is an [example readme](https://github.com/Azure/azure-sdk/blob/main/docs/policies/README-EXAMPLE.md) that should be emulated. Note that the top-level sections in this template align with that of the [template.](https://github.com/Azure/azure-sdk/blob/main/docs/policies/README-TEMPLATE.md)
 
 # Key concepts
 
@@ -39,7 +39,7 @@ This project has adopted the [Microsoft Open Source Code of Conduct](https://ope
 For more information see the [Code of Conduct FAQ](https://opensource.microsoft.com/codeofconduct/faq/) or
 contact [opencode@microsoft.com](mailto:opencode@microsoft.com) with any additional questions or comments.
 
-### Additional Helpful Links for Contributors  
+### Additional Helpful Links for Contributors
 Many people all over the world have helped make this project better.  You'll want to check out:
 
 * [What are some good first issues for new contributors to the repo?](https://github.com/azure/azure-sdk-for-cpp/issues?q=is%3Aopen+is%3Aissue+label%3A%22up+for+grabs%22)
@@ -54,12 +54,12 @@ Security issues and bugs should be reported privately, via email, to the Microso
 
 ### License
 
-Azure SDK for C++ is licensed under the [MIT](https://github.com/Azure/azure-sdk-for-cpp/blob/master/sdk/template/azure-template/LICENSE) license.
+Azure SDK for C++ is licensed under the [MIT](https://github.com/Azure/azure-sdk-for-cpp/blob/main/sdk/template/azure-template/LICENSE) license.
 
 <!-- LINKS -->
-[azure_sdk_for_cpp_contributing]: https://github.com/Azure/azure-sdk-for-cpp/blob/master/CONTRIBUTING.md
-[azure_sdk_for_cpp_contributing_developer_guide]: https://github.com/Azure/azure-sdk-for-cpp/blob/master/CONTRIBUTING.md#developer-guide
-[azure_sdk_for_cpp_contributing_pull_requests]: https://github.com/Azure/azure-sdk-for-cpp/blob/master/CONTRIBUTING.md#pull-requests
+[azure_sdk_for_cpp_contributing]: https://github.com/Azure/azure-sdk-for-cpp/blob/main/CONTRIBUTING.md
+[azure_sdk_for_cpp_contributing_developer_guide]: https://github.com/Azure/azure-sdk-for-cpp/blob/main/CONTRIBUTING.md#developer-guide
+[azure_sdk_for_cpp_contributing_pull_requests]: https://github.com/Azure/azure-sdk-for-cpp/blob/main/CONTRIBUTING.md#pull-requests
 [azure_cli]: https://docs.microsoft.com/cli/azure
 [azure_pattern_circuit_breaker]: https://docs.microsoft.com/azure/architecture/patterns/circuit-breaker
 [azure_pattern_retry]: https://docs.microsoft.com/azure/architecture/patterns/retry
