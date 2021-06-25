@@ -48,7 +48,7 @@ TEST_P(KeyVaultClientTest, RemoteEncrypt)
     EXPECT_EQ(decryptResult.KeyId, encryptResult.KeyId);
   }
 }
-/*
+
 TEST_P(KeyVaultClientTest, RemoteWrap)
 {
   KeyClient keyClient(m_keyVaultUrl, m_credential);
@@ -128,7 +128,7 @@ TEST_P(KeyVaultClientTest, RemoteSignVerifyRSA256)
     EXPECT_TRUE(verifyResult.IsValid);
   }
 }
-*/
+
 TEST_F(KeyVaultClientTest, RemoteSignVerifyES256)
 {
   KeyClient keyClient(m_keyVaultUrl, m_credential);
@@ -181,7 +181,7 @@ TEST_F(KeyVaultClientTest, RemoteSignVerifyES256)
     EXPECT_TRUE(verifyResult.IsValid);
   }
 }
-/*
+
 TEST_P(KeyVaultClientTest, RemoteSignVerifyRSA384)
 {
   KeyClient keyClient(m_keyVaultUrl, m_credential);
@@ -275,4 +275,4 @@ TEST_P(KeyVaultClientTest, RemoteSignVerifyDataRSA256)
     EXPECT_EQ(verifyResult.KeyId, rsaKey.Id());
     EXPECT_TRUE(verifyResult.IsValid);
   }
-}*/
+}
