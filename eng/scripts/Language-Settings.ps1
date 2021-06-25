@@ -2,7 +2,7 @@ $Language = "cpp"
 $LanguageDisplayName = "C++"
 $PackageRepository = "CPP"
 $packagePattern = "package-info.json"
-$MetadataUri = "https://raw.githubusercontent.com/Azure/azure-sdk/master/_data/releases/latest/cpp-packages.csv"
+$MetadataUri = "https://raw.githubusercontent.com/Azure/azure-sdk/main/_data/releases/latest/cpp-packages.csv"
 $BlobStorageUrl = "https://azuresdkdocs.blob.core.windows.net/%24web?restype=container&comp=list&prefix=cpp%2F&delimiter=%2F"
 
 $VersionRegex = '(#define AZURE_\w+_VERSION_MAJOR )(?<major>[0-9]+)(\s+#define AZURE_\w+_VERSION_MINOR )(?<minor>[0-9]+)(\s+#define AZURE_\w+_VERSION_PATCH )(?<patch>[0-9]+)(\s+#define AZURE_\w+_VERSION_PRERELEASE )"(?<prerelease>[a-zA-Z0-9.]*)"';
