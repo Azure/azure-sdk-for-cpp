@@ -6,7 +6,7 @@
  * @brief The base class to construct and init a Key Vault client.
  *
  */
-
+#define GTEST_REMOVE_LEGACY_TEST_CASEAPI_
 #include <gtest/gtest.h>
 
 #include <azure/core/context.hpp>
@@ -19,7 +19,7 @@
 
 namespace Azure { namespace Security { namespace KeyVault { namespace Keys { namespace Test {
 
-  class KeyVaultClientTest : public ::testing::Test {
+  class KeyVaultClientTest : public ::testing::TestWithParam<int> {
   private:
     std::string GetEnv(const std::string& name)
     {
@@ -122,4 +122,16 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys { nam
     }
   };
 
+  namespace {
+    static std::string GetSuffix(const testing::TestParamInfo<int>& info)
+    {
+      return std::to_string(info.param);
+    }
+  } // namespace
+
+  INSTANTIATE_TEST_SUITE_P(
+      Parametrized,
+      KeyVaultClientTest,
+      ::testing::Values(13, 55, 233, 987, 1597, 2048),
+      GetSuffix);
 }}}}} // namespace Azure::Security::KeyVault::Keys::Test

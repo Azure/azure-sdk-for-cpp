@@ -20,13 +20,13 @@ using namespace Azure::Security::KeyVault::Keys::Test;
 using namespace Azure::Security::KeyVault::Keys;
 using namespace Azure::Security::KeyVault::Keys::Cryptography;
 
-TEST_F(KeyVaultClientTest, RemoteEncrypt)
+TEST_P(KeyVaultClientTest, RemoteEncrypt)
 {
   KeyClient keyClient(m_keyVaultUrl, m_credential);
   std::string keyName(GetUniqueName());
-
+  
   CreateRsaKeyOptions rsaKeyOptions(keyName);
-  rsaKeyOptions.KeySize = 2048;
+  rsaKeyOptions.KeySize = GetParam();
   auto rsaKey = keyClient.CreateRsaKey(rsaKeyOptions).Value;
 
   // init crypto client from key ID. The remote client will get the key and try to create a local
@@ -48,14 +48,14 @@ TEST_F(KeyVaultClientTest, RemoteEncrypt)
     EXPECT_EQ(decryptResult.KeyId, encryptResult.KeyId);
   }
 }
-
-TEST_F(KeyVaultClientTest, RemoteWrap)
+/*
+TEST_P(KeyVaultClientTest, RemoteWrap)
 {
   KeyClient keyClient(m_keyVaultUrl, m_credential);
   std::string keyName(GetUniqueName());
 
   CreateRsaKeyOptions rsaKeyOptions(keyName);
-  rsaKeyOptions.KeySize = 2048;
+  rsaKeyOptions.KeySize = GetParam();
   auto rsaKey = keyClient.CreateRsaKey(rsaKeyOptions).Value;
 
   // init crypto client from key ID. The remote client will get the key and try to create a local
@@ -78,13 +78,13 @@ TEST_F(KeyVaultClientTest, RemoteWrap)
   }
 }
 
-TEST_F(KeyVaultClientTest, RemoteSignVerifyRSA256)
+TEST_P(KeyVaultClientTest, RemoteSignVerifyRSA256)
 {
   KeyClient keyClient(m_keyVaultUrl, m_credential);
   std::string keyName(GetUniqueName());
 
   CreateRsaKeyOptions rsaKeyOptions(keyName);
-  rsaKeyOptions.KeySize = 2048;
+  rsaKeyOptions.KeySize = GetParam();
   auto rsaKey = keyClient.CreateRsaKey(rsaKeyOptions).Value;
 
   // init crypto client from key ID. The remote client will get the key and try to create a local
@@ -128,7 +128,7 @@ TEST_F(KeyVaultClientTest, RemoteSignVerifyRSA256)
     EXPECT_TRUE(verifyResult.IsValid);
   }
 }
-
+*/
 TEST_F(KeyVaultClientTest, RemoteSignVerifyES256)
 {
   KeyClient keyClient(m_keyVaultUrl, m_credential);
@@ -181,14 +181,14 @@ TEST_F(KeyVaultClientTest, RemoteSignVerifyES256)
     EXPECT_TRUE(verifyResult.IsValid);
   }
 }
-
-TEST_F(KeyVaultClientTest, RemoteSignVerifyRSA384)
+/*
+TEST_P(KeyVaultClientTest, RemoteSignVerifyRSA384)
 {
   KeyClient keyClient(m_keyVaultUrl, m_credential);
   std::string keyName(GetUniqueName());
 
   CreateRsaKeyOptions rsaKeyOptions(keyName);
-  rsaKeyOptions.KeySize = 2048;
+  rsaKeyOptions.KeySize = GetParam();
   auto rsaKey = keyClient.CreateRsaKey(rsaKeyOptions).Value;
 
   // init crypto client from key ID. The remote client will get the key and try to create a local
@@ -233,13 +233,13 @@ TEST_F(KeyVaultClientTest, RemoteSignVerifyRSA384)
   }
 }
 
-TEST_F(KeyVaultClientTest, RemoteSignVerifyDataRSA256)
+TEST_P(KeyVaultClientTest, RemoteSignVerifyDataRSA256)
 {
   KeyClient keyClient(m_keyVaultUrl, m_credential);
   std::string keyName(GetUniqueName());
 
   CreateRsaKeyOptions rsaKeyOptions(keyName);
-  rsaKeyOptions.KeySize = 2048;
+  rsaKeyOptions.KeySize = GetParam();
   auto rsaKey = keyClient.CreateRsaKey(rsaKeyOptions).Value;
 
   // init crypto client from key ID. The remote client will get the key and try to create a local
@@ -275,4 +275,4 @@ TEST_F(KeyVaultClientTest, RemoteSignVerifyDataRSA256)
     EXPECT_EQ(verifyResult.KeyId, rsaKey.Id());
     EXPECT_TRUE(verifyResult.IsValid);
   }
-}
+}*/
