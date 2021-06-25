@@ -35,7 +35,7 @@ For the simplest case, when no specific configuration is set, the default transp
 
 The Azure SDK for C++ uses CMake options to define what HTTP transport adapters to build.
 
-You can see [CMake options](https://github.com/Azure/azure-sdk-for-cpp/blob/master/CONTRIBUTING.md#cmake-build-options) to learn about all the supported options and what is the specific option required for each HTTP transport adapter.
+You can see [CMake options](https://github.com/Azure/azure-sdk-for-cpp/blob/main/CONTRIBUTING.md#cmake-build-options) to learn about all the supported options and what is the specific option required for each HTTP transport adapter.
 
 Multiple HTTP transport adapters can be built as part of the project. This is to support scenarios where you want to send HTTP request with the libcurl transport adapter for some cases and the WinHTTP transport adapter for others.
 
@@ -70,12 +70,12 @@ The example below shows how to override the default HTTP transport adapter when 
   auto storageClient = BlobServiceClient(url, credential, options);
 ```
 
-### Re-use the HTTP Transport Adapter 
+### Re-use the HTTP Transport Adapter
 
 Note that the HTTP transport adapter is a `shared_ptr`. This is because you can re-use the same HTTP transport adapter for multiple clients. There are two ways of doing this. The first one is by using the same HTTP transport adapter when creating another client. The second one is when you get a specific child client from an already created parent client directly, in which case the child client inherits the same options. See the next example:
 
 ```cpp
-  /* 
+  /*
   *  Option 1. Init a new client with the same HTTP transport adapter.
   */
   auto curlTransportAdapter = std::make_shared<Azure::Core::Http::CurlTransport>();
@@ -87,7 +87,7 @@ Note that the HTTP transport adapter is a `shared_ptr`. This is because you can 
   optionsB.TransportOptions.Transport = curlTransportAdapter;
   auto storageClientB = BlobServiceClient(url, credential, optionsB);
 
-  /* 
+  /*
   *  Option 2. Create new client from a parent client.
   */
   auto curlTransportAdapter = std::make_shared<Azure::Core::Http::CurlTransport>();
@@ -115,7 +115,7 @@ The libcurl and WinHTTP transport adapters can also be initialized with specific
   auto curlTransportAdapter = std::make_shared<Azure::Core::Http::CurlTransport>(curlTransportOptions);
 
   BlobClientOptions options;
-  options.TransportOptions.Transport = curlTransportAdapter; 
+  options.TransportOptions.Transport = curlTransportAdapter;
   auto storageClient = BlobServiceClient(url, credential, options);
 ```
 
@@ -123,7 +123,7 @@ The libcurl and WinHTTP transport adapters can also be initialized with specific
 
 The Azure SDK for C++ uses CMake options to define what HTTP transport adapters to build.
 
-You can see [CMake options](https://github.com/Azure/azure-sdk-for-cpp/blob/master/CONTRIBUTING.md#cmake-build-options) to learn about all the supported options and what is the specific option required to be set when building your own HTTP transport adapter.
+You can see [CMake options](https://github.com/Azure/azure-sdk-for-cpp/blob/main/CONTRIBUTING.md#cmake-build-options) to learn about all the supported options and what is the specific option required to be set when building your own HTTP transport adapter.
 
 Follow these steps to implement your own HTTP transport adapter:
 
@@ -165,7 +165,7 @@ class CustomHttpTransportAdapterSession {
     // Keep any state like network/socket handlers here.
     SomeHttpClientLibraryHandler handler;
     SomeOtherRequiredState state;
-  
+
   public:
     // Expose any functionality required. For example, this could
     // be the main method to produce the HTTP raw response.
@@ -205,7 +205,7 @@ At this point you have all you need to use your custom HTTP transport adapter. R
 
 You can optionally set your custom HTTP transport adapter as the default to avoid explicitly setting the option every time you create a new SDK client.
 
-The first step is to set the required CMake compile option that would configure the build for using a custom HTTP transport adapter. Refer to the [CMake options](https://github.com/Azure/azure-sdk-for-cpp/blob/master/CONTRIBUTING.md#cmake-build-options) to find out the required option for this.
+The first step is to set the required CMake compile option that would configure the build for using a custom HTTP transport adapter. Refer to the [CMake options](https://github.com/Azure/azure-sdk-for-cpp/blob/main/CONTRIBUTING.md#cmake-build-options) to find out the required option for this.
 
 The second step is to implement the method shown below in the global unnamed namespace.
 
