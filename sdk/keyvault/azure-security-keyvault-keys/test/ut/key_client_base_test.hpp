@@ -6,7 +6,6 @@
  * @brief The base class to construct and init a Key Vault client.
  *
  */
-#define GTEST_REMOVE_LEGACY_TEST_CASEAPI_
 #include <gtest/gtest.h>
 
 #include <azure/core/context.hpp>
