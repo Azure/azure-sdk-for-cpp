@@ -1,10 +1,10 @@
 # Azure SDK Perf for C++
 
-Azure perf for C++ (`azure-perf`) provides shared primitives, abstractions, and helpers for running performance tests for an Azure SDK clients for C++. It represent the C++ version of the [.NET original version](https://github.com/Azure/azure-sdk-for-net/tree/master/common/Perf).
+Azure perf for C++ (`azure-perf`) provides shared primitives, abstractions, and helpers for running performance tests for an Azure SDK clients for C++. It represent the C++ version of the [.NET original version](https://github.com/Azure/azure-sdk-for-net/tree/main/common/Perf).
 
 ## Getting started
 
-See the [pre-requisites](https://github.com/Azure/azure-sdk-for-cpp/blob/master/CONTRIBUTING.md#pre-requisites) for building before going to the next step.
+See the [pre-requisites](https://github.com/Azure/azure-sdk-for-cpp/blob/main/CONTRIBUTING.md#pre-requisites) for building before going to the next step.
 
 ### Build
 
@@ -127,11 +127,11 @@ The main source file defines the list of available tests and calls the performan
 int main(int argc, char** argv)
 {
 
-  /**  
+  /**
    * The test list is a dictionary with the name of the test as a key and
    * an std::function to define how to instantiate a new Test for the PerfTest
    * interface.
-   * 
+   *
    * In the next example, a map called `tests` is init with two test definitions.
    *
    **/
@@ -142,12 +142,12 @@ int main(int argc, char** argv)
       tests{
           {"noOp", // Test Name
            [](Azure::Perf::TestOptions options) {
-             // No Op test 
+             // No Op test
              return std::make_unique<Azure::Perf::Test::NoOp>(options);
            }},
           {"extendedOptions", // Test Name
             [](Azure::Perf::TestOptions options) {
-             // Extended options test 
+             // Extended options test
              return std::make_unique<Azure::Perf::Test::ExtendedOptionsTest>(options);
            }}};
 
@@ -194,7 +194,7 @@ namespace Azure { namespace Perf { namespace Test {
     // PerfTest constructor.
     NoOp(Azure::Perf::TestOptions options) : PerfTest(options) {}
 
-    // Override the `Run` method with the test definition 
+    // Override the `Run` method with the test definition
     void Run(Azure::Core::Context const& ctx) override {
       (void)ctx;
     }
@@ -234,7 +234,7 @@ namespace Azure { namespace Perf { namespace Test {
   // other test (with or without extended options).
   class ExtendedOptionsTest : public Azure::Perf::PerfTest {
   public:
-    
+
     ExtendedOptionsTest(Azure::Perf::TestOptions options) : PerfTest(options) {}
 
     // Override the `GetTestOptions` function to define the unique test options.
@@ -280,7 +280,7 @@ This project has adopted the [Microsoft Open Source Code of Conduct](https://ope
 For more information see the [Code of Conduct FAQ](https://opensource.microsoft.com/codeofconduct/faq/) or
 contact [opencode@microsoft.com](mailto:opencode@microsoft.com) with any additional questions or comments.
 
-### Additional Helpful Links for Contributors  
+### Additional Helpful Links for Contributors
 Many people all over the world have helped make this project better.  You'll want to check out:
 
 * [What are some good first issues for new contributors to the repo?](https://github.com/azure/azure-sdk-for-cpp/issues?q=is%3Aopen+is%3Aissue+label%3A%22up+for+grabs%22)
@@ -294,4 +294,4 @@ Security issues and bugs should be reported privately, via email, to the Microso
 
 ### License
 
-Azure SDK for C++ is licensed under the [MIT](https://github.com/Azure/azure-sdk-for-cpp/blob/master/LICENSE.txt) license.
+Azure SDK for C++ is licensed under the [MIT](https://github.com/Azure/azure-sdk-for-cpp/blob/main/LICENSE.txt) license.

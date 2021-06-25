@@ -16,7 +16,7 @@ package_version.hpp
 New version string to use. Must follow SemVer conventions.
 
 .DESCRIPTION
-This script bumps up package versions following conventions defined at https://github.com/Azure/azure-sdk/blob/master/docs/policies/releases.md#incrementing-after-release-cpp
+This script bumps up package versions following conventions defined at https://github.com/Azure/azure-sdk/blob/main/docs/policies/releases.md#incrementing-after-release-cpp
 
 
 #>
@@ -29,11 +29,11 @@ Param (
     [string] $ServiceDirectory,
     [Parameter(Mandatory=$True)]
     [string] $PackageName,
-    [string] $NewVersionString
+    [string] $NewVersionString,
+    [string] $ReleaseDate
 )
 
-. ${RepoRoot}\common\scripts\SemVer.ps1
-. ${PSScriptRoot}\SdkVersion-Common.ps1
+. (Join-Path $PSScriptRoot ".." common scripts common.ps1)
 
 # Updated Version in version file and changelog using computed or set NewVersionString
 function Update-Version(
@@ -65,14 +65,18 @@ function Update-Version(
         -ServiceDirectory $ServiceDirectory `
         -PackageName $PackageName `
         -Unreleased $Unreleased `
-        -ReplaceLatestEntryTitle $ReplaceLatestEntryTitle
+        -ReplaceLatestEntryTitle $ReplaceLatestEntryTitle `
+        -ReleaseDate $ReleaseDate
 }
 
 $versionHppLocation = Get-VersionHppLocation `
     -ServiceDirectory $ServiceDirectory `
     -PackageName $PackageName
 
-Write-Verbose "VERSION FILE: $versionHppLocation"
+if (!$versionHppLocation) {
+    LogError "Failed to retrieve package version for '$ServiceDirectory/$PackageName'. No version file found."
+    exit 1
+}
 
 # Obtain Current Package Version
 if ([System.String]::IsNullOrEmpty($NewVersionString))

@@ -48,13 +48,13 @@ Codespaces is new technology that allows you to use a container as your developm
 ### GitHub Codespaces
 
 1. From the Azure SDK GitHub repo, click on the "Code -> Open with Codespaces" button.
-1. Open a Terminal. The development environment will be ready for you. Continue to [Building and Testing](https://github.com/Azure/azure-sdk-for-cpp/blob/master/CONTRIBUTING.md#building-and-testing).
+1. Open a Terminal. The development environment will be ready for you. Continue to [Building and Testing](https://github.com/Azure/azure-sdk-for-cpp/blob/main/CONTRIBUTING.md#building-and-testing).
 
 #### VS Code Codespaces
 
 1. Install the [VS Code Remote Extension Pack](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.vscode-remote-extensionpack)
 1. When you open the Azure SDK for C++ repo in VS Code, it will prompt you to open the project in the Dev Container. If it does not prompt you, then hit CTRL+P, and select "Remote-Containers: Open Folder in Container..."
-1. Open a Terminal. The development environment will be ready for you. Continue to [Building and Testing](https://github.com/Azure/azure-sdk-for-cpp/blob/master/CONTRIBUTING.md#building-and-testing).
+1. Open a Terminal. The development environment will be ready for you. Continue to [Building and Testing](https://github.com/Azure/azure-sdk-for-cpp/blob/main/CONTRIBUTING.md#building-and-testing).
 
 ### Full Local Setup
 
@@ -80,7 +80,7 @@ Follow [vcpkg install guide](https://github.com/microsoft/vcpkg#getting-started)
 
 When using vcpkg, you can set the `VCPKG_ROOT` environment variable to the vcpkg Git repository folder. This would automatically set the CMake variable `CMAKE_TOOLCHAIN_FILE` for you, enabling the project to use any library installed with vcpkg.
 
-The Azure SDK for C++ uses [this vcpkg release version](https://github.com/Azure/azure-sdk-for-cpp/blob/master/eng/vcpkg-commit.txt) for continuous integration (CI) building and testing. Make sure to checkout this version when following the next steps for building and running the Azure SDK for C++. Using a newer vcpkg version might still work, however, if it is tested.
+The Azure SDK for C++ uses [this vcpkg release version](https://github.com/Azure/azure-sdk-for-cpp/blob/main/eng/vcpkg-commit.txt) for continuous integration (CI) building and testing. Make sure to checkout this version when following the next steps for building and running the Azure SDK for C++. Using a newer vcpkg version might still work, however, if it is tested.
 
 ```sh
 # Checking out vcpkg release version before installing dependencies

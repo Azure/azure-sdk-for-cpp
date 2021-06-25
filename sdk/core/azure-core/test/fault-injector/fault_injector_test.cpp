@@ -5,7 +5,7 @@
  * @brief Validates the Azure Core transport adapters with fault responses from server.
  *
  * @note This test requires the Http-fault-injector
- * (https://github.com/Azure/azure-sdk-tools/tree/master/tools/http-fault-injector) running. Follow
+ * (https://github.com/Azure/azure-sdk-tools/tree/main/tools/http-fault-injector) running. Follow
  * the instructions to install and run the server before running this test.
  *
  */
