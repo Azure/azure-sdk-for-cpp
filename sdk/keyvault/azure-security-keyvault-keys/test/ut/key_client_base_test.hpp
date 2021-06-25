@@ -132,6 +132,5 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys { nam
   INSTANTIATE_TEST_SUITE_P(
       Parametrized,
       KeyVaultClientTest,
-      ::testing::Values(13, 55, 233, 987, 1597, 2048),
-      GetSuffix);
+      ::testing::Values(13, 55, 233, 987, 1597, 2048));
 }}}}} // namespace Azure::Security::KeyVault::Keys::Test
