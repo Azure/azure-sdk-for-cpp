@@ -24,8 +24,8 @@ namespace Azure {
    * @brief Parameters for decrypting ciphertext.
    *
    */
-  struct DecryptParameters final
-  {
+  class DecryptParameters final {
+  private:
     /**
      * @brief Construct a new Decrypt Parameters object.
      *
@@ -43,14 +43,9 @@ namespace Azure {
         std::vector<uint8_t> iv,
         std::vector<uint8_t> additionalAuthenticatedData,
         std::vector<uint8_t> authenticationTag)
-        : Algorithm(std::move(algorithm)), Ciphertext(std::move(ciphertext)), Iv(std::move(iv)),
+        : Iv(std::move(iv)), Algorithm(std::move(algorithm)), Ciphertext(std::move(ciphertext)),
           AdditionalAuthenticatedData(std::move(additionalAuthenticatedData)),
           AuthenticationTag(std::move(authenticationTag))
-    {
-    }
-
-    DecryptParameters(EncryptionAlgorithm algorithm, std::vector<uint8_t> const ciphertext)
-        : Algorithm(std::move(algorithm)), Ciphertext(std::move(ciphertext))
     {
     }
 
@@ -58,7 +53,7 @@ namespace Azure {
         EncryptionAlgorithm algorithm,
         std::vector<uint8_t> ciphertext,
         std::vector<uint8_t> iv)
-        : Algorithm(std::move(algorithm)), Ciphertext(std::move(ciphertext)), Iv(std::move(iv))
+        : Iv(std::move(iv)), Algorithm(std::move(algorithm)), Ciphertext(std::move(ciphertext))
     {
     }
 
@@ -67,6 +62,24 @@ namespace Azure {
      *
      */
     DecryptParameters() = delete;
+
+    /**
+     * @brief Gets the initialization vector for decryption.
+     *
+     */
+    std::vector<uint8_t> Iv;
+
+  public:
+    /**
+     * @brief Construct a new Decrypt Parameters object
+     *
+     * @param algorithm The #EncryptionAlgorithm to use for decrypt operation.
+     * @param ciphertext The content to decrypt.
+     */
+    DecryptParameters(EncryptionAlgorithm algorithm, std::vector<uint8_t> const ciphertext)
+        : Algorithm(std::move(algorithm)), Ciphertext(std::move(ciphertext))
+    {
+    }
 
     /**
      * @brief Gets or sets the #EncryptionAlgorithm.
@@ -84,7 +97,7 @@ namespace Azure {
      * @brief Gets the initialization vector for decryption.
      *
      */
-    std::vector<uint8_t> Iv;
+    std::vector<uint8_t> const& GetIv() const { return Iv; }
 
     /**
      * @brief Gets additional data that is authenticated during decryption but not encrypted.
