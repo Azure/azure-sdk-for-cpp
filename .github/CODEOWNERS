@@ -6,23 +6,23 @@
 ###########
 
 # Catch all for non-code project files and unowned files | folders
-*                        @rickwinter @ahsonkhan @antkmsft @vhvb1989 @gearana
-/sdk/                    @rickwinter @ahsonkhan @antkmsft @vhvb1989 @gearana
+*                        @rickwinter @ahsonkhan @antkmsft @vhvb1989 @gearama
+/sdk/                    @rickwinter @ahsonkhan @antkmsft @vhvb1989 @gearama
 
 # Samples
-/samples/                @rickwinter @ahsonkhan @antkmsft @vhvb1989 @gearana
+/samples/                @rickwinter @ahsonkhan @antkmsft @vhvb1989 @gearama
 
 # PRLabel: %Azure.Core
-/sdk/core/               @rickwinter @ahsonkhan @antkmsft @vhvb1989 @gearana
+/sdk/core/               @rickwinter @ahsonkhan @antkmsft @vhvb1989 @gearama
 
 # PRLabel: %Azure.Identity
-/sdk/identity/           @antkmsft @schaabs @ahsonkhan @rickwinter @vhvb1989 @gearana
+/sdk/identity/           @antkmsft @schaabs @ahsonkhan @rickwinter @vhvb1989 @gearama
 
 # PRLabel: %KeyVault
-/sdk/keyvault/           @vhvb1989 @gearana @ahsonkhan @antkmsft @rickwinter
+/sdk/keyvault/           @vhvb1989 @gearama @ahsonkhan @antkmsft @rickwinter
 
 # PRLabel: %Storage
-/sdk/storage/            @vinjiang @katmsft @Jinming-Hu @antkmsft @rickwinter @vhvb1989 @gearana
+/sdk/storage/            @vinjiang @katmsft @Jinming-Hu @antkmsft @rickwinter @vhvb1989 @gearama
 
 # PRLabel: %EngSys
 /sdk/template/           @danieljurek @Azure/azure-sdk-eng
