@@ -276,3 +276,16 @@ TEST_P(KeyVaultClientTest, RemoteSignVerifyDataRSA256)
     EXPECT_TRUE(verifyResult.IsValid);
   }
 }
+
+namespace {
+static std::string GetSuffix(const testing::TestParamInfo<int>& info)
+{
+  return std::to_string(info.param);
+}
+} // namespace
+
+INSTANTIATE_TEST_SUITE_P(
+    Parametrized,
+    KeyVaultClientTest,
+    ::testing::Values(13, 55, 233, 987, 1597, 2048),
+    GetSuffix);
