@@ -24,7 +24,7 @@ TEST_P(KeyVaultClientTest, RemoteEncrypt)
 {
   KeyClient keyClient(m_keyVaultUrl, m_credential);
   std::string keyName(GetUniqueName());
-  
+
   CreateRsaKeyOptions rsaKeyOptions(keyName);
   rsaKeyOptions.KeySize = GetParam();
   auto rsaKey = keyClient.CreateRsaKey(rsaKeyOptions).Value;
