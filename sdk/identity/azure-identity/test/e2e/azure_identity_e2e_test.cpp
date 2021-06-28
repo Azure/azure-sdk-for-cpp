@@ -42,7 +42,7 @@ std::string FormatEnvVarValue(std::string const& varName, bool isSecret)
   return varName + ": " + value;
 }
 
-void PrintEnvVariables()
+void PrintEnvVariables(std::string const& resourceUsed)
 {
   std::cout << std::endl
             << std::endl
@@ -56,14 +56,16 @@ void PrintEnvVariables()
             << std::endl
             << FormatEnvVarValue("AZURE_IDENTITY_TEST_MANAGED_IDENTITY_CLIENT_ID", false)
             << std::endl
-            << FormatEnvVarValue("AZURE_IDENTITY_TEST_VAULT_URL", false) << std::endl
+            << FormatEnvVarValue("AZURE_IDENTITY_TEST_VAULT_URL", false) << resourceUsed
+            << std::endl
             << std::endl
             << FormatEnvVarValue("AZURE_LOG_LEVEL", false) << std::endl;
 }
 } // namespace
 
-int main()
+int main(int argc, char** argv)
 {
+  std::string resourceUsedMsg;
   try
   {
     using Azure::DateTime;
@@ -71,20 +73,25 @@ int main()
     using Azure::Core::Credentials::TokenCredentialOptions;
     using Azure::Identity::ManagedIdentityCredential;
 
-    // Setting it to AZURE_IDENTITY_TEST_VAULT_URL=https://management.azure.com/ would also work. It
-    // is easier to do so when testing manually, as less setup is needed. But other language SDKs do
-    // coordinated testing using AZURE_IDENTITY_TEST_VAULT_URL environment variable approach, and
-    // accessing a Key Vault, so this code should work for checking access to a Key Vault too.
-    // But, JFYI, if you are not very familiar with setting up a realistic Managed Identity
-    // environment, with Jey Vault and all the access controls, https://management.azure.com/ should
-    // be good enough at least for the smoke test.
     constexpr char const* resourceUrlEnvVarName = "AZURE_IDENTITY_TEST_VAULT_URL";
-    auto const resourceUrl = GetEnv(resourceUrlEnvVarName);
+    std::string const defaultResourceUrl = "https://management.azure.com/";
+
+    auto resourceUrl = GetEnv(resourceUrlEnvVarName);
     if (resourceUrl.empty())
     {
-      std::cout << "FAIL: Test environment is not configured: " << resourceUrlEnvVarName
-                << " is not defined. Aborting." << std::endl;
-      return -1;
+      constexpr char const* simpleSwitch = "--simple";
+      if (argc > 0 && std::string(argv[argc - 1]) == simpleSwitch)
+      {
+        resourceUrl = defaultResourceUrl;
+        resourceUsedMsg = " The default '" + defaultResourceUrl + "' was used.";
+      }
+      else
+      {
+        std::cout << "FAIL: Test environment is not configured: " << resourceUrlEnvVarName
+                  << " is not defined. Either set it, or use '" << simpleSwitch
+                  << "' switch. Aborting." << std::endl;
+        return -1;
+      }
     }
 
     TokenCredentialOptions options;
@@ -133,7 +140,7 @@ int main()
               << " hours from now)." << std::endl
               << "Token value: " << tokenPreview << std::endl;
 
-    PrintEnvVariables();
+    PrintEnvVariables(resourceUsedMsg);
     return 0;
   }
   catch (std::exception const& e)
@@ -153,6 +160,6 @@ int main()
               << "ERROR: Unknown exception" << std::endl;
   }
 
-  PrintEnvVariables();
+  PrintEnvVariables(resourceUsedMsg);
   return 1;
 }
