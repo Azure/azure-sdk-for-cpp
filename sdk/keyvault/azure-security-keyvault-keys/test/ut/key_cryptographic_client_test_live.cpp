@@ -280,12 +280,13 @@ TEST_P(KeyVaultClientTest, RemoteSignVerifyDataRSA256)
 namespace {
 static std::string GetSuffix(const testing::TestParamInfo<int>& info)
 {
-  return std::to_string(info.param);
+  auto stringValue = std::to_string(abs(info.param));
+  return info.param < 0 ? "Minus" + stringValue : stringValue;
 }
 } // namespace
 
 INSTANTIATE_TEST_SUITE_P(
     Parametrized,
     KeyVaultClientTest,
-    ::testing::Values(13, 55, 233, 987, 1597, 2048),
+    ::testing::Values(-215, -100, 0, 13, 55, 233, 987, 1597, 2048, 3072, 4096),
     GetSuffix);
