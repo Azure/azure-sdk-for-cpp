@@ -75,6 +75,11 @@ The Azure Identity library focuses on OAuth authentication with Azure Active dir
   </tbody>
 </table>
 
+## Managed Identity Support
+The [Managed identity authentication](https://docs.microsoft.com/azure/active-directory/managed-identities-azure-resources/overview) is supported via the `ManagedIdentityCredential` for the following Azure Services:
+* [Azure Virtual Machines](https://docs.microsoft.com/azure/active-directory/managed-identities-azure-resources/how-to-use-vm-token)
+* [Azure Arc](https://docs.microsoft.com/azure/azure-arc/servers/managed-identity-authentication)
+
 ## Troubleshooting
 Credentials raise exceptions either when they fail to authenticate or cannot execute authentication.
 When credentials fail to authenticate, the `AuthenticationException` is thrown and it has the `what()` functions returning the description why authentication failed.
