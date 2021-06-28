@@ -78,6 +78,7 @@ The Azure Identity library focuses on OAuth authentication with Azure Active dir
 ## Managed Identity Support
 The [Managed identity authentication](https://docs.microsoft.com/azure/active-directory/managed-identities-azure-resources/overview) is supported via the `ManagedIdentityCredential` for the following Azure Services:
 * [Azure Virtual Machines](https://docs.microsoft.com/azure/active-directory/managed-identities-azure-resources/how-to-use-vm-token)
+* [Azure Cloud Shell](https://docs.microsoft.com/azure/cloud-shell/msi-authorization)
 * [Azure Arc](https://docs.microsoft.com/azure/azure-arc/servers/managed-identity-authentication)
 
 ## Troubleshooting
