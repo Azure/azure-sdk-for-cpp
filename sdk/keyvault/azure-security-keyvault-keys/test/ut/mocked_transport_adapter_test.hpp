@@ -11,18 +11,19 @@
 
 #include <azure/core.hpp>
 #include <azure/keyvault/key_vault_keys.hpp>
-
+#include "./../../src/private/key_serializers.hpp"
 #include <cstdio>
-
+#include <format>
+#include <string>
 namespace Azure { namespace Security { namespace KeyVault { namespace Keys { namespace Test {
 
   namespace _detail {
     // Return a simple key as response so keyvault can parse it to create the T response
     // Fake key from https://docs.microsoft.com/en-us/rest/api/keyvault/GetKey/GetKey#examples
-    constexpr static const char FakeKey[]
+    static const char FakeKey[]
         = "{  \"key\": {    \"kid\": "
           "\"https://myvault.vault.azure.net/keys/CreateSoftKeyTest/"
-          "78deebed173b48e48f55abf87ed4cf71\",    \"kty\": \"RSA\",    \"key_ops\": [      "
+          "78deebed173b48e48f55abf87ed4cf71\",    \"kty\": \"%s\",    \"key_ops\": [      "
           "\"encrypt\",      \"decrypt\",      \"sign\",      \"verify\",      \"wrapKey\",      "
           "\"unwrapKey\"    ]},  \"attributes\": {    \"enabled\": true,    "
           "\"created\": 1493942451,    \"updated\": 1493942451,    \"recoveryLevel\": "
@@ -46,11 +47,46 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys { nam
       {
         response->SetHeader(header.first, header.second);
       }
-      std::string bodyCount(_detail::FakeKey);
+      auto updatedFakeKey = UpdateFakeKey(_detail::FakeKey, request.GetHeaders()["user-agent"]);
+      std::string bodyCount(updatedFakeKey);
       response->SetBodyStream(std::make_unique<Azure::Core::IO::MemoryBodyStream>(
-          reinterpret_cast<const uint8_t*>(_detail::FakeKey), bodyCount.size()));
+          reinterpret_cast<const uint8_t*>(updatedFakeKey), bodyCount.size()));
       return response;
     } // namespace Azure
+
+    const char* UpdateFakeKey(const char fakeKey[], std::string header)
+    {
+      char* result;
+      std::string keyType = "RSA";
+
+      if (header.find("CreateKeyRSAHSM") != std::string::npos)
+      {
+        keyType = "RSA-HSM";
+      }
+      else if (header.find("CreateKeyECHSM") != std::string::npos)
+      {
+        keyType = "EC-HSM";
+      }
+      else if (header.find("CreateKeyOCTHSM") != std::string::npos)
+      {
+        keyType = "oct-HSM";
+      } else if (header.find("CreateKeyRSA") != std::string::npos)
+      {
+        keyType = "RSA";
+      }
+      else if (header.find("CreateKeyEC") != std::string::npos)
+      {
+        keyType = "EC";
+      }
+      else if (header.find("CreateKeyOCT") != std::string::npos)
+      {
+        keyType = "oct";
+      }
+      
+      result = new char[std::string(fakeKey).size() + keyType.size()];
+      std::sprintf(result, fakeKey, keyType.c_str());
+      return result;
+    }
   }; // namespace Test
 
   // A derived class with no credential and authentication
