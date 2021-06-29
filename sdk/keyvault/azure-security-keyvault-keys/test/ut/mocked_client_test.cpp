@@ -86,7 +86,7 @@ TEST_F(MockedTransportAdapterTest, CreateKeyRSAHSM)
       Azure::Security::KeyVault::Keys::Test::KeyClientWithNoAuthenticationPolicy>(
       "url", m_clientOptions);
 
-  auto options = CreateRsaKeyOptions("name",true);
+  auto options = CreateRsaKeyOptions("name", true);
   // The fake response from the mocked transport adapter is good for parsing a Key back
   auto response = m_client->CreateRsaKey(options);
 

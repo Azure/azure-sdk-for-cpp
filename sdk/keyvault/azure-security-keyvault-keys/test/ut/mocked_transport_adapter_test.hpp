@@ -9,9 +9,9 @@
 
 #include <gtest/gtest.h>
 
+#include "./../../src/private/key_serializers.hpp"
 #include <azure/core.hpp>
 #include <azure/keyvault/key_vault_keys.hpp>
-#include "./../../src/private/key_serializers.hpp"
 #include <cstdio>
 #include <format>
 #include <string>
@@ -70,7 +70,8 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys { nam
       else if (header.find("CreateKeyOCTHSM") != std::string::npos)
       {
         keyType = "oct-HSM";
-      } else if (header.find("CreateKeyRSA") != std::string::npos)
+      }
+      else if (header.find("CreateKeyRSA") != std::string::npos)
       {
         keyType = "RSA";
       }
@@ -82,7 +83,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys { nam
       {
         keyType = "oct";
       }
-      
+
       result = new char[std::string(fakeKey).size() + keyType.size()];
       std::sprintf(result, fakeKey, keyType.c_str());
       return result;
