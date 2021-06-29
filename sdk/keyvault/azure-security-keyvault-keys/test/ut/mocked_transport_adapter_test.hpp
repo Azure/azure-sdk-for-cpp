@@ -13,8 +13,8 @@
 #include <azure/core.hpp>
 #include <azure/keyvault/key_vault_keys.hpp>
 #include <cstdio>
-#include <format>
 #include <string>
+
 namespace Azure { namespace Security { namespace KeyVault { namespace Keys { namespace Test {
 
   namespace _detail {
