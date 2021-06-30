@@ -3,9 +3,9 @@
 
 #include "gtest/gtest.h"
 
-#include "azure/keyvault/common/internal/sha_hash.hpp"
+#include "azure/core/internal/cryptography/sha_hash.hpp"
 
-using namespace Azure::Security::KeyVault::_internal;
+using namespace Azure::Core::Cryptography::_internal;
 
 TEST(SHA, SHA256Test)
 {

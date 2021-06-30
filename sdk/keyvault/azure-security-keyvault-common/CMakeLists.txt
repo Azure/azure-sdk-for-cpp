@@ -33,7 +33,6 @@ set(
     inc/azure/keyvault/common/internal/single_page.hpp
     inc/azure/keyvault/common/internal/unix_time_helper.hpp
     inc/azure/keyvault/common/internal/keyvault_exception.hpp
-    inc/azure/keyvault/common/internal/sha_hash.hpp
 )
 
 set(
@@ -42,7 +41,6 @@ set(
     src/private/package_version.hpp
     src/keyvault_exception.cpp
     src/keyvault_pipeline.cpp
-    src/sha_hash.cpp
 )
 
 add_library(
