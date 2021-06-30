@@ -74,8 +74,49 @@ Out of the box, the Azure SDK for C++ supports the libcurl and WinHTTP libraries
 Three main ways of troubleshooting failures are:
 
 - Inspecting exceptions
-- Enabling logging (`Available in future release`)
+- Enabling logging (see [SDK Log Messages](#sdk-log-messages))
 - Distributed tracing (`Available in future release`)
+
+### SDK Log Messages
+
+The simplest way to enable logs is to set `AZURE_LOG_LEVEL` environment variable to one of the values:
+|`AZURE_LOG_LEVEL`|`Azure::Core::Diagnostics::Logger::Level`|Log message level
+|-|-|-
+|`4`, or `error`, or `err`|`Error`|Logging level for failures that the application is unlikely to recover from.
+|`3`, or `warning`, or `warn`|`Warning`|Logging level when a function fails to perform its intended task.
+|`2`, or `informational`, or `information`, or `info`|`Informational`|Logging level when a function operates normally.
+|`1`, or `verbose`, or `debug`|`Verbose`|Logging level for detailed troubleshooting scenarios.
+
+Then, log messages will be printed to console (`stderr`).
+Note that `stderr` messages can be redirected into a log file like this:
+
+```cmd
+myprogram.exe 2> log.txt
+```
+
+On Linux or macOS:
+```sh
+./myprogram 2> log.txt
+```
+
+Other option is to handle log messages programmatically by providing a callback function, which can save them to a file, or display them in a desired custom way.
+```cpp
+#include <azure/core/diagnostics/logger.hpp>
+
+int main()
+{
+    using namespace Azure::Core::Diagnostics;
+
+    // See above for the level descriptions.
+    Logger::SetLevel(Logger::Level::Verbose);
+
+    // SetListener accepts std::function<>, which can be either lambda or a function pointer.
+    Logger::SetListener([&](auto lvl, auto msg){ /* handle Logger::Level lvl and std::string msg */ });
+}
+```
+
+Note that the listener callback is being executed in the same thread as the operation that triggered the log message, so if the implementation is operation-heavy, it may slow down the SDK performance.
+In that case, consider implementing in a way that the callback pushes the message string into a thread-safe queue, so that another thread would pick the messages from that queue and handle them.
 
 ## Next steps
 
