@@ -42,7 +42,7 @@ set(
     src/private/package_version.hpp
     src/keyvault_exception.cpp
     src/keyvault_pipeline.cpp
-    src/sha.cpp
+    src/sha_hash.cpp
 )
 
 add_library(
