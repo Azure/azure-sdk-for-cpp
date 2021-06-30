@@ -6424,11 +6424,14 @@ namespace Azure { namespace Storage { namespace Blobs {
           {
             response.Details.HttpHeaders.CacheControl = cache_control__iterator->second;
           }
-          auto content_md5__iterator = httpResponse.GetHeaders().find("content-md5");
-          if (content_md5__iterator != httpResponse.GetHeaders().end())
+          if (http_status_code == 200)
           {
-            response.Details.HttpHeaders.ContentHash.Value
-                = Azure::Core::Convert::Base64Decode(content_md5__iterator->second);
+            auto content_md5__iterator = httpResponse.GetHeaders().find("content-md5");
+            if (content_md5__iterator != httpResponse.GetHeaders().end())
+            {
+              response.Details.HttpHeaders.ContentHash.Value
+                  = Azure::Core::Convert::Base64Decode(content_md5__iterator->second);
+            }
           }
           auto x_ms_blob_content_md5__iterator
               = httpResponse.GetHeaders().find("x-ms-blob-content-md5");
