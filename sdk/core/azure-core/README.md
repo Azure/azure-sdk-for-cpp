@@ -90,6 +90,7 @@ The simplest way to enable logs is to set `AZURE_LOG_LEVEL` environment variable
 Then, log messages will be printed to console (`stderr`).
 Note that `stderr` messages can be redirected into a log file like this:
 
+On Windows:
 ```cmd
 myprogram.exe 2> log.txt
 ```
