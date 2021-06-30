@@ -3,7 +3,7 @@
 
 /**
  * @file
- * @brief Defines the Key Vault KeyOperation.
+ * @brief Defines the Key Vault KeyOperationType.
  *
  */
 
@@ -25,20 +25,20 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
 
   public:
     /**
-     * @brief Construct a new Key Operation object.
+     * @brief Construct a new Key Operation Type object.
      *
      * @param operation The operation for the key as string.
      */
     explicit KeyOperationType(std::string operation) : m_operation(std::move(operation)) {}
 
     /**
-     * @brief Construct a default Key operation.
+     * @brief Construct a default Key operation type.
      *
      */
     KeyOperationType() = default;
 
     /**
-     * @brief Enables using the equal operator for key operations.
+     * @brief Enables using the equal operator for key operation types.
      *
      * @param other A key operation to be compared.
      */
