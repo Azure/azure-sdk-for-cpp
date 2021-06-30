@@ -33,7 +33,7 @@ set(
     inc/azure/keyvault/common/internal/single_page.hpp
     inc/azure/keyvault/common/internal/unix_time_helper.hpp
     inc/azure/keyvault/common/internal/keyvault_exception.hpp
-    "inc/azure/keyvault/common/internal/sha_hash.hpp"
+    inc/azure/keyvault/common/internal/sha_hash.hpp
 )
 
 set(
