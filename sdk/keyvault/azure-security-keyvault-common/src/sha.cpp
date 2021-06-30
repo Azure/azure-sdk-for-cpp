@@ -12,7 +12,7 @@
 #include <openssl/evp.h>
 #endif
 
-#include "azure/keyvault/common/sha.hpp"
+#include "azure/keyvault/common/internal/sha.hpp"
 
 #include <memory>
 #include <stdexcept>
@@ -97,17 +97,17 @@ public:
 
 } // namespace
 
-Azure::Security::KeyVault::SHA256::SHA256()
+Azure::Security::KeyVault::_internal::SHA256::SHA256()
     : m_portableImplementation(std::make_unique<SHAWithOpenSSL>(SHASize::SHA256))
 {
 }
 
-Azure::Security::KeyVault::SHA384::SHA384()
+Azure::Security::KeyVault::_internal::SHA384::SHA384()
     : m_portableImplementation(std::make_unique<SHAWithOpenSSL>(SHASize::SHA384))
 {
 }
 
-Azure::Security::KeyVault::SHA512::SHA512()
+Azure::Security::KeyVault::_internal::SHA512::SHA512()
     : m_portableImplementation(std::make_unique<SHAWithOpenSSL>(SHASize::SHA512))
 {
 }
@@ -222,17 +222,17 @@ public:
 
 } // namespace
 
-Azure::Security::KeyVault::SHA256::SHA256()
+Azure::Security::KeyVault::_internal::SHA256::SHA256()
     : m_portableImplementation(std::make_unique<SHAWithBCrypt>(BCRYPT_SHA256_ALGORITHM))
 {
 }
 
-Azure::Security::KeyVault::SHA384::SHA384()
+Azure::Security::KeyVault::_internal::SHA384::SHA384()
     : m_portableImplementation(std::make_unique<SHAWithBCrypt>(BCRYPT_SHA384_ALGORITHM))
 {
 }
 
-Azure::Security::KeyVault::SHA512::SHA512()
+Azure::Security::KeyVault::_internal::SHA512::SHA512()
     : m_portableImplementation(std::make_unique<SHAWithBCrypt>(BCRYPT_SHA512_ALGORITHM))
 {
 }
