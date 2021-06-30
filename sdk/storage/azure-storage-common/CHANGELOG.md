@@ -85,7 +85,13 @@
 
 ### Bug Fixes
 
-- Fixed default EndpointSuffix when parsing a connection string.
+- Fixed default EndpointSuffix when parsing a connection string. (A community contribution, courtesy of _[lordgamez](https://github.com/lordgamez)_)
+
+### Acknowledgments
+
+Thank you to our developer community members who helped to make Azure Core better with their contributions to this release:
+
+- Gabor Gyimesi _([GitHub](https://github.com/lordgamez))_
 
 ## 12.0.0-beta.5 (2020-11-13)
 
