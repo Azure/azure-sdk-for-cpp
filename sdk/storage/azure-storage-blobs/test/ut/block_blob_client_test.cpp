@@ -110,8 +110,8 @@ namespace Azure { namespace Storage { namespace Test {
 
   TEST_F(BlockBlobClientTest, DownloadTransactionalHash)
   {
-    const std::vector<uint8_t> dataPart1(4_MB + 1, 'a');
-    const std::vector<uint8_t> dataPart2(4_MB + 1, 'b');
+    const std::vector<uint8_t> dataPart1(static_cast<size_t>(4_MB + 1), 'a');
+    const std::vector<uint8_t> dataPart2(static_cast<size_t>(4_MB + 1), 'b');
 
     const std::string blockId1 = Base64EncodeText("0");
     const std::string blockId2 = Base64EncodeText("1");
