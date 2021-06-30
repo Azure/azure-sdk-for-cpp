@@ -279,7 +279,7 @@ Azure::Response<PurgedKey> KeyClient::PurgeDeletedKey(
 
 Azure::Response<KeyVaultKey> KeyClient::UpdateKeyProperties(
     KeyProperties const& properties,
-    Azure::Nullable<std::list<KeyOperation>> const& keyOperations,
+    Azure::Nullable<std::list<KeyOperationType>> const& keyOperations,
     Azure::Core::Context const& context) const
 {
   return m_pipeline->SendRequest<KeyVaultKey>(

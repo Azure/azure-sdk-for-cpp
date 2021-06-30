@@ -37,7 +37,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys { nam
 
     explicit KeyRequestParameters(
         KeyProperties const& key,
-        Azure::Nullable<std::list<KeyOperation>> const& operations)
+        Azure::Nullable<std::list<KeyOperationType>> const& operations)
         : m_options(CreateKeyOptions())
     {
       if (key.Enabled)
@@ -58,7 +58,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys { nam
       }
       if (operations)
       {
-        m_options.KeyOperations = std::list<KeyOperation>(operations.Value());
+        m_options.KeyOperations = std::list<KeyOperationType>(operations.Value());
       }
     }
 

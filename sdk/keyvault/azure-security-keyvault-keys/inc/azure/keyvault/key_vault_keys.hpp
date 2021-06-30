@@ -28,7 +28,7 @@
 #include "azure/keyvault/keys/key_client_options.hpp"
 #include "azure/keyvault/keys/key_create_options.hpp"
 #include "azure/keyvault/keys/key_curve_name.hpp"
-#include "azure/keyvault/keys/key_operation.hpp"
+#include "azure/keyvault/keys/key_operation_type.hpp"
 #include "azure/keyvault/keys/key_properties.hpp"
 #include "azure/keyvault/keys/key_type.hpp"
 #include "azure/keyvault/keys/key_vault_key.hpp"

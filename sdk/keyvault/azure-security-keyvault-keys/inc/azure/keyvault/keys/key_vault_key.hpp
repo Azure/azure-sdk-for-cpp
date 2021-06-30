@@ -10,7 +10,7 @@
 #pragma once
 
 #include "azure/keyvault/keys/json_web_key.hpp"
-#include "azure/keyvault/keys/key_operation.hpp"
+#include "azure/keyvault/keys/key_operation_type.hpp"
 #include "azure/keyvault/keys/key_properties.hpp"
 
 #include <azure/core/http/http.hpp>
@@ -82,6 +82,6 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
      *
      * @return A vector with the supported operations for the key.
      */
-    std::vector<KeyOperation> const& KeyOperations() const { return Key.KeyOperations(); }
+    std::vector<KeyOperationType> const& KeyOperations() const { return Key.KeyOperations(); }
   };
 }}}} // namespace Azure::Security::KeyVault::Keys

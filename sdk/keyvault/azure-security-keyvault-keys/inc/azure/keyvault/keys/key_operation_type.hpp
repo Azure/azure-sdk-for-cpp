@@ -19,7 +19,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
    * @brief An operation that can be performed with the key.
    *
    */
-  class KeyOperation final {
+  class KeyOperationType final {
   private:
     std::string m_operation;
 
@@ -29,20 +29,20 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
      *
      * @param operation The operation for the key as string.
      */
-    explicit KeyOperation(std::string operation) : m_operation(std::move(operation)) {}
+    explicit KeyOperationType(std::string operation) : m_operation(std::move(operation)) {}
 
     /**
      * @brief Construct a default Key operation.
      *
      */
-    KeyOperation() = default;
+    KeyOperationType() = default;
 
     /**
      * @brief Enables using the equal operator for key operations.
      *
      * @param other A key operation to be compared.
      */
-    bool operator==(const KeyOperation& other) const noexcept
+    bool operator==(const KeyOperationType& other) const noexcept
     {
       return m_operation == other.m_operation;
     }
@@ -58,43 +58,43 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
      * @brief The key can be used to encrypt with the #Encrypt(EncryptionAlgorithm, Byte[],
      * CancellationToken) method.
      */
-    AZ_SECURITY_KEYVAULT_KEYS_DLLEXPORT static const KeyOperation Encrypt;
+    AZ_SECURITY_KEYVAULT_KEYS_DLLEXPORT static const KeyOperationType Encrypt;
 
     /**
      * @brief The key can be used to decrypt with the #Decrypt(EncryptionAlgorithm, Byte[],
      * CancellationToken) method.
      */
-    AZ_SECURITY_KEYVAULT_KEYS_DLLEXPORT static const KeyOperation Decrypt;
+    AZ_SECURITY_KEYVAULT_KEYS_DLLEXPORT static const KeyOperationType Decrypt;
 
     /**
      * @brief The key can be used to sign with the Sign(SignatureAlgorithm, Byte[],
      * CancellationToken) method.
      */
-    AZ_SECURITY_KEYVAULT_KEYS_DLLEXPORT static const KeyOperation Sign;
+    AZ_SECURITY_KEYVAULT_KEYS_DLLEXPORT static const KeyOperationType Sign;
 
     /**
      * @brief The key can be used to verify with the Verify(SignatureAlgorithm, Byte[], Byte[],
      * CancellationToken) method.
      */
-    AZ_SECURITY_KEYVAULT_KEYS_DLLEXPORT static const KeyOperation Verify;
+    AZ_SECURITY_KEYVAULT_KEYS_DLLEXPORT static const KeyOperationType Verify;
 
     /**
      * @brief The key can be used to wrap another key with the WrapKey(KeyWrapAlgorithm, Byte[],
      * CancellationToken) method.
      */
-    AZ_SECURITY_KEYVAULT_KEYS_DLLEXPORT static const KeyOperation WrapKey;
+    AZ_SECURITY_KEYVAULT_KEYS_DLLEXPORT static const KeyOperationType WrapKey;
 
     /**
      * @brief The key can be used to unwrap another key with the UnwrapKey(KeyWrapAlgorithm, Byte[],
      * CancellationToken) method.
      */
-    AZ_SECURITY_KEYVAULT_KEYS_DLLEXPORT static const KeyOperation UnwrapKey;
+    AZ_SECURITY_KEYVAULT_KEYS_DLLEXPORT static const KeyOperationType UnwrapKey;
 
     /**
      * @brief The key can be imported during creation using the ImportKey(ImportKeyOptions,
      * CancellationToken) method.
      */
-    AZ_SECURITY_KEYVAULT_KEYS_DLLEXPORT static const KeyOperation Import;
+    AZ_SECURITY_KEYVAULT_KEYS_DLLEXPORT static const KeyOperationType Import;
   };
 
 }}}} // namespace Azure::Security::KeyVault::Keys

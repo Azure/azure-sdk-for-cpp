@@ -12,7 +12,7 @@
 #include <azure/core/nullable.hpp>
 
 #include "azure/keyvault/keys/json_web_key.hpp"
-#include "azure/keyvault/keys/key_operation.hpp"
+#include "azure/keyvault/keys/key_operation_type.hpp"
 #include "azure/keyvault/keys/key_properties.hpp"
 
 #include <azure/core/http/http.hpp>

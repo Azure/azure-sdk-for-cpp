@@ -33,7 +33,7 @@ std::string KeyRequestParameters::Serialize() const
   // key_size
   // public_exponent
   // key_ops
-  for (KeyOperation op : m_options.KeyOperations)
+  for (KeyOperationType op : m_options.KeyOperations)
   {
     payload[_detail::KeyOpsPropertyName].push_back(op.ToString());
   }

@@ -319,8 +319,8 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
      */
     Azure::Response<KeyVaultKey> UpdateKeyProperties(
         KeyProperties const& properties,
-        Azure::Nullable<std::list<KeyOperation>> const& keyOperations
-        = Azure::Nullable<std::list<KeyOperation>>(),
+        Azure::Nullable<std::list<KeyOperationType>> const& keyOperations
+        = Azure::Nullable<std::list<KeyOperationType>>(),
         Azure::Core::Context const& context = Azure::Core::Context()) const;
 
     /**

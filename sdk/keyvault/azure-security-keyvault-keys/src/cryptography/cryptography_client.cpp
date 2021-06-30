@@ -10,7 +10,7 @@
 
 #include "azure/keyvault/keys/cryptography/cryptography_client.hpp"
 #include "azure/keyvault/keys/internal/cryptography/local_cryptography_provider_factory.hpp"
-#include "azure/keyvault/keys/key_operation.hpp"
+#include "azure/keyvault/keys/key_operation_type.hpp"
 
 #include <memory>
 #include <string>
@@ -107,14 +107,14 @@ EncryptResult CryptographyClient::Encrypt(
   {
     // Try to init a local crypto provider after getting the key from the server.
     // If the local provider can't be created, the remote client is used as provider.
-    Initialize(KeyOperation::Encrypt.ToString(), context);
+    Initialize(KeyOperationType::Encrypt.ToString(), context);
   }
 
   // Default result has empty values.
   EncryptResult result;
 
   // m_provider can be local or remote, depending on how it was init.
-  if (m_provider->SupportsOperation(KeyOperation::Encrypt))
+  if (m_provider->SupportsOperation(KeyOperationType::Encrypt))
   {
     try
     {
@@ -151,14 +151,14 @@ DecryptResult CryptographyClient::Decrypt(
   {
     // Try to init a local crypto provider after getting the key from the server.
     // If the local provider can't be created, the remote client is used as provider.
-    Initialize(KeyOperation::Decrypt.ToString(), context);
+    Initialize(KeyOperationType::Decrypt.ToString(), context);
   }
 
   // Default result has empty values.
   DecryptResult result;
 
   // m_provider can be local or remote, depending on how it was init.
-  if (m_provider->SupportsOperation(KeyOperation::Decrypt))
+  if (m_provider->SupportsOperation(KeyOperationType::Decrypt))
   {
     try
     {
@@ -196,14 +196,14 @@ WrapResult CryptographyClient::WrapKey(
   {
     // Try to init a local crypto provider after getting the key from the server.
     // If the local provider can't be created, the remote client is used as provider.
-    Initialize(KeyOperation::WrapKey.ToString(), context);
+    Initialize(KeyOperationType::WrapKey.ToString(), context);
   }
 
   // Default result has empty values.
   WrapResult result;
 
   // m_provider can be local or remote, depending on how it was init.
-  if (m_provider->SupportsOperation(KeyOperation::WrapKey))
+  if (m_provider->SupportsOperation(KeyOperationType::WrapKey))
   {
     try
     {
@@ -241,14 +241,14 @@ UnwrapResult CryptographyClient::UnwrapKey(
   {
     // Try to init a local crypto provider after getting the encryptedKey from the server.
     // If the local provider can't be created, the remote client is used as provider.
-    Initialize(KeyOperation::UnwrapKey.ToString(), context);
+    Initialize(KeyOperationType::UnwrapKey.ToString(), context);
   }
 
   // Default result has empty values.
   UnwrapResult result;
 
   // m_provider can be local or remote, depending on how it was init.
-  if (m_provider->SupportsOperation(KeyOperation::UnwrapKey))
+  if (m_provider->SupportsOperation(KeyOperationType::UnwrapKey))
   {
     try
     {
@@ -286,14 +286,14 @@ SignResult CryptographyClient::Sign(
   {
     // Try to init a local crypto provider after getting the encryptedKey from the server.
     // If the local provider can't be created, the remote client is used as provider.
-    Initialize(KeyOperation::Sign.ToString(), context);
+    Initialize(KeyOperationType::Sign.ToString(), context);
   }
 
   // Default result has empty values.
   SignResult result;
 
   // m_provider can be local or remote, depending on how it was init.
-  if (m_provider->SupportsOperation(KeyOperation::Sign))
+  if (m_provider->SupportsOperation(KeyOperationType::Sign))
   {
     try
     {
@@ -348,14 +348,14 @@ VerifyResult CryptographyClient::Verify(
   {
     // Try to init a local crypto provider after getting the encryptedKey from the server.
     // If the local provider can't be created, the remote client is used as provider.
-    Initialize(KeyOperation::Verify.ToString(), context);
+    Initialize(KeyOperationType::Verify.ToString(), context);
   }
 
   // Default result has empty values.
   VerifyResult result;
 
   // m_provider can be local or remote, depending on how it was init.
-  if (m_provider->SupportsOperation(KeyOperation::Verify))
+  if (m_provider->SupportsOperation(KeyOperationType::Verify))
   {
     try
     {

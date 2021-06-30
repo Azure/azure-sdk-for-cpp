@@ -44,7 +44,7 @@ namespace Azure {
 
       bool CanRemote() const noexcept override { return true; }
 
-      bool SupportsOperation(Azure::Security::KeyVault::Keys::KeyOperation) const noexcept override
+      bool SupportsOperation(Azure::Security::KeyVault::Keys::KeyOperationType) const noexcept override
       {
         return true;
       };

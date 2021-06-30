@@ -19,12 +19,12 @@ using namespace Azure::Security::KeyVault::_internal;
 
 namespace {
 void ParseStringOperationsToKeyOperations(
-    std::vector<KeyOperation>& keyOperations,
+    std::vector<KeyOperationType>& keyOperations,
     std::vector<std::string> const& stringOperations)
 {
   for (std::string const& operation : stringOperations)
   {
-    keyOperations.emplace_back(KeyOperation(operation));
+    keyOperations.emplace_back(KeyOperationType(operation));
   }
 }
 
@@ -61,7 +61,7 @@ void Azure::Security::KeyVault::Keys::_detail::JsonWebKeySerializer::JsonWebKeyS
   destJson[_detail::KeyTypePropertyName] = jwk.KeyType.ToString();
 
   // ops
-  for (KeyOperation op : jwk.KeyOperations())
+  for (KeyOperationType op : jwk.KeyOperations())
   {
     destJson[_detail::KeyOpsPropertyName].push_back(op.ToString());
   }
@@ -99,7 +99,7 @@ void Azure::Security::KeyVault::Keys::_detail::JsonWebKeySerializer::JsonWebDese
       // key_ops
       auto keyOperationVector
           = jsonKey[_detail::KeyOpsPropertyName].get<std::vector<std::string>>();
-      std::vector<KeyOperation> keyOperations;
+      std::vector<KeyOperationType> keyOperations;
       ParseStringOperationsToKeyOperations(keyOperations, keyOperationVector);
       srcKey.SetKeyOperations(keyOperations);
     }

@@ -13,7 +13,7 @@
 #include <azure/core/nullable.hpp>
 
 #include "azure/keyvault/keys/key_curve_name.hpp"
-#include "azure/keyvault/keys/key_operation.hpp"
+#include "azure/keyvault/keys/key_operation_type.hpp"
 #include "azure/keyvault/keys/key_type.hpp"
 
 #include <string>
@@ -50,7 +50,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
      *
      * @param keyOperations The list of key operations.
      */
-    void SetKeyOperations(std::vector<KeyOperation> const& keyOperations)
+    void SetKeyOperations(std::vector<KeyOperationType> const& keyOperations)
     {
       m_keyOps = keyOperations;
     }
@@ -60,7 +60,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
      *
      * @return std::vector<KeyOperation> const&
      */
-    std::vector<KeyOperation> const& KeyOperations() const { return m_keyOps; }
+    std::vector<KeyOperationType> const& KeyOperations() const { return m_keyOps; }
 
     /**
      * @brief Gets or sets the elliptic curve name.
@@ -117,7 +117,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
       return false;
     }
 
-    bool SupportsOperation(KeyOperation operation) const
+    bool SupportsOperation(KeyOperationType operation) const
     {
       for (auto supportedOperation : m_keyOps)
       {
@@ -130,7 +130,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
     }
 
   private:
-    std::vector<KeyOperation> m_keyOps;
+    std::vector<KeyOperationType> m_keyOps;
   };
 
 }}}} // namespace Azure::Security::KeyVault::Keys

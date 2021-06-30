@@ -14,7 +14,7 @@
 #include <azure/core/nullable.hpp>
 
 #include "azure/keyvault/keys/key_curve_name.hpp"
-#include "azure/keyvault/keys/key_operation.hpp"
+#include "azure/keyvault/keys/key_operation_type.hpp"
 #include "azure/keyvault/keys/key_vault_key.hpp"
 
 #include <list>
@@ -39,7 +39,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
      * @brief Define the supported operations for the key.
      *
      */
-    std::list<KeyOperation> KeyOperations;
+    std::list<KeyOperationType> KeyOperations;
 
     /**
      * @brief Indicates when the key will be valid and can be used for cryptographic operations.

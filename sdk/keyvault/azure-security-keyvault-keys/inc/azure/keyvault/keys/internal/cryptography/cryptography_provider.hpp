@@ -21,7 +21,7 @@
 #include "azure/keyvault/keys/cryptography/unwrap_result.hpp"
 #include "azure/keyvault/keys/cryptography/verify_result.hpp"
 #include "azure/keyvault/keys/cryptography/wrap_result.hpp"
-#include "azure/keyvault/keys/key_operation.hpp"
+#include "azure/keyvault/keys/key_operation_type.hpp"
 
 #include <memory>
 #include <string>
@@ -41,7 +41,7 @@ namespace Azure {
       virtual bool CanRemote() const noexcept = 0;
 
       virtual bool SupportsOperation(
-          Azure::Security::KeyVault::Keys::KeyOperation operation) const noexcept = 0;
+          Azure::Security::KeyVault::Keys::KeyOperationType operation) const noexcept = 0;
 
       virtual EncryptResult Encrypt(
           EncryptParameters const& parameters,

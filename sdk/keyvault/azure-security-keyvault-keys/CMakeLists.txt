@@ -54,7 +54,7 @@ set(
     inc/azure/keyvault/keys/key_create_options.hpp
     inc/azure/keyvault/keys/key_curve_name.hpp
     inc/azure/keyvault/keys/key_client_options.hpp
-    inc/azure/keyvault/keys/key_operation.hpp
+    inc/azure/keyvault/keys/key_operation_type.hpp
     inc/azure/keyvault/keys/key_properties.hpp
     inc/azure/keyvault/keys/key_type.hpp
     inc/azure/keyvault/keys/key_vault_key.hpp
@@ -99,7 +99,7 @@ set(
     src/key_client_options.cpp
     src/key_client.cpp
     src/key_curve_name.cpp
-    src/key_operation.cpp
+    src/key_operation_type.cpp
     src/key_request_parameters.cpp
     src/key_type.cpp
     src/key_vault_key.cpp

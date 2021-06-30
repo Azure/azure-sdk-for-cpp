@@ -43,8 +43,8 @@ TEST_F(KeyVaultClientTest, CreateKeyWithOptions)
   auto keyName = GetUniqueName();
 
   Azure::Security::KeyVault::Keys::CreateKeyOptions options;
-  options.KeyOperations.push_back(Azure::Security::KeyVault::Keys::KeyOperation::Sign);
-  options.KeyOperations.push_back(Azure::Security::KeyVault::Keys::KeyOperation::Verify);
+  options.KeyOperations.push_back(Azure::Security::KeyVault::Keys::KeyOperationType::Sign);
+  options.KeyOperations.push_back(Azure::Security::KeyVault::Keys::KeyOperationType::Verify);
   {
     auto keyResponse = keyClient.CreateKey(
         keyName, Azure::Security::KeyVault::Keys::KeyVaultKeyType::Ec, options);
@@ -59,8 +59,8 @@ TEST_F(KeyVaultClientTest, CreateKeyWithOptions)
     uint16_t expectedSize = 2;
     EXPECT_EQ(keyOperations.size(), expectedSize);
 
-    auto findOperation = [keyOperations](Azure::Security::KeyVault::Keys::KeyOperation op) {
-      for (Azure::Security::KeyVault::Keys::KeyOperation operation : keyOperations)
+    auto findOperation = [keyOperations](Azure::Security::KeyVault::Keys::KeyOperationType op) {
+      for (Azure::Security::KeyVault::Keys::KeyOperationType operation : keyOperations)
       {
         if (operation.ToString() == op.ToString())
         {
@@ -69,8 +69,8 @@ TEST_F(KeyVaultClientTest, CreateKeyWithOptions)
       }
       return false;
     };
-    EXPECT_PRED1(findOperation, Azure::Security::KeyVault::Keys::KeyOperation::Sign);
-    EXPECT_PRED1(findOperation, Azure::Security::KeyVault::Keys::KeyOperation::Verify);
+    EXPECT_PRED1(findOperation, Azure::Security::KeyVault::Keys::KeyOperationType::Sign);
+    EXPECT_PRED1(findOperation, Azure::Security::KeyVault::Keys::KeyOperationType::Verify);
   }
 }
 

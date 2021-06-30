@@ -32,14 +32,14 @@ namespace Azure {
       }
 
       bool SupportsOperation(
-          Azure::Security::KeyVault::Keys::KeyOperation operation) const noexcept override
+          Azure::Security::KeyVault::Keys::KeyOperationType operation) const noexcept override
       {
-        if (operation == Azure::Security::KeyVault::Keys::KeyOperation::Encrypt
-            || operation == Azure::Security::KeyVault::Keys::KeyOperation::Decrypt
-            || operation == Azure::Security::KeyVault::Keys::KeyOperation::Sign
-            || operation == Azure::Security::KeyVault::Keys::KeyOperation::Verify
-            || operation == Azure::Security::KeyVault::Keys::KeyOperation::WrapKey
-            || operation == Azure::Security::KeyVault::Keys::KeyOperation::UnwrapKey)
+        if (operation == Azure::Security::KeyVault::Keys::KeyOperationType::Encrypt
+            || operation == Azure::Security::KeyVault::Keys::KeyOperationType::Decrypt
+            || operation == Azure::Security::KeyVault::Keys::KeyOperationType::Sign
+            || operation == Azure::Security::KeyVault::Keys::KeyOperationType::Verify
+            || operation == Azure::Security::KeyVault::Keys::KeyOperationType::WrapKey
+            || operation == Azure::Security::KeyVault::Keys::KeyOperationType::UnwrapKey)
         {
           return m_keyMaterial.SupportsOperation(operation);
         }
