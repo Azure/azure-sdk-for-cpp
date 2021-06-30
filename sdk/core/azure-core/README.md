@@ -99,7 +99,7 @@ On Linux or macOS:
 ./myprogram 2> log.txt
 ```
 
-Other option is to handle log messages programmatically by providing a callback function, which can save them to a file, or display them in a desired custom way.
+In addition, log messages can be programmatically processed by providing a callback function, which can save them to a file, or display them in a desired custom way.
 ```cpp
 #include <azure/core/diagnostics/logger.hpp>
 
@@ -115,8 +115,9 @@ int main()
 }
 ```
 
-Note that the listener callback is being executed in the same thread as the operation that triggered the log message, so if the implementation is operation-heavy, it may slow down the SDK performance.
-In that case, consider implementing in a way that the callback pushes the message string into a thread-safe queue, so that another thread would pick the messages from that queue and handle them.
+Note, the listener callback is executed on the same thread as the operation that triggered the log message. 
+ It is recommended implementation due the minimal amount of log message processing on the callback thread.
+Where message processing is required, consider implementing in a way that the callback pushes the message string into a thread-safe queue, so that another thread would pick the messages from that queue and handle them.
 
 ## Next steps
 
