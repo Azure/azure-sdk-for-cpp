@@ -3,14 +3,14 @@
 
 #include "gtest/gtest.h"
 
-#include "azure/keyvault/common/internal/sha.hpp"
+#include "azure/keyvault/common/internal/sha_hash.hpp"
 
 using namespace Azure::Security::KeyVault::_internal;
 
 TEST(SHA, SHA256Test)
 {
-  SHA256 sha;
-  SHA256 sha2;
+  Sha256Hash sha;
+  Sha256Hash sha2;
   uint8_t data[] = "A";
   auto shaResult = sha.Final(data, sizeof(data));
   auto shaResult2 = sha2.Final(data, sizeof(data));
