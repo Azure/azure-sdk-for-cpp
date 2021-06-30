@@ -1,15 +1,14 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
 
-#include "azure/keyvault/common/internal/keyvault_exception.hpp"
-#include "private/keyvault_constants.hpp"
+#include <azure/core/internal/keyvault_exception.hpp>
 
 #include <azure/core/http/policies/policy.hpp>
 
 #include <azure/core/internal/json/json.hpp>
 #include <type_traits>
 
-using namespace Azure::Security::KeyVault;
+using namespace Azure::Core;
 using namespace Azure::Core::Http::_internal;
 
 Azure::Core::RequestFailedException _internal::KeyVaultException::CreateException(

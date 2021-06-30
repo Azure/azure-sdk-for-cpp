@@ -3,7 +3,7 @@
 
 #include <azure/core/http/http.hpp>
 
-#include "azure/keyvault/common/internal/keyvault_exception.hpp"
+#include "azure/core/internal/keyvault_exception.hpp"
 #include "azure/keyvault/common/internal/keyvault_pipeline.hpp"
 #include "private/keyvault_constants.hpp"
 
@@ -70,7 +70,7 @@ std::unique_ptr<Azure::Core::Http::RawResponse> _internal::KeyVaultPipeline::Sen
     case Azure::Core::Http::HttpStatusCode::NoContent:
       break;
     default:
-      throw Azure::Security::KeyVault::_internal::KeyVaultException::CreateException(
+      throw Azure::Core::_internal::KeyVaultException::CreateException(
           std::move(response));
   }
   return response;
