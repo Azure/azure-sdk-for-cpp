@@ -4,8 +4,6 @@
 #include <azure/core/internal/json/json.hpp>
 #include <azure/core/internal/json/json_optional.hpp>
 
-#include <azure/keyvault/common/internal/unix_time_helper.hpp>
-
 #include "azure/keyvault/keys/deleted_key.hpp"
 #include "azure/keyvault/keys/key_vault_key.hpp"
 #include "private/key_constants.hpp"
@@ -13,7 +11,7 @@
 
 using namespace Azure::Security::KeyVault::Keys;
 using namespace Azure::Core::Json::_internal;
-using Azure::Security::KeyVault::_internal::UnixTimeConverter;
+using Azure::_internal::PosixTimeConverter;
 
 DeletedKey _detail::DeletedKeySerializer::DeletedKeyDeserialize(
     std::string const& name,
@@ -42,12 +40,12 @@ DeletedKey _detail::DeletedKeySerializer::DeletedKeyDeserialize(
       deletedKey.DeletedDate,
       jsonParser,
       _detail::DeletedOnPropertyName,
-      UnixTimeConverter::UnixTimeToDatetime);
+      PosixTimeConverter::PosixTimeToDateTime);
   JsonOptional::SetIfExists<int64_t, Azure::DateTime>(
       deletedKey.ScheduledPurgeDate,
       jsonParser,
       _detail::ScheduledPurgeDatePropertyName,
-      UnixTimeConverter::UnixTimeToDatetime);
+      PosixTimeConverter::PosixTimeToDateTime);
 
   return deletedKey;
 }
