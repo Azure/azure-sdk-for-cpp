@@ -32,20 +32,20 @@ namespace Azure { namespace Core {
 
   RequestFailedException::RequestFailedException(
       std::unique_ptr<Azure::Core::Http::RawResponse>& rawResponse)
-      : std::runtime_error(getRawResponseField(rawResponse, "message"))
+      : std::runtime_error(GetRawResponseField(rawResponse, "message"))
   {
     auto& headers = rawResponse->GetHeaders();
 
     StatusCode = rawResponse->GetStatusCode();
-    ErrorCode = getRawResponseField(rawResponse, "code");
-    StatusCode = rawResponse->GetStatusCode();
+    ErrorCode = GetRawResponseField(rawResponse, "code");
     ReasonPhrase = rawResponse->GetReasonPhrase();
     RequestId = HttpShared::GetHeaderOrEmptyString(headers, HttpShared::MsRequestId);
     ClientRequestId = HttpShared::GetHeaderOrEmptyString(headers, HttpShared::MsClientRequestId);
     Message = this->what();
+    RawResponse = std::move(rawResponse);
   }
 
-  std::string RequestFailedException::getRawResponseField(
+  std::string RequestFailedException::GetRawResponseField(
       std::unique_ptr<Azure::Core::Http::RawResponse>& rawResponse,
       std::string fieldName)
   {
@@ -62,14 +62,6 @@ namespace Azure { namespace Core {
       {
         result = error.value()[fieldName].get<std::string>();
       }
-      else if (fieldName == "message")
-      {
-        result = std::string(bodyBuffer.begin(), bodyBuffer.end());
-      }
-    }
-    else if (fieldName == "message")
-    {
-      result = std::string(bodyBuffer.begin(), bodyBuffer.end());
     }
 
     return result;

@@ -1,5 +1,6 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
+
 #include <azure/core/exception.hpp>
 #include <azure/core/http/http.hpp>
 #include <gtest/gtest.h>
@@ -50,30 +51,8 @@ TEST(RequestFailedException, JSONErrorNoError)
   auto exception = Azure::Core::RequestFailedException(response);
 
   EXPECT_EQ(exception.StatusCode, Azure::Core::Http::HttpStatusCode::ServiceUnavailable);
-  EXPECT_EQ(exception.Message, "{\"text\" :\"some text\"}");
+  EXPECT_EQ(exception.Message, "");
   EXPECT_EQ(exception.ErrorCode, "");
-  EXPECT_EQ(exception.RequestId, "1");
-  EXPECT_EQ(exception.ClientRequestId, "2");
-}
-
-TEST(RequestFailedException, NonJSONError)
-{
-  auto response = std::make_unique<Azure::Core::Http::RawResponse>(
-      1, 1, Azure::Core::Http::HttpStatusCode::ServiceUnavailable, "reason");
-  static constexpr uint8_t const responseBody[] = "NJT";
-  static constexpr uint8_t const responseBodyStream[] = "NJT";
-
-  response->SetHeader(HttpShared::ContentType, "application/text");
-  response->SetHeader(HttpShared::MsRequestId, "1");
-  response->SetHeader(HttpShared::MsClientRequestId, "2");
-  response->SetBody(std::vector<uint8_t>(responseBody, responseBody + sizeof(responseBody)));
-  response->SetBodyStream(std::make_unique<Azure::Core::IO::MemoryBodyStream>(
-      responseBodyStream, sizeof(responseBodyStream) - 1));
-
-  auto exception = Azure::Core::RequestFailedException(response);
-
-  EXPECT_EQ(exception.StatusCode, Azure::Core::Http::HttpStatusCode::ServiceUnavailable);
-  EXPECT_EQ(exception.Message, "NJT");
   EXPECT_EQ(exception.RequestId, "1");
   EXPECT_EQ(exception.ClientRequestId, "2");
 }

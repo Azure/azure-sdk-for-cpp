@@ -147,7 +147,7 @@ namespace Azure { namespace Core {
     ~RequestFailedException() = default;
 
   private:
-    std::string getRawResponseField(
+    std::string GetRawResponseField(
         std::unique_ptr<Azure::Core::Http::RawResponse>& rawResponse,
         std::string fieldName);
   };
