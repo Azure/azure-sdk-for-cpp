@@ -21,7 +21,7 @@
 using namespace Azure::Security::KeyVault::Keys::Test;
 using namespace Azure::Security::KeyVault::Keys;
 using namespace Azure::Core::Json::_internal;
-
+/*
 TEST_F(KeyVaultClientTest, BackupKey)
 {
   KeyClient keyClient(m_keyVaultUrl, m_credential);
@@ -81,4 +81,4 @@ TEST_F(KeyVaultClientTest, BackupKey)
     auto response = keyClient.PurgeDeletedKey(keyName);
     CheckValidResponse(response, Azure::Core::Http::HttpStatusCode::NoContent);
   }
-}
+}*/

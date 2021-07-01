@@ -93,6 +93,24 @@ namespace Azure { namespace Core {
         std::unique_ptr<Azure::Core::Http::RawResponse> rawResponse);
 
     /**
+     * @brief Constructs a new `%RequestFailedException` object with an HTTP raw response.
+     *
+     * @note The HTTP raw response is parsed to populate information expected from all Azure
+     * Services like the status code, reason phrase and some headers like the request ID. A concrete
+     * Service exception which derives from this exception uses its constructor to parse the HTTP
+     * raw response adding the service specific values to the exception.
+     *
+     * @param rawResponse The HTTP raw response from the service.
+     */
+    explicit RequestFailedException(std::unique_ptr<Azure::Core::Http::RawResponse>& rawResponse);
+
+    /**
+     * @brief Constructs an empty (null) `%ETag`.
+     *
+     */
+    RequestFailedException() = default;
+
+    /**
      * @brief Constructs a new `%RequestFailedException` by copying from an existing one.
      * @note Copies the #Azure::Core::Http::RawResponse into the new `RequestFailedException`.
      *
@@ -133,5 +151,10 @@ namespace Azure { namespace Core {
      *
      */
     ~RequestFailedException() = default;
+
+  private:
+    std::string getRawResponseField(
+        std::unique_ptr<Azure::Core::Http::RawResponse>& rawResponse,
+        std::string fieldName);
   };
 }} // namespace Azure::Core

@@ -117,7 +117,6 @@ set(
     src/logger.cpp
     src/operation_status.cpp
     src/strings.cpp
-    src/internal/keyvault_exception.cpp
 )
 
 add_library(azure-core ${AZURE_CORE_HEADER} ${AZURE_CORE_SOURCE})
