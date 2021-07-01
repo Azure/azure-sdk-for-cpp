@@ -34,9 +34,9 @@ set(
 
 set(
   AZURE_KEYVAULT_COMMON_SOURCE
-    src/keyvault_pipeline.cpp
     src/private/keyvault_constants.hpp
     src/private/package_version.hpp
+    src/keyvault_pipeline.cpp
 )
 
 add_library(
