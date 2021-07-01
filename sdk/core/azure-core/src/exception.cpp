@@ -30,40 +30,41 @@ namespace Azure { namespace Core {
     RawResponse = std::move(rawResponse);
   }
 
-  RequestFailedException::RequestFailedException(
-      std::unique_ptr<Azure::Core::Http::RawResponse>& rawResponse)
-      : std::runtime_error(GetRawResponseField(rawResponse, "message"))
-  {
-    auto& headers = rawResponse->GetHeaders();
+  namespace _internal {
 
-    StatusCode = rawResponse->GetStatusCode();
-    ErrorCode = GetRawResponseField(rawResponse, "code");
-    ReasonPhrase = rawResponse->GetReasonPhrase();
-    RequestId = HttpShared::GetHeaderOrEmptyString(headers, HttpShared::MsRequestId);
-    ClientRequestId = HttpShared::GetHeaderOrEmptyString(headers, HttpShared::MsClientRequestId);
-    Message = this->what();
-    RawResponse = std::move(rawResponse);
-  }
-
-  std::string RequestFailedException::GetRawResponseField(
-      std::unique_ptr<Azure::Core::Http::RawResponse>& rawResponse,
-      std::string fieldName)
-  {
-    auto& headers = rawResponse->GetHeaders();
-    std::string contentType = HttpShared::GetHeaderOrEmptyString(headers, HttpShared::ContentType);
-    std::vector<uint8_t> bodyBuffer = rawResponse->GetBody();
-    std::string result;
-
-    if (contentType.find("json") != std::string::npos)
+    static std::string GetRawResponseField(
+        std::unique_ptr<Azure::Core::Http::RawResponse>& rawResponse,
+        std::string fieldName)
     {
-      auto jsonParser = Azure::Core::Json::_internal::json::parse(bodyBuffer);
-      auto error = jsonParser.find("error");
-      if (error != jsonParser.end() && error.value().contains(fieldName))
+      auto& headers = rawResponse->GetHeaders();
+      std::string contentType
+          = HttpShared::GetHeaderOrEmptyString(headers, HttpShared::ContentType);
+      std::vector<uint8_t> bodyBuffer = rawResponse->GetBody();
+      std::string result;
+
+      if (contentType.find("json") != std::string::npos)
       {
-        result = error.value()[fieldName].get<std::string>();
+        auto jsonParser = Azure::Core::Json::_internal::json::parse(bodyBuffer);
+        auto error = jsonParser.find("error");
+        if (error != jsonParser.end() && error.value().contains(fieldName))
+        {
+          result = error.value()[fieldName].get<std::string>();
+        }
       }
+
+      return result;
     }
 
-    return result;
-  }
+    Azure::Core::RequestFailedException _internal::ExceptionFactory::CreateException(
+        std::unique_ptr<Azure::Core::Http::RawResponse> rawResponse)
+    {
+      std::string message = GetRawResponseField(rawResponse, "message");
+      std::string errorCode = GetRawResponseField(rawResponse, "code");
+
+      Azure::Core::RequestFailedException exception(message, std::move(rawResponse));
+      exception.ErrorCode = std::move(errorCode);
+      return exception;
+    }
+
+  } // namespace _internal
 }} // namespace Azure::Core

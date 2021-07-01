@@ -25,7 +25,7 @@ TEST(RequestFailedException, JSONError)
   response->SetBodyStream(std::make_unique<Azure::Core::IO::MemoryBodyStream>(
       responseBodyStream, sizeof(responseBodyStream) - 1));
 
-  auto exception = Azure::Core::RequestFailedException(response);
+  auto exception = Azure::Core::_internal::ExceptionFactory::CreateException(std::move(response));
 
   EXPECT_EQ(exception.StatusCode, Azure::Core::Http::HttpStatusCode::ServiceUnavailable);
   EXPECT_EQ(exception.Message, "JT");
@@ -48,7 +48,7 @@ TEST(RequestFailedException, JSONErrorNoError)
   response->SetBodyStream(std::make_unique<Azure::Core::IO::MemoryBodyStream>(
       responseBodyStream, sizeof(responseBodyStream) - 1));
 
-  auto exception = Azure::Core::RequestFailedException(response);
+  auto exception = Azure::Core::_internal::ExceptionFactory::CreateException(std::move(response));
 
   EXPECT_EQ(exception.StatusCode, Azure::Core::Http::HttpStatusCode::ServiceUnavailable);
   EXPECT_EQ(exception.Message, "");
