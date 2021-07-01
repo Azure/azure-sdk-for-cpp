@@ -9,17 +9,19 @@
 #pragma once
 
 #include "azure/identity/dll_import_export.hpp"
-#include "azure/identity/internal/token_credential_impl.hpp"
 
+#include <azure/core/credentials/credentials.hpp>
 #include <azure/core/credentials/token_credential_options.hpp>
 #include <azure/core/url.hpp>
 
+#include <memory>
 #include <string>
 
 namespace Azure { namespace Identity {
   namespace _detail {
+    class TokenCredentialImpl;
     AZ_IDENTITY_DLLEXPORT extern std::string const g_aadGlobalAuthority;
-  }
+  } // namespace _detail
 
   /**
    * @brief Options for token authentication.
@@ -44,14 +46,12 @@ namespace Azure { namespace Identity {
    * ID and a client secret.
    *
    */
-  class ClientSecretCredential final : public _detail::TokenCredentialImpl {
+  class ClientSecretCredential final : public Core::Credentials::TokenCredential {
   private:
+    std::unique_ptr<_detail::TokenCredentialImpl> m_tokenCredentialImpl;
     Core::Url m_requestUrl;
     std::string m_requestBody;
     bool m_isAdfs;
-
-    std::unique_ptr<TokenRequest> CreateRequest(
-        Core::Credentials::TokenRequestContext const& tokenRequestContext) const final;
 
     ClientSecretCredential(
         std::string const& tenantId,
@@ -100,6 +100,24 @@ namespace Azure { namespace Identity {
             options)
     {
     }
+
+    /**
+     * @brief Destructs `%ClientSecretCredential`.
+     *
+     */
+    ~ClientSecretCredential() override;
+
+    /**
+     * @brief Gets an authentication token.
+     *
+     * @param tokenRequestContext A context to get the token in.
+     * @param context A context to control the request lifetime.
+     *
+     * @throw Azure::Core::Credentials::AuthenticationException Authentication error occurred.
+     */
+    Core::Credentials::AccessToken GetToken(
+        Core::Credentials::TokenRequestContext const& tokenRequestContext,
+        Core::Context const& context) const override;
   };
 
 }} // namespace Azure::Identity

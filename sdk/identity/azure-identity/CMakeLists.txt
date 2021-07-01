@@ -28,7 +28,6 @@ endif()
 
 set(
   AZURE_IDENTITY_HEADER
-    inc/azure/identity/internal/token_credential_impl.hpp
     inc/azure/identity/client_secret_credential.hpp
     inc/azure/identity/dll_import_export.hpp
     inc/azure/identity/environment_credential.hpp
@@ -41,6 +40,7 @@ set(
     src/private/environment.hpp
     src/private/managed_identity_source.hpp
     src/private/package_version.hpp
+    src/private/token_credential_impl.hpp
     src/client_secret_credential.cpp
     src/environment.cpp
     src/environment_credential.cpp

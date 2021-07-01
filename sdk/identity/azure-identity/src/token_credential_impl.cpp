@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
 
-#include "azure/identity/internal/token_credential_impl.hpp"
+#include "private/token_credential_impl.hpp"
 
 #include <azure/core/url.hpp>
 
@@ -53,8 +53,11 @@ std::string TokenCredentialImpl::FormatScopes(
 }
 
 Azure::Core::Credentials::AccessToken TokenCredentialImpl::GetToken(
-    Azure::Core::Credentials::TokenRequestContext const& tokenRequestContext,
-    Azure::Core::Context const& context) const
+    Core::Context const& context,
+    std::function<std::unique_ptr<TokenCredentialImpl::TokenRequest>()> const& createRequest,
+    std::function<std::unique_ptr<TokenCredentialImpl::TokenRequest>(
+        Azure::Core::Http::HttpStatusCode statusCode,
+        Azure::Core::Http::RawResponse const& response)> const& shouldRetry) const
 {
   using Azure::Core::Credentials::AuthenticationException;
   using Azure::Core::Http::HttpStatusCode;
@@ -66,7 +69,7 @@ Azure::Core::Credentials::AccessToken TokenCredentialImpl::GetToken(
   {
     std::unique_ptr<RawResponse> response;
     {
-      auto request = CreateRequest(tokenRequestContext);
+      auto request = createRequest();
       for (;;)
       {
         response = m_httpPipeline.Send(request->HttpRequest, context);
@@ -81,7 +84,7 @@ Azure::Core::Credentials::AccessToken TokenCredentialImpl::GetToken(
           break;
         }
 
-        request = ShouldRetry(statusCode, *response, tokenRequestContext);
+        request = shouldRetry(statusCode, *response);
         if (request == nullptr)
         {
           std::ostringstream errorMsg;

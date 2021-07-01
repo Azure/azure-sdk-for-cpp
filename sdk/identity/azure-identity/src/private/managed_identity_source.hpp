@@ -3,16 +3,22 @@
 
 #pragma once
 
-#include "azure/identity/internal/token_credential_impl.hpp"
-
+#include <azure/core/credentials/credentials.hpp>
 #include <azure/core/credentials/token_credential_options.hpp>
 #include <azure/core/url.hpp>
+
+#include "private/token_credential_impl.hpp"
 
 #include <memory>
 #include <string>
 
 namespace Azure { namespace Identity { namespace _detail {
-  class ManagedIdentitySource : public TokenCredentialImpl {
+  class ManagedIdentitySource : protected TokenCredentialImpl {
+  public:
+    virtual Core::Credentials::AccessToken GetToken(
+        Core::Credentials::TokenRequestContext const& tokenRequestContext,
+        Core::Context const& context) const = 0;
+
   protected:
     static Core::Url ParseEndpointUrl(std::string const& url, char const* envVarName);
 
@@ -23,11 +29,6 @@ namespace Azure { namespace Identity { namespace _detail {
   };
 
   class AppServiceManagedIdentitySource final : public ManagedIdentitySource {
-  public:
-    static std::unique_ptr<ManagedIdentitySource> Create(
-        std::string const& clientId,
-        Core::Credentials::TokenCredentialOptions const& options);
-
   private:
     Core::Http::Request m_request;
 
@@ -37,16 +38,17 @@ namespace Azure { namespace Identity { namespace _detail {
         Core::Url endpointUrl,
         std::string const& secret);
 
-    std::unique_ptr<TokenRequest> CreateRequest(
-        Core::Credentials::TokenRequestContext const& tokenRequestContext) const final;
-  };
-
-  class CloudShellManagedIdentitySource final : public ManagedIdentitySource {
   public:
     static std::unique_ptr<ManagedIdentitySource> Create(
         std::string const& clientId,
         Core::Credentials::TokenCredentialOptions const& options);
 
+    Core::Credentials::AccessToken GetToken(
+        Core::Credentials::TokenRequestContext const& tokenRequestContext,
+        Core::Context const& context) const override;
+  };
+
+  class CloudShellManagedIdentitySource final : public ManagedIdentitySource {
   private:
     Core::Url m_url;
     std::string m_body;
@@ -56,16 +58,17 @@ namespace Azure { namespace Identity { namespace _detail {
         Core::Credentials::TokenCredentialOptions const& options,
         Core::Url endpointUrl);
 
-    std::unique_ptr<TokenRequest> CreateRequest(
-        Core::Credentials::TokenRequestContext const& tokenRequestContext) const final;
-  };
-
-  class AzureArcManagedIdentitySource final : public ManagedIdentitySource {
   public:
     static std::unique_ptr<ManagedIdentitySource> Create(
         std::string const& clientId,
         Core::Credentials::TokenCredentialOptions const& options);
 
+    Core::Credentials::AccessToken GetToken(
+        Core::Credentials::TokenRequestContext const& tokenRequestContext,
+        Core::Context const& context) const override;
+  };
+
+  class AzureArcManagedIdentitySource final : public ManagedIdentitySource {
   private:
     Core::Url m_url;
 
@@ -73,21 +76,17 @@ namespace Azure { namespace Identity { namespace _detail {
         Core::Credentials::TokenCredentialOptions const& options,
         Core::Url endpointUrl);
 
-    std::unique_ptr<TokenRequest> CreateRequest(
-        Core::Credentials::TokenRequestContext const& tokenRequestContext) const final;
-
-    std::unique_ptr<TokenRequest> ShouldRetry(
-        Core::Http::HttpStatusCode statusCode,
-        Core::Http::RawResponse const& response,
-        Core::Credentials::TokenRequestContext const& tokenRequestContext) const final;
-  };
-
-  class ImdsManagedIdentitySource final : public ManagedIdentitySource {
   public:
     static std::unique_ptr<ManagedIdentitySource> Create(
         std::string const& clientId,
         Core::Credentials::TokenCredentialOptions const& options);
 
+    Core::Credentials::AccessToken GetToken(
+        Core::Credentials::TokenRequestContext const& tokenRequestContext,
+        Core::Context const& context) const override;
+  };
+
+  class ImdsManagedIdentitySource final : public ManagedIdentitySource {
   private:
     Core::Http::Request m_request;
 
@@ -95,7 +94,13 @@ namespace Azure { namespace Identity { namespace _detail {
         std::string const& clientId,
         Core::Credentials::TokenCredentialOptions const& options);
 
-    std::unique_ptr<TokenRequest> CreateRequest(
-        Core::Credentials::TokenRequestContext const& tokenRequestContext) const final;
+  public:
+    static std::unique_ptr<ManagedIdentitySource> Create(
+        std::string const& clientId,
+        Core::Credentials::TokenCredentialOptions const& options);
+
+    Core::Credentials::AccessToken GetToken(
+        Core::Credentials::TokenRequestContext const& tokenRequestContext,
+        Core::Context const& context) const override;
   };
 }}} // namespace Azure::Identity::_detail

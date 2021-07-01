@@ -3,6 +3,8 @@
 
 #include "azure/identity/client_secret_credential.hpp"
 
+#include "private/token_credential_impl.hpp"
+
 #include <sstream>
 
 using namespace Azure::Identity;
@@ -16,7 +18,7 @@ ClientSecretCredential::ClientSecretCredential(
     std::string const& clientSecret,
     std::string const& authorityHost,
     Azure::Core::Credentials::TokenCredentialOptions const& options)
-    : _detail::TokenCredentialImpl(options), m_isAdfs(tenantId == "adfs")
+    : m_tokenCredentialImpl(new _detail::TokenCredentialImpl(options)), m_isAdfs(tenantId == "adfs")
 {
   using Azure::Core::Url;
   m_requestUrl = Url(authorityHost);
@@ -30,27 +32,34 @@ ClientSecretCredential::ClientSecretCredential(
   m_requestBody = body.str();
 }
 
-std::unique_ptr<Azure::Identity::_detail::TokenCredentialImpl::TokenRequest>
-ClientSecretCredential::CreateRequest(
-    Azure::Core::Credentials::TokenRequestContext const& tokenRequestContext) const
+ClientSecretCredential::~ClientSecretCredential() = default;
+
+Azure::Core::Credentials::AccessToken ClientSecretCredential::GetToken(
+    Azure::Core::Credentials::TokenRequestContext const& tokenRequestContext,
+    Azure::Core::Context const& context) const
 {
-  using Azure::Core::Http::HttpMethod;
+  return m_tokenCredentialImpl->GetToken(context, [&]() {
+    using _detail::TokenCredentialImpl;
+    using Azure::Core::Http::HttpMethod;
 
-  std::ostringstream body;
-  body << m_requestBody;
-  {
-    auto const& scopes = tokenRequestContext.Scopes;
-    if (!scopes.empty())
+    std::ostringstream body;
+    body << m_requestBody;
     {
-      body << "&scope=" << FormatScopes(scopes, m_isAdfs);
+      auto const& scopes = tokenRequestContext.Scopes;
+      if (!scopes.empty())
+      {
+        body << "&scope=" << TokenCredentialImpl::FormatScopes(scopes, m_isAdfs);
+      }
     }
-  }
 
-  auto request = std::make_unique<TokenRequest>(HttpMethod::Post, m_requestUrl, body.str());
-  if (m_isAdfs)
-  {
-    request->HttpRequest.SetHeader("Host", m_requestUrl.GetHost());
-  }
+    auto request = std::make_unique<TokenCredentialImpl::TokenRequest>(
+        HttpMethod::Post, m_requestUrl, body.str());
 
-  return request;
+    if (m_isAdfs)
+    {
+      request->HttpRequest.SetHeader("Host", m_requestUrl.GetHost());
+    }
+
+    return request;
+  });
 }

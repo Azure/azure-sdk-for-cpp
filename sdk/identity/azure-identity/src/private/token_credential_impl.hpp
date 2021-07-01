@@ -8,7 +8,6 @@
 
 #pragma once
 
-#include <azure/core/credentials/credentials.hpp>
 #include <azure/core/credentials/token_credential_options.hpp>
 #include <azure/core/http/http.hpp>
 #include <azure/core/http/http_status_code.hpp>
@@ -16,6 +15,7 @@
 #include <azure/core/internal/http/pipeline.hpp>
 #include <azure/core/io/body_stream.hpp>
 
+#include <functional>
 #include <memory>
 #include <string>
 #include <utility>
@@ -23,11 +23,38 @@
 
 namespace Azure { namespace Identity { namespace _detail {
   /**
-   * @brief Implements `GetToken()`, requiring deriving classes to implement `GetRequest()`.
+   * @brief Implements common tasks such as token parsing.
    *
    */
-  class TokenCredentialImpl : public Core::Credentials::TokenCredential {
-  protected:
+  class TokenCredentialImpl {
+  private:
+    Core::Http::_internal::HttpPipeline m_httpPipeline;
+
+  public:
+    /**
+     * @brief Destructs `%TokenCredentialImpl`.
+     *
+     */
+    virtual ~TokenCredentialImpl() = default;
+
+    /**
+     * @brief Constructs `%TokenCredentialImpl`.
+     *
+     */
+    explicit TokenCredentialImpl(Core::Credentials::TokenCredentialOptions const& options);
+
+    /**
+     * @brief Formats authentication scopes so that they can be used in Identity requests.
+     *
+     * @param scopes Authentication scopes.
+     * @param asResource `true` if \p scopes need to be formatted as a resource.
+     *
+     * @return A string representing scopes so that it can be used in Identity request.
+     *
+     * @note Does not check for \p scopes being empty.
+     */
+    static std::string FormatScopes(std::vector<std::string> const& scopes, bool asResource);
+
     /**
      * @brief Holds `#Azure::Core::Http::Request` and all the associated resources for the HTTP
      * request body, so that the lifetime for all the resources needed for the request aligns with
@@ -73,57 +100,22 @@ namespace Azure { namespace Identity { namespace _detail {
       }
     };
 
-  private:
-    Core::Http::_internal::HttpPipeline m_httpPipeline;
-
-    virtual std::unique_ptr<TokenRequest> CreateRequest(
-        Core::Credentials::TokenRequestContext const& tokenRequestContext) const = 0;
-
-    virtual std::unique_ptr<TokenRequest> ShouldRetry(
-        Core::Http::HttpStatusCode statusCode,
-        Core::Http::RawResponse const& response,
-        Core::Credentials::TokenRequestContext const& tokenRequestContext) const
-    {
-      static_cast<void>(statusCode);
-      static_cast<void>(response);
-      static_cast<void>(tokenRequestContext);
-
-      return nullptr;
-    }
-
-  protected:
-    /**
-     * @brief Constructs `%TokenCredentialImpl`.
-     *
-     */
-    explicit TokenCredentialImpl(Core::Credentials::TokenCredentialOptions const& options);
-
-    /**
-     * @brief Formats authentication scopes so that they can be used in Identity requests.
-     *
-     * @param scopes Authentication scopes.
-     * @param asResource `true` if \p scopes need to be formatted as a resource.
-     *
-     * @return A string representing scopes so that it can be used in Identity request.
-     *
-     * @note Does not check for \p scopes being empty.
-     */
-    static std::string FormatScopes(std::vector<std::string> const& scopes, bool asResource);
-
-  public:
     /**
      * @brief Gets an authentication token.
      *
-     * @param tokenRequestContext A context to get the token in.
      * @param context A context to control the request lifetime.
+     * @param createRequest A function to create a token request.
+     * @param shouldRetry A function to determine whether a response should be retried with
+     * another request.
      *
      * @throw Azure::Core::Credentials::AuthenticationException Authentication error occurred.
-     *
-     * @note Invokes `GetRequest()` to get the request to send.
      */
     Core::Credentials::AccessToken GetToken(
-        Core::Credentials::TokenRequestContext const& tokenRequestContext,
-        Core::Context const& context) const final;
+        Core::Context const& context,
+        std::function<std::unique_ptr<TokenRequest>()> const& createRequest,
+        std::function<std::unique_ptr<TokenRequest>(
+            Core::Http::HttpStatusCode statusCode,
+            Core::Http::RawResponse const& response)> const& shouldRetry
+        = [](auto const, auto const&) { return nullptr; }) const;
   };
-
 }}} // namespace Azure::Identity::_detail

@@ -71,19 +71,22 @@ AppServiceManagedIdentitySource::AppServiceManagedIdentitySource(
   m_request.SetHeader("secret", secret);
 }
 
-std::unique_ptr<TokenCredentialImpl::TokenRequest> AppServiceManagedIdentitySource::CreateRequest(
-    Azure::Core::Credentials::TokenRequestContext const& tokenRequestContext) const
+Azure::Core::Credentials::AccessToken AppServiceManagedIdentitySource::GetToken(
+    Azure::Core::Credentials::TokenRequestContext const& tokenRequestContext,
+    Azure::Core::Context const& context) const
 {
-  auto request = std::make_unique<TokenRequest>(m_request);
-  {
-    auto const& scopes = tokenRequestContext.Scopes;
-    if (!scopes.empty())
+  return TokenCredentialImpl::GetToken(context, [&]() {
+    auto request = std::make_unique<TokenRequest>(m_request);
     {
-      request->HttpRequest.GetUrl().AppendQueryParameter("resource", FormatScopes(scopes, true));
+      auto const& scopes = tokenRequestContext.Scopes;
+      if (!scopes.empty())
+      {
+        request->HttpRequest.GetUrl().AppendQueryParameter("resource", FormatScopes(scopes, true));
+      }
     }
-  }
 
-  return request;
+    return request;
+  });
 }
 
 std::unique_ptr<ManagedIdentitySource> CloudShellManagedIdentitySource::Create(
@@ -112,29 +115,32 @@ CloudShellManagedIdentitySource::CloudShellManagedIdentitySource(
   }
 }
 
-std::unique_ptr<TokenCredentialImpl::TokenRequest> CloudShellManagedIdentitySource::CreateRequest(
-    Azure::Core::Credentials::TokenRequestContext const& tokenRequestContext) const
+Azure::Core::Credentials::AccessToken CloudShellManagedIdentitySource::GetToken(
+    Azure::Core::Credentials::TokenRequestContext const& tokenRequestContext,
+    Azure::Core::Context const& context) const
 {
-  using Azure::Core::Url;
-  using Azure::Core::Http::HttpMethod;
+  return TokenCredentialImpl::GetToken(context, [&]() {
+    using Azure::Core::Url;
+    using Azure::Core::Http::HttpMethod;
 
-  std::string resource;
-  {
-    auto const& scopes = tokenRequestContext.Scopes;
-    if (!scopes.empty())
+    std::string resource;
     {
-      resource = "resource=" + FormatScopes(scopes, true);
-      if (!m_body.empty())
+      auto const& scopes = tokenRequestContext.Scopes;
+      if (!scopes.empty())
       {
-        resource += "&";
+        resource = "resource=" + FormatScopes(scopes, true);
+        if (!m_body.empty())
+        {
+          resource += "&";
+        }
       }
     }
-  }
 
-  auto request = std::make_unique<TokenRequest>(HttpMethod::Post, m_url, resource + m_body);
-  request->HttpRequest.SetHeader("Metadata", "true");
+    auto request = std::make_unique<TokenRequest>(HttpMethod::Post, m_url, resource + m_body);
+    request->HttpRequest.SetHeader("Metadata", "true");
 
-  return request;
+    return request;
+  });
 }
 
 std::unique_ptr<ManagedIdentitySource> AzureArcManagedIdentitySource::Create(
@@ -172,69 +178,72 @@ AzureArcManagedIdentitySource::AzureArcManagedIdentitySource(
   m_url.AppendQueryParameter("api-version", "2019-11-01");
 }
 
-std::unique_ptr<TokenCredentialImpl::TokenRequest> AzureArcManagedIdentitySource::CreateRequest(
-    Azure::Core::Credentials::TokenRequestContext const& tokenRequestContext) const
+Azure::Core::Credentials::AccessToken AzureArcManagedIdentitySource::GetToken(
+    Azure::Core::Credentials::TokenRequestContext const& tokenRequestContext,
+    Azure::Core::Context const& context) const
 {
-  using Azure::Core::Http::HttpMethod;
-  using Azure::Core::Http::Request;
+  auto const createRequest = [&]() {
+    using Azure::Core::Http::HttpMethod;
+    using Azure::Core::Http::Request;
 
-  auto request = std::make_unique<TokenRequest>(Request(HttpMethod::Get, m_url));
-  {
-    auto& httpRequest = request->HttpRequest;
-    httpRequest.SetHeader("Metadata", "true");
+    auto request = std::make_unique<TokenRequest>(Request(HttpMethod::Get, m_url));
     {
-      auto const& scopes = tokenRequestContext.Scopes;
-      if (!scopes.empty())
+      auto& httpRequest = request->HttpRequest;
+      httpRequest.SetHeader("Metadata", "true");
       {
-        httpRequest.GetUrl().AppendQueryParameter("resource", FormatScopes(scopes, true));
+        auto const& scopes = tokenRequestContext.Scopes;
+        if (!scopes.empty())
+        {
+          httpRequest.GetUrl().AppendQueryParameter("resource", FormatScopes(scopes, true));
+        }
       }
     }
-  }
 
-  return request;
-}
+    return request;
+  };
 
-std::unique_ptr<TokenCredentialImpl::TokenRequest> AzureArcManagedIdentitySource::ShouldRetry(
-    Azure::Core::Http::HttpStatusCode statusCode,
-    Azure::Core::Http::RawResponse const& response,
-    Azure::Core::Credentials::TokenRequestContext const& tokenRequestContext) const
-{
-  using Core::Credentials::AuthenticationException;
-  using Core::Http::HttpStatusCode;
+  return TokenCredentialImpl::GetToken(
+      context,
+      createRequest,
+      [&](auto const statusCode, auto const& response) -> std::unique_ptr<TokenRequest> {
+        using Core::Credentials::AuthenticationException;
+        using Core::Http::HttpStatusCode;
 
-  if (statusCode != HttpStatusCode::Unauthorized)
-  {
-    return nullptr;
-  }
+        if (statusCode != HttpStatusCode::Unauthorized)
+        {
+          return nullptr;
+        }
 
-  auto const& headers = response.GetHeaders();
-  auto authHeader = headers.find("WWW-Authenticate");
-  if (authHeader == headers.end())
-  {
-    throw AuthenticationException("Did not receive expected WWW-Authenticate header "
-                                  "in the response from Azure Arc Managed Identity Endpoint.");
-  }
+        auto const& headers = response.GetHeaders();
+        auto authHeader = headers.find("WWW-Authenticate");
+        if (authHeader == headers.end())
+        {
+          throw AuthenticationException(
+              "Did not receive expected WWW-Authenticate header "
+              "in the response from Azure Arc Managed Identity Endpoint.");
+        }
 
-  constexpr auto ChallengeValueSeparator = '=';
-  auto const& challenge = authHeader->second;
-  auto eq = challenge.find(ChallengeValueSeparator);
-  if (eq == std::string::npos
-      || challenge.find(ChallengeValueSeparator, eq + 1) != std::string::npos)
-  {
-    throw AuthenticationException(
-        "The WWW-Authenticate header in the response from Azure Arc Managed Identity Endpoint "
-        "did not match the expected format.");
-  }
+        constexpr auto ChallengeValueSeparator = '=';
+        auto const& challenge = authHeader->second;
+        auto eq = challenge.find(ChallengeValueSeparator);
+        if (eq == std::string::npos
+            || challenge.find(ChallengeValueSeparator, eq + 1) != std::string::npos)
+        {
+          throw AuthenticationException("The WWW-Authenticate header in the response from Azure "
+                                        "Arc Managed Identity Endpoint "
+                                        "did not match the expected format.");
+        }
 
-  auto request = CreateRequest(tokenRequestContext);
-  std::ifstream secretFile(challenge.substr(eq + 1));
-  request->HttpRequest.SetHeader(
-      "Authorization",
-      "Basic "
-          + std::string(
-              std::istreambuf_iterator<char>(secretFile), std::istreambuf_iterator<char>()));
+        auto request = createRequest();
+        std::ifstream secretFile(challenge.substr(eq + 1));
+        request->HttpRequest.SetHeader(
+            "Authorization",
+            "Basic "
+                + std::string(
+                    std::istreambuf_iterator<char>(secretFile), std::istreambuf_iterator<char>()));
 
-  return request;
+        return request;
+      });
 }
 
 std::unique_ptr<ManagedIdentitySource> ImdsManagedIdentitySource::Create(
@@ -267,17 +276,20 @@ ImdsManagedIdentitySource::ImdsManagedIdentitySource(
   m_request.SetHeader("Metadata", "true");
 }
 
-std::unique_ptr<TokenCredentialImpl::TokenRequest> ImdsManagedIdentitySource::CreateRequest(
-    Azure::Core::Credentials::TokenRequestContext const& tokenRequestContext) const
+Azure::Core::Credentials::AccessToken ImdsManagedIdentitySource::GetToken(
+    Azure::Core::Credentials::TokenRequestContext const& tokenRequestContext,
+    Azure::Core::Context const& context) const
 {
-  auto request = std::make_unique<TokenRequest>(m_request);
-  {
-    auto const& scopes = tokenRequestContext.Scopes;
-    if (!scopes.empty())
+  return TokenCredentialImpl::GetToken(context, [&]() {
+    auto request = std::make_unique<TokenRequest>(m_request);
     {
-      request->HttpRequest.GetUrl().AppendQueryParameter("resource", FormatScopes(scopes, true));
+      auto const& scopes = tokenRequestContext.Scopes;
+      if (!scopes.empty())
+      {
+        request->HttpRequest.GetUrl().AppendQueryParameter("resource", FormatScopes(scopes, true));
+      }
     }
-  }
 
-  return request;
+    return request;
+  });
 }
