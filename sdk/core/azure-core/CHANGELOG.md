@@ -2,19 +2,19 @@
 
 ## 1.1.0 (2021-07-01)
 
-### Bug Fixes
+### Bugs Fixed
 
 - Fixed a memory leak issue in `Base64Encode()`. (A community contribution, courtesy of _[jorgen](https://github.com/jorgen)_)
 
-### Other Changes and Improvements
+### Other Changes
 
-- Added internal support for Azure Key Vault client library.
+- Made internal-only changes to support the Azure Key Vault client library.
 
 ### Acknowledgments
 
 Thank you to our developer community members who helped to make Azure Core better with their contributions to this release:
 
-- Jørgen Lind _([GitHub](https://github.com/jorgen))_
+- JÃ¸rgen Lind _([GitHub](https://github.com/jorgen))_
 
 ## 1.0.0 (2021-06-04)
 
