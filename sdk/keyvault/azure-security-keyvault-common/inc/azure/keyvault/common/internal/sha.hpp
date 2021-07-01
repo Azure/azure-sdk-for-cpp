@@ -15,7 +15,7 @@
 #include <string>
 #include <vector>
 
-namespace Azure { namespace Security { namespace KeyVault {
+namespace Azure { namespace Security { namespace KeyVault { namespace _internal {
 
   /**
    * @brief Defines #SHA256.
@@ -173,4 +173,4 @@ namespace Azure { namespace Security { namespace KeyVault {
     }
   };
 
-}}} // namespace Azure::Security::KeyVault
+}}}} // namespace Azure::Security::KeyVault::_internal

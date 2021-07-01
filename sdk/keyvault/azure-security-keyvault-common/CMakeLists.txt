@@ -32,7 +32,7 @@ set(
     inc/azure/keyvault/common/internal/keyvault_pipeline.hpp
     inc/azure/keyvault/common/internal/single_page.hpp
     inc/azure/keyvault/common/internal/keyvault_exception.hpp
-    inc/azure/keyvault/common/sha.hpp
+    inc/azure/keyvault/common/internal/sha.hpp
 )
 
 set(

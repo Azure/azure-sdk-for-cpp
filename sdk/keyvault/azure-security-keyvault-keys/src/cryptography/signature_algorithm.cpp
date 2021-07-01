@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
 
-#include <azure/keyvault/common/sha.hpp>
+#include <azure/keyvault/common/internal/sha.hpp>
 
 #include "../private/key_constants.hpp"
 #include "azure/keyvault/keys/cryptography/signature_algorithm.hpp"
@@ -28,19 +28,19 @@ namespace Azure {
     if (*this == SignatureAlgorithm::RS256 || *this == SignatureAlgorithm::PS256
         || *this == SignatureAlgorithm::ES256 || *this == SignatureAlgorithm::ES256K)
     {
-      return std::make_unique<SHA256>();
+      return std::make_unique<_internal::SHA256>();
     }
 
     if (*this == SignatureAlgorithm::RS384 || *this == SignatureAlgorithm::PS384
         || *this == SignatureAlgorithm::ES384)
     {
-      return std::make_unique<SHA384>();
+      return std::make_unique<_internal::SHA384>();
     }
 
     if (*this == SignatureAlgorithm::RS512 || *this == SignatureAlgorithm::PS512
         || *this == SignatureAlgorithm::ES512)
     {
-      return std::make_unique<SHA512>();
+      return std::make_unique<_internal::SHA512>();
     }
     throw std::runtime_error("Unkown Hash algorithm for: " + m_value);
   }
