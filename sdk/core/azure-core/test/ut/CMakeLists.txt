@@ -74,6 +74,7 @@ add_executable (
     transport_adapter_implementation_test.cpp
     url_test.cpp
     uuid_test.cpp
+    exception_test.cpp
 )
 
 if (MSVC)
@@ -101,7 +102,7 @@ target_link_libraries(azure-core-test PRIVATE azure-core gtest gmock)
 add_executable (
   azure-core-global-context-test
   global_context_test.cpp
-)
+ )
 if (MSVC)
   # Disable gtest warnings for MSVC
   target_compile_options(azure-core-global-context-test PUBLIC /wd26495 /wd26812 /wd6326 /wd28204 /wd28020 /wd6330 /wd4389)
@@ -123,7 +124,7 @@ if(BUILD_TRANSPORT_CURL)
   add_executable (
     azure-core-libcurl-test
     azure_libcurl_core_main_test.cpp
-  )
+   )
 
   if (MSVC)
     # warning C4389: '==': signed/unsigned mismatch

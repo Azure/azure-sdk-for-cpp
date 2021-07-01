@@ -7,9 +7,9 @@
 
 #include "gtest/gtest.h"
 
+#include <azure/core/base64.hpp>
 #include <azure/core/exception.hpp>
 
-#include <azure/keyvault/common/internal/base64url.hpp>
 #include <azure/keyvault/key_vault_keys.hpp>
 
 #include "key_client_base_test.hpp"
@@ -17,6 +17,7 @@
 #include <string>
 #include <thread>
 
+using namespace Azure::Core::_internal;
 using namespace Azure::Security::KeyVault::Keys::Test;
 using namespace Azure::Security::KeyVault::Keys;
 using namespace Azure::Security::KeyVault::_internal;

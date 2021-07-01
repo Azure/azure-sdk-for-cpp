@@ -3,7 +3,7 @@
 
 #include <azure/core/exception.hpp>
 
-#include <azure/keyvault/common/internal/keyvault_exception.hpp>
+#include <azure/core/exception.hpp>
 
 #include "azure/keyvault/keys/delete_key_operation.hpp"
 #include "azure/keyvault/keys/key_client.hpp"
@@ -43,8 +43,7 @@ Azure::Security::KeyVault::Keys::DeleteKeyOperation::PollInternal(
         break;
       }
       default:
-        throw Azure::Security::KeyVault::_internal::KeyVaultException::CreateException(
-            std::move(rawResponse));
+        throw Azure::Core::RequestFailedException(rawResponse);
     }
 
     if (m_status == Azure::Core::OperationStatus::Succeeded)

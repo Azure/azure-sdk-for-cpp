@@ -4,8 +4,6 @@
 #include <azure/core/internal/json/json.hpp>
 #include <azure/core/internal/json/json_optional.hpp>
 
-#include <azure/keyvault/common/internal/unix_time_helper.hpp>
-
 #include "azure/keyvault/keys/import_key_options.hpp"
 #include "private/key_constants.hpp"
 #include "private/key_serializers.hpp"
@@ -21,6 +19,7 @@ std::string
 Azure::Security::KeyVault::Keys::_detail::ImportKeyOptionsSerializer::ImportKeyOptionsSerialize(
     ImportKeyOptions const& importKeyOptions)
 {
+  using Azure::Core::_internal::PosixTimeConverter;
 
   Azure::Core::Json::_internal::json payload;
   // key
@@ -36,7 +35,7 @@ Azure::Security::KeyVault::Keys::_detail::ImportKeyOptionsSerializer::ImportKeyO
       importKeyOptions.Properties.CreatedOn,
       payload[_detail::AttributesPropertyName],
       _detail::CreatedPropertyName,
-      UnixTimeConverter::DatetimeToUnixTime);
+      PosixTimeConverter::DateTimeToPosixTime);
   JsonOptional::SetFromNullable(
       importKeyOptions.Properties.Enabled,
       payload[_detail::AttributesPropertyName],
@@ -45,12 +44,12 @@ Azure::Security::KeyVault::Keys::_detail::ImportKeyOptionsSerializer::ImportKeyO
       importKeyOptions.Properties.ExpiresOn,
       payload[_detail::AttributesPropertyName],
       _detail::ExpPropertyName,
-      UnixTimeConverter::DatetimeToUnixTime);
+      PosixTimeConverter::DateTimeToPosixTime);
   JsonOptional::SetFromNullable<Azure::DateTime, int64_t>(
       importKeyOptions.Properties.NotBefore,
       payload[_detail::AttributesPropertyName],
       _detail::NbfPropertyName,
-      UnixTimeConverter::DatetimeToUnixTime);
+      PosixTimeConverter::DateTimeToPosixTime);
   JsonOptional::SetFromNullable(
       importKeyOptions.Properties.RecoverableDays,
       payload[_detail::AttributesPropertyName],
@@ -62,7 +61,7 @@ Azure::Security::KeyVault::Keys::_detail::ImportKeyOptionsSerializer::ImportKeyO
       importKeyOptions.Properties.UpdatedOn,
       payload[_detail::AttributesPropertyName],
       _detail::UpdatedPropertyName,
-      UnixTimeConverter::DatetimeToUnixTime);
+      PosixTimeConverter::DateTimeToPosixTime);
 
   // tags
   for (auto& tag : importKeyOptions.Properties.Tags)

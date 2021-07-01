@@ -4,55 +4,31 @@
 #include "azure/identity/environment_credential.hpp"
 #include "azure/identity/client_secret_credential.hpp"
 
-#include "azure/core/platform.hpp"
-
-#include <cstdlib>
-
-#if defined(AZ_PLATFORM_WINDOWS)
-#if !defined(WIN32_LEAN_AND_MEAN)
-#define WIN32_LEAN_AND_MEAN
-#endif
-#if !defined(NOMINMAX)
-#define NOMINMAX
-#endif
-
-#include <windows.h>
-#endif
+#include "private/environment.hpp"
 
 using namespace Azure::Identity;
 
 EnvironmentCredential::EnvironmentCredential(
     Azure::Core::Credentials::TokenCredentialOptions options)
 {
-#if !defined(WINAPI_PARTITION_DESKTOP) \
-    || WINAPI_PARTITION_DESKTOP // See azure/core/platform.hpp for explanation.
-#if defined(_MSC_VER)
-#pragma warning(push)
-// warning C4996: 'getenv': This function or variable may be unsafe. Consider using _dupenv_s
-// instead.
-#pragma warning(disable : 4996)
-#endif
+  using _detail::Environment;
 
-  auto tenantId = std::getenv("AZURE_TENANT_ID");
-  auto clientId = std::getenv("AZURE_CLIENT_ID");
+  auto tenantId = Environment::GetVariable("AZURE_TENANT_ID");
+  auto clientId = Environment::GetVariable("AZURE_CLIENT_ID");
 
-  auto clientSecret = std::getenv("AZURE_CLIENT_SECRET");
-  auto authority = std::getenv("AZURE_AUTHORITY_HOST");
+  auto clientSecret = Environment::GetVariable("AZURE_CLIENT_SECRET");
+  auto authority = Environment::GetVariable("AZURE_AUTHORITY_HOST");
 
-  // auto username = std::getenv("AZURE_USERNAME");
-  // auto password = std::getenv("AZURE_PASSWORD");
+  // auto username = Environment::GetVariable("AZURE_USERNAME");
+  // auto password = Environment::GetVariable("AZURE_PASSWORD");
   //
-  // auto clientCertificatePath = std::getenv("AZURE_CLIENT_CERTIFICATE_PATH");
+  // auto clientCertificatePath = Environment::GetVariable("AZURE_CLIENT_CERTIFICATE_PATH");
 
-#if defined(_MSC_VER)
-#pragma warning(pop)
-#endif
-
-  if (tenantId != nullptr && clientId != nullptr)
+  if (!tenantId.empty() && !clientId.empty())
   {
-    if (clientSecret != nullptr)
+    if (!clientSecret.empty())
     {
-      if (authority != nullptr)
+      if (!authority.empty())
       {
         using namespace Azure::Core::Credentials;
         ClientSecretCredentialOptions clientSecretCredentialOptions;
@@ -69,17 +45,16 @@ EnvironmentCredential::EnvironmentCredential(
       }
     }
     // TODO: These credential types are not implemented. Uncomment when implemented.
-    // else if (username != nullptr && password != nullptr)
+    // else if (!username.empty() && !password.empty())
     // {
     //   m_credentialImpl.reset(
     //       new UsernamePasswordCredential(tenantId, clientId, username, password, options));
     // }
-    // else if (clientCertificatePath != nullptr)
+    // else if (!clientCertificatePath.empty())
     // {
     //   m_credentialImpl.reset(new ClientCertificateCredential(tenantId, clientId, options));
     // }
   }
-#endif
 }
 
 Azure::Core::Credentials::AccessToken EnvironmentCredential::GetToken(

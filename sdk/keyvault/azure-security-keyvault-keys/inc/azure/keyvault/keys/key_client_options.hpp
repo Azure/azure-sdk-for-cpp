@@ -42,18 +42,6 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
     std::string const& ToString() const { return m_version; }
 
     /**
-     * @brief Use to send request to the 7.0 version of Key Vault service.
-     *
-     */
-    AZ_SECURITY_KEYVAULT_KEYS_DLLEXPORT static const ServiceVersion V7_0;
-
-    /**
-     * @brief Use to send request to the 7.1 version of Key Vault service.
-     *
-     */
-    AZ_SECURITY_KEYVAULT_KEYS_DLLEXPORT static const ServiceVersion V7_1;
-
-    /**
      * @brief Use to send request to the 7.2 version of Key Vault service.
      *
      */

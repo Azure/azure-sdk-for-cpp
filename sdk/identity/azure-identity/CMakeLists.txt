@@ -20,25 +20,33 @@ include(AzureGlobalCompileOptions)
 az_vcpkg_integrate()
 
 if(NOT AZ_ALL_LIBRARIES)
-  find_package(azure-core-cpp CONFIG QUIET)
+  find_package(azure-core-cpp "1.0.0" CONFIG QUIET)
   if(NOT azure-core-cpp_FOUND)
-    find_package(azure-core-cpp REQUIRED)
+    find_package(azure-core-cpp "1.0.0" REQUIRED)
   endif()
 endif()
 
 set(
   AZURE_IDENTITY_HEADER
     inc/azure/identity/client_secret_credential.hpp
-    inc/azure/identity/environment_credential.hpp
     inc/azure/identity/dll_import_export.hpp
+    inc/azure/identity/environment_credential.hpp
+    inc/azure/identity/managed_identity_credential.hpp
     inc/azure/identity.hpp
 )
 
 set(
   AZURE_IDENTITY_SOURCE
+    src/private/environment.hpp
+    src/private/managed_identity_source.hpp
     src/private/package_version.hpp
+    src/private/token_credential_impl.hpp
     src/client_secret_credential.cpp
+    src/environment.cpp
     src/environment_credential.cpp
+    src/managed_identity_credential.cpp
+    src/managed_identity_source.cpp
+    src/token_credential_impl.cpp
 )
 
 add_library(azure-identity ${AZURE_IDENTITY_HEADER} ${AZURE_IDENTITY_SOURCE})
@@ -75,6 +83,7 @@ if(BUILD_TESTING)
     enable_testing ()
   endif()
 
+  add_subdirectory(test/e2e)
   add_subdirectory(test/live)
   add_subdirectory(test/ut)
 endif()
