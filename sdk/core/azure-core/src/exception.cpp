@@ -32,17 +32,21 @@ namespace Azure { namespace Core {
 
   RequestFailedException::RequestFailedException(
       std::unique_ptr<Azure::Core::Http::RawResponse>& rawResponse)
-      : std::runtime_error(GetRawResponseField(rawResponse, "message"))
+      : std::runtime_error("Received an HTTP unsuccesful status code.")
   {
     auto& headers = rawResponse->GetHeaders();
 
+    // These are guaranteed to always be present in the rawResponse.
     StatusCode = rawResponse->GetStatusCode();
-    ErrorCode = GetRawResponseField(rawResponse, "code");
     ReasonPhrase = rawResponse->GetReasonPhrase();
-    RequestId = HttpShared::GetHeaderOrEmptyString(headers, HttpShared::MsRequestId);
-    ClientRequestId = HttpShared::GetHeaderOrEmptyString(headers, HttpShared::MsClientRequestId);
-    Message = this->what();
     RawResponse = std::move(rawResponse);
+
+    // The response body may or may not have these fields
+    ErrorCode = GetRawResponseField(RawResponse, "code");
+    Message = GetRawResponseField(RawResponse, "message");
+
+    ClientRequestId = HttpShared::GetHeaderOrEmptyString(headers, HttpShared::MsClientRequestId);
+    RequestId = HttpShared::GetHeaderOrEmptyString(headers, HttpShared::MsRequestId);
   }
 
   std::string RequestFailedException::GetRawResponseField(
