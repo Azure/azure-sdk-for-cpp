@@ -6,7 +6,7 @@
 
 - Added `ManagedIdentityCredential`.
 
-### Bug Fixes
+### Bugs Fixed
 
 - Fixed minor memory leak when obtaining a token.
 
