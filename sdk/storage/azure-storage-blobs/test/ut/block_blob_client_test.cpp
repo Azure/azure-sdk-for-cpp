@@ -139,11 +139,13 @@ namespace Azure { namespace Storage { namespace Test {
         headers.ContentHash.Value = blobMd5;
         blobClient.SetHttpHeaders(headers);
         ASSERT_FALSE(blobClient.GetProperties().Value.HttpHeaders.ContentHash.Value.empty());
+        ASSERT_FALSE(blobClient.Download().Value.Details.HttpHeaders.ContentHash.Value.empty());
       }
       else
       {
         blobClient.SetHttpHeaders(Blobs::Models::BlobHttpHeaders());
         ASSERT_TRUE(blobClient.GetProperties().Value.HttpHeaders.ContentHash.Value.empty());
+        ASSERT_TRUE(blobClient.Download().Value.Details.HttpHeaders.ContentHash.Value.empty());
       }
       const int64_t downloadLength = 1;
       Blobs::DownloadBlobOptions options;
