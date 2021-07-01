@@ -73,7 +73,7 @@ namespace Azure { namespace Core {
      * @param message The error description.
      */
     explicit RequestFailedException(std::string const& message)
-        : std::runtime_error(message), Message(message)
+        : std::runtime_error(message)
     {
     }
 
