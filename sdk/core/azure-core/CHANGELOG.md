@@ -1,6 +1,10 @@
 # Release History
 
-## 1.1.0 (Unreleased)
+## 1.1.0 (2021-07-01)
+
+### New Features
+
+- Added internal support for Azure Key Vault client library.
 
 ### Bug Fixes
 
