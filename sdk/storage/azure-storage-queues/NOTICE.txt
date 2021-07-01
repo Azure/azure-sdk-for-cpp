@@ -1,4 +1,4 @@
-azure-storage-blobs
+azure-storage-queues
 
 NOTICES AND INFORMATION
 Do Not Translate or Localize
