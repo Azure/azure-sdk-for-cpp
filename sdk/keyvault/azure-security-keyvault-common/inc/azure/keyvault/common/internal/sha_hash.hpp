@@ -18,22 +18,22 @@
 namespace Azure { namespace Security { namespace KeyVault { namespace _internal {
 
   /**
-   * @brief Defines #SHA256.
+   * @brief Defines #Sha256Hash.
    *
    */
-  class SHA256 final : public Azure::Core::Cryptography::Hash {
+  class Sha256Hash final : public Azure::Core::Cryptography::Hash {
   public:
     /**
-     * @brief Construct a default instance of #SHA256.
+     * @brief Construct a default instance of #Sha256Hash.
      *
      */
-    SHA256();
+    Sha256Hash();
 
     /**
-     * @brief Cleanup any state when destroying the instance of #SHA256.
+     * @brief Cleanup any state when destroying the instance of #Sha256Hash.
      *
      */
-    ~SHA256(){};
+    ~Sha256Hash(){};
 
   private:
     /**
@@ -70,22 +70,22 @@ namespace Azure { namespace Security { namespace KeyVault { namespace _internal 
   };
 
   /**
-   * @brief Defines #SHA384.
+   * @brief Defines #Sha384Hash.
    *
    */
-  class SHA384 final : public Azure::Core::Cryptography::Hash {
+  class Sha384Hash final : public Azure::Core::Cryptography::Hash {
   public:
     /**
-     * @brief Construct a default instance of #SHA384.
+     * @brief Construct a default instance of #Sha384Hash.
      *
      */
-    SHA384();
+    Sha384Hash();
 
     /**
-     * @brief Cleanup any state when destroying the instance of #SHA384.
+     * @brief Cleanup any state when destroying the instance of #Sha384Hash.
      *
      */
-    ~SHA384(){};
+    ~Sha384Hash(){};
 
   private:
     /**
@@ -122,22 +122,22 @@ namespace Azure { namespace Security { namespace KeyVault { namespace _internal 
   };
 
   /**
-   * @brief Defines #SHA512.
+   * @brief Defines #Sha512Hash.
    *
    */
-  class SHA512 final : public Azure::Core::Cryptography::Hash {
+  class Sha512Hash final : public Azure::Core::Cryptography::Hash {
   public:
     /**
-     * @brief Construct a default instance of #SHA512.
+     * @brief Construct a default instance of #Sha512Hash.
      *
      */
-    SHA512();
+    Sha512Hash();
 
     /**
-     * @brief Cleanup any state when destroying the instance of #SHA512.
+     * @brief Cleanup any state when destroying the instance of #Sha512Hash.
      *
      */
-    ~SHA512(){};
+    ~Sha512Hash(){};
 
   private:
     /**
