@@ -2,11 +2,11 @@
 
 ## 1.1.0-beta.1 (Unreleased)
 
-### New Features
+### Features Added
 
 - Added `ManagedIdentityCredential`.
 
-### Bug Fixes
+### Bugs Fixed
 
 - Fixed minor memory leak when obtaining a token.
 
@@ -22,7 +22,7 @@ No API changes since `1.0.0-beta.6`.
 
 ## 1.0.0-beta.5 (2021-04-07)
 
-### New Features
+### Features Added
 
 - Add Active Directory Federation Service (ADFS) support to `ClientSecretCredential`.
 
@@ -32,7 +32,7 @@ No API changes since `1.0.0-beta.6`.
 
 ## 1.0.0-beta.4 (2021-03-11)
 
-### New Features
+### Features Added
 
 - Added `Azure::Identity::PackageVersion`.
 
@@ -52,13 +52,13 @@ No API changes since `1.0.0-beta.6`.
 
 - Moved `Azure::Identity::Version`, defined in `azure/identity/version.hpp` to the `Azure::Identity::Details` namespace.
 
-### Other Changes and Improvements
+### Other Changes
 
 - Add high-level and simplified identity.hpp file for simpler include experience for customers.
 
 ## 1.0.0-beta.1 (2020-11-11)
 
-### New Features
+### Features Added
 
 - Support for Client Secret Credential.
 - Support for Environment Credential.

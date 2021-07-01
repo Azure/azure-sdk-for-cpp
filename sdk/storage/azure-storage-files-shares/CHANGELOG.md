@@ -9,14 +9,14 @@
 
 - Renamed `ContentLength` in `FileItemDetails` to `FileSize`.
 
-### Other Changes and Improvements
+### Other Changes
 
 - Updated some samples.
 - Fixed a read consistency issue.
 
 ## 12.0.0-beta.11 (2021-05-19)
 
-### New Features
+### Features Added
 
 - Added `ShareDirectoryClient::ForceCloseAllHandles()` and `ShareFileClient::ForceCloseAllHandles()`.
 
@@ -43,7 +43,7 @@
   
 ## 12.0.0-beta.9 (2021-03-23)
 
-### New Features
+### Features Added
 
 - Added support for telemetry options.
 - Added `Azure::Storage::Files::Shares::PackageVersion`.
@@ -78,7 +78,7 @@
 
 ## 12.0.0-beta.8 (2021-02-12)
 
-### New Features
+### Features Added
 
 - Changed type of `FileAttributes` to extensible enum.
 
@@ -111,7 +111,7 @@
 
 ## 12.0.0-beta.7 (2021-02-04)
 
-### New Features
+### Features Added
 
 - Added support for `UploadRangeFromUri` in file client.
 - Added support for `SetProperties` in share client. This API supports update share tier and adjusting share's quota.
@@ -139,13 +139,13 @@
 - Renamed `FileProperty` to `FileItemDetails` to align with other SDK's naming pattern for returned items for list operation.
 - Renamed `ShareProperties` to `ShareItemDetails` to align with other SDK's naming pattern for returned items for list operation.
 
-### Other Changes and Improvements
+### Other Changes
 
 - Removed `c_` for constants and renamed to pascal format.
 
 ## 12.0.0-beta.6 (2021-01-14)
 
-### New Features
+### Features Added
 
 - Added support for `CreateIfNotExists` for Share and Directory clients, and `DeleteIfExists` for Share, Directory and File clients.
 - Support setting file SAS permission with a raw string.
@@ -180,7 +180,7 @@
 
 ## 1.0.0-beta.4 (2020-10-16)
 
-### New Features
+### Features Added
 
 - Service version is now 2020-02-10.
 - Added support for leasing a share:
@@ -200,20 +200,20 @@
 - `NextMarker` is renamed to `ContinuationToken` in returned result objects.
 - `Marker` is renamed to `PreviousContinuationToken` in returned result objects.
 
-### Bug Fixes
+### Bugs Fixed
 
 - Unencoded Share/File/Directory name is now encoded.
 
 ## 1.0.0-beta.2 (2020-09-09)
 
-### New Features
+### Features Added
 
 - Added File SAS generation support.
 - Release based on azure-core_1.0.0-beta.1.
 
 ## 1.0.0-beta.1 (2020-08-28)
 
-### New Features
+### Features Added
 
 - Added support for File features:
   - ServiceClient::ListSharesSegment

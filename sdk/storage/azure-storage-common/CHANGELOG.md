@@ -2,13 +2,13 @@
 
 ## 12.1.0-beta.1 (Unreleased)
 
-### Bug Fixes
+### Bugs Fixed
 
 - Fixed a memory leak issue while parsing XML.
 
 ## 12.0.0 (2021-06-08)
 
-### Other Changes and Improvements
+### Other Changes
 
 - Fixed a filename encoding issue.
 
@@ -19,13 +19,13 @@
 - Added `final` specifier to classes and structures that are are not expected to be inheritable at the moment.
 - Removed `Azure::PagedResponse<T>`.
 
-### Bug Fixes
+### Bugs Fixed
 
 - Fixed a stream leak issue in `ReliableStream`.
 
 ## 12.0.0-beta.10 (2021-04-16)
 
-### New Features
+### Features Added
 
 - Added server timeout support.
 - Added `Azure::PagedResponse<T>` for returning paginated collections.
@@ -38,7 +38,7 @@
 
 ## 12.0.0-beta.9 (2021-03-23)
 
-### New Features
+### Features Added
 
 - Added `Azure::Storage::Common::PackageVersion`.
 
@@ -51,7 +51,7 @@
 
 ## 12.0.0-beta.7 (2021-02-03)
 
-### New Features
+### Features Added
 
 - Added additional information in `StorageException`.
 
@@ -59,13 +59,13 @@
 
 - `AccountSasResource::BlobContainer` was renamed to `AccountSasResource::Container`.
 
-### Bug Fixes
+### Bugs Fixed
 
 - Fixed `ClientRequestId` wasn't filled in `StorageException`.
 
 ## 12.0.0-beta.6 (2021-01-14)
 
-### New Features
+### Features Added
 
 - Added new type `ContentHash`.
 - Added definition of `Metadata`.
@@ -83,7 +83,7 @@
 - Moved `Base64Encode` and `Base64Decode` from the `Azure::Storage` namespace to `Azure::Core` and removed the string accepting overload of `Base64Encode`.
 - Renamed public constants so they no longer start with the prefix `c_`. For example, `c_InfiniteLeaseDuration` became `InfiniteLeaseDuration`.
 
-### Bug Fixes
+### Bugs Fixed
 
 - Fixed default EndpointSuffix when parsing a connection string. (A community contribution, courtesy of _[lordgamez](https://github.com/lordgamez)_)
 
@@ -105,25 +105,25 @@ Thank you to our developer community members who helped to make Azure Core bette
 - Remove `storage_version.hpp` and add `version.hpp`.
 - Make `SharedKeyCredential` a class.
 
-### Other Changes and Improvements
+### Other Changes
 
 - Remove support for specifying SAS version.
 
 ## 1.0.0-beta.3 (2020-10-13)
 
-### New Features
+### Features Added
 
 - Support for customizable retry policy.
 
 ## 1.0.0-beta.2 (2020-09-09)
 
-### New Features
+### Features Added
 
 - Release based on azure-core_1.0.0-beta.1.
 
 ## 1.0.0-beta.1 (2020-08-28)
 
-### New Features
+### Features Added
 
 - Support for Account SAS.
 - Support for Base64 Encoding/Decoding.

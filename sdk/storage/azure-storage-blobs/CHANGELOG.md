@@ -5,7 +5,7 @@
 
 ## 12.0.0 (2021-06-08)
 
-### Other Changes and Improvements
+### Other Changes
 
 - Added and updated some samples.
 - Fixed a read consistency issue.
@@ -42,7 +42,7 @@
 
 ## 12.0.0-beta.9 (2021-03-23)
 
-### New Features
+### Features Added
 
 - Added support for telemetry options.
 - Added `Azure::Storage::Blobs::PackageVersion`.
@@ -92,7 +92,7 @@
 
 ## 12.0.0-beta.7 (2021-02-03)
 
-### New Features
+### Features Added
 
 - Added `RequestId` in API return types.
 - Added some new properties in `GetBlobPropertiesResult`, `DownloadBlobResult` and `DownloadBlobToResult`.
@@ -123,7 +123,7 @@
 
 ## 12.0.0-beta.6 (2021-01-14)
 
-### New Features
+### Features Added
 
 - Added `CreateIfNotExists` and `DeleteIfExists` for blob containers and blobs.
 - Added `IsHierarchicalNamespaceEnabled` in `GetAccountInfoResult`.
@@ -200,7 +200,7 @@
 
 ## 12.0.0-beta.5 (2020-11-13)
 
-### New Features
+### Features Added
 
 - Support for replaceable HTTP transport layer.
 - Add `version.hpp`.
@@ -213,14 +213,14 @@
 - Remove `BlockBlobClientOptions`, `AppendBlobClientOptions` and `PageBlobClientOptions`, use `BlobClientOptions` instead.
 - Rename `BlobSasBuilder::ToSasQueryParameters` to `BlobSasBuilder::GenerateSasToken`.
 
-### Other Changes and Improvements
+### Other Changes
 
 - Default uploading/downloading concurrency is changed from 1 to 5.
 - Remove support for specifying SAS version.
 
 ## 1.0.0-beta.4 (2020-10-16)
 
-### New Features
+### Features Added
 
 - Bump up API version to 2020-02-10.
 - Support for Last Accessting Time.
@@ -235,13 +235,13 @@
 - Variable name change: `Marker` is renamed to `ContinuationToken` for `ListContainersSegmentOptions`, `FindBlobsByTagsOptions` and `ListBlobsSegmentOptions`.
 - Variable name change: `Marker` is renamed to `PreviousContinuationToken`, `NextMarker` is renamed to `ContinuationToken` for `FilterBlobsSegmentResult`, `ListContainersSegmentResult`, `ListBlobsByHierarchySegmentResult` and `ListBlobsFlatSegmentResult`.
 
-### Bug Fixes
+### Bugs Fixed
 
 - Unencoded Container/Blob name is now encoded.
 
 ## 1.0.0-beta.2 (2020-09-09)
 
-### New Features
+### Features Added
 
 - Support for Blob Batch.
 - Support for Blob Index.
@@ -249,7 +249,7 @@
 
 ## 1.0.0-beta.1 (2020-08-28)
 
-### New Features
+### Features Added
 
 - Added support for Blob features:
   - BlobServiceClient::ListBlobContainersSegment

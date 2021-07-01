@@ -27,6 +27,6 @@ No breaking changes or new features added. Includes only implementation enhancem
 
 ## 4.0.0-beta.1 (2021-04-07)
 
-### New Features
+### Features Added
 
-- KeyVaultException.
+- `KeyVaultException`.

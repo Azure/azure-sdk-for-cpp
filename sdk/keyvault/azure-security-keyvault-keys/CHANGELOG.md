@@ -25,7 +25,7 @@
 
 ## 4.0.0-beta.2 (2021-05-18)
 
-### New Features
+### Features Added
 
 - Added support for importing and deserializing EC and OCT keys.
 - Added cryptography client.
@@ -51,13 +51,13 @@
   - `GetDeletedKeysSinglePage()` now returns `DeletedKey`.
 - Removed `ResumeDeleteKeyOperation()` and `ResumeRecoverKeyOperation()`.
 
-### Bug Fixes
+### Bugs Fixed
 
 - Fix getting a resume token from delete and recover key operations.
 
 ## 4.0.0-beta.1 (2021-04-07)
 
-### New Features
+### Features Added
 
 - Added `Azure::Security::KeyVault::Keys::KeyClient` for get, create, list, delete, backup, restore, and import key operations.
 - Added high-level and simplified `key_vault.hpp` file for simpler include experience for customers.
