@@ -6,8 +6,6 @@
 #include "private/key_constants.hpp"
 #include "private/key_serializers.hpp"
 
-#include <azure/keyvault/common/internal/unix_time_helper.hpp>
-
 #include <azure/core/internal/json/json.hpp>
 #include <azure/core/internal/json/json_optional.hpp>
 #include <azure/core/internal/json/json_serializable.hpp>
@@ -15,12 +13,13 @@
 
 using namespace Azure::Security::KeyVault::Keys;
 using namespace Azure::Core::Json::_internal;
-using Azure::Security::KeyVault::_internal::UnixTimeConverter;
 
 KeyPropertiesPageResult
 _detail::KeyPropertiesPageResultSerializer::KeyPropertiesPageResultDeserialize(
     Azure::Core::Http::RawResponse const& rawResponse)
 {
+  using Azure::Core::_internal::PosixTimeConverter;
+
   KeyPropertiesPageResult result;
   auto const& body = rawResponse.GetBody();
   auto jsonParser = json::parse(body);
@@ -44,22 +43,22 @@ _detail::KeyPropertiesPageResultSerializer::KeyPropertiesPageResultDeserialize(
           keyProperties.NotBefore,
           attributes,
           _detail::NbfPropertyName,
-          UnixTimeConverter::UnixTimeToDatetime);
+          PosixTimeConverter::PosixTimeToDateTime);
       JsonOptional::SetIfExists<int64_t, Azure::DateTime>(
           keyProperties.ExpiresOn,
           attributes,
           _detail::ExpPropertyName,
-          UnixTimeConverter::UnixTimeToDatetime);
+          PosixTimeConverter::PosixTimeToDateTime);
       JsonOptional::SetIfExists<int64_t, Azure::DateTime>(
           keyProperties.CreatedOn,
           attributes,
           _detail::CreatedPropertyName,
-          UnixTimeConverter::UnixTimeToDatetime);
+          PosixTimeConverter::PosixTimeToDateTime);
       JsonOptional::SetIfExists<int64_t, Azure::DateTime>(
           keyProperties.UpdatedOn,
           attributes,
           _detail::UpdatedPropertyName,
-          UnixTimeConverter::UnixTimeToDatetime);
+          PosixTimeConverter::PosixTimeToDateTime);
     }
 
     // "Tags"
@@ -87,6 +86,8 @@ _detail::KeyPropertiesPageResultSerializer::KeyPropertiesPageResultDeserialize(
 DeletedKeyPageResult _detail::KeyPropertiesPageResultSerializer::DeletedKeyPageResultDeserialize(
     Azure::Core::Http::RawResponse const& rawResponse)
 {
+  using Azure::Core::_internal::PosixTimeConverter;
+
   auto const& body = rawResponse.GetBody();
   auto jsonParser = Azure::Core::Json::_internal::json::parse(body);
 
@@ -115,12 +116,12 @@ DeletedKeyPageResult _detail::KeyPropertiesPageResultSerializer::DeletedKeyPageR
         deletedKey.DeletedDate,
         key,
         _detail::DeletedOnPropertyName,
-        UnixTimeConverter::UnixTimeToDatetime);
+        PosixTimeConverter::PosixTimeToDateTime);
     JsonOptional::SetIfExists<int64_t, Azure::DateTime>(
         deletedKey.ScheduledPurgeDate,
         key,
         _detail::ScheduledPurgeDatePropertyName,
-        UnixTimeConverter::UnixTimeToDatetime);
+        PosixTimeConverter::PosixTimeToDateTime);
 
     deletedKeyPageResult.Items.emplace_back(deletedKey);
   }

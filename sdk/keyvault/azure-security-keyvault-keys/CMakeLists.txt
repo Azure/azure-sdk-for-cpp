@@ -20,9 +20,9 @@ include(AzureGlobalCompileOptions)
 az_vcpkg_integrate()
 
 if(NOT AZ_ALL_LIBRARIES)
-  find_package(azure-security-keyvault-common-cpp CONFIG QUIET)
+  find_package(azure-security-keyvault-common-cpp "4.0.0" CONFIG QUIET)
   if(NOT azure-security-keyvault-common-cpp_FOUND)
-    find_package(azure-security-keyvault-common-cpp REQUIRED)
+    find_package(azure-security-keyvault-common-cpp "4.0.0" REQUIRED)
   endif()
 endif()
 

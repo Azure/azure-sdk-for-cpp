@@ -20,9 +20,9 @@ include(AzureGlobalCompileOptions)
 az_vcpkg_integrate()
 
 if(NOT AZ_ALL_LIBRARIES)
-  find_package(azure-core-cpp CONFIG QUIET)
+  find_package(azure-core-cpp "1.1.0" CONFIG QUIET)
   if(NOT azure-core-cpp_FOUND)
-    find_package(azure-core-cpp REQUIRED)
+    find_package(azure-core-cpp "1.1.0" REQUIRED)
   endif()
 endif()
 
@@ -32,7 +32,7 @@ set(
     inc/azure/keyvault/common/internal/keyvault_pipeline.hpp
     inc/azure/keyvault/common/internal/single_page.hpp
     inc/azure/keyvault/common/internal/unix_time_helper.hpp
-    inc/azure/keyvault/common/sha.hpp
+    inc/azure/keyvault/common/internal/sha.hpp
 )
 
 set(

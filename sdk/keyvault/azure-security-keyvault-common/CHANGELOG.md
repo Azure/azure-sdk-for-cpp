@@ -6,6 +6,8 @@
 
 ### Breaking Changes
 
+- Removed `SHA256`, `SHA384`, and `SHA512` hashing classes by making them internal since the end user doesn't need them.
+
 ### Key Bugs Fixed
 
 ### Fixed
