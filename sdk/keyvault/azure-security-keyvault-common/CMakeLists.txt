@@ -31,7 +31,6 @@ set(
     inc/azure/keyvault/common/internal/base64url.hpp
     inc/azure/keyvault/common/internal/keyvault_pipeline.hpp
     inc/azure/keyvault/common/internal/single_page.hpp
-    inc/azure/keyvault/common/internal/keyvault_exception.hpp
     inc/azure/keyvault/common/internal/sha_hash.hpp
 )
 
@@ -39,7 +38,7 @@ set(
   AZURE_KEYVAULT_COMMON_SOURCE
     src/private/keyvault_constants.hpp
     src/private/package_version.hpp
-    src/keyvault_exception.cpp
+    
     src/keyvault_pipeline.cpp
     src/sha_hash.cpp
 )

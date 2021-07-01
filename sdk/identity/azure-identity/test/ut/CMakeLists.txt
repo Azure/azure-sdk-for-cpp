@@ -15,10 +15,12 @@ add_executable (
   azure-identity-test
     azure_identity_test.cpp
     client_secret_credential_test.cpp
+    credential_test_helper.cpp
+    credential_test_helper.hpp
     environment_credential_test.cpp
     macro_guard_test.cpp
+    managed_identity_credential_test.cpp
     simplified_header_test.cpp
-    test_transport_test.hpp
 )
 
 if (MSVC)

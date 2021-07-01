@@ -1,11 +1,11 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
 
-#include <azure/core/http/http.hpp>
-
-#include "azure/keyvault/common/internal/keyvault_exception.hpp"
 #include "azure/keyvault/common/internal/keyvault_pipeline.hpp"
 #include "private/keyvault_constants.hpp"
+
+#include <azure/core/exception.hpp>
+#include <azure/core/http/http.hpp>
 
 using namespace Azure::Security::KeyVault;
 using namespace Azure::Core::Http::_internal;
@@ -70,8 +70,7 @@ std::unique_ptr<Azure::Core::Http::RawResponse> _internal::KeyVaultPipeline::Sen
     case Azure::Core::Http::HttpStatusCode::NoContent:
       break;
     default:
-      throw Azure::Security::KeyVault::_internal::KeyVaultException::CreateException(
-          std::move(response));
+      throw Azure::Core::RequestFailedException(response);
   }
   return response;
 }
