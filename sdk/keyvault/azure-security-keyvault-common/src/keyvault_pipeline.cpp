@@ -1,11 +1,11 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
 
-#include <azure/core/http/http.hpp>
-
-#include "azure/core/exception.hpp"
 #include "azure/keyvault/common/internal/keyvault_pipeline.hpp"
 #include "private/keyvault_constants.hpp"
+
+#include <azure/core/exception.hpp>
+#include <azure/core/http/http.hpp>
 
 using namespace Azure::Security::KeyVault;
 using namespace Azure::Core::Http::_internal;

@@ -3,8 +3,8 @@
 
 #include "azure/core/exception.hpp"
 #include "azure/core/http/http.hpp"
-#include <azure/core/http/policies/policy.hpp>
-#include <azure/core/internal/json/json.hpp>
+#include "azure/core/http/policies/policy.hpp"
+#include "azure/core/internal/json/json.hpp"
 #include <memory>
 #include <stdexcept>
 #include <string>
