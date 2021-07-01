@@ -43,7 +43,7 @@ namespace Azure {
         std::vector<uint8_t> iv,
         std::vector<uint8_t> additionalAuthenticatedData,
         std::vector<uint8_t> authenticationTag)
-        : Iv(std::move(iv)), Algorithm(std::move(algorithm)), Ciphertext(std::move(ciphertext)),
+        : m_iv(std::move(iv)), Algorithm(std::move(algorithm)), Ciphertext(std::move(ciphertext)),
           AdditionalAuthenticatedData(std::move(additionalAuthenticatedData)),
           AuthenticationTag(std::move(authenticationTag))
     {
@@ -53,7 +53,7 @@ namespace Azure {
         EncryptionAlgorithm algorithm,
         std::vector<uint8_t> ciphertext,
         std::vector<uint8_t> iv)
-        : Iv(std::move(iv)), Algorithm(std::move(algorithm)), Ciphertext(std::move(ciphertext))
+        : m_iv(std::move(iv)), Algorithm(std::move(algorithm)), Ciphertext(std::move(ciphertext))
     {
     }
 
@@ -67,7 +67,7 @@ namespace Azure {
      * @brief Gets the initialization vector for decryption.
      *
      */
-    std::vector<uint8_t> Iv;
+    std::vector<uint8_t> m_iv;
 
   public:
     /**
@@ -97,7 +97,7 @@ namespace Azure {
      * @brief Gets the initialization vector for decryption.
      *
      */
-    std::vector<uint8_t> const& GetIv() const { return Iv; }
+    std::vector<uint8_t> const& GetIv() const { return m_iv; }
 
     /**
      * @brief Gets additional data that is authenticated during decryption but not encrypted.

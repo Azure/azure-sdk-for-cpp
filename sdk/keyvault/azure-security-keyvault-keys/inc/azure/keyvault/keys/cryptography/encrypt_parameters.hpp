@@ -33,7 +33,7 @@ namespace Azure {
      * is private so it is only set by the factory methods.
      *
      */
-    std::vector<uint8_t> Iv;
+    std::vector<uint8_t> m_iv;
 
     /**
      * @brief Construct a new Encrypt Parameters object.
@@ -49,7 +49,7 @@ namespace Azure {
         std::vector<uint8_t> plaintext,
         std::vector<uint8_t> iv,
         std::vector<uint8_t> additionalAuthenticatedData)
-        : Iv(std::move(iv)), Algorithm(std::move(algorithm)), Plaintext(std::move(plaintext)),
+        : m_iv(std::move(iv)), Algorithm(std::move(algorithm)), Plaintext(std::move(plaintext)),
           AdditionalAuthenticatedData(std::move(additionalAuthenticatedData))
     {
     }
@@ -94,7 +94,7 @@ namespace Azure {
      * @brief Gets the initialization vector for encryption.
      *
      */
-    std::vector<uint8_t> const& GetIv() const { return Iv; }
+    std::vector<uint8_t> const& GetIv() const { return m_iv; }
 
     /**
      * @brief Creates an instance of the #EncryptParameters class for the
