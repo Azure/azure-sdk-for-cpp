@@ -1,10 +1,9 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
 
+#include <azure/core/base64.hpp>
 #include <azure/core/internal/json/json.hpp>
 #include <azure/core/internal/json/json_optional.hpp>
-
-#include <azure/keyvault/common/internal/base64url.hpp>
 
 #include "private/key_backup.hpp"
 #include "private/key_constants.hpp"
@@ -12,8 +11,8 @@
 #include <string>
 
 using namespace Azure::Security::KeyVault::Keys::_detail;
+using namespace Azure::Core::_internal;
 using namespace Azure::Core::Json::_internal;
-using namespace Azure::Security::KeyVault::_internal;
 
 std::string KeyBackup::Serialize() const
 {

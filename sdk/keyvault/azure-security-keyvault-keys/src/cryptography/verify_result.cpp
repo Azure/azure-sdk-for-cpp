@@ -7,14 +7,11 @@
 #include "../private/key_constants.hpp"
 #include "azure/keyvault/keys/cryptography/verify_result.hpp"
 
-#include <azure/keyvault/common/internal/base64url.hpp>
-
 #include <string>
 #include <vector>
 
 using namespace Azure::Core::Json::_internal;
 using namespace Azure::Security::KeyVault::Keys::_detail;
-using namespace Azure::Security::KeyVault::_internal;
 
 namespace Azure {
   namespace Security {
