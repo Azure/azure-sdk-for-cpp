@@ -8,12 +8,9 @@
 
 ### Breaking Changes
 
-- Removed `Azure::Security::KeyVault::Keys::ServiceVersion::V7_0`.
-- Removed `Azure::Security::KeyVault::Keys::ServiceVersion::V7_1`.
-- Removed `Azure::Security::KeyVault::Keys::Cryptography::ServiceVersion::V7_0`.
-- Removed `Azure::Security::KeyVault::Keys::Cryptography::ServiceVersion::V7_1`.
-- Removed `CryptographyClient::RemoteClient()`.
-- Removed `CryptographyClient::LocalOnly()`.
+- Removed `Azure::Security::KeyVault::Keys::ServiceVersion::V7_0` and `V7_1`.
+- Removed `Azure::Security::KeyVault::Keys::Cryptography::ServiceVersion::V7_0` and `V7_1`.
+- Removed `CryptographyClient::RemoteClient()` and `CryptographyClient::LocalOnly()`.
 - Removed the general constructor from `EncryptParameters` and `DecryptParameters`.
 - Removed access to `Iv` field member from `EncryptParameters` and `DecryptParameters`.
 
