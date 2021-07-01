@@ -2,7 +2,7 @@
 
 ## 1.1.0 (2021-07-01)
 
-### Bugs Fixed
+### Bugs Fixed (random)
 
 - Fixed a memory leak issue in `Base64Encode()`. (A community contribution, courtesy of _[jorgen](https://github.com/jorgen)_)
 
