@@ -105,7 +105,7 @@ namespace Azure { namespace Core {
     explicit RequestFailedException(std::unique_ptr<Azure::Core::Http::RawResponse>& rawResponse);
 
     /**
-     * @brief Constructs a new `%RequestFailedException` by copying from an existing one.
+     * @brief Constructs a new `%RequestFailedException` by copying from an existing one. 
      * @note Copies the #Azure::Core::Http::RawResponse into the new `RequestFailedException`.
      *
      * @param other The `%RequestFailedException` to be copied.
