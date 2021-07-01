@@ -11,7 +11,7 @@
 
 using namespace Azure::Security::KeyVault::Keys;
 using namespace Azure::Core::Json::_internal;
-using Azure::_internal::PosixTimeConverter;
+using Azure::Core::_internal::PosixTimeConverter;
 
 DeletedKey _detail::DeletedKeySerializer::DeletedKeyDeserialize(
     std::string const& name,

@@ -13,13 +13,12 @@
 
 using namespace Azure::Security::KeyVault::Keys;
 using namespace Azure::Core::Json::_internal;
-using Azure::_internal::PosixTimeConverter;
 
 KeyPropertiesPageResult
 _detail::KeyPropertiesPageResultSerializer::KeyPropertiesPageResultDeserialize(
     Azure::Core::Http::RawResponse const& rawResponse)
 {
-  using Azure::_internal::PosixTimeConverter;
+  using Azure::Core::_internal::PosixTimeConverter;
 
   KeyPropertiesPageResult result;
   auto const& body = rawResponse.GetBody();
@@ -87,6 +86,8 @@ _detail::KeyPropertiesPageResultSerializer::KeyPropertiesPageResultDeserialize(
 DeletedKeyPageResult _detail::KeyPropertiesPageResultSerializer::DeletedKeyPageResultDeserialize(
     Azure::Core::Http::RawResponse const& rawResponse)
 {
+  using Azure::Core::_internal::PosixTimeConverter;
+
   auto const& body = rawResponse.GetBody();
   auto jsonParser = Azure::Core::Json::_internal::json::parse(body);
 

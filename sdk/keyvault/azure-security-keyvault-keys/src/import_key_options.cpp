@@ -19,7 +19,7 @@ std::string
 Azure::Security::KeyVault::Keys::_detail::ImportKeyOptionsSerializer::ImportKeyOptionsSerialize(
     ImportKeyOptions const& importKeyOptions)
 {
-  using Azure::_internal::PosixTimeConverter;
+  using Azure::Core::_internal::PosixTimeConverter;
 
   Azure::Core::Json::_internal::json payload;
   // key

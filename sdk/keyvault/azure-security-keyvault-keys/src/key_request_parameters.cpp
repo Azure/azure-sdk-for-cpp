@@ -14,7 +14,7 @@ using namespace Azure::Core::Json::_internal;
 
 std::string KeyRequestParameters::Serialize() const
 {
-  using Azure::_internal::PosixTimeConverter;
+  using Azure::Core::_internal::PosixTimeConverter;
 
   Azure::Core::Json::_internal::json payload;
   // kty

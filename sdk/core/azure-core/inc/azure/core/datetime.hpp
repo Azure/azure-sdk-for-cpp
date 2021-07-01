@@ -267,7 +267,7 @@ inline bool operator>=(std::chrono::system_clock::time_point const& tp, DateTime
   return (dt <= tp);
 }
 
-namespace _internal {
+namespace Core { namespace _internal {
   /**
    * @brief Provides convertion methods for POSIX time to an #Azure::DateTime.
    *
@@ -311,6 +311,6 @@ namespace _internal {
      */
     ~PosixTimeConverter() = delete;
   };
-} // namespace _internal
+}} // namespace Core::_internal
 
 } // namespace Azure

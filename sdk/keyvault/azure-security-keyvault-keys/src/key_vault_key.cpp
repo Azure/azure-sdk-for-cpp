@@ -12,7 +12,7 @@
 
 using namespace Azure::Security::KeyVault::Keys;
 using namespace Azure::Core::Json::_internal;
-using Azure::_internal::PosixTimeConverter;
+using Azure::Core::_internal::PosixTimeConverter;
 
 KeyVaultKey _detail::KeyVaultKeySerializer::KeyVaultKeyDeserialize(
     std::string const& name,
@@ -44,7 +44,7 @@ void _detail::KeyVaultKeySerializer::KeyVaultKeyDeserialize(
     KeyVaultKey& key,
     Azure::Core::Json::_internal::json const& jsonParser)
 {
-  using Azure::_internal::PosixTimeConverter;
+  using Azure::Core::_internal::PosixTimeConverter;
 
   // Deserialize jwk
   _detail::JsonWebKeySerializer::JsonWebDeserialize(key.Key, jsonParser);
