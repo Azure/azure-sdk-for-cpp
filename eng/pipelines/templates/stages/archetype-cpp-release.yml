@@ -3,13 +3,15 @@ parameters:
   ArtifactName: 'not-specified'
   ServiceDirectory: not-specified
   TestPipeline: false
+  DependsOn:
+    - Build
 
 stages:
   - ${{if and(eq(variables['Build.Reason'], 'Manual'), eq(variables['System.TeamProject'], 'internal'))}}:
     - ${{ each artifact in parameters.Artifacts }}:
       - stage: Release_${{ replace(artifact.Name, '-', '_') }}
         displayName: 'Release ${{artifact.name}}'
-        dependsOn: Build
+        dependsOn: ${{ parameters.DependsOn }}
         condition:  and(succeeded(), ne(variables['Build.Repository.Name'], 'Azure/azure-sdk-for-cpp'), ne(variables['Skip.AllRelease'], 'true'))
 
         jobs:
@@ -190,7 +192,7 @@ stages:
 
   - ${{if eq(variables['System.TeamProject'], 'internal') }}:
     - stage: Integration
-      dependsOn: Build
+      dependsOn: ${{ parameters.DependsOn }}
       condition: and(succeeded(), or(eq(variables['PublishDailyVcpkg'], 'true'), eq(variables['Build.Reason'],'Schedule')))
       jobs:
         - job: PublishDailyVcpkg
