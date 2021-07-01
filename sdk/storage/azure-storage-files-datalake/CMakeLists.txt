@@ -20,9 +20,9 @@ include(AzureGlobalCompileOptions)
 az_vcpkg_integrate()
 
 if(NOT AZ_ALL_LIBRARIES)
-  find_package(azure-storage-blobs-cpp CONFIG QUIET)
+  find_package(azure-storage-blobs-cpp "12.0.0" CONFIG QUIET)
   if(NOT azure-storage-blobs-cpp_FOUND)
-    find_package(azure-storage-blobs-cpp REQUIRED)
+    find_package(azure-storage-blobs-cpp "12.0.0" REQUIRED)
   endif()
 endif()
 

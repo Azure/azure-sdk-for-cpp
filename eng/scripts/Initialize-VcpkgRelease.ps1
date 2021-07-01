@@ -60,12 +60,12 @@ Write-Host "SHA512: $sha512"
 Write-Verbose "Writing the SHA512 hash"
 $portfileLocation = "$SourceDirectory/port/portfile.cmake"
 
-# Regex replace SHA512 preserving spaces. The placeholder "SHA512 1" is
+# Regex replace SHA512 preserving spaces. The placeholder "SHA512 0" is
 # recommended in vcpkg documentation
-# Before: "   SHA512   1"
+# Before: "   SHA512   0"
 # After:  "   SHA512   f6cf1c16c52" 
 $portFileContent = Get-Content -Raw -Path $portfileLocation 
-$newContent = $portFileContent -replace '(SHA512\s+)1', "`${1}$sha512"
+$newContent = $portFileContent -replace '(SHA512\s+)0', "`${1}$sha512"
 
 if ($DailyReleaseRef) {
     Write-Verbose "Overriding REF with test release ref: $DailyReleaseRef"
