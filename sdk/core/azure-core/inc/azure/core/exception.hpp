@@ -55,7 +55,8 @@ namespace Azure { namespace Core {
     /**
      * @brief The error message from the service returned in the HTTP response.
      *
-     * @note This string is purely for informational purposes, and should't be relied on at runtime.
+     * @note This string is purely for informational or diagnostic purposes, and should't be relied
+     * on at runtime.
      *
      */
     std::string Message;
