@@ -6,15 +6,13 @@
 #include <azure/core/internal/json/json_serializable.hpp>
 #include <azure/core/url.hpp>
 
-#include <azure/keyvault/common/internal/unix_time_helper.hpp>
-
 #include "azure/keyvault/keys/key_vault_key.hpp"
 #include "private/key_constants.hpp"
 #include "private/key_serializers.hpp"
 
 using namespace Azure::Security::KeyVault::Keys;
 using namespace Azure::Core::Json::_internal;
-using Azure::Security::KeyVault::_internal::UnixTimeConverter;
+using Azure::Core::_internal::PosixTimeConverter;
 
 KeyVaultKey _detail::KeyVaultKeySerializer::KeyVaultKeyDeserialize(
     std::string const& name,
@@ -46,6 +44,8 @@ void _detail::KeyVaultKeySerializer::KeyVaultKeyDeserialize(
     KeyVaultKey& key,
     Azure::Core::Json::_internal::json const& jsonParser)
 {
+  using Azure::Core::_internal::PosixTimeConverter;
+
   // Deserialize jwk
   _detail::JsonWebKeySerializer::JsonWebDeserialize(key.Key, jsonParser);
 
@@ -63,22 +63,22 @@ void _detail::KeyVaultKeySerializer::KeyVaultKeyDeserialize(
         key.Properties.NotBefore,
         attributes,
         _detail::NbfPropertyName,
-        UnixTimeConverter::UnixTimeToDatetime);
+        PosixTimeConverter::PosixTimeToDateTime);
     JsonOptional::SetIfExists<int64_t, Azure::DateTime>(
         key.Properties.ExpiresOn,
         attributes,
         _detail::ExpPropertyName,
-        UnixTimeConverter::UnixTimeToDatetime);
+        PosixTimeConverter::PosixTimeToDateTime);
     JsonOptional::SetIfExists<int64_t, Azure::DateTime>(
         key.Properties.CreatedOn,
         attributes,
         _detail::CreatedPropertyName,
-        UnixTimeConverter::UnixTimeToDatetime);
+        PosixTimeConverter::PosixTimeToDateTime);
     JsonOptional::SetIfExists<int64_t, Azure::DateTime>(
         key.Properties.UpdatedOn,
         attributes,
         _detail::UpdatedPropertyName,
-        UnixTimeConverter::UnixTimeToDatetime);
+        PosixTimeConverter::PosixTimeToDateTime);
   }
 
   // "Tags"

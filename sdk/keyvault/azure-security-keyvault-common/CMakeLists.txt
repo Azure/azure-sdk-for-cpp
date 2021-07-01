@@ -31,7 +31,6 @@ set(
     inc/azure/keyvault/common/internal/base64url.hpp
     inc/azure/keyvault/common/internal/keyvault_pipeline.hpp
     inc/azure/keyvault/common/internal/single_page.hpp
-    inc/azure/keyvault/common/internal/unix_time_helper.hpp
     inc/azure/keyvault/common/internal/keyvault_exception.hpp
     inc/azure/keyvault/common/sha.hpp
 )
