@@ -8,6 +8,4 @@
 #include "samples_common.hpp"
 
 SAMPLE(QueuesGettingStarted, QueuesGettingStarted)
-void QueuesGettingStarted()
-{
-}
+void QueuesGettingStarted() {}
