@@ -31,18 +31,6 @@ TEST(KeyClient, ServiceVersion)
   auto credential
       = std::make_shared<Azure::Identity::ClientSecretCredential>("tenantID", "AppId", "SecretId");
   {
-    // 7.0
-    EXPECT_NO_THROW(auto options = KeyClientOptions(ServiceVersion::V7_0);
-                    KeyClient keyClient("vaultUrl", credential, options);
-                    EXPECT_EQ(options.Version.ToString(), "7.0"););
-  }
-  {
-    // 7.1
-    EXPECT_NO_THROW(auto options = KeyClientOptions(ServiceVersion::V7_1);
-                    KeyClient keyClient("vaultUrl", credential, options);
-                    EXPECT_EQ(options.Version.ToString(), "7.1"););
-  }
-  {
     // 7.2
     EXPECT_NO_THROW(auto options = KeyClientOptions(ServiceVersion::V7_2);
                     KeyClient keyClient("vaultUrl", credential, options);

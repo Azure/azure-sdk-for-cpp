@@ -24,8 +24,17 @@ namespace Azure {
    * @brief Parameters for encrypting plaintext.
    *
    */
-  struct EncryptParameters final
-  {
+  class EncryptParameters final {
+  private:
+    /**
+     * @brief Gets the initialization vector for encryption.
+     *
+     * @note Initialization vector should not be set for some encryption algorithms. That's why it
+     * is private so it is only set by the factory methods.
+     *
+     */
+    std::vector<uint8_t> m_iv;
+
     /**
      * @brief Construct a new Encrypt Parameters object.
      *
@@ -40,11 +49,18 @@ namespace Azure {
         std::vector<uint8_t> plaintext,
         std::vector<uint8_t> iv,
         std::vector<uint8_t> additionalAuthenticatedData)
-        : Algorithm(std::move(algorithm)), Plaintext(std::move(plaintext)), Iv(std::move(iv)),
+        : m_iv(std::move(iv)), Algorithm(std::move(algorithm)), Plaintext(std::move(plaintext)),
           AdditionalAuthenticatedData(std::move(additionalAuthenticatedData))
     {
     }
 
+    /**
+     * @brief Encrypt Parameters can't be default constructed.
+     *
+     */
+    EncryptParameters() = delete;
+
+  public:
     /**
      * @brief Construct a new Encrypt Parameters object
      *
@@ -55,12 +71,6 @@ namespace Azure {
         : Algorithm(std::move(algorithm)), Plaintext(std::move(plaintext))
     {
     }
-
-    /**
-     * @brief Encrypt Parameters can't be default constructed.
-     *
-     */
-    EncryptParameters() = delete;
 
     /**
      * @brief Gets the #EncryptionAlgorithm.
@@ -75,16 +85,16 @@ namespace Azure {
     std::vector<uint8_t> Plaintext;
 
     /**
-     * @brief Gets the initialization vector for encryption.
-     *
-     */
-    std::vector<uint8_t> Iv;
-
-    /**
      * @brief Gets additional data that is authenticated during decryption but not encrypted.
      *
      */
     std::vector<uint8_t> AdditionalAuthenticatedData;
+
+    /**
+     * @brief Gets the initialization vector for encryption.
+     *
+     */
+    std::vector<uint8_t> const& GetIv() const { return m_iv; }
 
     /**
      * @brief Creates an instance of the #EncryptParameters class for the
