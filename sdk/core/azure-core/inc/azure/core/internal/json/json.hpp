@@ -15731,6 +15731,12 @@ namespace Azure { namespace Core { namespace Json { namespace _internal { namesp
       }
     }
 
+#if defined(_MSC_VER)
+#pragma warning(push)
+// warning C28020: The expression '0<=_Param_(1)&&_Param_(1)<=400-1' is not true at this call.
+#pragma warning(disable : 28020)
+#endif
+
     /*!
     @brief check whether a string is UTF-8 encoded
 
@@ -15794,6 +15800,10 @@ namespace Azure { namespace Core { namespace Json { namespace _internal { namesp
       state = utf8d[index];
       return state;
     }
+
+#if defined(_MSC_VER)
+#pragma warning(pop)
+#endif
 
     /*
      * Overload to make the compiler happy while it is instantiating
