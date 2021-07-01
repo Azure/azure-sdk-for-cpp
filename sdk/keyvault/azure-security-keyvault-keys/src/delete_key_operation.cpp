@@ -43,8 +43,7 @@ Azure::Security::KeyVault::Keys::DeleteKeyOperation::PollInternal(
         break;
       }
       default:
-        throw Azure::Core::RequestFailedException(
-            rawResponse);
+        throw Azure::Core::RequestFailedException(rawResponse);
     }
 
     if (m_status == Azure::Core::OperationStatus::Succeeded)

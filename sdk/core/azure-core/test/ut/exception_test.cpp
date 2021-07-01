@@ -16,7 +16,7 @@ TEST(RequestFailedException, JSONError)
       = "{\"error\":{ \"code\":\"503\",  \"message\":\"JT\"}}";
   static constexpr uint8_t const responseBodyStream[]
       = "{\"error\":{ \"code\":\"503\",  \"message\":\"JT\"}}";
-  
+
   response->SetHeader(HttpShared::ContentType, "application/json");
   response->SetHeader(HttpShared::MsRequestId, "1");
   response->SetHeader(HttpShared::MsClientRequestId, "2");
@@ -25,7 +25,7 @@ TEST(RequestFailedException, JSONError)
       responseBodyStream, sizeof(responseBodyStream) - 1));
 
   auto exception = Azure::Core::RequestFailedException(response);
-  
+
   EXPECT_EQ(exception.StatusCode, Azure::Core::Http::HttpStatusCode::ServiceUnavailable);
   EXPECT_EQ(exception.Message, "JT");
   EXPECT_EQ(exception.ErrorCode, "503");
@@ -48,7 +48,7 @@ TEST(RequestFailedException, JSONErrorNoError)
       responseBodyStream, sizeof(responseBodyStream) - 1));
 
   auto exception = Azure::Core::RequestFailedException(response);
-  
+
   EXPECT_EQ(exception.StatusCode, Azure::Core::Http::HttpStatusCode::ServiceUnavailable);
   EXPECT_EQ(exception.Message, "{\"text\" :\"some text\"}");
   EXPECT_EQ(exception.ErrorCode, "");
@@ -62,7 +62,7 @@ TEST(RequestFailedException, NonJSONError)
       1, 1, Azure::Core::Http::HttpStatusCode::ServiceUnavailable, "reason");
   static constexpr uint8_t const responseBody[] = "NJT";
   static constexpr uint8_t const responseBodyStream[] = "NJT";
-  
+
   response->SetHeader(HttpShared::ContentType, "application/text");
   response->SetHeader(HttpShared::MsRequestId, "1");
   response->SetHeader(HttpShared::MsClientRequestId, "2");

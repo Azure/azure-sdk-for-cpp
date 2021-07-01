@@ -70,8 +70,7 @@ std::unique_ptr<Azure::Core::Http::RawResponse> _internal::KeyVaultPipeline::Sen
     case Azure::Core::Http::HttpStatusCode::NoContent:
       break;
     default:
-      throw Azure::Core::RequestFailedException(
-          response);
+      throw Azure::Core::RequestFailedException(response);
   }
   return response;
 }
