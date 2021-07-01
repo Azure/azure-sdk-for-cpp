@@ -7,7 +7,7 @@
 
 #include "gtest/gtest.h"
 
-#include <azure/keyvault/common/internal/sha_hash.hpp>
+#include <azure/core/internal/cryptography/sha_hash.hpp>
 
 #include "key_client_base_test.hpp"
 
@@ -94,7 +94,7 @@ TEST_P(KeyVaultClientTest, RemoteSignVerifyRSA256)
 
   // RS256
   {
-    Azure::Security::KeyVault::_internal::Sha256Hash sha256;
+    Azure::Core::Cryptography::_internal::Sha256Hash sha256;
     auto signatureAlgorithm = SignatureAlgorithm::RS256;
     std::vector<uint8_t> digest
         = sha256.Final(reinterpret_cast<const uint8_t*>(digestSource.data()), digestSource.size());
@@ -112,7 +112,7 @@ TEST_P(KeyVaultClientTest, RemoteSignVerifyRSA256)
 
   // PS256
   {
-    Azure::Security::KeyVault::_internal::Sha256Hash sha256;
+    Azure::Core::Cryptography::_internal::Sha256Hash sha256;
     auto signatureAlgorithm = SignatureAlgorithm::PS256;
     std::vector<uint8_t> digest
         = sha256.Final(reinterpret_cast<const uint8_t*>(digestSource.data()), digestSource.size());
@@ -142,7 +142,7 @@ TEST_F(KeyVaultClientTest, RemoteSignVerifyES256)
     auto ecKey = keyClient.CreateEcKey(ecKeyOptions).Value;
     CryptographyClient cryptoClient(ecKey.Id(), m_credential);
 
-    Azure::Security::KeyVault::_internal::Sha256Hash sha256;
+    Azure::Core::Cryptography::_internal::Sha256Hash sha256;
     auto signatureAlgorithm = SignatureAlgorithm::ES256;
     std::vector<uint8_t> digest
         = sha256.Final(reinterpret_cast<const uint8_t*>(digestSource.data()), digestSource.size());
@@ -165,7 +165,7 @@ TEST_F(KeyVaultClientTest, RemoteSignVerifyES256)
     auto ecKey = keyClient.CreateEcKey(ecKeyOptions).Value;
     CryptographyClient cryptoClient(ecKey.Id(), m_credential);
 
-    Azure::Security::KeyVault::_internal::Sha256Hash sha256;
+    Azure::Core::Cryptography::_internal::Sha256Hash sha256;
     auto signatureAlgorithm = SignatureAlgorithm::ES256K;
     std::vector<uint8_t> digest
         = sha256.Final(reinterpret_cast<const uint8_t*>(digestSource.data()), digestSource.size());
@@ -198,7 +198,7 @@ TEST_P(KeyVaultClientTest, RemoteSignVerifyRSA384)
 
   // RS384
   {
-    Azure::Security::KeyVault::_internal::Sha384Hash sha384;
+    Azure::Core::Cryptography::_internal::Sha384Hash sha384;
     auto signatureAlgorithm = SignatureAlgorithm::RS384;
     std::vector<uint8_t> digest
         = sha384.Final(reinterpret_cast<const uint8_t*>(digestSource.data()), digestSource.size());
@@ -216,7 +216,7 @@ TEST_P(KeyVaultClientTest, RemoteSignVerifyRSA384)
 
   // PS384
   {
-    Azure::Security::KeyVault::_internal::Sha384Hash sha384;
+    Azure::Core::Cryptography::_internal::Sha384Hash sha384;
     auto signatureAlgorithm = SignatureAlgorithm::PS384;
     std::vector<uint8_t> digest
         = sha384.Final(reinterpret_cast<const uint8_t*>(digestSource.data()), digestSource.size());

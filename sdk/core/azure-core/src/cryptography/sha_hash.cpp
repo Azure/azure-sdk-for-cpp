@@ -12,13 +12,13 @@
 #include <openssl/evp.h>
 #endif
 
-#include "azure/keyvault/common/internal/sha_hash.hpp"
+#include "azure/core/internal/cryptography/sha_hash.hpp"
 
 #include <memory>
 #include <stdexcept>
 #include <vector>
 
-using namespace Azure::Security::KeyVault;
+using namespace Azure::Core::Cryptography;
 
 #if defined(AZ_PLATFORM_POSIX)
 
@@ -97,17 +97,17 @@ public:
 
 } // namespace
 
-Azure::Security::KeyVault::_internal::Sha256Hash::Sha256Hash()
+Azure::Core::Cryptography::_internal::Sha256Hash::Sha256Hash()
     : m_portableImplementation(std::make_unique<SHAWithOpenSSL>(SHASize::SHA256))
 {
 }
 
-Azure::Security::KeyVault::_internal::Sha384Hash::Sha384Hash()
+Azure::Core::Cryptography::_internal::Sha384Hash::Sha384Hash()
     : m_portableImplementation(std::make_unique<SHAWithOpenSSL>(SHASize::SHA384))
 {
 }
 
-Azure::Security::KeyVault::_internal::Sha512Hash::Sha512Hash()
+Azure::Core::Cryptography::_internal::Sha512Hash::Sha512Hash()
     : m_portableImplementation(std::make_unique<SHAWithOpenSSL>(SHASize::SHA512))
 {
 }
@@ -222,17 +222,17 @@ public:
 
 } // namespace
 
-Azure::Security::KeyVault::_internal::Sha256Hash::Sha256Hash()
+Azure::Core::Cryptography::_internal::Sha256Hash::Sha256Hash()
     : m_portableImplementation(std::make_unique<SHAWithBCrypt>(BCRYPT_SHA256_ALGORITHM))
 {
 }
 
-Azure::Security::KeyVault::_internal::Sha384Hash::Sha384Hash()
+Azure::Core::Cryptography::_internal::Sha384Hash::Sha384Hash()
     : m_portableImplementation(std::make_unique<SHAWithBCrypt>(BCRYPT_SHA384_ALGORITHM))
 {
 }
 
-Azure::Security::KeyVault::_internal::Sha512Hash::Sha512Hash()
+Azure::Core::Cryptography::_internal::Sha512Hash::Sha512Hash()
     : m_portableImplementation(std::make_unique<SHAWithBCrypt>(BCRYPT_SHA512_ALGORITHM))
 {
 }
