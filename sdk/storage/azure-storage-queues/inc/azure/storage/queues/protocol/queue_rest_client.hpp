@@ -55,29 +55,81 @@ namespace Azure { namespace Storage { namespace Queues {
       std::string m_value;
     }; // extensible enum GeoReplicationStatus
 
+    /**
+     * @brief A message object peeked from a queue.
+     */
     struct PeekedQueueMessage final
     {
+      /**
+       * The content of the message.
+       */
       std::string Body;
+      /**
+       * A GUID value that identifies the message in the queue.
+       */
       std::string MessageId;
+      /**
+       * The time the message was inserted into the queue.
+       */
       Azure::DateTime InsertedOn;
+      /**
+       * The time that the message will expire and be automatically deleted from the queue.
+       */
       Azure::DateTime ExpiresOn;
+      /**
+       * The number of times the message has been dequeued.
+       */
       int64_t DequeueCount = 0;
     }; // struct PeekedQueueMessage
 
+    /**
+     * @brief A queue item from the result of
+     * #Azure::Storage::Queues::QueueServiceClient::ListQueues.
+     */
     struct QueueItem final
     {
+      /**
+       * Queue name.
+       */
       std::string Name;
+      /**
+       * A set of name-value pairs associated with a queue as user-defined metadata.
+       */
       Storage::Metadata Metadata;
     }; // struct QueueItem
 
+    /**
+     * @brief A message object stored in the queue.
+     */
     struct QueueMessage final
     {
+      /**
+       * The content of the message.
+       */
       std::string Body;
+      /**
+       * A GUID value that identifies the message in the queue.
+       */
       std::string MessageId;
+      /**
+       * The time the message was inserted into the queue.
+       */
       Azure::DateTime InsertedOn;
+      /**
+       * The time that the message will expire and be automatically deleted from the queue.
+       */
       Azure::DateTime ExpiresOn;
+      /**
+       * This value is required to delete a message.
+       */
       std::string PopReceipt;
+      /**
+       * The time that the message will again become visible in the queue.
+       */
       Azure::DateTime NextVisibleOn;
+      /**
+       * The number of times the message has been dequeued.
+       */
       int64_t DequeueCount = 0;
     }; // struct QueueMessage
 
@@ -216,6 +268,9 @@ namespace Azure { namespace Storage { namespace Queues {
       Azure::Nullable<bool> IncludeApis;
     }; // struct Metrics
 
+    /**
+     * @brief Response type for #Azure::Storage::Queues::QueueClient::ClearMessages.
+     */
     struct ClearMessagesResult final
     {
     }; // struct ClearMessagesResult
@@ -291,6 +346,9 @@ namespace Azure { namespace Storage { namespace Queues {
      */
     struct QueueAccessPolicy final
     {
+      /**
+       * A collection of signed identifiers.
+       */
       std::vector<SignedIdentifier> SignedIdentifiers;
     }; // struct QueueAccessPolicy
 
@@ -299,7 +357,14 @@ namespace Azure { namespace Storage { namespace Queues {
      */
     struct QueueProperties final
     {
+      /**
+       * A set of name-value pairs associated with a queue as user-defined metadata.
+       */
       Storage::Metadata Metadata;
+      /**
+       * The approximate number of messages in the queue. This number is not lower than the actual
+       * number of messages in the queue, but could be higher.
+       */
       int64_t ApproximateMessageCount;
     }; // struct QueueProperties
 
@@ -331,10 +396,25 @@ namespace Azure { namespace Storage { namespace Queues {
      */
     struct SendMessageResult final
     {
+      /**
+       * A GUID value that identifies the message in the queue.
+       */
       std::string MessageId;
+      /**
+       * The time the message was inserted into the queue.
+       */
       Azure::DateTime InsertedOn;
+      /**
+       * The time that the message will expire and be automatically deleted from the queue.
+       */
       Azure::DateTime ExpiresOn;
-      std::string PopReciept;
+      /**
+       * This value is required to delete a message.
+       */
+      std::string PopReceipt;
+      /**
+       * The time that the message will again become visible in the queue.
+       */
       Azure::DateTime NextVisibleOn;
     }; // struct SendMessageResult
 
@@ -370,9 +450,18 @@ namespace Azure { namespace Storage { namespace Queues {
     {
     }; // struct SetServicePropertiesResult
 
+    /**
+     * @brief Response type for #Azure::Storage::Queues::QueueClient::UpdateMessage.
+     */
     struct UpdateMessageResult final
     {
+      /**
+       * This value is required to delete a message.
+       */
       std::string PopReceipt;
+      /**
+       * The time that the message will again become visible in the queue.
+       */
       Azure::DateTime NextVisibleOn;
     }; // struct UpdateMessageResult
 
@@ -2243,7 +2332,7 @@ namespace Azure { namespace Storage { namespace Queues {
                   path.size() == 3 && path[0] == XmlTagName::k_QueueMessagesList
                   && path[1] == XmlTagName::k_QueueMessage && path[2] == XmlTagName::k_PopReceipt)
               {
-                ret.PopReciept = node.Value;
+                ret.PopReceipt = node.Value;
               }
               else if (
                   path.size() == 3 && path[0] == XmlTagName::k_QueueMessagesList
