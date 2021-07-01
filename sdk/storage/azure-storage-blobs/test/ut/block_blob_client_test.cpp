@@ -139,7 +139,7 @@ namespace Azure { namespace Storage { namespace Test {
         headers.ContentHash.Value = blobMd5;
         blobClient.SetHttpHeaders(headers);
         ASSERT_FALSE(blobClient.GetProperties().Value.HttpHeaders.ContentHash.Value.empty());
-        ASSERT_FALSE(blobClient.Download().Value.Details.HttpHeaders.ContentHash.Value.empty());
+        EXPECT_EQ(blobClient.Download().Value.Details.HttpHeaders.ContentHash.Value, blobMd5);
       }
       else
       {
