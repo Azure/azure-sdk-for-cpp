@@ -55,6 +55,8 @@ namespace Azure { namespace Core {
     /**
      * @brief The error message from the service returned in the HTTP response.
      *
+     * @note This string is purely for informational purposes, and should't be relied on at runtime.
+     *
      */
     std::string Message;
 
@@ -72,10 +74,7 @@ namespace Azure { namespace Core {
      *
      * @param message The error description.
      */
-    explicit RequestFailedException(std::string const& message)
-        : std::runtime_error(message)
-    {
-    }
+    explicit RequestFailedException(std::string const& message) : std::runtime_error(message) {}
 
     /**
      * @brief Constructs a new `%RequestFailedException` object with an HTTP raw response.
