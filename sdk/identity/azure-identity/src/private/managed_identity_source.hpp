@@ -7,7 +7,7 @@
 #include <azure/core/credentials/token_credential_options.hpp>
 #include <azure/core/url.hpp>
 
-#include "private/token_credential_impl.hpp"
+#include "token_credential_impl.hpp"
 
 #include <memory>
 #include <string>
