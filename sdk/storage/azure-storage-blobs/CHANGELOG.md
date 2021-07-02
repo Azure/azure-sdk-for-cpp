@@ -2,6 +2,9 @@
 
 ## 12.1.0-beta.1 (Unreleased)
 
+### Bug Fixes
+
+- Fixed a bug where transactional MD5 hash was treated as blob MD5 hash when downloading partial blob.
 
 ## 12.0.0 (2021-06-08)
 
