@@ -3,11 +3,8 @@
 
 #pragma once
 
-#include <cstring>
-#include <limits>
-#include <map>
-#include <set>
-#include <stdexcept>
+#include <chrono>
+#include <memory>
 #include <string>
 #include <type_traits>
 #include <vector>
@@ -17,7 +14,6 @@
 #include <azure/core/etag.hpp>
 #include <azure/core/http/http.hpp>
 #include <azure/core/internal/http/pipeline.hpp>
-#include <azure/core/internal/strings.hpp>
 #include <azure/core/nullable.hpp>
 #include <azure/core/response.hpp>
 #include <azure/storage/common/crypt.hpp>
