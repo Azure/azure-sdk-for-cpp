@@ -7,7 +7,10 @@ Param (
     [string] $SourceBranch,
 
     [Parameter()]
-    [string] $CspellConfigPath = "./.vscode/cspell.json"
+    [string] $CspellConfigPath = "./.vscode/cspell.json",
+
+    [Parameter()]
+    [switch] $ExitWithError
 )
 
 $ErrorActionPreference = "Continue"
@@ -49,11 +52,19 @@ Write-Host "npx cspell --config $CspellConfigPath $changedFilesString"
 $spellingErrors = cspell --config $CspellConfigPath @changedFiles
 
 if ($spellingErrors) {
-    foreach ($spellingError in $spellingErrors) { 
-        LogWarning $spellingError
+    $errorLoggingFunction = Get-Item 'Function:LogWarning'
+    if ($ExitWithError) { 
+        $errorLoggingFunction = Get-Item 'Function:LogError'
     }
-    LogWarning "Spelling errors detected. To correct false positives or learn about spell checking see: https://aka.ms/azsdk/engsys/spellcheck"
-    exit 1
+
+    foreach ($spellingError in $spellingErrors) { 
+        &$errorLoggingFunction $spellingError
+    }
+    &$errorLoggingFunction "Spelling errors detected. To correct false positives or learn about spell checking see: https://aka.ms/azsdk/engsys/spellcheck"
+
+    if ($ExitWithError) {
+        exit 1
+    }
 }
 
 exit 0
@@ -88,6 +99,9 @@ includes files for whom changes have not been committed.
 .PARAMETER CspellConfigPath
 Optional location to use for cspell.json path. Default value is 
 `./.vscode/cspell.json`
+
+.PARAMETER ExitWithError
+Exit with error code 1 if spelling errors are detected.
 
 .EXAMPLE
 ./eng/common/scripts/check-spelling-in-changed-files.ps1 -TargetBranch 'target_branch_name'

@@ -27,6 +27,7 @@ steps:
           -TargetBranch "origin/$("${{ parameters.TargetBranch }}" -replace "refs/heads/")"
           -SourceBranch ${{ parameters.SourceBranch }}
           -CspellConfigPath ${{ parameters.CspellConfigPath }}
+          -ExitWithError:!$${{ parameters.ContinueOnError }}
         pwsh: true
 
     - pwsh: npm uninstall --global cspell
