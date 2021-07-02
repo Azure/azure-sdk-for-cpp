@@ -1,6 +1,6 @@
 # Release History
 
-## 1.1.0 (2021-07-01)
+## 1.1.0 (2021-07-02)
 
 ### Bugs Fixed
 
@@ -14,7 +14,7 @@
 
 Thank you to our developer community members who helped to make Azure Core better with their contributions to this release:
 
-- Jørgen Lind _([GitHub](https://github.com/jorgen))_
+- Jorgen Lind _([GitHub](https://github.com/jorgen))_
 
 ## 1.0.0 (2021-06-04)
 
