@@ -110,30 +110,84 @@ namespace Azure { namespace Storage { namespace Test {
 
   TEST_F(BlockBlobClientTest, DownloadTransactionalHash)
   {
-    const int64_t downloadLength = 1024;
-    Blobs::DownloadBlobOptions options;
-    options.Range = Azure::Core::Http::HttpRange();
-    options.Range.Value().Offset = 0;
-    options.Range.Value().Length = downloadLength;
-    options.RangeHashAlgorithm = HashAlgorithm::Md5;
-    auto res = m_blockBlobClient->Download(options);
-    ASSERT_TRUE(res.Value.TransactionalContentHash.HasValue());
-    EXPECT_EQ(res.Value.TransactionalContentHash.Value().Algorithm, HashAlgorithm::Md5);
+    const std::vector<uint8_t> dataPart1(static_cast<size_t>(4_MB + 1), 'a');
+    const std::vector<uint8_t> dataPart2(static_cast<size_t>(4_MB + 1), 'b');
+
+    const std::string blockId1 = Base64EncodeText("0");
+    const std::string blockId2 = Base64EncodeText("1");
+
+    auto blobClient = m_blobContainerClient->GetBlockBlobClient(RandomString());
+    auto blockContent = Azure::Core::IO::MemoryBodyStream(dataPart1.data(), dataPart1.size());
+    blobClient.StageBlock(blockId1, blockContent);
+    blockContent = Azure::Core::IO::MemoryBodyStream(dataPart2.data(), dataPart2.size());
+    blobClient.StageBlock(blockId2, blockContent);
+    blobClient.CommitBlockList({blockId1, blockId2});
+
+    std::vector<uint8_t> blobMd5;
     {
       Azure::Core::Cryptography::Md5Hash instance;
-      EXPECT_EQ(
-          res.Value.TransactionalContentHash.Value().Value,
-          instance.Final(m_blobContent.data(), downloadLength));
+      instance.Append(dataPart1.data(), dataPart1.size());
+      blobMd5 = instance.Final(dataPart2.data(), dataPart2.size());
     }
-    options.RangeHashAlgorithm = HashAlgorithm::Crc64;
-    res = m_blockBlobClient->Download(options);
-    ASSERT_TRUE(res.Value.TransactionalContentHash.HasValue());
-    EXPECT_EQ(res.Value.TransactionalContentHash.Value().Algorithm, HashAlgorithm::Crc64);
+
+    for (bool blobHasMd5 : {true, false})
     {
-      Crc64Hash instance;
-      EXPECT_EQ(
-          res.Value.TransactionalContentHash.Value().Value,
-          instance.Final(m_blobContent.data(), downloadLength));
+      if (blobHasMd5)
+      {
+        Blobs::Models::BlobHttpHeaders headers;
+        headers.ContentHash.Algorithm = HashAlgorithm::Md5;
+        headers.ContentHash.Value = blobMd5;
+        blobClient.SetHttpHeaders(headers);
+        ASSERT_FALSE(blobClient.GetProperties().Value.HttpHeaders.ContentHash.Value.empty());
+        EXPECT_EQ(blobClient.Download().Value.Details.HttpHeaders.ContentHash.Value, blobMd5);
+      }
+      else
+      {
+        blobClient.SetHttpHeaders(Blobs::Models::BlobHttpHeaders());
+        ASSERT_TRUE(blobClient.GetProperties().Value.HttpHeaders.ContentHash.Value.empty());
+        ASSERT_TRUE(blobClient.Download().Value.Details.HttpHeaders.ContentHash.Value.empty());
+      }
+      const int64_t downloadLength = 1;
+      Blobs::DownloadBlobOptions options;
+      options.Range = Azure::Core::Http::HttpRange();
+      options.Range.Value().Offset = 0;
+      options.Range.Value().Length = downloadLength;
+      options.RangeHashAlgorithm = HashAlgorithm::Md5;
+      auto res = blobClient.Download(options);
+      if (blobHasMd5)
+      {
+        EXPECT_EQ(res.Value.Details.HttpHeaders.ContentHash.Value, blobMd5);
+      }
+      else
+      {
+        EXPECT_TRUE(res.Value.Details.HttpHeaders.ContentHash.Value.empty());
+      }
+      ASSERT_TRUE(res.Value.TransactionalContentHash.HasValue());
+      EXPECT_EQ(res.Value.TransactionalContentHash.Value().Algorithm, HashAlgorithm::Md5);
+      {
+        Azure::Core::Cryptography::Md5Hash instance;
+        EXPECT_EQ(
+            res.Value.TransactionalContentHash.Value().Value,
+            instance.Final(dataPart1.data(), downloadLength));
+      }
+      options.RangeHashAlgorithm = HashAlgorithm::Crc64;
+      res = blobClient.Download(options);
+      if (blobHasMd5)
+      {
+        EXPECT_EQ(res.Value.Details.HttpHeaders.ContentHash.Value, blobMd5);
+      }
+      else
+      {
+        EXPECT_TRUE(res.Value.Details.HttpHeaders.ContentHash.Value.empty());
+      }
+      ASSERT_TRUE(res.Value.TransactionalContentHash.HasValue());
+      EXPECT_EQ(res.Value.TransactionalContentHash.Value().Algorithm, HashAlgorithm::Crc64);
+      {
+        Crc64Hash instance;
+        EXPECT_EQ(
+            res.Value.TransactionalContentHash.Value().Value,
+            instance.Final(dataPart1.data(), downloadLength));
+      }
     }
   }
 

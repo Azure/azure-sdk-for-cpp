@@ -65,6 +65,7 @@ add_executable (
     request_id_policy_test.cpp
     response_t_test.cpp
     retry_policy_test.cpp
+    sha_test.cpp
     simplified_header_test.cpp
     string_test.cpp
     telemetry_policy_test.cpp
