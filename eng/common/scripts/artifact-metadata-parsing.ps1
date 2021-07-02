@@ -38,6 +38,9 @@ function CreateReleases($pkgList, $releaseApiUrl, $releaseSha) {
     Write-Host "------------------------- Release body"
     Write-Host "$body"
 
+    Write-Host "------------------------- env token length"
+    Write-Host $env:GH_TOKEN.Length
+
     throw
 
     Invoke-RestMethod -Uri $url -Body $body -Headers $headers -Method "Post" -MaximumRetryCount 3 -RetryIntervalSec 10
