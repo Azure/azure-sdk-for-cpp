@@ -78,9 +78,9 @@ of the file not touched will still be shown.
 Git ref to compare changes. This is usually the "base" (GitHub) or "target" 
 (DevOps) branch for which a pull request would be opened.
 
-.PARAMETER SouceBranch
+.PARAMETER SourceBranch
 Git ref to use instead of changes in current repo state. Use `HEAD` here to 
-check spelling of files that have been committed and exlcude any new files or
+check spelling of files that have been committed and exclude any new files or
 modified files that are not committed. This is most useful in CI scenarios where
 builds may have modified the state of the repo. Leaving this parameter blank  
 includes files for whom changes have not been committed. 
