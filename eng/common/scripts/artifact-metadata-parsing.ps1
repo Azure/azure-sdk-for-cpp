@@ -35,6 +35,11 @@ function CreateReleases($pkgList, $releaseApiUrl, $releaseSha) {
       "Authorization" = "token $($env:GH_TOKEN)"
     }
 
+    Write-Host "------------------------- Release body"
+    Write-Host "$body"
+
+    throw
+
     Invoke-RestMethod -Uri $url -Body $body -Headers $headers -Method "Post" -MaximumRetryCount 3 -RetryIntervalSec 10
   }
 }
