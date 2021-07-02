@@ -14,6 +14,9 @@ parameters:
 
 steps:
   - ${{ if eq(variables['Build.Reason'], 'PullRequest') }}:
+    - pwsh: npm install --global cspell
+      displayName: Install cspell
+
     - task: PowerShell@2
       displayName: Check spelling (cspell)
       continueOnError: ${{ parameters.ContinueOnError }}
@@ -25,3 +28,6 @@ steps:
           -SourceBranch ${{ parameters.SourceBranch }}
           -CspellConfigPath ${{ parameters.CspellConfigPath }}
         pwsh: true
+
+    - pwsh: npm uninstall --global cspell
+      displayName: Uninstall cspell

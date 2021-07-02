@@ -18,8 +18,8 @@ if ((Get-Command git | Measure-Object).Count -eq 0) {
     exit 1
 }
 
-if ((Get-Command npx | Measure-Object).Count -eq 0) { 
-    LogError "Could not locate npx. Install NodeJS (includes npm and npx) https://nodejs.org/en/download/"
+if ((Get-Command cspell | Measure-Object).Count -eq 0) { 
+    LogError "Could not locate cspell. Install NodeJS (includes npm) https://nodejs.org/en/download/ and cspell (npm install --global cspell)"
     exit 1
 }
 
@@ -46,13 +46,14 @@ if ($changedFilesCount -eq 0) {
 $changedFilesString = $changedFiles -join ' '
 
 Write-Host "npx cspell --config $CspellConfigPath $changedFilesString"
-$spellingErrors = Invoke-Expression "npx cspell --config $CspellConfigPath $changedFilesString"
+$spellingErrors = cspell --config $CspellConfigPath @changedFiles
 
 if ($spellingErrors) {
     foreach ($spellingError in $spellingErrors) { 
         LogWarning $spellingError
     }
     LogWarning "Spelling errors detected. To correct false positives or learn about spell checking see: https://aka.ms/azsdk/engsys/spellcheck"
+    exit 1
 }
 
 exit 0
@@ -66,14 +67,12 @@ This script checks files that have changed relative to a base branch (default
 branch) for spelling errors. Dictionaries and spelling configurations reside 
 in a configurable `cspell.json` location.
 
-This script uses `npx` and assumes that NodeJS (and by extension `npm` and `npx`
-) are installed on the machine. If it does not detect `npx` it will warn the 
-user and exit with an error. 
+This script assumes NodeJS and cspell are installed. NodeJS (which includes npm)
+can be downloaded from https://nodejs.org/en/download/. Once NodeJS is installed
+the cspell command can be installed with `npm install -g cspell`.
 
 The entire file is scanned, not just changed sections. Spelling errors in parts 
 of the file not touched will still be shown.
-
-Running this on the local machine will trigger tests 
 
 .PARAMETER TargetBranch
 Git ref to compare changes. This is usually the "base" (GitHub) or "target" 
