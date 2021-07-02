@@ -23,3 +23,4 @@ TEST(KeyVaultPipeline, initPipeline)
       options, "service-name", "service-version", std::move(policies), {});
   EXPECT_NO_THROW(KeyVaultPipeline p(url, "version", std::move(pipeline)));
 }
+ 

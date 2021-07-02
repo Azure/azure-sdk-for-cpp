@@ -117,3 +117,4 @@ TEST(Base64, Roundtrip)
     EXPECT_EQ(Convert::Base64Decode(Convert::Base64Encode(data)), data);
   }
 }
+ 

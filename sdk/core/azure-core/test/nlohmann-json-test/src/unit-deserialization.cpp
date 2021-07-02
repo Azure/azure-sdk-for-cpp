@@ -1171,3 +1171,4 @@ TEST_CASE_TEMPLATE(
   CHECK(json::sax_parse(v, &l));
   CHECK(l.events.size() == 1);
 }
+ 

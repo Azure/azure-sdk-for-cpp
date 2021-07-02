@@ -153,3 +153,4 @@ static inline bool CompareNullableT(Azure::Nullable<T> const& left, Azure::Nulla
   }
   return left.Value() == right.Value();
 }
+ 

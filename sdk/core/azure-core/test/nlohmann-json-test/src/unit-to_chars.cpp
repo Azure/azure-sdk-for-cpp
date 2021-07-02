@@ -733,3 +733,4 @@ TEST_CASE("formatting")
     check_integer(1000000000000000000LL, "1000000000000000000");
   }
 }
+ 

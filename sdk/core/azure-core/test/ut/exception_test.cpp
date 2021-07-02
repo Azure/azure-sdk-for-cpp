@@ -56,3 +56,4 @@ TEST(RequestFailedException, JSONErrorNoError)
   EXPECT_EQ(exception.RequestId, "1");
   EXPECT_EQ(exception.ClientRequestId, "2");
 }
+ 

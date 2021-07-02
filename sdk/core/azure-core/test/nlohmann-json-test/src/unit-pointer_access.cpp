@@ -498,3 +498,4 @@ TEST_CASE("pointer access")
     CHECK(value.get_ptr<const json::binary_t*>() != nullptr);
   }
 }
+ 

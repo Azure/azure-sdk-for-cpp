@@ -43,3 +43,4 @@ std::string Environment::GetVariable(const char* name)
 
   return std::string();
 }
+ 

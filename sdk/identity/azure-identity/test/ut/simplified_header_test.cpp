@@ -23,3 +23,4 @@ TEST(SimplifiedHeader, identity)
   EXPECT_NO_THROW(EnvironmentCredential environmentCredential);
   EXPECT_NO_THROW(static_cast<void>(static_cast<ManagedIdentityCredential const*>(nullptr)));
 }
+ 

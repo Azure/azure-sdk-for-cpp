@@ -244,3 +244,4 @@ TEST(ETag, PreCondition)
   ASSERT_DEATH(emptyTag.ToString(), "Empty ETag");
 #endif
 }
+ 

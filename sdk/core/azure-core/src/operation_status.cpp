@@ -12,3 +12,4 @@ namespace Azure { namespace Core {
   const OperationStatus OperationStatus::Cancelled{"Cancelled"};
 
 }} // namespace Azure::Core
+ 

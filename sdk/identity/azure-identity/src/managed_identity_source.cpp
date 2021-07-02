@@ -293,3 +293,4 @@ Azure::Core::Credentials::AccessToken ImdsManagedIdentitySource::GetToken(
     return request;
   });
 }
+ 

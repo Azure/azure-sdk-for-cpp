@@ -190,3 +190,4 @@ size_t FileBodyStream::OnRead(uint8_t* buffer, size_t count, Azure::Core::Contex
 void FileBodyStream::Rewind() { m_randomAccessFileBodyStream->Rewind(); }
 
 int64_t FileBodyStream::Length() const { return m_randomAccessFileBodyStream->Length(); }
+ 

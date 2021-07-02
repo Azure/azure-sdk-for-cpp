@@ -41,3 +41,4 @@ void BlobsGettingStarted()
 
   std::cout << std::string(buffer.begin(), buffer.end()) << std::endl;
 }
+ 

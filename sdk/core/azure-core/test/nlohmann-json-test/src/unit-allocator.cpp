@@ -266,3 +266,4 @@ TEST_CASE("bad my_allocator::construct")
     j["test"].push_back("should not leak");
   }
 }
+ 

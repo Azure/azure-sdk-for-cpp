@@ -13,3 +13,4 @@
 #define min(x, y) small
 
 #include <azure/core.hpp>
+ 

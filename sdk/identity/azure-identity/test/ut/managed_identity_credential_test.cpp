@@ -738,3 +738,4 @@ TEST(ManagedIdentityCredential, ImdsClientId)
   EXPECT_GT(response1.AccessToken.ExpiresOn, response1.EarliestExpiration + 7200s);
   EXPECT_LT(response1.AccessToken.ExpiresOn, response1.LatestExpiration + 7200s);
 }
+ 

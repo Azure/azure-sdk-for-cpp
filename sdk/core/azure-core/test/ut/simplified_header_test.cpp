@@ -64,3 +64,4 @@ TEST(SimplifiedHeader, core)
 #elif defined(__clang__) // !_MSC_VER !__clang__
 #pragma clang diagnostic pop // NOLINT(clang-diagnostic-unknown-pragmas)
 #endif // _MSC_VER
+ 

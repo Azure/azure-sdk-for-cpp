@@ -165,3 +165,4 @@ std::unique_ptr<RawResponse> TelemetryPolicy::Send(
   request.SetHeader("User-Agent", m_telemetryId);
   return nextPolicy.Send(request, context);
 }
+ 

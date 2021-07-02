@@ -29,3 +29,4 @@ std::unique_ptr<RawResponse> BearerTokenAuthenticationPolicy::Send(
 
   return nextPolicy.Send(request, context);
 }
+ 

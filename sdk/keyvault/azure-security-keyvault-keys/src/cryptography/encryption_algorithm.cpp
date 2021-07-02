@@ -22,3 +22,4 @@ namespace Azure {
   const EncryptionAlgorithm EncryptionAlgorithm::A192CbcPad(_detail::A192CbcPadValue);
   const EncryptionAlgorithm EncryptionAlgorithm::A256CbcPad(_detail::A256CbcPadValue);
 }}}}} // namespace Azure::Security::KeyVault::Keys::Cryptography
+ 

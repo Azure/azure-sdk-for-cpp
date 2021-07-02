@@ -118,3 +118,4 @@ TEST(TelemetryPolicy, telemetryString)
   EXPECT_EQ(actualValue3.substr(0, expected3.size()), expected3);
   EXPECT_EQ(actualValue4.substr(0, expected4.size()), expected4);
 }
+ 

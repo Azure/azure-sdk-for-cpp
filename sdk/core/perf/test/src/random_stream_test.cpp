@@ -43,3 +43,4 @@ TEST(circular_stream, basic)
     EXPECT_EQ(buffer[i], buffer2[i]);
   }
 }
+ 

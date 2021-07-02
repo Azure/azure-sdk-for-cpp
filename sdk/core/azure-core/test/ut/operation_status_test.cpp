@@ -53,3 +53,4 @@ TEST(OperationStatus, Custom)
   EXPECT_EQ(status2, status3);
   EXPECT_EQ(status3, status4);
 }
+ 

@@ -77,3 +77,4 @@ std::vector<Azure::Perf::TestOption> Azure::Perf::GlobalTestOptions::GetOptionMe
       {"Warmup", {"-w", "--warmup"}, "Duration of warmup in seconds. Default to 5 seconds.", 1},
       {"help", {"-h", "--help"}, "Display help information.", 0}};
 }
+ 

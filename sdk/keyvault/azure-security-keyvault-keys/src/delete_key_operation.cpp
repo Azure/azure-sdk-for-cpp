@@ -79,3 +79,4 @@ Azure::Security::KeyVault::Keys::DeleteKeyOperation::DeleteKeyOperation(
     m_status = Azure::Core::OperationStatus::Succeeded;
   }
 }
+ 
