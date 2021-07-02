@@ -201,3 +201,4 @@ TEST(Logger, Message)
     throw;
   }
 }
+ 

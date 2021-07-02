@@ -335,3 +335,4 @@ TEST_CASE("algorithms")
         == json({false, true, 3, 13, 29, {{"one", 1}, {"two", 2}}, {1, 2, 3}, "baz", "foo"}));
   }
 }
+ 

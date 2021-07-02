@@ -51,3 +51,4 @@ TEST(Pipeline, refrefEmptyPipeline)
           std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>>(0)),
       std::invalid_argument);
 }
+ 

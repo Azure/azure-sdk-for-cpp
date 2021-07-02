@@ -71,3 +71,4 @@ Azure::Core::Credentials::AccessToken EnvironmentCredential::GetToken(
 
   return m_credentialImpl->GetToken(tokenRequestContext, context);
 }
+ 

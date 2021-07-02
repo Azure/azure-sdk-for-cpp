@@ -58,3 +58,4 @@ void DataLakeGettingStarted()
   // downloaded contains your downloaded data.
   std::cout << std::string(downloaded.begin(), downloaded.end()) << std::endl;
 }
+ 

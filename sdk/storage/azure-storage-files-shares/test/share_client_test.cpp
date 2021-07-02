@@ -509,3 +509,4 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_FALSE(properties.AccessTierChangedOn.HasValue());
   }
 }}} // namespace Azure::Storage::Test
+ 

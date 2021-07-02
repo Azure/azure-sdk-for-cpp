@@ -718,3 +718,4 @@ TEST_CASE("Issue #1237")
   };
   static_assert(not std::is_convertible<json, non_convertible_type>::value, "");
 }
+ 

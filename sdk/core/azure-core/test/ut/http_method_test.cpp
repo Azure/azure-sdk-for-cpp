@@ -286,3 +286,4 @@ TEST(HttpMethod, HawaiianFish)
   EXPECT_NE(HttpMethod::Patch, humuhumunukunukuapuaa);
   EXPECT_NE(HttpMethod("TRACE"), humuhumunukunukuapuaa);
 }
+ 

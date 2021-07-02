@@ -96,3 +96,4 @@ Azure::Perf::GlobalTestOptions Azure::Perf::Program::ArgParser::Parse(
 
   return options;
 }
+ 

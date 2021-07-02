@@ -17,3 +17,4 @@ TEST(MatchConditions, Basic)
   EXPECT_EQ(match.IfMatch.ToString(), "IfMatch");
   EXPECT_EQ(match.IfNoneMatch.ToString(), "IfNoneMatch");
 }
+ 

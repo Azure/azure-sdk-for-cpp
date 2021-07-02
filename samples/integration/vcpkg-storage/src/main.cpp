@@ -65,3 +65,4 @@ const std::string& GetConnectionString()
   }
   throw std::runtime_error("Cannot find connection string");
 }
+ 

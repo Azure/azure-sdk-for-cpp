@@ -200,3 +200,4 @@ TEST_F(EnvironmentLogLevelListenerTest, GetLogListenerInformational)
   EXPECT_NE(buffer.str().find("INFO  : message"), std::string::npos);
   std::cerr.rdbuf(old);
 }
+ 

@@ -20,3 +20,4 @@ TEST(ClientSecretCredential, Basic)
   EXPECT_FALSE(token.Token.empty());
   EXPECT_GE(token.ExpiresOn, std::chrono::system_clock::now());
 }
+ 

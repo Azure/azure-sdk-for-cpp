@@ -94,3 +94,4 @@ namespace Azure { namespace Storage { namespace Blobs { namespace Models {
   const ScheduleBlobExpiryOriginType ScheduleBlobExpiryOriginType::Absolute("Absolute");
 
 }}}} // namespace Azure::Storage::Blobs::Models
+ 

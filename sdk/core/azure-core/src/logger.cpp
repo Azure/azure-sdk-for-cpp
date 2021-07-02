@@ -52,3 +52,4 @@ void Logger::SetListener(
 }
 
 void Logger::SetLevel(Logger::Level level) { Log::SetLogLevel(level); }
+ 

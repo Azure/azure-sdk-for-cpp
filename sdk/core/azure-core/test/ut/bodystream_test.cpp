@@ -145,3 +145,4 @@ TEST(FileBodyStream, Read)
   EXPECT_EQ(readSize, FileSize);
   EXPECT_EQ(buffer[FileSize], 0);
 }
+ 

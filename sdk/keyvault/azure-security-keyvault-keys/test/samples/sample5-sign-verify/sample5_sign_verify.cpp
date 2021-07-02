@@ -126,3 +126,4 @@ int main()
   keyClient.PurgeDeletedKey(rsaKeyName);
   keyClient.PurgeDeletedKey(ecKeyName);
 }
+ 
