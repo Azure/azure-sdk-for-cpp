@@ -67,7 +67,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     }; // extensible enum AccountKind
 
     /**
-     * @brief Describes a sinlge block in block blob.
+     * @brief Describes a single block in block blob.
      */
     struct BlobBlock final
     {
