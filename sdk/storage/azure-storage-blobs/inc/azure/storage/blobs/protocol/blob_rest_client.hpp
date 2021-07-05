@@ -2131,6 +2131,20 @@ namespace Azure { namespace Storage { namespace Blobs {
        * blob.
        */
       Azure::DateTime LastModified;
+      /**
+       * True if the blob data and metadata are completely encrypted using the specified algorithm.
+       * Otherwise, the value is set to false (when the blob is unencrypted, or if only parts of the
+       * blob/application metadata are encrypted).
+       */
+      bool IsServerEncrypted = false;
+      /**
+       * The SHA-256 hash of the encryption key used to encrypt the blob data and metadata.
+       */
+      Azure::Nullable<std::vector<uint8_t>> EncryptionKeySha256;
+      /**
+       * Name of the encryption scope used to encrypt the blob data and metadata.
+       */
+      Azure::Nullable<std::string> EncryptionScope;
     }; // struct SetBlobMetadataResult
 
     /**
@@ -7301,6 +7315,21 @@ namespace Azure { namespace Storage { namespace Blobs {
           response.ETag = Azure::ETag(httpResponse.GetHeaders().at("etag"));
           response.LastModified = Azure::DateTime::Parse(
               httpResponse.GetHeaders().at("last-modified"), Azure::DateTime::DateFormat::Rfc1123);
+          response.IsServerEncrypted
+              = httpResponse.GetHeaders().at("x-ms-request-server-encrypted") == "true";
+          auto x_ms_encryption_key_sha256__iterator
+              = httpResponse.GetHeaders().find("x-ms-encryption-key-sha256");
+          if (x_ms_encryption_key_sha256__iterator != httpResponse.GetHeaders().end())
+          {
+            response.EncryptionKeySha256
+                = Azure::Core::Convert::Base64Decode(x_ms_encryption_key_sha256__iterator->second);
+          }
+          auto x_ms_encryption_scope__iterator
+              = httpResponse.GetHeaders().find("x-ms-encryption-scope");
+          if (x_ms_encryption_scope__iterator != httpResponse.GetHeaders().end())
+          {
+            response.EncryptionScope = x_ms_encryption_scope__iterator->second;
+          }
           return Azure::Response<SetBlobMetadataResult>(
               std::move(response), std::move(pHttpResponse));
         }

@@ -498,6 +498,10 @@ namespace Azure { namespace Storage { namespace Test {
       auto blobContentInfo = appendBlobClient.Create();
       EXPECT_TRUE(blobContentInfo.Value.EncryptionScope.HasValue());
       EXPECT_EQ(blobContentInfo.Value.EncryptionScope.Value(), TestEncryptionScope);
+      auto setMetadataRes = appendBlobClient.SetMetadata({});
+      EXPECT_TRUE(setMetadataRes.Value.IsServerEncrypted);
+      ASSERT_TRUE(setMetadataRes.Value.EncryptionScope.HasValue());
+      EXPECT_EQ(setMetadataRes.Value.EncryptionScope.Value(), TestEncryptionScope);
       auto properties = appendBlobClient.GetProperties().Value;
       EXPECT_TRUE(properties.EncryptionScope.HasValue());
       EXPECT_EQ(properties.EncryptionScope.Value(), TestEncryptionScope);
@@ -575,7 +579,12 @@ namespace Azure { namespace Storage { namespace Test {
       EXPECT_NO_THROW(appendBlob.AppendBlockFromUri(copySourceBlob.GetUrl() + GetSas()));
       EXPECT_NO_THROW(appendBlob.Download());
       EXPECT_NO_THROW(appendBlob.GetProperties());
-      EXPECT_NO_THROW(appendBlob.SetMetadata({}));
+      auto setMetadataRes = appendBlob.SetMetadata({});
+      EXPECT_TRUE(setMetadataRes.Value.IsServerEncrypted);
+      ASSERT_TRUE(setMetadataRes.Value.EncryptionKeySha256.HasValue());
+      EXPECT_EQ(
+          setMetadataRes.Value.EncryptionKeySha256.Value(),
+          options.CustomerProvidedKey.Value().KeyHash);
       EXPECT_NO_THROW(appendBlob.CreateSnapshot());
 
       auto appendBlobClientWithoutEncryptionKey
