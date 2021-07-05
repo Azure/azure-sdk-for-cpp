@@ -438,7 +438,9 @@ namespace Azure { namespace Storage { namespace Blobs {
     /**
      * @brief Optional conditions that must be met to perform this operation.
      */
-    LeaseAccessConditions AccessConditions;
+    struct : public LeaseAccessConditions, public TagAccessConditions
+    {
+    } AccessConditions;
   };
 
   /**

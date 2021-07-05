@@ -1001,6 +1001,15 @@ namespace Azure { namespace Storage { namespace Test {
     blockBlobClient.SetTags(tags);
 
     {
+      Blobs::SetBlobAccessTierOptions options;
+      options.AccessConditions.TagConditions = successWhereExpression;
+      EXPECT_NO_THROW(blockBlobClient.SetAccessTier(Blobs::Models::AccessTier::Hot, options));
+      options.AccessConditions.TagConditions = failWhereExpression;
+      EXPECT_THROW(
+          blockBlobClient.SetAccessTier(Blobs::Models::AccessTier::Hot, options), StorageException);
+    }
+
+    {
       Blobs::UploadBlockBlobOptions options;
       options.AccessConditions.TagConditions = failWhereExpression;
       content.Rewind();
