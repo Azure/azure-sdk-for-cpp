@@ -2580,11 +2580,6 @@ namespace Azure { namespace Storage { namespace Blobs {
          * blob.
          */
         Azure::DateTime LastModified;
-        /**
-         * The current sequence number for a page blob. This value is null for block blobs or append
-         * blobs.
-         */
-        Azure::Nullable<int64_t> SequenceNumber;
       }; // struct ReleaseBlobLeaseResult
     } // namespace _detail
 
