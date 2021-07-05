@@ -15,7 +15,7 @@
 ### Breaking Changes
 
 - Removed `SequenceNumber` from `SetBlobMetadataResult`, the value of which was always null.
-- Removed source lease ID access conddition for `BlobClient::StartCopy()`, because it's never supported.
+- Removed source lease ID access conditions for `BlobClient::StartCopy()`, because it's never supported.
 
 ### New Features
 
