@@ -15,10 +15,12 @@
 ### Breaking Changes
 
 - Removed `SequenceNumber` from `SetBlobMetadataResult`, the value of which was always null.
-
+- Removed source lease ID access conddition for `BlobClient::StartCopy()`, because it's never supported.
 ### New Features
 
-- Added lease ID access condition for `BlobClient::SetAccessTier()`.
+- Added lease ID access condition and tags access condition for `BlobClient::SetAccessTier()`.
+- Added source ETag access conditions and last-modified access conditions for `PageBlobClient::UploadPagesFromUri()`.
+- Added three new fields `IsServerEncrypted`, `EncryptionKeySha256` and `EncryptionScope` into `SetBlobMetadataResult`.
 
 ### Bug Fixes
 

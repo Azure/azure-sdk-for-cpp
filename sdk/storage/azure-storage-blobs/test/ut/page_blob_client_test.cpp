@@ -329,4 +329,56 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_EQ(downloadStream->ReadToEnd(Azure::Core::Context()), m_blobContent);
   }
 
+  TEST_F(PageBlobClientTest, SourceBlobAccessConditions)
+  {
+    auto sourceBlobClient = Azure::Storage::Blobs::PageBlobClient::CreateFromConnectionString(
+        StandardStorageConnectionString(), m_containerName, RandomString());
+
+    const std::string url = sourceBlobClient.GetUrl() + GetSas();
+
+    const int64_t blobSize = 512;
+    auto createResponse = sourceBlobClient.Create(blobSize);
+    Azure::ETag eTag = createResponse.Value.ETag;
+    auto lastModifiedTime = createResponse.Value.LastModified;
+    auto timeBeforeStr = lastModifiedTime - std::chrono::seconds(1);
+    auto timeAfterStr = lastModifiedTime + std::chrono::seconds(1);
+
+    auto destBlobClient = Azure::Storage::Blobs::PageBlobClient::CreateFromConnectionString(
+        StandardStorageConnectionString(), m_containerName, RandomString());
+    destBlobClient.Create(blobSize);
+
+    {
+      Blobs::UploadPagesFromUriOptions options;
+      options.SourceAccessConditions.IfMatch = eTag;
+      EXPECT_NO_THROW(destBlobClient.UploadPagesFromUri(0, url, {0, blobSize}, options));
+      options.SourceAccessConditions.IfMatch = DummyETag;
+      EXPECT_THROW(
+          destBlobClient.UploadPagesFromUri(0, url, {0, blobSize}, options), StorageException);
+    }
+    {
+      Blobs::UploadPagesFromUriOptions options;
+      options.SourceAccessConditions.IfNoneMatch = DummyETag;
+      EXPECT_NO_THROW(destBlobClient.UploadPagesFromUri(0, url, {0, blobSize}, options));
+      options.SourceAccessConditions.IfNoneMatch = eTag;
+      EXPECT_THROW(
+          destBlobClient.UploadPagesFromUri(0, url, {0, blobSize}, options), StorageException);
+    }
+    {
+      Blobs::UploadPagesFromUriOptions options;
+      options.SourceAccessConditions.IfModifiedSince = timeBeforeStr;
+      EXPECT_NO_THROW(destBlobClient.UploadPagesFromUri(0, url, {0, blobSize}, options));
+      options.SourceAccessConditions.IfModifiedSince = timeAfterStr;
+      EXPECT_THROW(
+          destBlobClient.UploadPagesFromUri(0, url, {0, blobSize}, options), StorageException);
+    }
+    {
+      Blobs::UploadPagesFromUriOptions options;
+      options.SourceAccessConditions.IfUnmodifiedSince = timeAfterStr;
+      EXPECT_NO_THROW(destBlobClient.UploadPagesFromUri(0, url, {0, blobSize}, options));
+      options.SourceAccessConditions.IfUnmodifiedSince = timeBeforeStr;
+      EXPECT_THROW(
+          destBlobClient.UploadPagesFromUri(0, url, {0, blobSize}, options), StorageException);
+    }
+  }
+
 }}} // namespace Azure::Storage::Test

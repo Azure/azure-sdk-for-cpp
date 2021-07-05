@@ -465,7 +465,11 @@ namespace Azure { namespace Storage { namespace Blobs {
     /**
      * @brief Optional conditions that the source must meet to perform this operation.
      */
-    BlobAccessConditions SourceAccessConditions;
+    struct : public Azure::ModifiedConditions,
+             public Azure::MatchConditions,
+             public TagAccessConditions
+    {
+    } SourceAccessConditions;
 
     /**
      * @brief Specifies the tier to be set on the target blob.
@@ -991,6 +995,13 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @brief Optional conditions that must be met to perform this operation.
      */
     PageBlobAccessConditions AccessConditions;
+
+    /**
+     * @brief Optional conditions that the source must meet to perform this operation.
+     */
+    struct : public Azure::ModifiedConditions, public Azure::MatchConditions
+    {
+    } SourceAccessConditions;
   };
 
   /**

@@ -201,31 +201,15 @@ namespace Azure { namespace Storage { namespace Test {
   {
     auto sourceBlobClient = Azure::Storage::Blobs::AppendBlobClient::CreateFromConnectionString(
         StandardStorageConnectionString(), m_containerName, RandomString());
-    sourceBlobClient.Create();
-    Blobs::BlobLeaseClient sourceLeaseClient(
-        sourceBlobClient, Blobs::BlobLeaseClient::CreateUniqueLeaseId());
-    auto leaseResponse = sourceLeaseClient.Acquire(Blobs::BlobLeaseClient::InfiniteLeaseDuration);
-    std::string leaseId = leaseResponse.Value.LeaseId;
-    Azure::ETag eTag = leaseResponse.Value.ETag;
-    auto lastModifiedTime = leaseResponse.Value.LastModified;
+    auto createResponse = sourceBlobClient.Create();
+    Azure::ETag eTag = createResponse.Value.ETag;
+    auto lastModifiedTime = createResponse.Value.LastModified;
     auto timeBeforeStr = lastModifiedTime - std::chrono::seconds(1);
     auto timeAfterStr = lastModifiedTime + std::chrono::seconds(1);
 
     auto destBlobClient = Azure::Storage::Blobs::AppendBlobClient::CreateFromConnectionString(
         StandardStorageConnectionString(), m_containerName, RandomString());
 
-    {
-      Blobs::StartBlobCopyFromUriOptions options;
-      options.SourceAccessConditions.LeaseId = Blobs::BlobLeaseClient::CreateUniqueLeaseId();
-      /*
-      don't know why, the copy operation also succeeds even if the lease ID doesn't match.
-      EXPECT_THROW(
-          destBlobClient.StartCopyFromUri(sourceBlobClient.GetUrl(), options), StorageException);
-      */
-      options.SourceAccessConditions.LeaseId = leaseId;
-      EXPECT_NO_THROW(destBlobClient.StartCopyFromUri(sourceBlobClient.GetUrl(), options));
-    }
-    sourceLeaseClient.Break();
     {
       Blobs::StartBlobCopyFromUriOptions options;
       options.SourceAccessConditions.IfMatch = eTag;

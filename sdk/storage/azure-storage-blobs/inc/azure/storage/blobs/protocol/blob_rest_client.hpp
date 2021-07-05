@@ -7409,7 +7409,6 @@ namespace Azure { namespace Storage { namespace Blobs {
           Storage::Metadata Metadata;
           std::string SourceUri;
           Azure::Nullable<std::string> LeaseId;
-          Azure::Nullable<std::string> SourceLeaseId;
           Azure::Nullable<Models::AccessTier> AccessTier;
           Azure::Nullable<Models::RehydratePriority> RehydratePriority;
           Azure::Nullable<Azure::DateTime> IfModifiedSince;
@@ -7448,10 +7447,6 @@ namespace Azure { namespace Storage { namespace Blobs {
           if (options.LeaseId.HasValue())
           {
             request.SetHeader("x-ms-lease-id", options.LeaseId.Value());
-          }
-          if (options.SourceLeaseId.HasValue())
-          {
-            request.SetHeader("x-ms-source-lease-id", options.SourceLeaseId.Value());
           }
           if (options.AccessTier.HasValue())
           {
@@ -9502,6 +9497,10 @@ namespace Azure { namespace Storage { namespace Blobs {
           Azure::ETag IfMatch;
           Azure::ETag IfNoneMatch;
           Azure::Nullable<std::string> IfTags;
+          Azure::Nullable<Azure::DateTime> SourceIfModifiedSince;
+          Azure::Nullable<Azure::DateTime> SourceIfUnmodifiedSince;
+          Azure::ETag SourceIfMatch;
+          Azure::ETag SourceIfNoneMatch;
         }; // struct UploadPageBlobPagesFromUriOptions
 
         static Azure::Response<UploadPagesFromUriResult> UploadPagesFromUri(
@@ -9621,6 +9620,28 @@ namespace Azure { namespace Storage { namespace Blobs {
           if (options.IfTags.HasValue())
           {
             request.SetHeader("x-ms-if-tags", options.IfTags.Value());
+          }
+          if (options.SourceIfModifiedSince.HasValue())
+          {
+            request.SetHeader(
+                "x-ms-source-if-modified-since",
+                options.SourceIfModifiedSince.Value().ToString(
+                    Azure::DateTime::DateFormat::Rfc1123));
+          }
+          if (options.SourceIfUnmodifiedSince.HasValue())
+          {
+            request.SetHeader(
+                "x-ms-source-if-unmodified-since",
+                options.SourceIfUnmodifiedSince.Value().ToString(
+                    Azure::DateTime::DateFormat::Rfc1123));
+          }
+          if (options.SourceIfMatch.HasValue() && !options.SourceIfMatch.ToString().empty())
+          {
+            request.SetHeader("x-ms-source-if-match", options.SourceIfMatch.ToString());
+          }
+          if (options.SourceIfNoneMatch.HasValue() && !options.SourceIfNoneMatch.ToString().empty())
+          {
+            request.SetHeader("x-ms-source-if-none-match", options.SourceIfNoneMatch.ToString());
           }
           auto pHttpResponse = pipeline.Send(request, context);
           Azure::Core::Http::RawResponse& httpResponse = *pHttpResponse;
