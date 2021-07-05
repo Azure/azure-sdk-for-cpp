@@ -12,9 +12,18 @@
 
 ## 12.0.1 (2021-07-07)
 
+### Breaking Changes
+
+- Removed `SequenceNumber` from `SetBlobMetadataResult`, the value of which was always null.
+
+### New Features
+
+- Added lease ID access condition for `BlobClient::SetAccessTier()`.
+
 ### Bug Fixes
 
 - Fixed a bug where transactional MD5 hash was treated as blob MD5 hash when downloading partial blob.
+- Fixed a bug where lease ID didn't work for `BlobContainerClient::GetAccessPolicy()`.
 
 ## 12.0.0 (2021-06-08)
 

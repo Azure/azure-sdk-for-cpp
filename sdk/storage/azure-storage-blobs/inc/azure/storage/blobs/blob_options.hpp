@@ -435,6 +435,10 @@ namespace Azure { namespace Storage { namespace Blobs {
      * same blob.
      */
     Azure::Nullable<Models::RehydratePriority> RehydratePriority;
+    /**
+     * @brief Optional conditions that must be met to perform this operation.
+     */
+    LeaseAccessConditions AccessConditions;
   };
 
   /**

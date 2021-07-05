@@ -681,13 +681,44 @@ namespace Azure { namespace Storage { namespace Test {
         StandardStorageConnectionString(), LowercaseRandomString());
     containerClient.Create();
 
-    std::string leaseId = Blobs::BlobLeaseClient::CreateUniqueLeaseId();
+    const std::string leaseId = Blobs::BlobLeaseClient::CreateUniqueLeaseId();
+    const std::string dummyLeaseId = Blobs::BlobLeaseClient::CreateUniqueLeaseId();
     Blobs::BlobLeaseClient leaseClient(containerClient, leaseId);
     leaseClient.Acquire(std::chrono::seconds(30));
-    EXPECT_THROW(containerClient.Delete(), StorageException);
-    Blobs::DeleteBlobContainerOptions options;
-    options.AccessConditions.LeaseId = leaseId;
-    EXPECT_NO_THROW(containerClient.Delete(options));
+    {
+      Blobs::GetBlobContainerPropertiesOptions options;
+      options.AccessConditions.LeaseId = dummyLeaseId;
+      EXPECT_THROW(containerClient.GetProperties(options), StorageException);
+      options.AccessConditions.LeaseId = leaseId;
+      EXPECT_NO_THROW(containerClient.GetProperties(options));
+    }
+    {
+      Blobs::SetBlobContainerMetadataOptions options;
+      options.AccessConditions.LeaseId = dummyLeaseId;
+      EXPECT_THROW(containerClient.SetMetadata({}, options), StorageException);
+      options.AccessConditions.LeaseId = leaseId;
+      EXPECT_NO_THROW(containerClient.SetMetadata({}, options));
+    }
+    {
+      Blobs::GetBlobContainerAccessPolicyOptions options;
+      options.AccessConditions.LeaseId = dummyLeaseId;
+      EXPECT_THROW(containerClient.GetAccessPolicy(options), StorageException);
+      options.AccessConditions.LeaseId = leaseId;
+      EXPECT_NO_THROW(containerClient.GetAccessPolicy(options));
+    }
+    {
+      Blobs::SetBlobContainerAccessPolicyOptions options;
+      options.AccessConditions.LeaseId = dummyLeaseId;
+      EXPECT_THROW(containerClient.SetAccessPolicy(options), StorageException);
+      options.AccessConditions.LeaseId = leaseId;
+      EXPECT_NO_THROW(containerClient.SetAccessPolicy(options));
+    }
+    {
+      EXPECT_THROW(containerClient.Delete(), StorageException);
+      Blobs::DeleteBlobContainerOptions options;
+      options.AccessConditions.LeaseId = leaseId;
+      EXPECT_NO_THROW(containerClient.Delete(options));
+    }
   }
 
   TEST_F(BlobContainerClientTest, DISABLED_Tags)

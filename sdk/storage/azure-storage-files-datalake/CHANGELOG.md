@@ -12,6 +12,10 @@
 
 ## 12.0.1 (2021-07-07)
 
+### New Features
+
+- Added `ETag` and `LastModified` into `ScheduleFileDeletionResult`.
+
 ### Bug Fixes
 
 - Fixed a bug where transactional MD5 hash was treated as blob MD5 hash when downloading partial blob.

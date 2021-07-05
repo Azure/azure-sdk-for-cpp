@@ -2082,6 +2082,16 @@ namespace Azure { namespace Storage { namespace Blobs {
      */
     struct SetBlobExpiryResult final
     {
+      /**
+       * The ETag contains a value that you can use to perform operations conditionally.
+       */
+      Azure::ETag ETag;
+      /**
+       * The date and time the container was last modified. Any operation that modifies the blob,
+       * including an update of the metadata or properties, changes the last-modified time of the
+       * blob.
+       */
+      Azure::DateTime LastModified;
     }; // struct SetBlobExpiryResult
 
     /**
@@ -2121,11 +2131,6 @@ namespace Azure { namespace Storage { namespace Blobs {
        * blob.
        */
       Azure::DateTime LastModified;
-      /**
-       * The current sequence number for a page blob. This value is null for block blobs or append
-       * blobs.
-       */
-      Azure::Nullable<int64_t> SequenceNumber;
     }; // struct SetBlobMetadataResult
 
     /**
@@ -4986,6 +4991,10 @@ namespace Azure { namespace Storage { namespace Blobs {
           }
           request.GetUrl().AppendQueryParameter("restype", "container");
           request.GetUrl().AppendQueryParameter("comp", "acl");
+          if (options.LeaseId.HasValue())
+          {
+            request.SetHeader("x-ms-lease-id", options.LeaseId.Value());
+          }
           auto pHttpResponse = pipeline.Send(request, context);
           Azure::Core::Http::RawResponse& httpResponse = *pHttpResponse;
           BlobContainerAccessPolicy response;
@@ -6727,6 +6736,9 @@ namespace Azure { namespace Storage { namespace Blobs {
           {
             throw StorageException::CreateFromResponse(std::move(pHttpResponse));
           }
+          response.ETag = Azure::ETag(httpResponse.GetHeaders().at("etag"));
+          response.LastModified = Azure::DateTime::Parse(
+              httpResponse.GetHeaders().at("last-modified"), Azure::DateTime::DateFormat::Rfc1123);
           return Azure::Response<SetBlobExpiryResult>(
               std::move(response), std::move(pHttpResponse));
         }
@@ -7303,6 +7315,7 @@ namespace Azure { namespace Storage { namespace Blobs {
           Azure::Nullable<int32_t> Timeout;
           Models::AccessTier AccessTier;
           Azure::Nullable<Models::RehydratePriority> RehydratePriority;
+          Azure::Nullable<std::string> LeaseId;
           Azure::Nullable<std::string> IfTags;
         }; // struct SetBlobAccessTierOptions
 
@@ -7325,6 +7338,10 @@ namespace Azure { namespace Storage { namespace Blobs {
           {
             request.SetHeader(
                 "x-ms-rehydrate-priority", options.RehydratePriority.Value().ToString());
+          }
+          if (options.LeaseId.HasValue())
+          {
+            request.SetHeader("x-ms-lease-id", options.LeaseId.Value());
           }
           if (options.IfTags.HasValue())
           {
@@ -8047,12 +8064,6 @@ namespace Azure { namespace Storage { namespace Blobs {
           response.ETag = Azure::ETag(httpResponse.GetHeaders().at("etag"));
           response.LastModified = Azure::DateTime::Parse(
               httpResponse.GetHeaders().at("last-modified"), Azure::DateTime::DateFormat::Rfc1123);
-          auto x_ms_blob_sequence_number__iterator
-              = httpResponse.GetHeaders().find("x-ms-blob-sequence-number");
-          if (x_ms_blob_sequence_number__iterator != httpResponse.GetHeaders().end())
-          {
-            response.SequenceNumber = std::stoll(x_ms_blob_sequence_number__iterator->second);
-          }
           return Azure::Response<Models::_detail::ReleaseBlobLeaseResult>(
               std::move(response), std::move(pHttpResponse));
         }

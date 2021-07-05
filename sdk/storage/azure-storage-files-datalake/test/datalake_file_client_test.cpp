@@ -333,9 +333,11 @@ namespace Azure { namespace Storage { namespace Test {
   {
     {
       auto client = m_fileSystemClient->GetFileClient(RandomString());
-      EXPECT_NO_THROW(client.Create());
-      EXPECT_NO_THROW(
-          client.ScheduleDeletion(Files::DataLake::ScheduleFileExpiryOriginType::NeverExpire));
+      auto createResponse = client.Create();
+      auto scheduleDeletionResponse
+          = client.ScheduleDeletion(Files::DataLake::ScheduleFileExpiryOriginType::NeverExpire);
+      EXPECT_EQ(scheduleDeletionResponse.Value.ETag, createResponse.Value.ETag);
+      EXPECT_EQ(scheduleDeletionResponse.Value.LastModified, createResponse.Value.LastModified);
     }
     {
       auto client = m_fileSystemClient->GetFileClient(RandomString());

@@ -1066,4 +1066,22 @@ namespace Azure { namespace Storage { namespace Test {
     }
   }
 
+  TEST_F(BlockBlobClientTest, SetTierWithLeaseId)
+  {
+    std::vector<uint8_t> emptyContent;
+    auto blobClient = Azure::Storage::Blobs::BlockBlobClient::CreateFromConnectionString(
+        StandardStorageConnectionString(), m_containerName, RandomString());
+    blobClient.UploadFrom(emptyContent.data(), emptyContent.size());
+
+    const std::string leaseId = Blobs::BlobLeaseClient::CreateUniqueLeaseId();
+    Blobs::BlobLeaseClient leaseClient(blobClient, leaseId);
+    leaseClient.Acquire(std::chrono::seconds(30));
+
+    EXPECT_THROW(blobClient.SetAccessTier(Blobs::Models::AccessTier::Cool), StorageException);
+
+    Blobs::SetBlobAccessTierOptions options;
+    options.AccessConditions.LeaseId = leaseId;
+    EXPECT_NO_THROW(blobClient.SetAccessTier(Blobs::Models::AccessTier::Cool, options));
+  }
+
 }}} // namespace Azure::Storage::Test

@@ -525,6 +525,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     _detail::BlobRestClient::Blob::SetBlobAccessTierOptions protocolLayerOptions;
     protocolLayerOptions.AccessTier = tier;
     protocolLayerOptions.RehydratePriority = options.RehydratePriority;
+    protocolLayerOptions.LeaseId = options.AccessConditions.LeaseId;
     return _detail::BlobRestClient::Blob::SetAccessTier(
         *m_pipeline, m_blobUrl, protocolLayerOptions, context);
   }
