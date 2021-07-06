@@ -750,6 +750,8 @@ namespace Azure { namespace Storage { namespace Test {
     std::string v2 = RandomString();
     std::string c3 = "k" + RandomString();
     std::string v3 = RandomString();
+    std::string c4 = "key3 +-./:=_";
+    std::string v4 = "v1 +-./:=_";
     tags[c1] = v1;
     tags[c2] = v2;
     tags[c3] = v3;
