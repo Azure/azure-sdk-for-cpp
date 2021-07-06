@@ -93,6 +93,19 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_THROW(appendBlobClient.Delete(), StorageException);
   }
 
+  TEST_F(AppendBlobClientTest, CreateWithTags)
+  {
+    auto appendBlobClient = Azure::Storage::Blobs::AppendBlobClient::CreateFromConnectionString(
+        StandardStorageConnectionString(), m_containerName, RandomString());
+    Blobs::CreateAppendBlobOptions options;
+    options.Tags["key1"] = "value1";
+    options.Tags["key2"] = "value2";
+    options.Tags["key3 +-./:=_"] = "v1 +-./:=_";
+    appendBlobClient.Create(options);
+
+    EXPECT_EQ(appendBlobClient.GetTags().Value, options.Tags);
+  }
+
   TEST_F(AppendBlobClientTest, AccessConditionLastModifiedTime)
   {
     auto appendBlobClient = Azure::Storage::Blobs::AppendBlobClient::CreateFromConnectionString(

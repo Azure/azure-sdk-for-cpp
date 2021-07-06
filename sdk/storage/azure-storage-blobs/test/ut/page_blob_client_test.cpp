@@ -62,6 +62,19 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_THROW(pageBlobClient.Delete(), StorageException);
   }
 
+  TEST_F(PageBlobClientTest, CreateWithTags)
+  {
+    auto pageBlobClient = Azure::Storage::Blobs::PageBlobClient::CreateFromConnectionString(
+        StandardStorageConnectionString(), m_containerName, RandomString());
+    Blobs::CreatePageBlobOptions options;
+    options.Tags["key1"] = "value1";
+    options.Tags["key2"] = "value2";
+    options.Tags["key3 +-./:=_"] = "v1 +-./:=_";
+    pageBlobClient.Create(512, options);
+
+    EXPECT_EQ(pageBlobClient.GetTags().Value, options.Tags);
+  }
+
   TEST_F(PageBlobClientTest, Resize)
   {
     auto pageBlobClient = Azure::Storage::Blobs::PageBlobClient::CreateFromConnectionString(

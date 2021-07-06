@@ -17,6 +17,7 @@
 - Added lease ID access condition and tags access condition for `BlobClient::SetAccessTier()`.
 - Added source ETag access conditions and last-modified access conditions for `PageBlobClient::UploadPagesFromUri()`.
 - Added three new fields `IsServerEncrypted`, `EncryptionKeySha256` and `EncryptionScope` into `SetBlobMetadataResult`.
+- Added support for setting blob tags when creating or copying blobs.
 
 ### Bugs Fixed
 

@@ -538,6 +538,7 @@ namespace Azure { namespace Storage { namespace Blobs {
   {
     _detail::BlobRestClient::Blob::StartBlobCopyFromUriOptions protocolLayerOptions;
     protocolLayerOptions.Metadata = options.Metadata;
+    protocolLayerOptions.Tags = options.Tags;
     protocolLayerOptions.SourceUri = sourceUri;
     protocolLayerOptions.AccessTier = options.AccessTier;
     protocolLayerOptions.RehydratePriority = options.RehydratePriority;

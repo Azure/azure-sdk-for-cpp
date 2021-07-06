@@ -108,6 +108,49 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_EQ(res.Value.BlobSize, static_cast<int64_t>(m_blobContent.size()));
   }
 
+  TEST_F(BlockBlobClientTest, UploadWithTags)
+  {
+    auto blockBlobClient = Azure::Storage::Blobs::BlockBlobClient::CreateFromConnectionString(
+        StandardStorageConnectionString(), m_containerName, RandomString());
+    std::map<std::string, std::string> tags;
+    tags["key1"] = "value1";
+    tags["key2"] = "value2";
+    tags["key3 +-./:=_"] = "v1 +-./:=_";
+
+    std::vector<uint8_t> blobContent(100, 'a');
+    {
+      Blobs::UploadBlockBlobOptions options;
+      options.Tags = tags;
+      auto stream = Azure::Core::IO::MemoryBodyStream(blobContent.data(), blobContent.size());
+      blockBlobClient.Upload(stream, options);
+      EXPECT_EQ(blockBlobClient.GetTags().Value, tags);
+      blockBlobClient.Delete();
+    }
+
+    {
+      Blobs::UploadBlockBlobFromOptions options;
+      options.TransferOptions.SingleUploadThreshold = 0;
+      options.TransferOptions.ChunkSize = blobContent.size() / 2;
+      options.Tags = tags;
+
+      {
+        blockBlobClient.UploadFrom(blobContent.data(), blobContent.size(), options);
+        EXPECT_EQ(blockBlobClient.GetTags().Value, tags);
+        blockBlobClient.Delete();
+      }
+      {
+        const std::string tempFilename = RandomString();
+        {
+          Azure::Storage::_internal::FileWriter fileWriter(tempFilename);
+          fileWriter.Write(blobContent.data(), blobContent.size(), 0);
+        }
+        blockBlobClient.UploadFrom(tempFilename, options);
+        EXPECT_EQ(blockBlobClient.GetTags().Value, tags);
+        blockBlobClient.Delete();
+      }
+    }
+  }
+
   TEST_F(BlockBlobClientTest, DownloadTransactionalHash)
   {
     const std::vector<uint8_t> dataPart1(static_cast<size_t>(4_MB + 1), 'a');
@@ -286,6 +329,17 @@ namespace Azure { namespace Storage { namespace Test {
     {
       EXPECT_TRUE(IsValidTime(downloadResult.Value.Details.CopyCompletedOn.Value()));
     }
+  }
+
+  TEST_F(BlockBlobClientTest, CopyWithTags)
+  {
+    auto blobClient = m_blobContainerClient->GetBlockBlobClient(RandomString());
+    Blobs::StartBlobCopyFromUriOptions options;
+    options.Tags["key1"] = "value1";
+    options.Tags["key2"] = "value2";
+    options.Tags["key3 +-./:=_"] = "v1 +-./:=_";
+    blobClient.StartCopyFromUri(m_blockBlobClient->GetUrl(), options);
+    EXPECT_EQ(blobClient.GetTags().Value, options.Tags);
   }
 
   TEST_F(BlockBlobClientTest, SnapShotVersions)

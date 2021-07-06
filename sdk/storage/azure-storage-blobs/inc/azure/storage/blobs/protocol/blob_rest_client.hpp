@@ -7417,6 +7417,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         {
           Azure::Nullable<int32_t> Timeout;
           Storage::Metadata Metadata;
+          std::map<std::string, std::string> Tags;
           std::string SourceUri;
           Azure::Nullable<std::string> LeaseId;
           Azure::Nullable<Models::AccessTier> AccessTier;
@@ -7453,6 +7454,20 @@ namespace Azure { namespace Storage { namespace Blobs {
           for (const auto& pair : options.Metadata)
           {
             request.SetHeader("x-ms-meta-" + pair.first, pair.second);
+          }
+          if (!options.Tags.empty())
+          {
+            std::string blobTagsValue;
+            for (const auto& tag : options.Tags)
+            {
+              if (!blobTagsValue.empty())
+              {
+                blobTagsValue += "&";
+              }
+              blobTagsValue += _internal::UrlEncodeQueryParameter(tag.first) + "="
+                  + _internal::UrlEncodeQueryParameter(tag.second);
+            }
+            request.SetHeader("x-ms-tags", std::move(blobTagsValue));
           }
           request.SetHeader("x-ms-copy-source", options.SourceUri);
           if (options.LeaseId.HasValue())
@@ -8316,6 +8331,7 @@ namespace Azure { namespace Storage { namespace Blobs {
           Azure::Nullable<ContentHash> TransactionalContentHash;
           BlobHttpHeaders HttpHeaders;
           Storage::Metadata Metadata;
+          std::map<std::string, std::string> Tags;
           Azure::Nullable<std::string> LeaseId;
           Azure::Nullable<Models::AccessTier> AccessTier;
           Azure::Nullable<std::string> EncryptionKey;
@@ -8412,6 +8428,20 @@ namespace Azure { namespace Storage { namespace Blobs {
           for (const auto& pair : options.Metadata)
           {
             request.SetHeader("x-ms-meta-" + pair.first, pair.second);
+          }
+          if (!options.Tags.empty())
+          {
+            std::string blobTagsValue;
+            for (const auto& tag : options.Tags)
+            {
+              if (!blobTagsValue.empty())
+              {
+                blobTagsValue += "&";
+              }
+              blobTagsValue += _internal::UrlEncodeQueryParameter(tag.first) + "="
+                  + _internal::UrlEncodeQueryParameter(tag.second);
+            }
+            request.SetHeader("x-ms-tags", std::move(blobTagsValue));
           }
           if (options.LeaseId.HasValue())
           {
@@ -8786,6 +8816,7 @@ namespace Azure { namespace Storage { namespace Blobs {
           std::vector<std::pair<BlockType, std::string>> BlockList;
           BlobHttpHeaders HttpHeaders;
           Storage::Metadata Metadata;
+          std::map<std::string, std::string> Tags;
           Azure::Nullable<std::string> LeaseId;
           Azure::Nullable<std::string> EncryptionKey;
           Azure::Nullable<std::vector<uint8_t>> EncryptionKeySha256;
@@ -8855,6 +8886,20 @@ namespace Azure { namespace Storage { namespace Blobs {
           for (const auto& pair : options.Metadata)
           {
             request.SetHeader("x-ms-meta-" + pair.first, pair.second);
+          }
+          if (!options.Tags.empty())
+          {
+            std::string blobTagsValue;
+            for (const auto& tag : options.Tags)
+            {
+              if (!blobTagsValue.empty())
+              {
+                blobTagsValue += "&";
+              }
+              blobTagsValue += _internal::UrlEncodeQueryParameter(tag.first) + "="
+                  + _internal::UrlEncodeQueryParameter(tag.second);
+            }
+            request.SetHeader("x-ms-tags", std::move(blobTagsValue));
           }
           if (options.LeaseId.HasValue())
           {
@@ -9167,6 +9212,7 @@ namespace Azure { namespace Storage { namespace Blobs {
           Azure::ETag IfMatch;
           Azure::ETag IfNoneMatch;
           Azure::Nullable<std::string> IfTags;
+          std::map<std::string, std::string> Tags;
         }; // struct CreatePageBlobOptions
 
         static Azure::Response<CreatePageBlobResult> Create(
@@ -9214,6 +9260,20 @@ namespace Azure { namespace Storage { namespace Blobs {
           for (const auto& pair : options.Metadata)
           {
             request.SetHeader("x-ms-meta-" + pair.first, pair.second);
+          }
+          if (!options.Tags.empty())
+          {
+            std::string blobTagsValue;
+            for (const auto& tag : options.Tags)
+            {
+              if (!blobTagsValue.empty())
+              {
+                blobTagsValue += "&";
+              }
+              blobTagsValue += _internal::UrlEncodeQueryParameter(tag.first) + "="
+                  + _internal::UrlEncodeQueryParameter(tag.second);
+            }
+            request.SetHeader("x-ms-tags", std::move(blobTagsValue));
           }
           if (options.LeaseId.HasValue())
           {
@@ -10318,6 +10378,7 @@ namespace Azure { namespace Storage { namespace Blobs {
           Azure::Nullable<int32_t> Timeout;
           BlobHttpHeaders HttpHeaders;
           Storage::Metadata Metadata;
+          std::map<std::string, std::string> Tags;
           Azure::Nullable<std::string> LeaseId;
           Azure::Nullable<std::string> EncryptionKey;
           Azure::Nullable<std::vector<uint8_t>> EncryptionKeySha256;
@@ -10375,6 +10436,20 @@ namespace Azure { namespace Storage { namespace Blobs {
           for (const auto& pair : options.Metadata)
           {
             request.SetHeader("x-ms-meta-" + pair.first, pair.second);
+          }
+          if (!options.Tags.empty())
+          {
+            std::string blobTagsValue;
+            for (const auto& tag : options.Tags)
+            {
+              if (!blobTagsValue.empty())
+              {
+                blobTagsValue += "&";
+              }
+              blobTagsValue += _internal::UrlEncodeQueryParameter(tag.first) + "="
+                  + _internal::UrlEncodeQueryParameter(tag.second);
+            }
+            request.SetHeader("x-ms-tags", std::move(blobTagsValue));
           }
           if (options.LeaseId.HasValue())
           {
