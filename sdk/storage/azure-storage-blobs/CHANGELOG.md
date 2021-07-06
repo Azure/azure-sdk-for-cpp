@@ -12,13 +12,13 @@
 
 ## 12.0.1 (2021-07-07)
 
-### New Features
+### Features Added
 
 - Added lease ID access condition and tags access condition for `BlobClient::SetAccessTier()`.
 - Added source ETag access conditions and last-modified access conditions for `PageBlobClient::UploadPagesFromUri()`.
 - Added three new fields `IsServerEncrypted`, `EncryptionKeySha256` and `EncryptionScope` into `SetBlobMetadataResult`.
 
-### Bug Fixes
+### Bugs Fixed
 
 - Fixed a bug where transactional MD5 hash was treated as blob MD5 hash when downloading partial blob.
 - Fixed a bug where lease ID didn't work for `BlobContainerClient::GetAccessPolicy()`.
