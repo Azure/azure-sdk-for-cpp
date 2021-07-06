@@ -12,11 +12,6 @@
 
 ## 12.0.1 (2021-07-07)
 
-### Breaking Changes
-
-- Removed `SequenceNumber` from `SetBlobMetadataResult`, the value of which was always null.
-- Removed source lease ID access conditions for `BlobClient::StartCopy()`, because it's never supported.
-
 ### New Features
 
 - Added lease ID access condition and tags access condition for `BlobClient::SetAccessTier()`.

@@ -464,9 +464,12 @@ namespace Azure { namespace Storage { namespace Blobs {
 
     /**
      * @brief Optional conditions that the source must meet to perform this operation.
+     *
+     * @note Lease access condition only works for API versions before 2012-02-12.
      */
     struct : public Azure::ModifiedConditions,
              public Azure::MatchConditions,
+             public LeaseAccessConditions,
              public TagAccessConditions
     {
     } SourceAccessConditions;

@@ -552,6 +552,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     protocolLayerOptions.SourceIfMatch = options.SourceAccessConditions.IfMatch;
     protocolLayerOptions.SourceIfNoneMatch = options.SourceAccessConditions.IfNoneMatch;
     protocolLayerOptions.ShouldSealDestination = options.ShouldSealDestination;
+    protocolLayerOptions.SourceLeaseId = options.SourceAccessConditions.LeaseId;
     protocolLayerOptions.SourceIfTags = options.SourceAccessConditions.TagConditions;
 
     auto response = _detail::BlobRestClient::Blob::StartCopyFromUri(

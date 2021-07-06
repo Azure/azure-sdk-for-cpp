@@ -2132,6 +2132,10 @@ namespace Azure { namespace Storage { namespace Blobs {
        */
       Azure::DateTime LastModified;
       /**
+       * This value is always null, don't use it.
+       */
+      Azure::Nullable<int64_t> SequenceNumber;
+      /**
        * True if the blob data and metadata are completely encrypted using the specified algorithm.
        * Otherwise, the value is set to false (when the blob is unencrypted, or if only parts of the
        * blob/application metadata are encrypted).
@@ -7315,6 +7319,12 @@ namespace Azure { namespace Storage { namespace Blobs {
           response.ETag = Azure::ETag(httpResponse.GetHeaders().at("etag"));
           response.LastModified = Azure::DateTime::Parse(
               httpResponse.GetHeaders().at("last-modified"), Azure::DateTime::DateFormat::Rfc1123);
+          auto x_ms_blob_sequence_number__iterator
+              = httpResponse.GetHeaders().find("x-ms-blob-sequence-number");
+          if (x_ms_blob_sequence_number__iterator != httpResponse.GetHeaders().end())
+          {
+            response.SequenceNumber = std::stoll(x_ms_blob_sequence_number__iterator->second);
+          }
           response.IsServerEncrypted
               = httpResponse.GetHeaders().at("x-ms-request-server-encrypted") == "true";
           auto x_ms_encryption_key_sha256__iterator
@@ -7421,6 +7431,7 @@ namespace Azure { namespace Storage { namespace Blobs {
           Azure::ETag SourceIfMatch;
           Azure::ETag SourceIfNoneMatch;
           Azure::Nullable<std::string> SourceIfTags;
+          Azure::Nullable<std::string> SourceLeaseId;
           Azure::Nullable<bool> ShouldSealDestination;
         }; // struct StartBlobCopyFromUriOptions
 
@@ -7511,6 +7522,10 @@ namespace Azure { namespace Storage { namespace Blobs {
           if (options.SourceIfTags.HasValue())
           {
             request.SetHeader("x-ms-source-if-tags", options.SourceIfTags.Value());
+          }
+          if (options.SourceLeaseId.HasValue())
+          {
+            request.SetHeader("x-ms-source-lease-id", options.SourceLeaseId.Value());
           }
           auto pHttpResponse = pipeline.Send(request, context);
           Azure::Core::Http::RawResponse& httpResponse = *pHttpResponse;
