@@ -33,7 +33,7 @@ stages:
   - template: ../../eng/pipelines/templates/stages/archetype-sdk-client.yml
     parameters:
       ServiceDirectory: keyvault
-      CtestRegex: "azure-security-keyvault.*-unittest"
+      CtestRegex: "Remote"
       LiveTestCtestRegex: "azure-security-keyvault.*-livetest"
       LiveTestTimeoutInMinutes: 120
       SubscriptionConfiguration: $(sub-config-azure-cloud-test-resources)
