@@ -730,7 +730,7 @@ namespace Azure { namespace Storage { namespace Test {
     }
   }
 
-  TEST_F(BlobContainerClientTest, DISABLED_Tags)
+  TEST_F(BlobContainerClientTest, Tags)
   {
     std::string blobName = RandomString();
     auto blobClient = Azure::Storage::Blobs::AppendBlobClient::CreateFromConnectionString(
@@ -802,7 +802,7 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_EQ(findResults[0].BlobContainerName, m_containerName);
   }
 
-  TEST_F(BlobContainerClientTest, DISABLED_AccessConditionTags)
+  TEST_F(BlobContainerClientTest, AccessConditionTags)
   {
     std::map<std::string, std::string> tags;
     std::string c1 = "k" + RandomString();
