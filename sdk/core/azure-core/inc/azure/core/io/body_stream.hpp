@@ -291,8 +291,8 @@ namespace Azure { namespace Core { namespace IO {
   class ProgressBodyStream : public BodyStream {
   private:
     BodyStream* m_bodyStream;
-    std::atomic_int64_t m_position;
-    std::function<void(int64_t position, int64_t length)> m_callback;
+    int64_t m_bytesTransferred;
+    std::function<void(int64_t bytesTransferred)> m_callback;
 
   private:
     size_t OnRead(uint8_t* buffer, size_t count, Azure::Core::Context const& context) override;
@@ -310,19 +310,12 @@ namespace Azure { namespace Core { namespace IO {
      */
     ProgressBodyStream(
         BodyStream* bodyStream,
-        std::function<void(int64_t position, int64_t length)> callback);
+        std::function<void(int64_t bytesTransferred)> callback);
 
     ~ProgressBodyStream();
 
     void Rewind() override;
 
     int64_t Length() const override;
-
-    /**
-     * @brief Obtain the current value of the position property
-     *
-     * @return Number of bytes read so far from class instantitation or last Rewind call.
-     */
-    int64_t Position();
   };
 }}} // namespace Azure::Core::IO
