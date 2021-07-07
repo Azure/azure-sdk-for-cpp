@@ -17,7 +17,6 @@
 #include "azure/core/context.hpp"
 
 #include <algorithm>
-#include <atomic>
 #include <cstdint>
 #include <cstdio>
 #include <cstring>
