@@ -1,7 +1,4 @@
-# Copyright (c) Microsoft Corporation. All rights reserved.
-# SPDX-License-Identifier: MIT
-
-{
+# Copyright (c) Microsoft Corporation. All rights reserved. # SPDX-License-Identifier: MIT {
   "name": "azure-core-cpp",
   "version-semver": "@AZ_LIBRARY_VERSION@",
   "description": [
@@ -41,8 +38,7 @@
           "default-features": false,
           "features": [
             "ssl"
-          ],
-          "version>=": "7.44"
+          ]
         }
       ]
     },
