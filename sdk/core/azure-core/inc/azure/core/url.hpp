@@ -116,7 +116,7 @@ namespace Azure { namespace Core {
     /**
      * @brief Sets URL host.
      *
-     * @param host URL host.
+     * @param encodedHost URL host, already encoded.
      */
     void SetHost(const std::string& encodedHost) { m_host = encodedHost; }
 
@@ -130,7 +130,7 @@ namespace Azure { namespace Core {
     /**
      * @brief Sets URL path.
      *
-     * @param path URL path.
+     * @param encodedPath URL path, already encoded.
      */
     void SetPath(const std::string& encodedPath) { m_encodedPath = encodedPath; }
 
@@ -139,7 +139,7 @@ namespace Azure { namespace Core {
      *
      * @note Keys and values in \p queryParameters are expected to be URL-encoded.
      *
-     * @param queryParameters
+     * @param queryParameters query parameters for request, already encoded
      */
     void SetQueryParameters(std::map<std::string, std::string> queryParameters)
     {
@@ -152,7 +152,7 @@ namespace Azure { namespace Core {
     /**
      * @brief Appends an element of URL path.
      *
-     * @param path URL path element to append.
+     * @param encodedPath URL path element to append, already encoded.
      */
     void AppendPath(const std::string& encodedPath)
     {
