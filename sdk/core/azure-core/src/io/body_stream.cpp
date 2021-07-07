@@ -200,7 +200,7 @@ ProgressBodyStream::ProgressBodyStream(
   {
     throw std::runtime_error("Parameter 'bodystream' cannot be null");
   }
- 
+
   m_bodyStream = bodyStream;
   m_callback = callback;
   m_callback(Position(), Length());
@@ -231,9 +231,6 @@ size_t ProgressBodyStream::OnRead(
   return read;
 }
 
-int64_t ProgressBodyStream::Position() 
-{
-  return m_position;
-}
+int64_t ProgressBodyStream::Position() { return m_position; }
 
 int64_t ProgressBodyStream::Length() const { return m_bodyStream->Length(); }
