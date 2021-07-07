@@ -1,7 +1,8 @@
 # Release History
 
-## 12.1.0-beta.1 (Unreleased)
+## 12.0.1 (2021-07-07)
 
+No API changes since `12.0.0`.
 
 ## 12.0.0 (2021-06-08)
 
