@@ -19,7 +19,6 @@
 
 #include <azure/core.hpp>
 #include <azure/identity.hpp>
-#include <azure/keyvault/common/sha.hpp>
 #include <azure/keyvault/key_vault_keys.hpp>
 
 #include <chrono>
@@ -60,13 +59,15 @@ int main()
 
   CryptographyClient ecCryptoClient(cloudEcKey.Id(), credential);
 
-  // digestBase64 simulates some text data that has been hashed using the SHA256 algorithm
+  uint8_t const dataSource[]
+      = "This is some sample data which we will use to demonstrate sign and verify";
+  std::vector<uint8_t> data(std::begin(dataSource), std::end(dataSource));
+
+  // digestRaw simulates some text data that has been hashed using the SHA256 algorithm
   // and then base 64 encoded. It is not relevant for the sample how to create the SHA256
   // hashed digest.
-  // Example input data source for the digest:
-  // "This is some sample data which we will use to demonstrate sign and verify"
-  std::string digestBase64 = "DU9EdhpwhJqnGnieD0qKYEz6e8QPKlOVpYZZro+XtI8=";
-  std::vector<uint8_t> digest = Azure::Core::Convert::Base64Decode(digestBase64);
+  std::vector<uint8_t> digest
+      = Azure::Core::Convert::Base64Decode("DU9EdhpwhJqnGnieD0qKYEz6e8QPKlOVpYZZro");
 
   // Sign and Verify from digest
   SignResult rsaSignResult = rsaCryptoClient.Sign(SignatureAlgorithm::RS256, digest);
