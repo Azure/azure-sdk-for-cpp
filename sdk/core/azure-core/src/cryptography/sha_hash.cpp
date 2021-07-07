@@ -12,13 +12,13 @@
 #include <openssl/evp.h>
 #endif
 
-#include "azure/keyvault/common/sha.hpp"
+#include "azure/core/internal/cryptography/sha_hash.hpp"
 
 #include <memory>
 #include <stdexcept>
 #include <vector>
 
-using namespace Azure::Security::KeyVault;
+using namespace Azure::Core::Cryptography;
 
 #if defined(AZ_PLATFORM_POSIX)
 
@@ -31,7 +31,7 @@ enum class SHASize
   SHA512
 };
 
-/*************************** SHA256 *******************/
+/*************************** Sha256Hash *******************/
 class SHAWithOpenSSL final : public Azure::Core::Cryptography::Hash {
 private:
   EVP_MD_CTX* m_context;
@@ -43,7 +43,7 @@ private:
     unsigned char finalHash[EVP_MAX_MD_SIZE];
     if (1 != EVP_DigestFinal(m_context, finalHash, &size))
     {
-      throw std::runtime_error("Crypto error while computing SHA256.");
+      throw std::runtime_error("Crypto error while computing Sha256Hash.");
     }
     return std::vector<uint8_t>(std::begin(finalHash), std::begin(finalHash) + size);
   }
@@ -52,7 +52,7 @@ private:
   {
     if (1 != EVP_DigestUpdate(m_context, data, length))
     {
-      throw std::runtime_error("Crypto error while updating SHA256.");
+      throw std::runtime_error("Crypto error while updating Sha256Hash.");
     }
   }
 
@@ -68,21 +68,21 @@ public:
       case SHASize::SHA256: {
         if (1 != EVP_DigestInit_ex(m_context, EVP_sha256(), NULL))
         {
-          throw std::runtime_error("Crypto error while init SHA256.");
+          throw std::runtime_error("Crypto error while init Sha256Hash.");
         }
         break;
       }
       case SHASize::SHA384: {
         if (1 != EVP_DigestInit_ex(m_context, EVP_sha384(), NULL))
         {
-          throw std::runtime_error("Crypto error while init SHA384.");
+          throw std::runtime_error("Crypto error while init Sha384Hash.");
         }
         break;
       }
       case SHASize::SHA512: {
         if (1 != EVP_DigestInit_ex(m_context, EVP_sha512(), NULL))
         {
-          throw std::runtime_error("Crypto error while init SHA512.");
+          throw std::runtime_error("Crypto error while init Sha512Hash.");
         }
         break;
       }
@@ -97,17 +97,17 @@ public:
 
 } // namespace
 
-Azure::Security::KeyVault::SHA256::SHA256()
+Azure::Core::Cryptography::_internal::Sha256Hash::Sha256Hash()
     : m_portableImplementation(std::make_unique<SHAWithOpenSSL>(SHASize::SHA256))
 {
 }
 
-Azure::Security::KeyVault::SHA384::SHA384()
+Azure::Core::Cryptography::_internal::Sha384Hash::Sha384Hash()
     : m_portableImplementation(std::make_unique<SHAWithOpenSSL>(SHASize::SHA384))
 {
 }
 
-Azure::Security::KeyVault::SHA512::SHA512()
+Azure::Core::Cryptography::_internal::Sha512Hash::Sha512Hash()
     : m_portableImplementation(std::make_unique<SHAWithOpenSSL>(SHASize::SHA512))
 {
 }
@@ -222,17 +222,17 @@ public:
 
 } // namespace
 
-Azure::Security::KeyVault::SHA256::SHA256()
+Azure::Core::Cryptography::_internal::Sha256Hash::Sha256Hash()
     : m_portableImplementation(std::make_unique<SHAWithBCrypt>(BCRYPT_SHA256_ALGORITHM))
 {
 }
 
-Azure::Security::KeyVault::SHA384::SHA384()
+Azure::Core::Cryptography::_internal::Sha384Hash::Sha384Hash()
     : m_portableImplementation(std::make_unique<SHAWithBCrypt>(BCRYPT_SHA384_ALGORITHM))
 {
 }
 
-Azure::Security::KeyVault::SHA512::SHA512()
+Azure::Core::Cryptography::_internal::Sha512Hash::Sha512Hash()
     : m_portableImplementation(std::make_unique<SHAWithBCrypt>(BCRYPT_SHA512_ALGORITHM))
 {
 }

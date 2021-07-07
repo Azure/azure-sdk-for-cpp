@@ -52,6 +52,24 @@ namespace Azure {
 
     void Initialize(std::string const& operation, Azure::Core::Context const& context);
 
+    /**
+     * @brief Provides a #CryptographyProvider that performs operations in the Key Vault Keys
+     * Server.
+     *
+     * @return A cryptographic client to perform operations on the server.
+     */
+    std::shared_ptr<Azure::Security::KeyVault::Keys::Cryptography::_detail::CryptographyProvider>
+    RemoteClient() const
+    {
+      return m_remoteProvider;
+    }
+
+    /**
+     * @brief Gets whether this #CryptographyClient runs only local operations.
+     *
+     */
+    bool LocalOnly() const noexcept { return m_remoteProvider == nullptr; }
+
   public:
     /**
      * @brief Initializes a new instance of the #CryptographyClient class.
@@ -70,24 +88,6 @@ namespace Azure {
         : CryptographyClient(keyId, credential, options, false)
     {
     }
-
-    /**
-     * @brief Provides a #CryptographyProvider that performs operations in the Key Vault Keys
-     * Server.
-     *
-     * @return A cryptographic client to perform operations on the server.
-     */
-    std::shared_ptr<Azure::Security::KeyVault::Keys::Cryptography::_detail::CryptographyProvider>
-    RemoteClient() const
-    {
-      return m_remoteProvider;
-    }
-
-    /**
-     * @brief Gets whether this #CryptographyClient runs only local operations.
-     *
-     */
-    bool LocalOnly() const noexcept { return m_remoteProvider == nullptr; }
 
     /**
      * @brief Encrypts plaintext.

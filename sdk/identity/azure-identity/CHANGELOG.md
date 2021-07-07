@@ -1,7 +1,14 @@
 # Release History
 
-## 1.1.0-beta.1 (Unreleased)
+## 1.1.0-beta.1 (2021-07-02)
 
+### Features Added
+
+- Added `ManagedIdentityCredential`.
+
+### Bugs Fixed
+
+- Fixed minor memory leak when obtaining a token.
 
 ## 1.0.0 (2021-06-04)
 

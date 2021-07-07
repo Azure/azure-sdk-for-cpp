@@ -1,10 +1,20 @@
 # Release History
 
-## 1.1.0-beta.1 (Unreleased)
+## 1.1.0 (2021-07-02)
 
-### Bug Fixes
+### Bugs Fixed
 
-- Fixed a memory leak issue in `Base64Encode()`.
+- Fixed a memory leak issue in `Base64Encode()`. (A community contribution, courtesy of _[jorgen](https://github.com/jorgen)_)
+
+### Other Changes
+
+- Made internal-only changes to support the Azure Key Vault client library.
+
+### Acknowledgments
+
+Thank you to our developer community members who helped to make Azure Core better with their contributions to this release:
+
+- Jorgen Lind _([GitHub](https://github.com/jorgen))_
 
 ## 1.0.0 (2021-06-04)
 
@@ -163,9 +173,16 @@
 
 ### Bug Fixes
 
-- Fixed computation of the token expiration time in `BearerTokenAuthenticationPolicy`.
+- Fixed computation of the token expiration time in `BearerTokenAuthenticationPolicy`. (A community contribution, courtesy of _[sjoubert](https://github.com/sjoubert)_)
+- Fixed `Retry-After` HTTP header to be treated as case-insensitive. (A community contribution, courtesy of _[sjoubert](https://github.com/sjoubert)_)
 - Fixed compilation dependency issue for MacOS when consuming the SDK from VcPkg.
 - Fixed support for sending requests to endpoints with a custom port within the url on Windows when using the WinHttp transport.
+
+### Acknowledgments
+
+Thank you to our developer community members who helped to make Azure Core better with their contributions to this release:
+
+- Sylvain Joubert _([GitHub](https://github.com/sjoubert))_
 
 ## 1.0.0-beta.5 (2021-02-02)
 
@@ -222,11 +239,21 @@
 - Fixed setting up the default transport adapter.
 - Fixed linker error of missing pthread on Linux.
 - Initialize class data members to avoid MSVC warning.
-- Throw `Azure::Core::Http::TransportException` if `curl_easy_init()` returns a null handle.
+- Throw `Azure::Core::Http::TransportException` if `curl_easy_init()` returns a null handle. (A community contribution, courtesy of _[ku-sourav](https://github.com/ku-sourav)_)
 
 ### Other Changes and Improvements
 
 - Added support for distributing the C++ SDK as a source package via vcpkg.
+- Fixed installation error when the SDK is being installed under a non-standard prefix. (A community contribution, courtesy of _[juchem](https://github.com/juchem)_)
+- Fixed linker error when pthread is missing on Linux. (A community contribution, courtesy of _[lordgamez](https://github.com/lordgamez)_)
+
+### Acknowledgments
+
+Thank you to our developer community members who helped to make Azure Core better with their contributions to this release:
+
+- Gabor Gyimesi _([GitHub](https://github.com/lordgamez))_
+- Marcelo Juchem _([GitHub](https://github.com/juchem))_
+- `ku-sourav` _([GitHub](https://github.com/ku-sourav))_
 
 ## 1.0.0-beta.3 (2020-11-11)
 
@@ -292,6 +319,14 @@
 - Improved performance on windows when using libcurl.
 - Pinned the version of package dependencies.
 - Added NOTICE.txt for 3rd party dependencies.
+- Added build instructions for running tests. (A community contribution, courtesy of _[ku-sourav](https://github.com/ku-sourav)_)
+- Updated vcpkg build instructions. (A community contribution, courtesy of _[ku-sourav](https://github.com/ku-sourav)_)
+
+### Acknowledgments
+
+Thank you to our developer community members who helped to make Azure Core better with their contributions to this release:
+
+- `ku-sourav` _([GitHub](https://github.com/ku-sourav))_
 
 ## 1.0.0-beta.1 (2020-09-09)
 

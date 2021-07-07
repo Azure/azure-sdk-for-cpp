@@ -63,15 +63,13 @@ The `Sign` and `Verify` methods expect a precalculated digest, and the digest ne
 SHA256 is the hash algorithm used for both RS256 and ES256K which are the algorithms we'll be using in this sample.
 
 ```cpp
-uint8_t const dataSource[]
-    = "This is some sample data which we will use to demonstrate sign and verify";
-std::vector<uint8_t> data(std::begin(dataSource), std::end(dataSource));
-std::vector<uint8_t> digest;
-
-{
-    Azure::Security::KeyVault::SHA256 hashAlgo;
-    digest = hashAlgo.Final(data.data(), data.size());
-}
+// digestBase64 simulates some text data that has been hashed using the SHA256 algorithm
+// and then base 64 encoded. It is not relevant for the sample how to create the SHA256
+// hashed digest.
+// Example input data source for the digest:
+// "This is some sample data which we will use to demonstrate sign and verify"
+std::string digestBase64 = "DU9EdhpwhJqnGnieD0qKYEz6e8QPKlOVpYZZro+XtI8=";
+std::vector<uint8_t> digest = Azure::Core::Convert::Base64Decode(digestBase64);
 
 // Sign and Verify from digest
 SignResult rsaSignResult = rsaCryptoClient.Sign(SignatureAlgorithm::RS256, digest);

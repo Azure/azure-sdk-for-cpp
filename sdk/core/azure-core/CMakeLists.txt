@@ -61,6 +61,7 @@ set(
     inc/azure/core/http/transport.hpp
     inc/azure/core/internal/client_options.hpp
     inc/azure/core/internal/contract.hpp
+    inc/azure/core/internal/cryptography/sha_hash.hpp
     inc/azure/core/internal/diagnostics/log.hpp
     inc/azure/core/internal/http/pipeline.hpp
     inc/azure/core/internal/io/null_body_stream.hpp
@@ -95,6 +96,7 @@ set(
     ${WIN_TRANSPORT_ADAPTER_SRC}
     src/azure_assert.cpp
     src/cryptography/md5.cpp
+    src/cryptography/sha_hash.cpp
     src/http/bearer_token_authentication_policy.cpp
     src/http/http.cpp
     src/http/log_policy.cpp

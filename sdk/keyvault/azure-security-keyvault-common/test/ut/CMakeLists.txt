@@ -13,7 +13,6 @@ add_executable (
   azure-security-keyvault-common-test
     azure_security_keyvault_common_test.cpp
     pipeline_test.cpp
-    sha_test.cpp
 )
 
 if (MSVC)
