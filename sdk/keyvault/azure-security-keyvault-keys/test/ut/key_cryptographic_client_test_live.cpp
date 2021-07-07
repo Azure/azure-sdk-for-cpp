@@ -42,7 +42,8 @@ TEST_P(KeyVaultClientTest, RemoteEncrypt)
     EXPECT_EQ(encryptResult.KeyId, rsaKey.Id());
     EXPECT_TRUE(encryptResult.Ciphertext.size() > 0);
 
-    auto decryptResult = cryptoClient.Decrypt(DecryptParameters::RsaOaepParameters(encryptResult.Ciphertext));
+    auto decryptResult
+        = cryptoClient.Decrypt(DecryptParameters::RsaOaepParameters(encryptResult.Ciphertext));
     EXPECT_EQ(decryptResult.Algorithm.ToString(), encryptResult.Algorithm.ToString());
     EXPECT_EQ(decryptResult.Plaintext, plaintext);
     EXPECT_EQ(decryptResult.KeyId, encryptResult.KeyId);
