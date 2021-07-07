@@ -190,3 +190,50 @@ size_t FileBodyStream::OnRead(uint8_t* buffer, size_t count, Azure::Core::Contex
 void FileBodyStream::Rewind() { m_randomAccessFileBodyStream->Rewind(); }
 
 int64_t FileBodyStream::Length() const { return m_randomAccessFileBodyStream->Length(); }
+
+ProgressBodyStream::ProgressBodyStream(
+    BodyStream* bodyStream,
+    std::function<void(int64_t position, int64_t length)> callback)
+    : m_position(0)
+{
+  if (bodyStream == nullptr)
+  {
+    throw std::runtime_error("Parameter 'bodystream' cannot be null");
+  }
+ 
+  m_bodyStream = bodyStream;
+  m_callback = callback;
+  m_callback(Position(), Length());
+}
+
+ProgressBodyStream::~ProgressBodyStream()
+{
+  m_bodyStream = nullptr;
+  m_callback = nullptr;
+}
+
+void ProgressBodyStream::Rewind()
+{
+  m_bodyStream->Rewind();
+  m_position = 0;
+  m_callback(Position(), Length());
+}
+
+size_t ProgressBodyStream::OnRead(
+    uint8_t* buffer,
+    size_t count,
+    Azure::Core::Context const& context)
+{
+  size_t read = m_bodyStream->Read(buffer, count, context);
+  m_position += read;
+  m_callback(Position(), Length());
+
+  return read;
+}
+
+int64_t ProgressBodyStream::Position() 
+{
+  return m_position;
+}
+
+int64_t ProgressBodyStream::Length() const { return m_bodyStream->Length(); }

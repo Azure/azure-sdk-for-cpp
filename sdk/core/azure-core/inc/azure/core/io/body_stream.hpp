@@ -17,9 +17,11 @@
 #include "azure/core/context.hpp"
 
 #include <algorithm>
+#include <atomic>
 #include <cstdint>
 #include <cstdio>
 #include <cstring>
+#include <functional>
 #include <memory>
 #include <vector>
 
@@ -282,4 +284,45 @@ namespace Azure { namespace Core { namespace IO {
     int64_t Length() const override;
   };
 
+  /**
+   * @brief A concrete implementation of #Azure::Core::IO::BodyStream that wraps another stream and
+   * reports progress
+   */
+  class ProgressBodyStream : public BodyStream {
+  private:
+    BodyStream* m_bodyStream;
+    std::atomic_int64_t m_position;
+    std::function<void(int64_t position, int64_t length)> m_callback;
+
+  private:
+    size_t OnRead(uint8_t* buffer, size_t count, Azure::Core::Context const& context) override;
+
+  public:
+    /**
+     * @brief Constructs `%ProgressBodyStream` from a %BodyStream.
+     *
+     * @param bodyStream the body stream to wrap
+     *
+     * @param callback the callback method used to report progress back to the caller
+     *
+     * @remark The #Azure::Core::IO::ProgressBodyStream does not own the wrapped stream
+     * and is not responsible for closing / cleaning up resources
+     */
+    ProgressBodyStream(
+        BodyStream* bodyStream,
+        std::function<void(int64_t position, int64_t length)> callback);
+
+    ~ProgressBodyStream();
+
+    void Rewind() override;
+
+    int64_t Length() const override;
+
+    /**
+     * @brief Obtain the current value of the position property
+     *
+     * @return Number of bytes read so far from class instantitation or last Rewind call.
+     */
+    int64_t Position();
+  };
 }}} // namespace Azure::Core::IO

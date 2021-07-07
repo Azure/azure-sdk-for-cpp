@@ -145,3 +145,140 @@ TEST(FileBodyStream, Read)
   EXPECT_EQ(readSize, FileSize);
   EXPECT_EQ(buffer[FileSize], 0);
 }
+
+TEST(ProgressBodyStream, NullPtr)
+{
+  int64_t position = -1;
+  int64_t length = -1;
+
+  EXPECT_THROW(
+      ProgressBodyStream(
+          nullptr,
+          [&position, &length](int64_t pos, int64_t len) {
+            position = pos;
+            length = len;
+          }),
+      std::runtime_error);
+}
+
+TEST(ProgressBodyStream, Init)
+{
+  int64_t position = -1;
+  int64_t length = -1;
+  std::string testDataPath(AZURE_TEST_DATA_PATH);
+  testDataPath.append("/fileData");
+
+  Azure::Core::IO::FileBodyStream stream(testDataPath);
+
+  ProgressBodyStream progress(&stream, [&position, &length](int64_t pos, int64_t len) {
+    position = pos;
+    length = len;
+  });
+
+  EXPECT_EQ(position, 0);
+  EXPECT_EQ(length, stream.Length());
+  EXPECT_EQ(progress.Length(), stream.Length());
+  EXPECT_EQ(progress.Position(), 0);
+}
+
+TEST(ProgressBodyStream, ReadChunk)
+{
+  int64_t position = -1;
+  int64_t length = -1;
+  std::string testDataPath(AZURE_TEST_DATA_PATH);
+  testDataPath.append("/fileData");
+
+  Azure::Core::IO::FileBodyStream stream(testDataPath);
+
+  ProgressBodyStream progress(&stream, [&position, &length](int64_t pos, int64_t len) {
+    position = pos;
+    length = len;
+  });
+
+  std::vector<uint8_t> buffer(10);
+
+  size_t readSize = progress.ReadToCount(buffer.data(), 10);
+
+  EXPECT_EQ(position, 10);
+  EXPECT_EQ(length, stream.Length());
+  EXPECT_EQ(progress.Length(), stream.Length());
+  EXPECT_EQ(progress.Position(), 10);
+  EXPECT_EQ(readSize, 10);
+}
+
+TEST(ProgressBodyStream, ReadMultipleChunks)
+{
+  int64_t position = -1;
+  int64_t length = -1;
+  std::string testDataPath(AZURE_TEST_DATA_PATH);
+  testDataPath.append("/fileData");
+
+  Azure::Core::IO::FileBodyStream stream(testDataPath);
+
+  ProgressBodyStream progress(&stream, [&position, &length](int64_t pos, int64_t len) {
+    position = pos;
+    length = len;
+  });
+
+  std::vector<uint8_t> buffer(10);
+
+  for (int i = 0; i < stream.Length() / 10; i++)
+  {
+
+    size_t readSize = progress.ReadToCount(buffer.data(), 10);
+
+    EXPECT_EQ(position, (i + 1) * 10);
+    EXPECT_EQ(length, stream.Length());
+    EXPECT_EQ(progress.Length(), stream.Length());
+    EXPECT_EQ(progress.Position(), (i + 1) * 10);
+    EXPECT_EQ(readSize, 10);
+  }
+}
+
+TEST(ProgressBodyStream, ReadMultipleChunksRewind)
+{
+  int64_t position = -1;
+  int64_t length = -1;
+  std::string testDataPath(AZURE_TEST_DATA_PATH);
+  testDataPath.append("/fileData");
+
+  Azure::Core::IO::FileBodyStream stream(testDataPath);
+
+  ProgressBodyStream progress(&stream, [&position, &length](int64_t pos, int64_t len) {
+    position = pos;
+    length = len;
+  });
+
+  std::vector<uint8_t> buffer(10);
+
+  for (int i = 0; i < stream.Length() / 100; i++)
+  {
+
+    size_t readSize = progress.ReadToCount(buffer.data(), 10);
+
+    EXPECT_EQ(position, (i + 1) * 10);
+    EXPECT_EQ(length, stream.Length());
+    EXPECT_EQ(progress.Length(), stream.Length());
+    EXPECT_EQ(progress.Position(), (i + 1) * 10);
+    EXPECT_EQ(readSize, 10);
+  }
+
+  progress.Rewind();
+
+  EXPECT_EQ(position, 0);
+  EXPECT_EQ(length, stream.Length());
+  EXPECT_EQ(progress.Length(), stream.Length());
+  EXPECT_EQ(progress.Position(), 0);
+
+  for (int i = 0; i < stream.Length() / 100; i++)
+  {
+
+    size_t readSize = progress.ReadToCount(buffer.data(), 10);
+
+    EXPECT_EQ(position, (i + 1) * 10);
+    EXPECT_EQ(length, stream.Length());
+    EXPECT_EQ(progress.Length(), stream.Length());
+    EXPECT_EQ(progress.Position(), (i + 1) * 10);
+    EXPECT_EQ(readSize, 10);
+  }
+}
