@@ -96,6 +96,7 @@ jobs:
     CMOCKA_XML_FILE: "%g-test-results.xml"
     CMOCKA_MESSAGE_OUTPUT: "xml"
     AZURE_ENABLE_STATIC_ANALYSIS: 1
+    AZURE_KEYVAULT_AVOID_THROTTLED: 1
 
   steps:
   - checkout: self
