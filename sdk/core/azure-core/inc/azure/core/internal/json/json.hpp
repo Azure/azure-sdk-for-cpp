@@ -5997,7 +5997,7 @@ namespace Azure { namespace Core { namespace Json { namespace _internal { namesp
     @param[in, out] result  A reference to the string variable where the read
                             string is to be stored.
     @return `true` if the \x00-byte indicating the end of the string was
-             encountered before the EOF; false` indicates an unexpected EOF.
+             encountered before the EOF; `false` indicates an unexpected EOF.
     */
     bool get_bson_cstr(string_t& result)
     {
