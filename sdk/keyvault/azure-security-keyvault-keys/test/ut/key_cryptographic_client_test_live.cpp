@@ -76,7 +76,6 @@ TEST_P(KeyVaultClientTest, RemoteWrap)
     EXPECT_EQ(unwrapResult.Key, plaintext);
     EXPECT_EQ(unwrapResult.KeyId, wrapResult.KeyId);
   }
-  RemoveAllKeysFromVault(keyClient);
 }
 
 TEST_P(KeyVaultClientTest, RemoteSignVerifyRSA256)
@@ -128,7 +127,6 @@ TEST_P(KeyVaultClientTest, RemoteSignVerifyRSA256)
     EXPECT_EQ(verifyResult.KeyId, rsaKey.Id());
     EXPECT_TRUE(verifyResult.IsValid);
   }
-  RemoveAllKeysFromVault(keyClient);
 }
 
 TEST_F(KeyVaultClientTest, RemoteSignVerifyES256)
@@ -233,7 +231,6 @@ TEST_P(KeyVaultClientTest, RemoteSignVerifyRSA384)
     EXPECT_EQ(verifyResult.KeyId, rsaKey.Id());
     EXPECT_TRUE(verifyResult.IsValid);
   }
-  RemoveAllKeysFromVault(keyClient);
 }
 
 TEST_P(KeyVaultClientTest, RemoteSignVerifyDataRSA256)
@@ -278,7 +275,6 @@ TEST_P(KeyVaultClientTest, RemoteSignVerifyDataRSA256)
     EXPECT_EQ(verifyResult.KeyId, rsaKey.Id());
     EXPECT_TRUE(verifyResult.IsValid);
   }
-  RemoveAllKeysFromVault(keyClient);
 }
 
 namespace {
