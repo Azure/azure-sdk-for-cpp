@@ -3,12 +3,13 @@
 
 /**
  * @file
- * @brief test file for .
+ * @brief The base class to construct and init a Key Vault client.
  *
  */
-#include "./../../src/private/key_serializers.hpp"
 
 #include <gtest/gtest.h>
+
+#include "./../../src/private/key_serializers.hpp"
 #include <azure/core.hpp>
 #include <azure/keyvault/key_vault_keys.hpp>
 #include <cstdio>
