@@ -9,7 +9,7 @@
 
 #include <gtest/gtest.h>
 
-#include "./../../src/private/key_serializers.hpp"
+#include <private/key_serializers.hpp>
 #include <azure/core.hpp>
 #include <azure/keyvault/key_vault_keys.hpp>
 #include <cstdio>
