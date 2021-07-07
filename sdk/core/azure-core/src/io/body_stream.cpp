@@ -194,15 +194,13 @@ int64_t FileBodyStream::Length() const { return m_randomAccessFileBodyStream->Le
 ProgressBodyStream::ProgressBodyStream(
     BodyStream* bodyStream,
     std::function<void(int64_t position, int64_t length)> callback)
-    : m_position(0)
+    : m_bodyStream(bodyStream), m_position(0), m_callback(std::move(callback))
 {
   if (bodyStream == nullptr)
   {
     throw std::runtime_error("Parameter 'bodystream' cannot be null");
   }
 
-  m_bodyStream = bodyStream;
-  m_callback = callback;
   m_callback(Position(), Length());
 }
 
