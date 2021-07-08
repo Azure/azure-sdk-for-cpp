@@ -946,6 +946,10 @@ namespace Azure { namespace Storage { namespace Blobs {
        */
       Azure::Nullable<int32_t> TagCount;
       /**
+       * User-defined tags for this blob.
+       */
+      std::map<std::string, std::string> Tags;
+      /**
        * Data and time at which this blob was deleted. Only valid when this blob was deleted.
        */
       Azure::Nullable<Azure::DateTime> DeletedOn;
@@ -1989,6 +1993,10 @@ namespace Azure { namespace Storage { namespace Blobs {
        * Uncommitted blobs should be included.
        */
       UncomittedBlobs = 32,
+      /**
+       * Tags should be included.
+       */
+      Tags = 64,
     }; // bitwise enum ListBlobsIncludeFlags
 
     inline ListBlobsIncludeFlags operator|(ListBlobsIncludeFlags lhs, ListBlobsIncludeFlags rhs)
@@ -2577,6 +2585,9 @@ namespace Azure { namespace Storage { namespace Blobs {
     namespace _detail {
       struct GetBlobTagsResult final
       {
+        /**
+         * User-defined tags for this blob.
+         */
         std::map<std::string, std::string> Tags;
       }; // struct GetBlobTagsResult
     } // namespace _detail
@@ -2831,6 +2842,7 @@ namespace Azure { namespace Storage { namespace Blobs {
           ListBlobsIncludeFlags::Snapshots,
           ListBlobsIncludeFlags::Versions,
           ListBlobsIncludeFlags::UncomittedBlobs,
+          ListBlobsIncludeFlags::Tags,
       };
       const char* string_list[] = {
           "copy",
@@ -2839,6 +2851,7 @@ namespace Azure { namespace Storage { namespace Blobs {
           "snapshots",
           "versions",
           "uncommittedblobs",
+          "tags",
       };
       std::string ret;
       for (size_t i = 0; i < sizeof(value_list) / sizeof(ListBlobsIncludeFlags); ++i)
@@ -5801,6 +5814,8 @@ namespace Azure { namespace Storage { namespace Blobs {
             k_TagCount,
             k_Metadata,
             k_OrMetadata,
+            k_Tags,
+            k_TagSet,
             k_Unknown,
           };
           std::vector<XmlTagName> path;
@@ -6004,6 +6019,14 @@ namespace Azure { namespace Storage { namespace Blobs {
               {
                 path.emplace_back(XmlTagName::k_OrMetadata);
               }
+              else if (node.Name == "Tags")
+              {
+                path.emplace_back(XmlTagName::k_Tags);
+              }
+              else if (node.Name == "TagSet")
+              {
+                path.emplace_back(XmlTagName::k_TagSet);
+              }
               else
               {
                 path.emplace_back(XmlTagName::k_Unknown);
@@ -6017,6 +6040,13 @@ namespace Azure { namespace Storage { namespace Blobs {
               {
                 ret.Details.ObjectReplicationSourceProperties
                     = ObjectReplicationSourcePropertiesFromXml(reader);
+                path.pop_back();
+              }
+              else if (
+                  path.size() == 2 && path[0] == XmlTagName::k_Tags
+                  && path[1] == XmlTagName::k_TagSet)
+              {
+                ret.Details.Tags = TagsFromXml(reader);
                 path.pop_back();
               }
             }
@@ -6360,6 +6390,56 @@ namespace Azure { namespace Storage { namespace Blobs {
                   && path[1] == XmlTagName::k_Permission)
               {
                 ret.Permissions = node.Value;
+              }
+            }
+          }
+          return ret;
+        }
+
+        static std::map<std::string, std::string> TagsFromXml(_internal::XmlReader& reader)
+        {
+          std::map<std::string, std::string> ret;
+          int depth = 0;
+          std::string key;
+          bool is_key = false;
+          bool is_value = false;
+          while (true)
+          {
+            auto node = reader.Read();
+            if (node.Type == _internal::XmlNodeType::End)
+            {
+              break;
+            }
+            else if (node.Type == _internal::XmlNodeType::StartTag)
+            {
+              ++depth;
+              if (node.Name == "Key")
+              {
+                is_key = true;
+              }
+              else if (node.Name == "Value")
+              {
+                is_value = true;
+              }
+            }
+            else if (node.Type == _internal::XmlNodeType::EndTag)
+            {
+              if (depth-- == 0)
+              {
+                break;
+              }
+            }
+            if (depth == 2 && node.Type == _internal::XmlNodeType::Text)
+            {
+              if (is_key)
+              {
+                key = node.Value;
+                is_key = false;
+              }
+              else if (is_value)
+              {
+                ret.emplace(std::move(key), node.Value);
+                is_value = false;
               }
             }
           }

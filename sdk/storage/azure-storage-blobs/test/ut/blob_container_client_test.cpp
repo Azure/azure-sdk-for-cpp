@@ -811,12 +811,13 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_EQ(properties.TagCount.Value(), static_cast<int32_t>(tags.size()));
 
     downloadRet = blobClient.Download();
-    EXPECT_TRUE(downloadRet.Value.Details.TagCount.HasValue());
+    ASSERT_TRUE(downloadRet.Value.Details.TagCount.HasValue());
     EXPECT_EQ(downloadRet.Value.Details.TagCount.Value(), static_cast<int32_t>(tags.size()));
 
-    auto blobItem = GetBlobItem(blobName);
+    auto blobItem = GetBlobItem(blobName, Blobs::Models::ListBlobsIncludeFlags::Tags);
     ASSERT_TRUE(blobItem.Details.TagCount.HasValue());
-    EXPECT_TRUE(blobItem.Details.TagCount.Value() == static_cast<int32_t>(tags.size()));
+    EXPECT_EQ(blobItem.Details.TagCount.Value(), static_cast<int32_t>(tags.size()));
+    EXPECT_EQ(blobItem.Details.Tags, tags);
 
     auto blobServiceClient = Azure::Storage::Blobs::BlobServiceClient::CreateFromConnectionString(
         StandardStorageConnectionString());
