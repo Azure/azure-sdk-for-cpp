@@ -13,6 +13,8 @@
 - Removed `CryptographyClient::RemoteClient()` and `CryptographyClient::LocalOnly()`.
 - Removed the general constructor from `EncryptParameters` and `DecryptParameters`.
 - Removed access to `Iv` field member from `EncryptParameters` and `DecryptParameters`.
+- Removed `Encrypt(EncryptionAlgorithm, std::vector, context)`.
+- Removed `Decrypt(DecryptAlgorithm, std::vector, context)`.
 
 ### Key Bugs Fixed
 
