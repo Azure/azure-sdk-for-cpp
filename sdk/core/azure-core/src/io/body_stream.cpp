@@ -204,12 +204,6 @@ ProgressBodyStream::ProgressBodyStream(
   m_callback(m_bytesTransferred);
 }
 
-ProgressBodyStream::~ProgressBodyStream()
-{
-  m_bodyStream = nullptr;
-  m_callback = nullptr;
-}
-
 void ProgressBodyStream::Rewind()
 {
   m_bodyStream->Rewind();

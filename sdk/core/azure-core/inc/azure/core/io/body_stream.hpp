@@ -311,8 +311,6 @@ namespace Azure { namespace Core { namespace IO {
         BodyStream* bodyStream,
         std::function<void(int64_t bytesTransferred)> callback);
 
-    ~ProgressBodyStream();
-
     void Rewind() override;
 
     int64_t Length() const override;
