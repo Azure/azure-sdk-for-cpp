@@ -93,11 +93,14 @@ namespace Azure { namespace Storage { namespace Test {
 
     blockBlobClient.Delete();
 
-    blobItem = GetBlobItem(blobName);
+    blobItem = GetBlobItem(blobName, Blobs::Models::ListBlobsIncludeFlags::Deleted);
+    /*
+    // Below fields doesn't apply to blobs with versioning enabled.
     EXPECT_TRUE(blobItem.IsDeleted);
     ASSERT_TRUE(blobItem.Details.DeletedOn.HasValue());
     EXPECT_TRUE(IsValidTime(blobItem.Details.DeletedOn.Value()));
     EXPECT_TRUE(blobItem.Details.RemainingRetentionDays.HasValue());
+    */
   }
 
   TEST_F(BlockBlobClientTest, UploadDownload)
