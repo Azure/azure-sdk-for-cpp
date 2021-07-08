@@ -149,10 +149,15 @@ TEST(FileBodyStream, Read)
 TEST(ProgressBodyStream, NullPtr)
 {
   int64_t bytesTransferred = -1;
-
-  EXPECT_THROW(
+#if defined(NDEBUG)
+  // Release build won't provide assert msg
+  ASSERT_DEATH(
+      ProgressBodyStream(nullptr, [&bytesTransferred](int64_t bt) { bytesTransferred = bt; }), "");
+#else
+  ASSERT_DEATH(
       ProgressBodyStream(nullptr, [&bytesTransferred](int64_t bt) { bytesTransferred = bt; }),
-      std::runtime_error);
+      "Parameter 'bodyStream' cannot be null");
+#endif
 }
 
 TEST(ProgressBodyStream, Init)

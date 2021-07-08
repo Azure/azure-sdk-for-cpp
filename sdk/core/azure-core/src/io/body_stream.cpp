@@ -196,10 +196,7 @@ ProgressBodyStream::ProgressBodyStream(
     std::function<void(int64_t bytesTransferred)> callback)
     : m_bodyStream(bodyStream), m_bytesTransferred(0), m_callback(std::move(callback))
 {
-  if (bodyStream == nullptr)
-  {
-    throw std::runtime_error("Parameter 'bodystream' cannot be null");
-  }
+  AZURE_ASSERT_MSG(bodyStream, "Parameter 'bodyStream' cannot be null");
 
   m_callback(m_bytesTransferred);
 }
