@@ -1,6 +1,6 @@
 # Release History
 
-## 4.0.0-beta.4 (Unreleased)
+## 4.0.0 (2021-07-08)
 
 ### Features Added
 
@@ -15,10 +15,6 @@
 - Removed access to `Iv` field member from `EncryptParameters` and `DecryptParameters`.
 - Removed `Encrypt(EncryptionAlgorithm, std::vector, context)`.
 - Removed `Decrypt(DecryptAlgorithm, std::vector, context)`.
-
-### Key Bugs Fixed
-
-### Fixed
 
 ## 4.0.0-beta.3 (2021-06-08)
 
