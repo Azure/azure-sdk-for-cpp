@@ -5,7 +5,7 @@
 #include <azure/core/http/http.hpp>
 #include <azure/core/http/policies/policy.hpp>
 
-#include <azure/keyvault/common/internal/single_page.hpp>
+#include <azure/keyvault/common/internal/get_page_results_options.hpp>
 
 #include "azure/keyvault/keys/key_client.hpp"
 #include "private/key_backup.hpp"

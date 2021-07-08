@@ -28,8 +28,8 @@ endif()
 
 set(
   AZURE_KEYVAULT_COMMON_HEADER
+    inc/azure/keyvault/common/internal/get_page_results_options.hpp
     inc/azure/keyvault/common/internal/keyvault_pipeline.hpp
-    inc/azure/keyvault/common/internal/single_page.hpp
 )
 
 set(
