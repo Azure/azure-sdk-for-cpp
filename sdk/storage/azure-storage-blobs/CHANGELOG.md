@@ -22,7 +22,7 @@
 
 ## 12.0.1 (2021-07-07)
 
-### Bugs Fixed
+### Bug Fixes
 
 - Fixed a bug where transactional MD5 hash was treated as blob MD5 hash when downloading partial blob.
 
