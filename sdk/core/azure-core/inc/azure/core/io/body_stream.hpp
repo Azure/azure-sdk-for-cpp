@@ -289,7 +289,7 @@ namespace Azure { namespace Core { namespace IO {
    */
   class ProgressBodyStream : public BodyStream {
   private:
-    BodyStream* m_bodyStream;
+    BodyStream& m_bodyStream;
     int64_t m_bytesTransferred;
     std::function<void(int64_t bytesTransferred)> m_callback;
 
@@ -308,7 +308,7 @@ namespace Azure { namespace Core { namespace IO {
      * and is not responsible for closing / cleaning up resources
      */
     ProgressBodyStream(
-        BodyStream* bodyStream,
+        BodyStream& bodyStream,
         std::function<void(int64_t bytesTransferred)> callback);
 
     void Rewind() override;

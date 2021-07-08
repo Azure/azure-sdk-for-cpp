@@ -146,20 +146,6 @@ TEST(FileBodyStream, Read)
   EXPECT_EQ(buffer[FileSize], 0);
 }
 
-TEST(ProgressBodyStream, NullPtr)
-{
-  int64_t bytesTransferred = -1;
-#if defined(NDEBUG)
-  // Release build won't provide assert msg
-  ASSERT_DEATH(
-      ProgressBodyStream(nullptr, [&bytesTransferred](int64_t bt) { bytesTransferred = bt; }), "");
-#else
-  ASSERT_DEATH(
-      ProgressBodyStream(nullptr, [&bytesTransferred](int64_t bt) { bytesTransferred = bt; }),
-      "Parameter 'bodyStream' cannot be null");
-#endif
-}
-
 TEST(ProgressBodyStream, Init)
 {
   int64_t bytesTransferred = -1;
@@ -168,7 +154,7 @@ TEST(ProgressBodyStream, Init)
 
   Azure::Core::IO::FileBodyStream stream(testDataPath);
 
-  ProgressBodyStream progress(&stream, [&bytesTransferred](int64_t bt) { bytesTransferred = bt; });
+  ProgressBodyStream progress(stream, [&bytesTransferred](int64_t bt) { bytesTransferred = bt; });
 
   EXPECT_EQ(bytesTransferred, 0);
   EXPECT_EQ(progress.Length(), stream.Length());
@@ -182,7 +168,7 @@ TEST(ProgressBodyStream, ReadChunk)
 
   Azure::Core::IO::FileBodyStream stream(testDataPath);
 
-  ProgressBodyStream progress(&stream, [&bytesTransferred](int64_t bt) { bytesTransferred = bt; });
+  ProgressBodyStream progress(stream, [&bytesTransferred](int64_t bt) { bytesTransferred = bt; });
 
   std::vector<uint8_t> buffer(10);
 
@@ -201,7 +187,7 @@ TEST(ProgressBodyStream, ReadMultipleChunks)
 
   Azure::Core::IO::FileBodyStream stream(testDataPath);
 
-  ProgressBodyStream progress(&stream, [&bytesTransferred](int64_t bt) { bytesTransferred = bt; });
+  ProgressBodyStream progress(stream, [&bytesTransferred](int64_t bt) { bytesTransferred = bt; });
 
   std::vector<uint8_t> buffer(10);
 
@@ -224,7 +210,7 @@ TEST(ProgressBodyStream, ReadMultipleChunksRewind)
 
   Azure::Core::IO::FileBodyStream stream(testDataPath);
 
-  ProgressBodyStream progress(&stream, [&bytesTransferred](int64_t bt) { bytesTransferred = bt; });
+  ProgressBodyStream progress(stream, [&bytesTransferred](int64_t bt) { bytesTransferred = bt; });
 
   std::vector<uint8_t> buffer(10);
 
