@@ -1,6 +1,6 @@
 # Release History
 
-## 4.0.0-beta.4 (Unreleased)
+## 4.0.0 (2021-07-08)
 
 ### Features Added
 
@@ -16,10 +16,6 @@
 - Removed `Encrypt(EncryptionAlgorithm, std::vector, context)`.
 - Removed `Decrypt(DecryptAlgorithm, std::vector, context)`.
 - Renamed header `list_keys_single_page_result.hpp` to `list_keys_result.hpp`.
-
-### Key Bugs Fixed
-
-### Fixed
 
 ## 4.0.0-beta.3 (2021-06-08)
 
