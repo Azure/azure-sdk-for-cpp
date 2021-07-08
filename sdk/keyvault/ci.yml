@@ -34,7 +34,7 @@ stages:
     parameters:
       ServiceDirectory: keyvault
       CtestRegex: "azure-security-keyvault.*-unittest"
-      LiveTestCtestRegex: "Remote"
+      LiveTestCtestRegex: "azure-security-keyvault.*-livetest"
       LiveTestTimeoutInMinutes: 120
       SubscriptionConfiguration: $(sub-config-azure-cloud-test-resources)
       Artifacts:
