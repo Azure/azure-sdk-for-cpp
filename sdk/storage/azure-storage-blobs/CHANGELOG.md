@@ -18,11 +18,13 @@
 - Added source ETag access conditions and last-modified access conditions for `PageBlobClient::UploadPagesFromUri()`.
 - Added three new fields `IsServerEncrypted`, `EncryptionKeySha256` and `EncryptionScope` into `SetBlobMetadataResult`.
 - Added support for setting blob tags when creating or copying blobs.
+- Added new fields `AccessTierChangedOn`, `ArchiveStatus`, `RehydratePriority`, `CopyId`, `CopySource`, `CopyStatus`, `CopyStatusDescription`, `IsIncrementalCopy`, `IncrementalCopyDestinationSnapshot`, `CopyProgress`, `CopyCompletedOn`, `TagCount`, `DeletedOn` and `RemainingRetentionDays` into `BlobItemDetails`.
 
 ### Bugs Fixed
 
 - Fixed a bug where transactional MD5 hash was treated as blob MD5 hash when downloading partial blob.
 - Fixed a bug where lease ID didn't work for `BlobContainerClient::GetAccessPolicy()`.
+- Fixed a bug where `BlobItemDetails::EncryptionKeySha256` was always null because it wasn't correctly parsed from xml.
 
 ## 12.0.0 (2021-06-08)
 

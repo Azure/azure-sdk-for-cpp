@@ -847,6 +847,18 @@ namespace Azure { namespace Storage { namespace Blobs {
        */
       Azure::Nullable<bool> IsAccessTierInferred;
       /**
+       * The date and time the tier was changed on the object.
+       */
+      Azure::Nullable<Azure::DateTime> AccessTierChangedOn;
+      /**
+       * Indicates if the blob is being rehydrated.
+       */
+      Azure::Nullable<Models::ArchiveStatus> ArchiveStatus;
+      /**
+       * Priority of rehydrate if the blob is being rehydrated.
+       */
+      Azure::Nullable<Models::RehydratePriority> RehydratePriority;
+      /**
        * The current lease status of the blob.
        */
       Models::LeaseStatus LeaseStatus = Models::LeaseStatus::Unlocked;
@@ -886,6 +898,62 @@ namespace Azure { namespace Storage { namespace Blobs {
        * Only valid when Object Replication is enabled and current blob is the source.
        */
       std::vector<ObjectReplicationPolicy> ObjectReplicationSourceProperties;
+      /**
+       * String identifier for the last attempted Copy Blob operation where this blob was the
+       * destination. This value is null if this blob has never been the destination of a copy
+       * operation, or if this blob has been modified after a concluded copy operation.
+       */
+      Azure::Nullable<std::string> CopyId;
+      /**
+       * URL that specifies the source blob or file used in the last attempted copy operation where
+       * this blob was the destination blob. This value is null if this blob has never been the
+       * destination of a copy operation, or if this blob has been modified after a concluded copy
+       * operation.
+       */
+      Azure::Nullable<std::string> CopySource;
+      /**
+       * State of the copy operation identified by the copy ID. Possible values include success,
+       * pending, aborted, failed etc. This value is null if this blob has never been the
+       * destination of a copy operation, or if this blob has been modified after a concluded copy
+       * operation.
+       */
+      Azure::Nullable<Models::CopyStatus> CopyStatus;
+      /**
+       * Describes the cause of the last fatal or non-fatal copy operation failure. This is not null
+       * only when copy status is failed or pending.
+       */
+      Azure::Nullable<std::string> CopyStatusDescription;
+      /**
+       * True if the copy operation is incremental copy.
+       */
+      Azure::Nullable<bool> IsIncrementalCopy;
+      /**
+       * Snapshot time of the last successful incremental copy snapshot for this blob.
+       */
+      Azure::Nullable<std::string> IncrementalCopyDestinationSnapshot;
+      /**
+       * Contains the number of bytes copied and the total bytes in the source in the last attempted
+       * copy operation where this blob was the destination blob.
+       */
+      Azure::Nullable<std::string> CopyProgress;
+      /**
+       * Conclusion time of the last attempted copy operation where this blob was the destination
+       * blob.
+       */
+      Azure::Nullable<Azure::DateTime> CopyCompletedOn;
+      /**
+       * the number of tags stored on the blob.
+       */
+      Azure::Nullable<int32_t> TagCount;
+      /**
+       * Data and time at which this blob was deleted. Only valid when this blob was deleted.
+       */
+      Azure::Nullable<Azure::DateTime> DeletedOn;
+      /**
+       * Remaining days before this blob will be permanantely deleted. Only valid when this blob was
+       * deleted.
+       */
+      Azure::Nullable<int32_t> RemainingRetentionDays;
     }; // struct BlobItemDetails
 
     /**
@@ -5709,13 +5777,28 @@ namespace Azure { namespace Storage { namespace Blobs {
             k_BlobType,
             k_AccessTier,
             k_AccessTierInferred,
+            k_AccessTierChangeTime,
+            k_ArchiveStatus,
+            k_RehydratePriority,
             k_LeaseStatus,
             k_LeaseState,
             k_LeaseDuration,
             k_ServerEncrypted,
-            k_EncryptionKeySHA256,
+            k_CustomerProvidedKeySha256,
+            k_EncryptionScope,
             k_Sealed,
             k_xmsblobsequencenumber,
+            k_CopyId,
+            k_CopyStatus,
+            k_CopySource,
+            k_CopyProgress,
+            k_CopyCompletionTime,
+            k_CopyStatusDescription,
+            k_IncrementalCopy,
+            k_CopyDestinationSnapshot,
+            k_DeletedTime,
+            k_RemainingRetentionDays,
+            k_TagCount,
             k_Metadata,
             k_OrMetadata,
             k_Unknown,
@@ -5825,6 +5908,18 @@ namespace Azure { namespace Storage { namespace Blobs {
               {
                 path.emplace_back(XmlTagName::k_AccessTierInferred);
               }
+              else if (node.Name == "AccessTierChangeTime")
+              {
+                path.emplace_back(XmlTagName::k_AccessTierChangeTime);
+              }
+              else if (node.Name == "ArchiveStatus")
+              {
+                path.emplace_back(XmlTagName::k_ArchiveStatus);
+              }
+              else if (node.Name == "RehydratePriority")
+              {
+                path.emplace_back(XmlTagName::k_RehydratePriority);
+              }
               else if (node.Name == "LeaseStatus")
               {
                 path.emplace_back(XmlTagName::k_LeaseStatus);
@@ -5841,9 +5936,13 @@ namespace Azure { namespace Storage { namespace Blobs {
               {
                 path.emplace_back(XmlTagName::k_ServerEncrypted);
               }
-              else if (node.Name == "EncryptionKeySHA256")
+              else if (node.Name == "CustomerProvidedKeySha256")
               {
-                path.emplace_back(XmlTagName::k_EncryptionKeySHA256);
+                path.emplace_back(XmlTagName::k_CustomerProvidedKeySha256);
+              }
+              else if (node.Name == "EncryptionScope")
+              {
+                path.emplace_back(XmlTagName::k_EncryptionScope);
               }
               else if (node.Name == "Sealed")
               {
@@ -5852,6 +5951,50 @@ namespace Azure { namespace Storage { namespace Blobs {
               else if (node.Name == "x-ms-blob-sequence-number")
               {
                 path.emplace_back(XmlTagName::k_xmsblobsequencenumber);
+              }
+              else if (node.Name == "CopyId")
+              {
+                path.emplace_back(XmlTagName::k_CopyId);
+              }
+              else if (node.Name == "CopyStatus")
+              {
+                path.emplace_back(XmlTagName::k_CopyStatus);
+              }
+              else if (node.Name == "CopySource")
+              {
+                path.emplace_back(XmlTagName::k_CopySource);
+              }
+              else if (node.Name == "CopyProgress")
+              {
+                path.emplace_back(XmlTagName::k_CopyProgress);
+              }
+              else if (node.Name == "CopyCompletionTime")
+              {
+                path.emplace_back(XmlTagName::k_CopyCompletionTime);
+              }
+              else if (node.Name == "CopyStatusDescription")
+              {
+                path.emplace_back(XmlTagName::k_CopyStatusDescription);
+              }
+              else if (node.Name == "IncrementalCopy")
+              {
+                path.emplace_back(XmlTagName::k_IncrementalCopy);
+              }
+              else if (node.Name == "CopyDestinationSnapshot")
+              {
+                path.emplace_back(XmlTagName::k_CopyDestinationSnapshot);
+              }
+              else if (node.Name == "DeletedTime")
+              {
+                path.emplace_back(XmlTagName::k_DeletedTime);
+              }
+              else if (node.Name == "RemainingRetentionDays")
+              {
+                path.emplace_back(XmlTagName::k_RemainingRetentionDays);
+              }
+              else if (node.Name == "TagCount")
+              {
+                path.emplace_back(XmlTagName::k_TagCount);
               }
               else if (node.Name == "Metadata")
               {
@@ -5996,6 +6139,25 @@ namespace Azure { namespace Storage { namespace Blobs {
               }
               else if (
                   path.size() == 2 && path[0] == XmlTagName::k_Properties
+                  && path[1] == XmlTagName::k_AccessTierChangeTime)
+              {
+                ret.Details.AccessTierChangedOn
+                    = Azure::DateTime::Parse(node.Value, Azure::DateTime::DateFormat::Rfc1123);
+              }
+              else if (
+                  path.size() == 2 && path[0] == XmlTagName::k_Properties
+                  && path[1] == XmlTagName::k_ArchiveStatus)
+              {
+                ret.Details.ArchiveStatus = ArchiveStatus(node.Value);
+              }
+              else if (
+                  path.size() == 2 && path[0] == XmlTagName::k_Properties
+                  && path[1] == XmlTagName::k_RehydratePriority)
+              {
+                ret.Details.RehydratePriority = RehydratePriority(node.Value);
+              }
+              else if (
+                  path.size() == 2 && path[0] == XmlTagName::k_Properties
                   && path[1] == XmlTagName::k_LeaseStatus)
               {
                 ret.Details.LeaseStatus = LeaseStatus(node.Value);
@@ -6020,9 +6182,15 @@ namespace Azure { namespace Storage { namespace Blobs {
               }
               else if (
                   path.size() == 2 && path[0] == XmlTagName::k_Properties
-                  && path[1] == XmlTagName::k_EncryptionKeySHA256)
+                  && path[1] == XmlTagName::k_CustomerProvidedKeySha256)
               {
                 ret.Details.EncryptionKeySha256 = Azure::Core::Convert::Base64Decode(node.Value);
+              }
+              else if (
+                  path.size() == 2 && path[0] == XmlTagName::k_Properties
+                  && path[1] == XmlTagName::k_EncryptionScope)
+              {
+                ret.Details.EncryptionScope = node.Value;
               }
               else if (
                   path.size() == 2 && path[0] == XmlTagName::k_Properties
@@ -6035,6 +6203,74 @@ namespace Azure { namespace Storage { namespace Blobs {
                   && path[1] == XmlTagName::k_xmsblobsequencenumber)
               {
                 ret.Details.SequenceNumber = std::stoll(node.Value);
+              }
+              else if (
+                  path.size() == 2 && path[0] == XmlTagName::k_Properties
+                  && path[1] == XmlTagName::k_CopyId)
+              {
+                ret.Details.CopyId = node.Value;
+              }
+              else if (
+                  path.size() == 2 && path[0] == XmlTagName::k_Properties
+                  && path[1] == XmlTagName::k_CopyStatus)
+              {
+                ret.Details.CopyStatus = CopyStatus(node.Value);
+              }
+              else if (
+                  path.size() == 2 && path[0] == XmlTagName::k_Properties
+                  && path[1] == XmlTagName::k_CopySource)
+              {
+                ret.Details.CopySource = node.Value;
+              }
+              else if (
+                  path.size() == 2 && path[0] == XmlTagName::k_Properties
+                  && path[1] == XmlTagName::k_CopyProgress)
+              {
+                ret.Details.CopyProgress = node.Value;
+              }
+              else if (
+                  path.size() == 2 && path[0] == XmlTagName::k_Properties
+                  && path[1] == XmlTagName::k_CopyCompletionTime)
+              {
+                ret.Details.CopyCompletedOn
+                    = Azure::DateTime::Parse(node.Value, Azure::DateTime::DateFormat::Rfc1123);
+              }
+              else if (
+                  path.size() == 2 && path[0] == XmlTagName::k_Properties
+                  && path[1] == XmlTagName::k_CopyStatusDescription)
+              {
+                ret.Details.CopyStatusDescription = node.Value;
+              }
+              else if (
+                  path.size() == 2 && path[0] == XmlTagName::k_Properties
+                  && path[1] == XmlTagName::k_IncrementalCopy)
+              {
+                ret.Details.IsIncrementalCopy = node.Value == "true";
+              }
+              else if (
+                  path.size() == 2 && path[0] == XmlTagName::k_Properties
+                  && path[1] == XmlTagName::k_CopyDestinationSnapshot)
+              {
+                ret.Details.IncrementalCopyDestinationSnapshot = node.Value;
+              }
+              else if (
+                  path.size() == 2 && path[0] == XmlTagName::k_Properties
+                  && path[1] == XmlTagName::k_DeletedTime)
+              {
+                ret.Details.DeletedOn
+                    = Azure::DateTime::Parse(node.Value, Azure::DateTime::DateFormat::Rfc1123);
+              }
+              else if (
+                  path.size() == 2 && path[0] == XmlTagName::k_Properties
+                  && path[1] == XmlTagName::k_RemainingRetentionDays)
+              {
+                ret.Details.RemainingRetentionDays = std::stoi(node.Value);
+              }
+              else if (
+                  path.size() == 2 && path[0] == XmlTagName::k_Properties
+                  && path[1] == XmlTagName::k_TagCount)
+              {
+                ret.Details.TagCount = std::stoi(node.Value);
               }
             }
           }

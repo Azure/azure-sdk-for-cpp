@@ -51,6 +51,27 @@ namespace Azure { namespace Storage { namespace Test {
         *_internal::ParseConnectionString(StandardStorageConnectionString()).KeyCredential);
   }
 
+  Blobs::Models::BlobItem BlobContainerClientTest::GetBlobItem(
+      const std::string& blobName,
+      Blobs::Models::ListBlobsIncludeFlags include)
+  {
+    Blobs::ListBlobsOptions options;
+    options.Prefix = blobName;
+    options.Include = include;
+    for (auto page = m_blobContainerClient->ListBlobs(options); page.HasPage();
+         page.MoveToNextPage())
+    {
+      for (auto& blob : page.Blobs)
+      {
+        if (blob.Name == blobName)
+        {
+          return std::move(blob);
+        }
+      }
+    }
+    std::abort();
+  }
+
   TEST_F(BlobContainerClientTest, CreateDelete)
   {
     auto container_client = Azure::Storage::Blobs::BlobContainerClient::CreateFromConnectionString(
@@ -477,6 +498,23 @@ namespace Azure { namespace Storage { namespace Test {
           createOptions.PreventEncryptionScopeOverride.Value());
       auto appendBlobClient = containerClient.GetAppendBlobClient(blobName);
       auto blobContentInfo = appendBlobClient.Create();
+      {
+        Blobs::ListBlobsOptions listOptions;
+        listOptions.Prefix = blobName;
+        for (auto page = containerClient.ListBlobs(listOptions); page.HasPage();
+             page.MoveToNextPage())
+        {
+          for (auto& blob : page.Blobs)
+          {
+            if (blob.Name == blobName)
+            {
+              EXPECT_TRUE(blob.Details.IsServerEncrypted);
+              EXPECT_TRUE(blob.Details.EncryptionScope.HasValue());
+              EXPECT_EQ(blob.Details.EncryptionScope.Value(), TestEncryptionScope);
+            }
+          }
+        }
+      }
       appendBlobClient.Delete();
       EXPECT_TRUE(blobContentInfo.Value.EncryptionScope.HasValue());
       EXPECT_EQ(blobContentInfo.Value.EncryptionScope.Value(), TestEncryptionScope);
@@ -573,6 +611,12 @@ namespace Azure { namespace Storage { namespace Test {
       EXPECT_TRUE(blobContentInfo.EncryptionKeySha256.HasValue());
       EXPECT_EQ(
           blobContentInfo.EncryptionKeySha256.Value(), options.CustomerProvidedKey.Value().KeyHash);
+      auto blobItem = GetBlobItem(appendBlobName);
+      EXPECT_TRUE(blobItem.Details.IsServerEncrypted);
+      EXPECT_TRUE(blobItem.Details.EncryptionKeySha256.HasValue());
+      EXPECT_EQ(
+          blobItem.Details.EncryptionKeySha256.Value(),
+          options.CustomerProvidedKey.Value().KeyHash);
 
       bodyStream.Rewind();
       EXPECT_NO_THROW(appendBlob.AppendBlock(bodyStream));
@@ -764,11 +808,15 @@ namespace Azure { namespace Storage { namespace Test {
 
     properties = blobClient.GetProperties().Value;
     EXPECT_TRUE(properties.TagCount.HasValue());
-    EXPECT_EQ(properties.TagCount.Value(), static_cast<int64_t>(tags.size()));
+    EXPECT_EQ(properties.TagCount.Value(), static_cast<int32_t>(tags.size()));
 
     downloadRet = blobClient.Download();
     EXPECT_TRUE(downloadRet.Value.Details.TagCount.HasValue());
-    EXPECT_EQ(downloadRet.Value.Details.TagCount.Value(), static_cast<int64_t>(tags.size()));
+    EXPECT_EQ(downloadRet.Value.Details.TagCount.Value(), static_cast<int32_t>(tags.size()));
+
+    auto blobItem = GetBlobItem(blobName);
+    ASSERT_TRUE(blobItem.Details.TagCount.HasValue());
+    EXPECT_TRUE(blobItem.Details.TagCount.Value() == static_cast<int32_t>(tags.size()));
 
     auto blobServiceClient = Azure::Storage::Blobs::BlobServiceClient::CreateFromConnectionString(
         StandardStorageConnectionString());

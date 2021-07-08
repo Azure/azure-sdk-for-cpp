@@ -175,8 +175,9 @@ namespace Azure { namespace Storage { namespace Test {
 
   TEST_F(PageBlobClientTest, StartCopyIncremental)
   {
+    const std::string blobName = RandomString();
     auto pageBlobClient = Azure::Storage::Blobs::PageBlobClient::CreateFromConnectionString(
-        StandardStorageConnectionString(), m_containerName, RandomString());
+        StandardStorageConnectionString(), m_containerName, blobName);
     std::string snapshot = m_pageBlobClient->CreateSnapshot().Value.Snapshot;
     Azure::Core::Url sourceUri(m_pageBlobClient->WithSnapshot(snapshot).GetUrl());
     auto copyInfo = pageBlobClient.StartCopyIncremental(AppendQueryParameters(sourceUri, GetSas()));
@@ -197,6 +198,12 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_TRUE(IsValidTime(getPropertiesResult.Value.CopyCompletedOn.Value()));
     ASSERT_TRUE(getPropertiesResult.Value.CopyProgress.HasValue());
     EXPECT_FALSE(getPropertiesResult.Value.CopyProgress.Value().empty());
+
+    auto blobItem = GetBlobItem(blobName, Blobs::Models::ListBlobsIncludeFlags::Copy);
+    ASSERT_TRUE(blobItem.Details.IsIncrementalCopy.HasValue());
+    EXPECT_TRUE(blobItem.Details.IsIncrementalCopy.Value());
+    ASSERT_TRUE(blobItem.Details.IncrementalCopyDestinationSnapshot.HasValue());
+    EXPECT_FALSE(blobItem.Details.IncrementalCopyDestinationSnapshot.Value().empty());
   }
 
   TEST_F(PageBlobClientTest, Lease)

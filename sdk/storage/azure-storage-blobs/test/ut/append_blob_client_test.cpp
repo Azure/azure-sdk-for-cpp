@@ -274,20 +274,9 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_TRUE(getPropertiesResult.Value.IsSealed.HasValue());
     EXPECT_FALSE(getPropertiesResult.Value.IsSealed.Value());
 
-    Azure::Storage::Blobs::ListBlobsOptions options;
-    options.Prefix = blobName;
-    for (auto pageResponse = m_blobContainerClient->ListBlobs(options); pageResponse.HasPage();
-         pageResponse.MoveToNextPage())
-    {
-      for (const auto& blob : pageResponse.Blobs)
-      {
-        if (blob.Name == blobName)
-        {
-          EXPECT_TRUE(blob.Details.IsSealed.HasValue());
-          EXPECT_FALSE(blob.Details.IsSealed.Value());
-        }
-      }
-    }
+    auto blobItem = GetBlobItem(blobName);
+    EXPECT_TRUE(blobItem.Details.IsSealed.HasValue());
+    EXPECT_FALSE(blobItem.Details.IsSealed.Value());
 
     Blobs::SealAppendBlobOptions sealOptions;
     sealOptions.AccessConditions.IfAppendPositionEqual = m_blobContent.size() + 1;
@@ -307,18 +296,9 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_TRUE(getPropertiesResult.Value.IsSealed.HasValue());
     EXPECT_TRUE(getPropertiesResult.Value.IsSealed.Value());
 
-    for (auto pageResponse = m_blobContainerClient->ListBlobs(options); pageResponse.HasPage();
-         pageResponse.MoveToNextPage())
-    {
-      for (const auto& blob : pageResponse.Blobs)
-      {
-        if (blob.Name == blobName)
-        {
-          EXPECT_TRUE(blob.Details.IsSealed.HasValue());
-          EXPECT_TRUE(blob.Details.IsSealed.Value());
-        }
-      }
-    }
+    blobItem = GetBlobItem(blobName);
+    EXPECT_TRUE(blobItem.Details.IsSealed.HasValue());
+    EXPECT_TRUE(blobItem.Details.IsSealed.Value());
 
     auto blobClient2 = m_blobContainerClient->GetAppendBlobClient(RandomString());
 
