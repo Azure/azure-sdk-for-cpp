@@ -12,8 +12,6 @@
 #include <azure/core/http/http.hpp>
 #include <azure/core/paged_response.hpp>
 
-#include <azure/keyvault/common/internal/get_page_results_options.hpp>
-
 #include "azure/keyvault/keys/deleted_key.hpp"
 #include "azure/keyvault/keys/json_web_key.hpp"
 #include "azure/keyvault/keys/key_vault_key.hpp"
@@ -125,8 +123,9 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
    *
    */
   struct GetPropertiesOfKeysOptions final
-      : public Azure::Security::KeyVault::_internal::GetPageResultOptions
   {
+    Azure::Nullable<std::string> NextPageToken;
+    Azure::Nullable<int32_t> MaxPageResults;
   };
 
   /**
@@ -134,8 +133,9 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
    *
    */
   struct GetPropertiesOfKeyVersionsOptions final
-      : public Azure::Security::KeyVault::_internal::GetPageResultOptions
   {
+    Azure::Nullable<std::string> NextPageToken;
+    Azure::Nullable<int32_t> MaxPageResults;
   };
 
   /**
@@ -143,7 +143,8 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
    *
    */
   struct GetDeletedKeysOptions final
-      : public Azure::Security::KeyVault::_internal::GetPageResultOptions
   {
+    Azure::Nullable<std::string> NextPageToken;
+    Azure::Nullable<int32_t> MaxPageResults;
   };
 }}}} // namespace Azure::Security::KeyVault::Keys
