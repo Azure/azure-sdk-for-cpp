@@ -401,4 +401,45 @@ namespace Azure { namespace Storage { namespace Test {
     }
   }
 
+  TEST_F(PageBlobClientTest, UpdateSequenceNumber)
+  {
+    auto blobClient = Azure::Storage::Blobs::PageBlobClient::CreateFromConnectionString(
+        StandardStorageConnectionString(), m_containerName, RandomString());
+    blobClient.Create(512);
+
+    Blobs::Models::BlobHttpHeaders headers;
+    headers.ContentType = "text/plain";
+    blobClient.SetHttpHeaders(headers);
+
+    Blobs::UpdatePageBlobSequenceNumberOptions options;
+    options.SequenceNumber = 100;
+    auto res
+        = blobClient.UpdateSequenceNumber(Blobs::Models::SequenceNumberAction::Update, options);
+    EXPECT_TRUE(res.Value.ETag.HasValue());
+    EXPECT_TRUE(IsValidTime(res.Value.LastModified));
+    EXPECT_EQ(res.Value.SequenceNumber, 100);
+    EXPECT_EQ(blobClient.GetProperties().Value.SequenceNumber.Value(), 100);
+
+    options.SequenceNumber = 200;
+    res = blobClient.UpdateSequenceNumber(Blobs::Models::SequenceNumberAction::Update, options);
+    EXPECT_EQ(res.Value.SequenceNumber, 200);
+    EXPECT_EQ(blobClient.GetProperties().Value.SequenceNumber.Value(), 200);
+
+    options.SequenceNumber = 50;
+    res = blobClient.UpdateSequenceNumber(Blobs::Models::SequenceNumberAction::Max, options);
+    EXPECT_EQ(res.Value.SequenceNumber, 200);
+    EXPECT_EQ(blobClient.GetProperties().Value.SequenceNumber.Value(), 200);
+    options.SequenceNumber = 300;
+    res = blobClient.UpdateSequenceNumber(Blobs::Models::SequenceNumberAction::Max, options);
+    EXPECT_EQ(res.Value.SequenceNumber, 300);
+    EXPECT_EQ(blobClient.GetProperties().Value.SequenceNumber.Value(), 300);
+
+    options.SequenceNumber.Reset();
+    res = blobClient.UpdateSequenceNumber(Blobs::Models::SequenceNumberAction::Increment, options);
+    EXPECT_EQ(res.Value.SequenceNumber, 301);
+    EXPECT_EQ(blobClient.GetProperties().Value.SequenceNumber.Value(), 301);
+
+    EXPECT_EQ(blobClient.GetProperties().Value.HttpHeaders.ContentType, headers.ContentType);
+  }
+
 }}} // namespace Azure::Storage::Test

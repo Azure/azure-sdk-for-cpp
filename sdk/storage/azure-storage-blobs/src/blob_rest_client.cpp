@@ -93,4 +93,8 @@ namespace Azure { namespace Storage { namespace Blobs { namespace Models {
   const ScheduleBlobExpiryOriginType ScheduleBlobExpiryOriginType::RelativeToNow("RelativeToNow");
   const ScheduleBlobExpiryOriginType ScheduleBlobExpiryOriginType::Absolute("Absolute");
 
+  const SequenceNumberAction SequenceNumberAction::Max("max");
+  const SequenceNumberAction SequenceNumberAction::Update("update");
+  const SequenceNumberAction SequenceNumberAction::Increment("increment");
+
 }}}} // namespace Azure::Storage::Blobs::Models

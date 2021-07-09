@@ -2101,6 +2101,34 @@ namespace Azure { namespace Storage { namespace Blobs {
     }; // struct SealAppendBlobResult
 
     /**
+     * @brief Indicates how the service should modify the blob's sequence number.
+     */
+    class SequenceNumberAction final {
+    public:
+      SequenceNumberAction() = default;
+      explicit SequenceNumberAction(std::string value) : m_value(std::move(value)) {}
+      bool operator==(const SequenceNumberAction& other) const { return m_value == other.m_value; }
+      bool operator!=(const SequenceNumberAction& other) const { return !(*this == other); }
+      const std::string& ToString() const { return m_value; }
+      /**
+       * Sets the sequence number to be the higher of the value included with the request and the
+       * value currently stored for the blob.
+       */
+      AZ_STORAGE_BLOBS_DLLEXPORT const static SequenceNumberAction Max;
+      /**
+       * Sets the sequence number to the value included with the request.
+       */
+      AZ_STORAGE_BLOBS_DLLEXPORT const static SequenceNumberAction Update;
+      /**
+       * Increments the value of the sequence number by 1.
+       */
+      AZ_STORAGE_BLOBS_DLLEXPORT const static SequenceNumberAction Increment;
+
+    private:
+      std::string m_value;
+    }; // extensible enum SequenceNumberAction
+
+    /**
      * @brief Statistics for the storage service.
      */
     struct ServiceStatistics final
@@ -2297,6 +2325,28 @@ namespace Azure { namespace Storage { namespace Blobs {
     struct UndeleteBlobResult final
     {
     }; // struct UndeleteBlobResult
+
+    /**
+     * @brief Response type for Azure::Storage::Blobs::PageBlobClient::UpdateSequenceNumber.
+     */
+    struct UpdateSequenceNumberResult final
+    {
+      /**
+       * The ETag contains a value that you can use to perform operations conditionally.
+       */
+      Azure::ETag ETag;
+      /**
+       * The date and time the container was last modified. Any operation that modifies the blob,
+       * including an update of the metadata or properties, changes the last-modified time of the
+       * blob.
+       */
+      Azure::DateTime LastModified;
+      /**
+       * The current sequence number for a page blob. This value is null for block blobs or append
+       * blobs.
+       */
+      int64_t SequenceNumber = 0;
+    }; // struct UpdateSequenceNumberResult
 
     /**
      * @brief Response type for #Azure::Storage::Blobs::BlockBlobClient::Upload.
@@ -10332,6 +10382,109 @@ namespace Azure { namespace Storage { namespace Blobs {
           response.SequenceNumber
               = std::stoll(httpResponse.GetHeaders().at("x-ms-blob-sequence-number"));
           return Azure::Response<ResizePageBlobResult>(
+              std::move(response), std::move(pHttpResponse));
+        }
+
+        struct UpdatePageBlobSequenceNumberOptions final
+        {
+          Azure::Nullable<int32_t> Timeout;
+          SequenceNumberAction Action;
+          Azure::Nullable<int64_t> SequenceNumber;
+          Azure::Nullable<std::string> LeaseId;
+          Azure::Nullable<int64_t> IfSequenceNumberLessThanOrEqualTo;
+          Azure::Nullable<int64_t> IfSequenceNumberLessThan;
+          Azure::Nullable<int64_t> IfSequenceNumberEqualTo;
+          Azure::Nullable<Azure::DateTime> IfModifiedSince;
+          Azure::Nullable<Azure::DateTime> IfUnmodifiedSince;
+          Azure::ETag IfMatch;
+          Azure::ETag IfNoneMatch;
+          Azure::Nullable<std::string> IfTags;
+        }; // struct UpdatePageBlobSequenceNumberOptions
+
+        static Azure::Response<UpdateSequenceNumberResult> UpdateSequenceNumber(
+            Azure::Core::Http::_internal::HttpPipeline& pipeline,
+            const Azure::Core::Url& url,
+            const UpdatePageBlobSequenceNumberOptions& options,
+            const Azure::Core::Context& context)
+        {
+          (void)options;
+          auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Put, url);
+          request.SetHeader("Content-Length", "0");
+          request.GetUrl().AppendQueryParameter("comp", "properties");
+          request.SetHeader("x-ms-version", "2020-02-10");
+          if (options.Timeout.HasValue())
+          {
+            request.GetUrl().AppendQueryParameter(
+                "timeout", std::to_string(options.Timeout.Value()));
+          }
+          if (options.LeaseId.HasValue())
+          {
+            request.SetHeader("x-ms-lease-id", options.LeaseId.Value());
+          }
+          if (options.IfSequenceNumberLessThanOrEqualTo.HasValue())
+          {
+            request.SetHeader(
+                "x-ms-if-sequence-number-le",
+                std::to_string(options.IfSequenceNumberLessThanOrEqualTo.Value()));
+          }
+          if (options.IfSequenceNumberLessThan.HasValue())
+          {
+            request.SetHeader(
+                "x-ms-if-sequence-number-lt",
+                std::to_string(options.IfSequenceNumberLessThan.Value()));
+          }
+          if (options.IfSequenceNumberEqualTo.HasValue())
+          {
+            request.SetHeader(
+                "x-ms-if-sequence-number-eq",
+                std::to_string(options.IfSequenceNumberEqualTo.Value()));
+          }
+          if (options.IfModifiedSince.HasValue())
+          {
+            request.SetHeader(
+                "If-Modified-Since",
+                options.IfModifiedSince.Value().ToString(Azure::DateTime::DateFormat::Rfc1123));
+          }
+          if (options.IfUnmodifiedSince.HasValue())
+          {
+            request.SetHeader(
+                "If-Unmodified-Since",
+                options.IfUnmodifiedSince.Value().ToString(Azure::DateTime::DateFormat::Rfc1123));
+          }
+          if (options.IfMatch.HasValue() && !options.IfMatch.ToString().empty())
+          {
+            request.SetHeader("If-Match", options.IfMatch.ToString());
+          }
+          if (options.IfNoneMatch.HasValue() && !options.IfNoneMatch.ToString().empty())
+          {
+            request.SetHeader("If-None-Match", options.IfNoneMatch.ToString());
+          }
+          if (options.IfTags.HasValue())
+          {
+            request.SetHeader("x-ms-if-tags", options.IfTags.Value());
+          }
+          request.SetHeader("x-ms-sequence-number-action", options.Action.ToString());
+          if (options.SequenceNumber.HasValue())
+          {
+            request.SetHeader(
+                "x-ms-blob-sequence-number", std::to_string(options.SequenceNumber.Value()));
+          }
+          auto pHttpResponse = pipeline.Send(request, context);
+          Azure::Core::Http::RawResponse& httpResponse = *pHttpResponse;
+          UpdateSequenceNumberResult response;
+          auto http_status_code
+              = static_cast<std::underlying_type<Azure::Core::Http::HttpStatusCode>::type>(
+                  httpResponse.GetStatusCode());
+          if (!(http_status_code == 200))
+          {
+            throw StorageException::CreateFromResponse(std::move(pHttpResponse));
+          }
+          response.ETag = Azure::ETag(httpResponse.GetHeaders().at("etag"));
+          response.LastModified = Azure::DateTime::Parse(
+              httpResponse.GetHeaders().at("last-modified"), Azure::DateTime::DateFormat::Rfc1123);
+          response.SequenceNumber
+              = std::stoll(httpResponse.GetHeaders().at("x-ms-blob-sequence-number"));
+          return Azure::Response<UpdateSequenceNumberResult>(
               std::move(response), std::move(pHttpResponse));
         }
 

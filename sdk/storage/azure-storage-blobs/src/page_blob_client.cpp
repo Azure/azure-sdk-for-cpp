@@ -238,6 +238,24 @@ namespace Azure { namespace Storage { namespace Blobs {
         *m_pipeline, m_blobUrl, protocolLayerOptions, context);
   }
 
+  Azure::Response<Models::UpdateSequenceNumberResult> PageBlobClient::UpdateSequenceNumber(
+      Models::SequenceNumberAction action,
+      const UpdatePageBlobSequenceNumberOptions& options,
+      const Azure::Core::Context& context) const
+  {
+    _detail::BlobRestClient::PageBlob::UpdatePageBlobSequenceNumberOptions protocolLayerOptions;
+    protocolLayerOptions.Action = action;
+    protocolLayerOptions.SequenceNumber = options.SequenceNumber;
+    protocolLayerOptions.LeaseId = options.AccessConditions.LeaseId;
+    protocolLayerOptions.IfModifiedSince = options.AccessConditions.IfModifiedSince;
+    protocolLayerOptions.IfUnmodifiedSince = options.AccessConditions.IfUnmodifiedSince;
+    protocolLayerOptions.IfMatch = options.AccessConditions.IfMatch;
+    protocolLayerOptions.IfNoneMatch = options.AccessConditions.IfNoneMatch;
+    protocolLayerOptions.IfTags = options.AccessConditions.TagConditions;
+    return _detail::BlobRestClient::PageBlob::UpdateSequenceNumber(
+        *m_pipeline, m_blobUrl, protocolLayerOptions, context);
+  }
+
   GetPageRangesPagedResponse PageBlobClient::GetPageRanges(
       const GetPageRangesOptions& options,
       const Azure::Core::Context& context) const
