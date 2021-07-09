@@ -58,7 +58,7 @@ set(
     inc/azure/keyvault/keys/key_properties.hpp
     inc/azure/keyvault/keys/key_type.hpp
     inc/azure/keyvault/keys/key_vault_key.hpp
-    inc/azure/keyvault/keys/list_keys_result.hpp
+    inc/azure/keyvault/keys/list_keys_responses.hpp
     inc/azure/keyvault/keys/recover_deleted_key_operation.hpp
 )
 
@@ -103,7 +103,7 @@ set(
     src/key_request_parameters.cpp
     src/key_type.cpp
     src/key_vault_key.cpp
-    src/list_keys_result.cpp
+    src/list_keys_responses.cpp
     src/recover_deleted_key_operation.cpp
 )
 

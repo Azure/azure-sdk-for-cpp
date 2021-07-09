@@ -32,5 +32,5 @@
 #include "azure/keyvault/keys/key_properties.hpp"
 #include "azure/keyvault/keys/key_type.hpp"
 #include "azure/keyvault/keys/key_vault_key.hpp"
-#include "azure/keyvault/keys/list_keys_result.hpp"
+#include "azure/keyvault/keys/list_keys_responses.hpp"
 #include "azure/keyvault/keys/recover_deleted_key_operation.hpp"
