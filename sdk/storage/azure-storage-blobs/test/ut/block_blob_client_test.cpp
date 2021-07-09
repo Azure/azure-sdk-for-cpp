@@ -93,9 +93,9 @@ namespace Azure { namespace Storage { namespace Test {
 
     blockBlobClient.Delete();
 
-    blobItem = GetBlobItem(blobName, Blobs::Models::ListBlobsIncludeFlags::Deleted);
     /*
-    // Below fields doesn't apply to blobs with versioning enabled.
+    // Soft delete doesn't work in storage account with versioning enabled.
+    blobItem = GetBlobItem(blobName, Blobs::Models::ListBlobsIncludeFlags::Deleted);
     EXPECT_TRUE(blobItem.IsDeleted);
     ASSERT_TRUE(blobItem.Details.DeletedOn.HasValue());
     EXPECT_TRUE(IsValidTime(blobItem.Details.DeletedOn.Value()));
