@@ -125,8 +125,9 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
    *
    */
   struct GetPropertiesOfKeysOptions final
-      : public Azure::Security::KeyVault::_internal::GetPageResultOptions
   {
+    Azure::Nullable<std::string> NextPageToken;
+    Azure::Nullable<int32_t> MaxPageResults;
   };
 
   /**
@@ -134,8 +135,9 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
    *
    */
   struct GetPropertiesOfKeyVersionsOptions final
-      : public Azure::Security::KeyVault::_internal::GetPageResultOptions
   {
+    Azure::Nullable<std::string> NextPageToken;
+    Azure::Nullable<int32_t> MaxPageResults;
   };
 
   /**
@@ -143,7 +145,8 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
    *
    */
   struct GetDeletedKeysOptions final
-      : public Azure::Security::KeyVault::_internal::GetPageResultOptions
   {
+    Azure::Nullable<std::string> NextPageToken;
+    Azure::Nullable<int32_t> MaxPageResults;
   };
 }}}} // namespace Azure::Security::KeyVault::Keys
