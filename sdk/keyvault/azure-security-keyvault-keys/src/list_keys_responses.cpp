@@ -1,8 +1,8 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
 
-#include "azure/keyvault/keys/key_client.hpp"
 #include "azure/keyvault/keys/list_keys_responses.hpp"
+#include "azure/keyvault/keys/key_client.hpp"
 #include "private/key_constants.hpp"
 #include "private/key_serializers.hpp"
 
@@ -14,13 +14,13 @@
 using namespace Azure::Security::KeyVault::Keys;
 using namespace Azure::Core::Json::_internal;
 
-KeyPropertiesPageResult
+KeyPropertiesPageResponse
 _detail::KeyPropertiesPageResultSerializer::KeyPropertiesPageResultDeserialize(
     Azure::Core::Http::RawResponse const& rawResponse)
 {
   using Azure::Core::_internal::PosixTimeConverter;
 
-  KeyPropertiesPageResult result;
+  KeyPropertiesPageResponse result;
   auto const& body = rawResponse.GetBody();
   auto jsonParser = json::parse(body);
 
@@ -83,7 +83,7 @@ _detail::KeyPropertiesPageResultSerializer::KeyPropertiesPageResultDeserialize(
   return result;
 }
 
-DeletedKeyPageResult _detail::KeyPropertiesPageResultSerializer::DeletedKeyPageResultDeserialize(
+DeletedKeyPageResponse _detail::KeyPropertiesPageResultSerializer::DeletedKeyPageResultDeserialize(
     Azure::Core::Http::RawResponse const& rawResponse)
 {
   using Azure::Core::_internal::PosixTimeConverter;
@@ -91,7 +91,7 @@ DeletedKeyPageResult _detail::KeyPropertiesPageResultSerializer::DeletedKeyPageR
   auto const& body = rawResponse.GetBody();
   auto jsonParser = Azure::Core::Json::_internal::json::parse(body);
 
-  DeletedKeyPageResult deletedKeyPageResult;
+  DeletedKeyPageResponse deletedKeyPageResult;
 
   JsonOptional::SetIfExists(deletedKeyPageResult.NextPageToken, jsonParser, "nextLink");
 
@@ -129,7 +129,7 @@ DeletedKeyPageResult _detail::KeyPropertiesPageResultSerializer::DeletedKeyPageR
   return deletedKeyPageResult;
 }
 
-void DeletedKeyPageResult::OnNextPage(const Azure::Core::Context& context)
+void DeletedKeyPageResponse::OnNextPage(const Azure::Core::Context& context)
 {
   // Before calling `OnNextPage` pagedResponse validates there is a next page, so we are sure
   // NextPageToken is valid.
@@ -139,14 +139,14 @@ void DeletedKeyPageResult::OnNextPage(const Azure::Core::Context& context)
   CurrentPageToken = options.NextPageToken.Value();
 }
 
-void KeyPropertiesPageResult::OnNextPage(const Azure::Core::Context& context)
+void KeyPropertiesPageResponse::OnNextPage(const Azure::Core::Context& context)
 {
   // Notes
   // - Before calling `OnNextPage` pagedResponse validates there is a next page, so we are sure
   // NextPageToken is valid.
-  // - KeyPropertiesPageResult is used to list keys from a Key Vault and also to list the key
-  // versions from a specific key. When KeyPropertiesPageResult is listing keys, the `m_keyName`
-  // fields will be empty, but for listing the key versions, the KeyPropertiesPageResult needs to
+  // - KeyPropertiesPageResponse is used to list keys from a Key Vault and also to list the key
+  // versions from a specific key. When KeyPropertiesPageResponse is listing keys, the `m_keyName`
+  // fields will be empty, but for listing the key versions, the KeyPropertiesPageResponse needs to
   // keep the name of the key in `m_keyName` because it is required to get more pages.
   //
   if (m_keyName.empty())

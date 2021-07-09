@@ -99,9 +99,9 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys { nam
   /**************** Key Properties ************/
   struct KeyPropertiesPageResultSerializer final
   {
-    static KeyPropertiesPageResult KeyPropertiesPageResultDeserialize(
+    static KeyPropertiesPageResponse KeyPropertiesPageResultDeserialize(
         Azure::Core::Http::RawResponse const& rawResponse);
-    static DeletedKeyPageResult DeletedKeyPageResultDeserialize(
+    static DeletedKeyPageResponse DeletedKeyPageResultDeserialize(
         Azure::Core::Http::RawResponse const& rawResponse);
   };
 
