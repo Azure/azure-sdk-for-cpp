@@ -435,6 +435,12 @@ namespace Azure { namespace Storage { namespace Blobs {
      * same blob.
      */
     Azure::Nullable<Models::RehydratePriority> RehydratePriority;
+    /**
+     * @brief Optional conditions that must be met to perform this operation.
+     */
+    struct : public LeaseAccessConditions, public TagAccessConditions
+    {
+    } AccessConditions;
   };
 
   /**
@@ -452,14 +458,26 @@ namespace Azure { namespace Storage { namespace Blobs {
     Storage::Metadata Metadata;
 
     /**
+     * @brief The tags to set for this blob.
+     */
+    std::map<std::string, std::string> Tags;
+
+    /**
      * @brief Optional conditions that must be met to perform this operation.
      */
     BlobAccessConditions AccessConditions;
 
     /**
      * @brief Optional conditions that the source must meet to perform this operation.
+     *
+     * @note Lease access condition only works for API versions before 2012-02-12.
      */
-    BlobAccessConditions SourceAccessConditions;
+    struct : public Azure::ModifiedConditions,
+             public Azure::MatchConditions,
+             public LeaseAccessConditions,
+             public TagAccessConditions
+    {
+    } SourceAccessConditions;
 
     /**
      * @brief Specifies the tier to be set on the target blob.
@@ -699,6 +717,11 @@ namespace Azure { namespace Storage { namespace Blobs {
     Storage::Metadata Metadata;
 
     /**
+     * @brief The tags to set for this blob.
+     */
+    std::map<std::string, std::string> Tags;
+
+    /**
      * @brief Indicates the tier to be set on blob.
      */
     Azure::Nullable<Models::AccessTier> AccessTier;
@@ -723,6 +746,11 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @brief Name-value pairs associated with the blob as metadata.
      */
     Storage::Metadata Metadata;
+
+    /**
+     * @brief The tags to set for this blob.
+     */
+    std::map<std::string, std::string> Tags;
 
     /**
      * @brief Indicates the tier to be set on blob.
@@ -817,6 +845,11 @@ namespace Azure { namespace Storage { namespace Blobs {
     Storage::Metadata Metadata;
 
     /**
+     * @brief The tags to set for this blob.
+     */
+    std::map<std::string, std::string> Tags;
+
+    /**
      * @brief Indicates the tier to be set on blob.
      */
     Azure::Nullable<Models::AccessTier> AccessTier;
@@ -860,6 +893,11 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @brief Name-value pairs associated with the blob as metadata.
      */
     Storage::Metadata Metadata;
+
+    /**
+     * @brief The tags to set for this blob.
+     */
+    std::map<std::string, std::string> Tags;
 
     /**
      * @brief Optional conditions that must be met to perform this operation.
@@ -946,6 +984,11 @@ namespace Azure { namespace Storage { namespace Blobs {
     Azure::Nullable<Models::AccessTier> AccessTier;
 
     /**
+     * @brief The tags to set for this blob.
+     */
+    std::map<std::string, std::string> Tags;
+
+    /**
      * @brief Optional conditions that must be met to perform this operation.
      */
     BlobAccessConditions AccessConditions;
@@ -985,6 +1028,13 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @brief Optional conditions that must be met to perform this operation.
      */
     PageBlobAccessConditions AccessConditions;
+
+    /**
+     * @brief Optional conditions that the source must meet to perform this operation.
+     */
+    struct : public Azure::ModifiedConditions, public Azure::MatchConditions
+    {
+    } SourceAccessConditions;
   };
 
   /**

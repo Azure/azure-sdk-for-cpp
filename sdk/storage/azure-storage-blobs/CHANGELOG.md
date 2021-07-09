@@ -4,9 +4,19 @@
 
 ### Features Added
 
+- Added lease ID access condition and tags access condition for `BlobClient::SetAccessTier()`.
+- Added source ETag access conditions and last-modified access conditions for `PageBlobClient::UploadPagesFromUri()`.
+- Added three new fields `IsServerEncrypted`, `EncryptionKeySha256` and `EncryptionScope` into `SetBlobMetadataResult`.
+- Added support for setting blob tags when creating or copying blobs.
+- Added new fields `AccessTierChangedOn`, `ArchiveStatus`, `RehydratePriority`, `CopyId`, `CopySource`, `CopyStatus`, `CopyStatusDescription`, `IsIncrementalCopy`, `IncrementalCopyDestinationSnapshot`, `CopyProgress`, `CopyCompletedOn`, `TagCount`, `Tags`, `DeletedOn` and `RemainingRetentionDays` into `BlobItemDetails`.
+- Added support for including blob tags when listing blobs.
+
 ### Breaking Changes
 
 ### Bugs Fixed
+
+- Fixed a bug where lease ID didn't work for `BlobContainerClient::GetAccessPolicy()`.
+- Fixed a bug where `BlobItemDetails::EncryptionKeySha256` was always null because it wasn't correctly parsed from xml.
 
 ### Other Changes
 

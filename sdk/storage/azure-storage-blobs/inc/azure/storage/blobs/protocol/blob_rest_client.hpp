@@ -847,6 +847,18 @@ namespace Azure { namespace Storage { namespace Blobs {
        */
       Azure::Nullable<bool> IsAccessTierInferred;
       /**
+       * The date and time the tier was changed on the object.
+       */
+      Azure::Nullable<Azure::DateTime> AccessTierChangedOn;
+      /**
+       * Indicates if the blob is being rehydrated.
+       */
+      Azure::Nullable<Models::ArchiveStatus> ArchiveStatus;
+      /**
+       * Priority of rehydrate if the blob is being rehydrated.
+       */
+      Azure::Nullable<Models::RehydratePriority> RehydratePriority;
+      /**
        * The current lease status of the blob.
        */
       Models::LeaseStatus LeaseStatus = Models::LeaseStatus::Unlocked;
@@ -886,6 +898,66 @@ namespace Azure { namespace Storage { namespace Blobs {
        * Only valid when Object Replication is enabled and current blob is the source.
        */
       std::vector<ObjectReplicationPolicy> ObjectReplicationSourceProperties;
+      /**
+       * String identifier for the last attempted Copy Blob operation where this blob was the
+       * destination. This value is null if this blob has never been the destination of a copy
+       * operation, or if this blob has been modified after a concluded copy operation.
+       */
+      Azure::Nullable<std::string> CopyId;
+      /**
+       * URL that specifies the source blob or file used in the last attempted copy operation where
+       * this blob was the destination blob. This value is null if this blob has never been the
+       * destination of a copy operation, or if this blob has been modified after a concluded copy
+       * operation.
+       */
+      Azure::Nullable<std::string> CopySource;
+      /**
+       * State of the copy operation identified by the copy ID. Possible values include success,
+       * pending, aborted, failed etc. This value is null if this blob has never been the
+       * destination of a copy operation, or if this blob has been modified after a concluded copy
+       * operation.
+       */
+      Azure::Nullable<Models::CopyStatus> CopyStatus;
+      /**
+       * Describes the cause of the last fatal or non-fatal copy operation failure. This is not null
+       * only when copy status is failed or pending.
+       */
+      Azure::Nullable<std::string> CopyStatusDescription;
+      /**
+       * True if the copy operation is incremental copy.
+       */
+      Azure::Nullable<bool> IsIncrementalCopy;
+      /**
+       * Snapshot time of the last successful incremental copy snapshot for this blob.
+       */
+      Azure::Nullable<std::string> IncrementalCopyDestinationSnapshot;
+      /**
+       * Contains the number of bytes copied and the total bytes in the source in the last attempted
+       * copy operation where this blob was the destination blob.
+       */
+      Azure::Nullable<std::string> CopyProgress;
+      /**
+       * Conclusion time of the last attempted copy operation where this blob was the destination
+       * blob.
+       */
+      Azure::Nullable<Azure::DateTime> CopyCompletedOn;
+      /**
+       * the number of tags stored on the blob.
+       */
+      Azure::Nullable<int32_t> TagCount;
+      /**
+       * User-defined tags for this blob.
+       */
+      std::map<std::string, std::string> Tags;
+      /**
+       * Data and time at which this blob was deleted. Only valid when this blob was deleted.
+       */
+      Azure::Nullable<Azure::DateTime> DeletedOn;
+      /**
+       * Remaining days before this blob will be permanantely deleted. Only valid when this blob was
+       * deleted.
+       */
+      Azure::Nullable<int32_t> RemainingRetentionDays;
     }; // struct BlobItemDetails
 
     /**
@@ -1921,6 +1993,10 @@ namespace Azure { namespace Storage { namespace Blobs {
        * Uncommitted blobs should be included.
        */
       UncomittedBlobs = 32,
+      /**
+       * Tags should be included.
+       */
+      Tags = 64,
     }; // bitwise enum ListBlobsIncludeFlags
 
     inline ListBlobsIncludeFlags operator|(ListBlobsIncludeFlags lhs, ListBlobsIncludeFlags rhs)
@@ -2082,6 +2158,16 @@ namespace Azure { namespace Storage { namespace Blobs {
      */
     struct SetBlobExpiryResult final
     {
+      /**
+       * The ETag contains a value that you can use to perform operations conditionally.
+       */
+      Azure::ETag ETag;
+      /**
+       * The date and time the container was last modified. Any operation that modifies the blob,
+       * including an update of the metadata or properties, changes the last-modified time of the
+       * blob.
+       */
+      Azure::DateTime LastModified;
     }; // struct SetBlobExpiryResult
 
     /**
@@ -2122,10 +2208,23 @@ namespace Azure { namespace Storage { namespace Blobs {
        */
       Azure::DateTime LastModified;
       /**
-       * The current sequence number for a page blob. This value is null for block blobs or append
-       * blobs.
+       * This value is always null, don't use it.
        */
       Azure::Nullable<int64_t> SequenceNumber;
+      /**
+       * True if the blob data and metadata are completely encrypted using the specified algorithm.
+       * Otherwise, the value is set to false (when the blob is unencrypted, or if only parts of the
+       * blob/application metadata are encrypted).
+       */
+      bool IsServerEncrypted = false;
+      /**
+       * The SHA-256 hash of the encryption key used to encrypt the blob data and metadata.
+       */
+      Azure::Nullable<std::vector<uint8_t>> EncryptionKeySha256;
+      /**
+       * Name of the encryption scope used to encrypt the blob data and metadata.
+       */
+      Azure::Nullable<std::string> EncryptionScope;
     }; // struct SetBlobMetadataResult
 
     /**
@@ -2486,6 +2585,9 @@ namespace Azure { namespace Storage { namespace Blobs {
     namespace _detail {
       struct GetBlobTagsResult final
       {
+        /**
+         * User-defined tags for this blob.
+         */
         std::map<std::string, std::string> Tags;
       }; // struct GetBlobTagsResult
     } // namespace _detail
@@ -2575,11 +2677,6 @@ namespace Azure { namespace Storage { namespace Blobs {
          * blob.
          */
         Azure::DateTime LastModified;
-        /**
-         * The current sequence number for a page blob. This value is null for block blobs or append
-         * blobs.
-         */
-        Azure::Nullable<int64_t> SequenceNumber;
       }; // struct ReleaseBlobLeaseResult
     } // namespace _detail
 
@@ -2745,6 +2842,7 @@ namespace Azure { namespace Storage { namespace Blobs {
           ListBlobsIncludeFlags::Snapshots,
           ListBlobsIncludeFlags::Versions,
           ListBlobsIncludeFlags::UncomittedBlobs,
+          ListBlobsIncludeFlags::Tags,
       };
       const char* string_list[] = {
           "copy",
@@ -2753,6 +2851,7 @@ namespace Azure { namespace Storage { namespace Blobs {
           "snapshots",
           "versions",
           "uncommittedblobs",
+          "tags",
       };
       std::string ret;
       for (size_t i = 0; i < sizeof(value_list) / sizeof(ListBlobsIncludeFlags); ++i)
@@ -4986,6 +5085,10 @@ namespace Azure { namespace Storage { namespace Blobs {
           }
           request.GetUrl().AppendQueryParameter("restype", "container");
           request.GetUrl().AppendQueryParameter("comp", "acl");
+          if (options.LeaseId.HasValue())
+          {
+            request.SetHeader("x-ms-lease-id", options.LeaseId.Value());
+          }
           auto pHttpResponse = pipeline.Send(request, context);
           Azure::Core::Http::RawResponse& httpResponse = *pHttpResponse;
           BlobContainerAccessPolicy response;
@@ -5687,15 +5790,32 @@ namespace Azure { namespace Storage { namespace Blobs {
             k_BlobType,
             k_AccessTier,
             k_AccessTierInferred,
+            k_AccessTierChangeTime,
+            k_ArchiveStatus,
+            k_RehydratePriority,
             k_LeaseStatus,
             k_LeaseState,
             k_LeaseDuration,
             k_ServerEncrypted,
-            k_EncryptionKeySHA256,
+            k_CustomerProvidedKeySha256,
+            k_EncryptionScope,
             k_Sealed,
             k_xmsblobsequencenumber,
+            k_CopyId,
+            k_CopyStatus,
+            k_CopySource,
+            k_CopyProgress,
+            k_CopyCompletionTime,
+            k_CopyStatusDescription,
+            k_IncrementalCopy,
+            k_CopyDestinationSnapshot,
+            k_DeletedTime,
+            k_RemainingRetentionDays,
+            k_TagCount,
             k_Metadata,
             k_OrMetadata,
+            k_Tags,
+            k_TagSet,
             k_Unknown,
           };
           std::vector<XmlTagName> path;
@@ -5803,6 +5923,18 @@ namespace Azure { namespace Storage { namespace Blobs {
               {
                 path.emplace_back(XmlTagName::k_AccessTierInferred);
               }
+              else if (node.Name == "AccessTierChangeTime")
+              {
+                path.emplace_back(XmlTagName::k_AccessTierChangeTime);
+              }
+              else if (node.Name == "ArchiveStatus")
+              {
+                path.emplace_back(XmlTagName::k_ArchiveStatus);
+              }
+              else if (node.Name == "RehydratePriority")
+              {
+                path.emplace_back(XmlTagName::k_RehydratePriority);
+              }
               else if (node.Name == "LeaseStatus")
               {
                 path.emplace_back(XmlTagName::k_LeaseStatus);
@@ -5819,9 +5951,13 @@ namespace Azure { namespace Storage { namespace Blobs {
               {
                 path.emplace_back(XmlTagName::k_ServerEncrypted);
               }
-              else if (node.Name == "EncryptionKeySHA256")
+              else if (node.Name == "CustomerProvidedKeySha256")
               {
-                path.emplace_back(XmlTagName::k_EncryptionKeySHA256);
+                path.emplace_back(XmlTagName::k_CustomerProvidedKeySha256);
+              }
+              else if (node.Name == "EncryptionScope")
+              {
+                path.emplace_back(XmlTagName::k_EncryptionScope);
               }
               else if (node.Name == "Sealed")
               {
@@ -5831,6 +5967,50 @@ namespace Azure { namespace Storage { namespace Blobs {
               {
                 path.emplace_back(XmlTagName::k_xmsblobsequencenumber);
               }
+              else if (node.Name == "CopyId")
+              {
+                path.emplace_back(XmlTagName::k_CopyId);
+              }
+              else if (node.Name == "CopyStatus")
+              {
+                path.emplace_back(XmlTagName::k_CopyStatus);
+              }
+              else if (node.Name == "CopySource")
+              {
+                path.emplace_back(XmlTagName::k_CopySource);
+              }
+              else if (node.Name == "CopyProgress")
+              {
+                path.emplace_back(XmlTagName::k_CopyProgress);
+              }
+              else if (node.Name == "CopyCompletionTime")
+              {
+                path.emplace_back(XmlTagName::k_CopyCompletionTime);
+              }
+              else if (node.Name == "CopyStatusDescription")
+              {
+                path.emplace_back(XmlTagName::k_CopyStatusDescription);
+              }
+              else if (node.Name == "IncrementalCopy")
+              {
+                path.emplace_back(XmlTagName::k_IncrementalCopy);
+              }
+              else if (node.Name == "CopyDestinationSnapshot")
+              {
+                path.emplace_back(XmlTagName::k_CopyDestinationSnapshot);
+              }
+              else if (node.Name == "DeletedTime")
+              {
+                path.emplace_back(XmlTagName::k_DeletedTime);
+              }
+              else if (node.Name == "RemainingRetentionDays")
+              {
+                path.emplace_back(XmlTagName::k_RemainingRetentionDays);
+              }
+              else if (node.Name == "TagCount")
+              {
+                path.emplace_back(XmlTagName::k_TagCount);
+              }
               else if (node.Name == "Metadata")
               {
                 path.emplace_back(XmlTagName::k_Metadata);
@@ -5838,6 +6018,14 @@ namespace Azure { namespace Storage { namespace Blobs {
               else if (node.Name == "OrMetadata")
               {
                 path.emplace_back(XmlTagName::k_OrMetadata);
+              }
+              else if (node.Name == "Tags")
+              {
+                path.emplace_back(XmlTagName::k_Tags);
+              }
+              else if (node.Name == "TagSet")
+              {
+                path.emplace_back(XmlTagName::k_TagSet);
               }
               else
               {
@@ -5852,6 +6040,13 @@ namespace Azure { namespace Storage { namespace Blobs {
               {
                 ret.Details.ObjectReplicationSourceProperties
                     = ObjectReplicationSourcePropertiesFromXml(reader);
+                path.pop_back();
+              }
+              else if (
+                  path.size() == 2 && path[0] == XmlTagName::k_Tags
+                  && path[1] == XmlTagName::k_TagSet)
+              {
+                ret.Details.Tags = TagsFromXml(reader);
                 path.pop_back();
               }
             }
@@ -5974,6 +6169,25 @@ namespace Azure { namespace Storage { namespace Blobs {
               }
               else if (
                   path.size() == 2 && path[0] == XmlTagName::k_Properties
+                  && path[1] == XmlTagName::k_AccessTierChangeTime)
+              {
+                ret.Details.AccessTierChangedOn
+                    = Azure::DateTime::Parse(node.Value, Azure::DateTime::DateFormat::Rfc1123);
+              }
+              else if (
+                  path.size() == 2 && path[0] == XmlTagName::k_Properties
+                  && path[1] == XmlTagName::k_ArchiveStatus)
+              {
+                ret.Details.ArchiveStatus = ArchiveStatus(node.Value);
+              }
+              else if (
+                  path.size() == 2 && path[0] == XmlTagName::k_Properties
+                  && path[1] == XmlTagName::k_RehydratePriority)
+              {
+                ret.Details.RehydratePriority = RehydratePriority(node.Value);
+              }
+              else if (
+                  path.size() == 2 && path[0] == XmlTagName::k_Properties
                   && path[1] == XmlTagName::k_LeaseStatus)
               {
                 ret.Details.LeaseStatus = LeaseStatus(node.Value);
@@ -5998,9 +6212,15 @@ namespace Azure { namespace Storage { namespace Blobs {
               }
               else if (
                   path.size() == 2 && path[0] == XmlTagName::k_Properties
-                  && path[1] == XmlTagName::k_EncryptionKeySHA256)
+                  && path[1] == XmlTagName::k_CustomerProvidedKeySha256)
               {
                 ret.Details.EncryptionKeySha256 = Azure::Core::Convert::Base64Decode(node.Value);
+              }
+              else if (
+                  path.size() == 2 && path[0] == XmlTagName::k_Properties
+                  && path[1] == XmlTagName::k_EncryptionScope)
+              {
+                ret.Details.EncryptionScope = node.Value;
               }
               else if (
                   path.size() == 2 && path[0] == XmlTagName::k_Properties
@@ -6013,6 +6233,74 @@ namespace Azure { namespace Storage { namespace Blobs {
                   && path[1] == XmlTagName::k_xmsblobsequencenumber)
               {
                 ret.Details.SequenceNumber = std::stoll(node.Value);
+              }
+              else if (
+                  path.size() == 2 && path[0] == XmlTagName::k_Properties
+                  && path[1] == XmlTagName::k_CopyId)
+              {
+                ret.Details.CopyId = node.Value;
+              }
+              else if (
+                  path.size() == 2 && path[0] == XmlTagName::k_Properties
+                  && path[1] == XmlTagName::k_CopyStatus)
+              {
+                ret.Details.CopyStatus = CopyStatus(node.Value);
+              }
+              else if (
+                  path.size() == 2 && path[0] == XmlTagName::k_Properties
+                  && path[1] == XmlTagName::k_CopySource)
+              {
+                ret.Details.CopySource = node.Value;
+              }
+              else if (
+                  path.size() == 2 && path[0] == XmlTagName::k_Properties
+                  && path[1] == XmlTagName::k_CopyProgress)
+              {
+                ret.Details.CopyProgress = node.Value;
+              }
+              else if (
+                  path.size() == 2 && path[0] == XmlTagName::k_Properties
+                  && path[1] == XmlTagName::k_CopyCompletionTime)
+              {
+                ret.Details.CopyCompletedOn
+                    = Azure::DateTime::Parse(node.Value, Azure::DateTime::DateFormat::Rfc1123);
+              }
+              else if (
+                  path.size() == 2 && path[0] == XmlTagName::k_Properties
+                  && path[1] == XmlTagName::k_CopyStatusDescription)
+              {
+                ret.Details.CopyStatusDescription = node.Value;
+              }
+              else if (
+                  path.size() == 2 && path[0] == XmlTagName::k_Properties
+                  && path[1] == XmlTagName::k_IncrementalCopy)
+              {
+                ret.Details.IsIncrementalCopy = node.Value == "true";
+              }
+              else if (
+                  path.size() == 2 && path[0] == XmlTagName::k_Properties
+                  && path[1] == XmlTagName::k_CopyDestinationSnapshot)
+              {
+                ret.Details.IncrementalCopyDestinationSnapshot = node.Value;
+              }
+              else if (
+                  path.size() == 2 && path[0] == XmlTagName::k_Properties
+                  && path[1] == XmlTagName::k_DeletedTime)
+              {
+                ret.Details.DeletedOn
+                    = Azure::DateTime::Parse(node.Value, Azure::DateTime::DateFormat::Rfc1123);
+              }
+              else if (
+                  path.size() == 2 && path[0] == XmlTagName::k_Properties
+                  && path[1] == XmlTagName::k_RemainingRetentionDays)
+              {
+                ret.Details.RemainingRetentionDays = std::stoi(node.Value);
+              }
+              else if (
+                  path.size() == 2 && path[0] == XmlTagName::k_Properties
+                  && path[1] == XmlTagName::k_TagCount)
+              {
+                ret.Details.TagCount = std::stoi(node.Value);
               }
             }
           }
@@ -6102,6 +6390,56 @@ namespace Azure { namespace Storage { namespace Blobs {
                   && path[1] == XmlTagName::k_Permission)
               {
                 ret.Permissions = node.Value;
+              }
+            }
+          }
+          return ret;
+        }
+
+        static std::map<std::string, std::string> TagsFromXml(_internal::XmlReader& reader)
+        {
+          std::map<std::string, std::string> ret;
+          int depth = 0;
+          std::string key;
+          bool is_key = false;
+          bool is_value = false;
+          while (true)
+          {
+            auto node = reader.Read();
+            if (node.Type == _internal::XmlNodeType::End)
+            {
+              break;
+            }
+            else if (node.Type == _internal::XmlNodeType::StartTag)
+            {
+              ++depth;
+              if (node.Name == "Key")
+              {
+                is_key = true;
+              }
+              else if (node.Name == "Value")
+              {
+                is_value = true;
+              }
+            }
+            else if (node.Type == _internal::XmlNodeType::EndTag)
+            {
+              if (depth-- == 0)
+              {
+                break;
+              }
+            }
+            if (depth == 2 && node.Type == _internal::XmlNodeType::Text)
+            {
+              if (is_key)
+              {
+                key = node.Value;
+                is_key = false;
+              }
+              else if (is_value)
+              {
+                ret.emplace(std::move(key), node.Value);
+                is_value = false;
               }
             }
           }
@@ -6727,6 +7065,9 @@ namespace Azure { namespace Storage { namespace Blobs {
           {
             throw StorageException::CreateFromResponse(std::move(pHttpResponse));
           }
+          response.ETag = Azure::ETag(httpResponse.GetHeaders().at("etag"));
+          response.LastModified = Azure::DateTime::Parse(
+              httpResponse.GetHeaders().at("last-modified"), Azure::DateTime::DateFormat::Rfc1123);
           return Azure::Response<SetBlobExpiryResult>(
               std::move(response), std::move(pHttpResponse));
         }
@@ -7294,6 +7635,27 @@ namespace Azure { namespace Storage { namespace Blobs {
           response.ETag = Azure::ETag(httpResponse.GetHeaders().at("etag"));
           response.LastModified = Azure::DateTime::Parse(
               httpResponse.GetHeaders().at("last-modified"), Azure::DateTime::DateFormat::Rfc1123);
+          auto x_ms_blob_sequence_number__iterator
+              = httpResponse.GetHeaders().find("x-ms-blob-sequence-number");
+          if (x_ms_blob_sequence_number__iterator != httpResponse.GetHeaders().end())
+          {
+            response.SequenceNumber = std::stoll(x_ms_blob_sequence_number__iterator->second);
+          }
+          response.IsServerEncrypted
+              = httpResponse.GetHeaders().at("x-ms-request-server-encrypted") == "true";
+          auto x_ms_encryption_key_sha256__iterator
+              = httpResponse.GetHeaders().find("x-ms-encryption-key-sha256");
+          if (x_ms_encryption_key_sha256__iterator != httpResponse.GetHeaders().end())
+          {
+            response.EncryptionKeySha256
+                = Azure::Core::Convert::Base64Decode(x_ms_encryption_key_sha256__iterator->second);
+          }
+          auto x_ms_encryption_scope__iterator
+              = httpResponse.GetHeaders().find("x-ms-encryption-scope");
+          if (x_ms_encryption_scope__iterator != httpResponse.GetHeaders().end())
+          {
+            response.EncryptionScope = x_ms_encryption_scope__iterator->second;
+          }
           return Azure::Response<SetBlobMetadataResult>(
               std::move(response), std::move(pHttpResponse));
         }
@@ -7303,6 +7665,7 @@ namespace Azure { namespace Storage { namespace Blobs {
           Azure::Nullable<int32_t> Timeout;
           Models::AccessTier AccessTier;
           Azure::Nullable<Models::RehydratePriority> RehydratePriority;
+          Azure::Nullable<std::string> LeaseId;
           Azure::Nullable<std::string> IfTags;
         }; // struct SetBlobAccessTierOptions
 
@@ -7325,6 +7688,10 @@ namespace Azure { namespace Storage { namespace Blobs {
           {
             request.SetHeader(
                 "x-ms-rehydrate-priority", options.RehydratePriority.Value().ToString());
+          }
+          if (options.LeaseId.HasValue())
+          {
+            request.SetHeader("x-ms-lease-id", options.LeaseId.Value());
           }
           if (options.IfTags.HasValue())
           {
@@ -7366,9 +7733,9 @@ namespace Azure { namespace Storage { namespace Blobs {
         {
           Azure::Nullable<int32_t> Timeout;
           Storage::Metadata Metadata;
+          std::map<std::string, std::string> Tags;
           std::string SourceUri;
           Azure::Nullable<std::string> LeaseId;
-          Azure::Nullable<std::string> SourceLeaseId;
           Azure::Nullable<Models::AccessTier> AccessTier;
           Azure::Nullable<Models::RehydratePriority> RehydratePriority;
           Azure::Nullable<Azure::DateTime> IfModifiedSince;
@@ -7381,6 +7748,7 @@ namespace Azure { namespace Storage { namespace Blobs {
           Azure::ETag SourceIfMatch;
           Azure::ETag SourceIfNoneMatch;
           Azure::Nullable<std::string> SourceIfTags;
+          Azure::Nullable<std::string> SourceLeaseId;
           Azure::Nullable<bool> ShouldSealDestination;
         }; // struct StartBlobCopyFromUriOptions
 
@@ -7403,14 +7771,24 @@ namespace Azure { namespace Storage { namespace Blobs {
           {
             request.SetHeader("x-ms-meta-" + pair.first, pair.second);
           }
+          if (!options.Tags.empty())
+          {
+            std::string blobTagsValue;
+            for (const auto& tag : options.Tags)
+            {
+              if (!blobTagsValue.empty())
+              {
+                blobTagsValue += "&";
+              }
+              blobTagsValue += _internal::UrlEncodeQueryParameter(tag.first) + "="
+                  + _internal::UrlEncodeQueryParameter(tag.second);
+            }
+            request.SetHeader("x-ms-tags", std::move(blobTagsValue));
+          }
           request.SetHeader("x-ms-copy-source", options.SourceUri);
           if (options.LeaseId.HasValue())
           {
             request.SetHeader("x-ms-lease-id", options.LeaseId.Value());
-          }
-          if (options.SourceLeaseId.HasValue())
-          {
-            request.SetHeader("x-ms-source-lease-id", options.SourceLeaseId.Value());
           }
           if (options.AccessTier.HasValue())
           {
@@ -7475,6 +7853,10 @@ namespace Azure { namespace Storage { namespace Blobs {
           if (options.SourceIfTags.HasValue())
           {
             request.SetHeader("x-ms-source-if-tags", options.SourceIfTags.Value());
+          }
+          if (options.SourceLeaseId.HasValue())
+          {
+            request.SetHeader("x-ms-source-lease-id", options.SourceLeaseId.Value());
           }
           auto pHttpResponse = pipeline.Send(request, context);
           Azure::Core::Http::RawResponse& httpResponse = *pHttpResponse;
@@ -8047,12 +8429,6 @@ namespace Azure { namespace Storage { namespace Blobs {
           response.ETag = Azure::ETag(httpResponse.GetHeaders().at("etag"));
           response.LastModified = Azure::DateTime::Parse(
               httpResponse.GetHeaders().at("last-modified"), Azure::DateTime::DateFormat::Rfc1123);
-          auto x_ms_blob_sequence_number__iterator
-              = httpResponse.GetHeaders().find("x-ms-blob-sequence-number");
-          if (x_ms_blob_sequence_number__iterator != httpResponse.GetHeaders().end())
-          {
-            response.SequenceNumber = std::stoll(x_ms_blob_sequence_number__iterator->second);
-          }
           return Azure::Response<Models::_detail::ReleaseBlobLeaseResult>(
               std::move(response), std::move(pHttpResponse));
         }
@@ -8271,6 +8647,7 @@ namespace Azure { namespace Storage { namespace Blobs {
           Azure::Nullable<ContentHash> TransactionalContentHash;
           BlobHttpHeaders HttpHeaders;
           Storage::Metadata Metadata;
+          std::map<std::string, std::string> Tags;
           Azure::Nullable<std::string> LeaseId;
           Azure::Nullable<Models::AccessTier> AccessTier;
           Azure::Nullable<std::string> EncryptionKey;
@@ -8367,6 +8744,20 @@ namespace Azure { namespace Storage { namespace Blobs {
           for (const auto& pair : options.Metadata)
           {
             request.SetHeader("x-ms-meta-" + pair.first, pair.second);
+          }
+          if (!options.Tags.empty())
+          {
+            std::string blobTagsValue;
+            for (const auto& tag : options.Tags)
+            {
+              if (!blobTagsValue.empty())
+              {
+                blobTagsValue += "&";
+              }
+              blobTagsValue += _internal::UrlEncodeQueryParameter(tag.first) + "="
+                  + _internal::UrlEncodeQueryParameter(tag.second);
+            }
+            request.SetHeader("x-ms-tags", std::move(blobTagsValue));
           }
           if (options.LeaseId.HasValue())
           {
@@ -8741,6 +9132,7 @@ namespace Azure { namespace Storage { namespace Blobs {
           std::vector<std::pair<BlockType, std::string>> BlockList;
           BlobHttpHeaders HttpHeaders;
           Storage::Metadata Metadata;
+          std::map<std::string, std::string> Tags;
           Azure::Nullable<std::string> LeaseId;
           Azure::Nullable<std::string> EncryptionKey;
           Azure::Nullable<std::vector<uint8_t>> EncryptionKeySha256;
@@ -8810,6 +9202,20 @@ namespace Azure { namespace Storage { namespace Blobs {
           for (const auto& pair : options.Metadata)
           {
             request.SetHeader("x-ms-meta-" + pair.first, pair.second);
+          }
+          if (!options.Tags.empty())
+          {
+            std::string blobTagsValue;
+            for (const auto& tag : options.Tags)
+            {
+              if (!blobTagsValue.empty())
+              {
+                blobTagsValue += "&";
+              }
+              blobTagsValue += _internal::UrlEncodeQueryParameter(tag.first) + "="
+                  + _internal::UrlEncodeQueryParameter(tag.second);
+            }
+            request.SetHeader("x-ms-tags", std::move(blobTagsValue));
           }
           if (options.LeaseId.HasValue())
           {
@@ -9122,6 +9528,7 @@ namespace Azure { namespace Storage { namespace Blobs {
           Azure::ETag IfMatch;
           Azure::ETag IfNoneMatch;
           Azure::Nullable<std::string> IfTags;
+          std::map<std::string, std::string> Tags;
         }; // struct CreatePageBlobOptions
 
         static Azure::Response<CreatePageBlobResult> Create(
@@ -9169,6 +9576,20 @@ namespace Azure { namespace Storage { namespace Blobs {
           for (const auto& pair : options.Metadata)
           {
             request.SetHeader("x-ms-meta-" + pair.first, pair.second);
+          }
+          if (!options.Tags.empty())
+          {
+            std::string blobTagsValue;
+            for (const auto& tag : options.Tags)
+            {
+              if (!blobTagsValue.empty())
+              {
+                blobTagsValue += "&";
+              }
+              blobTagsValue += _internal::UrlEncodeQueryParameter(tag.first) + "="
+                  + _internal::UrlEncodeQueryParameter(tag.second);
+            }
+            request.SetHeader("x-ms-tags", std::move(blobTagsValue));
           }
           if (options.LeaseId.HasValue())
           {
@@ -9467,6 +9888,10 @@ namespace Azure { namespace Storage { namespace Blobs {
           Azure::ETag IfMatch;
           Azure::ETag IfNoneMatch;
           Azure::Nullable<std::string> IfTags;
+          Azure::Nullable<Azure::DateTime> SourceIfModifiedSince;
+          Azure::Nullable<Azure::DateTime> SourceIfUnmodifiedSince;
+          Azure::ETag SourceIfMatch;
+          Azure::ETag SourceIfNoneMatch;
         }; // struct UploadPageBlobPagesFromUriOptions
 
         static Azure::Response<UploadPagesFromUriResult> UploadPagesFromUri(
@@ -9586,6 +10011,28 @@ namespace Azure { namespace Storage { namespace Blobs {
           if (options.IfTags.HasValue())
           {
             request.SetHeader("x-ms-if-tags", options.IfTags.Value());
+          }
+          if (options.SourceIfModifiedSince.HasValue())
+          {
+            request.SetHeader(
+                "x-ms-source-if-modified-since",
+                options.SourceIfModifiedSince.Value().ToString(
+                    Azure::DateTime::DateFormat::Rfc1123));
+          }
+          if (options.SourceIfUnmodifiedSince.HasValue())
+          {
+            request.SetHeader(
+                "x-ms-source-if-unmodified-since",
+                options.SourceIfUnmodifiedSince.Value().ToString(
+                    Azure::DateTime::DateFormat::Rfc1123));
+          }
+          if (options.SourceIfMatch.HasValue() && !options.SourceIfMatch.ToString().empty())
+          {
+            request.SetHeader("x-ms-source-if-match", options.SourceIfMatch.ToString());
+          }
+          if (options.SourceIfNoneMatch.HasValue() && !options.SourceIfNoneMatch.ToString().empty())
+          {
+            request.SetHeader("x-ms-source-if-none-match", options.SourceIfNoneMatch.ToString());
           }
           auto pHttpResponse = pipeline.Send(request, context);
           Azure::Core::Http::RawResponse& httpResponse = *pHttpResponse;
@@ -10247,6 +10694,7 @@ namespace Azure { namespace Storage { namespace Blobs {
           Azure::Nullable<int32_t> Timeout;
           BlobHttpHeaders HttpHeaders;
           Storage::Metadata Metadata;
+          std::map<std::string, std::string> Tags;
           Azure::Nullable<std::string> LeaseId;
           Azure::Nullable<std::string> EncryptionKey;
           Azure::Nullable<std::vector<uint8_t>> EncryptionKeySha256;
@@ -10304,6 +10752,20 @@ namespace Azure { namespace Storage { namespace Blobs {
           for (const auto& pair : options.Metadata)
           {
             request.SetHeader("x-ms-meta-" + pair.first, pair.second);
+          }
+          if (!options.Tags.empty())
+          {
+            std::string blobTagsValue;
+            for (const auto& tag : options.Tags)
+            {
+              if (!blobTagsValue.empty())
+              {
+                blobTagsValue += "&";
+              }
+              blobTagsValue += _internal::UrlEncodeQueryParameter(tag.first) + "="
+                  + _internal::UrlEncodeQueryParameter(tag.second);
+            }
+            request.SetHeader("x-ms-tags", std::move(blobTagsValue));
           }
           if (options.LeaseId.HasValue())
           {
