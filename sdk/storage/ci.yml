@@ -53,3 +53,6 @@ stages:
         - Name: azure-storage-files-shares
           Path: azure-storage-files-shares
           VcpkgPortName: azure-storage-files-shares-cpp
+        - Name: azure-storage-queues
+          Path: azure-storage-queues
+          VcpkgPortName: azure-storage-queues-cpp
