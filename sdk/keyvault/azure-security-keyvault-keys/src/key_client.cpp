@@ -5,8 +5,6 @@
 #include <azure/core/http/http.hpp>
 #include <azure/core/http/policies/policy.hpp>
 
-#include <azure/keyvault/common/internal/get_page_results_options.hpp>
-
 #include "azure/keyvault/keys/key_client.hpp"
 #include "private/key_backup.hpp"
 #include "private/key_constants.hpp"
@@ -32,7 +30,61 @@ struct RequestWithContinuationToken final
 };
 
 static inline RequestWithContinuationToken BuildRequestFromContinuationToken(
-    Azure::Security::KeyVault::_internal::GetPageResultOptions const& options,
+    Azure::Security::KeyVault::Keys::GetPropertiesOfKeysOptions const& options,
+    std::vector<std::string>&& defaultPath)
+{
+  RequestWithContinuationToken request;
+  request.Path = defaultPath;
+  if (options.NextPageToken)
+  {
+    // Using a continuation token requires to send the request to the continuation token URL instead
+    // of the default URL which is used only for the first page.
+    Azure::Core::Url nextPageUrl(options.NextPageToken.Value());
+    request.Query
+        = std::make_unique<std::map<std::string, std::string>>(nextPageUrl.GetQueryParameters());
+    request.Path.clear();
+    request.Path.emplace_back(nextPageUrl.GetPath());
+  }
+  if (options.MaxPageResults)
+  {
+    if (request.Query == nullptr)
+    {
+      request.Query = std::make_unique<std::map<std::string, std::string>>();
+    }
+    request.Query->emplace("maxResults", std::to_string(options.MaxPageResults.Value()));
+  }
+  return request;
+}
+
+static inline RequestWithContinuationToken BuildRequestFromContinuationToken(
+    Azure::Security::KeyVault::Keys::GetPropertiesOfKeyVersionsOptions const& options,
+    std::vector<std::string>&& defaultPath)
+{
+  RequestWithContinuationToken request;
+  request.Path = defaultPath;
+  if (options.NextPageToken)
+  {
+    // Using a continuation token requires to send the request to the continuation token URL instead
+    // of the default URL which is used only for the first page.
+    Azure::Core::Url nextPageUrl(options.NextPageToken.Value());
+    request.Query
+        = std::make_unique<std::map<std::string, std::string>>(nextPageUrl.GetQueryParameters());
+    request.Path.clear();
+    request.Path.emplace_back(nextPageUrl.GetPath());
+  }
+  if (options.MaxPageResults)
+  {
+    if (request.Query == nullptr)
+    {
+      request.Query = std::make_unique<std::map<std::string, std::string>>();
+    }
+    request.Query->emplace("maxResults", std::to_string(options.MaxPageResults.Value()));
+  }
+  return request;
+}
+
+static inline RequestWithContinuationToken BuildRequestFromContinuationToken(
+    Azure::Security::KeyVault::Keys::GetDeletedKeysOptions const& options,
     std::vector<std::string>&& defaultPath)
 {
   RequestWithContinuationToken request;

@@ -1,11 +1,11 @@
 # Release History
 
-## 4.0.0 (2021-07-08)
+## 4.0.0 (2021-07-09)
 
 ### Breaking Changes
 
 - Removed `SHA256`, `SHA384`, and `SHA512` hashing classes by making them internal since the end user doesn't need them.
-- Renamed header `single_page.hpp` to `get_page_results_options.hpp`.
+- Removed header `single_page.hpp`.
 
 ## 4.0.0-beta.3 (2021-06-08)
 
