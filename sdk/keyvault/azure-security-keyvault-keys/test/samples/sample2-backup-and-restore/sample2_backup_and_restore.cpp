@@ -54,7 +54,7 @@ int main()
     size_t backUpSize = 0;
     {
       std::cout << "\t-Backup Key" << std::endl;
-      std::vector<uint8_t> backupKey(keyClient.BackupKey(rsaKeyName).Value);
+      std::vector<uint8_t> backupKey(keyClient.BackupKey(rsaKeyName).Value.GetValue());
       backUpSize = backupKey.size();
 
       // save data to file

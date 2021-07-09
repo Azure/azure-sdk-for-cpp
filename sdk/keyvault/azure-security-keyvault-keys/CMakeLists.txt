@@ -46,6 +46,7 @@ set(
     inc/azure/keyvault/keys/internal/cryptography/local_cryptography_provider.hpp
     inc/azure/keyvault/keys/internal/cryptography/remote_cryptography_client.hpp
     inc/azure/keyvault/keys/internal/cryptography/rsa_cryptography_provider.hpp
+    inc/azure/keyvault/keys/backup_key.hpp
     inc/azure/keyvault/keys/delete_key_operation.hpp
     inc/azure/keyvault/keys/deleted_key.hpp
     inc/azure/keyvault/keys/import_key_options.hpp
