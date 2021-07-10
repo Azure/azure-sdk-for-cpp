@@ -1038,6 +1038,18 @@ namespace Azure { namespace Storage { namespace Test {
     }
 
     {
+      Blobs::UpdatePageBlobSequenceNumberOptions options;
+      options.AccessConditions.TagConditions = failWhereExpression;
+      EXPECT_THROW(
+          pageBlobClient.UpdateSequenceNumber(
+              Blobs::Models::SequenceNumberAction::Increment, options),
+          StorageException);
+      options.AccessConditions.TagConditions = successWhereExpression;
+      EXPECT_NO_THROW(pageBlobClient.UpdateSequenceNumber(
+          Blobs::Models::SequenceNumberAction::Increment, options));
+    }
+
+    {
       Blobs::GetPageRangesOptions options;
       options.AccessConditions.TagConditions = failWhereExpression;
       EXPECT_THROW(pageBlobClient.GetPageRanges(options), StorageException);
