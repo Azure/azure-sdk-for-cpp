@@ -40,35 +40,41 @@ set(
 )
 
 add_library(azure-security-keyvault-secrets ${AZURE_SECURITY_KEYVAULT_SECRETS_HEADER} ${AZURE_SECURITY_KEYVAULT_SECRETS_SOURCE})
-
+add_library(Azure::azure-security-keyvault-secrets ALIAS azure-security-keyvault-secrets)
 target_include_directories(
   azure-security-keyvault-secrets
     PUBLIC
       $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/inc>
       $<INSTALL_INTERFACE:include>
-      # Disable dependency on azure-core until azure-core has released to vcpkg
-      # ${azure-core-cpp_INCLUDE_DIRS}
 )
 
-# Disable dependency on azure-core until azure-core has released to vcpkg
-# target_link_libraries(azure-security-keyvault-secrets PUBLIC Azure::azure-core)
-
-# make sure that users can consume the project as a library.
-add_library(Azure::azure-security-keyvault-secrets ALIAS azure-security-keyvault-secrets)
+target_link_libraries(azure-security-keyvault-secrets ALIAS Azure::azure-security-keyvault-secrets)
 
 # coverage. Has no effect if BUILD_CODE_COVERAGE is OFF
-create_code_coverage(azure-security-keyvault-secrets azure-security-keyvault-secrets azure-security-keyvault-secrets-test)
+create_code_coverage(keyvault-secrets azure-security-keyvault-secrets azure-security-keyvault-secrets-test)
 
-get_az_version("${CMAKE_CURRENT_SOURCE_DIR}/src/private//package_version.hpp")
+get_az_version("${CMAKE_CURRENT_SOURCE_DIR}/src/private/package_version.hpp")
 generate_documentation(azure-security-keyvault-secrets ${AZ_LIBRARY_VERSION})
+if(BUILD_TESTING)
+
+  if (NOT AZ_ALL_LIBRARIES)
+    include(AddGoogleTest)
+    enable_testing ()
+  endif()
+  
+  #add_subdirectory(test)
+endif()
+
+if (BUILD_PERFORMANCE_TESTS)
+  #add_subdirectory(test/perf)
+endif()
+
+if(BUILD_SAMPLES)
+  #add_subdirectory(test/samples)
+endif()
 
 az_vcpkg_export(
     azure-security-keyvault-secrets
-    TEMPLATE
-    "azure/azure-security-keyvault-secrets/dll_import_export.hpp"
+    SECURITY_KEYVAULT_KEYS
+    "azure/keyvault/secrets/dll_import_export.hpp"
   )
-
-if(BUILD_TESTING)
-    # tests
-    add_subdirectory(test)
-endif()

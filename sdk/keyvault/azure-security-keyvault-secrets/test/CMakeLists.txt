@@ -14,7 +14,7 @@ include(GoogleTest)
 add_executable (
      azure-security-keyvault-secrets-test
      ut/macro_guard.cpp
-     ut/template_test.cpp
+     ut/secret_client_test.cpp
      )
 
 target_link_libraries(azure-security-keyvault-secrets-test PRIVATE Azure::azure-template gtest_main)
