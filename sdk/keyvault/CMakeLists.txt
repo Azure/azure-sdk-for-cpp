@@ -14,3 +14,4 @@ endif()
 
 add_subdirectory(azure-security-keyvault-common)
 add_subdirectory(azure-security-keyvault-keys)
+add_subdirectory(azure-security-keyvault-secrets)
