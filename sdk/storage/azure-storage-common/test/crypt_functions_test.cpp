@@ -15,16 +15,6 @@ namespace Azure { namespace Storage { namespace Test {
     return std::vector<uint8_t>(start, start + strlen(text));
   }
 
-  TEST(CryptFunctionsTest, Sha256)
-  {
-    EXPECT_EQ(
-        Azure::Core::Convert::Base64Encode(_internal::Sha256(ToBinaryVector(""))),
-        "47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU=");
-    EXPECT_EQ(
-        Azure::Core::Convert::Base64Encode(_internal::Sha256(ToBinaryVector("Hello Azure!"))),
-        "Mjzwx2mqGHb9FSgjm33ShNmXYndkgvwA6tQmEiskOHg=");
-  }
-
   TEST(CryptFunctionsTest, HmacSha256)
   {
     std::string key = "8CwtGFF1mGR4bPEP9eZ0x1fxKiQ3Ca5N";

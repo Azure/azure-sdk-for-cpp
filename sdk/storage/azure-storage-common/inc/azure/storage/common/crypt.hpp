@@ -37,7 +37,6 @@ namespace Azure { namespace Storage {
   };
 
   namespace _internal {
-    std::vector<uint8_t> Sha256(const std::vector<uint8_t>& data);
     std::vector<uint8_t> HmacSha256(
         const std::vector<uint8_t>& data,
         const std::vector<uint8_t>& key);
