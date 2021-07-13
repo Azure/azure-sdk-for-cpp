@@ -4,12 +4,11 @@
 #pragma once
 
 #include <string>
+namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
 
-namespace Azure { namespace Template {
-
-  class TemplateClient final {
+  class SecretClient final {
   public:
     std::string ClientVersion() const;
   };
 
-}} // namespace Azure::Template
+}}}} // namespace Azure::Security::KeyVault::Keys

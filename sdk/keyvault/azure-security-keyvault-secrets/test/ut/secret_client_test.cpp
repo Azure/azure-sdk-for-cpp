@@ -5,11 +5,11 @@
 
 #include <azure/keyvault/secrets/secret_client.hpp>
 
-using namespace Azure::Template;
+using namespace Azure::Security::KeyVault::Secrets;
 
-TEST(Template, Basic)
+TEST(SecretClient, Basic)
 {
-  TemplateClient templateClient;
+  SecretClient secretClient;
 
-  EXPECT_FALSE(templateClient.ClientVersion().empty());
+  EXPECT_FALSE(secretClient.ClientVersion().empty());
 }

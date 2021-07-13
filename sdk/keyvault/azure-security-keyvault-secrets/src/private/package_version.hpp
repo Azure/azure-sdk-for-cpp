@@ -8,29 +8,32 @@
 
 #pragma once
 
+#include <cstdint>
+
 #define AZURE_SECURITY_KEYVAULT_SECRETS_VERSION_MAJOR 1
 #define AZURE_SECURITY_KEYVAULT_SECRETS_VERSION_MINOR 0
 #define AZURE_SECURITY_KEYVAULT_SECRETS_VERSION_PATCH 0
-#define AZURE_SECURITY_KEYVAULT_SECRETS_VERSION_PRERELEASE "1"
+#define AZURE_SECURITY_KEYVAULT_SECRETS_VERSION_PRERELEASE "beta.0"
 
 #define AZURE_SECURITY_KEYVAULT_SECRETS_VERSION_ITOA_HELPER(i) #i
 #define AZURE_SECURITY_KEYVAULT_SECRETS_VERSION_ITOA(i) \
   AZURE_SECURITY_KEYVAULT_SECRETS_VERSION_ITOA_HELPER(i)
 
-namespace Azure { namespace Template { namespace _detail {
+namespace Azure { namespace Security { namespace KeyVault { namespace Secrets { namespace _detail {
   /**
    * @brief Provides version information.
+   *
    */
   class PackageVersion final {
   public:
     /// Major numeric identifier.
-    static constexpr int Major = AZURE_SECURITY_KEYVAULT_SECRETS_VERSION_MAJOR;
+    static constexpr int32_t Major = AZURE_SECURITY_KEYVAULT_SECRETS_VERSION_MAJOR;
 
     /// Minor numeric identifier.
-    static constexpr int Minor = AZURE_SECURITY_KEYVAULT_SECRETS_VERSION_MINOR;
+    static constexpr int32_t Minor = AZURE_SECURITY_KEYVAULT_SECRETS_VERSION_MINOR;
 
     /// Patch numeric identifier.
-    static constexpr int Patch = AZURE_SECURITY_KEYVAULT_SECRETS_VERSION_PATCH;
+    static constexpr int32_t Patch = AZURE_SECURITY_KEYVAULT_SECRETS_VERSION_PATCH;
 
     /// Indicates whether the SDK is in a pre-release state.
     static constexpr bool IsPreRelease
@@ -49,7 +52,7 @@ namespace Azure { namespace Template { namespace _detail {
               AZURE_SECURITY_KEYVAULT_SECRETS_VERSION_MINOR) "." AZURE_SECURITY_KEYVAULT_SECRETS_VERSION_ITOA(AZURE_SECURITY_KEYVAULT_SECRETS_VERSION_PATCH);
     }
   };
-}}} // namespace Azure::Template::_detail
+}}}}} // namespace Azure::Security::KeyVault::Keys::_detail
 
 #undef AZURE_SECURITY_KEYVAULT_SECRETS_VERSION_ITOA_HELPER
 #undef AZURE_SECURITY_KEYVAULT_SECRETS_VERSION_ITOA

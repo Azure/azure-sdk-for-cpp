@@ -7,7 +7,7 @@
 
 #include <string>
 
-using namespace Azure::Template;
-using namespace Azure::Template::_detail;
+using namespace Azure::Security::KeyVault::Secrets;
+using namespace Azure::Security::KeyVault::Secrets::_detail;
 
-std::string TemplateClient::ClientVersion() const { return PackageVersion::ToString(); }
+std::string SecretClient::ClientVersion() const { return PackageVersion::ToString(); }

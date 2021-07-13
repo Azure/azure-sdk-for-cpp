@@ -49,7 +49,7 @@ target_include_directories(
       $<INSTALL_INTERFACE:include>
 )
 
-target_link_libraries(azure-security-keyvault-secrets ALIAS Azure::azure-security-keyvault-secrets)
+target_link_libraries(azure-security-keyvault-secrets PUBLIC Azure::azure-security-keyvault-secrets)
 
 # coverage. Has no effect if BUILD_CODE_COVERAGE is OFF
 create_code_coverage(keyvault-secrets azure-security-keyvault-secrets azure-security-keyvault-secrets-test)
@@ -63,7 +63,7 @@ if(BUILD_TESTING)
     enable_testing ()
   endif()
   
-  #add_subdirectory(test)
+  add_subdirectory(test/ut)
 endif()
 
 if (BUILD_PERFORMANCE_TESTS)
