@@ -672,6 +672,7 @@ namespace Azure { namespace Storage { namespace Test {
           = Azure::Storage::Blobs::PageBlobClient::CreateFromConnectionString(
               StandardStorageConnectionString(), m_containerName, pageBlobName);
       EXPECT_NO_THROW(pageBlobClientWithoutEncryptionKey.GetPageRanges());
+      EXPECT_NO_THROW(pageBlobClientWithoutEncryptionKey.Resize(blobContent.size() + 512));
     }
   }
 
