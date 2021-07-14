@@ -193,7 +193,7 @@ A `CryptographyClient` providing synchronous operations exists in the SDK. Once 
 
 ### Thread safety
 
-We guarantee that all client instance methods are thread-safe and independent of each other ([guideline](https://azure.github.io/azure-sdk/dotnet_introduction.html#dotnet-service-methods-thread-safety)). This ensures that the recommendation of reusing client instances is always safe, even across threads.
+We guarantee that all client instance methods are thread-safe and independent of each other ([guideline](https://azure.github.io/azure-sdk/cpp_introduction.html#thread-safety)). This ensures that the recommendation of reusing client instances is always safe, even across threads.
 
 ### Additional concepts
 
@@ -443,7 +443,7 @@ For more information see the [Code of Conduct FAQ][coc_faq] or contact opencode@
 
 <!-- LINKS -->
 [azsdk_vcpkg_install]: https://github.com/Azure/azure-sdk-for-cpp#download--install-the-sdk
-[api_reference]: https://docs.microsoft.com/dotnet/api/azure.security.keyvault.keys
+[api_reference]: https://azure.github.io/azure-sdk-for-cpp/keyvault.html
 [azure_cli]: https://docs.microsoft.com/cli/azure
 [azure_identity]: https://github.com/Azure/azure-sdk-for-cpp/tree/main/sdk/identity/azure-identity
 [azure_sub]: https://azure.microsoft.com/free/
