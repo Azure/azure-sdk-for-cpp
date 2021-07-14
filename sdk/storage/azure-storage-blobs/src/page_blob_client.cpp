@@ -227,13 +227,6 @@ namespace Azure { namespace Storage { namespace Blobs {
     protocolLayerOptions.IfMatch = options.AccessConditions.IfMatch;
     protocolLayerOptions.IfNoneMatch = options.AccessConditions.IfNoneMatch;
     protocolLayerOptions.IfTags = options.AccessConditions.TagConditions;
-    if (m_customerProvidedKey.HasValue())
-    {
-      protocolLayerOptions.EncryptionKey = m_customerProvidedKey.Value().Key;
-      protocolLayerOptions.EncryptionKeySha256 = m_customerProvidedKey.Value().KeyHash;
-      protocolLayerOptions.EncryptionAlgorithm = m_customerProvidedKey.Value().Algorithm;
-    }
-    protocolLayerOptions.EncryptionScope = m_encryptionScope;
     return _detail::BlobRestClient::PageBlob::Resize(
         *m_pipeline, m_blobUrl, protocolLayerOptions, context);
   }
