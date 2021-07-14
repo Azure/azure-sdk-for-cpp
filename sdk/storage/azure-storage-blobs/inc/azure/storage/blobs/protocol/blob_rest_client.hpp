@@ -2024,7 +2024,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     }
 
     /**
-     * @brief Azure::Storage::Blobs::PageBlobClient::Resize.
+     * @brief Response type for Azure::Storage::Blobs::PageBlobClient::Resize.
      */
     struct ResizePageBlobResult final
     {
@@ -10273,10 +10273,6 @@ namespace Azure { namespace Storage { namespace Blobs {
           Azure::Nullable<int64_t> IfSequenceNumberLessThanOrEqualTo;
           Azure::Nullable<int64_t> IfSequenceNumberLessThan;
           Azure::Nullable<int64_t> IfSequenceNumberEqualTo;
-          Azure::Nullable<std::string> EncryptionKey;
-          Azure::Nullable<std::vector<uint8_t>> EncryptionKeySha256;
-          Azure::Nullable<EncryptionAlgorithmType> EncryptionAlgorithm;
-          Azure::Nullable<std::string> EncryptionScope;
           Azure::Nullable<Azure::DateTime> IfModifiedSince;
           Azure::Nullable<Azure::DateTime> IfUnmodifiedSince;
           Azure::ETag IfMatch;
@@ -10322,25 +10318,6 @@ namespace Azure { namespace Storage { namespace Blobs {
             request.SetHeader(
                 "x-ms-if-sequence-number-eq",
                 std::to_string(options.IfSequenceNumberEqualTo.Value()));
-          }
-          if (options.EncryptionKey.HasValue())
-          {
-            request.SetHeader("x-ms-encryption-key", options.EncryptionKey.Value());
-          }
-          if (options.EncryptionKeySha256.HasValue())
-          {
-            request.SetHeader(
-                "x-ms-encryption-key-sha256",
-                Azure::Core::Convert::Base64Encode(options.EncryptionKeySha256.Value()));
-          }
-          if (options.EncryptionAlgorithm.HasValue())
-          {
-            request.SetHeader(
-                "x-ms-encryption-algorithm", options.EncryptionAlgorithm.Value().ToString());
-          }
-          if (options.EncryptionScope.HasValue())
-          {
-            request.SetHeader("x-ms-encryption-scope", options.EncryptionScope.Value());
           }
           if (options.IfModifiedSince.HasValue())
           {

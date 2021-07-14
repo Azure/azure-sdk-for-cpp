@@ -16,7 +16,7 @@
 - Removed access to `Iv` field member from `EncryptParameters` and `DecryptParameters`.
 - Removed `Encrypt(EncryptionAlgorithm, std::vector, context)`.
 - Removed `Decrypt(DecryptAlgorithm, std::vector, context)`.
-- Renamed header `list_keys_single_page_result.hpp` to `list_keys_result.hpp`.
+- Renamed header `list_keys_single_page_result.hpp` to `list_keys_responses.hpp`.
 - Updated `BackupKey()` API return type to `BackupKeyResult` model type.
 
 ## 4.0.0-beta.3 (2021-06-08)
