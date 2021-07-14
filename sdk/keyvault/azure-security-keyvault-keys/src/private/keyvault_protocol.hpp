@@ -21,13 +21,13 @@
 #include <string>
 #include <vector>
 
-namespace Azure { namespace Security { namespace KeyVault { namespace _internal {
+namespace Azure { namespace Security { namespace KeyVault { namespace _detail {
 
   /**
-   * @brief The HTTP pipeline used by Key Vault clients.
+   * @brief The Protocol layer used by Key Vault clients.
    *
    */
-  class KeyVaultPipeline final {
+  class KeyVaultProtocolClient final {
     Azure::Core::Url m_vaultUrl;
     Azure::Core::Http::_internal::HttpPipeline m_pipeline;
     std::string m_apiVersion;
@@ -69,13 +69,13 @@ namespace Azure { namespace Security { namespace KeyVault { namespace _internal 
 
   public:
     /**
-     * @brief Construct a new Key Vault Pipeline.
+     * @brief Construct a new Key Vault Protocol Client.
      *
      * @param vaultUrl The URL address for the Key Vault.
      * @param apiVersion The service API version.
      * @param pipeline The HTTP pipeline for sending requests with.
      */
-    explicit KeyVaultPipeline(
+    explicit KeyVaultProtocolClient(
         Azure::Core::Url vaultUrl,
         std::string apiVersion,
         Azure::Core::Http::_internal::HttpPipeline&& pipeline)
@@ -187,4 +187,4 @@ namespace Azure { namespace Security { namespace KeyVault { namespace _internal 
       return m_pipeline.Send(request, context);
     }
   };
-}}}} // namespace Azure::Security::KeyVault::_internal
+}}}} // namespace Azure::Security::KeyVault::_detail

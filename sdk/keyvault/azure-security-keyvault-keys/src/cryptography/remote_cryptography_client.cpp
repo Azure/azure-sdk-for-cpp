@@ -41,7 +41,7 @@ RemoteCryptographyClient::RemoteCryptographyClient(
         std::make_unique<BearerTokenAuthenticationPolicy>(credential, tokenContext));
   }
 
-  Pipeline = std::make_shared<Azure::Security::KeyVault::_internal::KeyVaultPipeline>(
+  Pipeline = std::make_shared<Azure::Security::KeyVault::_detail::KeyVaultProtocolClient>(
       Azure::Core::Url(keyId),
       apiVersion,
       Azure::Core::Http::_internal::HttpPipeline(

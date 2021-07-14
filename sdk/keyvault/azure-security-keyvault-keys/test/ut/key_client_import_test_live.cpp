@@ -20,7 +20,7 @@
 using namespace Azure::Core::_internal;
 using namespace Azure::Security::KeyVault::Keys::Test;
 using namespace Azure::Security::KeyVault::Keys;
-using namespace Azure::Security::KeyVault::_internal;
+using namespace Azure::Security::KeyVault::_detail;
 
 TEST_F(KeyVaultClientTest, ImportKey)
 {
