@@ -47,14 +47,6 @@ static inline RequestWithContinuationToken BuildRequestFromContinuationToken(
     request.Path.clear();
     request.Path.emplace_back(nextPageUrl.GetPath());
   }
-  if (options.MaxPageResults)
-  {
-    if (request.Query == nullptr)
-    {
-      request.Query = std::make_unique<std::map<std::string, std::string>>();
-    }
-    request.Query->emplace("maxResults", std::to_string(options.MaxPageResults.Value()));
-  }
   return request;
 }
 
@@ -74,14 +66,6 @@ static inline RequestWithContinuationToken BuildRequestFromContinuationToken(
     request.Path.clear();
     request.Path.emplace_back(nextPageUrl.GetPath());
   }
-  if (options.MaxPageResults)
-  {
-    if (request.Query == nullptr)
-    {
-      request.Query = std::make_unique<std::map<std::string, std::string>>();
-    }
-    request.Query->emplace("maxResults", std::to_string(options.MaxPageResults.Value()));
-  }
   return request;
 }
 
@@ -100,14 +84,6 @@ static inline RequestWithContinuationToken BuildRequestFromContinuationToken(
         = std::make_unique<std::map<std::string, std::string>>(nextPageUrl.GetQueryParameters());
     request.Path.clear();
     request.Path.emplace_back(nextPageUrl.GetPath());
-  }
-  if (options.MaxPageResults)
-  {
-    if (request.Query == nullptr)
-    {
-      request.Query = std::make_unique<std::map<std::string, std::string>>();
-    }
-    request.Query->emplace("maxResults", std::to_string(options.MaxPageResults.Value()));
   }
   return request;
 }
@@ -346,7 +322,7 @@ Azure::Response<KeyVaultKey> KeyClient::UpdateKeyProperties(
       {_detail::KeysPath, properties.Name, properties.Version});
 }
 
-Azure::Response<std::vector<uint8_t>> KeyClient::BackupKey(
+Azure::Response<Azure::Security::KeyVault::Keys::BackupKeyResult> KeyClient::BackupKey(
     std::string const& name,
     Azure::Core::Context const& context) const
 {
@@ -360,8 +336,9 @@ Azure::Response<std::vector<uint8_t>> KeyClient::BackupKey(
       {_detail::KeysPath, name, "backup"});
 
   // Convert the internal KeyBackup model to a raw vector<uint8_t>.
-  return Azure::Response<std::vector<uint8_t>>(
-      response.Value.Value, std::move(response.RawResponse));
+  return Azure::Response<Azure::Security::KeyVault::Keys::BackupKeyResult>(
+      Azure::Security::KeyVault::Keys::BackupKeyResult{response.Value.Value},
+      std::move(response.RawResponse));
 }
 
 Azure::Response<KeyVaultKey> KeyClient::RestoreKeyBackup(

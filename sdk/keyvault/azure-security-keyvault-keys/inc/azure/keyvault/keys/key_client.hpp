@@ -9,6 +9,7 @@
 
 #pragma once
 
+#include "azure/keyvault/keys/backup_key_result.hpp"
 #include "azure/keyvault/keys/delete_key_operation.hpp"
 #include "azure/keyvault/keys/import_key_options.hpp"
 #include "azure/keyvault/keys/key_client_options.hpp"
@@ -186,7 +187,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
      * key are not listed in the response. This operation requires the keys/list permission.
      *
      * @remark Use \p options to control which page to get. If
-     * #GetPropertiesOfKeysOptions.NextLink is not set, the operation will get the first
+     * #GetPropertiesOfKeysOptions.NextPageToken is not set, the operation will get the first
      * page and it will set the `NextPageToken` from the #KeyPropertiesPageResult as the next
      * page of the response if there is a next page.
      *
@@ -207,7 +208,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
      * operation requires the keys/list permission.
      *
      * @remark Use \p options to control which page to get. If
-     * #GetPropertiesOfKeyVersionsOptions.NextLink is not set, the operation will get the
+     * #GetPropertiesOfKeyVersionsOptions.NextPageToken is not set, the operation will get the
      * first page and it will set the `NextPageToken` from the #KeyPropertiesPageResult as the
      * next page of the response if there is a next page.
      *
@@ -265,9 +266,9 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
      * requires the keys/list permission.
      *
      * @remark Use \p options to control which page to get. If
-     * #GetPropertiesOfKeyVersionsOptions.NextPageToken is not set, the operation will get
-     * the first page and it will set the `NextPageToken` from the #KeyPropertiesPageResult as
-     * the next page of the response if there is a next page.
+     * #GetDeletedKeysOptions.NextPageToken is not set, the operation will get
+     * the first page and it will set the `NextPageToken` from the #DeletedKeyPageResult as the
+     * next page of the response if there is a next page.
      *
      * @param options The #GetDeletedKeysOptions object to for setting the operation up.
      * @param context A #Azure::Core::Context controlling the request lifetime.
@@ -346,7 +347,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
      * @param name The name of the key.
      * @param context A #Azure::Core::Context controlling the request lifetime.
      */
-    Azure::Response<std::vector<uint8_t>> BackupKey(
+    Azure::Response<Azure::Security::KeyVault::Keys::BackupKeyResult> BackupKey(
         std::string const& name,
         Azure::Core::Context const& context = Azure::Core::Context()) const;
 
