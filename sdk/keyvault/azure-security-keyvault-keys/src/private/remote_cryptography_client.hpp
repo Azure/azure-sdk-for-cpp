@@ -12,10 +12,10 @@
 #include <azure/core/response.hpp>
 #include <azure/core/url.hpp>
 
-#include "../src/private/keyvault_protocol.hpp"
+#include "keyvault_protocol.hpp"
+#include "cryptography_provider.hpp"
 
 #include "azure/keyvault/keys/cryptography/cryptography_client_options.hpp"
-#include "azure/keyvault/keys/cryptography/cryptography_provider.hpp"
 #include "azure/keyvault/keys/cryptography/encrypt_parameters.hpp"
 #include "azure/keyvault/keys/cryptography/encrypt_result.hpp"
 #include "azure/keyvault/keys/key_vault_key.hpp"

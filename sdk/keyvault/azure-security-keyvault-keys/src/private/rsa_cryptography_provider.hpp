@@ -9,7 +9,7 @@
 
 #pragma once
 
-#include "../private/local_cryptography_provider.hpp"
+#include "local_cryptography_provider.hpp"
 
 #include <memory>
 #include <string>
