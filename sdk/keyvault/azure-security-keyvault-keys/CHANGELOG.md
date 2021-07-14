@@ -1,6 +1,6 @@
 # Release History
 
-## 4.0.0-beta.4 (Unreleased)
+## 4.0.0 (2021-07-08)
 
 ### Features Added
 
@@ -13,10 +13,9 @@
 - Removed `CryptographyClient::RemoteClient()` and `CryptographyClient::LocalOnly()`.
 - Removed the general constructor from `EncryptParameters` and `DecryptParameters`.
 - Removed access to `Iv` field member from `EncryptParameters` and `DecryptParameters`.
-
-### Key Bugs Fixed
-
-### Fixed
+- Removed `Encrypt(EncryptionAlgorithm, std::vector, context)`.
+- Removed `Decrypt(DecryptAlgorithm, std::vector, context)`.
+- Renamed header `list_keys_single_page_result.hpp` to `list_keys_responses.hpp`.
 
 ## 4.0.0-beta.3 (2021-06-08)
 

@@ -37,12 +37,13 @@ TEST_P(KeyVaultClientTest, RemoteEncrypt)
     uint8_t plaintextSource[] = "A single block of plaintext";
     std::vector<uint8_t> plaintext(std::begin(plaintextSource), std::end(plaintextSource));
 
-    auto encryptResult = cryptoClient.Encrypt(EncryptionAlgorithm::RsaOaep, plaintext);
+    auto encryptResult = cryptoClient.Encrypt(EncryptParameters::RsaOaepParameters(plaintext));
     EXPECT_EQ(encryptResult.Algorithm.ToString(), EncryptionAlgorithm::RsaOaep.ToString());
     EXPECT_EQ(encryptResult.KeyId, rsaKey.Id());
     EXPECT_TRUE(encryptResult.Ciphertext.size() > 0);
 
-    auto decryptResult = cryptoClient.Decrypt(encryptResult.Algorithm, encryptResult.Ciphertext);
+    auto decryptResult
+        = cryptoClient.Decrypt(DecryptParameters::RsaOaepParameters(encryptResult.Ciphertext));
     EXPECT_EQ(decryptResult.Algorithm.ToString(), encryptResult.Algorithm.ToString());
     EXPECT_EQ(decryptResult.Plaintext, plaintext);
     EXPECT_EQ(decryptResult.KeyId, encryptResult.KeyId);

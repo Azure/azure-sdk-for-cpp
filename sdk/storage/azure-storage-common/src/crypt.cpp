@@ -85,7 +85,6 @@ namespace Azure { namespace Storage {
     enum class AlgorithmType
     {
       HmacSha256,
-      Sha256,
     };
 
     struct AlgorithmProviderInstance final
@@ -97,7 +96,7 @@ namespace Azure { namespace Storage {
       AlgorithmProviderInstance(AlgorithmType type)
       {
         const wchar_t* algorithmId = nullptr;
-        if (type == AlgorithmType::HmacSha256 || type == AlgorithmType::Sha256)
+        if (type == AlgorithmType::HmacSha256)
         {
           algorithmId = BCRYPT_SHA256_ALGORITHM;
         }
@@ -148,53 +147,6 @@ namespace Azure { namespace Storage {
 
       ~AlgorithmProviderInstance() { BCryptCloseAlgorithmProvider(Handle, 0); }
     };
-
-    std::vector<uint8_t> Sha256(const std::vector<uint8_t>& data)
-    {
-      AZURE_ASSERT_MSG(data.size() <= std::numeric_limits<ULONG>::max(), "Data size is too big.");
-
-      static AlgorithmProviderInstance AlgorithmProvider(AlgorithmType::Sha256);
-
-      std::string context;
-      context.resize(AlgorithmProvider.ContextSize);
-
-      BCRYPT_HASH_HANDLE hashHandle;
-      NTSTATUS status = BCryptCreateHash(
-          AlgorithmProvider.Handle,
-          &hashHandle,
-          reinterpret_cast<PUCHAR>(&context[0]),
-          static_cast<ULONG>(context.size()),
-          nullptr,
-          0,
-          0);
-      if (!BCRYPT_SUCCESS(status))
-      {
-        throw std::runtime_error("BCryptCreateHash failed.");
-      }
-
-      status = BCryptHashData(
-          hashHandle,
-          reinterpret_cast<PBYTE>(const_cast<uint8_t*>(data.data())),
-          static_cast<ULONG>(data.size()),
-          0);
-      if (!BCRYPT_SUCCESS(status))
-      {
-        throw std::runtime_error("BCryptHashData failed.");
-      }
-
-      std::vector<uint8_t> hash;
-      hash.resize(AlgorithmProvider.HashLength);
-      status = BCryptFinishHash(
-          hashHandle, reinterpret_cast<PUCHAR>(&hash[0]), static_cast<ULONG>(hash.size()), 0);
-      if (!BCRYPT_SUCCESS(status))
-      {
-        throw std::runtime_error("BCryptFinishHash failed.");
-      }
-
-      BCryptDestroyHash(hashHandle);
-
-      return hash;
-    }
 
     std::vector<uint8_t> HmacSha256(
         const std::vector<uint8_t>& data,
@@ -249,16 +201,6 @@ namespace Azure { namespace Storage {
 #elif defined(AZ_PLATFORM_POSIX)
 
   namespace _internal {
-
-    std::vector<uint8_t> Sha256(const std::vector<uint8_t>& data)
-    {
-      SHA256_CTX context;
-      SHA256_Init(&context);
-      SHA256_Update(&context, data.data(), data.size());
-      unsigned char hash[SHA256_DIGEST_LENGTH];
-      SHA256_Final(hash, &context);
-      return std::vector<uint8_t>(std::begin(hash), std::end(hash));
-    }
 
     std::vector<uint8_t> HmacSha256(
         const std::vector<uint8_t>& data,

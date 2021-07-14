@@ -13,21 +13,29 @@
 #include <azure/identity/client_secret_credential.hpp>
 #include <azure/keyvault/key_vault_keys.hpp>
 
+#include <chrono>
 #include <cstdio>
 #include <iostream>
+#include <thread>
 
 namespace Azure { namespace Security { namespace KeyVault { namespace Keys { namespace Test {
 
   class KeyVaultClientTest : public ::testing::TestWithParam<int> {
   private:
-    std::string GetEnv(const std::string& name)
+    std::string GetEnv(const std::string& name, std::string const& defaultValue = std::string())
     {
       const char* ret = std::getenv(name.data());
       if (!ret)
       {
+        if (defaultValue.size() > 0)
+        {
+          return defaultValue;
+        }
+
         throw std::runtime_error(
             name + " is required to run the tests but not set as an environment variable.");
       }
+
       return std::string(ret);
     }
 
@@ -48,6 +56,18 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys { nam
 
       m_keyVaultUrl = GetEnv("AZURE_KEYVAULT_URL");
       m_keyVaultHsmUrl = GetEnv("AZURE_KEYVAULT_HSM_URL");
+
+      // When running live tests, service can return 429 error response if the client is sending
+      // multiple requests per second. This can happen if the network is fast and tests are running
+      // without any delay between them.
+      auto avoidTestThrottled = GetEnv("AZURE_KEYVAULT_AVOID_THROTTLED", "0");
+
+      if (avoidTestThrottled != "0")
+      {
+        std::cout << "- Wait to avoid server throttled..." << std::endl;
+        // 10 sec should be enough to prevent from 429 error
+        std::this_thread::sleep_for(std::chrono::seconds(10));
+      }
     }
 
   public:

@@ -705,7 +705,8 @@ void CurlSession::ReadStatusLineAndHeadersFromRawResponse(
   // For NoContent status code, also need to set contentLength to 0.
   // https://github.com/Azure/azure-sdk-for-cpp/issues/406
   if (this->m_request.GetMethod() == HttpMethod::Head
-      || this->m_lastStatusCode == HttpStatusCode::NoContent)
+      || this->m_lastStatusCode == HttpStatusCode::NoContent
+      || this->m_lastStatusCode == HttpStatusCode::NotModified)
   {
     this->m_contentLength = 0;
     this->m_bodyStartInBuffer = _detail::DefaultLibcurlReaderSize;
