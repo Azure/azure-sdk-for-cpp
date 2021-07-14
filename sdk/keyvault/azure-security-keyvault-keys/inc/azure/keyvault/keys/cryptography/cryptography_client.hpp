@@ -9,8 +9,6 @@
 
 #pragma once
 
-#include "../src/private/keyvault_protocol.hpp"
-
 #include <azure/core/io/body_stream.hpp>
 
 #include "azure/keyvault/keys/cryptography/cryptography_client_options.hpp"
@@ -30,6 +28,9 @@ namespace Azure {
       namespace Keys {
         namespace Cryptography {
 
+  namespace _detail {
+    class KeyVaultProtocolClient;
+  } // namespace _detail
   /**
    * @brief A client used to perform cryptographic operations with Azure Key Vault keys.
    *

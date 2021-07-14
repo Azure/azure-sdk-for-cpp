@@ -12,8 +12,6 @@
 #include <azure/core/response.hpp>
 #include <azure/core/url.hpp>
 
-#include "../src/private/keyvault_protocol.hpp"
-
 #include "azure/keyvault/keys/cryptography/cryptography_client_options.hpp"
 #include "azure/keyvault/keys/cryptography/encrypt_parameters.hpp"
 #include "azure/keyvault/keys/cryptography/encrypt_result.hpp"
@@ -23,12 +21,11 @@
 #include <memory>
 #include <string>
 
-namespace Azure {
-  namespace Security {
-    namespace KeyVault {
-      namespace Keys {
-        namespace Cryptography {
+namespace Azure { namespace Security { namespace KeyVault {
   namespace _detail {
+    class KeyVaultProtocolClient;
+  } // namespace _detail
+  namespace Keys { namespace Cryptography { namespace _detail {
 
     struct RemoteCryptographyClient final
         : public Azure::Security::KeyVault::Keys::Cryptography::_detail::CryptographyProvider
@@ -110,4 +107,5 @@ namespace Azure {
           std::vector<uint8_t> const& signature,
           Azure::Core::Context const& context) const override;
     };
-}}}}}} // namespace Azure::Security::KeyVault::Keys::Cryptography::_detail
+  }}} // namespace Keys::Cryptography::_detail
+}}} // namespace Azure::Security::KeyVault

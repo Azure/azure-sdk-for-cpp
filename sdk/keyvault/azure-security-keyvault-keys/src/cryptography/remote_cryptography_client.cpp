@@ -4,6 +4,7 @@
 #include <azure/core/credentials/credentials.hpp>
 #include <azure/core/http/http.hpp>
 #include <azure/core/http/policies/policy.hpp>
+#include <azure/core/internal/http/pipeline.hpp>
 
 #include "../private/cryptography_serializers.hpp"
 #include "../private/key_constants.hpp"
@@ -11,6 +12,7 @@
 #include "../private/key_sign_parameters.hpp"
 #include "../private/key_verify_parameters.hpp"
 #include "../private/key_wrap_parameters.hpp"
+#include "../private/keyvault_protocol.hpp"
 #include "azure/keyvault/keys/internal/cryptography/remote_cryptography_client.hpp"
 
 #include <memory>
