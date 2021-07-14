@@ -10,27 +10,14 @@
 using namespace Azure::Security::KeyVault;
 using namespace Azure::Core::Http::_internal;
 
-namespace {
-inline Azure::Core::Http::Request InitRequest(
-    Azure::Core::Http::HttpMethod method,
-    Azure::Core::IO::BodyStream* content,
-    Azure::Core::Url const& url)
-{
-  if (content == nullptr)
-  {
-    return Azure::Core::Http::Request(method, url);
-  }
-  return Azure::Core::Http::Request(method, url, content);
-}
-} // namespace
-
 Azure::Core::Http::Request _internal::KeyVaultPipeline::CreateRequest(
     Azure::Core::Http::HttpMethod method,
     Azure::Core::IO::BodyStream* content,
     std::vector<std::string> const& path) const
 {
-
-  auto request = ::InitRequest(method, content, m_vaultUrl);
+  Azure::Core::Http::Request request = content == nullptr
+      ? Azure::Core::Http::Request(method, m_vaultUrl)
+      : Azure::Core::Http::Request(method, m_vaultUrl, content);
 
   request.SetHeader(HttpShared::ContentType, HttpShared::ApplicationJson);
   request.SetHeader(HttpShared::Accept, HttpShared::ApplicationJson);
