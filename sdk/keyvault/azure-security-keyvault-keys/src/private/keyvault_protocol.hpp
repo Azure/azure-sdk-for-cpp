@@ -186,13 +186,5 @@ namespace Azure { namespace Security { namespace KeyVault { namespace _detail {
       // Use the core pipeline directly to avoid checking the response code.
       return m_pipeline.Send(request, context);
     }
-
-    /**
-     * @brief Get the Vault Url which was used to create the
-     * #Azure::Security::KeyVault::_detail::KeyVaultProtocolClient.
-     *
-     * @return The vault Url as string.
-     */
-    std::string GetVaultUrl() const { return m_vaultUrl.GetAbsoluteUrl(); }
   };
 }}}} // namespace Azure::Security::KeyVault::_detail
