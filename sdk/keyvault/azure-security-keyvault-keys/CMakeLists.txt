@@ -20,9 +20,9 @@ include(AzureGlobalCompileOptions)
 az_vcpkg_integrate()
 
 if(NOT AZ_ALL_LIBRARIES)
-  find_package(azure-security-keyvault-common-cpp "4.0.0" CONFIG QUIET)
-  if(NOT azure-security-keyvault-common-cpp_FOUND)
-    find_package(azure-security-keyvault-common-cpp "4.0.0" REQUIRED)
+  find_package(azure-core-cpp "1.1.0" CONFIG QUIET)
+  if(NOT azure-core-cpp_FOUND)
+    find_package(azure-core-cpp "1.1.0" REQUIRED)
   endif()
 endif()
 
@@ -43,6 +43,7 @@ set(
     inc/azure/keyvault/keys/cryptography/wrap_result.hpp
     inc/azure/keyvault/keys/cryptography/unwrap_result.hpp
     inc/azure/keyvault/keys/cryptography/verify_result.hpp
+    inc/azure/keyvault/keys/backup_key_result.hpp
     inc/azure/keyvault/keys/delete_key_operation.hpp
     inc/azure/keyvault/keys/deleted_key.hpp
     inc/azure/keyvault/keys/import_key_options.hpp
@@ -87,6 +88,8 @@ set(
     src/private/key_sign_parameters.hpp
     src/private/key_verify_parameters.hpp
     src/private/key_wrap_parameters.hpp
+    src/private/keyvault_constants.hpp
+    src/private/keyvault_protocol.hpp
     src/private/local_cryptography_provider.hpp
     src/private/local_cryptography_provider_factory.hpp
     src/private/package_version.hpp
@@ -103,6 +106,7 @@ set(
     src/key_request_parameters.cpp
     src/key_type.cpp
     src/key_vault_key.cpp
+    src/keyvault_protocol.cpp
     src/list_keys_responses.cpp
     src/recover_deleted_key_operation.cpp
 )
@@ -119,7 +123,7 @@ target_include_directories(
       $<INSTALL_INTERFACE:include>
 )
 
-target_link_libraries(azure-security-keyvault-keys PUBLIC Azure::azure-security-keyvault-common)
+target_link_libraries(azure-security-keyvault-keys PUBLIC Azure::azure-core)
 
 # coverage. Has no effect if BUILD_CODE_COVERAGE is OFF
 create_code_coverage(keyvault azure-security-keyvault-keys azure-security-keyvault-keys-test)
