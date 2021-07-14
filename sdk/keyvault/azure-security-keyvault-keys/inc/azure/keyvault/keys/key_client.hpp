@@ -11,6 +11,7 @@
 
 #include <azure/keyvault/common/internal/keyvault_pipeline.hpp>
 
+#include "azure/keyvault/keys/backup_key_result.hpp"
 #include "azure/keyvault/keys/delete_key_operation.hpp"
 #include "azure/keyvault/keys/import_key_options.hpp"
 #include "azure/keyvault/keys/key_client_options.hpp"
@@ -341,7 +342,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
      * @param name The name of the key.
      * @param context A #Azure::Core::Context controlling the request lifetime.
      */
-    Azure::Response<std::vector<uint8_t>> BackupKey(
+    Azure::Response<Azure::Security::KeyVault::Keys::BackupKeyResult> BackupKey(
         std::string const& name,
         Azure::Core::Context const& context = Azure::Core::Context()) const;
 

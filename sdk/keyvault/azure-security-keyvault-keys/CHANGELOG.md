@@ -5,6 +5,7 @@
 ### Features Added
 
 - Added `GetIv()` to `EncryptParameters` and `DecryptParameters`.
+- Added `BackupKeyResult` for `BackupKey()` return type.
 
 ### Breaking Changes
 
@@ -16,6 +17,7 @@
 - Removed `Encrypt(EncryptionAlgorithm, std::vector, context)`.
 - Removed `Decrypt(DecryptAlgorithm, std::vector, context)`.
 - Renamed header `list_keys_single_page_result.hpp` to `list_keys_result.hpp`.
+- Updated `BackupKey()` API return type to `BackupKeyResult` model type.
 
 ## 4.0.0-beta.3 (2021-06-08)
 
