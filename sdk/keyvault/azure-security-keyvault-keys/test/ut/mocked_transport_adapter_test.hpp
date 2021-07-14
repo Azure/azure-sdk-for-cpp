@@ -101,7 +101,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys { nam
     {
       auto apiVersion = options.Version.ToString();
 
-      m_pipeline = std::make_unique<Azure::Security::KeyVault::_internal::KeyVaultPipeline>(
+      m_pipeline = std::make_unique<Azure::Security::KeyVault::_internal::KeyVaultProtocolClient>(
           Azure::Core::Url(vaultUrl),
           apiVersion,
           Azure::Core::Http::_internal::HttpPipeline(options, "test", "version", {}, {}));

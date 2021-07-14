@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
 
-#include "azure/keyvault/common/internal/keyvault_pipeline.hpp"
+#include "azure/keyvault/common/internal/keyvault_protocol.hpp"
 #include "private/keyvault_constants.hpp"
 
 #include <azure/core/exception.hpp>
@@ -10,7 +10,7 @@
 using namespace Azure::Security::KeyVault;
 using namespace Azure::Core::Http::_internal;
 
-Azure::Core::Http::Request _internal::KeyVaultPipeline::CreateRequest(
+Azure::Core::Http::Request _internal::KeyVaultProtocolClient::CreateRequest(
     Azure::Core::Http::HttpMethod method,
     Azure::Core::IO::BodyStream* content,
     std::vector<std::string> const& path) const
@@ -34,14 +34,14 @@ Azure::Core::Http::Request _internal::KeyVaultPipeline::CreateRequest(
   return request;
 }
 
-Azure::Core::Http::Request _internal::KeyVaultPipeline::CreateRequest(
+Azure::Core::Http::Request _internal::KeyVaultProtocolClient::CreateRequest(
     Azure::Core::Http::HttpMethod method,
     std::vector<std::string> const& path) const
 {
   return CreateRequest(method, nullptr, path);
 }
 
-std::unique_ptr<Azure::Core::Http::RawResponse> _internal::KeyVaultPipeline::SendRequest(
+std::unique_ptr<Azure::Core::Http::RawResponse> _internal::KeyVaultProtocolClient::SendRequest(
     Azure::Core::Context const& context,
     Azure::Core::Http::Request& request) const
 {

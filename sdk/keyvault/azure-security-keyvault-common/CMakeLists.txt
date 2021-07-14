@@ -28,14 +28,14 @@ endif()
 
 set(
   AZURE_KEYVAULT_COMMON_HEADER
-    inc/azure/keyvault/common/internal/keyvault_pipeline.hpp
+    inc/azure/keyvault/common/internal/keyvault_protocol.hpp
 )
 
 set(
   AZURE_KEYVAULT_COMMON_SOURCE
     src/private/keyvault_constants.hpp
     src/private/package_version.hpp
-    src/keyvault_pipeline.cpp
+    src/keyvault_protocol.cpp
 )
 
 add_library(
