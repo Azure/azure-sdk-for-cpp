@@ -12,8 +12,8 @@
 #include <azure/core/response.hpp>
 #include <azure/core/url.hpp>
 
-#include "keyvault_protocol.hpp"
 #include "cryptography_provider.hpp"
+#include "keyvault_protocol.hpp"
 
 #include "azure/keyvault/keys/cryptography/cryptography_client_options.hpp"
 #include "azure/keyvault/keys/cryptography/encrypt_parameters.hpp"
