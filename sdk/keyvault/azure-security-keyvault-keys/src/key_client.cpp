@@ -45,14 +45,6 @@ static inline RequestWithContinuationToken BuildRequestFromContinuationToken(
     request.Path.clear();
     request.Path.emplace_back(nextPageUrl.GetPath());
   }
-  if (options.MaxPageResults)
-  {
-    if (request.Query == nullptr)
-    {
-      request.Query = std::make_unique<std::map<std::string, std::string>>();
-    }
-    request.Query->emplace("maxResults", std::to_string(options.MaxPageResults.Value()));
-  }
   return request;
 }
 
@@ -72,14 +64,6 @@ static inline RequestWithContinuationToken BuildRequestFromContinuationToken(
     request.Path.clear();
     request.Path.emplace_back(nextPageUrl.GetPath());
   }
-  if (options.MaxPageResults)
-  {
-    if (request.Query == nullptr)
-    {
-      request.Query = std::make_unique<std::map<std::string, std::string>>();
-    }
-    request.Query->emplace("maxResults", std::to_string(options.MaxPageResults.Value()));
-  }
   return request;
 }
 
@@ -98,14 +82,6 @@ static inline RequestWithContinuationToken BuildRequestFromContinuationToken(
         = std::make_unique<std::map<std::string, std::string>>(nextPageUrl.GetQueryParameters());
     request.Path.clear();
     request.Path.emplace_back(nextPageUrl.GetPath());
-  }
-  if (options.MaxPageResults)
-  {
-    if (request.Query == nullptr)
-    {
-      request.Query = std::make_unique<std::map<std::string, std::string>>();
-    }
-    request.Query->emplace("maxResults", std::to_string(options.MaxPageResults.Value()));
   }
   return request;
 }
