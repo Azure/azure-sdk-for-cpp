@@ -181,7 +181,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
      * are not listed in the response. This operation requires the keys/list permission.
      *
      * @remark Use \p options to control which page to get. If
-     * #GetPropertiesOfKeysOptions.NextLink is not set, the operation will get the first
+     * #GetPropertiesOfKeysOptions.NextPageToken is not set, the operation will get the first
      * page and it will set the `NextPageToken` from the #KeyPropertiesPageResult as the next
      * page of the response if there is a next page.
      *
@@ -202,7 +202,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
      * operation requires the keys/list permission.
      *
      * @remark Use \p options to control which page to get. If
-     * #GetPropertiesOfKeyVersionsOptions.NextLink is not set, the operation will get the
+     * #GetPropertiesOfKeyVersionsOptions.NextPageToken is not set, the operation will get the
      * first page and it will set the `NextPageToken` from the #KeyPropertiesPageResult as the
      * next page of the response if there is a next page.
      *
@@ -260,8 +260,8 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
      * requires the keys/list permission.
      *
      * @remark Use \p options to control which page to get. If
-     * #GetPropertiesOfKeyVersionsOptions.NextPageToken is not set, the operation will get
-     * the first page and it will set the `NextPageToken` from the #KeyPropertiesPageResult as the
+     * #GetDeletedKeysOptions.NextPageToken is not set, the operation will get
+     * the first page and it will set the `NextPageToken` from the #DeletedKeyPageResult as the
      * next page of the response if there is a next page.
      *
      * @param options The #GetDeletedKeysOptions object to for setting the operation up.
