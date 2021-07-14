@@ -24,7 +24,7 @@
 namespace Azure { namespace Security { namespace KeyVault { namespace _detail {
 
   /**
-   * @brief The HTTP pipeline used by Key Vault clients.
+   * @brief The Protocol layer used by Key Vault clients.
    *
    */
   class KeyVaultProtocolClient final {
@@ -69,7 +69,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace _detail {
 
   public:
     /**
-     * @brief Construct a new Key Vault Pipeline.
+     * @brief Construct a new Key Vault Protocol Client.
      *
      * @param vaultUrl The URL address for the Key Vault.
      * @param apiVersion The service API version.
