@@ -103,23 +103,6 @@ namespace Azure {
         Azure::Core::Context const& context = Azure::Core::Context());
 
     /**
-     * @brief Encrypts the specified plaintext.
-     *
-     * @param algorithm The #EncryptionAlgorithm to use.
-     * @param plaintext The data to encrypt.
-     * @param context A #Azure::Core::Context to cancel the operation.
-     * @return An #EncryptResult containing the encrypted data along with all other information
-     * needed to decrypt it. This information should be stored with the encrypted data.
-     */
-    EncryptResult Encrypt(
-        EncryptionAlgorithm algorithm,
-        std::vector<uint8_t> const& plaintext,
-        Azure::Core::Context const& context = Azure::Core::Context())
-    {
-      return Encrypt(EncryptParameters(algorithm, plaintext), context);
-    }
-
-    /**
      * @brief Decrypts ciphertext.
      *
      * @param parameters A #DecryptParameters containing the data to decrypt and other parameters
@@ -131,23 +114,6 @@ namespace Azure {
     DecryptResult Decrypt(
         DecryptParameters const& parameters,
         Azure::Core::Context const& context = Azure::Core::Context());
-
-    /**
-     * @brief Decrypts the specified ciphertext.
-     *
-     * @param algorithm The #EncryptionAlgorithm to use.
-     * @param ciphertext The encrypted data to decrypt..
-     * @param context A #Azure::Core::Context to cancel the operation.
-     * @return An #DecryptResult containing the Decrypted data along with all other information
-     * needed to decrypt it. This information should be stored with the Decrypted data.
-     */
-    DecryptResult Decrypt(
-        EncryptionAlgorithm algorithm,
-        std::vector<uint8_t> const& ciphertext,
-        Azure::Core::Context const& context = Azure::Core::Context())
-    {
-      return Decrypt(DecryptParameters(algorithm, ciphertext), context);
-    }
 
     /**
      * @brief Encrypts the specified key.

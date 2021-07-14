@@ -17,7 +17,7 @@ add_executable (
     key_client_test.cpp
     macro_guard.cpp
     mocked_transport_adapter_test.hpp
-    telemetry_header_test.cpp
+    mocked_client_test.cpp
 )
 
 if (MSVC)

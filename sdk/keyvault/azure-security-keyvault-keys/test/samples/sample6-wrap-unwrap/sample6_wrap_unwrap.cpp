@@ -19,7 +19,6 @@
 
 #include <azure/core.hpp>
 #include <azure/identity.hpp>
-#include <azure/keyvault/common/sha.hpp>
 #include <azure/keyvault/key_vault_keys.hpp>
 
 #include <chrono>

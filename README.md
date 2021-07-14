@@ -99,8 +99,7 @@ int main()
 
   try
   {
-    auto sharedKeyCredential = std::make_shared<StorageSharedKeyCredential>(
-        StorageSharedKeyCredential(accountName, accountKey));
+    auto sharedKeyCredential = std::make_shared<StorageSharedKeyCredential>(accountName, accountKey);
 
     auto blockBlobClient = BlockBlobClient(endpointUrl, sharedKeyCredential);
 
