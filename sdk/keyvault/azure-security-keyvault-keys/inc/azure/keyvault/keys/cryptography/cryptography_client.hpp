@@ -9,7 +9,7 @@
 
 #pragma once
 
-#include <azure/keyvault/common/internal/keyvault_protocol.hpp>
+#include "../src/private/keyvault_protocol.hpp"
 
 #include <azure/core/io/body_stream.hpp>
 
@@ -36,7 +36,7 @@ namespace Azure {
    */
   class CryptographyClient final {
   private:
-    std::shared_ptr<Azure::Security::KeyVault::_internal::KeyVaultProtocolClient> m_pipeline;
+    std::shared_ptr<Azure::Security::KeyVault::_detail::KeyVaultProtocolClient> m_pipeline;
     std::string m_keyId;
     std::shared_ptr<
         Azure::Security::KeyVault::Keys::Cryptography::_detail::RemoteCryptographyClient>

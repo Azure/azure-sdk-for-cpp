@@ -6,11 +6,12 @@
 #include <azure/core/http/http.hpp>
 #include <azure/core/http/policies/policy.hpp>
 #include <azure/core/internal/client_options.hpp>
-#include <azure/keyvault/common/internal/keyvault_protocol.hpp>
+
+#include "./../../src/private/keyvault_protocol.hpp"
 
 #include <memory>
 
-using namespace Azure::Security::KeyVault::_internal;
+using namespace Azure::Security::KeyVault::_detail;
 
 TEST(KeyVaultProtocolClient, initPipeline)
 {

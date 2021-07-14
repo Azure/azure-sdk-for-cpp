@@ -9,7 +9,7 @@
 
 #pragma once
 
-#include <azure/keyvault/common/internal/keyvault_protocol.hpp>
+#include "../src/private/keyvault_protocol.hpp"
 
 #include "azure/keyvault/keys/delete_key_operation.hpp"
 #include "azure/keyvault/keys/import_key_options.hpp"
@@ -59,7 +59,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
   {
   protected:
     // Using a shared pipeline for a client to share it with LRO (like delete key)
-    std::shared_ptr<Azure::Security::KeyVault::_internal::KeyVaultProtocolClient> m_pipeline;
+    std::shared_ptr<Azure::Security::KeyVault::_detail::KeyVaultProtocolClient> m_pipeline;
 
   public:
     /**
