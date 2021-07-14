@@ -62,7 +62,7 @@ endif()
 create_code_coverage(keyvault azure-security-keyvault-common azure-security-keyvault-common-test)
 
 get_az_version("${CMAKE_CURRENT_SOURCE_DIR}/src/private/package_version.hpp")
-generate_documentation(azure-security-keyvault-common ${AZ_LIBRARY_VERSION})
+#generate_documentation(azure-security-keyvault-common ${AZ_LIBRARY_VERSION})
 
 if(BUILD_TESTING)
     # tests
