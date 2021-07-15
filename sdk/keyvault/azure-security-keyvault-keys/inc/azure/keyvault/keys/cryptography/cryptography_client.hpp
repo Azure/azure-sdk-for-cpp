@@ -37,8 +37,8 @@ namespace Azure {
         namespace Cryptography {
 
   namespace _detail {
-    struct CryptographyProvider;
-    struct RemoteCryptographyClient;
+    class CryptographyProvider;
+    class RemoteCryptographyClient;
   } // namespace _detail
 
   /**
