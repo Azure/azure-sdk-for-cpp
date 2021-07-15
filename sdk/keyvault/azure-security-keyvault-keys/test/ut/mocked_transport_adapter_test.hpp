@@ -10,7 +10,10 @@
 #include <gtest/gtest.h>
 
 #include "./../../src/private/key_serializers.hpp"
+#include "./../../src/private/keyvault_protocol.hpp"
+
 #include <azure/core.hpp>
+#include <azure/core/internal/http/pipeline.hpp>
 #include <azure/keyvault/key_vault_keys.hpp>
 #include <cstdio>
 #include <string>
