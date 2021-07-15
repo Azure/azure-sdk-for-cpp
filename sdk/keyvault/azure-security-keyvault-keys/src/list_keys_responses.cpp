@@ -15,7 +15,7 @@ using namespace Azure::Security::KeyVault::Keys;
 using namespace Azure::Core::Json::_internal;
 
 KeyPropertiesPagedResponse
-_detail::KeyPropertiesPageResultSerializer::KeyPropertiesPageResultDeserialize(
+_detail::KeyPropertiesPagedResultSerializer::KeyPropertiesPagedResultDeserialize(
     Azure::Core::Http::RawResponse const& rawResponse)
 {
   using Azure::Core::_internal::PosixTimeConverter;
@@ -83,7 +83,8 @@ _detail::KeyPropertiesPageResultSerializer::KeyPropertiesPageResultDeserialize(
   return result;
 }
 
-DeletedKeyPagedResponse _detail::KeyPropertiesPageResultSerializer::DeletedKeyPageResultDeserialize(
+DeletedKeyPagedResponse
+_detail::KeyPropertiesPagedResultSerializer::DeletedKeyPagedResultDeserialize(
     Azure::Core::Http::RawResponse const& rawResponse)
 {
   using Azure::Core::_internal::PosixTimeConverter;
@@ -91,9 +92,9 @@ DeletedKeyPagedResponse _detail::KeyPropertiesPageResultSerializer::DeletedKeyPa
   auto const& body = rawResponse.GetBody();
   auto jsonParser = Azure::Core::Json::_internal::json::parse(body);
 
-  DeletedKeyPagedResponse deletedKeyPageResult;
+  DeletedKeyPagedResponse deletedKeyPagedResult;
 
-  JsonOptional::SetIfExists(deletedKeyPageResult.NextPageToken, jsonParser, "nextLink");
+  JsonOptional::SetIfExists(deletedKeyPagedResult.NextPageToken, jsonParser, "nextLink");
 
   auto deletedKeys = jsonParser["value"];
   for (auto const& key : deletedKeys)
@@ -123,10 +124,10 @@ DeletedKeyPagedResponse _detail::KeyPropertiesPageResultSerializer::DeletedKeyPa
         _detail::ScheduledPurgeDatePropertyName,
         PosixTimeConverter::PosixTimeToDateTime);
 
-    deletedKeyPageResult.Items.emplace_back(deletedKey);
+    deletedKeyPagedResult.Items.emplace_back(deletedKey);
   }
 
-  return deletedKeyPageResult;
+  return deletedKeyPagedResult;
 }
 
 void DeletedKeyPagedResponse::OnNextPage(const Azure::Core::Context& context)

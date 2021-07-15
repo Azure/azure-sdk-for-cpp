@@ -196,7 +196,7 @@ KeyPropertiesPagedResponse KeyClient::GetPropertiesOfKeys(
       context,
       Azure::Core::Http::HttpMethod::Get,
       [](Azure::Core::Http::RawResponse const& rawResponse) {
-        return _detail::KeyPropertiesPageResultSerializer::KeyPropertiesPageResultDeserialize(
+        return _detail::KeyPropertiesPagedResultSerializer::KeyPropertiesPagedResultDeserialize(
             rawResponse);
       },
       request.Path,
@@ -219,7 +219,7 @@ KeyPropertiesPagedResponse KeyClient::GetPropertiesOfKeyVersions(
       context,
       Azure::Core::Http::HttpMethod::Get,
       [](Azure::Core::Http::RawResponse const& rawResponse) {
-        return _detail::KeyPropertiesPageResultSerializer::KeyPropertiesPageResultDeserialize(
+        return _detail::KeyPropertiesPagedResultSerializer::KeyPropertiesPagedResultDeserialize(
             rawResponse);
       },
       request.Path,
@@ -284,7 +284,7 @@ DeletedKeyPagedResponse KeyClient::GetDeletedKeys(
       context,
       Azure::Core::Http::HttpMethod::Get,
       [](Azure::Core::Http::RawResponse const& rawResponse) {
-        return _detail::KeyPropertiesPageResultSerializer::DeletedKeyPageResultDeserialize(
+        return _detail::KeyPropertiesPagedResultSerializer::DeletedKeyPagedResultDeserialize(
             rawResponse);
       },
       request.Path,
