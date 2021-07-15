@@ -44,7 +44,5 @@ namespace Azure {
       }
 
       bool CanRemote() const noexcept override { return m_canRemote; };
-
-      bool MustRemote() const { return m_canRemote && !m_keyMaterial.HasPrivateKey(); }
     };
 }}}}}} // namespace Azure::Security::KeyVault::Keys::Cryptography::_detail
