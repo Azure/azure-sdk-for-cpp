@@ -13,7 +13,7 @@
 
 #include "azure/keyvault/keys/deleted_key.hpp"
 #include "azure/keyvault/keys/import_key_options.hpp"
-#include "azure/keyvault/keys/key_vault_key.hpp"
+#include "azure/keyvault/keys/keyvault_key.hpp"
 #include "azure/keyvault/keys/list_keys_responses.hpp"
 
 #include <string>

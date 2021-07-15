@@ -15,7 +15,7 @@
 #include "azure/keyvault/keys/key_client_options.hpp"
 #include "azure/keyvault/keys/key_create_options.hpp"
 #include "azure/keyvault/keys/key_type.hpp"
-#include "azure/keyvault/keys/key_vault_key.hpp"
+#include "azure/keyvault/keys/keyvault_key.hpp"
 #include "azure/keyvault/keys/list_keys_responses.hpp"
 #include "azure/keyvault/keys/recover_deleted_key_operation.hpp"
 

@@ -18,7 +18,7 @@
 #include "azure/keyvault/keys/cryptography/cryptography_client_options.hpp"
 #include "azure/keyvault/keys/cryptography/encrypt_parameters.hpp"
 #include "azure/keyvault/keys/cryptography/encrypt_result.hpp"
-#include "azure/keyvault/keys/key_vault_key.hpp"
+#include "azure/keyvault/keys/keyvault_key.hpp"
 
 #include <memory>
 #include <string>
@@ -55,53 +55,24 @@ namespace Azure {
           EncryptParameters const& parameters,
           Azure::Core::Context const& context) const override;
 
-      Azure::Response<EncryptResult> EncryptWithResponse(
-          EncryptParameters const& parameters,
-          Azure::Core::Context const& context) const;
-
       DecryptResult Decrypt(
           DecryptParameters const& parameters,
           Azure::Core::Context const& context) const override;
-
-      Azure::Response<DecryptResult> DecryptWithResponse(
-          DecryptParameters const& parameters,
-          Azure::Core::Context const& context) const;
-
-      Azure::Response<WrapResult> WrapKeyWithResponse(
-          KeyWrapAlgorithm const& algorithm,
-          std::vector<uint8_t> const& key,
-          Azure::Core::Context const& context) const;
 
       WrapResult WrapKey(
           KeyWrapAlgorithm const& algorithm,
           std::vector<uint8_t> const& key,
           Azure::Core::Context const& context) const override;
 
-      Azure::Response<UnwrapResult> UnwrapKeyWithResponse(
-          KeyWrapAlgorithm const& algorithm,
-          std::vector<uint8_t> const& encryptedKey,
-          Azure::Core::Context const& context) const;
-
       UnwrapResult UnwrapKey(
           KeyWrapAlgorithm const& algorithm,
           std::vector<uint8_t> const& encryptedKey,
           Azure::Core::Context const& context) const override;
 
-      Azure::Response<SignResult> SignWithResponse(
-          SignatureAlgorithm const& algorithm,
-          std::vector<uint8_t> const& digest,
-          Azure::Core::Context const& context) const;
-
       SignResult Sign(
           SignatureAlgorithm const& algorithm,
           std::vector<uint8_t> const& digest,
           Azure::Core::Context const& context) const override;
-
-      Azure::Response<VerifyResult> VerifyWithResponse(
-          SignatureAlgorithm const& algorithm,
-          std::vector<uint8_t> const& digest,
-          std::vector<uint8_t> const& signature,
-          Azure::Core::Context const& context) const;
 
       VerifyResult Verify(
           SignatureAlgorithm const& algorithm,

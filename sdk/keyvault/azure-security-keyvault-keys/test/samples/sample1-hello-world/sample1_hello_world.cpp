@@ -19,7 +19,7 @@
 
 #include <azure/core.hpp>
 #include <azure/identity.hpp>
-#include <azure/keyvault/key_vault_keys.hpp>
+#include <azure/keyvault/keyvault_keys.hpp>
 
 #include <chrono>
 #include <iostream>
