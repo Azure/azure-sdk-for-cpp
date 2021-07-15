@@ -190,7 +190,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
      * up.
      * @param context A #Azure::Core::Context controlling the request lifetime.
      */
-    KeyPropertiesPageResponse GetPropertiesOfKeys(
+    KeyPropertiesPagedResponse GetPropertiesOfKeys(
         GetPropertiesOfKeysOptions const& options = GetPropertiesOfKeysOptions(),
         Azure::Core::Context const& context = Azure::Core::Context()) const;
 
@@ -212,7 +212,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
      * operation up.
      * @param context A #Azure::Core::Context controlling the request lifetime.
      */
-    KeyPropertiesPageResponse GetPropertiesOfKeyVersions(
+    KeyPropertiesPagedResponse GetPropertiesOfKeyVersions(
         std::string const& name,
         GetPropertiesOfKeyVersionsOptions const& options = GetPropertiesOfKeyVersionsOptions(),
         Azure::Core::Context const& context = Azure::Core::Context()) const;
@@ -267,9 +267,9 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
      *
      * @param options The #GetDeletedKeysOptions object to for setting the operation up.
      * @param context A #Azure::Core::Context controlling the request lifetime.
-     * @return Azure::Response<DeletedKeyPageResponse>
+     * @return Azure::Response<DeletedKeyPagedResponse>
      */
-    DeletedKeyPageResponse GetDeletedKeys(
+    DeletedKeyPagedResponse GetDeletedKeys(
         GetDeletedKeysOptions const& options = GetDeletedKeysOptions(),
         Azure::Core::Context const& context = Azure::Core::Context()) const;
 

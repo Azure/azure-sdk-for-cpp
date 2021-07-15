@@ -14,13 +14,13 @@
 using namespace Azure::Security::KeyVault::Keys;
 using namespace Azure::Core::Json::_internal;
 
-KeyPropertiesPageResponse
+KeyPropertiesPagedResponse
 _detail::KeyPropertiesPageResultSerializer::KeyPropertiesPageResultDeserialize(
     Azure::Core::Http::RawResponse const& rawResponse)
 {
   using Azure::Core::_internal::PosixTimeConverter;
 
-  KeyPropertiesPageResponse result;
+  KeyPropertiesPagedResponse result;
   auto const& body = rawResponse.GetBody();
   auto jsonParser = json::parse(body);
 
@@ -83,7 +83,7 @@ _detail::KeyPropertiesPageResultSerializer::KeyPropertiesPageResultDeserialize(
   return result;
 }
 
-DeletedKeyPageResponse _detail::KeyPropertiesPageResultSerializer::DeletedKeyPageResultDeserialize(
+DeletedKeyPagedResponse _detail::KeyPropertiesPageResultSerializer::DeletedKeyPageResultDeserialize(
     Azure::Core::Http::RawResponse const& rawResponse)
 {
   using Azure::Core::_internal::PosixTimeConverter;
@@ -91,7 +91,7 @@ DeletedKeyPageResponse _detail::KeyPropertiesPageResultSerializer::DeletedKeyPag
   auto const& body = rawResponse.GetBody();
   auto jsonParser = Azure::Core::Json::_internal::json::parse(body);
 
-  DeletedKeyPageResponse deletedKeyPageResult;
+  DeletedKeyPagedResponse deletedKeyPageResult;
 
   JsonOptional::SetIfExists(deletedKeyPageResult.NextPageToken, jsonParser, "nextLink");
 
@@ -129,7 +129,7 @@ DeletedKeyPageResponse _detail::KeyPropertiesPageResultSerializer::DeletedKeyPag
   return deletedKeyPageResult;
 }
 
-void DeletedKeyPageResponse::OnNextPage(const Azure::Core::Context& context)
+void DeletedKeyPagedResponse::OnNextPage(const Azure::Core::Context& context)
 {
   // Before calling `OnNextPage` pagedResponse validates there is a next page, so we are sure
   // NextPageToken is valid.
@@ -139,14 +139,14 @@ void DeletedKeyPageResponse::OnNextPage(const Azure::Core::Context& context)
   CurrentPageToken = options.NextPageToken.Value();
 }
 
-void KeyPropertiesPageResponse::OnNextPage(const Azure::Core::Context& context)
+void KeyPropertiesPagedResponse::OnNextPage(const Azure::Core::Context& context)
 {
   // Notes
   // - Before calling `OnNextPage` pagedResponse validates there is a next page, so we are sure
   // NextPageToken is valid.
-  // - KeyPropertiesPageResponse is used to list keys from a Key Vault and also to list the key
-  // versions from a specific key. When KeyPropertiesPageResponse is listing keys, the `m_keyName`
-  // fields will be empty, but for listing the key versions, the KeyPropertiesPageResponse needs to
+  // - KeyPropertiesPagedResponse is used to list keys from a Key Vault and also to list the key
+  // versions from a specific key. When KeyPropertiesPagedResponse is listing keys, the `m_keyName`
+  // fields will be empty, but for listing the key versions, the KeyPropertiesPagedResponse needs to
   // keep the name of the key in `m_keyName` because it is required to get more pages.
   //
   if (m_keyName.empty())

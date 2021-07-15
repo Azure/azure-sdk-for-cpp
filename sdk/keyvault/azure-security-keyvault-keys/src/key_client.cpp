@@ -185,12 +185,12 @@ Azure::Response<KeyVaultKey> KeyClient::CreateOctKey(
       {_detail::KeysPath, keyName, "create"});
 }
 
-KeyPropertiesPageResponse KeyClient::GetPropertiesOfKeys(
+KeyPropertiesPagedResponse KeyClient::GetPropertiesOfKeys(
     GetPropertiesOfKeysOptions const& options,
     Azure::Core::Context const& context) const
 {
   auto const request = BuildRequestFromContinuationToken(options, {_detail::KeysPath});
-  auto response = m_pipeline->SendRequest<KeyPropertiesPageResponse>(
+  auto response = m_pipeline->SendRequest<KeyPropertiesPagedResponse>(
       context,
       Azure::Core::Http::HttpMethod::Get,
       [](Azure::Core::Http::RawResponse const& rawResponse) {
@@ -200,20 +200,20 @@ KeyPropertiesPageResponse KeyClient::GetPropertiesOfKeys(
       request.Path,
       request.Query);
 
-  return KeyPropertiesPageResponse(
+  return KeyPropertiesPagedResponse(
       std::move(response.Value),
       std::move(response.RawResponse),
       std::make_unique<KeyClient>(*this));
 }
 
-KeyPropertiesPageResponse KeyClient::GetPropertiesOfKeyVersions(
+KeyPropertiesPagedResponse KeyClient::GetPropertiesOfKeyVersions(
     std::string const& name,
     GetPropertiesOfKeyVersionsOptions const& options,
     Azure::Core::Context const& context) const
 {
   auto const request
       = BuildRequestFromContinuationToken(options, {_detail::KeysPath, name, "versions"});
-  auto response = m_pipeline->SendRequest<KeyPropertiesPageResponse>(
+  auto response = m_pipeline->SendRequest<KeyPropertiesPagedResponse>(
       context,
       Azure::Core::Http::HttpMethod::Get,
       [](Azure::Core::Http::RawResponse const& rawResponse) {
@@ -223,7 +223,7 @@ KeyPropertiesPageResponse KeyClient::GetPropertiesOfKeyVersions(
       request.Path,
       request.Query);
 
-  return KeyPropertiesPageResponse(
+  return KeyPropertiesPagedResponse(
       std::move(response.Value),
       std::move(response.RawResponse),
       std::make_unique<KeyClient>(*this),
@@ -273,12 +273,12 @@ Azure::Response<DeletedKey> KeyClient::GetDeletedKey(
       {_detail::DeletedKeysPath, name});
 }
 
-DeletedKeyPageResponse KeyClient::GetDeletedKeys(
+DeletedKeyPagedResponse KeyClient::GetDeletedKeys(
     GetDeletedKeysOptions const& options,
     Azure::Core::Context const& context) const
 {
   auto const request = BuildRequestFromContinuationToken(options, {_detail::DeletedKeysPath});
-  auto response = m_pipeline->SendRequest<DeletedKeyPageResponse>(
+  auto response = m_pipeline->SendRequest<DeletedKeyPagedResponse>(
       context,
       Azure::Core::Http::HttpMethod::Get,
       [](Azure::Core::Http::RawResponse const& rawResponse) {
@@ -288,7 +288,7 @@ DeletedKeyPageResponse KeyClient::GetDeletedKeys(
       request.Path,
       request.Query);
 
-  return DeletedKeyPageResponse(
+  return DeletedKeyPagedResponse(
       std::move(response.Value),
       std::move(response.RawResponse),
       std::make_unique<KeyClient>(*this));
