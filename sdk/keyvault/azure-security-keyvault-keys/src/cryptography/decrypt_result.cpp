@@ -6,7 +6,7 @@
 
 #include "../private/cryptography_serializers.hpp"
 #include "../private/key_constants.hpp"
-#include "azure/keyvault/keys/cryptography/decrypt_result.hpp"
+#include "azure/keyvault/keys/cryptography/cryptography_client_models.hpp"
 
 #include <string>
 #include <vector>

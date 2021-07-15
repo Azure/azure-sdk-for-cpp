@@ -9,7 +9,7 @@
 
 #pragma once
 
-#include "azure/keyvault/keys/cryptography/encryption_algorithm.hpp"
+#include "azure/keyvault/keys/cryptography/cryptography_client_models.hpp"
 
 #include <string>
 #include <vector>

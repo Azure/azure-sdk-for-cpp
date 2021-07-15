@@ -11,16 +11,9 @@
 
 #include <azure/core/context.hpp>
 
+#include "azure/keyvault/keys/cryptography/cryptography_client_models.hpp"
 #include "azure/keyvault/keys/cryptography/decrypt_parameters.hpp"
-#include "azure/keyvault/keys/cryptography/decrypt_result.hpp"
 #include "azure/keyvault/keys/cryptography/encrypt_parameters.hpp"
-#include "azure/keyvault/keys/cryptography/encrypt_result.hpp"
-#include "azure/keyvault/keys/cryptography/key_wrap_algorithm.hpp"
-#include "azure/keyvault/keys/cryptography/sign_result.hpp"
-#include "azure/keyvault/keys/cryptography/signature_algorithm.hpp"
-#include "azure/keyvault/keys/cryptography/unwrap_result.hpp"
-#include "azure/keyvault/keys/cryptography/verify_result.hpp"
-#include "azure/keyvault/keys/cryptography/wrap_result.hpp"
 #include "azure/keyvault/keys/key_client_models.hpp"
 
 #include <memory>

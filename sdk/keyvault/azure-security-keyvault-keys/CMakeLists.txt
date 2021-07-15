@@ -28,21 +28,14 @@ endif()
 
 set(
   AZURE_KEYVAULT_KEYS_HEADER
+    inc/azure/keyvault/keys/cryptography/cryptography_client_models.hpp
     inc/azure/keyvault/keys/cryptography/cryptography_client_options.hpp
     inc/azure/keyvault/keys/cryptography/cryptography_client.hpp
     inc/azure/keyvault/keys/cryptography/decrypt_parameters.hpp
-    inc/azure/keyvault/keys/cryptography/decrypt_result.hpp
     inc/azure/keyvault/keys/cryptography/encrypt_parameters.hpp
-    inc/azure/keyvault/keys/cryptography/encrypt_result.hpp
-    inc/azure/keyvault/keys/cryptography/encryption_algorithm.hpp
-    inc/azure/keyvault/keys/cryptography/key_wrap_algorithm.hpp
-    inc/azure/keyvault/keys/cryptography/sign_result.hpp
-    inc/azure/keyvault/keys/cryptography/signature_algorithm.hpp
-    inc/azure/keyvault/keys/cryptography/wrap_result.hpp
-    inc/azure/keyvault/keys/cryptography/unwrap_result.hpp
-    inc/azure/keyvault/keys/cryptography/verify_result.hpp
     inc/azure/keyvault/keys/delete_key_operation.hpp
     inc/azure/keyvault/keys/key_client.hpp
+    inc/azure/keyvault/keys/key_client_models.hpp
     inc/azure/keyvault/keys/key_client_options.hpp
     inc/azure/keyvault/keys/list_keys_responses.hpp
     inc/azure/keyvault/keys/recover_deleted_key_operation.hpp

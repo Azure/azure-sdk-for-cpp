@@ -15,9 +15,9 @@
 #include "cryptography_provider.hpp"
 #include "keyvault_protocol.hpp"
 
+#include "azure/keyvault/keys/cryptography/cryptography_client_models.hpp"
 #include "azure/keyvault/keys/cryptography/cryptography_client_options.hpp"
 #include "azure/keyvault/keys/cryptography/encrypt_parameters.hpp"
-#include "azure/keyvault/keys/cryptography/encrypt_result.hpp"
 #include "azure/keyvault/keys/key_client_models.hpp"
 
 #include <memory>
