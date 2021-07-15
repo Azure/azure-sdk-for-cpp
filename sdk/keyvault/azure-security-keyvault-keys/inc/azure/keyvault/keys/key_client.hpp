@@ -188,14 +188,14 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
      *
      * @remark Use \p options to control which page to get. If
      * #GetPropertiesOfKeysOptions.NextPageToken is not set, the operation will get the first
-     * page and it will set the `NextPageToken` from the #KeyPropertiesPageResult as the next
+     * page and it will set the `NextPageToken` from the #KeyPropertiesPagedResult as the next
      * page of the response if there is a next page.
      *
      * @param options The #GetPropertiesOfKeysOptions object to for setting the operation
      * up.
      * @param context A #Azure::Core::Context controlling the request lifetime.
      */
-    KeyPropertiesPageResult GetPropertiesOfKeys(
+    KeyPropertiesPagedResponse GetPropertiesOfKeys(
         GetPropertiesOfKeysOptions const& options = GetPropertiesOfKeysOptions(),
         Azure::Core::Context const& context = Azure::Core::Context()) const;
 
@@ -209,7 +209,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
      *
      * @remark Use \p options to control which page to get. If
      * #GetPropertiesOfKeyVersionsOptions.NextPageToken is not set, the operation will get the
-     * first page and it will set the `NextPageToken` from the #KeyPropertiesPageResult as the
+     * first page and it will set the `NextPageToken` from the #KeyPropertiesPagedResult as the
      * next page of the response if there is a next page.
      *
      * @param name The name of the key.
@@ -217,7 +217,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
      * operation up.
      * @param context A #Azure::Core::Context controlling the request lifetime.
      */
-    KeyPropertiesPageResult GetPropertiesOfKeyVersions(
+    KeyPropertiesPagedResponse GetPropertiesOfKeyVersions(
         std::string const& name,
         GetPropertiesOfKeyVersionsOptions const& options = GetPropertiesOfKeyVersionsOptions(),
         Azure::Core::Context const& context = Azure::Core::Context()) const;
@@ -267,14 +267,14 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
      *
      * @remark Use \p options to control which page to get. If
      * #GetDeletedKeysOptions.NextPageToken is not set, the operation will get
-     * the first page and it will set the `NextPageToken` from the #DeletedKeyPageResult as the
+     * the first page and it will set the `NextPageToken` from the #DeletedKeyPagedResult as the
      * next page of the response if there is a next page.
      *
      * @param options The #GetDeletedKeysOptions object to for setting the operation up.
      * @param context A #Azure::Core::Context controlling the request lifetime.
-     * @return Azure::Response<DeletedKeyPageResult>
+     * @return Azure::Response<DeletedKeyPagedResponse>
      */
-    DeletedKeyPageResult GetDeletedKeys(
+    DeletedKeyPagedResponse GetDeletedKeys(
         GetDeletedKeysOptions const& options = GetDeletedKeysOptions(),
         Azure::Core::Context const& context = Azure::Core::Context()) const;
 
