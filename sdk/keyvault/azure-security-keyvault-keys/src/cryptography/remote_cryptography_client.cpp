@@ -64,74 +64,44 @@ Azure::Response<KeyVaultKey> RemoteCryptographyClient::GetKey(
       {});
 }
 
-Azure::Response<EncryptResult> RemoteCryptographyClient::EncryptWithResponse(
-    EncryptParameters const& parameters,
-    Azure::Core::Context const& context) const
-{
-  return Pipeline->SendRequest<EncryptResult>(
-      context,
-      Azure::Core::Http::HttpMethod::Post,
-      [&parameters]() {
-        return EncryptParametersSerializer::EncryptParametersSerialize(parameters);
-      },
-      [&parameters](Azure::Core::Http::RawResponse const& rawResponse) {
-        auto result = EncryptResultSerializer::EncryptResultDeserialize(rawResponse);
-        result.Algorithm = parameters.Algorithm;
-        return result;
-      },
-      {"encrypt"});
-}
-
 EncryptResult RemoteCryptographyClient::Encrypt(
     EncryptParameters const& parameters,
     Azure::Core::Context const& context) const
 {
-  return EncryptWithResponse(parameters, context).Value;
-}
-
-Azure::Response<DecryptResult> RemoteCryptographyClient::DecryptWithResponse(
-    DecryptParameters const& parameters,
-    Azure::Core::Context const& context) const
-{
-  return Pipeline->SendRequest<DecryptResult>(
-      context,
-      Azure::Core::Http::HttpMethod::Post,
-      [&parameters]() {
-        return DecryptParametersSerializer::DecryptParametersSerialize(parameters);
-      },
-      [&parameters](Azure::Core::Http::RawResponse const& rawResponse) {
-        auto result = DecryptResultSerializer::DecryptResultDeserialize(rawResponse);
-        result.Algorithm = parameters.Algorithm;
-        return result;
-      },
-      {"decrypt"});
+  return Pipeline
+      ->SendRequest<EncryptResult>(
+          context,
+          Azure::Core::Http::HttpMethod::Post,
+          [&parameters]() {
+            return EncryptParametersSerializer::EncryptParametersSerialize(parameters);
+          },
+          [&parameters](Azure::Core::Http::RawResponse const& rawResponse) {
+            auto result = EncryptResultSerializer::EncryptResultDeserialize(rawResponse);
+            result.Algorithm = parameters.Algorithm;
+            return result;
+          },
+          {"encrypt"})
+      .Value;
 }
 
 DecryptResult RemoteCryptographyClient::Decrypt(
     DecryptParameters const& parameters,
     Azure::Core::Context const& context) const
 {
-  return DecryptWithResponse(parameters, context).Value;
-}
-
-Azure::Response<WrapResult> RemoteCryptographyClient::WrapKeyWithResponse(
-    KeyWrapAlgorithm const& algorithm,
-    std::vector<uint8_t> const& key,
-    Azure::Core::Context const& context) const
-{
-  return Pipeline->SendRequest<WrapResult>(
-      context,
-      Azure::Core::Http::HttpMethod::Post,
-      [&algorithm, &key]() {
-        return KeyWrapParametersSerializer::KeyWrapParametersSerialize(
-            KeyWrapParameters(algorithm.ToString(), key));
-      },
-      [&algorithm](Azure::Core::Http::RawResponse const& rawResponse) {
-        auto result = WrapResultSerializer::WrapResultDeserialize(rawResponse);
-        result.Algorithm = algorithm;
-        return result;
-      },
-      {"wrapKey"});
+  return Pipeline
+      ->SendRequest<DecryptResult>(
+          context,
+          Azure::Core::Http::HttpMethod::Post,
+          [&parameters]() {
+            return DecryptParametersSerializer::DecryptParametersSerialize(parameters);
+          },
+          [&parameters](Azure::Core::Http::RawResponse const& rawResponse) {
+            auto result = DecryptResultSerializer::DecryptResultDeserialize(rawResponse);
+            result.Algorithm = parameters.Algorithm;
+            return result;
+          },
+          {"decrypt"})
+      .Value;
 }
 
 WrapResult RemoteCryptographyClient::WrapKey(
@@ -139,27 +109,21 @@ WrapResult RemoteCryptographyClient::WrapKey(
     std::vector<uint8_t> const& key,
     Azure::Core::Context const& context) const
 {
-  return WrapKeyWithResponse(algorithm, key, context).Value;
-}
-
-Azure::Response<UnwrapResult> RemoteCryptographyClient::UnwrapKeyWithResponse(
-    KeyWrapAlgorithm const& algorithm,
-    std::vector<uint8_t> const& key,
-    Azure::Core::Context const& context) const
-{
-  return Pipeline->SendRequest<UnwrapResult>(
-      context,
-      Azure::Core::Http::HttpMethod::Post,
-      [&algorithm, &key]() {
-        return KeyWrapParametersSerializer::KeyWrapParametersSerialize(
-            KeyWrapParameters(algorithm.ToString(), key));
-      },
-      [&algorithm](Azure::Core::Http::RawResponse const& rawResponse) {
-        auto result = UnwrapResultSerializer::UnwrapResultDeserialize(rawResponse);
-        result.Algorithm = algorithm;
-        return result;
-      },
-      {"unwrapKey"});
+  return Pipeline
+      ->SendRequest<WrapResult>(
+          context,
+          Azure::Core::Http::HttpMethod::Post,
+          [&algorithm, &key]() {
+            return KeyWrapParametersSerializer::KeyWrapParametersSerialize(
+                KeyWrapParameters(algorithm.ToString(), key));
+          },
+          [&algorithm](Azure::Core::Http::RawResponse const& rawResponse) {
+            auto result = WrapResultSerializer::WrapResultDeserialize(rawResponse);
+            result.Algorithm = algorithm;
+            return result;
+          },
+          {"wrapKey"})
+      .Value;
 }
 
 UnwrapResult RemoteCryptographyClient::UnwrapKey(
@@ -167,27 +131,21 @@ UnwrapResult RemoteCryptographyClient::UnwrapKey(
     std::vector<uint8_t> const& key,
     Azure::Core::Context const& context) const
 {
-  return UnwrapKeyWithResponse(algorithm, key, context).Value;
-}
-
-Azure::Response<SignResult> RemoteCryptographyClient::SignWithResponse(
-    SignatureAlgorithm const& algorithm,
-    std::vector<uint8_t> const& digest,
-    Azure::Core::Context const& context) const
-{
-  return Pipeline->SendRequest<SignResult>(
-      context,
-      Azure::Core::Http::HttpMethod::Post,
-      [&algorithm, &digest]() {
-        return KeySignParametersSerializer::KeySignParametersSerialize(
-            KeySignParameters(algorithm.ToString(), digest));
-      },
-      [&algorithm](Azure::Core::Http::RawResponse const& rawResponse) {
-        auto result = SignResultSerializer::SignResultDeserialize(rawResponse);
-        result.Algorithm = algorithm;
-        return result;
-      },
-      {"sign"});
+  return Pipeline
+      ->SendRequest<UnwrapResult>(
+          context,
+          Azure::Core::Http::HttpMethod::Post,
+          [&algorithm, &key]() {
+            return KeyWrapParametersSerializer::KeyWrapParametersSerialize(
+                KeyWrapParameters(algorithm.ToString(), key));
+          },
+          [&algorithm](Azure::Core::Http::RawResponse const& rawResponse) {
+            auto result = UnwrapResultSerializer::UnwrapResultDeserialize(rawResponse);
+            result.Algorithm = algorithm;
+            return result;
+          },
+          {"unwrapKey"})
+      .Value;
 }
 
 SignResult RemoteCryptographyClient::Sign(
@@ -195,31 +153,21 @@ SignResult RemoteCryptographyClient::Sign(
     std::vector<uint8_t> const& digest,
     Azure::Core::Context const& context) const
 {
-  return SignWithResponse(algorithm, digest, context).Value;
-}
-
-Azure::Response<VerifyResult> RemoteCryptographyClient::VerifyWithResponse(
-    SignatureAlgorithm const& algorithm,
-    std::vector<uint8_t> const& digest,
-    std::vector<uint8_t> const& signature,
-    Azure::Core::Context const& context) const
-{
-  return Pipeline->SendRequest<VerifyResult>(
-      context,
-      Azure::Core::Http::HttpMethod::Post,
-      [&algorithm, &digest, &signature]() {
-        return KeyVerifyParametersSerializer::KeyVerifyParametersSerialize(
-            KeyVerifyParameters(algorithm.ToString(), digest, signature));
-      },
-      [&algorithm, this](Azure::Core::Http::RawResponse const& rawResponse) {
-        auto result = VerifyResultSerializer::VerifyResultDeserialize(rawResponse);
-        result.Algorithm = algorithm;
-        // Verify result won't return the KeyId, the client SDK will add it based on the client
-        // KeyId.
-        result.KeyId = this->KeyId.GetAbsoluteUrl();
-        return result;
-      },
-      {"verify"});
+  return Pipeline
+      ->SendRequest<SignResult>(
+          context,
+          Azure::Core::Http::HttpMethod::Post,
+          [&algorithm, &digest]() {
+            return KeySignParametersSerializer::KeySignParametersSerialize(
+                KeySignParameters(algorithm.ToString(), digest));
+          },
+          [&algorithm](Azure::Core::Http::RawResponse const& rawResponse) {
+            auto result = SignResultSerializer::SignResultDeserialize(rawResponse);
+            result.Algorithm = algorithm;
+            return result;
+          },
+          {"sign"})
+      .Value;
 }
 
 VerifyResult RemoteCryptographyClient::Verify(
@@ -228,5 +176,22 @@ VerifyResult RemoteCryptographyClient::Verify(
     std::vector<uint8_t> const& signature,
     Azure::Core::Context const& context) const
 {
-  return VerifyWithResponse(algorithm, digest, signature, context).Value;
+  return Pipeline
+      ->SendRequest<VerifyResult>(
+          context,
+          Azure::Core::Http::HttpMethod::Post,
+          [&algorithm, &digest, &signature]() {
+            return KeyVerifyParametersSerializer::KeyVerifyParametersSerialize(
+                KeyVerifyParameters(algorithm.ToString(), digest, signature));
+          },
+          [&algorithm, this](Azure::Core::Http::RawResponse const& rawResponse) {
+            auto result = VerifyResultSerializer::VerifyResultDeserialize(rawResponse);
+            result.Algorithm = algorithm;
+            // Verify result won't return the KeyId, the client SDK will add it based on the client
+            // KeyId.
+            result.KeyId = this->KeyId.GetAbsoluteUrl();
+            return result;
+          },
+          {"verify"})
+      .Value;
 }
