@@ -4,6 +4,7 @@
 #include <azure/core/credentials/credentials.hpp>
 #include <azure/core/http/http.hpp>
 #include <azure/core/http/policies/policy.hpp>
+#include <azure/core/internal/http/pipeline.hpp>
 
 #include "../private/cryptography_serializers.hpp"
 #include "../private/key_constants.hpp"

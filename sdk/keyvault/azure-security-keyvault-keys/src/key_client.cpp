@@ -4,12 +4,14 @@
 #include <azure/core/credentials/credentials.hpp>
 #include <azure/core/http/http.hpp>
 #include <azure/core/http/policies/policy.hpp>
+#include <azure/core/internal/http/pipeline.hpp>
 
 #include "azure/keyvault/keys/key_client.hpp"
 #include "private/key_backup.hpp"
 #include "private/key_constants.hpp"
 #include "private/key_request_parameters.hpp"
 #include "private/key_serializers.hpp"
+#include "private/keyvault_protocol.hpp"
 
 #include <memory>
 #include <string>
