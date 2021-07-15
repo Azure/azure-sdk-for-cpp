@@ -5,8 +5,8 @@
 
 #include <azure/core/exception.hpp>
 
-#include "azure/keyvault/keys/key_client_operations.hpp"
 #include "azure/keyvault/keys/key_client.hpp"
+#include "azure/keyvault/keys/key_client_operations.hpp"
 #include "private/key_constants.hpp"
 #include "private/key_serializers.hpp"
 

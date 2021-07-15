@@ -83,13 +83,13 @@ set(
     src/key_backup.cpp
     src/key_client_options.cpp
     src/key_client.cpp
+    src/key_client_paged_responses.cpp
     src/key_curve_name.cpp
     src/key_operation.cpp
     src/key_request_parameters.cpp
     src/key_type.cpp
     src/keyvault_key.cpp
     src/keyvault_protocol.cpp
-    src/list_keys_responses.cpp
     src/recover_deleted_key_operation.cpp
 )
 
