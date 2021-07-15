@@ -30,10 +30,9 @@ namespace Azure {
         namespace Cryptography {
   namespace _detail {
 
-    struct RemoteCryptographyClient final
-        : public Azure::Security::KeyVault::Keys::Cryptography::_detail::CryptographyProvider
-    {
-
+    class RemoteCryptographyClient final
+        : public Azure::Security::KeyVault::Keys::Cryptography::_detail::CryptographyProvider {
+    public:
       std::shared_ptr<Azure::Security::KeyVault::_detail::KeyVaultProtocolClient> Pipeline;
       Azure::Core::Url KeyId;
 

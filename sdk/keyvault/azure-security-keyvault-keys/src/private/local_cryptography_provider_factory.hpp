@@ -24,8 +24,8 @@ namespace Azure {
         namespace Cryptography {
   namespace _detail {
 
-    struct LocalCryptographyProviderFactory final
-    {
+    class LocalCryptographyProviderFactory final {
+    public:
       LocalCryptographyProviderFactory() = delete;
 
       static std::unique_ptr<CryptographyProvider> Create(

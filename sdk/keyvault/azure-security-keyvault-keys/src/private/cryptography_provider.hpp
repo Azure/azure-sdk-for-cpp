@@ -34,8 +34,8 @@ namespace Azure {
         namespace Cryptography {
   namespace _detail {
 
-    struct CryptographyProvider
-    {
+    class CryptographyProvider {
+    public:
       virtual ~CryptographyProvider() = default;
 
       virtual bool CanRemote() const noexcept = 0;
