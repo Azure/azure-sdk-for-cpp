@@ -17,7 +17,6 @@
 #include "azure/keyvault/keys/key_operation.hpp"
 #include "azure/keyvault/keys/keyvault_key.hpp"
 
-#include <list>
 #include <string>
 #include <unordered_map>
 
@@ -39,7 +38,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
      * @brief Define the supported operations for the key.
      *
      */
-    std::list<KeyOperation> KeyOperations;
+    std::vector<KeyOperation> KeyOperations;
 
     /**
      * @brief Indicates when the key will be valid and can be used for cryptographic operations.
