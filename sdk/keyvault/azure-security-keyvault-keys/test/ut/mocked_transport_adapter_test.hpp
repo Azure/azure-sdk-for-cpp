@@ -14,7 +14,7 @@
 
 #include <azure/core.hpp>
 #include <azure/core/internal/http/pipeline.hpp>
-#include <azure/keyvault/key_vault_keys.hpp>
+#include <azure/keyvault/keyvault_keys.hpp>
 #include <cstdio>
 #include <string>
 

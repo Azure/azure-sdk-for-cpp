@@ -11,7 +11,7 @@
 
 #include "cryptography_provider.hpp"
 
-#include "azure/keyvault/keys/key_vault_key.hpp"
+#include "azure/keyvault/keys/keyvault_key.hpp"
 
 #include <memory>
 #include <string>
