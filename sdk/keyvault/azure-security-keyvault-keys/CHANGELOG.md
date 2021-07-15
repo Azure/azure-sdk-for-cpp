@@ -19,6 +19,8 @@
 - Removed the `MaxPageResults` field from `GetPropertiesOfKeysOptions`, `GetPropertiesOfKeyVersionsOptions`, and `GetDeletedKeysOptions`.
 - Renamed header `list_keys_single_page_result.hpp` to `list_keys_responses.hpp`.
 - Updated `BackupKey()` API return type to `BackupKeyResult` model type.
+- Renamed `KeyPropertiesPageResult` to `KeyPropertiesPagedResponse`.
+- Renamed `DeletedKeyPageResult` to `DeletedKeyPagedResponse`.
 
 ## 4.0.0-beta.3 (2021-06-08)
 
