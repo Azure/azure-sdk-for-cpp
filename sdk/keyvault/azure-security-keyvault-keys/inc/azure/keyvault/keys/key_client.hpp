@@ -16,7 +16,6 @@
 #include "azure/keyvault/keys/recover_deleted_key_operation.hpp"
 
 #include <functional>
-#include <list>
 #include <vector>
 
 namespace Azure { namespace Security { namespace KeyVault { namespace _detail {
@@ -300,8 +299,8 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
      */
     Azure::Response<KeyVaultKey> UpdateKeyProperties(
         KeyProperties const& properties,
-        Azure::Nullable<std::list<KeyOperation>> const& keyOperations
-        = Azure::Nullable<std::list<KeyOperation>>(),
+        Azure::Nullable<std::vector<KeyOperation>> const& keyOperations
+        = Azure::Nullable<std::vector<KeyOperation>>(),
         Azure::Core::Context const& context = Azure::Core::Context()) const;
 
     /**
