@@ -258,6 +258,30 @@ namespace Azure { namespace Storage { namespace Test {
     }
   }
 
+  TEST_F(FileShareFileClientTest, SmbPropertiesDefaultValue)
+  {
+    auto fileClient = m_shareClient->GetRootDirectoryClient().GetFileClient(RandomString());
+    fileClient.Create(1024);
+    auto smbProperties = fileClient.GetProperties().Value.SmbProperties;
+    EXPECT_EQ(smbProperties.Attributes, Files::Shares::Models::FileAttributes::Archive);
+    ASSERT_TRUE(smbProperties.CreatedOn.HasValue());
+    EXPECT_TRUE(IsValidTime(smbProperties.CreatedOn.Value()));
+    ASSERT_TRUE(smbProperties.LastWrittenOn.HasValue());
+    EXPECT_TRUE(IsValidTime(smbProperties.LastWrittenOn.Value()));
+    ASSERT_TRUE(smbProperties.ChangedOn.HasValue());
+    EXPECT_TRUE(IsValidTime(smbProperties.ChangedOn.Value()));
+
+    fileClient.SetProperties(
+        Files::Shares::Models::FileHttpHeaders(), Files::Shares::Models::FileSmbProperties());
+
+    auto smbProperties2 = fileClient.GetProperties().Value.SmbProperties;
+    EXPECT_EQ(smbProperties2.PermissionKey.Value(), smbProperties.PermissionKey.Value());
+    EXPECT_EQ(smbProperties2.Attributes, smbProperties.Attributes);
+    EXPECT_EQ(smbProperties2.CreatedOn.Value(), smbProperties.CreatedOn.Value());
+    EXPECT_EQ(smbProperties2.LastWrittenOn.Value(), smbProperties.LastWrittenOn.Value());
+    EXPECT_NE(smbProperties2.ChangedOn.Value(), smbProperties.ChangedOn.Value());
+  }
+
   TEST_F(FileShareFileClientTest, HandlesFunctionalityWorks)
   {
     auto result = m_fileClient->ListHandles();
