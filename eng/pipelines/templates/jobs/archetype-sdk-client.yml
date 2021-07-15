@@ -27,24 +27,24 @@ jobs:
   strategy:
     matrix:
       Linux_x64_gcc8:
-        Pool: azsdk-pool-mms-ubuntu-1804-general
-        OSVmImage: MMSUbuntu18.04
+        Pool: azsdk-pool-mms-ubuntu-2004-general
+        OSVmImage: MMSUbuntu20.04
         VcpkgInstall: 'curl[ssl] libxml2 openssl'
         VCPKG_DEFAULT_TRIPLET: 'x64-linux'
         CC: '/usr/bin/gcc-8'
         CXX: '/usr/bin/g++-8'
         BuildArgs: '-j 10'
       Linux_x64_gcc9:
-        Pool: azsdk-pool-mms-ubuntu-1804-general
-        OSVmImage: MMSUbuntu18.04
+        Pool: azsdk-pool-mms-ubuntu-2004-general
+        OSVmImage: MMSUbuntu20.04
         VcpkgInstall: 'curl[ssl] libxml2 openssl'
         VCPKG_DEFAULT_TRIPLET: 'x64-linux'
         CC: '/usr/bin/gcc-9'
         CXX: '/usr/bin/g++-9'
         BuildArgs: '-j 10'
       Linux_x64:
-        Pool: azsdk-pool-mms-ubuntu-1804-general
-        OSVmImage: MMSUbuntu18.04
+        Pool: azsdk-pool-mms-ubuntu-2004-general
+        OSVmImage: MMSUbuntu20.04
         VcpkgInstall: 'curl[ssl] libxml2 openssl'
         VCPKG_DEFAULT_TRIPLET: 'x64-linux'
         BuildArgs: '-j 10'
@@ -75,8 +75,8 @@ jobs:
 
       # Unit testing ON
       Linux_x64_with_unit_test:
-        Pool: azsdk-pool-mms-ubuntu-1804-general
-        OSVmImage: MMSUbuntu18.04
+        Pool: azsdk-pool-mms-ubuntu-2004-general
+        OSVmImage: MMSUbuntu20.04
         VcpkgInstall: 'curl[ssl] libxml2 openssl'
         VCPKG_DEFAULT_TRIPLET: 'x64-linux'
         CmakeArgs: ' -DBUILD_TESTING=ON -DBUILD_PERFORMANCE_TESTS=ON -DRUN_LONG_UNIT_TESTS=ON -DCMAKE_BUILD_TYPE=Debug -DBUILD_CODE_COVERAGE=ON'
@@ -86,8 +86,8 @@ jobs:
         CODE_COVERAGE_COLLECT_ONLY: 1
         BuildArgs: '-j 10'
       Linux_x64_with_unit_test_release:
-        Pool: azsdk-pool-mms-ubuntu-1804-general
-        OSVmImage: MMSUbuntu18.04
+        Pool: azsdk-pool-mms-ubuntu-2004-general
+        OSVmImage: MMSUbuntu20.04
         VcpkgInstall: 'curl[ssl] libxml2 openssl'
         VCPKG_DEFAULT_TRIPLET: 'x64-linux'
         CmakeArgs: ' -DCMAKE_BUILD_TYPE=Release -DBUILD_TESTING=ON -DBUILD_PERFORMANCE_TESTS=ON -DRUN_LONG_UNIT_TESTS=ON'
