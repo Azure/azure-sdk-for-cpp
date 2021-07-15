@@ -20,9 +20,8 @@
 
 namespace Azure { namespace Security { namespace KeyVault { namespace Keys { namespace _detail {
   /***************** KeyVault Key *****************/
-  class KeyVaultKeySerializer final
-  {
-    public:
+  class KeyVaultKeySerializer final {
+  public:
     // Creates a new key based on a name and an HTTP raw response.
     static KeyVaultKey KeyVaultKeyDeserialize(
         std::string const& name,
@@ -84,25 +83,22 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys { nam
   };
 
   /**************** Deleted Key *******************/
-  class DeletedKeySerializer final
-  {
-    public:
+  class DeletedKeySerializer final {
+  public:
     static DeletedKey DeletedKeyDeserialize(
         std::string const& name,
         Azure::Core::Http::RawResponse const& rawResponse);
   };
 
   /**************** Import Key Options ***********/
-  class ImportKeyOptionsSerializer final
-  {
-    public:
+  class ImportKeyOptionsSerializer final {
+  public:
     static std::string ImportKeyOptionsSerialize(ImportKeyOptions const& importKeyOptions);
   };
 
   /**************** Key Properties ************/
-  class KeyPropertiesPageResultSerializer final
-  {
-    public:
+  class KeyPropertiesPageResultSerializer final {
+  public:
     static KeyPropertiesPageResult KeyPropertiesPageResultDeserialize(
         Azure::Core::Http::RawResponse const& rawResponse);
     static DeletedKeyPageResult DeletedKeyPageResultDeserialize(
@@ -110,9 +106,8 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys { nam
   };
 
   /**************** JWK  ************/
-  class JsonWebKeySerializer final
-  {
-    public:
+  class JsonWebKeySerializer final {
+  public:
     static void JsonWebKeySerialize(
         JsonWebKey const& jwk,
         Azure::Core::Json::_internal::json& destJson);
