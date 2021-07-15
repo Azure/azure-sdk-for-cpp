@@ -9,7 +9,7 @@
 
 #include "key_client_base_test.hpp"
 
-#include <azure/keyvault/key_vault_keys.hpp>
+#include <azure/keyvault/keyvault_keys.hpp>
 #include <private/key_constants.hpp>
 
 #include <string>

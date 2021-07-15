@@ -10,7 +10,7 @@
 #include <azure/core/base64.hpp>
 #include <azure/core/exception.hpp>
 
-#include <azure/keyvault/key_vault_keys.hpp>
+#include <azure/keyvault/keyvault_keys.hpp>
 
 #include "key_client_base_test.hpp"
 

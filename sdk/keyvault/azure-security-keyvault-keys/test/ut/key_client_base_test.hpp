@@ -11,7 +11,7 @@
 #include <azure/core/context.hpp>
 #include <azure/core/uuid.hpp>
 #include <azure/identity/client_secret_credential.hpp>
-#include <azure/keyvault/key_vault_keys.hpp>
+#include <azure/keyvault/keyvault_keys.hpp>
 
 #include <chrono>
 #include <cstdio>
