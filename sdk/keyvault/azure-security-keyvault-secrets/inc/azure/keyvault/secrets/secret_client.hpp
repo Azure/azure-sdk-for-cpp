@@ -8,6 +8,7 @@
 #pragma once
 #include "dll_import_export.hpp"
 #include <azure/keyvault/common/internal/keyvault_pipeline.hpp>
+#include <azure/keyvault/secrets/keyvault_secret.hpp>
 #include <string>
 
 namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
@@ -64,6 +65,19 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
   };
 
   /**
+   * @brief Optional parameters for SecretClient::GetSecret
+   *
+   */
+  struct GetSecretOptions final
+  {
+    /**
+     * @brief Specify the key version to get.
+     *
+     */
+    std::string Version;
+  };
+  
+  /**
    * @brief The SecretClient provides synchronous methods to manage a secret in the Azure Key
    * Vault. The client supports creating, retrieving, updating, deleting, purging, backing up,
    * restoring, and listing the secret.
@@ -99,6 +113,12 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
     explicit SecretClient(SecretClient const& keyClient) : m_pipeline(keyClient.m_pipeline){};
 
     ~SecretClient() = default;
+
+
+    Response<KeyVaultSecret> GetSecret(
+        std::string const& name,
+        GetSecretOptions const& options = GetSecretOptions(),
+        Azure::Core::Context const& context = Azure::Core::Context()) const;
 
     std::string ClientVersion() const;
   };

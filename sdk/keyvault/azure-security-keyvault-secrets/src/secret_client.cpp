@@ -3,14 +3,16 @@
 
 #include "azure/keyvault/secrets/secret_client.hpp"
 #include "private/package_version.hpp"
+#include "private/secret_constants.hpp"
+
+#include <azure/keyvault/common/internal/keyvault_pipeline.hpp>
 #include <azure/core/credentials/credentials.hpp>
-#include <azure/core/http/http.hpp>
 #include <azure/core/http/policies/policy.hpp>
+#include <azure/core/http/http.hpp>
 
 #include <string>
 
 using namespace Azure::Security::KeyVault::Secrets;
-using namespace Azure::Security::KeyVault::Secrets::_detail;
 using namespace Azure::Core::Http::Policies;
 using namespace Azure::Core::Http::Policies::_internal;
 
@@ -18,7 +20,7 @@ namespace {
 constexpr static const char TelemetryName[] = "keyvault-secrets";
 };
 
-std::string SecretClient::ClientVersion() const { return PackageVersion::ToString(); }
+std::string SecretClient::ClientVersion() const { return _detail::PackageVersion::ToString(); }
 
 SecretClient::SecretClient(
     std::string const& vaultUrl,
@@ -42,5 +44,21 @@ SecretClient::SecretClient(
       Azure::Core::Http::_internal::HttpPipeline(
           options, TelemetryName, apiVersion, std::move(perRetrypolicies), {}));
 }
+
+Azure::Response<KeyVaultSecret> SecretClient::GetSecret(
+    std::string const& name,
+    GetSecretOptions const& options,
+    Azure::Core::Context const& context) const
+{
+  return m_pipeline->SendRequest<KeyVaultSecret>(
+      context,
+      Azure::Core::Http::HttpMethod::Get,
+      [&name](Azure::Core::Http::RawResponse const& rawResponse) {
+        KeyVaultSecret secret;
+        secret.Value = rawResponse.GetReasonPhrase();
+        return secret;
+      },
+      {_detail::SecretPath, name, options.Version});
+    }
 
 const ServiceVersion ServiceVersion::V7_2("7.2");

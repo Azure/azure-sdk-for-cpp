@@ -30,7 +30,7 @@ set(
   AZURE_SECURITY_KEYVAULT_SECRETS_HEADER
     inc/azure/keyvault/secrets/dll_import_export.hpp
     inc/azure/keyvault/secrets/secret_client.hpp
-    
+    inc/azure/keyvault/secrets/keyvault_secret.hpp
     inc/azure/keyvault/keyvault_secrets.hpp
 )
 
@@ -41,7 +41,7 @@ set(
     src/secret_client.cpp
 )
 
-add_library(azure-security-keyvault-secrets ${AZURE_SECURITY_KEYVAULT_SECRETS_HEADER} ${AZURE_SECURITY_KEYVAULT_SECRETS_SOURCE})
+add_library(azure-security-keyvault-secrets ${AZURE_SECURITY_KEYVAULT_SECRETS_HEADER} ${AZURE_SECURITY_KEYVAULT_SECRETS_SOURCE} "inc/azure/keyvault/secrets/keyvault_secret.hpp" "src/private/secret_constants.hpp")
 add_library(Azure::azure-security-keyvault-secrets ALIAS azure-security-keyvault-secrets)
 
 target_include_directories(
