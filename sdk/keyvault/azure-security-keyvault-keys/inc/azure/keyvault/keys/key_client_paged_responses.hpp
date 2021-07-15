@@ -117,31 +117,4 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
      */
     std::vector<DeletedKey> Items;
   };
-
-  /**
-   * @brief The options for calling an operation #GetPropertiesOfKeys.
-   *
-   */
-  struct GetPropertiesOfKeysOptions final
-  {
-    Azure::Nullable<std::string> NextPageToken;
-  };
-
-  /**
-   * @brief The options for calling an operation #GetPropertiesOfKeyVersions.
-   *
-   */
-  struct GetPropertiesOfKeyVersionsOptions final
-  {
-    Azure::Nullable<std::string> NextPageToken;
-  };
-
-  /**
-   * @brief The options for calling an operation #GetDeletedKeys.
-   *
-   */
-  struct GetDeletedKeysOptions final
-  {
-    Azure::Nullable<std::string> NextPageToken;
-  };
 }}}} // namespace Azure::Security::KeyVault::Keys

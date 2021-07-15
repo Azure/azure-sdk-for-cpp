@@ -33,12 +33,11 @@ set(
     inc/azure/keyvault/keys/cryptography/cryptography_client.hpp
     inc/azure/keyvault/keys/cryptography/decrypt_parameters.hpp
     inc/azure/keyvault/keys/cryptography/encrypt_parameters.hpp
-    inc/azure/keyvault/keys/delete_key_operation.hpp
     inc/azure/keyvault/keys/key_client.hpp
     inc/azure/keyvault/keys/key_client_models.hpp
+    inc/azure/keyvault/keys/key_client_operations.hpp
     inc/azure/keyvault/keys/key_client_options.hpp
-    inc/azure/keyvault/keys/list_keys_responses.hpp
-    inc/azure/keyvault/keys/recover_deleted_key_operation.hpp
+    inc/azure/keyvault/keys/key_client_paged_responses.hpp
 )
 
 set(

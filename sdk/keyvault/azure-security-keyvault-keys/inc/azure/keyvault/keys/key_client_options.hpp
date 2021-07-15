@@ -16,6 +16,33 @@
 
 namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
 
+  /**
+   * @brief The options for calling an operation #GetPropertiesOfKeys.
+   *
+   */
+  struct GetPropertiesOfKeysOptions final
+  {
+    Azure::Nullable<std::string> NextPageToken;
+  };
+
+  /**
+   * @brief The options for calling an operation #GetPropertiesOfKeyVersions.
+   *
+   */
+  struct GetPropertiesOfKeyVersionsOptions final
+  {
+    Azure::Nullable<std::string> NextPageToken;
+  };
+
+  /**
+   * @brief The options for calling an operation #GetDeletedKeys.
+   *
+   */
+  struct GetDeletedKeysOptions final
+  {
+    Azure::Nullable<std::string> NextPageToken;
+  };
+
   class ServiceVersion final {
   private:
     std::string m_version;

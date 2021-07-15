@@ -9,11 +9,10 @@
 
 #pragma once
 
-#include "azure/keyvault/keys/delete_key_operation.hpp"
 #include "azure/keyvault/keys/key_client_models.hpp"
+#include "azure/keyvault/keys/key_client_operations.hpp"
 #include "azure/keyvault/keys/key_client_options.hpp"
-#include "azure/keyvault/keys/list_keys_responses.hpp"
-#include "azure/keyvault/keys/recover_deleted_key_operation.hpp"
+#include "azure/keyvault/keys/key_client_paged_responses.hpp"
 
 #include <functional>
 #include <vector>
