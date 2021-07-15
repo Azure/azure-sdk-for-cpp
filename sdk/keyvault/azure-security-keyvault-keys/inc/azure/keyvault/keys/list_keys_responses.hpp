@@ -90,8 +90,8 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
      *
      * @remark The constructor is private and only a key client or PagedResponse can init this.
      *
-     * @param deletedKeyProperties A previously created #DeletedKeyPagedResponse that is used to init
-     * this new instance.
+     * @param deletedKeyProperties A previously created #DeletedKeyPagedResponse that is used to
+     * init this new instance.
      * @param rawResponse The HTTP raw response from where the #DeletedKeyPagedResponse was parsed.
      * @param keyClient A key client required for getting the next pages.
      * @param keyName When \p keyName is set, the response is listing key versions. Otherwise, the
