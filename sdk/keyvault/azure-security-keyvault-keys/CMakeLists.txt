@@ -41,19 +41,9 @@ set(
     inc/azure/keyvault/keys/cryptography/wrap_result.hpp
     inc/azure/keyvault/keys/cryptography/unwrap_result.hpp
     inc/azure/keyvault/keys/cryptography/verify_result.hpp
-    inc/azure/keyvault/keys/backup_key_result.hpp
     inc/azure/keyvault/keys/delete_key_operation.hpp
-    inc/azure/keyvault/keys/deleted_key.hpp
-    inc/azure/keyvault/keys/import_key_options.hpp
-    inc/azure/keyvault/keys/json_web_key.hpp
     inc/azure/keyvault/keys/key_client.hpp
-    inc/azure/keyvault/keys/key_create_options.hpp
-    inc/azure/keyvault/keys/key_curve_name.hpp
     inc/azure/keyvault/keys/key_client_options.hpp
-    inc/azure/keyvault/keys/key_operation.hpp
-    inc/azure/keyvault/keys/key_properties.hpp
-    inc/azure/keyvault/keys/key_type.hpp
-    inc/azure/keyvault/keys/keyvault_key.hpp
     inc/azure/keyvault/keys/list_keys_responses.hpp
     inc/azure/keyvault/keys/recover_deleted_key_operation.hpp
 )

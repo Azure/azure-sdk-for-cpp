@@ -21,7 +21,7 @@
 #include "azure/keyvault/keys/cryptography/unwrap_result.hpp"
 #include "azure/keyvault/keys/cryptography/verify_result.hpp"
 #include "azure/keyvault/keys/cryptography/wrap_result.hpp"
-#include "azure/keyvault/keys/key_operation.hpp"
+#include "azure/keyvault/keys/key_client_models.hpp"
 
 #include <memory>
 #include <string>

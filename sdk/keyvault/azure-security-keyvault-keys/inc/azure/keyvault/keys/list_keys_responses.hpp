@@ -12,9 +12,7 @@
 #include <azure/core/http/http.hpp>
 #include <azure/core/paged_response.hpp>
 
-#include "azure/keyvault/keys/deleted_key.hpp"
-#include "azure/keyvault/keys/json_web_key.hpp"
-#include "azure/keyvault/keys/keyvault_key.hpp"
+#include "azure/keyvault/keys/key_client_models.hpp"
 
 #include <memory>
 #include <vector>
