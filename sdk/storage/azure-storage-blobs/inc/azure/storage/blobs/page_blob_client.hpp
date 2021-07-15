@@ -209,6 +209,19 @@ namespace Azure { namespace Storage { namespace Blobs {
         const Azure::Core::Context& context = Azure::Core::Context()) const;
 
     /**
+     * @brief Changes the sequence number for this page blob.
+     *
+     * @param action Specifies how the service should modify the blob's sequence number.
+     * @param options Optional parameters to execute this function.
+     * @param context Context for cancelling long running operations.
+     * @return An UpdateSequenceNumberResult describing the updated page blob.
+     */
+    Azure::Response<Models::UpdateSequenceNumberResult> UpdateSequenceNumber(
+        Models::SequenceNumberAction action,
+        const UpdatePageBlobSequenceNumberOptions& options = UpdatePageBlobSequenceNumberOptions(),
+        const Azure::Core::Context& context = Azure::Core::Context()) const;
+
+    /**
      * @brief Returns the list of valid page ranges for a page blob or snapshot of a page blob.
      *
      * @param options Optional parameters to execute this function.

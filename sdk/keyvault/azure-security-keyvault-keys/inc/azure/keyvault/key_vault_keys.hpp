@@ -12,6 +12,8 @@
 #include "azure/keyvault/keys/cryptography/cryptography_client_options.hpp"
 #include "azure/keyvault/keys/cryptography/decrypt_parameters.hpp"
 #include "azure/keyvault/keys/cryptography/decrypt_result.hpp"
+#include "azure/keyvault/keys/cryptography/encrypt_parameters.hpp"
+#include "azure/keyvault/keys/cryptography/encrypt_result.hpp"
 #include "azure/keyvault/keys/cryptography/encryption_algorithm.hpp"
 #include "azure/keyvault/keys/cryptography/key_wrap_algorithm.hpp"
 #include "azure/keyvault/keys/cryptography/sign_result.hpp"

@@ -12,12 +12,12 @@
 #include <azure/core/response.hpp>
 #include <azure/core/url.hpp>
 
-#include <azure/keyvault/common/internal/keyvault_pipeline.hpp>
+#include "cryptography_provider.hpp"
+#include "keyvault_protocol.hpp"
 
 #include "azure/keyvault/keys/cryptography/cryptography_client_options.hpp"
 #include "azure/keyvault/keys/cryptography/encrypt_parameters.hpp"
 #include "azure/keyvault/keys/cryptography/encrypt_result.hpp"
-#include "azure/keyvault/keys/internal/cryptography/cryptography_provider.hpp"
 #include "azure/keyvault/keys/key_vault_key.hpp"
 
 #include <memory>
@@ -34,7 +34,7 @@ namespace Azure {
         : public Azure::Security::KeyVault::Keys::Cryptography::_detail::CryptographyProvider
     {
 
-      std::shared_ptr<Azure::Security::KeyVault::_internal::KeyVaultPipeline> Pipeline;
+      std::shared_ptr<Azure::Security::KeyVault::_detail::KeyVaultProtocolClient> Pipeline;
       Azure::Core::Url KeyId;
 
       explicit RemoteCryptographyClient(

@@ -11,7 +11,7 @@
 #include "../private/key_sign_parameters.hpp"
 #include "../private/key_verify_parameters.hpp"
 #include "../private/key_wrap_parameters.hpp"
-#include "azure/keyvault/keys/internal/cryptography/remote_cryptography_client.hpp"
+#include "../private/remote_cryptography_client.hpp"
 
 #include <memory>
 #include <string>
@@ -41,7 +41,7 @@ RemoteCryptographyClient::RemoteCryptographyClient(
         std::make_unique<BearerTokenAuthenticationPolicy>(credential, tokenContext));
   }
 
-  Pipeline = std::make_shared<Azure::Security::KeyVault::_internal::KeyVaultPipeline>(
+  Pipeline = std::make_shared<Azure::Security::KeyVault::_detail::KeyVaultProtocolClient>(
       Azure::Core::Url(keyId),
       apiVersion,
       Azure::Core::Http::_internal::HttpPipeline(
