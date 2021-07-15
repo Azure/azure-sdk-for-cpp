@@ -21,10 +21,6 @@
 #include <string>
 #include <vector>
 
-namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
-  class KeyClient;
-}}}} // namespace Azure::Security::KeyVault::Keys
-
 namespace Azure { namespace Security { namespace KeyVault { namespace _detail {
 
   /**

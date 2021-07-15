@@ -23,11 +23,12 @@
 #include <memory>
 #include <string>
 
-namespace Azure { namespace Security { namespace KeyVault {
+namespace Azure {
+  namespace Security {
+    namespace KeyVault {
+      namespace Keys {
+        namespace Cryptography {
   namespace _detail {
-    class KeyVaultProtocolClient;
-  } // namespace _detail
-  namespace Keys { namespace Cryptography { namespace _detail {
 
     struct RemoteCryptographyClient final
         : public Azure::Security::KeyVault::Keys::Cryptography::_detail::CryptographyProvider
@@ -109,5 +110,4 @@ namespace Azure { namespace Security { namespace KeyVault {
           std::vector<uint8_t> const& signature,
           Azure::Core::Context const& context) const override;
     };
-  }}} // namespace Keys::Cryptography::_detail
-}}} // namespace Azure::Security::KeyVault
+}}}}}} // namespace Azure::Security::KeyVault::Keys::Cryptography::_detail

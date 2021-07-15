@@ -12,7 +12,6 @@
 #include "../private/key_sign_parameters.hpp"
 #include "../private/key_verify_parameters.hpp"
 #include "../private/key_wrap_parameters.hpp"
-#include "../private/keyvault_protocol.hpp"
 #include "../private/remote_cryptography_client.hpp"
 
 #include <memory>
