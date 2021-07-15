@@ -41,11 +41,6 @@ set(
     inc/azure/keyvault/keys/cryptography/wrap_result.hpp
     inc/azure/keyvault/keys/cryptography/unwrap_result.hpp
     inc/azure/keyvault/keys/cryptography/verify_result.hpp
-    inc/azure/keyvault/keys/internal/cryptography/cryptography_provider.hpp
-    inc/azure/keyvault/keys/internal/cryptography/local_cryptography_provider_factory.hpp
-    inc/azure/keyvault/keys/internal/cryptography/local_cryptography_provider.hpp
-    inc/azure/keyvault/keys/internal/cryptography/remote_cryptography_client.hpp
-    inc/azure/keyvault/keys/internal/cryptography/rsa_cryptography_provider.hpp
     inc/azure/keyvault/keys/backup_key_result.hpp
     inc/azure/keyvault/keys/delete_key_operation.hpp
     inc/azure/keyvault/keys/deleted_key.hpp
@@ -83,6 +78,7 @@ set(
     src/cryptography/wrap_result.cpp
     src/cryptography/unwrap_result.cpp
     src/cryptography/verify_result.cpp
+    src/private/cryptography_provider.hpp
     src/private/cryptography_serializers.hpp
     src/private/key_backup.hpp
     src/private/key_constants.hpp
@@ -93,7 +89,11 @@ set(
     src/private/key_wrap_parameters.hpp
     src/private/keyvault_constants.hpp
     src/private/keyvault_protocol.hpp
+    src/private/local_cryptography_provider.hpp
+    src/private/local_cryptography_provider_factory.hpp
     src/private/package_version.hpp
+    src/private/remote_cryptography_client.hpp
+    src/private/rsa_cryptography_provider.hpp
     src/delete_key_operation.cpp
     src/deleted_key.cpp
     src/import_key_options.cpp

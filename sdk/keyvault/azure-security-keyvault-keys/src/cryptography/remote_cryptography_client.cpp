@@ -13,7 +13,7 @@
 #include "../private/key_verify_parameters.hpp"
 #include "../private/key_wrap_parameters.hpp"
 #include "../private/keyvault_protocol.hpp"
-#include "azure/keyvault/keys/internal/cryptography/remote_cryptography_client.hpp"
+#include "../private/remote_cryptography_client.hpp"
 
 #include <memory>
 #include <string>
