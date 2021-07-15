@@ -21,6 +21,7 @@
 - Updated `BackupKey()` API return type to `BackupKeyResult` model type.
 - Renamed `KeyPropertiesPageResult` to `KeyPropertiesPagedResponse`.
 - Renamed `DeletedKeyPageResult` to `DeletedKeyPagedResponse`.
+- Changed the container for `KeyOperations` from `std::list` to `std::vector` within `CreateKeyOptions` and `UpdateKeyProperties()`.
 
 ## 4.0.0-beta.3 (2021-06-08)
 
