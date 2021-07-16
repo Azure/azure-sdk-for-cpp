@@ -13,7 +13,6 @@
 
 #include "azure/keyvault/keys/key_client_models.hpp"
 #include "azure/keyvault/keys/key_client_options.hpp"
-#include "azure/keyvault/keys/key_client_paged_responses.hpp"
 
 #include <string>
 

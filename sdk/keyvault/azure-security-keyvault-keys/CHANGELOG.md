@@ -18,7 +18,7 @@
 - Removed `Decrypt(DecryptAlgorithm, std::vector, context)`.
 - Removed `JsonWebKey::HasPrivateKey()`.
 - Removed the `MaxPageResults` field from `GetPropertiesOfKeysOptions`, `GetPropertiesOfKeyVersionsOptions`, and `GetDeletedKeysOptions`.
-- Renamed header `list_keys_single_page_result.hpp` to `key_client_paged_responses.hpp`.
+- Consolidated keyvault and cryptography client options and model files into single headers.
 - Updated `BackupKey()` API return type to `BackupKeyResult` model type.
 - Renamed `KeyPropertiesPageResult` to `KeyPropertiesPagedResponse`.
 - Renamed `DeletedKeyPageResult` to `DeletedKeyPagedResponse`.

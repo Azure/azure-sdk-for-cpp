@@ -11,11 +11,19 @@
 
 #include "azure/keyvault/keys/dll_import_export.hpp"
 
+#include <azure/core/context.hpp>
 #include <azure/core/datetime.hpp>
+#include <azure/core/http/http.hpp>
 #include <azure/core/nullable.hpp>
+#include <azure/core/operation.hpp>
+#include <azure/core/operation_status.hpp>
+#include <azure/core/paged_response.hpp>
+#include <azure/core/response.hpp>
 
+#include <memory>
 #include <stdexcept>
 #include <string>
+#include <thread>
 #include <unordered_map>
 #include <vector>
 
@@ -587,6 +595,308 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
      *
      */
     Azure::DateTime ScheduledPurgeDate;
+  };
+
+  class KeyClient;
+
+  /**
+   * @brief Define a single page to list the keys from the Key Vault.
+   *
+   */
+  class KeyPropertiesPagedResponse final
+      : public Azure::Core::PagedResponse<KeyPropertiesPagedResponse> {
+  private:
+    friend class KeyClient;
+    friend class Azure::Core::PagedResponse<KeyPropertiesPagedResponse>;
+
+    std::string m_keyName;
+    std::shared_ptr<KeyClient> m_keyClient;
+    void OnNextPage(const Azure::Core::Context&);
+
+    /**
+     * @brief Construct a new Key Properties Single Page object.
+     *
+     * @remark The constructor is private and only a key client or PagedResponse can init this.
+     *
+     * @param keyProperties A previously created #KeyPropertiesPageResponse that is used to init
+     * this instance.
+     * @param rawResponse The HTTP raw response from where the #KeyPropertiesPagedResponse was
+     * parsed.
+     * @param keyClient A key client required for getting the next pages.
+     * @param keyName When \p keyName is set, the response is listing key versions. Otherwise, the
+     * response is for listing keys from the Key Vault.
+     */
+    KeyPropertiesPagedResponse(
+        KeyPropertiesPagedResponse&& keyProperties,
+        std::unique_ptr<Azure::Core::Http::RawResponse> rawResponse,
+        std::shared_ptr<KeyClient> keyClient,
+        std::string const& keyName = std::string())
+        : m_keyName(keyName), m_keyClient(keyClient), Items(std::move(keyProperties.Items))
+    {
+      RawResponse = std::move(rawResponse);
+    }
+
+  public:
+    /**
+     * @brief Construct a new key properties object.
+     *
+     */
+    KeyPropertiesPagedResponse() = default;
+
+    /**
+     * @brief Each #KeyProperties represent a Key in the Key Vault.
+     *
+     */
+    std::vector<KeyProperties> Items;
+  };
+
+  /**
+   * @brief Define a single page containing the deleted keys from the Key Vault.
+   *
+   */
+  class DeletedKeyPagedResponse final : public Azure::Core::PagedResponse<DeletedKeyPagedResponse> {
+  private:
+    friend class KeyClient;
+    friend class Azure::Core::PagedResponse<DeletedKeyPagedResponse>;
+
+    std::shared_ptr<KeyClient> m_keyClient;
+    void OnNextPage(const Azure::Core::Context& context);
+
+    /**
+     * @brief Construct a new Key Properties Single Page object.
+     *
+     * @remark The constructor is private and only a key client or PagedResponse can init this.
+     *
+     * @param deletedKeyProperties A previously created #DeletedKeyPagedResponse that is used to
+     * init this new instance.
+     * @param rawResponse The HTTP raw response from where the #DeletedKeyPagedResponse was parsed.
+     * @param keyClient A key client required for getting the next pages.
+     * @param keyName When \p keyName is set, the response is listing key versions. Otherwise, the
+     * response is for listing keys from the Key Vault.
+     */
+    DeletedKeyPagedResponse(
+        DeletedKeyPagedResponse&& deletedKeyProperties,
+        std::unique_ptr<Azure::Core::Http::RawResponse> rawResponse,
+        std::shared_ptr<KeyClient> keyClient)
+        : m_keyClient(keyClient), Items(std::move(deletedKeyProperties.Items))
+    {
+      RawResponse = std::move(rawResponse);
+    }
+
+  public:
+    /**
+     * @brief Construct a new Deleted Key Single Page object
+     *
+     */
+    DeletedKeyPagedResponse() = default;
+
+    /**
+     * @brief Each #DeletedKey represent a deleted key in the Key Vault.
+     *
+     */
+    std::vector<DeletedKey> Items;
+  };
+
+  /**
+   * @brief A long running operation to delete a key.
+   *
+   */
+  class DeleteKeyOperation final
+      : public Azure::Core::Operation<Azure::Security::KeyVault::Keys::DeletedKey> {
+  private:
+    /* DeleteKeyOperation can be constructed only by friends classes (internal creation). The
+     * constructor is private and requires internal components.*/
+    friend class KeyClient;
+
+    std::shared_ptr<Azure::Security::KeyVault::Keys::KeyClient> m_keyClient;
+    Azure::Security::KeyVault::Keys::DeletedKey m_value;
+    std::string m_continuationToken;
+
+    /* This is the implementation for checking the status of a deleted key. The key is considered
+     * deleted if querying /deletedkeys/keyName returns 200 from server. Or whenever soft-delete is
+     * disabled.*/
+    std::unique_ptr<Azure::Core::Http::RawResponse> PollInternal(
+        Azure::Core::Context const& context) override;
+
+    Azure::Response<Azure::Security::KeyVault::Keys::DeletedKey> PollUntilDoneInternal(
+        std::chrono::milliseconds period,
+        Azure::Core::Context& context) override
+    {
+      while (true)
+      {
+        // Poll will update the raw response.
+        Poll(context);
+        if (IsDone())
+        {
+          break;
+        }
+        std::this_thread::sleep_for(period);
+      }
+
+      return Azure::Response<Azure::Security::KeyVault::Keys::DeletedKey>(
+          m_value, std::make_unique<Azure::Core::Http::RawResponse>(*m_rawResponse));
+    }
+
+    /*
+     * Only friend classes are permitted to construct a DeleteOperation. This is because a
+     * KeyVaultPipelne is required and it is not exposed to customers.
+     *
+     * Since C++ doesn't offer `internal` access, we use friends-only instead.
+     */
+    DeleteKeyOperation(
+        std::shared_ptr<Azure::Security::KeyVault::Keys::KeyClient> keyClient,
+        Azure::Response<Azure::Security::KeyVault::Keys::DeletedKey> response);
+
+    DeleteKeyOperation(
+        std::string resumeToken,
+        std::shared_ptr<Azure::Security::KeyVault::Keys::KeyClient> keyClient)
+        : m_keyClient(keyClient), m_value(DeletedKey(resumeToken)),
+          m_continuationToken(std::move(resumeToken))
+    {
+    }
+
+    /**
+     * @brief Get the #Azure::Core::Http::RawResponse of the operation request.
+     * @return A reference to an #Azure::Core::Http::RawResponse.
+     * @note Does not give up ownership of the RawResponse.
+     */
+    Azure::Core::Http::RawResponse const& GetRawResponseInternal() const override
+    {
+      return *m_rawResponse;
+    }
+
+  public:
+    /**
+     * @brief Get the #Azure::Security::KeyVault::Keys::DeletedKey object.
+     *
+     * @remark The deleted key contains the recovery id if the key can be recovered.
+     *
+     * @return A deleted key object.
+     */
+    Azure::Security::KeyVault::Keys::DeletedKey Value() const override { return m_value; }
+
+    /**
+     * @brief Get an Url as string which can be used to get the status of the delete key operation.
+     *
+     * @return std::string
+     */
+    std::string GetResumeToken() const override { return m_continuationToken; }
+
+    /**
+     * @brief Create a #DeleteKeyOperation from the \p resumeToken fetched from another
+     * `Operation<T>`, updated to the the latest operation status.
+     *
+     * @remark After the operation is initialized, it is used to poll the last update from the
+     * server using the \p context.
+     *
+     * @param resumeToken A previously generated token used to resume the polling of the operation.
+     * @param client A #KeyClient that is used for getting status updates.
+     * @param context A #Azure::Core::Context controlling the request lifetime.
+     * @return DeleteKeyOperation
+     */
+    static DeleteKeyOperation CreateFromResumeToken(
+        std::string const& resumeToken,
+        Azure::Security::KeyVault::Keys::KeyClient const& client,
+        Azure::Core::Context const& context = Azure::Core::Context());
+  };
+
+  /**
+   * @brief A long running operation to recover a key.
+   *
+   */
+  class RecoverDeletedKeyOperation final : public Azure::Core::Operation<KeyVaultKey> {
+  private:
+    /* RecoverDeletedKeyOperation can be constructed only by friends classes (internal creation).
+     * The constructor is private and requires internal components.*/
+    friend class KeyClient;
+
+    std::shared_ptr<Azure::Security::KeyVault::Keys::KeyClient> m_keyClient;
+    Azure::Security::KeyVault::Keys::KeyVaultKey m_value;
+    std::string m_continuationToken;
+
+    std::unique_ptr<Azure::Core::Http::RawResponse> PollInternal(
+        Azure::Core::Context const& context) override;
+
+    Azure::Response<Azure::Security::KeyVault::Keys::KeyVaultKey> PollUntilDoneInternal(
+        std::chrono::milliseconds period,
+        Azure::Core::Context& context) override
+    {
+      while (true)
+      {
+        // Poll will update the raw response.
+        Poll(context);
+        if (IsDone())
+        {
+          break;
+        }
+        std::this_thread::sleep_for(period);
+      }
+
+      return Azure::Response<Azure::Security::KeyVault::Keys::KeyVaultKey>(
+          m_value, std::make_unique<Azure::Core::Http::RawResponse>(*m_rawResponse));
+    }
+
+    /*
+     * Only friend classes are permitted to construct a RecoverDeletedKeyOperation. This is because
+     * a KeyVaultPipelne is required and it is not exposed to customers.
+     *
+     * Since C++ doesn't offer `internal` access, we use friends-only instead.
+     */
+    RecoverDeletedKeyOperation(
+        std::shared_ptr<Azure::Security::KeyVault::Keys::KeyClient> keyClient,
+        Azure::Response<Azure::Security::KeyVault::Keys::KeyVaultKey> response);
+
+    RecoverDeletedKeyOperation(
+        std::string resumeToken,
+        std::shared_ptr<Azure::Security::KeyVault::Keys::KeyClient> keyClient)
+        : m_keyClient(keyClient), m_value(DeletedKey(resumeToken)),
+          m_continuationToken(std::move(resumeToken))
+    {
+    }
+
+    /**
+     * @brief Get the #Azure::Core::Http::RawResponse of the operation request.
+     * @return A reference to an #Azure::Core::Http::RawResponse.
+     * @note Does not give up ownership of the RawResponse.
+     */
+    Azure::Core::Http::RawResponse const& GetRawResponseInternal() const override
+    {
+      return *m_rawResponse;
+    }
+
+  public:
+    /**
+     * @brief Get the #Azure::Security::KeyVault::Keys::KeyVaultKey object.
+     *
+     * @remark The deleted key contains the recovery ID if the key can be recovered.
+     *
+     * @return A deleted key object.
+     */
+    Azure::Security::KeyVault::Keys::KeyVaultKey Value() const override { return m_value; }
+
+    /**
+     * @brief Get an Url as string which can be used to get the status of the delete key operation.
+     *
+     * @return std::string
+     */
+    std::string GetResumeToken() const override { return m_continuationToken; }
+
+    /**
+     * @brief Create a #RecoverDeletedKeyOperation from the \p resumeToken fetched from another
+     * `Operation<T>`, updated to the the latest operation status.
+     *
+     * @remark After the operation is initialized, it is used to poll the last update from the
+     * server using the \p context.
+     *
+     * @param resumeToken A previously generated token used to resume the polling of the operation.
+     * @param client A #KeyClient that is used for getting status updates.
+     * @param context A #Azure::Core::Context controlling the request lifetime.
+     * @return DeleteKeyOperation
+     */
+    static RecoverDeletedKeyOperation CreateFromResumeToken(
+        std::string const& resumeToken,
+        Azure::Security::KeyVault::Keys::KeyClient const& client,
+        Azure::Core::Context const& context = Azure::Core::Context());
   };
 
 }}}} // namespace Azure::Security::KeyVault::Keys

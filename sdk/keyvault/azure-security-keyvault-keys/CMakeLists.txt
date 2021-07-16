@@ -35,9 +35,7 @@ set(
     inc/azure/keyvault/keys/cryptography/encrypt_parameters.hpp
     inc/azure/keyvault/keys/key_client.hpp
     inc/azure/keyvault/keys/key_client_models.hpp
-    inc/azure/keyvault/keys/key_client_operations.hpp
     inc/azure/keyvault/keys/key_client_options.hpp
-    inc/azure/keyvault/keys/key_client_paged_responses.hpp
 )
 
 set(

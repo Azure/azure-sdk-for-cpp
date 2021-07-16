@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
 
-#include "azure/keyvault/keys/key_client_paged_responses.hpp"
+#include "azure/keyvault/keys/key_client_models.hpp"
 #include "azure/keyvault/keys/key_client.hpp"
 #include "private/key_constants.hpp"
 #include "private/key_serializers.hpp"
