@@ -145,3 +145,97 @@ TEST(FileBodyStream, Read)
   EXPECT_EQ(readSize, FileSize);
   EXPECT_EQ(buffer[FileSize], 0);
 }
+
+TEST(ProgressBodyStream, Init)
+{
+  int64_t bytesTransferred = -1;
+  std::string testDataPath(AZURE_TEST_DATA_PATH);
+  testDataPath.append("/fileData");
+
+  Azure::Core::IO::FileBodyStream stream(testDataPath);
+
+  ProgressBodyStream progress(stream, [&bytesTransferred](int64_t bt) { bytesTransferred = bt; });
+
+  EXPECT_EQ(bytesTransferred, 0);
+  EXPECT_EQ(progress.Length(), stream.Length());
+}
+
+TEST(ProgressBodyStream, ReadChunk)
+{
+  int64_t bytesTransferred = -1;
+  std::string testDataPath(AZURE_TEST_DATA_PATH);
+  testDataPath.append("/fileData");
+
+  Azure::Core::IO::FileBodyStream stream(testDataPath);
+
+  ProgressBodyStream progress(stream, [&bytesTransferred](int64_t bt) { bytesTransferred = bt; });
+
+  std::vector<uint8_t> buffer(10);
+
+  size_t readSize = progress.ReadToCount(buffer.data(), 10);
+
+  EXPECT_EQ(bytesTransferred, 10);
+  EXPECT_EQ(progress.Length(), stream.Length());
+  EXPECT_EQ(readSize, 10);
+}
+
+TEST(ProgressBodyStream, ReadMultipleChunks)
+{
+  int64_t bytesTransferred = -1;
+  std::string testDataPath(AZURE_TEST_DATA_PATH);
+  testDataPath.append("/fileData");
+
+  Azure::Core::IO::FileBodyStream stream(testDataPath);
+
+  ProgressBodyStream progress(stream, [&bytesTransferred](int64_t bt) { bytesTransferred = bt; });
+
+  std::vector<uint8_t> buffer(10);
+
+  for (int i = 0; i < stream.Length() / 10; i++)
+  {
+
+    size_t readSize = progress.ReadToCount(buffer.data(), 10);
+
+    EXPECT_EQ(bytesTransferred, (i + 1) * 10);
+    EXPECT_EQ(progress.Length(), stream.Length());
+    EXPECT_EQ(readSize, 10);
+  }
+}
+
+TEST(ProgressBodyStream, ReadMultipleChunksRewind)
+{
+  int64_t bytesTransferred = -1;
+  std::string testDataPath(AZURE_TEST_DATA_PATH);
+  testDataPath.append("/fileData");
+
+  Azure::Core::IO::FileBodyStream stream(testDataPath);
+
+  ProgressBodyStream progress(stream, [&bytesTransferred](int64_t bt) { bytesTransferred = bt; });
+
+  std::vector<uint8_t> buffer(10);
+
+  for (int i = 0; i < stream.Length() / 100; i++)
+  {
+
+    size_t readSize = progress.ReadToCount(buffer.data(), 10);
+
+    EXPECT_EQ(bytesTransferred, (i + 1) * 10);
+    EXPECT_EQ(progress.Length(), stream.Length());
+    EXPECT_EQ(readSize, 10);
+  }
+
+  progress.Rewind();
+
+  EXPECT_EQ(bytesTransferred, 0);
+  EXPECT_EQ(progress.Length(), stream.Length());
+
+  for (int i = 0; i < stream.Length() / 100; i++)
+  {
+
+    size_t readSize = progress.ReadToCount(buffer.data(), 10);
+
+    EXPECT_EQ(bytesTransferred, (i + 1) * 10);
+    EXPECT_EQ(progress.Length(), stream.Length());
+    EXPECT_EQ(readSize, 10);
+  }
+}
