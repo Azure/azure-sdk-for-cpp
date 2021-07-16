@@ -1,0 +1,288 @@
+﻿<!DOCTYPE html>
+<!--[if IE]><![endif]-->
+<html>
+  
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>Azure SDK for C++ Contributing Guide | Azure SDK for C++ </title>
+    <meta name="viewport" content="width=device-width">
+    <meta name="title" content="Azure SDK for C++ Contributing Guide | Azure SDK for C++ ">
+    <meta name="generator" content="docfx 2.43.2.0">
+    
+    <link rel="shortcut icon" href="https://c.s-microsoft.com/favicon.ico?v2">
+    <link rel="stylesheet" href="styles/docfx.vendor.css">
+    <link rel="stylesheet" href="styles/docfx.css">
+    <link rel="stylesheet" href="styles/main.css">
+    <meta property="docfx:navrel" content="navtoc.html">
+    <meta property="docfx:tocrel" content="toc.html">
+    
+    
+    <meta property="docfx:newtab" content="true">
+  </head>
+  <body data-spy="scroll" data-target="#affix" data-offset="120">
+    <div id="wrapper">
+      <header>
+        
+        <nav id="autocollapse" class="navbar navbar-inverse ng-scope" role="navigation">
+          <div class="container">
+            <div class="navbar-header">
+              <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+              </button>
+              
+              <a class="navbar-brand" href="index.html">
+                <img id="logo" class="svg" src="logo.svg" alt="">
+              </a>
+            </div>
+            <div class="collapse navbar-collapse" id="navbar">
+              <form class="navbar-form navbar-right" role="search" id="search">
+                <div class="form-group">
+                  <input type="text" class="form-control" id="search-query" placeholder="Search" autocomplete="off">
+                </div>
+              </form>
+            </div>
+          </div>
+        </nav>
+        
+        <div class="subnav navbar navbar-default">
+          <div class="container hide-when-search" id="breadcrumb">
+            <ul class="breadcrumb">
+              <li></li>
+            </ul>
+          </div>
+        </div>
+      </header>
+      <div role="main" class="container body-content hide-when-search">
+        
+        <div class="sidenav hide-when-search">
+          <a class="btn toc-toggle collapse" data-toggle="collapse" href="#sidetoggle" aria-expanded="false" aria-controls="sidetoggle">Show / Hide Table of Contents</a>
+          <div class="sidetoggle collapse" id="sidetoggle">
+            <div id="sidetoc"></div>
+          </div>
+        </div>
+        <div class="article row grid-right">
+          <div class="col-md-10">
+            <article class="content wrap" id="_content" data-uid="">
+<h2 id="azure-sdk-for-c-contributing-guide">Azure SDK for C++ Contributing Guide</h2>
+
+<p>Thank you for your interest in contributing to Azure SDK for C++.</p>
+<ul>
+<li><p>For reporting bugs, requesting features, or asking for support, please file an issue in the <a href="https://github.com/Azure/azure-sdk-for-cpp/issues">issues</a> section of the project.</p>
+</li>
+<li><p>If you would like to become an active contributor to this project please follow the instructions provided in <a href="https://azure.github.io/azure-sdk/policies_opensource.html">Microsoft Azure Projects Contribution Guidelines</a>.</p>
+</li>
+<li><p>To make code changes, or contribute something new, please follow the <a href="https://help.github.com/articles/fork-a-repo/">GitHub Forks / Pull requests model</a>: Fork the repo, make the change and propose it back by submitting a pull request.</p>
+</li>
+</ul>
+<h2 id="pull-requests">Pull Requests</h2>
+<ul>
+<li><strong>DO</strong> follow the API design and implementation <a href="https://azure.github.io/azure-sdk/cpp_introduction.html">C++ Guidelines</a>.
+<ul>
+<li>When submitting large changes or features, <strong>DO</strong> have an issue or spec doc that describes the design, usage, and motivating scenario.</li>
+</ul>
+</li>
+<li><strong>DO</strong> submit all code changes via pull requests (PRs) rather than through a direct commit. PRs will be reviewed and potentially merged by the repo maintainers after a peer review that includes at least one maintainer.</li>
+<li><strong>DO</strong> review your own PR to make sure there aren't any unintended changes or commits before submitting it.</li>
+<li><strong>DO NOT</strong> submit &quot;work in progress&quot; PRs. A PR should only be submitted when it is considered ready for review and subsequent merging by the contributor.
+<ul>
+<li>If the change is work-in-progress or an experiment, <strong>DO</strong> start if off as a temporary draft PR.</li>
+</ul>
+</li>
+<li><strong>DO</strong> give PRs short-but-descriptive names (e.g. &quot;Improve code coverage for Azure.Core by 10%&quot;, not &quot;Fix #1234&quot;) and add a description which explains why the change is being made.</li>
+<li><strong>DO</strong> refer to any relevant issues, and include <a href="https://help.github.com/articles/closing-issues-via-commit-messages/">keywords</a> that automatically close issues when the PR is merged.</li>
+<li><strong>DO</strong> tag any users that should know about and/or review the change.</li>
+<li><strong>DO</strong> ensure each commit successfully builds. The entire PR must pass all tests in the Continuous Integration (CI) system before it'll be merged.</li>
+<li><strong>DO</strong> address PR feedback in an additional commit(s) rather than amending the existing commits, and only rebase/squash them when necessary. This makes it easier for reviewers to track changes.</li>
+<li><strong>DO</strong> assume that <a href="https://github.com/blog/2141-squash-your-commits">&quot;Squash and Merge&quot;</a> will be used to merge your commit unless you request otherwise in the PR.</li>
+<li><strong>DO NOT</strong> mix independent, unrelated changes in one PR. Separate real product/test code changes from larger code formatting/dead code removal changes. Separate unrelated fixes into separate PRs, especially if they are in different modules or files that otherwise wouldn't be changed.</li>
+<li><strong>DO</strong> comment your code focusing on &quot;why&quot;, where necessary. Otherwise, aim to keep it self-documenting with appropriate names and style.</li>
+<li><strong>DO</strong> add <a href="https://azure.github.io/azure-sdk/cpp_introduction.html#documentation-style">doxygen style API comments</a> when adding new APIs or modifying header files.</li>
+<li><strong>DO</strong> make sure there are no typos or spelling errors, especially in user-facing documentation.</li>
+<li><strong>DO</strong> verify if your changes have impact elsewhere. For instance, do you need to update other docs or exiting markdown files that might be impacted?</li>
+<li><strong>DO</strong> add relevant unit tests to ensure CI will catch future regressions.</li>
+</ul>
+<h2 id="merging-pull-requests-for-project-contributors-with-write-access">Merging Pull Requests (for project contributors with write access)</h2>
+<ul>
+<li><p><strong>DO</strong> use <a href="https://github.com/blog/2141-squash-your-commits">&quot;Squash and Merge&quot;</a> by default for individual contributions unless requested by the PR author.
+Do so, even if the PR contains only one commit. It creates a simpler history than &quot;Create a Merge Commit&quot;.
+Reasons that PR authors may request &quot;Merge and Commit&quot; may include (but are not limited to):</p>
+<ul>
+<li>The change is easier to understand as a series of focused commits. Each commit in the series must be buildable so as not to break <code>git bisect</code>.</li>
+<li>Contributor is using an e-mail address other than the primary GitHub address and wants that preserved in the history. Contributor must be willing to squash
+the commits manually before acceptance.</li>
+</ul>
+</li>
+</ul>
+<h2 id="developer-guide">Developer Guide</h2>
+<h3 id="codespaces">Codespaces</h3>
+<p>Codespaces is new technology that allows you to use a container as your development environment. This repo provides a Codespaces container which is supported by both GitHub Codespaces and VS Code Codespaces.</p>
+<h3 id="github-codespaces">GitHub Codespaces</h3>
+<ol>
+<li>From the Azure SDK GitHub repo, click on the &quot;Code -&gt; Open with Codespaces&quot; button.</li>
+<li>Open a Terminal. The development environment will be ready for you. Continue to <a href="https://github.com/Azure/azure-sdk-for-cpp/blob/main/CONTRIBUTING.md#building-and-testing">Building and Testing</a>.</li>
+</ol>
+<h4 id="vs-code-codespaces">VS Code Codespaces</h4>
+<ol>
+<li>Install the <a href="https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.vscode-remote-extensionpack">VS Code Remote Extension Pack</a></li>
+<li>When you open the Azure SDK for C++ repo in VS Code, it will prompt you to open the project in the Dev Container. If it does not prompt you, then hit CTRL+P, and select &quot;Remote-Containers: Open Folder in Container...&quot;</li>
+<li>Open a Terminal. The development environment will be ready for you. Continue to <a href="https://github.com/Azure/azure-sdk-for-cpp/blob/main/CONTRIBUTING.md#building-and-testing">Building and Testing</a>.</li>
+</ol>
+<h3 id="full-local-setup">Full Local Setup</h3>
+<h4 id="pre-requisites">Pre-requisites</h4>
+<h5 id="cmake">CMake</h5>
+<p>CMake version 3.13 or higher is required to build these libraries. Download and install CMake from the project's
+<a href="https://cmake.org/download/">website</a>.</p>
+<h5 id="third-party-dependencies">Third Party Dependencies</h5>
+<ul>
+<li>curl</li>
+<li>libxml2</li>
+<li>clang-format (min version 10)</li>
+</ul>
+<p>Vcpkg can be used to install the Azure SDK for CPP dependencies into a specific folder on the system instead of globally installing them.
+Follow <a href="https://github.com/microsoft/vcpkg#getting-started">vcpkg install guide</a> to get vcpkg and install the following dependencies:</p>
+<pre><code class="lang-sh">./vcpkg install curl libxml2
+</code></pre>
+<p>When using vcpkg, you can set the <code>VCPKG_ROOT</code> environment variable to the vcpkg Git repository folder. This would automatically set the CMake variable <code>CMAKE_TOOLCHAIN_FILE</code> for you, enabling the project to use any library installed with vcpkg.</p>
+<p>The Azure SDK for C++ uses <a href="https://github.com/Azure/azure-sdk-for-cpp/blob/main/eng/vcpkg-commit.txt">this vcpkg release version</a> for continuous integration (CI) building and testing. Make sure to checkout this version when following the next steps for building and running the Azure SDK for C++. Using a newer vcpkg version might still work, however, if it is tested.</p>
+<pre><code class="lang-sh"># Checking out vcpkg release version before installing dependencies
+
+git clone https://github.com/Microsoft/vcpkg.git
+cd vcpkg
+# Checkout the vcpkg commit from the vcpkg-commit.txt file (link above)
+git checkout &lt;vcpkg commit&gt;
+
+# build vcpkg (showing Linux command, see vcpkg getting started for Windows)
+./bootstrap-vcpkg.sh
+./vcpkg install curl libxml2
+</code></pre>
+<h3 id="building-and-testing">Building and Testing</h3>
+<h4 id="building-the-project">Building the project</h4>
+<p>Generate the CMake files and build as you would with any standard CMake project. From the
+repo root, run:</p>
+<pre><code class="lang-sh">mkdir build
+cd build
+cmake ..
+cmake --build .
+</code></pre>
+<h4 id="static-analysis">Static Analysis</h4>
+<p>When the project is built using MSVC on Windows, the compiler can run <a href="https://docs.microsoft.com/cpp/code-quality/walkthrough-analyzing-c-cpp-code-for-defects">static analysis</a> on the code. The CMake project can add the required compiler flags to perform this check. To enable this feature, set an environment variable <code>AZURE_ENABLE_STATIC_ANALYSIS</code>.</p>
+<p>Keep in mind that enabling static analysis will significantly impact build time. It is recommended to run it right before submitting the PR, but not in your inner developer loop.</p>
+<p>The static code analysis is <code>ON</code> for the CI pipelines. You can turn this feature <code>ON</code> locally to debug errors reported during CI or for the last time you build and test before creating a new PR.</p>
+<h4 id="cmake-build-options">CMake build options</h4>
+<p>The following CMake options are available for adding/removing project features.</p>
+<table>
+<tr>
+<td>Option</td>
+<td>Description</td>
+<td>Default Value</td>
+</tr>
+<tr>
+<td>BUILD_TESTING</td>
+<td>Generates Unit Test for compilation. CMake will automatically download and build g-test.<br>After Compiling, use `ctest` to run Unit Test.</td>
+<td>OFF</td>
+</tr>
+<tr>
+<td>BUILD_CODE_COVERAGE</td>
+<td>Build HTML and XML targets for each package which can be call to produce XML or HTML reports. The generated CMake targets are named `package-name_cov_xml` and `package-name_cov_html` (for example, for Azure Core, it would be `azure-core-cov_xml`).<br> <br>Ths option requires compiling on `debug` mode, building tests (BUILD_TESTING) and a GNU compiler like gcc. </td>
+<td>OFF</td>
+</tr>
+<tr>
+<td>BUILD_STORAGE_SAMPLES</td>
+<td>Build Azure Storage clients sample application.</td>
+<td>OFF</td>
+</tr>
+<tr>
+<td>RUN_LONG_UNIT_TESTS</td>
+<td>Enables the special unit tests which takes more than 3 minutes to run. These tests are for some specific features like the connection pool for libcurl transport adapter.</td>
+<td>OFF</td>
+</tr>
+<tr>
+<td>WARNINGS_AS_ERRORS</td>
+<td>Warnings will make compiling fail</td>
+<td>ON</td>
+</tr>
+<tr>
+<td>BUILD_TRANSPORT_CURL</td>
+<td>Build the libcurl HTTP transport adapter. When building on POSIX systems, if no other transport adapter is built, this option will be automatically turned ON</td>
+<td>OFF</td>
+</tr>
+<tr>
+<td>BUILD_TRANSPORT_WINHTTP</td>
+<td>Build the WinHTTP transport adapter. When building on Windows systems, if no other transport adapter is built, this option will be automatically turned ON. This option is not supported on non-Windows OSes.</td>
+<td>OFF</td>
+</tr>
+<tr>
+<td>BUILD_DOCUMENTATION</td>
+<td>Build Doxygen documentation</td>
+<td>OFF</td>
+</tr>
+<tr>
+<td>MSVC_USE_STATIC_CRT</td>
+<td>On MSVC, link SDK with static CRT (use `/MT` or `/MTd` switch)</td>
+<td>OFF</td>
+</tr>
+</table>
+<h4 id="testing-the-project">Testing the project</h4>
+<p>If you want to run tests also, generate build files using below command and then build.</p>
+<pre><code class="lang-sh">cmake -DBUILD_TESTING=ON ..
+cmake --build .
+</code></pre>
+<p>Tests are executed via the <code>ctest</code> command included with CMake. From the build directory, run:</p>
+<pre><code class="lang-sh"># use -V for verbose
+ctest -V
+# Use -N to list test that are part of test set
+ctest -N
+# Use -R to use a regular exp for what to run
+ctest -R Http # runs only HTTP tests
+</code></pre>
+<h4 id="generating-code-coverage-reports">Generating Code Coverage reports</h4>
+<p><code>gcov</code> and <code>gcovr</code> must be installed on your system.
+Also, make sure to generate the project with Debug mode. Then, option <code>-DBUILD_TESTING</code> must be <code>ON</code> and to use a GNU compiler (like gcc).</p>
+<pre><code class="lang-sh"># install gcov and gcovr if missing
+sudo apt-get install gcov gcovr # example for Linux
+
+cmake -DBUILD_TESTING=ON -DCMAKE_BUILD_TYPE=Debug -DBUILD_CODE_COVERAGE=ON ..
+
+# After this, generate reports by calling a package target
+make package-name_cov_xml # for example `azure-core_cov_xml`
+make package-name_cov_html # for example `azure-core_cov_html`
+</code></pre>
+<p>Running the above commands will create the test executable and run it. While it runs, gcov will capture coverage and produce coverage data. And when test finished, gcovr is used to parse the coverage data to produce and XML or HTML. The output files will be inside the package build directory. For example, for Azure core, it will be <code>build/path/sdk/core/azure-core/</code>.</p>
+<p>If the coverage data has been previously generated (for example, if you manually run the unit tests), you can define <code>CODE_COVERAGE_COLLECT_ONLY</code> environment variable (set it to any value) and then the report will be generated without running the tests again. This is how the coverage reports are generated on CI, where the tests runs prior to code coverage step.</p>
+<h3 id="visual-studio-2019">Visual Studio 2019</h3>
+<p>You can also build the project by simply opening the repo directory in Visual Studio. Visual Studio will detect the <code>CMake</code> file and will configure itself to generate, build and run tests.</p>
+</article>
+          </div>
+          
+          <div class="hidden-sm col-md-2" role="complementary">
+            <div class="sideaffix">
+              <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
+              </nav>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <footer>
+        <div class="grad-bottom"></div>
+        <div class="footer">
+          <div class="container">
+            <span class="pull-right">
+              <a href="#top">Back to top</a>
+            </span>
+            Azure SDK for C++
+            
+          </div>
+        </div>
+      </footer>
+    </div>
+    
+    <script type="text/javascript" src="styles/docfx.vendor.js"></script>
+    <script type="text/javascript" src="styles/docfx.js"></script>
+    <script type="text/javascript" src="styles/main.js"></script>
+  </body>
+</html>

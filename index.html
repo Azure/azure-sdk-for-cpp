@@ -1,0 +1,305 @@
+﻿<!DOCTYPE html>
+<!--[if IE]><![endif]-->
+<html>
+  
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>Azure SDK for C++ | Azure SDK for C++ </title>
+    <meta name="viewport" content="width=device-width">
+    <meta name="title" content="Azure SDK for C++ | Azure SDK for C++ ">
+    <meta name="generator" content="docfx 2.43.2.0">
+    
+    <link rel="shortcut icon" href="https://c.s-microsoft.com/favicon.ico?v2">
+    <link rel="stylesheet" href="styles/docfx.vendor.css">
+    <link rel="stylesheet" href="styles/docfx.css">
+    <link rel="stylesheet" href="styles/main.css">
+    <meta property="docfx:navrel" content="navtoc.html">
+    <meta property="docfx:tocrel" content="toc.html">
+    
+    
+    <meta property="docfx:newtab" content="true">
+  </head>
+  <body data-spy="scroll" data-target="#affix" data-offset="120">
+    <div id="wrapper">
+      <header>
+        
+        <nav id="autocollapse" class="navbar navbar-inverse ng-scope" role="navigation">
+          <div class="container">
+            <div class="navbar-header">
+              <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+              </button>
+              
+              <a class="navbar-brand" href="index.html">
+                <img id="logo" class="svg" src="logo.svg" alt="">
+              </a>
+            </div>
+            <div class="collapse navbar-collapse" id="navbar">
+              <form class="navbar-form navbar-right" role="search" id="search">
+                <div class="form-group">
+                  <input type="text" class="form-control" id="search-query" placeholder="Search" autocomplete="off">
+                </div>
+              </form>
+            </div>
+          </div>
+        </nav>
+        
+        <div class="subnav navbar navbar-default">
+          <div class="container hide-when-search" id="breadcrumb">
+            <ul class="breadcrumb">
+              <li></li>
+            </ul>
+          </div>
+        </div>
+      </header>
+      <div role="main" class="container body-content hide-when-search">
+        
+        <div class="sidenav hide-when-search">
+          <a class="btn toc-toggle collapse" data-toggle="collapse" href="#sidetoggle" aria-expanded="false" aria-controls="sidetoggle">Show / Hide Table of Contents</a>
+          <div class="sidetoggle collapse" id="sidetoggle">
+            <div id="sidetoc"></div>
+          </div>
+        </div>
+        <div class="article row grid-right">
+          <div class="col-md-10">
+            <article class="content wrap" id="_content" data-uid="">
+<h1 id="azure-sdk-for-c">Azure SDK for C++</h1>
+
+<p><a href="https://dev.azure.com/azure-sdk/public/_build/latest?definitionId=1611&amp;branchName=main"><img src="https://dev.azure.com/azure-sdk/public/_apis/build/status/cpp/cpp%20-%20client%20-%20ci?branchName=main" alt="Build Status"></a></p>
+<p>This repository is for active development of the Azure SDK for C++. For consumers of the SDK we recommend visiting our <a href="https://azure.github.io/azure-sdk-for-cpp">developer docs</a>.</p>
+<h2 id="getting-started">Getting started</h2>
+<p>For the best development experience, we recommend developers use <a href="https://docs.microsoft.com/cpp/build/cmake-projects-in-visual-studio?view=vs-2019">CMake projects in Visual Studio</a> to view and build the source code together with its dependencies. You can also use any other text editor of your choice, such as <a href="https://code.visualstudio.com/">VS Code</a>, along with the command line for building your application with the SDK.</p>
+<p>You can find additional information for specific libraries by navigating to the appropriate folder in the <code>/sdk</code> directory. See the <strong>README.md</strong> file located in the library's project folder, for example, the <a href="https://github.com/Azure/azure-sdk-for-cpp/tree/main/sdk/storage#azure-storage-client-library-for-c">Azure Storage client library</a>.</p>
+<p>For API reference docs, tutorials, samples, quick starts, and other documentation, go to <a href="https://azure.github.io/azure-sdk-for-cpp">Azure SDK for C++ Developer Docs</a>.</p>
+<h3 id="download--install-the-sdk">Download &amp; Install the SDK</h3>
+<p>The easiest way to acquire the C++ SDK is leveraging vcpkg package manager. You will need to install <a href="https://git-scm.com/downloads">Git</a> before getting started.</p>
+<p>First clone and bootstrap vcpkg itself. You can install it anywhere on your machine, but <strong>make note</strong> of the directory where you clone the vcpkg repo.</p>
+<pre><code class="lang-cmd">&gt; git clone https://github.com/microsoft/vcpkg
+</code></pre>
+<p>On Windows:</p>
+<pre><code class="lang-cmd">&gt; .\vcpkg\bootstrap-vcpkg.bat
+</code></pre>
+<p>On Linux:</p>
+<pre><code class="lang-sh">&gt; ./vcpkg/bootstrap-vcpkg.sh
+</code></pre>
+<p>To install the libraries for your project, run the following, optionally specifying the triplet. For example, the following will install packages for the <code>x64-windows</code> triplet. On Windows, not specifying a triplet will default to <code>x86-windows</code>:</p>
+<pre><code class="lang-cmd">&gt; .\vcpkg\vcpkg install azure-storage-blobs-cpp:x64-windows
+</code></pre>
+<p>See the <a href="https://github.com/Azure/azure-sdk-for-cpp#vcpkg">list of packages</a> available via vcpkg below. All Azure C++ SDK package names start with <code>azure-</code>. You can also search for the libraries you need with the <code>search</code> command. For example:</p>
+<pre><code class="lang-cmd">&gt; .\vcpkg\vcpkg search azure-
+</code></pre>
+<p>Once the library is installed, follow the instructions from the console output to include the library in your <code>CMake</code> application. For example, to include <code>azure-storage-blobs-cpp</code>, add the following to your <code>CMakeLists.txt</code> file:</p>
+<pre><code class="lang-CMake">find_package(azure-storage-blobs-cpp CONFIG REQUIRED)
+target_link_libraries(&lt;your project name&gt; PRIVATE Azure::azure-storage-blobs)
+</code></pre>
+<blockquote>
+<p>NOTE: All the Azure client libraries take a dependency on <code>azure-core-cpp</code> which provides functionality commonly needed by all Azure clients. When you install any client library via vcpkg, it will bring in all the necessary dependencies as well. You don't need to install those individually to get started.</p>
+</blockquote>
+<p>You can reference this <a href="https://github.com/microsoft/vcpkg#quick-start-windows">vcpkg Quick Start</a> for more details.</p>
+<h3 id="building-your-application">Building your Application</h3>
+<p>In order to use the SDK installed via vcpkg with CMake, you can use the toolchain file from vcpkg:</p>
+<pre><code class="lang-cmd">&gt; cmake -B [build directory] -S . -DCMAKE_TOOLCHAIN_FILE=[path to vcpkg repo]/scripts/buildsystems/vcpkg.cmake
+&gt; cmake --build [build directory]
+</code></pre>
+<h4 id="using-the-sdk-within-your-application">Using the SDK within your Application</h4>
+<p>The <strong>entry point</strong> for most scenarios when using the SDK will be a top-level client type corresponding to the Azure service. For example, sending requests to blob storage can be done via the <code>Azure::Storage::Blobs::BlobClient</code> API. All APIs on the client type send HTTP requests to the cloud service and return back an HTTP <code>Response&lt;T&gt;</code>.</p>
+<p>Azure C++ SDK headers needed are located within the <code>&lt;azure&gt;</code> folder, with sub-folders corresponding to each service. Similarly, all types and APIs can be found within the <code>Azure::</code> namespace. For example, to use functionality from <code>Azure::Core</code>, include the following header at the beginning of your application <code>#include &lt;azure/core.hpp&gt;</code>.</p>
+<p>Here's an example application to help you get started:</p>
+<pre><code class="lang-C++">#include &lt;iostream&gt;
+
+// Include the necessary SDK headers
+#include &lt;azure/core.hpp&gt;
+#include &lt;azure/storage/blobs.hpp&gt;
+
+// Add appropriate using namespace directives
+using namespace Azure::Storage;
+using namespace Azure::Storage::Blobs;
+
+// Secrets should be stored &amp; retrieved from secure locations such as Azure::KeyVault. For
+// convenience and brevity of samples, the secrets are retrieved from environment variables.
+std::string GetEndpointUrl() { return std::getenv(&quot;AZURE_STORAGE_ACCOUNT_URL&quot;); }
+std::string GetAccountName() { return std::getenv(&quot;AZURE_STORAGE_ACCOUNT_NAME&quot;); }
+std::string GetAccountKey() { return std::getenv(&quot;AZURE_STORAGE_ACCOUNT_KEY&quot;); }
+
+int main()
+{
+  std::string endpointUrl = GetEndpointUrl();
+  std::string accountName = GetAccountName();
+  std::string accountKey = GetAccountKey();
+
+  try
+  {
+    auto sharedKeyCredential = std::make_shared&lt;StorageSharedKeyCredential&gt;(accountName, accountKey);
+
+    auto blockBlobClient = BlockBlobClient(endpointUrl, sharedKeyCredential);
+
+    // Create some data to upload into the blob.
+    std::vector&lt;uint8_t&gt; data = {1, 2, 3, 4};
+    Azure::Core::IO::MemoryBodyStream stream(data);
+
+    Azure::Response&lt;Models::UploadBlockBlobResult&gt; response = blockBlobClient.Upload(stream);
+
+    Models::UploadBlockBlobResult model = response.Value;
+    std::cout &lt;&lt; &quot;Last modified date of uploaded blob: &quot; &lt;&lt; model.LastModified.ToString()
+              &lt;&lt; std::endl;
+  }
+  catch (const Azure::Core::RequestFailedException&amp; e)
+  {
+    std::cout &lt;&lt; &quot;Status Code: &quot; &lt;&lt; static_cast&lt;int&gt;(e.StatusCode)
+              &lt;&lt; &quot;, Reason Phrase: &quot; &lt;&lt; e.ReasonPhrase &lt;&lt; std::endl;
+    std::cout &lt;&lt; e.what() &lt;&lt; std::endl;
+    return 1;
+  }
+  return 0;
+}
+</code></pre>
+<h4 id="key-core-concepts">Key Core concepts</h4>
+<p>Understanding the key concepts from the <code>Azure Core</code> library, which is leveraged by all client libraries is helpful in getting started, regardless of which Azure service you want to use.</p>
+<p>The main shared concepts of <code>Azure Core</code> include:</p>
+<ul>
+<li>Accessing HTTP response details for the returned model of any SDK client operation, via <code>Response&lt;T&gt;</code>.</li>
+<li>Exceptions for reporting errors from service requests in a consistent fashion via the base exception type <code>RequestFailedException</code>.</li>
+<li>Abstractions for Azure SDK credentials (<code>TokenCredential</code>).</li>
+<li>Handling streaming data and input/output (I/O) via <code>BodyStream</code> along with its derived types.</li>
+<li>Polling long-running operations (LROs), via <code>Operation&lt;T&gt;</code>.</li>
+<li>Collections are returned via <code>PagedResponse&lt;T&gt;</code>.</li>
+<li>HTTP pipeline and HTTP policies such as retry and logging, which are configurable via service client specific options.</li>
+<li>Replaceable HTTP transport layer to send requests and receive responses over the network.</li>
+</ul>
+<h4 id="response-t-model-types"><code>Response &lt;T&gt;</code> Model Types</h4>
+<p>Many client library operations <strong>return</strong> the templated <code>Azure::Core::Response&lt;T&gt;</code> type from the API calls. This type let's you get the raw HTTP response from the service request call the Azure service APIs make, along with the result of the operation to get more API specific details. This is the templated <code>T</code> operation result which can be extracted from the response, using the <code>Value</code> field.</p>
+<pre><code class="lang-C++">  // Azure service operations return a Response&lt;T&gt; templated type.
+  Azure::Response&lt;Models::BlobProperties&gt; propertiesResponse = blockBlobClient.GetProperties();
+
+  // You can get the T, from the returned Response&lt;T&gt;,
+  // which is typically named with a Result suffix in the type name.
+  Models::BlobProperties propertiesModel = propertiesResponse.Value;
+
+  // Now you can look at API specific members on the result object that is returned.
+  std::cout &lt;&lt; &quot;The size of the blob is: &quot; &lt;&lt; propertiesModel.BlobSize &lt;&lt; std::endl;
+</code></pre>
+<h4 id="long-running-operations">Long Running Operations</h4>
+<p>Some operations take a long time to complete and require polling for their status. Methods starting long-running operations return <code>Operation&lt;T&gt;</code> types.</p>
+<p>You can intermittently poll whether the operation has finished by using the <code>Poll()</code> method inside a loop on the returned <code>Operation&lt;T&gt;</code> and track progress of the operation using <code>Value()</code>, while the operation is not done (using <code>IsDone()</code>). Your per-polling custom logic can go in that loop, such as logging progress.Alternatively, if you just want to wait until the operation completes, you can use <code>PollUntilDone()</code>.</p>
+<pre><code class="lang-C++">  std::string sourceUri = &quot;&lt;a uri to the source blob to copy&gt;&quot;;
+
+  // Typically, long running operation APIs have names that begin with Start.
+  StartBlobCopyOperation operation = blockBlobClient.StartCopyFromUri(sourceUri);
+
+  // Waits for the operation to finish, checking for status every 1 second.
+  auto copyResponse = operation.PollUntilDone(std::chrono::milliseconds(1000));
+  auto propertiesModel = copyResponse.Value;
+
+  // Now you can look at API specific members on the result object that is returned.
+  if (propertiesModel.CopySource.HasValue())
+  {
+    std::cout &lt;&lt; &quot;The source of the copied blob is: &quot; &lt;&lt; propertiesModel.CopySource.Value()
+              &lt;&lt; std::endl;
+  }
+</code></pre>
+<h4 id="interacting-with-azure-sdk-for-c">Interacting with Azure SDK for C++</h4>
+<p>Static SDK members should not be accessed and SDK functions should not be called before the static initialization phase is finished.</p>
+<h4 id="visual-studio---cmakesettingsjson">Visual Studio - CMakeSettings.json</h4>
+<p>When building your application via Visual Studio, you can create and update a <code>CMakeSettings.json</code> file and include the following properties to let Visual Studio know where the packages are installed and which triplet needs to be used:</p>
+<pre><code class="lang-json">{
+  &quot;configurations&quot;: [
+    {
+        &quot;cmakeToolchain&quot;: &quot;&lt;path to vcpkg repo&gt;/vcpkg/scripts/buildsystems/vcpkg.cmake&quot;,
+        &quot;variables&quot;: [
+        {
+          &quot;name&quot;: &quot;VCPKG_TARGET_TRIPLET&quot;,
+          &quot;value&quot;: &quot;x64-windows&quot;,
+          &quot;type&quot;: &quot;STRING&quot;
+        }
+      ]
+    }
+  ]
+}
+</code></pre>
+<h3 id="azure-requirements">Azure Requirements</h3>
+<p>To call Azure services, you must first have an Azure subscription. Sign up for a <a href="https://azure.microsoft.com/pricing/free-trial/">free trial</a> or use your <a href="https://azure.microsoft.com/pricing/member-offers/msdn-benefits-details/">MSDN subscriber benefits</a>.</p>
+<h2 id="packages-available">Packages available</h2>
+<p>Each service might have a number of libraries available. These libraries follow the <a href="https://azure.github.io/azure-sdk/cpp_introduction.html">Azure SDK Design Guidelines for C++</a> and share a number of core features such as HTTP retries, logging, transport protocols, authentication protocols, etc., so that once you learn how to use these features in one client library, you will know how to use them in other client libraries. You can learn about these shared features at <a href="https://github.com/Azure/azure-sdk-for-cpp/blob/main/sdk/core/azure-core/README.md">Azure::Core</a>.</p>
+<p>The client libraries can be identified by the naming used for their folder, package, and namespace. Each will start with <code>azure</code>, followed by the service category, and then the name of the service. For example <code>azure-storage-blobs</code>.</p>
+<p>For a complete list of available packages, please see the <a href="https://azure.github.io/azure-sdk/releases/latest/#c">latest available packages</a> page.</p>
+<blockquote>
+<p>NOTE: If you need to ensure your code is ready for production we strongly recommend using one of the stable, non-beta libraries.</p>
+</blockquote>
+<h3 id="vcpkg">Vcpkg</h3>
+<p>The following SDK library releases are available on <a href="https://github.com/microsoft/vcpkg">vcpkg</a>:</p>
+<ul>
+<li><code>azure-core-cpp</code></li>
+<li><code>azure-identity-cpp</code></li>
+<li><code>azure-storage-blobs-cpp</code></li>
+<li><code>azure-storage-files-datalake-cpp</code></li>
+<li><code>azure-storage-files-shares-cpp</code></li>
+</ul>
+<blockquote>
+<p>NOTE: In case of getting linker errors when consuming the SDK on Windows, make sure that <a href="https://vcpkg.readthedocs.io/en/latest/users/triplets/">vcpkg triplet</a> being consumed matches the <a href="https://docs.microsoft.com/cpp/build/reference/md-mt-ld-use-run-time-library?view=msvc-160">CRT link flags</a> being set for your app or library build. See also <code>MSVC_USE_STATIC_CRT</code> build flag.</p>
+</blockquote>
+<h2 id="need-help">Need help</h2>
+<ul>
+<li>For reference documentation visit the <a href="https://azure.github.io/azure-sdk-for-cpp">Azure SDK for C++ documentation</a>.</li>
+<li>For tutorials, samples, quick starts and other documentation, visit <a href="https://docs.microsoft.com/azure/">Azure for C++ Developers</a>.</li>
+<li>File an issue via <a href="https://github.com/Azure/azure-sdk-for-cpp/issues/new/choose">GitHub Issues</a>.</li>
+</ul>
+<h2 id="navigating-the-repository">Navigating the repository</h2>
+<h3 id="main-branch">Main branch</h3>
+<p>The main branch has the most recent code with new features and bug fixes. It does <strong>not</strong> represent latest released <strong>beta</strong> or <strong>GA</strong> SDK.</p>
+<h3 id="release-branches-release-tagging">Release branches (Release tagging)</h3>
+<p>For each package we release there will be a unique Git tag created that contains the name and the version of the package to mark the commit of the code that produced the package. This tag will be used for servicing via hotfix branches as well as debugging the code for a particular beta or stable release version.
+Format of the release tags are <code>&lt;package-name&gt;_&lt;package-version&gt;</code>. For more information please see <a href="https://github.com/Azure/azure-sdk/blob/main/docs/policies/repobranching.md#release-tagging">our branching strategy</a>.</p>
+<h2 id="contributing">Contributing</h2>
+<p>For details on contributing to this repository, see the <a href="https://github.com/Azure/azure-sdk-for-cpp/blob/main/CONTRIBUTING.md">contributing guide</a>.</p>
+<p>This project welcomes contributions and suggestions. Most contributions require you to agree to a Contributor License Agreement (CLA) declaring that you have the right to, and actually do, grant us the rights to use your contribution. For details, view <a href="https://cla.microsoft.com">Microsoft's CLA</a>.</p>
+<p>When you submit a pull request, a CLA-bot will automatically determine whether you need to provide a CLA and decorate the PR appropriately (e.g., label, comment). Simply follow the instructions provided by the bot. You will only need to do this once across all repositories using our CLA.</p>
+<p>This project has adopted the <a href="https://opensource.microsoft.com/codeofconduct/">Microsoft Open Source Code of Conduct</a>. For more information see the <a href="https://opensource.microsoft.com/codeofconduct/faq/">Code of Conduct FAQ</a> or contact <a href="mailto:opencode@microsoft.com">opencode@microsoft.com</a> with any additional questions or comments.</p>
+<h3 id="additional-helpful-links-for-contributors">Additional Helpful Links for Contributors</h3>
+<p>Many people all over the world have helped make this project better.  You'll want to check out:</p>
+<ul>
+<li><a href="https://github.com/azure/azure-sdk-for-cpp/issues?q=is%3Aopen+is%3Aissue+label%3A%22up+for+grabs%22">What are some good first issues for new contributors to the repo?</a></li>
+<li><a href="https://github.com/Azure/azure-sdk-for-cpp/blob/main/CONTRIBUTING.md#developer-guide">How to build and test your change</a></li>
+<li><a href="https://github.com/Azure/azure-sdk-for-cpp/blob/main/CONTRIBUTING.md#pull-requests">How you can make a change happen!</a></li>
+<li>Frequently Asked Questions (FAQ) and Conceptual Topics in the detailed <a href="https://github.com/azure/azure-sdk-for-cpp/wiki">Azure SDK for C++ wiki</a>.</li>
+</ul>
+<!-- ### Community-->
+<h3 id="reporting-security-issues-and-security-bugs">Reporting security issues and security bugs</h3>
+<p>Security issues and bugs should be reported privately, via email, to the Microsoft Security Response Center (MSRC) <a href="mailto:secure@microsoft.com">secure@microsoft.com</a>. You should receive a response within 24 hours. If for some reason you do not, please follow up via email to ensure we received your original message. Further information, including the MSRC PGP key, can be found in the <a href="https://www.microsoft.com/msrc/faqs-report-an-issue">Security TechCenter</a>.</p>
+<h3 id="license">License</h3>
+<p>Azure SDK for C++ is licensed under the <a href="https://github.com/Azure/azure-sdk-for-cpp/blob/main/LICENSE.txt">MIT</a> license.</p>
+<p><img src="https://azure-sdk-impressions.azurewebsites.net/api/impressions/azure-sdk-for-cpp%2FREADME.png" alt="Impressions"></p>
+</article>
+          </div>
+          
+          <div class="hidden-sm col-md-2" role="complementary">
+            <div class="sideaffix">
+              <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
+              </nav>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <footer>
+        <div class="grad-bottom"></div>
+        <div class="footer">
+          <div class="container">
+            <span class="pull-right">
+              <a href="#top">Back to top</a>
+            </span>
+            Azure SDK for C++
+            
+          </div>
+        </div>
+      </footer>
+    </div>
+    
+    <script type="text/javascript" src="styles/docfx.vendor.js"></script>
+    <script type="text/javascript" src="styles/docfx.js"></script>
+    <script type="text/javascript" src="styles/main.js"></script>
+  </body>
+</html>
