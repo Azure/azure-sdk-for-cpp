@@ -73,7 +73,7 @@ TEST_F(KeyVaultClientTest, ImportKey)
   {
     // delete + purge
     auto op = keyClient.StartDeleteKey(keyName);
-    op.PollUntilDone(std::chrono::milliseconds(1000));
+    op.PollUntilDone(m_testPollingIntervalMinutes);
     keyClient.PurgeDeletedKey(keyName);
   }
 }

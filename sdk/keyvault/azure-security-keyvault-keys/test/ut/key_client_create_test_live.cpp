@@ -194,7 +194,7 @@ TEST_F(KeyVaultClientTest, CreateEcHsmKey)
   {
     // Delete key
     auto keyResponseOperation = keyClient.StartDeleteKey(keyName);
-    auto keyResponse = keyResponseOperation.PollUntilDone(std::chrono::milliseconds(1000));
+    auto keyResponse = keyResponseOperation.PollUntilDone(m_testPollingIntervalMinutes);
     CheckValidResponse(keyResponse);
     auto keyVaultKey = keyResponse.Value;
     EXPECT_EQ(keyVaultKey.Name(), keyName);
@@ -223,7 +223,7 @@ TEST_F(KeyVaultClientTest, CreateRsaHsmKey)
   {
     // Delete key
     auto keyResponseOperation = keyClient.StartDeleteKey(keyName);
-    auto keyResponse = keyResponseOperation.PollUntilDone(std::chrono::milliseconds(1000));
+    auto keyResponse = keyResponseOperation.PollUntilDone(m_testPollingIntervalMinutes);
     CheckValidResponse(keyResponse);
     auto keyVaultKey = keyResponse.Value;
     EXPECT_EQ(keyVaultKey.Name(), keyName);
