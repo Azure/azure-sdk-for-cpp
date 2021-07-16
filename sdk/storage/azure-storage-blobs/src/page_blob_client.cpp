@@ -145,6 +145,11 @@ namespace Azure { namespace Storage { namespace Blobs {
     protocolLayerOptions.IfMatch = options.AccessConditions.IfMatch;
     protocolLayerOptions.IfNoneMatch = options.AccessConditions.IfNoneMatch;
     protocolLayerOptions.IfTags = options.AccessConditions.TagConditions;
+    protocolLayerOptions.IfSequenceNumberLessThanOrEqualTo
+        = options.AccessConditions.IfSequenceNumberLessThanOrEqual;
+    protocolLayerOptions.IfSequenceNumberLessThan
+        = options.AccessConditions.IfSequenceNumberLessThan;
+    protocolLayerOptions.IfSequenceNumberEqualTo = options.AccessConditions.IfSequenceNumberEqual;
     if (m_customerProvidedKey.HasValue())
     {
       protocolLayerOptions.EncryptionKey = m_customerProvidedKey.Value().Key;
@@ -175,6 +180,11 @@ namespace Azure { namespace Storage { namespace Blobs {
     protocolLayerOptions.IfMatch = options.AccessConditions.IfMatch;
     protocolLayerOptions.IfNoneMatch = options.AccessConditions.IfNoneMatch;
     protocolLayerOptions.IfTags = options.AccessConditions.TagConditions;
+    protocolLayerOptions.IfSequenceNumberLessThanOrEqualTo
+        = options.AccessConditions.IfSequenceNumberLessThanOrEqual;
+    protocolLayerOptions.IfSequenceNumberLessThan
+        = options.AccessConditions.IfSequenceNumberLessThan;
+    protocolLayerOptions.IfSequenceNumberEqualTo = options.AccessConditions.IfSequenceNumberEqual;
     protocolLayerOptions.SourceIfModifiedSince = options.SourceAccessConditions.IfModifiedSince;
     protocolLayerOptions.SourceIfUnmodifiedSince = options.SourceAccessConditions.IfUnmodifiedSince;
     protocolLayerOptions.SourceIfMatch = options.SourceAccessConditions.IfMatch;
@@ -203,6 +213,11 @@ namespace Azure { namespace Storage { namespace Blobs {
     protocolLayerOptions.IfMatch = options.AccessConditions.IfMatch;
     protocolLayerOptions.IfNoneMatch = options.AccessConditions.IfNoneMatch;
     protocolLayerOptions.IfTags = options.AccessConditions.TagConditions;
+    protocolLayerOptions.IfSequenceNumberLessThanOrEqualTo
+        = options.AccessConditions.IfSequenceNumberLessThanOrEqual;
+    protocolLayerOptions.IfSequenceNumberLessThan
+        = options.AccessConditions.IfSequenceNumberLessThan;
+    protocolLayerOptions.IfSequenceNumberEqualTo = options.AccessConditions.IfSequenceNumberEqual;
     if (m_customerProvidedKey.HasValue())
     {
       protocolLayerOptions.EncryptionKey = m_customerProvidedKey.Value().Key;
