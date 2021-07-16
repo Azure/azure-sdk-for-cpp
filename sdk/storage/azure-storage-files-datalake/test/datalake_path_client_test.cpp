@@ -16,7 +16,7 @@ namespace Azure { namespace Storage { namespace Test {
   void DataLakePathClientTest::SetUpTestSuite()
   {
     DataLakeFileSystemClientTest::SetUpTestSuite();
-    m_pathName = LowercaseRandomString(10);
+    m_pathName = RandomString();
     m_pathClient = std::make_shared<Files::DataLake::DataLakePathClient>(
         m_fileSystemClient->GetFileClient(m_pathName));
     m_fileSystemClient->GetFileClient(m_pathName).Create();
@@ -73,8 +73,8 @@ namespace Azure { namespace Storage { namespace Test {
 
     {
       // Create path with metadata works
-      auto client1 = m_fileSystemClient->GetFileClient(LowercaseRandomString());
-      auto client2 = m_fileSystemClient->GetFileClient(LowercaseRandomString());
+      auto client1 = m_fileSystemClient->GetFileClient(RandomString());
+      auto client2 = m_fileSystemClient->GetFileClient(RandomString());
       Files::DataLake::CreatePathOptions options1;
       Files::DataLake::CreatePathOptions options2;
       options1.Metadata = metadata1;
@@ -127,7 +127,7 @@ namespace Azure { namespace Storage { namespace Test {
       std::vector<Files::DataLake::DataLakePathClient> pathClient;
       for (int32_t i = 0; i < 2; ++i)
       {
-        auto client = m_fileSystemClient->GetFileClient(LowercaseRandomString());
+        auto client = m_fileSystemClient->GetFileClient(RandomString());
         Files::DataLake::CreatePathOptions options;
         options.HttpHeaders = httpHeader;
         EXPECT_NO_THROW(client.Create(options));
@@ -149,7 +149,7 @@ namespace Azure { namespace Storage { namespace Test {
       std::vector<Files::DataLake::DataLakePathClient> pathClient;
       for (int32_t i = 0; i < 2; ++i)
       {
-        auto client = m_fileSystemClient->GetFileClient(LowercaseRandomString());
+        auto client = m_fileSystemClient->GetFileClient(RandomString());
         EXPECT_NO_THROW(client.Create());
         EXPECT_NO_THROW(client.SetHttpHeaders(httpHeader));
         pathClient.emplace_back(std::move(client));
@@ -349,7 +349,7 @@ namespace Azure { namespace Storage { namespace Test {
   {
     {
       // Create from connection string validates static creator function and shared key constructor.
-      auto pathName = LowercaseRandomString(10);
+      auto pathName = RandomString();
       auto connectionStringClient
           = Azure::Storage::Files::DataLake::DataLakePathClient::CreateFromConnectionString(
               AdlsGen2ConnectionString(), m_fileSystemName, pathName);
@@ -366,7 +366,7 @@ namespace Azure { namespace Storage { namespace Test {
       auto clientSecretClient = Azure::Storage::Files::DataLake::DataLakePathClient(
           Files::DataLake::_detail::GetDfsUrlFromUrl(
               Azure::Storage::Files::DataLake::DataLakePathClient::CreateFromConnectionString(
-                  AdlsGen2ConnectionString(), m_fileSystemName, LowercaseRandomString(10))
+                  AdlsGen2ConnectionString(), m_fileSystemName, RandomString())
                   .GetUrl()),
           credential);
 
@@ -376,7 +376,7 @@ namespace Azure { namespace Storage { namespace Test {
 
     {
       // Create from Anonymous credential.
-      auto objectName = LowercaseRandomString(10);
+      auto objectName = RandomString();
       auto containerClient = Azure::Storage::Blobs::BlobContainerClient::CreateFromConnectionString(
           AdlsGen2ConnectionString(), m_fileSystemName);
       Azure::Storage::Blobs::SetBlobContainerAccessPolicyOptions options;
