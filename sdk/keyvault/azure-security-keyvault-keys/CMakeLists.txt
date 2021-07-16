@@ -28,34 +28,12 @@ endif()
 
 set(
   AZURE_KEYVAULT_KEYS_HEADER
+    inc/azure/keyvault/keys/cryptography/cryptography_client_models.hpp
     inc/azure/keyvault/keys/cryptography/cryptography_client_options.hpp
     inc/azure/keyvault/keys/cryptography/cryptography_client.hpp
-    inc/azure/keyvault/keys/cryptography/decrypt_parameters.hpp
-    inc/azure/keyvault/keys/cryptography/decrypt_result.hpp
-    inc/azure/keyvault/keys/cryptography/encrypt_parameters.hpp
-    inc/azure/keyvault/keys/cryptography/encrypt_result.hpp
-    inc/azure/keyvault/keys/cryptography/encryption_algorithm.hpp
-    inc/azure/keyvault/keys/cryptography/key_wrap_algorithm.hpp
-    inc/azure/keyvault/keys/cryptography/sign_result.hpp
-    inc/azure/keyvault/keys/cryptography/signature_algorithm.hpp
-    inc/azure/keyvault/keys/cryptography/wrap_result.hpp
-    inc/azure/keyvault/keys/cryptography/unwrap_result.hpp
-    inc/azure/keyvault/keys/cryptography/verify_result.hpp
-    inc/azure/keyvault/keys/backup_key_result.hpp
-    inc/azure/keyvault/keys/delete_key_operation.hpp
-    inc/azure/keyvault/keys/deleted_key.hpp
-    inc/azure/keyvault/keys/import_key_options.hpp
-    inc/azure/keyvault/keys/json_web_key.hpp
     inc/azure/keyvault/keys/key_client.hpp
-    inc/azure/keyvault/keys/key_create_options.hpp
-    inc/azure/keyvault/keys/key_curve_name.hpp
+    inc/azure/keyvault/keys/key_client_models.hpp
     inc/azure/keyvault/keys/key_client_options.hpp
-    inc/azure/keyvault/keys/key_operation.hpp
-    inc/azure/keyvault/keys/key_properties.hpp
-    inc/azure/keyvault/keys/key_type.hpp
-    inc/azure/keyvault/keys/keyvault_key.hpp
-    inc/azure/keyvault/keys/list_keys_responses.hpp
-    inc/azure/keyvault/keys/recover_deleted_key_operation.hpp
 )
 
 set(
@@ -94,13 +72,13 @@ set(
     src/key_backup.cpp
     src/key_client_options.cpp
     src/key_client.cpp
+    src/key_client_paged_responses.cpp
     src/key_curve_name.cpp
     src/key_operation.cpp
     src/key_request_parameters.cpp
     src/key_type.cpp
     src/keyvault_key.cpp
     src/keyvault_protocol.cpp
-    src/list_keys_responses.cpp
     src/recover_deleted_key_operation.cpp
 )
 

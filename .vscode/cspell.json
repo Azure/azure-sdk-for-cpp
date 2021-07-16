@@ -100,7 +100,7 @@
       "words": ["xmsblobsequencenumber"]
     },
     {
-      "filename": "**/sdk/keyvault/azure-security-keyvault-keys/inc/azure/keyvault/keys/key_curve_name.hpp",
+      "filename": "**/sdk/keyvault/azure-security-keyvault-keys/inc/azure/keyvault/keys/key_client_models.hpp",
       "words": ["SECG", "SECP"]
     },
     {

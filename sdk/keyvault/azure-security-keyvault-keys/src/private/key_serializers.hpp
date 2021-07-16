@@ -11,10 +11,8 @@
 
 #include <azure/core/internal/json/json.hpp>
 
-#include "azure/keyvault/keys/deleted_key.hpp"
-#include "azure/keyvault/keys/import_key_options.hpp"
-#include "azure/keyvault/keys/keyvault_key.hpp"
-#include "azure/keyvault/keys/list_keys_responses.hpp"
+#include "azure/keyvault/keys/key_client_models.hpp"
+#include "azure/keyvault/keys/key_client_options.hpp"
 
 #include <string>
 

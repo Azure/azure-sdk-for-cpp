@@ -12,9 +12,8 @@
 #include <azure/core/internal/json/json_serializable.hpp>
 #include <azure/core/nullable.hpp>
 
-#include "azure/keyvault/keys/key_create_options.hpp"
-#include "azure/keyvault/keys/key_curve_name.hpp"
-#include "azure/keyvault/keys/key_type.hpp"
+#include "azure/keyvault/keys/key_client_models.hpp"
+#include "azure/keyvault/keys/key_client_options.hpp"
 
 #include <functional>
 #include <memory>

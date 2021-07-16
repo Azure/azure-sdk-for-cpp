@@ -9,15 +9,8 @@
 
 #pragma once
 
-#include "azure/keyvault/keys/backup_key_result.hpp"
-#include "azure/keyvault/keys/delete_key_operation.hpp"
-#include "azure/keyvault/keys/import_key_options.hpp"
+#include "azure/keyvault/keys/key_client_models.hpp"
 #include "azure/keyvault/keys/key_client_options.hpp"
-#include "azure/keyvault/keys/key_create_options.hpp"
-#include "azure/keyvault/keys/key_type.hpp"
-#include "azure/keyvault/keys/keyvault_key.hpp"
-#include "azure/keyvault/keys/list_keys_responses.hpp"
-#include "azure/keyvault/keys/recover_deleted_key_operation.hpp"
 
 #include <functional>
 #include <vector>
@@ -27,27 +20,6 @@ namespace Azure { namespace Security { namespace KeyVault { namespace _detail {
 }}}} // namespace Azure::Security::KeyVault::_detail
 
 namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
-
-  /**
-   * @brief Define a model for a purged key.
-   *
-   */
-  struct PurgedKey final
-  {
-  };
-
-  /**
-   * @brief Optional parameters for KeyVaultClient::GetKey
-   *
-   */
-  struct GetKeyOptions final
-  {
-    /**
-     * @brief Specify the key version to get.
-     *
-     */
-    std::string Version;
-  };
 
   /**
    * @brief The KeyClient provides synchronous methods to manage a KeyVaultKe in the Azure Key

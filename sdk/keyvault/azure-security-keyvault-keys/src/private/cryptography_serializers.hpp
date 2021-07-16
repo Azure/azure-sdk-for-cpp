@@ -13,14 +13,8 @@
 #include <azure/core/http/http.hpp>
 #include <azure/core/internal/json/json.hpp>
 
-#include "azure/keyvault/keys/cryptography/decrypt_parameters.hpp"
-#include "azure/keyvault/keys/cryptography/decrypt_result.hpp"
-#include "azure/keyvault/keys/cryptography/encrypt_parameters.hpp"
-#include "azure/keyvault/keys/cryptography/encrypt_result.hpp"
-#include "azure/keyvault/keys/cryptography/sign_result.hpp"
-#include "azure/keyvault/keys/cryptography/unwrap_result.hpp"
-#include "azure/keyvault/keys/cryptography/verify_result.hpp"
-#include "azure/keyvault/keys/cryptography/wrap_result.hpp"
+#include "azure/keyvault/keys/cryptography/cryptography_client_models.hpp"
+
 #include "key_sign_parameters.hpp"
 #include "key_verify_parameters.hpp"
 #include "key_wrap_parameters.hpp"
