@@ -11,9 +11,13 @@
 #include "azure/keyvault/keys/cryptography/cryptography_client.hpp"
 #include "azure/keyvault/keys/key_operation.hpp"
 
-#include "../private/cryptography_provider.hpp"
-#include "../private/local_cryptography_provider_factory.hpp"
-#include "../private/remote_cryptography_client.hpp"
+#include "../private/cryptography_serializers.hpp"
+#include "../private/key_constants.hpp"
+#include "../private/key_serializers.hpp"
+#include "../private/key_sign_parameters.hpp"
+#include "../private/key_verify_parameters.hpp"
+#include "../private/key_wrap_parameters.hpp"
+#include "../private/keyvault_protocol.hpp"
 
 #include <memory>
 #include <string>
@@ -56,278 +60,126 @@ inline std::vector<uint8_t> CreateDigest(
 
 CryptographyClient::~CryptographyClient() = default;
 
-void CryptographyClient::Initialize(std::string const&, Azure::Core::Context const& context)
-{
-  if (m_provider != nullptr)
-  {
-    return;
-  }
-
-  try
-  {
-    auto key = m_remoteProvider->GetKey(context).Value;
-    m_provider = LocalCryptographyProviderFactory::Create(key);
-    if (m_provider == nullptr)
-    {
-      // KeyVaultKeyType is not supported locally. Use remote client.
-      m_provider = m_remoteProvider;
-      return;
-    }
-  }
-  catch (Azure::Core::RequestFailedException const& e)
-  {
-    if (e.StatusCode == HttpStatusCode::Forbidden)
-    {
-      m_provider = m_remoteProvider;
-    }
-    else
-    {
-      throw;
-    }
-  }
-}
-
 CryptographyClient::CryptographyClient(
     std::string const& keyId,
     std::shared_ptr<Core::Credentials::TokenCredential const> credential,
-    CryptographyClientOptions const& options,
-    bool forceRemote)
+    CryptographyClientOptions const& options)
 {
   auto apiVersion = options.Version.ToString();
-  m_keyId = keyId;
-  m_remoteProvider = std::make_shared<RemoteCryptographyClient>(keyId, credential, options);
-  m_pipeline = m_remoteProvider->Pipeline;
-
-  if (forceRemote)
+  m_keyId = Azure::Core::Url(keyId);
+  std::vector<std::unique_ptr<HttpPolicy>> perRetrypolicies;
   {
-    m_provider = m_remoteProvider;
+    Azure::Core::Credentials::TokenRequestContext const tokenContext
+        = {{"https://vault.azure.net/.default"}};
+
+    perRetrypolicies.emplace_back(
+        std::make_unique<BearerTokenAuthenticationPolicy>(credential, tokenContext));
   }
+
+  m_pipeline = std::make_shared<Azure::Security::KeyVault::_detail::KeyVaultProtocolClient>(
+      m_keyId,
+      apiVersion,
+      Azure::Core::Http::_internal::HttpPipeline(
+          options, "KeyVault", apiVersion, std::move(perRetrypolicies), {}));
 }
 
-EncryptResult CryptographyClient::Encrypt(
+Azure::Response<EncryptResult> CryptographyClient::Encrypt(
     EncryptParameters const& parameters,
     Azure::Core::Context const& context)
 {
-  if (m_provider == nullptr)
-  {
-    // Try to init a local crypto provider after getting the key from the server.
-    // If the local provider can't be created, the remote client is used as provider.
-    Initialize(KeyOperation::Encrypt.ToString(), context);
-  }
-
-  // Default result has empty values.
-  EncryptResult result;
-
-  // m_provider can be local or remote, depending on how it was init.
-  if (m_provider->SupportsOperation(KeyOperation::Encrypt))
-  {
-    try
-    {
-      result = m_provider->Encrypt(parameters, context);
-    }
-    catch (std::exception const&)
-    {
-      // If provider supports remote, otherwise re-throw
-      if (!m_provider->CanRemote())
-      {
-        throw;
-      }
-    }
-
-    if (result.Ciphertext.empty())
-    {
-      // Operation is not completed yet. Either not supported by the provider or not generated.
-      // Assert the client is NOT localOnly before running the operation on Key Vault Service with
-      // the remote provider.
-      AZURE_ASSERT_FALSE(LocalOnly());
-
-      result = m_remoteProvider->Encrypt(parameters, context);
-    }
-  }
-
-  return result;
+  return m_pipeline->SendRequest<EncryptResult>(
+      context,
+      Azure::Core::Http::HttpMethod::Post,
+      [&parameters]() {
+        return EncryptParametersSerializer::EncryptParametersSerialize(parameters);
+      },
+      [&parameters](Azure::Core::Http::RawResponse const& rawResponse) {
+        auto result = EncryptResultSerializer::EncryptResultDeserialize(rawResponse);
+        result.Algorithm = parameters.Algorithm;
+        return result;
+      },
+      {"encrypt"});
 }
 
-DecryptResult CryptographyClient::Decrypt(
+Azure::Response<DecryptResult> CryptographyClient::Decrypt(
     DecryptParameters const& parameters,
     Azure::Core::Context const& context)
 {
-  if (m_provider == nullptr)
-  {
-    // Try to init a local crypto provider after getting the key from the server.
-    // If the local provider can't be created, the remote client is used as provider.
-    Initialize(KeyOperation::Decrypt.ToString(), context);
-  }
-
-  // Default result has empty values.
-  DecryptResult result;
-
-  // m_provider can be local or remote, depending on how it was init.
-  if (m_provider->SupportsOperation(KeyOperation::Decrypt))
-  {
-    try
-    {
-      result = m_provider->Decrypt(parameters, context);
-    }
-    catch (std::exception const&)
-    {
-      // If provider supports remote, otherwise re-throw
-      if (!m_provider->CanRemote())
-      {
-        throw;
-      }
-    }
-
-    if (result.Plaintext.empty())
-    {
-      // Operation is not completed yet. Either not supported by the provider or not generated.
-      // Assert the client is NOT localOnly before running the operation on Key Vault Service with
-      // the remote provider.
-      AZURE_ASSERT_FALSE(LocalOnly());
-
-      result = m_remoteProvider->Decrypt(parameters, context);
-    }
-  }
-
-  return result;
+  return m_pipeline->SendRequest<DecryptResult>(
+      context,
+      Azure::Core::Http::HttpMethod::Post,
+      [&parameters]() {
+        return DecryptParametersSerializer::DecryptParametersSerialize(parameters);
+      },
+      [&parameters](Azure::Core::Http::RawResponse const& rawResponse) {
+        auto result = DecryptResultSerializer::DecryptResultDeserialize(rawResponse);
+        result.Algorithm = parameters.Algorithm;
+        return result;
+      },
+      {"decrypt"});
 }
 
-WrapResult CryptographyClient::WrapKey(
+Azure::Response<WrapResult> CryptographyClient::WrapKey(
     KeyWrapAlgorithm algorithm,
     std::vector<uint8_t> const& key,
     Azure::Core::Context const& context)
 {
-  if (m_provider == nullptr)
-  {
-    // Try to init a local crypto provider after getting the key from the server.
-    // If the local provider can't be created, the remote client is used as provider.
-    Initialize(KeyOperation::WrapKey.ToString(), context);
-  }
-
-  // Default result has empty values.
-  WrapResult result;
-
-  // m_provider can be local or remote, depending on how it was init.
-  if (m_provider->SupportsOperation(KeyOperation::WrapKey))
-  {
-    try
-    {
-      result = m_provider->WrapKey(algorithm, key, context);
-    }
-    catch (std::exception const&)
-    {
-      // If provider supports remote, otherwise re-throw
-      if (!m_provider->CanRemote())
-      {
-        throw;
-      }
-    }
-
-    if (result.EncryptedKey.size() == 0)
-    {
-      // Operation is not completed yet. Either not supported by the provider or not generated.
-      // Assert the client is NOT localOnly before running the operation on Key Vault Service with
-      // the remote provider.
-      AZURE_ASSERT_FALSE(LocalOnly());
-
-      result = m_remoteProvider->WrapKey(algorithm, key, context);
-    }
-  }
-
-  return result;
+  return m_pipeline->SendRequest<WrapResult>(
+      context,
+      Azure::Core::Http::HttpMethod::Post,
+      [&algorithm, &key]() {
+        return KeyWrapParametersSerializer::KeyWrapParametersSerialize(
+            KeyWrapParameters(algorithm.ToString(), key));
+      },
+      [&algorithm](Azure::Core::Http::RawResponse const& rawResponse) {
+        auto result = WrapResultSerializer::WrapResultDeserialize(rawResponse);
+        result.Algorithm = algorithm;
+        return result;
+      },
+      {"wrapKey"});
 }
 
-UnwrapResult CryptographyClient::UnwrapKey(
+Azure::Response<UnwrapResult> CryptographyClient::UnwrapKey(
     KeyWrapAlgorithm algorithm,
     std::vector<uint8_t> const& encryptedKey,
     Azure::Core::Context const& context)
 {
-  if (m_provider == nullptr)
-  {
-    // Try to init a local crypto provider after getting the encryptedKey from the server.
-    // If the local provider can't be created, the remote client is used as provider.
-    Initialize(KeyOperation::UnwrapKey.ToString(), context);
-  }
-
-  // Default result has empty values.
-  UnwrapResult result;
-
-  // m_provider can be local or remote, depending on how it was init.
-  if (m_provider->SupportsOperation(KeyOperation::UnwrapKey))
-  {
-    try
-    {
-      result = m_provider->UnwrapKey(algorithm, encryptedKey, context);
-    }
-    catch (std::exception const&)
-    {
-      // If provider supports remote, otherwise re-throw
-      if (!m_provider->CanRemote())
-      {
-        throw;
-      }
-    }
-
-    if (result.Key.size() == 0)
-    {
-      // Operation is not completed yet. Either not supported by the provider or not generated.
-      // Assert the client is NOT localOnly before running the operation on Key Vault Service with
-      // the remote provider.
-      AZURE_ASSERT_FALSE(LocalOnly());
-
-      result = m_remoteProvider->UnwrapKey(algorithm, encryptedKey, context);
-    }
-  }
-
-  return result;
+  return m_pipeline->SendRequest<UnwrapResult>(
+      context,
+      Azure::Core::Http::HttpMethod::Post,
+      [&algorithm, &encryptedKey]() {
+        return KeyWrapParametersSerializer::KeyWrapParametersSerialize(
+            KeyWrapParameters(algorithm.ToString(), encryptedKey));
+      },
+      [&algorithm](Azure::Core::Http::RawResponse const& rawResponse) {
+        auto result = UnwrapResultSerializer::UnwrapResultDeserialize(rawResponse);
+        result.Algorithm = algorithm;
+        return result;
+      },
+      {"unwrapKey"});
 }
 
-SignResult CryptographyClient::Sign(
+Azure::Response<SignResult> CryptographyClient::Sign(
     SignatureAlgorithm algorithm,
     std::vector<uint8_t> const& digest,
     Azure::Core::Context const& context)
 {
-  if (m_provider == nullptr)
-  {
-    // Try to init a local crypto provider after getting the encryptedKey from the server.
-    // If the local provider can't be created, the remote client is used as provider.
-    Initialize(KeyOperation::Sign.ToString(), context);
-  }
-
-  // Default result has empty values.
-  SignResult result;
-
-  // m_provider can be local or remote, depending on how it was init.
-  if (m_provider->SupportsOperation(KeyOperation::Sign))
-  {
-    try
-    {
-      result = m_provider->Sign(algorithm, digest, context);
-    }
-    catch (std::exception const&)
-    {
-      // If provider supports remote, otherwise re-throw
-      if (!m_provider->CanRemote())
-      {
-        throw;
-      }
-    }
-
-    if (result.Signature.size() == 0)
-    {
-      // Operation is not completed yet. Either not supported by the provider or not generated.
-      // Assert the client is NOT localOnly before running the operation on Key Vault Service with
-      // the remote provider.
-      AZURE_ASSERT_FALSE(LocalOnly());
-
-      result = m_remoteProvider->Sign(algorithm, digest, context);
-    }
-  }
-
-  return result;
+  return m_pipeline->SendRequest<SignResult>(
+      context,
+      Azure::Core::Http::HttpMethod::Post,
+      [&algorithm, &digest]() {
+        return KeySignParametersSerializer::KeySignParametersSerialize(
+            KeySignParameters(algorithm.ToString(), digest));
+      },
+      [&algorithm](Azure::Core::Http::RawResponse const& rawResponse) {
+        auto result = SignResultSerializer::SignResultDeserialize(rawResponse);
+        result.Algorithm = algorithm;
+        return result;
+      },
+      {"sign"});
 }
 
-SignResult CryptographyClient::SignData(
+Azure::Response<SignResult> CryptographyClient::SignData(
     SignatureAlgorithm algorithm,
     Azure::Core::IO::BodyStream& data,
     Azure::Core::Context const& context)
@@ -335,7 +187,7 @@ SignResult CryptographyClient::SignData(
   return Sign(algorithm, CreateDigest(algorithm, data), context);
 }
 
-SignResult CryptographyClient::SignData(
+Azure::Response<SignResult> CryptographyClient::SignData(
     SignatureAlgorithm algorithm,
     std::vector<uint8_t> const& data,
     Azure::Core::Context const& context)
@@ -343,53 +195,31 @@ SignResult CryptographyClient::SignData(
   return Sign(algorithm, CreateDigest(algorithm, data), context);
 }
 
-VerifyResult CryptographyClient::Verify(
+Azure::Response<VerifyResult> CryptographyClient::Verify(
     SignatureAlgorithm algorithm,
     std::vector<uint8_t> const& digest,
     std::vector<uint8_t> const& signature,
     Azure::Core::Context const& context)
 {
-  if (m_provider == nullptr)
-  {
-    // Try to init a local crypto provider after getting the encryptedKey from the server.
-    // If the local provider can't be created, the remote client is used as provider.
-    Initialize(KeyOperation::Verify.ToString(), context);
-  }
-
-  // Default result has empty values.
-  VerifyResult result;
-
-  // m_provider can be local or remote, depending on how it was init.
-  if (m_provider->SupportsOperation(KeyOperation::Verify))
-  {
-    try
-    {
-      result = m_provider->Verify(algorithm, digest, signature, context);
-    }
-    catch (std::exception const&)
-    {
-      // If provider supports remote, otherwise re-throw
-      if (!m_provider->CanRemote())
-      {
-        throw;
-      }
-    }
-
-    if (result.KeyId.empty())
-    {
-      // Operation is not completed yet. Either not supported by the provider or not generated.
-      // Assert the client is NOT localOnly before running the operation on Key Vault Service with
-      // the remote provider.
-      AZURE_ASSERT_FALSE(LocalOnly());
-
-      result = m_remoteProvider->Verify(algorithm, digest, signature, context);
-    }
-  }
-
-  return result;
+  return m_pipeline->SendRequest<VerifyResult>(
+      context,
+      Azure::Core::Http::HttpMethod::Post,
+      [&algorithm, &digest, &signature]() {
+        return KeyVerifyParametersSerializer::KeyVerifyParametersSerialize(
+            KeyVerifyParameters(algorithm.ToString(), digest, signature));
+      },
+      [&algorithm, this](Azure::Core::Http::RawResponse const& rawResponse) {
+        auto result = VerifyResultSerializer::VerifyResultDeserialize(rawResponse);
+        result.Algorithm = algorithm;
+        // Verify result won't return the KeyId, the client SDK will add it based on the client
+        // KeyId.
+        result.KeyId = this->m_keyId.GetAbsoluteUrl();
+        return result;
+      },
+      {"verify"});
 }
 
-VerifyResult CryptographyClient::VerifyData(
+Azure::Response<VerifyResult> CryptographyClient::VerifyData(
     SignatureAlgorithm algorithm,
     Azure::Core::IO::BodyStream& data,
     std::vector<uint8_t> const& signature,
@@ -398,7 +228,7 @@ VerifyResult CryptographyClient::VerifyData(
   return Verify(algorithm, CreateDigest(algorithm, data), signature, context);
 }
 
-VerifyResult CryptographyClient::VerifyData(
+Azure::Response<VerifyResult> CryptographyClient::VerifyData(
     SignatureAlgorithm algorithm,
     std::vector<uint8_t> const& data,
     std::vector<uint8_t> const& signature,

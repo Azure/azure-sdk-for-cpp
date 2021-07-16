@@ -52,13 +52,13 @@ int main()
   uint8_t const data[] = "A single block of plaintext";
   std::vector<uint8_t> plaintext(std::begin(data), std::end(data));
   EncryptResult encryptResult
-      = cryptoClient.Encrypt(EncryptParameters::RsaOaepParameters(plaintext));
+      = cryptoClient.Encrypt(EncryptParameters::RsaOaepParameters(plaintext)).Value;
   std::cout << " - Encrypted data using the algorithm " << encryptResult.Algorithm.ToString()
             << ", with key " << encryptResult.KeyId << ". The resulting encrypted data is: "
             << Azure::Core::Convert::Base64Encode(encryptResult.Ciphertext) << std::endl;
 
   DecryptResult decryptResult
-      = cryptoClient.Decrypt(DecryptParameters::RsaOaepParameters(encryptResult.Ciphertext));
+      = cryptoClient.Decrypt(DecryptParameters::RsaOaepParameters(encryptResult.Ciphertext)).Value;
   std::cout << " - Decrypted data using the algorithm " << decryptResult.Algorithm.ToString()
             << ", with key " << decryptResult.KeyId << ". The resulting decrypted data is: "
             << std::string(decryptResult.Plaintext.begin(), decryptResult.Plaintext.end())
