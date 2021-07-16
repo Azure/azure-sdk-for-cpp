@@ -102,6 +102,23 @@ namespace Azure { namespace Storage { namespace Test {
     }
   }
 
+  TEST_F(FileShareFileClientTest, DownloadEmptyFile)
+  {
+    auto fileClient = m_fileShareDirectoryClient->GetFileClient(RandomString());
+    fileClient.Create(0);
+
+    auto res = fileClient.Download();
+    EXPECT_EQ(res.Value.BodyStream->Length(), 0);
+
+    std::string tempFilename = RandomString();
+    EXPECT_NO_THROW(fileClient.DownloadTo(tempFilename));
+    EXPECT_TRUE(ReadFile(tempFilename).empty());
+    DeleteFile(tempFilename);
+
+    std::vector<uint8_t> buff;
+    EXPECT_NO_THROW(fileClient.DownloadTo(buff.data(), 0));
+  }
+
   TEST_F(FileShareFileClientTest, FileMetadata)
   {
     auto metadata1 = RandomMetadata();
@@ -638,12 +655,6 @@ namespace Azure { namespace Storage { namespace Test {
     }
   }
 
-  static std::vector<uint8_t> Hash(const std::string& data)
-  {
-    Azure::Core::Cryptography::Md5Hash instance;
-    return instance.Final(reinterpret_cast<const uint8_t*>(data.data()), data.size());
-  }
-
   TEST_F(FileShareFileClientTest, RangeUploadDownload)
   {
     auto rangeSize = 1 * 1024 * 1024;
@@ -682,7 +693,6 @@ namespace Azure { namespace Storage { namespace Test {
       memBodyStream.Rewind();
       Azure::Core::Cryptography::Md5Hash instance;
       auto md5 = instance.Final(rangeContent.data(), rangeContent.size());
-      auto invalidMd5 = Hash(std::string("This is garbage."));
       auto fileClient
           = m_shareClient->GetRootDirectoryClient().GetFileClient(LowercaseRandomString(10));
       Files::Shares::UploadFileRangeOptions uploadOptions;
@@ -692,7 +702,7 @@ namespace Azure { namespace Storage { namespace Test {
       hash.Algorithm = HashAlgorithm::Md5;
       uploadOptions.TransactionalContentHash = hash;
       EXPECT_NO_THROW(fileClient.UploadRange(0, memBodyStream, uploadOptions));
-      hash.Value = invalidMd5;
+      hash.Value = Azure::Core::Convert::Base64Decode(DummyMd5);
       uploadOptions.TransactionalContentHash = hash;
       memBodyStream.Rewind();
       EXPECT_THROW(fileClient.UploadRange(0, memBodyStream, uploadOptions), StorageException);

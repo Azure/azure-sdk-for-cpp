@@ -329,6 +329,23 @@ namespace Azure { namespace Storage { namespace Test {
     }
   }
 
+  TEST_F(DataLakeFileClientTest, ReadEmptyFile)
+  {
+    auto fileClient = m_fileSystemClient->GetFileClient(RandomString());
+    fileClient.Create();
+
+    auto res = fileClient.Download();
+    EXPECT_EQ(res.Value.Body->Length(), 0);
+
+    std::string tempFilename = RandomString();
+    EXPECT_NO_THROW(fileClient.DownloadTo(tempFilename));
+    EXPECT_TRUE(ReadFile(tempFilename).empty());
+    DeleteFile(tempFilename);
+
+    std::vector<uint8_t> buff;
+    EXPECT_NO_THROW(fileClient.DownloadTo(buff.data(), 0));
+  }
+
   TEST_F(DataLakeFileClientTest, ScheduleForDeletion)
   {
     {
