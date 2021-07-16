@@ -241,6 +241,10 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
   {
     auto protocolLayerOptions = _detail::ShareRestClient::Directory::SetPropertiesOptions();
     protocolLayerOptions.FileAttributes = smbProperties.Attributes.ToString();
+    if (protocolLayerOptions.FileAttributes.empty())
+    {
+      protocolLayerOptions.FileAttributes = FilePreserveSmbProperties;
+    }
     if (smbProperties.CreatedOn.HasValue())
     {
       protocolLayerOptions.FileCreationTime = smbProperties.CreatedOn.Value().ToString(
@@ -248,7 +252,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     }
     else
     {
-      protocolLayerOptions.FileCreationTime = std::string(FileDefaultTimeValue);
+      protocolLayerOptions.FileCreationTime = FilePreserveSmbProperties;
     }
     if (smbProperties.LastWrittenOn.HasValue())
     {
@@ -257,7 +261,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     }
     else
     {
-      protocolLayerOptions.FileLastWriteTime = std::string(FileDefaultTimeValue);
+      protocolLayerOptions.FileLastWriteTime = FilePreserveSmbProperties;
     }
     if (options.FilePermission.HasValue())
     {
@@ -269,7 +273,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     }
     else
     {
-      protocolLayerOptions.FilePermission = std::string(FileInheritPermission);
+      protocolLayerOptions.FilePermission = FilePreserveSmbProperties;
     }
     return _detail::ShareRestClient::Directory::SetProperties(
         m_shareDirectoryUrl, *m_pipeline, context, protocolLayerOptions);

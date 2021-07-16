@@ -402,7 +402,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     protocolLayerOptions.FileAttributes = smbProperties.Attributes.ToString();
     if (protocolLayerOptions.FileAttributes.empty())
     {
-      protocolLayerOptions.FileAttributes = Models::FileAttributes::None.ToString();
+      protocolLayerOptions.FileAttributes = FilePreserveSmbProperties;
     }
     if (smbProperties.CreatedOn.HasValue())
     {
@@ -411,7 +411,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     }
     else
     {
-      protocolLayerOptions.FileCreationTime = std::string(FileDefaultTimeValue);
+      protocolLayerOptions.FileCreationTime = FilePreserveSmbProperties;
     }
     if (smbProperties.LastWrittenOn.HasValue())
     {
@@ -420,7 +420,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     }
     else
     {
-      protocolLayerOptions.FileLastWriteTime = std::string(FileDefaultTimeValue);
+      protocolLayerOptions.FileLastWriteTime = FilePreserveSmbProperties;
     }
     protocolLayerOptions.XMsContentLength = options.Size;
     protocolLayerOptions.LeaseIdOptional = options.AccessConditions.LeaseId;
@@ -434,7 +434,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     }
     else
     {
-      protocolLayerOptions.FilePermission = std::string(FileInheritPermission);
+      protocolLayerOptions.FilePermission = FilePreserveSmbProperties;
     }
 
     if (!httpHeaders.ContentType.empty())
