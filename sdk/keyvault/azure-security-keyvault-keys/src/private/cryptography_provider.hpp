@@ -12,8 +12,6 @@
 #include <azure/core/context.hpp>
 
 #include "azure/keyvault/keys/cryptography/cryptography_client_models.hpp"
-#include "azure/keyvault/keys/cryptography/decrypt_parameters.hpp"
-#include "azure/keyvault/keys/cryptography/encrypt_parameters.hpp"
 #include "azure/keyvault/keys/key_client_models.hpp"
 
 #include <memory>

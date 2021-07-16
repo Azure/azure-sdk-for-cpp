@@ -14,8 +14,6 @@
 #include <azure/core/internal/json/json.hpp>
 
 #include "azure/keyvault/keys/cryptography/cryptography_client_models.hpp"
-#include "azure/keyvault/keys/cryptography/decrypt_parameters.hpp"
-#include "azure/keyvault/keys/cryptography/encrypt_parameters.hpp"
 
 #include "key_sign_parameters.hpp"
 #include "key_verify_parameters.hpp"
