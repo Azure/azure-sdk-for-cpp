@@ -16,6 +16,7 @@
 ### Bugs Fixed
 
 - Fixed a bug where lease ID didn't work for `BlobContainerClient::GetAccessPolicy()`.
+- Fixed a bug where sequence number access conditions didn't work for page blob operations.
 - Fixed a bug where `BlobItemDetails::EncryptionKeySha256` was always null because it wasn't correctly parsed from xml.
 
 ### Other Changes
