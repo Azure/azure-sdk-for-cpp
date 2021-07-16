@@ -209,7 +209,7 @@ namespace Azure { namespace Storage { namespace Test {
     Storage::Metadata result;
     for (size_t i = 0; i < size; ++i)
     {
-      result["m" + RandomString(5)] = RandomString(5);
+      result["m" + LowercaseRandomString(5)] = RandomString(5);
     }
     return result;
   }
