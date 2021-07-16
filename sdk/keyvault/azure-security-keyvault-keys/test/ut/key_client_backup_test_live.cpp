@@ -45,7 +45,7 @@ TEST_F(KeyVaultClientTest, BackupKey)
     // Delete
     std::cout << std::endl << "- Delete key";
     auto response = keyClient.StartDeleteKey(keyName);
-    response.PollUntilDone(std::chrono::milliseconds(1000));
+    response.PollUntilDone(m_testPollingIntervalMinutes);
   }
   {
     // Purge
@@ -74,7 +74,7 @@ TEST_F(KeyVaultClientTest, BackupKey)
     // Delete
     std::cout << std::endl << "- Clean";
     auto response = keyClient.StartDeleteKey(keyName);
-    response.PollUntilDone(std::chrono::milliseconds(1000));
+    response.PollUntilDone(m_testPollingIntervalMinutes);
   }
   {
     // Purge

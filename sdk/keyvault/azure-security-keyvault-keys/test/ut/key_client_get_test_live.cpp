@@ -135,7 +135,7 @@ TEST_F(KeyVaultClientTest, GetDeletedKeysOnePage)
   // wait for all of the delete operations to complete
   for (auto& operation : operations)
   {
-    operation.PollUntilDone(std::chrono::milliseconds(1000));
+    operation.PollUntilDone(m_testPollingIntervalMinutes);
   }
 
   // Get all deleted Keys
