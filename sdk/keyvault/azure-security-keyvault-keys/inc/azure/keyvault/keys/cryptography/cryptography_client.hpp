@@ -11,6 +11,7 @@
 
 #include <azure/core/context.hpp>
 #include <azure/core/io/body_stream.hpp>
+#include <azure/core/response.hpp>
 
 #include "azure/keyvault/keys/cryptography/cryptography_client_models.hpp"
 #include "azure/keyvault/keys/cryptography/cryptography_client_options.hpp"
@@ -27,11 +28,6 @@ namespace Azure { namespace Security { namespace KeyVault {
 
   namespace Keys { namespace Cryptography {
 
-    namespace _detail {
-      class CryptographyProvider;
-      class RemoteCryptographyClient;
-    } // namespace _detail
-
     /**
      * @brief A client used to perform cryptographic operations with Azure Key Vault keys.
      *
@@ -39,26 +35,7 @@ namespace Azure { namespace Security { namespace KeyVault {
     class CryptographyClient final {
     private:
       std::shared_ptr<Azure::Security::KeyVault::_detail::KeyVaultProtocolClient> m_pipeline;
-      std::string m_keyId;
-      std::shared_ptr<
-          Azure::Security::KeyVault::Keys::Cryptography::_detail::RemoteCryptographyClient>
-          m_remoteProvider;
-      std::shared_ptr<Azure::Security::KeyVault::Keys::Cryptography::_detail::CryptographyProvider>
-          m_provider;
-
-      explicit CryptographyClient(
-          std::string const& keyId,
-          std::shared_ptr<Core::Credentials::TokenCredential const> credential,
-          CryptographyClientOptions const& options,
-          bool forceRemote);
-
-      void Initialize(std::string const& operation, Azure::Core::Context const& context);
-
-      /**
-       * @brief Gets whether this #CryptographyClient runs only local operations.
-       *
-       */
-      bool LocalOnly() const noexcept { return m_remoteProvider == nullptr; }
+      Azure::Core::Url m_keyId;
 
     public:
       /**
@@ -74,10 +51,7 @@ namespace Azure { namespace Security { namespace KeyVault {
       explicit CryptographyClient(
           std::string const& keyId,
           std::shared_ptr<Core::Credentials::TokenCredential const> credential,
-          CryptographyClientOptions options = CryptographyClientOptions())
-          : CryptographyClient(keyId, credential, options, false)
-      {
-      }
+          CryptographyClientOptions const& options = CryptographyClientOptions());
 
       /**
        * @brief Destructs `%CryptographyClient`.
@@ -94,7 +68,7 @@ namespace Azure { namespace Security { namespace KeyVault {
        * @return An #EncryptResult containing the encrypted data along with all other information
        * needed to decrypt it. This information should be stored with the encrypted data.
        */
-      EncryptResult Encrypt(
+      Azure::Response<EncryptResult> Encrypt(
           EncryptParameters const& parameters,
           Azure::Core::Context const& context = Azure::Core::Context());
 
@@ -107,7 +81,7 @@ namespace Azure { namespace Security { namespace KeyVault {
        * @return An #DecryptResult containing the decrypted data along with all other information
        * needed to decrypt it. This information should be stored with the Decrypted data.
        */
-      DecryptResult Decrypt(
+      Azure::Response<DecryptResult> Decrypt(
           DecryptParameters const& parameters,
           Azure::Core::Context const& context = Azure::Core::Context());
 
@@ -121,7 +95,7 @@ namespace Azure { namespace Security { namespace KeyVault {
        * along with all other information needed to unwrap it. This information should be stored
        * with the wrapped key.
        */
-      WrapResult WrapKey(
+      Azure::Response<WrapResult> WrapKey(
           KeyWrapAlgorithm algorithm,
           std::vector<uint8_t> const& key,
           Azure::Core::Context const& context = Azure::Core::Context());
@@ -135,7 +109,7 @@ namespace Azure { namespace Security { namespace KeyVault {
        * @return The result of the unwrap operation. The returned #UnwrapResult contains the key
        * along with information regarding the algorithm and key used to unwrap it.
        */
-      UnwrapResult UnwrapKey(
+      Azure::Response<UnwrapResult> UnwrapKey(
           KeyWrapAlgorithm algorithm,
           std::vector<uint8_t> const& encryptedKey,
           Azure::Core::Context const& context = Azure::Core::Context());
@@ -151,7 +125,7 @@ namespace Azure { namespace Security { namespace KeyVault {
        * along with all other information needed to verify it. This information should be stored
        * with the signature.
        */
-      SignResult Sign(
+      Azure::Response<SignResult> Sign(
           SignatureAlgorithm algorithm,
           std::vector<uint8_t> const& digest,
           Azure::Core::Context const& context = Azure::Core::Context());
@@ -166,7 +140,7 @@ namespace Azure { namespace Security { namespace KeyVault {
        * along with all other information needed to verify it. This information should be stored
        * with the signature.
        */
-      SignResult SignData(
+      Azure::Response<SignResult> SignData(
           SignatureAlgorithm algorithm,
           Azure::Core::IO::BodyStream& data,
           Azure::Core::Context const& context = Azure::Core::Context());
@@ -181,7 +155,7 @@ namespace Azure { namespace Security { namespace KeyVault {
        * along with all other information needed to verify it. This information should be stored
        * with the signature.
        */
-      SignResult SignData(
+      Azure::Response<SignResult> SignData(
           SignatureAlgorithm algorithm,
           std::vector<uint8_t> const& data,
           Azure::Core::Context const& context = Azure::Core::Context());
@@ -198,7 +172,7 @@ namespace Azure { namespace Security { namespace KeyVault {
        * @return The result of the verify operation. If the signature is valid the
        * #VerifyResult.IsValid property of the returned #VerifyResult will be set to true.
        */
-      VerifyResult Verify(
+      Azure::Response<VerifyResult> Verify(
           SignatureAlgorithm algorithm,
           std::vector<uint8_t> const& digest,
           std::vector<uint8_t> const& signature,
@@ -215,7 +189,7 @@ namespace Azure { namespace Security { namespace KeyVault {
        * @return The result of the verify operation. If the signature is valid the
        * #VerifyResult.IsValid property of the returned #VerifyResult will be set to true.
        */
-      VerifyResult VerifyData(
+      Azure::Response<VerifyResult> VerifyData(
           SignatureAlgorithm algorithm,
           Azure::Core::IO::BodyStream& data,
           std::vector<uint8_t> const& signature,
@@ -232,7 +206,7 @@ namespace Azure { namespace Security { namespace KeyVault {
        * @return The result of the verify operation. If the signature is valid the
        * #VerifyResult.IsValid property of the returned #VerifyResult will be set to true.
        */
-      VerifyResult VerifyData(
+      Azure::Response<VerifyResult> VerifyData(
           SignatureAlgorithm algorithm,
           std::vector<uint8_t> const& data,
           std::vector<uint8_t> const& signature,

@@ -49,14 +49,11 @@ set(
     src/cryptography/key_verify_parameters.cpp
     src/cryptography/key_wrap_algorithm.cpp
     src/cryptography/key_wrap_parameters.cpp
-    src/cryptography/remote_cryptography_client.cpp
-    src/cryptography/rsa_cryptography_provider.cpp
     src/cryptography/sign_result.cpp
     src/cryptography/signature_algorithm.cpp
     src/cryptography/wrap_result.cpp
     src/cryptography/unwrap_result.cpp
     src/cryptography/verify_result.cpp
-    src/private/cryptography_provider.hpp
     src/private/cryptography_serializers.hpp
     src/private/key_backup.hpp
     src/private/key_constants.hpp
@@ -67,11 +64,7 @@ set(
     src/private/key_wrap_parameters.hpp
     src/private/keyvault_constants.hpp
     src/private/keyvault_protocol.hpp
-    src/private/local_cryptography_provider.hpp
-    src/private/local_cryptography_provider_factory.hpp
     src/private/package_version.hpp
-    src/private/remote_cryptography_client.hpp
-    src/private/rsa_cryptography_provider.hpp
     src/delete_key_operation.cpp
     src/deleted_key.cpp
     src/import_key_options.cpp
