@@ -69,4 +69,18 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_LE(timeout.Value(), 301);
   }
 
+  TEST(StoragetimeoutTest, Cancelled)
+  {
+    Blobs::BlobClientOptions clientOptions;
+    auto containerClient = Azure::Storage::Blobs::BlobContainerClient::CreateFromConnectionString(
+        StandardStorageConnectionString(), LowercaseRandomString(), clientOptions);
+
+    Azure::Core::Context context;
+    context.Cancel();
+    // Should not throw an error on time point casting.
+    EXPECT_THROW(
+        containerClient.DeleteIfExists(Storage::Blobs::DeleteBlobContainerOptions(), context),
+        Core::OperationCancelledException);
+  }
+
 }}} // namespace Azure::Storage::Test
