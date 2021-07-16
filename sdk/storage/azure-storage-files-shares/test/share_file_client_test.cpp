@@ -20,9 +20,9 @@ namespace Azure { namespace Storage { namespace Test {
 
   void FileShareFileClientTest::SetUpTestSuite()
   {
-    m_directoryName = LowercaseRandomString();
+    m_directoryName = RandomString();
     m_shareName = LowercaseRandomString();
-    m_fileName = LowercaseRandomString();
+    m_fileName = RandomString();
     m_shareClient = std::make_shared<Files::Shares::ShareClient>(
         Files::Shares::ShareClient::CreateFromConnectionString(
             StandardStorageConnectionString(), m_shareName));
@@ -49,7 +49,7 @@ namespace Azure { namespace Storage { namespace Test {
       std::vector<Files::Shares::ShareFileClient> fileClients;
       for (int32_t i = 0; i < 5; ++i)
       {
-        auto fileName = RandomString(10);
+        auto fileName = RandomString();
         Files::Shares::ShareFileClient client = m_fileShareDirectoryClient->GetFileClient(fileName);
         EXPECT_NO_THROW(client.Create(1024));
         fileClients.emplace_back(std::move(client));
@@ -72,30 +72,27 @@ namespace Azure { namespace Storage { namespace Test {
     {
       // DeleteIfExists.
       {
-        auto client
-            = m_shareClient->GetRootDirectoryClient().GetFileClient(LowercaseRandomString());
+        auto client = m_shareClient->GetRootDirectoryClient().GetFileClient(RandomString());
         EXPECT_NO_THROW(client.Create(1024));
         EXPECT_NO_THROW(client.Delete());
         EXPECT_NO_THROW(client.DeleteIfExists());
       }
       {
-        auto client
-            = m_shareClient->GetRootDirectoryClient().GetFileClient(LowercaseRandomString());
+        auto client = m_shareClient->GetRootDirectoryClient().GetFileClient(RandomString());
         auto deleteResult = client.DeleteIfExists();
         EXPECT_FALSE(deleteResult.Value.Deleted);
       }
       {
         auto shareClient = Files::Shares::ShareClient::CreateFromConnectionString(
             StandardStorageConnectionString(), LowercaseRandomString());
-        auto client
-            = m_shareClient->GetRootDirectoryClient().GetFileClient(LowercaseRandomString());
+        auto client = m_shareClient->GetRootDirectoryClient().GetFileClient(RandomString());
         auto deleteResult = client.DeleteIfExists();
         EXPECT_FALSE(deleteResult.Value.Deleted);
       }
       {
         auto client = m_shareClient->GetRootDirectoryClient()
-                          .GetSubdirectoryClient(LowercaseRandomString())
-                          .GetFileClient(LowercaseRandomString());
+                          .GetSubdirectoryClient(RandomString())
+                          .GetFileClient(RandomString());
         auto deleteResult = client.DeleteIfExists();
         EXPECT_FALSE(deleteResult.Value.Deleted);
       }
@@ -135,8 +132,8 @@ namespace Azure { namespace Storage { namespace Test {
 
     {
       // Create directory with metadata works
-      auto client1 = m_fileShareDirectoryClient->GetFileClient(LowercaseRandomString());
-      auto client2 = m_fileShareDirectoryClient->GetFileClient(LowercaseRandomString());
+      auto client1 = m_fileShareDirectoryClient->GetFileClient(RandomString());
+      auto client2 = m_fileShareDirectoryClient->GetFileClient(RandomString());
       Files::Shares::CreateFileOptions options1;
       Files::Shares::CreateFileOptions options2;
       options1.Metadata = metadata1;
@@ -159,8 +156,8 @@ namespace Azure { namespace Storage { namespace Test {
 
     {
       // Create directory with permission/permission key works
-      auto client1 = m_fileShareDirectoryClient->GetFileClient(LowercaseRandomString());
-      auto client2 = m_fileShareDirectoryClient->GetFileClient(LowercaseRandomString());
+      auto client1 = m_fileShareDirectoryClient->GetFileClient(RandomString());
+      auto client2 = m_fileShareDirectoryClient->GetFileClient(RandomString());
       Files::Shares::CreateFileOptions options1;
       Files::Shares::CreateFileOptions options2;
       options1.Permission = permission;
@@ -174,7 +171,7 @@ namespace Azure { namespace Storage { namespace Test {
       EXPECT_TRUE(result2.HasValue());
       EXPECT_EQ(result1.Value(), result2.Value());
 
-      auto client3 = m_fileShareDirectoryClient->GetFileClient(LowercaseRandomString());
+      auto client3 = m_fileShareDirectoryClient->GetFileClient(RandomString());
       Files::Shares::CreateFileOptions options3;
       options3.SmbProperties.PermissionKey = result1;
       EXPECT_NO_THROW(client3.Create(1024, options3));
@@ -191,8 +188,8 @@ namespace Azure { namespace Storage { namespace Test {
       properties.CreatedOn = std::chrono::system_clock::now();
       properties.LastWrittenOn = std::chrono::system_clock::now();
       properties.PermissionKey = "";
-      auto client1 = m_fileShareDirectoryClient->GetFileClient(LowercaseRandomString());
-      auto client2 = m_fileShareDirectoryClient->GetFileClient(LowercaseRandomString());
+      auto client1 = m_fileShareDirectoryClient->GetFileClient(RandomString());
+      auto client2 = m_fileShareDirectoryClient->GetFileClient(RandomString());
 
       EXPECT_NO_THROW(client1.Create(1024));
       EXPECT_NO_THROW(client2.Create(1024));
@@ -208,7 +205,7 @@ namespace Azure { namespace Storage { namespace Test {
       EXPECT_TRUE(result2.HasValue());
       EXPECT_EQ(result1.Value(), result2.Value());
 
-      auto client3 = m_fileShareDirectoryClient->GetFileClient(LowercaseRandomString());
+      auto client3 = m_fileShareDirectoryClient->GetFileClient(RandomString());
       Files::Shares::CreateFileOptions options3;
       options3.SmbProperties.PermissionKey = result1;
       std::string permissionKey;
@@ -230,8 +227,8 @@ namespace Azure { namespace Storage { namespace Test {
     properties.PermissionKey = m_fileClient->GetProperties().Value.SmbProperties.PermissionKey;
     {
       // Create directory with SmbProperties works
-      auto client1 = m_fileShareDirectoryClient->GetFileClient(LowercaseRandomString());
-      auto client2 = m_fileShareDirectoryClient->GetFileClient(LowercaseRandomString());
+      auto client1 = m_fileShareDirectoryClient->GetFileClient(RandomString());
+      auto client2 = m_fileShareDirectoryClient->GetFileClient(RandomString());
       Files::Shares::CreateFileOptions options1;
       Files::Shares::CreateFileOptions options2;
       options1.SmbProperties = properties;
@@ -254,8 +251,8 @@ namespace Azure { namespace Storage { namespace Test {
 
     {
       // SetProperties works
-      auto client1 = m_fileShareDirectoryClient->GetFileClient(LowercaseRandomString());
-      auto client2 = m_fileShareDirectoryClient->GetFileClient(LowercaseRandomString());
+      auto client1 = m_fileShareDirectoryClient->GetFileClient(RandomString());
+      auto client2 = m_fileShareDirectoryClient->GetFileClient(RandomString());
 
       EXPECT_NO_THROW(client1.Create(1024));
       EXPECT_NO_THROW(client2.Create(1024));
@@ -663,8 +660,7 @@ namespace Azure { namespace Storage { namespace Test {
     auto memBodyStream = Core::IO::MemoryBodyStream(rangeContent);
     {
       // Simple upload/download.
-      auto fileClient
-          = m_shareClient->GetRootDirectoryClient().GetFileClient(LowercaseRandomString(10));
+      auto fileClient = m_shareClient->GetRootDirectoryClient().GetFileClient(RandomString());
       fileClient.Create(static_cast<int64_t>(numOfChunks) * rangeSize);
       for (int32_t i = 0; i < numOfChunks; ++i)
       {
@@ -693,8 +689,7 @@ namespace Azure { namespace Storage { namespace Test {
       memBodyStream.Rewind();
       Azure::Core::Cryptography::Md5Hash instance;
       auto md5 = instance.Final(rangeContent.data(), rangeContent.size());
-      auto fileClient
-          = m_shareClient->GetRootDirectoryClient().GetFileClient(LowercaseRandomString(10));
+      auto fileClient = m_shareClient->GetRootDirectoryClient().GetFileClient(RandomString());
       Files::Shares::UploadFileRangeOptions uploadOptions;
       fileClient.Create(static_cast<int64_t>(numOfChunks) * rangeSize);
       ContentHash hash;
@@ -716,12 +711,10 @@ namespace Azure { namespace Storage { namespace Test {
     auto memBodyStream = Core::IO::MemoryBodyStream(fileContent);
     {
       // Simple copy works.
-      auto fileClient
-          = m_shareClient->GetRootDirectoryClient().GetFileClient(LowercaseRandomString(10));
+      auto fileClient = m_shareClient->GetRootDirectoryClient().GetFileClient(RandomString());
       fileClient.Create(fileSize);
 
-      auto destFileClient
-          = m_shareClient->GetRootDirectoryClient().GetFileClient(LowercaseRandomString(10));
+      auto destFileClient = m_shareClient->GetRootDirectoryClient().GetFileClient(RandomString());
       auto copyOperation = destFileClient.StartCopy(fileClient.GetUrl());
       EXPECT_EQ(
           copyOperation.GetRawResponse().GetStatusCode(),
@@ -732,12 +725,10 @@ namespace Azure { namespace Storage { namespace Test {
 
     {
       // Copy mode with override and empty permission throws error..
-      auto fileClient
-          = m_shareClient->GetRootDirectoryClient().GetFileClient(LowercaseRandomString(10));
+      auto fileClient = m_shareClient->GetRootDirectoryClient().GetFileClient(RandomString());
       fileClient.Create(fileSize);
 
-      auto destFileClient
-          = m_shareClient->GetRootDirectoryClient().GetFileClient(LowercaseRandomString(10));
+      auto destFileClient = m_shareClient->GetRootDirectoryClient().GetFileClient(RandomString());
     }
   }
 
@@ -749,8 +740,7 @@ namespace Azure { namespace Storage { namespace Test {
     auto halfContent
         = std::vector<uint8_t>(fileContent.begin(), fileContent.begin() + fileSize / 2);
     halfContent.resize(fileSize);
-    auto fileClient
-        = m_shareClient->GetRootDirectoryClient().GetFileClient(LowercaseRandomString(10));
+    auto fileClient = m_shareClient->GetRootDirectoryClient().GetFileClient(RandomString());
     fileClient.Create(fileSize);
     EXPECT_NO_THROW(fileClient.UploadRange(0, memBodyStream));
     EXPECT_NO_THROW(fileClient.ClearRange(fileSize / 2, fileSize / 2));
@@ -778,8 +768,7 @@ namespace Azure { namespace Storage { namespace Test {
     auto halfContent
         = std::vector<uint8_t>(fileContent.begin(), fileContent.begin() + fileSize / 2);
     halfContent.resize(fileSize);
-    auto fileClient
-        = m_shareClient->GetRootDirectoryClient().GetFileClient(LowercaseRandomString(10));
+    auto fileClient = m_shareClient->GetRootDirectoryClient().GetFileClient(RandomString());
     fileClient.Create(fileSize);
     EXPECT_NO_THROW(fileClient.UploadRange(0, memBodyStream));
     EXPECT_NO_THROW(fileClient.ClearRange(fileSize / 2, fileSize / 2));
@@ -878,7 +867,7 @@ namespace Azure { namespace Storage { namespace Test {
     sourceFileClient.Create(fileSize);
     EXPECT_NO_THROW(sourceFileClient.UploadRange(0, memBodyStream));
 
-    auto destFileClient = m_shareClient->GetRootDirectoryClient().GetFileClient(RandomString(10));
+    auto destFileClient = m_shareClient->GetRootDirectoryClient().GetFileClient(RandomString());
     destFileClient.Create(fileSize * 4);
     Azure::Core::Http::HttpRange sourceRange;
     Azure::Core::Http::HttpRange destRange;

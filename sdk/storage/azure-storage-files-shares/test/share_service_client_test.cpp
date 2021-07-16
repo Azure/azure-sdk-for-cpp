@@ -30,19 +30,19 @@ namespace Azure { namespace Storage { namespace Test {
     m_fileShareServiceClient = std::make_shared<Files::Shares::ShareServiceClient>(
         Files::Shares::ShareServiceClient::CreateFromConnectionString(
             StandardStorageConnectionString()));
-    m_sharePrefixA = LowercaseRandomString(10);
-    m_sharePrefixB = LowercaseRandomString(10);
+    m_sharePrefixA = LowercaseRandomString();
+    m_sharePrefixB = LowercaseRandomString();
     m_shareNameSetA.clear();
     m_shareNameSetB.clear();
     for (size_t i = 0; i < ShareTestSize; ++i)
     {
       {
-        auto name = m_sharePrefixA + LowercaseRandomString(10);
+        auto name = m_sharePrefixA + LowercaseRandomString();
         m_fileShareServiceClient->GetShareClient(name).Create();
         m_shareNameSetA.emplace_back(std::move(name));
       }
       {
-        auto name = m_sharePrefixB + LowercaseRandomString(10);
+        auto name = m_sharePrefixB + LowercaseRandomString();
         m_fileShareServiceClient->GetShareClient(name).Create();
         m_shareNameSetB.emplace_back(std::move(name));
       }

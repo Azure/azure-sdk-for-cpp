@@ -33,7 +33,7 @@ namespace Azure { namespace Storage { namespace Test {
   void DataLakeFileClientTest::SetUpTestSuite()
   {
     DataLakeFileSystemClientTest::SetUpTestSuite();
-    m_fileName = RandomString(10);
+    m_fileName = RandomString();
     m_fileClient = std::make_shared<Files::DataLake::DataLakeFileClient>(
         m_fileSystemClient->GetFileClient(m_fileName));
     m_fileClient->Create();
@@ -247,7 +247,7 @@ namespace Azure { namespace Storage { namespace Test {
     auto buffer = RandomBuffer(bufferSize);
     auto bufferStream = std::make_unique<Azure::Core::IO::MemoryBodyStream>(
         Azure::Core::IO::MemoryBodyStream(buffer));
-    auto newFileName = RandomString(10);
+    auto newFileName = RandomString();
     auto newFileClient = std::make_shared<Files::DataLake::DataLakeFileClient>(
         m_fileSystemClient->GetFileClient(newFileName));
     newFileClient->Create();
@@ -481,7 +481,7 @@ namespace Azure { namespace Storage { namespace Test {
     {
       // Create from connection string validates static creator function and shared key
       // constructor.
-      auto fileName = RandomString(10);
+      auto fileName = RandomString();
       auto connectionStringClient
           = Azure::Storage::Files::DataLake::DataLakeFileClient::CreateFromConnectionString(
               AdlsGen2ConnectionString(), m_fileSystemName, fileName);
@@ -497,7 +497,7 @@ namespace Azure { namespace Storage { namespace Test {
       auto clientSecretClient = Azure::Storage::Files::DataLake::DataLakeFileClient(
           Azure::Storage::Files::DataLake::_detail::GetDfsUrlFromUrl(
               Azure::Storage::Files::DataLake::DataLakeFileClient::CreateFromConnectionString(
-                  AdlsGen2ConnectionString(), m_fileSystemName, RandomString(10))
+                  AdlsGen2ConnectionString(), m_fileSystemName, RandomString())
                   .GetUrl()),
           credential);
 
@@ -510,7 +510,7 @@ namespace Azure { namespace Storage { namespace Test {
       std::vector<uint8_t> blobContent;
       blobContent.resize(static_cast<size_t>(1_MB));
       RandomBuffer(reinterpret_cast<char*>(&blobContent[0]), blobContent.size());
-      auto objectName = RandomString(10);
+      auto objectName = RandomString();
       auto containerClient = Azure::Storage::Blobs::BlobContainerClient::CreateFromConnectionString(
           AdlsGen2ConnectionString(), m_fileSystemName);
       Azure::Storage::Blobs::SetBlobContainerAccessPolicyOptions options;
