@@ -1,9 +1,10 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
-
+#pragma once
 #include "azure/keyvault/secrets/secret_client.hpp"
 #include "private/package_version.hpp"
 #include "private/secret_constants.hpp"
+#include "private/secret_serializers.hpp"
 
 #include <azure/keyvault/common/internal/keyvault_pipeline.hpp>
 #include <azure/core/credentials/credentials.hpp>
@@ -54,9 +55,7 @@ Azure::Response<KeyVaultSecret> SecretClient::GetSecret(
       context,
       Azure::Core::Http::HttpMethod::Get,
       [&name](Azure::Core::Http::RawResponse const& rawResponse) {
-        KeyVaultSecret secret;
-        secret.Value = rawResponse.GetReasonPhrase();
-        return secret;
+        return _detail::KeyVaultSecretSerializer::KeyVaultSecretDeserialize(name, rawResponse);
       },
       {_detail::SecretPath, name, options.Version});
     }
