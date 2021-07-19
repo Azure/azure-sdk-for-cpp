@@ -22,7 +22,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys { nam
 
   class KeyVaultClientTest : public ::testing::TestWithParam<int> {
   protected:
-    int m_testPollingTimeOutMinutes = 5;
+    int m_testPollingTimeOutMinutes = 20;
     std::chrono::minutes m_testPollingIntervalMinutes = std::chrono::minutes(1);
 
   private:
