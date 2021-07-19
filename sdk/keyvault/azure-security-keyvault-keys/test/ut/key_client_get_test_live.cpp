@@ -20,7 +20,6 @@ using namespace Azure::Security::KeyVault::Keys;
 TEST_F(KeyVaultClientTest, GetSingleKey)
 {
   KeyClient keyClient(m_keyVaultUrl, m_credential);
-  // Assuming and RS Key exists in the KeyVault Account.
   std::string keyName(GetUniqueName());
 
   auto createKeyResponse = keyClient.CreateEcKey(CreateEcKeyOptions(keyName));
@@ -69,9 +68,6 @@ TEST_F(KeyVaultClientTest, GetPropertiesOfKeysOnePage)
     auto findKeyName = std::find(keyNames.begin(), keyNames.end(), keyProperties.Name);
     EXPECT_NE(findKeyName, keyNames.end());
   }
-
-  // Clean vault
-  RemoveAllKeysFromVault(keyClient, false);
 }
 
 TEST_F(KeyVaultClientTest, GetKeysVersionsOnePage)
@@ -104,9 +100,6 @@ TEST_F(KeyVaultClientTest, GetKeysVersionsOnePage)
   {
     EXPECT_EQ(keyName, keyProperties.Name);
   }
-
-  // Clean vault
-  RemoveAllKeysFromVault(keyClient, false);
 }
 
 TEST_F(KeyVaultClientTest, GetDeletedKeysOnePage)
@@ -155,11 +148,5 @@ TEST_F(KeyVaultClientTest, GetDeletedKeysOnePage)
     // Check names are in the keyNames list
     auto findKeyName = std::find(keyNames.begin(), keyNames.end(), deletedKey.Name());
     EXPECT_NE(findKeyName, keyNames.end());
-  }
-
-  // Purge
-  for (auto const& keyName : keyNames)
-  {
-    keyClient.PurgeDeletedKey(keyName);
   }
 }

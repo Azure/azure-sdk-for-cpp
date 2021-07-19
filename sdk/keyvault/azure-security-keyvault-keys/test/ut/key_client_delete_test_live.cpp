@@ -79,11 +79,6 @@ TEST_F(KeyVaultClientTest, DeleteKey)
     auto deleteOp = keyClient.StartDeleteKey(key.Name());
     deleteOp.PollUntilDone(m_testPollingIntervalMinutes);
   }
-  {
-    // Purge
-    auto response = keyClient.PurgeDeletedKey(keyName);
-    CheckValidResponse(response, Azure::Core::Http::HttpStatusCode::NoContent);
-  }
 }
 
 TEST_F(KeyVaultClientTest, DeleteKeyOperationPoll)
@@ -347,20 +342,6 @@ TEST_F(KeyVaultClientTest, DeleteOperationResumeToken)
             resumeToken, keyClient);
     resumeOperation.PollUntilDone(m_testPollingIntervalMinutes);
   }
-  {
-    // recover
-    auto recoverOperation = keyClient.StartRecoverDeletedKey(keyName);
-    auto keyResponse = recoverOperation.PollUntilDone(m_testPollingIntervalMinutes);
-    auto key = keyResponse.Value;
-    // Delete again for purging
-    auto deleteOp = keyClient.StartDeleteKey(key.Name());
-    deleteOp.PollUntilDone(m_testPollingIntervalMinutes);
-  }
-  {
-    // Purge
-    auto response = keyClient.PurgeDeletedKey(keyName);
-    CheckValidResponse(response, Azure::Core::Http::HttpStatusCode::NoContent);
-  }
 }
 
 TEST_F(KeyVaultClientTest, RecoverOperationResumeToken)
@@ -399,13 +380,5 @@ TEST_F(KeyVaultClientTest, RecoverOperationResumeToken)
             resumeToken, keyClient);
     auto keyResponse = resumeRecoveryOp.PollUntilDone(m_testPollingIntervalMinutes);
     auto key = keyResponse.Value;
-    // Delete again for purging
-    auto deleteOp = keyClient.StartDeleteKey(key.Name());
-    deleteOp.PollUntilDone(m_testPollingIntervalMinutes);
-  }
-  {
-    // Purge
-    auto response = keyClient.PurgeDeletedKey(keyName);
-    CheckValidResponse(response, Azure::Core::Http::HttpStatusCode::NoContent);
   }
 }

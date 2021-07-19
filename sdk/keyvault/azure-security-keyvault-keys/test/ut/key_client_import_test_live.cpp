@@ -69,11 +69,4 @@ TEST_F(KeyVaultClientTest, ImportKey)
   EXPECT_EQ(key.CurveName.Value().ToString(), returnedkey.Key.CurveName.Value().ToString());
   EXPECT_EQ(returnedkey.KeyOperations().size(), 1);
   EXPECT_EQ(returnedkey.KeyOperations()[0].ToString(), KeyOperation::Sign.ToString());
-
-  {
-    // delete + purge
-    auto op = keyClient.StartDeleteKey(keyName);
-    op.PollUntilDone(m_testPollingIntervalMinutes);
-    keyClient.PurgeDeletedKey(keyName);
-  }
 }

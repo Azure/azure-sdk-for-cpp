@@ -47,38 +47,27 @@ TEST_F(KeyVaultClientTest, BackupKey)
     auto response = keyClient.StartDeleteKey(keyName);
     response.PollUntilDone(m_testPollingIntervalMinutes);
   }
-  // {
-  //   // Purge
-  //   std::cout << std::endl << "- Purge key";
-  //   auto response = keyClient.PurgeDeletedKey(keyName);
-  //   CheckValidResponse(response, Azure::Core::Http::HttpStatusCode::NoContent);
-  //   // Purge can take up to 2 min
-  //   std::this_thread::sleep_for(std::chrono::minutes(2));
-  // }
-  // { // Check key is gone
-  //   EXPECT_THROW(keyClient.GetKey(keyName), Azure::Core::RequestFailedException);
-  // }
-  // {
-  //   // Restore
-  //   std::cout << std::endl << "- Restore key";
-  //   auto respone = keyClient.RestoreKeyBackup(backUpResponse.Value.BackupKey);
-  //   CheckValidResponse(backUpResponse);
-  // }
-  // {
-  //   // Check key is restored
-  //   auto response = keyClient.GetKey(keyName);
-  //   CheckValidResponse(response);
-  //   EXPECT_EQ(keyName, response.Value.Name());
-  // }
-  // {
-  //   // Delete
-  //   std::cout << std::endl << "- Clean";
-  //   auto response = keyClient.StartDeleteKey(keyName);
-  //   response.PollUntilDone(m_testPollingIntervalMinutes);
-  // }
-  // {
-  //   // Purge
-  //   auto response = keyClient.PurgeDeletedKey(keyName);
-  //   CheckValidResponse(response, Azure::Core::Http::HttpStatusCode::NoContent);
-  // }
+  {
+    // Purge
+    std::cout << std::endl << "- Purge key";
+    auto response = keyClient.PurgeDeletedKey(keyName);
+    CheckValidResponse(response, Azure::Core::Http::HttpStatusCode::NoContent);
+    // Purge can take up to 2 min
+    std::this_thread::sleep_for(std::chrono::minutes(4));
+  }
+  { // Check key is gone
+    EXPECT_THROW(keyClient.GetKey(keyName), Azure::Core::RequestFailedException);
+  }
+  {
+    // Restore
+    std::cout << std::endl << "- Restore key";
+    auto respone = keyClient.RestoreKeyBackup(backUpResponse.Value.BackupKey);
+    CheckValidResponse(backUpResponse);
+  }
+  {
+    // Check key is restored
+    auto response = keyClient.GetKey(keyName);
+    CheckValidResponse(response);
+    EXPECT_EQ(keyName, response.Value.Name());
+  }
 }
