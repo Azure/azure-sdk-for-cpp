@@ -129,20 +129,21 @@ TEST_F(KeyVaultClientTest, GetDeletedKeysOnePage)
   }
 
   // Get all deleted Keys
-  std::vector<DeletedKey> deletedKeys;
+  std::vector<std::string> deletedKeys;
   for (auto keyResponse = keyClient.GetDeletedKeys(); keyResponse.HasPage();
        keyResponse.MoveToNextPage())
   {
     for (auto& key : keyResponse.Items)
     {
-      deletedKeys.emplace_back(key);
+      deletedKeys.emplace_back(key.Name());
     }
   }
 
-  for (auto const& deletedKey : deletedKeys)
+  // Check all keys are in the deleted key list
+  for (auto const& key : keyNames)
   {
     // Check names are in the keyNames list
-    auto findKeyName = std::find(keyNames.begin(), keyNames.end(), deletedKey.Name());
+    auto findKeyName = std::find(deletedKeys.begin(), deletedKeys.end(), key);
     EXPECT_NE(findKeyName, keyNames.end());
   }
 }
