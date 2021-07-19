@@ -106,9 +106,6 @@ TEST_F(KeyVaultClientTest, GetDeletedKeysOnePage)
 {
   KeyClient keyClient(m_keyVaultUrl, m_credential);
 
-  // Delete and purge anything before starting the test to ensure test will work
-  CleanUpKeyVault(keyClient);
-
   // Create 5 keys
   std::vector<std::string> keyNames;
   for (int counter = 0; counter < 5; counter++)
@@ -142,7 +139,6 @@ TEST_F(KeyVaultClientTest, GetDeletedKeysOnePage)
     }
   }
 
-  EXPECT_EQ(keyNames.size(), deletedKeys.size());
   for (auto const& deletedKey : deletedKeys)
   {
     // Check names are in the keyNames list
