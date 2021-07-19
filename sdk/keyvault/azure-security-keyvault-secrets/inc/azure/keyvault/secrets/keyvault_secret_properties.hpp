@@ -6,7 +6,7 @@
 namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
 	
     /**
-    * @brief The object attributes managed by the KeyVault service.
+    * @brief The Secret attributes managed by the KeyVault service.
     * 
     */
 	struct KeyvaultSecretProperties final 
@@ -56,8 +56,8 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
     /**
      * @brief The recovery level currently in effect for secrets in the Key Vault.
      *
-     * @remark If Purgeable, the key can be permanently deleted by an authorized user; otherwise,
-     * only the service can purge the keys at the end of the retention interval.
+     * @remark If Purgeable, the secret can be permanently deleted by an authorized user; otherwise,
+     * only the service can purge the secret at the end of the retention interval.
      *
      */
     std::string RecoveryLevel;
@@ -71,7 +71,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
     /**
      * @brief Construct a new secret Properties object.
      *
-     * @param name The name of the key.
+     * @param name The name of the secret.
      */
     KeyvaultSecretProperties(std::string name) : Name(std::move(name)) {}
   };

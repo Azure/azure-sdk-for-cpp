@@ -14,4 +14,17 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets { 
 	/***************** KeyVault Secret *****************/
   constexpr static const char SecretPath[] = "secrets";
 
+  /******************* Secret property names ***********/
+
+  constexpr static const char AttributesPropertyName[] = "attributes";
+  constexpr static const char EnabledPropertyName[] = "enabled";
+  constexpr static const char NbfPropertyName[] = "nbf";
+  constexpr static const char ExpPropertyName[] = "exp";
+  constexpr static const char CreatedPropertyName[] = "created";
+  constexpr static const char UpdatedPropertyName[] = "updated";
+  constexpr static const char ManagedPropertyName[] = "managed";
+  constexpr static const char TagsPropertyName[] = "tags";
+  constexpr static const char IdPropertyName[] = "id";
+  constexpr static const char KeyIdPropertyName[] = "kid";
+  constexpr static const char ValuePropertyName[] = "value";
 }}}}} // namespace Azure::Security::KeyVault::Secrets::_detail
