@@ -11,7 +11,7 @@
 
 #include <azure/core/datetime.hpp>
 
-#include "azure/keyvault/keys/key_vault_key.hpp"
+#include "azure/keyvault/keys/keyvault_key.hpp"
 
 namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
 

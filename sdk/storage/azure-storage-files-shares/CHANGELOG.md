@@ -8,6 +8,8 @@
 
 ### Bugs Fixed
 
+- Fixed a bug where unspecified SMB properties got overwritten rather than preserved by `SetProperties()`.
+
 ### Other Changes
 
 ## 12.0.1 (2021-07-07)

@@ -4,12 +4,14 @@
 #include <azure/core/credentials/credentials.hpp>
 #include <azure/core/http/http.hpp>
 #include <azure/core/http/policies/policy.hpp>
+#include <azure/core/internal/http/pipeline.hpp>
 
 #include "azure/keyvault/keys/key_client.hpp"
 #include "private/key_backup.hpp"
 #include "private/key_constants.hpp"
 #include "private/key_request_parameters.hpp"
 #include "private/key_serializers.hpp"
+#include "private/keyvault_protocol.hpp"
 
 #include <memory>
 #include <string>
@@ -45,14 +47,6 @@ static inline RequestWithContinuationToken BuildRequestFromContinuationToken(
     request.Path.clear();
     request.Path.emplace_back(nextPageUrl.GetPath());
   }
-  if (options.MaxPageResults)
-  {
-    if (request.Query == nullptr)
-    {
-      request.Query = std::make_unique<std::map<std::string, std::string>>();
-    }
-    request.Query->emplace("maxResults", std::to_string(options.MaxPageResults.Value()));
-  }
   return request;
 }
 
@@ -72,14 +66,6 @@ static inline RequestWithContinuationToken BuildRequestFromContinuationToken(
     request.Path.clear();
     request.Path.emplace_back(nextPageUrl.GetPath());
   }
-  if (options.MaxPageResults)
-  {
-    if (request.Query == nullptr)
-    {
-      request.Query = std::make_unique<std::map<std::string, std::string>>();
-    }
-    request.Query->emplace("maxResults", std::to_string(options.MaxPageResults.Value()));
-  }
   return request;
 }
 
@@ -98,14 +84,6 @@ static inline RequestWithContinuationToken BuildRequestFromContinuationToken(
         = std::make_unique<std::map<std::string, std::string>>(nextPageUrl.GetQueryParameters());
     request.Path.clear();
     request.Path.emplace_back(nextPageUrl.GetPath());
-  }
-  if (options.MaxPageResults)
-  {
-    if (request.Query == nullptr)
-    {
-      request.Query = std::make_unique<std::map<std::string, std::string>>();
-    }
-    request.Query->emplace("maxResults", std::to_string(options.MaxPageResults.Value()));
   }
   return request;
 }
@@ -127,7 +105,7 @@ KeyClient::KeyClient(
         std::make_unique<BearerTokenAuthenticationPolicy>(credential, tokenContext));
   }
 
-  m_pipeline = std::make_shared<Azure::Security::KeyVault::_internal::KeyVaultPipeline>(
+  m_pipeline = std::make_shared<Azure::Security::KeyVault::_detail::KeyVaultProtocolClient>(
       Azure::Core::Url(vaultUrl),
       apiVersion,
       Azure::Core::Http::_internal::HttpPipeline(
@@ -209,45 +187,45 @@ Azure::Response<KeyVaultKey> KeyClient::CreateOctKey(
       {_detail::KeysPath, keyName, "create"});
 }
 
-KeyPropertiesPageResult KeyClient::GetPropertiesOfKeys(
+KeyPropertiesPagedResponse KeyClient::GetPropertiesOfKeys(
     GetPropertiesOfKeysOptions const& options,
     Azure::Core::Context const& context) const
 {
   auto const request = BuildRequestFromContinuationToken(options, {_detail::KeysPath});
-  auto response = m_pipeline->SendRequest<KeyPropertiesPageResult>(
+  auto response = m_pipeline->SendRequest<KeyPropertiesPagedResponse>(
       context,
       Azure::Core::Http::HttpMethod::Get,
       [](Azure::Core::Http::RawResponse const& rawResponse) {
-        return _detail::KeyPropertiesPageResultSerializer::KeyPropertiesPageResultDeserialize(
+        return _detail::KeyPropertiesPagedResultSerializer::KeyPropertiesPagedResultDeserialize(
             rawResponse);
       },
       request.Path,
       request.Query);
 
-  return KeyPropertiesPageResult(
+  return KeyPropertiesPagedResponse(
       std::move(response.Value),
       std::move(response.RawResponse),
       std::make_unique<KeyClient>(*this));
 }
 
-KeyPropertiesPageResult KeyClient::GetPropertiesOfKeyVersions(
+KeyPropertiesPagedResponse KeyClient::GetPropertiesOfKeyVersions(
     std::string const& name,
     GetPropertiesOfKeyVersionsOptions const& options,
     Azure::Core::Context const& context) const
 {
   auto const request
       = BuildRequestFromContinuationToken(options, {_detail::KeysPath, name, "versions"});
-  auto response = m_pipeline->SendRequest<KeyPropertiesPageResult>(
+  auto response = m_pipeline->SendRequest<KeyPropertiesPagedResponse>(
       context,
       Azure::Core::Http::HttpMethod::Get,
       [](Azure::Core::Http::RawResponse const& rawResponse) {
-        return _detail::KeyPropertiesPageResultSerializer::KeyPropertiesPageResultDeserialize(
+        return _detail::KeyPropertiesPagedResultSerializer::KeyPropertiesPagedResultDeserialize(
             rawResponse);
       },
       request.Path,
       request.Query);
 
-  return KeyPropertiesPageResult(
+  return KeyPropertiesPagedResponse(
       std::move(response.Value),
       std::move(response.RawResponse),
       std::make_unique<KeyClient>(*this),
@@ -297,22 +275,22 @@ Azure::Response<DeletedKey> KeyClient::GetDeletedKey(
       {_detail::DeletedKeysPath, name});
 }
 
-DeletedKeyPageResult KeyClient::GetDeletedKeys(
+DeletedKeyPagedResponse KeyClient::GetDeletedKeys(
     GetDeletedKeysOptions const& options,
     Azure::Core::Context const& context) const
 {
   auto const request = BuildRequestFromContinuationToken(options, {_detail::DeletedKeysPath});
-  auto response = m_pipeline->SendRequest<DeletedKeyPageResult>(
+  auto response = m_pipeline->SendRequest<DeletedKeyPagedResponse>(
       context,
       Azure::Core::Http::HttpMethod::Get,
       [](Azure::Core::Http::RawResponse const& rawResponse) {
-        return _detail::KeyPropertiesPageResultSerializer::DeletedKeyPageResultDeserialize(
+        return _detail::KeyPropertiesPagedResultSerializer::DeletedKeyPagedResultDeserialize(
             rawResponse);
       },
       request.Path,
       request.Query);
 
-  return DeletedKeyPageResult(
+  return DeletedKeyPagedResponse(
       std::move(response.Value),
       std::move(response.RawResponse),
       std::make_unique<KeyClient>(*this));
@@ -331,7 +309,7 @@ Azure::Response<PurgedKey> KeyClient::PurgeDeletedKey(
 
 Azure::Response<KeyVaultKey> KeyClient::UpdateKeyProperties(
     KeyProperties const& properties,
-    Azure::Nullable<std::list<KeyOperation>> const& keyOperations,
+    Azure::Nullable<std::vector<KeyOperation>> const& keyOperations,
     Azure::Core::Context const& context) const
 {
   return m_pipeline->SendRequest<KeyVaultKey>(
@@ -344,7 +322,7 @@ Azure::Response<KeyVaultKey> KeyClient::UpdateKeyProperties(
       {_detail::KeysPath, properties.Name, properties.Version});
 }
 
-Azure::Response<std::vector<uint8_t>> KeyClient::BackupKey(
+Azure::Response<Azure::Security::KeyVault::Keys::BackupKeyResult> KeyClient::BackupKey(
     std::string const& name,
     Azure::Core::Context const& context) const
 {
@@ -358,8 +336,9 @@ Azure::Response<std::vector<uint8_t>> KeyClient::BackupKey(
       {_detail::KeysPath, name, "backup"});
 
   // Convert the internal KeyBackup model to a raw vector<uint8_t>.
-  return Azure::Response<std::vector<uint8_t>>(
-      response.Value.Value, std::move(response.RawResponse));
+  return Azure::Response<Azure::Security::KeyVault::Keys::BackupKeyResult>(
+      Azure::Security::KeyVault::Keys::BackupKeyResult{response.Value.Value},
+      std::move(response.RawResponse));
 }
 
 Azure::Response<KeyVaultKey> KeyClient::RestoreKeyBackup(

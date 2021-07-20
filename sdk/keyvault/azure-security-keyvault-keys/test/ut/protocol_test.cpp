@@ -6,13 +6,14 @@
 #include <azure/core/http/http.hpp>
 #include <azure/core/http/policies/policy.hpp>
 #include <azure/core/internal/client_options.hpp>
-#include <azure/keyvault/common/internal/keyvault_pipeline.hpp>
+
+#include "./../../src/private/keyvault_protocol.hpp"
 
 #include <memory>
 
-using namespace Azure::Security::KeyVault::_internal;
+using namespace Azure::Security::KeyVault::_detail;
 
-TEST(KeyVaultPipeline, initPipeline)
+TEST(KeyVaultProtocolClient, initPipeline)
 {
   std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>> policies;
   policies.emplace_back(
@@ -21,5 +22,5 @@ TEST(KeyVaultPipeline, initPipeline)
   Azure::Core::_internal::ClientOptions options;
   Azure::Core::Http::_internal::HttpPipeline pipeline(
       options, "service-name", "service-version", std::move(policies), {});
-  EXPECT_NO_THROW(KeyVaultPipeline p(url, "version", std::move(pipeline)));
+  EXPECT_NO_THROW(KeyVaultProtocolClient p(url, "version", std::move(pipeline)));
 }

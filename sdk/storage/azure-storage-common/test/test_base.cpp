@@ -209,8 +209,6 @@ namespace Azure { namespace Storage { namespace Test {
     Storage::Metadata result;
     for (size_t i = 0; i < size; ++i)
     {
-      // TODO: Use mixed casing after Azure::Core lower cases the headers.
-      // Metadata keys cannot start with a number.
       result["m" + LowercaseRandomString(5)] = RandomString(5);
     }
     return result;

@@ -1,10 +1,11 @@
 # Release History
 
-## 4.0.0 (2021-07-08)
+## 4.0.0-beta.4 (2021-07-20)
 
 ### Features Added
 
 - Added `GetIv()` to `EncryptParameters` and `DecryptParameters`.
+- Added `BackupKeyResult` for `BackupKey()` return type.
 
 ### Breaking Changes
 
@@ -15,7 +16,15 @@
 - Removed access to `Iv` field member from `EncryptParameters` and `DecryptParameters`.
 - Removed `Encrypt(EncryptionAlgorithm, std::vector, context)`.
 - Removed `Decrypt(DecryptAlgorithm, std::vector, context)`.
+- Removed `JsonWebKey::HasPrivateKey()`.
+- Removed the `MaxPageResults` field from `GetPropertiesOfKeysOptions`, `GetPropertiesOfKeyVersionsOptions`, and `GetDeletedKeysOptions`.
 - Renamed header `list_keys_single_page_result.hpp` to `list_keys_responses.hpp`.
+- Updated `BackupKey()` API return type to `BackupKeyResult` model type.
+- Renamed `KeyPropertiesPageResult` to `KeyPropertiesPagedResponse`.
+- Renamed `DeletedKeyPageResult` to `DeletedKeyPagedResponse`.
+- Changed the container for `KeyOperations` from `std::list` to `std::vector` within `CreateKeyOptions` and `UpdateKeyProperties()`.
+- Changed the return type of `CrytographyClient` APIs like `Encrypt()` to return `Response<T>` rather than the `T` directly.
+- Renamed high-level header from `key_vault_keys.hpp` to `keyvault_keys.hpp`.
 
 ## 4.0.0-beta.3 (2021-06-08)
 

@@ -11,7 +11,7 @@
 
 #include "key_client_base_test.hpp"
 
-#include <azure/keyvault/key_vault_keys.hpp>
+#include <azure/keyvault/keyvault_keys.hpp>
 
 #include <string>
 #include <vector>
@@ -37,13 +37,15 @@ TEST_P(KeyVaultClientTest, RemoteEncrypt)
     uint8_t plaintextSource[] = "A single block of plaintext";
     std::vector<uint8_t> plaintext(std::begin(plaintextSource), std::end(plaintextSource));
 
-    auto encryptResult = cryptoClient.Encrypt(EncryptParameters::RsaOaepParameters(plaintext));
+    auto encryptResult
+        = cryptoClient.Encrypt(EncryptParameters::RsaOaepParameters(plaintext)).Value;
     EXPECT_EQ(encryptResult.Algorithm.ToString(), EncryptionAlgorithm::RsaOaep.ToString());
     EXPECT_EQ(encryptResult.KeyId, rsaKey.Id());
     EXPECT_TRUE(encryptResult.Ciphertext.size() > 0);
 
     auto decryptResult
-        = cryptoClient.Decrypt(DecryptParameters::RsaOaepParameters(encryptResult.Ciphertext));
+        = cryptoClient.Decrypt(DecryptParameters::RsaOaepParameters(encryptResult.Ciphertext))
+              .Value;
     EXPECT_EQ(decryptResult.Algorithm.ToString(), encryptResult.Algorithm.ToString());
     EXPECT_EQ(decryptResult.Plaintext, plaintext);
     EXPECT_EQ(decryptResult.KeyId, encryptResult.KeyId);
@@ -67,12 +69,12 @@ TEST_P(KeyVaultClientTest, RemoteWrap)
     uint8_t plaintextSource[] = "A single block of plaintext";
     std::vector<uint8_t> plaintext(std::begin(plaintextSource), std::end(plaintextSource));
 
-    auto wrapResult = cryptoClient.WrapKey(KeyWrapAlgorithm::RsaOaep256, plaintext);
+    auto wrapResult = cryptoClient.WrapKey(KeyWrapAlgorithm::RsaOaep256, plaintext).Value;
     EXPECT_EQ(wrapResult.Algorithm.ToString(), KeyWrapAlgorithm::RsaOaep256.ToString());
     EXPECT_EQ(wrapResult.KeyId, rsaKey.Id());
     EXPECT_TRUE(wrapResult.EncryptedKey.size() > 0);
 
-    auto unwrapResult = cryptoClient.UnwrapKey(wrapResult.Algorithm, wrapResult.EncryptedKey);
+    auto unwrapResult = cryptoClient.UnwrapKey(wrapResult.Algorithm, wrapResult.EncryptedKey).Value;
     EXPECT_EQ(unwrapResult.Algorithm.ToString(), wrapResult.Algorithm.ToString());
     EXPECT_EQ(unwrapResult.Key, plaintext);
     EXPECT_EQ(unwrapResult.KeyId, wrapResult.KeyId);
@@ -100,12 +102,13 @@ TEST_P(KeyVaultClientTest, RemoteSignVerifyRSA256)
     std::vector<uint8_t> digest
         = sha256.Final(reinterpret_cast<const uint8_t*>(digestSource.data()), digestSource.size());
 
-    auto signResult = cryptoClient.Sign(signatureAlgorithm, digest);
+    auto signResult = cryptoClient.Sign(signatureAlgorithm, digest).Value;
     EXPECT_EQ(signResult.Algorithm.ToString(), signatureAlgorithm.ToString());
     EXPECT_EQ(signResult.KeyId, rsaKey.Id());
     EXPECT_TRUE(signResult.Signature.size() > 0);
 
-    auto verifyResult = cryptoClient.Verify(signResult.Algorithm, digest, signResult.Signature);
+    auto verifyResult
+        = cryptoClient.Verify(signResult.Algorithm, digest, signResult.Signature).Value;
     EXPECT_EQ(verifyResult.Algorithm.ToString(), verifyResult.Algorithm.ToString());
     EXPECT_EQ(verifyResult.KeyId, rsaKey.Id());
     EXPECT_TRUE(verifyResult.IsValid);
@@ -118,12 +121,13 @@ TEST_P(KeyVaultClientTest, RemoteSignVerifyRSA256)
     std::vector<uint8_t> digest
         = sha256.Final(reinterpret_cast<const uint8_t*>(digestSource.data()), digestSource.size());
 
-    auto signResult = cryptoClient.Sign(signatureAlgorithm, digest);
+    auto signResult = cryptoClient.Sign(signatureAlgorithm, digest).Value;
     EXPECT_EQ(signResult.Algorithm.ToString(), signatureAlgorithm.ToString());
     EXPECT_EQ(signResult.KeyId, rsaKey.Id());
     EXPECT_TRUE(signResult.Signature.size() > 0);
 
-    auto verifyResult = cryptoClient.Verify(signResult.Algorithm, digest, signResult.Signature);
+    auto verifyResult
+        = cryptoClient.Verify(signResult.Algorithm, digest, signResult.Signature).Value;
     EXPECT_EQ(verifyResult.Algorithm.ToString(), verifyResult.Algorithm.ToString());
     EXPECT_EQ(verifyResult.KeyId, rsaKey.Id());
     EXPECT_TRUE(verifyResult.IsValid);
@@ -148,12 +152,13 @@ TEST_F(KeyVaultClientTest, RemoteSignVerifyES256)
     std::vector<uint8_t> digest
         = sha256.Final(reinterpret_cast<const uint8_t*>(digestSource.data()), digestSource.size());
 
-    auto signResult = cryptoClient.Sign(signatureAlgorithm, digest);
+    auto signResult = cryptoClient.Sign(signatureAlgorithm, digest).Value;
     EXPECT_EQ(signResult.Algorithm.ToString(), signatureAlgorithm.ToString());
     EXPECT_EQ(signResult.KeyId, ecKey.Id());
     EXPECT_TRUE(signResult.Signature.size() > 0);
 
-    auto verifyResult = cryptoClient.Verify(signResult.Algorithm, digest, signResult.Signature);
+    auto verifyResult
+        = cryptoClient.Verify(signResult.Algorithm, digest, signResult.Signature).Value;
     EXPECT_EQ(verifyResult.Algorithm.ToString(), verifyResult.Algorithm.ToString());
     EXPECT_EQ(verifyResult.KeyId, ecKey.Id());
     EXPECT_TRUE(verifyResult.IsValid);
@@ -171,12 +176,13 @@ TEST_F(KeyVaultClientTest, RemoteSignVerifyES256)
     std::vector<uint8_t> digest
         = sha256.Final(reinterpret_cast<const uint8_t*>(digestSource.data()), digestSource.size());
 
-    auto signResult = cryptoClient.Sign(signatureAlgorithm, digest);
+    auto signResult = cryptoClient.Sign(signatureAlgorithm, digest).Value;
     EXPECT_EQ(signResult.Algorithm.ToString(), signatureAlgorithm.ToString());
     EXPECT_EQ(signResult.KeyId, ecKey.Id());
     EXPECT_TRUE(signResult.Signature.size() > 0);
 
-    auto verifyResult = cryptoClient.Verify(signResult.Algorithm, digest, signResult.Signature);
+    auto verifyResult
+        = cryptoClient.Verify(signResult.Algorithm, digest, signResult.Signature).Value;
     EXPECT_EQ(verifyResult.Algorithm.ToString(), verifyResult.Algorithm.ToString());
     EXPECT_EQ(verifyResult.KeyId, ecKey.Id());
     EXPECT_TRUE(verifyResult.IsValid);
@@ -204,12 +210,13 @@ TEST_P(KeyVaultClientTest, RemoteSignVerifyRSA384)
     std::vector<uint8_t> digest
         = sha384.Final(reinterpret_cast<const uint8_t*>(digestSource.data()), digestSource.size());
 
-    auto signResult = cryptoClient.Sign(signatureAlgorithm, digest);
+    auto signResult = cryptoClient.Sign(signatureAlgorithm, digest).Value;
     EXPECT_EQ(signResult.Algorithm.ToString(), signatureAlgorithm.ToString());
     EXPECT_EQ(signResult.KeyId, rsaKey.Id());
     EXPECT_TRUE(signResult.Signature.size() > 0);
 
-    auto verifyResult = cryptoClient.Verify(signResult.Algorithm, digest, signResult.Signature);
+    auto verifyResult
+        = cryptoClient.Verify(signResult.Algorithm, digest, signResult.Signature).Value;
     EXPECT_EQ(verifyResult.Algorithm.ToString(), verifyResult.Algorithm.ToString());
     EXPECT_EQ(verifyResult.KeyId, rsaKey.Id());
     EXPECT_TRUE(verifyResult.IsValid);
@@ -222,12 +229,13 @@ TEST_P(KeyVaultClientTest, RemoteSignVerifyRSA384)
     std::vector<uint8_t> digest
         = sha384.Final(reinterpret_cast<const uint8_t*>(digestSource.data()), digestSource.size());
 
-    auto signResult = cryptoClient.Sign(signatureAlgorithm, digest);
+    auto signResult = cryptoClient.Sign(signatureAlgorithm, digest).Value;
     EXPECT_EQ(signResult.Algorithm.ToString(), signatureAlgorithm.ToString());
     EXPECT_EQ(signResult.KeyId, rsaKey.Id());
     EXPECT_TRUE(signResult.Signature.size() > 0);
 
-    auto verifyResult = cryptoClient.Verify(signResult.Algorithm, digest, signResult.Signature);
+    auto verifyResult
+        = cryptoClient.Verify(signResult.Algorithm, digest, signResult.Signature).Value;
     EXPECT_EQ(verifyResult.Algorithm.ToString(), verifyResult.Algorithm.ToString());
     EXPECT_EQ(verifyResult.KeyId, rsaKey.Id());
     EXPECT_TRUE(verifyResult.IsValid);
@@ -252,12 +260,13 @@ TEST_P(KeyVaultClientTest, RemoteSignVerifyDataRSA256)
   // RS256
   {
     auto signatureAlgorithm = SignatureAlgorithm::RS256;
-    auto signResult = cryptoClient.SignData(signatureAlgorithm, data);
+    auto signResult = cryptoClient.SignData(signatureAlgorithm, data).Value;
     EXPECT_EQ(signResult.Algorithm.ToString(), signatureAlgorithm.ToString());
     EXPECT_EQ(signResult.KeyId, rsaKey.Id());
     EXPECT_TRUE(signResult.Signature.size() > 0);
 
-    auto verifyResult = cryptoClient.VerifyData(signResult.Algorithm, data, signResult.Signature);
+    auto verifyResult
+        = cryptoClient.VerifyData(signResult.Algorithm, data, signResult.Signature).Value;
     EXPECT_EQ(verifyResult.Algorithm.ToString(), verifyResult.Algorithm.ToString());
     EXPECT_EQ(verifyResult.KeyId, rsaKey.Id());
     EXPECT_TRUE(verifyResult.IsValid);
@@ -266,12 +275,13 @@ TEST_P(KeyVaultClientTest, RemoteSignVerifyDataRSA256)
   // PS256
   {
     auto signatureAlgorithm = SignatureAlgorithm::PS256;
-    auto signResult = cryptoClient.SignData(signatureAlgorithm, data);
+    auto signResult = cryptoClient.SignData(signatureAlgorithm, data).Value;
     EXPECT_EQ(signResult.Algorithm.ToString(), signatureAlgorithm.ToString());
     EXPECT_EQ(signResult.KeyId, rsaKey.Id());
     EXPECT_TRUE(signResult.Signature.size() > 0);
 
-    auto verifyResult = cryptoClient.VerifyData(signResult.Algorithm, data, signResult.Signature);
+    auto verifyResult
+        = cryptoClient.VerifyData(signResult.Algorithm, data, signResult.Signature).Value;
     EXPECT_EQ(verifyResult.Algorithm.ToString(), verifyResult.Algorithm.ToString());
     EXPECT_EQ(verifyResult.KeyId, rsaKey.Id());
     EXPECT_TRUE(verifyResult.IsValid);
