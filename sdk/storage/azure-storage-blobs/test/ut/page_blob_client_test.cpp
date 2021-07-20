@@ -62,6 +62,19 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_THROW(pageBlobClient.Delete(), StorageException);
   }
 
+  TEST_F(PageBlobClientTest, CreateWithTags)
+  {
+    auto pageBlobClient = Azure::Storage::Blobs::PageBlobClient::CreateFromConnectionString(
+        StandardStorageConnectionString(), m_containerName, RandomString());
+    Blobs::CreatePageBlobOptions options;
+    options.Tags["key1"] = "value1";
+    options.Tags["key2"] = "value2";
+    options.Tags["key3 +-./:=_"] = "v1 +-./:=_";
+    pageBlobClient.Create(512, options);
+
+    EXPECT_EQ(pageBlobClient.GetTags().Value, options.Tags);
+  }
+
   TEST_F(PageBlobClientTest, Resize)
   {
     auto pageBlobClient = Azure::Storage::Blobs::PageBlobClient::CreateFromConnectionString(
@@ -162,8 +175,9 @@ namespace Azure { namespace Storage { namespace Test {
 
   TEST_F(PageBlobClientTest, StartCopyIncremental)
   {
+    const std::string blobName = RandomString();
     auto pageBlobClient = Azure::Storage::Blobs::PageBlobClient::CreateFromConnectionString(
-        StandardStorageConnectionString(), m_containerName, RandomString());
+        StandardStorageConnectionString(), m_containerName, blobName);
     std::string snapshot = m_pageBlobClient->CreateSnapshot().Value.Snapshot;
     Azure::Core::Url sourceUri(m_pageBlobClient->WithSnapshot(snapshot).GetUrl());
     auto copyInfo = pageBlobClient.StartCopyIncremental(AppendQueryParameters(sourceUri, GetSas()));
@@ -184,6 +198,12 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_TRUE(IsValidTime(getPropertiesResult.Value.CopyCompletedOn.Value()));
     ASSERT_TRUE(getPropertiesResult.Value.CopyProgress.HasValue());
     EXPECT_FALSE(getPropertiesResult.Value.CopyProgress.Value().empty());
+
+    auto blobItem = GetBlobItem(blobName, Blobs::Models::ListBlobsIncludeFlags::Copy);
+    ASSERT_TRUE(blobItem.Details.IsIncrementalCopy.HasValue());
+    EXPECT_TRUE(blobItem.Details.IsIncrementalCopy.Value());
+    ASSERT_TRUE(blobItem.Details.IncrementalCopyDestinationSnapshot.HasValue());
+    EXPECT_FALSE(blobItem.Details.IncrementalCopyDestinationSnapshot.Value().empty());
   }
 
   TEST_F(PageBlobClientTest, Lease)
@@ -327,6 +347,210 @@ namespace Azure { namespace Storage { namespace Test {
     }
     auto downloadStream = std::move(blobClient.Download().Value.BodyStream);
     EXPECT_EQ(downloadStream->ReadToEnd(Azure::Core::Context()), m_blobContent);
+  }
+
+  TEST_F(PageBlobClientTest, SourceBlobAccessConditions)
+  {
+    auto sourceBlobClient = Azure::Storage::Blobs::PageBlobClient::CreateFromConnectionString(
+        StandardStorageConnectionString(), m_containerName, RandomString());
+
+    const std::string url = sourceBlobClient.GetUrl() + GetSas();
+
+    const int64_t blobSize = 512;
+    auto createResponse = sourceBlobClient.Create(blobSize);
+    Azure::ETag eTag = createResponse.Value.ETag;
+    auto lastModifiedTime = createResponse.Value.LastModified;
+    auto timeBeforeStr = lastModifiedTime - std::chrono::seconds(1);
+    auto timeAfterStr = lastModifiedTime + std::chrono::seconds(1);
+
+    auto destBlobClient = Azure::Storage::Blobs::PageBlobClient::CreateFromConnectionString(
+        StandardStorageConnectionString(), m_containerName, RandomString());
+    destBlobClient.Create(blobSize);
+
+    {
+      Blobs::UploadPagesFromUriOptions options;
+      options.SourceAccessConditions.IfMatch = eTag;
+      EXPECT_NO_THROW(destBlobClient.UploadPagesFromUri(0, url, {0, blobSize}, options));
+      options.SourceAccessConditions.IfMatch = DummyETag;
+      EXPECT_THROW(
+          destBlobClient.UploadPagesFromUri(0, url, {0, blobSize}, options), StorageException);
+    }
+    {
+      Blobs::UploadPagesFromUriOptions options;
+      options.SourceAccessConditions.IfNoneMatch = DummyETag;
+      EXPECT_NO_THROW(destBlobClient.UploadPagesFromUri(0, url, {0, blobSize}, options));
+      options.SourceAccessConditions.IfNoneMatch = eTag;
+      EXPECT_THROW(
+          destBlobClient.UploadPagesFromUri(0, url, {0, blobSize}, options), StorageException);
+    }
+    {
+      Blobs::UploadPagesFromUriOptions options;
+      options.SourceAccessConditions.IfModifiedSince = timeBeforeStr;
+      EXPECT_NO_THROW(destBlobClient.UploadPagesFromUri(0, url, {0, blobSize}, options));
+      options.SourceAccessConditions.IfModifiedSince = timeAfterStr;
+      EXPECT_THROW(
+          destBlobClient.UploadPagesFromUri(0, url, {0, blobSize}, options), StorageException);
+    }
+    {
+      Blobs::UploadPagesFromUriOptions options;
+      options.SourceAccessConditions.IfUnmodifiedSince = timeAfterStr;
+      EXPECT_NO_THROW(destBlobClient.UploadPagesFromUri(0, url, {0, blobSize}, options));
+      options.SourceAccessConditions.IfUnmodifiedSince = timeBeforeStr;
+      EXPECT_THROW(
+          destBlobClient.UploadPagesFromUri(0, url, {0, blobSize}, options), StorageException);
+    }
+  }
+
+  TEST_F(PageBlobClientTest, UpdateSequenceNumber)
+  {
+    auto blobClient = Azure::Storage::Blobs::PageBlobClient::CreateFromConnectionString(
+        StandardStorageConnectionString(), m_containerName, RandomString());
+    blobClient.Create(512);
+
+    Blobs::Models::BlobHttpHeaders headers;
+    headers.ContentType = "text/plain";
+    blobClient.SetHttpHeaders(headers);
+
+    Blobs::UpdatePageBlobSequenceNumberOptions options;
+    options.SequenceNumber = 100;
+    auto res
+        = blobClient.UpdateSequenceNumber(Blobs::Models::SequenceNumberAction::Update, options);
+    EXPECT_TRUE(res.Value.ETag.HasValue());
+    EXPECT_TRUE(IsValidTime(res.Value.LastModified));
+    EXPECT_EQ(res.Value.SequenceNumber, 100);
+    EXPECT_EQ(blobClient.GetProperties().Value.SequenceNumber.Value(), 100);
+
+    options.SequenceNumber = 200;
+    res = blobClient.UpdateSequenceNumber(Blobs::Models::SequenceNumberAction::Update, options);
+    EXPECT_EQ(res.Value.SequenceNumber, 200);
+    EXPECT_EQ(blobClient.GetProperties().Value.SequenceNumber.Value(), 200);
+
+    options.SequenceNumber = 50;
+    res = blobClient.UpdateSequenceNumber(Blobs::Models::SequenceNumberAction::Max, options);
+    EXPECT_EQ(res.Value.SequenceNumber, 200);
+    EXPECT_EQ(blobClient.GetProperties().Value.SequenceNumber.Value(), 200);
+    options.SequenceNumber = 300;
+    res = blobClient.UpdateSequenceNumber(Blobs::Models::SequenceNumberAction::Max, options);
+    EXPECT_EQ(res.Value.SequenceNumber, 300);
+    EXPECT_EQ(blobClient.GetProperties().Value.SequenceNumber.Value(), 300);
+
+    options.SequenceNumber.Reset();
+    res = blobClient.UpdateSequenceNumber(Blobs::Models::SequenceNumberAction::Increment, options);
+    EXPECT_EQ(res.Value.SequenceNumber, 301);
+    EXPECT_EQ(blobClient.GetProperties().Value.SequenceNumber.Value(), 301);
+
+    EXPECT_EQ(blobClient.GetProperties().Value.HttpHeaders.ContentType, headers.ContentType);
+  }
+
+  TEST_F(PageBlobClientTest, PageBlobAccessConditions)
+  {
+    auto blobClient = Azure::Storage::Blobs::PageBlobClient::CreateFromConnectionString(
+        StandardStorageConnectionString(), m_containerName, RandomString());
+    blobClient.Create(1024);
+    Blobs::UpdatePageBlobSequenceNumberOptions updateSequenceNumberOptions;
+    updateSequenceNumberOptions.SequenceNumber = 100;
+    blobClient.UpdateSequenceNumber(
+        Blobs::Models::SequenceNumberAction::Update, updateSequenceNumberOptions);
+
+    enum class AccessConditionType
+    {
+      Eq,
+      Lt,
+      LtOrEq,
+    };
+    enum class Operation
+    {
+      Upload,
+      UploadFromUri,
+      Clear,
+    };
+    for (auto o : {Operation::Upload, Operation::UploadFromUri, Operation::Clear})
+    {
+
+      for (auto willSuccess : {true, false})
+      {
+        for (auto t :
+             {AccessConditionType::Eq, AccessConditionType::Lt, AccessConditionType::LtOrEq})
+        {
+          Blobs::PageBlobAccessConditions accessConditions;
+          if (t == AccessConditionType::Eq)
+          {
+            accessConditions.IfSequenceNumberEqual
+                = blobClient.GetProperties().Value.SequenceNumber.Value();
+            if (!willSuccess)
+            {
+              accessConditions.IfSequenceNumberEqual.Value()++;
+            }
+          }
+          else if (t == AccessConditionType::Lt)
+          {
+            accessConditions.IfSequenceNumberLessThan
+                = blobClient.GetProperties().Value.SequenceNumber.Value();
+            if (willSuccess)
+            {
+              accessConditions.IfSequenceNumberLessThan.Value()++;
+            }
+          }
+          else if (t == AccessConditionType::LtOrEq)
+          {
+            accessConditions.IfSequenceNumberLessThanOrEqual
+                = blobClient.GetProperties().Value.SequenceNumber.Value();
+            if (!willSuccess)
+            {
+              accessConditions.IfSequenceNumberLessThanOrEqual.Value()--;
+            }
+          }
+
+          if (o == Operation::Upload)
+          {
+            std::vector<uint8_t> pageContent(512);
+            auto pageContentStream
+                = Azure::Core::IO::MemoryBodyStream(pageContent.data(), pageContent.size());
+
+            Blobs::UploadPagesOptions options;
+            options.AccessConditions = accessConditions;
+            if (willSuccess)
+            {
+              EXPECT_NO_THROW(blobClient.UploadPages(0, pageContentStream, options));
+            }
+            else
+            {
+              EXPECT_THROW(blobClient.UploadPages(0, pageContentStream, options), StorageException);
+            }
+          }
+          else if (o == Operation::UploadFromUri)
+          {
+            Blobs::UploadPagesFromUriOptions options;
+            options.AccessConditions = accessConditions;
+            if (willSuccess)
+            {
+              EXPECT_NO_THROW(blobClient.UploadPagesFromUri(
+                  512, blobClient.GetUrl() + GetSas(), {0, 512}, options));
+            }
+            else
+            {
+              EXPECT_THROW(
+                  blobClient.UploadPagesFromUri(
+                      512, blobClient.GetUrl() + GetSas(), {0, 512}, options),
+                  StorageException);
+            }
+          }
+          else if (o == Operation::Clear)
+          {
+            Blobs::ClearPagesOptions options;
+            options.AccessConditions = accessConditions;
+            if (willSuccess)
+            {
+              EXPECT_NO_THROW(blobClient.ClearPages({0, 512}, options));
+            }
+            else
+            {
+              EXPECT_THROW(blobClient.ClearPages({0, 512}, options), StorageException);
+            }
+          }
+        }
+      }
+    }
   }
 
 }}} // namespace Azure::Storage::Test

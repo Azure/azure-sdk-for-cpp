@@ -93,6 +93,19 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_THROW(appendBlobClient.Delete(), StorageException);
   }
 
+  TEST_F(AppendBlobClientTest, CreateWithTags)
+  {
+    auto appendBlobClient = Azure::Storage::Blobs::AppendBlobClient::CreateFromConnectionString(
+        StandardStorageConnectionString(), m_containerName, RandomString());
+    Blobs::CreateAppendBlobOptions options;
+    options.Tags["key1"] = "value1";
+    options.Tags["key2"] = "value2";
+    options.Tags["key3 +-./:=_"] = "v1 +-./:=_";
+    appendBlobClient.Create(options);
+
+    EXPECT_EQ(appendBlobClient.GetTags().Value, options.Tags);
+  }
+
   TEST_F(AppendBlobClientTest, AccessConditionLastModifiedTime)
   {
     auto appendBlobClient = Azure::Storage::Blobs::AppendBlobClient::CreateFromConnectionString(
@@ -201,31 +214,15 @@ namespace Azure { namespace Storage { namespace Test {
   {
     auto sourceBlobClient = Azure::Storage::Blobs::AppendBlobClient::CreateFromConnectionString(
         StandardStorageConnectionString(), m_containerName, RandomString());
-    sourceBlobClient.Create();
-    Blobs::BlobLeaseClient sourceLeaseClient(
-        sourceBlobClient, Blobs::BlobLeaseClient::CreateUniqueLeaseId());
-    auto leaseResponse = sourceLeaseClient.Acquire(Blobs::BlobLeaseClient::InfiniteLeaseDuration);
-    std::string leaseId = leaseResponse.Value.LeaseId;
-    Azure::ETag eTag = leaseResponse.Value.ETag;
-    auto lastModifiedTime = leaseResponse.Value.LastModified;
+    auto createResponse = sourceBlobClient.Create();
+    Azure::ETag eTag = createResponse.Value.ETag;
+    auto lastModifiedTime = createResponse.Value.LastModified;
     auto timeBeforeStr = lastModifiedTime - std::chrono::seconds(1);
     auto timeAfterStr = lastModifiedTime + std::chrono::seconds(1);
 
     auto destBlobClient = Azure::Storage::Blobs::AppendBlobClient::CreateFromConnectionString(
         StandardStorageConnectionString(), m_containerName, RandomString());
 
-    {
-      Blobs::StartBlobCopyFromUriOptions options;
-      options.SourceAccessConditions.LeaseId = Blobs::BlobLeaseClient::CreateUniqueLeaseId();
-      /*
-      don't know why, the copy operation also succeeds even if the lease ID doesn't match.
-      EXPECT_THROW(
-          destBlobClient.StartCopyFromUri(sourceBlobClient.GetUrl(), options), StorageException);
-      */
-      options.SourceAccessConditions.LeaseId = leaseId;
-      EXPECT_NO_THROW(destBlobClient.StartCopyFromUri(sourceBlobClient.GetUrl(), options));
-    }
-    sourceLeaseClient.Break();
     {
       Blobs::StartBlobCopyFromUriOptions options;
       options.SourceAccessConditions.IfMatch = eTag;
@@ -277,20 +274,9 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_TRUE(getPropertiesResult.Value.IsSealed.HasValue());
     EXPECT_FALSE(getPropertiesResult.Value.IsSealed.Value());
 
-    Azure::Storage::Blobs::ListBlobsOptions options;
-    options.Prefix = blobName;
-    for (auto pageResponse = m_blobContainerClient->ListBlobs(options); pageResponse.HasPage();
-         pageResponse.MoveToNextPage())
-    {
-      for (const auto& blob : pageResponse.Blobs)
-      {
-        if (blob.Name == blobName)
-        {
-          EXPECT_TRUE(blob.Details.IsSealed.HasValue());
-          EXPECT_FALSE(blob.Details.IsSealed.Value());
-        }
-      }
-    }
+    auto blobItem = GetBlobItem(blobName);
+    EXPECT_TRUE(blobItem.Details.IsSealed.HasValue());
+    EXPECT_FALSE(blobItem.Details.IsSealed.Value());
 
     Blobs::SealAppendBlobOptions sealOptions;
     sealOptions.AccessConditions.IfAppendPositionEqual = m_blobContent.size() + 1;
@@ -310,18 +296,9 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_TRUE(getPropertiesResult.Value.IsSealed.HasValue());
     EXPECT_TRUE(getPropertiesResult.Value.IsSealed.Value());
 
-    for (auto pageResponse = m_blobContainerClient->ListBlobs(options); pageResponse.HasPage();
-         pageResponse.MoveToNextPage())
-    {
-      for (const auto& blob : pageResponse.Blobs)
-      {
-        if (blob.Name == blobName)
-        {
-          EXPECT_TRUE(blob.Details.IsSealed.HasValue());
-          EXPECT_TRUE(blob.Details.IsSealed.Value());
-        }
-      }
-    }
+    blobItem = GetBlobItem(blobName);
+    EXPECT_TRUE(blobItem.Details.IsSealed.HasValue());
+    EXPECT_TRUE(blobItem.Details.IsSealed.Value());
 
     auto blobClient2 = m_blobContainerClient->GetAppendBlobClient(RandomString());
 

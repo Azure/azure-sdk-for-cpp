@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
 
-#include "azure/keyvault/keys/list_keys_single_page_result.hpp"
+#include "azure/keyvault/keys/list_keys_responses.hpp"
 #include "azure/keyvault/keys/key_client.hpp"
 #include "private/key_constants.hpp"
 #include "private/key_serializers.hpp"
@@ -14,13 +14,13 @@
 using namespace Azure::Security::KeyVault::Keys;
 using namespace Azure::Core::Json::_internal;
 
-KeyPropertiesPageResult
-_detail::KeyPropertiesPageResultSerializer::KeyPropertiesPageResultDeserialize(
+KeyPropertiesPagedResponse
+_detail::KeyPropertiesPagedResultSerializer::KeyPropertiesPagedResultDeserialize(
     Azure::Core::Http::RawResponse const& rawResponse)
 {
   using Azure::Core::_internal::PosixTimeConverter;
 
-  KeyPropertiesPageResult result;
+  KeyPropertiesPagedResponse result;
   auto const& body = rawResponse.GetBody();
   auto jsonParser = json::parse(body);
 
@@ -83,7 +83,8 @@ _detail::KeyPropertiesPageResultSerializer::KeyPropertiesPageResultDeserialize(
   return result;
 }
 
-DeletedKeyPageResult _detail::KeyPropertiesPageResultSerializer::DeletedKeyPageResultDeserialize(
+DeletedKeyPagedResponse
+_detail::KeyPropertiesPagedResultSerializer::DeletedKeyPagedResultDeserialize(
     Azure::Core::Http::RawResponse const& rawResponse)
 {
   using Azure::Core::_internal::PosixTimeConverter;
@@ -91,9 +92,9 @@ DeletedKeyPageResult _detail::KeyPropertiesPageResultSerializer::DeletedKeyPageR
   auto const& body = rawResponse.GetBody();
   auto jsonParser = Azure::Core::Json::_internal::json::parse(body);
 
-  DeletedKeyPageResult deletedKeyPageResult;
+  DeletedKeyPagedResponse deletedKeyPagedResult;
 
-  JsonOptional::SetIfExists(deletedKeyPageResult.NextPageToken, jsonParser, "nextLink");
+  JsonOptional::SetIfExists(deletedKeyPagedResult.NextPageToken, jsonParser, "nextLink");
 
   auto deletedKeys = jsonParser["value"];
   for (auto const& key : deletedKeys)
@@ -123,13 +124,13 @@ DeletedKeyPageResult _detail::KeyPropertiesPageResultSerializer::DeletedKeyPageR
         _detail::ScheduledPurgeDatePropertyName,
         PosixTimeConverter::PosixTimeToDateTime);
 
-    deletedKeyPageResult.Items.emplace_back(deletedKey);
+    deletedKeyPagedResult.Items.emplace_back(deletedKey);
   }
 
-  return deletedKeyPageResult;
+  return deletedKeyPagedResult;
 }
 
-void DeletedKeyPageResult::OnNextPage(const Azure::Core::Context& context)
+void DeletedKeyPagedResponse::OnNextPage(const Azure::Core::Context& context)
 {
   // Before calling `OnNextPage` pagedResponse validates there is a next page, so we are sure
   // NextPageToken is valid.
@@ -139,14 +140,14 @@ void DeletedKeyPageResult::OnNextPage(const Azure::Core::Context& context)
   CurrentPageToken = options.NextPageToken.Value();
 }
 
-void KeyPropertiesPageResult::OnNextPage(const Azure::Core::Context& context)
+void KeyPropertiesPagedResponse::OnNextPage(const Azure::Core::Context& context)
 {
   // Notes
   // - Before calling `OnNextPage` pagedResponse validates there is a next page, so we are sure
   // NextPageToken is valid.
-  // - KeyPropertiesPageResult is used to list keys from a Key Vault and also to list the key
-  // versions from a specific key. When KeyPropertiesPageResult is listing keys, the `m_keyName`
-  // fields will be empty, but for listing the key versions, the KeyPropertiesPageResult needs to
+  // - KeyPropertiesPagedResponse is used to list keys from a Key Vault and also to list the key
+  // versions from a specific key. When KeyPropertiesPagedResponse is listing keys, the `m_keyName`
+  // fields will be empty, but for listing the key versions, the KeyPropertiesPagedResponse needs to
   // keep the name of the key in `m_keyName` because it is required to get more pages.
   //
   if (m_keyName.empty())

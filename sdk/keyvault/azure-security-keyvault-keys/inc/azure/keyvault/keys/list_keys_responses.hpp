@@ -12,11 +12,9 @@
 #include <azure/core/http/http.hpp>
 #include <azure/core/paged_response.hpp>
 
-#include <azure/keyvault/common/internal/single_page.hpp>
-
 #include "azure/keyvault/keys/deleted_key.hpp"
 #include "azure/keyvault/keys/json_web_key.hpp"
-#include "azure/keyvault/keys/key_vault_key.hpp"
+#include "azure/keyvault/keys/keyvault_key.hpp"
 
 #include <memory>
 #include <vector>
@@ -28,10 +26,11 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
    * @brief Define a single page to list the keys from the Key Vault.
    *
    */
-  class KeyPropertiesPageResult final : public Azure::Core::PagedResponse<KeyPropertiesPageResult> {
+  class KeyPropertiesPagedResponse final
+      : public Azure::Core::PagedResponse<KeyPropertiesPagedResponse> {
   private:
     friend class KeyClient;
-    friend class Azure::Core::PagedResponse<KeyPropertiesPageResult>;
+    friend class Azure::Core::PagedResponse<KeyPropertiesPagedResponse>;
 
     std::string m_keyName;
     std::shared_ptr<KeyClient> m_keyClient;
@@ -42,19 +41,21 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
      *
      * @remark The constructor is private and only a key client or PagedResponse can init this.
      *
-     * @param keyProperties A previously created #KeyPropertiesPageResult that is used to init this
-     * instance.
-     * @param rawResponse The HTTP raw response from where the #KeyPropertiesPageResult was parsed.
+     * @param keyProperties A previously created #KeyPropertiesPageResponse that is used to init
+     * this instance.
+     * @param rawResponse The HTTP raw response from where the #KeyPropertiesPagedResponse was
+     * parsed.
      * @param keyClient A key client required for getting the next pages.
      * @param keyName When \p keyName is set, the response is listing key versions. Otherwise, the
      * response is for listing keys from the Key Vault.
      */
-    KeyPropertiesPageResult(
-        KeyPropertiesPageResult&& keyProperties,
+    KeyPropertiesPagedResponse(
+        KeyPropertiesPagedResponse&& keyProperties,
         std::unique_ptr<Azure::Core::Http::RawResponse> rawResponse,
         std::shared_ptr<KeyClient> keyClient,
         std::string const& keyName = std::string())
-        : m_keyName(keyName), m_keyClient(keyClient), Items(std::move(keyProperties.Items))
+        : PagedResponse(std::move(keyProperties)), m_keyName(keyName), m_keyClient(keyClient),
+          Items(std::move(keyProperties.Items))
     {
       RawResponse = std::move(rawResponse);
     }
@@ -64,7 +65,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
      * @brief Construct a new key properties object.
      *
      */
-    KeyPropertiesPageResult() = default;
+    KeyPropertiesPagedResponse() = default;
 
     /**
      * @brief Each #KeyProperties represent a Key in the Key Vault.
@@ -77,10 +78,10 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
    * @brief Define a single page containing the deleted keys from the Key Vault.
    *
    */
-  class DeletedKeyPageResult final : public Azure::Core::PagedResponse<DeletedKeyPageResult> {
+  class DeletedKeyPagedResponse final : public Azure::Core::PagedResponse<DeletedKeyPagedResponse> {
   private:
     friend class KeyClient;
-    friend class Azure::Core::PagedResponse<DeletedKeyPageResult>;
+    friend class Azure::Core::PagedResponse<DeletedKeyPagedResponse>;
 
     std::shared_ptr<KeyClient> m_keyClient;
     void OnNextPage(const Azure::Core::Context& context);
@@ -90,18 +91,19 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
      *
      * @remark The constructor is private and only a key client or PagedResponse can init this.
      *
-     * @param deletedKeyProperties A previously created #DeletedKeyPageResult that is used to init
-     * this new instance.
-     * @param rawResponse The HTTP raw response from where the #DeletedKeyPageResult was parsed.
+     * @param deletedKeyProperties A previously created #DeletedKeyPagedResponse that is used to
+     * init this new instance.
+     * @param rawResponse The HTTP raw response from where the #DeletedKeyPagedResponse was parsed.
      * @param keyClient A key client required for getting the next pages.
      * @param keyName When \p keyName is set, the response is listing key versions. Otherwise, the
      * response is for listing keys from the Key Vault.
      */
-    DeletedKeyPageResult(
-        DeletedKeyPageResult&& deletedKeyProperties,
+    DeletedKeyPagedResponse(
+        DeletedKeyPagedResponse&& deletedKeyProperties,
         std::unique_ptr<Azure::Core::Http::RawResponse> rawResponse,
         std::shared_ptr<KeyClient> keyClient)
-        : m_keyClient(keyClient), Items(std::move(deletedKeyProperties.Items))
+        : PagedResponse(std::move(deletedKeyProperties)), m_keyClient(keyClient),
+          Items(std::move(deletedKeyProperties.Items))
     {
       RawResponse = std::move(rawResponse);
     }
@@ -111,7 +113,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
      * @brief Construct a new Deleted Key Single Page object
      *
      */
-    DeletedKeyPageResult() = default;
+    DeletedKeyPagedResponse() = default;
 
     /**
      * @brief Each #DeletedKey represent a deleted key in the Key Vault.
@@ -125,8 +127,8 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
    *
    */
   struct GetPropertiesOfKeysOptions final
-      : public Azure::Security::KeyVault::_internal::GetPageResultOptions
   {
+    Azure::Nullable<std::string> NextPageToken;
   };
 
   /**
@@ -134,8 +136,8 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
    *
    */
   struct GetPropertiesOfKeyVersionsOptions final
-      : public Azure::Security::KeyVault::_internal::GetPageResultOptions
   {
+    Azure::Nullable<std::string> NextPageToken;
   };
 
   /**
@@ -143,7 +145,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
    *
    */
   struct GetDeletedKeysOptions final
-      : public Azure::Security::KeyVault::_internal::GetPageResultOptions
   {
+    Azure::Nullable<std::string> NextPageToken;
   };
 }}}} // namespace Azure::Security::KeyVault::Keys

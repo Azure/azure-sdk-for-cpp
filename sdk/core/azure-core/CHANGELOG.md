@@ -1,5 +1,16 @@
 # Release History
 
+## 1.2.0-beta.1 (Unreleased)
+
+### Features Added
+- Added `Azure::Core::IO::ProgressBodyStream` type that wraps an existing BodyStream based type stream and reports progress via callback when the stream position is updated. 
+
+### Breaking Changes
+
+### Bugs Fixed
+
+### Other Changes
+
 ## 1.1.0 (2021-07-02)
 
 ### Bugs Fixed
