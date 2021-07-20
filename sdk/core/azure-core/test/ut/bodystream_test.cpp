@@ -189,7 +189,8 @@ TEST(ProgressBodyStream, MultiWrapProgressStream)
   Azure::Core::IO::FileBodyStream stream(testDataPath);
 
   ProgressBodyStream progress(stream, [&bytesTransferred](int64_t bt) { bytesTransferred = bt; });
-  ProgressBodyStream progress2(progress, [&wrapBytesTransferred](int64_t bt) { wrapBytesTransferred = bt; });
+  ProgressBodyStream progress2(
+      progress, [&wrapBytesTransferred](int64_t bt) { wrapBytesTransferred = bt; });
   std::vector<uint8_t> buffer(30);
 
   size_t readSize = progress2.ReadToCount(buffer.data(), 10);
@@ -200,7 +201,6 @@ TEST(ProgressBodyStream, MultiWrapProgressStream)
 
   EXPECT_EQ(wrapBytesTransferred, 10);
   EXPECT_EQ(progress2.Length(), stream.Length());
-  
 }
 
 TEST(ProgressBodyStream, ReadMultipleChunks)
