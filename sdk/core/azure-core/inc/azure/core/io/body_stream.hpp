@@ -289,7 +289,7 @@ namespace Azure { namespace Core { namespace IO {
    */
   class ProgressBodyStream : public BodyStream {
   private:
-    BodyStream& m_bodyStream;
+    BodyStream* m_bodyStream;
     int64_t m_bytesTransferred;
     std::function<void(int64_t bytesTransferred)> m_callback;
 
@@ -300,12 +300,12 @@ namespace Azure { namespace Core { namespace IO {
     /**
      * @brief Constructs `%ProgressBodyStream` from a %BodyStream.
      *
-     * @param bodyStream the body stream to wrap
+     * @param bodyStream The body stream to wrap.
      *
-     * @param callback the callback method used to report progress back to the caller
+     * @param callback The callback method used to report progress back to the caller.
      *
      * @remark The #Azure::Core::IO::ProgressBodyStream does not own the wrapped stream
-     * and is not responsible for closing / cleaning up resources
+     * and is not responsible for closing / cleaning up resources.
      */
     ProgressBodyStream(
         BodyStream& bodyStream,
