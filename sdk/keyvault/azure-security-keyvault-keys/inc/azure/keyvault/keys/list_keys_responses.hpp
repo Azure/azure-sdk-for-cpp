@@ -54,8 +54,8 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
         std::unique_ptr<Azure::Core::Http::RawResponse> rawResponse,
         std::shared_ptr<KeyClient> keyClient,
         std::string const& keyName = std::string())
-        : PagedResponse(std::move(keyProperties)), m_keyName(keyName),
-          m_keyClient(keyClient), Items(std::move(keyProperties.Items))
+        : PagedResponse(std::move(keyProperties)), m_keyName(keyName), m_keyClient(keyClient),
+          Items(std::move(keyProperties.Items))
     {
       RawResponse = std::move(rawResponse);
     }
