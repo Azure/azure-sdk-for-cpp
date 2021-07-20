@@ -14,6 +14,7 @@ add_executable (
     azure_security_keyvault_secrets_test.cpp
     macro_guard.cpp
     secret_client_test.cpp
+    secret_get_client_deserialize_test.hpp
     secret_get_client_deserialize_test.cpp
  )
 
