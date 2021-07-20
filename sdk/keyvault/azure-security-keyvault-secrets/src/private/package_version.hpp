@@ -52,7 +52,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets { 
               AZURE_SECURITY_KEYVAULT_SECRETS_VERSION_MINOR) "." AZURE_SECURITY_KEYVAULT_SECRETS_VERSION_ITOA(AZURE_SECURITY_KEYVAULT_SECRETS_VERSION_PATCH);
     }
   };
-}}}}} // namespace Azure::Security::KeyVault::Keys::_detail
+}}}}} // namespace Azure::Security::KeyVault::Secrets::_detail
 
 #undef AZURE_SECURITY_KEYVAULT_SECRETS_VERSION_ITOA_HELPER
 #undef AZURE_SECURITY_KEYVAULT_SECRETS_VERSION_ITOA
