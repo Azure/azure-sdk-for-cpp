@@ -525,6 +525,8 @@ namespace Azure { namespace Storage { namespace Blobs {
     _detail::BlobRestClient::Blob::SetBlobAccessTierOptions protocolLayerOptions;
     protocolLayerOptions.AccessTier = tier;
     protocolLayerOptions.RehydratePriority = options.RehydratePriority;
+    protocolLayerOptions.LeaseId = options.AccessConditions.LeaseId;
+    protocolLayerOptions.IfTags = options.AccessConditions.TagConditions;
     return _detail::BlobRestClient::Blob::SetAccessTier(
         *m_pipeline, m_blobUrl, protocolLayerOptions, context);
   }
@@ -536,6 +538,7 @@ namespace Azure { namespace Storage { namespace Blobs {
   {
     _detail::BlobRestClient::Blob::StartBlobCopyFromUriOptions protocolLayerOptions;
     protocolLayerOptions.Metadata = options.Metadata;
+    protocolLayerOptions.Tags = options.Tags;
     protocolLayerOptions.SourceUri = sourceUri;
     protocolLayerOptions.AccessTier = options.AccessTier;
     protocolLayerOptions.RehydratePriority = options.RehydratePriority;
@@ -545,12 +548,12 @@ namespace Azure { namespace Storage { namespace Blobs {
     protocolLayerOptions.IfMatch = options.AccessConditions.IfMatch;
     protocolLayerOptions.IfNoneMatch = options.AccessConditions.IfNoneMatch;
     protocolLayerOptions.IfTags = options.AccessConditions.TagConditions;
-    protocolLayerOptions.SourceLeaseId = options.SourceAccessConditions.LeaseId;
     protocolLayerOptions.SourceIfModifiedSince = options.SourceAccessConditions.IfModifiedSince;
     protocolLayerOptions.SourceIfUnmodifiedSince = options.SourceAccessConditions.IfUnmodifiedSince;
     protocolLayerOptions.SourceIfMatch = options.SourceAccessConditions.IfMatch;
     protocolLayerOptions.SourceIfNoneMatch = options.SourceAccessConditions.IfNoneMatch;
     protocolLayerOptions.ShouldSealDestination = options.ShouldSealDestination;
+    protocolLayerOptions.SourceLeaseId = options.SourceAccessConditions.LeaseId;
     protocolLayerOptions.SourceIfTags = options.SourceAccessConditions.TagConditions;
 
     auto response = _detail::BlobRestClient::Blob::StartCopyFromUri(

@@ -27,21 +27,13 @@ if(NOT AZ_ALL_LIBRARIES)
 endif()
 
 set(
-  AZURE_KEYVAULT_COMMON_HEADER
-    inc/azure/keyvault/common/internal/keyvault_pipeline.hpp
-    inc/azure/keyvault/common/internal/single_page.hpp
-)
-
-set(
   AZURE_KEYVAULT_COMMON_SOURCE
-    src/private/keyvault_constants.hpp
     src/private/package_version.hpp
-    src/keyvault_pipeline.cpp
 )
 
 add_library(
     azure-security-keyvault-common
-    ${AZURE_KEYVAULT_COMMON_HEADER} ${AZURE_KEYVAULT_COMMON_SOURCE}
+    ${AZURE_KEYVAULT_COMMON_SOURCE}
 )
 add_library(Azure::azure-security-keyvault-common ALIAS azure-security-keyvault-common)
 
@@ -70,7 +62,7 @@ endif()
 create_code_coverage(keyvault azure-security-keyvault-common azure-security-keyvault-common-test)
 
 get_az_version("${CMAKE_CURRENT_SOURCE_DIR}/src/private/package_version.hpp")
-generate_documentation(azure-security-keyvault-common ${AZ_LIBRARY_VERSION})
+#generate_documentation(azure-security-keyvault-common ${AZ_LIBRARY_VERSION})
 
 if(BUILD_TESTING)
     # tests
