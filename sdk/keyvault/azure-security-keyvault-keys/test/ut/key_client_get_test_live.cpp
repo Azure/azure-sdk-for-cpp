@@ -144,6 +144,6 @@ TEST_F(KeyVaultClientTest, GetDeletedKeysOnePage)
   {
     // Check names are in the keyNames list
     auto findKeyName = std::find(deletedKeys.begin(), deletedKeys.end(), key);
-    EXPECT_NE(findKeyName, keyNames.end());
+    EXPECT_NE(findKeyName, deletedKeys.end());
   }
 }
