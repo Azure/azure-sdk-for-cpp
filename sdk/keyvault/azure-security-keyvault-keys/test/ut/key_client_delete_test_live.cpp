@@ -15,6 +15,7 @@
 #include <string>
 
 namespace {
+
 std::string GetNotFoundErrorMsg(std::string const& keyName)
 {
   return "A key with (name/id) " + keyName
@@ -58,7 +59,8 @@ TEST_F(KeyVaultClientTest, DeleteKey)
     // The polling operation would usually complete in ~20 seconds.
     // Setting 3 min as timeout just because I like number 3. We just want to prevent test running
     // for so long if something happens and no exception is thrown (paranoid scenario)
-    auto duration = std::chrono::system_clock::now() + std::chrono::minutes(3);
+    auto duration
+        = std::chrono::system_clock::now() + std::chrono::minutes(m_testPollingTimeOutMinutes);
     auto cancelToken = Azure::Core::Context::ApplicationContext.WithDeadline(duration);
 
     auto keyResponseLRO = keyClient.StartDeleteKey(keyName);
@@ -66,21 +68,16 @@ TEST_F(KeyVaultClientTest, DeleteKey)
     EXPECT_EQ(keyResponseLRO.GetResumeToken(), expectedStatusToken);
     // poll each second until key is soft-deleted
     // Will throw and fail test if test takes more than 3 minutes (token cancelled)
-    auto keyResponse = keyResponseLRO.PollUntilDone(std::chrono::milliseconds(1000), cancelToken);
+    auto keyResponse = keyResponseLRO.PollUntilDone(m_testPollingIntervalMinutes, cancelToken);
   }
   {
     // recover
     auto recoverOperation = keyClient.StartRecoverDeletedKey(keyName);
-    auto keyResponse = recoverOperation.PollUntilDone(std::chrono::milliseconds(500));
+    auto keyResponse = recoverOperation.PollUntilDone(m_testPollingIntervalMinutes);
     auto key = keyResponse.Value;
     // Delete again for purging
     auto deleteOp = keyClient.StartDeleteKey(key.Name());
-    deleteOp.PollUntilDone(std::chrono::milliseconds(200));
-  }
-  {
-    // Purge
-    auto response = keyClient.PurgeDeletedKey(keyName);
-    CheckValidResponse(response, Azure::Core::Http::HttpStatusCode::NoContent);
+    deleteOp.PollUntilDone(m_testPollingIntervalMinutes);
   }
 }
 
@@ -145,10 +142,11 @@ TEST_F(KeyVaultClientTest, DoubleDelete)
         = keyClient.CreateKey(keyName, Azure::Security::KeyVault::Keys::KeyVaultKeyType::Ec);
   }
   {
-    auto duration = std::chrono::system_clock::now() + std::chrono::minutes(3);
+    auto duration
+        = std::chrono::system_clock::now() + std::chrono::minutes(m_testPollingTimeOutMinutes);
     auto cancelToken = Azure::Core::Context::ApplicationContext.WithDeadline(duration);
     auto keyResponseLRO = keyClient.StartDeleteKey(keyName);
-    auto keyResponse = keyResponseLRO.PollUntilDone(std::chrono::milliseconds(1000), cancelToken);
+    auto keyResponse = keyResponseLRO.PollUntilDone(m_testPollingIntervalMinutes, cancelToken);
   }
   // delete same key again
   auto wasThrown = false;
@@ -219,10 +217,11 @@ TEST_F(KeyVaultClientTest, CreateDeletedKey)
         = keyClient.CreateKey(keyName, Azure::Security::KeyVault::Keys::KeyVaultKeyType::Ec);
   }
   {
-    auto duration = std::chrono::system_clock::now() + std::chrono::minutes(3);
+    auto duration
+        = std::chrono::system_clock::now() + std::chrono::minutes(m_testPollingTimeOutMinutes);
     auto cancelToken = Azure::Core::Context::ApplicationContext.WithDeadline(duration);
     auto keyResponseLRO = keyClient.StartDeleteKey(keyName);
-    auto keyResponse = keyResponseLRO.PollUntilDone(std::chrono::milliseconds(1000), cancelToken);
+    auto keyResponse = keyResponseLRO.PollUntilDone(m_testPollingIntervalMinutes, cancelToken);
   }
   // Create a key with same name
   auto wasThrown = false;
@@ -300,13 +299,14 @@ TEST_F(KeyVaultClientTest, GetDeletedKey)
   }
   {
     // Wait until key is deleted
-    auto duration = std::chrono::system_clock::now() + std::chrono::minutes(3);
+    auto duration
+        = std::chrono::system_clock::now() + std::chrono::minutes(m_testPollingTimeOutMinutes);
     auto cancelToken = Azure::Core::Context::ApplicationContext.WithDeadline(duration);
 
     auto keyResponseLRO = keyClient.StartDeleteKey(keyName);
     auto expectedStatusToken = m_keyVaultUrl
         + std::string(Azure::Security::KeyVault::Keys::_detail::DeletedKeysPath) + "/" + keyName;
-    auto keyResponse = keyResponseLRO.PollUntilDone(std::chrono::milliseconds(1000), cancelToken);
+    auto keyResponse = keyResponseLRO.PollUntilDone(m_testPollingIntervalMinutes, cancelToken);
   }
   {
     // Get the deleted key
@@ -340,21 +340,7 @@ TEST_F(KeyVaultClientTest, DeleteOperationResumeToken)
     auto resumeOperation
         = Azure::Security::KeyVault::Keys::DeleteKeyOperation::CreateFromResumeToken(
             resumeToken, keyClient);
-    resumeOperation.PollUntilDone(std::chrono::milliseconds(500));
-  }
-  {
-    // recover
-    auto recoverOperation = keyClient.StartRecoverDeletedKey(keyName);
-    auto keyResponse = recoverOperation.PollUntilDone(std::chrono::milliseconds(500));
-    auto key = keyResponse.Value;
-    // Delete again for purging
-    auto deleteOp = keyClient.StartDeleteKey(key.Name());
-    deleteOp.PollUntilDone(std::chrono::milliseconds(200));
-  }
-  {
-    // Purge
-    auto response = keyClient.PurgeDeletedKey(keyName);
-    CheckValidResponse(response, Azure::Core::Http::HttpStatusCode::NoContent);
+    resumeOperation.PollUntilDone(m_testPollingIntervalMinutes);
   }
 }
 
@@ -380,7 +366,7 @@ TEST_F(KeyVaultClientTest, RecoverOperationResumeToken)
     auto resumeOperation
         = Azure::Security::KeyVault::Keys::DeleteKeyOperation::CreateFromResumeToken(
             resumeToken, keyClient);
-    resumeOperation.PollUntilDone(std::chrono::milliseconds(500));
+    resumeOperation.PollUntilDone(m_testPollingIntervalMinutes);
   }
   {
     // recover
@@ -392,15 +378,7 @@ TEST_F(KeyVaultClientTest, RecoverOperationResumeToken)
     auto resumeRecoveryOp
         = Azure::Security::KeyVault::Keys::RecoverDeletedKeyOperation::CreateFromResumeToken(
             resumeToken, keyClient);
-    auto keyResponse = resumeRecoveryOp.PollUntilDone(std::chrono::milliseconds(500));
+    auto keyResponse = resumeRecoveryOp.PollUntilDone(m_testPollingIntervalMinutes);
     auto key = keyResponse.Value;
-    // Delete again for purging
-    auto deleteOp = keyClient.StartDeleteKey(key.Name());
-    deleteOp.PollUntilDone(std::chrono::milliseconds(200));
-  }
-  {
-    // Purge
-    auto response = keyClient.PurgeDeletedKey(keyName);
-    CheckValidResponse(response, Azure::Core::Http::HttpStatusCode::NoContent);
   }
 }

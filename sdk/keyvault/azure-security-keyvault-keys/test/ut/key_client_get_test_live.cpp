@@ -20,7 +20,6 @@ using namespace Azure::Security::KeyVault::Keys;
 TEST_F(KeyVaultClientTest, GetSingleKey)
 {
   KeyClient keyClient(m_keyVaultUrl, m_credential);
-  // Assuming and RS Key exists in the KeyVault Account.
   std::string keyName(GetUniqueName());
 
   auto createKeyResponse = keyClient.CreateEcKey(CreateEcKeyOptions(keyName));
@@ -69,9 +68,6 @@ TEST_F(KeyVaultClientTest, GetPropertiesOfKeysOnePage)
     auto findKeyName = std::find(keyNames.begin(), keyNames.end(), keyProperties.Name);
     EXPECT_NE(findKeyName, keyNames.end());
   }
-
-  // Clean vault
-  RemoveAllKeysFromVault(keyClient, false);
 }
 
 TEST_F(KeyVaultClientTest, GetKeysVersionsOnePage)
@@ -104,17 +100,11 @@ TEST_F(KeyVaultClientTest, GetKeysVersionsOnePage)
   {
     EXPECT_EQ(keyName, keyProperties.Name);
   }
-
-  // Clean vault
-  RemoveAllKeysFromVault(keyClient, false);
 }
 
 TEST_F(KeyVaultClientTest, GetDeletedKeysOnePage)
 {
   KeyClient keyClient(m_keyVaultUrl, m_credential);
-
-  // Delete and purge anything before starting the test to ensure test will work
-  CleanUpKeyVault(keyClient);
 
   // Create 5 keys
   std::vector<std::string> keyNames;
@@ -135,31 +125,25 @@ TEST_F(KeyVaultClientTest, GetDeletedKeysOnePage)
   // wait for all of the delete operations to complete
   for (auto& operation : operations)
   {
-    operation.PollUntilDone(std::chrono::milliseconds(1000));
+    operation.PollUntilDone(m_testPollingIntervalMinutes);
   }
 
   // Get all deleted Keys
-  std::vector<DeletedKey> deletedKeys;
+  std::vector<std::string> deletedKeys;
   for (auto keyResponse = keyClient.GetDeletedKeys(); keyResponse.HasPage();
        keyResponse.MoveToNextPage())
   {
     for (auto& key : keyResponse.Items)
     {
-      deletedKeys.emplace_back(key);
+      deletedKeys.emplace_back(key.Name());
     }
   }
 
-  EXPECT_EQ(keyNames.size(), deletedKeys.size());
-  for (auto const& deletedKey : deletedKeys)
+  // Check all keys are in the deleted key list
+  for (auto const& key : keyNames)
   {
     // Check names are in the keyNames list
-    auto findKeyName = std::find(keyNames.begin(), keyNames.end(), deletedKey.Name());
-    EXPECT_NE(findKeyName, keyNames.end());
-  }
-
-  // Purge
-  for (auto const& keyName : keyNames)
-  {
-    keyClient.PurgeDeletedKey(keyName);
+    auto findKeyName = std::find(deletedKeys.begin(), deletedKeys.end(), key);
+    EXPECT_NE(findKeyName, deletedKeys.end());
   }
 }

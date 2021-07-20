@@ -21,6 +21,10 @@
 namespace Azure { namespace Security { namespace KeyVault { namespace Keys { namespace Test {
 
   class KeyVaultClientTest : public ::testing::TestWithParam<int> {
+  protected:
+    int m_testPollingTimeOutMinutes = 20;
+    std::chrono::minutes m_testPollingIntervalMinutes = std::chrono::minutes(1);
+
   private:
     std::string GetEnv(const std::string& name, std::string const& defaultValue = std::string())
     {
@@ -127,7 +131,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys { nam
                   << " Will be deleted and purged now...";
         for (auto& deletedKey : deletedKeys)
         {
-          auto readyToPurgeKey = deletedKey.PollUntilDone(std::chrono::milliseconds(1000));
+          auto readyToPurgeKey = deletedKey.PollUntilDone(std::chrono::minutes(1));
           keyClient.PurgeDeletedKey(readyToPurgeKey.Value.Name());
           std::cout << std::endl << "Deleted and purged key: " + readyToPurgeKey.Value.Name();
         }
