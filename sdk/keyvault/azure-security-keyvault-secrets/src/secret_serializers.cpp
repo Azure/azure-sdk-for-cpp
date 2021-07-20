@@ -39,17 +39,9 @@ void KeyVaultSecretSerializer::KeyVaultSecretDeserialize(
   auto jsonParser = json::parse(body);
 
   secret.Value = jsonParser[_detail::ValuePropertyName];
-  
   secret.Id = jsonParser[_detail::IdPropertyName];
-  if (jsonParser.contains(_detail::KeyIdPropertyName))
-  {
-    secret.KeyId = jsonParser[_detail::KeyIdPropertyName];
-  }
 
-
-  // Parse URL for the vaultUri, keyVersion
-  //_detail::KeyVaultSecretSerializer::ParseKeyUrl(key.Properties, key.Key.Id);
-  // "Attributes"
+  // Parse URL for the various attributes
   if (jsonParser.contains(_detail::AttributesPropertyName))
   {
     auto attributes = jsonParser[_detail::AttributesPropertyName];
@@ -76,6 +68,8 @@ void KeyVaultSecretSerializer::KeyVaultSecretDeserialize(
         attributes,
         _detail::UpdatedPropertyName,
         PosixTimeConverter::PosixTimeToDateTime);
+    JsonOptional::SetIfExists<std::string>(
+        secret.Properties.RecoveryLevel, attributes, _detail::RecoveryLevelPropertyName);
   }
 
   // "Tags"
@@ -95,5 +89,12 @@ void KeyVaultSecretSerializer::KeyVaultSecretDeserialize(
   {
     secret.Managed = jsonParser[_detail::ManagedPropertyName].get<bool>();
   }
+
+  // key id
+  JsonOptional::SetIfExists<std::string>(
+      secret.KeyId, jsonParser, _detail::KeyIdPropertyName);
+
+  // key id
+  JsonOptional::SetIfExists<std::string>(secret.ContentType, jsonParser, _detail::ContentTypePropertyName);
 }
 

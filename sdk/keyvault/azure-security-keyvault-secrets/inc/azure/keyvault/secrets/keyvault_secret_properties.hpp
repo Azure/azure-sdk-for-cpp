@@ -15,7 +15,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
      * @brief The name of the secret.
      *
      */
-    std::string Name;
+    Azure::Nullable<std::string> Name;
     /**
      * @brief Indicate whether the secret is enabled and useable for cryptographic operations.
      *
@@ -60,7 +60,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
      * only the service can purge the secret at the end of the retention interval.
      *
      */
-    std::string RecoveryLevel;
+    Azure::Nullable<std::string> RecoveryLevel;
 
     /**
      * @brief Construct a new secret Properties object.

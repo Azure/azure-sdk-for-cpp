@@ -22,14 +22,14 @@ namespace Azure{namespace Security{namespace KeyVault{namespace Secrets {
      * @brief The content type of the secret.
      *
      */
-    std::string ContentType;
+    Azure::Nullable<std::string> ContentType;
 
     /**
      * @brief  If this is a secret backing a KV certificate, then this field specifies the
      * corresponding key backing the KV certificate.
      *
      */
-    std::string KeyId;
+    Azure::Nullable<std::string> KeyId;
 
     /**
      * @brief Application specific metadata in the form of key-value pairs.
