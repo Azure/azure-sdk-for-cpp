@@ -21,11 +21,6 @@
 #include "azure/storage/queues/dll_import_export.hpp"
 
 namespace Azure { namespace Storage { namespace Queues {
-
-  namespace _detail {
-    constexpr static const char* ApiVersion = "2018-03-28";
-  } // namespace _detail
-
   namespace Models {
 
     /**
@@ -490,6 +485,10 @@ namespace Azure { namespace Storage { namespace Queues {
     } // namespace _detail
 
   } // namespace Models
+
+  namespace _detail {
+    constexpr static const char* ApiVersion = "2018-03-28";
+  } // namespace _detail
 
   namespace _detail {
 

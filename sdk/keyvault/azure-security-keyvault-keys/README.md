@@ -442,6 +442,7 @@ This project has adopted the [Microsoft Open Source Code of Conduct][code_of_con
 For more information see the [Code of Conduct FAQ][coc_faq] or contact opencode@microsoft.com with any additional questions or comments.
 
 <!-- LINKS -->
+
 [azsdk_vcpkg_install]: https://github.com/Azure/azure-sdk-for-cpp#download--install-the-sdk
 [api_reference]: https://azure.github.io/azure-sdk-for-cpp/keyvault.html
 [azure_cli]: https://docs.microsoft.com/cli/azure
