@@ -6,10 +6,10 @@
 #include "private/secret_constants.hpp"
 #include "private/secret_serializers.hpp"
 
-#include <azure/keyvault/common/internal/keyvault_pipeline.hpp>
 #include <azure/core/credentials/credentials.hpp>
-#include <azure/core/http/policies/policy.hpp>
 #include <azure/core/http/http.hpp>
+#include <azure/core/http/policies/policy.hpp>
+#include <azure/keyvault/common/internal/keyvault_pipeline.hpp>
 
 #include <string>
 
@@ -58,6 +58,21 @@ Azure::Response<KeyVaultSecret> SecretClient::GetSecret(
         return _detail::KeyVaultSecretSerializer::KeyVaultSecretDeserialize(name, rawResponse);
       },
       {_detail::SecretPath, name, options.Version});
-    }
+}
+
+Azure::Response<KeyVaultSecret> SecretClient::SetSecret(
+    std::string const& name,
+    GetSecretOptions const& value,
+    Azure::Core::Context const& context) const
+{
+  return m_pipeline->SendRequest<KeyVaultSecret>(
+      context,
+      Azure::Core::Http::HttpMethod::Get,
+      [&name](Azure::Core::Http::RawResponse const& rawResponse) {
+        return _detail::KeyVaultSecretSerializer::KeyVaultSecretDeserialize(name, rawResponse);
+      },
+      {_detail::SecretPath, name, options.Version});
+}
+
 
 const ServiceVersion ServiceVersion::V7_2("7.2");

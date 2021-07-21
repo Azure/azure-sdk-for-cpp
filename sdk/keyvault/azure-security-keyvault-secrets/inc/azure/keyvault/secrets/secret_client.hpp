@@ -76,7 +76,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
      */
     std::string Version;
   };
-  
+
   /**
    * @brief The SecretClient provides synchronous methods to manage a secret in the Azure Key
    * Vault. The client supports creating, retrieving, updating, deleting, purging, backing up,
@@ -114,11 +114,19 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
 
     ~SecretClient() = default;
 
-
-    Response<KeyVaultSecret> GetSecret(
+    Azure::Response<KeyVaultSecret> GetSecret(
         std::string const& name,
         GetSecretOptions const& options = GetSecretOptions(),
         Azure::Core::Context const& context = Azure::Core::Context()) const;
+
+    Azure::Response<KeyVaultSecret> SetSecret(
+        std::string const& name,
+        std::string const& value,
+        Azure::Core::Context const& context = Azure::Core::Context());
+
+    Azure::Response<KeyVaultSecret> SetSecret(
+        KeyVaultSecret secret,
+        Azure::Core::Context const& context = Azure::Core::Context());
 
     std::string ClientVersion() const;
   };
