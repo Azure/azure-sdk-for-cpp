@@ -1,8 +1,8 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
 
-#include "../src/private/secret_serializers.hpp"
-#include "../src/private/secret_constants.hpp"
+#include "private/secret_serializers.hpp"
+#include "private/secret_constants.hpp"
 
 #include "secret_get_client_deserialize_test.hpp"
 #include <azure/core/internal/json/json.hpp>
