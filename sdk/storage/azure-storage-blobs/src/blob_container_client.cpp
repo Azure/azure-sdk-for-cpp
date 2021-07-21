@@ -261,6 +261,10 @@ namespace Azure { namespace Storage { namespace Blobs {
       {
         i.Details.IsSealed = false;
       }
+      if (i.Details.CopyStatus.HasValue() && !i.Details.IsIncrementalCopy.HasValue())
+      {
+        i.Details.IsIncrementalCopy = false;
+      }
     }
 
     ListBlobsPagedResponse pagedResponse;
@@ -309,6 +313,10 @@ namespace Azure { namespace Storage { namespace Blobs {
       if (i.BlobType == Models::BlobType::AppendBlob && !i.Details.IsSealed)
       {
         i.Details.IsSealed = false;
+      }
+      if (i.Details.CopyStatus.HasValue() && !i.Details.IsIncrementalCopy.HasValue())
+      {
+        i.Details.IsIncrementalCopy = false;
       }
     }
 

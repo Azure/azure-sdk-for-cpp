@@ -17,7 +17,6 @@
 #include "azure/keyvault/keys/key_type.hpp"
 
 #include <functional>
-#include <list>
 #include <memory>
 #include <string>
 #include <unordered_map>
@@ -37,7 +36,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys { nam
 
     explicit KeyRequestParameters(
         KeyProperties const& key,
-        Azure::Nullable<std::list<KeyOperation>> const& operations)
+        Azure::Nullable<std::vector<KeyOperation>> const& operations)
         : m_options(CreateKeyOptions())
     {
       if (key.Enabled)
@@ -58,7 +57,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys { nam
       }
       if (operations)
       {
-        m_options.KeyOperations = std::list<KeyOperation>(operations.Value());
+        m_options.KeyOperations = std::vector<KeyOperation>(operations.Value());
       }
     }
 

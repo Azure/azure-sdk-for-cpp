@@ -98,6 +98,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     protocolLayerOptions.TransactionalContentHash = options.TransactionalContentHash;
     protocolLayerOptions.HttpHeaders = options.HttpHeaders;
     protocolLayerOptions.Metadata = options.Metadata;
+    protocolLayerOptions.Tags = options.Tags;
     protocolLayerOptions.AccessTier = options.AccessTier;
     protocolLayerOptions.LeaseId = options.AccessConditions.LeaseId;
     protocolLayerOptions.IfModifiedSince = options.AccessConditions.IfModifiedSince;
@@ -138,6 +139,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       UploadBlockBlobOptions uploadBlockBlobOptions;
       uploadBlockBlobOptions.HttpHeaders = options.HttpHeaders;
       uploadBlockBlobOptions.Metadata = options.Metadata;
+      uploadBlockBlobOptions.Tags = options.Tags;
       uploadBlockBlobOptions.AccessTier = options.AccessTier;
       return Upload(contentStream, uploadBlockBlobOptions, context);
     }
@@ -187,6 +189,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     CommitBlockListOptions commitBlockListOptions;
     commitBlockListOptions.HttpHeaders = options.HttpHeaders;
     commitBlockListOptions.Metadata = options.Metadata;
+    commitBlockListOptions.Tags = options.Tags;
     commitBlockListOptions.AccessTier = options.AccessTier;
     auto commitBlockListResponse = CommitBlockList(blockIds, commitBlockListOptions, context);
 
@@ -219,6 +222,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         UploadBlockBlobOptions uploadBlockBlobOptions;
         uploadBlockBlobOptions.HttpHeaders = options.HttpHeaders;
         uploadBlockBlobOptions.Metadata = options.Metadata;
+        uploadBlockBlobOptions.Tags = options.Tags;
         uploadBlockBlobOptions.AccessTier = options.AccessTier;
         return Upload(contentStream, uploadBlockBlobOptions, context);
       }
@@ -276,6 +280,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     CommitBlockListOptions commitBlockListOptions;
     commitBlockListOptions.HttpHeaders = options.HttpHeaders;
     commitBlockListOptions.Metadata = options.Metadata;
+    commitBlockListOptions.Tags = options.Tags;
     commitBlockListOptions.AccessTier = options.AccessTier;
     auto commitBlockListResponse = CommitBlockList(blockIds, commitBlockListOptions, context);
 
@@ -351,6 +356,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     }
     protocolLayerOptions.HttpHeaders = options.HttpHeaders;
     protocolLayerOptions.Metadata = options.Metadata;
+    protocolLayerOptions.Tags = options.Tags;
     protocolLayerOptions.AccessTier = options.AccessTier;
     protocolLayerOptions.LeaseId = options.AccessConditions.LeaseId;
     protocolLayerOptions.IfModifiedSince = options.AccessConditions.IfModifiedSince;
