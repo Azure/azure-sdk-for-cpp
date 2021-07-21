@@ -10,8 +10,11 @@
 #include <gtest/gtest.h>
 
 #include "./../../src/private/key_serializers.hpp"
+#include "./../../src/private/keyvault_protocol.hpp"
+
 #include <azure/core.hpp>
-#include <azure/keyvault/key_vault_keys.hpp>
+#include <azure/core/internal/http/pipeline.hpp>
+#include <azure/keyvault/keyvault_keys.hpp>
 #include <cstdio>
 #include <string>
 
@@ -101,7 +104,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys { nam
     {
       auto apiVersion = options.Version.ToString();
 
-      m_pipeline = std::make_unique<Azure::Security::KeyVault::_internal::KeyVaultPipeline>(
+      m_pipeline = std::make_unique<Azure::Security::KeyVault::_detail::KeyVaultProtocolClient>(
           Azure::Core::Url(vaultUrl),
           apiVersion,
           Azure::Core::Http::_internal::HttpPipeline(options, "test", "version", {}, {}));

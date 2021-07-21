@@ -24,11 +24,6 @@
 #include "azure/storage/blobs/dll_import_export.hpp"
 
 namespace Azure { namespace Storage { namespace Blobs {
-
-  namespace _detail {
-    constexpr static const char* ApiVersion = "2020-02-10";
-  } // namespace _detail
-
   namespace Models {
 
     /**
@@ -2852,6 +2847,10 @@ namespace Azure { namespace Storage { namespace Blobs {
     } // namespace _detail
 
   } // namespace Models
+
+  namespace _detail {
+    constexpr static const char* ApiVersion = "2020-02-10";
+  } // namespace _detail
 
   namespace _detail {
 
@@ -10270,9 +10269,6 @@ namespace Azure { namespace Storage { namespace Blobs {
           Azure::Nullable<int32_t> Timeout;
           int64_t BlobSize = -1;
           Azure::Nullable<std::string> LeaseId;
-          Azure::Nullable<int64_t> IfSequenceNumberLessThanOrEqualTo;
-          Azure::Nullable<int64_t> IfSequenceNumberLessThan;
-          Azure::Nullable<int64_t> IfSequenceNumberEqualTo;
           Azure::Nullable<Azure::DateTime> IfModifiedSince;
           Azure::Nullable<Azure::DateTime> IfUnmodifiedSince;
           Azure::ETag IfMatch;
@@ -10300,24 +10296,6 @@ namespace Azure { namespace Storage { namespace Blobs {
           if (options.LeaseId.HasValue())
           {
             request.SetHeader("x-ms-lease-id", options.LeaseId.Value());
-          }
-          if (options.IfSequenceNumberLessThanOrEqualTo.HasValue())
-          {
-            request.SetHeader(
-                "x-ms-if-sequence-number-le",
-                std::to_string(options.IfSequenceNumberLessThanOrEqualTo.Value()));
-          }
-          if (options.IfSequenceNumberLessThan.HasValue())
-          {
-            request.SetHeader(
-                "x-ms-if-sequence-number-lt",
-                std::to_string(options.IfSequenceNumberLessThan.Value()));
-          }
-          if (options.IfSequenceNumberEqualTo.HasValue())
-          {
-            request.SetHeader(
-                "x-ms-if-sequence-number-eq",
-                std::to_string(options.IfSequenceNumberEqualTo.Value()));
           }
           if (options.IfModifiedSince.HasValue())
           {
@@ -10368,9 +10346,6 @@ namespace Azure { namespace Storage { namespace Blobs {
           SequenceNumberAction Action;
           Azure::Nullable<int64_t> SequenceNumber;
           Azure::Nullable<std::string> LeaseId;
-          Azure::Nullable<int64_t> IfSequenceNumberLessThanOrEqualTo;
-          Azure::Nullable<int64_t> IfSequenceNumberLessThan;
-          Azure::Nullable<int64_t> IfSequenceNumberEqualTo;
           Azure::Nullable<Azure::DateTime> IfModifiedSince;
           Azure::Nullable<Azure::DateTime> IfUnmodifiedSince;
           Azure::ETag IfMatch;
@@ -10397,24 +10372,6 @@ namespace Azure { namespace Storage { namespace Blobs {
           if (options.LeaseId.HasValue())
           {
             request.SetHeader("x-ms-lease-id", options.LeaseId.Value());
-          }
-          if (options.IfSequenceNumberLessThanOrEqualTo.HasValue())
-          {
-            request.SetHeader(
-                "x-ms-if-sequence-number-le",
-                std::to_string(options.IfSequenceNumberLessThanOrEqualTo.Value()));
-          }
-          if (options.IfSequenceNumberLessThan.HasValue())
-          {
-            request.SetHeader(
-                "x-ms-if-sequence-number-lt",
-                std::to_string(options.IfSequenceNumberLessThan.Value()));
-          }
-          if (options.IfSequenceNumberEqualTo.HasValue())
-          {
-            request.SetHeader(
-                "x-ms-if-sequence-number-eq",
-                std::to_string(options.IfSequenceNumberEqualTo.Value()));
           }
           if (options.IfModifiedSince.HasValue())
           {

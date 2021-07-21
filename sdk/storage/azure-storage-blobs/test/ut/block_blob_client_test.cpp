@@ -298,6 +298,14 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_EQ(res.Value.Details.Metadata, m_blobUploadOptions.Metadata);
     EXPECT_EQ(res.Value.BlobType, Azure::Storage::Blobs::Models::BlobType::BlockBlob);
 
+    std::string tempFilename = RandomString();
+    EXPECT_NO_THROW(blockBlobClient.DownloadTo(tempFilename));
+    EXPECT_TRUE(ReadFile(tempFilename).empty());
+    DeleteFile(tempFilename);
+
+    std::vector<uint8_t> buff;
+    EXPECT_NO_THROW(blockBlobClient.DownloadTo(buff.data(), 0));
+
     Azure::Storage::Blobs::DownloadBlobOptions options;
     options.Range = Core::Http::HttpRange();
     options.Range.Value().Offset = 0;

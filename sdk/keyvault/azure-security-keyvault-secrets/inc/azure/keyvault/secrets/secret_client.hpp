@@ -11,4 +11,4 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
     std::string ClientVersion() const;
   };
 
-}}}} // namespace Azure::Security::KeyVault::Keys
+}}}} // namespace Azure::Security::KeyVault::Secrets
