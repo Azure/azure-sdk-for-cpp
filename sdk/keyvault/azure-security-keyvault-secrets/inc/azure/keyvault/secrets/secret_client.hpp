@@ -11,6 +11,7 @@
 #include <azure/keyvault/secrets/keyvault_secret.hpp>
 #include <string>
 
+#include <string>
 namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
 
   class ServiceVersion final {
@@ -132,4 +133,5 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
 
     std::string ClientVersion() const;
   };
+
 }}}} // namespace Azure::Security::KeyVault::Secrets

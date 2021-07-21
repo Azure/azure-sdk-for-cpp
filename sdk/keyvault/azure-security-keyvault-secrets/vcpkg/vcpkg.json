@@ -1,4 +1,4 @@
-# Copyright (c) Microsoft Corporation. All rights reserved.
+# Copyright (c) Microsoft Corporation. All rights reserved. 
 # SPDX-License-Identifier: MIT
 
 {
@@ -12,11 +12,6 @@
   "license": "MIT",
   "builtin-baseline": "14c54c49b56a964ac7f2f701a6857adb02ae1bec",
   "dependencies": [
-    {
-      "name": "azure-security-keyvault-common-cpp",
-      "default-features": false,
-      "version>=": "4.0.0"
-    },
     {
       "name": "vcpkg-cmake",
       "host": true

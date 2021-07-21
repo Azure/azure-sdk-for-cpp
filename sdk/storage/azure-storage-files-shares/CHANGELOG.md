@@ -2,6 +2,19 @@
 
 ## 12.1.0-beta.1 (Unreleased)
 
+### Features Added
+
+### Breaking Changes
+
+### Bugs Fixed
+
+- Fixed a bug where unspecified SMB properties got overwritten rather than preserved by `SetProperties()`.
+
+### Other Changes
+
+## 12.0.1 (2021-07-07)
+
+No API changes since `12.0.0`.
 
 ## 12.0.0 (2021-06-08)
 

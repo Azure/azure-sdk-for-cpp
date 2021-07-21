@@ -2,16 +2,10 @@
 
 ## 4.0.0-beta.4 (Unreleased)
 
-### Features Added
-
 ### Breaking Changes
 
 - Removed `SHA256`, `SHA384`, and `SHA512` hashing classes by making them internal since the end user doesn't need them.
-
-### Key Bugs Fixed
-
-### Fixed
-
+- Removed header `single_page.hpp`.
 
 ## 4.0.0-beta.3 (2021-06-08)
 

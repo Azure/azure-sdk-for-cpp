@@ -11,7 +11,7 @@
 
 #include <azure/core/base64.hpp>
 #include <azure/core/internal/json/json.hpp>
-#include <azure/keyvault/key_vault_keys.hpp>
+#include <azure/keyvault/keyvault_keys.hpp>
 #include <private/key_constants.hpp>
 
 #include <iostream>
@@ -45,7 +45,7 @@ TEST_F(KeyVaultClientTest, BackupKey)
     // Delete
     std::cout << std::endl << "- Delete key";
     auto response = keyClient.StartDeleteKey(keyName);
-    response.PollUntilDone(std::chrono::milliseconds(1000));
+    response.PollUntilDone(m_testPollingIntervalMinutes);
   }
   {
     // Purge
@@ -53,7 +53,7 @@ TEST_F(KeyVaultClientTest, BackupKey)
     auto response = keyClient.PurgeDeletedKey(keyName);
     CheckValidResponse(response, Azure::Core::Http::HttpStatusCode::NoContent);
     // Purge can take up to 2 min
-    std::this_thread::sleep_for(std::chrono::minutes(2));
+    std::this_thread::sleep_for(std::chrono::minutes(4));
   }
   { // Check key is gone
     EXPECT_THROW(keyClient.GetKey(keyName), Azure::Core::RequestFailedException);
@@ -61,7 +61,7 @@ TEST_F(KeyVaultClientTest, BackupKey)
   {
     // Restore
     std::cout << std::endl << "- Restore key";
-    auto respone = keyClient.RestoreKeyBackup(backUpResponse.Value);
+    auto respone = keyClient.RestoreKeyBackup(backUpResponse.Value.BackupKey);
     CheckValidResponse(backUpResponse);
   }
   {
@@ -69,16 +69,5 @@ TEST_F(KeyVaultClientTest, BackupKey)
     auto response = keyClient.GetKey(keyName);
     CheckValidResponse(response);
     EXPECT_EQ(keyName, response.Value.Name());
-  }
-  {
-    // Delete
-    std::cout << std::endl << "- Clean";
-    auto response = keyClient.StartDeleteKey(keyName);
-    response.PollUntilDone(std::chrono::milliseconds(1000));
-  }
-  {
-    // Purge
-    auto response = keyClient.PurgeDeletedKey(keyName);
-    CheckValidResponse(response, Azure::Core::Http::HttpStatusCode::NoContent);
   }
 }

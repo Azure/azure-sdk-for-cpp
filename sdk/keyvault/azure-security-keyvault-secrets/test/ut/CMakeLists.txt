@@ -22,7 +22,10 @@ if (MSVC)
   target_compile_options(azure-security-keyvault-secrets-test PUBLIC /wd6326 /wd26495 /wd26812)
 endif()
 
-target_link_libraries(azure-security-keyvault-secrets-test PRIVATE azure-security-keyvault-secrets azure-identity gtest gmock)
+target_link_libraries(azure-security-keyvault-secrets-test PRIVATE azure-security-keyvault-secrets azure-identity gtest gtest_main gmock)
+
+# Adding private headers so we can test the private APIs with no relative paths include.
+target_include_directories (azure-security-keyvault-secrets-test PRIVATE $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/../../src>)
 
 # gtest_add_tests will scan the test from azure-core-test and call add_test
 # for each test to ctest. This enables `ctest -r` to run specific tests directly.

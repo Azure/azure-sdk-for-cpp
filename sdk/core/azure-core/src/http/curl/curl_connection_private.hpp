@@ -118,9 +118,11 @@ namespace Azure { namespace Core { namespace Http {
 
   public:
     /**
-     * @Brief Construct CURL HTTP connection.
+     * @brief Construct CURL HTTP connection.
      *
-     * @param host HTTP connection host name.
+     * @param handle CURL handle.
+     *
+     * @param connectionPropertiesKey CURL connection properties key
      */
     CurlConnection(CURL* handle, std::string connectionPropertiesKey)
         : m_handle(handle), m_connectionKey(std::move(connectionPropertiesKey))

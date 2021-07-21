@@ -79,6 +79,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     _detail::BlobRestClient::AppendBlob::CreateAppendBlobOptions protocolLayerOptions;
     protocolLayerOptions.HttpHeaders = options.HttpHeaders;
     protocolLayerOptions.Metadata = options.Metadata;
+    protocolLayerOptions.Tags = options.Tags;
     protocolLayerOptions.LeaseId = options.AccessConditions.LeaseId;
     protocolLayerOptions.IfModifiedSince = options.AccessConditions.IfModifiedSince;
     protocolLayerOptions.IfUnmodifiedSince = options.AccessConditions.IfUnmodifiedSince;

@@ -41,7 +41,7 @@ set(
     src/secret_serializers.cpp
 )
 
-add_library(azure-security-keyvault-secrets ${AZURE_SECURITY_KEYVAULT_SECRETS_HEADER} ${AZURE_SECURITY_KEYVAULT_SECRETS_SOURCE} "inc/azure/keyvault/secrets/keyvault_secret.hpp" "src/private/secret_constants.hpp" "src/private/secret_serializers.hpp" "src/secret_serializers.cpp" "inc/azure/keyvault/secrets/keyvault_secret_properties.hpp")
+add_library(azure-security-keyvault-secrets ${AZURE_SECURITY_KEYVAULT_SECRETS_HEADER} ${AZURE_SECURITY_KEYVAULT_SECRETS_SOURCE})
 add_library(Azure::azure-security-keyvault-secrets ALIAS azure-security-keyvault-secrets)
 
 target_include_directories(
@@ -51,7 +51,7 @@ target_include_directories(
       $<INSTALL_INTERFACE:include>
 )
 
-target_link_libraries(azure-security-keyvault-secrets PUBLIC PUBLIC Azure::azure-security-keyvault-common)
+#target_link_libraries(azure-security-keyvault-secrets PUBLIC Azure::azure-security-keyvault-secrets)
 
 # coverage. Has no effect if BUILD_CODE_COVERAGE is OFF
 create_code_coverage(keyvault-secrets azure-security-keyvault-secrets azure-security-keyvault-secrets-test)

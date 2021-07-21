@@ -19,8 +19,7 @@
 
 #include <azure/core.hpp>
 #include <azure/identity.hpp>
-#include <azure/keyvault/common/sha.hpp>
-#include <azure/keyvault/key_vault_keys.hpp>
+#include <azure/keyvault/keyvault_keys.hpp>
 
 #include <chrono>
 #include <iostream>
@@ -61,13 +60,13 @@ int main()
   std::cout << " - Using a sample generated key: " << Azure::Core::Convert::Base64Encode(keyData)
             << std::endl;
 
-  WrapResult wrapResult = cryptoClient.WrapKey(KeyWrapAlgorithm::RsaOaep, keyData);
+  auto wrapResult = cryptoClient.WrapKey(KeyWrapAlgorithm::RsaOaep, keyData).Value;
   std::cout << " - Encrypted data using the algorithm " << wrapResult.Algorithm.ToString()
             << ", with key " << wrapResult.KeyId << ". The resulting encrypted data is: "
             << Azure::Core::Convert::Base64Encode(wrapResult.EncryptedKey) << std::endl;
 
-  UnwrapResult unwrapResult
-      = cryptoClient.UnwrapKey(KeyWrapAlgorithm::RsaOaep, wrapResult.EncryptedKey);
+  auto unwrapResult
+      = cryptoClient.UnwrapKey(KeyWrapAlgorithm::RsaOaep, wrapResult.EncryptedKey).Value;
   std::cout << " - Decrypted data using the algorithm " << unwrapResult.Algorithm.ToString()
             << ", with key " << unwrapResult.KeyId << ". The resulting decrypted data is: "
             << Azure::Core::Convert::Base64Encode(unwrapResult.Key) << std::endl;
