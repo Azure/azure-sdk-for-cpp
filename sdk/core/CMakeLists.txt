@@ -12,3 +12,8 @@ add_subdirectory(azure-core)
 if (BUILD_PERFORMANCE_TESTS) 
   add_subdirectory(perf)
 endif()
+
+# Playback & record framework (a.k.a. azure-core-test)
+if (BUILD_TESTING)
+  add_subdirectory(azure-core-test)
+endif()
