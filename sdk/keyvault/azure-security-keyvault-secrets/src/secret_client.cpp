@@ -59,20 +59,31 @@ Azure::Response<KeyVaultSecret> SecretClient::GetSecret(
       },
       {_detail::SecretPath, name, options.Version});
 }
-
+/*
 Azure::Response<KeyVaultSecret> SecretClient::SetSecret(
     std::string const& name,
-    GetSecretOptions const& value,
+    std::string const& value,
     Azure::Core::Context const& context) const
 {
-  return m_pipeline->SendRequest<KeyVaultSecret>(
-      context,
-      Azure::Core::Http::HttpMethod::Get,
-      [&name](Azure::Core::Http::RawResponse const& rawResponse) {
-        return _detail::KeyVaultSecretSerializer::KeyVaultSecretDeserialize(name, rawResponse);
-      },
-      {_detail::SecretPath, name, options.Version});
+  KeyVaultSecret secret;
+  secret.Value = value;
+  secret.Attributes.Name = name;
+
+  return SetSecret(secret, context);
 }
 
-
+Azure::Response<KeyVaultSecret> SecretClient::SetSecret(
+    KeyVaultSecret const& secret,
+    Azure::Core::Context const& context) const
+{
+    
+  return m_pipeline->SendRequest<KeyVaultSecret>(
+      context,
+      Azure::Core::Http::HttpMethod::Put,
+      [](Azure::Core::Http::RawResponse const& rawResponse) {
+        return _detail::KeyVaultSecretSerializer::KeyVaultSecretDeserialize(rawResponse);
+      },
+      {_detail::SecretPath, secret.Attributes.Name});
+}
+*/
 const ServiceVersion ServiceVersion::V7_2("7.2");

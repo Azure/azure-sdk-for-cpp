@@ -2,6 +2,7 @@
 #include <azure/core/internal/json/json.hpp>
 #include <azure/keyvault/secrets/keyvault_secret.hpp>
 #include <azure/core/http/http.hpp>
+#include <azure/keyvault/secrets/keyvault_secret_set_parameters.hpp>
 
 using namespace Azure::Security::KeyVault::Secrets;
 
@@ -21,5 +22,11 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets { 
     static void KeyVaultSecretDeserialize(
         KeyVaultSecret& key,
         Azure::Core::Http::RawResponse const& rawResponse);
+  };
+
+  struct KeyvaultSecretSetParametersSerializer final
+  {
+    static std::string KeyvaultSecretSetParametersSerialize(
+        KeyVaultSecretSetParameters const& parameters);
   };
 }}}}} // namespace Azure::Security::KeyVault::Secrets::_detail

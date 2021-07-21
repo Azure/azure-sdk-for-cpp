@@ -14,7 +14,7 @@ TEST(KeyVaultSecretSerializer, GetClientDeserializePartial1)
   auto response = getPartialResponse();
 
   KeyVaultSecret secret = _detail::KeyVaultSecretSerializer::KeyVaultSecretDeserialize(response);
-  EXPECT_EQ(secret.Properties.Name.HasValue(), false);
+  EXPECT_EQ(secret.Attributes.Name.HasValue(), false);
   runPartialExpect(secret);
 }
 
@@ -25,7 +25,7 @@ TEST(KeyVaultSecretSerializer, GetClientDeserializePartial2)
   KeyVaultSecret secret
       = _detail::KeyVaultSecretSerializer::KeyVaultSecretDeserialize("name1", response);
 
-  EXPECT_EQ(secret.Properties.Name.Value(), "name1");
+  EXPECT_EQ(secret.Attributes.Name.Value(), "name1");
   runPartialExpect(secret);
 }
 
@@ -36,7 +36,7 @@ TEST(KeyVaultSecretSerializer, GetClientDeserializePartial3)
   KeyVaultSecret secret = KeyVaultSecret("name2");
   _detail::KeyVaultSecretSerializer::KeyVaultSecretDeserialize(secret, response);
 
-  EXPECT_EQ(secret.Properties.Name.Value(), "name2");
+  EXPECT_EQ(secret.Attributes.Name.Value(), "name2");
   runPartialExpect(secret);
 }
 
@@ -45,7 +45,7 @@ TEST(KeyVaultSecretSerializer, GetClientdeserializeFull1)
   auto response = getFullResponse();
 
   KeyVaultSecret secret = _detail::KeyVaultSecretSerializer::KeyVaultSecretDeserialize(response);
-  EXPECT_EQ(secret.Properties.Name.HasValue(), false);
+  EXPECT_EQ(secret.Attributes.Name.HasValue(), false);
   runFullExpect(secret);
 }
 
@@ -56,7 +56,7 @@ TEST(KeyVaultSecretSerializer, GetClientdeserializeFull2)
   KeyVaultSecret secret
       = _detail::KeyVaultSecretSerializer::KeyVaultSecretDeserialize("name1", response);
 
-  EXPECT_EQ(secret.Properties.Name.Value(), "name1");
+  EXPECT_EQ(secret.Attributes.Name.Value(), "name1");
   runFullExpect(secret);
 }
 
@@ -67,6 +67,6 @@ TEST(KeyVaultSecretSerializer, GetClientdeserializeFull3)
   KeyVaultSecret secret = KeyVaultSecret("name2");
   _detail::KeyVaultSecretSerializer::KeyVaultSecretDeserialize(secret, response);
 
-  EXPECT_EQ(secret.Properties.Name.Value(), "name2");
+  EXPECT_EQ(secret.Attributes.Name.Value(), "name2");
   runFullExpect(secret);
 }

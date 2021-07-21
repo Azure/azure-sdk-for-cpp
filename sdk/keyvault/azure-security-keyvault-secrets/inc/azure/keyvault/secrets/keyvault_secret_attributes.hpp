@@ -4,12 +4,12 @@
 #include <azure/core/nullable.hpp>
 
 namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
-	
-    /**
-    * @brief The Secret attributes managed by the KeyVault service.
-    * 
-    */
-	struct KeyvaultSecretProperties final 
+
+  /**
+   * @brief The Secret attributes managed by the KeyVault service.
+   *
+   */
+  struct KeyvaultSecretAttributes final
   {
     /**
      * @brief The name of the secret.
@@ -51,7 +51,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
      * Key Vault.
      *
      */
-    Azure::Nullable<int> RecoverableDays;
+    Azure::Nullable<int64_t> RecoverableDays;
 
     /**
      * @brief The recovery level currently in effect for secrets in the Key Vault.
@@ -66,13 +66,13 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
      * @brief Construct a new secret Properties object.
      *
      */
-    KeyvaultSecretProperties() = default;
+    KeyvaultSecretAttributes() = default;
 
     /**
      * @brief Construct a new secret Properties object.
      *
      * @param name The name of the secret.
      */
-    KeyvaultSecretProperties(std::string name) : Name(std::move(name)) {}
+    KeyvaultSecretAttributes(std::string name) : Name(std::move(name)) {}
   };
 }}}} // namespace Azure::Security::KeyVault::Secrets

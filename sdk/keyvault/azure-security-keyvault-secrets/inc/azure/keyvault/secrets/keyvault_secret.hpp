@@ -1,5 +1,5 @@
 #pragma once
-#include "keyvault_secret_properties.hpp"
+#include "keyvault_secret_attributes.hpp"
 
 namespace Azure{namespace Security{namespace KeyVault{namespace Secrets {
   struct KeyVaultSecret final
@@ -16,7 +16,7 @@ namespace Azure{namespace Security{namespace KeyVault{namespace Secrets {
      */
     std::string Id;
 
-    KeyvaultSecretProperties Properties;
+    KeyvaultSecretAttributes Attributes;
 
     /**
      * @brief The content type of the secret.
@@ -50,6 +50,6 @@ namespace Azure{namespace Security{namespace KeyVault{namespace Secrets {
      */
     KeyVaultSecret() = default;
 
-    KeyVaultSecret(std::string name) : Properties(std::move(name)) {}
+    KeyVaultSecret(std::string name) : Attributes(std::move(name)) {}
   };
 }}}} // namespace Azure::Security::KeyVault::Secrets

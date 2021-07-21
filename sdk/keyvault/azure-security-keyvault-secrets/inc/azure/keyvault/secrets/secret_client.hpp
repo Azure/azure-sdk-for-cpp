@@ -130,6 +130,38 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
         GetSecretOptions const& options = GetSecretOptions(),
         Azure::Core::Context const& context = Azure::Core::Context()) const;
 
+    /**
+     * @brief Sets a secret in a specified key vault.
+     * This operation adds a secret to the Azure Key Vault. 
+     * If the named secret already exists, Azure Key Vault creates a new version of that secret. 
+     * This operation requires the secrets/set permission.
+     *
+     * @param name The name of the secret
+     * @param value The the value of the secret.
+     *
+     * @param context The context for the operation can be used for request cancellation.
+     * @return The Secret wrapped in the Response.
+     */
+    /* Azure::Response<KeyVaultSecret> SetSecret(
+        std::string const& name,
+        std::string const& value,
+        Azure::Core::Context const& context = Azure::Core::Context()) const;
+        */
+    /**
+     * @brief Sets a secret in a specified key vault.
+     * This operation adds a secret to the Azure Key Vault.
+     * If the named secret already exists, Azure Key Vault creates a new version of that secret.
+     * This operation requires the secrets/set permission.
+     *
+     * @param secret The secret to set.
+     *
+     * @param context The context for the operation can be used for request cancellation.
+     * @return The Secret wrapped in the Response.
+     */
+    /* Azure::Response<KeyVaultSecret> SetSecret(
+        KeyVaultSecret const& secret,
+        Azure::Core::Context const& context = Azure::Core::Context()) const;*/
+
     std::string ClientVersion() const;
   };
 }}}} // namespace Azure::Security::KeyVault::Secrets

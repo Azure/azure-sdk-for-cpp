@@ -46,30 +46,32 @@ void KeyVaultSecretSerializer::KeyVaultSecretDeserialize(
   {
     auto attributes = jsonParser[_detail::AttributesPropertyName];
 
-    JsonOptional::SetIfExists(secret.Properties.Enabled, attributes, _detail::EnabledPropertyName);
+    JsonOptional::SetIfExists(secret.Attributes.Enabled, attributes, _detail::EnabledPropertyName);
 
     JsonOptional::SetIfExists<int64_t, Azure::DateTime>(
-        secret.Properties.NotBefore,
+        secret.Attributes.NotBefore,
         attributes,
         _detail::NbfPropertyName,
         PosixTimeConverter::PosixTimeToDateTime);
     JsonOptional::SetIfExists<int64_t, Azure::DateTime>(
-        secret.Properties.ExpiresOn,
+        secret.Attributes.ExpiresOn,
         attributes,
         _detail::ExpPropertyName,
         PosixTimeConverter::PosixTimeToDateTime);
     JsonOptional::SetIfExists<int64_t, Azure::DateTime>(
-        secret.Properties.CreatedOn,
+        secret.Attributes.CreatedOn,
         attributes,
         _detail::CreatedPropertyName,
         PosixTimeConverter::PosixTimeToDateTime);
     JsonOptional::SetIfExists<int64_t, Azure::DateTime>(
-        secret.Properties.UpdatedOn,
+        secret.Attributes.UpdatedOn,
         attributes,
         _detail::UpdatedPropertyName,
         PosixTimeConverter::PosixTimeToDateTime);
     JsonOptional::SetIfExists<std::string>(
-        secret.Properties.RecoveryLevel, attributes, _detail::RecoveryLevelPropertyName);
+        secret.Attributes.RecoveryLevel, attributes, _detail::RecoveryLevelPropertyName);
+    JsonOptional::SetIfExists<int64_t>(
+        secret.Attributes.RecoverableDays, attributes, _detail::RecoverableDaysPropertyName);
   }
 
   // "Tags"
@@ -96,5 +98,67 @@ void KeyVaultSecretSerializer::KeyVaultSecretDeserialize(
 
   // key id
   JsonOptional::SetIfExists<std::string>(secret.ContentType, jsonParser, _detail::ContentTypePropertyName);
+}
+
+// serializes a set secret parameters object
+std::string KeyvaultSecretSetParametersSerializer::KeyvaultSecretSetParametersSerialize(
+    KeyVaultSecretSetParameters const& parameters)
+{
+  Azure::Core::Json::_internal::json payload;
+  using namespace Azure::Security::KeyVault::Secrets::_detail;
+  
+  // value is required
+  payload[ValuePropertyName] = parameters.Value;
+
+  // all else is optional
+  JsonOptional::SetFromNullable(parameters.ContentType, payload, ContentTypePropertyName);
+
+  if (parameters.Attributes.HasValue())
+  { // optional attributes
+    Azure::Core::Json::_internal::json attributes;
+
+    JsonOptional::SetFromNullable<Azure::DateTime, int64_t>(
+        parameters.Attributes.Value().CreatedOn,
+        attributes,
+        CreatedPropertyName,
+        PosixTimeConverter::DateTimeToPosixTime);
+    JsonOptional::SetFromNullable(
+        parameters.Attributes.Value().Enabled, attributes, EnabledPropertyName);
+    JsonOptional::SetFromNullable<Azure::DateTime, int64_t>(
+        parameters.Attributes.Value().ExpiresOn,
+        attributes,
+        ExpPropertyName,
+        PosixTimeConverter::DateTimeToPosixTime);
+    JsonOptional::SetFromNullable<Azure::DateTime, int64_t>(
+        parameters.Attributes.Value().NotBefore,
+        attributes,
+        NbfPropertyName,
+        PosixTimeConverter::DateTimeToPosixTime);
+    JsonOptional::SetFromNullable(
+        parameters.Attributes.Value().RecoverableDays, attributes, RecoverableDaysPropertyName);
+    JsonOptional::SetFromNullable(
+        parameters.Attributes.Value().RecoveryLevel, attributes, RecoveryLevelPropertyName);
+    JsonOptional::SetFromNullable<Azure::DateTime, int64_t>(
+        parameters.Attributes.Value().UpdatedOn,
+        attributes,
+        UpdatedPropertyName,
+        PosixTimeConverter::DateTimeToPosixTime);
+
+    payload[AttributesPropertyName] = attributes;
+  }
+
+  if (parameters.Tags.HasValue())
+  { // optional tags
+    Azure::Core::Json::_internal::json tags;
+
+    for (auto iterator  : parameters.Tags.Value())
+    {
+      tags[iterator.first] = iterator.second;
+    }
+
+    payload[TagsPropertyName] = tags;
+
+  }
+  return payload.dump();
 }
 
