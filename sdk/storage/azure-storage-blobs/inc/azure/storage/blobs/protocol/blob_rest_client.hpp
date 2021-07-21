@@ -24,11 +24,6 @@
 #include "azure/storage/blobs/dll_import_export.hpp"
 
 namespace Azure { namespace Storage { namespace Blobs {
-
-  namespace _detail {
-    constexpr static const char* ApiVersion = "2020-02-10";
-  } // namespace _detail
-
   namespace Models {
 
     /**
@@ -2852,6 +2847,10 @@ namespace Azure { namespace Storage { namespace Blobs {
     } // namespace _detail
 
   } // namespace Models
+
+  namespace _detail {
+    constexpr static const char* ApiVersion = "2020-02-10";
+  } // namespace _detail
 
   namespace _detail {
 
