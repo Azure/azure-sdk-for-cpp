@@ -22,6 +22,7 @@
 #include <memory>
 #include <mutex>
 #include <thread>
+#include <azure/core/http/curl_transport.hpp>
 
 #if defined(TESTING_BUILD)
 // Define the class name that reads from ConnectionPool private members

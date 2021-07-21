@@ -20,9 +20,9 @@ include(AzureGlobalCompileOptions)
 az_vcpkg_integrate()
 
 if(NOT AZ_ALL_LIBRARIES)
-  find_package(azure-security-keyvault-common-cpp "4.0.0" CONFIG QUIET)
-  if(NOT azure-security-keyvault-common-cpp_FOUND)
-    find_package(azure-security-keyvault-common-cpp "4.0.0" REQUIRED)
+  find_package(azure-core-cpp "1.1.0" CONFIG QUIET)
+  if(NOT azure-core-cpp_FOUND)
+    find_package(azure-core-cpp "1.1.0" REQUIRED)
   endif()
 endif()
 
@@ -37,6 +37,10 @@ set(
 set(
   AZURE_SECURITY_KEYVAULT_SECRETS_SOURCE
     src/private/package_version.hpp
+    src/private/keyvault_protocol.hpp
+    src/private/secret_constants.hpp
+    src/private/secret_serializers.hpp
+    src/keyvault_protocol.cpp
     src/secret_client.cpp
     src/secret_serializers.cpp
 )
@@ -48,10 +52,11 @@ target_include_directories(
   azure-security-keyvault-secrets
     PUBLIC
       $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/inc>
+      $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/src>
       $<INSTALL_INTERFACE:include>
 )
 
-#target_link_libraries(azure-security-keyvault-secrets PUBLIC Azure::azure-security-keyvault-secrets)
+target_link_libraries(azure-security-keyvault-secrets PUBLIC Azure::azure-core)
 
 # coverage. Has no effect if BUILD_CODE_COVERAGE is OFF
 create_code_coverage(keyvault-secrets azure-security-keyvault-secrets azure-security-keyvault-secrets-test)

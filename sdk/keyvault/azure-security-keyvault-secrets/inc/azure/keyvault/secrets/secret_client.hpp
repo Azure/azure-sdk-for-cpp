@@ -7,7 +7,8 @@
  */
 #pragma once
 #include "dll_import_export.hpp"
-#include <azure/keyvault/common/internal/keyvault_pipeline.hpp>
+#include "private/keyvault_protocol.hpp"
+//#include <azure/keyvault/common/internal/keyvault_pipeline.hpp>
 #include <azure/keyvault/secrets/keyvault_secret.hpp>
 #include <string>
 
@@ -91,7 +92,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
 
   protected:
     // Using a shared pipeline for a client to share it with LRO (like delete key)
-    std::shared_ptr<Azure::Security::KeyVault::_internal::KeyVaultPipeline> m_pipeline;
+    std::shared_ptr<Azure::Security::KeyVault::_detail::KeyVaultProtocolClient> m_pipeline;
 
   public:
     /**
@@ -103,7 +104,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
      */
     explicit SecretClient(
         std::string const& vaultUrl,
-        std::shared_ptr<Core::Credentials::TokenCredential const> credential,
+        std::shared_ptr<Azure::Core::Credentials::TokenCredential const> credential,
         SecretClientOptions options = SecretClientOptions());
 
     /**

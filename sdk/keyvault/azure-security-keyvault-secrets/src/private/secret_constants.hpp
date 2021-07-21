@@ -29,4 +29,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets { 
   constexpr static const char ValuePropertyName[] = "value";
   constexpr static const char RecoveryLevelPropertyName[] = "recoveryLevel";
   constexpr static const char ContentTypePropertyName[] = "contentType";
+
+    /**************** KeyVault QueryParameters *********/
+  static constexpr char const ApiVersion[] = "api-version";
 }}}}} // namespace Azure::Security::KeyVault::Secrets::_detail

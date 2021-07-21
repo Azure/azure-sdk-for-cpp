@@ -10,11 +10,12 @@
 #include "private/package_version.hpp"
 #include "private/secret_constants.hpp"
 #include "private/secret_serializers.hpp"
+#include "private/keyvault_protocol.hpp"
 
 #include <azure/core/credentials/credentials.hpp>
 #include <azure/core/http/http.hpp>
 #include <azure/core/http/policies/policy.hpp>
-#include <azure/keyvault/common/internal/keyvault_pipeline.hpp>
+
 
 #include <string>
 
@@ -44,7 +45,7 @@ SecretClient::SecretClient(
         std::make_unique<BearerTokenAuthenticationPolicy>(credential, tokenContext));
   }
 
-  m_pipeline = std::make_shared<Azure::Security::KeyVault::_internal::KeyVaultPipeline>(
+  m_pipeline = std::make_shared<Azure::Security::KeyVault::_detail::KeyVaultProtocolClient>(
       Azure::Core::Url(vaultUrl),
       apiVersion,
       Azure::Core::Http::_internal::HttpPipeline(
@@ -64,7 +65,7 @@ Azure::Response<KeyVaultSecret> SecretClient::GetSecret(
       },
       {_detail::SecretPath, name, options.Version});
 }
-
+/*
 Azure::Response<KeyVaultSecret> SecretClient::SetSecret(
     std::string const& name,
     GetSecretOptions const& value,
@@ -78,6 +79,6 @@ Azure::Response<KeyVaultSecret> SecretClient::SetSecret(
       },
       {_detail::SecretPath, name, options.Version});
 }
-
+*/
 
 const ServiceVersion ServiceVersion::V7_2("7.2");
