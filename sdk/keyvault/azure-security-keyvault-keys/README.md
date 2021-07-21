@@ -466,7 +466,7 @@ For more information see the [Code of Conduct FAQ][coc_faq] or contact opencode@
 
 <!-- [secrets_client_library]: https://github.com/Azure/azure-sdk-for-net/tree/main/sdk/keyvault/Azure.Security.KeyVault.Secrets -->
 
-<!-- [soft_delete]: https://docs.microsoft.com/azure/key-vault/key-vault-ovw-soft-delete -->
+[soft_delete]: https://docs.microsoft.com/en-us/azure/key-vault/general/soft-delete-overview
 [defaultazurecredential]: https://github.com/Azure/azure-sdk-for-cpp/tree/main/sdk/identity/azure-identity#credentials
 [contributing]: https://github.com/Azure/azure-sdk-for-cpp/blob/main/CONTRIBUTING.md
 [coc_faq]: https://opensource.microsoft.com/codeofconduct/faq/
