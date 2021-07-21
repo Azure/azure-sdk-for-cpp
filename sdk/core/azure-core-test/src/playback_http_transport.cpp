@@ -8,8 +8,8 @@
 #include <string>
 
 std::unique_ptr<Azure::Core::Http::RawResponse> Azure::Core::Test::PlaybackClient::Send(
-    Azure::Core::Context const& context,
-    Azure::Core::Http::Request& request)
+    Azure::Core::Http::Request& request,
+    Azure::Core::Context const& context)
 {
   (void)(context);
   (void)(request);

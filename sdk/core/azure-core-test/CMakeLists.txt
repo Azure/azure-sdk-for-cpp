@@ -2,8 +2,8 @@
 # SPDX-License-Identifier: MIT
 
 cmake_minimum_required (VERSION 3.13)
-set(TARGET_NAME "azure-core-test")
-project(azure-core-test LANGUAGES CXX)
+set(TARGET_NAME "azure-core-test-fw")
+project(azure-core-test-fw LANGUAGES CXX)
 
 set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
@@ -27,16 +27,16 @@ set(
 )
 
 add_library (
-  azure-core-test
-  AZURE_CORE_TEST_HEADER
-  AZURE_CORE_TEST_SOURCE
+  azure-core-test-fw
+  ${AZURE_CORE_TEST_HEADER}
+  ${AZURE_CORE_TEST_SOURCE}
   )
 
-target_include_directories (azure-core-test
+target_include_directories (azure-core-test-fw
   PUBLIC
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/inc>
     $<INSTALL_INTERFACE:include/az_core_test>)
 
 # make sure that users can consume the project as a library.
-add_library (Azure::Core::Test ALIAS azure-core-test)
-target_link_libraries(azure-core-test PRIVATE azure-core gtest)
+add_library (Azure::Core::Test ALIAS azure-core-test-fw)
+target_link_libraries(azure-core-test-fw PRIVATE azure-core gtest)

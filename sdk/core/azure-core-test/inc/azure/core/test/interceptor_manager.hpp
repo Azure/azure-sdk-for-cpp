@@ -20,7 +20,7 @@
 
 #pragma once
 
-#include <azure/core/http/policy.hpp>
+#include <azure/core/http/policies/policy.hpp>
 #include <memory>
 #include <string>
 
@@ -81,7 +81,7 @@ namespace Azure { namespace Core { namespace Test {
      *
      * @return HttpPipelinePolicy to record network calls.
      */
-    std::unique_ptr<Azure::Core::Http::HttpPolicy> GetRecordPolicy()
+    std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy> GetRecordPolicy()
     {
       return std::make_unique<Azure::Core::Test::RecordNetworkCallPolicy>(m_recordedData);
     }

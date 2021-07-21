@@ -11,11 +11,10 @@
 
 #include <azure/core/context.hpp>
 #include <azure/core/http/http.hpp>
-#include <azure/core/http/policy.hpp>
+#include <azure/core/http/policies/policy.hpp>
 #include <azure/core/response.hpp>
 
 #include "azure/core/test/network_models.hpp"
-
 
 namespace Azure { namespace Core { namespace Test {
 
@@ -44,8 +43,8 @@ namespace Azure { namespace Core { namespace Test {
      * @return The HTTP raw response containing code, headers and payload.
      */
     std::unique_ptr<Azure::Core::Http::RawResponse> Send(
-        Azure::Core::Context const& context,
-        Azure::Core::Http::Request& request) override;
+        Azure::Core::Http::Request& request,
+        Azure::Core::Context const& context) override;
   };
 
 }}} // namespace Azure::Core::Test

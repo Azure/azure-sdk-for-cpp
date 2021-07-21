@@ -13,7 +13,7 @@
 
 #include <azure/core/context.hpp>
 #include <azure/core/http/http.hpp>
-#include <azure/core/http/policy.hpp>
+#include <azure/core/http/policies/policy.hpp>
 #include <azure/core/response.hpp>
 
 #include "azure/core/test/network_models.hpp"
@@ -24,7 +24,7 @@ namespace Azure { namespace Core { namespace Test {
    * @brief Creates a policy that records network calls into recordedData.
    *
    */
-  class RecordNetworkCallPolicy : public Azure::Core::Http::HttpPolicy {
+  class RecordNetworkCallPolicy : public Azure::Core::Http::Policies::HttpPolicy {
   private:
     Azure::Core::Test::RecordedData& m_recordedData;
 
@@ -51,7 +51,7 @@ namespace Azure { namespace Core { namespace Test {
      *
      * @return A record network policy with the same recorded data.
      */
-    std::unique_ptr<Azure::Core::Http::HttpPolicy> Clone() const override
+    std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy> Clone() const override
     {
       return std::make_unique<RecordNetworkCallPolicy>(m_recordedData);
     }
@@ -66,9 +66,9 @@ namespace Azure { namespace Core { namespace Test {
      * @return The HTTP raw response from the network after it is recorded.
      */
     std::unique_ptr<Azure::Core::Http::RawResponse> Send(
-        const Azure::Core::Context& ctx,
         Azure::Core::Http::Request& request,
-        Azure::Core::Http::NextHttpPolicy nextHttpPolicy) const override;
+        Azure::Core::Http::Policies::NextHttpPolicy nextHttpPolicy,
+        const Azure::Core::Context& ctx) const override;
   };
 
 }}} // namespace Azure::Core::Test

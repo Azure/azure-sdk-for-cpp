@@ -3,6 +3,7 @@
 
 #include "azure/core/test/record_network_call_policy.hpp"
 
+using namespace Azure::Core::Http::Policies;
 using namespace Azure::Core::Http;
 
 /**
@@ -14,9 +15,9 @@ using namespace Azure::Core::Http;
  * @return The HTTP raw response.
  */
 std::unique_ptr<RawResponse> Azure::Core::Test::RecordNetworkCallPolicy::Send(
-    Context const& ctx,
     Request& request,
-    NextHttpPolicy nextHttpPolicy) const
+    NextHttpPolicy nextHttpPolicy,
+    Context const& ctx) const
 {
-  return nextHttpPolicy.Send(ctx, request);
+  return nextHttpPolicy.Send(request, ctx);
 }
