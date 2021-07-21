@@ -114,19 +114,21 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
 
     ~SecretClient() = default;
 
+    /**
+     * @brief Get a specified secret from a given key vault
+     * ThisT operation is applicable to any secret stored in Azure Key Vault.
+     * This operation requires the secrets/get permission.
+     *
+     * @param name The name of the secret
+     * @param options The optional parameters for this request.
+     *
+     * @param context The context for the operation can be used for request cancellation.
+     * @return The Secret wrapped in the Response.
+     */
     Azure::Response<KeyVaultSecret> GetSecret(
         std::string const& name,
         GetSecretOptions const& options = GetSecretOptions(),
         Azure::Core::Context const& context = Azure::Core::Context()) const;
-
-    Azure::Response<KeyVaultSecret> SetSecret(
-        std::string const& name,
-        std::string const& value,
-        Azure::Core::Context const& context = Azure::Core::Context());
-
-    Azure::Response<KeyVaultSecret> SetSecret(
-        KeyVaultSecret secret,
-        Azure::Core::Context const& context = Azure::Core::Context());
 
     std::string ClientVersion() const;
   };
