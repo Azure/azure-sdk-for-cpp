@@ -1,3 +1,11 @@
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// SPDX-License-Identifier: MIT
+
+/**
+ * @file
+ * @brief Keyvault Secret serializers 
+ */
+
 #include "private/secret_serializers.hpp"
 #include "private/secret_constants.hpp"
 
