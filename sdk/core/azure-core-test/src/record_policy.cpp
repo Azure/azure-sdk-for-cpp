@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: MIT
 
 #include "azure/core/test/record_network_call_policy.hpp"
+#include "private/environment.hpp"
 
 using namespace Azure::Core::Http::Policies;
 using namespace Azure::Core::Http;
@@ -20,4 +21,11 @@ std::unique_ptr<RawResponse> Azure::Core::Test::RecordNetworkCallPolicy::Send(
     Context const& ctx) const
 {
   return nextHttpPolicy.Send(request, ctx);
+}
+
+Azure::Core::Test::RecordNetworkCallPolicy::RecordNetworkCallPolicy(
+    Azure::Core::Test::RecordedData& recordedData)
+    : m_recordedData(recordedData)
+{
+  m_testMode = Azure::Core::Test::_detail::Environment::GetTestMode();
 }

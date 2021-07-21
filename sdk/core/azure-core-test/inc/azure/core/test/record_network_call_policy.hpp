@@ -27,6 +27,7 @@ namespace Azure { namespace Core { namespace Test {
   class RecordNetworkCallPolicy : public Azure::Core::Http::Policies::HttpPolicy {
   private:
     Azure::Core::Test::RecordedData& m_recordedData;
+    Azure::Core::Test::TestMode m_testMode;
 
   public:
     /**
@@ -41,10 +42,7 @@ namespace Azure { namespace Core { namespace Test {
      *
      * @param recordedData The recorded data where to write the HTTP request and response.
      */
-    RecordNetworkCallPolicy(Azure::Core::Test::RecordedData& recordedData)
-        : m_recordedData(recordedData)
-    {
-    }
+    RecordNetworkCallPolicy(Azure::Core::Test::RecordedData& recordedData);
 
     /**
      * @brief Cronstructs a new record network policy with the same recorded data.

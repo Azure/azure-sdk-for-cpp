@@ -13,6 +13,8 @@
 #include <azure/identity/client_secret_credential.hpp>
 #include <azure/keyvault/keyvault_keys.hpp>
 
+#include <azure/core/test/test_base.hpp>
+
 #include <chrono>
 #include <cstdio>
 #include <iostream>
@@ -20,7 +22,8 @@
 
 namespace Azure { namespace Security { namespace KeyVault { namespace Keys { namespace Test {
 
-  class KeyVaultClientTest : public ::testing::TestWithParam<int> {
+  class KeyVaultClientTest : public Azure::Core::Test::TestBase,
+                             public ::testing::WithParamInterface<int> {
   protected:
     int m_testPollingTimeOutMinutes = 20;
     std::chrono::minutes m_testPollingIntervalMinutes = std::chrono::minutes(1);
@@ -52,6 +55,9 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys { nam
     // Create
     virtual void SetUp() override
     {
+      // Init interceptor from PlayBackRecorder
+      Azure::Core::Test::TestBase::SetUp();
+
       std::string tenantId = GetEnv("AZURE_TENANT_ID");
       std::string clientId = GetEnv("AZURE_CLIENT_ID");
       std::string secretId = GetEnv("AZURE_CLIENT_SECRET");
@@ -60,6 +66,21 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys { nam
 
       m_keyVaultUrl = GetEnv("AZURE_KEYVAULT_URL");
       m_keyVaultHsmUrl = GetEnv("AZURE_KEYVAULT_HSM_URL");
+
+      // Create default client for the test
+      KeyClientOptions options;
+      // Replace default transport adapter for playback
+      if (m_interceptor.IsPlaybackMode())
+      {
+        options.Transport.Transport = std::move(m_interceptor.GetPlaybackClient());
+      }
+      // Insert Recording policy when Record mode is on (non playback and non LiveMode)
+      else if (!m_interceptor.IsLiveMode())
+      {
+        options.PerRetryPolicies.push_back(std::move(m_interceptor.GetRecordPolicy()));
+      }
+
+      m_client = std::make_unique<KeyClient>(m_keyVaultUrl, m_credential);
 
       // When running live tests, service can return 429 error response if the client is sending
       // multiple requests per second. This can happen if the network is fast and tests are running

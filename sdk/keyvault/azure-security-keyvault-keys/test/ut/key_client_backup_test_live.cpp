@@ -24,7 +24,6 @@ using namespace Azure::Core::Json::_internal;
 
 TEST_F(KeyVaultClientTest, BackupKey)
 {
-  KeyClient keyClient(m_keyVaultUrl, m_credential);
   std::string keyName = GetUniqueName();
 
   std::cout
@@ -33,40 +32,40 @@ TEST_F(KeyVaultClientTest, BackupKey)
 
   {
     std::cout << std::endl << "- Create key";
-    auto response = keyClient.CreateKey(keyName, KeyVaultKeyType::Ec);
+    auto response = m_client->CreateKey(keyName, KeyVaultKeyType::Ec);
     CheckValidResponse(response);
   }
 
   // backup
   std::cout << std::endl << "- Backup key";
-  auto backUpResponse = keyClient.BackupKey(keyName);
+  auto backUpResponse = m_client->BackupKey(keyName);
   CheckValidResponse(backUpResponse);
   {
     // Delete
     std::cout << std::endl << "- Delete key";
-    auto response = keyClient.StartDeleteKey(keyName);
+    auto response = m_client->StartDeleteKey(keyName);
     response.PollUntilDone(m_testPollingIntervalMinutes);
   }
   {
     // Purge
     std::cout << std::endl << "- Purge key";
-    auto response = keyClient.PurgeDeletedKey(keyName);
+    auto response = m_client->PurgeDeletedKey(keyName);
     CheckValidResponse(response, Azure::Core::Http::HttpStatusCode::NoContent);
     // Purge can take up to 2 min
     std::this_thread::sleep_for(std::chrono::minutes(4));
   }
   { // Check key is gone
-    EXPECT_THROW(keyClient.GetKey(keyName), Azure::Core::RequestFailedException);
+    EXPECT_THROW(m_client->GetKey(keyName), Azure::Core::RequestFailedException);
   }
   {
     // Restore
     std::cout << std::endl << "- Restore key";
-    auto respone = keyClient.RestoreKeyBackup(backUpResponse.Value.BackupKey);
+    auto respone = m_client->RestoreKeyBackup(backUpResponse.Value.BackupKey);
     CheckValidResponse(backUpResponse);
   }
   {
     // Check key is restored
-    auto response = keyClient.GetKey(keyName);
+    auto response = m_client->GetKey(keyName);
     CheckValidResponse(response);
     EXPECT_EQ(keyName, response.Value.Name());
   }
