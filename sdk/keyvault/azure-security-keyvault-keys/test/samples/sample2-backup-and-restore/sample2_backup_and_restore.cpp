@@ -19,7 +19,7 @@
 
 #include <azure/core.hpp>
 #include <azure/identity.hpp>
-#include <azure/keyvault/key_vault_keys.hpp>
+#include <azure/keyvault/keyvault_keys.hpp>
 
 #include <assert.h>
 #include <chrono>
@@ -54,7 +54,7 @@ int main()
     size_t backUpSize = 0;
     {
       std::cout << "\t-Backup Key" << std::endl;
-      std::vector<uint8_t> backupKey(keyClient.BackupKey(rsaKeyName).Value);
+      std::vector<uint8_t> backupKey(keyClient.BackupKey(rsaKeyName).Value.BackupKey);
       backUpSize = backupKey.size();
 
       // save data to file

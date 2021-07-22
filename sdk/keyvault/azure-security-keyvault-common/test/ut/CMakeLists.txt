@@ -12,14 +12,13 @@ include(GoogleTest)
 add_executable (
   azure-security-keyvault-common-test
     azure_security_keyvault_common_test.cpp
-    pipeline_test.cpp
 )
 
 if (MSVC)
   target_compile_options(azure-security-keyvault-common-test PUBLIC /wd6326 /wd26495 /wd26812)
 endif()
 
-target_link_libraries(azure-security-keyvault-common-test PUBLIC azure-security-keyvault-common gtest gmock)
+target_link_libraries(azure-security-keyvault-common-test PUBLIC gtest gmock)
 
 # gtest_discover_tests will scan the test from azure-core-test and call add_test
 # for each test to ctest. This enables `ctest -r` to run specific tests directly.

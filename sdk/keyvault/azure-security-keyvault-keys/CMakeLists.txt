@@ -20,46 +20,20 @@ include(AzureGlobalCompileOptions)
 az_vcpkg_integrate()
 
 if(NOT AZ_ALL_LIBRARIES)
-  find_package(azure-security-keyvault-common-cpp "4.0.0" CONFIG QUIET)
-  if(NOT azure-security-keyvault-common-cpp_FOUND)
-    find_package(azure-security-keyvault-common-cpp "4.0.0" REQUIRED)
+  find_package(azure-core-cpp "1.1.0" CONFIG QUIET)
+  if(NOT azure-core-cpp_FOUND)
+    find_package(azure-core-cpp "1.1.0" REQUIRED)
   endif()
 endif()
 
 set(
   AZURE_KEYVAULT_KEYS_HEADER
+    inc/azure/keyvault/keys/cryptography/cryptography_client_models.hpp
     inc/azure/keyvault/keys/cryptography/cryptography_client_options.hpp
     inc/azure/keyvault/keys/cryptography/cryptography_client.hpp
-    inc/azure/keyvault/keys/cryptography/decrypt_parameters.hpp
-    inc/azure/keyvault/keys/cryptography/decrypt_result.hpp
-    inc/azure/keyvault/keys/cryptography/encrypt_parameters.hpp
-    inc/azure/keyvault/keys/cryptography/encrypt_result.hpp
-    inc/azure/keyvault/keys/cryptography/encryption_algorithm.hpp
-    inc/azure/keyvault/keys/cryptography/key_wrap_algorithm.hpp
-    inc/azure/keyvault/keys/cryptography/sign_result.hpp
-    inc/azure/keyvault/keys/cryptography/signature_algorithm.hpp
-    inc/azure/keyvault/keys/cryptography/wrap_result.hpp
-    inc/azure/keyvault/keys/cryptography/unwrap_result.hpp
-    inc/azure/keyvault/keys/cryptography/verify_result.hpp
-    inc/azure/keyvault/keys/internal/cryptography/cryptography_provider.hpp
-    inc/azure/keyvault/keys/internal/cryptography/local_cryptography_provider_factory.hpp
-    inc/azure/keyvault/keys/internal/cryptography/local_cryptography_provider.hpp
-    inc/azure/keyvault/keys/internal/cryptography/remote_cryptography_client.hpp
-    inc/azure/keyvault/keys/internal/cryptography/rsa_cryptography_provider.hpp
-    inc/azure/keyvault/keys/delete_key_operation.hpp
-    inc/azure/keyvault/keys/deleted_key.hpp
-    inc/azure/keyvault/keys/import_key_options.hpp
-    inc/azure/keyvault/keys/json_web_key.hpp
     inc/azure/keyvault/keys/key_client.hpp
-    inc/azure/keyvault/keys/key_create_options.hpp
-    inc/azure/keyvault/keys/key_curve_name.hpp
+    inc/azure/keyvault/keys/key_client_models.hpp
     inc/azure/keyvault/keys/key_client_options.hpp
-    inc/azure/keyvault/keys/key_operation.hpp
-    inc/azure/keyvault/keys/key_properties.hpp
-    inc/azure/keyvault/keys/key_type.hpp
-    inc/azure/keyvault/keys/key_vault_key.hpp
-    inc/azure/keyvault/keys/list_keys_result.hpp
-    inc/azure/keyvault/keys/recover_deleted_key_operation.hpp
 )
 
 set(
@@ -75,8 +49,6 @@ set(
     src/cryptography/key_verify_parameters.cpp
     src/cryptography/key_wrap_algorithm.cpp
     src/cryptography/key_wrap_parameters.cpp
-    src/cryptography/remote_cryptography_client.cpp
-    src/cryptography/rsa_cryptography_provider.cpp
     src/cryptography/sign_result.cpp
     src/cryptography/signature_algorithm.cpp
     src/cryptography/wrap_result.cpp
@@ -90,6 +62,8 @@ set(
     src/private/key_sign_parameters.hpp
     src/private/key_verify_parameters.hpp
     src/private/key_wrap_parameters.hpp
+    src/private/keyvault_constants.hpp
+    src/private/keyvault_protocol.hpp
     src/private/package_version.hpp
     src/delete_key_operation.cpp
     src/deleted_key.cpp
@@ -98,12 +72,13 @@ set(
     src/key_backup.cpp
     src/key_client_options.cpp
     src/key_client.cpp
+    src/key_client_paged_responses.cpp
     src/key_curve_name.cpp
     src/key_operation.cpp
     src/key_request_parameters.cpp
     src/key_type.cpp
-    src/key_vault_key.cpp
-    src/list_keys_result.cpp
+    src/keyvault_key.cpp
+    src/keyvault_protocol.cpp
     src/recover_deleted_key_operation.cpp
 )
 
@@ -119,7 +94,7 @@ target_include_directories(
       $<INSTALL_INTERFACE:include>
 )
 
-target_link_libraries(azure-security-keyvault-keys PUBLIC Azure::azure-security-keyvault-common)
+target_link_libraries(azure-security-keyvault-keys PUBLIC Azure::azure-core)
 
 # coverage. Has no effect if BUILD_CODE_COVERAGE is OFF
 create_code_coverage(keyvault azure-security-keyvault-keys azure-security-keyvault-keys-test)

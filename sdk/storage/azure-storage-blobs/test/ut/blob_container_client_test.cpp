@@ -6,6 +6,7 @@
 #include <chrono>
 #include <thread>
 
+#include <azure/core/internal/cryptography/sha_hash.hpp>
 #include <azure/storage/blobs/blob_lease_client.hpp>
 #include <azure/storage/blobs/blob_sas_builder.hpp>
 #include <azure/storage/common/crypt.hpp>
@@ -566,7 +567,8 @@ namespace Azure { namespace Storage { namespace Test {
       aes256Key.resize(32);
       RandomBuffer(&aes256Key[0], aes256Key.size());
       key.Key = Azure::Core::Convert::Base64Encode(aes256Key);
-      key.KeyHash = _internal::Sha256(aes256Key);
+      key.KeyHash = Azure::Core::Cryptography::_internal::Sha256Hash().Final(
+          aes256Key.data(), aes256Key.size());
       key.Algorithm = Blobs::Models::EncryptionAlgorithmType::Aes256;
       return key;
     };
@@ -670,6 +672,7 @@ namespace Azure { namespace Storage { namespace Test {
           = Azure::Storage::Blobs::PageBlobClient::CreateFromConnectionString(
               StandardStorageConnectionString(), m_containerName, pageBlobName);
       EXPECT_NO_THROW(pageBlobClientWithoutEncryptionKey.GetPageRanges());
+      EXPECT_NO_THROW(pageBlobClientWithoutEncryptionKey.Resize(blobContent.size() + 512));
     }
   }
 
@@ -1035,6 +1038,18 @@ namespace Azure { namespace Storage { namespace Test {
       EXPECT_THROW(pageBlobClient.Resize(contentSize, options), StorageException);
       options.AccessConditions.TagConditions = successWhereExpression;
       EXPECT_NO_THROW(pageBlobClient.Resize(contentSize, options));
+    }
+
+    {
+      Blobs::UpdatePageBlobSequenceNumberOptions options;
+      options.AccessConditions.TagConditions = failWhereExpression;
+      EXPECT_THROW(
+          pageBlobClient.UpdateSequenceNumber(
+              Blobs::Models::SequenceNumberAction::Increment, options),
+          StorageException);
+      options.AccessConditions.TagConditions = successWhereExpression;
+      EXPECT_NO_THROW(pageBlobClient.UpdateSequenceNumber(
+          Blobs::Models::SequenceNumberAction::Increment, options));
     }
 
     {

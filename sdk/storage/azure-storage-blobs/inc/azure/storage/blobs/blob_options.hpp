@@ -1060,6 +1060,22 @@ namespace Azure { namespace Storage { namespace Blobs {
   };
 
   /**
+   * @brief Optional parameters for #Azure::Storage::Blobs::PageBlobClient::UpdateSequenceNumber.
+   */
+  struct UpdatePageBlobSequenceNumberOptions final
+  {
+    /**
+     * @brief An updated sequence number of your choosing, if Action is Max or Update.
+     */
+    Azure::Nullable<int64_t> SequenceNumber;
+
+    /**
+     * @brief Optional conditions that must be met to perform this operation.
+     */
+    BlobAccessConditions AccessConditions;
+  };
+
+  /**
    * @brief Optional parameters for #Azure::Storage::Blobs::PageBlobClient::GetPageRanges.
    */
   struct GetPageRangesOptions final

@@ -22,19 +22,19 @@ namespace Azure { namespace Storage { namespace Test {
     m_dataLakeServiceClient = std::make_shared<Files::DataLake::DataLakeServiceClient>(
         Files::DataLake::DataLakeServiceClient::CreateFromConnectionString(
             AdlsGen2ConnectionString()));
-    m_fileSystemPrefixA = LowercaseRandomString(10);
-    m_fileSystemPrefixB = LowercaseRandomString(10);
+    m_fileSystemPrefixA = LowercaseRandomString();
+    m_fileSystemPrefixB = LowercaseRandomString();
     m_fileSystemNameSetA.clear();
     m_fileSystemNameSetB.clear();
     for (size_t i = 0; i < FileSystemTestSize; ++i)
     {
       {
-        auto name = m_fileSystemPrefixA + LowercaseRandomString(10);
+        auto name = m_fileSystemPrefixA + LowercaseRandomString();
         m_dataLakeServiceClient->GetFileSystemClient(name).Create();
         m_fileSystemNameSetA.emplace_back(std::move(name));
       }
       {
-        auto name = m_fileSystemPrefixB + LowercaseRandomString(10);
+        auto name = m_fileSystemPrefixB + LowercaseRandomString();
         m_dataLakeServiceClient->GetFileSystemClient(name).Create();
         m_fileSystemNameSetB.emplace_back(std::move(name));
       }

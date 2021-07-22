@@ -18,6 +18,7 @@ add_executable (
     macro_guard.cpp
     mocked_transport_adapter_test.hpp
     mocked_client_test.cpp
+    protocol_test.cpp
 )
 
 if (MSVC)

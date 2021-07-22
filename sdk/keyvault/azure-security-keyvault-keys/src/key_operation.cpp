@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
 
-#include "azure/keyvault/keys/key_operation.hpp"
+#include "azure/keyvault/keys/key_client_models.hpp"
 
 namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
 

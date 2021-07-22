@@ -38,9 +38,9 @@ stages:
       LiveTestTimeoutInMinutes: 120
       SubscriptionConfiguration: $(sub-config-azure-cloud-test-resources)
       Artifacts:
-        - Name: azure-security-keyvault-common
-          Path: azure-security-keyvault-common
-          VcpkgPortName: azure-security-keyvault-common-cpp
         - Name: azure-security-keyvault-keys
           Path: azure-security-keyvault-keys
           VcpkgPortName: azure-security-keyvault-keys-cpp
+        - Name: azure-security-keyvault-secrets
+          Path: azure-security-keyvault-secrets
+          VcpkgPortName: azure-security-keyvault-secrets-cpp
