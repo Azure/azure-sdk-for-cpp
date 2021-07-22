@@ -10,6 +10,8 @@
 
 ### Other Changes
 
+- Consolidated keyvault and cryptography client options and model files into single headers.
+
 ## 4.0.0-beta.4 (2021-07-20)
 
 ### Features Added
@@ -28,7 +30,7 @@
 - Removed `Decrypt(DecryptAlgorithm, std::vector, context)`.
 - Removed `JsonWebKey::HasPrivateKey()`.
 - Removed the `MaxPageResults` field from `GetPropertiesOfKeysOptions`, `GetPropertiesOfKeyVersionsOptions`, and `GetDeletedKeysOptions`.
-- Consolidated keyvault and cryptography client options and model files into single headers.
+- Renamed header `list_keys_single_page_result.hpp` to `list_keys_responses.hpp`.
 - Updated `BackupKey()` API return type to `BackupKeyResult` model type.
 - Renamed `KeyPropertiesPageResult` to `KeyPropertiesPagedResponse`.
 - Renamed `DeletedKeyPageResult` to `DeletedKeyPagedResponse`.
