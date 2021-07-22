@@ -19,7 +19,7 @@ int main()
       = std::make_shared<Azure::Identity::ClientSecretCredential>(tenantId, clientId, clientSecret);
 
   SecretClient secretClient(std::getenv("AZURE_KEYVAULT_URL"), credential);
-  // just a response
+  // just a response, with a secret
   auto response = secretClient.GetSecret("testSecret");
 
   return 0;
