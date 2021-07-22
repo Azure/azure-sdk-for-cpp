@@ -9,6 +9,8 @@
 #pragma once
 #include "keyvault_secret_properties.hpp"
 
+#include <unordered_map>
+
 namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
   struct KeyVaultSecret final
   {
