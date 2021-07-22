@@ -7,15 +7,14 @@
  */
 #include "azure/keyvault/secrets/secret_client.hpp"
 
+#include "private/keyvault_protocol.hpp"
 #include "private/package_version.hpp"
 #include "private/secret_constants.hpp"
 #include "private/secret_serializers.hpp"
-#include "private/keyvault_protocol.hpp"
 
 #include <azure/core/credentials/credentials.hpp>
 #include <azure/core/http/http.hpp>
 #include <azure/core/http/policies/policy.hpp>
-
 
 #include "private/package_version.hpp"
 
@@ -67,20 +66,29 @@ Azure::Response<KeyVaultSecret> SecretClient::GetSecret(
       },
       {_detail::SecretPath, name, options.Version});
 }
-/*
+
 Azure::Response<KeyVaultSecret> SecretClient::SetSecret(
     std::string const& name,
-    GetSecretOptions const& value,
+    std::string const& value,
+    Azure::Core::Context const& context) const
+{
+  KeyVaultSecretSetParameters setParameters(value);
+  return SetSecret(name, setParameters, context);
+}
+
+Azure::Response<KeyVaultSecret> SecretClient::SetSecret(
+    std::string const& name,
+    KeyVaultSecretSetParameters const& secret,
     Azure::Core::Context const& context) const
 {
   return m_pipeline->SendRequest<KeyVaultSecret>(
       context,
-      Azure::Core::Http::HttpMethod::Get,
+      Azure::Core::Http::HttpMethod::Put,
+      _detail::KeyvaultSecretSetParametersSerializer::KeyvaultSecretSetParametersSerialize(secret),
       [&name](Azure::Core::Http::RawResponse const& rawResponse) {
         return _detail::KeyVaultSecretSerializer::KeyVaultSecretDeserialize(name, rawResponse);
       },
-      {_detail::SecretPath, name, options.Version});
+      {_detail::SecretPath, name});
 }
-*/
 
 const ServiceVersion ServiceVersion::V7_2("7.2");

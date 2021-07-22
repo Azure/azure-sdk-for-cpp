@@ -8,8 +8,8 @@
 #pragma once
 #include "dll_import_export.hpp"
 #include "private/keyvault_protocol.hpp"
-//#include <azure/keyvault/common/internal/keyvault_pipeline.hpp>
 #include <azure/keyvault/secrets/keyvault_secret.hpp>
+#include <azure/keyvault/secrets/keyvault_secret_set_parameters.hpp>
 #include <string>
 
 #include <string>
@@ -130,6 +130,16 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
     Azure::Response<KeyVaultSecret> GetSecret(
         std::string const& name,
         GetSecretOptions const& options = GetSecretOptions(),
+        Azure::Core::Context const& context = Azure::Core::Context()) const;
+
+    Azure::Response<KeyVaultSecret> SetSecret(
+        std::string const& name,
+        std::string const& value,
+        Azure::Core::Context const& context = Azure::Core::Context()) const;
+
+    Azure::Response<KeyVaultSecret> SetSecret(
+        std::string const& name,
+        KeyVaultSecretSetParameters const& secret,
         Azure::Core::Context const& context = Azure::Core::Context()) const;
 
     std::string ClientVersion() const;

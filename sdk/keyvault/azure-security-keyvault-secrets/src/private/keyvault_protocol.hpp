@@ -137,15 +137,8 @@ namespace Azure { namespace Security { namespace KeyVault { namespace _detail {
         std::vector<std::string> const& path)
     {
       auto serialContent = content.Serialize();
-      auto streamContent = Azure::Core::IO::MemoryBodyStream(
-          reinterpret_cast<const uint8_t*>(serialContent.data()), serialContent.size());
 
-      auto request = CreateRequest(method, &streamContent, path);
-      auto response = SendRequest(context, request);
-      // Saving the value in a local is required before passing it in to Response<T> to avoid
-      // compiler optimizations re-ordering the `factoryFn` function call and the RawResponse move.
-      T value = factoryFn(*response);
-      return Azure::Response<T>(value, std::move(response));
+      return SendRequest(context, method, serialContent, factoryFn, path);
     }
 
     template <class T>
@@ -157,8 +150,20 @@ namespace Azure { namespace Security { namespace KeyVault { namespace _detail {
         std::vector<std::string> const& path)
     {
       auto serialContent = serializeContentFn();
+     
+      return SendRequest(context, method, serialContent, factoryFn, path);
+    }
+
+    template <class T>
+    Azure::Response<T> SendRequest(
+        Azure::Core::Context const& context,
+        Azure::Core::Http::HttpMethod method,
+        std::string const& serializedContent,
+        std::function<T(Azure::Core::Http::RawResponse const& rawResponse)> factoryFn,
+        std::vector<std::string> const& path)
+    {
       auto streamContent = Azure::Core::IO::MemoryBodyStream(
-          reinterpret_cast<const uint8_t*>(serialContent.data()), serialContent.size());
+          reinterpret_cast<const uint8_t*>(serializedContent.data()), serializedContent.size());
 
       auto request = CreateRequest(method, &streamContent, path);
       auto response = SendRequest(context, request);

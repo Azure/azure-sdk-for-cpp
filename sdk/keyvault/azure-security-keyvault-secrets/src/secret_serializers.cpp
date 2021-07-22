@@ -167,6 +167,7 @@ std::string KeyvaultSecretSetParametersSerializer::KeyvaultSecretSetParametersSe
     payload[TagsPropertyName] = tags;
 
   }
+
   return payload.dump();
 }
 

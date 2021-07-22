@@ -29,8 +29,10 @@ endif()
 set(
   AZURE_SECURITY_KEYVAULT_SECRETS_HEADER
     inc/azure/keyvault/secrets/dll_import_export.hpp
-    inc/azure/keyvault/secrets/secret_client.hpp
     inc/azure/keyvault/secrets/keyvault_secret.hpp
+    inc/azure/keyvault/secrets/keyvault_secret_attributes.hpp
+    inc/azure/keyvault/secrets/keyvault_secret_set_parameters.hpp
+    inc/azure/keyvault/secrets/secret_client.hpp
     inc/azure/keyvault/keyvault_secrets.hpp
 )
 
@@ -43,6 +45,7 @@ set(
     src/keyvault_protocol.cpp
     src/secret_client.cpp
     src/secret_serializers.cpp
+    src/
 )
 
 add_library(azure-security-keyvault-secrets ${AZURE_SECURITY_KEYVAULT_SECRETS_HEADER} ${AZURE_SECURITY_KEYVAULT_SECRETS_SOURCE})
