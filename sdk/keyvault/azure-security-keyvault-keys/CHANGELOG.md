@@ -1,6 +1,16 @@
 # Release History
 
-## 4.0.0 (2021-07-08)
+## 4.0.0-beta.5 (Unreleased)
+
+### Features Added
+
+### Breaking Changes
+
+### Bugs Fixed
+
+### Other Changes
+
+## 4.0.0-beta.4 (2021-07-20)
 
 ### Features Added
 
@@ -23,6 +33,7 @@
 - Renamed `KeyPropertiesPageResult` to `KeyPropertiesPagedResponse`.
 - Renamed `DeletedKeyPageResult` to `DeletedKeyPagedResponse`.
 - Changed the container for `KeyOperations` from `std::list` to `std::vector` within `CreateKeyOptions` and `UpdateKeyProperties()`.
+- Changed the return type of `CrytographyClient` APIs like `Encrypt()` to return `Response<T>` rather than the `T` directly.
 - Renamed high-level header from `key_vault_keys.hpp` to `keyvault_keys.hpp`.
 
 ## 4.0.0-beta.3 (2021-06-08)

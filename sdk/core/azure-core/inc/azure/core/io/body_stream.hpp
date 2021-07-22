@@ -20,6 +20,7 @@
 #include <cstdint>
 #include <cstdio>
 #include <cstring>
+#include <functional>
 #include <memory>
 #include <vector>
 
@@ -282,4 +283,36 @@ namespace Azure { namespace Core { namespace IO {
     int64_t Length() const override;
   };
 
+  /**
+   * @brief A concrete implementation of #Azure::Core::IO::BodyStream that wraps another stream and
+   * reports progress
+   */
+  class ProgressBodyStream : public BodyStream {
+  private:
+    BodyStream* m_bodyStream;
+    int64_t m_bytesTransferred;
+    std::function<void(int64_t bytesTransferred)> m_callback;
+
+  private:
+    size_t OnRead(uint8_t* buffer, size_t count, Azure::Core::Context const& context) override;
+
+  public:
+    /**
+     * @brief Constructs `%ProgressBodyStream` from a %BodyStream.
+     *
+     * @param bodyStream The body stream to wrap.
+     *
+     * @param callback The callback method used to report progress back to the caller.
+     *
+     * @remark The #Azure::Core::IO::ProgressBodyStream does not own the wrapped stream
+     * and is not responsible for closing / cleaning up resources.
+     */
+    ProgressBodyStream(
+        BodyStream& bodyStream,
+        std::function<void(int64_t bytesTransferred)> callback);
+
+    void Rewind() override;
+
+    int64_t Length() const override;
+  };
 }}} // namespace Azure::Core::IO

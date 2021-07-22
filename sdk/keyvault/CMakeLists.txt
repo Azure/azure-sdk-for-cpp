@@ -13,3 +13,4 @@ if(BUILD_TESTING)
 endif()
 
 add_subdirectory(azure-security-keyvault-keys)
+add_subdirectory(azure-security-keyvault-secrets)

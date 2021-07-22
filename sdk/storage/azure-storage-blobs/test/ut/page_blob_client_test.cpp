@@ -442,4 +442,115 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_EQ(blobClient.GetProperties().Value.HttpHeaders.ContentType, headers.ContentType);
   }
 
+  TEST_F(PageBlobClientTest, PageBlobAccessConditions)
+  {
+    auto blobClient = Azure::Storage::Blobs::PageBlobClient::CreateFromConnectionString(
+        StandardStorageConnectionString(), m_containerName, RandomString());
+    blobClient.Create(1024);
+    Blobs::UpdatePageBlobSequenceNumberOptions updateSequenceNumberOptions;
+    updateSequenceNumberOptions.SequenceNumber = 100;
+    blobClient.UpdateSequenceNumber(
+        Blobs::Models::SequenceNumberAction::Update, updateSequenceNumberOptions);
+
+    enum class AccessConditionType
+    {
+      Eq,
+      Lt,
+      LtOrEq,
+    };
+    enum class Operation
+    {
+      Upload,
+      UploadFromUri,
+      Clear,
+    };
+    for (auto o : {Operation::Upload, Operation::UploadFromUri, Operation::Clear})
+    {
+
+      for (auto willSuccess : {true, false})
+      {
+        for (auto t :
+             {AccessConditionType::Eq, AccessConditionType::Lt, AccessConditionType::LtOrEq})
+        {
+          Blobs::PageBlobAccessConditions accessConditions;
+          if (t == AccessConditionType::Eq)
+          {
+            accessConditions.IfSequenceNumberEqual
+                = blobClient.GetProperties().Value.SequenceNumber.Value();
+            if (!willSuccess)
+            {
+              accessConditions.IfSequenceNumberEqual.Value()++;
+            }
+          }
+          else if (t == AccessConditionType::Lt)
+          {
+            accessConditions.IfSequenceNumberLessThan
+                = blobClient.GetProperties().Value.SequenceNumber.Value();
+            if (willSuccess)
+            {
+              accessConditions.IfSequenceNumberLessThan.Value()++;
+            }
+          }
+          else if (t == AccessConditionType::LtOrEq)
+          {
+            accessConditions.IfSequenceNumberLessThanOrEqual
+                = blobClient.GetProperties().Value.SequenceNumber.Value();
+            if (!willSuccess)
+            {
+              accessConditions.IfSequenceNumberLessThanOrEqual.Value()--;
+            }
+          }
+
+          if (o == Operation::Upload)
+          {
+            std::vector<uint8_t> pageContent(512);
+            auto pageContentStream
+                = Azure::Core::IO::MemoryBodyStream(pageContent.data(), pageContent.size());
+
+            Blobs::UploadPagesOptions options;
+            options.AccessConditions = accessConditions;
+            if (willSuccess)
+            {
+              EXPECT_NO_THROW(blobClient.UploadPages(0, pageContentStream, options));
+            }
+            else
+            {
+              EXPECT_THROW(blobClient.UploadPages(0, pageContentStream, options), StorageException);
+            }
+          }
+          else if (o == Operation::UploadFromUri)
+          {
+            Blobs::UploadPagesFromUriOptions options;
+            options.AccessConditions = accessConditions;
+            if (willSuccess)
+            {
+              EXPECT_NO_THROW(blobClient.UploadPagesFromUri(
+                  512, blobClient.GetUrl() + GetSas(), {0, 512}, options));
+            }
+            else
+            {
+              EXPECT_THROW(
+                  blobClient.UploadPagesFromUri(
+                      512, blobClient.GetUrl() + GetSas(), {0, 512}, options),
+                  StorageException);
+            }
+          }
+          else if (o == Operation::Clear)
+          {
+            Blobs::ClearPagesOptions options;
+            options.AccessConditions = accessConditions;
+            if (willSuccess)
+            {
+              EXPECT_NO_THROW(blobClient.ClearPages({0, 512}, options));
+            }
+            else
+            {
+              EXPECT_THROW(blobClient.ClearPages({0, 512}, options), StorageException);
+            }
+          }
+        }
+      }
+    }
+  }
+
 }}} // namespace Azure::Storage::Test

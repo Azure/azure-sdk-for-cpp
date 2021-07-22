@@ -18,7 +18,7 @@ namespace Azure { namespace Storage { namespace Test {
   void DataLakeDirectoryClientTest::SetUpTestSuite()
   {
     DataLakeFileSystemClientTest::SetUpTestSuite();
-    m_directoryName = RandomString(10);
+    m_directoryName = RandomString();
     m_directoryClient = std::make_shared<Files::DataLake::DataLakeDirectoryClient>(
         m_fileSystemClient->GetDirectoryClient(m_directoryName));
     m_fileSystemClient->GetFileClient(m_directoryName).Create();
@@ -636,7 +636,7 @@ namespace Azure { namespace Storage { namespace Test {
     {
       // Create from connection string validates static creator function and shared key
       // constructor.
-      auto directoryName = RandomString(10);
+      auto directoryName = RandomString();
       auto connectionStringClient
           = Azure::Storage::Files::DataLake::DataLakeDirectoryClient::CreateFromConnectionString(
               AdlsGen2ConnectionString(), m_fileSystemName, directoryName);
@@ -652,7 +652,7 @@ namespace Azure { namespace Storage { namespace Test {
       auto clientSecretClient = Azure::Storage::Files::DataLake::DataLakeDirectoryClient(
           Azure::Storage::Files::DataLake::_detail::GetDfsUrlFromUrl(
               Azure::Storage::Files::DataLake::DataLakeDirectoryClient::CreateFromConnectionString(
-                  AdlsGen2ConnectionString(), m_fileSystemName, RandomString(10))
+                  AdlsGen2ConnectionString(), m_fileSystemName, RandomString())
                   .GetUrl()),
           credential);
 
@@ -662,7 +662,7 @@ namespace Azure { namespace Storage { namespace Test {
 
     {
       // Create from Anonymous credential.
-      auto objectName = RandomString(10);
+      auto objectName = RandomString();
       auto containerClient = Azure::Storage::Blobs::BlobContainerClient::CreateFromConnectionString(
           AdlsGen2ConnectionString(), m_fileSystemName);
       Azure::Storage::Blobs::SetBlobContainerAccessPolicyOptions options;

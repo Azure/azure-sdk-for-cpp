@@ -412,7 +412,7 @@ namespace Azure { namespace Storage { namespace Test {
     // Set properties works
     {
       auto shareClient = Files::Shares::ShareClient::CreateFromConnectionString(
-          StandardStorageConnectionString(), LowercaseRandomString(10));
+          StandardStorageConnectionString(), LowercaseRandomString());
       auto options = Files::Shares::CreateShareOptions();
       options.AccessTier = Files::Shares::Models::AccessTier::Cool;
       EXPECT_NO_THROW(shareClient.Create(options));
@@ -469,7 +469,7 @@ namespace Azure { namespace Storage { namespace Test {
 
   TEST_F(FileShareClientTest, PremiumShare)
   {
-    auto shareName = LowercaseRandomString(10);
+    auto shareName = LowercaseRandomString();
     auto shareClient = Files::Shares::ShareClient::CreateFromConnectionString(
         PremiumFileConnectionString(), shareName);
     EXPECT_NO_THROW(shareClient.Create());
