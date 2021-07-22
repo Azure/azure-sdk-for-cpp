@@ -25,7 +25,7 @@ using namespace Azure::Core::Http::Policies::_internal;
 
 namespace {
 constexpr static const char TelemetryName[] = "keyvault-secrets";
-};
+}
 
 SecretClient::SecretClient(
     std::string const& vaultUrl,
