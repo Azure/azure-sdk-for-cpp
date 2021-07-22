@@ -8,9 +8,8 @@
 #include <curl/curl.h>
 #endif
 
-
-#include <azure/keyvault/secrets/secret_client.hpp>
 #include <azure/identity.hpp>
+#include <azure/keyvault/secrets/secret_client.hpp>
 
 using namespace Azure::Security::KeyVault::Secrets;
 

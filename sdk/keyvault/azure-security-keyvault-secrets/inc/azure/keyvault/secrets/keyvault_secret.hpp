@@ -9,7 +9,7 @@
 #pragma once
 #include "keyvault_secret_properties.hpp"
 
-namespace Azure{namespace Security{namespace KeyVault{namespace Secrets {
+namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
   struct KeyVaultSecret final
   {
     /**
@@ -50,7 +50,7 @@ namespace Azure{namespace Security{namespace KeyVault{namespace Secrets {
      * backing a certificate, then managed will be true.
      *
      */
-    bool Managed = false;   
+    bool Managed = false;
 
     /**
      * @brief Construct a new SecretBundle object.

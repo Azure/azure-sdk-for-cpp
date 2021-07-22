@@ -8,15 +8,14 @@
 
 #include "azure/keyvault/secrets/secret_client.hpp"
 
+#include "private/keyvault_protocol.hpp"
 #include "private/package_version.hpp"
 #include "private/secret_constants.hpp"
 #include "private/secret_serializers.hpp"
-#include "private/keyvault_protocol.hpp"
 
 #include <azure/core/credentials/credentials.hpp>
 #include <azure/core/http/http.hpp>
 #include <azure/core/http/policies/policy.hpp>
-
 
 #include <string>
 

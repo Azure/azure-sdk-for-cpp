@@ -12,12 +12,12 @@
 #include <azure/core/nullable.hpp>
 
 namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
-	
-    /**
-    * @brief The Secret attributes managed by the KeyVault service.
-    * 
-    */
-	struct KeyvaultSecretProperties final 
+
+  /**
+   * @brief The Secret attributes managed by the KeyVault service.
+   *
+   */
+  struct KeyvaultSecretProperties final
   {
     /**
      * @brief The name of the secret.

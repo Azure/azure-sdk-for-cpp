@@ -28,7 +28,6 @@ KeyVaultSecret KeyVaultSecretSerializer::KeyVaultSecretDeserialize(
   return secret;
 }
 
-
 // Create from HTTP raw response only.
 KeyVaultSecret KeyVaultSecretSerializer::KeyVaultSecretDeserialize(
     Azure::Core::Http::RawResponse const& rawResponse)
@@ -101,10 +100,9 @@ void KeyVaultSecretSerializer::KeyVaultSecretDeserialize(
   }
 
   // key id
-  JsonOptional::SetIfExists<std::string>(
-      secret.KeyId, jsonParser, _detail::KeyIdPropertyName);
+  JsonOptional::SetIfExists<std::string>(secret.KeyId, jsonParser, _detail::KeyIdPropertyName);
 
   // key id
-  JsonOptional::SetIfExists<std::string>(secret.ContentType, jsonParser, _detail::ContentTypePropertyName);
+  JsonOptional::SetIfExists<std::string>(
+      secret.ContentType, jsonParser, _detail::ContentTypePropertyName);
 }
-
