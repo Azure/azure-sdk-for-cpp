@@ -7,8 +7,8 @@
  */
 
 #pragma once
-#include "dll_import_export.hpp"
 #include "../src/private/keyvault_protocol.hpp"
+#include "dll_import_export.hpp"
 
 #include <azure/keyvault/secrets/keyvault_secret.hpp>
 #include <string>
