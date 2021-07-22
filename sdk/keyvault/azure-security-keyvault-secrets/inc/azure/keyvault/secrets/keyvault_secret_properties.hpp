@@ -1,3 +1,11 @@
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// SPDX-License-Identifier: MIT
+
+/**
+ * @file
+ * @brief Keyvault Secret Attributes definition
+ */
+
 #pragma once
 
 #include <azure/core/datetime.hpp>
@@ -51,7 +59,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
      * Key Vault.
      *
      */
-    Azure::Nullable<int> RecoverableDays;
+    Azure::Nullable<int64_t> RecoverableDays;
 
     /**
      * @brief The recovery level currently in effect for secrets in the Key Vault.

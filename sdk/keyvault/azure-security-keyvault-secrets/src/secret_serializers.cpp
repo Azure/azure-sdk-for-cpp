@@ -1,3 +1,11 @@
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// SPDX-License-Identifier: MIT
+
+/**
+ * @file
+ * @brief Keyvault Secret serializers
+ */
+
 #include "private/secret_serializers.hpp"
 #include "private/secret_constants.hpp"
 
@@ -70,6 +78,8 @@ void KeyVaultSecretSerializer::KeyVaultSecretDeserialize(
         PosixTimeConverter::PosixTimeToDateTime);
     JsonOptional::SetIfExists<std::string>(
         secret.Properties.RecoveryLevel, attributes, _detail::RecoveryLevelPropertyName);
+    JsonOptional::SetIfExists<int64_t>(
+        secret.Properties.RecoverableDays, attributes, _detail::RecoverableDaysPropertyName);
   }
 
   // "Tags"

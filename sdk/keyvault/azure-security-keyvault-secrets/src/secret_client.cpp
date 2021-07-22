@@ -5,6 +5,7 @@
  * @brief Keyvault Secrets Client definition.
  *
  */
+
 #include "azure/keyvault/secrets/secret_client.hpp"
 
 #include "private/package_version.hpp"
@@ -26,8 +27,6 @@ using namespace Azure::Core::Http::Policies::_internal;
 namespace {
 constexpr static const char TelemetryName[] = "keyvault-secrets";
 };
-
-std::string SecretClient::ClientVersion() const { return _detail::PackageVersion::ToString(); }
 
 SecretClient::SecretClient(
     std::string const& vaultUrl,
@@ -65,20 +64,5 @@ Azure::Response<KeyVaultSecret> SecretClient::GetSecret(
       },
       {_detail::SecretPath, name, options.Version});
 }
-/*
-Azure::Response<KeyVaultSecret> SecretClient::SetSecret(
-    std::string const& name,
-    GetSecretOptions const& value,
-    Azure::Core::Context const& context) const
-{
-  return m_pipeline->SendRequest<KeyVaultSecret>(
-      context,
-      Azure::Core::Http::HttpMethod::Get,
-      [&name](Azure::Core::Http::RawResponse const& rawResponse) {
-        return _detail::KeyVaultSecretSerializer::KeyVaultSecretDeserialize(name, rawResponse);
-      },
-      {_detail::SecretPath, name, options.Version});
-}
-*/
 
 const ServiceVersion ServiceVersion::V7_2("7.2");

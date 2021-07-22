@@ -1,3 +1,11 @@
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// SPDX-License-Identifier: MIT
+
+/**
+ * @file
+ * @brief Keyvault Secret definition
+ */
+
 #pragma once
 #include "keyvault_secret_properties.hpp"
 

@@ -5,6 +5,7 @@
  * @brief Defines the Key Vault Secret client.
  *
  */
+
 #pragma once
 #include "dll_import_export.hpp"
 #include "private/keyvault_protocol.hpp"
@@ -131,8 +132,6 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
         std::string const& name,
         GetSecretOptions const& options = GetSecretOptions(),
         Azure::Core::Context const& context = Azure::Core::Context()) const;
-
-    std::string ClientVersion() const;
   };
 
 }}}} // namespace Azure::Security::KeyVault::Secrets
