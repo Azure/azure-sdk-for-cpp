@@ -7,7 +7,7 @@
  */
 
 #pragma once
-#include "keyvault_secret_properties.hpp"
+#include <azure/keyvault/secrets/keyvault_secret_properties.hpp>
 
 #include <unordered_map>
 
@@ -26,6 +26,10 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
      */
     std::string Id;
 
+    /**
+     * @brief The secret Properties bundle.
+     *
+     */
     KeyvaultSecretProperties Properties;
 
     /**
@@ -55,11 +59,16 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
     bool Managed = false;
 
     /**
-     * @brief Construct a new SecretBundle object.
+     * @brief Construct a new KeyVaultSecret object.
      *
      */
     KeyVaultSecret() = default;
 
+    /**
+     * @brief Construct a new KeyVaultSecret object.
+     *
+     * @param name The name of the secret.
+     */
     KeyVaultSecret(std::string name) : Properties(std::move(name)) {}
   };
 }}}} // namespace Azure::Security::KeyVault::Secrets

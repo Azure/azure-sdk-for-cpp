@@ -8,12 +8,11 @@
 
 #pragma once
 #include "dll_import_export.hpp"
-#include "private/keyvault_protocol.hpp"
-//#include <azure/keyvault/common/internal/keyvault_pipeline.hpp>
+#include "../src/private/keyvault_protocol.hpp"
+
 #include <azure/keyvault/secrets/keyvault_secret.hpp>
 #include <string>
 
-#include <string>
 namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
 
   class ServiceVersion final {
@@ -93,7 +92,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
 
   protected:
     // Using a shared pipeline for a client to share it with LRO (like delete key)
-    std::shared_ptr<Azure::Security::KeyVault::_detail::KeyVaultProtocolClient> m_pipeline;
+    std::shared_ptr<Azure::Security::KeyVault::_detail::KeyVaultProtocolClient> m_protocolClient;
 
   public:
     /**
@@ -113,16 +112,17 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
      *
      * @param keyClient An existing key vault key client.
      */
-    explicit SecretClient(SecretClient const& keyClient) : m_pipeline(keyClient.m_pipeline){};
+    explicit SecretClient(SecretClient const& keyClient)
+        : m_protocolClient(keyClient.m_protocolClient){};
 
     ~SecretClient() = default;
 
     /**
      * @brief Get a specified secret from a given key vault
-     * ThisT operation is applicable to any secret stored in Azure Key Vault.
+     * This operation is applicable to any secret stored in Azure Key Vault.
      * This operation requires the secrets/get permission.
      *
-     * @param name The name of the secret
+     * @param name The name of the secret<span class="x x-first x-last">.</span>
      * @param options The optional parameters for this request.
      *
      * @param context The context for the operation can be used for request cancellation.

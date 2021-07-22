@@ -1,3 +1,12 @@
+// Copyright(c) Microsoft Corporation.All rights reserved.
+// SPDX-License-Identifier: MIT
+
+/**
+ * @file
+ * @brief Serializers/sdeserializers for the KeyVault Secret client.
+ *
+ */
+
 #pragma once
 #include <azure/core/http/http.hpp>
 #include <azure/core/internal/json/json.hpp>

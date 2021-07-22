@@ -4,12 +4,9 @@
 #define _CRT_SECURE_NO_WARNINGS
 #endif
 
-#if defined(BUILD_CURL_HTTP_TRANSPORT_ADAPTER)
-#include <curl/curl.h>
-#endif
-
 #include <azure/identity.hpp>
-#include <azure/keyvault/secrets/secret_client.hpp>
+
+#include <azure/keyvault/keyvault_secrets.hpp>
 
 using namespace Azure::Security::KeyVault::Secrets;
 
@@ -24,6 +21,6 @@ int main()
   SecretClient secretClient(std::getenv("AZURE_KEYVAULT_URL"), credential);
 
   auto response = secretClient.GetSecret("testSecret");
-
+  
   return 0;
 }
