@@ -11,6 +11,8 @@
 #include <azure/core/datetime.hpp>
 #include <azure/core/nullable.hpp>
 
+#include <unordered_map>
+
 namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
 
   /**
@@ -19,11 +21,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
    */
   struct KeyvaultSecretProperties final
   {
-    /**
-     * @brief The name of the secret.
-     *
-     */
-    Azure::Nullable<std::string> Name;
+
     /**
      * @brief Indicate whether the secret is enabled and useable for cryptographic operations.
      *
@@ -71,16 +69,59 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
     Azure::Nullable<std::string> RecoveryLevel;
 
     /**
-     * @brief Construct a new secret Properties object.
+     * @brief The content type of the secret.
      *
      */
-    KeyvaultSecretProperties() = default;
+    Azure::Nullable<std::string> ContentType;
+
+    /**
+     * @brief  If this is a secret backing a KV certificate, then this field specifies the
+     * corresponding key backing the KV certificate.
+     *
+     */
+    Azure::Nullable<std::string> KeyId;
+
+    /**
+     * @brief Application specific metadata in the form of key-value pairs.
+     *
+     */
+    std::unordered_map<std::string, std::string> Tags;
+
+    /**
+     * @brief True if the secret's lifetime is managed by key vault. If this is a secret
+     * backing a certificate, then managed will be true.
+     *
+     */
+    bool Managed = false;
+
+    /**
+     * @brief The secret id.
+     *
+     */
+    std::string Id;
+
+    /**
+     * @brief The name of the secret.
+     *
+     */
+    std::string Name;
+
+    /**
+     * @brief The vault url of the secret.
+     *
+     */
+    std::string VaultUrl;
+
+    /**
+     * @brief The version of the secret.
+     *
+     */
+    std::string Version;
 
     /**
      * @brief Construct a new secret Properties object.
      *
-     * @param name The name of the secret.
      */
-    KeyvaultSecretProperties(std::string name) : Name(std::move(name)) {}
+    KeyvaultSecretProperties() = default;
   };
 }}}} // namespace Azure::Security::KeyVault::Secrets

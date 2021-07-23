@@ -30,5 +30,50 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets { 
     static void KeyVaultSecretDeserialize(
         KeyVaultSecret& key,
         Azure::Core::Http::RawResponse const& rawResponse);
+
+    // extract the host out of the URL (with port if available)
+    static std::string GetUrlAuthorityWithScheme(Azure::Core::Url const& url)
+    {
+      std::string urlString;
+      if (!url.GetScheme().empty())
+      {
+        urlString += url.GetScheme() + "://";
+      }
+      urlString += url.GetHost();
+      if (url.GetPort() != 0)
+      {
+        urlString += ":" + std::to_string(url.GetPort());
+      }
+      return urlString;
+    }
+
+    // parse the ID url to extract relevant data
+    void static inline ParseIDUrl(
+        KeyvaultSecretProperties& secretProperties,
+        std::string const& url)
+    {
+      Azure::Core::Url sid(url);
+      secretProperties.Id = url;
+      secretProperties.VaultUrl = GetUrlAuthorityWithScheme(sid);
+      auto const& path = sid.GetPath();
+      //  path is in the form of `verb/keyName{/keyVersion}`
+      auto const separatorChar = '/';
+      auto pathEnd = path.end();
+      auto start = path.begin();
+      start = std::find(start, pathEnd, separatorChar);
+      start += 1;
+      auto separator = std::find(start, pathEnd, separatorChar);
+      if (separator != pathEnd)
+      {
+        secretProperties.Name = std::string(start, separator);
+        start = separator + 1;
+        secretProperties.Version = std::string(start, pathEnd);
+      }
+      else
+      {
+        // Nothing but the name+
+        secretProperties.Name = std::string(start, pathEnd);
+      }
+    }
   };
 }}}}} // namespace Azure::Security::KeyVault::Secrets::_detail

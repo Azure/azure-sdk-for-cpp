@@ -23,7 +23,7 @@ KeyVaultSecret KeyVaultSecretSerializer::KeyVaultSecretDeserialize(
     std::string const& name,
     Azure::Core::Http::RawResponse const& rawResponse)
 {
-  KeyVaultSecret secret(name);
+  KeyVaultSecret secret(name, "");
   _detail::KeyVaultSecretSerializer::KeyVaultSecretDeserialize(secret, rawResponse);
   return secret;
 }
@@ -47,6 +47,10 @@ void KeyVaultSecretSerializer::KeyVaultSecretDeserialize(
 
   secret.Value = jsonParser[_detail::ValuePropertyName];
   secret.Id = jsonParser[_detail::IdPropertyName];
+  secret.Properties.Id = secret.Id;
+
+  ParseIDUrl(secret.Properties, secret.Id);
+  secret.Name = secret.Properties.Name;
 
   // Parse URL for the various attributes
   if (jsonParser.contains(_detail::AttributesPropertyName))
@@ -88,7 +92,7 @@ void KeyVaultSecretSerializer::KeyVaultSecretDeserialize(
     {
       for (auto tag = tags.begin(); tag != tags.end(); ++tag)
       {
-        secret.Tags.emplace(tag.key(), tag.value().get<std::string>());
+        secret.Properties.Tags.emplace(tag.key(), tag.value().get<std::string>());
       }
     }
   }
@@ -96,13 +100,14 @@ void KeyVaultSecretSerializer::KeyVaultSecretDeserialize(
   // managed
   if (jsonParser.contains(_detail::ManagedPropertyName))
   {
-    secret.Managed = jsonParser[_detail::ManagedPropertyName].get<bool>();
+    secret.Properties.Managed = jsonParser[_detail::ManagedPropertyName].get<bool>();
   }
 
   // key id
-  JsonOptional::SetIfExists<std::string>(secret.KeyId, jsonParser, _detail::KeyIdPropertyName);
-
-  // key id
   JsonOptional::SetIfExists<std::string>(
-      secret.ContentType, jsonParser, _detail::ContentTypePropertyName);
+      secret.Properties.KeyId, jsonParser, _detail::KeyIdPropertyName);
+
+  // content type
+  JsonOptional::SetIfExists<std::string>(
+      secret.Properties.ContentType, jsonParser, _detail::ContentTypePropertyName);
 }

@@ -9,8 +9,6 @@
 #pragma once
 #include <azure/keyvault/secrets/keyvault_secret_properties.hpp>
 
-#include <unordered_map>
-
 namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
   struct KeyVaultSecret final
   {
@@ -27,36 +25,16 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
     std::string Id;
 
     /**
+     * @brief The name of the secret.
+     *
+     */
+    std::string Name;
+
+    /**
      * @brief The secret Properties bundle.
      *
      */
     KeyvaultSecretProperties Properties;
-
-    /**
-     * @brief The content type of the secret.
-     *
-     */
-    Azure::Nullable<std::string> ContentType;
-
-    /**
-     * @brief  If this is a secret backing a KV certificate, then this field specifies the
-     * corresponding key backing the KV certificate.
-     *
-     */
-    Azure::Nullable<std::string> KeyId;
-
-    /**
-     * @brief Application specific metadata in the form of key-value pairs.
-     *
-     */
-    std::unordered_map<std::string, std::string> Tags;
-
-    /**
-     * @brief True if the secret's lifetime is managed by key vault. If this is a secret
-     * backing a certificate, then managed will be true.
-     *
-     */
-    bool Managed = false;
 
     /**
      * @brief Construct a new KeyVaultSecret object.
@@ -68,7 +46,15 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
      * @brief Construct a new KeyVaultSecret object.
      *
      * @param name The name of the secret.
+     * @param value The name of the secret.
      */
-    KeyVaultSecret(std::string name) : Properties(std::move(name)) {}
+    KeyVaultSecret(std::string name, std::string value)
+        : Name(std::move(name)), Value(std::move(value))
+    {
+      if (Name.empty())
+      {
+        throw std::invalid_argument("Name cannot be empty");
+      }
+    }
   };
 }}}} // namespace Azure::Security::KeyVault::Secrets
