@@ -13,6 +13,12 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
   struct KeyVaultSecret final
   {
     /**
+     * @brief The name of the secret.
+     *
+     */
+    std::string Name;
+
+    /**
      * @brief The secret value.
      *
      */
@@ -23,12 +29,6 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
      *
      */
     std::string Id;
-
-    /**
-     * @brief The name of the secret.
-     *
-     */
-    std::string Name;
 
     /**
      * @brief The secret Properties bundle.
