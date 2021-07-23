@@ -32,54 +32,16 @@ struct RequestWithContinuationToken final
 };
 
 static inline RequestWithContinuationToken BuildRequestFromContinuationToken(
-    Azure::Security::KeyVault::Keys::GetPropertiesOfKeysOptions const& options,
-    std::vector<std::string>&& defaultPath)
+    const Azure::Nullable<std::string>& NextPageToken,
+    const std::vector<std::string>&& defaultPath)
 {
   RequestWithContinuationToken request;
   request.Path = defaultPath;
-  if (options.NextPageToken)
+  if (NextPageToken)
   {
     // Using a continuation token requires to send the request to the continuation token URL instead
     // of the default URL which is used only for the first page.
-    Azure::Core::Url nextPageUrl(options.NextPageToken.Value());
-    request.Query
-        = std::make_unique<std::map<std::string, std::string>>(nextPageUrl.GetQueryParameters());
-    request.Path.clear();
-    request.Path.emplace_back(nextPageUrl.GetPath());
-  }
-  return request;
-}
-
-static inline RequestWithContinuationToken BuildRequestFromContinuationToken(
-    Azure::Security::KeyVault::Keys::GetPropertiesOfKeyVersionsOptions const& options,
-    std::vector<std::string>&& defaultPath)
-{
-  RequestWithContinuationToken request;
-  request.Path = defaultPath;
-  if (options.NextPageToken)
-  {
-    // Using a continuation token requires to send the request to the continuation token URL instead
-    // of the default URL which is used only for the first page.
-    Azure::Core::Url nextPageUrl(options.NextPageToken.Value());
-    request.Query
-        = std::make_unique<std::map<std::string, std::string>>(nextPageUrl.GetQueryParameters());
-    request.Path.clear();
-    request.Path.emplace_back(nextPageUrl.GetPath());
-  }
-  return request;
-}
-
-static inline RequestWithContinuationToken BuildRequestFromContinuationToken(
-    Azure::Security::KeyVault::Keys::GetDeletedKeysOptions const& options,
-    std::vector<std::string>&& defaultPath)
-{
-  RequestWithContinuationToken request;
-  request.Path = defaultPath;
-  if (options.NextPageToken)
-  {
-    // Using a continuation token requires to send the request to the continuation token URL instead
-    // of the default URL which is used only for the first page.
-    Azure::Core::Url nextPageUrl(options.NextPageToken.Value());
+    Azure::Core::Url nextPageUrl(NextPageToken.Value());
     request.Query
         = std::make_unique<std::map<std::string, std::string>>(nextPageUrl.GetQueryParameters());
     request.Path.clear();
@@ -191,7 +153,8 @@ KeyPropertiesPagedResponse KeyClient::GetPropertiesOfKeys(
     GetPropertiesOfKeysOptions const& options,
     Azure::Core::Context const& context) const
 {
-  auto const request = BuildRequestFromContinuationToken(options, {_detail::KeysPath});
+  auto const request
+      = BuildRequestFromContinuationToken(options.NextPageToken, {_detail::KeysPath});
   auto response = m_pipeline->SendRequest<KeyPropertiesPagedResponse>(
       context,
       Azure::Core::Http::HttpMethod::Get,
@@ -213,8 +176,8 @@ KeyPropertiesPagedResponse KeyClient::GetPropertiesOfKeyVersions(
     GetPropertiesOfKeyVersionsOptions const& options,
     Azure::Core::Context const& context) const
 {
-  auto const request
-      = BuildRequestFromContinuationToken(options, {_detail::KeysPath, name, "versions"});
+  auto const request = BuildRequestFromContinuationToken(
+      options.NextPageToken, {_detail::KeysPath, name, "versions"});
   auto response = m_pipeline->SendRequest<KeyPropertiesPagedResponse>(
       context,
       Azure::Core::Http::HttpMethod::Get,
@@ -279,7 +242,8 @@ DeletedKeyPagedResponse KeyClient::GetDeletedKeys(
     GetDeletedKeysOptions const& options,
     Azure::Core::Context const& context) const
 {
-  auto const request = BuildRequestFromContinuationToken(options, {_detail::DeletedKeysPath});
+  auto const request
+      = BuildRequestFromContinuationToken(options.NextPageToken, {_detail::DeletedKeysPath});
   auto response = m_pipeline->SendRequest<DeletedKeyPagedResponse>(
       context,
       Azure::Core::Http::HttpMethod::Get,

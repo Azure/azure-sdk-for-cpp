@@ -4,7 +4,7 @@
 #include <azure/core/internal/cryptography/sha_hash.hpp>
 
 #include "../private/key_constants.hpp"
-#include "azure/keyvault/keys/cryptography/signature_algorithm.hpp"
+#include "azure/keyvault/keys/cryptography/cryptography_client_models.hpp"
 
 namespace Azure {
   namespace Security {
