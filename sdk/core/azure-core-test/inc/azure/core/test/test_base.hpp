@@ -16,6 +16,7 @@ namespace Azure { namespace Core { namespace Test {
   class TestBase : public ::testing::Test {
   private:
     static Azure::Core::Test::TestMode testMode;
+    Azure::Core::Test::TestContextManager m_testContext;
 
   protected:
     Azure::Core::Test::InterceptorManager m_interceptor = Azure::Core::Test::InterceptorManager();
@@ -37,10 +38,16 @@ namespace Azure { namespace Core { namespace Test {
     {
       // Create test content from gtest Test Info
       auto testNameInfo = ::testing::UnitTest::GetInstance()->current_test_info();
-      Azure::Core::Test::TestContextManager testContext(testNameInfo, testMode);
+      m_testContext = Azure::Core::Test::TestContextManager(testNameInfo, testMode);
 
       // set the interceptor for the current test
-      m_interceptor = Azure::Core::Test::InterceptorManager(testContext);
+      m_interceptor = Azure::Core::Test::InterceptorManager(m_testContext);
     }
+
+    /**
+     * @brief Run after each test
+     *
+     */
+    void TearDown() override;
   };
 }}} // namespace Azure::Core::Test

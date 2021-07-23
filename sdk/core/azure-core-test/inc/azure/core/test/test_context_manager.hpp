@@ -25,6 +25,8 @@ namespace Azure { namespace Core { namespace Test {
     constexpr static const char* LiveOnlyToken = "LIVE";
 
   public:
+    TestContextManager() = default;
+
     /**
      * @brief Construct a new Test Context Manager object based on the test info.
      *

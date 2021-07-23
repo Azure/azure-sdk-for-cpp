@@ -31,10 +31,10 @@ namespace Azure { namespace Core { namespace Test {
    */
   struct NetworkCallRecord
   {
-    std::string method;
-    std::string uri;
-    std::map<std::string, std::string> headers;
-    std::map<std::string, std::string> response;
+    std::string Method;
+    std::string Url;
+    std::map<std::string, std::string> Headers;
+    std::map<std::string, std::string> Response;
   };
 
   /**
@@ -43,11 +43,10 @@ namespace Azure { namespace Core { namespace Test {
    *
    */
   class RecordedData {
-  private:
-    std::list<NetworkCallRecord> m_networkCallRecords;
-    std::list<std::string> m_variables;
-
   public:
+    std::list<NetworkCallRecord> NetworkCallRecords;
+    std::list<std::string> Variables;
+
     /**
      * @brief Construct a new Recorded Data object.
      *
