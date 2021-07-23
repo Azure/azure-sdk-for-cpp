@@ -6,7 +6,7 @@
 #include <azure/core/internal/json/json_serializable.hpp>
 #include <azure/core/url.hpp>
 
-#include "azure/keyvault/keys/keyvault_key.hpp"
+#include "azure/keyvault/keys/key_client_models.hpp"
 #include "private/key_constants.hpp"
 #include "private/key_serializers.hpp"
 
