@@ -136,6 +136,8 @@ namespace Azure { namespace Security { namespace KeyVault { namespace _detail {
         std::vector<std::string> const& path)
     {
       auto serialContent = content.Serialize();
+      auto streamContent = Azure::Core::IO::MemoryBodyStream(
+          reinterpret_cast<const uint8_t*>(serialContent.data()), serialContent.size());
 
       return SendRequest(context, method, serialContent, factoryFn, path);
     }
