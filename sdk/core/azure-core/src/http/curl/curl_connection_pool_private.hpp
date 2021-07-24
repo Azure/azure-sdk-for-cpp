@@ -15,6 +15,7 @@
 #include "curl_connection_private.hpp"
 
 #include <atomic>
+#include <azure/core/http/curl_transport.hpp>
 #include <condition_variable>
 #include <curl/curl.h>
 #include <list>

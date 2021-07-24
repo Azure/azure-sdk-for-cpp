@@ -20,9 +20,9 @@ include(AzureGlobalCompileOptions)
 az_vcpkg_integrate()
 
 if(NOT AZ_ALL_LIBRARIES)
-  find_package(azure-core-cpp "1.0.0" CONFIG QUIET)
+  find_package(azure-core-cpp "1.1.0" CONFIG QUIET)
   if(NOT azure-core-cpp_FOUND)
-    find_package(azure-core-cpp "1.0.0" REQUIRED)
+    find_package(azure-core-cpp "1.1.0" REQUIRED)
   endif()
 endif()
 
@@ -30,13 +30,19 @@ set(
   AZURE_SECURITY_KEYVAULT_SECRETS_HEADER
     inc/azure/keyvault/secrets/dll_import_export.hpp
     inc/azure/keyvault/secrets/secret_client.hpp
+    inc/azure/keyvault/secrets/keyvault_secret.hpp
     inc/azure/keyvault/keyvault_secrets.hpp
 )
 
 set(
   AZURE_SECURITY_KEYVAULT_SECRETS_SOURCE
     src/private/package_version.hpp
+    src/private/keyvault_protocol.hpp
+    src/private/secret_constants.hpp
+    src/private/secret_serializers.hpp
+    src/keyvault_protocol.cpp
     src/secret_client.cpp
+    src/secret_serializers.cpp
 )
 
 add_library(azure-security-keyvault-secrets ${AZURE_SECURITY_KEYVAULT_SECRETS_HEADER} ${AZURE_SECURITY_KEYVAULT_SECRETS_SOURCE})
@@ -49,7 +55,7 @@ target_include_directories(
       $<INSTALL_INTERFACE:include>
 )
 
-#target_link_libraries(azure-security-keyvault-secrets PUBLIC Azure::azure-security-keyvault-secrets)
+target_link_libraries(azure-security-keyvault-secrets PUBLIC Azure::azure-core)
 
 # coverage. Has no effect if BUILD_CODE_COVERAGE is OFF
 create_code_coverage(keyvault-secrets azure-security-keyvault-secrets azure-security-keyvault-secrets-test)
@@ -64,6 +70,7 @@ if(BUILD_TESTING)
   endif()
   
   add_subdirectory(test/ut)
+  add_subdirectory(test/sample)
 endif()
 
 if (BUILD_PERFORMANCE_TESTS)
