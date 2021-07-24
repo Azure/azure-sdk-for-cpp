@@ -10,8 +10,7 @@
 #include "../src/private/keyvault_protocol.hpp"
 #include "dll_import_export.hpp"
 
-#include <azure/keyvault/secrets/keyvault_secret.hpp>
-#include <azure/keyvault/secrets/keyvault_secret_set_parameters.hpp>
+#include "azure/keyvault/secrets/keyvault_secret.hpp"
 #include <string>
 
 namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
@@ -134,14 +133,32 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
         GetSecretOptions const& options = GetSecretOptions(),
         Azure::Core::Context const& context = Azure::Core::Context()) const;
 
+    /**
+     * @brief Sets a secret in a specified key vault.
+     *
+     * @param name The name of the secret<span class="x x-first x-last">.</span>
+     * @param value The value of the secret<span class="x x-first x-last">.</span>
+     *
+     * @param context The context for the operation can be used for request cancellation.
+     * @return The Secret wrapped in the Response.
+     */
     Azure::Response<KeyVaultSecret> SetSecret(
         std::string const& name,
         std::string const& value,
         Azure::Core::Context const& context = Azure::Core::Context()) const;
 
+    /**
+     * @brief Sets a secret in a specified key vault.
+     *
+     * @param name The name of the secret<span class="x x-first x-last">.</span>
+     * @param secret The secret definition <span class="x x-first x-last">.</span>
+     *
+     * @param context The context for the operation can be used for request cancellation.
+     * @return The Secret wrapped in the Response.
+     */
     Azure::Response<KeyVaultSecret> SetSecret(
         std::string const& name,
-        KeyVaultSecretSetParameters const& secret,
+        KeyVaultSecret const& secret,
         Azure::Core::Context const& context = Azure::Core::Context()) const;
 
     std::string ClientVersion() const;

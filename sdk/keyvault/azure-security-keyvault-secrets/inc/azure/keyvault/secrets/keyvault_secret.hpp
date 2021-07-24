@@ -55,6 +55,8 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
       {
         throw std::invalid_argument("Name cannot be empty");
       }
+
+      Properties.Name = Name;
     }
   };
 }}}} // namespace Azure::Security::KeyVault::Secrets

@@ -71,19 +71,19 @@ Azure::Response<KeyVaultSecret> SecretClient::SetSecret(
     std::string const& value,
     Azure::Core::Context const& context) const
 {
-  KeyVaultSecretSetParameters setParameters(value);
+  KeyVaultSecret setParameters(name, value);
   return SetSecret(name, setParameters, context);
 }
 
 Azure::Response<KeyVaultSecret> SecretClient::SetSecret(
     std::string const& name,
-    KeyVaultSecretSetParameters const& secret,
+    KeyVaultSecret const& secret,
     Azure::Core::Context const& context) const
 {
-  return m_pipeline->SendRequest<KeyVaultSecret>(
+  return m_protocolClient->SendRequest<KeyVaultSecret>(
       context,
       Azure::Core::Http::HttpMethod::Put,
-      _detail::KeyvaultSecretSetParametersSerializer::KeyvaultSecretSetParametersSerialize(secret),
+      _detail::KeyVaultSecretSerializer::KeyVaultSecretSerialize(secret),
       [&name](Azure::Core::Http::RawResponse const& rawResponse) {
         return _detail::KeyVaultSecretSerializer::KeyVaultSecretDeserialize(name, rawResponse);
       },

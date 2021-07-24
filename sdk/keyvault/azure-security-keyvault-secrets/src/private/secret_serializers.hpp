@@ -8,10 +8,9 @@
  */
 
 #pragma once
-#include <azure/core/internal/json/json.hpp>
-#include <azure/keyvault/secrets/keyvault_secret.hpp>
-#include <azure/core/http/http.hpp>
-#include <azure/keyvault/secrets/keyvault_secret_set_parameters.hpp>
+#include "azure/core/http/http.hpp"
+#include "azure/core/internal/json/json.hpp"
+#include "azure/keyvault/secrets/keyvault_secret.hpp"
 
 using namespace Azure::Security::KeyVault::Secrets;
 
@@ -32,7 +31,10 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets { 
         KeyVaultSecret& key,
         Azure::Core::Http::RawResponse const& rawResponse);
 
-    // extract the host out of the URL (with port if available)
+    // Serializes a key vault secret for set action
+    static std::string KeyVaultSecretSerialize(KeyVaultSecret const& parameters);
+
+    // Extract the host out of the URL (with port if available)
     static std::string GetUrlAuthorityWithScheme(Azure::Core::Url const& url)
     {
       std::string urlString;
@@ -76,11 +78,5 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets { 
         secretProperties.Name = std::string(start, pathEnd);
       }
     }
-  };
-
-  struct KeyvaultSecretSetParametersSerializer final
-  {
-    static std::string KeyvaultSecretSetParametersSerialize(
-        KeyVaultSecretSetParameters const& parameters);
   };
 }}}}} // namespace Azure::Security::KeyVault::Secrets::_detail
