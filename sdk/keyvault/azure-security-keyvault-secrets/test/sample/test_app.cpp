@@ -20,7 +20,7 @@ int main()
 
   SecretClient secretClient(std::getenv("AZURE_KEYVAULT_URL"), credential);
 
-  auto response = secretClient.SetSecret("someSecret2", "someData");
+  auto response = secretClient.SetSecret("someSecret", "someData");
 
   auto response2 = secretClient.GetSecret("someSecret2");
 

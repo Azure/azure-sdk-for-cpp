@@ -7,7 +7,7 @@
  */
 
 #pragma once
-#include "keyvault_secret_attributes.hpp"
+#include "keyvault_secret_properties.hpp"
 
 namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
   struct KeyVaultSecret final
