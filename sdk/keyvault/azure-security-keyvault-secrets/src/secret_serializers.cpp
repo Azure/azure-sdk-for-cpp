@@ -3,7 +3,7 @@
 
 /**
  * @file
- * @brief Keyvault Secret serializers 
+ * @brief Keyvault Secret serializers
  */
 
 #include "private/secret_serializers.hpp"
@@ -23,11 +23,10 @@ KeyVaultSecret KeyVaultSecretSerializer::KeyVaultSecretDeserialize(
     std::string const& name,
     Azure::Core::Http::RawResponse const& rawResponse)
 {
-  KeyVaultSecret secret(name);
+  KeyVaultSecret secret(name, "");
   _detail::KeyVaultSecretSerializer::KeyVaultSecretDeserialize(secret, rawResponse);
   return secret;
 }
-
 
 // Create from HTTP raw response only.
 KeyVaultSecret KeyVaultSecretSerializer::KeyVaultSecretDeserialize(
@@ -48,6 +47,10 @@ void KeyVaultSecretSerializer::KeyVaultSecretDeserialize(
 
   secret.Value = jsonParser[_detail::ValuePropertyName];
   secret.Id = jsonParser[_detail::IdPropertyName];
+  secret.Properties.Id = secret.Id;
+
+  ParseIDUrl(secret.Properties, secret.Id);
+  secret.Name = secret.Properties.Name;
 
   // Parse URL for the various attributes
   if (jsonParser.contains(_detail::AttributesPropertyName))
@@ -67,19 +70,19 @@ void KeyVaultSecretSerializer::KeyVaultSecretDeserialize(
         _detail::ExpPropertyName,
         PosixTimeConverter::PosixTimeToDateTime);
     JsonOptional::SetIfExists<int64_t, Azure::DateTime>(
-        secret.Attributes.CreatedOn,
+        secret.Properties.CreatedOn,
         attributes,
         _detail::CreatedPropertyName,
         PosixTimeConverter::PosixTimeToDateTime);
     JsonOptional::SetIfExists<int64_t, Azure::DateTime>(
-        secret.Attributes.UpdatedOn,
+        secret.Properties.UpdatedOn,
         attributes,
         _detail::UpdatedPropertyName,
         PosixTimeConverter::PosixTimeToDateTime);
     JsonOptional::SetIfExists<std::string>(
-        secret.Attributes.RecoveryLevel, attributes, _detail::RecoveryLevelPropertyName);
+        secret.Properties.RecoveryLevel, attributes, _detail::RecoveryLevelPropertyName);
     JsonOptional::SetIfExists<int64_t>(
-        secret.Attributes.RecoverableDays, attributes, _detail::RecoverableDaysPropertyName);
+        secret.Properties.RecoverableDays, attributes, _detail::RecoverableDaysPropertyName);
   }
 
   // "Tags"
@@ -89,7 +92,7 @@ void KeyVaultSecretSerializer::KeyVaultSecretDeserialize(
     {
       for (auto tag = tags.begin(); tag != tags.end(); ++tag)
       {
-        secret.Tags.emplace(tag.key(), tag.value().get<std::string>());
+        secret.Properties.Tags.emplace(tag.key(), tag.value().get<std::string>());
       }
     }
   }
@@ -97,15 +100,16 @@ void KeyVaultSecretSerializer::KeyVaultSecretDeserialize(
   // managed
   if (jsonParser.contains(_detail::ManagedPropertyName))
   {
-    secret.Managed = jsonParser[_detail::ManagedPropertyName].get<bool>();
+    secret.Properties.Managed = jsonParser[_detail::ManagedPropertyName].get<bool>();
   }
 
   // key id
   JsonOptional::SetIfExists<std::string>(
-      secret.KeyId, jsonParser, _detail::KeyIdPropertyName);
+      secret.Properties.KeyId, jsonParser, _detail::KeyIdPropertyName);
 
-  // key id
-  JsonOptional::SetIfExists<std::string>(secret.ContentType, jsonParser, _detail::ContentTypePropertyName);
+  // content type
+  JsonOptional::SetIfExists<std::string>(
+      secret.Properties.ContentType, jsonParser, _detail::ContentTypePropertyName);
 }
 
 // serializes a set secret parameters object

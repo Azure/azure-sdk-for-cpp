@@ -37,11 +37,11 @@ namespace Azure { namespace Storage { namespace _internal {
     }
     else
     {
-      auto currentTimepoint = std::chrono::system_clock::now();
-      int64_t numSeconds
-          = std::chrono::duration_cast<std::chrono::seconds>(
-                std::chrono::system_clock::time_point(cancelTimepoint) - currentTimepoint)
-                .count();
+      auto currentTimepoint = DateTime(std::chrono::system_clock::now());
+      int64_t numSeconds = (cancelTimepoint > currentTimepoint)
+          ? std::chrono::duration_cast<std::chrono::seconds>(cancelTimepoint - currentTimepoint)
+                .count()
+          : -1;
       request.GetUrl().AppendQueryParameter(
           HttpHeaderTimeout, std::to_string(std::max(numSeconds, int64_t(1))));
     }

@@ -3,7 +3,7 @@
 
 /**
  * @file
- * @brief Centralize the string constants used by Key Vault Keys Client.
+ * @brief Centralize the string constants used by Key Vault Secret Client.
  *
  */
 
@@ -11,7 +11,7 @@
 
 namespace Azure { namespace Security { namespace KeyVault { namespace Secrets { namespace _detail {
 
-	/***************** KeyVault Secret *****************/
+  /***************** KeyVault Secret *****************/
   constexpr static const char SecretPath[] = "secrets";
 
   /******************* Secret property names ***********/
@@ -31,6 +31,6 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets { 
   constexpr static const char ContentTypePropertyName[] = "contentType";
   constexpr static const char RecoverableDaysPropertyName[] = "recoverableDays";
 
-    /**************** KeyVault QueryParameters *********/
+  /**************** KeyVault QueryParameters *********/
   static constexpr char const ApiVersion[] = "api-version";
 }}}}} // namespace Azure::Security::KeyVault::Secrets::_detail

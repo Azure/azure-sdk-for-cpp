@@ -21,7 +21,8 @@ Azure::Core::Http::Request _detail::KeyVaultProtocolClient::CreateRequest(
   request.SetHeader(HttpShared::ContentType, HttpShared::ApplicationJson);
   request.SetHeader(HttpShared::Accept, HttpShared::ApplicationJson);
 
-  request.GetUrl().AppendQueryParameter(Azure::Security::KeyVault::Secrets::_detail::ApiVersion, m_apiVersion);
+  request.GetUrl().AppendQueryParameter(
+      Azure::Security::KeyVault::Secrets::_detail::ApiVersion, m_apiVersion);
 
   for (std::string const& p : path)
   {

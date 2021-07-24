@@ -5,6 +5,7 @@
  * @brief Keyvault Secrets Client definition.
  *
  */
+
 #include "azure/keyvault/secrets/secret_client.hpp"
 
 #include "private/keyvault_protocol.hpp"
@@ -26,9 +27,7 @@ using namespace Azure::Core::Http::Policies::_internal;
 
 namespace {
 constexpr static const char TelemetryName[] = "keyvault-secrets";
-};
-
-std::string SecretClient::ClientVersion() const { return _detail::PackageVersion::ToString(); }
+}
 
 SecretClient::SecretClient(
     std::string const& vaultUrl,
@@ -46,7 +45,7 @@ SecretClient::SecretClient(
         std::make_unique<BearerTokenAuthenticationPolicy>(credential, tokenContext));
   }
 
-  m_pipeline = std::make_shared<Azure::Security::KeyVault::_detail::KeyVaultProtocolClient>(
+  m_protocolClient = std::make_shared<Azure::Security::KeyVault::_detail::KeyVaultProtocolClient>(
       Azure::Core::Url(vaultUrl),
       apiVersion,
       Azure::Core::Http::_internal::HttpPipeline(
@@ -58,7 +57,7 @@ Azure::Response<KeyVaultSecret> SecretClient::GetSecret(
     GetSecretOptions const& options,
     Azure::Core::Context const& context) const
 {
-  return m_pipeline->SendRequest<KeyVaultSecret>(
+  return m_protocolClient->SendRequest<KeyVaultSecret>(
       context,
       Azure::Core::Http::HttpMethod::Get,
       [&name](Azure::Core::Http::RawResponse const& rawResponse) {

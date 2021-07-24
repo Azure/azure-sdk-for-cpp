@@ -1,10 +1,9 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
 
-
-#include <azure/core/http/http.hpp>
-#include <azure/core/http/policies/policy.hpp>
-#include <azure/keyvault/secrets/keyvault_secret.hpp>
+#include "azure/core/http/http.hpp"
+#include "azure/core/http/policies/policy.hpp"
+#include "azure/keyvault/secrets/keyvault_secret.hpp"
 
 #include <gtest/gtest.h>
 #include <string>
@@ -71,29 +70,37 @@ Azure::Core::Http::RawResponse getFullResponse()
 
 void runPartialExpect(KeyVaultSecret& secret)
 {
+  EXPECT_EQ(secret.Name, "mysecretname");
   EXPECT_EQ(secret.Value, "mysecretvalue");
+  EXPECT_EQ(secret.Properties.VaultUrl, "https://myvault.vault.azure.net");
+  EXPECT_EQ(secret.Properties.Version, "4387e9f3d6e14c459867679a90fd0f79");
+  EXPECT_EQ(secret.Properties.Id, secret.Id);
   EXPECT_EQ(
       secret.Id,
       "https://myvault.vault.azure.net/secrets/mysecretname/4387e9f3d6e14c459867679a90fd0f79");
-  EXPECT_EQ(secret.KeyId.HasValue(), false);
-  EXPECT_EQ(secret.Attributes.Enabled.Value(), true);
-  EXPECT_EQ(secret.Managed, false);
-  EXPECT_EQ(secret.Attributes.UpdatedOn.HasValue(), true);
-  EXPECT_EQ(secret.Attributes.CreatedOn.HasValue(), true);
+  EXPECT_EQ(secret.Properties.KeyId.HasValue(), false);
+  EXPECT_EQ(secret.Properties.Enabled.Value(), true);
+  EXPECT_EQ(secret.Properties.Managed, false);
+  EXPECT_EQ(secret.Properties.UpdatedOn.HasValue(), true);
+  EXPECT_EQ(secret.Properties.CreatedOn.HasValue(), true);
 }
 
 void runFullExpect(KeyVaultSecret& secret)
 {
+  EXPECT_EQ(secret.Name, "mysecretname");
   EXPECT_EQ(secret.Value, "mysecretvalue");
+  EXPECT_EQ(secret.Properties.VaultUrl, "https://myvault.vault.azure.net");
+  EXPECT_EQ(secret.Properties.Version, "4387e9f3d6e14c459867679a90fd0f79");
+  EXPECT_EQ(secret.Properties.Id, secret.Id);
   EXPECT_EQ(
       secret.Id,
       "https://myvault.vault.azure.net/secrets/mysecretname/4387e9f3d6e14c459867679a90fd0f79");
-  EXPECT_EQ(secret.Attributes.Enabled.Value(), true);
-  EXPECT_EQ(secret.Managed, true);
-  EXPECT_EQ(secret.ContentType.Value(), "ct");
-  EXPECT_EQ(secret.KeyId.Value(), "kid");
-  EXPECT_EQ(secret.Attributes.UpdatedOn.HasValue(), true);
-  EXPECT_EQ(secret.Attributes.CreatedOn.HasValue(), true);
+  EXPECT_EQ(secret.Properties.Enabled.Value(), true);
+  EXPECT_EQ(secret.Properties.Managed, true);
+  EXPECT_EQ(secret.Properties.ContentType.Value(), "ct");
+  EXPECT_EQ(secret.Properties.KeyId.Value(), "kid");
+  EXPECT_EQ(secret.Properties.UpdatedOn.HasValue(), true);
+  EXPECT_EQ(secret.Properties.CreatedOn.HasValue(), true);
 }
 
 } // namespace
