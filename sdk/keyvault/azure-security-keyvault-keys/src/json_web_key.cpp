@@ -4,8 +4,7 @@
 #include <azure/core/base64.hpp>
 #include <azure/core/internal/json/json_optional.hpp>
 
-#include "azure/keyvault/keys/json_web_key.hpp"
-#include "azure/keyvault/keys/key_curve_name.hpp"
+#include "azure/keyvault/keys/key_client_models.hpp"
 #include "private/key_constants.hpp"
 #include "private/key_serializers.hpp"
 

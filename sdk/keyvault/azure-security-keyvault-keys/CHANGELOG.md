@@ -10,6 +10,8 @@
 
 ### Other Changes
 
+- Consolidated keyvault and cryptography client options and model files into single headers.
+
 ## 4.0.0-beta.4 (2021-07-20)
 
 ### Features Added
