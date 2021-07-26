@@ -45,7 +45,6 @@ void KeyVaultSecretSerializer::KeyVaultSecretDeserialize(
   auto const& body = rawResponse.GetBody();
   auto jsonParser = json::parse(body);
 
-  secret.Value = jsonParser[_detail::ValuePropertyName];
   secret.Id = jsonParser[_detail::IdPropertyName];
   secret.Properties.Id = secret.Id;
 
@@ -103,6 +102,12 @@ void KeyVaultSecretSerializer::KeyVaultSecretDeserialize(
     secret.Properties.Managed = jsonParser[_detail::ManagedPropertyName].get<bool>();
   }
 
+  // value
+  if (jsonParser.contains(_detail::ValuePropertyName))
+  {
+    secret.Value = jsonParser[_detail::ValuePropertyName];
+  }
+
   // key id
   JsonOptional::SetIfExists<std::string>(
       secret.Properties.KeyId, jsonParser, _detail::KeyIdPropertyName);
@@ -110,4 +115,39 @@ void KeyVaultSecretSerializer::KeyVaultSecretDeserialize(
   // content type
   JsonOptional::SetIfExists<std::string>(
       secret.Properties.ContentType, jsonParser, _detail::ContentTypePropertyName);
+}
+
+KeyVaultDeletedSecret KeyVaultDeletedSecretSerializer::KeyVaultDeletedSecretDeserialize(
+    std::string const& name,
+    Azure::Core::Http::RawResponse const& rawResponse)
+{
+  KeyVaultDeletedSecret deletedSecret(name);
+  KeyVaultDeletedSecretDeserialize(deletedSecret, rawResponse);
+  return deletedSecret;
+}
+
+// Create deleted secret from HTTP raw response only.
+KeyVaultDeletedSecret KeyVaultDeletedSecretSerializer::KeyVaultDeletedSecretDeserialize(
+    Azure::Core::Http::RawResponse const& rawResponse)
+{
+  KeyVaultDeletedSecret deletedSecret;
+  KeyVaultDeletedSecretDeserialize(deletedSecret, rawResponse);
+  return deletedSecret;
+}
+
+// Updates a deleted secret based on an HTTP raw response.
+void KeyVaultDeletedSecretSerializer::KeyVaultDeletedSecretDeserialize(
+    KeyVaultDeletedSecret& secret,
+    Azure::Core::Http::RawResponse const& rawResponse)
+{
+  KeyVaultSecretSerializer::KeyVaultSecretDeserialize(secret, rawResponse);
+
+  auto const& body = rawResponse.GetBody();
+  auto jsonParser = json::parse(body);
+
+  secret.RecoveryId = jsonParser[_detail::RecoveryIdPropertyName];
+  secret.ScheduledPurgeDate = PosixTimeConverter::PosixTimeToDateTime(
+      jsonParser[_detail::ScheduledPurgeDatePropertyName]);
+  secret.DeletedDate
+      = PosixTimeConverter::PosixTimeToDateTime(jsonParser[_detail::DeletedDatePropertyName]);
 }

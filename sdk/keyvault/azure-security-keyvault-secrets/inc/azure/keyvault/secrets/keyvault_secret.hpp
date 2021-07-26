@@ -10,7 +10,7 @@
 #include <azure/keyvault/secrets/keyvault_secret_properties.hpp>
 
 namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
-  struct KeyVaultSecret final
+  struct KeyVaultSecret
   {
     /**
      * @brief The name of the secret.
@@ -48,7 +48,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
      * @param name The name of the secret.
      * @param value The name of the secret.
      */
-    KeyVaultSecret(std::string name, std::string value)
+    KeyVaultSecret(std::string name, std::string value = "")
         : Name(std::move(name)), Value(std::move(value))
     {
       if (Name.empty())
