@@ -151,7 +151,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace _detail {
         std::vector<std::string> const& path)
     {
       auto serialContent = serializeContentFn();
-     
+
       return SendRequest(context, method, serialContent, factoryFn, path);
     }
 
