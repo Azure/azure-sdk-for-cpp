@@ -7,60 +7,61 @@
 #include "azure/keyvault/secrets/secret_client.hpp"
 
 using namespace Azure::Security::KeyVault::Secrets;
+using namespace Azure::Security::KeyVault::Secrets::_test;
 using namespace Azure::Security::KeyVault::Secrets::_detail;
 
 TEST(KeyVaultSecretSerializer, GetClientDeserializePartial1)
 {
-  auto response = getPartialResponse();
+  auto response = Helpers::GetPartialResponse();
 
   KeyVaultSecret secret = _detail::KeyVaultSecretSerializer::KeyVaultSecretDeserialize(response);
-  runPartialExpect(secret);
+  Helpers::RunPartialExpect(secret);
 }
 
 TEST(KeyVaultSecretSerializer, GetClientDeserializePartial2)
 {
-  auto response = getPartialResponse();
+  auto response = Helpers::GetPartialResponse();
 
   KeyVaultSecret secret
       = _detail::KeyVaultSecretSerializer::KeyVaultSecretDeserialize("name1", response);
 
-  runPartialExpect(secret);
+  Helpers::RunPartialExpect(secret);
 }
 
 TEST(KeyVaultSecretSerializer, GetClientDeserializePartial3)
 {
-  auto response = getPartialResponse();
+  auto response = Helpers::GetPartialResponse();
 
   KeyVaultSecret secret = KeyVaultSecret("name2", "");
   _detail::KeyVaultSecretSerializer::KeyVaultSecretDeserialize(secret, response);
 
-  runPartialExpect(secret);
+  Helpers::RunPartialExpect(secret);
 }
 
 TEST(KeyVaultSecretSerializer, GetClientdeserializeFull1)
 {
-  auto response = getFullResponse();
+  auto response = Helpers::GetFullResponse();
 
   KeyVaultSecret secret = _detail::KeyVaultSecretSerializer::KeyVaultSecretDeserialize(response);
-  runFullExpect(secret);
+  Helpers::RunFullExpect(secret);
 }
 
 TEST(KeyVaultSecretSerializer, GetClientdeserializeFull2)
 {
-  auto response = getFullResponse();
+  auto response = Helpers::GetFullResponse();
 
   KeyVaultSecret secret
       = _detail::KeyVaultSecretSerializer::KeyVaultSecretDeserialize("name1", response);
 
-  runFullExpect(secret);
+  Helpers::RunFullExpect(secret);
 }
 
 TEST(KeyVaultSecretSerializer, GetClientdeserializeFull3)
 {
-  auto response = getFullResponse();
+  auto response = Helpers::GetFullResponse();
 
   KeyVaultSecret secret = KeyVaultSecret("name2", "");
   _detail::KeyVaultSecretSerializer::KeyVaultSecretDeserialize(secret, response);
 
-  runFullExpect(secret);
+  Helpers::RunFullExpect(secret);
 }
