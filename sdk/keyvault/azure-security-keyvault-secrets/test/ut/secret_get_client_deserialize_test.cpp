@@ -3,7 +3,6 @@
 
 #include "secret_get_client_deserialize_test.hpp"
 #include "../src/private/secret_serializers.hpp"
-#include "private/secret_serializers.hpp"
 
 #include "azure/keyvault/secrets/secret_client.hpp"
 
