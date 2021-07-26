@@ -1898,7 +1898,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       /**
        * Size of the blob. Invalid if the blob is never committed.
        */
-      int64_t BlobSize = -1;
+      int64_t BlobSize = 0;
       /**
        * Collection of committed blocks.
        */

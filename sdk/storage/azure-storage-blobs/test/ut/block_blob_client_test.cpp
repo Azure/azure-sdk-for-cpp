@@ -1162,7 +1162,7 @@ namespace Azure { namespace Storage { namespace Test {
     getBlockListOptions.ListType = Blobs::Models::BlockListType::All;
     auto res = blobClient.GetBlockList(getBlockListOptions).Value;
     EXPECT_FALSE(res.ETag.HasValue());
-    EXPECT_LT(res.BlobSize, 0);
+    EXPECT_EQ(res.BlobSize, 0);
     EXPECT_TRUE(res.CommittedBlocks.empty());
     EXPECT_FALSE(res.UncommittedBlocks.empty());
 
