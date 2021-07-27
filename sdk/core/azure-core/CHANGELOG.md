@@ -3,11 +3,14 @@
 ## 1.2.0-beta.1 (Unreleased)
 
 ### Features Added
-- Added `Azure::Core::IO::ProgressBodyStream` type that wraps an existing BodyStream based type stream and reports progress via callback when the stream position is updated. 
+
+- Added `Azure::Core::IO::ProgressBodyStream` type that wraps an existing BodyStream based type stream and reports progress via callback when the stream position is updated.
 
 ### Breaking Changes
 
 ### Bugs Fixed
+
+- [2647](https://github.com/Azure/azure-sdk-for-cpp/issues/2647) Make the curl transport adapter to check the connection close header.
 
 ### Other Changes
 

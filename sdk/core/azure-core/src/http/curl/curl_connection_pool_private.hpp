@@ -29,6 +29,7 @@
 namespace Azure { namespace Core { namespace Test {
   class CurlConnectionPool_connectionPoolTest_Test;
   class CurlConnectionPool_uniquePort_Test;
+  class CurlConnectionPool_connectionClose_Test;
 }}} // namespace Azure::Core::Test
 #endif
 
@@ -46,6 +47,7 @@ namespace Azure { namespace Core { namespace Http { namespace _detail {
     // Give access to private to this tests class
     friend class Azure::Core::Test::CurlConnectionPool_connectionPoolTest_Test;
     friend class Azure::Core::Test::CurlConnectionPool_uniquePort_Test;
+    friend class Azure::Core::Test::CurlConnectionPool_connectionClose_Test;
 #endif
 
   public:
