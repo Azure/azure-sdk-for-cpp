@@ -22,5 +22,7 @@ int main()
   // just a response, with a secret
   auto response = secretClient.GetSecret("testSecret");
 
+  // just a response, with a secret
+  auto response2 = secretClient.GetDeletedSecret("someSecret");
   return 0;
 }
