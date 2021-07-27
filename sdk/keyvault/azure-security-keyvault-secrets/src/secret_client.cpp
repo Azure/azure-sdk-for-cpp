@@ -104,7 +104,7 @@ Azure::Response<KeyVaultSecret> SecretClient::SetSecret(
 
 Azure::Response<KeyVaultSecret> SecretClient::UpdateSecretProperties(
     std::string const& name,
-    GetSecretOptions const& options,
+    UpdateSecretPropertiesOptions const& options,
     KeyvaultSecretProperties const& properties,
     Azure::Core::Context const& context) const
 {
@@ -127,7 +127,7 @@ Azure::Response<KeyVaultSecret> SecretClient::UpdateSecretProperties(
     KeyvaultSecretProperties const& properties,
     Azure::Core::Context const& context) const
 {
-  GetSecretOptions options;
+  UpdateSecretPropertiesOptions options;
   options.Version = version;
 
   return UpdateSecretProperties(name, options, properties, context);

@@ -5,7 +5,6 @@
 #endif
 
 #include <azure/identity.hpp>
-
 #include <azure/keyvault/keyvault_secrets.hpp>
 
 using namespace Azure::Security::KeyVault::Secrets;
