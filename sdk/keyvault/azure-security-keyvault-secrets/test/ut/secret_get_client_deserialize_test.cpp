@@ -68,34 +68,34 @@ TEST(KeyVaultSecretSerializer, GetClientdeserializeFull3)
 
 TEST(KeyVaultDeletedSecretSerializer, GetDeletedClientDeserializeFull1)
 {
-  auto response = getDeletedFullResponse();
+  auto response = Helpers::GetDeletedFullResponse();
 
   KeyVaultDeletedSecret secret
       = _detail::KeyVaultDeletedSecretSerializer::KeyVaultDeletedSecretDeserialize(response);
 
-  runFullExpect(secret, false);
-  runDeletedExtras(secret);
+  Helpers::RunFullExpect(secret, false);
+  Helpers::RunDeletedExtras(secret);
 }
 
 TEST(KeyVaultDeletedSecretSerializer, GetDeletedClientDeserializeFull2)
 {
-  auto response = getDeletedFullResponse();
+  auto response = Helpers::GetDeletedFullResponse();
 
   KeyVaultDeletedSecret secret
       = _detail::KeyVaultDeletedSecretSerializer::KeyVaultDeletedSecretDeserialize(
           "name1", response);
 
-  runFullExpect(secret, false);
-  runDeletedExtras(secret);
+  Helpers::RunFullExpect(secret, false);
+  Helpers::RunDeletedExtras(secret);
 }
 
 TEST(KeyVaultDeletedSecretSerializer, GetDeletedClientDeserializeFull3)
 {
-  auto response = getDeletedFullResponse();
+  auto response = Helpers::GetDeletedFullResponse();
 
   KeyVaultDeletedSecret secret = KeyVaultDeletedSecret("name2");
   _detail::KeyVaultDeletedSecretSerializer::KeyVaultDeletedSecretDeserialize(secret, response);
 
-  runFullExpect(secret, false);
-  runDeletedExtras(secret);
+  Helpers::RunFullExpect(secret, false);
+  Helpers::RunDeletedExtras(secret);
 }
