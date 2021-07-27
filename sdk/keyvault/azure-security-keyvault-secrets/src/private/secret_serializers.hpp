@@ -76,4 +76,10 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets { 
       }
     }
   };
+
+  struct KeyVaultSecretPropertiesSerializer final
+  {
+    static std::string KeyVaultSecretPropertiesSerialize(
+        KeyvaultSecretProperties const& properties);
+  };
 }}}}} // namespace Azure::Security::KeyVault::Secrets::_detail

@@ -132,6 +132,25 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
         std::string const& name,
         GetSecretOptions const& options = GetSecretOptions(),
         Azure::Core::Context const& context = Azure::Core::Context()) const;
+
+    /**
+     * @brief Updates the attributes associated with a specified secret in a given key vault.
+     * The UPDATE operation changes specified attributes of an existing stored secret.
+     * Attributes that are not specified in the request are left unchanged.
+     * The value of a secret itself cannot be changed.
+     * This operation requires the secrets/set permission.
+     *
+     * @param name The name of the secret<span class="x x-first x-last">.</span>
+     * @param options The optional parameters for this request.
+     *
+     * @param context The context for the operation can be used for request cancellation.
+     * @return The Secret wrapped in the Response.
+     */
+    Azure::Response<KeyVaultSecret> UpdateSecretProperties(
+        std::string const& name,
+        GetSecretOptions const& options,
+        KeyvaultSecretProperties const& properties,
+        Azure::Core::Context const& context = Azure::Core::Context()) const;
   };
 
 }}}} // namespace Azure::Security::KeyVault::Secrets

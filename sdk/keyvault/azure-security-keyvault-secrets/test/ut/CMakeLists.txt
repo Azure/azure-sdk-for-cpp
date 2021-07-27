@@ -16,6 +16,7 @@ add_executable (
     secret_client_test.cpp
     secret_get_client_deserialize_test.hpp
     secret_get_client_deserialize_test.cpp
+    secret_update_properties_test.cpp
  )
 
 if (MSVC)

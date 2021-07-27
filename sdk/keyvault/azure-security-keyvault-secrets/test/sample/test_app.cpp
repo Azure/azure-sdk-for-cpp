@@ -21,6 +21,12 @@ int main()
   SecretClient secretClient(std::getenv("AZURE_KEYVAULT_URL"), credential);
   // just a response, with a secret
   auto response = secretClient.GetSecret("testSecret");
+  response.Value.Properties.ContentType = "weqeq";
+  GetSecretOptions options;
+
+  options.Version = response.Value.Properties.Version;
+  response = secretClient.UpdateSecretProperties(
+      response.Value.Name, options, response.Value.Properties);
 
   return 0;
 }

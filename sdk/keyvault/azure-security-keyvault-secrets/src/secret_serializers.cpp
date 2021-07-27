@@ -45,7 +45,6 @@ void KeyVaultSecretSerializer::KeyVaultSecretDeserialize(
   auto const& body = rawResponse.GetBody();
   auto jsonParser = json::parse(body);
 
-  secret.Value = jsonParser[_detail::ValuePropertyName];
   secret.Id = jsonParser[_detail::IdPropertyName];
   secret.Properties.Id = secret.Id;
 
@@ -103,6 +102,12 @@ void KeyVaultSecretSerializer::KeyVaultSecretDeserialize(
     secret.Properties.Managed = jsonParser[_detail::ManagedPropertyName].get<bool>();
   }
 
+  // managed
+  if (jsonParser.contains(_detail::ValuePropertyName))
+  {
+    secret.Value = jsonParser[_detail::ValuePropertyName];
+  }
+
   // key id
   JsonOptional::SetIfExists<std::string>(
       secret.Properties.KeyId, jsonParser, _detail::KeyIdPropertyName);
@@ -110,4 +115,46 @@ void KeyVaultSecretSerializer::KeyVaultSecretDeserialize(
   // content type
   JsonOptional::SetIfExists<std::string>(
       secret.Properties.ContentType, jsonParser, _detail::ContentTypePropertyName);
+}
+
+std::string KeyVaultSecretPropertiesSerializer::KeyVaultSecretPropertiesSerialize(
+    KeyvaultSecretProperties const& properties)
+{
+  Azure::Core::Json::_internal::json payload;
+
+  // content type
+  JsonOptional::SetFromNullable(properties.ContentType, payload, _detail::ContentTypePropertyName);
+
+  // optional tags
+  Azure::Core::Json::_internal::json tags;
+
+  for (auto iterator : properties.Tags)
+  {
+    tags[iterator.first] = iterator.second;
+  }
+
+  payload[TagsPropertyName] = tags;
+
+  // attributes
+  Azure::Core::Json::_internal::json attributes;
+
+  JsonOptional::SetFromNullable(
+      properties.RecoverableDays, attributes, _detail::RecoverableDaysPropertyName);
+  JsonOptional::SetFromNullable(
+      properties.RecoveryLevel, attributes, _detail::RecoveryLevelPropertyName);
+  JsonOptional::SetFromNullable(properties.Enabled, attributes, _detail::EnabledPropertyName);
+  JsonOptional::SetFromNullable<Azure::DateTime, int64_t>(
+      properties.NotBefore,
+      attributes,
+      _detail::NbfPropertyName,
+      PosixTimeConverter::DateTimeToPosixTime);
+  JsonOptional::SetFromNullable<Azure::DateTime, int64_t>(
+      properties.ExpiresOn,
+      attributes,
+      _detail::ExpPropertyName,
+      PosixTimeConverter::DateTimeToPosixTime);
+
+  payload[AttributesPropertyName] = attributes;
+
+  return payload.dump();
 }
