@@ -28,9 +28,13 @@ endif()
 
 set(
   AZURE_STORAGE_QUEUE_HEADER
+    inc/azure/storage/queues.hpp
     inc/azure/storage/queues/dll_import_export.hpp
     inc/azure/storage/queues/protocol/queue_rest_client.hpp
-    inc/azure/storage/queues.hpp
+    inc/azure/storage/queues/queue_client.hpp
+    inc/azure/storage/queues/queue_options.hpp
+    inc/azure/storage/queues/queue_responses.hpp
+    inc/azure/storage/queues/queue_service_client.hpp
 )
 
 set(

@@ -7,3 +7,6 @@
  */
 
 #pragma once
+
+#include "azure/storage/queues/queue_service_client.hpp"
+#include "azure/storage/queues/queue_client.hpp"
