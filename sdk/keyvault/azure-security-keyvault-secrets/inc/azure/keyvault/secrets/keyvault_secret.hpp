@@ -48,13 +48,30 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
      * @param name The name of the secret.
      * @param value The name of the secret.
      */
-    KeyVaultSecret(std::string name, std::string value = "")
+    KeyVaultSecret(std::string name, std::string value)
         : Name(std::move(name)), Value(std::move(value))
     {
       if (Name.empty())
       {
         throw std::invalid_argument("Name cannot be empty");
       }
+
+      if (Value.empty())
+      {
+        throw std::invalid_argument("Value cannot be empty");
+      }
+    };
+
+  private:
+    KeyVaultSecret(std::string name) : Name(std::move(name))
+    {
+      if (Name.empty())
+      {
+        throw std::invalid_argument("Name cannot be empty");
+      }
     }
+
+    friend struct KeyVaultDeletedSecret;
   };
+
 }}}} // namespace Azure::Security::KeyVault::Secrets

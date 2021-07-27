@@ -7,12 +7,20 @@
  */
 
 #pragma once
-#include "../src/private/keyvault_protocol.hpp"
+
 #include "dll_import_export.hpp"
 
 #include "azure/keyvault/secrets/keyvault_deleted_secret.hpp"
 #include "azure/keyvault/secrets/keyvault_secret.hpp"
+#include <azure/core/http/http.hpp>
+#include <azure/core/internal/http/pipeline.hpp>
+#include <azure/core/response.hpp>
+
 #include <string>
+
+namespace Azure { namespace Security { namespace KeyVault { namespace _detail {
+  class KeyVaultProtocolClient;
+}}}} // namespace Azure::Security::KeyVault::_detail
 
 namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
 

@@ -31,7 +31,7 @@ TEST(KeyVaultSecretSerializer, GetClientDeserializePartial3)
 {
   auto response = getPartialResponse();
 
-  KeyVaultSecret secret = KeyVaultSecret("name2", "");
+  KeyVaultSecret secret = KeyVaultSecret("name2", "a");
   _detail::KeyVaultSecretSerializer::KeyVaultSecretDeserialize(secret, response);
 
   runPartialExpect(secret);
@@ -59,7 +59,7 @@ TEST(KeyVaultSecretSerializer, GetClientdeserializeFull3)
 {
   auto response = getFullResponse();
 
-  KeyVaultSecret secret = KeyVaultSecret("name2", "");
+  KeyVaultSecret secret = KeyVaultSecret("name2", "a");
   _detail::KeyVaultSecretSerializer::KeyVaultSecretDeserialize(secret, response);
 
   runFullExpect(secret);

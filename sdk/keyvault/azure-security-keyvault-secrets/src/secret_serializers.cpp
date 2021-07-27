@@ -23,7 +23,8 @@ KeyVaultSecret KeyVaultSecretSerializer::KeyVaultSecretDeserialize(
     std::string const& name,
     Azure::Core::Http::RawResponse const& rawResponse)
 {
-  KeyVaultSecret secret(name, "");
+  KeyVaultSecret secret;
+  secret.Name = name;
   _detail::KeyVaultSecretSerializer::KeyVaultSecretDeserialize(secret, rawResponse);
   return secret;
 }
