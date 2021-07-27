@@ -139,7 +139,7 @@ namespace Azure { namespace Core {
      *
      * @note Keys and values in \p queryParameters are expected to be URL-encoded.
      *
-     * @param queryParameters query parameters for request, already encoded
+     * @param queryParameters query parameters for request.
      */
     void SetQueryParameters(std::map<std::string, std::string> queryParameters)
     {
