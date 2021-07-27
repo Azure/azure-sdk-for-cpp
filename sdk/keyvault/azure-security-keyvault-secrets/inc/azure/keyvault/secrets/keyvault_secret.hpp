@@ -49,7 +49,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
      * @param value The name of the secret.
      */
     KeyVaultSecret(std::string const& name, std::string const& value)
-        : Name(std::move(name)), Value(std::move(value)), Properties(std::move(name))
+        : Name(name), Value(value), Properties(name)
     {
       if (Name.empty())
       {
