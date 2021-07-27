@@ -152,3 +152,52 @@ void KeyVaultDeletedSecretSerializer::KeyVaultDeletedSecretDeserialize(
   secret.DeletedDate
       = PosixTimeConverter::PosixTimeToDateTime(jsonParser[_detail::DeletedDatePropertyName]);
 }
+
+// serializes a set secret parameters object
+std::string KeyVaultSecretSerializer::KeyVaultSecretSerialize(KeyVaultSecret const& parameters)
+{
+  Azure::Core::Json::_internal::json payload;
+  using namespace Azure::Security::KeyVault::Secrets::_detail;
+
+  // value is required
+  payload[ValuePropertyName] = parameters.Value;
+
+  // all else is optional
+  JsonOptional::SetFromNullable(
+      parameters.Properties.ContentType, payload, ContentTypePropertyName);
+
+  Azure::Core::Json::_internal::json attributes;
+
+  JsonOptional::SetFromNullable<Azure::DateTime, int64_t>(
+      parameters.Properties.CreatedOn,
+      attributes,
+      CreatedPropertyName,
+      PosixTimeConverter::DateTimeToPosixTime);
+  JsonOptional::SetFromNullable(parameters.Properties.Enabled, attributes, EnabledPropertyName);
+  JsonOptional::SetFromNullable<Azure::DateTime, int64_t>(
+      parameters.Properties.ExpiresOn,
+      attributes,
+      ExpPropertyName,
+      PosixTimeConverter::DateTimeToPosixTime);
+  JsonOptional::SetFromNullable<Azure::DateTime, int64_t>(
+      parameters.Properties.NotBefore,
+      attributes,
+      NbfPropertyName,
+      PosixTimeConverter::DateTimeToPosixTime);
+  JsonOptional::SetFromNullable(
+      parameters.Properties.RecoverableDays, attributes, RecoverableDaysPropertyName);
+  JsonOptional::SetFromNullable(
+      parameters.Properties.RecoveryLevel, attributes, RecoveryLevelPropertyName);
+  JsonOptional::SetFromNullable<Azure::DateTime, int64_t>(
+      parameters.Properties.UpdatedOn,
+      attributes,
+      UpdatedPropertyName,
+      PosixTimeConverter::DateTimeToPosixTime);
+
+  // optional tags
+  attributes[TagsPropertyName] = Azure::Core::Json::_internal::json(parameters.Properties.Tags);
+
+  payload[AttributesPropertyName] = attributes;
+
+  return payload.dump();
+}

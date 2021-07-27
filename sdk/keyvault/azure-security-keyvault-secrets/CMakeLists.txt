@@ -29,8 +29,9 @@ endif()
 set(
   AZURE_SECURITY_KEYVAULT_SECRETS_HEADER
     inc/azure/keyvault/secrets/dll_import_export.hpp
-    inc/azure/keyvault/secrets/secret_client.hpp
     inc/azure/keyvault/secrets/keyvault_secret.hpp
+    inc/azure/keyvault/secrets/keyvault_secret_properties.hpp
+    inc/azure/keyvault/secrets/secret_client.hpp
     inc/azure/keyvault/keyvault_secrets.hpp
     inc/azure/keyvault/secrets/keyvault_deleted_secret.hpp
 )

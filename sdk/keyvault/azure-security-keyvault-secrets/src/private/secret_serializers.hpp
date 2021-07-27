@@ -3,7 +3,7 @@
 
 /**
  * @file
- * @brief Serializers/sdeserializers for the KeyVault Secret client.
+ * @brief Serializers/deserializers for the KeyVault Secret client.
  *
  */
 
@@ -32,7 +32,10 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets { 
         KeyVaultSecret& key,
         Azure::Core::Http::RawResponse const& rawResponse);
 
-    // extract the host out of the URL (with port if available)
+    // Serializes a key vault secret for set action
+    static std::string KeyVaultSecretSerialize(KeyVaultSecret const& parameters);
+
+    // Extract the host out of the URL (with port if available)
     static std::string GetUrlAuthorityWithScheme(Azure::Core::Url const& url)
     {
       std::string urlString;

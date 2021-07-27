@@ -11,12 +11,16 @@
 using namespace Azure::Security::KeyVault::Secrets;
 using namespace Azure::Core::Http::_internal;
 
-namespace {
-Azure::Core::Http::RawResponse getPartialResponse()
-{
-  auto response = Azure::Core::Http::RawResponse(1, 1, Azure::Core::Http::HttpStatusCode::Ok, "OK");
+namespace Azure { namespace Security { namespace KeyVault { namespace Secrets { namespace _test {
+  struct Helpers
+  {
 
-  constexpr static const uint8_t responseBody[] = R"json({
+    static Azure::Core::Http::RawResponse GetPartialResponse()
+    {
+      auto response
+          = Azure::Core::Http::RawResponse(1, 1, Azure::Core::Http::HttpStatusCode::Ok, "OK");
+
+      constexpr static const uint8_t responseBody[] = R"json({
         "value": "mysecretvalue",
         "id": "https://myvault.vault.azure.net/secrets/mysecretname/4387e9f3d6e14c459867679a90fd0f79",
         "attributes": {
@@ -28,22 +32,23 @@ Azure::Core::Http::RawResponse getPartialResponse()
     }
 )json";
 
-  response.SetHeader(HttpShared::ContentType, "application/json");
-  response.SetHeader(HttpShared::MsRequestId, "1");
-  response.SetHeader(HttpShared::MsClientRequestId, "2");
-  response.SetBody(std::vector<uint8_t>(responseBody, responseBody + sizeof(responseBody)));
-  response.SetBodyStream(
-      std::make_unique<Azure::Core::IO::MemoryBodyStream>(responseBody, sizeof(responseBody) - 1));
+      response.SetHeader(HttpShared::ContentType, "application/json");
+      response.SetHeader(HttpShared::MsRequestId, "1");
+      response.SetHeader(HttpShared::MsClientRequestId, "2");
+      response.SetBody(std::vector<uint8_t>(responseBody, responseBody + sizeof(responseBody)));
+      response.SetBodyStream(std::make_unique<Azure::Core::IO::MemoryBodyStream>(
+          responseBody, sizeof(responseBody) - 1));
 
-  return response;
-}
+      return response;
+    }
 
-Azure::Core::Http::RawResponse getFullResponse()
+    static Azure::Core::Http::RawResponse GetFullResponse()
 
-{
-  auto response = Azure::Core::Http::RawResponse(1, 1, Azure::Core::Http::HttpStatusCode::Ok, "OK");
+    {
+      auto response
+          = Azure::Core::Http::RawResponse(1, 1, Azure::Core::Http::HttpStatusCode::Ok, "OK");
 
-  constexpr static const uint8_t responseBody[] = R"json({
+      constexpr static const uint8_t responseBody[] = R"json({
         "value": "mysecretvalue",
         "id": "https://myvault.vault.azure.net/secrets/mysecretname/4387e9f3d6e14c459867679a90fd0f79",
         "contentType" : "ct",
@@ -58,22 +63,23 @@ Azure::Core::Http::RawResponse getFullResponse()
     }
 )json";
 
-  response.SetHeader(HttpShared::ContentType, "application/json");
-  response.SetHeader(HttpShared::MsRequestId, "1");
-  response.SetHeader(HttpShared::MsClientRequestId, "2");
-  response.SetBody(std::vector<uint8_t>(responseBody, responseBody + sizeof(responseBody)));
-  response.SetBodyStream(
-      std::make_unique<Azure::Core::IO::MemoryBodyStream>(responseBody, sizeof(responseBody) - 1));
+      response.SetHeader(HttpShared::ContentType, "application/json");
+      response.SetHeader(HttpShared::MsRequestId, "1");
+      response.SetHeader(HttpShared::MsClientRequestId, "2");
+      response.SetBody(std::vector<uint8_t>(responseBody, responseBody + sizeof(responseBody)));
+      response.SetBodyStream(std::make_unique<Azure::Core::IO::MemoryBodyStream>(
+          responseBody, sizeof(responseBody) - 1));
 
-  return response;
-}
+      return response;
+    }
 
-Azure::Core::Http::RawResponse getDeletedFullResponse()
+    static Azure::Core::Http::RawResponse GetDeletedFullResponse()
 
-{
-  auto response = Azure::Core::Http::RawResponse(1, 1, Azure::Core::Http::HttpStatusCode::Ok, "OK");
+    {
+      auto response
+          = Azure::Core::Http::RawResponse(1, 1, Azure::Core::Http::HttpStatusCode::Ok, "OK");
 
-  constexpr static const uint8_t responseBody[] = R"json({
+      constexpr static const uint8_t responseBody[] = R"json({
         "recoveryId": "https://myvault.vault.azure.net/deletedsecrets/GetDeletedSecretTest",
         "deletedDate": 1493938433,
         "scheduledPurgeDate": 1501714433,
@@ -87,63 +93,66 @@ Azure::Core::Http::RawResponse getDeletedFullResponse()
         }
 })json";
 
-  response.SetHeader(HttpShared::ContentType, "application/json");
-  response.SetHeader(HttpShared::MsRequestId, "1");
-  response.SetHeader(HttpShared::MsClientRequestId, "2");
-  response.SetBody(std::vector<uint8_t>(responseBody, responseBody + sizeof(responseBody)));
-  response.SetBodyStream(
-      std::make_unique<Azure::Core::IO::MemoryBodyStream>(responseBody, sizeof(responseBody) - 1));
+      response.SetHeader(HttpShared::ContentType, "application/json");
+      response.SetHeader(HttpShared::MsRequestId, "1");
+      response.SetHeader(HttpShared::MsClientRequestId, "2");
+      response.SetBody(std::vector<uint8_t>(responseBody, responseBody + sizeof(responseBody)));
+      response.SetBodyStream(std::make_unique<Azure::Core::IO::MemoryBodyStream>(
+          responseBody, sizeof(responseBody) - 1));
 
-  return response;
-}
+      return response;
+    }
 
-void runPartialExpect(KeyVaultSecret& secret, bool expectValue = true)
-{
-  if (expectValue)
-  {
-    EXPECT_EQ(secret.Value, "mysecretvalue");
-  }
+    static void RunPartialExpect(KeyVaultSecret& secret, bool expectValue = true)
+    {
+      if (expectValue)
+      {
+        EXPECT_EQ(secret.Value, "mysecretvalue");
+      }
 
-  EXPECT_EQ(secret.Name, "mysecretname");
-  EXPECT_EQ(secret.Properties.VaultUrl, "https://myvault.vault.azure.net");
-  EXPECT_EQ(secret.Properties.Version, "4387e9f3d6e14c459867679a90fd0f79");
-  EXPECT_EQ(secret.Properties.Id, secret.Id);
-  EXPECT_EQ(
-      secret.Id,
-      "https://myvault.vault.azure.net/secrets/mysecretname/4387e9f3d6e14c459867679a90fd0f79");
-  EXPECT_EQ(secret.Properties.KeyId.HasValue(), false);
-  EXPECT_EQ(secret.Properties.Managed, false);
-  EXPECT_EQ(secret.Properties.UpdatedOn.HasValue(), true);
-  EXPECT_EQ(secret.Properties.CreatedOn.HasValue(), true);
-}
+      EXPECT_EQ(secret.Name, "mysecretname");
+      EXPECT_EQ(secret.Properties.VaultUrl, "https://myvault.vault.azure.net");
+      EXPECT_EQ(secret.Properties.Version, "4387e9f3d6e14c459867679a90fd0f79");
+      EXPECT_EQ(secret.Properties.Id, secret.Id);
+      EXPECT_EQ(
+          secret.Id,
+          "https://myvault.vault.azure.net/secrets/mysecretname/"
+          "4387e9f3d6e14c459867679a90fd0f79");
+      EXPECT_EQ(secret.Properties.KeyId.HasValue(), false);
+      EXPECT_EQ(secret.Properties.Managed, false);
+      EXPECT_EQ(secret.Properties.UpdatedOn.HasValue(), true);
+      EXPECT_EQ(secret.Properties.CreatedOn.HasValue(), true);
+    }
 
-void runFullExpect(KeyVaultSecret& secret, bool expectValue = true)
-{
-  if (expectValue)
-  {
-    EXPECT_EQ(secret.Value, "mysecretvalue");
-    EXPECT_EQ(secret.Properties.ContentType.Value(), "ct");
-    EXPECT_EQ(secret.Properties.KeyId.Value(), "kid");
-  }
+    static void RunFullExpect(KeyVaultSecret& secret, bool expectValue = true)
+    {
+      if (expectValue)
+      {
+        EXPECT_EQ(secret.Value, "mysecretvalue");
+        EXPECT_EQ(secret.Properties.ContentType.Value(), "ct");
+        EXPECT_EQ(secret.Properties.KeyId.Value(), "kid");
+      }
 
-  EXPECT_EQ(secret.Name, "mysecretname");
-  EXPECT_EQ(secret.Properties.VaultUrl, "https://myvault.vault.azure.net");
-  EXPECT_EQ(secret.Properties.Version, "4387e9f3d6e14c459867679a90fd0f79");
-  EXPECT_EQ(secret.Properties.Id, secret.Id);
-  EXPECT_EQ(
-      secret.Id,
-      "https://myvault.vault.azure.net/secrets/mysecretname/4387e9f3d6e14c459867679a90fd0f79");
-  EXPECT_EQ(secret.Properties.Enabled.Value(), true);
-  EXPECT_EQ(secret.Properties.Managed, true);
-  EXPECT_EQ(secret.Properties.UpdatedOn.HasValue(), true);
-  EXPECT_EQ(secret.Properties.CreatedOn.HasValue(), true);
-}
+      EXPECT_EQ(secret.Name, "mysecretname");
+      EXPECT_EQ(secret.Properties.VaultUrl, "https://myvault.vault.azure.net");
+      EXPECT_EQ(secret.Properties.Version, "4387e9f3d6e14c459867679a90fd0f79");
+      EXPECT_EQ(secret.Properties.Id, secret.Id);
+      EXPECT_EQ(
+          secret.Id,
+          "https://myvault.vault.azure.net/secrets/mysecretname/"
+          "4387e9f3d6e14c459867679a90fd0f79");
+      EXPECT_EQ(secret.Properties.Enabled.Value(), true);
+      EXPECT_EQ(secret.Properties.Managed, true);
+      EXPECT_EQ(secret.Properties.UpdatedOn.HasValue(), true);
+      EXPECT_EQ(secret.Properties.CreatedOn.HasValue(), true);
+    }
 
-void runDeletedExtras(KeyVaultDeletedSecret& secret)
-{
-  EXPECT_EQ(
-      secret.RecoveryId, "https://myvault.vault.azure.net/deletedsecrets/GetDeletedSecretTest");
-  EXPECT_EQ(secret.ScheduledPurgeDate.ToString(), "2017-08-02T22:53:53Z");
-  EXPECT_EQ(secret.DeletedDate.ToString(), "2017-05-04T22:53:53Z");
-}
-} // namespace
+    static void RunDeletedExtras(KeyVaultDeletedSecret& secret)
+    {
+      EXPECT_EQ(
+          secret.RecoveryId, "https://myvault.vault.azure.net/deletedsecrets/GetDeletedSecretTest");
+      EXPECT_EQ(secret.ScheduledPurgeDate.ToString(), "2017-08-02T22:53:53Z");
+      EXPECT_EQ(secret.DeletedDate.ToString(), "2017-05-04T22:53:53Z");
+    }
+  };
+}}}}} // namespace Azure::Security::KeyVault::Secrets::_test
