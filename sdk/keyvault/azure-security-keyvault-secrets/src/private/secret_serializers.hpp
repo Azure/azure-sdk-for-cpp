@@ -8,9 +8,10 @@
  */
 
 #pragma once
+#include "azure/keyvault/secrets/keyvault_deleted_secret.hpp"
+#include "azure/keyvault/secrets/keyvault_secret.hpp"
 #include <azure/core/http/http.hpp>
 #include <azure/core/internal/json/json.hpp>
-#include <azure/keyvault/secrets/keyvault_secret.hpp>
 
 using namespace Azure::Security::KeyVault::Secrets;
 
@@ -75,6 +76,23 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets { 
         secretProperties.Name = std::string(start, pathEnd);
       }
     }
+  };
+
+  struct KeyVaultDeletedSecretSerializer final
+  {
+    // Creates a new deleted secret based on a name and an HTTP raw response.
+    static KeyVaultDeletedSecret KeyVaultDeletedSecretDeserialize(
+        std::string const& name,
+        Azure::Core::Http::RawResponse const& rawResponse);
+
+    // Create deleted secret from HTTP raw response only.
+    static KeyVaultDeletedSecret KeyVaultDeletedSecretDeserialize(
+        Azure::Core::Http::RawResponse const& rawResponse);
+
+    // Updates a deleted secret based on an HTTP raw response.
+    static void KeyVaultDeletedSecretDeserialize(
+        KeyVaultDeletedSecret& secret,
+        Azure::Core::Http::RawResponse const& rawResponse);
   };
 
   struct KeyVaultSecretPropertiesSerializer final

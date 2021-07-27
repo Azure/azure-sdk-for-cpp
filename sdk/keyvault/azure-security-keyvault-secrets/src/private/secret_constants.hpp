@@ -13,6 +13,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets { 
 
   /***************** KeyVault Secret *****************/
   constexpr static const char SecretPath[] = "secrets";
+  static constexpr char const DeletedSecretPath[] = "deletedsecrets";
 
   /******************* Secret property names ***********/
 
@@ -30,6 +31,11 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets { 
   constexpr static const char RecoveryLevelPropertyName[] = "recoveryLevel";
   constexpr static const char ContentTypePropertyName[] = "contentType";
   constexpr static const char RecoverableDaysPropertyName[] = "recoverableDays";
+
+  /**************** Deleted Secret property names ********/
+  constexpr static const char RecoveryIdPropertyName[] = "recoveryId";
+  constexpr static const char ScheduledPurgeDatePropertyName[] = "scheduledPurgeDate";
+  constexpr static const char DeletedDatePropertyName[] = "deletedDate";
 
   /**************** KeyVault QueryParameters *********/
   static constexpr char const ApiVersion[] = "api-version";

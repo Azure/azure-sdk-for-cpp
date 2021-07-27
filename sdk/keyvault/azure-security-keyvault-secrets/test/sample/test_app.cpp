@@ -28,5 +28,7 @@ int main()
   response = secretClient.UpdateSecretProperties(
       response.Value.Name, options, response.Value.Properties);
 
+  // just a response, with a secret
+  auto response2 = secretClient.GetDeletedSecret("someSecret");
   return 0;
 }

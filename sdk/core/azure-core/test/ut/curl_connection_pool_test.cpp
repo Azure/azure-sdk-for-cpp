@@ -554,5 +554,45 @@ namespace Azure { namespace Core { namespace Test {
       }
     }
 
+    TEST(CurlConnectionPool, connectionClose)
+    {
+      /// When getting the header connection: close from an HTTP response, the connection should not
+      /// be moved back to the pool.
+      {
+        std::lock_guard<std::mutex> lock(
+            CurlConnectionPool::g_curlConnectionPool.ConnectionPoolMutex);
+        CurlConnectionPool::g_curlConnectionPool.ConnectionPoolIndex.clear();
+        // Make sure there are nothing in the pool
+        EXPECT_EQ(CurlConnectionPool::g_curlConnectionPool.ConnectionPoolIndex.size(), 0);
+      }
+
+      // Use the same request for all connections.
+      Azure::Core::Http::Request req(
+          Azure::Core::Http::HttpMethod::Get, Azure::Core::Url(AzureSdkHttpbinServer::Headers()));
+      // Server will return this header back
+      req.SetHeader("connection", "close");
+
+      {
+        // Create a pipeline to send the request and dispose after it.
+        Azure::Core::Http::_internal::HttpPipeline pipeline({}, "test", "test", {}, {});
+        auto response = pipeline.Send(req, Azure::Core::Context::ApplicationContext);
+        EXPECT_PRED2(
+            [](Azure::Core::Http::HttpStatusCode a, Azure::Core::Http::HttpStatusCode b) {
+              return a == b;
+            },
+            response->GetStatusCode(),
+            Azure::Core::Http::HttpStatusCode::Ok);
+      }
+
+      // Check that after the connection is gone, it is moved back to the pool
+      {
+        std::lock_guard<std::mutex> lock(
+            CurlConnectionPool::g_curlConnectionPool.ConnectionPoolMutex);
+        EXPECT_EQ(
+            Azure::Core::Http::_detail::CurlConnectionPool::g_curlConnectionPool.ConnectionPoolIndex
+                .size(),
+            0);
+      }
+    }
 #endif
 }}} // namespace Azure::Core::Test
