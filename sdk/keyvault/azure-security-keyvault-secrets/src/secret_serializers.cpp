@@ -126,14 +126,7 @@ std::string KeyVaultSecretPropertiesSerializer::KeyVaultSecretPropertiesSerializ
   JsonOptional::SetFromNullable(properties.ContentType, payload, _detail::ContentTypePropertyName);
 
   // optional tags
-  Azure::Core::Json::_internal::json tags;
-
-  for (auto iterator : properties.Tags)
-  {
-    tags[iterator.first] = iterator.second;
-  }
-
-  payload[TagsPropertyName] = tags;
+  payload[TagsPropertyName] = Azure::Core::Json::_internal::json(properties.Tags);
 
   // attributes
   Azure::Core::Json::_internal::json attributes;
