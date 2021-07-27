@@ -47,7 +47,7 @@ namespace Azure { namespace Core { namespace Test {
      * @brief Enables to init an interceptor with empty values.
      *
      */
-    InterceptorManager(){};
+    InterceptorManager() = default;
 
     explicit InterceptorManager(Azure::Core::Test::TestContextManager testContext)
         : m_testSession(testContext.GetTestName()), m_testMode(testContext.GetTestMode())
@@ -73,7 +73,7 @@ namespace Azure { namespace Core { namespace Test {
      *
      * @return The recorded data reference managed by InterceptorManager.
      */
-    Azure::Core::Test::RecordedData& GetRecordedData() { return m_recordedData; }
+    Azure::Core::Test::RecordedData const& GetRecordedData() { return m_recordedData; }
 
     /**
      * Gets HTTP pipeline policy that records network calls and its data is managed by the

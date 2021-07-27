@@ -5,12 +5,15 @@
 #include "azure/core/test/record_network_call_policy.hpp"
 #include "private/environment.hpp"
 
+#include <azure/core/internal/strings.hpp>
+
 #include <string>
 #include <vector>
 
 using namespace Azure::Core::Http::Policies;
 using namespace Azure::Core::Http;
 using namespace Azure::Core::Test;
+using namespace Azure::Core::_internal;
 
 /**
  * @brief Records network request and response into RecordedData.
@@ -41,7 +44,14 @@ std::unique_ptr<RawResponse> RecordNetworkCallPolicy::Send(
 
     for (auto const& header : request.GetHeaders())
     {
-      record.Headers.emplace(header.first, header.second);
+      if (std::find_if(
+              headersToBeCaptured.begin(),
+              headersToBeCaptured.end(),
+              [header](std::string const& compare) {
+                return StringExtensions::LocaleInvariantCaseInsensitiveEqual(compare, header.first);
+              })
+          != headersToBeCaptured.end())
+        record.Headers.emplace(header.first, header.second);
     }
   }
 

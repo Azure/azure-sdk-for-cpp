@@ -15,30 +15,22 @@ using namespace Azure::Core::Json::_internal;
 void Azure::Core::Test::TestBase::TearDown()
 {
   json root;
-  auto records = root["networkCallRecords"];
+  json records;
   auto const& recordData = m_interceptor.GetRecordedData();
-
   for (auto const& record : recordData.NetworkCallRecords)
   {
     json recordJson;
+    recordJson["Headers"] = json(record.Headers);
+    recordJson["Response"] = json(record.Response);
     recordJson["Method"] = record.Method;
     recordJson["Url"] = record.Url;
-    auto headersRecords = recordJson["Headers"];
-    for (auto const& requestHeader : record.Headers)
-    {
-      headersRecords[requestHeader.first] = requestHeader.second;
-    }
-    auto responseRecords = recordJson["Response"];
-    for (auto const& responseFragment : record.Response)
-    {
-      responseRecords[responseFragment.first] = responseFragment.second;
-    }
     records.push_back(recordJson);
   }
+  root["networkCallRecords"] = records;
 
   // Write json to file
   std::ofstream outFile;
   outFile.open(m_testContext.GetTestName() + ".json");
-  outFile << root.dump();
+  outFile << root.dump(2);
   outFile.close();
 }

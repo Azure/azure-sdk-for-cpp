@@ -16,7 +16,7 @@
 
 using namespace Azure::Security::KeyVault::Keys::Test;
 
-TEST_F(KeyVaultClientTest, CreateKey)
+TEST_F(KeyVaultClientTest, CreateKey123)
 {
   auto keyName = GetUniqueName();
   {

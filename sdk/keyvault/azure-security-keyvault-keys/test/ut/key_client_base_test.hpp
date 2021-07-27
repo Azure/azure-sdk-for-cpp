@@ -80,7 +80,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys { nam
         options.PerRetryPolicies.push_back(std::move(m_interceptor.GetRecordPolicy()));
       }
 
-      m_client = std::make_unique<KeyClient>(m_keyVaultUrl, m_credential);
+      m_client = std::make_unique<KeyClient>(m_keyVaultUrl, m_credential, options);
 
       // When running live tests, service can return 429 error response if the client is sending
       // multiple requests per second. This can happen if the network is fast and tests are running

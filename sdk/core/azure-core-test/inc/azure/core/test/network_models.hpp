@@ -46,12 +46,6 @@ namespace Azure { namespace Core { namespace Test {
   public:
     std::list<NetworkCallRecord> NetworkCallRecords;
     std::list<std::string> Variables;
-
-    /**
-     * @brief Construct a new Recorded Data object.
-     *
-     */
-    RecordedData() {}
   };
 
 }}} // namespace Azure::Core::Test
