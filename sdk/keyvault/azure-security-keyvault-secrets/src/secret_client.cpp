@@ -83,4 +83,16 @@ Azure::Response<KeyVaultSecret> SecretClient::UpdateSecretProperties(
       {_detail::SecretPath, name, options.Version});
 }
 
+Azure::Response<KeyVaultSecret> SecretClient::UpdateSecretProperties(
+    std::string const& name,
+    std::string const& version,
+    KeyvaultSecretProperties const& properties,
+    Azure::Core::Context const& context) const
+{
+  GetSecretOptions options;
+  options.Version = version;
+
+  return UpdateSecretProperties(name, options, properties, context);
+}
+
 const ServiceVersion ServiceVersion::V7_2("7.2");
