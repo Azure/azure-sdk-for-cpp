@@ -714,7 +714,20 @@ void CurlSession::ReadStatusLineAndHeadersFromRawResponse(
   }
 
   // headers are already lowerCase at this point
-  auto headers = this->m_response->GetHeaders();
+  auto const& headers = this->m_response->GetHeaders();
+
+  // Check if server has return the connection header. This header can be used to stop re-using the
+  // connection. The `Iot Edge Blob Storage Module` is known to return this after some time re-using
+  // the same http secured channel.
+  auto connectionHeader = headers.find("connection");
+  if (connectionHeader != headers.end())
+  {
+    if (connectionHeader->second == "close")
+    {
+      // Use connection shut-down so it won't be moved it back to the connection pool.
+      m_connection->Shutdown();
+    }
+  }
 
   auto isContentLengthHeaderInResponse = headers.find("content-length");
   if (isContentLengthHeaderInResponse != headers.end())

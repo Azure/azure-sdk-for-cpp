@@ -1149,4 +1149,25 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_NO_THROW(blobClient.SetAccessTier(Blobs::Models::AccessTier::Cool, options));
   }
 
+  TEST_F(BlockBlobClientTest, UncommittedBlob)
+  {
+    const std::string blobName = RandomString();
+    auto blobClient = m_blobContainerClient->GetBlockBlobClient(blobName);
+
+    std::vector<uint8_t> buffer(100);
+    Azure::Core::IO::MemoryBodyStream stream(buffer.data(), buffer.size());
+    blobClient.StageBlock("YWJjZA==", stream);
+
+    Blobs::GetBlockListOptions getBlockListOptions;
+    getBlockListOptions.ListType = Blobs::Models::BlockListType::All;
+    auto res = blobClient.GetBlockList(getBlockListOptions).Value;
+    EXPECT_FALSE(res.ETag.HasValue());
+    EXPECT_EQ(res.BlobSize, 0);
+    EXPECT_TRUE(res.CommittedBlocks.empty());
+    EXPECT_FALSE(res.UncommittedBlocks.empty());
+
+    auto blobItem = GetBlobItem(blobName, Blobs::Models::ListBlobsIncludeFlags::UncomittedBlobs);
+    EXPECT_EQ(blobItem.BlobSize, 0);
+  }
+
 }}} // namespace Azure::Storage::Test

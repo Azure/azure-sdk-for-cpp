@@ -1885,17 +1885,18 @@ namespace Azure { namespace Storage { namespace Blobs {
     struct GetBlockListResult final
     {
       /**
-       * The ETag contains a value that you can use to perform operations conditionally.
+       * The ETag contains a value that you can use to perform operations conditionally. Empty if
+       * the blob is not never committed.
        */
       Azure::ETag ETag;
       /**
        * The date and time the container was last modified. Any operation that modifies the blob,
        * including an update of the metadata or properties, changes the last-modified time of the
-       * blob.
+       * blob. Invalid if the blob is never committed.
        */
       Azure::DateTime LastModified;
       /**
-       * Size of the blob.
+       * Size of the blob. Invalid if the blob is never committed.
        */
       int64_t BlobSize = 0;
       /**
@@ -9403,10 +9404,23 @@ namespace Azure { namespace Storage { namespace Blobs {
                 reinterpret_cast<const char*>(httpResponseBody.data()), httpResponseBody.size());
             response = GetBlockListResultFromXml(reader);
           }
-          response.ETag = Azure::ETag(httpResponse.GetHeaders().at("etag"));
-          response.LastModified = Azure::DateTime::Parse(
-              httpResponse.GetHeaders().at("last-modified"), Azure::DateTime::DateFormat::Rfc1123);
-          response.BlobSize = std::stoll(httpResponse.GetHeaders().at("x-ms-blob-content-length"));
+          auto etag__iterator = httpResponse.GetHeaders().find("etag");
+          if (etag__iterator != httpResponse.GetHeaders().end())
+          {
+            response.ETag = Azure::ETag(httpResponse.GetHeaders().at("etag"));
+          }
+          auto last_modified__iterator = httpResponse.GetHeaders().find("last-modified");
+          if (last_modified__iterator != httpResponse.GetHeaders().end())
+          {
+            response.LastModified = Azure::DateTime::Parse(
+                last_modified__iterator->second, Azure::DateTime::DateFormat::Rfc1123);
+          }
+          auto x_ms_blob_content_length__iterator
+              = httpResponse.GetHeaders().find("x-ms-blob-content-length");
+          if (x_ms_blob_content_length__iterator != httpResponse.GetHeaders().end())
+          {
+            response.BlobSize = std::stoll(x_ms_blob_content_length__iterator->second);
+          }
           return Azure::Response<GetBlockListResult>(std::move(response), std::move(pHttpResponse));
         }
 

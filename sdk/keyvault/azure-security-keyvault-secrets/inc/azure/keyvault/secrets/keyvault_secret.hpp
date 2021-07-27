@@ -10,7 +10,7 @@
 #include "azure/keyvault/secrets/keyvault_secret_properties.hpp"
 
 namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
-  struct KeyVaultSecret final
+  struct KeyVaultSecret
   {
     /**
      * @brief The name of the secret.
@@ -55,6 +55,23 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
       {
         throw std::invalid_argument("Name cannot be empty");
       }
+
+      if (Value.empty())
+      {
+        throw std::invalid_argument("Value cannot be empty");
+      }
+    };
+
+  private:
+    KeyVaultSecret(std::string name) : Name(std::move(name))
+    {
+      if (Name.empty())
+      {
+        throw std::invalid_argument("Name cannot be empty");
+      }
     }
+
+    friend struct KeyVaultDeletedSecret;
   };
+
 }}}} // namespace Azure::Security::KeyVault::Secrets
