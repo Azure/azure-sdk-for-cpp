@@ -24,9 +24,8 @@ int main()
   response.Value.Properties.ContentType = "weqeq";
   GetSecretOptions options;
 
-  options.Version = response.Value.Properties.Version;
   response = secretClient.UpdateSecretProperties(
-      response.Value.Name, options, response.Value.Properties);
+      response.Value.Name, response.Value.Properties.Version, response.Value.Properties);
 
   // just a response, with a secret
   auto response3 = secretClient.GetDeletedSecret("someSecret");

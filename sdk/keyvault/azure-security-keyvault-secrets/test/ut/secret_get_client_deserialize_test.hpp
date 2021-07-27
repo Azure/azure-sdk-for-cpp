@@ -43,7 +43,6 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets { 
     }
 
     static Azure::Core::Http::RawResponse GetFullResponse()
-
     {
       auto response
           = Azure::Core::Http::RawResponse(1, 1, Azure::Core::Http::HttpStatusCode::Ok, "OK");
