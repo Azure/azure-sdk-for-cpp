@@ -78,6 +78,30 @@ Azure::Response<KeyVaultDeletedSecret> SecretClient::GetDeletedSecret(
       {_detail::DeletedSecretPath, name});
 }
 
+Azure::Response<KeyVaultSecret> SecretClient::SetSecret(
+    std::string const& name,
+    std::string const& value,
+    Azure::Core::Context const& context) const
+{
+  KeyVaultSecret setParameters(name, value);
+  return SetSecret(name, setParameters, context);
+}
+
+Azure::Response<KeyVaultSecret> SecretClient::SetSecret(
+    std::string const& name,
+    KeyVaultSecret const& secret,
+    Azure::Core::Context const& context) const
+{
+  return m_protocolClient->SendRequest<KeyVaultSecret>(
+      context,
+      Azure::Core::Http::HttpMethod::Put,
+      [&secret]() { return _detail::KeyVaultSecretSerializer::KeyVaultSecretSerialize(secret); },
+      [&name](Azure::Core::Http::RawResponse const& rawResponse) {
+        return _detail::KeyVaultSecretSerializer::KeyVaultSecretDeserialize(name, rawResponse);
+      },
+      {_detail::SecretPath, name});
+}
+
 Azure::Response<KeyVaultSecret> SecretClient::UpdateSecretProperties(
     std::string const& name,
     GetSecretOptions const& options,

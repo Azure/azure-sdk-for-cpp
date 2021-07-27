@@ -157,6 +157,34 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
         Azure::Core::Context const& context = Azure::Core::Context()) const;
 
     /**
+     * @brief Set a secret in a specified key vault.
+     *
+     * @param name The name of the secret<span class="x x-first x-last">.</span>
+     * @param value The value of the secret<span class="x x-first x-last">.</span>
+     *
+     * @param context The context for the operation can be used for request cancellation.
+     * @return The Secret wrapped in the Response.
+     */
+    Azure::Response<KeyVaultSecret> SetSecret(
+        std::string const& name,
+        std::string const& value,
+        Azure::Core::Context const& context = Azure::Core::Context()) const;
+
+    /**
+     * @brief Set a secret in a specified key vault.
+     *
+     * @param name The name of the secret<span class="x x-first x-last">.</span>
+     * @param secret The secret definition <span class="x x-first x-last">.</span>
+     *
+     * @param context The context for the operation can be used for request cancellation.
+     * @return The Secret wrapped in the Response.
+     */
+    Azure::Response<KeyVaultSecret> SetSecret(
+        std::string const& name,
+        KeyVaultSecret const& secret,
+        Azure::Core::Context const& context = Azure::Core::Context()) const;
+
+    /**
      * @brief Updates the attributes associated with a specified secret in a given key vault.
      * The UPDATE operation changes specified attributes of an existing stored secret.
      * Attributes that are not specified in the request are left unchanged.
