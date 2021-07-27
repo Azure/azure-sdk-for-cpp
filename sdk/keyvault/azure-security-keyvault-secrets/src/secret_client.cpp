@@ -17,8 +17,6 @@
 #include <azure/core/http/http.hpp>
 #include <azure/core/http/policies/policy.hpp>
 
-#include "private/package_version.hpp"
-
 #include <string>
 
 using namespace Azure::Security::KeyVault::Secrets;
@@ -83,7 +81,7 @@ Azure::Response<KeyVaultSecret> SecretClient::SetSecret(
   return m_protocolClient->SendRequest<KeyVaultSecret>(
       context,
       Azure::Core::Http::HttpMethod::Put,
-      _detail::KeyVaultSecretSerializer::KeyVaultSecretSerialize(secret),
+      [&secret]() { return _detail::KeyVaultSecretSerializer::KeyVaultSecretSerialize(secret); },
       [&name](Azure::Core::Http::RawResponse const& rawResponse) {
         return _detail::KeyVaultSecretSerializer::KeyVaultSecretDeserialize(name, rawResponse);
       },

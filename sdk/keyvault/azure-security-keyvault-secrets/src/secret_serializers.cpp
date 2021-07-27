@@ -154,14 +154,7 @@ std::string KeyVaultSecretSerializer::KeyVaultSecretSerialize(KeyVaultSecret con
       PosixTimeConverter::DateTimeToPosixTime);
 
   // optional tags
-  Azure::Core::Json::_internal::json tags;
-
-  for (auto iterator : parameters.Properties.Tags)
-  {
-    tags[iterator.first] = iterator.second;
-  }
-
-  attributes[TagsPropertyName] = tags;
+  attributes[TagsPropertyName] = Azure::Core::Json::_internal::json(parameters.Properties.Tags);
 
   payload[AttributesPropertyName] = attributes;
 

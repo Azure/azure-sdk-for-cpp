@@ -123,5 +123,17 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
      *
      */
     KeyvaultSecretProperties() = default;
+
+    /**
+     * @brief Construct a new secret Properties object.
+     *
+     */
+    KeyvaultSecretProperties(std::string const& name) : Name(std::move(name))
+    {
+      if (Name.empty())
+      {
+        throw std::invalid_argument("Name cannot be empty");
+      }
+    };
   };
 }}}} // namespace Azure::Security::KeyVault::Secrets

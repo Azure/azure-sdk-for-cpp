@@ -134,7 +134,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
         Azure::Core::Context const& context = Azure::Core::Context()) const;
 
     /**
-     * @brief Sets a secret in a specified key vault.
+     * @brief Set a secret in a specified key vault.
      *
      * @param name The name of the secret<span class="x x-first x-last">.</span>
      * @param value The value of the secret<span class="x x-first x-last">.</span>
@@ -148,7 +148,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
         Azure::Core::Context const& context = Azure::Core::Context()) const;
 
     /**
-     * @brief Sets a secret in a specified key vault.
+     * @brief Set a secret in a specified key vault.
      *
      * @param name The name of the secret<span class="x x-first x-last">.</span>
      * @param secret The secret definition <span class="x x-first x-last">.</span>
@@ -160,8 +160,6 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
         std::string const& name,
         KeyVaultSecret const& secret,
         Azure::Core::Context const& context = Azure::Core::Context()) const;
-
-    std::string ClientVersion() const;
   };
 
 }}}} // namespace Azure::Security::KeyVault::Secrets

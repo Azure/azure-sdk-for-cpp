@@ -7,7 +7,7 @@
  */
 
 #pragma once
-#include "keyvault_secret_properties.hpp"
+#include "azure/keyvault/secrets/keyvault_secret_properties.hpp"
 
 namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
   struct KeyVaultSecret final
@@ -48,15 +48,13 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
      * @param name The name of the secret.
      * @param value The name of the secret.
      */
-    KeyVaultSecret(std::string name, std::string value)
-        : Name(std::move(name)), Value(std::move(value))
+    KeyVaultSecret(std::string const& name, std::string const& value)
+        : Name(std::move(name)), Value(std::move(value)), Properties(std::move(name))
     {
       if (Name.empty())
       {
         throw std::invalid_argument("Name cannot be empty");
       }
-
-      Properties.Name = Name;
     }
   };
 }}}} // namespace Azure::Security::KeyVault::Secrets

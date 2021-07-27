@@ -8,9 +8,9 @@
  */
 
 #pragma once
-#include "azure/core/http/http.hpp"
-#include "azure/core/internal/json/json.hpp"
 #include "azure/keyvault/secrets/keyvault_secret.hpp"
+#include <azure/core/http/http.hpp>
+#include <azure/core/internal/json/json.hpp>
 
 using namespace Azure::Security::KeyVault::Secrets;
 
