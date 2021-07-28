@@ -3,6 +3,8 @@
 
 #include "azure/core/http/http.hpp"
 
+#include "azure/core/internal/strings.hpp"
+
 #if defined(BUILD_TRANSPORT_WINHTTP_ADAPTER)
 #include "azure/core/http/win_http_transport.hpp"
 #endif
@@ -16,6 +18,8 @@ using Azure::Core::Context;
 using namespace Azure::Core::Http;
 
 namespace {
+
+const std::string HttpScheme = "http";
 
 inline std::wstring HttpMethodToWideString(HttpMethod method)
 {
@@ -289,7 +293,10 @@ void WinHttpTransport::CreateRequestHandle(std::unique_ptr<_detail::HandleManage
       NULL, // Use HTTP/1.1
       WINHTTP_NO_REFERER,
       WINHTTP_DEFAULT_ACCEPT_TYPES, // No media types are accepted by the client
-      WINHTTP_FLAG_SECURE); // Uses secure transaction semantics (SSL/TLS)
+      Azure::Core::_internal::StringExtensions::LocaleInvariantCaseInsensitiveEqual(
+          handleManager->m_request.GetUrl().GetScheme(), HttpScheme)
+          ? 0
+          : WINHTTP_FLAG_SECURE); // Uses secure transaction semantics (SSL/TLS)
 
   if (!handleManager->m_requestHandle)
   {
