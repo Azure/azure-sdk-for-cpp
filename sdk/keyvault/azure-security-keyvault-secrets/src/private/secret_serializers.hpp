@@ -97,4 +97,10 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets { 
         KeyVaultDeletedSecret& secret,
         Azure::Core::Http::RawResponse const& rawResponse);
   };
+
+  struct KeyvaultBackupSecretSerializer final
+  {
+    static std::vector<uint8_t> KeyvaultBackupSecretDeserialize(
+        Azure::Core::Http::RawResponse const& rawResponse);
+  };
 }}}}} // namespace Azure::Security::KeyVault::Secrets::_detail

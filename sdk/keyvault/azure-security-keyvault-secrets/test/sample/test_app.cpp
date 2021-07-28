@@ -26,5 +26,7 @@ int main()
 
   // just a response, with a secret
   auto response3 = secretClient.GetDeletedSecret("someSecret");
+
+  auto response4 = secretClient.BackupSecret("someSecret3");
   return 0;
 }

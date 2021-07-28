@@ -102,4 +102,18 @@ Azure::Response<KeyVaultSecret> SecretClient::SetSecret(
       {_detail::SecretPath, name});
 }
 
+Azure::Response<std::vector<uint8_t>> SecretClient::BackupSecret(
+    std::string const& name,
+    Azure::Core::Context const& context) const
+{
+  return m_protocolClient->SendRequest<std::vector<uint8_t>>(
+      context,
+      Azure::Core::Http::HttpMethod::Post,
+      [](Azure::Core::Http::RawResponse const& rawResponse) {
+        return _detail::KeyvaultBackupSecretSerializer::KeyvaultBackupSecretDeserialize(
+            rawResponse);
+      },
+      {_detail::SecretPath, name, _detail::BackupSecretPath});
+}
+
 const ServiceVersion ServiceVersion::V7_2("7.2");

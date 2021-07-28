@@ -183,6 +183,20 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
         std::string const& name,
         KeyVaultSecret const& secret,
         Azure::Core::Context const& context = Azure::Core::Context()) const;
-  };
 
+    /**
+     * @brief Back up the specified secret.
+     * Requests that a backup of the specified secret be downloaded to the client.
+     * All versions of the secret will be downloaded.
+     * This operation requires the secrets/backup permission.
+     *
+     * @param name The name of the secret<span class="x x-first x-last">.</span>
+     * @param context The context for the operation can be used for request cancellation.
+     *
+     * @return The The backup blob containing the backed up secret.
+     */
+    Azure::Response<std::vector<uint8_t>> BackupSecret(
+        std::string const& name,
+        Azure::Core::Context const& context = Azure::Core::Context()) const;
+  };
 }}}} // namespace Azure::Security::KeyVault::Secrets
