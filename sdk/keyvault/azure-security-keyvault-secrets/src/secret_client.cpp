@@ -64,4 +64,42 @@ Azure::Response<KeyVaultSecret> SecretClient::GetSecret(
       {_detail::SecretPath, name, options.Version});
 }
 
+Azure::Response<KeyVaultDeletedSecret> SecretClient::GetDeletedSecret(
+    std::string const& name,
+    Azure::Core::Context const& context) const
+{
+  return m_protocolClient->SendRequest<KeyVaultDeletedSecret>(
+      context,
+      Azure::Core::Http::HttpMethod::Get,
+      [&name](Azure::Core::Http::RawResponse const& rawResponse) {
+        return _detail::KeyVaultDeletedSecretSerializer::KeyVaultDeletedSecretDeserialize(
+            name, rawResponse);
+      },
+      {_detail::DeletedSecretPath, name});
+}
+
+Azure::Response<KeyVaultSecret> SecretClient::SetSecret(
+    std::string const& name,
+    std::string const& value,
+    Azure::Core::Context const& context) const
+{
+  KeyVaultSecret setParameters(name, value);
+  return SetSecret(name, setParameters, context);
+}
+
+Azure::Response<KeyVaultSecret> SecretClient::SetSecret(
+    std::string const& name,
+    KeyVaultSecret const& secret,
+    Azure::Core::Context const& context) const
+{
+  return m_protocolClient->SendRequest<KeyVaultSecret>(
+      context,
+      Azure::Core::Http::HttpMethod::Put,
+      [&secret]() { return _detail::KeyVaultSecretSerializer::KeyVaultSecretSerialize(secret); },
+      [&name](Azure::Core::Http::RawResponse const& rawResponse) {
+        return _detail::KeyVaultSecretSerializer::KeyVaultSecretDeserialize(name, rawResponse);
+      },
+      {_detail::SecretPath, name});
+}
+
 const ServiceVersion ServiceVersion::V7_2("7.2");

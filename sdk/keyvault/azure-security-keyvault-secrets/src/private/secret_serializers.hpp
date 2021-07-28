@@ -3,14 +3,15 @@
 
 /**
  * @file
- * @brief Serializers/sdeserializers for the KeyVault Secret client.
+ * @brief Serializers/deserializers for the KeyVault Secret client.
  *
  */
 
 #pragma once
+#include "azure/keyvault/secrets/keyvault_deleted_secret.hpp"
+#include "azure/keyvault/secrets/keyvault_secret.hpp"
 #include <azure/core/http/http.hpp>
 #include <azure/core/internal/json/json.hpp>
-#include <azure/keyvault/secrets/keyvault_secret.hpp>
 
 using namespace Azure::Security::KeyVault::Secrets;
 
@@ -31,7 +32,10 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets { 
         KeyVaultSecret& key,
         Azure::Core::Http::RawResponse const& rawResponse);
 
-    // extract the host out of the URL (with port if available)
+    // Serializes a key vault secret for set action
+    static std::string KeyVaultSecretSerialize(KeyVaultSecret const& parameters);
+
+    // Extract the host out of the URL (with port if available)
     static std::string GetUrlAuthorityWithScheme(Azure::Core::Url const& url)
     {
       std::string urlString;
@@ -75,5 +79,22 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets { 
         secretProperties.Name = std::string(start, pathEnd);
       }
     }
+  };
+
+  struct KeyVaultDeletedSecretSerializer final
+  {
+    // Creates a new deleted secret based on a name and an HTTP raw response.
+    static KeyVaultDeletedSecret KeyVaultDeletedSecretDeserialize(
+        std::string const& name,
+        Azure::Core::Http::RawResponse const& rawResponse);
+
+    // Create deleted secret from HTTP raw response only.
+    static KeyVaultDeletedSecret KeyVaultDeletedSecretDeserialize(
+        Azure::Core::Http::RawResponse const& rawResponse);
+
+    // Updates a deleted secret based on an HTTP raw response.
+    static void KeyVaultDeletedSecretDeserialize(
+        KeyVaultDeletedSecret& secret,
+        Azure::Core::Http::RawResponse const& rawResponse);
   };
 }}}}} // namespace Azure::Security::KeyVault::Secrets::_detail

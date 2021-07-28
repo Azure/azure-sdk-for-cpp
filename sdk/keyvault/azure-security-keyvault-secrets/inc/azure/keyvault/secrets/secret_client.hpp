@@ -7,11 +7,20 @@
  */
 
 #pragma once
-#include "../src/private/keyvault_protocol.hpp"
+
 #include "dll_import_export.hpp"
 
-#include <azure/keyvault/secrets/keyvault_secret.hpp>
+#include "azure/keyvault/secrets/keyvault_deleted_secret.hpp"
+#include "azure/keyvault/secrets/keyvault_secret.hpp"
+#include <azure/core/http/http.hpp>
+#include <azure/core/internal/http/pipeline.hpp>
+#include <azure/core/response.hpp>
+
 #include <string>
+
+namespace Azure { namespace Security { namespace KeyVault { namespace _detail {
+  class KeyVaultProtocolClient;
+}}}} // namespace Azure::Security::KeyVault::_detail
 
 namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
 
@@ -131,6 +140,48 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
     Azure::Response<KeyVaultSecret> GetSecret(
         std::string const& name,
         GetSecretOptions const& options = GetSecretOptions(),
+        Azure::Core::Context const& context = Azure::Core::Context()) const;
+
+    /**
+     * @brief The Get Deleted Secret operation returns
+     * the specified deleted secret along with its attributes.
+     * This operation requires the secrets/get permission.
+     *
+     * @param name The name of the secret<span class="x x-first x-last">.</span>
+     * @param context The context for the operation can be used for request cancellation.
+     *
+     * @return The Secret wrapped in the Response.
+     */
+    Azure::Response<KeyVaultDeletedSecret> GetDeletedSecret(
+        std::string const& name,
+        Azure::Core::Context const& context = Azure::Core::Context()) const;
+
+    /**
+     * @brief Set a secret in a specified key vault.
+     *
+     * @param name The name of the secret<span class="x x-first x-last">.</span>
+     * @param value The value of the secret<span class="x x-first x-last">.</span>
+     *
+     * @param context The context for the operation can be used for request cancellation.
+     * @return The Secret wrapped in the Response.
+     */
+    Azure::Response<KeyVaultSecret> SetSecret(
+        std::string const& name,
+        std::string const& value,
+        Azure::Core::Context const& context = Azure::Core::Context()) const;
+
+    /**
+     * @brief Set a secret in a specified key vault.
+     *
+     * @param name The name of the secret<span class="x x-first x-last">.</span>
+     * @param secret The secret definition <span class="x x-first x-last">.</span>
+     *
+     * @param context The context for the operation can be used for request cancellation.
+     * @return The Secret wrapped in the Response.
+     */
+    Azure::Response<KeyVaultSecret> SetSecret(
+        std::string const& name,
+        KeyVaultSecret const& secret,
         Azure::Core::Context const& context = Azure::Core::Context()) const;
   };
 
