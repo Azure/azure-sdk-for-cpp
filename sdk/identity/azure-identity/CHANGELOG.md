@@ -7,6 +7,7 @@
 ### Breaking Changes
 
 ### Bugs Fixed
+- Fixed `ManagedIdentityCredential` not being able to authenticate on an Azure VM when the WinHTTP transport adapter is being used.
 
 ### Other Changes
 
