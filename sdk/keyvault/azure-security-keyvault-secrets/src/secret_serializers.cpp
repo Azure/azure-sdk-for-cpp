@@ -8,7 +8,6 @@
 
 #include "private/secret_serializers.hpp"
 #include "private/secret_constants.hpp"
-
 #include <azure/core/base64.hpp>
 #include <azure/core/internal/json/json.hpp>
 #include <azure/core/internal/json/json_optional.hpp>
@@ -239,21 +238,22 @@ std::string KeyVaultSecretPropertiesSerializer::KeyVaultSecretPropertiesSerializ
   return payload.dump();
 }
 
-std::vector<uint8_t> KeyvaultBackupSecretSerializer::KeyvaultBackupSecretDeserialize(
+BackupSecretData KeyvaultBackupSecretSerializer::KeyvaultBackupSecretDeserialize(
     Azure::Core::Http::RawResponse const& rawResponse)
 {
   auto const& body = rawResponse.GetBody();
   auto jsonParser = json::parse(body);
   auto encodedResult = jsonParser[_detail::ValuePropertyName].get<std::string>();
+  BackupSecretData data;
+  data.Secret = Base64Url::Base64UrlDecode(encodedResult);
 
-  return std::vector<uint8_t>(encodedResult.begin(), encodedResult.end());
+  return data;
 }
 
 std::string KeyvaultRestoreSecretSerializer::KeyvaultRestoreSecretSerialize(
-    std::vector<uint8_t> const& backup)
+    BackupSecretData const& backup)
 {
   json payload;
-  std::string str(backup.begin(), backup.end());
-  payload[_detail::ValuePropertyName] = str;
+  payload[_detail::ValuePropertyName] = Base64Url::Base64UrlEncode(backup.Secret);
   return payload.dump();
 }

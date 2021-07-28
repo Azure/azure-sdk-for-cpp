@@ -16,7 +16,7 @@ TEST(KeyvaultBackupSecretSerializer, EmptyValue)
 
   auto secret = _detail::KeyvaultBackupSecretSerializer::KeyvaultBackupSecretDeserialize(response);
 
-  EXPECT_EQ(secret.size(), 0);
+  EXPECT_EQ(secret.Secret.size(), size_t(0));
 }
 
 TEST(KeyvaultBackupSecretSerializer, FullValue)
@@ -25,28 +25,30 @@ TEST(KeyvaultBackupSecretSerializer, FullValue)
 
   auto secret = _detail::KeyvaultBackupSecretSerializer::KeyvaultBackupSecretDeserialize(response);
 
-  EXPECT_EQ(secret.size(), 16);
-  std::string str(secret.begin(), secret.end());
-  EXPECT_EQ(str, "bXkgbmFtZSBpcw==");
+  EXPECT_EQ(secret.Secret.size(), size_t(10));
+  std::string str(secret.Secret.begin(), secret.Secret.end());
+  EXPECT_EQ(str, "my name is");
 }
 
 TEST(KeyvaultBackupSecretSerializer, IncorrectValue)
 {
   auto response = BackupHelpers::GetIncorrectResponse();
-
   auto secret = _detail::KeyvaultBackupSecretSerializer::KeyvaultBackupSecretDeserialize(response);
 
-  EXPECT_EQ(secret.size(), 10);
+  EXPECT_EQ(secret.Secret.size(), size_t(6));
+  std::string str(secret.Secret.begin(), secret.Secret.end());
+  EXPECT_EQ(str, "\x9B)\xDA\x99\xE8\xAC");
 }
 
 TEST(KeyvaultRestoreSecretSerializer, EmptyValue)
 {
   std::string str = "";
-
-  auto secret = _detail::KeyvaultRestoreSecretSerializer::KeyvaultRestoreSecretSerialize(
-      std::vector<uint8_t>(str.begin(), str.end()));
+  BackupSecretData data;
+  data.Secret = std::vector<uint8_t>(str.begin(), str.end());
+  auto secret = _detail::KeyvaultRestoreSecretSerializer::KeyvaultRestoreSecretSerialize(data);
   auto jsonParser = json::parse(secret);
-  EXPECT_EQ(secret.size(), 12);
+
+  EXPECT_EQ(secret.size(), size_t(12));
   EXPECT_EQ(jsonParser["value"].get<std::string>().empty(), true);
 }
 
@@ -54,9 +56,11 @@ TEST(KeyvaultRestoreSecretSerializer, SomeValue)
 {
   std::string str = "my name is";
 
-  auto secret = _detail::KeyvaultRestoreSecretSerializer::KeyvaultRestoreSecretSerialize(
-      std::vector<uint8_t>(str.begin(), str.end()));
+  BackupSecretData data;
+  data.Secret = std::vector<uint8_t>(str.begin(), str.end());
+  auto secret = _detail::KeyvaultRestoreSecretSerializer::KeyvaultRestoreSecretSerialize(data);
   auto jsonParser = json::parse(secret);
-  EXPECT_EQ(secret.size(), 22);
-  EXPECT_EQ(jsonParser["value"], "my name is");
+
+  EXPECT_EQ(secret.size(), size_t(26));
+  EXPECT_EQ(jsonParser["value"], "bXkgbmFtZSBpcw");
 }

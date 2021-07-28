@@ -8,6 +8,7 @@
  */
 
 #pragma once
+#include "azure/keyvault/secrets/keyvault_backup_secret.hpp"
 #include "azure/keyvault/secrets/keyvault_deleted_secret.hpp"
 #include "azure/keyvault/secrets/keyvault_secret.hpp"
 #include <azure/core/http/http.hpp>
@@ -107,12 +108,12 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets { 
 
   struct KeyvaultBackupSecretSerializer final
   {
-    static std::vector<uint8_t> KeyvaultBackupSecretDeserialize(
+    static BackupSecretData KeyvaultBackupSecretDeserialize(
         Azure::Core::Http::RawResponse const& rawResponse);
   };
 
   struct KeyvaultRestoreSecretSerializer final
   {
-    static std::string KeyvaultRestoreSecretSerialize(std::vector<uint8_t> const& backup);
+    static std::string KeyvaultRestoreSecretSerialize(BackupSecretData const& backup);
   };
 }}}}} // namespace Azure::Security::KeyVault::Secrets::_detail

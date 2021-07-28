@@ -8,10 +8,10 @@
 
 #pragma once
 
-#include "dll_import_export.hpp"
-
+#include "azure/keyvault/secrets/keyvault_backup_secret.hpp"
 #include "azure/keyvault/secrets/keyvault_deleted_secret.hpp"
 #include "azure/keyvault/secrets/keyvault_secret.hpp"
+#include "dll_import_export.hpp"
 #include <azure/core/http/http.hpp>
 #include <azure/core/internal/http/pipeline.hpp>
 #include <azure/core/response.hpp>
@@ -247,7 +247,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
      *
      * @return The The backup blob containing the backed up secret.
      */
-    Azure::Response<std::vector<uint8_t>> BackupSecret(
+    Azure::Response<BackupSecretData> BackupSecret(
         std::string const& name,
         Azure::Core::Context const& context = Azure::Core::Context()) const;
 
@@ -262,7 +262,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
      * @return The Secret wrapped in the Response.
      */
     Azure::Response<KeyVaultSecret> RestoreSecretBackup(
-        std::vector<uint8_t> const& backup,
+        BackupSecretData const& backup,
         Azure::Core::Context const& context = Azure::Core::Context()) const;
   };
 
