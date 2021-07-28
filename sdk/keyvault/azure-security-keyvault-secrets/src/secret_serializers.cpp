@@ -156,7 +156,7 @@ void KeyVaultDeletedSecretSerializer::KeyVaultDeletedSecretDeserialize(
 // serializes a set secret parameters object
 std::string KeyVaultSecretSerializer::KeyVaultSecretSerialize(KeyVaultSecret const& parameters)
 {
-  Azure::Core::Json::_internal::json payload;
+  json payload;
   using namespace Azure::Security::KeyVault::Secrets::_detail;
 
   // value is required
@@ -166,7 +166,7 @@ std::string KeyVaultSecretSerializer::KeyVaultSecretSerialize(KeyVaultSecret con
   JsonOptional::SetFromNullable(
       parameters.Properties.ContentType, payload, ContentTypePropertyName);
 
-  Azure::Core::Json::_internal::json attributes;
+  json attributes;
 
   JsonOptional::SetFromNullable<Azure::DateTime, int64_t>(
       parameters.Properties.CreatedOn,
@@ -195,7 +195,42 @@ std::string KeyVaultSecretSerializer::KeyVaultSecretSerialize(KeyVaultSecret con
       PosixTimeConverter::DateTimeToPosixTime);
 
   // optional tags
-  attributes[TagsPropertyName] = Azure::Core::Json::_internal::json(parameters.Properties.Tags);
+  attributes[TagsPropertyName] = json(parameters.Properties.Tags);
+
+  payload[AttributesPropertyName] = attributes;
+
+  return payload.dump();
+}
+
+std::string KeyVaultSecretPropertiesSerializer::KeyVaultSecretPropertiesSerialize(
+    KeyvaultSecretProperties const& properties)
+{
+  json payload;
+
+  // content type
+  JsonOptional::SetFromNullable(properties.ContentType, payload, _detail::ContentTypePropertyName);
+
+  // optional tags
+  payload[TagsPropertyName] = json(properties.Tags);
+
+  // attributes
+  json attributes;
+
+  JsonOptional::SetFromNullable(
+      properties.RecoverableDays, attributes, _detail::RecoverableDaysPropertyName);
+  JsonOptional::SetFromNullable(
+      properties.RecoveryLevel, attributes, _detail::RecoveryLevelPropertyName);
+  JsonOptional::SetFromNullable(properties.Enabled, attributes, _detail::EnabledPropertyName);
+  JsonOptional::SetFromNullable<Azure::DateTime, int64_t>(
+      properties.NotBefore,
+      attributes,
+      _detail::NbfPropertyName,
+      PosixTimeConverter::DateTimeToPosixTime);
+  JsonOptional::SetFromNullable<Azure::DateTime, int64_t>(
+      properties.ExpiresOn,
+      attributes,
+      _detail::ExpPropertyName,
+      PosixTimeConverter::DateTimeToPosixTime);
 
   payload[AttributesPropertyName] = attributes;
 

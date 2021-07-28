@@ -102,4 +102,35 @@ Azure::Response<KeyVaultSecret> SecretClient::SetSecret(
       {_detail::SecretPath, name});
 }
 
+Azure::Response<KeyVaultSecret> SecretClient::UpdateSecretProperties(
+    std::string const& name,
+    UpdateSecretPropertiesOptions const& options,
+    KeyvaultSecretProperties const& properties,
+    Azure::Core::Context const& context) const
+{
+  return m_protocolClient->SendRequest<KeyVaultSecret>(
+      context,
+      Azure::Core::Http::HttpMethod::Patch,
+      [&properties]() {
+        return _detail::KeyVaultSecretPropertiesSerializer::KeyVaultSecretPropertiesSerialize(
+            properties);
+      },
+      [&name](Azure::Core::Http::RawResponse const& rawResponse) {
+        return _detail::KeyVaultSecretSerializer::KeyVaultSecretDeserialize(name, rawResponse);
+      },
+      {_detail::SecretPath, name, options.Version});
+}
+
+Azure::Response<KeyVaultSecret> SecretClient::UpdateSecretProperties(
+    std::string const& name,
+    std::string const& version,
+    KeyvaultSecretProperties const& properties,
+    Azure::Core::Context const& context) const
+{
+  UpdateSecretPropertiesOptions options;
+  options.Version = version;
+
+  return UpdateSecretProperties(name, options, properties, context);
+}
+
 const ServiceVersion ServiceVersion::V7_2("7.2");
