@@ -289,7 +289,9 @@ void WinHttpTransport::CreateRequestHandle(std::unique_ptr<_detail::HandleManage
       NULL, // Use HTTP/1.1
       WINHTTP_NO_REFERER,
       WINHTTP_DEFAULT_ACCEPT_TYPES, // No media types are accepted by the client
-      WINHTTP_FLAG_SECURE); // Uses secure transaction semantics (SSL/TLS)
+      handleManager->m_request.GetUrl().GetScheme() == "http"
+          ? 0
+          : WINHTTP_FLAG_SECURE); // Uses secure transaction semantics (SSL/TLS)
 
   if (!handleManager->m_requestHandle)
   {

@@ -11,6 +11,7 @@
 ### Bugs Fixed
 
 - [2647](https://github.com/Azure/azure-sdk-for-cpp/issues/2647) Make the curl transport adapter to check the connection close header.
+- Make WinHTTP transport adapter to NOT use SSL/TLS for unsecured HTTP connections.
 
 ### Other Changes
 
