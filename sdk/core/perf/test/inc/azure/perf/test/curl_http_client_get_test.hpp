@@ -13,8 +13,6 @@
 
 #include <azure/core/http/curl_transport.hpp>
 
-#include <curl/curl.h>
-
 namespace Azure { namespace Perf { namespace Test {
   /**
    * @brief A performance test that defines a test option.

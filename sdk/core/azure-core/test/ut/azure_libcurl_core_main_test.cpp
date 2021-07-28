@@ -16,8 +16,6 @@
 
 #include <gtest/gtest.h>
 
-#include <curl/curl.h>
-
 #include <azure/core/context.hpp>
 #include <azure/core/http/curl_transport.hpp>
 #include <azure/core/http/http.hpp>

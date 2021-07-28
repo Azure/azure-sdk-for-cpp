@@ -27,7 +27,6 @@
 #endif
 
 #include <algorithm>
-#include <curl/curl.h>
 #include <string>
 #include <thread>
 
