@@ -5,7 +5,6 @@
 
 #if defined(BUILD_CURL_HTTP_TRANSPORT_ADAPTER)
 #include <azure/core/platform.hpp>
-#include <curl/curl.h>
 #include <signal.h>
 #endif
 
