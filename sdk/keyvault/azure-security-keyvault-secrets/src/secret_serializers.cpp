@@ -204,6 +204,41 @@ std::string KeyVaultSecretSerializer::KeyVaultSecretSerialize(KeyVaultSecret con
   return payload.dump();
 }
 
+std::string KeyVaultSecretPropertiesSerializer::KeyVaultSecretPropertiesSerialize(
+    KeyvaultSecretProperties const& properties)
+{
+  json payload;
+
+  // content type
+  JsonOptional::SetFromNullable(properties.ContentType, payload, _detail::ContentTypePropertyName);
+
+  // optional tags
+  payload[TagsPropertyName] = json(properties.Tags);
+
+  // attributes
+  json attributes;
+
+  JsonOptional::SetFromNullable(
+      properties.RecoverableDays, attributes, _detail::RecoverableDaysPropertyName);
+  JsonOptional::SetFromNullable(
+      properties.RecoveryLevel, attributes, _detail::RecoveryLevelPropertyName);
+  JsonOptional::SetFromNullable(properties.Enabled, attributes, _detail::EnabledPropertyName);
+  JsonOptional::SetFromNullable<Azure::DateTime, int64_t>(
+      properties.NotBefore,
+      attributes,
+      _detail::NbfPropertyName,
+      PosixTimeConverter::DateTimeToPosixTime);
+  JsonOptional::SetFromNullable<Azure::DateTime, int64_t>(
+      properties.ExpiresOn,
+      attributes,
+      _detail::ExpPropertyName,
+      PosixTimeConverter::DateTimeToPosixTime);
+
+  payload[AttributesPropertyName] = attributes;
+
+  return payload.dump();
+}
+
 std::vector<uint8_t> KeyvaultBackupSecretSerializer::KeyvaultBackupSecretDeserialize(
     Azure::Core::Http::RawResponse const& rawResponse)
 {

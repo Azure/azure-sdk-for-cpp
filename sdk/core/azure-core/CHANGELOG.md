@@ -11,6 +11,7 @@
 ### Bugs Fixed
 
 - [2647](https://github.com/Azure/azure-sdk-for-cpp/issues/2647) Make the curl transport adapter to check the connection close header.
+- [2474](https://github.com/Azure/azure-sdk-for-cpp/issues/2474) Fix compiling with MSVC and /analyze.
 
 ### Other Changes
 

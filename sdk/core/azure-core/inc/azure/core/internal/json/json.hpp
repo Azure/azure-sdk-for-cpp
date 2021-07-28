@@ -2176,7 +2176,7 @@ _az_JSON_HEDLEY_DIAGNOSTIC_PUSH
     class exception : public std::exception {
     public:
       /// returns the explanatory string
-      _az_JSON_HEDLEY_RETURNS_NON_NULL const char* what() const noexcept override
+      const char* what() const noexcept override
       {
         return m.what();
       }

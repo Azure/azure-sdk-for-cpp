@@ -82,12 +82,24 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
   struct GetSecretOptions final
   {
     /**
-     * @brief Specify the key version to get.
+     * @brief Specify the secret version to get.
      *
      */
     std::string Version;
   };
 
+  /**
+   * @brief Optional parameters for SecretClient::UpdateSecretParameters
+   *
+   */
+  struct UpdateSecretPropertiesOptions final
+  {
+    /**
+     * @brief Specify the secret version to update.
+     *
+     */
+    std::string Version;
+  };
   /**
    * @brief The SecretClient provides synchronous methods to manage a secret in the Azure Key
    * Vault. The client supports creating, retrieving, updating, deleting, purging, backing up,
@@ -185,6 +197,46 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
         Azure::Core::Context const& context = Azure::Core::Context()) const;
 
     /**
+     * @brief Updates the attributes associated with a specified secret in a given key vault.
+     * The UPDATE operation changes specified attributes of an existing stored secret.
+     * Attributes that are not specified in the request are left unchanged.
+     * The value of a secret itself cannot be changed.
+     * This operation requires the secrets/set permission.
+     *
+     * @param name The name of the secret<span class="x x-first x-last">.</span>
+     * @param options The optional parameters for this request.
+     * @param properties The properties to update
+     * @param context The context for the operation can be used for request cancellation.
+     *
+     * @return The Secret wrapped in the Response.
+     */
+    Azure::Response<KeyVaultSecret> UpdateSecretProperties(
+        std::string const& name,
+        UpdateSecretPropertiesOptions const& options,
+        KeyvaultSecretProperties const& properties,
+        Azure::Core::Context const& context = Azure::Core::Context()) const;
+
+    /**
+     * @brief Update the attributes associated with a specified secret in a given key vault.
+     * The UPDATE operation changes specified attributes of an existing stored secret.
+     * Attributes that are not specified in the request are left unchanged.
+     * The value of a secret itself cannot be changed.
+     * This operation requires the secrets/set permission.
+     *
+     * @param name The name of the secret<span class="x x-first x-last">.</span>
+     * @param version The version of the secret for this request.
+     * @param properties The properties to update
+     * @param context The context for the operation can be used for request cancellation.
+     *
+     * @return The Secret wrapped in the Response.
+     */
+    Azure::Response<KeyVaultSecret> UpdateSecretProperties(
+        std::string const& name,
+        std::string const& version,
+        KeyvaultSecretProperties const& properties,
+        Azure::Core::Context const& context = Azure::Core::Context()) const;
+
+    /**
      * @brief Back up the specified secret.
      * Requests that a backup of the specified secret be downloaded to the client.
      * All versions of the secret will be downloaded.
@@ -199,4 +251,5 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
         std::string const& name,
         Azure::Core::Context const& context = Azure::Core::Context()) const;
   };
+
 }}}} // namespace Azure::Security::KeyVault::Secrets

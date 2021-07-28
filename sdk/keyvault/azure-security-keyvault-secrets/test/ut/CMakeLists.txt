@@ -16,7 +16,8 @@ add_executable (
     secret_get_client_deserialize_test.hpp
     secret_get_client_deserialize_test.cpp
     secret_set_parameters_serializer_test.cpp
-  )
+    secret_update_properties_test.cpp
+ )
 
 if (MSVC)
   target_compile_options(azure-security-keyvault-secrets-test PUBLIC /wd6326 /wd26495 /wd26812)

@@ -33,10 +33,10 @@ struct RequestWithContinuationToken final
 
 static inline RequestWithContinuationToken BuildRequestFromContinuationToken(
     const Azure::Nullable<std::string>& NextPageToken,
-    const std::vector<std::string>&& defaultPath)
+    std::vector<std::string> defaultPath)
 {
   RequestWithContinuationToken request;
-  request.Path = defaultPath;
+  request.Path = std::move(defaultPath);
   if (NextPageToken)
   {
     // Using a continuation token requires to send the request to the continuation token URL instead

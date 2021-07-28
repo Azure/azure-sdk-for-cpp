@@ -5,7 +5,6 @@
 #endif
 
 #include <azure/identity.hpp>
-
 #include <azure/keyvault/keyvault_secrets.hpp>
 
 using namespace Azure::Security::KeyVault::Secrets;
@@ -19,10 +18,13 @@ int main()
       = std::make_shared<Azure::Identity::ClientSecretCredential>(tenantId, clientId, clientSecret);
 
   SecretClient secretClient(std::getenv("AZURE_KEYVAULT_URL"), credential);
+  // just a response, with a secret
+  auto response = secretClient.GetSecret("testSecret");
+  response.Value.Properties.ContentType = "weqeq";
+  GetSecretOptions options;
 
-  auto response = secretClient.SetSecret("someSecret3", "someData");
-
-  auto response2 = secretClient.GetSecret("someSecret3");
+  response = secretClient.UpdateSecretProperties(
+      response.Value.Name, response.Value.Properties.Version, response.Value.Properties);
 
   // just a response, with a secret
   auto response3 = secretClient.GetDeletedSecret("someSecret");
