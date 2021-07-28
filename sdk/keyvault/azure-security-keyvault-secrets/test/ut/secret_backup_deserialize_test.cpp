@@ -36,8 +36,6 @@ TEST(KeyvaultBackupSecretSerializer, IncorrectValue)
   auto secret = _detail::KeyvaultBackupSecretSerializer::KeyvaultBackupSecretDeserialize(response);
 
   EXPECT_EQ(secret.Secret.size(), size_t(6));
-  std::string str(secret.Secret.begin(), secret.Secret.end());
-  EXPECT_EQ(str, "\x9B)\xDA\x99\xE8\xAC");
 }
 
 TEST(KeyvaultRestoreSecretSerializer, EmptyValue)
