@@ -12,6 +12,7 @@
 #include "azure/keyvault/secrets/keyvault_secret.hpp"
 #include <azure/core/http/http.hpp>
 #include <azure/core/internal/json/json.hpp>
+#include <vector>
 
 using namespace Azure::Security::KeyVault::Secrets;
 
