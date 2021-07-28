@@ -30,14 +30,6 @@ TEST(KeyvaultBackupSecretSerializer, FullValue)
   EXPECT_EQ(str, "my name is");
 }
 
-TEST(KeyvaultBackupSecretSerializer, IncorrectValue)
-{
-  auto response = BackupHelpers::GetIncorrectResponse();
-  auto secret = _detail::KeyvaultBackupSecretSerializer::KeyvaultBackupSecretDeserialize(response);
-
-  EXPECT_EQ(secret.Secret.size(), size_t(6));
-}
-
 TEST(KeyvaultRestoreSecretSerializer, EmptyValue)
 {
   std::string str = "";
