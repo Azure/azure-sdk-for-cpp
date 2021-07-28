@@ -27,6 +27,8 @@ namespace {
 constexpr static const char TelemetryName[] = "keyvault-secrets";
 }
 
+const ServiceVersion ServiceVersion::V7_2("7.2");
+
 SecretClient::SecretClient(
     std::string const& vaultUrl,
     std::shared_ptr<Core::Credentials::TokenCredential const> credential,
@@ -147,4 +149,18 @@ Azure::Response<std::vector<uint8_t>> SecretClient::BackupSecret(
       {_detail::SecretPath, name, _detail::BackupSecretPath});
 }
 
-const ServiceVersion ServiceVersion::V7_2("7.2");
+Azure::Response<KeyVaultSecret> SecretClient::RestoreSecretBackup(
+    std::vector<uint8_t> const& backup,
+    Azure::Core::Context const& context) const
+{
+  return m_protocolClient->SendRequest<KeyVaultSecret>(
+      context,
+      Azure::Core::Http::HttpMethod::Post,
+      [&backup]() {
+        return _detail::KeyvaultRestoreSecretSerializer::KeyvaultRestoreSecretSerialize(backup);
+      },
+      [](Azure::Core::Http::RawResponse const& rawResponse) {
+        return _detail::KeyVaultSecretSerializer::KeyVaultSecretDeserialize(rawResponse);
+      },
+      {_detail::SecretPath, _detail::RestoreSecretPath});
+}

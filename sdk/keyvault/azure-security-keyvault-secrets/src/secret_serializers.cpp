@@ -246,5 +246,14 @@ std::vector<uint8_t> KeyvaultBackupSecretSerializer::KeyvaultBackupSecretDeseria
   auto jsonParser = json::parse(body);
   auto encodedResult = jsonParser[_detail::ValuePropertyName].get<std::string>();
 
-  return Base64Url::Base64UrlDecode(encodedResult);
+  return std::vector<uint8_t>(encodedResult.begin(), encodedResult.end());
+}
+
+std::string KeyvaultRestoreSecretSerializer::KeyvaultRestoreSecretSerialize(
+    std::vector<uint8_t> const& backup)
+{
+  json payload;
+  std::string str(backup.begin(), backup.end());
+  payload[_detail::ValuePropertyName] = str;
+  return payload.dump();
 }

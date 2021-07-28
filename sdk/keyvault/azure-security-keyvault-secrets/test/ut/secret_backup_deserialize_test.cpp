@@ -9,7 +9,7 @@
 using namespace Azure::Security::KeyVault::Secrets;
 using namespace Azure::Security::KeyVault::Secrets::_test;
 using namespace Azure::Security::KeyVault::Secrets::_detail;
-
+using namespace Azure::Core::Json::_internal;
 TEST(KeyvaultBackupSecretSerializer, EmptyValue)
 {
   auto response = BackupHelpers::GetEmptyResponse();
@@ -25,9 +25,9 @@ TEST(KeyvaultBackupSecretSerializer, FullValue)
 
   auto secret = _detail::KeyvaultBackupSecretSerializer::KeyvaultBackupSecretDeserialize(response);
 
-  EXPECT_EQ(secret.size(), 10);
+  EXPECT_EQ(secret.size(), 16);
   std::string str(secret.begin(), secret.end());
-  EXPECT_EQ(str, "my name is");
+  EXPECT_EQ(str, "bXkgbmFtZSBpcw==");
 }
 
 TEST(KeyvaultBackupSecretSerializer, IncorrectValue)
@@ -36,5 +36,27 @@ TEST(KeyvaultBackupSecretSerializer, IncorrectValue)
 
   auto secret = _detail::KeyvaultBackupSecretSerializer::KeyvaultBackupSecretDeserialize(response);
 
-  EXPECT_EQ(secret.size(), 6);
+  EXPECT_EQ(secret.size(), 10);
+}
+
+TEST(KeyvaultRestoreSecretSerializer, EmptyValue)
+{
+  std::string str = "";
+
+  auto secret = _detail::KeyvaultRestoreSecretSerializer::KeyvaultRestoreSecretSerialize(
+      std::vector<uint8_t>(str.begin(), str.end()));
+  auto jsonParser = json::parse(secret);
+  EXPECT_EQ(secret.size(), 12);
+  EXPECT_EQ(jsonParser["value"].get<std::string>().empty(), true);
+}
+
+TEST(KeyvaultRestoreSecretSerializer, SomeValue)
+{
+  std::string str = "my name is";
+
+  auto secret = _detail::KeyvaultRestoreSecretSerializer::KeyvaultRestoreSecretSerialize(
+      std::vector<uint8_t>(str.begin(), str.end()));
+  auto jsonParser = json::parse(secret);
+  EXPECT_EQ(secret.size(), 22);
+  EXPECT_EQ(jsonParser["value"], "my name is");
 }
