@@ -6,6 +6,7 @@
  * @brief Keyvault BackupSecretData definition
  */
 #pragma once
+#include <stdint.h>
 #include <vector>
 
 namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
