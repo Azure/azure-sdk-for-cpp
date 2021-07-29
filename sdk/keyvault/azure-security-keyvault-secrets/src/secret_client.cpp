@@ -150,13 +150,6 @@ Azure::Response<BackupSecretResult> SecretClient::BackupSecret(
 }
 
 Azure::Response<KeyVaultSecret> SecretClient::RestoreSecretBackup(
-    BackupSecretResult const& backup,
-    Azure::Core::Context const& context) const
-{
-  return RestoreSecretBackup(backup.Secret, context);
-}
-
-Azure::Response<KeyVaultSecret> SecretClient::RestoreSecretBackup(
     std::vector<uint8_t> const& backup,
     Azure::Core::Context const& context) const
 {

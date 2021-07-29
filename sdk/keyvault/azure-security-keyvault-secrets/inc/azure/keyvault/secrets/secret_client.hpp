@@ -263,20 +263,6 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
      * @return The Secret wrapped in the Response.
      */
     Azure::Response<KeyVaultSecret> RestoreSecretBackup(
-        BackupSecretResult const& backup,
-        Azure::Core::Context const& context = Azure::Core::Context()) const;
-
-    /**
-     * @brief Restore a backed up secret to a vault.
-     * Restores a backed up secret, and all its versions, to a vault.
-     * This operation requires the secrets/restore permission.
-     *
-     * @param backup The backup payload as encoded vector of bytes.
-     * @param context The context for the operation can be used for request cancellation.
-     *
-     * @return The Secret wrapped in the Response.
-     */
-    Azure::Response<KeyVaultSecret> RestoreSecretBackup(
         std::vector<uint8_t> const& backup,
         Azure::Core::Context const& context = Azure::Core::Context()) const;
   };
