@@ -3,7 +3,6 @@
 
 #include "secret_backup_deserialize_test.hpp"
 #include "../src/private/secret_serializers.hpp"
-
 #include "azure/keyvault/secrets/secret_client.hpp"
 
 using namespace Azure::Security::KeyVault::Secrets;
@@ -33,8 +32,7 @@ TEST(KeyvaultBackupSecretSerializer, FullValue)
 TEST(KeyvaultRestoreSecretSerializer, EmptyValue)
 {
   std::string str = "";
-  BackupSecretResponse data;
-  data.Secret = std::vector<uint8_t>(str.begin(), str.end());
+  auto data = std::vector<uint8_t>(str.begin(), str.end());
   auto secret = _detail::KeyvaultRestoreSecretSerializer::KeyvaultRestoreSecretSerialize(data);
   auto jsonParser = json::parse(secret);
 
@@ -46,8 +44,7 @@ TEST(KeyvaultRestoreSecretSerializer, SomeValue)
 {
   std::string str = "my name is";
 
-  BackupSecretResponse data;
-  data.Secret = std::vector<uint8_t>(str.begin(), str.end());
+  auto data = std::vector<uint8_t>(str.begin(), str.end());
   auto secret = _detail::KeyvaultRestoreSecretSerializer::KeyvaultRestoreSecretSerialize(data);
   auto jsonParser = json::parse(secret);
 

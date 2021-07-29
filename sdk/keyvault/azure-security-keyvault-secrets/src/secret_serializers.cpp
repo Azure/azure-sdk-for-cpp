@@ -251,9 +251,9 @@ BackupSecretResponse KeyvaultBackupSecretSerializer::KeyvaultBackupSecretDeseria
 }
 
 std::string KeyvaultRestoreSecretSerializer::KeyvaultRestoreSecretSerialize(
-    BackupSecretResponse const& backup)
+    std::vector<uint8_t> const& backup)
 {
   json payload;
-  payload[_detail::ValuePropertyName] = Base64Url::Base64UrlEncode(backup.Secret);
+  payload[_detail::ValuePropertyName] = Base64Url::Base64UrlEncode(backup);
   return payload.dump();
 }

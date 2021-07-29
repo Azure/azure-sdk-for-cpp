@@ -16,6 +16,7 @@
 #include <azure/core/internal/http/pipeline.hpp>
 #include <azure/core/response.hpp>
 
+#include <stdint.h>
 #include <string>
 
 namespace Azure { namespace Security { namespace KeyVault { namespace _detail {
@@ -256,13 +257,27 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
      * Restores a backed up secret, and all its versions, to a vault.
      * This operation requires the secrets/restore permission.
      *
-     * @param backup The backup payload as base64url encoded vector of bytes.
+     * @param backup The backup payload as encoded vector of bytes.
      * @param context The context for the operation can be used for request cancellation.
      *
      * @return The Secret wrapped in the Response.
      */
     Azure::Response<KeyVaultSecret> RestoreSecretBackup(
         BackupSecretResponse const& backup,
+        Azure::Core::Context const& context = Azure::Core::Context()) const;
+
+    /**
+     * @brief Restore a backed up secret to a vault.
+     * Restores a backed up secret, and all its versions, to a vault.
+     * This operation requires the secrets/restore permission.
+     *
+     * @param backup The backup payload as encoded vector of bytes.
+     * @param context The context for the operation can be used for request cancellation.
+     *
+     * @return The Secret wrapped in the Response.
+     */
+    Azure::Response<KeyVaultSecret> RestoreSecretBackup(
+        std::vector<uint8_t> const& backup,
         Azure::Core::Context const& context = Azure::Core::Context()) const;
   };
 
