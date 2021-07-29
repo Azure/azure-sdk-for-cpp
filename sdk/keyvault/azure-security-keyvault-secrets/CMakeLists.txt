@@ -34,6 +34,7 @@ set(
     inc/azure/keyvault/secrets/secret_client.hpp
     inc/azure/keyvault/keyvault_secrets.hpp
     inc/azure/keyvault/secrets/keyvault_deleted_secret.hpp
+    inc/azure/keyvault/secrets/keyvault_backup_secret.hpp
 )
 
 set(

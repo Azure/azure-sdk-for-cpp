@@ -19,14 +19,17 @@ int main()
 
   SecretClient secretClient(std::getenv("AZURE_KEYVAULT_URL"), credential);
   // just a response, with a secret
-  auto response = secretClient.GetSecret("testSecret");
-  response.Value.Properties.ContentType = "weqeq";
-  GetSecretOptions options;
+  // auto response = secretClient.GetSecret("testSecret");
+  // response.Value.Properties.ContentType = "weqeq";
+  // GetSecretOptions options;
 
-  response = secretClient.UpdateSecretProperties(
-      response.Value.Name, response.Value.Properties.Version, response.Value.Properties);
+  // response = secretClient.UpdateSecretProperties(
+  //     response.Value.Name, response.Value.Properties.Version, response.Value.Properties);
 
   // just a response, with a secret
-  auto response3 = secretClient.GetDeletedSecret("someSecret");
+  // auto response3 = secretClient.GetDeletedSecret("someSecret");
+
+  auto response4 = secretClient.BackupSecret("someSecret2");
+  auto response5 = secretClient.RestoreSecretBackup(response4.Value.Secret);
   return 0;
 }
