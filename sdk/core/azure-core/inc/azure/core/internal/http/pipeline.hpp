@@ -94,11 +94,6 @@ namespace Azure { namespace Core { namespace Http { namespace _internal {
       {
         m_policies.emplace_back(policy->Clone());
       }
-      // client-options per call policies.
-      for (auto& policy : perCallClientPolicies)
-      {
-        m_policies.emplace_back(policy->Clone());
-      }
 
       // Request Id
       m_policies.emplace_back(
@@ -107,6 +102,12 @@ namespace Azure { namespace Core { namespace Http { namespace _internal {
       m_policies.emplace_back(
           std::make_unique<Azure::Core::Http::Policies::_internal::TelemetryPolicy>(
               telemetryServiceName, telemetryServiceVersion, clientOptions.Telemetry));
+
+      // client-options per call policies.
+      for (auto& policy : perCallClientPolicies)
+      {
+        m_policies.emplace_back(policy->Clone());
+      }
 
       // Retry policy
       m_policies.emplace_back(std::make_unique<Azure::Core::Http::Policies::_internal::RetryPolicy>(
