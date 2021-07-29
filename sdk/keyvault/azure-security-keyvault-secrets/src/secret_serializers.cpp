@@ -238,13 +238,13 @@ std::string KeyVaultSecretPropertiesSerializer::KeyVaultSecretPropertiesSerializ
   return payload.dump();
 }
 
-BackupSecretResponse KeyvaultBackupSecretSerializer::KeyvaultBackupSecretDeserialize(
+BackupSecretResult KeyvaultBackupSecretSerializer::KeyvaultBackupSecretDeserialize(
     Azure::Core::Http::RawResponse const& rawResponse)
 {
   auto const& body = rawResponse.GetBody();
   auto jsonParser = json::parse(body);
   auto encodedResult = jsonParser[_detail::ValuePropertyName].get<std::string>();
-  BackupSecretResponse data;
+  BackupSecretResult data;
   data.Secret = Base64Url::Base64UrlDecode(encodedResult);
 
   return data;

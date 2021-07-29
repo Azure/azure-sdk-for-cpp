@@ -248,7 +248,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
      *
      * @return The The backup blob containing the backed up secret.
      */
-    Azure::Response<BackupSecretResponse> BackupSecret(
+    Azure::Response<BackupSecretResult> BackupSecret(
         std::string const& name,
         Azure::Core::Context const& context = Azure::Core::Context()) const;
 
@@ -263,7 +263,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
      * @return The Secret wrapped in the Response.
      */
     Azure::Response<KeyVaultSecret> RestoreSecretBackup(
-        BackupSecretResponse const& backup,
+        BackupSecretResult const& backup,
         Azure::Core::Context const& context = Azure::Core::Context()) const;
 
     /**

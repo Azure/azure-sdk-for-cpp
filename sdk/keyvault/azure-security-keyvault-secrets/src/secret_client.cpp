@@ -135,11 +135,11 @@ Azure::Response<KeyVaultSecret> SecretClient::UpdateSecretProperties(
   return UpdateSecretProperties(name, options, properties, context);
 }
 
-Azure::Response<BackupSecretResponse> SecretClient::BackupSecret(
+Azure::Response<BackupSecretResult> SecretClient::BackupSecret(
     std::string const& name,
     Azure::Core::Context const& context) const
 {
-  return m_protocolClient->SendRequest<BackupSecretResponse>(
+  return m_protocolClient->SendRequest<BackupSecretResult>(
       context,
       Azure::Core::Http::HttpMethod::Post,
       [](Azure::Core::Http::RawResponse const& rawResponse) {
@@ -150,7 +150,7 @@ Azure::Response<BackupSecretResponse> SecretClient::BackupSecret(
 }
 
 Azure::Response<KeyVaultSecret> SecretClient::RestoreSecretBackup(
-    BackupSecretResponse const& backup,
+    BackupSecretResult const& backup,
     Azure::Core::Context const& context) const
 {
   return RestoreSecretBackup(backup.Secret, context);
