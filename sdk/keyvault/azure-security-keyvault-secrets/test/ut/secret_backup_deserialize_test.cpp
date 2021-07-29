@@ -33,7 +33,7 @@ TEST(KeyvaultBackupSecretSerializer, FullValue)
 TEST(KeyvaultRestoreSecretSerializer, EmptyValue)
 {
   std::string str = "";
-  BackupSecretData data;
+  BackupSecretResponse data;
   data.Secret = std::vector<uint8_t>(str.begin(), str.end());
   auto secret = _detail::KeyvaultRestoreSecretSerializer::KeyvaultRestoreSecretSerialize(data);
   auto jsonParser = json::parse(secret);
@@ -46,7 +46,7 @@ TEST(KeyvaultRestoreSecretSerializer, SomeValue)
 {
   std::string str = "my name is";
 
-  BackupSecretData data;
+  BackupSecretResponse data;
   data.Secret = std::vector<uint8_t>(str.begin(), str.end());
   auto secret = _detail::KeyvaultRestoreSecretSerializer::KeyvaultRestoreSecretSerialize(data);
   auto jsonParser = json::parse(secret);

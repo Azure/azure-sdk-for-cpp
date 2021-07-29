@@ -14,7 +14,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
    * @brief Represents a backed up secret.
    *
    */
-  struct BackupSecretData final
+  struct BackupSecretResponse final
   {
     /**
      * @brief The backed up secret.
