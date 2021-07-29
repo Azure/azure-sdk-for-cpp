@@ -937,10 +937,6 @@ namespace Azure { namespace Storage { namespace Blobs {
        */
       Azure::Nullable<Azure::DateTime> CopyCompletedOn;
       /**
-       * the number of tags stored on the blob.
-       */
-      Azure::Nullable<int32_t> TagCount;
-      /**
        * User-defined tags for this blob.
        */
       std::map<std::string, std::string> Tags;
@@ -5861,7 +5857,6 @@ namespace Azure { namespace Storage { namespace Blobs {
             k_CopyDestinationSnapshot,
             k_DeletedTime,
             k_RemainingRetentionDays,
-            k_TagCount,
             k_Metadata,
             k_OrMetadata,
             k_Tags,
@@ -6056,10 +6051,6 @@ namespace Azure { namespace Storage { namespace Blobs {
               else if (node.Name == "RemainingRetentionDays")
               {
                 path.emplace_back(XmlTagName::k_RemainingRetentionDays);
-              }
-              else if (node.Name == "TagCount")
-              {
-                path.emplace_back(XmlTagName::k_TagCount);
               }
               else if (node.Name == "Metadata")
               {
@@ -6345,12 +6336,6 @@ namespace Azure { namespace Storage { namespace Blobs {
                   && path[1] == XmlTagName::k_RemainingRetentionDays)
               {
                 ret.Details.RemainingRetentionDays = std::stoi(node.Value);
-              }
-              else if (
-                  path.size() == 2 && path[0] == XmlTagName::k_Properties
-                  && path[1] == XmlTagName::k_TagCount)
-              {
-                ret.Details.TagCount = std::stoi(node.Value);
               }
             }
           }
