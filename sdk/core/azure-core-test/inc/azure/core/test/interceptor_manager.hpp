@@ -38,42 +38,27 @@ namespace Azure { namespace Core { namespace Test {
    */
   class InterceptorManager {
   private:
-    std::string m_testSession;
-    TestMode m_testMode;
     Azure::Core::Test::RecordedData m_recordedData;
+    // Using a reference because the context lives in the test_base class and we don't want to make
+    // a copy.
+    Azure::Core::Test::TestContextManager& m_testContext;
 
   public:
     /**
      * @brief Enables to init an interceptor with empty values.
      *
      */
-    InterceptorManager() = default;
-
-    explicit InterceptorManager(Azure::Core::Test::TestContextManager testContext)
-        : m_testSession(testContext.GetTestName()), m_testMode(testContext.GetTestMode())
+    InterceptorManager(Azure::Core::Test::TestContextManager& testContext)
+        : m_testContext(testContext)
     {
     }
-
-    /**
-     * Gets whether this InterceptorManager is in playback mode.
-     *
-     * @return `true` if the InterceptorManager is in playback mode and `false` otherwise.
-     */
-    bool IsPlaybackMode() { return m_testMode == TestMode::PLAYBACK; }
-
-    /**
-     * Gets whether this InterceptorManager is in live mode.
-     *
-     * @return `true` if the InterceptorManager is in live mode and `false` otherwise.
-     */
-    bool IsLiveMode() { return m_testMode == TestMode::LIVE; }
 
     /**
      * Gets the recorded data reference that InterceptorManager is keeping track of.
      *
      * @return The recorded data reference managed by InterceptorManager.
      */
-    Azure::Core::Test::RecordedData const& GetRecordedData() { return m_recordedData; }
+    Azure::Core::Test::RecordedData& GetRecordedData() { return m_recordedData; }
 
     /**
      * Gets HTTP pipeline policy that records network calls and its data is managed by the
@@ -83,7 +68,7 @@ namespace Azure { namespace Core { namespace Test {
      */
     std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy> GetRecordPolicy()
     {
-      return std::make_unique<Azure::Core::Test::RecordNetworkCallPolicy>(m_recordedData);
+      return std::make_unique<Azure::Core::Test::RecordNetworkCallPolicy>(this);
     }
 
     /**
@@ -94,8 +79,10 @@ namespace Azure { namespace Core { namespace Test {
      */
     std::unique_ptr<Azure::Core::Http::HttpTransport> GetPlaybackClient()
     {
-      return std::make_unique<Azure::Core::Test::PlaybackClient>(m_recordedData);
+      return std::make_unique<Azure::Core::Test::PlaybackClient>(this);
     }
+
+    Azure::Core::Test::TestContextManager const& GetTestContext() const { return m_testContext; }
 
     /**
      * @brief Read from environment and parse the a test mode.

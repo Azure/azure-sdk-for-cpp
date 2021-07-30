@@ -18,13 +18,15 @@
 
 namespace Azure { namespace Core { namespace Test {
 
+  class InterceptorManager;
+
   /**
    * @brief Creates an HTTP Transport adapter that answer to requests using recorded data.
    *
    */
   class PlaybackClient : public Azure::Core::Http::HttpTransport {
   private:
-    Azure::Core::Test::RecordedData& m_recordedData;
+    Azure::Core::Test::InterceptorManager* m_interceptorManager;
 
   public:
     /**
@@ -33,7 +35,10 @@ namespace Azure { namespace Core { namespace Test {
      *
      * @param recordedData
      */
-    PlaybackClient(Azure::Core::Test::RecordedData& recordedData) : m_recordedData(recordedData) {}
+    PlaybackClient(Azure::Core::Test::InterceptorManager* interceptorManager)
+        : m_interceptorManager(interceptorManager)
+    {
+    }
 
     /**
      * @brief Override the HTTPTransport `send` contract.

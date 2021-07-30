@@ -3,12 +3,11 @@
 
 #include <azure/core/internal/json/json.hpp>
 
+#include "azure/core/test/interceptor_manager.hpp"
 #include "azure/core/test/network_models.hpp"
 #include "azure/core/test/test_base.hpp"
 
 #include <fstream>
-
-Azure::Core::Test::TestMode Azure::Core::Test::TestBase::testMode;
 
 using namespace Azure::Core::Json::_internal;
 
@@ -16,7 +15,7 @@ void Azure::Core::Test::TestBase::TearDown()
 {
   json root;
   json records;
-  auto const& recordData = m_interceptor.GetRecordedData();
+  auto const& recordData = m_interceptor->GetRecordedData();
   for (auto const& record : recordData.NetworkCallRecords)
   {
     json recordJson;
@@ -30,7 +29,9 @@ void Azure::Core::Test::TestBase::TearDown()
 
   // Write json to file
   std::ofstream outFile;
-  outFile.open(m_testContext.GetTestName() + ".json");
+  // AZURE_TEST_RECORDING_DIR is exported from CMAKE
+  std::string testPath(m_testContext.RecordingPath);
+  outFile.open(testPath + "/" + m_testContext.GetTestPlaybackRecordingName() + ".json");
   outFile << root.dump(2);
   outFile.close();
 }

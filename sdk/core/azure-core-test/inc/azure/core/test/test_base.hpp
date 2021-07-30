@@ -11,37 +11,30 @@
 #include "azure/core/test/network_models.hpp"
 #include "azure/core/test/test_context_manager.hpp"
 
+#include <memory>
+
 namespace Azure { namespace Core { namespace Test {
 
   class TestBase : public ::testing::Test {
-  private:
-    static Azure::Core::Test::TestMode testMode;
-    Azure::Core::Test::TestContextManager m_testContext;
 
   protected:
-    Azure::Core::Test::InterceptorManager m_interceptor = Azure::Core::Test::InterceptorManager();
-
-    /**
-     * @brief Set the test mode
-     *
-     */
-    static void SetUpTestSuite()
-    {
-      testMode = Azure::Core::Test::InterceptorManager::GetTestMode();
-    }
+    Azure::Core::Test::TestContextManager m_testContext;
+    std::unique_ptr<Azure::Core::Test::InterceptorManager> m_interceptor;
 
     /**
      * @brief Run before each test
      *
      */
-    void SetUp() override
+    void SetUp(std::string const& recordingPath)
     {
-      // Create test content from gtest Test Info
+      // Use the test info to init the test context and interceptor.
       auto testNameInfo = ::testing::UnitTest::GetInstance()->current_test_info();
-      m_testContext = Azure::Core::Test::TestContextManager(testNameInfo, testMode);
 
       // set the interceptor for the current test
-      m_interceptor = Azure::Core::Test::InterceptorManager(m_testContext);
+      m_testContext.RenameTest(testNameInfo->test_suite_name(), testNameInfo->name());
+      m_testContext.RecordingPath = recordingPath;
+      m_testContext.TestMode = Azure::Core::Test::InterceptorManager::GetTestMode();
+      m_interceptor = std::make_unique<Azure::Core::Test::InterceptorManager>(m_testContext);
     }
 
     /**

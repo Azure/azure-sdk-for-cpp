@@ -3,6 +3,7 @@
 
 #include <azure/core/http/http.hpp>
 
+#include "azure/core/test/interceptor_manager.hpp"
 #include "azure/core/test/playback_http_client.hpp"
 
 #include <string>
@@ -13,7 +14,7 @@ std::unique_ptr<Azure::Core::Http::RawResponse> Azure::Core::Test::PlaybackClien
 {
   (void)(context);
   (void)(request);
-  (void)(m_recordedData);
+  (void)m_interceptorManager->GetTestContext().GetTestPlaybackRecordingName();
 
   throw;
 }

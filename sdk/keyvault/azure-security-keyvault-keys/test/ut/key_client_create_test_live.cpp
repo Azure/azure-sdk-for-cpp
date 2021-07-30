@@ -19,16 +19,19 @@ using namespace Azure::Security::KeyVault::Keys::Test;
 TEST_F(KeyVaultClientTest, CreateKey123)
 {
   auto keyName = GetUniqueName();
+  auto const& client
+      = GetClientForTest(::testing::UnitTest::GetInstance()->current_test_info()->name());
+
   {
     auto keyResponse
-        = m_client->CreateKey(keyName, Azure::Security::KeyVault::Keys::KeyVaultKeyType::Ec);
+        = client.CreateKey(keyName, Azure::Security::KeyVault::Keys::KeyVaultKeyType::Ec);
     CheckValidResponse(keyResponse);
     auto keyVaultKey = keyResponse.Value;
     EXPECT_EQ(keyVaultKey.Name(), keyName);
   }
   {
     // Now get the key
-    auto keyResponse = m_client->GetKey(keyName);
+    auto keyResponse = client.GetKey(keyName);
     CheckValidResponse(keyResponse);
     auto keyVaultKey = keyResponse.Value;
     EXPECT_EQ(keyVaultKey.Name(), keyName);

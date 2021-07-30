@@ -1,6 +1,7 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
 
+#include "azure/core/test/interceptor_manager.hpp"
 #include "azure/core/test/network_models.hpp"
 #include "azure/core/test/record_network_call_policy.hpp"
 #include "private/environment.hpp"
@@ -28,7 +29,7 @@ std::unique_ptr<RawResponse> RecordNetworkCallPolicy::Send(
     NextHttpPolicy nextHttpPolicy,
     Context const& ctx) const
 {
-  if (m_testMode != TestMode::RECORD)
+  if (m_interceptorManager->GetTestMode() != TestMode::RECORD)
   {
     return nextHttpPolicy.Send(request, ctx);
   }
@@ -107,13 +108,7 @@ std::unique_ptr<RawResponse> RecordNetworkCallPolicy::Send(
   // Capture response
   auto const& body = response->GetBody();
   record.Response.emplace("BODY", std::string(body.begin(), body.end()));
-  m_recordedData.NetworkCallRecords.push_back(record);
+  m_interceptorManager->GetRecordedData().NetworkCallRecords.push_back(record);
 
   return response;
-}
-
-RecordNetworkCallPolicy::RecordNetworkCallPolicy(RecordedData& recordedData)
-    : m_recordedData(recordedData)
-{
-  m_testMode = _detail::Environment::GetTestMode();
 }

@@ -20,14 +20,15 @@
 
 namespace Azure { namespace Core { namespace Test {
 
+  class InterceptorManager;
+
   /**
    * @brief Creates a policy that records network calls into recordedData.
    *
    */
   class RecordNetworkCallPolicy : public Azure::Core::Http::Policies::HttpPolicy {
   private:
-    Azure::Core::Test::RecordedData& m_recordedData;
-    Azure::Core::Test::TestMode m_testMode;
+    Azure::Core::Test::InterceptorManager* m_interceptorManager;
 
   public:
     /**
@@ -42,7 +43,10 @@ namespace Azure { namespace Core { namespace Test {
      *
      * @param recordedData The recorded data where to write the HTTP request and response.
      */
-    RecordNetworkCallPolicy(Azure::Core::Test::RecordedData& recordedData);
+    RecordNetworkCallPolicy(Azure::Core::Test::InterceptorManager* interceptorManager)
+        : m_interceptorManager(interceptorManager)
+    {
+    }
 
     /**
      * @brief Cronstructs a new record network policy with the same recorded data.
@@ -51,7 +55,7 @@ namespace Azure { namespace Core { namespace Test {
      */
     std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy> Clone() const override
     {
-      return std::make_unique<RecordNetworkCallPolicy>(m_recordedData);
+      return std::make_unique<RecordNetworkCallPolicy>(m_interceptorManager);
     }
 
     /**

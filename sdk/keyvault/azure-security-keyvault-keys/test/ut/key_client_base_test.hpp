@@ -24,11 +24,8 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys { nam
 
   class KeyVaultClientTest : public Azure::Core::Test::TestBase,
                              public ::testing::WithParamInterface<int> {
-  protected:
-    int m_testPollingTimeOutMinutes = 20;
-    std::chrono::minutes m_testPollingIntervalMinutes = std::chrono::minutes(1);
-
   private:
+    std::unique_ptr<Azure::Security::KeyVault::Keys::KeyClient> m_client;
     std::string GetEnv(const std::string& name, std::string const& defaultValue = std::string())
     {
       const char* ret = std::getenv(name.data());
@@ -47,16 +44,27 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys { nam
     }
 
   protected:
+    int m_testPollingTimeOutMinutes = 20;
+    std::chrono::minutes m_testPollingIntervalMinutes = std::chrono::minutes(1);
+
     std::shared_ptr<Azure::Identity::ClientSecretCredential> m_credential;
     std::string m_keyVaultUrl;
     std::string m_keyVaultHsmUrl;
-    std::unique_ptr<Azure::Security::KeyVault::Keys::KeyClient> m_client;
+
+    Azure::Security::KeyVault::Keys::KeyClient const& GetClientForTest(std::string const& testName)
+    {
+      // set the interceptor for the current test
+      m_testContext.RenameTest(testName);
+      return *m_client;
+    }
 
     // Create
     virtual void SetUp() override
     {
       // Init interceptor from PlayBackRecorder
-      Azure::Core::Test::TestBase::SetUp();
+      std::string recordingPath(AZURE_TEST_RECORDING_DIR);
+      recordingPath.append("/recordings");
+      Azure::Core::Test::TestBase::SetUp(recordingPath);
 
       std::string tenantId = GetEnv("AZURE_TENANT_ID");
       std::string clientId = GetEnv("AZURE_CLIENT_ID");
@@ -70,14 +78,15 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys { nam
       // Create default client for the test
       KeyClientOptions options;
       // Replace default transport adapter for playback
-      if (m_interceptor.IsPlaybackMode())
+      if (m_testContext.IsPlaybackMode())
       {
-        options.Transport.Transport = std::move(m_interceptor.GetPlaybackClient());
+        options.Transport.Transport = std::move(m_interceptor->GetPlaybackClient());
       }
       // Insert Recording policy when Record mode is on (non playback and non LiveMode)
-      else if (!m_interceptor.IsLiveMode())
+      else if (!m_testContext.IsLiveMode())
       {
-        options.PerRetryPolicies.push_back(std::move(m_interceptor.GetRecordPolicy()));
+        // AZURE_TEST_RECORDING_DIR is exported by CMAKE
+        options.PerRetryPolicies.push_back(std::move(m_interceptor->GetRecordPolicy()));
       }
 
       m_client = std::make_unique<KeyClient>(m_keyVaultUrl, m_credential, options);
