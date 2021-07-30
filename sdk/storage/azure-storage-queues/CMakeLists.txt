@@ -77,6 +77,10 @@ if(BUILD_TESTING)
     azure-storage-test
       PRIVATE
         test/ut/macro_guard.cpp
+        test/ut/queue_client_messages_test.cpp
+        test/ut/queue_client_test.cpp
+        test/ut/queue_client_test.hpp
+        test/ut/queue_service_client_test.cpp
   )
 
   target_link_libraries(azure-storage-test PRIVATE azure-storage-queues)

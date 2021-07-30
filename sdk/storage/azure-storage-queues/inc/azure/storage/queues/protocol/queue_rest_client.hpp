@@ -599,7 +599,7 @@ namespace Azure { namespace Storage { namespace Queues {
         {
           (void)options;
           auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Get, url);
-          request.GetUrl().AppendQueryParameter("resttype", "service");
+          request.GetUrl().AppendQueryParameter("restype", "service");
           request.GetUrl().AppendQueryParameter("comp", "properties");
           request.SetHeader("x-ms-version", "2018-03-28");
           if (options.Timeout.HasValue())
@@ -1609,7 +1609,7 @@ namespace Azure { namespace Storage { namespace Queues {
           auto http_status_code
               = static_cast<std::underlying_type<Azure::Core::Http::HttpStatusCode>::type>(
                   httpResponse.GetStatusCode());
-          if (!(http_status_code == 202))
+          if (!(http_status_code == 204))
           {
             throw StorageException::CreateFromResponse(std::move(pHttpResponse));
           }
@@ -1648,7 +1648,7 @@ namespace Azure { namespace Storage { namespace Queues {
           auto http_status_code
               = static_cast<std::underlying_type<Azure::Core::Http::HttpStatusCode>::type>(
                   httpResponse.GetStatusCode());
-          if (!(http_status_code == 200))
+          if (!(http_status_code == 204))
           {
             throw StorageException::CreateFromResponse(std::move(pHttpResponse));
           }
