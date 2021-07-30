@@ -2010,6 +2010,50 @@ namespace Azure { namespace Storage { namespace Queues {
               std::move(response), std::move(pHttpResponse));
         }
 
+        struct UpdateMessageVisibilityOptions final
+        {
+          Azure::Nullable<int32_t> Timeout;
+          std::string PopReceipt;
+          int32_t VisibilityTimeout;
+        }; // struct UpdateMessageVisibilityOptions
+
+        static Azure::Response<UpdateMessageResult> UpdateMessageVisibility(
+            Azure::Core::Http::_internal::HttpPipeline& pipeline,
+            const Azure::Core::Url& url,
+            const UpdateMessageVisibilityOptions& options,
+            const Azure::Core::Context& context)
+        {
+          (void)options;
+          auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Put, url);
+          request.SetHeader("Content-Length", "0");
+          request.SetHeader("x-ms-version", "2018-03-28");
+          if (options.Timeout.HasValue())
+          {
+            request.GetUrl().AppendQueryParameter(
+                "timeout", std::to_string(options.Timeout.Value()));
+          }
+          request.GetUrl().AppendQueryParameter(
+              "popreceipt", _internal::UrlEncodeQueryParameter(options.PopReceipt));
+          request.GetUrl().AppendQueryParameter(
+              "visibilitytimeout", std::to_string(options.VisibilityTimeout));
+          auto pHttpResponse = pipeline.Send(request, context);
+          Azure::Core::Http::RawResponse& httpResponse = *pHttpResponse;
+          UpdateMessageResult response;
+          auto http_status_code
+              = static_cast<std::underlying_type<Azure::Core::Http::HttpStatusCode>::type>(
+                  httpResponse.GetStatusCode());
+          if (!(http_status_code == 204))
+          {
+            throw StorageException::CreateFromResponse(std::move(pHttpResponse));
+          }
+          response.PopReceipt = httpResponse.GetHeaders().at("x-ms-popreceipt");
+          response.NextVisibleOn = Azure::DateTime::Parse(
+              httpResponse.GetHeaders().at("x-ms-time-next-visible"),
+              Azure::DateTime::DateFormat::Rfc1123);
+          return Azure::Response<UpdateMessageResult>(
+              std::move(response), std::move(pHttpResponse));
+        }
+
         struct UpdateMessageOptions final
         {
           std::string Body;

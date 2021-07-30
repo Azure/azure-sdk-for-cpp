@@ -66,6 +66,7 @@ namespace Azure { namespace Storage { namespace Queues {
         const Azure::Core::Context& context = Azure::Core::Context()) const;
 
     Azure::Response<Models::SetQueueAccessPolicyResult> SetAccessPolicy(
+        std::vector<Models::SignedIdentifier> signedIdentifiers,
         const SetQueueAccessPolicyOptions& options = SetQueueAccessPolicyOptions(),
         const Azure::Core::Context& context = Azure::Core::Context()) const;
 
@@ -93,6 +94,7 @@ namespace Azure { namespace Storage { namespace Queues {
     Azure::Response<Models::UpdateMessageResult> UpdateMessage(
         const std::string& messageId,
         const std::string& popReceipt,
+        int32_t VisibilityTimeout,
         const UpdateMessageOptions& options = UpdateMessageOptions(),
         const Azure::Core::Context& context = Azure::Core::Context()) const;
 
@@ -120,4 +122,5 @@ namespace Azure { namespace Storage { namespace Queues {
 
     friend class QueueServiceClient;
   };
+
 }}} // namespace Azure::Storage::Queues

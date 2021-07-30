@@ -81,14 +81,19 @@ namespace Azure { namespace Storage { namespace Queues {
 
   struct SendMessageOptions final
   {
+    Azure::Nullable<int32_t> VisibilityTimeout;
+    Azure::Nullable<int32_t> TimeToLive;
   };
 
   struct ReceiveMessageOptions final
   {
+    Azure::Nullable<int32_t> VisibilityTimeout;
   };
 
   struct ReceiveMessagesOptions final
   {
+    Azure::Nullable<int64_t> MaxMessages;
+    Azure::Nullable<int32_t> VisibilityTimeout;
   };
 
   struct PeekMessageOptions final
@@ -97,10 +102,12 @@ namespace Azure { namespace Storage { namespace Queues {
 
   struct PeekMessagesOptions final
   {
+    Azure::Nullable<int64_t> MaxMessages;
   };
 
   struct UpdateMessageOptions final
   {
+    Azure::Nullable<std::string> messageText;
   };
 
   struct DeleteMessageOptions final
