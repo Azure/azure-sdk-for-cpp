@@ -35,7 +35,7 @@ namespace Azure { namespace Storage { namespace Queues {
   private:
     void OnNextPage(const Azure::Core::Context& context);
 
-    std::shared_ptr<QueueServiceClient> m_blobServiceClient;
+    std::shared_ptr<QueueServiceClient> m_queueServiceClient;
     ListQueuesOptions m_operationOptions;
 
     friend class QueueServiceClient;

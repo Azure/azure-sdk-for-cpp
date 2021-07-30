@@ -360,7 +360,7 @@ namespace Azure { namespace Storage { namespace Queues {
        * The approximate number of messages in the queue. This number is not lower than the actual
        * number of messages in the queue, but could be higher.
        */
-      int64_t ApproximateMessageCount;
+      int64_t ApproximateMessageCount = 0;
     }; // struct QueueProperties
 
     /**

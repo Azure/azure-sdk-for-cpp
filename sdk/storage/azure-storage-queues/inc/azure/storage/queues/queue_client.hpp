@@ -107,7 +107,17 @@ namespace Azure { namespace Storage { namespace Queues {
         const Azure::Core::Context& context = Azure::Core::Context()) const;
 
   private:
+    explicit QueueClient(
+        Azure::Core::Url queueUrl,
+        std::shared_ptr<Azure::Core::Http::_internal::HttpPipeline> pipeline)
+        : m_queueUrl(std::move(queueUrl)), m_pipeline(std::move(pipeline))
+    {
+    }
+
+  private:
     Azure::Core::Url m_queueUrl;
     std::shared_ptr<Azure::Core::Http::_internal::HttpPipeline> m_pipeline;
+
+    friend class QueueServiceClient;
   };
 }}} // namespace Azure::Storage::Queues
