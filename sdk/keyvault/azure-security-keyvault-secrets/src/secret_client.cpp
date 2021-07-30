@@ -5,14 +5,14 @@
  * @brief Keyvault Secrets Client definition.
  *
  */
-
+#pragma once
 #include "azure/keyvault/secrets/secret_client.hpp"
 
+#include "azure/keyvault/secrets/keyvault_operations.hpp"
 #include "private/keyvault_protocol.hpp"
 #include "private/package_version.hpp"
 #include "private/secret_constants.hpp"
 #include "private/secret_serializers.hpp"
-
 #include <azure/core/credentials/credentials.hpp>
 #include <azure/core/http/http.hpp>
 #include <azure/core/http/policies/policy.hpp>
@@ -163,4 +163,34 @@ Azure::Response<KeyVaultSecret> SecretClient::RestoreSecretBackup(
         return _detail::KeyVaultSecretSerializer::KeyVaultSecretDeserialize(rawResponse);
       },
       {_detail::SecretPath, _detail::RestoreSecretPath});
+}
+
+Azure::Security::KeyVault::Secrets::KeyVaultSecretsOperations<KeyVaultDeletedSecret>
+SecretClient::StartDeleteKey(std::string const& name, Azure::Core::Context const& context) const
+{
+  return Azure::Security::KeyVault::Secrets::KeyVaultSecretsOperations<KeyVaultDeletedSecret>(
+      std::make_shared<SecretClient>(*this),
+      m_protocolClient->SendRequest<KeyVaultDeletedSecret>(
+          context,
+          Azure::Core::Http::HttpMethod::Delete,
+          [&name](Azure::Core::Http::RawResponse const& rawResponse) {
+            return _detail::KeyVaultDeletedSecretSerializer::KeyVaultDeletedSecretDeserialize(
+                name, rawResponse);
+          },
+          {_detail::SecretPath, name}));
+}
+
+Azure::Security::KeyVault::Secrets::KeyVaultSecretsOperations<KeyVaultSecret>
+SecretClient::StartRecoverDeletedKey(std::string const& name, Azure::Core::Context const& context)
+    const
+{
+  return Azure::Security::KeyVault::Secrets::KeyVaultSecretsOperations<KeyVaultSecret>(
+      std::make_shared<SecretClient>(*this),
+      m_protocolClient->SendRequest<KeyVaultSecret>(
+          context,
+          Azure::Core::Http::HttpMethod::Delete,
+          [&name](Azure::Core::Http::RawResponse const& rawResponse) {
+            return _detail::KeyVaultSecretSerializer::KeyVaultSecretDeserialize(name, rawResponse);
+          },
+          {_detail::SecretPath, name}));
 }

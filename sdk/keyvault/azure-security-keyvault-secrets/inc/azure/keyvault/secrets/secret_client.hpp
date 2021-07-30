@@ -22,6 +22,9 @@
 namespace Azure { namespace Security { namespace KeyVault { namespace _detail {
   class KeyVaultProtocolClient;
 }}}} // namespace Azure::Security::KeyVault::_detail
+namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
+  template <class T> class KeyVaultSecretsOperations;
+}}}} // namespace Azure::Security::KeyVault::Secrets
 
 namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
 
@@ -265,6 +268,15 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
     Azure::Response<KeyVaultSecret> RestoreSecretBackup(
         std::vector<uint8_t> const& backup,
         Azure::Core::Context const& context = Azure::Core::Context()) const;
-  };
 
+    Azure::Security::KeyVault::Secrets::KeyVaultSecretsOperations<KeyVaultDeletedSecret>
+    StartDeleteKey(
+        std::string const& name,
+        Azure::Core::Context const& context = Azure::Core::Context()) const;
+
+    Azure::Security::KeyVault::Secrets::KeyVaultSecretsOperations<KeyVaultSecret>
+    StartRecoverDeletedKey(
+        std::string const& name,
+        Azure::Core::Context const& context = Azure::Core::Context()) const;
+  };
 }}}} // namespace Azure::Security::KeyVault::Secrets

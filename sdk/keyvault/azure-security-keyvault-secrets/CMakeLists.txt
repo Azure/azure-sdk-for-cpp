@@ -35,6 +35,7 @@ set(
     inc/azure/keyvault/keyvault_secrets.hpp
     inc/azure/keyvault/secrets/keyvault_deleted_secret.hpp
     inc/azure/keyvault/secrets/keyvault_backup_secret.hpp
+    inc/azure/keyvault/secrets/keyvault_operations.hpp
 )
 
 set(
@@ -43,6 +44,8 @@ set(
     src/private/keyvault_protocol.hpp
     src/private/secret_constants.hpp
     src/private/secret_serializers.hpp
+    inc/azure/keyvault/secrets/keyvault_operations.hpp
+    src/keyvault_operations.cpp
     src/keyvault_protocol.cpp
     src/secret_client.cpp
     src/secret_serializers.cpp
