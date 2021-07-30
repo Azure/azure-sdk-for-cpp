@@ -45,7 +45,6 @@ set(
     src/private/secret_constants.hpp
     src/private/secret_serializers.hpp
     inc/azure/keyvault/secrets/keyvault_operations.hpp
-    src/keyvault_operations.cpp
     src/keyvault_protocol.cpp
     src/secret_client.cpp
     src/secret_serializers.cpp

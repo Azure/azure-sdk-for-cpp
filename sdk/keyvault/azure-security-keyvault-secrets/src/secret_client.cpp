@@ -188,9 +188,9 @@ SecretClient::StartRecoverDeletedKey(std::string const& name, Azure::Core::Conte
       std::make_shared<SecretClient>(*this),
       m_protocolClient->SendRequest<KeyVaultSecret>(
           context,
-          Azure::Core::Http::HttpMethod::Delete,
+          Azure::Core::Http::HttpMethod::Post,
           [&name](Azure::Core::Http::RawResponse const& rawResponse) {
             return _detail::KeyVaultSecretSerializer::KeyVaultSecretDeserialize(name, rawResponse);
           },
-          {_detail::SecretPath, name}));
+          {_detail::DeletedSecretPath, name, _detail::RecoverDeletedSecretPath}));
 }

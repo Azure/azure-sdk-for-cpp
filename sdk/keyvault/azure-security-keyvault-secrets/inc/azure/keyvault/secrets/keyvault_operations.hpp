@@ -20,7 +20,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
 
   private:
     friend class SecretClient;
-    std::shared_ptr<SecretClient> m_keyClient;
+    std::shared_ptr<SecretClient> m_secretClient;
     T m_value;
     std::string m_continuationToken;
 
@@ -55,7 +55,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
         }
         /* try
         {
-          rawResponse = m_keyClient->GetDeletedKey(m_value.Name(), context).RawResponse;
+          rawResponse = m_secretClient->GetDeletedKey(m_value.Name, context).RawResponse;
         }
         catch (Azure::Core::RequestFailedException& error)
         {
@@ -95,17 +95,25 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
      *
      * Since C++ doesn't offer `internal` access, we use friends-only instead.
      */
-    KeyVaultSecretsOperations(std::shared_ptr<SecretClient> keyClient, Azure::Response<T> response)
-        : m_keyClient(keyClient)
+    KeyVaultSecretsOperations(std::shared_ptr<SecretClient> secretClient, Azure::Response<T> response)
+        : m_secretClient(secretClient)
     {
       // The response becomes useless and the value and rawResponse are now owned by the
       // DeleteKeyOperation. This is fine because the DeleteKeyOperation is what the delete key api
       // will return.
-      m_value = response.Value;
+      if (std::is_base_of<KeyVaultSecret, T>())
+      {
+        m_value = (T)response.Value;
+      }
+      else
+      {
+        throw std::exception("Type T must be of KeyVaultSecret derived type");
+      }
+
       this->m_rawResponse = std::move(response.RawResponse);
 
       // The key name is enough to be used as continuation token.
-      //      m_continuationToken = m_value.Name();
+      m_continuationToken = ((KeyVaultSecret)m_value).Name;
 
       // The recoveryId is only returned if soft-delete is enabled.
       // The LRO is considered completed for non soft-delete (key will be eventually removed).
@@ -115,8 +123,8 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
       }*/
     };
 
-    KeyVaultSecretsOperations(std::string resumeToken, std::shared_ptr<SecretClient> keyClient)
-        : m_keyClient(keyClient), m_value(T(resumeToken)),
+    KeyVaultSecretsOperations(std::string resumeToken, std::shared_ptr<SecretClient> secretClient)
+        : m_secretClient(secretClient), m_value(T(resumeToken)),
           m_continuationToken(std::move(resumeToken))
     {
     }
@@ -139,7 +147,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
      *
      * @return A deleted key object.
      */
-    T Value() const override { return m_value; }
+    T Value() const override { return (T)m_value; }
 
     /**
      * @brief Get an Url as string which can be used to get the status of the delete key operation.
@@ -156,7 +164,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
      * server using the \p context.
      *
      * @param resumeToken A previously generated token used to resume the polling of the operation.
-     * @param client A #KeyClient that is used for getting status updates.
+     * @param client A #secretClient that is used for getting status updates.
      * @param context A #Azure::Core::Context controlling the request lifetime.
      * @return DeleteKeyOperation
      */
