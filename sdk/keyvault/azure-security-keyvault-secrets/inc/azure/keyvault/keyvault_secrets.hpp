@@ -12,6 +12,7 @@
 #include "azure/keyvault/secrets/keyvault_backup_secret.hpp"
 #include "azure/keyvault/secrets/keyvault_deleted_secret.hpp"
 #include "azure/keyvault/secrets/keyvault_operations.hpp"
+#include "azure/keyvault/secrets/keyvault_options.hpp"
 #include "azure/keyvault/secrets/keyvault_secret.hpp"
 #include "azure/keyvault/secrets/keyvault_secret_properties.hpp"
 #include "azure/keyvault/secrets/secret_client.hpp"

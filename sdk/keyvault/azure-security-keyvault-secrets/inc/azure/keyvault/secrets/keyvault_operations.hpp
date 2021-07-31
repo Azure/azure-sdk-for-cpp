@@ -7,7 +7,8 @@
  */
 
 #pragma once
-
+#include "../src/private/secret_serializers.hpp"
+#include "azure/keyvault/secrets/keyvault_deleted_secret.hpp"
 #include <azure/core/http/http.hpp>
 #include <azure/core/operation.hpp>
 #include <azure/core/operation_status.hpp>
@@ -16,117 +17,107 @@
 #include <azure/keyvault/secrets/secret_client.hpp>
 
 namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
-  template <class T> class KeyVaultSecretsOperations final : public Azure::Core::Operation<T> {
+
+  /**
+   * @brief Represents a long running operation to restore a deleted secret.
+   */
+  class KeyVaultRestoreDeletedSecretOperation final
+      : public Azure::Core::Operation<KeyVaultSecret> {
 
   private:
     friend class SecretClient;
     std::shared_ptr<SecretClient> m_secretClient;
-    T m_value;
+    KeyVaultSecret m_value;
     std::string m_continuationToken;
 
-    Azure::Response<T> PollUntilDoneInternal(
+    Azure::Response<KeyVaultSecret> PollUntilDoneInternal(
         std::chrono::milliseconds period,
         Azure::Core::Context& context) override
     {
       while (true)
       {
         // Poll will update the raw response.
-        this->Poll(context);
-        if (this->IsDone())
+        Poll(context);
+        if (IsDone())
         {
           break;
         }
         std::this_thread::sleep_for(period);
       }
 
-      return Azure::Response<T>(
-          m_value, std::make_unique<Azure::Core::Http::RawResponse>(*this->m_rawResponse));
+      return Azure::Response<KeyVaultSecret>(
+          m_value, std::make_unique<Azure::Core::Http::RawResponse>(*m_rawResponse));
     }
 
     std::unique_ptr<Azure::Core::Http::RawResponse> PollInternal(
         Azure::Core::Context const& context) override
     {
       std::unique_ptr<Azure::Core::Http::RawResponse> rawResponse;
-      if (!this->IsDone())
+      if (IsDone())
       {
-        if (context.IsCancelled())
+        try
         {
-          throw std::exception("dsds");
-        }
-        /* try
-        {
-          rawResponse = m_secretClient->GetDeletedKey(m_value.Name, context).RawResponse;
+          rawResponse
+              = m_secretClient->GetSecret(m_value.Name, GetSecretOptions(), context).RawResponse;
         }
         catch (Azure::Core::RequestFailedException& error)
         {
           rawResponse = std::move(error.RawResponse);
-        }*/
+        }
 
         switch (rawResponse->GetStatusCode())
         {
           case Azure::Core::Http::HttpStatusCode::Ok:
-          case Azure::Core::Http::HttpStatusCode::Forbidden: // Access denied but proof the
-                                                             // key was deleted.
-          {
-            this->m_status = Azure::Core::OperationStatus::Succeeded;
+          case Azure::Core::Http::HttpStatusCode::Forbidden: {
+            m_status = Azure::Core::OperationStatus::Succeeded;
             break;
           }
           case Azure::Core::Http::HttpStatusCode::NotFound: {
-            this->m_status = Azure::Core::OperationStatus::Running;
+            m_status = Azure::Core::OperationStatus::Running;
             break;
           }
           default:
             throw Azure::Core::RequestFailedException(rawResponse);
         }
 
-        if (this->m_status == Azure::Core::OperationStatus::Succeeded)
+        if (m_status == Azure::Core::OperationStatus::Succeeded)
         {
-          /* m_value
-              = _detail::DeletedKeySerializer::DeletedKeyDeserialize(m_value.Name(),
-             *rawResponse);*/
+          m_value = _detail::KeyVaultSecretSerializer::KeyVaultSecretDeserialize(
+              m_value.Name, *rawResponse);
         }
       }
       return rawResponse;
     }
 
     /*
-     * Only friend classes are permitted to construct a DeleteOperation. This is because a
+     * Only friend classes are permitted to construct an Operation. This is because a
      * KeyVaultPipelne is required and it is not exposed to customers.
      *
      * Since C++ doesn't offer `internal` access, we use friends-only instead.
      */
-    KeyVaultSecretsOperations(std::shared_ptr<SecretClient> secretClient, Azure::Response<T> response)
+    KeyVaultRestoreDeletedSecretOperation(
+        std::shared_ptr<SecretClient> secretClient,
+        Azure::Response<KeyVaultSecret> response)
         : m_secretClient(secretClient)
     {
-      // The response becomes useless and the value and rawResponse are now owned by the
-      // DeleteKeyOperation. This is fine because the DeleteKeyOperation is what the delete key api
-      // will return.
-      if (std::is_base_of<KeyVaultSecret, T>())
-      {
-        m_value = (T)response.Value;
-      }
-      else
-      {
-        throw std::exception("Type T must be of KeyVaultSecret derived type");
-      }
+      m_value = response.Value;
 
-      this->m_rawResponse = std::move(response.RawResponse);
+      m_rawResponse = std::move(response.RawResponse);
 
-      // The key name is enough to be used as continuation token.
       m_continuationToken = ((KeyVaultSecret)m_value).Name;
 
-      // The recoveryId is only returned if soft-delete is enabled.
-      // The LRO is considered completed for non soft-delete (key will be eventually removed).
-      /* if (m_value.RecoveryId.empty())
+      if (m_value.Name.empty() == false)
       {
-        this->m_status = Azure::Core::OperationStatus::Succeeded;
-      }*/
+        m_status = Azure::Core::OperationStatus::Succeeded;
+      }
     };
 
-    KeyVaultSecretsOperations(std::string resumeToken, std::shared_ptr<SecretClient> secretClient)
-        : m_secretClient(secretClient), m_value(T(resumeToken)),
-          m_continuationToken(std::move(resumeToken))
+    KeyVaultRestoreDeletedSecretOperation(
+        std::string resumeToken,
+        std::shared_ptr<SecretClient> secretClient)
+        : m_secretClient(secretClient), m_continuationToken(std::move(resumeToken))
     {
+      m_value.Name = resumeToken;
     }
 
     /**
@@ -136,28 +127,175 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
      */
     Azure::Core::Http::RawResponse const& GetRawResponseInternal() const override
     {
-      return *this->m_rawResponse;
+      return *m_rawResponse;
     }
 
   public:
     /**
-     * @brief Get the #Azure::Security::KeyVault::Keys::DeletedKey object.
+     * @brief Get the #Azure::Security::KeyVault::Secrets::KeyVaultSecret object.
      *
-     * @remark The deleted key contains the recovery id if the key can be recovered.
-     *
-     * @return A deleted key object.
+     * @return A KeyVaultSecret object.
      */
-    T Value() const override { return (T)m_value; }
+    KeyVaultSecret Value() const override { return m_value; }
 
     /**
-     * @brief Get an Url as string which can be used to get the status of the delete key operation.
+     * @brief Get an Url as string which can be used to get the status of the operation.
      *
      * @return std::string
      */
     std::string GetResumeToken() const override { return m_continuationToken; }
 
     /**
-     * @brief Create a #DeleteKeyOperation from the \p resumeToken fetched from another
+     * @brief Create a #KeyVaultRestoreDeletedSecretOperation from the \p resumeToken fetched from
+     * another `Operation<T>`, updated to the the latest operation status.
+     *
+     * @remark After the operation is initialized, it is used to poll the last update from the
+     * server using the \p context.
+     *
+     * @param resumeToken A previously generated token used to resume the polling of the operation.
+     * @param client A #secretClient that is used for getting status updates.
+     * @param context A #Azure::Core::Context controlling the request lifetime.
+     * @return KeyVaultRestoreDeletedSecretOperation
+     */
+    static KeyVaultRestoreDeletedSecretOperation CreateFromResumeToken(
+        std::string const& resumeToken,
+        SecretClient const& client,
+        Azure::Core::Context const& context = Azure::Core::Context())
+    {
+      KeyVaultRestoreDeletedSecretOperation operation(
+          resumeToken, std::make_shared<SecretClient>(client));
+      operation.Poll(context);
+      return operation;
+    };
+  };
+
+  /**
+   * @brief Represents a delete secret long running operation
+   */
+  class KeyVaultDeleteSecretOperation final : public Azure::Core::Operation<KeyVaultDeletedSecret> {
+
+  private:
+    friend class SecretClient;
+    std::shared_ptr<SecretClient> m_secretClient;
+    KeyVaultDeletedSecret m_value;
+    std::string m_continuationToken;
+
+    Azure::Response<KeyVaultDeletedSecret> PollUntilDoneInternal(
+        std::chrono::milliseconds period,
+        Azure::Core::Context& context) override
+    {
+      while (true)
+      {
+        Poll(context);
+        if (IsDone())
+        {
+          break;
+        }
+        std::this_thread::sleep_for(period);
+      }
+
+      return Azure::Response<KeyVaultDeletedSecret>(
+          m_value, std::make_unique<Azure::Core::Http::RawResponse>(*m_rawResponse));
+    }
+
+    std::unique_ptr<Azure::Core::Http::RawResponse> PollInternal(
+        Azure::Core::Context const& context) override
+    {
+      std::unique_ptr<Azure::Core::Http::RawResponse> rawResponse;
+      if (!IsDone())
+      {
+        try
+        {
+          rawResponse = m_secretClient->GetDeletedSecret(m_value.Name, context).RawResponse;
+        }
+        catch (Azure::Core::RequestFailedException& error)
+        {
+          rawResponse = std::move(error.RawResponse);
+        }
+
+        switch (rawResponse->GetStatusCode())
+        {
+          case Azure::Core::Http::HttpStatusCode::Ok:
+          case Azure::Core::Http::HttpStatusCode::Forbidden: {
+            m_status = Azure::Core::OperationStatus::Succeeded;
+            break;
+          }
+          case Azure::Core::Http::HttpStatusCode::NotFound: {
+            m_status = Azure::Core::OperationStatus::Running;
+            break;
+          }
+          default:
+            throw Azure::Core::RequestFailedException(rawResponse);
+        }
+
+        if (m_status == Azure::Core::OperationStatus::Succeeded)
+        {
+          m_value = _detail::KeyVaultDeletedSecretSerializer::KeyVaultDeletedSecretDeserialize(
+              m_value.Name, *rawResponse);
+        }
+      }
+      return rawResponse;
+    }
+
+    /*
+     * Only friend classes are permitted to call the constructor . This is because a
+     * KeyVaultPipelne is required and it is not exposed to customers.
+     *
+     * Since C++ doesn't offer `internal` access, we use friends-only instead.
+     */
+    KeyVaultDeleteSecretOperation(
+        std::shared_ptr<SecretClient> secretClient,
+        Azure::Response<KeyVaultDeletedSecret> response)
+        : m_secretClient(secretClient)
+    {
+      m_value = response.Value;
+      m_rawResponse = std::move(response.RawResponse);
+      m_continuationToken = m_value.Name;
+
+      if (m_value.Name.empty() == false)
+      {
+        m_status = Azure::Core::OperationStatus::Succeeded;
+      }
+    };
+
+    KeyVaultDeleteSecretOperation(
+        std::string resumeToken,
+        std::shared_ptr<SecretClient> secretClient)
+        : m_secretClient(secretClient), m_continuationToken(std::move(resumeToken))
+    {
+      m_value.Name = resumeToken;
+    }
+
+    /**
+     * @brief Get the #Azure::Core::Http::RawResponse of the operation request.
+     * @return A reference to an #Azure::Core::Http::RawResponse.
+     * @note Does not give up ownership of the RawResponse.
+     */
+    Azure::Core::Http::RawResponse const& GetRawResponseInternal() const override
+    {
+      return *m_rawResponse;
+    }
+
+  public:
+    /**
+     * @brief Get the #Azure::Security::KeyVault::Secrets::KeyVaultDeletedSecret object.
+     *
+     * @remark The deleted secret contains the recovery id if the key can be recovered.
+     *
+     * @return A deleted secret object.
+     */
+    KeyVaultDeletedSecret Value() const override { return m_value; }
+
+    /**
+     * @brief Get an Url as string which can be used to get the status of the delete secret
+     * operation.
+     *
+     * @return std::string
+     */
+    std::string GetResumeToken() const override { return m_continuationToken; }
+
+    /**
+     * @brief Create a #KeyVaultDeleteSecretOperation from the \p resumeToken fetched from another
      * `Operation<T>`, updated to the the latest operation status.
      *
      * @remark After the operation is initialized, it is used to poll the last update from the
@@ -166,14 +304,14 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
      * @param resumeToken A previously generated token used to resume the polling of the operation.
      * @param client A #secretClient that is used for getting status updates.
      * @param context A #Azure::Core::Context controlling the request lifetime.
-     * @return DeleteKeyOperation
+     * @return KeyVaultDeleteSecretOperation
      */
-    static KeyVaultSecretsOperations CreateFromResumeToken(
+    static KeyVaultDeleteSecretOperation CreateFromResumeToken(
         std::string const& resumeToken,
         SecretClient const& client,
         Azure::Core::Context const& context = Azure::Core::Context())
     {
-      KeyVaultSecretsOperations operation(resumeToken, std::make_shared<SecretClient>(client));
+      KeyVaultDeleteSecretOperation operation(resumeToken, std::make_shared<SecretClient>(client));
       operation.Poll(context);
       return operation;
     };
