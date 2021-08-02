@@ -233,6 +233,12 @@ namespace Azure { namespace Storage { namespace Queues {
     protocolLayerOptions.VisibilityTimeout = options.VisibilityTimeout;
     auto response = _detail::QueueRestClient::Queue::ReceiveMessages(
         *m_pipeline, messagesUrl, protocolLayerOptions, context);
+    if (response.Value.Messages.empty())
+    {
+      auto e = StorageException::CreateFromResponse(std::move(response.RawResponse));
+      e.Message = "No message available.";
+      throw e;
+    }
     return Azure::Response<Models::QueueMessage>(
         std::move(response.Value.Messages[0]), std::move(response.RawResponse));
   }
@@ -244,6 +250,7 @@ namespace Azure { namespace Storage { namespace Queues {
     auto messagesUrl = m_queueUrl;
     messagesUrl.AppendPath("messages");
     _detail::QueueRestClient::Queue::ReceiveMessagesOptions protocolLayerOptions;
+    protocolLayerOptions.MaxMessages = options.MaxMessages;
     protocolLayerOptions.VisibilityTimeout = options.VisibilityTimeout;
     auto response = _detail::QueueRestClient::Queue::ReceiveMessages(
         *m_pipeline, messagesUrl, protocolLayerOptions, context);
@@ -261,6 +268,12 @@ namespace Azure { namespace Storage { namespace Queues {
     _detail::QueueRestClient::Queue::PeekMessagesOptions protocolLayerOptions;
     auto response = _detail::QueueRestClient::Queue::PeekMessages(
         *m_pipeline, messagesUrl, protocolLayerOptions, context);
+    if (response.Value.Messages.empty())
+    {
+      auto e = StorageException::CreateFromResponse(std::move(response.RawResponse));
+      e.Message = "No message available.";
+      throw e;
+    }
     return Azure::Response<Models::PeekedQueueMessage>(
         std::move(response.Value.Messages[0]), std::move(response.RawResponse));
   }
