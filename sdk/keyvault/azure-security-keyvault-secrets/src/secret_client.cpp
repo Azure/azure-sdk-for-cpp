@@ -5,9 +5,8 @@
  * @brief Keyvault Secrets Client definition.
  *
  */
-#pragma once
-#include "azure/keyvault/secrets/secret_client.hpp"
 
+#include "azure/keyvault/secrets/secret_client.hpp"
 #include "azure/keyvault/secrets/keyvault_operations.hpp"
 #include "private/keyvault_protocol.hpp"
 #include "private/package_version.hpp"
