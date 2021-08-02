@@ -105,7 +105,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
 
       m_rawResponse = std::move(response.RawResponse);
 
-      m_continuationToken = ((KeyVaultSecret)m_value).Name;
+      m_continuationToken = m_value.Name;
 
       if (m_value.Name.empty() == false)
       {
