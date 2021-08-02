@@ -283,7 +283,7 @@ namespace Azure { namespace Storage { namespace Queues {
   Azure::Response<Models::UpdateMessageResult> QueueClient::UpdateMessage(
       const std::string& messageId,
       const std::string& popReceipt,
-      int32_t VisibilityTimeout,
+      int32_t visibilityTimeout,
       const UpdateMessageOptions& options,
       const Azure::Core::Context& context) const
   {
@@ -295,7 +295,7 @@ namespace Azure { namespace Storage { namespace Queues {
       _detail::QueueRestClient::Queue::UpdateMessageOptions protocolLayerOptions;
       protocolLayerOptions.Body = options.messageText.Value();
       protocolLayerOptions.PopReceipt = popReceipt;
-      protocolLayerOptions.VisibilityTimeout = VisibilityTimeout;
+      protocolLayerOptions.VisibilityTimeout = visibilityTimeout;
       return _detail::QueueRestClient::Queue::UpdateMessage(
           *m_pipeline, messageUrl, protocolLayerOptions, context);
     }
@@ -303,7 +303,7 @@ namespace Azure { namespace Storage { namespace Queues {
     {
       _detail::QueueRestClient::Queue::UpdateMessageVisibilityOptions protocolLayerOptions;
       protocolLayerOptions.PopReceipt = popReceipt;
-      protocolLayerOptions.VisibilityTimeout = VisibilityTimeout;
+      protocolLayerOptions.VisibilityTimeout = visibilityTimeout;
       return _detail::QueueRestClient::Queue::UpdateMessageVisibility(
           *m_pipeline, messageUrl, protocolLayerOptions, context);
     }
