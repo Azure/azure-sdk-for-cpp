@@ -72,7 +72,7 @@ namespace Azure { namespace Storage { namespace Test {
     }
     {
       auto response = queueClient.CreateIfNotExists();
-      EXPECT_FALSE(response.Value.Created);
+      EXPECT_TRUE(response.Value.Created);
     }
     {
       auto response = queueClient.DeleteIfExists();
