@@ -101,6 +101,15 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
      */
     std::string Version;
   };
+
+  /**
+   * @brief Define a model for a purged key.
+   *
+   */
+  struct PurgedSecret final
+  {
+  };
+
   /**
    * @brief The SecretClient provides synchronous methods to manage a secret in the Azure Key
    * Vault. The client supports creating, retrieving, updating, deleting, purging, backing up,
@@ -264,6 +273,21 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
      */
     Azure::Response<KeyVaultSecret> RestoreSecretBackup(
         std::vector<uint8_t> const& backup,
+        Azure::Core::Context const& context = Azure::Core::Context()) const;
+
+    /**
+     * @brief Permanently deletes the specified secret.
+     * The purge deleted secret operation removes the secret permanently, without the possibility of
+     * recovery. This operation can only be enabled on a soft-delete enabled vault. This operation
+     * requires the secrets/purge permission.
+     *
+     * @param name The name of the secret<span class="x x-first x-last">.</span>
+     * @param context The context for the operation can be used for request cancellation.
+     *
+     * @return Response<void> is success.
+     */
+    Azure::Response<PurgedSecret> PurgeDeletedSecret(
+        std::string const& name,
         Azure::Core::Context const& context = Azure::Core::Context()) const;
   };
 
