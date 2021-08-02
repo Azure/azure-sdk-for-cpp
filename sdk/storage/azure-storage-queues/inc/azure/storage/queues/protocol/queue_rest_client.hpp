@@ -536,7 +536,6 @@ namespace Azure { namespace Storage { namespace Queues {
             const ListQueuesOptions& options,
             const Azure::Core::Context& context)
         {
-          (void)options;
           auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Get, url);
           request.SetHeader("x-ms-version", "2018-03-28");
           if (options.Timeout.HasValue())
@@ -597,7 +596,6 @@ namespace Azure { namespace Storage { namespace Queues {
             const GetServicePropertiesOptions& options,
             const Azure::Core::Context& context)
         {
-          (void)options;
           auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Get, url);
           request.GetUrl().AppendQueryParameter("restype", "service");
           request.GetUrl().AppendQueryParameter("comp", "properties");
@@ -639,7 +637,6 @@ namespace Azure { namespace Storage { namespace Queues {
             const SetServicePropertiesOptions& options,
             const Azure::Core::Context& context)
         {
-          (void)options;
           std::string xml_body;
           {
             _internal::XmlWriter writer;
@@ -685,7 +682,6 @@ namespace Azure { namespace Storage { namespace Queues {
             const GetServiceStatisticsOptions& options,
             const Azure::Core::Context& context)
         {
-          (void)options;
           auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Get, url);
           request.GetUrl().AppendQueryParameter("restype", "service");
           request.GetUrl().AppendQueryParameter("comp", "stats");
@@ -1558,7 +1554,6 @@ namespace Azure { namespace Storage { namespace Queues {
             const CreateQueueOptions& options,
             const Azure::Core::Context& context)
         {
-          (void)options;
           auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Put, url);
           request.SetHeader("Content-Length", "0");
           request.SetHeader("x-ms-version", "2018-03-28");
@@ -1595,7 +1590,6 @@ namespace Azure { namespace Storage { namespace Queues {
             const DeleteQueueOptions& options,
             const Azure::Core::Context& context)
         {
-          (void)options;
           auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Delete, url);
           request.SetHeader("x-ms-version", "2018-03-28");
           if (options.Timeout.HasValue())
@@ -1628,7 +1622,6 @@ namespace Azure { namespace Storage { namespace Queues {
             const SetQueueMetadataOptions& options,
             const Azure::Core::Context& context)
         {
-          (void)options;
           auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Put, url);
           request.SetHeader("Content-Length", "0");
           request.GetUrl().AppendQueryParameter("comp", "metadata");
@@ -1667,7 +1660,6 @@ namespace Azure { namespace Storage { namespace Queues {
             const GetQueuePropertiesOptions& options,
             const Azure::Core::Context& context)
         {
-          (void)options;
           auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Head, url);
           request.GetUrl().AppendQueryParameter("comp", "metadata");
           request.SetHeader("x-ms-version", "2018-03-28");
@@ -1708,7 +1700,6 @@ namespace Azure { namespace Storage { namespace Queues {
             const GetQueueAccessPolicyOptions& options,
             const Azure::Core::Context& context)
         {
-          (void)options;
           auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Get, url);
           request.SetHeader("x-ms-version", "2018-03-28");
           if (options.Timeout.HasValue())
@@ -1748,7 +1739,6 @@ namespace Azure { namespace Storage { namespace Queues {
             const SetQueueAccessPolicyOptions& options,
             const Azure::Core::Context& context)
         {
-          (void)options;
           std::string xml_body;
           {
             _internal::XmlWriter writer;
@@ -1796,7 +1786,6 @@ namespace Azure { namespace Storage { namespace Queues {
             const SendMessageOptions& options,
             const Azure::Core::Context& context)
         {
-          (void)options;
           std::string xml_body;
           {
             _internal::XmlWriter writer;
@@ -1857,7 +1846,6 @@ namespace Azure { namespace Storage { namespace Queues {
             const ReceiveMessagesOptions& options,
             const Azure::Core::Context& context)
         {
-          (void)options;
           auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Get, url);
           request.SetHeader("x-ms-version", "2018-03-28");
           if (options.Timeout.HasValue())
@@ -1907,7 +1895,6 @@ namespace Azure { namespace Storage { namespace Queues {
             const PeekMessagesOptions& options,
             const Azure::Core::Context& context)
         {
-          (void)options;
           auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Get, url);
           request.SetHeader("x-ms-version", "2018-03-28");
           if (options.Timeout.HasValue())
@@ -1953,7 +1940,6 @@ namespace Azure { namespace Storage { namespace Queues {
             const DeleteMessageOptions& options,
             const Azure::Core::Context& context)
         {
-          (void)options;
           auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Delete, url);
           request.SetHeader("x-ms-version", "2018-03-28");
           if (options.Timeout.HasValue())
@@ -1988,7 +1974,6 @@ namespace Azure { namespace Storage { namespace Queues {
             const ClearMessagesOptions& options,
             const Azure::Core::Context& context)
         {
-          (void)options;
           auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Delete, url);
           request.SetHeader("x-ms-version", "2018-03-28");
           if (options.Timeout.HasValue())
@@ -2023,7 +2008,6 @@ namespace Azure { namespace Storage { namespace Queues {
             const UpdateMessageVisibilityOptions& options,
             const Azure::Core::Context& context)
         {
-          (void)options;
           auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Put, url);
           request.SetHeader("Content-Length", "0");
           request.SetHeader("x-ms-version", "2018-03-28");
@@ -2068,7 +2052,6 @@ namespace Azure { namespace Storage { namespace Queues {
             const UpdateMessageOptions& options,
             const Azure::Core::Context& context)
         {
-          (void)options;
           std::string xml_body;
           {
             _internal::XmlWriter writer;
