@@ -47,7 +47,10 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_FALSE(res.RawResponse->GetHeaders().at(_internal::HttpHeaderRequestId).empty());
     EXPECT_FALSE(res.RawResponse->GetHeaders().at(_internal::HttpHeaderDate).empty());
     EXPECT_FALSE(res.RawResponse->GetHeaders().at(_internal::HttpHeaderXMsVersion).empty());
+    EXPECT_NO_THROW(queueClient.Create(options));
     EXPECT_THROW(queueClient.Create(), StorageException);
+    EXPECT_NO_THROW(queueClient.CreateIfNotExists());
+    EXPECT_NO_THROW(queueClient.CreateIfNotExists(options));
 
     auto res2 = queueClient.Delete();
     EXPECT_FALSE(res2.RawResponse->GetHeaders().at(_internal::HttpHeaderRequestId).empty());

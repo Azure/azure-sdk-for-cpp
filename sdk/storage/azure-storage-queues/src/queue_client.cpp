@@ -124,8 +124,7 @@ namespace Azure { namespace Storage { namespace Queues {
     }
     catch (StorageException& e)
     {
-      if ((e.StatusCode == Core::Http::HttpStatusCode::NoContent && e.ReasonPhrase == "No Content")
-          || (e.ErrorCode == "QueueAlreadyExists"))
+      if (e.ErrorCode == "QueueAlreadyExists")
       {
         Models::CreateQueueResult ret;
         ret.Created = false;

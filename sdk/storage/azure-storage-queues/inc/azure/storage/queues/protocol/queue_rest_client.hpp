@@ -1577,7 +1577,7 @@ namespace Azure { namespace Storage { namespace Queues {
           auto http_status_code
               = static_cast<std::underlying_type<Azure::Core::Http::HttpStatusCode>::type>(
                   httpResponse.GetStatusCode());
-          if (!(http_status_code == 201))
+          if (!(http_status_code == 201 || http_status_code == 204))
           {
             throw StorageException::CreateFromResponse(std::move(pHttpResponse));
           }
