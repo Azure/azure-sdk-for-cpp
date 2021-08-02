@@ -15,6 +15,7 @@
 #include <azure/core/response.hpp>
 #include <azure/keyvault/secrets/keyvault_secret.hpp>
 #include <azure/keyvault/secrets/secret_client.hpp>
+#include <thread>
 
 namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
 
@@ -152,7 +153,8 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
      * @remark After the operation is initialized, it is used to poll the last update from the
      * server using the \p context.
      *
-     * @param resumeToken A previously generated token used to resume the polling of the operation.
+     * @param resumeToken A previously generated token used to resume the polling of the
+     * operation.
      * @param client A #secretClient that is used for getting status updates.
      * @param context A #Azure::Core::Context controlling the request lifetime.
      * @return KeyVaultRestoreDeletedSecretOperation
@@ -301,7 +303,8 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
      * @remark After the operation is initialized, it is used to poll the last update from the
      * server using the \p context.
      *
-     * @param resumeToken A previously generated token used to resume the polling of the operation.
+     * @param resumeToken A previously generated token used to resume the polling of the
+     * operation.
      * @param client A #secretClient that is used for getting status updates.
      * @param context A #Azure::Core::Context controlling the request lifetime.
      * @return KeyVaultDeleteSecretOperation
