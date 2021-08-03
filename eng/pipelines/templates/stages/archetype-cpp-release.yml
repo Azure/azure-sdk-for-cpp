@@ -162,6 +162,7 @@ stages:
                           SkipCheckingForChanges: true
                           BaseBranchName: $(DefaultBranch)
                           OpenAsDraft: ${{ parameters.TestPipeline }}
+                          PRLabels: "auto-merge"
                           CloseAfterOpenForTesting: '${{ parameters.TestPipeline }}'
 
           - ${{if ne(artifact.skipUpdatePackageVersion, 'true')}}:
