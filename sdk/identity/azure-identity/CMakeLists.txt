@@ -91,3 +91,7 @@ endif()
 if (BUILD_PERFORMANCE_TESTS)
   add_subdirectory(test/perf)
 endif()
+
+if (AZ_ALL_LIBRARIES)
+  add_subdirectory(samples)
+endif()
