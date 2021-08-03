@@ -13,6 +13,7 @@
 #include "azure/keyvault/keys/key_client_options.hpp"
 
 #include <azure/core/context.hpp>
+#include <azure/core/credentials/credentials.hpp>
 #include <azure/core/http/http.hpp>
 #include <azure/core/internal/http/pipeline.hpp>
 #include <azure/core/io/body_stream.hpp>
@@ -387,6 +388,10 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
         Azure::Core::Context const& context = Azure::Core::Context()) const;
 
   private:
+    std::unique_ptr<Azure::Core::Http::RawResponse> SendRequest(
+        Azure::Core::Http::Request& request,
+        Azure::Core::Context const& context) const;
+
     Azure::Core::Http::Request CreateRequest(
         Azure::Core::Http::HttpMethod method,
         std::vector<std::string> const& path = {},

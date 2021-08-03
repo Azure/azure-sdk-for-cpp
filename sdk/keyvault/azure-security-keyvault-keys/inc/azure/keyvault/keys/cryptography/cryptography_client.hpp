@@ -13,6 +13,7 @@
 #include "azure/keyvault/keys/cryptography/cryptography_client_options.hpp"
 
 #include <azure/core/context.hpp>
+#include <azure/core/credentials/credentials.hpp>
 #include <azure/core/http/http.hpp>
 #include <azure/core/internal/http/pipeline.hpp>
 #include <azure/core/io/body_stream.hpp>
@@ -36,11 +37,9 @@ namespace Azure { namespace Security { namespace KeyVault {
      */
     class CryptographyClient final {
     protected:
-      std::shared_ptr<Azure::Security::KeyVault::_detail::KeyVaultProtocolClient> m_pipeline;
       Azure::Core::Url m_keyId;
-
       std::string m_apiVersion;
-      std::shared_ptr<Azure::Core::Http::_internal::HttpPipeline> m_pipelineeee;
+      std::shared_ptr<Azure::Core::Http::_internal::HttpPipeline> m_pipeline;
 
     private:
       Azure::Core::Http::Request CreateRequest(

@@ -1,8 +1,6 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
 
-#include <azure/core/azure_assert.hpp>
-#include <azure/core/credentials/credentials.hpp>
 #include <azure/core/cryptography/hash.hpp>
 #include <azure/core/exception.hpp>
 #include <azure/core/http/http.hpp>
@@ -82,8 +80,9 @@ std::unique_ptr<Azure::Core::Http::RawResponse> CryptographyClient::SendCryptoRe
   request.SetHeader(HttpShared::ContentType, HttpShared::ApplicationJson);
   request.SetHeader(HttpShared::Accept, HttpShared::ApplicationJson);
 
-  // Send and parse respone
-  return m_pipelineeee->Send(request, context);
+  // Send, parse and validate respone
+  return Azure::Security::KeyVault::_detail::KeyVaultKeysCommonRequest::SendRequest(
+      *m_pipeline, request, context);
 }
 
 CryptographyClient::~CryptographyClient() = default;
@@ -105,13 +104,7 @@ CryptographyClient::CryptographyClient(
   }
   std::vector<std::unique_ptr<HttpPolicy>> perCallpolicies;
 
-  m_pipeline = std::make_shared<Azure::Security::KeyVault::_detail::KeyVaultProtocolClient>(
-      m_keyId,
-      m_apiVersion,
-      Azure::Core::Http::_internal::HttpPipeline(
-          options, "KeyVault", m_apiVersion, std::move(perRetrypolicies), {}));
-
-  m_pipelineeee = std::make_shared<Azure::Core::Http::_internal::HttpPipeline>(
+  m_pipeline = std::make_shared<Azure::Core::Http::_internal::HttpPipeline>(
       options,
       "KeyVault",
       options.Version.ToString(),

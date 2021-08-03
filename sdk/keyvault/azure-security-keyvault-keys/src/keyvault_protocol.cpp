@@ -10,42 +10,12 @@
 using namespace Azure::Security::KeyVault;
 using namespace Azure::Core::Http::_internal;
 
-Azure::Core::Http::Request _detail::KeyVaultProtocolClient::CreateRequest(
-    Azure::Core::Http::HttpMethod method,
-    Azure::Core::IO::BodyStream* content,
-    std::vector<std::string> const& path) const
+std::unique_ptr<Azure::Core::Http::RawResponse> _detail::KeyVaultKeysCommonRequest::SendRequest(
+    Azure::Core::Http::_internal::HttpPipeline const& pipeline,
+    Azure::Core::Http::Request& request,
+    Azure::Core::Context const& context)
 {
-  Azure::Core::Http::Request request = content == nullptr
-      ? Azure::Core::Http::Request(method, m_vaultUrl)
-      : Azure::Core::Http::Request(method, m_vaultUrl, content);
-
-  request.SetHeader(HttpShared::ContentType, HttpShared::ApplicationJson);
-  request.SetHeader(HttpShared::Accept, HttpShared::ApplicationJson);
-
-  request.GetUrl().AppendQueryParameter(_detail::ApiVersion, m_apiVersion);
-
-  for (std::string const& p : path)
-  {
-    if (!p.empty())
-    {
-      request.GetUrl().AppendPath(p);
-    }
-  }
-  return request;
-}
-
-Azure::Core::Http::Request _detail::KeyVaultProtocolClient::CreateRequest(
-    Azure::Core::Http::HttpMethod method,
-    std::vector<std::string> const& path) const
-{
-  return CreateRequest(method, nullptr, path);
-}
-
-std::unique_ptr<Azure::Core::Http::RawResponse> _detail::KeyVaultProtocolClient::SendRequest(
-    Azure::Core::Context const& context,
-    Azure::Core::Http::Request& request) const
-{
-  auto response = m_pipeline.Send(request, context);
+  auto response = pipeline.Send(request, context);
   auto responseCode = response->GetStatusCode();
   switch (responseCode)
   {
