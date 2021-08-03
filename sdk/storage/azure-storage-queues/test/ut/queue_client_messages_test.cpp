@@ -4,6 +4,7 @@
 #include "queue_client_test.hpp"
 
 #include <chrono>
+#include <thread>
 
 namespace Azure { namespace Storage { namespace Test {
 
@@ -70,18 +71,18 @@ namespace Azure { namespace Storage { namespace Test {
     Queues::ReceiveMessagesOptions receiveOptions;
     receiveOptions.MaxMessages = 1;
     auto receivedMessages = queueClient.ReceiveMessages(receiveOptions).Value;
-    EXPECT_EQ(receivedMessages.size(), 0);
+    EXPECT_TRUE(receivedMessages.empty());
     receivedMessages = queueClient.ReceiveMessages().Value;
-    EXPECT_EQ(receivedMessages.size(), 0);
+    EXPECT_TRUE(receivedMessages.empty());
 
     const std::string message1 = "message content.1";
     const std::string message2 = "message content.2";
     const std::string message3 = "message content.3";
     const std::string message4 = "message content.4";
-    queueClient.SendMessage(message1).Value;
-    queueClient.SendMessage(message2).Value;
-    queueClient.SendMessage(message3).Value;
-    queueClient.SendMessage(message4).Value;
+    queueClient.SendMessage(message1);
+    queueClient.SendMessage(message2);
+    queueClient.SendMessage(message3);
+    queueClient.SendMessage(message4);
 
     receiveOptions.MaxMessages = 1;
     receivedMessages = queueClient.ReceiveMessages(receiveOptions).Value;
@@ -141,10 +142,10 @@ namespace Azure { namespace Storage { namespace Test {
     const std::string message2 = "message content.2";
     const std::string message3 = "message content.3";
     const std::string message4 = "message content.4";
-    queueClient.SendMessage(message1).Value;
-    queueClient.SendMessage(message2).Value;
-    queueClient.SendMessage(message3).Value;
-    queueClient.SendMessage(message4).Value;
+    queueClient.SendMessage(message1);
+    queueClient.SendMessage(message2);
+    queueClient.SendMessage(message3);
+    queueClient.SendMessage(message4);
 
     peekOptions.MaxMessages = 1;
     peekedMessages = queueClient.PeekMessages(peekOptions).Value;
@@ -186,7 +187,7 @@ namespace Azure { namespace Storage { namespace Test {
 
     Queues::UpdateMessageOptions updateOptions;
     updateOptions.messageText = updatedMessage;
-    queueClient.UpdateMessage(res.MessageId, updateRes.PopReceipt, 1, updateOptions).Value;
+    queueClient.UpdateMessage(res.MessageId, updateRes.PopReceipt, 1, updateOptions);
     EXPECT_THROW(queueClient.PeekMessage(), StorageException);
 
     std::this_thread::sleep_for(std::chrono::milliseconds(1200));
@@ -218,7 +219,7 @@ namespace Azure { namespace Storage { namespace Test {
     queueClient.Create();
 
     const std::string message = "message content.";
-    queueClient.SendMessage(message).Value;
+    queueClient.SendMessage(message);
 
     EXPECT_NO_THROW(queueClient.ClearMessages());
     EXPECT_THROW(queueClient.PeekMessage(), StorageException);
