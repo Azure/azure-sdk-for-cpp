@@ -68,7 +68,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
      *
      * @param keyClient An existing key vault key client.
      */
-    explicit KeyClient(KeyClient const& keyClient) : m_pipeline(keyClient.m_pipeline) {}
+    explicit KeyClient(KeyClient const& keyClient) = default;
 
     /**
      * @brief Gets the public part of a stored key.
