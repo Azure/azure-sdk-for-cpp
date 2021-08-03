@@ -91,12 +91,12 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_EQ(receivedMessages[0].Body, message1);
 
     receivedMessages = queueClient.ReceiveMessages().Value;
-    EXPECT_EQ(receivedMessages.size(), 1);
+    EXPECT_EQ(receivedMessages.size(), size_t(1));
     EXPECT_EQ(receivedMessages[0].Body, message2);
 
     receiveOptions.MaxMessages = 10;
     receivedMessages = queueClient.ReceiveMessages(receiveOptions).Value;
-    EXPECT_EQ(receivedMessages.size(), 2);
+    EXPECT_EQ(receivedMessages.size(), size_t(2));
     EXPECT_EQ(receivedMessages[0].Body, message3);
     EXPECT_EQ(receivedMessages[1].Body, message4);
 
@@ -134,9 +134,9 @@ namespace Azure { namespace Storage { namespace Test {
     Queues::PeekMessagesOptions peekOptions;
     peekOptions.MaxMessages = 1;
     auto peekedMessages = queueClient.PeekMessages(peekOptions).Value;
-    EXPECT_EQ(peekedMessages.size(), 0);
+    EXPECT_TRUE(peekedMessages.empty());
     peekedMessages = queueClient.PeekMessages().Value;
-    EXPECT_EQ(peekedMessages.size(), 0);
+    EXPECT_TRUE(peekedMessages.empty());
 
     const std::string message1 = "message content.1";
     const std::string message2 = "message content.2";
@@ -154,12 +154,12 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_EQ(peekedMessages[0].Body, message1);
 
     peekedMessages = queueClient.PeekMessages().Value;
-    EXPECT_EQ(peekedMessages.size(), 1);
+    EXPECT_EQ(peekedMessages.size(), size_t(1));
     EXPECT_EQ(peekedMessages[0].Body, message1);
 
     peekOptions.MaxMessages = 10;
     peekedMessages = queueClient.PeekMessages(peekOptions).Value;
-    EXPECT_EQ(peekedMessages.size(), 4);
+    EXPECT_EQ(peekedMessages.size(), size_t(4));
     EXPECT_EQ(peekedMessages[0].Body, message1);
     EXPECT_EQ(peekedMessages[1].Body, message2);
     EXPECT_EQ(peekedMessages[2].Body, message3);
