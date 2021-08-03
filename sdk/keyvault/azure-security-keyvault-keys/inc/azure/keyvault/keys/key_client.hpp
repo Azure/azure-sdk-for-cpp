@@ -12,6 +12,9 @@
 #include "azure/keyvault/keys/key_client_models.hpp"
 #include "azure/keyvault/keys/key_client_options.hpp"
 
+#include <azure/core/http/http.hpp>
+#include <azure/core/internal/http/pipeline.hpp>
+
 #include <functional>
 #include <vector>
 
@@ -33,6 +36,9 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
   {
   protected:
     // Using a shared pipeline for a client to share it with LRO (like delete key)
+    Azure::Core::Url m_vaultUrl;
+    std::string m_apiVersion;
+    std::shared_ptr<Azure::Core::Http::_internal::HttpPipeline> m_pipelineee;
     std::shared_ptr<Azure::Security::KeyVault::_detail::KeyVaultProtocolClient> m_pipeline;
 
   public:
@@ -377,5 +383,11 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
     Azure::Response<KeyVaultKey> ImportKey(
         ImportKeyOptions const& importKeyOptions,
         Azure::Core::Context const& context = Azure::Core::Context()) const;
+
+  private:
+    Azure::Core::Http::Request CreateRequest(
+        Azure::Core::Http::HttpMethod method,
+        std::vector<std::string> const& path = {},
+        Azure::Core::IO::BodyStream* content = nullptr) const;
   };
 }}}} // namespace Azure::Security::KeyVault::Keys

@@ -21,6 +21,7 @@ using namespace Azure::Security::KeyVault::Keys;
 using namespace Azure::Core::Http;
 using namespace Azure::Core::Http::Policies;
 using namespace Azure::Core::Http::Policies::_internal;
+using namespace Azure::Core::Http::_internal;
 
 namespace {
 constexpr static const char KeyVaultServicePackageName[] = "keyvault-keys";
@@ -51,13 +52,42 @@ static inline RequestWithContinuationToken BuildRequestFromContinuationToken(
 }
 } // namespace
 
+Request KeyClient::CreateRequest(
+    HttpMethod method,
+    std::vector<std::string> const& path,
+    Azure::Core::IO::BodyStream* content) const
+{
+  Request request
+      = content == nullptr ? Request(method, m_vaultUrl) : Request(method, m_vaultUrl, content);
+
+  request.GetUrl().AppendQueryParameter("api-version", m_apiVersion);
+
+  for (std::string const& p : path)
+  {
+    if (!p.empty())
+    {
+      request.GetUrl().AppendPath(p);
+    }
+  }
+  return request;
+}
+
 KeyClient::KeyClient(
     std::string const& vaultUrl,
     std::shared_ptr<Core::Credentials::TokenCredential const> credential,
     KeyClientOptions options)
+    : m_vaultUrl(vaultUrl), m_apiVersion(options.Version.ToString())
 {
   auto apiVersion = options.Version.ToString();
 
+  std::vector<std::unique_ptr<HttpPolicy>> perRetrypoliciesOld;
+  {
+    Azure::Core::Credentials::TokenRequestContext const tokenContext
+        = {{"https://vault.azure.net/.default"}};
+
+    perRetrypoliciesOld.emplace_back(
+        std::make_unique<BearerTokenAuthenticationPolicy>(credential, tokenContext));
+  }
   std::vector<std::unique_ptr<HttpPolicy>> perRetrypolicies;
   {
     Azure::Core::Credentials::TokenRequestContext const tokenContext
@@ -66,12 +96,20 @@ KeyClient::KeyClient(
     perRetrypolicies.emplace_back(
         std::make_unique<BearerTokenAuthenticationPolicy>(credential, tokenContext));
   }
+  std::vector<std::unique_ptr<HttpPolicy>> perCallpolicies;
 
   m_pipeline = std::make_shared<Azure::Security::KeyVault::_detail::KeyVaultProtocolClient>(
       Azure::Core::Url(vaultUrl),
       apiVersion,
       Azure::Core::Http::_internal::HttpPipeline(
-          options, KeyVaultServicePackageName, apiVersion, std::move(perRetrypolicies), {}));
+          options, KeyVaultServicePackageName, apiVersion, std::move(perRetrypoliciesOld), {}));
+
+  m_pipelineee = std::make_shared<Azure::Core::Http::_internal::HttpPipeline>(
+      options,
+      KeyVaultServicePackageName,
+      m_apiVersion,
+      std::move(perRetrypolicies),
+      std::move(perCallpolicies));
 }
 
 Azure::Response<KeyVaultKey> KeyClient::GetKey(
@@ -79,13 +117,10 @@ Azure::Response<KeyVaultKey> KeyClient::GetKey(
     GetKeyOptions const& options,
     Azure::Core::Context const& context) const
 {
-  return m_pipeline->SendRequest<KeyVaultKey>(
-      context,
-      Azure::Core::Http::HttpMethod::Get,
-      [&name](Azure::Core::Http::RawResponse const& rawResponse) {
-        return _detail::KeyVaultKeySerializer::KeyVaultKeyDeserialize(name, rawResponse);
-      },
-      {_detail::KeysPath, name, options.Version});
+  auto request = CreateRequest(HttpMethod::Get, {_detail::KeysPath, name, options.Version});
+  auto rawResponse = m_pipelineee->Send(request, context);
+  auto value = _detail::KeyVaultKeySerializer::KeyVaultKeyDeserialize(name, *rawResponse);
+  return Azure::Response<KeyVaultKey>(std::move(value), std::move(rawResponse));
 }
 
 Azure::Response<KeyVaultKey> KeyClient::CreateKey(
@@ -94,14 +129,18 @@ Azure::Response<KeyVaultKey> KeyClient::CreateKey(
     CreateKeyOptions const& options,
     Azure::Core::Context const& context) const
 {
-  return m_pipeline->SendRequest<KeyVaultKey>(
-      context,
-      Azure::Core::Http::HttpMethod::Post,
-      _detail::KeyRequestParameters(keyType, options),
-      [&name](Azure::Core::Http::RawResponse const& rawResponse) {
-        return _detail::KeyVaultKeySerializer::KeyVaultKeyDeserialize(name, rawResponse);
-      },
-      {_detail::KeysPath, name, "create"});
+  _detail::KeyRequestParameters const params(keyType, options);
+  auto payload = params.Serialize();
+  Azure::Core::IO::MemoryBodyStream payloadStream(
+      reinterpret_cast<const uint8_t*>(payload.data()), payload.size());
+
+  auto request
+      = CreateRequest(HttpMethod::Post, {_detail::KeysPath, name, "create"}, &payloadStream);
+  request.SetHeader(HttpShared::ContentType, HttpShared::ApplicationJson);
+
+  auto rawResponse = m_pipelineee->Send(request, context);
+  auto value = _detail::KeyVaultKeySerializer::KeyVaultKeyDeserialize(name, *rawResponse);
+  return Azure::Response<KeyVaultKey>(std::move(value), std::move(rawResponse));
 }
 
 Azure::Response<KeyVaultKey> KeyClient::CreateEcKey(
@@ -109,14 +148,17 @@ Azure::Response<KeyVaultKey> KeyClient::CreateEcKey(
     Azure::Core::Context const& context) const
 {
   std::string const& keyName = ecKeyOptions.GetName();
-  return m_pipeline->SendRequest<KeyVaultKey>(
-      context,
-      Azure::Core::Http::HttpMethod::Post,
-      _detail::KeyRequestParameters(ecKeyOptions),
-      [&keyName](Azure::Core::Http::RawResponse const& rawResponse) {
-        return _detail::KeyVaultKeySerializer::KeyVaultKeyDeserialize(keyName, rawResponse);
-      },
-      {_detail::KeysPath, keyName, "create"});
+  auto payload = _detail::KeyRequestParameters(ecKeyOptions).Serialize();
+  Azure::Core::IO::MemoryBodyStream payloadStream(
+      reinterpret_cast<const uint8_t*>(payload.data()), payload.size());
+
+  auto request
+      = CreateRequest(HttpMethod::Post, {_detail::KeysPath, keyName, "create"}, &payloadStream);
+  request.SetHeader(HttpShared::ContentType, HttpShared::ApplicationJson);
+
+  auto rawResponse = m_pipelineee->Send(request, context);
+  auto value = _detail::KeyVaultKeySerializer::KeyVaultKeyDeserialize(keyName, *rawResponse);
+  return Azure::Response<KeyVaultKey>(std::move(value), std::move(rawResponse));
 }
 
 Azure::Response<KeyVaultKey> KeyClient::CreateRsaKey(
@@ -124,14 +166,17 @@ Azure::Response<KeyVaultKey> KeyClient::CreateRsaKey(
     Azure::Core::Context const& context) const
 {
   std::string const& keyName = rsaKeyOptions.GetName();
-  return m_pipeline->SendRequest<KeyVaultKey>(
-      context,
-      Azure::Core::Http::HttpMethod::Post,
-      _detail::KeyRequestParameters(rsaKeyOptions),
-      [&keyName](Azure::Core::Http::RawResponse const& rawResponse) {
-        return _detail::KeyVaultKeySerializer::KeyVaultKeyDeserialize(keyName, rawResponse);
-      },
-      {_detail::KeysPath, keyName, "create"});
+  auto payload = _detail::KeyRequestParameters(rsaKeyOptions).Serialize();
+  Azure::Core::IO::MemoryBodyStream payloadStream(
+      reinterpret_cast<const uint8_t*>(payload.data()), payload.size());
+
+  auto request
+      = CreateRequest(HttpMethod::Post, {_detail::KeysPath, keyName, "create"}, &payloadStream);
+  request.SetHeader(HttpShared::ContentType, HttpShared::ApplicationJson);
+
+  auto rawResponse = m_pipelineee->Send(request, context);
+  auto value = _detail::KeyVaultKeySerializer::KeyVaultKeyDeserialize(keyName, *rawResponse);
+  return Azure::Response<KeyVaultKey>(std::move(value), std::move(rawResponse));
 }
 
 Azure::Response<KeyVaultKey> KeyClient::CreateOctKey(
@@ -139,14 +184,17 @@ Azure::Response<KeyVaultKey> KeyClient::CreateOctKey(
     Azure::Core::Context const& context) const
 {
   std::string const& keyName = octKeyOptions.GetName();
-  return m_pipeline->SendRequest<KeyVaultKey>(
-      context,
-      Azure::Core::Http::HttpMethod::Post,
-      _detail::KeyRequestParameters(octKeyOptions),
-      [&keyName](Azure::Core::Http::RawResponse const& rawResponse) {
-        return _detail::KeyVaultKeySerializer::KeyVaultKeyDeserialize(keyName, rawResponse);
-      },
-      {_detail::KeysPath, keyName, "create"});
+  auto payload = _detail::KeyRequestParameters(octKeyOptions).Serialize();
+  Azure::Core::IO::MemoryBodyStream payloadStream(
+      reinterpret_cast<const uint8_t*>(payload.data()), payload.size());
+
+  auto request
+      = CreateRequest(HttpMethod::Post, {_detail::KeysPath, keyName, "create"}, &payloadStream);
+  request.SetHeader(HttpShared::ContentType, HttpShared::ApplicationJson);
+
+  auto rawResponse = m_pipelineee->Send(request, context);
+  auto value = _detail::KeyVaultKeySerializer::KeyVaultKeyDeserialize(keyName, *rawResponse);
+  return Azure::Response<KeyVaultKey>(std::move(value), std::move(rawResponse));
 }
 
 KeyPropertiesPagedResponse KeyClient::GetPropertiesOfKeys(

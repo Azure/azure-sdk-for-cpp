@@ -108,6 +108,11 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys { nam
           Azure::Core::Url(vaultUrl),
           apiVersion,
           Azure::Core::Http::_internal::HttpPipeline(options, "test", "version", {}, {}));
+
+      std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>> perCallpolicies;
+      std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>> perRetrypolicies;
+      m_pipelineee = std::make_unique<Azure::Core::Http::_internal::HttpPipeline>(
+          options, "test", "version", std::move(perRetrypolicies), std::move(perCallpolicies));
     }
   };
 
