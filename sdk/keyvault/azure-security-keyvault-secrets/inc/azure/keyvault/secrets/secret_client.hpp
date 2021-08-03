@@ -11,6 +11,7 @@
 #include "azure/keyvault/secrets/keyvault_backup_secret.hpp"
 #include "azure/keyvault/secrets/keyvault_deleted_secret.hpp"
 #include "azure/keyvault/secrets/keyvault_secret.hpp"
+#include "azure/keyvault/secrets/keyvault_secret_paged_response.hpp"
 #include "dll_import_export.hpp"
 #include <azure/core/http/http.hpp>
 #include <azure/core/internal/http/pipeline.hpp>
@@ -101,6 +102,35 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
      */
     std::string Version;
   };
+
+  /**
+   * @brief The options for calling an operation #GetPropertiesOfSecrets.
+   *
+   */
+  struct GetPropertiesOfSecretsOptions final
+  {
+    Azure::Nullable<size_t> MaxResults;
+    Azure::Nullable<std::string> NextPageToken;
+  };
+
+  /**
+   * @brief The options for calling an operation #GetPropertiesOfSecretVersions.
+   *
+   */
+  struct GetPropertiesOfSecretVersionsOptions final
+  {
+    Azure::Nullable<std::string> NextPageToken;
+  };
+
+  /**
+   * @brief The options for calling an operation #GetDeletedSecrets.
+   *
+   */
+  struct GetDeletedSecretsOptions final
+  {
+    Azure::Nullable<std::string> NextPageToken;
+  };
+
   /**
    * @brief The SecretClient provides synchronous methods to manage a secret in the Azure Key
    * Vault. The client supports creating, retrieving, updating, deleting, purging, backing up,
@@ -265,6 +295,21 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
     Azure::Response<KeyVaultSecret> RestoreSecretBackup(
         std::vector<uint8_t> const& backup,
         Azure::Core::Context const& context = Azure::Core::Context()) const;
+
+    KeyVaultSecretPropertiesPagedResponse GetPropertiesOfSecrets(
+        GetPropertiesOfSecretsOptions const& options = GetPropertiesOfSecretsOptions(),
+        Azure::Core::Context const& context = Azure::Core::Context()) const;
+
+    /* KeyVaultSecretPropertiesPagedResponse GetPropertiesOfSecretsVersions(
+          std::string const& name,
+          GetPropertiesOfSecretVersionsOptions const& options
+          = GetPropertiesOfSecretVersionsOptions(),
+          Azure::Core::Context const& context = Azure::Core::Context()) const;*/
+    /*
+        DeletedKeyPagedResponse GetDeletedKeys(
+        GetDeletedKeysOptions const& options = GetDeletedKeysOptions(),
+        Azure::Core::Context const& context = Azure::Core::Context()) const;
+    */
   };
 
 }}}} // namespace Azure::Security::KeyVault::Secrets

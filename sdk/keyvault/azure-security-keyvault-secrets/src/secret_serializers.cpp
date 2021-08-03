@@ -257,3 +257,21 @@ std::string KeyvaultRestoreSecretSerializer::KeyvaultRestoreSecretSerialize(
   payload[_detail::ValuePropertyName] = Base64Url::Base64UrlEncode(backup);
   return payload.dump();
 }
+
+KeyVaultSecretPropertiesPagedResponse
+KeyVaultSecretPropertiesPagedResultSerializer::KeyVaultSecretPropertiesPagedResponseDeserialize(
+    Azure::Core::Http::RawResponse const& rawResponse)
+{
+  using Azure::Core::_internal::PosixTimeConverter;
+
+  KeyVaultSecretPropertiesPagedResponse result;
+  auto const& body = rawResponse.GetBody();
+  auto jsonParser = json::parse(body);
+
+  JsonOptional::SetIfExists(result.NextPageToken, jsonParser, "nextLink");
+
+  // Key properties
+  auto keyPropertiesJson = jsonParser["value"];
+
+  return result;
+}

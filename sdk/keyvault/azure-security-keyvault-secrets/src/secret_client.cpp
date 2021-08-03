@@ -25,7 +25,33 @@ using namespace Azure::Core::Http::Policies::_internal;
 
 namespace {
 constexpr static const char TelemetryName[] = "keyvault-secrets";
+
+struct RequestWithContinuationToken final
+{
+  std::vector<std::string> Path;
+  std::unique_ptr<std::map<std::string, std::string>> Query;
+};
+
+static inline RequestWithContinuationToken BuildRequestFromContinuationToken(
+    const Azure::Nullable<std::string>& NextPageToken,
+    std::vector<std::string> defaultPath)
+{
+  RequestWithContinuationToken request;
+  request.Path = std::move(defaultPath);
+  request.Query = std::make_unique<std::map<std::string, std::string>>();
+  if (NextPageToken)
+  {
+    // Using a continuation token requires to send the request to the continuation token URL instead
+    // of the default URL which is used only for the first page.
+    Azure::Core::Url nextPageUrl(NextPageToken.Value());
+    auto queryParameters = nextPageUrl.GetQueryParameters();
+    request.Query->insert(queryParameters.begin(), queryParameters.end());
+    request.Path.clear();
+    request.Path.emplace_back(nextPageUrl.GetPath());
+  }
+  return request;
 }
+} // namespace
 
 const ServiceVersion ServiceVersion::V7_2("7.2");
 
@@ -164,3 +190,40 @@ Azure::Response<KeyVaultSecret> SecretClient::RestoreSecretBackup(
       },
       {_detail::SecretPath, _detail::RestoreSecretPath});
 }
+
+KeyVaultSecretPropertiesPagedResponse SecretClient::GetPropertiesOfSecrets(
+    GetPropertiesOfSecretsOptions const& options,
+    Azure::Core::Context const& context) const
+{
+  auto const request
+      = BuildRequestFromContinuationToken(options.NextPageToken, {_detail::SecretPath});
+  size_t maxResults = _detail::PagedMaxResults;
+  if (options.MaxResults.HasValue() && (options.MaxResults.Value() <= _detail::PagedMaxResults))
+  {
+    maxResults = options.MaxResults.Value();
+  }
+
+  request.Query->emplace(_detail::PagedMaxResultsName, std::to_string(maxResults));
+
+  auto response = m_protocolClient->SendRequest<KeyVaultSecretPropertiesPagedResponse>(
+      context,
+      Azure::Core::Http::HttpMethod::Get,
+      [](Azure::Core::Http::RawResponse const& rawResponse) {
+        return _detail::KeyVaultSecretPropertiesPagedResultSerializer::
+            KeyVaultSecretPropertiesPagedResponseDeserialize(rawResponse);
+      },
+      request.Path,
+      request.Query);
+
+  return KeyVaultSecretPropertiesPagedResponse(
+      std::move(response.Value),
+      std::move(response.RawResponse),
+      std::make_unique<SecretClient>(*this));
+}
+/*
+KeyVaultSecretPropertiesPagedResponse SecretClient::GetPropertiesOfSecretsVersions(
+    std::string const& name,
+    GetPropertiesOfSecretVersionsOptions const& options,
+    Azure::Core::Context const& context) const
+{
+}*/

@@ -11,6 +11,7 @@
 #include "azure/keyvault/secrets/keyvault_backup_secret.hpp"
 #include "azure/keyvault/secrets/keyvault_deleted_secret.hpp"
 #include "azure/keyvault/secrets/keyvault_secret.hpp"
+#include "azure/keyvault/secrets/keyvault_secret_paged_response.hpp"
 #include <azure/core/http/http.hpp>
 #include <azure/core/internal/json/json.hpp>
 #include <stdint.h>
@@ -116,5 +117,13 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets { 
   struct KeyvaultRestoreSecretSerializer final
   {
     static std::string KeyvaultRestoreSecretSerialize(std::vector<uint8_t> const& backup);
+  };
+
+  class KeyVaultSecretPropertiesPagedResultSerializer final {
+  public:
+    static KeyVaultSecretPropertiesPagedResponse KeyVaultSecretPropertiesPagedResponseDeserialize(
+        Azure::Core::Http::RawResponse const& rawResponse);
+    /* static DeletedKeyPagedResponse DeletedKeyPagedResultDeserialize(
+        Azure::Core::Http::RawResponse const& rawResponse);*/
   };
 }}}}} // namespace Azure::Security::KeyVault::Secrets::_detail
