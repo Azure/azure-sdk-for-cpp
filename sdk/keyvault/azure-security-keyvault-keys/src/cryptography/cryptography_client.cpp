@@ -28,6 +28,7 @@ using namespace Azure::Security::KeyVault::Keys::Cryptography::_detail;
 using namespace Azure::Core::Http;
 using namespace Azure::Core::Http::Policies;
 using namespace Azure::Core::Http::Policies::_internal;
+using namespace Azure::Core::Http::_internal;
 
 namespace {
 // 1Mb at a time
@@ -58,6 +59,15 @@ inline std::vector<uint8_t> CreateDigest(
 }
 } // namespace
 
+Request CryptographyClient::CreateRequest(
+    HttpMethod method,
+    std::vector<std::string> const& path,
+    Azure::Core::IO::BodyStream* content) const
+{
+  return Azure::Security::KeyVault::_detail::KeyVaultKeysCommonRequest::CreateRequest(
+      m_keyId, m_apiVersion, method, path, content);
+}
+
 CryptographyClient::~CryptographyClient() = default;
 
 CryptographyClient::CryptographyClient(
@@ -65,8 +75,8 @@ CryptographyClient::CryptographyClient(
     std::shared_ptr<Core::Credentials::TokenCredential const> credential,
     CryptographyClientOptions const& options)
 {
-  auto apiVersion = options.Version.ToString();
   m_keyId = Azure::Core::Url(keyId);
+  m_apiVersion = options.Version.ToString();
   std::vector<std::unique_ptr<HttpPolicy>> perRetrypolicies;
   {
     Azure::Core::Credentials::TokenRequestContext const tokenContext
@@ -75,30 +85,41 @@ CryptographyClient::CryptographyClient(
     perRetrypolicies.emplace_back(
         std::make_unique<BearerTokenAuthenticationPolicy>(credential, tokenContext));
   }
+  std::vector<std::unique_ptr<HttpPolicy>> perCallpolicies;
 
   m_pipeline = std::make_shared<Azure::Security::KeyVault::_detail::KeyVaultProtocolClient>(
       m_keyId,
-      apiVersion,
+      m_apiVersion,
       Azure::Core::Http::_internal::HttpPipeline(
-          options, "KeyVault", apiVersion, std::move(perRetrypolicies), {}));
+          options, "KeyVault", m_apiVersion, std::move(perRetrypolicies), {}));
+
+  m_pipelineeee = std::make_shared<Azure::Core::Http::_internal::HttpPipeline>(
+      options,
+      "KeyVault",
+      options.Version.ToString(),
+      std::move(perRetrypolicies),
+      std::move(perCallpolicies));
 }
 
 Azure::Response<EncryptResult> CryptographyClient::Encrypt(
     EncryptParameters const& parameters,
     Azure::Core::Context const& context)
 {
-  return m_pipeline->SendRequest<EncryptResult>(
-      context,
-      Azure::Core::Http::HttpMethod::Post,
-      [&parameters]() {
-        return EncryptParametersSerializer::EncryptParametersSerialize(parameters);
-      },
-      [&parameters](Azure::Core::Http::RawResponse const& rawResponse) {
-        auto result = EncryptResultSerializer::EncryptResultDeserialize(rawResponse);
-        result.Algorithm = parameters.Algorithm;
-        return result;
-      },
-      {"encrypt"});
+  // Payload for the request
+  auto payload = EncryptParametersSerializer::EncryptParametersSerialize(parameters);
+  Azure::Core::IO::MemoryBodyStream payloadStream(
+      reinterpret_cast<const uint8_t*>(payload.data()), payload.size());
+
+  // Request and settings
+  auto request = CreateRequest(HttpMethod::Post, {"encrypt"}, &payloadStream);
+  request.SetHeader(HttpShared::ContentType, HttpShared::ApplicationJson);
+  request.SetHeader(HttpShared::Accept, HttpShared::ApplicationJson);
+
+  // Send and parse respone
+  auto rawResponse = m_pipelineeee->Send(request, context);
+  auto value = EncryptResultSerializer::EncryptResultDeserialize(*rawResponse);
+  value.Algorithm = parameters.Algorithm;
+  return Azure::Response<EncryptResult>(std::move(value), std::move(rawResponse));
 }
 
 Azure::Response<DecryptResult> CryptographyClient::Decrypt(

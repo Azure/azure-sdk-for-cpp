@@ -9,12 +9,14 @@
 
 #pragma once
 
-#include <azure/core/context.hpp>
-#include <azure/core/io/body_stream.hpp>
-#include <azure/core/response.hpp>
-
 #include "azure/keyvault/keys/cryptography/cryptography_client_models.hpp"
 #include "azure/keyvault/keys/cryptography/cryptography_client_options.hpp"
+
+#include <azure/core/context.hpp>
+#include <azure/core/http/http.hpp>
+#include <azure/core/internal/http/pipeline.hpp>
+#include <azure/core/io/body_stream.hpp>
+#include <azure/core/response.hpp>
 
 #include <memory>
 #include <string>
@@ -33,9 +35,17 @@ namespace Azure { namespace Security { namespace KeyVault {
      *
      */
     class CryptographyClient final {
-    private:
+    protected:
       std::shared_ptr<Azure::Security::KeyVault::_detail::KeyVaultProtocolClient> m_pipeline;
       Azure::Core::Url m_keyId;
+
+      std::string m_apiVersion;
+      std::shared_ptr<Azure::Core::Http::_internal::HttpPipeline> m_pipelineeee;
+
+      Azure::Core::Http::Request CreateRequest(
+          Azure::Core::Http::HttpMethod method,
+          std::vector<std::string> const& path = {},
+          Azure::Core::IO::BodyStream* content = nullptr) const;
 
     public:
       /**

@@ -23,6 +23,16 @@
 
 namespace Azure { namespace Security { namespace KeyVault { namespace _detail {
 
+  struct KeyVaultKeysCommonRequest final
+  {
+    static Azure::Core::Http::Request CreateRequest(
+        Azure::Core::Url url,
+        std::string const& apiVersion,
+        Azure::Core::Http::HttpMethod method,
+        std::vector<std::string> const& path,
+        Azure::Core::IO::BodyStream* content);
+  };
+
   /**
    * @brief The Protocol layer used by Key Vault clients.
    *

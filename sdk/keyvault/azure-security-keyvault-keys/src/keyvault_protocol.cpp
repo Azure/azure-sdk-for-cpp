@@ -61,3 +61,25 @@ std::unique_ptr<Azure::Core::Http::RawResponse> _detail::KeyVaultProtocolClient:
   }
   return response;
 }
+
+Azure::Core::Http::Request _detail::KeyVaultKeysCommonRequest::CreateRequest(
+    Azure::Core::Url url,
+    std::string const& apiVersion,
+    Azure::Core::Http::HttpMethod method,
+    std::vector<std::string> const& path,
+    Azure::Core::IO::BodyStream* content)
+{
+  using namespace Azure::Core::Http;
+  Request request = content == nullptr ? Request(method, url) : Request(method, url, content);
+
+  request.GetUrl().AppendQueryParameter("api-version", apiVersion);
+
+  for (std::string const& p : path)
+  {
+    if (!p.empty())
+    {
+      request.GetUrl().AppendPath(p);
+    }
+  }
+  return request;
+}

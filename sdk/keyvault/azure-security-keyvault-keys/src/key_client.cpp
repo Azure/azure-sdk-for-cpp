@@ -32,19 +32,8 @@ Request KeyClient::CreateRequest(
     std::vector<std::string> const& path,
     Azure::Core::IO::BodyStream* content) const
 {
-  Request request
-      = content == nullptr ? Request(method, m_vaultUrl) : Request(method, m_vaultUrl, content);
-
-  request.GetUrl().AppendQueryParameter("api-version", m_apiVersion);
-
-  for (std::string const& p : path)
-  {
-    if (!p.empty())
-    {
-      request.GetUrl().AppendPath(p);
-    }
-  }
-  return request;
+  return Azure::Security::KeyVault::_detail::KeyVaultKeysCommonRequest::CreateRequest(
+      m_vaultUrl, m_apiVersion, method, path, content);
 }
 
 Request KeyClient::ContinuationTokenRequest(

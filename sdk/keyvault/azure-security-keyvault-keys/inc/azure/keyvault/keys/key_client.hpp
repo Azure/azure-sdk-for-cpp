@@ -12,8 +12,11 @@
 #include "azure/keyvault/keys/key_client_models.hpp"
 #include "azure/keyvault/keys/key_client_options.hpp"
 
+#include <azure/core/context.hpp>
 #include <azure/core/http/http.hpp>
 #include <azure/core/internal/http/pipeline.hpp>
+#include <azure/core/io/body_stream.hpp>
+#include <azure/core/response.hpp>
 
 #include <functional>
 #include <vector>
