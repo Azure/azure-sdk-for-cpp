@@ -568,10 +568,8 @@ namespace Azure { namespace Storage { namespace Queues {
           auto pHttpResponse = pipeline.Send(request, context);
           Azure::Core::Http::RawResponse& httpResponse = *pHttpResponse;
           Models::_detail::ListQueuesResult response;
-          auto http_status_code
-              = static_cast<std::underlying_type<Azure::Core::Http::HttpStatusCode>::type>(
-                  httpResponse.GetStatusCode());
-          if (!(http_status_code == 200))
+          auto http_status_code = httpResponse.GetStatusCode();
+          if (http_status_code != Azure::Core::Http::HttpStatusCode::Ok)
           {
             throw StorageException::CreateFromResponse(std::move(pHttpResponse));
           }
@@ -608,10 +606,8 @@ namespace Azure { namespace Storage { namespace Queues {
           auto pHttpResponse = pipeline.Send(request, context);
           Azure::Core::Http::RawResponse& httpResponse = *pHttpResponse;
           QueueServiceProperties response;
-          auto http_status_code
-              = static_cast<std::underlying_type<Azure::Core::Http::HttpStatusCode>::type>(
-                  httpResponse.GetStatusCode());
-          if (!(http_status_code == 200))
+          auto http_status_code = httpResponse.GetStatusCode();
+          if (http_status_code != Azure::Core::Http::HttpStatusCode::Ok)
           {
             throw StorageException::CreateFromResponse(std::move(pHttpResponse));
           }
@@ -660,10 +656,8 @@ namespace Azure { namespace Storage { namespace Queues {
           auto pHttpResponse = pipeline.Send(request, context);
           Azure::Core::Http::RawResponse& httpResponse = *pHttpResponse;
           SetServicePropertiesResult response;
-          auto http_status_code
-              = static_cast<std::underlying_type<Azure::Core::Http::HttpStatusCode>::type>(
-                  httpResponse.GetStatusCode());
-          if (!(http_status_code == 202))
+          auto http_status_code = httpResponse.GetStatusCode();
+          if (http_status_code != Azure::Core::Http::HttpStatusCode::Accepted)
           {
             throw StorageException::CreateFromResponse(std::move(pHttpResponse));
           }
@@ -694,10 +688,8 @@ namespace Azure { namespace Storage { namespace Queues {
           auto pHttpResponse = pipeline.Send(request, context);
           Azure::Core::Http::RawResponse& httpResponse = *pHttpResponse;
           ServiceStatistics response;
-          auto http_status_code
-              = static_cast<std::underlying_type<Azure::Core::Http::HttpStatusCode>::type>(
-                  httpResponse.GetStatusCode());
-          if (!(http_status_code == 200))
+          auto http_status_code = httpResponse.GetStatusCode();
+          if (http_status_code != Azure::Core::Http::HttpStatusCode::Ok)
           {
             throw StorageException::CreateFromResponse(std::move(pHttpResponse));
           }
@@ -1569,10 +1561,9 @@ namespace Azure { namespace Storage { namespace Queues {
           auto pHttpResponse = pipeline.Send(request, context);
           Azure::Core::Http::RawResponse& httpResponse = *pHttpResponse;
           CreateQueueResult response;
-          auto http_status_code
-              = static_cast<std::underlying_type<Azure::Core::Http::HttpStatusCode>::type>(
-                  httpResponse.GetStatusCode());
-          if (!(http_status_code == 201 || http_status_code == 204))
+          auto http_status_code = httpResponse.GetStatusCode();
+          if (!(http_status_code == Azure::Core::Http::HttpStatusCode::Created
+                || http_status_code == Azure::Core::Http::HttpStatusCode::NoContent))
           {
             throw StorageException::CreateFromResponse(std::move(pHttpResponse));
           }
@@ -1600,10 +1591,8 @@ namespace Azure { namespace Storage { namespace Queues {
           auto pHttpResponse = pipeline.Send(request, context);
           Azure::Core::Http::RawResponse& httpResponse = *pHttpResponse;
           DeleteQueueResult response;
-          auto http_status_code
-              = static_cast<std::underlying_type<Azure::Core::Http::HttpStatusCode>::type>(
-                  httpResponse.GetStatusCode());
-          if (!(http_status_code == 204))
+          auto http_status_code = httpResponse.GetStatusCode();
+          if (http_status_code != Azure::Core::Http::HttpStatusCode::NoContent)
           {
             throw StorageException::CreateFromResponse(std::move(pHttpResponse));
           }
@@ -1638,10 +1627,8 @@ namespace Azure { namespace Storage { namespace Queues {
           auto pHttpResponse = pipeline.Send(request, context);
           Azure::Core::Http::RawResponse& httpResponse = *pHttpResponse;
           SetQueueMetadataResult response;
-          auto http_status_code
-              = static_cast<std::underlying_type<Azure::Core::Http::HttpStatusCode>::type>(
-                  httpResponse.GetStatusCode());
-          if (!(http_status_code == 204))
+          auto http_status_code = httpResponse.GetStatusCode();
+          if (http_status_code != Azure::Core::Http::HttpStatusCode::NoContent)
           {
             throw StorageException::CreateFromResponse(std::move(pHttpResponse));
           }
@@ -1671,10 +1658,8 @@ namespace Azure { namespace Storage { namespace Queues {
           auto pHttpResponse = pipeline.Send(request, context);
           Azure::Core::Http::RawResponse& httpResponse = *pHttpResponse;
           QueueProperties response;
-          auto http_status_code
-              = static_cast<std::underlying_type<Azure::Core::Http::HttpStatusCode>::type>(
-                  httpResponse.GetStatusCode());
-          if (!(http_status_code == 200))
+          auto http_status_code = httpResponse.GetStatusCode();
+          if (http_status_code != Azure::Core::Http::HttpStatusCode::Ok)
           {
             throw StorageException::CreateFromResponse(std::move(pHttpResponse));
           }
@@ -1711,10 +1696,8 @@ namespace Azure { namespace Storage { namespace Queues {
           auto pHttpResponse = pipeline.Send(request, context);
           Azure::Core::Http::RawResponse& httpResponse = *pHttpResponse;
           QueueAccessPolicy response;
-          auto http_status_code
-              = static_cast<std::underlying_type<Azure::Core::Http::HttpStatusCode>::type>(
-                  httpResponse.GetStatusCode());
-          if (!(http_status_code == 200))
+          auto http_status_code = httpResponse.GetStatusCode();
+          if (http_status_code != Azure::Core::Http::HttpStatusCode::Ok)
           {
             throw StorageException::CreateFromResponse(std::move(pHttpResponse));
           }
@@ -1761,10 +1744,8 @@ namespace Azure { namespace Storage { namespace Queues {
           auto pHttpResponse = pipeline.Send(request, context);
           Azure::Core::Http::RawResponse& httpResponse = *pHttpResponse;
           SetQueueAccessPolicyResult response;
-          auto http_status_code
-              = static_cast<std::underlying_type<Azure::Core::Http::HttpStatusCode>::type>(
-                  httpResponse.GetStatusCode());
-          if (!(http_status_code == 204))
+          auto http_status_code = httpResponse.GetStatusCode();
+          if (http_status_code != Azure::Core::Http::HttpStatusCode::NoContent)
           {
             throw StorageException::CreateFromResponse(std::move(pHttpResponse));
           }
@@ -1817,10 +1798,8 @@ namespace Azure { namespace Storage { namespace Queues {
           auto pHttpResponse = pipeline.Send(request, context);
           Azure::Core::Http::RawResponse& httpResponse = *pHttpResponse;
           SendMessageResult response;
-          auto http_status_code
-              = static_cast<std::underlying_type<Azure::Core::Http::HttpStatusCode>::type>(
-                  httpResponse.GetStatusCode());
-          if (!(http_status_code == 201))
+          auto http_status_code = httpResponse.GetStatusCode();
+          if (http_status_code != Azure::Core::Http::HttpStatusCode::Created)
           {
             throw StorageException::CreateFromResponse(std::move(pHttpResponse));
           }
@@ -1866,10 +1845,8 @@ namespace Azure { namespace Storage { namespace Queues {
           auto pHttpResponse = pipeline.Send(request, context);
           Azure::Core::Http::RawResponse& httpResponse = *pHttpResponse;
           Models::_detail::ReceiveMessagesResult response;
-          auto http_status_code
-              = static_cast<std::underlying_type<Azure::Core::Http::HttpStatusCode>::type>(
-                  httpResponse.GetStatusCode());
-          if (!(http_status_code == 200))
+          auto http_status_code = httpResponse.GetStatusCode();
+          if (http_status_code != Azure::Core::Http::HttpStatusCode::Ok)
           {
             throw StorageException::CreateFromResponse(std::move(pHttpResponse));
           }
@@ -1911,10 +1888,8 @@ namespace Azure { namespace Storage { namespace Queues {
           auto pHttpResponse = pipeline.Send(request, context);
           Azure::Core::Http::RawResponse& httpResponse = *pHttpResponse;
           Models::_detail::PeekMessagesResult response;
-          auto http_status_code
-              = static_cast<std::underlying_type<Azure::Core::Http::HttpStatusCode>::type>(
-                  httpResponse.GetStatusCode());
-          if (!(http_status_code == 200))
+          auto http_status_code = httpResponse.GetStatusCode();
+          if (http_status_code != Azure::Core::Http::HttpStatusCode::Ok)
           {
             throw StorageException::CreateFromResponse(std::move(pHttpResponse));
           }
@@ -1952,10 +1927,8 @@ namespace Azure { namespace Storage { namespace Queues {
           auto pHttpResponse = pipeline.Send(request, context);
           Azure::Core::Http::RawResponse& httpResponse = *pHttpResponse;
           DeleteMessageResult response;
-          auto http_status_code
-              = static_cast<std::underlying_type<Azure::Core::Http::HttpStatusCode>::type>(
-                  httpResponse.GetStatusCode());
-          if (!(http_status_code == 204))
+          auto http_status_code = httpResponse.GetStatusCode();
+          if (http_status_code != Azure::Core::Http::HttpStatusCode::NoContent)
           {
             throw StorageException::CreateFromResponse(std::move(pHttpResponse));
           }
@@ -1984,10 +1957,8 @@ namespace Azure { namespace Storage { namespace Queues {
           auto pHttpResponse = pipeline.Send(request, context);
           Azure::Core::Http::RawResponse& httpResponse = *pHttpResponse;
           ClearMessagesResult response;
-          auto http_status_code
-              = static_cast<std::underlying_type<Azure::Core::Http::HttpStatusCode>::type>(
-                  httpResponse.GetStatusCode());
-          if (!(http_status_code == 204))
+          auto http_status_code = httpResponse.GetStatusCode();
+          if (http_status_code != Azure::Core::Http::HttpStatusCode::NoContent)
           {
             throw StorageException::CreateFromResponse(std::move(pHttpResponse));
           }
@@ -2023,10 +1994,8 @@ namespace Azure { namespace Storage { namespace Queues {
           auto pHttpResponse = pipeline.Send(request, context);
           Azure::Core::Http::RawResponse& httpResponse = *pHttpResponse;
           UpdateMessageResult response;
-          auto http_status_code
-              = static_cast<std::underlying_type<Azure::Core::Http::HttpStatusCode>::type>(
-                  httpResponse.GetStatusCode());
-          if (!(http_status_code == 204))
+          auto http_status_code = httpResponse.GetStatusCode();
+          if (http_status_code != Azure::Core::Http::HttpStatusCode::NoContent)
           {
             throw StorageException::CreateFromResponse(std::move(pHttpResponse));
           }
@@ -2077,10 +2046,8 @@ namespace Azure { namespace Storage { namespace Queues {
           auto pHttpResponse = pipeline.Send(request, context);
           Azure::Core::Http::RawResponse& httpResponse = *pHttpResponse;
           UpdateMessageResult response;
-          auto http_status_code
-              = static_cast<std::underlying_type<Azure::Core::Http::HttpStatusCode>::type>(
-                  httpResponse.GetStatusCode());
-          if (!(http_status_code == 204))
+          auto http_status_code = httpResponse.GetStatusCode();
+          if (http_status_code != Azure::Core::Http::HttpStatusCode::NoContent)
           {
             throw StorageException::CreateFromResponse(std::move(pHttpResponse));
           }
