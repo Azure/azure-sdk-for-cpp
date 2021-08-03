@@ -42,10 +42,16 @@ namespace Azure { namespace Security { namespace KeyVault {
       std::string m_apiVersion;
       std::shared_ptr<Azure::Core::Http::_internal::HttpPipeline> m_pipelineeee;
 
+    private:
       Azure::Core::Http::Request CreateRequest(
           Azure::Core::Http::HttpMethod method,
           std::vector<std::string> const& path = {},
           Azure::Core::IO::BodyStream* content = nullptr) const;
+
+      std::unique_ptr<Azure::Core::Http::RawResponse> SendCryptoRequest(
+          std::vector<std::string> const& path,
+          std::string const& payload,
+          Azure::Core::Context const& context) const;
 
     public:
       /**
