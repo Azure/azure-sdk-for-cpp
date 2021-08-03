@@ -38,8 +38,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
     // Using a shared pipeline for a client to share it with LRO (like delete key)
     Azure::Core::Url m_vaultUrl;
     std::string m_apiVersion;
-    std::shared_ptr<Azure::Core::Http::_internal::HttpPipeline> m_pipelineee;
-    std::shared_ptr<Azure::Security::KeyVault::_detail::KeyVaultProtocolClient> m_pipeline;
+    std::shared_ptr<Azure::Core::Http::_internal::HttpPipeline> m_pipeline;
 
   public:
     /**
@@ -389,5 +388,9 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
         Azure::Core::Http::HttpMethod method,
         std::vector<std::string> const& path = {},
         Azure::Core::IO::BodyStream* content = nullptr) const;
+
+    Azure::Core::Http::Request ContinuationTokenRequest(
+        std::vector<std::string> const& path,
+        const Azure::Nullable<std::string>& NextPageToken) const;
   };
 }}}} // namespace Azure::Security::KeyVault::Keys
