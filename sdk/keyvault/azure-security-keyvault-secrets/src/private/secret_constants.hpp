@@ -9,6 +9,8 @@
 
 #pragma once
 
+#include <cstddef>
+
 namespace Azure { namespace Security { namespace KeyVault { namespace Secrets { namespace _detail {
 
   /***************** KeyVault Secret *****************/
@@ -43,7 +45,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets { 
   static constexpr char const ApiVersion[] = "api-version";
 
   /**************** KeyVault Secrets Paged  *********/
-  static constexpr size_t const PagedMaxResults = 25;
+  static constexpr size_t PagedMaxResults = 25;
   static constexpr char const PagedMaxResultsName[] = "maxresults";
   static constexpr char const VersionsName[] = "versions";
 

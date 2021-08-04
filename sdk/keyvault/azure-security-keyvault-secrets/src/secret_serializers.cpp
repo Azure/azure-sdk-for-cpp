@@ -420,4 +420,4 @@ KeyVaultSecretDeletedSecretPagedResultSerializer::KeyVaultSecretDeletedSecretPag
   }
 
   return result;
-};
+}
