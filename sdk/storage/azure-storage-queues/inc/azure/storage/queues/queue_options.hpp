@@ -11,12 +11,25 @@
 
 namespace Azure { namespace Storage { namespace Queues {
 
+  /**
+   * Determines how message body is represented in HTTP requests and responses.
+   */
   enum class QueueMessageEncoding
   {
+    /**
+     * Message body is represented verbatim in HTTP requests and responses. I.e. message is not
+     * transformed.
+     */
     None,
+    /**
+     * Message body is represented as Base64 encoded string in HTTP requests and responses.
+     */
     Base64,
   };
 
+  /**
+   * @brief Client options used to initialize all kinds of queue clients.
+   */
   struct QueueClientOptions final : Azure::Core::_internal::ClientOptions
   {
     /**
@@ -39,29 +52,61 @@ namespace Azure { namespace Storage { namespace Queues {
     QueueMessageEncoding MessageEncoding = QueueMessageEncoding::None;
   };
 
+  /**
+   * Optional parameters for #Azure::Storage::Queues::QueueServiceClient::ListQueues.
+   */
   struct ListQueuesOptions final
   {
+    /**
+     * @brief Specifies a string that filters the results to return only queues whose name begins
+     * with the specified prefix.
+     */
     Azure::Nullable<std::string> Prefix;
 
+    /**
+     * @brief A string value that identifies the portion of the list of queues to be returned with
+     * the next listing operation. The operation returns a non-empty continuation token if the
+     * listing operation did not return all queues remaining to be listed with the current segment.
+     * The ContinuationToken value can be used as the value for the ContinuationToken parameter in a
+     * subsequent call to request the next segment of list items.
+     */
     Azure::Nullable<std::string> ContinuationToken;
 
+    /**
+     * @brief Specifies the maximum number of queues to return.
+     */
     Azure::Nullable<int32_t> PageSizeHint;
 
+    /**
+     * @brief Specifies that the queue's metadata be returned.
+     */
     Models::ListQueuesIncludeFlags Include = Models::ListQueuesIncludeFlags::None;
   };
 
+  /**
+   * Optional parameters for #Azure::Storage::Queues::QueueServiceClient::SetProperties.
+   */
   struct SetServicePropertiesOptions final
   {
   };
 
+  /**
+   * Optional parameters for #Azure::Storage::Queues::QueueServiceClient::GetProperties.
+   */
   struct GetServicePropertiesOptions final
   {
   };
 
+  /**
+   * Optional parameters for #Azure::Storage::Queues::QueueServiceClient::GetStatistics.
+   */
   struct GetQueueServiceStatisticsOptions final
   {
   };
 
+  /**
+   * Optional parameters for #Azure::Storage::Queues::QueueClient::Create.
+   */
   struct CreateQueueOptions final
   {
     /**
@@ -70,61 +115,125 @@ namespace Azure { namespace Storage { namespace Queues {
     Storage::Metadata Metadata;
   };
 
+  /**
+   * Optional parameters for #Azure::Storage::Queues::QueueClient::Delete.
+   */
   struct DeleteQueueOptions final
   {
   };
 
+  /**
+   * Optional parameters for #Azure::Storage::Queues::QueueClient::GetProperties.
+   */
   struct GetQueuePropertiesOptions final
   {
   };
 
+  /**
+   * Optional parameters for #Azure::Storage::Queues::QueueClient::SetMetadata.
+   */
   struct SetQueueMetadataOptions final
   {
   };
 
+  /**
+   * Optional parameters for #Azure::Storage::Queues::QueueClient::GetAccessPolicy.
+   */
   struct GetQueueAccessPolicyOptions final
   {
   };
 
+  /**
+   * Optional parameters for #Azure::Storage::Queues::QueueClient::SetAccessPolicy.
+   */
   struct SetQueueAccessPolicyOptions final
   {
   };
 
+  /**
+   * Optional parameters for #Azure::Storage::Queues::QueueClient::SendMessages.
+   */
   struct SendMessageOptions final
   {
+    /**
+     * Specifies how long the message should be invisible to dequeue and peek operations.
+     */
     Azure::Nullable<int32_t> VisibilityTimeout;
+
+    /**
+     * Specifies the time-to-live interval for the message. The maximum time-to-live can be any
+     * positive number, as well as -1 indicating that the message does not expire
+     */
     Azure::Nullable<int32_t> TimeToLive;
   };
 
+  /**
+   * Optional parameters for #Azure::Storage::Queues::QueueClient::ReceiveMessage.
+   */
   struct ReceiveMessageOptions final
   {
+    /**
+     * After the message has been retrieved, it is not visible to other clients for the time
+     * interval specified by this parameter.
+     */
     Azure::Nullable<int32_t> VisibilityTimeout;
   };
 
+  /**
+   * Optional parameters for #Azure::Storage::Queues::QueueClient::ReceiveMessages.
+   */
   struct ReceiveMessagesOptions final
   {
+    /**
+     * Specifies the number of messages to retrieve from the queue.
+     */
     Azure::Nullable<int64_t> MaxMessages;
+    /**
+     * After the messages have been retrieved, they are not visible to other clients for the time
+     * interval specified by this parameter.
+     */
     Azure::Nullable<int32_t> VisibilityTimeout;
   };
 
+  /**
+   * Optional parameters for #Azure::Storage::Queues::QueueClient::PeekMessage.
+   */
   struct PeekMessageOptions final
   {
   };
 
+  /**
+   * Optional parameters for #Azure::Storage::Queues::QueueClient::PeekMessages.
+   */
   struct PeekMessagesOptions final
   {
+    /**
+     * Specifies the number of messages to peek from the queue.
+     */
     Azure::Nullable<int64_t> MaxMessages;
   };
 
+  /**
+   * Optional parameters for #Azure::Storage::Queues::QueueClient::UpdateMessage.
+   */
   struct UpdateMessageOptions final
   {
-    Azure::Nullable<std::string> messageText;
+    /**
+     * Optionally update the queue message.
+     */
+    Azure::Nullable<std::string> MessageText;
   };
 
+  /**
+   * Optional parameters for #Azure::Storage::Queues::QueueClient::DeleteMessage.
+   */
   struct DeleteMessageOptions final
   {
   };
 
+  /**
+   * Optional parameters for #Azure::Storage::Queues::QueueClient::ClearMessages.
+   */
   struct ClearMessagesOptions final
   {
   };

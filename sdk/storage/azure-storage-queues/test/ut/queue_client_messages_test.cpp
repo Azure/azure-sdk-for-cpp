@@ -186,7 +186,7 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_EQ(peekedMessage.Body, message);
 
     Queues::UpdateMessageOptions updateOptions;
-    updateOptions.messageText = updatedMessage;
+    updateOptions.MessageText = updatedMessage;
     queueClient.UpdateMessage(res.MessageId, updateRes.PopReceipt, 1, updateOptions);
     EXPECT_THROW(queueClient.PeekMessage(), StorageException);
 

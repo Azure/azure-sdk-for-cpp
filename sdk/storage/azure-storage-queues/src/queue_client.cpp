@@ -343,17 +343,17 @@ namespace Azure { namespace Storage { namespace Queues {
     auto messageUrl = m_queueUrl;
     messageUrl.AppendPath("messages");
     messageUrl.AppendPath(_internal::UrlEncodePath(messageId));
-    if (options.messageText.HasValue())
+    if (options.MessageText.HasValue())
     {
       _detail::QueueRestClient::Queue::UpdateMessageOptions protocolLayerOptions;
       if (m_messageEncoding == QueueMessageEncoding::Base64)
       {
         protocolLayerOptions.Body = Core::Convert::Base64Encode(std::vector<uint8_t>(
-            options.messageText.Value().begin(), options.messageText.Value().end()));
+            options.MessageText.Value().begin(), options.MessageText.Value().end()));
       }
       else
       {
-        protocolLayerOptions.Body = options.messageText.Value();
+        protocolLayerOptions.Body = options.MessageText.Value();
       }
       protocolLayerOptions.PopReceipt = popReceipt;
       protocolLayerOptions.VisibilityTimeout = visibilityTimeout;

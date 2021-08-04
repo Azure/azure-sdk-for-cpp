@@ -15,6 +15,9 @@ namespace Azure { namespace Storage { namespace Queues {
 
   class QueueServiceClient;
 
+  /**
+   * @brief Response type for #Azure::Storage::Queues::QueueServiceClient::ListQueues.
+   */
   class ListQueuesPagedResponse final : public Azure::Core::PagedResponse<ListQueuesPagedResponse> {
   public:
     /**
