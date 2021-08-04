@@ -11,6 +11,12 @@
 
 namespace Azure { namespace Storage { namespace Queues {
 
+  enum class QueueMessageEncoding
+  {
+    None,
+    Base64,
+  };
+
   struct QueueClientOptions final : Azure::Core::_internal::ClientOptions
   {
     /**
@@ -26,6 +32,11 @@ namespace Azure { namespace Storage { namespace Queues {
      * API version used by this client.
      */
     std::string ApiVersion = _detail::ApiVersion;
+
+    /**
+     * This determines how queue message body is represented in HTTP requests and responses.
+     */
+    QueueMessageEncoding MessageEncoding = QueueMessageEncoding::None;
   };
 
   struct ListQueuesOptions final

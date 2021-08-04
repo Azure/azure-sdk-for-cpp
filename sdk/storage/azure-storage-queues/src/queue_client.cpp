@@ -87,7 +87,7 @@ namespace Azure { namespace Storage { namespace Queues {
   }
 
   QueueClient::QueueClient(const std::string& queueUrl, const QueueClientOptions& options)
-      : m_queueUrl(queueUrl)
+      : m_queueUrl(queueUrl), m_messageEncoding(options.MessageEncoding)
   {
     std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>> perRetryPolicies;
     std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>> perOperationPolicies;
@@ -216,7 +216,15 @@ namespace Azure { namespace Storage { namespace Queues {
     auto messagesUrl = m_queueUrl;
     messagesUrl.AppendPath("messages");
     _detail::QueueRestClient::Queue::SendMessageOptions protocolLayerOptions;
-    protocolLayerOptions.Body = std::move(messageText);
+    if (m_messageEncoding == QueueMessageEncoding::Base64)
+    {
+      protocolLayerOptions.Body = Core::Convert::Base64Encode(
+          std::vector<uint8_t>(messageText.begin(), messageText.end()));
+    }
+    else
+    {
+      protocolLayerOptions.Body = std::move(messageText);
+    }
     protocolLayerOptions.TimeToLive = options.TimeToLive;
     protocolLayerOptions.VisibilityTimeout = options.VisibilityTimeout;
     return _detail::QueueRestClient::Queue::SendMessage(
@@ -239,6 +247,14 @@ namespace Azure { namespace Storage { namespace Queues {
       e.Message = "No message available.";
       throw e;
     }
+    for (auto& message : response.Value.Messages)
+    {
+      if (m_messageEncoding == QueueMessageEncoding::Base64)
+      {
+        auto decodedMessageBody = Core::Convert::Base64Decode(message.Body);
+        message.Body = std::string(decodedMessageBody.begin(), decodedMessageBody.end());
+      }
+    }
     return Azure::Response<Models::QueueMessage>(
         std::move(response.Value.Messages[0]), std::move(response.RawResponse));
   }
@@ -254,6 +270,14 @@ namespace Azure { namespace Storage { namespace Queues {
     protocolLayerOptions.VisibilityTimeout = options.VisibilityTimeout;
     auto response = _detail::QueueRestClient::Queue::ReceiveMessages(
         *m_pipeline, messagesUrl, protocolLayerOptions, context);
+    for (auto& message : response.Value.Messages)
+    {
+      if (m_messageEncoding == QueueMessageEncoding::Base64)
+      {
+        auto decodedMessageBody = Core::Convert::Base64Decode(message.Body);
+        message.Body = std::string(decodedMessageBody.begin(), decodedMessageBody.end());
+      }
+    }
     return Azure::Response<std::vector<Models::QueueMessage>>(
         std::move(response.Value.Messages), std::move(response.RawResponse));
   }
@@ -274,6 +298,14 @@ namespace Azure { namespace Storage { namespace Queues {
       e.Message = "No message available.";
       throw e;
     }
+    for (auto& message : response.Value.Messages)
+    {
+      if (m_messageEncoding == QueueMessageEncoding::Base64)
+      {
+        auto decodedMessageBody = Core::Convert::Base64Decode(message.Body);
+        message.Body = std::string(decodedMessageBody.begin(), decodedMessageBody.end());
+      }
+    }
     return Azure::Response<Models::PeekedQueueMessage>(
         std::move(response.Value.Messages[0]), std::move(response.RawResponse));
   }
@@ -289,6 +321,14 @@ namespace Azure { namespace Storage { namespace Queues {
     protocolLayerOptions.MaxMessages = options.MaxMessages;
     auto response = _detail::QueueRestClient::Queue::PeekMessages(
         *m_pipeline, messagesUrl, protocolLayerOptions, context);
+    for (auto& message : response.Value.Messages)
+    {
+      if (m_messageEncoding == QueueMessageEncoding::Base64)
+      {
+        auto decodedMessageBody = Core::Convert::Base64Decode(message.Body);
+        message.Body = std::string(decodedMessageBody.begin(), decodedMessageBody.end());
+      }
+    }
     return Azure::Response<std::vector<Models::PeekedQueueMessage>>(
         std::move(response.Value.Messages), std::move(response.RawResponse));
   }
@@ -306,7 +346,15 @@ namespace Azure { namespace Storage { namespace Queues {
     if (options.messageText.HasValue())
     {
       _detail::QueueRestClient::Queue::UpdateMessageOptions protocolLayerOptions;
-      protocolLayerOptions.Body = options.messageText.Value();
+      if (m_messageEncoding == QueueMessageEncoding::Base64)
+      {
+        protocolLayerOptions.Body = Core::Convert::Base64Encode(std::vector<uint8_t>(
+            options.messageText.Value().begin(), options.messageText.Value().end()));
+      }
+      else
+      {
+        protocolLayerOptions.Body = options.messageText.Value();
+      }
       protocolLayerOptions.PopReceipt = popReceipt;
       protocolLayerOptions.VisibilityTimeout = visibilityTimeout;
       return _detail::QueueRestClient::Queue::UpdateMessage(

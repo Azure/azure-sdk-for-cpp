@@ -111,14 +111,17 @@ namespace Azure { namespace Storage { namespace Queues {
   private:
     explicit QueueClient(
         Azure::Core::Url queueUrl,
-        std::shared_ptr<Azure::Core::Http::_internal::HttpPipeline> pipeline)
-        : m_queueUrl(std::move(queueUrl)), m_pipeline(std::move(pipeline))
+        std::shared_ptr<Azure::Core::Http::_internal::HttpPipeline> pipeline,
+        QueueMessageEncoding messageEncoding)
+        : m_queueUrl(std::move(queueUrl)), m_pipeline(std::move(pipeline)),
+          m_messageEncoding(messageEncoding)
     {
     }
 
   private:
     Azure::Core::Url m_queueUrl;
     std::shared_ptr<Azure::Core::Http::_internal::HttpPipeline> m_pipeline;
+    QueueMessageEncoding m_messageEncoding;
 
     friend class QueueServiceClient;
   };
