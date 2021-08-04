@@ -45,5 +45,6 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets { 
   /**************** KeyVault Secrets Paged  *********/
   static constexpr size_t const PagedMaxResults = 25;
   static constexpr char const PagedMaxResultsName[] = "maxresults";
+  static constexpr char const VerstionsName[] = "versions";
 
 }}}}} // namespace Azure::Security::KeyVault::Secrets::_detail

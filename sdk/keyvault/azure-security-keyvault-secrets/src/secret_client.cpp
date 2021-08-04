@@ -220,10 +220,35 @@ KeyVaultSecretPropertiesPagedResponse SecretClient::GetPropertiesOfSecrets(
       std::move(response.RawResponse),
       std::make_unique<SecretClient>(*this));
 }
-/*
+
 KeyVaultSecretPropertiesPagedResponse SecretClient::GetPropertiesOfSecretsVersions(
     std::string const& name,
     GetPropertiesOfSecretVersionsOptions const& options,
     Azure::Core::Context const& context) const
 {
-}*/
+  auto const request = BuildRequestFromContinuationToken(
+      options.NextPageToken, {_detail::SecretPath, name, _detail::VerstionsName});
+  size_t maxResults = _detail::PagedMaxResults;
+  if (options.MaxResults.HasValue() && (options.MaxResults.Value() <= _detail::PagedMaxResults))
+  {
+    maxResults = options.MaxResults.Value();
+  }
+
+  request.Query->emplace(_detail::PagedMaxResultsName, std::to_string(maxResults));
+
+  auto response = m_protocolClient->SendRequest<KeyVaultSecretPropertiesPagedResponse>(
+      context,
+      Azure::Core::Http::HttpMethod::Get,
+      [](Azure::Core::Http::RawResponse const& rawResponse) {
+        return _detail::KeyVaultSecretPropertiesPagedResultSerializer::
+            KeyVaultSecretPropertiesPagedResponseDeserialize(rawResponse);
+      },
+      request.Path,
+      request.Query);
+
+  return KeyVaultSecretPropertiesPagedResponse(
+      std::move(response.Value),
+      std::move(response.RawResponse),
+      std::make_unique<SecretClient>(*this),
+      name);
+}

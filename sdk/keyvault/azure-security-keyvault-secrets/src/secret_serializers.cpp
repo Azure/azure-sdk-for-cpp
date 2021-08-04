@@ -267,11 +267,74 @@ KeyVaultSecretPropertiesPagedResultSerializer::KeyVaultSecretPropertiesPagedResp
   KeyVaultSecretPropertiesPagedResponse result;
   auto const& body = rawResponse.GetBody();
   auto jsonParser = json::parse(body);
-
+  auto string = jsonParser.dump();
   JsonOptional::SetIfExists(result.NextPageToken, jsonParser, "nextLink");
 
   // Key properties
-  auto keyPropertiesJson = jsonParser["value"];
+  auto secretsPropertiesJson = jsonParser["value"];
+
+  for (auto const& secretProperties : secretsPropertiesJson)
+  {
+    KeyvaultSecretProperties item;
+    string = secretProperties.dump();
+    item.Id = secretProperties[_detail::IdPropertyName].get<std::string>();
+    _detail::KeyVaultSecretSerializer::ParseIDUrl(item, item.Id);
+    // Parse URL for the various attributes
+    if (secretProperties.contains(_detail::AttributesPropertyName))
+    {
+      auto attributes = secretProperties[_detail::AttributesPropertyName];
+
+      JsonOptional::SetIfExists(item.Enabled, attributes, _detail::EnabledPropertyName);
+
+      JsonOptional::SetIfExists<int64_t, Azure::DateTime>(
+          item.NotBefore,
+          attributes,
+          _detail::NbfPropertyName,
+          PosixTimeConverter::PosixTimeToDateTime);
+      JsonOptional::SetIfExists<int64_t, Azure::DateTime>(
+          item.ExpiresOn,
+          attributes,
+          _detail::ExpPropertyName,
+          PosixTimeConverter::PosixTimeToDateTime);
+      JsonOptional::SetIfExists<int64_t, Azure::DateTime>(
+          item.CreatedOn,
+          attributes,
+          _detail::CreatedPropertyName,
+          PosixTimeConverter::PosixTimeToDateTime);
+      JsonOptional::SetIfExists<int64_t, Azure::DateTime>(
+          item.UpdatedOn,
+          attributes,
+          _detail::UpdatedPropertyName,
+          PosixTimeConverter::PosixTimeToDateTime);
+      JsonOptional::SetIfExists<std::string>(
+          item.RecoveryLevel, attributes, _detail::RecoveryLevelPropertyName);
+      JsonOptional::SetIfExists<int64_t>(
+          item.RecoverableDays, attributes, _detail::RecoverableDaysPropertyName);
+    }
+
+    // "Tags"
+    if (secretProperties.contains(_detail::TagsPropertyName))
+    {
+      auto const& tags = secretProperties[_detail::TagsPropertyName];
+      {
+        for (auto tag = tags.begin(); tag != tags.end(); ++tag)
+        {
+          item.Tags.emplace(tag.key(), tag.value().get<std::string>());
+        }
+      }
+    }
+
+    // managed
+    if (secretProperties.contains(_detail::ManagedPropertyName))
+    {
+      item.Managed = secretProperties[_detail::ManagedPropertyName].get<bool>();
+    }
+
+    // content type
+    JsonOptional::SetIfExists<std::string>(
+        item.ContentType, secretProperties, _detail::ContentTypePropertyName);
+    result.Items.emplace_back(item);
+  }
 
   return result;
 }

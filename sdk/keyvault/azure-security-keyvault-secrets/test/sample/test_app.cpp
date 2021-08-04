@@ -34,6 +34,7 @@ int main()
   GetPropertiesOfSecretsOptions options;
   options.MaxResults = 1;
   auto r1 = secretClient.GetPropertiesOfSecrets(options);
+  auto r2 = secretClient.GetPropertiesOfSecretsVersions(r1.Items[0].Name);
   // r1.MoveToNextPage();
   return 0;
 }

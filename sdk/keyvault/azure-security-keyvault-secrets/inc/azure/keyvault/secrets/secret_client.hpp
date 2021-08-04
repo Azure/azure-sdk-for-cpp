@@ -119,6 +119,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
    */
   struct GetPropertiesOfSecretVersionsOptions final
   {
+    Azure::Nullable<size_t> MaxResults;
     Azure::Nullable<std::string> NextPageToken;
   };
 
@@ -300,11 +301,11 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
         GetPropertiesOfSecretsOptions const& options = GetPropertiesOfSecretsOptions(),
         Azure::Core::Context const& context = Azure::Core::Context()) const;
 
-    /* KeyVaultSecretPropertiesPagedResponse GetPropertiesOfSecretsVersions(
-          std::string const& name,
-          GetPropertiesOfSecretVersionsOptions const& options
-          = GetPropertiesOfSecretVersionsOptions(),
-          Azure::Core::Context const& context = Azure::Core::Context()) const;*/
+    KeyVaultSecretPropertiesPagedResponse GetPropertiesOfSecretsVersions(
+        std::string const& name,
+        GetPropertiesOfSecretVersionsOptions const& options
+        = GetPropertiesOfSecretVersionsOptions(),
+        Azure::Core::Context const& context = Azure::Core::Context()) const;
     /*
         DeletedKeyPagedResponse GetDeletedKeys(
         GetDeletedKeysOptions const& options = GetDeletedKeysOptions(),
