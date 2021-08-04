@@ -33,8 +33,9 @@ int main()
   // auto response5 = secretClient.RestoreSecretBackup(response4.Value.Secret);
   GetPropertiesOfSecretsOptions options;
   options.MaxResults = 1;
-  auto r1 = secretClient.GetPropertiesOfSecrets(options);
-  auto r2 = secretClient.GetPropertiesOfSecretsVersions(r1.Items[0].Name);
+  // auto r1 = secretClient.GetPropertiesOfSecrets(options);
+  // auto r2 = secretClient.GetPropertiesOfSecretsVersions(r1.Items[0].Name);
+  auto r3 = secretClient.GetDeletedSecrets();
   // r1.MoveToNextPage();
   return 0;
 }

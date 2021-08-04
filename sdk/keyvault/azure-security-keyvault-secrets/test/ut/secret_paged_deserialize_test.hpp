@@ -103,5 +103,118 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets { 
 
       return response;
     }
+
+    static Azure::Core::Http::RawResponse GetEmptyResponse()
+    {
+      auto response
+          = Azure::Core::Http::RawResponse(1, 1, Azure::Core::Http::HttpStatusCode::Ok, "OK");
+
+      constexpr static const uint8_t responseBody[] = R"json({
+	"nextLink": null,
+	"value": []
+}
+)json";
+
+      response.SetHeader(HttpShared::ContentType, "application/json");
+      response.SetHeader(HttpShared::MsRequestId, "1");
+      response.SetHeader(HttpShared::MsClientRequestId, "2");
+      response.SetBody(std::vector<uint8_t>(responseBody, responseBody + sizeof(responseBody)));
+      response.SetBodyStream(std::make_unique<Azure::Core::IO::MemoryBodyStream>(
+          responseBody, sizeof(responseBody) - 1));
+
+      return response;
+    }
+
+    static Azure::Core::Http::RawResponse GetDeletedFirstResponse()
+    {
+      auto response
+          = Azure::Core::Http::RawResponse(1, 1, Azure::Core::Http::HttpStatusCode::Ok, "OK");
+
+      constexpr static const uint8_t responseBody[] = R"json({
+	"nextLink": "nextLink",
+	"value": [{
+		"attributes": {
+			"created": 1628110306,
+			"enabled": true,
+			"recoverableDays": 90,
+			"recoveryLevel": "Recoverable+Purgeable",
+			"updated": 1628110306
+		},
+		"deletedDate": 1628110318,
+		"id": "https://gearama-test2.vault.azure.net/secrets/eqwewq",
+		"recoveryId": "https://gearama-test2.vault.azure.net/deletedsecrets/eqwewq",
+		"scheduledPurgeDate": 1635886318,
+		"tags": {}
+	}]
+}
+)json";
+
+      response.SetHeader(HttpShared::ContentType, "application/json");
+      response.SetHeader(HttpShared::MsRequestId, "1");
+      response.SetHeader(HttpShared::MsClientRequestId, "2");
+      response.SetBody(std::vector<uint8_t>(responseBody, responseBody + sizeof(responseBody)));
+      response.SetBodyStream(std::make_unique<Azure::Core::IO::MemoryBodyStream>(
+          responseBody, sizeof(responseBody) - 1));
+
+      return response;
+    }
+
+    static Azure::Core::Http::RawResponse GetDeletedMultipleResponse()
+    {
+      auto response
+          = Azure::Core::Http::RawResponse(1, 1, Azure::Core::Http::HttpStatusCode::Ok, "OK");
+
+      constexpr static const uint8_t responseBody[] = R"json({
+	"nextLink": null,
+	"value": [{
+		"attributes": {
+			"created": 1628110306,
+			"enabled": true,
+			"recoverableDays": 90,
+			"recoveryLevel": "Recoverable+Purgeable",
+			"updated": 1628110306
+		},
+		"deletedDate": 1628110318,
+		"id": "https://gearama-test2.vault.azure.net/secrets/eqwewq",
+		"recoveryId": "https://gearama-test2.vault.azure.net/deletedsecrets/eqwewq",
+		"scheduledPurgeDate": 1635886318,
+		"tags": {}
+	}, {
+		"attributes": {
+			"created": 1626967532,
+			"enabled": true,
+			"recoverableDays": 90,
+			"recoveryLevel": "Recoverable+Purgeable",
+			"updated": 1626967532
+		},
+		"deletedDate": 1628110252,
+		"id": "https://gearama-test2.vault.azure.net/secrets/someSecret",
+		"recoveryId": "https://gearama-test2.vault.azure.net/secrets/someSecret",
+		"scheduledPurgeDate": 1635886252
+	}, {
+		"attributes": {
+			"created": 1627101774,
+			"enabled": true,
+			"recoverableDays": 90,
+			"recoveryLevel": "Recoverable+Purgeable",
+			"updated": 1627101774
+		},
+		"deletedDate": 1628110259,
+		"id": "https://gearama-test2.vault.azure.net/secrets/someSecret2",
+		"recoveryId": "https://gearama-test2.vault.azure.net/deletedsecrets/someSecret2",
+		"scheduledPurgeDate": 1635886259
+	}]
+}
+)json";
+
+      response.SetHeader(HttpShared::ContentType, "application/json");
+      response.SetHeader(HttpShared::MsRequestId, "1");
+      response.SetHeader(HttpShared::MsClientRequestId, "2");
+      response.SetBody(std::vector<uint8_t>(responseBody, responseBody + sizeof(responseBody)));
+      response.SetBodyStream(std::make_unique<Azure::Core::IO::MemoryBodyStream>(
+          responseBody, sizeof(responseBody) - 1));
+
+      return response;
+    }
   };
 }}}}} // namespace Azure::Security::KeyVault::Secrets::_test

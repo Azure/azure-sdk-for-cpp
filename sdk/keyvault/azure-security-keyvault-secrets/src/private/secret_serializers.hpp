@@ -123,7 +123,12 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets { 
   public:
     static KeyVaultSecretPropertiesPagedResponse KeyVaultSecretPropertiesPagedResponseDeserialize(
         Azure::Core::Http::RawResponse const& rawResponse);
-    /* static DeletedKeyPagedResponse DeletedKeyPagedResultDeserialize(
-        Azure::Core::Http::RawResponse const& rawResponse);*/
+  };
+
+  class KeyVaultSecretDeletedSecretPagedResultSerializer final {
+  public:
+    static KeyvaultSecretDeletedSecretPagedResponse
+    KeyVaultSecretDeletedSecretPagedResultDeserialize(
+        Azure::Core::Http::RawResponse const& rawResponse);
   };
 }}}}} // namespace Azure::Security::KeyVault::Secrets::_detail

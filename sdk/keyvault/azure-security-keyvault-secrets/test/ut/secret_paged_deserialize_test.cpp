@@ -70,3 +70,75 @@ TEST(KeyVaultSecretPropertiesPagedResponse, MultipleNoNext)
   EXPECT_EQ(item.Name, "gdfgfd");
   EXPECT_EQ(item.Version, "d75080822f03400ab4d658bd0e988ac5");
 }
+
+TEST(KeyVaultSecretPropertiesPagedResponse, NoneNoNext)
+{
+  auto response = _test::PagedHelpers::GetEmptyResponse();
+
+  auto result = _detail::KeyVaultSecretPropertiesPagedResultSerializer::
+      KeyVaultSecretPropertiesPagedResponseDeserialize(response);
+
+  EXPECT_EQ(result.Items.size(), 0);
+  EXPECT_EQ(result.NextPageToken.HasValue(), false);
+}
+
+TEST(KeyVaultSecretDeletedSecretPagedResultSerializer, SingleWithNext)
+{
+  auto response = _test::PagedHelpers::GetDeletedFirstResponse();
+
+  auto result = _detail::KeyVaultSecretDeletedSecretPagedResultSerializer::
+      KeyVaultSecretDeletedSecretPagedResultDeserialize(response);
+
+  EXPECT_EQ(result.Items.size(), 1);
+  EXPECT_EQ(result.NextPageToken.Value(), "nextLink");
+
+  auto item = result.Items[0];
+  EXPECT_EQ(item.Properties.Enabled.Value(), true);
+  EXPECT_EQ(item.Properties.RecoverableDays.Value(), 90);
+  EXPECT_EQ(item.Properties.RecoveryLevel.Value(), "Recoverable+Purgeable");
+  EXPECT_EQ(item.Id, "https://gearama-test2.vault.azure.net/secrets/eqwewq");
+  EXPECT_EQ(item.RecoveryId, "https://gearama-test2.vault.azure.net/deletedsecrets/eqwewq");
+}
+
+TEST(KeyVaultSecretDeletedSecretPagedResultSerializer, MultipleNoNext)
+{
+  auto response = _test::PagedHelpers::GetDeletedMultipleResponse();
+
+  auto result = _detail::KeyVaultSecretDeletedSecretPagedResultSerializer::
+      KeyVaultSecretDeletedSecretPagedResultDeserialize(response);
+
+  EXPECT_EQ(result.Items.size(), 3);
+  EXPECT_FALSE(result.NextPageToken.HasValue());
+
+  auto item = result.Items[0];
+  EXPECT_EQ(item.Properties.Enabled.Value(), true);
+  EXPECT_EQ(item.Properties.RecoverableDays.Value(), 90);
+  EXPECT_EQ(item.Properties.RecoveryLevel.Value(), "Recoverable+Purgeable");
+  EXPECT_EQ(item.Id, "https://gearama-test2.vault.azure.net/secrets/eqwewq");
+  EXPECT_EQ(item.RecoveryId, "https://gearama-test2.vault.azure.net/deletedsecrets/eqwewq");
+
+  item = result.Items[1];
+  EXPECT_EQ(item.Properties.Enabled.Value(), true);
+  EXPECT_EQ(item.Properties.RecoverableDays.Value(), 90);
+  EXPECT_EQ(item.Properties.RecoveryLevel.Value(), "Recoverable+Purgeable");
+  EXPECT_EQ(item.Id, "https://gearama-test2.vault.azure.net/secrets/someSecret");
+  EXPECT_EQ(item.RecoveryId, "https://gearama-test2.vault.azure.net/secrets/someSecret");
+
+  item = result.Items[2];
+  EXPECT_EQ(item.Properties.Enabled.Value(), true);
+  EXPECT_EQ(item.Properties.RecoverableDays.Value(), 90);
+  EXPECT_EQ(item.Properties.RecoveryLevel.Value(), "Recoverable+Purgeable");
+  EXPECT_EQ(item.Id, "https://gearama-test2.vault.azure.net/secrets/someSecret2");
+  EXPECT_EQ(item.RecoveryId, "https://gearama-test2.vault.azure.net/deletedsecrets/someSecret2");
+}
+
+TEST(KeyVaultSecretDeletedSecretPagedResultSerializer, NoneNoNext)
+{
+  auto response = _test::PagedHelpers::GetEmptyResponse();
+
+  auto result = _detail::KeyVaultSecretDeletedSecretPagedResultSerializer::
+      KeyVaultSecretDeletedSecretPagedResultDeserialize(response);
+
+  EXPECT_EQ(result.Items.size(), 0);
+  EXPECT_EQ(result.NextPageToken.HasValue(), false);
+}

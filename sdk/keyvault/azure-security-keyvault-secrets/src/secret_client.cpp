@@ -227,7 +227,7 @@ KeyVaultSecretPropertiesPagedResponse SecretClient::GetPropertiesOfSecretsVersio
     Azure::Core::Context const& context) const
 {
   auto const request = BuildRequestFromContinuationToken(
-      options.NextPageToken, {_detail::SecretPath, name, _detail::VerstionsName});
+      options.NextPageToken, {_detail::SecretPath, name, _detail::VersionsName});
   size_t maxResults = _detail::PagedMaxResults;
   if (options.MaxResults.HasValue() && (options.MaxResults.Value() <= _detail::PagedMaxResults))
   {
@@ -251,4 +251,34 @@ KeyVaultSecretPropertiesPagedResponse SecretClient::GetPropertiesOfSecretsVersio
       std::move(response.RawResponse),
       std::make_unique<SecretClient>(*this),
       name);
+}
+
+KeyvaultSecretDeletedSecretPagedResponse SecretClient::GetDeletedSecrets(
+    GetDeletedSecretsOptions const& options,
+    Azure::Core::Context const& context) const
+{
+  auto const request
+      = BuildRequestFromContinuationToken(options.NextPageToken, {_detail::DeletedSecretPath});
+  size_t maxResults = _detail::PagedMaxResults;
+  if (options.MaxResults.HasValue() && (options.MaxResults.Value() <= _detail::PagedMaxResults))
+  {
+    maxResults = options.MaxResults.Value();
+  }
+
+  request.Query->emplace(_detail::PagedMaxResultsName, std::to_string(maxResults));
+
+  auto response = m_protocolClient->SendRequest<KeyvaultSecretDeletedSecretPagedResponse>(
+      context,
+      Azure::Core::Http::HttpMethod::Get,
+      [](Azure::Core::Http::RawResponse const& rawResponse) {
+        return _detail::KeyVaultSecretDeletedSecretPagedResultSerializer::
+            KeyVaultSecretDeletedSecretPagedResultDeserialize(rawResponse);
+      },
+      request.Path,
+      request.Query);
+
+  return KeyvaultSecretDeletedSecretPagedResponse(
+      std::move(response.Value),
+      std::move(response.RawResponse),
+      std::make_unique<SecretClient>(*this));
 }

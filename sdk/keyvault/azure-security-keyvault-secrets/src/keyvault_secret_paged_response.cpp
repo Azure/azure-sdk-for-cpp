@@ -22,11 +22,21 @@ void KeyVaultSecretPropertiesPagedResponse::OnNextPage(const Azure::Core::Contex
     *this = m_secretClient->GetPropertiesOfSecrets(options, context);
     CurrentPageToken = options.NextPageToken.Value();
   }
-  /* else
+  else
   {
     GetPropertiesOfSecretVersionsOptions options;
     options.NextPageToken = NextPageToken;
     *this = m_secretClient->GetPropertiesOfSecretsVersions(m_secretName, options, context);
     CurrentPageToken = options.NextPageToken.Value();
-  }*/
+  }
+}
+
+void KeyvaultSecretDeletedSecretPagedResponse::OnNextPage(const Azure::Core::Context& context)
+{
+  // Before calling `OnNextPage` pagedResponse validates there is a next page, so we are sure
+  // NextPageToken is valid.
+  GetDeletedSecretsOptions options;
+  options.NextPageToken = NextPageToken;
+  *this = m_secretClient->GetDeletedSecrets(options, context);
+  CurrentPageToken = options.NextPageToken.Value();
 }
