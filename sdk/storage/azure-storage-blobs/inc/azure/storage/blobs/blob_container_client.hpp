@@ -118,8 +118,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     /**
      * @brief Gets the container's primary URL endpoint.
      *
-     * @return The
-     * container's primary URL endpoint.
+     * @return The container's primary URL endpoint.
      */
     std::string GetUrl() const { return m_blobContainerUrl.GetAbsoluteUrl(); }
 
