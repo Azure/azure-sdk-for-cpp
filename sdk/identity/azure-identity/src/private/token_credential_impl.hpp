@@ -83,6 +83,7 @@ namespace Azure { namespace Identity { namespace _detail {
       explicit TokenRequest(Core::Http::HttpMethod httpMethod, Core::Url url, std::string body)
           : m_body(new std::string(std::move(body))),
             m_memoryBodyStream(new Core::IO::MemoryBodyStream(
+                // allowed cast. see: link-to-casting-types
                 reinterpret_cast<uint8_t const*>(m_body->data()),
                 m_body->size())),
             HttpRequest(std::move(httpMethod), std::move(url), m_memoryBodyStream.get())

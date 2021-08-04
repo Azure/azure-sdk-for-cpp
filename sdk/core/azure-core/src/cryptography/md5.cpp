@@ -42,6 +42,7 @@ public:
     // calculate the size of the buffer to hold the hash object
     DWORD objectLength = 0;
     DWORD dataLength = 0;
+    // allowed cast. see: link-to-casting-types
     if (!BCRYPT_SUCCESS(
             m_status = BCryptGetProperty(
                 Handle,
@@ -57,6 +58,7 @@ public:
     // calculate the length of the hash
     ContextSize = objectLength;
     DWORD hashLength = 0;
+    // allowed cast. see: link-to-casting-types
     if (!BCRYPT_SUCCESS(
             m_status = BCryptGetProperty(
                 Handle,
@@ -96,6 +98,7 @@ private:
 
   void OnAppend(const uint8_t* data, size_t length)
   {
+    // allowed cast. see: link-to-casting-types
     if (!BCRYPT_SUCCESS(
             m_status = BCryptHashData(
                 m_hashHandle,
@@ -113,6 +116,7 @@ private:
 
     std::vector<uint8_t> hash;
     hash.resize(m_hashLength);
+    // allowed cast. see: link-to-casting-types
     if (!BCRYPT_SUCCESS(
             m_status = BCryptFinishHash(
                 m_hashHandle,
@@ -131,6 +135,7 @@ public:
     m_buffer.resize(GetMD5AlgorithmProvider().ContextSize);
     m_hashLength = GetMD5AlgorithmProvider().HashLength;
 
+    // allowed cast. see: link-to-casting-types
     if (!BCRYPT_SUCCESS(
             m_status = BCryptCreateHash(
                 GetMD5AlgorithmProvider().Handle,

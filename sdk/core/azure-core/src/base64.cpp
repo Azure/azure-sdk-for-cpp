@@ -26,6 +26,7 @@ namespace Azure { namespace Core {
     DWORD encodedLength = static_cast<DWORD>((data.size() + 2) / 3 * 4);
     encoded.resize(encodedLength);
 
+    // allowed cast. see: link-to-casting-types
     CryptBinaryToStringA(
         reinterpret_cast<const BYTE*>(data.data()),
         static_cast<DWORD>(data.size()),
@@ -44,6 +45,7 @@ namespace Azure { namespace Core {
     DWORD decodedLength = DWORD(text.length() / 4 * 3);
     decoded.resize(decodedLength);
 
+    // allowed cast. see: link-to-casting-types
     CryptStringToBinaryA(
         text.data(),
         static_cast<DWORD>(text.length()),

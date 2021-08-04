@@ -131,6 +131,7 @@ struct AlgorithmProviderInstance final
     }
     DWORD objectLength = 0;
     DWORD dataLength = 0;
+    // allowed cast. see: link-to-casting-types
     status = BCryptGetProperty(
         Handle,
         BCRYPT_OBJECT_LENGTH,
@@ -144,6 +145,7 @@ struct AlgorithmProviderInstance final
     }
     ContextSize = objectLength;
     DWORD hashLength = 0;
+    // allowed cast. see: link-to-casting-types
     status = BCryptGetProperty(
         Handle,
         BCRYPT_HASH_LENGTH,
@@ -173,6 +175,7 @@ private:
 
     std::vector<uint8_t> hash;
     hash.resize(m_hashLength);
+    // allowed cast. see: link-to-casting-types
     NTSTATUS status = BCryptFinishHash(
         m_hashHandle, reinterpret_cast<PUCHAR>(&hash[0]), static_cast<ULONG>(hash.size()), 0);
     if (!BCRYPT_SUCCESS(status))
@@ -184,6 +187,7 @@ private:
 
   void OnAppend(const uint8_t* data, size_t length) override
   {
+    // allowed cast. see: link-to-casting-types
     NTSTATUS status = BCryptHashData(
         m_hashHandle,
         reinterpret_cast<PBYTE>(const_cast<uint8_t*>(data)),
@@ -203,6 +207,7 @@ public:
     m_buffer.resize(algorithmProvider.ContextSize);
     m_hashLength = algorithmProvider.HashLength;
 
+    // allowed cast. see: link-to-casting-types
     NTSTATUS status = BCryptCreateHash(
         algorithmProvider.Handle,
         &m_hashHandle,

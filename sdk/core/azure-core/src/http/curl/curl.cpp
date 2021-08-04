@@ -149,6 +149,7 @@ void WinSocketSetBuffSize(curl_socket_t socket)
 
 void static inline SetHeader(Azure::Core::Http::RawResponse& response, std::string const& header)
 {
+  // allowed cast. see: link-to-casting-types
   return Azure::Core::Http::_detail::RawResponseHelpers::SetHeader(
       response,
       reinterpret_cast<uint8_t const*>(header.data()),
@@ -458,6 +459,7 @@ static std::unique_ptr<RawResponse> CreateHTTPResponse(
 // Creates an HTTP Response with specific bodyType
 static std::unique_ptr<RawResponse> CreateHTTPResponse(std::string const& header)
 {
+  // allowed cast. see: link-to-casting-types
   return CreateHTTPResponse(
       reinterpret_cast<const uint8_t*>(header.data()),
       reinterpret_cast<const uint8_t*>(header.data() + header.size()));
@@ -557,6 +559,7 @@ CURLcode CurlSession::SendRawHttp(Context const& context)
   auto rawRequest = GetHTTPMessagePreBody(this->m_request);
   auto rawRequestLen = rawRequest.size();
 
+  // allowed cast. see: link-to-casting-types
   CURLcode sendResult = m_connection->SendBuffer(
       reinterpret_cast<uint8_t const*>(rawRequest.data()),
       static_cast<size_t>(rawRequestLen),
@@ -583,6 +586,7 @@ void CurlSession::ParseChunkSize(Context const& context)
     for (size_t index = this->m_bodyStartInBuffer, iteration = 0; index < this->m_innerBufferSize;
          index++, iteration++)
     {
+      // allowed cast. see: link-to-casting-types
       strChunkSize.append(reinterpret_cast<char*>(&this->m_readBuffer[index]), 1);
       if (iteration > 1 && this->m_readBuffer[index] == '\n')
       {

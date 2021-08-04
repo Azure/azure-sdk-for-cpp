@@ -42,6 +42,7 @@ namespace Azure { namespace Storage {
       if (response->GetHeaders().at(_internal::HttpHeaderContentType).find("xml")
           != std::string::npos)
       {
+        // allowed cast. see: link-to-casting-types
         auto xmlReader = _internal::XmlReader(
             reinterpret_cast<const char*>(bodyBuffer.data()), bodyBuffer.size());
 

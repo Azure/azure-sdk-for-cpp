@@ -45,6 +45,7 @@ namespace Azure { namespace Storage { namespace _internal {
       int ret = xmlTextReaderMoveToNextAttribute(reader);
       if (ret == 1)
       {
+        // allowed cast. see: link-to-casting-types
         const char* name = reinterpret_cast<const char*>(xmlTextReaderConstName(reader));
         const char* value = reinterpret_cast<const char*>(xmlTextReaderConstValue(reader));
         return XmlNode{XmlNodeType::Attribute, name, value};
@@ -74,6 +75,7 @@ namespace Azure { namespace Storage { namespace _internal {
     bool has_value = xmlTextReaderHasValue(reader) == 1;
     bool has_attributes = xmlTextReaderHasAttributes(reader) == 1;
 
+    // allowed cast. see: link-to-casting-types
     const char* name = reinterpret_cast<const char*>(xmlTextReaderConstName(reader));
     const char* value = reinterpret_cast<const char*>(xmlTextReaderConstValue(reader));
 
@@ -130,6 +132,7 @@ namespace Azure { namespace Storage { namespace _internal {
   namespace {
     inline xmlChar* BadCast(const char* x)
     {
+      // allowed cast. see: link-to-casting-types
       return const_cast<xmlChar*>(reinterpret_cast<const xmlChar*>(x));
     }
   } // namespace
@@ -182,6 +185,7 @@ namespace Azure { namespace Storage { namespace _internal {
     xmlTextWriterPtr writer = static_cast<xmlTextWriterPtr>(m_writer);
     xmlBufferPtr buffer = static_cast<xmlBufferPtr>(m_buffer);
     xmlTextWriterFlush(writer);
+    // allowed cast. see: link-to-casting-types
     return std::string(reinterpret_cast<const char*>(buffer->content), buffer->use);
   }
 

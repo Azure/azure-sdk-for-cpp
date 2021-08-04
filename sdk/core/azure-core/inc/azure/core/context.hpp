@@ -200,6 +200,7 @@ namespace Azure { namespace Core {
           AZURE_ASSERT_MSG(
               typeid(T) == ptr->ValueType, "Type mismatch for Context::TryGetValue().");
 
+          // allowed cast. see: link-to-casting-types
           outputValue = *reinterpret_cast<const T*>(ptr->Value.get());
           return true;
         }

@@ -118,6 +118,7 @@ namespace Azure { namespace Storage {
         }
         DWORD objectLength = 0;
         DWORD dataLength = 0;
+        // allowed cast. see: link-to-casting-types
         status = BCryptGetProperty(
             Handle,
             BCRYPT_OBJECT_LENGTH,
@@ -131,6 +132,7 @@ namespace Azure { namespace Storage {
         }
         ContextSize = objectLength;
         DWORD hashLength = 0;
+        // allowed cast. see: link-to-casting-types
         status = BCryptGetProperty(
             Handle,
             BCRYPT_HASH_LENGTH,
@@ -160,6 +162,7 @@ namespace Azure { namespace Storage {
       context.resize(AlgorithmProvider.ContextSize);
 
       BCRYPT_HASH_HANDLE hashHandle;
+      // allowed cast. see: link-to-casting-types
       NTSTATUS status = BCryptCreateHash(
           AlgorithmProvider.Handle,
           &hashHandle,
@@ -173,6 +176,7 @@ namespace Azure { namespace Storage {
         throw std::runtime_error("BCryptCreateHash failed.");
       }
 
+      // allowed cast. see: link-to-casting-types
       status = BCryptHashData(
           hashHandle,
           reinterpret_cast<PBYTE>(const_cast<uint8_t*>(data.data())),
@@ -185,6 +189,7 @@ namespace Azure { namespace Storage {
 
       std::vector<uint8_t> hash;
       hash.resize(AlgorithmProvider.HashLength);
+      // allowed cast. see: link-to-casting-types
       status = BCryptFinishHash(
           hashHandle, reinterpret_cast<PUCHAR>(&hash[0]), static_cast<ULONG>(hash.size()), 0);
       if (!BCRYPT_SUCCESS(status))
@@ -208,6 +213,7 @@ namespace Azure { namespace Storage {
     {
       uint8_t hash[EVP_MAX_MD_SIZE];
       unsigned int hashLength = 0;
+      // allowed cast. see: link-to-casting-types
       HMAC(
           EVP_sha256(),
           key.data(),
@@ -866,6 +872,7 @@ namespace Azure { namespace Storage {
     size_t uStop = length - (length % 32);
     if (uStop >= 2 * 32)
     {
+      // allowed cast. see: link-to-casting-types
       const uint64_t* wdata = reinterpret_cast<const uint64_t*>(data);
 
       uint64_t uCrc0 = 0;
