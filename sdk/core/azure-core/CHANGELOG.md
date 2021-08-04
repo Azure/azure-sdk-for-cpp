@@ -13,6 +13,8 @@
 - [2647](https://github.com/Azure/azure-sdk-for-cpp/issues/2647) Make the curl transport adapter to check the connection close header.
 - [2474](https://github.com/Azure/azure-sdk-for-cpp/issues/2474) Fix compiling with MSVC and `/analyze`.
 - Make WinHTTP transport adapter to NOT use SSL/TLS for unsecured HTTP connections.
+
+### Other Changes
 - Updated source code to build with Clang 11. (A community contribution, courtesy of _[davidchisnall](https://github.com/davidchisnall)_)
 
 ### Acknowledgments
@@ -20,8 +22,6 @@
 Thank you to our developer community members who helped to make Azure Core better with their contributions to this release:
 
 - David Chisnall _([GitHub](https://github.com/davidchisnall))_
-
-### Other Changes
 
 ## 1.1.0 (2021-07-02)
 
