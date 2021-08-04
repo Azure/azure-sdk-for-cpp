@@ -1567,6 +1567,10 @@ namespace Azure { namespace Storage { namespace Queues {
           {
             throw StorageException::CreateFromResponse(std::move(pHttpResponse));
           }
+          if (http_status_code == Azure::Core::Http::HttpStatusCode::NoContent)
+          {
+            response.Created = false;
+          }
           return Azure::Response<CreateQueueResult>(std::move(response), std::move(pHttpResponse));
         }
 

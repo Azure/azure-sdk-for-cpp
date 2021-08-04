@@ -44,6 +44,7 @@ namespace Azure { namespace Storage { namespace Test {
     metadata["key2"] = "TWO";
     options.Metadata = metadata;
     auto res = queueClient.Create(options);
+    EXPECT_TRUE(res.Value.Created);
     EXPECT_FALSE(res.RawResponse->GetHeaders().at(_internal::HttpHeaderRequestId).empty());
     EXPECT_FALSE(res.RawResponse->GetHeaders().at(_internal::HttpHeaderDate).empty());
     EXPECT_FALSE(res.RawResponse->GetHeaders().at(_internal::HttpHeaderXMsVersion).empty());
@@ -72,7 +73,11 @@ namespace Azure { namespace Storage { namespace Test {
     }
     {
       auto response = queueClient.CreateIfNotExists();
-      EXPECT_TRUE(response.Value.Created);
+      EXPECT_FALSE(response.Value.Created);
+    }
+    {
+      auto response = queueClient.Create();
+      EXPECT_FALSE(response.Value.Created);
     }
     {
       auto response = queueClient.DeleteIfExists();
