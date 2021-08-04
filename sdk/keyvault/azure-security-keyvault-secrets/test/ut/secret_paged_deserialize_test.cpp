@@ -15,7 +15,7 @@ TEST(KeyVaultSecretPropertiesPagedResponse, SingleWithNext)
   auto result = _detail::KeyVaultSecretPropertiesPagedResultSerializer::
       KeyVaultSecretPropertiesPagedResponseDeserialize(response);
 
-  EXPECT_EQ(result.Items.size(), 1);
+  EXPECT_EQ(result.Items.size(), size_t(1));
   EXPECT_EQ(
       result.NextPageToken.Value(),
       "https://gearama-test2.vault.azure.net:443/"
@@ -37,7 +37,7 @@ TEST(KeyVaultSecretPropertiesPagedResponse, MultipleNoNext)
   auto result = _detail::KeyVaultSecretPropertiesPagedResultSerializer::
       KeyVaultSecretPropertiesPagedResponseDeserialize(response);
 
-  EXPECT_EQ(result.Items.size(), 3);
+  EXPECT_EQ(result.Items.size(), size_t(3));
   EXPECT_EQ(result.NextPageToken.HasValue(), false);
 
   auto item = result.Items[0];
@@ -78,7 +78,7 @@ TEST(KeyVaultSecretPropertiesPagedResponse, NoneNoNext)
   auto result = _detail::KeyVaultSecretPropertiesPagedResultSerializer::
       KeyVaultSecretPropertiesPagedResponseDeserialize(response);
 
-  EXPECT_EQ(result.Items.size(), 0);
+  EXPECT_EQ(result.Items.size(), size_t(0));
   EXPECT_EQ(result.NextPageToken.HasValue(), false);
 }
 
@@ -89,7 +89,7 @@ TEST(KeyVaultSecretDeletedSecretPagedResultSerializer, SingleWithNext)
   auto result = _detail::KeyVaultSecretDeletedSecretPagedResultSerializer::
       KeyVaultSecretDeletedSecretPagedResultDeserialize(response);
 
-  EXPECT_EQ(result.Items.size(), 1);
+  EXPECT_EQ(result.Items.size(), size_t(1));
   EXPECT_EQ(result.NextPageToken.Value(), "nextLink");
 
   auto item = result.Items[0];
@@ -107,7 +107,7 @@ TEST(KeyVaultSecretDeletedSecretPagedResultSerializer, MultipleNoNext)
   auto result = _detail::KeyVaultSecretDeletedSecretPagedResultSerializer::
       KeyVaultSecretDeletedSecretPagedResultDeserialize(response);
 
-  EXPECT_EQ(result.Items.size(), 3);
+  EXPECT_EQ(result.Items.size(), size_t(3));
   EXPECT_FALSE(result.NextPageToken.HasValue());
 
   auto item = result.Items[0];
@@ -139,6 +139,6 @@ TEST(KeyVaultSecretDeletedSecretPagedResultSerializer, NoneNoNext)
   auto result = _detail::KeyVaultSecretDeletedSecretPagedResultSerializer::
       KeyVaultSecretDeletedSecretPagedResultDeserialize(response);
 
-  EXPECT_EQ(result.Items.size(), 0);
+  EXPECT_EQ(result.Items.size(), size_t(0));
   EXPECT_EQ(result.NextPageToken.HasValue(), false);
 }
