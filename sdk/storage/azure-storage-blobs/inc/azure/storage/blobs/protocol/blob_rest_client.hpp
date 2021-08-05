@@ -2933,7 +2933,6 @@ namespace Azure { namespace Storage { namespace Blobs {
             const ListBlobContainersOptions& options,
             const Azure::Core::Context& context)
         {
-          (void)options;
           auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Get, url);
           request.SetHeader("x-ms-version", "2020-02-10");
           if (options.Timeout.HasValue())
@@ -2967,10 +2966,8 @@ namespace Azure { namespace Storage { namespace Blobs {
           auto pHttpResponse = pipeline.Send(request, context);
           Azure::Core::Http::RawResponse& httpResponse = *pHttpResponse;
           Models::_detail::ListBlobContainersResult response;
-          auto http_status_code
-              = static_cast<std::underlying_type<Azure::Core::Http::HttpStatusCode>::type>(
-                  httpResponse.GetStatusCode());
-          if (!(http_status_code == 200))
+          auto http_status_code = httpResponse.GetStatusCode();
+          if (http_status_code != Azure::Core::Http::HttpStatusCode::Ok)
           {
             throw StorageException::CreateFromResponse(std::move(pHttpResponse));
           }
@@ -2997,7 +2994,6 @@ namespace Azure { namespace Storage { namespace Blobs {
             const GetUserDelegationKeyOptions& options,
             const Azure::Core::Context& context)
         {
-          (void)options;
           std::string xml_body;
           {
             _internal::XmlWriter writer;
@@ -3021,10 +3017,8 @@ namespace Azure { namespace Storage { namespace Blobs {
           auto pHttpResponse = pipeline.Send(request, context);
           Azure::Core::Http::RawResponse& httpResponse = *pHttpResponse;
           UserDelegationKey response;
-          auto http_status_code
-              = static_cast<std::underlying_type<Azure::Core::Http::HttpStatusCode>::type>(
-                  httpResponse.GetStatusCode());
-          if (!(http_status_code == 200))
+          auto http_status_code = httpResponse.GetStatusCode();
+          if (http_status_code != Azure::Core::Http::HttpStatusCode::Ok)
           {
             throw StorageException::CreateFromResponse(std::move(pHttpResponse));
           }
@@ -3048,7 +3042,6 @@ namespace Azure { namespace Storage { namespace Blobs {
             const GetServicePropertiesOptions& options,
             const Azure::Core::Context& context)
         {
-          (void)options;
           auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Get, url);
           request.GetUrl().AppendQueryParameter("restype", "service");
           request.GetUrl().AppendQueryParameter("comp", "properties");
@@ -3061,10 +3054,8 @@ namespace Azure { namespace Storage { namespace Blobs {
           auto pHttpResponse = pipeline.Send(request, context);
           Azure::Core::Http::RawResponse& httpResponse = *pHttpResponse;
           BlobServiceProperties response;
-          auto http_status_code
-              = static_cast<std::underlying_type<Azure::Core::Http::HttpStatusCode>::type>(
-                  httpResponse.GetStatusCode());
-          if (!(http_status_code == 200))
+          auto http_status_code = httpResponse.GetStatusCode();
+          if (http_status_code != Azure::Core::Http::HttpStatusCode::Ok)
           {
             throw StorageException::CreateFromResponse(std::move(pHttpResponse));
           }
@@ -3090,7 +3081,6 @@ namespace Azure { namespace Storage { namespace Blobs {
             const SetServicePropertiesOptions& options,
             const Azure::Core::Context& context)
         {
-          (void)options;
           std::string xml_body;
           {
             _internal::XmlWriter writer;
@@ -3114,10 +3104,8 @@ namespace Azure { namespace Storage { namespace Blobs {
           auto pHttpResponse = pipeline.Send(request, context);
           Azure::Core::Http::RawResponse& httpResponse = *pHttpResponse;
           SetServicePropertiesResult response;
-          auto http_status_code
-              = static_cast<std::underlying_type<Azure::Core::Http::HttpStatusCode>::type>(
-                  httpResponse.GetStatusCode());
-          if (!(http_status_code == 202))
+          auto http_status_code = httpResponse.GetStatusCode();
+          if (http_status_code != Azure::Core::Http::HttpStatusCode::Accepted)
           {
             throw StorageException::CreateFromResponse(std::move(pHttpResponse));
           }
@@ -3136,7 +3124,6 @@ namespace Azure { namespace Storage { namespace Blobs {
             const GetAccountInfoOptions& options,
             const Azure::Core::Context& context)
         {
-          (void)options;
           auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Head, url);
           request.GetUrl().AppendQueryParameter("restype", "account");
           request.GetUrl().AppendQueryParameter("comp", "properties");
@@ -3149,10 +3136,8 @@ namespace Azure { namespace Storage { namespace Blobs {
           auto pHttpResponse = pipeline.Send(request, context);
           Azure::Core::Http::RawResponse& httpResponse = *pHttpResponse;
           AccountInfo response;
-          auto http_status_code
-              = static_cast<std::underlying_type<Azure::Core::Http::HttpStatusCode>::type>(
-                  httpResponse.GetStatusCode());
-          if (!(http_status_code == 200))
+          auto http_status_code = httpResponse.GetStatusCode();
+          if (http_status_code != Azure::Core::Http::HttpStatusCode::Ok)
           {
             throw StorageException::CreateFromResponse(std::move(pHttpResponse));
           }
@@ -3174,7 +3159,6 @@ namespace Azure { namespace Storage { namespace Blobs {
             const GetServiceStatisticsOptions& options,
             const Azure::Core::Context& context)
         {
-          (void)options;
           auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Get, url);
           request.GetUrl().AppendQueryParameter("restype", "service");
           request.GetUrl().AppendQueryParameter("comp", "stats");
@@ -3187,10 +3171,8 @@ namespace Azure { namespace Storage { namespace Blobs {
           auto pHttpResponse = pipeline.Send(request, context);
           Azure::Core::Http::RawResponse& httpResponse = *pHttpResponse;
           ServiceStatistics response;
-          auto http_status_code
-              = static_cast<std::underlying_type<Azure::Core::Http::HttpStatusCode>::type>(
-                  httpResponse.GetStatusCode());
-          if (!(http_status_code == 200))
+          auto http_status_code = httpResponse.GetStatusCode();
+          if (http_status_code != Azure::Core::Http::HttpStatusCode::Ok)
           {
             throw StorageException::CreateFromResponse(std::move(pHttpResponse));
           }
@@ -3217,7 +3199,6 @@ namespace Azure { namespace Storage { namespace Blobs {
             const FindBlobsByTagsOptions& options,
             const Azure::Core::Context& context)
         {
-          (void)options;
           auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Get, url);
           request.SetHeader("x-ms-version", "2020-02-10");
           if (options.Timeout.HasValue())
@@ -3241,10 +3222,8 @@ namespace Azure { namespace Storage { namespace Blobs {
           auto pHttpResponse = pipeline.Send(request, context);
           Azure::Core::Http::RawResponse& httpResponse = *pHttpResponse;
           Models::_detail::FindBlobsByTagsResult response;
-          auto http_status_code
-              = static_cast<std::underlying_type<Azure::Core::Http::HttpStatusCode>::type>(
-                  httpResponse.GetStatusCode());
-          if (!(http_status_code == 200))
+          auto http_status_code = httpResponse.GetStatusCode();
+          if (http_status_code != Azure::Core::Http::HttpStatusCode::Ok)
           {
             throw StorageException::CreateFromResponse(std::move(pHttpResponse));
           }
@@ -4707,7 +4686,6 @@ namespace Azure { namespace Storage { namespace Blobs {
             const CreateBlobContainerOptions& options,
             const Azure::Core::Context& context)
         {
-          (void)options;
           auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Put, url);
           request.SetHeader("Content-Length", "0");
           request.GetUrl().AppendQueryParameter("restype", "container");
@@ -4739,10 +4717,8 @@ namespace Azure { namespace Storage { namespace Blobs {
           auto pHttpResponse = pipeline.Send(request, context);
           Azure::Core::Http::RawResponse& httpResponse = *pHttpResponse;
           CreateBlobContainerResult response;
-          auto http_status_code
-              = static_cast<std::underlying_type<Azure::Core::Http::HttpStatusCode>::type>(
-                  httpResponse.GetStatusCode());
-          if (!(http_status_code == 201))
+          auto http_status_code = httpResponse.GetStatusCode();
+          if (http_status_code != Azure::Core::Http::HttpStatusCode::Created)
           {
             throw StorageException::CreateFromResponse(std::move(pHttpResponse));
           }
@@ -4767,7 +4743,6 @@ namespace Azure { namespace Storage { namespace Blobs {
             const DeleteBlobContainerOptions& options,
             const Azure::Core::Context& context)
         {
-          (void)options;
           auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Delete, url);
           request.GetUrl().AppendQueryParameter("restype", "container");
           request.SetHeader("x-ms-version", "2020-02-10");
@@ -4795,10 +4770,8 @@ namespace Azure { namespace Storage { namespace Blobs {
           auto pHttpResponse = pipeline.Send(request, context);
           Azure::Core::Http::RawResponse& httpResponse = *pHttpResponse;
           DeleteBlobContainerResult response;
-          auto http_status_code
-              = static_cast<std::underlying_type<Azure::Core::Http::HttpStatusCode>::type>(
-                  httpResponse.GetStatusCode());
-          if (!(http_status_code == 202))
+          auto http_status_code = httpResponse.GetStatusCode();
+          if (http_status_code != Azure::Core::Http::HttpStatusCode::Accepted)
           {
             throw StorageException::CreateFromResponse(std::move(pHttpResponse));
           }
@@ -4819,7 +4792,6 @@ namespace Azure { namespace Storage { namespace Blobs {
             const UndeleteBlobContainerOptions& options,
             const Azure::Core::Context& context)
         {
-          (void)options;
           auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Put, url);
           request.SetHeader("Content-Length", "0");
           request.GetUrl().AppendQueryParameter("restype", "container");
@@ -4835,10 +4807,8 @@ namespace Azure { namespace Storage { namespace Blobs {
           auto pHttpResponse = pipeline.Send(request, context);
           Azure::Core::Http::RawResponse& httpResponse = *pHttpResponse;
           Models::_detail::UndeleteBlobContainerResult response;
-          auto http_status_code
-              = static_cast<std::underlying_type<Azure::Core::Http::HttpStatusCode>::type>(
-                  httpResponse.GetStatusCode());
-          if (!(http_status_code == 201))
+          auto http_status_code = httpResponse.GetStatusCode();
+          if (http_status_code != Azure::Core::Http::HttpStatusCode::Created)
           {
             throw StorageException::CreateFromResponse(std::move(pHttpResponse));
           }
@@ -4858,7 +4828,6 @@ namespace Azure { namespace Storage { namespace Blobs {
             const GetBlobContainerPropertiesOptions& options,
             const Azure::Core::Context& context)
         {
-          (void)options;
           auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Head, url);
           request.GetUrl().AppendQueryParameter("restype", "container");
           request.SetHeader("x-ms-version", "2020-02-10");
@@ -4874,10 +4843,8 @@ namespace Azure { namespace Storage { namespace Blobs {
           auto pHttpResponse = pipeline.Send(request, context);
           Azure::Core::Http::RawResponse& httpResponse = *pHttpResponse;
           BlobContainerProperties response;
-          auto http_status_code
-              = static_cast<std::underlying_type<Azure::Core::Http::HttpStatusCode>::type>(
-                  httpResponse.GetStatusCode());
-          if (!(http_status_code == 200))
+          auto http_status_code = httpResponse.GetStatusCode();
+          if (http_status_code != Azure::Core::Http::HttpStatusCode::Ok)
           {
             throw StorageException::CreateFromResponse(std::move(pHttpResponse));
           }
@@ -4929,7 +4896,6 @@ namespace Azure { namespace Storage { namespace Blobs {
             const SetBlobContainerMetadataOptions& options,
             const Azure::Core::Context& context)
         {
-          (void)options;
           auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Put, url);
           request.SetHeader("Content-Length", "0");
           request.GetUrl().AppendQueryParameter("restype", "container");
@@ -4957,10 +4923,8 @@ namespace Azure { namespace Storage { namespace Blobs {
           auto pHttpResponse = pipeline.Send(request, context);
           Azure::Core::Http::RawResponse& httpResponse = *pHttpResponse;
           SetBlobContainerMetadataResult response;
-          auto http_status_code
-              = static_cast<std::underlying_type<Azure::Core::Http::HttpStatusCode>::type>(
-                  httpResponse.GetStatusCode());
-          if (!(http_status_code == 200))
+          auto http_status_code = httpResponse.GetStatusCode();
+          if (http_status_code != Azure::Core::Http::HttpStatusCode::Ok)
           {
             throw StorageException::CreateFromResponse(std::move(pHttpResponse));
           }
@@ -4986,7 +4950,6 @@ namespace Azure { namespace Storage { namespace Blobs {
             const ListBlobsOptions& options,
             const Azure::Core::Context& context)
         {
-          (void)options;
           auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Get, url);
           request.SetHeader("x-ms-version", "2020-02-10");
           if (options.Timeout.HasValue())
@@ -5020,10 +4983,8 @@ namespace Azure { namespace Storage { namespace Blobs {
           auto pHttpResponse = pipeline.Send(request, context);
           Azure::Core::Http::RawResponse& httpResponse = *pHttpResponse;
           Models::_detail::ListBlobsResult response;
-          auto http_status_code
-              = static_cast<std::underlying_type<Azure::Core::Http::HttpStatusCode>::type>(
-                  httpResponse.GetStatusCode());
-          if (!(http_status_code == 200))
+          auto http_status_code = httpResponse.GetStatusCode();
+          if (http_status_code != Azure::Core::Http::HttpStatusCode::Ok)
           {
             throw StorageException::CreateFromResponse(std::move(pHttpResponse));
           }
@@ -5053,7 +5014,6 @@ namespace Azure { namespace Storage { namespace Blobs {
             const ListBlobsByHierarchyOptions& options,
             const Azure::Core::Context& context)
         {
-          (void)options;
           auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Get, url);
           request.SetHeader("x-ms-version", "2020-02-10");
           if (options.Timeout.HasValue())
@@ -5092,10 +5052,8 @@ namespace Azure { namespace Storage { namespace Blobs {
           auto pHttpResponse = pipeline.Send(request, context);
           Azure::Core::Http::RawResponse& httpResponse = *pHttpResponse;
           Models::_detail::ListBlobsByHierarchyResult response;
-          auto http_status_code
-              = static_cast<std::underlying_type<Azure::Core::Http::HttpStatusCode>::type>(
-                  httpResponse.GetStatusCode());
-          if (!(http_status_code == 200))
+          auto http_status_code = httpResponse.GetStatusCode();
+          if (http_status_code != Azure::Core::Http::HttpStatusCode::Ok)
           {
             throw StorageException::CreateFromResponse(std::move(pHttpResponse));
           }
@@ -5121,7 +5079,6 @@ namespace Azure { namespace Storage { namespace Blobs {
             const GetBlobContainerAccessPolicyOptions& options,
             const Azure::Core::Context& context)
         {
-          (void)options;
           auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Get, url);
           request.SetHeader("x-ms-version", "2020-02-10");
           if (options.Timeout.HasValue())
@@ -5138,10 +5095,8 @@ namespace Azure { namespace Storage { namespace Blobs {
           auto pHttpResponse = pipeline.Send(request, context);
           Azure::Core::Http::RawResponse& httpResponse = *pHttpResponse;
           BlobContainerAccessPolicy response;
-          auto http_status_code
-              = static_cast<std::underlying_type<Azure::Core::Http::HttpStatusCode>::type>(
-                  httpResponse.GetStatusCode());
-          if (!(http_status_code == 200))
+          auto http_status_code = httpResponse.GetStatusCode();
+          if (http_status_code != Azure::Core::Http::HttpStatusCode::Ok)
           {
             throw StorageException::CreateFromResponse(std::move(pHttpResponse));
           }
@@ -5177,7 +5132,6 @@ namespace Azure { namespace Storage { namespace Blobs {
             const SetBlobContainerAccessPolicyOptions& options,
             const Azure::Core::Context& context)
         {
-          (void)options;
           std::string xml_body;
           {
             _internal::XmlWriter writer;
@@ -5221,10 +5175,8 @@ namespace Azure { namespace Storage { namespace Blobs {
           auto pHttpResponse = pipeline.Send(request, context);
           Azure::Core::Http::RawResponse& httpResponse = *pHttpResponse;
           SetBlobContainerAccessPolicyResult response;
-          auto http_status_code
-              = static_cast<std::underlying_type<Azure::Core::Http::HttpStatusCode>::type>(
-                  httpResponse.GetStatusCode());
-          if (!(http_status_code == 200))
+          auto http_status_code = httpResponse.GetStatusCode();
+          if (http_status_code != Azure::Core::Http::HttpStatusCode::Ok)
           {
             throw StorageException::CreateFromResponse(std::move(pHttpResponse));
           }
@@ -5250,7 +5202,6 @@ namespace Azure { namespace Storage { namespace Blobs {
             const AcquireBlobContainerLeaseOptions& options,
             const Azure::Core::Context& context)
         {
-          (void)options;
           auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Put, url);
           request.SetHeader("Content-Length", "0");
           request.SetHeader("x-ms-version", "2020-02-10");
@@ -5282,10 +5233,8 @@ namespace Azure { namespace Storage { namespace Blobs {
           auto pHttpResponse = pipeline.Send(request, context);
           Azure::Core::Http::RawResponse& httpResponse = *pHttpResponse;
           Models::_detail::AcquireBlobContainerLeaseResult response;
-          auto http_status_code
-              = static_cast<std::underlying_type<Azure::Core::Http::HttpStatusCode>::type>(
-                  httpResponse.GetStatusCode());
-          if (!(http_status_code == 201))
+          auto http_status_code = httpResponse.GetStatusCode();
+          if (http_status_code != Azure::Core::Http::HttpStatusCode::Created)
           {
             throw StorageException::CreateFromResponse(std::move(pHttpResponse));
           }
@@ -5311,7 +5260,6 @@ namespace Azure { namespace Storage { namespace Blobs {
             const RenewBlobContainerLeaseOptions& options,
             const Azure::Core::Context& context)
         {
-          (void)options;
           auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Put, url);
           request.SetHeader("Content-Length", "0");
           request.SetHeader("x-ms-version", "2020-02-10");
@@ -5339,10 +5287,8 @@ namespace Azure { namespace Storage { namespace Blobs {
           auto pHttpResponse = pipeline.Send(request, context);
           Azure::Core::Http::RawResponse& httpResponse = *pHttpResponse;
           Models::_detail::RenewBlobContainerLeaseResult response;
-          auto http_status_code
-              = static_cast<std::underlying_type<Azure::Core::Http::HttpStatusCode>::type>(
-                  httpResponse.GetStatusCode());
-          if (!(http_status_code == 200))
+          auto http_status_code = httpResponse.GetStatusCode();
+          if (http_status_code != Azure::Core::Http::HttpStatusCode::Ok)
           {
             throw StorageException::CreateFromResponse(std::move(pHttpResponse));
           }
@@ -5369,7 +5315,6 @@ namespace Azure { namespace Storage { namespace Blobs {
             const ChangeBlobContainerLeaseOptions& options,
             const Azure::Core::Context& context)
         {
-          (void)options;
           auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Put, url);
           request.SetHeader("Content-Length", "0");
           request.SetHeader("x-ms-version", "2020-02-10");
@@ -5398,10 +5343,8 @@ namespace Azure { namespace Storage { namespace Blobs {
           auto pHttpResponse = pipeline.Send(request, context);
           Azure::Core::Http::RawResponse& httpResponse = *pHttpResponse;
           Models::_detail::ChangeBlobContainerLeaseResult response;
-          auto http_status_code
-              = static_cast<std::underlying_type<Azure::Core::Http::HttpStatusCode>::type>(
-                  httpResponse.GetStatusCode());
-          if (!(http_status_code == 200))
+          auto http_status_code = httpResponse.GetStatusCode();
+          if (http_status_code != Azure::Core::Http::HttpStatusCode::Ok)
           {
             throw StorageException::CreateFromResponse(std::move(pHttpResponse));
           }
@@ -5427,7 +5370,6 @@ namespace Azure { namespace Storage { namespace Blobs {
             const ReleaseBlobContainerLeaseOptions& options,
             const Azure::Core::Context& context)
         {
-          (void)options;
           auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Put, url);
           request.SetHeader("Content-Length", "0");
           request.SetHeader("x-ms-version", "2020-02-10");
@@ -5455,10 +5397,8 @@ namespace Azure { namespace Storage { namespace Blobs {
           auto pHttpResponse = pipeline.Send(request, context);
           Azure::Core::Http::RawResponse& httpResponse = *pHttpResponse;
           Models::_detail::ReleaseBlobContainerLeaseResult response;
-          auto http_status_code
-              = static_cast<std::underlying_type<Azure::Core::Http::HttpStatusCode>::type>(
-                  httpResponse.GetStatusCode());
-          if (!(http_status_code == 200))
+          auto http_status_code = httpResponse.GetStatusCode();
+          if (http_status_code != Azure::Core::Http::HttpStatusCode::Ok)
           {
             throw StorageException::CreateFromResponse(std::move(pHttpResponse));
           }
@@ -5483,7 +5423,6 @@ namespace Azure { namespace Storage { namespace Blobs {
             const BreakBlobContainerLeaseOptions& options,
             const Azure::Core::Context& context)
         {
-          (void)options;
           auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Put, url);
           request.SetHeader("Content-Length", "0");
           request.SetHeader("x-ms-version", "2020-02-10");
@@ -5515,10 +5454,8 @@ namespace Azure { namespace Storage { namespace Blobs {
           auto pHttpResponse = pipeline.Send(request, context);
           Azure::Core::Http::RawResponse& httpResponse = *pHttpResponse;
           Models::_detail::BreakBlobContainerLeaseResult response;
-          auto http_status_code
-              = static_cast<std::underlying_type<Azure::Core::Http::HttpStatusCode>::type>(
-                  httpResponse.GetStatusCode());
-          if (!(http_status_code == 202))
+          auto http_status_code = httpResponse.GetStatusCode();
+          if (http_status_code != Azure::Core::Http::HttpStatusCode::Accepted)
           {
             throw StorageException::CreateFromResponse(std::move(pHttpResponse));
           }
@@ -6638,7 +6575,6 @@ namespace Azure { namespace Storage { namespace Blobs {
             const DownloadBlobOptions& options,
             const Azure::Core::Context& context)
         {
-          (void)options;
           auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Get, url, false);
           request.SetHeader("x-ms-version", "2020-02-10");
           if (options.Timeout.HasValue())
@@ -6713,10 +6649,9 @@ namespace Azure { namespace Storage { namespace Blobs {
           auto pHttpResponse = pipeline.Send(request, context);
           Azure::Core::Http::RawResponse& httpResponse = *pHttpResponse;
           DownloadBlobResult response;
-          auto http_status_code
-              = static_cast<std::underlying_type<Azure::Core::Http::HttpStatusCode>::type>(
-                  httpResponse.GetStatusCode());
-          if (!(http_status_code == 200 || http_status_code == 206))
+          auto http_status_code = httpResponse.GetStatusCode();
+          if (!(http_status_code == Azure::Core::Http::HttpStatusCode::Ok
+                || http_status_code == Azure::Core::Http::HttpStatusCode::PartialContent))
           {
             throw StorageException::CreateFromResponse(std::move(pHttpResponse));
           }
@@ -6793,7 +6728,7 @@ namespace Azure { namespace Storage { namespace Blobs {
           {
             response.Details.HttpHeaders.CacheControl = cache_control__iterator->second;
           }
-          if (http_status_code == 200)
+          if (http_status_code == Azure::Core::Http::HttpStatusCode::Ok)
           {
             auto content_md5__iterator = httpResponse.GetHeaders().find("content-md5");
             if (content_md5__iterator != httpResponse.GetHeaders().end())
@@ -6991,7 +6926,6 @@ namespace Azure { namespace Storage { namespace Blobs {
             const Azure::Core::Url& url,
             const DeleteBlobOptions& options)
         {
-          (void)options;
           auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Delete, url);
           request.SetHeader("x-ms-version", "2020-02-10");
           if (options.Timeout.HasValue())
@@ -7041,10 +6975,8 @@ namespace Azure { namespace Storage { namespace Blobs {
           (void)context;
           Azure::Core::Http::RawResponse& httpResponse = *pHttpResponse;
           DeleteBlobResult response;
-          auto http_status_code
-              = static_cast<std::underlying_type<Azure::Core::Http::HttpStatusCode>::type>(
-                  httpResponse.GetStatusCode());
-          if (!(http_status_code == 202))
+          auto http_status_code = httpResponse.GetStatusCode();
+          if (http_status_code != Azure::Core::Http::HttpStatusCode::Accepted)
           {
             throw StorageException::CreateFromResponse(std::move(pHttpResponse));
           }
@@ -7075,7 +7007,6 @@ namespace Azure { namespace Storage { namespace Blobs {
             const SetBlobExpiryOptions& options,
             const Azure::Core::Context& context)
         {
-          (void)options;
           auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Put, url);
           request.SetHeader("Content-Length", "0");
           request.SetHeader("x-ms-version", "2020-02-10");
@@ -7093,10 +7024,8 @@ namespace Azure { namespace Storage { namespace Blobs {
           auto pHttpResponse = pipeline.Send(request, context);
           Azure::Core::Http::RawResponse& httpResponse = *pHttpResponse;
           SetBlobExpiryResult response;
-          auto http_status_code
-              = static_cast<std::underlying_type<Azure::Core::Http::HttpStatusCode>::type>(
-                  httpResponse.GetStatusCode());
-          if (!(http_status_code == 200))
+          auto http_status_code = httpResponse.GetStatusCode();
+          if (http_status_code != Azure::Core::Http::HttpStatusCode::Ok)
           {
             throw StorageException::CreateFromResponse(std::move(pHttpResponse));
           }
@@ -7118,7 +7047,6 @@ namespace Azure { namespace Storage { namespace Blobs {
             const UndeleteBlobOptions& options,
             const Azure::Core::Context& context)
         {
-          (void)options;
           auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Put, url);
           request.SetHeader("Content-Length", "0");
           request.SetHeader("x-ms-version", "2020-02-10");
@@ -7131,10 +7059,8 @@ namespace Azure { namespace Storage { namespace Blobs {
           auto pHttpResponse = pipeline.Send(request, context);
           Azure::Core::Http::RawResponse& httpResponse = *pHttpResponse;
           UndeleteBlobResult response;
-          auto http_status_code
-              = static_cast<std::underlying_type<Azure::Core::Http::HttpStatusCode>::type>(
-                  httpResponse.GetStatusCode());
-          if (!(http_status_code == 200))
+          auto http_status_code = httpResponse.GetStatusCode();
+          if (http_status_code != Azure::Core::Http::HttpStatusCode::Ok)
           {
             throw StorageException::CreateFromResponse(std::move(pHttpResponse));
           }
@@ -7161,7 +7087,6 @@ namespace Azure { namespace Storage { namespace Blobs {
             const GetBlobPropertiesOptions& options,
             const Azure::Core::Context& context)
         {
-          (void)options;
           auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Head, url);
           request.SetHeader("x-ms-version", "2020-02-10");
           if (options.Timeout.HasValue())
@@ -7215,10 +7140,8 @@ namespace Azure { namespace Storage { namespace Blobs {
           auto pHttpResponse = pipeline.Send(request, context);
           Azure::Core::Http::RawResponse& httpResponse = *pHttpResponse;
           BlobProperties response;
-          auto http_status_code
-              = static_cast<std::underlying_type<Azure::Core::Http::HttpStatusCode>::type>(
-                  httpResponse.GetStatusCode());
-          if (!(http_status_code == 200))
+          auto http_status_code = httpResponse.GetStatusCode();
+          if (http_status_code != Azure::Core::Http::HttpStatusCode::Ok)
           {
             throw StorageException::CreateFromResponse(std::move(pHttpResponse));
           }
@@ -7486,7 +7409,6 @@ namespace Azure { namespace Storage { namespace Blobs {
             const SetBlobHttpHeadersOptions& options,
             const Azure::Core::Context& context)
         {
-          (void)options;
           auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Put, url);
           request.SetHeader("Content-Length", "0");
           request.GetUrl().AppendQueryParameter("comp", "properties");
@@ -7554,10 +7476,8 @@ namespace Azure { namespace Storage { namespace Blobs {
           auto pHttpResponse = pipeline.Send(request, context);
           Azure::Core::Http::RawResponse& httpResponse = *pHttpResponse;
           SetBlobHttpHeadersResult response;
-          auto http_status_code
-              = static_cast<std::underlying_type<Azure::Core::Http::HttpStatusCode>::type>(
-                  httpResponse.GetStatusCode());
-          if (!(http_status_code == 200))
+          auto http_status_code = httpResponse.GetStatusCode();
+          if (http_status_code != Azure::Core::Http::HttpStatusCode::Ok)
           {
             throw StorageException::CreateFromResponse(std::move(pHttpResponse));
           }
@@ -7596,7 +7516,6 @@ namespace Azure { namespace Storage { namespace Blobs {
             const SetBlobMetadataOptions& options,
             const Azure::Core::Context& context)
         {
-          (void)options;
           auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Put, url);
           request.SetHeader("Content-Length", "0");
           request.GetUrl().AppendQueryParameter("comp", "metadata");
@@ -7660,10 +7579,8 @@ namespace Azure { namespace Storage { namespace Blobs {
           auto pHttpResponse = pipeline.Send(request, context);
           Azure::Core::Http::RawResponse& httpResponse = *pHttpResponse;
           SetBlobMetadataResult response;
-          auto http_status_code
-              = static_cast<std::underlying_type<Azure::Core::Http::HttpStatusCode>::type>(
-                  httpResponse.GetStatusCode());
-          if (!(http_status_code == 200))
+          auto http_status_code = httpResponse.GetStatusCode();
+          if (http_status_code != Azure::Core::Http::HttpStatusCode::Ok)
           {
             throw StorageException::CreateFromResponse(std::move(pHttpResponse));
           }
@@ -7708,7 +7625,6 @@ namespace Azure { namespace Storage { namespace Blobs {
             const Azure::Core::Url& url,
             const SetBlobAccessTierOptions& options)
         {
-          (void)options;
           auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Put, url);
           request.SetHeader("Content-Length", "0");
           request.GetUrl().AppendQueryParameter("comp", "tier");
@@ -7742,10 +7658,9 @@ namespace Azure { namespace Storage { namespace Blobs {
           (void)context;
           Azure::Core::Http::RawResponse& httpResponse = *pHttpResponse;
           SetBlobAccessTierResult response;
-          auto http_status_code
-              = static_cast<std::underlying_type<Azure::Core::Http::HttpStatusCode>::type>(
-                  httpResponse.GetStatusCode());
-          if (!(http_status_code == 200 || http_status_code == 202))
+          auto http_status_code = httpResponse.GetStatusCode();
+          if (!(http_status_code == Azure::Core::Http::HttpStatusCode::Ok
+                || http_status_code == Azure::Core::Http::HttpStatusCode::Accepted))
           {
             throw StorageException::CreateFromResponse(std::move(pHttpResponse));
           }
@@ -7793,7 +7708,6 @@ namespace Azure { namespace Storage { namespace Blobs {
             const StartBlobCopyFromUriOptions& options,
             const Azure::Core::Context& context)
         {
-          (void)options;
           auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Put, url);
           request.SetHeader("Content-Length", "0");
           request.SetHeader("x-ms-version", "2020-02-10");
@@ -7896,10 +7810,8 @@ namespace Azure { namespace Storage { namespace Blobs {
           auto pHttpResponse = pipeline.Send(request, context);
           Azure::Core::Http::RawResponse& httpResponse = *pHttpResponse;
           Models::_detail::StartBlobCopyFromUriResult response;
-          auto http_status_code
-              = static_cast<std::underlying_type<Azure::Core::Http::HttpStatusCode>::type>(
-                  httpResponse.GetStatusCode());
-          if (!(http_status_code == 202))
+          auto http_status_code = httpResponse.GetStatusCode();
+          if (http_status_code != Azure::Core::Http::HttpStatusCode::Accepted)
           {
             throw StorageException::CreateFromResponse(std::move(pHttpResponse));
           }
@@ -7930,7 +7842,6 @@ namespace Azure { namespace Storage { namespace Blobs {
             const AbortBlobCopyFromUriOptions& options,
             const Azure::Core::Context& context)
         {
-          (void)options;
           auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Put, url);
           request.SetHeader("Content-Length", "0");
           request.SetHeader("x-ms-version", "2020-02-10");
@@ -7950,10 +7861,8 @@ namespace Azure { namespace Storage { namespace Blobs {
           auto pHttpResponse = pipeline.Send(request, context);
           Azure::Core::Http::RawResponse& httpResponse = *pHttpResponse;
           AbortBlobCopyFromUriResult response;
-          auto http_status_code
-              = static_cast<std::underlying_type<Azure::Core::Http::HttpStatusCode>::type>(
-                  httpResponse.GetStatusCode());
-          if (!(http_status_code == 204))
+          auto http_status_code = httpResponse.GetStatusCode();
+          if (http_status_code != Azure::Core::Http::HttpStatusCode::NoContent)
           {
             throw StorageException::CreateFromResponse(std::move(pHttpResponse));
           }
@@ -7983,7 +7892,6 @@ namespace Azure { namespace Storage { namespace Blobs {
             const CreateBlobSnapshotOptions& options,
             const Azure::Core::Context& context)
         {
-          (void)options;
           auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Put, url);
           request.SetHeader("Content-Length", "0");
           request.GetUrl().AppendQueryParameter("comp", "snapshot");
@@ -8047,10 +7955,8 @@ namespace Azure { namespace Storage { namespace Blobs {
           auto pHttpResponse = pipeline.Send(request, context);
           Azure::Core::Http::RawResponse& httpResponse = *pHttpResponse;
           CreateBlobSnapshotResult response;
-          auto http_status_code
-              = static_cast<std::underlying_type<Azure::Core::Http::HttpStatusCode>::type>(
-                  httpResponse.GetStatusCode());
-          if (!(http_status_code == 201))
+          auto http_status_code = httpResponse.GetStatusCode();
+          if (http_status_code != Azure::Core::Http::HttpStatusCode::Created)
           {
             throw StorageException::CreateFromResponse(std::move(pHttpResponse));
           }
@@ -8094,7 +8000,6 @@ namespace Azure { namespace Storage { namespace Blobs {
             const GetBlobTagsOptions& options,
             const Azure::Core::Context& context)
         {
-          (void)options;
           auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Get, url);
           request.SetHeader("x-ms-version", "2020-02-10");
           if (options.Timeout.HasValue())
@@ -8110,10 +8015,8 @@ namespace Azure { namespace Storage { namespace Blobs {
           auto pHttpResponse = pipeline.Send(request, context);
           Azure::Core::Http::RawResponse& httpResponse = *pHttpResponse;
           Models::_detail::GetBlobTagsResult response;
-          auto http_status_code
-              = static_cast<std::underlying_type<Azure::Core::Http::HttpStatusCode>::type>(
-                  httpResponse.GetStatusCode());
-          if (!(http_status_code == 200))
+          auto http_status_code = httpResponse.GetStatusCode();
+          if (http_status_code != Azure::Core::Http::HttpStatusCode::Ok)
           {
             throw StorageException::CreateFromResponse(std::move(pHttpResponse));
           }
@@ -8140,7 +8043,6 @@ namespace Azure { namespace Storage { namespace Blobs {
             const SetBlobTagsOptions& options,
             const Azure::Core::Context& context)
         {
-          (void)options;
           std::string xml_body;
           {
             _internal::XmlWriter writer;
@@ -8168,10 +8070,8 @@ namespace Azure { namespace Storage { namespace Blobs {
           auto pHttpResponse = pipeline.Send(request, context);
           Azure::Core::Http::RawResponse& httpResponse = *pHttpResponse;
           SetBlobTagsResult response;
-          auto http_status_code
-              = static_cast<std::underlying_type<Azure::Core::Http::HttpStatusCode>::type>(
-                  httpResponse.GetStatusCode());
-          if (!(http_status_code == 204))
+          auto http_status_code = httpResponse.GetStatusCode();
+          if (http_status_code != Azure::Core::Http::HttpStatusCode::NoContent)
           {
             throw StorageException::CreateFromResponse(std::move(pHttpResponse));
           }
@@ -8196,7 +8096,6 @@ namespace Azure { namespace Storage { namespace Blobs {
             const AcquireBlobLeaseOptions& options,
             const Azure::Core::Context& context)
         {
-          (void)options;
           auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Put, url);
           request.SetHeader("Content-Length", "0");
           request.SetHeader("x-ms-version", "2020-02-10");
@@ -8239,10 +8138,8 @@ namespace Azure { namespace Storage { namespace Blobs {
           auto pHttpResponse = pipeline.Send(request, context);
           Azure::Core::Http::RawResponse& httpResponse = *pHttpResponse;
           Models::_detail::AcquireBlobLeaseResult response;
-          auto http_status_code
-              = static_cast<std::underlying_type<Azure::Core::Http::HttpStatusCode>::type>(
-                  httpResponse.GetStatusCode());
-          if (!(http_status_code == 201))
+          auto http_status_code = httpResponse.GetStatusCode();
+          if (http_status_code != Azure::Core::Http::HttpStatusCode::Created)
           {
             throw StorageException::CreateFromResponse(std::move(pHttpResponse));
           }
@@ -8271,7 +8168,6 @@ namespace Azure { namespace Storage { namespace Blobs {
             const RenewBlobLeaseOptions& options,
             const Azure::Core::Context& context)
         {
-          (void)options;
           auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Put, url);
           request.SetHeader("Content-Length", "0");
           request.SetHeader("x-ms-version", "2020-02-10");
@@ -8310,10 +8206,8 @@ namespace Azure { namespace Storage { namespace Blobs {
           auto pHttpResponse = pipeline.Send(request, context);
           Azure::Core::Http::RawResponse& httpResponse = *pHttpResponse;
           Models::_detail::RenewBlobLeaseResult response;
-          auto http_status_code
-              = static_cast<std::underlying_type<Azure::Core::Http::HttpStatusCode>::type>(
-                  httpResponse.GetStatusCode());
-          if (!(http_status_code == 200))
+          auto http_status_code = httpResponse.GetStatusCode();
+          if (http_status_code != Azure::Core::Http::HttpStatusCode::Ok)
           {
             throw StorageException::CreateFromResponse(std::move(pHttpResponse));
           }
@@ -8343,7 +8237,6 @@ namespace Azure { namespace Storage { namespace Blobs {
             const ChangeBlobLeaseOptions& options,
             const Azure::Core::Context& context)
         {
-          (void)options;
           auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Put, url);
           request.SetHeader("Content-Length", "0");
           request.SetHeader("x-ms-version", "2020-02-10");
@@ -8383,10 +8276,8 @@ namespace Azure { namespace Storage { namespace Blobs {
           auto pHttpResponse = pipeline.Send(request, context);
           Azure::Core::Http::RawResponse& httpResponse = *pHttpResponse;
           Models::_detail::ChangeBlobLeaseResult response;
-          auto http_status_code
-              = static_cast<std::underlying_type<Azure::Core::Http::HttpStatusCode>::type>(
-                  httpResponse.GetStatusCode());
-          if (!(http_status_code == 200))
+          auto http_status_code = httpResponse.GetStatusCode();
+          if (http_status_code != Azure::Core::Http::HttpStatusCode::Ok)
           {
             throw StorageException::CreateFromResponse(std::move(pHttpResponse));
           }
@@ -8415,7 +8306,6 @@ namespace Azure { namespace Storage { namespace Blobs {
             const ReleaseBlobLeaseOptions& options,
             const Azure::Core::Context& context)
         {
-          (void)options;
           auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Put, url);
           request.SetHeader("Content-Length", "0");
           request.SetHeader("x-ms-version", "2020-02-10");
@@ -8454,10 +8344,8 @@ namespace Azure { namespace Storage { namespace Blobs {
           auto pHttpResponse = pipeline.Send(request, context);
           Azure::Core::Http::RawResponse& httpResponse = *pHttpResponse;
           Models::_detail::ReleaseBlobLeaseResult response;
-          auto http_status_code
-              = static_cast<std::underlying_type<Azure::Core::Http::HttpStatusCode>::type>(
-                  httpResponse.GetStatusCode());
-          if (!(http_status_code == 200))
+          auto http_status_code = httpResponse.GetStatusCode();
+          if (http_status_code != Azure::Core::Http::HttpStatusCode::Ok)
           {
             throw StorageException::CreateFromResponse(std::move(pHttpResponse));
           }
@@ -8485,7 +8373,6 @@ namespace Azure { namespace Storage { namespace Blobs {
             const BreakBlobLeaseOptions& options,
             const Azure::Core::Context& context)
         {
-          (void)options;
           auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Put, url);
           request.SetHeader("Content-Length", "0");
           request.SetHeader("x-ms-version", "2020-02-10");
@@ -8528,10 +8415,8 @@ namespace Azure { namespace Storage { namespace Blobs {
           auto pHttpResponse = pipeline.Send(request, context);
           Azure::Core::Http::RawResponse& httpResponse = *pHttpResponse;
           Models::_detail::BreakBlobLeaseResult response;
-          auto http_status_code
-              = static_cast<std::underlying_type<Azure::Core::Http::HttpStatusCode>::type>(
-                  httpResponse.GetStatusCode());
-          if (!(http_status_code == 202))
+          auto http_status_code = httpResponse.GetStatusCode();
+          if (http_status_code != Azure::Core::Http::HttpStatusCode::Accepted)
           {
             throw StorageException::CreateFromResponse(std::move(pHttpResponse));
           }
@@ -8703,7 +8588,6 @@ namespace Azure { namespace Storage { namespace Blobs {
             const UploadBlockBlobOptions& options,
             const Azure::Core::Context& context)
         {
-          (void)options;
           auto request
               = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Put, url, &requestBody);
           request.SetHeader("Content-Length", std::to_string(requestBody.Length()));
@@ -8830,10 +8714,8 @@ namespace Azure { namespace Storage { namespace Blobs {
           auto pHttpResponse = pipeline.Send(request, context);
           Azure::Core::Http::RawResponse& httpResponse = *pHttpResponse;
           UploadBlockBlobResult response;
-          auto http_status_code
-              = static_cast<std::underlying_type<Azure::Core::Http::HttpStatusCode>::type>(
-                  httpResponse.GetStatusCode());
-          if (!(http_status_code == 201))
+          auto http_status_code = httpResponse.GetStatusCode();
+          if (http_status_code != Azure::Core::Http::HttpStatusCode::Created)
           {
             throw StorageException::CreateFromResponse(std::move(pHttpResponse));
           }
@@ -8902,7 +8784,6 @@ namespace Azure { namespace Storage { namespace Blobs {
             const StageBlockOptions& options,
             const Azure::Core::Context& context)
         {
-          (void)options;
           auto request
               = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Put, url, &requestBody);
           request.SetHeader("Content-Length", std::to_string(requestBody.Length()));
@@ -8958,10 +8839,8 @@ namespace Azure { namespace Storage { namespace Blobs {
           auto pHttpResponse = pipeline.Send(request, context);
           Azure::Core::Http::RawResponse& httpResponse = *pHttpResponse;
           StageBlockResult response;
-          auto http_status_code
-              = static_cast<std::underlying_type<Azure::Core::Http::HttpStatusCode>::type>(
-                  httpResponse.GetStatusCode());
-          if (!(http_status_code == 201))
+          auto http_status_code = httpResponse.GetStatusCode();
+          if (http_status_code != Azure::Core::Http::HttpStatusCode::Created)
           {
             throw StorageException::CreateFromResponse(std::move(pHttpResponse));
           }
@@ -9026,7 +8905,6 @@ namespace Azure { namespace Storage { namespace Blobs {
             const StageBlockFromUriOptions& options,
             const Azure::Core::Context& context)
         {
-          (void)options;
           auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Put, url);
           request.SetHeader("Content-Length", "0");
           request.GetUrl().AppendQueryParameter("comp", "block");
@@ -9116,10 +8994,8 @@ namespace Azure { namespace Storage { namespace Blobs {
           auto pHttpResponse = pipeline.Send(request, context);
           Azure::Core::Http::RawResponse& httpResponse = *pHttpResponse;
           StageBlockFromUriResult response;
-          auto http_status_code
-              = static_cast<std::underlying_type<Azure::Core::Http::HttpStatusCode>::type>(
-                  httpResponse.GetStatusCode());
-          if (!(http_status_code == 201))
+          auto http_status_code = httpResponse.GetStatusCode();
+          if (http_status_code != Azure::Core::Http::HttpStatusCode::Created)
           {
             throw StorageException::CreateFromResponse(std::move(pHttpResponse));
           }
@@ -9187,7 +9063,6 @@ namespace Azure { namespace Storage { namespace Blobs {
             const CommitBlockListOptions& options,
             const Azure::Core::Context& context)
         {
-          (void)options;
           std::string xml_body;
           {
             _internal::XmlWriter writer;
@@ -9306,10 +9181,8 @@ namespace Azure { namespace Storage { namespace Blobs {
           auto pHttpResponse = pipeline.Send(request, context);
           Azure::Core::Http::RawResponse& httpResponse = *pHttpResponse;
           CommitBlockListResult response;
-          auto http_status_code
-              = static_cast<std::underlying_type<Azure::Core::Http::HttpStatusCode>::type>(
-                  httpResponse.GetStatusCode());
-          if (!(http_status_code == 201))
+          auto http_status_code = httpResponse.GetStatusCode();
+          if (http_status_code != Azure::Core::Http::HttpStatusCode::Created)
           {
             throw StorageException::CreateFromResponse(std::move(pHttpResponse));
           }
@@ -9354,7 +9227,6 @@ namespace Azure { namespace Storage { namespace Blobs {
             const GetBlockListOptions& options,
             const Azure::Core::Context& context)
         {
-          (void)options;
           auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Get, url);
           request.GetUrl().AppendQueryParameter("comp", "blocklist");
           request.GetUrl().AppendQueryParameter(
@@ -9376,10 +9248,8 @@ namespace Azure { namespace Storage { namespace Blobs {
           auto pHttpResponse = pipeline.Send(request, context);
           Azure::Core::Http::RawResponse& httpResponse = *pHttpResponse;
           GetBlockListResult response;
-          auto http_status_code
-              = static_cast<std::underlying_type<Azure::Core::Http::HttpStatusCode>::type>(
-                  httpResponse.GetStatusCode());
-          if (!(http_status_code == 200))
+          auto http_status_code = httpResponse.GetStatusCode();
+          if (http_status_code != Azure::Core::Http::HttpStatusCode::Ok)
           {
             throw StorageException::CreateFromResponse(std::move(pHttpResponse));
           }
@@ -9585,7 +9455,6 @@ namespace Azure { namespace Storage { namespace Blobs {
             const CreatePageBlobOptions& options,
             const Azure::Core::Context& context)
         {
-          (void)options;
           auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Put, url);
           request.SetHeader("Content-Length", "0");
           request.SetHeader("x-ms-version", "2020-02-10");
@@ -9700,10 +9569,8 @@ namespace Azure { namespace Storage { namespace Blobs {
           auto pHttpResponse = pipeline.Send(request, context);
           Azure::Core::Http::RawResponse& httpResponse = *pHttpResponse;
           CreatePageBlobResult response;
-          auto http_status_code
-              = static_cast<std::underlying_type<Azure::Core::Http::HttpStatusCode>::type>(
-                  httpResponse.GetStatusCode());
-          if (!(http_status_code == 201))
+          auto http_status_code = httpResponse.GetStatusCode();
+          if (http_status_code != Azure::Core::Http::HttpStatusCode::Created)
           {
             throw StorageException::CreateFromResponse(std::move(pHttpResponse));
           }
@@ -9761,7 +9628,6 @@ namespace Azure { namespace Storage { namespace Blobs {
             const UploadPageBlobPagesOptions& options,
             const Azure::Core::Context& context)
         {
-          (void)options;
           auto request
               = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Put, url, &requestBody);
           request.SetHeader("Content-Length", std::to_string(requestBody.Length()));
@@ -9867,10 +9733,8 @@ namespace Azure { namespace Storage { namespace Blobs {
           auto pHttpResponse = pipeline.Send(request, context);
           Azure::Core::Http::RawResponse& httpResponse = *pHttpResponse;
           UploadPagesResult response;
-          auto http_status_code
-              = static_cast<std::underlying_type<Azure::Core::Http::HttpStatusCode>::type>(
-                  httpResponse.GetStatusCode());
-          if (!(http_status_code == 201))
+          auto http_status_code = httpResponse.GetStatusCode();
+          if (http_status_code != Azure::Core::Http::HttpStatusCode::Created)
           {
             throw StorageException::CreateFromResponse(std::move(pHttpResponse));
           }
@@ -9948,7 +9812,6 @@ namespace Azure { namespace Storage { namespace Blobs {
             const UploadPageBlobPagesFromUriOptions& options,
             const Azure::Core::Context& context)
         {
-          (void)options;
           auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Put, url);
           request.SetHeader("Content-Length", "0");
           request.GetUrl().AppendQueryParameter("comp", "page");
@@ -10085,10 +9948,8 @@ namespace Azure { namespace Storage { namespace Blobs {
           auto pHttpResponse = pipeline.Send(request, context);
           Azure::Core::Http::RawResponse& httpResponse = *pHttpResponse;
           UploadPagesFromUriResult response;
-          auto http_status_code
-              = static_cast<std::underlying_type<Azure::Core::Http::HttpStatusCode>::type>(
-                  httpResponse.GetStatusCode());
-          if (!(http_status_code == 201))
+          auto http_status_code = httpResponse.GetStatusCode();
+          if (http_status_code != Azure::Core::Http::HttpStatusCode::Created)
           {
             throw StorageException::CreateFromResponse(std::move(pHttpResponse));
           }
@@ -10160,7 +10021,6 @@ namespace Azure { namespace Storage { namespace Blobs {
             const ClearPageBlobPagesOptions& options,
             const Azure::Core::Context& context)
         {
-          (void)options;
           auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Put, url);
           request.SetHeader("Content-Length", "0");
           request.GetUrl().AppendQueryParameter("comp", "page");
@@ -10248,10 +10108,8 @@ namespace Azure { namespace Storage { namespace Blobs {
           auto pHttpResponse = pipeline.Send(request, context);
           Azure::Core::Http::RawResponse& httpResponse = *pHttpResponse;
           ClearPagesResult response;
-          auto http_status_code
-              = static_cast<std::underlying_type<Azure::Core::Http::HttpStatusCode>::type>(
-                  httpResponse.GetStatusCode());
-          if (!(http_status_code == 201))
+          auto http_status_code = httpResponse.GetStatusCode();
+          if (http_status_code != Azure::Core::Http::HttpStatusCode::Created)
           {
             throw StorageException::CreateFromResponse(std::move(pHttpResponse));
           }
@@ -10281,7 +10139,6 @@ namespace Azure { namespace Storage { namespace Blobs {
             const ResizePageBlobOptions& options,
             const Azure::Core::Context& context)
         {
-          (void)options;
           auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Put, url);
           request.SetHeader("Content-Length", "0");
           request.GetUrl().AppendQueryParameter("comp", "properties");
@@ -10323,10 +10180,8 @@ namespace Azure { namespace Storage { namespace Blobs {
           auto pHttpResponse = pipeline.Send(request, context);
           Azure::Core::Http::RawResponse& httpResponse = *pHttpResponse;
           ResizePageBlobResult response;
-          auto http_status_code
-              = static_cast<std::underlying_type<Azure::Core::Http::HttpStatusCode>::type>(
-                  httpResponse.GetStatusCode());
-          if (!(http_status_code == 200))
+          auto http_status_code = httpResponse.GetStatusCode();
+          if (http_status_code != Azure::Core::Http::HttpStatusCode::Ok)
           {
             throw StorageException::CreateFromResponse(std::move(pHttpResponse));
           }
@@ -10358,7 +10213,6 @@ namespace Azure { namespace Storage { namespace Blobs {
             const UpdatePageBlobSequenceNumberOptions& options,
             const Azure::Core::Context& context)
         {
-          (void)options;
           auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Put, url);
           request.SetHeader("Content-Length", "0");
           request.GetUrl().AppendQueryParameter("comp", "properties");
@@ -10405,10 +10259,8 @@ namespace Azure { namespace Storage { namespace Blobs {
           auto pHttpResponse = pipeline.Send(request, context);
           Azure::Core::Http::RawResponse& httpResponse = *pHttpResponse;
           UpdateSequenceNumberResult response;
-          auto http_status_code
-              = static_cast<std::underlying_type<Azure::Core::Http::HttpStatusCode>::type>(
-                  httpResponse.GetStatusCode());
-          if (!(http_status_code == 200))
+          auto http_status_code = httpResponse.GetStatusCode();
+          if (http_status_code != Azure::Core::Http::HttpStatusCode::Ok)
           {
             throw StorageException::CreateFromResponse(std::move(pHttpResponse));
           }
@@ -10441,7 +10293,6 @@ namespace Azure { namespace Storage { namespace Blobs {
             const GetPageBlobPageRangesOptions& options,
             const Azure::Core::Context& context)
         {
-          (void)options;
           auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Get, url);
           request.GetUrl().AppendQueryParameter("comp", "pagelist");
           if (options.PreviousSnapshot.HasValue())
@@ -10501,10 +10352,8 @@ namespace Azure { namespace Storage { namespace Blobs {
           auto pHttpResponse = pipeline.Send(request, context);
           Azure::Core::Http::RawResponse& httpResponse = *pHttpResponse;
           Models::_detail::GetPageRangesResult response;
-          auto http_status_code
-              = static_cast<std::underlying_type<Azure::Core::Http::HttpStatusCode>::type>(
-                  httpResponse.GetStatusCode());
-          if (!(http_status_code == 200))
+          auto http_status_code = httpResponse.GetStatusCode();
+          if (http_status_code != Azure::Core::Http::HttpStatusCode::Ok)
           {
             throw StorageException::CreateFromResponse(std::move(pHttpResponse));
           }
@@ -10540,7 +10389,6 @@ namespace Azure { namespace Storage { namespace Blobs {
             const StartBlobCopyIncrementalOptions& options,
             const Azure::Core::Context& context)
         {
-          (void)options;
           auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Put, url);
           request.SetHeader("Content-Length", "0");
           request.GetUrl().AppendQueryParameter("comp", "incrementalcopy");
@@ -10578,10 +10426,8 @@ namespace Azure { namespace Storage { namespace Blobs {
           auto pHttpResponse = pipeline.Send(request, context);
           Azure::Core::Http::RawResponse& httpResponse = *pHttpResponse;
           Models::_detail::StartBlobCopyIncrementalResult response;
-          auto http_status_code
-              = static_cast<std::underlying_type<Azure::Core::Http::HttpStatusCode>::type>(
-                  httpResponse.GetStatusCode());
-          if (!(http_status_code == 202))
+          auto http_status_code = httpResponse.GetStatusCode();
+          if (http_status_code != Azure::Core::Http::HttpStatusCode::Accepted)
           {
             throw StorageException::CreateFromResponse(std::move(pHttpResponse));
           }
@@ -10799,7 +10645,6 @@ namespace Azure { namespace Storage { namespace Blobs {
             const CreateAppendBlobOptions& options,
             const Azure::Core::Context& context)
         {
-          (void)options;
           auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Put, url);
           request.SetHeader("Content-Length", "0");
           request.SetHeader("x-ms-version", "2020-02-10");
@@ -10904,10 +10749,8 @@ namespace Azure { namespace Storage { namespace Blobs {
           auto pHttpResponse = pipeline.Send(request, context);
           Azure::Core::Http::RawResponse& httpResponse = *pHttpResponse;
           CreateAppendBlobResult response;
-          auto http_status_code
-              = static_cast<std::underlying_type<Azure::Core::Http::HttpStatusCode>::type>(
-                  httpResponse.GetStatusCode());
-          if (!(http_status_code == 201))
+          auto http_status_code = httpResponse.GetStatusCode();
+          if (http_status_code != Azure::Core::Http::HttpStatusCode::Created)
           {
             throw StorageException::CreateFromResponse(std::move(pHttpResponse));
           }
@@ -10963,7 +10806,6 @@ namespace Azure { namespace Storage { namespace Blobs {
             const AppendBlockOptions& options,
             const Azure::Core::Context& context)
         {
-          (void)options;
           auto request
               = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Put, url, &requestBody);
           request.SetHeader("Content-Length", std::to_string(requestBody.Length()));
@@ -11051,10 +10893,8 @@ namespace Azure { namespace Storage { namespace Blobs {
           auto pHttpResponse = pipeline.Send(request, context);
           Azure::Core::Http::RawResponse& httpResponse = *pHttpResponse;
           AppendBlockResult response;
-          auto http_status_code
-              = static_cast<std::underlying_type<Azure::Core::Http::HttpStatusCode>::type>(
-                  httpResponse.GetStatusCode());
-          if (!(http_status_code == 201))
+          auto http_status_code = httpResponse.GetStatusCode();
+          if (http_status_code != Azure::Core::Http::HttpStatusCode::Created)
           {
             throw StorageException::CreateFromResponse(std::move(pHttpResponse));
           }
@@ -11128,7 +10968,6 @@ namespace Azure { namespace Storage { namespace Blobs {
             const AppendBlockFromUriOptions& options,
             const Azure::Core::Context& context)
         {
-          (void)options;
           auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Put, url);
           request.SetHeader("Content-Length", "0");
           request.GetUrl().AppendQueryParameter("comp", "appendblock");
@@ -11228,10 +11067,8 @@ namespace Azure { namespace Storage { namespace Blobs {
           auto pHttpResponse = pipeline.Send(request, context);
           Azure::Core::Http::RawResponse& httpResponse = *pHttpResponse;
           AppendBlockFromUriResult response;
-          auto http_status_code
-              = static_cast<std::underlying_type<Azure::Core::Http::HttpStatusCode>::type>(
-                  httpResponse.GetStatusCode());
-          if (!(http_status_code == 201))
+          auto http_status_code = httpResponse.GetStatusCode();
+          if (http_status_code != Azure::Core::Http::HttpStatusCode::Created)
           {
             throw StorageException::CreateFromResponse(std::move(pHttpResponse));
           }
@@ -11298,7 +11135,6 @@ namespace Azure { namespace Storage { namespace Blobs {
             const SealAppendBlobOptions& options,
             const Azure::Core::Context& context)
         {
-          (void)options;
           auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Put, url);
           request.SetHeader("Content-Length", "0");
           request.GetUrl().AppendQueryParameter("comp", "seal");
@@ -11344,10 +11180,8 @@ namespace Azure { namespace Storage { namespace Blobs {
           auto pHttpResponse = pipeline.Send(request, context);
           Azure::Core::Http::RawResponse& httpResponse = *pHttpResponse;
           SealAppendBlobResult response;
-          auto http_status_code
-              = static_cast<std::underlying_type<Azure::Core::Http::HttpStatusCode>::type>(
-                  httpResponse.GetStatusCode());
-          if (!(http_status_code == 200))
+          auto http_status_code = httpResponse.GetStatusCode();
+          if (http_status_code != Azure::Core::Http::HttpStatusCode::Ok)
           {
             throw StorageException::CreateFromResponse(std::move(pHttpResponse));
           }
@@ -11376,7 +11210,6 @@ namespace Azure { namespace Storage { namespace Blobs {
             const SubmitBlobBatchOptions& options,
             const Azure::Core::Context& context)
         {
-          (void)options;
           auto request
               = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Post, url, &requestBody);
           request.SetHeader("Content-Length", std::to_string(requestBody.Length()));
@@ -11391,10 +11224,8 @@ namespace Azure { namespace Storage { namespace Blobs {
           auto pHttpResponse = pipeline.Send(request, context);
           Azure::Core::Http::RawResponse& httpResponse = *pHttpResponse;
           Models::_detail::SubmitBlobBatchResult response;
-          auto http_status_code
-              = static_cast<std::underlying_type<Azure::Core::Http::HttpStatusCode>::type>(
-                  httpResponse.GetStatusCode());
-          if (!(http_status_code == 202))
+          auto http_status_code = httpResponse.GetStatusCode();
+          if (http_status_code != Azure::Core::Http::HttpStatusCode::Accepted)
           {
             throw StorageException::CreateFromResponse(std::move(pHttpResponse));
           }

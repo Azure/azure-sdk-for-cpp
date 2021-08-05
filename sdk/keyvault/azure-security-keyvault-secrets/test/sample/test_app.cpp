@@ -32,6 +32,11 @@ int main()
   // auto response4 = secretClient.BackupSecret("someSecret2");
   // auto response5 = secretClient.RestoreSecretBackup(response4.Value.Secret);
 
+  auto response = secretClient.PurgeDeletedSecret("someSecret3");
+
+  // auto response4 = secretClient.BackupSecret("someSecret2");
+  // auto response5 = secretClient.RestoreSecretBackup(response4.Value.Secret);
+
   auto response6 = secretClient.StartRecoverDeletedSecret("someSecret2");
   if (!response6.IsDone())
   {

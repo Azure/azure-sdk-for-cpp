@@ -74,6 +74,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @brief Creates a new BlobContainerClient object with the same URL as this BlobServiceClient.
      * The new BlobContainerClient uses the same request policy pipeline as this BlobServiceClient.
      *
+     * @param blobContainerName The name of the container to reference.
      * @return A new BlobContainerClient instance.
      */
     BlobContainerClient GetBlobContainerClient(const std::string& blobContainerName) const;
@@ -120,8 +121,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      * settings. You can also use this operation to set the default request version for all incoming
      * requests to the Blob service that do not have a version specified.
      *
-     * @param
-     * properties The blob service properties.
+     * @param properties The blob service properties.
      * @param options Optional parameters to execute this function.
      * @param context Context for cancelling long running operations.
      * @return A SetServicePropertiesResult on successfully setting the properties.

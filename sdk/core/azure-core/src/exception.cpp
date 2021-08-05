@@ -32,7 +32,7 @@ namespace Azure { namespace Core {
 
   RequestFailedException::RequestFailedException(
       std::unique_ptr<Azure::Core::Http::RawResponse>& rawResponse)
-      : std::runtime_error("Received an HTTP unsuccesful status code.")
+      : std::runtime_error("Received an HTTP unsuccessful status code.")
   {
     auto& headers = rawResponse->GetHeaders();
 
