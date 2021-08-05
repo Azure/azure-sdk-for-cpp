@@ -115,5 +115,16 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys { nam
   constexpr static const char IvValue[] = "iv";
   constexpr static const char AdditionalAuthenticatedValue[] = "aad";
   constexpr static const char AuthenticationTagValue[] = "tag";
+  constexpr static const char EncryptValue[] = "encrypt";
+  constexpr static const char DecryptValue[] = "decrypt";
+  constexpr static const char WrapKeyValue[] = "wrapKey";
+  constexpr static const char UnwrapKeyValue[] = "unwrapKey";
+  constexpr static const char SignValue[] = "sign";
+  constexpr static const char VerifyValue[] = "verify";
+  constexpr static const char ImportValue[] = "import";
+
+  /***************** Service *********/
+  constexpr static const char ApiVersionValue[] = "api-version";
+  constexpr static const char TokenContextValue[] = "https://vault.azure.net/.default";
 
 }}}}} // namespace Azure::Security::KeyVault::Keys::_detail

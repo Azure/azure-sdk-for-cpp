@@ -22,6 +22,7 @@
 #include <vector>
 
 using namespace Azure::Security::KeyVault::Keys::Cryptography;
+using namespace Azure::Security::KeyVault::Keys::_detail;
 using namespace Azure::Security::KeyVault::Keys::Cryptography::_detail;
 using namespace Azure::Core::Http;
 using namespace Azure::Core::Http::Policies;
@@ -97,7 +98,7 @@ CryptographyClient::CryptographyClient(
   std::vector<std::unique_ptr<HttpPolicy>> perRetrypolicies;
   {
     Azure::Core::Credentials::TokenRequestContext const tokenContext
-        = {{"https://vault.azure.net/.default"}};
+        = {{TokenContextValue}};
 
     perRetrypolicies.emplace_back(
         std::make_unique<BearerTokenAuthenticationPolicy>(credential, tokenContext));
@@ -118,7 +119,7 @@ Azure::Response<EncryptResult> CryptographyClient::Encrypt(
 {
   // Send and parse respone
   auto rawResponse = SendCryptoRequest(
-      {"encrypt"}, EncryptParametersSerializer::EncryptParametersSerialize(parameters), context);
+      {EncryptValue}, EncryptParametersSerializer::EncryptParametersSerialize(parameters), context);
   auto value = EncryptResultSerializer::EncryptResultDeserialize(*rawResponse);
   value.Algorithm = parameters.Algorithm;
   return Azure::Response<EncryptResult>(std::move(value), std::move(rawResponse));
@@ -130,7 +131,7 @@ Azure::Response<DecryptResult> CryptographyClient::Decrypt(
 {
   // Send and parse respone
   auto rawResponse = SendCryptoRequest(
-      {"decrypt"}, DecryptParametersSerializer::DecryptParametersSerialize(parameters), context);
+      {DecryptValue}, DecryptParametersSerializer::DecryptParametersSerialize(parameters), context);
   auto value = DecryptResultSerializer::DecryptResultDeserialize(*rawResponse);
   value.Algorithm = parameters.Algorithm;
   return Azure::Response<DecryptResult>(std::move(value), std::move(rawResponse));
@@ -143,7 +144,7 @@ Azure::Response<WrapResult> CryptographyClient::WrapKey(
 {
   // Send and parse respone
   auto rawResponse = SendCryptoRequest(
-      {"wrapKey"},
+      {WrapKeyValue},
       KeyWrapParametersSerializer::KeyWrapParametersSerialize(
           KeyWrapParameters(algorithm.ToString(), key)),
       context);
@@ -159,7 +160,7 @@ Azure::Response<UnwrapResult> CryptographyClient::UnwrapKey(
 {
   // Send and parse respone
   auto rawResponse = SendCryptoRequest(
-      {"unwrapKey"},
+      {UnwrapKeyValue},
       KeyWrapParametersSerializer::KeyWrapParametersSerialize(
           KeyWrapParameters(algorithm.ToString(), encryptedKey)),
       context);
@@ -175,7 +176,7 @@ Azure::Response<SignResult> CryptographyClient::Sign(
 {
   // Send and parse respone
   auto rawResponse = SendCryptoRequest(
-      {"sign"},
+      {SignValue},
       KeySignParametersSerializer::KeySignParametersSerialize(
           KeySignParameters(algorithm.ToString(), digest)),
       context);
@@ -208,7 +209,7 @@ Azure::Response<VerifyResult> CryptographyClient::Verify(
 {
   // Send and parse respone
   auto rawResponse = SendCryptoRequest(
-      {"verify"},
+      {VerifyValue},
       KeyVerifyParametersSerializer::KeyVerifyParametersSerialize(
           KeyVerifyParameters(algorithm.ToString(), digest, signature)),
       context);

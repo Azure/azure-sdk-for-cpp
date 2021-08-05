@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: MIT
 
 #include "private/keyvault_protocol.hpp"
+#include "private/key_constants.hpp"
 #include "private/keyvault_constants.hpp"
 
 #include <azure/core/exception.hpp>
@@ -9,6 +10,7 @@
 
 using namespace Azure::Security::KeyVault;
 using namespace Azure::Core::Http::_internal;
+using namespace Azure::Security::KeyVault::Keys::_detail;
 
 std::unique_ptr<Azure::Core::Http::RawResponse> _detail::KeyVaultKeysCommonRequest::SendRequest(
     Azure::Core::Http::_internal::HttpPipeline const& pipeline,
@@ -42,7 +44,7 @@ Azure::Core::Http::Request _detail::KeyVaultKeysCommonRequest::CreateRequest(
   using namespace Azure::Core::Http;
   Request request = content == nullptr ? Request(method, url) : Request(method, url, content);
 
-  request.GetUrl().AppendQueryParameter("api-version", apiVersion);
+  request.GetUrl().AppendQueryParameter(ApiVersionValue, apiVersion);
 
   for (std::string const& p : path)
   {

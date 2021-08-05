@@ -18,6 +18,7 @@
 #include <vector>
 
 using namespace Azure::Security::KeyVault::Keys;
+using namespace Azure::Security::KeyVault::Keys::_detail;
 using namespace Azure::Core::Http;
 using namespace Azure::Core::Http::Policies;
 using namespace Azure::Core::Http::Policies::_internal;
@@ -25,6 +26,7 @@ using namespace Azure::Core::Http::_internal;
 
 namespace {
 constexpr static const char KeyVaultServicePackageName[] = "keyvault-keys";
+constexpr static const char CreateValue[] = "create";
 } // namespace
 
 std::unique_ptr<RawResponse> KeyClient::SendRequest(
@@ -68,16 +70,14 @@ KeyClient::KeyClient(
 
   std::vector<std::unique_ptr<HttpPolicy>> perRetrypoliciesOld;
   {
-    Azure::Core::Credentials::TokenRequestContext const tokenContext
-        = {{"https://vault.azure.net/.default"}};
+    Azure::Core::Credentials::TokenRequestContext const tokenContext = {{TokenContextValue}};
 
     perRetrypoliciesOld.emplace_back(
         std::make_unique<BearerTokenAuthenticationPolicy>(credential, tokenContext));
   }
   std::vector<std::unique_ptr<HttpPolicy>> perRetrypolicies;
   {
-    Azure::Core::Credentials::TokenRequestContext const tokenContext
-        = {{"https://vault.azure.net/.default"}};
+    Azure::Core::Credentials::TokenRequestContext const tokenContext = {{TokenContextValue}};
 
     perRetrypolicies.emplace_back(
         std::make_unique<BearerTokenAuthenticationPolicy>(credential, tokenContext));
@@ -120,7 +120,7 @@ Azure::Response<KeyVaultKey> KeyClient::CreateKey(
 
   // Request and settings
   auto request
-      = CreateRequest(HttpMethod::Post, {_detail::KeysPath, name, "create"}, &payloadStream);
+      = CreateRequest(HttpMethod::Post, {_detail::KeysPath, name, CreateValue}, &payloadStream);
   request.SetHeader(HttpShared::ContentType, HttpShared::ApplicationJson);
 
   // Send and parse respone
@@ -141,7 +141,7 @@ Azure::Response<KeyVaultKey> KeyClient::CreateEcKey(
 
   // Request and settings
   auto request
-      = CreateRequest(HttpMethod::Post, {_detail::KeysPath, keyName, "create"}, &payloadStream);
+      = CreateRequest(HttpMethod::Post, {_detail::KeysPath, keyName, CreateValue}, &payloadStream);
   request.SetHeader(HttpShared::ContentType, HttpShared::ApplicationJson);
 
   // Send and parse respone
@@ -162,7 +162,7 @@ Azure::Response<KeyVaultKey> KeyClient::CreateRsaKey(
 
   // Request and settings
   auto request
-      = CreateRequest(HttpMethod::Post, {_detail::KeysPath, keyName, "create"}, &payloadStream);
+      = CreateRequest(HttpMethod::Post, {_detail::KeysPath, keyName, CreateValue}, &payloadStream);
   request.SetHeader(HttpShared::ContentType, HttpShared::ApplicationJson);
 
   // Send and parse respone
@@ -183,7 +183,7 @@ Azure::Response<KeyVaultKey> KeyClient::CreateOctKey(
 
   // Request and settings
   auto request
-      = CreateRequest(HttpMethod::Post, {_detail::KeysPath, keyName, "create"}, &payloadStream);
+      = CreateRequest(HttpMethod::Post, {_detail::KeysPath, keyName, CreateValue}, &payloadStream);
   request.SetHeader(HttpShared::ContentType, HttpShared::ApplicationJson);
 
   // Send and parse respone
