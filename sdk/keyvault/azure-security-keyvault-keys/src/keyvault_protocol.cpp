@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: MIT
 
 #include "private/keyvault_protocol.hpp"
+#include "private/key_constants.hpp"
 #include "private/keyvault_constants.hpp"
 
 #include <azure/core/exception.hpp>
@@ -9,43 +10,14 @@
 
 using namespace Azure::Security::KeyVault;
 using namespace Azure::Core::Http::_internal;
+using namespace Azure::Security::KeyVault::Keys::_detail;
 
-Azure::Core::Http::Request _detail::KeyVaultProtocolClient::CreateRequest(
-    Azure::Core::Http::HttpMethod method,
-    Azure::Core::IO::BodyStream* content,
-    std::vector<std::string> const& path) const
+std::unique_ptr<Azure::Core::Http::RawResponse> _detail::KeyVaultKeysCommonRequest::SendRequest(
+    Azure::Core::Http::_internal::HttpPipeline const& pipeline,
+    Azure::Core::Http::Request& request,
+    Azure::Core::Context const& context)
 {
-  Azure::Core::Http::Request request = content == nullptr
-      ? Azure::Core::Http::Request(method, m_vaultUrl)
-      : Azure::Core::Http::Request(method, m_vaultUrl, content);
-
-  request.SetHeader(HttpShared::ContentType, HttpShared::ApplicationJson);
-  request.SetHeader(HttpShared::Accept, HttpShared::ApplicationJson);
-
-  request.GetUrl().AppendQueryParameter(_detail::ApiVersion, m_apiVersion);
-
-  for (std::string const& p : path)
-  {
-    if (!p.empty())
-    {
-      request.GetUrl().AppendPath(p);
-    }
-  }
-  return request;
-}
-
-Azure::Core::Http::Request _detail::KeyVaultProtocolClient::CreateRequest(
-    Azure::Core::Http::HttpMethod method,
-    std::vector<std::string> const& path) const
-{
-  return CreateRequest(method, nullptr, path);
-}
-
-std::unique_ptr<Azure::Core::Http::RawResponse> _detail::KeyVaultProtocolClient::SendRequest(
-    Azure::Core::Context const& context,
-    Azure::Core::Http::Request& request) const
-{
-  auto response = m_pipeline.Send(request, context);
+  auto response = pipeline.Send(request, context);
   auto responseCode = response->GetStatusCode();
   switch (responseCode)
   {
@@ -60,4 +32,26 @@ std::unique_ptr<Azure::Core::Http::RawResponse> _detail::KeyVaultProtocolClient:
       throw Azure::Core::RequestFailedException(response);
   }
   return response;
+}
+
+Azure::Core::Http::Request _detail::KeyVaultKeysCommonRequest::CreateRequest(
+    Azure::Core::Url url,
+    std::string const& apiVersion,
+    Azure::Core::Http::HttpMethod method,
+    std::vector<std::string> const& path,
+    Azure::Core::IO::BodyStream* content)
+{
+  using namespace Azure::Core::Http;
+  Request request = content == nullptr ? Request(method, url) : Request(method, url, content);
+
+  request.GetUrl().AppendQueryParameter(ApiVersionValue, apiVersion);
+
+  for (std::string const& p : path)
+  {
+    if (!p.empty())
+    {
+      request.GetUrl().AppendPath(p);
+    }
+  }
+  return request;
 }
