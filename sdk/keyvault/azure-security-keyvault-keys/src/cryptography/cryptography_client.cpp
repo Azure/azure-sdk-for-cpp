@@ -97,8 +97,7 @@ CryptographyClient::CryptographyClient(
   m_apiVersion = options.Version.ToString();
   std::vector<std::unique_ptr<HttpPolicy>> perRetrypolicies;
   {
-    Azure::Core::Credentials::TokenRequestContext const tokenContext
-        = {{TokenContextValue}};
+    Azure::Core::Credentials::TokenRequestContext const tokenContext = {{TokenContextValue}};
 
     perRetrypolicies.emplace_back(
         std::make_unique<BearerTokenAuthenticationPolicy>(credential, tokenContext));
