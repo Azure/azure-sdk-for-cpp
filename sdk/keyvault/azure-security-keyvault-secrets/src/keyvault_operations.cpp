@@ -85,7 +85,7 @@ KeyVaultRestoreDeletedSecretOperation::KeyVaultRestoreDeletedSecretOperation(
   {
     m_status = Azure::Core::OperationStatus::Succeeded;
   }
-};
+}
 
 KeyVaultRestoreDeletedSecretOperation::KeyVaultRestoreDeletedSecretOperation(
     std::string resumeToken,
@@ -104,7 +104,7 @@ KeyVaultRestoreDeletedSecretOperation KeyVaultRestoreDeletedSecretOperation::Cre
       resumeToken, std::make_shared<SecretClient>(client));
   operation.Poll(context);
   return operation;
-};
+}
 // KeyVaultDeleteSecretOperation
 Azure::Response<KeyVaultDeletedSecret> KeyVaultDeleteSecretOperation::PollUntilDoneInternal(
     std::chrono::milliseconds period,
@@ -194,4 +194,4 @@ KeyVaultDeleteSecretOperation KeyVaultDeleteSecretOperation::CreateFromResumeTok
   KeyVaultDeleteSecretOperation operation(resumeToken, std::make_shared<SecretClient>(client));
   operation.Poll(context);
   return operation;
-};
+}
