@@ -29,7 +29,10 @@ int main()
   // just a response, with a secret
   // auto response3 = secretClient.GetDeletedSecret("someSecret");
 
-  auto response4 = secretClient.BackupSecret("someSecret2");
-  auto response5 = secretClient.RestoreSecretBackup(response4.Value.Secret);
+  // auto response4 = secretClient.BackupSecret("someSecret2");
+  // auto response5 = secretClient.RestoreSecretBackup(response4.Value.Secret);
+
+  auto response = secretClient.PurgeDeletedSecret("someSecret3");
+
   return 0;
 }
