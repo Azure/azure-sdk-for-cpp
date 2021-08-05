@@ -164,3 +164,14 @@ Azure::Response<KeyVaultSecret> SecretClient::RestoreSecretBackup(
       },
       {_detail::SecretPath, _detail::RestoreSecretPath});
 }
+
+Azure::Response<PurgedSecret> SecretClient::PurgeDeletedSecret(
+    std::string const& name,
+    Azure::Core::Context const& context) const
+{
+  return m_protocolClient->SendRequest<PurgedSecret>(
+      context,
+      Azure::Core::Http::HttpMethod::Delete,
+      [](Azure::Core::Http::RawResponse const&) { return PurgedSecret(); },
+      {_detail::DeletedSecretPath, name});
+}
