@@ -34,6 +34,7 @@ set(
     inc/azure/storage/queues/queue_client.hpp
     inc/azure/storage/queues/queue_options.hpp
     inc/azure/storage/queues/queue_responses.hpp
+    inc/azure/storage/queues/queue_sas_builder.hpp
     inc/azure/storage/queues/queue_service_client.hpp
 )
 
@@ -43,6 +44,7 @@ set(
     src/queue_client.cpp
     src/queue_responses.cpp
     src/queue_rest_client.cpp
+    src/queue_sas_builder.cpp
     src/queue_service_client.cpp
 )
 
@@ -80,6 +82,7 @@ if(BUILD_TESTING)
         test/ut/queue_client_messages_test.cpp
         test/ut/queue_client_test.cpp
         test/ut/queue_client_test.hpp
+        test/ut/queue_sas_test.cpp
         test/ut/queue_service_client_test.cpp
   )
 
