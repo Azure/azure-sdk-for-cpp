@@ -8,7 +8,15 @@
 
 ### Bugs Fixed
 
+- Avoid time domain casting exception during request cancellation. (A community contribution, courtesy of [John Heffner](https://github.com/johnwheffner)
+
 ### Other Changes
+
+### Acknowledgments
+
+Thank you to our developer community members who helped to make Azure Storage better with their contributions to this release:
+
+- John Heffner([GitHub](https://github.com/johnwheffner))
 
 ## 12.0.1 (2021-07-07)
 
