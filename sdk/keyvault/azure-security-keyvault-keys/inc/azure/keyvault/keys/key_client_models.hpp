@@ -672,8 +672,6 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
      * init this new instance.
      * @param rawResponse The HTTP raw response from where the #DeletedKeyPagedResponse was parsed.
      * @param keyClient A key client required for getting the next pages.
-     * @param keyName When \p keyName is set, the response is listing key versions. Otherwise, the
-     * response is for listing keys from the Key Vault.
      */
     DeletedKeyPagedResponse(
         DeletedKeyPagedResponse&& deletedKeyProperties,

@@ -282,7 +282,7 @@ namespace Core { namespace _internal {
      */
     static DateTime PosixTimeToDateTime(int64_t posixTime)
     {
-      return DateTime(1970) + std::chrono::seconds(posixTime);
+      return {DateTime(1970) + std::chrono::seconds(posixTime)};
     }
 
     /**
