@@ -419,4 +419,3 @@ TEST_CASE("const_iterator class")
     }
   }
 }
- 

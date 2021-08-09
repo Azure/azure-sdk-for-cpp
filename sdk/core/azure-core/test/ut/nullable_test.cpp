@@ -224,4 +224,3 @@ TEST(Nullable, Move)
   EXPECT_EQ(*taken, 123);
   // val.HasValue() would return true, but accessing a value after it has been moved is UB anyways.
 }
- 

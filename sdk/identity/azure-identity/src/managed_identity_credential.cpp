@@ -48,4 +48,3 @@ Azure::Core::Credentials::AccessToken ManagedIdentityCredential::GetToken(
 {
   return m_managedIdentitySource->GetToken(tokenRequestContext, context);
 }
- 

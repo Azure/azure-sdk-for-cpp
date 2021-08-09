@@ -63,4 +63,3 @@ Azure::Core::Credentials::AccessToken ClientSecretCredential::GetToken(
     return request;
   });
 }
- 

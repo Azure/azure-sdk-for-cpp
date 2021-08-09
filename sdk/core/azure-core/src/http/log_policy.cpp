@@ -181,4 +181,3 @@ std::unique_ptr<RawResponse> LogPolicy::Send(
 
   return response;
 }
- 

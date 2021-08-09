@@ -10,4 +10,3 @@
   AZURE_ASSERT_MSG(false, msg);
   std::abort();
 }
- 

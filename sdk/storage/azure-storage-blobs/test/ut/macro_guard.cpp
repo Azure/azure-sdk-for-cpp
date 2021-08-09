@@ -13,4 +13,3 @@
 #define min(x, y) small
 
 #include <azure/storage/blobs.hpp>
- 

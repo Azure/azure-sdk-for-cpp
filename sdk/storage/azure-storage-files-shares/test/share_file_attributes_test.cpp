@@ -89,4 +89,4 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_EQ(a1, a2);
   }
 
-}}} // namespace Azure::Storage::Test 
+}}} // namespace Azure::Storage::Test

@@ -164,4 +164,3 @@ void KeyPropertiesPageResult::OnNextPage(const Azure::Core::Context& context)
     CurrentPageToken = options.NextPageToken.Value();
   }
 }
- 

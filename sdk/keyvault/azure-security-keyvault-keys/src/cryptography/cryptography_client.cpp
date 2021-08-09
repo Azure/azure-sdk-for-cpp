@@ -401,4 +401,3 @@ VerifyResult CryptographyClient::VerifyData(
 {
   return Verify(algorithm, CreateDigest(algorithm, data), signature, context);
 }
- 

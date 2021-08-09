@@ -492,4 +492,3 @@ TEST_CASE("object inspection")
     }
   }
 }
- 

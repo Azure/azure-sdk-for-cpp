@@ -229,4 +229,3 @@ VerifyResult RemoteCryptographyClient::Verify(
 {
   return VerifyWithResponse(algorithm, digest, signature, context).Value;
 }
- 

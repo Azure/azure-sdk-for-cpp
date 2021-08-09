@@ -202,4 +202,3 @@ TEST(BearerTokenAuthenticationPolicy, RefreshAfterExpiry)
     }
   }
 }
- 

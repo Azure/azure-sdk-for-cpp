@@ -239,4 +239,3 @@ TEST(ClientOptions, moveConstruct)
       r, NextHttpPolicy(0, {}), Context::ApplicationContext);
   EXPECT_EQ(std::string("IamAPerRetryPolicy"), result->GetReasonPhrase());
 }
- 

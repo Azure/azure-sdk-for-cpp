@@ -87,4 +87,3 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares { names
   const FileAttributes FileAttributes::NoScrubData("NoScrubData");
 
 }}}}} // namespace Azure::Storage::Files::Shares::Models
- 

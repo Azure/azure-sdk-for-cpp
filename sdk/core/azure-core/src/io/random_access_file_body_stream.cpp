@@ -80,4 +80,3 @@ size_t RandomAccessFileBodyStream::OnRead(
   this->m_offset += numberOfBytesRead;
   return numberOfBytesRead;
 }
- 

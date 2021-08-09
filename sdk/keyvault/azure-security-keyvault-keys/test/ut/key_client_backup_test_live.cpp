@@ -82,4 +82,3 @@ TEST_F(KeyVaultClientTest, BackupKey)
     CheckValidResponse(response, Azure::Core::Http::HttpStatusCode::NoContent);
   }
 }
- 

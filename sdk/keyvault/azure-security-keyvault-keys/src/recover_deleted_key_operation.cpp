@@ -69,4 +69,3 @@ Azure::Security::KeyVault::Keys::RecoverDeletedKeyOperation::RecoverDeletedKeyOp
   // The key name is enough to resume the operation
   m_continuationToken = m_value.Name();
 }
- 

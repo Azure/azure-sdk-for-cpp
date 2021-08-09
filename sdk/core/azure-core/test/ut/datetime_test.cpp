@@ -800,4 +800,3 @@ TEST(DateTime, TimeRoundtrip)
   TestDateTimeRoundtrip<DateTime::TimeFractionFormat::AllDigits>("2021-02-05T10:00:00.0000000Z");
   TestDateTimeRoundtrip<DateTime::TimeFractionFormat::AllDigits>("2021-02-05T20:00:00.0000000Z");
 }
- 

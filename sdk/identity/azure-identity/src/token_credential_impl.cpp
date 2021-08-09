@@ -187,4 +187,3 @@ Azure::Core::Credentials::AccessToken TokenCredentialImpl::GetToken(
     throw AuthenticationException("unknown error");
   }
 }
- 

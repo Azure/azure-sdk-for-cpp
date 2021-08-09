@@ -184,4 +184,3 @@ CredentialTestHelper::TokenRequestSimulationResult CredentialTestHelper::Simulat
 
   return result;
 }
- 

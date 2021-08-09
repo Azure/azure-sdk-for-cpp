@@ -83,4 +83,3 @@ size_t Azure::Perf::RandomStream::CircularStream::OnRead(
   m_totalRead += read;
   return read;
 }
- 

@@ -13,4 +13,3 @@ TEST(Template, Basic)
 
   EXPECT_FALSE(templateClient.ClientVersion().empty());
 }
- 

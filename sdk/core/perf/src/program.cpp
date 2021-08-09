@@ -372,4 +372,3 @@ void Azure::Perf::Program::Run(
     test->GlobalCleanup();
   }
 }
- 

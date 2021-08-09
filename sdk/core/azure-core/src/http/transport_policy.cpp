@@ -77,4 +77,3 @@ std::unique_ptr<RawResponse> TransportPolicy::Send(
   // session with sockets or internal state.
   return response;
 }
- 

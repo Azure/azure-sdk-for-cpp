@@ -71,4 +71,3 @@ namespace Azure { namespace Core {
     return result;
   }
 }} // namespace Azure::Core
- 

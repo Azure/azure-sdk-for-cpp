@@ -43,4 +43,3 @@ TEST(KeyClient, ServiceVersion)
                     EXPECT_EQ(options.Version.ToString(), "1.0"););
   }
 }
- 

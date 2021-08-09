@@ -35,4 +35,3 @@ TEST(String, toLower)
   EXPECT_FALSE(StringExtensions::ToLower("a") == "aA");
   EXPECT_FALSE(StringExtensions::ToLower("abc") == "abcd");
 }
- 

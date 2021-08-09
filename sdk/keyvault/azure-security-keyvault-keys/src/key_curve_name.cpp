@@ -15,4 +15,3 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
   const KeyCurveName KeyCurveName::P521(_detail::P521Value);
 
 }}}} // namespace Azure::Security::KeyVault::Keys
- 

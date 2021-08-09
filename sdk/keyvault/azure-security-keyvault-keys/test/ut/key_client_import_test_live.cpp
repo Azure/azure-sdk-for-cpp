@@ -77,4 +77,3 @@ TEST_F(KeyVaultClientTest, ImportKey)
     keyClient.PurgeDeletedKey(keyName);
   }
 }
- 

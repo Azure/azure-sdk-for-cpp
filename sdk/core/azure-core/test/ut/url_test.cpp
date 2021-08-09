@@ -289,4 +289,3 @@ namespace Azure { namespace Core { namespace Test {
     EXPECT_THROW(Core::Url url("http://test.com:99999999999999999"), std::out_of_range);
   }
 }}} // namespace Azure::Core::Test
- 

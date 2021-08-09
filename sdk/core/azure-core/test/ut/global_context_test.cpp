@@ -41,4 +41,3 @@ TEST(Context, ApplicationContext)
   Context appContext2 = Context::ApplicationContext;
   EXPECT_TRUE(appContext2.IsCancelled());
 }
- 

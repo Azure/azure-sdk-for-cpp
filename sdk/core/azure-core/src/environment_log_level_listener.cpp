@@ -152,4 +152,3 @@ bool EnvironmentLogLevelListener::IsInitialized() { return g_initialized; }
 
 void EnvironmentLogLevelListener::SetInitialized(bool value) { g_initialized = value; }
 #endif
- 

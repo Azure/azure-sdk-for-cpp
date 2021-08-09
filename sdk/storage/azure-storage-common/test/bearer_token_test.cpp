@@ -27,4 +27,4 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_NO_THROW(containerClient.Delete());
   }
 
-}}} // namespace Azure::Storage::Test 
+}}} // namespace Azure::Storage::Test

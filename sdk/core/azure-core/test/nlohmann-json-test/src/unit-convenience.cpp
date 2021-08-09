@@ -117,4 +117,3 @@ TEST_CASE("convenience functions")
         "[json.exception.type_error.316] incomplete UTF-8 string; last byte: 0xC2");
   }
 }
- 

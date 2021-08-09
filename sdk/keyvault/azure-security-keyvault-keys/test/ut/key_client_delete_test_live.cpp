@@ -404,4 +404,3 @@ TEST_F(KeyVaultClientTest, RecoverOperationResumeToken)
     CheckValidResponse(response, Azure::Core::Http::HttpStatusCode::NoContent);
   }
 }
- 

@@ -18,4 +18,3 @@ TEST(SHA, SHA256Test)
   for (size_t i = 0; i != shaResult.size(); i++)
     printf("%02x", shaResult[i]);
 }
- 

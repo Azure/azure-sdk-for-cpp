@@ -163,4 +163,3 @@ TEST_F(KeyVaultClientTest, GetDeletedKeysOnePage)
     keyClient.PurgeDeletedKey(keyName);
   }
 }
- 

@@ -48,4 +48,3 @@ TEST_F(MockedTransportAdapterTest, keyvaultTelemetryId)
   }
   EXPECT_TRUE(foundHeader);
 }
- 

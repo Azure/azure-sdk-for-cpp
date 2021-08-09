@@ -14,4 +14,3 @@ const KeyVaultKeyType KeyVaultKeyType::Rsa(_detail::RsaValue);
 const KeyVaultKeyType KeyVaultKeyType::RsaHsm(_detail::RsaHsmValue);
 const KeyVaultKeyType KeyVaultKeyType::Oct(_detail::OctValue);
 const KeyVaultKeyType KeyVaultKeyType::OctHsm(_detail::OctHsmValue);
- 

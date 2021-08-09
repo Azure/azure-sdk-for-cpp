@@ -157,4 +157,3 @@ TEST(Md5Hash, multiThread)
     pool[counter].join();
   }
 }
- 

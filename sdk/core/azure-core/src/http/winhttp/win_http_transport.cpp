@@ -646,4 +646,3 @@ size_t _detail::WinHttpStream::OnRead(uint8_t* buffer, size_t count, Context con
   }
   return numberOfBytesRead;
 }
- 

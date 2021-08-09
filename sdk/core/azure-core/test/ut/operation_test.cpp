@@ -107,4 +107,3 @@ TEST(Operation, ResumeToken)
     }
   }
 }
- 

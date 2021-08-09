@@ -52,4 +52,3 @@ void TransactionalChecksum()
     std::cout << "CRC-64 match" << std::endl;
   }
 }
- 

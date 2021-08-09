@@ -13,4 +13,3 @@
 #define min(x, y) small
 
 #include <azure/keyvault/key_vault_keys.hpp>
- 

@@ -8,4 +8,3 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
   const std::chrono::seconds DataLakeLeaseClient::InfiniteLeaseDuration{-1};
 
 }}}} // namespace Azure::Storage::Files::DataLake
- 

@@ -20,4 +20,3 @@ std::unique_ptr<RawResponse> NextHttpPolicy::Send(Request& request, Context cons
 
   return m_policies[m_index + 1]->Send(request, NextHttpPolicy{m_index + 1, m_policies}, context);
 }
- 

@@ -1468,4 +1468,3 @@ void CurlConnectionPool::MoveConnectionBackToPool(
   }
   lock.unlock();
 }
- 

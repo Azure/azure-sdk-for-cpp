@@ -108,4 +108,3 @@ TEST(ClientSecretCredential, AzureStack)
   EXPECT_GT(response.AccessToken.ExpiresOn, response.EarliestExpiration + 3600s);
   EXPECT_LT(response.AccessToken.ExpiresOn, response.LatestExpiration + 3600s);
 }
- 

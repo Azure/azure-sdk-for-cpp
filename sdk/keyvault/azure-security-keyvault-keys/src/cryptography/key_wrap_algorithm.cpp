@@ -16,4 +16,3 @@ namespace Azure {
   const KeyWrapAlgorithm KeyWrapAlgorithm::A192KW(_detail::A192KWValueValue);
   const KeyWrapAlgorithm KeyWrapAlgorithm::A256KW(_detail::A256KWValueValue);
 }}}}} // namespace Azure::Security::KeyVault::Keys::Cryptography
- 

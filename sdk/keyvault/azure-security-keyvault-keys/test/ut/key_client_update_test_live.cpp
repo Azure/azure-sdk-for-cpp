@@ -47,4 +47,3 @@ TEST_F(KeyVaultClientTest, UpdateProperties)
     EXPECT_FALSE(key.Properties.Enabled.Value());
   }
 }
- 

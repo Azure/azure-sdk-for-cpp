@@ -156,4 +156,3 @@ namespace Azure { namespace Storage {
     return result;
   }
 }} // namespace Azure::Storage
- 

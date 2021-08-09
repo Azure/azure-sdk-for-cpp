@@ -15,4 +15,3 @@ TEST(Json, create)
 
   EXPECT_EQ(expected, j.dump());
 }
- 
