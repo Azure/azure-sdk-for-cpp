@@ -34,5 +34,15 @@ int main()
 
   auto response = secretClient.PurgeDeletedSecret("someSecret3");
 
+  // auto response4 = secretClient.BackupSecret("someSecret2");
+  // auto response5 = secretClient.RestoreSecretBackup(response4.Value.Secret);
+
+  auto response6 = secretClient.StartRecoverDeletedSecret("someSecret2");
+  if (!response6.IsDone())
+  {
+    auto resumeToken = response6.GetResumeToken();
+    auto response7 = response6.CreateFromResumeToken(resumeToken, secretClient);
+    auto reasponse8 = response7.Poll();
+  }
   return 0;
 }

@@ -35,6 +35,8 @@ set(
     inc/azure/keyvault/keyvault_secrets.hpp
     inc/azure/keyvault/secrets/keyvault_deleted_secret.hpp
     inc/azure/keyvault/secrets/keyvault_backup_secret.hpp
+    inc/azure/keyvault/secrets/keyvault_operations.hpp
+    inc/azure/keyvault/secrets/keyvault_options.hpp
 )
 
 set(
@@ -46,6 +48,7 @@ set(
     src/keyvault_protocol.cpp
     src/secret_client.cpp
     src/secret_serializers.cpp
+    src/keyvault_operations.cpp
 )
 
 add_library(azure-security-keyvault-secrets ${AZURE_SECURITY_KEYVAULT_SECRETS_HEADER} ${AZURE_SECURITY_KEYVAULT_SECRETS_SOURCE})

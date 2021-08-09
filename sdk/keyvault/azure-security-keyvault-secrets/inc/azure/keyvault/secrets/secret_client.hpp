@@ -10,12 +10,13 @@
 
 #include "azure/keyvault/secrets/keyvault_backup_secret.hpp"
 #include "azure/keyvault/secrets/keyvault_deleted_secret.hpp"
+#include "azure/keyvault/secrets/keyvault_operations.hpp"
+#include "azure/keyvault/secrets/keyvault_options.hpp"
 #include "azure/keyvault/secrets/keyvault_secret.hpp"
 #include "dll_import_export.hpp"
 #include <azure/core/http/http.hpp>
 #include <azure/core/internal/http/pipeline.hpp>
 #include <azure/core/response.hpp>
-
 #include <stdint.h>
 #include <string>
 
@@ -24,83 +25,6 @@ namespace Azure { namespace Security { namespace KeyVault { namespace _detail {
 }}}} // namespace Azure::Security::KeyVault::_detail
 
 namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
-
-  class ServiceVersion final {
-  private:
-    std::string m_version;
-
-  public:
-    /**
-     * @brief Construct a new Service Version object
-     *
-     * @param version The string version for the Key Vault keys service.
-     */
-    ServiceVersion(std::string version) : m_version(std::move(version)) {}
-
-    /**
-     * @brief Enable comparing the ext enum.
-     *
-     * @param other Another #ServiceVersion to be compared.
-     */
-    bool operator==(ServiceVersion const& other) const { return m_version == other.m_version; }
-
-    /**
-     * @brief Return the #ServiceVersion string representation.
-     *
-     */
-    std::string const& ToString() const { return m_version; }
-
-    /**
-     * @brief Use to send request to the 7.2 version of Key Vault service.
-     *
-     */
-    AZURE_SECURITY_KEYVAULT_SECRETS_DLLEXPORT static const ServiceVersion V7_2;
-  };
-
-  /**
-   * @brief Define the options to create an SDK Keys client.
-   *
-   */
-  struct SecretClientOptions final : public Azure::Core::_internal::ClientOptions
-  {
-    ServiceVersion Version;
-
-    /**
-     * @brief Construct a new Secret Client Options object.
-     *
-     * @param version Optional version for the client.
-     */
-    SecretClientOptions(ServiceVersion version = ServiceVersion::V7_2)
-        : Azure::Core::_internal::ClientOptions(), Version(version)
-    {
-    }
-  };
-
-  /**
-   * @brief Optional parameters for SecretClient::GetSecret
-   *
-   */
-  struct GetSecretOptions final
-  {
-    /**
-     * @brief Specify the secret version to get.
-     *
-     */
-    std::string Version;
-  };
-
-  /**
-   * @brief Optional parameters for SecretClient::UpdateSecretParameters
-   *
-   */
-  struct UpdateSecretPropertiesOptions final
-  {
-    /**
-     * @brief Specify the secret version to update.
-     *
-     */
-    std::string Version;
-  };
 
   /**
    * @brief Define a model for a purged key.
@@ -153,7 +77,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
      * This operation is applicable to any secret stored in Azure Key Vault.
      * This operation requires the secrets/get permission.
      *
-     * @param name The name of the secret<span class="x x-first x-last">.</span>
+     * @param name The name of the secret.
      * @param options The optional parameters for this request.
      *
      * @param context The context for the operation can be used for request cancellation.
@@ -169,7 +93,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
      * the specified deleted secret along with its attributes.
      * This operation requires the secrets/get permission.
      *
-     * @param name The name of the secret<span class="x x-first x-last">.</span>
+     * @param name The name of the secret.
      * @param context The context for the operation can be used for request cancellation.
      *
      * @return The Secret wrapped in the Response.
@@ -181,8 +105,8 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
     /**
      * @brief Set a secret in a specified key vault.
      *
-     * @param name The name of the secret<span class="x x-first x-last">.</span>
-     * @param value The value of the secret<span class="x x-first x-last">.</span>
+     * @param name The name of the secret.
+     * @param value The value of the secret.
      *
      * @param context The context for the operation can be used for request cancellation.
      * @return The Secret wrapped in the Response.
@@ -195,8 +119,8 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
     /**
      * @brief Set a secret in a specified key vault.
      *
-     * @param name The name of the secret<span class="x x-first x-last">.</span>
-     * @param secret The secret definition <span class="x x-first x-last">.</span>
+     * @param name The name of the secret.
+     * @param secret The secret definition.
      *
      * @param context The context for the operation can be used for request cancellation.
      * @return The Secret wrapped in the Response.
@@ -213,7 +137,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
      * The value of a secret itself cannot be changed.
      * This operation requires the secrets/set permission.
      *
-     * @param name The name of the secret<span class="x x-first x-last">.</span>
+     * @param name The name of the secret.
      * @param options The optional parameters for this request.
      * @param properties The properties to update
      * @param context The context for the operation can be used for request cancellation.
@@ -233,7 +157,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
      * The value of a secret itself cannot be changed.
      * This operation requires the secrets/set permission.
      *
-     * @param name The name of the secret<span class="x x-first x-last">.</span>
+     * @param name The name of the secret.
      * @param version The version of the secret for this request.
      * @param properties The properties to update
      * @param context The context for the operation can be used for request cancellation.
@@ -252,7 +176,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
      * All versions of the secret will be downloaded.
      * This operation requires the secrets/backup permission.
      *
-     * @param name The name of the secret<span class="x x-first x-last">.</span>
+     * @param name The name of the secret.
      * @param context The context for the operation can be used for request cancellation.
      *
      * @return The The backup blob containing the backed up secret.
@@ -281,7 +205,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
      * recovery. This operation can only be enabled on a soft-delete enabled vault. This operation
      * requires the secrets/purge permission.
      *
-     * @param name The name of the secret<span class="x x-first x-last">.</span>
+     * @param name The name of the secret.
      * @param context The context for the operation can be used for request cancellation.
      *
      * @return Response<PurgedSecret> is success.
@@ -289,6 +213,34 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
     Azure::Response<PurgedSecret> PurgeDeletedSecret(
         std::string const& name,
         Azure::Core::Context const& context = Azure::Core::Context()) const;
-  };
 
+    /**
+     * @brief Delete a secret from a specified key vault.
+     *
+     * @remark The DELETE operation applies to any secret stored in Azure Key Vault.
+     * DELETE cannot be applied to an individual version of a secret.
+     * This operation requires the secrets/delete permission.
+     *
+     * @param name The name of the secret.
+     * @param context The context for the operation can be used for request cancellation.
+     */
+    Azure::Security::KeyVault::Secrets::KeyVaultDeleteSecretOperation StartDeleteSecret(
+        std::string const& name,
+        Azure::Core::Context const& context = Azure::Core::Context()) const;
+
+    /**
+     * @brief Recover the deleted secret to the latest version.
+     *
+     * @remark Recovers the deleted secret in the specified vault.
+     * This operation can only be performed on a soft-delete enabled vault.
+     * This operation requires the secrets/recover permission.
+     *
+     * @param name The name of the secret.
+     * @param context The context for the operation can be used for request cancellation.
+     */
+    Azure::Security::KeyVault::Secrets::KeyVaultRestoreDeletedSecretOperation
+    StartRecoverDeletedSecret(
+        std::string const& name,
+        Azure::Core::Context const& context = Azure::Core::Context()) const;
+  };
 }}}} // namespace Azure::Security::KeyVault::Secrets
