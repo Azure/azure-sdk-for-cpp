@@ -96,7 +96,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
   /**
    * @brief Represents a delete secret long running operation
    */
-  class KeyVaultDeleteSecretOperation final : public Azure::Core::Operation<DeletedSecret> {
+  class DeleteSecretOperation final : public Azure::Core::Operation<DeletedSecret> {
 
   private:
     friend class SecretClient;
@@ -117,13 +117,11 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
      *
      * Since C++ doesn't offer `internal` access, we use friends-only instead.
      */
-    KeyVaultDeleteSecretOperation(
+    DeleteSecretOperation(
         std::shared_ptr<SecretClient> secretClient,
         Azure::Response<DeletedSecret> response);
 
-    KeyVaultDeleteSecretOperation(
-        std::string resumeToken,
-        std::shared_ptr<SecretClient> secretClient);
+    DeleteSecretOperation(std::string resumeToken, std::shared_ptr<SecretClient> secretClient);
 
     /**
      * @brief Get the #Azure::Core::Http::RawResponse of the operation request.
@@ -154,7 +152,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
     std::string GetResumeToken() const override { return m_continuationToken; }
 
     /**
-     * @brief Create a #KeyVaultDeleteSecretOperation from the \p resumeToken fetched from another
+     * @brief Create a #DeleteSecretOperation from the \p resumeToken fetched from another
      * `Operation<T>`, updated to the the latest operation status.
      *
      * @remark After the operation is initialized, it is used to poll the last update from the
@@ -164,9 +162,9 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
      * operation.
      * @param client A #secretClient that is used for getting status updates.
      * @param context A #Azure::Core::Context controlling the request lifetime.
-     * @return KeyVaultDeleteSecretOperation
+     * @return DeleteSecretOperation
      */
-    static KeyVaultDeleteSecretOperation CreateFromResumeToken(
+    static DeleteSecretOperation CreateFromResumeToken(
         std::string const& resumeToken,
         SecretClient const& client,
         Azure::Core::Context const& context = Azure::Core::Context());

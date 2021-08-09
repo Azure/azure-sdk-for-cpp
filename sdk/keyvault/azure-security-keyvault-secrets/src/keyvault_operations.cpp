@@ -104,8 +104,8 @@ RestoreDeletedSecretOperation RestoreDeletedSecretOperation::CreateFromResumeTok
   operation.Poll(context);
   return operation;
 }
-// KeyVaultDeleteSecretOperation
-Azure::Response<DeletedSecret> KeyVaultDeleteSecretOperation::PollUntilDoneInternal(
+// DeleteSecretOperation
+Azure::Response<DeletedSecret> DeleteSecretOperation::PollUntilDoneInternal(
     std::chrono::milliseconds period,
     Azure::Core::Context& context)
 {
@@ -123,7 +123,7 @@ Azure::Response<DeletedSecret> KeyVaultDeleteSecretOperation::PollUntilDoneInter
       m_value, std::make_unique<Azure::Core::Http::RawResponse>(*m_rawResponse));
 }
 
-std::unique_ptr<Azure::Core::Http::RawResponse> KeyVaultDeleteSecretOperation::PollInternal(
+std::unique_ptr<Azure::Core::Http::RawResponse> DeleteSecretOperation::PollInternal(
     Azure::Core::Context const& context)
 {
   std::unique_ptr<Azure::Core::Http::RawResponse> rawResponse;
@@ -162,7 +162,7 @@ std::unique_ptr<Azure::Core::Http::RawResponse> KeyVaultDeleteSecretOperation::P
   return rawResponse;
 }
 
-KeyVaultDeleteSecretOperation::KeyVaultDeleteSecretOperation(
+DeleteSecretOperation::DeleteSecretOperation(
     std::shared_ptr<SecretClient> secretClient,
     Azure::Response<DeletedSecret> response)
     : m_secretClient(secretClient)
@@ -177,7 +177,7 @@ KeyVaultDeleteSecretOperation::KeyVaultDeleteSecretOperation(
   }
 }
 
-KeyVaultDeleteSecretOperation::KeyVaultDeleteSecretOperation(
+DeleteSecretOperation::DeleteSecretOperation(
     std::string resumeToken,
     std::shared_ptr<SecretClient> secretClient)
     : m_secretClient(secretClient), m_continuationToken(std::move(resumeToken))
@@ -185,12 +185,12 @@ KeyVaultDeleteSecretOperation::KeyVaultDeleteSecretOperation(
   m_value.Name = resumeToken;
 }
 
-KeyVaultDeleteSecretOperation KeyVaultDeleteSecretOperation::CreateFromResumeToken(
+DeleteSecretOperation DeleteSecretOperation::CreateFromResumeToken(
     std::string const& resumeToken,
     SecretClient const& client,
     Azure::Core::Context const& context)
 {
-  KeyVaultDeleteSecretOperation operation(resumeToken, std::make_shared<SecretClient>(client));
+  DeleteSecretOperation operation(resumeToken, std::make_shared<SecretClient>(client));
   operation.Poll(context);
   return operation;
 }

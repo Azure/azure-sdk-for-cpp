@@ -201,11 +201,11 @@ Azure::Response<PurgedSecret> SecretClient::PurgeDeletedSecret(
       {_detail::DeletedSecretPath, name});
 }
 
-Azure::Security::KeyVault::Secrets::KeyVaultDeleteSecretOperation SecretClient::StartDeleteSecret(
+Azure::Security::KeyVault::Secrets::DeleteSecretOperation SecretClient::StartDeleteSecret(
     std::string const& name,
     Azure::Core::Context const& context) const
 {
-  return Azure::Security::KeyVault::Secrets::KeyVaultDeleteSecretOperation(
+  return Azure::Security::KeyVault::Secrets::DeleteSecretOperation(
       std::make_shared<SecretClient>(*this),
       m_protocolClient->SendRequest<DeletedSecret>(
           context,
