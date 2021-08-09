@@ -7,6 +7,7 @@
 #include <azure/core/internal/strings.hpp>
 
 #include <cstdlib>
+#include <stdexcept>
 
 #if defined(AZ_PLATFORM_WINDOWS)
 #if !defined(WIN32_LEAN_AND_MEAN)
