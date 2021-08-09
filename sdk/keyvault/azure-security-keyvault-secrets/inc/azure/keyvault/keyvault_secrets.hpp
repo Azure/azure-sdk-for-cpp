@@ -9,6 +9,7 @@
 #pragma once
 
 #include "azure/keyvault/secrets/dll_import_export.hpp"
+#include "azure/keyvault/secrets/keyvault_backup_secret.hpp"
 #include "azure/keyvault/secrets/keyvault_deleted_secret.hpp"
 #include "azure/keyvault/secrets/keyvault_secret.hpp"
 #include "azure/keyvault/secrets/keyvault_secret_properties.hpp"

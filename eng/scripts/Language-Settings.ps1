@@ -81,7 +81,7 @@ function Get-cpp-GithubIoDocIndex()
   # Build up the artifact to service name mapping for GithubIo toc.
   $tocContent = Get-TocMapping -metadata $metadata -artifacts $artifacts
   # Generate yml/md toc files and build site.
-  GenerateDocfxTocContent -tocContent $tocContent -lang "C++"
+  GenerateDocfxTocContent -tocContent $tocContent -lang "C++" -campaignId "UA-62780441-44"
 }
 
 function SetPackageVersion ($PackageName, $Version, $ServiceDirectory, $ReleaseDate)

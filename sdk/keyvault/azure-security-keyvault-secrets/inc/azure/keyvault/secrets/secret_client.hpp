@@ -8,14 +8,15 @@
 
 #pragma once
 
-#include "dll_import_export.hpp"
-
+#include "azure/keyvault/secrets/keyvault_backup_secret.hpp"
 #include "azure/keyvault/secrets/keyvault_deleted_secret.hpp"
 #include "azure/keyvault/secrets/keyvault_secret.hpp"
+#include "dll_import_export.hpp"
 #include <azure/core/http/http.hpp>
 #include <azure/core/internal/http/pipeline.hpp>
 #include <azure/core/response.hpp>
 
+#include <stdint.h>
 #include <string>
 
 namespace Azure { namespace Security { namespace KeyVault { namespace _detail {
@@ -100,6 +101,15 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
      */
     std::string Version;
   };
+
+  /**
+   * @brief Define a model for a purged key.
+   *
+   */
+  struct PurgedSecret final
+  {
+  };
+
   /**
    * @brief The SecretClient provides synchronous methods to manage a secret in the Azure Key
    * Vault. The client supports creating, retrieving, updating, deleting, purging, backing up,
@@ -234,6 +244,50 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
         std::string const& name,
         std::string const& version,
         KeyvaultSecretProperties const& properties,
+        Azure::Core::Context const& context = Azure::Core::Context()) const;
+
+    /**
+     * @brief Back up the specified secret.
+     * Requests that a backup of the specified secret be downloaded to the client.
+     * All versions of the secret will be downloaded.
+     * This operation requires the secrets/backup permission.
+     *
+     * @param name The name of the secret<span class="x x-first x-last">.</span>
+     * @param context The context for the operation can be used for request cancellation.
+     *
+     * @return The The backup blob containing the backed up secret.
+     */
+    Azure::Response<BackupSecretResult> BackupSecret(
+        std::string const& name,
+        Azure::Core::Context const& context = Azure::Core::Context()) const;
+
+    /**
+     * @brief Restore a backed up secret to a vault.
+     * Restores a backed up secret, and all its versions, to a vault.
+     * This operation requires the secrets/restore permission.
+     *
+     * @param backup The backup payload as encoded vector of bytes.
+     * @param context The context for the operation can be used for request cancellation.
+     *
+     * @return The Secret wrapped in the Response.
+     */
+    Azure::Response<KeyVaultSecret> RestoreSecretBackup(
+        std::vector<uint8_t> const& backup,
+        Azure::Core::Context const& context = Azure::Core::Context()) const;
+
+    /**
+     * @brief Permanently deletes the specified secret.
+     * The purge deleted secret operation removes the secret permanently, without the possibility of
+     * recovery. This operation can only be enabled on a soft-delete enabled vault. This operation
+     * requires the secrets/purge permission.
+     *
+     * @param name The name of the secret<span class="x x-first x-last">.</span>
+     * @param context The context for the operation can be used for request cancellation.
+     *
+     * @return Response<PurgedSecret> is success.
+     */
+    Azure::Response<PurgedSecret> PurgeDeletedSecret(
+        std::string const& name,
         Azure::Core::Context const& context = Azure::Core::Context()) const;
   };
 

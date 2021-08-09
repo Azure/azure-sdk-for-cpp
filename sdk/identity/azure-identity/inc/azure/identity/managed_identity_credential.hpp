@@ -48,7 +48,6 @@ namespace Azure { namespace Identity {
     /**
      * @brief Constructs a Managed Identity Credential.
      *
-     * @param clientId Client ID.
      * @param options Options for token retrieval.
      */
     explicit ManagedIdentityCredential(

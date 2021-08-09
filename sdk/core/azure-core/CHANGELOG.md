@@ -1,12 +1,10 @@
 # Release History
 
-## 1.2.0-beta.1 (Unreleased)
+## 1.2.0 (2021-08-05)
 
 ### Features Added
 
 - Added `Azure::Core::IO::ProgressBodyStream` type that wraps an existing BodyStream based type stream and reports progress via callback when the stream position is updated.
-
-### Breaking Changes
 
 ### Bugs Fixed
 
@@ -15,6 +13,14 @@
 - Make WinHTTP transport adapter to NOT use SSL/TLS for unsecured HTTP connections.
 
 ### Other Changes
+
+- Updated source code to build with Clang 11. (A community contribution, courtesy of _[davidchisnall](https://github.com/davidchisnall)_)
+
+### Acknowledgments
+
+Thank you to our developer community members who helped to make Azure Core better with their contributions to this release:
+
+- David Chisnall _([GitHub](https://github.com/davidchisnall))_
 
 ## 1.1.0 (2021-07-02)
 

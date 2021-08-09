@@ -14,6 +14,8 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets { 
   /***************** KeyVault Secret *****************/
   constexpr static const char SecretPath[] = "secrets";
   static constexpr char const DeletedSecretPath[] = "deletedsecrets";
+  static constexpr char const BackupSecretPath[] = "backup";
+  static constexpr char const RestoreSecretPath[] = "restore";
 
   /******************* Secret property names ***********/
 

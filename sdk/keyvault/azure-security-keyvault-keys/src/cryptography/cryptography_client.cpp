@@ -1,8 +1,6 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
 
-#include <azure/core/azure_assert.hpp>
-#include <azure/core/credentials/credentials.hpp>
 #include <azure/core/cryptography/hash.hpp>
 #include <azure/core/exception.hpp>
 #include <azure/core/http/http.hpp>
@@ -24,10 +22,12 @@
 #include <vector>
 
 using namespace Azure::Security::KeyVault::Keys::Cryptography;
+using namespace Azure::Security::KeyVault::Keys::_detail;
 using namespace Azure::Security::KeyVault::Keys::Cryptography::_detail;
 using namespace Azure::Core::Http;
 using namespace Azure::Core::Http::Policies;
 using namespace Azure::Core::Http::Policies::_internal;
+using namespace Azure::Core::Http::_internal;
 
 namespace {
 // 1Mb at a time
@@ -58,6 +58,34 @@ inline std::vector<uint8_t> CreateDigest(
 }
 } // namespace
 
+Request CryptographyClient::CreateRequest(
+    HttpMethod method,
+    std::vector<std::string> const& path,
+    Azure::Core::IO::BodyStream* content) const
+{
+  return Azure::Security::KeyVault::_detail::KeyVaultKeysCommonRequest::CreateRequest(
+      m_keyId, m_apiVersion, method, path, content);
+}
+
+std::unique_ptr<Azure::Core::Http::RawResponse> CryptographyClient::SendCryptoRequest(
+    std::vector<std::string> const& path,
+    std::string const& payload,
+    Azure::Core::Context const& context) const
+{
+  // Payload for the request
+  Azure::Core::IO::MemoryBodyStream payloadStream(
+      reinterpret_cast<const uint8_t*>(payload.data()), payload.size());
+
+  // Request and settings
+  auto request = CreateRequest(HttpMethod::Post, path, &payloadStream);
+  request.SetHeader(HttpShared::ContentType, HttpShared::ApplicationJson);
+  request.SetHeader(HttpShared::Accept, HttpShared::ApplicationJson);
+
+  // Send, parse and validate respone
+  return Azure::Security::KeyVault::_detail::KeyVaultKeysCommonRequest::SendRequest(
+      *m_pipeline, request, context);
+}
+
 CryptographyClient::~CryptographyClient() = default;
 
 CryptographyClient::CryptographyClient(
@@ -65,58 +93,47 @@ CryptographyClient::CryptographyClient(
     std::shared_ptr<Core::Credentials::TokenCredential const> credential,
     CryptographyClientOptions const& options)
 {
-  auto apiVersion = options.Version.ToString();
   m_keyId = Azure::Core::Url(keyId);
+  m_apiVersion = options.Version.ToString();
   std::vector<std::unique_ptr<HttpPolicy>> perRetrypolicies;
   {
-    Azure::Core::Credentials::TokenRequestContext const tokenContext
-        = {{"https://vault.azure.net/.default"}};
+    Azure::Core::Credentials::TokenRequestContext const tokenContext = {{TokenContextValue}};
 
     perRetrypolicies.emplace_back(
         std::make_unique<BearerTokenAuthenticationPolicy>(credential, tokenContext));
   }
+  std::vector<std::unique_ptr<HttpPolicy>> perCallpolicies;
 
-  m_pipeline = std::make_shared<Azure::Security::KeyVault::_detail::KeyVaultProtocolClient>(
-      m_keyId,
-      apiVersion,
-      Azure::Core::Http::_internal::HttpPipeline(
-          options, "KeyVault", apiVersion, std::move(perRetrypolicies), {}));
+  m_pipeline = std::make_shared<Azure::Core::Http::_internal::HttpPipeline>(
+      options,
+      "KeyVault",
+      options.Version.ToString(),
+      std::move(perRetrypolicies),
+      std::move(perCallpolicies));
 }
 
 Azure::Response<EncryptResult> CryptographyClient::Encrypt(
     EncryptParameters const& parameters,
     Azure::Core::Context const& context)
 {
-  return m_pipeline->SendRequest<EncryptResult>(
-      context,
-      Azure::Core::Http::HttpMethod::Post,
-      [&parameters]() {
-        return EncryptParametersSerializer::EncryptParametersSerialize(parameters);
-      },
-      [&parameters](Azure::Core::Http::RawResponse const& rawResponse) {
-        auto result = EncryptResultSerializer::EncryptResultDeserialize(rawResponse);
-        result.Algorithm = parameters.Algorithm;
-        return result;
-      },
-      {"encrypt"});
+  // Send and parse respone
+  auto rawResponse = SendCryptoRequest(
+      {EncryptValue}, EncryptParametersSerializer::EncryptParametersSerialize(parameters), context);
+  auto value = EncryptResultSerializer::EncryptResultDeserialize(*rawResponse);
+  value.Algorithm = parameters.Algorithm;
+  return Azure::Response<EncryptResult>(std::move(value), std::move(rawResponse));
 }
 
 Azure::Response<DecryptResult> CryptographyClient::Decrypt(
     DecryptParameters const& parameters,
     Azure::Core::Context const& context)
 {
-  return m_pipeline->SendRequest<DecryptResult>(
-      context,
-      Azure::Core::Http::HttpMethod::Post,
-      [&parameters]() {
-        return DecryptParametersSerializer::DecryptParametersSerialize(parameters);
-      },
-      [&parameters](Azure::Core::Http::RawResponse const& rawResponse) {
-        auto result = DecryptResultSerializer::DecryptResultDeserialize(rawResponse);
-        result.Algorithm = parameters.Algorithm;
-        return result;
-      },
-      {"decrypt"});
+  // Send and parse respone
+  auto rawResponse = SendCryptoRequest(
+      {DecryptValue}, DecryptParametersSerializer::DecryptParametersSerialize(parameters), context);
+  auto value = DecryptResultSerializer::DecryptResultDeserialize(*rawResponse);
+  value.Algorithm = parameters.Algorithm;
+  return Azure::Response<DecryptResult>(std::move(value), std::move(rawResponse));
 }
 
 Azure::Response<WrapResult> CryptographyClient::WrapKey(
@@ -124,19 +141,15 @@ Azure::Response<WrapResult> CryptographyClient::WrapKey(
     std::vector<uint8_t> const& key,
     Azure::Core::Context const& context)
 {
-  return m_pipeline->SendRequest<WrapResult>(
-      context,
-      Azure::Core::Http::HttpMethod::Post,
-      [&algorithm, &key]() {
-        return KeyWrapParametersSerializer::KeyWrapParametersSerialize(
-            KeyWrapParameters(algorithm.ToString(), key));
-      },
-      [&algorithm](Azure::Core::Http::RawResponse const& rawResponse) {
-        auto result = WrapResultSerializer::WrapResultDeserialize(rawResponse);
-        result.Algorithm = algorithm;
-        return result;
-      },
-      {"wrapKey"});
+  // Send and parse respone
+  auto rawResponse = SendCryptoRequest(
+      {WrapKeyValue},
+      KeyWrapParametersSerializer::KeyWrapParametersSerialize(
+          KeyWrapParameters(algorithm.ToString(), key)),
+      context);
+  auto value = WrapResultSerializer::WrapResultDeserialize(*rawResponse);
+  value.Algorithm = algorithm;
+  return Azure::Response<WrapResult>(std::move(value), std::move(rawResponse));
 }
 
 Azure::Response<UnwrapResult> CryptographyClient::UnwrapKey(
@@ -144,19 +157,15 @@ Azure::Response<UnwrapResult> CryptographyClient::UnwrapKey(
     std::vector<uint8_t> const& encryptedKey,
     Azure::Core::Context const& context)
 {
-  return m_pipeline->SendRequest<UnwrapResult>(
-      context,
-      Azure::Core::Http::HttpMethod::Post,
-      [&algorithm, &encryptedKey]() {
-        return KeyWrapParametersSerializer::KeyWrapParametersSerialize(
-            KeyWrapParameters(algorithm.ToString(), encryptedKey));
-      },
-      [&algorithm](Azure::Core::Http::RawResponse const& rawResponse) {
-        auto result = UnwrapResultSerializer::UnwrapResultDeserialize(rawResponse);
-        result.Algorithm = algorithm;
-        return result;
-      },
-      {"unwrapKey"});
+  // Send and parse respone
+  auto rawResponse = SendCryptoRequest(
+      {UnwrapKeyValue},
+      KeyWrapParametersSerializer::KeyWrapParametersSerialize(
+          KeyWrapParameters(algorithm.ToString(), encryptedKey)),
+      context);
+  auto value = UnwrapResultSerializer::UnwrapResultDeserialize(*rawResponse);
+  value.Algorithm = algorithm;
+  return Azure::Response<UnwrapResult>(std::move(value), std::move(rawResponse));
 }
 
 Azure::Response<SignResult> CryptographyClient::Sign(
@@ -164,19 +173,15 @@ Azure::Response<SignResult> CryptographyClient::Sign(
     std::vector<uint8_t> const& digest,
     Azure::Core::Context const& context)
 {
-  return m_pipeline->SendRequest<SignResult>(
-      context,
-      Azure::Core::Http::HttpMethod::Post,
-      [&algorithm, &digest]() {
-        return KeySignParametersSerializer::KeySignParametersSerialize(
-            KeySignParameters(algorithm.ToString(), digest));
-      },
-      [&algorithm](Azure::Core::Http::RawResponse const& rawResponse) {
-        auto result = SignResultSerializer::SignResultDeserialize(rawResponse);
-        result.Algorithm = algorithm;
-        return result;
-      },
-      {"sign"});
+  // Send and parse respone
+  auto rawResponse = SendCryptoRequest(
+      {SignValue},
+      KeySignParametersSerializer::KeySignParametersSerialize(
+          KeySignParameters(algorithm.ToString(), digest)),
+      context);
+  auto value = SignResultSerializer::SignResultDeserialize(*rawResponse);
+  value.Algorithm = algorithm;
+  return Azure::Response<SignResult>(std::move(value), std::move(rawResponse));
 }
 
 Azure::Response<SignResult> CryptographyClient::SignData(
@@ -201,22 +206,16 @@ Azure::Response<VerifyResult> CryptographyClient::Verify(
     std::vector<uint8_t> const& signature,
     Azure::Core::Context const& context)
 {
-  return m_pipeline->SendRequest<VerifyResult>(
-      context,
-      Azure::Core::Http::HttpMethod::Post,
-      [&algorithm, &digest, &signature]() {
-        return KeyVerifyParametersSerializer::KeyVerifyParametersSerialize(
-            KeyVerifyParameters(algorithm.ToString(), digest, signature));
-      },
-      [&algorithm, this](Azure::Core::Http::RawResponse const& rawResponse) {
-        auto result = VerifyResultSerializer::VerifyResultDeserialize(rawResponse);
-        result.Algorithm = algorithm;
-        // Verify result won't return the KeyId, the client SDK will add it based on the client
-        // KeyId.
-        result.KeyId = this->m_keyId.GetAbsoluteUrl();
-        return result;
-      },
-      {"verify"});
+  // Send and parse respone
+  auto rawResponse = SendCryptoRequest(
+      {VerifyValue},
+      KeyVerifyParametersSerializer::KeyVerifyParametersSerialize(
+          KeyVerifyParameters(algorithm.ToString(), digest, signature)),
+      context);
+  auto value = VerifyResultSerializer::VerifyResultDeserialize(*rawResponse);
+  value.Algorithm = algorithm;
+  value.KeyId = this->m_keyId.GetAbsoluteUrl();
+  return Azure::Response<VerifyResult>(std::move(value), std::move(rawResponse));
 }
 
 Azure::Response<VerifyResult> CryptographyClient::VerifyData(

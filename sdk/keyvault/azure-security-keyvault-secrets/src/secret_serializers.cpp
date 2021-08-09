@@ -8,11 +8,12 @@
 
 #include "private/secret_serializers.hpp"
 #include "private/secret_constants.hpp"
-
+#include <azure/core/base64.hpp>
 #include <azure/core/internal/json/json.hpp>
 #include <azure/core/internal/json/json_optional.hpp>
 #include <azure/core/internal/json/json_serializable.hpp>
 
+using namespace Azure::Core::_internal;
 using namespace Azure::Core::Json::_internal;
 using Azure::Core::_internal::PosixTimeConverter;
 using namespace Azure::Security::KeyVault::Secrets;
@@ -157,41 +158,41 @@ void KeyVaultDeletedSecretSerializer::KeyVaultDeletedSecretDeserialize(
 std::string KeyVaultSecretSerializer::KeyVaultSecretSerialize(KeyVaultSecret const& parameters)
 {
   json payload;
-  using namespace Azure::Security::KeyVault::Secrets::_detail;
 
   // value is required
   payload[ValuePropertyName] = parameters.Value;
 
   // all else is optional
   JsonOptional::SetFromNullable(
-      parameters.Properties.ContentType, payload, ContentTypePropertyName);
+      parameters.Properties.ContentType, payload, _detail::ContentTypePropertyName);
 
   json attributes;
 
   JsonOptional::SetFromNullable<Azure::DateTime, int64_t>(
       parameters.Properties.CreatedOn,
       attributes,
-      CreatedPropertyName,
+      _detail::CreatedPropertyName,
       PosixTimeConverter::DateTimeToPosixTime);
-  JsonOptional::SetFromNullable(parameters.Properties.Enabled, attributes, EnabledPropertyName);
+  JsonOptional::SetFromNullable(
+      parameters.Properties.Enabled, attributes, _detail::EnabledPropertyName);
   JsonOptional::SetFromNullable<Azure::DateTime, int64_t>(
       parameters.Properties.ExpiresOn,
       attributes,
-      ExpPropertyName,
+      _detail::ExpPropertyName,
       PosixTimeConverter::DateTimeToPosixTime);
   JsonOptional::SetFromNullable<Azure::DateTime, int64_t>(
       parameters.Properties.NotBefore,
       attributes,
-      NbfPropertyName,
+      _detail::NbfPropertyName,
       PosixTimeConverter::DateTimeToPosixTime);
   JsonOptional::SetFromNullable(
-      parameters.Properties.RecoverableDays, attributes, RecoverableDaysPropertyName);
+      parameters.Properties.RecoverableDays, attributes, _detail::RecoverableDaysPropertyName);
   JsonOptional::SetFromNullable(
-      parameters.Properties.RecoveryLevel, attributes, RecoveryLevelPropertyName);
+      parameters.Properties.RecoveryLevel, attributes, _detail::RecoveryLevelPropertyName);
   JsonOptional::SetFromNullable<Azure::DateTime, int64_t>(
       parameters.Properties.UpdatedOn,
       attributes,
-      UpdatedPropertyName,
+      _detail::UpdatedPropertyName,
       PosixTimeConverter::DateTimeToPosixTime);
 
   // optional tags
@@ -234,5 +235,25 @@ std::string KeyVaultSecretPropertiesSerializer::KeyVaultSecretPropertiesSerializ
 
   payload[AttributesPropertyName] = attributes;
 
+  return payload.dump();
+}
+
+BackupSecretResult KeyvaultBackupSecretSerializer::KeyvaultBackupSecretDeserialize(
+    Azure::Core::Http::RawResponse const& rawResponse)
+{
+  auto const& body = rawResponse.GetBody();
+  auto jsonParser = json::parse(body);
+  auto encodedResult = jsonParser[_detail::ValuePropertyName].get<std::string>();
+  BackupSecretResult data;
+  data.Secret = Base64Url::Base64UrlDecode(encodedResult);
+
+  return data;
+}
+
+std::string KeyvaultRestoreSecretSerializer::KeyvaultRestoreSecretSerialize(
+    std::vector<uint8_t> const& backup)
+{
+  json payload;
+  payload[_detail::ValuePropertyName] = Base64Url::Base64UrlEncode(backup);
   return payload.dump();
 }
