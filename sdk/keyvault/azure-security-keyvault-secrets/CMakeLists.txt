@@ -35,6 +35,7 @@ set(
     inc/azure/keyvault/keyvault_secrets.hpp
     inc/azure/keyvault/secrets/keyvault_deleted_secret.hpp
     inc/azure/keyvault/secrets/keyvault_secret_paged_response.hpp
+    inc/azure/keyvault/secrets/keyvault_backup_secret.hpp
 )
 
 set(
