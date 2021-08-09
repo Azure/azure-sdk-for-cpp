@@ -4,8 +4,8 @@
 #define _CRT_SECURE_NO_WARNINGS
 #endif
 
+#include "azure/keyvault/keyvault_secrets.hpp"
 #include <azure/identity.hpp>
-#include <azure/keyvault/keyvault_secrets.hpp>
 
 using namespace Azure::Security::KeyVault::Secrets;
 
@@ -32,7 +32,7 @@ int main()
   // auto response4 = secretClient.BackupSecret("someSecret2");
   // auto response5 = secretClient.RestoreSecretBackup(response4.Value.Secret);
 
-  auto response = secretClient.PurgeDeletedSecret("someSecret3");
+  // auto response = secretClient.PurgeDeletedSecret("someSecret3");
 
   // auto response4 = secretClient.BackupSecret("someSecret2");
   // auto response5 = secretClient.RestoreSecretBackup(response4.Value.Secret);
@@ -44,5 +44,13 @@ int main()
     auto response7 = response6.CreateFromResumeToken(resumeToken, secretClient);
     auto reasponse8 = response7.Poll();
   }
+  // auto response4 = secretClient.BackupSecret("someSecret2");
+  // auto response5 = secretClient.RestoreSecretBackup(response4.Value.Secret);
+  // GetPropertiesOfSecretsOptions options;
+  // options.MaxResults = 1;
+  // auto r1 = secretClient.GetPropertiesOfSecrets(options);
+  // auto r2 = secretClient.GetPropertiesOfSecretsVersions(r1.Items[0].Name);
+  auto r3 = secretClient.GetDeletedSecrets();
+  // r1.MoveToNextPage();
   return 0;
 }

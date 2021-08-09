@@ -87,4 +87,34 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
      */
     std::string Version;
   };
+
+  /**
+   * @brief The options for calling an operation #GetPropertiesOfSecrets.
+   *
+   */
+  struct GetPropertiesOfSecretsOptions final
+  {
+    Azure::Nullable<size_t> MaxResults;
+    Azure::Nullable<std::string> NextPageToken;
+  };
+
+  /**
+   * @brief The options for calling an operation #GetPropertiesOfSecretVersions.
+   *
+   */
+  struct GetPropertiesOfSecretVersionsOptions final
+  {
+    Azure::Nullable<size_t> MaxResults;
+    Azure::Nullable<std::string> NextPageToken;
+  };
+
+  /**
+   * @brief The options for calling an operation #GetDeletedSecrets.
+   *
+   */
+  struct GetDeletedSecretsOptions final
+  {
+    Azure::Nullable<size_t> MaxResults;
+    Azure::Nullable<std::string> NextPageToken;
+  };
 }}}} // namespace Azure::Security::KeyVault::Secrets

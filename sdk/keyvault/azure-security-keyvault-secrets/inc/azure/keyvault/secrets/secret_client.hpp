@@ -13,6 +13,7 @@
 #include "azure/keyvault/secrets/keyvault_operations.hpp"
 #include "azure/keyvault/secrets/keyvault_options.hpp"
 #include "azure/keyvault/secrets/keyvault_secret.hpp"
+#include "azure/keyvault/secrets/keyvault_secret_paged_response.hpp"
 #include "dll_import_export.hpp"
 #include <azure/core/http/http.hpp>
 #include <azure/core/internal/http/pipeline.hpp>
@@ -241,6 +242,56 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
     Azure::Security::KeyVault::Secrets::KeyVaultRestoreDeletedSecretOperation
     StartRecoverDeletedSecret(
         std::string const& name,
+        Azure::Core::Context const& context = Azure::Core::Context()) const;
+
+    /**
+     * @brief List secrets in a specified key vault.
+     * The Get Secrets operation is applicable to the entire vault.
+     * However, only the base secret identifier and its attributes are provided in the response.
+     * Individual secret versions are not listed in the response. This operation requires the
+     * secrets/list permission.
+     *
+     * @param options The optional parameters for this request
+     * @param context The context for the operation can be used for request cancellation.
+     *
+     * @return Response containing a list of secrets in the vault along with a link to the next page
+     * of secrets.
+     */
+    KeyVaultSecretPropertiesPagedResponse GetPropertiesOfSecrets(
+        GetPropertiesOfSecretsOptions const& options = GetPropertiesOfSecretsOptions(),
+        Azure::Core::Context const& context = Azure::Core::Context()) const;
+
+    /**
+     * @brief List all versions of the specified secret.
+     * The full secret identifier and attributes are provided in the response. No values are
+     * returned for the secrets. This operations requires the secrets/list permission.
+     *
+     * @param name The name of the secret.
+     * @param options The optional parameters for this request
+     * @param context The context for the operation can be used for request cancellation.
+     *
+     * @return Response containing a list of secrets in the vault along with a link to the next page
+     * of secrets.
+     */
+    KeyVaultSecretPropertiesPagedResponse GetPropertiesOfSecretsVersions(
+        std::string const& name,
+        GetPropertiesOfSecretVersionsOptions const& options
+        = GetPropertiesOfSecretVersionsOptions(),
+        Azure::Core::Context const& context = Azure::Core::Context()) const;
+
+    /**
+     * @brief Lists deleted secrets for the specified vault.
+     * The Get Deleted Secrets operation returns the secrets that have been deleted for a vault
+     * enabled for soft-delete. This operation requires the secrets/list permission.
+     *
+     * @param options The optional parameters for this request
+     * @param context The context for the operation can be used for request cancellation.
+     *
+     * @return Response containing a list of deleted secrets in the vault, along with a link to the
+     * next page of deleted secrets.
+     */
+    KeyvaultSecretDeletedSecretPagedResponse GetDeletedSecrets(
+        GetDeletedSecretsOptions const& options = GetDeletedSecretsOptions(),
         Azure::Core::Context const& context = Azure::Core::Context()) const;
   };
 }}}} // namespace Azure::Security::KeyVault::Secrets
