@@ -258,11 +258,11 @@ std::string KeyvaultRestoreSecretSerializer::KeyvaultRestoreSecretSerialize(
   return payload.dump();
 }
 
-KeyVaultSecretPropertiesPagedResponse
+SecretPropertiesPagedResponse
 KeyVaultSecretPropertiesPagedResultSerializer::KeyVaultSecretPropertiesPagedResponseDeserialize(
     Azure::Core::Http::RawResponse const& rawResponse)
 {
-  KeyVaultSecretPropertiesPagedResponse result;
+  SecretPropertiesPagedResponse result;
   auto const& body = rawResponse.GetBody();
   auto jsonParser = json::parse(body);
 
@@ -336,12 +336,12 @@ KeyVaultSecretPropertiesPagedResultSerializer::KeyVaultSecretPropertiesPagedResp
   return result;
 }
 
-KeyvaultSecretDeletedSecretPagedResponse
+DeletedSecretPagedResponse
 KeyVaultSecretDeletedSecretPagedResultSerializer::KeyVaultSecretDeletedSecretPagedResultDeserialize(
     Azure::Core::Http::RawResponse const& rawResponse)
 {
 
-  KeyvaultSecretDeletedSecretPagedResponse result;
+  DeletedSecretPagedResponse result;
   auto const& body = rawResponse.GetBody();
   auto jsonParser = json::parse(body);
   auto string = jsonParser.dump();

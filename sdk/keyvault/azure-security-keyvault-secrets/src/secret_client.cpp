@@ -231,7 +231,7 @@ Azure::Security::KeyVault::Secrets::RestoreDeletedSecretOperation SecretClient::
           {_detail::DeletedSecretPath, name, _detail::RecoverDeletedSecretPath}));
 }
 
-KeyVaultSecretPropertiesPagedResponse SecretClient::GetPropertiesOfSecrets(
+SecretPropertiesPagedResponse SecretClient::GetPropertiesOfSecrets(
     GetPropertiesOfSecretsOptions const& options,
     Azure::Core::Context const& context) const
 {
@@ -245,7 +245,7 @@ KeyVaultSecretPropertiesPagedResponse SecretClient::GetPropertiesOfSecrets(
 
   request.Query->emplace(_detail::PagedMaxResultsName, std::to_string(maxResults));
 
-  auto response = m_protocolClient->SendRequest<KeyVaultSecretPropertiesPagedResponse>(
+  auto response = m_protocolClient->SendRequest<SecretPropertiesPagedResponse>(
       context,
       Azure::Core::Http::HttpMethod::Get,
       [](Azure::Core::Http::RawResponse const& rawResponse) {
@@ -255,13 +255,13 @@ KeyVaultSecretPropertiesPagedResponse SecretClient::GetPropertiesOfSecrets(
       request.Path,
       request.Query);
 
-  return KeyVaultSecretPropertiesPagedResponse(
+  return SecretPropertiesPagedResponse(
       std::move(response.Value),
       std::move(response.RawResponse),
       std::make_unique<SecretClient>(*this));
 }
 
-KeyVaultSecretPropertiesPagedResponse SecretClient::GetPropertiesOfSecretsVersions(
+SecretPropertiesPagedResponse SecretClient::GetPropertiesOfSecretsVersions(
     std::string const& name,
     GetPropertiesOfSecretVersionsOptions const& options,
     Azure::Core::Context const& context) const
@@ -276,7 +276,7 @@ KeyVaultSecretPropertiesPagedResponse SecretClient::GetPropertiesOfSecretsVersio
 
   request.Query->emplace(_detail::PagedMaxResultsName, std::to_string(maxResults));
 
-  auto response = m_protocolClient->SendRequest<KeyVaultSecretPropertiesPagedResponse>(
+  auto response = m_protocolClient->SendRequest<SecretPropertiesPagedResponse>(
       context,
       Azure::Core::Http::HttpMethod::Get,
       [](Azure::Core::Http::RawResponse const& rawResponse) {
@@ -286,14 +286,14 @@ KeyVaultSecretPropertiesPagedResponse SecretClient::GetPropertiesOfSecretsVersio
       request.Path,
       request.Query);
 
-  return KeyVaultSecretPropertiesPagedResponse(
+  return SecretPropertiesPagedResponse(
       std::move(response.Value),
       std::move(response.RawResponse),
       std::make_unique<SecretClient>(*this),
       name);
 }
 
-KeyvaultSecretDeletedSecretPagedResponse SecretClient::GetDeletedSecrets(
+DeletedSecretPagedResponse SecretClient::GetDeletedSecrets(
     GetDeletedSecretsOptions const& options,
     Azure::Core::Context const& context) const
 {
@@ -307,7 +307,7 @@ KeyvaultSecretDeletedSecretPagedResponse SecretClient::GetDeletedSecrets(
 
   request.Query->emplace(_detail::PagedMaxResultsName, std::to_string(maxResults));
 
-  auto response = m_protocolClient->SendRequest<KeyvaultSecretDeletedSecretPagedResponse>(
+  auto response = m_protocolClient->SendRequest<DeletedSecretPagedResponse>(
       context,
       Azure::Core::Http::HttpMethod::Get,
       [](Azure::Core::Http::RawResponse const& rawResponse) {
@@ -317,7 +317,7 @@ KeyvaultSecretDeletedSecretPagedResponse SecretClient::GetDeletedSecrets(
       request.Path,
       request.Query);
 
-  return KeyvaultSecretDeletedSecretPagedResponse(
+  return DeletedSecretPagedResponse(
       std::move(response.Value),
       std::move(response.RawResponse),
       std::make_unique<SecretClient>(*this));

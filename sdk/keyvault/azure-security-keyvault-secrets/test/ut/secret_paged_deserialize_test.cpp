@@ -8,7 +8,7 @@ using namespace Azure::Security::KeyVault::Secrets::_test;
 using namespace Azure::Security::KeyVault::Secrets::_detail;
 using namespace Azure::Core::Json::_internal;
 
-TEST(KeyVaultSecretPropertiesPagedResponse, SingleWithNext)
+TEST(SecretPropertiesPagedResponse, SingleWithNext)
 {
   auto response = _test::PagedHelpers::GetFirstResponse();
 
@@ -30,7 +30,7 @@ TEST(KeyVaultSecretPropertiesPagedResponse, SingleWithNext)
   EXPECT_EQ(item.Id, "https://gearama-test2.vault.azure.net/secrets/gdfgfd");
 }
 
-TEST(KeyVaultSecretPropertiesPagedResponse, MultipleNoNext)
+TEST(SecretPropertiesPagedResponse, MultipleNoNext)
 {
   auto response = _test::PagedHelpers::GetMultipleResponse();
 
@@ -71,7 +71,7 @@ TEST(KeyVaultSecretPropertiesPagedResponse, MultipleNoNext)
   EXPECT_EQ(item.Version, "d75080822f03400ab4d658bd0e988ac5");
 }
 
-TEST(KeyVaultSecretPropertiesPagedResponse, NoneNoNext)
+TEST(SecretPropertiesPagedResponse, NoneNoNext)
 {
   auto response = _test::PagedHelpers::GetEmptyResponse();
 

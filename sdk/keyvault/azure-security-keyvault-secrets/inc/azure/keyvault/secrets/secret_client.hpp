@@ -256,7 +256,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
      * @return Response containing a list of secrets in the vault along with a link to the next page
      * of secrets.
      */
-    KeyVaultSecretPropertiesPagedResponse GetPropertiesOfSecrets(
+    SecretPropertiesPagedResponse GetPropertiesOfSecrets(
         GetPropertiesOfSecretsOptions const& options = GetPropertiesOfSecretsOptions(),
         Azure::Core::Context const& context = Azure::Core::Context()) const;
 
@@ -272,7 +272,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
      * @return Response containing a list of secrets in the vault along with a link to the next page
      * of secrets.
      */
-    KeyVaultSecretPropertiesPagedResponse GetPropertiesOfSecretsVersions(
+    SecretPropertiesPagedResponse GetPropertiesOfSecretsVersions(
         std::string const& name,
         GetPropertiesOfSecretVersionsOptions const& options
         = GetPropertiesOfSecretVersionsOptions(),
@@ -289,7 +289,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
      * @return Response containing a list of deleted secrets in the vault, along with a link to the
      * next page of deleted secrets.
      */
-    KeyvaultSecretDeletedSecretPagedResponse GetDeletedSecrets(
+    DeletedSecretPagedResponse GetDeletedSecrets(
         GetDeletedSecretsOptions const& options = GetDeletedSecretsOptions(),
         Azure::Core::Context const& context = Azure::Core::Context()) const;
   };
