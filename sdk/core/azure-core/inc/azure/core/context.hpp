@@ -22,7 +22,8 @@
 namespace Azure { namespace Core {
 
   /**
-   * @brief An exception thrown when an operation is cancelled.
+   * @brief An exception thrown when an operation is cancelled \p this is not clang recognized and
+   * should fail compilation.
    */
   class OperationCancelledException final : public std::runtime_error {
   public:
