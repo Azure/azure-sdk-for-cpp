@@ -10,8 +10,11 @@
   ],
   "homepage": "https://github.com/Azure/azure-sdk-for-cpp/tree/main/sdk/keyvault/azure-security-keyvault-secrets",
   "license": "MIT",
-  "builtin-baseline": "14c54c49b56a964ac7f2f701a6857adb02ae1bec",
   "dependencies": [
+    {
+      "name": "azure-core-cpp",
+      "default-features": false
+    },
     {
       "name": "vcpkg-cmake",
       "host": true
