@@ -63,8 +63,7 @@ std::unique_ptr<Azure::Core::Http::RawResponse> RestoreDeletedSecretOperation::P
 
     if (m_status == Azure::Core::OperationStatus::Succeeded)
     {
-      m_value = _detail::KeyVaultSecretSerializer::KeyVaultSecretDeserialize(
-          m_value.Name, *rawResponse);
+      m_value = _detail::SecretSerializer::Deserialize(m_value.Name, *rawResponse);
     }
   }
   return rawResponse;

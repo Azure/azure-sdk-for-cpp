@@ -86,7 +86,7 @@ Azure::Response<Secret> SecretClient::GetSecret(
       context,
       Azure::Core::Http::HttpMethod::Get,
       [&name](Azure::Core::Http::RawResponse const& rawResponse) {
-        return _detail::KeyVaultSecretSerializer::KeyVaultSecretDeserialize(name, rawResponse);
+        return _detail::SecretSerializer::Deserialize(name, rawResponse);
       },
       {_detail::SecretPath, name, options.Version});
 }
@@ -122,9 +122,9 @@ Azure::Response<Secret> SecretClient::SetSecret(
   return m_protocolClient->SendRequest<Secret>(
       context,
       Azure::Core::Http::HttpMethod::Put,
-      [&secret]() { return _detail::KeyVaultSecretSerializer::KeyVaultSecretSerialize(secret); },
+      [&secret]() { return _detail::SecretSerializer::Serialize(secret); },
       [&name](Azure::Core::Http::RawResponse const& rawResponse) {
-        return _detail::KeyVaultSecretSerializer::KeyVaultSecretDeserialize(name, rawResponse);
+        return _detail::SecretSerializer::Deserialize(name, rawResponse);
       },
       {_detail::SecretPath, name});
 }
@@ -143,7 +143,7 @@ Azure::Response<Secret> SecretClient::UpdateSecretProperties(
             properties);
       },
       [&name](Azure::Core::Http::RawResponse const& rawResponse) {
-        return _detail::KeyVaultSecretSerializer::KeyVaultSecretDeserialize(name, rawResponse);
+        return _detail::SecretSerializer::Deserialize(name, rawResponse);
       },
       {_detail::SecretPath, name, options.Version});
 }
@@ -185,7 +185,7 @@ Azure::Response<Secret> SecretClient::RestoreSecretBackup(
         return _detail::KeyvaultRestoreSecretSerializer::KeyvaultRestoreSecretSerialize(backup);
       },
       [](Azure::Core::Http::RawResponse const& rawResponse) {
-        return _detail::KeyVaultSecretSerializer::KeyVaultSecretDeserialize(rawResponse);
+        return _detail::SecretSerializer::Deserialize(rawResponse);
       },
       {_detail::SecretPath, _detail::RestoreSecretPath});
 }
@@ -226,7 +226,7 @@ Azure::Security::KeyVault::Secrets::RestoreDeletedSecretOperation SecretClient::
           context,
           Azure::Core::Http::HttpMethod::Post,
           [&name](Azure::Core::Http::RawResponse const& rawResponse) {
-            return _detail::KeyVaultSecretSerializer::KeyVaultSecretDeserialize(name, rawResponse);
+            return _detail::SecretSerializer::Deserialize(name, rawResponse);
           },
           {_detail::DeletedSecretPath, name, _detail::RecoverDeletedSecretPath}));
 }

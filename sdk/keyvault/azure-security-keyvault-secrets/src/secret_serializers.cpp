@@ -20,27 +20,26 @@ using namespace Azure::Security::KeyVault::Secrets;
 using namespace Azure::Security::KeyVault::Secrets::_detail;
 
 // Creates a new key based on a name and an HTTP raw response.
-Secret KeyVaultSecretSerializer::KeyVaultSecretDeserialize(
+Secret SecretSerializer::Deserialize(
     std::string const& name,
     Azure::Core::Http::RawResponse const& rawResponse)
 {
   Secret secret;
   secret.Name = name;
-  _detail::KeyVaultSecretSerializer::KeyVaultSecretDeserialize(secret, rawResponse);
+  _detail::SecretSerializer::Deserialize(secret, rawResponse);
   return secret;
 }
 
 // Create from HTTP raw response only.
-Secret KeyVaultSecretSerializer::KeyVaultSecretDeserialize(
-    Azure::Core::Http::RawResponse const& rawResponse)
+Secret SecretSerializer::Deserialize(Azure::Core::Http::RawResponse const& rawResponse)
 {
   Secret secret;
-  _detail::KeyVaultSecretSerializer::KeyVaultSecretDeserialize(secret, rawResponse);
+  _detail::SecretSerializer::Deserialize(secret, rawResponse);
   return secret;
 }
 
 // Updates a Key based on an HTTP raw response.
-void KeyVaultSecretSerializer::KeyVaultSecretDeserialize(
+void SecretSerializer::Deserialize(
     Secret& secret,
     Azure::Core::Http::RawResponse const& rawResponse)
 {
@@ -142,7 +141,7 @@ void KeyVaultDeletedSecretSerializer::KeyVaultDeletedSecretDeserialize(
     DeletedSecret& secret,
     Azure::Core::Http::RawResponse const& rawResponse)
 {
-  KeyVaultSecretSerializer::KeyVaultSecretDeserialize(secret, rawResponse);
+  SecretSerializer::Deserialize(secret, rawResponse);
 
   auto const& body = rawResponse.GetBody();
   auto jsonParser = json::parse(body);
@@ -155,7 +154,7 @@ void KeyVaultDeletedSecretSerializer::KeyVaultDeletedSecretDeserialize(
 }
 
 // serializes a set secret parameters object
-std::string KeyVaultSecretSerializer::KeyVaultSecretSerialize(Secret const& parameters)
+std::string SecretSerializer::Serialize(Secret const& parameters)
 {
   json payload;
 
@@ -275,7 +274,7 @@ KeyVaultSecretPropertiesPagedResultSerializer::KeyVaultSecretPropertiesPagedResp
   {
     SecretProperties item;
     item.Id = secretProperties[_detail::IdPropertyName].get<std::string>();
-    _detail::KeyVaultSecretSerializer::ParseIDUrl(item, item.Id);
+    _detail::SecretSerializer::ParseIDUrl(item, item.Id);
     // Parse URL for the various attributes
     if (secretProperties.contains(_detail::AttributesPropertyName))
     {
@@ -354,7 +353,7 @@ KeyVaultSecretDeletedSecretPagedResultSerializer::KeyVaultSecretDeletedSecretPag
   {
     DeletedSecret item;
     item.Id = secretProperties[_detail::IdPropertyName].get<std::string>();
-    _detail::KeyVaultSecretSerializer::ParseIDUrl(item.Properties, item.Id);
+    _detail::SecretSerializer::ParseIDUrl(item.Properties, item.Id);
     // Parse URL for the various attributes
     if (secretProperties.contains(_detail::AttributesPropertyName))
     {

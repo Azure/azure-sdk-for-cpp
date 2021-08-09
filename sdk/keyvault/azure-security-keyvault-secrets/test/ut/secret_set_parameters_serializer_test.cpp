@@ -19,7 +19,7 @@ TEST(KeyvaultSecretSetParametersSerializer, SetValue)
 {
   Secret params("name", "value");
 
-  std::string result = KeyVaultSecretSerializer::KeyVaultSecretSerialize(params);
+  std::string result = SecretSerializer::Serialize(params);
 
   auto jsonParser = json::parse(result);
 
@@ -34,7 +34,7 @@ TEST(KeyvaultSecretSetParametersSerializer, SetValueCT)
 
   params.Properties.ContentType = "ct";
 
-  std::string result = KeyVaultSecretSerializer::KeyVaultSecretSerialize(params);
+  std::string result = SecretSerializer::Serialize(params);
 
   auto jsonParser = json::parse(result);
 
@@ -50,7 +50,7 @@ TEST(KeyvaultSecretSetParametersSerializer, SetValueCTAttrTag)
   params.Properties.Enabled = true;
   params.Properties.Tags = std::unordered_map<std::string, std::string>{{"a", "b"}};
 
-  std::string result = KeyVaultSecretSerializer::KeyVaultSecretSerialize(params);
+  std::string result = SecretSerializer::Serialize(params);
 
   auto jsonParser = json::parse(result);
 
