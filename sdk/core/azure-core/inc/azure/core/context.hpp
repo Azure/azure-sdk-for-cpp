@@ -30,7 +30,6 @@ namespace Azure { namespace Core {
      * @brief Constructs an `OperationCancelledException` with message string as the description.
      *
      * @param message The description for the exception.
-     * @param x this is not real.
      */
     explicit OperationCancelledException(std::string const& message) : std::runtime_error(message)
     {
