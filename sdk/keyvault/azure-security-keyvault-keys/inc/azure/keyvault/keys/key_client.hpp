@@ -12,6 +12,13 @@
 #include "azure/keyvault/keys/key_client_models.hpp"
 #include "azure/keyvault/keys/key_client_options.hpp"
 
+#include <azure/core/context.hpp>
+#include <azure/core/credentials/credentials.hpp>
+#include <azure/core/http/http.hpp>
+#include <azure/core/internal/http/pipeline.hpp>
+#include <azure/core/io/body_stream.hpp>
+#include <azure/core/response.hpp>
+
 #include <functional>
 #include <vector>
 
@@ -33,7 +40,9 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
   {
   protected:
     // Using a shared pipeline for a client to share it with LRO (like delete key)
-    std::shared_ptr<Azure::Security::KeyVault::_detail::KeyVaultProtocolClient> m_pipeline;
+    Azure::Core::Url m_vaultUrl;
+    std::string m_apiVersion;
+    std::shared_ptr<Azure::Core::Http::_internal::HttpPipeline> m_pipeline;
 
   public:
     /**
@@ -59,7 +68,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
      *
      * @param keyClient An existing key vault key client.
      */
-    explicit KeyClient(KeyClient const& keyClient) : m_pipeline(keyClient.m_pipeline) {}
+    explicit KeyClient(KeyClient const& keyClient) = default;
 
     /**
      * @brief Gets the public part of a stored key.
@@ -377,5 +386,19 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
     Azure::Response<KeyVaultKey> ImportKey(
         ImportKeyOptions const& importKeyOptions,
         Azure::Core::Context const& context = Azure::Core::Context()) const;
+
+  private:
+    std::unique_ptr<Azure::Core::Http::RawResponse> SendRequest(
+        Azure::Core::Http::Request& request,
+        Azure::Core::Context const& context) const;
+
+    Azure::Core::Http::Request CreateRequest(
+        Azure::Core::Http::HttpMethod method,
+        std::vector<std::string> const& path = {},
+        Azure::Core::IO::BodyStream* content = nullptr) const;
+
+    Azure::Core::Http::Request ContinuationTokenRequest(
+        std::vector<std::string> const& path,
+        const Azure::Nullable<std::string>& NextPageToken) const;
   };
 }}}} // namespace Azure::Security::KeyVault::Keys

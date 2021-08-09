@@ -36,6 +36,16 @@ int main()
 
   // auto response4 = secretClient.BackupSecret("someSecret2");
   // auto response5 = secretClient.RestoreSecretBackup(response4.Value.Secret);
+
+  auto response6 = secretClient.StartRecoverDeletedSecret("someSecret2");
+  if (!response6.IsDone())
+  {
+    auto resumeToken = response6.GetResumeToken();
+    auto response7 = response6.CreateFromResumeToken(resumeToken, secretClient);
+    auto reasponse8 = response7.Poll();
+  }
+  // auto response4 = secretClient.BackupSecret("someSecret2");
+  // auto response5 = secretClient.RestoreSecretBackup(response4.Value.Secret);
   // GetPropertiesOfSecretsOptions options;
   // options.MaxResults = 1;
   // auto r1 = secretClient.GetPropertiesOfSecrets(options);
