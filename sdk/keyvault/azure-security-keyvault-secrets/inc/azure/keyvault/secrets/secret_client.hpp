@@ -148,7 +148,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
     Azure::Response<Secret> UpdateSecretProperties(
         std::string const& name,
         UpdateSecretPropertiesOptions const& options,
-        KeyvaultSecretProperties const& properties,
+        SecretProperties const& properties,
         Azure::Core::Context const& context = Azure::Core::Context()) const;
 
     /**
@@ -168,7 +168,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
     Azure::Response<Secret> UpdateSecretProperties(
         std::string const& name,
         std::string const& version,
-        KeyvaultSecretProperties const& properties,
+        SecretProperties const& properties,
         Azure::Core::Context const& context = Azure::Core::Context()) const;
 
     /**

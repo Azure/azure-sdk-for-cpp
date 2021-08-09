@@ -23,11 +23,10 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
    * @brief Define a single page to list the secrets from the Key Vault.
    *
    */
-  class SecretPropertiesPagedResponse final
-      : public Azure::Core::PagedResponse<KeyvaultSecretProperties> {
+  class SecretPropertiesPagedResponse final : public Azure::Core::PagedResponse<SecretProperties> {
   private:
     friend class SecretClient;
-    friend class Azure::Core::PagedResponse<KeyvaultSecretProperties>;
+    friend class Azure::Core::PagedResponse<SecretProperties>;
 
     std::string m_secretName;
     std::shared_ptr<SecretClient> m_secretClient;
@@ -53,10 +52,10 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
     SecretPropertiesPagedResponse() = default;
 
     /**
-     * @brief Each #KeyvaultSecretProperties represent a Secret in the Key Vault.
+     * @brief Each #SecretProperties represent a Secret in the Key Vault.
      *
      */
-    std::vector<KeyvaultSecretProperties> Items;
+    std::vector<SecretProperties> Items;
   };
 
   /**

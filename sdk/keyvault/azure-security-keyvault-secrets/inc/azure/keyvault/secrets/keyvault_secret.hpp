@@ -34,7 +34,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
      * @brief The secret Properties bundle.
      *
      */
-    KeyvaultSecretProperties Properties;
+    SecretProperties Properties;
 
     /**
      * @brief Construct a new Secret object.

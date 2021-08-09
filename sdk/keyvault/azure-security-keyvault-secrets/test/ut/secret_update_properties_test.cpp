@@ -12,7 +12,7 @@ using namespace Azure::Core::Json::_internal;
 
 TEST(KeyVaultSecretPropertiesSerializer, Serialize1)
 {
-  KeyvaultSecretProperties properties;
+  SecretProperties properties;
 
   properties.ContentType = "contentType";
   properties.Enabled = true;
@@ -34,7 +34,7 @@ TEST(KeyVaultSecretPropertiesSerializer, Serialize1)
 
 TEST(KeyVaultSecretPropertiesSerializer, Serialize2)
 {
-  KeyvaultSecretProperties properties;
+  SecretProperties properties;
 
   properties.ContentType = "contentType";
   properties.Enabled = true;
@@ -58,7 +58,7 @@ TEST(KeyVaultSecretPropertiesSerializer, Serialize2)
 
 TEST(KeyVaultSecretPropertiesSerializer, Serialize3)
 {
-  KeyvaultSecretProperties properties;
+  SecretProperties properties;
 
   properties.ContentType = "contentType";
   properties.Enabled = true;

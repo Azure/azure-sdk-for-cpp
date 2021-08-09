@@ -204,7 +204,7 @@ std::string KeyVaultSecretSerializer::KeyVaultSecretSerialize(Secret const& para
 }
 
 std::string KeyVaultSecretPropertiesSerializer::KeyVaultSecretPropertiesSerialize(
-    KeyvaultSecretProperties const& properties)
+    SecretProperties const& properties)
 {
   json payload;
 
@@ -273,7 +273,7 @@ KeyVaultSecretPropertiesPagedResultSerializer::KeyVaultSecretPropertiesPagedResp
 
   for (auto const& secretProperties : secretsPropertiesJson)
   {
-    KeyvaultSecretProperties item;
+    SecretProperties item;
     item.Id = secretProperties[_detail::IdPropertyName].get<std::string>();
     _detail::KeyVaultSecretSerializer::ParseIDUrl(item, item.Id);
     // Parse URL for the various attributes

@@ -55,9 +55,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets { 
     }
 
     // parse the ID url to extract relevant data
-    void static inline ParseIDUrl(
-        KeyvaultSecretProperties& secretProperties,
-        std::string const& url)
+    void static inline ParseIDUrl(SecretProperties& secretProperties, std::string const& url)
     {
       Azure::Core::Url sid(url);
       secretProperties.Id = url;
@@ -103,8 +101,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets { 
 
   struct KeyVaultSecretPropertiesSerializer final
   {
-    static std::string KeyVaultSecretPropertiesSerialize(
-        KeyvaultSecretProperties const& properties);
+    static std::string KeyVaultSecretPropertiesSerialize(SecretProperties const& properties);
   };
 
   struct KeyvaultBackupSecretSerializer final
