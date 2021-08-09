@@ -21,8 +21,8 @@ if ((Get-Command git | Measure-Object).Count -eq 0) {
     exit 1
 }
 
-if ((Get-Command cspell | Measure-Object).Count -eq 0) { 
-    LogError "Could not locate cspell. Install NodeJS (includes npm) https://nodejs.org/en/download/ and cspell (npm install --global cspell)"
+if ((Get-Command npx | Measure-Object).Count -eq 0) { 
+    LogError "Could not locate npx. Install NodeJS (includes npx) https://nodejs.org/en/download/"
     exit 1
 }
 
@@ -51,13 +51,14 @@ foreach ($file in $changedFiles) {
     $changedFilePaths += $file.Path
 }
 
-# Using GetTempPath because it works on linux and windows
+# Using GetTempPath because it works on linux and windows. Setting .json 
+# extension because cspell requires the file have a .json or .jsonc extension
 $cspellConfigTemporaryPath = Join-Path `
     ([System.IO.Path]::GetTempPath()) `
-    ([System.IO.Path]::GetRandomFileName())
+    "$([System.IO.Path]::GetRandomFileName()).json"
 
 $cspellConfigContent = Get-Content $CspellConfigPath -Raw
-$cspellConfig = ConvertFrom-Json $cspellConfigContent -Depth 100
+$cspellConfig = ConvertFrom-Json $cspellConfigContent
 
 # If the config has no "files" property this adds it or sets the value. In this
 # case, spell checking is only intended to check files from $changedFiles so
@@ -71,11 +72,11 @@ Add-Member `
 
 # Set the temporary config file with the mutated configuration
 Write-Host "Setting config in: $cspellConfigTemporaryPath"
-Set-Content -Path $cspellConfigTemporaryPath -Value (ConvertTo-Json $cspellConfig)
+Set-Content -Path $cspellConfigTemporaryPath -Value (ConvertTo-Json $cspellConfig -Depth 100)
 
 # Use the mutated configuration file when calling cspell
-Write-Host "npx cspell --config $cspellConfigTemporaryPath"
-$spellingErrors = npx cspell -- lint "--config $cspellConfigTemporaryPath"
+Write-Host "npx cspell lint --config $cspellConfigTemporaryPath"
+$spellingErrors = npx cspell lint --config $cspellConfigTemporaryPath
 
 if ($spellingErrors) {
     $errorLoggingFunction = Get-Item 'Function:LogWarning'
