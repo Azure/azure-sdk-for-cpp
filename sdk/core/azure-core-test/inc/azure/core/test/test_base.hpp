@@ -25,7 +25,7 @@ namespace Azure { namespace Core { namespace Test {
      * @brief Run before each test
      *
      */
-    void SetUp(std::string const& recordingPath)
+    void SetUpBase(std::string const& recordingPath)
     {
       // Use the test info to init the test context and interceptor.
       auto testNameInfo = ::testing::UnitTest::GetInstance()->current_test_info();

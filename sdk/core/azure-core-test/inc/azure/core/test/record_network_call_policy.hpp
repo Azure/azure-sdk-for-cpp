@@ -41,7 +41,8 @@ namespace Azure { namespace Core { namespace Test {
      * @brief Construct the record network policy which will save the HTTP request and response to
      * the \p recordedData.
      *
-     * @param recordedData The recorded data where to write the HTTP request and response.
+     * @param interceptorManager A reference to the interceptor manager which holds the recorded
+     * data.
      */
     RecordNetworkCallPolicy(Azure::Core::Test::InterceptorManager* interceptorManager)
         : m_interceptorManager(interceptorManager)

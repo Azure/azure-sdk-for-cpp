@@ -8,6 +8,7 @@
 #include "azure/core/test/test_base.hpp"
 
 #include <fstream>
+#include <iostream>
 
 using namespace Azure::Core::Json::_internal;
 
@@ -32,6 +33,6 @@ void Azure::Core::Test::TestBase::TearDown()
   // AZURE_TEST_RECORDING_DIR is exported from CMAKE
   std::string testPath(m_testContext.RecordingPath);
   outFile.open(testPath + "/" + m_testContext.GetTestPlaybackRecordingName() + ".json");
-  outFile << root.dump(2);
+  outFile << root.dump(2) << std::endl;
   outFile.close();
 }

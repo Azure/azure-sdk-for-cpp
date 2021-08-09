@@ -64,7 +64,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys { nam
       // Init interceptor from PlayBackRecorder
       std::string recordingPath(AZURE_TEST_RECORDING_DIR);
       recordingPath.append("/recordings");
-      Azure::Core::Test::TestBase::SetUp(recordingPath);
+      Azure::Core::Test::TestBase::SetUpBase(recordingPath);
 
       std::string tenantId = GetEnv("AZURE_TENANT_ID");
       std::string clientId = GetEnv("AZURE_CLIENT_ID");
@@ -80,13 +80,13 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys { nam
       // Replace default transport adapter for playback
       if (m_testContext.IsPlaybackMode())
       {
-        options.Transport.Transport = std::move(m_interceptor->GetPlaybackClient());
+        options.Transport.Transport = m_interceptor->GetPlaybackClient();
       }
       // Insert Recording policy when Record mode is on (non playback and non LiveMode)
       else if (!m_testContext.IsLiveMode())
       {
         // AZURE_TEST_RECORDING_DIR is exported by CMAKE
-        options.PerRetryPolicies.push_back(std::move(m_interceptor->GetRecordPolicy()));
+        options.PerRetryPolicies.push_back(m_interceptor->GetRecordPolicy());
       }
 
       m_client = std::make_unique<KeyClient>(m_keyVaultUrl, m_credential, options);

@@ -33,7 +33,7 @@ namespace Azure { namespace Core { namespace Test {
      * @brief Construct a new Playback Client that uses \p recordedData to answer to the HTTP
      * request.
      *
-     * @param recordedData
+     * @param interceptorManager A reference to the interceptor manager holding the recorded data.
      */
     PlaybackClient(Azure::Core::Test::InterceptorManager* interceptorManager)
         : m_interceptorManager(interceptorManager)

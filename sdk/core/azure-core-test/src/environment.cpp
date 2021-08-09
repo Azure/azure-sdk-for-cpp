@@ -2,8 +2,8 @@
 // SPDX-License-Identifier: MIT
 
 #include "private/environment.hpp"
-
 #include "azure/core/platform.hpp"
+
 #include <azure/core/internal/strings.hpp>
 
 #include <cstdlib>
