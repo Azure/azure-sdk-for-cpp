@@ -80,48 +80,46 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets { 
     }
   };
 
-  struct KeyVaultDeletedSecretSerializer final
+  struct DeletedSecretSerializer final
   {
     // Creates a new deleted secret based on a name and an HTTP raw response.
-    static DeletedSecret KeyVaultDeletedSecretDeserialize(
+    static DeletedSecret Deserialize(
         std::string const& name,
         Azure::Core::Http::RawResponse const& rawResponse);
 
     // Create deleted secret from HTTP raw response only.
-    static DeletedSecret KeyVaultDeletedSecretDeserialize(
-        Azure::Core::Http::RawResponse const& rawResponse);
+    static DeletedSecret Deserialize(Azure::Core::Http::RawResponse const& rawResponse);
 
     // Updates a deleted secret based on an HTTP raw response.
-    static void KeyVaultDeletedSecretDeserialize(
+    static void Deserialize(
         DeletedSecret& secret,
         Azure::Core::Http::RawResponse const& rawResponse);
   };
 
-  struct KeyVaultSecretPropertiesSerializer final
+  struct SecretPropertiesSerializer final
   {
-    static std::string KeyVaultSecretPropertiesSerialize(SecretProperties const& properties);
+    static std::string Serialize(SecretProperties const& properties);
   };
 
-  struct KeyvaultBackupSecretSerializer final
+  struct BackupSecretSerializer final
   {
-    static BackupSecretResult KeyvaultBackupSecretDeserialize(
+    static BackupSecretResult Deserialize(Azure::Core::Http::RawResponse const& rawResponse);
+  };
+
+  struct RestoreSecretSerializer final
+  {
+    static std::string Serialize(std::vector<uint8_t> const& backup);
+  };
+
+  class SecretPropertiesPagedResultSerializer final {
+  public:
+    static SecretPropertiesPagedResponse Deserialize(
         Azure::Core::Http::RawResponse const& rawResponse);
   };
 
-  struct KeyvaultRestoreSecretSerializer final
-  {
-    static std::string KeyvaultRestoreSecretSerialize(std::vector<uint8_t> const& backup);
-  };
-
-  class KeyVaultSecretPropertiesPagedResultSerializer final {
+  class DeletedSecretPagedResultSerializer final {
   public:
-    static SecretPropertiesPagedResponse KeyVaultSecretPropertiesPagedResponseDeserialize(
-        Azure::Core::Http::RawResponse const& rawResponse);
-  };
-
-  class KeyVaultSecretDeletedSecretPagedResultSerializer final {
-  public:
-    static DeletedSecretPagedResponse KeyVaultSecretDeletedSecretPagedResultDeserialize(
+    static DeletedSecretPagedResponse Deserialize(
         Azure::Core::Http::RawResponse const& rawResponse);
   };
 }}}}} // namespace Azure::Security::KeyVault::Secrets::_detail

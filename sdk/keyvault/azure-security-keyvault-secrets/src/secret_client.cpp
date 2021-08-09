@@ -99,8 +99,7 @@ Azure::Response<DeletedSecret> SecretClient::GetDeletedSecret(
       context,
       Azure::Core::Http::HttpMethod::Get,
       [&name](Azure::Core::Http::RawResponse const& rawResponse) {
-        return _detail::KeyVaultDeletedSecretSerializer::KeyVaultDeletedSecretDeserialize(
-            name, rawResponse);
+        return _detail::DeletedSecretSerializer::Deserialize(name, rawResponse);
       },
       {_detail::DeletedSecretPath, name});
 }
@@ -138,10 +137,7 @@ Azure::Response<Secret> SecretClient::UpdateSecretProperties(
   return m_protocolClient->SendRequest<Secret>(
       context,
       Azure::Core::Http::HttpMethod::Patch,
-      [&properties]() {
-        return _detail::KeyVaultSecretPropertiesSerializer::KeyVaultSecretPropertiesSerialize(
-            properties);
-      },
+      [&properties]() { return _detail::SecretPropertiesSerializer::Serialize(properties); },
       [&name](Azure::Core::Http::RawResponse const& rawResponse) {
         return _detail::SecretSerializer::Deserialize(name, rawResponse);
       },
@@ -168,8 +164,7 @@ Azure::Response<BackupSecretResult> SecretClient::BackupSecret(
       context,
       Azure::Core::Http::HttpMethod::Post,
       [](Azure::Core::Http::RawResponse const& rawResponse) {
-        return _detail::KeyvaultBackupSecretSerializer::KeyvaultBackupSecretDeserialize(
-            rawResponse);
+        return _detail::BackupSecretSerializer::Deserialize(rawResponse);
       },
       {_detail::SecretPath, name, _detail::BackupSecretPath});
 }
@@ -181,9 +176,7 @@ Azure::Response<Secret> SecretClient::RestoreSecretBackup(
   return m_protocolClient->SendRequest<Secret>(
       context,
       Azure::Core::Http::HttpMethod::Post,
-      [&backup]() {
-        return _detail::KeyvaultRestoreSecretSerializer::KeyvaultRestoreSecretSerialize(backup);
-      },
+      [&backup]() { return _detail::RestoreSecretSerializer::Serialize(backup); },
       [](Azure::Core::Http::RawResponse const& rawResponse) {
         return _detail::SecretSerializer::Deserialize(rawResponse);
       },
@@ -211,8 +204,7 @@ Azure::Security::KeyVault::Secrets::DeleteSecretOperation SecretClient::StartDel
           context,
           Azure::Core::Http::HttpMethod::Delete,
           [&name](Azure::Core::Http::RawResponse const& rawResponse) {
-            return _detail::KeyVaultDeletedSecretSerializer::KeyVaultDeletedSecretDeserialize(
-                name, rawResponse);
+            return _detail::DeletedSecretSerializer::Deserialize(name, rawResponse);
           },
           {_detail::SecretPath, name}));
 }
@@ -249,8 +241,7 @@ SecretPropertiesPagedResponse SecretClient::GetPropertiesOfSecrets(
       context,
       Azure::Core::Http::HttpMethod::Get,
       [](Azure::Core::Http::RawResponse const& rawResponse) {
-        return _detail::KeyVaultSecretPropertiesPagedResultSerializer::
-            KeyVaultSecretPropertiesPagedResponseDeserialize(rawResponse);
+        return _detail::SecretPropertiesPagedResultSerializer::Deserialize(rawResponse);
       },
       request.Path,
       request.Query);
@@ -280,8 +271,7 @@ SecretPropertiesPagedResponse SecretClient::GetPropertiesOfSecretsVersions(
       context,
       Azure::Core::Http::HttpMethod::Get,
       [](Azure::Core::Http::RawResponse const& rawResponse) {
-        return _detail::KeyVaultSecretPropertiesPagedResultSerializer::
-            KeyVaultSecretPropertiesPagedResponseDeserialize(rawResponse);
+        return _detail::SecretPropertiesPagedResultSerializer::Deserialize(rawResponse);
       },
       request.Path,
       request.Query);
@@ -311,8 +301,7 @@ DeletedSecretPagedResponse SecretClient::GetDeletedSecrets(
       context,
       Azure::Core::Http::HttpMethod::Get,
       [](Azure::Core::Http::RawResponse const& rawResponse) {
-        return _detail::KeyVaultSecretDeletedSecretPagedResultSerializer::
-            KeyVaultSecretDeletedSecretPagedResultDeserialize(rawResponse);
+        return _detail::DeletedSecretPagedResultSerializer::Deserialize(rawResponse);
       },
       request.Path,
       request.Query);

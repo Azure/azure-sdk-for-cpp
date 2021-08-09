@@ -12,8 +12,7 @@ TEST(SecretPropertiesPagedResponse, SingleWithNext)
 {
   auto response = _test::PagedHelpers::GetFirstResponse();
 
-  auto result = _detail::KeyVaultSecretPropertiesPagedResultSerializer::
-      KeyVaultSecretPropertiesPagedResponseDeserialize(response);
+  auto result = _detail::SecretPropertiesPagedResultSerializer::Deserialize(response);
 
   EXPECT_EQ(result.Items.size(), size_t(1));
   EXPECT_EQ(
@@ -34,8 +33,7 @@ TEST(SecretPropertiesPagedResponse, MultipleNoNext)
 {
   auto response = _test::PagedHelpers::GetMultipleResponse();
 
-  auto result = _detail::KeyVaultSecretPropertiesPagedResultSerializer::
-      KeyVaultSecretPropertiesPagedResponseDeserialize(response);
+  auto result = _detail::SecretPropertiesPagedResultSerializer::Deserialize(response);
 
   EXPECT_EQ(result.Items.size(), size_t(3));
   EXPECT_EQ(result.NextPageToken.HasValue(), false);
@@ -75,19 +73,17 @@ TEST(SecretPropertiesPagedResponse, NoneNoNext)
 {
   auto response = _test::PagedHelpers::GetEmptyResponse();
 
-  auto result = _detail::KeyVaultSecretPropertiesPagedResultSerializer::
-      KeyVaultSecretPropertiesPagedResponseDeserialize(response);
+  auto result = _detail::SecretPropertiesPagedResultSerializer::Deserialize(response);
 
   EXPECT_EQ(result.Items.size(), size_t(0));
   EXPECT_EQ(result.NextPageToken.HasValue(), false);
 }
 
-TEST(KeyVaultSecretDeletedSecretPagedResultSerializer, SingleWithNext)
+TEST(DeletedSecretPagedResultSerializer, SingleWithNext)
 {
   auto response = _test::PagedHelpers::GetDeletedFirstResponse();
 
-  auto result = _detail::KeyVaultSecretDeletedSecretPagedResultSerializer::
-      KeyVaultSecretDeletedSecretPagedResultDeserialize(response);
+  auto result = _detail::DeletedSecretPagedResultSerializer::Deserialize(response);
 
   EXPECT_EQ(result.Items.size(), size_t(1));
   EXPECT_EQ(result.NextPageToken.Value(), "nextLink");
@@ -100,12 +96,11 @@ TEST(KeyVaultSecretDeletedSecretPagedResultSerializer, SingleWithNext)
   EXPECT_EQ(item.RecoveryId, "https://gearama-test2.vault.azure.net/deletedsecrets/eqwewq");
 }
 
-TEST(KeyVaultSecretDeletedSecretPagedResultSerializer, MultipleNoNext)
+TEST(DeletedSecretPagedResultSerializer, MultipleNoNext)
 {
   auto response = _test::PagedHelpers::GetDeletedMultipleResponse();
 
-  auto result = _detail::KeyVaultSecretDeletedSecretPagedResultSerializer::
-      KeyVaultSecretDeletedSecretPagedResultDeserialize(response);
+  auto result = _detail::DeletedSecretPagedResultSerializer::Deserialize(response);
 
   EXPECT_EQ(result.Items.size(), size_t(3));
   EXPECT_FALSE(result.NextPageToken.HasValue());
@@ -132,12 +127,11 @@ TEST(KeyVaultSecretDeletedSecretPagedResultSerializer, MultipleNoNext)
   EXPECT_EQ(item.RecoveryId, "https://gearama-test2.vault.azure.net/deletedsecrets/someSecret2");
 }
 
-TEST(KeyVaultSecretDeletedSecretPagedResultSerializer, NoneNoNext)
+TEST(DeletedSecretPagedResultSerializer, NoneNoNext)
 {
   auto response = _test::PagedHelpers::GetEmptyResponse();
 
-  auto result = _detail::KeyVaultSecretDeletedSecretPagedResultSerializer::
-      KeyVaultSecretDeletedSecretPagedResultDeserialize(response);
+  auto result = _detail::DeletedSecretPagedResultSerializer::Deserialize(response);
 
   EXPECT_EQ(result.Items.size(), size_t(0));
   EXPECT_EQ(result.NextPageToken.HasValue(), false);

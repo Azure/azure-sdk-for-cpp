@@ -154,8 +154,7 @@ std::unique_ptr<Azure::Core::Http::RawResponse> DeleteSecretOperation::PollInter
 
     if (m_status == Azure::Core::OperationStatus::Succeeded)
     {
-      m_value = _detail::KeyVaultDeletedSecretSerializer::KeyVaultDeletedSecretDeserialize(
-          m_value.Name, *rawResponse);
+      m_value = _detail::DeletedSecretSerializer::Deserialize(m_value.Name, *rawResponse);
     }
   }
   return rawResponse;
