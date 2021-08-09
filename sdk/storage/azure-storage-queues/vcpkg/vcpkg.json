@@ -13,8 +13,7 @@
   "dependencies": [
     {
       "name": "azure-storage-common-cpp",
-      "default-features": false,
-      "version>=": "12.0.0"
+      "default-features": false
     },
     {
       "name": "vcpkg-cmake",

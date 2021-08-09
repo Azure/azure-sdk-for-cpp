@@ -257,3 +257,167 @@ std::string KeyvaultRestoreSecretSerializer::KeyvaultRestoreSecretSerialize(
   payload[_detail::ValuePropertyName] = Base64Url::Base64UrlEncode(backup);
   return payload.dump();
 }
+
+KeyVaultSecretPropertiesPagedResponse
+KeyVaultSecretPropertiesPagedResultSerializer::KeyVaultSecretPropertiesPagedResponseDeserialize(
+    Azure::Core::Http::RawResponse const& rawResponse)
+{
+  KeyVaultSecretPropertiesPagedResponse result;
+  auto const& body = rawResponse.GetBody();
+  auto jsonParser = json::parse(body);
+
+  JsonOptional::SetIfExists(result.NextPageToken, jsonParser, "nextLink");
+
+  // Key properties
+  auto secretsPropertiesJson = jsonParser["value"];
+
+  for (auto const& secretProperties : secretsPropertiesJson)
+  {
+    KeyvaultSecretProperties item;
+    item.Id = secretProperties[_detail::IdPropertyName].get<std::string>();
+    _detail::KeyVaultSecretSerializer::ParseIDUrl(item, item.Id);
+    // Parse URL for the various attributes
+    if (secretProperties.contains(_detail::AttributesPropertyName))
+    {
+      auto attributes = secretProperties[_detail::AttributesPropertyName];
+
+      JsonOptional::SetIfExists(item.Enabled, attributes, _detail::EnabledPropertyName);
+
+      JsonOptional::SetIfExists<int64_t, Azure::DateTime>(
+          item.NotBefore,
+          attributes,
+          _detail::NbfPropertyName,
+          PosixTimeConverter::PosixTimeToDateTime);
+      JsonOptional::SetIfExists<int64_t, Azure::DateTime>(
+          item.ExpiresOn,
+          attributes,
+          _detail::ExpPropertyName,
+          PosixTimeConverter::PosixTimeToDateTime);
+      JsonOptional::SetIfExists<int64_t, Azure::DateTime>(
+          item.CreatedOn,
+          attributes,
+          _detail::CreatedPropertyName,
+          PosixTimeConverter::PosixTimeToDateTime);
+      JsonOptional::SetIfExists<int64_t, Azure::DateTime>(
+          item.UpdatedOn,
+          attributes,
+          _detail::UpdatedPropertyName,
+          PosixTimeConverter::PosixTimeToDateTime);
+      JsonOptional::SetIfExists<std::string>(
+          item.RecoveryLevel, attributes, _detail::RecoveryLevelPropertyName);
+      JsonOptional::SetIfExists<int64_t>(
+          item.RecoverableDays, attributes, _detail::RecoverableDaysPropertyName);
+    }
+
+    // "Tags"
+    if (secretProperties.contains(_detail::TagsPropertyName))
+    {
+      auto const& tags = secretProperties[_detail::TagsPropertyName];
+      {
+        for (auto tag = tags.begin(); tag != tags.end(); ++tag)
+        {
+          item.Tags.emplace(tag.key(), tag.value().get<std::string>());
+        }
+      }
+    }
+
+    // managed
+    if (secretProperties.contains(_detail::ManagedPropertyName))
+    {
+      item.Managed = secretProperties[_detail::ManagedPropertyName].get<bool>();
+    }
+
+    // content type
+    JsonOptional::SetIfExists<std::string>(
+        item.ContentType, secretProperties, _detail::ContentTypePropertyName);
+    result.Items.emplace_back(item);
+  }
+
+  return result;
+}
+
+KeyvaultSecretDeletedSecretPagedResponse
+KeyVaultSecretDeletedSecretPagedResultSerializer::KeyVaultSecretDeletedSecretPagedResultDeserialize(
+    Azure::Core::Http::RawResponse const& rawResponse)
+{
+
+  KeyvaultSecretDeletedSecretPagedResponse result;
+  auto const& body = rawResponse.GetBody();
+  auto jsonParser = json::parse(body);
+  auto string = jsonParser.dump();
+  JsonOptional::SetIfExists(result.NextPageToken, jsonParser, "nextLink");
+
+  // Key properties
+  auto secretsPropertiesJson = jsonParser["value"];
+
+  for (auto const& secretProperties : secretsPropertiesJson)
+  {
+    KeyVaultDeletedSecret item;
+    item.Id = secretProperties[_detail::IdPropertyName].get<std::string>();
+    _detail::KeyVaultSecretSerializer::ParseIDUrl(item.Properties, item.Id);
+    // Parse URL for the various attributes
+    if (secretProperties.contains(_detail::AttributesPropertyName))
+    {
+      auto attributes = secretProperties[_detail::AttributesPropertyName];
+
+      JsonOptional::SetIfExists(item.Properties.Enabled, attributes, _detail::EnabledPropertyName);
+
+      JsonOptional::SetIfExists<int64_t, Azure::DateTime>(
+          item.Properties.NotBefore,
+          attributes,
+          _detail::NbfPropertyName,
+          PosixTimeConverter::PosixTimeToDateTime);
+      JsonOptional::SetIfExists<int64_t, Azure::DateTime>(
+          item.Properties.ExpiresOn,
+          attributes,
+          _detail::ExpPropertyName,
+          PosixTimeConverter::PosixTimeToDateTime);
+      JsonOptional::SetIfExists<int64_t, Azure::DateTime>(
+          item.Properties.CreatedOn,
+          attributes,
+          _detail::CreatedPropertyName,
+          PosixTimeConverter::PosixTimeToDateTime);
+      JsonOptional::SetIfExists<int64_t, Azure::DateTime>(
+          item.Properties.UpdatedOn,
+          attributes,
+          _detail::UpdatedPropertyName,
+          PosixTimeConverter::PosixTimeToDateTime);
+      JsonOptional::SetIfExists<std::string>(
+          item.Properties.RecoveryLevel, attributes, _detail::RecoveryLevelPropertyName);
+      JsonOptional::SetIfExists<int64_t>(
+          item.Properties.RecoverableDays, attributes, _detail::RecoverableDaysPropertyName);
+    }
+
+    // "Tags"
+    if (secretProperties.contains(_detail::TagsPropertyName))
+    {
+      auto const& tags = secretProperties[_detail::TagsPropertyName];
+      {
+        for (auto tag = tags.begin(); tag != tags.end(); ++tag)
+        {
+          item.Properties.Tags.emplace(tag.key(), tag.value().get<std::string>());
+        }
+      }
+    }
+
+    // managed
+    if (secretProperties.contains(_detail::ManagedPropertyName))
+    {
+      item.Properties.Managed = secretProperties[_detail::ManagedPropertyName].get<bool>();
+    }
+
+    // content type
+    JsonOptional::SetIfExists<std::string>(
+        item.Properties.ContentType, secretProperties, _detail::ContentTypePropertyName);
+
+    item.RecoveryId = secretProperties[_detail::RecoveryIdPropertyName];
+    item.ScheduledPurgeDate = PosixTimeConverter::PosixTimeToDateTime(
+        secretProperties[_detail::ScheduledPurgeDatePropertyName]);
+    item.DeletedDate = PosixTimeConverter::PosixTimeToDateTime(
+        secretProperties[_detail::DeletedDatePropertyName]);
+
+    result.Items.emplace_back(item);
+  }
+
+  return result;
+}

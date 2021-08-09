@@ -9,6 +9,8 @@
 
 #pragma once
 
+#include <cstddef>
+
 namespace Azure { namespace Security { namespace KeyVault { namespace Secrets { namespace _detail {
 
   /***************** KeyVault Secret *****************/
@@ -16,6 +18,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets { 
   static constexpr char const DeletedSecretPath[] = "deletedsecrets";
   static constexpr char const BackupSecretPath[] = "backup";
   static constexpr char const RestoreSecretPath[] = "restore";
+  static constexpr char const RecoverDeletedSecretPath[] = "recover";
 
   /******************* Secret property names ***********/
 
@@ -41,4 +44,10 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets { 
 
   /**************** KeyVault QueryParameters *********/
   static constexpr char const ApiVersion[] = "api-version";
+
+  /**************** KeyVault Secrets Paged  *********/
+  static constexpr size_t PagedMaxResults = 25;
+  static constexpr char const PagedMaxResultsName[] = "maxresults";
+  static constexpr char const VersionsName[] = "versions";
+
 }}}}} // namespace Azure::Security::KeyVault::Secrets::_detail
