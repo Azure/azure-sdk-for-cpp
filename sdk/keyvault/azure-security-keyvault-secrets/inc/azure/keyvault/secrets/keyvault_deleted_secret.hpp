@@ -15,7 +15,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
    * @brief A Deleted Secret consisting of its previous id, attributes and its tags,
    * as well as information on when it will be purged.
    */
-  struct KeyVaultDeletedSecret : public KeyVaultSecret
+  struct KeyVaultDeletedSecret : public Secret
   {
     /**
      * @brief A Deleted Secret consisting of its previous id, attributes and its tags,
@@ -43,6 +43,6 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
      *
      * @param name Name of the deleted secret.
      */
-    KeyVaultDeletedSecret(std::string name) : KeyVaultSecret(std::move(name)) {}
+    KeyVaultDeletedSecret(std::string name) : Secret(std::move(name)) {}
   };
 }}}} // namespace Azure::Security::KeyVault::Secrets

@@ -20,28 +20,28 @@ using namespace Azure::Security::KeyVault::Secrets;
 using namespace Azure::Security::KeyVault::Secrets::_detail;
 
 // Creates a new key based on a name and an HTTP raw response.
-KeyVaultSecret KeyVaultSecretSerializer::KeyVaultSecretDeserialize(
+Secret KeyVaultSecretSerializer::KeyVaultSecretDeserialize(
     std::string const& name,
     Azure::Core::Http::RawResponse const& rawResponse)
 {
-  KeyVaultSecret secret;
+  Secret secret;
   secret.Name = name;
   _detail::KeyVaultSecretSerializer::KeyVaultSecretDeserialize(secret, rawResponse);
   return secret;
 }
 
 // Create from HTTP raw response only.
-KeyVaultSecret KeyVaultSecretSerializer::KeyVaultSecretDeserialize(
+Secret KeyVaultSecretSerializer::KeyVaultSecretDeserialize(
     Azure::Core::Http::RawResponse const& rawResponse)
 {
-  KeyVaultSecret secret;
+  Secret secret;
   _detail::KeyVaultSecretSerializer::KeyVaultSecretDeserialize(secret, rawResponse);
   return secret;
 }
 
 // Updates a Key based on an HTTP raw response.
 void KeyVaultSecretSerializer::KeyVaultSecretDeserialize(
-    KeyVaultSecret& secret,
+    Secret& secret,
     Azure::Core::Http::RawResponse const& rawResponse)
 {
   auto const& body = rawResponse.GetBody();
@@ -155,7 +155,7 @@ void KeyVaultDeletedSecretSerializer::KeyVaultDeletedSecretDeserialize(
 }
 
 // serializes a set secret parameters object
-std::string KeyVaultSecretSerializer::KeyVaultSecretSerialize(KeyVaultSecret const& parameters)
+std::string KeyVaultSecretSerializer::KeyVaultSecretSerialize(Secret const& parameters)
 {
   json payload;
 

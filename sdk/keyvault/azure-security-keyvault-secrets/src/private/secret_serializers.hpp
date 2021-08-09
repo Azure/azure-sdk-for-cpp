@@ -23,21 +23,20 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets { 
   struct KeyVaultSecretSerializer final
   {
     // Creates a new key based on a name and an HTTP raw response.
-    static KeyVaultSecret KeyVaultSecretDeserialize(
+    static Secret KeyVaultSecretDeserialize(
         std::string const& name,
         Azure::Core::Http::RawResponse const& rawResponse);
 
     // Create from HTTP raw response only.
-    static KeyVaultSecret KeyVaultSecretDeserialize(
-        Azure::Core::Http::RawResponse const& rawResponse);
+    static Secret KeyVaultSecretDeserialize(Azure::Core::Http::RawResponse const& rawResponse);
 
     // Updates a Key based on an HTTP raw response.
     static void KeyVaultSecretDeserialize(
-        KeyVaultSecret& key,
+        Secret& key,
         Azure::Core::Http::RawResponse const& rawResponse);
 
     // Serializes a key vault secret for set action
-    static std::string KeyVaultSecretSerialize(KeyVaultSecret const& parameters);
+    static std::string KeyVaultSecretSerialize(Secret const& parameters);
 
     // Extract the host out of the URL (with port if available)
     static std::string GetUrlAuthorityWithScheme(Azure::Core::Url const& url)

@@ -20,16 +20,15 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
   /**
    * @brief Represents a long running operation to restore a deleted secret.
    */
-  class KeyVaultRestoreDeletedSecretOperation final
-      : public Azure::Core::Operation<KeyVaultSecret> {
+  class KeyVaultRestoreDeletedSecretOperation final : public Azure::Core::Operation<Secret> {
 
   private:
     friend class SecretClient;
     std::shared_ptr<SecretClient> m_secretClient;
-    KeyVaultSecret m_value;
+    Secret m_value;
     std::string m_continuationToken;
 
-    Azure::Response<KeyVaultSecret> PollUntilDoneInternal(
+    Azure::Response<Secret> PollUntilDoneInternal(
         std::chrono::milliseconds period,
         Azure::Core::Context& context) override;
 
@@ -44,7 +43,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
      */
     KeyVaultRestoreDeletedSecretOperation(
         std::shared_ptr<SecretClient> secretClient,
-        Azure::Response<KeyVaultSecret> response);
+        Azure::Response<Secret> response);
 
     KeyVaultRestoreDeletedSecretOperation(
         std::string resumeToken,
@@ -62,11 +61,11 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
 
   public:
     /**
-     * @brief Get the #Azure::Security::KeyVault::Secrets::KeyVaultSecret object.
+     * @brief Get the #Azure::Security::KeyVault::Secrets::Secret object.
      *
-     * @return A KeyVaultSecret object.
+     * @return A Secret object.
      */
-    KeyVaultSecret Value() const override { return m_value; }
+    Secret Value() const override { return m_value; }
 
     /**
      * @brief Get an Url as string which can be used to get the status of the operation.

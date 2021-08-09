@@ -17,7 +17,7 @@ using namespace Azure::Core::Json::_internal;
 
 TEST(KeyvaultSecretSetParametersSerializer, SetValue)
 {
-  KeyVaultSecret params("name", "value");
+  Secret params("name", "value");
 
   std::string result = KeyVaultSecretSerializer::KeyVaultSecretSerialize(params);
 
@@ -30,7 +30,7 @@ TEST(KeyvaultSecretSetParametersSerializer, SetValue)
 
 TEST(KeyvaultSecretSetParametersSerializer, SetValueCT)
 {
-  KeyVaultSecret params("name", "value");
+  Secret params("name", "value");
 
   params.Properties.ContentType = "ct";
 
@@ -44,7 +44,7 @@ TEST(KeyvaultSecretSetParametersSerializer, SetValueCT)
 
 TEST(KeyvaultSecretSetParametersSerializer, SetValueCTAttrTag)
 {
-  KeyVaultSecret params("name", "value");
+  Secret params("name", "value");
 
   params.Properties.ContentType = "ct";
   params.Properties.Enabled = true;

@@ -84,7 +84,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
      * @param context The context for the operation can be used for request cancellation.
      * @return The Secret wrapped in the Response.
      */
-    Azure::Response<KeyVaultSecret> GetSecret(
+    Azure::Response<Secret> GetSecret(
         std::string const& name,
         GetSecretOptions const& options = GetSecretOptions(),
         Azure::Core::Context const& context = Azure::Core::Context()) const;
@@ -112,7 +112,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
      * @param context The context for the operation can be used for request cancellation.
      * @return The Secret wrapped in the Response.
      */
-    Azure::Response<KeyVaultSecret> SetSecret(
+    Azure::Response<Secret> SetSecret(
         std::string const& name,
         std::string const& value,
         Azure::Core::Context const& context = Azure::Core::Context()) const;
@@ -126,9 +126,9 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
      * @param context The context for the operation can be used for request cancellation.
      * @return The Secret wrapped in the Response.
      */
-    Azure::Response<KeyVaultSecret> SetSecret(
+    Azure::Response<Secret> SetSecret(
         std::string const& name,
-        KeyVaultSecret const& secret,
+        Secret const& secret,
         Azure::Core::Context const& context = Azure::Core::Context()) const;
 
     /**
@@ -145,7 +145,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
      *
      * @return The Secret wrapped in the Response.
      */
-    Azure::Response<KeyVaultSecret> UpdateSecretProperties(
+    Azure::Response<Secret> UpdateSecretProperties(
         std::string const& name,
         UpdateSecretPropertiesOptions const& options,
         KeyvaultSecretProperties const& properties,
@@ -165,7 +165,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
      *
      * @return The Secret wrapped in the Response.
      */
-    Azure::Response<KeyVaultSecret> UpdateSecretProperties(
+    Azure::Response<Secret> UpdateSecretProperties(
         std::string const& name,
         std::string const& version,
         KeyvaultSecretProperties const& properties,
@@ -196,7 +196,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
      *
      * @return The Secret wrapped in the Response.
      */
-    Azure::Response<KeyVaultSecret> RestoreSecretBackup(
+    Azure::Response<Secret> RestoreSecretBackup(
         std::vector<uint8_t> const& backup,
         Azure::Core::Context const& context = Azure::Core::Context()) const;
 
