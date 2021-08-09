@@ -77,7 +77,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
      * This operation is applicable to any secret stored in Azure Key Vault.
      * This operation requires the secrets/get permission.
      *
-     * @param name The name of the secret<span class="x x-first x-last">.</span>
+     * @param name The name of the secret.
      * @param options The optional parameters for this request.
      *
      * @param context The context for the operation can be used for request cancellation.
@@ -93,7 +93,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
      * the specified deleted secret along with its attributes.
      * This operation requires the secrets/get permission.
      *
-     * @param name The name of the secret<span class="x x-first x-last">.</span>
+     * @param name The name of the secret.
      * @param context The context for the operation can be used for request cancellation.
      *
      * @return The Secret wrapped in the Response.
@@ -105,8 +105,8 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
     /**
      * @brief Set a secret in a specified key vault.
      *
-     * @param name The name of the secret<span class="x x-first x-last">.</span>
-     * @param value The value of the secret<span class="x x-first x-last">.</span>
+     * @param name The name of the secret.
+     * @param value The value of the secret.
      *
      * @param context The context for the operation can be used for request cancellation.
      * @return The Secret wrapped in the Response.
@@ -119,8 +119,8 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
     /**
      * @brief Set a secret in a specified key vault.
      *
-     * @param name The name of the secret<span class="x x-first x-last">.</span>
-     * @param secret The secret definition <span class="x x-first x-last">.</span>
+     * @param name The name of the secret.
+     * @param secret The secret definition.
      *
      * @param context The context for the operation can be used for request cancellation.
      * @return The Secret wrapped in the Response.
@@ -137,7 +137,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
      * The value of a secret itself cannot be changed.
      * This operation requires the secrets/set permission.
      *
-     * @param name The name of the secret<span class="x x-first x-last">.</span>
+     * @param name The name of the secret.
      * @param options The optional parameters for this request.
      * @param properties The properties to update
      * @param context The context for the operation can be used for request cancellation.
@@ -157,7 +157,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
      * The value of a secret itself cannot be changed.
      * This operation requires the secrets/set permission.
      *
-     * @param name The name of the secret<span class="x x-first x-last">.</span>
+     * @param name The name of the secret.
      * @param version The version of the secret for this request.
      * @param properties The properties to update
      * @param context The context for the operation can be used for request cancellation.
@@ -176,7 +176,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
      * All versions of the secret will be downloaded.
      * This operation requires the secrets/backup permission.
      *
-     * @param name The name of the secret<span class="x x-first x-last">.</span>
+     * @param name The name of the secret.
      * @param context The context for the operation can be used for request cancellation.
      *
      * @return The The backup blob containing the backed up secret.
@@ -205,7 +205,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
      * recovery. This operation can only be enabled on a soft-delete enabled vault. This operation
      * requires the secrets/purge permission.
      *
-     * @param name The name of the secret<span class="x x-first x-last">.</span>
+     * @param name The name of the secret.
      * @param context The context for the operation can be used for request cancellation.
      *
      * @return Response<PurgedSecret> is success.
@@ -221,7 +221,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
      * DELETE cannot be applied to an individual version of a secret.
      * This operation requires the secrets/delete permission.
      *
-     * @param name The name of the secret<span class="x x-first x-last">.</span>
+     * @param name The name of the secret.
      * @param context The context for the operation can be used for request cancellation.
      */
     Azure::Security::KeyVault::Secrets::KeyVaultDeleteSecretOperation StartDeleteSecret(
@@ -235,7 +235,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
      * This operation can only be performed on a soft-delete enabled vault.
      * This operation requires the secrets/recover permission.
      *
-     * @param name The name of the secret<span class="x x-first x-last">.</span>
+     * @param name The name of the secret.
      * @param context The context for the operation can be used for request cancellation.
      */
     Azure::Security::KeyVault::Secrets::KeyVaultRestoreDeletedSecretOperation
