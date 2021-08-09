@@ -15,6 +15,10 @@
 
 namespace Azure { namespace Core { namespace Test {
 
+  /**
+   * @brief The base class provides the tools for a test to use the Record&PlayBack functionalities.
+   *
+   */
   class TestBase : public ::testing::Test {
 
   protected:
@@ -22,7 +26,7 @@ namespace Azure { namespace Core { namespace Test {
     std::unique_ptr<Azure::Core::Test::InterceptorManager> m_interceptor;
 
     /**
-     * @brief Run before each test
+     * @brief Run before each test.
      *
      */
     void SetUpBase(std::string const& recordingPath)

@@ -13,20 +13,57 @@
 #include "azure/core/test/network_models.hpp"
 
 namespace Azure { namespace Core { namespace Test {
+  /**
+   * @brief The test context is used to hold information about a test, such as the recording path,
+   * running test mode, name, etc.
+   *
+   */
   class TestContextManager {
   public:
+    /**
+     * @brief The path where the tests recordings are written.
+     *
+     */
     std::string RecordingPath;
+
+    /**
+     * @brief The mode how the test is running.
+     *
+     */
     Azure::Core::Test::TestMode TestMode;
+
+    /**
+     * @brief Whenever the test must be ran on live mode only.
+     *
+     * @remark This configuration allow tests to ignore the recording or playback setting and run
+     * without it and amount other tests which are using the recording and playback.
+     *
+     */
     bool LiveOnly = false;
 
+    /**
+     * @brief Construct a new Test Context Manager object
+     *
+     */
     TestContextManager() { SetLiveOnly(); }
 
+    /**
+     * @brief Change the name of the running test.
+     *
+     * @param testName The new name for the test.
+     */
     void RenameTest(std::string const& testName)
     {
       m_testName = testName;
       SetLiveOnly();
     }
 
+    /**
+     * @brief Change the name of the test suite and test name.
+     *
+     * @param testSuite The new name for the test suite.
+     * @param testName The new name for the test name.
+     */
     void RenameTest(std::string const& testSuite, std::string const& testName)
     {
       m_testSuite = testSuite;
@@ -64,7 +101,18 @@ namespace Azure { namespace Core { namespace Test {
       return TestMode != Azure::Core::Test::TestMode::RECORD || LiveOnly;
     }
 
+    /**
+     * @brief Whenever the test is running on playback mode.
+     *
+     * @return true if the test is using recorded data as server responses.
+     */
     bool IsPlaybackMode() const { return TestMode == Azure::Core::Test::TestMode::PLAYBACK; }
+
+    /**
+     * @brief Whenever the test is running on live mode.
+     *
+     * @return true if the test is not recording or returning recorded data.
+     */
     bool IsLiveMode() const { return TestMode == Azure::Core::Test::TestMode::LIVE; }
 
   protected:

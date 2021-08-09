@@ -82,6 +82,11 @@ namespace Azure { namespace Core { namespace Test {
       return std::make_unique<Azure::Core::Test::PlaybackClient>(this);
     }
 
+    /**
+     * @brief Get the Test Context object.
+     *
+     * @return Azure::Core::Test::TestContextManager const&
+     */
     Azure::Core::Test::TestContextManager const& GetTestContext() const { return m_testContext; }
 
     /**

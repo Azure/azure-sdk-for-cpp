@@ -20,6 +20,7 @@
 
 namespace Azure { namespace Core { namespace Test {
 
+  // Partial class. Required to reference the Interceptor that is defined in the implementation.
   class InterceptorManager;
 
   /**
