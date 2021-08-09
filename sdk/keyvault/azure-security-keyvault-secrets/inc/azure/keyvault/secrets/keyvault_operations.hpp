@@ -96,15 +96,15 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
   /**
    * @brief Represents a delete secret long running operation
    */
-  class KeyVaultDeleteSecretOperation final : public Azure::Core::Operation<KeyVaultDeletedSecret> {
+  class KeyVaultDeleteSecretOperation final : public Azure::Core::Operation<DeletedSecret> {
 
   private:
     friend class SecretClient;
     std::shared_ptr<SecretClient> m_secretClient;
-    KeyVaultDeletedSecret m_value;
+    DeletedSecret m_value;
     std::string m_continuationToken;
 
-    Azure::Response<KeyVaultDeletedSecret> PollUntilDoneInternal(
+    Azure::Response<DeletedSecret> PollUntilDoneInternal(
         std::chrono::milliseconds period,
         Azure::Core::Context& context) override;
 
@@ -119,7 +119,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
      */
     KeyVaultDeleteSecretOperation(
         std::shared_ptr<SecretClient> secretClient,
-        Azure::Response<KeyVaultDeletedSecret> response);
+        Azure::Response<DeletedSecret> response);
 
     KeyVaultDeleteSecretOperation(
         std::string resumeToken,
@@ -137,13 +137,13 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
 
   public:
     /**
-     * @brief Get the #Azure::Security::KeyVault::Secrets::KeyVaultDeletedSecret object.
+     * @brief Get the #Azure::Security::KeyVault::Secrets::DeletedSecret object.
      *
      * @remark The deleted secret contains the recovery id if the key can be recovered.
      *
      * @return A deleted secret object.
      */
-    KeyVaultDeletedSecret Value() const override { return m_value; }
+    DeletedSecret Value() const override { return m_value; }
 
     /**
      * @brief Get an Url as string which can be used to get the status of the delete secret

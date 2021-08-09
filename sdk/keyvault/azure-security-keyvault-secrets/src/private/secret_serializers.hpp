@@ -87,17 +87,17 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets { 
   struct KeyVaultDeletedSecretSerializer final
   {
     // Creates a new deleted secret based on a name and an HTTP raw response.
-    static KeyVaultDeletedSecret KeyVaultDeletedSecretDeserialize(
+    static DeletedSecret KeyVaultDeletedSecretDeserialize(
         std::string const& name,
         Azure::Core::Http::RawResponse const& rawResponse);
 
     // Create deleted secret from HTTP raw response only.
-    static KeyVaultDeletedSecret KeyVaultDeletedSecretDeserialize(
+    static DeletedSecret KeyVaultDeletedSecretDeserialize(
         Azure::Core::Http::RawResponse const& rawResponse);
 
     // Updates a deleted secret based on an HTTP raw response.
     static void KeyVaultDeletedSecretDeserialize(
-        KeyVaultDeletedSecret& secret,
+        DeletedSecret& secret,
         Azure::Core::Http::RawResponse const& rawResponse);
   };
 

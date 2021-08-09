@@ -93,6 +93,6 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
      * @brief Each #DeletedKey represent a deleted key in the Key Vault.
      *
      */
-    std::vector<KeyVaultDeletedSecret> Items;
+    std::vector<DeletedSecret> Items;
   };
 }}}} // namespace Azure::Security::KeyVault::Secrets

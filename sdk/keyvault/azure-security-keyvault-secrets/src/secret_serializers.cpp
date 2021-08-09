@@ -119,27 +119,27 @@ void KeyVaultSecretSerializer::KeyVaultSecretDeserialize(
       secret.Properties.ContentType, jsonParser, _detail::ContentTypePropertyName);
 }
 
-KeyVaultDeletedSecret KeyVaultDeletedSecretSerializer::KeyVaultDeletedSecretDeserialize(
+DeletedSecret KeyVaultDeletedSecretSerializer::KeyVaultDeletedSecretDeserialize(
     std::string const& name,
     Azure::Core::Http::RawResponse const& rawResponse)
 {
-  KeyVaultDeletedSecret deletedSecret(name);
+  DeletedSecret deletedSecret(name);
   KeyVaultDeletedSecretDeserialize(deletedSecret, rawResponse);
   return deletedSecret;
 }
 
 // Create deleted secret from HTTP raw response only.
-KeyVaultDeletedSecret KeyVaultDeletedSecretSerializer::KeyVaultDeletedSecretDeserialize(
+DeletedSecret KeyVaultDeletedSecretSerializer::KeyVaultDeletedSecretDeserialize(
     Azure::Core::Http::RawResponse const& rawResponse)
 {
-  KeyVaultDeletedSecret deletedSecret;
+  DeletedSecret deletedSecret;
   KeyVaultDeletedSecretDeserialize(deletedSecret, rawResponse);
   return deletedSecret;
 }
 
 // Updates a deleted secret based on an HTTP raw response.
 void KeyVaultDeletedSecretSerializer::KeyVaultDeletedSecretDeserialize(
-    KeyVaultDeletedSecret& secret,
+    DeletedSecret& secret,
     Azure::Core::Http::RawResponse const& rawResponse)
 {
   KeyVaultSecretSerializer::KeyVaultSecretDeserialize(secret, rawResponse);
@@ -352,7 +352,7 @@ KeyVaultSecretDeletedSecretPagedResultSerializer::KeyVaultSecretDeletedSecretPag
 
   for (auto const& secretProperties : secretsPropertiesJson)
   {
-    KeyVaultDeletedSecret item;
+    DeletedSecret item;
     item.Id = secretProperties[_detail::IdPropertyName].get<std::string>();
     _detail::KeyVaultSecretSerializer::ParseIDUrl(item.Properties, item.Id);
     // Parse URL for the various attributes

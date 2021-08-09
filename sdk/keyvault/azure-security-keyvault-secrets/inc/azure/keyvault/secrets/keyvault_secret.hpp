@@ -71,7 +71,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
       }
     }
 
-    friend struct KeyVaultDeletedSecret;
+    friend struct DeletedSecret;
   };
 
 }}}} // namespace Azure::Security::KeyVault::Secrets

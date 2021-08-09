@@ -99,7 +99,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
      *
      * @return The Secret wrapped in the Response.
      */
-    Azure::Response<KeyVaultDeletedSecret> GetDeletedSecret(
+    Azure::Response<DeletedSecret> GetDeletedSecret(
         std::string const& name,
         Azure::Core::Context const& context = Azure::Core::Context()) const;
 

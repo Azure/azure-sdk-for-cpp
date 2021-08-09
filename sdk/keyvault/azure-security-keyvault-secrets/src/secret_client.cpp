@@ -91,11 +91,11 @@ Azure::Response<Secret> SecretClient::GetSecret(
       {_detail::SecretPath, name, options.Version});
 }
 
-Azure::Response<KeyVaultDeletedSecret> SecretClient::GetDeletedSecret(
+Azure::Response<DeletedSecret> SecretClient::GetDeletedSecret(
     std::string const& name,
     Azure::Core::Context const& context) const
 {
-  return m_protocolClient->SendRequest<KeyVaultDeletedSecret>(
+  return m_protocolClient->SendRequest<DeletedSecret>(
       context,
       Azure::Core::Http::HttpMethod::Get,
       [&name](Azure::Core::Http::RawResponse const& rawResponse) {
@@ -207,7 +207,7 @@ Azure::Security::KeyVault::Secrets::KeyVaultDeleteSecretOperation SecretClient::
 {
   return Azure::Security::KeyVault::Secrets::KeyVaultDeleteSecretOperation(
       std::make_shared<SecretClient>(*this),
-      m_protocolClient->SendRequest<KeyVaultDeletedSecret>(
+      m_protocolClient->SendRequest<DeletedSecret>(
           context,
           Azure::Core::Http::HttpMethod::Delete,
           [&name](Azure::Core::Http::RawResponse const& rawResponse) {

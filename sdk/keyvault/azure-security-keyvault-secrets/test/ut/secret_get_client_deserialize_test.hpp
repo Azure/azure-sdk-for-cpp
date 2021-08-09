@@ -146,7 +146,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets { 
       EXPECT_EQ(secret.Properties.CreatedOn.HasValue(), true);
     }
 
-    static void RunDeletedExtras(KeyVaultDeletedSecret& secret)
+    static void RunDeletedExtras(DeletedSecret& secret)
     {
       EXPECT_EQ(
           secret.RecoveryId, "https://myvault.vault.azure.net/deletedsecrets/GetDeletedSecretTest");
