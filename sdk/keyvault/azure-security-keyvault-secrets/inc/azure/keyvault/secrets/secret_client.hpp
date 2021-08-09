@@ -239,8 +239,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
      * @param name The name of the secret.
      * @param context The context for the operation can be used for request cancellation.
      */
-    Azure::Security::KeyVault::Secrets::KeyVaultRestoreDeletedSecretOperation
-    StartRecoverDeletedSecret(
+    Azure::Security::KeyVault::Secrets::RestoreDeletedSecretOperation StartRecoverDeletedSecret(
         std::string const& name,
         Azure::Core::Context const& context = Azure::Core::Context()) const;
 

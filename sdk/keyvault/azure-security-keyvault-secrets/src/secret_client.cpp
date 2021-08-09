@@ -217,10 +217,10 @@ Azure::Security::KeyVault::Secrets::KeyVaultDeleteSecretOperation SecretClient::
           {_detail::SecretPath, name}));
 }
 
-Azure::Security::KeyVault::Secrets::KeyVaultRestoreDeletedSecretOperation SecretClient::
+Azure::Security::KeyVault::Secrets::RestoreDeletedSecretOperation SecretClient::
     StartRecoverDeletedSecret(std::string const& name, Azure::Core::Context const& context) const
 {
-  return Azure::Security::KeyVault::Secrets::KeyVaultRestoreDeletedSecretOperation(
+  return Azure::Security::KeyVault::Secrets::RestoreDeletedSecretOperation(
       std::make_shared<SecretClient>(*this),
       m_protocolClient->SendRequest<Secret>(
           context,
