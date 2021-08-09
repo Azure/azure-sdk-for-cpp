@@ -46,10 +46,36 @@ if ($changedFilesCount -eq 0) {
     exit 0
 }
 
-$changedFilesString = $changedFiles -join ' '
+$changedFilePaths = @()
+foreach ($file in $changedFiles) {
+    $changedFilePaths += $file.Path
+}
 
-Write-Host "npx cspell --config $CspellConfigPath $changedFilesString"
-$spellingErrors = cspell --config $CspellConfigPath @changedFiles
+# Using GetTempPath because it works on linux and windows
+$cspellConfigTemporaryPath = Join-Path `
+    ([System.IO.Path]::GetTempPath()) `
+    ([System.IO.Path]::GetRandomFileName())
+
+$cspellConfigContent = Get-Content $CspellConfigPath -Raw
+$cspellConfig = ConvertFrom-Json $cspellConfigContent -Depth 100
+
+# If the config has no "files" property this adds it or sets the value. In this
+# case, spell checking is only intended to check files from $changedFiles so
+# preexisting entries in "files" will be overwritten.
+Add-Member `
+    -MemberType NoteProperty `
+    -InputObject $cspellConfig `
+    -Name "files" `
+    -Value $changedFilePaths `
+    -Force
+
+# Set the temporary config file with the mutated configuration
+Write-Host "Setting config in: $cspellConfigTemporaryPath"
+Set-Content -Path $cspellConfigTemporaryPath -Value (ConvertTo-Json $cspellConfig)
+
+# Use the mutated configuration file when calling cspell
+Write-Host "npx cspell --config $cspellConfigTemporaryPath"
+$spellingErrors = npx cspell -- lint "--config $cspellConfigTemporaryPath"
 
 if ($spellingErrors) {
     $errorLoggingFunction = Get-Item 'Function:LogWarning'
@@ -66,6 +92,9 @@ if ($spellingErrors) {
         exit 1
     }
 }
+
+# Clean up the temporary config file used for cspell run config
+#Remove-Item -Path $cspellConfigTemporaryPath -Force
 
 exit 0
 
