@@ -145,3 +145,120 @@ TEST(FileBodyStream, Read)
   EXPECT_EQ(readSize, FileSize);
   EXPECT_EQ(buffer[FileSize], 0);
 }
+
+TEST(ProgressBodyStream, Init)
+{
+  int64_t bytesTransferred = -1;
+  std::string testDataPath(AZURE_TEST_DATA_PATH);
+  testDataPath.append("/fileData");
+
+  Azure::Core::IO::FileBodyStream stream(testDataPath);
+
+  ProgressBodyStream progress(stream, [&bytesTransferred](int64_t bt) { bytesTransferred = bt; });
+
+  EXPECT_EQ(bytesTransferred, -1);
+  EXPECT_EQ(progress.Length(), stream.Length());
+}
+
+TEST(ProgressBodyStream, ReadChunk)
+{
+  int64_t bytesTransferred = -1;
+  std::string testDataPath(AZURE_TEST_DATA_PATH);
+  testDataPath.append("/fileData");
+
+  Azure::Core::IO::FileBodyStream stream(testDataPath);
+
+  ProgressBodyStream progress(stream, [&bytesTransferred](int64_t bt) { bytesTransferred = bt; });
+
+  std::vector<uint8_t> buffer(30);
+
+  size_t readSize = progress.ReadToCount(buffer.data(), 10);
+
+  EXPECT_EQ(bytesTransferred, 10);
+  EXPECT_EQ(progress.Length(), stream.Length());
+  EXPECT_EQ(readSize, 10);
+}
+
+TEST(ProgressBodyStream, MultiWrapProgressStream)
+{
+  int64_t bytesTransferred = -1;
+  int64_t wrapBytesTransferred = -1;
+  std::string testDataPath(AZURE_TEST_DATA_PATH);
+  testDataPath.append("/fileData");
+
+  Azure::Core::IO::FileBodyStream stream(testDataPath);
+
+  ProgressBodyStream progress(stream, [&bytesTransferred](int64_t bt) { bytesTransferred = bt; });
+  ProgressBodyStream progress2(
+      progress, [&wrapBytesTransferred](int64_t bt) { wrapBytesTransferred = bt; });
+  std::vector<uint8_t> buffer(30);
+
+  size_t readSize = progress2.ReadToCount(buffer.data(), 10);
+
+  EXPECT_EQ(bytesTransferred, 10);
+  EXPECT_EQ(progress.Length(), stream.Length());
+  EXPECT_EQ(readSize, 10);
+
+  EXPECT_EQ(wrapBytesTransferred, 10);
+  EXPECT_EQ(progress2.Length(), stream.Length());
+}
+
+TEST(ProgressBodyStream, ReadMultipleChunks)
+{
+  int64_t bytesTransferred = -1;
+  std::string testDataPath(AZURE_TEST_DATA_PATH);
+  testDataPath.append("/fileData");
+
+  Azure::Core::IO::FileBodyStream stream(testDataPath);
+
+  ProgressBodyStream progress(stream, [&bytesTransferred](int64_t bt) { bytesTransferred = bt; });
+
+  std::vector<uint8_t> buffer(10);
+
+  for (int i = 0; i < stream.Length() / 10; i++)
+  {
+    size_t readSize = progress.ReadToCount(buffer.data(), 10);
+
+    EXPECT_EQ(bytesTransferred, (i + 1) * 10);
+    EXPECT_EQ(progress.Length(), stream.Length());
+    EXPECT_EQ(readSize, 10);
+  }
+}
+
+TEST(ProgressBodyStream, ReadMultipleChunksRewind)
+{
+  int64_t bytesTransferred = -1;
+  std::string testDataPath(AZURE_TEST_DATA_PATH);
+  testDataPath.append("/fileData");
+
+  Azure::Core::IO::FileBodyStream stream(testDataPath);
+
+  ProgressBodyStream progress(stream, [&bytesTransferred](int64_t bt) { bytesTransferred = bt; });
+
+  std::vector<uint8_t> buffer(10);
+
+  for (int i = 0; i < stream.Length() / 100; i++)
+  {
+
+    size_t readSize = progress.ReadToCount(buffer.data(), 10);
+
+    EXPECT_EQ(bytesTransferred, (i + 1) * 10);
+    EXPECT_EQ(progress.Length(), stream.Length());
+    EXPECT_EQ(readSize, 10);
+  }
+
+  progress.Rewind();
+
+  EXPECT_EQ(bytesTransferred, 0);
+  EXPECT_EQ(progress.Length(), stream.Length());
+
+  for (int i = 0; i < stream.Length() / 100; i++)
+  {
+
+    size_t readSize = progress.ReadToCount(buffer.data(), 10);
+
+    EXPECT_EQ(bytesTransferred, (i + 1) * 10);
+    EXPECT_EQ(progress.Length(), stream.Length());
+    EXPECT_EQ(readSize, 10);
+  }
+}

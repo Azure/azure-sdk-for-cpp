@@ -20,9 +20,9 @@ include(AzureGlobalCompileOptions)
 az_vcpkg_integrate()
 
 if(NOT AZ_ALL_LIBRARIES)
-  find_package(azure-core-cpp "1.0.0" CONFIG QUIET)
+  find_package(azure-core-cpp "1.2.0" CONFIG QUIET)
   if(NOT azure-core-cpp_FOUND)
-    find_package(azure-core-cpp "1.0.0" REQUIRED)
+    find_package(azure-core-cpp "1.2.0" REQUIRED)
   endif()
 endif()
 
@@ -90,4 +90,8 @@ endif()
 
 if (BUILD_PERFORMANCE_TESTS)
   add_subdirectory(test/perf)
+endif()
+
+if (AZ_ALL_LIBRARIES)
+  add_subdirectory(samples)
 endif()

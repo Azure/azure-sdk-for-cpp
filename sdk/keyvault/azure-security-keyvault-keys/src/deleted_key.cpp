@@ -4,8 +4,7 @@
 #include <azure/core/internal/json/json.hpp>
 #include <azure/core/internal/json/json_optional.hpp>
 
-#include "azure/keyvault/keys/deleted_key.hpp"
-#include "azure/keyvault/keys/key_vault_key.hpp"
+#include "azure/keyvault/keys/key_client_models.hpp"
 #include "private/key_constants.hpp"
 #include "private/key_serializers.hpp"
 

@@ -4,7 +4,7 @@
 #include <azure/core/exception.hpp>
 
 #include "azure/keyvault/keys/key_client.hpp"
-#include "azure/keyvault/keys/recover_deleted_key_operation.hpp"
+#include "azure/keyvault/keys/key_client_models.hpp"
 #include "private/key_constants.hpp"
 #include "private/key_serializers.hpp"
 
@@ -68,4 +68,17 @@ Azure::Security::KeyVault::Keys::RecoverDeletedKeyOperation::RecoverDeletedKeyOp
 
   // The key name is enough to resume the operation
   m_continuationToken = m_value.Name();
+}
+
+RecoverDeletedKeyOperation
+Azure::Security::KeyVault::Keys::RecoverDeletedKeyOperation::CreateFromResumeToken(
+    std::string const& resumeToken,
+    Azure::Security::KeyVault::Keys::KeyClient const& client,
+    Azure::Core::Context const& context)
+{
+
+  RecoverDeletedKeyOperation operation(
+      resumeToken, std::make_shared<Azure::Security::KeyVault::Keys::KeyClient>(client));
+  operation.Poll(context);
+  return operation;
 }

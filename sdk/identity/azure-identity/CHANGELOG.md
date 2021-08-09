@@ -1,6 +1,17 @@
 # Release History
 
-## 1.1.0-beta.1 (2021-07-01)
+## 1.1.0-beta.2 (Unreleased)
+
+### Features Added
+
+### Breaking Changes
+
+### Bugs Fixed
+- Fixed `ManagedIdentityCredential` authentication on an Azure VM when using WinHTTP transport adapter.
+
+### Other Changes
+
+## 1.1.0-beta.1 (2021-07-02)
 
 ### Features Added
 

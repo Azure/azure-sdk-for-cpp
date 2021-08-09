@@ -12,4 +12,4 @@
 #define max(x, y) small
 #define min(x, y) small
 
-#include <azure/keyvault/key_vault_keys.hpp>
+#include <azure/keyvault/keyvault_keys.hpp>

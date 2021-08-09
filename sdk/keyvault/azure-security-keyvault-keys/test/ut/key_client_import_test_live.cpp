@@ -10,7 +10,7 @@
 #include <azure/core/base64.hpp>
 #include <azure/core/exception.hpp>
 
-#include <azure/keyvault/key_vault_keys.hpp>
+#include <azure/keyvault/keyvault_keys.hpp>
 
 #include "key_client_base_test.hpp"
 
@@ -20,7 +20,7 @@
 using namespace Azure::Core::_internal;
 using namespace Azure::Security::KeyVault::Keys::Test;
 using namespace Azure::Security::KeyVault::Keys;
-using namespace Azure::Security::KeyVault::_internal;
+using namespace Azure::Security::KeyVault::_detail;
 
 TEST_F(KeyVaultClientTest, ImportKey)
 {
@@ -69,11 +69,4 @@ TEST_F(KeyVaultClientTest, ImportKey)
   EXPECT_EQ(key.CurveName.Value().ToString(), returnedkey.Key.CurveName.Value().ToString());
   EXPECT_EQ(returnedkey.KeyOperations().size(), 1);
   EXPECT_EQ(returnedkey.KeyOperations()[0].ToString(), KeyOperation::Sign.ToString());
-
-  {
-    // delete + purge
-    auto op = keyClient.StartDeleteKey(keyName);
-    op.PollUntilDone(std::chrono::milliseconds(1000));
-    keyClient.PurgeDeletedKey(keyName);
-  }
 }

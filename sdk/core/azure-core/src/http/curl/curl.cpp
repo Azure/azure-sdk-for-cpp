@@ -27,7 +27,6 @@
 #endif
 
 #include <algorithm>
-#include <curl/curl.h>
 #include <string>
 #include <thread>
 
@@ -705,7 +704,8 @@ void CurlSession::ReadStatusLineAndHeadersFromRawResponse(
   // For NoContent status code, also need to set contentLength to 0.
   // https://github.com/Azure/azure-sdk-for-cpp/issues/406
   if (this->m_request.GetMethod() == HttpMethod::Head
-      || this->m_lastStatusCode == HttpStatusCode::NoContent)
+      || this->m_lastStatusCode == HttpStatusCode::NoContent
+      || this->m_lastStatusCode == HttpStatusCode::NotModified)
   {
     this->m_contentLength = 0;
     this->m_bodyStartInBuffer = _detail::DefaultLibcurlReaderSize;
@@ -713,7 +713,20 @@ void CurlSession::ReadStatusLineAndHeadersFromRawResponse(
   }
 
   // headers are already lowerCase at this point
-  auto headers = this->m_response->GetHeaders();
+  auto const& headers = this->m_response->GetHeaders();
+
+  // Check if server has return the connection header. This header can be used to stop re-using the
+  // connection. The `Iot Edge Blob Storage Module` is known to return this after some time re-using
+  // the same http secured channel.
+  auto connectionHeader = headers.find("connection");
+  if (connectionHeader != headers.end())
+  {
+    if (connectionHeader->second == "close")
+    {
+      // Use connection shut-down so it won't be moved it back to the connection pool.
+      m_connection->Shutdown();
+    }
+  }
 
   auto isContentLengthHeaderInResponse = headers.find("content-length");
   if (isContentLengthHeaderInResponse != headers.end())

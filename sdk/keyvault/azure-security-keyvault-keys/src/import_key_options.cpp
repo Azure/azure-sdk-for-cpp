@@ -4,7 +4,7 @@
 #include <azure/core/internal/json/json.hpp>
 #include <azure/core/internal/json/json_optional.hpp>
 
-#include "azure/keyvault/keys/import_key_options.hpp"
+#include "azure/keyvault/keys/key_client_options.hpp"
 #include "private/key_constants.hpp"
 #include "private/key_serializers.hpp"
 
@@ -13,7 +13,6 @@
 using namespace Azure::Security::KeyVault::Keys;
 using namespace Azure::Security::KeyVault::Keys::_detail;
 using namespace Azure::Core::Json::_internal;
-using namespace Azure::Security::KeyVault::_internal;
 
 std::string
 Azure::Security::KeyVault::Keys::_detail::ImportKeyOptionsSerializer::ImportKeyOptionsSerialize(

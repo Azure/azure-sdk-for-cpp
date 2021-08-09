@@ -30,19 +30,19 @@ namespace Azure { namespace Storage { namespace Test {
         m_dataLakeServiceClient->GetFileSystemClient(m_fileSystemName));
     m_fileSystemClient->Create();
 
-    m_directoryA = LowercaseRandomString();
-    m_directoryB = LowercaseRandomString();
+    m_directoryA = RandomString();
+    m_directoryB = RandomString();
     m_pathNameSetA.clear();
     m_pathNameSetB.clear();
     for (size_t i = 0; i < PathTestSize; ++i)
     {
       {
-        auto name = m_directoryA + "/" + LowercaseRandomString();
+        auto name = m_directoryA + "/" + RandomString();
         m_fileSystemClient->GetFileClient(name).Create();
         m_pathNameSetA.emplace_back(std::move(name));
       }
       {
-        auto name = m_directoryB + "/" + LowercaseRandomString();
+        auto name = m_directoryB + "/" + RandomString();
         m_fileSystemClient->GetFileClient(name).Create();
         m_pathNameSetB.emplace_back(std::move(name));
       }
@@ -328,7 +328,7 @@ namespace Azure { namespace Storage { namespace Test {
   {
     {
       // Create from connection string validates static creator function and shared key constructor.
-      auto fileSystemName = LowercaseRandomString(10);
+      auto fileSystemName = LowercaseRandomString();
       auto connectionStringClient
           = Azure::Storage::Files::DataLake::DataLakeFileSystemClient::CreateFromConnectionString(
               AdlsGen2ConnectionString(), fileSystemName);
@@ -343,7 +343,7 @@ namespace Azure { namespace Storage { namespace Test {
 
       auto clientSecretClient = Azure::Storage::Files::DataLake::DataLakeFileSystemClient(
           Azure::Storage::Files::DataLake::DataLakeFileSystemClient::CreateFromConnectionString(
-              AdlsGen2ConnectionString(), LowercaseRandomString(10))
+              AdlsGen2ConnectionString(), LowercaseRandomString())
               .GetUrl(),
           credential);
 

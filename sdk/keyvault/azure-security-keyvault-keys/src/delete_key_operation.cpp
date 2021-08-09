@@ -5,8 +5,8 @@
 
 #include <azure/core/exception.hpp>
 
-#include "azure/keyvault/keys/delete_key_operation.hpp"
 #include "azure/keyvault/keys/key_client.hpp"
+#include "azure/keyvault/keys/key_client_models.hpp"
 #include "private/key_constants.hpp"
 #include "private/key_serializers.hpp"
 
@@ -78,4 +78,15 @@ Azure::Security::KeyVault::Keys::DeleteKeyOperation::DeleteKeyOperation(
   {
     m_status = Azure::Core::OperationStatus::Succeeded;
   }
+}
+
+DeleteKeyOperation Azure::Security::KeyVault::Keys::DeleteKeyOperation::CreateFromResumeToken(
+    std::string const& resumeToken,
+    Azure::Security::KeyVault::Keys::KeyClient const& client,
+    Azure::Core::Context const& context)
+{
+  DeleteKeyOperation operation(
+      resumeToken, std::make_shared<Azure::Security::KeyVault::Keys::KeyClient>(client));
+  operation.Poll(context);
+  return operation;
 }
