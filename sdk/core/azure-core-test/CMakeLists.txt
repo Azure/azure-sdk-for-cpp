@@ -35,6 +35,11 @@ add_library (
   ${AZURE_CORE_TEST_SOURCE}
   )
 
+if (MSVC)
+  # - C6326: Google comparisons 
+  target_compile_options(azure-core-test-fw PUBLIC /wd6326)
+endif()
+
 target_include_directories (azure-core-test-fw
   PUBLIC
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/inc>
