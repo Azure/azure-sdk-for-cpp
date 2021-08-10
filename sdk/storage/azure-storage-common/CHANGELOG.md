@@ -2,15 +2,9 @@
 
 ## 12.1.0 (2021-08-10)
 
-### Features Added
-
-### Breaking Changes
-
 ### Bugs Fixed
 
 - Avoid time domain casting exception during request cancellation. (A community contribution, courtesy of _[johnwheffner](https://github.com/johnwheffner)_)
-
-### Other Changes
 
 ### Acknowledgments
 
