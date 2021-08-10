@@ -1,9 +1,14 @@
+// See https://aka.ms/azsdk/engsys/spellcheck to learn about spell check
+// configuration options including dealing with false positives.
 {
   "version": "0.1",
   "language": "en",
   "languageId": "cpp",
-  "dictionaries": ["powershell"],
-  "ignorePaths": ["vcpkg/**/*", "*.exe", "*.a", "*.lib", ".vscode/cspell.json", "json.hpp", "*nlohmann-json*"],
+  "dictionaries": ["powershell", "cpp"],
+  "ignorePaths": ["vcpkg/**/*", "*.exe", "*.a", "*.lib", ".vscode/cspell.json", "json.hpp", "*nlohmann-json*", "eng/common/**/*"],
+  // * Unless configured otherwise, these words are not case sensitive
+  // * Alphabetize the list when making changes so the list is easier for future
+  //   users to maintain and reason about.
   "words": [
     "ABFS",
     "ABNF",
