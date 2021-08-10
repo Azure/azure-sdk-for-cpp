@@ -20,9 +20,9 @@ include(AzureGlobalCompileOptions)
 az_vcpkg_integrate()
 
 if(NOT AZ_ALL_LIBRARIES)
-  find_package(azure-storage-common-cpp "12.0.0" CONFIG QUIET)
+  find_package(azure-storage-common-cpp "12.1.0" CONFIG QUIET)
   if(NOT azure-storage-common-cpp_FOUND)
-    find_package(azure-storage-common-cpp "12.0.0" REQUIRED)
+    find_package(azure-storage-common-cpp "12.1.0" REQUIRED)
   endif()
 endif()
 

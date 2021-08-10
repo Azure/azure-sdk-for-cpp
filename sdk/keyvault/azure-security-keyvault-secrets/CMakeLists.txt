@@ -20,9 +20,9 @@ include(AzureGlobalCompileOptions)
 az_vcpkg_integrate()
 
 if(NOT AZ_ALL_LIBRARIES)
-  find_package(azure-core-cpp "1.1.0" CONFIG QUIET)
+  find_package(azure-core-cpp "1.2.0" CONFIG QUIET)
   if(NOT azure-core-cpp_FOUND)
-    find_package(azure-core-cpp "1.1.0" REQUIRED)
+    find_package(azure-core-cpp "1.2.0" REQUIRED)
   endif()
 endif()
 
@@ -34,7 +34,10 @@ set(
     inc/azure/keyvault/secrets/secret_client.hpp
     inc/azure/keyvault/keyvault_secrets.hpp
     inc/azure/keyvault/secrets/keyvault_deleted_secret.hpp
+    inc/azure/keyvault/secrets/keyvault_secret_paged_response.hpp
     inc/azure/keyvault/secrets/keyvault_backup_secret.hpp
+    inc/azure/keyvault/secrets/keyvault_operations.hpp
+    inc/azure/keyvault/secrets/keyvault_options.hpp
 )
 
 set(
@@ -46,6 +49,8 @@ set(
     src/keyvault_protocol.cpp
     src/secret_client.cpp
     src/secret_serializers.cpp
+    src/keyvault_operations.cpp
+    src/keyvault_secret_paged_response.cpp
 )
 
 add_library(azure-security-keyvault-secrets ${AZURE_SECURITY_KEYVAULT_SECRETS_HEADER} ${AZURE_SECURITY_KEYVAULT_SECRETS_SOURCE})

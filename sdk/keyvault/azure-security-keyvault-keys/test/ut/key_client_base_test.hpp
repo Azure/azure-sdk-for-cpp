@@ -13,6 +13,8 @@
 #include <azure/identity/client_secret_credential.hpp>
 #include <azure/keyvault/keyvault_keys.hpp>
 
+#include <azure/core/test/test_base.hpp>
+
 #include <chrono>
 #include <cstdio>
 #include <iostream>
@@ -20,12 +22,10 @@
 
 namespace Azure { namespace Security { namespace KeyVault { namespace Keys { namespace Test {
 
-  class KeyVaultClientTest : public ::testing::TestWithParam<int> {
-  protected:
-    int m_testPollingTimeOutMinutes = 20;
-    std::chrono::minutes m_testPollingIntervalMinutes = std::chrono::minutes(1);
-
+  class KeyVaultClientTest : public Azure::Core::Test::TestBase,
+                             public ::testing::WithParamInterface<int> {
   private:
+    std::unique_ptr<Azure::Security::KeyVault::Keys::KeyClient> m_client;
     std::string GetEnv(const std::string& name, std::string const& defaultValue = std::string())
     {
       const char* ret = std::getenv(name.data());
@@ -44,14 +44,28 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys { nam
     }
 
   protected:
+    int m_testPollingTimeOutMinutes = 20;
+    std::chrono::minutes m_testPollingIntervalMinutes = std::chrono::minutes(1);
+
     std::shared_ptr<Azure::Identity::ClientSecretCredential> m_credential;
     std::string m_keyVaultUrl;
     std::string m_keyVaultHsmUrl;
-    std::unique_ptr<Azure::Security::KeyVault::Keys::KeyClient> m_client;
+
+    Azure::Security::KeyVault::Keys::KeyClient const& GetClientForTest(std::string const& testName)
+    {
+      // set the interceptor for the current test
+      m_testContext.RenameTest(testName);
+      return *m_client;
+    }
 
     // Create
     virtual void SetUp() override
     {
+      // Init interceptor from PlayBackRecorder
+      std::string recordingPath(AZURE_TEST_RECORDING_DIR);
+      recordingPath.append("/recordings");
+      Azure::Core::Test::TestBase::SetUpBase(recordingPath);
+
       std::string tenantId = GetEnv("AZURE_TENANT_ID");
       std::string clientId = GetEnv("AZURE_CLIENT_ID");
       std::string secretId = GetEnv("AZURE_CLIENT_SECRET");
@@ -60,6 +74,22 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys { nam
 
       m_keyVaultUrl = GetEnv("AZURE_KEYVAULT_URL");
       m_keyVaultHsmUrl = GetEnv("AZURE_KEYVAULT_HSM_URL");
+
+      // Create default client for the test
+      KeyClientOptions options;
+      // Replace default transport adapter for playback
+      if (m_testContext.IsPlaybackMode())
+      {
+        options.Transport.Transport = m_interceptor->GetPlaybackClient();
+      }
+      // Insert Recording policy when Record mode is on (non playback and non LiveMode)
+      else if (!m_testContext.IsLiveMode())
+      {
+        // AZURE_TEST_RECORDING_DIR is exported by CMAKE
+        options.PerRetryPolicies.push_back(m_interceptor->GetRecordPolicy());
+      }
+
+      m_client = std::make_unique<KeyClient>(m_keyVaultUrl, m_credential, options);
 
       // When running live tests, service can return 429 error response if the client is sending
       // multiple requests per second. This can happen if the network is fast and tests are running
