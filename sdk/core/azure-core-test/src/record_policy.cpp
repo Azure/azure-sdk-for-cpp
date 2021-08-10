@@ -58,24 +58,7 @@ std::unique_ptr<RawResponse> RecordNetworkCallPolicy::Send(
 
   // Remove sensitive information such as SAS token signatures from the recording.
   {
-    auto const& url = request.GetUrl();
-    Azure::Core::Url redactedUrl;
-    redactedUrl.SetScheme(url.GetScheme());
-    auto host = url.GetHost();
-    auto hostWithNoAccount = std::find(host.begin(), host.end(), '.');
-    redactedUrl.SetHost("REDACTED" + std::string(hostWithNoAccount, host.end()));
-    // Query parameters
-    for (auto const& qp : url.GetQueryParameters())
-    {
-      if (qp.first == "sig")
-      {
-        redactedUrl.AppendQueryParameter("sig", "REDACTED");
-      }
-      else
-      {
-        redactedUrl.AppendQueryParameter(qp.first, qp.second);
-      }
-    }
+    Azure::Core::Url const redactedUrl = m_interceptorManager->RedactUrl(request.GetUrl());
     record.Url = redactedUrl.GetAbsoluteUrl();
   }
 

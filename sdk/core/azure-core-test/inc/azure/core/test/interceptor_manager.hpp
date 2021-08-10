@@ -20,6 +20,7 @@
 
 #pragma once
 
+#include <azure/core/http/http.hpp>
 #include <azure/core/http/policies/policy.hpp>
 #include <memory>
 #include <string>
@@ -97,6 +98,23 @@ namespace Azure { namespace Core { namespace Test {
      * @return TestMode
      */
     static TestMode GetTestMode();
+
+    /**
+     * @brief This function is expected to be called by the playback transport adapter.
+     *
+     * @remark The name of the test is known and set when the test is actually started. That's why
+     * the recorded data can't be loaded until the test is already running (Can't load on SetUp).
+     *
+     */
+    void LoadTestData();
+
+    /**
+     * @brief Removes sensitive info from a request Url.
+     * 
+     * @param url The request Url.
+     * @return Azure::Core::Url 
+     */
+    Azure::Core::Url RedactUrl (Azure::Core::Url const& url);
   };
 
 }}} // namespace Azure::Core::Test
