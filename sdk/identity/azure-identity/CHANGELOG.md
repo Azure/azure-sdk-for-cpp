@@ -2,8 +2,13 @@
 
 ## 1.1.0 (2021-08-10)
 
+### Features Added
+
+- Added `ManagedIdentityCredential`.
+
 ### Bugs Fixed
-- Fixed `ManagedIdentityCredential` authentication on an Azure VM when using WinHTTP transport adapter.
+
+- Fixed minor memory leak when obtaining a token.
 
 ## 1.1.0-beta.1 (2021-07-02)
 
