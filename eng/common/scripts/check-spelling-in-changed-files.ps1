@@ -22,7 +22,7 @@ if ((Get-Command git | Measure-Object).Count -eq 0) {
 }
 
 if ((Get-Command npx | Measure-Object).Count -eq 0) { 
-    LogError "Could not locate npx. Install NodeJS (includes npx) https://nodejs.org/en/download/"
+    LogError "Could not locate npx. Install NodeJS (includes npx and npx) https://nodejs.org/en/download/"
     exit 1
 }
 
@@ -51,7 +51,7 @@ foreach ($file in $changedFiles) {
     $changedFilePaths += $file.Path
 }
 
-# Using GetTempPath because it works on linux and windows. Setting .json 
+# Using GetTempPath because it works on linux and windows. Setting .json
 # extension because cspell requires the file have a .json or .jsonc extension
 $cspellConfigTemporaryPath = Join-Path `
     ([System.IO.Path]::GetTempPath()) `
@@ -60,7 +60,8 @@ $cspellConfigTemporaryPath = Join-Path `
 $cspellConfigContent = Get-Content $CspellConfigPath -Raw
 $cspellConfig = ConvertFrom-Json $cspellConfigContent
 
-# If the config has no "files" property this adds it or sets the value. In this
+# If the config has no "files" property this adds it. If the config has a
+# "files" property this sets the value, overwriting the existing value. In this
 # case, spell checking is only intended to check files from $changedFiles so
 # preexisting entries in "files" will be overwritten.
 Add-Member `
@@ -70,9 +71,13 @@ Add-Member `
     -Value $changedFilePaths `
     -Force
 
-# Set the temporary config file with the mutated configuration
+# Set the temporary config file with the mutated configuration. The temporary
+# location is used to configure the command and the original file remains
+# unchanged.
 Write-Host "Setting config in: $cspellConfigTemporaryPath"
-Set-Content -Path $cspellConfigTemporaryPath -Value (ConvertTo-Json $cspellConfig -Depth 100)
+Set-Content `
+    -Path $cspellConfigTemporaryPath `
+    -Value (ConvertTo-Json $cspellConfig -Depth 100)
 
 # Use the mutated configuration file when calling cspell
 Write-Host "npx cspell lint --config $cspellConfigTemporaryPath"
@@ -80,7 +85,7 @@ $spellingErrors = npx cspell lint --config $cspellConfigTemporaryPath
 
 if ($spellingErrors) {
     $errorLoggingFunction = Get-Item 'Function:LogWarning'
-    if ($ExitWithError) { 
+    if ($ExitWithError) {
         $errorLoggingFunction = Get-Item 'Function:LogError'
     }
 
@@ -92,10 +97,10 @@ if ($spellingErrors) {
     if ($ExitWithError) {
         exit 1
     }
+} else {
+    Write-Host "No spelling errors detected. Removing temporary config file."
+    Remove-Item -Path $cspellConfigTemporaryPath -Force
 }
-
-# Clean up the temporary config file used for cspell run config
-#Remove-Item -Path $cspellConfigTemporaryPath -Force
 
 exit 0
 
@@ -108,12 +113,18 @@ This script checks files that have changed relative to a base branch (default
 branch) for spelling errors. Dictionaries and spelling configurations reside 
 in a configurable `cspell.json` location.
 
-This script assumes NodeJS and cspell are installed. NodeJS (which includes npm)
-can be downloaded from https://nodejs.org/en/download/. Once NodeJS is installed
-the cspell command can be installed with `npm install -g cspell`.
+This script uses `npx` and assumes that NodeJS (and by extension `npm` and
+`npx`) are installed on the machine. If it does not detect `npx` it will warn
+the user and exit with an error.
 
 The entire file is scanned, not just changed sections. Spelling errors in parts 
 of the file not touched will still be shown.
+
+This script copies the config file supplied in CspellConfigPath to a temporary
+location, mutates the config file to include only the files that have changed,
+and then uses the mutated config file to call cspell. In the case of success
+the temporary file is deleted. In the case of failure the temporary file, whose
+location was logged to the console, remains on disk for examination.
 
 .PARAMETER TargetBranch
 Git ref to compare changes. This is usually the "base" (GitHub) or "target" 
