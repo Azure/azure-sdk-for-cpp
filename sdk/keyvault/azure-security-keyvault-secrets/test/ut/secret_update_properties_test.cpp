@@ -10,16 +10,15 @@ using namespace Azure::Security::KeyVault::Secrets;
 using namespace Azure::Security::KeyVault::Secrets::_detail;
 using namespace Azure::Core::Json::_internal;
 
-TEST(KeyVaultSecretPropertiesSerializer, Serialize1)
+TEST(SecretPropertiesSerializer, Serialize1)
 {
-  KeyvaultSecretProperties properties;
+  SecretProperties properties;
 
   properties.ContentType = "contentType";
   properties.Enabled = true;
   properties.RecoverableDays = 5;
 
-  auto serialized
-      = _detail::KeyVaultSecretPropertiesSerializer::KeyVaultSecretPropertiesSerialize(properties);
+  auto serialized = _detail::SecretPropertiesSerializer::Serialize(properties);
 
   auto jsonParser = json::parse(serialized);
 
@@ -32,17 +31,16 @@ TEST(KeyVaultSecretPropertiesSerializer, Serialize1)
       jsonParser[_detail::AttributesPropertyName][_detail::RecoverableDaysPropertyName]);
 }
 
-TEST(KeyVaultSecretPropertiesSerializer, Serialize2)
+TEST(SecretPropertiesSerializer, Serialize2)
 {
-  KeyvaultSecretProperties properties;
+  SecretProperties properties;
 
   properties.ContentType = "contentType";
   properties.Enabled = true;
   properties.RecoverableDays = 5;
   properties.Tags.emplace("a", "b");
 
-  auto serialized
-      = _detail::KeyVaultSecretPropertiesSerializer::KeyVaultSecretPropertiesSerialize(properties);
+  auto serialized = _detail::SecretPropertiesSerializer::Serialize(properties);
 
   auto jsonParser = json::parse(serialized);
 
@@ -56,9 +54,9 @@ TEST(KeyVaultSecretPropertiesSerializer, Serialize2)
   EXPECT_EQ(properties.Tags["a"], jsonParser[_detail::TagsPropertyName]["a"]);
 }
 
-TEST(KeyVaultSecretPropertiesSerializer, Serialize3)
+TEST(SecretPropertiesSerializer, Serialize3)
 {
-  KeyvaultSecretProperties properties;
+  SecretProperties properties;
 
   properties.ContentType = "contentType";
   properties.Enabled = true;
@@ -66,8 +64,7 @@ TEST(KeyVaultSecretPropertiesSerializer, Serialize3)
   properties.Tags.emplace("a", "b");
   properties.Tags.emplace("c", "d");
 
-  auto serialized
-      = _detail::KeyVaultSecretPropertiesSerializer::KeyVaultSecretPropertiesSerialize(properties);
+  auto serialized = _detail::SecretPropertiesSerializer::Serialize(properties);
 
   auto jsonParser = json::parse(serialized);
 

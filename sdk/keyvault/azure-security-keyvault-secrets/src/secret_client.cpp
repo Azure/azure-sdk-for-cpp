@@ -77,81 +77,77 @@ SecretClient::SecretClient(
           options, TelemetryName, apiVersion, std::move(perRetrypolicies), {}));
 }
 
-Azure::Response<KeyVaultSecret> SecretClient::GetSecret(
+Azure::Response<Secret> SecretClient::GetSecret(
     std::string const& name,
     GetSecretOptions const& options,
     Azure::Core::Context const& context) const
 {
-  return m_protocolClient->SendRequest<KeyVaultSecret>(
+  return m_protocolClient->SendRequest<Secret>(
       context,
       Azure::Core::Http::HttpMethod::Get,
       [&name](Azure::Core::Http::RawResponse const& rawResponse) {
-        return _detail::KeyVaultSecretSerializer::KeyVaultSecretDeserialize(name, rawResponse);
+        return _detail::SecretSerializer::Deserialize(name, rawResponse);
       },
       {_detail::SecretPath, name, options.Version});
 }
 
-Azure::Response<KeyVaultDeletedSecret> SecretClient::GetDeletedSecret(
+Azure::Response<DeletedSecret> SecretClient::GetDeletedSecret(
     std::string const& name,
     Azure::Core::Context const& context) const
 {
-  return m_protocolClient->SendRequest<KeyVaultDeletedSecret>(
+  return m_protocolClient->SendRequest<DeletedSecret>(
       context,
       Azure::Core::Http::HttpMethod::Get,
       [&name](Azure::Core::Http::RawResponse const& rawResponse) {
-        return _detail::KeyVaultDeletedSecretSerializer::KeyVaultDeletedSecretDeserialize(
-            name, rawResponse);
+        return _detail::DeletedSecretSerializer::Deserialize(name, rawResponse);
       },
       {_detail::DeletedSecretPath, name});
 }
 
-Azure::Response<KeyVaultSecret> SecretClient::SetSecret(
+Azure::Response<Secret> SecretClient::SetSecret(
     std::string const& name,
     std::string const& value,
     Azure::Core::Context const& context) const
 {
-  KeyVaultSecret setParameters(name, value);
+  Secret setParameters(name, value);
   return SetSecret(name, setParameters, context);
 }
 
-Azure::Response<KeyVaultSecret> SecretClient::SetSecret(
+Azure::Response<Secret> SecretClient::SetSecret(
     std::string const& name,
-    KeyVaultSecret const& secret,
+    Secret const& secret,
     Azure::Core::Context const& context) const
 {
-  return m_protocolClient->SendRequest<KeyVaultSecret>(
+  return m_protocolClient->SendRequest<Secret>(
       context,
       Azure::Core::Http::HttpMethod::Put,
-      [&secret]() { return _detail::KeyVaultSecretSerializer::KeyVaultSecretSerialize(secret); },
+      [&secret]() { return _detail::SecretSerializer::Serialize(secret); },
       [&name](Azure::Core::Http::RawResponse const& rawResponse) {
-        return _detail::KeyVaultSecretSerializer::KeyVaultSecretDeserialize(name, rawResponse);
+        return _detail::SecretSerializer::Deserialize(name, rawResponse);
       },
       {_detail::SecretPath, name});
 }
 
-Azure::Response<KeyVaultSecret> SecretClient::UpdateSecretProperties(
+Azure::Response<Secret> SecretClient::UpdateSecretProperties(
     std::string const& name,
     UpdateSecretPropertiesOptions const& options,
-    KeyvaultSecretProperties const& properties,
+    SecretProperties const& properties,
     Azure::Core::Context const& context) const
 {
-  return m_protocolClient->SendRequest<KeyVaultSecret>(
+  return m_protocolClient->SendRequest<Secret>(
       context,
       Azure::Core::Http::HttpMethod::Patch,
-      [&properties]() {
-        return _detail::KeyVaultSecretPropertiesSerializer::KeyVaultSecretPropertiesSerialize(
-            properties);
-      },
+      [&properties]() { return _detail::SecretPropertiesSerializer::Serialize(properties); },
       [&name](Azure::Core::Http::RawResponse const& rawResponse) {
-        return _detail::KeyVaultSecretSerializer::KeyVaultSecretDeserialize(name, rawResponse);
+        return _detail::SecretSerializer::Deserialize(name, rawResponse);
       },
       {_detail::SecretPath, name, options.Version});
 }
 
-Azure::Response<KeyVaultSecret> SecretClient::UpdateSecretProperties(
+Azure::Response<Secret> SecretClient::UpdateSecretProperties(
     std::string const& name,
     std::string const& version,
-    KeyvaultSecretProperties const& properties,
+    SecretProperties const& properties,
     Azure::Core::Context const& context) const
 {
   UpdateSecretPropertiesOptions options;
@@ -168,24 +164,21 @@ Azure::Response<BackupSecretResult> SecretClient::BackupSecret(
       context,
       Azure::Core::Http::HttpMethod::Post,
       [](Azure::Core::Http::RawResponse const& rawResponse) {
-        return _detail::KeyvaultBackupSecretSerializer::KeyvaultBackupSecretDeserialize(
-            rawResponse);
+        return _detail::BackupSecretSerializer::Deserialize(rawResponse);
       },
       {_detail::SecretPath, name, _detail::BackupSecretPath});
 }
 
-Azure::Response<KeyVaultSecret> SecretClient::RestoreSecretBackup(
+Azure::Response<Secret> SecretClient::RestoreSecretBackup(
     std::vector<uint8_t> const& backup,
     Azure::Core::Context const& context) const
 {
-  return m_protocolClient->SendRequest<KeyVaultSecret>(
+  return m_protocolClient->SendRequest<Secret>(
       context,
       Azure::Core::Http::HttpMethod::Post,
-      [&backup]() {
-        return _detail::KeyvaultRestoreSecretSerializer::KeyvaultRestoreSecretSerialize(backup);
-      },
+      [&backup]() { return _detail::RestoreSecretSerializer::Serialize(backup); },
       [](Azure::Core::Http::RawResponse const& rawResponse) {
-        return _detail::KeyVaultSecretSerializer::KeyVaultSecretDeserialize(rawResponse);
+        return _detail::SecretSerializer::Deserialize(rawResponse);
       },
       {_detail::SecretPath, _detail::RestoreSecretPath});
 }
@@ -201,37 +194,36 @@ Azure::Response<PurgedSecret> SecretClient::PurgeDeletedSecret(
       {_detail::DeletedSecretPath, name});
 }
 
-Azure::Security::KeyVault::Secrets::KeyVaultDeleteSecretOperation SecretClient::StartDeleteSecret(
+Azure::Security::KeyVault::Secrets::DeleteSecretOperation SecretClient::StartDeleteSecret(
     std::string const& name,
     Azure::Core::Context const& context) const
 {
-  return Azure::Security::KeyVault::Secrets::KeyVaultDeleteSecretOperation(
+  return Azure::Security::KeyVault::Secrets::DeleteSecretOperation(
       std::make_shared<SecretClient>(*this),
-      m_protocolClient->SendRequest<KeyVaultDeletedSecret>(
+      m_protocolClient->SendRequest<DeletedSecret>(
           context,
           Azure::Core::Http::HttpMethod::Delete,
           [&name](Azure::Core::Http::RawResponse const& rawResponse) {
-            return _detail::KeyVaultDeletedSecretSerializer::KeyVaultDeletedSecretDeserialize(
-                name, rawResponse);
+            return _detail::DeletedSecretSerializer::Deserialize(name, rawResponse);
           },
           {_detail::SecretPath, name}));
 }
 
-Azure::Security::KeyVault::Secrets::KeyVaultRestoreDeletedSecretOperation SecretClient::
+Azure::Security::KeyVault::Secrets::RestoreDeletedSecretOperation SecretClient::
     StartRecoverDeletedSecret(std::string const& name, Azure::Core::Context const& context) const
 {
-  return Azure::Security::KeyVault::Secrets::KeyVaultRestoreDeletedSecretOperation(
+  return Azure::Security::KeyVault::Secrets::RestoreDeletedSecretOperation(
       std::make_shared<SecretClient>(*this),
-      m_protocolClient->SendRequest<KeyVaultSecret>(
+      m_protocolClient->SendRequest<Secret>(
           context,
           Azure::Core::Http::HttpMethod::Post,
           [&name](Azure::Core::Http::RawResponse const& rawResponse) {
-            return _detail::KeyVaultSecretSerializer::KeyVaultSecretDeserialize(name, rawResponse);
+            return _detail::SecretSerializer::Deserialize(name, rawResponse);
           },
           {_detail::DeletedSecretPath, name, _detail::RecoverDeletedSecretPath}));
 }
 
-KeyVaultSecretPropertiesPagedResponse SecretClient::GetPropertiesOfSecrets(
+SecretPropertiesPagedResponse SecretClient::GetPropertiesOfSecrets(
     GetPropertiesOfSecretsOptions const& options,
     Azure::Core::Context const& context) const
 {
@@ -245,23 +237,22 @@ KeyVaultSecretPropertiesPagedResponse SecretClient::GetPropertiesOfSecrets(
 
   request.Query->emplace(_detail::PagedMaxResultsName, std::to_string(maxResults));
 
-  auto response = m_protocolClient->SendRequest<KeyVaultSecretPropertiesPagedResponse>(
+  auto response = m_protocolClient->SendRequest<SecretPropertiesPagedResponse>(
       context,
       Azure::Core::Http::HttpMethod::Get,
       [](Azure::Core::Http::RawResponse const& rawResponse) {
-        return _detail::KeyVaultSecretPropertiesPagedResultSerializer::
-            KeyVaultSecretPropertiesPagedResponseDeserialize(rawResponse);
+        return _detail::SecretPropertiesPagedResultSerializer::Deserialize(rawResponse);
       },
       request.Path,
       request.Query);
 
-  return KeyVaultSecretPropertiesPagedResponse(
+  return SecretPropertiesPagedResponse(
       std::move(response.Value),
       std::move(response.RawResponse),
       std::make_unique<SecretClient>(*this));
 }
 
-KeyVaultSecretPropertiesPagedResponse SecretClient::GetPropertiesOfSecretsVersions(
+SecretPropertiesPagedResponse SecretClient::GetPropertiesOfSecretsVersions(
     std::string const& name,
     GetPropertiesOfSecretVersionsOptions const& options,
     Azure::Core::Context const& context) const
@@ -276,24 +267,23 @@ KeyVaultSecretPropertiesPagedResponse SecretClient::GetPropertiesOfSecretsVersio
 
   request.Query->emplace(_detail::PagedMaxResultsName, std::to_string(maxResults));
 
-  auto response = m_protocolClient->SendRequest<KeyVaultSecretPropertiesPagedResponse>(
+  auto response = m_protocolClient->SendRequest<SecretPropertiesPagedResponse>(
       context,
       Azure::Core::Http::HttpMethod::Get,
       [](Azure::Core::Http::RawResponse const& rawResponse) {
-        return _detail::KeyVaultSecretPropertiesPagedResultSerializer::
-            KeyVaultSecretPropertiesPagedResponseDeserialize(rawResponse);
+        return _detail::SecretPropertiesPagedResultSerializer::Deserialize(rawResponse);
       },
       request.Path,
       request.Query);
 
-  return KeyVaultSecretPropertiesPagedResponse(
+  return SecretPropertiesPagedResponse(
       std::move(response.Value),
       std::move(response.RawResponse),
       std::make_unique<SecretClient>(*this),
       name);
 }
 
-KeyvaultSecretDeletedSecretPagedResponse SecretClient::GetDeletedSecrets(
+DeletedSecretPagedResponse SecretClient::GetDeletedSecrets(
     GetDeletedSecretsOptions const& options,
     Azure::Core::Context const& context) const
 {
@@ -307,17 +297,16 @@ KeyvaultSecretDeletedSecretPagedResponse SecretClient::GetDeletedSecrets(
 
   request.Query->emplace(_detail::PagedMaxResultsName, std::to_string(maxResults));
 
-  auto response = m_protocolClient->SendRequest<KeyvaultSecretDeletedSecretPagedResponse>(
+  auto response = m_protocolClient->SendRequest<DeletedSecretPagedResponse>(
       context,
       Azure::Core::Http::HttpMethod::Get,
       [](Azure::Core::Http::RawResponse const& rawResponse) {
-        return _detail::KeyVaultSecretDeletedSecretPagedResultSerializer::
-            KeyVaultSecretDeletedSecretPagedResultDeserialize(rawResponse);
+        return _detail::DeletedSecretPagedResultSerializer::Deserialize(rawResponse);
       },
       request.Path,
       request.Query);
 
-  return KeyvaultSecretDeletedSecretPagedResponse(
+  return DeletedSecretPagedResponse(
       std::move(response.Value),
       std::move(response.RawResponse),
       std::make_unique<SecretClient>(*this));

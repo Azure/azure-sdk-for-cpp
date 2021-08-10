@@ -9,9 +9,9 @@
 #include "azure/keyvault/secrets/keyvault_operations.hpp"
 #include "azure/keyvault/secrets/secret_client.hpp"
 #include "private/secret_serializers.hpp"
-// KeyVaultRestoreDeletedSecretOperation
+// RestoreDeletedSecretOperation
 
-Azure::Response<KeyVaultSecret> KeyVaultRestoreDeletedSecretOperation::PollUntilDoneInternal(
+Azure::Response<Secret> RestoreDeletedSecretOperation::PollUntilDoneInternal(
     std::chrono::milliseconds period,
     Azure::Core::Context& context)
 {
@@ -26,11 +26,11 @@ Azure::Response<KeyVaultSecret> KeyVaultRestoreDeletedSecretOperation::PollUntil
     std::this_thread::sleep_for(period);
   }
 
-  return Azure::Response<KeyVaultSecret>(
+  return Azure::Response<Secret>(
       m_value, std::make_unique<Azure::Core::Http::RawResponse>(*m_rawResponse));
 }
 
-std::unique_ptr<Azure::Core::Http::RawResponse> KeyVaultRestoreDeletedSecretOperation::PollInternal(
+std::unique_ptr<Azure::Core::Http::RawResponse> RestoreDeletedSecretOperation::PollInternal(
     Azure::Core::Context const& context)
 {
   std::unique_ptr<Azure::Core::Http::RawResponse> rawResponse;
@@ -63,16 +63,15 @@ std::unique_ptr<Azure::Core::Http::RawResponse> KeyVaultRestoreDeletedSecretOper
 
     if (m_status == Azure::Core::OperationStatus::Succeeded)
     {
-      m_value = _detail::KeyVaultSecretSerializer::KeyVaultSecretDeserialize(
-          m_value.Name, *rawResponse);
+      m_value = _detail::SecretSerializer::Deserialize(m_value.Name, *rawResponse);
     }
   }
   return rawResponse;
 }
 
-KeyVaultRestoreDeletedSecretOperation::KeyVaultRestoreDeletedSecretOperation(
+RestoreDeletedSecretOperation::RestoreDeletedSecretOperation(
     std::shared_ptr<SecretClient> secretClient,
-    Azure::Response<KeyVaultSecret> response)
+    Azure::Response<Secret> response)
     : m_secretClient(secretClient)
 {
   m_value = response.Value;
@@ -87,7 +86,7 @@ KeyVaultRestoreDeletedSecretOperation::KeyVaultRestoreDeletedSecretOperation(
   }
 }
 
-KeyVaultRestoreDeletedSecretOperation::KeyVaultRestoreDeletedSecretOperation(
+RestoreDeletedSecretOperation::RestoreDeletedSecretOperation(
     std::string resumeToken,
     std::shared_ptr<SecretClient> secretClient)
     : m_secretClient(secretClient), m_continuationToken(std::move(resumeToken))
@@ -95,18 +94,17 @@ KeyVaultRestoreDeletedSecretOperation::KeyVaultRestoreDeletedSecretOperation(
   m_value.Name = resumeToken;
 }
 
-KeyVaultRestoreDeletedSecretOperation KeyVaultRestoreDeletedSecretOperation::CreateFromResumeToken(
+RestoreDeletedSecretOperation RestoreDeletedSecretOperation::CreateFromResumeToken(
     std::string const& resumeToken,
     SecretClient const& client,
     Azure::Core::Context const& context)
 {
-  KeyVaultRestoreDeletedSecretOperation operation(
-      resumeToken, std::make_shared<SecretClient>(client));
+  RestoreDeletedSecretOperation operation(resumeToken, std::make_shared<SecretClient>(client));
   operation.Poll(context);
   return operation;
 }
-// KeyVaultDeleteSecretOperation
-Azure::Response<KeyVaultDeletedSecret> KeyVaultDeleteSecretOperation::PollUntilDoneInternal(
+// DeleteSecretOperation
+Azure::Response<DeletedSecret> DeleteSecretOperation::PollUntilDoneInternal(
     std::chrono::milliseconds period,
     Azure::Core::Context& context)
 {
@@ -120,11 +118,11 @@ Azure::Response<KeyVaultDeletedSecret> KeyVaultDeleteSecretOperation::PollUntilD
     std::this_thread::sleep_for(period);
   }
 
-  return Azure::Response<KeyVaultDeletedSecret>(
+  return Azure::Response<DeletedSecret>(
       m_value, std::make_unique<Azure::Core::Http::RawResponse>(*m_rawResponse));
 }
 
-std::unique_ptr<Azure::Core::Http::RawResponse> KeyVaultDeleteSecretOperation::PollInternal(
+std::unique_ptr<Azure::Core::Http::RawResponse> DeleteSecretOperation::PollInternal(
     Azure::Core::Context const& context)
 {
   std::unique_ptr<Azure::Core::Http::RawResponse> rawResponse;
@@ -156,16 +154,15 @@ std::unique_ptr<Azure::Core::Http::RawResponse> KeyVaultDeleteSecretOperation::P
 
     if (m_status == Azure::Core::OperationStatus::Succeeded)
     {
-      m_value = _detail::KeyVaultDeletedSecretSerializer::KeyVaultDeletedSecretDeserialize(
-          m_value.Name, *rawResponse);
+      m_value = _detail::DeletedSecretSerializer::Deserialize(m_value.Name, *rawResponse);
     }
   }
   return rawResponse;
 }
 
-KeyVaultDeleteSecretOperation::KeyVaultDeleteSecretOperation(
+DeleteSecretOperation::DeleteSecretOperation(
     std::shared_ptr<SecretClient> secretClient,
-    Azure::Response<KeyVaultDeletedSecret> response)
+    Azure::Response<DeletedSecret> response)
     : m_secretClient(secretClient)
 {
   m_value = response.Value;
@@ -178,7 +175,7 @@ KeyVaultDeleteSecretOperation::KeyVaultDeleteSecretOperation(
   }
 }
 
-KeyVaultDeleteSecretOperation::KeyVaultDeleteSecretOperation(
+DeleteSecretOperation::DeleteSecretOperation(
     std::string resumeToken,
     std::shared_ptr<SecretClient> secretClient)
     : m_secretClient(secretClient), m_continuationToken(std::move(resumeToken))
@@ -186,12 +183,12 @@ KeyVaultDeleteSecretOperation::KeyVaultDeleteSecretOperation(
   m_value.Name = resumeToken;
 }
 
-KeyVaultDeleteSecretOperation KeyVaultDeleteSecretOperation::CreateFromResumeToken(
+DeleteSecretOperation DeleteSecretOperation::CreateFromResumeToken(
     std::string const& resumeToken,
     SecretClient const& client,
     Azure::Core::Context const& context)
 {
-  KeyVaultDeleteSecretOperation operation(resumeToken, std::make_shared<SecretClient>(client));
+  DeleteSecretOperation operation(resumeToken, std::make_shared<SecretClient>(client));
   operation.Poll(context);
   return operation;
 }

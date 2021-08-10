@@ -102,7 +102,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets { 
       return response;
     }
 
-    static void RunPartialExpect(KeyVaultSecret& secret, bool expectValue = true)
+    static void RunPartialExpect(Secret& secret, bool expectValue = true)
     {
       if (expectValue)
       {
@@ -123,7 +123,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets { 
       EXPECT_EQ(secret.Properties.CreatedOn.HasValue(), true);
     }
 
-    static void RunFullExpect(KeyVaultSecret& secret, bool expectValue = true)
+    static void RunFullExpect(Secret& secret, bool expectValue = true)
     {
       if (expectValue)
       {
@@ -146,7 +146,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets { 
       EXPECT_EQ(secret.Properties.CreatedOn.HasValue(), true);
     }
 
-    static void RunDeletedExtras(KeyVaultDeletedSecret& secret)
+    static void RunDeletedExtras(DeletedSecret& secret)
     {
       EXPECT_EQ(
           secret.RecoveryId, "https://myvault.vault.azure.net/deletedsecrets/GetDeletedSecretTest");

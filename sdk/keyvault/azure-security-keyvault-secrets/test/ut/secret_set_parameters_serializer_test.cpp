@@ -17,9 +17,9 @@ using namespace Azure::Core::Json::_internal;
 
 TEST(KeyvaultSecretSetParametersSerializer, SetValue)
 {
-  KeyVaultSecret params("name", "value");
+  Secret params("name", "value");
 
-  std::string result = KeyVaultSecretSerializer::KeyVaultSecretSerialize(params);
+  std::string result = SecretSerializer::Serialize(params);
 
   auto jsonParser = json::parse(result);
 
@@ -30,11 +30,11 @@ TEST(KeyvaultSecretSetParametersSerializer, SetValue)
 
 TEST(KeyvaultSecretSetParametersSerializer, SetValueCT)
 {
-  KeyVaultSecret params("name", "value");
+  Secret params("name", "value");
 
   params.Properties.ContentType = "ct";
 
-  std::string result = KeyVaultSecretSerializer::KeyVaultSecretSerialize(params);
+  std::string result = SecretSerializer::Serialize(params);
 
   auto jsonParser = json::parse(result);
 
@@ -44,13 +44,13 @@ TEST(KeyvaultSecretSetParametersSerializer, SetValueCT)
 
 TEST(KeyvaultSecretSetParametersSerializer, SetValueCTAttrTag)
 {
-  KeyVaultSecret params("name", "value");
+  Secret params("name", "value");
 
   params.Properties.ContentType = "ct";
   params.Properties.Enabled = true;
   params.Properties.Tags = std::unordered_map<std::string, std::string>{{"a", "b"}};
 
-  std::string result = KeyVaultSecretSerializer::KeyVaultSecretSerialize(params);
+  std::string result = SecretSerializer::Serialize(params);
 
   auto jsonParser = json::parse(result);
 
