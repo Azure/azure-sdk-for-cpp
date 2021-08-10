@@ -11,16 +11,12 @@
 - Added new fields `AccessTierChangedOn`, `ArchiveStatus`, `RehydratePriority`, `CopyId`, `CopySource`, `CopyStatus`, `CopyStatusDescription`, `IsIncrementalCopy`, `IncrementalCopyDestinationSnapshot`, `CopyProgress`, `CopyCompletedOn`, `Tags`, `DeletedOn` and `RemainingRetentionDays` into `BlobItemDetails`.
 - Added support for including blob tags when listing blobs.
 
-### Breaking Changes
-
 ### Bugs Fixed
 
 - Fixed a bug where lease ID didn't work for `BlobContainerClient::GetAccessPolicy()`.
 - Fixed a bug where sequence number access conditions didn't work for page blob operations.
 - Fixed a bug where `BlobItemDetails::EncryptionKeySha256` was always null because it wasn't correctly parsed from xml.
 - Fixed a bug where `BlockBlobClient::GetBlockList` threw exception if the blob is not committed.
-
-### Other Changes
 
 ## 12.0.1 (2021-07-07)
 

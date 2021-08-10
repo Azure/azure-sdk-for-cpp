@@ -6,12 +6,6 @@
 
 - Added `ETag` and `LastModified` into `ScheduleFileDeletionResult`.
 
-### Breaking Changes
-
-### Bugs Fixed
-
-### Other Changes
-
 ## 12.0.1 (2021-07-07)
 
 ### Bug Fixes
