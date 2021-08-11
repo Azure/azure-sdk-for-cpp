@@ -53,7 +53,7 @@ std::unique_ptr<RawResponse> PlaybackClient::Send(
       // Body
       auto body = record->Response.find("BODY")->second;
       std::vector<uint8_t> bodyVector(body.begin(), body.end());
-      response->SetBody(bodyVector);
+      response->SetBodyStream(std::make_unique<WithMemoryBodyStream>(bodyVector));
 
       // take the record out of the recording
       record = recordedData.NetworkCallRecords.erase(record);
