@@ -1,6 +1,6 @@
 # Release History
 
-## 12.1.0 (2021-08-10)
+## 12.2.0-beta.1 (Unreleased)
 
 ### Features Added
 
@@ -8,9 +8,13 @@
 
 ### Bugs Fixed
 
-- Avoid time domain casting exception during request cancellation. (A community contribution, courtesy of _[johnwheffner](https://github.com/johnwheffner)_)
-
 ### Other Changes
+
+## 12.1.0 (2021-08-10)
+
+### Bugs Fixed
+
+- Avoid time domain casting exception during request cancellation. (A community contribution, courtesy of _[johnwheffner](https://github.com/johnwheffner)_)
 
 ### Acknowledgments
 

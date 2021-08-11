@@ -23,19 +23,18 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
    * @brief Define a single page to list the secrets from the Key Vault.
    *
    */
-  class KeyVaultSecretPropertiesPagedResponse final
-      : public Azure::Core::PagedResponse<KeyvaultSecretProperties> {
+  class SecretPropertiesPagedResponse final : public Azure::Core::PagedResponse<SecretProperties> {
   private:
     friend class SecretClient;
-    friend class Azure::Core::PagedResponse<KeyvaultSecretProperties>;
+    friend class Azure::Core::PagedResponse<SecretProperties>;
 
     std::string m_secretName;
     std::shared_ptr<SecretClient> m_secretClient;
 
     void OnNextPage(const Azure::Core::Context& context);
 
-    KeyVaultSecretPropertiesPagedResponse(
-        KeyVaultSecretPropertiesPagedResponse&& secretProperties,
+    SecretPropertiesPagedResponse(
+        SecretPropertiesPagedResponse&& secretProperties,
         std::unique_ptr<Azure::Core::Http::RawResponse> rawResponse,
         std::shared_ptr<SecretClient> secretClient,
         std::string const& secretName = std::string())
@@ -47,33 +46,33 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
 
   public:
     /**
-     * @brief Construct a new KeyVaultSecretPropertiesPagedResponse object.
+     * @brief Construct a new SecretPropertiesPagedResponse object.
      *
      */
-    KeyVaultSecretPropertiesPagedResponse() = default;
+    SecretPropertiesPagedResponse() = default;
 
     /**
-     * @brief Each #KeyvaultSecretProperties represent a Secret in the Key Vault.
+     * @brief Each #SecretProperties represent a Secret in the Key Vault.
      *
      */
-    std::vector<KeyvaultSecretProperties> Items;
+    std::vector<SecretProperties> Items;
   };
 
   /**
    * @brief Define a single page containing the deleted keys from the Key Vault.
    *
    */
-  class KeyvaultSecretDeletedSecretPagedResponse final
-      : public Azure::Core::PagedResponse<KeyvaultSecretDeletedSecretPagedResponse> {
+  class DeletedSecretPagedResponse final
+      : public Azure::Core::PagedResponse<DeletedSecretPagedResponse> {
   private:
     friend class SecretClient;
-    friend class Azure::Core::PagedResponse<KeyvaultSecretDeletedSecretPagedResponse>;
+    friend class Azure::Core::PagedResponse<DeletedSecretPagedResponse>;
 
     std::shared_ptr<SecretClient> m_secretClient;
     void OnNextPage(const Azure::Core::Context& context);
 
-    KeyvaultSecretDeletedSecretPagedResponse(
-        KeyvaultSecretDeletedSecretPagedResponse&& deletedKeyProperties,
+    DeletedSecretPagedResponse(
+        DeletedSecretPagedResponse&& deletedKeyProperties,
         std::unique_ptr<Azure::Core::Http::RawResponse> rawResponse,
         std::shared_ptr<SecretClient> secretClient)
         : PagedResponse(std::move(deletedKeyProperties)), m_secretClient(secretClient),
@@ -87,12 +86,12 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
      * @brief Construct a new Deleted Key Single Page object
      *
      */
-    KeyvaultSecretDeletedSecretPagedResponse() = default;
+    DeletedSecretPagedResponse() = default;
 
     /**
      * @brief Each #DeletedKey represent a deleted key in the Key Vault.
      *
      */
-    std::vector<KeyVaultDeletedSecret> Items;
+    std::vector<DeletedSecret> Items;
   };
 }}}} // namespace Azure::Security::KeyVault::Secrets

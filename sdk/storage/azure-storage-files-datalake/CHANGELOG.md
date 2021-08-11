@@ -1,16 +1,20 @@
 # Release History
 
-## 12.1.0 (2021-08-10)
+## 12.2.0-beta.1 (Unreleased)
 
 ### Features Added
-
-- Added `ETag` and `LastModified` into `ScheduleFileDeletionResult`.
 
 ### Breaking Changes
 
 ### Bugs Fixed
 
 ### Other Changes
+
+## 12.1.0 (2021-08-10)
+
+### Features Added
+
+- Added `ETag` and `LastModified` into `ScheduleFileDeletionResult`.
 
 ## 12.0.1 (2021-07-07)
 

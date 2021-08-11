@@ -10,7 +10,7 @@
 #include "azure/keyvault/secrets/keyvault_secret_properties.hpp"
 
 namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
-  struct KeyVaultSecret
+  struct Secret
   {
     /**
      * @brief The name of the secret.
@@ -34,21 +34,21 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
      * @brief The secret Properties bundle.
      *
      */
-    KeyvaultSecretProperties Properties;
+    SecretProperties Properties;
 
     /**
-     * @brief Construct a new KeyVaultSecret object.
+     * @brief Construct a new Secret object.
      *
      */
-    KeyVaultSecret() = default;
+    Secret() = default;
 
     /**
-     * @brief Construct a new KeyVaultSecret object.
+     * @brief Construct a new Secret object.
      *
      * @param name The name of the secret.
      * @param value The name of the secret.
      */
-    KeyVaultSecret(std::string const& name, std::string const& value)
+    Secret(std::string const& name, std::string const& value)
         : Name(name), Value(value), Properties(name)
     {
       if (Name.empty())
@@ -63,7 +63,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
     };
 
   private:
-    KeyVaultSecret(std::string name) : Name(std::move(name))
+    Secret(std::string name) : Name(std::move(name))
     {
       if (Name.empty())
       {
@@ -71,7 +71,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
       }
     }
 
-    friend struct KeyVaultDeletedSecret;
+    friend struct DeletedSecret;
   };
 
 }}}} // namespace Azure::Security::KeyVault::Secrets

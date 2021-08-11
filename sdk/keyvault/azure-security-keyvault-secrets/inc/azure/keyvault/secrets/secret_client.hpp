@@ -84,7 +84,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
      * @param context The context for the operation can be used for request cancellation.
      * @return The Secret wrapped in the Response.
      */
-    Azure::Response<KeyVaultSecret> GetSecret(
+    Azure::Response<Secret> GetSecret(
         std::string const& name,
         GetSecretOptions const& options = GetSecretOptions(),
         Azure::Core::Context const& context = Azure::Core::Context()) const;
@@ -99,7 +99,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
      *
      * @return The Secret wrapped in the Response.
      */
-    Azure::Response<KeyVaultDeletedSecret> GetDeletedSecret(
+    Azure::Response<DeletedSecret> GetDeletedSecret(
         std::string const& name,
         Azure::Core::Context const& context = Azure::Core::Context()) const;
 
@@ -112,7 +112,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
      * @param context The context for the operation can be used for request cancellation.
      * @return The Secret wrapped in the Response.
      */
-    Azure::Response<KeyVaultSecret> SetSecret(
+    Azure::Response<Secret> SetSecret(
         std::string const& name,
         std::string const& value,
         Azure::Core::Context const& context = Azure::Core::Context()) const;
@@ -126,9 +126,9 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
      * @param context The context for the operation can be used for request cancellation.
      * @return The Secret wrapped in the Response.
      */
-    Azure::Response<KeyVaultSecret> SetSecret(
+    Azure::Response<Secret> SetSecret(
         std::string const& name,
-        KeyVaultSecret const& secret,
+        Secret const& secret,
         Azure::Core::Context const& context = Azure::Core::Context()) const;
 
     /**
@@ -145,10 +145,10 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
      *
      * @return The Secret wrapped in the Response.
      */
-    Azure::Response<KeyVaultSecret> UpdateSecretProperties(
+    Azure::Response<Secret> UpdateSecretProperties(
         std::string const& name,
         UpdateSecretPropertiesOptions const& options,
-        KeyvaultSecretProperties const& properties,
+        SecretProperties const& properties,
         Azure::Core::Context const& context = Azure::Core::Context()) const;
 
     /**
@@ -165,10 +165,10 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
      *
      * @return The Secret wrapped in the Response.
      */
-    Azure::Response<KeyVaultSecret> UpdateSecretProperties(
+    Azure::Response<Secret> UpdateSecretProperties(
         std::string const& name,
         std::string const& version,
-        KeyvaultSecretProperties const& properties,
+        SecretProperties const& properties,
         Azure::Core::Context const& context = Azure::Core::Context()) const;
 
     /**
@@ -196,7 +196,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
      *
      * @return The Secret wrapped in the Response.
      */
-    Azure::Response<KeyVaultSecret> RestoreSecretBackup(
+    Azure::Response<Secret> RestoreSecretBackup(
         std::vector<uint8_t> const& backup,
         Azure::Core::Context const& context = Azure::Core::Context()) const;
 
@@ -225,7 +225,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
      * @param name The name of the secret.
      * @param context The context for the operation can be used for request cancellation.
      */
-    Azure::Security::KeyVault::Secrets::KeyVaultDeleteSecretOperation StartDeleteSecret(
+    Azure::Security::KeyVault::Secrets::DeleteSecretOperation StartDeleteSecret(
         std::string const& name,
         Azure::Core::Context const& context = Azure::Core::Context()) const;
 
@@ -239,8 +239,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
      * @param name The name of the secret.
      * @param context The context for the operation can be used for request cancellation.
      */
-    Azure::Security::KeyVault::Secrets::KeyVaultRestoreDeletedSecretOperation
-    StartRecoverDeletedSecret(
+    Azure::Security::KeyVault::Secrets::RestoreDeletedSecretOperation StartRecoverDeletedSecret(
         std::string const& name,
         Azure::Core::Context const& context = Azure::Core::Context()) const;
 
@@ -257,7 +256,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
      * @return Response containing a list of secrets in the vault along with a link to the next page
      * of secrets.
      */
-    KeyVaultSecretPropertiesPagedResponse GetPropertiesOfSecrets(
+    SecretPropertiesPagedResponse GetPropertiesOfSecrets(
         GetPropertiesOfSecretsOptions const& options = GetPropertiesOfSecretsOptions(),
         Azure::Core::Context const& context = Azure::Core::Context()) const;
 
@@ -273,7 +272,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
      * @return Response containing a list of secrets in the vault along with a link to the next page
      * of secrets.
      */
-    KeyVaultSecretPropertiesPagedResponse GetPropertiesOfSecretsVersions(
+    SecretPropertiesPagedResponse GetPropertiesOfSecretsVersions(
         std::string const& name,
         GetPropertiesOfSecretVersionsOptions const& options
         = GetPropertiesOfSecretVersionsOptions(),
@@ -290,7 +289,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
      * @return Response containing a list of deleted secrets in the vault, along with a link to the
      * next page of deleted secrets.
      */
-    KeyvaultSecretDeletedSecretPagedResponse GetDeletedSecrets(
+    DeletedSecretPagedResponse GetDeletedSecrets(
         GetDeletedSecretsOptions const& options = GetDeletedSecretsOptions(),
         Azure::Core::Context const& context = Azure::Core::Context()) const;
   };

@@ -20,16 +20,15 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
   /**
    * @brief Represents a long running operation to restore a deleted secret.
    */
-  class KeyVaultRestoreDeletedSecretOperation final
-      : public Azure::Core::Operation<KeyVaultSecret> {
+  class RestoreDeletedSecretOperation final : public Azure::Core::Operation<Secret> {
 
   private:
     friend class SecretClient;
     std::shared_ptr<SecretClient> m_secretClient;
-    KeyVaultSecret m_value;
+    Secret m_value;
     std::string m_continuationToken;
 
-    Azure::Response<KeyVaultSecret> PollUntilDoneInternal(
+    Azure::Response<Secret> PollUntilDoneInternal(
         std::chrono::milliseconds period,
         Azure::Core::Context& context) override;
 
@@ -42,11 +41,11 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
      *
      * Since C++ doesn't offer `internal` access, we use friends-only instead.
      */
-    KeyVaultRestoreDeletedSecretOperation(
+    RestoreDeletedSecretOperation(
         std::shared_ptr<SecretClient> secretClient,
-        Azure::Response<KeyVaultSecret> response);
+        Azure::Response<Secret> response);
 
-    KeyVaultRestoreDeletedSecretOperation(
+    RestoreDeletedSecretOperation(
         std::string resumeToken,
         std::shared_ptr<SecretClient> secretClient);
 
@@ -62,11 +61,11 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
 
   public:
     /**
-     * @brief Get the #Azure::Security::KeyVault::Secrets::KeyVaultSecret object.
+     * @brief Get the #Azure::Security::KeyVault::Secrets::Secret object.
      *
-     * @return A KeyVaultSecret object.
+     * @return A Secret object.
      */
-    KeyVaultSecret Value() const override { return m_value; }
+    Secret Value() const override { return m_value; }
 
     /**
      * @brief Get an Url as string which can be used to get the status of the operation.
@@ -76,7 +75,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
     std::string GetResumeToken() const override { return m_continuationToken; }
 
     /**
-     * @brief Create a #KeyVaultRestoreDeletedSecretOperation from the \p resumeToken fetched from
+     * @brief Create a #RestoreDeletedSecretOperation from the \p resumeToken fetched from
      * another `Operation<T>`, updated to the the latest operation status.
      *
      * @remark After the operation is initialized, it is used to poll the last update from the
@@ -86,9 +85,9 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
      * operation.
      * @param client A #secretClient that is used for getting status updates.
      * @param context A #Azure::Core::Context controlling the request lifetime.
-     * @return KeyVaultRestoreDeletedSecretOperation
+     * @return RestoreDeletedSecretOperation
      */
-    static KeyVaultRestoreDeletedSecretOperation CreateFromResumeToken(
+    static RestoreDeletedSecretOperation CreateFromResumeToken(
         std::string const& resumeToken,
         SecretClient const& client,
         Azure::Core::Context const& context = Azure::Core::Context());
@@ -97,15 +96,15 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
   /**
    * @brief Represents a delete secret long running operation
    */
-  class KeyVaultDeleteSecretOperation final : public Azure::Core::Operation<KeyVaultDeletedSecret> {
+  class DeleteSecretOperation final : public Azure::Core::Operation<DeletedSecret> {
 
   private:
     friend class SecretClient;
     std::shared_ptr<SecretClient> m_secretClient;
-    KeyVaultDeletedSecret m_value;
+    DeletedSecret m_value;
     std::string m_continuationToken;
 
-    Azure::Response<KeyVaultDeletedSecret> PollUntilDoneInternal(
+    Azure::Response<DeletedSecret> PollUntilDoneInternal(
         std::chrono::milliseconds period,
         Azure::Core::Context& context) override;
 
@@ -118,13 +117,11 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
      *
      * Since C++ doesn't offer `internal` access, we use friends-only instead.
      */
-    KeyVaultDeleteSecretOperation(
+    DeleteSecretOperation(
         std::shared_ptr<SecretClient> secretClient,
-        Azure::Response<KeyVaultDeletedSecret> response);
+        Azure::Response<DeletedSecret> response);
 
-    KeyVaultDeleteSecretOperation(
-        std::string resumeToken,
-        std::shared_ptr<SecretClient> secretClient);
+    DeleteSecretOperation(std::string resumeToken, std::shared_ptr<SecretClient> secretClient);
 
     /**
      * @brief Get the #Azure::Core::Http::RawResponse of the operation request.
@@ -138,13 +135,13 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
 
   public:
     /**
-     * @brief Get the #Azure::Security::KeyVault::Secrets::KeyVaultDeletedSecret object.
+     * @brief Get the #Azure::Security::KeyVault::Secrets::DeletedSecret object.
      *
      * @remark The deleted secret contains the recovery id if the key can be recovered.
      *
      * @return A deleted secret object.
      */
-    KeyVaultDeletedSecret Value() const override { return m_value; }
+    DeletedSecret Value() const override { return m_value; }
 
     /**
      * @brief Get an Url as string which can be used to get the status of the delete secret
@@ -155,7 +152,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
     std::string GetResumeToken() const override { return m_continuationToken; }
 
     /**
-     * @brief Create a #KeyVaultDeleteSecretOperation from the \p resumeToken fetched from another
+     * @brief Create a #DeleteSecretOperation from the \p resumeToken fetched from another
      * `Operation<T>`, updated to the the latest operation status.
      *
      * @remark After the operation is initialized, it is used to poll the last update from the
@@ -165,9 +162,9 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
      * operation.
      * @param client A #secretClient that is used for getting status updates.
      * @param context A #Azure::Core::Context controlling the request lifetime.
-     * @return KeyVaultDeleteSecretOperation
+     * @return DeleteSecretOperation
      */
-    static KeyVaultDeleteSecretOperation CreateFromResumeToken(
+    static DeleteSecretOperation CreateFromResumeToken(
         std::string const& resumeToken,
         SecretClient const& client,
         Azure::Core::Context const& context = Azure::Core::Context());

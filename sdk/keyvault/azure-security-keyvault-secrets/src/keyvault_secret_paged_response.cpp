@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: MIT
 /**
  * @file
- * @brief Defines KeyVaultSecretPropertiesPagedResponse.
+ * @brief Defines SecretPropertiesPagedResponse.
  *
  */
 
@@ -11,7 +11,7 @@
 
 using namespace Azure::Security::KeyVault::Secrets;
 
-void KeyVaultSecretPropertiesPagedResponse::OnNextPage(const Azure::Core::Context& context)
+void SecretPropertiesPagedResponse::OnNextPage(const Azure::Core::Context& context)
 {
   // Before calling `OnNextPage` pagedResponse validates there is a next page, so we are sure
   // NextPageToken is valid.
@@ -31,7 +31,7 @@ void KeyVaultSecretPropertiesPagedResponse::OnNextPage(const Azure::Core::Contex
   }
 }
 
-void KeyvaultSecretDeletedSecretPagedResponse::OnNextPage(const Azure::Core::Context& context)
+void DeletedSecretPagedResponse::OnNextPage(const Azure::Core::Context& context)
 {
   // Before calling `OnNextPage` pagedResponse validates there is a next page, so we are sure
   // NextPageToken is valid.

@@ -19,7 +19,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
    * @brief The Secret attributes managed by the KeyVault service.
    *
    */
-  struct KeyvaultSecretProperties final
+  struct SecretProperties final
   {
 
     /**
@@ -122,13 +122,13 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
      * @brief Construct a new secret Properties object.
      *
      */
-    KeyvaultSecretProperties() = default;
+    SecretProperties() = default;
 
     /**
      * @brief Construct a new secret Properties object.
      *
      */
-    KeyvaultSecretProperties(std::string const& name) : Name(name)
+    SecretProperties(std::string const& name) : Name(name)
     {
       if (Name.empty())
       {
