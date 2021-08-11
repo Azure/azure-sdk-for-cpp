@@ -87,11 +87,13 @@ namespace Azure { namespace Storage { namespace Queues {
        */
       Azure::DateTime ExpiresOn;
       /**
-       * This value is required to delete a message.
+       * An opaque string that is required to delete or update a message. Empty if it's a peeked
+       * message.
        */
       std::string PopReceipt;
       /**
-       * The time that the message will again become visible in the queue.
+       * The time that the message will again become visible in the queue. Invalid if it's a peeked
+       * message.
        */
       Azure::DateTime NextVisibleOn;
       /**
@@ -286,7 +288,7 @@ namespace Azure { namespace Storage { namespace Queues {
        */
       Azure::DateTime ExpiresOn;
       /**
-       * This value is required to delete a message.
+       * An opaque string that is required to delete or update a message.
        */
       std::string PopReceipt;
       /**
@@ -337,6 +339,9 @@ namespace Azure { namespace Storage { namespace Queues {
 
     struct PeekMessagesResult final
     {
+      /**
+       * A vector of peeked messages.
+       */
       std::vector<QueueMessage> Messages;
     }; // struct PeekMessagesResult
 
@@ -392,6 +397,9 @@ namespace Azure { namespace Storage { namespace Queues {
 
     struct ReceiveMessagesResult final
     {
+      /**
+       * A vector of received messages.
+       */
       std::vector<QueueMessage> Messages;
     }; // struct ReceiveMessagesResult
 
@@ -433,7 +441,7 @@ namespace Azure { namespace Storage { namespace Queues {
     struct UpdateMessageResult final
     {
       /**
-       * This value is required to delete a message.
+       * An opaque string that is required to delete or update a message.
        */
       std::string PopReceipt;
       /**
