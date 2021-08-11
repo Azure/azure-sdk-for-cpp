@@ -110,11 +110,11 @@ namespace Azure { namespace Core { namespace Test {
 
     /**
      * @brief Removes sensitive info from a request Url.
-     * 
+     *
      * @param url The request Url.
-     * @return Azure::Core::Url 
+     * @return Azure::Core::Url
      */
-    Azure::Core::Url RedactUrl (Azure::Core::Url const& url);
+    Azure::Core::Url RedactUrl(Azure::Core::Url const& url);
   };
 
 }}} // namespace Azure::Core::Test
