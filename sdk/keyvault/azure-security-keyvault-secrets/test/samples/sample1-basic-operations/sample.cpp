@@ -1,0 +1,102 @@
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// SPDX-License-Identifier: MIT
+
+/**
+ * @brief This sample provides the code implementation to use the Key Vault Secrets SDK client for C++
+ * to create, get, update, delete and purge a secret.
+ *
+ * @remark The following environment variables must be set before running the sample.
+ * - AZURE_KEYVAULT_URL:  To the Key Vault account URL.
+ * - AZURE_TENANT_ID:     Tenant ID for the Azure account.
+ * - AZURE_CLIENT_ID:     The Client ID to authenticate the request.
+ * - AZURE_CLIENT_SECRET: The client secret.
+ *
+ */
+
+#if defined(_MSC_VER)
+#define _CRT_SECURE_NO_WARNINGS
+#endif
+
+#include <azure/core.hpp>
+#include <azure/identity.hpp>
+#include <azure/keyvault/keyvault_secrets.hpp>
+
+#include <chrono>
+#include <iostream>
+#include <memory>
+#include <thread>
+
+using namespace Azure::Security::KeyVault::Secrets;
+void AssertSecretsEqual(Secret const& expected, Secret const& actual);
+
+int main()
+{ 
+  auto tenantId = std::getenv("AZURE_TENANT_ID");
+  auto clientId = std::getenv("AZURE_CLIENT_ID");
+  auto clientSecret = std::getenv("AZURE_CLIENT_SECRET");
+  auto credential
+      = std::make_shared<Azure::Identity::ClientSecretCredential>(tenantId, clientId, clientSecret);
+  
+  // create client
+  SecretClient secretClient(std::getenv("AZURE_KEYVAULT_URL"), credential);
+
+  std::string secretName("MySampleSecret");
+  std::string secretValue("my secret value");
+
+  try
+  {
+    // create secret
+    secretClient.SetSecret(secretName, secretValue);
+
+    // get secret
+    Secret secret = secretClient.GetSecret(secretName).Value;
+
+    std::cout << "Secret is returned with name " << secret.Name << " and value " << secret.Value
+              << std::endl;
+
+    // start deleting the secret
+    DeleteSecretOperation operation = secretClient.StartDeleteSecret(secret.Name);
+
+    // You only need to wait for completion if you want to purge or recover the secret.
+    operation.PollUntilDone(std::chrono::milliseconds(2000));
+
+    // call restore secret
+    RestoreDeletedSecretOperation restoreOperation
+        = secretClient.StartRecoverDeletedSecret(secret.Name);
+
+    // poll until done
+    Secret restoredSecret = restoreOperation.PollUntilDone(std::chrono::milliseconds(2000)).Value;
+
+    AssertSecretsEqual(secret, restoredSecret);
+
+    // cleanup
+    // start deleting the secret
+    DeleteSecretOperation cleanupOperation = secretClient.StartDeleteSecret(restoredSecret.Name);
+    cleanupOperation.PollUntilDone(std::chrono::milliseconds(2000));
+    secretClient.PurgeDeletedSecret(restoredSecret.Name);
+  }
+  catch (Azure::Core::Credentials::AuthenticationException const& e)
+  {
+    std::cout << "Authentication Exception happened:" << std::endl << e.what() << std::endl;
+    return 1;
+  }
+  catch (Azure::Core::RequestFailedException const& e)
+  {
+    std::cout << "Key Vault Secret Client Exception happened:" << std::endl << e.Message << std::endl;
+    return 1;
+  }
+  
+  return 0;
+}
+
+void AssertSecretsEqual(Secret const& expected, Secret const& actual)
+{
+#if defined(NDEBUG)
+  // Use (void) to silence unused warnings.
+  (void)expected;
+  (void)actual;
+#endif
+  assert(expected.Name == actual.Name);
+  assert(expected.Properties.Version == actual.Properties.Version);
+  assert(expected.Id == actual.Id);
+}

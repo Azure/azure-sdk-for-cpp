@@ -78,7 +78,7 @@ if(BUILD_TESTING)
   endif()
   
   add_subdirectory(test/ut)
-  add_subdirectory(test/sample)
+  add_subdirectory(test/test-app)
 endif()
 
 if (BUILD_PERFORMANCE_TESTS)
@@ -86,7 +86,7 @@ if (BUILD_PERFORMANCE_TESTS)
 endif()
 
 if(BUILD_SAMPLES)
-  #add_subdirectory(test/samples)
+  add_subdirectory(test/samples)
 endif()
 
 az_vcpkg_export(
