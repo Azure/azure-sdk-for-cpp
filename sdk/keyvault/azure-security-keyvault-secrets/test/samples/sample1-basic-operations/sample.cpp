@@ -54,26 +54,24 @@ int main()
     std::cout << "Secret is returned with name " << secret.Name << " and value " << secret.Value
               << std::endl;
 
+    // change one of the properties
+    secret.Properties.ContentType = "my content";
+    // update the secret
+    Secret updatedSecret
+        = secretClient
+              .UpdateSecretProperties(secret.Name, secret.Properties.Version, secret.Properties)
+              .Value;
+    std::cout << "Secret's content type is now " << updatedSecret.Properties.ContentType.Value()
+              << std::endl;
+
     // start deleting the secret
     DeleteSecretOperation operation = secretClient.StartDeleteSecret(secret.Name);
 
     // You only need to wait for completion if you want to purge or recover the secret.
     operation.PollUntilDone(std::chrono::milliseconds(2000));
 
-    // call restore secret
-    RestoreDeletedSecretOperation restoreOperation
-        = secretClient.StartRecoverDeletedSecret(secret.Name);
-
-    // poll until done
-    Secret restoredSecret = restoreOperation.PollUntilDone(std::chrono::milliseconds(2000)).Value;
-
-    AssertSecretsEqual(secret, restoredSecret);
-
-    // cleanup
-    // start deleting the secret
-    DeleteSecretOperation cleanupOperation = secretClient.StartDeleteSecret(restoredSecret.Name);
-    cleanupOperation.PollUntilDone(std::chrono::milliseconds(2000));
-    secretClient.PurgeDeletedSecret(restoredSecret.Name);
+    // purge the deleted secret
+    secretClient.PurgeDeletedSecret(secret.Name);
   }
   catch (Azure::Core::Credentials::AuthenticationException const& e)
   {
