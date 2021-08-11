@@ -88,7 +88,7 @@ namespace Azure { namespace Storage { namespace Queues {
   QueueServiceClient::QueueServiceClient(
       const std::string& serviceUrl,
       const QueueClientOptions& options)
-      : m_serviceUrl(serviceUrl), m_messageEncoding(options.MessageEncoding)
+      : m_serviceUrl(serviceUrl)
   {
     std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>> perRetryPolicies;
     std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>> perOperationPolicies;
@@ -109,7 +109,7 @@ namespace Azure { namespace Storage { namespace Queues {
   {
     auto queueUrl = m_serviceUrl;
     queueUrl.AppendPath(_internal::UrlEncodePath(queueName));
-    return QueueClient(std::move(queueUrl), m_pipeline, m_messageEncoding);
+    return QueueClient(std::move(queueUrl), m_pipeline);
   }
 
   ListQueuesPagedResponse QueueServiceClient::ListQueues(

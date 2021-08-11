@@ -169,7 +169,6 @@ namespace Azure { namespace Storage { namespace Queues {
   private:
     Azure::Core::Url m_serviceUrl;
     std::shared_ptr<Azure::Core::Http::_internal::HttpPipeline> m_pipeline;
-    QueueMessageEncoding m_messageEncoding;
   };
 
 }}} // namespace Azure::Storage::Queues

@@ -11,25 +11,6 @@
 
 namespace Azure { namespace Storage { namespace Queues {
 
-  /**
-   * Determines how message body is represented in HTTP requests and responses.
-   */
-  enum class QueueMessageEncoding
-  {
-    /**
-     * Message body is represented verbatim in HTTP requests and responses. I.e. message is not
-     * transformed.
-     */
-    None,
-    /**
-     * Message body is represented as Base64 encoded string in HTTP requests and responses.
-     */
-    Base64,
-  };
-
-  /**
-   * @brief Client options used to initialize all kinds of queue clients.
-   */
   struct QueueClientOptions final : Azure::Core::_internal::ClientOptions
   {
     /**
@@ -45,11 +26,6 @@ namespace Azure { namespace Storage { namespace Queues {
      * API version used by this client.
      */
     std::string ApiVersion = _detail::ApiVersion;
-
-    /**
-     * This determines how queue message body is represented in HTTP requests and responses.
-     */
-    QueueMessageEncoding MessageEncoding = QueueMessageEncoding::None;
   };
 
   /**
