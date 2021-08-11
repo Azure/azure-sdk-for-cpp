@@ -39,11 +39,11 @@ namespace Azure { namespace Storage { namespace Test {
 
     auto verifyQueueAdd = [&](const std::string& sas) {
       auto queueClient = Queues::QueueClient(queueUrl + sas);
-      queueClient.SendMessage("message1");
+      queueClient.EnqueueMessage("message1");
     };
 
     auto verifyQueueUpdate = [&](const std::string& sas) {
-      auto sendReceipt = queueClient0.SendMessage("message 0").Value;
+      auto sendReceipt = queueClient0.EnqueueMessage("message 0").Value;
       auto queueClient = Queues::QueueClient(queueUrl + sas);
       auto updateReceipt
           = queueClient.UpdateMessage(sendReceipt.MessageId, sendReceipt.PopReceipt, 0).Value;
@@ -51,7 +51,7 @@ namespace Azure { namespace Storage { namespace Test {
     };
 
     auto verifyQueueProcess = [&](const std::string& sas) {
-      auto sendReceipt = queueClient0.SendMessage("message 0").Value;
+      auto sendReceipt = queueClient0.EnqueueMessage("message 0").Value;
       auto queueClient = Queues::QueueClient(queueUrl + sas);
       queueClient.DeleteMessage(sendReceipt.MessageId, sendReceipt.PopReceipt);
     };

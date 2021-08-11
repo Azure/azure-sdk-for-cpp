@@ -186,23 +186,11 @@ namespace Azure { namespace Storage { namespace Queues {
      * @param messageText Message in plain text.
      * @param options Optional parameters to execute this function.
      * @param context Context for cancelling long running operations.
-     * @return A SendMessageResult describing the result.
+     * @return A EnqueueMessageResult describing the result.
      */
-    Azure::Response<Models::SendMessageResult> SendMessage(
+    Azure::Response<Models::EnqueueMessageResult> EnqueueMessage(
         std::string messageText,
-        const SendMessageOptions& options = SendMessageOptions(),
-        const Azure::Core::Context& context = Azure::Core::Context()) const;
-
-    /**
-     * @brief Receives one message from the front of the queue. Throws if there's no message
-     * available.
-     *
-     * @param options Optional parameters to execute this function.
-     * @param context Context for cancelling long running operations.
-     * @return A queue message.
-     */
-    Azure::Response<Models::QueueMessage> ReceiveMessage(
-        const ReceiveMessageOptions& options = ReceiveMessageOptions(),
+        const EnqueueMessageOptions& options = EnqueueMessageOptions(),
         const Azure::Core::Context& context = Azure::Core::Context()) const;
 
     /**
@@ -211,22 +199,10 @@ namespace Azure { namespace Storage { namespace Queues {
      *
      * @param options Optional parameters to execute this function.
      * @param context Context for cancelling long running operations.
-     * @return A vector of queue messages.
+     * @return A ReceiveMessagesResult that contains a vector of queue messages.
      */
-    Azure::Response<std::vector<Models::QueueMessage>> ReceiveMessages(
+    Azure::Response<Models::ReceiveMessagesResult> ReceiveMessages(
         const ReceiveMessagesOptions& options = ReceiveMessagesOptions(),
-        const Azure::Core::Context& context = Azure::Core::Context()) const;
-
-    /**
-     * @brief Retrieves one message from the front of the queue but does not alter the visibility of
-     * the message. Throws if there's no message available.
-     *
-     * @param options Optional parameters to execute this function.
-     * @param context Context for cancelling long running operations.
-     * @return A peeked queue message.
-     */
-    Azure::Response<Models::PeekedQueueMessage> PeekMessage(
-        const PeekMessageOptions& options = PeekMessageOptions(),
         const Azure::Core::Context& context = Azure::Core::Context()) const;
 
     /**
@@ -235,9 +211,9 @@ namespace Azure { namespace Storage { namespace Queues {
      *
      * @param options Optional parameters to execute this function.
      * @param context Context for cancelling long running operations.
-     * @return A vector of queue messages.
+     * @return A PeekMessagesResult that contains a vector of queue messages.
      */
-    Azure::Response<std::vector<Models::PeekedQueueMessage>> PeekMessages(
+    Azure::Response<Models::PeekMessagesResult> PeekMessages(
         const PeekMessagesOptions& options = PeekMessagesOptions(),
         const Azure::Core::Context& context = Azure::Core::Context()) const;
 

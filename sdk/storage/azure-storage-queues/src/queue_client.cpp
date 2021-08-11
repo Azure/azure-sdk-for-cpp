@@ -208,42 +208,22 @@ namespace Azure { namespace Storage { namespace Queues {
         *m_pipeline, m_queueUrl, protocolLayerOptions, context);
   }
 
-  Azure::Response<Models::SendMessageResult> QueueClient::SendMessage(
+  Azure::Response<Models::EnqueueMessageResult> QueueClient::EnqueueMessage(
       std::string messageText,
-      const SendMessageOptions& options,
+      const EnqueueMessageOptions& options,
       const Azure::Core::Context& context) const
   {
     auto messagesUrl = m_queueUrl;
     messagesUrl.AppendPath("messages");
-    _detail::QueueRestClient::Queue::SendMessageOptions protocolLayerOptions;
+    _detail::QueueRestClient::Queue::EnqueueMessageOptions protocolLayerOptions;
     protocolLayerOptions.Body = std::move(messageText);
     protocolLayerOptions.TimeToLive = options.TimeToLive;
     protocolLayerOptions.VisibilityTimeout = options.VisibilityTimeout;
-    return _detail::QueueRestClient::Queue::SendMessage(
+    return _detail::QueueRestClient::Queue::EnqueueMessage(
         *m_pipeline, messagesUrl, protocolLayerOptions, context);
   }
 
-  Azure::Response<Models::QueueMessage> QueueClient::ReceiveMessage(
-      const ReceiveMessageOptions& options,
-      const Azure::Core::Context& context) const
-  {
-    auto messagesUrl = m_queueUrl;
-    messagesUrl.AppendPath("messages");
-    _detail::QueueRestClient::Queue::ReceiveMessagesOptions protocolLayerOptions;
-    protocolLayerOptions.VisibilityTimeout = options.VisibilityTimeout;
-    auto response = _detail::QueueRestClient::Queue::ReceiveMessages(
-        *m_pipeline, messagesUrl, protocolLayerOptions, context);
-    if (response.Value.Messages.empty())
-    {
-      auto e = StorageException::CreateFromResponse(std::move(response.RawResponse));
-      e.Message = "No message available.";
-      throw e;
-    }
-    return Azure::Response<Models::QueueMessage>(
-        std::move(response.Value.Messages[0]), std::move(response.RawResponse));
-  }
-
-  Azure::Response<std::vector<Models::QueueMessage>> QueueClient::ReceiveMessages(
+  Azure::Response<Models::ReceiveMessagesResult> QueueClient::ReceiveMessages(
       const ReceiveMessagesOptions& options,
       const Azure::Core::Context& context) const
   {
@@ -252,33 +232,11 @@ namespace Azure { namespace Storage { namespace Queues {
     _detail::QueueRestClient::Queue::ReceiveMessagesOptions protocolLayerOptions;
     protocolLayerOptions.MaxMessages = options.MaxMessages;
     protocolLayerOptions.VisibilityTimeout = options.VisibilityTimeout;
-    auto response = _detail::QueueRestClient::Queue::ReceiveMessages(
+    return _detail::QueueRestClient::Queue::ReceiveMessages(
         *m_pipeline, messagesUrl, protocolLayerOptions, context);
-    return Azure::Response<std::vector<Models::QueueMessage>>(
-        std::move(response.Value.Messages), std::move(response.RawResponse));
   }
 
-  Azure::Response<Models::PeekedQueueMessage> QueueClient::PeekMessage(
-      const PeekMessageOptions& options,
-      const Azure::Core::Context& context) const
-  {
-    (void)options;
-    auto messagesUrl = m_queueUrl;
-    messagesUrl.AppendPath("messages");
-    _detail::QueueRestClient::Queue::PeekMessagesOptions protocolLayerOptions;
-    auto response = _detail::QueueRestClient::Queue::PeekMessages(
-        *m_pipeline, messagesUrl, protocolLayerOptions, context);
-    if (response.Value.Messages.empty())
-    {
-      auto e = StorageException::CreateFromResponse(std::move(response.RawResponse));
-      e.Message = "No message available.";
-      throw e;
-    }
-    return Azure::Response<Models::PeekedQueueMessage>(
-        std::move(response.Value.Messages[0]), std::move(response.RawResponse));
-  }
-
-  Azure::Response<std::vector<Models::PeekedQueueMessage>> QueueClient::PeekMessages(
+  Azure::Response<Models::PeekMessagesResult> QueueClient::PeekMessages(
       const PeekMessagesOptions& options,
       const Azure::Core::Context& context) const
   {
@@ -287,10 +245,8 @@ namespace Azure { namespace Storage { namespace Queues {
     messagesUrl.AppendPath("messages");
     _detail::QueueRestClient::Queue::PeekMessagesOptions protocolLayerOptions;
     protocolLayerOptions.MaxMessages = options.MaxMessages;
-    auto response = _detail::QueueRestClient::Queue::PeekMessages(
+    return _detail::QueueRestClient::Queue::PeekMessages(
         *m_pipeline, messagesUrl, protocolLayerOptions, context);
-    return Azure::Response<std::vector<Models::PeekedQueueMessage>>(
-        std::move(response.Value.Messages), std::move(response.RawResponse));
   }
 
   Azure::Response<Models::UpdateMessageResult> QueueClient::UpdateMessage(
@@ -306,7 +262,7 @@ namespace Azure { namespace Storage { namespace Queues {
     if (options.MessageText.HasValue())
     {
       _detail::QueueRestClient::Queue::UpdateMessageOptions protocolLayerOptions;
-      protocolLayerOptions.Body = options.messageText.Value();
+      protocolLayerOptions.Body = options.MessageText.Value();
       protocolLayerOptions.PopReceipt = popReceipt;
       protocolLayerOptions.VisibilityTimeout = visibilityTimeout;
       return _detail::QueueRestClient::Queue::UpdateMessage(

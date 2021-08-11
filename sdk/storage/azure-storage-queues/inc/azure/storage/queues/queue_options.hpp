@@ -127,9 +127,9 @@ namespace Azure { namespace Storage { namespace Queues {
   };
 
   /**
-   * Optional parameters for #Azure::Storage::Queues::QueueClient::SendMessages.
+   * Optional parameters for #Azure::Storage::Queues::QueueClient::EnqueueMessages.
    */
-  struct SendMessageOptions final
+  struct EnqueueMessageOptions final
   {
     /**
      * Specifies how long the message should be invisible to dequeue and peek operations.
@@ -141,18 +141,6 @@ namespace Azure { namespace Storage { namespace Queues {
      * positive number, as well as -1 indicating that the message does not expire
      */
     Azure::Nullable<int32_t> TimeToLive;
-  };
-
-  /**
-   * Optional parameters for #Azure::Storage::Queues::QueueClient::ReceiveMessage.
-   */
-  struct ReceiveMessageOptions final
-  {
-    /**
-     * After the message has been retrieved, it is not visible to other clients for the time
-     * interval specified by this parameter.
-     */
-    Azure::Nullable<int32_t> VisibilityTimeout;
   };
 
   /**
@@ -169,13 +157,6 @@ namespace Azure { namespace Storage { namespace Queues {
      * interval specified by this parameter.
      */
     Azure::Nullable<int32_t> VisibilityTimeout;
-  };
-
-  /**
-   * Optional parameters for #Azure::Storage::Queues::QueueClient::PeekMessage.
-   */
-  struct PeekMessageOptions final
-  {
   };
 
   /**
