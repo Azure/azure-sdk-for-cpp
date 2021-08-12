@@ -10,6 +10,8 @@
 
 ### Other Changes
 
+- Fixed compilation error on POSIX platforms where OpenSSL was not available.
+
 ## 1.2.0 (2021-08-05)
 
 ### Features Added

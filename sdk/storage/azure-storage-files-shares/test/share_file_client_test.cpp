@@ -6,6 +6,7 @@
 #include <algorithm>
 #include <chrono>
 #include <future>
+#include <random>
 
 #include <azure/core/cryptography/hash.hpp>
 #include <azure/storage/common/crypt.hpp>
