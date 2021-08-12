@@ -38,7 +38,7 @@ Secret secret2 = secretClient.SetSecret(secretName2, secretValue).Value;
 
 ## Getting the properties of all the secrets in the keyvault
 
-To get the properties of the secrets in the keyvault we will call GetPropertiesOfSecrets. The results of this call are paged to a maximum of 25 SecretProperties per page. 
+To get the properties of the secrets in the keyvault we will call GetPropertiesOfSecrets. The results of this call are paged to a maximum of 25 SecretProperties per page.
 
 ```cpp Snippet:SecretSample4ListAllSecrets
  // get properties of secrets
@@ -104,7 +104,7 @@ for (auto deletedSecrets = secretClient.GetDeletedSecrets(); deletedSecrets.HasP
 
 ## Get Deleted Secret
 
-To get information about a specific deleted secret we will call GetDeletedSecret passing the secret name as a parameter. 
+To get information about a specific deleted secret we will call GetDeletedSecret passing the secret name as a parameter.
 
 ```cpp Snippet:SecretSample4GetDeletedSecret
 // get one deleted secret
@@ -121,7 +121,6 @@ Since the secrets were deleted previously now we need to call purge to finish cl
 secretClient.PurgeDeletedSecret(secret1.Name);
 secretClient.PurgeDeletedSecret(secret2.Name);
 ```
-
 ## Source
 
 [defaultazurecredential]: https://github.com/Azure/azure-sdk-for-cpp/blob/main/sdk/identity/azure-identity/README.md

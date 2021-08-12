@@ -1,7 +1,6 @@
-# Creating, getting, updating, and deleting secrets
+# Delete and recover deleted secrets
 
-This sample demonstrates how to create, get, update, and delete and purge a secrer in Azure Key Vault.
-To get started, you'll need a URI to an Azure Key Vault. 
+This sample demonstrates how to delete and recover a deleted secret in Azure Key Vault.
 
 ## Creating a SecretClient
 

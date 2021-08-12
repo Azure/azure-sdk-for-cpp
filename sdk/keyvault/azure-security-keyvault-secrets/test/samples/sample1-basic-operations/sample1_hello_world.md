@@ -60,6 +60,7 @@ Secret updatedSecret = secretClient.UpdateSecretProperties(secret.Name, secret.P
 std::cout << "Secret's content type is now " << updatedSecret.Properties.ContentType.Value()
           << std::endl;
 ```
+
 ## Deleting a secret
 
 The secret is no longer needed so we need to delete it.
