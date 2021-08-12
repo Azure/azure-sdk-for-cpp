@@ -5,7 +5,7 @@ vcpkg_from_github(
     OUT_SOURCE_PATH SOURCE_PATH
     REPO Azure/azure-sdk-for-cpp
     REF azure-storage-queues_@AZ_LIBRARY_VERSION@
-    SHA512 1
+    SHA512 0
 )
 
 vcpkg_cmake_configure(
