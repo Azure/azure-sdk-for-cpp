@@ -45,6 +45,7 @@ namespace Azure { namespace Storage { namespace Queues {
        * The secondary location is temporarily unavailable.
        */
       AZ_STORAGE_QUEUES_DLLEXPORT const static GeoReplicationStatus Unavailable;
+
     private:
       std::string m_value;
     }; // extensible enum GeoReplicationStatus
