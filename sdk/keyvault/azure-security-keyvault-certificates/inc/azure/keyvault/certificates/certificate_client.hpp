@@ -19,6 +19,7 @@
 #include <azure/core/io/body_stream.hpp>
 #include <azure/core/response.hpp>
 
+#include <memory>
 #include <string>
 
 namespace Azure { namespace Security { namespace KeyVault { namespace Certificates {
@@ -81,5 +82,15 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
     Azure::Response<KeyVaultCertificateWithPolicy> GetCertificate(
         std::string const& name,
         Azure::Core::Context const& context = Azure::Core::Context()) const;
+
+  private:
+    std::unique_ptr<Azure::Core::Http::RawResponse> SendRequest(
+        Azure::Core::Http::Request& request,
+        Azure::Core::Context const& context) const;
+
+    Azure::Core::Http::Request CreateRequest(
+        Azure::Core::Http::HttpMethod method,
+        std::vector<std::string> const& path = {},
+        Azure::Core::IO::BodyStream* content = nullptr) const;
   };
 }}}} // namespace Azure::Security::KeyVault::Certificates
