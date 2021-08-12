@@ -1,6 +1,6 @@
 # Creating, getting, updating, and deleting secrets
 
-This sample demonstrates how to create, get, update, and delete and purge a secret in Azure Key Vault.
+This sample demonstrates how to create, get, update, and delete and purge a secrer in Azure Key Vault.
 To get started, you'll need a URI to an Azure Key Vault. 
 
 ## Creating a SecretClient
@@ -11,7 +11,7 @@ Key Vault Secrets client for C++ currently supports the `ClientSecretCredential`
 
 In the sample below, you can create a credential by setting the Tenant ID, Client ID and Client Secret as environment variables.
 
-```cpp Snippet:SecretSample1CreateCredential
+```cpp Snippet:SecretSample3CreateCredential
   auto tenantId = std::getenv("AZURE_TENANT_ID");
   auto clientId = std::getenv("AZURE_CLIENT_ID");
   auto clientSecret = std::getenv("AZURE_CLIENT_SECRET");
@@ -20,7 +20,7 @@ In the sample below, you can create a credential by setting the Tenant ID, Clien
 
 Then, in the sample below, you can set `keyVaultUrl` based on an environment variable, configuration setting, or any way that works for your application.
 
-```cpp Snippet:SecretSample1SecretClient
+```cpp Snippet:SecretSample3SecretClient
 SecretClient secretClient(std::getenv("AZURE_KEYVAULT_URL"), credential);
 ```
 
@@ -28,7 +28,7 @@ SecretClient secretClient(std::getenv("AZURE_KEYVAULT_URL"), credential);
 
 To create a secret all you need to set id the name and secret value.
 
-```cpp Snippet:SecretSample1SetSecret
+```cpp Snippet:SecretSample3SetSecret
 std::string secretName("MySampleSecret");
 std::string secretValue("my secret value");
 
@@ -39,46 +39,32 @@ secretClient.SetSecret(secretName, secretValue);
 
 To get a secret from the keyvault  you will need to call GetSecret.
 
-```cpp Snippet:SecretSample1GetSecret
+```cpp Snippet:SecretSample3GetSecret
 // get secret
 Secret secret = secretClient.GetSecret(secretName).Value;
 std::cout << "Secret is returned with name " << secret.Name << " and value " << secret.Value
           << std::endl;
 ```
 
-## Updating secret properties
-
-We forgot to set the content type for the secret we created, we can do that using the UpdateSecretProperties method.
-
-
-```cpp Snippet:SecretSample1UpdateSecretProperties
-// change one of the properties
-secret.Properties.ContentType = "my content";
-// update the secret
-Secret updatedSecret = secretClient.UpdateSecretProperties(secret.Name, secret.Properties.Version, secret.Properties)
-          .Value;
-std::cout << "Secret's content type is now " << updatedSecret.Properties.ContentType.Value()
-          << std::endl;
-```
 ## Deleting a secret
 
 The secret is no longer needed so we need to delete it.
 
-```cpp Snippet:SecretSample1DeleteSecret
+```cpp Snippet:SecretSample3DeleteSecret
 // start deleting the secret
 DeleteSecretOperation operation = secretClient.StartDeleteSecret(secret.Name);
 ```
 
-## Purging a deleted key
+## Recover a Deleted secret
 
-If the Azure Key Vault is soft delete-enabled and you want to permanently delete the secret before its `ScheduledPurgeDate`, the secret needs to be purged.
+To recover a deleted secret we need to call StartRecoverDeletedSecret and then poll untill the operation is done.
 
-```cpp Snippet:SecretSample1PurgeSecret
-// You only need to wait for completion if you want to purge or recover the secret.
-operation.PollUntilDone(std::chrono::milliseconds(2000));
+```cpp Snippet:SecretSample3RecoverSecret
+// call restore secret
+RecoverDeletedSecretOperation recoverOperation = secretClient.StartRecoverDeletedSecret(secret.Name);
 
-// purge the deleted secret
-secretClient.PurgeDeletedSecret(secret.Name);
+// poll until done
+Secret restoredSecret = recoverOperation.PollUntilDone(std::chrono::milliseconds(2000)).Value;
 ```
 
 ## Source

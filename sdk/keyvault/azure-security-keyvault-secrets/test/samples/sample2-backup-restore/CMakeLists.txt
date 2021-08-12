@@ -9,11 +9,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED True)
 
 add_executable (
   sample2-backup-restore
-  sample.cpp
+  sample2-backup-restore.cpp
 )
-
-if (MSVC)
-  target_compile_options(sample2-backup-restore PUBLIC /wd6326 /wd26495 /wd26812)
-endif()
 
 target_link_libraries(sample2-backup-restore PRIVATE azure-security-keyvault-secrets azure-identity)

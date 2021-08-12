@@ -2,8 +2,8 @@
 // SPDX-License-Identifier: MIT
 
 /**
- * @brief This sample provides the code implementation to use the Key Vault Secrets SDK client for C++
- * to delete and restore a secret.
+ * @brief This sample provides the code implementation to use the Key Vault Secrets SDK client for
+ * C++ to backup, restore, delete and purge a secret.
  *
  * @remark The following environment variables must be set before running the sample.
  * - AZURE_KEYVAULT_URL:  To the Key Vault account URL.
@@ -22,6 +22,7 @@
 #include <azure/keyvault/keyvault_secrets.hpp>
 
 #include <chrono>
+#include <fstream>
 #include <iostream>
 #include <memory>
 #include <thread>
@@ -30,22 +31,21 @@ using namespace Azure::Security::KeyVault::Secrets;
 void AssertSecretsEqual(Secret const& expected, Secret const& actual);
 
 int main()
-{ 
+{
   auto tenantId = std::getenv("AZURE_TENANT_ID");
   auto clientId = std::getenv("AZURE_CLIENT_ID");
   auto clientSecret = std::getenv("AZURE_CLIENT_SECRET");
   auto credential
       = std::make_shared<Azure::Identity::ClientSecretCredential>(tenantId, clientId, clientSecret);
-  
+
   // create client
   SecretClient secretClient(std::getenv("AZURE_KEYVAULT_URL"), credential);
 
-  std::string secretName("MySampleSecret");
+  std::string secretName("MySampleSecret2");
   std::string secretValue("my secret value");
 
   try
   {
-
     // create secret
     secretClient.SetSecret(secretName, secretValue);
 
@@ -55,25 +55,49 @@ int main()
     std::cout << "Secret is returned with name " << secret.Name << " and value " << secret.Value
               << std::endl;
 
+    size_t backUpSize = 0;
+    {
+      std::cout << "\t-Backup Key" << std::endl;
+      std::vector<uint8_t> backupKey(secretClient.BackupSecret(secret.Name).Value.Secret);
+      backUpSize = backupKey.size();
+
+      // save data to file
+      std::cout << "\t-Save to file" << std::endl;
+      std::ofstream savedFile;
+      savedFile.open("backup.dat");
+      for (auto const& data : backupKey)
+      {
+        savedFile << data;
+      }
+      savedFile.close();
+    }
     // start deleting the secret
     DeleteSecretOperation operation = secretClient.StartDeleteSecret(secret.Name);
 
     // You only need to wait for completion if you want to purge or recover the secret.
     operation.PollUntilDone(std::chrono::milliseconds(2000));
+    // purge the deleted secret
+    secretClient.PurgeDeletedSecret(secret.Name);
 
-    // call restore secret
-    RestoreDeletedSecretOperation restoreOperation
-        = secretClient.StartRecoverDeletedSecret(secret.Name);
+    // let's wait for one minute so we know the key was purged.
+    std::this_thread::sleep_for(std::chrono::seconds(60));
 
-    // poll until done
-    Secret restoredSecret = restoreOperation.PollUntilDone(std::chrono::milliseconds(2000)).Value;
+    // Restore the key from the file backup
+    std::cout << "\t-Read from file." << std::endl;
+    std::ifstream inFile;
+    inFile.open("backup.dat");
+    std::vector<uint8_t> inMemoryBackup(backUpSize);
+    inFile >> inMemoryBackup.data();
+    inFile.close();
+
+    std::cout << "\t-Restore Key" << std::endl;
+    auto restoredSecret = secretClient.RestoreSecretBackup(inMemoryBackup).Value;
 
     AssertSecretsEqual(secret, restoredSecret);
 
-    // cleanup
-    // start deleting the secret
-    DeleteSecretOperation cleanupOperation = secretClient.StartDeleteSecret(restoredSecret.Name);
-    cleanupOperation.PollUntilDone(std::chrono::milliseconds(2000));
+    operation = secretClient.StartDeleteSecret(restoredSecret.Name);
+    // You only need to wait for completion if you want to purge or recover the key.
+    operation.PollUntilDone(std::chrono::milliseconds(2000));
     secretClient.PurgeDeletedSecret(restoredSecret.Name);
   }
   catch (Azure::Core::Credentials::AuthenticationException const& e)
@@ -83,10 +107,11 @@ int main()
   }
   catch (Azure::Core::RequestFailedException const& e)
   {
-    std::cout << "Key Vault Secret Client Exception happened:" << std::endl << e.Message << std::endl;
+    std::cout << "Key Vault Secret Client Exception happened:" << std::endl
+              << e.Message << std::endl;
     return 1;
   }
-  
+
   return 0;
 }
 

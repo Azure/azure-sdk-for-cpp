@@ -1,6 +1,6 @@
-# Creating, getting, updating, and deleting secrets
+# Backup and Restore secrets
 
-This sample demonstrates how to create, get, update, and delete and purge a secret in Azure Key Vault.
+This sample demonstrates how to backup and restore in Azure Key Vault.
 To get started, you'll need a URI to an Azure Key Vault. 
 
 ## Creating a SecretClient
@@ -11,7 +11,7 @@ Key Vault Secrets client for C++ currently supports the `ClientSecretCredential`
 
 In the sample below, you can create a credential by setting the Tenant ID, Client ID and Client Secret as environment variables.
 
-```cpp Snippet:SecretSample1CreateCredential
+```cpp Snippet:SecretSample2CreateCredential
   auto tenantId = std::getenv("AZURE_TENANT_ID");
   auto clientId = std::getenv("AZURE_CLIENT_ID");
   auto clientSecret = std::getenv("AZURE_CLIENT_SECRET");
@@ -20,7 +20,7 @@ In the sample below, you can create a credential by setting the Tenant ID, Clien
 
 Then, in the sample below, you can set `keyVaultUrl` based on an environment variable, configuration setting, or any way that works for your application.
 
-```cpp Snippet:SecretSample1SecretClient
+```cpp Snippet:SecretSample2SecretClient
 SecretClient secretClient(std::getenv("AZURE_KEYVAULT_URL"), credential);
 ```
 
@@ -28,7 +28,7 @@ SecretClient secretClient(std::getenv("AZURE_KEYVAULT_URL"), credential);
 
 To create a secret all you need to set id the name and secret value.
 
-```cpp Snippet:SecretSample1SetSecret
+```cpp Snippet:SecretSample2SetSecret
 std::string secretName("MySampleSecret");
 std::string secretValue("my secret value");
 
@@ -39,32 +39,29 @@ secretClient.SetSecret(secretName, secretValue);
 
 To get a secret from the keyvault  you will need to call GetSecret.
 
-```cpp Snippet:SecretSample1GetSecret
+```cpp Snippet:SecretSample2GetSecret
 // get secret
 Secret secret = secretClient.GetSecret(secretName).Value;
 std::cout << "Secret is returned with name " << secret.Name << " and value " << secret.Value
           << std::endl;
 ```
 
-## Updating secret properties
+## Creating a Backup for the secret properties
 
-We forgot to set the content type for the secret we created, we can do that using the UpdateSecretProperties method.
+In order to get the backup of the secret we need to call BackupSecret, which will return a vector of bytes representing the backed up content. 
 
 
-```cpp Snippet:SecretSample1UpdateSecretProperties
-// change one of the properties
-secret.Properties.ContentType = "my content";
-// update the secret
-Secret updatedSecret = secretClient.UpdateSecretProperties(secret.Name, secret.Properties.Version, secret.Properties)
-          .Value;
-std::cout << "Secret's content type is now " << updatedSecret.Properties.ContentType.Value()
-          << std::endl;
+```cpp Snippet:SecretSample2BackupSecret
+std::cout << "\t-Backup Key" << std::endl;
+std::vector<uint8_t> backupKey(secretClient.BackupSecret(secret.Name).Value.Secret);
+backUpSize = backupKey.size();
 ```
-## Deleting a secret
+
+## Deleting the secret in order to later restore it
 
 The secret is no longer needed so we need to delete it.
 
-```cpp Snippet:SecretSample1DeleteSecret
+```cpp Snippet:SecretSample2DeleteSecret
 // start deleting the secret
 DeleteSecretOperation operation = secretClient.StartDeleteSecret(secret.Name);
 ```
@@ -73,7 +70,7 @@ DeleteSecretOperation operation = secretClient.StartDeleteSecret(secret.Name);
 
 If the Azure Key Vault is soft delete-enabled and you want to permanently delete the secret before its `ScheduledPurgeDate`, the secret needs to be purged.
 
-```cpp Snippet:SecretSample1PurgeSecret
+```cpp Snippet:SecretSample2PurgeSecret
 // You only need to wait for completion if you want to purge or recover the secret.
 operation.PollUntilDone(std::chrono::milliseconds(2000));
 
@@ -81,6 +78,15 @@ operation.PollUntilDone(std::chrono::milliseconds(2000));
 secretClient.PurgeDeletedSecret(secret.Name);
 ```
 
-## Source
+## Restoring a secret 
 
+In order to restore a secret we need to call RestoreSecretBackup api passing in the byte vector obtained at the previous(backup) step.
+
+```cpp Snippet:SecretSample2RestoreSecret
+std::cout << "\t-Restore Key" << std::endl;
+auto restoredSecret = secretClient.RestoreSecretBackup(inMemoryBackup).Value;
+```
+
+## Source
 [defaultazurecredential]: https://github.com/Azure/azure-sdk-for-cpp/blob/main/sdk/identity/azure-identity/README.md
+

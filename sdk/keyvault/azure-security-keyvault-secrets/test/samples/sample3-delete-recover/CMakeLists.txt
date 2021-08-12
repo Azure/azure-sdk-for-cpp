@@ -9,11 +9,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED True)
 
 add_executable (
   sample3-delete-recover
-  sample.cpp
+  sample3-delete-recover.cpp
 )
-
-if (MSVC)
-  target_compile_options(sample3-delete-recover PUBLIC /wd6326 /wd26495 /wd26812)
-endif()
 
 target_link_libraries(sample3-delete-recover PRIVATE azure-security-keyvault-secrets azure-identity)

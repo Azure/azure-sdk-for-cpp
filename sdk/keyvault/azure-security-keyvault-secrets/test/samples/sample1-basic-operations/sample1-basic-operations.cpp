@@ -2,8 +2,8 @@
 // SPDX-License-Identifier: MIT
 
 /**
- * @brief This sample provides the code implementation to use the Key Vault Secrets SDK client for C++
- * to create, get, update, delete and purge a secret.
+ * @brief This sample provides the code implementation to use the Key Vault Secrets SDK client for
+ * C++ to create, get, update, delete and purge a secret.
  *
  * @remark The following environment variables must be set before running the sample.
  * - AZURE_KEYVAULT_URL:  To the Key Vault account URL.
@@ -30,13 +30,13 @@ using namespace Azure::Security::KeyVault::Secrets;
 void AssertSecretsEqual(Secret const& expected, Secret const& actual);
 
 int main()
-{ 
+{
   auto tenantId = std::getenv("AZURE_TENANT_ID");
   auto clientId = std::getenv("AZURE_CLIENT_ID");
   auto clientSecret = std::getenv("AZURE_CLIENT_SECRET");
   auto credential
       = std::make_shared<Azure::Identity::ClientSecretCredential>(tenantId, clientId, clientSecret);
-  
+
   // create client
   SecretClient secretClient(std::getenv("AZURE_KEYVAULT_URL"), credential);
 
@@ -80,10 +80,11 @@ int main()
   }
   catch (Azure::Core::RequestFailedException const& e)
   {
-    std::cout << "Key Vault Secret Client Exception happened:" << std::endl << e.Message << std::endl;
+    std::cout << "Key Vault Secret Client Exception happened:" << std::endl
+              << e.Message << std::endl;
     return 1;
   }
-  
+
   return 0;
 }
 

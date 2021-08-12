@@ -46,7 +46,7 @@ int main()
 
   try
   {
-     // create secret
+    // create secret
     Secret secret1 = secretClient.SetSecret(secretName, secretValue).Value;
     Secret secret2 = secretClient.SetSecret(secretName2, secretValue).Value;
 
@@ -83,7 +83,7 @@ int main()
     operation = secretClient.StartDeleteSecret(secret2.Name);
     // You only need to wait for completion if you want to purge or recover the secret.
     operation.PollUntilDone(std::chrono::milliseconds(2000));
-    
+
     // get all the versions of a secret
     for (auto deletedSecrets = secretClient.GetDeletedSecrets(); deletedSecrets.HasPage();
          deletedSecrets.MoveToNextPage())
@@ -94,11 +94,11 @@ int main()
       }
     }
 
-    // get one deleted secret 
+    // get one deleted secret
     auto deletedSecret = secretClient.GetDeletedSecret(secret1.Name);
     std::cout << "Deleted Secret with name: " << deletedSecret.Value.Name;
 
-    //cleanup 
+    // cleanup
     secretClient.PurgeDeletedSecret(secret1.Name);
     secretClient.PurgeDeletedSecret(secret2.Name);
   }

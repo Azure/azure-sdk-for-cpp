@@ -9,9 +9,9 @@
 #include "azure/keyvault/secrets/keyvault_operations.hpp"
 #include "azure/keyvault/secrets/secret_client.hpp"
 #include "private/secret_serializers.hpp"
-// RestoreDeletedSecretOperation
+// RecoverDeletedSecretOperation
 
-Azure::Response<Secret> RestoreDeletedSecretOperation::PollUntilDoneInternal(
+Azure::Response<Secret> RecoverDeletedSecretOperation::PollUntilDoneInternal(
     std::chrono::milliseconds period,
     Azure::Core::Context& context)
 {
@@ -30,7 +30,7 @@ Azure::Response<Secret> RestoreDeletedSecretOperation::PollUntilDoneInternal(
       m_value, std::make_unique<Azure::Core::Http::RawResponse>(*m_rawResponse));
 }
 
-std::unique_ptr<Azure::Core::Http::RawResponse> RestoreDeletedSecretOperation::PollInternal(
+std::unique_ptr<Azure::Core::Http::RawResponse> RecoverDeletedSecretOperation::PollInternal(
     Azure::Core::Context const& context)
 {
   std::unique_ptr<Azure::Core::Http::RawResponse> rawResponse;
@@ -67,7 +67,7 @@ std::unique_ptr<Azure::Core::Http::RawResponse> RestoreDeletedSecretOperation::P
   return rawResponse;
 }
 
-RestoreDeletedSecretOperation::RestoreDeletedSecretOperation(
+RecoverDeletedSecretOperation::RecoverDeletedSecretOperation(
     std::shared_ptr<SecretClient> secretClient,
     Azure::Response<Secret> response)
     : m_secretClient(secretClient)
@@ -84,7 +84,7 @@ RestoreDeletedSecretOperation::RestoreDeletedSecretOperation(
   }
 }
 
-RestoreDeletedSecretOperation::RestoreDeletedSecretOperation(
+RecoverDeletedSecretOperation::RecoverDeletedSecretOperation(
     std::string resumeToken,
     std::shared_ptr<SecretClient> secretClient)
     : m_secretClient(secretClient), m_continuationToken(std::move(resumeToken))
@@ -92,12 +92,12 @@ RestoreDeletedSecretOperation::RestoreDeletedSecretOperation(
   m_value.Name = resumeToken;
 }
 
-RestoreDeletedSecretOperation RestoreDeletedSecretOperation::CreateFromResumeToken(
+RecoverDeletedSecretOperation RecoverDeletedSecretOperation::CreateFromResumeToken(
     std::string const& resumeToken,
     SecretClient const& client,
     Azure::Core::Context const& context)
 {
-  RestoreDeletedSecretOperation operation(resumeToken, std::make_shared<SecretClient>(client));
+  RecoverDeletedSecretOperation operation(resumeToken, std::make_shared<SecretClient>(client));
   operation.Poll(context);
   return operation;
 }
