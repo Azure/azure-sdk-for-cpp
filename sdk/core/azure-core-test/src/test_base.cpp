@@ -14,9 +14,23 @@ using namespace Azure::Core::Json::_internal;
 
 void Azure::Core::Test::TestBase::TearDown()
 {
+
+  if (m_testContext.IsLiveMode() || m_testContext.IsPlaybackMode())
+  {
+    // Don't want to record here
+    return;
+  }
+
   json root;
   json records;
   auto const& recordData = m_interceptor->GetRecordedData();
+
+  if (recordData.NetworkCallRecords.size() == 0)
+  {
+    // Don't make empty recordings
+    return;
+  }
+
   for (auto const& record : recordData.NetworkCallRecords)
   {
     json recordJson;
