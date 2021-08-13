@@ -104,7 +104,7 @@ namespace Azure { namespace Core {
       static_assert(
           std::is_base_of<PagedResponse, T>::value,
           "The template argument \"T\" should derive from PagedResponse<T>.");
-          
+
       if (!NextPageToken.HasValue() || NextPageToken.Value().empty())
       {
         m_hasPage = false;
