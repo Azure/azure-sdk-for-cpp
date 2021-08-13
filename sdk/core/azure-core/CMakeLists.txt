@@ -111,6 +111,7 @@ set(
     src/io/random_access_file_body_stream.cpp
     src/private/environment_log_level_listener.hpp
     src/private/package_version.hpp
+    src/uuid.cpp
     src/base64.cpp
     src/context.cpp
     src/datetime.cpp
