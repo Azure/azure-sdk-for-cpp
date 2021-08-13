@@ -291,7 +291,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
     AZ_SECURITY_KEYVAULT_CERTIFICATES_DLLEXPORT static const CertificateKeyCurveName P521;
   };
 
-  struct SubjectAlternativeNames
+  struct SubjectAlternativeNameList
   {
     std::vector<std::string> DnsNames;
     std::vector<std::string> Emails;
@@ -509,10 +509,9 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
     Azure::Nullable<CertificateKeyCurveName> KeyCurveName;
     Azure::Nullable<int32_t> KeySize;
     std::string Subject;
-    SubjectAlternativeNames SubjectAlternativeNames;
+    SubjectAlternativeNameList SubjectAlternativeNames;
     std::string IssuerName;
     Azure::Nullable<CertificateContentType> ContentType;
-    std::string IssuerName;
     std::string CertificateType;
     Azure::Nullable<bool> CertificateTransparency;
     Azure::Nullable<int32_t> ValidityInMonths;
