@@ -17,17 +17,15 @@
 #define _CRT_SECURE_NO_WARNINGS
 #endif
 
-#include <azure/core.hpp>
 #include <azure/identity.hpp>
 #include <azure/keyvault/keyvault_secrets.hpp>
 
 #include <chrono>
 #include <fstream>
 #include <iostream>
-#include <memory>
-#include <thread>
 
 using namespace Azure::Security::KeyVault::Secrets;
+using namespace std::chrono_literals;
 void AssertSecretsEqual(Secret const& expected, Secret const& actual);
 
 int main()
@@ -58,14 +56,15 @@ int main()
     size_t backUpSize = 0;
     {
       std::cout << "\t-Backup Key" << std::endl;
-      std::vector<uint8_t> backupKey(secretClient.BackupSecret(secret.Name).Value.Secret);
-      backUpSize = backupKey.size();
+      auto backupSecretResult = secretClient.BackupSecret(secret.Name).Value;
+      auto const& backedupSecret = backupSecretResult.Secret;
+      backUpSize = backedupSecret.size();
 
       // save data to file
       std::cout << "\t-Save to file" << std::endl;
       std::ofstream savedFile;
       savedFile.open("backup.dat");
-      for (auto const& data : backupKey)
+      for (auto const& data : backedupSecret)
       {
         savedFile << data;
       }
@@ -75,12 +74,12 @@ int main()
     DeleteSecretOperation operation = secretClient.StartDeleteSecret(secret.Name);
 
     // You only need to wait for completion if you want to purge or recover the secret.
-    operation.PollUntilDone(std::chrono::milliseconds(2000));
+    operation.PollUntilDone(2s);
     // purge the deleted secret
     secretClient.PurgeDeletedSecret(secret.Name);
 
     // let's wait for one minute so we know the key was purged.
-    std::this_thread::sleep_for(std::chrono::seconds(60));
+    std::this_thread::sleep_for(60s);
 
     // Restore the key from the file backup
     std::cout << "\t-Read from file." << std::endl;
@@ -97,7 +96,7 @@ int main()
 
     operation = secretClient.StartDeleteSecret(restoredSecret.Name);
     // You only need to wait for completion if you want to purge or recover the key.
-    operation.PollUntilDone(std::chrono::milliseconds(2000));
+    operation.PollUntilDone(2s);
     secretClient.PurgeDeletedSecret(restoredSecret.Name);
   }
   catch (Azure::Core::Credentials::AuthenticationException const& e)

@@ -7,10 +7,10 @@ The library allows client libraries to expose common functionality in a consiste
 ## Getting started
 
 ### Install the package
-Install the Azure Key Vault secrets client library for .NET with [NuGet][nuget]:
+Install the Azure Key Vault secrets client library for C++ with vcpkg:
 
 ```cmd
-azure-security-keyvault-secrets-cpp
+vcpkg install azure-security-keyvault-secrets-cpp
 ```
 
 ### Prerequisites
@@ -54,6 +54,9 @@ auto tenantId = std::getenv("AZURE_TENANT_ID");
 auto clientId = std::getenv("AZURE_CLIENT_ID");
 auto clientSecret = std::getenv("AZURE_CLIENT_SECRET");
 auto credential = std::make_shared<Azure::Identity::ClientSecretCredential>(tenantId, clientId, clientSecret);
+
+ // create client
+  SecretClient secretClient(std::getenv("AZURE_KEYVAULT_URL"), credential);
 ```
 
 ### Create a secret

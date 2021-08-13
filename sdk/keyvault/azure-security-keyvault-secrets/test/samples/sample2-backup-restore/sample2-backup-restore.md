@@ -72,7 +72,7 @@ If the Azure Key Vault is soft delete-enabled and you want to permanently delete
 
 ```cpp Snippet:SecretSample2PurgeSecret
 // You only need to wait for completion if you want to purge or recover the secret.
-operation.PollUntilDone(std::chrono::milliseconds(2000));
+operation.PollUntilDone(2s);
 
 // purge the deleted secret
 secretClient.PurgeDeletedSecret(secret.Name);

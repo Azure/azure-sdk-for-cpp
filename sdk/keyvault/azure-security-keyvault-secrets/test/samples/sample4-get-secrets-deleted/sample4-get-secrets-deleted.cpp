@@ -17,17 +17,14 @@
 #define _CRT_SECURE_NO_WARNINGS
 #endif
 
-#include <azure/core.hpp>
 #include <azure/identity.hpp>
 #include <azure/keyvault/keyvault_secrets.hpp>
 
 #include <chrono>
 #include <iostream>
-#include <memory>
-#include <thread>
 
 using namespace Azure::Security::KeyVault::Secrets;
-void AssertSecretsEqual(Secret const& expected, Secret const& actual);
+using namespace std::chrono_literals;
 
 int main()
 {
@@ -77,12 +74,12 @@ int main()
     // start deleting the secret
     DeleteSecretOperation operation = secretClient.StartDeleteSecret(secret1.Name);
     // You only need to wait for completion if you want to purge or recover the secret.
-    operation.PollUntilDone(std::chrono::milliseconds(2000));
+    operation.PollUntilDone(2s);
 
     // start deleting the secret
     operation = secretClient.StartDeleteSecret(secret2.Name);
     // You only need to wait for completion if you want to purge or recover the secret.
-    operation.PollUntilDone(std::chrono::milliseconds(2000));
+    operation.PollUntilDone(2s);
 
     // get all the versions of a secret
     for (auto deletedSecrets = secretClient.GetDeletedSecrets(); deletedSecrets.HasPage();

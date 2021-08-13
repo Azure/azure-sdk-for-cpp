@@ -9,7 +9,6 @@
 #include "azure/keyvault/secrets/keyvault_operations.hpp"
 #include "azure/keyvault/secrets/secret_client.hpp"
 #include "private/secret_serializers.hpp"
-// RecoverDeletedSecretOperation
 
 Azure::Response<Secret> RecoverDeletedSecretOperation::PollUntilDoneInternal(
     std::chrono::milliseconds period,
@@ -101,7 +100,7 @@ RecoverDeletedSecretOperation RecoverDeletedSecretOperation::CreateFromResumeTok
   operation.Poll(context);
   return operation;
 }
-// DeleteSecretOperation
+
 Azure::Response<DeletedSecret> DeleteSecretOperation::PollUntilDoneInternal(
     std::chrono::milliseconds period,
     Azure::Core::Context& context)

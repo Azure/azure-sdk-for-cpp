@@ -78,12 +78,12 @@ The secrets is no longer needed so we need to delete them, in order to demonstra
 // start deleting the secret
 DeleteSecretOperation operation = secretClient.StartDeleteSecret(secret1.Name);
 // You only need to wait for completion if you want to purge or recover the secret.
-operation.PollUntilDone(std::chrono::milliseconds(2000));
+operation.PollUntilDone(2s);
 
 // start deleting the secret
 operation = secretClient.StartDeleteSecret(secret2.Name);
 // You only need to wait for completion if you want to purge or recover the secret.
-operation.PollUntilDone(std::chrono::milliseconds(2000));
+operation.PollUntilDone(2s);
 ```
 
 ## Get Deleted Secrets

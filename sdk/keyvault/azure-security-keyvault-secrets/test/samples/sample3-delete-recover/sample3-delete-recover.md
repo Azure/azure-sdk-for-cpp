@@ -63,7 +63,7 @@ To recover a deleted secret we need to call StartRecoverDeletedSecret and then p
 RecoverDeletedSecretOperation recoverOperation = secretClient.StartRecoverDeletedSecret(secret.Name);
 
 // poll until done
-Secret restoredSecret = recoverOperation.PollUntilDone(std::chrono::milliseconds(2000)).Value;
+Secret restoredSecret = recoverOperation.PollUntilDone(2s).Value;
 ```
 
 ## Source

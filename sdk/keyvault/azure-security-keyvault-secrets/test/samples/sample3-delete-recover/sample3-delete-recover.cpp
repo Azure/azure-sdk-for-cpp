@@ -17,16 +17,14 @@
 #define _CRT_SECURE_NO_WARNINGS
 #endif
 
-#include <azure/core.hpp>
 #include <azure/identity.hpp>
 #include <azure/keyvault/keyvault_secrets.hpp>
 
 #include <chrono>
 #include <iostream>
-#include <memory>
-#include <thread>
 
 using namespace Azure::Security::KeyVault::Secrets;
+using namespace std::chrono_literals;
 void AssertSecretsEqual(Secret const& expected, Secret const& actual);
 
 int main()
@@ -59,21 +57,21 @@ int main()
     DeleteSecretOperation operation = secretClient.StartDeleteSecret(secret.Name);
 
     // You only need to wait for completion if you want to purge or recover the secret.
-    operation.PollUntilDone(std::chrono::milliseconds(2000));
+    operation.PollUntilDone(2s);
 
     // call recover secret
     RecoverDeletedSecretOperation recoverOperation
         = secretClient.StartRecoverDeletedSecret(secret.Name);
 
     // poll until done
-    Secret restoredSecret = recoverOperation.PollUntilDone(std::chrono::milliseconds(2000)).Value;
+    Secret restoredSecret = recoverOperation.PollUntilDone(2s).Value;
 
     AssertSecretsEqual(secret, restoredSecret);
 
     // cleanup
     // start deleting the secret
     DeleteSecretOperation cleanupOperation = secretClient.StartDeleteSecret(restoredSecret.Name);
-    cleanupOperation.PollUntilDone(std::chrono::milliseconds(2000));
+    cleanupOperation.PollUntilDone(2s);
     secretClient.PurgeDeletedSecret(restoredSecret.Name);
   }
   catch (Azure::Core::Credentials::AuthenticationException const& e)
