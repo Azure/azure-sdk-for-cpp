@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: MIT
 
 /**
- * @brief Includes all public headers from Azure Key Vault Keys SDK library.
+ * @brief Includes all public headers from Azure Key Vault Certificates SDK library.
  *
  */
 

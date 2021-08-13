@@ -16,7 +16,6 @@
 #include <azure/core/credentials/credentials.hpp>
 #include <azure/core/http/http.hpp>
 #include <azure/core/internal/http/pipeline.hpp>
-#include <azure/core/io/body_stream.hpp>
 #include <azure/core/response.hpp>
 
 #include <memory>
