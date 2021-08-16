@@ -16,6 +16,14 @@ namespace Azure { namespace Storage { namespace Test {
     auto sasExpiresOn = std::chrono::system_clock::now() + std::chrono::minutes(60);
 
     std::string queueName = LowercaseRandomString();
+
+    Sas::AccountSasBuilder accountSasBuilder;
+    accountSasBuilder.Protocol = Sas::SasProtocol::HttpsAndHttp;
+    accountSasBuilder.StartsOn = sasStartsOn;
+    accountSasBuilder.ExpiresOn = sasExpiresOn;
+    accountSasBuilder.Services = Sas::AccountSasServices::Queue;
+    accountSasBuilder.ResourceTypes = Sas::AccountSasResource::All;
+
     Sas::QueueSasBuilder queueSasBuilder;
     queueSasBuilder.Protocol = Sas::SasProtocol::HttpsAndHttp;
     queueSasBuilder.StartsOn = sasStartsOn;
@@ -30,6 +38,7 @@ namespace Azure { namespace Storage { namespace Test {
     auto queueClient0 = queueServiceClient0.GetQueueClient(queueName);
     queueClient0.Create();
 
+    std::string queueServiceUrl = queueServiceClient0.GetUrl();
     std::string queueUrl = queueClient0.GetUrl();
 
     auto verifyQueueRead = [&](const std::string& sas) {
@@ -55,6 +64,82 @@ namespace Azure { namespace Storage { namespace Test {
       auto queueClient = Queues::QueueClient(queueUrl + sas);
       queueClient.DeleteMessage(sendReceipt.MessageId, sendReceipt.PopReceipt);
     };
+
+    auto verifyQueueWrite = [&](const std::string& sas) {
+      auto queueClient = Queues::QueueClient(queueUrl + sas);
+      Metadata m;
+      m["key1"] = RandomString();
+      EXPECT_NO_THROW(queueClient.SetMetadata(m));
+    };
+
+    auto verifyQueueList = [&](const std::string& sas) {
+      auto queueServiceClient = Queues::QueueServiceClient(queueServiceUrl + sas);
+      EXPECT_NO_THROW(queueServiceClient.ListQueues());
+    };
+
+    auto verifyQueueCreate = [&](const std::string& sas) {
+      auto queueServiceClient = Queues::QueueServiceClient(queueServiceUrl + sas);
+      const std::string newQueueName = LowercaseRandomString();
+      EXPECT_NO_THROW(queueServiceClient.CreateQueue(newQueueName));
+      queueServiceClient0.GetQueueClient(newQueueName).DeleteIfExists();
+    };
+
+    auto verifyQueueDelete = [&](const std::string& sas) {
+      const std::string newQueueName = LowercaseRandomString();
+      queueServiceClient0.CreateQueue(newQueueName);
+      auto queueServiceClient = Queues::QueueServiceClient(queueServiceUrl + sas);
+      EXPECT_NO_THROW(queueServiceClient.DeleteQueue(newQueueName));
+    };
+
+    for (auto permissions : {
+             Sas::AccountSasPermissions::All,
+             Sas::AccountSasPermissions::Read,
+             Sas::AccountSasPermissions::Write,
+             Sas::AccountSasPermissions::List,
+             Sas::AccountSasPermissions::Create,
+             Sas::AccountSasPermissions::Delete,
+             Sas::AccountSasPermissions::Add,
+             Sas::AccountSasPermissions::Process,
+             Sas::AccountSasPermissions::Update,
+         })
+    {
+      accountSasBuilder.SetPermissions(permissions);
+      auto sasToken = accountSasBuilder.GenerateSasToken(*keyCredential);
+
+      if ((permissions & Sas::AccountSasPermissions::Read) == Sas::AccountSasPermissions::Read)
+      {
+        verifyQueueRead(sasToken);
+      }
+      if ((permissions & Sas::AccountSasPermissions::Write) == Sas::AccountSasPermissions::Write)
+      {
+        verifyQueueWrite(sasToken);
+      }
+      if ((permissions & Sas::AccountSasPermissions::List) == Sas::AccountSasPermissions::List)
+      {
+        verifyQueueList(sasToken);
+      }
+      if ((permissions & Sas::AccountSasPermissions::Create) == Sas::AccountSasPermissions::Create)
+      {
+        verifyQueueCreate(sasToken);
+      }
+      if ((permissions & Sas::AccountSasPermissions::Delete) == Sas::AccountSasPermissions::Delete)
+      {
+        verifyQueueDelete(sasToken);
+      }
+      if ((permissions & Sas::AccountSasPermissions::Add) == Sas::AccountSasPermissions::Add)
+      {
+        verifyQueueAdd(sasToken);
+      }
+      if ((permissions & Sas::AccountSasPermissions::Process)
+          == Sas::AccountSasPermissions::Process)
+      {
+        verifyQueueProcess(sasToken);
+      }
+      if ((permissions & Sas::AccountSasPermissions::Update) == Sas::AccountSasPermissions::Update)
+      {
+        verifyQueueUpdate(sasToken);
+      }
+    }
 
     for (auto permissions :
          {Sas::QueueSasPermissions::Read,
