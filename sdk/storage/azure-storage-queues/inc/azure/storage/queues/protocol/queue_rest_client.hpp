@@ -51,33 +51,6 @@ namespace Azure { namespace Storage { namespace Queues {
     }; // extensible enum GeoReplicationStatus
 
     /**
-     * @brief A message object peeked from a queue.
-     */
-    struct PeekedQueueMessage final
-    {
-      /**
-       * The content of the message.
-       */
-      std::string Body;
-      /**
-       * A GUID value that identifies the message in the queue.
-       */
-      std::string MessageId;
-      /**
-       * The time the message was inserted into the queue.
-       */
-      Azure::DateTime InsertedOn;
-      /**
-       * The time that the message will expire and be automatically deleted from the queue.
-       */
-      Azure::DateTime ExpiresOn;
-      /**
-       * The number of times the message has been dequeued.
-       */
-      int64_t DequeueCount = 0;
-    }; // struct PeekedQueueMessage
-
-    /**
      * @brief A queue item from the result of
      * #Azure::Storage::Queues::QueueServiceClient::ListQueues.
      */
@@ -115,11 +88,13 @@ namespace Azure { namespace Storage { namespace Queues {
        */
       Azure::DateTime ExpiresOn;
       /**
-       * This value is required to delete a message.
+       * An opaque string that is required to delete or update a message. Empty if it's a peeked
+       * message.
        */
       std::string PopReceipt;
       /**
-       * The time that the message will again become visible in the queue.
+       * The time that the message will again become visible in the queue. Invalid if it's a peeked
+       * message.
        */
       Azure::DateTime NextVisibleOn;
       /**
@@ -296,6 +271,33 @@ namespace Azure { namespace Storage { namespace Queues {
       bool Deleted = true;
     }; // struct DeleteQueueResult
 
+    /**
+     * @brief Response type for #Azure::Storage::Queues::QueueClient::EnqueueMessage.
+     */
+    struct EnqueueMessageResult final
+    {
+      /**
+       * A GUID value that identifies the message in the queue.
+       */
+      std::string MessageId;
+      /**
+       * The time the message was inserted into the queue.
+       */
+      Azure::DateTime InsertedOn;
+      /**
+       * The time that the message will expire and be automatically deleted from the queue.
+       */
+      Azure::DateTime ExpiresOn;
+      /**
+       * An opaque string that is required to delete or update a message.
+       */
+      std::string PopReceipt;
+      /**
+       * The time that the message will again become visible in the queue.
+       */
+      Azure::DateTime NextVisibleOn;
+    }; // struct EnqueueMessageResult
+
     enum class ListQueuesIncludeFlags
     {
       /**
@@ -336,6 +338,14 @@ namespace Azure { namespace Storage { namespace Queues {
       return lhs;
     }
 
+    struct PeekMessagesResult final
+    {
+      /**
+       * A vector of peeked messages.
+       */
+      std::vector<QueueMessage> Messages;
+    }; // struct PeekMessagesResult
+
     /**
      * @brief Access policy for a queue.
      */
@@ -360,7 +370,7 @@ namespace Azure { namespace Storage { namespace Queues {
        * The approximate number of messages in the queue. This number is not lower than the actual
        * number of messages in the queue, but could be higher.
        */
-      int64_t ApproximateMessageCount;
+      int64_t ApproximateMessageCount = 0;
     }; // struct QueueProperties
 
     /**
@@ -386,32 +396,13 @@ namespace Azure { namespace Storage { namespace Queues {
       std::vector<CorsRule> Cors;
     }; // struct QueueServiceProperties
 
-    /**
-     * @brief Response type for #Azure::Storage::Queues::QueueClient::SendMessage.
-     */
-    struct SendMessageResult final
+    struct ReceiveMessagesResult final
     {
       /**
-       * A GUID value that identifies the message in the queue.
+       * A vector of received messages.
        */
-      std::string MessageId;
-      /**
-       * The time the message was inserted into the queue.
-       */
-      Azure::DateTime InsertedOn;
-      /**
-       * The time that the message will expire and be automatically deleted from the queue.
-       */
-      Azure::DateTime ExpiresOn;
-      /**
-       * This value is required to delete a message.
-       */
-      std::string PopReceipt;
-      /**
-       * The time that the message will again become visible in the queue.
-       */
-      Azure::DateTime NextVisibleOn;
-    }; // struct SendMessageResult
+      std::vector<QueueMessage> Messages;
+    }; // struct ReceiveMessagesResult
 
     /**
      * @brief Statistics for the storage service.
@@ -451,7 +442,7 @@ namespace Azure { namespace Storage { namespace Queues {
     struct UpdateMessageResult final
     {
       /**
-       * This value is required to delete a message.
+       * An opaque string that is required to delete or update a message.
        */
       std::string PopReceipt;
       /**
@@ -468,20 +459,6 @@ namespace Azure { namespace Storage { namespace Queues {
         Azure::Nullable<std::string> ContinuationToken;
         std::vector<QueueItem> Items;
       }; // struct ListQueuesResult
-    } // namespace _detail
-
-    namespace _detail {
-      struct PeekMessagesResult final
-      {
-        std::vector<PeekedQueueMessage> Messages;
-      }; // struct PeekMessagesResult
-    } // namespace _detail
-
-    namespace _detail {
-      struct ReceiveMessagesResult final
-      {
-        std::vector<QueueMessage> Messages;
-      }; // struct ReceiveMessagesResult
     } // namespace _detail
 
   } // namespace Models
@@ -536,7 +513,6 @@ namespace Azure { namespace Storage { namespace Queues {
             const ListQueuesOptions& options,
             const Azure::Core::Context& context)
         {
-          (void)options;
           auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Get, url);
           request.SetHeader("x-ms-version", "2018-03-28");
           if (options.Timeout.HasValue())
@@ -569,10 +545,8 @@ namespace Azure { namespace Storage { namespace Queues {
           auto pHttpResponse = pipeline.Send(request, context);
           Azure::Core::Http::RawResponse& httpResponse = *pHttpResponse;
           Models::_detail::ListQueuesResult response;
-          auto http_status_code
-              = static_cast<std::underlying_type<Azure::Core::Http::HttpStatusCode>::type>(
-                  httpResponse.GetStatusCode());
-          if (!(http_status_code == 200))
+          auto http_status_code = httpResponse.GetStatusCode();
+          if (http_status_code != Azure::Core::Http::HttpStatusCode::Ok)
           {
             throw StorageException::CreateFromResponse(std::move(pHttpResponse));
           }
@@ -597,9 +571,8 @@ namespace Azure { namespace Storage { namespace Queues {
             const GetServicePropertiesOptions& options,
             const Azure::Core::Context& context)
         {
-          (void)options;
           auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Get, url);
-          request.GetUrl().AppendQueryParameter("resttype", "service");
+          request.GetUrl().AppendQueryParameter("restype", "service");
           request.GetUrl().AppendQueryParameter("comp", "properties");
           request.SetHeader("x-ms-version", "2018-03-28");
           if (options.Timeout.HasValue())
@@ -610,10 +583,8 @@ namespace Azure { namespace Storage { namespace Queues {
           auto pHttpResponse = pipeline.Send(request, context);
           Azure::Core::Http::RawResponse& httpResponse = *pHttpResponse;
           QueueServiceProperties response;
-          auto http_status_code
-              = static_cast<std::underlying_type<Azure::Core::Http::HttpStatusCode>::type>(
-                  httpResponse.GetStatusCode());
-          if (!(http_status_code == 200))
+          auto http_status_code = httpResponse.GetStatusCode();
+          if (http_status_code != Azure::Core::Http::HttpStatusCode::Ok)
           {
             throw StorageException::CreateFromResponse(std::move(pHttpResponse));
           }
@@ -639,7 +610,6 @@ namespace Azure { namespace Storage { namespace Queues {
             const SetServicePropertiesOptions& options,
             const Azure::Core::Context& context)
         {
-          (void)options;
           std::string xml_body;
           {
             _internal::XmlWriter writer;
@@ -663,10 +633,8 @@ namespace Azure { namespace Storage { namespace Queues {
           auto pHttpResponse = pipeline.Send(request, context);
           Azure::Core::Http::RawResponse& httpResponse = *pHttpResponse;
           SetServicePropertiesResult response;
-          auto http_status_code
-              = static_cast<std::underlying_type<Azure::Core::Http::HttpStatusCode>::type>(
-                  httpResponse.GetStatusCode());
-          if (!(http_status_code == 202))
+          auto http_status_code = httpResponse.GetStatusCode();
+          if (http_status_code != Azure::Core::Http::HttpStatusCode::Accepted)
           {
             throw StorageException::CreateFromResponse(std::move(pHttpResponse));
           }
@@ -685,7 +653,6 @@ namespace Azure { namespace Storage { namespace Queues {
             const GetServiceStatisticsOptions& options,
             const Azure::Core::Context& context)
         {
-          (void)options;
           auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Get, url);
           request.GetUrl().AppendQueryParameter("restype", "service");
           request.GetUrl().AppendQueryParameter("comp", "stats");
@@ -698,10 +665,8 @@ namespace Azure { namespace Storage { namespace Queues {
           auto pHttpResponse = pipeline.Send(request, context);
           Azure::Core::Http::RawResponse& httpResponse = *pHttpResponse;
           ServiceStatistics response;
-          auto http_status_code
-              = static_cast<std::underlying_type<Azure::Core::Http::HttpStatusCode>::type>(
-                  httpResponse.GetStatusCode());
-          if (!(http_status_code == 200))
+          auto http_status_code = httpResponse.GetStatusCode();
+          if (http_status_code != Azure::Core::Http::HttpStatusCode::Ok)
           {
             throw StorageException::CreateFromResponse(std::move(pHttpResponse));
           }
@@ -1558,7 +1523,6 @@ namespace Azure { namespace Storage { namespace Queues {
             const CreateQueueOptions& options,
             const Azure::Core::Context& context)
         {
-          (void)options;
           auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Put, url);
           request.SetHeader("Content-Length", "0");
           request.SetHeader("x-ms-version", "2018-03-28");
@@ -1574,12 +1538,15 @@ namespace Azure { namespace Storage { namespace Queues {
           auto pHttpResponse = pipeline.Send(request, context);
           Azure::Core::Http::RawResponse& httpResponse = *pHttpResponse;
           CreateQueueResult response;
-          auto http_status_code
-              = static_cast<std::underlying_type<Azure::Core::Http::HttpStatusCode>::type>(
-                  httpResponse.GetStatusCode());
-          if (!(http_status_code == 201))
+          auto http_status_code = httpResponse.GetStatusCode();
+          if (!(http_status_code == Azure::Core::Http::HttpStatusCode::Created
+                || http_status_code == Azure::Core::Http::HttpStatusCode::NoContent))
           {
             throw StorageException::CreateFromResponse(std::move(pHttpResponse));
+          }
+          if (http_status_code == Azure::Core::Http::HttpStatusCode::NoContent)
+          {
+            response.Created = false;
           }
           return Azure::Response<CreateQueueResult>(std::move(response), std::move(pHttpResponse));
         }
@@ -1595,7 +1562,6 @@ namespace Azure { namespace Storage { namespace Queues {
             const DeleteQueueOptions& options,
             const Azure::Core::Context& context)
         {
-          (void)options;
           auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Delete, url);
           request.SetHeader("x-ms-version", "2018-03-28");
           if (options.Timeout.HasValue())
@@ -1606,10 +1572,8 @@ namespace Azure { namespace Storage { namespace Queues {
           auto pHttpResponse = pipeline.Send(request, context);
           Azure::Core::Http::RawResponse& httpResponse = *pHttpResponse;
           DeleteQueueResult response;
-          auto http_status_code
-              = static_cast<std::underlying_type<Azure::Core::Http::HttpStatusCode>::type>(
-                  httpResponse.GetStatusCode());
-          if (!(http_status_code == 202))
+          auto http_status_code = httpResponse.GetStatusCode();
+          if (http_status_code != Azure::Core::Http::HttpStatusCode::NoContent)
           {
             throw StorageException::CreateFromResponse(std::move(pHttpResponse));
           }
@@ -1628,7 +1592,6 @@ namespace Azure { namespace Storage { namespace Queues {
             const SetQueueMetadataOptions& options,
             const Azure::Core::Context& context)
         {
-          (void)options;
           auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Put, url);
           request.SetHeader("Content-Length", "0");
           request.GetUrl().AppendQueryParameter("comp", "metadata");
@@ -1645,10 +1608,8 @@ namespace Azure { namespace Storage { namespace Queues {
           auto pHttpResponse = pipeline.Send(request, context);
           Azure::Core::Http::RawResponse& httpResponse = *pHttpResponse;
           SetQueueMetadataResult response;
-          auto http_status_code
-              = static_cast<std::underlying_type<Azure::Core::Http::HttpStatusCode>::type>(
-                  httpResponse.GetStatusCode());
-          if (!(http_status_code == 200))
+          auto http_status_code = httpResponse.GetStatusCode();
+          if (http_status_code != Azure::Core::Http::HttpStatusCode::NoContent)
           {
             throw StorageException::CreateFromResponse(std::move(pHttpResponse));
           }
@@ -1667,7 +1628,6 @@ namespace Azure { namespace Storage { namespace Queues {
             const GetQueuePropertiesOptions& options,
             const Azure::Core::Context& context)
         {
-          (void)options;
           auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Head, url);
           request.GetUrl().AppendQueryParameter("comp", "metadata");
           request.SetHeader("x-ms-version", "2018-03-28");
@@ -1679,10 +1639,8 @@ namespace Azure { namespace Storage { namespace Queues {
           auto pHttpResponse = pipeline.Send(request, context);
           Azure::Core::Http::RawResponse& httpResponse = *pHttpResponse;
           QueueProperties response;
-          auto http_status_code
-              = static_cast<std::underlying_type<Azure::Core::Http::HttpStatusCode>::type>(
-                  httpResponse.GetStatusCode());
-          if (!(http_status_code == 200))
+          auto http_status_code = httpResponse.GetStatusCode();
+          if (http_status_code != Azure::Core::Http::HttpStatusCode::Ok)
           {
             throw StorageException::CreateFromResponse(std::move(pHttpResponse));
           }
@@ -1708,7 +1666,6 @@ namespace Azure { namespace Storage { namespace Queues {
             const GetQueueAccessPolicyOptions& options,
             const Azure::Core::Context& context)
         {
-          (void)options;
           auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Get, url);
           request.SetHeader("x-ms-version", "2018-03-28");
           if (options.Timeout.HasValue())
@@ -1720,10 +1677,8 @@ namespace Azure { namespace Storage { namespace Queues {
           auto pHttpResponse = pipeline.Send(request, context);
           Azure::Core::Http::RawResponse& httpResponse = *pHttpResponse;
           QueueAccessPolicy response;
-          auto http_status_code
-              = static_cast<std::underlying_type<Azure::Core::Http::HttpStatusCode>::type>(
-                  httpResponse.GetStatusCode());
-          if (!(http_status_code == 200))
+          auto http_status_code = httpResponse.GetStatusCode();
+          if (http_status_code != Azure::Core::Http::HttpStatusCode::Ok)
           {
             throw StorageException::CreateFromResponse(std::move(pHttpResponse));
           }
@@ -1748,7 +1703,6 @@ namespace Azure { namespace Storage { namespace Queues {
             const SetQueueAccessPolicyOptions& options,
             const Azure::Core::Context& context)
         {
-          (void)options;
           std::string xml_body;
           {
             _internal::XmlWriter writer;
@@ -1771,10 +1725,8 @@ namespace Azure { namespace Storage { namespace Queues {
           auto pHttpResponse = pipeline.Send(request, context);
           Azure::Core::Http::RawResponse& httpResponse = *pHttpResponse;
           SetQueueAccessPolicyResult response;
-          auto http_status_code
-              = static_cast<std::underlying_type<Azure::Core::Http::HttpStatusCode>::type>(
-                  httpResponse.GetStatusCode());
-          if (!(http_status_code == 204))
+          auto http_status_code = httpResponse.GetStatusCode();
+          if (http_status_code != Azure::Core::Http::HttpStatusCode::NoContent)
           {
             throw StorageException::CreateFromResponse(std::move(pHttpResponse));
           }
@@ -1782,25 +1734,24 @@ namespace Azure { namespace Storage { namespace Queues {
               std::move(response), std::move(pHttpResponse));
         }
 
-        struct SendMessageOptions final
+        struct EnqueueMessageOptions final
         {
           Azure::Nullable<int32_t> Timeout;
           std::string Body;
           Azure::Nullable<int32_t> VisibilityTimeout;
           Azure::Nullable<int32_t> TimeToLive;
-        }; // struct SendMessageOptions
+        }; // struct EnqueueMessageOptions
 
-        static Azure::Response<SendMessageResult> SendMessage(
+        static Azure::Response<EnqueueMessageResult> EnqueueMessage(
             Azure::Core::Http::_internal::HttpPipeline& pipeline,
             const Azure::Core::Url& url,
-            const SendMessageOptions& options,
+            const EnqueueMessageOptions& options,
             const Azure::Core::Context& context)
         {
-          (void)options;
           std::string xml_body;
           {
             _internal::XmlWriter writer;
-            SendMessageOptionsToXml(writer, options);
+            EnqueueMessageOptionsToXml(writer, options);
             xml_body = writer.GetDocument();
             writer.Write(_internal::XmlNode{_internal::XmlNodeType::End});
           }
@@ -1827,11 +1778,9 @@ namespace Azure { namespace Storage { namespace Queues {
           }
           auto pHttpResponse = pipeline.Send(request, context);
           Azure::Core::Http::RawResponse& httpResponse = *pHttpResponse;
-          SendMessageResult response;
-          auto http_status_code
-              = static_cast<std::underlying_type<Azure::Core::Http::HttpStatusCode>::type>(
-                  httpResponse.GetStatusCode());
-          if (!(http_status_code == 201))
+          EnqueueMessageResult response;
+          auto http_status_code = httpResponse.GetStatusCode();
+          if (http_status_code != Azure::Core::Http::HttpStatusCode::Created)
           {
             throw StorageException::CreateFromResponse(std::move(pHttpResponse));
           }
@@ -1839,9 +1788,10 @@ namespace Azure { namespace Storage { namespace Queues {
             const auto& httpResponseBody = httpResponse.GetBody();
             _internal::XmlReader reader(
                 reinterpret_cast<const char*>(httpResponseBody.data()), httpResponseBody.size());
-            response = SendMessageResultFromXml(reader);
+            response = EnqueueMessageResultFromXml(reader);
           }
-          return Azure::Response<SendMessageResult>(std::move(response), std::move(pHttpResponse));
+          return Azure::Response<EnqueueMessageResult>(
+              std::move(response), std::move(pHttpResponse));
         }
 
         struct ReceiveMessagesOptions final
@@ -1851,13 +1801,12 @@ namespace Azure { namespace Storage { namespace Queues {
           Azure::Nullable<int32_t> VisibilityTimeout;
         }; // struct ReceiveMessagesOptions
 
-        static Azure::Response<Models::_detail::ReceiveMessagesResult> ReceiveMessages(
+        static Azure::Response<ReceiveMessagesResult> ReceiveMessages(
             Azure::Core::Http::_internal::HttpPipeline& pipeline,
             const Azure::Core::Url& url,
             const ReceiveMessagesOptions& options,
             const Azure::Core::Context& context)
         {
-          (void)options;
           auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Get, url);
           request.SetHeader("x-ms-version", "2018-03-28");
           if (options.Timeout.HasValue())
@@ -1877,11 +1826,9 @@ namespace Azure { namespace Storage { namespace Queues {
           }
           auto pHttpResponse = pipeline.Send(request, context);
           Azure::Core::Http::RawResponse& httpResponse = *pHttpResponse;
-          Models::_detail::ReceiveMessagesResult response;
-          auto http_status_code
-              = static_cast<std::underlying_type<Azure::Core::Http::HttpStatusCode>::type>(
-                  httpResponse.GetStatusCode());
-          if (!(http_status_code == 200))
+          ReceiveMessagesResult response;
+          auto http_status_code = httpResponse.GetStatusCode();
+          if (http_status_code != Azure::Core::Http::HttpStatusCode::Ok)
           {
             throw StorageException::CreateFromResponse(std::move(pHttpResponse));
           }
@@ -1889,9 +1836,9 @@ namespace Azure { namespace Storage { namespace Queues {
             const auto& httpResponseBody = httpResponse.GetBody();
             _internal::XmlReader reader(
                 reinterpret_cast<const char*>(httpResponseBody.data()), httpResponseBody.size());
-            response = ReceiveMessagesResultInternalFromXml(reader);
+            response = ReceiveMessagesResultFromXml(reader);
           }
-          return Azure::Response<Models::_detail::ReceiveMessagesResult>(
+          return Azure::Response<ReceiveMessagesResult>(
               std::move(response), std::move(pHttpResponse));
         }
 
@@ -1901,13 +1848,12 @@ namespace Azure { namespace Storage { namespace Queues {
           Azure::Nullable<int64_t> MaxMessages;
         }; // struct PeekMessagesOptions
 
-        static Azure::Response<Models::_detail::PeekMessagesResult> PeekMessages(
+        static Azure::Response<PeekMessagesResult> PeekMessages(
             Azure::Core::Http::_internal::HttpPipeline& pipeline,
             const Azure::Core::Url& url,
             const PeekMessagesOptions& options,
             const Azure::Core::Context& context)
         {
-          (void)options;
           auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Get, url);
           request.SetHeader("x-ms-version", "2018-03-28");
           if (options.Timeout.HasValue())
@@ -1923,11 +1869,9 @@ namespace Azure { namespace Storage { namespace Queues {
           }
           auto pHttpResponse = pipeline.Send(request, context);
           Azure::Core::Http::RawResponse& httpResponse = *pHttpResponse;
-          Models::_detail::PeekMessagesResult response;
-          auto http_status_code
-              = static_cast<std::underlying_type<Azure::Core::Http::HttpStatusCode>::type>(
-                  httpResponse.GetStatusCode());
-          if (!(http_status_code == 200))
+          PeekMessagesResult response;
+          auto http_status_code = httpResponse.GetStatusCode();
+          if (http_status_code != Azure::Core::Http::HttpStatusCode::Ok)
           {
             throw StorageException::CreateFromResponse(std::move(pHttpResponse));
           }
@@ -1935,10 +1879,9 @@ namespace Azure { namespace Storage { namespace Queues {
             const auto& httpResponseBody = httpResponse.GetBody();
             _internal::XmlReader reader(
                 reinterpret_cast<const char*>(httpResponseBody.data()), httpResponseBody.size());
-            response = PeekMessagesResultInternalFromXml(reader);
+            response = PeekMessagesResultFromXml(reader);
           }
-          return Azure::Response<Models::_detail::PeekMessagesResult>(
-              std::move(response), std::move(pHttpResponse));
+          return Azure::Response<PeekMessagesResult>(std::move(response), std::move(pHttpResponse));
         }
 
         struct DeleteMessageOptions final
@@ -1953,7 +1896,6 @@ namespace Azure { namespace Storage { namespace Queues {
             const DeleteMessageOptions& options,
             const Azure::Core::Context& context)
         {
-          (void)options;
           auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Delete, url);
           request.SetHeader("x-ms-version", "2018-03-28");
           if (options.Timeout.HasValue())
@@ -1966,10 +1908,8 @@ namespace Azure { namespace Storage { namespace Queues {
           auto pHttpResponse = pipeline.Send(request, context);
           Azure::Core::Http::RawResponse& httpResponse = *pHttpResponse;
           DeleteMessageResult response;
-          auto http_status_code
-              = static_cast<std::underlying_type<Azure::Core::Http::HttpStatusCode>::type>(
-                  httpResponse.GetStatusCode());
-          if (!(http_status_code == 204))
+          auto http_status_code = httpResponse.GetStatusCode();
+          if (http_status_code != Azure::Core::Http::HttpStatusCode::NoContent)
           {
             throw StorageException::CreateFromResponse(std::move(pHttpResponse));
           }
@@ -1988,7 +1928,6 @@ namespace Azure { namespace Storage { namespace Queues {
             const ClearMessagesOptions& options,
             const Azure::Core::Context& context)
         {
-          (void)options;
           auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Delete, url);
           request.SetHeader("x-ms-version", "2018-03-28");
           if (options.Timeout.HasValue())
@@ -1999,14 +1938,53 @@ namespace Azure { namespace Storage { namespace Queues {
           auto pHttpResponse = pipeline.Send(request, context);
           Azure::Core::Http::RawResponse& httpResponse = *pHttpResponse;
           ClearMessagesResult response;
-          auto http_status_code
-              = static_cast<std::underlying_type<Azure::Core::Http::HttpStatusCode>::type>(
-                  httpResponse.GetStatusCode());
-          if (!(http_status_code == 204))
+          auto http_status_code = httpResponse.GetStatusCode();
+          if (http_status_code != Azure::Core::Http::HttpStatusCode::NoContent)
           {
             throw StorageException::CreateFromResponse(std::move(pHttpResponse));
           }
           return Azure::Response<ClearMessagesResult>(
+              std::move(response), std::move(pHttpResponse));
+        }
+
+        struct UpdateMessageVisibilityOptions final
+        {
+          Azure::Nullable<int32_t> Timeout;
+          std::string PopReceipt;
+          int32_t VisibilityTimeout;
+        }; // struct UpdateMessageVisibilityOptions
+
+        static Azure::Response<UpdateMessageResult> UpdateMessageVisibility(
+            Azure::Core::Http::_internal::HttpPipeline& pipeline,
+            const Azure::Core::Url& url,
+            const UpdateMessageVisibilityOptions& options,
+            const Azure::Core::Context& context)
+        {
+          auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Put, url);
+          request.SetHeader("Content-Length", "0");
+          request.SetHeader("x-ms-version", "2018-03-28");
+          if (options.Timeout.HasValue())
+          {
+            request.GetUrl().AppendQueryParameter(
+                "timeout", std::to_string(options.Timeout.Value()));
+          }
+          request.GetUrl().AppendQueryParameter(
+              "popreceipt", _internal::UrlEncodeQueryParameter(options.PopReceipt));
+          request.GetUrl().AppendQueryParameter(
+              "visibilitytimeout", std::to_string(options.VisibilityTimeout));
+          auto pHttpResponse = pipeline.Send(request, context);
+          Azure::Core::Http::RawResponse& httpResponse = *pHttpResponse;
+          UpdateMessageResult response;
+          auto http_status_code = httpResponse.GetStatusCode();
+          if (http_status_code != Azure::Core::Http::HttpStatusCode::NoContent)
+          {
+            throw StorageException::CreateFromResponse(std::move(pHttpResponse));
+          }
+          response.PopReceipt = httpResponse.GetHeaders().at("x-ms-popreceipt");
+          response.NextVisibleOn = Azure::DateTime::Parse(
+              httpResponse.GetHeaders().at("x-ms-time-next-visible"),
+              Azure::DateTime::DateFormat::Rfc1123);
+          return Azure::Response<UpdateMessageResult>(
               std::move(response), std::move(pHttpResponse));
         }
 
@@ -2024,7 +2002,6 @@ namespace Azure { namespace Storage { namespace Queues {
             const UpdateMessageOptions& options,
             const Azure::Core::Context& context)
         {
-          (void)options;
           std::string xml_body;
           {
             _internal::XmlWriter writer;
@@ -2050,10 +2027,8 @@ namespace Azure { namespace Storage { namespace Queues {
           auto pHttpResponse = pipeline.Send(request, context);
           Azure::Core::Http::RawResponse& httpResponse = *pHttpResponse;
           UpdateMessageResult response;
-          auto http_status_code
-              = static_cast<std::underlying_type<Azure::Core::Http::HttpStatusCode>::type>(
-                  httpResponse.GetStatusCode());
-          if (!(http_status_code == 204))
+          auto http_status_code = httpResponse.GetStatusCode();
+          if (http_status_code != Azure::Core::Http::HttpStatusCode::NoContent)
           {
             throw StorageException::CreateFromResponse(std::move(pHttpResponse));
           }
@@ -2066,14 +2041,18 @@ namespace Azure { namespace Storage { namespace Queues {
         }
 
       private:
-        static Models::_detail::PeekMessagesResult PeekMessagesResultInternalFromXml(
-            _internal::XmlReader& reader)
+        static EnqueueMessageResult EnqueueMessageResultFromXml(_internal::XmlReader& reader)
         {
-          Models::_detail::PeekMessagesResult ret;
+          EnqueueMessageResult ret;
           enum class XmlTagName
           {
             k_QueueMessagesList,
             k_QueueMessage,
+            k_MessageId,
+            k_InsertionTime,
+            k_ExpirationTime,
+            k_PopReceipt,
+            k_TimeNextVisible,
             k_Unknown,
           };
           std::vector<XmlTagName> path;
@@ -2105,28 +2084,76 @@ namespace Azure { namespace Storage { namespace Queues {
               {
                 path.emplace_back(XmlTagName::k_QueueMessage);
               }
+              else if (node.Name == "MessageId")
+              {
+                path.emplace_back(XmlTagName::k_MessageId);
+              }
+              else if (node.Name == "InsertionTime")
+              {
+                path.emplace_back(XmlTagName::k_InsertionTime);
+              }
+              else if (node.Name == "ExpirationTime")
+              {
+                path.emplace_back(XmlTagName::k_ExpirationTime);
+              }
+              else if (node.Name == "PopReceipt")
+              {
+                path.emplace_back(XmlTagName::k_PopReceipt);
+              }
+              else if (node.Name == "TimeNextVisible")
+              {
+                path.emplace_back(XmlTagName::k_TimeNextVisible);
+              }
               else
               {
                 path.emplace_back(XmlTagName::k_Unknown);
               }
-              if (path.size() == 2 && path[0] == XmlTagName::k_QueueMessagesList
-                  && path[1] == XmlTagName::k_QueueMessage)
-              {
-                ret.Messages.emplace_back(PeekedQueueMessageFromXml(reader));
-                path.pop_back();
-              }
             }
             else if (node.Type == _internal::XmlNodeType::Text)
             {
+              if (path.size() == 3 && path[0] == XmlTagName::k_QueueMessagesList
+                  && path[1] == XmlTagName::k_QueueMessage && path[2] == XmlTagName::k_MessageId)
+              {
+                ret.MessageId = node.Value;
+              }
+              else if (
+                  path.size() == 3 && path[0] == XmlTagName::k_QueueMessagesList
+                  && path[1] == XmlTagName::k_QueueMessage
+                  && path[2] == XmlTagName::k_InsertionTime)
+              {
+                ret.InsertedOn
+                    = Azure::DateTime::Parse(node.Value, Azure::DateTime::DateFormat::Rfc1123);
+              }
+              else if (
+                  path.size() == 3 && path[0] == XmlTagName::k_QueueMessagesList
+                  && path[1] == XmlTagName::k_QueueMessage
+                  && path[2] == XmlTagName::k_ExpirationTime)
+              {
+                ret.ExpiresOn
+                    = Azure::DateTime::Parse(node.Value, Azure::DateTime::DateFormat::Rfc1123);
+              }
+              else if (
+                  path.size() == 3 && path[0] == XmlTagName::k_QueueMessagesList
+                  && path[1] == XmlTagName::k_QueueMessage && path[2] == XmlTagName::k_PopReceipt)
+              {
+                ret.PopReceipt = node.Value;
+              }
+              else if (
+                  path.size() == 3 && path[0] == XmlTagName::k_QueueMessagesList
+                  && path[1] == XmlTagName::k_QueueMessage
+                  && path[2] == XmlTagName::k_TimeNextVisible)
+              {
+                ret.NextVisibleOn
+                    = Azure::DateTime::Parse(node.Value, Azure::DateTime::DateFormat::Rfc1123);
+              }
             }
           }
           return ret;
         }
 
-        static Models::_detail::ReceiveMessagesResult ReceiveMessagesResultInternalFromXml(
-            _internal::XmlReader& reader)
+        static PeekMessagesResult PeekMessagesResultFromXml(_internal::XmlReader& reader)
         {
-          Models::_detail::ReceiveMessagesResult ret;
+          PeekMessagesResult ret;
           enum class XmlTagName
           {
             k_QueueMessagesList,
@@ -2236,18 +2263,13 @@ namespace Azure { namespace Storage { namespace Queues {
           return ret;
         }
 
-        static SendMessageResult SendMessageResultFromXml(_internal::XmlReader& reader)
+        static ReceiveMessagesResult ReceiveMessagesResultFromXml(_internal::XmlReader& reader)
         {
-          SendMessageResult ret;
+          ReceiveMessagesResult ret;
           enum class XmlTagName
           {
             k_QueueMessagesList,
             k_QueueMessage,
-            k_MessageId,
-            k_InsertionTime,
-            k_ExpirationTime,
-            k_PopReceipt,
-            k_TimeNextVisible,
             k_Unknown,
           };
           std::vector<XmlTagName> path;
@@ -2279,155 +2301,19 @@ namespace Azure { namespace Storage { namespace Queues {
               {
                 path.emplace_back(XmlTagName::k_QueueMessage);
               }
-              else if (node.Name == "MessageId")
-              {
-                path.emplace_back(XmlTagName::k_MessageId);
-              }
-              else if (node.Name == "InsertionTime")
-              {
-                path.emplace_back(XmlTagName::k_InsertionTime);
-              }
-              else if (node.Name == "ExpirationTime")
-              {
-                path.emplace_back(XmlTagName::k_ExpirationTime);
-              }
-              else if (node.Name == "PopReceipt")
-              {
-                path.emplace_back(XmlTagName::k_PopReceipt);
-              }
-              else if (node.Name == "TimeNextVisible")
-              {
-                path.emplace_back(XmlTagName::k_TimeNextVisible);
-              }
               else
               {
                 path.emplace_back(XmlTagName::k_Unknown);
               }
-            }
-            else if (node.Type == _internal::XmlNodeType::Text)
-            {
-              if (path.size() == 3 && path[0] == XmlTagName::k_QueueMessagesList
-                  && path[1] == XmlTagName::k_QueueMessage && path[2] == XmlTagName::k_MessageId)
+              if (path.size() == 2 && path[0] == XmlTagName::k_QueueMessagesList
+                  && path[1] == XmlTagName::k_QueueMessage)
               {
-                ret.MessageId = node.Value;
-              }
-              else if (
-                  path.size() == 3 && path[0] == XmlTagName::k_QueueMessagesList
-                  && path[1] == XmlTagName::k_QueueMessage
-                  && path[2] == XmlTagName::k_InsertionTime)
-              {
-                ret.InsertedOn
-                    = Azure::DateTime::Parse(node.Value, Azure::DateTime::DateFormat::Rfc1123);
-              }
-              else if (
-                  path.size() == 3 && path[0] == XmlTagName::k_QueueMessagesList
-                  && path[1] == XmlTagName::k_QueueMessage
-                  && path[2] == XmlTagName::k_ExpirationTime)
-              {
-                ret.ExpiresOn
-                    = Azure::DateTime::Parse(node.Value, Azure::DateTime::DateFormat::Rfc1123);
-              }
-              else if (
-                  path.size() == 3 && path[0] == XmlTagName::k_QueueMessagesList
-                  && path[1] == XmlTagName::k_QueueMessage && path[2] == XmlTagName::k_PopReceipt)
-              {
-                ret.PopReceipt = node.Value;
-              }
-              else if (
-                  path.size() == 3 && path[0] == XmlTagName::k_QueueMessagesList
-                  && path[1] == XmlTagName::k_QueueMessage
-                  && path[2] == XmlTagName::k_TimeNextVisible)
-              {
-                ret.NextVisibleOn
-                    = Azure::DateTime::Parse(node.Value, Azure::DateTime::DateFormat::Rfc1123);
-              }
-            }
-          }
-          return ret;
-        }
-
-        static PeekedQueueMessage PeekedQueueMessageFromXml(_internal::XmlReader& reader)
-        {
-          PeekedQueueMessage ret;
-          enum class XmlTagName
-          {
-            k_MessageText,
-            k_MessageId,
-            k_InsertionTime,
-            k_ExpirationTime,
-            k_DequeueCount,
-            k_Unknown,
-          };
-          std::vector<XmlTagName> path;
-          while (true)
-          {
-            auto node = reader.Read();
-            if (node.Type == _internal::XmlNodeType::End)
-            {
-              break;
-            }
-            else if (node.Type == _internal::XmlNodeType::EndTag)
-            {
-              if (path.size() > 0)
-              {
+                ret.Messages.emplace_back(QueueMessageFromXml(reader));
                 path.pop_back();
               }
-              else
-              {
-                break;
-              }
-            }
-            else if (node.Type == _internal::XmlNodeType::StartTag)
-            {
-              if (node.Name == "MessageText")
-              {
-                path.emplace_back(XmlTagName::k_MessageText);
-              }
-              else if (node.Name == "MessageId")
-              {
-                path.emplace_back(XmlTagName::k_MessageId);
-              }
-              else if (node.Name == "InsertionTime")
-              {
-                path.emplace_back(XmlTagName::k_InsertionTime);
-              }
-              else if (node.Name == "ExpirationTime")
-              {
-                path.emplace_back(XmlTagName::k_ExpirationTime);
-              }
-              else if (node.Name == "DequeueCount")
-              {
-                path.emplace_back(XmlTagName::k_DequeueCount);
-              }
-              else
-              {
-                path.emplace_back(XmlTagName::k_Unknown);
-              }
             }
             else if (node.Type == _internal::XmlNodeType::Text)
             {
-              if (path.size() == 1 && path[0] == XmlTagName::k_MessageText)
-              {
-                ret.Body = node.Value;
-              }
-              else if (path.size() == 1 && path[0] == XmlTagName::k_MessageId)
-              {
-                ret.MessageId = node.Value;
-              }
-              else if (path.size() == 1 && path[0] == XmlTagName::k_InsertionTime)
-              {
-                ret.InsertedOn
-                    = Azure::DateTime::Parse(node.Value, Azure::DateTime::DateFormat::Rfc1123);
-              }
-              else if (path.size() == 1 && path[0] == XmlTagName::k_ExpirationTime)
-              {
-                ret.ExpiresOn
-                    = Azure::DateTime::Parse(node.Value, Azure::DateTime::DateFormat::Rfc1123);
-              }
-              else if (path.size() == 1 && path[0] == XmlTagName::k_DequeueCount)
-              {
-                ret.DequeueCount = std::stoll(node.Value);
-              }
             }
           }
           return ret;
@@ -2628,9 +2514,9 @@ namespace Azure { namespace Storage { namespace Queues {
           return ret;
         }
 
-        static void SendMessageOptionsToXml(
+        static void EnqueueMessageOptionsToXml(
             _internal::XmlWriter& writer,
-            const SendMessageOptions& options)
+            const EnqueueMessageOptions& options)
         {
           writer.Write(_internal::XmlNode{_internal::XmlNodeType::StartTag, "QueueMessage"});
           writer.Write(_internal::XmlNode{_internal::XmlNodeType::StartTag, "MessageText"});

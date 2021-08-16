@@ -28,15 +28,24 @@ endif()
 
 set(
   AZURE_STORAGE_QUEUE_HEADER
+    inc/azure/storage/queues.hpp
     inc/azure/storage/queues/dll_import_export.hpp
     inc/azure/storage/queues/protocol/queue_rest_client.hpp
-    inc/azure/storage/queues.hpp
+    inc/azure/storage/queues/queue_client.hpp
+    inc/azure/storage/queues/queue_options.hpp
+    inc/azure/storage/queues/queue_responses.hpp
+    inc/azure/storage/queues/queue_sas_builder.hpp
+    inc/azure/storage/queues/queue_service_client.hpp
 )
 
 set(
   AZURE_STORAGE_QUEUE_SOURCE
     src/private/package_version.hpp
+    src/queue_client.cpp
+    src/queue_responses.cpp
     src/queue_rest_client.cpp
+    src/queue_sas_builder.cpp
+    src/queue_service_client.cpp
 )
 
 add_library(azure-storage-queues ${AZURE_STORAGE_QUEUE_HEADER} ${AZURE_STORAGE_QUEUE_SOURCE})
@@ -70,6 +79,11 @@ if(BUILD_TESTING)
     azure-storage-test
       PRIVATE
         test/ut/macro_guard.cpp
+        test/ut/queue_client_messages_test.cpp
+        test/ut/queue_client_test.cpp
+        test/ut/queue_client_test.hpp
+        test/ut/queue_sas_test.cpp
+        test/ut/queue_service_client_test.cpp
   )
 
   target_link_libraries(azure-storage-test PRIVATE azure-storage-queues)
