@@ -20,6 +20,9 @@ parameters:
   - name: CoverageReportPath
     type: string
     default: 'sdk/*/*/*cov_xml.xml'
+  - name: FailOnSpellingErrors
+    type: boolean
+    default: false
 
 jobs:
 - job: Validate
@@ -240,6 +243,8 @@ jobs:
       VCPKG_DEFAULT_TRIPLET: 'x64-windows-static'
     steps:
       - template: /eng/common/pipelines/templates/steps/check-spelling.yml
+        parameters:
+          ContinueOnError: ${ not(parameters.FailOnSpellingErrors) }
 
       - template: /eng/common/pipelines/templates/steps/verify-links.yml
         parameters:
