@@ -16,6 +16,7 @@ namespace Azure { namespace Storage {
     struct BlobSasBuilder;
     struct ShareSasBuilder;
     struct DataLakeSasBuilder;
+    struct QueueSasBuilder;
   } // namespace Sas
 
   namespace _internal {
@@ -62,6 +63,7 @@ namespace Azure { namespace Storage {
     friend struct Sas::BlobSasBuilder;
     friend struct Sas::ShareSasBuilder;
     friend struct Sas::DataLakeSasBuilder;
+    friend struct Sas::QueueSasBuilder;
     friend struct Sas::AccountSasBuilder;
     std::string GetAccountKey() const
     {

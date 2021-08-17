@@ -9,9 +9,8 @@
 #include "azure/keyvault/secrets/keyvault_operations.hpp"
 #include "azure/keyvault/secrets/secret_client.hpp"
 #include "private/secret_serializers.hpp"
-// RestoreDeletedSecretOperation
 
-Azure::Response<Secret> RestoreDeletedSecretOperation::PollUntilDoneInternal(
+Azure::Response<Secret> RecoverDeletedSecretOperation::PollUntilDoneInternal(
     std::chrono::milliseconds period,
     Azure::Core::Context& context)
 {
@@ -30,46 +29,44 @@ Azure::Response<Secret> RestoreDeletedSecretOperation::PollUntilDoneInternal(
       m_value, std::make_unique<Azure::Core::Http::RawResponse>(*m_rawResponse));
 }
 
-std::unique_ptr<Azure::Core::Http::RawResponse> RestoreDeletedSecretOperation::PollInternal(
+std::unique_ptr<Azure::Core::Http::RawResponse> RecoverDeletedSecretOperation::PollInternal(
     Azure::Core::Context const& context)
 {
   std::unique_ptr<Azure::Core::Http::RawResponse> rawResponse;
-  if (IsDone())
+
+  try
   {
-    try
-    {
-      rawResponse
-          = m_secretClient->GetSecret(m_value.Name, GetSecretOptions(), context).RawResponse;
-    }
-    catch (Azure::Core::RequestFailedException& error)
-    {
-      rawResponse = std::move(error.RawResponse);
-    }
-
-    switch (rawResponse->GetStatusCode())
-    {
-      case Azure::Core::Http::HttpStatusCode::Ok:
-      case Azure::Core::Http::HttpStatusCode::Forbidden: {
-        m_status = Azure::Core::OperationStatus::Succeeded;
-        break;
-      }
-      case Azure::Core::Http::HttpStatusCode::NotFound: {
-        m_status = Azure::Core::OperationStatus::Running;
-        break;
-      }
-      default:
-        throw Azure::Core::RequestFailedException(rawResponse);
-    }
-
-    if (m_status == Azure::Core::OperationStatus::Succeeded)
-    {
-      m_value = _detail::SecretSerializer::Deserialize(m_value.Name, *rawResponse);
-    }
+    rawResponse = m_secretClient->GetSecret(m_value.Name, GetSecretOptions(), context).RawResponse;
   }
+  catch (Azure::Core::RequestFailedException& error)
+  {
+    rawResponse = std::move(error.RawResponse);
+  }
+
+  switch (rawResponse->GetStatusCode())
+  {
+    case Azure::Core::Http::HttpStatusCode::Ok:
+    case Azure::Core::Http::HttpStatusCode::Forbidden: {
+      m_status = Azure::Core::OperationStatus::Succeeded;
+      break;
+    }
+    case Azure::Core::Http::HttpStatusCode::NotFound: {
+      m_status = Azure::Core::OperationStatus::Running;
+      break;
+    }
+    default:
+      throw Azure::Core::RequestFailedException(rawResponse);
+  }
+
+  if (m_status == Azure::Core::OperationStatus::Succeeded)
+  {
+    m_value = _detail::SecretSerializer::Deserialize(m_value.Name, *rawResponse);
+  }
+
   return rawResponse;
 }
 
-RestoreDeletedSecretOperation::RestoreDeletedSecretOperation(
+RecoverDeletedSecretOperation::RecoverDeletedSecretOperation(
     std::shared_ptr<SecretClient> secretClient,
     Azure::Response<Secret> response)
     : m_secretClient(secretClient)
@@ -86,7 +83,7 @@ RestoreDeletedSecretOperation::RestoreDeletedSecretOperation(
   }
 }
 
-RestoreDeletedSecretOperation::RestoreDeletedSecretOperation(
+RecoverDeletedSecretOperation::RecoverDeletedSecretOperation(
     std::string resumeToken,
     std::shared_ptr<SecretClient> secretClient)
     : m_secretClient(secretClient), m_continuationToken(std::move(resumeToken))
@@ -94,16 +91,16 @@ RestoreDeletedSecretOperation::RestoreDeletedSecretOperation(
   m_value.Name = resumeToken;
 }
 
-RestoreDeletedSecretOperation RestoreDeletedSecretOperation::CreateFromResumeToken(
+RecoverDeletedSecretOperation RecoverDeletedSecretOperation::CreateFromResumeToken(
     std::string const& resumeToken,
     SecretClient const& client,
     Azure::Core::Context const& context)
 {
-  RestoreDeletedSecretOperation operation(resumeToken, std::make_shared<SecretClient>(client));
+  RecoverDeletedSecretOperation operation(resumeToken, std::make_shared<SecretClient>(client));
   operation.Poll(context);
   return operation;
 }
-// DeleteSecretOperation
+
 Azure::Response<DeletedSecret> DeleteSecretOperation::PollUntilDoneInternal(
     std::chrono::milliseconds period,
     Azure::Core::Context& context)
@@ -126,36 +123,34 @@ std::unique_ptr<Azure::Core::Http::RawResponse> DeleteSecretOperation::PollInter
     Azure::Core::Context const& context)
 {
   std::unique_ptr<Azure::Core::Http::RawResponse> rawResponse;
-  if (!IsDone())
+
+  try
   {
-    try
-    {
-      rawResponse = m_secretClient->GetDeletedSecret(m_value.Name, context).RawResponse;
-    }
-    catch (Azure::Core::RequestFailedException& error)
-    {
-      rawResponse = std::move(error.RawResponse);
-    }
+    rawResponse = m_secretClient->GetDeletedSecret(m_value.Name, context).RawResponse;
+  }
+  catch (Azure::Core::RequestFailedException& error)
+  {
+    rawResponse = std::move(error.RawResponse);
+  }
 
-    switch (rawResponse->GetStatusCode())
-    {
-      case Azure::Core::Http::HttpStatusCode::Ok:
-      case Azure::Core::Http::HttpStatusCode::Forbidden: {
-        m_status = Azure::Core::OperationStatus::Succeeded;
-        break;
-      }
-      case Azure::Core::Http::HttpStatusCode::NotFound: {
-        m_status = Azure::Core::OperationStatus::Running;
-        break;
-      }
-      default:
-        throw Azure::Core::RequestFailedException(rawResponse);
+  switch (rawResponse->GetStatusCode())
+  {
+    case Azure::Core::Http::HttpStatusCode::Ok:
+    case Azure::Core::Http::HttpStatusCode::Forbidden: {
+      m_status = Azure::Core::OperationStatus::Succeeded;
+      break;
     }
+    case Azure::Core::Http::HttpStatusCode::NotFound: {
+      m_status = Azure::Core::OperationStatus::Running;
+      break;
+    }
+    default:
+      throw Azure::Core::RequestFailedException(rawResponse);
+  }
 
-    if (m_status == Azure::Core::OperationStatus::Succeeded)
-    {
-      m_value = _detail::DeletedSecretSerializer::Deserialize(m_value.Name, *rawResponse);
-    }
+  if (m_status == Azure::Core::OperationStatus::Succeeded)
+  {
+    m_value = _detail::DeletedSecretSerializer::Deserialize(m_value.Name, *rawResponse);
   }
   return rawResponse;
 }

@@ -350,6 +350,7 @@ DeletedSecretPagedResponse DeletedSecretPagedResultSerializer::Deserialize(
     DeletedSecret item;
     item.Id = secretProperties[_detail::IdPropertyName].get<std::string>();
     _detail::SecretSerializer::ParseIDUrl(item.Properties, item.Id);
+    item.Name = item.Properties.Name;
     // Parse URL for the various attributes
     if (secretProperties.contains(_detail::AttributesPropertyName))
     {
