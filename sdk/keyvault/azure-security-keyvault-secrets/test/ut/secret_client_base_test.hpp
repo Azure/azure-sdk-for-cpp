@@ -8,8 +8,8 @@
  */
 #include <gtest/gtest.h>
 
-#include <azure/keyvault/keyvault_secrets.hpp>
 #include <azure/core/test/test_base.hpp>
+#include <azure/keyvault/keyvault_secrets.hpp>
 
 namespace Azure { namespace Security { namespace KeyVault { namespace Secrets { namespace _test {
 
@@ -21,13 +21,13 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets { 
     {
 #if defined(_MSC_VER)
 #pragma warning(push)
-#pragma warning(disable:4996)
+#pragma warning(disable : 4996)
       const char* ret = std::getenv(name.data());
 #pragma warning(pop)
-#elif
+#else
       const char* ret = std::getenv(name.data());
 #endif
-      
+
       if (!ret)
       {
         if (defaultValue.size() > 0)
@@ -75,7 +75,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets { 
 
 #if defined(_MSC_VER)
       _putenv_s("AZURE_TEST_MODE", testModeValue.c_str());
-#elif
+#else
       std::setenv("AZURE_TEST_MODE", testModeValue.c_str(), 1);
 #endif
       InitializeClient();
