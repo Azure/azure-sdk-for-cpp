@@ -24,7 +24,7 @@
 namespace Azure { namespace Security { namespace KeyVault { namespace Secrets { namespace _test {
 
   class KeyVaultSecretClientTest : public Azure::Core::Test::TestBase,
-                             public ::testing::WithParamInterface<int> {
+                                   public ::testing::WithParamInterface<int> {
   private:
     std::unique_ptr<Azure::Security::KeyVault::Secrets::SecretClient> m_client;
     std::string GetEnv(const std::string& name, std::string const& defaultValue = std::string())
@@ -89,7 +89,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets { 
     }
 
     // Create
-    void InitializeClient() 
+    void InitializeClient()
     {
       // Init interceptor from PlayBackRecorder
       std::string recordingPath(AZURE_TEST_RECORDING_DIR);
@@ -150,9 +150,9 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets { 
 
     static inline std::string GetUniqueName() { return Azure::Core::Uuid::CreateUuid().ToString(); }
 
-     static inline void CleanUpKeyVault(SecretClient const& secretClient)
+    static inline void CleanUpKeyVault(SecretClient const& secretClient)
     {
-      
+
       std::vector<DeletedSecret> deletedSecrets;
       for (auto secretResponse = secretClient.GetDeletedSecrets(); secretResponse.HasPage();
            secretResponse.MoveToNextPage())
@@ -173,9 +173,11 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets { 
       }
     }
 
-    static inline void RemoveAllSecretsFromVault(SecretClient const& secretClient, bool waitForPurge = true)
+    static inline void RemoveAllSecretsFromVault(
+        SecretClient const& secretClient,
+        bool waitForPurge = true)
     {
-       std::vector<DeleteSecretOperation> deletedSecrets;
+      std::vector<DeleteSecretOperation> deletedSecrets;
       GetPropertiesOfSecretsOptions options;
       for (auto secretResponse = secretClient.GetPropertiesOfSecrets(); secretResponse.HasPage();
            secretResponse.MoveToNextPage())
@@ -205,4 +207,4 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets { 
       }
     }
   };
-}}}}} // namespace Azure::Security::KeyVault::Secrets::Test
+}}}}} // namespace Azure::Security::KeyVault::Secrets::_test
