@@ -4,13 +4,14 @@
 #include "azure/core/context.hpp"
 #include "azure/identity/client_secret_credential.hpp"
 #include "azure/keyvault/secrets/secret_client.hpp"
-
+#include "secret_client_base_test.hpp"
+#include <stdlib.h>
 #include <exception>
 #include <gtest/gtest.h>
 #include <memory>
 
 using namespace Azure::Security::KeyVault::Secrets;
-
+using namespace Azure::Security::KeyVault::Secrets::_test;
 TEST(SecretClient, InitClient)
 {
   auto credential
@@ -40,5 +41,31 @@ TEST(SecretClient, ServiceVersion)
     EXPECT_NO_THROW(auto options = SecretClientOptions(ServiceVersion("1.0"));
                     SecretClient secretClient("vaultUrl", credential, options);
                     EXPECT_EQ(options.Version.ToString(), "1.0"););
+  }
+}
+
+TEST_F(KeyVaultSecretClientTest, FirstCreateTest)
+{
+  auto secretName = "CreateSecretWithThisName";
+  auto const& client
+      = GetClientForTest(::testing::UnitTest::GetInstance()->current_test_info()->name(), Azure::Core::Test::TestMode::RECORD);
+
+  {
+    auto secretResponse = client.SetSecret(secretName, "secretValue");
+    CheckValidResponse(secretResponse);
+    auto secret = secretResponse.Value;
+    EXPECT_EQ(secret.Name, secretName);
+  }
+  {
+    // Now get the key
+    auto secretResponse = client.GetSecret(secretName);
+    CheckValidResponse(secretResponse);
+    auto secret = secretResponse.Value;
+    EXPECT_EQ(secret.Name, secretName);
+  }
+  {
+    // Now get the key
+    auto secretResponse = client.StartDeleteSecret(secretName);
+    
   }
 }
