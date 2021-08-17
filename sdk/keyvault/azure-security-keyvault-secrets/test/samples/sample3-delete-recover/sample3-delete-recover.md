@@ -1,12 +1,12 @@
 # Delete and recover deleted secrets
 
-This sample demonstrates how to delete and recover a deleted secret in Azure Key Vault.
+This sample demonstrates how to delete and recover a deleted secret in Azure KeyVault.
 
 ## Creating a SecretClient
 
-To create a new `SecretClient` to create, get, update, or delete secrets, you need the endpoint to an Azure Key Vault and credentials.
+To create a new `SecretClient` to create, get, update, or delete secrets, you need the endpoint to an Azure KeyVault and credentials.
 
-Key Vault Secrets client for C++ currently supports the `ClientSecretCredential` for authenticating.
+KeyVault Secrets client for C++ currently supports the `ClientSecretCredential` for authenticating.
 
 In the sample below, you can create a credential by setting the Tenant ID, Client ID and Client Secret as environment variables.
 

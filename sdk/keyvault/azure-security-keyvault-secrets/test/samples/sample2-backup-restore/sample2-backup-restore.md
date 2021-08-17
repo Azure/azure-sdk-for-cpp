@@ -1,13 +1,13 @@
 # Backup and Restore secrets
 
-This sample demonstrates how to backup and restore in Azure Key Vault.
-To get started, you'll need a URI to an Azure Key Vault. 
+This sample demonstrates how to backup and restore in Azure KeyVault.
+To get started, you'll need a URI to an Azure KeyVault.
 
 ## Creating a SecretClient
 
-To create a new `SecretClient` to create, get, update, or delete secrets, you need the endpoint to an Azure Key Vault and credentials.
+To create a new `SecretClient` to create, get, update, or delete secrets, you need the endpoint to an Azure KeyVault and credentials.
 
-Key Vault Secrets client for C++ currently supports the `ClientSecretCredential` for authenticating.
+KeyVault Secrets client for C++ currently supports the `ClientSecretCredential` for authenticating.
 
 In the sample below, you can create a credential by setting the Tenant ID, Client ID and Client Secret as environment variables.
 
@@ -48,13 +48,13 @@ std::cout << "Secret is returned with name " << secret.Name << " and value " << 
 
 ## Creating a Backup for the secret properties
 
-In order to get the backup of the secret we need to call BackupSecret, which will return a vector of bytes representing the backed up content. 
+In order to get the backup of the secret we need to call BackupSecret, which will return a vector of bytes representing the backed up content.
 
 
 ```cpp Snippet:SecretSample2BackupSecret
-std::cout << "\t-Backup Key" << std::endl;
-std::vector<uint8_t> backupKey(secretClient.BackupSecret(secret.Name).Value.Secret);
-backUpSize = backupKey.size();
+std::cout << "\t-Backup secret" << std::endl;
+std::vector<uint8_t> backupSecret(secretClient.BackupSecret(secret.Name).Value.Secret);
+backUpSize = backupSecret.size();
 ```
 
 ## Deleting the secret in order to later restore it
@@ -66,9 +66,9 @@ The secret is no longer needed so we need to delete it.
 DeleteSecretOperation operation = secretClient.StartDeleteSecret(secret.Name);
 ```
 
-## Purging a deleted key
+## Purging a deleted secret
 
-If the Azure Key Vault is soft delete-enabled and you want to permanently delete the secret before its `ScheduledPurgeDate`, the secret needs to be purged.
+If the Azure KeyVault is soft delete-enabled and you want to permanently delete the secret before its `ScheduledPurgeDate`, the secret needs to be purged.
 
 ```cpp Snippet:SecretSample2PurgeSecret
 // You only need to wait for completion if you want to purge or recover the secret.
@@ -78,12 +78,12 @@ operation.PollUntilDone(2s);
 secretClient.PurgeDeletedSecret(secret.Name);
 ```
 
-## Restoring a secret 
+## Restoring a secret
 
 In order to restore a secret we need to call RestoreSecretBackup api passing in the byte vector obtained at the previous(backup) step.
 
 ```cpp Snippet:SecretSample2RestoreSecret
-std::cout << "\t-Restore Key" << std::endl;
+std::cout << "\t-Restore Secret" << std::endl;
 auto restoredSecret = secretClient.RestoreSecretBackup(inMemoryBackup).Value;
 ```
 

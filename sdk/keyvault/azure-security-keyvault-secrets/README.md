@@ -25,27 +25,27 @@ az keyvault create --resource-group <your-resource-group-name> --name <your-key-
 
 ## Key concepts
 
+### KeyVaultSecret
+A `Secret` is the fundamental resource within Azure Key Vault. From a developer's perspective, Azure Key Vault APIs accept and return secret values as strings.
+
 ### SecretClient
 `SecretClient` provides synchronous operations exists in the SDK. Once you've initialized a `SecretClient`, you can interact with the primary resource types in Azure Key Vault.
 
 ### Thread safety
-
 We guarantee that all client instance methods are thread-safe and independent of each other ([guideline](https://azure.github.io/azure-sdk/cpp_introduction.html#thread-safety)). This ensures that the recommendation of reusing client instances is always safe, even across threads.
 
 ### Additional concepts
 
 <!-- CLIENT COMMON BAR -->
-
 [Replaceable HTTP transport adapter](https://github.com/Azure/azure-sdk-for-cpp/tree/main/sdk/core/azure-core#http-transport-adapter) |
 [Long-running operations](https://github.com/Azure/azure-sdk-for-cpp/tree/main/sdk/core/azure-core#long-running-operations) |
-
 <!-- CLIENT COMMON BAR -->
 
 ## Examples
 
-For detailed samples please review the samples provided. 
+For detailed samples please review the samples provided.
 
-### Create a client 
+### Create a client
 
 First step is to create  a SecretClient.
 
@@ -55,8 +55,8 @@ auto clientId = std::getenv("AZURE_CLIENT_ID");
 auto clientSecret = std::getenv("AZURE_CLIENT_SECRET");
 auto credential = std::make_shared<Azure::Identity::ClientSecretCredential>(tenantId, clientId, clientSecret);
 
- // create client
-  SecretClient secretClient(std::getenv("AZURE_KEYVAULT_URL"), credential);
+// create client
+SecretClient secretClient(std::getenv("AZURE_KEYVAULT_URL"), credential);
 ```
 
 ### Create a secret
@@ -157,21 +157,21 @@ You will notice that additional information is logged, like the client request I
 
 Several Azure Key Vault secrets client library samples are available to you in this GitHub repository. These samples provide example code for additional scenarios commonly encountered while working with Azure Key Vault:
 
-* Sample1-Basic-Operations:
+* [Sample1-Basic-Operations](https://github.com/Azure/azure-sdk-for-cpp/tree/main/sdk/keyvault/azure-security-keyvault-secrets/test/samples/sample1-basic-operations):
   * Create a secret
   * Get a secret
   * Update a secret
   * Delete and Purge a secret
 
-* Sample2-Backup-Restore
+* [Sample2-Backup-Restore](https://github.com/Azure/azure-sdk-for-cpp/tree/main/sdk/keyvault/azure-security-keyvault-secrets/test/samples/sample2-backup-restore):
   * Backup a secret
   * Restore a deleted secret
 
-* Sample3-Delete-Recover
+* [Sample3-Delete-Recover](https://github.com/Azure/azure-sdk-for-cpp/tree/main/sdk/keyvault/azure-security-keyvault-secrets/test/samples/sample3-delete-recover):
   * Delete a secret
   * Recover a deleted Secret
 
-* Sample4-Get-Secrets-Deleted
+* [Sample4-Get-Secrets-Deleted](https://github.com/Azure/azure-sdk-for-cpp/tree/main/sdk/keyvault/azure-security-keyvault-secrets/test/samples/sample4-get-secrets-deleted):
   * List all secrets
   * List all of a secrets versions
   * List all deletes secrets
@@ -214,10 +214,4 @@ Azure SDK for C++ is licensed under the [MIT](https://github.com/Azure/azure-sdk
 [azure_sdk_for_cpp_contributing_developer_guide]: https://github.com/Azure/azure-sdk-for-cpp/blob/main/CONTRIBUTING.md#developer-guide
 [azure_sdk_for_cpp_contributing_pull_requests]: https://github.com/Azure/azure-sdk-for-cpp/blob/main/CONTRIBUTING.md#pull-requests
 [azure_cli]: https://docs.microsoft.com/cli/azure
-[azure_pattern_circuit_breaker]: https://docs.microsoft.com/azure/architecture/patterns/circuit-breaker
-[azure_pattern_retry]: https://docs.microsoft.com/azure/architecture/patterns/retry
-[azure_portal]: https://portal.azure.com
 [azure_sub]: https://azure.microsoft.com/free/
-[c_compiler]: https://visualstudio.microsoft.com/vs/features/cplusplus/
-[cloud_shell]: https://docs.microsoft.com/azure/cloud-shell/overview
-[cloud_shell_bash]: https://shell.azure.com/bash

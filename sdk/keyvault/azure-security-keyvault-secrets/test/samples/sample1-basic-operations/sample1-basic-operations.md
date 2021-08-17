@@ -1,13 +1,13 @@
 # Creating, getting, updating, and deleting secrets
 
-This sample demonstrates how to create, get, update, and delete and purge a secret in Azure Key Vault.
-To get started, you'll need a URI to an Azure Key Vault. 
+This sample demonstrates how to create, get, update, and delete and purge a secret in Azure KeyVault.
+To get started, you'll need a URI to an Azure KeyVault.
 
 ## Creating a SecretClient
 
-To create a new `SecretClient` to create, get, update, or delete secrets, you need the endpoint to an Azure Key Vault and credentials.
+To create a new `SecretClient` to create, get, update, or delete secrets, you need the endpoint to an Azure KeyVault and credentials.
 
-Key Vault Secrets client for C++ currently supports the `ClientSecretCredential` for authenticating.
+KeyVault Secrets client for C++ currently supports the `ClientSecretCredential` for authenticating.
 
 In the sample below, you can create a credential by setting the Tenant ID, Client ID and Client Secret as environment variables.
 
@@ -70,9 +70,9 @@ The secret is no longer needed so we need to delete it.
 DeleteSecretOperation operation = secretClient.StartDeleteSecret(secret.Name);
 ```
 
-## Purging a deleted key
+## Purging a deleted secret
 
-If the Azure Key Vault is soft delete-enabled and you want to permanently delete the secret before its `ScheduledPurgeDate`, the secret needs to be purged.
+If the Azure KeyVault is soft delete-enabled and you want to permanently delete the secret before its `ScheduledPurgeDate`, the secret needs to be purged.
 
 ```cpp Snippet:SecretSample1PurgeSecret
 // You only need to wait for completion if you want to purge or recover the secret.
