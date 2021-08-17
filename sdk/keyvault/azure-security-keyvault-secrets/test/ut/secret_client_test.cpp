@@ -1,15 +1,9 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
 
-#include "azure/core/context.hpp"
 #include "azure/identity/client_secret_credential.hpp"
-#include "azure/keyvault/secrets/secret_client.hpp"
 #include "secret_client_base_test.hpp"
-#include <chrono>
-#include <exception>
 #include <gtest/gtest.h>
-#include <memory>
-#include <stdlib.h>
 
 using namespace std::chrono_literals;
 using namespace Azure::Security::KeyVault::Secrets;

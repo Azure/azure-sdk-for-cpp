@@ -6,20 +6,10 @@
  * @brief The base class to construct and init a Key Vault client.
  *
  */
-
 #include <gtest/gtest.h>
 
-#include <azure/core/context.hpp>
-#include <azure/core/uuid.hpp>
-#include <azure/identity/client_secret_credential.hpp>
 #include <azure/keyvault/keyvault_secrets.hpp>
-
 #include <azure/core/test/test_base.hpp>
-
-#include <chrono>
-#include <cstdio>
-#include <iostream>
-#include <thread>
 
 namespace Azure { namespace Security { namespace KeyVault { namespace Secrets { namespace _test {
 
@@ -29,9 +19,15 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets { 
     std::unique_ptr<Azure::Security::KeyVault::Secrets::SecretClient> m_client;
     std::string GetEnv(const std::string& name, std::string const& defaultValue = std::string())
     {
-#pragma warning(disable : 4996) // for _CRT_SECURE_NO_WARNINGS
+#if defined(_MSC_VER)
+#pragma warning(push)
+#pragma warning(disable:4996)
       const char* ret = std::getenv(name.data());
-#pragma warning(default : 4996) // for _CRT_SECURE_NO_WARNINGS
+#pragma warning(pop)
+#elif
+      const char* ret = std::getenv(name.data());
+#endif
+      
       if (!ret)
       {
         if (defaultValue.size() > 0)

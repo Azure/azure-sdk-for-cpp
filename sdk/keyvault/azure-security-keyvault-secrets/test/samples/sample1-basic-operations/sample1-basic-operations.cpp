@@ -12,7 +12,6 @@
  * - AZURE_CLIENT_SECRET: The client secret.
  *
  */
-
 #if defined(_MSC_VER)
 #define _CRT_SECURE_NO_WARNINGS
 #endif
