@@ -8,6 +8,8 @@
 
 ### Bugs Fixed
 
+- [2750](https://github.com/Azure/azure-sdk-for-cpp/issues/2750) Support for Azure managedhsm cloud and any other non public Azure cloud.
+
 ### Other Changes
 
 ## 4.0.0 (2021-08-10)

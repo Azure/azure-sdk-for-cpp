@@ -418,6 +418,53 @@ namespace Azure { namespace Core { namespace Http { namespace Policies {
     };
 
     /**
+     * @brief Helper class for creating scopes for the token request context.
+     *
+     */
+    struct TokenScopes
+    {
+      /**
+       * @brief Parses url and generates a scope from it.
+       *
+       * @details For example, from a url like: `https://<account>.<service>.azure.net` the
+       * generated scope is in the form of: `https://<service>.azure.net/.default`
+       *
+       * @param url The url used to create an Azure SDK client.
+       * @param defaultScope Optional hardcoded scope to be always added to the result scopes. It
+       * won't be added if it is equal to the calculated scope from the url.
+       * @return A vector with the calculated scopes plus any default scope provided.
+       */
+      static std::vector<std::string> GetScopeFromUrl(
+          Azure::Core::Url const& url,
+          std::string const& defaultScope = "")
+      {
+        std::vector<std::string> scopes;
+
+        std::string calculatedScope(url.GetScheme() + "://");
+        auto const& hostWithAccount = url.GetHost();
+        auto hostNoAccountStart = std::find(hostWithAccount.begin(), hostWithAccount.end(), '.');
+        if (hostNoAccountStart == hostWithAccount.end())
+        {
+          throw std::invalid_argument(
+              "Can't get the scope from the provided url: " + url.GetAbsoluteUrl());
+        }
+        std::string hostNoAccount(hostNoAccountStart + 1, hostWithAccount.end());
+
+        calculatedScope.append(hostNoAccount);
+        calculatedScope.append("/.default");
+
+        scopes.emplace_back(calculatedScope);
+
+        if (!defaultScope.empty() && defaultScope != calculatedScope)
+        {
+          scopes.emplace_back(defaultScope);
+        }
+
+        return scopes;
+      }
+    };
+
+    /**
      * @brief Bearer Token authentication policy.
      *
      */

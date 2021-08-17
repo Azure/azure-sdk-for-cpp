@@ -60,18 +60,19 @@ SecretClient::SecretClient(
     SecretClientOptions options)
 {
   auto apiVersion = options.Version.ToString();
+  Azure::Core::Url url(vaultUrl);
 
   std::vector<std::unique_ptr<HttpPolicy>> perRetrypolicies;
   {
     Azure::Core::Credentials::TokenRequestContext const tokenContext
-        = {{"https://vault.azure.net/.default"}};
+        = {TokenScopes::GetScopeFromUrl(url, "https://vault.azure.net/.default")};
 
     perRetrypolicies.emplace_back(
         std::make_unique<BearerTokenAuthenticationPolicy>(credential, tokenContext));
   }
 
   m_protocolClient = std::make_shared<Azure::Security::KeyVault::_detail::KeyVaultProtocolClient>(
-      Azure::Core::Url(vaultUrl),
+      std::move(url),
       apiVersion,
       Azure::Core::Http::_internal::HttpPipeline(
           options, TelemetryName, apiVersion, std::move(perRetrypolicies), {}));

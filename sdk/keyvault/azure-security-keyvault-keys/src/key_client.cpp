@@ -68,19 +68,13 @@ KeyClient::KeyClient(
 {
   auto apiVersion = options.Version.ToString();
 
-  std::vector<std::unique_ptr<HttpPolicy>> perRetrypoliciesOld;
-  {
-    Azure::Core::Credentials::TokenRequestContext const tokenContext = {{TokenContextValue}};
-
-    perRetrypoliciesOld.emplace_back(
-        std::make_unique<BearerTokenAuthenticationPolicy>(credential, tokenContext));
-  }
   std::vector<std::unique_ptr<HttpPolicy>> perRetrypolicies;
   {
-    Azure::Core::Credentials::TokenRequestContext const tokenContext = {{TokenContextValue}};
+    Azure::Core::Credentials::TokenRequestContext const tokenContext
+        = {TokenScopes::GetScopeFromUrl(m_vaultUrl, TokenContextValue)};
 
     perRetrypolicies.emplace_back(
-        std::make_unique<BearerTokenAuthenticationPolicy>(credential, tokenContext));
+        std::make_unique<BearerTokenAuthenticationPolicy>(credential, std::move(tokenContext)));
   }
   std::vector<std::unique_ptr<HttpPolicy>> perCallpolicies;
 

@@ -74,6 +74,7 @@ add_executable (
     transport_adapter_base_test.cpp
     transport_adapter_base_test.hpp
     transport_adapter_implementation_test.cpp
+    token_scopes_test.cpp
     url_test.cpp
     uuid_test.cpp
     exception_test.cpp
