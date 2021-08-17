@@ -427,7 +427,11 @@ namespace Azure { namespace Core { namespace Http { namespace Policies {
        * @brief Parses url and generates a scope from it.
        *
        * @details For example, from a url like: `https://<account>.<service>.azure.net` the
-       * generated scope is in the form of: `https://<service>.azure.net/.default`
+       * generated scope is in the form of: `https://<service>.azure.net/.default`.
+       *
+       * @remark As per Azure rules, the account for any service  name must only contain
+       * alphanumeric characters and dashes and cannot start with a number. This allow this method
+       * to calculate the scope after the first `.` from the url host.
        *
        * @param url The url used to create an Azure SDK client.
        * @param defaultScope Optional hardcoded scope to be always added to the result scopes. It
