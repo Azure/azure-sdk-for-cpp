@@ -150,7 +150,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets { 
 
     static inline std::string GetUniqueName() { return Azure::Core::Uuid::CreateUuid().ToString(); }
 
-    /* static inline void CleanUpKeyVault(SecretClient const& secretClient)
+     static inline void CleanUpKeyVault(SecretClient const& secretClient)
     {
       
       std::vector<DeletedSecret> deletedSecrets;
@@ -171,9 +171,9 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets { 
         // Wait for purge is completed
         std::this_thread::sleep_for(std::chrono::minutes(1));
       }
-    }*/
+    }
 
-   /* static inline void RemoveAllSecretsFromVault(SecretClient const& secretClient, bool waitForPurge = true)
+    static inline void RemoveAllSecretsFromVault(SecretClient const& secretClient, bool waitForPurge = true)
     {
        std::vector<DeleteSecretOperation> deletedSecrets;
       GetPropertiesOfSecretsOptions options;
@@ -203,6 +203,6 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets { 
           std::this_thread::sleep_for(std::chrono::minutes(1));
         }
       }
-    }*/
+    }
   };
 }}}}} // namespace Azure::Security::KeyVault::Secrets::Test
