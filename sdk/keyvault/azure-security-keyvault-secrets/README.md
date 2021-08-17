@@ -1,4 +1,3 @@
-#to be edited to something more useful before first release
 # Azure Security Keyvault Secrets Package client library for C++
 
 Azure Security Keyvault Secrets Package client library for C++ (`azure-security-keyvault-secrets`)  matches necessary patterns that the development team has established to create a unified SDK written in the C++ programming language. These libraries follow the Azure SDK Design Guidelines for C++.
@@ -7,23 +6,176 @@ The library allows client libraries to expose common functionality in a consiste
 
 ## Getting started
 
-For a rich example of a well formatted readme, please check [here.](https://github.com/Azure/azure-sdk/blob/main/docs/policies/README-TEMPLATE.md) In addition, this is an [example readme](https://github.com/Azure/azure-sdk/blob/main/docs/policies/README-EXAMPLE.md) that should be emulated. Note that the top-level sections in this template align with that of the [template.](https://github.com/Azure/azure-sdk/blob/main/docs/policies/README-TEMPLATE.md)
+### Install the package
+Install the Azure Key Vault secrets client library for C++ with vcpkg:
 
-# Key concepts
+```cmd
+vcpkg install azure-security-keyvault-secrets-cpp
+```
 
-Bullet point list of your library's main concepts.
+### Prerequisites
+* An [Azure subscription][azure_sub].
+* An existing Azure Key Vault. If you need to create an Azure Key Vault, you can use the Azure Portal or [Azure CLI][azure_cli].
 
-# Examples
+If you use the Azure CLI, replace `<your-resource-group-name>` and `<your-key-vault-name>` with your own, unique names:
 
-Examples of some of the key concepts for your library.
+```PowerShell
+az keyvault create --resource-group <your-resource-group-name> --name <your-key-vault-name>
+```
 
-# Troubleshooting
+## Key concepts
 
-Running into issues? This section should contain details as to what to do there.
+### SecretClient
+`SecretClient` provides synchronous operations exists in the SDK. Once you've initialized a `SecretClient`, you can interact with the primary resource types in Azure Key Vault.
+
+### Thread safety
+
+We guarantee that all client instance methods are thread-safe and independent of each other ([guideline](https://azure.github.io/azure-sdk/cpp_introduction.html#thread-safety)). This ensures that the recommendation of reusing client instances is always safe, even across threads.
+
+### Additional concepts
+
+<!-- CLIENT COMMON BAR -->
+
+[Replaceable HTTP transport adapter](https://github.com/Azure/azure-sdk-for-cpp/tree/main/sdk/core/azure-core#http-transport-adapter) |
+[Long-running operations](https://github.com/Azure/azure-sdk-for-cpp/tree/main/sdk/core/azure-core#long-running-operations) |
+
+<!-- CLIENT COMMON BAR -->
+
+## Examples
+
+For detailed samples please review the samples provided. 
+
+### Create a client 
+
+First step is to create  a SecretClient.
+
+```cpp Snippet:SecretSample1CreateCredential
+auto tenantId = std::getenv("AZURE_TENANT_ID");
+auto clientId = std::getenv("AZURE_CLIENT_ID");
+auto clientSecret = std::getenv("AZURE_CLIENT_SECRET");
+auto credential = std::make_shared<Azure::Identity::ClientSecretCredential>(tenantId, clientId, clientSecret);
+
+ // create client
+  SecretClient secretClient(std::getenv("AZURE_KEYVAULT_URL"), credential);
+```
+
+### Create a secret
+
+We call the secret client to create a secret.
+
+```cpp Snippet:SecretSample1SetSecret
+std::string secretName("MySampleSecret");
+std::string secretValue("my secret value");
+
+secretClient.SetSecret(secretName, secretValue);
+```
+
+### Get a secret
+
+We retrieve a secret by name.
+
+```cpp Snippet:SecretSample1GetSecret
+// get secret
+Secret secret = secretClient.GetSecret(secretName).Value;
+std::cout << "Secret is returned with name " << secret.Name << " and value " << secret.Value
+          << std::endl;
+```
+
+### Update a secret
+
+Updating an existing secret
+
+```cpp Snippet:SecretSample1UpdateSecretProperties
+// change one of the properties
+secret.Properties.ContentType = "my content";
+// update the secret
+Secret updatedSecret = secretClient.UpdateSecretProperties(secret.Name, secret.Properties.Version, secret.Properties)
+          .Value;
+std::cout << "Secret's content type is now " << updatedSecret.Properties.ContentType.Value()
+          << std::endl;
+```
+
+### Delete a secret
+
+Delete an existing secret.
+
+```cpp Snippet:SecretSample1DeleteSecret
+// start deleting the secret
+DeleteSecretOperation operation = secretClient.StartDeleteSecret(secret.Name);
+```
+
+### Delete and purge a secret
+
+Delete and Purge a secret.
+
+```cpp Snippet:SecretSample1DeleteSecret
+// start deleting the secret
+DeleteSecretOperation operation = secretClient.StartDeleteSecret(secret.Name);
+// You only need to wait for completion if you want to purge or recover the secret.
+operation.PollUntilDone(std::chrono::milliseconds(2000));
+// purge the deleted secret
+secretClient.PurgeDeletedSecret(secret.Name);
+```
+
+### List Secrets
+
+List all the secrets in keyvault. 
+
+```cpp Snippet:SecretSample4ListAllSecrets
+ // get properties of secrets
+for (auto secrets = secretClient.GetPropertiesOfSecrets(); secrets.HasPage(); secrets.MoveToNextPage())
+{ // go through every secret of each page returned
+  for (auto const& secret : secrets.Items)
+  {
+    std::cout << "Found Secret with name: " << secret.Name << std::endl;
+  }
+}
+```
+
+
+## Troubleshooting
+
+When you interact with the Azure Key Vault Secrets client library using the C++ SDK, errors returned by the service correspond to the same HTTP status codes returned for requests.
+
+For example, if you try to retrieve a key that doesn't exist in your Azure Key Vault, a `404` error is returned, indicating "Not Found".
+
+```cpp
+try
+{
+  Secret secret = client.GetSecret("some_secret").Value;
+}
+catch (const Azure::Core::RequestFailedException& ex)
+{
+  std::cout << std::underlying_type<Azure::Core::Http::HttpStatusCode>::type(ex.StatusCode);
+}
+```
+
+You will notice that additional information is logged, like the client request ID of the operation.
+
 
 # Next steps
 
-More sample code should go here, along with links out to the appropriate example tests.
+Several Azure Key Vault secrets client library samples are available to you in this GitHub repository. These samples provide example code for additional scenarios commonly encountered while working with Azure Key Vault:
+
+* Sample1-Basic-Operations:
+  * Create a secret
+  * Get a secret
+  * Update a secret
+  * Delete and Purge a secret
+
+* Sample2-Backup-Restore
+  * Backup a secret
+  * Restore a deleted secret
+
+* Sample3-Delete-Recover
+  * Delete a secret
+  * Recover a deleted Secret
+
+* Sample4-Get-Secrets-Deleted
+  * List all secrets
+  * List all of a secrets versions
+  * List all deletes secrets
+  * Get properties of a deleted secret
 
 ## Contributing
 For details on contributing to this repository, see the [contributing guide][azure_sdk_for_cpp_contributing].
