@@ -4,6 +4,7 @@
 #include "azure/identity/client_secret_credential.hpp"
 #include "secret_client_base_test.hpp"
 #include <gtest/gtest.h>
+#include <cstddef>
 
 using namespace std::chrono_literals;
 using namespace Azure::Security::KeyVault::Secrets;
@@ -98,7 +99,7 @@ TEST_F(KeyVaultSecretClientTest, SecondCreateTest)
   }
   {
     auto secretResponse = client.GetPropertiesOfSecretsVersions(secretName);
-    EXPECT_EQ(secretResponse.Items.size(), 2);
+    EXPECT_EQ(secretResponse.Items.size(), size_t(2));
     EXPECT_EQ(secretResponse.Items[0].Version, version1);
     EXPECT_EQ(secretResponse.Items[1].Version, version2);
   }
@@ -287,7 +288,7 @@ TEST_F(KeyVaultSecretClientTest, GetProperties)
   }
   {
     auto secretResponse = client.GetPropertiesOfSecrets();
-    EXPECT_EQ(secretResponse.Items.size(), 2);
+    EXPECT_EQ(secretResponse.Items.size(), size_t(2));
     EXPECT_EQ(secretResponse.Items[0].Name, secretName);
     EXPECT_EQ(secretResponse.Items[1].Name, secretName2);
   }
@@ -301,7 +302,7 @@ TEST_F(KeyVaultSecretClientTest, GetProperties)
   }
   {
     auto deletedResponse = client.GetDeletedSecrets();
-    EXPECT_EQ(deletedResponse.Items.size(), 2);
+    EXPECT_EQ(deletedResponse.Items.size(),size_t(2));
     EXPECT_EQ(deletedResponse.Items[0].Name, secretName);
     EXPECT_EQ(deletedResponse.Items[1].Name, secretName2);
   }

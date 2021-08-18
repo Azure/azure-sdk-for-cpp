@@ -76,7 +76,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets { 
 #if defined(_MSC_VER)
       _putenv_s("AZURE_TEST_MODE", testModeValue.c_str());
 #else
-      std::setenv("AZURE_TEST_MODE", testModeValue.c_str(), 1);
+      setenv("AZURE_TEST_MODE", testModeValue.c_str(), 1);
 #endif
       InitializeClient();
       // set the interceptor for the current test
