@@ -22,7 +22,7 @@ TEST_F(MockedTransportAdapterTest, keyvaultTelemetryId)
   m_clientOptions.Telemetry.ApplicationId = applicationId;
   m_client = std::make_unique<
       Azure::Security::KeyVault::Keys::Test::KeyClientWithNoAuthenticationPolicy>(
-      "url", m_clientOptions);
+      "http://account.vault.azure.net", m_clientOptions);
 
   // The fake response from the mocked transport adapter is good for parsing a Key back
   auto response = m_client->GetKey("name");
@@ -55,7 +55,7 @@ TEST_F(MockedTransportAdapterTest, CreateKeyRSA)
   m_clientOptions.Telemetry.ApplicationId = applicationId;
   m_client = std::make_unique<
       Azure::Security::KeyVault::Keys::Test::KeyClientWithNoAuthenticationPolicy>(
-      "url", m_clientOptions);
+      "http://account.vault.azure.net", m_clientOptions);
 
   // The fake response from the mocked transport adapter is good for parsing a Key back
   auto response = m_client->CreateKey("name", KeyVaultKeyType::Rsa);
@@ -69,7 +69,7 @@ TEST_F(MockedTransportAdapterTest, CreateKeyRSA2)
   m_clientOptions.Telemetry.ApplicationId = applicationId;
   m_client = std::make_unique<
       Azure::Security::KeyVault::Keys::Test::KeyClientWithNoAuthenticationPolicy>(
-      "url", m_clientOptions);
+      "http://account.vault.azure.net", m_clientOptions);
 
   auto options = CreateRsaKeyOptions("name");
   // The fake response from the mocked transport adapter is good for parsing a Key back
@@ -84,7 +84,7 @@ TEST_F(MockedTransportAdapterTest, CreateKeyRSAHSM)
   m_clientOptions.Telemetry.ApplicationId = applicationId;
   m_client = std::make_unique<
       Azure::Security::KeyVault::Keys::Test::KeyClientWithNoAuthenticationPolicy>(
-      "url", m_clientOptions);
+      "http://account.vault.azure.net", m_clientOptions);
 
   auto options = CreateRsaKeyOptions("name", true);
   // The fake response from the mocked transport adapter is good for parsing a Key back
@@ -99,7 +99,7 @@ TEST_F(MockedTransportAdapterTest, CreateKeyEC)
   m_clientOptions.Telemetry.ApplicationId = applicationId;
   m_client = std::make_unique<
       Azure::Security::KeyVault::Keys::Test::KeyClientWithNoAuthenticationPolicy>(
-      "url", m_clientOptions);
+      "http://account.vault.azure.net", m_clientOptions);
 
   auto options = CreateEcKeyOptions("name");
   // The fake response from the mocked transport adapter is good for parsing a Key back
@@ -114,7 +114,7 @@ TEST_F(MockedTransportAdapterTest, CreateKeyECHSM)
   m_clientOptions.Telemetry.ApplicationId = applicationId;
   m_client = std::make_unique<
       Azure::Security::KeyVault::Keys::Test::KeyClientWithNoAuthenticationPolicy>(
-      "url", m_clientOptions);
+      "http://account.vault.azure.net", m_clientOptions);
 
   auto options = CreateEcKeyOptions("name", true);
   // The fake response from the mocked transport adapter is good for parsing a Key back
@@ -129,7 +129,7 @@ TEST_F(MockedTransportAdapterTest, CreateKeyOCT)
   m_clientOptions.Telemetry.ApplicationId = applicationId;
   m_client = std::make_unique<
       Azure::Security::KeyVault::Keys::Test::KeyClientWithNoAuthenticationPolicy>(
-      "url", m_clientOptions);
+      "http://account.vault.azure.net", m_clientOptions);
 
   auto options = CreateOctKeyOptions("name");
   // The fake response from the mocked transport adapter is good for parsing a Key back
@@ -144,7 +144,7 @@ TEST_F(MockedTransportAdapterTest, CreateKeyOCTHSM)
   m_clientOptions.Telemetry.ApplicationId = applicationId;
   m_client = std::make_unique<
       Azure::Security::KeyVault::Keys::Test::KeyClientWithNoAuthenticationPolicy>(
-      "url", m_clientOptions);
+      "http://account.vault.azure.net", m_clientOptions);
 
   auto options = CreateOctKeyOptions("name", true);
   // The fake response from the mocked transport adapter is good for parsing a Key back
@@ -159,7 +159,7 @@ TEST_F(MockedTransportAdapterTest, GetPropertiesOfKeys)
   m_clientOptions.Telemetry.ApplicationId = applicationId;
   m_client = std::make_unique<
       Azure::Security::KeyVault::Keys::Test::KeyClientWithNoAuthenticationPolicy>(
-      "url", m_clientOptions);
+      "http://account.vault.azure.net", m_clientOptions);
 
   auto options = GetPropertiesOfKeysOptions();
   // The fake response from the mocked transport adapter is good for parsing a Key back
