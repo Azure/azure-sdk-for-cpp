@@ -389,12 +389,10 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
 
     /**
      * @brief Gets the key client's primary URL endpoint.
-     * 
+     *
      * @return The key client's primary URL endpoint.
      */
-    std::string GetUrl() const {
-        return m_vaultUrl.GetAbsoluteUrl();
-    }
+    std::string GetUrl() const { return m_vaultUrl.GetAbsoluteUrl(); }
 
   private:
     std::unique_ptr<Azure::Core::Http::RawResponse> SendRequest(

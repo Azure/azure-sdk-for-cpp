@@ -48,7 +48,7 @@ TEST(KeyClient, GetUrl)
 {
   auto credential
       = std::make_shared<Azure::Identity::ClientSecretCredential>("tenantID", "AppId", "SecretId");
-  
+
   auto url = "vaultUrl";
   KeyClient keyClient(url, credential);
   EXPECT_EQ(url, keyClient.GetUrl());
