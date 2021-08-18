@@ -133,6 +133,11 @@ namespace Azure { namespace Storage { namespace Queues {
   };
 
   /**
+   * @brief A TTL value representing the queue message does not expire.
+   */
+  constexpr static std::chrono::seconds MessageNeverExpires{-1};
+
+  /**
    * Optional parameters for #Azure::Storage::Queues::QueueClient::EnqueueMessages.
    */
   struct EnqueueMessageOptions final
@@ -144,7 +149,7 @@ namespace Azure { namespace Storage { namespace Queues {
 
     /**
      * Specifies the time-to-live interval for the message. The maximum time-to-live can be any
-     * positive number, as well as -1 indicating that the message does not expire
+     * positive number, as well as MessageNeverExpires indicating that the message does not expire
      */
     Azure::Nullable<std::chrono::seconds> TimeToLive;
   };

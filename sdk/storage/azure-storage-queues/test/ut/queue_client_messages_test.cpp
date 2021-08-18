@@ -51,7 +51,7 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_TRUE(queueClient.PeekMessages().Value.Messages.empty());
 
     enqueueOptions = Queues::EnqueueMessageOptions();
-    enqueueOptions.TimeToLive = std::chrono::seconds(-1);
+    enqueueOptions.TimeToLive = Queues::MessageNeverExpires;
     res = queueClient.EnqueueMessage(message, enqueueOptions).Value;
 
     const Azure::DateTime neverExpireDateTime = Azure::DateTime::Parse(
