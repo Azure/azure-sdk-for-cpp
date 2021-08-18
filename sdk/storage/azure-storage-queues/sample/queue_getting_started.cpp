@@ -57,7 +57,8 @@ void ConsumerFunc2()
       std::cout << msg.Body << std::endl;
       ++counter;
 
-      auto updateResponse = queueClient.UpdateMessage(msg.MessageId, msg.PopReceipt, 30);
+      auto updateResponse
+          = queueClient.UpdateMessage(msg.MessageId, msg.PopReceipt, std::chrono::seconds(30));
 
       queueClient.DeleteMessage(msg.MessageId, updateResponse.Value.PopReceipt);
     }

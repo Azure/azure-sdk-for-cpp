@@ -1738,8 +1738,8 @@ namespace Azure { namespace Storage { namespace Queues {
         {
           Azure::Nullable<int32_t> Timeout;
           std::string Body;
-          Azure::Nullable<int32_t> VisibilityTimeout;
-          Azure::Nullable<int32_t> TimeToLive;
+          Azure::Nullable<std::chrono::seconds> VisibilityTimeout;
+          Azure::Nullable<std::chrono::seconds> TimeToLive;
         }; // struct EnqueueMessageOptions
 
         static Azure::Response<EnqueueMessageResult> EnqueueMessage(
@@ -1769,12 +1769,12 @@ namespace Azure { namespace Storage { namespace Queues {
           if (options.VisibilityTimeout.HasValue())
           {
             request.GetUrl().AppendQueryParameter(
-                "visibilitytimeout", std::to_string(options.VisibilityTimeout.Value()));
+                "visibilitytimeout", std::to_string(options.VisibilityTimeout.Value().count()));
           }
           if (options.TimeToLive.HasValue())
           {
             request.GetUrl().AppendQueryParameter(
-                "messagettl", std::to_string(options.TimeToLive.Value()));
+                "messagettl", std::to_string(options.TimeToLive.Value().count()));
           }
           auto pHttpResponse = pipeline.Send(request, context);
           Azure::Core::Http::RawResponse& httpResponse = *pHttpResponse;
@@ -1798,7 +1798,7 @@ namespace Azure { namespace Storage { namespace Queues {
         {
           Azure::Nullable<int32_t> Timeout;
           Azure::Nullable<int64_t> MaxMessages;
-          Azure::Nullable<int32_t> VisibilityTimeout;
+          Azure::Nullable<std::chrono::seconds> VisibilityTimeout;
         }; // struct ReceiveMessagesOptions
 
         static Azure::Response<ReceiveMessagesResult> ReceiveMessages(
@@ -1822,7 +1822,7 @@ namespace Azure { namespace Storage { namespace Queues {
           if (options.VisibilityTimeout.HasValue())
           {
             request.GetUrl().AppendQueryParameter(
-                "visibilitytimeout", std::to_string(options.VisibilityTimeout.Value()));
+                "visibilitytimeout", std::to_string(options.VisibilityTimeout.Value().count()));
           }
           auto pHttpResponse = pipeline.Send(request, context);
           Azure::Core::Http::RawResponse& httpResponse = *pHttpResponse;
@@ -1951,7 +1951,7 @@ namespace Azure { namespace Storage { namespace Queues {
         {
           Azure::Nullable<int32_t> Timeout;
           std::string PopReceipt;
-          int32_t VisibilityTimeout;
+          std::chrono::seconds VisibilityTimeout;
         }; // struct UpdateMessageVisibilityOptions
 
         static Azure::Response<UpdateMessageResult> UpdateMessageVisibility(
@@ -1971,7 +1971,7 @@ namespace Azure { namespace Storage { namespace Queues {
           request.GetUrl().AppendQueryParameter(
               "popreceipt", _internal::UrlEncodeQueryParameter(options.PopReceipt));
           request.GetUrl().AppendQueryParameter(
-              "visibilitytimeout", std::to_string(options.VisibilityTimeout));
+              "visibilitytimeout", std::to_string(options.VisibilityTimeout.count()));
           auto pHttpResponse = pipeline.Send(request, context);
           Azure::Core::Http::RawResponse& httpResponse = *pHttpResponse;
           UpdateMessageResult response;
@@ -1993,7 +1993,7 @@ namespace Azure { namespace Storage { namespace Queues {
           std::string Body;
           Azure::Nullable<int32_t> Timeout;
           std::string PopReceipt;
-          int32_t VisibilityTimeout;
+          std::chrono::seconds VisibilityTimeout;
         }; // struct UpdateMessageOptions
 
         static Azure::Response<UpdateMessageResult> UpdateMessage(
@@ -2023,7 +2023,7 @@ namespace Azure { namespace Storage { namespace Queues {
           request.GetUrl().AppendQueryParameter(
               "popreceipt", _internal::UrlEncodeQueryParameter(options.PopReceipt));
           request.GetUrl().AppendQueryParameter(
-              "visibilitytimeout", std::to_string(options.VisibilityTimeout));
+              "visibilitytimeout", std::to_string(options.VisibilityTimeout.count()));
           auto pHttpResponse = pipeline.Send(request, context);
           Azure::Core::Http::RawResponse& httpResponse = *pHttpResponse;
           UpdateMessageResult response;

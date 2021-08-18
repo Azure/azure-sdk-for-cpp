@@ -8,6 +8,7 @@
 
 #pragma once
 
+#include <chrono>
 #include <string>
 
 #include <azure/core/internal/client_options.hpp>
@@ -139,13 +140,13 @@ namespace Azure { namespace Storage { namespace Queues {
     /**
      * Specifies how long the message should be invisible to dequeue and peek operations.
      */
-    Azure::Nullable<int32_t> VisibilityTimeout;
+    Azure::Nullable<std::chrono::seconds> VisibilityTimeout;
 
     /**
      * Specifies the time-to-live interval for the message. The maximum time-to-live can be any
      * positive number, as well as -1 indicating that the message does not expire
      */
-    Azure::Nullable<int32_t> TimeToLive;
+    Azure::Nullable<std::chrono::seconds> TimeToLive;
   };
 
   /**
@@ -161,7 +162,7 @@ namespace Azure { namespace Storage { namespace Queues {
      * After the messages have been retrieved, they are not visible to other clients for the time
      * interval specified by this parameter.
      */
-    Azure::Nullable<int32_t> VisibilityTimeout;
+    Azure::Nullable<std::chrono::seconds> VisibilityTimeout;
   };
 
   /**
