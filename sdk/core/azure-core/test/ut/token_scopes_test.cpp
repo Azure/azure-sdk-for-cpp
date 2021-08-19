@@ -51,7 +51,22 @@ TEST(TokenScopes, GenerateScopeWithDefaultExclude)
   ASSERT_EQ("https://managedhsm.azure.net/.default", scopes[0]);
 }
 
-TEST(TokenScopes, GenerateScopeThrow)
+TEST(TokenScopes, GenerateIgnore)
 {
-  EXPECT_THROW(TokenScopes::GetScopeFromUrl(Url("https://badUrlnet")), std::invalid_argument);
+  auto scopes = TokenScopes::GetScopeFromUrl(
+      Url("https://account"), "https://managedhsm.azure.net/.default");
+  ASSERT_EQ(1, scopes.size());
+  ASSERT_EQ("https://managedhsm.azure.net/.default", scopes[0]);
+}
+
+TEST(TokenScopes, GenerateIgnoreNoDefault)
+{
+  auto scopes = TokenScopes::GetScopeFromUrl(Url("https://account"));
+  ASSERT_EQ(0, scopes.size());
+}
+
+TEST(TokenScopes, GenerateIgnoreWithPort)
+{
+  auto scopes = TokenScopes::GetScopeFromUrl(Url("https://account:8080"));
+  ASSERT_EQ(0, scopes.size());
 }

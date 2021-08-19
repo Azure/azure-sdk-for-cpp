@@ -440,32 +440,7 @@ namespace Azure { namespace Core { namespace Http { namespace Policies {
        */
       static std::vector<std::string> GetScopeFromUrl(
           Azure::Core::Url const& url,
-          std::string const& defaultScope = "")
-      {
-        std::vector<std::string> scopes;
-
-        std::string calculatedScope(url.GetScheme() + "://");
-        auto const& hostWithAccount = url.GetHost();
-        auto hostNoAccountStart = std::find(hostWithAccount.begin(), hostWithAccount.end(), '.');
-        if (hostNoAccountStart == hostWithAccount.end())
-        {
-          throw std::invalid_argument(
-              "Can't get the scope from the provided url: " + url.GetAbsoluteUrl());
-        }
-        std::string hostNoAccount(hostNoAccountStart + 1, hostWithAccount.end());
-
-        calculatedScope.append(hostNoAccount);
-        calculatedScope.append("/.default");
-
-        scopes.emplace_back(calculatedScope);
-
-        if (!defaultScope.empty() && defaultScope != calculatedScope)
-        {
-          scopes.emplace_back(defaultScope);
-        }
-
-        return scopes;
-      }
+          std::string const& defaultScope = "");
     };
 
     /**
