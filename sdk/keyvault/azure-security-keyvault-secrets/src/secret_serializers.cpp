@@ -147,9 +147,9 @@ void DeletedSecretSerializer::Deserialize(
   auto jsonParser = json::parse(body);
 
   secret.RecoveryId = jsonParser[_detail::RecoveryIdPropertyName];
-  secret.ScheduledPurgeDate = PosixTimeConverter::PosixTimeToDateTime(
+  secret.m_scheduledPurgeDate = PosixTimeConverter::PosixTimeToDateTime(
       jsonParser[_detail::ScheduledPurgeDatePropertyName]);
-  secret.DeletedDate
+  secret.m_deletedOn
       = PosixTimeConverter::PosixTimeToDateTime(jsonParser[_detail::DeletedDatePropertyName]);
 }
 
@@ -406,9 +406,9 @@ DeletedSecretPagedResponse DeletedSecretPagedResultSerializer::Deserialize(
         item.Properties.ContentType, secretProperties, _detail::ContentTypePropertyName);
 
     item.RecoveryId = secretProperties[_detail::RecoveryIdPropertyName];
-    item.ScheduledPurgeDate = PosixTimeConverter::PosixTimeToDateTime(
+    item.m_scheduledPurgeDate = PosixTimeConverter::PosixTimeToDateTime(
         secretProperties[_detail::ScheduledPurgeDatePropertyName]);
-    item.DeletedDate = PosixTimeConverter::PosixTimeToDateTime(
+    item.m_deletedOn = PosixTimeConverter::PosixTimeToDateTime(
         secretProperties[_detail::DeletedDatePropertyName]);
 
     result.Items.emplace_back(item);

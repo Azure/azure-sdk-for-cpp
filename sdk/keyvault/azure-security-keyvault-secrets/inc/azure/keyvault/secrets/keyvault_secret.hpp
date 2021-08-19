@@ -43,6 +43,18 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
     KeyVaultSecret() = default;
 
     /**
+     * @brief The vault url of the secret.
+     *
+     */
+    std::string VaultUrl() { return Properties.VaultUrl; }
+
+    /**
+     * @brief The version of the secret.
+     *
+     */
+    std::string Version() { return Properties.Version; }
+
+    /**
      * @brief Construct a new Secret object.
      *
      * @param name The name of the secret.
@@ -56,7 +68,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
         throw std::invalid_argument("Name cannot be empty");
       }
 
-      if (Value.HasValue()== false || Value.Value().empty())
+      if (Value.HasValue() == false || Value.Value().empty())
       {
         throw std::invalid_argument("Value cannot be empty");
       }

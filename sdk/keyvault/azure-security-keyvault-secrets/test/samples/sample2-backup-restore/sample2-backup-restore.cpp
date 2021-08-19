@@ -26,7 +26,7 @@
 
 using namespace Azure::Security::KeyVault::Secrets;
 using namespace std::chrono_literals;
-void AssertSecretsEqual(Secret const& expected, Secret const& actual);
+void AssertSecretsEqual(KeyVaultSecret const& expected, KeyVaultSecret const& actual);
 
 int main()
 {
@@ -48,9 +48,10 @@ int main()
     secretClient.SetSecret(secretName, secretValue);
 
     // get secret
-    Secret secret = secretClient.GetSecret(secretName).Value;
+    KeyVaultSecret secret = secretClient.GetSecret(secretName).Value;
 
-    std::cout << "Secret is returned with name " << secret.Name << " and value " << secret.Value
+    std::cout << "Secret is returned with name " << secret.Name << " and value "
+              << secret.Value.Value()
               << std::endl;
 
     size_t backUpSize = 0;
@@ -114,7 +115,7 @@ int main()
   return 0;
 }
 
-void AssertSecretsEqual(Secret const& expected, Secret const& actual)
+void AssertSecretsEqual(KeyVaultSecret const& expected, KeyVaultSecret const& actual)
 {
 #if defined(NDEBUG)
   // Use (void) to silence unused warnings.

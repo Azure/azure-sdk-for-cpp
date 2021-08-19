@@ -150,8 +150,8 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets { 
     {
       EXPECT_EQ(
           secret.RecoveryId, "https://myvault.vault.azure.net/deletedsecrets/GetDeletedSecretTest");
-      EXPECT_EQ(secret.ScheduledPurgeDate.ToString(), "2017-08-02T22:53:53Z");
-      EXPECT_EQ(secret.DeletedDate.ToString(), "2017-05-04T22:53:53Z");
+      EXPECT_EQ(secret.ScheduledPurgeDate().ToString(), "2017-08-02T22:53:53Z");
+      EXPECT_EQ(secret.DeletedOn().ToString(), "2017-05-04T22:53:53Z");
     }
   };
 }}}}} // namespace Azure::Security::KeyVault::Secrets::_test
