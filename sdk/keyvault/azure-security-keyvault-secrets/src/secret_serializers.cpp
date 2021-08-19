@@ -20,27 +20,27 @@ using namespace Azure::Security::KeyVault::Secrets;
 using namespace Azure::Security::KeyVault::Secrets::_detail;
 
 // Creates a new key based on a name and an HTTP raw response.
-Secret SecretSerializer::Deserialize(
+KeyVaultSecret SecretSerializer::Deserialize(
     std::string const& name,
     Azure::Core::Http::RawResponse const& rawResponse)
 {
-  Secret secret;
+  KeyVaultSecret secret;
   secret.Name = name;
   _detail::SecretSerializer::Deserialize(secret, rawResponse);
   return secret;
 }
 
 // Create from HTTP raw response only.
-Secret SecretSerializer::Deserialize(Azure::Core::Http::RawResponse const& rawResponse)
+KeyVaultSecret SecretSerializer::Deserialize(Azure::Core::Http::RawResponse const& rawResponse)
 {
-  Secret secret;
+  KeyVaultSecret secret;
   _detail::SecretSerializer::Deserialize(secret, rawResponse);
   return secret;
 }
 
 // Updates a Key based on an HTTP raw response.
 void SecretSerializer::Deserialize(
-    Secret& secret,
+    KeyVaultSecret& secret,
     Azure::Core::Http::RawResponse const& rawResponse)
 {
   auto const& body = rawResponse.GetBody();
@@ -154,14 +154,13 @@ void DeletedSecretSerializer::Deserialize(
 }
 
 // serializes a set secret parameters object
-std::string SecretSerializer::Serialize(Secret const& parameters)
+std::string SecretSerializer::Serialize(KeyVaultSecret const& parameters)
 {
   json payload;
 
-  // value is required
-  payload[ValuePropertyName] = parameters.Value;
-
-  // all else is optional
+  JsonOptional::SetFromNullable(
+      parameters.Value, payload, _detail::ValuePropertyName);
+  
   JsonOptional::SetFromNullable(
       parameters.Properties.ContentType, payload, _detail::ContentTypePropertyName);
 
