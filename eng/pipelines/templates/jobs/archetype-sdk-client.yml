@@ -159,11 +159,11 @@ jobs:
       )
 
   # Validate all the files are formatted correctly according to the
-  # .clang-format file. This step is macOS only to use clang-format-11
+  # .clang-format file. This step runs on linux only only and assumes that
+  # clang-format-11 is installed.
   - bash: |
       # Run clang-format recursively on each source and header file within the repo sdk folder.
       echo "Check clang-formatting"
-      brew install clang-format
       clang-format --version
       find ./sdk \( -iname '*.hpp' -o -iname '*.cpp' \) ! -iname 'json.hpp' -exec clang-format -i {} \;
 
