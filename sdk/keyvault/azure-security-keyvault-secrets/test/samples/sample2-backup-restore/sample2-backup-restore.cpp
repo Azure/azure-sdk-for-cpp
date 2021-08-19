@@ -51,8 +51,7 @@ int main()
     KeyVaultSecret secret = secretClient.GetSecret(secretName).Value;
 
     std::cout << "Secret is returned with name " << secret.Name << " and value "
-              << secret.Value.Value()
-              << std::endl;
+              << secret.Value.Value() << std::endl;
 
     size_t backUpSize = 0;
     {

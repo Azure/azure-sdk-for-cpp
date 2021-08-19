@@ -215,7 +215,7 @@ SecretPropertiesPagedResponse SecretClient::GetPropertiesOfSecrets(
 {
   auto const request
       = BuildRequestFromContinuationToken(options.NextPageToken, {_detail::SecretPath});
-  
+
   auto response = m_protocolClient->SendRequest<SecretPropertiesPagedResponse>(
       context,
       Azure::Core::Http::HttpMethod::Get,
@@ -238,7 +238,7 @@ SecretPropertiesPagedResponse SecretClient::GetPropertiesOfSecretsVersions(
 {
   auto const request = BuildRequestFromContinuationToken(
       options.NextPageToken, {_detail::SecretPath, name, _detail::VersionsName});
-  
+
   auto response = m_protocolClient->SendRequest<SecretPropertiesPagedResponse>(
       context,
       Azure::Core::Http::HttpMethod::Get,
@@ -261,7 +261,7 @@ DeletedSecretPagedResponse SecretClient::GetDeletedSecrets(
 {
   auto const request
       = BuildRequestFromContinuationToken(options.NextPageToken, {_detail::DeletedSecretPath});
-  
+
   auto response = m_protocolClient->SendRequest<DeletedSecretPagedResponse>(
       context,
       Azure::Core::Http::HttpMethod::Get,

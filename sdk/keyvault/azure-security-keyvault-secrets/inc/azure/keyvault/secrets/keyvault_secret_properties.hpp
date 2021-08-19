@@ -17,8 +17,9 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets { 
   struct SecretPropertiesPagedResultSerializer;
   struct DeletedSecretPagedResultSerializer;
   struct SecretPropertiesSerializer;
-}}}}}
-      namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
+}}}}} // namespace Azure::Security::KeyVault::Secrets::_detail
+
+namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
 
   /**
    * @brief The Secret attributes managed by the KeyVault service.
@@ -152,4 +153,4 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets { 
     Azure::Nullable<std::string> m_recoveryLevel;
     Azure::Nullable<int64_t> m_recoverableDays;
   };
-      }}}} // namespace Azure::Security::KeyVault::Secrets
+}}}} // namespace Azure::Security::KeyVault::Secrets

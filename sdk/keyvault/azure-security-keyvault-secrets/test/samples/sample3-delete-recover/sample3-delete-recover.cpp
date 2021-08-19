@@ -50,8 +50,8 @@ int main()
     // get secret
     KeyVaultSecret secret = secretClient.GetSecret(secretName).Value;
 
-    std::cout << "Secret is returned with name " << secret.Name << " and value " << secret.Value.Value()
-              << std::endl;
+    std::cout << "Secret is returned with name " << secret.Name << " and value "
+              << secret.Value.Value() << std::endl;
 
     // start deleting the secret
     DeleteSecretOperation operation = secretClient.StartDeleteSecret(secret.Name);

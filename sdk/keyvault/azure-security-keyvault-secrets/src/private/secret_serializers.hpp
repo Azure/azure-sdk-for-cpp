@@ -111,12 +111,14 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets { 
     static std::string Serialize(std::vector<uint8_t> const& backup);
   };
 
-  struct SecretPropertiesPagedResultSerializer final {
+  struct SecretPropertiesPagedResultSerializer final
+  {
     static SecretPropertiesPagedResponse Deserialize(
         Azure::Core::Http::RawResponse const& rawResponse);
   };
 
-  struct DeletedSecretPagedResultSerializer final {
+  struct DeletedSecretPagedResultSerializer final
+  {
     static DeletedSecretPagedResponse Deserialize(
         Azure::Core::Http::RawResponse const& rawResponse);
   };

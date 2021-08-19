@@ -48,16 +48,13 @@ int main()
     // get secret
     KeyVaultSecret secret = secretClient.GetSecret(secretName).Value;
 
-    std::cout << "Secret is returned with name " << secret.Name << " and value " << secret.Value.Value()
-              << std::endl;
+    std::cout << "Secret is returned with name " << secret.Name << " and value "
+              << secret.Value.Value() << std::endl;
 
     // change one of the properties
     secret.Properties.ContentType = "my content";
     // update the secret
-    KeyVaultSecret updatedSecret
-        = secretClient
-              .UpdateSecretProperties(secret.Properties)
-              .Value;
+    KeyVaultSecret updatedSecret = secretClient.UpdateSecretProperties(secret.Properties).Value;
     std::cout << "Secret's content type is now " << updatedSecret.Properties.ContentType.Value()
               << std::endl;
 

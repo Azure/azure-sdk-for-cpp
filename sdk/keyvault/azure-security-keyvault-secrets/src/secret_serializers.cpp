@@ -158,9 +158,8 @@ std::string SecretSerializer::Serialize(KeyVaultSecret const& parameters)
 {
   json payload;
 
-  JsonOptional::SetFromNullable(
-      parameters.Value, payload, _detail::ValuePropertyName);
-  
+  JsonOptional::SetFromNullable(parameters.Value, payload, _detail::ValuePropertyName);
+
   JsonOptional::SetFromNullable(
       parameters.Properties.ContentType, payload, _detail::ContentTypePropertyName);
 
