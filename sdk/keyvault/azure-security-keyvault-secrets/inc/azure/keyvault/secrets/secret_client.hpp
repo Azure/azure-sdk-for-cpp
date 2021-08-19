@@ -292,5 +292,12 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
     DeletedSecretPagedResponse GetDeletedSecrets(
         GetDeletedSecretsOptions const& options = GetDeletedSecretsOptions(),
         Azure::Core::Context const& context = Azure::Core::Context()) const;
+
+    /**
+     * @brief Gets the secret client's primary URL endpoint.
+     *
+     * @return The key secret's primary URL endpoint.
+     */
+    std::string GetUrl() const;
   };
 }}}} // namespace Azure::Security::KeyVault::Secrets
