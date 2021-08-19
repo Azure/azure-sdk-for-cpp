@@ -1,50 +1,73 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
 
-#include "azure/identity/managed_identity_credential.hpp"
-#include "private/managed_identity_source.hpp"
+/**
+ * @file
+ * @brief Managed Identity Credential and options.
+ */
 
-using namespace Azure::Identity;
+#pragma once
 
-namespace {
-std::unique_ptr<_detail::ManagedIdentitySource> CreateManagedIdentitySource(
-    std::string const& clientId,
-    Azure::Core::Credentials::TokenCredentialOptions const& options)
-{
-  using namespace Azure::Core::Credentials;
-  using namespace Azure::Identity::_detail;
-  static std::unique_ptr<ManagedIdentitySource> (*managedIdentitySourceCreate[])(
-      std::string const& clientId, TokenCredentialOptions const& options)
-      = {AppServiceManagedIdentitySource::Create,
-         CloudShellManagedIdentitySource::Create,
-         AzureArcManagedIdentitySource::Create,
-         ImdsManagedIdentitySource::Create};
+#include <azure/core/credentials/credentials.hpp>
+#include <azure/core/credentials/token_credential_options.hpp>
 
-  for (auto create : managedIdentitySourceCreate)
-  {
-    if (auto source = create(clientId, options))
-    {
-      return source;
-    }
+#include <memory>
+#include <string>
+
+namespace Azure { namespace Identity {
+  namespace _detail {
+    class ManagedIdentitySource;
   }
 
-  throw AuthenticationException(
-      "ManagedIdentityCredential authentication unavailable. No Managed Identity endpoint found.");
-}
-} // namespace
+  /**
+   * @brief Client Secret Credential authenticates with the Azure services using a Tenant ID, Client
+   * ID and a client secret.
+   */
+  class ManagedIdentityCredential final : public Core::Credentials::TokenCredential {
+  private:
+    std::unique_ptr<_detail::ManagedIdentitySource> m_managedIdentitySource;
 
-ManagedIdentityCredential::~ManagedIdentityCredential() = default;
+  public:
+    /**
+     * @brief Destructs `%TokenCredential`.
+     *
+     */
+    ~ManagedIdentityCredential() override;
 
-ManagedIdentityCredential::ManagedIdentityCredential(
-    std::string const& clientId,
-    Azure::Core::Credentials::TokenCredentialOptions const& options)
-    : m_managedIdentitySource(CreateManagedIdentitySource(clientId, options))
-{
-}
+    /**
+     * @brief Constructs a Managed Identity Credential.
+     *
+     * @param clientId Client ID.
+     * @param options Options for token retrieval.
+     */
+    explicit ManagedIdentityCredential(
+        std::string const& clientId = std::string(),
+        Azure::Core::Credentials::TokenCredentialOptions const& options
+        = Azure::Core::Credentials::TokenCredentialOptions());
 
-Azure::Core::Credentials::AccessToken ManagedIdentityCredential::GetToken(
-    Azure::Core::Credentials::TokenRequestContext const& tokenRequestContext,
-    Azure::Core::Context const& context) const
-{
-  return m_managedIdentitySource->GetToken(tokenRequestContext, context);
-}
+    /**
+     * @brief Constructs a Managed Identity Credential.
+     *
+     * @param clientId Client ID.
+     * @param options Options for token retrieval.
+     */
+    explicit ManagedIdentityCredential(
+        Azure::Core::Credentials::TokenCredentialOptions const& options)
+        : ManagedIdentityCredential(std::string(), options)
+    {
+    }
+
+    /**
+     * @brief Gets an authentication token.
+     *
+     * @param tokenRequestContext A context to get the token in.
+     * @param context A context to control the request lifetime.
+     *
+     * @throw Azure::Core::Credentials::AuthenticationException Authentication error occurred.
+     */
+    Core::Credentials::AccessToken GetToken(
+        Core::Credentials::TokenRequestContext const& tokenRequestContext,
+        Core::Context const& context) const override;
+  };
+
+}} // namespace Azure::Identity
