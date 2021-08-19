@@ -80,10 +80,10 @@ jobs:
         VcpkgInstall: 'curl[ssl] libxml2 openssl'
         VCPKG_DEFAULT_TRIPLET: 'x64-linux'
         CHECK_CLANG_FORMAT: 1
+        CmakeArgs: -DCMAKE_VERBOSE_MAKEFILE=1
         AptDependencies: 'clang-11'
         CC: '/usr/bin/clang-11'
         CXX: '/usr/bin/clang++-11'
-        CmakeArgs:
 
       # Unit testing ON
       # Linux_x64_with_unit_test:
