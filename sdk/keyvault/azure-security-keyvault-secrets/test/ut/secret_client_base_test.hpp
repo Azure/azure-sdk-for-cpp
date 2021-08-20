@@ -52,7 +52,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets { 
 
       if (!ret)
       {
-        if (defaultValue.size() > 0)
+        if (!defaultValue.empty())
         {
           return defaultValue;
         }
