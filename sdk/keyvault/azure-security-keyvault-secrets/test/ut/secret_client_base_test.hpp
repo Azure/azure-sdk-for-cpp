@@ -115,7 +115,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets { 
 #if defined(_MSC_VER)
       _putenv_s("AZURE_TEST_MODE", originalValue.c_str());
 #else
-      setenv("AZURE_TEST_MODE", testModeValue.c_str(), 1);
+      setenv("AZURE_TEST_MODE", originalValue.c_str(), 1);
 #endif
     }
 
