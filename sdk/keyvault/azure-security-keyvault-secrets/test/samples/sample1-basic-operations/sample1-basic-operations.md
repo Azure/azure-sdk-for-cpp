@@ -26,7 +26,7 @@ SecretClient secretClient(std::getenv("AZURE_KEYVAULT_URL"), credential);
 
 ## Creating a Secret
 
-To create a secret all you need to set id the name and secret value.
+Call SetSecret to create a new secret with name and secret value.
 
 ```cpp Snippet:SecretSample1SetSecret
 std::string secretName("MySampleSecret");
@@ -48,7 +48,7 @@ std::cout << "Secret is returned with name " << secret.Name << " and value " << 
 
 ## Updating secret properties
 
-We forgot to set the content type for the secret we created, we can do that using the UpdateSecretProperties method.
+Call UpdateSecretProperties to change on of the secret properties.
 
 
 ```cpp Snippet:SecretSample1UpdateSecretProperties
@@ -63,7 +63,7 @@ std::cout << "Secret's content type is now " << updatedSecret.Properties.Content
 
 ## Deleting a secret
 
-The secret is no longer needed so we need to delete it.
+Call StartDeleteSecret to delete a secret. This is a long running operation.
 
 ```cpp Snippet:SecretSample1DeleteSecret
 // start deleting the secret

@@ -25,7 +25,7 @@ SecretClient secretClient(std::getenv("AZURE_KEYVAULT_URL"), credential);
 
 ## Creating a Secret
 
-To create a secret all you need to set id the name and secret value.
+Call SetSecret to create a new secret with name and secret value.
 
 ```cpp Snippet:SecretSample3SetSecret
 std::string secretName("MySampleSecret");
@@ -36,7 +36,7 @@ secretClient.SetSecret(secretName, secretValue);
 
 ## Getting a Secret
 
-To get a secret from the key vault  you will need to call GetSecret.
+Call GetSecret to retrieve a secret from Key Vault.
 
 ```cpp Snippet:SecretSample3GetSecret
 // get secret
@@ -47,7 +47,7 @@ std::cout << "Secret is returned with name " << secret.Name << " and value " << 
 
 ## Deleting a secret
 
-The secret is no longer needed so we need to delete it.
+Call StartDeleteSecret to delete a secret. This is a long running operation.
 
 ```cpp Snippet:SecretSample3DeleteSecret
 // start deleting the secret
@@ -56,7 +56,7 @@ DeleteSecretOperation operation = secretClient.StartDeleteSecret(secret.Name);
 
 ## Recover a Deleted secret
 
-To recover a deleted secret we need to call StartRecoverDeletedSecret and then poll untill the operation is done.
+Call StartRecoverDeletedSecret to recover a deleted secret and then poll until the operation is done.
 
 ```cpp Snippet:SecretSample3RecoverSecret
 // call restore secret
