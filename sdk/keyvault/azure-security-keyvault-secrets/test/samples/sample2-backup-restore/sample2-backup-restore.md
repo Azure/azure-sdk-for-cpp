@@ -48,7 +48,7 @@ std::cout << "Secret is returned with name " << secret.Name << " and value " << 
 
 ## Creating a Backup for the secret properties
 
-In order to get the backup of the secret we need to call BackupSecret, which will return a vector of bytes representing the backed up content.
+Call BackupSecret to retrieve the secret backup.  BackupSecret will will return a vector of bytes representing the backed up content.
 
 
 ```cpp Snippet:SecretSample2BackupSecret
