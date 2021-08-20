@@ -44,10 +44,10 @@ int main()
   try
   {
     // create secret
-    Secret secret1 = secretClient.SetSecret(secretName, secretValue).Value;
-    Secret secret2 = secretClient.SetSecret(secretName2, secretValue).Value;
+    KeyVaultSecret secret1 = secretClient.SetSecret(secretName, secretValue).Value;
+    KeyVaultSecret secret2 = secretClient.SetSecret(secretName2, secretValue).Value;
 
-    std::cout << "Secret1 Version : " << secret1.Properties.Version << std::endl;
+    std::cout << "Secret1 Version : " << secret1.Version() << std::endl;
 
     // get properties of secrets
     for (auto secrets = secretClient.GetPropertiesOfSecrets(); secrets.HasPage();
