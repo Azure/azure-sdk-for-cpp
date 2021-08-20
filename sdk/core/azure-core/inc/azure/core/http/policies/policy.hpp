@@ -421,8 +421,11 @@ namespace Azure { namespace Core { namespace Http { namespace Policies {
      * @brief Helper class for creating scopes for the token request context.
      *
      */
-    struct TokenScopes
-    {
+    class TokenScopes final {
+      // Remove cttor. This class is only a container for util methods.
+      TokenScopes() = delete;
+
+    public:
       /**
        * @brief Parses url and generates a scope from it.
        *
