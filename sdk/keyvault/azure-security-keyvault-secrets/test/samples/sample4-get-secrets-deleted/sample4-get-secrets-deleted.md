@@ -4,9 +4,9 @@ This sample demonstrates how to list all the secrets , all the versions of a sec
 
 ## Creating a SecretClient
 
-To create a new `SecretClient` to create, get, update, or delete secrets, you need the endpoint to an Azure KeyVault and credentials.
+To create a new `SecretClient` to create, get, update, or delete secrets, you need the endpoint to an Azure Key Vault and credentials.
 
-KeyVault Secrets client for C++ currently supports the `ClientSecretCredential` for authenticating.
+Key Vault Secrets client for C++ currently supports the `ClientSecretCredential` for authenticating.
 
 In the sample below, you can create a credential by setting the Tenant ID, Client ID and Client Secret as environment variables.
 
@@ -36,9 +36,9 @@ Secret secret1 = secretClient.SetSecret(secretName, secretValue).Value;
 Secret secret2 = secretClient.SetSecret(secretName2, secretValue).Value;
 ```
 
-## Getting the properties of all the secrets in the keyvault
+## Getting the properties of all the secrets in the key vault
 
-To get the properties of the secrets in the keyvault we will call GetPropertiesOfSecrets. The results of this call are paged to a maximum of 25 SecretProperties per page.
+To get the properties of the secrets in the key vault we will call GetPropertiesOfSecrets. The results of this call are paged to a maximum of 25 SecretProperties per page.
 
 ```cpp Snippet:SecretSample4ListAllSecrets
  // get properties of secrets

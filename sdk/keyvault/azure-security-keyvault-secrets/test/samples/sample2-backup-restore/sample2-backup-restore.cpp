@@ -2,11 +2,11 @@
 // SPDX-License-Identifier: MIT
 
 /**
- * @brief This sample provides the code implementation to use the KeyVault Secrets SDK client for
+ * @brief This sample provides the code implementation to use the Key Vault Secrets SDK client for
  * C++ to backup, restore, delete and purge a secret.
  *
  * @remark The following environment variables must be set before running the sample.
- * - AZURE_KEYVAULT_URL:  To the KeyVault account URL.
+ * - AZURE_KEYVAULT_URL:  To the Key Vault account URL.
  * - AZURE_TENANT_ID:     Tenant ID for the Azure account.
  * - AZURE_CLIENT_ID:     The Client ID to authenticate the request.
  * - AZURE_CLIENT_SECRET: The client secret.
@@ -106,7 +106,7 @@ int main()
   }
   catch (Azure::Core::RequestFailedException const& e)
   {
-    std::cout << "KeyVault Secret Client Exception happened:" << std::endl
+    std::cout << "Key Vault Secret Client Exception happened:" << std::endl
               << e.Message << std::endl;
     return 1;
   }
