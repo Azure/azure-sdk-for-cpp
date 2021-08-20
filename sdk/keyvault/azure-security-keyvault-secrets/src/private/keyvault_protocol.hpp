@@ -185,5 +185,12 @@ namespace Azure { namespace Security { namespace KeyVault { namespace _detail {
       // Use the core pipeline directly to avoid checking the response code.
       return m_pipeline.Send(request, context);
     }
+
+    /**
+     * @brief Get the Url used to create the secret client.
+     *
+     * @return A constant reference to the Url.
+     */
+    Azure::Core::Url const& GetUrl() const { return m_vaultUrl; }
   };
 }}}} // namespace Azure::Security::KeyVault::_detail
