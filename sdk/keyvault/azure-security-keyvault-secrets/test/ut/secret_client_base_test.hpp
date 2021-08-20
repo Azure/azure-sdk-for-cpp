@@ -9,10 +9,32 @@
 #include <gtest/gtest.h>
 
 #include <azure/core/test/test_base.hpp>
+#include <azure/identity/client_secret_credential.hpp>
 #include <azure/keyvault/keyvault_secrets.hpp>
-
 namespace Azure { namespace Security { namespace KeyVault { namespace Secrets { namespace _test {
+  /**
+   * @brief Client Secret Credential authenticates with the Azure services using a Tenant ID, Client
+   * ID and a client secret.
+   *
+   */
+  class TestClientSecretCredential final : public Core::Credentials::TokenCredential {
+  public:
+    Core::Credentials::AccessToken GetToken(
+        Core::Credentials::TokenRequestContext const& tokenRequestContext,
+        Core::Context const& context) const override
+    {
+      Core::Credentials::AccessToken accessToken;
+      accessToken.Token = "magicToken";
+      accessToken.ExpiresOn = DateTime::max();
 
+      if (context.IsCancelled() || tokenRequestContext.Scopes.size() == 0)
+      {
+        accessToken.ExpiresOn = DateTime::min();
+      }
+
+      return accessToken;
+    }
+  };
   class KeyVaultSecretClientTest : public Azure::Core::Test::TestBase,
                                    public ::testing::WithParamInterface<int> {
   private:
@@ -47,6 +69,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets { 
     std::chrono::minutes m_testPollingIntervalMinutes = std::chrono::minutes(1);
 
     std::shared_ptr<Azure::Identity::ClientSecretCredential> m_credential;
+    std::shared_ptr<TestClientSecretCredential> m_testCredential;
     std::string m_keyVaultUrl;
     std::string m_keyVaultHsmUrl;
 
@@ -78,28 +101,26 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets { 
 #else
       setenv("AZURE_TEST_MODE", testModeValue.c_str(), 1);
 #endif
-      InitializeClient();
+      InitializeClient(testMode);
       // set the interceptor for the current test
       m_testContext.RenameTest(testName);
       return *m_client;
     }
 
     // Create
-    void InitializeClient()
+    void InitializeClient(Azure::Core::Test::TestMode testMode)
     {
       // Init interceptor from PlayBackRecorder
       std::string recordingPath(AZURE_TEST_RECORDING_DIR);
       recordingPath.append("/recordings");
       Azure::Core::Test::TestBase::SetUpBase(recordingPath);
 
-      std::string tenantId = GetEnv("AZURE_TENANT_ID");
-      std::string clientId = GetEnv("AZURE_CLIENT_ID");
-      std::string secretId = GetEnv("AZURE_CLIENT_SECRET");
-      m_credential
-          = std::make_shared<Azure::Identity::ClientSecretCredential>(tenantId, clientId, secretId);
+      std::string tenantId = GetEnv("AZURE_TENANT_ID", "tenant");
+      std::string clientId = GetEnv("AZURE_CLIENT_ID", "client");
+      std::string secretId = GetEnv("AZURE_CLIENT_SECRET", "secret");
 
-      m_keyVaultUrl = GetEnv("AZURE_KEYVAULT_URL");
-      m_keyVaultHsmUrl = GetEnv("AZURE_KEYVAULT_HSM_URL");
+      m_keyVaultUrl = GetEnv("AZURE_KEYVAULT_URL", "https://REDACTED.vault.azure.net/");
+      m_keyVaultHsmUrl = GetEnv("AZURE_KEYVAULT_HSM_URL", "https://REDACTED.vault.azure.net/");
 
       // Create default client for the test
       SecretClientOptions options;
@@ -115,7 +136,17 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets { 
         options.PerRetryPolicies.push_back(m_interceptor->GetRecordPolicy());
       }
 
-      m_client = std::make_unique<SecretClient>(m_keyVaultUrl, m_credential, options);
+      if (testMode == Azure::Core::Test::TestMode::PLAYBACK)
+      { // inject face token client here if it's test
+        m_testCredential = std::make_shared<TestClientSecretCredential>();
+        m_client = std::make_unique<SecretClient>(m_keyVaultUrl, m_testCredential, options);
+      }
+      else
+      {
+        m_credential = std::make_shared<Azure::Identity::ClientSecretCredential>(
+            tenantId, clientId, secretId);
+        m_client = std::make_unique<SecretClient>(m_keyVaultUrl, m_credential, options);
+      }
 
       // When running live tests, service can return 429 error response if the client is sending
       // multiple requests per second. This can happen if the network is fast and tests are running
@@ -203,4 +234,5 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets { 
       }
     }
   };
+
 }}}}} // namespace Azure::Security::KeyVault::Secrets::_test
