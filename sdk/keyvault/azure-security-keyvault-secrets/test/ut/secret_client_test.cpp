@@ -41,6 +41,16 @@ TEST(SecretClient, ServiceVersion)
   }
 }
 
+TEST(SecretClient, GetUrl)
+{
+  auto credential
+      = std::make_shared<Azure::Identity::ClientSecretCredential>("tenantID", "AppId", "SecretId");
+
+  auto url = "vaultUrl";
+  SecretClient secretClient(url, credential);
+  EXPECT_EQ(url, secretClient.GetUrl());
+}
+
 TEST_F(KeyVaultSecretClientTest, FirstCreateTest)
 {
   auto secretName = "CreateSecretWithThisName";
