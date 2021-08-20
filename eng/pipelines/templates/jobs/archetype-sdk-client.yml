@@ -65,12 +65,15 @@ jobs:
         CMAKE_GENERATOR: 'Visual Studio 16 2019'
         CMAKE_GENERATOR_PLATFORM: x64
         BuildArgs: '--parallel 8'
-      MacOS_x64:
-        Pool: Azure Pipelines
-        OSVmImage: 'macOS-10.14'
+      Ubuntu_20_x64_clang:
+        Pool: azsdk-pool-mms-ubuntu-2004-general
+        OSVmImage: MMSUbuntu20.04
         VcpkgInstall: 'curl[ssl] libxml2 openssl'
-        VCPKG_DEFAULT_TRIPLET: 'x64-osx'
+        VCPKG_DEFAULT_TRIPLET: 'x64-linux'
         CHECK_CLANG_FORMAT: 1
+        AptDependencies: 'clang-11'
+        CC: '/usr/bin/clang-11'
+        CXX: '/usr/bin/clang++-11'
         BuildArgs: '-j 4'
 
       # Unit testing ON
@@ -146,7 +149,7 @@ jobs:
 
   # Install gcc and g++ 8 if it is needed on the image.
   - bash: sudo apt-get install gcc-8 g++-8 -y
-    displayName: Install gcc and g++ 8 
+    displayName: Install gcc and g++ 8
     condition: >-
       and(
         succeeded(), 
@@ -156,11 +159,11 @@ jobs:
       )
 
   # Validate all the files are formatted correctly according to the
-  # .clang-format file. This step is macOS only to use clang-format-11
+  # .clang-format file. This step runs on linux only only and assumes that
+  # clang-format-11 is installed.
   - bash: |
       # Run clang-format recursively on each source and header file within the repo sdk folder.
       echo "Check clang-formatting"
-      brew install clang-format
       clang-format --version
       find ./sdk \( -iname '*.hpp' -o -iname '*.cpp' \) ! -iname 'json.hpp' -exec clang-format -i {} \;
 
@@ -179,7 +182,7 @@ jobs:
 
     displayName: Validate Clang Format
     condition: and(succeededOrFailed(), eq(variables['CHECK_CLANG_FORMAT'], 1))
-  
+
   - ${{ each artifact in parameters.Artifacts }}: 
     - template: /eng/common/pipelines/templates/steps/set-test-pipeline-version.yml
       parameters:
