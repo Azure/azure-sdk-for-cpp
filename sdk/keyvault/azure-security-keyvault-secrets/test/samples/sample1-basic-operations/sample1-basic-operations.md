@@ -37,7 +37,7 @@ secretClient.SetSecret(secretName, secretValue);
 
 ## Getting a Secret
 
-To get a secret from the key vault  you will need to call GetSecret.
+Call GetSecret to retrieve a secret from Key Vault.
 
 ```cpp Snippet:SecretSample1GetSecret
 // get secret
