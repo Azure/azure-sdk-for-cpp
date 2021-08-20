@@ -67,7 +67,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets { 
   protected:
     int m_testPollingTimeOutMinutes = 20;
     std::chrono::minutes m_testPollingIntervalMinutes = std::chrono::minutes(1);
-
+    std::string m_originalValue;
     std::shared_ptr<Azure::Identity::ClientSecretCredential> m_credential;
     std::shared_ptr<TestClientSecretCredential> m_testCredential;
     std::string m_keyVaultUrl;
@@ -96,15 +96,27 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets { 
         break;
       };
 
+      m_originalValue = GetEnv("AZURE_TEST_MODE", "NONE");
 #if defined(_MSC_VER)
       _putenv_s("AZURE_TEST_MODE", testModeValue.c_str());
 #else
       setenv("AZURE_TEST_MODE", testModeValue.c_str(), 1);
 #endif
+
       InitializeClient(testMode);
       // set the interceptor for the current test
       m_testContext.RenameTest(testName);
       return *m_client;
+    }
+
+    ~KeyVaultSecretClientTest()
+    {
+      std::string originalValue = m_originalValue == "NONE" ? "" : m_originalValue;
+#if defined(_MSC_VER)
+      _putenv_s("AZURE_TEST_MODE", originalValue.c_str());
+#else
+      setenv("AZURE_TEST_MODE", testModeValue.c_str(), 1);
+#endif
     }
 
     // Create
