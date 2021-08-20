@@ -32,6 +32,42 @@ namespace Azure { namespace Storage { namespace Test {
     queueClient.Delete();
   }
 
+  TEST_F(QueueClientTest, EnqueueMessageTTL)
+  {
+    auto queueClient = Azure::Storage::Queues::QueueClient::CreateFromConnectionString(
+        StandardStorageConnectionString(), LowercaseRandomString());
+    queueClient.Create();
+
+    const std::string message = "message content.";
+    Queues::EnqueueMessageOptions enqueueOptions;
+    enqueueOptions.VisibilityTimeout = std::chrono::seconds(1);
+    enqueueOptions.TimeToLive = std::chrono::seconds(2);
+    auto res = queueClient.EnqueueMessage(message, enqueueOptions).Value;
+
+    EXPECT_TRUE(queueClient.PeekMessages().Value.Messages.empty());
+    std::this_thread::sleep_for(std::chrono::milliseconds(1200));
+    EXPECT_FALSE(queueClient.PeekMessages().Value.Messages.empty());
+    std::this_thread::sleep_for(std::chrono::milliseconds(1200));
+    EXPECT_TRUE(queueClient.PeekMessages().Value.Messages.empty());
+
+    enqueueOptions = Queues::EnqueueMessageOptions();
+    enqueueOptions.TimeToLive = Queues::MessageNeverExpires;
+    res = queueClient.EnqueueMessage(message, enqueueOptions).Value;
+
+    const Azure::DateTime neverExpireDateTime = Azure::DateTime::Parse(
+        "Fri, 31 Dec 9999 23:59:59 GMT", Azure::DateTime::DateFormat::Rfc1123);
+
+    EXPECT_EQ(res.ExpiresOn, neverExpireDateTime);
+    auto peekRes = queueClient.PeekMessages();
+    ASSERT_FALSE(peekRes.Value.Messages.empty());
+    EXPECT_EQ(peekRes.Value.Messages[0].ExpiresOn, neverExpireDateTime);
+    auto receiveRes = queueClient.ReceiveMessages();
+    ASSERT_FALSE(receiveRes.Value.Messages.empty());
+    EXPECT_EQ(receiveRes.Value.Messages[0].ExpiresOn, neverExpireDateTime);
+
+    queueClient.Delete();
+  }
+
   TEST_F(QueueClientTest, ReceiveMessage)
   {
     auto queueClient = Azure::Storage::Queues::QueueClient::CreateFromConnectionString(
@@ -44,7 +80,7 @@ namespace Azure { namespace Storage { namespace Test {
     auto res = queueClient.EnqueueMessage(message).Value;
 
     Queues::ReceiveMessagesOptions receiveOptions;
-    receiveOptions.VisibilityTimeout = 1;
+    receiveOptions.VisibilityTimeout = std::chrono::seconds(1);
     auto receivedMessage = queueClient.ReceiveMessages(receiveOptions).Value.Messages[0];
 
     EXPECT_EQ(receivedMessage.Body, message);
@@ -180,7 +216,8 @@ namespace Azure { namespace Storage { namespace Test {
     const std::string updatedMessage = "MESSAGE CONTENT2";
     auto res = queueClient.EnqueueMessage(message).Value;
 
-    auto updateRes = queueClient.UpdateMessage(res.MessageId, res.PopReceipt, 0).Value;
+    auto updateRes
+        = queueClient.UpdateMessage(res.MessageId, res.PopReceipt, std::chrono::seconds(0)).Value;
     EXPECT_FALSE(updateRes.PopReceipt.empty());
     EXPECT_TRUE(IsValidTime(updateRes.NextVisibleOn));
 
@@ -189,7 +226,8 @@ namespace Azure { namespace Storage { namespace Test {
 
     Queues::UpdateMessageOptions updateOptions;
     updateOptions.MessageText = updatedMessage;
-    queueClient.UpdateMessage(res.MessageId, updateRes.PopReceipt, 1, updateOptions);
+    queueClient.UpdateMessage(
+        res.MessageId, updateRes.PopReceipt, std::chrono::seconds(1), updateOptions);
     EXPECT_TRUE(queueClient.PeekMessages().Value.Messages.empty());
 
     std::this_thread::sleep_for(std::chrono::milliseconds(1200));

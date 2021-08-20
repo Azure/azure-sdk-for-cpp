@@ -4,6 +4,8 @@
 
 ### Features Added
 
+- Added `GetUrl()` to `KeyClient`.
+
 ### Breaking Changes
 
 ### Bugs Fixed

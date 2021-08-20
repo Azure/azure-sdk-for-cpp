@@ -312,3 +312,5 @@ DeletedSecretPagedResponse SecretClient::GetDeletedSecrets(
       std::move(response.RawResponse),
       std::make_unique<SecretClient>(*this));
 }
+
+std::string SecretClient::GetUrl() const { return m_protocolClient->GetUrl().GetAbsoluteUrl(); }

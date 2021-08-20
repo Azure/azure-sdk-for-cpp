@@ -45,3 +45,13 @@ TEST(SecretClient, ServiceVersion)
         EXPECT_EQ(options.Version.ToString(), "1.0"););
   }
 }
+
+TEST(SecretClient, GetUrl)
+{
+  auto credential
+      = std::make_shared<Azure::Identity::ClientSecretCredential>("tenantID", "AppId", "SecretId");
+
+  auto url = "vaultUrl";
+  SecretClient secretClient(url, credential);
+  EXPECT_EQ(url, secretClient.GetUrl());
+}

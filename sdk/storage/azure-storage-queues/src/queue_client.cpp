@@ -252,7 +252,7 @@ namespace Azure { namespace Storage { namespace Queues {
   Azure::Response<Models::UpdateMessageResult> QueueClient::UpdateMessage(
       const std::string& messageId,
       const std::string& popReceipt,
-      int32_t visibilityTimeout,
+      std::chrono::seconds visibilityTimeout,
       const UpdateMessageOptions& options,
       const Azure::Core::Context& context) const
   {
