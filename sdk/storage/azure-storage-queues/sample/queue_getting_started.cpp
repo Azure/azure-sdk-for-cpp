@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: MIT
 
 #include <iostream>
+#include <thread>
 
 #include <azure/storage/queues.hpp>
 

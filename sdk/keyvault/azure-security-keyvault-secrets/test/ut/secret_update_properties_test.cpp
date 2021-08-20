@@ -16,7 +16,6 @@ TEST(SecretPropertiesSerializer, Serialize1)
 
   properties.ContentType = "contentType";
   properties.Enabled = true;
-  properties.RecoverableDays = 5;
 
   auto serialized = _detail::SecretPropertiesSerializer::Serialize(properties);
 
@@ -26,9 +25,6 @@ TEST(SecretPropertiesSerializer, Serialize1)
   EXPECT_EQ(
       properties.Enabled.Value(),
       jsonParser[_detail::AttributesPropertyName][_detail::EnabledPropertyName]);
-  EXPECT_EQ(
-      properties.RecoverableDays.Value(),
-      jsonParser[_detail::AttributesPropertyName][_detail::RecoverableDaysPropertyName]);
 }
 
 TEST(SecretPropertiesSerializer, Serialize2)
@@ -37,7 +33,6 @@ TEST(SecretPropertiesSerializer, Serialize2)
 
   properties.ContentType = "contentType";
   properties.Enabled = true;
-  properties.RecoverableDays = 5;
   properties.Tags.emplace("a", "b");
 
   auto serialized = _detail::SecretPropertiesSerializer::Serialize(properties);
@@ -48,9 +43,6 @@ TEST(SecretPropertiesSerializer, Serialize2)
   EXPECT_EQ(
       properties.Enabled.Value(),
       jsonParser[_detail::AttributesPropertyName][_detail::EnabledPropertyName]);
-  EXPECT_EQ(
-      properties.RecoverableDays.Value(),
-      jsonParser[_detail::AttributesPropertyName][_detail::RecoverableDaysPropertyName]);
   EXPECT_EQ(properties.Tags["a"], jsonParser[_detail::TagsPropertyName]["a"]);
 }
 
@@ -60,7 +52,6 @@ TEST(SecretPropertiesSerializer, Serialize3)
 
   properties.ContentType = "contentType";
   properties.Enabled = true;
-  properties.RecoverableDays = 5;
   properties.Tags.emplace("a", "b");
   properties.Tags.emplace("c", "d");
 
@@ -72,9 +63,6 @@ TEST(SecretPropertiesSerializer, Serialize3)
   EXPECT_EQ(
       properties.Enabled.Value(),
       jsonParser[_detail::AttributesPropertyName][_detail::EnabledPropertyName]);
-  EXPECT_EQ(
-      properties.RecoverableDays.Value(),
-      jsonParser[_detail::AttributesPropertyName][_detail::RecoverableDaysPropertyName]);
   for (auto kvp : properties.Tags)
   {
     EXPECT_EQ(properties.Tags[kvp.first], jsonParser[_detail::TagsPropertyName][kvp.first]);
