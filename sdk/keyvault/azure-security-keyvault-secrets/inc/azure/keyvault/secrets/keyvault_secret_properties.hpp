@@ -12,12 +12,6 @@
 #include <azure/core/nullable.hpp>
 
 #include <unordered_map>
-namespace Azure { namespace Security { namespace KeyVault { namespace Secrets { namespace _detail {
-  struct SecretSerializer;
-  struct SecretPropertiesPagedResultSerializer;
-  struct DeletedSecretPagedResultSerializer;
-  struct SecretPropertiesSerializer;
-}}}}} // namespace Azure::Security::KeyVault::Secrets::_detail
 
 namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
 
@@ -27,12 +21,6 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
    */
   struct SecretProperties final
   {
-    friend struct Azure::Security::KeyVault::Secrets::_detail::SecretSerializer;
-    friend struct Azure::Security::KeyVault::Secrets::_detail::
-        SecretPropertiesPagedResultSerializer;
-    friend struct Azure::Security::KeyVault::Secrets::_detail::DeletedSecretPagedResultSerializer;
-    friend struct Azure::Security::KeyVault::Secrets::_detail::SecretPropertiesSerializer;
-
     /**
      * @brief Indicate whether the secret is enabled and useable for cryptographic operations.
      *
@@ -68,7 +56,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
      * Key Vault.
      *
      */
-    Azure::Nullable<int64_t> RecoverableDays() { return m_recoverableDays; };
+    Azure::Nullable<int64_t> RecoverableDays;
 
     /**
      * @brief The recovery level currently in effect for secrets in the Key Vault.
@@ -77,7 +65,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
      * only the service can purge the secret at the end of the retention interval.
      *
      */
-    Azure::Nullable<std::string> RecoveryLevel() { return m_recoveryLevel; };
+    Azure::Nullable<std::string> RecoveryLevel;
 
     /**
      * @brief The content type of the secret.
@@ -90,7 +78,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
      * corresponding key backing the KV certificate.
      *
      */
-    Azure::Nullable<std::string> KeyId() { return m_keyId; };
+    Azure::Nullable<std::string> KeyId;
 
     /**
      * @brief Application specific metadata in the form of key-value pairs.
@@ -103,7 +91,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
      * backing a certificate, then managed will be true.
      *
      */
-    bool Managed() { return m_managed; };
+    bool Managed;
 
     /**
      * @brief The secret id.
@@ -146,11 +134,5 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
         throw std::invalid_argument("Name cannot be empty");
       }
     };
-
-  protected:
-    bool m_managed = false;
-    Azure::Nullable<std::string> m_keyId;
-    Azure::Nullable<std::string> m_recoveryLevel;
-    Azure::Nullable<int64_t> m_recoverableDays;
   };
 }}}} // namespace Azure::Security::KeyVault::Secrets

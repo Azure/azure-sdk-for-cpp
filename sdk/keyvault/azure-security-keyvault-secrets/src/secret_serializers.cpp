@@ -80,9 +80,9 @@ void SecretSerializer::Deserialize(
         _detail::UpdatedPropertyName,
         PosixTimeConverter::PosixTimeToDateTime);
     JsonOptional::SetIfExists<std::string>(
-        secret.Properties.m_recoveryLevel, attributes, _detail::RecoveryLevelPropertyName);
+        secret.Properties.RecoveryLevel, attributes, _detail::RecoveryLevelPropertyName);
     JsonOptional::SetIfExists<int64_t>(
-        secret.Properties.m_recoverableDays, attributes, _detail::RecoverableDaysPropertyName);
+        secret.Properties.RecoverableDays, attributes, _detail::RecoverableDaysPropertyName);
   }
 
   // "Tags"
@@ -100,7 +100,7 @@ void SecretSerializer::Deserialize(
   // managed
   if (jsonParser.contains(_detail::ManagedPropertyName))
   {
-    secret.Properties.m_managed = jsonParser[_detail::ManagedPropertyName].get<bool>();
+    secret.Properties.Managed = jsonParser[_detail::ManagedPropertyName].get<bool>();
   }
 
   // value
@@ -111,7 +111,7 @@ void SecretSerializer::Deserialize(
 
   // key id
   JsonOptional::SetIfExists<std::string>(
-      secret.Properties.m_keyId, jsonParser, _detail::KeyIdPropertyName);
+      secret.Properties.KeyId, jsonParser, _detail::KeyIdPropertyName);
 
   // content type
   JsonOptional::SetIfExists<std::string>(
@@ -147,9 +147,9 @@ void DeletedSecretSerializer::Deserialize(
   auto jsonParser = json::parse(body);
 
   secret.RecoveryId = jsonParser[_detail::RecoveryIdPropertyName];
-  secret.m_scheduledPurgeDate = PosixTimeConverter::PosixTimeToDateTime(
+  secret.ScheduledPurgeDate = PosixTimeConverter::PosixTimeToDateTime(
       jsonParser[_detail::ScheduledPurgeDatePropertyName]);
-  secret.m_deletedOn
+  secret.DeletedOn
       = PosixTimeConverter::PosixTimeToDateTime(jsonParser[_detail::DeletedDatePropertyName]);
 }
 
@@ -183,9 +183,9 @@ std::string SecretSerializer::Serialize(KeyVaultSecret const& parameters)
       _detail::NbfPropertyName,
       PosixTimeConverter::DateTimeToPosixTime);
   JsonOptional::SetFromNullable(
-      parameters.Properties.m_recoverableDays, attributes, _detail::RecoverableDaysPropertyName);
+      parameters.Properties.RecoverableDays, attributes, _detail::RecoverableDaysPropertyName);
   JsonOptional::SetFromNullable(
-      parameters.Properties.m_recoveryLevel, attributes, _detail::RecoveryLevelPropertyName);
+      parameters.Properties.RecoveryLevel, attributes, _detail::RecoveryLevelPropertyName);
   JsonOptional::SetFromNullable<Azure::DateTime, int64_t>(
       parameters.Properties.UpdatedOn,
       attributes,
@@ -214,9 +214,9 @@ std::string SecretPropertiesSerializer::Serialize(SecretProperties const& proper
   json attributes;
 
   JsonOptional::SetFromNullable(
-      properties.m_recoverableDays, attributes, _detail::RecoverableDaysPropertyName);
+      properties.RecoverableDays, attributes, _detail::RecoverableDaysPropertyName);
   JsonOptional::SetFromNullable(
-      properties.m_recoveryLevel, attributes, _detail::RecoveryLevelPropertyName);
+      properties.RecoveryLevel, attributes, _detail::RecoveryLevelPropertyName);
   JsonOptional::SetFromNullable(properties.Enabled, attributes, _detail::EnabledPropertyName);
   JsonOptional::SetFromNullable<Azure::DateTime, int64_t>(
       properties.NotBefore,
@@ -298,9 +298,9 @@ SecretPropertiesPagedResponse SecretPropertiesPagedResultSerializer::Deserialize
           _detail::UpdatedPropertyName,
           PosixTimeConverter::PosixTimeToDateTime);
       JsonOptional::SetIfExists<std::string>(
-          item.m_recoveryLevel, attributes, _detail::RecoveryLevelPropertyName);
+          item.RecoveryLevel, attributes, _detail::RecoveryLevelPropertyName);
       JsonOptional::SetIfExists<int64_t>(
-          item.m_recoverableDays, attributes, _detail::RecoverableDaysPropertyName);
+          item.RecoverableDays, attributes, _detail::RecoverableDaysPropertyName);
     }
 
     // "Tags"
@@ -318,7 +318,7 @@ SecretPropertiesPagedResponse SecretPropertiesPagedResultSerializer::Deserialize
     // managed
     if (secretProperties.contains(_detail::ManagedPropertyName))
     {
-      item.m_managed = secretProperties[_detail::ManagedPropertyName].get<bool>();
+      item.Managed = secretProperties[_detail::ManagedPropertyName].get<bool>();
     }
 
     // content type
@@ -377,9 +377,9 @@ DeletedSecretPagedResponse DeletedSecretPagedResultSerializer::Deserialize(
           _detail::UpdatedPropertyName,
           PosixTimeConverter::PosixTimeToDateTime);
       JsonOptional::SetIfExists<std::string>(
-          item.Properties.m_recoveryLevel, attributes, _detail::RecoveryLevelPropertyName);
+          item.Properties.RecoveryLevel, attributes, _detail::RecoveryLevelPropertyName);
       JsonOptional::SetIfExists<int64_t>(
-          item.Properties.m_recoverableDays, attributes, _detail::RecoverableDaysPropertyName);
+          item.Properties.RecoverableDays, attributes, _detail::RecoverableDaysPropertyName);
     }
 
     // "Tags"
@@ -397,7 +397,7 @@ DeletedSecretPagedResponse DeletedSecretPagedResultSerializer::Deserialize(
     // managed
     if (secretProperties.contains(_detail::ManagedPropertyName))
     {
-      item.Properties.m_managed = secretProperties[_detail::ManagedPropertyName].get<bool>();
+      item.Properties.Managed = secretProperties[_detail::ManagedPropertyName].get<bool>();
     }
 
     // content type
@@ -405,9 +405,9 @@ DeletedSecretPagedResponse DeletedSecretPagedResultSerializer::Deserialize(
         item.Properties.ContentType, secretProperties, _detail::ContentTypePropertyName);
 
     item.RecoveryId = secretProperties[_detail::RecoveryIdPropertyName];
-    item.m_scheduledPurgeDate = PosixTimeConverter::PosixTimeToDateTime(
+    item.ScheduledPurgeDate = PosixTimeConverter::PosixTimeToDateTime(
         secretProperties[_detail::ScheduledPurgeDatePropertyName]);
-    item.m_deletedOn = PosixTimeConverter::PosixTimeToDateTime(
+    item.DeletedOn = PosixTimeConverter::PosixTimeToDateTime(
         secretProperties[_detail::DeletedDatePropertyName]);
 
     result.Items.emplace_back(item);

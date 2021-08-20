@@ -24,8 +24,8 @@ TEST(SecretPropertiesPagedResponse, SingleWithNext)
 
   auto item = result.Items[0];
   EXPECT_EQ(item.Enabled.Value(), true);
-  EXPECT_EQ(item.RecoverableDays().Value(), 90);
-  EXPECT_EQ(item.RecoveryLevel().Value(), "Recoverable+Purgeable");
+  EXPECT_EQ(item.RecoverableDays.Value(), 90);
+  EXPECT_EQ(item.RecoveryLevel.Value(), "Recoverable+Purgeable");
   EXPECT_EQ(item.Id, "https://gearama-test2.vault.azure.net/secrets/gdfgfd");
 }
 
@@ -40,8 +40,8 @@ TEST(SecretPropertiesPagedResponse, MultipleNoNext)
 
   auto item = result.Items[0];
   EXPECT_EQ(item.Enabled.Value(), true);
-  EXPECT_EQ(item.RecoverableDays().Value(), 90);
-  EXPECT_EQ(item.RecoveryLevel().Value(), "Recoverable+Purgeable");
+  EXPECT_EQ(item.RecoverableDays.Value(), 90);
+  EXPECT_EQ(item.RecoveryLevel.Value(), "Recoverable+Purgeable");
   EXPECT_EQ(
       item.Id,
       "https://gearama-test2.vault.azure.net/secrets/gdfgfd/5a0fdd819481420eac6f3282ce722461");
@@ -50,8 +50,8 @@ TEST(SecretPropertiesPagedResponse, MultipleNoNext)
 
   item = result.Items[1];
   EXPECT_EQ(item.Enabled.Value(), true);
-  EXPECT_EQ(item.RecoverableDays().Value(), 90);
-  EXPECT_EQ(item.RecoveryLevel().Value(), "Recoverable+Purgeable");
+  EXPECT_EQ(item.RecoverableDays.Value(), 90);
+  EXPECT_EQ(item.RecoveryLevel.Value(), "Recoverable+Purgeable");
   EXPECT_EQ(
       item.Id,
       "https://gearama-test2.vault.azure.net/secrets/gdfgfd/8faafbb99216484dbbd75f9dd6bcaadf");
@@ -60,8 +60,8 @@ TEST(SecretPropertiesPagedResponse, MultipleNoNext)
 
   item = result.Items[2];
   EXPECT_EQ(item.Enabled.Value(), true);
-  EXPECT_EQ(item.RecoverableDays().Value(), 90);
-  EXPECT_EQ(item.RecoveryLevel().Value(), "Recoverable+Purgeable");
+  EXPECT_EQ(item.RecoverableDays.Value(), 90);
+  EXPECT_EQ(item.RecoveryLevel.Value(), "Recoverable+Purgeable");
   EXPECT_EQ(
       item.Id,
       "https://gearama-test2.vault.azure.net/secrets/gdfgfd/d75080822f03400ab4d658bd0e988ac5");
@@ -90,8 +90,8 @@ TEST(DeletedSecretPagedResultSerializer, SingleWithNext)
 
   auto item = result.Items[0];
   EXPECT_EQ(item.Properties.Enabled.Value(), true);
-  EXPECT_EQ(item.Properties.RecoverableDays().Value(), 90);
-  EXPECT_EQ(item.Properties.RecoveryLevel().Value(), "Recoverable+Purgeable");
+  EXPECT_EQ(item.Properties.RecoverableDays.Value(), 90);
+  EXPECT_EQ(item.Properties.RecoveryLevel.Value(), "Recoverable+Purgeable");
   EXPECT_EQ(item.Id, "https://gearama-test2.vault.azure.net/secrets/eqwewq");
   EXPECT_EQ(item.RecoveryId, "https://gearama-test2.vault.azure.net/deletedsecrets/eqwewq");
 }
@@ -107,22 +107,22 @@ TEST(DeletedSecretPagedResultSerializer, MultipleNoNext)
 
   auto item = result.Items[0];
   EXPECT_EQ(item.Properties.Enabled.Value(), true);
-  EXPECT_EQ(item.Properties.RecoverableDays().Value(), 90);
-  EXPECT_EQ(item.Properties.RecoveryLevel().Value(), "Recoverable+Purgeable");
+  EXPECT_EQ(item.Properties.RecoverableDays.Value(), 90);
+  EXPECT_EQ(item.Properties.RecoveryLevel.Value(), "Recoverable+Purgeable");
   EXPECT_EQ(item.Id, "https://gearama-test2.vault.azure.net/secrets/eqwewq");
   EXPECT_EQ(item.RecoveryId, "https://gearama-test2.vault.azure.net/deletedsecrets/eqwewq");
 
   item = result.Items[1];
   EXPECT_EQ(item.Properties.Enabled.Value(), true);
-  EXPECT_EQ(item.Properties.RecoverableDays().Value(), 90);
-  EXPECT_EQ(item.Properties.RecoveryLevel().Value(), "Recoverable+Purgeable");
+  EXPECT_EQ(item.Properties.RecoverableDays.Value(), 90);
+  EXPECT_EQ(item.Properties.RecoveryLevel.Value(), "Recoverable+Purgeable");
   EXPECT_EQ(item.Id, "https://gearama-test2.vault.azure.net/secrets/someSecret");
   EXPECT_EQ(item.RecoveryId, "https://gearama-test2.vault.azure.net/secrets/someSecret");
 
   item = result.Items[2];
   EXPECT_EQ(item.Properties.Enabled.Value(), true);
-  EXPECT_EQ(item.Properties.RecoverableDays().Value(), 90);
-  EXPECT_EQ(item.Properties.RecoveryLevel().Value(), "Recoverable+Purgeable");
+  EXPECT_EQ(item.Properties.RecoverableDays.Value(), 90);
+  EXPECT_EQ(item.Properties.RecoveryLevel.Value(), "Recoverable+Purgeable");
   EXPECT_EQ(item.Id, "https://gearama-test2.vault.azure.net/secrets/someSecret2");
   EXPECT_EQ(item.RecoveryId, "https://gearama-test2.vault.azure.net/deletedsecrets/someSecret2");
 }

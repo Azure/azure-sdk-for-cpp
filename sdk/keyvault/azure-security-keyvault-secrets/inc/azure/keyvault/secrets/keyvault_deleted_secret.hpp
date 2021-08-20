@@ -9,10 +9,6 @@
 #pragma once
 #include <azure/core/datetime.hpp>
 #include <azure/keyvault/secrets/keyvault_secret.hpp>
-namespace Azure { namespace Security { namespace KeyVault { namespace Secrets { namespace _detail {
-  struct DeletedSecretSerializer;
-  struct DeletedSecretPagedResultSerializer;
-}}}}} // namespace Azure::Security::KeyVault::Secrets::_detail
 
 namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
   /**
@@ -21,8 +17,6 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
    */
   struct DeletedSecret : public KeyVaultSecret
   {
-    friend struct Azure::Security::KeyVault::Secrets::_detail::DeletedSecretSerializer;
-    friend struct Azure::Security::KeyVault::Secrets::_detail::DeletedSecretPagedResultSerializer;
     /**
      * @brief A Deleted Secret consisting of its previous id, attributes and its tags,
      * as well as information on when it will be purged.
@@ -32,12 +26,12 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
     /**
      * @brief The time when the secret is scheduled to be purged, in UTC.
      */
-    Azure::DateTime ScheduledPurgeDate() { return m_scheduledPurgeDate; };
+    Azure::DateTime ScheduledPurgeDate;
 
     /**
      * @brief The time when the secret was deleted, in UTC.
      */
-    Azure::DateTime DeletedOn() { return m_deletedOn; };
+    Azure::DateTime DeletedOn;
 
     /**
      * @brief Default constructor.
@@ -50,9 +44,5 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
      * @param name Name of the deleted secret.
      */
     DeletedSecret(std::string name) : KeyVaultSecret(std::move(name)) {}
-
-  protected:
-    Azure::DateTime m_scheduledPurgeDate;
-    Azure::DateTime m_deletedOn;
   };
 }}}} // namespace Azure::Security::KeyVault::Secrets
