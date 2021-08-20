@@ -21,6 +21,7 @@
 using namespace Azure::Security::KeyVault::Secrets;
 using namespace Azure::Core::Http::Policies;
 using namespace Azure::Core::Http::Policies::_internal;
+using namespace Azure::Security::KeyVault::Secrets::_detail;
 
 namespace {
 constexpr static const char TelemetryName[] = "keyvault-secrets";
@@ -74,7 +75,7 @@ SecretClient::SecretClient(
       Azure::Core::Url(vaultUrl),
       apiVersion,
       Azure::Core::Http::_internal::HttpPipeline(
-          options, TelemetryName, apiVersion, std::move(perRetrypolicies), {}));
+          options, TelemetryName, PackageVersion::ToString(), std::move(perRetrypolicies), {}));
 }
 
 Azure::Response<Secret> SecretClient::GetSecret(
