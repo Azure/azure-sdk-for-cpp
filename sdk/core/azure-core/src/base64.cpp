@@ -64,7 +64,7 @@ namespace Azure { namespace Core {
     bio = BIO_push(BIO_new(BIO_f_base64()), bio);
     BIO_set_flags(bio, BIO_FLAGS_BASE64_NO_NL);
     BIO_write(bio, data.data(), static_cast<int>(data.size()));
-    BIO_flush(bio);
+    (void)BIO_flush(bio);
     BUF_MEM* bufferPtr;
     BIO_get_mem_ptr(bio, &bufferPtr);
     std::string toReturn(bufferPtr->data, bufferPtr->length);
