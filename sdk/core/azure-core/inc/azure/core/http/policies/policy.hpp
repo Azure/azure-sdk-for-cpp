@@ -422,18 +422,19 @@ namespace Azure { namespace Core { namespace Http { namespace Policies {
      *
      */
     class TokenScopes final {
-```suggestion
-     /**
-      * @brief An instance of `%TokenScopes` class cannot be created.
-      *
-      */
-     TokenScopes() = delete;
+      ```suggestion
+      /**
+       * @brief An instance of `%TokenScopes` class cannot be created.
+       *
+       */
+      TokenScopes()
+          = delete;
 
-     /**
-      * @brief An instance of `%TokenScopes` class cannot be destructed, because no instance
-      * can be created.
-      *
-      */
+      /**
+       * @brief An instance of `%TokenScopes` class cannot be destructed, because no instance
+       * can be created.
+       *
+       */
       ~TokenScopes() = delete;
 
     public:
