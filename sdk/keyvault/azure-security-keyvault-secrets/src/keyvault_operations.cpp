@@ -10,7 +10,7 @@
 #include "azure/keyvault/secrets/secret_client.hpp"
 #include "private/secret_serializers.hpp"
 
-Azure::Response<Secret> RecoverDeletedSecretOperation::PollUntilDoneInternal(
+Azure::Response<KeyVaultSecret> RecoverDeletedSecretOperation::PollUntilDoneInternal(
     std::chrono::milliseconds period,
     Azure::Core::Context& context)
 {
@@ -25,7 +25,7 @@ Azure::Response<Secret> RecoverDeletedSecretOperation::PollUntilDoneInternal(
     std::this_thread::sleep_for(period);
   }
 
-  return Azure::Response<Secret>(
+  return Azure::Response<KeyVaultSecret>(
       m_value, std::make_unique<Azure::Core::Http::RawResponse>(*m_rawResponse));
 }
 
@@ -68,7 +68,7 @@ std::unique_ptr<Azure::Core::Http::RawResponse> RecoverDeletedSecretOperation::P
 
 RecoverDeletedSecretOperation::RecoverDeletedSecretOperation(
     std::shared_ptr<SecretClient> secretClient,
-    Azure::Response<Secret> response)
+    Azure::Response<KeyVaultSecret> response)
     : m_secretClient(secretClient)
 {
   m_value = response.Value;

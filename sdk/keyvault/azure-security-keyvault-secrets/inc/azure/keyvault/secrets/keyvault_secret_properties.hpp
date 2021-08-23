@@ -21,7 +21,6 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
    */
   struct SecretProperties final
   {
-
     /**
      * @brief Indicate whether the secret is enabled and useable for cryptographic operations.
      *
@@ -92,7 +91,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
      * backing a certificate, then managed will be true.
      *
      */
-    bool Managed = false;
+    bool Managed;
 
     /**
      * @brief The secret id.

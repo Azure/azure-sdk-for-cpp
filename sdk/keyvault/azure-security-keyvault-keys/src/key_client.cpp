@@ -12,6 +12,7 @@
 #include "private/key_request_parameters.hpp"
 #include "private/key_serializers.hpp"
 #include "private/keyvault_protocol.hpp"
+#include "private/package_version.hpp"
 
 #include <memory>
 #include <string>
@@ -81,7 +82,7 @@ KeyClient::KeyClient(
   m_pipeline = std::make_shared<Azure::Core::Http::_internal::HttpPipeline>(
       options,
       KeyVaultServicePackageName,
-      m_apiVersion,
+      PackageVersion::ToString(),
       std::move(perRetrypolicies),
       std::move(perCallpolicies));
 }

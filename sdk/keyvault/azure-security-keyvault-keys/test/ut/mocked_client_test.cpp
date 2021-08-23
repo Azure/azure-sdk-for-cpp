@@ -49,6 +49,40 @@ TEST_F(MockedTransportAdapterTest, keyvaultTelemetryId)
   EXPECT_TRUE(foundHeader);
 }
 
+TEST_F(MockedTransportAdapterTest, keyvaultTelemetryIdVersion)
+{
+  m_client = std::make_unique<
+      Azure::Security::KeyVault::Keys::Test::KeyClientWithNoAuthenticationPolicy>(
+      "url", m_clientOptions);
+
+  std::string const expectedTelemetryVersionString(
+      Azure::Security::KeyVault::Keys::_detail::PackageVersion::ToString());
+  std::string telemetryStart("azsdk-cpp-keyvault-keys/");
+
+  // The fake response from the mocked transport adapter is good for parsing a Key back
+  auto response = m_client->GetKey("name");
+
+  // The response is an echo of the sent headers. Let's find the telemetry ID
+  auto foundHeader = false;
+  for (auto& header : response.RawResponse->GetHeaders())
+  {
+    if (Azure::Core::_internal::StringExtensions::LocaleInvariantCaseInsensitiveEqual(
+            header.first, "User-Agent"))
+    {
+      foundHeader = true;
+      EXPECT_PRED2(
+          [](std::string const& received, std::string const& sent) {
+            return Azure::Core::_internal::StringExtensions::LocaleInvariantCaseInsensitiveEqual(
+                received, sent);
+          },
+          header.second.substr(telemetryStart.size(), expectedTelemetryVersionString.size()),
+          expectedTelemetryVersionString);
+      break;
+    }
+  }
+  EXPECT_TRUE(foundHeader);
+}
+
 TEST_F(MockedTransportAdapterTest, CreateKeyRSA)
 {
   std::string applicationId("CreateKeyRSA");

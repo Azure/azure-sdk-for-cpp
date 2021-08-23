@@ -84,7 +84,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
      * @param context The context for the operation can be used for request cancellation.
      * @return The Secret wrapped in the Response.
      */
-    Azure::Response<Secret> GetSecret(
+    Azure::Response<KeyVaultSecret> GetSecret(
         std::string const& name,
         GetSecretOptions const& options = GetSecretOptions(),
         Azure::Core::Context const& context = Azure::Core::Context()) const;
@@ -112,7 +112,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
      * @param context The context for the operation can be used for request cancellation.
      * @return The Secret wrapped in the Response.
      */
-    Azure::Response<Secret> SetSecret(
+    Azure::Response<KeyVaultSecret> SetSecret(
         std::string const& name,
         std::string const& value,
         Azure::Core::Context const& context = Azure::Core::Context()) const;
@@ -126,29 +126,9 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
      * @param context The context for the operation can be used for request cancellation.
      * @return The Secret wrapped in the Response.
      */
-    Azure::Response<Secret> SetSecret(
+    Azure::Response<KeyVaultSecret> SetSecret(
         std::string const& name,
-        Secret const& secret,
-        Azure::Core::Context const& context = Azure::Core::Context()) const;
-
-    /**
-     * @brief Updates the attributes associated with a specified secret in a given key vault.
-     * The UPDATE operation changes specified attributes of an existing stored secret.
-     * Attributes that are not specified in the request are left unchanged.
-     * The value of a secret itself cannot be changed.
-     * This operation requires the secrets/set permission.
-     *
-     * @param name The name of the secret.
-     * @param options The optional parameters for this request.
-     * @param properties The properties to update
-     * @param context The context for the operation can be used for request cancellation.
-     *
-     * @return The Secret wrapped in the Response.
-     */
-    Azure::Response<Secret> UpdateSecretProperties(
-        std::string const& name,
-        UpdateSecretPropertiesOptions const& options,
-        SecretProperties const& properties,
+        KeyVaultSecret const& secret,
         Azure::Core::Context const& context = Azure::Core::Context()) const;
 
     /**
@@ -158,16 +138,12 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
      * The value of a secret itself cannot be changed.
      * This operation requires the secrets/set permission.
      *
-     * @param name The name of the secret.
-     * @param version The version of the secret for this request.
      * @param properties The properties to update
      * @param context The context for the operation can be used for request cancellation.
      *
      * @return The Secret wrapped in the Response.
      */
-    Azure::Response<Secret> UpdateSecretProperties(
-        std::string const& name,
-        std::string const& version,
+    Azure::Response<KeyVaultSecret> UpdateSecretProperties(
         SecretProperties const& properties,
         Azure::Core::Context const& context = Azure::Core::Context()) const;
 
@@ -196,7 +172,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
      *
      * @return The Secret wrapped in the Response.
      */
-    Azure::Response<Secret> RestoreSecretBackup(
+    Azure::Response<KeyVaultSecret> RestoreSecretBackup(
         std::vector<uint8_t> const& backup,
         Azure::Core::Context const& context = Azure::Core::Context()) const;
 

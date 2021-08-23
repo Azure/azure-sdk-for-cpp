@@ -10,7 +10,7 @@
 #include "azure/keyvault/secrets/keyvault_secret_properties.hpp"
 
 namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
-  struct Secret
+  struct KeyVaultSecret
   {
     /**
      * @brief The name of the secret.
@@ -22,7 +22,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
      * @brief The secret value.
      *
      */
-    std::string Value;
+    Azure::Nullable<std::string> Value;
 
     /**
      * @brief The secret id.
@@ -40,7 +40,19 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
      * @brief Construct a new Secret object.
      *
      */
-    Secret() = default;
+    KeyVaultSecret() = default;
+
+    /**
+     * @brief The vault url of the secret.
+     *
+     */
+    std::string VaultUrl() { return Properties.VaultUrl; }
+
+    /**
+     * @brief The version of the secret.
+     *
+     */
+    std::string Version() { return Properties.Version; }
 
     /**
      * @brief Construct a new Secret object.
@@ -48,7 +60,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
      * @param name The name of the secret.
      * @param value The name of the secret.
      */
-    Secret(std::string const& name, std::string const& value)
+    KeyVaultSecret(std::string const& name, std::string const& value)
         : Name(name), Value(value), Properties(name)
     {
       if (Name.empty())
@@ -56,14 +68,14 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
         throw std::invalid_argument("Name cannot be empty");
       }
 
-      if (Value.empty())
+      if (Value.HasValue() == false || Value.Value().empty())
       {
         throw std::invalid_argument("Value cannot be empty");
       }
     };
 
   private:
-    Secret(std::string name) : Name(std::move(name))
+    KeyVaultSecret(std::string name) : Name(std::move(name))
     {
       if (Name.empty())
       {
