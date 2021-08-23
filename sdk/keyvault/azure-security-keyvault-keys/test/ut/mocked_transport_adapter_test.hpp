@@ -11,10 +11,12 @@
 
 #include "./../../src/private/key_serializers.hpp"
 #include "./../../src/private/keyvault_protocol.hpp"
+#include "./../../src/private/package_version.hpp"
 
 #include <azure/core.hpp>
 #include <azure/core/internal/http/pipeline.hpp>
 #include <azure/keyvault/keyvault_keys.hpp>
+
 #include <cstdio>
 #include <string>
 
@@ -105,7 +107,11 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys { nam
       std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>> perCallpolicies;
       std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>> perRetrypolicies;
       m_pipeline = std::make_unique<Azure::Core::Http::_internal::HttpPipeline>(
-          options, "test", "version", std::move(perRetrypolicies), std::move(perCallpolicies));
+          options,
+          "keyvault-keys",
+          Azure::Security::KeyVault::Keys::_detail::PackageVersion::ToString(),
+          std::move(perRetrypolicies),
+          std::move(perCallpolicies));
     }
   };
 
