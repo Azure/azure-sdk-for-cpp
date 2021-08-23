@@ -66,7 +66,7 @@ SecretClient::SecretClient(
   std::vector<std::unique_ptr<HttpPolicy>> perRetrypolicies;
   {
     Azure::Core::Credentials::TokenRequestContext const tokenContext
-        = {TokenScopes::GetScopeFromUrl(url, "https://vault.azure.net/.default")};
+        = {TokenScopes::GetScopeFromUrl(url)};
 
     perRetrypolicies.emplace_back(
         std::make_unique<BearerTokenAuthenticationPolicy>(credential, tokenContext));

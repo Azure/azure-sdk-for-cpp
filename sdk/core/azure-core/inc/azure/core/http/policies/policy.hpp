@@ -448,13 +448,9 @@ namespace Azure { namespace Core { namespace Http { namespace Policies {
        * to calculate the scope after the first `.` from the url host.
        *
        * @param url The url used to create an Azure SDK client.
-       * @param defaultScope Optional hardcoded scope to be always added to the result scopes. It
-       * won't be added if it is equal to the calculated scope from the url.
        * @return A vector with the calculated scopes plus any default scope provided.
        */
-      static std::vector<std::string> GetScopeFromUrl(
-          Azure::Core::Url const& url,
-          std::string const& defaultScope = "");
+      static std::vector<std::string> GetScopeFromUrl(Azure::Core::Url const& url);
     };
 
     /**

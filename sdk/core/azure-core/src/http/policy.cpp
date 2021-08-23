@@ -24,8 +24,7 @@ std::unique_ptr<RawResponse> NextHttpPolicy::Send(Request& request, Context cons
 }
 
 std::vector<std::string> Policies::_internal::TokenScopes::GetScopeFromUrl(
-    Azure::Core::Url const& url,
-    std::string const& defaultScope)
+    Azure::Core::Url const& url)
 {
   std::vector<std::string> scopes;
 
@@ -45,11 +44,6 @@ std::vector<std::string> Policies::_internal::TokenScopes::GetScopeFromUrl(
     calculatedScope.append("/.default");
 
     scopes.emplace_back(calculatedScope);
-  }
-
-  if (!defaultScope.empty() && defaultScope != calculatedScope)
-  {
-    scopes.emplace_back(defaultScope);
   }
 
   return scopes;

@@ -25,40 +25,6 @@ TEST(TokenScopes, GenerateScopeUrlWithPath)
   ASSERT_EQ("https://managedhsm.azure.net/.default", scopes[0]);
 }
 
-TEST(TokenScopes, GenerateScopeWithDefault)
-{
-  auto scopes = TokenScopes::GetScopeFromUrl(
-      Url("https://account.managedhsm.azure.net"), "https://vault.azure.net/.default");
-  ASSERT_EQ(2, scopes.size());
-  ASSERT_EQ("https://managedhsm.azure.net/.default", scopes[0]);
-  ASSERT_EQ("https://vault.azure.net/.default", scopes[1]);
-}
-
-TEST(TokenScopes, GenerateScopeWithDefaultWithPath)
-{
-  auto scopes = TokenScopes::GetScopeFromUrl(
-      Url("https://account.managedhsm.azure.net/some/path"), "https://vault.azure.net/.default");
-  ASSERT_EQ(2, scopes.size());
-  ASSERT_EQ("https://managedhsm.azure.net/.default", scopes[0]);
-  ASSERT_EQ("https://vault.azure.net/.default", scopes[1]);
-}
-
-TEST(TokenScopes, GenerateScopeWithDefaultExclude)
-{
-  auto scopes = TokenScopes::GetScopeFromUrl(
-      Url("https://account.managedhsm.azure.net"), "https://managedhsm.azure.net/.default");
-  ASSERT_EQ(1, scopes.size());
-  ASSERT_EQ("https://managedhsm.azure.net/.default", scopes[0]);
-}
-
-TEST(TokenScopes, GenerateIgnore)
-{
-  auto scopes = TokenScopes::GetScopeFromUrl(
-      Url("https://account"), "https://managedhsm.azure.net/.default");
-  ASSERT_EQ(1, scopes.size());
-  ASSERT_EQ("https://managedhsm.azure.net/.default", scopes[0]);
-}
-
 TEST(TokenScopes, GenerateIgnoreNoDefault)
 {
   auto scopes = TokenScopes::GetScopeFromUrl(Url("https://account"));
