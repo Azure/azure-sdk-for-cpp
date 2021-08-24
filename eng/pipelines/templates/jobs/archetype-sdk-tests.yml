@@ -27,6 +27,16 @@ jobs:
   timeoutInMinutes: ${{ parameters.TimeoutInMinutes }}
   strategy:
     matrix:
+      Linux_x64_gcc5_with_unit_test:
+        Pool: azsdk-pool-mms-ubuntu-1804-general
+        OSVmImage: MMSUbuntu18.04
+        VcpkgInstall: 'curl[ssl] libxml2 openssl'
+        VCPKG_DEFAULT_TRIPLET: 'x64-linux'
+        # Can't set CC and CXX to env because it would affect VCPKG building which requires g++ > 7
+        # So, this conf will set the CXX for cmake inline.
+        CmakeEnvArg: 'CC=/usr/bin/gcc-5 CXX=/usr/bin/g++-5 cmake'
+        BuildArgs: '-j 4'
+        CmakeArgs: ' -DBUILD_TESTING=ON -DRUN_LONG_UNIT_TESTS=ON'
       Linux_x64_with_unit_test:
         Pool: azsdk-pool-mms-ubuntu-1804-general
         OSVmImage: MMSUbuntu18.04
@@ -105,6 +115,9 @@ jobs:
     CMOCKA_MESSAGE_OUTPUT: "xml"
     AZURE_ENABLE_STATIC_ANALYSIS: 1
     AZURE_KEYVAULT_AVOID_THROTTLED: 1
+    BuildArgs: ""
+    CmakeEnvArg: ""
+    CmakeArgs: ""    
 
   steps:
   - checkout: self
@@ -115,6 +128,26 @@ jobs:
       AgentImage: $(OSVmImage)
 
   - template: /eng/common/pipelines/templates/steps/bypass-local-dns.yml
+
+  # Add g++5 repo to ubuntu
+  - bash: sudo sh -c "echo 'deb http://ftp.debian.org/debian/ stretch main' >> /etc/apt/sources.list"
+    displayName: Add g++ 5
+    condition: >-
+      and(
+        succeeded(), 
+        contains(variables['OSVmImage'], 'Ubuntu'), 
+        contains(variables['CmakeEnvArg'], 'CC=/usr/bin/gcc-5 CXX=/usr/bin/g++-5 cmake')
+      )
+
+  # Install g++5
+  - bash: sudo apt-get update & sudo apt-get install g++-5
+    displayName: Install g++ 5
+    condition: >-
+      and(
+        succeeded(), 
+        contains(variables['OSVmImage'], 'Ubuntu'), 
+        contains(variables['CmakeEnvArg'], 'CC=/usr/bin/gcc-5 CXX=/usr/bin/g++-5 cmake')
+      )
 
   # Install apt dependencies (if appropriate)
   - bash: sudo apt install -y $(AptDependencies)
@@ -137,6 +170,7 @@ jobs:
     parameters:
       GenerateArgs: $(CmakeArgs)
       BuildArgs: "$(BuildArgs)"
+      Env: "$(CmakeEnvArg)"
 
   - template: /eng/common/TestResources/deploy-test-resources.yml
     parameters:

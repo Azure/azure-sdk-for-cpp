@@ -26,6 +26,15 @@ jobs:
   condition: and(succeededOrFailed(), ne(variables['Skip.Test'], 'true'))
   strategy:
     matrix:
+      Linux_x64_gcc5:
+        Pool: azsdk-pool-mms-ubuntu-1804-general
+        OSVmImage: MMSUbuntu18.04
+        VcpkgInstall: 'curl[ssl] libxml2 openssl'
+        VCPKG_DEFAULT_TRIPLET: 'x64-linux'
+        # Can't set CC and CXX to env because it would affect VCPKG building which requires g++ > 7
+        # So, this conf will set the CXX for cmake inline.
+        CmakeEnvArg: 'CC=/usr/bin/gcc-5 CXX=/usr/bin/g++-5 cmake'
+        BuildArgs: '-j 4'
       Linux_x64_gcc8:
         Pool: azsdk-pool-mms-ubuntu-1804-general
         OSVmImage: MMSUbuntu18.04
@@ -138,6 +147,10 @@ jobs:
     value: "xml"
   - name: BuildArgs
     value: ""
+  - name: CmakeEnvArg
+    value: ""
+  - name: CmakeArgs
+    value: ""
 
   steps:
   - checkout: self
@@ -146,6 +159,26 @@ jobs:
   - template: /eng/common/pipelines/templates/steps/verify-agent-os.yml
     parameters:
       AgentImage: $(OSVmImage)
+
+  # Add g++5 repo to ubuntu
+  - bash: sudo sh -c "echo 'deb http://ftp.debian.org/debian/ stretch main' >> /etc/apt/sources.list"
+    displayName: Add g++ 5
+    condition: >-
+      and(
+        succeeded(), 
+        contains(variables['OSVmImage'], 'Ubuntu'), 
+        contains(variables['CmakeEnvArg'], 'CC=/usr/bin/gcc-5 CXX=/usr/bin/g++-5 cmake')
+      )
+
+  # Install g++5
+  - bash: sudo apt-get update & sudo apt-get install g++-5
+    displayName: Install g++ 5
+    condition: >-
+      and(
+        succeeded(), 
+        contains(variables['OSVmImage'], 'Ubuntu'), 
+        contains(variables['CmakeEnvArg'], 'CC=/usr/bin/gcc-5 CXX=/usr/bin/g++-5 cmake')
+      )
 
   # Install gcc and g++ 8 if it is needed on the image.
   - bash: sudo apt-get install gcc-8 g++-8 -y
@@ -211,6 +244,7 @@ jobs:
     parameters:
       GenerateArgs: "$(CmakeArgs)"
       BuildArgs: "$(BuildArgs)"
+      Env: "$(CmakeEnvArg)"
 
   - script: ctest -C Debug -V --tests-regex ${{ parameters.CtestRegex }}
     workingDirectory: build
