@@ -115,6 +115,12 @@ jobs:
     CMOCKA_MESSAGE_OUTPUT: "xml"
     AZURE_ENABLE_STATIC_ANALYSIS: 1
     AZURE_KEYVAULT_AVOID_THROTTLED: 1
+  - name: BuildArgs
+    value: ""
+  - name: CmakeEnvArg
+    value: ""
+  - name: CmakeArgs
+    value: ""    
 
   steps:
   - checkout: self
