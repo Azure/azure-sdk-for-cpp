@@ -17,6 +17,7 @@
 #include "../private/key_wrap_parameters.hpp"
 #include "../private/keyvault_protocol.hpp"
 
+#include <algorithm>
 #include <memory>
 #include <string>
 #include <vector>

@@ -14,6 +14,7 @@
 #include "private/keyvault_protocol.hpp"
 #include "private/package_version.hpp"
 
+#include <algorithm>
 #include <memory>
 #include <string>
 #include <vector>

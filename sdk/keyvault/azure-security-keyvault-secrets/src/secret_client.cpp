@@ -16,6 +16,7 @@
 #include <azure/core/http/http.hpp>
 #include <azure/core/http/policies/policy.hpp>
 
+#include <algorithm>
 #include <string>
 
 using namespace Azure::Security::KeyVault::Secrets;

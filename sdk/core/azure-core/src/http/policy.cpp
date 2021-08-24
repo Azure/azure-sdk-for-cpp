@@ -4,8 +4,6 @@
 #include "azure/core/http/policies/policy.hpp"
 #include "azure/core/http/http.hpp"
 
-#include <algorithm>
-
 using Azure::Core::Context;
 using namespace Azure::Core::Http;
 using namespace Azure::Core::Http::Policies;
