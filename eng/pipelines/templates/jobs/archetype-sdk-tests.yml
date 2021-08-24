@@ -34,7 +34,7 @@ jobs:
         VCPKG_DEFAULT_TRIPLET: 'x64-linux'
         # Can't set CC and CXX to env because it would affect VCPKG building which requires g++ > 7
         # So, this conf will set the CXX for cmake inline.
-        CmakeEnvArg: 'CC=/usr/bin/gcc-5 CCX=/usr/bin/g++-5'
+        CmakeEnvArg: 'CC=/usr/bin/gcc-5 CXX=/usr/bin/g++-5 cmake'
         BuildArgs: '-j 4'
         CmakeArgs: ' -DBUILD_TESTING=ON -DRUN_LONG_UNIT_TESTS=ON'
       Linux_x64_with_unit_test:
@@ -133,7 +133,7 @@ jobs:
       and(
         succeeded(), 
         contains(variables['OSVmImage'], 'Ubuntu'), 
-        contains(variables['CmakeEnvArg'], 'CC=/usr/bin/gcc-5 CCX=/usr/bin/g++-5')
+        contains(variables['CmakeEnvArg'], 'CC=/usr/bin/gcc-5 CXX=/usr/bin/g++-5 cmake')
       )
 
   # Install g++5
@@ -143,7 +143,7 @@ jobs:
       and(
         succeeded(), 
         contains(variables['OSVmImage'], 'Ubuntu'), 
-        contains(variables['CmakeEnvArg'], 'CC=/usr/bin/gcc-5 CCX=/usr/bin/g++-5')
+        contains(variables['CmakeEnvArg'], 'CC=/usr/bin/gcc-5 CXX=/usr/bin/g++-5 cmake')
       )
 
   # Install apt dependencies (if appropriate)
