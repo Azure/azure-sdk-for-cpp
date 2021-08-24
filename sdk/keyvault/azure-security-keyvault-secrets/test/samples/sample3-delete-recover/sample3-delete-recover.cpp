@@ -57,20 +57,27 @@ int main()
     DeleteSecretOperation operation = secretClient.StartDeleteSecret(secret.Name);
 
     // You only need to wait for completion if you want to purge or recover the secret.
-    operation.PollUntilDone(2s);
+    // The duration of the delete operation might vary
+    // in case returns too fast increase the timeout value
+    operation.PollUntilDone(2s); 
 
     // call recover secret
     RecoverDeletedSecretOperation recoverOperation
         = secretClient.StartRecoverDeletedSecret(secret.Name);
 
     // poll until done
-    KeyVaultSecret restoredSecret = recoverOperation.PollUntilDone(2s).Value;
+    // The duration of the delete operation might vary
+    // in case returns too fast increase the timeout value
+    SecretProperties restoredSecretProperties = recoverOperation.PollUntilDone(2s).Value;
+    KeyVaultSecret restoredSecret = secretClient.GetSecret(restoredSecretProperties.Name).Value;
 
     AssertSecretsEqual(secret, restoredSecret);
 
     // cleanup
     // start deleting the secret
     DeleteSecretOperation cleanupOperation = secretClient.StartDeleteSecret(restoredSecret.Name);
+    // The duration of the delete operation might vary
+    // in case returns too fast increase the timeout value
     cleanupOperation.PollUntilDone(2s);
     secretClient.PurgeDeletedSecret(restoredSecret.Name);
   }

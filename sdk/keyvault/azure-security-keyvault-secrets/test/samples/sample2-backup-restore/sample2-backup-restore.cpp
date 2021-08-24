@@ -74,6 +74,8 @@ int main()
     DeleteSecretOperation operation = secretClient.StartDeleteSecret(secret.Name);
 
     // You only need to wait for completion if you want to purge or recover the secret.
+    // The duration of the delete operation might vary
+    // in case returns too fast increase the timeout value
     operation.PollUntilDone(2s);
     // purge the deleted secret
     secretClient.PurgeDeletedSecret(secret.Name);

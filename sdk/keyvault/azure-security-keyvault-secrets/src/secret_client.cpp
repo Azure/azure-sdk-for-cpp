@@ -201,11 +201,12 @@ Azure::Security::KeyVault::Secrets::RecoverDeletedSecretOperation SecretClient::
 {
   return Azure::Security::KeyVault::Secrets::RecoverDeletedSecretOperation(
       std::make_shared<SecretClient>(*this),
-      m_protocolClient->SendRequest<KeyVaultSecret>(
+      m_protocolClient->SendRequest<SecretProperties>(
           context,
           Azure::Core::Http::HttpMethod::Post,
           [&name](Azure::Core::Http::RawResponse const& rawResponse) {
-            return _detail::SecretSerializer::Deserialize(name, rawResponse);
+            auto parsedResponse = _detail::SecretSerializer::Deserialize(name, rawResponse);
+            return parsedResponse.Properties;
           },
           {_detail::DeletedSecretPath, name, _detail::RecoverDeletedSecretPath}));
 }
