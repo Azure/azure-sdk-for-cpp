@@ -28,6 +28,32 @@ using namespace Azure::Core::Http::_internal;
 namespace {
 constexpr static const char KeyVaultServicePackageName[] = "keyvault-keys";
 constexpr static const char CreateValue[] = "create";
+
+std::vector<std::string> GetScopeFromUrl(Azure::Core::Url const& url)
+{
+  std::vector<std::string> scopes;
+
+  std::string calculatedScope(url.GetScheme() + "://");
+  auto const& hostWithAccount = url.GetHost();
+  auto hostNoAccountStart = std::find(hostWithAccount.begin(), hostWithAccount.end(), '.');
+
+  // Insert the calculated scope only when then host in the url contains at least a `.`
+  // Otherwise, only the default scope will be there.
+  // We don't want to throw/validate input but just leave the values go to azure to decide what to
+  // do.
+  if (hostNoAccountStart != hostWithAccount.end())
+  {
+    std::string hostNoAccount(hostNoAccountStart + 1, hostWithAccount.end());
+
+    calculatedScope.append(hostNoAccount);
+    calculatedScope.append("/.default");
+
+    scopes.emplace_back(calculatedScope);
+  }
+
+  return scopes;
+}
+
 } // namespace
 
 std::unique_ptr<RawResponse> KeyClient::SendRequest(
@@ -72,7 +98,7 @@ KeyClient::KeyClient(
   std::vector<std::unique_ptr<HttpPolicy>> perRetrypolicies;
   {
     Azure::Core::Credentials::TokenRequestContext const tokenContext
-        = {TokenScopes::GetScopeFromUrl(m_vaultUrl)};
+        = {::GetScopeFromUrl(m_vaultUrl)};
 
     perRetrypolicies.emplace_back(
         std::make_unique<BearerTokenAuthenticationPolicy>(credential, std::move(tokenContext)));

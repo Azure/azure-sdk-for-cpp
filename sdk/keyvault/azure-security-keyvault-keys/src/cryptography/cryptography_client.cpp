@@ -56,6 +56,32 @@ inline std::vector<uint8_t> CreateDigest(
   auto hashAlgorithm = algorithm.GetHashAlgorithm();
   return hashAlgorithm->Final(data.data(), data.size());
 }
+
+std::vector<std::string> GetScopeFromUrl(Azure::Core::Url const& url)
+{
+  std::vector<std::string> scopes;
+
+  std::string calculatedScope(url.GetScheme() + "://");
+  auto const& hostWithAccount = url.GetHost();
+  auto hostNoAccountStart = std::find(hostWithAccount.begin(), hostWithAccount.end(), '.');
+
+  // Insert the calculated scope only when then host in the url contains at least a `.`
+  // Otherwise, only the default scope will be there.
+  // We don't want to throw/validate input but just leave the values go to azure to decide what to
+  // do.
+  if (hostNoAccountStart != hostWithAccount.end())
+  {
+    std::string hostNoAccount(hostNoAccountStart + 1, hostWithAccount.end());
+
+    calculatedScope.append(hostNoAccount);
+    calculatedScope.append("/.default");
+
+    scopes.emplace_back(calculatedScope);
+  }
+
+  return scopes;
+}
+
 } // namespace
 
 Request CryptographyClient::CreateRequest(
@@ -97,8 +123,7 @@ CryptographyClient::CryptographyClient(
   m_apiVersion = options.Version.ToString();
   std::vector<std::unique_ptr<HttpPolicy>> perRetrypolicies;
   {
-    Azure::Core::Credentials::TokenRequestContext const tokenContext
-        = {TokenScopes::GetScopeFromUrl(m_keyId)};
+    Azure::Core::Credentials::TokenRequestContext const tokenContext = {::GetScopeFromUrl(m_keyId)};
 
     perRetrypolicies.emplace_back(
         std::make_unique<BearerTokenAuthenticationPolicy>(credential, tokenContext));

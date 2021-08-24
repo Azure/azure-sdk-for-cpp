@@ -22,29 +22,3 @@ std::unique_ptr<RawResponse> NextHttpPolicy::Send(Request& request, Context cons
 
   return m_policies[m_index + 1]->Send(request, NextHttpPolicy{m_index + 1, m_policies}, context);
 }
-
-std::vector<std::string> Policies::_internal::TokenScopes::GetScopeFromUrl(
-    Azure::Core::Url const& url)
-{
-  std::vector<std::string> scopes;
-
-  std::string calculatedScope(url.GetScheme() + "://");
-  auto const& hostWithAccount = url.GetHost();
-  auto hostNoAccountStart = std::find(hostWithAccount.begin(), hostWithAccount.end(), '.');
-
-  // Insert the calculated scope only when then host in the url contains at least a `.`
-  // Otherwise, only the default scope will be there.
-  // We don't want to throw/validate input but just leave the values go to azure to decide what to
-  // do.
-  if (hostNoAccountStart != hostWithAccount.end())
-  {
-    std::string hostNoAccount(hostNoAccountStart + 1, hostWithAccount.end());
-
-    calculatedScope.append(hostNoAccount);
-    calculatedScope.append("/.default");
-
-    scopes.emplace_back(calculatedScope);
-  }
-
-  return scopes;
-}

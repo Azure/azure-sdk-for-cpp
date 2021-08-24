@@ -418,42 +418,6 @@ namespace Azure { namespace Core { namespace Http { namespace Policies {
     };
 
     /**
-     * @brief Helper class for creating scopes for the token request context.
-     *
-     */
-    class TokenScopes final {
-
-      /**
-       * @brief An instance of `%TokenScopes` class cannot be created.
-       *
-       */
-      TokenScopes() = delete;
-
-      /**
-       * @brief An instance of `%TokenScopes` class cannot be destructed, because no instance
-       * can be created.
-       *
-       */
-      ~TokenScopes() = delete;
-
-    public:
-      /**
-       * @brief Parses url and generates a scope from it.
-       *
-       * @details For example, from a url like: `https://<account>.<service>.azure.net` the
-       * generated scope is in the form of: `https://<service>.azure.net/.default`.
-       *
-       * @remark As per Azure rules, the account for any service  name must only contain
-       * alphanumeric characters and dashes and cannot start with a number. This allow this method
-       * to calculate the scope after the first `.` from the url host.
-       *
-       * @param url The url used to create an Azure SDK client.
-       * @return A vector with the calculated scopes plus any default scope provided.
-       */
-      static std::vector<std::string> GetScopeFromUrl(Azure::Core::Url const& url);
-    };
-
-    /**
      * @brief Bearer Token authentication policy.
      *
      */

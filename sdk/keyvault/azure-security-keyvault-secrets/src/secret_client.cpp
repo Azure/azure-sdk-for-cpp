@@ -51,6 +51,31 @@ static inline RequestWithContinuationToken BuildRequestFromContinuationToken(
   }
   return request;
 }
+
+std::vector<std::string> GetScopeFromUrl(Azure::Core::Url const& url)
+{
+  std::vector<std::string> scopes;
+
+  std::string calculatedScope(url.GetScheme() + "://");
+  auto const& hostWithAccount = url.GetHost();
+  auto hostNoAccountStart = std::find(hostWithAccount.begin(), hostWithAccount.end(), '.');
+
+  // Insert the calculated scope only when then host in the url contains at least a `.`
+  // Otherwise, only the default scope will be there.
+  // We don't want to throw/validate input but just leave the values go to azure to decide what to
+  // do.
+  if (hostNoAccountStart != hostWithAccount.end())
+  {
+    std::string hostNoAccount(hostNoAccountStart + 1, hostWithAccount.end());
+
+    calculatedScope.append(hostNoAccount);
+    calculatedScope.append("/.default");
+
+    scopes.emplace_back(calculatedScope);
+  }
+
+  return scopes;
+}
 } // namespace
 
 const ServiceVersion ServiceVersion::V7_2("7.2");
@@ -65,8 +90,7 @@ SecretClient::SecretClient(
 
   std::vector<std::unique_ptr<HttpPolicy>> perRetrypolicies;
   {
-    Azure::Core::Credentials::TokenRequestContext const tokenContext
-        = {TokenScopes::GetScopeFromUrl(url)};
+    Azure::Core::Credentials::TokenRequestContext const tokenContext = {::GetScopeFromUrl(url)};
 
     perRetrypolicies.emplace_back(
         std::make_unique<BearerTokenAuthenticationPolicy>(credential, tokenContext));
