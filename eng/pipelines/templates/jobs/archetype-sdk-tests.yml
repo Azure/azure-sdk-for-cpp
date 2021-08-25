@@ -117,7 +117,8 @@ jobs:
     AZURE_KEYVAULT_AVOID_THROTTLED: 1
     BuildArgs: ""
     CmakeEnvArg: ""
-    CmakeArgs: ""    
+    CmakeArgs: ""
+    AZURE_TEST_MODE: "LIVE"
 
   steps:
   - checkout: self

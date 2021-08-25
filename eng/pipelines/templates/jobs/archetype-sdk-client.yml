@@ -151,6 +151,8 @@ jobs:
     value: ""
   - name: CmakeArgs
     value: ""
+  - name: AZURE_TEST_MODE
+    value: "PLAYBACK"
 
   steps:
   - checkout: self
