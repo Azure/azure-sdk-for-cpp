@@ -195,20 +195,7 @@
         "keySize": "[parameters('keySize')]",
         "curveName": "[parameters('curveName')]"
       }
-    },
-    {
-      "type": "Microsoft.KeyVault/vaults/secrets",
-      "apiVersion": "2019-09-01",
-      "name": "[concat(parameters('baseName'), '/', parameters('secretName'))]",
-      "location": "[parameters('location')]",
-      "dependsOn": [
-        "[resourceId('Microsoft.KeyVault/vaults', parameters('baseName'))]"
-      ],
-      "properties": {
-        "value": "azbxyzabcxyz"
-      }
     }
-
   ],
   "outputs": {
     "AZURE_KEYVAULT_URL": {
