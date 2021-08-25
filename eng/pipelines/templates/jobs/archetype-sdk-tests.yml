@@ -118,7 +118,7 @@ jobs:
     BuildArgs: ""
     CmakeEnvArg: ""
     CmakeArgs: ""
-    AZURE_TEST_MODE: "PLAYBACK"
+    AZURE_TEST_MODE: "LIVE"
 
   steps:
   - checkout: self
