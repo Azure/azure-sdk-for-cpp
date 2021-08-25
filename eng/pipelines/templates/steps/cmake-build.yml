@@ -1,4 +1,5 @@
 parameters:
+  Env: ''
   GenerateArgs: ''
   Build: true
   BuildArgs: ''
@@ -12,7 +13,7 @@ steps:
     workingDirectory: build
     displayName: cmake --version
 
-  - script: cmake ${{ parameters.GenerateArgs }} ..
+  - script: ${{ parameters.Env }} cmake ${{ parameters.GenerateArgs }} ..
     workingDirectory: build
     displayName: cmake generate
 

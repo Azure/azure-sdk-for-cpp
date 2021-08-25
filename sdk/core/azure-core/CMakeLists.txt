@@ -1,7 +1,8 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # SPDX-License-Identifier: MIT
 
-cmake_minimum_required (VERSION 3.13)
+# Azure core is compatible with CMake 3.12
+cmake_minimum_required (VERSION 3.12)
 project(azure-core LANGUAGES CXX)
 
 set(CMAKE_CXX_STANDARD 14)
