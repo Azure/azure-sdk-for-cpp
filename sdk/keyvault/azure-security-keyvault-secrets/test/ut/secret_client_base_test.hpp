@@ -11,6 +11,9 @@
 #include <azure/core/test/test_base.hpp>
 #include <azure/identity/client_secret_credential.hpp>
 #include <azure/keyvault/keyvault_secrets.hpp>
+
+using namespace std::chrono_literals;
+
 namespace Azure { namespace Security { namespace KeyVault { namespace Secrets { namespace _test {
   /**
    * @brief Client Secret Credential authenticates with the Azure services using a Tenant ID, Client
@@ -67,60 +70,26 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets { 
   protected:
     int m_testPollingTimeOutMinutes = 20;
     std::chrono::minutes m_testPollingIntervalMinutes = std::chrono::minutes(1);
-    std::string m_originalValue;
     std::shared_ptr<Azure::Identity::ClientSecretCredential> m_credential;
     std::shared_ptr<TestClientSecretCredential> m_testCredential;
     std::string m_keyVaultUrl;
     std::string m_keyVaultHsmUrl;
+    std::chrono::milliseconds m_defaultWait;
 
     Azure::Security::KeyVault::Secrets::SecretClient const& GetClientForTest(
-        std::string const& testName,
-        Azure::Core::Test::TestMode const& testMode)
+        std::string const& testName)
     {
-      std::string testModeValue = "LIVE";
-
-      switch (testMode)
-      {
-        case Azure::Core::Test::TestMode::RECORD: {
-          testModeValue = "RECORD";
-        }
-        break;
-        case Azure::Core::Test::TestMode::PLAYBACK: {
-          testModeValue = "PLAYBACK";
-        }
-        break;
-        case Azure::Core::Test::TestMode::LIVE:
-        default: {
-          testModeValue = "LIVE";
-        }
-        break;
-      };
-
-      m_originalValue = GetEnv("AZURE_TEST_MODE", "NONE");
-#if defined(_MSC_VER)
-      _putenv_s("AZURE_TEST_MODE", testModeValue.c_str());
-#else
-      setenv("AZURE_TEST_MODE", testModeValue.c_str(), 1);
-#endif
-
-      InitializeClient(testMode);
+      //_putenv_s("AZURE_TEST_MODE", "LIVE");
+      // keep this here to quickly switch between test modes
+      InitializeClient();
       // set the interceptor for the current test
       m_testContext.RenameTest(testName);
       return *m_client;
     }
 
-    ~KeyVaultSecretClientTest()
-    {
-      std::string originalValue = m_originalValue == "NONE" ? "" : m_originalValue;
-#if defined(_MSC_VER)
-      _putenv_s("AZURE_TEST_MODE", originalValue.c_str());
-#else
-      setenv("AZURE_TEST_MODE", originalValue.c_str(), 1);
-#endif
-    }
-
+    
     // Create
-    void InitializeClient(Azure::Core::Test::TestMode testMode)
+    void InitializeClient()
     {
       // Init interceptor from PlayBackRecorder
       std::string recordingPath(AZURE_TEST_RECORDING_DIR);
@@ -148,16 +117,19 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets { 
         options.PerRetryPolicies.push_back(m_interceptor->GetRecordPolicy());
       }
 
-      if (testMode == Azure::Core::Test::TestMode::PLAYBACK)
-      { // inject face token client here if it's test
+      if (m_testContext.IsPlaybackMode())
+      { // inject fake token client here if it's test
         m_testCredential = std::make_shared<TestClientSecretCredential>();
         m_client = std::make_unique<SecretClient>(m_keyVaultUrl, m_testCredential, options);
+        // we really dont need to wait for results
+        m_defaultWait = 1ms;
       }
       else
       {
         m_credential = std::make_shared<Azure::Identity::ClientSecretCredential>(
             tenantId, clientId, secretId);
         m_client = std::make_unique<SecretClient>(m_keyVaultUrl, m_credential, options);
+        m_defaultWait = 30s;
       }
 
       // When running live tests, service can return 429 error response if the client is sending
