@@ -59,7 +59,7 @@ int main()
     // You only need to wait for completion if you want to purge or recover the secret.
     // The duration of the delete operation might vary
     // in case returns too fast increase the timeout value
-    operation.PollUntilDone(2s); 
+    operation.PollUntilDone(2s);
 
     // call recover secret
     RecoverDeletedSecretOperation recoverOperation

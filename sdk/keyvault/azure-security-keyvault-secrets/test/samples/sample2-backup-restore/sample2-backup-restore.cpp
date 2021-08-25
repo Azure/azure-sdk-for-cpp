@@ -91,7 +91,7 @@ int main()
     backedUpSecret.Secret = std::vector<uint8_t>(backUpSize);
     inFile >> backedUpSecret.Secret.data();
     inFile.close();
-    
+
     std::cout << "\t-Restore Secret" << std::endl;
     auto restoredSecret = secretClient.RestoreSecretBackup(backedUpSecret).Value;
 

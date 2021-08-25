@@ -54,7 +54,7 @@ int main()
          secrets.MoveToNextPage())
     { // go through every secret of each page returned
       // the number of results returned for in a  page is not guaranteed
-      // it can be anywhere from 0 to 25 
+      // it can be anywhere from 0 to 25
       for (auto const& secret : secrets.Items)
       {
         std::cout << "Found Secret with name: " << secret.Name << std::endl;

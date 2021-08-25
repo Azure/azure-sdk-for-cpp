@@ -14,4 +14,4 @@ using namespace Azure::Security::KeyVault::Secrets;
 SecretProperties::SecretProperties(Azure::Core::Url const& url)
 {
   _detail::SecretSerializer::ParseIDUrl(*this, url.GetAbsoluteUrl());
-};
+}
