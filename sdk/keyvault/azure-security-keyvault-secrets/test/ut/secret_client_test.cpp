@@ -54,9 +54,8 @@ TEST(SecretClient, GetUrl)
 TEST_F(KeyVaultSecretClientTest, FirstCreateTest)
 {
   auto secretName = "FirstCreateTest";
-  auto const& client = GetClientForTest(
-      ::testing::UnitTest::GetInstance()->current_test_info()->name()
-      );
+  auto const& client
+      = GetClientForTest(::testing::UnitTest::GetInstance()->current_test_info()->name());
 
   {
     auto secretResponse = client.SetSecret(secretName, "secretValue");
@@ -88,9 +87,8 @@ TEST_F(KeyVaultSecretClientTest, FirstCreateTest)
 TEST_F(KeyVaultSecretClientTest, SecondCreateTest)
 {
   auto secretName = "SecondCreateTest";
-  auto const& client = GetClientForTest(
-      ::testing::UnitTest::GetInstance()->current_test_info()->name()
-      );
+  auto const& client
+      = GetClientForTest(::testing::UnitTest::GetInstance()->current_test_info()->name());
   std::string version1;
   std::string version2;
   {
@@ -114,7 +112,6 @@ TEST_F(KeyVaultSecretClientTest, SecondCreateTest)
         secretResponse.Items[0].Version == version1 || secretResponse.Items[0].Version == version2);
     EXPECT_TRUE(
         secretResponse.Items[1].Version == version1 || secretResponse.Items[1].Version == version2);
-    
   }
   {
     auto operation = client.StartDeleteSecret(secretName);
@@ -153,7 +150,7 @@ TEST_F(KeyVaultSecretClientTest, UpdateTest)
   {
     properties.ContentType = "xyz";
     UpdateSecretPropertiesOptions options;
-    auto props = properties; 
+    auto props = properties;
     auto secretResponse = client.UpdateSecretProperties(properties);
     CheckValidResponse(secretResponse);
     auto secret = secretResponse.Value;
@@ -178,8 +175,8 @@ TEST_F(KeyVaultSecretClientTest, BackupRestore)
 {
   auto secretName = "BackupRestore";
   std::vector<uint8_t> backupData;
-  auto const& client = GetClientForTest(
-      ::testing::UnitTest::GetInstance()->current_test_info()->name());
+  auto const& client
+      = GetClientForTest(::testing::UnitTest::GetInstance()->current_test_info()->name());
 
   {
     auto secretResponse = client.SetSecret(secretName, "secretValue");
@@ -229,8 +226,8 @@ TEST_F(KeyVaultSecretClientTest, Recover)
 {
   auto secretName = "Recover";
   std::vector<uint8_t> backupData;
-  auto const& client = GetClientForTest(
-      ::testing::UnitTest::GetInstance()->current_test_info()->name());
+  auto const& client
+      = GetClientForTest(::testing::UnitTest::GetInstance()->current_test_info()->name());
 
   {
     auto secretResponse = client.SetSecret(secretName, "secretValue");
@@ -281,8 +278,8 @@ TEST_F(KeyVaultSecretClientTest, GetProperties)
   auto secretName = "GetProperties";
   auto secretName2 = "GetProperties2";
 
-  auto const& client = GetClientForTest(
-      ::testing::UnitTest::GetInstance()->current_test_info()->name());
+  auto const& client
+      = GetClientForTest(::testing::UnitTest::GetInstance()->current_test_info()->name());
   {
     auto secretResponse = client.SetSecret(secretName, "secretValue");
     CheckValidResponse(secretResponse);
@@ -315,11 +312,11 @@ TEST_F(KeyVaultSecretClientTest, GetProperties)
     auto deletedResponse = client.GetDeletedSecrets();
     EXPECT_EQ(deletedResponse.Items.size(), size_t(2));
     EXPECT_TRUE(
-        deletedResponse.Items[0].Name == secretName || deletedResponse.Items[0].Name == secretName2);
+        deletedResponse.Items[0].Name == secretName
+        || deletedResponse.Items[0].Name == secretName2);
     EXPECT_TRUE(
         deletedResponse.Items[1].Name == secretName
         || deletedResponse.Items[1].Name == secretName2);
-   
   }
   {
     auto purgedResponse = client.PurgeDeletedSecret(secretName);
