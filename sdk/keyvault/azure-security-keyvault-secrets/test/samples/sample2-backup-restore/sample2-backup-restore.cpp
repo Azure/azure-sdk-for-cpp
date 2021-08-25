@@ -87,12 +87,13 @@ int main()
     std::cout << "\t-Read from file." << std::endl;
     std::ifstream inFile;
     inFile.open("backup.dat");
-    std::vector<uint8_t> inMemoryBackup(backUpSize);
-    inFile >> inMemoryBackup.data();
+    BackupSecretResult backedUpSecret;
+    backedUpSecret.Secret = std::vector<uint8_t>(backUpSize);
+    inFile >> backedUpSecret.Secret.data();
     inFile.close();
-
+    
     std::cout << "\t-Restore Secret" << std::endl;
-    auto restoredSecret = secretClient.RestoreSecretBackup(inMemoryBackup).Value;
+    auto restoredSecret = secretClient.RestoreSecretBackup(backedUpSecret).Value;
 
     AssertSecretsEqual(secret, restoredSecret);
 

@@ -157,13 +157,13 @@ Azure::Response<BackupSecretResult> SecretClient::BackupSecret(
 }
 
 Azure::Response<KeyVaultSecret> SecretClient::RestoreSecretBackup(
-    std::vector<uint8_t> const& backup,
+    BackupSecretResult const& backup,
     Azure::Core::Context const& context) const
 {
   return m_protocolClient->SendRequest<KeyVaultSecret>(
       context,
       Azure::Core::Http::HttpMethod::Post,
-      [&backup]() { return _detail::RestoreSecretSerializer::Serialize(backup); },
+      [&backup]() { return _detail::RestoreSecretSerializer::Serialize(backup.Secret); },
       [](Azure::Core::Http::RawResponse const& rawResponse) {
         return _detail::SecretSerializer::Deserialize(rawResponse);
       },
