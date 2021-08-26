@@ -105,11 +105,3 @@ TEST(SecretProperties, FactoryValid)
   EXPECT_EQ(props.Id, url);
   EXPECT_EQ(props.VaultUrl, "https://myvault.vault.azure.net");
 }
-
-TEST(SecretProperties, FactoryInvalid)
-{
-  std::string url("invalid As We Can See");
-  EXPECT_DEATH(
-      { auto result = SecretProperties::CreateFromURL(url); },
-      "Assertion failed: cannot seek string iterator after end");
-}
