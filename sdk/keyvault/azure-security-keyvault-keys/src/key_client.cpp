@@ -30,10 +30,9 @@ namespace {
 constexpr static const char KeyVaultServicePackageName[] = "keyvault-keys";
 constexpr static const char CreateValue[] = "create";
 
-std::vector<std::string> GetScopeFromUrl(Azure::Core::Url const& url)
+// This is a Key-Vault only patch to calculate token scope/audience
+std::string GetScopeFromUrl(Azure::Core::Url const& url)
 {
-  std::vector<std::string> scopes;
-
   std::string calculatedScope(url.GetScheme() + "://");
   auto const& hostWithAccount = url.GetHost();
   auto hostNoAccountStart = std::find(hostWithAccount.begin(), hostWithAccount.end(), '.');
@@ -44,15 +43,11 @@ std::vector<std::string> GetScopeFromUrl(Azure::Core::Url const& url)
   // do.
   if (hostNoAccountStart != hostWithAccount.end())
   {
-    std::string hostNoAccount(hostNoAccountStart + 1, hostWithAccount.end());
-
-    calculatedScope.append(hostNoAccount);
+    calculatedScope.append(hostNoAccountStart + 1, hostWithAccount.end());
     calculatedScope.append("/.default");
-
-    scopes.emplace_back(calculatedScope);
   }
 
-  return scopes;
+  return calculatedScope;
 }
 
 } // namespace
@@ -99,7 +94,7 @@ KeyClient::KeyClient(
   std::vector<std::unique_ptr<HttpPolicy>> perRetrypolicies;
   {
     Azure::Core::Credentials::TokenRequestContext const tokenContext
-        = {::GetScopeFromUrl(m_vaultUrl)};
+        = {{::GetScopeFromUrl(m_vaultUrl)}};
 
     perRetrypolicies.emplace_back(
         std::make_unique<BearerTokenAuthenticationPolicy>(credential, std::move(tokenContext)));

@@ -53,10 +53,9 @@ static inline RequestWithContinuationToken BuildRequestFromContinuationToken(
   return request;
 }
 
-std::vector<std::string> GetScopeFromUrl(Azure::Core::Url const& url)
+// This is a Key-Vault only patch to calculate token scope/audience
+std::string GetScopeFromUrl(Azure::Core::Url const& url)
 {
-  std::vector<std::string> scopes;
-
   std::string calculatedScope(url.GetScheme() + "://");
   auto const& hostWithAccount = url.GetHost();
   auto hostNoAccountStart = std::find(hostWithAccount.begin(), hostWithAccount.end(), '.');
@@ -67,15 +66,11 @@ std::vector<std::string> GetScopeFromUrl(Azure::Core::Url const& url)
   // do.
   if (hostNoAccountStart != hostWithAccount.end())
   {
-    std::string hostNoAccount(hostNoAccountStart + 1, hostWithAccount.end());
-
-    calculatedScope.append(hostNoAccount);
+    calculatedScope.append(hostNoAccountStart + 1, hostWithAccount.end());
     calculatedScope.append("/.default");
-
-    scopes.emplace_back(calculatedScope);
   }
 
-  return scopes;
+  return calculatedScope;
 }
 } // namespace
 
@@ -91,7 +86,7 @@ SecretClient::SecretClient(
 
   std::vector<std::unique_ptr<HttpPolicy>> perRetrypolicies;
   {
-    Azure::Core::Credentials::TokenRequestContext const tokenContext = {::GetScopeFromUrl(url)};
+    Azure::Core::Credentials::TokenRequestContext const tokenContext = {{::GetScopeFromUrl(url)}};
 
     perRetrypolicies.emplace_back(
         std::make_unique<BearerTokenAuthenticationPolicy>(credential, tokenContext));

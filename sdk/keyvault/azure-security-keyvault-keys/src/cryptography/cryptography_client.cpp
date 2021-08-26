@@ -58,10 +58,9 @@ inline std::vector<uint8_t> CreateDigest(
   return hashAlgorithm->Final(data.data(), data.size());
 }
 
-std::vector<std::string> GetScopeFromUrl(Azure::Core::Url const& url)
+// This is a Key-Vault only patch to calculate token scope/audience
+std::string GetScopeFromUrl(Azure::Core::Url const& url)
 {
-  std::vector<std::string> scopes;
-
   std::string calculatedScope(url.GetScheme() + "://");
   auto const& hostWithAccount = url.GetHost();
   auto hostNoAccountStart = std::find(hostWithAccount.begin(), hostWithAccount.end(), '.');
@@ -72,15 +71,11 @@ std::vector<std::string> GetScopeFromUrl(Azure::Core::Url const& url)
   // do.
   if (hostNoAccountStart != hostWithAccount.end())
   {
-    std::string hostNoAccount(hostNoAccountStart + 1, hostWithAccount.end());
-
-    calculatedScope.append(hostNoAccount);
+    calculatedScope.append(hostNoAccountStart + 1, hostWithAccount.end());
     calculatedScope.append("/.default");
-
-    scopes.emplace_back(calculatedScope);
   }
 
-  return scopes;
+  return calculatedScope;
 }
 
 } // namespace
@@ -124,7 +119,8 @@ CryptographyClient::CryptographyClient(
   m_apiVersion = options.Version.ToString();
   std::vector<std::unique_ptr<HttpPolicy>> perRetrypolicies;
   {
-    Azure::Core::Credentials::TokenRequestContext const tokenContext = {::GetScopeFromUrl(m_keyId)};
+    Azure::Core::Credentials::TokenRequestContext const tokenContext
+        = {{::GetScopeFromUrl(m_keyId)}};
 
     perRetrypolicies.emplace_back(
         std::make_unique<BearerTokenAuthenticationPolicy>(credential, tokenContext));
