@@ -93,6 +93,7 @@ if(BUILD_STORAGE_SAMPLES)
   target_sources(
     azure-storage-sample
       PRIVATE
+        sample/queue_encode_message.cpp
         sample/queue_getting_started.cpp
   )
 
