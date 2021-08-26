@@ -54,6 +54,33 @@ namespace Azure { namespace Storage { namespace Queues {
     }; // extensible enum GeoReplicationStatus
 
     /**
+     * @brief A peeked message object stored in the queue.
+     */
+    struct PeekedQueueMessage final
+    {
+      /**
+       * The content of the message.
+       */
+      std::string MessageText;
+      /**
+       * A GUID value that identifies the message in the queue.
+       */
+      std::string MessageId;
+      /**
+       * The time the message was inserted into the queue.
+       */
+      Azure::DateTime InsertedOn;
+      /**
+       * The time that the message will expire and be automatically deleted from the queue.
+       */
+      Azure::DateTime ExpiresOn;
+      /**
+       * The number of times the message has been dequeued.
+       */
+      int64_t DequeueCount = 0;
+    }; // struct PeekedQueueMessage
+
+    /**
      * @brief A queue item from the result of
      * #Azure::Storage::Queues::QueueServiceClient::ListQueues.
      */
@@ -77,7 +104,7 @@ namespace Azure { namespace Storage { namespace Queues {
       /**
        * The content of the message.
        */
-      std::string Body;
+      std::string MessageText;
       /**
        * A GUID value that identifies the message in the queue.
        */
@@ -91,13 +118,11 @@ namespace Azure { namespace Storage { namespace Queues {
        */
       Azure::DateTime ExpiresOn;
       /**
-       * An opaque string that is required to delete or update a message. Empty if it's a peeked
-       * message.
+       * An opaque string that is required to delete or update a message.
        */
       std::string PopReceipt;
       /**
-       * The time that the message will again become visible in the queue. Invalid if it's a peeked
-       * message.
+       * The time that the message will again become visible in the queue.
        */
       Azure::DateTime NextVisibleOn;
       /**
@@ -346,7 +371,7 @@ namespace Azure { namespace Storage { namespace Queues {
       /**
        * A vector of peeked messages.
        */
-      std::vector<QueueMessage> Messages;
+      std::vector<PeekedQueueMessage> Messages;
     }; // struct PeekMessagesResult
 
     /**
@@ -1740,7 +1765,7 @@ namespace Azure { namespace Storage { namespace Queues {
         struct EnqueueMessageOptions final
         {
           Azure::Nullable<int32_t> Timeout;
-          std::string Body;
+          std::string MessageText;
           Azure::Nullable<std::chrono::seconds> VisibilityTimeout;
           Azure::Nullable<std::chrono::seconds> TimeToLive;
         }; // struct EnqueueMessageOptions
@@ -1993,7 +2018,7 @@ namespace Azure { namespace Storage { namespace Queues {
 
         struct UpdateMessageOptions final
         {
-          std::string Body;
+          std::string MessageText;
           Azure::Nullable<int32_t> Timeout;
           std::string PopReceipt;
           std::chrono::seconds VisibilityTimeout;
@@ -2199,7 +2224,7 @@ namespace Azure { namespace Storage { namespace Queues {
               if (path.size() == 2 && path[0] == XmlTagName::k_QueueMessagesList
                   && path[1] == XmlTagName::k_QueueMessage)
               {
-                ret.Messages.emplace_back(QueueMessageFromXml(reader));
+                ret.Messages.emplace_back(PeekedQueueMessageFromXml(reader));
                 path.pop_back();
               }
             }
@@ -2322,6 +2347,93 @@ namespace Azure { namespace Storage { namespace Queues {
           return ret;
         }
 
+        static PeekedQueueMessage PeekedQueueMessageFromXml(_internal::XmlReader& reader)
+        {
+          PeekedQueueMessage ret;
+          enum class XmlTagName
+          {
+            k_MessageText,
+            k_MessageId,
+            k_InsertionTime,
+            k_ExpirationTime,
+            k_DequeueCount,
+            k_Unknown,
+          };
+          std::vector<XmlTagName> path;
+          while (true)
+          {
+            auto node = reader.Read();
+            if (node.Type == _internal::XmlNodeType::End)
+            {
+              break;
+            }
+            else if (node.Type == _internal::XmlNodeType::EndTag)
+            {
+              if (path.size() > 0)
+              {
+                path.pop_back();
+              }
+              else
+              {
+                break;
+              }
+            }
+            else if (node.Type == _internal::XmlNodeType::StartTag)
+            {
+              if (node.Name == "MessageText")
+              {
+                path.emplace_back(XmlTagName::k_MessageText);
+              }
+              else if (node.Name == "MessageId")
+              {
+                path.emplace_back(XmlTagName::k_MessageId);
+              }
+              else if (node.Name == "InsertionTime")
+              {
+                path.emplace_back(XmlTagName::k_InsertionTime);
+              }
+              else if (node.Name == "ExpirationTime")
+              {
+                path.emplace_back(XmlTagName::k_ExpirationTime);
+              }
+              else if (node.Name == "DequeueCount")
+              {
+                path.emplace_back(XmlTagName::k_DequeueCount);
+              }
+              else
+              {
+                path.emplace_back(XmlTagName::k_Unknown);
+              }
+            }
+            else if (node.Type == _internal::XmlNodeType::Text)
+            {
+              if (path.size() == 1 && path[0] == XmlTagName::k_MessageText)
+              {
+                ret.MessageText = node.Value;
+              }
+              else if (path.size() == 1 && path[0] == XmlTagName::k_MessageId)
+              {
+                ret.MessageId = node.Value;
+              }
+              else if (path.size() == 1 && path[0] == XmlTagName::k_InsertionTime)
+              {
+                ret.InsertedOn
+                    = Azure::DateTime::Parse(node.Value, Azure::DateTime::DateFormat::Rfc1123);
+              }
+              else if (path.size() == 1 && path[0] == XmlTagName::k_ExpirationTime)
+              {
+                ret.ExpiresOn
+                    = Azure::DateTime::Parse(node.Value, Azure::DateTime::DateFormat::Rfc1123);
+              }
+              else if (path.size() == 1 && path[0] == XmlTagName::k_DequeueCount)
+              {
+                ret.DequeueCount = std::stoll(node.Value);
+              }
+            }
+          }
+          return ret;
+        }
+
         static QueueMessage QueueMessageFromXml(_internal::XmlReader& reader)
         {
           QueueMessage ret;
@@ -2394,7 +2506,7 @@ namespace Azure { namespace Storage { namespace Queues {
             {
               if (path.size() == 1 && path[0] == XmlTagName::k_MessageText)
               {
-                ret.Body = node.Value;
+                ret.MessageText = node.Value;
               }
               else if (path.size() == 1 && path[0] == XmlTagName::k_MessageId)
               {
@@ -2524,7 +2636,7 @@ namespace Azure { namespace Storage { namespace Queues {
           writer.Write(_internal::XmlNode{_internal::XmlNodeType::StartTag, "QueueMessage"});
           writer.Write(_internal::XmlNode{_internal::XmlNodeType::StartTag, "MessageText"});
           writer.Write(
-              _internal::XmlNode{_internal::XmlNodeType::Text, std::string(), options.Body});
+              _internal::XmlNode{_internal::XmlNodeType::Text, std::string(), options.MessageText});
           writer.Write(_internal::XmlNode{_internal::XmlNodeType::EndTag});
           writer.Write(_internal::XmlNode{_internal::XmlNodeType::EndTag});
         }
@@ -2548,7 +2660,7 @@ namespace Azure { namespace Storage { namespace Queues {
           writer.Write(_internal::XmlNode{_internal::XmlNodeType::StartTag, "QueueMessage"});
           writer.Write(_internal::XmlNode{_internal::XmlNodeType::StartTag, "MessageText"});
           writer.Write(
-              _internal::XmlNode{_internal::XmlNodeType::Text, std::string(), options.Body});
+              _internal::XmlNode{_internal::XmlNodeType::Text, std::string(), options.MessageText});
           writer.Write(_internal::XmlNode{_internal::XmlNodeType::EndTag});
           writer.Write(_internal::XmlNode{_internal::XmlNodeType::EndTag});
         }

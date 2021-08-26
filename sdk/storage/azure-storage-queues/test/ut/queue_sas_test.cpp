@@ -84,7 +84,7 @@ namespace Azure { namespace Storage { namespace Test {
       auto queueServiceClient = Queues::QueueServiceClient(queueServiceUrl + sas);
       const std::string newQueueName = LowercaseRandomString();
       EXPECT_NO_THROW(queueServiceClient.CreateQueue(newQueueName));
-      queueServiceClient0.GetQueueClient(newQueueName).DeleteIfExists();
+      queueServiceClient0.GetQueueClient(newQueueName).Delete();
     };
 
     auto verifyQueueDelete = [&](const std::string& sas) {

@@ -64,7 +64,7 @@ namespace Azure { namespace Storage { namespace Test {
     queueClient = Azure::Storage::Queues::QueueClient::CreateFromConnectionString(
         StandardStorageConnectionString(), LowercaseRandomString());
     {
-      auto response = queueClient.DeleteIfExists();
+      auto response = queueClient.Delete();
       EXPECT_FALSE(response.Value.Deleted);
     }
     {
@@ -80,7 +80,7 @@ namespace Azure { namespace Storage { namespace Test {
       EXPECT_FALSE(response.Value.Created);
     }
     {
-      auto response = queueClient.DeleteIfExists();
+      auto response = queueClient.Delete();
       EXPECT_TRUE(response.Value.Deleted);
     }
   }

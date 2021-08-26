@@ -20,6 +20,15 @@ void ProducerFunc()
     std::string msg = "Message " + std::to_string(i);
     queueClient.EnqueueMessage(msg);
   }
+
+  for (int i = 5; i < 10; ++i)
+  {
+    std::string msg = "Message " + std::to_string(i);
+    EnqueueMessageOptions options;
+    options.TimeToLive = std::chrono::seconds(60 * 60 * 24);
+    options.VisibilityTimeout = std::chrono::seconds(1);
+    queueClient.EnqueueMessage(msg, options);
+  }
 }
 
 void ConsumerFunc()
@@ -29,12 +38,12 @@ void ConsumerFunc()
   int counter = 0;
   while (counter < 5)
   {
-    auto msgResponse = queueClient.ReceiveMessages();
-    if (!msgResponse.Value.Messages.empty())
+    auto receiveMessagesResult = queueClient.ReceiveMessages().Value;
+    if (!receiveMessagesResult.Messages.empty())
     {
-      auto& msg = msgResponse.Value.Messages[0];
+      auto& msg = receiveMessagesResult.Messages[0];
 
-      std::cout << msg.Body << std::endl;
+      std::cout << msg.MessageText << std::endl;
       ++counter;
 
       queueClient.DeleteMessage(msg.MessageId, msg.PopReceipt);
@@ -52,10 +61,10 @@ void ConsumerFunc2()
   {
     ReceiveMessagesOptions receiveOptions;
     receiveOptions.MaxMessages = 3;
-    auto msgResponse = queueClient.ReceiveMessages(receiveOptions);
-    for (auto& msg : msgResponse.Value.Messages)
+    auto receiveMessagesResult = queueClient.ReceiveMessages(receiveOptions).Value;
+    for (auto& msg : receiveMessagesResult.Messages)
     {
-      std::cout << msg.Body << std::endl;
+      std::cout << msg.MessageText << std::endl;
       ++counter;
 
       auto updateResponse
@@ -75,4 +84,5 @@ void QueuesGettingStarted()
 
   ProducerFunc();
   ConsumerFunc();
+  ConsumerFunc2();
 }
