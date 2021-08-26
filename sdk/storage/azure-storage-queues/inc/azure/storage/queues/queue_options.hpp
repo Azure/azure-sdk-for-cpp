@@ -17,6 +17,48 @@
 
 namespace Azure { namespace Storage { namespace Queues {
 
+  /**
+   * @brief API version for Storage Queue service.
+   */
+  class ServiceVersion final {
+  public:
+    /**
+     * @brief Construct a new Service Version object
+     *
+     * @param version The string version for Storage Queue Service.
+     */
+    explicit ServiceVersion(std::string version) : m_version(std::move(version)) {}
+
+    /**
+     * @brief Enable comparing between two versions.
+     *
+     * @param other Another service version to be compared.
+     */
+    bool operator==(const ServiceVersion& other) const { return m_version == other.m_version; }
+
+    /**
+     * @brief Enable comparing between two versions.
+     *
+     * @param other Another service version to be compared.
+     */
+    bool operator!=(const ServiceVersion& other) const { return !(*this == other); }
+
+    /**
+     * @brief Returns string representation.
+     *
+     */
+    std::string const& ToString() const { return m_version; }
+
+    /**
+     * @brief API version 2018-03-28.
+     *
+     */
+    AZ_STORAGE_QUEUES_DLLEXPORT static const ServiceVersion V2018_03_28;
+
+  private:
+    std::string m_version;
+  };
+
   struct QueueClientOptions final : Azure::Core::_internal::ClientOptions
   {
     /**
@@ -31,7 +73,7 @@ namespace Azure { namespace Storage { namespace Queues {
     /**
      * API version used by this client.
      */
-    std::string ApiVersion = _detail::ApiVersion;
+    ServiceVersion ApiVersion{_detail::ApiVersion};
   };
 
   /**

@@ -42,6 +42,7 @@ set(
   AZURE_STORAGE_QUEUE_SOURCE
     src/private/package_version.hpp
     src/queue_client.cpp
+    src/queue_options.cpp
     src/queue_responses.cpp
     src/queue_rest_client.cpp
     src/queue_sas_builder.cpp

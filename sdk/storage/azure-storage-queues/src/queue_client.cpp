@@ -49,7 +49,7 @@ namespace Azure { namespace Storage { namespace Queues {
         m_queueUrl.GetHost(), newOptions.SecondaryHostForRetryReads));
     perRetryPolicies.emplace_back(std::make_unique<_internal::StoragePerRetryPolicy>());
     perOperationPolicies.emplace_back(
-        std::make_unique<_internal::StorageServiceVersionPolicy>(newOptions.ApiVersion));
+        std::make_unique<_internal::StorageServiceVersionPolicy>(newOptions.ApiVersion.ToString()));
     m_pipeline = std::make_shared<Azure::Core::Http::_internal::HttpPipeline>(
         newOptions,
         _internal::QueueServicePackageName,
@@ -77,7 +77,7 @@ namespace Azure { namespace Storage { namespace Queues {
               credential, tokenContext));
     }
     perOperationPolicies.emplace_back(
-        std::make_unique<_internal::StorageServiceVersionPolicy>(options.ApiVersion));
+        std::make_unique<_internal::StorageServiceVersionPolicy>(options.ApiVersion.ToString()));
     m_pipeline = std::make_shared<Azure::Core::Http::_internal::HttpPipeline>(
         options,
         _internal::QueueServicePackageName,
@@ -95,7 +95,7 @@ namespace Azure { namespace Storage { namespace Queues {
         m_queueUrl.GetHost(), options.SecondaryHostForRetryReads));
     perRetryPolicies.emplace_back(std::make_unique<_internal::StoragePerRetryPolicy>());
     perOperationPolicies.emplace_back(
-        std::make_unique<_internal::StorageServiceVersionPolicy>(options.ApiVersion));
+        std::make_unique<_internal::StorageServiceVersionPolicy>(options.ApiVersion.ToString()));
     m_pipeline = std::make_shared<Azure::Core::Http::_internal::HttpPipeline>(
         options,
         _internal::QueueServicePackageName,
