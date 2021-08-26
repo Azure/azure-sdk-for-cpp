@@ -74,6 +74,8 @@ int main()
     DeleteSecretOperation operation = secretClient.StartDeleteSecret(secret.Name);
 
     // You only need to wait for completion if you want to purge or recover the secret.
+    // The duration of the delete operation might vary
+    // in case returns too fast increase the timeout value
     operation.PollUntilDone(2s);
     // purge the deleted secret
     secretClient.PurgeDeletedSecret(secret.Name);
@@ -85,12 +87,13 @@ int main()
     std::cout << "\t-Read from file." << std::endl;
     std::ifstream inFile;
     inFile.open("backup.dat");
-    std::vector<uint8_t> inMemoryBackup(backUpSize);
-    inFile >> inMemoryBackup.data();
+    BackupSecretResult backedUpSecret;
+    backedUpSecret.Secret = std::vector<uint8_t>(backUpSize);
+    inFile >> backedUpSecret.Secret.data();
     inFile.close();
 
     std::cout << "\t-Restore Secret" << std::endl;
-    auto restoredSecret = secretClient.RestoreSecretBackup(inMemoryBackup).Value;
+    auto restoredSecret = secretClient.RestoreSecretBackup(backedUpSecret).Value;
 
     AssertSecretsEqual(secret, restoredSecret);
 

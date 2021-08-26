@@ -43,18 +43,6 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
     KeyVaultSecret() = default;
 
     /**
-     * @brief The vault url of the secret.
-     *
-     */
-    std::string VaultUrl() { return Properties.VaultUrl; }
-
-    /**
-     * @brief The version of the secret.
-     *
-     */
-    std::string Version() { return Properties.Version; }
-
-    /**
      * @brief Construct a new Secret object.
      *
      * @param name The name of the secret.

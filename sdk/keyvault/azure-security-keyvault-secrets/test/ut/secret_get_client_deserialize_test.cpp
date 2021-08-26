@@ -94,3 +94,14 @@ TEST(DeletedSecretSerializer, GetDeletedClientDeserializeFull3)
   Helpers::RunFullExpect(secret, false);
   Helpers::RunDeletedExtras(secret);
 }
+
+TEST(SecretProperties, FactoryValid)
+{
+  std::string url(
+      "https://myvault.vault.azure.net/secrets/mysecretname/4387e9f3d6e14c459867679a90fd0f79");
+  SecretProperties props = SecretProperties::CreateFromURL(url);
+  EXPECT_EQ(props.Name, "mysecretname");
+  EXPECT_EQ(props.Version, "4387e9f3d6e14c459867679a90fd0f79");
+  EXPECT_EQ(props.Id, url);
+  EXPECT_EQ(props.VaultUrl, "https://myvault.vault.azure.net");
+}
