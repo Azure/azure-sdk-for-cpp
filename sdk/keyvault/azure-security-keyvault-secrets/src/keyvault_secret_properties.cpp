@@ -11,7 +11,12 @@
 
 using namespace Azure::Security::KeyVault::Secrets;
 
-SecretProperties::SecretProperties(Azure::Core::Url const& url)
+SecretProperties SecretProperties::CreateFromURL(std::string const& url)
 {
-  _detail::SecretSerializer::ParseIDUrl(*this, url.GetAbsoluteUrl());
+	// create a url object to validate the string is valid as url
+  Azure::Core::Url urlInstance(url);
+  SecretProperties result;
+  // parse the url into the result object
+  _detail::SecretSerializer::ParseIDUrl(result, urlInstance.GetAbsoluteUrl());
+  return result;
 }
