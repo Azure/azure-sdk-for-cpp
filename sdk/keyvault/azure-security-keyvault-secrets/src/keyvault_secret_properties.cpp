@@ -13,7 +13,7 @@ using namespace Azure::Security::KeyVault::Secrets;
 
 SecretProperties SecretProperties::CreateFromURL(std::string const& url)
 {
-	// create a url object to validate the string is valid as url
+  // create a url object to validate the string is valid as url
   Azure::Core::Url urlInstance(url);
   SecretProperties result;
   // parse the url into the result object

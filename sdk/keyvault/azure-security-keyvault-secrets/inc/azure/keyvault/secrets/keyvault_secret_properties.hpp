@@ -139,6 +139,6 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
      * @brief Construct a new secret Properties object.
      *
      */
-    static SecretProperties CreateFromURL (std::string const& url);
+    static SecretProperties CreateFromURL(std::string const& url);
   };
 }}}} // namespace Azure::Security::KeyVault::Secrets
