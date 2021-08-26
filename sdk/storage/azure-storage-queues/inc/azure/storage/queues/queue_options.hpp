@@ -53,7 +53,7 @@ namespace Azure { namespace Storage { namespace Queues {
      * @brief API version 2018-03-28.
      *
      */
-    AZ_STORAGE_QUEUES_DLLEXPORT static const ServiceVersion V2018_03_28;
+    AZ_STORAGE_QUEUES_DLLEXPORT const static ServiceVersion V2018_03_28;
 
   private:
     std::string m_version;
@@ -193,7 +193,7 @@ namespace Azure { namespace Storage { namespace Queues {
     /**
      * @brief A TTL value representing the queue message does not expire.
      */
-    constexpr static std::chrono::seconds MessageNeverExpires{-1};
+    AZ_STORAGE_QUEUES_DLLEXPORT const static std::chrono::seconds MessageNeverExpires;
   };
 
   /**
