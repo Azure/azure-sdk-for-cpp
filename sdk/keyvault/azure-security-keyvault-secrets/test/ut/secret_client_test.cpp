@@ -174,7 +174,7 @@ TEST_F(KeyVaultSecretClientTest, UpdateTest)
 TEST_F(KeyVaultSecretClientTest, BackupRestore)
 {
   auto secretName = "BackupRestore";
-  std::vector<uint8_t> backupData;
+  BackupSecretResult backupData;
   auto const& client
       = GetClientForTest(::testing::UnitTest::GetInstance()->current_test_info()->name());
 
@@ -187,7 +187,7 @@ TEST_F(KeyVaultSecretClientTest, BackupRestore)
   {
     auto backup = client.BackupSecret(secretName);
     CheckValidResponse(backup);
-    backupData = backup.Value.Secret;
+    backupData = backup.Value;
   }
   {
     auto operation = client.StartDeleteSecret(secretName);
