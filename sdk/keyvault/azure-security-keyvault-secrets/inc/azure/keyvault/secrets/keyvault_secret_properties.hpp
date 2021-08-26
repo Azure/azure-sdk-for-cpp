@@ -10,7 +10,7 @@
 
 #include <azure/core/datetime.hpp>
 #include <azure/core/nullable.hpp>
-
+#include <azure/core/url.hpp>
 #include <unordered_map>
 
 namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
@@ -134,5 +134,11 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
         throw std::invalid_argument("Name cannot be empty");
       }
     };
+
+    /**
+     * @brief Construct a new secret Properties object.
+     *
+     */
+    static SecretProperties CreateFromURL(std::string const& url);
   };
 }}}} // namespace Azure::Security::KeyVault::Secrets

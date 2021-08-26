@@ -51,6 +51,7 @@ set(
     src/secret_serializers.cpp
     src/keyvault_operations.cpp
     src/keyvault_secret_paged_response.cpp
+    src/keyvault_secret_properties.cpp
 )
 
 add_library(azure-security-keyvault-secrets ${AZURE_SECURITY_KEYVAULT_SECRETS_HEADER} ${AZURE_SECURITY_KEYVAULT_SECRETS_SOURCE})

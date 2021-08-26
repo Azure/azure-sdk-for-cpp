@@ -26,12 +26,12 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
     /**
      * @brief The time when the secret is scheduled to be purged, in UTC.
      */
-    Azure::DateTime ScheduledPurgeDate;
+    Azure::Nullable<Azure::DateTime> ScheduledPurgeDate;
 
     /**
      * @brief The time when the secret was deleted, in UTC.
      */
-    Azure::DateTime DeletedOn;
+    Azure::Nullable<Azure::DateTime> DeletedOn;
 
     /**
      * @brief Default constructor.

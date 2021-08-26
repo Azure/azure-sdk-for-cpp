@@ -46,7 +46,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
 #endif
   {
 
-  protected:
+  private:
     // Using a shared pipeline for a client to share it with LRO (like delete key)
     std::shared_ptr<Azure::Security::KeyVault::_detail::KeyVaultProtocolClient> m_protocolClient;
 
@@ -173,7 +173,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
      * @return The Secret wrapped in the Response.
      */
     Azure::Response<KeyVaultSecret> RestoreSecretBackup(
-        std::vector<uint8_t> const& backup,
+        BackupSecretResult const& backup,
         Azure::Core::Context const& context = Azure::Core::Context()) const;
 
     /**

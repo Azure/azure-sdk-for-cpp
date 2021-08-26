@@ -84,7 +84,7 @@ Call RestoreSecretBackup  to restore a secret from a backup  obtained at the pre
 
 ```cpp Snippet:SecretSample2RestoreSecret
 std::cout << "\t-Restore Secret" << std::endl;
-auto restoredSecret = secretClient.RestoreSecretBackup(inMemoryBackup).Value;
+auto restoredSecret = secretClient.RestoreSecretBackup(backedUpSecret).Value;
 ```
 
 ## Source
