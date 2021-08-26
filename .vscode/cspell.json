@@ -17,8 +17,7 @@
     "*nlohmann-json*",
     "sdk/identity/**/*",
     "sdk/core/**/*",
-    "sdk/keyvault/**/*",
-    "sdk/storage/**/*"
+    "sdk/keyvault/**/*"
   ],
   // * Unless configured otherwise, these words are not case sensitive
   // * Alphabetize the list when making changes so the list is easier for future
@@ -110,24 +109,6 @@
       ]
     },
     {
-      "filename": "**/sdk/storage/azure-storage-common/src/crypt.cpp",
-      "words": [
-        "wdata"
-      ]
-    },
-    {
-      "filename": "**/sdk/storage/azure-storage-files-shares/inc/azure/storage/files/shares/share_options.hpp",
-      "words": [
-        "dacl"
-      ]
-    },
-    {
-      "filename": "**/sdk/storage/azure-storage-blobs/inc/azure/storage/blobs/protocol/blob_rest_client.hpp",
-      "words": [
-        "xmsblobsequencenumber"
-      ]
-    },
-    {
       "filename": "**/sdk/keyvault/azure-security-keyvault-keys/inc/azure/keyvault/keys/key_client_models.hpp",
       "words": [
         "SECG",
@@ -135,9 +116,21 @@
       ]
     },
     {
-      "filename": "**/sdk/storage/azure-storage-common/test/test_base.hpp",
+      "filename": "**/sdk/storage/azure-storage-common/CHANGELOG.md",
       "words": [
-        "FQJQ"
+        "johnwheffner",
+        "Heffner",
+        "lordgamez",
+        "Gabor",
+        "Gyimesi"
+      ]
+    },
+    {
+      "filename": "**/sdk/storage/test-resources.json",
+      "words": [
+        "bfqt",
+        "rwdlacup",
+        "pfile"
       ]
     }
   ],

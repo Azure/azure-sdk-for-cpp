@@ -399,7 +399,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
      */
     int32_t NumberOfHandlesClosed = 0;
     /**
-     * Number of file handles that fialed to close.
+     * Number of file handles that failed to close.
      */
     int32_t NumberOfHandlesFailedToClose = 0;
 

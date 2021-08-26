@@ -13,6 +13,8 @@
 
 #include "azure/storage/files/shares/protocol/share_rest_client.hpp"
 
+/* cSpell:ignore dacl */
+
 namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
   /**

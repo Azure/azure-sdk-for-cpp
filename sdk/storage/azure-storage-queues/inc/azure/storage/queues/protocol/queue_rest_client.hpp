@@ -21,6 +21,8 @@
 
 #include "azure/storage/queues/dll_import_export.hpp"
 
+/* cSpell:disable */
+
 namespace Azure { namespace Storage { namespace Queues {
   namespace Models {
 

@@ -137,7 +137,7 @@ If you wish to rotate the key within your `BlobServiceClient` (and any derived c
 
 **The legacy SDK used a stateful model.** There were container and blob objects that held state regarding service resources and required the user to manually call their update methods. But blob contents were not a part of this state and had to be uploaded/downloaded whenever they were to be interacted with. This became increasingly confusing over time, and increasingly susceptible to thread safety issues.
 
-The modern SDK has taken a client-based approach. There are no objects designed to be representations of storage resources, but instead clients that act as your mechanism to interact with your storage resources in the cloud. **Clients hold no state of your resources.** (Lease client is an exception.) This is most noticable when looking at [blob metadata](#managing-blob-metadata).
+The modern SDK has taken a client-based approach. There are no objects designed to be representations of storage resources, but instead clients that act as your mechanism to interact with your storage resources in the cloud. **Clients hold no state of your resources.** (Lease client is an exception.) This is most noticeable when looking at [blob metadata](#managing-blob-metadata).
 
 The hierarchical structure of Azure Blob Storage can be understood by the following diagram:
 ![Blob Storage Hierarchy](https://docs.microsoft.com/azure/storage/blobs/media/storage-blobs-introduction/blob1.png)
@@ -148,7 +148,7 @@ In the interest of simplifying the API surface, v12 uses three top level clients
 
 Note the absence of a v12 equivalent for v7.5's `cloud_blob_directory`. Directories were an SDK-only concept that did not exist in Azure Blob Storage, and which were not brought forwards into the modern Storage SDK. As shown by the diagram in [Client Structure](#client-structure), containers only contain a flat list of blobs, but those blobs can be named and listed in ways that imply a folder-like structure. See our [Listing Blobs in a Container](#listing-blobs-in-a-container) migration samples later in this guide for more information.
 
-For those whose workloads revolve around manipulating directories and heavily relied on the leagacy SDKs abstraction of this structure, consider the [pros and cons of enabling hierarchical namespace](https://docs.microsoft.com/azure/storage/blobs/data-lake-storage-namespace) on your storage account, which would allow switching to the [Data Lake Gen 2 SDK](https://github.com/Azure/azure-sdk-for-cpp/tree/main/sdk/storage/azure-storage-files-datalake), whose migration is not covered in this document.
+For those whose workloads revolve around manipulating directories and heavily relied on the legacy SDKs abstraction of this structure, consider the [pros and cons of enabling hierarchical namespace](https://docs.microsoft.com/azure/storage/blobs/data-lake-storage-namespace) on your storage account, which would allow switching to the [Data Lake Gen 2 SDK](https://github.com/Azure/azure-sdk-for-cpp/tree/main/sdk/storage/azure-storage-files-datalake), whose migration is not covered in this document.
 
 #### Class Conversion Reference
 
@@ -350,7 +350,7 @@ blob_client.download_to_file(local_file_path);
 
 // modify blob content
 
-// reupload modified blob content while preserving metadata
+// re-upload modified blob content while preserving metadata
 blob_client.upload_from_file(local_file_path);
 ```
 
@@ -364,7 +364,7 @@ metadata["foo"] = "bar";
 blobClient.SetMetadata(metadata);
 ```
 
-Additionally with blob content edits, if your blobs have metadata you need to get the metadata and reupload with that metadata, telling the service what metadata goes with this new blob state.
+Additionally with blob content edits, if your blobs have metadata you need to get the metadata and re-upload with that metadata, telling the service what metadata goes with this new blob state.
 
 ```C++
 // download blob content and metadata
@@ -373,7 +373,7 @@ auto metadata = response.Value.Metadata;
 
 // modify blob content
 
-// reupload modified blob content while preserving metadata
+// re-upload modified blob content while preserving metadata
 // not adding metadata is a metadata clear
 UploadBlockBlobFromOptions uploadOptions;
 uploadOptions.Metadata = metadata;

@@ -370,6 +370,7 @@ namespace Azure { namespace Storage { namespace Test {
       identifier.Id = RandomString(64);
       identifier.StartsOn = std::chrono::system_clock::now() - std::chrono::minutes(2);
       identifier.ExpiresOn = std::chrono::system_clock::now() + std::chrono::minutes(2);
+      /* cspell:disable-next-line */
       identifier.Permissions = "racwdxlt";
       options.SignedIdentifiers.emplace_back(identifier);
 
