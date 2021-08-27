@@ -6,6 +6,8 @@
 #include <azure/core/http/http.hpp>
 #include <azure/storage/common/crypt.hpp>
 
+/* cSpell:ignore rscc, rscd, rsce, rscl, rsct, skoid, sktid, saoid, suoid, scid */
+
 namespace Azure { namespace Storage { namespace Sas {
   namespace {
     std::string DataLakeSasResourceToString(DataLakeSasResource resource)
@@ -142,7 +144,6 @@ namespace Azure { namespace Storage { namespace Sas {
         std::vector<uint8_t>(stringToSign.begin(), stringToSign.end()),
         Azure::Core::Convert::Base64Decode(credential.GetAccountKey())));
 
-    /* cSpell:disable */
     Azure::Core::Url builder;
     builder.AppendQueryParameter(
         "sv", _internal::UrlEncodeQueryParameter(_internal::DefaultSasVersion));
@@ -189,7 +190,6 @@ namespace Azure { namespace Storage { namespace Sas {
     {
       builder.AppendQueryParameter("rsct", _internal::UrlEncodeQueryParameter(ContentType));
     }
-    /* cSpell:enable */
 
     return builder.GetAbsoluteUrl();
   }
@@ -230,7 +230,6 @@ namespace Azure { namespace Storage { namespace Sas {
         std::vector<uint8_t>(stringToSign.begin(), stringToSign.end()),
         Azure::Core::Convert::Base64Decode(userDelegationKey.Value)));
 
-    /* cSpell:disable */
     Azure::Core::Url builder;
     builder.AppendQueryParameter(
         "sv", _internal::UrlEncodeQueryParameter(_internal::DefaultSasVersion));
@@ -295,7 +294,6 @@ namespace Azure { namespace Storage { namespace Sas {
       builder.AppendQueryParameter("rsct", _internal::UrlEncodeQueryParameter(ContentType));
     }
     builder.AppendQueryParameter("sig", _internal::UrlEncodeQueryParameter(signature));
-    /* cSpell:enable */
 
     return builder.GetAbsoluteUrl();
   }

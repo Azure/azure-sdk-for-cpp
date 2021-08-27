@@ -6,6 +6,8 @@
 #include <azure/core/http/http.hpp>
 #include <azure/storage/common/crypt.hpp>
 
+/* cSpell:ignore rscc, rscd, rsce, rscl, rsct */
+
 namespace Azure { namespace Storage { namespace Sas {
 
   namespace {
@@ -102,7 +104,6 @@ namespace Azure { namespace Storage { namespace Sas {
         std::vector<uint8_t>(stringToSign.begin(), stringToSign.end()),
         Azure::Core::Convert::Base64Decode(credential.GetAccountKey())));
 
-    /* cSpell:disable */
     Azure::Core::Url builder;
     builder.AppendQueryParameter(
         "sv", _internal::UrlEncodeQueryParameter(_internal::DefaultSasVersion));
@@ -149,7 +150,6 @@ namespace Azure { namespace Storage { namespace Sas {
     {
       builder.AppendQueryParameter("rsct", _internal::UrlEncodeQueryParameter(ContentType));
     }
-    /* cSpell:enable */
 
     return builder.GetAbsoluteUrl();
   }
