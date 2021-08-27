@@ -6,6 +6,8 @@
 #include <azure/core/http/http.hpp>
 #include <azure/storage/common/crypt.hpp>
 
+/* cSpell:ignore rscc, rscd, rsce, rscl, rsct, skoid, sktid */
+
 namespace Azure { namespace Storage { namespace Sas {
 
   namespace {

@@ -866,7 +866,7 @@ namespace Azure { namespace Storage {
     size_t uStop = length - (length % 32);
     if (uStop >= 2 * 32)
     {
-      const uint64_t* wdata = reinterpret_cast<const uint64_t*>(data);
+      const uint64_t* wData = reinterpret_cast<const uint64_t*>(data);
 
       uint64_t uCrc0 = 0;
       uint64_t uCrc1 = 0;
@@ -876,12 +876,12 @@ namespace Azure { namespace Storage {
       length -= uStop;
       uCrc0 = uCrc;
 
-      for (; pData < pLast; pData += 32, wdata += 4)
+      for (; pData < pLast; pData += 32, wData += 4)
       {
-        uint64_t b0 = wdata[0] ^ uCrc0;
-        uint64_t b1 = wdata[1] ^ uCrc1;
-        uint64_t b2 = wdata[2] ^ uCrc2;
-        uint64_t b3 = wdata[3] ^ uCrc3;
+        uint64_t b0 = wData[0] ^ uCrc0;
+        uint64_t b1 = wData[1] ^ uCrc1;
+        uint64_t b2 = wData[2] ^ uCrc2;
+        uint64_t b3 = wData[3] ^ uCrc3;
 
         uCrc0 = Crc64MU32[7 * 256 + (b0 & 0xff)];
         b0 >>= 8;
@@ -953,7 +953,7 @@ namespace Azure { namespace Storage {
       }
 
       uCrc = 0;
-      uCrc ^= wdata[0] ^ uCrc0;
+      uCrc ^= wData[0] ^ uCrc0;
       uCrc = (uCrc >> 8) ^ Crc64MU1[uCrc & 0xff];
       uCrc = (uCrc >> 8) ^ Crc64MU1[uCrc & 0xff];
       uCrc = (uCrc >> 8) ^ Crc64MU1[uCrc & 0xff];
@@ -963,7 +963,7 @@ namespace Azure { namespace Storage {
       uCrc = (uCrc >> 8) ^ Crc64MU1[uCrc & 0xff];
       uCrc = (uCrc >> 8) ^ Crc64MU1[uCrc & 0xff];
 
-      uCrc ^= wdata[1] ^ uCrc1;
+      uCrc ^= wData[1] ^ uCrc1;
       uCrc = (uCrc >> 8) ^ Crc64MU1[uCrc & 0xff];
       uCrc = (uCrc >> 8) ^ Crc64MU1[uCrc & 0xff];
       uCrc = (uCrc >> 8) ^ Crc64MU1[uCrc & 0xff];
@@ -973,7 +973,7 @@ namespace Azure { namespace Storage {
       uCrc = (uCrc >> 8) ^ Crc64MU1[uCrc & 0xff];
       uCrc = (uCrc >> 8) ^ Crc64MU1[uCrc & 0xff];
 
-      uCrc ^= wdata[2] ^ uCrc2;
+      uCrc ^= wData[2] ^ uCrc2;
       uCrc = (uCrc >> 8) ^ Crc64MU1[uCrc & 0xff];
       uCrc = (uCrc >> 8) ^ Crc64MU1[uCrc & 0xff];
       uCrc = (uCrc >> 8) ^ Crc64MU1[uCrc & 0xff];
@@ -983,7 +983,7 @@ namespace Azure { namespace Storage {
       uCrc = (uCrc >> 8) ^ Crc64MU1[uCrc & 0xff];
       uCrc = (uCrc >> 8) ^ Crc64MU1[uCrc & 0xff];
 
-      uCrc ^= wdata[3] ^ uCrc3;
+      uCrc ^= wData[3] ^ uCrc3;
       uCrc = (uCrc >> 8) ^ Crc64MU1[uCrc & 0xff];
       uCrc = (uCrc >> 8) ^ Crc64MU1[uCrc & 0xff];
       uCrc = (uCrc >> 8) ^ Crc64MU1[uCrc & 0xff];

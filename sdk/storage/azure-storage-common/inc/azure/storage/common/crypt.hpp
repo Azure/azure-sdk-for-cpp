@@ -20,7 +20,7 @@ namespace Azure { namespace Storage {
   public:
     /**
      * @brief Concatenates another #Crc64 instance after this instance. This operation has the same
-     * effect as if the data in the other instance was appened to this instance.
+     * effect as if the data in the other instance was append to this instance.
      *
      * @param other Another #Crc64Hash instance to be concatenated after this instance.
      */

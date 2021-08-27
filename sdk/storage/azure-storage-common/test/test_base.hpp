@@ -53,7 +53,9 @@ namespace Azure { namespace Storage {
 
     const static Azure::ETag DummyETag("0x8D83B58BDF51D75");
     const static Azure::ETag DummyETag2("0x8D812645BFB0CDE");
+    /* cspell:disable-next-line */
     constexpr static const char* DummyMd5 = "tQbD1aMPeB+LiPffUwFQJQ==";
+    /* cspell:disable-next-line */
     constexpr static const char* DummyCrc64 = "+DNR5PON4EM=";
 
     uint64_t RandomInt(

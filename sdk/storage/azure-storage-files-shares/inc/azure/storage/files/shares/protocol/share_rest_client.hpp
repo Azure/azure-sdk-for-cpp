@@ -27,6 +27,8 @@
 #include <azure/storage/common/storage_common.hpp>
 #include <azure/storage/common/storage_exception.hpp>
 
+/* cSpell:disable */
+
 namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
   namespace Models {
