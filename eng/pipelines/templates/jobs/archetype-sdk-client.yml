@@ -279,8 +279,6 @@ jobs:
       VCPKG_DEFAULT_TRIPLET: 'x64-windows-static'
     steps:
       - template: /eng/common/pipelines/templates/steps/check-spelling.yml
-        parameters:
-          ContinueOnError: false
 
       - template: /eng/common/pipelines/templates/steps/verify-links.yml
         parameters:
