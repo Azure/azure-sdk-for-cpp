@@ -17,10 +17,10 @@ steps:
     - task: PowerShell@2
       displayName: Check spelling (cspell)
       continueOnError: ${{ parameters.ContinueOnError }}
-      inputs: 
+      inputs:
         targetType: filePath
         filePath: eng/common/scripts/check-spelling-in-changed-files.ps1
-        arguments: >- 
+        arguments: >-
           -TargetBranch "origin/$("${{ parameters.TargetBranch }}" -replace "refs/heads/")"
           -SourceBranch ${{ parameters.SourceBranch }}
           -CspellConfigPath ${{ parameters.CspellConfigPath }}
