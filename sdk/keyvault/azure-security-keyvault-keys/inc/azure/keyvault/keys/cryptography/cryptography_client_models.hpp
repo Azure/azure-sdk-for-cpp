@@ -94,21 +94,21 @@ namespace Azure {
     AZ_SECURITY_KEYVAULT_KEYS_DLLEXPORT static const SignatureAlgorithm RS512;
 
     /**
-     * cspell: disable-next-line 
+     * cspell: disable-next-line
      * @brief An RSASSA-PSS using SHA-256 and MGF1 with SHA-256 #SignatureAlgorithm
      *
      */
     AZ_SECURITY_KEYVAULT_KEYS_DLLEXPORT static const SignatureAlgorithm PS256;
 
     /**
-     * cspell: disable-next-line 
+     * cspell: disable-next-line
      * @brief An RSASSA-PSS using SHA-384 and MGF1 with SHA-384 #SignatureAlgorithm
      *
      */
     AZ_SECURITY_KEYVAULT_KEYS_DLLEXPORT static const SignatureAlgorithm PS384;
 
     /**
-     * cspell: disable-next-line 
+     * cspell: disable-next-line
      * @brief An RSASSA-PSS using SHA-512 and MGF1 with SHA-512 #SignatureAlgorithm
      *
      */
@@ -133,7 +133,7 @@ namespace Azure {
     AZ_SECURITY_KEYVAULT_KEYS_DLLEXPORT static const SignatureAlgorithm ES512;
 
     /**
-     * cspell: disable-next-line 
+     * cspell: disable-next-line
      * @brief An ECDSA with a secp256k1 curve #SignatureAlgorithm
      *
      */

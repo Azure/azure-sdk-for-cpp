@@ -39,7 +39,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets { 
       auto response
           = Azure::Core::Http::RawResponse(1, 1, Azure::Core::Http::HttpStatusCode::Ok, "OK");
 
-      //cspell: disable-next-line
+      // cspell: disable-next-line
       constexpr static const uint8_t responseBody[] = R"json({"value": "bXkgbmFtZSBpcw=="})json";
 
       response.SetHeader(HttpShared::ContentType, "application/json");

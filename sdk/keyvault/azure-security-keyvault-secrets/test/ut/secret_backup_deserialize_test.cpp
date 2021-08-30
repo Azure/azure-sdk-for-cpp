@@ -49,6 +49,6 @@ TEST(RestoreSecretSerializer, SomeValue)
   auto jsonParser = json::parse(secret);
 
   EXPECT_EQ(secret.size(), size_t(26));
-  //cspell: disable-next-line
+  // cspell: disable-next-line
   EXPECT_EQ(jsonParser["value"], "bXkgbmFtZSBpcw");
 }
