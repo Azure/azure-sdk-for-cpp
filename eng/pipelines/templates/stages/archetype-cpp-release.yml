@@ -195,7 +195,7 @@ stages:
                           }
                           $codeOwnersToNotify = $owners -join ', '
                           if (!$codeOwnersToNotify) {
-                            $codeOwnersToNotify = $(VcpkgDefaultCodeOwners)
+                            $codeOwnersToNotify = "$(VcpkgDefaultCodeOwners)"
                           }
 
                           $prComment = "Adding ${{ artifact.Name }} to release"
