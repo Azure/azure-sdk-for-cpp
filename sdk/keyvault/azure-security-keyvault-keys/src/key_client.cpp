@@ -14,6 +14,7 @@
 #include "private/keyvault_protocol.hpp"
 #include "private/package_version.hpp"
 
+#include <algorithm>
 #include <memory>
 #include <string>
 #include <vector>
@@ -28,6 +29,27 @@ using namespace Azure::Core::Http::_internal;
 namespace {
 constexpr static const char KeyVaultServicePackageName[] = "keyvault-keys";
 constexpr static const char CreateValue[] = "create";
+
+// This is a Key-Vault only patch to calculate token scope/audience
+std::string GetScopeFromUrl(Azure::Core::Url const& url)
+{
+  std::string calculatedScope(url.GetScheme() + "://");
+  auto const& hostWithAccount = url.GetHost();
+  auto hostNoAccountStart = std::find(hostWithAccount.begin(), hostWithAccount.end(), '.');
+
+  // Insert the calculated scope only when then host in the url contains at least a `.`
+  // Otherwise, only the default scope will be there.
+  // We don't want to throw/validate input but just leave the values go to azure to decide what to
+  // do.
+  if (hostNoAccountStart != hostWithAccount.end())
+  {
+    calculatedScope.append(hostNoAccountStart + 1, hostWithAccount.end());
+    calculatedScope.append("/.default");
+  }
+
+  return calculatedScope;
+}
+
 } // namespace
 
 std::unique_ptr<RawResponse> KeyClient::SendRequest(
@@ -69,19 +91,13 @@ KeyClient::KeyClient(
 {
   auto apiVersion = options.Version.ToString();
 
-  std::vector<std::unique_ptr<HttpPolicy>> perRetrypoliciesOld;
-  {
-    Azure::Core::Credentials::TokenRequestContext const tokenContext = {{TokenContextValue}};
-
-    perRetrypoliciesOld.emplace_back(
-        std::make_unique<BearerTokenAuthenticationPolicy>(credential, tokenContext));
-  }
   std::vector<std::unique_ptr<HttpPolicy>> perRetrypolicies;
   {
-    Azure::Core::Credentials::TokenRequestContext const tokenContext = {{TokenContextValue}};
+    Azure::Core::Credentials::TokenRequestContext const tokenContext
+        = {{::GetScopeFromUrl(m_vaultUrl)}};
 
     perRetrypolicies.emplace_back(
-        std::make_unique<BearerTokenAuthenticationPolicy>(credential, tokenContext));
+        std::make_unique<BearerTokenAuthenticationPolicy>(credential, std::move(tokenContext)));
   }
   std::vector<std::unique_ptr<HttpPolicy>> perCallpolicies;
 

@@ -16,6 +16,7 @@
 #include <azure/core/http/http.hpp>
 #include <azure/core/http/policies/policy.hpp>
 
+#include <algorithm>
 #include <string>
 
 using namespace Azure::Security::KeyVault::Secrets;
@@ -51,6 +52,26 @@ static inline RequestWithContinuationToken BuildRequestFromContinuationToken(
   }
   return request;
 }
+
+// This is a Key-Vault only patch to calculate token scope/audience
+std::string GetScopeFromUrl(Azure::Core::Url const& url)
+{
+  std::string calculatedScope(url.GetScheme() + "://");
+  auto const& hostWithAccount = url.GetHost();
+  auto hostNoAccountStart = std::find(hostWithAccount.begin(), hostWithAccount.end(), '.');
+
+  // Insert the calculated scope only when then host in the url contains at least a `.`
+  // Otherwise, only the default scope will be there.
+  // We don't want to throw/validate input but just leave the values go to azure to decide what to
+  // do.
+  if (hostNoAccountStart != hostWithAccount.end())
+  {
+    calculatedScope.append(hostNoAccountStart + 1, hostWithAccount.end());
+    calculatedScope.append("/.default");
+  }
+
+  return calculatedScope;
+}
 } // namespace
 
 const ServiceVersion ServiceVersion::V7_2("7.2");
@@ -61,18 +82,18 @@ SecretClient::SecretClient(
     SecretClientOptions options)
 {
   auto apiVersion = options.Version.ToString();
+  Azure::Core::Url url(vaultUrl);
 
   std::vector<std::unique_ptr<HttpPolicy>> perRetrypolicies;
   {
-    Azure::Core::Credentials::TokenRequestContext const tokenContext
-        = {{"https://vault.azure.net/.default"}};
+    Azure::Core::Credentials::TokenRequestContext const tokenContext = {{::GetScopeFromUrl(url)}};
 
     perRetrypolicies.emplace_back(
         std::make_unique<BearerTokenAuthenticationPolicy>(credential, tokenContext));
   }
 
   m_protocolClient = std::make_shared<Azure::Security::KeyVault::_detail::KeyVaultProtocolClient>(
-      Azure::Core::Url(vaultUrl),
+      std::move(url),
       apiVersion,
       Azure::Core::Http::_internal::HttpPipeline(
           options, TelemetryName, PackageVersion::ToString(), std::move(perRetrypolicies), {}));
