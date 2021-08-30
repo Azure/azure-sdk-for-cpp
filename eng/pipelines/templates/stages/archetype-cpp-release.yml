@@ -95,13 +95,14 @@ stages:
                 name: azsdk-pool-mms-win-2019-general
                 vmImage: MMS2019
 
+              variables:
+                VcpkgDefaultCodeOwners: '@antkmsft'
+                VcpkgPrRepoOwner: Microsoft
+                VcpkgPrRepoName: vcpkg
+
               strategy:
                 runOnce:
                   deploy:
-                    variables:
-                      VcpkgDefaultCodeOwners: '@antkmsft'
-                      VcpkgPrRepoOwner: Microsoft
-                      VcpkgPrRepoName: vcpkg
                     steps:
                       - checkout: self
 
