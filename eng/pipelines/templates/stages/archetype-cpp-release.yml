@@ -204,6 +204,7 @@ stages:
                           }
 
                           ./eng/common/scripts/Add-IssueComment.ps1 `
+                            -AuthToken "$(azuresdk-github-pat)" `
                             -RepoOwner $(VcpkgPrRepoOwner) `
                             -RepoName $(VcpkgPrRepoName) `
                             -IssueNumber "$(Submitted.PullRequest.Number)" `
