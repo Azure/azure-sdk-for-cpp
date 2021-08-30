@@ -1,5 +1,6 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # SPDX-License-Identifier: MIT
+# Added change to validate multiple releases to the same PR
 
 vcpkg_from_github(
     OUT_SOURCE_PATH SOURCE_PATH
