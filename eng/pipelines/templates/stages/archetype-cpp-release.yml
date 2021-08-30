@@ -108,7 +108,7 @@ stages:
 
                       - pwsh: |
                           $branchName = "azure-sdk-for-cpp-${{ artifact.Name }}-$(Build.BuildId)"
-                          if ('$(VcpkgForkBranchName)') { 
+                          if ('$(VcpkgForkBranchName)') {
                             Write-Host "Using queue time branch name" 
                             $branchName = '$(VcpkgForkBranchName)'
                           } 
@@ -154,6 +154,16 @@ stages:
                         parameters:
                           WorkingDirectory: $(Pipeline.Workspace)/vcpkg
 
+                      - task: PowerShell@2
+                        displayName: Get PR owners from CODEOWNERS
+                        inputs:
+                          pwsh: true
+                          filePath: $(Build.SourcesDirectory)/eng/common/scripts/get-codeowners.ps1
+                          arguments: >
+                            -TargetDirectory "/sdk/${{ parameters.ServiceDirectory }}/"
+                            -RootDirectory "$(Build.SourcesDirectory)"
+                            -VsoVariable "PrOwners"
+
                       # SkipCheckingForChanges is true to skip the commit step 
                       # (which is already done by Update-VcpkgPort.ps1)
                       - template: /eng/common/pipelines/templates/steps/create-pull-request.yml
@@ -170,16 +180,6 @@ stages:
                           OpenAsDraft: ${{ parameters.TestPipeline }}
                           PRLabels: "auto-merge"
                           CloseAfterOpenForTesting: '${{ parameters.TestPipeline }}'
-
-                      - task: PowerShell@2
-                        displayName: Get PR owners from CODEOWNERS
-                        inputs:
-                          pwsh: true
-                          filePath: $(Build.SourcesDirectory)/eng/common/scripts/get-codeowners.ps1
-                          arguments: >
-                            -TargetDirectory "/sdk/${{ parameters.ServiceDirectory }}/"
-                            -RootDirectory "$(Build.SourcesDirectory)"
-                            -VsoVariable "PrOwners"
 
                       - pwsh: |
                           $owners = @()
