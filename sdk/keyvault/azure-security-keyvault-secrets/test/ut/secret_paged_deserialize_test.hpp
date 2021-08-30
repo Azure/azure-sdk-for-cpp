@@ -39,7 +39,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets { 
 			"recoveryLevel": "Recoverable+Purgeable",
 			"updated": 1627404049
 		},
-		"id": "https://gearama-test2.vault.azure.net/secrets/gdfgfd"
+		"id": "https://gearama-test2.vault.azure.net/secrets/magic"
 	}]
 }
 )json";
@@ -69,8 +69,8 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets { 
 			"recoveryLevel": "Recoverable+Purgeable",
 			"updated": 1628101925
 		},
-		"contentType": "fdsfdsfs",
-		"id": "https://gearama-test2.vault.azure.net/secrets/gdfgfd/5a0fdd819481420eac6f3282ce722461",
+		"contentType": "content",
+		"id": "https://gearama-test2.vault.azure.net/secrets/magic/5a0fdd819481420eac6f3282ce722461",
 		"tags": {}
 	}, {
 		"attributes": {
@@ -80,7 +80,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets { 
 			"recoveryLevel": "Recoverable+Purgeable",
 			"updated": 1627404049
 		},
-		"id": "https://gearama-test2.vault.azure.net/secrets/gdfgfd/8faafbb99216484dbbd75f9dd6bcaadf"
+		"id": "https://gearama-test2.vault.azure.net/secrets/magic/8faafbb99216484dbbd75f9dd6bcaadf"
 	}, {
 		"attributes": {
 			"created": 1628101911,
@@ -89,7 +89,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets { 
 			"recoveryLevel": "Recoverable+Purgeable",
 			"updated": 1628101911
 		},
-		"id": "https://gearama-test2.vault.azure.net/secrets/gdfgfd/d75080822f03400ab4d658bd0e988ac5",
+		"id": "https://gearama-test2.vault.azure.net/secrets/magic/d75080822f03400ab4d658bd0e988ac5",
 		"tags": {}
 	}]
 }

@@ -63,15 +63,17 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys { nam
     {
       char* result;
       std::string keyType = "RSA";
-
+      // cspell: disable-next-line
       if (header.find("CreateKeyRSAHSM") != std::string::npos)
       {
         keyType = "RSA-HSM";
       }
+      // cspell: disable-next-line
       else if (header.find("CreateKeyECHSM") != std::string::npos)
       {
         keyType = "EC-HSM";
       }
+      // cspell: disable-next-line
       else if (header.find("CreateKeyOCTHSM") != std::string::npos)
       {
         keyType = "oct-HSM";

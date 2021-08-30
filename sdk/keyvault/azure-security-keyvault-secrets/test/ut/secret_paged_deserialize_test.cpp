@@ -26,7 +26,7 @@ TEST(SecretPropertiesPagedResponse, SingleWithNext)
   EXPECT_EQ(item.Enabled.Value(), true);
   EXPECT_EQ(item.RecoverableDays.Value(), 90);
   EXPECT_EQ(item.RecoveryLevel.Value(), "Recoverable+Purgeable");
-  EXPECT_EQ(item.Id, "https://gearama-test2.vault.azure.net/secrets/gdfgfd");
+  EXPECT_EQ(item.Id, "https://gearama-test2.vault.azure.net/secrets/magic");
 }
 
 TEST(SecretPropertiesPagedResponse, MultipleNoNext)
@@ -44,8 +44,8 @@ TEST(SecretPropertiesPagedResponse, MultipleNoNext)
   EXPECT_EQ(item.RecoveryLevel.Value(), "Recoverable+Purgeable");
   EXPECT_EQ(
       item.Id,
-      "https://gearama-test2.vault.azure.net/secrets/gdfgfd/5a0fdd819481420eac6f3282ce722461");
-  EXPECT_EQ(item.Name, "gdfgfd");
+      "https://gearama-test2.vault.azure.net/secrets/magic/5a0fdd819481420eac6f3282ce722461");
+  EXPECT_EQ(item.Name, "magic");
   EXPECT_EQ(item.Version, "5a0fdd819481420eac6f3282ce722461");
 
   item = result.Items[1];
@@ -54,8 +54,8 @@ TEST(SecretPropertiesPagedResponse, MultipleNoNext)
   EXPECT_EQ(item.RecoveryLevel.Value(), "Recoverable+Purgeable");
   EXPECT_EQ(
       item.Id,
-      "https://gearama-test2.vault.azure.net/secrets/gdfgfd/8faafbb99216484dbbd75f9dd6bcaadf");
-  EXPECT_EQ(item.Name, "gdfgfd");
+      "https://gearama-test2.vault.azure.net/secrets/magic/8faafbb99216484dbbd75f9dd6bcaadf");
+  EXPECT_EQ(item.Name, "magic");
   EXPECT_EQ(item.Version, "8faafbb99216484dbbd75f9dd6bcaadf");
 
   item = result.Items[2];
@@ -64,8 +64,8 @@ TEST(SecretPropertiesPagedResponse, MultipleNoNext)
   EXPECT_EQ(item.RecoveryLevel.Value(), "Recoverable+Purgeable");
   EXPECT_EQ(
       item.Id,
-      "https://gearama-test2.vault.azure.net/secrets/gdfgfd/d75080822f03400ab4d658bd0e988ac5");
-  EXPECT_EQ(item.Name, "gdfgfd");
+      "https://gearama-test2.vault.azure.net/secrets/magic/d75080822f03400ab4d658bd0e988ac5");
+  EXPECT_EQ(item.Name, "magic");
   EXPECT_EQ(item.Version, "d75080822f03400ab4d658bd0e988ac5");
 }
 
