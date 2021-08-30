@@ -5,7 +5,6 @@ parameters:
   TestPipeline: false
   DependsOn:
     - Build
-  VcpkgPrReviewers: []
 
 stages:
   - ${{if and(eq(variables['Build.Reason'], 'Manual'), eq(variables['System.TeamProject'], 'internal'))}}:
@@ -99,6 +98,10 @@ stages:
               strategy:
                 runOnce:
                   deploy:
+                    variables:
+                      VcpkgDefaultCodeOwners: '@antkmsft'
+                      VcpkgPrRepoOwner: Microsoft
+                      VcpkgPrRepoName: vcpkg
                     steps:
                       - checkout: self
 
@@ -150,6 +153,23 @@ stages:
                         parameters:
                           WorkingDirectory: $(Pipeline.Workspace)/vcpkg
 
+                      # SkipCheckingForChanges is true to skip the commit step 
+                      # (which is already done by Update-VcpkgPort.ps1)
+                      - template: /eng/common/pipelines/templates/steps/create-pull-request.yml
+                        parameters:
+                          RepoOwner: $(VcpkgPrRepoOwner)
+                          RepoName: $(VcpkgPrRepoName)
+                          WorkingDirectory: $(Pipeline.Workspace)/vcpkg
+                          PrBranchName: $(PrBranchName)
+                          PRTitle: $(PrTitle)
+                          PRBody: Update vcpkg ports for Azure SDK release. This release may contain multiple ports.
+                          GHReviewersVariable: PrOwners
+                          SkipCheckingForChanges: true
+                          BaseBranchName: $(DefaultBranch)
+                          OpenAsDraft: ${{ parameters.TestPipeline }}
+                          PRLabels: "auto-merge"
+                          CloseAfterOpenForTesting: '${{ parameters.TestPipeline }}'
+
                       - task: PowerShell@2
                         displayName: Get PR owners from CODEOWNERS
                         inputs:
@@ -160,22 +180,35 @@ stages:
                             -RootDirectory "$(Build.SourcesDirectory)"
                             -VsoVariable "PrOwners"
 
-                      # SkipCheckingForChanges is true to skip the commit step 
-                      # (which is already done by Update-VcpkgPort.ps1)
-                      - template: /eng/common/pipelines/templates/steps/create-pull-request.yml
-                        parameters:
-                          RepoOwner: Microsoft
-                          RepoName: vcpkg
-                          WorkingDirectory: $(Pipeline.Workspace)/vcpkg
-                          PrBranchName: $(PrBranchName)
-                          PRTitle: $(PrTitle)
-                          PRBody: Update vcpkg ports for Azure SDK release. This release may contain multiple ports. @danieljurek
-                          GHReviewersVariable: PrOwners
-                          SkipCheckingForChanges: true
-                          BaseBranchName: $(DefaultBranch)
-                          OpenAsDraft: ${{ parameters.TestPipeline }}
-                          PRLabels: "auto-merge"
-                          CloseAfterOpenForTesting: '${{ parameters.TestPipeline }}'
+                      - pwsh: |
+                          $owners = @()
+                          foreach($owner in $env:PrOwners -split ',') {
+                            # Exclude groups. GitHub does not notify teams
+                            # that have different owners (e.g. alerting
+                            # @Azure/example-team when opening a PR in
+                            # Microsoft/vcpkg)
+                            if ($owner.indexOf('/') -ne -1) {
+                              continue
+                            }
+
+                            $owners += "@$owner"
+                          }
+                          $codeOwnersToNotify = $owners -join ', '
+                          if (!$codeOwnersToNotify) {
+                            $codeOwnersToNotify = $(VcpkgDefaultCodeOwners)
+                          }
+
+                          $prComment = "Adding ${{ artifact.Name }} to release"
+                          if ($codeOwnersToNotify) {
+                            $prComment += "`n`ncc: $codeOwnersToNotify"
+                          }
+
+                          ./eng/common/scripts/Add-IssueComment.ps1 `
+                            -RepoOwner $(VcpkgPrRepoOwner) `
+                            -RepoName $(VcpkgPrRepoName) `
+                            -IssueNumber "$(Submitted.PullRequest.Number)" `
+                            -Comment $prComment
+                        displayName: Comment notification to PR
 
           - ${{if ne(artifact.skipUpdatePackageVersion, 'true')}}:
             - deployment: UpdatePackageVersion
