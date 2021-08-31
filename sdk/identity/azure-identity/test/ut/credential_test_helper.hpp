@@ -57,7 +57,7 @@ namespace Azure { namespace Identity { namespace Test { namespace _detail {
       std::vector<ResponseInfo> Responses;
     };
 
-    struct TokenRequestSimuationServerResponse
+    struct TokenRequestSimulationServerResponse
     {
       Core::Http::HttpStatusCode StatusCode;
       std::string Body;
@@ -78,7 +78,7 @@ namespace Azure { namespace Identity { namespace Test { namespace _detail {
     static TokenRequestSimulationResult SimulateTokenRequest(
         CreateCredentialCallback const& createCredential,
         std::vector<Core::Credentials::TokenRequestContext> const& tokenRequestContexts,
-        std::vector<TokenRequestSimuationServerResponse> const& responses,
+        std::vector<TokenRequestSimulationServerResponse> const& responses,
         GetTokenCallback getToken = DefaultGetToken);
 
     static TokenRequestSimulationResult SimulateTokenRequest(
@@ -88,7 +88,7 @@ namespace Azure { namespace Identity { namespace Test { namespace _detail {
         GetTokenCallback getToken = DefaultGetToken)
     {
       using Core::Http::HttpStatusCode;
-      std::vector<TokenRequestSimuationServerResponse> responses;
+      std::vector<TokenRequestSimulationServerResponse> responses;
       for (auto const& responseBody : responseBodies)
       {
         responses.push_back({HttpStatusCode::Ok, responseBody, {}});

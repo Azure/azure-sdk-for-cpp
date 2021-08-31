@@ -9,7 +9,7 @@
 
 // These functions should be getting the real Tenant ID, Client ID, and the Client Secret to
 // authenticate. It is recommended to NOT hardcode the secret in the code, but to get it from the
-// envoronment or read it from a secure location.
+// environment or read it from a secure location.
 std::string GetTenantId() { return std::string(); }
 std::string GetClientId() { return std::string(); }
 std::string GetClientSecret() { return std::string(); }
@@ -18,7 +18,7 @@ int main()
 {
   try
   {
-    // Step 1: Initialize Cient Secret Credential.
+    // Step 1: Initialize Client Secret Credential.
     auto clientSecretCredential = std::make_shared<Azure::Identity::ClientSecretCredential>(
         GetTenantId(), GetClientId(), GetClientSecret());
 
