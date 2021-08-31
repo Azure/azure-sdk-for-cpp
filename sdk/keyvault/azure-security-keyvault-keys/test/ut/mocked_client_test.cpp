@@ -112,8 +112,10 @@ TEST_F(MockedTransportAdapterTest, CreateKeyRSA2)
   EXPECT_EQ(response.Value.GetKeyType(), KeyVaultKeyType::Rsa);
 }
 
+// cspell: disable-next-line
 TEST_F(MockedTransportAdapterTest, CreateKeyRSAHSM)
 {
+  // cspell: disable-next-line
   std::string applicationId("CreateKeyRSAHSM");
   m_clientOptions.Telemetry.ApplicationId = applicationId;
   m_client = std::make_unique<
@@ -142,8 +144,10 @@ TEST_F(MockedTransportAdapterTest, CreateKeyEC)
   EXPECT_EQ(response.Value.GetKeyType(), KeyVaultKeyType::Ec);
 }
 
+// cspell: disable-next-line
 TEST_F(MockedTransportAdapterTest, CreateKeyECHSM)
 {
+  // cspell: disable-next-line
   std::string applicationId("CreateKeyECHSM");
   m_clientOptions.Telemetry.ApplicationId = applicationId;
   m_client = std::make_unique<
@@ -172,8 +176,10 @@ TEST_F(MockedTransportAdapterTest, CreateKeyOCT)
   EXPECT_EQ(response.Value.GetKeyType(), KeyVaultKeyType::Oct);
 }
 
+// cspell: disable-next-line
 TEST_F(MockedTransportAdapterTest, CreateKeyOCTHSM)
 {
+  // cspell: disable-next-line
   std::string applicationId("CreateKeyOCTHSM");
   m_clientOptions.Telemetry.ApplicationId = applicationId;
   m_client = std::make_unique<

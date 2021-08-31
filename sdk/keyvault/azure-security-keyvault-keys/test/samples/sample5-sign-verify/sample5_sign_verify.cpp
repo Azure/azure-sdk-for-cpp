@@ -67,6 +67,7 @@ int main()
   // and then base 64 encoded. It is not relevant for the sample how to create the SHA256
   // hashed digest.
   std::vector<uint8_t> digest
+      // cspell: disable-next-line
       = Azure::Core::Convert::Base64Decode("DU9EdhpwhJqnGnieD0qKYEz6e8QPKlOVpYZZro");
 
   // Sign and Verify from digest
