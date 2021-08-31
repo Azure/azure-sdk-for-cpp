@@ -12,8 +12,10 @@
 namespace Azure { namespace Core { namespace Diagnostics { namespace _internal {
   class Log final {
     static_assert(
-        ATOMIC_INT_LOCK_FREE == 2,
+        std::is_same<int, std::underlying_type<Logger::Level>::type>::value == true,
         "Logger::Level values must be representable as lock-free");
+
+    static_assert(ATOMIC_INT_LOCK_FREE == 2, "atomic<int> must be lock-free");
 
     static_assert(ATOMIC_BOOL_LOCK_FREE == 2, "atomic<bool> must be lock-free");
 
