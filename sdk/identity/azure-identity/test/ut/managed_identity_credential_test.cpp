@@ -51,13 +51,13 @@ TEST(ManagedIdentityCredential, AppService)
       request0.AbsoluteUrl,
       "https://microsoft.com"
       "?api-version=2017-09-01"
-      "&resource=https%3A%2F%2Fazure.com");
+      "&resource=https%3A%2F%2Fazure.com"); // cspell:disable-line
 
   EXPECT_EQ(
       request1.AbsoluteUrl,
       "https://microsoft.com"
       "?api-version=2017-09-01"
-      "&resource=https%3A%2F%2Foutlook.com");
+      "&resource=https%3A%2F%2Foutlook.com"); // cspell:disable-line
 
   EXPECT_TRUE(request0.Body.empty());
   EXPECT_TRUE(request1.Body.empty());
@@ -119,14 +119,14 @@ TEST(ManagedIdentityCredential, AppServiceClientId)
       "https://microsoft.com"
       "?api-version=2017-09-01"
       "&clientid=fedcba98-7654-3210-0123-456789abcdef"
-      "&resource=https%3A%2F%2Fazure.com");
+      "&resource=https%3A%2F%2Fazure.com"); // cspell:disable-line
 
   EXPECT_EQ(
       request1.AbsoluteUrl,
       "https://microsoft.com"
       "?api-version=2017-09-01"
       "&clientid=fedcba98-7654-3210-0123-456789abcdef"
-      "&resource=https%3A%2F%2Foutlook.com");
+      "&resource=https%3A%2F%2Foutlook.com"); // cspell:disable-line
 
   EXPECT_TRUE(request0.Body.empty());
   EXPECT_TRUE(request1.Body.empty());
@@ -217,8 +217,8 @@ TEST(ManagedIdentityCredential, CloudShell)
   EXPECT_EQ(request0.AbsoluteUrl, "https://microsoft.com");
   EXPECT_EQ(request1.AbsoluteUrl, "https://microsoft.com");
 
-  EXPECT_EQ(request0.Body, "resource=https%3A%2F%2Fazure.com");
-  EXPECT_EQ(request1.Body, "resource=https%3A%2F%2Foutlook.com");
+  EXPECT_EQ(request0.Body, "resource=https%3A%2F%2Fazure.com"); // cspell:disable-line
+  EXPECT_EQ(request1.Body, "resource=https%3A%2F%2Foutlook.com"); // cspell:disable-line
 
   {
     EXPECT_NE(request0.Headers.find("Metadata"), request0.Headers.end());
@@ -277,11 +277,11 @@ TEST(ManagedIdentityCredential, CloudShellClientId)
 
   EXPECT_EQ(
       request0.Body,
-      "resource=https%3A%2F%2Fazure.com&client_id=fedcba98-7654-3210-0123-456789abcdef");
+      "resource=https%3A%2F%2Fazure.com&client_id=fedcba98-7654-3210-0123-456789abcdef"); // cspell:disable-line
 
   EXPECT_EQ(
       request1.Body,
-      "resource=https%3A%2F%2Foutlook.com&client_id=fedcba98-7654-3210-0123-456789abcdef");
+      "resource=https%3A%2F%2Foutlook.com&client_id=fedcba98-7654-3210-0123-456789abcdef"); // cspell:disable-line
 
   {
     EXPECT_NE(request0.Headers.find("Metadata"), request0.Headers.end());
@@ -390,19 +390,19 @@ TEST(ManagedIdentityCredential, AzureArc)
 
   EXPECT_EQ(
       request0.AbsoluteUrl,
-      "https://visualstudio.com?api-version=2019-11-01&resource=https%3A%2F%2Fazure.com");
+      "https://visualstudio.com?api-version=2019-11-01&resource=https%3A%2F%2Fazure.com"); // cspell:disable-line
 
   EXPECT_EQ(
       request1.AbsoluteUrl,
-      "https://visualstudio.com?api-version=2019-11-01&resource=https%3A%2F%2Fazure.com");
+      "https://visualstudio.com?api-version=2019-11-01&resource=https%3A%2F%2Fazure.com"); // cspell:disable-line
 
   EXPECT_EQ(
       request2.AbsoluteUrl,
-      "https://visualstudio.com?api-version=2019-11-01&resource=https%3A%2F%2Foutlook.com");
+      "https://visualstudio.com?api-version=2019-11-01&resource=https%3A%2F%2Foutlook.com"); // cspell:disable-line
 
   EXPECT_EQ(
       request3.AbsoluteUrl,
-      "https://visualstudio.com?api-version=2019-11-01&resource=https%3A%2F%2Foutlook.com");
+      "https://visualstudio.com?api-version=2019-11-01&resource=https%3A%2F%2Foutlook.com"); // cspell:disable-line
 
   EXPECT_TRUE(request0.Body.empty());
   EXPECT_TRUE(request1.Body.empty());
@@ -640,13 +640,13 @@ TEST(ManagedIdentityCredential, Imds)
       request0.AbsoluteUrl,
       "http://169.254.169.254/metadata/identity/oauth2/token"
       "?api-version=2018-02-01"
-      "&resource=https%3A%2F%2Fazure.com");
+      "&resource=https%3A%2F%2Fazure.com"); // cspell:disable-line
 
   EXPECT_EQ(
       request1.AbsoluteUrl,
       "http://169.254.169.254/metadata/identity/oauth2/token"
       "?api-version=2018-02-01"
-      "&resource=https%3A%2F%2Foutlook.com");
+      "&resource=https%3A%2F%2Foutlook.com"); // cspell:disable-line
 
   EXPECT_TRUE(request0.Body.empty());
   EXPECT_TRUE(request1.Body.empty());
@@ -708,14 +708,14 @@ TEST(ManagedIdentityCredential, ImdsClientId)
       "http://169.254.169.254/metadata/identity/oauth2/token"
       "?api-version=2018-02-01"
       "&client_id=fedcba98-7654-3210-0123-456789abcdef"
-      "&resource=https%3A%2F%2Fazure.com");
+      "&resource=https%3A%2F%2Fazure.com"); // cspell:disable-line
 
   EXPECT_EQ(
       request1.AbsoluteUrl,
       "http://169.254.169.254/metadata/identity/oauth2/token"
       "?api-version=2018-02-01"
       "&client_id=fedcba98-7654-3210-0123-456789abcdef"
-      "&resource=https%3A%2F%2Foutlook.com");
+      "&resource=https%3A%2F%2Foutlook.com"); // cspell:disable-line
 
   EXPECT_TRUE(request0.Body.empty());
   EXPECT_TRUE(request1.Body.empty());
