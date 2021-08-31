@@ -36,6 +36,8 @@ set(
 set(
   AZURE_KEYVAULT_KEYS_SOURCE
     src/certificate_client.cpp
+    src/keyvault_certificate.cpp
+    src/keyvault_certificates_common_request.cpp
 )
 
 add_library(azure-security-keyvault-certificates
@@ -58,15 +60,15 @@ create_code_coverage(keyvault azure-security-keyvault-certificates azure-securit
 get_az_version("${CMAKE_CURRENT_SOURCE_DIR}/src/private/package_version.hpp")
 generate_documentation(azure-security-keyvault-certificates ${AZ_LIBRARY_VERSION})
 
-# if(BUILD_TESTING)
+if(BUILD_TESTING)
 
-#   if (NOT AZ_ALL_LIBRARIES)
-#     include(AddGoogleTest)
-#     enable_testing ()
-#   endif()
+  if (NOT AZ_ALL_LIBRARIES)
+    include(AddGoogleTest)
+    enable_testing ()
+  endif()
   
-#   add_subdirectory(test/ut)
-# endif()
+  add_subdirectory(test/ut)
+endif()
 
 # if (BUILD_PERFORMANCE_TESTS)
 #   add_subdirectory(test/perf)
