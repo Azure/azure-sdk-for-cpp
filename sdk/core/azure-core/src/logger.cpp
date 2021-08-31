@@ -21,14 +21,14 @@ static std::function<void(Logger::Level level, std::string const& message)> g_lo
 std::atomic<bool> Log::g_isLoggingEnabled(
     _detail::EnvironmentLogLevelListener::GetLogListener() != nullptr);
 
-std::atomic<Log::LogLevelInt> Log::g_logLevel(static_cast<LogLevelInt>(
-    _detail::EnvironmentLogLevelListener::GetLogLevel(Logger::Level::Warning)));
+std::atomic<Logger::Level> Log::g_logLevel(
+    _detail::EnvironmentLogLevelListener::GetLogLevel(Logger::Level::Warning));
 
 inline void Log::EnableLogging(bool isEnabled) { g_isLoggingEnabled = isEnabled; }
 
 inline void Log::SetLogLevel(Logger::Level logLevel)
 {
-  g_logLevel = static_cast<LogLevelInt>(logLevel);
+  g_logLevel = logLevel;
 }
 
 void Log::Write(Logger::Level level, std::string const& message)

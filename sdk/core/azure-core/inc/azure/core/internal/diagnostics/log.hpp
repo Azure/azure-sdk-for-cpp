@@ -11,16 +11,13 @@
 
 namespace Azure { namespace Core { namespace Diagnostics { namespace _internal {
   class Log final {
-    using LogLevelInt = std::underlying_type<Logger::Level>::type;
-
-    static_assert(
-        std::is_same<int, LogLevelInt>::value == true && ATOMIC_INT_LOCK_FREE == 2,
+    static_assert(ATOMIC_INT_LOCK_FREE == 2,
         "Logger::Level values must be representable as lock-free");
 
     static_assert(ATOMIC_BOOL_LOCK_FREE == 2, "atomic<bool> must be lock-free");
 
     static AZ_CORE_DLLEXPORT std::atomic<bool> g_isLoggingEnabled;
-    static AZ_CORE_DLLEXPORT std::atomic<LogLevelInt> g_logLevel;
+    static AZ_CORE_DLLEXPORT std::atomic<Logger::Level> g_logLevel;
 
     Log() = delete;
     ~Log() = delete;
@@ -28,7 +25,7 @@ namespace Azure { namespace Core { namespace Diagnostics { namespace _internal {
   public:
     static bool ShouldWrite(Logger::Level level)
     {
-      return g_isLoggingEnabled && static_cast<LogLevelInt>(level) >= g_logLevel;
+      return g_isLoggingEnabled && level >= g_logLevel;
     }
 
     static void Write(Logger::Level level, std::string const& message);
