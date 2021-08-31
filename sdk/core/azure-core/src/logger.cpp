@@ -26,10 +26,7 @@ std::atomic<Logger::Level> Log::g_logLevel(
 
 inline void Log::EnableLogging(bool isEnabled) { g_isLoggingEnabled = isEnabled; }
 
-inline void Log::SetLogLevel(Logger::Level logLevel)
-{
-  g_logLevel = logLevel;
-}
+inline void Log::SetLogLevel(Logger::Level logLevel) { g_logLevel = logLevel; }
 
 void Log::Write(Logger::Level level, std::string const& message)
 {
