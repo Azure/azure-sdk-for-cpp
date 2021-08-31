@@ -16,7 +16,7 @@ using namespace Azure::Security::KeyVault::Certificates::Test;
 TEST_F(KeyVaultCertificateClientTest, GetCertificate)
 {
   // cspell: disable-next-line
-  std::string const certificateName("vivaz");
+  std::string const certificateName("vivazqu");
 
   auto const& client
       = GetClientForTest(::testing::UnitTest::GetInstance()->current_test_info()->name());
