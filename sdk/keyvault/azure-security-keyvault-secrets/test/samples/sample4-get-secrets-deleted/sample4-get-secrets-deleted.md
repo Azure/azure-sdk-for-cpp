@@ -25,7 +25,7 @@ SecretClient secretClient(std::getenv("AZURE_KEYVAULT_URL"), credential);
 
 ## Creating a couple of Secrets
 
-To create a secret all you need to set id the name and secret value.
+Call SetSecret to create a couple of new secret with names and secret values.
 
 ```cpp Snippet:SecretSample4SetSecret
 std::string secretName("MySampleSecret");
@@ -36,9 +36,9 @@ Secret secret1 = secretClient.SetSecret(secretName, secretValue).Value;
 Secret secret2 = secretClient.SetSecret(secretName2, secretValue).Value;
 ```
 
-## Getting the properties of all the secrets in the keyvault
+## Getting the properties of all the secrets in the key vault
 
-To get the properties of the secrets in the keyvault we will call GetPropertiesOfSecrets. The results of this call are paged to a maximum of 25 SecretProperties per page.
+Call GetPropertiesOfSecrets to get the properties of all the secrets in the key vault. The results of this call are paged to a maximum of 25 SecretProperties per page.
 
 ```cpp Snippet:SecretSample4ListAllSecrets
  // get properties of secrets
@@ -53,8 +53,7 @@ for (auto secrets = secretClient.GetPropertiesOfSecrets(); secrets.HasPage(); se
 
 ## Get the versions of a Secret
 
-in order to list all the versions of a secret we need to call GetPropertiesOfSecretsVersions, which responds similarly with a paged response of up to 25 versions of the secret per page. 
-
+Call GetPropertiesOfSecretsVersions in order to list all the versions of a secret. Responds similarly with a paged response of up to 25 versions of the secret per page.
 
 ```cpp Snippet:SecretSample4GetVersions
 // get all the versions of a secret
@@ -72,7 +71,7 @@ for (auto secretsVersion = secretClient.GetPropertiesOfSecretsVersions(secret1.N
 
 ## Delete both secrets
 
-The secrets is no longer needed so we need to delete them, in order to demonstrate the delete related operations. We shall not purge the secrets yet.
+Call StartDeleteSecret to delete a secret. This is a long running operation. We shall not purge the secrets yet.
 
 ```cpp Snippet:SecretSample4DeleteSecrets
 // start deleting the secret
@@ -88,7 +87,7 @@ operation.PollUntilDone(2s);
 
 ## Get Deleted Secrets
 
-To get a list of preprties of all deleted secrets we will call GetDeletedSecrets, similarly to the previous calls this is a paged response with the same limit of 25 items per response. 
+Call GetDeletedSecrets to get a list of properties of all deleted secrets. This is a paged response with the same limit of 25 items per response.
 
 ```cpp Snippet:SecretSample4GetDeletedSecrets
 // get all the versions of a secret
@@ -104,7 +103,7 @@ for (auto deletedSecrets = secretClient.GetDeletedSecrets(); deletedSecrets.HasP
 
 ## Get Deleted Secret
 
-To get information about a specific deleted secret we will call GetDeletedSecret passing the secret name as a parameter.
+Call GetDeletedSecret to get information about a specific deleted secret.
 
 ```cpp Snippet:SecretSample4GetDeletedSecret
 // get one deleted secret
@@ -114,7 +113,7 @@ std::cout << "Deleted Secret with name: " << deletedSecret.Value.Name;
 
 ## Purge the secrets to cleanup
 
-Since the secrets were deleted previously now we need to call purge to finish cleaning up.
+Call PurgeDeletedSecret to finish cleaning up.
 
 ```cpp Snippet:SecretSample4PurgeSecrets
  // cleanup

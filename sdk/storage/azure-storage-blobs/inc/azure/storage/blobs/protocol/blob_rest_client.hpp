@@ -23,6 +23,8 @@
 
 #include "azure/storage/blobs/dll_import_export.hpp"
 
+/* cspell:ignore xmsblobsequencenumber */
+
 namespace Azure { namespace Storage { namespace Blobs {
   namespace Models {
 

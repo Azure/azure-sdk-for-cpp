@@ -25,7 +25,7 @@
 
 using namespace Azure::Security::KeyVault::Secrets;
 using namespace std::chrono_literals;
-void AssertSecretsEqual(Secret const& expected, Secret const& actual);
+void AssertSecretsEqual(KeyVaultSecret const& expected, KeyVaultSecret const& actual);
 
 int main()
 {
@@ -48,15 +48,17 @@ int main()
     secretClient.SetSecret(secretName, secretValue);
 
     // get secret
-    Secret secret = secretClient.GetSecret(secretName).Value;
+    KeyVaultSecret secret = secretClient.GetSecret(secretName).Value;
 
-    std::cout << "Secret is returned with name " << secret.Name << " and value " << secret.Value
-              << std::endl;
+    std::cout << "Secret is returned with name " << secret.Name << " and value "
+              << secret.Value.Value() << std::endl;
 
     // start deleting the secret
     DeleteSecretOperation operation = secretClient.StartDeleteSecret(secret.Name);
 
     // You only need to wait for completion if you want to purge or recover the secret.
+    // The duration of the delete operation might vary
+    // in case returns too fast increase the timeout value
     operation.PollUntilDone(2s);
 
     // call recover secret
@@ -64,13 +66,18 @@ int main()
         = secretClient.StartRecoverDeletedSecret(secret.Name);
 
     // poll until done
-    Secret restoredSecret = recoverOperation.PollUntilDone(2s).Value;
+    // The duration of the delete operation might vary
+    // in case returns too fast increase the timeout value
+    SecretProperties restoredSecretProperties = recoverOperation.PollUntilDone(2s).Value;
+    KeyVaultSecret restoredSecret = secretClient.GetSecret(restoredSecretProperties.Name).Value;
 
     AssertSecretsEqual(secret, restoredSecret);
 
     // cleanup
     // start deleting the secret
     DeleteSecretOperation cleanupOperation = secretClient.StartDeleteSecret(restoredSecret.Name);
+    // The duration of the delete operation might vary
+    // in case returns too fast increase the timeout value
     cleanupOperation.PollUntilDone(2s);
     secretClient.PurgeDeletedSecret(restoredSecret.Name);
   }
@@ -89,7 +96,7 @@ int main()
   return 0;
 }
 
-void AssertSecretsEqual(Secret const& expected, Secret const& actual)
+void AssertSecretsEqual(KeyVaultSecret const& expected, KeyVaultSecret const& actual)
 {
 #if defined(NDEBUG)
   // Use (void) to silence unused warnings.

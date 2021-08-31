@@ -21,8 +21,9 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets { 
           = Azure::Core::Http::RawResponse(1, 1, Azure::Core::Http::HttpStatusCode::Ok, "OK");
 
       constexpr static const uint8_t responseBody[] = R"json({
-        "value": "mysecretvalue",
-        "id": "https://myvault.vault.azure.net/secrets/mysecretname/4387e9f3d6e14c459867679a90fd0f79",
+        "value": "my_secret_value",
+        "id": "https://myvault.vault.azure.net/secrets/my_secret_name/4387e9f3d6e14c459867679a90fd0f79",
+        "managed":true,
         "attributes": {
           "enabled": true,
           "created": 1493938410,
@@ -48,8 +49,8 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets { 
           = Azure::Core::Http::RawResponse(1, 1, Azure::Core::Http::HttpStatusCode::Ok, "OK");
 
       constexpr static const uint8_t responseBody[] = R"json({
-        "value": "mysecretvalue",
-        "id": "https://myvault.vault.azure.net/secrets/mysecretname/4387e9f3d6e14c459867679a90fd0f79",
+        "value": "my_secret_value",
+        "id": "https://myvault.vault.azure.net/secrets/my_secret_name/4387e9f3d6e14c459867679a90fd0f79",
         "contentType" : "ct",
         "kid": "kid",
         "managed": true,
@@ -83,7 +84,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets { 
         "deletedDate": 1493938433,
         "scheduledPurgeDate": 1501714433,
         "managed": true,
-        "id": "https://myvault.vault.azure.net/secrets/mysecretname/4387e9f3d6e14c459867679a90fd0f79",
+        "id": "https://myvault.vault.azure.net/secrets/my_secret_name/4387e9f3d6e14c459867679a90fd0f79",
         "attributes": {
           "enabled": true,
           "created": 1493938433,
@@ -102,43 +103,43 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets { 
       return response;
     }
 
-    static void RunPartialExpect(Secret& secret, bool expectValue = true)
+    static void RunPartialExpect(KeyVaultSecret& secret, bool expectValue = true)
     {
       if (expectValue)
       {
-        EXPECT_EQ(secret.Value, "mysecretvalue");
+        EXPECT_EQ(secret.Value.Value(), "my_secret_value");
       }
 
-      EXPECT_EQ(secret.Name, "mysecretname");
+      EXPECT_EQ(secret.Name, "my_secret_name");
       EXPECT_EQ(secret.Properties.VaultUrl, "https://myvault.vault.azure.net");
       EXPECT_EQ(secret.Properties.Version, "4387e9f3d6e14c459867679a90fd0f79");
       EXPECT_EQ(secret.Properties.Id, secret.Id);
       EXPECT_EQ(
           secret.Id,
-          "https://myvault.vault.azure.net/secrets/mysecretname/"
+          "https://myvault.vault.azure.net/secrets/my_secret_name/"
           "4387e9f3d6e14c459867679a90fd0f79");
+      EXPECT_EQ(secret.Properties.Managed, true);
       EXPECT_EQ(secret.Properties.KeyId.HasValue(), false);
-      EXPECT_EQ(secret.Properties.Managed, false);
       EXPECT_EQ(secret.Properties.UpdatedOn.HasValue(), true);
       EXPECT_EQ(secret.Properties.CreatedOn.HasValue(), true);
     }
 
-    static void RunFullExpect(Secret& secret, bool expectValue = true)
+    static void RunFullExpect(KeyVaultSecret& secret, bool expectValue = true)
     {
       if (expectValue)
       {
-        EXPECT_EQ(secret.Value, "mysecretvalue");
+        EXPECT_EQ(secret.Value.Value(), "my_secret_value");
         EXPECT_EQ(secret.Properties.ContentType.Value(), "ct");
         EXPECT_EQ(secret.Properties.KeyId.Value(), "kid");
       }
 
-      EXPECT_EQ(secret.Name, "mysecretname");
+      EXPECT_EQ(secret.Name, "my_secret_name");
       EXPECT_EQ(secret.Properties.VaultUrl, "https://myvault.vault.azure.net");
       EXPECT_EQ(secret.Properties.Version, "4387e9f3d6e14c459867679a90fd0f79");
       EXPECT_EQ(secret.Properties.Id, secret.Id);
       EXPECT_EQ(
           secret.Id,
-          "https://myvault.vault.azure.net/secrets/mysecretname/"
+          "https://myvault.vault.azure.net/secrets/my_secret_name/"
           "4387e9f3d6e14c459867679a90fd0f79");
       EXPECT_EQ(secret.Properties.Enabled.Value(), true);
       EXPECT_EQ(secret.Properties.Managed, true);
@@ -150,8 +151,8 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets { 
     {
       EXPECT_EQ(
           secret.RecoveryId, "https://myvault.vault.azure.net/deletedsecrets/GetDeletedSecretTest");
-      EXPECT_EQ(secret.ScheduledPurgeDate.ToString(), "2017-08-02T22:53:53Z");
-      EXPECT_EQ(secret.DeletedDate.ToString(), "2017-05-04T22:53:53Z");
+      EXPECT_EQ(secret.ScheduledPurgeDate.Value().ToString(), "2017-08-02T22:53:53Z");
+      EXPECT_EQ(secret.DeletedOn.Value().ToString(), "2017-05-04T22:53:53Z");
     }
   };
 }}}}} // namespace Azure::Security::KeyVault::Secrets::_test

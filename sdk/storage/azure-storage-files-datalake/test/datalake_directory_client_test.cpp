@@ -302,7 +302,9 @@ namespace Azure { namespace Storage { namespace Test {
       EXPECT_NO_THROW(client1.Create(options1));
       EXPECT_NO_THROW(client2.Create(options2));
       auto result = client1.GetProperties().Value.Metadata;
+      /* cspell:disable-next-line */
       metadata1["hdi_isfolder"] = "true";
+      /* cspell:disable-next-line */
       metadata2["hdi_isfolder"] = "true";
       EXPECT_EQ(metadata1, result);
       result = client2.GetProperties().Value.Metadata;

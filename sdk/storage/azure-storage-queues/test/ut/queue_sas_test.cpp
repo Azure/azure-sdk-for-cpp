@@ -55,7 +55,10 @@ namespace Azure { namespace Storage { namespace Test {
       auto sendReceipt = queueClient0.EnqueueMessage("message 0").Value;
       auto queueClient = Queues::QueueClient(queueUrl + sas);
       auto updateReceipt
-          = queueClient.UpdateMessage(sendReceipt.MessageId, sendReceipt.PopReceipt, 0).Value;
+          = queueClient
+                .UpdateMessage(
+                    sendReceipt.MessageId, sendReceipt.PopReceipt, std::chrono::seconds(0))
+                .Value;
       queueClient0.DeleteMessage(sendReceipt.MessageId, updateReceipt.PopReceipt);
     };
 
@@ -81,7 +84,7 @@ namespace Azure { namespace Storage { namespace Test {
       auto queueServiceClient = Queues::QueueServiceClient(queueServiceUrl + sas);
       const std::string newQueueName = LowercaseRandomString();
       EXPECT_NO_THROW(queueServiceClient.CreateQueue(newQueueName));
-      queueServiceClient0.GetQueueClient(newQueueName).DeleteIfExists();
+      queueServiceClient0.GetQueueClient(newQueueName).Delete();
     };
 
     auto verifyQueueDelete = [&](const std::string& sas) {

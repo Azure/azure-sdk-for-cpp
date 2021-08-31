@@ -10,7 +10,7 @@
 
 #include <azure/core/datetime.hpp>
 #include <azure/core/nullable.hpp>
-
+#include <azure/core/url.hpp>
 #include <unordered_map>
 
 namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
@@ -21,7 +21,6 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
    */
   struct SecretProperties final
   {
-
     /**
      * @brief Indicate whether the secret is enabled and useable for cryptographic operations.
      *
@@ -92,7 +91,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
      * backing a certificate, then managed will be true.
      *
      */
-    bool Managed = false;
+    bool Managed;
 
     /**
      * @brief The secret id.
@@ -135,5 +134,11 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
         throw std::invalid_argument("Name cannot be empty");
       }
     };
+
+    /**
+     * @brief Construct a new secret Properties object.
+     *
+     */
+    static SecretProperties CreateFromURL(std::string const& url);
   };
 }}}} // namespace Azure::Security::KeyVault::Secrets

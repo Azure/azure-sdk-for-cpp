@@ -94,7 +94,6 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
    */
   struct GetPropertiesOfSecretsOptions final
   {
-    Azure::Nullable<size_t> MaxResults;
     Azure::Nullable<std::string> NextPageToken;
   };
 
@@ -104,7 +103,6 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
    */
   struct GetPropertiesOfSecretVersionsOptions final
   {
-    Azure::Nullable<size_t> MaxResults;
     Azure::Nullable<std::string> NextPageToken;
   };
 
@@ -114,7 +112,6 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
    */
   struct GetDeletedSecretsOptions final
   {
-    Azure::Nullable<size_t> MaxResults;
     Azure::Nullable<std::string> NextPageToken;
   };
 }}}} // namespace Azure::Security::KeyVault::Secrets

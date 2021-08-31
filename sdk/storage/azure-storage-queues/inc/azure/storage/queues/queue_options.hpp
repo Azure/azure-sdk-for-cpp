@@ -8,6 +8,7 @@
 
 #pragma once
 
+#include <chrono>
 #include <string>
 
 #include <azure/core/internal/client_options.hpp>
@@ -15,6 +16,48 @@
 #include "azure/storage/queues/protocol/queue_rest_client.hpp"
 
 namespace Azure { namespace Storage { namespace Queues {
+
+  /**
+   * @brief API version for Storage Queue service.
+   */
+  class ServiceVersion final {
+  public:
+    /**
+     * @brief Construct a new Service Version object
+     *
+     * @param version The string version for Storage Queue Service.
+     */
+    explicit ServiceVersion(std::string version) : m_version(std::move(version)) {}
+
+    /**
+     * @brief Enable comparing between two versions.
+     *
+     * @param other Another service version to be compared.
+     */
+    bool operator==(const ServiceVersion& other) const { return m_version == other.m_version; }
+
+    /**
+     * @brief Enable comparing between two versions.
+     *
+     * @param other Another service version to be compared.
+     */
+    bool operator!=(const ServiceVersion& other) const { return !(*this == other); }
+
+    /**
+     * @brief Returns string representation.
+     *
+     */
+    std::string const& ToString() const { return m_version; }
+
+    /**
+     * @brief API version 2018-03-28.
+     *
+     */
+    AZ_STORAGE_QUEUES_DLLEXPORT const static ServiceVersion V2018_03_28;
+
+  private:
+    std::string m_version;
+  };
 
   struct QueueClientOptions final : Azure::Core::_internal::ClientOptions
   {
@@ -30,7 +73,7 @@ namespace Azure { namespace Storage { namespace Queues {
     /**
      * API version used by this client.
      */
-    std::string ApiVersion = _detail::ApiVersion;
+    ServiceVersion ApiVersion{_detail::ApiVersion};
   };
 
   /**
@@ -139,13 +182,18 @@ namespace Azure { namespace Storage { namespace Queues {
     /**
      * Specifies how long the message should be invisible to dequeue and peek operations.
      */
-    Azure::Nullable<int32_t> VisibilityTimeout;
+    Azure::Nullable<std::chrono::seconds> VisibilityTimeout;
 
     /**
      * Specifies the time-to-live interval for the message. The maximum time-to-live can be any
-     * positive number, as well as -1 indicating that the message does not expire
+     * positive number, as well as MessageNeverExpires indicating that the message does not expire
      */
-    Azure::Nullable<int32_t> TimeToLive;
+    Azure::Nullable<std::chrono::seconds> TimeToLive;
+
+    /**
+     * @brief A TTL value representing the queue message does not expire.
+     */
+    AZ_STORAGE_QUEUES_DLLEXPORT const static std::chrono::seconds MessageNeverExpires;
   };
 
   /**
@@ -161,7 +209,7 @@ namespace Azure { namespace Storage { namespace Queues {
      * After the messages have been retrieved, they are not visible to other clients for the time
      * interval specified by this parameter.
      */
-    Azure::Nullable<int32_t> VisibilityTimeout;
+    Azure::Nullable<std::chrono::seconds> VisibilityTimeout;
   };
 
   /**

@@ -12,7 +12,6 @@
  * - AZURE_CLIENT_SECRET: The client secret.
  *
  */
-
 #if defined(_MSC_VER)
 #define _CRT_SECURE_NO_WARNINGS
 #endif
@@ -46,18 +45,15 @@ int main()
     secretClient.SetSecret(secretName, secretValue);
 
     // get secret
-    Secret secret = secretClient.GetSecret(secretName).Value;
+    KeyVaultSecret secret = secretClient.GetSecret(secretName).Value;
 
-    std::cout << "Secret is returned with name " << secret.Name << " and value " << secret.Value
-              << std::endl;
+    std::cout << "Secret is returned with name " << secret.Name << " and value "
+              << secret.Value.Value() << std::endl;
 
     // change one of the properties
     secret.Properties.ContentType = "my content";
     // update the secret
-    Secret updatedSecret
-        = secretClient
-              .UpdateSecretProperties(secret.Name, secret.Properties.Version, secret.Properties)
-              .Value;
+    KeyVaultSecret updatedSecret = secretClient.UpdateSecretProperties(secret.Properties).Value;
     std::cout << "Secret's content type is now " << updatedSecret.Properties.ContentType.Value()
               << std::endl;
 
@@ -65,7 +61,9 @@ int main()
     DeleteSecretOperation operation = secretClient.StartDeleteSecret(secret.Name);
 
     // You only need to wait for completion if you want to purge or recover the secret.
-    operation.PollUntilDone(2s);
+    // The duration of the delete operation might vary
+    // in case returns too fast increase the timeout value
+    operation.PollUntilDone(20s);
 
     // purge the deleted secret
     secretClient.PurgeDeletedSecret(secret.Name);

@@ -17,20 +17,20 @@ using namespace Azure::Core::Json::_internal;
 
 TEST(KeyvaultSecretSetParametersSerializer, SetValue)
 {
-  Secret params("name", "value");
+  KeyVaultSecret params("name", "value");
 
   std::string result = SecretSerializer::Serialize(params);
 
   auto jsonParser = json::parse(result);
 
-  EXPECT_EQ(jsonParser[ValuePropertyName], params.Value);
+  EXPECT_EQ(jsonParser[ValuePropertyName], params.Value.Value());
   EXPECT_EQ(jsonParser[IdPropertyName], nullptr);
   EXPECT_EQ(jsonParser[ContentTypePropertyName], nullptr);
 }
 
 TEST(KeyvaultSecretSetParametersSerializer, SetValueCT)
 {
-  Secret params("name", "value");
+  KeyVaultSecret params("name", "value");
 
   params.Properties.ContentType = "ct";
 
@@ -38,13 +38,13 @@ TEST(KeyvaultSecretSetParametersSerializer, SetValueCT)
 
   auto jsonParser = json::parse(result);
 
-  EXPECT_EQ(jsonParser[ValuePropertyName], params.Value);
+  EXPECT_EQ(jsonParser[ValuePropertyName], params.Value.Value());
   EXPECT_EQ(jsonParser[ContentTypePropertyName], params.Properties.ContentType.Value());
 }
 
 TEST(KeyvaultSecretSetParametersSerializer, SetValueCTAttrTag)
 {
-  Secret params("name", "value");
+  KeyVaultSecret params("name", "value");
 
   params.Properties.ContentType = "ct";
   params.Properties.Enabled = true;
@@ -54,7 +54,7 @@ TEST(KeyvaultSecretSetParametersSerializer, SetValueCTAttrTag)
 
   auto jsonParser = json::parse(result);
 
-  EXPECT_EQ(jsonParser[ValuePropertyName], params.Value);
+  EXPECT_EQ(jsonParser[ValuePropertyName], params.Value.Value());
   EXPECT_EQ(jsonParser[AttributesPropertyName][TagsPropertyName]["a"], "b");
   EXPECT_EQ(jsonParser[AttributesPropertyName][EnabledPropertyName], true);
   EXPECT_EQ(jsonParser[ContentTypePropertyName], params.Properties.ContentType.Value());

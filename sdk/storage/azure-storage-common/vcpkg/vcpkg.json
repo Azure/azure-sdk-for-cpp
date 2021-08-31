@@ -13,7 +13,8 @@
   "dependencies": [
     {
       "name": "azure-core-cpp",
-      "default-features": false
+      "default-features": false,
+      "version>=": "1.0.0"
     },
     "libxml2",
     {

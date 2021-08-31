@@ -26,7 +26,7 @@
 
 using namespace Azure::Security::KeyVault::Secrets;
 using namespace std::chrono_literals;
-void AssertSecretsEqual(Secret const& expected, Secret const& actual);
+void AssertSecretsEqual(KeyVaultSecret const& expected, KeyVaultSecret const& actual);
 
 int main()
 {
@@ -48,14 +48,14 @@ int main()
     secretClient.SetSecret(secretName, secretValue);
 
     // get secret
-    Secret secret = secretClient.GetSecret(secretName).Value;
+    KeyVaultSecret secret = secretClient.GetSecret(secretName).Value;
 
-    std::cout << "Secret is returned with name " << secret.Name << " and value " << secret.Value
-              << std::endl;
+    std::cout << "Secret is returned with name " << secret.Name << " and value "
+              << secret.Value.Value() << std::endl;
 
     size_t backUpSize = 0;
     {
-      std::cout << "\t-Backup Key" << std::endl;
+      std::cout << "\t-Backup Secret" << std::endl;
       auto backupSecretResult = secretClient.BackupSecret(secret.Name).Value;
       auto const& backedupSecret = backupSecretResult.Secret;
       backUpSize = backedupSecret.size();
@@ -74,28 +74,31 @@ int main()
     DeleteSecretOperation operation = secretClient.StartDeleteSecret(secret.Name);
 
     // You only need to wait for completion if you want to purge or recover the secret.
+    // The duration of the delete operation might vary
+    // in case returns too fast increase the timeout value
     operation.PollUntilDone(2s);
     // purge the deleted secret
     secretClient.PurgeDeletedSecret(secret.Name);
 
-    // let's wait for one minute so we know the key was purged.
+    // let's wait for one minute so we know the secret was purged.
     std::this_thread::sleep_for(60s);
 
-    // Restore the key from the file backup
+    // Restore the secret from the file backup
     std::cout << "\t-Read from file." << std::endl;
     std::ifstream inFile;
     inFile.open("backup.dat");
-    std::vector<uint8_t> inMemoryBackup(backUpSize);
-    inFile >> inMemoryBackup.data();
+    BackupSecretResult backedUpSecret;
+    backedUpSecret.Secret = std::vector<uint8_t>(backUpSize);
+    inFile >> backedUpSecret.Secret.data();
     inFile.close();
 
-    std::cout << "\t-Restore Key" << std::endl;
-    auto restoredSecret = secretClient.RestoreSecretBackup(inMemoryBackup).Value;
+    std::cout << "\t-Restore Secret" << std::endl;
+    auto restoredSecret = secretClient.RestoreSecretBackup(backedUpSecret).Value;
 
     AssertSecretsEqual(secret, restoredSecret);
 
     operation = secretClient.StartDeleteSecret(restoredSecret.Name);
-    // You only need to wait for completion if you want to purge or recover the key.
+    // You only need to wait for completion if you want to purge or recover the secret.
     operation.PollUntilDone(2s);
     secretClient.PurgeDeletedSecret(restoredSecret.Name);
   }
@@ -114,7 +117,7 @@ int main()
   return 0;
 }
 
-void AssertSecretsEqual(Secret const& expected, Secret const& actual)
+void AssertSecretsEqual(KeyVaultSecret const& expected, KeyVaultSecret const& actual)
 {
 #if defined(NDEBUG)
   // Use (void) to silence unused warnings.

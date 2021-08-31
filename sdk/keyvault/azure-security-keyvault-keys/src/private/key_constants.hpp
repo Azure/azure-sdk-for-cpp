@@ -125,6 +125,5 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys { nam
 
   /***************** Service *********/
   constexpr static const char ApiVersionValue[] = "api-version";
-  constexpr static const char TokenContextValue[] = "https://vault.azure.net/.default";
 
 }}}}} // namespace Azure::Security::KeyVault::Keys::_detail

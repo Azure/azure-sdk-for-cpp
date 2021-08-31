@@ -113,24 +113,14 @@ namespace Azure { namespace Storage { namespace Queues {
         const Azure::Core::Context& context = Azure::Core::Context()) const;
 
     /**
-     * @brief Marks the specified queue for deletion.
-     *
-     * @param options Optional parameters to execute this function.
-     * @param context Context for cancelling long running operations.
-     * @return A DeleteQueueResult if successful.
-     */
-    Azure::Response<Models::DeleteQueueResult> Delete(
-        const DeleteQueueOptions& options = DeleteQueueOptions(),
-        const Azure::Core::Context& context = Azure::Core::Context()) const;
-
-    /**
      * @brief Marks the specified queue for deletion if it exists.
      *
      * @param options Optional parameters to execute this function.
      * @param context Context for cancelling long running operations.
-     * @return A DeleteQueueResult if successful.
+     * @return DeleteQueueResult.Deleted will be true if successful, false if the queue doesn't
+     * exist.
      */
-    Azure::Response<Models::DeleteQueueResult> DeleteIfExists(
+    Azure::Response<Models::DeleteQueueResult> Delete(
         const DeleteQueueOptions& options = DeleteQueueOptions(),
         const Azure::Core::Context& context = Azure::Core::Context()) const;
 
@@ -238,7 +228,7 @@ namespace Azure { namespace Storage { namespace Queues {
     Azure::Response<Models::UpdateMessageResult> UpdateMessage(
         const std::string& messageId,
         const std::string& popReceipt,
-        int32_t visibilityTimeout,
+        std::chrono::seconds visibilityTimeout,
         const UpdateMessageOptions& options = UpdateMessageOptions(),
         const Azure::Core::Context& context = Azure::Core::Context()) const;
 

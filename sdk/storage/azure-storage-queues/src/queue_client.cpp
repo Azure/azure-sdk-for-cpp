@@ -49,7 +49,7 @@ namespace Azure { namespace Storage { namespace Queues {
         m_queueUrl.GetHost(), newOptions.SecondaryHostForRetryReads));
     perRetryPolicies.emplace_back(std::make_unique<_internal::StoragePerRetryPolicy>());
     perOperationPolicies.emplace_back(
-        std::make_unique<_internal::StorageServiceVersionPolicy>(newOptions.ApiVersion));
+        std::make_unique<_internal::StorageServiceVersionPolicy>(newOptions.ApiVersion.ToString()));
     m_pipeline = std::make_shared<Azure::Core::Http::_internal::HttpPipeline>(
         newOptions,
         _internal::QueueServicePackageName,
@@ -77,7 +77,7 @@ namespace Azure { namespace Storage { namespace Queues {
               credential, tokenContext));
     }
     perOperationPolicies.emplace_back(
-        std::make_unique<_internal::StorageServiceVersionPolicy>(options.ApiVersion));
+        std::make_unique<_internal::StorageServiceVersionPolicy>(options.ApiVersion.ToString()));
     m_pipeline = std::make_shared<Azure::Core::Http::_internal::HttpPipeline>(
         options,
         _internal::QueueServicePackageName,
@@ -95,7 +95,7 @@ namespace Azure { namespace Storage { namespace Queues {
         m_queueUrl.GetHost(), options.SecondaryHostForRetryReads));
     perRetryPolicies.emplace_back(std::make_unique<_internal::StoragePerRetryPolicy>());
     perOperationPolicies.emplace_back(
-        std::make_unique<_internal::StorageServiceVersionPolicy>(options.ApiVersion));
+        std::make_unique<_internal::StorageServiceVersionPolicy>(options.ApiVersion.ToString()));
     m_pipeline = std::make_shared<Azure::Core::Http::_internal::HttpPipeline>(
         options,
         _internal::QueueServicePackageName,
@@ -139,18 +139,11 @@ namespace Azure { namespace Storage { namespace Queues {
       const Azure::Core::Context& context) const
   {
     (void)options;
-    _detail::QueueRestClient::Queue::DeleteQueueOptions protocolLayerOptions;
-    return _detail::QueueRestClient::Queue::Delete(
-        *m_pipeline, m_queueUrl, protocolLayerOptions, context);
-  }
-
-  Azure::Response<Models::DeleteQueueResult> QueueClient::DeleteIfExists(
-      const DeleteQueueOptions& options,
-      const Azure::Core::Context& context) const
-  {
     try
     {
-      return Delete(options, context);
+      _detail::QueueRestClient::Queue::DeleteQueueOptions protocolLayerOptions;
+      return _detail::QueueRestClient::Queue::Delete(
+          *m_pipeline, m_queueUrl, protocolLayerOptions, context);
     }
     catch (StorageException& e)
     {
@@ -216,7 +209,7 @@ namespace Azure { namespace Storage { namespace Queues {
     auto messagesUrl = m_queueUrl;
     messagesUrl.AppendPath("messages");
     _detail::QueueRestClient::Queue::EnqueueMessageOptions protocolLayerOptions;
-    protocolLayerOptions.Body = std::move(messageText);
+    protocolLayerOptions.MessageText = std::move(messageText);
     protocolLayerOptions.TimeToLive = options.TimeToLive;
     protocolLayerOptions.VisibilityTimeout = options.VisibilityTimeout;
     return _detail::QueueRestClient::Queue::EnqueueMessage(
@@ -252,7 +245,7 @@ namespace Azure { namespace Storage { namespace Queues {
   Azure::Response<Models::UpdateMessageResult> QueueClient::UpdateMessage(
       const std::string& messageId,
       const std::string& popReceipt,
-      int32_t visibilityTimeout,
+      std::chrono::seconds visibilityTimeout,
       const UpdateMessageOptions& options,
       const Azure::Core::Context& context) const
   {
@@ -262,7 +255,7 @@ namespace Azure { namespace Storage { namespace Queues {
     if (options.MessageText.HasValue())
     {
       _detail::QueueRestClient::Queue::UpdateMessageOptions protocolLayerOptions;
-      protocolLayerOptions.Body = options.MessageText.Value();
+      protocolLayerOptions.MessageText = options.MessageText.Value();
       protocolLayerOptions.PopReceipt = popReceipt;
       protocolLayerOptions.VisibilityTimeout = visibilityTimeout;
       return _detail::QueueRestClient::Queue::UpdateMessage(

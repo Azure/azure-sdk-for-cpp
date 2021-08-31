@@ -4,9 +4,13 @@
 
 ### Features Added
 
+- Added `GetUrl()` to `KeyClient`.
+
 ### Breaking Changes
 
 ### Bugs Fixed
+
+- [2750](https://github.com/Azure/azure-sdk-for-cpp/issues/2750) Support for Azure `managedhsm` cloud and any other non-public Azure cloud.
 
 ### Other Changes
 

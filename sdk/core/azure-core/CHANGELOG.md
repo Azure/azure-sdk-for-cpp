@@ -8,9 +8,12 @@
 
 ### Bugs Fixed
 
+- [2785](https://github.com/Azure/azure-sdk-for-cpp/issues/2785) Fix to build on g++ 5.5.
+
 ### Other Changes
 
 - Fixed compilation error on POSIX platforms where OpenSSL was not available.
+- Support CMake version 3.12
 
 ## 1.2.0 (2021-08-05)
 

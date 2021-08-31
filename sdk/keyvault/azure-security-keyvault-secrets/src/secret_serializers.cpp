@@ -20,27 +20,27 @@ using namespace Azure::Security::KeyVault::Secrets;
 using namespace Azure::Security::KeyVault::Secrets::_detail;
 
 // Creates a new key based on a name and an HTTP raw response.
-Secret SecretSerializer::Deserialize(
+KeyVaultSecret SecretSerializer::Deserialize(
     std::string const& name,
     Azure::Core::Http::RawResponse const& rawResponse)
 {
-  Secret secret;
+  KeyVaultSecret secret;
   secret.Name = name;
   _detail::SecretSerializer::Deserialize(secret, rawResponse);
   return secret;
 }
 
 // Create from HTTP raw response only.
-Secret SecretSerializer::Deserialize(Azure::Core::Http::RawResponse const& rawResponse)
+KeyVaultSecret SecretSerializer::Deserialize(Azure::Core::Http::RawResponse const& rawResponse)
 {
-  Secret secret;
+  KeyVaultSecret secret;
   _detail::SecretSerializer::Deserialize(secret, rawResponse);
   return secret;
 }
 
 // Updates a Key based on an HTTP raw response.
 void SecretSerializer::Deserialize(
-    Secret& secret,
+    KeyVaultSecret& secret,
     Azure::Core::Http::RawResponse const& rawResponse)
 {
   auto const& body = rawResponse.GetBody();
@@ -149,19 +149,17 @@ void DeletedSecretSerializer::Deserialize(
   secret.RecoveryId = jsonParser[_detail::RecoveryIdPropertyName];
   secret.ScheduledPurgeDate = PosixTimeConverter::PosixTimeToDateTime(
       jsonParser[_detail::ScheduledPurgeDatePropertyName]);
-  secret.DeletedDate
+  secret.DeletedOn
       = PosixTimeConverter::PosixTimeToDateTime(jsonParser[_detail::DeletedDatePropertyName]);
 }
 
 // serializes a set secret parameters object
-std::string SecretSerializer::Serialize(Secret const& parameters)
+std::string SecretSerializer::Serialize(KeyVaultSecret const& parameters)
 {
   json payload;
 
-  // value is required
-  payload[ValuePropertyName] = parameters.Value;
+  JsonOptional::SetFromNullable(parameters.Value, payload, _detail::ValuePropertyName);
 
-  // all else is optional
   JsonOptional::SetFromNullable(
       parameters.Properties.ContentType, payload, _detail::ContentTypePropertyName);
 
@@ -409,7 +407,7 @@ DeletedSecretPagedResponse DeletedSecretPagedResultSerializer::Deserialize(
     item.RecoveryId = secretProperties[_detail::RecoveryIdPropertyName];
     item.ScheduledPurgeDate = PosixTimeConverter::PosixTimeToDateTime(
         secretProperties[_detail::ScheduledPurgeDatePropertyName]);
-    item.DeletedDate = PosixTimeConverter::PosixTimeToDateTime(
+    item.DeletedOn = PosixTimeConverter::PosixTimeToDateTime(
         secretProperties[_detail::DeletedDatePropertyName]);
 
     result.Items.emplace_back(item);

@@ -10,7 +10,10 @@ namespace Azure { namespace Storage { namespace Queues { namespace Models {
 
   bool operator==(const SignedIdentifier& lhs, const SignedIdentifier& rhs)
   {
-    return lhs.Id == rhs.Id && lhs.StartsOn == rhs.StartsOn && lhs.ExpiresOn == rhs.ExpiresOn
+    return lhs.Id == rhs.Id && lhs.StartsOn.HasValue() == rhs.StartsOn.HasValue()
+        && (!lhs.StartsOn.HasValue() || lhs.StartsOn.Value() == rhs.StartsOn.Value())
+        && lhs.ExpiresOn.HasValue() == rhs.ExpiresOn.HasValue()
+        && (!lhs.ExpiresOn.HasValue() || lhs.ExpiresOn.Value() == rhs.ExpiresOn.Value())
         && lhs.Permissions == rhs.Permissions;
   }
 
@@ -64,7 +67,7 @@ namespace Azure { namespace Storage { namespace Test {
     queueClient = Azure::Storage::Queues::QueueClient::CreateFromConnectionString(
         StandardStorageConnectionString(), LowercaseRandomString());
     {
-      auto response = queueClient.DeleteIfExists();
+      auto response = queueClient.Delete();
       EXPECT_FALSE(response.Value.Deleted);
     }
     {
@@ -80,7 +83,7 @@ namespace Azure { namespace Storage { namespace Test {
       EXPECT_FALSE(response.Value.Created);
     }
     {
-      auto response = queueClient.DeleteIfExists();
+      auto response = queueClient.Delete();
       EXPECT_TRUE(response.Value.Deleted);
     }
   }
@@ -130,17 +133,36 @@ namespace Azure { namespace Storage { namespace Test {
     queueClient.Create();
 
     std::vector<Queues::Models::SignedIdentifier> signedIdentifiers;
-    Queues::Models::SignedIdentifier identifier;
-    identifier.Id = RandomString(64);
-    identifier.StartsOn = std::chrono::system_clock::now() - std::chrono::minutes(1);
-    identifier.ExpiresOn = std::chrono::system_clock::now() + std::chrono::minutes(1);
-    identifier.Permissions = "r";
-    signedIdentifiers.emplace_back(identifier);
-    identifier.Id = RandomString(64);
-    identifier.StartsOn = std::chrono::system_clock::now() - std::chrono::minutes(2);
-    identifier.ExpiresOn = std::chrono::system_clock::now() + std::chrono::minutes(2);
-    identifier.Permissions = "raup";
-    signedIdentifiers.emplace_back(identifier);
+    {
+      Queues::Models::SignedIdentifier identifier;
+      identifier.Id = RandomString(64);
+      identifier.StartsOn = std::chrono::system_clock::now() - std::chrono::minutes(1);
+      identifier.ExpiresOn = std::chrono::system_clock::now() + std::chrono::minutes(1);
+      identifier.Permissions = "r";
+      signedIdentifiers.emplace_back(identifier);
+    }
+    {
+      Queues::Models::SignedIdentifier identifier;
+      identifier.Id = RandomString(64);
+      identifier.StartsOn = std::chrono::system_clock::now() - std::chrono::minutes(2);
+      identifier.ExpiresOn.Reset();
+      /* cspell:disable-next-line */
+      identifier.Permissions = "raup";
+      signedIdentifiers.emplace_back(identifier);
+    }
+    {
+      Queues::Models::SignedIdentifier identifier;
+      identifier.Id = RandomString(64);
+      identifier.Permissions = "r";
+      signedIdentifiers.emplace_back(identifier);
+    }
+    {
+      Queues::Models::SignedIdentifier identifier;
+      identifier.Id = RandomString(64);
+      identifier.StartsOn = std::chrono::system_clock::now() - std::chrono::minutes(1);
+      identifier.ExpiresOn = std::chrono::system_clock::now() + std::chrono::minutes(1);
+      signedIdentifiers.emplace_back(identifier);
+    }
 
     EXPECT_NO_THROW(queueClient.SetAccessPolicy(signedIdentifiers));
 

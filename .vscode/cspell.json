@@ -2,8 +2,27 @@
   "version": "0.1",
   "language": "en",
   "languageId": "cpp",
-  "dictionaries": ["powershell"],
-  "ignorePaths": ["vcpkg/**/*", "*.exe", "*.a", "*.lib", ".vscode/cspell.json", "json.hpp", "*nlohmann-json*"],
+  "dictionaries": [
+    "powershell",
+    "cpp"
+  ],
+  "ignorePaths": [
+    "vcpkg/**/*",
+    "*.exe",
+    "*.a",
+    "*.lib",
+    ".vscode/cspell.json",
+    "eng/common/**/*",
+    "json.hpp",
+    "*nlohmann-json*",
+    "sdk/identity/**/*",
+    "sdk/core/**/*",
+    "sdk/keyvault/azure-security-keyvault-keys/test/ut/recordings/*.json",
+    "sdk/keyvault/azure-security-keyvault-keys/test/ut/key_client_import_test_live.cpp"
+  ],
+  // * Unless configured otherwise, these words are not case sensitive
+  // * Alphabetize the list when making changes so the list is easier for future
+  //   users to maintain and reason about.
   "words": [
     "ABFS",
     "ABNF",
@@ -17,12 +36,14 @@
     "Cobertura",
     "ctest",
     "DCMAKE",
+    "deserializers",
     "Deserializes",
     "docfx",
     "DPAPI",
     "DRUN",
     "DWARNINGS",
     "eastus",
+    "echsmkey",
     "Edlund",
     "Favicon",
     "gcovr",
@@ -38,6 +59,7 @@
     "Lohmann",
     "LPBYTE",
     "LPSTR",
+    "MHSM",
     "moxygen",
     "MSRC",
     "Niels",
@@ -61,6 +83,7 @@
     "retriable",
     "rwxrw",
     "SDDL",
+    "serializers",
     "Seriot",
     "SPDX",
     "stoi",
@@ -85,27 +108,35 @@
   "overrides": [
     {
       "filename": "**/eng/pipelines/templates/jobs/archetype-sdk-client.yml",
-      "words": ["lcov", "iname"]
-    },
-    {
-      "filename": "**/sdk/storage/azure-storage-common/src/crypt.cpp",
-      "words": ["wdata"]
-    },
-    {
-      "filename": "**/sdk/storage/azure-storage-files-shares/inc/azure/storage/files/shares/share_options.hpp",
-      "words": ["dacl"]
-    },
-    {
-      "filename": "**/sdk/storage/azure-storage-blobs/inc/azure/storage/blobs/protocol/blob_rest_client.hpp",
-      "words": ["xmsblobsequencenumber"]
+      "words": [
+        "lcov",
+        "iname"
+      ]
     },
     {
       "filename": "**/sdk/keyvault/azure-security-keyvault-keys/inc/azure/keyvault/keys/key_client_models.hpp",
-      "words": ["SECG", "SECP"]
+      "words": [
+        "SECG",
+        "SECP"
+      ]
     },
     {
-      "filename": "**/sdk/storage/azure-storage-common/test/test_base.hpp",
-      "words": ["FQJQ"]
+      "filename": "**/sdk/storage/azure-storage-common/CHANGELOG.md",
+      "words": [
+        "johnwheffner",
+        "Heffner",
+        "lordgamez",
+        "Gabor",
+        "Gyimesi"
+      ]
+    },
+    {
+      "filename": "**/sdk/storage/test-resources.json",
+      "words": [
+        "bfqt",
+        "rwdlacup",
+        "pfile"
+      ]
     }
   ],
   "allowCompoundWords": true

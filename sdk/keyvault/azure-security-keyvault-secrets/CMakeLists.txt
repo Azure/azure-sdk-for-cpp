@@ -51,6 +51,7 @@ set(
     src/secret_serializers.cpp
     src/keyvault_operations.cpp
     src/keyvault_secret_paged_response.cpp
+    src/keyvault_secret_properties.cpp
 )
 
 add_library(azure-security-keyvault-secrets ${AZURE_SECURITY_KEYVAULT_SECRETS_HEADER} ${AZURE_SECURITY_KEYVAULT_SECRETS_SOURCE})
@@ -66,7 +67,7 @@ target_include_directories(
 target_link_libraries(azure-security-keyvault-secrets PUBLIC Azure::azure-core)
 
 # coverage. Has no effect if BUILD_CODE_COVERAGE is OFF
-create_code_coverage(keyvault-secrets azure-security-keyvault-secrets azure-security-keyvault-secrets-test)
+create_code_coverage(keyvault azure-security-keyvault-secrets azure-security-keyvault-secrets-test)
 
 get_az_version("${CMAKE_CURRENT_SOURCE_DIR}/src/private/package_version.hpp")
 generate_documentation(azure-security-keyvault-secrets ${AZ_LIBRARY_VERSION})

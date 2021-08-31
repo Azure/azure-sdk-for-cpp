@@ -14,7 +14,7 @@ TEST(KeyVaultSecretSerializer, GetClientDeserializePartial1)
 {
   auto response = Helpers::GetPartialResponse();
 
-  Secret secret = _detail::SecretSerializer::Deserialize(response);
+  KeyVaultSecret secret = _detail::SecretSerializer::Deserialize(response);
   Helpers::RunPartialExpect(secret);
 }
 
@@ -22,7 +22,7 @@ TEST(KeyVaultSecretSerializer, GetClientDeserializePartial2)
 {
   auto response = Helpers::GetPartialResponse();
 
-  Secret secret = _detail::SecretSerializer::Deserialize("name1", response);
+  KeyVaultSecret secret = _detail::SecretSerializer::Deserialize("name1", response);
 
   Helpers::RunPartialExpect(secret);
 }
@@ -31,7 +31,7 @@ TEST(KeyVaultSecretSerializer, GetClientDeserializePartial3)
 {
   auto response = Helpers::GetPartialResponse();
 
-  Secret secret = Secret("name2", "a");
+  KeyVaultSecret secret = KeyVaultSecret("name2", "a");
   _detail::SecretSerializer::Deserialize(secret, response);
 
   Helpers::RunPartialExpect(secret);
@@ -41,7 +41,7 @@ TEST(KeyVaultSecretSerializer, GetClientdeserializeFull1)
 {
   auto response = Helpers::GetFullResponse();
 
-  Secret secret = _detail::SecretSerializer::Deserialize(response);
+  KeyVaultSecret secret = _detail::SecretSerializer::Deserialize(response);
   Helpers::RunFullExpect(secret);
 }
 
@@ -49,7 +49,7 @@ TEST(KeyVaultSecretSerializer, GetClientdeserializeFull2)
 {
   auto response = Helpers::GetFullResponse();
 
-  Secret secret = _detail::SecretSerializer::Deserialize("name1", response);
+  KeyVaultSecret secret = _detail::SecretSerializer::Deserialize("name1", response);
 
   Helpers::RunFullExpect(secret);
 }
@@ -58,7 +58,7 @@ TEST(KeyVaultSecretSerializer, GetClientdeserializeFull3)
 {
   auto response = Helpers::GetFullResponse();
 
-  Secret secret = Secret("name2", "a");
+  KeyVaultSecret secret = KeyVaultSecret("name2", "a");
   _detail::SecretSerializer::Deserialize(secret, response);
 
   Helpers::RunFullExpect(secret);
@@ -93,4 +93,15 @@ TEST(DeletedSecretSerializer, GetDeletedClientDeserializeFull3)
 
   Helpers::RunFullExpect(secret, false);
   Helpers::RunDeletedExtras(secret);
+}
+
+TEST(SecretProperties, FactoryValid)
+{
+  std::string url(
+      "https://myvault.vault.azure.net/secrets/my_secret_name/4387e9f3d6e14c459867679a90fd0f79");
+  SecretProperties props = SecretProperties::CreateFromURL(url);
+  EXPECT_EQ(props.Name, "my_secret_name");
+  EXPECT_EQ(props.Version, "4387e9f3d6e14c459867679a90fd0f79");
+  EXPECT_EQ(props.Id, url);
+  EXPECT_EQ(props.VaultUrl, "https://myvault.vault.azure.net");
 }

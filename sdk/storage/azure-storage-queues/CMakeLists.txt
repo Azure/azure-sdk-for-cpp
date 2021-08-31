@@ -42,6 +42,7 @@ set(
   AZURE_STORAGE_QUEUE_SOURCE
     src/private/package_version.hpp
     src/queue_client.cpp
+    src/queue_options.cpp
     src/queue_responses.cpp
     src/queue_rest_client.cpp
     src/queue_sas_builder.cpp
@@ -93,6 +94,7 @@ if(BUILD_STORAGE_SAMPLES)
   target_sources(
     azure-storage-sample
       PRIVATE
+        sample/queue_encode_message.cpp
         sample/queue_getting_started.cpp
   )
 

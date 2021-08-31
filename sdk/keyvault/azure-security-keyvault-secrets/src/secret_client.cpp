@@ -16,11 +16,13 @@
 #include <azure/core/http/http.hpp>
 #include <azure/core/http/policies/policy.hpp>
 
+#include <algorithm>
 #include <string>
 
 using namespace Azure::Security::KeyVault::Secrets;
 using namespace Azure::Core::Http::Policies;
 using namespace Azure::Core::Http::Policies::_internal;
+using namespace Azure::Security::KeyVault::Secrets::_detail;
 
 namespace {
 constexpr static const char TelemetryName[] = "keyvault-secrets";
@@ -50,6 +52,26 @@ static inline RequestWithContinuationToken BuildRequestFromContinuationToken(
   }
   return request;
 }
+
+// This is a Key-Vault only patch to calculate token scope/audience
+std::string GetScopeFromUrl(Azure::Core::Url const& url)
+{
+  std::string calculatedScope(url.GetScheme() + "://");
+  auto const& hostWithAccount = url.GetHost();
+  auto hostNoAccountStart = std::find(hostWithAccount.begin(), hostWithAccount.end(), '.');
+
+  // Insert the calculated scope only when then host in the url contains at least a `.`
+  // Otherwise, only the default scope will be there.
+  // We don't want to throw/validate input but just leave the values go to azure to decide what to
+  // do.
+  if (hostNoAccountStart != hostWithAccount.end())
+  {
+    calculatedScope.append(hostNoAccountStart + 1, hostWithAccount.end());
+    calculatedScope.append("/.default");
+  }
+
+  return calculatedScope;
+}
 } // namespace
 
 const ServiceVersion ServiceVersion::V7_2("7.2");
@@ -60,29 +82,29 @@ SecretClient::SecretClient(
     SecretClientOptions options)
 {
   auto apiVersion = options.Version.ToString();
+  Azure::Core::Url url(vaultUrl);
 
   std::vector<std::unique_ptr<HttpPolicy>> perRetrypolicies;
   {
-    Azure::Core::Credentials::TokenRequestContext const tokenContext
-        = {{"https://vault.azure.net/.default"}};
+    Azure::Core::Credentials::TokenRequestContext const tokenContext = {{::GetScopeFromUrl(url)}};
 
     perRetrypolicies.emplace_back(
         std::make_unique<BearerTokenAuthenticationPolicy>(credential, tokenContext));
   }
 
   m_protocolClient = std::make_shared<Azure::Security::KeyVault::_detail::KeyVaultProtocolClient>(
-      Azure::Core::Url(vaultUrl),
+      std::move(url),
       apiVersion,
       Azure::Core::Http::_internal::HttpPipeline(
-          options, TelemetryName, apiVersion, std::move(perRetrypolicies), {}));
+          options, TelemetryName, PackageVersion::ToString(), std::move(perRetrypolicies), {}));
 }
 
-Azure::Response<Secret> SecretClient::GetSecret(
+Azure::Response<KeyVaultSecret> SecretClient::GetSecret(
     std::string const& name,
     GetSecretOptions const& options,
     Azure::Core::Context const& context) const
 {
-  return m_protocolClient->SendRequest<Secret>(
+  return m_protocolClient->SendRequest<KeyVaultSecret>(
       context,
       Azure::Core::Http::HttpMethod::Get,
       [&name](Azure::Core::Http::RawResponse const& rawResponse) {
@@ -104,21 +126,21 @@ Azure::Response<DeletedSecret> SecretClient::GetDeletedSecret(
       {_detail::DeletedSecretPath, name});
 }
 
-Azure::Response<Secret> SecretClient::SetSecret(
+Azure::Response<KeyVaultSecret> SecretClient::SetSecret(
     std::string const& name,
     std::string const& value,
     Azure::Core::Context const& context) const
 {
-  Secret setParameters(name, value);
+  KeyVaultSecret setParameters(name, value);
   return SetSecret(name, setParameters, context);
 }
 
-Azure::Response<Secret> SecretClient::SetSecret(
+Azure::Response<KeyVaultSecret> SecretClient::SetSecret(
     std::string const& name,
-    Secret const& secret,
+    KeyVaultSecret const& secret,
     Azure::Core::Context const& context) const
 {
-  return m_protocolClient->SendRequest<Secret>(
+  return m_protocolClient->SendRequest<KeyVaultSecret>(
       context,
       Azure::Core::Http::HttpMethod::Put,
       [&secret]() { return _detail::SecretSerializer::Serialize(secret); },
@@ -128,32 +150,18 @@ Azure::Response<Secret> SecretClient::SetSecret(
       {_detail::SecretPath, name});
 }
 
-Azure::Response<Secret> SecretClient::UpdateSecretProperties(
-    std::string const& name,
-    UpdateSecretPropertiesOptions const& options,
+Azure::Response<KeyVaultSecret> SecretClient::UpdateSecretProperties(
     SecretProperties const& properties,
     Azure::Core::Context const& context) const
 {
-  return m_protocolClient->SendRequest<Secret>(
+  return m_protocolClient->SendRequest<KeyVaultSecret>(
       context,
       Azure::Core::Http::HttpMethod::Patch,
       [&properties]() { return _detail::SecretPropertiesSerializer::Serialize(properties); },
-      [&name](Azure::Core::Http::RawResponse const& rawResponse) {
-        return _detail::SecretSerializer::Deserialize(name, rawResponse);
+      [&properties](Azure::Core::Http::RawResponse const& rawResponse) {
+        return _detail::SecretSerializer::Deserialize(properties.Name, rawResponse);
       },
-      {_detail::SecretPath, name, options.Version});
-}
-
-Azure::Response<Secret> SecretClient::UpdateSecretProperties(
-    std::string const& name,
-    std::string const& version,
-    SecretProperties const& properties,
-    Azure::Core::Context const& context) const
-{
-  UpdateSecretPropertiesOptions options;
-  options.Version = version;
-
-  return UpdateSecretProperties(name, options, properties, context);
+      {_detail::SecretPath, properties.Name, properties.Version});
 }
 
 Azure::Response<BackupSecretResult> SecretClient::BackupSecret(
@@ -169,14 +177,14 @@ Azure::Response<BackupSecretResult> SecretClient::BackupSecret(
       {_detail::SecretPath, name, _detail::BackupSecretPath});
 }
 
-Azure::Response<Secret> SecretClient::RestoreSecretBackup(
-    std::vector<uint8_t> const& backup,
+Azure::Response<KeyVaultSecret> SecretClient::RestoreSecretBackup(
+    BackupSecretResult const& backup,
     Azure::Core::Context const& context) const
 {
-  return m_protocolClient->SendRequest<Secret>(
+  return m_protocolClient->SendRequest<KeyVaultSecret>(
       context,
       Azure::Core::Http::HttpMethod::Post,
-      [&backup]() { return _detail::RestoreSecretSerializer::Serialize(backup); },
+      [&backup]() { return _detail::RestoreSecretSerializer::Serialize(backup.Secret); },
       [](Azure::Core::Http::RawResponse const& rawResponse) {
         return _detail::SecretSerializer::Deserialize(rawResponse);
       },
@@ -214,11 +222,12 @@ Azure::Security::KeyVault::Secrets::RecoverDeletedSecretOperation SecretClient::
 {
   return Azure::Security::KeyVault::Secrets::RecoverDeletedSecretOperation(
       std::make_shared<SecretClient>(*this),
-      m_protocolClient->SendRequest<Secret>(
+      m_protocolClient->SendRequest<SecretProperties>(
           context,
           Azure::Core::Http::HttpMethod::Post,
           [&name](Azure::Core::Http::RawResponse const& rawResponse) {
-            return _detail::SecretSerializer::Deserialize(name, rawResponse);
+            auto parsedResponse = _detail::SecretSerializer::Deserialize(name, rawResponse);
+            return parsedResponse.Properties;
           },
           {_detail::DeletedSecretPath, name, _detail::RecoverDeletedSecretPath}));
 }
@@ -229,13 +238,6 @@ SecretPropertiesPagedResponse SecretClient::GetPropertiesOfSecrets(
 {
   auto const request
       = BuildRequestFromContinuationToken(options.NextPageToken, {_detail::SecretPath});
-  size_t maxResults = _detail::PagedMaxResults;
-  if (options.MaxResults.HasValue() && (options.MaxResults.Value() <= _detail::PagedMaxResults))
-  {
-    maxResults = options.MaxResults.Value();
-  }
-
-  request.Query->emplace(_detail::PagedMaxResultsName, std::to_string(maxResults));
 
   auto response = m_protocolClient->SendRequest<SecretPropertiesPagedResponse>(
       context,
@@ -259,13 +261,6 @@ SecretPropertiesPagedResponse SecretClient::GetPropertiesOfSecretsVersions(
 {
   auto const request = BuildRequestFromContinuationToken(
       options.NextPageToken, {_detail::SecretPath, name, _detail::VersionsName});
-  size_t maxResults = _detail::PagedMaxResults;
-  if (options.MaxResults.HasValue() && (options.MaxResults.Value() <= _detail::PagedMaxResults))
-  {
-    maxResults = options.MaxResults.Value();
-  }
-
-  request.Query->emplace(_detail::PagedMaxResultsName, std::to_string(maxResults));
 
   auto response = m_protocolClient->SendRequest<SecretPropertiesPagedResponse>(
       context,
@@ -289,13 +284,6 @@ DeletedSecretPagedResponse SecretClient::GetDeletedSecrets(
 {
   auto const request
       = BuildRequestFromContinuationToken(options.NextPageToken, {_detail::DeletedSecretPath});
-  size_t maxResults = _detail::PagedMaxResults;
-  if (options.MaxResults.HasValue() && (options.MaxResults.Value() <= _detail::PagedMaxResults))
-  {
-    maxResults = options.MaxResults.Value();
-  }
-
-  request.Query->emplace(_detail::PagedMaxResultsName, std::to_string(maxResults));
 
   auto response = m_protocolClient->SendRequest<DeletedSecretPagedResponse>(
       context,
@@ -311,3 +299,5 @@ DeletedSecretPagedResponse SecretClient::GetDeletedSecrets(
       std::move(response.RawResponse),
       std::make_unique<SecretClient>(*this));
 }
+
+std::string SecretClient::GetUrl() const { return m_protocolClient->GetUrl().GetAbsoluteUrl(); }
