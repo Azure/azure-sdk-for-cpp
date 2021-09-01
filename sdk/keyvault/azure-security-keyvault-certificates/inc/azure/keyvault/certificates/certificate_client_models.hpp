@@ -62,7 +62,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
      * delete-enabled Key Vault.
      *
      */
-    Azure::Nullable<int> RecoverableDays;
+    Azure::Nullable<int32_t> RecoverableDays;
 
     /**
      * @brief The recovery level currently in effect for keys in the Key Vault.
