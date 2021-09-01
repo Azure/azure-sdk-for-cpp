@@ -27,7 +27,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
    * @brief Contains identity and other basic properties of a Certificate.
    *
    */
-  struct CertificateProperties
+  struct CertificateProperties final
   {
     // Attributes
 
@@ -106,7 +106,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
     std::string Version;
 
     /**
-     * @brief Gets the digital thumbprint of the certificate which can be used to uniquely identify
+     * @brief Get the digital thumbprint of the certificate which can be used to uniquely identify
      * it.
      *
      */
@@ -132,17 +132,37 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
     CertificateProperties(std::string const& name) : Name(name) {}
   };
 
+  /**
+   * @brief An Azure Key Vault certificate.
+   *
+   */
   struct KeyVaultCertificate
   {
-
+    /**
+     * @brief Get the identifier of the certificate.
+     *
+     */
     std::string KeyId;
+
+    /**
+     * @brief Get the identifier of the Key Vault Secret which contains the PEM of PFX formatted
+     * content of the certificate and its private key.
+     *
+     */
     std::string SecretId;
+
     /**
      * @brief Additional fields for the certificate.
      *
      */
     CertificateProperties Properties;
 
+    /**
+     * @brief Get the CER formatted public X509 certificate.
+     *
+     * @remarks This property contains only the public key.
+     *
+     */
     std::vector<uint8_t> Cer;
 
     /**
@@ -152,18 +172,40 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
      */
     std::string const& Name() const { return Properties.Name; }
 
+    /**
+     * @brief Construct a new Key Vault Certificate object
+     *
+     * @param properties The properties to create a new certificate.
+     */
     KeyVaultCertificate(CertificateProperties const& properties) : Properties(properties) {}
 
+    /**
+     * @brief Construct a new Key Vault Certificate object
+     *
+     */
     KeyVaultCertificate() = default;
   };
 
-  class CertificateKeyType {
+  /**
+   * @brief Supported JsonWebKey key types (kty).
+   *
+   */
+  class CertificateKeyType final {
   private:
     std::string m_value;
 
   public:
+    /**
+     * @brief Construct a new Certificate Key Type object
+     *
+     * @param keyType The type of the certificate.
+     */
     explicit CertificateKeyType(std::string keyType) : m_value(std::move(keyType)) {}
 
+    /**
+     * @brief Construct a new Certificate Key Type object
+     *
+     */
     CertificateKeyType() = default;
 
     /**
@@ -221,6 +263,10 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
     AZ_SECURITY_KEYVAULT_CERTIFICATES_DLLEXPORT static const CertificateKeyType OctHsm;
   };
 
+  /**
+   * @brief Elliptic Curve Cryptography (ECC) curve names.
+   *
+   */
   class CertificateKeyCurveName final {
   private:
     std::string m_value;
@@ -263,7 +309,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
     std::string const& ToString() const { return m_value; }
 
     /**
-     * @brief Gets the NIST P-256 elliptic curve, AKA SECG curve SECP256R1.
+     * @brief Get the NIST P-256 elliptic curve, AKA SECG curve SECP256R1.
      *
      * @remark For more information, see
      *  <a href="https://docs.microsoft.com/azure/key-vault/keys/about-keys#curve-types">Curve
@@ -273,7 +319,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
     AZ_SECURITY_KEYVAULT_CERTIFICATES_DLLEXPORT static const CertificateKeyCurveName P256;
 
     /**
-     * @brief Gets the SECG SECP256K1 elliptic curve.
+     * @brief Get the SECG SECP256K1 elliptic curve.
      *
      * @remark For more information, see
      * <a href="https://docs.microsoft.com/azure/key-vault/keys/about-keys#curve-types">Curve
@@ -283,7 +329,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
     AZ_SECURITY_KEYVAULT_CERTIFICATES_DLLEXPORT static const CertificateKeyCurveName P256K;
 
     /**
-     * @brief Gets the NIST P-384 elliptic curve, AKA SECG curve SECP384R1.
+     * @brief Get the NIST P-384 elliptic curve, AKA SECG curve SECP384R1.
      *
      * @remark For more information, see
      * <a href="https://docs.microsoft.com/azure/key-vault/keys/about-keys#curve-types">Curve
@@ -293,7 +339,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
     AZ_SECURITY_KEYVAULT_CERTIFICATES_DLLEXPORT static const CertificateKeyCurveName P384;
 
     /**
-     * @brief Gets the NIST P-521 elliptic curve, AKA SECG curve SECP521R1.
+     * @brief Get the NIST P-521 elliptic curve, AKA SECG curve SECP521R1.
      *
      * @remark For more information, see
      * <a href="https://docs.microsoft.com/azure/key-vault/keys/about-keys#curve-types">Curve
@@ -303,13 +349,36 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
     AZ_SECURITY_KEYVAULT_CERTIFICATES_DLLEXPORT static const CertificateKeyCurveName P521;
   };
 
-  struct SubjectAlternativeNameList
+  /**
+   * @brief A collection of subject alternative names (SANs) for a X.509 certificate. SANs can be
+   * DNS entries, emails, or unique principal names.
+   *
+   */
+  struct SubjectAlternativeNameList final
   {
+    /**
+     * @brief Get a collection of DNS names.
+     *
+     */
     std::vector<std::string> DnsNames;
+
+    /**
+     * @brief Get a collection of email addresses.
+     *
+     */
     std::vector<std::string> Emails;
+
+    /**
+     * @brief Get a collection of user principal names (UPNs).
+     *
+     */
     std::vector<std::string> UserPrincipalNames;
   };
 
+  /**
+   * @brief Content type of the certificate when downloaded from getecret.
+   *
+   */
   class CertificateContentType final {
   private:
     std::string m_value;
@@ -352,7 +421,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
     std::string const& ToString() const { return m_value; }
 
     /**
-     * @brief Gets the NIST P-256 elliptic curve, AKA SECG curve SECP256R1.
+     * @brief Get the NIST P-256 elliptic curve, AKA SECG curve SECP256R1.
      *
      * @remark For more information, see
      *  <a href="https://docs.microsoft.com/azure/key-vault/keys/about-keys#curve-types">Curve
@@ -362,7 +431,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
     AZ_SECURITY_KEYVAULT_CERTIFICATES_DLLEXPORT static const CertificateContentType Pkcs12;
 
     /**
-     * @brief Gets the SECG SECP256K1 elliptic curve.
+     * @brief Get the SECG SECP256K1 elliptic curve.
      *
      * @remark For more information, see
      * <a href="https://docs.microsoft.com/azure/key-vault/keys/about-keys#curve-types">Curve
@@ -372,6 +441,10 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
     AZ_SECURITY_KEYVAULT_CERTIFICATES_DLLEXPORT static const CertificateContentType Pem;
   };
 
+  /**
+   * @brief Supported usages of a certificate key.
+   *
+   */
   class CertificateKeyUsage final {
   private:
     std::string m_value;
@@ -414,7 +487,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
     std::string const& ToString() const { return m_value; }
 
     /**
-     * @brief Gets the NIST P-256 elliptic curve, AKA SECG curve SECP256R1.
+     * @brief Get the NIST P-256 elliptic curve, AKA SECG curve SECP256R1.
      *
      * @remark For more information, see
      *  <a href="https://docs.microsoft.com/azure/key-vault/keys/about-keys#curve-types">Curve
@@ -424,7 +497,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
     AZ_SECURITY_KEYVAULT_CERTIFICATES_DLLEXPORT static const CertificateKeyUsage DigitalSignature;
 
     /**
-     * @brief Gets the SECG SECP256K1 elliptic curve.
+     * @brief Get the SECG SECP256K1 elliptic curve.
      *
      * @remark For more information, see
      * <a href="https://docs.microsoft.com/azure/key-vault/keys/about-keys#curve-types">Curve
@@ -435,6 +508,10 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
     AZ_SECURITY_KEYVAULT_CERTIFICATES_DLLEXPORT static const CertificateKeyUsage EmailContacts;
   };
 
+  /**
+   * @brief An action that will be executed.
+   *
+   */
   class CertificatePolicyAction final {
   private:
     std::string m_value;
@@ -477,7 +554,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
     std::string const& ToString() const { return m_value; }
 
     /**
-     * @brief Gets the NIST P-256 elliptic curve, AKA SECG curve SECP256R1.
+     * @brief Get the NIST P-256 elliptic curve, AKA SECG curve SECP256R1.
      *
      * @remark For more information, see
      *  <a href="https://docs.microsoft.com/azure/key-vault/keys/about-keys#curve-types">Curve
@@ -488,7 +565,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
         DigitalSignature;
 
     /**
-     * @brief Gets the SECG SECP256K1 elliptic curve.
+     * @brief Get the SECG SECP256K1 elliptic curve.
      *
      * @remark For more information, see
      * <a href="https://docs.microsoft.com/azure/key-vault/keys/about-keys#curve-types">Curve
@@ -507,46 +584,186 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
     AZ_SECURITY_KEYVAULT_CERTIFICATES_DLLEXPORT static const CertificatePolicyAction DecipherOnly;
   };
 
-  struct LifetimeAction
+  /**
+   * @brief An action to be executed at a prescribed time in a certificates lifecycle.
+   *
+   */
+  struct LifetimeAction final
   {
+    /**
+     * @brief Get the CertificatePolicyAction to be performed.
+     *
+     */
     CertificatePolicyAction Action;
+
+    /**
+     * @brief Get the action should be performed the specified number of days before the certificate
+     * will expire.
+     *
+     */
     Azure::Nullable<int32_t> DaysBeforeExpiry;
+
+    /**
+     * @brief Get the action should be performed when the certificate reaches the specified
+     * percentage of its lifetime. Valid values include 1-99.
+     *
+     */
     Azure::Nullable<int32_t> LifetimePercentage;
   };
 
-  struct IssuerProperties
+  /**
+   * @brief Properties of a CertificateIssuer.
+   *
+   */
+  struct IssuerParameters final
   {
+    /**
+     * @brief Indicates if the certificates generated under this policy should be published to
+     * certificate transparency logs.
+     *
+     */
     Azure::Nullable<bool> CertTransparency;
+
+    /**
+     * @brief Certificate type as supported by the provider (optional); for example 'OV-SSL',
+     * 'EV-SSL'.
+     *
+     */
     Azure::Nullable<std::string> Cty;
+
+    /**
+     * @brief Name of the referenced issuer object or reserved names; for example, 'Self' or
+     'Unknown'.
+     *
+     */
     Azure::Nullable<std::string> Name;
   };
 
-  struct CertificatePolicy
+  /**
+   * @brief A policy which governs the lifecycle a properties of a certificate managed by Azure Key
+   * Vault.
+   *
+   */
+  struct CertificatePolicy final
   {
+    /**
+     * @brief Get the type of backing key to be generated when issuing new certificates.
+     *
+     */
     Azure::Nullable<CertificateKeyType> KeyType;
+
+    /**
+     * @brief Get a value indicating whether the certificate key should be reused when rotating the
+     * certificate.
+     *
+     */
     Azure::Nullable<bool> ReuseKey;
+
+    /**
+     * @brief Get a value indicating whether the certificate key is exportable from the vault or
+     * secure certificate store.
+     *
+     */
     Azure::Nullable<bool> Exportable;
+
+    /**
+     * @brief Get the curve which back an Elliptic Curve (EC) key.
+     *
+     */
     Azure::Nullable<CertificateKeyCurveName> KeyCurveName;
+
+    /**
+     * @brief Get the size of the RSA key. The value must be a valid RSA key length such as 2048 or
+     * 4092.
+     *
+     */
     Azure::Nullable<int32_t> KeySize;
+
+    /**
+     * @brief Get the subject name of a certificate.
+     *
+     */
     std::string Subject;
+
+    /**
+     * @brief Get the subject alternative names (SANs) of a certificate.
+     *
+     */
     SubjectAlternativeNameList SubjectAlternativeNames;
-    IssuerProperties Issuer;
+
+    /**
+     * @brief Get the issuer for a certificate.
+     *
+     */
+    IssuerParameters Issuer;
+
+    /**
+     * @brief Get the CertificateContentType of the certificate.
+     *
+     */
     Azure::Nullable<CertificateContentType> ContentType;
-    std::string CertificateType;
-    Azure::Nullable<bool> CertificateTransparency;
+
+    /**
+     * @brief Get the validity period for a certificate in months.
+     *
+     */
     Azure::Nullable<int32_t> ValidityInMonths;
+
+    /**
+     * @brief Get a value indicating whether the certificate is currently enabled. If null, the
+     * server default will be used.
+     *
+     */
     Azure::Nullable<bool> Enabled;
+
+    /**
+     * @brief Get a DateTime indicating when the certificate was updated.
+     *
+     */
     Azure::Nullable<Azure::DateTime> UpdatedOn;
+
+    /**
+     * @brief Get a DateTime indicating when the certificate was created.
+     *
+     */
     Azure::Nullable<Azure::DateTime> CreatedOn;
+
+    /**
+     * @brief Gets the allowed usages for the key of the certificate.
+     *
+     */
     std::vector<CertificateKeyUsage> KeyUsage;
+
+    /**
+     * @brief Get the allowed enhanced key usages (EKUs) of the certificate.
+     *
+     */
     std::vector<std::string> EnhancedKeyUsage;
+
+    /**
+     * @brief Get the actions to be executed at specified times in the certificates lifetime.
+     *
+     */
     std::vector<LifetimeAction> LifetimeActions;
   };
 
-  struct KeyVaultCertificateWithPolicy : public KeyVaultCertificate
+  /**
+   * @brief A KeyVaultCertificate along with its CertificatePolicy.
+   *
+   */
+  struct KeyVaultCertificateWithPolicy final : public KeyVaultCertificate
   {
+    /**
+     * @brief Gets the current policy for the certificate.
+     *
+     */
     CertificatePolicy Policy;
 
+    /**
+     * @brief Construct a new Key Vault Certificate With Policy object
+     *
+     * @param properties The properties to create a new certificate.
+     */
     KeyVaultCertificateWithPolicy(CertificateProperties const& properties)
         : KeyVaultCertificate(properties)
     {
