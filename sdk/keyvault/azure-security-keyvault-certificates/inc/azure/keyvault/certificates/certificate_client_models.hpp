@@ -189,7 +189,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
      * @brief Destroy the Key Vault Certificate object
      *
      */
-    ~KeyVaultCertificate() = default;
+    virtual ~KeyVaultCertificate() = default;
   };
 
   /**

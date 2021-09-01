@@ -170,7 +170,7 @@ _detail::KeyVaultCertificateSerializer::KeyVaultCertificateDeserialize(
     // lifetime_actions
     {
       auto const policyAttributesJson = policyJson[LifetimeActionsPropertyName];
-      for (auto const attributeItem : policyAttributesJson)
+      for (auto const& attributeItem : policyAttributesJson)
       {
         LifetimeAction action;
         JsonOptional::SetIfExists<json, CertificatePolicyAction>(
