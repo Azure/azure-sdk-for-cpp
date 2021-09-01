@@ -16,6 +16,10 @@
 
 namespace Azure { namespace Security { namespace KeyVault { namespace Certificates {
 
+  /**
+   * @brief The API version to use from Key Vault.
+   *
+   */
   class ServiceVersion final {
   private:
     std::string m_version;
