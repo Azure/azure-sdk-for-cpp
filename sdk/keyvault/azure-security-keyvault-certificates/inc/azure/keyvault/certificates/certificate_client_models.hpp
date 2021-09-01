@@ -19,6 +19,7 @@
 #include <memory>
 #include <string>
 #include <unordered_map>
+#include <vector>
 
 namespace Azure { namespace Security { namespace KeyVault { namespace Certificates {
 
@@ -70,7 +71,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
      * otherwise, only the service can purge the keys at the end of the retention interval.
      *
      */
-    std::string RecoveryLevel;
+    Azure::Nullable<std::string> RecoveryLevel;
 
     // Properties
 
@@ -103,6 +104,13 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
      *
      */
     std::string Version;
+
+    /**
+     * @brief Gets the digital thumbprint of the certificate which can be used to uniquely identify
+     * it.
+     *
+     */
+    std::vector<uint8_t> X509Thumbprint;
 
     /**
      * @brief Indicate whether the certificate is enabled and useable for cryptographic operations.
@@ -143,6 +151,10 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
      * @return The name of the certificate.
      */
     std::string const& Name() const { return Properties.Name; }
+
+    KeyVaultCertificate(CertificateProperties const& properties) : Properties(properties) {}
+
+    KeyVaultCertificate() = default;
   };
 
   class CertificateKeyType {
@@ -502,7 +514,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
     Azure::Nullable<int32_t> LifetimePercentage;
   };
 
-  class CertificatePolicy {
+  struct CertificatePolicy {
     Azure::Nullable<CertificateKeyType> KeyType;
     Azure::Nullable<bool> ReuseKey;
     Azure::Nullable<bool> Exportable;
@@ -526,5 +538,10 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
   struct KeyVaultCertificateWithPolicy : public KeyVaultCertificate
   {
     CertificatePolicy Policy;
+
+    KeyVaultCertificateWithPolicy(CertificateProperties const& properties)
+        : KeyVaultCertificate(properties)
+    {
+    }
   };
 }}}} // namespace Azure::Security::KeyVault::Certificates

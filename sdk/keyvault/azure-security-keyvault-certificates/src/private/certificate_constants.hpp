@@ -1,0 +1,51 @@
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// SPDX-License-Identifier: MIT
+
+/**
+ * @file
+ * @brief Centralize the string constants used by Key Vault Certificates Client.
+ *
+ */
+
+#pragma once
+
+namespace Azure { namespace Security { namespace KeyVault { namespace Certificates {
+  namespace _detail {
+
+    /***************** Certificates Properties *****************/
+    constexpr static const char IdName[] = "id";
+    constexpr static const char X5tName[] = "x5t";
+    constexpr static const char TagsName[] = "tags";
+    constexpr static const char AttributesPropertyName[] = "attributes";
+    constexpr static const char EnabledPropertyName[] = "enabled";
+    constexpr static const char NbfPropertyName[] = "nbf";
+    constexpr static const char ExpPropertyName[] = "exp";
+    constexpr static const char CreatedPropertyName[] = "created";
+    constexpr static const char UpdatedPropertyName[] = "updated";
+    constexpr static const char RecoverableDaysPropertyName[] = "recoverableDays";
+    constexpr static const char RecoveryLevelPropertyName[] = "recoveryLevel";
+    constexpr static const char KidPropertyName[] = "kid";
+    constexpr static const char SidPropertyName[] = "sid";
+    constexpr static const char CerPropertyName[] = "cer";
+
+    /***************** Certificates Policy *****************/
+    constexpr static const char PolicyPropertyName[] = "policy";
+    constexpr static const char KeyPropsPropertyName[] = "key_props";
+    constexpr static const char KeyTypePropertyName[] = "kty";
+    constexpr static const char ReuseKeyPropertyName[] = "reuse_key";
+    constexpr static const char ExportablePropertyName[] = "exportable";
+    constexpr static const char CurveNamePropertyName[] = "crv";
+    constexpr static const char KeySizePropertyName[] = "key_size";
+    constexpr static const char SecretPropsPropertyName[] = "secret_props";
+    constexpr static const char ContentTypePropertyName[] = "contentType";
+    constexpr static const char X509PropsPropertyName[] = "x509_props";
+    constexpr static const char SubjectPropertyName[] = "subject";
+    constexpr static const char SansPropertyName[] = "sans";
+    constexpr static const char DnsPropertyName[] = "dns_names";
+    constexpr static const char EmailsPropertyName[] = "emails";
+    constexpr static const char UserPrincipalNamesPropertyName[] = "upns";
+    constexpr static const char KeyUsagePropertyName[] = "key_usage";
+    constexpr static const char EkusPropertyName[] = "ekus";
+    constexpr static const char ValidityMonthsPropertyName[] = "validity_months";
+
+}}}}} // namespace Azure::Security::KeyVault::Certificates::_detail
