@@ -348,7 +348,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
    * DNS entries, emails, or unique principal names.
    *
    */
-  struct SubjectAlternativeNameList final
+  struct SubjectAlternativeNames final
   {
     /**
      * @brief Get a collection of DNS names.
@@ -718,7 +718,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
      * @brief Get the subject alternative names (SANs) of a certificate.
      *
      */
-    SubjectAlternativeNameList SubjectAlternativeNames;
+    struct SubjectAlternativeNames SubjectAlternativeNames;
 
     /**
      * @brief Get the issuer for a certificate.
