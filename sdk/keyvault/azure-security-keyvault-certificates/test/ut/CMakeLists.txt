@@ -19,7 +19,7 @@ add_executable (
     certificate_client_base_test.hpp)
 
 if (MSVC)
-  target_compile_options(azure-security-keyvault-certificates-test PUBLIC /wd6326 /wd26495 /wd26812)
+  target_compile_options(azure-security-keyvault-certificates-test PUBLIC /wd6326 /wd26495 /wd26812 /wd4389)
 endif()
 
 target_link_libraries(azure-security-keyvault-certificates-test PRIVATE azure-security-keyvault-certificates azure-identity azure-core-test-fw gtest gtest_main gmock)
