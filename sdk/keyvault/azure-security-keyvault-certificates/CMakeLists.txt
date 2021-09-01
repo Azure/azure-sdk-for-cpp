@@ -27,21 +27,21 @@ if(NOT AZ_ALL_LIBRARIES)
 endif()
 
 set(
-  AZURE_KEYVAULT_KEYS_HEADER
+  AZURE_KEYVAULT_CERTIFICATES_HEADER
     inc/azure/keyvault/certificates/certificate_client.hpp
     inc/azure/keyvault/certificates/certificate_client_models.hpp
     inc/azure/keyvault/certificates/certificate_client_options.hpp
 )
 
 set(
-  AZURE_KEYVAULT_KEYS_SOURCE
+  AZURE_KEYVAULT_CERTIFICATES_SOURCE
     src/certificate_client.cpp
     src/keyvault_certificate.cpp
     src/keyvault_certificates_common_request.cpp
 )
 
 add_library(azure-security-keyvault-certificates
-  ${AZURE_KEYVAULT_KEYS_HEADER} ${AZURE_KEYVAULT_KEYS_SOURCE}
+  ${AZURE_KEYVAULT_CERTIFICATES_HEADER} ${AZURE_KEYVAULT_CERTIFICATES_SOURCE}
 )
 add_library(Azure::azure-security-keyvault-certificates ALIAS azure-security-keyvault-certificates)
 
