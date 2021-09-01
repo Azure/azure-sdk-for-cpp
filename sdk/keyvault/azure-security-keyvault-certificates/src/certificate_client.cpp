@@ -29,7 +29,6 @@ using namespace Azure::Security::KeyVault::_detail;
 namespace {
 constexpr static const char KeyVaultServicePackageName[] = "keyvault-certificates";
 constexpr static const char CertificatesPath[] = "certificates";
-constexpr static const char CreateValue[] = "create";
 
 // This is a Key-Vault only patch to calculate token scope/audience
 std::string GetScopeFromUrl(Azure::Core::Url const& url)
