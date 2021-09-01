@@ -142,10 +142,55 @@ _detail::KeyVaultCertificateSerializer::KeyVaultCertificateDeserialize(
       JsonOptional::SetIfExists(
           certificate.Policy.ValidityInMonths, x509PropsJson, ValidityMonthsPropertyName);
     }
+    // issuer
+    {
+      auto const issuerJson = policyJson[IssuerPropertyName];
+      JsonOptional::SetIfExists(certificate.Policy.Issuer.Name, issuerJson, IssuerNamePropertyName);
+      JsonOptional::SetIfExists(
+          certificate.Policy.Issuer.CertTransparency, issuerJson, CertTransparencyPropertyName);
+      JsonOptional::SetIfExists(certificate.Policy.Issuer.Cty, issuerJson, CtyPropertyName);
+    }
+    // attributes
+    {
+      auto const policyAttributesJson = policyJson[AttributesPropertyName];
+      JsonOptional::SetIfExists(
+          certificate.Policy.Enabled, policyAttributesJson, EnabledPropertyName);
+      JsonOptional::SetIfExists<int64_t, Azure::DateTime>(
+          certificate.Policy.CreatedOn,
+          policyAttributesJson,
+          CreatedPropertyName,
+          PosixTimeConverter::PosixTimeToDateTime);
+      JsonOptional::SetIfExists<int64_t, Azure::DateTime>(
+          certificate.Policy.UpdatedOn,
+          policyAttributesJson,
+          UpdatedPropertyName,
+          PosixTimeConverter::PosixTimeToDateTime);
+    }
+    // lifetime_actions
+    {
+      auto const policyAttributesJson = policyJson[LifetimeActionsPropertyName];
+      for (auto const attributeItem : policyAttributesJson)
+      {
+        LifetimeAction action;
+        JsonOptional::SetIfExists<json, CertificatePolicyAction>(
+            action.Action, attributeItem, ActionPropertyName, [](json const& value) {
+              return CertificatePolicyAction(value[ActionTypePropertyName].get<std::string>());
+            });
+
+        if (attributeItem.contains(TriggerPropertyName))
+        {
+          auto const triggerPropertyJson = attributeItem[TriggerPropertyName];
+          JsonOptional::SetIfExists(
+              action.DaysBeforeExpiry, triggerPropertyJson, DaysBeforeExpiryPropertyName);
+          JsonOptional::SetIfExists(
+              action.LifetimePercentage, triggerPropertyJson, LifetimePercentagePropertyName);
+        }
+        // At this point the action is parsed from json and can be added to the LifeTimeActions from
+        // the policy.
+        certificate.Policy.LifetimeActions.emplace_back(action);
+      }
+    }
   }
-  // issuer
-  // attributes
-  // lifetime_actions
 
   return certificate;
 }

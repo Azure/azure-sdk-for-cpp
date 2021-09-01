@@ -47,5 +47,15 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
     constexpr static const char KeyUsagePropertyName[] = "key_usage";
     constexpr static const char EkusPropertyName[] = "ekus";
     constexpr static const char ValidityMonthsPropertyName[] = "validity_months";
+    constexpr static const char IssuerPropertyName[] = "issuer";
+    constexpr static const char CertTransparencyPropertyName[] = "cert_transparency";
+    constexpr static const char CtyPropertyName[] = "cty";
+    constexpr static const char IssuerNamePropertyName[] = "name";
+    constexpr static const char LifetimeActionsPropertyName[] = "lifetime_actions";
+    constexpr static const char TriggerPropertyName[] = "trigger";
+    constexpr static const char ActionPropertyName[] = "action";
+    constexpr static const char LifetimePercentagePropertyName[] = "lifetime_percentage";
+    constexpr static const char DaysBeforeExpiryPropertyName[] = "days_before_expiry";
+    constexpr static const char ActionTypePropertyName[] = "action_type";
 
 }}}}} // namespace Azure::Security::KeyVault::Certificates::_detail

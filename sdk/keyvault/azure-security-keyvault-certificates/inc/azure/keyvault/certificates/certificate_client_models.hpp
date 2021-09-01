@@ -514,7 +514,15 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
     Azure::Nullable<int32_t> LifetimePercentage;
   };
 
-  struct CertificatePolicy {
+  struct IssuerProperties
+  {
+    Azure::Nullable<bool> CertTransparency;
+    Azure::Nullable<std::string> Cty;
+    Azure::Nullable<std::string> Name;
+  };
+
+  struct CertificatePolicy
+  {
     Azure::Nullable<CertificateKeyType> KeyType;
     Azure::Nullable<bool> ReuseKey;
     Azure::Nullable<bool> Exportable;
@@ -522,7 +530,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
     Azure::Nullable<int32_t> KeySize;
     std::string Subject;
     SubjectAlternativeNameList SubjectAlternativeNames;
-    std::string IssuerName;
+    IssuerProperties Issuer;
     Azure::Nullable<CertificateContentType> ContentType;
     std::string CertificateType;
     Azure::Nullable<bool> CertificateTransparency;
