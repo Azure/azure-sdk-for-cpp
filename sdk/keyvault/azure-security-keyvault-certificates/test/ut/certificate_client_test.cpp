@@ -34,7 +34,7 @@ TEST_F(KeyVaultCertificateClientTest, GetCertificate)
     // x5t
     EXPECT_NE(cert.Properties.X509Thumbprint.size(), 0);
 
-    // recording contains one tag
+    // recording contains one tag - When running LIVE, make sure the cert contains one tag!
     EXPECT_EQ(cert.Properties.Tags.size(), 1);
     EXPECT_EQ(cert.Properties.Tags["a"], std::string("1"));
 
@@ -51,5 +51,34 @@ TEST_F(KeyVaultCertificateClientTest, GetCertificate)
     EXPECT_NE(cert.KeyId, "");
     EXPECT_NE(cert.SecretId, "");
     EXPECT_NE(cert.Cer.size(), 0);
+
+    // policy
+    {
+      auto const& policy = cert.Policy;
+
+      // Key props
+      EXPECT_TRUE(policy.Exportable.HasValue());
+      EXPECT_TRUE(policy.KeyType.HasValue());
+      EXPECT_TRUE(policy.ReuseKey.HasValue());
+      // Recording uses RSA with no curve-name. Use RSA key when running LIVE
+      EXPECT_FALSE(policy.KeyCurveName.HasValue());
+      EXPECT_TRUE(policy.KeySize.HasValue());
+
+      // Secret props
+      EXPECT_TRUE(policy.ContentType.HasValue());
+
+      // x509_props
+      EXPECT_TRUE(policy.Subject.size() > 0);
+
+      // issuer
+      EXPECT_TRUE(policy.Issuer.Name.HasValue());
+
+      // attributes
+      EXPECT_TRUE(policy.CreatedOn.HasValue());
+
+      // lifetime_actions
+      EXPECT_TRUE(policy.LifetimeActions.size() > 0);
+      EXPECT_NE(policy.LifetimeActions[0].Action.ToString(), "");
+    }
   }
 }
