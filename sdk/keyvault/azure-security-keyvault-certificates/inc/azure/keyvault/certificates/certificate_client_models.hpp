@@ -798,4 +798,14 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
     {
     }
   };
+
+  /**
+   * @brief The options for calling GetCertificate.
+   *
+   */
+  struct GetCertificateOptions final
+  {
+    std::string Version;
+  };
+
 }}}} // namespace Azure::Security::KeyVault::Certificates

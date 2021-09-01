@@ -73,13 +73,30 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
      * @remark This operation requires the certificates/get permission.
      *
      * @param name The name of the certificate.
-     * @param options Optional parameters for this operation.
      * @param context The context for the operation can be used for request cancellation.
      * @return A response containing the certificate and policy as a KeyVaultCertificateWithPolicy
      * instance.
      */
     Azure::Response<KeyVaultCertificateWithPolicy> GetCertificate(
         std::string const& name,
+        Azure::Core::Context const& context = Azure::Core::Context()) const;
+
+    /**
+     * @brief Returns a specific version of the certificate without its CertificatePolicy.
+     *
+     * @details If the version is not set in the options, the latest version is returned.
+     *
+     * @remark This operation requires the certificates/get permission.
+     *
+     * @param name The name of the certificate.
+     * @param options Optional parameters for this operation.
+     * @param context The context for the operation can be used for request cancellation.
+     * @return A response containing the certificate and policy as a KeyVaultCertificateWithPolicy
+     * instance.
+     */
+    Azure::Response<KeyVaultCertificate> GetCertificateVersion(
+        std::string const& name,
+        GetCertificateOptions const& options = GetCertificateOptions(),
         Azure::Core::Context const& context = Azure::Core::Context()) const;
 
   private:

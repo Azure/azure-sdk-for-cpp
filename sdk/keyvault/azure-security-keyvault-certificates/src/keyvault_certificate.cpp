@@ -75,6 +75,7 @@ _detail::KeyVaultCertificateSerializer::KeyVaultCertificateDeserialize(
   certificate.Cer = Base64Url::Base64UrlDecode(jsonResponse[CerPropertyName].get<std::string>());
 
   // policy
+  if (jsonResponse.contains(PolicyPropertyName))
   {
     auto const policyJson = jsonResponse[PolicyPropertyName];
     // key_props

@@ -98,7 +98,6 @@ Response<KeyVaultCertificateWithPolicy> CertificateClient::GetCertificate(
     std::string const& name,
     Context const& context) const
 {
-  // Request with no payload
   auto request = CreateRequest(HttpMethod::Get, {CertificatesPath, name});
 
   // Send and parse respone
@@ -106,6 +105,27 @@ Response<KeyVaultCertificateWithPolicy> CertificateClient::GetCertificate(
   auto value
       = _detail::KeyVaultCertificateSerializer::KeyVaultCertificateDeserialize(name, *rawResponse);
   return Azure::Response<KeyVaultCertificateWithPolicy>(std::move(value), std::move(rawResponse));
+}
+
+Response<KeyVaultCertificate> CertificateClient::GetCertificateVersion(
+    std::string const& name,
+    GetCertificateOptions const& options,
+    Context const& context) const
+{
+  // Request with no payload
+  std::vector<std::string> path{{CertificatesPath, name}};
+  if (!options.Version.empty())
+  {
+    path.emplace_back(options.Version);
+  }
+
+  auto request = CreateRequest(HttpMethod::Get, std::move(path));
+
+  // Send and parse respone
+  auto rawResponse = SendRequest(request, context);
+  auto value
+      = _detail::KeyVaultCertificateSerializer::KeyVaultCertificateDeserialize(name, *rawResponse);
+  return Azure::Response<KeyVaultCertificate>(std::move(value), std::move(rawResponse));
 }
 
 const ServiceVersion ServiceVersion::V7_2("7.2");
