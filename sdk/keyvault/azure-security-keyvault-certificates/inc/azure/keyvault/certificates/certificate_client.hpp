@@ -3,7 +3,7 @@
 
 /**
  * @file
- * @brief Defines the Key Vault Keys client.
+ * @brief Defines the Key Vault Certificates client.
  *
  */
 
