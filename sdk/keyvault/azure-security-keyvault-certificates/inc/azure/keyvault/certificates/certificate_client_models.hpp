@@ -173,6 +173,13 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
     std::string const& Name() const { return Properties.Name; }
 
     /**
+     * @brief Get the certificate Id,
+     *
+     * @return The id of the certificate.
+     */
+    std::string const& Id() const { return Properties.Id; }
+
+    /**
      * @brief Construct a new Key Vault Certificate object
      *
      * @param properties The properties to create a new certificate.
