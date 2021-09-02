@@ -82,7 +82,7 @@ az_vcpkg_export(
   )
 
 # coverage. Has no effect if BUILD_CODE_COVERAGE is OFF
-create_code_coverage(storage azure-storage-blobs azure-storage-test)
+create_code_coverage(storage azure-storage-blobs azure-storage-test "tests?/*|samples?/*")
 
 if(BUILD_TESTING)
   target_sources(

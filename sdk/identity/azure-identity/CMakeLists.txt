@@ -54,8 +54,7 @@ add_library(azure-identity ${AZURE_IDENTITY_HEADER} ${AZURE_IDENTITY_SOURCE})
 # make sure that users can consume the project as a library.
 add_library(Azure::azure-identity ALIAS azure-identity)
 
-create_code_coverage(identity azure-identity azure-identity-test)
-create_code_coverage(identity azure-identity-livetest azure-identity-livetest)
+create_code_coverage(identity azure-identity azure-identity-test "tests?/*|samples?/*")
 
 target_include_directories(
   azure-identity
