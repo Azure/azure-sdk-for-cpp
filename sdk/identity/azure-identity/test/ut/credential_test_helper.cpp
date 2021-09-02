@@ -106,7 +106,7 @@ CredentialTestHelper::GetTokenCallback const CredentialTestHelper::DefaultGetTok
 CredentialTestHelper::TokenRequestSimulationResult CredentialTestHelper::SimulateTokenRequest(
     CredentialTestHelper::CreateCredentialCallback const& createCredential,
     std::vector<Core::Credentials::TokenRequestContext> const& tokenRequestContexts,
-    std::vector<TokenRequestSimuationServerResponse> const& responses,
+    std::vector<TokenRequestSimulationServerResponse> const& responses,
     GetTokenCallback getToken)
 {
   using Azure::Core::Context;

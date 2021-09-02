@@ -42,10 +42,11 @@ TEST(ClientSecretCredential, Regular)
       "https://microsoft.com/01234567-89ab-cdef-fedc-ba8976543210/oauth2/v2.0/token");
 
   {
-    constexpr char expectedBody[] = "grant_type=client_credentials"
-                                    "&client_id=fedcba98-7654-3210-0123-456789abcdef"
-                                    "&client_secret=CLIENTSECRET"
-                                    "&scope=https%3A%2F%2Fazure.com%2F.default";
+    constexpr char expectedBody[]
+        = "grant_type=client_credentials"
+          "&client_id=fedcba98-7654-3210-0123-456789abcdef"
+          "&client_secret=CLIENTSECRET"
+          "&scope=https%3A%2F%2Fazure.com%2F.default"; // cspell:disable-line
 
     EXPECT_EQ(request.Body, expectedBody);
 
@@ -88,7 +89,7 @@ TEST(ClientSecretCredential, AzureStack)
     constexpr char expectedBody[] = "grant_type=client_credentials"
                                     "&client_id=fedcba98-7654-3210-0123-456789abcdef"
                                     "&client_secret=CLIENTSECRET"
-                                    "&scope=https%3A%2F%2Fazure.com";
+                                    "&scope=https%3A%2F%2Fazure.com"; // cspell:disable-line
 
     EXPECT_EQ(request.Body, expectedBody);
 
