@@ -150,7 +150,7 @@ namespace Azure { namespace Storage { namespace Queues {
     }
   }
 
-  Azure::Response<Models::QueueProperties> QueueClient::GetProperties(
+  Azure::Response<Models::GetQueuePropertiesResult> QueueClient::GetProperties(
       const GetQueuePropertiesOptions& options,
       const Azure::Core::Context& context) const
   {
@@ -172,7 +172,7 @@ namespace Azure { namespace Storage { namespace Queues {
         *m_pipeline, m_queueUrl, protocolLayerOptions, context);
   }
 
-  Azure::Response<Models::QueueAccessPolicy> QueueClient::GetAccessPolicy(
+  Azure::Response<Models::GetQueueAccessPolicyResult> QueueClient::GetAccessPolicy(
       const GetQueueAccessPolicyOptions& options,
       const Azure::Core::Context& context) const
   {

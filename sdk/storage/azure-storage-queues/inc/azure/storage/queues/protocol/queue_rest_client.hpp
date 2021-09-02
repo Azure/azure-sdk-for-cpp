@@ -350,6 +350,33 @@ namespace Azure { namespace Storage { namespace Queues {
     }; // struct EnqueueMessageResult
 
     /**
+     * @brief Response type for #Azure::Storage::Queues::QueueClient::GetAccessPolicy.
+     */
+    struct GetQueueAccessPolicyResult final
+    {
+      /**
+       * A collection of signed identifiers.
+       */
+      std::vector<SignedIdentifier> SignedIdentifiers;
+    }; // struct GetQueueAccessPolicyResult
+
+    /**
+     * @brief Response type for #Azure::Storage::Queues::QueueClient::GetProperties.
+     */
+    struct GetQueuePropertiesResult final
+    {
+      /**
+       * A set of name-value pairs associated with a queue as user-defined metadata.
+       */
+      Storage::Metadata Metadata;
+      /**
+       * The approximate number of messages in the queue. This number is not lower than the actual
+       * number of messages in the queue, but could be higher.
+       */
+      int64_t ApproximateMessageCount = 0;
+    }; // struct GetQueuePropertiesResult
+
+    /**
      * @brief Response type for #Azure::Storage::Queues::QueueServiceClient::GetProperties.
      */
     struct GetServicePropertiesResult final
@@ -415,33 +442,6 @@ namespace Azure { namespace Storage { namespace Queues {
        */
       std::vector<PeekedQueueMessage> Messages;
     }; // struct PeekMessagesResult
-
-    /**
-     * @brief Access policy for a queue.
-     */
-    struct QueueAccessPolicy final
-    {
-      /**
-       * A collection of signed identifiers.
-       */
-      std::vector<SignedIdentifier> SignedIdentifiers;
-    }; // struct QueueAccessPolicy
-
-    /**
-     * @brief Properties of a queue.
-     */
-    struct QueueProperties final
-    {
-      /**
-       * A set of name-value pairs associated with a queue as user-defined metadata.
-       */
-      Storage::Metadata Metadata;
-      /**
-       * The approximate number of messages in the queue. This number is not lower than the actual
-       * number of messages in the queue, but could be higher.
-       */
-      int64_t ApproximateMessageCount = 0;
-    }; // struct QueueProperties
 
     struct ReceiveMessagesResult final
     {
@@ -1706,7 +1706,7 @@ namespace Azure { namespace Storage { namespace Queues {
           Azure::Nullable<int32_t> Timeout;
         }; // struct GetQueuePropertiesOptions
 
-        static Azure::Response<QueueProperties> GetProperties(
+        static Azure::Response<GetQueuePropertiesResult> GetProperties(
             Azure::Core::Http::_internal::HttpPipeline& pipeline,
             const Azure::Core::Url& url,
             const GetQueuePropertiesOptions& options,
@@ -1722,7 +1722,7 @@ namespace Azure { namespace Storage { namespace Queues {
           }
           auto pHttpResponse = pipeline.Send(request, context);
           Azure::Core::Http::RawResponse& httpResponse = *pHttpResponse;
-          QueueProperties response;
+          GetQueuePropertiesResult response;
           auto http_status_code = httpResponse.GetStatusCode();
           if (http_status_code != Azure::Core::Http::HttpStatusCode::Ok)
           {
@@ -1736,7 +1736,8 @@ namespace Azure { namespace Storage { namespace Queues {
           }
           response.ApproximateMessageCount
               = std::stoll(httpResponse.GetHeaders().at("x-ms-approximate-messages-count"));
-          return Azure::Response<QueueProperties>(std::move(response), std::move(pHttpResponse));
+          return Azure::Response<GetQueuePropertiesResult>(
+              std::move(response), std::move(pHttpResponse));
         }
 
         struct GetQueueAccessPolicyOptions final
@@ -1744,7 +1745,7 @@ namespace Azure { namespace Storage { namespace Queues {
           Azure::Nullable<int32_t> Timeout;
         }; // struct GetQueueAccessPolicyOptions
 
-        static Azure::Response<QueueAccessPolicy> GetAccessPolicy(
+        static Azure::Response<GetQueueAccessPolicyResult> GetAccessPolicy(
             Azure::Core::Http::_internal::HttpPipeline& pipeline,
             const Azure::Core::Url& url,
             const GetQueueAccessPolicyOptions& options,
@@ -1760,7 +1761,7 @@ namespace Azure { namespace Storage { namespace Queues {
           request.GetUrl().AppendQueryParameter("comp", "acl");
           auto pHttpResponse = pipeline.Send(request, context);
           Azure::Core::Http::RawResponse& httpResponse = *pHttpResponse;
-          QueueAccessPolicy response;
+          GetQueueAccessPolicyResult response;
           auto http_status_code = httpResponse.GetStatusCode();
           if (http_status_code != Azure::Core::Http::HttpStatusCode::Ok)
           {
@@ -1770,9 +1771,10 @@ namespace Azure { namespace Storage { namespace Queues {
             const auto& httpResponseBody = httpResponse.GetBody();
             _internal::XmlReader reader(
                 reinterpret_cast<const char*>(httpResponseBody.data()), httpResponseBody.size());
-            response = QueueAccessPolicyFromXml(reader);
+            response = GetQueueAccessPolicyResultFromXml(reader);
           }
-          return Azure::Response<QueueAccessPolicy>(std::move(response), std::move(pHttpResponse));
+          return Azure::Response<GetQueueAccessPolicyResult>(
+              std::move(response), std::move(pHttpResponse));
         }
 
         struct SetQueueAccessPolicyOptions final
@@ -2235,6 +2237,63 @@ namespace Azure { namespace Storage { namespace Queues {
           return ret;
         }
 
+        static GetQueueAccessPolicyResult GetQueueAccessPolicyResultFromXml(
+            _internal::XmlReader& reader)
+        {
+          GetQueueAccessPolicyResult ret;
+          enum class XmlTagName
+          {
+            k_SignedIdentifiers,
+            k_SignedIdentifier,
+            k_Unknown,
+          };
+          std::vector<XmlTagName> path;
+          while (true)
+          {
+            auto node = reader.Read();
+            if (node.Type == _internal::XmlNodeType::End)
+            {
+              break;
+            }
+            else if (node.Type == _internal::XmlNodeType::EndTag)
+            {
+              if (path.size() > 0)
+              {
+                path.pop_back();
+              }
+              else
+              {
+                break;
+              }
+            }
+            else if (node.Type == _internal::XmlNodeType::StartTag)
+            {
+              if (node.Name == "SignedIdentifiers")
+              {
+                path.emplace_back(XmlTagName::k_SignedIdentifiers);
+              }
+              else if (node.Name == "SignedIdentifier")
+              {
+                path.emplace_back(XmlTagName::k_SignedIdentifier);
+              }
+              else
+              {
+                path.emplace_back(XmlTagName::k_Unknown);
+              }
+              if (path.size() == 2 && path[0] == XmlTagName::k_SignedIdentifiers
+                  && path[1] == XmlTagName::k_SignedIdentifier)
+              {
+                ret.SignedIdentifiers.emplace_back(SignedIdentifierFromXml(reader));
+                path.pop_back();
+              }
+            }
+            else if (node.Type == _internal::XmlNodeType::Text)
+            {
+            }
+          }
+          return ret;
+        }
+
         static PeekMessagesResult PeekMessagesResultFromXml(_internal::XmlReader& reader)
         {
           PeekMessagesResult ret;
@@ -2281,62 +2340,6 @@ namespace Azure { namespace Storage { namespace Queues {
                   && path[1] == XmlTagName::k_QueueMessage)
               {
                 ret.Messages.emplace_back(PeekedQueueMessageFromXml(reader));
-                path.pop_back();
-              }
-            }
-            else if (node.Type == _internal::XmlNodeType::Text)
-            {
-            }
-          }
-          return ret;
-        }
-
-        static QueueAccessPolicy QueueAccessPolicyFromXml(_internal::XmlReader& reader)
-        {
-          QueueAccessPolicy ret;
-          enum class XmlTagName
-          {
-            k_SignedIdentifiers,
-            k_SignedIdentifier,
-            k_Unknown,
-          };
-          std::vector<XmlTagName> path;
-          while (true)
-          {
-            auto node = reader.Read();
-            if (node.Type == _internal::XmlNodeType::End)
-            {
-              break;
-            }
-            else if (node.Type == _internal::XmlNodeType::EndTag)
-            {
-              if (path.size() > 0)
-              {
-                path.pop_back();
-              }
-              else
-              {
-                break;
-              }
-            }
-            else if (node.Type == _internal::XmlNodeType::StartTag)
-            {
-              if (node.Name == "SignedIdentifiers")
-              {
-                path.emplace_back(XmlTagName::k_SignedIdentifiers);
-              }
-              else if (node.Name == "SignedIdentifier")
-              {
-                path.emplace_back(XmlTagName::k_SignedIdentifier);
-              }
-              else
-              {
-                path.emplace_back(XmlTagName::k_Unknown);
-              }
-              if (path.size() == 2 && path[0] == XmlTagName::k_SignedIdentifiers
-                  && path[1] == XmlTagName::k_SignedIdentifier)
-              {
-                ret.SignedIdentifiers.emplace_back(SignedIdentifierFromXml(reader));
                 path.pop_back();
               }
             }
