@@ -267,6 +267,29 @@ namespace Azure { namespace Storage { namespace Queues {
     }; // struct Metrics
 
     /**
+     * @brief Properties of queue service.
+     */
+    struct QueueServiceProperties final
+    {
+      /**
+       * Azure analytics logging settings.
+       */
+      AnalyticsLogging Logging;
+      /**
+       * Summary of request statistics grouped by API in hour aggregates for queues.
+       */
+      Metrics HourMetrics;
+      /**
+       * Summary of request statistics grouped by API in minute aggregates for queues.
+       */
+      Metrics MinuteMetrics;
+      /**
+       * CORS rules set.
+       */
+      std::vector<CorsRule> Cors;
+    }; // struct QueueServiceProperties
+
+    /**
      * @brief Response type for #Azure::Storage::Queues::QueueClient::ClearMessages.
      */
     struct ClearMessagesResult final
@@ -325,6 +348,25 @@ namespace Azure { namespace Storage { namespace Queues {
        */
       Azure::DateTime NextVisibleOn;
     }; // struct EnqueueMessageResult
+
+    /**
+     * @brief Response type for #Azure::Storage::Queues::QueueServiceClient::GetProperties.
+     */
+    struct GetServicePropertiesResult final
+    {
+      QueueServiceProperties Properties;
+    }; // struct GetServicePropertiesResult
+
+    /**
+     * @brief Response tyoe for #Azure::Storage::Queues::QueueServiceClient::GetStatistics.
+     */
+    struct GetServiceStatisticsResult final
+    {
+      /**
+       * Geo-replication information for the secondary storage endpoint.
+       */
+      Models::GeoReplication GeoReplication;
+    }; // struct GetServiceStatisticsResult
 
     enum class ListQueuesIncludeFlags
     {
@@ -401,29 +443,6 @@ namespace Azure { namespace Storage { namespace Queues {
       int64_t ApproximateMessageCount = 0;
     }; // struct QueueProperties
 
-    /**
-     * @brief Properties of queue service.
-     */
-    struct QueueServiceProperties final
-    {
-      /**
-       * Azure analytics logging settings.
-       */
-      AnalyticsLogging Logging;
-      /**
-       * Summary of request statistics grouped by API in hour aggregates for queues.
-       */
-      Metrics HourMetrics;
-      /**
-       * Summary of request statistics grouped by API in minute aggregates for queues.
-       */
-      Metrics MinuteMetrics;
-      /**
-       * CORS rules set.
-       */
-      std::vector<CorsRule> Cors;
-    }; // struct QueueServiceProperties
-
     struct ReceiveMessagesResult final
     {
       /**
@@ -431,17 +450,6 @@ namespace Azure { namespace Storage { namespace Queues {
        */
       std::vector<QueueMessage> Messages;
     }; // struct ReceiveMessagesResult
-
-    /**
-     * @brief Statistics for the storage service.
-     */
-    struct ServiceStatistics final
-    {
-      /**
-       * Geo-replication information for the secondary storage endpoint.
-       */
-      Models::GeoReplication GeoReplication;
-    }; // struct ServiceStatistics
 
     /**
      * @brief Response type for #Azure::Storage::Queues::QueueClient::SetAccessPolicy.
@@ -593,7 +601,7 @@ namespace Azure { namespace Storage { namespace Queues {
           Azure::Nullable<int32_t> Timeout;
         }; // struct GetServicePropertiesOptions
 
-        static Azure::Response<QueueServiceProperties> GetProperties(
+        static Azure::Response<GetServicePropertiesResult> GetProperties(
             Azure::Core::Http::_internal::HttpPipeline& pipeline,
             const Azure::Core::Url& url,
             const GetServicePropertiesOptions& options,
@@ -610,7 +618,7 @@ namespace Azure { namespace Storage { namespace Queues {
           }
           auto pHttpResponse = pipeline.Send(request, context);
           Azure::Core::Http::RawResponse& httpResponse = *pHttpResponse;
-          QueueServiceProperties response;
+          GetServicePropertiesResult response;
           auto http_status_code = httpResponse.GetStatusCode();
           if (http_status_code != Azure::Core::Http::HttpStatusCode::Ok)
           {
@@ -620,9 +628,9 @@ namespace Azure { namespace Storage { namespace Queues {
             const auto& httpResponseBody = httpResponse.GetBody();
             _internal::XmlReader reader(
                 reinterpret_cast<const char*>(httpResponseBody.data()), httpResponseBody.size());
-            response = QueueServicePropertiesFromXml(reader);
+            response = GetServicePropertiesResultFromXml(reader);
           }
-          return Azure::Response<QueueServiceProperties>(
+          return Azure::Response<GetServicePropertiesResult>(
               std::move(response), std::move(pHttpResponse));
         }
 
@@ -675,7 +683,7 @@ namespace Azure { namespace Storage { namespace Queues {
           Azure::Nullable<int32_t> Timeout;
         }; // struct GetServiceStatisticsOptions
 
-        static Azure::Response<ServiceStatistics> GetStatistics(
+        static Azure::Response<GetServiceStatisticsResult> GetStatistics(
             Azure::Core::Http::_internal::HttpPipeline& pipeline,
             const Azure::Core::Url& url,
             const GetServiceStatisticsOptions& options,
@@ -692,7 +700,7 @@ namespace Azure { namespace Storage { namespace Queues {
           }
           auto pHttpResponse = pipeline.Send(request, context);
           Azure::Core::Http::RawResponse& httpResponse = *pHttpResponse;
-          ServiceStatistics response;
+          GetServiceStatisticsResult response;
           auto http_status_code = httpResponse.GetStatusCode();
           if (http_status_code != Azure::Core::Http::HttpStatusCode::Ok)
           {
@@ -702,12 +710,121 @@ namespace Azure { namespace Storage { namespace Queues {
             const auto& httpResponseBody = httpResponse.GetBody();
             _internal::XmlReader reader(
                 reinterpret_cast<const char*>(httpResponseBody.data()), httpResponseBody.size());
-            response = ServiceStatisticsFromXml(reader);
+            response = GetServiceStatisticsResultFromXml(reader);
           }
-          return Azure::Response<ServiceStatistics>(std::move(response), std::move(pHttpResponse));
+          return Azure::Response<GetServiceStatisticsResult>(
+              std::move(response), std::move(pHttpResponse));
         }
 
       private:
+        static GetServicePropertiesResult GetServicePropertiesResultFromXml(
+            _internal::XmlReader& reader)
+        {
+          GetServicePropertiesResult ret;
+          enum class XmlTagName
+          {
+            k_StorageServiceProperties,
+            k_Unknown,
+          };
+          std::vector<XmlTagName> path;
+          while (true)
+          {
+            auto node = reader.Read();
+            if (node.Type == _internal::XmlNodeType::End)
+            {
+              break;
+            }
+            else if (node.Type == _internal::XmlNodeType::EndTag)
+            {
+              if (path.size() > 0)
+              {
+                path.pop_back();
+              }
+              else
+              {
+                break;
+              }
+            }
+            else if (node.Type == _internal::XmlNodeType::StartTag)
+            {
+              if (node.Name == "StorageServiceProperties")
+              {
+                path.emplace_back(XmlTagName::k_StorageServiceProperties);
+              }
+              else
+              {
+                path.emplace_back(XmlTagName::k_Unknown);
+              }
+              if (path.size() == 1 && path[0] == XmlTagName::k_StorageServiceProperties)
+              {
+                ret.Properties = QueueServicePropertiesFromXml(reader);
+                path.pop_back();
+              }
+            }
+            else if (node.Type == _internal::XmlNodeType::Text)
+            {
+            }
+          }
+          return ret;
+        }
+
+        static GetServiceStatisticsResult GetServiceStatisticsResultFromXml(
+            _internal::XmlReader& reader)
+        {
+          GetServiceStatisticsResult ret;
+          enum class XmlTagName
+          {
+            k_StorageServiceStats,
+            k_GeoReplication,
+            k_Unknown,
+          };
+          std::vector<XmlTagName> path;
+          while (true)
+          {
+            auto node = reader.Read();
+            if (node.Type == _internal::XmlNodeType::End)
+            {
+              break;
+            }
+            else if (node.Type == _internal::XmlNodeType::EndTag)
+            {
+              if (path.size() > 0)
+              {
+                path.pop_back();
+              }
+              else
+              {
+                break;
+              }
+            }
+            else if (node.Type == _internal::XmlNodeType::StartTag)
+            {
+              if (node.Name == "StorageServiceStats")
+              {
+                path.emplace_back(XmlTagName::k_StorageServiceStats);
+              }
+              else if (node.Name == "GeoReplication")
+              {
+                path.emplace_back(XmlTagName::k_GeoReplication);
+              }
+              else
+              {
+                path.emplace_back(XmlTagName::k_Unknown);
+              }
+              if (path.size() == 2 && path[0] == XmlTagName::k_StorageServiceStats
+                  && path[1] == XmlTagName::k_GeoReplication)
+              {
+                ret.GeoReplication = GeoReplicationFromXml(reader);
+                path.pop_back();
+              }
+            }
+            else if (node.Type == _internal::XmlNodeType::Text)
+            {
+            }
+          }
+          return ret;
+        }
+
         static Models::_detail::ListQueuesResult ListQueuesResultInternalFromXml(
             _internal::XmlReader& reader)
         {
@@ -799,12 +916,129 @@ namespace Azure { namespace Storage { namespace Queues {
           return ret;
         }
 
+        static GeoReplication GeoReplicationFromXml(_internal::XmlReader& reader)
+        {
+          GeoReplication ret;
+          enum class XmlTagName
+          {
+            k_Status,
+            k_LastSyncTime,
+            k_Unknown,
+          };
+          std::vector<XmlTagName> path;
+          while (true)
+          {
+            auto node = reader.Read();
+            if (node.Type == _internal::XmlNodeType::End)
+            {
+              break;
+            }
+            else if (node.Type == _internal::XmlNodeType::EndTag)
+            {
+              if (path.size() > 0)
+              {
+                path.pop_back();
+              }
+              else
+              {
+                break;
+              }
+            }
+            else if (node.Type == _internal::XmlNodeType::StartTag)
+            {
+              if (node.Name == "Status")
+              {
+                path.emplace_back(XmlTagName::k_Status);
+              }
+              else if (node.Name == "LastSyncTime")
+              {
+                path.emplace_back(XmlTagName::k_LastSyncTime);
+              }
+              else
+              {
+                path.emplace_back(XmlTagName::k_Unknown);
+              }
+            }
+            else if (node.Type == _internal::XmlNodeType::Text)
+            {
+              if (path.size() == 1 && path[0] == XmlTagName::k_Status)
+              {
+                ret.Status = GeoReplicationStatus(node.Value);
+              }
+              else if (path.size() == 1 && path[0] == XmlTagName::k_LastSyncTime)
+              {
+                ret.LastSyncedOn
+                    = Azure::DateTime::Parse(node.Value, Azure::DateTime::DateFormat::Rfc1123);
+              }
+            }
+          }
+          return ret;
+        }
+
+        static QueueItem QueueItemFromXml(_internal::XmlReader& reader)
+        {
+          QueueItem ret;
+          enum class XmlTagName
+          {
+            k_Name,
+            k_Metadata,
+            k_Unknown,
+          };
+          std::vector<XmlTagName> path;
+          while (true)
+          {
+            auto node = reader.Read();
+            if (node.Type == _internal::XmlNodeType::End)
+            {
+              break;
+            }
+            else if (node.Type == _internal::XmlNodeType::EndTag)
+            {
+              if (path.size() > 0)
+              {
+                path.pop_back();
+              }
+              else
+              {
+                break;
+              }
+            }
+            else if (node.Type == _internal::XmlNodeType::StartTag)
+            {
+              if (node.Name == "Name")
+              {
+                path.emplace_back(XmlTagName::k_Name);
+              }
+              else if (node.Name == "Metadata")
+              {
+                path.emplace_back(XmlTagName::k_Metadata);
+              }
+              else
+              {
+                path.emplace_back(XmlTagName::k_Unknown);
+              }
+              if (path.size() == 1 && path[0] == XmlTagName::k_Metadata)
+              {
+                ret.Metadata = MetadataFromXml(reader);
+                path.pop_back();
+              }
+            }
+            else if (node.Type == _internal::XmlNodeType::Text)
+            {
+              if (path.size() == 1 && path[0] == XmlTagName::k_Name)
+              {
+                ret.Name = node.Value;
+              }
+            }
+          }
+          return ret;
+        }
+
         static QueueServiceProperties QueueServicePropertiesFromXml(_internal::XmlReader& reader)
         {
           QueueServiceProperties ret;
           enum class XmlTagName
           {
-            k_StorageServiceProperties,
             k_Logging,
             k_HourMetrics,
             k_MinuteMetrics,
@@ -833,11 +1067,7 @@ namespace Azure { namespace Storage { namespace Queues {
             }
             else if (node.Type == _internal::XmlNodeType::StartTag)
             {
-              if (node.Name == "StorageServiceProperties")
-              {
-                path.emplace_back(XmlTagName::k_StorageServiceProperties);
-              }
-              else if (node.Name == "Logging")
+              if (node.Name == "Logging")
               {
                 path.emplace_back(XmlTagName::k_Logging);
               }
@@ -861,87 +1091,26 @@ namespace Azure { namespace Storage { namespace Queues {
               {
                 path.emplace_back(XmlTagName::k_Unknown);
               }
-              if (path.size() == 2 && path[0] == XmlTagName::k_StorageServiceProperties
-                  && path[1] == XmlTagName::k_Logging)
+              if (path.size() == 1 && path[0] == XmlTagName::k_Logging)
               {
                 ret.Logging = AnalyticsLoggingFromXml(reader);
                 path.pop_back();
               }
-              else if (
-                  path.size() == 2 && path[0] == XmlTagName::k_StorageServiceProperties
-                  && path[1] == XmlTagName::k_HourMetrics)
+              else if (path.size() == 1 && path[0] == XmlTagName::k_HourMetrics)
               {
                 ret.HourMetrics = MetricsFromXml(reader);
                 path.pop_back();
               }
-              else if (
-                  path.size() == 2 && path[0] == XmlTagName::k_StorageServiceProperties
-                  && path[1] == XmlTagName::k_MinuteMetrics)
+              else if (path.size() == 1 && path[0] == XmlTagName::k_MinuteMetrics)
               {
                 ret.MinuteMetrics = MetricsFromXml(reader);
                 path.pop_back();
               }
               else if (
-                  path.size() == 3 && path[0] == XmlTagName::k_StorageServiceProperties
-                  && path[1] == XmlTagName::k_Cors && path[2] == XmlTagName::k_CorsRule)
+                  path.size() == 2 && path[0] == XmlTagName::k_Cors
+                  && path[1] == XmlTagName::k_CorsRule)
               {
                 ret.Cors.emplace_back(CorsRuleFromXml(reader));
-                path.pop_back();
-              }
-            }
-            else if (node.Type == _internal::XmlNodeType::Text)
-            {
-            }
-          }
-          return ret;
-        }
-
-        static ServiceStatistics ServiceStatisticsFromXml(_internal::XmlReader& reader)
-        {
-          ServiceStatistics ret;
-          enum class XmlTagName
-          {
-            k_StorageServiceStats,
-            k_GeoReplication,
-            k_Unknown,
-          };
-          std::vector<XmlTagName> path;
-          while (true)
-          {
-            auto node = reader.Read();
-            if (node.Type == _internal::XmlNodeType::End)
-            {
-              break;
-            }
-            else if (node.Type == _internal::XmlNodeType::EndTag)
-            {
-              if (path.size() > 0)
-              {
-                path.pop_back();
-              }
-              else
-              {
-                break;
-              }
-            }
-            else if (node.Type == _internal::XmlNodeType::StartTag)
-            {
-              if (node.Name == "StorageServiceStats")
-              {
-                path.emplace_back(XmlTagName::k_StorageServiceStats);
-              }
-              else if (node.Name == "GeoReplication")
-              {
-                path.emplace_back(XmlTagName::k_GeoReplication);
-              }
-              else
-              {
-                path.emplace_back(XmlTagName::k_Unknown);
-              }
-              if (path.size() == 2 && path[0] == XmlTagName::k_StorageServiceStats
-                  && path[1] == XmlTagName::k_GeoReplication)
-              {
-                ret.GeoReplication = GeoReplicationFromXml(reader);
                 path.pop_back();
               }
             }
@@ -1123,16 +1292,11 @@ namespace Azure { namespace Storage { namespace Queues {
           return ret;
         }
 
-        static GeoReplication GeoReplicationFromXml(_internal::XmlReader& reader)
+        static Metadata MetadataFromXml(_internal::XmlReader& reader)
         {
-          GeoReplication ret;
-          enum class XmlTagName
-          {
-            k_Status,
-            k_LastSyncTime,
-            k_Unknown,
-          };
-          std::vector<XmlTagName> path;
+          Metadata ret;
+          int depth = 0;
+          std::string key;
           while (true)
           {
             auto node = reader.Read();
@@ -1140,43 +1304,23 @@ namespace Azure { namespace Storage { namespace Queues {
             {
               break;
             }
+            else if (node.Type == _internal::XmlNodeType::StartTag)
+            {
+              if (depth++ == 0)
+              {
+                key = node.Name;
+              }
+            }
             else if (node.Type == _internal::XmlNodeType::EndTag)
             {
-              if (path.size() > 0)
-              {
-                path.pop_back();
-              }
-              else
+              if (depth-- == 0)
               {
                 break;
               }
             }
-            else if (node.Type == _internal::XmlNodeType::StartTag)
+            else if (depth == 1 && node.Type == _internal::XmlNodeType::Text)
             {
-              if (node.Name == "Status")
-              {
-                path.emplace_back(XmlTagName::k_Status);
-              }
-              else if (node.Name == "LastSyncTime")
-              {
-                path.emplace_back(XmlTagName::k_LastSyncTime);
-              }
-              else
-              {
-                path.emplace_back(XmlTagName::k_Unknown);
-              }
-            }
-            else if (node.Type == _internal::XmlNodeType::Text)
-            {
-              if (path.size() == 1 && path[0] == XmlTagName::k_Status)
-              {
-                ret.Status = GeoReplicationStatus(node.Value);
-              }
-              else if (path.size() == 1 && path[0] == XmlTagName::k_LastSyncTime)
-              {
-                ret.LastSyncedOn
-                    = Azure::DateTime::Parse(node.Value, Azure::DateTime::DateFormat::Rfc1123);
-              }
+              ret.emplace(std::move(key), node.Value);
             }
           }
           return ret;
@@ -1254,99 +1398,6 @@ namespace Azure { namespace Storage { namespace Queues {
               {
                 ret.IncludeApis = node.Value == "true";
               }
-            }
-          }
-          return ret;
-        }
-
-        static QueueItem QueueItemFromXml(_internal::XmlReader& reader)
-        {
-          QueueItem ret;
-          enum class XmlTagName
-          {
-            k_Name,
-            k_Metadata,
-            k_Unknown,
-          };
-          std::vector<XmlTagName> path;
-          while (true)
-          {
-            auto node = reader.Read();
-            if (node.Type == _internal::XmlNodeType::End)
-            {
-              break;
-            }
-            else if (node.Type == _internal::XmlNodeType::EndTag)
-            {
-              if (path.size() > 0)
-              {
-                path.pop_back();
-              }
-              else
-              {
-                break;
-              }
-            }
-            else if (node.Type == _internal::XmlNodeType::StartTag)
-            {
-              if (node.Name == "Name")
-              {
-                path.emplace_back(XmlTagName::k_Name);
-              }
-              else if (node.Name == "Metadata")
-              {
-                path.emplace_back(XmlTagName::k_Metadata);
-              }
-              else
-              {
-                path.emplace_back(XmlTagName::k_Unknown);
-              }
-              if (path.size() == 1 && path[0] == XmlTagName::k_Metadata)
-              {
-                ret.Metadata = MetadataFromXml(reader);
-                path.pop_back();
-              }
-            }
-            else if (node.Type == _internal::XmlNodeType::Text)
-            {
-              if (path.size() == 1 && path[0] == XmlTagName::k_Name)
-              {
-                ret.Name = node.Value;
-              }
-            }
-          }
-          return ret;
-        }
-
-        static Metadata MetadataFromXml(_internal::XmlReader& reader)
-        {
-          Metadata ret;
-          int depth = 0;
-          std::string key;
-          while (true)
-          {
-            auto node = reader.Read();
-            if (node.Type == _internal::XmlNodeType::End)
-            {
-              break;
-            }
-            else if (node.Type == _internal::XmlNodeType::StartTag)
-            {
-              if (depth++ == 0)
-              {
-                key = node.Name;
-              }
-            }
-            else if (node.Type == _internal::XmlNodeType::EndTag)
-            {
-              if (depth-- == 0)
-              {
-                break;
-              }
-            }
-            else if (depth == 1 && node.Type == _internal::XmlNodeType::Text)
-            {
-              ret.emplace(std::move(key), node.Value);
             }
           }
           return ret;
