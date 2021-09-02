@@ -1,4 +1,4 @@
-# Azure Key Vault Certificate client library for C++
+# Azure Key Vault Certificates client library for C++
 
 Azure Key Vault is a cloud service that provides secure storage of keys for encrypting your data.
 Multiple keys, and multiple versions of the same key, can be kept in the Azure Key Vault.
@@ -7,7 +7,6 @@ Cryptographic keys in Azure Key Vault are represented as [JSON Web Key (JWK)](ht
 Azure Key Vault Managed HSM is a fully-managed, highly-available, single-tenant, standards-compliant cloud service that enables
 you to safeguard cryptographic keys for your cloud applications using FIPS 140-2 Level 3 validated HSMs.
 
-The Azure Key Vault keys library client supports RSA keys and Elliptic Curve (EC) keys, each with corresponding support in hardware security modules (HSM). It offers operations to create, retrieve, update, delete, purge, backup, restore, and list the keys and its versions.
 
 [Source code][key_client_src] | [VCPKG][key_client_vcpkg_package] | [API reference documentation][api_reference] | [Product documentation][keyvault_docs] | [Samples][key_client_samples]
 
@@ -20,13 +19,13 @@ The easiest way to acquire the C++ SDK is leveraging vcpkg package manager. See 
 To install Azure Security Key Vault Keys package via vcpkg:
 
 ```cmd
-> vcpkg install azure-security-keyvault-keys-cpp
+> vcpkg install azure-security-keyvault-certificates-cpp
 ```
 
 Then, use in your CMake file:
 
 ```CMake
-find_package(azure-security-keyvault-keys-cpp CONFIG REQUIRED)
+find_package(azure-security-keyvault-certificates-cpp CONFIG REQUIRED)
 target_link_libraries(<your project name> PRIVATE Azure::azure-security-keyvault-keys)
 ```
 
