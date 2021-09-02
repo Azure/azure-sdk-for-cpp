@@ -146,10 +146,10 @@ _detail::KeyVaultCertificateSerializer::KeyVaultCertificateDeserialize(
     // issuer
     {
       auto const issuerJson = policyJson[IssuerPropertyName];
-      JsonOptional::SetIfExists(certificate.Policy.Issuer.Name, issuerJson, IssuerNamePropertyName);
+      JsonOptional::SetIfExists(certificate.Policy.IssuerName, issuerJson, IssuerNamePropertyName);
       JsonOptional::SetIfExists(
-          certificate.Policy.Issuer.CertTransparency, issuerJson, CertTransparencyPropertyName);
-      JsonOptional::SetIfExists(certificate.Policy.Issuer.Cty, issuerJson, CtyPropertyName);
+          certificate.Policy.CertificateTransparency, issuerJson, CertTransparencyPropertyName);
+      JsonOptional::SetIfExists(certificate.Policy.CertificateType, issuerJson, CtyPropertyName);
     }
     // attributes
     {

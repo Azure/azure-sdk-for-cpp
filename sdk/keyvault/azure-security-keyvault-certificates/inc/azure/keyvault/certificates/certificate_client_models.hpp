@@ -641,34 +641,6 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
   };
 
   /**
-   * @brief Properties of a CertificateIssuer.
-   *
-   */
-  struct IssuerParameters final
-  {
-    /**
-     * @brief Indicates if the certificates generated under this policy should be published to
-     * certificate transparency logs.
-     *
-     */
-    Azure::Nullable<bool> CertTransparency;
-
-    /**
-     * @brief Certificate type as supported by the provider (optional); for example 'OV-SSL',
-     * 'EV-SSL'.
-     *
-     */
-    Azure::Nullable<std::string> Cty;
-
-    /**
-     * @brief Name of the referenced issuer object or reserved names; for example, 'Self' or
-     'Unknown'.
-     *
-     */
-    Azure::Nullable<std::string> Name;
-  };
-
-  /**
    * @brief A policy which governs the lifecycle a properties of a certificate managed by Azure Key
    * Vault.
    *
@@ -721,10 +693,25 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
     struct SubjectAlternativeNames SubjectAlternativeNames;
 
     /**
-     * @brief Get the issuer for a certificate.
+     * @brief Indicates if the certificates generated under this policy should be published to
+     * certificate transparency logs.
      *
      */
-    IssuerParameters Issuer;
+    Azure::Nullable<bool> CertificateTransparency;
+
+    /**
+     * @brief Certificate type as supported by the provider (optional); for example 'OV-SSL',
+     * 'EV-SSL'.
+     *
+     */
+    Azure::Nullable<std::string> CertificateType;
+
+    /**
+     * @brief Name of the referenced issuer object or reserved names; for example, 'Self' or
+     'Unknown'.
+     *
+     */
+    Azure::Nullable<std::string> IssuerName;
 
     /**
      * @brief Get the CertificateContentType of the certificate.

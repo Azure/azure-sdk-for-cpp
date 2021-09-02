@@ -68,7 +68,7 @@ TEST_F(KeyVaultCertificateClientTest, GetCertificate)
       EXPECT_TRUE(policy.Subject.size() > 0);
 
       // issuer
-      EXPECT_TRUE(policy.Issuer.Name.HasValue());
+      EXPECT_TRUE(policy.IssuerName.HasValue());
 
       // attributes
       EXPECT_TRUE(policy.CreatedOn.HasValue());
