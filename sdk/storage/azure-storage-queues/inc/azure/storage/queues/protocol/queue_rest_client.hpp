@@ -281,7 +281,7 @@ namespace Azure { namespace Storage { namespace Queues {
       /**
        * Indicates if the queue was successfully created in this operation.
        */
-      bool Created = true;
+      bool Created = false;
     }; // struct CreateQueueResult
 
     struct DeleteMessageResult final
@@ -296,7 +296,7 @@ namespace Azure { namespace Storage { namespace Queues {
       /**
        * Indicates if the queue was successfully deleted in this operation.
        */
-      bool Deleted = true;
+      bool Deleted = false;
     }; // struct DeleteQueueResult
 
     /**
@@ -1572,9 +1572,9 @@ namespace Azure { namespace Storage { namespace Queues {
           {
             throw StorageException::CreateFromResponse(std::move(pHttpResponse));
           }
-          if (http_status_code == Azure::Core::Http::HttpStatusCode::NoContent)
+          if (http_status_code == Azure::Core::Http::HttpStatusCode::Created)
           {
-            response.Created = false;
+            response.Created = true;
           }
           return Azure::Response<CreateQueueResult>(std::move(response), std::move(pHttpResponse));
         }
@@ -1601,9 +1601,14 @@ namespace Azure { namespace Storage { namespace Queues {
           Azure::Core::Http::RawResponse& httpResponse = *pHttpResponse;
           DeleteQueueResult response;
           auto http_status_code = httpResponse.GetStatusCode();
-          if (http_status_code != Azure::Core::Http::HttpStatusCode::NoContent)
+          if (!(http_status_code == Azure::Core::Http::HttpStatusCode::NoContent
+                || http_status_code == Azure::Core::Http::HttpStatusCode::NotFound))
           {
             throw StorageException::CreateFromResponse(std::move(pHttpResponse));
+          }
+          if (http_status_code == Azure::Core::Http::HttpStatusCode::NoContent)
+          {
+            response.Deleted = true;
           }
           return Azure::Response<DeleteQueueResult>(std::move(response), std::move(pHttpResponse));
         }

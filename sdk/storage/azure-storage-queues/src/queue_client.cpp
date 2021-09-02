@@ -108,19 +108,12 @@ namespace Azure { namespace Storage { namespace Queues {
       const CreateQueueOptions& options,
       const Azure::Core::Context& context) const
   {
-    _detail::QueueRestClient::Queue::CreateQueueOptions protocolLayerOptions;
-    protocolLayerOptions.Metadata = options.Metadata;
-    return _detail::QueueRestClient::Queue::Create(
-        *m_pipeline, m_queueUrl, protocolLayerOptions, context);
-  }
-
-  Azure::Response<Models::CreateQueueResult> QueueClient::CreateIfNotExists(
-      const CreateQueueOptions& options,
-      const Azure::Core::Context& context) const
-  {
     try
     {
-      return Create(options, context);
+      _detail::QueueRestClient::Queue::CreateQueueOptions protocolLayerOptions;
+      protocolLayerOptions.Metadata = options.Metadata;
+      return _detail::QueueRestClient::Queue::Create(
+          *m_pipeline, m_queueUrl, protocolLayerOptions, context);
     }
     catch (StorageException& e)
     {

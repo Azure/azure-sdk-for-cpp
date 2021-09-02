@@ -87,20 +87,6 @@ namespace Azure { namespace Storage { namespace Queues {
 
     /**
      * @brief Creates a new queue under the specified account. If the queue with the same name
-     * already exists and the metadata is identical to the one of the existing queue, the operation
-     * is successful and the value of CreateQueueResult.Created is false. If the metadata doesn't
-     * match the one of the existing queue, the operation fails.
-     *
-     * @param options Optional parameters to execute this function.
-     * @param context Context for cancelling long running operations.
-     * @return A CreateQueueResult describing the newly created blob container.
-     */
-    Azure::Response<Models::CreateQueueResult> Create(
-        const CreateQueueOptions& options = CreateQueueOptions(),
-        const Azure::Core::Context& context = Azure::Core::Context()) const;
-
-    /**
-     * @brief Creates a new queue under the specified account. If the queue with the same name
      * already exists, it is not changed.
      *
      * @param options Optional parameters to execute this function.
@@ -108,7 +94,7 @@ namespace Azure { namespace Storage { namespace Queues {
      * @return A CreateQueueResult describing the newly created queue if the queue doesn't exist.
      * CreateQueueResult.Created is false if the queue already exists.
      */
-    Azure::Response<Models::CreateQueueResult> CreateIfNotExists(
+    Azure::Response<Models::CreateQueueResult> Create(
         const CreateQueueOptions& options = CreateQueueOptions(),
         const Azure::Core::Context& context = Azure::Core::Context()) const;
 
