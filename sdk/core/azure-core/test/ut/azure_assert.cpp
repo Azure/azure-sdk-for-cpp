@@ -5,4 +5,4 @@
 
 #include <gtest/gtest.h>
 
-TEST(AzureAssert, AzureNoReturnPath) { ASSERT_DEATH(AzureNoReturnPath("test")); }
+TEST(AzureAssert, AzureNoReturnPath) { ASSERT_DEATH(AzureNoReturnPath("test"), ""); }
