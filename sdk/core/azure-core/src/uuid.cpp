@@ -3,10 +3,6 @@
 
 #include "azure/core/uuid.hpp"
 
-#if defined(AZ_PLATFORM_POSIX)
-#include <openssl/rand.h> //for RAND_bytes
-#endif
-
 #include <cstdio>
 #include <random>
 
@@ -45,7 +41,6 @@ namespace Azure { namespace Core {
   {
     uint8_t uuid[UuidSize] = {};
 
-#if defined(AZ_PLATFORM_WINDOWS)
     std::random_device rd;
 
     for (size_t i = 0; i < UuidSize; i += 4)
@@ -53,16 +48,6 @@ namespace Azure { namespace Core {
       const uint32_t x = rd();
       std::memcpy(uuid + i, &x, 4);
     }
-#elif defined(AZ_PLATFORM_POSIX)
-    // This static cast is safe since we know Uuid size, which is a const, will always fit an int.
-    int ret = RAND_bytes(uuid, static_cast<int>(UuidSize));
-    if (ret <= 0)
-    {
-      abort();
-    }
-#else
-    abort();
-#endif
 
     // SetVariant to ReservedRFC4122
     uuid[8] = (uuid[8] | ReservedRFC4122) & 0x7F;
