@@ -15,8 +15,6 @@
     "eng/common/**/*",
     "json.hpp",
     "*nlohmann-json*",
-    "sdk/identity/**/*",
-    "sdk/core/**/*",
     "sdk/keyvault/azure-security-keyvault-keys/test/ut/recordings/*.json",
     "sdk/keyvault/azure-security-keyvault-keys/test/ut/key_client_import_test_live.cpp"
   ],
@@ -52,6 +50,7 @@
     "gtest",
     "Gzrs",
     "HKEY",
+    "IMDS",
     "itfactor",
     "Kirilov",
     "lcov",
@@ -118,6 +117,27 @@
       "words": [
         "SECG",
         "SECP"
+      ]
+    },
+    {
+      "filename": "**/sdk/core/azure-core/README.md",
+      "words": [
+        "myprogram"
+      ]
+    },
+    {
+      "filename": "**/sdk/core/azure-core/CHANGELOG.md",
+      "words": [
+        "Chisnall",
+        "copiable",
+        "davidchisnall",
+        "Gabor",
+        "Joubert",
+        "juchem",
+        "lordgamez",
+        "sjoubert",
+        "sourav",
+        "Sylvain"
       ]
     },
     {

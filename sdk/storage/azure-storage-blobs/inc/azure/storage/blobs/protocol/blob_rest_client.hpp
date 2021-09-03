@@ -296,11 +296,11 @@ namespace Azure { namespace Storage { namespace Blobs {
       /**
        * Date and time since when this policy is active.
        */
-      Azure::DateTime StartsOn;
+      Azure::Nullable<Azure::DateTime> StartsOn;
       /**
        * Date and time the policy expires.
        */
-      Azure::DateTime ExpiresOn;
+      Azure::Nullable<Azure::DateTime> ExpiresOn;
       /**
        * The permissions for this ACL policy.
        */
@@ -6527,22 +6527,28 @@ namespace Azure { namespace Storage { namespace Blobs {
           writer.Write(_internal::XmlNode{_internal::XmlNodeType::Text, std::string(), options.Id});
           writer.Write(_internal::XmlNode{_internal::XmlNodeType::EndTag});
           writer.Write(_internal::XmlNode{_internal::XmlNodeType::StartTag, "AccessPolicy"});
-          writer.Write(_internal::XmlNode{_internal::XmlNodeType::StartTag, "Start"});
-          writer.Write(_internal::XmlNode{
-              _internal::XmlNodeType::Text,
-              std::string(),
-              options.StartsOn.ToString(
-                  Azure::DateTime::DateFormat::Rfc3339,
-                  Azure::DateTime::TimeFractionFormat::AllDigits)});
-          writer.Write(_internal::XmlNode{_internal::XmlNodeType::EndTag});
-          writer.Write(_internal::XmlNode{_internal::XmlNodeType::StartTag, "Expiry"});
-          writer.Write(_internal::XmlNode{
-              _internal::XmlNodeType::Text,
-              std::string(),
-              options.ExpiresOn.ToString(
-                  Azure::DateTime::DateFormat::Rfc3339,
-                  Azure::DateTime::TimeFractionFormat::AllDigits)});
-          writer.Write(_internal::XmlNode{_internal::XmlNodeType::EndTag});
+          if (options.StartsOn.HasValue())
+          {
+            writer.Write(_internal::XmlNode{_internal::XmlNodeType::StartTag, "Start"});
+            writer.Write(_internal::XmlNode{
+                _internal::XmlNodeType::Text,
+                std::string(),
+                options.StartsOn.Value().ToString(
+                    Azure::DateTime::DateFormat::Rfc3339,
+                    Azure::DateTime::TimeFractionFormat::AllDigits)});
+            writer.Write(_internal::XmlNode{_internal::XmlNodeType::EndTag});
+          }
+          if (options.ExpiresOn.HasValue())
+          {
+            writer.Write(_internal::XmlNode{_internal::XmlNodeType::StartTag, "Expiry"});
+            writer.Write(_internal::XmlNode{
+                _internal::XmlNodeType::Text,
+                std::string(),
+                options.ExpiresOn.Value().ToString(
+                    Azure::DateTime::DateFormat::Rfc3339,
+                    Azure::DateTime::TimeFractionFormat::AllDigits)});
+            writer.Write(_internal::XmlNode{_internal::XmlNodeType::EndTag});
+          }
           writer.Write(_internal::XmlNode{_internal::XmlNodeType::StartTag, "Permission"});
           writer.Write(
               _internal::XmlNode{_internal::XmlNodeType::Text, std::string(), options.Permissions});

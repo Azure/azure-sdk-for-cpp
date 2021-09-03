@@ -16,7 +16,7 @@ void QueuesEncodeMessage()
   std::string QueueName = "sample-queue";
 
   auto queueClient = QueueClient::CreateFromConnectionString(GetConnectionString(), QueueName);
-  queueClient.CreateIfNotExists();
+  queueClient.Create();
 
   // Binary message cannot be enqueued directly, we encode the message with Base64.
   std::vector<uint8_t> binaryMessage{0x00, 0x01, 0x02, 0x03};

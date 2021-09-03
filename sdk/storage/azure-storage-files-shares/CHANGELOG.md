@@ -6,6 +6,8 @@
 
 ### Breaking Changes
 
+- `AccessPolicy::StartsOn` and `AccessPolicy::ExpiresOn` are now nullable values.
+
 ### Bugs Fixed
 
 ### Other Changes

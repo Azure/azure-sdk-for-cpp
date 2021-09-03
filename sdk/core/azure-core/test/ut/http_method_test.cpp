@@ -7,6 +7,8 @@
 
 using namespace Azure::Core::Http;
 
+// cSpell:words humuhumunukunukuapuaa
+
 TEST(HttpMethod, Get)
 {
   HttpMethod const get = HttpMethod::Get;

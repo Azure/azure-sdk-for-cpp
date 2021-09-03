@@ -16,10 +16,6 @@ project(Application-using-keyvault-from-vcpkg LANGUAGES CXX)
 set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 
-find_package(CURL REQUIRED)
-find_package(azure-security-keyvault-keys-cpp CONFIG REQUIRED)
-find_package(azure-identity-cpp CONFIG REQUIRED)
-
 add_executable (
      application
      src/main
