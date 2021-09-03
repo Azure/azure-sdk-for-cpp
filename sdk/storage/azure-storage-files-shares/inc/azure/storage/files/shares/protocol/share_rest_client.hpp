@@ -5007,28 +5007,28 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         static void AccessPolicyToXml(_internal::XmlWriter& writer, const AccessPolicy& object)
         {
           writer.Write(_internal::XmlNode{_internal::XmlNodeType::StartTag, "AccessPolicy"});
-          writer.Write(_internal::XmlNode{_internal::XmlNodeType::StartTag, "Start"});
           if (object.StartsOn.HasValue())
           {
+            writer.Write(_internal::XmlNode{_internal::XmlNodeType::StartTag, "Start"});
             writer.Write(_internal::XmlNode{
                 _internal::XmlNodeType::Text,
                 std::string(),
                 object.StartsOn.Value().ToString(
                     Azure::DateTime::DateFormat::Rfc3339,
                     DateTime::TimeFractionFormat::AllDigits)});
+            writer.Write(_internal::XmlNode{_internal::XmlNodeType::EndTag});
           }
-          writer.Write(_internal::XmlNode{_internal::XmlNodeType::EndTag});
-          writer.Write(_internal::XmlNode{_internal::XmlNodeType::StartTag, "Expiry"});
           if (object.ExpiresOn.HasValue())
           {
+            writer.Write(_internal::XmlNode{_internal::XmlNodeType::StartTag, "Expiry"});
             writer.Write(_internal::XmlNode{
                 _internal::XmlNodeType::Text,
                 std::string(),
                 object.ExpiresOn.Value().ToString(
                     Azure::DateTime::DateFormat::Rfc3339,
                     DateTime::TimeFractionFormat::AllDigits)});
+            writer.Write(_internal::XmlNode{_internal::XmlNodeType::EndTag});
           }
-          writer.Write(_internal::XmlNode{_internal::XmlNodeType::EndTag});
           writer.Write(_internal::XmlNode{_internal::XmlNodeType::StartTag, "Permission"});
           writer.Write(
               _internal::XmlNode{_internal::XmlNodeType::Text, std::string(), object.Permission});

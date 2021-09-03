@@ -220,10 +220,23 @@ namespace Azure { namespace Storage { namespace Test {
   TEST_F(FileShareClientTest, ShareAccessPolicyNullable)
   {
     std::vector<Files::Shares::Models::SignedIdentifier> identifiers;
-    for (unsigned i = 0; i < 3; ++i)
     {
       Files::Shares::Models::SignedIdentifier identifier;
       identifier.Id = RandomString(64);
+      identifier.Policy.Permission = "r";
+      identifiers.emplace_back(identifier);
+    }
+    {
+      Files::Shares::Models::SignedIdentifier identifier;
+      identifier.Id = RandomString(64);
+      identifier.Policy.StartsOn = std::chrono::system_clock::now() - std::chrono::minutes(10);
+      identifier.Policy.Permission = "r";
+      identifiers.emplace_back(identifier);
+    }
+    {
+      Files::Shares::Models::SignedIdentifier identifier;
+      identifier.Id = RandomString(64);
+      identifier.Policy.ExpiresOn = std::chrono::system_clock::now() + std::chrono::minutes(100);
       identifier.Policy.Permission = "r";
       identifiers.emplace_back(identifier);
     }
