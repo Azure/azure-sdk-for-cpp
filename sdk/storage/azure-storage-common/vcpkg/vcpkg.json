@@ -16,7 +16,10 @@
       "default-features": false,
       "version>=": "1.0.0"
     },
-    "libxml2",
+    {
+      "name": "libxml2",
+      "platform": "!windows"
+    }
     {
       "name": "openssl",
       "platform": "!windows"
