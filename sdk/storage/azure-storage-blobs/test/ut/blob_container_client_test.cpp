@@ -15,7 +15,10 @@ namespace Azure { namespace Storage { namespace Blobs { namespace Models {
 
   bool operator==(const SignedIdentifier& lhs, const SignedIdentifier& rhs)
   {
-    return lhs.Id == rhs.Id && lhs.StartsOn == rhs.StartsOn && lhs.ExpiresOn == rhs.ExpiresOn
+    return lhs.Id == rhs.Id && lhs.StartsOn.HasValue() == rhs.StartsOn.HasValue()
+        && (!lhs.StartsOn.HasValue() || lhs.StartsOn.Value() == rhs.StartsOn.Value())
+        && lhs.ExpiresOn.HasValue() == rhs.ExpiresOn.HasValue()
+        && (!lhs.ExpiresOn.HasValue() || lhs.ExpiresOn.Value() == rhs.ExpiresOn.Value())
         && lhs.Permissions == rhs.Permissions;
   }
 
@@ -381,18 +384,36 @@ namespace Azure { namespace Storage { namespace Test {
 
     Blobs::SetBlobContainerAccessPolicyOptions options;
     options.AccessType = Blobs::Models::PublicAccessType::Blob;
-    Blobs::Models::SignedIdentifier identifier;
-    identifier.Id = RandomString(64);
-    identifier.StartsOn = std::chrono::system_clock::now() - std::chrono::minutes(1);
-    identifier.ExpiresOn = std::chrono::system_clock::now() + std::chrono::minutes(1);
-    identifier.Permissions = "r";
-    options.SignedIdentifiers.emplace_back(identifier);
-    identifier.Id = RandomString(64);
-    identifier.StartsOn = std::chrono::system_clock::now() - std::chrono::minutes(2);
-    identifier.ExpiresOn = std::chrono::system_clock::now() + std::chrono::minutes(2);
-    /* cspell:disable-next-line */
-    identifier.Permissions = "racwdxlt";
-    options.SignedIdentifiers.emplace_back(identifier);
+    {
+      Blobs::Models::SignedIdentifier identifier;
+      identifier.Id = RandomString(64);
+      identifier.StartsOn = std::chrono::system_clock::now() - std::chrono::minutes(1);
+      identifier.ExpiresOn = std::chrono::system_clock::now() + std::chrono::minutes(1);
+      identifier.Permissions = "r";
+      options.SignedIdentifiers.emplace_back(identifier);
+    }
+    {
+      Blobs::Models::SignedIdentifier identifier;
+      identifier.Id = RandomString(64);
+      identifier.StartsOn = std::chrono::system_clock::now() - std::chrono::minutes(2);
+      identifier.ExpiresOn.Reset();
+      /* cspell:disable-next-line */
+      identifier.Permissions = "racwdxlt";
+      options.SignedIdentifiers.emplace_back(identifier);
+    }
+    {
+      Blobs::Models::SignedIdentifier identifier;
+      identifier.Id = RandomString(64);
+      identifier.Permissions = "r";
+      options.SignedIdentifiers.emplace_back(identifier);
+    }
+    {
+      Blobs::Models::SignedIdentifier identifier;
+      identifier.Id = RandomString(64);
+      identifier.StartsOn = std::chrono::system_clock::now() - std::chrono::minutes(1);
+      identifier.ExpiresOn = std::chrono::system_clock::now() + std::chrono::minutes(1);
+      options.SignedIdentifiers.emplace_back(identifier);
+    }
 
     auto ret = container_client.SetAccessPolicy(options);
     EXPECT_TRUE(ret.Value.ETag.HasValue());
