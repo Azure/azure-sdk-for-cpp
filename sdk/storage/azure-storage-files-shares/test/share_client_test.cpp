@@ -217,6 +217,24 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_EQ(ret2.Value.SignedIdentifiers, identifiers);
   }
 
+  TEST_F(FileShareClientTest, ShareAccessPolicyNullable)
+  {
+    std::vector<Files::Shares::Models::SignedIdentifier> identifiers;
+    for (unsigned i = 0; i < 3; ++i)
+    {
+      Files::Shares::Models::SignedIdentifier identifier;
+      identifier.Id = RandomString(64);
+      identifier.Policy.Permission = "r";
+      identifiers.emplace_back(identifier);
+    }
+
+    auto ret = m_shareClient->SetAccessPolicy(identifiers);
+    EXPECT_TRUE(IsValidTime(ret.Value.LastModified));
+
+    auto ret2 = m_shareClient->GetAccessPolicy();
+    EXPECT_EQ(ret2.Value.SignedIdentifiers, identifiers);
+  }
+
   TEST_F(FileShareClientTest, SharePermissions)
   {
     std::string permission = "O:S-1-5-21-2127521184-1604012920-1887927527-21560751G:S-1-5-21-"
