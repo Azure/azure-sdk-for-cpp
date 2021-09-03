@@ -35,6 +35,7 @@ include(GoogleTest)
 
 add_executable (
   azure-core-test
+    azure_assert.cpp
     azure_core_test.cpp
     base64_test.cpp
     bearer_token_authentication_policy_test.cpp
