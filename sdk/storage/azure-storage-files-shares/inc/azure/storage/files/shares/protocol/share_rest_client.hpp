@@ -178,12 +178,12 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       /**
        * The date-time the policy is active.
        */
-      DateTime StartsOn;
+      Azure::Nullable<DateTime> StartsOn;
 
       /**
        * The date-time the policy expires.
        */
-      DateTime ExpiresOn;
+      Azure::Nullable<DateTime> ExpiresOn;
 
       /**
        * The permissions for the ACL policy.
@@ -5008,18 +5008,26 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         {
           writer.Write(_internal::XmlNode{_internal::XmlNodeType::StartTag, "AccessPolicy"});
           writer.Write(_internal::XmlNode{_internal::XmlNodeType::StartTag, "Start"});
-          writer.Write(_internal::XmlNode{
-              _internal::XmlNodeType::Text,
-              std::string(),
-              object.StartsOn.ToString(
-                  Azure::DateTime::DateFormat::Rfc3339, DateTime::TimeFractionFormat::AllDigits)});
+          if (object.StartsOn.HasValue())
+          {
+            writer.Write(_internal::XmlNode{
+                _internal::XmlNodeType::Text,
+                std::string(),
+                object.StartsOn.Value().ToString(
+                    Azure::DateTime::DateFormat::Rfc3339,
+                    DateTime::TimeFractionFormat::AllDigits)});
+          }
           writer.Write(_internal::XmlNode{_internal::XmlNodeType::EndTag});
           writer.Write(_internal::XmlNode{_internal::XmlNodeType::StartTag, "Expiry"});
-          writer.Write(_internal::XmlNode{
-              _internal::XmlNodeType::Text,
-              std::string(),
-              object.ExpiresOn.ToString(
-                  Azure::DateTime::DateFormat::Rfc3339, DateTime::TimeFractionFormat::AllDigits)});
+          if (object.ExpiresOn.HasValue())
+          {
+            writer.Write(_internal::XmlNode{
+                _internal::XmlNodeType::Text,
+                std::string(),
+                object.ExpiresOn.Value().ToString(
+                    Azure::DateTime::DateFormat::Rfc3339,
+                    DateTime::TimeFractionFormat::AllDigits)});
+          }
           writer.Write(_internal::XmlNode{_internal::XmlNodeType::EndTag});
           writer.Write(_internal::XmlNode{_internal::XmlNodeType::StartTag, "Permission"});
           writer.Write(
