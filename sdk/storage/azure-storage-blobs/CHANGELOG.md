@@ -6,6 +6,8 @@
 
 ### Breaking Changes
 
+- `StartsOn` and `ExpiresOn` in `SignedIdentifier` were changed to nullable.
+
 ### Bugs Fixed
 
 ### Other Changes
