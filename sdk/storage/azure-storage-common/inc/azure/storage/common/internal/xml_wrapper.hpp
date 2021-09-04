@@ -36,18 +36,35 @@ namespace Azure { namespace Storage { namespace _internal {
   class XmlReader final {
   public:
     explicit XmlReader(const char* data, size_t length);
+    XmlReader(const XmlReader& other) = delete;
+    XmlReader& operator=(const XmlReader& other) = delete;
+    XmlReader(XmlReader&& other) noexcept { *this = std::move(other); }
+    XmlReader& operator=(XmlReader&& other) noexcept
+    {
+      m_context = other.m_context;
+      other.m_context = nullptr;
+      return *this;
+    }
     ~XmlReader();
 
     XmlNode Read();
 
   private:
-    void* m_reader = nullptr;
-    bool m_readingAttributes = false;
+    void* m_context = nullptr;
   };
 
   class XmlWriter final {
   public:
     explicit XmlWriter();
+    XmlWriter(const XmlWriter& other) = delete;
+    XmlWriter& operator=(const XmlWriter& other) = delete;
+    XmlWriter(XmlWriter&& other) noexcept { *this = std::move(other); }
+    XmlWriter& operator=(XmlWriter&& other) noexcept
+    {
+      m_context = other.m_context;
+      other.m_context = nullptr;
+      return *this;
+    }
     ~XmlWriter();
 
     void Write(XmlNode node);
@@ -55,8 +72,7 @@ namespace Azure { namespace Storage { namespace _internal {
     std::string GetDocument();
 
   private:
-    void* m_buffer = nullptr;
-    void* m_writer = nullptr;
+    void* m_context = nullptr;
   };
 
 }}} // namespace Azure::Storage::_internal
