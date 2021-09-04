@@ -4,93 +4,472 @@
 #include "azure/core/base64.hpp"
 #include "azure/core/platform.hpp"
 
-#if defined(AZ_PLATFORM_WINDOWS)
-#include <windows.h>
-#elif defined(AZ_PLATFORM_POSIX)
-#include <openssl/bio.h>
-#include <openssl/buffer.h>
-#include <openssl/evp.h>
-#endif
-
 #include <string>
 #include <vector>
 
+namespace {
+
+static char const Base64EncodeArray[65]
+    = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
+static char const EncodingPath = '=';
+static int8_t const Base64DecodeArray[256] = {
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    62,
+    -1,
+    -1,
+    -1,
+    63, // 62 is placed at index 43 (for +), 63 at index 47 (for /)
+    52,
+    53,
+    54,
+    55,
+    56,
+    57,
+    58,
+    59,
+    60,
+    61,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1, // 52-61 are placed at index 48-57 (for 0-9), 64 at index 61 (for =)
+    -1,
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12,
+    13,
+    14,
+    15,
+    16,
+    17,
+    18,
+    19,
+    20,
+    21,
+    22,
+    23,
+    24,
+    25,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1, // 0-25 are placed at index 65-90 (for A-Z)
+    -1,
+    26,
+    27,
+    28,
+    29,
+    30,
+    31,
+    32,
+    33,
+    34,
+    35,
+    36,
+    37,
+    38,
+    39,
+    40,
+    41,
+    42,
+    43,
+    44,
+    45,
+    46,
+    47,
+    48,
+    49,
+    50,
+    51,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1, // 26-51 are placed at index 97-122 (for a-z)
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1, // Bytes over 122 ('z') are invalid and cannot be decoded. Hence, padding the map with 255,
+        // which indicates invalid input
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+};
+
+static int64_t base64Encode(const uint8_t* threeBytes)
+{
+  int64_t i = (*threeBytes << 16) | (*(threeBytes + 1) << 8) | *(threeBytes + 2);
+
+  int64_t i0 = Base64EncodeArray[i >> 18];
+  int64_t i1 = Base64EncodeArray[(i >> 12) & 0x3F];
+  int64_t i2 = Base64EncodeArray[(i >> 6) & 0x3F];
+  int64_t i3 = Base64EncodeArray[i & 0x3F];
+
+  return i0 | (i1 << 8) | (i2 << 16) | (i3 << 24);
+}
+
+static int64_t base64EncodeAndPadOne(const uint8_t* twoBytes)
+{
+  int64_t i = (*twoBytes << 16) | (*(twoBytes + 1) << 8);
+
+  int64_t i0 = Base64EncodeArray[i >> 18];
+  int64_t i1 = Base64EncodeArray[(i >> 12) & 0x3F];
+  int64_t i2 = Base64EncodeArray[(i >> 6) & 0x3F];
+
+  return i0 | (i1 << 8) | (i2 << 16) | (EncodingPath << 24);
+}
+
+static int64_t base64EncodeAndPadTwo(const uint8_t* oneByte)
+{
+  int64_t i = (*oneByte << 8);
+
+  int64_t i0 = Base64EncodeArray[i >> 10];
+  int64_t i1 = Base64EncodeArray[(i >> 4) & 0x3F];
+
+  return i0 | (i1 << 8) | (EncodingPath << 16) | (EncodingPath << 24);
+}
+
+static void base64WriteIntAsFourBytes(char* destination, int64_t value)
+{
+  *(destination + 3) = static_cast<uint8_t>((value >> 24) & 0xFF);
+  *(destination + 2) = static_cast<uint8_t>((value >> 16) & 0xFF);
+  *(destination + 1) = static_cast<uint8_t>((value >> 8) & 0xFF);
+  *(destination + 0) = static_cast<uint8_t>(value & 0xFF);
+}
+
+std::string base64Encode(const std::vector<uint8_t>& data)
+{
+  int64_t sourceIndex = 0;
+  auto inputSize = static_cast<int64_t>(data.size());
+  int64_t result = 0;
+  // Use a string with size to the max possible result
+  std::string encodedResult((((inputSize + 2) / 3) * 4), '0');
+  // Removing const from the string to update the placeholder string
+  auto destination = const_cast<char*>(encodedResult.data());
+
+  while (sourceIndex < inputSize - 2)
+  {
+    result = base64Encode(data.data() + sourceIndex);
+    base64WriteIntAsFourBytes(destination, result);
+    destination += 4;
+    sourceIndex += 3;
+  }
+
+  if (sourceIndex == inputSize - 1)
+  {
+    result = base64EncodeAndPadTwo(data.data() + sourceIndex);
+    base64WriteIntAsFourBytes(destination, result);
+    destination += 4;
+    sourceIndex += 1;
+  }
+  else if (sourceIndex == inputSize - 2)
+  {
+    result = base64EncodeAndPadOne(data.data() + sourceIndex);
+    base64WriteIntAsFourBytes(destination, result);
+    destination += 4;
+    sourceIndex += 2;
+  }
+  auto destinationLength = static_cast<int64_t>(destination - encodedResult.data());
+  // If encoding took less than the max-expected
+  if (destinationLength < static_cast<int64_t>(encodedResult.size()))
+  {
+    return encodedResult.substr(0, destinationLength);
+  }
+  return encodedResult;
+}
+
+static int64_t base64Decode(const char* encodedBytes)
+{
+  int64_t i0 = *encodedBytes;
+  int64_t i1 = *(encodedBytes + 1);
+  int64_t i2 = *(encodedBytes + 2);
+  int64_t i3 = *(encodedBytes + 3);
+
+  i0 = Base64DecodeArray[i0];
+  i1 = Base64DecodeArray[i1];
+  i2 = Base64DecodeArray[i2];
+  i3 = Base64DecodeArray[i3];
+
+  i0 <<= 18;
+  i1 <<= 12;
+  i2 <<= 6;
+
+  i0 |= i3;
+  i1 |= i2;
+
+  i0 |= i1;
+  return i0;
+}
+
+static void base64WriteThreeLowOrderBytes(std::vector<uint8_t>::iterator destination, int64_t value)
+{
+  *destination = static_cast<uint8_t>(value >> 16);
+  *(destination + 1) = static_cast<uint8_t>(value >> 8);
+  *(destination + 2) = static_cast<uint8_t>(value);
+}
+
+std::vector<uint8_t> base64Decode(const std::string& text)
+{
+
+  if (text.size() == 0)
+  {
+    return std::vector<uint8_t>(0);
+  }
+
+  int64_t sourceIndex = 0;
+  int64_t destinationIndex = 0;
+  auto inputSize = static_cast<int64_t>(text.size());
+  auto inputPtr = text.data();
+  // use the size for the max decoded size
+  std::vector<uint8_t> destination((inputSize / 4) * 3 - 2);
+  auto destinationPtr = destination.begin();
+
+  while (sourceIndex < inputSize - 4)
+  {
+    int64_t result = base64Decode(inputPtr + sourceIndex);
+    base64WriteThreeLowOrderBytes(destinationPtr, result);
+    destinationPtr += 3;
+    destinationIndex += 3;
+    sourceIndex += 4;
+  }
+
+  // We are guaranteed to have an input with at least 4 bytes at this point, with a size that is a
+  // multiple of 4.
+  int64_t i0 = *(inputPtr + inputSize - 4);
+  int64_t i1 = *(inputPtr + inputSize - 3);
+  int64_t i2 = *(inputPtr + inputSize - 2);
+  int64_t i3 = *(inputPtr + inputSize - 1);
+
+  i0 = Base64DecodeArray[i0];
+  i1 = Base64DecodeArray[i1];
+
+  i0 <<= 18;
+  i1 <<= 12;
+
+  i0 |= i1;
+
+  if (i3 != EncodingPath)
+  {
+    i2 = Base64DecodeArray[i2];
+    i3 = Base64DecodeArray[i3];
+
+    i2 <<= 6;
+
+    i0 |= i3;
+    i0 |= i2;
+
+    base64WriteThreeLowOrderBytes(destinationPtr, i0);
+    destinationPtr += 3;
+  }
+  else if (i2 != EncodingPath)
+  {
+    i2 = Base64DecodeArray[i2];
+
+    i2 <<= 6;
+
+    i0 |= i2;
+
+    *(destinationPtr + 1) = static_cast<uint8_t>(i0 >> 8);
+    *destinationPtr = static_cast<uint8_t>(i0 >> 16);
+    destinationPtr += 2;
+  }
+  else
+  {
+    *destinationPtr = static_cast<uint8_t>(i0 >> 16);
+    destinationPtr += 1;
+  }
+
+  auto resultSize = static_cast<int64_t>(destinationPtr - destination.begin());
+  if (resultSize < static_cast<int64_t>(destination.size()))
+  {
+    destination.resize(resultSize);
+    destination.shrink_to_fit();
+  }
+  return destination;
+}
+
+} // namespace
+
 namespace Azure { namespace Core {
 
-#if defined(AZ_PLATFORM_WINDOWS)
+  std::string Convert::Base64Encode(const std::vector<uint8_t>& data) { return base64Encode(data); }
 
-  std::string Convert::Base64Encode(const std::vector<uint8_t>& data)
-  {
-    std::string encoded;
-    // According to RFC 4648, the encoded length should be ceiling(n / 3) * 4
-    DWORD encodedLength = static_cast<DWORD>((data.size() + 2) / 3 * 4);
-    encoded.resize(encodedLength);
-
-    CryptBinaryToStringA(
-        reinterpret_cast<const BYTE*>(data.data()),
-        static_cast<DWORD>(data.size()),
-        CRYPT_STRING_BASE64 | CRYPT_STRING_NOCRLF,
-        static_cast<LPSTR>(&encoded[0]),
-        &encodedLength);
-
-    return encoded;
-  }
-
-  std::vector<uint8_t> Convert::Base64Decode(const std::string& text)
-  {
-    std::vector<uint8_t> decoded;
-    // According to RFC 4648, the encoded length should be ceiling(n / 3) * 4, so we can infer an
-    // upper bound here
-    DWORD decodedLength = DWORD(text.length() / 4 * 3);
-    decoded.resize(decodedLength);
-
-    CryptStringToBinaryA(
-        text.data(),
-        static_cast<DWORD>(text.length()),
-        CRYPT_STRING_BASE64 | CRYPT_STRING_STRICT,
-        reinterpret_cast<BYTE*>(decoded.data()),
-        &decodedLength,
-        nullptr,
-        nullptr);
-    decoded.resize(decodedLength);
-    return decoded;
-  }
-
-#elif defined(AZ_PLATFORM_POSIX)
-
-  std::string Convert::Base64Encode(const std::vector<uint8_t>& data)
-  {
-    BIO* bio = BIO_new(BIO_s_mem());
-    bio = BIO_push(BIO_new(BIO_f_base64()), bio);
-    BIO_set_flags(bio, BIO_FLAGS_BASE64_NO_NL);
-    BIO_write(bio, data.data(), static_cast<int>(data.size()));
-    (void)BIO_flush(bio);
-    BUF_MEM* bufferPtr;
-    BIO_get_mem_ptr(bio, &bufferPtr);
-    std::string toReturn(bufferPtr->data, bufferPtr->length);
-    BIO_free_all(bio);
-
-    return toReturn;
-  }
-
-  std::vector<uint8_t> Convert::Base64Decode(const std::string& text)
-  {
-    std::vector<uint8_t> decoded;
-    // According to RFC 4648, the encoded length should be ceiling(n / 3) * 4, so we can infer an
-    // upper bound here
-    size_t maxDecodedLength = text.length() / 4 * 3;
-    decoded.resize(maxDecodedLength);
-
-    BIO* bio = BIO_new_mem_buf(text.data(), -1);
-    bio = BIO_push(BIO_new(BIO_f_base64()), bio);
-    BIO_set_flags(bio, BIO_FLAGS_BASE64_NO_NL);
-    int decodedLength = BIO_read(bio, &decoded[0], static_cast<int>(text.length()));
-    BIO_free_all(bio);
-
-    decoded.resize(decodedLength);
-    return decoded;
-  }
-
-#endif
+  std::vector<uint8_t> Convert::Base64Decode(const std::string& text) { return base64Decode(text); }
 
 }} // namespace Azure::Core
