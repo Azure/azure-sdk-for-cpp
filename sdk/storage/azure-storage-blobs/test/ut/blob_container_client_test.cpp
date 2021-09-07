@@ -1133,59 +1133,72 @@ namespace Azure { namespace Storage { namespace Test {
   {
     const std::string non_ascii_word = "\xE6\xB5\x8B\xE8\xAF\x95";
     const std::string encoded_non_ascii_word = "%E6%B5%8B%E8%AF%95";
-    std::string baseBlobName = "a b c / !@#$%^&*(?/<>,.;:'\"[]{}|`~\\) def" + non_ascii_word;
+    ASSERT_EQ(_internal::UrlEncodePath(non_ascii_word), encoded_non_ascii_word);
+    // blobName cannot contain backslash '\'
+    const std::string baseBlobName = "a b c / !@#$%^&*(?/<>,.;:'\"[]{}|`~) def" + non_ascii_word;
 
     {
-      std::string blobName = baseBlobName + RandomString();
+      const std::string blobName = baseBlobName + RandomString();
       auto blobClient = m_blobContainerClient->GetAppendBlobClient(blobName);
       EXPECT_NO_THROW(blobClient.Create());
       auto blobUrl = blobClient.GetUrl();
       EXPECT_EQ(
           blobUrl, m_blobContainerClient->GetUrl() + "/" + _internal::UrlEncodePath(blobName));
+      auto blobItem = GetBlobItem(blobName);
+      EXPECT_EQ(blobItem.Name, blobName);
     }
     {
-      std::string blobName = baseBlobName + RandomString();
+      const std::string blobName = baseBlobName + RandomString();
       auto blobClient = m_blobContainerClient->GetPageBlobClient(blobName);
       EXPECT_NO_THROW(blobClient.Create(1024));
       auto blobUrl = blobClient.GetUrl();
       EXPECT_EQ(
           blobUrl, m_blobContainerClient->GetUrl() + "/" + _internal::UrlEncodePath(blobName));
+      auto blobItem = GetBlobItem(blobName);
+      EXPECT_EQ(blobItem.Name, blobName);
     }
     {
-      std::string blobName = baseBlobName + RandomString();
+      const std::string blobName = baseBlobName + RandomString();
       auto blobClient = m_blobContainerClient->GetBlockBlobClient(blobName);
       EXPECT_NO_THROW(blobClient.UploadFrom(nullptr, 0));
       auto blobUrl = blobClient.GetUrl();
       EXPECT_EQ(
           blobUrl, m_blobContainerClient->GetUrl() + "/" + _internal::UrlEncodePath(blobName));
+      auto blobItem = GetBlobItem(blobName);
+      EXPECT_EQ(blobItem.Name, blobName);
     }
-
     {
-      std::string blobName = baseBlobName + RandomString();
+      const std::string blobName = baseBlobName + RandomString();
       auto blobClient = Blobs::AppendBlobClient::CreateFromConnectionString(
           StandardStorageConnectionString(), m_containerName, blobName);
       EXPECT_NO_THROW(blobClient.Create());
       auto blobUrl = blobClient.GetUrl();
       EXPECT_EQ(
           blobUrl, m_blobContainerClient->GetUrl() + "/" + _internal::UrlEncodePath(blobName));
+      auto blobItem = GetBlobItem(blobName);
+      EXPECT_EQ(blobItem.Name, blobName);
     }
     {
-      std::string blobName = baseBlobName + RandomString();
+      const std::string blobName = baseBlobName + RandomString();
       auto blobClient = Blobs::PageBlobClient::CreateFromConnectionString(
           StandardStorageConnectionString(), m_containerName, blobName);
       EXPECT_NO_THROW(blobClient.Create(1024));
       auto blobUrl = blobClient.GetUrl();
       EXPECT_EQ(
           blobUrl, m_blobContainerClient->GetUrl() + "/" + _internal::UrlEncodePath(blobName));
+      auto blobItem = GetBlobItem(blobName);
+      EXPECT_EQ(blobItem.Name, blobName);
     }
     {
-      std::string blobName = baseBlobName + RandomString();
+      const std::string blobName = baseBlobName + RandomString();
       auto blobClient = Blobs::BlockBlobClient::CreateFromConnectionString(
           StandardStorageConnectionString(), m_containerName, blobName);
       EXPECT_NO_THROW(blobClient.UploadFrom(nullptr, 0));
       auto blobUrl = blobClient.GetUrl();
       EXPECT_EQ(
           blobUrl, m_blobContainerClient->GetUrl() + "/" + _internal::UrlEncodePath(blobName));
+      auto blobItem = GetBlobItem(blobName);
+      EXPECT_EQ(blobItem.Name, blobName);
     }
   }
 

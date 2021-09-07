@@ -4,9 +4,13 @@
 
 ### Features Added
 
+- Used new xml library on Windows, dropped dependency for libxml2.
+
 ### Breaking Changes
 
 ### Bugs Fixed
+
+- Fixed a bug that may cause crash when parsing XML.
 
 ### Other Changes
 
