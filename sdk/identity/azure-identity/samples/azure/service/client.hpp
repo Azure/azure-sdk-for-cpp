@@ -34,7 +34,7 @@ namespace Azure { namespace Service {
       // how Azure::Identity classes can be used with a generic Azure SDK service client.
       // If we have code here that gets the token, it would be up to the user to set it up to be
       // valid enough to get a token, which is not critical for the intended demonstration purposes.
-      // And if user runs this, and authentication is unsuccessful, it may draw an unneccessary
+      // And if user runs this, and authentication is unsuccessful, it may draw an unnecessary
       // attention to an irrelevant (to the demo) point.
 
       // But an oversimplified logic of what a typical Azure SDK client does is below:

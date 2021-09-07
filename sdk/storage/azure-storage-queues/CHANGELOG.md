@@ -12,7 +12,6 @@
   - QueueServiceClient::CreateQueue
   - QueueServiceClient::DeleteQueue
   - QueueClient::Create
-  - QueueClient::CreateIfNotExists
   - QueueClient::Delete
   - QueueClient::GetProperties
   - QueueClient::SetMetadata

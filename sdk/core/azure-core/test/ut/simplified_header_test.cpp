@@ -29,7 +29,7 @@ class DllExportTest final {
 TEST(SimplifiedHeader, core)
 {
   EXPECT_NO_THROW(Azure::Core::CaseInsensitiveMap imap);
-  EXPECT_NO_THROW(Azure::Core::CaseInsensitiveSet iset);
+  EXPECT_NO_THROW(Azure::Core::CaseInsensitiveSet iset); // cspell:disable-line
   EXPECT_NO_THROW(Azure::Core::Context c);
   EXPECT_NO_THROW(Azure::DateTime(2020, 11, 03, 15, 30, 44));
   EXPECT_NO_THROW(Azure::ETag e);

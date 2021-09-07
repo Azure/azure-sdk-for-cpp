@@ -6,9 +6,15 @@
 
 ### Breaking Changes
 
+- `StartsOn` and `ExpiresOn` in `SignedIdentifier` were changed to nullable.
+
 ### Bugs Fixed
 
+- Fixed a bug where prefix cannot contain `&` when listing blobs.
+
 ### Other Changes
+
+- Create less threads if there isn't too much data to transfer.
 
 ## 12.1.0 (2021-08-10)
 

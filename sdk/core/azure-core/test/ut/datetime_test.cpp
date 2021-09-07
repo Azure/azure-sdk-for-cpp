@@ -10,6 +10,8 @@
 
 using namespace Azure;
 
+// cspell:words AGMT, CEST
+
 TEST(DateTime, ParseDateAndTimeBasic)
 {
   auto dt1 = DateTime::Parse("20130517T00:00:00Z", DateTime::DateFormat::Rfc3339);
@@ -347,7 +349,7 @@ TEST(DateTime, ParseTimeRfc1123InvalidCases)
       "01 Jan 1971 00:00:70 GMT", // second too big
       "01 Jan 1971 00:00:61 GMT",
       "01 Jan 1969 00:00:00 CEST", // bad tz
-      "14 Jan 2019 23:16:21 G0100", // bad tzoffsets
+      "14 Jan 2019 23:16:21 G0100", // bad tz offsets
       //"01 Jan 1970 00:00:00 +2400",
       //"01 Jan 1970 00:00:00 -3000",
       "01 Jan 1970 00:00:00 +2160",
@@ -553,7 +555,7 @@ TEST(DateTime, ParseTimeInvalid2)
       "1971-01-01T00:00:61Z",
       "0001-01-01T00:00:00+00:01", // time zone underflow
       // "1970-01-01T00:00:00.Z", // accepted as invalid timezone above
-      //"1970-01-01T00:00:00+24:00", // bad tzoffsets
+      //"1970-01-01T00:00:00+24:00", // bad tz offsets
       //"1970-01-01T00:00:00-30:00",
       "1970-01-01T00:00:00+21:60",
       //"1970-01-01T00:00:00-24:00",

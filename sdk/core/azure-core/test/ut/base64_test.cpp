@@ -23,7 +23,7 @@ TEST(Base64, Basic)
   EXPECT_PRED2(
       [](std::string expect, std::string actual) { return expect == actual; },
       result,
-      "AQIDBAUGBw==");
+      "AQIDBAUGBw=="); // cspell:disable-line
   EXPECT_TRUE(std::equal(data.begin(), data.end(), Convert::Base64Decode(result).begin()));
 
   std::vector<uint8_t> subsection = std::vector<uint8_t>(data.begin(), data.begin() + 1);
@@ -43,28 +43,36 @@ TEST(Base64, Basic)
   subsection = std::vector<uint8_t>(data.begin(), data.begin() + 3);
   result = Convert::Base64Encode(subsection);
   EXPECT_PRED2(
-      [](std::string expect, std::string actual) { return expect == actual; }, result, "AQID");
+      [](std::string expect, std::string actual) { return expect == actual; },
+      result,
+      "AQID"); // cspell:disable-line
   EXPECT_TRUE(
       std::equal(subsection.begin(), subsection.end(), Convert::Base64Decode(result).begin()));
 
   subsection = std::vector<uint8_t>(data.begin(), data.begin() + 4);
   result = Convert::Base64Encode(subsection);
   EXPECT_PRED2(
-      [](std::string expect, std::string actual) { return expect == actual; }, result, "AQIDBA==");
+      [](std::string expect, std::string actual) { return expect == actual; },
+      result,
+      "AQIDBA=="); // cspell:disable-line
   EXPECT_TRUE(
       std::equal(subsection.begin(), subsection.end(), Convert::Base64Decode(result).begin()));
 
   subsection = std::vector<uint8_t>(data.begin(), data.begin() + 5);
   result = Convert::Base64Encode(subsection);
   EXPECT_PRED2(
-      [](std::string expect, std::string actual) { return expect == actual; }, result, "AQIDBAU=");
+      [](std::string expect, std::string actual) { return expect == actual; },
+      result,
+      "AQIDBAU="); // cspell:disable-line
   EXPECT_TRUE(
       std::equal(subsection.begin(), subsection.end(), Convert::Base64Decode(result).begin()));
 
   subsection = std::vector<uint8_t>(data.begin(), data.begin() + 6);
   result = Convert::Base64Encode(subsection);
   EXPECT_PRED2(
-      [](std::string expect, std::string actual) { return expect == actual; }, result, "AQIDBAUG");
+      [](std::string expect, std::string actual) { return expect == actual; },
+      result,
+      "AQIDBAUG"); // cspell:disable-line
   EXPECT_TRUE(
       std::equal(subsection.begin(), subsection.end(), Convert::Base64Decode(result).begin()));
 }

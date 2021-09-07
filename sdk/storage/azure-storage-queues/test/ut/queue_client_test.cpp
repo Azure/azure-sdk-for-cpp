@@ -51,10 +51,10 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_FALSE(res.RawResponse->GetHeaders().at(_internal::HttpHeaderRequestId).empty());
     EXPECT_FALSE(res.RawResponse->GetHeaders().at(_internal::HttpHeaderDate).empty());
     EXPECT_FALSE(res.RawResponse->GetHeaders().at(_internal::HttpHeaderXMsVersion).empty());
-    EXPECT_NO_THROW(queueClient.Create(options));
-    EXPECT_THROW(queueClient.Create(), StorageException);
-    EXPECT_NO_THROW(queueClient.CreateIfNotExists());
-    EXPECT_NO_THROW(queueClient.CreateIfNotExists(options));
+    res = queueClient.Create(options);
+    EXPECT_FALSE(res.Value.Created);
+    res = queueClient.Create();
+    EXPECT_FALSE(res.Value.Created);
 
     auto res2 = queueClient.Delete();
     EXPECT_FALSE(res2.RawResponse->GetHeaders().at(_internal::HttpHeaderRequestId).empty());
@@ -63,7 +63,7 @@ namespace Azure { namespace Storage { namespace Test {
 
     queueClient = Azure::Storage::Queues::QueueClient::CreateFromConnectionString(
         StandardStorageConnectionString(), LowercaseRandomString() + "UPPERCASE");
-    EXPECT_THROW(queueClient.CreateIfNotExists(), StorageException);
+    EXPECT_THROW(queueClient.Create(), StorageException);
     queueClient = Azure::Storage::Queues::QueueClient::CreateFromConnectionString(
         StandardStorageConnectionString(), LowercaseRandomString());
     {
@@ -71,16 +71,8 @@ namespace Azure { namespace Storage { namespace Test {
       EXPECT_FALSE(response.Value.Deleted);
     }
     {
-      auto response = queueClient.CreateIfNotExists();
-      EXPECT_TRUE(response.Value.Created);
-    }
-    {
-      auto response = queueClient.CreateIfNotExists();
-      EXPECT_FALSE(response.Value.Created);
-    }
-    {
       auto response = queueClient.Create();
-      EXPECT_FALSE(response.Value.Created);
+      EXPECT_TRUE(response.Value.Created);
     }
     {
       auto response = queueClient.Delete();

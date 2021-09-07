@@ -10,6 +10,8 @@
 using Azure::Core::Diagnostics::Logger;
 using Azure::Core::Http::Policies::LogOptions;
 
+// cspell:ignore qparam
+
 namespace {
 void SendRequest(LogOptions const& logOptions)
 {
