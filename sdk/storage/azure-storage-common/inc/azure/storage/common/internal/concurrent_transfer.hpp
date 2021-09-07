@@ -27,6 +27,11 @@ namespace Azure { namespace Storage { namespace _internal {
 
     const auto numChunks = (length + chunkSize - 1) / chunkSize;
 
+    if (numChunks == 0)
+    {
+      return;
+    }
+
     auto threadFunc = [&]() {
       while (true)
       {
@@ -54,7 +59,7 @@ namespace Azure { namespace Storage { namespace _internal {
     };
 
     std::vector<std::future<void>> threadHandles;
-    for (int i = 0; i < concurrency - 1; ++i)
+    for (int i = 0; i < std::min<int64_t>(concurrency, numChunks) - 1; ++i)
     {
       threadHandles.emplace_back(std::async(std::launch::async, threadFunc));
     }
