@@ -34,7 +34,9 @@ TEST(SimplifiedHeader, core)
   EXPECT_NO_THROW(Azure::DateTime(2020, 11, 03, 15, 30, 44));
   EXPECT_NO_THROW(Azure::ETag e);
   EXPECT_NO_THROW(Azure::Core::Convert::Base64Decode("foo"));
+#if defined(AZURE_BUILD_CRYPTO)
   EXPECT_NO_THROW(Azure::Core::Cryptography::Md5Hash m);
+#endif
   EXPECT_NO_THROW(Azure::Core::Http::RawResponse r(
       1, 1, Azure::Core::Http::HttpStatusCode::Accepted, "phrase"));
   EXPECT_NO_THROW({

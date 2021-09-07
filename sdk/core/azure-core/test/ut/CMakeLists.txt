@@ -33,6 +33,13 @@ endif()
 
 include(GoogleTest)
 
+if(BUILD_CRYPTO)
+ SET(AZURE_SDK_TEST_CRYPTO_SRC
+  md5_test.cpp
+  sha_test.cpp
+ )
+endif()
+
 add_executable (
   azure-core-test
     azure_core_test.cpp
@@ -56,7 +63,7 @@ add_executable (
     logging_test.cpp
     macro_guard_test.cpp
     match_conditions_test.cpp
-    md5_test.cpp
+    ${AZURE_SDK_TEST_CRYPTO_SRC}
     modified_conditions_test.cpp
     nullable_test.cpp
     operation_test.cpp
@@ -67,7 +74,6 @@ add_executable (
     request_id_policy_test.cpp
     response_t_test.cpp
     retry_policy_test.cpp
-    sha_test.cpp
     simplified_header_test.cpp
     string_test.cpp
     telemetry_policy_test.cpp
