@@ -8,6 +8,12 @@
 #include <azure/identity/client_secret_credential.hpp>
 #include <azure/storage/common/crypt.hpp>
 
+namespace Azure { namespace Storage { namespace Blobs { namespace Models {
+
+  bool operator==(const SignedIdentifier& lhs, const SignedIdentifier& rhs);
+
+}}}} // namespace Azure::Storage::Blobs::Models
+
 namespace Azure { namespace Storage { namespace Test {
 
   const size_t PathTestSize = 5;
@@ -361,18 +367,36 @@ namespace Azure { namespace Storage { namespace Test {
 
       Files::DataLake::SetFileSystemAccessPolicyOptions options;
       options.AccessType = Files::DataLake::Models::PublicAccessType::Path;
-      Files::DataLake::Models::SignedIdentifier identifier;
-      identifier.Id = RandomString(64);
-      identifier.StartsOn = std::chrono::system_clock::now() - std::chrono::minutes(1);
-      identifier.ExpiresOn = std::chrono::system_clock::now() + std::chrono::minutes(1);
-      identifier.Permissions = "r";
-      options.SignedIdentifiers.emplace_back(identifier);
-      identifier.Id = RandomString(64);
-      identifier.StartsOn = std::chrono::system_clock::now() - std::chrono::minutes(2);
-      identifier.ExpiresOn = std::chrono::system_clock::now() + std::chrono::minutes(2);
-      /* cspell:disable-next-line */
-      identifier.Permissions = "racwdxlt";
-      options.SignedIdentifiers.emplace_back(identifier);
+      {
+        Files::DataLake::Models::SignedIdentifier identifier;
+        identifier.Id = RandomString(64);
+        identifier.StartsOn = std::chrono::system_clock::now() - std::chrono::minutes(1);
+        identifier.ExpiresOn = std::chrono::system_clock::now() + std::chrono::minutes(1);
+        identifier.Permissions = "r";
+        options.SignedIdentifiers.emplace_back(identifier);
+      }
+      {
+        Files::DataLake::Models::SignedIdentifier identifier;
+        identifier.Id = RandomString(64);
+        identifier.StartsOn = std::chrono::system_clock::now() - std::chrono::minutes(2);
+        identifier.ExpiresOn.Reset();
+        /* cspell:disable-next-line */
+        identifier.Permissions = "racwdxlt";
+        options.SignedIdentifiers.emplace_back(identifier);
+      }
+      {
+        Files::DataLake::Models::SignedIdentifier identifier;
+        identifier.Id = RandomString(64);
+        identifier.Permissions = "r";
+        options.SignedIdentifiers.emplace_back(identifier);
+      }
+      {
+        Files::DataLake::Models::SignedIdentifier identifier;
+        identifier.Id = RandomString(64);
+        identifier.StartsOn = std::chrono::system_clock::now() - std::chrono::minutes(1);
+        identifier.ExpiresOn = std::chrono::system_clock::now() + std::chrono::minutes(1);
+        options.SignedIdentifiers.emplace_back(identifier);
+      }
 
       auto ret = fileSystem.SetAccessPolicy(options);
       EXPECT_TRUE(ret.Value.ETag.HasValue());
@@ -380,14 +404,10 @@ namespace Azure { namespace Storage { namespace Test {
 
       auto ret2 = fileSystem.GetAccessPolicy();
       EXPECT_EQ(ret2.Value.AccessType, options.AccessType);
+      ASSERT_EQ(ret2.Value.SignedIdentifiers.size(), options.SignedIdentifiers.size());
       for (size_t i = 0; i < ret2.Value.SignedIdentifiers.size(); ++i)
       {
-        EXPECT_EQ(ret2.Value.SignedIdentifiers[i].StartsOn, options.SignedIdentifiers[i].StartsOn);
-        EXPECT_EQ(
-            ret2.Value.SignedIdentifiers[i].ExpiresOn, options.SignedIdentifiers[i].ExpiresOn);
-        EXPECT_EQ(ret2.Value.SignedIdentifiers[i].Id, options.SignedIdentifiers[i].Id);
-        EXPECT_EQ(
-            ret2.Value.SignedIdentifiers[i].Permissions, options.SignedIdentifiers[i].Permissions);
+        EXPECT_EQ(ret2.Value.SignedIdentifiers[i], options.SignedIdentifiers[i]);
       }
 
       options.AccessType = Files::DataLake::Models::PublicAccessType::FileSystem;

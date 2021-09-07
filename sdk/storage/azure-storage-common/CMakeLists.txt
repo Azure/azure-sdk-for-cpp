@@ -27,7 +27,6 @@ if(NOT AZ_ALL_LIBRARIES)
 endif()
 
 find_package(Threads REQUIRED)
-find_package(LibXml2 REQUIRED)
 
 set(
   AZURE_STORAGE_COMMON_HEADER
@@ -78,14 +77,15 @@ target_include_directories(
 )
 
 target_link_libraries(azure-storage-common PUBLIC Azure::azure-core)
-target_include_directories(azure-storage-common PRIVATE ${LIBXML2_INCLUDE_DIRS})
-target_link_libraries(azure-storage-common PRIVATE ${LIBXML2_LIBRARIES})
 
 if(WIN32)
-    target_link_libraries(azure-storage-common PRIVATE bcrypt)
+    target_link_libraries(azure-storage-common PRIVATE bcrypt webservices)
     # C28020 and C28204 are introduced by nlohmann/json
     target_compile_options(azure-storage-common PUBLIC /wd28204 /wd28020)
 else()
+    find_package(LibXml2 REQUIRED)
+    target_include_directories(azure-storage-common PRIVATE ${LIBXML2_INCLUDE_DIRS})
+    target_link_libraries(azure-storage-common PRIVATE ${LIBXML2_LIBRARIES})
     find_package(OpenSSL REQUIRED)
     target_link_libraries(azure-storage-common PRIVATE OpenSSL::SSL OpenSSL::Crypto)
 endif()
