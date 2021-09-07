@@ -272,40 +272,40 @@ static int8_t const Base64DecodeArray[256] = {
     -1,
 };
 
-static int64_t base64Encode(const uint8_t* threeBytes)
+static int32_t base64Encode(const uint8_t* threeBytes)
 {
-  int64_t i = (*threeBytes << 16) | (*(threeBytes + 1) << 8) | *(threeBytes + 2);
+  int32_t i = (*threeBytes << 16) | (*(threeBytes + 1) << 8) | *(threeBytes + 2);
 
-  int64_t i0 = Base64EncodeArray[i >> 18];
-  int64_t i1 = Base64EncodeArray[(i >> 12) & 0x3F];
-  int64_t i2 = Base64EncodeArray[(i >> 6) & 0x3F];
-  int64_t i3 = Base64EncodeArray[i & 0x3F];
+  int32_t i0 = Base64EncodeArray[i >> 18];
+  int32_t i1 = Base64EncodeArray[(i >> 12) & 0x3F];
+  int32_t i2 = Base64EncodeArray[(i >> 6) & 0x3F];
+  int32_t i3 = Base64EncodeArray[i & 0x3F];
 
   return i0 | (i1 << 8) | (i2 << 16) | (i3 << 24);
 }
 
-static int64_t base64EncodeAndPadOne(const uint8_t* twoBytes)
+static int32_t base64EncodeAndPadOne(const uint8_t* twoBytes)
 {
-  int64_t i = (*twoBytes << 16) | (*(twoBytes + 1) << 8);
+  int32_t i = (*twoBytes << 16) | (*(twoBytes + 1) << 8);
 
-  int64_t i0 = Base64EncodeArray[i >> 18];
-  int64_t i1 = Base64EncodeArray[(i >> 12) & 0x3F];
-  int64_t i2 = Base64EncodeArray[(i >> 6) & 0x3F];
+  int32_t i0 = Base64EncodeArray[i >> 18];
+  int32_t i1 = Base64EncodeArray[(i >> 12) & 0x3F];
+  int32_t i2 = Base64EncodeArray[(i >> 6) & 0x3F];
 
   return i0 | (i1 << 8) | (i2 << 16) | (EncodingPath << 24);
 }
 
-static int64_t base64EncodeAndPadTwo(const uint8_t* oneByte)
+static int32_t base64EncodeAndPadTwo(const uint8_t* oneByte)
 {
-  int64_t i = (*oneByte << 8);
+  int32_t i = (*oneByte << 8);
 
-  int64_t i0 = Base64EncodeArray[i >> 10];
-  int64_t i1 = Base64EncodeArray[(i >> 4) & 0x3F];
+  int32_t i0 = Base64EncodeArray[i >> 10];
+  int32_t i1 = Base64EncodeArray[(i >> 4) & 0x3F];
 
   return i0 | (i1 << 8) | (EncodingPath << 16) | (EncodingPath << 24);
 }
 
-static void base64WriteIntAsFourBytes(char* destination, int64_t value)
+static void base64WriteIntAsFourBytes(char* destination, int32_t value)
 {
   *(destination + 3) = static_cast<uint8_t>((value >> 24) & 0xFF);
   *(destination + 2) = static_cast<uint8_t>((value >> 16) & 0xFF);
@@ -317,7 +317,7 @@ std::string base64Encode(const std::vector<uint8_t>& data)
 {
   int64_t sourceIndex = 0;
   auto inputSize = static_cast<int64_t>(data.size());
-  int64_t result = 0;
+  int32_t result = 0;
   // Use a string with size to the max possible result
   std::string encodedResult((((inputSize + 2) / 3) * 4), '0');
   // Removing const from the string to update the placeholder string
