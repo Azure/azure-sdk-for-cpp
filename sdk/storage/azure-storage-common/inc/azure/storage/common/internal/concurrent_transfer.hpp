@@ -27,11 +27,6 @@ namespace Azure { namespace Storage { namespace _internal {
 
     const auto numChunks = (length + chunkSize - 1) / chunkSize;
 
-    if (numChunks == 0)
-    {
-      return;
-    }
-
     auto threadFunc = [&]() {
       while (true)
       {
