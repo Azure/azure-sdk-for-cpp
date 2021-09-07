@@ -10,6 +10,8 @@
 
 ### Bugs Fixed
 
+- Fixed a bug where prefix cannot contain `&` when listing blobs.
+
 ### Other Changes
 
 ## 12.1.0 (2021-08-10)
