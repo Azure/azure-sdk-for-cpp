@@ -10,6 +10,8 @@
 
 ### Bugs Fixed
 
+- Fixed a bug where prefix cannot contain `&` when listing blobs.
+
 ### Other Changes
 
 - Create less threads if there isn't too much data to transfer.
