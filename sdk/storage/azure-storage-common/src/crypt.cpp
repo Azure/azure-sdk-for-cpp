@@ -45,11 +45,11 @@ namespace Azure { namespace Storage {
                 doNotEncodeCharacters.begin(),
                 doNotEncodeCharacters.end(),
                 [](char x) {
-                  // we also encode +
+                  // we also encode + and &
                   // Surprisingly, '=' also needs to be encoded because Azure Storage server side is
                   // so strict. We are applying this function to query key and value respectively,
                   // so this won't affect that = used to separate key and query.
-                  return x == '+' || x == '=';
+                  return x == '+' || x == '=' || x == '&';
                 }),
             doNotEncodeCharacters.end());
         return doNotEncodeCharacters;

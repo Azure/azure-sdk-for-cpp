@@ -3,6 +3,7 @@
 
 #include "azure/storage/common/internal/xml_wrapper.hpp"
 
+#include <cstring>
 #include <limits>
 #include <memory>
 #include <stdexcept>
@@ -109,16 +110,18 @@ namespace Azure { namespace Storage { namespace _internal {
   {
     auto context = static_cast<XmlReaderContext*>(m_context);
 
+    auto moveToNext = [&]() {
+      HRESULT ret = WsReadNode(context->reader, context->error);
+      if (!SUCCEEDED(ret))
+      {
+        throw std::runtime_error("Failed to parse xml.");
+      }
+    };
+
     if (context->readingAttributes)
     {
       const WS_XML_ATTRIBUTE* attribute
-          = context->attributeElementNode->attributes[context->attributeIndex++];
-      if (context->attributeIndex == context->attributeElementNode->attributeCount)
-      {
-        context->readingAttributes = false;
-        context->attributeElementNode = nullptr;
-        context->attributeIndex = 0;
-      }
+          = context->attributeElementNode->attributes[context->attributeIndex];
 
       std::string name(
           reinterpret_cast<const char*>(attribute->localName->bytes), attribute->localName->length);
@@ -133,19 +136,16 @@ namespace Azure { namespace Storage { namespace _internal {
       std::string value(
           reinterpret_cast<const char*>(utf8Text->value.bytes), utf8Text->value.length);
 
+      if (++context->attributeIndex == context->attributeElementNode->attributeCount)
+      {
+        moveToNext();
+        context->readingAttributes = false;
+        context->attributeElementNode = nullptr;
+        context->attributeIndex = 0;
+      }
+
       return XmlNode{XmlNodeType::Attribute, std::move(name), std::move(value)};
     }
-
-    auto moveToNext = [&]() {
-      HRESULT ret = WsReadNode(context->reader, context->error);
-      if (!SUCCEEDED(ret))
-      {
-        throw std::runtime_error("Failed to parse xml.");
-      }
-    };
-    // This will skip WS_XML_NODE_TYPE_BOF when parsing the very beginning of an xml document. But
-    // it's fine. We don't care about that xml node anyway.
-    moveToNext();
 
     const WS_XML_NODE* node;
     HRESULT ret = WsGetReaderNode(context->reader, &node, context->error);
@@ -160,36 +160,49 @@ namespace Azure { namespace Storage { namespace _internal {
         std::string name(
             reinterpret_cast<const char*>(elementNode->localName->bytes),
             elementNode->localName->length);
+
         if (elementNode->attributeCount != 0)
         {
           context->readingAttributes = true;
           context->attributeElementNode = elementNode;
           context->attributeIndex = 0;
         }
-        if (elementNode->isEmpty)
-        {
-          // Skip the end tag.
-          moveToNext();
-          return XmlNode{XmlNodeType::SelfClosingTag, std::move(name)};
-        }
         else
         {
-          return XmlNode{XmlNodeType::StartTag, std::move(name)};
+          moveToNext();
         }
+
+        return XmlNode{XmlNodeType::StartTag, std::move(name)};
       }
       case WS_XML_NODE_TYPE_TEXT: {
-        const WS_XML_TEXT_NODE* textNode = (const WS_XML_TEXT_NODE*)node;
-        if (textNode->text->textType != WS_XML_TEXT_TYPE_UTF8)
+        std::string value;
+        while (true)
         {
-          throw std::runtime_error("Unsupported xml encoding.");
+          const WS_XML_TEXT_NODE* textNode = (const WS_XML_TEXT_NODE*)node;
+          if (textNode->text->textType != WS_XML_TEXT_TYPE_UTF8)
+          {
+            throw std::runtime_error("Unsupported xml encoding.");
+          }
+          const WS_XML_UTF8_TEXT* utf8Text
+              = reinterpret_cast<const WS_XML_UTF8_TEXT*>(textNode->text);
+          value += std::string(
+              reinterpret_cast<const char*>(utf8Text->value.bytes), utf8Text->value.length);
+
+          moveToNext();
+          ret = WsGetReaderNode(context->reader, &node, context->error);
+          if (!SUCCEEDED(ret))
+          {
+            throw std::runtime_error("Failed to parse xml.");
+          }
+          if (node->nodeType != WS_XML_NODE_TYPE_TEXT)
+          {
+            break;
+          }
         }
-        const WS_XML_UTF8_TEXT* utf8Text
-            = reinterpret_cast<const WS_XML_UTF8_TEXT*>(textNode->text);
-        std::string value(
-            reinterpret_cast<const char*>(utf8Text->value.bytes), utf8Text->value.length);
         return XmlNode{XmlNodeType::Text, std::string(), std::move(value)};
       }
       case WS_XML_NODE_TYPE_END_ELEMENT:
+        moveToNext();
         return XmlNode{XmlNodeType::EndTag, std::string()};
       case WS_XML_NODE_TYPE_EOF:
         return XmlNode{XmlNodeType::End};
@@ -197,6 +210,7 @@ namespace Azure { namespace Storage { namespace _internal {
       case WS_XML_NODE_TYPE_END_CDATA:
       case WS_XML_NODE_TYPE_COMMENT:
       case WS_XML_NODE_TYPE_BOF:
+        moveToNext();
         return Read();
       default:
         throw std::runtime_error(
@@ -300,11 +314,6 @@ namespace Azure { namespace Storage { namespace _internal {
         throw std::runtime_error("Failed to write xml.");
       }
     }
-    else if (node.Type == XmlNodeType::SelfClosingTag)
-    {
-      Write(XmlNode{XmlNodeType::StartTag, std::move(node.Name), std::move(node.Value)});
-      Write(XmlNode{XmlNodeType::EndTag});
-    }
     else if (node.Type == XmlNodeType::Text)
     {
       HRESULT ret = WsWriteCharsUtf8(
@@ -391,6 +400,7 @@ namespace Azure { namespace Storage { namespace _internal {
   {
     xmlTextReaderPtr reader = nullptr;
     bool readingAttributes = false;
+    bool readingEmptyTag = false;
   };
 
   XmlReader::XmlReader(const char* data, size_t length)
@@ -445,6 +455,11 @@ namespace Azure { namespace Storage { namespace _internal {
         throw std::runtime_error("Failed to parse xml.");
       }
     }
+    if (context->readingEmptyTag)
+    {
+      context->readingEmptyTag = false;
+      return XmlNode{XmlNodeType::EndTag};
+    }
 
     int ret = xmlTextReaderRead(context->reader);
     if (ret == 0)
@@ -471,7 +486,8 @@ namespace Azure { namespace Storage { namespace _internal {
 
     if (type == XML_READER_TYPE_ELEMENT && is_empty)
     {
-      return XmlNode{XmlNodeType::SelfClosingTag, name};
+      context->readingEmptyTag = true;
+      return XmlNode{XmlNodeType::StartTag, name};
     }
     else if (type == XML_READER_TYPE_ELEMENT)
     {
@@ -479,7 +495,7 @@ namespace Azure { namespace Storage { namespace _internal {
     }
     else if (type == XML_READER_TYPE_END_ELEMENT)
     {
-      return XmlNode{XmlNodeType::EndTag, name};
+      return XmlNode{XmlNodeType::EndTag};
     }
     else if (type == XML_READER_TYPE_TEXT)
     {
@@ -567,11 +583,6 @@ namespace Azure { namespace Storage { namespace _internal {
     }
     else if (node.Type == XmlNodeType::EndTag)
     {
-      xmlTextWriterEndElement(writer);
-    }
-    else if (node.Type == XmlNodeType::SelfClosingTag)
-    {
-      xmlTextWriterStartElement(writer, BadCast(node.Name.data()));
       xmlTextWriterEndElement(writer);
     }
     else if (node.Type == XmlNodeType::Text)

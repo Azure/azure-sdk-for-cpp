@@ -6,6 +6,14 @@
 
 - `AccessPolicy::StartsOn` and `AccessPolicy::ExpiresOn` are now nullable values.
 
+### Bugs Fixed
+
+- Fixed a bug where prefix cannot contain `&` when listing files.
+
+### Other Changes
+
+- Create less threads if there isn't too much data to transfer.
+
 ## 12.1.0 (2021-08-10)
 
 ### Bugs Fixed
