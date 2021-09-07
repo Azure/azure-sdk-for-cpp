@@ -10,6 +10,10 @@
 
 ### Other Changes
 
+- Added option `BUILD_CRYPTO` to support to build azure-core without the Cryptographic namespace (no hashing). ON by default.
+- Updated `base64` implementation.
+- Updated `Uuid` implementation for Linux.
+
 ## 1.2.1 (2021-09-02)
 
 ### Bugs Fixed
