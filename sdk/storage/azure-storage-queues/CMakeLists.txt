@@ -10,19 +10,19 @@ set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
 
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/../../../cmake-modules")
 
-# include(AzureVcpkg)
+include(AzureVcpkg)
 include(AzureVersion)
 include(AzureCodeCoverage)
 include(AzureTransportAdapters)
 include(AzureDoxygen)
 include(AzureGlobalCompileOptions)
 
-# az_vcpkg_integrate()
+az_vcpkg_integrate()
 
 if(NOT AZ_ALL_LIBRARIES)
-  find_package(azure-storage-common-cpp "12.1.0" CONFIG QUIET)
+  find_package(azure-storage-common-cpp "12.2.0" CONFIG QUIET)
   if(NOT azure-storage-common-cpp_FOUND)
-    find_package(azure-storage-common-cpp "12.1.0" REQUIRED)
+    find_package(azure-storage-common-cpp "12.2.0" REQUIRED)
   endif()
 endif()
 
@@ -66,11 +66,11 @@ target_link_libraries(azure-storage-queues PUBLIC Azure::azure-storage-common)
 get_az_version("${CMAKE_CURRENT_SOURCE_DIR}/src/private/package_version.hpp")
 generate_documentation(azure-storage-queues ${AZ_LIBRARY_VERSION})
 
-# az_vcpkg_export(
-#     azure-storage-queues
-#     STORAGE_QUEUES
-#     "azure/storage/queues/dll_import_export.hpp"
-#   )
+az_vcpkg_export(
+    azure-storage-queues
+    STORAGE_QUEUES
+    "azure/storage/queues/dll_import_export.hpp"
+  )
 
 # coverage. Has no effect if BUILD_CODE_COVERAGE is OFF
 create_code_coverage(storage azure-storage-queues azure-storage-test)

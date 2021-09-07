@@ -1,16 +1,10 @@
 # Release History
 
-## 12.2.0-beta.1 (Unreleased)
-
-### Features Added
+## 12.2.0 (2021-09-08)
 
 ### Breaking Changes
 
 - `StartsOn` and `ExpiresOn` in `SignedIdentifier` were changed to nullable.
-
-### Bugs Fixed
-
-### Other Changes
 
 ## 12.1.0 (2021-08-10)
 
