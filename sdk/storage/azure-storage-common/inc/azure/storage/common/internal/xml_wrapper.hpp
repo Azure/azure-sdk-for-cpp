@@ -12,7 +12,6 @@ namespace Azure { namespace Storage { namespace _internal {
   {
     StartTag,
     EndTag,
-    SelfClosingTag,
     Text,
     Attribute,
     End,
