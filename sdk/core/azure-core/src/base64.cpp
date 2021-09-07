@@ -387,7 +387,7 @@ static void base64WriteThreeLowOrderBytes(std::vector<uint8_t>::iterator destina
 std::vector<uint8_t> base64Decode(const std::string& text)
 {
 
-  if (text.size() == 0)
+  if (text.size() < 4)
   {
     return std::vector<uint8_t>(0);
   }
