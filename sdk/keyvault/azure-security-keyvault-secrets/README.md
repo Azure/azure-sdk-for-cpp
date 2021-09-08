@@ -37,8 +37,8 @@ We guarantee that all client instance methods are thread-safe and independent of
 ### Additional concepts
 
 <!-- CLIENT COMMON BAR -->
-[Replaceable HTTP transport adapter](https://github.com/Azure/azure-sdk-for-cpp/tree/main/sdk/core/azure-core#http-transport-adapter) |
-[Long-running operations](https://github.com/Azure/azure-sdk-for-cpp/tree/main/sdk/core/azure-core#long-running-operations) |
+[Replaceable HTTP transport adapter](https://github.com/Azure/azure-sdk-for-cpp/blob/main/sdk/core/azure-core#http-transport-adapter) |
+[Long-running operations](https://github.com/Azure/azure-sdk-for-cpp/blob/main/sdk/core/azure-core#long-running-operations) |
 <!-- CLIENT COMMON BAR -->
 
 ## Examples
@@ -157,21 +157,21 @@ You will notice that additional information is logged, like the client request I
 
 Several Azure Key Vault secrets client library samples are available to you in this GitHub repository. These samples provide example code for additional scenarios commonly encountered while working with Azure Key Vault:
 
-* [Sample1-Basic-Operations](https://github.com/Azure/azure-sdk-for-cpp/tree/main/sdk/keyvault/azure-security-keyvault-secrets/samples/sample1-basic-operations):
+* [Sample1-Basic-Operations](https://github.com/Azure/azure-sdk-for-cpp/blob/main/sdk/keyvault/azure-security-keyvault-secrets/samples/sample1-basic-operations):
   * Create a secret
   * Get a secret
   * Update a secret
   * Delete and Purge a secret
 
-* [Sample2-Backup-Restore](https://github.com/Azure/azure-sdk-for-cpp/tree/main/sdk/keyvault/azure-security-keyvault-secrets/samples/sample2-backup-restore):
+* [Sample2-Backup-Restore](https://github.com/Azure/azure-sdk-for-cpp/blob/main/sdk/keyvault/azure-security-keyvault-secrets/samples/sample2-backup-restore):
   * Backup a secret
   * Restore a deleted secret
 
-* [Sample3-Delete-Recover](https://github.com/Azure/azure-sdk-for-cpp/tree/main/sdk/keyvault/azure-security-keyvault-secrets/samples/sample3-delete-recover):
+* [Sample3-Delete-Recover](https://github.com/Azure/azure-sdk-for-cpp/blob/main/sdk/keyvault/azure-security-keyvault-secrets/samples/sample3-delete-recover):
   * Delete a secret
   * Recover a deleted Secret
 
-* [Sample4-Get-Secrets-Deleted](https://github.com/Azure/azure-sdk-for-cpp/tree/main/sdk/keyvault/azure-security-keyvault-secrets/samples/sample4-get-secrets-deleted):
+* [Sample4-Get-Secrets-Deleted](https://github.com/Azure/azure-sdk-for-cpp/blob/main/sdk/keyvault/azure-security-keyvault-secrets/samples/sample4-get-secrets-deleted):
   * List all secrets
   * List all of a secrets versions
   * List all deletes secrets

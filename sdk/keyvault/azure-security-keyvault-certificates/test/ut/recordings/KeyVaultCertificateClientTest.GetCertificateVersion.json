@@ -1,0 +1,30 @@
+{
+  "networkCallRecords": [
+    {
+      "Headers": {
+        "user-agent": "azsdk-cpp-keyvault-certificates/4.0.0-beta.1 (Linux 5.4.0-1056-azure x86_64 #58~18.04.1-Ubuntu SMP Wed Jul 28 23:14:18 UTC 2021)",
+        "x-ms-client-request-id": "fd08ec44-e0b4-4568-7a4b-7f778c59e81a"
+      },
+      "Method": "GET",
+      "Response": {
+        "BODY": "{\"id\":\"https://vivaz.vault.azure.net/certificates/vivazqu/8d532937fea74df58d9b18fca036ad51\",\"kid\":\"https://vivaz.vault.azure.net/keys/vivazqu/8d532937fea74df58d9b18fca036ad51\",\"sid\":\"https://vivaz.vault.azure.net/secrets/vivazqu/8d532937fea74df58d9b18fca036ad51\",\"x5t\":\"7ojjp5dyU2lDF0UkU5ekmfrHGUc\",\"cer\":\"MIIDLDCCAhSgAwIBAgIQAxd2DfDpSUWO55wIK3plrzANBgkqhkiG9w0BAQsFADATMREwDwYDVQQDEwh2aHZiMTk4OTAeFw0yMTA4MzEyMDM2NTJaFw0yMjA4MzEyMDQ2NTJaMBMxETAPBgNVBAMTCHZodmIxOTg5MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAn5pMgw+hP76Hu+ZXkjfrQTw04jUPTfpXPCw4AIjLNo3g4mUmqTDXd3yNIUOpmibfPcDhGotyPiE3UO0hsQCBTf18iHYM108BhO3shVR2sILKw5CBKhqMr4U+g4o9iUsXgiLRO58SUFvJlj9aio7tgS1Z8gcBkYpmJKDrVvZb65SbewkTC6iohhornU3q5ju3fEKtvVllmOgMxlGESYOEkONxAjQccqVWvbElhT0py2pkwDxiIxkFWMnBdtblIuoimKS+UujcSvrrxXFoTT47MzxjuFTTCYvaqHTmmSnEdR7SBansGVyaoW+Pyqm4SNvToa8JzFnf2+0lpwv/f3C52QIDAQABo3wwejAOBgNVHQ8BAf8EBAMCBaAwCQYDVR0TBAIwADAdBgNVHSUEFjAUBggrBgEFBQcDAQYIKwYBBQUHAwIwHwYDVR0jBBgwFoAUDkHLOHieUJ6WfzBMcn6iiJ3FqS4wHQYDVR0OBBYEFA5Byzh4nlCeln8wTHJ+ooidxakuMA0GCSqGSIb3DQEBCwUAA4IBAQAN52HqsZTL9psVFbbvnI8DeO+/oRBkUJhEyk5zgkWkQYBMqCOfULxuG5kIvJkmR83TZOwN0Ki6cVg6pw16zh8IHyE4KgoVEO+3n2pbldJY7RuQDGcmE7kd+B+uOpU5yW6vHCsfGnRBid05uf3+y618B9mUiJ0NjpGoITCelkMiqe5ISDUpx6g4uI/PGyKQzFCddO9Kzy3uGdilcuSfEOlZdgHzmvuqrhdWjx+tFjCGDeWP6WW4BTJBXS14dJ3n+oNWpnTVxyybB5K95O8MWh1ASnw3XA3Zgq6jfTLwQHth9BPSR7iy5CfHLr6l7ZBXLiOlyZCTU1IHpTK56EYE4DpC\",\"attributes\":{\"enabled\":true,\"nbf\":1630442212,\"exp\":1661978812,\"created\":1630442812,\"updated\":1630442812,\"recoveryLevel\":\"Recoverable+Purgeable\",\"recoverableDays\":90},\"tags\":{},\"subject\":\"CN=vhvb1989\",\"issuer\":\"CN=vhvb1989\",\"sans\":{\"dns_names\":[]},\"serialnumber\":\"0317760DF0E949458EE79C082B7A65AF\"}",
+        "STATUS_CODE": "200",
+        "cache-control": "no-cache",
+        "content-length": "1694",
+        "content-type": "application/json; charset=utf-8",
+        "date": "Wed, 01 Sep 2021 21:21:03 GMT",
+        "expires": "-1",
+        "pragma": "no-cache",
+        "strict-transport-security": "max-age=31536000;includeSubDomains",
+        "x-content-type-options": "nosniff",
+        "x-ms-client-request-id": "fd08ec44-e0b4-4568-7a4b-7f778c59e81a",
+        "x-ms-keyvault-network-info": "conn_type=Ipv4;addr=20.49.4.206;act_addr_fam=InterNetwork;",
+        "x-ms-keyvault-region": "eastus",
+        "x-ms-keyvault-service-version": "1.9.79.1",
+        "x-ms-request-id": "b9720337-3e1b-468b-ada0-a8c3f0f53c04",
+        "x-powered-by": "ASP.NET"
+      },
+      "Url": "https://REDACTED.vault.azure.net/certificates/vivazqu/8d532937fea74df58d9b18fca036ad51?api-version=7.2"
+    }
+  ]
+}
