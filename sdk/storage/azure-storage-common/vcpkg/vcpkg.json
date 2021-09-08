@@ -19,7 +19,7 @@
     {
       "name": "libxml2",
       "platform": "!windows"
-    }
+    },
     {
       "name": "openssl",
       "platform": "!windows"
