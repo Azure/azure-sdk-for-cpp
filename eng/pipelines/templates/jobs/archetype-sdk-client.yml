@@ -92,7 +92,8 @@ jobs:
         VcpkgInstall: 'curl[ssl] libxml2 openssl'
         VCPKG_DEFAULT_TRIPLET: 'x64-linux'
         CmakeArgs: ' -DBUILD_TESTING=ON -DBUILD_PERFORMANCE_TESTS=ON -DRUN_LONG_UNIT_TESTS=ON -DCMAKE_BUILD_TYPE=Debug -DBUILD_CODE_COVERAGE=ON'
-        AptDependencies: 'gcovr lcov'
+        AptDependencies: 'lcov'
+        PipDependencies: 'gcovr'
         CODE_COVERAGE: '${{ parameters.Coverage }}'
         # Make coverage report to avoid running the test exe because CI step will run it
         CODE_COVERAGE_COLLECT_ONLY: 1
@@ -229,6 +230,11 @@ jobs:
   - bash: sudo apt install -y $(AptDependencies)
     condition: and(succeededOrFailed(), ne(variables['AptDependencies'], ''))
     displayName: Install dependencies from apt
+
+  # Install pip dependencies (if appropriate)
+  - bash: sudo pip install -y $(PipDependencies)
+    condition: and(succeededOrFailed(), ne(variables['PipDependencies'], ''))
+    displayName: Install dependencies from pip
 
   - template: /eng/pipelines/templates/steps/vcpkg.yml
     parameters:
