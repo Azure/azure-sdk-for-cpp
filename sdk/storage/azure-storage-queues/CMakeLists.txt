@@ -73,7 +73,7 @@ generate_documentation(azure-storage-queues ${AZ_LIBRARY_VERSION})
 #   )
 
 # coverage. Has no effect if BUILD_CODE_COVERAGE is OFF
-create_code_coverage(storage azure-storage-queues azure-storage-test "tests?/*|samples?/*")
+create_code_coverage(storage azure-storage-queues azure-storage-test "tests?/*;samples?/*")
 
 if(BUILD_TESTING)
   target_sources(

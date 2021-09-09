@@ -40,7 +40,7 @@ function(add_gcovr_html)
     set(EXCLUDE_ARGS "")
     foreach(PATH ${args_EXCLUDE})
         list(APPEND EXCLUDE_ARGS -e)
-        list(APPEND EXCLUDE_ARGS "${PATH}")
+        list(APPEND EXCLUDE_ARGS "${BASEDIR}/${PATH}")
     endforeach()
 
     add_custom_target(${args_TARGET_NAME}
@@ -92,7 +92,7 @@ function(add_gcovr_xml)
     set(EXCLUDE_ARGS "")
     foreach(PATH ${args_EXCLUDE})
         list(APPEND EXCLUDE_ARGS -e)
-        list(APPEND EXCLUDE_ARGS "${PATH}")
+        list(APPEND EXCLUDE_ARGS "${BASEDIR}/${PATH}")
     endforeach()
     
     add_custom_target(${args_TARGET_NAME}

@@ -136,7 +136,7 @@ target_include_directories(
 add_library(Azure::azure-core ALIAS azure-core)
 
 # coverage. Has no effect if BUILD_CODE_COVERAGE is OFF
-create_code_coverage(core azure-core azure-core-test "tests?/*|samples?/*|inc/azure/core/internal/json/json.hpp")
+create_code_coverage(core azure-core azure-core-test "tests?/*;samples?/*;inc/azure/core/internal/json/json.hpp")
 
 target_link_libraries(azure-core INTERFACE Threads::Threads)
 

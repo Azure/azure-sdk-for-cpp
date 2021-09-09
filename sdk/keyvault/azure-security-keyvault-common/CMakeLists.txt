@@ -59,7 +59,7 @@ if(MSVC)
 endif()
 
 # coverage. Has no effect if BUILD_CODE_COVERAGE is OFF
-create_code_coverage(keyvault azure-security-keyvault-common azure-security-keyvault-common-test "tests?/*|samples?/*")
+create_code_coverage(keyvault azure-security-keyvault-common azure-security-keyvault-common-test "tests?/*;samples?/*")
 
 get_az_version("${CMAKE_CURRENT_SOURCE_DIR}/src/private/package_version.hpp")
 #generate_documentation(azure-security-keyvault-common ${AZ_LIBRARY_VERSION})
