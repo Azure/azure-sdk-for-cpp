@@ -24,6 +24,9 @@
 # PRLabel: %Storage
 /sdk/storage/            @vinjiang @katmsft @Jinming-Hu @antkmsft @rickwinter @vhvb1989 @gearama
 
+# PRLabel: %EngSys
+/sdk/template/           @danieljurek @Azure/azure-sdk-eng
+
 ###########
 # Eng Sys
 ###########
