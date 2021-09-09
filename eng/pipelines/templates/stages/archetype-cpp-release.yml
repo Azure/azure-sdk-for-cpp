@@ -173,6 +173,12 @@ stages:
                           # "person1,person2,Azure/group-name,person3" ->
                           # "@person1, @person2, @person3"
                           function getFormattedNotifableOwners($rawOwners) {
+                            # If the list of owners is empty return an emtpy
+                            # string
+                            if (!$rawOwners) {
+                              return ''
+                            }
+
                             $owners = @()
                             foreach ($owner in $rawOwners -split ',') {
                               # Exclude groups. GitHub does not notify teams
