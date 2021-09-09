@@ -398,7 +398,7 @@ std::vector<uint8_t> base64Decode(const std::string& text)
   auto inputSize = text.size();
   auto inputPtr = text.data();
   // use the size for the max decoded size
-  auto maxDecodedSize = (inputSize / 4) * 3 - 2;
+  auto maxDecodedSize = (inputSize / 4) * 3;
   std::vector<uint8_t> destination(maxDecodedSize);
   auto destinationPtr = destination.begin();
 
