@@ -157,7 +157,7 @@ jobs:
     displayName: Install dependencies from apt
 
   # Install pip dependencies (if appropriate)
-  - bash: sudo pip install -y $(PipDependencies)
+  - bash: sudo pip install $(PipDependencies)
     condition: and(succeededOrFailed(), ne(variables['PipDependencies'], ''))
     displayName: Install dependencies from pip
 
