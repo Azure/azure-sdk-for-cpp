@@ -96,7 +96,6 @@ stages:
                 vmImage: MMS2019
 
               variables:
-                VcpkgDefaultCodeOwners: '@antkmsft'
                 VcpkgPrRepoOwner: Microsoft
                 VcpkgPrRepoName: vcpkg
 
@@ -170,32 +169,37 @@ stages:
                           PRLabels: "auto-merge"
                           CloseAfterOpenForTesting: '${{ parameters.TestPipeline }}'
 
-                      - task: PowerShell@2
-                        displayName: Get PR owners from CODEOWNERS
-                        inputs:
-                          pwsh: true
-                          filePath: $(Build.SourcesDirectory)/eng/common/scripts/get-codeowners.ps1
-                          arguments: >
-                            -TargetDirectory "/sdk/${{ parameters.ServiceDirectory }}/"
-                            -RootDirectory "$(Build.SourcesDirectory)"
-                            -VsoVariable "PrOwners"
-
                       - pwsh: |
-                          $owners = @()
-                          foreach($owner in $env:PrOwners -split ',') {
-                            # Exclude groups. GitHub does not notify teams
-                            # that have different owners (e.g. alerting
-                            # @Azure/example-team when opening a PR in
-                            # Microsoft/vcpkg)
-                            if ($owner.indexOf('/') -ne -1) {
-                              continue
-                            }
+                          # "person1,person2,Azure/group-name,person3" ->
+                          # "@person1, @person2, @person3"
+                          function getFormattedNotifableOwners($rawOwners) {
+                            $owners = @()
+                            foreach ($owner in $rawOwners -split ',') {
+                              # Exclude groups. GitHub does not notify teams
+                              # that have different owners (e.g. alerting
+                              # @Azure/example-team when opening a PR in
+                              # Microsoft/vcpkg)
+                              if ($owner.indexOf('/') -ne -1) {
+                                continue
+                              }
 
-                            $owners += "@$owner"
+                              $owners += "@$owner"
+                            }
+                            return $owners -join ', '
                           }
-                          $codeOwnersToNotify = $owners -join ', '
+
+                          $prOwners = $(Build.SourcesDirectory)/eng/common/scripts/get-codeowners.ps1 `
+                            -TargetDirectory "/sdk/${{ parameters.ServiceDirectory }}/" `
+                            -RootDirectory "$(Build.SourcesDirectory)"
+
+                          $codeOwnersToNotify = getFormattedNotifableOwners -rawOwners $prOwners
+
+                          # If there are no codeowners fall back to owners of /sdk/
                           if (!$codeOwnersToNotify) {
-                            $codeOwnersToNotify = "$(VcpkgDefaultCodeOwners)"
+                            $fallbackOwners = $(Build.SourcesDirectory)/eng/common/scripts/get-codeowners.ps1 `
+                              -TargetDirectory "/sdk/" `
+                              -RootDirectory "$(Build.SourcesDirectory)"
+                            $codeOwnersToNotify = getFormattedNotifableOwners -rawOwners $fallbackOwners
                           }
 
                           $prComment = "Adding ${{ artifact.Name }} to release"
