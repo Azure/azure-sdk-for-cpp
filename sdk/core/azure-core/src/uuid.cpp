@@ -10,6 +10,7 @@
 namespace {
 // 64-bit Mersenne Twister by Matsumoto and Nishimura, 2000
 // Used to generate the random numbers for the Uuid.
+// The seed is generated with std::random_device.
 static thread_local std::mt19937_64 randomGenerator(std::random_device{}());
 } // namespace
 
