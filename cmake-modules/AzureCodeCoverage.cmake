@@ -39,7 +39,7 @@ function(add_gcovr_html)
     # Enable excluding path from code coverage generation 
     set(EXCLUDE_ARGS "")
     foreach(PATH ${args_EXCLUDE})
-        list(APPEND EXCLUDE_ARGS -e)
+        list(APPEND EXCLUDE_ARGS --filter)
         list(APPEND EXCLUDE_ARGS "${BASEDIR}/${PATH}")
     endforeach()
 
@@ -91,7 +91,7 @@ function(add_gcovr_xml)
     # Enable excluding path from code coverage generation 
     set(EXCLUDE_ARGS "")
     foreach(PATH ${args_EXCLUDE})
-        list(APPEND EXCLUDE_ARGS -e)
+        list(APPEND EXCLUDE_ARGS --filter)
         list(APPEND EXCLUDE_ARGS "${BASEDIR}/${PATH}")
     endforeach()
     
