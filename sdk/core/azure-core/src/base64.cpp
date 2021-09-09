@@ -316,14 +316,15 @@ static void base64WriteIntAsFourBytes(char* destination, int32_t value)
 std::string base64Encode(const std::vector<uint8_t>& data)
 {
   int64_t sourceIndex = 0;
-  auto inputSize = static_cast<int64_t>(data.size());
+  auto inputSize = data.size();
   int32_t result = 0;
+  auto maxEncodedSize = ((inputSize + 2) / 3) * 4;
   // Use a string with size to the max possible result
-  std::string encodedResult((((inputSize + 2) / 3) * 4), '0');
+  std::string encodedResult(maxEncodedSize, '0');
   // Removing const from the string to update the placeholder string
   auto destination = const_cast<char*>(encodedResult.data());
 
-  while (sourceIndex < inputSize - 2)
+  while (sourceIndex < static_cast<int64_t>(inputSize - 2))
   {
     result = base64Encode(data.data() + sourceIndex);
     base64WriteIntAsFourBytes(destination, result);
@@ -331,23 +332,23 @@ std::string base64Encode(const std::vector<uint8_t>& data)
     sourceIndex += 3;
   }
 
-  if (sourceIndex == inputSize - 1)
+  if (sourceIndex == static_cast<int64_t>(inputSize - 1))
   {
     result = base64EncodeAndPadTwo(data.data() + sourceIndex);
     base64WriteIntAsFourBytes(destination, result);
     destination += 4;
     sourceIndex += 1;
   }
-  else if (sourceIndex == inputSize - 2)
+  else if (sourceIndex == static_cast<int64_t>(inputSize - 2))
   {
     result = base64EncodeAndPadOne(data.data() + sourceIndex);
     base64WriteIntAsFourBytes(destination, result);
     destination += 4;
     sourceIndex += 2;
   }
-  auto destinationLength = static_cast<int64_t>(destination - encodedResult.data());
+  auto destinationLength = static_cast<size_t>(destination - encodedResult.data());
   // If encoding took less than the max-expected
-  if (destinationLength < static_cast<int64_t>(encodedResult.size()))
+  if (destinationLength < encodedResult.size())
   {
     return encodedResult.substr(0, destinationLength);
   }
@@ -394,13 +395,14 @@ std::vector<uint8_t> base64Decode(const std::string& text)
 
   int64_t sourceIndex = 0;
   int64_t destinationIndex = 0;
-  auto inputSize = static_cast<int64_t>(text.size());
+  auto inputSize = text.size();
   auto inputPtr = text.data();
   // use the size for the max decoded size
-  std::vector<uint8_t> destination((inputSize / 4) * 3 - 2);
+  auto maxDecodedSize = (inputSize / 4) * 3 - 2;
+  std::vector<uint8_t> destination(maxDecodedSize);
   auto destinationPtr = destination.begin();
 
-  while (sourceIndex < inputSize - 4)
+  while (sourceIndex < static_cast<int64_t>(inputSize - 4))
   {
     int64_t result = base64Decode(inputPtr + sourceIndex);
     base64WriteThreeLowOrderBytes(destinationPtr, result);
@@ -455,8 +457,8 @@ std::vector<uint8_t> base64Decode(const std::string& text)
     destinationPtr += 1;
   }
 
-  auto resultSize = static_cast<int64_t>(destinationPtr - destination.begin());
-  if (resultSize < static_cast<int64_t>(destination.size()))
+  auto resultSize = static_cast<size_t>(destinationPtr - destination.begin());
+  if (resultSize < destination.size())
   {
     destination.resize(resultSize);
     destination.shrink_to_fit();
