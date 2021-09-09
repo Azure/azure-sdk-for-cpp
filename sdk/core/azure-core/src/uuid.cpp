@@ -5,6 +5,13 @@
 
 #include <cstdio>
 #include <random>
+#include <thread>
+
+namespace {
+// 64-bit Mersenne Twister by Matsumoto and Nishimura, 2000
+// Used to generate the random numbers for the Uuid.
+static thread_local std::mt19937_64 randomGenerator(std::random_device{}());
+} // namespace
 
 namespace Azure { namespace Core {
   std::string Uuid::ToString()
@@ -41,11 +48,12 @@ namespace Azure { namespace Core {
   {
     uint8_t uuid[UuidSize] = {};
 
-    std::random_device rd;
+    // RAND_MAX == INT_MAX
+    std::uniform_int_distribution<uint32_t> distribution(0, RAND_MAX);
 
     for (size_t i = 0; i < UuidSize; i += 4)
     {
-      const uint32_t x = rd();
+      const uint32_t x = distribution(randomGenerator);
       std::memcpy(uuid + i, &x, 4);
     }
 
