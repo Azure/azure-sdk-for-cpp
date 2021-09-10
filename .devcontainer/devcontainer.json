@@ -27,7 +27,6 @@
     "AZURE_TEST_MODE": "PLAYBACK",
     "CLIENT_OBJECTID": "",
     // set or unset to run using vcpkg or not
-    "VCPKG_ROOT": "/vcpkg",
-    "VCPKG_INSTALLATION_ROOT": "/vcpkg"
+    "VCPKG_ROOT": "/vcpkg"
   }
 }
