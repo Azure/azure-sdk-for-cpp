@@ -1,20 +1,32 @@
-{
-    "name": "Ubuntu-21.04",
-    "dockerFile": "Dockerfile",
-    "settings": { 
-        "terminal.integrated.shell.linux": "/bin/bash"
-    },
-    "extensions": [
-		"ms-vscode.cpptools-themes",
-		"bbenoist.doxygen",
-		"streetsidesoftware.code-spell-checker",
-		"ms-vscode.cpptools",
-		"xaver.clang-format",
-		"twxs.cmake",
-		"ms-vscode.cmake-tools",
-		"eamodio.gitlens",
-		"davidschuldenfrei.gtest-adapter"
-	],
-    // Do not run as root. See https://aka.ms/vscode-remote/containers/non-root.
-    "remoteUser": "azure-sdk-for-cpp"
+﻿{
+  "name": "Ubuntu-21.04",
+  "dockerFile": "Dockerfile",
+  "settings": {
+    "terminal.integrated.shell.linux": "/bin/bash"
+  },
+  "extensions": [
+    "ms-vscode.cpptools-themes",
+    "bbenoist.doxygen",
+    "streetsidesoftware.code-spell-checker",
+    "ms-vscode.cpptools",
+    "xaver.clang-format",
+    "twxs.cmake",
+    "ms-vscode.cmake-tools",
+    "eamodio.gitlens",
+    "davidschuldenfrei.gtest-adapter"
+  ],
+  // Do not run as root. See https://aka.ms/vscode-remote/containers/non-root.
+  "remoteUser": "azure-sdk-for-cpp",
+  "containerEnv": {
+    "AZURE_CLIENT_ID": "e75e5cbc-4dcc-406b-a6d8-fd2ca7a4a900",
+    "AZURE_CLIENT_SECRET": "i5-X7l-HPErHhQ_0s0hyrHB793M-y.yi4w",
+    "AZURE_KEYVAULT_HSM_URL": "https://gearama-test2.vault.azure.net/",
+    "AZURE_KEYVAULT_URL": "https://gearama-test2.vault.azure.net/",
+    "AZURE_LOG_LEVEL": "1",
+    "AZURE_TENANT_ID": "72f988bf-86f1-41af-91ab-2d7cd011db47",
+    "AZURE_TEST_MODE": "PLAYBACK",
+    "CLIENT_OBJECTID": "3b5454a8-2860-40b2-a3be-a9c9ad237565",
+    "VCPKG_ROOT": "/vcpkg",
+    "VCPKG_INSTALLATION_ROOT": "/vcpkg"
+  }
 }
