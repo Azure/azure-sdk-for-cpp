@@ -39,6 +39,7 @@ RUN apt-get update \
     gnupg2 \
     wget \
     ca-certificates \
+    # vcpkg reqs
     curl \
     zip \
     unzip \
