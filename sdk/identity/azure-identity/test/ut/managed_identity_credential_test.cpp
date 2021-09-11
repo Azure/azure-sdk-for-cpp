@@ -182,6 +182,38 @@ TEST(ManagedIdentityCredential, AppServiceInvalidUrl)
       {"{\"expires_in\":3600, \"access_token\":\"ACCESSTOKEN1\"}"}));
 }
 
+TEST(ManagedIdentityCredential, AppServiceUnsupportedUrl)
+{
+  using Azure::Core::Credentials::AccessToken;
+  using Azure::Core::Credentials::AuthenticationException;
+
+  using Azure::Core::Credentials::AuthenticationException;
+  static_cast<void>(CredentialTestHelper::SimulateTokenRequest(
+      [](auto transport) {
+        TokenCredentialOptions options;
+        options.Transport.Transport = transport;
+
+        CredentialTestHelper::EnvironmentOverride const env({
+            {"MSI_ENDPOINT", "https://microsoft.com:65536/"},
+            {"MSI_SECRET", "CLIENTSECRET"},
+            {"IDENTITY_ENDPOINT", "https://visualstudio.com/"},
+            {"IMDS_ENDPOINT", "https://xbox.com/"},
+            {"IDENTITY_HEADER", "CLIENTSECRET"},
+            {"IDENTITY_SERVER_THUMBPRINT", "0123456789abcdef0123456789abcdef01234567"},
+        });
+
+        std::unique_ptr<ManagedIdentityCredential const> appServiceManagedIdentityCredential;
+        EXPECT_THROW(
+            appServiceManagedIdentityCredential
+            = std::make_unique<ManagedIdentityCredential>(options),
+            AuthenticationException);
+
+        return appServiceManagedIdentityCredential;
+      },
+      {},
+      {"{\"expires_in\":3600, \"access_token\":\"ACCESSTOKEN1\"}"}));
+}
+
 TEST(ManagedIdentityCredential, CloudShell)
 {
   auto const actual = CredentialTestHelper::SimulateTokenRequest(
