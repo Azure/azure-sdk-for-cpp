@@ -28,8 +28,10 @@ std::unique_ptr<_detail::ManagedIdentitySource> CreateManagedIdentitySource(
     }
   }
 
+  // LCOV_EXCL_START
   throw AuthenticationException(
       "ManagedIdentityCredential authentication unavailable. No Managed Identity endpoint found.");
+  // LCOV_EXCL_STOP
 }
 } // namespace
 
