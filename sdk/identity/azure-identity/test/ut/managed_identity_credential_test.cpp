@@ -541,6 +541,47 @@ TEST(ManagedIdentityCredential, AzureArcAuthHeaderMissing)
       }));
 }
 
+TEST(ManagedIdentityCredential, AzureArcUnexpectedHttpStatusCode)
+{
+  {
+    std::ofstream secretFile(
+        "managed_identity_credential_test0.txt", std::ios_base::out | std::ios_base::trunc);
+
+    secretFile << "SECRET0";
+  }
+
+  using Azure::Core::Credentials::AccessToken;
+  using Azure::Core::Credentials::AuthenticationException;
+
+  static_cast<void>(CredentialTestHelper::SimulateTokenRequest(
+      [](auto transport) {
+        TokenCredentialOptions options;
+        options.Transport.Transport = transport;
+
+        CredentialTestHelper::EnvironmentOverride const env({
+            {"MSI_ENDPOINT", ""},
+            {"MSI_SECRET", ""},
+            {"IDENTITY_ENDPOINT", "https://visualstudio.com/"},
+            {"IMDS_ENDPOINT", "https://xbox.com/"},
+            {"IDENTITY_HEADER", "CLIENTSECRET"},
+            {"IDENTITY_SERVER_THUMBPRINT", "0123456789abcdef0123456789abcdef01234567"},
+        });
+
+        return std::make_unique<ManagedIdentityCredential>(options);
+      },
+      {{{"https://azure.com/.default"}}},
+      {{HttpStatusCode::ServiceUnavailable,
+        "",
+        {{"WWW-Authenticate", "ABC ABC=managed_identity_credential_test0.txt"}}},
+       {HttpStatusCode::Ok, "{\"expires_in\":3600, \"access_token\":\"ACCESSTOKEN1\"}", {}}},
+      [](auto& credential, auto& tokenRequestContext, auto& context) {
+        AccessToken token;
+        EXPECT_THROW(
+            token = credential.GetToken(tokenRequestContext, context), AuthenticationException);
+        return token;
+      }));
+}
+
 TEST(ManagedIdentityCredential, AzureArcAuthHeaderNoEquals)
 {
   using Azure::Core::Credentials::AccessToken;
