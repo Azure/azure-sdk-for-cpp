@@ -570,7 +570,7 @@ TEST(ManagedIdentityCredential, AzureArcUnexpectedHttpStatusCode)
         return std::make_unique<ManagedIdentityCredential>(options);
       },
       {{{"https://azure.com/.default"}}},
-      {{HttpStatusCode::ServiceUnavailable,
+      {{HttpStatusCode::Forbidden,
         "",
         {{"WWW-Authenticate", "ABC ABC=managed_identity_credential_test0.txt"}}},
        {HttpStatusCode::Ok, "{\"expires_in\":3600, \"access_token\":\"ACCESSTOKEN1\"}", {}}},
