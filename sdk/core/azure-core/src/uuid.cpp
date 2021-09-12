@@ -56,12 +56,15 @@ namespace Azure { namespace Core {
 #elif defined(AZ_PLATFORM_POSIX)
     // This static cast is safe since we know Uuid size, which is a const, will always fit an int.
     int ret = RAND_bytes(uuid, static_cast<int>(UuidSize));
+
+    // LCOV_EXCL_START
     if (ret <= 0)
     {
       abort();
     }
+    // LCOV_EXCL_STOP
 #else
-    abort();
+    abort(); // LCOV_EXCL_LINE
 #endif
 
     // SetVariant to ReservedRFC4122
