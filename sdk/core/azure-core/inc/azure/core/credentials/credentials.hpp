@@ -23,7 +23,7 @@ namespace Azure { namespace Core { namespace Credentials {
   /**
    * @brief An access token is used to authenticate requests.
    */
-  struct AccessToken final
+  struct AccessToken final // LCOV_EXCL_LINE
   {
     /**
      * @brief Token string.
