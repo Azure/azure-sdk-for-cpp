@@ -99,7 +99,7 @@ std::unique_ptr<ManagedIdentitySource> CloudShellManagedIdentitySource::Create(
   return (msiEndpoint.empty())
       ? nullptr
       : std::unique_ptr<ManagedIdentitySource>(new CloudShellManagedIdentitySource(
-          clientId, options, ParseEndpointUrl(msiEndpoint, EndpointVarName)));
+          clientId, options, ParseEndpointUrl(msiEndpoint, EndpointVarName))); // LCOV_EXCL_LINE
 }
 
 CloudShellManagedIdentitySource::CloudShellManagedIdentitySource(

@@ -27,7 +27,9 @@ namespace Azure { namespace Identity {
    * @brief Options for token authentication.
    *
    */
-  struct ClientSecretCredentialOptions final : public Core::Credentials::TokenCredentialOptions
+  // LCOV_EXCL_START
+  struct ClientSecretCredentialOptions final
+      : public Core::Credentials::TokenCredentialOptions // LCOV_EXCL_STOP
   {
   public:
     /**
