@@ -111,7 +111,7 @@ std::string GetOSVersion()
 #elif defined(AZ_PLATFORM_POSIX)
   {
     utsname sysInfo{};
-    if (uname(&sysInfo) == 0)
+    if (uname(&sysInfo) == 0) // LCOV_EXCL_LINE
     {
       osVersionInfo << sysInfo.sysname << " " << sysInfo.release << " " << sysInfo.machine << " "
                     << sysInfo.version;

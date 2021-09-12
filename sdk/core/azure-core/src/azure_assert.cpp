@@ -3,6 +3,7 @@
 
 #include "azure/core/azure_assert.hpp"
 
+// LCOV_EXCL_START
 [[noreturn]] void AzureNoReturnPath(std::string const& msg)
 {
   // void msg for Release build where Assert is ignored
@@ -10,3 +11,4 @@
   AZURE_ASSERT_MSG(false, msg);
   std::abort();
 }
+// LCOV_EXCL_STOP

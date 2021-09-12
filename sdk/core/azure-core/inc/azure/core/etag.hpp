@@ -113,7 +113,7 @@ public:
         break;
     }
     // Unknown comparison
-    AZURE_UNREACHABLE_CODE();
+    AZURE_UNREACHABLE_CODE(); // LCOV_EXCL_LINE
   }
 
   /**

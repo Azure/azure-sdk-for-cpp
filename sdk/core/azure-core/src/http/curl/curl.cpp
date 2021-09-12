@@ -1026,7 +1026,7 @@ size_t CurlSession::ResponseBufferParser::Parse(
         {
           // Should never happen that parser is not statusLIne or Headers and we still try
           // to parse more.
-          AZURE_UNREACHABLE_CODE();
+          AZURE_UNREACHABLE_CODE(); // LCOV_EXCL_LINE
         }
         // clean internal buffer
         this->m_internalBuffer.clear();
@@ -1064,7 +1064,7 @@ size_t CurlSession::ResponseBufferParser::Parse(
         {
           // Should never happen that parser is not statusLIne or Headers and we still try
           // to parse more.
-          AZURE_UNREACHABLE_CODE();
+          AZURE_UNREACHABLE_CODE(); // LCOV_EXCL_LINE
         }
       }
     }

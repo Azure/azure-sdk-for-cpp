@@ -86,9 +86,11 @@ public:
         }
         break;
       }
+        // LCOV_EXCL_START
       default:
         // imposible to get here
         AZURE_UNREACHABLE_CODE();
+        // LCOV_EXCL_STOP
     }
   }
 
