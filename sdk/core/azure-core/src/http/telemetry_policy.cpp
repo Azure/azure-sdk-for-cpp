@@ -151,7 +151,7 @@ std::string TelemetryPolicy::BuildTelemetryId(
     telemetryId << TrimString(applicationId).substr(0, 24) << " ";
   }
 
-  static std::string const osVer = GetOSVersion();
+  static std::string const osVer = GetOSVersion(); // LCOV_EXCL_LINE
   telemetryId << "azsdk-cpp-" << componentName << "/" << componentVersion << " (" << osVer << ")";
 
   return telemetryId.str();

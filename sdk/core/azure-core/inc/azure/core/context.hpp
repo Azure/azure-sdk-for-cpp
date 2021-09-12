@@ -197,8 +197,10 @@ namespace Azure { namespace Core {
       {
         if (ptr->Key == key)
         {
+          // LCOV_EXCL_START
           AZURE_ASSERT_MSG(
               typeid(T) == ptr->ValueType, "Type mismatch for Context::TryGetValue().");
+          // LCOV_EXCL_STOP
 
           outputValue = *reinterpret_cast<const T*>(ptr->Value.get());
           return true;

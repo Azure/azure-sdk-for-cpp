@@ -140,7 +140,9 @@ public:
    */
   const std::string& ToString() const
   {
+    // LCOV_EXCL_START
     AZURE_ASSERT_MSG(m_value.HasValue(), "Empty ETag, check HasValue() before calling ToString().");
+    // LCOV_EXCL_STOP
 
     return m_value.Value();
   }
