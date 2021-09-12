@@ -44,8 +44,12 @@ std::unique_ptr<ManagedIdentitySource> AppServiceManagedIdentitySource::Create(
 
   return (msiEndpoint.empty() || msiSecret.empty())
       ? nullptr
-      : std::unique_ptr<ManagedIdentitySource>(new AppServiceManagedIdentitySource(
-          clientId, options, ParseEndpointUrl(msiEndpoint, EndpointVarName), msiSecret));
+      : std::unique_ptr<ManagedIdentitySource>(
+          new AppServiceManagedIdentitySource( // LCOV_EXCL_START
+              clientId,
+              options,
+              ParseEndpointUrl(msiEndpoint, EndpointVarName),
+              msiSecret)); // LCOV_EXCL_STOP
 }
 
 AppServiceManagedIdentitySource::AppServiceManagedIdentitySource(
