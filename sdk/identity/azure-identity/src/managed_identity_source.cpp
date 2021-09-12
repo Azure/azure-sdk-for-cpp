@@ -21,7 +21,7 @@ Azure::Core::Url ManagedIdentitySource::ParseEndpointUrl(
 
   try
   {
-    return Url(url); // LCOV_EXCL_BR_LINE
+    return Url(url); // LCOV_EXCL_LINE
   }
   catch (std::invalid_argument const&)
   {
