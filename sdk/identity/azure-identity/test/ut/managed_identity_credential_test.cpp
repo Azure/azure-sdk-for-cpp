@@ -39,6 +39,9 @@ TEST(ManagedIdentityCredential, AppService)
           "{\"expires_in\":7200, \"access_token\":\"ACCESSTOKEN2\"}",
           "{\"expires_in\":9999, \"access_token\":\"ACCESSTOKEN3\"}"});
 
+  EXPECT_EQ(actual.Requests.size(), 3U);
+  EXPECT_EQ(actual.Responses.size(), 3U);
+
   auto const& request0 = actual.Requests.at(0);
   auto const& request1 = actual.Requests.at(1);
   auto const& request2 = actual.Requests.at(2);
@@ -122,6 +125,9 @@ TEST(ManagedIdentityCredential, AppServiceClientId)
           "{\"expires_in\":3600, \"access_token\":\"ACCESSTOKEN1\"}",
           "{\"expires_in\":7200, \"access_token\":\"ACCESSTOKEN2\"}",
           "{\"expires_in\":9999, \"access_token\":\"ACCESSTOKEN3\"}"});
+
+  EXPECT_EQ(actual.Requests.size(), 3U);
+  EXPECT_EQ(actual.Responses.size(), 3U);
 
   auto const& request0 = actual.Requests.at(0);
   auto const& request1 = actual.Requests.at(1);
@@ -273,6 +279,9 @@ TEST(ManagedIdentityCredential, CloudShell)
           "{\"expires_in\":7200, \"access_token\":\"ACCESSTOKEN2\"}",
           "{\"expires_in\":9999, \"access_token\":\"ACCESSTOKEN3\"}"});
 
+  EXPECT_EQ(actual.Requests.size(), 3U);
+  EXPECT_EQ(actual.Responses.size(), 3U);
+
   auto const& request0 = actual.Requests.at(0);
   auto const& request1 = actual.Requests.at(1);
   auto const& request2 = actual.Requests.at(2);
@@ -343,6 +352,9 @@ TEST(ManagedIdentityCredential, CloudShellClientId)
           "{\"expires_in\":3600, \"access_token\":\"ACCESSTOKEN1\"}",
           "{\"expires_in\":7200, \"access_token\":\"ACCESSTOKEN2\"}",
           "{\"expires_in\":9999, \"access_token\":\"ACCESSTOKEN3\"}"});
+
+  EXPECT_EQ(actual.Requests.size(), 3U);
+  EXPECT_EQ(actual.Responses.size(), 3U);
 
   auto const& request0 = actual.Requests.at(0);
   auto const& request1 = actual.Requests.at(1);
@@ -479,6 +491,9 @@ TEST(ManagedIdentityCredential, AzureArc)
         "",
         {{"WWW-Authenticate", "ABC ABC=managed_identity_credential_test3.txt"}}},
        {HttpStatusCode::Ok, "{\"expires_in\":9999, \"access_token\":\"ACCESSTOKEN3\"}", {}}});
+
+  EXPECT_EQ(actual.Requests.size(), 6U);
+  EXPECT_EQ(actual.Responses.size(), 3U);
 
   auto const& request0 = actual.Requests.at(0);
   auto const& request1 = actual.Requests.at(1);
@@ -785,7 +800,7 @@ TEST(ManagedIdentityCredential, Imds)
         CredentialTestHelper::EnvironmentOverride const env({
             {"MSI_ENDPOINT", ""},
             {"MSI_SECRET", ""},
-            {"IDENTITY_ENDPOINT", "https://visualstudio.com/"},
+            {"IDENTITY_ENDPOINT", ""},
             {"IMDS_ENDPOINT", ""},
             {"IDENTITY_HEADER", ""},
             {"IDENTITY_SERVER_THUMBPRINT", ""},
@@ -798,6 +813,9 @@ TEST(ManagedIdentityCredential, Imds)
           "{\"expires_in\":3600, \"access_token\":\"ACCESSTOKEN1\"}",
           "{\"expires_in\":7200, \"access_token\":\"ACCESSTOKEN2\"}",
           "{\"expires_in\":9999, \"access_token\":\"ACCESSTOKEN3\"}"});
+
+  EXPECT_EQ(actual.Requests.size(), 3U);
+  EXPECT_EQ(actual.Responses.size(), 3U);
 
   auto const& request0 = actual.Requests.at(0);
   auto const& request1 = actual.Requests.at(1);
@@ -869,7 +887,7 @@ TEST(ManagedIdentityCredential, ImdsClientId)
             {"MSI_ENDPOINT", ""},
             {"MSI_SECRET", ""},
             {"IDENTITY_ENDPOINT", ""},
-            {"IMDS_ENDPOINT", "https://xbox.com/"},
+            {"IMDS_ENDPOINT", ""},
             {"IDENTITY_HEADER", ""},
             {"IDENTITY_SERVER_THUMBPRINT", ""},
         });
@@ -882,6 +900,9 @@ TEST(ManagedIdentityCredential, ImdsClientId)
           "{\"expires_in\":3600, \"access_token\":\"ACCESSTOKEN1\"}",
           "{\"expires_in\":7200, \"access_token\":\"ACCESSTOKEN2\"}",
           "{\"expires_in\":9999, \"access_token\":\"ACCESSTOKEN3\"}"});
+
+  EXPECT_EQ(actual.Requests.size(), 3U);
+  EXPECT_EQ(actual.Responses.size(), 3U);
 
   auto const& request0 = actual.Requests.at(0);
   auto const& request1 = actual.Requests.at(1);
@@ -943,4 +964,97 @@ TEST(ManagedIdentityCredential, ImdsClientId)
 
   EXPECT_GT(response2.AccessToken.ExpiresOn, response2.EarliestExpiration + 9999s);
   EXPECT_LT(response2.AccessToken.ExpiresOn, response2.LatestExpiration + 9999s);
+}
+
+TEST(ManagedIdentityCredential, ImdsCreation)
+{
+  auto const actual1 = CredentialTestHelper::SimulateTokenRequest(
+      [](auto transport) {
+        TokenCredentialOptions options;
+        options.Transport.Transport = transport;
+
+        CredentialTestHelper::EnvironmentOverride const env({
+            {"MSI_ENDPOINT", ""},
+            {"MSI_SECRET", ""},
+            {"IDENTITY_ENDPOINT", "https://visualstudio.com/"},
+            {"IMDS_ENDPOINT", ""},
+            {"IDENTITY_HEADER", ""},
+            {"IDENTITY_SERVER_THUMBPRINT", ""},
+        });
+
+        return std::make_unique<ManagedIdentityCredential>(
+            "fedcba98-7654-3210-0123-456789abcdef", options);
+      },
+      {{{"https://azure.com/.default"}}},
+      {"{\"expires_in\":3600, \"access_token\":\"ACCESSTOKEN1\"}"});
+
+  auto const actual2 = CredentialTestHelper::SimulateTokenRequest(
+      [](auto transport) {
+        TokenCredentialOptions options;
+        options.Transport.Transport = transport;
+
+        CredentialTestHelper::EnvironmentOverride const env({
+            {"MSI_ENDPOINT", ""},
+            {"MSI_SECRET", ""},
+            {"IDENTITY_ENDPOINT", ""},
+            {"IMDS_ENDPOINT", "https://xbox.com/"},
+            {"IDENTITY_HEADER", ""},
+            {"IDENTITY_SERVER_THUMBPRINT", ""},
+        });
+
+        return std::make_unique<ManagedIdentityCredential>(
+            "01234567-89ab-cdef-fedc-ba9876543210", options);
+      },
+      {{{"https://outlook.com/.default"}}},
+      {"{\"expires_in\":7200, \"access_token\":\"ACCESSTOKEN2\"}"});
+
+  EXPECT_EQ(actual1.Requests.size(), 1U);
+  EXPECT_EQ(actual1.Responses.size(), 1U);
+
+  EXPECT_EQ(actual2.Requests.size(), 1U);
+  EXPECT_EQ(actual2.Responses.size(), 1U);
+
+  auto const& request1 = actual1.Requests.at(0);
+  auto const& response1 = actual1.Responses.at(0);
+
+  auto const& request2 = actual2.Requests.at(0);
+  auto const& response2 = actual2.Responses.at(0);
+
+  EXPECT_EQ(request1.HttpMethod, HttpMethod::Get);
+  EXPECT_EQ(request2.HttpMethod, HttpMethod::Get);
+
+  EXPECT_EQ(
+      request1.AbsoluteUrl,
+      "http://169.254.169.254/metadata/identity/oauth2/token"
+      "?api-version=2018-02-01"
+      "&client_id=fedcba98-7654-3210-0123-456789abcdef"
+      "&resource=https%3A%2F%2Fazure.com"); // cspell:disable-line
+
+  EXPECT_EQ(
+      request2.AbsoluteUrl,
+      "http://169.254.169.254/metadata/identity/oauth2/token"
+      "?api-version=2018-02-01"
+      "&client_id=01234567-89ab-cdef-fedc-ba9876543210"
+      "&resource=https%3A%2F%2Foutlook.com"); // cspell:disable-line
+
+  EXPECT_TRUE(request1.Body.empty());
+  EXPECT_TRUE(request2.Body.empty());
+
+  {
+    EXPECT_NE(request1.Headers.find("Metadata"), request1.Headers.end());
+    EXPECT_EQ(request1.Headers.at("Metadata"), "true");
+
+    EXPECT_NE(request2.Headers.find("Metadata"), request2.Headers.end());
+    EXPECT_EQ(request2.Headers.at("Metadata"), "true");
+  }
+
+  EXPECT_EQ(response1.AccessToken.Token, "ACCESSTOKEN1");
+  EXPECT_EQ(response2.AccessToken.Token, "ACCESSTOKEN2");
+
+  using namespace std::chrono_literals;
+  EXPECT_GT(response1.AccessToken.ExpiresOn, response1.EarliestExpiration + 3600s);
+  EXPECT_LT(response1.AccessToken.ExpiresOn, response1.LatestExpiration + 3600s);
+
+  EXPECT_GT(response2.AccessToken.ExpiresOn, response2.EarliestExpiration + 7200s);
+  EXPECT_LT(response2.AccessToken.ExpiresOn, response2.LatestExpiration + 7200s);
 }
