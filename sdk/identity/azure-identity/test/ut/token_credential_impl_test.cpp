@@ -260,3 +260,43 @@ TEST(TokenCredentialImpl, FormatScopes)
       TokenCredentialImpl::FormatScopes({"https://azure.com", "https://azure.com"}, true),
       "https%3A%2F%2Fazure.com https%3A%2F%2Fazure.com"); // cspell:disable-line
 }
+
+TEST(TokenCredentialImpl, NoExpiration)
+{
+  static_cast<void>(CredentialTestHelper::SimulateTokenRequest(
+      [](auto transport) {
+        TokenCredentialOptions options;
+        options.Transport.Transport = transport;
+
+        return std::make_unique<TokenCredentialImplTester>(
+            HttpMethod::Delete, Url("https://outlook.com/"), options);
+      },
+      {{{"https://azure.com/.default", "https://microsoft.com/.default"}}},
+      {"{\"access_token\":\"ACCESSTOKEN\"}"},
+      [](auto& credential, auto& tokenRequestContext, auto& context) {
+        AccessToken token;
+        EXPECT_THROW(
+            token = credential.GetToken(tokenRequestContext, context), AuthenticationException);
+        return token;
+      }));
+}
+
+TEST(TokenCredentialImpl, NoToken)
+{
+  static_cast<void>(CredentialTestHelper::SimulateTokenRequest(
+      [](auto transport) {
+        TokenCredentialOptions options;
+        options.Transport.Transport = transport;
+
+        return std::make_unique<TokenCredentialImplTester>(
+            HttpMethod::Delete, Url("https://outlook.com/"), options);
+      },
+      {{{"https://azure.com/.default", "https://microsoft.com/.default"}}},
+      {"{\"expires_in\":3600}"},
+      [](auto& credential, auto& tokenRequestContext, auto& context) {
+        AccessToken token;
+        EXPECT_THROW(
+            token = credential.GetToken(tokenRequestContext, context), AuthenticationException);
+        return token;
+      }));
+}
