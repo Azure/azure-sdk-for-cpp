@@ -229,4 +229,7 @@ TEST(TokenCredentialImpl, FormatScopes)
       TokenCredentialImpl::FormatScopes(
           {"https://microsoft.com/.default", "https://azure.com/.default"}, true),
       "https%3A%2F%2Fmicrosoft.com%2F.default https%3A%2F%2Fazure.com%2F.default"); // cspell:disable-line
+
+  // Spaces inside scopes get encoded, but the spaces separating scopes are not
+  EXPECT_EQ(TokenCredentialImpl::FormatScopes({"a b", "c d", "e f"}, false), "a%20b c%20d e%20f");
 }
