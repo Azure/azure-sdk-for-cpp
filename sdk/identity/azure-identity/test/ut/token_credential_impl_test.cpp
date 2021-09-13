@@ -244,8 +244,8 @@ TEST(TokenCredentialImpl, FormatScopes)
       "%2F.default %2F.default");
 
   // Very short single scope, maybe can be '/.default'
-  EXPECT_EQ(TokenCredentialImpl::FormatScopes({"./outlook"}, true), "%2F.outlook");
+  EXPECT_EQ(TokenCredentialImpl::FormatScopes({"/.outlook"}, true), "%2F.outlook");
 
   // Very short single scope, clearly can't end with '/.default'
-  EXPECT_EQ(TokenCredentialImpl::FormatScopes({"./xbox"}, true), "%2F.xbox");
+  EXPECT_EQ(TokenCredentialImpl::FormatScopes({"/.xbox"}, true), "%2F.xbox");
 }
