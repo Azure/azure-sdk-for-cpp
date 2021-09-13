@@ -889,7 +889,7 @@ TEST(ManagedIdentityCredential, ImdsClientId)
 
   auto const& response0 = actual.Responses.at(0);
   auto const& response1 = actual.Responses.at(1);
-  auto const& response1 = actual.Responses.at(2);
+  auto const& response2 = actual.Responses.at(2);
 
   EXPECT_EQ(request0.HttpMethod, HttpMethod::Get);
   EXPECT_EQ(request1.HttpMethod, HttpMethod::Get);
