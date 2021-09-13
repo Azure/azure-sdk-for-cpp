@@ -12,6 +12,7 @@
 using Azure::Core::Context;
 using Azure::Core::Url;
 using Azure::Core::Credentials::AccessToken;
+using Azure::Core::Credentials::AuthenticationException;
 using Azure::Core::Credentials::TokenCredential;
 using Azure::Core::Credentials::TokenCredentialOptions;
 using Azure::Core::Credentials::TokenRequestContext;
@@ -22,6 +23,7 @@ using Azure::Identity::Test::_detail::CredentialTestHelper;
 namespace {
 class TokenCredentialImplTester : public TokenCredential {
 private:
+  std::function<void()> m_throwingFunction;
   HttpMethod m_httpMethod;
   Url m_url;
   std::unique_ptr<TokenCredentialImpl> m_tokenCredentialImpl;
@@ -31,14 +33,22 @@ public:
       HttpMethod httpMethod,
       Url url,
       TokenCredentialOptions const& options)
-      : m_httpMethod(httpMethod), m_url(url),
+      : m_throwingFunction([]() {}), m_httpMethod(httpMethod), m_url(url),
         m_tokenCredentialImpl(new TokenCredentialImpl(options))
+  {
+  }
+
+  explicit TokenCredentialImplTester(
+      std::function<void()> throwingFunction,
+      TokenCredentialOptions const& options)
+      : m_httpMethod(std::string()), m_tokenCredentialImpl(new TokenCredentialImpl(options))
   {
   }
 
   AccessToken GetToken(TokenRequestContext const& tokenRequestContext, Context const& context)
       const override
   {
+    m_throwingFunction;
     return m_tokenCredentialImpl->GetToken(context, [&]() {
       std::string scopesStr;
       for (auto const& scope : tokenRequestContext.Scopes)
@@ -62,7 +72,7 @@ TEST(TokenCredentialImpl, Normal)
         return std::make_unique<TokenCredentialImplTester>(
             HttpMethod::Delete, Url("https://outlook.com/"), options);
       },
-      {{{"https://azure.com/.default"}}, {{}}, {{"https://microsoft.com/.default"}}},
+      {{{"https://azure.com/.default", "https://microsoft.com/.default"}}},
       {"{\"expires_in\":3600, \"access_token\":\"ACCESSTOKEN\"}"});
 
   EXPECT_EQ(actual.Requests.size(), 1U);
@@ -74,10 +84,10 @@ TEST(TokenCredentialImpl, Normal)
 
   EXPECT_EQ(request.HttpMethod, HttpMethod::Delete);
 
-  EXPECT_EQ(request.AbsoluteUrl, "https://outlook.com/");
+  EXPECT_EQ(request.AbsoluteUrl, "https://outlook.com");
 
   {
-    constexpr char expectedBody[] = "https://azure.com/.default  https://microsoft.com/.default ";
+    constexpr char expectedBody[] = "https://azure.com/.default https://microsoft.com/.default ";
     EXPECT_EQ(request.Body, expectedBody);
 
     EXPECT_NE(request.Headers.find("Content-Length"), request.Headers.end());
@@ -92,4 +102,43 @@ TEST(TokenCredentialImpl, Normal)
   using namespace std::chrono_literals;
   EXPECT_GT(response.AccessToken.ExpiresOn, response.EarliestExpiration + 3600s);
   EXPECT_LT(response.AccessToken.ExpiresOn, response.LatestExpiration + 3600s);
+}
+
+TEST(TokenCredentialImpl, StdException)
+{
+  static_cast<void>(CredentialTestHelper::SimulateTokenRequest(
+      [](auto transport) {
+        TokenCredentialOptions options;
+        options.Transport.Transport = transport;
+
+        return std::make_unique<TokenCredentialImplTester>(
+            []() { throw std::exception(); }, options);
+      },
+      {{{"https://azure.com/.default", "https://microsoft.com/.default"}}},
+      {"{\"expires_in\":3600, \"access_token\":\"ACCESSTOKEN\"}"},
+      [](auto& credential, auto& tokenRequestContext, auto& context) {
+        AccessToken token;
+        EXPECT_THROW(
+            token = credential.GetToken(tokenRequestContext, context), AuthenticationException);
+        return token;
+      }));
+}
+
+TEST(TokenCredentialImpl, ThrowInt)
+{
+  static_cast<void>(CredentialTestHelper::SimulateTokenRequest(
+      [](auto transport) {
+        TokenCredentialOptions options;
+        options.Transport.Transport = transport;
+
+        return std::make_unique<TokenCredentialImplTester>([]() { throw 0; }, options);
+      },
+      {{{"https://azure.com/.default", "https://microsoft.com/.default"}}},
+      {"{\"expires_in\":3600, \"access_token\":\"ACCESSTOKEN\"}"},
+      [](auto& credential, auto& tokenRequestContext, auto& context) {
+        AccessToken token;
+        EXPECT_THROW(
+            token = credential.GetToken(tokenRequestContext, context), AuthenticationException);
+        return token;
+      }));
 }
