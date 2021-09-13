@@ -238,7 +238,9 @@ TEST(TokenCredentialImpl, FormatScopes)
   EXPECT_EQ(TokenCredentialImpl::FormatScopes({"/.default"}, true), "");
 
   // 2 scopes, './default' only
-  EXPECT_EQ(TokenCredentialImpl::FormatScopes({"/.default", "/.default"}, false), "%2F.default");
+  EXPECT_EQ(
+      TokenCredentialImpl::FormatScopes({"/.default", "/.default"}, false),
+      "%2F.default %2F.default");
   EXPECT_EQ(
       TokenCredentialImpl::FormatScopes({"/.default", "/.default"}, true),
       "%2F.default %2F.default");
@@ -248,4 +250,13 @@ TEST(TokenCredentialImpl, FormatScopes)
 
   // Very short single scope, clearly can't end with '/.default'
   EXPECT_EQ(TokenCredentialImpl::FormatScopes({"/.xbox"}, true), "%2F.xbox");
+
+  // Duplicates kept
+  EXPECT_EQ(
+      TokenCredentialImpl::FormatScopes({"https://azure.com", "https://azure.com"}, false),
+      "https%3A%2F%2Fazure.com https%3A%2F%2Fazure.com"); // cspell:disable-line
+
+  EXPECT_EQ(
+      TokenCredentialImpl::FormatScopes({"https://azure.com", "https://azure.com"}, true),
+      "https%3A%2F%2Fazure.com https%3A%2F%2Fazure.com"); // cspell:disable-line
 }
