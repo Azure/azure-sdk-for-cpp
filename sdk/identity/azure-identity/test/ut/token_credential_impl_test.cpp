@@ -151,8 +151,8 @@ TEST(TokenCredentialImpl, FormatScopes)
   // Not testing with 0 scopes:
   // It is a caller's responsibility to never give an empty vector of scopes to the FormatScopes()
   // member function. The class is in _detail, so this kind of contract is ok. It allows for less
-  // unneccessary checks, because, realistically, calling code would test the scopes for being empty
-  // first, in ordrer to decide whether to append "&scopes=" at all, or not.
+  // unnecessary checks, because, realistically, calling code would test the scopes for being empty
+  // first, in order to decide whether to append "&scopes=" at all, or not.
 
   // 1 scope
   EXPECT_EQ(
