@@ -15,6 +15,7 @@
     "eng/common/**/*",
     "json.hpp",
     "*nlohmann-json*",
+    "eng/docs/api/assets/**/*",
     "sdk/keyvault/azure-security-keyvault-keys/test/ut/recordings/*.json",
     "sdk/keyvault/azure-security-keyvault-keys/test/ut/key_client_import_test_live.cpp"
   ],
@@ -28,6 +29,7 @@
     "Aloctl",
     "azcore",
     "azsdk",
+    "azuresdk",
     "azuresdkforcpp",
     "cmake",
     "CMOCKA",
