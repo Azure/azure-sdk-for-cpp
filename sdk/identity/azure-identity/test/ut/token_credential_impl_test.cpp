@@ -300,3 +300,23 @@ TEST(TokenCredentialImpl, NoToken)
         return token;
       }));
 }
+
+TEST(TokenCredentialImpl, ExpirationValueMissing)
+{
+  static_cast<void>(CredentialTestHelper::SimulateTokenRequest(
+      [](auto transport) {
+        TokenCredentialOptions options;
+        options.Transport.Transport = transport;
+
+        return std::make_unique<TokenCredentialImplTester>(
+            HttpMethod::Delete, Url("https://outlook.com/"), options);
+      },
+      {{{"https://azure.com/.default", "https://microsoft.com/.default"}}},
+      {"{\"expires_in\": \"\", \"access_token\":\"ACCESSTOKEN\"}"},
+      [](auto& credential, auto& tokenRequestContext, auto& context) {
+        AccessToken token;
+        EXPECT_THROW(
+            token = credential.GetToken(tokenRequestContext, context), AuthenticationException);
+        return token;
+      }));
+}
