@@ -6,6 +6,7 @@
 #include "credential_test_helper.hpp"
 
 #include <memory>
+#include <utility>
 
 #include <gtest/gtest.h>
 
@@ -23,8 +24,8 @@ using Azure::Identity::Test::_detail::CredentialTestHelper;
 namespace {
 class TokenCredentialImplTester : public TokenCredential {
 private:
-  std::function<void()> m_throwingFunction;
-  HttpMethod m_httpMethod;
+  std::function<void()> m_throwingFunction = []() {};
+  HttpMethod m_httpMethod = HttpMethod(std::string());
   Url m_url;
   std::unique_ptr<TokenCredentialImpl> m_tokenCredentialImpl;
 
@@ -33,7 +34,7 @@ public:
       HttpMethod httpMethod,
       Url url,
       TokenCredentialOptions const& options)
-      : m_throwingFunction([]() {}), m_httpMethod(httpMethod), m_url(url),
+      : m_httpMethod(std::move(httpMethod)), m_url(std::move(url)),
         m_tokenCredentialImpl(new TokenCredentialImpl(options))
   {
   }
@@ -41,15 +42,17 @@ public:
   explicit TokenCredentialImplTester(
       std::function<void()> throwingFunction,
       TokenCredentialOptions const& options)
-      : m_httpMethod(std::string()), m_tokenCredentialImpl(new TokenCredentialImpl(options))
+      : m_throwingFunction(std::move(throwingFunction)),
+        m_tokenCredentialImpl(new TokenCredentialImpl(options))
   {
   }
 
   AccessToken GetToken(TokenRequestContext const& tokenRequestContext, Context const& context)
       const override
   {
-    m_throwingFunction;
     return m_tokenCredentialImpl->GetToken(context, [&]() {
+      m_throwingFunction();
+
       std::string scopesStr;
       for (auto const& scope : tokenRequestContext.Scopes)
       {
