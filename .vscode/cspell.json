@@ -160,6 +160,15 @@
         "rwdlacup",
         "pfile"
       ]
+    },
+    {
+      "filename": "**/cmake-modules/**/*",
+      "words": [
+        "fprofile",
+        "ftest",
+        "mathjax",
+        "mdfile"
+      ]
     }
   ],
   "allowCompoundWords": true
