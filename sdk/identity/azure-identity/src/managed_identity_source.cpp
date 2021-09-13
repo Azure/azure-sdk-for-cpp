@@ -156,7 +156,9 @@ std::unique_ptr<ManagedIdentitySource> AzureArcManagedIdentitySource::Create(
   constexpr auto EndpointVarName = "IDENTITY_ENDPOINT";
   auto identityEndpoint = Environment::GetVariable(EndpointVarName);
 
+  // LCOV_EXCL_START
   if (identityEndpoint.empty() || Environment::GetVariable("IMDS_ENDPOINT").empty())
+  // LCOV_EXCL_STOP
   {
     return nullptr;
   }

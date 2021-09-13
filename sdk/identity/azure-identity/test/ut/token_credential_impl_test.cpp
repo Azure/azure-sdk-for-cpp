@@ -145,3 +145,88 @@ TEST(TokenCredentialImpl, ThrowInt)
         return token;
       }));
 }
+
+TEST(TokenCredentialImpl, FormatScopes)
+{
+  // Not testing with 0 scopes:
+  // It is a caller's responsibility to never give an empty vector of scopes to the FormatScopes()
+  // member function. The class is in _detail, so this kind of contract is ok. It allows for less
+  // unneccessary checks, because, realistically, calling code would test the scopes for being empty
+  // first, in ordrer to decide whether to append "&scopes=" at all, or not.
+
+  // 1 scope
+  EXPECT_EQ(
+      TokenCredentialImpl::FormatScopes({"https://azure.com"}, false),
+      "https%3A%2F%2Fazure.com"); // cspell:disable-line
+
+  EXPECT_EQ(
+      TokenCredentialImpl::FormatScopes({"https://azure.com"}, true),
+      "https%3A%2F%2Fazure.com"); // cspell:disable-line
+
+  // 1 scope, ends with '/'
+  EXPECT_EQ(
+      TokenCredentialImpl::FormatScopes({"https://azure.com/"}, false),
+      "https%3A%2F%2Fazure.com%2F"); // cspell:disable-line
+
+  EXPECT_EQ(
+      TokenCredentialImpl::FormatScopes({"https://azure.com/"}, true),
+      "https%3A%2F%2Fazure.com%2F"); // cspell:disable-line
+
+  // 1 scope, ends with '/.default'
+  EXPECT_EQ(
+      TokenCredentialImpl::FormatScopes({"https://azure.com/.default"}, false),
+      "https%3A%2F%2Fazure.com%2F.default"); // cspell:disable-line
+
+  EXPECT_EQ(
+      TokenCredentialImpl::FormatScopes({"https://azure.com/.default"}, true),
+      "https%3A%2F%2Fazure.com"); // cspell:disable-line
+
+  // 2 scopes
+  EXPECT_EQ(
+      TokenCredentialImpl::FormatScopes({"https://azure.com", "https://microsoft.com"}, false),
+      "https%3A%2F%2Fazure.com https%3A%2F%2Fmicrosoft.com"); // cspell:disable-line
+
+  EXPECT_EQ(
+      TokenCredentialImpl::FormatScopes({"https://azure.com", "https://microsoft.com"}, true),
+      "https%3A%2F%2Fazure.com https%3A%2F%2Fmicrosoft.com"); // cspell:disable-line
+
+  // 2 scopes, reverse order
+  EXPECT_EQ(
+      TokenCredentialImpl::FormatScopes({"https://microsoft.com", "https://azure.com"}, false),
+      "https%3A%2F%2Fmicrosoft.com https%3A%2F%2Fazure.com"); // cspell:disable-line
+
+  EXPECT_EQ(
+      TokenCredentialImpl::FormatScopes({"https://microsoft.com", "https://azure.com"}, true),
+      "https%3A%2F%2Fmicrosoft.com https%3A%2F%2Fazure.com"); // cspell:disable-line
+
+  // 2 scopes, one ends with '/'
+  EXPECT_EQ(
+      TokenCredentialImpl::FormatScopes({"https://azure.com", "https://microsoft.com/"}, false),
+      "https%3A%2F%2Fazure.com https%3A%2F%2Fmicrosoft.com%2F"); // cspell:disable-line
+
+  EXPECT_EQ(
+      TokenCredentialImpl::FormatScopes({"https://azure.com", "https://microsoft.com/"}, true),
+      "https%3A%2F%2Fazure.com https%3A%2F%2Fmicrosoft.com%2F"); // cspell:disable-line
+
+  // 2 scopes, one ends with '/.default'
+  EXPECT_EQ(
+      TokenCredentialImpl::FormatScopes(
+          {"https://azure.com", "https://microsoft.com/.default"}, false),
+      "https%3A%2F%2Fazure.com https%3A%2F%2Fmicrosoft.com%2F.default"); // cspell:disable-line
+
+  EXPECT_EQ(
+      TokenCredentialImpl::FormatScopes(
+          {"https://azure.com", "https://microsoft.com/.default"}, true),
+      "https%3A%2F%2Fazure.com https%3A%2F%2Fmicrosoft.com%2F.default"); // cspell:disable-line
+
+  // 2 scopes, both end with '/.default', reverse order
+  EXPECT_EQ(
+      TokenCredentialImpl::FormatScopes(
+          {"https://microsoft.com/.default", "https://azure.com/.default"}, false),
+      "https%3A%2F%2Fmicrosoft.com%2F.default https%3A%2F%2Fazure.com%2F.default"); // cspell:disable-line
+
+  EXPECT_EQ(
+      TokenCredentialImpl::FormatScopes(
+          {"https://microsoft.com/.default", "https://azure.com/.default"}, true),
+      "https%3A%2F%2Fmicrosoft.com%2F.default https%3A%2F%2Fazure.com%2F.default"); // cspell:disable-line
+}
