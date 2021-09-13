@@ -271,7 +271,7 @@ TEST(ManagedIdentityCredential, CloudShell)
       std::vector<std::string>{
           "{\"expires_in\":3600, \"access_token\":\"ACCESSTOKEN1\"}",
           "{\"expires_in\":7200, \"access_token\":\"ACCESSTOKEN2\"}",
-          "{\"expires_in\":9999, \"access_token\":\"ACCESSTOKEN2\"}"});
+          "{\"expires_in\":9999, \"access_token\":\"ACCESSTOKEN3\"}"});
 
   auto const& request0 = actual.Requests.at(0);
   auto const& request1 = actual.Requests.at(1);
@@ -824,7 +824,7 @@ TEST(ManagedIdentityCredential, Imds)
       "&resource=https%3A%2F%2Foutlook.com"); // cspell:disable-line
 
   EXPECT_EQ(
-      request1.AbsoluteUrl,
+      request2.AbsoluteUrl,
       "http://169.254.169.254/metadata/identity/oauth2/token"
       "?api-version=2018-02-01");
 
