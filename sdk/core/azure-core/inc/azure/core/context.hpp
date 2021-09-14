@@ -113,7 +113,7 @@ namespace Azure { namespace Core {
           T value) // NOTE, should this be T&&
           : Parent(parent), // LCOV_EXCL_START
             Deadline(ToDateTimeRepresentation(deadline)), Key(key),
-            Value(std::make_shared<T>(std::move(value))), ValueType(typeid(T))
+            Value(std::make_shared<T>(std::move(value))), ValueType(typeid(T)) // LCOV_EXCL_START
       { // LCOV_EXCL_STOP
       }
     };
