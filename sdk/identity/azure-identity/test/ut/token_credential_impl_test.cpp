@@ -338,6 +338,13 @@ TEST(TokenCredentialImpl, NoToken)
 
 TEST(TokenCredentialImpl, CurrentJsonParserQuirksAndLimitations)
 {
+  // This test case is to cover all the current behavior in the JSON parsing code.
+  // It is to verify the edge cases to define limitations. A better behavior is possible, and it
+  // won't be a breaking change to update it. This parsing is internal. At some point, we will
+  // update the code to use the real JSON parser, instead of parsing ourselves. If when that
+  // happens, at any point, this test case gets broken, it is ok to drop/update this test case - it
+  // is likely that the proper JSON parser has better behavior.
+
   auto const actual = CredentialTestHelper::SimulateTokenRequest(
       [](auto transport) {
         TokenCredentialOptions options;
