@@ -286,7 +286,7 @@ namespace Azure { namespace Core { namespace Http { namespace Policies {
     /**
      * @brief HTTP retry policy.
      */
-    class RetryPolicy
+    class RetryPolicy // LCOV_EXCL_LINE
 #if !defined(TESTING_BUILD)
         final
 #endif
