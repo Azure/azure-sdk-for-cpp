@@ -92,8 +92,8 @@ namespace Azure { namespace Core {
       }
 
       explicit ContextSharedState()
-          : Deadline(ToDateTimeRepresentation((DateTime::max)())), Value(nullptr),
-            ValueType(typeid(std::nullptr_t))
+          : Deadline(ToDateTimeRepresentation((DateTime::max)())), // LCOV_EXCL_LINE
+            Value(nullptr), ValueType(typeid(std::nullptr_t))
       {
       }
 
@@ -111,8 +111,9 @@ namespace Azure { namespace Core {
           DateTime const& deadline,
           Context::Key const& key,
           T value) // NOTE, should this be T&&
-          : Parent(parent), Deadline(ToDateTimeRepresentation(deadline)), Key(key),
-            Value(std::make_shared<T>(std::move(value))), ValueType(typeid(T))
+          : Parent(parent), // LCOV_EXCL_START
+            Deadline(ToDateTimeRepresentation(deadline)), // LCOV_EXCL_STOP
+            Key(key), Value(std::make_shared<T>(std::move(value))), ValueType(typeid(T))
       {
       }
     };
@@ -164,7 +165,7 @@ namespace Azure { namespace Core {
     template <class T> Context WithValue(Key const& key, T&& value) const
     {
       return Context{std::make_shared<ContextSharedState>(
-          m_contextSharedState, (DateTime::max)(), key, std::forward<T>(value))};
+          m_contextSharedState, (DateTime::max)(), key, std::forward<T>(value))}; // LCOV_EXCL_LINE
     }
 
     /**
@@ -193,16 +194,17 @@ namespace Azure { namespace Core {
      */
     template <class T> bool TryGetValue(Key const& key, T& outputValue) const
     {
+      // LCOV_EXCL_START
       for (auto ptr = m_contextSharedState; ptr; ptr = ptr->Parent)
       {
         if (ptr->Key == key)
         {
-          // LCOV_EXCL_START
           AZURE_ASSERT_MSG(
               typeid(T) == ptr->ValueType, "Type mismatch for Context::TryGetValue().");
-          // LCOV_EXCL_STOP
 
           outputValue = *reinterpret_cast<const T*>(ptr->Value.get());
+          // LCOV_EXCL_STOP
+
           return true;
         }
       }
@@ -234,7 +236,7 @@ namespace Azure { namespace Core {
     {
       if (IsCancelled())
       {
-        throw OperationCancelledException("Request was cancelled by context.");
+        throw OperationCancelledException("Request was cancelled by context."); // LCOV_EXCL_LINE
       }
     }
 
