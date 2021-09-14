@@ -112,15 +112,16 @@ set(
     src/io/random_access_file_body_stream.cpp
     src/private/environment_log_level_listener.hpp
     src/private/package_version.hpp
-    src/uuid.cpp
     src/base64.cpp
     src/context.cpp
     src/datetime.cpp
     src/environment_log_level_listener.cpp
+    src/etag.cpp
     src/exception.cpp
     src/logger.cpp
     src/operation_status.cpp
     src/strings.cpp
+    src/uuid.cpp
 )
 
 add_library(azure-core ${AZURE_CORE_HEADER} ${AZURE_CORE_SOURCE})

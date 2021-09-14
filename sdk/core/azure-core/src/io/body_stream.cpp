@@ -19,6 +19,7 @@
 #endif
 
 #include "azure/core/context.hpp"
+#include "azure/core/internal/io/null_body_stream.hpp"
 #include "azure/core/io/body_stream.hpp"
 
 #include <algorithm>
@@ -220,3 +221,11 @@ size_t ProgressBodyStream::OnRead(
 }
 
 int64_t ProgressBodyStream::Length() const { return m_bodyStream->Length(); }
+
+using Azure::Core::IO::_internal::NullBodyStream;
+
+NullBodyStream* NullBodyStream::GetNullBodyStream()
+{
+  static NullBodyStream nullBodyStream; // LCOV_EXCL_LINE
+  return &nullBodyStream;
+}

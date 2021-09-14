@@ -87,7 +87,7 @@ public:
       return !left.m_value && !right.m_value;
     }
 
-    switch (comparisonKind)
+    switch (comparisonKind) // LCOV_EXCL_LINE
     {
       case ETagComparison::Strong:
         // Strong comparison
@@ -185,10 +185,6 @@ public:
    * @brief #Azure::Core::ETag representing everything.
    * @note The any #Azure::Core::ETag is *, (unquoted).  It is NOT the same as "*".
    */
-  static const ETag& Any()
-  {
-    static ETag any = ETag("*");
-    return any;
-  }
+  static const ETag& Any();
 };
 } // namespace Azure

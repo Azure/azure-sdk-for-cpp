@@ -28,7 +28,7 @@ namespace Azure { namespace Core {
           auto separator = '?';
           for (const auto& q : encodedQueryParameters)
           {
-            queryStr += separator + q.first + '=' + q.second;
+            queryStr += separator + q.first + '=' + q.second; // LCOV_EXCL_LINE
             separator = '&';
           }
         }

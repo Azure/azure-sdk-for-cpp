@@ -130,7 +130,7 @@ inline std::string GetResponseLogMessage(
 } // namespace
 
 Azure::Core::CaseInsensitiveSet const
-    Azure::Core::Http::Policies::_detail::g_defaultAllowedHttpHeaders
+    Azure::Core::Http::Policies::_detail::g_defaultAllowedHttpHeaders // LCOV_EXCL_LINE
     = {"x-ms-request-id",
        "x-ms-client-request-id",
        "x-ms-return-client-request-id",

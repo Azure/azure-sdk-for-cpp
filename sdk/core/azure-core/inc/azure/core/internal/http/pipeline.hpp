@@ -47,13 +47,13 @@ namespace Azure { namespace Core { namespace Http { namespace _internal {
     {
       if (policies.size() == 0)
       {
-        throw std::invalid_argument("policies cannot be empty");
+        throw std::invalid_argument("policies cannot be empty"); // LCOV_EXCL_LINE
       }
 
-      m_policies.reserve(policies.size());
+      m_policies.reserve(policies.size()); // LCOV_EXCL_LINE
       for (auto& policy : policies)
       {
-        m_policies.emplace_back(policy->Clone());
+        m_policies.emplace_back(policy->Clone()); // LCOV_EXCL_LINE
       }
     }
 
@@ -183,8 +183,10 @@ namespace Azure { namespace Core { namespace Http { namespace _internal {
     {
       // Accessing position zero is fine because pipeline must be constructed with at least one
       // policy.
-      return m_policies[0]->Send(
-          request, Azure::Core::Http::Policies::NextHttpPolicy(0, m_policies), context);
+      return m_policies[0]->Send( // LCOV_EXCL_START
+          request,
+          Azure::Core::Http::Policies::NextHttpPolicy(0, m_policies),
+          context); // LCOV_EXCL_STOP
     }
   };
 }}}} // namespace Azure::Core::Http::_internal
