@@ -75,36 +75,71 @@ TEST(TokenCredentialImpl, Normal)
         return std::make_unique<TokenCredentialImplTester>(
             HttpMethod::Delete, Url("https://outlook.com/"), options);
       },
-      {{{"https://azure.com/.default", "https://microsoft.com/.default"}}},
-      {"{\"expires_in\":3600, \"access_token\":\"ACCESSTOKEN\"}"});
+      {{{"https://azure.com/.default", "https://microsoft.com/.default"}},
+       {{"https://azure.com/.default", "https://microsoft.com/.default"}},
+       {{"https://azure.com/.default", "https://microsoft.com/.default"}}},
+      std::vector<std::string>{
+          "{\"expires_in\":3600, \"access_token\":\"ACCESSTOKEN1\"}",
+          "{\"access_token\":\"ACCESSTOKEN2\", \"expires_in\":7200}",
+          "{\"ab\":1,\"expires_in\":9999,\"cd\":2,\"access_token\":\"ACCESSTOKEN3\",\"ef\":3}"});
 
-  EXPECT_EQ(actual.Requests.size(), 1U);
-  EXPECT_EQ(actual.Responses.size(), 1U);
+  EXPECT_EQ(actual.Requests.size(), 3U);
+  EXPECT_EQ(actual.Responses.size(), 3U);
 
-  auto const& request = actual.Requests.at(0);
+  auto const& request0 = actual.Requests.at(0);
+  auto const& request1 = actual.Requests.at(1);
+  auto const& request2 = actual.Requests.at(2);
 
-  auto const& response = actual.Responses.at(0);
+  auto const& response0 = actual.Responses.at(0);
+  auto const& response1 = actual.Responses.at(1);
+  auto const& response2 = actual.Responses.at(2);
 
-  EXPECT_EQ(request.HttpMethod, HttpMethod::Delete);
+  EXPECT_EQ(request0.HttpMethod, HttpMethod::Delete);
+  EXPECT_EQ(request1.HttpMethod, HttpMethod::Delete);
+  EXPECT_EQ(request2.HttpMethod, HttpMethod::Delete);
 
-  EXPECT_EQ(request.AbsoluteUrl, "https://outlook.com");
+  EXPECT_EQ(request0.AbsoluteUrl, "https://outlook.com");
+  EXPECT_EQ(request1.AbsoluteUrl, "https://outlook.com");
+  EXPECT_EQ(request2.AbsoluteUrl, "https://outlook.com");
 
   {
     constexpr char expectedBody[] = "https://azure.com/.default https://microsoft.com/.default ";
-    EXPECT_EQ(request.Body, expectedBody);
+    EXPECT_EQ(request0.Body, expectedBody);
+    EXPECT_EQ(request1.Body, expectedBody);
+    EXPECT_EQ(request2.Body, expectedBody);
 
-    EXPECT_NE(request.Headers.find("Content-Length"), request.Headers.end());
-    EXPECT_EQ(request.Headers.at("Content-Length"), std::to_string(sizeof(expectedBody) - 1));
+    EXPECT_NE(request0.Headers.find("Content-Length"), request0.Headers.end());
+    EXPECT_EQ(request0.Headers.at("Content-Length"), std::to_string(sizeof(expectedBody) - 1));
+
+    EXPECT_NE(request1.Headers.find("Content-Length"), request1.Headers.end());
+    EXPECT_EQ(request1.Headers.at("Content-Length"), std::to_string(sizeof(expectedBody) - 1));
+
+    EXPECT_NE(request2.Headers.find("Content-Length"), request2.Headers.end());
+    EXPECT_EQ(request2.Headers.at("Content-Length"), std::to_string(sizeof(expectedBody) - 1));
   }
 
-  EXPECT_NE(request.Headers.find("Content-Type"), request.Headers.end());
-  EXPECT_EQ(request.Headers.at("Content-Type"), "application/x-www-form-urlencoded");
+  EXPECT_NE(request0.Headers.find("Content-Type"), request0.Headers.end());
+  EXPECT_EQ(request0.Headers.at("Content-Type"), "application/x-www-form-urlencoded");
 
-  EXPECT_EQ(response.AccessToken.Token, "ACCESSTOKEN");
+  EXPECT_NE(request1.Headers.find("Content-Type"), request1.Headers.end());
+  EXPECT_EQ(request1.Headers.at("Content-Type"), "application/x-www-form-urlencoded");
+
+  EXPECT_NE(request2.Headers.find("Content-Type"), request2.Headers.end());
+  EXPECT_EQ(request2.Headers.at("Content-Type"), "application/x-www-form-urlencoded");
+
+  EXPECT_EQ(response0.AccessToken.Token, "ACCESSTOKEN1");
+  EXPECT_EQ(response1.AccessToken.Token, "ACCESSTOKEN2");
+  EXPECT_EQ(response2.AccessToken.Token, "ACCESSTOKEN3");
 
   using namespace std::chrono_literals;
-  EXPECT_GT(response.AccessToken.ExpiresOn, response.EarliestExpiration + 3600s);
-  EXPECT_LT(response.AccessToken.ExpiresOn, response.LatestExpiration + 3600s);
+  EXPECT_GT(response0.AccessToken.ExpiresOn, response0.EarliestExpiration + 3600s);
+  EXPECT_LT(response0.AccessToken.ExpiresOn, response0.LatestExpiration + 3600s);
+
+  EXPECT_GT(response1.AccessToken.ExpiresOn, response1.EarliestExpiration + 7200s);
+  EXPECT_LT(response1.AccessToken.ExpiresOn, response1.LatestExpiration + 7200s);
+
+  EXPECT_GT(response2.AccessToken.ExpiresOn, response2.EarliestExpiration + 9999s);
+  EXPECT_LT(response2.AccessToken.ExpiresOn, response2.LatestExpiration + 9999s);
 }
 
 TEST(TokenCredentialImpl, StdException)
@@ -301,22 +336,61 @@ TEST(TokenCredentialImpl, NoToken)
       }));
 }
 
-TEST(TokenCredentialImpl, ExpirationValueMissing)
+TEST(TokenCredentialImpl, CurrentJsonParserQuirksAndLimitations)
 {
-  static_cast<void>(CredentialTestHelper::SimulateTokenRequest(
+  auto const actual = CredentialTestHelper::SimulateTokenRequest(
       [](auto transport) {
         TokenCredentialOptions options;
         options.Transport.Transport = transport;
 
         return std::make_unique<TokenCredentialImplTester>(
-            HttpMethod::Delete, Url("https://outlook.com/"), options);
+            HttpMethod::Delete, Url("https://microsoft.com/"), options);
       },
-      {{{"https://azure.com/.default", "https://microsoft.com/.default"}}},
-      {"{\"expires_in\": \"\", \"access_token\":\"ACCESSTOKEN\"}"},
-      [](auto& credential, auto& tokenRequestContext, auto& context) {
-        AccessToken token;
-        EXPECT_THROW(
-            token = credential.GetToken(tokenRequestContext, context), AuthenticationException);
-        return token;
-      }));
+      {{{"https://azure.com/.default"}}, {{"https://azure.com/.default"}}},
+      std::vector<std::string>{
+          {"{\"access_token\":\'ACCESSTOKEN\', \"expires_in\": \"\'"},
+          {"{\"expires_in\": 3600, \"access_token\": \"\'"}});
+
+  EXPECT_EQ(actual.Requests.size(), 2U);
+  EXPECT_EQ(actual.Responses.size(), 2U);
+
+  auto const& request0 = actual.Requests.at(0);
+  auto const& request1 = actual.Requests.at(1);
+
+  auto const& response0 = actual.Responses.at(0);
+  auto const& response1 = actual.Responses.at(1);
+
+  EXPECT_EQ(request0.HttpMethod, HttpMethod::Delete);
+  EXPECT_EQ(request1.HttpMethod, HttpMethod::Delete);
+
+  EXPECT_EQ(request0.AbsoluteUrl, "https://microsoft.com");
+  EXPECT_EQ(request1.AbsoluteUrl, "https://microsoft.com");
+
+  {
+    constexpr char expectedBody[] = "https://azure.com/.default ";
+    EXPECT_EQ(request0.Body, expectedBody);
+    EXPECT_EQ(request1.Body, expectedBody);
+
+    EXPECT_NE(request0.Headers.find("Content-Length"), request0.Headers.end());
+    EXPECT_EQ(request0.Headers.at("Content-Length"), std::to_string(sizeof(expectedBody) - 1));
+
+    EXPECT_NE(request1.Headers.find("Content-Length"), request1.Headers.end());
+    EXPECT_EQ(request1.Headers.at("Content-Length"), std::to_string(sizeof(expectedBody) - 1));
+  }
+
+  EXPECT_NE(request0.Headers.find("Content-Type"), request0.Headers.end());
+  EXPECT_EQ(request0.Headers.at("Content-Type"), "application/x-www-form-urlencoded");
+
+  EXPECT_NE(request1.Headers.find("Content-Type"), request1.Headers.end());
+  EXPECT_EQ(request1.Headers.at("Content-Type"), "application/x-www-form-urlencoded");
+
+  EXPECT_EQ(response0.AccessToken.Token, "ACCESSTOKEN");
+  EXPECT_EQ(response1.AccessToken.Token, std::string());
+
+  using namespace std::chrono_literals;
+  EXPECT_GT(response0.AccessToken.ExpiresOn, response0.EarliestExpiration + 0s);
+  EXPECT_LT(response0.AccessToken.ExpiresOn, response0.LatestExpiration + 0s);
+
+  EXPECT_GT(response1.AccessToken.ExpiresOn, response1.EarliestExpiration + 3600s);
+  EXPECT_LT(response1.AccessToken.ExpiresOn, response1.LatestExpiration + 3600s);
 }
