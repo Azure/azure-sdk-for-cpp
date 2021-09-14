@@ -401,3 +401,42 @@ TEST(TokenCredentialImpl, CurrentJsonParserQuirksAndLimitations)
   EXPECT_GT(response1.AccessToken.ExpiresOn, response1.EarliestExpiration + 3600s);
   EXPECT_LT(response1.AccessToken.ExpiresOn, response1.LatestExpiration + 3600s);
 }
+
+TEST(TokenCredentialImpl, NullResponse)
+{
+  using Azure::Core::Http::RawResponse;
+  using Azure::Core::Http::Request;
+  using Azure::Core::Http::Policies::HttpPolicy;
+  using Azure::Core::Http::Policies::NextHttpPolicy;
+
+  class NullResponsePolicy : public HttpPolicy {
+  public:
+    std::unique_ptr<HttpPolicy> Clone() const override
+    {
+      return std::make_unique<NullResponsePolicy>(*this);
+    }
+
+    std::unique_ptr<RawResponse> Send(Request&, NextHttpPolicy, Context const&) const override
+    {
+      return nullptr;
+    }
+  };
+
+  static_cast<void>(CredentialTestHelper::SimulateTokenRequest(
+      [](auto transport) {
+        TokenCredentialOptions options;
+        options.Transport.Transport = transport;
+        options.PerOperationPolicies.push_back(std::make_unique<NullResponsePolicy>());
+
+        return std::make_unique<TokenCredentialImplTester>(
+            HttpMethod::Delete, Url("https://microsoft.com/"), options);
+      },
+      {{{"https://azure.com/.default"}}},
+      {{"{\"expires_in\":3600, \"access_token\":\"ACCESSTOKEN1\"}"}},
+      [](auto& credential, auto& tokenRequestContext, auto& context) {
+        AccessToken token;
+        EXPECT_THROW(
+            token = credential.GetToken(tokenRequestContext, context), AuthenticationException);
+        return token;
+      }));
+}
