@@ -75,7 +75,7 @@ Azure::Core::Credentials::AccessToken TokenCredentialImpl::GetToken(
         response = m_httpPipeline.Send(request->HttpRequest, context);
         if (!response)
         {
-          throw AuthenticationException(errorMsgPrefix + "null response");
+          throw AuthenticationException(errorMsgPrefix + "null response"); // LCOV_EXCL_LINE
         }
 
         auto const statusCode = response->GetStatusCode();
