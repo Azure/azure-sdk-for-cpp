@@ -58,14 +58,13 @@ namespace Azure { namespace Core { namespace Http {
         int32_t minorVersion,
         HttpStatusCode statusCode,
         std::string const& reasonPhrase)
-        // LCOV_EXCL_START
         : RawResponse(
             majorVersion,
             minorVersion,
             statusCode,
             reasonPhrase,
-            nullptr) // LCOV_EXCL_STOP
-    {
+            nullptr) // LCOV_EXCL_START
+    { // LCOV_EXCL_STOP
     }
 
     /**

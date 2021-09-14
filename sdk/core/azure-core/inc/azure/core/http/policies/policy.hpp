@@ -404,11 +404,11 @@ namespace Azure { namespace Core { namespace Http { namespace Policies {
           std::string const& componentName,
           std::string const& componentVersion,
           TelemetryOptions options = TelemetryOptions())
-          : m_telemetryId(BuildTelemetryId( // LCOV_EXCL_START
+          : m_telemetryId(BuildTelemetryId(
               componentName,
               componentVersion,
-              options.ApplicationId)) // LCOV_EXCL_STOP
-      {
+              options.ApplicationId)) // LCOV_EXCL_START
+      { // LCOV_EXCL_STOP
       }
 
       std::unique_ptr<HttpPolicy> Clone() const override

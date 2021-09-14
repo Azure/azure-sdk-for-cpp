@@ -183,10 +183,10 @@ namespace Azure { namespace Core { namespace Http { namespace _internal {
     {
       // Accessing position zero is fine because pipeline must be constructed with at least one
       // policy.
-      return m_policies[0]->Send( // LCOV_EXCL_START
+      return m_policies[0]->Send(
           request,
           Azure::Core::Http::Policies::NextHttpPolicy(0, m_policies),
-          context); // LCOV_EXCL_STOP
-    }
+          context); // LCOV_EXCL_START
+    } // LCOV_EXCL_STOP
   };
 }}}} // namespace Azure::Core::Http::_internal
