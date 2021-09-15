@@ -71,7 +71,7 @@ SecretClient::SecretClient(
   std::vector<std::unique_ptr<HttpPolicy>> perRetrypolicies;
   {
     Azure::Core::Credentials::TokenRequestContext const tokenContext
-        = {{_internal::GetScopeFromUrl(url)}};
+        = {{_internal::UrlScope::GetScopeFromUrl(url)}};
 
     perRetrypolicies.emplace_back(
         std::make_unique<BearerTokenAuthenticationPolicy>(credential, tokenContext));

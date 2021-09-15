@@ -102,7 +102,7 @@ CryptographyClient::CryptographyClient(
   std::vector<std::unique_ptr<HttpPolicy>> perRetrypolicies;
   {
     Azure::Core::Credentials::TokenRequestContext const tokenContext
-        = {{_internal::GetScopeFromUrl(m_keyId)}};
+        = {{_internal::UrlScope::GetScopeFromUrl(m_keyId)}};
 
     perRetrypolicies.emplace_back(
         std::make_unique<BearerTokenAuthenticationPolicy>(credential, tokenContext));
