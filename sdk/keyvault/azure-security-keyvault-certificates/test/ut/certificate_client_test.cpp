@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+﻿// Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
 
 #include <azure/identity/client_secret_credential.hpp>
@@ -13,7 +13,7 @@ using namespace std::chrono_literals;
 using namespace Azure::Security::KeyVault::Certificates;
 using namespace Azure::Security::KeyVault::Certificates::Test;
 
-TEST_F(KeyVaultCertificateClientTest, DISABLED_GetCertificate)
+TEST_F(KeyVaultCertificateClientTest, GetCertificate)
 {
   // cspell: disable-next-line
   std::string const certificateName("vivazqu");
@@ -80,7 +80,7 @@ TEST_F(KeyVaultCertificateClientTest, DISABLED_GetCertificate)
   }
 }
 
-TEST_F(KeyVaultCertificateClientTest, DISABLED_GetCertificateVersion)
+TEST_F(KeyVaultCertificateClientTest, GetCertificateVersion)
 {
   // cspell: disable-next-line
   std::string const certificateName("vivazqu");
