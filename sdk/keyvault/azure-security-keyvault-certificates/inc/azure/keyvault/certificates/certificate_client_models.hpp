@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+﻿// Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
 
 /**
@@ -802,4 +802,11 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
     std::string Version;
   };
 
+  struct CertificateCreateParameters final
+  {
+    CertificatePolicy Policy;
+    CertificateProperties Properties;
+    Azure::Nullable<bool> Enabled() { return Properties.Enabled; }
+    std::unordered_map<std::string, std::string> Tags;
+  };
 }}}} // namespace Azure::Security::KeyVault::Certificates
