@@ -1,18 +1,24 @@
 # Release History
 
-## 4.1.0-beta.1 (Unreleased)
+## 4.2.0-beta.1 (Unreleased)
 
 ### Features Added
-
-- Added `GetUrl()` to `KeyClient`.
 
 ### Breaking Changes
 
 ### Bugs Fixed
 
-- [2750](https://github.com/Azure/azure-sdk-for-cpp/issues/2750) Support for Azure `managedhsm` cloud and any other non-public Azure cloud.
-
 ### Other Changes
+
+## 4.1.0 (2021-09-08)
+
+### Features Added
+
+- Added `GetUrl()` to `KeyClient`.
+
+### Bugs Fixed
+
+- [2750](https://github.com/Azure/azure-sdk-for-cpp/issues/2750) Support for Azure `managedhsm` cloud and any other non-public Azure cloud.
 
 ## 4.0.0 (2021-08-10)
 

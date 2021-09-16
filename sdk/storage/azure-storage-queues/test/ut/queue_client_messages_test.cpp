@@ -265,4 +265,21 @@ namespace Azure { namespace Storage { namespace Test {
     queueClient.Delete();
   }
 
+  TEST_F(QueueClientTest, MessageSpecialCharacters)
+  {
+    auto queueClient = Azure::Storage::Queues::QueueClient::CreateFromConnectionString(
+        StandardStorageConnectionString(), LowercaseRandomString());
+    queueClient.Create();
+
+    const std::string message = "message content`~!@#$%^&*()-=_+[]{}\\|;':\",.<>/?";
+
+    auto res = queueClient.EnqueueMessage(message).Value;
+
+    auto peekedMessage = queueClient.PeekMessages().Value.Messages[0];
+
+    EXPECT_EQ(peekedMessage.MessageText, message);
+
+    queueClient.Delete();
+  }
+
 }}} // namespace Azure::Storage::Test

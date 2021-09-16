@@ -1,6 +1,6 @@
 # Release History
 
-## 12.2.0-beta.1 (Unreleased)
+## 12.3.0-beta.1 (Unreleased)
 
 ### Features Added
 
@@ -9,6 +9,16 @@
 ### Bugs Fixed
 
 ### Other Changes
+
+## 12.2.0 (2021-09-08)
+
+### Features Added
+
+- Used new xml library on Windows, dropped dependency for libxml2.
+
+### Bugs Fixed
+
+- Fixed a bug that may cause crash when parsing XML.
 
 ## 12.1.0 (2021-08-10)
 

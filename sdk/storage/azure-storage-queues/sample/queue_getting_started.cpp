@@ -80,7 +80,7 @@ SAMPLE(QueuesGettingStarted, QueuesGettingStarted)
 void QueuesGettingStarted()
 {
   auto queueClient = QueueClient::CreateFromConnectionString(GetConnectionString(), QueueName);
-  queueClient.CreateIfNotExists();
+  queueClient.Create();
 
   ProducerFunc();
   ConsumerFunc();

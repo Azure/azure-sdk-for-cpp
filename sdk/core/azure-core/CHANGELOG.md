@@ -8,6 +8,12 @@
 
 ### Bugs Fixed
 
+### Other Changes
+
+## 1.2.1 (2021-09-02)
+
+### Bugs Fixed
+
 - [2785](https://github.com/Azure/azure-sdk-for-cpp/issues/2785) Fix to build on g++ 5.5.
 
 ### Other Changes

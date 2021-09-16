@@ -141,7 +141,7 @@ namespace Azure { namespace Core { namespace Test {
     // chunked response - simulate the data that the wire will return on every read
     std::string response0("HTTP/1.1 200 Ok\r");
     std::string response1("\ntransfer-encoding:");
-    std::string response2(" chunke");
+    std::string response2(" chunke"); // cspell:disable-line
     std::string response3("d\r\n");
     std::string response4("\r");
     std::string response5("\n3\r\n");

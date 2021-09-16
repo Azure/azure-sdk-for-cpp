@@ -124,7 +124,7 @@ namespace Azure { namespace Storage { namespace Test {
   TEST_F(QueueServiceClientTest, GetProperties)
   {
     auto ret = m_queueServiceClient.GetProperties();
-    auto properties = ret.Value;
+    auto properties = ret.Value.Properties;
     auto logging = properties.Logging;
     EXPECT_FALSE(logging.Version.empty());
     if (logging.RetentionPolicy.IsEnabled)
@@ -155,10 +155,10 @@ namespace Azure { namespace Storage { namespace Test {
   {
     auto getServicePropertiesResult = m_queueServiceClient.GetProperties().Value;
     Queues::Models::QueueServiceProperties properties;
-    properties.Logging = getServicePropertiesResult.Logging;
-    properties.HourMetrics = getServicePropertiesResult.HourMetrics;
-    properties.MinuteMetrics = getServicePropertiesResult.MinuteMetrics;
-    properties.Cors = getServicePropertiesResult.Cors;
+    properties.Logging = getServicePropertiesResult.Properties.Logging;
+    properties.HourMetrics = getServicePropertiesResult.Properties.HourMetrics;
+    properties.MinuteMetrics = getServicePropertiesResult.Properties.MinuteMetrics;
+    properties.Cors = getServicePropertiesResult.Properties.Cors;
 
     auto originalProperties = properties;
 
@@ -198,7 +198,7 @@ namespace Azure { namespace Storage { namespace Test {
     // It takes some time before the new properties comes into effect.
     using namespace std::chrono_literals;
     std::this_thread::sleep_for(10s);
-    auto downloadedProperties = m_queueServiceClient.GetProperties().Value;
+    auto downloadedProperties = m_queueServiceClient.GetProperties().Value.Properties;
     EXPECT_EQ(downloadedProperties.Logging.Version, properties.Logging.Version);
     EXPECT_EQ(downloadedProperties.Logging.Delete, properties.Logging.Delete);
     EXPECT_EQ(downloadedProperties.Logging.Read, properties.Logging.Read);

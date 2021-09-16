@@ -257,7 +257,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       {
         i.IsCurrentVersion = false;
       }
-      if (i.BlobType == Models::BlobType::AppendBlob && !i.Details.IsSealed)
+      if (i.BlobType == Models::BlobType::AppendBlob && !i.Details.IsSealed.HasValue())
       {
         i.Details.IsSealed = false;
       }
@@ -310,7 +310,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       {
         i.IsCurrentVersion = false;
       }
-      if (i.BlobType == Models::BlobType::AppendBlob && !i.Details.IsSealed)
+      if (i.BlobType == Models::BlobType::AppendBlob && !i.Details.IsSealed.HasValue())
       {
         i.Details.IsSealed = false;
       }

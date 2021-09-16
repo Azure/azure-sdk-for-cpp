@@ -15,8 +15,7 @@
     "eng/common/**/*",
     "json.hpp",
     "*nlohmann-json*",
-    "sdk/identity/**/*",
-    "sdk/core/**/*",
+    "eng/docs/api/assets/**/*",
     "sdk/keyvault/azure-security-keyvault-keys/test/ut/recordings/*.json",
     "sdk/keyvault/azure-security-keyvault-keys/test/ut/key_client_import_test_live.cpp"
   ],
@@ -30,6 +29,7 @@
     "Aloctl",
     "azcore",
     "azsdk",
+    "azuresdk",
     "azuresdkforcpp",
     "cmake",
     "CMOCKA",
@@ -52,6 +52,8 @@
     "gtest",
     "Gzrs",
     "HKEY",
+    "HRESULT",
+    "IMDS",
     "itfactor",
     "Kirilov",
     "lcov",
@@ -78,8 +80,8 @@
     "Ragrs",
     "Ragzrs",
     "Reconnector",
-    "Reitz",
     "rehydrated",
+    "Reitz",
     "retriable",
     "rwxrw",
     "SDDL",
@@ -121,6 +123,27 @@
       ]
     },
     {
+      "filename": "**/sdk/core/azure-core/README.md",
+      "words": [
+        "myprogram"
+      ]
+    },
+    {
+      "filename": "**/sdk/core/azure-core/CHANGELOG.md",
+      "words": [
+        "Chisnall",
+        "copiable",
+        "davidchisnall",
+        "Gabor",
+        "Joubert",
+        "juchem",
+        "lordgamez",
+        "sjoubert",
+        "sourav",
+        "Sylvain"
+      ]
+    },
+    {
       "filename": "**/sdk/storage/azure-storage-common/CHANGELOG.md",
       "words": [
         "johnwheffner",
@@ -136,6 +159,15 @@
         "bfqt",
         "rwdlacup",
         "pfile"
+      ]
+    },
+    {
+      "filename": "**/cmake-modules/**/*",
+      "words": [
+        "fprofile",
+        "ftest",
+        "mathjax",
+        "mdfile"
       ]
     }
   ],

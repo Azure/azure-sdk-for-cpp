@@ -95,6 +95,10 @@ stages:
                 name: azsdk-pool-mms-win-2019-general
                 vmImage: MMS2019
 
+              variables:
+                VcpkgPrRepoOwner: Microsoft
+                VcpkgPrRepoName: vcpkg
+
               strategy:
                 runOnce:
                   deploy:
@@ -103,7 +107,7 @@ stages:
 
                       - pwsh: |
                           $branchName = "azure-sdk-for-cpp-${{ artifact.Name }}-$(Build.BuildId)"
-                          if ('$(VcpkgForkBranchName)') { 
+                          if ('$(VcpkgForkBranchName)') {
                             Write-Host "Using queue time branch name" 
                             $branchName = '$(VcpkgForkBranchName)'
                           } 
@@ -153,8 +157,8 @@ stages:
                       # (which is already done by Update-VcpkgPort.ps1)
                       - template: /eng/common/pipelines/templates/steps/create-pull-request.yml
                         parameters:
-                          RepoOwner: Microsoft
-                          RepoName: vcpkg
+                          RepoOwner: $(VcpkgPrRepoOwner)
+                          RepoName: $(VcpkgPrRepoName)
                           WorkingDirectory: $(Pipeline.Workspace)/vcpkg
                           PrBranchName: $(PrBranchName)
                           PRTitle: $(PrTitle)
@@ -164,6 +168,58 @@ stages:
                           OpenAsDraft: ${{ parameters.TestPipeline }}
                           PRLabels: "auto-merge"
                           CloseAfterOpenForTesting: '${{ parameters.TestPipeline }}'
+
+                      - pwsh: |
+                          # "person1,person2,Azure/group-name,person3" ->
+                          # "@person1, @person2, @person3"
+                          function getFormattedNotifableOwners($rawOwners) {
+                            # If the list of owners is empty return an emtpy
+                            # string
+                            if (!$rawOwners) {
+                              return ''
+                            }
+
+                            $owners = @()
+                            foreach ($owner in $rawOwners -split ',') {
+                              # Exclude groups. GitHub does not notify teams
+                              # that have different owners (e.g. alerting
+                              # @Azure/example-team when opening a PR in
+                              # Microsoft/vcpkg)
+                              if ($owner.indexOf('/') -ne -1) {
+                                continue
+                              }
+
+                              $owners += "@$owner"
+                            }
+                            return $owners -join ', '
+                          }
+
+                          $prOwners = $(Build.SourcesDirectory)/eng/common/scripts/get-codeowners.ps1 `
+                            -TargetDirectory "/sdk/${{ parameters.ServiceDirectory }}/" `
+                            -RootDirectory "$(Build.SourcesDirectory)"
+
+                          $codeOwnersToNotify = getFormattedNotifableOwners -rawOwners $prOwners
+
+                          # If there are no codeowners fall back to owners of /sdk/
+                          if (!$codeOwnersToNotify) {
+                            $fallbackOwners = $(Build.SourcesDirectory)/eng/common/scripts/get-codeowners.ps1 `
+                              -TargetDirectory "/sdk/" `
+                              -RootDirectory "$(Build.SourcesDirectory)"
+                            $codeOwnersToNotify = getFormattedNotifableOwners -rawOwners $fallbackOwners
+                          }
+
+                          $prComment = "Adding ${{ artifact.Name }} to release"
+                          if ($codeOwnersToNotify) {
+                            $prComment += "`n`ncc: $codeOwnersToNotify"
+                          }
+
+                          ./eng/common/scripts/Add-IssueComment.ps1 `
+                            -AuthToken "$(azuresdk-github-pat)" `
+                            -RepoOwner $(VcpkgPrRepoOwner) `
+                            -RepoName $(VcpkgPrRepoName) `
+                            -IssueNumber "$(Submitted.PullRequest.Number)" `
+                            -Comment $prComment
+                        displayName: Comment notification to PR
 
           - ${{if ne(artifact.skipUpdatePackageVersion, 'true')}}:
             - deployment: UpdatePackageVersion

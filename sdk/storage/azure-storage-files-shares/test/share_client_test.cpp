@@ -14,8 +14,12 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares { names
       const Azure::Storage::Files::Shares::Models::SignedIdentifier& lhs,
       const Azure::Storage::Files::Shares::Models::SignedIdentifier& rhs)
   {
-    return lhs.Id == rhs.Id && lhs.Policy.StartsOn == rhs.Policy.StartsOn
-        && lhs.Policy.ExpiresOn == rhs.Policy.ExpiresOn
+    return lhs.Id == rhs.Id && lhs.Policy.StartsOn.HasValue() == rhs.Policy.StartsOn.HasValue()
+        && (!lhs.Policy.StartsOn.HasValue()
+            || lhs.Policy.StartsOn.Value() == rhs.Policy.StartsOn.Value())
+        && lhs.Policy.ExpiresOn.HasValue() == rhs.Policy.ExpiresOn.HasValue()
+        && (!lhs.Policy.ExpiresOn.HasValue()
+            || lhs.Policy.ExpiresOn.Value() == rhs.Policy.ExpiresOn.Value())
         && lhs.Policy.Permission == rhs.Policy.Permission;
   }
 
@@ -201,6 +205,37 @@ namespace Azure { namespace Storage { namespace Test {
       Files::Shares::Models::SignedIdentifier identifier;
       identifier.Id = RandomString(64);
       identifier.Policy.StartsOn = std::chrono::system_clock::now() - std::chrono::minutes(10);
+      identifier.Policy.ExpiresOn = std::chrono::system_clock::now() + std::chrono::minutes(100);
+      identifier.Policy.Permission = "r";
+      identifiers.emplace_back(identifier);
+    }
+
+    auto ret = m_shareClient->SetAccessPolicy(identifiers);
+    EXPECT_TRUE(IsValidTime(ret.Value.LastModified));
+
+    auto ret2 = m_shareClient->GetAccessPolicy();
+    EXPECT_EQ(ret2.Value.SignedIdentifiers, identifiers);
+  }
+
+  TEST_F(FileShareClientTest, ShareAccessPolicyNullable)
+  {
+    std::vector<Files::Shares::Models::SignedIdentifier> identifiers;
+    {
+      Files::Shares::Models::SignedIdentifier identifier;
+      identifier.Id = RandomString(64);
+      identifier.Policy.Permission = "r";
+      identifiers.emplace_back(identifier);
+    }
+    {
+      Files::Shares::Models::SignedIdentifier identifier;
+      identifier.Id = RandomString(64);
+      identifier.Policy.StartsOn = std::chrono::system_clock::now() - std::chrono::minutes(10);
+      identifier.Policy.Permission = "r";
+      identifiers.emplace_back(identifier);
+    }
+    {
+      Files::Shares::Models::SignedIdentifier identifier;
+      identifier.Id = RandomString(64);
       identifier.Policy.ExpiresOn = std::chrono::system_clock::now() + std::chrono::minutes(100);
       identifier.Policy.Permission = "r";
       identifiers.emplace_back(identifier);
