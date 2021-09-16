@@ -31,6 +31,7 @@ set(
     inc/azure/keyvault/certificates/certificate_client.hpp
     inc/azure/keyvault/certificates/certificate_client_models.hpp
     inc/azure/keyvault/certificates/certificate_client_options.hpp
+    inc/azure/keyvault/certificates/certificate_client_operations.hpp
 )
 
 set(
@@ -38,11 +39,12 @@ set(
     src/certificate_client.cpp
     src/keyvault_certificate.cpp
     src/keyvault_certificates_common_request.cpp
+    src/certificate_client_operations.cpp
 )
 
 add_library(azure-security-keyvault-certificates
   ${AZURE_KEYVAULT_CERTIFICATES_HEADER} ${AZURE_KEYVAULT_CERTIFICATES_SOURCE}
-)
+ )
 add_library(Azure::azure-security-keyvault-certificates ALIAS azure-security-keyvault-certificates)
 
 target_include_directories(
