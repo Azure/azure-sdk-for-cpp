@@ -14,11 +14,9 @@ TEST(Uuid, Basic)
   EXPECT_TRUE(uuid.ToString().length() == 36);
 }
 
-#include <iostream>
-#include <thread>
 TEST(Uuid, Randomness)
 {
-  const int size = 1000000000;
+  const int size = 100000;
   std::set<std::string> uuids;
   for (int i = 0; i < size; i++)
   {
@@ -26,8 +24,6 @@ TEST(Uuid, Randomness)
     // If the value already exists in the set then the insert will fail
     // ret.second == false means the insert failed.
     EXPECT_TRUE(ret.second);
-    std::cout << i << std::endl;
-    std::this_thread::sleep_for(std::chrono::microseconds(1));
   }
   EXPECT_TRUE(uuids.size() == size);
 }
