@@ -11,7 +11,7 @@
 
 #include "azure/keyvault/certificates/certificate_client_models.hpp"
 #include "azure/keyvault/certificates/certificate_client_options.hpp"
-
+#include "azure/keyvault/certificates/"
 #include <azure/core/context.hpp>
 #include <azure/core/credentials/credentials.hpp>
 #include <azure/core/http/http.hpp>
@@ -98,6 +98,9 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
         std::string const& name,
         GetCertificateOptions const& options = GetCertificateOptions(),
         Azure::Core::Context const& context = Azure::Core::Context()) const;
+
+
+    Start
 
   private:
     std::unique_ptr<Azure::Core::Http::RawResponse> SendRequest(
