@@ -15,12 +15,6 @@ namespace Azure { namespace Core { namespace Diagnostics { namespace _internal {
         std::is_same<int, std::underlying_type<Logger::Level>::type>::value == true,
         "Logger::Level values must be representable as lock-free");
 
-    // Ensure that the LogLevel is of size that is compatible with cmpxchg16b
-    // If this is true then a reasonable implementation of atomic will be lock_free
-    static_assert(
-        sizeof(Logger::Level) <= 8 && (sizeof(Logger::Level) & (sizeof(Logger::Level) - 1)) == 0,
-        "Logger::Level values must be representable as lock-free");
-
     static_assert(ATOMIC_INT_LOCK_FREE == 2, "atomic<int> must be lock-free");
 
     static_assert(ATOMIC_BOOL_LOCK_FREE == 2, "atomic<bool> must be lock-free");
