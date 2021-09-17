@@ -15,6 +15,7 @@
     "eng/common/**/*",
     "json.hpp",
     "*nlohmann-json*",
+    "eng/docs/api/assets/**/*",
     "sdk/keyvault/azure-security-keyvault-keys/test/ut/recordings/*.json",
     "sdk/keyvault/azure-security-keyvault-certificates/test/ut/recordings/*.json",
     "sdk/keyvault/azure-security-keyvault-certificates/inc/azure/keyvault/certificates/certificate_client_models.hpp",
@@ -30,6 +31,7 @@
     "Aloctl",
     "azcore",
     "azsdk",
+    "azuresdk",
     "azuresdkforcpp",
     "cmake",
     "CMOCKA",
@@ -53,6 +55,7 @@
     "gtest",
     "Gzrs",
     "HKEY",
+    "HRESULT",
     "IMDS",
     "itfactor",
     "Kirilov",
@@ -80,8 +83,8 @@
     "Ragrs",
     "Ragzrs",
     "Reconnector",
-    "Reitz",
     "rehydrated",
+    "Reitz",
     "retriable",
     "rwxrw",
     "SDDL",
@@ -160,6 +163,15 @@
         "bfqt",
         "rwdlacup",
         "pfile"
+      ]
+    },
+    {
+      "filename": "**/cmake-modules/**/*",
+      "words": [
+        "fprofile",
+        "ftest",
+        "mathjax",
+        "mdfile"
       ]
     }
   ],

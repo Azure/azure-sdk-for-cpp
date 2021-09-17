@@ -16,27 +16,36 @@ USER root
 RUN apt-get update \
     && export DEBIAN_FRONTEND=noninteractive \
     && LANG=C LC_ALL=C apt-get -y install --no-install-recommends \
-        apt-utils \
-        dialog \
-        sudo \
-        #
-        # Install vim, git, process tools, lsb-release
-        git \
-        openssh-client \
-        less \
-        #
-        # Azure SDK for C++ dev env
-        make \
-        cmake \
-        build-essential \
-        zlib1g-dev \
-        libcurl4-openssl-dev \
-        libssl-dev \
-        libxml2-dev \
-        # clang format 10 req
-        gnupg2 \
-        wget \
-        ca-certificates \
+    apt-utils \
+    dialog \
+    sudo \
+    #
+    # Install vim, git, process tools, lsb-release
+    git \
+    openssh-client \
+    less \
+    #
+    # Azure SDK for C++ dev env
+    make \
+    cmake \
+    ninja-build \
+    build-essential \
+    zlib1g-dev \
+    libcurl4-openssl-dev \
+    libssl-dev \
+    libxml2-dev \
+    gdb \
+    # clang format 10 req
+    gnupg2 \
+    wget \
+    ca-certificates \
+    # vcpkg reqs
+    curl \
+    zip \
+    unzip \
+    tar \
+    pkg-config \
+
     #
     # Add en_US.UTF-8 locale
     && echo 'en_US.UTF-8 UTF-8' >> /etc/locale.gen \
@@ -58,6 +67,12 @@ RUN apt-get update \
     && apt-get autoremove -y \
     && apt-get clean -y \
     && rm -rf /var/lib/apt/lists/*
+
+RUN cd / \
+    && git clone https://github.com/microsoft/vcpkg.git \
+    && cd vcpkg \
+    && ./bootstrap-vcpkg.sh \
+    && ./vcpkg install curl 
 
 # Switch back to the non-root user
 USER ${USERNAME}
