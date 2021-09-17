@@ -9,8 +9,8 @@
 
 #include "azure/keyvault/certificates/certificate_client_models.hpp"
 #include "private/certificate_constants.hpp"
-#include "private/certificate_serializers.hpp"
 #include "private/certificate_key_usage.hpp"
+#include "private/certificate_serializers.hpp"
 
 using namespace Azure::Security::KeyVault::Certificates::_detail;
 using namespace Azure::Security::KeyVault::Certificates;
@@ -19,7 +19,7 @@ using namespace Azure::Core::_internal;
 
 using Azure::Core::_internal::PosixTimeConverter;
 
-KeyVaultCertificateWithPolicy 
+KeyVaultCertificateWithPolicy
 _detail::KeyVaultCertificateSerializer::KeyVaultCertificateDeserialize(
     std::string const& name,
     Azure::Core::Http::RawResponse const& rawResponse)

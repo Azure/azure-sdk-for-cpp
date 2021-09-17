@@ -102,7 +102,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
     /**
      * @brief Creates a new certificate.
      *
-     * @details If this is the first version, the certificate resource is created. 
+     * @details If this is the first version, the certificate resource is created.
      *
      * @remark This operation requires the certificates/create permission.
      *

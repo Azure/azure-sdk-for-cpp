@@ -813,7 +813,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
      *
      */
     CertificatePolicy Policy;
-    
+
     /**
      * @brief certificate attributes
      *

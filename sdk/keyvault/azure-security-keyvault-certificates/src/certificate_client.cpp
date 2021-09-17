@@ -139,7 +139,7 @@ CreateCertificateOperation CertificateClient::StartCreateCertificate(
 
   auto rawResponse = SendRequest(request, context);
   auto value = KeyVaultCertificate();
-  value.Properties.Name = name; 
+  value.Properties.Name = name;
   auto responseT = Azure::Response<KeyVaultCertificate>(std::move(value), std::move(rawResponse));
   return CreateCertificateOperation(
       std::make_shared<CertificateClient>(*this), std::move(responseT));
