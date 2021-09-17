@@ -802,16 +802,34 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
     std::string Version;
   };
 
+  /**
+   * @brief Parameters for StartCreateCErtificate
+   *
+   */
   struct CertificateCreateParameters final
   {
+    /**
+     * @brief Certificate policy
+     *
+     */
     CertificatePolicy Policy;
+    
+    /**
+     * @brief certificate attributes
+     *
+     */
     CertificateProperties Properties;
-    Azure::Nullable<bool> Enabled() { return Properties.Enabled; }
-    std::unordered_map<std::string, std::string> Tags;
-  };
 
-  struct CertificateOperationProperties
-  {
-    std::string Id;
+    /**
+     * @brief enabled?
+     *
+     */
+    Azure::Nullable<bool> Enabled() { return Properties.Enabled; }
+
+    /**
+     * @brief tags
+     *
+     */
+    std::unordered_map<std::string, std::string> Tags;
   };
 }}}} // namespace Azure::Security::KeyVault::Certificates

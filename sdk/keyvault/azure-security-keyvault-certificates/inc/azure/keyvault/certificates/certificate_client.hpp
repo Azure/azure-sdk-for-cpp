@@ -99,6 +99,18 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
         GetCertificateOptions const& options = GetCertificateOptions(),
         Azure::Core::Context const& context = Azure::Core::Context()) const;
 
+    /**
+     * @brief Creates a new certificate.
+     *
+     * @details If this is the first version, the certificate resource is created. 
+     *
+     * @remark This operation requires the certificates/create permission.
+     *
+     * @param name The name of the certificate.
+     * @param parameters Parameters for this operation.
+     * @param context The context for the operation can be used for request cancellation.
+     * @return CreateCertificateOperation instance used to determine create status.
+     */
     CreateCertificateOperation StartCreateCertificate(
         std::string const& name,
         CertificateCreateParameters const& parameters,
