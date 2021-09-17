@@ -17,6 +17,8 @@
     "*nlohmann-json*",
     "eng/docs/api/assets/**/*",
     "sdk/keyvault/azure-security-keyvault-keys/test/ut/recordings/*.json",
+    "sdk/keyvault/azure-security-keyvault-certificates/test/ut/recordings/*.json",
+    "sdk/keyvault/azure-security-keyvault-certificates/inc/azure/keyvault/certificates/certificate_client_models.hpp",
     "sdk/keyvault/azure-security-keyvault-keys/test/ut/key_client_import_test_live.cpp"
   ],
   // * Unless configured otherwise, these words are not case sensitive
@@ -45,6 +47,7 @@
     "eastus",
     "echsmkey",
     "Edlund",
+    "ekus",
     "Favicon",
     "gcovr",
     "githubio",
@@ -95,6 +98,7 @@
     "undeleted",
     "unscoped",
     "unskipped",
+    "upns",
     "vcpkg",
     "Viet",
     "Viktor",
