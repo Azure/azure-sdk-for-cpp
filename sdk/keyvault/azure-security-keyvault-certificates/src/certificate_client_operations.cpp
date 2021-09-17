@@ -4,6 +4,7 @@
 #include "azure/keyvault/certificates/certificate_client.hpp"
 #include "azure/keyvault/certificates/certificate_client_models.hpp"
 #include "private/certificate_serializers.hpp"
+#include <thread>
 
 using namespace Azure::Security::KeyVault::Certificates;
 
