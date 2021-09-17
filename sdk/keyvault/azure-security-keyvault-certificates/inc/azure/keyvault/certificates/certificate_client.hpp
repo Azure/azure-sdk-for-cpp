@@ -10,6 +10,7 @@
 #pragma once
 
 #include "azure/keyvault/certificates/certificate_client_models.hpp"
+#include "azure/keyvault/certificates/certificate_client_operations.hpp"
 #include "azure/keyvault/certificates/certificate_client_options.hpp"
 #include <azure/core/context.hpp>
 #include <azure/core/credentials/credentials.hpp>
@@ -96,6 +97,11 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
     Azure::Response<KeyVaultCertificate> GetCertificateVersion(
         std::string const& name,
         GetCertificateOptions const& options = GetCertificateOptions(),
+        Azure::Core::Context const& context = Azure::Core::Context()) const;
+
+    CreateCertificateOperation StartCreateCertificate(
+        std::string const& name,
+        CertificateCreateParameters const& parameters,
         Azure::Core::Context const& context = Azure::Core::Context()) const;
 
   private:

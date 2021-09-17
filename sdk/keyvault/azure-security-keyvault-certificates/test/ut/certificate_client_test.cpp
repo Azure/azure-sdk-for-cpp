@@ -13,6 +13,38 @@ using namespace std::chrono_literals;
 using namespace Azure::Security::KeyVault::Certificates;
 using namespace Azure::Security::KeyVault::Certificates::Test;
 
+using namespace std::chrono_literals;
+
+TEST_F(KeyVaultCertificateClientTest, CreateCertificate)
+{
+  // cspell: disable-next-line
+  std::string const certificateName("vivazqu");
+
+  auto const& client
+      = GetClientForTest(::testing::UnitTest::GetInstance()->current_test_info()->name());
+
+  auto params = CertificateCreateParameters();
+  params.Policy.Subject = "CN=xyz";
+  params.Policy.ValidityInMonths = 12;
+  params.Policy.Enabled = true;
+
+  params.Properties.Enabled = true;
+  params.Properties.Name = "magiqStuff2";
+  params.Policy.ContentType = CertificateContentType::Pkcs12;
+  params.Policy.IssuerName = "Self";
+
+  LifetimeAction action;
+  action.LifetimePercentage = 80;
+  action.Action = CertificatePolicyAction::AutoRenew;
+  params.Policy.LifetimeActions.emplace_back(action);
+
+  auto response = client.StartCreateCertificate("magiqStuff2", params);
+  auto result = response.PollUntilDone(m_defaultWait);
+
+  EXPECT_EQ(result.Value.Name(), params.Properties.Name);
+  EXPECT_EQ(result.Value.Properties.Enabled.Value(), true);
+}
+
 TEST_F(KeyVaultCertificateClientTest, GetCertificate)
 {
   // cspell: disable-next-line
@@ -20,6 +52,26 @@ TEST_F(KeyVaultCertificateClientTest, GetCertificate)
 
   auto const& client
       = GetClientForTest(::testing::UnitTest::GetInstance()->current_test_info()->name());
+
+  auto params = CertificateCreateParameters();
+  params.Policy.Subject = "CN=xyz";
+  params.Policy.ValidityInMonths = 12;
+  params.Policy.Enabled = true;
+
+  params.Properties.Enabled = true;
+  params.Properties.Name = certificateName;
+  params.Policy.ContentType = CertificateContentType::Pkcs12;
+  params.Policy.IssuerName = "Self";
+
+  LifetimeAction action;
+  action.LifetimePercentage = 80;
+  action.Action = CertificatePolicyAction::AutoRenew;
+  params.Policy.LifetimeActions.emplace_back(action);
+
+  {
+    auto response = client.StartCreateCertificate(certificateName, params);
+    auto result = response.PollUntilDone(m_defaultWait);
+  }
 
   {
     auto response = client.GetCertificate(certificateName);
@@ -83,15 +135,32 @@ TEST_F(KeyVaultCertificateClientTest, GetCertificate)
 TEST_F(KeyVaultCertificateClientTest, GetCertificateVersion)
 {
   // cspell: disable-next-line
-  std::string const certificateName("vivazqu");
-  std::string const certificateVersion("8d532937fea74df58d9b18fca036ad51");
+  std::string const certificateName("vivazqu2");
 
   auto const& client
       = GetClientForTest(::testing::UnitTest::GetInstance()->current_test_info()->name());
+  auto params = CertificateCreateParameters();
+  params.Policy.Subject = "CN=xyz";
+  params.Policy.ValidityInMonths = 12;
+  params.Policy.Enabled = true;
 
+  params.Properties.Enabled = true;
+  params.Properties.Name = certificateName;
+  params.Policy.ContentType = CertificateContentType::Pkcs12;
+  params.Policy.IssuerName = "Self";
+
+  LifetimeAction action;
+  action.LifetimePercentage = 80;
+  action.Action = CertificatePolicyAction::AutoRenew;
+  params.Policy.LifetimeActions.emplace_back(action);
+  GetCertificateOptions options;
   {
-    GetCertificateOptions options;
-    options.Version = certificateVersion;
+    auto response = client.StartCreateCertificate(certificateName, params);
+    auto result = response.PollUntilDone(m_defaultWait);
+    options.Version = result.Value.Properties.Version;
+  }
+  {
+
     auto response = client.GetCertificateVersion(certificateName, options);
     CheckValidResponse(response);
     auto cert = response.Value;

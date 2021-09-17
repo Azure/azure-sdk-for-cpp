@@ -35,9 +35,10 @@ _detail::KeyVaultCertificateSerializer::KeyVaultCertificateDeserialize(
   properties.X509Thumbprint = Base64Url::Base64UrlDecode(jsonResponse[X5tName].get<std::string>());
 
   // "Tags"
-  if (jsonResponse.contains(TagsName))
+  if (jsonResponse.contains(TagsPropertyName))
   {
-    properties.Tags = jsonResponse[TagsName].get<std::unordered_map<std::string, std::string>>();
+    properties.Tags
+        = jsonResponse[TagsPropertyName].get<std::unordered_map<std::string, std::string>>();
   }
 
   // "Attributes"
@@ -86,6 +87,12 @@ void CertificatePropertiesSerializer::Deserialize(
 
 std::string CertificatePropertiesSerializer::Serialize(CertificateProperties const& properties)
 {
+  return JsonSerialize(properties).dump();
+}
+
+Azure::Core::Json::_internal::json CertificatePropertiesSerializer::JsonSerialize(
+    CertificateProperties const& properties)
+{
   json attributes;
 
   JsonOptional::SetFromNullable(properties.Enabled, attributes, EnabledPropertyName);
@@ -107,7 +114,7 @@ std::string CertificatePropertiesSerializer::Serialize(CertificateProperties con
   JsonOptional::SetFromNullable(
       properties.RecoverableDays, attributes, RecoverableDaysPropertyName);
 
-  return attributes.dump();
+  return attributes;
 }
 
 void CertificatePolicySerializer::Deserialize(
@@ -226,6 +233,12 @@ void CertificatePolicySerializer::Deserialize(
 
 std::string CertificatePolicySerializer::Serialize(CertificatePolicy const& policy)
 {
+  return JsonSerialize(policy).dump();
+}
+
+Azure::Core::Json::_internal::json CertificatePolicySerializer::JsonSerialize(
+    CertificatePolicy const& policy)
+{
   json result;
   // key_props
   {
@@ -260,7 +273,7 @@ std::string CertificatePolicySerializer::Serialize(CertificatePolicy const& poli
   // x509_props
   {
     json fragment;
-
+    fragment[SubjectPropertyName] = policy.Subject;
     JsonOptional::SetFromNullable<std::vector<std::string>, std::vector<std::string>>(
         policy.SubjectAlternativeNames.DnsNames,
         fragment,
@@ -339,7 +352,7 @@ std::string CertificatePolicySerializer::Serialize(CertificatePolicy const& poli
       JsonOptional::SetFromNullable<CertificatePolicyAction, std::string>(
           action.Action,
           actionFragment,
-          ActionPropertyName,
+          ActionTypePropertyName,
           [](CertificatePolicyAction const& certAction) { return certAction.ToString(); });
       json lifetimeAction;
       lifetimeAction[TriggerPropertyName] = trigger;
@@ -350,5 +363,50 @@ std::string CertificatePolicySerializer::Serialize(CertificatePolicy const& poli
     result[LifetimeActionsPropertyName] = fragment;
   }
 
-  return result.dump();
+  return result;
 }
+
+std::string CertificateCreateParametersSerializer::Serialize(
+    CertificateCreateParameters const& parameters)
+{
+  json parameter;
+
+  parameter[PolicyPropertyName] = CertificatePolicySerializer::JsonSerialize(parameters.Policy);
+
+  parameter[AttributesPropertyName]
+      = CertificatePropertiesSerializer::JsonSerialize(parameters.Properties);
+
+  parameter[TagsPropertyName] = json(parameters.Properties.Tags);
+
+  return parameter.dump();
+}
+
+namespace Azure { namespace Security { namespace KeyVault { namespace Certificates {
+
+  const CertificateKeyUsage CertificateKeyUsage::DigitalSignature(_detail::DigitalSignatureValue);
+  const CertificateKeyUsage CertificateKeyUsage::NonRepudiation(_detail::NonRepudiationValue);
+  const CertificateKeyUsage CertificateKeyUsage::KeyEncipherment(_detail::KeyEnciphermentValue);
+  const CertificateKeyUsage CertificateKeyUsage::DataEncipherment(_detail::DataEnciphermentValue);
+  const CertificateKeyUsage CertificateKeyUsage::KeyAgreement(_detail::KeyAgreementValue);
+  const CertificateKeyUsage CertificateKeyUsage::KeyCertSign(_detail::KeyCertSignValue);
+  const CertificateKeyUsage CertificateKeyUsage::CrlSign(_detail::CrlSignValue);
+  const CertificateKeyUsage CertificateKeyUsage::EncipherOnly(_detail::EncipherOnlyValue);
+  const CertificateKeyUsage CertificateKeyUsage::DecipherOnly(_detail::DecipherOnlyValue);
+
+  const CertificateKeyType CertificateKeyType::Ec(_detail::EcValue);
+  const CertificateKeyType CertificateKeyType::EcHsm(_detail::EcHsmValue);
+  const CertificateKeyType CertificateKeyType::Rsa(_detail::RsaValue);
+  const CertificateKeyType CertificateKeyType::RsaHsm(_detail::RsaHsmValue);
+
+  const CertificateKeyCurveName CertificateKeyCurveName::P256(_detail::P256Value);
+  const CertificateKeyCurveName CertificateKeyCurveName::P256K(_detail::P256KValue);
+  const CertificateKeyCurveName CertificateKeyCurveName::P384(_detail::P384Value);
+  const CertificateKeyCurveName CertificateKeyCurveName::P521(_detail::P521Value);
+
+  const CertificateContentType CertificateContentType::Pkcs12(_detail::Pkc12Value);
+  const CertificateContentType CertificateContentType::Pem(_detail::PemValue);
+
+  const CertificatePolicyAction CertificatePolicyAction::AutoRenew(_detail::AutoRenewValue);
+  const CertificatePolicyAction CertificatePolicyAction::EmailContacts(_detail::EmailContactsValue);
+
+}}}} // namespace Azure::Security::KeyVault::Certificates

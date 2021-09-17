@@ -37,7 +37,7 @@ set(
 set(
   AZURE_KEYVAULT_CERTIFICATES_SOURCE
     src/certificate_client.cpp
-    src/keyvault_certificate.cpp
+    src/certificate_serializers.cpp
     src/keyvault_certificates_common_request.cpp
     src/certificate_client_operations.cpp
 )

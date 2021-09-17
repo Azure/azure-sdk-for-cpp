@@ -1,0 +1,60 @@
+{
+  "networkCallRecords": [
+    {
+      "Headers": {
+        "content-type": "application/json",
+        "user-agent": "azsdk-cpp-keyvault-certificates/4.0.0-beta.1 (Windows 10 Enterprise 6.3 19043 19041.1.amd64fre.vb_release.191206-1406)",
+        "x-ms-client-request-id": "1c9896c4-e5f8-432a-5790-b57817065ed3"
+      },
+      "Method": "POST",
+      "Response": {
+        "BODY": "{\"id\":\"https://gearama-test2.vault.azure.net/certificates/magiqStuff2/pending\",\"issuer\":{\"name\":\"Self\"},\"csr\":\"MIICfzCCAWcCAQAwDjEMMAoGA1UEAxMDeHl6MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAoszvkzbx82GvgpKeEmMd4QMx2QQ9RfNYLNriNI/dlv1Ic/9j6xHq0MFo/3nPysycuFnRL2YIdSmONUcL/nW4IEuRV8QejcvdbUcooShWxQ55CAVvAdcCp1TyvSjZIa+OjpDG6OKn8ltLwE48fpLE0Wf9T+wMeBZRxbeEinmWanx+LeaHO85ekJZZ17i2k+cyq1CAZ8G+GxIsugzqOZlDETqawhFu1H8cgDS/Pa8Ur9QZY3O4EbzQXJzHf0JlTi50M6EfTF6JcjEy6MAGL0bgVbGP/ctJ+ZW0EH2mAEI2Xnw4/lYC//NhJqb3Ed8qH711upC57MjkTvadRv48uiDrGQIDAQABoCwwKgYJKoZIhvcNAQkOMR0wGzAOBgNVHQ8BAf8EBAMCBaAwCQYDVR0TBAIwADANBgkqhkiG9w0BAQsFAAOCAQEAVxntAdVqfINv91DcJkNMZ4jvrjukmsUZSDShOMzdBHlR1J47HP2PFqWZan+n85Qg9bZcU2c5UjEEklnFK/oyAii1NWzFJbAmSmAiCJukf6aJPrNv4DwlrMBA5cvvCPnBqxKgM6QRl+YSBkmmL8GeTV+Horh0BKvDFXWjspS/+zDswUYO3oagog3dZ/BhUDeJykFgu/qefWjyuf15zdo3dbYYru27FNrqQXbqrt/jOINy5MqUodu1h/IwL9fj+vaFw0MDht8e7QbSdSxAlidCzOuoTz1DOMaixX4Om1jwwIFFeAzPbQkcXZgKajVrUq7Ud0yXrnRYR6UPxWoBDMIy4g==\",\"cancellation_requested\":false,\"status\":\"inProgress\",\"status_details\":\"Pending certificate created. Certificate request is in progress. This may take some time based on the issuer provider. Please check again later.\",\"request_id\":\"a66838e821b240f9aa77bad48d08e2ef\"}",
+        "STATUS_CODE": "202",
+        "cache-control": "no-cache",
+        "content-length": "1238",
+        "content-type": "application/json; charset=utf-8",
+        "date": "Fri, 17 Sep 2021 00:29:50 GMT",
+        "expires": "-1",
+        "location": "https://gearama-test2.vault.azure.net/certificates/magiqStuff2/pending?api-version=7.2&request_id=a66838e821b240f9aa77bad48d08e2ef",
+        "pragma": "no-cache",
+        "retry-after": "10",
+        "strict-transport-security": "max-age=31536000;includeSubDomains",
+        "x-content-type-options": "nosniff",
+        "x-ms-client-request-id": "1c9896c4-e5f8-432a-5790-b57817065ed3",
+        "x-ms-keyvault-network-info": "conn_type=Ipv4;addr=24.22.157.72;act_addr_fam=InterNetwork;",
+        "x-ms-keyvault-region": "westus2",
+        "x-ms-keyvault-service-version": "1.9.79.2",
+        "x-ms-request-id": "24e878dd-92ac-4653-a99e-6ec3ee7c05ca",
+        "x-powered-by": "ASP.NET"
+      },
+      "Url": "https://REDACTED.vault.azure.net/certificates/magiqStuff2/create?api-version=7.2"
+    },
+    {
+      "Headers": {
+        "content-type": "application/json",
+        "user-agent": "azsdk-cpp-keyvault-certificates/4.0.0-beta.1 (Windows 10 Enterprise 6.3 19043 19041.1.amd64fre.vb_release.191206-1406)",
+        "x-ms-client-request-id": "e6ac44d0-49fe-4ace-53b7-427f2ccc364a"
+      },
+      "Method": "GET",
+      "Response": {
+        "BODY": "{\"id\":\"https://gearama-test2.vault.azure.net/certificates/magiqStuff2/e58eed29954a4f779aee1d941ead347c\",\"kid\":\"https://gearama-test2.vault.azure.net/keys/magiqStuff2/e58eed29954a4f779aee1d941ead347c\",\"sid\":\"https://gearama-test2.vault.azure.net/secrets/magiqStuff2/e58eed29954a4f779aee1d941ead347c\",\"x5t\":\"KqTO9MOSOVQiGb4q8SFZ5rHl-NM\",\"cer\":\"MIIDAzCCAeugAwIBAgIQDRgMJLukTkajJPqy273XGjANBgkqhkiG9w0BAQsFADAOMQwwCgYDVQQDEwN4eXowHhcNMjEwOTE3MDAxOTIzWhcNMjIwOTE3MDAyOTIzWjAOMQwwCgYDVQQDEwN4eXowggEiMA0GCSqGSIb3DQEBAQUAA4IBDwAwggEKAoIBAQDqbvyoGMMhL6T6IlrpulNA5cwQkRud6dBdejD+juj/L9QghkzLCAyByLixxplaKpLF/x6hRhFH7mnJioslaTPqCe5z4C9xIyGCrx0YeOq7kg8U+mAWAN3FpKs3kZEgjIzO0HMQqwQqII5yMLkoES27kc5Ve8xn5I6s6WxhxxLMe+bM4/UvtOeKmAOaR6S+XMqMo0kpjmPbgbshnTNhKsbzsUH0X+6+1451WrPn/HayzEkd6dZTvgZWXvJAge1WidDFrq/hjYQ1HTobk/q2tAAOZvCg5zFiGg/YHS+k3Se9NsAHiyl6ldumhpf/2S3E7s+HiRz83ElJwDSDO/T3nxnNAgMBAAGjXTBbMA4GA1UdDwEB/wQEAwIFoDAJBgNVHRMEAjAAMB8GA1UdIwQYMBaAFA6n0oteqyrSSRO587vircSmc66+MB0GA1UdDgQWBBQOp9KLXqsq0kkTufO74q3EpnOuvjANBgkqhkiG9w0BAQsFAAOCAQEALhXdZlUZXqVk9a0+TKC9+x+lW1ma7UJm0+TGEVoTwH6puqKYcLm+slznqXqY90aZdHdjXkomAcnGeZ6mW16N8PQ7dWb9Kb7Np59LDeQLln6EVccesVJ8lUXJi7t7iwgJmky7xbxcgcbXT1FxwAGST7XcBi53yr1dGXW8si3vxJM5Jrver1Uhz5xHX4XqfNhk2cC3hDgMcDSwos8fpxsvLcSadlonARhd0AEkKMdN4MDQ9DEFQCMenSUc9HZeBzhP5pB+10H4/xi9pYgRaFaFuOt6DT8osBaRcat0vdGfbyTT7JErGz94UGnFL5iQjduen43X6CKUlkfsPyX2no+XLw==\",\"attributes\":{\"enabled\":true,\"nbf\":1631837963,\"exp\":1663374563,\"created\":1631838563,\"updated\":1631838563,\"recoveryLevel\":\"Recoverable+Purgeable\",\"recoverableDays\":90},\"tags\":{},\"policy\":{\"id\":\"https://gearama-test2.vault.azure.net/certificates/magiqStuff2/policy\",\"key_props\":{\"exportable\":true,\"kty\":\"RSA\",\"key_size\":2048,\"reuse_key\":false},\"secret_props\":{\"contentType\":\"application/x-pkcs12\"},\"x509_props\":{\"subject\":\"CN=xyz\",\"ekus\":[],\"key_usage\":[\"digitalSignature\",\"keyEncipherment\"],\"validity_months\":12,\"basic_constraints\":{\"ca\":false}},\"lifetime_actions\":[{\"trigger\":{\"lifetime_percentage\":80},\"action\":{\"action_type\":\"AutoRenew\"}}],\"issuer\":{\"name\":\"Self\"},\"attributes\":{\"enabled\":true,\"created\":1631834200,\"updated\":1631838590}},\"pending\":{\"id\":\"https://gearama-test2.vault.azure.net/certificates/magiqStuff2/pending\"}}",
+        "STATUS_CODE": "200",
+        "cache-control": "no-cache",
+        "content-length": "2210",
+        "content-type": "application/json; charset=utf-8",
+        "date": "Fri, 17 Sep 2021 00:29:50 GMT",
+        "expires": "-1",
+        "pragma": "no-cache",
+        "strict-transport-security": "max-age=31536000;includeSubDomains",
+        "x-content-type-options": "nosniff",
+        "x-ms-client-request-id": "e6ac44d0-49fe-4ace-53b7-427f2ccc364a",
+        "x-ms-keyvault-network-info": "conn_type=Ipv4;addr=24.22.157.72;act_addr_fam=InterNetwork;",
+        "x-ms-keyvault-region": "westus2",
+        "x-ms-keyvault-service-version": "1.9.79.2",
+        "x-ms-request-id": "9b05adde-6a6c-48cc-96fa-0a0cea13d3df",
+        "x-powered-by": "ASP.NET"
+      },
+      "Url": "https://REDACTED.vault.azure.net/certificates/magiqStuff2?api-version=7.2"
+    }
+  ]
+}

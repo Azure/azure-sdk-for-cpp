@@ -28,7 +28,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
   class CreateCertificateOperation final : public Azure::Core::Operation<KeyVaultCertificate> {
 
   private:
-    friend class CCertificateClient;
+    friend class CertificateClient;
     std::shared_ptr<CertificateClient> m_certificateClient;
     KeyVaultCertificate m_value;
     std::string m_continuationToken;

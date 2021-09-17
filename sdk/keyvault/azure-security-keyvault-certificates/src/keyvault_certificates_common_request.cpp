@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+﻿// Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
 
 #include "private/keyvault_certificates_common_request.hpp"
@@ -17,8 +17,10 @@ _detail::KeyVaultCertificatesCommonRequest::SendRequest(
     Azure::Core::Http::Request& request,
     Azure::Core::Context const& context)
 {
+  request.SetHeader("content-type", "application/json");
   auto response = pipeline.Send(request, context);
   auto responseCode = response->GetStatusCode();
+  std::string str((response->GetBody()).begin(), (response->GetBody()).end());
   switch (responseCode)
   {
 

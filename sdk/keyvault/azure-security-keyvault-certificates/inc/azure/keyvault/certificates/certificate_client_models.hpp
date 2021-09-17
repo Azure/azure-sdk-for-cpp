@@ -809,4 +809,9 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
     Azure::Nullable<bool> Enabled() { return Properties.Enabled; }
     std::unordered_map<std::string, std::string> Tags;
   };
+
+  struct CertificateOperationProperties
+  {
+    std::string Id;
+  };
 }}}} // namespace Azure::Security::KeyVault::Certificates
