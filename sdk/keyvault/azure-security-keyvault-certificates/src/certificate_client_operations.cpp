@@ -72,7 +72,7 @@ CreateCertificateOperation::CreateCertificateOperation(
   m_rawResponse = std::move(response.RawResponse);
   m_continuationToken = m_value.Name();
 
-  if (m_value.Name().empty() == false)
+  if (!m_value.Name().empty())
   {
     m_status = Azure::Core::OperationStatus::Succeeded;
   }
