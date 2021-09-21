@@ -145,4 +145,60 @@ CreateCertificateOperation CertificateClient::StartCreateCertificate(
       std::make_shared<CertificateClient>(*this), std::move(responseT));
 }
 
+Azure::Response<CertificateIssuer> CertificateClient::GetIssuer(
+    std::string const& name,
+    Azure::Core::Context const& context) const
+{
+  auto request = CreateRequest(HttpMethod::Get, {CertificatesPath, IssuersPath, name});
+  auto rawResponse = SendRequest(request, context);
+
+  auto value = CertificateIssuerSerializer::Deserialize(name, *rawResponse);
+  return Azure::Response<CertificateIssuer>(std::move(value), std::move(rawResponse));
+}
+
+Azure::Response<CertificateIssuer> CertificateClient::DeleteIssuer(
+    std::string const& name,
+    Azure::Core::Context const& context) const
+{
+  auto request = CreateRequest(HttpMethod::Delete, {CertificatesPath, IssuersPath, name});
+  auto rawResponse = SendRequest(request, context);
+
+  auto value = CertificateIssuerSerializer::Deserialize(name, *rawResponse);
+  return Azure::Response<CertificateIssuer>(std::move(value), std::move(rawResponse));
+}
+
+Azure::Response<CertificateIssuer> CertificateClient::CreateIssuer(
+    CertificateIssuer const& issuer,
+    Azure::Core::Context const& context) const
+{
+  std::string name = issuer.Name;
+  auto payload = CertificateIssuerSerializer::Serialize(issuer);
+  Azure::Core::IO::MemoryBodyStream payloadStream(
+      reinterpret_cast<const uint8_t*>(payload.data()), payload.size());
+
+  auto request
+      = CreateRequest(HttpMethod::Put, {CertificatesPath, IssuersPath, name}, &payloadStream);
+
+  auto rawResponse = SendRequest(request, context);
+  auto value = CertificateIssuerSerializer::Deserialize(name, *rawResponse);
+  return Azure::Response<CertificateIssuer>(std::move(value), std::move(rawResponse));
+}
+
+Azure::Response<CertificateIssuer> CertificateClient::UpdateIssuer(
+    CertificateIssuer const& issuer,
+    Azure::Core::Context const& context) const
+{
+  std::string name = issuer.Name;
+  auto payload = CertificateIssuerSerializer::Serialize(issuer);
+  Azure::Core::IO::MemoryBodyStream payloadStream(
+      reinterpret_cast<const uint8_t*>(payload.data()), payload.size());
+
+  auto request
+      = CreateRequest(HttpMethod::Patch, {CertificatesPath, IssuersPath, name}, &payloadStream);
+
+  auto rawResponse = SendRequest(request, context);
+  auto value = CertificateIssuerSerializer::Deserialize(name, *rawResponse);
+  return Azure::Response<CertificateIssuer>(std::move(value), std::move(rawResponse));
+}
+
 const ServiceVersion ServiceVersion::V7_2("7.2");

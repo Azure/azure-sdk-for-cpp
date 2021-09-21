@@ -381,3 +381,111 @@ std::string CertificateCreateParametersSerializer::Serialize(
 
   return parameter.dump();
 }
+
+CertificateIssuer CertificateIssuerSerializer::Deserialize(
+    std::string const& name,
+    Azure::Core::Http::RawResponse const& rawResponse)
+{
+  CertificateIssuer issuer;
+  issuer.Name = name;
+  auto const& body = rawResponse.GetBody();
+  auto jsonResponse = json::parse(body);
+  std::string data = jsonResponse.dump();
+  issuer.Id = jsonResponse[IdName];
+  issuer.Provider = jsonResponse[ProviderPropertyValue];
+
+  if (jsonResponse.contains(CredentialsPropertyValue))
+  {
+    auto credentialsJson = jsonResponse[CredentialsPropertyValue];
+    JsonOptional::SetIfExists(issuer.Credentials.AccountId, credentialsJson, AccountIdValue);
+    JsonOptional::SetIfExists(issuer.Credentials.Password, credentialsJson, PwdPropertyValue);
+  }
+
+  if (jsonResponse.contains(OrgDetailsPropertyValue))
+  {
+    auto orgJson = jsonResponse[OrgDetailsPropertyValue];
+    JsonOptional::SetIfExists(issuer.Organization.Id, orgJson, IdName);
+
+    for (auto adminJson : orgJson[AdminDetailsPropertyValue])
+    {
+      AdministratorDetails admin;
+      JsonOptional::SetIfExists(admin.EmailAddress, adminJson, EmailPropertyValue);
+      JsonOptional::SetIfExists(admin.FirstName, adminJson, FirstNamePropertyValue);
+      JsonOptional::SetIfExists(admin.LastName, adminJson, LastNamePropertyValue);
+      JsonOptional::SetIfExists(admin.PhoneNumber, adminJson, PhonePropertyValue);
+
+      issuer.Organization.AdminDetails.emplace_back(admin);
+    }
+  }
+
+  if (jsonResponse.contains(AttributesPropertyName))
+  {
+    auto attributesJson = jsonResponse[AttributesPropertyName];
+
+    JsonOptional::SetIfExists(issuer.Properties.Enabled, attributesJson, EnabledPropertyName);
+    JsonOptional::SetIfExists<int64_t, Azure::DateTime>(
+        issuer.Properties.Created,
+        attributesJson,
+        CreatedPropertyName,
+        PosixTimeConverter::PosixTimeToDateTime);
+    JsonOptional::SetIfExists<int64_t, Azure::DateTime>(
+        issuer.Properties.Updated,
+        attributesJson,
+        UpdatedPropertyName,
+        PosixTimeConverter::PosixTimeToDateTime);
+  }
+
+  return issuer;
+}
+
+std::string CertificateIssuerSerializer::Serialize(CertificateIssuer const& issuer)
+{
+
+  json jsonResponse;
+  JsonOptional::SetFromNullable(issuer.Provider, jsonResponse, ProviderPropertyValue);
+
+  {
+    json credentialsJson;
+    JsonOptional::SetFromNullable(issuer.Credentials.AccountId, credentialsJson, AccountIdValue);
+    JsonOptional::SetFromNullable(issuer.Credentials.Password, credentialsJson, PwdPropertyValue);
+    jsonResponse[CredentialsPropertyValue] = credentialsJson;
+  }
+
+  {
+    json orgJson;
+    JsonOptional::SetFromNullable(issuer.Organization.Id, orgJson, IdName);
+
+    for (auto admin : issuer.Organization.AdminDetails)
+    {
+      json adminJson;
+      JsonOptional::SetFromNullable(admin.EmailAddress, adminJson, EmailPropertyValue);
+      JsonOptional::SetFromNullable(admin.FirstName, adminJson, FirstNamePropertyValue);
+      JsonOptional::SetFromNullable(admin.LastName, adminJson, LastNamePropertyValue);
+      JsonOptional::SetFromNullable(admin.PhoneNumber, adminJson, PhonePropertyValue);
+
+      orgJson[AdminDetailsPropertyValue].emplace_back(adminJson);
+    }
+
+    jsonResponse[OrgDetailsPropertyValue] = orgJson;
+  }
+
+  {
+    json attributesJson;
+
+    JsonOptional::SetFromNullable(issuer.Properties.Enabled, attributesJson, EnabledPropertyName);
+    JsonOptional::SetFromNullable<Azure::DateTime, int64_t>(
+        issuer.Properties.Created,
+        attributesJson,
+        CreatedPropertyName,
+        PosixTimeConverter::DateTimeToPosixTime);
+    JsonOptional::SetFromNullable<Azure::DateTime, int64_t>(
+        issuer.Properties.Updated,
+        attributesJson,
+        UpdatedPropertyName,
+        PosixTimeConverter::DateTimeToPosixTime);
+
+    jsonResponse[AttributesPropertyName] = attributesJson;
+  }
+
+  return jsonResponse.dump();
+}

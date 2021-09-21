@@ -92,4 +92,13 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
     {
       static std::string Serialize(CertificateCreateParameters const& parameters);
     };
+
+    struct CertificateIssuerSerializer final
+    {
+      static CertificateIssuer Deserialize(
+          std::string const& name,
+          Azure::Core::Http::RawResponse const& rawResponse);
+
+      static std::string Serialize(CertificateIssuer const& issuer);
+    };
 }}}}} // namespace Azure::Security::KeyVault::Certificates::_detail
