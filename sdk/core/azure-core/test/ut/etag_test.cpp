@@ -50,12 +50,16 @@ TEST(ETag, IsWeak)
   }
 
   {
+    auto strong000 = ETag();
+    auto strong00 = ETag("W/\"");
     auto strong0 = ETag("Xxxx"); // cspell:disable-line
     auto strong1 = ETag("Wxxx"); // cspell:disable-line
     auto strong2 = ETag("W/xx");
     auto strong3 = ETag("W/\"x");
     auto weak = ETag("W/\"/\"");
 
+    ASSERT_FALSE(strong000.IsWeak());
+    ASSERT_FALSE(strong00.IsWeak());
     ASSERT_FALSE(strong0.IsWeak());
     ASSERT_FALSE(strong1.IsWeak());
     ASSERT_FALSE(strong2.IsWeak());
