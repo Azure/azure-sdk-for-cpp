@@ -803,7 +803,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
   };
 
   /**
-   * @brief Parameters for StartCreateCErtificate
+   * @brief Parameters for StartCreateCertificate
    *
    */
   struct CertificateCreateParameters final
