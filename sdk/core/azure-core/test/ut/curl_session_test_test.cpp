@@ -194,7 +194,7 @@ namespace Azure { namespace Core { namespace Test {
     EXPECT_NO_THROW(session->Perform(Azure::Core::Context::ApplicationContext));
   }
 
-  TEST_F(CurlSession, headerWhitespace)
+  TEST_F(CurlSession, headerValueWhitespace)
   {
     std::string response("HTTP/1.1 200 Ok\r\header: \tvalue\r\n\r\nbody");
     int32_t const payloadSize = static_cast<int32_t>(response.size());
