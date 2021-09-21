@@ -10,12 +10,9 @@
 
 #pragma once
 
-#include <azure/core/internal/client_options.hpp>
-
 #include "azure/keyvault/certificates/certificate_client_models.hpp"
 #include "azure/keyvault/certificates/dll_import_export.hpp"
 
-#include <azure/core/http/http.hpp>
 #include <azure/core/operation.hpp>
 #include <azure/core/operation_status.hpp>
 #include <azure/core/response.hpp>
@@ -27,8 +24,9 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
    */
   class CreateCertificateOperation final : public Azure::Core::Operation<KeyVaultCertificate> {
 
-  private:
     friend class CertificateClient;
+
+  private:
     std::shared_ptr<CertificateClient> m_certificateClient;
     KeyVaultCertificate m_value;
     std::string m_continuationToken;

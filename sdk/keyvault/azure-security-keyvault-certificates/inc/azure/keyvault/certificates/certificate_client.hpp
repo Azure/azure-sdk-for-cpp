@@ -13,7 +13,6 @@
 #include "azure/keyvault/certificates/certificate_client_operations.hpp"
 #include "azure/keyvault/certificates/certificate_client_options.hpp"
 #include <azure/core/context.hpp>
-#include <azure/core/credentials/credentials.hpp>
 #include <azure/core/http/http.hpp>
 #include <azure/core/internal/http/pipeline.hpp>
 #include <azure/core/response.hpp>

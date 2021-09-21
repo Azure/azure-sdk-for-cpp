@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+﻿// Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
 
 /**
@@ -21,6 +21,10 @@
 #include <vector>
 
 namespace Azure { namespace Security { namespace KeyVault { namespace _detail {
+
+  constexpr static const char ContentHeaderName[] = "content-type";
+  constexpr static const char ApplicationJsonValue[] = "application/json";
+  constexpr static const char ApiVersionQueryParamName[] = "api-version";
 
   struct KeyVaultCertificatesCommonRequest final
   {

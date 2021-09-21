@@ -803,31 +803,31 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
   };
 
   /**
-   * @brief Parameters for StartCreateCertificate
+   * @brief Parameters for StartCreateCertificate.
    *
    */
   struct CertificateCreateParameters final
   {
     /**
-     * @brief Certificate policy
+     * @brief Certificate policy.
      *
      */
     CertificatePolicy Policy;
 
     /**
-     * @brief certificate attributes
+     * @brief Certificate attributes.
      *
      */
     CertificateProperties Properties;
 
     /**
-     * @brief enabled?
+     * @brief Respresents if certificate is enabled.
      *
      */
     Azure::Nullable<bool> Enabled() { return Properties.Enabled; }
 
     /**
-     * @brief tags
+     * @brief Certificate tags.
      *
      */
     std::unordered_map<std::string, std::string> Tags;
