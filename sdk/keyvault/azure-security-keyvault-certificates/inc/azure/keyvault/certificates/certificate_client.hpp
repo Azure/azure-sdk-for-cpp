@@ -115,6 +115,48 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
         CertificateCreateParameters const& parameters,
         Azure::Core::Context const& context = Azure::Core::Context()) const;
 
+    /**
+     * @brief Lists the certificate contacts for a specified key vault.
+     *
+     * @details The GetContacts operation returns the set of certificate contact
+     * resources in the specified key vault.
+     *
+     * @remark This operation requires the certificates/managecontacts permission.
+     *
+     * @param context The context for the operation can be used for request cancellation.
+     * @return The contacts list for the key vault certificate.
+     */
+    Azure::Response<std::vector<CertificateContact>> GetContacts(
+        Azure::Core::Context const& context = Azure::Core::Context()) const;
+
+    /**
+     * @brief Deletes the certificate contacts for a specified key vault.
+     *
+     * @details Deletes the certificate contacts for a specified key vault certificate.
+     *
+     * @remark This operation requires the certificates/managecontacts permission.
+     *
+     * @param context The context for the operation can be used for request cancellation.
+     * @return The contacts for the key vault certificate.
+     */
+    Azure::Response<std::vector<CertificateContact>> DeleteContacts(
+        Azure::Core::Context const& context = Azure::Core::Context()) const;
+
+    /**
+     * @brief Create certificate contacts.
+     *
+     * @details Sets the certificate contacts for the specified key vault.
+     *
+     * @remark his operation requires the certificates/managecontacts permission.
+     *
+     * @param contacts The contacts for the key vault certificate.
+     * @param context The context for the operation can be used for request cancellation.
+     * @return The contacts for the key vault certificate.
+     */
+    Azure::Response<std::vector<CertificateContact>> SetContacts(
+        std::vector<CertificateContact> const& constacts,
+        Azure::Core::Context const& context = Azure::Core::Context()) const;
+
   private:
     std::unique_ptr<Azure::Core::Http::RawResponse> SendRequest(
         Azure::Core::Http::Request& request,

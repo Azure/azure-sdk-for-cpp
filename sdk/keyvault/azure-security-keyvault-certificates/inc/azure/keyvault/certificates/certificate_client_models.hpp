@@ -832,4 +832,29 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
      */
     std::unordered_map<std::string, std::string> Tags;
   };
+
+  /**
+   * @brief The contact information for the vault certificates.
+   *
+   */
+  struct CertificateContact
+  {
+    /**
+     * @brief Contact email address of.
+     *
+     */
+    Azure::Nullable<std::string> EmailAddress;
+
+    /**
+     * @brief Contact name.
+     *
+     */
+    Azure::Nullable<std::string> Name;
+
+    /**
+     * @brief Contact phone number.
+     *
+     */
+    Azure::Nullable<std::string> Phone;
+  };
 }}}} // namespace Azure::Security::KeyVault::Certificates

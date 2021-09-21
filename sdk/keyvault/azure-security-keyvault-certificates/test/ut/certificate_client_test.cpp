@@ -13,8 +13,6 @@ using namespace std::chrono_literals;
 using namespace Azure::Security::KeyVault::Certificates;
 using namespace Azure::Security::KeyVault::Certificates::Test;
 
-using namespace std::chrono_literals;
-
 TEST_F(KeyVaultCertificateClientTest, CreateCertificate)
 {
   // cspell: disable-next-line
@@ -188,4 +186,65 @@ TEST_F(KeyVaultCertificateClientTest, GetCertificateVersion)
     EXPECT_NE(cert.SecretId, "");
     EXPECT_NE(cert.Cer.size(), 0);
   }
+}
+
+TEST_F(KeyVaultCertificateClientTest, SetContacts)
+{
+  auto const& client
+      = GetClientForTest(::testing::UnitTest::GetInstance()->current_test_info()->name());
+
+  std::vector<CertificateContact> contacts;
+
+  CertificateContact ctt;
+
+  ctt.EmailAddress = "one@two.org";
+  ctt.Name = "giqu";
+  ctt.Phone = "1234567890";
+  contacts.emplace_back(ctt);
+
+  CertificateContact ctt2;
+
+  ctt2.EmailAddress = "two@three.org";
+  ctt2.Name = "giqu2";
+  ctt2.Phone = "1234567891";
+  contacts.emplace_back(ctt2);
+
+  auto response = client.SetContacts(contacts);
+
+  CheckContactsCollections(contacts, response.Value);
+
+  auto response2 = client.DeleteContacts();
+
+  CheckContactsCollections(contacts, response2.Value);
+}
+
+TEST_F(KeyVaultCertificateClientTest, GetContacts)
+{
+  auto const& client
+      = GetClientForTest(::testing::UnitTest::GetInstance()->current_test_info()->name());
+
+  std::vector<CertificateContact> contacts;
+
+  CertificateContact ctt;
+
+  ctt.EmailAddress = "one@two.org";
+  ctt.Name = "giqu";
+  ctt.Phone = "1234567890";
+  contacts.emplace_back(ctt);
+
+  CertificateContact ctt2;
+
+  ctt2.EmailAddress = "two@three.org";
+  ctt2.Name = "giqu2";
+  ctt2.Phone = "1234567891";
+  contacts.emplace_back(ctt2);
+
+  client.SetContacts(contacts);
+  auto response = client.GetContacts();
+
+  CheckContactsCollections(contacts, response.Value);
+
+  auto response2 = client.DeleteContacts();
+
+  CheckContactsCollections(contacts, response2.Value);
 }

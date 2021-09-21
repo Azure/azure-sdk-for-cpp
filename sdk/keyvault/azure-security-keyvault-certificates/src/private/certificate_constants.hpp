@@ -16,6 +16,8 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
     constexpr static const char KeyVaultServicePackageName[] = "keyvault-certificates";
     constexpr static const char CertificatesPath[] = "certificates";
     constexpr static const char CertificatesCreatePath[] = "create";
+    constexpr static const char ContactsPath[] = "contacts";
+    constexpr static const char ContactsPropertyName[] = "contacts";
 
     /***************** Certificates Properties *****************/
     constexpr static const char IdName[] = "id";
@@ -94,4 +96,8 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
     constexpr static const char AutoRenewValue[] = "AutoRenew";
     constexpr static const char EmailContactsValue[] = "EmailContacts";
 
+    /***************** Certificates Contact *****************/
+    constexpr static const char EmailPropertyName[] = "email";
+    constexpr static const char NamePropertyName[] = "name";
+    constexpr static const char PhonePropertyName[] = "phone";
 }}}}} // namespace Azure::Security::KeyVault::Certificates::_detail

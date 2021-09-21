@@ -1,0 +1,85 @@
+﻿{
+  "networkCallRecords": [
+    {
+      "Headers": {
+        "content-type": "application/json",
+        "user-agent": "azsdk-cpp-keyvault-certificates/4.0.0-beta.1 (Windows 10 Enterprise 6.3 19043 19041.1.amd64fre.vb_release.191206-1406)",
+        "x-ms-client-request-id": "cb835e83-7191-495b-63ef-d07366443a0c"
+      },
+      "Method": "PUT",
+      "Response": {
+        "BODY": "{\"id\":\"https://REDACTED.vault.azure.net/certificates/contacts\",\"contacts\":[{\"email\":\"one@two.org\",\"name\":\"giqu\",\"phone\":\"1234567890\"},{\"email\":\"two@three.org\",\"name\":\"giqu2\",\"phone\":\"1234567891\"}]}",
+        "STATUS_CODE": "200",
+        "cache-control": "no-cache",
+        "content-length": "202",
+        "content-type": "application/json; charset=utf-8",
+        "date": "Sun, 19 Sep 2021 19:21:46 GMT",
+        "expires": "-1",
+        "pragma": "no-cache",
+        "strict-transport-security": "max-age=31536000;includeSubDomains",
+        "x-content-type-options": "nosniff",
+        "x-ms-client-request-id": "cb835e83-7191-495b-63ef-d07366443a0c",
+        "x-ms-keyvault-network-info": "conn_type=Ipv4;addr=24.22.157.72;act_addr_fam=InterNetwork;",
+        "x-ms-keyvault-region": "westus2",
+        "x-ms-keyvault-service-version": "1.9.79.2",
+        "x-ms-request-id": "f0d670d2-8cc8-49dc-8317-ba7021419d55",
+        "x-powered-by": "ASP.NET"
+      },
+      "Url": "https://REDACTED.vault.azure.net/certificates/contacts?api-version=7.2"
+    },
+    {
+      "Headers": {
+        "content-type": "application/json",
+        "user-agent": "azsdk-cpp-keyvault-certificates/4.0.0-beta.1 (Windows 10 Enterprise 6.3 19043 19041.1.amd64fre.vb_release.191206-1406)",
+        "x-ms-client-request-id": "f29dad38-641c-4c0e-49f3-6850a18624e3"
+      },
+      "Method": "GET",
+      "Response": {
+        "BODY": "{\"id\":\"https://REDACTED.vault.azure.net/certificates/contacts\",\"contacts\":[{\"email\":\"one@two.org\",\"name\":\"giqu\",\"phone\":\"1234567890\"},{\"email\":\"two@three.org\",\"name\":\"giqu2\",\"phone\":\"1234567891\"}]}",
+        "STATUS_CODE": "200",
+        "cache-control": "no-cache",
+        "content-length": "202",
+        "content-type": "application/json; charset=utf-8",
+        "date": "Sun, 19 Sep 2021 19:21:46 GMT",
+        "expires": "-1",
+        "pragma": "no-cache",
+        "strict-transport-security": "max-age=31536000;includeSubDomains",
+        "x-content-type-options": "nosniff",
+        "x-ms-client-request-id": "f29dad38-641c-4c0e-49f3-6850a18624e3",
+        "x-ms-keyvault-network-info": "conn_type=Ipv4;addr=24.22.157.72;act_addr_fam=InterNetwork;",
+        "x-ms-keyvault-region": "westus2",
+        "x-ms-keyvault-service-version": "1.9.79.2",
+        "x-ms-request-id": "255653c0-ad75-4a67-8b86-f3a2dd609ce2",
+        "x-powered-by": "ASP.NET"
+      },
+      "Url": "https://REDACTED.vault.azure.net/certificates/contacts?api-version=7.2"
+    },
+    {
+      "Headers": {
+        "content-type": "application/json",
+        "user-agent": "azsdk-cpp-keyvault-certificates/4.0.0-beta.1 (Windows 10 Enterprise 6.3 19043 19041.1.amd64fre.vb_release.191206-1406)",
+        "x-ms-client-request-id": "8e1cb98e-014c-4146-42fa-230813e03d17"
+      },
+      "Method": "DELETE",
+      "Response": {
+        "BODY": "{\"id\":\"https://REDACTED.vault.azure.net/certificates/contacts\",\"contacts\":[{\"email\":\"one@two.org\",\"name\":\"giqu\",\"phone\":\"1234567890\"},{\"email\":\"two@three.org\",\"name\":\"giqu2\",\"phone\":\"1234567891\"}]}",
+        "STATUS_CODE": "200",
+        "cache-control": "no-cache",
+        "content-length": "202",
+        "content-type": "application/json; charset=utf-8",
+        "date": "Sun, 19 Sep 2021 19:21:46 GMT",
+        "expires": "-1",
+        "pragma": "no-cache",
+        "strict-transport-security": "max-age=31536000;includeSubDomains",
+        "x-content-type-options": "nosniff",
+        "x-ms-client-request-id": "8e1cb98e-014c-4146-42fa-230813e03d17",
+        "x-ms-keyvault-network-info": "conn_type=Ipv4;addr=24.22.157.72;act_addr_fam=InterNetwork;",
+        "x-ms-keyvault-region": "westus2",
+        "x-ms-keyvault-service-version": "1.9.79.2",
+        "x-ms-request-id": "bbd2d766-037f-4cf4-a65e-db0b62bf9425",
+        "x-powered-by": "ASP.NET"
+      },
+      "Url": "https://REDACTED.vault.azure.net/certificates/contacts?api-version=7.2"
+    }
+  ]
+}

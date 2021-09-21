@@ -381,3 +381,47 @@ std::string CertificateCreateParametersSerializer::Serialize(
 
   return parameter.dump();
 }
+
+std::string CertificateContactsSerializer::Serialize(
+    std::vector<CertificateContact> const& contacts)
+{
+  json response;
+
+  for (auto contact : contacts)
+  {
+    json contactJson;
+
+    JsonOptional::SetFromNullable(contact.EmailAddress, contactJson, EmailPropertyName);
+    JsonOptional::SetFromNullable(contact.Name, contactJson, NamePropertyName);
+    JsonOptional::SetFromNullable(contact.Phone, contactJson, PhonePropertyName);
+
+    response[ContactsPropertyName].emplace_back(contactJson);
+  }
+
+  return response.dump();
+}
+
+std::vector<CertificateContact> CertificateContactsSerializer::Deserialize(
+    Azure::Core::Http::RawResponse const& rawResponse)
+{
+  std::vector<CertificateContact> response;
+
+  auto const& body = rawResponse.GetBody();
+  auto jsonResponse = json::parse(body);
+
+  if (jsonResponse.contains(ContactsPropertyName))
+  {
+    for (auto contactJson : jsonResponse[ContactsPropertyName])
+    {
+      CertificateContact contact;
+
+      JsonOptional::SetIfExists(contact.EmailAddress, contactJson, EmailPropertyName);
+      JsonOptional::SetIfExists(contact.Name, contactJson, NamePropertyName);
+      JsonOptional::SetIfExists(contact.Phone, contactJson, PhonePropertyName);
+
+      response.emplace_back(contact);
+    }
+  }
+
+  return response;
+}

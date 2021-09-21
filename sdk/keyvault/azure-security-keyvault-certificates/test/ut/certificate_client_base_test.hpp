@@ -83,7 +83,7 @@ namespace Azure {
     Azure::Security::KeyVault::Certificates::CertificateClient const& GetClientForTest(
         std::string const& testName)
     {
-      // used for updating testing mode_putenv_s("AZURE_TEST_MODE", "PLAYBACK");
+      _putenv_s("AZURE_TEST_MODE", "PLAYBACK");
       InitializeClient();
       // set the interceptor for the current test
       m_testContext.RenameTest(testName);
@@ -159,6 +159,49 @@ namespace Azure {
               rawResponse->GetStatusCode()),
           static_cast<typename std::underlying_type<Azure::Core::Http::HttpStatusCode>::type>(
               expectedCode));
+    }
+
+    static inline void CheckContactsCollections(
+        std::vector<CertificateContact> contacts,
+        std::vector<CertificateContact> results)
+    {
+      EXPECT_EQ(results.size(), contacts.size());
+
+      for (auto c2 : results)
+      {
+        bool found = false;
+        for (auto c1 : contacts)
+        {
+          if (c1.EmailAddress.HasValue() == c2.EmailAddress.HasValue()
+              && c1.Name.HasValue() == c2.Name.HasValue()
+              && c1.Phone.HasValue() == c2.Phone.HasValue()
+              && c1.EmailAddress.Value() == c2.EmailAddress.Value()
+              && c1.Name.Value() == c2.Name.Value() && c1.Phone.Value() == c2.Phone.Value())
+          {
+            found = true;
+            break;
+          }
+        }
+        EXPECT_TRUE(found);
+      }
+
+      for (auto c1 : contacts)
+      {
+        bool found = false;
+        for (auto c2 : results)
+        {
+          if (c1.EmailAddress.HasValue() == c2.EmailAddress.HasValue()
+              && c1.Name.HasValue() == c2.Name.HasValue()
+              && c1.Phone.HasValue() == c2.Phone.HasValue()
+              && c1.EmailAddress.Value() == c2.EmailAddress.Value()
+              && c1.Name.Value() == c2.Name.Value() && c1.Phone.Value() == c2.Phone.Value())
+          {
+            found = true;
+            break;
+          }
+        }
+        EXPECT_TRUE(found);
+      }
     }
   };
 
