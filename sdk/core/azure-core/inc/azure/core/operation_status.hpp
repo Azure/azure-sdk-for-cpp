@@ -44,7 +44,7 @@ namespace Azure { namespace Core {
      *
      * @param value The value to initialize with.
      */
-    explicit OperationStatus(const char* value) : m_value(value) {}
+    explicit OperationStatus(const char* value) : m_value(value) {} // LCOV_EXCL_LINE
 
     /**
      * @brief Compares two `%OperationStatus` objects for equality.
