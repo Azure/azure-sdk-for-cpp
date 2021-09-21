@@ -229,7 +229,7 @@ TEST(Nullable, ConstexprAndRvalue)
 {
 #if defined(__clang__)
 #pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wpessimizing-move"
+#pragma clang diagnostic ignored "-Wpessimizing-move" // cspell:disable-line
 #endif // __clang__
 
   Nullable<int> nullableInt0(std::move(Nullable<int>()));
