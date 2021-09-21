@@ -103,7 +103,8 @@ namespace Azure { namespace Core { namespace Http {
      *
      * @param options Optional parameter to override the default options.
      */
-    CurlTransport(CurlTransportOptions const& options = CurlTransportOptions()) : m_options(options)
+    CurlTransport(CurlTransportOptions const& options = CurlTransportOptions())
+        : m_options(options) // LCOV_EXCL_LINE
     {
     }
 
