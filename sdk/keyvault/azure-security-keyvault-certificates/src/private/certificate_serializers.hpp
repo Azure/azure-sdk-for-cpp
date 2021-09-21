@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+﻿// Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
 
 /**
@@ -9,10 +9,9 @@
 
 #pragma once
 
-#include <azure/core/internal/json/json.hpp>
-
 #include "azure/keyvault/certificates/certificate_client_models.hpp"
 #include "azure/keyvault/certificates/certificate_client_options.hpp"
+#include <azure/core/internal/json/json.hpp>
 
 #include <string>
 
@@ -70,4 +69,27 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
       }
     };
 
+    struct CertificatePropertiesSerializer final
+    {
+      static std::string Serialize(CertificateProperties const& properties);
+      static Azure::Core::Json::_internal::json JsonSerialize(
+          CertificateProperties const& properties);
+      static void Deserialize(
+          CertificateProperties& properties,
+          Azure::Core::Json::_internal::json fragment);
+    };
+
+    struct CertificatePolicySerializer final
+    {
+      static std::string Serialize(CertificatePolicy const& policy);
+      static Azure::Core::Json::_internal::json JsonSerialize(CertificatePolicy const& policy);
+      static void Deserialize(
+          CertificatePolicy& policy,
+          Azure::Core::Json::_internal::json fragment);
+    };
+
+    struct CertificateCreateParametersSerializer final
+    {
+      static std::string Serialize(CertificateCreateParameters const& parameters);
+    };
 }}}}} // namespace Azure::Security::KeyVault::Certificates::_detail
