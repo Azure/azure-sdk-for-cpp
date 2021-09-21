@@ -224,3 +224,13 @@ TEST(Nullable, Move)
   EXPECT_EQ(*taken, 123);
   // val.HasValue() would return true, but accessing a value after it has been moved is UB anyways.
 }
+
+TEST(Nullable, ConstexprAndRvalue)
+{
+  Nullable<int> nulableInt0(std::move(Nullable<int>()));
+  Nullable<int> nulableInt1(Nullable<int>(1));
+
+  EXPECT_FALSE(nulableInt0.HasValue());
+  EXPECT_TRUE(nulableInt1.HasValue());
+  EXPECT_EQ(*nulableInt1, 1);
+}

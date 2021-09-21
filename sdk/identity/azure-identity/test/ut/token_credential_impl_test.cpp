@@ -432,7 +432,7 @@ TEST(TokenCredentialImpl, NullResponse)
             HttpMethod::Delete, Url("https://microsoft.com/"), options);
       },
       {{{"https://azure.com/.default"}}},
-      {{"{\"expires_in\":3600, \"access_token\":\"ACCESSTOKEN1\"}"}},
+      {{"{\"expires_in\":3600, \"access_token\":\"ACCESSTOKEN\"}"}},
       [](auto& credential, auto& tokenRequestContext, auto& context) {
         AccessToken token;
         EXPECT_THROW(

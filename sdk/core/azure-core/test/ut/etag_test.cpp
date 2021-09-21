@@ -32,20 +32,34 @@ TEST(ETag, ToString)
 
 TEST(ETag, IsWeak)
 {
-  auto et1 = ETag("tag");
-  EXPECT_FALSE(et1.IsWeak());
+  {
+    auto et1 = ETag("tag");
+    EXPECT_FALSE(et1.IsWeak());
 
-  auto et2 = ETag("\"tag\"");
-  EXPECT_FALSE(et2.IsWeak());
+    auto et2 = ETag("\"tag\"");
+    EXPECT_FALSE(et2.IsWeak());
 
-  auto et3 = ETag("W/\"weakETag\"");
-  EXPECT_TRUE(et3.IsWeak());
+    auto et3 = ETag("W/\"weakETag\"");
+    EXPECT_TRUE(et3.IsWeak());
 
-  auto et4 = ETag("W/\"\"");
-  EXPECT_TRUE(et4.IsWeak());
+    auto et4 = ETag("W/\"\"");
+    EXPECT_TRUE(et4.IsWeak());
 
-  auto any = ETag::Any();
-  EXPECT_FALSE(any.IsWeak());
+    auto any = ETag::Any();
+    EXPECT_FALSE(any.IsWeak());
+  }
+
+  {
+    auto strong1 = ETag("Wxxx");
+    auto strong2 = ETag("W/xx");
+    auto strong3 = ETag("W/\"x");
+    auto weak = ETag("W/\"/\"");
+
+    ASSERT_FALSE(strong1.IsWeak());
+    ASSERT_FALSE(strong2.IsWeak());
+    ASSERT_FALSE(strong3.IsWeak());
+    ASSERT_TRUE(weak.IsWeak());
+  }
 }
 
 TEST(ETag, Equals)
@@ -110,6 +124,7 @@ TEST(ETag, Equals)
 
 TEST(ETag, Any)
 {
+  auto nullETag = ETag();
   auto anyETag = ETag::Any();
   auto star = ETag("*");
   auto weakStar = ETag("W\"*\"");
@@ -133,6 +148,11 @@ TEST(ETag, Any)
 
   EXPECT_FALSE(star == quotedStar);
   EXPECT_TRUE(anyETag == star);
+
+  EXPECT_EQ(nullETag, nullETag);
+  EXPECT_EQ(anyETag, anyETag);
+  EXPECT_NE(nullETag, anyETag);
+  EXPECT_NE(anyETag, nullETag);
 }
 
 TEST(ETag, EqualsStrong)
