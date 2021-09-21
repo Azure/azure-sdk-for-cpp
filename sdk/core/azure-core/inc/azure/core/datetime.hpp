@@ -215,7 +215,7 @@ inline bool operator==(DateTime const& dt, std::chrono::system_clock::time_point
 
 inline bool operator<(DateTime const& dt, std::chrono::system_clock::time_point const& tp)
 {
-  auto dt2 = DateTime(tp);
+  auto dt2 = DateTime(tp); // LCOV_EXCL_LINE
 
   return static_cast<DateTime::time_point const&>(dt)
       < static_cast<DateTime::time_point const&>(dt2);
