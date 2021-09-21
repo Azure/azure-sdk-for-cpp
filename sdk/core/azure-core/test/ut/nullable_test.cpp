@@ -245,6 +245,9 @@ TEST(Nullable, ConstexprAndRvalue)
   EXPECT_FALSE(nullableInt0.HasValue());
   EXPECT_FALSE(nullableInt00.HasValue());
 
+  nullableInt0.Reset();
+  EXPECT_FALSE(nullableInt0.HasValue());
+
   EXPECT_TRUE(nullableInt1.HasValue());
   EXPECT_TRUE(nullableInt11.HasValue());
 

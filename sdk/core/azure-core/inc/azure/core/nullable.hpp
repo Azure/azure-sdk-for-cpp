@@ -134,9 +134,9 @@ public:
   // is_nothrow_swappable is added in C++17
   void Swap(Nullable& other) noexcept(std::is_nothrow_move_constructible<T>::value)
   {
-    if (m_hasValue)
+    if (m_hasValue) // LCOV_EXCL_LINE
     {
-      if (other.m_hasValue)
+      if (other.m_hasValue) // LCOV_EXCL_LINE
       {
         using std::swap;
         swap(m_value, other.m_value);
@@ -150,7 +150,7 @@ public:
         Reset();
       }
     }
-    else if (other.m_hasValue)
+    else if (other.m_hasValue) // LCOV_EXCL_LINE
     {
       // throws
       ::new (static_cast<void*>(&m_value)) T(std::move(other.m_value)); // LCOV_EXCL_LINE
