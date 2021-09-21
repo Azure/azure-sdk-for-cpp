@@ -50,7 +50,7 @@ TEST(ETag, IsWeak)
   }
 
   {
-    auto strong1 = ETag("Wxxx");
+    auto strong1 = ETag("Wxxx"); // cspell:disable-line
     auto strong2 = ETag("W/xx");
     auto strong3 = ETag("W/\"x");
     auto weak = ETag("W/\"/\"");
