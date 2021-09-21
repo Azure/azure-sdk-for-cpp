@@ -167,7 +167,7 @@ namespace Azure { namespace Core { namespace Test {
 
   TEST_F(CurlSession, emptyHeaderValue)
   {
-    std::string response("HTTP/1.1 200 Ok\r\header:\r\n\r\nbody");
+    std::string response("HTTP/1.1 200 Ok\r\nheader:\r\n\r\nbody");
     int32_t const payloadSize = static_cast<int32_t>(response.size());
 
     // Can't mock the curMock directly from a unique ptr, heap allocate it first and then make a
@@ -196,7 +196,7 @@ namespace Azure { namespace Core { namespace Test {
 
   TEST_F(CurlSession, headerValueWhitespace)
   {
-    std::string response("HTTP/1.1 200 Ok\r\header: \tvalue\r\n\r\nbody");
+    std::string response("HTTP/1.1 200 Ok\r\nheader: \tvalue\r\n\r\nbody");
     int32_t const payloadSize = static_cast<int32_t>(response.size());
 
     // Can't mock the curMock directly from a unique ptr, heap allocate it first and then make a
