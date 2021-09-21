@@ -37,7 +37,7 @@ steps:
       path: $(VCPKG_INSTALLATION_ROOT)
       cacheHitVar: VcpkgRestoredFromCache
     displayName: Vcpkg Cache
-    timeoutInMinutes: 10
+    timeoutInMinutes: 20
     condition: >-
       and(
         succeeded(),
