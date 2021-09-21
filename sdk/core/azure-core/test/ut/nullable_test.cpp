@@ -251,9 +251,6 @@ TEST(Nullable, ConstexprAndRvalue)
   EXPECT_EQ(*nullableInt1, 1);
   EXPECT_EQ(*nullableInt11, 11);
 
-  nullableInt0.Reset();
-  nullableInt1.Reset();
-
-  EXPECT_FALSE(nullableInt0.HasValue());
-  EXPECT_FALSE(nullableInt1.HasValue());
+  std::string str(Nullable<std::string>(std::string("hello")).Value());
+  EXPECT_EQ(str, "hello");
 }
