@@ -227,10 +227,27 @@ TEST(Nullable, Move)
 
 TEST(Nullable, ConstexprAndRvalue)
 {
-  Nullable<int> nulableInt0(std::move(Nullable<int>()));
-  Nullable<int> nulableInt1(Nullable<int>(1));
+#if defined(__clang__)
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wpessimizing-move"
+#endif // __clang__
 
-  EXPECT_FALSE(nulableInt0.HasValue());
-  EXPECT_TRUE(nulableInt1.HasValue());
-  EXPECT_EQ(*nulableInt1, 1);
+  Nullable<int> nullableInt0(std::move(Nullable<int>()));
+  Nullable<int> nullableInt11(std::move(Nullable<int>(11)));
+
+#if defined(__clang__)
+#pragma clang diagnostic pop // NOLINT(clang-diagnostic-unknown-pragmas)
+#endif // __clang__
+
+  Nullable<int> nullableInt00(Nullable<int>{});
+  Nullable<int> nullableInt1(Nullable<int>(1));
+
+  EXPECT_FALSE(nullableInt0.HasValue());
+  EXPECT_FALSE(nullableInt00.HasValue());
+
+  EXPECT_TRUE(nullableInt1.HasValue());
+  EXPECT_TRUE(nullableInt11.HasValue());
+
+  EXPECT_EQ(*nullableInt1, 1);
+  EXPECT_EQ(*nullableInt11, 11);
 }
