@@ -198,14 +198,14 @@ TEST_F(KeyVaultCertificateClientTest, SetContacts)
   CertificateContact ctt;
 
   ctt.EmailAddress = "one@two.org";
-  ctt.Name = "giqu";
+  ctt.Name = "giqu"; // cspell:disable-line
   ctt.Phone = "1234567890";
   contacts.emplace_back(ctt);
 
   CertificateContact ctt2;
 
   ctt2.EmailAddress = "two@three.org";
-  ctt2.Name = "giqu2";
+  ctt2.Name = "giqu2"; // cspell:disable-line
   ctt2.Phone = "1234567891";
   contacts.emplace_back(ctt2);
 
@@ -228,14 +228,14 @@ TEST_F(KeyVaultCertificateClientTest, GetContacts)
   CertificateContact ctt;
 
   ctt.EmailAddress = "one@two.org";
-  ctt.Name = "giqu";
+  ctt.Name = "giqu"; // cspell:disable-line
   ctt.Phone = "1234567890";
   contacts.emplace_back(ctt);
 
   CertificateContact ctt2;
 
   ctt2.EmailAddress = "two@three.org";
-  ctt2.Name = "giqu2";
+  ctt2.Name = "giqu2"; // cspell:disable-line
   ctt2.Phone = "1234567891";
   contacts.emplace_back(ctt2);
 
