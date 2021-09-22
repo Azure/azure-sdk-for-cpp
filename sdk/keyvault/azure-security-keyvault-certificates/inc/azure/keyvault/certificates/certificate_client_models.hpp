@@ -774,7 +774,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
    * @brief A KeyVaultCertificate along with its CertificatePolicy.
    *
    */
-  struct KeyVaultCertificateWithPolicy final : public KeyVaultCertificate
+  struct KeyVaultCertificateWithPolicy : public KeyVaultCertificate
   {
     /**
      * @brief Gets the current policy for the certificate.
@@ -791,6 +791,13 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
         : KeyVaultCertificate(properties)
     {
     }
+
+    /**
+     * @brief Default constructorfor Key Vault Certificate With Policy object
+     *
+     *
+     */
+    KeyVaultCertificateWithPolicy() = default;
   };
 
   /**
@@ -831,5 +838,50 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
      *
      */
     std::unordered_map<std::string, std::string> Tags;
+  };
+
+  struct DeletedCertificate : public KeyVaultCertificateWithPolicy
+  {
+    /**
+     * @brief Gets the identifier of the deleted certificate.
+     *
+     */
+    std::string RecoveryId;
+
+    /**
+     * @brief DateTime indicating when the certificate was deleted.
+     *
+     */
+    Azure::Nullable<DateTime> DeletedOn;
+
+    /**
+     * @brief DateTime for when the deleted certificate will be purged.
+     *
+     */
+    Azure::Nullable<DateTime> ScheduledPurgeDate;
+
+    /**
+     * @brief Construct a new Key Vault Deleted Certificate
+     *
+     * @param properties The properties to create a new certificate.
+     */
+    DeletedCertificate(CertificateProperties const& properties)
+        : KeyVaultCertificateWithPolicy(properties)
+    {
+    }
+
+    /**
+     * @brief Default constructor.
+     *
+     */
+    DeletedCertificate() = default;
+  };
+
+  /**
+   * @brief Define a model for a purged Certificate.
+   *
+   */
+  struct PurgedCertificate final
+  {
   };
 }}}} // namespace Azure::Security::KeyVault::Certificates

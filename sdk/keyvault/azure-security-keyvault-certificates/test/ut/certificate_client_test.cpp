@@ -189,3 +189,14 @@ TEST_F(KeyVaultCertificateClientTest, GetCertificateVersion)
     EXPECT_NE(cert.Cer.size(), 0);
   }
 }
+
+TEST_F(KeyVaultCertificateClientTest, GetDeletedCertificate)
+{
+  auto const& client
+      = GetClientForTest(::testing::UnitTest::GetInstance()->current_test_info()->name());
+
+  // auto response = client.GetDeletedCertificate("selfgoqu");
+  // auto response2 = client.PurgeDeletedCertificate("goqumoqu");
+  auto response = client.StartRecoverDeletedCertificate("selfgoqu");
+  auto result = response.PollUntilDone(m_defaultWait);
+}
