@@ -22,7 +22,8 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
   /**
    * @brief Represents a create certificate long running operation
    */
-  class CreateCertificateOperation final : public Azure::Core::Operation<KeyVaultCertificateWithPolicy> {
+  class CreateCertificateOperation final
+      : public Azure::Core::Operation<KeyVaultCertificateWithPolicy> {
 
     friend class CertificateClient;
 
@@ -63,7 +64,8 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
 
   public:
     /**
-     * @brief Get the #Azure::Security::KeyVault::Certificates::KeyVaultCertificateWithPolicy object.
+     * @brief Get the #Azure::Security::KeyVault::Certificates::KeyVaultCertificateWithPolicy
+     * object.
      *
      * @return A certificate object.
      */
@@ -218,7 +220,8 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
 
   public:
     /**
-     * @brief Get the #Azure::Security::KeyVault::Certificates::KeyVaultCertificateWithPolicy object.
+     * @brief Get the #Azure::Security::KeyVault::Certificates::KeyVaultCertificateWithPolicy
+     * object.
      *
      * @return A key vault certificate object.
      */
@@ -233,8 +236,8 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
     std::string GetResumeToken() const override { return m_continuationToken; }
 
     /**
-     * @brief Create a #RecoverDeletedCertificateOperation from the \p resumeToken fetched from another
-     * `Operation<T>`, updated to the the latest operation status.
+     * @brief Create a #RecoverDeletedCertificateOperation from the \p resumeToken fetched from
+     * another `Operation<T>`, updated to the the latest operation status.
      *
      * @remark After the operation is initialized, it is used to poll the last update from the
      * server using the \p context.

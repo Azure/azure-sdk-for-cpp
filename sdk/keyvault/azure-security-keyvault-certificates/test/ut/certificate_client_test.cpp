@@ -37,12 +37,24 @@ TEST_F(KeyVaultCertificateClientTest, CreateCertificate)
   action.LifetimePercentage = 80;
   action.Action = CertificatePolicyAction::AutoRenew;
   params.Policy.LifetimeActions.emplace_back(action);
+  {
 
-  auto response = client.StartCreateCertificate("magiqStuff2", params);
-  auto result = response.PollUntilDone(m_defaultWait);
+    auto response = client.StartCreateCertificate("magiqStuff2", params);
+    auto result = response.PollUntilDone(m_defaultWait);
 
-  EXPECT_EQ(result.Value.Name(), params.Properties.Name);
-  EXPECT_EQ(result.Value.Properties.Enabled.Value(), true);
+    EXPECT_EQ(result.Value.Name(), params.Properties.Name);
+    EXPECT_EQ(result.Value.Properties.Enabled.Value(), true);
+  }
+  {
+    auto response = client.StartDeleteCertificate("magiqStuff2");
+    auto result = response.PollUntilDone(m_defaultWait);
+    EXPECT_EQ(result.Value.Name(), params.Properties.Name);
+    EXPECT_EQ(result.Value.Properties.Enabled.Value(), true);
+    EXPECT_NE(result.Value.RecoveryId.length(), size_t(0));
+    EXPECT_TRUE(result.Value.DeletedOn.HasValue());
+    EXPECT_TRUE(result.Value.ScheduledPurgeDate.HasValue());
+    client.PurgeDeletedCertificate("magiqStuff2");
+  }
 }
 
 TEST_F(KeyVaultCertificateClientTest, GetCertificate)
@@ -130,6 +142,16 @@ TEST_F(KeyVaultCertificateClientTest, GetCertificate)
       EXPECT_NE(policy.LifetimeActions[0].Action.ToString(), "");
     }
   }
+  {
+    auto response = client.StartDeleteCertificate(certificateName);
+    auto result = response.PollUntilDone(m_defaultWait);
+    EXPECT_EQ(result.Value.Name(), certificateName);
+    EXPECT_EQ(result.Value.Properties.Enabled.Value(), true);
+    EXPECT_NE(result.Value.RecoveryId.length(), size_t(0));
+    EXPECT_TRUE(result.Value.DeletedOn.HasValue());
+    EXPECT_TRUE(result.Value.ScheduledPurgeDate.HasValue());
+    client.PurgeDeletedCertificate(certificateName);
+  }
 }
 
 TEST_F(KeyVaultCertificateClientTest, GetCertificateVersion)
@@ -188,15 +210,68 @@ TEST_F(KeyVaultCertificateClientTest, GetCertificateVersion)
     EXPECT_NE(cert.SecretId, "");
     EXPECT_NE(cert.Cer.size(), 0);
   }
+
+  {
+    auto response = client.StartDeleteCertificate(certificateName);
+    auto result = response.PollUntilDone(m_defaultWait);
+    EXPECT_EQ(result.Value.Name(), certificateName);
+    EXPECT_EQ(result.Value.Properties.Enabled.Value(), true);
+    EXPECT_NE(result.Value.RecoveryId.length(), size_t(0));
+    EXPECT_TRUE(result.Value.DeletedOn.HasValue());
+    EXPECT_TRUE(result.Value.ScheduledPurgeDate.HasValue());
+    client.PurgeDeletedCertificate(certificateName);
+  }
 }
 
 TEST_F(KeyVaultCertificateClientTest, GetDeletedCertificate)
 {
+  // cspell: disable-next-line
+  std::string const certificateName("vivazqu");
+
   auto const& client
       = GetClientForTest(::testing::UnitTest::GetInstance()->current_test_info()->name());
 
-  // auto response = client.GetDeletedCertificate("selfgoqu");
-  // auto response2 = client.PurgeDeletedCertificate("goqumoqu");
-  auto response = client.StartRecoverDeletedCertificate("selfgoqu");
-  auto result = response.PollUntilDone(m_defaultWait);
+  auto params = CertificateCreateParameters();
+  params.Policy.Subject = "CN=xyz";
+  params.Policy.ValidityInMonths = 12;
+  params.Policy.Enabled = true;
+
+  params.Properties.Enabled = true;
+  params.Properties.Name = certificateName;
+  params.Policy.ContentType = CertificateContentType::Pkcs12;
+  params.Policy.IssuerName = "Self";
+
+  LifetimeAction action;
+  action.LifetimePercentage = 80;
+  action.Action = CertificatePolicyAction::AutoRenew;
+  params.Policy.LifetimeActions.emplace_back(action);
+
+  {
+    auto response = client.StartCreateCertificate(certificateName, params);
+    auto result = response.PollUntilDone(m_defaultWait);
+  }
+  {
+    auto response = client.StartDeleteCertificate(certificateName);
+    auto result = response.PollUntilDone(m_defaultWait);
+    EXPECT_EQ(result.Value.Name(), certificateName);
+  }
+  {
+    auto response = client.GetDeletedCertificate(certificateName);
+    EXPECT_EQ(response.Value.Name(), certificateName);
+  }
+  {
+    auto response = client.StartRecoverDeletedCertificate(certificateName);
+    auto result = response.PollUntilDone(m_defaultWait);
+    EXPECT_EQ(result.Value.Name(), certificateName);
+  }
+  {
+    auto response = client.GetCertificate(certificateName);
+    EXPECT_EQ(response.Value.Name(), certificateName);
+  }
+  {
+    auto response = client.StartDeleteCertificate(certificateName);
+    auto result = response.PollUntilDone(m_defaultWait);
+    EXPECT_EQ(result.Value.Name(), certificateName);
+    client.PurgeDeletedCertificate(certificateName);
+  }
 }

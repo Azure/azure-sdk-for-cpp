@@ -39,6 +39,11 @@ std::unique_ptr<Azure::Core::Http::RawResponse> CreateCertificateOperation::Poll
   {
     rawResponse = std::move(error.RawResponse);
   }
+  catch (...)
+  {
+    m_status = Azure::Core::OperationStatus::Running;
+    return rawResponse;
+  }
 
   switch (rawResponse->GetStatusCode())
   {
@@ -57,8 +62,7 @@ std::unique_ptr<Azure::Core::Http::RawResponse> CreateCertificateOperation::Poll
 
   if (m_status == Azure::Core::OperationStatus::Succeeded)
   {
-    m_value = _detail::KeyVaultCertificateSerializer::Deserialize(
-        m_value.Name(), *rawResponse);
+    m_value = _detail::KeyVaultCertificateSerializer::Deserialize(m_value.Name(), *rawResponse);
   }
   return rawResponse;
 }
@@ -184,9 +188,7 @@ DeleteCertificateOperation DeleteCertificateOperation::CreateFromResumeToken(
 }
 
 Azure::Response<KeyVaultCertificateWithPolicy> RecoverDeletedCertificateOperation::
-    PollUntilDoneInternal(
-    std::chrono::milliseconds period,
-    Azure::Core::Context& context)
+    PollUntilDoneInternal(std::chrono::milliseconds period, Azure::Core::Context& context)
 {
   while (true)
   {
