@@ -154,7 +154,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
      * @return The contacts for the key vault certificate.
      */
     Azure::Response<std::vector<CertificateContact>> SetContacts(
-        std::vector<CertificateContact> const& constacts,
+        std::vector<CertificateContact> const& contacts,
         Azure::Core::Context const& context = Azure::Core::Context()) const;
 
   private:

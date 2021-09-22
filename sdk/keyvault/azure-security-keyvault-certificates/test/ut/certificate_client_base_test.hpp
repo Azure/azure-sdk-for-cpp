@@ -83,7 +83,7 @@ namespace Azure {
     Azure::Security::KeyVault::Certificates::CertificateClient const& GetClientForTest(
         std::string const& testName)
     {
-      _putenv_s("AZURE_TEST_MODE", "PLAYBACK");
+      // used for test customization purposes _putenv_s("AZURE_TEST_MODE", "PLAYBACK");
       InitializeClient();
       // set the interceptor for the current test
       m_testContext.RenameTest(testName);
