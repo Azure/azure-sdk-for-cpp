@@ -4,6 +4,8 @@
 
 ### Features Added
 
+- [2833](https://github.com/Azure/azure-sdk-for-cpp/issues/2833) Added `GetCryptographyClient()` to `KeyClient` to return a `CryptographyClient` that uses the same options, policies, and pipeline as the `KeyClient` that created it.
+
 ### Breaking Changes
 
 ### Bugs Fixed

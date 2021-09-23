@@ -9,6 +9,7 @@
 
 #pragma once
 
+#include "azure/keyvault/keys/cryptography/cryptography_client.hpp"
 #include "azure/keyvault/keys/key_client_models.hpp"
 #include "azure/keyvault/keys/key_client_options.hpp"
 
@@ -69,6 +70,21 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
      * @param keyClient An existing key vault key client.
      */
     explicit KeyClient(KeyClient const& keyClient) = default;
+
+    /**
+     * @brief Get a CryptographyClient for the given key.
+     *
+     * @details The returned client uses the same options and pipeline as the key client which
+     * creates it.
+     *
+     * @param name The name of the key used to perform cryptographic operations.
+     * @param version Optional version of the key used to perform cryptographic operations.
+     * @return Cryptography::CryptographyClient with the same options and re-using the same
+     * pipeline.
+     */
+    Cryptography::CryptographyClient GetCryptographyClient(
+        std::string const& name,
+        std::string const& version = std::string());
 
     /**
      * @brief Gets the public part of a stored key.
