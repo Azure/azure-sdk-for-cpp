@@ -71,7 +71,7 @@ namespace Azure {
      *
      * @param keyId The url for the key.
      * @param apiVersion The service version to send requests to.
-     * @param m_pipeline The already created pipeline to be use for requests.
+     * @param pipeline The already created pipeline to be use for requests.
      */
     explicit CryptographyClient(
         Azure::Core::Url keyId,
