@@ -29,7 +29,7 @@ namespace Azure { namespace Core { namespace Test {
     UuidTest(Azure::Perf::TestOptions options) : PerfTest(options) {}
 
     /**
-     * @brief Use Uuid to assing and read.
+     * @brief Use Uuid to assign and read.
      *
      */
     void Run(Azure::Core::Context const&) override
