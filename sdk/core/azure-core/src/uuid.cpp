@@ -50,7 +50,7 @@ namespace Azure { namespace Core {
     uint8_t uuid[UuidSize] = {};
 
     // RAND_MAX == INT_MAX
-    std::uniform_int_distribution<uint32_t> distribution(0, RAND_MAX);
+    std::uniform_int_distribution<uint32_t> distribution;
 
     for (size_t i = 0; i < UuidSize; i += 4)
     {
