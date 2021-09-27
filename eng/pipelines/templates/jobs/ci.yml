@@ -1,0 +1,141 @@
+parameters:
+  - name: Artifacts
+    type: object
+    default: []
+  - name: ServiceDirectory
+    type: string
+    default: not-specified
+  - name: TestPipeline
+    type: boolean
+    default: false
+  - name: CtestRegex
+    type: string
+    default: .*
+  - name: CoverageReportPath
+    type: string
+    default: 'sdk/*/*/*cov_xml.xml'
+  - name: CoverageEnabled
+    type: boolean
+    default: true
+  - name: DisplayNameDecorator
+    type: string
+    default: ''
+  - name: Matrix
+    type: string
+
+  # Supplied by archetype-sdk-tests-generate.yml dynamic matrix generator
+  - name: CloudConfig
+    type: object
+    default: {}
+  # Supplied by archetype-sdk-tests-generate.yml dynamic matrix generator.
+  # Must be wired up to ensure population of parameters.Matrix
+  - name: DependsOn
+    type: string
+    default: ''
+  # Supplied by archetype-sdk-tests-generate.yml dynamic matrix generator
+  - name: UsePlatformContainer
+    type: boolean
+    default: false
+
+jobs:
+  - job:
+    displayName: "Validate"
+    dependsOn: ${{ parameters.DependsOn }}
+    condition: and(succeededOrFailed(), ne(variables['Skip.Test'], 'true'))
+    strategy:
+      matrix: $[ ${{ parameters.Matrix }} ]
+      maxParallel: 12
+    pool:
+      vmImage: $(OSVmImage)
+      name: $(Pool)
+    variables:
+    - name: CMOCKA_XML_FILE
+      value: "%g-test-results.xml"
+    - name: CMOCKA_MESSAGE_OUTPUT
+      value: "xml"
+    - name: BuildArgs
+      value: ""
+    - name: CmakeEnvArg
+      value: ""
+    - name: CmakeArgs
+      value: ""
+    - name: AZURE_TEST_MODE
+      value: "PLAYBACK"
+    steps:
+      - template: /eng/common/pipelines/templates/steps/verify-agent-os.yml
+        parameters:
+          AgentImage: $(OsVmImage)
+
+      - pwsh: sudo apt update && sudo apt install -y $(AptDependencies)
+        condition: and(succeeded(), ne(variables['AptDependencies'], ''))
+        displayName: Install dependencies from apt
+
+      - template: /eng/pipelines/templates/steps/vcpkg.yml
+        parameters:
+          DependenciesVariableName: VcpkgInstall
+
+      # Validate all the files are formatted correctly according to the
+      # .clang-format file. This step runs on linux only only and assumes that
+      # clang-format-11 is installed.
+      - bash: |
+          # Run clang-format recursively on each source and header file within the repo sdk folder.
+          echo "Check clang-formatting"
+          clang-format --version
+          find ./sdk \( -iname '*.hpp' -o -iname '*.cpp' \) ! -iname 'json.hpp' -exec clang-format -i {} \;
+
+          if [[ `git status | grep modified | awk '{print $2}'` ]]; then
+            echo Some files were not formatted correctly according to the .clang-format file.
+            echo Please run clang-format version 10 or greater to fix the issue by using this bash command at the root of the repo:
+            echo "find ./sdk \( -iname '*.hpp' -o -iname '*.cpp' \) ! -iname 'json.hpp' -exec clang-format -i {} \;"
+            echo ""
+            echo "List of files not formatted correctly:"
+            git status | grep modified | awk '{print $2}'
+            exit 1
+          fi
+
+          echo Success, all files are formatted correctly according to the .clang-format file.
+          exit 0
+
+        displayName: Validate Clang Format ${{ parameters.DisplayNameDecorator }}
+        condition: and(succeededOrFailed(), eq(variables['CHECK_CLANG_FORMAT'], 1))
+
+      - ${{ each artifact in parameters.Artifacts }}:
+        - template: /eng/common/pipelines/templates/steps/set-test-pipeline-version.yml
+          parameters:
+            PackageName: ${{ artifact.Name }}
+            ServiceDirectory: ${{ parameters.ServiceDirectory }}
+            TestPipeline: ${{ parameters.TestPipeline }}
+
+      - template: /eng/pipelines/templates/steps/cmake-build.yml
+        parameters:
+          GenerateArgs: "$(CmakeArgs)"
+          BuildArgs: "$(BuildArgs)"
+          Env: "$(CmakeEnvArg)"
+
+      - script: ctest -C Debug -V --tests-regex ${{ parameters.CtestRegex }}
+        workingDirectory: build
+
+      - ${{ if eq(parameters.CoverageEnabled, true) }}:
+        - pwsh: |
+            $toolsDirectory = "$(Agent.TempDirectory)/coveragetools"
+            dotnet tool install -g dotnet-reportgenerator-globaltool
+            dotnet tool install dotnet-reportgenerator-globaltool --tool-path $toolsDirectory
+            Write-Host "##vso[task.setvariable variable=ToolsDirectory]$toolsDirectory"
+          displayName: Install coverage tools ${{ parameters.DisplayNameDecorator }}
+          condition: and(succeeded(), eq(variables['ToolsDirectory'], ''))
+
+        # Make coverage targets (specified in coverage_targets.txt) and assemble
+        # coverage report
+        - bash: |
+            make VERBOSE=1 `cat ${{ parameters.ServiceDirectory }}-targets-coverage.txt`
+            $(ToolsDirectory)/reportgenerator "-reports:${{ parameters.CoverageReportPath }}" "-targetdir:." "-reporttypes:Cobertura"
+          workingDirectory: build
+          displayName: Generate Code Coverage Data ${{ parameters.DisplayNameDecorator }}
+          condition: and(succeededOrFailed(), ne(variables['CODE_COVERAGE'], ''))
+
+        - task: PublishCodeCoverageResults@1
+          inputs:
+            codeCoverageTool: Cobertura
+            summaryFileLocation: '$(Build.SourcesDirectory)/**/Cobertura.xml'
+          displayName: Publish Code Coverage to DevOps ${{ parameters.DisplayNameDecorator }}
+          condition: and(succeededOrFailed(), ne(variables['CODE_COVERAGE'], ''))

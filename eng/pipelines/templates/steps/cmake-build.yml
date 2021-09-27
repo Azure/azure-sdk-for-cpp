@@ -3,21 +3,22 @@ parameters:
   GenerateArgs: ''
   Build: true
   BuildArgs: ''
+  DisplayNameDecorator: ''
 
 
 steps:
   - script: mkdir build
-    displayName: create working directory
+    displayName: create working directory ${{ parameters.DisplayNameDecorator }}
 
   - script: cmake --version
     workingDirectory: build
-    displayName: cmake --version
+    displayName: cmake --version ${{ parameters.DisplayNameDecorator }}
 
   - script: ${{ parameters.Env }} cmake ${{ parameters.GenerateArgs }} ..
     workingDirectory: build
-    displayName: cmake generate
+    displayName: cmake generate ${{ parameters.DisplayNameDecorator }}
 
   - ${{ if eq(parameters.Build, true) }}:
     - script: cmake --build . ${{ parameters.BuildArgs }}
       workingDirectory: build
-      displayName: cmake build
+      displayName: cmake build ${{ parameters.DisplayNameDecorator }}
