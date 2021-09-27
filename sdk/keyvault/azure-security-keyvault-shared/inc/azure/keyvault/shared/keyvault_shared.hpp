@@ -30,7 +30,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace _internal 
       auto const& hostWithAccount = url.GetHost();
       auto hostNoAccountStart = std::find(hostWithAccount.begin(), hostWithAccount.end(), '.');
 
-      // Insert the calculated scope only when then host in the url contains at least a `.`
+      // Insert the calculated scope only when the host in the url contains at least a `.`
       // Otherwise, only the default scope will be there.
       // We don't want to throw/validate input but just leave the values go to azure to decide what
       // to do.
