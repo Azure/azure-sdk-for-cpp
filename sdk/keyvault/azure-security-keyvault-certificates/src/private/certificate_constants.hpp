@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+﻿// Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
 
 /**
@@ -12,10 +12,15 @@
 namespace Azure { namespace Security { namespace KeyVault { namespace Certificates {
   namespace _detail {
 
+    /***************** Certificates Requests *****************/
+    constexpr static const char KeyVaultServicePackageName[] = "keyvault-certificates";
+    constexpr static const char CertificatesPath[] = "certificates";
+    constexpr static const char CertificatesCreatePath[] = "create";
+
     /***************** Certificates Properties *****************/
     constexpr static const char IdName[] = "id";
     constexpr static const char X5tName[] = "x5t";
-    constexpr static const char TagsName[] = "tags";
+    constexpr static const char TagsPropertyName[] = "tags";
     constexpr static const char AttributesPropertyName[] = "attributes";
     constexpr static const char EnabledPropertyName[] = "enabled";
     constexpr static const char NbfPropertyName[] = "nbf";
@@ -88,4 +93,5 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
     /***************** Certificates Policy Action *****************/
     constexpr static const char AutoRenewValue[] = "AutoRenew";
     constexpr static const char EmailContactsValue[] = "EmailContacts";
+
 }}}}} // namespace Azure::Security::KeyVault::Certificates::_detail

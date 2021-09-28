@@ -288,6 +288,68 @@ TEST_P(KeyVaultClientTest, RemoteSignVerifyDataRSA256)
   }
 }
 
+TEST_P(KeyVaultClientTest, GetCryptoFromKeyRemoteEncrypt)
+{
+  KeyClient keyClient(m_keyVaultUrl, m_credential);
+  std::string keyName(GetUniqueName());
+
+  CreateRsaKeyOptions rsaKeyOptions(keyName);
+  rsaKeyOptions.KeySize = GetParam();
+  auto rsaKey = keyClient.CreateRsaKey(rsaKeyOptions).Value;
+
+  // Get Crypto client from the key client
+  auto cryptoClient = keyClient.GetCryptographyClient(keyName);
+
+  {
+    uint8_t plaintextSource[] = "A single block of plaintext";
+    std::vector<uint8_t> plaintext(std::begin(plaintextSource), std::end(plaintextSource));
+
+    auto encryptResult
+        = cryptoClient.Encrypt(EncryptParameters::RsaOaepParameters(plaintext)).Value;
+    EXPECT_EQ(encryptResult.Algorithm.ToString(), EncryptionAlgorithm::RsaOaep.ToString());
+    EXPECT_EQ(encryptResult.KeyId, rsaKey.Id());
+    EXPECT_TRUE(encryptResult.Ciphertext.size() > 0);
+
+    auto decryptResult
+        = cryptoClient.Decrypt(DecryptParameters::RsaOaepParameters(encryptResult.Ciphertext))
+              .Value;
+    EXPECT_EQ(decryptResult.Algorithm.ToString(), encryptResult.Algorithm.ToString());
+    EXPECT_EQ(decryptResult.Plaintext, plaintext);
+    EXPECT_EQ(decryptResult.KeyId, encryptResult.KeyId);
+  }
+}
+
+TEST_P(KeyVaultClientTest, GetCryptoFromKeyVersionRemoteEncrypt)
+{
+  KeyClient keyClient(m_keyVaultUrl, m_credential);
+  std::string keyName(GetUniqueName());
+
+  CreateRsaKeyOptions rsaKeyOptions(keyName);
+  rsaKeyOptions.KeySize = GetParam();
+  auto rsaKey = keyClient.CreateRsaKey(rsaKeyOptions).Value;
+
+  // Get Crypto client from the key client
+  auto cryptoClient = keyClient.GetCryptographyClient(rsaKey.Name(), rsaKey.Properties.Version);
+
+  {
+    uint8_t plaintextSource[] = "A single block of plaintext";
+    std::vector<uint8_t> plaintext(std::begin(plaintextSource), std::end(plaintextSource));
+
+    auto encryptResult
+        = cryptoClient.Encrypt(EncryptParameters::RsaOaepParameters(plaintext)).Value;
+    EXPECT_EQ(encryptResult.Algorithm.ToString(), EncryptionAlgorithm::RsaOaep.ToString());
+    EXPECT_EQ(encryptResult.KeyId, rsaKey.Id());
+    EXPECT_TRUE(encryptResult.Ciphertext.size() > 0);
+
+    auto decryptResult
+        = cryptoClient.Decrypt(DecryptParameters::RsaOaepParameters(encryptResult.Ciphertext))
+              .Value;
+    EXPECT_EQ(decryptResult.Algorithm.ToString(), encryptResult.Algorithm.ToString());
+    EXPECT_EQ(decryptResult.Plaintext, plaintext);
+    EXPECT_EQ(decryptResult.KeyId, encryptResult.KeyId);
+  }
+}
+
 namespace {
 static std::string GetSuffix(const testing::TestParamInfo<int>& info)
 {

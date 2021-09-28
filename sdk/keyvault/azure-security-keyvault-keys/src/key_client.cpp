@@ -9,6 +9,7 @@
 #include <azure/keyvault/shared/keyvault_shared.hpp>
 
 #include "azure/keyvault/keys/key_client.hpp"
+#include "private/cryptography_internal_access.hpp"
 #include "private/key_backup.hpp"
 #include "private/key_constants.hpp"
 #include "private/key_request_parameters.hpp"
@@ -70,8 +71,6 @@ KeyClient::KeyClient(
     KeyClientOptions options)
     : m_vaultUrl(vaultUrl), m_apiVersion(options.Version.ToString())
 {
-  auto apiVersion = options.Version.ToString();
-
   std::vector<std::unique_ptr<HttpPolicy>> perRetrypolicies;
   {
     Azure::Core::Credentials::TokenRequestContext const tokenContext
@@ -380,4 +379,20 @@ Azure::Response<KeyVaultKey> KeyClient::ImportKey(
   auto value = _detail::KeyVaultKeySerializer::KeyVaultKeyDeserialize(
       importKeyOptions.Name(), *rawResponse);
   return Azure::Response<KeyVaultKey>(std::move(value), std::move(rawResponse));
+}
+
+Cryptography::CryptographyClient KeyClient::GetCryptographyClient(
+    std::string const& name,
+    std::string const& version)
+{
+  Azure::Core::Url vaultUrl(m_vaultUrl);
+  vaultUrl.AppendPath(_detail::KeysPath);
+  vaultUrl.AppendPath(name);
+  if (!version.empty())
+  {
+    vaultUrl.AppendPath(version);
+  }
+
+  return Cryptography::_detail::CryptoClientInternalAccess::CreateCryptographyClient(
+      vaultUrl, m_apiVersion, m_pipeline);
 }

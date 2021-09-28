@@ -1,8 +1,8 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+﻿// Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
 
 #include "azure/keyvault/certificates/certificate_client.hpp"
-
+#include "private/certificate_constants.hpp"
 #include "private/certificate_serializers.hpp"
 #include "private/keyvault_certificates_common_request.hpp"
 #include "private/package_version.hpp"
@@ -29,8 +29,6 @@ using namespace Azure::Core::Http::_internal;
 using namespace Azure::Security::KeyVault::_detail;
 
 namespace {
-constexpr static const char KeyVaultServicePackageName[] = "keyvault-certificates";
-constexpr static const char CertificatesPath[] = "certificates";
 
 } // namespace
 
@@ -108,6 +106,26 @@ Response<KeyVaultCertificate> CertificateClient::GetCertificateVersion(
   auto value
       = _detail::KeyVaultCertificateSerializer::KeyVaultCertificateDeserialize(name, *rawResponse);
   return Azure::Response<KeyVaultCertificate>(std::move(value), std::move(rawResponse));
+}
+
+CreateCertificateOperation CertificateClient::StartCreateCertificate(
+    std::string const& name,
+    CertificateCreateParameters const& parameters,
+    Azure::Core::Context const& context) const
+{
+  auto payload = CertificateCreateParametersSerializer::Serialize(parameters);
+  Azure::Core::IO::MemoryBodyStream payloadStream(
+      reinterpret_cast<const uint8_t*>(payload.data()), payload.size());
+
+  auto request = CreateRequest(
+      HttpMethod::Post, {CertificatesPath, name, CertificatesCreatePath}, &payloadStream);
+
+  auto rawResponse = SendRequest(request, context);
+  auto value = KeyVaultCertificate();
+  value.Properties.Name = name;
+  auto responseT = Azure::Response<KeyVaultCertificate>(std::move(value), std::move(rawResponse));
+  return CreateCertificateOperation(
+      std::make_shared<CertificateClient>(*this), std::move(responseT));
 }
 
 const ServiceVersion ServiceVersion::V7_2("7.2");

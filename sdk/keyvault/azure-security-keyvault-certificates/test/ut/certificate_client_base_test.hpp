@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+﻿// Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
 
 /**
@@ -83,6 +83,7 @@ namespace Azure {
     Azure::Security::KeyVault::Certificates::CertificateClient const& GetClientForTest(
         std::string const& testName)
     {
+      // used for updating testing mode_putenv_s("AZURE_TEST_MODE", "PLAYBACK");
       InitializeClient();
       // set the interceptor for the current test
       m_testContext.RenameTest(testName);
@@ -101,7 +102,7 @@ namespace Azure {
       std::string clientId = GetEnv("AZURE_CLIENT_ID", "client");
       std::string secretId = GetEnv("AZURE_CLIENT_SECRET", "secret");
 
-      m_keyVaultUrl = GetEnv("AZURE_KEYVAULT_URL", "https://REDACTED.vault.azure.net/");
+      m_keyVaultUrl = GetEnv("AZURE_KEYVAULT_URL", "https://REDACTED.vault.azure.net");
 
       // Create default client for the test
       CertificateClientOptions options;
@@ -123,6 +124,7 @@ namespace Azure {
         m_client = std::make_unique<CertificateClient>(m_keyVaultUrl, m_testCredential, options);
         // we really dont need to wait for results
         m_defaultWait = 1ms;
+        m_keyVaultUrl = "https://REDACTED.vault.azure.net";
       }
       else
       {

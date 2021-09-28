@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+﻿// Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
 
 /**
@@ -10,10 +10,9 @@
 #pragma once
 
 #include "azure/keyvault/certificates/certificate_client_models.hpp"
+#include "azure/keyvault/certificates/certificate_client_operations.hpp"
 #include "azure/keyvault/certificates/certificate_client_options.hpp"
-
 #include <azure/core/context.hpp>
-#include <azure/core/credentials/credentials.hpp>
 #include <azure/core/http/http.hpp>
 #include <azure/core/internal/http/pipeline.hpp>
 #include <azure/core/response.hpp>
@@ -97,6 +96,23 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
     Azure::Response<KeyVaultCertificate> GetCertificateVersion(
         std::string const& name,
         GetCertificateOptions const& options = GetCertificateOptions(),
+        Azure::Core::Context const& context = Azure::Core::Context()) const;
+
+    /**
+     * @brief Creates a new certificate.
+     *
+     * @details If this is the first version, the certificate resource is created.
+     *
+     * @remark This operation requires the certificates/create permission.
+     *
+     * @param name The name of the certificate.
+     * @param parameters Parameters for this operation.
+     * @param context The context for the operation can be used for request cancellation.
+     * @return CreateCertificateOperation instance used to determine create status.
+     */
+    CreateCertificateOperation StartCreateCertificate(
+        std::string const& name,
+        CertificateCreateParameters const& parameters,
         Azure::Core::Context const& context = Azure::Core::Context()) const;
 
   private:

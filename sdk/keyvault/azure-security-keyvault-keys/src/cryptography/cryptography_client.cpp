@@ -18,6 +18,7 @@
 #include "../private/key_verify_parameters.hpp"
 #include "../private/key_wrap_parameters.hpp"
 #include "../private/keyvault_protocol.hpp"
+#include "../private/package_version.hpp"
 
 #include <algorithm>
 #include <memory>
@@ -96,9 +97,8 @@ CryptographyClient::CryptographyClient(
     std::string const& keyId,
     std::shared_ptr<Core::Credentials::TokenCredential const> credential,
     CryptographyClientOptions const& options)
+    : m_keyId(Azure::Core::Url(keyId)), m_apiVersion(options.Version.ToString())
 {
-  m_keyId = Azure::Core::Url(keyId);
-  m_apiVersion = options.Version.ToString();
   std::vector<std::unique_ptr<HttpPolicy>> perRetrypolicies;
   {
     Azure::Core::Credentials::TokenRequestContext const tokenContext
@@ -112,7 +112,7 @@ CryptographyClient::CryptographyClient(
   m_pipeline = std::make_shared<Azure::Core::Http::_internal::HttpPipeline>(
       options,
       "KeyVault",
-      options.Version.ToString(),
+      PackageVersion::ToString(),
       std::move(perRetrypolicies),
       std::move(perCallpolicies));
 }
