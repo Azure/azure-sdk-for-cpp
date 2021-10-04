@@ -193,3 +193,76 @@ TEST_F(KeyVaultCertificateClientTest, DISABLED_GetCertificateVersion)
     EXPECT_NE(cert.Cer.size(), 0);
   }
 }
+
+TEST_F(KeyVaultCertificateClientTest, CreateGetIssuer)
+{
+  auto const& client
+      = GetClientForTest(::testing::UnitTest::GetInstance()->current_test_info()->name());
+
+  CertificateIssuer issuer;
+  issuer.Name = "issuer01";
+  issuer.Provider = "Test";
+  issuer.Properties.Enabled = true;
+  issuer.Credentials.AccountId = "keyvaultuser";
+  issuer.Credentials.Password = "password";
+
+  AdministratorDetails admin;
+  admin.FirstName = "John";
+  admin.LastName = "Doe";
+  admin.EmailAddress = "admin@microsoft.com";
+  admin.PhoneNumber = "4255555555";
+
+  issuer.Organization.AdminDetails.emplace_back(admin);
+
+  {
+    auto result = client.CreateIssuer(issuer);
+    CheckIssuers(result.Value, issuer);
+  }
+
+  {
+    auto result = client.GetIssuer(issuer.Name);
+    CheckIssuers(result.Value, issuer);
+  }
+
+  {
+    auto result = client.DeleteIssuer(issuer.Name);
+    CheckIssuers(result.Value, issuer);
+  }
+}
+
+TEST_F(KeyVaultCertificateClientTest, UpdateIssuer)
+{
+  auto const& client
+      = GetClientForTest(::testing::UnitTest::GetInstance()->current_test_info()->name());
+
+  CertificateIssuer issuer;
+  issuer.Name = "issuer01";
+  issuer.Provider = "Test";
+  issuer.Properties.Enabled = true;
+  issuer.Credentials.AccountId = "keyvaultuser";
+  issuer.Credentials.Password = "password";
+
+  AdministratorDetails admin;
+  admin.FirstName = "John";
+  admin.LastName = "Doe";
+  admin.EmailAddress = "admin@microsoft.com";
+  admin.PhoneNumber = "4255555555";
+
+  issuer.Organization.AdminDetails.emplace_back(admin);
+
+  {
+    auto result = client.CreateIssuer(issuer);
+    CheckIssuers(result.Value, issuer);
+  }
+
+  {
+    issuer.Credentials.Password = "password2";
+    auto result = client.UpdateIssuer(issuer);
+    CheckIssuers(result.Value, issuer);
+  }
+
+  {
+    auto result = client.DeleteIssuer(issuer.Name);
+    CheckIssuers(result.Value, issuer);
+  }
+}

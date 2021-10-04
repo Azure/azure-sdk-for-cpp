@@ -115,6 +115,67 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
         CertificateCreateParameters const& parameters,
         Azure::Core::Context const& context = Azure::Core::Context()) const;
 
+    /**
+     * @brief Creates a new certificate issuer.
+     *
+     * @details The  operation adds or updates the specified certificate issuer.
+     *
+     * @remark This operation requires the certificates/setissuers permission.
+     *
+     * @param issuer The certificate issuer.
+     * @param context The context for the operation can be used for request cancellation.
+     * @return CertificateIssuer instance used to determine create status.
+     */
+    Azure::Response<CertificateIssuer> CreateIssuer(
+        CertificateIssuer const& issuer,
+        Azure::Core::Context const& context = Azure::Core::Context()) const;
+
+    /**
+     * @brief Lists the specified certificate issuer.
+     *
+     * @details The GetCertificateIssuer operation returns the specified
+     * certificate issuer resources in the specified key vault.
+     *
+     * @remark This operation requires the certificates/manageissuers/getissuers permission.
+     *
+     * @param name The certificate issuer name.
+     * @param context The context for the operation can be used for request cancellation.
+     * @return CertificateIssuer instance .
+     */
+    Azure::Response<CertificateIssuer> GetIssuer(
+        std::string const& name,
+        Azure::Core::Context const& context = Azure::Core::Context()) const;
+
+    /**
+     * @brief Updates the specified certificate issuer.
+     *
+     * @details The operation performs an update on the specified certificate issuer entity.
+     *
+     * @remark This operation requires the certificates/setissuers permission.
+     *
+     * @param issuer The certificate issuer.
+     * @param context The context for the operation can be used for request cancellation.
+     * @return CertificateIssuer instance .
+     */
+    Azure::Response<CertificateIssuer> UpdateIssuer(
+        CertificateIssuer const& issuer,
+        Azure::Core::Context const& context = Azure::Core::Context()) const;
+
+    /**
+     * @brief Deletes the specified certificate issuer.
+     *
+     * @details The operation permanently removes the specified certificate issuer from the vault.
+     *
+     * @remark This operation requires the certificates/manageissuers/deleteissuers permission.
+     *
+     * @param name The certificate issuer name.
+     * @param context The context for the operation can be used for request cancellation.
+     * @return CertificateIssuer instance .
+     */
+    Azure::Response<CertificateIssuer> DeleteIssuer(
+        std::string const& name,
+        Azure::Core::Context const& context = Azure::Core::Context()) const;
+
   private:
     std::unique_ptr<Azure::Core::Http::RawResponse> SendRequest(
         Azure::Core::Http::Request& request,

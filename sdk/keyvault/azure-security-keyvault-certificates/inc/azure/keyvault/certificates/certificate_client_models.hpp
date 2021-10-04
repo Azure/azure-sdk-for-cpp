@@ -832,4 +832,142 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
      */
     std::unordered_map<std::string, std::string> Tags;
   };
+
+  /**
+   * @brief Issuer Credentials
+   *
+   */
+  struct IssuerCredentials final
+  {
+    /**
+     * @brief Account ID.
+     *
+     */
+    Azure::Nullable<std::string> AccountId;
+
+    /**
+     * @brief Password.
+     *
+     */
+    Azure::Nullable<std::string> Password;
+  };
+
+  /**
+   * @brief Administrator details
+   *
+   */
+  struct AdministratorDetails final
+  {
+    /**
+     * @brief Administrator first name.
+     *
+     */
+    Azure::Nullable<std::string> FirstName;
+
+    /**
+     * @brief Administrator last name.
+     *
+     */
+    Azure::Nullable<std::string> LastName;
+
+    /**
+     * @brief Administrator email address.
+     *
+     */
+    Azure::Nullable<std::string> EmailAddress;
+
+    /**
+     * @brief Administrator phone number.
+     *
+     */
+    Azure::Nullable<std::string> PhoneNumber;
+  };
+
+  /**
+   * @brief Certificate Issuer Properties.
+   *
+   */
+  struct IssuerProperties final
+  {
+    /**
+     * @brief Issuer enabled.
+     *
+     */
+    Azure::Nullable<bool> Enabled;
+
+    /**
+     * @brief Issuer creation date.
+     *
+     */
+    Azure::Nullable<DateTime> Created;
+
+    /**
+     * @brief Issuer last update date.
+     *
+     */
+    Azure::Nullable<DateTime> Updated;
+  };
+
+  /**
+   * @brief Organization details.
+   *
+   */
+  struct OrganizationDetails final
+  {
+    /**
+     * @brief Organization id
+     *
+     */
+    Azure::Nullable<std::string> Id;
+
+    /**
+     * @brief Organization Administators collection.
+     *
+     */
+    std::vector<AdministratorDetails> AdminDetails;
+  };
+
+  /**
+   * @brief Certificate issuer.
+   *
+   */
+  struct CertificateIssuer final
+  {
+    /**
+     * @brief Certificate issuer name.
+     *
+     */
+    std::string Name;
+
+    /**
+     * @brief  Certificate issuer id.
+     *
+     */
+    Azure::Nullable<std::string> Id;
+
+    /**
+     * @brief Certificate issuer provider.
+     *
+     */
+    Azure::Nullable<std::string> Provider;
+
+    /**
+     * @brief Certificate issuer credentials.
+     *
+     */
+    IssuerCredentials Credentials;
+
+    /**
+     * @brief Certificate issuer organization.
+     *
+     */
+    OrganizationDetails Organization;
+
+    /**
+     * @brief Certificate issuer properties.
+     *
+     */
+    IssuerProperties Properties;
+  };
+
 }}}} // namespace Azure::Security::KeyVault::Certificates
