@@ -390,7 +390,7 @@ CertificateIssuer CertificateIssuerSerializer::Deserialize(
   issuer.Name = name;
   auto const& body = rawResponse.GetBody();
   auto jsonResponse = json::parse(body);
-  std::string data = jsonResponse.dump();
+
   issuer.Id = jsonResponse[IdName];
   issuer.Provider = jsonResponse[ProviderPropertyValue];
 
