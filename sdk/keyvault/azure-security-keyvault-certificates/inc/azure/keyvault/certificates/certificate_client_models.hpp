@@ -971,30 +971,6 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
   };
 
   /**
-   * @brief The key vault server error.
-   *
-   */
-  struct CertificateServerError final
-  {
-    /**
-     * @brief The error code.
-     *
-     */
-
-    std::string Code;
-    /**
-     * @brief The error message.
-     *
-     */
-    std::string Message;
-    /**
-     * @brief
-     *
-     */
-    std::unique_ptr<CertificateServerError> InnerError;
-  };
-
-  /**
    * @brief A certificate operation is returned in case of asynchronous requests.
    *
    */
@@ -1069,7 +1045,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
     Azure::Nullable<std::string> CertificateType;
 
     /**
-     * @briefIndicates if the certificates generated under this policy should be published to
+     * @brief Indicates if the certificates generated under this policy should be published to
      * certificate transparency logs.
      *
      */
