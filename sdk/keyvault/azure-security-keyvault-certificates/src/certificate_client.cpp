@@ -138,9 +138,9 @@ CreateCertificateOperation CertificateClient::StartCreateCertificate(
       HttpMethod::Post, {CertificatesPath, name, CertificatesCreatePath}, &payloadStream);
 
   auto rawResponse = SendRequest(request, context);
-  auto value = KeyVaultCertificate();
-  value.Properties.Name = name;
-  auto responseT = Azure::Response<KeyVaultCertificate>(std::move(value), std::move(rawResponse));
+  auto value = _detail::CertificateOperationSerializer::Deserialize(*rawResponse);
+  auto responseT
+      = Azure::Response<CertificateOperationProperties>(std::move(value), std::move(rawResponse));
   return CreateCertificateOperation(
       std::make_shared<CertificateClient>(*this), std::move(responseT));
 }
@@ -199,6 +199,17 @@ Azure::Response<CertificateIssuer> CertificateClient::UpdateIssuer(
   auto rawResponse = SendRequest(request, context);
   auto value = CertificateIssuerSerializer::Deserialize(name, *rawResponse);
   return Azure::Response<CertificateIssuer>(std::move(value), std::move(rawResponse));
+}
+
+Azure::Response<CertificateOperationProperties> CertificateClient::GetCertificateOperation(
+    std::string const& name,
+    Azure::Core::Context const& context) const
+{
+  auto request = CreateRequest(HttpMethod::Get, {CertificatesPath, name, PendingPath});
+  auto rawResponse = SendRequest(request, context);
+
+  auto value = CertificateOperationSerializer::Deserialize(*rawResponse);
+  return Azure::Response<CertificateOperationProperties>(std::move(value), std::move(rawResponse));
 }
 
 const ServiceVersion ServiceVersion::V7_2("7.2");

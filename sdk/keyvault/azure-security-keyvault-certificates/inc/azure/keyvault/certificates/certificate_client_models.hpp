@@ -970,4 +970,110 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
     IssuerProperties Properties;
   };
 
+  /**
+   * @brief The key vault server error.
+   *
+   */
+  struct CertificateServerError final
+  {
+    /**
+     * @brief The error code.
+     *
+     */
+
+    std::string Code;
+    /**
+     * @brief The error message.
+     *
+     */
+    std::string Message;
+    /**
+     * @brief
+     *
+     */
+    std::unique_ptr<CertificateServerError> InnerError;
+  };
+
+  /**
+   * @brief A certificate operation is returned in case of asynchronous requests.
+   *
+   */
+  struct CertificateOperationProperties
+  {
+    /**
+     * @brief The certificate id.
+     *
+     */
+    std::string Id;
+
+    /**
+     * @brief The certificate name.
+     *
+     */
+    std::string Name;
+
+    /**
+     * @brief The vault URI.
+     *
+     */
+    std::string VaultUrl;
+
+    /**
+     * @brief The certificate signing request (CSR) that is being used in the certificate operation.
+     *
+     */
+    std::vector<uint8_t> Csr;
+
+    /**
+     * @brief Indicates if cancellation was requested on the certificate operation.
+     *
+     */
+    Azure::Nullable<bool> CancellationRequested;
+
+    /**
+     * @brief Status of the certificate operation.
+     *
+     */
+    Azure::Nullable<std::string> Status;
+
+    /**
+     * @brief The status details of the certificate operation.
+     *
+     */
+    Azure::Nullable<std::string> StatusDetails;
+
+    /**
+     * @brief Location which contains the result of the certificate operation.
+     *
+     */
+    Azure::Nullable<std::string> Target;
+
+    /**
+     * @brief Identifier for the certificate operation.
+     *
+     */
+    Azure::Nullable<std::string> RequestId;
+
+    /**
+     * @brief Name of the referenced issuer object or reserved names; for example, 'Self' or
+     * 'Unknown'.
+     *
+     */
+    Azure::Nullable<std::string> IssuerName;
+
+    /**
+     * @brief Certificate type as supported by the provider (optional); for example 'OV-SSL',
+     * 'EV-SSL'
+     *
+     */
+    Azure::Nullable<std::string> CertificateType;
+
+    /**
+     * @briefIndicates if the certificates generated under this policy should be published to
+     * certificate transparency logs.
+     *
+     */
+    Azure::Nullable<bool> CertificateTransparency;
+  };
+
 }}}} // namespace Azure::Security::KeyVault::Certificates

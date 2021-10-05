@@ -176,6 +176,21 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
         std::string const& name,
         Azure::Core::Context const& context = Azure::Core::Context()) const;
 
+    /**
+     * @brief Gets the creation operation of a certificate.
+     *
+     * @details Gets the creation operation associated with a specified certificate.
+     *
+     * @remark This operation requires the certificates/get permission.
+     *
+     * @param name The certificate name.
+     * @param context The context for the operation can be used for request cancellation.
+     * @return CertificateOperationProperties instance representing the status of the operation.
+     */
+    Azure::Response<CertificateOperationProperties> GetCertificateOperation(
+        std::string const& name,
+        Azure::Core::Context const& context = Azure::Core::Context()) const;
+
   private:
     std::unique_ptr<Azure::Core::Http::RawResponse> SendRequest(
         Azure::Core::Http::Request& request,

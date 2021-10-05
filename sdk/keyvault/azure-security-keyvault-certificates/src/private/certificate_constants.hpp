@@ -17,6 +17,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
     constexpr static const char CertificatesPath[] = "certificates";
     constexpr static const char CertificatesCreatePath[] = "create";
     constexpr static const char IssuersPath[] = "issuers";
+    constexpr static const char PendingPath[] = "pending";
 
     /***************** Certificates Properties *****************/
     constexpr static const char IdName[] = "id";
@@ -106,5 +107,18 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
     constexpr static const char LastNamePropertyValue[] = "last_name";
     constexpr static const char EmailPropertyValue[] = "email";
     constexpr static const char PhonePropertyValue[] = "phone";
+
+    /****************** Certifectae Operation Properties **********/
+    constexpr static const char CsrPropertyName[] = "csr";
+    constexpr static const char StatusPropertyName[] = "status";
+    constexpr static const char ErrorPropertyName[] = "error";
+    constexpr static const char CodePropertyName[] = "code";
+    constexpr static const char RequestIdPropertyName[] = "request_id";
+    constexpr static const char TargetPropertyName[] = "target";
+    constexpr static const char MessagePropertyName[] = "message";
+    constexpr static const char InnerErrorPropertyName[] = "innererror";
+    constexpr static const char StatusDetailsPropertyName[] = "status_details";
+    constexpr static const char CancelationRequestedPropertyName[] = "cancellation_requested";
+    constexpr static const char CompletedValue[] = "completed";
 
 }}}}} // namespace Azure::Security::KeyVault::Certificates::_detail

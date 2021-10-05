@@ -28,7 +28,9 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
 
   private:
     std::shared_ptr<CertificateClient> m_certificateClient;
+    CertificateOperationProperties m_operationProperties;
     KeyVaultCertificate m_value;
+
     std::string m_continuationToken;
 
     Azure::Response<KeyVaultCertificate> PollUntilDoneInternal(
@@ -45,7 +47,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
      */
     CreateCertificateOperation(
         std::shared_ptr<CertificateClient> certificateClient,
-        Azure::Response<KeyVaultCertificate> response);
+        Azure::Response<CertificateOperationProperties> response);
 
     CreateCertificateOperation(
         std::string resumeToken,
