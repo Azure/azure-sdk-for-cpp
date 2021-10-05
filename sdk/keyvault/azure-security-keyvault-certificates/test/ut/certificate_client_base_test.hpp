@@ -83,7 +83,7 @@ namespace Azure {
     Azure::Security::KeyVault::Certificates::CertificateClient const& GetClientForTest(
         std::string const& testName)
     {
-      // used for updating testing mode_putenv_s("AZURE_TEST_MODE", "PLAYBACK");
+      // used to test/dev purposes _putenv_s("AZURE_TEST_MODE", "PLAYBACK");
       InitializeClient();
       // set the interceptor for the current test
       m_testContext.RenameTest(testName);
@@ -159,6 +159,25 @@ namespace Azure {
               rawResponse->GetStatusCode()),
           static_cast<typename std::underlying_type<Azure::Core::Http::HttpStatusCode>::type>(
               expectedCode));
+    }
+
+    static void CheckIssuers(CertificateIssuer const& data, CertificateIssuer const& issuer)
+    {
+      EXPECT_EQ(data.Name, issuer.Name);
+      EXPECT_EQ(data.Provider.Value(), issuer.Provider.Value());
+      EXPECT_TRUE(data.Properties.Enabled.Value());
+      EXPECT_TRUE(data.Id.HasValue());
+
+      EXPECT_EQ(data.Credentials.AccountId.Value(), issuer.Credentials.AccountId.Value());
+      EXPECT_FALSE(data.Credentials.Password.HasValue());
+
+      auto adminRemote = data.Organization.AdminDetails[0];
+      auto adminLocal = issuer.Organization.AdminDetails[0];
+
+      EXPECT_EQ(adminLocal.EmailAddress.Value(), adminRemote.EmailAddress.Value());
+      EXPECT_EQ(adminLocal.FirstName.Value(), adminRemote.FirstName.Value());
+      EXPECT_EQ(adminLocal.LastName.Value(), adminRemote.LastName.Value());
+      EXPECT_EQ(adminLocal.PhoneNumber.Value(), adminRemote.PhoneNumber.Value());
     }
   };
 
