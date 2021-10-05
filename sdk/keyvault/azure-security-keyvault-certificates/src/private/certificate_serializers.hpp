@@ -69,8 +69,10 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
       }
     };
 
-    struct CertificatePropertiesSerializer final
-    {
+    class CertificatePropertiesSerializer final {
+      CertificatePropertiesSerializer() = delete;
+
+    public:
       static std::string Serialize(CertificateProperties const& properties);
       static Azure::Core::Json::_internal::json JsonSerialize(
           CertificateProperties const& properties);
@@ -79,8 +81,10 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
           Azure::Core::Json::_internal::json fragment);
     };
 
-    struct CertificatePolicySerializer final
-    {
+    class CertificatePolicySerializer final {
+      CertificatePolicySerializer() = delete;
+
+    public:
       static std::string Serialize(CertificatePolicy const& policy);
       static Azure::Core::Json::_internal::json JsonSerialize(CertificatePolicy const& policy);
       static void Deserialize(
@@ -88,9 +92,22 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
           Azure::Core::Json::_internal::json fragment);
     };
 
-    struct CertificateCreateParametersSerializer final
-    {
+    class CertificateCreateParametersSerializer final {
+      CertificateCreateParametersSerializer() = delete;
+
+    public:
       static std::string Serialize(CertificateCreateParameters const& parameters);
+    };
+
+    class CertificateIssuerSerializer final {
+      CertificateIssuerSerializer() = delete;
+
+    public:
+      static CertificateIssuer Deserialize(
+          std::string const& name,
+          Azure::Core::Http::RawResponse const& rawResponse);
+
+      static std::string Serialize(CertificateIssuer const& issuer);
     };
     struct CertificateContactsSerializer final
     {
