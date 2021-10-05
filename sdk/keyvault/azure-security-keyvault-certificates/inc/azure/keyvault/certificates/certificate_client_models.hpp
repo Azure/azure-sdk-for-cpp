@@ -970,7 +970,6 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
     IssuerProperties Properties;
   };
 
-
   /**
    * @brief The contact information for the vault certificates.
    *
@@ -980,8 +979,9 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
     /**
      * @brief Contact email address of.
      *
+     * @remark Email is required, has to be unique
      */
-    Azure::Nullable<std::string> EmailAddress;
+    std::string EmailAddress;
 
     /**
      * @brief Contact name.

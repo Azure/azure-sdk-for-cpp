@@ -493,20 +493,20 @@ std::string CertificateIssuerSerializer::Serialize(CertificateIssuer const& issu
 std::string CertificateContactsSerializer::Serialize(
     std::vector<CertificateContact> const& contacts)
 {
-  json response;
+  json payload;
 
   for (auto contact : contacts)
   {
     json contactJson;
 
-    JsonOptional::SetFromNullable(contact.EmailAddress, contactJson, EmailPropertyName);
+    contactJson[EmailPropertyName] = contact.EmailAddress;
     JsonOptional::SetFromNullable(contact.Name, contactJson, NamePropertyName);
     JsonOptional::SetFromNullable(contact.Phone, contactJson, PhonePropertyName);
 
-    response[ContactsPropertyName].emplace_back(contactJson);
+    payload[ContactsPropertyName].emplace_back(contactJson);
   }
 
-  return response.dump();
+  return payload.dump();
 }
 
 std::vector<CertificateContact> CertificateContactsSerializer::Deserialize(
@@ -523,7 +523,7 @@ std::vector<CertificateContact> CertificateContactsSerializer::Deserialize(
     {
       CertificateContact contact;
 
-      JsonOptional::SetIfExists(contact.EmailAddress, contactJson, EmailPropertyName);
+      contact.EmailAddress = contactJson[EmailPropertyName];
       JsonOptional::SetIfExists(contact.Name, contactJson, NamePropertyName);
       JsonOptional::SetIfExists(contact.Phone, contactJson, PhonePropertyName);
 

@@ -191,11 +191,9 @@ namespace Azure {
         bool found = false;
         for (auto c1 : contacts)
         {
-          if (c1.EmailAddress.HasValue() == c2.EmailAddress.HasValue()
-              && c1.Name.HasValue() == c2.Name.HasValue()
-              && c1.Phone.HasValue() == c2.Phone.HasValue()
-              && c1.EmailAddress.Value() == c2.EmailAddress.Value()
-              && c1.Name.Value() == c2.Name.Value() && c1.Phone.Value() == c2.Phone.Value())
+          if (c1.EmailAddress == c2.EmailAddress && c1.Name.HasValue() == c2.Name.HasValue()
+              && c1.Phone.HasValue() == c2.Phone.HasValue() && c1.Name.Value() == c2.Name.Value()
+              && c1.Phone.Value() == c2.Phone.Value())
           {
             found = true;
             break;
@@ -209,11 +207,9 @@ namespace Azure {
         bool found = false;
         for (auto c2 : results)
         {
-          if (c1.EmailAddress.HasValue() == c2.EmailAddress.HasValue()
-              && c1.Name.HasValue() == c2.Name.HasValue()
-              && c1.Phone.HasValue() == c2.Phone.HasValue()
-              && c1.EmailAddress.Value() == c2.EmailAddress.Value()
-              && c1.Name.Value() == c2.Name.Value() && c1.Phone.Value() == c2.Phone.Value())
+          if (c1.EmailAddress == c2.EmailAddress && c1.Name.HasValue() == c2.Name.HasValue()
+              && c1.Phone.HasValue() == c2.Phone.HasValue() && c1.Name.Value() == c2.Name.Value()
+              && c1.Phone.Value() == c2.Phone.Value())
           {
             found = true;
             break;
