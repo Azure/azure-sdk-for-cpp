@@ -108,7 +108,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
     constexpr static const char EmailPropertyValue[] = "email";
     constexpr static const char PhonePropertyValue[] = "phone";
 
-    /****************** Certifectae Operation Properties **********/
+    /****************** Certificate Operation Properties **********/
     constexpr static const char CsrPropertyName[] = "csr";
     constexpr static const char StatusPropertyName[] = "status";
     constexpr static const char ErrorPropertyName[] = "error";
