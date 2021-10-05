@@ -4,6 +4,8 @@
 
 ### Features Added
 
+- Add the static libcurl transport adapter.
+
 ### Breaking Changes
 
 ### Bugs Fixed
