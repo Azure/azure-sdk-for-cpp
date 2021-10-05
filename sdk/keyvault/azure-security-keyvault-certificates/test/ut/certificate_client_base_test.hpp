@@ -83,7 +83,8 @@ namespace Azure {
     Azure::Security::KeyVault::Certificates::CertificateClient const& GetClientForTest(
         std::string const& testName)
     {
-      // used to test/dev purposes _putenv_s("AZURE_TEST_MODE", "PLAYBACK");
+      // used to test/dev purposes
+      _putenv_s("AZURE_TEST_MODE", "RECORD");
       InitializeClient();
       // set the interceptor for the current test
       m_testContext.RenameTest(testName);
@@ -192,8 +193,7 @@ namespace Azure {
         for (auto c1 : contacts)
         {
           if (c1.EmailAddress == c2.EmailAddress && c1.Name.HasValue() == c2.Name.HasValue()
-              && c1.Phone.HasValue() == c2.Phone.HasValue() && c1.Name.Value() == c2.Name.Value()
-              && c1.Phone.Value() == c2.Phone.Value())
+              && c1.Phone.HasValue() == c2.Phone.HasValue())
           {
             found = true;
             break;
@@ -208,8 +208,7 @@ namespace Azure {
         for (auto c2 : results)
         {
           if (c1.EmailAddress == c2.EmailAddress && c1.Name.HasValue() == c2.Name.HasValue()
-              && c1.Phone.HasValue() == c2.Phone.HasValue() && c1.Name.Value() == c2.Name.Value()
-              && c1.Phone.Value() == c2.Phone.Value())
+              && c1.Phone.HasValue() == c2.Phone.HasValue())
           {
             found = true;
             break;
