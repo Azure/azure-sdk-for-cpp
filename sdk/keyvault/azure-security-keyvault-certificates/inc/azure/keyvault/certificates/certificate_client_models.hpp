@@ -971,6 +971,30 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
   };
 
   /**
+   * @brief The contact information for the vault certificates.
+   *
+   */
+  struct CertificateContact
+  {
+    /**
+     * @brief Contact e-mail address.
+     *
+     */
+    std::string EmailAddress;
+
+    /**
+     * @brief Contact name.
+     *
+     */
+    Azure::Nullable<std::string> Name;
+
+    /**
+     * @brief Contact phone number.
+     *
+     */
+    Azure::Nullable<std::string> Phone;
+  };
+  /**
    * @brief A certificate operation.
    *
    */

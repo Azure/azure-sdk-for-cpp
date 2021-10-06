@@ -266,3 +266,130 @@ TEST_F(KeyVaultCertificateClientTest, UpdateIssuer)
     CheckIssuers(result.Value, issuer);
   }
 }
+
+TEST_F(KeyVaultCertificateClientTest, SetContacts)
+{
+  auto const& client
+      = GetClientForTest(::testing::UnitTest::GetInstance()->current_test_info()->name());
+
+  std::vector<CertificateContact> contacts;
+
+  CertificateContact ctt;
+
+  ctt.EmailAddress = "one@two.org";
+  ctt.Name = "giqu"; // cspell:disable-line
+  ctt.Phone = "1234567890";
+  contacts.emplace_back(ctt);
+
+  CertificateContact ctt2;
+
+  ctt2.EmailAddress = "two@three.org";
+  ctt2.Name = "giqu2"; // cspell:disable-line
+  ctt2.Phone = "1234567891";
+  contacts.emplace_back(ctt2);
+
+  auto response = client.SetContacts(contacts);
+
+  CheckContactsCollections(contacts, response.Value);
+
+  auto response2 = client.DeleteContacts();
+
+  CheckContactsCollections(contacts, response2.Value);
+}
+
+TEST_F(KeyVaultCertificateClientTest, GetContacts)
+{
+  auto const& client
+      = GetClientForTest(::testing::UnitTest::GetInstance()->current_test_info()->name());
+
+  std::vector<CertificateContact> contacts;
+
+  CertificateContact ctt;
+
+  ctt.EmailAddress = "one@two.org";
+  ctt.Name = "giqu"; // cspell:disable-line
+  ctt.Phone = "1234567890";
+  contacts.emplace_back(ctt);
+
+  CertificateContact ctt2;
+
+  ctt2.EmailAddress = "two@three.org";
+  ctt2.Name = "giqu2"; // cspell:disable-line
+  ctt2.Phone = "1234567891";
+  contacts.emplace_back(ctt2);
+
+  client.SetContacts(contacts);
+  auto response = client.GetContacts();
+
+  CheckContactsCollections(contacts, response.Value);
+
+  auto response2 = client.DeleteContacts();
+
+  CheckContactsCollections(contacts, response2.Value);
+}
+
+TEST_F(KeyVaultCertificateClientTest, GetContactsPartial)
+{
+  auto const& client
+      = GetClientForTest(::testing::UnitTest::GetInstance()->current_test_info()->name());
+
+  std::vector<CertificateContact> contacts;
+
+  CertificateContact ctt;
+
+  ctt.EmailAddress = "one1@two.org";
+  contacts.emplace_back(ctt);
+
+  CertificateContact ctt2, ctt3;
+
+  ctt2.EmailAddress = "two2@three.org";
+  ctt2.Name = "giqu2"; // cspell:disable-line
+  contacts.emplace_back(ctt2);
+
+  ctt3.EmailAddress = "two3@three.org";
+  ctt3.Phone = "1234567891";
+
+  contacts.emplace_back(ctt3);
+
+  client.SetContacts(contacts);
+  auto response = client.GetContacts();
+
+  CheckContactsCollections(contacts, response.Value);
+
+  auto response2 = client.DeleteContacts();
+
+  CheckContactsCollections(contacts, response2.Value);
+}
+
+TEST_F(KeyVaultCertificateClientTest, GetContactsDuplicateEmail)
+{
+  auto const& client
+      = GetClientForTest(::testing::UnitTest::GetInstance()->current_test_info()->name());
+
+  std::vector<CertificateContact> contacts;
+
+  CertificateContact ctt;
+
+  ctt.EmailAddress = "one1@two.org";
+  contacts.emplace_back(ctt);
+
+  CertificateContact ctt2, ctt3;
+
+  ctt2.EmailAddress = "two@three.org";
+  ctt2.Name = "giqu2"; // cspell:disable-line
+  contacts.emplace_back(ctt2);
+
+  ctt3.EmailAddress = "two@three.org";
+  ctt3.Phone = "1234567891";
+
+  contacts.emplace_back(ctt3);
+
+  client.SetContacts(contacts);
+  auto response = client.GetContacts();
+
+  CheckContactsCollections(contacts, response.Value);
+
+  auto response2 = client.DeleteContacts();
+
+  CheckContactsCollections(contacts, response2.Value);
+}

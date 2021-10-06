@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: MIT
 
 #include "azure/keyvault/certificates/certificate_client.hpp"
+
 #include "private/certificate_constants.hpp"
 #include "private/certificate_serializers.hpp"
 #include "private/keyvault_certificates_common_request.hpp"
@@ -27,7 +28,6 @@ using namespace Azure::Core::Http::_internal;
 using namespace Azure::Security::KeyVault::_detail;
 
 namespace {
-
 // This is a Key-Vault only patch to calculate token scope/audience
 std::string GetScopeFromUrl(Azure::Core::Url const& url)
 {
@@ -199,6 +199,43 @@ Azure::Response<CertificateIssuer> CertificateClient::UpdateIssuer(
   auto rawResponse = SendRequest(request, context);
   auto value = CertificateIssuerSerializer::Deserialize(name, *rawResponse);
   return Azure::Response<CertificateIssuer>(std::move(value), std::move(rawResponse));
+}
+
+Response<std::vector<CertificateContact>> CertificateClient::GetContacts(
+    Azure::Core::Context const& context) const
+{
+  auto request = CreateRequest(HttpMethod::Get, {CertificatesPath, ContactsPath});
+
+  // Send and parse respone
+  auto rawResponse = SendRequest(request, context);
+  auto value = CertificateContactsSerializer::Deserialize(*rawResponse);
+  return Azure::Response<std::vector<CertificateContact>>(std::move(value), std::move(rawResponse));
+}
+
+Response<std::vector<CertificateContact>> CertificateClient::DeleteContacts(
+    Azure::Core::Context const& context) const
+{
+  auto request = CreateRequest(HttpMethod::Delete, {CertificatesPath, ContactsPath});
+
+  // Send and parse respone
+  auto rawResponse = SendRequest(request, context);
+  auto value = CertificateContactsSerializer::Deserialize(*rawResponse);
+  return Azure::Response<std::vector<CertificateContact>>(std::move(value), std::move(rawResponse));
+}
+
+Response<std::vector<CertificateContact>> CertificateClient::SetContacts(
+    std::vector<CertificateContact> const& contacts,
+    Azure::Core::Context const& context) const
+{
+  auto payload = CertificateContactsSerializer::Serialize(contacts);
+  Azure::Core::IO::MemoryBodyStream payloadStream(
+      reinterpret_cast<const uint8_t*>(payload.data()), payload.size());
+
+  auto request = CreateRequest(HttpMethod::Put, {CertificatesPath, ContactsPath}, &payloadStream);
+
+  auto rawResponse = SendRequest(request, context);
+  auto value = CertificateContactsSerializer::Deserialize(*rawResponse);
+  return Azure::Response<std::vector<CertificateContact>>(std::move(value), std::move(rawResponse));
 }
 
 Azure::Response<CertificateOperationProperties> CertificateClient::GetCertificateOperation(

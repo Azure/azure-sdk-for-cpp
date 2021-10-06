@@ -68,7 +68,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
     explicit CertificateClient(CertificateClient const& keyClient) = default;
 
     /**
-     * @brief Returns the latest version of the KeyVaultCertificate along with its
+     * @brief Return the latest version of the KeyVaultCertificate along with its
      * CertificatePolicy.
      *
      * @remark This operation requires the certificates/get permission.
@@ -83,7 +83,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
         Azure::Core::Context const& context = Azure::Core::Context()) const;
 
     /**
-     * @brief Returns a specific version of the certificate without its CertificatePolicy.
+     * @brief Return a specific version of the certificate without its CertificatePolicy.
      *
      * @details If the version is not set in the options, the latest version is returned.
      *
@@ -101,7 +101,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
         Azure::Core::Context const& context = Azure::Core::Context()) const;
 
     /**
-     * @brief Creates a new certificate.
+     * @brief Create a new certificate.
      *
      * @details If this is the first version, the certificate resource is created.
      *
@@ -118,7 +118,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
         Azure::Core::Context const& context = Azure::Core::Context()) const;
 
     /**
-     * @brief Creates a new certificate issuer.
+     * @brief Create a new certificate issuer.
      *
      * @details The  operation adds or updates the specified certificate issuer.
      *
@@ -133,7 +133,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
         Azure::Core::Context const& context = Azure::Core::Context()) const;
 
     /**
-     * @brief Lists the specified certificate issuer.
+     * @brief List the specified certificate issuer.
      *
      * @details The GetCertificateIssuer operation returns the specified
      * certificate issuer resources in the specified key vault.
@@ -149,7 +149,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
         Azure::Core::Context const& context = Azure::Core::Context()) const;
 
     /**
-     * @brief Updates the specified certificate issuer.
+     * @brief Update the specified certificate issuer.
      *
      * @details The operation performs an update on the specified certificate issuer entity.
      *
@@ -164,7 +164,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
         Azure::Core::Context const& context = Azure::Core::Context()) const;
 
     /**
-     * @brief Deletes the specified certificate issuer.
+     * @brief Delete the specified certificate issuer.
      *
      * @details The operation permanently removes the specified certificate issuer from the vault.
      *
@@ -176,6 +176,48 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
      */
     Azure::Response<CertificateIssuer> DeleteIssuer(
         std::string const& name,
+        Azure::Core::Context const& context = Azure::Core::Context()) const;
+
+    /**
+     * @brief List the certificate contacts for a specified key vault.
+     *
+     * @details The GetContacts operation returns the set of certificate contact
+     * resources in the specified key vault.
+     *
+     * @remark This operation requires the certificates/managecontacts permission.
+     *
+     * @param context The context for the operation can be used for request cancellation.
+     * @return The contacts list for the key vault certificate.
+     */
+    Azure::Response<std::vector<CertificateContact>> GetContacts(
+        Azure::Core::Context const& context = Azure::Core::Context()) const;
+
+    /**
+     * @brief Delete the certificate contacts for a specified key vault.
+     *
+     * @details Deletes the certificate contacts for a specified key vault certificate.
+     *
+     * @remark This operation requires the certificates/managecontacts permission.
+     *
+     * @param context The context for the operation can be used for request cancellation.
+     * @return The contacts for the key vault certificate.
+     */
+    Azure::Response<std::vector<CertificateContact>> DeleteContacts(
+        Azure::Core::Context const& context = Azure::Core::Context()) const;
+
+    /**
+     * @brief Set certificate contacts.
+     *
+     * @details Set the certificate contacts for the specified key vault.
+     *
+     * @remark This operation requires the certificates/managecontacts permission.
+     *
+     * @param contacts The contacts for the key vault certificate.
+     * @param context The context for the operation can be used for request cancellation.
+     * @return The contacts for the key vault certificate.
+     */
+    Azure::Response<std::vector<CertificateContact>> SetContacts(
+        std::vector<CertificateContact> const& contacts,
         Azure::Core::Context const& context = Azure::Core::Context()) const;
 
   private:
