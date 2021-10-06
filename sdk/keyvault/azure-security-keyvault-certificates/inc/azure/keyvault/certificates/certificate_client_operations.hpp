@@ -71,11 +71,11 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
     KeyVaultCertificate Value() const override { return m_value; }
 
     /**
-     * @brief Gets the properties of the pending certificate operation.
-     * 
+     * @brief Get the properties of the pending certificate operation.
+     *
      */
     CertificateOperationProperties Properties;
-    
+
     /**
      * @brief Get an Url as string which can be used to get the status of the
      * operation.

@@ -34,8 +34,8 @@ std::unique_ptr<Azure::Core::Http::RawResponse> CreateCertificateOperation::Poll
 
   try
   {
-    rawResponse = m_certificateClient->GetCertificateOperation(Properties.Name, context)
-                      .RawResponse;
+    rawResponse
+        = m_certificateClient->GetCertificateOperation(Properties.Name, context).RawResponse;
   }
   catch (Azure::Core::RequestFailedException& error)
   {
