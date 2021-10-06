@@ -977,9 +977,8 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
   struct CertificateContact
   {
     /**
-     * @brief Contact email address of.
+     * @brief Contact e-mail address.
      *
-     * @remark Email is required, has to be unique
      */
     std::string EmailAddress;
 

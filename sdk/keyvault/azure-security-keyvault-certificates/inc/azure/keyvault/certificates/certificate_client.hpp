@@ -204,7 +204,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
         Azure::Core::Context const& context = Azure::Core::Context()) const;
 
     /**
-     * @brief Create certificate contacts.
+     * @brief Set certificate contacts.
      *
      * @details Set the certificate contacts for the specified key vault.
      *
