@@ -3,6 +3,7 @@
 #include "azure/keyvault/certificates/certificate_client_operations.hpp"
 #include "azure/keyvault/certificates/certificate_client.hpp"
 #include "azure/keyvault/certificates/certificate_client_models.hpp"
+#include "private/certificate_constants.hpp"
 #include "private/certificate_serializers.hpp"
 #include <thread>
 
@@ -33,7 +34,8 @@ std::unique_ptr<Azure::Core::Http::RawResponse> CreateCertificateOperation::Poll
 
   try
   {
-    rawResponse = m_certificateClient->GetCertificate(m_value.Name(), context).RawResponse;
+    rawResponse
+        = m_certificateClient->GetCertificateOperation(Properties.Name, context).RawResponse;
   }
   catch (Azure::Core::RequestFailedException& error)
   {
@@ -47,7 +49,24 @@ std::unique_ptr<Azure::Core::Http::RawResponse> CreateCertificateOperation::Poll
 
   switch (rawResponse->GetStatusCode())
   {
-    case Azure::Core::Http::HttpStatusCode::Ok:
+    case Azure::Core::Http::HttpStatusCode::Ok: {
+      Properties = _detail::CertificateOperationSerializer::Deserialize(*rawResponse);
+      // the operation returns completed for crete certificate, thus success is success when the
+      // operation returns completed not on operation query success
+      if (Properties.Status.HasValue())
+      {
+        m_status = Properties.Status.Value() == _detail::CompletedValue
+            ? Azure::Core::OperationStatus::Succeeded
+            : Azure::Core::OperationStatus::Running;
+      }
+      else
+      {
+        // no status code, we're in no mans land , assume failed
+        m_status = Azure::Core::OperationStatus::Failed;
+      }
+
+      break;
+    }
     case Azure::Core::Http::HttpStatusCode::Forbidden: {
       m_status = Azure::Core::OperationStatus::Succeeded;
       break;
@@ -62,17 +81,19 @@ std::unique_ptr<Azure::Core::Http::RawResponse> CreateCertificateOperation::Poll
 
   if (m_status == Azure::Core::OperationStatus::Succeeded)
   {
-    m_value = _detail::KeyVaultCertificateSerializer::Deserialize(m_value.Name(), *rawResponse);
+    auto finalReponse = m_certificateClient->GetCertificate(Properties.Name);
+    m_value = finalReponse.Value;
   }
+
   return rawResponse;
 }
 
 CreateCertificateOperation::CreateCertificateOperation(
     std::shared_ptr<CertificateClient> certificateClient,
-    Azure::Response<KeyVaultCertificateWithPolicy> response)
+    Azure::Response<CertificateOperationProperties> response)
     : m_certificateClient(certificateClient)
 {
-  m_value = response.Value;
+  Properties = response.Value;
   m_rawResponse = std::move(response.RawResponse);
   m_continuationToken = m_value.Name();
 

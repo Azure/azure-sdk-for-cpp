@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: MIT
 
 #include "azure/keyvault/certificates/certificate_client.hpp"
+
 #include "private/certificate_constants.hpp"
 #include "private/certificate_serializers.hpp"
 #include "private/keyvault_certificates_common_request.hpp"
@@ -27,7 +28,6 @@ using namespace Azure::Core::Http::_internal;
 using namespace Azure::Security::KeyVault::_detail;
 
 namespace {
-
 // This is a Key-Vault only patch to calculate token scope/audience
 std::string GetScopeFromUrl(Azure::Core::Url const& url)
 {
@@ -136,10 +136,9 @@ CreateCertificateOperation CertificateClient::StartCreateCertificate(
       HttpMethod::Post, {CertificatesPath, name, CertificatesCreatePath}, &payloadStream);
 
   auto rawResponse = SendRequest(request, context);
-  auto value = KeyVaultCertificateWithPolicy();
-  value.Properties.Name = name;
+  auto value = _detail::CertificateOperationSerializer::Deserialize(*rawResponse);
   auto responseT
-      = Azure::Response<KeyVaultCertificateWithPolicy>(std::move(value), std::move(rawResponse));
+      = Azure::Response<CertificateOperationProperties>(std::move(value), std::move(rawResponse));
   return CreateCertificateOperation(
       std::make_shared<CertificateClient>(*this), std::move(responseT));
 }
@@ -154,6 +153,110 @@ Response<DeletedCertificate> CertificateClient::GetDeletedCertificate(
   auto rawResponse = SendRequest(request, context);
   auto value = DeletedCertificateSerializer::Deserialize(name, *rawResponse);
   return Azure::Response<DeletedCertificate>(std::move(value), std::move(rawResponse));
+}
+
+Azure::Response<CertificateIssuer> CertificateClient::GetIssuer(
+    std::string const& name,
+    Azure::Core::Context const& context) const
+{
+  auto request = CreateRequest(HttpMethod::Get, {CertificatesPath, IssuersPath, name});
+  auto rawResponse = SendRequest(request, context);
+
+  auto value = CertificateIssuerSerializer::Deserialize(name, *rawResponse);
+  return Azure::Response<CertificateIssuer>(std::move(value), std::move(rawResponse));
+}
+
+Azure::Response<CertificateIssuer> CertificateClient::DeleteIssuer(
+    std::string const& name,
+    Azure::Core::Context const& context) const
+{
+  auto request = CreateRequest(HttpMethod::Delete, {CertificatesPath, IssuersPath, name});
+  auto rawResponse = SendRequest(request, context);
+
+  auto value = CertificateIssuerSerializer::Deserialize(name, *rawResponse);
+  return Azure::Response<CertificateIssuer>(std::move(value), std::move(rawResponse));
+}
+
+Azure::Response<CertificateIssuer> CertificateClient::CreateIssuer(
+    CertificateIssuer const& issuer,
+    Azure::Core::Context const& context) const
+{
+  std::string name = issuer.Name;
+  auto payload = CertificateIssuerSerializer::Serialize(issuer);
+  Azure::Core::IO::MemoryBodyStream payloadStream(
+      reinterpret_cast<const uint8_t*>(payload.data()), payload.size());
+
+  auto request
+      = CreateRequest(HttpMethod::Put, {CertificatesPath, IssuersPath, name}, &payloadStream);
+
+  auto rawResponse = SendRequest(request, context);
+  auto value = CertificateIssuerSerializer::Deserialize(name, *rawResponse);
+  return Azure::Response<CertificateIssuer>(std::move(value), std::move(rawResponse));
+}
+
+Azure::Response<CertificateIssuer> CertificateClient::UpdateIssuer(
+    CertificateIssuer const& issuer,
+    Azure::Core::Context const& context) const
+{
+  std::string name = issuer.Name;
+  auto payload = CertificateIssuerSerializer::Serialize(issuer);
+  Azure::Core::IO::MemoryBodyStream payloadStream(
+      reinterpret_cast<const uint8_t*>(payload.data()), payload.size());
+
+  auto request
+      = CreateRequest(HttpMethod::Patch, {CertificatesPath, IssuersPath, name}, &payloadStream);
+
+  auto rawResponse = SendRequest(request, context);
+  auto value = CertificateIssuerSerializer::Deserialize(name, *rawResponse);
+  return Azure::Response<CertificateIssuer>(std::move(value), std::move(rawResponse));
+}
+
+Response<std::vector<CertificateContact>> CertificateClient::GetContacts(
+    Azure::Core::Context const& context) const
+{
+  auto request = CreateRequest(HttpMethod::Get, {CertificatesPath, ContactsPath});
+
+  // Send and parse respone
+  auto rawResponse = SendRequest(request, context);
+  auto value = CertificateContactsSerializer::Deserialize(*rawResponse);
+  return Azure::Response<std::vector<CertificateContact>>(std::move(value), std::move(rawResponse));
+}
+
+Response<std::vector<CertificateContact>> CertificateClient::DeleteContacts(
+    Azure::Core::Context const& context) const
+{
+  auto request = CreateRequest(HttpMethod::Delete, {CertificatesPath, ContactsPath});
+
+  // Send and parse respone
+  auto rawResponse = SendRequest(request, context);
+  auto value = CertificateContactsSerializer::Deserialize(*rawResponse);
+  return Azure::Response<std::vector<CertificateContact>>(std::move(value), std::move(rawResponse));
+}
+
+Response<std::vector<CertificateContact>> CertificateClient::SetContacts(
+    std::vector<CertificateContact> const& contacts,
+    Azure::Core::Context const& context) const
+{
+  auto payload = CertificateContactsSerializer::Serialize(contacts);
+  Azure::Core::IO::MemoryBodyStream payloadStream(
+      reinterpret_cast<const uint8_t*>(payload.data()), payload.size());
+
+  auto request = CreateRequest(HttpMethod::Put, {CertificatesPath, ContactsPath}, &payloadStream);
+
+  auto rawResponse = SendRequest(request, context);
+  auto value = CertificateContactsSerializer::Deserialize(*rawResponse);
+  return Azure::Response<std::vector<CertificateContact>>(std::move(value), std::move(rawResponse));
+}
+
+Azure::Response<CertificateOperationProperties> CertificateClient::GetCertificateOperation(
+    std::string const& name,
+    Azure::Core::Context const& context) const
+{
+  auto request = CreateRequest(HttpMethod::Get, {CertificatesPath, name, PendingPath});
+  auto rawResponse = SendRequest(request, context);
+
+  auto value = CertificateOperationSerializer::Deserialize(*rawResponse);
+  return Azure::Response<CertificateOperationProperties>(std::move(value), std::move(rawResponse));
 }
 
 Response<PurgedCertificate> CertificateClient::PurgeDeletedCertificate(

@@ -46,7 +46,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
      */
     CreateCertificateOperation(
         std::shared_ptr<CertificateClient> certificateClient,
-        Azure::Response<KeyVaultCertificateWithPolicy> response);
+        Azure::Response<CertificateOperationProperties> response);
 
     CreateCertificateOperation(
         std::string resumeToken,
@@ -70,6 +70,12 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
      * @return A certificate object.
      */
     KeyVaultCertificateWithPolicy Value() const override { return m_value; }
+
+    /**
+     * @brief Get the properties of the pending certificate operation.
+     *
+     */
+    CertificateOperationProperties Properties;
 
     /**
      * @brief Get an Url as string which can be used to get the status of the

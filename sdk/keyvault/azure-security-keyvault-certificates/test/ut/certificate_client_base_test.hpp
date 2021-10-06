@@ -163,6 +163,62 @@ namespace Azure {
           static_cast<typename std::underlying_type<Azure::Core::Http::HttpStatusCode>::type>(
               expectedCode));
     }
+
+    static void CheckIssuers(CertificateIssuer const& data, CertificateIssuer const& issuer)
+    {
+      EXPECT_EQ(data.Name, issuer.Name);
+      EXPECT_EQ(data.Provider.Value(), issuer.Provider.Value());
+      EXPECT_TRUE(data.Properties.Enabled.Value());
+      EXPECT_TRUE(data.Id.HasValue());
+
+      EXPECT_EQ(data.Credentials.AccountId.Value(), issuer.Credentials.AccountId.Value());
+      EXPECT_FALSE(data.Credentials.Password.HasValue());
+
+      auto adminRemote = data.Organization.AdminDetails[0];
+      auto adminLocal = issuer.Organization.AdminDetails[0];
+
+      EXPECT_EQ(adminLocal.EmailAddress.Value(), adminRemote.EmailAddress.Value());
+      EXPECT_EQ(adminLocal.FirstName.Value(), adminRemote.FirstName.Value());
+      EXPECT_EQ(adminLocal.LastName.Value(), adminRemote.LastName.Value());
+      EXPECT_EQ(adminLocal.PhoneNumber.Value(), adminRemote.PhoneNumber.Value());
+    }
+
+    static inline void CheckContactsCollections(
+        std::vector<CertificateContact> contacts,
+        std::vector<CertificateContact> results)
+    {
+      EXPECT_EQ(results.size(), contacts.size());
+
+      for (auto c2 : results)
+      {
+        bool found = false;
+        for (auto c1 : contacts)
+        {
+          if (c1.EmailAddress == c2.EmailAddress && c1.Name.HasValue() == c2.Name.HasValue()
+              && c1.Phone.HasValue() == c2.Phone.HasValue())
+          {
+            found = true;
+            break;
+          }
+        }
+        EXPECT_TRUE(found);
+      }
+
+      for (auto c1 : contacts)
+      {
+        bool found = false;
+        for (auto c2 : results)
+        {
+          if (c1.EmailAddress == c2.EmailAddress && c1.Name.HasValue() == c2.Name.HasValue()
+              && c1.Phone.HasValue() == c2.Phone.HasValue())
+          {
+            found = true;
+            break;
+          }
+        }
+        EXPECT_TRUE(found);
+      }
+    }
   };
 
 }}}}} // namespace Azure::Security::KeyVault::Certificates::Test
