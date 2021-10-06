@@ -34,7 +34,7 @@ std::unique_ptr<Azure::Core::Http::RawResponse> CreateCertificateOperation::Poll
 
   try
   {
-    rawResponse = m_certificateClient->GetCertificateOperation(m_operationProperties.Name, context)
+    rawResponse = m_certificateClient->GetCertificateOperation(Properties.Name, context)
                       .RawResponse;
   }
   catch (Azure::Core::RequestFailedException& error)
@@ -45,12 +45,12 @@ std::unique_ptr<Azure::Core::Http::RawResponse> CreateCertificateOperation::Poll
   switch (rawResponse->GetStatusCode())
   {
     case Azure::Core::Http::HttpStatusCode::Ok: {
-      m_operationProperties = _detail::CertificateOperationSerializer::Deserialize(*rawResponse);
+      Properties = _detail::CertificateOperationSerializer::Deserialize(*rawResponse);
       // the operation returns completed for crete certificate, thus success is success when the
       // operation returns completed not on operation query success
-      if (m_operationProperties.Status.HasValue())
+      if (Properties.Status.HasValue())
       {
-        m_status = m_operationProperties.Status.Value() == _detail::CompletedValue
+        m_status = Properties.Status.Value() == _detail::CompletedValue
             ? Azure::Core::OperationStatus::Succeeded
             : Azure::Core::OperationStatus::Running;
       }
@@ -76,7 +76,7 @@ std::unique_ptr<Azure::Core::Http::RawResponse> CreateCertificateOperation::Poll
 
   if (m_status == Azure::Core::OperationStatus::Succeeded)
   {
-    auto finalReponse = m_certificateClient->GetCertificate(m_operationProperties.Name);
+    auto finalReponse = m_certificateClient->GetCertificate(Properties.Name);
     m_value = finalReponse.Value;
   }
 
@@ -88,7 +88,7 @@ CreateCertificateOperation::CreateCertificateOperation(
     Azure::Response<CertificateOperationProperties> response)
     : m_certificateClient(certificateClient)
 {
-  m_operationProperties = response.Value;
+  Properties = response.Value;
   m_rawResponse = std::move(response.RawResponse);
   m_continuationToken = m_value.Name();
 

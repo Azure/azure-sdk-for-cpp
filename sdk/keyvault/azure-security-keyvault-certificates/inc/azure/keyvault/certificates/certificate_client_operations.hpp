@@ -28,7 +28,6 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
 
   private:
     std::shared_ptr<CertificateClient> m_certificateClient;
-    CertificateOperationProperties m_operationProperties;
     KeyVaultCertificate m_value;
 
     std::string m_continuationToken;
@@ -75,7 +74,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
      * @brief Gets the properties of the pending certificate operation.
      * 
      */
-    CertificateOperationProperties Properties() { return m_operationProperties; }
+    CertificateOperationProperties Properties;
     
     /**
      * @brief Get an Url as string which can be used to get the status of the
