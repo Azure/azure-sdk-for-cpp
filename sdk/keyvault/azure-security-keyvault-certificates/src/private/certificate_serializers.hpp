@@ -173,8 +173,10 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
       }
     };
 
-    struct DeletedCertificateSerializer final
-    {
+    class DeletedCertificateSerializer final {
+      DeletedCertificateSerializer() = delete;
+
+    public:
       static DeletedCertificate Deserialize(
           std::string const& name,
           Azure::Core::Http::RawResponse const& rawResponse);

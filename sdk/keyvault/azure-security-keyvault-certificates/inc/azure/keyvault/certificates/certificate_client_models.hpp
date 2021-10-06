@@ -1083,8 +1083,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
     Azure::Nullable<bool> CertificateTransparency;
   };
 
-
-  struct DeletedCertificate : public KeyVaultCertificateWithPolicy
+  struct DeletedCertificate final : public KeyVaultCertificateWithPolicy
   {
     /**
      * @brief Gets the identifier of the deleted certificate.

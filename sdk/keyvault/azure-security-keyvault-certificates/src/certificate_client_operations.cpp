@@ -41,11 +41,6 @@ std::unique_ptr<Azure::Core::Http::RawResponse> CreateCertificateOperation::Poll
   {
     rawResponse = std::move(error.RawResponse);
   }
-  catch (...)
-  {
-    m_status = Azure::Core::OperationStatus::Running;
-    return rawResponse;
-  }
 
   switch (rawResponse->GetStatusCode())
   {
@@ -195,7 +190,7 @@ DeleteCertificateOperation::DeleteCertificateOperation(
     std::shared_ptr<CertificateClient> certificateClient)
     : m_certificateClient(certificateClient), m_continuationToken(std::move(resumeToken))
 {
-  m_value.Properties.Name = resumeToken;
+  m_value.Properties.Name = m_continuationToken;
 }
 
 DeleteCertificateOperation DeleteCertificateOperation::CreateFromResumeToken(
@@ -281,7 +276,7 @@ RecoverDeletedCertificateOperation::RecoverDeletedCertificateOperation(
     std::shared_ptr<CertificateClient> certificateClient)
     : m_certificateClient(certificateClient), m_continuationToken(std::move(resumeToken))
 {
-  m_value.Properties.Name = resumeToken;
+  m_value.Properties.Name = m_continuationToken;
 }
 
 RecoverDeletedCertificateOperation RecoverDeletedCertificateOperation::CreateFromResumeToken(
