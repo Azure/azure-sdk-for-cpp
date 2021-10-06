@@ -19,10 +19,10 @@ using namespace std::chrono_literals;
 // Disabling test as the createCertificate operation is currently broken. See:
 // https://github.com/Azure/azure-sdk-for-cpp/issues/2938
 
-TEST_F(KeyVaultCertificateClientTest, DISABLED_CreateCertificate)
+TEST_F(KeyVaultCertificateClientTest, CreateCertificate)
 {
   // cspell: disable-next-line
-  std::string const certificateName("magiqStuff289123");
+  std::string const certificateName("magiqStuff");
 
   auto const& client
       = GetClientForTest(::testing::UnitTest::GetInstance()->current_test_info()->name());
@@ -49,7 +49,7 @@ TEST_F(KeyVaultCertificateClientTest, DISABLED_CreateCertificate)
   EXPECT_EQ(result.Value.Properties.Enabled.Value(), true);
 }
 
-TEST_F(KeyVaultCertificateClientTest, DISABLED_GetCertificate)
+TEST_F(KeyVaultCertificateClientTest, GetCertificate)
 {
   // cspell: disable-next-line
   std::string const certificateName("vivazqu");
@@ -136,7 +136,7 @@ TEST_F(KeyVaultCertificateClientTest, DISABLED_GetCertificate)
   }
 }
 
-TEST_F(KeyVaultCertificateClientTest, DISABLED_GetCertificateVersion)
+TEST_F(KeyVaultCertificateClientTest, GetCertificateVersion)
 {
   // cspell: disable-next-line
   std::string const certificateName("vivazqu2");

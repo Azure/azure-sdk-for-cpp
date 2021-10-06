@@ -533,3 +533,34 @@ std::vector<CertificateContact> CertificateContactsSerializer::Deserialize(
 
   return response;
 }
+
+CertificateOperationProperties CertificateOperationSerializer ::Deserialize(
+    Azure::Core::Http::RawResponse const& rawResponse)
+{
+  CertificateOperationProperties operation;
+
+  auto const& body = rawResponse.GetBody();
+  auto jsonResponse = json::parse(body);
+  std::string str = jsonResponse.dump();
+
+  ParseKeyUrl(operation, jsonResponse[IdName]);
+
+  // issuer
+  {
+    auto const issuerJson = jsonResponse[IssuerPropertyName];
+    JsonOptional::SetIfExists(operation.IssuerName, issuerJson, IssuerNamePropertyName);
+    JsonOptional::SetIfExists(
+        operation.CertificateTransparency, issuerJson, CertTransparencyPropertyName);
+    JsonOptional::SetIfExists(operation.CertificateType, issuerJson, CtyPropertyName);
+  }
+
+  operation.Csr = Base64Url::Base64UrlDecode(jsonResponse[CsrPropertyName].get<std::string>());
+  JsonOptional::SetIfExists(
+      operation.CancellationRequested, jsonResponse, CancelationRequestedPropertyName);
+  JsonOptional::SetIfExists(operation.Status, jsonResponse, StatusPropertyName);
+  JsonOptional::SetIfExists(operation.StatusDetails, jsonResponse, StatusDetailsPropertyName);
+  JsonOptional::SetIfExists(operation.Target, jsonResponse, TargetPropertyName);
+  JsonOptional::SetIfExists(operation.RequestId, jsonResponse, RequestIdPropertyName);
+
+  return operation;
+}
