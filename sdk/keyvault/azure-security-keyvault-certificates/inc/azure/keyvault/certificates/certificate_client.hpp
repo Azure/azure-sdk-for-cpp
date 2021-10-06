@@ -33,6 +33,8 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
       final
 #endif
   {
+    friend class CreateCertificateOperation;
+
   protected:
     // Using a shared pipeline for a client to share it with LRO (like delete key)
     Azure::Core::Url m_vaultUrl;
@@ -176,6 +178,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
         std::string const& name,
         Azure::Core::Context const& context = Azure::Core::Context()) const;
 
+  private:
     /**
      * @brief Gets the creation operation of a certificate.
      *
@@ -191,7 +194,6 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
         std::string const& name,
         Azure::Core::Context const& context = Azure::Core::Context()) const;
 
-  private:
     std::unique_ptr<Azure::Core::Http::RawResponse> SendRequest(
         Azure::Core::Http::Request& request,
         Azure::Core::Context const& context) const;

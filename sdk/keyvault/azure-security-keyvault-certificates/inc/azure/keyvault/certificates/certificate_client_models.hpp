@@ -971,7 +971,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
   };
 
   /**
-   * @brief A certificate operation is returned in case of asynchronous requests.
+   * @brief A certificate operation.
    *
    */
   struct CertificateOperationProperties
