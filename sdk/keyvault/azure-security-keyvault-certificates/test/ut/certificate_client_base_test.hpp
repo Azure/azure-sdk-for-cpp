@@ -83,10 +83,7 @@ namespace Azure {
     Azure::Security::KeyVault::Certificates::CertificateClient const& GetClientForTest(
         std::string const& testName)
     {
-      // Uncomment one of the lines below to control test mode.
-      //_putenv_s("AZURE_TEST_MODE", "LIVE");
-      //_putenv_s("AZURE_TEST_MODE", "PLAYBACK");
-      //_putenv_s("AZURE_TEST_MODE", "RECORD");
+      // used to test/dev purposes _putenv_s("AZURE_TEST_MODE", "PLAYBACK");
       InitializeClient();
       // set the interceptor for the current test
       m_testContext.RenameTest(testName);
