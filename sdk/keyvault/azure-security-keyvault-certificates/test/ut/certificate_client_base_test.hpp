@@ -179,6 +179,43 @@ namespace Azure {
       EXPECT_EQ(adminLocal.LastName.Value(), adminRemote.LastName.Value());
       EXPECT_EQ(adminLocal.PhoneNumber.Value(), adminRemote.PhoneNumber.Value());
     }
+
+    static inline void CheckContactsCollections(
+        std::vector<CertificateContact> contacts,
+        std::vector<CertificateContact> results)
+    {
+      EXPECT_EQ(results.size(), contacts.size());
+
+      for (auto c2 : results)
+      {
+        bool found = false;
+        for (auto c1 : contacts)
+        {
+          if (c1.EmailAddress == c2.EmailAddress && c1.Name.HasValue() == c2.Name.HasValue()
+              && c1.Phone.HasValue() == c2.Phone.HasValue())
+          {
+            found = true;
+            break;
+          }
+        }
+        EXPECT_TRUE(found);
+      }
+
+      for (auto c1 : contacts)
+      {
+        bool found = false;
+        for (auto c2 : results)
+        {
+          if (c1.EmailAddress == c2.EmailAddress && c1.Name.HasValue() == c2.Name.HasValue()
+              && c1.Phone.HasValue() == c2.Phone.HasValue())
+          {
+            found = true;
+            break;
+          }
+        }
+        EXPECT_TRUE(found);
+      }
+    }
   };
 
 }}}}} // namespace Azure::Security::KeyVault::Certificates::Test

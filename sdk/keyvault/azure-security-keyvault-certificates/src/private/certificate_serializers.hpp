@@ -109,4 +109,13 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
 
       static std::string Serialize(CertificateIssuer const& issuer);
     };
+
+    class CertificateContactsSerializer final {
+      CertificateContactsSerializer() = delete;
+
+    public:
+      static std::string Serialize(std::vector<CertificateContact> const& constacts);
+      static std::vector<CertificateContact> Deserialize(
+          Azure::Core::Http::RawResponse const& rawResponse);
+    };
 }}}}} // namespace Azure::Security::KeyVault::Certificates::_detail
