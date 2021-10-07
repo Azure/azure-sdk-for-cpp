@@ -90,6 +90,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
       static void Deserialize(
           CertificatePolicy& policy,
           Azure::Core::Json::_internal::json fragment);
+      static CertificatePolicy Deserialize(Azure::Core::Http::RawResponse const& rawResponse);
     };
 
     class CertificateCreateParametersSerializer final {

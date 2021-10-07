@@ -393,3 +393,161 @@ TEST_F(KeyVaultCertificateClientTest, GetContactsDuplicateEmail)
 
   CheckContactsCollections(contacts, response2.Value);
 }
+
+TEST_F(KeyVaultCertificateClientTest, GetCertificatePolicy)
+{
+  // cspell: disable-next-line
+  std::string const certificateName("certPolicy");
+
+  auto const& client
+      = GetClientForTest(::testing::UnitTest::GetInstance()->current_test_info()->name());
+
+  auto params = CertificateCreateParameters();
+  params.Policy.Subject = "CN=xyz";
+  params.Policy.ValidityInMonths = 12;
+  params.Policy.Enabled = true;
+
+  params.Properties.Enabled = true;
+  params.Properties.Name = certificateName;
+  params.Policy.ContentType = CertificateContentType::Pkcs12;
+  params.Policy.IssuerName = "Self";
+
+  LifetimeAction action;
+  action.LifetimePercentage = 80;
+  action.Action = CertificatePolicyAction::AutoRenew;
+  params.Policy.LifetimeActions.emplace_back(action);
+
+  {
+    auto response = client.StartCreateCertificate(certificateName, params);
+    response.PollUntilDone(m_defaultWait);
+  }
+
+  {
+    auto response = client.GetCertificatePolicy(certificateName);
+    auto const& policy = response.Value;
+
+    // Key props
+    EXPECT_TRUE(policy.Exportable.HasValue());
+    EXPECT_TRUE(policy.KeyType.HasValue());
+    EXPECT_TRUE(policy.ReuseKey.HasValue());
+    // Recording uses RSA with no curve-name. Use RSA key when running LIVE
+    EXPECT_FALSE(policy.KeyCurveName.HasValue());
+    EXPECT_TRUE(policy.KeySize.HasValue());
+    // enabled
+    EXPECT_TRUE(policy.Enabled.HasValue());
+    EXPECT_TRUE(policy.Enabled.Value());
+    // validity
+    EXPECT_TRUE(policy.ValidityInMonths.HasValue());
+    EXPECT_EQ(policy.ValidityInMonths.Value(), (int32_t)12);
+    // Secret props
+    EXPECT_TRUE(policy.ContentType.HasValue());
+    EXPECT_EQ(policy.ContentType.Value(), CertificateContentType::Pkcs12);
+    // x509_props
+    EXPECT_TRUE(policy.Subject.size() > 0);
+    EXPECT_EQ(policy.Subject, "CN=xyz");
+    // issuer
+    EXPECT_TRUE(policy.IssuerName.HasValue());
+    EXPECT_EQ(policy.IssuerName.Value(), "Self");
+    // attributes
+    EXPECT_TRUE(policy.CreatedOn.HasValue());
+    // lifetime_actions
+    EXPECT_TRUE(policy.LifetimeActions.size() > 0);
+    EXPECT_NE(policy.LifetimeActions[0].Action.ToString(), "");
+  }
+}
+
+TEST_F(KeyVaultCertificateClientTest, UpdateCertificatePolicy)
+{
+  // cspell: disable-next-line
+  std::string const certificateName("updateCertPolicy");
+
+  auto const& client
+      = GetClientForTest(::testing::UnitTest::GetInstance()->current_test_info()->name());
+
+  auto params = CertificateCreateParameters();
+  params.Policy.Subject = "CN=xyz";
+  params.Policy.ValidityInMonths = 12;
+  params.Policy.Enabled = true;
+
+  params.Properties.Enabled = true;
+  params.Properties.Name = certificateName;
+  params.Policy.ContentType = CertificateContentType::Pkcs12;
+  params.Policy.IssuerName = "Self";
+
+  LifetimeAction action;
+  action.LifetimePercentage = 80;
+  action.Action = CertificatePolicyAction::AutoRenew;
+  params.Policy.LifetimeActions.emplace_back(action);
+
+  {
+    auto response = client.StartCreateCertificate(certificateName, params);
+    response.PollUntilDone(m_defaultWait);
+  }
+
+  {
+    auto response = client.GetCertificatePolicy(certificateName);
+    auto policy = response.Value;
+
+    // Key props
+    EXPECT_TRUE(policy.Exportable.HasValue());
+    EXPECT_TRUE(policy.KeyType.HasValue());
+    EXPECT_TRUE(policy.ReuseKey.HasValue());
+    // Recording uses RSA with no curve-name. Use RSA key when running LIVE
+    EXPECT_FALSE(policy.KeyCurveName.HasValue());
+    EXPECT_TRUE(policy.KeySize.HasValue());
+    // enabled
+    EXPECT_TRUE(policy.Enabled.HasValue());
+    EXPECT_TRUE(policy.Enabled.Value());
+    // validity
+    EXPECT_TRUE(policy.ValidityInMonths.HasValue());
+    EXPECT_EQ(policy.ValidityInMonths.Value(), (int32_t)12);
+    // Secret props
+    EXPECT_TRUE(policy.ContentType.HasValue());
+    EXPECT_EQ(policy.ContentType.Value(), CertificateContentType::Pkcs12);
+    // x509_props
+    EXPECT_TRUE(policy.Subject.size() > 0);
+    EXPECT_EQ(policy.Subject, "CN=xyz");
+    // issuer
+    EXPECT_TRUE(policy.IssuerName.HasValue());
+    EXPECT_EQ(policy.IssuerName.Value(), "Self");
+    // attributes
+    EXPECT_TRUE(policy.CreatedOn.HasValue());
+    // lifetime_actions
+    EXPECT_TRUE(policy.LifetimeActions.size() > 0);
+    EXPECT_NE(policy.LifetimeActions[0].Action.ToString(), "");
+
+    policy.ValidityInMonths = 8;
+    policy.Subject = "CN=twa";
+
+    auto updateResponse = client.UpdateCertificatePolicy(certificateName, policy);
+    auto const& updatedPolicy = updateResponse.Value;
+
+    // Key props
+    EXPECT_TRUE(updatedPolicy.Exportable.HasValue());
+    EXPECT_TRUE(updatedPolicy.KeyType.HasValue());
+    EXPECT_TRUE(updatedPolicy.ReuseKey.HasValue());
+    // Recording uses RSA with no curve-name. Use RSA key when running LIVE
+    EXPECT_FALSE(updatedPolicy.KeyCurveName.HasValue());
+    EXPECT_TRUE(updatedPolicy.KeySize.HasValue());
+    // enabled
+    EXPECT_TRUE(updatedPolicy.Enabled.HasValue());
+    EXPECT_TRUE(updatedPolicy.Enabled.Value());
+    // validity
+    EXPECT_TRUE(updatedPolicy.ValidityInMonths.HasValue());
+    EXPECT_EQ(updatedPolicy.ValidityInMonths.Value(), (int32_t)8);
+    // Secret props
+    EXPECT_TRUE(updatedPolicy.ContentType.HasValue());
+    EXPECT_EQ(updatedPolicy.ContentType.Value(), CertificateContentType::Pkcs12);
+    // x509_props
+    EXPECT_TRUE(updatedPolicy.Subject.size() > 0);
+    EXPECT_EQ(updatedPolicy.Subject, "CN=twa");
+    // issuer
+    EXPECT_TRUE(updatedPolicy.IssuerName.HasValue());
+    EXPECT_EQ(updatedPolicy.IssuerName.Value(), "Self");
+    // attributes
+    EXPECT_TRUE(updatedPolicy.CreatedOn.HasValue());
+    // lifetime_actions
+    EXPECT_TRUE(updatedPolicy.LifetimeActions.size() > 0);
+    EXPECT_NE(updatedPolicy.LifetimeActions[0].Action.ToString(), "");
+  }
+}
