@@ -29,6 +29,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
   private:
     std::shared_ptr<CertificateClient> m_certificateClient;
     KeyVaultCertificate m_value;
+
     std::string m_continuationToken;
 
     Azure::Response<KeyVaultCertificate> PollUntilDoneInternal(
@@ -45,7 +46,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
      */
     CreateCertificateOperation(
         std::shared_ptr<CertificateClient> certificateClient,
-        Azure::Response<KeyVaultCertificate> response);
+        Azure::Response<CertificateOperationProperties> response);
 
     CreateCertificateOperation(
         std::string resumeToken,
@@ -68,6 +69,12 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
      * @return A certificate object.
      */
     KeyVaultCertificate Value() const override { return m_value; }
+
+    /**
+     * @brief Get the properties of the pending certificate operation.
+     *
+     */
+    CertificateOperationProperties Properties;
 
     /**
      * @brief Get an Url as string which can be used to get the status of the

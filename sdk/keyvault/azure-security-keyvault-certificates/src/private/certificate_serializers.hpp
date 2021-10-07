@@ -69,8 +69,10 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
       }
     };
 
-    struct CertificatePropertiesSerializer final
-    {
+    class CertificatePropertiesSerializer final {
+      CertificatePropertiesSerializer() = delete;
+
+    public:
       static std::string Serialize(CertificateProperties const& properties);
       static Azure::Core::Json::_internal::json JsonSerialize(
           CertificateProperties const& properties);
@@ -79,8 +81,10 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
           Azure::Core::Json::_internal::json fragment);
     };
 
-    struct CertificatePolicySerializer final
-    {
+    class CertificatePolicySerializer final {
+      CertificatePolicySerializer() = delete;
+
+    public:
       static std::string Serialize(CertificatePolicy const& policy);
       static Azure::Core::Json::_internal::json JsonSerialize(CertificatePolicy const& policy);
       static void Deserialize(
@@ -88,8 +92,79 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
           Azure::Core::Json::_internal::json fragment);
     };
 
-    struct CertificateCreateParametersSerializer final
-    {
+    class CertificateCreateParametersSerializer final {
+      CertificateCreateParametersSerializer() = delete;
+
+    public:
       static std::string Serialize(CertificateCreateParameters const& parameters);
+    };
+
+    class CertificateIssuerSerializer final {
+      CertificateIssuerSerializer() = delete;
+
+    public:
+      static CertificateIssuer Deserialize(
+          std::string const& name,
+          Azure::Core::Http::RawResponse const& rawResponse);
+
+      static std::string Serialize(CertificateIssuer const& issuer);
+    };
+
+    class CertificateContactsSerializer final {
+      CertificateContactsSerializer() = delete;
+
+    public:
+      static std::string Serialize(std::vector<CertificateContact> const& constacts);
+      static std::vector<CertificateContact> Deserialize(
+          Azure::Core::Http::RawResponse const& rawResponse);
+    };
+
+    class CertificateOperationSerializer final {
+      CertificateOperationSerializer() = delete;
+
+    public:
+      static CertificateOperationProperties Deserialize(
+          Azure::Core::Http::RawResponse const& rawResponse);
+
+      static std::string GetUrlAuthorityWithScheme(Azure::Core::Url const& url)
+      {
+        std::string urlString;
+        if (!url.GetScheme().empty())
+        {
+          urlString += url.GetScheme() + "://";
+        }
+        urlString += url.GetHost();
+        if (url.GetPort() != 0)
+        {
+          urlString += ":" + std::to_string(url.GetPort());
+        }
+        return urlString;
+      }
+
+      void static inline ParseKeyUrl(
+          CertificateOperationProperties& certificateProperties,
+          std::string const& url)
+      {
+        Azure::Core::Url kid(url);
+        certificateProperties.Id = url;
+        certificateProperties.VaultUrl = GetUrlAuthorityWithScheme(kid);
+        auto const& path = kid.GetPath();
+        // path in format certificates/{name}/pending
+        auto const separatorChar = '/';
+        auto pathEnd = path.end();
+        auto start = path.begin();
+        start = std::find(start, pathEnd, separatorChar);
+        start += 1;
+        auto separator = std::find(start, pathEnd, separatorChar);
+        if (separator != pathEnd)
+        {
+          certificateProperties.Name = std::string(start, separator);
+        }
+        else
+        {
+          // Nothing but the name+
+          certificateProperties.Name = std::string(start, pathEnd);
+        }
+      }
     };
 }}}}} // namespace Azure::Security::KeyVault::Certificates::_detail

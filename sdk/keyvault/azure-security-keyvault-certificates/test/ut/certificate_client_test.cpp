@@ -15,10 +15,14 @@ using namespace Azure::Security::KeyVault::Certificates::Test;
 
 using namespace std::chrono_literals;
 
+// NOTE:
+// Disabling test as the createCertificate operation is currently broken. See:
+// https://github.com/Azure/azure-sdk-for-cpp/issues/2938
+
 TEST_F(KeyVaultCertificateClientTest, CreateCertificate)
 {
   // cspell: disable-next-line
-  std::string const certificateName("vivazqu");
+  std::string const certificateName("magiqStuff");
 
   auto const& client
       = GetClientForTest(::testing::UnitTest::GetInstance()->current_test_info()->name());
@@ -29,7 +33,7 @@ TEST_F(KeyVaultCertificateClientTest, CreateCertificate)
   params.Policy.Enabled = true;
 
   params.Properties.Enabled = true;
-  params.Properties.Name = "magiqStuff2";
+  params.Properties.Name = certificateName;
   params.Policy.ContentType = CertificateContentType::Pkcs12;
   params.Policy.IssuerName = "Self";
 
@@ -38,7 +42,7 @@ TEST_F(KeyVaultCertificateClientTest, CreateCertificate)
   action.Action = CertificatePolicyAction::AutoRenew;
   params.Policy.LifetimeActions.emplace_back(action);
 
-  auto response = client.StartCreateCertificate("magiqStuff2", params);
+  auto response = client.StartCreateCertificate(certificateName, params);
   auto result = response.PollUntilDone(m_defaultWait);
 
   EXPECT_EQ(result.Value.Name(), params.Properties.Name);
@@ -188,4 +192,204 @@ TEST_F(KeyVaultCertificateClientTest, GetCertificateVersion)
     EXPECT_NE(cert.SecretId, "");
     EXPECT_NE(cert.Cer.size(), 0);
   }
+}
+
+TEST_F(KeyVaultCertificateClientTest, CreateGetIssuer)
+{
+  auto const& client
+      = GetClientForTest(::testing::UnitTest::GetInstance()->current_test_info()->name());
+
+  CertificateIssuer issuer;
+  issuer.Name = "issuer01";
+  issuer.Provider = "Test";
+  issuer.Properties.Enabled = true;
+  issuer.Credentials.AccountId = "keyvaultuser";
+  issuer.Credentials.Password = "password";
+
+  AdministratorDetails admin;
+  admin.FirstName = "John";
+  admin.LastName = "Doe";
+  admin.EmailAddress = "admin@microsoft.com";
+  admin.PhoneNumber = "4255555555";
+
+  issuer.Organization.AdminDetails.emplace_back(admin);
+
+  {
+    auto result = client.CreateIssuer(issuer);
+    CheckIssuers(result.Value, issuer);
+  }
+
+  {
+    auto result = client.GetIssuer(issuer.Name);
+    CheckIssuers(result.Value, issuer);
+  }
+
+  {
+    auto result = client.DeleteIssuer(issuer.Name);
+    CheckIssuers(result.Value, issuer);
+  }
+}
+
+TEST_F(KeyVaultCertificateClientTest, UpdateIssuer)
+{
+  auto const& client
+      = GetClientForTest(::testing::UnitTest::GetInstance()->current_test_info()->name());
+
+  CertificateIssuer issuer;
+  issuer.Name = "issuer01";
+  issuer.Provider = "Test";
+  issuer.Properties.Enabled = true;
+  issuer.Credentials.AccountId = "keyvaultuser";
+  issuer.Credentials.Password = "password";
+
+  AdministratorDetails admin;
+  admin.FirstName = "John";
+  admin.LastName = "Doe";
+  admin.EmailAddress = "admin@microsoft.com";
+  admin.PhoneNumber = "4255555555";
+
+  issuer.Organization.AdminDetails.emplace_back(admin);
+
+  {
+    auto result = client.CreateIssuer(issuer);
+    CheckIssuers(result.Value, issuer);
+  }
+
+  {
+    issuer.Credentials.Password = "password2";
+    auto result = client.UpdateIssuer(issuer);
+    CheckIssuers(result.Value, issuer);
+  }
+
+  {
+    auto result = client.DeleteIssuer(issuer.Name);
+    CheckIssuers(result.Value, issuer);
+  }
+}
+
+TEST_F(KeyVaultCertificateClientTest, SetContacts)
+{
+  auto const& client
+      = GetClientForTest(::testing::UnitTest::GetInstance()->current_test_info()->name());
+
+  std::vector<CertificateContact> contacts;
+
+  CertificateContact ctt;
+
+  ctt.EmailAddress = "one@two.org";
+  ctt.Name = "giqu"; // cspell:disable-line
+  ctt.Phone = "1234567890";
+  contacts.emplace_back(ctt);
+
+  CertificateContact ctt2;
+
+  ctt2.EmailAddress = "two@three.org";
+  ctt2.Name = "giqu2"; // cspell:disable-line
+  ctt2.Phone = "1234567891";
+  contacts.emplace_back(ctt2);
+
+  auto response = client.SetContacts(contacts);
+
+  CheckContactsCollections(contacts, response.Value);
+
+  auto response2 = client.DeleteContacts();
+
+  CheckContactsCollections(contacts, response2.Value);
+}
+
+TEST_F(KeyVaultCertificateClientTest, GetContacts)
+{
+  auto const& client
+      = GetClientForTest(::testing::UnitTest::GetInstance()->current_test_info()->name());
+
+  std::vector<CertificateContact> contacts;
+
+  CertificateContact ctt;
+
+  ctt.EmailAddress = "one@two.org";
+  ctt.Name = "giqu"; // cspell:disable-line
+  ctt.Phone = "1234567890";
+  contacts.emplace_back(ctt);
+
+  CertificateContact ctt2;
+
+  ctt2.EmailAddress = "two@three.org";
+  ctt2.Name = "giqu2"; // cspell:disable-line
+  ctt2.Phone = "1234567891";
+  contacts.emplace_back(ctt2);
+
+  client.SetContacts(contacts);
+  auto response = client.GetContacts();
+
+  CheckContactsCollections(contacts, response.Value);
+
+  auto response2 = client.DeleteContacts();
+
+  CheckContactsCollections(contacts, response2.Value);
+}
+
+TEST_F(KeyVaultCertificateClientTest, GetContactsPartial)
+{
+  auto const& client
+      = GetClientForTest(::testing::UnitTest::GetInstance()->current_test_info()->name());
+
+  std::vector<CertificateContact> contacts;
+
+  CertificateContact ctt;
+
+  ctt.EmailAddress = "one1@two.org";
+  contacts.emplace_back(ctt);
+
+  CertificateContact ctt2, ctt3;
+
+  ctt2.EmailAddress = "two2@three.org";
+  ctt2.Name = "giqu2"; // cspell:disable-line
+  contacts.emplace_back(ctt2);
+
+  ctt3.EmailAddress = "two3@three.org";
+  ctt3.Phone = "1234567891";
+
+  contacts.emplace_back(ctt3);
+
+  client.SetContacts(contacts);
+  auto response = client.GetContacts();
+
+  CheckContactsCollections(contacts, response.Value);
+
+  auto response2 = client.DeleteContacts();
+
+  CheckContactsCollections(contacts, response2.Value);
+}
+
+TEST_F(KeyVaultCertificateClientTest, GetContactsDuplicateEmail)
+{
+  auto const& client
+      = GetClientForTest(::testing::UnitTest::GetInstance()->current_test_info()->name());
+
+  std::vector<CertificateContact> contacts;
+
+  CertificateContact ctt;
+
+  ctt.EmailAddress = "one1@two.org";
+  contacts.emplace_back(ctt);
+
+  CertificateContact ctt2, ctt3;
+
+  ctt2.EmailAddress = "two@three.org";
+  ctt2.Name = "giqu2"; // cspell:disable-line
+  contacts.emplace_back(ctt2);
+
+  ctt3.EmailAddress = "two@three.org";
+  ctt3.Phone = "1234567891";
+
+  contacts.emplace_back(ctt3);
+
+  client.SetContacts(contacts);
+  auto response = client.GetContacts();
+
+  CheckContactsCollections(contacts, response.Value);
+
+  auto response2 = client.DeleteContacts();
+
+  CheckContactsCollections(contacts, response2.Value);
 }

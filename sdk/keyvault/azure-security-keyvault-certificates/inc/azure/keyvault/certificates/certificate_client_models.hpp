@@ -832,4 +832,248 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
      */
     std::unordered_map<std::string, std::string> Tags;
   };
+
+  /**
+   * @brief Issuer Credentials
+   *
+   */
+  struct IssuerCredentials final
+  {
+    /**
+     * @brief Account ID.
+     *
+     */
+    Azure::Nullable<std::string> AccountId;
+
+    /**
+     * @brief Password.
+     *
+     */
+    Azure::Nullable<std::string> Password;
+  };
+
+  /**
+   * @brief Administrator details
+   *
+   */
+  struct AdministratorDetails final
+  {
+    /**
+     * @brief Administrator first name.
+     *
+     */
+    Azure::Nullable<std::string> FirstName;
+
+    /**
+     * @brief Administrator last name.
+     *
+     */
+    Azure::Nullable<std::string> LastName;
+
+    /**
+     * @brief Administrator email address.
+     *
+     */
+    Azure::Nullable<std::string> EmailAddress;
+
+    /**
+     * @brief Administrator phone number.
+     *
+     */
+    Azure::Nullable<std::string> PhoneNumber;
+  };
+
+  /**
+   * @brief Certificate Issuer Properties.
+   *
+   */
+  struct IssuerProperties final
+  {
+    /**
+     * @brief Issuer enabled.
+     *
+     */
+    Azure::Nullable<bool> Enabled;
+
+    /**
+     * @brief Issuer creation date.
+     *
+     */
+    Azure::Nullable<DateTime> Created;
+
+    /**
+     * @brief Issuer last update date.
+     *
+     */
+    Azure::Nullable<DateTime> Updated;
+  };
+
+  /**
+   * @brief Organization details.
+   *
+   */
+  struct OrganizationDetails final
+  {
+    /**
+     * @brief Organization id
+     *
+     */
+    Azure::Nullable<std::string> Id;
+
+    /**
+     * @brief Organization Administators collection.
+     *
+     */
+    std::vector<AdministratorDetails> AdminDetails;
+  };
+
+  /**
+   * @brief Certificate issuer.
+   *
+   */
+  struct CertificateIssuer final
+  {
+    /**
+     * @brief Certificate issuer name.
+     *
+     */
+    std::string Name;
+
+    /**
+     * @brief  Certificate issuer id.
+     *
+     */
+    Azure::Nullable<std::string> Id;
+
+    /**
+     * @brief Certificate issuer provider.
+     *
+     */
+    Azure::Nullable<std::string> Provider;
+
+    /**
+     * @brief Certificate issuer credentials.
+     *
+     */
+    IssuerCredentials Credentials;
+
+    /**
+     * @brief Certificate issuer organization.
+     *
+     */
+    OrganizationDetails Organization;
+
+    /**
+     * @brief Certificate issuer properties.
+     *
+     */
+    IssuerProperties Properties;
+  };
+
+  /**
+   * @brief The contact information for the vault certificates.
+   *
+   */
+  struct CertificateContact
+  {
+    /**
+     * @brief Contact e-mail address.
+     *
+     */
+    std::string EmailAddress;
+
+    /**
+     * @brief Contact name.
+     *
+     */
+    Azure::Nullable<std::string> Name;
+
+    /**
+     * @brief Contact phone number.
+     *
+     */
+    Azure::Nullable<std::string> Phone;
+  };
+  /**
+   * @brief A certificate operation.
+   *
+   */
+  struct CertificateOperationProperties
+  {
+    /**
+     * @brief The certificate id.
+     *
+     */
+    std::string Id;
+
+    /**
+     * @brief The certificate name.
+     *
+     */
+    std::string Name;
+
+    /**
+     * @brief The vault URI.
+     *
+     */
+    std::string VaultUrl;
+
+    /**
+     * @brief The certificate signing request (CSR) that is being used in the certificate operation.
+     *
+     */
+    std::vector<uint8_t> Csr;
+
+    /**
+     * @brief Indicates if cancellation was requested on the certificate operation.
+     *
+     */
+    Azure::Nullable<bool> CancellationRequested;
+
+    /**
+     * @brief Status of the certificate operation.
+     *
+     */
+    Azure::Nullable<std::string> Status;
+
+    /**
+     * @brief The status details of the certificate operation.
+     *
+     */
+    Azure::Nullable<std::string> StatusDetails;
+
+    /**
+     * @brief Location which contains the result of the certificate operation.
+     *
+     */
+    Azure::Nullable<std::string> Target;
+
+    /**
+     * @brief Identifier for the certificate operation.
+     *
+     */
+    Azure::Nullable<std::string> RequestId;
+
+    /**
+     * @brief Name of the referenced issuer object or reserved names; for example, 'Self' or
+     * 'Unknown'.
+     *
+     */
+    Azure::Nullable<std::string> IssuerName;
+
+    /**
+     * @brief Certificate type as supported by the provider (optional); for example 'OV-SSL',
+     * 'EV-SSL'
+     *
+     */
+    Azure::Nullable<std::string> CertificateType;
+
+    /**
+     * @brief Indicates if the certificates generated under this policy should be published to
+     * certificate transparency logs.
+     *
+     */
+    Azure::Nullable<bool> CertificateTransparency;
+  };
+
 }}}} // namespace Azure::Security::KeyVault::Certificates
