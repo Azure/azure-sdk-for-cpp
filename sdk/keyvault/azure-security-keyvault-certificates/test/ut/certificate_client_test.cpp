@@ -438,7 +438,7 @@ TEST_F(KeyVaultCertificateClientTest, GetCertificatePolicy)
     EXPECT_TRUE(policy.Enabled.Value());
     // validity
     EXPECT_TRUE(policy.ValidityInMonths.HasValue());
-    EXPECT_EQ(policy.ValidityInMonths.Value(), (int32_t)12);
+    EXPECT_EQ(policy.ValidityInMonths.Value(), 12);
     // Secret props
     EXPECT_TRUE(policy.ContentType.HasValue());
     EXPECT_EQ(policy.ContentType.Value(), CertificateContentType::Pkcs12);
@@ -500,7 +500,7 @@ TEST_F(KeyVaultCertificateClientTest, UpdateCertificatePolicy)
     EXPECT_TRUE(policy.Enabled.Value());
     // validity
     EXPECT_TRUE(policy.ValidityInMonths.HasValue());
-    EXPECT_EQ(policy.ValidityInMonths.Value(), (int32_t)12);
+    EXPECT_EQ(policy.ValidityInMonths.Value(), 12);
     // Secret props
     EXPECT_TRUE(policy.ContentType.HasValue());
     EXPECT_EQ(policy.ContentType.Value(), CertificateContentType::Pkcs12);
@@ -534,7 +534,7 @@ TEST_F(KeyVaultCertificateClientTest, UpdateCertificatePolicy)
     EXPECT_TRUE(updatedPolicy.Enabled.Value());
     // validity
     EXPECT_TRUE(updatedPolicy.ValidityInMonths.HasValue());
-    EXPECT_EQ(updatedPolicy.ValidityInMonths.Value(), (int32_t)8);
+    EXPECT_EQ(updatedPolicy.ValidityInMonths.Value(), 8);
     // Secret props
     EXPECT_TRUE(updatedPolicy.ContentType.HasValue());
     EXPECT_EQ(updatedPolicy.ContentType.Value(), CertificateContentType::Pkcs12);
