@@ -431,7 +431,7 @@ TEST_F(KeyVaultCertificateClientTest, BackupCertificate)
 
 TEST_F(KeyVaultCertificateClientTest, RestoreCertificate)
 {
-  // cspell: disable-next-line
+  // cspell: disable
   std::string const rawcertificate(
       "&AzureKeyVaultKeyBackupV1.microsoft."
       "comeyJraWQiOiIyYWZmNmFhMS03NmJkLTQ0YTctYTczNC02ZjVhZDBiNWE4OTgiLCJhbGciOiJSU0EtT0FFUC0yNTYiL"
@@ -905,25 +905,11 @@ TEST_F(KeyVaultCertificateClientTest, RestoreCertificate)
       "gAgvor4fN7PdWOlph1U9IZasYYeDS8Xu-JLET01sjvJCBMAAZUrU5I8NPt-"
       "InqpfuwzmuSBhxsxGLA9smjbpP80dcHXfcmbIwBYMGOOGmZHJS3.3XWe3Lv6LTKplJagfNaxe1-"
       "YXTnQygbniM24tVUgZEw");
+  // cspell: enable
   std::string const certificateName("certBackup");
   auto const& client
       = GetClientForTest(::testing::UnitTest::GetInstance()->current_test_info()->name());
 
-  /* auto params = CertificateCreateParameters();
-  params.Policy.Subject = "CN=xyz";
-  params.Policy.ValidityInMonths = 12;
-  params.Policy.Enabled = true;
-
-  params.Properties.Enabled = true;
-  params.Properties.Name = certificateName;
-  params.Policy.ContentType = CertificateContentType::Pkcs12;
-  params.Policy.IssuerName = "Self";
-
-  LifetimeAction action;
-  action.LifetimePercentage = 80;
-  action.Action = CertificatePolicyAction::AutoRenew;
-  params.Policy.LifetimeActions.emplace_back(action);
-  */
   BackupCertificateResult certificateBackup;
   certificateBackup.Certificate
       = std::vector<uint8_t>(rawcertificate.begin(), rawcertificate.end());

@@ -1084,7 +1084,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
   struct BackupCertificateResult
   {
     /**
-     * @briefThe backup blob containing the backed up certificate.
+     * @brief The backup blob containing the backed up certificate.
      *
      */
     std::vector<uint8_t> Certificate;
