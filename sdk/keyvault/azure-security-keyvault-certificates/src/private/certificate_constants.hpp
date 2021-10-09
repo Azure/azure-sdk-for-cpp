@@ -20,6 +20,8 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
     constexpr static const char ContactsPath[] = "contacts";
     constexpr static const char ContactsPropertyName[] = "contacts";
     constexpr static const char PendingPath[] = "pending";
+    constexpr static const char BackupPath[] = "backup";
+    constexpr static const char RestorePath[] = "restore";
 
     /***************** Certificates Properties *****************/
     constexpr static const char IdName[] = "id";
@@ -127,4 +129,6 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
     constexpr static const char CancelationRequestedPropertyName[] = "cancellation_requested";
     constexpr static const char CompletedValue[] = "completed";
 
+    /****************** Certificate Backup/Restore Properties **********/
+    constexpr static const char ValuePropertyName[] = "value";
 }}}}} // namespace Azure::Security::KeyVault::Certificates::_detail

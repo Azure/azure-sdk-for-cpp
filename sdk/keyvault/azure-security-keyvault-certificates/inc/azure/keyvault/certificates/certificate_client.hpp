@@ -220,6 +220,37 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
         std::vector<CertificateContact> const& contacts,
         Azure::Core::Context const& context = Azure::Core::Context()) const;
 
+    /**
+     * @brief Backs up the specified certificate.
+     *
+     * @details Request that a backup of the specified certificate be downloaded to the client.
+     * All versions of the certificate will be downloaded.
+     *
+     * @remark This operation requires the certificates/backup permission.
+     *
+     * @param name The name of the certificate.
+     * @param context The context for the operation can be used for request cancellation.
+     * @return Certificate backup.
+     */
+    Azure::Response<BackupCertificateResult> BackupCertificate(
+        std::string name,
+        Azure::Core::Context const& context = Azure::Core::Context()) const;
+
+    /**
+     * @brief Restores a backed up certificate to a vault.
+     *
+     * @details Restore a backed up certificate, and all its versions, to a vault.
+     *
+     * @remark This operation requires the certificates/restore permission.
+     *
+     * @param backup The backup to restore
+     * @param context The context for the operation can be used for request cancellation.
+     * @return The restored certificate.
+     */
+    Azure::Response<KeyVaultCertificateWithPolicy> RestoreCertificateBackup(
+        BackupCertificateResult const& backup,
+        Azure::Core::Context const& context = Azure::Core::Context()) const;
+
   private:
     /**
      * @brief Gets the creation operation of a certificate.

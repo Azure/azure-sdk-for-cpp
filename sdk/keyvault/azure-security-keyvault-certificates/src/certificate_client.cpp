@@ -249,4 +249,29 @@ Azure::Response<CertificateOperationProperties> CertificateClient::GetCertificat
   return Azure::Response<CertificateOperationProperties>(std::move(value), std::move(rawResponse));
 }
 
+Azure::Response<BackupCertificateResult> CertificateClient::BackupCertificate(
+    std::string name,
+    Azure::Core::Context const& context) const
+{
+  auto request = CreateRequest(HttpMethod::Post, {CertificatesPath, name, BackupPath});
+  auto rawResponse = SendRequest(request, context);
+
+  auto value = BackupCertificateSerializer::Deserialize(*rawResponse);
+  return Azure::Response<BackupCertificateResult>(std::move(value), std::move(rawResponse));
+}
+
+Azure::Response<KeyVaultCertificateWithPolicy> CertificateClient::RestoreCertificateBackup(
+    BackupCertificateResult const& backup,
+    Azure::Core::Context const& context) const
+{
+  auto payload = BackupCertificateSerializer::Serialize(backup.Certificate);
+  Azure::Core::IO::MemoryBodyStream payloadStream(
+      reinterpret_cast<const uint8_t*>(payload.data()), payload.size());
+
+  auto request = CreateRequest(HttpMethod::Post, {CertificatesPath, RestorePath}, &payloadStream);
+
+  auto rawResponse = SendRequest(request, context);
+  auto value = KeyVaultCertificateSerializer::KeyVaultCertificateDeserialize("", *rawResponse);
+  return Azure::Response<KeyVaultCertificateWithPolicy>(std::move(value), std::move(rawResponse));
+}
 const ServiceVersion ServiceVersion::V7_2("7.2");

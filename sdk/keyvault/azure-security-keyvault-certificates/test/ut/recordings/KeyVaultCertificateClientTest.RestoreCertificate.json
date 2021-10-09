@@ -1,0 +1,31 @@
+{
+  "networkCallRecords": [
+    {
+      "Headers": {
+        "content-type": "application/json",
+        "user-agent": "azsdk-cpp-keyvault-certificates/4.0.0-beta.1 (Windows 10 Enterprise 6.3 22000 22000.1.amd64fre.co_release.210604-1628)",
+        "x-ms-client-request-id": "990820fb-1da0-4e80-7738-2bc2325909a3"
+      },
+      "Method": "POST",
+      "Response": {
+        "BODY": "{\"id\":\"https://REDACTED.vault.azure.net/certificates/certBackup/f031409a3eed4870bb511f24fe285503\",\"kid\":\"https://REDACTED.vault.azure.net/keys/certBackup/f031409a3eed4870bb511f24fe285503\",\"sid\":\"https://REDACTED.vault.azure.net/secrets/certBackup/f031409a3eed4870bb511f24fe285503\",\"x5t\":\"1WBiZTMRJMvVfaO2IvjW7jLy7sU\",\"cer\":\"MIIDAzCCAeugAwIBAgIQaKw7qGqtSqm/WDx8CGo28zANBgkqhkiG9w0BAQsFADAOMQwwCgYDVQQDEwN4eXowHhcNMjExMDA5MDIzODUwWhcNMjIxMDA5MDI0ODUwWjAOMQwwCgYDVQQDEwN4eXowggEiMA0GCSqGSIb3DQEBAQUAA4IBDwAwggEKAoIBAQCp7eGTAAPithWGo9zLdfa3wytmgFH6KJYWys+2BZp6+VzObWzSAh0tUrKNDEhencZC7GE9bYpzZwlTjbheoL/Zr45bLvNyakGPgVrkh9wnWAAgJYHx1XolsqCz8Ctgdel9xFBeWmXbDw6YhefoKK0j4NjAJwOUw5rTD/eY78hcuygd/WkfoXNsn/9BypYYW3hH6g4h3bNkJ3Sghx7M671Kv137kczKsLJICWyGIbEAIRV+ucrPoSYMyHkRTw/CWoN0aglzdVuNuehumV6NM3Cs2joWaTU66WhToEtYyV+fHN8ZpZVCMLu9Mpn6WTYx5rMnSlSMRm4oAV+Obu+wR/z9AgMBAAGjXTBbMA4GA1UdDwEB/wQEAwIFoDAJBgNVHRMEAjAAMB8GA1UdIwQYMBaAFNLjJGcKvm6S+vNTkqpl+6jgNeTrMB0GA1UdDgQWBBTS4yRnCr5ukvrzU5KqZfuo4DXk6zANBgkqhkiG9w0BAQsFAAOCAQEAInSnuwBAGoCNvtd28ywmNBjle9hhleghuxaqajh2m5ZxAEy0h/awSX27/JXAyghmi9/C7l7FnflStPUxfIQJVeyF/KDVWiV29YyoaI4nL4COjAwTLhcQB83meFcgKWu/bGQVhJnEn3+zNh3FBKAbnS7Yw9RJbtKJJn+Eb9xofkvagg9CdZe/TdzPBvPcB0cdYjAMuKFpNJILzowMpO7Roukuri+2YqNcGPJxi1SVwn+KlpAMd0PbSlkun8fZbT6N8ExxmcFYDT9AzCeudg+CPNjcwpJ8tOOR5CuO/jMEt7bNMDutNJvyJC9eekZDknxWCzr5Jtqbtr7esNIWaatXRQ==\",\"attributes\":{\"enabled\":true,\"nbf\":1633747130,\"exp\":1665283730,\"created\":1633747731,\"updated\":1633747731,\"recoveryLevel\":\"Recoverable+Purgeable\",\"recoverableDays\":90},\"tags\":{},\"policy\":{\"id\":\"https://REDACTED.vault.azure.net/certificates/certBackup/policy\",\"key_props\":{\"exportable\":true,\"kty\":\"RSA\",\"key_size\":2048,\"reuse_key\":false},\"secret_props\":{\"contentType\":\"application/x-pkcs12\"},\"x509_props\":{\"subject\":\"CN=xyz\",\"ekus\":[],\"key_usage\":[\"digitalSignature\",\"keyEncipherment\"],\"validity_months\":12,\"basic_constraints\":{\"ca\":false}},\"lifetime_actions\":[{\"trigger\":{\"lifetime_percentage\":80},\"action\":{\"action_type\":\"AutoRenew\"}}],\"issuer\":{\"name\":\"Self\"},\"attributes\":{\"enabled\":true,\"created\":1633747729,\"updated\":1633747729}}}",
+        "STATUS_CODE": "200",
+        "cache-control": "no-cache",
+        "content-length": "2116",
+        "content-type": "application/json; charset=utf-8",
+        "date": "Sat, 09 Oct 2021 03:04:31 GMT",
+        "expires": "-1",
+        "pragma": "no-cache",
+        "strict-transport-security": "max-age=31536000;includeSubDomains",
+        "x-content-type-options": "nosniff",
+        "x-ms-client-request-id": "990820fb-1da0-4e80-7738-2bc2325909a3",
+        "x-ms-keyvault-network-info": "conn_type=Ipv4;addr=24.22.157.72;act_addr_fam=InterNetwork;",
+        "x-ms-keyvault-region": "westus2",
+        "x-ms-keyvault-service-version": "1.9.132.3",
+        "x-ms-request-id": "426b7b39-2d95-4fcc-a106-468961377f56",
+        "x-powered-by": "ASP.NET"
+      },
+      "Url": "https://REDACTED.vault.azure.net/certificates/restore?api-version=7.2"
+    }
+  ]
+}
