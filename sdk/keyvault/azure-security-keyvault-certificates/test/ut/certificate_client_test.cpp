@@ -341,7 +341,7 @@ TEST_F(KeyVaultCertificateClientTest, DeleteWrongCertificate)
     auto response = client.StartDeleteCertificate(certificateName);
     EXPECT_TRUE(false); // we should not reach this line
   }
-  catch (Azure::Core::RequestFailedException ex)
+  catch (Azure::Core::RequestFailedException const& ex)
   {
     EXPECT_EQ(ex.StatusCode, Azure::Core::Http::HttpStatusCode::NotFound);
     EXPECT_EQ(ex.ErrorCode, "CertificateNotFound");
@@ -352,7 +352,7 @@ TEST_F(KeyVaultCertificateClientTest, DeleteWrongCertificate)
     auto response = client.StartRecoverDeletedCertificate(certificateName);
     EXPECT_TRUE(false); // we should not reach this line
   }
-  catch (Azure::Core::RequestFailedException ex)
+  catch (Azure::Core::RequestFailedException const& ex)
   {
     EXPECT_EQ(ex.StatusCode, Azure::Core::Http::HttpStatusCode::NotFound);
     EXPECT_EQ(ex.ErrorCode, "CertificateNotFound");
