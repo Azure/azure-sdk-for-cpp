@@ -220,6 +220,73 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
         std::vector<CertificateContact> const& contacts,
         Azure::Core::Context const& context = Azure::Core::Context()) const;
 
+    /**
+     * @brief Retrieves information about the specified deleted certificate.
+     *
+     * @details The GetDeletedCertificate operation retrieves the deleted certificate
+     * information plus its attributes, such as retention interval,
+     * scheduled permanent deletion and the current deletion recovery level.
+     *
+     * @remark This operation requires the certificates/get permission.
+     *
+     * @param name The name of the certificate.
+     * @param context The context for the operation can be used for request cancellation.
+     * @return The deleted certificate.
+     */
+    Azure::Response<DeletedCertificate> GetDeletedCertificate(
+        std::string const& name,
+        Azure::Core::Context const& context = Azure::Core::Context()) const;
+
+    /**
+     * @brief Permanently deletes the specified deleted certificate.
+     *
+     * @details The PurgeDeletedCertificate operation performs an irreversible
+     * deletion of the specified certificate, without possibility for recovery.
+     * The operation is not available if the recovery level does not specify 'Purgeable'
+     *
+     * @remark This operation requires the certificate/purge permission.
+     *
+     * @param name The name of the certificate.
+     * @param context The context for the operation can be used for request cancellation.
+     * @return Empty object.
+     */
+    Azure::Response<PurgedCertificate> PurgeDeletedCertificate(
+        std::string const& name,
+        Azure::Core::Context const& context = Azure::Core::Context()) const;
+
+    /**
+     * @brief Deletes a certificate from a specified key vault.
+     *
+     * @details Deletes all versions of a certificate object along with its associated policy.
+     * Delete certificate cannot be used to remove individual versions of a certificate object.
+     *
+     * @remark This operation requires the certificate/delete permission.
+     *
+     * @param name The name of the certificate.
+     * @param context The context for the operation can be used for request cancellation.
+     * @return Delete Certificate operation.
+     */
+    DeleteCertificateOperation StartDeleteCertificate(
+        std::string const& name,
+        Azure::Core::Context const& context = Azure::Core::Context()) const;
+
+    /**
+     * @brief Recovers the deleted certificate back to its current version under /certificates.
+     *
+     * @details The StartRecoverDeletedCertificate operation performs the reversal of the Delete
+     * operation. The operation is applicable in vaults enabled for soft-delete, and must be issued
+     * during the retention interval (available in the deleted certificate's attributes).
+     *
+     * @remark This operation requires the certificate/recover permission.
+     *
+     * @param name The name of the certificate.
+     * @param context The context for the operation can be used for request cancellation.
+     * @return Recover deleted certificate operation.
+     */
+    RecoverDeletedCertificateOperation StartRecoverDeletedCertificate(
+        std::string const& name,
+        Azure::Core::Context const& context = Azure::Core::Context()) const;
+
   private:
     /**
      * @brief Gets the creation operation of a certificate.

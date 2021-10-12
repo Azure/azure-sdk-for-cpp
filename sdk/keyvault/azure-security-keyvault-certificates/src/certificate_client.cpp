@@ -82,8 +82,7 @@ Response<KeyVaultCertificateWithPolicy> CertificateClient::GetCertificate(
 
   // Send and parse respone
   auto rawResponse = SendRequest(request, context);
-  auto value
-      = _detail::KeyVaultCertificateSerializer::KeyVaultCertificateDeserialize(name, *rawResponse);
+  auto value = _detail::KeyVaultCertificateSerializer::Deserialize(name, *rawResponse);
   return Azure::Response<KeyVaultCertificateWithPolicy>(std::move(value), std::move(rawResponse));
 }
 
@@ -103,8 +102,7 @@ Response<KeyVaultCertificate> CertificateClient::GetCertificateVersion(
 
   // Send and parse respone
   auto rawResponse = SendRequest(request, context);
-  auto value
-      = _detail::KeyVaultCertificateSerializer::KeyVaultCertificateDeserialize(name, *rawResponse);
+  auto value = _detail::KeyVaultCertificateSerializer::Deserialize(name, *rawResponse);
   return Azure::Response<KeyVaultCertificate>(std::move(value), std::move(rawResponse));
 }
 
@@ -126,6 +124,18 @@ CreateCertificateOperation CertificateClient::StartCreateCertificate(
       = Azure::Response<CertificateOperationProperties>(std::move(value), std::move(rawResponse));
   return CreateCertificateOperation(
       std::make_shared<CertificateClient>(*this), std::move(responseT));
+}
+
+Response<DeletedCertificate> CertificateClient::GetDeletedCertificate(
+    std::string const& name,
+    Azure::Core::Context const& context) const
+{
+  auto request = CreateRequest(HttpMethod::Get, {DeletedCertificatesPath, name});
+
+  // Send and parse respone
+  auto rawResponse = SendRequest(request, context);
+  auto value = DeletedCertificateSerializer::Deserialize(name, *rawResponse);
+  return Azure::Response<DeletedCertificate>(std::move(value), std::move(rawResponse));
 }
 
 Azure::Response<CertificateIssuer> CertificateClient::GetIssuer(
@@ -232,4 +242,44 @@ Azure::Response<CertificateOperationProperties> CertificateClient::GetCertificat
   return Azure::Response<CertificateOperationProperties>(std::move(value), std::move(rawResponse));
 }
 
+Response<PurgedCertificate> CertificateClient::PurgeDeletedCertificate(
+    std::string const& name,
+    Azure::Core::Context const& context) const
+{
+  auto request = CreateRequest(HttpMethod::Delete, {DeletedCertificatesPath, name});
+
+  // Send and parse respone
+  auto rawResponse = SendRequest(request, context);
+  PurgedCertificate value;
+  return Azure::Response<PurgedCertificate>(std::move(value), std::move(rawResponse));
+}
+
+DeleteCertificateOperation CertificateClient::StartDeleteCertificate(
+    std::string const& name,
+    Azure::Core::Context const& context) const
+{
+  auto request = CreateRequest(HttpMethod::Delete, {CertificatesPath, name});
+
+  auto rawResponse = SendRequest(request, context);
+  auto value = DeletedCertificate();
+  value.Properties.Name = name;
+  auto responseT = Azure::Response<DeletedCertificate>(std::move(value), std::move(rawResponse));
+  return DeleteCertificateOperation(
+      std::make_shared<CertificateClient>(*this), std::move(responseT));
+}
+
+RecoverDeletedCertificateOperation CertificateClient::StartRecoverDeletedCertificate(
+    std::string const& name,
+    Azure::Core::Context const& context) const
+{
+  auto request = CreateRequest(HttpMethod::Post, {DeletedCertificatesPath, name, RecoverPath});
+
+  auto rawResponse = SendRequest(request, context);
+  auto value = KeyVaultCertificateWithPolicy();
+  value.Properties.Name = name;
+  auto responseT
+      = Azure::Response<KeyVaultCertificateWithPolicy>(std::move(value), std::move(rawResponse));
+  return RecoverDeletedCertificateOperation(
+      std::make_shared<CertificateClient>(*this), std::move(responseT));
+}
 const ServiceVersion ServiceVersion::V7_2("7.2");
