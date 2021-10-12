@@ -59,11 +59,20 @@ KeyVaultCertificateWithPolicy _detail::KeyVaultCertificateSerializer::Deserializ
   KeyVaultCertificateWithPolicy certificate(std::move(properties));
 
   // kid
-  certificate.KeyId = jsonResponse[KidPropertyName].get<std::string>();
-  // sid
-  certificate.SecretId = jsonResponse[SidPropertyName].get<std::string>();
+  if (jsonResponse.contains(KidPropertyName))
+  {
+
+    certificate.KeyId = jsonResponse[KidPropertyName].get<std::string>();
+  } // sid
+  if (jsonResponse.contains(SidPropertyName))
+  {
+    certificate.SecretId = jsonResponse[SidPropertyName].get<std::string>();
+  }
   // cer
-  certificate.Cer = Base64Url::Base64UrlDecode(jsonResponse[CerPropertyName].get<std::string>());
+  if (jsonResponse.contains(CerPropertyName))
+  {
+    certificate.Cer = Base64Url::Base64UrlDecode(jsonResponse[CerPropertyName].get<std::string>());
+  }
 
   // policy
   if (jsonResponse.contains(PolicyPropertyName))
@@ -608,7 +617,6 @@ CerticatePropertiesPagedResponse CerticatePropertiesPagedResponseSerializer::Des
 
   JsonOptional::SetIfExists(response.NextPageToken, jsonResponse, NextLinkPropertyName);
 
-  // Key properties
   auto certificatePropertiesJson = jsonResponse[ValuePropertyName];
 
   for (auto const& certificate : certificatePropertiesJson)
@@ -651,7 +659,6 @@ IssuerPropertiesPagedResponse IssuerPropertiesPagedResponseSerializer::Deseriali
 
   JsonOptional::SetIfExists(response.NextPageToken, jsonResponse, NextLinkPropertyName);
 
-  // Key properties
   auto issuersPropertiesJson = jsonResponse[ValuePropertyName];
 
   for (auto const& oneIssuer : issuersPropertiesJson)
@@ -660,6 +667,34 @@ IssuerPropertiesPagedResponse IssuerPropertiesPagedResponseSerializer::Deseriali
     issuer.Id = oneIssuer[IdName].get<std::string>();
     issuer.Provider = oneIssuer[ProviderPropertyValue].get<std::string>();
     response.Items.emplace_back(issuer);
+  }
+
+  return response;
+}
+
+DeletedCertificatesPagedResponse DeletedCertificatesPagedResponseSerializer::Deserialize(
+    Azure::Core::Http::RawResponse const& rawResponse)
+{
+  DeletedCertificatesPagedResponse response;
+  auto const& body = rawResponse.GetBody();
+  auto jsonResponse = json::parse(body);
+  std::string str = jsonResponse.dump();
+
+  JsonOptional::SetIfExists(response.NextPageToken, jsonResponse, NextLinkPropertyName);
+  auto deletedCertificates = jsonResponse[ValuePropertyName];
+
+  for (auto const& oneDeleted : deletedCertificates)
+  {
+    std::string deletedString = oneDeleted.dump();
+    std::vector<uint8_t> vec(deletedString.begin(), deletedString.end());
+
+    Azure::Core::Http::RawResponse fakeResponse(
+        1, 1, Azure::Core::Http::HttpStatusCode::Ok, "Success");
+    fakeResponse.SetBody(vec);
+
+    auto deserializedDeletedCert = DeletedCertificateSerializer::Deserialize("", fakeResponse);
+
+    response.Items.emplace_back(deserializedDeletedCert);
   }
 
   return response;

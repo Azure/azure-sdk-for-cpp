@@ -45,4 +45,13 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
     *this = m_certificateClient->GetPropertiesOfIssuers(options, context);
     CurrentPageToken = options.NextPageToken.Value();
   }
+
+  void DeletedCertificatesPagedResponse::OnNextPage(const Azure::Core::Context& context)
+  {
+    GetDeletedCertificatesOptions options;
+    options.NextPageToken = NextPageToken;
+    *this = m_certificateClient->GetDeletedCertificates(options, context);
+    CurrentPageToken = options.NextPageToken.Value();
+  }
+
 }}}} // namespace Azure::Security::KeyVault::Certificates

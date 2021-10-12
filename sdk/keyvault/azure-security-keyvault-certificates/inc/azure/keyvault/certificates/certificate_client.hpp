@@ -301,6 +301,10 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
         GetPropertiesOfIssuersOptions const& options = GetPropertiesOfIssuersOptions(),
         Azure::Core::Context const& context = Azure::Core::Context()) const;
 
+    DeletedCertificatesPagedResponse GetDeletedCertificates(
+        GetDeletedCertificatesOptions const& options = GetDeletedCertificatesOptions(),
+        Azure::Core::Context const& context = Azure::Core::Context()) const;
+
   private:
     /**
      * @brief Gets the creation operation of a certificate.

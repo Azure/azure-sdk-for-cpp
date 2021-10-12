@@ -1164,6 +1164,14 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
   };
 
   /**
+   * @brief The options for calling an operation #GetDeletedCertificates
+   *
+   */
+  struct GetDeletedCertificatesOptions final
+  {
+    Azure::Nullable<std::string> NextPageToken;
+  };
+  /**
    * @brief represents on item from GetPropertiesOfIssuers
    *
    */
@@ -1281,6 +1289,43 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
      *
      */
     std::vector<CertificateIssuerItem> Items;
+  };
+
+  /**
+   * @brief Define a single page to list the issuers from the Key Vault.
+   *
+   */
+  class DeletedCertificatesPagedResponse final
+      : public Azure::Core::PagedResponse<DeletedCertificatesPagedResponse> {
+  private:
+    friend class CertificateClient;
+    friend class Azure::Core::PagedResponse<DeletedCertificatesPagedResponse>;
+
+    std::shared_ptr<CertificateClient> m_certificateClient;
+    void OnNextPage(const Azure::Core::Context&);
+
+    DeletedCertificatesPagedResponse(
+        DeletedCertificatesPagedResponse&& deletedProperties,
+        std::unique_ptr<Azure::Core::Http::RawResponse> rawResponse,
+        std::shared_ptr<CertificateClient> certificateClient)
+        : PagedResponse(std::move(deletedProperties)), m_certificateClient(certificateClient),
+          Items(std::move(deletedProperties.Items))
+    {
+      RawResponse = std::move(rawResponse);
+    }
+
+  public:
+    /**
+     * @brief Construct a new certificate properties object.
+     *
+     */
+    DeletedCertificatesPagedResponse() = default;
+
+    /**
+     * @brief Each #certificateProperties represent a Key in the Key Vault.
+     *
+     */
+    std::vector<DeletedCertificate> Items;
   };
 
 }}}} // namespace Azure::Security::KeyVault::Certificates

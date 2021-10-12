@@ -198,4 +198,12 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
           Azure::Core::Http::RawResponse const& rawResponse);
     };
 
+    class DeletedCertificatesPagedResponseSerializer final {
+      DeletedCertificatesPagedResponseSerializer() = delete;
+
+    public:
+      static DeletedCertificatesPagedResponse Deserialize(
+          Azure::Core::Http::RawResponse const& rawResponse);
+    };
+
 }}}}} // namespace Azure::Security::KeyVault::Certificates::_detail

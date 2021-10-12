@@ -344,4 +344,18 @@ IssuerPropertiesPagedResponse CertificateClient::GetPropertiesOfIssuers(
       std::move(value), std::move(rawResponse), std::make_unique<CertificateClient>(*this));
 }
 
+DeletedCertificatesPagedResponse CertificateClient::GetDeletedCertificates(
+    GetDeletedCertificatesOptions const& options,
+    Azure::Core::Context const& context) const
+{
+  // Request and settings
+  auto request = ContinuationTokenRequest({DeletedCertificatesPath}, options.NextPageToken);
+
+  // Send and parse respone
+  auto rawResponse = SendRequest(request, context);
+  auto value = DeletedCertificatesPagedResponseSerializer::Deserialize(*rawResponse);
+  return DeletedCertificatesPagedResponse(
+      std::move(value), std::move(rawResponse), std::make_unique<CertificateClient>(*this));
+}
+
 const ServiceVersion ServiceVersion::V7_2("7.2");

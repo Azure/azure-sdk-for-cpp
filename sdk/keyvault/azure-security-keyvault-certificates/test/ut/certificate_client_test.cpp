@@ -586,3 +586,11 @@ TEST_F(KeyVaultCertificateClientTest, GetPropertiesOfIssuers)
 
   auto result = client.GetPropertiesOfIssuers(GetPropertiesOfIssuersOptions());
 }
+
+TEST_F(KeyVaultCertificateClientTest, GetDeletedCertificates)
+{
+  auto const& client
+      = GetClientForTest(::testing::UnitTest::GetInstance()->current_test_info()->name());
+
+  auto result = client.GetDeletedCertificates(GetDeletedCertificatesOptions());
+}
