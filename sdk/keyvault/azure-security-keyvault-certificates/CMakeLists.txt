@@ -40,7 +40,6 @@ set(
     src/certificate_serializers.cpp
     src/keyvault_certificates_common_request.cpp
     src/certificate_client_operations.cpp
-    src/certificate_client_paged_response.cpp
 )
 
 add_library(azure-security-keyvault-certificates
