@@ -230,6 +230,10 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
         = GetPropertiesOfCertificateVersionsOptions(),
         Azure::Core::Context const& context = Azure::Core::Context()) const;
 
+    IssuerPropertiesPagedResponse GetPropertiesOfIssuers(
+        GetPropertiesOfIssuersOptions const& options = GetPropertiesOfIssuersOptions(),
+        Azure::Core::Context const& context = Azure::Core::Context()) const;
+
   private:
     /**
      * @brief Gets the creation operation of a certificate.
@@ -254,5 +258,9 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
         Azure::Core::Http::HttpMethod method,
         std::vector<std::string> const& path = {},
         Azure::Core::IO::BodyStream* content = nullptr) const;
+
+    Azure::Core::Http::Request ContinuationTokenRequest(
+        std::vector<std::string> const& path,
+        const Azure::Nullable<std::string>& NextPageToken) const;
   };
 }}}} // namespace Azure::Security::KeyVault::Certificates

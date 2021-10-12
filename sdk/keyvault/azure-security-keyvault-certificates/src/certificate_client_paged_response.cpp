@@ -37,4 +37,12 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
       CurrentPageToken = options.NextPageToken.Value();
     }
   }
+
+  void IssuerPropertiesPagedResponse::OnNextPage(const Azure::Core::Context& context)
+  {
+    GetPropertiesOfIssuersOptions options;
+    options.NextPageToken = NextPageToken;
+    *this = m_certificateClient->GetPropertiesOfIssuers(options, context);
+    CurrentPageToken = options.NextPageToken.Value();
+  }
 }}}} // namespace Azure::Security::KeyVault::Certificates

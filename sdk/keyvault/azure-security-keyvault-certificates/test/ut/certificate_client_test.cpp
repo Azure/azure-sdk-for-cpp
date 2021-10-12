@@ -393,3 +393,31 @@ TEST_F(KeyVaultCertificateClientTest, GetContactsDuplicateEmail)
 
   CheckContactsCollections(contacts, response2.Value);
 }
+
+TEST_F(KeyVaultCertificateClientTest, GetPropertiesOfCertificates)
+{
+  auto const& client
+      = GetClientForTest(::testing::UnitTest::GetInstance()->current_test_info()->name());
+
+  auto result = client.GetPropertiesOfCertificates(GetPropertiesOfCertificatesOptions());
+}
+
+TEST_F(KeyVaultCertificateClientTest, GetPropertiesOfCertificatesVersions)
+{
+  // cspell: disable-next-line
+  std::string const certificateName("magiqStuff");
+
+  auto const& client
+      = GetClientForTest(::testing::UnitTest::GetInstance()->current_test_info()->name());
+
+  auto result = client.GetPropertiesOfCertificateVersions(
+      certificateName, GetPropertiesOfCertificateVersionsOptions());
+}
+
+TEST_F(KeyVaultCertificateClientTest, GetPropertiesOfIssuers)
+{
+  auto const& client
+      = GetClientForTest(::testing::UnitTest::GetInstance()->current_test_info()->name());
+
+  auto result = client.GetPropertiesOfIssuers(GetPropertiesOfIssuersOptions());
+}

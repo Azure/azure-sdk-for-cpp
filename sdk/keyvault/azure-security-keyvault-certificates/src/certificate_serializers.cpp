@@ -541,7 +541,6 @@ CertificateOperationProperties CertificateOperationSerializer ::Deserialize(
 
   auto const& body = rawResponse.GetBody();
   auto jsonResponse = json::parse(body);
-  std::string str = jsonResponse.dump();
 
   ParseKeyUrl(operation, jsonResponse[IdName]);
 
@@ -563,4 +562,70 @@ CertificateOperationProperties CertificateOperationSerializer ::Deserialize(
   JsonOptional::SetIfExists(operation.RequestId, jsonResponse, RequestIdPropertyName);
 
   return operation;
+}
+CerticatePropertiesPagedResponse CerticatePropertiesPagedResponseSerializer::Deserialize(
+    Azure::Core::Http::RawResponse const& rawResponse)
+{
+  CerticatePropertiesPagedResponse response;
+
+  auto const& body = rawResponse.GetBody();
+  auto jsonResponse = json::parse(body);
+
+  JsonOptional::SetIfExists(response.NextPageToken, jsonResponse, NextLinkPropertyName);
+
+  // Key properties
+  auto certificatePropertiesJson = jsonResponse[ValuePropertyName];
+
+  for (auto const& certificate : certificatePropertiesJson)
+  {
+    CertificateProperties properties;
+    // Parse URL for the name, vaultUrl and version
+    _detail::KeyVaultCertificateSerializer::ParseKeyUrl(
+        properties, certificate[IdName].get<std::string>());
+
+    // x5t
+    properties.X509Thumbprint = Base64Url::Base64UrlDecode(certificate[X5tName].get<std::string>());
+
+    // "Tags"
+    if (certificate.contains(TagsPropertyName))
+    {
+      properties.Tags
+          = certificate[TagsPropertyName].get<std::unordered_map<std::string, std::string>>();
+    }
+
+    // "Attributes"
+    if (certificate.contains(AttributesPropertyName))
+    {
+      auto attributes = certificate[AttributesPropertyName];
+      CertificatePropertiesSerializer::Deserialize(properties, attributes);
+    }
+
+    response.Items.emplace_back(properties);
+  }
+
+  return response;
+}
+
+IssuerPropertiesPagedResponse IssuerPropertiesPagedResponseSerializer::Deserialize(
+    Azure::Core::Http::RawResponse const& rawResponse)
+{
+  IssuerPropertiesPagedResponse response;
+  auto const& body = rawResponse.GetBody();
+  auto jsonResponse = json::parse(body);
+  std::string str = jsonResponse.dump();
+
+  JsonOptional::SetIfExists(response.NextPageToken, jsonResponse, NextLinkPropertyName);
+
+  // Key properties
+  auto issuersPropertiesJson = jsonResponse[ValuePropertyName];
+
+  for (auto const& oneIssuer : issuersPropertiesJson)
+  {
+    CertificateIssuerItem issuer;
+    issuer.Id = oneIssuer[IdName].get<std::string>();
+    issuer.Provider = oneIssuer[ProviderPropertyValue].get<std::string>();
+    response.Items.emplace_back(issuer);
+  }
+
+  return response;
 }

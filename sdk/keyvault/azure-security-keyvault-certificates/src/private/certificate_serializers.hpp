@@ -167,4 +167,21 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
         }
       }
     };
+
+    class CerticatePropertiesPagedResponseSerializer final {
+      CerticatePropertiesPagedResponseSerializer() = delete;
+
+    public:
+      static CerticatePropertiesPagedResponse Deserialize(
+          Azure::Core::Http::RawResponse const& rawResponse);
+    };
+
+    class IssuerPropertiesPagedResponseSerializer final {
+      IssuerPropertiesPagedResponseSerializer() = delete;
+
+    public:
+      static IssuerPropertiesPagedResponse Deserialize(
+          Azure::Core::Http::RawResponse const& rawResponse);
+    };
+
 }}}}} // namespace Azure::Security::KeyVault::Certificates::_detail
