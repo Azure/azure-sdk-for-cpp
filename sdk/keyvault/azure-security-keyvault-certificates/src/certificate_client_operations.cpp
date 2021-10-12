@@ -35,7 +35,7 @@ std::unique_ptr<Azure::Core::Http::RawResponse> CreateCertificateOperation::Poll
   try
   {
     rawResponse
-        = m_certificateClient->GetCertificateOperation(Properties.Name, context).RawResponse;
+        = m_certificateClient->GetCertificateOperation(m_continuationToken, context).RawResponse;
   }
   catch (Azure::Core::RequestFailedException& error)
   {
@@ -90,7 +90,7 @@ CreateCertificateOperation::CreateCertificateOperation(
 {
   Properties = response.Value;
   m_rawResponse = std::move(response.RawResponse);
-  m_continuationToken = m_value.Name();
+  m_continuationToken = Properties.Name;
 
   if (!m_value.Name().empty())
   {
@@ -103,7 +103,6 @@ CreateCertificateOperation::CreateCertificateOperation(
     std::shared_ptr<CertificateClient> certificateClient)
     : m_certificateClient(certificateClient), m_continuationToken(std::move(resumeToken))
 {
-  m_value.Properties.Name = resumeToken;
 }
 
 CreateCertificateOperation CreateCertificateOperation::CreateFromResumeToken(
@@ -141,7 +140,8 @@ std::unique_ptr<Azure::Core::Http::RawResponse> DeleteCertificateOperation::Poll
 
   try
   {
-    rawResponse = m_certificateClient->GetDeletedCertificate(m_value.Name(), context).RawResponse;
+    rawResponse
+        = m_certificateClient->GetDeletedCertificate(m_continuationToken, context).RawResponse;
   }
   catch (Azure::Core::RequestFailedException& error)
   {
@@ -190,7 +190,6 @@ DeleteCertificateOperation::DeleteCertificateOperation(
     std::shared_ptr<CertificateClient> certificateClient)
     : m_certificateClient(certificateClient), m_continuationToken(std::move(resumeToken))
 {
-  m_value.Properties.Name = m_continuationToken;
 }
 
 DeleteCertificateOperation DeleteCertificateOperation::CreateFromResumeToken(
@@ -227,7 +226,7 @@ std::unique_ptr<Azure::Core::Http::RawResponse> RecoverDeletedCertificateOperati
 
   try
   {
-    rawResponse = m_certificateClient->GetCertificate(m_value.Name(), context).RawResponse;
+    rawResponse = m_certificateClient->GetCertificate(m_continuationToken, context).RawResponse;
   }
   catch (Azure::Core::RequestFailedException& error)
   {
@@ -276,7 +275,6 @@ RecoverDeletedCertificateOperation::RecoverDeletedCertificateOperation(
     std::shared_ptr<CertificateClient> certificateClient)
     : m_certificateClient(certificateClient), m_continuationToken(std::move(resumeToken))
 {
-  m_value.Properties.Name = m_continuationToken;
 }
 
 RecoverDeletedCertificateOperation RecoverDeletedCertificateOperation::CreateFromResumeToken(

@@ -61,6 +61,54 @@ TEST_F(KeyVaultCertificateClientTest, CreateCertificate)
   }
 }
 
+TEST_F(KeyVaultCertificateClientTest, CreateCertificateResumeToken)
+{
+  // cspell: disable-next-line
+  std::string const certificateName("magiqStuff2");
+
+  auto const& client
+      = GetClientForTest(::testing::UnitTest::GetInstance()->current_test_info()->name());
+
+  auto params = CertificateCreateParameters();
+  params.Policy.Subject = "CN=xyz";
+  params.Policy.ValidityInMonths = 12;
+  params.Policy.Enabled = true;
+
+  params.Properties.Enabled = true;
+  params.Properties.Name = certificateName;
+  params.Policy.ContentType = CertificateContentType::Pkcs12;
+  params.Policy.IssuerName = "Self";
+
+  LifetimeAction action;
+  action.LifetimePercentage = 80;
+  action.Action = CertificatePolicyAction::AutoRenew;
+  params.Policy.LifetimeActions.emplace_back(action);
+  {
+
+    auto response = client.StartCreateCertificate(certificateName, params);
+
+    auto fromToken
+        = CreateCertificateOperation::CreateFromResumeToken(response.GetResumeToken(), client);
+
+    auto result = fromToken.PollUntilDone(m_defaultWait);
+
+    EXPECT_EQ(result.Value.Name(), params.Properties.Name);
+    EXPECT_EQ(result.Value.Properties.Enabled.Value(), true);
+  }
+  {
+    auto response = client.StartDeleteCertificate(certificateName);
+    auto fromToken
+        = DeleteCertificateOperation::CreateFromResumeToken(response.GetResumeToken(), client);
+    auto result = fromToken.PollUntilDone(m_defaultWait);
+    EXPECT_EQ(result.Value.Name(), params.Properties.Name);
+    EXPECT_EQ(result.Value.Properties.Enabled.Value(), true);
+    EXPECT_NE(result.Value.RecoveryId.length(), size_t(0));
+    EXPECT_TRUE(result.Value.DeletedOn.HasValue());
+    EXPECT_TRUE(result.Value.ScheduledPurgeDate.HasValue());
+    client.PurgeDeletedCertificate(certificateName);
+  }
+}
+
 TEST_F(KeyVaultCertificateClientTest, GetCertificate)
 {
   // cspell: disable-next-line
@@ -277,6 +325,37 @@ TEST_F(KeyVaultCertificateClientTest, GetDeletedCertificate)
     auto result = response.PollUntilDone(m_defaultWait);
     EXPECT_EQ(result.Value.Name(), certificateName);
     client.PurgeDeletedCertificate(certificateName);
+  }
+}
+
+TEST_F(KeyVaultCertificateClientTest, DeleteWrongCertificate)
+{
+  // cspell: disable-next-line
+  std::string const certificateName("unknownCert");
+
+  auto const& client
+      = GetClientForTest(::testing::UnitTest::GetInstance()->current_test_info()->name());
+
+  try
+  {
+    auto response = client.StartDeleteCertificate(certificateName);
+    EXPECT_TRUE(false); // we should not reach this line
+  }
+  catch (Azure::Core::RequestFailedException ex)
+  {
+    EXPECT_EQ(ex.StatusCode, Azure::Core::Http::HttpStatusCode::NotFound);
+    EXPECT_EQ(ex.ErrorCode, "CertificateNotFound");
+  }
+
+  try
+  {
+    auto response = client.StartRecoverDeletedCertificate(certificateName);
+    EXPECT_TRUE(false); // we should not reach this line
+  }
+  catch (Azure::Core::RequestFailedException ex)
+  {
+    EXPECT_EQ(ex.StatusCode, Azure::Core::Http::HttpStatusCode::NotFound);
+    EXPECT_EQ(ex.ErrorCode, "CertificateNotFound");
   }
 }
 
