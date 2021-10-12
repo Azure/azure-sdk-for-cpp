@@ -249,4 +249,26 @@ Azure::Response<CertificateOperationProperties> CertificateClient::GetCertificat
   return Azure::Response<CertificateOperationProperties>(std::move(value), std::move(rawResponse));
 }
 
+CerticatePropertiesPagedResponse CertificateClient::GetPropertiesOfCertificates(
+    GetPropertiesOfCertificatesOptions const& options,
+    Azure::Core::Context const& context) const
+{
+  (void)options;
+  (void)context;
+  CerticatePropertiesPagedResponse response;
+  return response;
+}
+
+CerticatePropertiesPagedResponse CertificateClient::GetPropertiesOfCertificateVersions(
+    std::string const& name,
+    GetPropertiesOfCertificateVersionsOptions const& options,
+    Azure::Core::Context const& context) const
+{
+  (void)name;
+  (void)options;
+  (void)context;
+  CerticatePropertiesPagedResponse response;
+  return response;
+}
+
 const ServiceVersion ServiceVersion::V7_2("7.2");

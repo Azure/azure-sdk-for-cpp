@@ -14,15 +14,15 @@
 #include <azure/core/context.hpp>
 #include <azure/core/http/http.hpp>
 #include <azure/core/nullable.hpp>
+#include <azure/core/paged_response.hpp>
 #include <azure/core/response.hpp>
-
 #include <memory>
 #include <string>
 #include <unordered_map>
 #include <vector>
 
 namespace Azure { namespace Security { namespace KeyVault { namespace Certificates {
-
+  class CertificateClient;
   /**
    * @brief Contains identity and other basic properties of a Certificate.
    *
@@ -1076,4 +1076,75 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
     Azure::Nullable<bool> CertificateTransparency;
   };
 
+  /**
+   * @brief The options for calling an operation #GetPropertiesOfCertificates.
+   *
+   */
+  struct GetPropertiesOfCertificatesOptions final
+  {
+    Azure::Nullable<std::string> NextPageToken;
+    Azure::Nullable<bool> IncludePending;
+  };
+
+  /**
+   * @brief The options for calling an operation #GetPropertiesOfCertificateVersions.
+   *
+   */
+  struct GetPropertiesOfCertificateVersionsOptions final
+  {
+    Azure::Nullable<std::string> NextPageToken;
+  };
+
+  /**
+   * @brief Define a single page to list the certificates from the Key Vault.
+   *
+   */
+  class CerticatePropertiesPagedResponse final
+      : public Azure::Core::PagedResponse<CerticatePropertiesPagedResponse> {
+  private:
+    friend class CertificateClient;
+    friend class Azure::Core::PagedResponse<CerticatePropertiesPagedResponse>;
+
+    std::string m_certificateName;
+    std::shared_ptr<CertificateClient> m_certificateClient;
+    void OnNextPage(const Azure::Core::Context&);
+
+    /**
+     * @brief Construct a new Certificate Properties Single Page object.
+     *
+     * @remark The constructor is private and only a certificate client or PagedResponse can init
+     * this.
+     *
+     * @param certificateProperties A previously created #CertificatePropertiesPageResponse that is
+     * used to init this instance.
+     * @param rawResponse The HTTP raw response from where the #CertificatePropertiesPagedResponse
+     * was parsed.
+     * @param certificateClient A certificate client required for getting the next pages.
+     * @param certificateName When \p certificateName is set, the response is listing certificate
+     * versions. Otherwise, the response is for listing certificates from the Key Vault.
+     */
+    CerticatePropertiesPagedResponse(
+        CerticatePropertiesPagedResponse&& certificateProperties,
+        std::unique_ptr<Azure::Core::Http::RawResponse> rawResponse,
+        std::shared_ptr<CertificateClient> certificateClient,
+        std::string const& certificateName = std::string())
+        : PagedResponse(std::move(certificateProperties)), m_certificateName(certificateName),
+          m_certificateClient(certificateClient), Items(std::move(certificateProperties.Items))
+    {
+      RawResponse = std::move(rawResponse);
+    }
+
+  public:
+    /**
+     * @brief Construct a new certificate properties object.
+     *
+     */
+    CerticatePropertiesPagedResponse() = default;
+
+    /**
+     * @brief Each #certificateProperties represent a Key in the Key Vault.
+     *
+     */
+    std::vector<CertificateProperties> Items;
+  };
 }}}} // namespace Azure::Security::KeyVault::Certificates

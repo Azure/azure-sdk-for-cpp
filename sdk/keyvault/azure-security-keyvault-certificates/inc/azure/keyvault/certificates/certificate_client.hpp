@@ -220,6 +220,16 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
         std::vector<CertificateContact> const& contacts,
         Azure::Core::Context const& context = Azure::Core::Context()) const;
 
+    CerticatePropertiesPagedResponse GetPropertiesOfCertificates(
+        GetPropertiesOfCertificatesOptions const& options,
+        Azure::Core::Context const& context = Azure::Core::Context()) const;
+
+    CerticatePropertiesPagedResponse GetPropertiesOfCertificateVersions(
+        std::string const& name,
+        GetPropertiesOfCertificateVersionsOptions const& options
+        = GetPropertiesOfCertificateVersionsOptions(),
+        Azure::Core::Context const& context = Azure::Core::Context()) const;
+
   private:
     /**
      * @brief Gets the creation operation of a certificate.
