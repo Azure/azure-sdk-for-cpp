@@ -125,6 +125,18 @@ Azure::Core::Json::_internal::json CertificatePropertiesSerializer::JsonSerializ
   return attributes;
 }
 
+CertificatePolicy CertificatePolicySerializer::Deserialize(
+    Azure::Core::Http::RawResponse const& rawResponse)
+{
+  CertificatePolicy policy;
+  auto const& body = rawResponse.GetBody();
+  auto jsonResponse = json::parse(body);
+
+  Deserialize(policy, jsonResponse);
+
+  return policy;
+}
+
 void CertificatePolicySerializer::Deserialize(
     CertificatePolicy& policy,
     Azure::Core::Json::_internal::json fragment)

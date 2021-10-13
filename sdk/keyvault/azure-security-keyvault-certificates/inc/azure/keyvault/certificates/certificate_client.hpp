@@ -287,6 +287,39 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
         std::string const& name,
         Azure::Core::Context const& context = Azure::Core::Context()) const;
 
+    /**
+     * @brief "List the policy for a certificate.
+     *
+     * @details The GetCertificatePolicy operation returns the specified certificate policy
+     * resources in the specified key vault.
+     *
+     * @remark This operation requires the certificates/get permission.
+     *
+     * @param name The name of the certificate
+     * @param context The context for the operation can be used for request cancellation.
+     * @return The contact properties.
+     */
+    Azure::Response<CertificatePolicy> GetCertificatePolicy(
+        std::string const& name,
+        Azure::Core::Context const& context = Azure::Core::Context()) const;
+
+    /**
+     * @brief Update the policy for a certificate.
+     *
+     * @details Set specified members in the certificate policy. Leave others as null.
+     *
+     * @remark This operation requires the certificates/update permission.
+     *
+     * @param name The name of the certificate
+     * @param certificatePolicy The updated certificate policy.
+     * @param context The context for the operation can be used for request cancellation.
+     * @return The updated contact properties.
+     */
+    Azure::Response<CertificatePolicy> UpdateCertificatePolicy(
+        std::string const& name,
+        CertificatePolicy const& certificatePolicy,
+        Azure::Core::Context const& context = Azure::Core::Context()) const;
+
   private:
     /**
      * @brief Gets the creation operation of a certificate.
