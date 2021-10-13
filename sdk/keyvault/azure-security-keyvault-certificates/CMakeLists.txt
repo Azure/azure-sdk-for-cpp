@@ -40,6 +40,7 @@ set(
     src/certificate_serializers.cpp
     src/keyvault_certificates_common_request.cpp
     src/certificate_client_operations.cpp
+    src/certificate_client_paged_response.cpp
 )
 
 add_library(azure-security-keyvault-certificates
@@ -52,6 +53,14 @@ target_include_directories(
     PUBLIC
       $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/inc>
       $<INSTALL_INTERFACE:include>
+)
+
+# Include shared source code
+# NOTE: Use shared-code only within .cpp files. DO NEVER consume the shared-code from header files.
+target_include_directories(
+  azure-security-keyvault-certificates
+    PRIVATE
+      $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/sdk/keyvault/azure-security-keyvault-shared/inc>
 )
 
 target_link_libraries(azure-security-keyvault-certificates PUBLIC Azure::azure-core)

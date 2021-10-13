@@ -19,8 +19,15 @@ using namespace Azure::Core::_internal;
 
 using Azure::Core::_internal::PosixTimeConverter;
 
-KeyVaultCertificateWithPolicy
-_detail::KeyVaultCertificateSerializer::KeyVaultCertificateDeserialize(
+void _detail::KeyVaultCertificateSerializer::Deserialize(
+    KeyVaultCertificateWithPolicy& certificate,
+    std::string const& name,
+    Azure::Core::Http::RawResponse const& rawResponse)
+{
+  certificate = Deserialize(name, rawResponse);
+}
+
+KeyVaultCertificateWithPolicy _detail::KeyVaultCertificateSerializer::Deserialize(
     std::string const& name,
     Azure::Core::Http::RawResponse const& rawResponse)
 {
@@ -52,11 +59,20 @@ _detail::KeyVaultCertificateSerializer::KeyVaultCertificateDeserialize(
   KeyVaultCertificateWithPolicy certificate(std::move(properties));
 
   // kid
-  certificate.KeyId = jsonResponse[KidPropertyName].get<std::string>();
-  // sid
-  certificate.SecretId = jsonResponse[SidPropertyName].get<std::string>();
+  if (jsonResponse.contains(KidPropertyName))
+  {
+
+    certificate.KeyId = jsonResponse[KidPropertyName].get<std::string>();
+  } // sid
+  if (jsonResponse.contains(SidPropertyName))
+  {
+    certificate.SecretId = jsonResponse[SidPropertyName].get<std::string>();
+  }
   // cer
-  certificate.Cer = Base64Url::Base64UrlDecode(jsonResponse[CerPropertyName].get<std::string>());
+  if (jsonResponse.contains(CerPropertyName))
+  {
+    certificate.Cer = Base64Url::Base64UrlDecode(jsonResponse[CerPropertyName].get<std::string>());
+  }
 
   // policy
   if (jsonResponse.contains(PolicyPropertyName))
@@ -116,6 +132,18 @@ Azure::Core::Json::_internal::json CertificatePropertiesSerializer::JsonSerializ
       properties.RecoverableDays, attributes, RecoverableDaysPropertyName);
 
   return attributes;
+}
+
+CertificatePolicy CertificatePolicySerializer::Deserialize(
+    Azure::Core::Http::RawResponse const& rawResponse)
+{
+  CertificatePolicy policy;
+  auto const& body = rawResponse.GetBody();
+  auto jsonResponse = json::parse(body);
+
+  Deserialize(policy, jsonResponse);
+
+  return policy;
 }
 
 void CertificatePolicySerializer::Deserialize(
@@ -488,4 +516,217 @@ std::string CertificateIssuerSerializer::Serialize(CertificateIssuer const& issu
   }
 
   return jsonResponse.dump();
+}
+
+std::string CertificateContactsSerializer::Serialize(
+    std::vector<CertificateContact> const& contacts)
+{
+  json payload;
+
+  for (auto contact : contacts)
+  {
+    json contactJson;
+
+    contactJson[EmailPropertyName] = contact.EmailAddress;
+    JsonOptional::SetFromNullable(contact.Name, contactJson, NamePropertyName);
+    JsonOptional::SetFromNullable(contact.Phone, contactJson, PhonePropertyName);
+
+    payload[ContactsPropertyName].emplace_back(contactJson);
+  }
+
+  return payload.dump();
+}
+
+std::vector<CertificateContact> CertificateContactsSerializer::Deserialize(
+    Azure::Core::Http::RawResponse const& rawResponse)
+{
+  std::vector<CertificateContact> response;
+
+  auto const& body = rawResponse.GetBody();
+  auto jsonResponse = json::parse(body);
+
+  if (jsonResponse.contains(ContactsPropertyName))
+  {
+    for (auto contactJson : jsonResponse[ContactsPropertyName])
+    {
+      CertificateContact contact;
+
+      contact.EmailAddress = contactJson[EmailPropertyName];
+      JsonOptional::SetIfExists(contact.Name, contactJson, NamePropertyName);
+      JsonOptional::SetIfExists(contact.Phone, contactJson, PhonePropertyName);
+
+      response.emplace_back(contact);
+    }
+  }
+
+  return response;
+}
+
+CertificateOperationProperties CertificateOperationSerializer ::Deserialize(
+    Azure::Core::Http::RawResponse const& rawResponse)
+{
+  CertificateOperationProperties operation;
+
+  auto const& body = rawResponse.GetBody();
+  auto jsonResponse = json::parse(body);
+
+  ParseKeyUrl(operation, jsonResponse[IdName]);
+
+  // issuer
+  {
+    auto const issuerJson = jsonResponse[IssuerPropertyName];
+    JsonOptional::SetIfExists(operation.IssuerName, issuerJson, IssuerNamePropertyName);
+    JsonOptional::SetIfExists(
+        operation.CertificateTransparency, issuerJson, CertTransparencyPropertyName);
+    JsonOptional::SetIfExists(operation.CertificateType, issuerJson, CtyPropertyName);
+  }
+
+  operation.Csr = Base64Url::Base64UrlDecode(jsonResponse[CsrPropertyName].get<std::string>());
+  JsonOptional::SetIfExists(
+      operation.CancellationRequested, jsonResponse, CancelationRequestedPropertyName);
+  JsonOptional::SetIfExists(operation.Status, jsonResponse, StatusPropertyName);
+  JsonOptional::SetIfExists(operation.StatusDetails, jsonResponse, StatusDetailsPropertyName);
+  JsonOptional::SetIfExists(operation.Target, jsonResponse, TargetPropertyName);
+  JsonOptional::SetIfExists(operation.RequestId, jsonResponse, RequestIdPropertyName);
+
+  return operation;
+}
+
+DeletedCertificate DeletedCertificateSerializer::Deserialize(
+    std::string const& name,
+    Azure::Core::Http::RawResponse const& rawResponse)
+{
+  DeletedCertificate result;
+
+  KeyVaultCertificateSerializer::Deserialize(result, name, rawResponse);
+
+  auto const& body = rawResponse.GetBody();
+  auto jsonResponse = json::parse(body);
+
+  result.RecoveryId = jsonResponse[RecoveryIdPropertyName];
+
+  JsonOptional::SetIfExists<int64_t, Azure::DateTime>(
+      result.DeletedOn,
+      jsonResponse,
+      DeletedDatePropertyName,
+      PosixTimeConverter::PosixTimeToDateTime);
+
+  JsonOptional::SetIfExists<int64_t, Azure::DateTime>(
+      result.ScheduledPurgeDate,
+      jsonResponse,
+      ScheduledPurgeDatePropertyName,
+      PosixTimeConverter::PosixTimeToDateTime);
+
+  return result;
+}
+
+BackupCertificateResult BackupCertificateSerializer::Deserialize(
+    Azure::Core::Http::RawResponse const& rawResponse)
+{
+  auto const& body = rawResponse.GetBody();
+  auto jsonParser = json::parse(body);
+  auto encodedResult = jsonParser[ValuePropertyName].get<std::string>();
+  BackupCertificateResult data;
+  data.Certificate = Base64Url::Base64UrlDecode(encodedResult);
+
+  return data;
+}
+
+std::string BackupCertificateSerializer::Serialize(std::vector<uint8_t> const& backup)
+{
+  json payload;
+  payload[_detail::ValuePropertyName] = Base64Url::Base64UrlEncode(backup);
+  return payload.dump();
+}
+CertificatePropertiesPagedResponse CertificatePropertiesPagedResponseSerializer::Deserialize(
+    Azure::Core::Http::RawResponse const& rawResponse)
+{
+  CertificatePropertiesPagedResponse response;
+
+  auto const& body = rawResponse.GetBody();
+  auto jsonResponse = json::parse(body);
+
+  JsonOptional::SetIfExists(response.NextPageToken, jsonResponse, NextLinkPropertyName);
+
+  auto certificatePropertiesJson = jsonResponse[ValuePropertyName];
+
+  for (auto const& certificate : certificatePropertiesJson)
+  {
+    CertificateProperties properties;
+    // Parse URL for the name, vaultUrl and version
+    _detail::KeyVaultCertificateSerializer::ParseKeyUrl(
+        properties, certificate[IdName].get<std::string>());
+
+    // x5t
+    properties.X509Thumbprint = Base64Url::Base64UrlDecode(certificate[X5tName].get<std::string>());
+
+    // "Tags"
+    if (certificate.contains(TagsPropertyName))
+    {
+      properties.Tags
+          = certificate[TagsPropertyName].get<std::unordered_map<std::string, std::string>>();
+    }
+
+    // "Attributes"
+    if (certificate.contains(AttributesPropertyName))
+    {
+      auto attributes = certificate[AttributesPropertyName];
+      CertificatePropertiesSerializer::Deserialize(properties, attributes);
+    }
+
+    response.Items.emplace_back(properties);
+  }
+
+  return response;
+}
+
+IssuerPropertiesPagedResponse IssuerPropertiesPagedResponseSerializer::Deserialize(
+    Azure::Core::Http::RawResponse const& rawResponse)
+{
+  IssuerPropertiesPagedResponse response;
+  auto const& body = rawResponse.GetBody();
+  auto jsonResponse = json::parse(body);
+  std::string str = jsonResponse.dump();
+
+  JsonOptional::SetIfExists(response.NextPageToken, jsonResponse, NextLinkPropertyName);
+
+  auto issuersPropertiesJson = jsonResponse[ValuePropertyName];
+
+  for (auto const& oneIssuer : issuersPropertiesJson)
+  {
+    CertificateIssuerItem issuer;
+    issuer.Id = oneIssuer[IdName].get<std::string>();
+    issuer.Provider = oneIssuer[ProviderPropertyValue].get<std::string>();
+    response.Items.emplace_back(issuer);
+  }
+
+  return response;
+}
+
+DeletedCertificatesPagedResponse DeletedCertificatesPagedResponseSerializer::Deserialize(
+    Azure::Core::Http::RawResponse const& rawResponse)
+{
+  DeletedCertificatesPagedResponse response;
+  auto const& body = rawResponse.GetBody();
+  auto jsonResponse = json::parse(body);
+  std::string str = jsonResponse.dump();
+
+  JsonOptional::SetIfExists(response.NextPageToken, jsonResponse, NextLinkPropertyName);
+  auto deletedCertificates = jsonResponse[ValuePropertyName];
+
+  for (auto const& oneDeleted : deletedCertificates)
+  {
+    std::string deletedString = oneDeleted.dump();
+    std::vector<uint8_t> vec(deletedString.begin(), deletedString.end());
+
+    Azure::Core::Http::RawResponse fakeResponse(
+        1, 1, Azure::Core::Http::HttpStatusCode::Ok, "Success");
+    fakeResponse.SetBody(vec);
+
+    auto deserializedDeletedCert = DeletedCertificateSerializer::Deserialize("", fakeResponse);
+
+    response.Items.emplace_back(deserializedDeletedCert);
+  }
+
+  return response;
 }

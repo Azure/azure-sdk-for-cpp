@@ -21,7 +21,12 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
     class KeyVaultCertificateSerializer final {
     public:
       // Creates a new key based on a name and an HTTP raw response.
-      static KeyVaultCertificateWithPolicy KeyVaultCertificateDeserialize(
+      static KeyVaultCertificateWithPolicy Deserialize(
+          std::string const& name,
+          Azure::Core::Http::RawResponse const& rawResponse);
+
+      static void Deserialize(
+          KeyVaultCertificateWithPolicy& certificate,
           std::string const& name,
           Azure::Core::Http::RawResponse const& rawResponse);
 
@@ -90,6 +95,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
       static void Deserialize(
           CertificatePolicy& policy,
           Azure::Core::Json::_internal::json fragment);
+      static CertificatePolicy Deserialize(Azure::Core::Http::RawResponse const& rawResponse);
     };
 
     class CertificateCreateParametersSerializer final {
@@ -109,4 +115,104 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
 
       static std::string Serialize(CertificateIssuer const& issuer);
     };
+
+    class CertificateContactsSerializer final {
+      CertificateContactsSerializer() = delete;
+
+    public:
+      static std::string Serialize(std::vector<CertificateContact> const& constacts);
+      static std::vector<CertificateContact> Deserialize(
+          Azure::Core::Http::RawResponse const& rawResponse);
+    };
+
+    class CertificateOperationSerializer final {
+      CertificateOperationSerializer() = delete;
+
+    public:
+      static CertificateOperationProperties Deserialize(
+          Azure::Core::Http::RawResponse const& rawResponse);
+
+      static std::string GetUrlAuthorityWithScheme(Azure::Core::Url const& url)
+      {
+        std::string urlString;
+        if (!url.GetScheme().empty())
+        {
+          urlString += url.GetScheme() + "://";
+        }
+        urlString += url.GetHost();
+        if (url.GetPort() != 0)
+        {
+          urlString += ":" + std::to_string(url.GetPort());
+        }
+        return urlString;
+      }
+
+      void static inline ParseKeyUrl(
+          CertificateOperationProperties& certificateProperties,
+          std::string const& url)
+      {
+        Azure::Core::Url kid(url);
+        certificateProperties.Id = url;
+        certificateProperties.VaultUrl = GetUrlAuthorityWithScheme(kid);
+        auto const& path = kid.GetPath();
+        // path in format certificates/{name}/pending
+        auto const separatorChar = '/';
+        auto pathEnd = path.end();
+        auto start = path.begin();
+        start = std::find(start, pathEnd, separatorChar);
+        start += 1;
+        auto separator = std::find(start, pathEnd, separatorChar);
+        if (separator != pathEnd)
+        {
+          certificateProperties.Name = std::string(start, separator);
+        }
+        else
+        {
+          // Nothing but the name+
+          certificateProperties.Name = std::string(start, pathEnd);
+        }
+      }
+    };
+
+    class DeletedCertificateSerializer final {
+      DeletedCertificateSerializer() = delete;
+
+    public:
+      static DeletedCertificate Deserialize(
+          std::string const& name,
+          Azure::Core::Http::RawResponse const& rawResponse);
+    };
+
+    class BackupCertificateSerializer final {
+      BackupCertificateSerializer() = delete;
+
+    public:
+      static BackupCertificateResult Deserialize(Azure::Core::Http::RawResponse const& rawResponse);
+      static std::string Serialize(std::vector<uint8_t> const& backup);
+    };
+
+    class CertificatePropertiesPagedResponseSerializer final {
+      CertificatePropertiesPagedResponseSerializer() = delete;
+
+    public:
+      static CertificatePropertiesPagedResponse Deserialize(
+          Azure::Core::Http::RawResponse const& rawResponse);
+    };
+
+    class IssuerPropertiesPagedResponseSerializer final {
+      IssuerPropertiesPagedResponseSerializer() = delete;
+
+    public:
+      static IssuerPropertiesPagedResponse Deserialize(
+          Azure::Core::Http::RawResponse const& rawResponse);
+    };
+
+    class DeletedCertificatesPagedResponseSerializer final {
+      DeletedCertificatesPagedResponseSerializer() = delete;
+
+    public:
+      static DeletedCertificatesPagedResponse Deserialize(
+          Azure::Core::Http::RawResponse const& rawResponse);
+    };
+
 }}}}} // namespace Azure::Security::KeyVault::Certificates::_detail

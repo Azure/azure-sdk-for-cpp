@@ -17,6 +17,15 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
     constexpr static const char CertificatesPath[] = "certificates";
     constexpr static const char CertificatesCreatePath[] = "create";
     constexpr static const char IssuersPath[] = "issuers";
+    constexpr static const char ContactsPath[] = "contacts";
+    constexpr static const char PendingPath[] = "pending";
+    constexpr static const char DeletedCertificatesPath[] = "deletedcertificates";
+    constexpr static const char RecoverPath[] = "recover";
+    constexpr static const char PolicyPath[] = "policy";
+    constexpr static const char BackupPath[] = "backup";
+    constexpr static const char RestorePath[] = "restore";
+    constexpr static const char IncludePendingQuery[] = "includePending";
+    constexpr static const char VersionsPath[] = "versions";
 
     /***************** Certificates Properties *****************/
     constexpr static const char IdName[] = "id";
@@ -107,4 +116,33 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
     constexpr static const char EmailPropertyValue[] = "email";
     constexpr static const char PhonePropertyValue[] = "phone";
 
+    /***************** Certificates Contact *****************/
+    constexpr static const char EmailPropertyName[] = "email";
+    constexpr static const char NamePropertyName[] = "name";
+    constexpr static const char PhonePropertyName[] = "phone";
+    constexpr static const char ContactsPropertyName[] = "contacts";
+
+    /****************** Certificate Operation Properties **********/
+    constexpr static const char CsrPropertyName[] = "csr";
+    constexpr static const char StatusPropertyName[] = "status";
+    constexpr static const char ErrorPropertyName[] = "error";
+    constexpr static const char CodePropertyName[] = "code";
+    constexpr static const char RequestIdPropertyName[] = "request_id";
+    constexpr static const char TargetPropertyName[] = "target";
+    constexpr static const char MessagePropertyName[] = "message";
+    constexpr static const char InnerErrorPropertyName[] = "innererror";
+    constexpr static const char StatusDetailsPropertyName[] = "status_details";
+    constexpr static const char CancelationRequestedPropertyName[] = "cancellation_requested";
+    constexpr static const char CompletedValue[] = "completed";
+
+    /**************** Deleted Certificate property names ********/
+    constexpr static const char RecoveryIdPropertyName[] = "recoveryId";
+    constexpr static const char ScheduledPurgeDatePropertyName[] = "scheduledPurgeDate";
+    constexpr static const char DeletedDatePropertyName[] = "deletedDate";
+    /****************** Certificate Backup/Restore Properties **********/
+    constexpr static const char ValuePropertyName[] = "value";
+    /****************** Paged Properties **********/
+    constexpr static const char TrueQueryValue[] = "true";
+    constexpr static const char FalseQueryValue[] = "false";
+    constexpr static const char NextLinkPropertyName[] = "nextLink";
 }}}}} // namespace Azure::Security::KeyVault::Certificates::_detail

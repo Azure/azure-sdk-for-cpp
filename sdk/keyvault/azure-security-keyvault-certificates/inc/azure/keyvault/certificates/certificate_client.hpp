@@ -33,6 +33,8 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
       final
 #endif
   {
+    friend class CreateCertificateOperation;
+
   protected:
     // Using a shared pipeline for a client to share it with LRO (like delete key)
     Azure::Core::Url m_vaultUrl;
@@ -66,7 +68,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
     explicit CertificateClient(CertificateClient const& keyClient) = default;
 
     /**
-     * @brief Returns the latest version of the KeyVaultCertificate along with its
+     * @brief Return the latest version of the KeyVaultCertificate along with its
      * CertificatePolicy.
      *
      * @remark This operation requires the certificates/get permission.
@@ -81,7 +83,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
         Azure::Core::Context const& context = Azure::Core::Context()) const;
 
     /**
-     * @brief Returns a specific version of the certificate without its CertificatePolicy.
+     * @brief Return a specific version of the certificate without its CertificatePolicy.
      *
      * @details If the version is not set in the options, the latest version is returned.
      *
@@ -99,7 +101,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
         Azure::Core::Context const& context = Azure::Core::Context()) const;
 
     /**
-     * @brief Creates a new certificate.
+     * @brief Create a new certificate.
      *
      * @details If this is the first version, the certificate resource is created.
      *
@@ -116,7 +118,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
         Azure::Core::Context const& context = Azure::Core::Context()) const;
 
     /**
-     * @brief Creates a new certificate issuer.
+     * @brief Create a new certificate issuer.
      *
      * @details The  operation adds or updates the specified certificate issuer.
      *
@@ -131,7 +133,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
         Azure::Core::Context const& context = Azure::Core::Context()) const;
 
     /**
-     * @brief Lists the specified certificate issuer.
+     * @brief List the specified certificate issuer.
      *
      * @details The GetCertificateIssuer operation returns the specified
      * certificate issuer resources in the specified key vault.
@@ -147,7 +149,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
         Azure::Core::Context const& context = Azure::Core::Context()) const;
 
     /**
-     * @brief Updates the specified certificate issuer.
+     * @brief Update the specified certificate issuer.
      *
      * @details The operation performs an update on the specified certificate issuer entity.
      *
@@ -162,7 +164,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
         Azure::Core::Context const& context = Azure::Core::Context()) const;
 
     /**
-     * @brief Deletes the specified certificate issuer.
+     * @brief Delete the specified certificate issuer.
      *
      * @details The operation permanently removes the specified certificate issuer from the vault.
      *
@@ -176,7 +178,267 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
         std::string const& name,
         Azure::Core::Context const& context = Azure::Core::Context()) const;
 
+    /**
+     * @brief List the certificate contacts for a specified key vault.
+     *
+     * @details The GetContacts operation returns the set of certificate contact
+     * resources in the specified key vault.
+     *
+     * @remark This operation requires the certificates/managecontacts permission.
+     *
+     * @param context The context for the operation can be used for request cancellation.
+     * @return The contacts list for the key vault certificate.
+     */
+    Azure::Response<std::vector<CertificateContact>> GetContacts(
+        Azure::Core::Context const& context = Azure::Core::Context()) const;
+
+    /**
+     * @brief Delete the certificate contacts for a specified key vault.
+     *
+     * @details Deletes the certificate contacts for a specified key vault certificate.
+     *
+     * @remark This operation requires the certificates/managecontacts permission.
+     *
+     * @param context The context for the operation can be used for request cancellation.
+     * @return The contacts for the key vault certificate.
+     */
+    Azure::Response<std::vector<CertificateContact>> DeleteContacts(
+        Azure::Core::Context const& context = Azure::Core::Context()) const;
+
+    /**
+     * @brief Set certificate contacts.
+     *
+     * @details Set the certificate contacts for the specified key vault.
+     *
+     * @remark This operation requires the certificates/managecontacts permission.
+     *
+     * @param contacts The contacts for the key vault certificate.
+     * @param context The context for the operation can be used for request cancellation.
+     * @return The contacts for the key vault certificate.
+     */
+    Azure::Response<std::vector<CertificateContact>> SetContacts(
+        std::vector<CertificateContact> const& contacts,
+        Azure::Core::Context const& context = Azure::Core::Context()) const;
+
+    /**
+     * @brief Retrieves information about the specified deleted certificate.
+     *
+     * @details The GetDeletedCertificate operation retrieves the deleted certificate
+     * information plus its attributes, such as retention interval,
+     * scheduled permanent deletion and the current deletion recovery level.
+     *
+     * @remark This operation requires the certificates/get permission.
+     *
+     * @param name The name of the certificate.
+     * @param context The context for the operation can be used for request cancellation.
+     * @return The deleted certificate.
+     */
+    Azure::Response<DeletedCertificate> GetDeletedCertificate(
+        std::string const& name,
+        Azure::Core::Context const& context = Azure::Core::Context()) const;
+
+    /**
+     * @brief Permanently deletes the specified deleted certificate.
+     *
+     * @details The PurgeDeletedCertificate operation performs an irreversible
+     * deletion of the specified certificate, without possibility for recovery.
+     * The operation is not available if the recovery level does not specify 'Purgeable'
+     *
+     * @remark This operation requires the certificate/purge permission.
+     *
+     * @param name The name of the certificate.
+     * @param context The context for the operation can be used for request cancellation.
+     * @return Empty object.
+     */
+    Azure::Response<PurgedCertificate> PurgeDeletedCertificate(
+        std::string const& name,
+        Azure::Core::Context const& context = Azure::Core::Context()) const;
+
+    /**
+     * @brief Deletes a certificate from a specified key vault.
+     *
+     * @details Deletes all versions of a certificate object along with its associated policy.
+     * Delete certificate cannot be used to remove individual versions of a certificate object.
+     *
+     * @remark This operation requires the certificate/delete permission.
+     *
+     * @param name The name of the certificate.
+     * @param context The context for the operation can be used for request cancellation.
+     * @return Delete Certificate operation.
+     */
+    DeleteCertificateOperation StartDeleteCertificate(
+        std::string const& name,
+        Azure::Core::Context const& context = Azure::Core::Context()) const;
+
+    /**
+     * @brief Recovers the deleted certificate back to its current version under /certificates.
+     *
+     * @details The StartRecoverDeletedCertificate operation performs the reversal of the Delete
+     * operation. The operation is applicable in vaults enabled for soft-delete, and must be issued
+     * during the retention interval (available in the deleted certificate's attributes).
+     *
+     * @remark This operation requires the certificate/recover permission.
+     *
+     * @param name The name of the certificate.
+     * @param context The context for the operation can be used for request cancellation.
+     * @return Recover deleted certificate operation.
+     */
+    RecoverDeletedCertificateOperation StartRecoverDeletedCertificate(
+        std::string const& name,
+        Azure::Core::Context const& context = Azure::Core::Context()) const;
+
+    /**
+     * @brief "List the policy for a certificate.
+     *
+     * @details The GetCertificatePolicy operation returns the specified certificate policy
+     * resources in the specified key vault.
+     *
+     * @remark This operation requires the certificates/get permission.
+     *
+     * @param name The name of the certificate
+     * @param context The context for the operation can be used for request cancellation.
+     * @return The contact properties.
+     */
+    Azure::Response<CertificatePolicy> GetCertificatePolicy(
+        std::string const& name,
+        Azure::Core::Context const& context = Azure::Core::Context()) const;
+
+    /**
+     * @brief Update the policy for a certificate.
+     *
+     * @details Set specified members in the certificate policy. Leave others as null.
+     *
+     * @remark This operation requires the certificates/update permission.
+     *
+     * @param name The name of the certificate
+     * @param certificatePolicy The updated certificate policy.
+     * @param context The context for the operation can be used for request cancellation.
+     * @return The updated contact properties.
+     */
+    Azure::Response<CertificatePolicy> UpdateCertificatePolicy(
+        std::string const& name,
+        CertificatePolicy const& certificatePolicy,
+        Azure::Core::Context const& context = Azure::Core::Context()) const;
+
+    /**
+     * @brief Backs up the specified certificate.
+     *
+     * @details Request that a backup of the specified certificate be downloaded to the client.
+     * All versions of the certificate will be downloaded.
+     *
+     * @remark This operation requires the certificates/backup permission.
+     *
+     * @param name The name of the certificate.
+     * @param context The context for the operation can be used for request cancellation.
+     * @return Certificate backup.
+     */
+    Azure::Response<BackupCertificateResult> BackupCertificate(
+        std::string name,
+        Azure::Core::Context const& context = Azure::Core::Context()) const;
+
+    /**
+     * @brief Restores a backed up certificate to a vault.
+     *
+     * @details Restore a backed up certificate, and all its versions, to a vault.
+     *
+     * @remark This operation requires the certificates/restore permission.
+     *
+     * @param backup The backup to restore
+     * @param context The context for the operation can be used for request cancellation.
+     * @return The restored certificate.
+     */
+    Azure::Response<KeyVaultCertificateWithPolicy> RestoreCertificateBackup(
+        BackupCertificateResult const& backup,
+        Azure::Core::Context const& context = Azure::Core::Context()) const;
+
+    /**
+     * @brief List certificates in a specified key vault.
+     *
+     * @details The GetPropertiesOfCertificates operation returns
+     * the set of certificates resources in the specified key vault.
+     *
+     * @remark This operation requires the certificates/list permission.
+     *
+     * @param options The options for the request.
+     * @param context The context for the operation can be used for request cancellation.
+     * @return A response message containing a list of certificates along with a link to the next
+     * page of certificates.
+     */
+    CertificatePropertiesPagedResponse GetPropertiesOfCertificates(
+        GetPropertiesOfCertificatesOptions const& options,
+        Azure::Core::Context const& context = Azure::Core::Context()) const;
+
+    /**
+     * @brief List the versions of a certificate.
+     *
+     * @details The GetCertificateVersions operation returns the versions
+     * of a certificate in the specified key vault.
+     *
+     * @remark This operation requires the certificates/list permission.
+     *
+     * @param options The options for the request.
+     * @param context The context for the operation can be used for request cancellation.
+     * @return A response message containing a list of certificate versions along with a link to the
+     * next page of certificates.
+     */
+    CertificatePropertiesPagedResponse GetPropertiesOfCertificateVersions(
+        std::string const& name,
+        GetPropertiesOfCertificateVersionsOptions const& options
+        = GetPropertiesOfCertificateVersionsOptions(),
+        Azure::Core::Context const& context = Azure::Core::Context()) const;
+
+    /**
+     * @brief List certificate issuers for a specified key vault.
+     *
+     * @details The GetPropertiesOfIssuers operation returns the set of certificate issuer resources
+     * in the specified key vault.
+     *
+     * @remark This operation requires the certificates/manageissuers/getissuers permission.
+     *
+     * @param options The options for the request.
+     * @param context The context for the operation can be used for request cancellation.
+     * @return A response message containing a list of issuers along with a link to the
+     * next page of certificates.
+     */
+    IssuerPropertiesPagedResponse GetPropertiesOfIssuers(
+        GetPropertiesOfIssuersOptions const& options = GetPropertiesOfIssuersOptions(),
+        Azure::Core::Context const& context = Azure::Core::Context()) const;
+
+    /**
+     * @brief Lists the deleted certificates in the specified vault currently available for
+     * recovery.
+     *
+     * @details The GetDeletedCertificates operation retrieves the certificates in the current vault
+     * which are in a deleted state and ready for recovery or purging. This operation includes
+     * deletion-specific information. This operation requires the certificates/get/list permission.
+     *
+     * @remark This operation can only be enabled on soft-delete enabled vaults.
+     *
+     * @param options The options for the request.
+     * @param context The context for the operation can be used for request cancellation.
+     * @return A response message containing a list of deleted certificates in the vault along with
+     * a link to the next page of deleted certificates
+     */
+    DeletedCertificatesPagedResponse GetDeletedCertificates(
+        GetDeletedCertificatesOptions const& options = GetDeletedCertificatesOptions(),
+        Azure::Core::Context const& context = Azure::Core::Context()) const;
+
   private:
+    /**
+     * @brief Gets the creation operation of a certificate.
+     *
+     * @details Gets the creation operation associated with a specified certificate.
+     *
+     * @remark This operation requires the certificates/get permission.
+     *
+     * @param name The certificate name.
+     * @param context The context for the operation can be used for request cancellation.
+     * @return CertificateOperationProperties instance representing the status of the operation.
+     */
+    Azure::Response<CertificateOperationProperties> GetCertificateOperation(
+        std::string const& name,
+        Azure::Core::Context const& context = Azure::Core::Context()) const;
+
     std::unique_ptr<Azure::Core::Http::RawResponse> SendRequest(
         Azure::Core::Http::Request& request,
         Azure::Core::Context const& context) const;
@@ -185,5 +447,9 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
         Azure::Core::Http::HttpMethod method,
         std::vector<std::string> const& path = {},
         Azure::Core::IO::BodyStream* content = nullptr) const;
+
+    Azure::Core::Http::Request ContinuationTokenRequest(
+        std::vector<std::string> const& path,
+        const Azure::Nullable<std::string>& NextPageToken) const;
   };
 }}}} // namespace Azure::Security::KeyVault::Certificates

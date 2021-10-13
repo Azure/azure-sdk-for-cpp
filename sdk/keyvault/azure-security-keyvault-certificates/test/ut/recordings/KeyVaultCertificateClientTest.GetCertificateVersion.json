@@ -1,30 +1,30 @@
-﻿{
+{
   "networkCallRecords": [
     {
       "Headers": {
         "content-type": "application/json",
-        "user-agent": "azsdk-cpp-keyvault-certificates/4.0.0-beta.1 (Windows 10 Enterprise 6.3 19043 19041.1.amd64fre.vb_release.191206-1406)",
-        "x-ms-client-request-id": "f0b52acd-403f-44c8-5659-eb0a1fb9ac58"
+        "user-agent": "azsdk-cpp-keyvault-certificates/4.0.0-beta.1 (Windows 10 Enterprise 6.3 22000 22000.1.amd64fre.co_release.210604-1628)",
+        "x-ms-client-request-id": "329e002e-9691-4db0-5473-9f02305729ca"
       },
       "Method": "POST",
       "Response": {
-        "BODY": "{\"id\":\"https://REDACTED.vault.azure.net/certificates/vivazqu2/pending\",\"issuer\":{\"name\":\"Self\"},\"csr\":\"MIICfzCCAWcCAQAwDjEMMAoGA1UEAxMDeHl6MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEApk7MRdel9siyZFmxsSXKbTWdbBEDmg5yHjh+vCJ8VIPU7yzBZEfHAoGiZwWCOdknr2bcNvTgztL3R9H3BeuUla0rhI1OFUFqeGWjwmPxj+cbHBqQUrY732GY8Y/sZJWnxtBMEY/lvLX6f4mcvLeGEf/HdyamdQ3tpBpsK4lRDWYg+9BncJdegLXKRsNH2MFUrBFoZ4KO9i7XJ7LyzuorDX2yMrfMWa3h6gYqQPifaY3va7pAOB/KYUyfhr/q4wLhDvt2O9xqCJ8mqCdAf8Ei71ivZam7Zo7R46HN45TinHIhiZBwcbFcuSsEBx1EQGC4Wn7V2/x7q5UwGWAVporjQQIDAQABoCwwKgYJKoZIhvcNAQkOMR0wGzAOBgNVHQ8BAf8EBAMCBaAwCQYDVR0TBAIwADANBgkqhkiG9w0BAQsFAAOCAQEAgT5IQMjzSSUBKFqTMficY2nIHUYpqqBLlbZSRqm6N9080Kn4BS/6f5Ibn36NujzcM+kGCsL2FNI3cKxRRIB9QkJOeLDnp91ISyCVlOh+VLKWWwurU0qNenO9EVRoufGkdvN7rPs/dI1Uflpha4+6ziF3bgYrYox2lcwwSx/ZH9dLrny8xj1ik8xWjhL+oFIe/qLrxquysA0wxQvG8pnh/220Vc6hLHNJTWD6L/G6kUwyXS8jLdgp+3obW/sj/++Ceuxomtrnb+DQGXPegj98qgYugu6g3vAlgRmIutVC7YY4dSKkF3DXdUsmre69vVrA1SGk7wixFF95BG1OJ1FUQw==\",\"cancellation_requested\":false,\"status\":\"inProgress\",\"status_details\":\"Pending certificate created. Certificate request is in progress. This may take some time based on the issuer provider. Please check again later.\",\"request_id\":\"75685d7a63e24728bc0a5c8c692bab27\"}",
+        "BODY": "{\"id\":\"https://REDACTED.vault.azure.net/certificates/vivazqu2/pending\",\"issuer\":{\"name\":\"Self\"},\"csr\":\"MIICfzCCAWcCAQAwDjEMMAoGA1UEAxMDeHl6MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA6SiVS3eHdd4+aQhpjRD6Goh+9+odkGN0pENjQlWqVimPOSqNse85maL8kWovfHVYs7VDn5IIsVEZxadCN+OC67yQsW9E+oSuT5mOVoQC8A7Zz/suPd2q2lsBb/AGN3tjCQGD4lEoUJyRMvWN2paGB/3bc43gsDaokthiAy0zyOdehDS1P5lvmj3SbO2/sUwnxK/d36IfKj+gw/mKAhSZT6HDmWn2kxDsRIM2KIWBoxZ0G2emjVrVjri+Hd0BySb7LEt1v0Qm1Z6mvbuUVnkv1/nr8Ywkqa4VfCHWzLKTsB6/lrAeChgxcQtnlAfWuo/2D1gqG6/SBlQyI4cyjygk4QIDAQABoCwwKgYJKoZIhvcNAQkOMR0wGzAOBgNVHQ8BAf8EBAMCBaAwCQYDVR0TBAIwADANBgkqhkiG9w0BAQsFAAOCAQEAXiTapCdQzVBAE6zZf55ocz20Qv+TZzofpo7d4wcg7Z/qf/v1NSfMuVgPb9o6LYmatnThpCMs0k/1yWnWm2Yc0/ssD8hLl+KgfiwprEV8Y+qNHwHfp+oVpgJ3KApFnpa31xwD/So/w9RLcMt/s2O9r20T1V7z47L/QLNiIOVjuuspMAFrCjKcWDz4IQMiIxTu3qPUN5h7W7OfQdSDH1AisodPQ+l8LBJoiXTqizhaeXmixTY6NzyqXkcsfTeo5TWRZbu9DUVSOwm3iE1P+shOzqKnVeJk7tQsJlQZgGmmu65XfdEaTgBobOOY0fqpkAzNZiPqQI99IexNI9r6MaDBBg==\",\"cancellation_requested\":false,\"status\":\"inProgress\",\"status_details\":\"Pending certificate created. Certificate request is in progress. This may take some time based on the issuer provider. Please check again later.\",\"request_id\":\"b6e1af27bae645aeb5835619e3d6e813\"}",
         "STATUS_CODE": "202",
         "cache-control": "no-cache",
         "content-length": "1235",
         "content-type": "application/json; charset=utf-8",
-        "date": "Fri, 17 Sep 2021 00:29:51 GMT",
+        "date": "Wed, 06 Oct 2021 23:35:18 GMT",
         "expires": "-1",
-        "location": "https://REDACTED.vault.azure.net/certificates/vivazqu2/pending?api-version=7.2&request_id=75685d7a63e24728bc0a5c8c692bab27",
+        "location": "https://REDACTED.vault.azure.net/certificates/vivazqu2/pending?api-version=7.2&request_id=b6e1af27bae645aeb5835619e3d6e813",
         "pragma": "no-cache",
         "retry-after": "10",
         "strict-transport-security": "max-age=31536000;includeSubDomains",
         "x-content-type-options": "nosniff",
-        "x-ms-client-request-id": "f0b52acd-403f-44c8-5659-eb0a1fb9ac58",
+        "x-ms-client-request-id": "329e002e-9691-4db0-5473-9f02305729ca",
         "x-ms-keyvault-network-info": "conn_type=Ipv4;addr=24.22.157.72;act_addr_fam=InterNetwork;",
         "x-ms-keyvault-region": "westus2",
-        "x-ms-keyvault-service-version": "1.9.79.2",
-        "x-ms-request-id": "43ccbe02-636d-4d50-8ad1-05c5d7e957ab",
+        "x-ms-keyvault-service-version": "1.9.132.3",
+        "x-ms-request-id": "39027088-2754-4337-86a0-a9e4ccad337d",
         "x-powered-by": "ASP.NET"
       },
       "Url": "https://REDACTED.vault.azure.net/certificates/vivazqu2/create?api-version=7.2"
@@ -32,26 +32,81 @@
     {
       "Headers": {
         "content-type": "application/json",
-        "user-agent": "azsdk-cpp-keyvault-certificates/4.0.0-beta.1 (Windows 10 Enterprise 6.3 19043 19041.1.amd64fre.vb_release.191206-1406)",
-        "x-ms-client-request-id": "7572379a-e90f-42b9-73d9-c6c743137bc9"
+        "user-agent": "azsdk-cpp-keyvault-certificates/4.0.0-beta.1 (Windows 10 Enterprise 6.3 22000 22000.1.amd64fre.co_release.210604-1628)",
+        "x-ms-client-request-id": "6da46aae-e742-4aaa-589c-a658196f458d"
       },
       "Method": "GET",
       "Response": {
-        "BODY": "{\"id\":\"https://REDACTED.vault.azure.net/certificates/vivazqu2/c35be11be53d4b84a99a301ce6c66689\",\"kid\":\"https://REDACTED.vault.azure.net/keys/vivazqu2/c35be11be53d4b84a99a301ce6c66689\",\"sid\":\"https://REDACTED.vault.azure.net/secrets/vivazqu2/c35be11be53d4b84a99a301ce6c66689\",\"x5t\":\"i0YNfOZFJQOrFsJs8n958kXXeUU\",\"cer\":\"MIIDAzCCAeugAwIBAgIQWGMGWpPxTtalXnPzfHDNYzANBgkqhkiG9w0BAQsFADAOMQwwCgYDVQQDEwN4eXowHhcNMjEwOTE3MDAxOTI1WhcNMjIwOTE3MDAyOTI1WjAOMQwwCgYDVQQDEwN4eXowggEiMA0GCSqGSIb3DQEBAQUAA4IBDwAwggEKAoIBAQDUFSGfj+DvdWYNEX8XvWpZ8rqHvJII483S9gAlLy7ipnxn8MKebOKhGAUPyu09iCDdk+SthwSIb8s/ZAqAD3/FvfijU0tM9yCQGcu1coahfrvdmYWOPxd1ZAOTWaSbHAiwL9eTnFoVUib15YBfTlO6+UznKPVVh1YkT/ArgbUm0vaHQ0qIlvNk4lJBYJsBPCXGRvVGGPBLio+cDhR3MA/fOuyFow0D6U4b/bHZNqSbLc6+PbifCUxlU+C+8AMLVSTDsOElztKDLhLzeEANh2Z/OwS5+8Q2S1ZOkDaR6zpMMV3c1ZLj6NGUjeXC8N69G0GfBtZVefmA1ThElncfUWBtAgMBAAGjXTBbMA4GA1UdDwEB/wQEAwIFoDAJBgNVHRMEAjAAMB8GA1UdIwQYMBaAFOPyCQA4O4gev5EZw8sQ6QCsCw82MB0GA1UdDgQWBBTj8gkAODuIHr+RGcPLEOkArAsPNjANBgkqhkiG9w0BAQsFAAOCAQEACbF/COY20fvH6EsceTWj4o2JEH9La79BDAhk50gZm/ZdSF4/2kd40dojYwpswSBvz7UckWY99YhdStlw3y1aoF7N8y6ycBiXknCJMcjXoX5+ryNoOisWZluAOWitL3lqBnuqyPuydQVDxSuowD7mMWXL8zA2dcw4SmnWC0L6ylIYFPr2DHQ4EHFyIQVpHiKDOpex0d7wdH6M19zyrYrnGFqoMGopZc5etfSa1KJZMlTzOTr0An6MSwtAU4W11kaIyJFdCdg359D+98Cd7Pih7SlIOjqTo1A7nIilkBxEbGYaS1WdrP57FAHrjBRVRUbmRfx3EuLhunL/39JDXb9dgg==\",\"attributes\":{\"enabled\":true,\"nbf\":1631837965,\"exp\":1663374565,\"created\":1631838565,\"updated\":1631838565,\"recoveryLevel\":\"Recoverable+Purgeable\",\"recoverableDays\":90},\"tags\":{},\"policy\":{\"id\":\"https://REDACTED.vault.azure.net/certificates/vivazqu2/policy\",\"key_props\":{\"exportable\":true,\"kty\":\"RSA\",\"key_size\":2048,\"reuse_key\":false},\"secret_props\":{\"contentType\":\"application/x-pkcs12\"},\"x509_props\":{\"subject\":\"CN=xyz\",\"ekus\":[],\"key_usage\":[\"digitalSignature\",\"keyEncipherment\"],\"validity_months\":12,\"basic_constraints\":{\"ca\":false}},\"lifetime_actions\":[{\"trigger\":{\"lifetime_percentage\":80},\"action\":{\"action_type\":\"AutoRenew\"}}],\"issuer\":{\"name\":\"Self\"},\"attributes\":{\"enabled\":true,\"created\":1631838534,\"updated\":1631838591}},\"pending\":{\"id\":\"https://REDACTED.vault.azure.net/certificates/vivazqu2/pending\"}}",
+        "BODY": "{\"id\":\"https://REDACTED.vault.azure.net/certificates/vivazqu2/pending\",\"issuer\":{\"name\":\"Self\"},\"csr\":\"MIICfzCCAWcCAQAwDjEMMAoGA1UEAxMDeHl6MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA6SiVS3eHdd4+aQhpjRD6Goh+9+odkGN0pENjQlWqVimPOSqNse85maL8kWovfHVYs7VDn5IIsVEZxadCN+OC67yQsW9E+oSuT5mOVoQC8A7Zz/suPd2q2lsBb/AGN3tjCQGD4lEoUJyRMvWN2paGB/3bc43gsDaokthiAy0zyOdehDS1P5lvmj3SbO2/sUwnxK/d36IfKj+gw/mKAhSZT6HDmWn2kxDsRIM2KIWBoxZ0G2emjVrVjri+Hd0BySb7LEt1v0Qm1Z6mvbuUVnkv1/nr8Ywkqa4VfCHWzLKTsB6/lrAeChgxcQtnlAfWuo/2D1gqG6/SBlQyI4cyjygk4QIDAQABoCwwKgYJKoZIhvcNAQkOMR0wGzAOBgNVHQ8BAf8EBAMCBaAwCQYDVR0TBAIwADANBgkqhkiG9w0BAQsFAAOCAQEAXiTapCdQzVBAE6zZf55ocz20Qv+TZzofpo7d4wcg7Z/qf/v1NSfMuVgPb9o6LYmatnThpCMs0k/1yWnWm2Yc0/ssD8hLl+KgfiwprEV8Y+qNHwHfp+oVpgJ3KApFnpa31xwD/So/w9RLcMt/s2O9r20T1V7z47L/QLNiIOVjuuspMAFrCjKcWDz4IQMiIxTu3qPUN5h7W7OfQdSDH1AisodPQ+l8LBJoiXTqizhaeXmixTY6NzyqXkcsfTeo5TWRZbu9DUVSOwm3iE1P+shOzqKnVeJk7tQsJlQZgGmmu65XfdEaTgBobOOY0fqpkAzNZiPqQI99IexNI9r6MaDBBg==\",\"cancellation_requested\":false,\"status\":\"inProgress\",\"status_details\":\"Pending certificate created. Certificate request is in progress. This may take some time based on the issuer provider. Please check again later.\",\"request_id\":\"b6e1af27bae645aeb5835619e3d6e813\"}",
         "STATUS_CODE": "200",
         "cache-control": "no-cache",
-        "content-length": "2195",
+        "content-length": "1235",
         "content-type": "application/json; charset=utf-8",
-        "date": "Fri, 17 Sep 2021 00:29:51 GMT",
+        "date": "Wed, 06 Oct 2021 23:35:18 GMT",
+        "expires": "-1",
+        "pragma": "no-cache",
+        "retry-after": "10",
+        "strict-transport-security": "max-age=31536000;includeSubDomains",
+        "x-content-type-options": "nosniff",
+        "x-ms-client-request-id": "6da46aae-e742-4aaa-589c-a658196f458d",
+        "x-ms-keyvault-network-info": "conn_type=Ipv4;addr=24.22.157.72;act_addr_fam=InterNetwork;",
+        "x-ms-keyvault-region": "westus2",
+        "x-ms-keyvault-service-version": "1.9.132.3",
+        "x-ms-request-id": "1d1d9ab2-d154-4fc0-a2e9-550332daf33f",
+        "x-powered-by": "ASP.NET"
+      },
+      "Url": "https://REDACTED.vault.azure.net/certificates/vivazqu2/pending?api-version=7.2"
+    },
+    {
+      "Headers": {
+        "content-type": "application/json",
+        "user-agent": "azsdk-cpp-keyvault-certificates/4.0.0-beta.1 (Windows 10 Enterprise 6.3 22000 22000.1.amd64fre.co_release.210604-1628)",
+        "x-ms-client-request-id": "a9e8b6a1-f8e1-442d-5818-2aee76bb482f"
+      },
+      "Method": "GET",
+      "Response": {
+        "BODY": "{\"id\":\"https://REDACTED.vault.azure.net/certificates/vivazqu2/pending\",\"issuer\":{\"name\":\"Self\"},\"csr\":\"MIICfzCCAWcCAQAwDjEMMAoGA1UEAxMDeHl6MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA6SiVS3eHdd4+aQhpjRD6Goh+9+odkGN0pENjQlWqVimPOSqNse85maL8kWovfHVYs7VDn5IIsVEZxadCN+OC67yQsW9E+oSuT5mOVoQC8A7Zz/suPd2q2lsBb/AGN3tjCQGD4lEoUJyRMvWN2paGB/3bc43gsDaokthiAy0zyOdehDS1P5lvmj3SbO2/sUwnxK/d36IfKj+gw/mKAhSZT6HDmWn2kxDsRIM2KIWBoxZ0G2emjVrVjri+Hd0BySb7LEt1v0Qm1Z6mvbuUVnkv1/nr8Ywkqa4VfCHWzLKTsB6/lrAeChgxcQtnlAfWuo/2D1gqG6/SBlQyI4cyjygk4QIDAQABoCwwKgYJKoZIhvcNAQkOMR0wGzAOBgNVHQ8BAf8EBAMCBaAwCQYDVR0TBAIwADANBgkqhkiG9w0BAQsFAAOCAQEAXiTapCdQzVBAE6zZf55ocz20Qv+TZzofpo7d4wcg7Z/qf/v1NSfMuVgPb9o6LYmatnThpCMs0k/1yWnWm2Yc0/ssD8hLl+KgfiwprEV8Y+qNHwHfp+oVpgJ3KApFnpa31xwD/So/w9RLcMt/s2O9r20T1V7z47L/QLNiIOVjuuspMAFrCjKcWDz4IQMiIxTu3qPUN5h7W7OfQdSDH1AisodPQ+l8LBJoiXTqizhaeXmixTY6NzyqXkcsfTeo5TWRZbu9DUVSOwm3iE1P+shOzqKnVeJk7tQsJlQZgGmmu65XfdEaTgBobOOY0fqpkAzNZiPqQI99IexNI9r6MaDBBg==\",\"cancellation_requested\":false,\"status\":\"completed\",\"target\":\"https://REDACTED.vault.azure.net/certificates/vivazqu2\",\"request_id\":\"b6e1af27bae645aeb5835619e3d6e813\"}",
+        "STATUS_CODE": "200",
+        "cache-control": "no-cache",
+        "content-length": "1141",
+        "content-type": "application/json; charset=utf-8",
+        "date": "Wed, 06 Oct 2021 23:35:49 GMT",
         "expires": "-1",
         "pragma": "no-cache",
         "strict-transport-security": "max-age=31536000;includeSubDomains",
         "x-content-type-options": "nosniff",
-        "x-ms-client-request-id": "7572379a-e90f-42b9-73d9-c6c743137bc9",
+        "x-ms-client-request-id": "a9e8b6a1-f8e1-442d-5818-2aee76bb482f",
         "x-ms-keyvault-network-info": "conn_type=Ipv4;addr=24.22.157.72;act_addr_fam=InterNetwork;",
         "x-ms-keyvault-region": "westus2",
-        "x-ms-keyvault-service-version": "1.9.79.2",
-        "x-ms-request-id": "44a4afcd-dfd4-4ed5-a1de-733567cb60ce",
+        "x-ms-keyvault-service-version": "1.9.132.3",
+        "x-ms-request-id": "a5b385a4-c518-4143-a1d4-c7610eb406b7",
+        "x-powered-by": "ASP.NET"
+      },
+      "Url": "https://REDACTED.vault.azure.net/certificates/vivazqu2/pending?api-version=7.2"
+    },
+    {
+      "Headers": {
+        "content-type": "application/json",
+        "user-agent": "azsdk-cpp-keyvault-certificates/4.0.0-beta.1 (Windows 10 Enterprise 6.3 22000 22000.1.amd64fre.co_release.210604-1628)",
+        "x-ms-client-request-id": "95d4345b-7574-4b78-47a8-3b314c4c15a0"
+      },
+      "Method": "GET",
+      "Response": {
+        "BODY": "{\"id\":\"https://REDACTED.vault.azure.net/certificates/vivazqu2/01fa40651fab4fd1a25c4a53c36bcaa0\",\"kid\":\"https://REDACTED.vault.azure.net/keys/vivazqu2/01fa40651fab4fd1a25c4a53c36bcaa0\",\"sid\":\"https://REDACTED.vault.azure.net/secrets/vivazqu2/01fa40651fab4fd1a25c4a53c36bcaa0\",\"x5t\":\"XmQtnmNa4eugCHeLEfHsTa4gEkw\",\"cer\":\"MIIDAzCCAeugAwIBAgIQFXWgDJB2SPyComUH+pmhLDANBgkqhkiG9w0BAQsFADAOMQwwCgYDVQQDEwN4eXowHhcNMjExMDA2MjMyNTIwWhcNMjIxMDA2MjMzNTIwWjAOMQwwCgYDVQQDEwN4eXowggEiMA0GCSqGSIb3DQEBAQUAA4IBDwAwggEKAoIBAQDpKJVLd4d13j5pCGmNEPoaiH736h2QY3SkQ2NCVapWKY85Ko2x7zmZovyRai98dViztUOfkgixURnFp0I344LrvJCxb0T6hK5PmY5WhALwDtnP+y493araWwFv8AY3e2MJAYPiUShQnJEy9Y3aloYH/dtzjeCwNqiS2GIDLTPI516ENLU/mW+aPdJs7b+xTCfEr93foh8qP6DD+YoCFJlPocOZafaTEOxEgzYohYGjFnQbZ6aNWtWOuL4d3QHJJvssS3W/RCbVnqa9u5RWeS/X+evxjCSprhV8IdbMspOwHr+WsB4KGDFxC2eUB9a6j/YPWCobr9IGVDIjhzKPKCThAgMBAAGjXTBbMA4GA1UdDwEB/wQEAwIFoDAJBgNVHRMEAjAAMB8GA1UdIwQYMBaAFAP3fINM0I+S4SidY3VtXQ0hCFvjMB0GA1UdDgQWBBQD93yDTNCPkuEonWN1bV0NIQhb4zANBgkqhkiG9w0BAQsFAAOCAQEAQMkA2EUyg3b5hQTh3Bc+JVTlPzbQyvDIEYXQAXtN25I7AokVl+pdDbB26y+HpO+hBcruAoqcARE21HkQeY9mJZZDCXe8eb/m4tgTy+VBsDWBaS06SYIOSZcxPHScYW4jhBYkizi6w4ZJlw9p8GbsT2hKzPVKHdjkrkOUCcO6p9R3sNhynJ2xFZNjVO/M6jGhAxKECoJ33VFvUxH3L7JnlGFYn6nzsWS0AEij1tJAtPhALCCigQEU3e6vs653L/Ds/Hmyp2PBoAdDGgnFOSoaxV00ZPBnfoFxRw1RuwB0EAkA5xrVZvoLiL2QH/GO3vlRn6h0aByQc9qAFtslB1wREA==\",\"attributes\":{\"enabled\":true,\"nbf\":1633562720,\"exp\":1665099320,\"created\":1633563320,\"updated\":1633563320,\"recoveryLevel\":\"Recoverable+Purgeable\",\"recoverableDays\":90},\"tags\":{},\"policy\":{\"id\":\"https://REDACTED.vault.azure.net/certificates/vivazqu2/policy\",\"key_props\":{\"exportable\":true,\"kty\":\"RSA\",\"key_size\":2048,\"reuse_key\":false},\"secret_props\":{\"contentType\":\"application/x-pkcs12\"},\"x509_props\":{\"subject\":\"CN=xyz\",\"ekus\":[],\"key_usage\":[\"digitalSignature\",\"keyEncipherment\"],\"validity_months\":12,\"basic_constraints\":{\"ca\":false}},\"lifetime_actions\":[{\"trigger\":{\"lifetime_percentage\":80},\"action\":{\"action_type\":\"AutoRenew\"}}],\"issuer\":{\"name\":\"Self\"},\"attributes\":{\"enabled\":true,\"created\":1633563319,\"updated\":1633563319}},\"pending\":{\"id\":\"https://REDACTED.vault.azure.net/certificates/vivazqu2/pending\"}}",
+        "STATUS_CODE": "200",
+        "cache-control": "no-cache",
+        "content-length": "2195",
+        "content-type": "application/json; charset=utf-8",
+        "date": "Wed, 06 Oct 2021 23:35:49 GMT",
+        "expires": "-1",
+        "pragma": "no-cache",
+        "strict-transport-security": "max-age=31536000;includeSubDomains",
+        "x-content-type-options": "nosniff",
+        "x-ms-client-request-id": "95d4345b-7574-4b78-47a8-3b314c4c15a0",
+        "x-ms-keyvault-network-info": "conn_type=Ipv4;addr=24.22.157.72;act_addr_fam=InterNetwork;",
+        "x-ms-keyvault-region": "westus2",
+        "x-ms-keyvault-service-version": "1.9.132.3",
+        "x-ms-request-id": "6266e6b0-f0f3-40f4-ad55-2b06d1f615c6",
         "x-powered-by": "ASP.NET"
       },
       "Url": "https://REDACTED.vault.azure.net/certificates/vivazqu2?api-version=7.2"
@@ -59,29 +114,135 @@
     {
       "Headers": {
         "content-type": "application/json",
-        "user-agent": "azsdk-cpp-keyvault-certificates/4.0.0-beta.1 (Windows 10 Enterprise 6.3 19043 19041.1.amd64fre.vb_release.191206-1406)",
-        "x-ms-client-request-id": "461e24b0-bc51-4acb-76d8-825710b9d35d"
+        "user-agent": "azsdk-cpp-keyvault-certificates/4.0.0-beta.1 (Windows 10 Enterprise 6.3 22000 22000.1.amd64fre.co_release.210604-1628)",
+        "x-ms-client-request-id": "cb33994a-c356-4113-528b-4737182cfc70"
       },
       "Method": "GET",
       "Response": {
-        "BODY": "{\"id\":\"https://REDACTED.vault.azure.net/certificates/vivazqu2/c35be11be53d4b84a99a301ce6c66689\",\"kid\":\"https://REDACTED.vault.azure.net/keys/vivazqu2/c35be11be53d4b84a99a301ce6c66689\",\"sid\":\"https://REDACTED.vault.azure.net/secrets/vivazqu2/c35be11be53d4b84a99a301ce6c66689\",\"x5t\":\"i0YNfOZFJQOrFsJs8n958kXXeUU\",\"cer\":\"MIIDAzCCAeugAwIBAgIQWGMGWpPxTtalXnPzfHDNYzANBgkqhkiG9w0BAQsFADAOMQwwCgYDVQQDEwN4eXowHhcNMjEwOTE3MDAxOTI1WhcNMjIwOTE3MDAyOTI1WjAOMQwwCgYDVQQDEwN4eXowggEiMA0GCSqGSIb3DQEBAQUAA4IBDwAwggEKAoIBAQDUFSGfj+DvdWYNEX8XvWpZ8rqHvJII483S9gAlLy7ipnxn8MKebOKhGAUPyu09iCDdk+SthwSIb8s/ZAqAD3/FvfijU0tM9yCQGcu1coahfrvdmYWOPxd1ZAOTWaSbHAiwL9eTnFoVUib15YBfTlO6+UznKPVVh1YkT/ArgbUm0vaHQ0qIlvNk4lJBYJsBPCXGRvVGGPBLio+cDhR3MA/fOuyFow0D6U4b/bHZNqSbLc6+PbifCUxlU+C+8AMLVSTDsOElztKDLhLzeEANh2Z/OwS5+8Q2S1ZOkDaR6zpMMV3c1ZLj6NGUjeXC8N69G0GfBtZVefmA1ThElncfUWBtAgMBAAGjXTBbMA4GA1UdDwEB/wQEAwIFoDAJBgNVHRMEAjAAMB8GA1UdIwQYMBaAFOPyCQA4O4gev5EZw8sQ6QCsCw82MB0GA1UdDgQWBBTj8gkAODuIHr+RGcPLEOkArAsPNjANBgkqhkiG9w0BAQsFAAOCAQEACbF/COY20fvH6EsceTWj4o2JEH9La79BDAhk50gZm/ZdSF4/2kd40dojYwpswSBvz7UckWY99YhdStlw3y1aoF7N8y6ycBiXknCJMcjXoX5+ryNoOisWZluAOWitL3lqBnuqyPuydQVDxSuowD7mMWXL8zA2dcw4SmnWC0L6ylIYFPr2DHQ4EHFyIQVpHiKDOpex0d7wdH6M19zyrYrnGFqoMGopZc5etfSa1KJZMlTzOTr0An6MSwtAU4W11kaIyJFdCdg359D+98Cd7Pih7SlIOjqTo1A7nIilkBxEbGYaS1WdrP57FAHrjBRVRUbmRfx3EuLhunL/39JDXb9dgg==\",\"attributes\":{\"enabled\":true,\"nbf\":1631837965,\"exp\":1663374565,\"created\":1631838565,\"updated\":1631838565,\"recoveryLevel\":\"Recoverable+Purgeable\",\"recoverableDays\":90},\"tags\":{},\"subject\":\"CN=xyz\",\"issuer\":\"CN=xyz\",\"serialnumber\":\"5863065A93F14ED6A55E73F37C70CD63\"}",
+        "BODY": "{\"id\":\"https://REDACTED.vault.azure.net/certificates/vivazqu2/01fa40651fab4fd1a25c4a53c36bcaa0\",\"kid\":\"https://REDACTED.vault.azure.net/keys/vivazqu2/01fa40651fab4fd1a25c4a53c36bcaa0\",\"sid\":\"https://REDACTED.vault.azure.net/secrets/vivazqu2/01fa40651fab4fd1a25c4a53c36bcaa0\",\"x5t\":\"XmQtnmNa4eugCHeLEfHsTa4gEkw\",\"cer\":\"MIIDAzCCAeugAwIBAgIQFXWgDJB2SPyComUH+pmhLDANBgkqhkiG9w0BAQsFADAOMQwwCgYDVQQDEwN4eXowHhcNMjExMDA2MjMyNTIwWhcNMjIxMDA2MjMzNTIwWjAOMQwwCgYDVQQDEwN4eXowggEiMA0GCSqGSIb3DQEBAQUAA4IBDwAwggEKAoIBAQDpKJVLd4d13j5pCGmNEPoaiH736h2QY3SkQ2NCVapWKY85Ko2x7zmZovyRai98dViztUOfkgixURnFp0I344LrvJCxb0T6hK5PmY5WhALwDtnP+y493araWwFv8AY3e2MJAYPiUShQnJEy9Y3aloYH/dtzjeCwNqiS2GIDLTPI516ENLU/mW+aPdJs7b+xTCfEr93foh8qP6DD+YoCFJlPocOZafaTEOxEgzYohYGjFnQbZ6aNWtWOuL4d3QHJJvssS3W/RCbVnqa9u5RWeS/X+evxjCSprhV8IdbMspOwHr+WsB4KGDFxC2eUB9a6j/YPWCobr9IGVDIjhzKPKCThAgMBAAGjXTBbMA4GA1UdDwEB/wQEAwIFoDAJBgNVHRMEAjAAMB8GA1UdIwQYMBaAFAP3fINM0I+S4SidY3VtXQ0hCFvjMB0GA1UdDgQWBBQD93yDTNCPkuEonWN1bV0NIQhb4zANBgkqhkiG9w0BAQsFAAOCAQEAQMkA2EUyg3b5hQTh3Bc+JVTlPzbQyvDIEYXQAXtN25I7AokVl+pdDbB26y+HpO+hBcruAoqcARE21HkQeY9mJZZDCXe8eb/m4tgTy+VBsDWBaS06SYIOSZcxPHScYW4jhBYkizi6w4ZJlw9p8GbsT2hKzPVKHdjkrkOUCcO6p9R3sNhynJ2xFZNjVO/M6jGhAxKECoJ33VFvUxH3L7JnlGFYn6nzsWS0AEij1tJAtPhALCCigQEU3e6vs653L/Ds/Hmyp2PBoAdDGgnFOSoaxV00ZPBnfoFxRw1RuwB0EAkA5xrVZvoLiL2QH/GO3vlRn6h0aByQc9qAFtslB1wREA==\",\"attributes\":{\"enabled\":true,\"nbf\":1633562720,\"exp\":1665099320,\"created\":1633563320,\"updated\":1633563320,\"recoveryLevel\":\"Recoverable+Purgeable\",\"recoverableDays\":90},\"tags\":{},\"subject\":\"CN=xyz\",\"issuer\":\"CN=xyz\",\"serialnumber\":\"1575A00C907648FC82A26507FA99A12C\"}",
         "STATUS_CODE": "200",
         "cache-control": "no-cache",
         "content-length": "1635",
         "content-type": "application/json; charset=utf-8",
-        "date": "Fri, 17 Sep 2021 00:29:51 GMT",
+        "date": "Wed, 06 Oct 2021 23:35:49 GMT",
         "expires": "-1",
         "pragma": "no-cache",
         "strict-transport-security": "max-age=31536000;includeSubDomains",
         "x-content-type-options": "nosniff",
-        "x-ms-client-request-id": "461e24b0-bc51-4acb-76d8-825710b9d35d",
+        "x-ms-client-request-id": "cb33994a-c356-4113-528b-4737182cfc70",
         "x-ms-keyvault-network-info": "conn_type=Ipv4;addr=24.22.157.72;act_addr_fam=InterNetwork;",
         "x-ms-keyvault-region": "westus2",
-        "x-ms-keyvault-service-version": "1.9.79.2",
-        "x-ms-request-id": "43df0bff-92cf-4523-a5ee-963b0b2871f4",
+        "x-ms-keyvault-service-version": "1.9.132.3",
+        "x-ms-request-id": "57283cb5-3612-44da-9e26-2a40284d2b89",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/certificates/vivazqu2/c35be11be53d4b84a99a301ce6c66689?api-version=7.2"
+      "Url": "https://REDACTED.vault.azure.net/certificates/vivazqu2/01fa40651fab4fd1a25c4a53c36bcaa0?api-version=7.2"
+    },
+    {
+      "Headers": {
+        "content-type": "application/json",
+        "user-agent": "azsdk-cpp-keyvault-certificates/4.0.0-beta.1 (Windows 10 Enterprise 6.3 22000 22000.1.amd64fre.co_release.210604-1628)",
+        "x-ms-client-request-id": "ca35302e-b42c-47e6-53eb-ad8a00ca6f7e"
+      },
+      "Method": "DELETE",
+      "Response": {
+        "BODY": "{\"recoveryId\":\"https://REDACTED.vault.azure.net/deletedcertificates/vivazqu2\",\"deletedDate\":1633563349,\"scheduledPurgeDate\":1641339349,\"id\":\"https://REDACTED.vault.azure.net/certificates/vivazqu2/01fa40651fab4fd1a25c4a53c36bcaa0\",\"kid\":\"https://REDACTED.vault.azure.net/keys/vivazqu2/01fa40651fab4fd1a25c4a53c36bcaa0\",\"sid\":\"https://REDACTED.vault.azure.net/secrets/vivazqu2/01fa40651fab4fd1a25c4a53c36bcaa0\",\"x5t\":\"XmQtnmNa4eugCHeLEfHsTa4gEkw\",\"cer\":\"MIIDAzCCAeugAwIBAgIQFXWgDJB2SPyComUH+pmhLDANBgkqhkiG9w0BAQsFADAOMQwwCgYDVQQDEwN4eXowHhcNMjExMDA2MjMyNTIwWhcNMjIxMDA2MjMzNTIwWjAOMQwwCgYDVQQDEwN4eXowggEiMA0GCSqGSIb3DQEBAQUAA4IBDwAwggEKAoIBAQDpKJVLd4d13j5pCGmNEPoaiH736h2QY3SkQ2NCVapWKY85Ko2x7zmZovyRai98dViztUOfkgixURnFp0I344LrvJCxb0T6hK5PmY5WhALwDtnP+y493araWwFv8AY3e2MJAYPiUShQnJEy9Y3aloYH/dtzjeCwNqiS2GIDLTPI516ENLU/mW+aPdJs7b+xTCfEr93foh8qP6DD+YoCFJlPocOZafaTEOxEgzYohYGjFnQbZ6aNWtWOuL4d3QHJJvssS3W/RCbVnqa9u5RWeS/X+evxjCSprhV8IdbMspOwHr+WsB4KGDFxC2eUB9a6j/YPWCobr9IGVDIjhzKPKCThAgMBAAGjXTBbMA4GA1UdDwEB/wQEAwIFoDAJBgNVHRMEAjAAMB8GA1UdIwQYMBaAFAP3fINM0I+S4SidY3VtXQ0hCFvjMB0GA1UdDgQWBBQD93yDTNCPkuEonWN1bV0NIQhb4zANBgkqhkiG9w0BAQsFAAOCAQEAQMkA2EUyg3b5hQTh3Bc+JVTlPzbQyvDIEYXQAXtN25I7AokVl+pdDbB26y+HpO+hBcruAoqcARE21HkQeY9mJZZDCXe8eb/m4tgTy+VBsDWBaS06SYIOSZcxPHScYW4jhBYkizi6w4ZJlw9p8GbsT2hKzPVKHdjkrkOUCcO6p9R3sNhynJ2xFZNjVO/M6jGhAxKECoJ33VFvUxH3L7JnlGFYn6nzsWS0AEij1tJAtPhALCCigQEU3e6vs653L/Ds/Hmyp2PBoAdDGgnFOSoaxV00ZPBnfoFxRw1RuwB0EAkA5xrVZvoLiL2QH/GO3vlRn6h0aByQc9qAFtslB1wREA==\",\"attributes\":{\"enabled\":true,\"nbf\":1633562720,\"exp\":1665099320,\"created\":1633563320,\"updated\":1633563320,\"recoveryLevel\":\"Recoverable+Purgeable\",\"recoverableDays\":90},\"tags\":{},\"policy\":{\"id\":\"https://REDACTED.vault.azure.net/certificates/vivazqu2/policy\",\"key_props\":{\"exportable\":true,\"kty\":\"RSA\",\"key_size\":2048,\"reuse_key\":false},\"secret_props\":{\"contentType\":\"application/x-pkcs12\"},\"x509_props\":{\"subject\":\"CN=xyz\",\"ekus\":[],\"key_usage\":[\"digitalSignature\",\"keyEncipherment\"],\"validity_months\":12,\"basic_constraints\":{\"ca\":false}},\"lifetime_actions\":[{\"trigger\":{\"lifetime_percentage\":80},\"action\":{\"action_type\":\"AutoRenew\"}}],\"issuer\":{\"name\":\"Self\"},\"attributes\":{\"enabled\":true,\"created\":1633563319,\"updated\":1633563319}},\"pending\":{\"id\":\"https://REDACTED.vault.azure.net/certificates/vivazqu2/pending\"}}",
+        "STATUS_CODE": "200",
+        "cache-control": "no-cache",
+        "content-length": "2334",
+        "content-type": "application/json; charset=utf-8",
+        "date": "Wed, 06 Oct 2021 23:35:49 GMT",
+        "expires": "-1",
+        "pragma": "no-cache",
+        "strict-transport-security": "max-age=31536000;includeSubDomains",
+        "x-content-type-options": "nosniff",
+        "x-ms-client-request-id": "ca35302e-b42c-47e6-53eb-ad8a00ca6f7e",
+        "x-ms-keyvault-network-info": "conn_type=Ipv4;addr=24.22.157.72;act_addr_fam=InterNetwork;",
+        "x-ms-keyvault-region": "westus2",
+        "x-ms-keyvault-service-version": "1.9.132.3",
+        "x-ms-request-id": "080745c1-296d-494a-b370-92f144c5bd07",
+        "x-powered-by": "ASP.NET"
+      },
+      "Url": "https://REDACTED.vault.azure.net/certificates/vivazqu2?api-version=7.2"
+    },
+    {
+      "Headers": {
+        "content-type": "application/json",
+        "user-agent": "azsdk-cpp-keyvault-certificates/4.0.0-beta.1 (Windows 10 Enterprise 6.3 22000 22000.1.amd64fre.co_release.210604-1628)",
+        "x-ms-client-request-id": "3e651791-25f5-4a64-6735-1f29935f325f"
+      },
+      "Method": "GET",
+      "Response": {
+        "BODY": "{\"error\":{\"code\":\"CertificateNotFound\",\"message\":\"Deleted Certificate not found: vivazqu2\"}}",
+        "STATUS_CODE": "404",
+        "cache-control": "no-cache",
+        "content-length": "92",
+        "content-type": "application/json; charset=utf-8",
+        "date": "Wed, 06 Oct 2021 23:35:49 GMT",
+        "expires": "-1",
+        "pragma": "no-cache",
+        "strict-transport-security": "max-age=31536000;includeSubDomains",
+        "x-content-type-options": "nosniff",
+        "x-ms-client-request-id": "3e651791-25f5-4a64-6735-1f29935f325f",
+        "x-ms-keyvault-network-info": "conn_type=Ipv4;addr=24.22.157.72;act_addr_fam=InterNetwork;",
+        "x-ms-keyvault-region": "westus2",
+        "x-ms-keyvault-service-version": "1.9.132.3",
+        "x-ms-request-id": "5ab0b11e-e2b4-4e76-80e9-d42128cbb050",
+        "x-powered-by": "ASP.NET"
+      },
+      "Url": "https://REDACTED.vault.azure.net/deletedcertificates/vivazqu2?api-version=7.2"
+    },
+    {
+      "Headers": {
+        "content-type": "application/json",
+        "user-agent": "azsdk-cpp-keyvault-certificates/4.0.0-beta.1 (Windows 10 Enterprise 6.3 22000 22000.1.amd64fre.co_release.210604-1628)",
+        "x-ms-client-request-id": "c58e092e-82d3-46f9-5512-669771b8414a"
+      },
+      "Method": "GET",
+      "Response": {
+        "BODY": "{\"recoveryId\":\"https://REDACTED.vault.azure.net/deletedcertificates/vivazqu2\",\"deletedDate\":1633563349,\"scheduledPurgeDate\":1641339349,\"id\":\"https://REDACTED.vault.azure.net/certificates/vivazqu2/01fa40651fab4fd1a25c4a53c36bcaa0\",\"kid\":\"https://REDACTED.vault.azure.net/keys/vivazqu2/01fa40651fab4fd1a25c4a53c36bcaa0\",\"sid\":\"https://REDACTED.vault.azure.net/secrets/vivazqu2/01fa40651fab4fd1a25c4a53c36bcaa0\",\"x5t\":\"XmQtnmNa4eugCHeLEfHsTa4gEkw\",\"cer\":\"MIIDAzCCAeugAwIBAgIQFXWgDJB2SPyComUH+pmhLDANBgkqhkiG9w0BAQsFADAOMQwwCgYDVQQDEwN4eXowHhcNMjExMDA2MjMyNTIwWhcNMjIxMDA2MjMzNTIwWjAOMQwwCgYDVQQDEwN4eXowggEiMA0GCSqGSIb3DQEBAQUAA4IBDwAwggEKAoIBAQDpKJVLd4d13j5pCGmNEPoaiH736h2QY3SkQ2NCVapWKY85Ko2x7zmZovyRai98dViztUOfkgixURnFp0I344LrvJCxb0T6hK5PmY5WhALwDtnP+y493araWwFv8AY3e2MJAYPiUShQnJEy9Y3aloYH/dtzjeCwNqiS2GIDLTPI516ENLU/mW+aPdJs7b+xTCfEr93foh8qP6DD+YoCFJlPocOZafaTEOxEgzYohYGjFnQbZ6aNWtWOuL4d3QHJJvssS3W/RCbVnqa9u5RWeS/X+evxjCSprhV8IdbMspOwHr+WsB4KGDFxC2eUB9a6j/YPWCobr9IGVDIjhzKPKCThAgMBAAGjXTBbMA4GA1UdDwEB/wQEAwIFoDAJBgNVHRMEAjAAMB8GA1UdIwQYMBaAFAP3fINM0I+S4SidY3VtXQ0hCFvjMB0GA1UdDgQWBBQD93yDTNCPkuEonWN1bV0NIQhb4zANBgkqhkiG9w0BAQsFAAOCAQEAQMkA2EUyg3b5hQTh3Bc+JVTlPzbQyvDIEYXQAXtN25I7AokVl+pdDbB26y+HpO+hBcruAoqcARE21HkQeY9mJZZDCXe8eb/m4tgTy+VBsDWBaS06SYIOSZcxPHScYW4jhBYkizi6w4ZJlw9p8GbsT2hKzPVKHdjkrkOUCcO6p9R3sNhynJ2xFZNjVO/M6jGhAxKECoJ33VFvUxH3L7JnlGFYn6nzsWS0AEij1tJAtPhALCCigQEU3e6vs653L/Ds/Hmyp2PBoAdDGgnFOSoaxV00ZPBnfoFxRw1RuwB0EAkA5xrVZvoLiL2QH/GO3vlRn6h0aByQc9qAFtslB1wREA==\",\"attributes\":{\"enabled\":true,\"nbf\":1633562720,\"exp\":1665099320,\"created\":1633563320,\"updated\":1633563320,\"recoveryLevel\":\"Recoverable+Purgeable\",\"recoverableDays\":90},\"tags\":{},\"policy\":{\"id\":\"https://REDACTED.vault.azure.net/certificates/vivazqu2/policy\",\"key_props\":{\"exportable\":true,\"kty\":\"RSA\",\"key_size\":2048,\"reuse_key\":false},\"secret_props\":{\"contentType\":\"application/x-pkcs12\"},\"x509_props\":{\"subject\":\"CN=xyz\",\"ekus\":[],\"key_usage\":[\"digitalSignature\",\"keyEncipherment\"],\"validity_months\":12,\"basic_constraints\":{\"ca\":false}},\"lifetime_actions\":[{\"trigger\":{\"lifetime_percentage\":80},\"action\":{\"action_type\":\"AutoRenew\"}}],\"issuer\":{\"name\":\"Self\"},\"attributes\":{\"enabled\":true,\"created\":1633563319,\"updated\":1633563319}},\"pending\":{\"id\":\"https://REDACTED.vault.azure.net/certificates/vivazqu2/pending\"}}",
+        "STATUS_CODE": "200",
+        "cache-control": "no-cache",
+        "content-length": "2334",
+        "content-type": "application/json; charset=utf-8",
+        "date": "Wed, 06 Oct 2021 23:36:20 GMT",
+        "expires": "-1",
+        "pragma": "no-cache",
+        "strict-transport-security": "max-age=31536000;includeSubDomains",
+        "x-content-type-options": "nosniff",
+        "x-ms-client-request-id": "c58e092e-82d3-46f9-5512-669771b8414a",
+        "x-ms-keyvault-network-info": "conn_type=Ipv4;addr=24.22.157.72;act_addr_fam=InterNetwork;",
+        "x-ms-keyvault-region": "westus2",
+        "x-ms-keyvault-service-version": "1.9.132.3",
+        "x-ms-request-id": "6fb7652f-9f5a-4045-823d-a8815086721e",
+        "x-powered-by": "ASP.NET"
+      },
+      "Url": "https://REDACTED.vault.azure.net/deletedcertificates/vivazqu2?api-version=7.2"
+    },
+    {
+      "Headers": {
+        "content-type": "application/json",
+        "user-agent": "azsdk-cpp-keyvault-certificates/4.0.0-beta.1 (Windows 10 Enterprise 6.3 22000 22000.1.amd64fre.co_release.210604-1628)",
+        "x-ms-client-request-id": "dc6b6e7a-1eb9-426f-72f7-0eb86e07d089"
+      },
+      "Method": "DELETE",
+      "Response": {
+        "BODY": "",
+        "STATUS_CODE": "204",
+        "cache-control": "no-cache",
+        "date": "Wed, 06 Oct 2021 23:36:20 GMT",
+        "expires": "-1",
+        "pragma": "no-cache",
+        "strict-transport-security": "max-age=31536000;includeSubDomains",
+        "x-content-type-options": "nosniff",
+        "x-ms-client-request-id": "dc6b6e7a-1eb9-426f-72f7-0eb86e07d089",
+        "x-ms-keyvault-network-info": "conn_type=Ipv4;addr=24.22.157.72;act_addr_fam=InterNetwork;",
+        "x-ms-keyvault-region": "westus2",
+        "x-ms-keyvault-service-version": "1.9.132.3",
+        "x-ms-request-id": "c7a92eef-9ad7-43cf-96b1-1dcb5253c618",
+        "x-powered-by": "ASP.NET"
+      },
+      "Url": "https://REDACTED.vault.azure.net/deletedcertificates/vivazqu2?api-version=7.2"
     }
   ]
 }

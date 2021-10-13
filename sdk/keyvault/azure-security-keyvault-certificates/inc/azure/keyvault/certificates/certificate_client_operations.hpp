@@ -22,16 +22,17 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
   /**
    * @brief Represents a create certificate long running operation
    */
-  class CreateCertificateOperation final : public Azure::Core::Operation<KeyVaultCertificate> {
+  class CreateCertificateOperation final
+      : public Azure::Core::Operation<KeyVaultCertificateWithPolicy> {
 
     friend class CertificateClient;
 
   private:
     std::shared_ptr<CertificateClient> m_certificateClient;
-    KeyVaultCertificate m_value;
+    KeyVaultCertificateWithPolicy m_value;
     std::string m_continuationToken;
 
-    Azure::Response<KeyVaultCertificate> PollUntilDoneInternal(
+    Azure::Response<KeyVaultCertificateWithPolicy> PollUntilDoneInternal(
         std::chrono::milliseconds period,
         Azure::Core::Context& context) override;
 
@@ -45,7 +46,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
      */
     CreateCertificateOperation(
         std::shared_ptr<CertificateClient> certificateClient,
-        Azure::Response<KeyVaultCertificate> response);
+        Azure::Response<CertificateOperationProperties> response);
 
     CreateCertificateOperation(
         std::string resumeToken,
@@ -63,11 +64,18 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
 
   public:
     /**
-     * @brief Get the #Azure::Security::KeyVault::Certificate::KeyVaultCertificate object.
+     * @brief Get the #Azure::Security::KeyVault::Certificates::KeyVaultCertificateWithPolicy
+     * object.
      *
      * @return A certificate object.
      */
-    KeyVaultCertificate Value() const override { return m_value; }
+    KeyVaultCertificateWithPolicy Value() const override { return m_value; }
+
+    /**
+     * @brief Get the properties of the pending certificate operation.
+     *
+     */
+    CertificateOperationProperties Properties;
 
     /**
      * @brief Get an Url as string which can be used to get the status of the
@@ -91,6 +99,162 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
      * @return CreateCertificateOperation
      */
     static CreateCertificateOperation CreateFromResumeToken(
+        std::string const& resumeToken,
+        CertificateClient const& client,
+        Azure::Core::Context const& context = Azure::Core::Context());
+  };
+
+  /**
+   * @brief Represents a delete certificate long running operation
+   */
+  class DeleteCertificateOperation final : public Azure::Core::Operation<DeletedCertificate> {
+
+    friend class CertificateClient;
+
+  private:
+    std::shared_ptr<CertificateClient> m_certificateClient;
+    DeletedCertificate m_value;
+    std::string m_continuationToken;
+
+    Azure::Response<DeletedCertificate> PollUntilDoneInternal(
+        std::chrono::milliseconds period,
+        Azure::Core::Context& context) override;
+
+    std::unique_ptr<Azure::Core::Http::RawResponse> PollInternal(
+        Azure::Core::Context const& context) override;
+
+    /*
+     * Only friend classes are permitted to call the constructor .
+     *
+     * Since C++ doesn't offer `internal` access, we use friends-only instead.
+     */
+    DeleteCertificateOperation(
+        std::shared_ptr<CertificateClient> certificateClient,
+        Azure::Response<DeletedCertificate> response);
+
+    DeleteCertificateOperation(
+        std::string resumeToken,
+        std::shared_ptr<CertificateClient> certificateClient);
+
+    /**
+     * @brief Get the #Azure::Core::Http::RawResponse of the operation request.
+     * @return A reference to an #Azure::Core::Http::RawResponse.
+     * @note Does not give up ownership of the RawResponse.
+     */
+    Azure::Core::Http::RawResponse const& GetRawResponseInternal() const override
+    {
+      return *m_rawResponse;
+    }
+
+  public:
+    /**
+     * @brief Get the #Azure::Security::KeyVault::Certificates::DeletedCertificate object.
+     *
+     * @return A deleted certificate object.
+     */
+    DeletedCertificate Value() const override { return m_value; }
+
+    /**
+     * @brief Get an Url as string which can be used to get the status of the
+     * operation.
+     *
+     * @return std::string
+     */
+    std::string GetResumeToken() const override { return m_continuationToken; }
+
+    /**
+     * @brief Create a #DeleteCertificateOperation from the \p resumeToken fetched from another
+     * `Operation<T>`, updated to the the latest operation status.
+     *
+     * @remark After the operation is initialized, it is used to poll the last update from the
+     * server using the \p context.
+     *
+     * @param resumeToken A previously generated token used to resume the polling of the
+     * operation.
+     * @param client A #CertificateClient that is used for getting status updates.
+     * @param context A #Azure::Core::Context controlling the request lifetime.
+     * @return DeleteCertificateOperation
+     */
+    static DeleteCertificateOperation CreateFromResumeToken(
+        std::string const& resumeToken,
+        CertificateClient const& client,
+        Azure::Core::Context const& context = Azure::Core::Context());
+  };
+
+  /**
+   * @brief Represents a recover deleted certificate long running operation
+   */
+  class RecoverDeletedCertificateOperation final
+      : public Azure::Core::Operation<KeyVaultCertificateWithPolicy> {
+
+    friend class CertificateClient;
+
+  private:
+    std::shared_ptr<CertificateClient> m_certificateClient;
+    KeyVaultCertificateWithPolicy m_value;
+    std::string m_continuationToken;
+
+    Azure::Response<KeyVaultCertificateWithPolicy> PollUntilDoneInternal(
+        std::chrono::milliseconds period,
+        Azure::Core::Context& context) override;
+
+    std::unique_ptr<Azure::Core::Http::RawResponse> PollInternal(
+        Azure::Core::Context const& context) override;
+
+    /*
+     * Only friend classes are permitted to call the constructor .
+     *
+     * Since C++ doesn't offer `internal` access, we use friends-only instead.
+     */
+    RecoverDeletedCertificateOperation(
+        std::shared_ptr<CertificateClient> certificateClient,
+        Azure::Response<KeyVaultCertificateWithPolicy> response);
+
+    RecoverDeletedCertificateOperation(
+        std::string resumeToken,
+        std::shared_ptr<CertificateClient> certificateClient);
+
+    /**
+     * @brief Get the #Azure::Core::Http::RawResponse of the operation request.
+     * @return A reference to an #Azure::Core::Http::RawResponse.
+     * @note Does not give up ownership of the RawResponse.
+     */
+    Azure::Core::Http::RawResponse const& GetRawResponseInternal() const override
+    {
+      return *m_rawResponse;
+    }
+
+  public:
+    /**
+     * @brief Get the #Azure::Security::KeyVault::Certificates::KeyVaultCertificateWithPolicy
+     * object.
+     *
+     * @return A key vault certificate object.
+     */
+    KeyVaultCertificateWithPolicy Value() const override { return m_value; }
+
+    /**
+     * @brief Get an Url as string which can be used to get the status of the
+     * operation.
+     *
+     * @return std::string
+     */
+    std::string GetResumeToken() const override { return m_continuationToken; }
+
+    /**
+     * @brief Create a #RecoverDeletedCertificateOperation from the \p resumeToken fetched from
+     * another `Operation<T>`, updated to the the latest operation status.
+     *
+     * @remark After the operation is initialized, it is used to poll the last update from the
+     * server using the \p context.
+     *
+     * @param resumeToken A previously generated token used to resume the polling of the
+     * operation.
+     * @param client A #CertificateClient that is used for getting status updates.
+     * @param context A #Azure::Core::Context controlling the request lifetime.
+     * @return RecoverDeletedCertificateOperation
+     */
+    static RecoverDeletedCertificateOperation CreateFromResumeToken(
         std::string const& resumeToken,
         CertificateClient const& client,
         Azure::Core::Context const& context = Azure::Core::Context());
