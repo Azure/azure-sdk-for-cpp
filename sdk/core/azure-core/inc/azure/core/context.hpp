@@ -79,8 +79,9 @@ namespace Azure { namespace Core {
       std::atomic<DateTime::rep> Deadline;
       Context::Key Key;
       std::shared_ptr<void> Value;
+#if defined(AZURE_SDK_RTTI_ENABLED)
       const std::type_info& ValueType;
-
+#endif
       static constexpr DateTime::rep ToDateTimeRepresentation(DateTime const& dateTime)
       {
         return dateTime.time_since_epoch().count();
@@ -92,16 +93,22 @@ namespace Azure { namespace Core {
       }
 
       explicit ContextSharedState()
-          : Deadline(ToDateTimeRepresentation((DateTime::max)())), Value(nullptr),
+          : Deadline(ToDateTimeRepresentation((DateTime::max)())), Value(nullptr)
+#if defined(AZURE_SDK_RTTI_ENABLED)
+            ,
             ValueType(typeid(std::nullptr_t))
+#endif
       {
       }
 
       explicit ContextSharedState(
           const std::shared_ptr<ContextSharedState>& parent,
           DateTime const& deadline)
-          : Parent(parent), Deadline(ToDateTimeRepresentation(deadline)), Value(nullptr),
+          : Parent(parent), Deadline(ToDateTimeRepresentation(deadline)), Value(nullptr)
+#if defined(AZURE_SDK_RTTI_ENABLED)
+            ,
             ValueType(typeid(std::nullptr_t))
+#endif
       {
       }
 
@@ -112,7 +119,11 @@ namespace Azure { namespace Core {
           Context::Key const& key,
           T value) // NOTE, should this be T&&
           : Parent(parent), Deadline(ToDateTimeRepresentation(deadline)), Key(key),
-            Value(std::make_shared<T>(std::move(value))), ValueType(typeid(T))
+            Value(std::make_shared<T>(std::move(value)))
+#if defined(AZURE_SDK_RTTI_ENABLED)
+            ,
+            ValueType(typeid(T))
+#endif
       {
       }
     };
@@ -197,8 +208,10 @@ namespace Azure { namespace Core {
       {
         if (ptr->Key == key)
         {
+#if defined(AZURE_SDK_RTTI_ENABLED)
           AZURE_ASSERT_MSG(
               typeid(T) == ptr->ValueType, "Type mismatch for Context::TryGetValue().");
+#endif
 
           outputValue = *reinterpret_cast<const T*>(ptr->Value.get());
           return true;

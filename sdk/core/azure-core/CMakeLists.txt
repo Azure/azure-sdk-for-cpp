@@ -17,8 +17,11 @@ include(AzureCodeCoverage)
 include(AzureTransportAdapters)
 include(AzureDoxygen)
 include(AzureGlobalCompileOptions)
+include(AzureRemoveRTTI)
 
 az_vcpkg_integrate()
+
+az_remove_rtti()
 
 find_package(Threads REQUIRED)
 

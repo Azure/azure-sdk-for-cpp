@@ -16,8 +16,11 @@ include(AzureCodeCoverage)
 include(AzureTransportAdapters)
 include(AzureDoxygen)
 include(AzureGlobalCompileOptions)
+include(AzureRemoveRTTI)
 
 az_vcpkg_integrate()
+
+az_remove_rtti()
 
 if(NOT AZ_ALL_LIBRARIES)
   find_package(azure-storage-blobs-cpp "12.2.0" CONFIG QUIET)

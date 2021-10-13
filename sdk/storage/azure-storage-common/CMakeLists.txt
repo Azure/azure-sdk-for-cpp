@@ -16,8 +16,11 @@ include(AzureCodeCoverage)
 include(AzureTransportAdapters)
 include(AzureDoxygen)
 include(AzureGlobalCompileOptions)
+include(AzureRemoveRTTI)
 
 az_vcpkg_integrate()
+
+az_remove_rtti()
 
 if(NOT AZ_ALL_LIBRARIES)
   find_package(azure-core-cpp "1.0.0" CONFIG QUIET)
