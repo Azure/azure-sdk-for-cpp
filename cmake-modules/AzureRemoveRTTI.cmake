@@ -3,7 +3,7 @@
 
 # The option is added again just like from the main CMakeList
 # to enable discovering the option directly from each project.
-option(BUILD_RTTI "Build libraries with Runtime type information." ON)
+option(BUILD_RTTI "Build libraries with run-time type information." ON)
 
 macro(az_remove_rtti target)
   if (BUILD_RTTI)
