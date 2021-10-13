@@ -17,7 +17,7 @@ include(AzureCodeCoverage)
 include(AzureTransportAdapters)
 include(AzureDoxygen)
 include(AzureGlobalCompileOptions)
-include(AzureRemoveRTTI)
+include(AzureConfigRTTI)
 
 az_vcpkg_integrate()
 
@@ -126,7 +126,7 @@ set(
 
 add_library(azure-core ${AZURE_CORE_HEADER} ${AZURE_CORE_SOURCE})
 
-az_remove_rtti(azure-core)
+az_rtti_setup(azure-core)
 
 target_include_directories(
   azure-core

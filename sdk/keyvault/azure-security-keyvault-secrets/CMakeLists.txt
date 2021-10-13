@@ -16,7 +16,7 @@ include(AzureCodeCoverage)
 include(AzureTransportAdapters)
 include(AzureDoxygen)
 include(AzureGlobalCompileOptions)
-include(AzureRemoveRTTI)
+include(AzureConfigRTTI)
 
 az_vcpkg_integrate()
 
@@ -58,7 +58,7 @@ set(
 add_library(azure-security-keyvault-secrets ${AZURE_SECURITY_KEYVAULT_SECRETS_HEADER} ${AZURE_SECURITY_KEYVAULT_SECRETS_SOURCE})
 add_library(Azure::azure-security-keyvault-secrets ALIAS azure-security-keyvault-secrets)
 
-az_remove_rtti(azure-security-keyvault-secrets)
+az_rtti_setup(azure-security-keyvault-secrets)
 
 target_include_directories(
   azure-security-keyvault-secrets

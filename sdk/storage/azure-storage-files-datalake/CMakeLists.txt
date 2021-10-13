@@ -16,7 +16,7 @@ include(AzureCodeCoverage)
 include(AzureTransportAdapters)
 include(AzureDoxygen)
 include(AzureGlobalCompileOptions)
-include(AzureRemoveRTTI)
+include(AzureConfigRTTI)
 
 az_vcpkg_integrate()
 
@@ -65,7 +65,7 @@ add_library(azure-storage-files-datalake ${AZURE_STORAGE_FILES_DATALAKE_HEADER} 
 # make sure that users can consume the project as a library.
 add_library(Azure::azure-storage-files-datalake ALIAS azure-storage-files-datalake)
 
-az_remove_rtti(azure-storage-files-datalake)
+az_rtti_setup(azure-storage-files-datalake)
 
 target_include_directories(
   azure-storage-files-datalake

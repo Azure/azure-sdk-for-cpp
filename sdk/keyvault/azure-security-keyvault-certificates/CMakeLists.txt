@@ -16,7 +16,7 @@ include(AzureCodeCoverage)
 include(AzureTransportAdapters)
 include(AzureDoxygen)
 include(AzureGlobalCompileOptions)
-include(AzureRemoveRTTI)
+include(AzureConfigRTTI)
 
 az_vcpkg_integrate()
 
@@ -48,7 +48,7 @@ add_library(azure-security-keyvault-certificates
 )
 add_library(Azure::azure-security-keyvault-certificates ALIAS azure-security-keyvault-certificates)
 
-az_remove_rtti(azure-security-keyvault-certificates)
+az_rtti_setup(azure-security-keyvault-certificates)
 
 target_include_directories(
   azure-security-keyvault-certificates

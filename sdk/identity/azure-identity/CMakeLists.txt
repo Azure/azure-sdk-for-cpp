@@ -16,7 +16,7 @@ include(AzureCodeCoverage)
 include(AzureTransportAdapters)
 include(AzureDoxygen)
 include(AzureGlobalCompileOptions)
-include(AzureRemoveRTTI)
+include(AzureConfigRTTI)
 
 az_vcpkg_integrate()
 
@@ -52,7 +52,7 @@ set(
 
 add_library(azure-identity ${AZURE_IDENTITY_HEADER} ${AZURE_IDENTITY_SOURCE})
 
-az_remove_rtti(azure-identity)
+az_rtti_setup(azure-identity)
 
 # make sure that users can consume the project as a library.
 add_library(Azure::azure-identity ALIAS azure-identity)

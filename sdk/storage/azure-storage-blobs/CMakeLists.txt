@@ -16,7 +16,7 @@ include(AzureCodeCoverage)
 include(AzureTransportAdapters)
 include(AzureDoxygen)
 include(AzureGlobalCompileOptions)
-include(AzureRemoveRTTI)
+include(AzureConfigRTTI)
 
 az_vcpkg_integrate()
 
@@ -61,7 +61,7 @@ set(
 
 add_library(azure-storage-blobs ${AZURE_STORAGE_BLOB_HEADER} ${AZURE_STORAGE_BLOB_SOURCE})
 
-az_remove_rtti(azure-storage-blobs)
+az_rtti_setup(azure-storage-blobs)
 
 # make sure that users can consume the project as a library.
 add_library(Azure::azure-storage-blobs ALIAS azure-storage-blobs)
