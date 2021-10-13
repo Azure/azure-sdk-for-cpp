@@ -23,7 +23,7 @@ _detail::KeyVaultCertificatesCommonRequest::SendRequest(
   switch (responseCode)
   {
 
-    // 200, 2001, 202, 204 are accepted responses
+    // 200, 201, 202, 204 are accepted responses
     case Azure::Core::Http::HttpStatusCode::Ok:
     case Azure::Core::Http::HttpStatusCode::Created:
     case Azure::Core::Http::HttpStatusCode::Accepted:

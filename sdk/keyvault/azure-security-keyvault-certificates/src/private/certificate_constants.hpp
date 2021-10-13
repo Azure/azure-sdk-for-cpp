@@ -18,10 +18,12 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
     constexpr static const char CertificatesCreatePath[] = "create";
     constexpr static const char IssuersPath[] = "issuers";
     constexpr static const char ContactsPath[] = "contacts";
-    constexpr static const char ContactsPropertyName[] = "contacts";
     constexpr static const char PendingPath[] = "pending";
     constexpr static const char DeletedCertificatesPath[] = "deletedcertificates";
     constexpr static const char RecoverPath[] = "recover";
+    constexpr static const char PolicyPath[] = "policy";
+    constexpr static const char BackupPath[] = "backup";
+    constexpr static const char RestorePath[] = "restore";
     constexpr static const char IncludePendingQuery[] = "includePending";
     constexpr static const char VersionsPath[] = "versions";
 
@@ -118,6 +120,8 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
     constexpr static const char EmailPropertyName[] = "email";
     constexpr static const char NamePropertyName[] = "name";
     constexpr static const char PhonePropertyName[] = "phone";
+    constexpr static const char ContactsPropertyName[] = "contacts";
+
     /****************** Certificate Operation Properties **********/
     constexpr static const char CsrPropertyName[] = "csr";
     constexpr static const char StatusPropertyName[] = "status";
@@ -135,9 +139,10 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
     constexpr static const char RecoveryIdPropertyName[] = "recoveryId";
     constexpr static const char ScheduledPurgeDatePropertyName[] = "scheduledPurgeDate";
     constexpr static const char DeletedDatePropertyName[] = "deletedDate";
+    /****************** Certificate Backup/Restore Properties **********/
+    constexpr static const char ValuePropertyName[] = "value";
     /****************** Paged Properties **********/
     constexpr static const char TrueQueryValue[] = "true";
     constexpr static const char FalseQueryValue[] = "false";
     constexpr static const char NextLinkPropertyName[] = "nextLink";
-    constexpr static const char ValuePropertyName[] = "value";
 }}}}} // namespace Azure::Security::KeyVault::Certificates::_detail
