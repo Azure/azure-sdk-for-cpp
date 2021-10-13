@@ -1268,18 +1268,6 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
     std::shared_ptr<CertificateClient> m_certificateClient;
     void OnNextPage(const Azure::Core::Context&);
 
-    /**
-     * @brief Construct a new Issuers Properties Single Page object.
-     *
-     * @remark The constructor is private and only a certificate client or PagedResponse can init
-     * this.
-     *
-     * @param certificateProperties A previously created #CertificatePropertiesPageResponse that is
-     * used to init this instance.
-     * @param rawResponse The HTTP raw response from where the #CertificatePropertiesPagedResponse
-     * was parsed.
-     * @param issuerClient A certificate client required for getting the next pages.
-     */
     IssuerPropertiesPagedResponse(
         IssuerPropertiesPagedResponse&& issuerProperties,
         std::unique_ptr<Azure::Core::Http::RawResponse> rawResponse,
