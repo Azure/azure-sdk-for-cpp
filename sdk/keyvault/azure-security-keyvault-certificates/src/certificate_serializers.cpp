@@ -611,3 +611,22 @@ DeletedCertificate DeletedCertificateSerializer::Deserialize(
 
   return result;
 }
+
+BackupCertificateResult BackupCertificateSerializer::Deserialize(
+    Azure::Core::Http::RawResponse const& rawResponse)
+{
+  auto const& body = rawResponse.GetBody();
+  auto jsonParser = json::parse(body);
+  auto encodedResult = jsonParser[ValuePropertyName].get<std::string>();
+  BackupCertificateResult data;
+  data.Certificate = Base64Url::Base64UrlDecode(encodedResult);
+
+  return data;
+}
+
+std::string BackupCertificateSerializer::Serialize(std::vector<uint8_t> const& backup)
+{
+  json payload;
+  payload[_detail::ValuePropertyName] = Base64Url::Base64UrlEncode(backup);
+  return payload.dump();
+}

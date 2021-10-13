@@ -8,6 +8,7 @@
 #include <gtest/gtest.h>
 
 #include <string>
+#include <thread>
 
 using namespace std::chrono_literals;
 using namespace Azure::Security::KeyVault::Certificates;
@@ -619,6 +620,13 @@ TEST_F(KeyVaultCertificateClientTest, GetCertificatePolicy)
     EXPECT_TRUE(policy.LifetimeActions.size() > 0);
     EXPECT_NE(policy.LifetimeActions[0].Action.ToString(), "");
   }
+
+  {
+    auto response = client.StartDeleteCertificate(certificateName);
+    auto result = response.PollUntilDone(m_defaultWait);
+    EXPECT_EQ(result.Value.Name(), certificateName);
+    client.PurgeDeletedCertificate(certificateName);
+  }
 }
 
 TEST_F(KeyVaultCertificateClientTest, UpdateCertificatePolicy)
@@ -714,5 +722,66 @@ TEST_F(KeyVaultCertificateClientTest, UpdateCertificatePolicy)
     // lifetime_actions
     EXPECT_TRUE(updatedPolicy.LifetimeActions.size() > 0);
     EXPECT_NE(updatedPolicy.LifetimeActions[0].Action.ToString(), "");
+  }
+  {
+    auto response = client.StartDeleteCertificate(certificateName);
+    auto result = response.PollUntilDone(m_defaultWait);
+    EXPECT_EQ(result.Value.Name(), certificateName);
+    client.PurgeDeletedCertificate(certificateName);
+  }
+}
+
+TEST_F(KeyVaultCertificateClientTest, BackupRestoreCertificate)
+{
+  // cspell: disable-next-line
+  std::string const certificateName("certBackup");
+
+  auto const& client
+      = GetClientForTest(::testing::UnitTest::GetInstance()->current_test_info()->name());
+
+  auto params = CertificateCreateParameters();
+  params.Policy.Subject = "CN=xyz";
+  params.Policy.ValidityInMonths = 12;
+  params.Policy.Enabled = true;
+
+  params.Properties.Enabled = true;
+  params.Properties.Name = certificateName;
+  params.Policy.ContentType = CertificateContentType::Pkcs12;
+  params.Policy.IssuerName = "Self";
+
+  LifetimeAction action;
+  action.LifetimePercentage = 80;
+  action.Action = CertificatePolicyAction::AutoRenew;
+  params.Policy.LifetimeActions.emplace_back(action);
+  {
+    auto response = client.StartCreateCertificate(certificateName, params);
+    response.PollUntilDone(m_defaultWait);
+  }
+  auto certBackup = client.BackupCertificate(certificateName);
+  {
+    EXPECT_TRUE(certBackup.Value.Certificate.size() > size_t(0));
+    std::string text(certBackup.Value.Certificate.begin(), certBackup.Value.Certificate.end());
+    EXPECT_EQ(text.find("AzureKeyVaultKeyBackupV1.microsoft.com"), 1);
+  }
+  {
+    auto response = client.StartDeleteCertificate(certificateName);
+    auto result = response.PollUntilDone(m_defaultWait);
+    EXPECT_EQ(result.Value.Name(), certificateName);
+    client.PurgeDeletedCertificate(certificateName);
+    std::this_thread::sleep_for(m_defaultWait);
+  }
+  {
+    auto responseRestore = client.RestoreCertificateBackup(certBackup.Value);
+    auto certificate = responseRestore.Value;
+
+    EXPECT_EQ(certificate.Name(), certificateName);
+    EXPECT_EQ(certificate.Policy.ValidityInMonths.Value(), 12);
+    EXPECT_EQ(certificate.Policy.IssuerName.Value(), "Self");
+  }
+  {
+    auto response = client.StartDeleteCertificate(certificateName);
+    auto result = response.PollUntilDone(m_defaultWait);
+    EXPECT_EQ(result.Value.Name(), certificateName);
+    client.PurgeDeletedCertificate(certificateName);
   }
 }

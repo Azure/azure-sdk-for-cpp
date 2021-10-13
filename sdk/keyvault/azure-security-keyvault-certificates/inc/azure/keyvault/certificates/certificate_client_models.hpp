@@ -1001,6 +1001,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
      */
     Azure::Nullable<std::string> Phone;
   };
+
   /**
    * @brief A certificate operation.
    *
@@ -1126,5 +1127,17 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
    */
   struct PurgedCertificate final
   {
+  };
+  /**
+   * @brief A certificate backup data.
+   *
+   */
+  struct BackupCertificateResult
+  {
+    /**
+     * @brief The backup blob containing the backed up certificate.
+     *
+     */
+    std::vector<uint8_t> Certificate;
   };
 }}}} // namespace Azure::Security::KeyVault::Certificates
