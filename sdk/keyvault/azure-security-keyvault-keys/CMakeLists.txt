@@ -89,8 +89,6 @@ add_library(azure-security-keyvault-keys
 )
 add_library(Azure::azure-security-keyvault-keys ALIAS azure-security-keyvault-keys)
 
-az_rtti_setup(azure-security-keyvault-keys)
-
 target_include_directories(
   azure-security-keyvault-keys
     PUBLIC
@@ -137,3 +135,8 @@ az_vcpkg_export(
     SECURITY_KEYVAULT_KEYS
     "azure/keyvault/keys/dll_import_export.hpp"
   )
+
+az_rtti_setup(
+  azure-security-keyvault-keys
+  "azure/keyvault/keys/azure_rtti.hpp"
+)

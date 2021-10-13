@@ -67,8 +67,6 @@ set(
 
 add_library(azure-storage-common ${AZURE_STORAGE_COMMON_HEADER} ${AZURE_STORAGE_COMMON_SOURCE})
 
-az_rtti_setup(azure-storage-common)
-
 # make sure that users can consume the project as a library.
 add_library(Azure::azure-storage-common ALIAS azure-storage-common)
 
@@ -101,6 +99,11 @@ az_vcpkg_export(
     STORAGE_COMMON
     "azure/storage/common/dll_import_export.hpp"
   )
+
+az_rtti_setup(
+  azure-storage-common
+  "azure/storage/common/azure_rtti.hpp"
+)
 
 # coverage. Has no effect if BUILD_CODE_COVERAGE is OFF
 # excluding json from coverage report

@@ -42,8 +42,6 @@ set(
 
 add_library(azure-template ${AZURE_TEMPLATE_HEADER} ${AZURE_TEMPLATE_SOURCE})
 
-az_rtti_setup(azure-template)
-
 target_include_directories(
   azure-template
     PUBLIC
@@ -70,6 +68,11 @@ az_vcpkg_export(
     TEMPLATE
     "azure/template/dll_import_export.hpp"
   )
+
+az_rtti_setup(
+  azure-template
+  "azure/template/azure_rtti.hpp"
+)
 
 if(BUILD_TESTING)
     # tests

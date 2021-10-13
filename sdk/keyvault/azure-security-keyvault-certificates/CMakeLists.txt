@@ -48,8 +48,6 @@ add_library(azure-security-keyvault-certificates
 )
 add_library(Azure::azure-security-keyvault-certificates ALIAS azure-security-keyvault-certificates)
 
-az_rtti_setup(azure-security-keyvault-certificates)
-
 target_include_directories(
   azure-security-keyvault-certificates
     PUBLIC
@@ -96,3 +94,8 @@ az_vcpkg_export(
     SECURITY_KEYVAULT_CERTIFICATES
     "azure/keyvault/certificates/dll_import_export.hpp"
   )
+
+az_rtti_setup(
+  azure-security-keyvault-certificates
+  "azure/keyvault/certificates/azure_rtti.hpp"
+)

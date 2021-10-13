@@ -61,8 +61,6 @@ set(
 
 add_library(azure-storage-blobs ${AZURE_STORAGE_BLOB_HEADER} ${AZURE_STORAGE_BLOB_SOURCE})
 
-az_rtti_setup(azure-storage-blobs)
-
 # make sure that users can consume the project as a library.
 add_library(Azure::azure-storage-blobs ALIAS azure-storage-blobs)
 
@@ -83,6 +81,11 @@ az_vcpkg_export(
     STORAGE_BLOBS
     "azure/storage/blobs/dll_import_export.hpp"
   )
+
+az_rtti_setup(
+  azure-storage-blobs
+  "azure/storage/blobs/azure_rtti.hpp"
+)
 
 # coverage. Has no effect if BUILD_CODE_COVERAGE is OFF
 create_code_coverage(storage azure-storage-blobs azure-storage-test)

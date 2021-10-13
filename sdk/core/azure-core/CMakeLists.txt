@@ -167,7 +167,6 @@ az_vcpkg_export(
 
 az_rtti_setup(
   azure-core
-  CORE
   "azure/core/azure_rtti.hpp"
 )
 

@@ -24,6 +24,6 @@
  * with RTTI and `false` otherwise.
  */
 
-#if !defined(AZURE_SDK_RTTI_ENABLED) && (BUILD_RTTI || (0 /*@AZ_CORE_WITH_RTTI@*/))
+#if !defined(AZURE_SDK_RTTI_ENABLED) && (BUILD_RTTI || (0 /*@AZ_BUILD_WITH_RTTI@*/))
 #define AZURE_SDK_RTTI_ENABLED 1
 #endif

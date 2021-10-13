@@ -58,8 +58,6 @@ set(
 add_library(azure-security-keyvault-secrets ${AZURE_SECURITY_KEYVAULT_SECRETS_HEADER} ${AZURE_SECURITY_KEYVAULT_SECRETS_SOURCE})
 add_library(Azure::azure-security-keyvault-secrets ALIAS azure-security-keyvault-secrets)
 
-az_rtti_setup(azure-security-keyvault-secrets)
-
 target_include_directories(
   azure-security-keyvault-secrets
     PUBLIC
@@ -106,3 +104,8 @@ az_vcpkg_export(
     SECURITY_KEYVAULT_KEYS
     "azure/keyvault/secrets/dll_import_export.hpp"
   )
+
+az_rtti_setup(
+  azure-security-keyvault-secrets
+  "azure/keyvault/secrets/azure_rtti.hpp"
+)

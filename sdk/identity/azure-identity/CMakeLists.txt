@@ -52,8 +52,6 @@ set(
 
 add_library(azure-identity ${AZURE_IDENTITY_HEADER} ${AZURE_IDENTITY_SOURCE})
 
-az_rtti_setup(azure-identity)
-
 # make sure that users can consume the project as a library.
 add_library(Azure::azure-identity ALIAS azure-identity)
 
@@ -78,6 +76,11 @@ az_vcpkg_export(
     IDENTITY
     "azure/identity/dll_import_export.hpp"
   )
+
+az_rtti_setup(
+  azure-identity
+  "azure/identity/azure_rtti.hpp"
+)
 
 if(BUILD_TESTING)
   # tests

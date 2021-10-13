@@ -52,8 +52,6 @@ set(
 
 add_library(azure-storage-queues ${AZURE_STORAGE_QUEUE_HEADER} ${AZURE_STORAGE_QUEUE_SOURCE})
 
-az_rtti_setup(azure-storage-queues)
-
 # make sure that users can consume the project as a library.
 add_library(Azure::azure-storage-queues ALIAS azure-storage-queues)
 
@@ -74,6 +72,11 @@ az_vcpkg_export(
     STORAGE_QUEUES
     "azure/storage/queues/dll_import_export.hpp"
   )
+  
+az_rtti_setup(
+  azure-storage-queues
+  "azure/storage/queues/azure_rtti.hpp"
+)
 
 # coverage. Has no effect if BUILD_CODE_COVERAGE is OFF
 create_code_coverage(storage azure-storage-queues azure-storage-test)

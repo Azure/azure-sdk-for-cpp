@@ -65,8 +65,6 @@ add_library(azure-storage-files-datalake ${AZURE_STORAGE_FILES_DATALAKE_HEADER} 
 # make sure that users can consume the project as a library.
 add_library(Azure::azure-storage-files-datalake ALIAS azure-storage-files-datalake)
 
-az_rtti_setup(azure-storage-files-datalake)
-
 target_include_directories(
   azure-storage-files-datalake
     PUBLIC
@@ -84,6 +82,11 @@ az_vcpkg_export(
     STORAGE_FILES_DATALAKE
     "azure/storage/files/datalake/dll_import_export.hpp"
   )
+
+az_rtti_setup(
+  azure-storage-files-datalake
+  "azure/storage/files/datalake/azure_rtti.hpp"
+)
 
 # coverage. Has no effect if BUILD_CODE_COVERAGE is OFF
 create_code_coverage(storage azure-storage-files-datalake azure-storage-test)

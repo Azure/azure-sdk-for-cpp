@@ -63,8 +63,6 @@ add_library(azure-storage-files-shares ${AZURE_STORAGE_FILES_SHARES_HEADER} ${AZ
 # make sure that users can consume the project as a library.
 add_library(Azure::azure-storage-files-shares ALIAS azure-storage-files-shares)
 
-az_rtti_setup(azure-storage-files-shares)
-
 target_include_directories(
   azure-storage-files-shares
     PUBLIC
@@ -82,6 +80,11 @@ az_vcpkg_export(
     STORAGE_FILES_SHARES
     "azure/storage/files/shares/dll_import_export.hpp"
   )
+
+az_rtti_setup(
+  azure-storage-files-shares
+  "azure/storage/files/shares/azure_rtti.hpp"
+)
 
 # coverage. Has no effect if BUILD_CODE_COVERAGE is OFF
 create_code_coverage(storage azure-storage-files-shares azure-storage-test)
