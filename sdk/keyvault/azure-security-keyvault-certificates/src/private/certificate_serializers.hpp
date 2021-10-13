@@ -95,6 +95,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
       static void Deserialize(
           CertificatePolicy& policy,
           Azure::Core::Json::_internal::json fragment);
+      static CertificatePolicy Deserialize(Azure::Core::Http::RawResponse const& rawResponse);
     };
 
     class CertificateCreateParametersSerializer final {
@@ -181,4 +182,13 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
           std::string const& name,
           Azure::Core::Http::RawResponse const& rawResponse);
     };
+
+    class BackupCertificateSerializer final {
+      BackupCertificateSerializer() = delete;
+
+    public:
+      static BackupCertificateResult Deserialize(Azure::Core::Http::RawResponse const& rawResponse);
+      static std::string Serialize(std::vector<uint8_t> const& backup);
+    };
+
 }}}}} // namespace Azure::Security::KeyVault::Certificates::_detail

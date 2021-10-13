@@ -287,6 +287,70 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
         std::string const& name,
         Azure::Core::Context const& context = Azure::Core::Context()) const;
 
+    /**
+     * @brief "List the policy for a certificate.
+     *
+     * @details The GetCertificatePolicy operation returns the specified certificate policy
+     * resources in the specified key vault.
+     *
+     * @remark This operation requires the certificates/get permission.
+     *
+     * @param name The name of the certificate
+     * @param context The context for the operation can be used for request cancellation.
+     * @return The contact properties.
+     */
+    Azure::Response<CertificatePolicy> GetCertificatePolicy(
+        std::string const& name,
+        Azure::Core::Context const& context = Azure::Core::Context()) const;
+
+    /**
+     * @brief Update the policy for a certificate.
+     *
+     * @details Set specified members in the certificate policy. Leave others as null.
+     *
+     * @remark This operation requires the certificates/update permission.
+     *
+     * @param name The name of the certificate
+     * @param certificatePolicy The updated certificate policy.
+     * @param context The context for the operation can be used for request cancellation.
+     * @return The updated contact properties.
+     */
+    Azure::Response<CertificatePolicy> UpdateCertificatePolicy(
+        std::string const& name,
+        CertificatePolicy const& certificatePolicy,
+        Azure::Core::Context const& context = Azure::Core::Context()) const;
+
+    /**
+     * @brief Backs up the specified certificate.
+     *
+     * @details Request that a backup of the specified certificate be downloaded to the client.
+     * All versions of the certificate will be downloaded.
+     *
+     * @remark This operation requires the certificates/backup permission.
+     *
+     * @param name The name of the certificate.
+     * @param context The context for the operation can be used for request cancellation.
+     * @return Certificate backup.
+     */
+    Azure::Response<BackupCertificateResult> BackupCertificate(
+        std::string name,
+        Azure::Core::Context const& context = Azure::Core::Context()) const;
+
+    /**
+     * @brief Restores a backed up certificate to a vault.
+     *
+     * @details Restore a backed up certificate, and all its versions, to a vault.
+     *
+     * @remark This operation requires the certificates/restore permission.
+     *
+     * @param backup The backup to restore
+     * @param context The context for the operation can be used for request cancellation.
+     * @return The restored certificate.
+     */
+    Azure::Response<KeyVaultCertificateWithPolicy> RestoreCertificateBackup(
+        BackupCertificateResult const& backup,
+        Azure::Core::Context const& context = Azure::Core::Context()) const;
+
   private:
     /**
      * @brief Gets the creation operation of a certificate.
