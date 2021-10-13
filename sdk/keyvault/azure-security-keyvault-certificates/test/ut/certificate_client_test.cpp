@@ -563,20 +563,149 @@ TEST_F(KeyVaultCertificateClientTest, GetPropertiesOfCertificates)
 {
   auto const& client
       = GetClientForTest(::testing::UnitTest::GetInstance()->current_test_info()->name());
+  {
+    auto result = client.GetPropertiesOfCertificates(GetPropertiesOfCertificatesOptions());
+    EXPECT_EQ(result.Items.size(), size_t(0));
+  }
 
-  auto result = client.GetPropertiesOfCertificates(GetPropertiesOfCertificatesOptions());
+  // cspell: disable-next-line
+  std::string const certificateName("magiqStuff");
+  // cspell: disable-next-line
+  std::string const certificateName2("magiqStuff2");
+
+  auto params = CertificateCreateParameters();
+  params.Policy.Subject = "CN=xyz";
+  params.Policy.ValidityInMonths = 12;
+  params.Policy.Enabled = true;
+
+  params.Properties.Enabled = true;
+  params.Properties.Name = certificateName;
+  params.Policy.ContentType = CertificateContentType::Pkcs12;
+  params.Policy.IssuerName = "Self";
+
+  LifetimeAction action;
+  action.LifetimePercentage = 80;
+  action.Action = CertificatePolicyAction::AutoRenew;
+  params.Policy.LifetimeActions.emplace_back(action);
+  {
+
+    auto response = client.StartCreateCertificate(certificateName, params);
+    auto result = response.PollUntilDone(m_defaultWait);
+
+    EXPECT_EQ(result.Value.Name(), params.Properties.Name);
+    EXPECT_EQ(result.Value.Properties.Enabled.Value(), true);
+  }
+
+  params.Properties.Name = certificateName2;
+
+  {
+    auto response = client.StartCreateCertificate(certificateName2, params);
+    auto result = response.PollUntilDone(m_defaultWait);
+
+    EXPECT_EQ(result.Value.Name(), params.Properties.Name);
+    EXPECT_EQ(result.Value.Properties.Enabled.Value(), true);
+  }
+
+  {
+    auto result = client.GetPropertiesOfCertificates(GetPropertiesOfCertificatesOptions());
+    EXPECT_EQ(result.Items.size(), size_t(2));
+    for (CertificateProperties prop : result.Items)
+    {
+      EXPECT_TRUE(prop.Name == certificateName || prop.Name == certificateName2);
+    }
+  }
+
+  {
+    auto response = client.StartDeleteCertificate(certificateName);
+    auto result = response.PollUntilDone(m_defaultWait);
+    EXPECT_EQ(result.Value.Name(), certificateName);
+    client.PurgeDeletedCertificate(certificateName);
+  }
+
+  {
+    auto response = client.StartDeleteCertificate(certificateName2);
+    auto result = response.PollUntilDone(m_defaultWait);
+    EXPECT_EQ(result.Value.Name(), certificateName2);
+    client.PurgeDeletedCertificate(certificateName2);
+  }
 }
 
-TEST_F(KeyVaultCertificateClientTest, GetPropertiesOfCertificatesVersions)
+TEST_F(KeyVaultCertificateClientTest, GetPropertiesOfCertificateVersions)
+{
+  auto const& client
+      = GetClientForTest(::testing::UnitTest::GetInstance()->current_test_info()->name());
+
+  // cspell: disable-next-line
+  std::string const certificateName("magiqStuff");
+
+  auto params = CertificateCreateParameters();
+  params.Policy.Subject = "CN=xyz";
+  params.Policy.ValidityInMonths = 12;
+  params.Policy.Enabled = true;
+
+  params.Properties.Enabled = true;
+  params.Properties.Name = certificateName;
+  params.Policy.ContentType = CertificateContentType::Pkcs12;
+  params.Policy.IssuerName = "Self";
+
+  LifetimeAction action;
+  action.LifetimePercentage = 80;
+  action.Action = CertificatePolicyAction::AutoRenew;
+  params.Policy.LifetimeActions.emplace_back(action);
+  {
+
+    auto response = client.StartCreateCertificate(certificateName, params);
+    auto result = response.PollUntilDone(m_defaultWait);
+
+    EXPECT_EQ(result.Value.Name(), params.Properties.Name);
+    EXPECT_EQ(result.Value.Properties.Enabled.Value(), true);
+  }
+
+  {
+    auto response = client.StartCreateCertificate(certificateName, params);
+    auto result = response.PollUntilDone(m_defaultWait);
+
+    EXPECT_EQ(result.Value.Name(), params.Properties.Name);
+    EXPECT_EQ(result.Value.Properties.Enabled.Value(), true);
+  }
+
+  {
+    auto result = client.GetPropertiesOfCertificateVersions(
+        certificateName, GetPropertiesOfCertificateVersionsOptions());
+    EXPECT_EQ(result.Items.size(), size_t(2));
+    for (CertificateProperties prop : result.Items)
+    {
+      EXPECT_TRUE(prop.Name == certificateName);
+      EXPECT_TRUE(prop.Version.size() > size_t(0));
+    }
+  }
+
+  {
+    auto response = client.StartDeleteCertificate(certificateName);
+    auto result = response.PollUntilDone(m_defaultWait);
+    EXPECT_EQ(result.Value.Name(), certificateName);
+    client.PurgeDeletedCertificate(certificateName);
+  }
+}
+
+TEST_F(KeyVaultCertificateClientTest, GetPropertiesOfCertificatesVersionsNoCert)
 {
   // cspell: disable-next-line
   std::string const certificateName("magiqStuff");
 
   auto const& client
       = GetClientForTest(::testing::UnitTest::GetInstance()->current_test_info()->name());
+  try
+  {
 
-  auto result = client.GetPropertiesOfCertificateVersions(
-      certificateName, GetPropertiesOfCertificateVersionsOptions());
+    auto result = client.GetPropertiesOfCertificateVersions(
+        certificateName, GetPropertiesOfCertificateVersionsOptions());
+  }
+  catch (Azure::Core::RequestFailedException const& ex)
+  {
+    EXPECT_EQ(ex.StatusCode, Azure::Core::Http::HttpStatusCode::NotFound);
+    EXPECT_EQ(ex.ErrorCode, "CertificateNotFound");
+  }
 }
 
 TEST_F(KeyVaultCertificateClientTest, GetPropertiesOfIssuers)
@@ -584,7 +713,55 @@ TEST_F(KeyVaultCertificateClientTest, GetPropertiesOfIssuers)
   auto const& client
       = GetClientForTest(::testing::UnitTest::GetInstance()->current_test_info()->name());
 
-  auto result = client.GetPropertiesOfIssuers(GetPropertiesOfIssuersOptions());
+  {
+    auto result = client.GetPropertiesOfIssuers(GetPropertiesOfIssuersOptions());
+    EXPECT_EQ(result.Items.size(), size_t(0));
+  }
+
+  CertificateIssuer issuer;
+  issuer.Name = "issuer01";
+  issuer.Provider = "Test";
+  issuer.Properties.Enabled = true;
+  issuer.Credentials.AccountId = "keyvaultuser";
+  issuer.Credentials.Password = "password";
+
+  AdministratorDetails admin;
+  admin.FirstName = "John";
+  admin.LastName = "Doe";
+  admin.EmailAddress = "admin@microsoft.com";
+  admin.PhoneNumber = "4255555555";
+
+  issuer.Organization.AdminDetails.emplace_back(admin);
+
+  CertificateIssuer issuer2;
+  issuer2.Name = "issuer02";
+  issuer2.Provider = "Test";
+  issuer2.Properties.Enabled = true;
+  issuer2.Credentials.AccountId = "keyvaultuser";
+  issuer2.Credentials.Password = "password";
+  issuer2.Organization.AdminDetails.emplace_back(admin);
+
+  {
+    auto result = client.CreateIssuer(issuer);
+    CheckIssuers(result.Value, issuer);
+  }
+  {
+    auto result = client.CreateIssuer(issuer2);
+    CheckIssuers(result.Value, issuer2);
+  }
+  {
+    auto result = client.GetPropertiesOfIssuers(GetPropertiesOfIssuersOptions());
+    EXPECT_EQ(result.Items.size(), size_t(2));
+
+    for (auto oneIssuer : result.Items)
+    {
+      EXPECT_EQ(oneIssuer.Provider, issuer.Provider.Value());
+    }
+  }
+  {
+    client.DeleteIssuer(issuer.Name);
+    client.DeleteIssuer(issuer2.Name);
+  }
 }
 
 TEST_F(KeyVaultCertificateClientTest, GetDeletedCertificates)
@@ -592,5 +769,67 @@ TEST_F(KeyVaultCertificateClientTest, GetDeletedCertificates)
   auto const& client
       = GetClientForTest(::testing::UnitTest::GetInstance()->current_test_info()->name());
 
-  auto result = client.GetDeletedCertificates(GetDeletedCertificatesOptions());
+  {
+    auto result = client.GetDeletedCertificates(GetDeletedCertificatesOptions());
+    EXPECT_EQ(result.Items.size(), size_t(0));
+  }
+  // cspell: disable-next-line
+  std::string const certificateName("magiqStuff");
+  // cspell: disable-next-line
+  std::string const certificateName2("magiqStuff2");
+
+  auto params = CertificateCreateParameters();
+  params.Policy.Subject = "CN=xyz";
+  params.Policy.ValidityInMonths = 12;
+  params.Policy.Enabled = true;
+
+  params.Properties.Enabled = true;
+  params.Properties.Name = certificateName;
+  params.Policy.ContentType = CertificateContentType::Pkcs12;
+  params.Policy.IssuerName = "Self";
+
+  LifetimeAction action;
+  action.LifetimePercentage = 80;
+  action.Action = CertificatePolicyAction::AutoRenew;
+  params.Policy.LifetimeActions.emplace_back(action);
+  {
+
+    auto response = client.StartCreateCertificate(certificateName, params);
+    auto result = response.PollUntilDone(m_defaultWait);
+
+    EXPECT_EQ(result.Value.Name(), params.Properties.Name);
+    EXPECT_EQ(result.Value.Properties.Enabled.Value(), true);
+  }
+
+  params.Properties.Name = certificateName2;
+
+  {
+    auto response = client.StartCreateCertificate(certificateName2, params);
+    auto result = response.PollUntilDone(m_defaultWait);
+
+    EXPECT_EQ(result.Value.Name(), params.Properties.Name);
+    EXPECT_EQ(result.Value.Properties.Enabled.Value(), true);
+  }
+  {
+    auto response = client.StartDeleteCertificate(certificateName);
+    auto result = response.PollUntilDone(m_defaultWait);
+    EXPECT_EQ(result.Value.Name(), certificateName);
+  }
+  {
+    auto response = client.StartDeleteCertificate(certificateName2);
+    auto result = response.PollUntilDone(m_defaultWait);
+    EXPECT_EQ(result.Value.Name(), certificateName2);
+  }
+  {
+    auto result = client.GetDeletedCertificates(GetDeletedCertificatesOptions());
+    EXPECT_EQ(result.Items.size(), size_t(2));
+    for (auto cert : result.Items)
+    {
+      EXPECT_TRUE(cert.Name() == certificateName || cert.Name() == certificateName2);
+    }
+  }
+  {
+    client.PurgeDeletedCertificate(certificateName);
+    client.PurgeDeletedCertificate(certificateName2);
+  }
 }
