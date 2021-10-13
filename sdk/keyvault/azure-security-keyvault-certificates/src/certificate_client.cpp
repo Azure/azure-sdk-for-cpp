@@ -48,6 +48,20 @@ Request CertificateClient::CreateRequest(
       m_vaultUrl, m_apiVersion, method, path, content);
 }
 
+Request CertificateClient::ContinuationTokenRequest(
+    std::vector<std::string> const& path,
+    const Azure::Nullable<std::string>& NextPageToken) const
+{
+  if (NextPageToken)
+  {
+    // Using a continuation token requires to send the request to the continuation token URL instead
+    // of the default URL which is used only for the first page.
+    Azure::Core::Url nextPageUrl(NextPageToken.Value());
+    return Request(HttpMethod::Get, nextPageUrl);
+  }
+  return CreateRequest(HttpMethod::Get, path);
+}
+
 CertificateClient::CertificateClient(
     std::string const& vaultUrl,
     std::shared_ptr<Core::Credentials::TokenCredential const> credential,
@@ -334,4 +348,66 @@ Azure::Response<KeyVaultCertificateWithPolicy> CertificateClient::RestoreCertifi
   auto value = KeyVaultCertificateSerializer::Deserialize("", *rawResponse);
   return Azure::Response<KeyVaultCertificateWithPolicy>(std::move(value), std::move(rawResponse));
 }
+CertificatePropertiesPagedResponse CertificateClient::GetPropertiesOfCertificates(
+    GetPropertiesOfCertificatesOptions const& options,
+    Azure::Core::Context const& context) const
+{
+  // Request and settings
+  auto request = ContinuationTokenRequest({CertificatesPath}, options.NextPageToken);
+  if (options.IncludePending.HasValue())
+  {
+    request.GetUrl().AppendQueryParameter(
+        IncludePendingQuery, options.IncludePending.Value() ? TrueQueryValue : FalseQueryValue);
+  }
+  // Send and parse respone
+  auto rawResponse = SendRequest(request, context);
+  auto value = CertificatePropertiesPagedResponseSerializer::Deserialize(*rawResponse);
+  return CertificatePropertiesPagedResponse(
+      std::move(value), std::move(rawResponse), std::make_unique<CertificateClient>(*this));
+}
+
+CertificatePropertiesPagedResponse CertificateClient::GetPropertiesOfCertificateVersions(
+    std::string const& name,
+    GetPropertiesOfCertificateVersionsOptions const& options,
+    Azure::Core::Context const& context) const
+{
+  // Request and settings
+  auto request
+      = ContinuationTokenRequest({CertificatesPath, name, VersionsPath}, options.NextPageToken);
+
+  // Send and parse respone
+  auto rawResponse = SendRequest(request, context);
+  auto value = CertificatePropertiesPagedResponseSerializer::Deserialize(*rawResponse);
+  return CertificatePropertiesPagedResponse(
+      std::move(value), std::move(rawResponse), std::make_unique<CertificateClient>(*this));
+}
+
+IssuerPropertiesPagedResponse CertificateClient::GetPropertiesOfIssuers(
+    GetPropertiesOfIssuersOptions const& options,
+    Azure::Core::Context const& context) const
+{
+  // Request and settings
+  auto request = ContinuationTokenRequest({CertificatesPath, IssuersPath}, options.NextPageToken);
+
+  // Send and parse respone
+  auto rawResponse = SendRequest(request, context);
+  auto value = IssuerPropertiesPagedResponseSerializer::Deserialize(*rawResponse);
+  return IssuerPropertiesPagedResponse(
+      std::move(value), std::move(rawResponse), std::make_unique<CertificateClient>(*this));
+}
+
+DeletedCertificatesPagedResponse CertificateClient::GetDeletedCertificates(
+    GetDeletedCertificatesOptions const& options,
+    Azure::Core::Context const& context) const
+{
+  // Request and settings
+  auto request = ContinuationTokenRequest({DeletedCertificatesPath}, options.NextPageToken);
+
+  // Send and parse respone
+  auto rawResponse = SendRequest(request, context);
+  auto value = DeletedCertificatesPagedResponseSerializer::Deserialize(*rawResponse);
+  return DeletedCertificatesPagedResponse(
+      std::move(value), std::move(rawResponse), std::make_unique<CertificateClient>(*this));
+}
+
 const ServiceVersion ServiceVersion::V7_2("7.2");

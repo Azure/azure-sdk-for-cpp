@@ -1,0 +1,31 @@
+{
+  "networkCallRecords": [
+    {
+      "Headers": {
+        "content-type": "application/json",
+        "user-agent": "azsdk-cpp-keyvault-certificates/4.0.0-beta.1 (Windows 10 Enterprise 6.3 22000 22000.1.amd64fre.co_release.210604-1628)",
+        "x-ms-client-request-id": "86482169-fa0b-4b37-7735-6acef8332c6f"
+      },
+      "Method": "GET",
+      "Response": {
+        "BODY": "{\"value\":[],\"nextLink\":null}",
+        "STATUS_CODE": "200",
+        "cache-control": "no-cache",
+        "content-length": "28",
+        "content-type": "application/json; charset=utf-8",
+        "date": "Tue, 12 Oct 2021 23:49:35 GMT",
+        "expires": "-1",
+        "pragma": "no-cache",
+        "strict-transport-security": "max-age=31536000;includeSubDomains",
+        "x-content-type-options": "nosniff",
+        "x-ms-client-request-id": "86482169-fa0b-4b37-7735-6acef8332c6f",
+        "x-ms-keyvault-network-info": "conn_type=Ipv4;addr=24.22.157.72;act_addr_fam=InterNetwork;",
+        "x-ms-keyvault-region": "westus2",
+        "x-ms-keyvault-service-version": "1.9.132.3",
+        "x-ms-request-id": "35241f8c-cca2-410d-91f0-45fbb84a71bc",
+        "x-powered-by": "ASP.NET"
+      },
+      "Url": "https://REDACTED.vault.azure.net/certificates/magiqStuff/versions?api-version=7.2"
+    }
+  ]
+}

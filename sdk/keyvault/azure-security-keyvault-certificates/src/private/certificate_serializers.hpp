@@ -191,4 +191,28 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
       static std::string Serialize(std::vector<uint8_t> const& backup);
     };
 
+    class CertificatePropertiesPagedResponseSerializer final {
+      CertificatePropertiesPagedResponseSerializer() = delete;
+
+    public:
+      static CertificatePropertiesPagedResponse Deserialize(
+          Azure::Core::Http::RawResponse const& rawResponse);
+    };
+
+    class IssuerPropertiesPagedResponseSerializer final {
+      IssuerPropertiesPagedResponseSerializer() = delete;
+
+    public:
+      static IssuerPropertiesPagedResponse Deserialize(
+          Azure::Core::Http::RawResponse const& rawResponse);
+    };
+
+    class DeletedCertificatesPagedResponseSerializer final {
+      DeletedCertificatesPagedResponseSerializer() = delete;
+
+    public:
+      static DeletedCertificatesPagedResponse Deserialize(
+          Azure::Core::Http::RawResponse const& rawResponse);
+    };
+
 }}}}} // namespace Azure::Security::KeyVault::Certificates::_detail

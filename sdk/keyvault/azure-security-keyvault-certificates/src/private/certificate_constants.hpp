@@ -24,6 +24,8 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
     constexpr static const char PolicyPath[] = "policy";
     constexpr static const char BackupPath[] = "backup";
     constexpr static const char RestorePath[] = "restore";
+    constexpr static const char IncludePendingQuery[] = "includePending";
+    constexpr static const char VersionsPath[] = "versions";
 
     /***************** Certificates Properties *****************/
     constexpr static const char IdName[] = "id";
@@ -139,4 +141,8 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
     constexpr static const char DeletedDatePropertyName[] = "deletedDate";
     /****************** Certificate Backup/Restore Properties **********/
     constexpr static const char ValuePropertyName[] = "value";
+    /****************** Paged Properties **********/
+    constexpr static const char TrueQueryValue[] = "true";
+    constexpr static const char FalseQueryValue[] = "false";
+    constexpr static const char NextLinkPropertyName[] = "nextLink";
 }}}}} // namespace Azure::Security::KeyVault::Certificates::_detail
