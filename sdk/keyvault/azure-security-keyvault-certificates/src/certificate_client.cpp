@@ -331,7 +331,7 @@ Azure::Response<KeyVaultCertificateWithPolicy> CertificateClient::RestoreCertifi
   auto request = CreateRequest(HttpMethod::Post, {CertificatesPath, RestorePath}, &payloadStream);
 
   auto rawResponse = SendRequest(request, context);
-  auto value = KeyVaultCertificateSerializer::KeyVaultCertificateDeserialize("", *rawResponse);
+  auto value = KeyVaultCertificateSerializer::Deserialize("", *rawResponse);
   return Azure::Response<KeyVaultCertificateWithPolicy>(std::move(value), std::move(rawResponse));
 }
 const ServiceVersion ServiceVersion::V7_2("7.2");
