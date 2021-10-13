@@ -19,8 +19,15 @@ using namespace Azure::Core::_internal;
 
 using Azure::Core::_internal::PosixTimeConverter;
 
-KeyVaultCertificateWithPolicy
-_detail::KeyVaultCertificateSerializer::KeyVaultCertificateDeserialize(
+void _detail::KeyVaultCertificateSerializer::Deserialize(
+    KeyVaultCertificateWithPolicy& certificate,
+    std::string const& name,
+    Azure::Core::Http::RawResponse const& rawResponse)
+{
+  certificate = Deserialize(name, rawResponse);
+}
+
+KeyVaultCertificateWithPolicy _detail::KeyVaultCertificateSerializer::Deserialize(
     std::string const& name,
     Azure::Core::Http::RawResponse const& rawResponse)
 {
@@ -116,6 +123,18 @@ Azure::Core::Json::_internal::json CertificatePropertiesSerializer::JsonSerializ
       properties.RecoverableDays, attributes, RecoverableDaysPropertyName);
 
   return attributes;
+}
+
+CertificatePolicy CertificatePolicySerializer::Deserialize(
+    Azure::Core::Http::RawResponse const& rawResponse)
+{
+  CertificatePolicy policy;
+  auto const& body = rawResponse.GetBody();
+  auto jsonResponse = json::parse(body);
+
+  Deserialize(policy, jsonResponse);
+
+  return policy;
 }
 
 void CertificatePolicySerializer::Deserialize(
@@ -563,6 +582,34 @@ CertificateOperationProperties CertificateOperationSerializer ::Deserialize(
   JsonOptional::SetIfExists(operation.RequestId, jsonResponse, RequestIdPropertyName);
 
   return operation;
+}
+
+DeletedCertificate DeletedCertificateSerializer::Deserialize(
+    std::string const& name,
+    Azure::Core::Http::RawResponse const& rawResponse)
+{
+  DeletedCertificate result;
+
+  KeyVaultCertificateSerializer::Deserialize(result, name, rawResponse);
+
+  auto const& body = rawResponse.GetBody();
+  auto jsonResponse = json::parse(body);
+
+  result.RecoveryId = jsonResponse[RecoveryIdPropertyName];
+
+  JsonOptional::SetIfExists<int64_t, Azure::DateTime>(
+      result.DeletedOn,
+      jsonResponse,
+      DeletedDatePropertyName,
+      PosixTimeConverter::PosixTimeToDateTime);
+
+  JsonOptional::SetIfExists<int64_t, Azure::DateTime>(
+      result.ScheduledPurgeDate,
+      jsonResponse,
+      ScheduledPurgeDatePropertyName,
+      PosixTimeConverter::PosixTimeToDateTime);
+
+  return result;
 }
 
 BackupCertificateResult BackupCertificateSerializer::Deserialize(
