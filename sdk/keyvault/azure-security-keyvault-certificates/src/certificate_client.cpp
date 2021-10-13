@@ -348,7 +348,7 @@ Azure::Response<KeyVaultCertificateWithPolicy> CertificateClient::RestoreCertifi
   auto value = KeyVaultCertificateSerializer::Deserialize("", *rawResponse);
   return Azure::Response<KeyVaultCertificateWithPolicy>(std::move(value), std::move(rawResponse));
 }
-CerticatePropertiesPagedResponse CertificateClient::GetPropertiesOfCertificates(
+CertificatePropertiesPagedResponse CertificateClient::GetPropertiesOfCertificates(
     GetPropertiesOfCertificatesOptions const& options,
     Azure::Core::Context const& context) const
 {
@@ -361,12 +361,12 @@ CerticatePropertiesPagedResponse CertificateClient::GetPropertiesOfCertificates(
   }
   // Send and parse respone
   auto rawResponse = SendRequest(request, context);
-  auto value = CerticatePropertiesPagedResponseSerializer::Deserialize(*rawResponse);
-  return CerticatePropertiesPagedResponse(
+  auto value = CertificatePropertiesPagedResponseSerializer::Deserialize(*rawResponse);
+  return CertificatePropertiesPagedResponse(
       std::move(value), std::move(rawResponse), std::make_unique<CertificateClient>(*this));
 }
 
-CerticatePropertiesPagedResponse CertificateClient::GetPropertiesOfCertificateVersions(
+CertificatePropertiesPagedResponse CertificateClient::GetPropertiesOfCertificateVersions(
     std::string const& name,
     GetPropertiesOfCertificateVersionsOptions const& options,
     Azure::Core::Context const& context) const
@@ -377,8 +377,8 @@ CerticatePropertiesPagedResponse CertificateClient::GetPropertiesOfCertificateVe
 
   // Send and parse respone
   auto rawResponse = SendRequest(request, context);
-  auto value = CerticatePropertiesPagedResponseSerializer::Deserialize(*rawResponse);
-  return CerticatePropertiesPagedResponse(
+  auto value = CertificatePropertiesPagedResponseSerializer::Deserialize(*rawResponse);
+  return CertificatePropertiesPagedResponse(
       std::move(value), std::move(rawResponse), std::make_unique<CertificateClient>(*this));
 }
 

@@ -638,10 +638,10 @@ std::string BackupCertificateSerializer::Serialize(std::vector<uint8_t> const& b
   payload[_detail::ValuePropertyName] = Base64Url::Base64UrlEncode(backup);
   return payload.dump();
 }
-CerticatePropertiesPagedResponse CerticatePropertiesPagedResponseSerializer::Deserialize(
+CertificatePropertiesPagedResponse CertificatePropertiesPagedResponseSerializer::Deserialize(
     Azure::Core::Http::RawResponse const& rawResponse)
 {
-  CerticatePropertiesPagedResponse response;
+  CertificatePropertiesPagedResponse response;
 
   auto const& body = rawResponse.GetBody();
   auto jsonResponse = json::parse(body);

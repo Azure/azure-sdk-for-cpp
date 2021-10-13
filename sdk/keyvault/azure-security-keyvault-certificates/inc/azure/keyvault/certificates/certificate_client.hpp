@@ -364,7 +364,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
      * @return A response message containing a list of certificates along with a link to the next
      * page of certificates.
      */
-    CerticatePropertiesPagedResponse GetPropertiesOfCertificates(
+    CertificatePropertiesPagedResponse GetPropertiesOfCertificates(
         GetPropertiesOfCertificatesOptions const& options,
         Azure::Core::Context const& context = Azure::Core::Context()) const;
 
@@ -381,7 +381,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
      * @return A response message containing a list of certificate versions along with a link to the
      * next page of certificates.
      */
-    CerticatePropertiesPagedResponse GetPropertiesOfCertificateVersions(
+    CertificatePropertiesPagedResponse GetPropertiesOfCertificateVersions(
         std::string const& name,
         GetPropertiesOfCertificateVersionsOptions const& options
         = GetPropertiesOfCertificateVersionsOptions(),

@@ -12,7 +12,7 @@
 
 namespace Azure { namespace Security { namespace KeyVault { namespace Certificates {
 
-  void CerticatePropertiesPagedResponse::OnNextPage(const Azure::Core::Context& context)
+  void CertificatePropertiesPagedResponse::OnNextPage(const Azure::Core::Context& context)
   {
     // Notes
     // - Before calling `OnNextPage` pagedResponse validates there is a next page, so we are

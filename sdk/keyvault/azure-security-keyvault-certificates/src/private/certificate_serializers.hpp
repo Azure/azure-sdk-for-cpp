@@ -191,11 +191,11 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
       static std::string Serialize(std::vector<uint8_t> const& backup);
     };
 
-    class CerticatePropertiesPagedResponseSerializer final {
-      CerticatePropertiesPagedResponseSerializer() = delete;
+    class CertificatePropertiesPagedResponseSerializer final {
+      CertificatePropertiesPagedResponseSerializer() = delete;
 
     public:
-      static CerticatePropertiesPagedResponse Deserialize(
+      static CertificatePropertiesPagedResponse Deserialize(
           Azure::Core::Http::RawResponse const& rawResponse);
     };
 

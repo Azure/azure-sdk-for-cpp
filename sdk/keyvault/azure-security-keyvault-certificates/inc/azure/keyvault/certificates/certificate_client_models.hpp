@@ -1206,11 +1206,11 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
    * @brief Define a single page to list the certificates from the Key Vault.
    *
    */
-  class CerticatePropertiesPagedResponse final
-      : public Azure::Core::PagedResponse<CerticatePropertiesPagedResponse> {
+  class CertificatePropertiesPagedResponse final
+      : public Azure::Core::PagedResponse<CertificatePropertiesPagedResponse> {
   private:
     friend class CertificateClient;
-    friend class Azure::Core::PagedResponse<CerticatePropertiesPagedResponse>;
+    friend class Azure::Core::PagedResponse<CertificatePropertiesPagedResponse>;
 
     std::string m_certificateName;
     std::shared_ptr<CertificateClient> m_certificateClient;
@@ -1230,8 +1230,8 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
      * @param certificateName When \p certificateName is set, the response is listing certificate
      * versions. Otherwise, the response is for listing certificates from the Key Vault.
      */
-    CerticatePropertiesPagedResponse(
-        CerticatePropertiesPagedResponse&& certificateProperties,
+    CertificatePropertiesPagedResponse(
+        CertificatePropertiesPagedResponse&& certificateProperties,
         std::unique_ptr<Azure::Core::Http::RawResponse> rawResponse,
         std::shared_ptr<CertificateClient> certificateClient,
         std::string const& certificateName = std::string())
@@ -1246,7 +1246,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
      * @brief Construct a new certificate properties object.
      *
      */
-    CerticatePropertiesPagedResponse() = default;
+    CertificatePropertiesPagedResponse() = default;
 
     /**
      * @brief Each #certificateProperties represent a Key in the Key Vault.
