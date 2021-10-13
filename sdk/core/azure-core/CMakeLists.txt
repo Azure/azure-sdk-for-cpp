@@ -72,6 +72,7 @@ set(
     inc/azure/core/internal/strings.hpp
     inc/azure/core/io/body_stream.hpp
     inc/azure/core/azure_assert.hpp
+    inc/azure/core/azure_rtti.hpp
     inc/azure/core/base64.hpp
     inc/azure/core/case_insensitive_containers.hpp
     inc/azure/core/context.hpp
@@ -126,8 +127,6 @@ set(
 
 add_library(azure-core ${AZURE_CORE_HEADER} ${AZURE_CORE_SOURCE})
 
-az_rtti_setup(azure-core)
-
 target_include_directories(
   azure-core
     PUBLIC
@@ -165,6 +164,12 @@ az_vcpkg_export(
     CORE
     "azure/core/dll_import_export.hpp"
   )
+
+az_rtti_setup(
+  azure-core
+  CORE
+  "azure/core/azure_rtti.hpp"
+)
 
 if(BUILD_TESTING)
   # define a symbol that enables some test hooks in code

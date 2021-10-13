@@ -9,6 +9,7 @@
 #pragma once
 
 #include "azure/core/azure_assert.hpp"
+#include "azure/core/azure_rtti.hpp"
 #include "azure/core/datetime.hpp"
 #include "azure/core/dll_import_export.hpp"
 
