@@ -1,6 +1,7 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
 
+#include <azure/core/azure_rtti.hpp>
 #include <azure/core/platform.hpp>
 
 #if defined(AZ_PLATFORM_POSIX)
@@ -472,6 +473,7 @@ namespace Azure { namespace Core { namespace Test {
     }
   }
 
+#if defined(AZURE_SDK_RTTI_ENABLED)
   TEST_P(TransportAdapter, dynamicCast)
   {
     Azure::Core::Url host("http://unresolvedHost.org/get");
@@ -490,6 +492,7 @@ namespace Azure { namespace Core { namespace Test {
       EXPECT_THROW((void)dynamic_cast<const std::range_error&>(err), std::bad_cast);
     }
   }
+#endif
 
   TEST_P(TransportAdapter, SizePutFromFile)
   {

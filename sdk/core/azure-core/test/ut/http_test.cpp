@@ -4,6 +4,7 @@
 #include <gtest/gtest.h>
 
 #include "http_test.hpp"
+#include <azure/core/azure_rtti.hpp>
 #include <azure/core/http/http.hpp>
 #include <azure/core/internal/io/null_body_stream.hpp>
 
@@ -155,9 +156,11 @@ namespace Azure { namespace Core { namespace Test {
       Url url("http://test.com");
       Http::Request req(httpMethod, url);
 
+#if defined(AZURE_SDK_RTTI_ENABLED)
       Azure::Core::IO::_internal::NullBodyStream* d
           = dynamic_cast<Azure::Core::IO::_internal::NullBodyStream*>(req.GetBodyStream());
       EXPECT_TRUE(d);
+#endif
 
       req.StartTry();
 
@@ -172,8 +175,10 @@ namespace Azure { namespace Core { namespace Test {
 
       EXPECT_FALSE(headers.count("name"));
 
+#if defined(AZURE_SDK_RTTI_ENABLED)
       d = dynamic_cast<Azure::Core::IO::_internal::NullBodyStream*>(req.GetBodyStream());
       EXPECT_TRUE(d);
+#endif
     }
 
     {
@@ -192,14 +197,18 @@ namespace Azure { namespace Core { namespace Test {
 
       Http::Request req(httpMethod, url, &stream);
 
+#if defined(AZURE_SDK_RTTI_ENABLED)
       Azure::Core::IO::MemoryBodyStream* d
           = dynamic_cast<Azure::Core::IO::MemoryBodyStream*>(req.GetBodyStream());
       EXPECT_TRUE(d);
+#endif
 
       req.StartTry();
 
+#if defined(AZURE_SDK_RTTI_ENABLED)
       d = dynamic_cast<Azure::Core::IO::MemoryBodyStream*>(req.GetBodyStream());
       EXPECT_TRUE(d);
+#endif
 
       // Verify that StartTry rewound the stream back.
       auto getStream = req.GetBodyStream();
