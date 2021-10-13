@@ -416,8 +416,8 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
      *
      * @param options The options for the request.
      * @param context The context for the operation can be used for request cancellation.
-     * @returnA response message containing a list of deleted certificates in the vault along with a
-     * link to the next page of deleted certificates
+     * @return A response message containing a list of deleted certificates in the vault along with
+     * a link to the next page of deleted certificates
      */
     DeletedCertificatesPagedResponse GetDeletedCertificates(
         GetDeletedCertificatesOptions const& options = GetDeletedCertificatesOptions(),
