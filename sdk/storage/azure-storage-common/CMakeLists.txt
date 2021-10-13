@@ -20,8 +20,6 @@ include(AzureRemoveRTTI)
 
 az_vcpkg_integrate()
 
-az_remove_rtti()
-
 if(NOT AZ_ALL_LIBRARIES)
   find_package(azure-core-cpp "1.0.0" CONFIG QUIET)
   if(NOT azure-core-cpp_FOUND)
@@ -68,6 +66,8 @@ set(
 )
 
 add_library(azure-storage-common ${AZURE_STORAGE_COMMON_HEADER} ${AZURE_STORAGE_COMMON_SOURCE})
+
+az_remove_rtti(azure-storage-common)
 
 # make sure that users can consume the project as a library.
 add_library(Azure::azure-storage-common ALIAS azure-storage-common)

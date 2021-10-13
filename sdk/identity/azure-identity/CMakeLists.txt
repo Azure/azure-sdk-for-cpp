@@ -20,8 +20,6 @@ include(AzureRemoveRTTI)
 
 az_vcpkg_integrate()
 
-az_remove_rtti()
-
 if(NOT AZ_ALL_LIBRARIES)
   find_package(azure-core-cpp "1.2.0" CONFIG QUIET)
   if(NOT azure-core-cpp_FOUND)
@@ -53,6 +51,8 @@ set(
 )
 
 add_library(azure-identity ${AZURE_IDENTITY_HEADER} ${AZURE_IDENTITY_SOURCE})
+
+az_remove_rtti(azure-identity)
 
 # make sure that users can consume the project as a library.
 add_library(Azure::azure-identity ALIAS azure-identity)

@@ -20,8 +20,6 @@ include(AzureRemoveRTTI)
 
 az_vcpkg_integrate()
 
-az_remove_rtti()
-
 if(NOT AZ_ALL_LIBRARIES)
   find_package(azure-core-cpp "1.2.0" CONFIG QUIET)
   if(NOT azure-core-cpp_FOUND)
@@ -90,6 +88,8 @@ add_library(azure-security-keyvault-keys
   ${AZURE_KEYVAULT_KEYS_HEADER} ${AZURE_KEYVAULT_KEYS_SOURCE}
 )
 add_library(Azure::azure-security-keyvault-keys ALIAS azure-security-keyvault-keys)
+
+az_remove_rtti(azure-security-keyvault-keys)
 
 target_include_directories(
   azure-security-keyvault-keys

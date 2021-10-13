@@ -20,8 +20,6 @@ include(AzureRemoveRTTI)
 
 az_vcpkg_integrate()
 
-az_remove_rtti()
-
 if(NOT AZ_ALL_LIBRARIES)
   find_package(azure-storage-common-cpp "12.2.0" CONFIG QUIET)
   if(NOT azure-storage-common-cpp_FOUND)
@@ -64,6 +62,8 @@ add_library(azure-storage-files-shares ${AZURE_STORAGE_FILES_SHARES_HEADER} ${AZ
 
 # make sure that users can consume the project as a library.
 add_library(Azure::azure-storage-files-shares ALIAS azure-storage-files-shares)
+
+az_remove_rtti(azure-storage-files-shares)
 
 target_include_directories(
   azure-storage-files-shares

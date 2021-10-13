@@ -20,8 +20,6 @@ include(AzureRemoveRTTI)
 
 az_vcpkg_integrate()
 
-az_remove_rtti()
-
 if(NOT AZ_ALL_LIBRARIES)
   find_package(azure-storage-blobs-cpp "12.2.0" CONFIG QUIET)
   if(NOT azure-storage-blobs-cpp_FOUND)
@@ -66,6 +64,8 @@ add_library(azure-storage-files-datalake ${AZURE_STORAGE_FILES_DATALAKE_HEADER} 
 
 # make sure that users can consume the project as a library.
 add_library(Azure::azure-storage-files-datalake ALIAS azure-storage-files-datalake)
+
+az_remove_rtti(azure-storage-files-datalake)
 
 target_include_directories(
   azure-storage-files-datalake

@@ -21,8 +21,6 @@ include(AzureRemoveRTTI)
 
 az_vcpkg_integrate()
 
-az_remove_rtti()
-
 find_package(Threads REQUIRED)
 
 if(BUILD_TRANSPORT_CURL)
@@ -127,6 +125,8 @@ set(
 )
 
 add_library(azure-core ${AZURE_CORE_HEADER} ${AZURE_CORE_SOURCE})
+
+az_remove_rtti(azure-core)
 
 target_include_directories(
   azure-core
