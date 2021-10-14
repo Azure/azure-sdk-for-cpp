@@ -3,27 +3,34 @@
 
 /**
  * @file
- * @brief run-time type info enable or disable.
+ * @brief Run-time type info enable or disable.
  *
- * @details Checks whenever RTTI is enabled and exports the symbol `AZ_TEMPLATE_WITH_RTTI`. When
- * the symbol is not exported, RTTI is disabled.
+ * @details When RTTI is enabled, defines a macro `AZ_TEMPLATE_WITH_RTTI`. When
+ * the macro is not defined, RTTI is disabled.
  *
- * @details This headers works together with the CMake module `AzureConfigRTTI` for installing the
- * header with the right value to resolve whether the SDK package was built and installed with or
- * without RTTI. The CMake module will patch this file for installation.
+ * @details Each library has this header file. These headers are being configured by
+ * `az_rtti_setup()` CMake macro. CMake install will patch this file during installation, depending
+ * on the build flags.
  */
 
 #pragma once
 
 /**
  * @def AZ_TEMPLATE_WITH_RTTI
- * @brief Define the symbol to enable or disable RTTI.
+ * @brief A macro indicating whether the code is built with RTTI or not.
  *
- * @details `BUILD_RTTI` can be set when building the Azure SDK with CMake, however, installing the
- * header requires to resolve `AZ_TEMPLATE_WITH_RTTI` which will become ` + 1 ` when the SDK was
- * built with RTTI and `false` otherwise.
+ * @details `AZ_BUILD_RTTI` could be defined while building the Azure SDK with CMake, however, after
+ * the build is completed, that information is not preserved for the code that consumes Azure SDK
+ * headers, unless the code that consumes the SDK is the part of the same build process. To address
+ * this issue, CMake install would patch the header it places in the installation directory, so that
+ * condition:
+ * `#if defined(AZ_BUILD_RTTI) || (0)`
+ * becomes, effectively,
+ * `#if defined(AZ_BUILD_RTTI) || (0 + 1)`
+ * when the library was built with RTTI support, and will make no changes to the
+ * condition when it was not.
  */
 
-#if AZ_BUILD_RTTI || (0 /*@AZ_TEMPLATE_WITH_RTTI@*/)
-#define AZ_TEMPLATE_WITH_RTTI 1
+#if defined(AZ_BUILD_RTTI) || (0 /*@AZ_TEMPLATE_WITH_RTTI@*/)
+#define AZ_TEMPLATE_WITH_RTTI
 #endif

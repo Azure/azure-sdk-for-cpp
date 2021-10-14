@@ -473,7 +473,7 @@ namespace Azure { namespace Core { namespace Test {
     }
   }
 
-#if defined(AZURE_SDK_RTTI_ENABLED)
+#if defined(AZ_CORE_WITH_RTTI)
   TEST_P(TransportAdapter, dynamicCast)
   {
     Azure::Core::Url host("http://unresolvedHost.org/get");
