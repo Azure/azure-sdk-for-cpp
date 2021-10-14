@@ -29,6 +29,8 @@ namespace {
 constexpr static const char* FailedToGetNewConnectionTemplate
     = "[static impl] Fail to get a new connection for: ";
 
+constexpr static const int HttpWordLen = 4;
+
 template <typename T>
 #if defined(_MSC_VER)
 #pragma warning(push)
@@ -55,26 +57,35 @@ private:
   std::unique_ptr<Azure::Core::IO::BodyStream> m_responseStream;
   bool m_isTransferEncodingChunked = false;
 
+  // Returns the next token from `*begin` to the next separator parsed as T
+  // *begin gets updated to the next token after the separator.
+  // use the last param to change the return type to other than int
+  template <class T = int>
+  static T GetNextToken(
+      char const** begin,
+      char const* const last,
+      char const separator,
+      std::function<T(std::string)> mutator
+      = [](std::string const& value) { return std::stoi(value); })
+  {
+    auto start = *begin;
+    auto end = std::find(start, last, separator);
+    // Move the original ptr to one place after the separator
+    *begin = end + 1;
+    return mutator(std::string(start, end));
+  }
+
   static std::unique_ptr<RawResponse> CreateHTTPResponse(
       char const* const begin,
       char const* const last)
   {
     // set response code, HTTP version and reason phrase (i.e. HTTP/1.1 200 OK)
-    auto start = begin + 5; // HTTP = 4, / = 1, moving to 5th place for version
-    auto end = std::find(start, last, '.');
-    auto majorVersion = std::stoi(std::string(start, end));
-
-    start = end + 1; // start of minor version
-    end = std::find(start, last, ' ');
-    auto minorVersion = std::stoi(std::string(start, end));
-
-    start = end + 1; // start of status code
-    end = std::find(start, last, ' ');
-    auto statusCode = std::stoi(std::string(start, end));
-
-    start = end + 1; // start of reason phrase
-    end = std::find(start, last, '\r');
-    auto reasonPhrase = std::string(start, end); // remove \r
+    auto start = begin + HttpWordLen + 1; // HTTP = 4, / = 1, moving to 5th place for version
+    auto majorVersion = GetNextToken(&start, last, '.');
+    auto minorVersion = GetNextToken(&start, last, ' ');
+    auto statusCode = GetNextToken(&start, last, ' ');
+    auto reasonPhrase = GetNextToken<std::string>(
+        &start, last, '\r', [](std::string const& value) { return value; });
 
     // allocate the instance of response to heap with shared ptr
     // So this memory gets delegated outside CurlTransport as a shared_ptr so memory will be
@@ -136,17 +147,17 @@ private:
   static size_t ReceiveInitialResponse(char* contents, size_t size, size_t nmemb, void* userp)
   {
     size_t const expectedSize = size * nmemb;
-    std::unique_ptr<RawResponse>* responseP = static_cast<std::unique_ptr<RawResponse>*>(userp);
+    std::unique_ptr<RawResponse>* rawResponse = static_cast<std::unique_ptr<RawResponse>*>(userp);
 
     // First response
-    if (*responseP == nullptr)
+    if (*rawResponse == nullptr)
     {
       // parse header to get init data
-      *responseP = CreateHTTPResponse(contents, contents + expectedSize);
+      *rawResponse = CreateHTTPResponse(contents, contents + expectedSize);
     }
     else
     {
-      StaticSetHeader(*(*responseP), contents, contents + expectedSize);
+      StaticSetHeader(*(*rawResponse), contents, contents + expectedSize);
     }
 
     // This callback needs to return the response size or curl will consider it as it failed
@@ -156,10 +167,10 @@ private:
   static size_t ReceiveData(void* contents, size_t size, size_t nmemb, void* userp)
   {
     size_t const expectedSize = size * nmemb;
-    std::vector<uint8_t>& responseP = *(static_cast<std::vector<uint8_t>*>(userp));
+    std::vector<uint8_t>& rawResponse = *(static_cast<std::vector<uint8_t>*>(userp));
     uint8_t* data = static_cast<uint8_t*>(contents);
 
-    responseP.insert(responseP.end(), data, data + expectedSize);
+    rawResponse.insert(rawResponse.end(), data, data + expectedSize);
 
     // This callback needs to return the response size or curl will consider it as it failed
     return expectedSize;
