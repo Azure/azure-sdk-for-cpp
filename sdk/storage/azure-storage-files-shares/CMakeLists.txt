@@ -83,6 +83,7 @@ az_vcpkg_export(
 
 az_rtti_setup(
   azure-storage-files-shares
+  STORAGE_FILES_SHARES
   "azure/storage/files/shares/azure_rtti.hpp"
 )
 

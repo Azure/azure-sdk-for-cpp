@@ -84,6 +84,7 @@ az_vcpkg_export(
 
 az_rtti_setup(
   azure-storage-blobs
+  STORAGE_BLOBS
   "azure/storage/blobs/azure_rtti.hpp"
 )
 

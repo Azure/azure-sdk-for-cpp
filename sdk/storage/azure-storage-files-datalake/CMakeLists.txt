@@ -85,6 +85,7 @@ az_vcpkg_export(
 
 az_rtti_setup(
   azure-storage-files-datalake
+  STORAGE_FILES_DATALAKE
   "azure/storage/files/datalake/azure_rtti.hpp"
 )
 

@@ -101,11 +101,12 @@ endif()
 
 az_vcpkg_export(
     azure-security-keyvault-secrets
-    SECURITY_KEYVAULT_KEYS
+    SECURITY_KEYVAULT_SECRETS
     "azure/keyvault/secrets/dll_import_export.hpp"
   )
 
 az_rtti_setup(
   azure-security-keyvault-secrets
+  SECURITY_KEYVAULT_SECRETS
   "azure/keyvault/secrets/azure_rtti.hpp"
 )

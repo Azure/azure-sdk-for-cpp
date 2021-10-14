@@ -75,6 +75,7 @@ az_vcpkg_export(
   
 az_rtti_setup(
   azure-storage-queues
+  STORAGE_QUEUES
   "azure/storage/queues/azure_rtti.hpp"
 )
 

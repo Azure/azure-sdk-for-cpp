@@ -102,6 +102,7 @@ az_vcpkg_export(
 
 az_rtti_setup(
   azure-storage-common
+  STORAGE_COMMON
   "azure/storage/common/azure_rtti.hpp"
 )
 

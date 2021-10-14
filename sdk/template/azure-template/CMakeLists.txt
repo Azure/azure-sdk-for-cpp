@@ -71,6 +71,7 @@ az_vcpkg_export(
 
 az_rtti_setup(
   azure-template
+  TEMPLATE
   "azure/template/azure_rtti.hpp"
 )
 

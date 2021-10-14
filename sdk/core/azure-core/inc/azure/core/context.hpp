@@ -80,7 +80,7 @@ namespace Azure { namespace Core {
       std::atomic<DateTime::rep> Deadline;
       Context::Key Key;
       std::shared_ptr<void> Value;
-#if defined(AZURE_SDK_RTTI_ENABLED)
+#if defined(AZ_CORE_WITH_RTTI)
       const std::type_info& ValueType;
 #endif
       static constexpr DateTime::rep ToDateTimeRepresentation(DateTime const& dateTime)
@@ -95,7 +95,7 @@ namespace Azure { namespace Core {
 
       explicit ContextSharedState()
           : Deadline(ToDateTimeRepresentation((DateTime::max)())), Value(nullptr)
-#if defined(AZURE_SDK_RTTI_ENABLED)
+#if defined(AZ_CORE_WITH_RTTI)
             ,
             ValueType(typeid(std::nullptr_t))
 #endif
@@ -106,7 +106,7 @@ namespace Azure { namespace Core {
           const std::shared_ptr<ContextSharedState>& parent,
           DateTime const& deadline)
           : Parent(parent), Deadline(ToDateTimeRepresentation(deadline)), Value(nullptr)
-#if defined(AZURE_SDK_RTTI_ENABLED)
+#if defined(AZ_CORE_WITH_RTTI)
             ,
             ValueType(typeid(std::nullptr_t))
 #endif
@@ -121,7 +121,7 @@ namespace Azure { namespace Core {
           T value) // NOTE, should this be T&&
           : Parent(parent), Deadline(ToDateTimeRepresentation(deadline)), Key(key),
             Value(std::make_shared<T>(std::move(value)))
-#if defined(AZURE_SDK_RTTI_ENABLED)
+#if defined(AZ_CORE_WITH_RTTI)
             ,
             ValueType(typeid(T))
 #endif
@@ -209,7 +209,7 @@ namespace Azure { namespace Core {
       {
         if (ptr->Key == key)
         {
-#if defined(AZURE_SDK_RTTI_ENABLED)
+#if defined(AZ_CORE_WITH_RTTI)
           AZURE_ASSERT_MSG(
               typeid(T) == ptr->ValueType, "Type mismatch for Context::TryGetValue().");
 #endif
