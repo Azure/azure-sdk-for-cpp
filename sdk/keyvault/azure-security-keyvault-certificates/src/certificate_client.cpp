@@ -245,11 +245,42 @@ Response<std::vector<CertificateContact>> CertificateClient::SetContacts(
   return Azure::Response<std::vector<CertificateContact>>(std::move(value), std::move(rawResponse));
 }
 
-Azure::Response<CertificateOperationProperties> CertificateClient::GetCertificateOperation(
+Azure::Response<CertificateOperationProperties> CertificateClient::GetPendingCertificateOperation(
     std::string const& name,
     Azure::Core::Context const& context) const
 {
   auto request = CreateRequest(HttpMethod::Get, {CertificatesPath, name, PendingPath});
+  auto rawResponse = SendRequest(request, context);
+
+  auto value = CertificateOperationSerializer::Deserialize(*rawResponse);
+  return Azure::Response<CertificateOperationProperties>(std::move(value), std::move(rawResponse));
+}
+
+Azure::Response<CertificateOperationProperties>
+CertificateClient::CancelPendingCertificateOperation(
+    std::string const& name,
+    Azure::Core::Context const& context) const
+{
+  CertificateOperationUpdateParameter parameter;
+  parameter.CancelationRequested = true;
+  auto payload = CertificateOperationUpdateParameterSerializer::Serialize(parameter);
+  Azure::Core::IO::MemoryBodyStream payloadStream(
+      reinterpret_cast<const uint8_t*>(payload.data()), payload.size());
+
+  auto request
+      = CreateRequest(HttpMethod::Patch, {CertificatesPath, name, PendingPath}, &payloadStream);
+  auto rawResponse = SendRequest(request, context);
+
+  auto value = CertificateOperationSerializer::Deserialize(*rawResponse);
+  return Azure::Response<CertificateOperationProperties>(std::move(value), std::move(rawResponse));
+}
+
+Azure::Response<CertificateOperationProperties>
+CertificateClient::DeletePendingCertificateOperation(
+    std::string const& name,
+    Azure::Core::Context const& context) const
+{
+  auto request = CreateRequest(HttpMethod::Delete, {CertificatesPath, name, PendingPath});
   auto rawResponse = SendRequest(request, context);
 
   auto value = CertificateOperationSerializer::Deserialize(*rawResponse);

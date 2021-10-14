@@ -105,6 +105,20 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
       static std::string Serialize(CertificateCreateParameters const& parameters);
     };
 
+    class CertificateOperationUpdateParameterSerializer final {
+      CertificateOperationUpdateParameterSerializer() = delete;
+
+    public:
+      static std::string Serialize(CertificateOperationUpdateParameter const& parameters);
+    };
+
+    class ServerErrorSerializer final {
+      ServerErrorSerializer() = delete;
+
+    public:
+      static void Deserialize(ServerError& error, Azure::Core::Json::_internal::json fragment);
+    };
+
     class CertificateIssuerSerializer final {
       CertificateIssuerSerializer() = delete;
 

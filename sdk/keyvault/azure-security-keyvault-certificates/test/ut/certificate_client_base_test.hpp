@@ -216,6 +216,54 @@ namespace Azure {
         EXPECT_TRUE(found);
       }
     }
+
+    static inline KeyVaultCertificateWithPolicy CreateCertificate(
+        std::string const& name,
+        CertificateClient const& client,
+        std::chrono::milliseconds defaultWait)
+    {
+      auto params = CertificateCreateParameters();
+      params.Policy.Subject = "CN=xyz";
+      params.Policy.ValidityInMonths = 12;
+      params.Policy.Enabled = true;
+
+      params.Properties.Enabled = true;
+      params.Properties.Name = name;
+      params.Policy.ContentType = CertificateContentType::Pkcs12;
+      params.Policy.IssuerName = "Self";
+
+      LifetimeAction action;
+      action.LifetimePercentage = 80;
+      action.Action = CertificatePolicyAction::AutoRenew;
+      params.Policy.LifetimeActions.emplace_back(action);
+
+      auto response = client.StartCreateCertificate(name, params);
+      auto result = response.PollUntilDone(defaultWait);
+
+      while (!response.IsCompleted())
+      {
+        response.UpdateProperties();
+        std::this_thread::sleep_for(defaultWait);
+      }
+
+      auto cert = client.GetCertificate(name);
+
+      EXPECT_EQ(cert.Value.Name(), params.Properties.Name);
+      EXPECT_EQ(cert.Value.Properties.Name, params.Properties.Name);
+      EXPECT_EQ(cert.Value.Properties.Enabled.Value(), true);
+      EXPECT_EQ(cert.Value.Policy.IssuerName.Value(), params.Policy.IssuerName.Value());
+      EXPECT_EQ(cert.Value.Policy.ContentType.Value(), params.Policy.ContentType.Value());
+      EXPECT_EQ(cert.Value.Policy.Subject, params.Policy.Subject);
+      EXPECT_EQ(cert.Value.Policy.ValidityInMonths.Value(), params.Policy.ValidityInMonths.Value());
+      EXPECT_EQ(cert.Value.Policy.Enabled.Value(), params.Policy.Enabled.Value());
+      EXPECT_EQ(cert.Value.Policy.LifetimeActions.size(), size_t(1));
+      EXPECT_EQ(cert.Value.Policy.LifetimeActions[0].Action, action.Action);
+      EXPECT_EQ(
+          cert.Value.Policy.LifetimeActions[0].LifetimePercentage.Value(),
+          action.LifetimePercentage.Value());
+
+      return cert.Value;
+    }
   };
 
 }}}}} // namespace Azure::Security::KeyVault::Certificates::Test

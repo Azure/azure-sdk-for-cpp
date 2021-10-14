@@ -9,7 +9,7 @@
 
 using namespace Azure::Security::KeyVault::Certificates;
 
-Azure::Response<KeyVaultCertificateWithPolicy> CreateCertificateOperation::PollUntilDoneInternal(
+Azure::Response<CertificateOperationProperties> CreateCertificateOperation::PollUntilDoneInternal(
     std::chrono::milliseconds period,
     Azure::Core::Context& context)
 {
@@ -23,7 +23,7 @@ Azure::Response<KeyVaultCertificateWithPolicy> CreateCertificateOperation::PollU
     std::this_thread::sleep_for(period);
   }
 
-  return Azure::Response<KeyVaultCertificateWithPolicy>(
+  return Azure::Response<CertificateOperationProperties>(
       m_value, std::make_unique<Azure::Core::Http::RawResponse>(*m_rawResponse));
 }
 
@@ -34,8 +34,8 @@ std::unique_ptr<Azure::Core::Http::RawResponse> CreateCertificateOperation::Poll
 
   try
   {
-    rawResponse
-        = m_certificateClient->GetCertificateOperation(m_continuationToken, context).RawResponse;
+    rawResponse = m_certificateClient->GetPendingCertificateOperation(m_continuationToken, context)
+                      .RawResponse;
   }
   catch (Azure::Core::RequestFailedException& error)
   {
@@ -44,24 +44,7 @@ std::unique_ptr<Azure::Core::Http::RawResponse> CreateCertificateOperation::Poll
 
   switch (rawResponse->GetStatusCode())
   {
-    case Azure::Core::Http::HttpStatusCode::Ok: {
-      Properties = _detail::CertificateOperationSerializer::Deserialize(*rawResponse);
-      // the operation returns completed for crete certificate, thus success is success when the
-      // operation returns completed not on operation query success
-      if (Properties.Status.HasValue())
-      {
-        m_status = Properties.Status.Value() == _detail::CompletedValue
-            ? Azure::Core::OperationStatus::Succeeded
-            : Azure::Core::OperationStatus::Running;
-      }
-      else
-      {
-        // no status code, we're in no mans land , assume failed
-        m_status = Azure::Core::OperationStatus::Failed;
-      }
-
-      break;
-    }
+    case Azure::Core::Http::HttpStatusCode::Ok:
     case Azure::Core::Http::HttpStatusCode::Forbidden: {
       m_status = Azure::Core::OperationStatus::Succeeded;
       break;
@@ -76,8 +59,7 @@ std::unique_ptr<Azure::Core::Http::RawResponse> CreateCertificateOperation::Poll
 
   if (m_status == Azure::Core::OperationStatus::Succeeded)
   {
-    auto finalReponse = m_certificateClient->GetCertificate(Properties.Name);
-    m_value = finalReponse.Value;
+    m_value = _detail::CertificateOperationSerializer::Deserialize(*rawResponse);
   }
 
   return rawResponse;
@@ -92,7 +74,7 @@ CreateCertificateOperation::CreateCertificateOperation(
   m_rawResponse = std::move(response.RawResponse);
   m_continuationToken = Properties.Name;
 
-  if (!m_value.Name().empty())
+  if (!m_value.Name.empty())
   {
     m_status = Azure::Core::OperationStatus::Succeeded;
   }
@@ -113,6 +95,50 @@ CreateCertificateOperation CreateCertificateOperation::CreateFromResumeToken(
   CreateCertificateOperation operation(resumeToken, std::make_shared<CertificateClient>(client));
   operation.Poll(context);
   return operation;
+}
+
+CertificateOperationProperties CreateCertificateOperation::UpdateProperties(
+    Azure::Core::Context const& context)
+{
+  if (IsCompleted())
+  {
+    return Properties;
+  }
+
+  auto response = m_certificateClient->GetPendingCertificateOperation(m_continuationToken, context);
+  Properties = response.Value;
+  return Properties;
+}
+
+void CreateCertificateOperation::Cancel(Azure::Core::Context const& context)
+{
+  auto response
+      = m_certificateClient->CancelPendingCertificateOperation(m_continuationToken, context);
+  Properties = response.Value;
+}
+void CreateCertificateOperation::Delete(Azure::Core::Context const& context)
+{
+  auto response
+      = m_certificateClient->DeletePendingCertificateOperation(m_continuationToken, context);
+  Properties = response.Value;
+}
+
+bool CreateCertificateOperation::IsCompleted()
+{
+  bool completed = false;
+
+  if (Properties.Status.HasValue()
+      && (Properties.Status.Value() == _detail::CompletedValue
+          || Properties.Status.Value() == _detail::DeletedValue))
+  {
+    completed = true;
+  }
+  if (Properties.Error.HasValue())
+  {
+    completed = true;
+  }
+
+  return completed;
 }
 
 Azure::Response<DeletedCertificate> DeleteCertificateOperation::PollUntilDoneInternal(

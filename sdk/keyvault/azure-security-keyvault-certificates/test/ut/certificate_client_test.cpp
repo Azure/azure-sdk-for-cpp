@@ -16,44 +16,20 @@ using namespace Azure::Security::KeyVault::Certificates::Test;
 
 using namespace std::chrono_literals;
 
-// NOTE:
-// Disabling test as the createCertificate operation is currently broken. See:
-// https://github.com/Azure/azure-sdk-for-cpp/issues/2938
-
 TEST_F(KeyVaultCertificateClientTest, CreateCertificate)
 {
   // cspell: disable-next-line
   std::string const certificateName("magiqStuff");
-
+  m_defaultWait = 5s;
   auto const& client
       = GetClientForTest(::testing::UnitTest::GetInstance()->current_test_info()->name());
+  // create certificate method contains all the checks
+  KeyVaultCertificateClientTest::CreateCertificate(certificateName, client, m_defaultWait);
 
-  auto params = CertificateCreateParameters();
-  params.Policy.Subject = "CN=xyz";
-  params.Policy.ValidityInMonths = 12;
-  params.Policy.Enabled = true;
-
-  params.Properties.Enabled = true;
-  params.Properties.Name = certificateName;
-  params.Policy.ContentType = CertificateContentType::Pkcs12;
-  params.Policy.IssuerName = "Self";
-
-  LifetimeAction action;
-  action.LifetimePercentage = 80;
-  action.Action = CertificatePolicyAction::AutoRenew;
-  params.Policy.LifetimeActions.emplace_back(action);
-  {
-
-    auto response = client.StartCreateCertificate(certificateName, params);
-    auto result = response.PollUntilDone(m_defaultWait);
-
-    EXPECT_EQ(result.Value.Name(), params.Properties.Name);
-    EXPECT_EQ(result.Value.Properties.Enabled.Value(), true);
-  }
   {
     auto response = client.StartDeleteCertificate(certificateName);
     auto result = response.PollUntilDone(m_defaultWait);
-    EXPECT_EQ(result.Value.Name(), params.Properties.Name);
+    EXPECT_EQ(result.Value.Name(), certificateName);
     EXPECT_EQ(result.Value.Properties.Enabled.Value(), true);
     EXPECT_NE(result.Value.RecoveryId.length(), size_t(0));
     EXPECT_TRUE(result.Value.DeletedOn.HasValue());
@@ -92,9 +68,15 @@ TEST_F(KeyVaultCertificateClientTest, CreateCertificateResumeToken)
         = CreateCertificateOperation::CreateFromResumeToken(response.GetResumeToken(), client);
 
     auto result = fromToken.PollUntilDone(m_defaultWait);
+    while (!response.IsCompleted())
+    {
+      response.UpdateProperties();
+      std::this_thread::sleep_for(m_defaultWait);
+    }
 
-    EXPECT_EQ(result.Value.Name(), params.Properties.Name);
-    EXPECT_EQ(result.Value.Properties.Enabled.Value(), true);
+    auto cert = client.GetCertificate(certificateName);
+    EXPECT_EQ(cert.Value.Name(), params.Properties.Name);
+    EXPECT_EQ(cert.Value.Properties.Enabled.Value(), true);
   }
   {
     auto response = client.StartDeleteCertificate(certificateName);
@@ -118,83 +100,60 @@ TEST_F(KeyVaultCertificateClientTest, GetCertificate)
   auto const& client
       = GetClientForTest(::testing::UnitTest::GetInstance()->current_test_info()->name());
 
-  auto params = CertificateCreateParameters();
-  params.Policy.Subject = "CN=xyz";
-  params.Policy.ValidityInMonths = 12;
-  params.Policy.Enabled = true;
+  auto cert = CreateCertificate(certificateName, client, m_defaultWait);
+  EXPECT_EQ(cert.Name(), cert.Properties.Name);
+  EXPECT_EQ(cert.Properties.Name, certificateName);
+  EXPECT_EQ(cert.Properties.VaultUrl, m_keyVaultUrl);
+  // There should be a version
+  EXPECT_NE(cert.Properties.Version, "");
 
-  params.Properties.Enabled = true;
-  params.Properties.Name = certificateName;
-  params.Policy.ContentType = CertificateContentType::Pkcs12;
-  params.Policy.IssuerName = "Self";
+  // x5t
+  EXPECT_NE(cert.Properties.X509Thumbprint.size(), 0);
+  EXPECT_EQ(cert.Properties.Tags.size(), 0);
 
-  LifetimeAction action;
-  action.LifetimePercentage = 80;
-  action.Action = CertificatePolicyAction::AutoRenew;
-  params.Policy.LifetimeActions.emplace_back(action);
+  // attributes
+  EXPECT_TRUE(cert.Properties.Enabled.HasValue());
+  EXPECT_TRUE(cert.Properties.NotBefore.HasValue());
+  EXPECT_TRUE(cert.Properties.ExpiresOn.HasValue());
+  EXPECT_TRUE(cert.Properties.CreatedOn.HasValue());
+  EXPECT_TRUE(cert.Properties.UpdatedOn.HasValue());
+  EXPECT_TRUE(cert.Properties.RecoverableDays.HasValue());
+  EXPECT_TRUE(cert.Properties.RecoveryLevel.HasValue());
 
+  // kid, sid, cer
+  EXPECT_NE(cert.KeyId, "");
+  EXPECT_NE(cert.SecretId, "");
+  EXPECT_NE(cert.Cer.size(), 0);
+
+  // policy
   {
-    auto response = client.StartCreateCertificate(certificateName, params);
-    auto result = response.PollUntilDone(m_defaultWait);
-  }
+    auto const& policy = cert.Policy;
 
-  {
-    auto response = client.GetCertificate(certificateName);
-    CheckValidResponse(response);
-    auto cert = response.Value;
-    EXPECT_EQ(cert.Name(), cert.Properties.Name);
-    EXPECT_EQ(cert.Properties.Name, certificateName);
-    EXPECT_EQ(cert.Properties.VaultUrl, m_keyVaultUrl);
-    // There should be a version
-    EXPECT_NE(cert.Properties.Version, "");
+    // Key props
+    EXPECT_TRUE(policy.Exportable.HasValue());
+    EXPECT_TRUE(policy.KeyType.HasValue());
+    EXPECT_TRUE(policy.ReuseKey.HasValue());
+    // Recording uses RSA with no curve-name. Use RSA key when running LIVE
+    EXPECT_FALSE(policy.KeyCurveName.HasValue());
+    EXPECT_TRUE(policy.KeySize.HasValue());
 
-    // x5t
-    EXPECT_NE(cert.Properties.X509Thumbprint.size(), 0);
-    EXPECT_EQ(cert.Properties.Tags.size(), 0);
+    // Secret props
+    EXPECT_TRUE(policy.ContentType.HasValue());
+
+    // x509_props
+    EXPECT_TRUE(policy.Subject.size() > 0);
+
+    // issuer
+    EXPECT_TRUE(policy.IssuerName.HasValue());
 
     // attributes
-    EXPECT_TRUE(cert.Properties.Enabled.HasValue());
-    EXPECT_TRUE(cert.Properties.NotBefore.HasValue());
-    EXPECT_TRUE(cert.Properties.ExpiresOn.HasValue());
-    EXPECT_TRUE(cert.Properties.CreatedOn.HasValue());
-    EXPECT_TRUE(cert.Properties.UpdatedOn.HasValue());
-    EXPECT_TRUE(cert.Properties.RecoverableDays.HasValue());
-    EXPECT_TRUE(cert.Properties.RecoveryLevel.HasValue());
+    EXPECT_TRUE(policy.CreatedOn.HasValue());
 
-    // kid, sid, cer
-    EXPECT_NE(cert.KeyId, "");
-    EXPECT_NE(cert.SecretId, "");
-    EXPECT_NE(cert.Cer.size(), 0);
-
-    // policy
-    {
-      auto const& policy = cert.Policy;
-
-      // Key props
-      EXPECT_TRUE(policy.Exportable.HasValue());
-      EXPECT_TRUE(policy.KeyType.HasValue());
-      EXPECT_TRUE(policy.ReuseKey.HasValue());
-      // Recording uses RSA with no curve-name. Use RSA key when running LIVE
-      EXPECT_FALSE(policy.KeyCurveName.HasValue());
-      EXPECT_TRUE(policy.KeySize.HasValue());
-
-      // Secret props
-      EXPECT_TRUE(policy.ContentType.HasValue());
-
-      // x509_props
-      EXPECT_TRUE(policy.Subject.size() > 0);
-
-      // issuer
-      EXPECT_TRUE(policy.IssuerName.HasValue());
-
-      // attributes
-      EXPECT_TRUE(policy.CreatedOn.HasValue());
-
-      // lifetime_actions
-      EXPECT_TRUE(policy.LifetimeActions.size() > 0);
-      EXPECT_NE(policy.LifetimeActions[0].Action.ToString(), "");
-    }
+    // lifetime_actions
+    EXPECT_TRUE(policy.LifetimeActions.size() > 0);
+    EXPECT_NE(policy.LifetimeActions[0].Action.ToString(), "");
   }
+
   {
     auto response = client.StartDeleteCertificate(certificateName);
     auto result = response.PollUntilDone(m_defaultWait);
@@ -214,26 +173,8 @@ TEST_F(KeyVaultCertificateClientTest, GetCertificateVersion)
 
   auto const& client
       = GetClientForTest(::testing::UnitTest::GetInstance()->current_test_info()->name());
-  auto params = CertificateCreateParameters();
-  params.Policy.Subject = "CN=xyz";
-  params.Policy.ValidityInMonths = 12;
-  params.Policy.Enabled = true;
-
-  params.Properties.Enabled = true;
-  params.Properties.Name = certificateName;
-  params.Policy.ContentType = CertificateContentType::Pkcs12;
-  params.Policy.IssuerName = "Self";
-
-  LifetimeAction action;
-  action.LifetimePercentage = 80;
-  action.Action = CertificatePolicyAction::AutoRenew;
-  params.Policy.LifetimeActions.emplace_back(action);
   GetCertificateOptions options;
-  {
-    auto response = client.StartCreateCertificate(certificateName, params);
-    auto result = response.PollUntilDone(m_defaultWait);
-    options.Version = result.Value.Properties.Version;
-  }
+  options.Version = CreateCertificate(certificateName, client, m_defaultWait).Properties.Version;
   {
 
     auto response = client.GetCertificateVersion(certificateName, options);
@@ -284,25 +225,8 @@ TEST_F(KeyVaultCertificateClientTest, GetDeletedCertificate)
   auto const& client
       = GetClientForTest(::testing::UnitTest::GetInstance()->current_test_info()->name());
 
-  auto params = CertificateCreateParameters();
-  params.Policy.Subject = "CN=xyz";
-  params.Policy.ValidityInMonths = 12;
-  params.Policy.Enabled = true;
+  CreateCertificate(certificateName, client, m_defaultWait);
 
-  params.Properties.Enabled = true;
-  params.Properties.Name = certificateName;
-  params.Policy.ContentType = CertificateContentType::Pkcs12;
-  params.Policy.IssuerName = "Self";
-
-  LifetimeAction action;
-  action.LifetimePercentage = 80;
-  action.Action = CertificatePolicyAction::AutoRenew;
-  params.Policy.LifetimeActions.emplace_back(action);
-
-  {
-    auto response = client.StartCreateCertificate(certificateName, params);
-    auto result = response.PollUntilDone(m_defaultWait);
-  }
   {
     auto response = client.StartDeleteCertificate(certificateName);
     auto result = response.PollUntilDone(m_defaultWait);
@@ -568,25 +492,7 @@ TEST_F(KeyVaultCertificateClientTest, GetCertificatePolicy)
   auto const& client
       = GetClientForTest(::testing::UnitTest::GetInstance()->current_test_info()->name());
 
-  auto params = CertificateCreateParameters();
-  params.Policy.Subject = "CN=xyz";
-  params.Policy.ValidityInMonths = 12;
-  params.Policy.Enabled = true;
-
-  params.Properties.Enabled = true;
-  params.Properties.Name = certificateName;
-  params.Policy.ContentType = CertificateContentType::Pkcs12;
-  params.Policy.IssuerName = "Self";
-
-  LifetimeAction action;
-  action.LifetimePercentage = 80;
-  action.Action = CertificatePolicyAction::AutoRenew;
-  params.Policy.LifetimeActions.emplace_back(action);
-
-  {
-    auto response = client.StartCreateCertificate(certificateName, params);
-    response.PollUntilDone(m_defaultWait);
-  }
+  CreateCertificate(certificateName, client, m_defaultWait);
 
   {
     auto response = client.GetCertificatePolicy(certificateName);
@@ -637,25 +543,7 @@ TEST_F(KeyVaultCertificateClientTest, UpdateCertificatePolicy)
   auto const& client
       = GetClientForTest(::testing::UnitTest::GetInstance()->current_test_info()->name());
 
-  auto params = CertificateCreateParameters();
-  params.Policy.Subject = "CN=xyz";
-  params.Policy.ValidityInMonths = 12;
-  params.Policy.Enabled = true;
-
-  params.Properties.Enabled = true;
-  params.Properties.Name = certificateName;
-  params.Policy.ContentType = CertificateContentType::Pkcs12;
-  params.Policy.IssuerName = "Self";
-
-  LifetimeAction action;
-  action.LifetimePercentage = 80;
-  action.Action = CertificatePolicyAction::AutoRenew;
-  params.Policy.LifetimeActions.emplace_back(action);
-
-  {
-    auto response = client.StartCreateCertificate(certificateName, params);
-    response.PollUntilDone(m_defaultWait);
-  }
+  CreateCertificate(certificateName, client, m_defaultWait);
 
   {
     auto response = client.GetCertificatePolicy(certificateName);
@@ -739,24 +627,8 @@ TEST_F(KeyVaultCertificateClientTest, BackupRestoreCertificate)
   auto const& client
       = GetClientForTest(::testing::UnitTest::GetInstance()->current_test_info()->name());
 
-  auto params = CertificateCreateParameters();
-  params.Policy.Subject = "CN=xyz";
-  params.Policy.ValidityInMonths = 12;
-  params.Policy.Enabled = true;
+  CreateCertificate(certificateName, client, m_defaultWait);
 
-  params.Properties.Enabled = true;
-  params.Properties.Name = certificateName;
-  params.Policy.ContentType = CertificateContentType::Pkcs12;
-  params.Policy.IssuerName = "Self";
-
-  LifetimeAction action;
-  action.LifetimePercentage = 80;
-  action.Action = CertificatePolicyAction::AutoRenew;
-  params.Policy.LifetimeActions.emplace_back(action);
-  {
-    auto response = client.StartCreateCertificate(certificateName, params);
-    response.PollUntilDone(m_defaultWait);
-  }
   auto certBackup = client.BackupCertificate(certificateName);
   {
     EXPECT_TRUE(certBackup.Value.Certificate.size() > size_t(0));
@@ -800,38 +672,8 @@ TEST_F(KeyVaultCertificateClientTest, GetPropertiesOfCertificates)
   // cspell: disable-next-line
   std::string const certificateName2("magiqStuff2");
 
-  auto params = CertificateCreateParameters();
-  params.Policy.Subject = "CN=xyz";
-  params.Policy.ValidityInMonths = 12;
-  params.Policy.Enabled = true;
-
-  params.Properties.Enabled = true;
-  params.Properties.Name = certificateName;
-  params.Policy.ContentType = CertificateContentType::Pkcs12;
-  params.Policy.IssuerName = "Self";
-
-  LifetimeAction action;
-  action.LifetimePercentage = 80;
-  action.Action = CertificatePolicyAction::AutoRenew;
-  params.Policy.LifetimeActions.emplace_back(action);
-  {
-
-    auto response = client.StartCreateCertificate(certificateName, params);
-    auto result = response.PollUntilDone(m_defaultWait);
-
-    EXPECT_EQ(result.Value.Name(), params.Properties.Name);
-    EXPECT_EQ(result.Value.Properties.Enabled.Value(), true);
-  }
-
-  params.Properties.Name = certificateName2;
-
-  {
-    auto response = client.StartCreateCertificate(certificateName2, params);
-    auto result = response.PollUntilDone(m_defaultWait);
-
-    EXPECT_EQ(result.Value.Name(), params.Properties.Name);
-    EXPECT_EQ(result.Value.Properties.Enabled.Value(), true);
-  }
+  CreateCertificate(certificateName, client, m_defaultWait);
+  CreateCertificate(certificateName2, client, m_defaultWait);
 
   {
     auto result = client.GetPropertiesOfCertificates(GetPropertiesOfCertificatesOptions());
@@ -865,36 +707,8 @@ TEST_F(KeyVaultCertificateClientTest, GetPropertiesOfCertificateVersions)
   // cspell: disable-next-line
   std::string const certificateName("magiqStuff");
 
-  auto params = CertificateCreateParameters();
-  params.Policy.Subject = "CN=xyz";
-  params.Policy.ValidityInMonths = 12;
-  params.Policy.Enabled = true;
-
-  params.Properties.Enabled = true;
-  params.Properties.Name = certificateName;
-  params.Policy.ContentType = CertificateContentType::Pkcs12;
-  params.Policy.IssuerName = "Self";
-
-  LifetimeAction action;
-  action.LifetimePercentage = 80;
-  action.Action = CertificatePolicyAction::AutoRenew;
-  params.Policy.LifetimeActions.emplace_back(action);
-  {
-
-    auto response = client.StartCreateCertificate(certificateName, params);
-    auto result = response.PollUntilDone(m_defaultWait);
-
-    EXPECT_EQ(result.Value.Name(), params.Properties.Name);
-    EXPECT_EQ(result.Value.Properties.Enabled.Value(), true);
-  }
-
-  {
-    auto response = client.StartCreateCertificate(certificateName, params);
-    auto result = response.PollUntilDone(m_defaultWait);
-
-    EXPECT_EQ(result.Value.Name(), params.Properties.Name);
-    EXPECT_EQ(result.Value.Properties.Enabled.Value(), true);
-  }
+  CreateCertificate(certificateName, client, m_defaultWait);
+  CreateCertificate(certificateName, client, m_defaultWait);
 
   {
     auto result = client.GetPropertiesOfCertificateVersions(
@@ -1005,38 +819,9 @@ TEST_F(KeyVaultCertificateClientTest, GetDeletedCertificates)
   // cspell: disable-next-line
   std::string const certificateName2("magiqStuff2");
 
-  auto params = CertificateCreateParameters();
-  params.Policy.Subject = "CN=xyz";
-  params.Policy.ValidityInMonths = 12;
-  params.Policy.Enabled = true;
+  CreateCertificate(certificateName, client, m_defaultWait);
+  CreateCertificate(certificateName2, client, m_defaultWait);
 
-  params.Properties.Enabled = true;
-  params.Properties.Name = certificateName;
-  params.Policy.ContentType = CertificateContentType::Pkcs12;
-  params.Policy.IssuerName = "Self";
-
-  LifetimeAction action;
-  action.LifetimePercentage = 80;
-  action.Action = CertificatePolicyAction::AutoRenew;
-  params.Policy.LifetimeActions.emplace_back(action);
-  {
-
-    auto response = client.StartCreateCertificate(certificateName, params);
-    auto result = response.PollUntilDone(m_defaultWait);
-
-    EXPECT_EQ(result.Value.Name(), params.Properties.Name);
-    EXPECT_EQ(result.Value.Properties.Enabled.Value(), true);
-  }
-
-  params.Properties.Name = certificateName2;
-
-  {
-    auto response = client.StartCreateCertificate(certificateName2, params);
-    auto result = response.PollUntilDone(m_defaultWait);
-
-    EXPECT_EQ(result.Value.Name(), params.Properties.Name);
-    EXPECT_EQ(result.Value.Properties.Enabled.Value(), true);
-  }
   {
     auto response = client.StartDeleteCertificate(certificateName);
     auto result = response.PollUntilDone(m_defaultWait);

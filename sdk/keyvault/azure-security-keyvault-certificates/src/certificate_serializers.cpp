@@ -410,6 +410,16 @@ std::string CertificateCreateParametersSerializer::Serialize(
   return parameter.dump();
 }
 
+std::string CertificateOperationUpdateParameterSerializer::Serialize(
+    CertificateOperationUpdateParameter const& parameters)
+{
+  json parameter;
+
+  parameter[CancelationRequestedPropertyName] = parameters.CancelationRequested;
+
+  return parameter.dump();
+}
+
 CertificateIssuer CertificateIssuerSerializer::Deserialize(
     std::string const& name,
     Azure::Core::Http::RawResponse const& rawResponse)
@@ -589,7 +599,28 @@ CertificateOperationProperties CertificateOperationSerializer ::Deserialize(
   JsonOptional::SetIfExists(operation.Target, jsonResponse, TargetPropertyName);
   JsonOptional::SetIfExists(operation.RequestId, jsonResponse, RequestIdPropertyName);
 
+  if (jsonResponse.contains(ErrorPropertyName))
+  {
+    auto errorJson = jsonResponse[ErrorPropertyName];
+    ServerError error;
+    ServerErrorSerializer::Deserialize(error, errorJson);
+    operation.Error = error;
+  }
+
   return operation;
+}
+void ServerErrorSerializer ::Deserialize(
+    ServerError& error,
+    Azure::Core::Json::_internal::json fragment)
+{
+  error.Code = fragment[CodePropertyName].get<std::string>();
+  error.Message = fragment[CodePropertyName].get<std::string>();
+  if (fragment.contains(InnerErrorPropertyName))
+  {
+    ServerError innerError;
+    error.InnerError = std::make_shared<ServerError>(innerError);
+    Deserialize(innerError, fragment[InnerErrorPropertyName]);
+  }
 }
 
 DeletedCertificate DeletedCertificateSerializer::Deserialize(

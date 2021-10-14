@@ -841,6 +841,20 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
   };
 
   /**
+   * @brief The certificate operation update parameters.
+   *
+   */
+  struct CertificateOperationUpdateParameter
+  {
+
+    /**
+     * @brief Indicates if cancellation was requested on the certificate operation.
+     *
+     */
+    bool CancelationRequested;
+  };
+
+  /**
    * @brief Issuer Credentials
    *
    */
@@ -1003,6 +1017,32 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
   };
 
   /**
+   * @brief Key vault server error
+   *
+   */
+  struct ServerError
+  {
+    ~ServerError() = default;
+    /**
+     * @brief Error Code
+     *
+     */
+    std::string Code;
+
+    /**
+     * @brief Error Message
+     *
+     */
+    std::string Message;
+
+    /**
+     * @brief Inner Error
+     *
+     */
+    std::shared_ptr<ServerError> InnerError;
+  };
+
+  /**
    * @brief A certificate operation.
    *
    */
@@ -1082,6 +1122,14 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
      *
      */
     Azure::Nullable<bool> CertificateTransparency;
+
+    /**
+     * @brief Error encountered, if any, during the certificate operation.
+     *
+     */
+    Azure::Nullable<ServerError> Error;
+
+    ~CertificateOperationProperties() = default;
   };
 
   struct DeletedCertificate final : public KeyVaultCertificateWithPolicy

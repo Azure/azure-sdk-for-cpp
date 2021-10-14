@@ -23,16 +23,16 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
    * @brief Represents a create certificate long running operation
    */
   class CreateCertificateOperation final
-      : public Azure::Core::Operation<KeyVaultCertificateWithPolicy> {
+      : public Azure::Core::Operation<CertificateOperationProperties> {
 
     friend class CertificateClient;
 
   private:
     std::shared_ptr<CertificateClient> m_certificateClient;
-    KeyVaultCertificateWithPolicy m_value;
+    CertificateOperationProperties m_value;
     std::string m_continuationToken;
 
-    Azure::Response<KeyVaultCertificateWithPolicy> PollUntilDoneInternal(
+    Azure::Response<CertificateOperationProperties> PollUntilDoneInternal(
         std::chrono::milliseconds period,
         Azure::Core::Context& context) override;
 
@@ -69,7 +69,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
      *
      * @return A certificate object.
      */
-    KeyVaultCertificateWithPolicy Value() const override { return m_value; }
+    CertificateOperationProperties Value() const override { return m_value; }
 
     /**
      * @brief Get the properties of the pending certificate operation.
@@ -102,6 +102,38 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
         std::string const& resumeToken,
         CertificateClient const& client,
         Azure::Core::Context const& context = Azure::Core::Context());
+
+    /**
+     * @brief Updates the properties of the operation by querying the key vault.
+     *
+     * @param context A #Azure::Core::Context controlling the request lifetime.
+     * @return updated properties
+     */
+    CertificateOperationProperties UpdateProperties(
+        Azure::Core::Context const& context = Azure::Core::Context());
+
+    /**
+     * @brief Cancels the operation.
+     *
+     * @param context A #Azure::Core::Context controlling the request lifetime.
+     */
+    void Cancel(Azure::Core::Context const& context = Azure::Core::Context());
+
+    /**
+     * @brief Delete operation.
+     *
+     * @param context A #Azure::Core::Context controlling the request lifetime.
+     * @return updated properties
+     */
+    void Delete(Azure::Core::Context const& context = Azure::Core::Context());
+
+    /**
+     * @brief Determines if the operation has completed.
+     *
+     * @param context A #Azure::Core::Context controlling the request lifetime.
+     * @return Completed status.
+     */
+    bool IsCompleted();
   };
 
   /**
