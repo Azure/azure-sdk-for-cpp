@@ -6,7 +6,7 @@
  * @brief Run-time type info enable or disable.
  *
  * @details Checks whenever RTTI is enabled and exports the symbol
- * `AZ_SECURITY_KEYVAULT_KEYS_WITH_RTTI`. When the macro is not defined, RTTI is disabled.
+ * `AZ_SECURITY_KEYVAULT_KEYS_RTTI`. When the macro is not defined, RTTI is disabled.
  *
  * @details Each library has this header file. These headers are being configured by
  * `az_rtti_setup()` CMake macro. CMake install will patch this file during installation, depending
@@ -16,7 +16,7 @@
 #pragma once
 
 /**
- * @def AZ_SECURITY_KEYVAULT_KEYS_WITH_RTTI
+ * @def AZ_SECURITY_KEYVAULT_KEYS_RTTI
  * @brief A macro indicating whether the code is built with RTTI or not.
  *
  * @details `AZ_RTTI` could be defined while building the Azure SDK with CMake, however, after
@@ -31,6 +31,6 @@
  * condition when it was not.
  */
 
-#if defined(AZ_RTTI) || (0 /*@AZ_SECURITY_KEYVAULT_KEYS_WITH_RTTI@*/)
-#define AZ_SECURITY_KEYVAULT_KEYS_WITH_RTTI
+#if defined(AZ_RTTI) || (0 /*@AZ_SECURITY_KEYVAULT_KEYS_RTTI@*/)
+#define AZ_SECURITY_KEYVAULT_KEYS_RTTI
 #endif
