@@ -72,7 +72,7 @@ set(
     inc/azure/core/internal/strings.hpp
     inc/azure/core/io/body_stream.hpp
     inc/azure/core/azure_assert.hpp
-    inc/azure/core/azure_rtti.hpp
+    inc/azure/core/rtti.hpp
     inc/azure/core/base64.hpp
     inc/azure/core/case_insensitive_containers.hpp
     inc/azure/core/context.hpp
@@ -168,7 +168,7 @@ az_vcpkg_export(
 az_rtti_setup(
   azure-core
   CORE
-  "azure/core/azure_rtti.hpp"
+  "azure/core/rtti.hpp"
 )
 
 if(BUILD_TESTING)

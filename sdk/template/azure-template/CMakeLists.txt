@@ -72,7 +72,7 @@ az_vcpkg_export(
 az_rtti_setup(
   azure-template
   TEMPLATE
-  "azure/template/azure_rtti.hpp"
+  "azure/template/rtti.hpp"
 )
 
 if(BUILD_TESTING)

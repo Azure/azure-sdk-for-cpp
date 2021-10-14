@@ -5,7 +5,7 @@
  * @file
  * @brief Run-time type info enable or disable.
  *
- * @details When RTTI is enabled, defines a macro `AZ_CORE_WITH_RTTI`. When
+ * @details When RTTI is enabled, defines a macro `AZ_CORE_RTTI`. When
  * the macro is not defined, RTTI is disabled.
  *
  * @details Each library has this header file. These headers are being configured by
@@ -16,21 +16,21 @@
 #pragma once
 
 /**
- * @def AZ_CORE_WITH_RTTI
+ * @def AZ_CORE_RTTI
  * @brief A macro indicating whether the code is built with RTTI or not.
  *
- * @details `AZ_BUILD_RTTI` could be defined while building the Azure SDK with CMake, however, after
+ * @details `AZ_RTTI` could be defined while building the Azure SDK with CMake, however, after
  * the build is completed, that information is not preserved for the code that consumes Azure SDK
  * headers, unless the code that consumes the SDK is the part of the same build process. To address
  * this issue, CMake install would patch the header it places in the installation directory, so that
  * condition:
- * `#if defined(AZ_BUILD_RTTI) || (0)`
+ * `#if defined(AZ_RTTI) || (0)`
  * becomes, effectively,
- * `#if defined(AZ_BUILD_RTTI) || (0 + 1)`
+ * `#if defined(AZ_RTTI) || (0 + 1)`
  * when the library was built with RTTI support, and will make no changes to the
  * condition when it was not.
  */
 
-#if defined(AZ_BUILD_RTTI) || (0 /*@AZ_CORE_WITH_RTTI@*/)
-#define AZ_CORE_WITH_RTTI 1
+#if defined(AZ_RTTI) || (0 /*@AZ_CORE_RTTI@*/)
+#define AZ_CORE_RTTI
 #endif

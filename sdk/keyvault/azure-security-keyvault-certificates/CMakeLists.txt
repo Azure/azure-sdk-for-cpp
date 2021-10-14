@@ -98,5 +98,5 @@ az_vcpkg_export(
 az_rtti_setup(
   azure-security-keyvault-certificates
   SECURITY_KEYVAULT_CERTIFICATES
-  "azure/keyvault/certificates/azure_rtti.hpp"
+  "azure/keyvault/certificates/rtti.hpp"
 )

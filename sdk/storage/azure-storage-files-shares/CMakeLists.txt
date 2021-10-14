@@ -84,7 +84,7 @@ az_vcpkg_export(
 az_rtti_setup(
   azure-storage-files-shares
   STORAGE_FILES_SHARES
-  "azure/storage/files/shares/azure_rtti.hpp"
+  "azure/storage/files/shares/rtti.hpp"
 )
 
 # coverage. Has no effect if BUILD_CODE_COVERAGE is OFF

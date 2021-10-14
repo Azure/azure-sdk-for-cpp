@@ -1,8 +1,8 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
 
-#include <azure/core/azure_rtti.hpp>
 #include <azure/core/platform.hpp>
+#include <azure/core/rtti.hpp>
 
 #if defined(AZ_PLATFORM_POSIX)
 #include <fcntl.h>
@@ -473,7 +473,7 @@ namespace Azure { namespace Core { namespace Test {
     }
   }
 
-#if defined(AZ_CORE_WITH_RTTI)
+#if defined(AZ_CORE_RTTI)
   TEST_P(TransportAdapter, dynamicCast)
   {
     Azure::Core::Url host("http://unresolvedHost.org/get");

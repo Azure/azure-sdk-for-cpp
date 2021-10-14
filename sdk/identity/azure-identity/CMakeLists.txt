@@ -80,7 +80,7 @@ az_vcpkg_export(
 az_rtti_setup(
   azure-identity
   IDENTITY
-  "azure/identity/azure_rtti.hpp"
+  "azure/identity/rtti.hpp"
 )
 
 if(BUILD_TESTING)

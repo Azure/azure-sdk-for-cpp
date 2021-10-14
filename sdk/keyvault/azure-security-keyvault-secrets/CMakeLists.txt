@@ -108,5 +108,5 @@ az_vcpkg_export(
 az_rtti_setup(
   azure-security-keyvault-secrets
   SECURITY_KEYVAULT_SECRETS
-  "azure/keyvault/secrets/azure_rtti.hpp"
+  "azure/keyvault/secrets/rtti.hpp"
 )
