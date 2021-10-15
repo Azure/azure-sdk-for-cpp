@@ -131,7 +131,7 @@ namespace Azure {
         m_credential = std::make_shared<Azure::Identity::ClientSecretCredential>(
             tenantId, clientId, secretId);
         m_client = std::make_unique<CertificateClient>(m_keyVaultUrl, m_credential, options);
-        m_defaultWait = 30s;
+        m_defaultWait = 10s;
       }
 
       // When running live tests, service can return 429 error response if the client is sending

@@ -351,6 +351,78 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
         BackupCertificateResult const& backup,
         Azure::Core::Context const& context = Azure::Core::Context()) const;
 
+    /**
+     * @brief List certificates in a specified key vault.
+     *
+     * @details The GetPropertiesOfCertificates operation returns
+     * the set of certificates resources in the specified key vault.
+     *
+     * @remark This operation requires the certificates/list permission.
+     *
+     * @param options The options for the request.
+     * @param context The context for the operation can be used for request cancellation.
+     * @return A response message containing a list of certificates along with a link to the next
+     * page of certificates.
+     */
+    CertificatePropertiesPagedResponse GetPropertiesOfCertificates(
+        GetPropertiesOfCertificatesOptions const& options,
+        Azure::Core::Context const& context = Azure::Core::Context()) const;
+
+    /**
+     * @brief List the versions of a certificate.
+     *
+     * @details The GetCertificateVersions operation returns the versions
+     * of a certificate in the specified key vault.
+     *
+     * @remark This operation requires the certificates/list permission.
+     *
+     * @param options The options for the request.
+     * @param context The context for the operation can be used for request cancellation.
+     * @return A response message containing a list of certificate versions along with a link to the
+     * next page of certificates.
+     */
+    CertificatePropertiesPagedResponse GetPropertiesOfCertificateVersions(
+        std::string const& name,
+        GetPropertiesOfCertificateVersionsOptions const& options
+        = GetPropertiesOfCertificateVersionsOptions(),
+        Azure::Core::Context const& context = Azure::Core::Context()) const;
+
+    /**
+     * @brief List certificate issuers for a specified key vault.
+     *
+     * @details The GetPropertiesOfIssuers operation returns the set of certificate issuer resources
+     * in the specified key vault.
+     *
+     * @remark This operation requires the certificates/manageissuers/getissuers permission.
+     *
+     * @param options The options for the request.
+     * @param context The context for the operation can be used for request cancellation.
+     * @return A response message containing a list of issuers along with a link to the
+     * next page of certificates.
+     */
+    IssuerPropertiesPagedResponse GetPropertiesOfIssuers(
+        GetPropertiesOfIssuersOptions const& options = GetPropertiesOfIssuersOptions(),
+        Azure::Core::Context const& context = Azure::Core::Context()) const;
+
+    /**
+     * @brief Lists the deleted certificates in the specified vault currently available for
+     * recovery.
+     *
+     * @details The GetDeletedCertificates operation retrieves the certificates in the current vault
+     * which are in a deleted state and ready for recovery or purging. This operation includes
+     * deletion-specific information. This operation requires the certificates/get/list permission.
+     *
+     * @remark This operation can only be enabled on soft-delete enabled vaults.
+     *
+     * @param options The options for the request.
+     * @param context The context for the operation can be used for request cancellation.
+     * @return A response message containing a list of deleted certificates in the vault along with
+     * a link to the next page of deleted certificates
+     */
+    DeletedCertificatesPagedResponse GetDeletedCertificates(
+        GetDeletedCertificatesOptions const& options = GetDeletedCertificatesOptions(),
+        Azure::Core::Context const& context = Azure::Core::Context()) const;
+
   private:
     /**
      * @brief Gets the creation operation of a certificate.
@@ -375,5 +447,9 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
         Azure::Core::Http::HttpMethod method,
         std::vector<std::string> const& path = {},
         Azure::Core::IO::BodyStream* content = nullptr) const;
+
+    Azure::Core::Http::Request ContinuationTokenRequest(
+        std::vector<std::string> const& path,
+        const Azure::Nullable<std::string>& NextPageToken) const;
   };
 }}}} // namespace Azure::Security::KeyVault::Certificates
