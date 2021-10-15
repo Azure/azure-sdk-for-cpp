@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: MIT
 
 #include <azure/core/platform.hpp>
+#include <azure/core/rtti.hpp>
 
 #if defined(AZ_PLATFORM_POSIX)
 #include <fcntl.h>
@@ -472,6 +473,7 @@ namespace Azure { namespace Core { namespace Test {
     }
   }
 
+#if defined(AZ_CORE_RTTI)
   TEST_P(TransportAdapter, dynamicCast)
   {
     Azure::Core::Url host("http://unresolvedHost.org/get");
@@ -490,6 +492,7 @@ namespace Azure { namespace Core { namespace Test {
       EXPECT_THROW((void)dynamic_cast<const std::range_error&>(err), std::bad_cast);
     }
   }
+#endif
 
   TEST_P(TransportAdapter, SizePutFromFile)
   {

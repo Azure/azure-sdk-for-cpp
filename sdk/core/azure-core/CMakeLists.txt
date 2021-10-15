@@ -17,6 +17,7 @@ include(AzureCodeCoverage)
 include(AzureTransportAdapters)
 include(AzureDoxygen)
 include(AzureGlobalCompileOptions)
+include(AzureConfigRTTI)
 
 az_vcpkg_integrate()
 
@@ -71,6 +72,7 @@ set(
     inc/azure/core/internal/strings.hpp
     inc/azure/core/io/body_stream.hpp
     inc/azure/core/azure_assert.hpp
+    inc/azure/core/rtti.hpp
     inc/azure/core/base64.hpp
     inc/azure/core/case_insensitive_containers.hpp
     inc/azure/core/context.hpp
@@ -162,6 +164,12 @@ az_vcpkg_export(
     CORE
     "azure/core/dll_import_export.hpp"
   )
+
+az_rtti_setup(
+  azure-core
+  CORE
+  "azure/core/rtti.hpp"
+)
 
 if(BUILD_TESTING)
   # define a symbol that enables some test hooks in code

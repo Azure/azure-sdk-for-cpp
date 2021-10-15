@@ -16,6 +16,7 @@ include(AzureCodeCoverage)
 include(AzureTransportAdapters)
 include(AzureDoxygen)
 include(AzureGlobalCompileOptions)
+include(AzureConfigRTTI)
 
 az_vcpkg_integrate()
 
@@ -94,3 +95,9 @@ az_vcpkg_export(
     SECURITY_KEYVAULT_CERTIFICATES
     "azure/keyvault/certificates/dll_import_export.hpp"
   )
+
+az_rtti_setup(
+  azure-security-keyvault-certificates
+  SECURITY_KEYVAULT_CERTIFICATES
+  "azure/keyvault/certificates/rtti.hpp"
+)

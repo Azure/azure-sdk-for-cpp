@@ -16,6 +16,7 @@ include(AzureCodeCoverage)
 include(AzureTransportAdapters)
 include(AzureDoxygen)
 include(AzureGlobalCompileOptions)
+include(AzureConfigRTTI)
 
 az_vcpkg_integrate()
 
@@ -71,6 +72,12 @@ az_vcpkg_export(
     STORAGE_QUEUES
     "azure/storage/queues/dll_import_export.hpp"
   )
+  
+az_rtti_setup(
+  azure-storage-queues
+  STORAGE_QUEUES
+  "azure/storage/queues/rtti.hpp"
+)
 
 # coverage. Has no effect if BUILD_CODE_COVERAGE is OFF
 create_code_coverage(storage azure-storage-queues azure-storage-test)

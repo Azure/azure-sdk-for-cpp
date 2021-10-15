@@ -16,6 +16,7 @@ include(AzureCodeCoverage)
 include(AzureTransportAdapters)
 include(AzureDoxygen)
 include(AzureGlobalCompileOptions)
+include(AzureConfigRTTI)
 
 az_vcpkg_integrate()
 
@@ -79,6 +80,12 @@ az_vcpkg_export(
     STORAGE_FILES_SHARES
     "azure/storage/files/shares/dll_import_export.hpp"
   )
+
+az_rtti_setup(
+  azure-storage-files-shares
+  STORAGE_FILES_SHARES
+  "azure/storage/files/shares/rtti.hpp"
+)
 
 # coverage. Has no effect if BUILD_CODE_COVERAGE is OFF
 create_code_coverage(storage azure-storage-files-shares azure-storage-test)
