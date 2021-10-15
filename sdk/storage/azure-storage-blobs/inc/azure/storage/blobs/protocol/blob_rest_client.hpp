@@ -444,7 +444,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       /**
        * The default encryption scope for the container.
        */
-      std::string DefaultEncryptionScope;
+      std::string DefaultEncryptionScope = "$account-encryption-key";
       /**
        * Indicates whether the container's default encryption scope can be overridden.
        */
@@ -1304,7 +1304,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       /**
        * The default encryption scope for the container.
        */
-      std::string DefaultEncryptionScope;
+      std::string DefaultEncryptionScope = "$account-encryption-key";
       /**
        * Indicates whether the container's default encryption scope can be overridden.
        */
@@ -4876,10 +4876,19 @@ namespace Azure { namespace Storage { namespace Blobs {
           {
             response.LeaseDuration = LeaseDurationType(x_ms_lease_duration__iterator->second);
           }
-          response.DefaultEncryptionScope
-              = httpResponse.GetHeaders().at("x-ms-default-encryption-scope");
-          response.PreventEncryptionScopeOverride
-              = httpResponse.GetHeaders().at("x-ms-deny-encryption-scope-override") == "true";
+          auto x_ms_default_encryption_scope__iterator
+              = httpResponse.GetHeaders().find("x-ms-default-encryption-scope");
+          if (x_ms_default_encryption_scope__iterator != httpResponse.GetHeaders().end())
+          {
+            response.DefaultEncryptionScope = x_ms_default_encryption_scope__iterator->second;
+          }
+          auto x_ms_deny_encryption_scope_override__iterator
+              = httpResponse.GetHeaders().find("x-ms-deny-encryption-scope-override");
+          if (x_ms_deny_encryption_scope_override__iterator != httpResponse.GetHeaders().end())
+          {
+            response.PreventEncryptionScopeOverride
+                = x_ms_deny_encryption_scope_override__iterator->second == "true";
+          }
           return Azure::Response<BlobContainerProperties>(
               std::move(response), std::move(pHttpResponse));
         }
