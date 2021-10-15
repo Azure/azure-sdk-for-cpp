@@ -449,11 +449,14 @@ TEST(Context, PreCondition)
   auto c2 = context.WithValue(key, s);
   int value;
 
+// Type-safe assert requires RTTI build
+#if defined(AZ_CORE_RTTI)
 #if defined(NDEBUG)
   // Release build won't provide assert msg
   ASSERT_DEATH(c2.TryGetValue<int>(key, value), "");
 #else
   ASSERT_DEATH(c2.TryGetValue<int>(key, value), "Type mismatch for Context::TryGetValue");
+#endif
 #endif
 }
 
@@ -475,6 +478,8 @@ TEST(Context, KeyTypePairPrecondition)
   EXPECT_FALSE(c2.TryGetValue<std::string>(keyNotFound, strValue));
   EXPECT_FALSE(c2.TryGetValue<int>(keyNotFound, intValue));
 
+// Type-safe assert requires RTTI build
+#if defined(AZ_CORE_RTTI)
 #if defined(NDEBUG)
   // Release build won't provide assert msg
   ASSERT_DEATH(c2.TryGetValue<std::string>(key, strValue), "");
@@ -482,17 +487,21 @@ TEST(Context, KeyTypePairPrecondition)
   ASSERT_DEATH(
       c2.TryGetValue<std::string>(key, strValue), "Type mismatch for Context::TryGetValue");
 #endif
+#endif
 
   EXPECT_TRUE(strValue == "previous value");
 
   EXPECT_TRUE(c2.TryGetValue<int>(key, intValue));
   EXPECT_TRUE(intValue == 123);
 
+// Type-safe assert requires RTTI build
+#if defined(AZ_CORE_RTTI)
 #if defined(NDEBUG)
   // Release build won't provide assert msg
   ASSERT_DEATH(c3.TryGetValue<int>(key, intValue), "");
 #else
   ASSERT_DEATH(c3.TryGetValue<int>(key, intValue), "Type mismatch for Context::TryGetValue");
+#endif
 #endif
 
   EXPECT_TRUE(intValue == 123);
