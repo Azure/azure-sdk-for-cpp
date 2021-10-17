@@ -7,7 +7,7 @@
 #include "private/certificate_serializers.hpp"
 #include "private/keyvault_certificates_common_request.hpp"
 #include "private/package_version.hpp"
-
+#include <azure/core/base64.hpp>
 #include <azure/keyvault/shared/keyvault_shared.hpp>
 
 #include <azure/core/credentials/credentials.hpp>
@@ -100,9 +100,9 @@ Response<KeyVaultCertificateWithPolicy> CertificateClient::GetCertificate(
   return Azure::Response<KeyVaultCertificateWithPolicy>(std::move(value), std::move(rawResponse));
 }
 
-Response<KeyVaultCertificate> CertificateClient::GetCertificateVersion(
+Response<KeyVaultCertificateWithPolicy> CertificateClient::GetCertificateVersion(
     std::string const& name,
-    GetCertificateOptions const& options,
+    GetCertificateVersionOptions const& options,
     Context const& context) const
 {
   // Request with no payload
@@ -117,7 +117,7 @@ Response<KeyVaultCertificate> CertificateClient::GetCertificateVersion(
   // Send and parse respone
   auto rawResponse = SendRequest(request, context);
   auto value = _detail::KeyVaultCertificateSerializer::Deserialize(name, *rawResponse);
-  return Azure::Response<KeyVaultCertificate>(std::move(value), std::move(rawResponse));
+  return Azure::Response<KeyVaultCertificateWithPolicy>(std::move(value), std::move(rawResponse));
 }
 
 CreateCertificateOperation CertificateClient::StartCreateCertificate(
@@ -439,6 +439,67 @@ DeletedCertificatesPagedResponse CertificateClient::GetDeletedCertificates(
   auto value = DeletedCertificatesPagedResponseSerializer::Deserialize(*rawResponse);
   return DeletedCertificatesPagedResponse(
       std::move(value), std::move(rawResponse), std::make_unique<CertificateClient>(*this));
+}
+
+Azure::Response<DownloadCertificateResult> CertificateClient::DownloadCertificate(
+    std::string const& name,
+    DownloadCertificateOptions const& options,
+    Azure::Core::Context const& context) const
+{
+  KeyVaultCertificateWithPolicy certificate;
+  if (options.Version.HasValue())
+  {
+    GetCertificateVersionOptions getVersionOptions{options.Version.Value()};
+    auto response = GetCertificateVersion(name, getVersionOptions, context);
+    certificate = response.Value;
+  }
+  {
+    auto response = GetCertificate(name, context);
+    certificate = response.Value;
+  }
+
+  Azure::Core::Url url(certificate.SecretId);
+  auto secretRequest = CreateRequest(HttpMethod::Get, {url.GetPath()});
+
+  auto secretResponse = SendRequest(secretRequest, context);
+  auto secret = KeyVaultSecretSerializer::Deserialize(*secretResponse);
+
+  DownloadCertificateResult result{secret.Value, secret.ContentType.Value()};
+  return Azure::Response<DownloadCertificateResult>(std::move(result), std::move(secretResponse));
+}
+
+Azure::Response<KeyVaultCertificateWithPolicy> CertificateClient::ImportCertificate(
+    std::string const& name,
+    ImportCertificateOptions const& options,
+    Azure::Core::Context const& context) const
+{
+  auto payload = ImportCertificateOptionsSerializer::Serialize(options);
+  Azure::Core::IO::MemoryBodyStream payloadStream(
+      reinterpret_cast<const uint8_t*>(payload.data()), payload.size());
+
+  auto request
+      = CreateRequest(HttpMethod::Post, {CertificatesPath, name, ImportPath}, &payloadStream);
+
+  auto rawResponse = SendRequest(request, context);
+  auto value = KeyVaultCertificateSerializer::Deserialize(name, *rawResponse);
+  return Azure::Response<KeyVaultCertificateWithPolicy>(std::move(value), std::move(rawResponse));
+}
+
+Azure::Response<KeyVaultCertificateWithPolicy> CertificateClient::MergeCertificate(
+    std::string const& name,
+    MergeCertificateOptions const& options,
+    Azure::Core::Context const& context) const
+{
+  auto payload = MergeCertificateOptionsSerializer::Serialize(options);
+  Azure::Core::IO::MemoryBodyStream payloadStream(
+      reinterpret_cast<const uint8_t*>(payload.data()), payload.size());
+
+  auto request = CreateRequest(
+      HttpMethod::Post, {CertificatesPath, name, PendingPath, MergePath}, &payloadStream);
+
+  auto rawResponse = SendRequest(request, context);
+  auto value = KeyVaultCertificateSerializer::Deserialize(name, *rawResponse);
+  return Azure::Response<KeyVaultCertificateWithPolicy>(std::move(value), std::move(rawResponse));
 }
 
 const ServiceVersion ServiceVersion::V7_2("7.2");

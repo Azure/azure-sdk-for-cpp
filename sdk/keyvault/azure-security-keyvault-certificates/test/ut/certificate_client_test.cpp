@@ -173,7 +173,7 @@ TEST_F(KeyVaultCertificateClientTest, GetCertificateVersion)
 
   auto const& client
       = GetClientForTest(::testing::UnitTest::GetInstance()->current_test_info()->name());
-  GetCertificateOptions options;
+  GetCertificateVersionOptions options;
   options.Version = CreateCertificate(certificateName, client, m_defaultWait).Properties.Version;
   {
 
@@ -844,4 +844,62 @@ TEST_F(KeyVaultCertificateClientTest, GetDeletedCertificates)
     client.PurgeDeletedCertificate(certificateName);
     client.PurgeDeletedCertificate(certificateName2);
   }
+}
+
+TEST_F(KeyVaultCertificateClientTest, DownloadPkcs)
+{
+  auto const& client
+      = GetClientForTest(::testing::UnitTest::GetInstance()->current_test_info()->name());
+  {
+    auto result = client.GetPropertiesOfCertificates(GetPropertiesOfCertificatesOptions());
+    EXPECT_EQ(result.Items.size(), size_t(0));
+  }
+
+  // cspell: disable-next-line
+  std::string const pem("pemCert");
+  std::string const pkcs("pkcsCert");
+
+  auto result = client.DownloadCertificate(pkcs);
+  auto getted = client.GetCertificate(pkcs);
+  auto params = ImportCertificateOptions();
+  params.Value = result.Value.Certificate;
+
+  params.Policy.Enabled = true;
+  params.Policy.KeyType = CertificateKeyType::Rsa;
+  params.Policy.KeySize = 2048;
+  params.Policy.ContentType = CertificateContentType::Pkcs12;
+  params.Policy.Exportable = true;
+  // LifetimeAction action;
+  // action.LifetimePercentage = 80;
+  // action.Action = CertificatePolicyAction::AutoRenew;
+  // params.Policy.LifetimeActions.emplace_back(action);
+
+  auto imported = client.ImportCertificate("pem2", params);
+}
+
+TEST_F(KeyVaultCertificateClientTest, DownloadPem)
+{
+  auto const& client
+      = GetClientForTest(::testing::UnitTest::GetInstance()->current_test_info()->name());
+  {
+    auto result = client.GetPropertiesOfCertificates(GetPropertiesOfCertificatesOptions());
+    EXPECT_EQ(result.Items.size(), size_t(0));
+  }
+
+  // cspell: disable-next-line
+  std::string const pem("pemCert");
+  std::string const pkcs("pkcsCert");
+
+  auto result = client.DownloadCertificate(pem);
+  auto getted = client.GetCertificate(pem);
+  auto params = ImportCertificateOptions();
+  params.Value = result.Value.Certificate;
+
+  params.Policy.Enabled = true;
+  params.Policy.KeyType = CertificateKeyType::Rsa;
+  params.Policy.KeySize = 2048;
+  params.Policy.ContentType = CertificateContentType::Pem;
+  params.Policy.Exportable = true;
+
+  auto imported = client.ImportCertificate("pem3", params);
 }

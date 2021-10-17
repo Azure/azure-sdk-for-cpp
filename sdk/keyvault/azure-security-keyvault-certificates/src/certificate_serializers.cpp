@@ -717,7 +717,6 @@ IssuerPropertiesPagedResponse IssuerPropertiesPagedResponseSerializer::Deseriali
   IssuerPropertiesPagedResponse response;
   auto const& body = rawResponse.GetBody();
   auto jsonResponse = json::parse(body);
-  std::string str = jsonResponse.dump();
 
   JsonOptional::SetIfExists(response.NextPageToken, jsonResponse, NextLinkPropertyName);
 
@@ -740,7 +739,6 @@ DeletedCertificatesPagedResponse DeletedCertificatesPagedResponseSerializer::Des
   DeletedCertificatesPagedResponse response;
   auto const& body = rawResponse.GetBody();
   auto jsonResponse = json::parse(body);
-  std::string str = jsonResponse.dump();
 
   JsonOptional::SetIfExists(response.NextPageToken, jsonResponse, NextLinkPropertyName);
   auto deletedCertificates = jsonResponse[ValuePropertyName];
@@ -760,4 +758,47 @@ DeletedCertificatesPagedResponse DeletedCertificatesPagedResponseSerializer::Des
   }
 
   return response;
+}
+
+KeyVaultSecret KeyVaultSecretSerializer::Deserialize(
+    Azure::Core::Http::RawResponse const& rawResponse)
+{
+  KeyVaultSecret response;
+  auto const& body = rawResponse.GetBody();
+  auto jsonResponse = json::parse(body);
+  std::string str = jsonResponse.dump();
+
+  response.Value = jsonResponse[ValuePropertyName];
+  JsonOptional::SetIfExists<std::string, CertificateContentType>(
+      response.ContentType, jsonResponse, ContentTypePropertyName, [](std::string value) {
+        return CertificateContentType(value);
+      });
+
+  return response;
+}
+
+std::string ImportCertificateOptionsSerializer::Serialize(ImportCertificateOptions const& options)
+{
+  json importOptions;
+
+  importOptions[ValuePropertyName] = options.Value;
+  JsonOptional::SetFromNullable(options.Password, importOptions, PwdPropertyValue);
+  importOptions[PolicyPropertyName] = CertificatePolicySerializer::JsonSerialize(options.Policy);
+  importOptions[AttributesPropertyName]
+      = CertificatePropertiesSerializer::JsonSerialize(options.Properties);
+  importOptions[TagsPropertyName] = json(options.Tags);
+
+  return importOptions.dump();
+}
+
+std::string MergeCertificateOptionsSerializer::Serialize(MergeCertificateOptions const& options)
+{
+  json mergeOptions;
+
+  mergeOptions[X5cPropertyName] = json(options.Certificates);
+  mergeOptions[AttributesPropertyName]
+      = CertificatePropertiesSerializer::JsonSerialize(options.Properties);
+  mergeOptions[TagsPropertyName] = json(options.Tags);
+
+  return mergeOptions.dump();
 }

@@ -95,9 +95,9 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
      * @return A response containing the certificate and policy as a KeyVaultCertificateWithPolicy
      * instance.
      */
-    Azure::Response<KeyVaultCertificate> GetCertificateVersion(
+    Azure::Response<KeyVaultCertificateWithPolicy> GetCertificateVersion(
         std::string const& name,
-        GetCertificateOptions const& options = GetCertificateOptions(),
+        GetCertificateVersionOptions const& options = GetCertificateVersionOptions(),
         Azure::Core::Context const& context = Azure::Core::Context()) const;
 
     /**
@@ -421,6 +421,21 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
      */
     DeletedCertificatesPagedResponse GetDeletedCertificates(
         GetDeletedCertificatesOptions const& options = GetDeletedCertificatesOptions(),
+        Azure::Core::Context const& context = Azure::Core::Context()) const;
+
+    Azure::Response<DownloadCertificateResult> DownloadCertificate(
+        std::string const& name,
+        DownloadCertificateOptions const& options = DownloadCertificateOptions(),
+        Azure::Core::Context const& context = Azure::Core::Context()) const;
+
+    Azure::Response<KeyVaultCertificateWithPolicy> ImportCertificate(
+        std::string const& name,
+        ImportCertificateOptions const& options,
+        Azure::Core::Context const& context = Azure::Core::Context()) const;
+
+    Azure::Response<KeyVaultCertificateWithPolicy> MergeCertificate(
+        std::string const& name,
+        MergeCertificateOptions const& options,
         Azure::Core::Context const& context = Azure::Core::Context()) const;
 
   private:
