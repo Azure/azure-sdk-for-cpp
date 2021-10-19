@@ -131,7 +131,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
      *
      * @return Completed status.
      */
-    bool IsCompleted();
+    bool IsCompleted() const;
   };
 
   /**

@@ -844,7 +844,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
    * @brief The certificate operation update parameters.
    *
    */
-  struct CertificateOperationUpdateParameter
+  struct CertificateOperationUpdateParameter final
   {
 
     /**
@@ -995,7 +995,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
    * @brief The contact information for the vault certificates.
    *
    */
-  struct CertificateContact
+  struct CertificateContact final
   {
     /**
      * @brief Contact e-mail address.
@@ -1020,7 +1020,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
    * @brief Key vault server error
    *
    */
-  struct ServerError
+  struct ServerError final
   {
     ~ServerError() = default;
     /**
@@ -1046,7 +1046,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
    * @brief A certificate operation.
    *
    */
-  struct CertificateOperationProperties
+  struct CertificateOperationProperties final
   {
     /**
      * @brief The certificate id.
@@ -1224,7 +1224,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
    * @brief A certificate backup data.
    *
    */
-  struct BackupCertificateResult
+  struct BackupCertificateResult final
   {
     /**
      * @brief The backup blob containing the backed up certificate.
