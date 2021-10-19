@@ -57,7 +57,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys { nam
       response->SetBodyStream(std::make_unique<Azure::Core::IO::MemoryBodyStream>(
           reinterpret_cast<const uint8_t*>(updatedFakeKey), bodyCount.size()));
       return response;
-    } // namespace Azure
+    }
 
     const char* UpdateFakeKey(const char fakeKey[], std::string header)
     {
@@ -95,7 +95,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys { nam
       std::sprintf(result, fakeKey, keyType.c_str());
       return result;
     }
-  }; // namespace Test
+  };
 
   // A derived class with no credential and authentication
   class KeyClientWithNoAuthenticationPolicy final
