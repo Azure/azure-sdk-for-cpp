@@ -457,6 +457,8 @@ TEST(Context, PreCondition)
 #else
   ASSERT_DEATH(c2.TryGetValue<int>(key, value), "Type mismatch for Context::TryGetValue");
 #endif
+#else
+  static_cast<void>(value);
 #endif
 }
 
