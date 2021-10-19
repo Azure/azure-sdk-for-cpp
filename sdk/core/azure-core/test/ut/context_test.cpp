@@ -437,6 +437,7 @@ TEST(Context, Deadline)
   }
 }
 
+#if defined(AZ_CORE_RTTI)
 TEST(Context, PreCondition)
 {
   // Get a mismatch type from the context
@@ -450,15 +451,14 @@ TEST(Context, PreCondition)
   int value;
 
 // Type-safe assert requires RTTI build
-#if defined(AZ_CORE_RTTI)
 #if defined(NDEBUG)
   // Release build won't provide assert msg
   ASSERT_DEATH(c2.TryGetValue<int>(key, value), "");
 #else
   ASSERT_DEATH(c2.TryGetValue<int>(key, value), "Type mismatch for Context::TryGetValue");
 #endif
-#endif
 }
+#endif
 
 TEST(Context, KeyTypePairPrecondition)
 {
