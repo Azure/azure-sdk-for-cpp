@@ -10,6 +10,8 @@
 
 ### Bugs Fixed
 
+[2848](https://github.com/Azure/azure-sdk-for-cpp/issues/2848) Update the libcurl transport adapter to work with HTTP/1.1 only.
+
 ### Other Changes
 
 ## 1.2.1 (2021-09-02)
