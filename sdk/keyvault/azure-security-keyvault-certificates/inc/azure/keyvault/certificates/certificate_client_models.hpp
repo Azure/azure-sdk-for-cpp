@@ -1422,11 +1422,11 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
      */
     std::string Value;
   };
+
   /**
-   * @brief
+   * @brief Import Certificate options
    *
    */
-
   struct ImportCertificateOptions final
   {
     /**

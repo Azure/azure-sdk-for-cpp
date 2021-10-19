@@ -955,7 +955,8 @@ TEST_F(KeyVaultCertificateClientTest, UpdateCertificate)
 
   {
     certificate.Properties.Enabled = false;
-    CertificateUpdateOptions updateOptions{certificate.Properties};
+    CertificateUpdateOptions updateOptions;
+    updateOptions.Properties = certificate.Properties;
     auto updatedCert = client.UpdateCertificateProperties(updateOptions).Value;
     EXPECT_FALSE(updatedCert.Properties.Enabled.Value());
   }
