@@ -841,6 +841,20 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
   };
 
   /**
+   * @brief The certificate operation update parameters.
+   *
+   */
+  struct CertificateOperationUpdateParameter final
+  {
+
+    /**
+     * @brief Indicates if cancellation was requested on the certificate operation.
+     *
+     */
+    bool CancelationRequested;
+  };
+
+  /**
    * @brief Issuer Credentials
    *
    */
@@ -981,7 +995,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
    * @brief The contact information for the vault certificates.
    *
    */
-  struct CertificateContact
+  struct CertificateContact final
   {
     /**
      * @brief Contact e-mail address.
@@ -1003,10 +1017,36 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
   };
 
   /**
+   * @brief Key vault server error
+   *
+   */
+  struct ServerError final
+  {
+    ~ServerError() = default;
+    /**
+     * @brief Error Code
+     *
+     */
+    std::string Code;
+
+    /**
+     * @brief Error Message
+     *
+     */
+    std::string Message;
+
+    /**
+     * @brief Inner Error
+     *
+     */
+    std::shared_ptr<ServerError> InnerError;
+  };
+
+  /**
    * @brief A certificate operation.
    *
    */
-  struct CertificateOperationProperties
+  struct CertificateOperationProperties final
   {
     /**
      * @brief The certificate id.
@@ -1082,6 +1122,14 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
      *
      */
     Azure::Nullable<bool> CertificateTransparency;
+
+    /**
+     * @brief Error encountered, if any, during the certificate operation.
+     *
+     */
+    Azure::Nullable<ServerError> Error;
+
+    ~CertificateOperationProperties() = default;
   };
 
   struct DeletedCertificate final : public KeyVaultCertificateWithPolicy
@@ -1176,7 +1224,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
    * @brief A certificate backup data.
    *
    */
-  struct BackupCertificateResult
+  struct BackupCertificateResult final
   {
     /**
      * @brief The backup blob containing the backed up certificate.

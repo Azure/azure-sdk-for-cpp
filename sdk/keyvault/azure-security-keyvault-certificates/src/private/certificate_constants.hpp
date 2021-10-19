@@ -134,6 +134,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
     constexpr static const char StatusDetailsPropertyName[] = "status_details";
     constexpr static const char CancelationRequestedPropertyName[] = "cancellation_requested";
     constexpr static const char CompletedValue[] = "completed";
+    constexpr static const char DeletedValue[] = "deleted";
 
     /**************** Deleted Certificate property names ********/
     constexpr static const char RecoveryIdPropertyName[] = "recoveryId";

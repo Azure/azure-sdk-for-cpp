@@ -435,7 +435,15 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
      * @param context The context for the operation can be used for request cancellation.
      * @return CertificateOperationProperties instance representing the status of the operation.
      */
-    Azure::Response<CertificateOperationProperties> GetCertificateOperation(
+    Azure::Response<CertificateOperationProperties> GetPendingCertificateOperation(
+        std::string const& name,
+        Azure::Core::Context const& context = Azure::Core::Context()) const;
+
+    Azure::Response<CertificateOperationProperties> DeletePendingCertificateOperation(
+        std::string const& name,
+        Azure::Core::Context const& context = Azure::Core::Context()) const;
+
+    Azure::Response<CertificateOperationProperties> CancelPendingCertificateOperation(
         std::string const& name,
         Azure::Core::Context const& context = Azure::Core::Context()) const;
 
