@@ -502,4 +502,22 @@ Azure::Response<KeyVaultCertificateWithPolicy> CertificateClient::MergeCertifica
   return Azure::Response<KeyVaultCertificateWithPolicy>(std::move(value), std::move(rawResponse));
 }
 
+Azure::Response<KeyVaultCertificateWithPolicy> CertificateClient::UpdateCertificateProperties(
+    CertificateUpdateOptions const& options,
+    Azure::Core::Context const& context) const
+{
+  auto payload = CertificateUpdateOptionsSerializer::Serialize(options);
+  Azure::Core::IO::MemoryBodyStream payloadStream(
+      reinterpret_cast<const uint8_t*>(payload.data()), payload.size());
+
+  auto request = CreateRequest(
+      HttpMethod::Patch,
+      {CertificatesPath, options.Properties.Name, options.Properties.Version},
+      &payloadStream);
+
+  auto rawResponse = SendRequest(request, context);
+  auto value = KeyVaultCertificateSerializer::Deserialize(options.Properties.Name, *rawResponse);
+  return Azure::Response<KeyVaultCertificateWithPolicy>(std::move(value), std::move(rawResponse));
+}
+
 const ServiceVersion ServiceVersion::V7_2("7.2");

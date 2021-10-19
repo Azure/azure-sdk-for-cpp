@@ -802,3 +802,13 @@ std::string MergeCertificateOptionsSerializer::Serialize(MergeCertificateOptions
 
   return mergeOptions.dump();
 }
+std::string CertificateUpdateOptionsSerializer::Serialize(CertificateUpdateOptions const& options)
+{
+  json updateOptions;
+
+  updateOptions[AttributesPropertyName]
+      = CertificatePropertiesSerializer::JsonSerialize(options.Properties);
+  updateOptions[TagsPropertyName] = json(options.Tags);
+
+  return updateOptions.dump();
+}

@@ -1466,12 +1466,30 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
    * @brief The certificate merge parameters
    *
    */
-  struct MergeCertificateOptions
+  struct MergeCertificateOptions final
   { /**
      * @brief The certificate or the certificate chain to merge.
      *
      */
     std::vector<std::string> Certificates;
+    /**
+     * @brief The attributes of the certificate (optional).
+     *
+     */
+    CertificateProperties Properties;
+    /**
+     * @brief Dictionary of tags with specific metadata about the certificate.
+     *
+     */
+    std::unordered_map<std::string, std::string> Tags;
+  };
+
+  /**
+   * @brief The certificate update parameters.
+   *
+   */
+  struct CertificateUpdateOptions final
+  {
     /**
      * @brief The attributes of the certificate (optional).
      *

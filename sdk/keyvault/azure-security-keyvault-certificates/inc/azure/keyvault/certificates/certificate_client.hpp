@@ -423,19 +423,73 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
         GetDeletedCertificatesOptions const& options = GetDeletedCertificatesOptions(),
         Azure::Core::Context const& context = Azure::Core::Context()) const;
 
+    /**
+     * @brief Downloads a copy of a certificate
+     *
+     * @details The Download Certificate operation attempts to download the managed secret which
+     * contains the full certificate
+     *
+     * @param name The name of the certificate
+     * @param options The options for the request.
+     * @param context The context for the operation can be used for request cancellation.
+     * @return Downloaded certificate
+     */
     Azure::Response<DownloadCertificateResult> DownloadCertificate(
         std::string const& name,
         DownloadCertificateOptions const& options = DownloadCertificateOptions(),
         Azure::Core::Context const& context = Azure::Core::Context()) const;
 
+    /**
+     * @brief Imports a certificate into a specified key vault.
+     *
+     * @details Imports an existing valid certificate, containing a private key, into Azure Key
+     * Vault. The certificate to be imported can be in either PFX or PEM format. If the certificate
+     * is in PEM format the PEM file must contain the key as well as x509 certificates.
+     *
+     * @remark This operation requires the certificates/import permission.
+     *
+     * @param name The name of the certificate.
+     * @param options The options for the request.
+     * @param context The context for the operation can be used for request cancellation.
+     * @return Imported certificate bundle to the vault.
+     */
     Azure::Response<KeyVaultCertificateWithPolicy> ImportCertificate(
         std::string const& name,
         ImportCertificateOptions const& options,
         Azure::Core::Context const& context = Azure::Core::Context()) const;
 
+    /**
+     * @brief Merges a certificate or a certificate chain with a key pair existing on the server.
+     *
+     * @details The MergeCertificate operation performs the merging of a certificate or certificate
+     * chain with a key pair currently available in the service.
+     *
+     * @remark This operation requires the certificates/create permission.
+     *
+     * @param name The name of the certificate.
+     * @param options The options for the request.
+     * @param context The context for the operation can be used for request cancellation.
+     * @return Merged certificate bundle to the vault.
+     */
     Azure::Response<KeyVaultCertificateWithPolicy> MergeCertificate(
         std::string const& name,
         MergeCertificateOptions const& options,
+        Azure::Core::Context const& context = Azure::Core::Context()) const;
+
+    /**
+     * @brief Updates the specified attributes associated with a certificate.
+     *
+     * @details The UpdateCertificate operation applies the specified update on the given
+     * certificate; the only elements updated are the certificate's attributes.
+     *
+     * @remark This operation requires the certificates/update permission.
+     *
+     * @param options The options for the request.
+     * @param context The context for the operation can be used for request cancellation.
+     * @return The updated certificate.
+     */
+    Azure::Response<KeyVaultCertificateWithPolicy> UpdateCertificateProperties(
+        CertificateUpdateOptions const& options,
         Azure::Core::Context const& context = Azure::Core::Context()) const;
 
   private:

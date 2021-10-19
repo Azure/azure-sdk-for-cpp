@@ -4,9 +4,9 @@
 #include <azure/identity/client_secret_credential.hpp>
 
 #include "certificate_client_base_test.hpp"
+#include <azure/core/base64.hpp>
 #include <cstddef>
 #include <gtest/gtest.h>
-
 #include <string>
 #include <thread>
 
@@ -846,7 +846,7 @@ TEST_F(KeyVaultCertificateClientTest, GetDeletedCertificates)
   }
 }
 
-TEST_F(KeyVaultCertificateClientTest, DownloadPkcs)
+TEST_F(KeyVaultCertificateClientTest, DownloadImportPkcs)
 {
   auto const& client
       = GetClientForTest(::testing::UnitTest::GetInstance()->current_test_info()->name());
@@ -856,28 +856,46 @@ TEST_F(KeyVaultCertificateClientTest, DownloadPkcs)
   }
 
   // cspell: disable-next-line
-  std::string const pem("pemCert");
-  std::string const pkcs("pkcsCert");
+  std::string const pkcs("pemCert");
+  std::string const importName("pkcsCert2");
+  auto originalCertificate
+      = CreateCertificate(pkcs, client, m_defaultWait, "CN=xyz", CertificateContentType::Pkcs12);
 
-  auto result = client.DownloadCertificate(pkcs);
-  auto getted = client.GetCertificate(pkcs);
-  auto params = ImportCertificateOptions();
-  params.Value = result.Value.Certificate;
+  {
+    auto result = client.DownloadCertificate(pkcs);
+    auto params = ImportCertificateOptions();
+    params.Value = result.Value.Certificate;
 
-  params.Policy.Enabled = true;
-  params.Policy.KeyType = CertificateKeyType::Rsa;
-  params.Policy.KeySize = 2048;
-  params.Policy.ContentType = CertificateContentType::Pkcs12;
-  params.Policy.Exportable = true;
-  // LifetimeAction action;
-  // action.LifetimePercentage = 80;
-  // action.Action = CertificatePolicyAction::AutoRenew;
-  // params.Policy.LifetimeActions.emplace_back(action);
+    params.Policy.Enabled = true;
+    params.Policy.KeyType = CertificateKeyType::Rsa;
+    params.Policy.KeySize = 2048;
+    params.Policy.ContentType = CertificateContentType::Pkcs12;
+    params.Policy.Exportable = true;
 
-  auto imported = client.ImportCertificate("pem2", params);
+    auto imported = client.ImportCertificate(importName, params).Value;
+
+    EXPECT_EQ(imported.Properties.Name, importName);
+    EXPECT_EQ(imported.Policy.ContentType.Value(), originalCertificate.Policy.ContentType.Value());
+    EXPECT_EQ(imported.Policy.Enabled.Value(), originalCertificate.Policy.Enabled.Value());
+    EXPECT_EQ(imported.Policy.KeySize.Value(), originalCertificate.Policy.KeySize.Value());
+    EXPECT_EQ(imported.Policy.Subject, originalCertificate.Policy.Subject);
+    EXPECT_EQ(imported.Cer, originalCertificate.Cer);
+  }
+  {
+    auto response = client.StartDeleteCertificate(pkcs);
+    auto result = response.PollUntilDone(m_defaultWait);
+    EXPECT_EQ(result.Value.Name(), pkcs);
+    client.PurgeDeletedCertificate(pkcs);
+  }
+  {
+    auto response = client.StartDeleteCertificate(importName);
+    auto result = response.PollUntilDone(m_defaultWait);
+    EXPECT_EQ(result.Value.Name(), importName);
+    client.PurgeDeletedCertificate(importName);
+  }
 }
 
-TEST_F(KeyVaultCertificateClientTest, DownloadPem)
+TEST_F(KeyVaultCertificateClientTest, DownloadImportPem)
 {
   auto const& client
       = GetClientForTest(::testing::UnitTest::GetInstance()->current_test_info()->name());
@@ -888,18 +906,122 @@ TEST_F(KeyVaultCertificateClientTest, DownloadPem)
 
   // cspell: disable-next-line
   std::string const pem("pemCert");
-  std::string const pkcs("pkcsCert");
+  std::string const importName("pemCert2");
+  auto originalCertificate
+      = CreateCertificate(pem, client, m_defaultWait, "CN=xyz", CertificateContentType::Pem);
 
-  auto result = client.DownloadCertificate(pem);
-  auto getted = client.GetCertificate(pem);
-  auto params = ImportCertificateOptions();
-  params.Value = result.Value.Certificate;
+  {
+    auto result = client.DownloadCertificate(pem);
+    auto params = ImportCertificateOptions();
+    params.Value = result.Value.Certificate;
 
-  params.Policy.Enabled = true;
-  params.Policy.KeyType = CertificateKeyType::Rsa;
-  params.Policy.KeySize = 2048;
-  params.Policy.ContentType = CertificateContentType::Pem;
-  params.Policy.Exportable = true;
+    params.Policy.Enabled = true;
+    params.Policy.KeyType = CertificateKeyType::Rsa;
+    params.Policy.KeySize = 2048;
+    params.Policy.ContentType = CertificateContentType::Pem;
+    params.Policy.Exportable = true;
 
-  auto imported = client.ImportCertificate("pem3", params);
+    auto imported = client.ImportCertificate(importName, params).Value;
+
+    EXPECT_EQ(imported.Properties.Name, importName);
+    EXPECT_EQ(imported.Policy.ContentType.Value(), originalCertificate.Policy.ContentType.Value());
+    EXPECT_EQ(imported.Policy.Enabled.Value(), originalCertificate.Policy.Enabled.Value());
+    EXPECT_EQ(imported.Policy.KeySize.Value(), originalCertificate.Policy.KeySize.Value());
+    EXPECT_EQ(imported.Policy.Subject, originalCertificate.Policy.Subject);
+    EXPECT_EQ(imported.Cer, originalCertificate.Cer);
+  }
+  {
+    auto response = client.StartDeleteCertificate(pem);
+    auto result = response.PollUntilDone(m_defaultWait);
+    EXPECT_EQ(result.Value.Name(), pem);
+    client.PurgeDeletedCertificate(pem);
+  }
+  {
+    auto response = client.StartDeleteCertificate(importName);
+    auto result = response.PollUntilDone(m_defaultWait);
+    EXPECT_EQ(result.Value.Name(), importName);
+    client.PurgeDeletedCertificate(importName);
+  }
+}
+
+TEST_F(KeyVaultCertificateClientTest, UpdateCertificate)
+{
+  auto const& client
+      = GetClientForTest(::testing::UnitTest::GetInstance()->current_test_info()->name());
+
+  // cspell: disable-next-line
+  std::string const certificateName("magiqStuff");
+  auto certificate = CreateCertificate(certificateName, client, m_defaultWait);
+
+  {
+    certificate.Properties.Enabled = false;
+    CertificateUpdateOptions updateOptions{certificate.Properties};
+    auto updatedCert = client.UpdateCertificateProperties(updateOptions).Value;
+    EXPECT_FALSE(updatedCert.Properties.Enabled.Value());
+  }
+  {
+    auto response = client.StartDeleteCertificate(certificate.Properties.Name);
+    auto result = response.PollUntilDone(m_defaultWait);
+    EXPECT_EQ(result.Value.Name(), certificateName);
+    client.PurgeDeletedCertificate(certificateName);
+  }
+}
+
+// the api implementation is correct according to swagger and other languages.
+// the issue revolves around the fact that to merge a certificate it needs to not be issued by self
+// which causes some issues on the automation side as the issuer needs to approve and i need to find
+// an issuer that would autoapprove requests, that is not self.
+TEST_F(KeyVaultCertificateClientTest, DISABLED_MergeCertificate)
+{
+  auto const& client
+      = GetClientForTest(::testing::UnitTest::GetInstance()->current_test_info()->name());
+  {
+    auto result = client.GetPropertiesOfCertificates(GetPropertiesOfCertificatesOptions());
+    EXPECT_EQ(result.Items.size(), size_t(0));
+  }
+
+  // cspell: disable-next-line
+  std::string pkcsToMerge = "aaaaa";
+  std::string mergeTarget = "baaab";
+  std::string mergeTarget2 = "ccaac";
+  auto mergeParams = MergeCertificateOptions();
+
+  {
+    auto certificate = CreateCertificate(pkcsToMerge, client, 1s, "CN=bbb");
+    auto result = client.DownloadCertificate(pkcsToMerge);
+    // mergeParams.Certificates.emplace_back(Azure::Core::Convert::Base64Encode(certificate.Cer));
+  }
+  {
+    auto response = client.StartDeleteCertificate(pkcsToMerge);
+    auto result = response.PollUntilDone(m_defaultWait);
+    client.PurgeDeletedCertificate(pkcsToMerge);
+  }
+  {
+    // CreateCertificate(mergeTarget, client, 1s, "CN=bbb");
+    auto params = CertificateCreateParameters();
+    params.Policy.Subject = "CN=bbb";
+    params.Policy.ValidityInMonths = 12;
+    params.Policy.Enabled = true;
+
+    params.Properties.Enabled = true;
+    params.Properties.Name = mergeTarget;
+    params.Policy.ContentType = CertificateContentType::Pkcs12;
+    params.Policy.IssuerName = "sss";
+
+    auto response = client.StartCreateCertificate(mergeTarget, params);
+    auto result = response.PollUntilDone(100ms);
+
+    bool cont = true;
+    while (cont)
+    {
+      try
+      {
+        auto merged = client.MergeCertificate(mergeTarget, mergeParams);
+        cont = false;
+      }
+      catch (...)
+      {
+      }
+    }
+  }
 }

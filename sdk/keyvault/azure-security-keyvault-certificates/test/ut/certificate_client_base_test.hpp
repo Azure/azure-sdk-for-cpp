@@ -84,7 +84,7 @@ namespace Azure {
         std::string const& testName)
     {
       // used to test/dev purposes
-      _putenv_s("AZURE_TEST_MODE", "LIVE");
+      _putenv_s("AZURE_TEST_MODE", "PLAYBACK");
       InitializeClient();
       // set the interceptor for the current test
       m_testContext.RenameTest(testName);
@@ -221,16 +221,18 @@ namespace Azure {
     static inline KeyVaultCertificateWithPolicy CreateCertificate(
         std::string const& name,
         CertificateClient const& client,
-        std::chrono::milliseconds defaultWait)
+        std::chrono::milliseconds defaultWait,
+        std::string const& subject = "CN=xyz",
+        CertificateContentType certificateType = CertificateContentType::Pkcs12)
     {
       auto params = CertificateCreateParameters();
-      params.Policy.Subject = "CN=xyz";
+      params.Policy.Subject = subject;
       params.Policy.ValidityInMonths = 12;
       params.Policy.Enabled = true;
 
       params.Properties.Enabled = true;
       params.Properties.Name = name;
-      params.Policy.ContentType = CertificateContentType::Pkcs12;
+      params.Policy.ContentType = certificateType;
       params.Policy.IssuerName = "Self";
 
       LifetimeAction action;

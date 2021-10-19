@@ -250,4 +250,11 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
       static std::string Serialize(MergeCertificateOptions const& options);
     };
 
+    class CertificateUpdateOptionsSerializer final {
+      CertificateUpdateOptionsSerializer() = delete;
+
+    public:
+      static std::string Serialize(CertificateUpdateOptions const& options);
+    };
+
 }}}}} // namespace Azure::Security::KeyVault::Certificates::_detail
