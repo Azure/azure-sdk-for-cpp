@@ -133,7 +133,7 @@ namespace Azure { namespace Core {
         throw std::runtime_error("The raw response was not yet set for the Operation.");
       }
       return *m_rawResponse;
-    };
+    }
 
     /**
      * @brief Gets the current #Azure::Core::OperationStatus of the long-running operation.

@@ -58,7 +58,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       }
 
       std::this_thread::sleep_for(period);
-    };
+    }
   }
 
   void ListSharesPagedResponse::OnNextPage(const Azure::Core::Context& context)

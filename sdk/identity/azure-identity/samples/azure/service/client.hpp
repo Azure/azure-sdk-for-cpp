@@ -51,7 +51,7 @@ namespace Azure { namespace Service {
 
       static_cast<void>(authenticationToken); // to suppress the "unused variable" warning.
 #endif
-    };
+    }
   };
 
 }} // namespace Azure::Service

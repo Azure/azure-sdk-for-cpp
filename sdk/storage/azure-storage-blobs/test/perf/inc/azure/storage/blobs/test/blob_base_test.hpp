@@ -56,7 +56,7 @@ namespace Azure { namespace Storage { namespace Blobs { namespace Test {
           m_containerClient->GetBlockBlobClient(m_blobName));
     }
 
-    void Cleanup() override { m_containerClient->DeleteIfExists(); };
+    void Cleanup() override { m_containerClient->DeleteIfExists(); }
 
     /**
      * @brief Construct a new BlobsTest test.

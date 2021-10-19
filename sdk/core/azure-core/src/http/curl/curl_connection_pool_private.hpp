@@ -121,7 +121,7 @@ namespace Azure { namespace Core { namespace Http { namespace _detail {
 
     // Makes possible to know the number of current connections in the connection pool for an
     // index
-    size_t ConnectionsOnPool(std::string const& host) { return ConnectionPoolIndex[host].size(); };
+    size_t ConnectionsOnPool(std::string const& host) { return ConnectionPoolIndex[host].size(); }
 
     std::thread m_cleanThread;
   };

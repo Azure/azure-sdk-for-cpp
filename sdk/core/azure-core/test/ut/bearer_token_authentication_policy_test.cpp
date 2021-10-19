@@ -34,12 +34,12 @@ public:
       Azure::Core::Context const&) const override
   {
     return nullptr;
-  };
+  }
 
   std::unique_ptr<HttpPolicy> Clone() const override
   {
     return std::make_unique<TestTransportPolicy>(*this);
-  };
+  }
 };
 
 } // namespace

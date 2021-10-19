@@ -25,12 +25,9 @@ private:
     (void)nextPolicy;
 
     return std::unique_ptr<RawResponse>();
-  };
+  }
 
-  std::unique_ptr<HttpPolicy> Clone() const override
-  {
-    return std::make_unique<NoOpPolicy>(*this);
-  };
+  std::unique_ptr<HttpPolicy> Clone() const override { return std::make_unique<NoOpPolicy>(*this); }
 };
 
 } // namespace
