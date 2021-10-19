@@ -983,7 +983,9 @@ TEST_F(KeyVaultCertificateClientTest, DISABLED_MergeCertificate)
 
   // cspell: disable-next-line
   std::string pkcsToMerge = "aaaaa";
+  // cspell: disable-next-line
   std::string mergeTarget = "baaab";
+  // cspell: disable-next-line
   std::string mergeTarget2 = "ccaac";
   auto mergeParams = MergeCertificateOptions();
 
