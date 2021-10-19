@@ -33,7 +33,7 @@ namespace Azure { namespace Core { namespace Cryptography { namespace _internal 
      * @brief Cleanup any state when destroying the instance of #Sha256Hash.
      *
      */
-    ~Sha256Hash(){};
+    ~Sha256Hash() {}
 
   private:
     /**
@@ -85,7 +85,7 @@ namespace Azure { namespace Core { namespace Cryptography { namespace _internal 
      * @brief Cleanup any state when destroying the instance of #Sha384Hash.
      *
      */
-    ~Sha384Hash(){};
+    ~Sha384Hash() {}
 
   private:
     /**
@@ -137,7 +137,7 @@ namespace Azure { namespace Core { namespace Cryptography { namespace _internal 
      * @brief Cleanup any state when destroying the instance of #Sha512Hash.
      *
      */
-    ~Sha512Hash(){};
+    ~Sha512Hash() {}
 
   private:
     /**

@@ -38,7 +38,7 @@ protected:
 #endif
   }
 
-  void TearDown() override { SetLogLevel(m_previousValue); };
+  void TearDown() override { SetLogLevel(m_previousValue); }
 
 private:
   std::string m_previousValue;

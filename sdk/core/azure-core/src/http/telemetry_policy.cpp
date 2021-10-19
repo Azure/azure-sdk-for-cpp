@@ -31,7 +31,7 @@ namespace Azure { namespace Core { namespace _internal {
     HKEY m_value = nullptr;
 
   public:
-    explicit HkeyHolder() noexcept : m_value(nullptr){};
+    explicit HkeyHolder() noexcept : m_value(nullptr) {}
 
     ~HkeyHolder() noexcept
     {

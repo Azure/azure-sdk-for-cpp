@@ -515,7 +515,7 @@ CURLcode CurlConnection::SendBuffer(
           return sendResult;
         }
       }
-    };
+    }
   }
 #if defined(AZ_PLATFORM_WINDOWS)
   WinSocketSetBuffSize(m_curlSocket);

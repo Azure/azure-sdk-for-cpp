@@ -200,7 +200,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
      * @brief Gets the name of the key to create.
      *
      */
-    std::string const& GetName() const { return m_name; };
+    std::string const& GetName() const { return m_name; }
 
     /**
      * @brief Gets the key type to create, including Ec and EcHsm.
@@ -272,7 +272,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
      * @brief Gets the name of the key to create.
      *
      */
-    std::string const& GetName() const { return m_name; };
+    std::string const& GetName() const { return m_name; }
 
     /**
      * @brief Gets the key type to create, including Rsa and RsaHsm.
@@ -336,7 +336,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
      * @brief Gets the name of the key to create.
      *
      */
-    std::string const& GetName() const { return m_name; };
+    std::string const& GetName() const { return m_name; }
 
     /**
      * @brief Gets the key type to create, including Oct and OctHsm.

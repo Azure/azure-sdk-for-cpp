@@ -31,7 +31,7 @@ namespace Azure { namespace Perf {
      * only once.
      *
      */
-    virtual void GlobalSetup(){};
+    virtual void GlobalSetup() {}
 
     /**
      * @brief Run one time per each test thread.
@@ -40,7 +40,7 @@ namespace Azure { namespace Perf {
      * thead.
      *
      */
-    virtual void Setup(){};
+    virtual void Setup() {}
 
     /**
      * @brief Defines the test specific options.
@@ -54,7 +54,7 @@ namespace Azure { namespace Perf {
     virtual std::vector<Azure::Perf::TestOption> GetTestOptions()
     {
       return std::vector<Azure::Perf::TestOption>();
-    };
+    }
 
     /**
      * @brief Define the main test case.
@@ -70,12 +70,12 @@ namespace Azure { namespace Perf {
      *
      * @remark The clean up can be skipped by setting the option `NoCleanup`.
      */
-    virtual void Cleanup(){};
+    virtual void Cleanup() {}
 
     /**
      * @brief Run only once before the test application ends.
      *
      */
-    virtual void GlobalCleanup(){};
+    virtual void GlobalCleanup() {}
   };
 }} // namespace Azure::Perf

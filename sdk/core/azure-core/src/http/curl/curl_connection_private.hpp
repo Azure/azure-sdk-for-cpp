@@ -106,14 +106,14 @@ namespace Azure { namespace Core { namespace Http {
      * @remark A connection won't be returned to the connection pool if it was shut it down.
      *
      */
-    virtual void Shutdown() { m_isShutDown = true; };
+    virtual void Shutdown() { m_isShutDown = true; }
 
     /**
      * @brief Check if the the connection was shut it down.
      *
      * @return `true` is the connection was shut it down; otherwise, `false`.
      */
-    bool IsShutdown() const { return m_isShutDown; };
+    bool IsShutdown() const { return m_isShutDown; }
   };
 
   /**

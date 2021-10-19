@@ -58,7 +58,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       }
 
       std::this_thread::sleep_for(period);
-    };
+    }
   }
 
   void ListBlobContainersPagedResponse::OnNextPage(const Azure::Core::Context& context)

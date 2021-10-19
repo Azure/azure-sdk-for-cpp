@@ -59,7 +59,7 @@ while (!operation.IsDone())
   // You can also try to abort the operation if it doesn't complete in time.
 
   std::this_thread::sleep_for(std::chrono::milliseconds(1000));
-};
+}
 
 auto finalResult = operation.Value();
 

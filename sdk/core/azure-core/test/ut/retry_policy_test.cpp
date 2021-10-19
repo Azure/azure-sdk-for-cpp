@@ -26,12 +26,12 @@ public:
       Azure::Core::Context const&) const override
   {
     return m_send();
-  };
+  }
 
   std::unique_ptr<HttpPolicy> Clone() const override
   {
     return std::make_unique<TestTransportPolicy>(*this);
-  };
+  }
 };
 
 class RetryPolicyTest final : public RetryPolicy {
@@ -62,7 +62,7 @@ public:
   std::unique_ptr<HttpPolicy> Clone() const override
   {
     return std::make_unique<RetryPolicyTest>(*this);
-  };
+  }
 
 protected:
   bool ShouldRetryOnTransportFailure(
@@ -320,8 +320,8 @@ TEST(RetryPolicy, ShouldRetryOnTransportFailure)
 
 namespace {
 class RetryLogic final : private RetryPolicy {
-  RetryLogic() : RetryPolicy(RetryOptions()){};
-  ~RetryLogic(){};
+  RetryLogic() : RetryPolicy(RetryOptions()) {}
+  ~RetryLogic() {}
 
   static RetryLogic const g_retryPolicy;
 

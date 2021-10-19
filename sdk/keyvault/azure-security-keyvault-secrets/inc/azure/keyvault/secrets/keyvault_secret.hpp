@@ -60,7 +60,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
       {
         throw std::invalid_argument("Value cannot be empty");
       }
-    };
+    }
 
   private:
     KeyVaultSecret(std::string name) : Name(std::move(name))

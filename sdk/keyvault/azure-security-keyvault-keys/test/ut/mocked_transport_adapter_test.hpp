@@ -95,7 +95,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys { nam
       std::sprintf(result, fakeKey, keyType.c_str());
       return result;
     }
-  }; // namespace Test
+  };
 
   // A derived class with no credential and authentication
   class KeyClientWithNoAuthenticationPolicy final

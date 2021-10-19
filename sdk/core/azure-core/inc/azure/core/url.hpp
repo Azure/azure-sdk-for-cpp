@@ -229,7 +229,7 @@ namespace Azure { namespace Core {
      * @brief Gets the URL scheme.
      *
      */
-    const std::string& GetScheme() const { return m_scheme; };
+    const std::string& GetScheme() const { return m_scheme; }
 
     /**
      * @brief Gets the path and query parameters.
