@@ -51,6 +51,15 @@ jobs:
         CC: '/usr/bin/gcc-9'
         CXX: '/usr/bin/g++-9'
         BuildArgs: '-j 10'
+      Linux_x64_gcc9_no_rtti:
+        Pool: azsdk-pool-mms-ubuntu-1804-general
+        OSVmImage: MMSUbuntu18.04
+        VcpkgInstall: 'curl[ssl] libxml2 openssl'
+        VCPKG_DEFAULT_TRIPLET: 'x64-linux'
+        CC: '/usr/bin/gcc-9'
+        CXX: '/usr/bin/g++-9'
+        BuildArgs: '-j 10'
+        CmakeArgs: ' -DBUILD_RTTI=OFF'
       Linux_x64:
         Pool: azsdk-pool-mms-ubuntu-1804-general
         OSVmImage: MMSUbuntu18.04
@@ -74,6 +83,15 @@ jobs:
         CMAKE_GENERATOR: 'Visual Studio 16 2019'
         CMAKE_GENERATOR_PLATFORM: x64
         BuildArgs: '--parallel 8'
+      Win_x64_no_rtti:
+        Pool: azsdk-pool-mms-win-2019-general
+        OSVmImage: MMS2019
+        VcpkgInstall: 'curl[winssl] libxml2'
+        VCPKG_DEFAULT_TRIPLET: 'x64-windows-static'
+        CMAKE_GENERATOR: 'Visual Studio 16 2019'
+        CMAKE_GENERATOR_PLATFORM: x64
+        BuildArgs: '--parallel 8'
+        CmakeArgs: ' -DBUILD_RTTI=OFF'
       Ubuntu_20_x64_clang:
         Pool: azsdk-pool-mms-ubuntu-2004-general
         OSVmImage: MMSUbuntu20.04

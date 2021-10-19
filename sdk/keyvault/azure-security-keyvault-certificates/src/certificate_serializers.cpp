@@ -609,7 +609,7 @@ CertificateOperationProperties CertificateOperationSerializer ::Deserialize(
 
   return operation;
 }
-void ServerErrorSerializer ::Deserialize(
+void ServerErrorSerializer::Deserialize(
     ServerError& error,
     Azure::Core::Json::_internal::json fragment)
 {

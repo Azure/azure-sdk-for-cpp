@@ -123,17 +123,15 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
      * @brief Delete operation.
      *
      * @param context A #Azure::Core::Context controlling the request lifetime.
-     * @return updated properties
      */
     void Delete(Azure::Core::Context const& context = Azure::Core::Context());
 
     /**
      * @brief Determines if the operation has completed.
      *
-     * @param context A #Azure::Core::Context controlling the request lifetime.
      * @return Completed status.
      */
-    bool IsCompleted();
+    bool IsCompleted() const;
   };
 
   /**

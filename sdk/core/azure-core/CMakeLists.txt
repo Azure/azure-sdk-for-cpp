@@ -17,6 +17,7 @@ include(AzureCodeCoverage)
 include(AzureTransportAdapters)
 include(AzureDoxygen)
 include(AzureGlobalCompileOptions)
+include(AzureConfigRTTI)
 
 az_vcpkg_integrate()
 
@@ -39,8 +40,11 @@ if(BUILD_TRANSPORT_CURL)
     src/http/curl/curl_connection_private.hpp
     src/http/curl/curl_session_private.hpp
     src/http/curl/curl.cpp
+    src/http/curl/static_curl.cpp
   )
-  SET(CURL_TRANSPORT_ADAPTER_INC inc/azure/core/http/curl_transport.hpp)
+  SET(CURL_TRANSPORT_ADAPTER_INC
+    inc/azure/core/http/curl_transport.hpp
+    inc/azure/core/http/static_curl_transport.hpp)
 endif()
 if(BUILD_TRANSPORT_WINHTTP)
   SET(WIN_TRANSPORT_ADAPTER_SRC src/http/winhttp/win_http_transport.cpp)
@@ -71,6 +75,7 @@ set(
     inc/azure/core/internal/strings.hpp
     inc/azure/core/io/body_stream.hpp
     inc/azure/core/azure_assert.hpp
+    inc/azure/core/rtti.hpp
     inc/azure/core/base64.hpp
     inc/azure/core/case_insensitive_containers.hpp
     inc/azure/core/context.hpp
@@ -162,6 +167,12 @@ az_vcpkg_export(
     CORE
     "azure/core/dll_import_export.hpp"
   )
+
+az_rtti_setup(
+  azure-core
+  CORE
+  "azure/core/rtti.hpp"
+)
 
 if(BUILD_TESTING)
   # define a symbol that enables some test hooks in code

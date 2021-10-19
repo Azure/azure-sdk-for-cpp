@@ -123,7 +123,7 @@ void CreateCertificateOperation::Delete(Azure::Core::Context const& context)
   Properties = response.Value;
 }
 
-bool CreateCertificateOperation::IsCompleted()
+bool CreateCertificateOperation::IsCompleted() const
 {
   bool completed = false;
 
