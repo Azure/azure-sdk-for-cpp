@@ -609,6 +609,7 @@ CertificateOperationProperties CertificateOperationSerializer ::Deserialize(
 
   return operation;
 }
+
 void ServerErrorSerializer::Deserialize(
     ServerError& error,
     Azure::Core::Json::_internal::json fragment)
@@ -669,6 +670,7 @@ std::string BackupCertificateSerializer::Serialize(std::vector<uint8_t> const& b
   payload[_detail::ValuePropertyName] = Base64Url::Base64UrlEncode(backup);
   return payload.dump();
 }
+
 CertificatePropertiesPagedResponse CertificatePropertiesPagedResponseSerializer::Deserialize(
     Azure::Core::Http::RawResponse const& rawResponse)
 {
@@ -802,6 +804,7 @@ std::string MergeCertificateOptionsSerializer::Serialize(MergeCertificateOptions
 
   return mergeOptions.dump();
 }
+
 std::string CertificateUpdateOptionsSerializer::Serialize(CertificateUpdateOptions const& options)
 {
   json updateOptions;

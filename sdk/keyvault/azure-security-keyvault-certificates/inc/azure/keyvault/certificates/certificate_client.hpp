@@ -242,7 +242,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
      *
      * @details The PurgeDeletedCertificate operation performs an irreversible
      * deletion of the specified certificate, without possibility for recovery.
-     * The operation is not available if the recovery level does not specify 'Purgeable'
+     * The operation is not available if the recovery level does not specify 'Purgeable'.
      *
      * @remark This operation requires the certificate/purge permission.
      *
@@ -295,7 +295,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
      *
      * @remark This operation requires the certificates/get permission.
      *
-     * @param name The name of the certificate
+     * @param name The name of the certificate.
      * @param context The context for the operation can be used for request cancellation.
      * @return The contact properties.
      */
@@ -343,7 +343,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
      *
      * @remark This operation requires the certificates/restore permission.
      *
-     * @param backup The backup to restore
+     * @param backup The backup to restore.
      * @param context The context for the operation can be used for request cancellation.
      * @return The restored certificate.
      */
@@ -417,7 +417,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
      * @param options The options for the request.
      * @param context The context for the operation can be used for request cancellation.
      * @return A response message containing a list of deleted certificates in the vault along with
-     * a link to the next page of deleted certificates
+     * a link to the next page of deleted certificates.
      */
     DeletedCertificatesPagedResponse GetDeletedCertificates(
         GetDeletedCertificatesOptions const& options = GetDeletedCertificatesOptions(),
@@ -429,10 +429,10 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
      * @details The Download Certificate operation attempts to download the managed secret which
      * contains the full certificate
      *
-     * @param name The name of the certificate
+     * @param name The name of the certificate.
      * @param options The options for the request.
      * @param context The context for the operation can be used for request cancellation.
-     * @return Downloaded certificate
+     * @return Downloaded certificate.
      */
     Azure::Response<DownloadCertificateResult> DownloadCertificate(
         std::string const& name,

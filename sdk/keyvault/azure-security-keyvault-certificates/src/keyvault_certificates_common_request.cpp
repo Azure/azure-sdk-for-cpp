@@ -19,7 +19,7 @@ _detail::KeyVaultCertificatesCommonRequest::SendRequest(
 {
   auto response = pipeline.Send(request, context);
   auto responseCode = response->GetStatusCode();
-  std::string responseMessage(response->GetBody().begin(), response->GetBody().end());
+
   switch (responseCode)
   {
 
