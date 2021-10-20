@@ -1413,8 +1413,8 @@ std::unique_ptr<CurlNetworkConnection> CurlConnectionPool::ExtractOrCreateCurlCo
   if (!SetLibcurlOption(newHandle, CURLOPT_HTTP_VERSION, CURL_HTTP_VERSION_1_1, &result))
   {
     throw Azure::Core::Http::TransportException(
-        _detail::DefaultFailedToGetNewConnectionTemplate + host
-        + ". Failed to disable ssl verify peer." + ". " + std::string(curl_easy_strerror(result)));
+        _detail::DefaultFailedToGetNewConnectionTemplate + host + ". Failed to set libcurl HTTP/1.1"
+        + ". " + std::string(curl_easy_strerror(result)));
   }
 
   auto performResult = curl_easy_perform(newHandle);
