@@ -45,7 +45,7 @@ namespace Azure { namespace Core { namespace Test {
       Azure::Core::Http::Request req(
           Azure::Core::Http::HttpMethod::Get, Azure::Core::Url(AzureSdkHttpbinServer::Get()));
       std::string const expectedConnectionKey
-          = AzureSdkHttpbinServer::Schema() + AzureSdkHttpbinServer::Host() + "0011";
+          = AzureSdkHttpbinServer::Schema() + AzureSdkHttpbinServer::Host() + "00110";
 
       {
         // Creating a new connection with default options
@@ -114,7 +114,7 @@ namespace Azure { namespace Core { namespace Test {
 
       // Now test that using a different connection config won't re-use the same connection
       std::string const secondExpectedKey
-          = AzureSdkHttpbinServer::Schema() + AzureSdkHttpbinServer::Host() + "0010";
+          = AzureSdkHttpbinServer::Schema() + AzureSdkHttpbinServer::Host() + "00100";
       {
         // Creating a new connection with options
         Azure::Core::Http::CurlTransportOptions options;
@@ -394,7 +394,7 @@ namespace Azure { namespace Core { namespace Test {
         Azure::Core::Http::Request req(
             Azure::Core::Http::HttpMethod::Get, Azure::Core::Url(authority));
         std::string const expectedConnectionKey
-            = AzureSdkHttpbinServer::Schema() + AzureSdkHttpbinServer::Host() + "0011";
+            = AzureSdkHttpbinServer::Schema() + AzureSdkHttpbinServer::Host() + "00110";
 
         // Creating a new connection with default options
         auto connection = Azure::Core::Http::_detail::CurlConnectionPool::g_curlConnectionPool
@@ -430,7 +430,7 @@ namespace Azure { namespace Core { namespace Test {
         Azure::Core::Http::Request req(
             Azure::Core::Http::HttpMethod::Get, Azure::Core::Url(authority));
         std::string const expectedConnectionKey
-            = AzureSdkHttpbinServer::Schema() + AzureSdkHttpbinServer::Host() + "4430011";
+            = AzureSdkHttpbinServer::Schema() + AzureSdkHttpbinServer::Host() + "44300110";
 
         // Creating a new connection with default options
         auto connection = Azure::Core::Http::_detail::CurlConnectionPool::g_curlConnectionPool
@@ -467,7 +467,7 @@ namespace Azure { namespace Core { namespace Test {
         Azure::Core::Http::Request req(
             Azure::Core::Http::HttpMethod::Get, Azure::Core::Url(authority));
         std::string const expectedConnectionKey
-            = AzureSdkHttpbinServer::Schema() + AzureSdkHttpbinServer::Host() + "0011";
+            = AzureSdkHttpbinServer::Schema() + AzureSdkHttpbinServer::Host() + "00110";
 
         // Creating a new connection with default options
         auto connection = Azure::Core::Http::_detail::CurlConnectionPool::g_curlConnectionPool
@@ -502,7 +502,7 @@ namespace Azure { namespace Core { namespace Test {
         Azure::Core::Http::Request req(
             Azure::Core::Http::HttpMethod::Get, Azure::Core::Url(authority));
         std::string const expectedConnectionKey
-            = AzureSdkHttpbinServer::Schema() + AzureSdkHttpbinServer::Host() + "4430011";
+            = AzureSdkHttpbinServer::Schema() + AzureSdkHttpbinServer::Host() + "44300110";
 
         // Creating a new connection with default options
         auto connection = Azure::Core::Http::_detail::CurlConnectionPool::g_curlConnectionPool
