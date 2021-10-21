@@ -17,9 +17,6 @@ parameters:
   - name: CoverageEnabled
     type: boolean
     default: true
-  - name: DisplayNameDecorator
-    type: string
-    default: ''
   - name: Matrix
     type: string
 
@@ -96,7 +93,7 @@ jobs:
           echo Success, all files are formatted correctly according to the .clang-format file.
           exit 0
 
-        displayName: Validate Clang Format ${{ parameters.DisplayNameDecorator }}
+        displayName: Validate Clang Format
         condition: and(succeededOrFailed(), eq(variables['CHECK_CLANG_FORMAT'], 1))
 
       - ${{ each artifact in parameters.Artifacts }}:
@@ -121,7 +118,7 @@ jobs:
             dotnet tool install -g dotnet-reportgenerator-globaltool
             dotnet tool install dotnet-reportgenerator-globaltool --tool-path $toolsDirectory
             Write-Host "##vso[task.setvariable variable=ToolsDirectory]$toolsDirectory"
-          displayName: Install coverage tools ${{ parameters.DisplayNameDecorator }}
+          displayName: Install coverage tools
           condition: and(succeeded(), eq(variables['ToolsDirectory'], ''))
 
         # Make coverage targets (specified in coverage_targets.txt) and assemble
@@ -130,12 +127,12 @@ jobs:
             make VERBOSE=1 `cat ${{ parameters.ServiceDirectory }}-targets-coverage.txt`
             $(ToolsDirectory)/reportgenerator "-reports:${{ parameters.CoverageReportPath }}" "-targetdir:." "-reporttypes:Cobertura"
           workingDirectory: build
-          displayName: Generate Code Coverage Data ${{ parameters.DisplayNameDecorator }}
+          displayName: Generate Code Coverage Data
           condition: and(succeededOrFailed(), ne(variables['CODE_COVERAGE'], ''))
 
         - task: PublishCodeCoverageResults@1
           inputs:
             codeCoverageTool: Cobertura
             summaryFileLocation: '$(Build.SourcesDirectory)/**/Cobertura.xml'
-          displayName: Publish Code Coverage to DevOps ${{ parameters.DisplayNameDecorator }}
+          displayName: Publish Code Coverage to DevOps
           condition: and(succeededOrFailed(), ne(variables['CODE_COVERAGE'], ''))
