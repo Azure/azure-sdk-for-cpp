@@ -1226,38 +1226,12 @@ namespace {
 inline std::string GetConnectionKey(std::string const& host, CurlTransportOptions const& options)
 {
   std::string key(host);
-  if (!options.CAInfo.empty())
-  {
-    key.append(options.CAInfo);
-  }
-  else
-  {
-    key.append("0");
-  }
-  if (!options.Proxy.empty())
-  {
-    key.append(options.Proxy);
-  }
-  else
-  {
-    key.append("0");
-  }
-  if (!options.SslOptions.EnableCertificateRevocationListCheck)
-  {
-    key.append("1");
-  }
-  else
-  {
-    key.append("0");
-  }
-  if (options.SslVerifyPeer)
-  {
-    key.append("1");
-  }
-  else
-  {
-    key.append("0");
-  }
+  key.append(!options.CAInfo.empty() ? options.CAInfo : "0");
+  key.append(!options.Proxy.empty() ? options.Proxy : "0");
+  key.append(!options.SslOptions.EnableCertificateRevocationListCheck ? "1" : "0");
+  key.append(options.SslVerifyPeer ? "1" : "0");
+  key.append(options.NoSignal ? "1" : "0");
+
   return key;
 }
 } // namespace
@@ -1402,7 +1376,17 @@ std::unique_ptr<CurlNetworkConnection> CurlConnectionPool::ExtractOrCreateCurlCo
     {
       throw Azure::Core::Http::TransportException(
           _detail::DefaultFailedToGetNewConnectionTemplate + host
-          + ". Failed to disable ssl verify peer." + ". "
+          + ". Failed to disable ssl verify peer. " + std::string(curl_easy_strerror(result)));
+    }
+  }
+
+  if (options.NoSignal)
+  {
+    if (!SetLibcurlOption(newHandle, CURLOPT_NOSIGNAL, 1L, &result))
+    {
+      throw Azure::Core::Http::TransportException(
+          _detail::DefaultFailedToGetNewConnectionTemplate + host
+          + ". Failed to set NOSIGNAL option for libcurl. "
           + std::string(curl_easy_strerror(result)));
     }
   }

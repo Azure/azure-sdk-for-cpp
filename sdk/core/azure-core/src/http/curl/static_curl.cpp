@@ -289,6 +289,17 @@ public:
       }
     }
 
+    if (m_options.NoSignal)
+    {
+      if (!SetStaticLibcurlOption(m_libcurlHandle, CURLOPT_NOSIGNAL, 1L, &result))
+      {
+        throw Azure::Core::Http::TransportException(
+            FailedToGetNewConnectionTemplate + host
+            + ". Failed to set NOSIGNAL option for libcurl. "
+            + std::string(curl_easy_strerror(result)));
+      }
+    }
+
     // headers sep-up
     auto const& headers = request.GetHeaders();
     if (headers.size() > 0)

@@ -88,6 +88,16 @@ namespace Azure { namespace Core { namespace Http {
      *
      */
     CurlTransportSslOptions SslOptions;
+
+    /**
+     * @brief When true, libcurl will not use any functions that install signal handlers or any
+     * functions that cause signals to be sent to the process.
+     *
+     * @details This option is here to allow multi-threaded unix applications to still set/use all
+     * timeout options etc, without risking getting signals.
+     *
+     */
+    bool NoSignal = false;
   };
 
   /**
