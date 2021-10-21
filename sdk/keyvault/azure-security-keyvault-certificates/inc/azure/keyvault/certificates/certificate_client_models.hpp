@@ -806,15 +806,23 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
    */
   struct GetCertificateVersionOptions final
   {
+    /**
+     * @brief Certificate Version.
+     *
+     */
     std::string Version;
   };
 
   /**
-   * @brief The options for calling GetCertificate.
+   * @brief The options for calling DownloadCertificate.
    *
    */
   struct DownloadCertificateOptions final
   {
+    /**
+     * @brief Certificate Version.
+     *
+     */
     Azure::Nullable<std::string> Version;
   };
 
@@ -1473,7 +1481,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
      */
     std::vector<std::string> Certificates;
     /**
-     * @brief The attributes of the certificate (optional).
+     * @brief The attributes of the certificate.
      *
      */
     CertificateProperties Properties;
@@ -1491,7 +1499,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
   struct CertificateUpdateOptions final
   {
     /**
-     * @brief The attributes of the certificate (optional).
+     * @brief The attributes of the certificate.
      *
      */
     CertificateProperties Properties;

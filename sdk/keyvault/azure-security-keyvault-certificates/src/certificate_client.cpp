@@ -385,7 +385,7 @@ CertificatePropertiesPagedResponse CertificateClient::GetPropertiesOfCertificate
 {
   // Request and settings
   auto request = ContinuationTokenRequest({CertificatesPath}, options.NextPageToken);
-  if (options.IncludePending.HasValue())
+  if (options.IncludePending)
   {
     request.GetUrl().AppendQueryParameter(
         IncludePendingQuery, options.IncludePending.Value() ? TrueQueryValue : FalseQueryValue);
@@ -447,12 +447,13 @@ Azure::Response<DownloadCertificateResult> CertificateClient::DownloadCertificat
     Azure::Core::Context const& context) const
 {
   KeyVaultCertificateWithPolicy certificate;
-  if (options.Version.HasValue())
+  if (options.Version)
   {
     GetCertificateVersionOptions getVersionOptions{options.Version.Value()};
     auto response = GetCertificateVersion(name, getVersionOptions, context);
     certificate = response.Value;
   }
+  else
   {
     auto response = GetCertificate(name, context);
     certificate = response.Value;

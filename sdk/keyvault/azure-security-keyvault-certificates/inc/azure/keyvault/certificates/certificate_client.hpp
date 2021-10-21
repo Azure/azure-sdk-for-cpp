@@ -142,7 +142,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
      *
      * @param name The certificate issuer name.
      * @param context The context for the operation can be used for request cancellation.
-     * @return CertificateIssuer instance .
+     * @return CertificateIssuer instance.
      */
     Azure::Response<CertificateIssuer> GetIssuer(
         std::string const& name,
@@ -157,7 +157,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
      *
      * @param issuer The certificate issuer.
      * @param context The context for the operation can be used for request cancellation.
-     * @return CertificateIssuer instance .
+     * @return CertificateIssuer instance.
      */
     Azure::Response<CertificateIssuer> UpdateIssuer(
         CertificateIssuer const& issuer,
@@ -172,7 +172,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
      *
      * @param name The certificate issuer name.
      * @param context The context for the operation can be used for request cancellation.
-     * @return CertificateIssuer instance .
+     * @return CertificateIssuer instance.
      */
     Azure::Response<CertificateIssuer> DeleteIssuer(
         std::string const& name,
@@ -310,7 +310,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
      *
      * @remark This operation requires the certificates/update permission.
      *
-     * @param name The name of the certificate
+     * @param name The name of the certificate.
      * @param certificatePolicy The updated certificate policy.
      * @param context The context for the operation can be used for request cancellation.
      * @return The updated contact properties.
@@ -424,7 +424,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
         Azure::Core::Context const& context = Azure::Core::Context()) const;
 
     /**
-     * @brief Downloads a copy of a certificate
+     * @brief Downloads a copy of a certificate.
      *
      * @details The Download Certificate operation attempts to download the managed secret which
      * contains the full certificate
