@@ -166,10 +166,10 @@ namespace Azure {
       EXPECT_EQ(data.Name, issuer.Name);
       EXPECT_EQ(data.Provider.Value(), issuer.Provider.Value());
       EXPECT_TRUE(data.Properties.Enabled.Value());
-      EXPECT_TRUE(data.Id.HasValue());
+      EXPECT_TRUE(data.Id);
 
       EXPECT_EQ(data.Credentials.AccountId.Value(), issuer.Credentials.AccountId.Value());
-      EXPECT_FALSE(data.Credentials.Password.HasValue());
+      EXPECT_FALSE(data.Credentials.Password);
 
       auto adminRemote = data.Organization.AdminDetails[0];
       auto adminLocal = issuer.Organization.AdminDetails[0];

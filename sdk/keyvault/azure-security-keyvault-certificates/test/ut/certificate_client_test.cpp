@@ -32,8 +32,8 @@ TEST_F(KeyVaultCertificateClientTest, CreateCertificate)
     EXPECT_EQ(result.Value.Name(), certificateName);
     EXPECT_EQ(result.Value.Properties.Enabled.Value(), true);
     EXPECT_NE(result.Value.RecoveryId.length(), size_t(0));
-    EXPECT_TRUE(result.Value.DeletedOn.HasValue());
-    EXPECT_TRUE(result.Value.ScheduledPurgeDate.HasValue());
+    EXPECT_TRUE(result.Value.DeletedOn);
+    EXPECT_TRUE(result.Value.ScheduledPurgeDate);
     client.PurgeDeletedCertificate(certificateName);
   }
 }
@@ -86,8 +86,8 @@ TEST_F(KeyVaultCertificateClientTest, CreateCertificateResumeToken)
     EXPECT_EQ(result.Value.Name(), params.Properties.Name);
     EXPECT_EQ(result.Value.Properties.Enabled.Value(), true);
     EXPECT_NE(result.Value.RecoveryId.length(), size_t(0));
-    EXPECT_TRUE(result.Value.DeletedOn.HasValue());
-    EXPECT_TRUE(result.Value.ScheduledPurgeDate.HasValue());
+    EXPECT_TRUE(result.Value.DeletedOn);
+    EXPECT_TRUE(result.Value.ScheduledPurgeDate);
     client.PurgeDeletedCertificate(certificateName);
   }
 }
@@ -112,13 +112,13 @@ TEST_F(KeyVaultCertificateClientTest, GetCertificate)
   EXPECT_EQ(cert.Properties.Tags.size(), 0);
 
   // attributes
-  EXPECT_TRUE(cert.Properties.Enabled.HasValue());
-  EXPECT_TRUE(cert.Properties.NotBefore.HasValue());
-  EXPECT_TRUE(cert.Properties.ExpiresOn.HasValue());
-  EXPECT_TRUE(cert.Properties.CreatedOn.HasValue());
-  EXPECT_TRUE(cert.Properties.UpdatedOn.HasValue());
-  EXPECT_TRUE(cert.Properties.RecoverableDays.HasValue());
-  EXPECT_TRUE(cert.Properties.RecoveryLevel.HasValue());
+  EXPECT_TRUE(cert.Properties.Enabled);
+  EXPECT_TRUE(cert.Properties.NotBefore);
+  EXPECT_TRUE(cert.Properties.ExpiresOn);
+  EXPECT_TRUE(cert.Properties.CreatedOn);
+  EXPECT_TRUE(cert.Properties.UpdatedOn);
+  EXPECT_TRUE(cert.Properties.RecoverableDays);
+  EXPECT_TRUE(cert.Properties.RecoveryLevel);
 
   // kid, sid, cer
   EXPECT_NE(cert.KeyId, "");
@@ -130,24 +130,24 @@ TEST_F(KeyVaultCertificateClientTest, GetCertificate)
     auto const& policy = cert.Policy;
 
     // Key props
-    EXPECT_TRUE(policy.Exportable.HasValue());
-    EXPECT_TRUE(policy.KeyType.HasValue());
-    EXPECT_TRUE(policy.ReuseKey.HasValue());
+    EXPECT_TRUE(policy.Exportable);
+    EXPECT_TRUE(policy.KeyType);
+    EXPECT_TRUE(policy.ReuseKey);
     // Recording uses RSA with no curve-name. Use RSA key when running LIVE
-    EXPECT_FALSE(policy.KeyCurveName.HasValue());
-    EXPECT_TRUE(policy.KeySize.HasValue());
+    EXPECT_FALSE(policy.KeyCurveName);
+    EXPECT_TRUE(policy.KeySize);
 
     // Secret props
-    EXPECT_TRUE(policy.ContentType.HasValue());
+    EXPECT_TRUE(policy.ContentType);
 
     // x509_props
     EXPECT_TRUE(policy.Subject.size() > 0);
 
     // issuer
-    EXPECT_TRUE(policy.IssuerName.HasValue());
+    EXPECT_TRUE(policy.IssuerName);
 
     // attributes
-    EXPECT_TRUE(policy.CreatedOn.HasValue());
+    EXPECT_TRUE(policy.CreatedOn);
 
     // lifetime_actions
     EXPECT_TRUE(policy.LifetimeActions.size() > 0);
@@ -160,8 +160,8 @@ TEST_F(KeyVaultCertificateClientTest, GetCertificate)
     EXPECT_EQ(result.Value.Name(), certificateName);
     EXPECT_EQ(result.Value.Properties.Enabled.Value(), true);
     EXPECT_NE(result.Value.RecoveryId.length(), size_t(0));
-    EXPECT_TRUE(result.Value.DeletedOn.HasValue());
-    EXPECT_TRUE(result.Value.ScheduledPurgeDate.HasValue());
+    EXPECT_TRUE(result.Value.DeletedOn);
+    EXPECT_TRUE(result.Value.ScheduledPurgeDate);
     client.PurgeDeletedCertificate(certificateName);
   }
 }
@@ -191,13 +191,13 @@ TEST_F(KeyVaultCertificateClientTest, GetCertificateVersion)
     EXPECT_EQ(cert.Properties.Tags.size(), 0);
 
     // attributes
-    EXPECT_TRUE(cert.Properties.Enabled.HasValue());
-    EXPECT_TRUE(cert.Properties.NotBefore.HasValue());
-    EXPECT_TRUE(cert.Properties.ExpiresOn.HasValue());
-    EXPECT_TRUE(cert.Properties.CreatedOn.HasValue());
-    EXPECT_TRUE(cert.Properties.UpdatedOn.HasValue());
-    EXPECT_TRUE(cert.Properties.RecoverableDays.HasValue());
-    EXPECT_TRUE(cert.Properties.RecoveryLevel.HasValue());
+    EXPECT_TRUE(cert.Properties.Enabled);
+    EXPECT_TRUE(cert.Properties.NotBefore);
+    EXPECT_TRUE(cert.Properties.ExpiresOn);
+    EXPECT_TRUE(cert.Properties.CreatedOn);
+    EXPECT_TRUE(cert.Properties.UpdatedOn);
+    EXPECT_TRUE(cert.Properties.RecoverableDays);
+    EXPECT_TRUE(cert.Properties.RecoveryLevel);
 
     // kid, sid, cer
     EXPECT_NE(cert.KeyId, "");
@@ -211,8 +211,8 @@ TEST_F(KeyVaultCertificateClientTest, GetCertificateVersion)
     EXPECT_EQ(result.Value.Name(), certificateName);
     EXPECT_EQ(result.Value.Properties.Enabled.Value(), true);
     EXPECT_NE(result.Value.RecoveryId.length(), size_t(0));
-    EXPECT_TRUE(result.Value.DeletedOn.HasValue());
-    EXPECT_TRUE(result.Value.ScheduledPurgeDate.HasValue());
+    EXPECT_TRUE(result.Value.DeletedOn);
+    EXPECT_TRUE(result.Value.ScheduledPurgeDate);
     client.PurgeDeletedCertificate(certificateName);
   }
 }
@@ -499,29 +499,29 @@ TEST_F(KeyVaultCertificateClientTest, GetCertificatePolicy)
     auto const& policy = response.Value;
 
     // Key props
-    EXPECT_TRUE(policy.Exportable.HasValue());
-    EXPECT_TRUE(policy.KeyType.HasValue());
-    EXPECT_TRUE(policy.ReuseKey.HasValue());
+    EXPECT_TRUE(policy.Exportable);
+    EXPECT_TRUE(policy.KeyType);
+    EXPECT_TRUE(policy.ReuseKey);
     // Recording uses RSA with no curve-name. Use RSA key when running LIVE
-    EXPECT_FALSE(policy.KeyCurveName.HasValue());
-    EXPECT_TRUE(policy.KeySize.HasValue());
+    EXPECT_FALSE(policy.KeyCurveName);
+    EXPECT_TRUE(policy.KeySize);
     // enabled
-    EXPECT_TRUE(policy.Enabled.HasValue());
+    EXPECT_TRUE(policy.Enabled);
     EXPECT_TRUE(policy.Enabled.Value());
     // validity
-    EXPECT_TRUE(policy.ValidityInMonths.HasValue());
+    EXPECT_TRUE(policy.ValidityInMonths);
     EXPECT_EQ(policy.ValidityInMonths.Value(), 12);
     // Secret props
-    EXPECT_TRUE(policy.ContentType.HasValue());
+    EXPECT_TRUE(policy.ContentType);
     EXPECT_EQ(policy.ContentType.Value(), CertificateContentType::Pkcs12);
     // x509_props
     EXPECT_TRUE(policy.Subject.size() > 0);
     EXPECT_EQ(policy.Subject, "CN=xyz");
     // issuer
-    EXPECT_TRUE(policy.IssuerName.HasValue());
+    EXPECT_TRUE(policy.IssuerName);
     EXPECT_EQ(policy.IssuerName.Value(), "Self");
     // attributes
-    EXPECT_TRUE(policy.CreatedOn.HasValue());
+    EXPECT_TRUE(policy.CreatedOn);
     // lifetime_actions
     EXPECT_TRUE(policy.LifetimeActions.size() > 0);
     EXPECT_NE(policy.LifetimeActions[0].Action.ToString(), "");
@@ -550,29 +550,29 @@ TEST_F(KeyVaultCertificateClientTest, UpdateCertificatePolicy)
     auto policy = response.Value;
 
     // Key props
-    EXPECT_TRUE(policy.Exportable.HasValue());
-    EXPECT_TRUE(policy.KeyType.HasValue());
-    EXPECT_TRUE(policy.ReuseKey.HasValue());
+    EXPECT_TRUE(policy.Exportable);
+    EXPECT_TRUE(policy.KeyType);
+    EXPECT_TRUE(policy.ReuseKey);
     // Recording uses RSA with no curve-name. Use RSA key when running LIVE
-    EXPECT_FALSE(policy.KeyCurveName.HasValue());
-    EXPECT_TRUE(policy.KeySize.HasValue());
+    EXPECT_FALSE(policy.KeyCurveName);
+    EXPECT_TRUE(policy.KeySize);
     // enabled
-    EXPECT_TRUE(policy.Enabled.HasValue());
+    EXPECT_TRUE(policy.Enabled);
     EXPECT_TRUE(policy.Enabled.Value());
     // validity
-    EXPECT_TRUE(policy.ValidityInMonths.HasValue());
+    EXPECT_TRUE(policy.ValidityInMonths);
     EXPECT_EQ(policy.ValidityInMonths.Value(), 12);
     // Secret props
-    EXPECT_TRUE(policy.ContentType.HasValue());
+    EXPECT_TRUE(policy.ContentType);
     EXPECT_EQ(policy.ContentType.Value(), CertificateContentType::Pkcs12);
     // x509_props
     EXPECT_TRUE(policy.Subject.size() > 0);
     EXPECT_EQ(policy.Subject, "CN=xyz");
     // issuer
-    EXPECT_TRUE(policy.IssuerName.HasValue());
+    EXPECT_TRUE(policy.IssuerName);
     EXPECT_EQ(policy.IssuerName.Value(), "Self");
     // attributes
-    EXPECT_TRUE(policy.CreatedOn.HasValue());
+    EXPECT_TRUE(policy.CreatedOn);
     // lifetime_actions
     EXPECT_TRUE(policy.LifetimeActions.size() > 0);
     EXPECT_NE(policy.LifetimeActions[0].Action.ToString(), "");
@@ -584,29 +584,29 @@ TEST_F(KeyVaultCertificateClientTest, UpdateCertificatePolicy)
     auto const& updatedPolicy = updateResponse.Value;
 
     // Key props
-    EXPECT_TRUE(updatedPolicy.Exportable.HasValue());
-    EXPECT_TRUE(updatedPolicy.KeyType.HasValue());
-    EXPECT_TRUE(updatedPolicy.ReuseKey.HasValue());
+    EXPECT_TRUE(updatedPolicy.Exportable);
+    EXPECT_TRUE(updatedPolicy.KeyType);
+    EXPECT_TRUE(updatedPolicy.ReuseKey);
     // Recording uses RSA with no curve-name. Use RSA key when running LIVE
-    EXPECT_FALSE(updatedPolicy.KeyCurveName.HasValue());
-    EXPECT_TRUE(updatedPolicy.KeySize.HasValue());
+    EXPECT_FALSE(updatedPolicy.KeyCurveName);
+    EXPECT_TRUE(updatedPolicy.KeySize);
     // enabled
-    EXPECT_TRUE(updatedPolicy.Enabled.HasValue());
+    EXPECT_TRUE(updatedPolicy.Enabled);
     EXPECT_TRUE(updatedPolicy.Enabled.Value());
     // validity
-    EXPECT_TRUE(updatedPolicy.ValidityInMonths.HasValue());
+    EXPECT_TRUE(updatedPolicy.ValidityInMonths);
     EXPECT_EQ(updatedPolicy.ValidityInMonths.Value(), 8);
     // Secret props
-    EXPECT_TRUE(updatedPolicy.ContentType.HasValue());
+    EXPECT_TRUE(updatedPolicy.ContentType);
     EXPECT_EQ(updatedPolicy.ContentType.Value(), CertificateContentType::Pkcs12);
     // x509_props
     EXPECT_TRUE(updatedPolicy.Subject.size() > 0);
     EXPECT_EQ(updatedPolicy.Subject, "CN=twa");
     // issuer
-    EXPECT_TRUE(updatedPolicy.IssuerName.HasValue());
+    EXPECT_TRUE(updatedPolicy.IssuerName);
     EXPECT_EQ(updatedPolicy.IssuerName.Value(), "Self");
     // attributes
-    EXPECT_TRUE(updatedPolicy.CreatedOn.HasValue());
+    EXPECT_TRUE(updatedPolicy.CreatedOn);
     // lifetime_actions
     EXPECT_TRUE(updatedPolicy.LifetimeActions.size() > 0);
     EXPECT_NE(updatedPolicy.LifetimeActions[0].Action.ToString(), "");
