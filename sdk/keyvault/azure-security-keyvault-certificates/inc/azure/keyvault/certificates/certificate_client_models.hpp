@@ -804,9 +804,26 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
    * @brief The options for calling GetCertificate.
    *
    */
-  struct GetCertificateOptions final
+  struct GetCertificateVersionOptions final
   {
+    /**
+     * @brief Certificate Version.
+     *
+     */
     std::string Version;
+  };
+
+  /**
+   * @brief The options for calling DownloadCertificate.
+   *
+   */
+  struct DownloadCertificateOptions final
+  {
+    /**
+     * @brief Certificate Version.
+     *
+     */
+    Azure::Nullable<std::string> Version;
   };
 
   /**
@@ -1251,6 +1268,25 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
   };
 
   /**
+   * @brief A certificate downloaded X509 data.
+   *
+   */
+  struct DownloadCertificateResult final
+  {
+    /**
+     * @brief Certificate data.
+     *
+     */
+    std::string Certificate;
+
+    /**
+     * @brief Content Type.
+     *
+     */
+    CertificateContentType ContentType;
+  };
+
+  /**
    * @brief Define a single page to list the certificates from the Key Vault.
    *
    */
@@ -1377,4 +1413,100 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
     std::vector<DeletedCertificate> Items;
   };
 
+  /**
+   * @brief Certificate associated secret.
+   *
+   */
+  struct KeyVaultSecret final
+  {
+    /**
+     * @brief Content Type.
+     *
+     */
+    Azure::Nullable<CertificateContentType> ContentType;
+    /**
+     * @brief Secret value.
+     *
+     */
+    std::string Value;
+  };
+
+  /**
+   * @brief Import Certificate options
+   *
+   */
+  struct ImportCertificateOptions final
+  {
+    /**
+     * @brief Base64 encoded representation of the certificate object to import. This certificate
+     * needs to contain the private key.
+     *
+     */
+    std::string Value;
+
+    /**
+     * @brief If the private key in base64EncodedCertificate is encrypted, the password used for
+     * encryption.
+     *
+     */
+    Azure::Nullable<std::string> Password;
+
+    /**
+     * @brief Management policy for the certificate.
+     *
+     */
+    CertificatePolicy Policy;
+
+    /**
+     * @brief Certificate Properties
+     *
+     */
+    CertificateProperties Properties;
+
+    /**
+     * @brief Dictionary of tags with specific metadata about the certificate.
+     *
+     */
+    std::unordered_map<std::string, std::string> Tags;
+  };
+
+  /**
+   * @brief The certificate merge parameters
+   *
+   */
+  struct MergeCertificateOptions final
+  { /**
+     * @brief The certificate or the certificate chain to merge.
+     *
+     */
+    std::vector<std::string> Certificates;
+    /**
+     * @brief The attributes of the certificate.
+     *
+     */
+    CertificateProperties Properties;
+    /**
+     * @brief Dictionary of tags with specific metadata about the certificate.
+     *
+     */
+    std::unordered_map<std::string, std::string> Tags;
+  };
+
+  /**
+   * @brief The certificate update parameters.
+   *
+   */
+  struct CertificateUpdateOptions final
+  {
+    /**
+     * @brief The attributes of the certificate.
+     *
+     */
+    CertificateProperties Properties;
+    /**
+     * @brief Dictionary of tags with specific metadata about the certificate.
+     *
+     */
+    std::unordered_map<std::string, std::string> Tags;
+  };
 }}}} // namespace Azure::Security::KeyVault::Certificates

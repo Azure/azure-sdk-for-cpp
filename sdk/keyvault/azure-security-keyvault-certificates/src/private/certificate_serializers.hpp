@@ -229,4 +229,32 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
           Azure::Core::Http::RawResponse const& rawResponse);
     };
 
+    class KeyVaultSecretSerializer final {
+      KeyVaultSecretSerializer() = delete;
+
+    public:
+      static KeyVaultSecret Deserialize(Azure::Core::Http::RawResponse const& rawResponse);
+    };
+
+    class ImportCertificateOptionsSerializer final {
+      ImportCertificateOptionsSerializer() = delete;
+
+    public:
+      static std::string Serialize(ImportCertificateOptions const& options);
+    };
+
+    class MergeCertificateOptionsSerializer final {
+      MergeCertificateOptionsSerializer() = delete;
+
+    public:
+      static std::string Serialize(MergeCertificateOptions const& options);
+    };
+
+    class CertificateUpdateOptionsSerializer final {
+      CertificateUpdateOptionsSerializer() = delete;
+
+    public:
+      static std::string Serialize(CertificateUpdateOptions const& options);
+    };
+
 }}}}} // namespace Azure::Security::KeyVault::Certificates::_detail

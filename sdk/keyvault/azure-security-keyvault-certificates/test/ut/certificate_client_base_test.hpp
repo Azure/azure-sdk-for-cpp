@@ -166,10 +166,10 @@ namespace Azure {
       EXPECT_EQ(data.Name, issuer.Name);
       EXPECT_EQ(data.Provider.Value(), issuer.Provider.Value());
       EXPECT_TRUE(data.Properties.Enabled.Value());
-      EXPECT_TRUE(data.Id.HasValue());
+      EXPECT_TRUE(data.Id);
 
       EXPECT_EQ(data.Credentials.AccountId.Value(), issuer.Credentials.AccountId.Value());
-      EXPECT_FALSE(data.Credentials.Password.HasValue());
+      EXPECT_FALSE(data.Credentials.Password);
 
       auto adminRemote = data.Organization.AdminDetails[0];
       auto adminLocal = issuer.Organization.AdminDetails[0];
@@ -220,16 +220,18 @@ namespace Azure {
     static inline KeyVaultCertificateWithPolicy CreateCertificate(
         std::string const& name,
         CertificateClient const& client,
-        std::chrono::milliseconds defaultWait)
+        std::chrono::milliseconds defaultWait,
+        std::string const& subject = "CN=xyz",
+        CertificateContentType certificateType = CertificateContentType::Pkcs12)
     {
       auto params = CertificateCreateParameters();
-      params.Policy.Subject = "CN=xyz";
+      params.Policy.Subject = subject;
       params.Policy.ValidityInMonths = 12;
       params.Policy.Enabled = true;
 
       params.Properties.Enabled = true;
       params.Properties.Name = name;
-      params.Policy.ContentType = CertificateContentType::Pkcs12;
+      params.Policy.ContentType = certificateType;
       params.Policy.IssuerName = "Self";
 
       LifetimeAction action;
