@@ -34,7 +34,7 @@ CertificateClient certificateClient(std::getenv("AZURE_KEYVAULT_URL"), credentia
 
 ## Creating a Certificate
 
-Call StartCreateCertificate to create a new certificate, with specified peoperties and policy.
+Call StartCreateCertificate to create a new certificate, with specified properties and policy.
 
 ```cpp Snippet:CertificateSample2Create
 std::string certificateName = "Sample1";
@@ -82,7 +82,7 @@ std::cout << "Found " << certificateVersions.Items.size()
 ```
 ## Deleting the certificates 
 
-Now we will delete the certificates. Since this is a long runnign operation we need to wait untill the operation finishes
+Now we will delete the certificates. Since this is a long running operation we need to wait for the operation to finish
 
 ```cpp Snippet:CertificateSample2Delete
 // delete the certificates

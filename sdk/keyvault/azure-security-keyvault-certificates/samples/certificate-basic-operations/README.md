@@ -33,7 +33,7 @@ CertificateClient certificateClient(std::getenv("AZURE_KEYVAULT_URL"), credentia
 
 ## Creating a Certificate
 
-Call StartCreateCertificate to create a new certificate, with specified peoperties and policy.
+Call StartCreateCertificate to create a new certificate, with specified properties and policy.
 
 ```cpp Snippet:CertificateSample1Create
 std::string certificateName = "Sample1";
