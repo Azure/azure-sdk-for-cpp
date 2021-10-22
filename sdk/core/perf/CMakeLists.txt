@@ -6,6 +6,11 @@ project(azure-perf LANGUAGES CXX)
 
 set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
+set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
+
+list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/../../../cmake-modules")
+
+include(AzureTransportAdapters)
 
 set(
   AZURE_PERFORMANCE_HEADER

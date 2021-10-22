@@ -7,10 +7,17 @@ project(azure-storage-blobs-perf LANGUAGES CXX)
 set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 
+if(BUILD_TRANSPORT_CURL)
+  set(DOWNLOAD_WITH_LIBCURL inc/azure/storage/blobs/test/download_blob_transport_only.hpp)
+endif()
+
 set(
   AZURE_STORAGE_BLOBS_PERF_TEST_HEADER
   inc/azure/storage/blobs/test/blob_base_test.hpp
+  inc/azure/storage/blobs/test/download_blob_from_sas.hpp
+  inc/azure/storage/blobs/test/download_blob_pipeline_only.hpp
   inc/azure/storage/blobs/test/download_blob_test.hpp
+  ${DOWNLOAD_WITH_LIBCURL}
   inc/azure/storage/blobs/test/list_blob_test.hpp
   inc/azure/storage/blobs/test/upload_blob_test.hpp
 )
