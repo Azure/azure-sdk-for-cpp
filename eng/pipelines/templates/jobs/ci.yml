@@ -38,7 +38,7 @@ jobs:
   - job:
     displayName: "Validate"
     dependsOn: ${{ parameters.DependsOn }}
-    condition: and(succeededOrFailed(), ne(variables['Skip.Test'], 'true'))
+    condition: and(succeededOrFailed(), ne(variables['Skip.Test'], 'true'), ne(${{ parameters.Matrix }}, '{}'))
     strategy:
       matrix: $[ ${{ parameters.Matrix }} ]
       maxParallel: 12
@@ -119,7 +119,7 @@ jobs:
             dotnet tool install dotnet-reportgenerator-globaltool --tool-path $toolsDirectory
             Write-Host "##vso[task.setvariable variable=ToolsDirectory]$toolsDirectory"
           displayName: Install coverage tools
-          condition: and(succeeded(), eq(variables['ToolsDirectory'], ''))
+          condition: and(succeeded(), eq(variables['CODE_COVERAGE'], 'enabled'))
 
         # Make coverage targets (specified in coverage_targets.txt) and assemble
         # coverage report
@@ -128,11 +128,11 @@ jobs:
             $(ToolsDirectory)/reportgenerator "-reports:${{ parameters.CoverageReportPath }}" "-targetdir:." "-reporttypes:Cobertura"
           workingDirectory: build
           displayName: Generate Code Coverage Data
-          condition: and(succeededOrFailed(), ne(variables['CODE_COVERAGE'], ''))
+          condition: and(succeededOrFailed(), eq(variables['CODE_COVERAGE'], 'enabled'))
 
         - task: PublishCodeCoverageResults@1
           inputs:
             codeCoverageTool: Cobertura
             summaryFileLocation: '$(Build.SourcesDirectory)/**/Cobertura.xml'
           displayName: Publish Code Coverage to DevOps
-          condition: and(succeededOrFailed(), ne(variables['CODE_COVERAGE'], ''))
+          condition: and(succeededOrFailed(), eq(variables['CODE_COVERAGE'], 'enabled'))
