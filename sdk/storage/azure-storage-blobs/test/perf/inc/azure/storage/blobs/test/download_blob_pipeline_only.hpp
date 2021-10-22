@@ -79,7 +79,7 @@ namespace Azure { namespace Storage { namespace Blobs { namespace Test {
     void Run(Azure::Core::Context const& context) override
     {
       // Transport policy resolved the buffer option. If buffer is ON on the request, the response
-      // will contain the payload directly. When it is OFF, the response will contain the strem to
+      // will contain the payload directly. When it is OFF, the response will contain the stream to
       // the network.
       auto response = m_pipeline->Send(*m_request, context);
     }

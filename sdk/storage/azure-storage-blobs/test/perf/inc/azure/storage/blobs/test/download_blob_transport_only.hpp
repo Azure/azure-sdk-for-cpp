@@ -78,7 +78,7 @@ namespace Azure { namespace Storage { namespace Blobs { namespace Test {
 
       if (m_bufferResponse)
       {
-        // if test request the response stream to be read completelly.
+        // if test request the response stream to be read completely.
         *m_downloadBuffer = response->ExtractBodyStream()->ReadToEnd();
       }
     }
