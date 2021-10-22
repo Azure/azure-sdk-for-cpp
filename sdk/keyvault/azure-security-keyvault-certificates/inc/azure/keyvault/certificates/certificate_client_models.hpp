@@ -1521,4 +1521,17 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
      */
     std::unordered_map<std::string, std::string> Tags;
   };
+
+  /**
+   * @brief The certificate contacts API result.
+   *
+   */
+  struct CertificateContactsResult
+  {
+    /**
+     * @brief The certificate contacts list.
+     *
+     */
+    std::vector<CertificateContact> Contacts;
+  };
 }}}} // namespace Azure::Security::KeyVault::Certificates

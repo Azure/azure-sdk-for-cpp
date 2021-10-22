@@ -193,7 +193,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
      * @param context The context for the operation can be used for request cancellation.
      * @return The contacts list for the key vault certificate.
      */
-    Azure::Response<std::vector<CertificateContact>> GetContacts(
+    Azure::Response<CertificateContactsResult> GetContacts(
         Azure::Core::Context const& context = Azure::Core::Context()) const;
 
     /**
@@ -206,7 +206,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
      * @param context The context for the operation can be used for request cancellation.
      * @return The contacts for the key vault certificate.
      */
-    Azure::Response<std::vector<CertificateContact>> DeleteContacts(
+    Azure::Response<CertificateContactsResult> DeleteContacts(
         Azure::Core::Context const& context = Azure::Core::Context()) const;
 
     /**
@@ -220,7 +220,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
      * @param context The context for the operation can be used for request cancellation.
      * @return The contacts for the key vault certificate.
      */
-    Azure::Response<std::vector<CertificateContact>> SetContacts(
+    Azure::Response<CertificateContactsResult> SetContacts(
         std::vector<CertificateContact> const& contacts,
         Azure::Core::Context const& context = Azure::Core::Context()) const;
 

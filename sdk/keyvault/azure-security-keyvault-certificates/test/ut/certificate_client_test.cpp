@@ -380,11 +380,11 @@ TEST_F(KeyVaultCertificateClientTest, SetContacts)
 
   auto response = client.SetContacts(contacts);
 
-  CheckContactsCollections(contacts, response.Value);
+  CheckContactsCollections(contacts, response.Value.Contacts);
 
   auto response2 = client.DeleteContacts();
 
-  CheckContactsCollections(contacts, response2.Value);
+  CheckContactsCollections(contacts, response2.Value.Contacts);
 }
 
 TEST_F(KeyVaultCertificateClientTest, GetContacts)
@@ -411,11 +411,11 @@ TEST_F(KeyVaultCertificateClientTest, GetContacts)
   client.SetContacts(contacts);
   auto response = client.GetContacts();
 
-  CheckContactsCollections(contacts, response.Value);
+  CheckContactsCollections(contacts, response.Value.Contacts);
 
   auto response2 = client.DeleteContacts();
 
-  CheckContactsCollections(contacts, response2.Value);
+  CheckContactsCollections(contacts, response2.Value.Contacts);
 }
 
 TEST_F(KeyVaultCertificateClientTest, GetContactsPartial)
@@ -444,11 +444,11 @@ TEST_F(KeyVaultCertificateClientTest, GetContactsPartial)
   client.SetContacts(contacts);
   auto response = client.GetContacts();
 
-  CheckContactsCollections(contacts, response.Value);
+  CheckContactsCollections(contacts, response.Value.Contacts);
 
   auto response2 = client.DeleteContacts();
 
-  CheckContactsCollections(contacts, response2.Value);
+  CheckContactsCollections(contacts, response2.Value.Contacts);
 }
 
 TEST_F(KeyVaultCertificateClientTest, GetContactsDuplicateEmail)
@@ -477,11 +477,11 @@ TEST_F(KeyVaultCertificateClientTest, GetContactsDuplicateEmail)
   client.SetContacts(contacts);
   auto response = client.GetContacts();
 
-  CheckContactsCollections(contacts, response.Value);
+  CheckContactsCollections(contacts, response.Value.Contacts);
 
   auto response2 = client.DeleteContacts();
 
-  CheckContactsCollections(contacts, response2.Value);
+  CheckContactsCollections(contacts, response2.Value.Contacts);
 }
 
 TEST_F(KeyVaultCertificateClientTest, GetCertificatePolicy)

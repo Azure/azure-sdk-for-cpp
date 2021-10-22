@@ -208,7 +208,7 @@ Azure::Response<CertificateIssuer> CertificateClient::UpdateIssuer(
   return Azure::Response<CertificateIssuer>(std::move(value), std::move(rawResponse));
 }
 
-Response<std::vector<CertificateContact>> CertificateClient::GetContacts(
+Response<CertificateContactsResult> CertificateClient::GetContacts(
     Azure::Core::Context const& context) const
 {
   auto request = CreateRequest(HttpMethod::Get, {CertificatesPath, ContactsPath});
@@ -216,10 +216,10 @@ Response<std::vector<CertificateContact>> CertificateClient::GetContacts(
   // Send and parse respone
   auto rawResponse = SendRequest(request, context);
   auto value = CertificateContactsSerializer::Deserialize(*rawResponse);
-  return Azure::Response<std::vector<CertificateContact>>(std::move(value), std::move(rawResponse));
+  return Azure::Response<CertificateContactsResult>(std::move(value), std::move(rawResponse));
 }
 
-Response<std::vector<CertificateContact>> CertificateClient::DeleteContacts(
+Response<CertificateContactsResult> CertificateClient::DeleteContacts(
     Azure::Core::Context const& context) const
 {
   auto request = CreateRequest(HttpMethod::Delete, {CertificatesPath, ContactsPath});
@@ -227,10 +227,10 @@ Response<std::vector<CertificateContact>> CertificateClient::DeleteContacts(
   // Send and parse respone
   auto rawResponse = SendRequest(request, context);
   auto value = CertificateContactsSerializer::Deserialize(*rawResponse);
-  return Azure::Response<std::vector<CertificateContact>>(std::move(value), std::move(rawResponse));
+  return Azure::Response<CertificateContactsResult>(std::move(value), std::move(rawResponse));
 }
 
-Response<std::vector<CertificateContact>> CertificateClient::SetContacts(
+Response<CertificateContactsResult> CertificateClient::SetContacts(
     std::vector<CertificateContact> const& contacts,
     Azure::Core::Context const& context) const
 {
@@ -242,7 +242,7 @@ Response<std::vector<CertificateContact>> CertificateClient::SetContacts(
 
   auto rawResponse = SendRequest(request, context);
   auto value = CertificateContactsSerializer::Deserialize(*rawResponse);
-  return Azure::Response<std::vector<CertificateContact>>(std::move(value), std::move(rawResponse));
+  return Azure::Response<CertificateContactsResult>(std::move(value), std::move(rawResponse));
 }
 
 Azure::Response<CertificateOperationProperties> CertificateClient::GetPendingCertificateOperation(
