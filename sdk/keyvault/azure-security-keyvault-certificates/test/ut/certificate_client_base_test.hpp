@@ -293,7 +293,7 @@ namespace Azure {
     {
       {
         KeyVaultCertificateWithPolicy certificate;
-        auto response = client.GetCertificate(name, context);
+        auto response = client.GetCertificate(name, GetCertificateOptions(), context);
         certificate = response.Value;
 
         Azure::Core::Url url(certificate.SecretId);
