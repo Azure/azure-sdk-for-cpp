@@ -90,9 +90,9 @@
             }
         },
         {
-            "OSVmImage": "MMSUbuntu18.04",
             "StaticConfigs": {
-                "_": {
+                "Ubuntu18": {
+                    "OSVmImage": "MMSUbuntu18.04",
                     "Pool": "azsdk-pool-mms-ubuntu-1804-general",
                     "VcpkgInstall": "curl[ssl] libxml2 openssl",
                     "VCPKG_DEFAULT_TRIPLET": "x64-linux",
@@ -128,9 +128,9 @@
             }
         },
         {
-            "OSVmImage": "MMSUbuntu20.04",
             "StaticConfigs": {
-                "_": {
+                "Ubuntu20": {
+                    "OSVmImage": "MMSUbuntu20.04",
                     "Pool": "azsdk-pool-mms-ubuntu-2004-general",
                     "VcpkgInstall": "curl[ssl] libxml2 openssl",
                     "VCPKG_DEFAULT_TRIPLET": "x64-linux",
