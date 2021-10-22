@@ -8,10 +8,10 @@
  */
 #include <gtest/gtest.h>
 
+#include "../src/private/certificate_serializers.hpp"
 #include <azure/core/test/test_base.hpp>
 #include <azure/identity/client_secret_credential.hpp>
 #include <azure/keyvault/keyvault_certificates.hpp>
-
 #include <thread>
 
 using namespace std::chrono_literals;
@@ -21,9 +21,28 @@ namespace Azure {
     namespace KeyVault {
       namespace Certificates {
         namespace Test {
+
   /**
-   * @brief Client Certificate Credential authenticates with the Azure services using a Tenant ID,
-   * Client ID and a client secret.
+   * @brief A certificate downloaded X509 data.
+   *
+   */
+  struct DownloadCertificateResult final
+  {
+    /**
+     * @brief Certificate data.
+     *
+     */
+    std::string Certificate;
+
+    /**
+     * @brief Content Type.
+     *
+     */
+    CertificateContentType ContentType;
+  };
+  /**
+   * @brief Client Certificate Credential authenticates with the Azure services using a
+   * Tenant ID, Client ID and a client secret.
    *
    */
   class TestClientSecretCredential final : public Core::Credentials::TokenCredential {
@@ -134,9 +153,9 @@ namespace Azure {
         m_defaultWait = 10s;
       }
 
-      // When running live tests, service can return 429 error response if the client is sending
-      // multiple requests per second. This can happen if the network is fast and tests are running
-      // without any delay between them.
+      // When running live tests, service can return 429 error response if the client is
+      // sending multiple requests per second. This can happen if the network is fast and
+      // tests are running without any delay between them.
       auto avoidTestThrottled = GetEnv("AZURE_KEYVAULT_AVOID_THROTTLED", "0");
 
       if (avoidTestThrottled != "0")
@@ -266,6 +285,28 @@ namespace Azure {
 
       return cert.Value;
     }
-  };
 
+    Azure::Response<DownloadCertificateResult> DownloadCertificate(
+        std::string const& name,
+        CertificateClient const& client,
+        Azure::Core::Context const& context = Azure::Core::Context()) const
+    {
+      {
+        KeyVaultCertificateWithPolicy certificate;
+        auto response = client.GetCertificate(name, context);
+        certificate = response.Value;
+
+        Azure::Core::Url url(certificate.SecretId);
+        auto secretRequest
+            = client.CreateRequest(Azure::Core::Http::HttpMethod::Get, {url.GetPath()});
+
+        auto secretResponse = client.SendRequest(secretRequest, context);
+        auto secret = _detail::KeyVaultSecretSerializer::Deserialize(*secretResponse);
+
+        DownloadCertificateResult result{secret.Value, secret.ContentType.Value()};
+        return Azure::Response<DownloadCertificateResult>(
+            std::move(result), std::move(secretResponse));
+      }
+    }
+  };
 }}}}} // namespace Azure::Security::KeyVault::Certificates::Test

@@ -441,34 +441,6 @@ DeletedCertificatesPagedResponse CertificateClient::GetDeletedCertificates(
       std::move(value), std::move(rawResponse), std::make_unique<CertificateClient>(*this));
 }
 
-Azure::Response<DownloadCertificateResult> CertificateClient::DownloadCertificate(
-    std::string const& name,
-    DownloadCertificateOptions const& options,
-    Azure::Core::Context const& context) const
-{
-  KeyVaultCertificateWithPolicy certificate;
-  if (options.Version)
-  {
-    GetCertificateVersionOptions getVersionOptions{options.Version.Value()};
-    auto response = GetCertificateVersion(name, getVersionOptions, context);
-    certificate = response.Value;
-  }
-  else
-  {
-    auto response = GetCertificate(name, context);
-    certificate = response.Value;
-  }
-
-  Azure::Core::Url url(certificate.SecretId);
-  auto secretRequest = CreateRequest(HttpMethod::Get, {url.GetPath()});
-
-  auto secretResponse = SendRequest(secretRequest, context);
-  auto secret = KeyVaultSecretSerializer::Deserialize(*secretResponse);
-
-  DownloadCertificateResult result{secret.Value, secret.ContentType.Value()};
-  return Azure::Response<DownloadCertificateResult>(std::move(result), std::move(secretResponse));
-}
-
 Azure::Response<KeyVaultCertificateWithPolicy> CertificateClient::ImportCertificate(
     std::string const& name,
     ImportCertificateOptions const& options,

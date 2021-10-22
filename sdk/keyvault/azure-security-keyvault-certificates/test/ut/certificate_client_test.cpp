@@ -862,7 +862,7 @@ TEST_F(KeyVaultCertificateClientTest, DownloadImportPkcs)
       = CreateCertificate(pkcs, client, m_defaultWait, "CN=xyz", CertificateContentType::Pkcs12);
 
   {
-    auto result = client.DownloadCertificate(pkcs);
+    auto result = DownloadCertificate(pkcs, client);
     auto params = ImportCertificateOptions();
     params.Value = result.Value.Certificate;
 
@@ -911,7 +911,7 @@ TEST_F(KeyVaultCertificateClientTest, DownloadImportPem)
       = CreateCertificate(pem, client, m_defaultWait, "CN=xyz", CertificateContentType::Pem);
 
   {
-    auto result = client.DownloadCertificate(pem);
+    auto result = DownloadCertificate(pem, client);
     auto params = ImportCertificateOptions();
     params.Value = result.Value.Certificate;
 
@@ -991,7 +991,7 @@ TEST_F(KeyVaultCertificateClientTest, DISABLED_MergeCertificate)
 
   {
     auto certificate = CreateCertificate(pkcsToMerge, client, 1s, "CN=bbb");
-    auto result = client.DownloadCertificate(pkcsToMerge);
+    auto result = DownloadCertificate(pkcsToMerge, client);
     // mergeParams.Certificates.emplace_back(Azure::Core::Convert::Base64Encode(certificate.Cer));
   }
   {

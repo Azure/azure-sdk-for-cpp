@@ -22,6 +22,9 @@
 
 namespace Azure { namespace Security { namespace KeyVault { namespace Certificates {
 
+  namespace Test {
+    class KeyVaultCertificateClientTest;
+  };
   /**
    * @brief The CertificateClient provides synchronous methods to manage KeyVaultCertificate in
    * Azure Key Vault.
@@ -34,8 +37,9 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
 #endif
   {
     friend class CreateCertificateOperation;
+    friend class Test::KeyVaultCertificateClientTest;
 
-  protected:
+  private:
     // Using a shared pipeline for a client to share it with LRO (like delete key)
     Azure::Core::Url m_vaultUrl;
     std::string m_apiVersion;
@@ -421,22 +425,6 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
      */
     DeletedCertificatesPagedResponse GetDeletedCertificates(
         GetDeletedCertificatesOptions const& options = GetDeletedCertificatesOptions(),
-        Azure::Core::Context const& context = Azure::Core::Context()) const;
-
-    /**
-     * @brief Downloads a copy of a certificate.
-     *
-     * @details The Download Certificate operation attempts to download the managed secret which
-     * contains the full certificate
-     *
-     * @param name The name of the certificate.
-     * @param options The options for the request.
-     * @param context The context for the operation can be used for request cancellation.
-     * @return Downloaded certificate.
-     */
-    Azure::Response<DownloadCertificateResult> DownloadCertificate(
-        std::string const& name,
-        DownloadCertificateOptions const& options = DownloadCertificateOptions(),
         Azure::Core::Context const& context = Azure::Core::Context()) const;
 
     /**

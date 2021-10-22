@@ -858,19 +858,6 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
   };
 
   /**
-   * @brief The options for calling DownloadCertificate.
-   *
-   */
-  struct DownloadCertificateOptions final
-  {
-    /**
-     * @brief Certificate Version.
-     *
-     */
-    Azure::Nullable<std::string> Version;
-  };
-
-  /**
    * @brief Parameters for StartCreateCertificate.
    *
    */
@@ -1309,25 +1296,6 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
      *
      */
     std::string Provider;
-  };
-
-  /**
-   * @brief A certificate downloaded X509 data.
-   *
-   */
-  struct DownloadCertificateResult final
-  {
-    /**
-     * @brief Certificate data.
-     *
-     */
-    std::string Certificate;
-
-    /**
-     * @brief Content Type.
-     *
-     */
-    CertificateContentType ContentType;
   };
 
   /**
