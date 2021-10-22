@@ -818,8 +818,8 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
    * @brief A KeyVaultCertificate along with its CertificatePolicy.
    *
    */
-  struct KeyVaultCertificateWithPolicy : public KeyVaultCertificate
-  {
+  class KeyVaultCertificateWithPolicy : public KeyVaultCertificate {
+  public:
     /**
      * @brief Gets the current policy for the certificate.
      *
@@ -861,8 +861,8 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
    * @brief Parameters for StartCreateCertificate.
    *
    */
-  struct CertificateCreateParameters final
-  {
+  class CertificateCreateParameters final {
+  public:
     /**
      * @brief Certificate policy.
      *
@@ -1068,8 +1068,8 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
    * @brief Key vault server error
    *
    */
-  struct ServerError final
-  {
+  class ServerError final {
+  public:
     ~ServerError() = default;
     /**
      * @brief Error Code
@@ -1094,8 +1094,8 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
    * @brief A certificate operation.
    *
    */
-  struct CertificateOperationProperties final
-  {
+  class CertificateOperationProperties final {
+  public:
     /**
      * @brief The certificate id.
      *
@@ -1180,8 +1180,8 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
     ~CertificateOperationProperties() = default;
   };
 
-  struct DeletedCertificate final : public KeyVaultCertificateWithPolicy
-  {
+  class DeletedCertificate final : public KeyVaultCertificateWithPolicy {
+  public:
     /**
      * @brief Gets the identifier of the deleted certificate.
      *
