@@ -1,9 +1,6 @@
 {
     "displayNames": {
-        "_": "",
-        "MMS2019": "Windows2019",
-        "MMSUbuntu18.04": "Ubuntu18",
-        "MMSUbuntu20.04": "Ubuntu20"
+        "_": ""
     },
     "include": [
         {
