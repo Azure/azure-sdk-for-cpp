@@ -22,6 +22,7 @@ void BlobsGettingStarted()
   containerClient.CreateIfNotExists();
 
   BlockBlobClient blobClient = containerClient.GetBlockBlobClient(blobName);
+  
 
   std::vector<uint8_t> buffer(blobContent.begin(), blobContent.end());
   blobClient.UploadFrom(buffer.data(), buffer.size());

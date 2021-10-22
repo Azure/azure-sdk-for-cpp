@@ -29,6 +29,7 @@ namespace Azure { namespace Storage { namespace Blobs { namespace Test {
     std::string m_containerName;
     std::string m_blobName;
     std::string m_connectionString;
+    std::unique_ptr<Azure::Storage::Blobs::BlobServiceClient> m_serviceClient;
     std::unique_ptr<Azure::Storage::Blobs::BlobContainerClient> m_containerClient;
     std::unique_ptr<Azure::Storage::Blobs::BlockBlobClient> m_blobClient;
 
@@ -48,9 +49,10 @@ namespace Azure { namespace Storage { namespace Blobs { namespace Test {
       m_blobName = "blob" + Azure::Core::Uuid::CreateUuid().ToString();
 
       // Create client, container and blobClient
+      m_serviceClient = std::make_unique<Azure::Storage::Blobs::BlobServiceClient>(
+          Azure::Storage::Blobs::BlobServiceClient::CreateFromConnectionString(m_connectionString));
       m_containerClient = std::make_unique<Azure::Storage::Blobs::BlobContainerClient>(
-          Azure::Storage::Blobs::BlobContainerClient::CreateFromConnectionString(
-              m_connectionString, m_containerName));
+          m_serviceClient->GetBlobContainerClient(m_containerName));
       m_containerClient->CreateIfNotExists();
       m_blobClient = std::make_unique<Azure::Storage::Blobs::BlockBlobClient>(
           m_containerClient->GetBlockBlobClient(m_blobName));
