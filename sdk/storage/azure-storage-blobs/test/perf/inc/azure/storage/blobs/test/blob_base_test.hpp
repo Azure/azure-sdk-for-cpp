@@ -25,6 +25,9 @@ namespace Azure { namespace Storage { namespace Blobs { namespace Test {
    *
    */
   class BlobsTest : public Azure::Perf::PerfTest {
+  private:
+    std::shared_ptr<Azure::Storage::StorageSharedKeyCredential> m_keyCredential;
+
   protected:
     std::string m_containerName;
     std::string m_blobName;
@@ -32,6 +35,24 @@ namespace Azure { namespace Storage { namespace Blobs { namespace Test {
     std::unique_ptr<Azure::Storage::Blobs::BlobServiceClient> m_serviceClient;
     std::unique_ptr<Azure::Storage::Blobs::BlobContainerClient> m_containerClient;
     std::unique_ptr<Azure::Storage::Blobs::BlockBlobClient> m_blobClient;
+
+    std::string GetSasToken()
+    {
+      // Generate SaS Token
+      auto sasStartsOn = std::chrono::system_clock::now() - std::chrono::minutes(5);
+      auto sasExpiresOn = std::chrono::system_clock::now() + std::chrono::minutes(60);
+
+      Sas::BlobSasBuilder blobSasBuilder;
+      blobSasBuilder.Protocol = Sas::SasProtocol::HttpsAndHttp;
+      blobSasBuilder.StartsOn = sasStartsOn;
+      blobSasBuilder.ExpiresOn = sasExpiresOn;
+      blobSasBuilder.BlobContainerName = m_containerName;
+      blobSasBuilder.BlobName = m_blobName;
+      blobSasBuilder.Resource = Sas::BlobSasResource::Blob;
+      blobSasBuilder.SetPermissions(Sas::BlobSasPermissions::All);
+
+      return blobSasBuilder.GenerateSasToken(*m_keyCredential);
+    }
 
   public:
     /**
@@ -56,6 +77,8 @@ namespace Azure { namespace Storage { namespace Blobs { namespace Test {
       m_containerClient->CreateIfNotExists();
       m_blobClient = std::make_unique<Azure::Storage::Blobs::BlockBlobClient>(
           m_containerClient->GetBlockBlobClient(m_blobName));
+
+      m_keyCredential = _internal::ParseConnectionString(m_connectionString).KeyCredential;
     }
 
     void Cleanup() override { m_containerClient->DeleteIfExists(); }

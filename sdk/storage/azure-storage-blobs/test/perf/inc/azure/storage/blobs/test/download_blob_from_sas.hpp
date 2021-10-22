@@ -55,26 +55,8 @@ namespace Azure { namespace Storage { namespace Blobs { namespace Test {
       auto content = Azure::Core::IO::MemoryBodyStream(*rawData);
       m_blobClient->Upload(content);
 
-      // Generate SaS Token
-      auto sasStartsOn = std::chrono::system_clock::now() - std::chrono::minutes(5);
-      auto sasExpiresOn = std::chrono::system_clock::now() + std::chrono::minutes(60);
-
-      auto keyCredential = _internal::ParseConnectionString(m_connectionString).KeyCredential;
-
-      Sas::BlobSasBuilder blobSasBuilder;
-      blobSasBuilder.Protocol = Sas::SasProtocol::HttpsAndHttp;
-      blobSasBuilder.StartsOn = sasStartsOn;
-      blobSasBuilder.ExpiresOn = sasExpiresOn;
-      blobSasBuilder.BlobContainerName = m_containerName;
-      blobSasBuilder.BlobName = m_blobName;
-      blobSasBuilder.Resource = Sas::BlobSasResource::Blob;
-      blobSasBuilder.SetPermissions(Sas::BlobSasPermissions::All);
-
-      auto sasToken = blobSasBuilder.GenerateSasToken(*keyCredential);
-      auto blobUrl = m_blobClient->GetUrl();
-
-      m_blobClientSas
-          = std::make_unique<Azure::Storage::Blobs::BlockBlobClient>(blobUrl + sasToken);
+      m_blobClientSas = std::make_unique<Azure::Storage::Blobs::BlockBlobClient>(
+          m_blobClient->GetUrl() + GetSasToken());
     }
 
     /**
