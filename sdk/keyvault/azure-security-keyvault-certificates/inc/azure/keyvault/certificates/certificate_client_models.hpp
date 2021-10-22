@@ -232,6 +232,13 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
     }
 
     /**
+     * @brief Enables using the not equal operator for JWT.
+     *
+     * @param other A JWT to be compared.
+     */
+    bool operator!=(const CertificateKeyType& other) const noexcept { return !operator==(other); }
+
+    /**
      * @brief Return the JSON Web Token (JWT) as a string.
      *
      * @return The JWT represented as string.
@@ -301,6 +308,16 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
     bool operator==(const CertificateKeyCurveName& other) const noexcept
     {
       return m_value == other.m_value;
+    }
+
+    /**
+     * @brief Enables using the not equal operator for JWT.
+     *
+     * @param other A JWT to be compared.
+     */
+    bool operator!=(const CertificateKeyCurveName& other) const noexcept
+    {
+      return !operator==(other);
     }
 
     /**
@@ -416,6 +433,16 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
     }
 
     /**
+     * @brief Enables using the not equal operator for JWT.
+     *
+     * @param other A JWT to be compared.
+     */
+    bool operator!=(const CertificateContentType& other) const noexcept
+    {
+      return !operator==(other);
+    }
+
+    /**
      * @brief Get the string value of the key curve.
      *
      */
@@ -480,6 +507,13 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
     {
       return m_value == other.m_value;
     }
+
+    /**
+     * @brief Enables using the not equal operator for JWT.
+     *
+     * @param other A JWT to be compared.
+     */
+    bool operator!=(const CertificateKeyUsage& other) const noexcept { return !operator==(other); }
 
     /**
      * @brief Get the string value of the key curve.
@@ -588,6 +622,16 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
     bool operator==(const CertificatePolicyAction& other) const noexcept
     {
       return m_value == other.m_value;
+    }
+
+    /**
+     * @brief Enables using the not equal operator for JWT.
+     *
+     * @param other A JWT to be compared.
+     */
+    bool operator!=(const CertificatePolicyAction& other) const noexcept
+    {
+      return !operator==(other);
     }
 
     /**
