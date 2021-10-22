@@ -1,17 +1,25 @@
-# Creating, getting, updating, and deleting secrets
+# Creating, get properties, get versions, delete, get deleted and purge certificates
 
-This sample demonstrates how to create, get, update, and delete and purge a secret in Azure Key Vault.
+This sample demonstrates how to:
+* create
+* get properties of certificates
+* get properties of certificate versions
+* delete
+* get deleted certificates
+* purge
+
+certificates in Azure Key Vault.
 To get started, you'll need a URI to an Azure Key Vault.
 
-## Creating a SecretClient
+### Creating a CertificateClient
 
-To create a new `SecretClient` to create, get, update, or delete secrets, you need the endpoint to an Azure Key Vault and credentials.
+To create a new `CertificateClient` to create, get, update, or delete certificates, you need the endpoint to an Azure Key Vault and credentials.
 
-Key Vault Secrets client for C++ currently supports the `ClientSecretCredential` for authenticating.
+Key Vault Certificate client for C++ currently supports the `ClientSecretCredential` for authenticating.
 
 In the sample below, you can create a credential by setting the Tenant ID, Client ID and Client Secret as environment variables.
 
-```cpp Snippet:SecretSample1CreateCredential
+```cpp Snippet:CertificateSample2CreateCredential
   auto tenantId = std::getenv("AZURE_TENANT_ID");
   auto clientId = std::getenv("AZURE_CLIENT_ID");
   auto clientSecret = std::getenv("AZURE_CLIENT_SECRET");
@@ -20,66 +28,91 @@ In the sample below, you can create a credential by setting the Tenant ID, Clien
 
 Then, in the sample below, you can set `keyVaultUrl` based on an environment variable, configuration setting, or any way that works for your application.
 
-```cpp Snippet:SecretSample1SecretClient
-SecretClient secretClient(std::getenv("AZURE_KEYVAULT_URL"), credential);
+```cpp Snippet:CertificateSample2Client
+CertificateClient certificateClient(std::getenv("AZURE_KEYVAULT_URL"), credential);
 ```
 
-## Creating a Secret
+## Creating a Certificate
 
-Call SetSecret to create a new secret with name and secret value.
+Call StartCreateCertificate to create a new certificate, with specified peoperties and policy.
 
-```cpp Snippet:SecretSample1SetSecret
-std::string secretName("MySampleSecret");
-std::string secretValue("my secret value");
+```cpp Snippet:CertificateSample2Create
+std::string certificateName = "Sample1";
+auto params = CertificateCreateParameters();
+... 
+// start the create process
+auto response = certificateClient.StartCreateCertificate(certificateName, params);
+auto result = response.PollUntilDone(defaultWait);
 
-secretClient.SetSecret(secretName, secretValue);
+// check that the operation completed
+while (!response.IsCompleted())
+{
+  response.UpdateProperties();
+  std::this_thread::sleep_for(defaultWait);
+}
 ```
 
-## Getting a Secret
+## Getting properties of Certificates
 
-Call GetSecret to retrieve a secret from Key Vault.
+Call GetPropertiesOfCertificates to retrieve information about certificates from Key Vault.
 
-```cpp Snippet:SecretSample1GetSecret
-// get secret
-Secret secret = secretClient.GetSecret(secretName).Value;
-std::cout << "Secret is returned with name " << secret.Name << " and value " << secret.Value
-          << std::endl;
+```cpp Snippet:CertificateSample2GetProperties
+ // get certificate properties
+auto certificates
+    = certificateClient.GetPropertiesOfCertificates(GetPropertiesOfCertificatesOptions());
+
+std::cout << "Found " << certificates.Items.size() << " certificates.";
 ```
 
-## Updating secret properties
+## Creating a new certificate version 
 
-Call UpdateSecretProperties to change on of the secret properties.
+Repeat the create certificate procedure, for an existing certificate it will create a new version of it.
 
+## Getting the versions of a certificate 
 
-```cpp Snippet:SecretSample1UpdateSecretProperties
-// change one of the properties
-secret.Properties.ContentType = "my content";
-// update the secret
-Secret updatedSecret = secretClient.UpdateSecretProperties(secret.Name, secret.Properties.Version, secret.Properties)
-          .Value;
-std::cout << "Secret's content type is now " << updatedSecret.Properties.ContentType.Value()
-          << std::endl;
+To get information about certificate versions call GetPropertiesOfCertificateVersions.
+
+```cpp Snippet:CertificateSample2GetProperties
+// get properties of all the versions of a certificate
+auto certificateVersions
+    = certificateClient.GetPropertiesOfCertificateVersions(certificateName1);
+
+std::cout << "Found " << certificateVersions.Items.size()
+          << " certificate versions for certificate " << certificateName1;
+```
+## Deleting the certificates 
+
+Now we will delete the certificates. Since this is a long runnign operation we need to wait untill the operation finishes
+
+```cpp Snippet:CertificateSample2Delete
+// delete the certificates
+auto response1 = certificateClient.StartDeleteCertificate(certificateName1);
+auto response2 = certificateClient.StartDeleteCertificate(certificateName2);
+response1.PollUntilDone(defaultWait);
+response2.PollUntilDone(defaultWait);
 ```
 
-## Deleting a secret
+## Getting the deleted certificates 
 
-Call StartDeleteSecret to delete a secret. This is a long running operation.
+After the certificates are deleted , but not yet purged we can call GetDeletedCertificates
 
-```cpp Snippet:SecretSample1DeleteSecret
-// start deleting the secret
-DeleteSecretOperation operation = secretClient.StartDeleteSecret(secret.Name);
+```cpp Snippet:CertificatesSample2GetDeleted
+ // get properties of deleted certificates
+auto deletedCertificates = certificateClient.GetDeletedCertificates();
+
+std::cout << "Found " << deletedCertificates.Items.size() << " deleted certificates.";
 ```
 
-## Purging a deleted secret
+## Purging the deleted certificates
 
-If the Azure Key Vault is soft delete-enabled and you want to permanently delete the secret before its `ScheduledPurgeDate`, the secret needs to be purged.
+If the Azure Key Vault is soft delete-enabled and you want to permanently delete the certificate before its `ScheduledPurgeDate`, the certificate needs to be purged.
 
-```cpp Snippet:SecretSample1PurgeSecret
-// You only need to wait for completion if you want to purge or recover the secret.
-operation.PollUntilDone(2s);
-
-// purge the deleted secret
-secretClient.PurgeDeletedSecret(secret.Name);
+```cpp Snippet:certificateSample2Purge
+ // purge the certificates
+{
+  certificateClient.PurgeDeletedCertificate(certificateName1);
+  certificateClient.PurgeDeletedCertificate(certificateName2);
+}
 ```
 
 ## Source

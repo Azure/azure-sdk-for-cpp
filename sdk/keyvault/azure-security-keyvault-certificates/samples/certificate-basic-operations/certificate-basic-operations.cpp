@@ -3,7 +3,7 @@
 
 /**
  * @brief This sample provides the code implementation to use the Key Vault Certificates SDK client
- * for C++ to create, get, update, delete and purge a secret.
+ * for C++ to create, get, update, delete and purge a certificate.
  *
  * @remark The following environment variables must be set before running the sample.
  * - AZURE_KEYVAULT_URL:  To the Key Vault account URL.
