@@ -29,7 +29,7 @@ jobs:
           Path: eng/pipelines/templates/stages/platform-matrix.json
           Selection: all
           GenerateVMJobs: true
-      JobTemplatePath: /eng/pipelines/templates/jobs/ci.yml
+      JobTemplatePath: /eng/pipelines/templates/jobs/ci.tests.yml
       AdditionalParameters:
         Artifacts: ${{ parameters.Artifacts }}
         ServiceDirectory: ${{ parameters.ServiceDirectory }}
