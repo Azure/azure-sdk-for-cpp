@@ -15,7 +15,10 @@
     "eng/common/**/*",
     "json.hpp",
     "*nlohmann-json*",
+    "eng/docs/api/assets/**/*",
     "sdk/keyvault/azure-security-keyvault-keys/test/ut/recordings/*.json",
+    "sdk/keyvault/azure-security-keyvault-certificates/test/ut/recordings/*.json",
+    "sdk/keyvault/azure-security-keyvault-certificates/inc/azure/keyvault/certificates/certificate_client_models.hpp",
     "sdk/keyvault/azure-security-keyvault-keys/test/ut/key_client_import_test_live.cpp"
   ],
   // * Unless configured otherwise, these words are not case sensitive
@@ -28,6 +31,7 @@
     "Aloctl",
     "azcore",
     "azsdk",
+    "azuresdk",
     "azuresdkforcpp",
     "cmake",
     "CMOCKA",
@@ -43,6 +47,7 @@
     "eastus",
     "echsmkey",
     "Edlund",
+    "EKUs",
     "Favicon",
     "gcovr",
     "githubio",
@@ -50,6 +55,7 @@
     "gtest",
     "Gzrs",
     "HKEY",
+    "HRESULT",
     "IMDS",
     "itfactor",
     "Kirilov",
@@ -77,8 +83,8 @@
     "Ragrs",
     "Ragzrs",
     "Reconnector",
-    "Reitz",
     "rehydrated",
+    "Reitz",
     "retriable",
     "rwxrw",
     "SDDL",
@@ -92,6 +98,7 @@
     "undeleted",
     "unscoped",
     "unskipped",
+    "UPNs",
     "vcpkg",
     "Viet",
     "Viktor",
@@ -106,7 +113,7 @@
   ],
   "overrides": [
     {
-      "filename": "**/eng/pipelines/templates/jobs/archetype-sdk-client.yml",
+      "filename": "**/eng/pipelines/templates/**/*.yml",
       "words": [
         "lcov",
         "iname"
@@ -156,6 +163,15 @@
         "bfqt",
         "rwdlacup",
         "pfile"
+      ]
+    },
+    {
+      "filename": "**/cmake-modules/**/*",
+      "words": [
+        "fprofile",
+        "ftest",
+        "mathjax",
+        "mdfile"
       ]
     }
   ],

@@ -4,9 +4,15 @@
 
 ### Features Added
 
+- Add the static libcurl transport adapter.
+- Add `NoSignal` option to the `CurlTransportAdapter`.
+- Add `ConnectionTimeout` option to the `CurlTransportAdapter`.
+
 ### Breaking Changes
 
 ### Bugs Fixed
+
+[2848](https://github.com/Azure/azure-sdk-for-cpp/issues/2848) Update the libcurl transport adapter to work with HTTP/1.1 only.
 
 ### Other Changes
 
@@ -297,7 +303,7 @@ Thank you to our developer community members who helped to make Azure Core bette
 ### Acknowledgments
 
 Thank you to our developer community members who helped to make Azure Core better with their contributions to this release:
-
+<!-- cspell:ignore Gyimesi -->
 - Gabor Gyimesi _([GitHub](https://github.com/lordgamez))_
 - Marcelo Juchem _([GitHub](https://github.com/juchem))_
 - `ku-sourav` _([GitHub](https://github.com/ku-sourav))_

@@ -16,6 +16,7 @@ include(AzureCodeCoverage)
 include(AzureTransportAdapters)
 include(AzureDoxygen)
 include(AzureGlobalCompileOptions)
+include(AzureConfigRTTI)
 
 az_vcpkg_integrate()
 
@@ -54,6 +55,7 @@ set(
     src/cryptography/wrap_result.cpp
     src/cryptography/unwrap_result.cpp
     src/cryptography/verify_result.cpp
+    src/private/cryptography_internal_access.hpp
     src/private/cryptography_serializers.hpp
     src/private/key_backup.hpp
     src/private/key_constants.hpp
@@ -94,6 +96,14 @@ target_include_directories(
       $<INSTALL_INTERFACE:include>
 )
 
+# Include shared source code
+# NOTE: Use shared-code only within .cpp files. DO NEVER consume the shared-code from header files.
+target_include_directories(
+  azure-security-keyvault-keys
+    PRIVATE
+      $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/sdk/keyvault/azure-security-keyvault-shared/inc>
+)
+
 target_link_libraries(azure-security-keyvault-keys PUBLIC Azure::azure-core)
 
 # coverage. Has no effect if BUILD_CODE_COVERAGE is OFF
@@ -125,3 +135,9 @@ az_vcpkg_export(
     SECURITY_KEYVAULT_KEYS
     "azure/keyvault/keys/dll_import_export.hpp"
   )
+
+az_rtti_setup(
+  azure-security-keyvault-keys
+  SECURITY_KEYVAULT_KEYS
+  "azure/keyvault/keys/rtti.hpp"
+)

@@ -1,5 +1,21 @@
 # Release History
 
+## 4.3.0-beta.1 (Unreleased)
+
+### Features Added
+
+### Breaking Changes
+
+### Bugs Fixed
+
+### Other Changes
+
+## 4.2.0 (2021-10-05)
+
+### Features Added
+
+- [2833](https://github.com/Azure/azure-sdk-for-cpp/issues/2833) Added `GetCryptographyClient()` to `KeyClient` to return a `CryptographyClient` that uses the same options, policies, and pipeline as the `KeyClient` that created it.
+
 ## 4.1.0 (2021-09-08)
 
 ### Features Added

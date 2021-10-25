@@ -16,6 +16,7 @@ include(AzureCodeCoverage)
 include(AzureTransportAdapters)
 include(AzureDoxygen)
 include(AzureGlobalCompileOptions)
+include(AzureConfigRTTI)
 
 az_vcpkg_integrate()
 
@@ -64,6 +65,14 @@ target_include_directories(
       $<INSTALL_INTERFACE:include>
 )
 
+# Include shared source code
+# NOTE: Use shared-code only within .cpp files. DO NEVER consume the shared-code from header files.
+target_include_directories(
+  azure-security-keyvault-secrets
+    PRIVATE
+      $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/sdk/keyvault/azure-security-keyvault-shared/inc>
+)
+
 target_link_libraries(azure-security-keyvault-secrets PUBLIC Azure::azure-core)
 
 # coverage. Has no effect if BUILD_CODE_COVERAGE is OFF
@@ -92,6 +101,12 @@ endif()
 
 az_vcpkg_export(
     azure-security-keyvault-secrets
-    SECURITY_KEYVAULT_KEYS
+    SECURITY_KEYVAULT_SECRETS
     "azure/keyvault/secrets/dll_import_export.hpp"
   )
+
+az_rtti_setup(
+  azure-security-keyvault-secrets
+  SECURITY_KEYVAULT_SECRETS
+  "azure/keyvault/secrets/rtti.hpp"
+)

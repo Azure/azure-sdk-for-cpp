@@ -24,7 +24,7 @@ namespace Azure { namespace Core { namespace IO { namespace _internal {
       (void)buffer;
       (void)count;
       return 0;
-    };
+    }
 
   public:
     /// Constructor.

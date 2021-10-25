@@ -69,7 +69,7 @@ namespace Azure { namespace Core { namespace IO {
           "The specified BodyStream doesn't support Rewind which is required to guarantee fault "
           "tolerance when retrying any operation. Consider creating a MemoryBodyStream or "
           "FileBodyStream, which are rewindable.");
-    };
+    }
 
     /**
      * @brief Read portion of data into a buffer.
@@ -90,7 +90,7 @@ namespace Azure { namespace Core { namespace IO {
 
       context.ThrowIfCancelled();
       return OnRead(buffer, count, context);
-    };
+    }
 
     /**
      * @brief Read #Azure::Core::IO::BodyStream into a buffer until the buffer is filled, or until
@@ -235,7 +235,7 @@ namespace Azure { namespace Core { namespace IO {
       // Rewind seeks back to 0
       void Rewind() override { this->m_offset = 0; }
 
-      int64_t Length() const override { return this->m_length; };
+      int64_t Length() const override { return this->m_length; }
     };
 
   } // namespace _internal

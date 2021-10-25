@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+﻿// Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
 
 /**
@@ -83,6 +83,7 @@ namespace Azure {
     Azure::Security::KeyVault::Certificates::CertificateClient const& GetClientForTest(
         std::string const& testName)
     {
+      // used to test/dev purposes _putenv_s("AZURE_TEST_MODE", "PLAYBACK");
       InitializeClient();
       // set the interceptor for the current test
       m_testContext.RenameTest(testName);
@@ -101,7 +102,7 @@ namespace Azure {
       std::string clientId = GetEnv("AZURE_CLIENT_ID", "client");
       std::string secretId = GetEnv("AZURE_CLIENT_SECRET", "secret");
 
-      m_keyVaultUrl = GetEnv("AZURE_KEYVAULT_URL", "https://REDACTED.vault.azure.net/");
+      m_keyVaultUrl = GetEnv("AZURE_KEYVAULT_URL", "https://REDACTED.vault.azure.net");
 
       // Create default client for the test
       CertificateClientOptions options;
@@ -123,13 +124,14 @@ namespace Azure {
         m_client = std::make_unique<CertificateClient>(m_keyVaultUrl, m_testCredential, options);
         // we really dont need to wait for results
         m_defaultWait = 1ms;
+        m_keyVaultUrl = "https://REDACTED.vault.azure.net";
       }
       else
       {
         m_credential = std::make_shared<Azure::Identity::ClientSecretCredential>(
             tenantId, clientId, secretId);
         m_client = std::make_unique<CertificateClient>(m_keyVaultUrl, m_credential, options);
-        m_defaultWait = 30s;
+        m_defaultWait = 10s;
       }
 
       // When running live tests, service can return 429 error response if the client is sending
@@ -157,6 +159,112 @@ namespace Azure {
               rawResponse->GetStatusCode()),
           static_cast<typename std::underlying_type<Azure::Core::Http::HttpStatusCode>::type>(
               expectedCode));
+    }
+
+    static void CheckIssuers(CertificateIssuer const& data, CertificateIssuer const& issuer)
+    {
+      EXPECT_EQ(data.Name, issuer.Name);
+      EXPECT_EQ(data.Provider.Value(), issuer.Provider.Value());
+      EXPECT_TRUE(data.Properties.Enabled.Value());
+      EXPECT_TRUE(data.Id);
+
+      EXPECT_EQ(data.Credentials.AccountId.Value(), issuer.Credentials.AccountId.Value());
+      EXPECT_FALSE(data.Credentials.Password);
+
+      auto adminRemote = data.Organization.AdminDetails[0];
+      auto adminLocal = issuer.Organization.AdminDetails[0];
+
+      EXPECT_EQ(adminLocal.EmailAddress.Value(), adminRemote.EmailAddress.Value());
+      EXPECT_EQ(adminLocal.FirstName.Value(), adminRemote.FirstName.Value());
+      EXPECT_EQ(adminLocal.LastName.Value(), adminRemote.LastName.Value());
+      EXPECT_EQ(adminLocal.PhoneNumber.Value(), adminRemote.PhoneNumber.Value());
+    }
+
+    static inline void CheckContactsCollections(
+        std::vector<CertificateContact> contacts,
+        std::vector<CertificateContact> results)
+    {
+      EXPECT_EQ(results.size(), contacts.size());
+
+      for (auto c2 : results)
+      {
+        bool found = false;
+        for (auto c1 : contacts)
+        {
+          if (c1.EmailAddress == c2.EmailAddress && c1.Name.HasValue() == c2.Name.HasValue()
+              && c1.Phone.HasValue() == c2.Phone.HasValue())
+          {
+            found = true;
+            break;
+          }
+        }
+        EXPECT_TRUE(found);
+      }
+
+      for (auto c1 : contacts)
+      {
+        bool found = false;
+        for (auto c2 : results)
+        {
+          if (c1.EmailAddress == c2.EmailAddress && c1.Name.HasValue() == c2.Name.HasValue()
+              && c1.Phone.HasValue() == c2.Phone.HasValue())
+          {
+            found = true;
+            break;
+          }
+        }
+        EXPECT_TRUE(found);
+      }
+    }
+
+    static inline KeyVaultCertificateWithPolicy CreateCertificate(
+        std::string const& name,
+        CertificateClient const& client,
+        std::chrono::milliseconds defaultWait,
+        std::string const& subject = "CN=xyz",
+        CertificateContentType certificateType = CertificateContentType::Pkcs12)
+    {
+      auto params = CertificateCreateParameters();
+      params.Policy.Subject = subject;
+      params.Policy.ValidityInMonths = 12;
+      params.Policy.Enabled = true;
+
+      params.Properties.Enabled = true;
+      params.Properties.Name = name;
+      params.Policy.ContentType = certificateType;
+      params.Policy.IssuerName = "Self";
+
+      LifetimeAction action;
+      action.LifetimePercentage = 80;
+      action.Action = CertificatePolicyAction::AutoRenew;
+      params.Policy.LifetimeActions.emplace_back(action);
+
+      auto response = client.StartCreateCertificate(name, params);
+      auto result = response.PollUntilDone(defaultWait);
+
+      while (!response.IsCompleted())
+      {
+        response.UpdateProperties();
+        std::this_thread::sleep_for(defaultWait);
+      }
+
+      auto cert = client.GetCertificate(name);
+
+      EXPECT_EQ(cert.Value.Name(), params.Properties.Name);
+      EXPECT_EQ(cert.Value.Properties.Name, params.Properties.Name);
+      EXPECT_EQ(cert.Value.Properties.Enabled.Value(), true);
+      EXPECT_EQ(cert.Value.Policy.IssuerName.Value(), params.Policy.IssuerName.Value());
+      EXPECT_EQ(cert.Value.Policy.ContentType.Value(), params.Policy.ContentType.Value());
+      EXPECT_EQ(cert.Value.Policy.Subject, params.Policy.Subject);
+      EXPECT_EQ(cert.Value.Policy.ValidityInMonths.Value(), params.Policy.ValidityInMonths.Value());
+      EXPECT_EQ(cert.Value.Policy.Enabled.Value(), params.Policy.Enabled.Value());
+      EXPECT_EQ(cert.Value.Policy.LifetimeActions.size(), size_t(1));
+      EXPECT_EQ(cert.Value.Policy.LifetimeActions[0].Action, action.Action);
+      EXPECT_EQ(
+          cert.Value.Policy.LifetimeActions[0].LifetimePercentage.Value(),
+          action.LifetimePercentage.Value());
+
+      return cert.Value;
     }
   };
 

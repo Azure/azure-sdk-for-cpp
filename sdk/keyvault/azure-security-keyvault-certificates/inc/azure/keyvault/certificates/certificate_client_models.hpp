@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+﻿// Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
 
 /**
@@ -14,15 +14,15 @@
 #include <azure/core/context.hpp>
 #include <azure/core/http/http.hpp>
 #include <azure/core/nullable.hpp>
+#include <azure/core/paged_response.hpp>
 #include <azure/core/response.hpp>
-
 #include <memory>
 #include <string>
 #include <unordered_map>
 #include <vector>
 
 namespace Azure { namespace Security { namespace KeyVault { namespace Certificates {
-
+  class CertificateClient;
   /**
    * @brief Contains identity and other basic properties of a Certificate.
    *
@@ -774,7 +774,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
    * @brief A KeyVaultCertificate along with its CertificatePolicy.
    *
    */
-  struct KeyVaultCertificateWithPolicy final : public KeyVaultCertificate
+  struct KeyVaultCertificateWithPolicy : public KeyVaultCertificate
   {
     /**
      * @brief Gets the current policy for the certificate.
@@ -791,15 +791,722 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
         : KeyVaultCertificate(properties)
     {
     }
+
+    /**
+     * @brief Default constructorfor Key Vault Certificate With Policy object
+     *
+     *
+     */
+    KeyVaultCertificateWithPolicy() = default;
   };
 
   /**
    * @brief The options for calling GetCertificate.
    *
    */
-  struct GetCertificateOptions final
+  struct GetCertificateVersionOptions final
   {
+    /**
+     * @brief Certificate Version.
+     *
+     */
     std::string Version;
   };
 
+  /**
+   * @brief The options for calling DownloadCertificate.
+   *
+   */
+  struct DownloadCertificateOptions final
+  {
+    /**
+     * @brief Certificate Version.
+     *
+     */
+    Azure::Nullable<std::string> Version;
+  };
+
+  /**
+   * @brief Parameters for StartCreateCertificate.
+   *
+   */
+  struct CertificateCreateParameters final
+  {
+    /**
+     * @brief Certificate policy.
+     *
+     */
+    CertificatePolicy Policy;
+
+    /**
+     * @brief Certificate attributes.
+     *
+     */
+    CertificateProperties Properties;
+
+    /**
+     * @brief Respresents if certificate is enabled.
+     *
+     */
+    Azure::Nullable<bool> Enabled() { return Properties.Enabled; }
+
+    /**
+     * @brief Certificate tags.
+     *
+     */
+    std::unordered_map<std::string, std::string> Tags;
+  };
+
+  /**
+   * @brief The certificate operation update parameters.
+   *
+   */
+  struct CertificateOperationUpdateParameter final
+  {
+
+    /**
+     * @brief Indicates if cancellation was requested on the certificate operation.
+     *
+     */
+    bool CancelationRequested;
+  };
+
+  /**
+   * @brief Issuer Credentials
+   *
+   */
+  struct IssuerCredentials final
+  {
+    /**
+     * @brief Account ID.
+     *
+     */
+    Azure::Nullable<std::string> AccountId;
+
+    /**
+     * @brief Password.
+     *
+     */
+    Azure::Nullable<std::string> Password;
+  };
+
+  /**
+   * @brief Administrator details
+   *
+   */
+  struct AdministratorDetails final
+  {
+    /**
+     * @brief Administrator first name.
+     *
+     */
+    Azure::Nullable<std::string> FirstName;
+
+    /**
+     * @brief Administrator last name.
+     *
+     */
+    Azure::Nullable<std::string> LastName;
+
+    /**
+     * @brief Administrator email address.
+     *
+     */
+    Azure::Nullable<std::string> EmailAddress;
+
+    /**
+     * @brief Administrator phone number.
+     *
+     */
+    Azure::Nullable<std::string> PhoneNumber;
+  };
+
+  /**
+   * @brief Certificate Issuer Properties.
+   *
+   */
+  struct IssuerProperties final
+  {
+    /**
+     * @brief Issuer enabled.
+     *
+     */
+    Azure::Nullable<bool> Enabled;
+
+    /**
+     * @brief Issuer creation date.
+     *
+     */
+    Azure::Nullable<DateTime> Created;
+
+    /**
+     * @brief Issuer last update date.
+     *
+     */
+    Azure::Nullable<DateTime> Updated;
+  };
+
+  /**
+   * @brief Organization details.
+   *
+   */
+  struct OrganizationDetails final
+  {
+    /**
+     * @brief Organization id
+     *
+     */
+    Azure::Nullable<std::string> Id;
+
+    /**
+     * @brief Organization Administators collection.
+     *
+     */
+    std::vector<AdministratorDetails> AdminDetails;
+  };
+
+  /**
+   * @brief Certificate issuer.
+   *
+   */
+  struct CertificateIssuer final
+  {
+    /**
+     * @brief Certificate issuer name.
+     *
+     */
+    std::string Name;
+
+    /**
+     * @brief  Certificate issuer id.
+     *
+     */
+    Azure::Nullable<std::string> Id;
+
+    /**
+     * @brief Certificate issuer provider.
+     *
+     */
+    Azure::Nullable<std::string> Provider;
+
+    /**
+     * @brief Certificate issuer credentials.
+     *
+     */
+    IssuerCredentials Credentials;
+
+    /**
+     * @brief Certificate issuer organization.
+     *
+     */
+    OrganizationDetails Organization;
+
+    /**
+     * @brief Certificate issuer properties.
+     *
+     */
+    IssuerProperties Properties;
+  };
+
+  /**
+   * @brief The contact information for the vault certificates.
+   *
+   */
+  struct CertificateContact final
+  {
+    /**
+     * @brief Contact e-mail address.
+     *
+     */
+    std::string EmailAddress;
+
+    /**
+     * @brief Contact name.
+     *
+     */
+    Azure::Nullable<std::string> Name;
+
+    /**
+     * @brief Contact phone number.
+     *
+     */
+    Azure::Nullable<std::string> Phone;
+  };
+
+  /**
+   * @brief Key vault server error
+   *
+   */
+  struct ServerError final
+  {
+    ~ServerError() = default;
+    /**
+     * @brief Error Code
+     *
+     */
+    std::string Code;
+
+    /**
+     * @brief Error Message
+     *
+     */
+    std::string Message;
+
+    /**
+     * @brief Inner Error
+     *
+     */
+    std::shared_ptr<ServerError> InnerError;
+  };
+
+  /**
+   * @brief A certificate operation.
+   *
+   */
+  struct CertificateOperationProperties final
+  {
+    /**
+     * @brief The certificate id.
+     *
+     */
+    std::string Id;
+
+    /**
+     * @brief The certificate name.
+     *
+     */
+    std::string Name;
+
+    /**
+     * @brief The vault URI.
+     *
+     */
+    std::string VaultUrl;
+
+    /**
+     * @brief The certificate signing request (CSR) that is being used in the certificate operation.
+     *
+     */
+    std::vector<uint8_t> Csr;
+
+    /**
+     * @brief Indicates if cancellation was requested on the certificate operation.
+     *
+     */
+    Azure::Nullable<bool> CancellationRequested;
+
+    /**
+     * @brief Status of the certificate operation.
+     *
+     */
+    Azure::Nullable<std::string> Status;
+
+    /**
+     * @brief The status details of the certificate operation.
+     *
+     */
+    Azure::Nullable<std::string> StatusDetails;
+
+    /**
+     * @brief Location which contains the result of the certificate operation.
+     *
+     */
+    Azure::Nullable<std::string> Target;
+
+    /**
+     * @brief Identifier for the certificate operation.
+     *
+     */
+    Azure::Nullable<std::string> RequestId;
+
+    /**
+     * @brief Name of the referenced issuer object or reserved names; for example, 'Self' or
+     * 'Unknown'.
+     *
+     */
+    Azure::Nullable<std::string> IssuerName;
+
+    /**
+     * @brief Certificate type as supported by the provider (optional); for example 'OV-SSL',
+     * 'EV-SSL'
+     *
+     */
+    Azure::Nullable<std::string> CertificateType;
+
+    /**
+     * @brief Indicates if the certificates generated under this policy should be published to
+     * certificate transparency logs.
+     *
+     */
+    Azure::Nullable<bool> CertificateTransparency;
+
+    /**
+     * @brief Error encountered, if any, during the certificate operation.
+     *
+     */
+    Azure::Nullable<ServerError> Error;
+
+    ~CertificateOperationProperties() = default;
+  };
+
+  struct DeletedCertificate final : public KeyVaultCertificateWithPolicy
+  {
+    /**
+     * @brief Gets the identifier of the deleted certificate.
+     *
+     */
+    std::string RecoveryId;
+
+    /**
+     * @brief DateTime indicating when the certificate was deleted.
+     *
+     */
+    Azure::Nullable<DateTime> DeletedOn;
+
+    /**
+     * @brief DateTime for when the deleted certificate will be purged.
+     *
+     */
+    Azure::Nullable<DateTime> ScheduledPurgeDate;
+
+    /**
+     * @brief Construct a new Key Vault Deleted Certificate
+     *
+     * @param properties The properties to create a new certificate.
+     */
+    DeletedCertificate(CertificateProperties const& properties)
+        : KeyVaultCertificateWithPolicy(properties)
+    {
+    }
+
+    /**
+     * @brief Default constructor.
+     *
+     */
+    DeletedCertificate() = default;
+  };
+
+  /**
+   * @brief Define a model for a purged Certificate.
+   *
+   */
+  struct PurgedCertificate final
+  {
+  };
+  /**
+   * @brief The options for calling an operation #GetPropertiesOfCertificates.
+   *
+   */
+  struct GetPropertiesOfCertificatesOptions final
+  {
+    /**
+     * @brief Next page token.
+     *
+     */
+    Azure::Nullable<std::string> NextPageToken;
+    /**
+     * @brief Include pending certificates.
+     *
+     */
+    Azure::Nullable<bool> IncludePending;
+  };
+
+  /**
+   * @brief The options for calling an operation #GetPropertiesOfCertificateVersions.
+   *
+   */
+  struct GetPropertiesOfCertificateVersionsOptions final
+  {
+    Azure::Nullable<std::string> NextPageToken;
+  };
+
+  /**
+   * @brief The options for calling an operation #GetPropertiesOfIssuers
+   *
+   */
+  struct GetPropertiesOfIssuersOptions final
+  {
+    Azure::Nullable<std::string> NextPageToken;
+  };
+
+  /**
+   * @brief The options for calling an operation #GetDeletedCertificates
+   *
+   */
+  struct GetDeletedCertificatesOptions final
+  {
+    Azure::Nullable<std::string> NextPageToken;
+  };
+  /**
+   * @brief A certificate backup data.
+   *
+   */
+  struct BackupCertificateResult final
+  {
+    /**
+     * @brief The backup blob containing the backed up certificate.
+     *
+     */
+    std::vector<uint8_t> Certificate;
+  };
+  /**
+   * @brief represents on item from GetPropertiesOfIssuers
+   *
+   */
+  struct CertificateIssuerItem final
+  {
+    /**
+     * @brief Certificate Identifier.
+     *
+     */
+    std::string Id;
+    /**
+     * @brief The issuer provider.
+     *
+     */
+    std::string Provider;
+  };
+
+  /**
+   * @brief A certificate downloaded X509 data.
+   *
+   */
+  struct DownloadCertificateResult final
+  {
+    /**
+     * @brief Certificate data.
+     *
+     */
+    std::string Certificate;
+
+    /**
+     * @brief Content Type.
+     *
+     */
+    CertificateContentType ContentType;
+  };
+
+  /**
+   * @brief Define a single page to list the certificates from the Key Vault.
+   *
+   */
+  class CertificatePropertiesPagedResponse final
+      : public Azure::Core::PagedResponse<CertificatePropertiesPagedResponse> {
+  private:
+    friend class CertificateClient;
+    friend class Azure::Core::PagedResponse<CertificatePropertiesPagedResponse>;
+
+    std::string m_certificateName;
+    std::shared_ptr<CertificateClient> m_certificateClient;
+    void OnNextPage(const Azure::Core::Context&);
+
+    /**
+     * @brief Construct a new Certificate Properties Single Page object.
+     *
+     * @remark The constructor is private and only a certificate client or PagedResponse can init
+     * this.
+     *
+     * @param certificateProperties A previously created #CertificatePropertiesPageResponse that is
+     * used to init this instance.
+     * @param rawResponse The HTTP raw response from where the #CertificatePropertiesPagedResponse
+     * was parsed.
+     * @param certificateClient A certificate client required for getting the next pages.
+     * @param certificateName When \p certificateName is set, the response is listing certificate
+     * versions. Otherwise, the response is for listing certificates from the Key Vault.
+     */
+    CertificatePropertiesPagedResponse(
+        CertificatePropertiesPagedResponse&& certificateProperties,
+        std::unique_ptr<Azure::Core::Http::RawResponse> rawResponse,
+        std::shared_ptr<CertificateClient> certificateClient,
+        std::string const& certificateName = std::string())
+        : PagedResponse(std::move(certificateProperties)), m_certificateName(certificateName),
+          m_certificateClient(certificateClient), Items(std::move(certificateProperties.Items))
+    {
+      RawResponse = std::move(rawResponse);
+    }
+
+  public:
+    /**
+     * @brief Construct a new certificate properties object.
+     *
+     */
+    CertificatePropertiesPagedResponse() = default;
+
+    /**
+     * @brief Each #certificateProperties represent a Key in the Key Vault.
+     *
+     */
+    std::vector<CertificateProperties> Items;
+  };
+
+  /**
+   * @brief Define a single page to list the issuers from the Key Vault.
+   *
+   */
+  class IssuerPropertiesPagedResponse final
+      : public Azure::Core::PagedResponse<IssuerPropertiesPagedResponse> {
+  private:
+    friend class CertificateClient;
+    friend class Azure::Core::PagedResponse<IssuerPropertiesPagedResponse>;
+
+    std::shared_ptr<CertificateClient> m_certificateClient;
+    void OnNextPage(const Azure::Core::Context&);
+
+    IssuerPropertiesPagedResponse(
+        IssuerPropertiesPagedResponse&& issuerProperties,
+        std::unique_ptr<Azure::Core::Http::RawResponse> rawResponse,
+        std::shared_ptr<CertificateClient> certificateClient)
+        : PagedResponse(std::move(issuerProperties)), m_certificateClient(certificateClient),
+          Items(std::move(issuerProperties.Items))
+    {
+      RawResponse = std::move(rawResponse);
+    }
+
+  public:
+    /**
+     * @brief Construct a new certificate properties object.
+     *
+     */
+    IssuerPropertiesPagedResponse() = default;
+
+    /**
+     * @brief Each #certificateProperties represent a Key in the Key Vault.
+     *
+     */
+    std::vector<CertificateIssuerItem> Items;
+  };
+
+  /**
+   * @brief Define a single page to list the issuers from the Key Vault.
+   *
+   */
+  class DeletedCertificatesPagedResponse final
+      : public Azure::Core::PagedResponse<DeletedCertificatesPagedResponse> {
+  private:
+    friend class CertificateClient;
+    friend class Azure::Core::PagedResponse<DeletedCertificatesPagedResponse>;
+
+    std::shared_ptr<CertificateClient> m_certificateClient;
+    void OnNextPage(const Azure::Core::Context&);
+
+    DeletedCertificatesPagedResponse(
+        DeletedCertificatesPagedResponse&& deletedProperties,
+        std::unique_ptr<Azure::Core::Http::RawResponse> rawResponse,
+        std::shared_ptr<CertificateClient> certificateClient)
+        : PagedResponse(std::move(deletedProperties)), m_certificateClient(certificateClient),
+          Items(std::move(deletedProperties.Items))
+    {
+      RawResponse = std::move(rawResponse);
+    }
+
+  public:
+    /**
+     * @brief Construct a new certificate properties object.
+     *
+     */
+    DeletedCertificatesPagedResponse() = default;
+
+    /**
+     * @brief Each #certificateProperties represent a Key in the Key Vault.
+     *
+     */
+    std::vector<DeletedCertificate> Items;
+  };
+
+  /**
+   * @brief Certificate associated secret.
+   *
+   */
+  struct KeyVaultSecret final
+  {
+    /**
+     * @brief Content Type.
+     *
+     */
+    Azure::Nullable<CertificateContentType> ContentType;
+    /**
+     * @brief Secret value.
+     *
+     */
+    std::string Value;
+  };
+
+  /**
+   * @brief Import Certificate options
+   *
+   */
+  struct ImportCertificateOptions final
+  {
+    /**
+     * @brief Base64 encoded representation of the certificate object to import. This certificate
+     * needs to contain the private key.
+     *
+     */
+    std::string Value;
+
+    /**
+     * @brief If the private key in base64EncodedCertificate is encrypted, the password used for
+     * encryption.
+     *
+     */
+    Azure::Nullable<std::string> Password;
+
+    /**
+     * @brief Management policy for the certificate.
+     *
+     */
+    CertificatePolicy Policy;
+
+    /**
+     * @brief Certificate Properties
+     *
+     */
+    CertificateProperties Properties;
+
+    /**
+     * @brief Dictionary of tags with specific metadata about the certificate.
+     *
+     */
+    std::unordered_map<std::string, std::string> Tags;
+  };
+
+  /**
+   * @brief The certificate merge parameters
+   *
+   */
+  struct MergeCertificateOptions final
+  { /**
+     * @brief The certificate or the certificate chain to merge.
+     *
+     */
+    std::vector<std::string> Certificates;
+    /**
+     * @brief The attributes of the certificate.
+     *
+     */
+    CertificateProperties Properties;
+    /**
+     * @brief Dictionary of tags with specific metadata about the certificate.
+     *
+     */
+    std::unordered_map<std::string, std::string> Tags;
+  };
+
+  /**
+   * @brief The certificate update parameters.
+   *
+   */
+  struct CertificateUpdateOptions final
+  {
+    /**
+     * @brief The attributes of the certificate.
+     *
+     */
+    CertificateProperties Properties;
+    /**
+     * @brief Dictionary of tags with specific metadata about the certificate.
+     *
+     */
+    std::unordered_map<std::string, std::string> Tags;
+  };
 }}}} // namespace Azure::Security::KeyVault::Certificates

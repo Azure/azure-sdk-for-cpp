@@ -113,7 +113,7 @@ inline std::string const& LogLevelToConsoleString(Logger::Level logLevel)
 
     default:
       return UnknownText;
-  };
+  }
 }
 } // namespace
 

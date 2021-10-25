@@ -119,7 +119,7 @@ bool EndsWith(std::string const& str, std::string const& with)
   if (str.size() < with.size())
   {
     return false;
-  };
+  }
 
   return str.substr(str.size() - with.size(), with.size()) == with;
 }

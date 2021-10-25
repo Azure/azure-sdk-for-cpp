@@ -16,6 +16,7 @@ include(AzureCodeCoverage)
 include(AzureTransportAdapters)
 include(AzureDoxygen)
 include(AzureGlobalCompileOptions)
+include(AzureConfigRTTI)
 
 az_vcpkg_integrate()
 
@@ -98,6 +99,12 @@ az_vcpkg_export(
     STORAGE_COMMON
     "azure/storage/common/dll_import_export.hpp"
   )
+
+az_rtti_setup(
+  azure-storage-common
+  STORAGE_COMMON
+  "azure/storage/common/rtti.hpp"
+)
 
 # coverage. Has no effect if BUILD_CODE_COVERAGE is OFF
 # excluding json from coverage report

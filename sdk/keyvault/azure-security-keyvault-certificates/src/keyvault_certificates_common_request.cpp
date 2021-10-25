@@ -1,11 +1,11 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+﻿// Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
 
 #include "private/keyvault_certificates_common_request.hpp"
+#include "private/certificate_constants.hpp"
 
 #include <azure/core/exception.hpp>
 #include <azure/core/http/http.hpp>
-
 #include <memory>
 
 using namespace Azure::Security::KeyVault;
@@ -19,10 +19,11 @@ _detail::KeyVaultCertificatesCommonRequest::SendRequest(
 {
   auto response = pipeline.Send(request, context);
   auto responseCode = response->GetStatusCode();
+
   switch (responseCode)
   {
 
-    // 200, 2001, 202, 204 are accepted responses
+    // 200, 201, 202, 204 are accepted responses
     case Azure::Core::Http::HttpStatusCode::Ok:
     case Azure::Core::Http::HttpStatusCode::Created:
     case Azure::Core::Http::HttpStatusCode::Accepted:
@@ -44,7 +45,8 @@ Azure::Core::Http::Request _detail::KeyVaultCertificatesCommonRequest::CreateReq
   using namespace Azure::Core::Http;
   Request request = content == nullptr ? Request(method, url) : Request(method, url, content);
 
-  request.GetUrl().AppendQueryParameter("api-version", apiVersion);
+  request.SetHeader(ContentHeaderName, ApplicationJsonValue);
+  request.GetUrl().AppendQueryParameter(ApiVersionQueryParamName, apiVersion);
 
   for (std::string const& p : path)
   {

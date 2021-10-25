@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+﻿// Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
 
 /**
@@ -13,6 +13,8 @@
 
 #include "azure/keyvault/certificates/certificate_client_models.hpp"
 #include "azure/keyvault/certificates/dll_import_export.hpp"
+#include <memory>
+#include <string>
 
 namespace Azure { namespace Security { namespace KeyVault { namespace Certificates {
 

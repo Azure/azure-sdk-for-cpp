@@ -133,7 +133,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
       {
         throw std::invalid_argument("Name cannot be empty");
       }
-    };
+    }
 
     /**
      * @brief Construct a new secret Properties object.

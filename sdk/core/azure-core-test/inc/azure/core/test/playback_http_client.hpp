@@ -37,7 +37,7 @@ namespace Azure { namespace Core { namespace Test {
     size_t OnRead(uint8_t* buffer, size_t count, Azure::Core::Context const& context) override
     {
       return m_streamer.Read(buffer, count, context);
-    };
+    }
 
   public:
     // Forbid constructor for rval so we don't end up storing dangling ptr

@@ -16,6 +16,7 @@ include(AzureCodeCoverage)
 include(AzureTransportAdapters)
 include(AzureDoxygen)
 include(AzureGlobalCompileOptions)
+include(AzureConfigRTTI)
 
 az_vcpkg_integrate()
 
@@ -75,6 +76,12 @@ az_vcpkg_export(
     IDENTITY
     "azure/identity/dll_import_export.hpp"
   )
+
+az_rtti_setup(
+  azure-identity
+  IDENTITY
+  "azure/identity/rtti.hpp"
+)
 
 if(BUILD_TESTING)
   # tests

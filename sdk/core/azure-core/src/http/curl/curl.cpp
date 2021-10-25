@@ -515,7 +515,7 @@ CURLcode CurlConnection::SendBuffer(
           return sendResult;
         }
       }
-    };
+    }
   }
 #if defined(AZ_PLATFORM_WINDOWS)
   WinSocketSetBuffSize(m_curlSocket);
@@ -1226,38 +1226,14 @@ namespace {
 inline std::string GetConnectionKey(std::string const& host, CurlTransportOptions const& options)
 {
   std::string key(host);
-  if (!options.CAInfo.empty())
-  {
-    key.append(options.CAInfo);
-  }
-  else
-  {
-    key.append("0");
-  }
-  if (!options.Proxy.empty())
-  {
-    key.append(options.Proxy);
-  }
-  else
-  {
-    key.append("0");
-  }
-  if (!options.SslOptions.EnableCertificateRevocationListCheck)
-  {
-    key.append("1");
-  }
-  else
-  {
-    key.append("0");
-  }
-  if (options.SslVerifyPeer)
-  {
-    key.append("1");
-  }
-  else
-  {
-    key.append("0");
-  }
+  key.append(!options.CAInfo.empty() ? options.CAInfo : "0");
+  key.append(!options.Proxy.empty() ? options.Proxy : "0");
+  key.append(!options.SslOptions.EnableCertificateRevocationListCheck ? "1" : "0");
+  key.append(options.SslVerifyPeer ? "1" : "0");
+  key.append(options.NoSignal ? "1" : "0");
+  key.append(
+      options.ConnectionTimeout == CurlTransportOptions::DefaultConnectionTimeout ? "0" : "1");
+
   return key;
 }
 } // namespace
@@ -1293,6 +1269,7 @@ std::unique_ptr<CurlNetworkConnection> CurlConnectionPool::ExtractOrCreateCurlCo
         // created and to discard all current connections in the pool for the host-index. A caller
         // might request this after getting broken/closed connections multiple-times.
         hostPoolIndex->second.clear();
+        Log::Write(Logger::Level::Verbose, LogMsgPrefix + "Reset connection pool requested.");
       }
       else
       {
@@ -1309,6 +1286,7 @@ std::unique_ptr<CurlNetworkConnection> CurlConnectionPool::ExtractOrCreateCurlCo
           g_curlConnectionPool.ConnectionPoolIndex.erase(hostPoolIndex);
         }
 
+        Log::Write(Logger::Level::Verbose, LogMsgPrefix + "Re-using connection from the pool.");
         // return connection ref
         return connection;
       }
@@ -1318,6 +1296,7 @@ std::unique_ptr<CurlNetworkConnection> CurlConnectionPool::ExtractOrCreateCurlCo
 
   // Creating a new connection is thread safe. No need to lock mutex here.
   // No available connection for the pool for the required host. Create one
+  Log::Write(Logger::Level::Verbose, LogMsgPrefix + "Spawn new connection.");
   CURL* newHandle = curl_easy_init();
   if (!newHandle)
   {
@@ -1357,6 +1336,17 @@ std::unique_ptr<CurlNetworkConnection> CurlConnectionPool::ExtractOrCreateCurlCo
     throw Azure::Core::Http::TransportException(
         _detail::DefaultFailedToGetNewConnectionTemplate + host + ". "
         + std::string(curl_easy_strerror(result)));
+  }
+
+  if (options.ConnectionTimeout != CurlTransportOptions::DefaultConnectionTimeout)
+  {
+    if (!SetLibcurlOption(newHandle, CURLOPT_CONNECTTIMEOUT, options.ConnectionTimeout, &result))
+    {
+      throw Azure::Core::Http::TransportException(
+          _detail::DefaultFailedToGetNewConnectionTemplate + host
+          + ". Fail setting connect timeout to: " + std::to_string(options.ConnectionTimeout) + ". "
+          + std::string(curl_easy_strerror(result)));
+    }
   }
 
   /******************** Curl handle options apply to all connections created
@@ -1402,9 +1392,29 @@ std::unique_ptr<CurlNetworkConnection> CurlConnectionPool::ExtractOrCreateCurlCo
     {
       throw Azure::Core::Http::TransportException(
           _detail::DefaultFailedToGetNewConnectionTemplate + host
-          + ". Failed to disable ssl verify peer." + ". "
+          + ". Failed to disable ssl verify peer. " + std::string(curl_easy_strerror(result)));
+    }
+  }
+
+  if (options.NoSignal)
+  {
+    if (!SetLibcurlOption(newHandle, CURLOPT_NOSIGNAL, 1L, &result))
+    {
+      throw Azure::Core::Http::TransportException(
+          _detail::DefaultFailedToGetNewConnectionTemplate + host
+          + ". Failed to set NOSIGNAL option for libcurl. "
           + std::string(curl_easy_strerror(result)));
     }
+  }
+
+  // curl-transport adapter supports only HTTP/1.1
+  // https://github.com/Azure/azure-sdk-for-cpp/issues/2848
+  // The libcurl uses HTTP/2 by default, if it can be negotiated with a server on handshake.
+  if (!SetLibcurlOption(newHandle, CURLOPT_HTTP_VERSION, CURL_HTTP_VERSION_1_1, &result))
+  {
+    throw Azure::Core::Http::TransportException(
+        _detail::DefaultFailedToGetNewConnectionTemplate + host + ". Failed to set libcurl HTTP/1.1"
+        + ". " + std::string(curl_easy_strerror(result)));
   }
 
   auto performResult = curl_easy_perform(newHandle);

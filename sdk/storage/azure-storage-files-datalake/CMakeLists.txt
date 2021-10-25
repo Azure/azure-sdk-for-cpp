@@ -16,6 +16,7 @@ include(AzureCodeCoverage)
 include(AzureTransportAdapters)
 include(AzureDoxygen)
 include(AzureGlobalCompileOptions)
+include(AzureConfigRTTI)
 
 az_vcpkg_integrate()
 
@@ -81,6 +82,12 @@ az_vcpkg_export(
     STORAGE_FILES_DATALAKE
     "azure/storage/files/datalake/dll_import_export.hpp"
   )
+
+az_rtti_setup(
+  azure-storage-files-datalake
+  STORAGE_FILES_DATALAKE
+  "azure/storage/files/datalake/rtti.hpp"
+)
 
 # coverage. Has no effect if BUILD_CODE_COVERAGE is OFF
 create_code_coverage(storage azure-storage-files-datalake azure-storage-test)

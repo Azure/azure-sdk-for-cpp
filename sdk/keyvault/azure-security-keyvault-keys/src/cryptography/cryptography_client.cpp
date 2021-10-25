@@ -6,6 +6,8 @@
 #include <azure/core/http/http.hpp>
 #include <azure/core/http/policies/policy.hpp>
 
+#include <azure/keyvault/shared/keyvault_shared.hpp>
+
 #include "azure/keyvault/keys/cryptography/cryptography_client.hpp"
 #include "azure/keyvault/keys/key_client_models.hpp"
 
@@ -16,6 +18,7 @@
 #include "../private/key_verify_parameters.hpp"
 #include "../private/key_wrap_parameters.hpp"
 #include "../private/keyvault_protocol.hpp"
+#include "../private/package_version.hpp"
 
 #include <algorithm>
 #include <memory>
@@ -58,26 +61,6 @@ inline std::vector<uint8_t> CreateDigest(
   return hashAlgorithm->Final(data.data(), data.size());
 }
 
-// This is a Key-Vault only patch to calculate token scope/audience
-std::string GetScopeFromUrl(Azure::Core::Url const& url)
-{
-  std::string calculatedScope(url.GetScheme() + "://");
-  auto const& hostWithAccount = url.GetHost();
-  auto hostNoAccountStart = std::find(hostWithAccount.begin(), hostWithAccount.end(), '.');
-
-  // Insert the calculated scope only when then host in the url contains at least a `.`
-  // Otherwise, only the default scope will be there.
-  // We don't want to throw/validate input but just leave the values go to azure to decide what to
-  // do.
-  if (hostNoAccountStart != hostWithAccount.end())
-  {
-    calculatedScope.append(hostNoAccountStart + 1, hostWithAccount.end());
-    calculatedScope.append("/.default");
-  }
-
-  return calculatedScope;
-}
-
 } // namespace
 
 Request CryptographyClient::CreateRequest(
@@ -114,13 +97,12 @@ CryptographyClient::CryptographyClient(
     std::string const& keyId,
     std::shared_ptr<Core::Credentials::TokenCredential const> credential,
     CryptographyClientOptions const& options)
+    : m_keyId(Azure::Core::Url(keyId)), m_apiVersion(options.Version.ToString())
 {
-  m_keyId = Azure::Core::Url(keyId);
-  m_apiVersion = options.Version.ToString();
   std::vector<std::unique_ptr<HttpPolicy>> perRetrypolicies;
   {
     Azure::Core::Credentials::TokenRequestContext const tokenContext
-        = {{::GetScopeFromUrl(m_keyId)}};
+        = {{_internal::UrlScope::GetScopeFromUrl(m_keyId)}};
 
     perRetrypolicies.emplace_back(
         std::make_unique<BearerTokenAuthenticationPolicy>(credential, tokenContext));
@@ -130,7 +112,7 @@ CryptographyClient::CryptographyClient(
   m_pipeline = std::make_shared<Azure::Core::Http::_internal::HttpPipeline>(
       options,
       "KeyVault",
-      options.Version.ToString(),
+      PackageVersion::ToString(),
       std::move(perRetrypolicies),
       std::move(perCallpolicies));
 }
