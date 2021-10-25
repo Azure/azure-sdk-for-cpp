@@ -145,7 +145,6 @@ create_code_coverage(core azure-core azure-core-test)
 
 target_link_libraries(azure-core INTERFACE Threads::Threads)
 
-
 if(WIN32)
     target_link_libraries(azure-core PRIVATE bcrypt crypt32)
 else()
@@ -153,7 +152,6 @@ else()
     find_package(OpenSSL REQUIRED)
     target_link_libraries(azure-core PRIVATE OpenSSL::SSL)
 endif()
-
 
 if(BUILD_TRANSPORT_CURL)
   target_link_libraries(azure-core PUBLIC CURL::libcurl)
