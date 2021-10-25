@@ -16,7 +16,6 @@
 
 ### Other Changes
 
-- Added option `BUILD_CRYPTO` to support building azure-core without the Cryptographic namespace (no hashing). ON by default.
 - Updated `base64` implementation to remove external dependency.
 - Updated `Uuid` implementation for Linux to remove external dependency.
 

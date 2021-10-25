@@ -23,10 +23,6 @@ az_vcpkg_integrate()
 
 find_package(Threads REQUIRED)
 
-# Allow building azure-core without OpenSSL dependency and hence without Crypto-functions
-# This is a work-around for anyone consuming azure-core without a need for Crypto like the cognitive services.
-option(BUILD_CRYPTO "Build the crypto namespace. Build will depend on OpenSSL." ON)
-
 if(BUILD_TRANSPORT_CURL)
   # min version for `CURLSSLOPT_NO_REVOKE`
   # https://curl.haxx.se/libcurl/c/CURLOPT_SSL_OPTIONS.html
@@ -55,25 +51,13 @@ if(BUILD_TRANSPORT_WINHTTP)
   SET(WIN_TRANSPORT_ADAPTER_INC inc/azure/core/http/win_http_transport.hpp)
 endif()
 
-if(BUILD_CRYPTO)
-  add_compile_definitions(AZURE_BUILD_CRYPTO)
-  SET(AZURE_SDK_CRYPTO_INC
-    inc/azure/core/cryptography/hash.hpp
-    inc/azure/core/internal/cryptography/sha_hash.hpp
-  )
-  SET(AZURE_SDK_CRYPTO_SRC
-    src/cryptography/md5.cpp
-    src/cryptography/sha_hash.cpp
-  )
-endif()
-
 set(
   AZURE_CORE_HEADER
     ${CURL_TRANSPORT_ADAPTER_INC}
     ${WIN_TRANSPORT_ADAPTER_INC}
     inc/azure/core/credentials/credentials.hpp
     inc/azure/core/credentials/token_credential_options.hpp
-    ${AZURE_SDK_CRYPTO_INC}
+    inc/azure/core/cryptography/hash.hpp
     inc/azure/core/diagnostics/logger.hpp
     inc/azure/core/http/http_status_code.hpp
     inc/azure/core/http/http.hpp
@@ -82,6 +66,7 @@ set(
     inc/azure/core/http/transport.hpp
     inc/azure/core/internal/client_options.hpp
     inc/azure/core/internal/contract.hpp
+    inc/azure/core/internal/cryptography/sha_hash.hpp
     inc/azure/core/internal/diagnostics/log.hpp
     inc/azure/core/internal/http/pipeline.hpp
     inc/azure/core/internal/io/null_body_stream.hpp
@@ -116,7 +101,8 @@ set(
     ${CURL_TRANSPORT_ADAPTER_SRC}
     ${WIN_TRANSPORT_ADAPTER_SRC}
     src/azure_assert.cpp
-    ${AZURE_SDK_CRYPTO_SRC}
+    src/cryptography/md5.cpp
+    src/cryptography/sha_hash.cpp
     src/http/bearer_token_authentication_policy.cpp
     src/http/http.cpp
     src/http/log_policy.cpp
@@ -159,14 +145,15 @@ create_code_coverage(core azure-core azure-core-test)
 
 target_link_libraries(azure-core INTERFACE Threads::Threads)
 
-if(BUILD_CRYPTO)
-  if(WIN32)
-      target_link_libraries(azure-core PRIVATE bcrypt crypt32)
-  else()
-      find_package(OpenSSL REQUIRED)
-      target_link_libraries(azure-core PRIVATE OpenSSL::SSL)
-  endif()
+
+if(WIN32)
+    target_link_libraries(azure-core PRIVATE bcrypt crypt32)
+else()
+    # Required for Hashing ( md5 and sha ).
+    find_package(OpenSSL REQUIRED)
+    target_link_libraries(azure-core PRIVATE OpenSSL::SSL)
 endif()
+
 
 if(BUILD_TRANSPORT_CURL)
   target_link_libraries(azure-core PUBLIC CURL::libcurl)
