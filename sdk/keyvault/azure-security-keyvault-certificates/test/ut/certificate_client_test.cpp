@@ -304,7 +304,7 @@ TEST_F(KeyVaultCertificateClientTest, CreateGetIssuer)
   issuer.Organization.AdminDetails.emplace_back(admin);
 
   {
-    auto result = client.CreateIssuer(issuer);
+    auto result = client.CreateIssuer(issuer.Name, issuer);
     CheckIssuers(result.Value, issuer);
   }
 
@@ -340,7 +340,7 @@ TEST_F(KeyVaultCertificateClientTest, UpdateIssuer)
   issuer.Organization.AdminDetails.emplace_back(admin);
 
   {
-    auto result = client.CreateIssuer(issuer);
+    auto result = client.CreateIssuer(issuer.Name, issuer);
     CheckIssuers(result.Value, issuer);
   }
 
@@ -782,11 +782,11 @@ TEST_F(KeyVaultCertificateClientTest, GetPropertiesOfIssuers)
   issuer2.Organization.AdminDetails.emplace_back(admin);
 
   {
-    auto result = client.CreateIssuer(issuer);
+    auto result = client.CreateIssuer(issuer.Name, issuer);
     CheckIssuers(result.Value, issuer);
   }
   {
-    auto result = client.CreateIssuer(issuer2);
+    auto result = client.CreateIssuer(issuer2.Name, issuer2);
     CheckIssuers(result.Value, issuer2);
   }
   {
@@ -956,7 +956,11 @@ TEST_F(KeyVaultCertificateClientTest, UpdateCertificate)
     certificate.Properties.Enabled = false;
     CertificateUpdateOptions updateOptions;
     updateOptions.Properties = certificate.Properties;
-    auto updatedCert = client.UpdateCertificateProperties(updateOptions).Value;
+    auto updatedCert
+        = client
+              .UpdateCertificateProperties(
+                  certificate.Properties.Name, certificate.Properties.Version, updateOptions)
+              .Value;
     EXPECT_FALSE(updatedCert.Properties.Enabled.Value());
   }
   {
