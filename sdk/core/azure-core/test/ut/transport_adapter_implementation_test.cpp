@@ -8,7 +8,7 @@
 
 #if defined(BUILD_CURL_HTTP_TRANSPORT_ADAPTER)
 #include "azure/core/http/curl_transport.hpp"
-#include "azure/core/http/static_curl_transport.hpp"
+#include "http/curl/static_curl_transport.hpp"
 #endif
 
 #if defined(BUILD_TRANSPORT_WINHTTP_ADAPTER)
