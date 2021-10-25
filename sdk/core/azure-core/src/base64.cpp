@@ -324,7 +324,7 @@ std::string base64Encode(const std::vector<uint8_t>& data)
   // Removing const from the string to update the placeholder string
   auto destination = const_cast<char*>(encodedResult.data());
 
-  while (sourceIndex < static_cast<int64_t>(inputSize - 2))
+  while (sourceIndex < static_cast<int64_t>(inputSize) - 2)
   {
     result = base64Encode(data.data() + sourceIndex);
     base64WriteIntAsFourBytes(destination, result);
@@ -332,14 +332,14 @@ std::string base64Encode(const std::vector<uint8_t>& data)
     sourceIndex += 3;
   }
 
-  if (sourceIndex == static_cast<int64_t>(inputSize - 1))
+  if (sourceIndex == static_cast<int64_t>(inputSize) - 1)
   {
     result = base64EncodeAndPadTwo(data.data() + sourceIndex);
     base64WriteIntAsFourBytes(destination, result);
     destination += 4;
     sourceIndex += 1;
   }
-  else if (sourceIndex == static_cast<int64_t>(inputSize - 2))
+  else if (sourceIndex == static_cast<int64_t>(inputSize) - 2)
   {
     result = base64EncodeAndPadOne(data.data() + sourceIndex);
     base64WriteIntAsFourBytes(destination, result);
@@ -398,11 +398,11 @@ std::vector<uint8_t> base64Decode(const std::string& text)
   auto inputSize = text.size();
   auto inputPtr = text.data();
   // use the size for the max decoded size
-  auto maxDecodedSize = (inputSize / 4) * 3 - 2;
+  auto maxDecodedSize = (inputSize / 4) * 3;
   std::vector<uint8_t> destination(maxDecodedSize);
   auto destinationPtr = destination.begin();
 
-  while (sourceIndex < static_cast<int64_t>(inputSize - 4))
+  while (sourceIndex < static_cast<int64_t>(inputSize) - 4)
   {
     int64_t result = base64Decode(inputPtr + sourceIndex);
     base64WriteThreeLowOrderBytes(destinationPtr, result);

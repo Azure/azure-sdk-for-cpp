@@ -25,7 +25,7 @@ find_package(Threads REQUIRED)
 
 # Allow building azure-core without OpenSSL dependency and hence without Crypto-functions
 # This is a work-around for anyone consuming azure-core without a need for Crypto like the cognitive services.
-option(BUILD_CRYPTO "Build the cryto namespace. Build will depend on OpenSSL." ON)
+option(BUILD_CRYPTO "Build the crypto namespace. Build will depend on OpenSSL." ON)
 
 if(BUILD_TRANSPORT_CURL)
   # min version for `CURLSSLOPT_NO_REVOKE`
