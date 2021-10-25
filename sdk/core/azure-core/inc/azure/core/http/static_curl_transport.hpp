@@ -44,6 +44,14 @@ namespace Azure { namespace Core { namespace Http {
    */
   struct StaticCurlTransportOptions final
   {
+
+    /**
+     * @brief Default Maximum time in seconds that you allow the connection phase to the server to
+     * take.
+     *
+     */
+    AZ_CORE_DLLEXPORT static const long DefaultConnectionTimeout = 300;
+
     /**
      * @brief The string for the proxy is passed directly to the libcurl handle without any parsing
      *
@@ -103,6 +111,15 @@ namespace Azure { namespace Core { namespace Http {
      *
      */
     bool NoSignal = false;
+
+    /**
+     * @brief Contain the maximum time in seconds that you allow the connection phase to the server
+     * to take.
+     *
+     * @details This only limits the connection phase, it has no impact once it has connected.
+     *
+     */
+    long ConnectionTimeout = DefaultConnectionTimeout;
   };
 
   /**

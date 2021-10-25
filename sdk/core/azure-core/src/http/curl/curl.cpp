@@ -1231,6 +1231,8 @@ inline std::string GetConnectionKey(std::string const& host, CurlTransportOption
   key.append(!options.SslOptions.EnableCertificateRevocationListCheck ? "1" : "0");
   key.append(options.SslVerifyPeer ? "1" : "0");
   key.append(options.NoSignal ? "1" : "0");
+  key.append(
+      options.ConnectionTimeout == CurlTransportOptions::DefaultConnectionTimeout ? "0" : "1");
 
   return key;
 }
@@ -1267,6 +1269,7 @@ std::unique_ptr<CurlNetworkConnection> CurlConnectionPool::ExtractOrCreateCurlCo
         // created and to discard all current connections in the pool for the host-index. A caller
         // might request this after getting broken/closed connections multiple-times.
         hostPoolIndex->second.clear();
+        Log::Write(Logger::Level::Verbose, LogMsgPrefix + "Reset connection pool requested.");
       }
       else
       {
@@ -1283,6 +1286,7 @@ std::unique_ptr<CurlNetworkConnection> CurlConnectionPool::ExtractOrCreateCurlCo
           g_curlConnectionPool.ConnectionPoolIndex.erase(hostPoolIndex);
         }
 
+        Log::Write(Logger::Level::Verbose, LogMsgPrefix + "Re-using connection from the pool.");
         // return connection ref
         return connection;
       }
@@ -1292,6 +1296,7 @@ std::unique_ptr<CurlNetworkConnection> CurlConnectionPool::ExtractOrCreateCurlCo
 
   // Creating a new connection is thread safe. No need to lock mutex here.
   // No available connection for the pool for the required host. Create one
+  Log::Write(Logger::Level::Verbose, LogMsgPrefix + "Spawn new connection.");
   CURL* newHandle = curl_easy_init();
   if (!newHandle)
   {
@@ -1331,6 +1336,17 @@ std::unique_ptr<CurlNetworkConnection> CurlConnectionPool::ExtractOrCreateCurlCo
     throw Azure::Core::Http::TransportException(
         _detail::DefaultFailedToGetNewConnectionTemplate + host + ". "
         + std::string(curl_easy_strerror(result)));
+  }
+
+  if (options.ConnectionTimeout != CurlTransportOptions::DefaultConnectionTimeout)
+  {
+    if (!SetLibcurlOption(newHandle, CURLOPT_CONNECTTIMEOUT, options.ConnectionTimeout, &result))
+    {
+      throw Azure::Core::Http::TransportException(
+          _detail::DefaultFailedToGetNewConnectionTemplate + host
+          + ". Fail setting connect timeout to: " + std::to_string(options.ConnectionTimeout) + ". "
+          + std::string(curl_easy_strerror(result)));
+    }
   }
 
   /******************** Curl handle options apply to all connections created
