@@ -136,3 +136,23 @@ jobs:
             summaryFileLocation: '$(Build.SourcesDirectory)/**/Cobertura.xml'
           displayName: Publish Code Coverage to DevOps
           condition: and(succeededOrFailed(), eq(variables['CODE_COVERAGE'], 'enabled'))
+
+        - task: mspremier.BuildQualityChecks.QualityChecks-task.BuildQualityChecks@6
+          displayName: Check line coverage
+          inputs:
+            checkCoverage: true
+            coverageFailOption: fixed
+            coverageType: line
+            # 95% minimum line coverage
+            coverageThreshold: 95
+          condition: eq(variables['CODE_COVERAGE'], 'enabled')
+
+        - task: mspremier.BuildQualityChecks.QualityChecks-task.BuildQualityChecks@6
+          displayName: Check branch coverage
+          inputs:
+            checkCoverage: true
+            coverageFailOption: fixed
+            coverageType: branch
+            # 70% minimum branch coverage
+            coverageThreshold: 70
+          condition: eq(variables['CODE_COVERAGE'], 'enabled')
