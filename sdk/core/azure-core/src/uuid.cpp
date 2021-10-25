@@ -49,12 +49,19 @@ namespace Azure { namespace Core {
   {
     uint8_t uuid[UuidSize] = {};
 
-    // RAND_MAX == INT_MAX
+#if defined(AZ_PLATFORM_WINDOWS)
+    std::random_device rd;
+#else
     std::uniform_int_distribution<uint32_t> distribution;
+#endif
 
     for (size_t i = 0; i < UuidSize; i += 4)
     {
+#if defined(AZ_PLATFORM_WINDOWS)
+      const uint32_t x = rd();
+#else
       const uint32_t x = distribution(randomGenerator);
+#endif
       std::memcpy(uuid + i, &x, 4);
     }
 
