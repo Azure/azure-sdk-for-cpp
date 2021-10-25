@@ -173,11 +173,10 @@ TEST_F(KeyVaultCertificateClientTest, GetCertificateVersion)
 
   auto const& client
       = GetClientForTest(::testing::UnitTest::GetInstance()->current_test_info()->name());
-  GetCertificateVersionOptions options;
-  options.Version = CreateCertificate(certificateName, client, m_defaultWait).Properties.Version;
+  std::string version
+      = CreateCertificate(certificateName, client, m_defaultWait).Properties.Version;
   {
-
-    auto response = client.GetCertificateVersion(certificateName, options);
+    auto response = client.GetCertificateVersion(certificateName, version);
     CheckValidResponse(response);
     auto cert = response.Value;
     EXPECT_EQ(cert.Name(), cert.Properties.Name);

@@ -104,15 +104,13 @@ Response<KeyVaultCertificateWithPolicy> CertificateClient::GetCertificate(
 
 Response<KeyVaultCertificateWithPolicy> CertificateClient::GetCertificateVersion(
     std::string const& name,
+    std::string const& version,
     GetCertificateVersionOptions const& options,
     Context const& context) const
 {
+  (void)options;
   // Request with no payload
-  std::vector<std::string> path{{CertificatesPath, name}};
-  if (!options.Version.empty())
-  {
-    path.emplace_back(options.Version);
-  }
+  std::vector<std::string> path{{CertificatesPath, name, version}};
 
   auto request = CreateRequest(HttpMethod::Get, std::move(path));
 

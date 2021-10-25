@@ -850,11 +850,6 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
    */
   struct GetCertificateVersionOptions final
   {
-    /**
-     * @brief Certificate Version.
-     *
-     */
-    std::string Version;
   };
 
   /**
