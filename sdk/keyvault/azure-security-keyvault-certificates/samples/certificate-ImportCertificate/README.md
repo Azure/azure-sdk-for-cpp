@@ -26,14 +26,14 @@ CertificateClient certificateClient(std::getenv("AZURE_KEYVAULT_URL"), credentia
 
 ## Importing a PEM certificate
 
-You will need the certificate content in PEM format to perform this operation. One sample is provided in certificate-ImportCertificate.hpp as the pemCertificate string.
+You will need the certificate content in PEM format to perform this operation. One sample is provided in certificate-ImportCertificate.hpp as the GetPemCertificate() string.
 
 Once the import parameters are setup we can call Import certificate and get back the newly imported certificate.
 
 ```cpp Snippet:CertificateSample3ImportPEM
 // prepare the parameters
 ImportCertificateOptions params;
-params.Value = pemCertificate;
+params.Value = GetPemCertificate();
 
 params.Policy.Enabled = true;
 params.Policy.KeyType = CertificateKeyType::Rsa;
@@ -48,14 +48,14 @@ std::cout << "Imported pem certificate with name " << imported.Name();
 
 ## Importing a PKCS certificate
 
-You will need the certificate content in PKCS format to perform this operation. One sample is provided in certificate-ImportCertificate.hpp as the pkcsBase64 string.
+You will need the certificate content in PKCS format to perform this operation. One sample is provided in certificate-ImportCertificate.hpp as the GetPkcsCertificate() string.
 
 Once the import parameters are setup we can call Import certificate and get back the newly imported certificate
 
 ```cpp Snippet:CertificateSample3ImportPKCS
  // prepare the parameters
 ImportCertificateOptions params;
-params.Value = pkcsBase64;
+params.Value = GetPemCertificate();
 
 params.Policy.Enabled = true;
 params.Policy.KeyType = CertificateKeyType::Rsa;
