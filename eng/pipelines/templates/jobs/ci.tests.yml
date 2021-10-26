@@ -141,18 +141,24 @@ jobs:
           displayName: Check line coverage
           inputs:
             checkCoverage: true
-            coverageFailOption: fixed
+            coverageFailOption: build
+            forceCoverageImprovement: true
             coverageType: line
-            # 95% minimum line coverage
-            coverageThreshold: 95
-          condition: eq(variables['CODE_COVERAGE'], 'enabled')
+            allowCoverageVariance: true
+            coverageVariance: 3.0
+            # Minimum baseline for line coverage
+            coverageThreshold: 60
+          condition: and(succeededOrFailed(), eq(variables['CODE_COVERAGE'], 'enabled'), eq(variables['Skip.CoverageEnforcement'], ''))
 
         - task: mspremier.BuildQualityChecks.QualityChecks-task.BuildQualityChecks@6
           displayName: Check branch coverage
           inputs:
             checkCoverage: true
-            coverageFailOption: fixed
+            coverageFailOption: build
+            forceCoverageImprovement: true
             coverageType: branch
-            # 70% minimum branch coverage
-            coverageThreshold: 70
-          condition: eq(variables['CODE_COVERAGE'], 'enabled')
+            allowCoverageVariance: true
+            coverageVariance: 3.0
+            # Minimum baseline for branch coverage
+            coverageThreshold: 30
+          condition: and(succeededOrFailed(), eq(variables['CODE_COVERAGE'], 'enabled'), eq(variables['Skip.CoverageEnforcement'], ''))
