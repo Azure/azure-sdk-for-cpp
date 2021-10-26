@@ -5,6 +5,8 @@
 ### Features Added
 
 - Add the static libcurl transport adapter.
+- Add `NoSignal` option to the `CurlTransportAdapter`.
+- Add `ConnectionTimeout` option to the `CurlTransportAdapter`.
 
 ### Breaking Changes
 

@@ -289,6 +289,30 @@ public:
       }
     }
 
+    if (m_options.NoSignal)
+    {
+      if (!SetStaticLibcurlOption(m_libcurlHandle, CURLOPT_NOSIGNAL, 1L, &result))
+      {
+        throw Azure::Core::Http::TransportException(
+            FailedToGetNewConnectionTemplate + host
+            + ". Failed to set NOSIGNAL option for libcurl. "
+            + std::string(curl_easy_strerror(result)));
+      }
+    }
+
+    if (m_options.ConnectionTimeout
+        != Azure::Core::Http::StaticCurlTransportOptions::DefaultConnectionTimeout)
+    {
+      if (!SetStaticLibcurlOption(
+              m_libcurlHandle, CURLOPT_CONNECTTIMEOUT, m_options.ConnectionTimeout, &result))
+      {
+        throw Azure::Core::Http::TransportException(
+            FailedToGetNewConnectionTemplate + host
+            + ". Fail setting connect timeout to: " + std::to_string(m_options.ConnectionTimeout)
+            + ". " + std::string(curl_easy_strerror(result)));
+      }
+    }
+
     // headers sep-up
     auto const& headers = request.GetHeaders();
     if (headers.size() > 0)

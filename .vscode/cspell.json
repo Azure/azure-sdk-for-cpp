@@ -113,7 +113,7 @@
   ],
   "overrides": [
     {
-      "filename": "**/eng/pipelines/templates/jobs/archetype-sdk-client.yml",
+      "filename": "**/eng/pipelines/templates/**/*.yml",
       "words": [
         "lcov",
         "iname"
