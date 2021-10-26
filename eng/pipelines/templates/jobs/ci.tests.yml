@@ -154,7 +154,7 @@ jobs:
           inputs:
             checkCoverage: true
             coverageFailOption: build
-            coverageType: branch
+            coverageType: branches
             allowCoverageVariance: true
             coverageVariance: 3.0
             # Minimum baseline for branch coverage
