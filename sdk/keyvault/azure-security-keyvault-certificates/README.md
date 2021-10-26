@@ -6,12 +6,56 @@ The Azure Key Vault certificates client library enables programmatically managin
 
 [Source code][certificate_client_src] | [API reference documentation][api_reference] | [Product documentation][keyvault_docs]
 
+
+## Getting started
+
+### Install the package
+Install the Azure Key Vault certificates client library for C++ with vcpkg:
+
+```cmd
+vcpkg install azure-security-keyvault-certificates-cpp
+```
+
+### Prerequisites
+* An [Azure subscription][azure_sub].
+* An existing Azure Key Vault. If you need to create an Azure Key Vault, you can use the Azure Portal or [Azure CLI][azure_cli].
+
+If you use the Azure CLI, replace `<your-resource-group-name>` and `<your-key-vault-name>` with your own, unique names:
+
+```PowerShell
+az keyvault create --resource-group <your-resource-group-name> --name <your-key-vault-name>
+```
+
+## Key concepts
+### KeyVaultCertificate
+A `KeyVaultCertificate` is the fundamental resource within Azure Key Vault. You'll use certificates to encrypt and verify encrypted or signed data.
+
+### CertificateClient
+With a `CertificateClient` you can get certificates from the vault, create new certificates and
+new versions of existing certificates, update certificate metadata, and delete certificates. You
+can also manage certificate issuers, contacts, and management policies of certificates. This is
+illustrated in the examples below.
+
+### Thread safety
+We guarantee that all client instance methods are thread-safe and independent of each other ([guideline](https://azure.github.io/azure-sdk/cpp_introduction.html#thread-safety)). This ensures that the recommendation of reusing client instances is always safe, even across threads.
+
 ### Additional concepts
 
 <!-- CLIENT COMMON BAR -->
+[Replaceable HTTP transport adapter](https://github.com/Azure/azure-sdk-for-cpp/blob/main/sdk/core/azure-core#http-transport-adapter) |
+[Long-running operations](https://github.com/Azure/azure-sdk-for-cpp/blob/main/sdk/core/azure-core#long-running-operations) |
+<!-- CLIENT COMMON BAR -->
 
-[Replaceable HTTP transport adapter](https://github.com/Azure/azure-sdk-for-cpp/tree/main/sdk/core/azure-core#http-transport-adapter) |
-[Long-running operations](https://github.com/Azure/azure-sdk-for-cpp/tree/main/sdk/core/azure-core#long-running-operations) |
+## Examples
+
+For detailed samples please review the samples provided.
+
+
+
+
+
+
+
 
 ### Additional Documentation
 
@@ -32,8 +76,11 @@ For more information see the [Code of Conduct FAQ][coc_faq] or contact opencode@
 
 <!-- LINKS -->
 [api_reference]: https://azure.github.io/azure-sdk-for-cpp/keyvault.html
+[certificate_client_src]: https://github.com/Azure/azure-sdk-for-cpp/tree/main/sdk/keyvault/azure-security-keyvault-certificates
 [code_of_conduct]: https://opensource.microsoft.com/codeofconduct/
 [keyvault_docs]: https://docs.microsoft.com/azure/key-vault/
 [keyvault_rest]: https://docs.microsoft.com/rest/api/keyvault/
 [contributing]: https://github.com/Azure/azure-sdk-for-cpp/blob/main/CONTRIBUTING.md
 [coc_faq]: https://opensource.microsoft.com/codeofconduct/faq/
+[azure_cli]: https://docs.microsoft.com/cli/azure
+[azure_sub]: https://azure.microsoft.com/free/
