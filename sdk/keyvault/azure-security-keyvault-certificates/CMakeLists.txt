@@ -86,9 +86,9 @@ endif()
 #   add_subdirectory(test/perf)
 # endif()
 
-# if(BUILD_SAMPLES)
-#   add_subdirectory(test/samples)
-# endif()
+if(BUILD_SAMPLES)
+   add_subdirectory(samples)
+endif()
 
 az_vcpkg_export(
     azure-security-keyvault-certificates

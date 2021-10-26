@@ -5,9 +5,9 @@ parameters:
 - name: CtestRegex
   type: string
   default: .*
-- name: Coverage
-  type: string
-  default: 'enabled'
+- name: CoverageEnabled
+  type: boolean
+  default: true
 - name: LiveTestCtestRegex
   type: string
   default: ''
@@ -35,7 +35,7 @@ stages:
           ServiceDirectory: ${{ parameters.ServiceDirectory }}
           Artifacts: ${{ parameters.Artifacts }}
           CtestRegex: ${{ parameters.CtestRegex }}
-          Coverage: ${{ parameters.Coverage }}
+          CoverageEnabled: ${{ parameters.CoverageEnabled }}
           CoverageReportPath: ${{ parameters.CoverageReportPath }}
           ${{ if eq(parameters.ServiceDirectory, 'template') }}:
             TestPipeline: true

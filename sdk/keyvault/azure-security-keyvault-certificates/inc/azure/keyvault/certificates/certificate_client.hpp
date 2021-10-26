@@ -375,7 +375,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
      * page of certificates.
      */
     CertificatePropertiesPagedResponse GetPropertiesOfCertificates(
-        GetPropertiesOfCertificatesOptions const& options,
+        GetPropertiesOfCertificatesOptions const& options = GetPropertiesOfCertificatesOptions(),
         Azure::Core::Context const& context = Azure::Core::Context()) const;
 
     /**
