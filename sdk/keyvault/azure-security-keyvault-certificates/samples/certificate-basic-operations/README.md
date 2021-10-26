@@ -1,13 +1,13 @@
 # Creating, getting, updating, and deleting certificates
 
 This sample demonstrates how to :
-* create
-* get 
-* update
-* delete 
-* purge
+* create a certificate
+* get a certificate 
+* update a certificate
+* delete a certificate 
+* purge a certificate
 
-a certificate in Azure Key Vault.
+in Azure Key Vault.
 To get started, you'll need a URI to an Azure Key Vault.
 
 ## Creating a CertificateClient
@@ -37,7 +37,7 @@ Call StartCreateCertificate to create a new certificate, with specified properti
 
 ```cpp Snippet:CertificateSample1Create
 std::string certificateName = "Sample1";
-auto params = CertificateCreateParameters();
+CertificateCreateParameters params;
 ... 
 // start the create process
 auto response = certificateClient.StartCreateCertificate(certificateName, params);
@@ -95,7 +95,3 @@ If the Azure Key Vault is soft delete-enabled and you want to permanently delete
 auto result = response.PollUntilDone(defaultWait);
 certificateClient.PurgeDeletedCertificate(certificateName);
 ```
-
-## Source
-
-[defaultazurecredential]: https://github.com/Azure/azure-sdk-for-cpp/blob/main/sdk/identity/azure-identity/README.md

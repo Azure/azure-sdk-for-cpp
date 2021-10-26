@@ -10,6 +10,6 @@ set(CMAKE_CXX_STANDARD_REQUIRED True)
 add_executable (
   certificate-ImportCertificate
   certificate-ImportCertificate.cpp
- "certificate-ImportCertificate.hpp")
+)
 
 target_link_libraries(certificate-ImportCertificate PRIVATE azure-security-keyvault-certificates azure-identity )

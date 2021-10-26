@@ -1,14 +1,14 @@
 # Creating, get properties, get versions, delete, get deleted and purge certificates
 
 This sample demonstrates how to:
-* create
+* create certificates
 * get properties of certificates
 * get properties of certificate versions
-* delete
+* delete a certificate
 * get deleted certificates
 * purge
 
-certificates in Azure Key Vault.
+in Azure Key Vault.
 To get started, you'll need a URI to an Azure Key Vault.
 
 ### Creating a CertificateClient
@@ -57,11 +57,21 @@ while (!response.IsCompleted())
 Call GetPropertiesOfCertificates to retrieve information about certificates from Key Vault.
 
 ```cpp Snippet:CertificateSample2GetProperties
- // get certificate properties
-auto certificates
-    = certificateClient.GetPropertiesOfCertificates(GetPropertiesOfCertificatesOptions());
-
-std::cout << "Found " << certificates.Items.size() << " certificates.";
+ // get properties of certificates
+for (auto certificates = certificateClient.GetPropertiesOfCertificates();
+    certificates.HasPage();
+    certificates.MoveToNextPage())
+{ 
+    // go through every certificate of each page returned
+    // the number of results returned for in a  page is not guaranteed
+    // it can be anywhere from 0 to 25
+    std::cout << "Found " << certificates.Items.size() << " certificates.";
+    
+    for (auto oneCertificate : certificates.Items)
+    {
+        std::cout << "Certificate name : " << oneCertificate.Name;
+    }
+}
 ```
 
 ## Creating a new certificate version 
@@ -74,11 +84,18 @@ To get information about certificate versions call GetPropertiesOfCertificateVer
 
 ```cpp Snippet:CertificateSample2GetProperties
 // get properties of all the versions of a certificate
-auto certificateVersions
+for (auto certificateVersions
     = certificateClient.GetPropertiesOfCertificateVersions(certificateName1);
+    certificateVersions.HasPage();
+    certificateVersions.MoveToNextPage())
+{ 
+    // go through every certificate of each page returned
+    // the number of results returned for in a  page is not guaranteed
+    // it can be anywhere from 0 to 25
 
-std::cout << "Found " << certificateVersions.Items.size()
-          << " certificate versions for certificate " << certificateName1;
+    std::cout << "Found " << certificateVersions.Items.size()
+            << " certificate versions for certificate " << certificateName1;
+}
 ```
 ## Deleting the certificates 
 
@@ -97,10 +114,16 @@ response2.PollUntilDone(defaultWait);
 After the certificates are deleted , but not yet purged we can call GetDeletedCertificates
 
 ```cpp Snippet:CertificatesSample2GetDeleted
- // get properties of deleted certificates
-auto deletedCertificates = certificateClient.GetDeletedCertificates();
-
-std::cout << "Found " << deletedCertificates.Items.size() << " deleted certificates.";
+// get properties of deleted certificates
+for (auto deletedCertificates = certificateClient.GetDeletedCertificates();
+    deletedCertificates.HasPage();
+    deletedCertificates.MoveToNextPage())
+{
+    // go through every certificate of each page returned
+    // the number of results returned for in a  page is not guaranteed
+    // it can be anywhere from 0 to 25
+    std::cout << "Found " << deletedCertificates.Items.size() << " deleted certificates.";
+}
 ```
 
 ## Purging the deleted certificates
@@ -114,7 +137,3 @@ If the Azure Key Vault is soft delete-enabled and you want to permanently delete
   certificateClient.PurgeDeletedCertificate(certificateName2);
 }
 ```
-
-## Source
-
-[defaultazurecredential]: https://github.com/Azure/azure-sdk-for-cpp/blob/main/sdk/identity/azure-identity/README.md

@@ -32,7 +32,7 @@ Once the import parameters are setup we can call Import certificate and get back
 
 ```cpp Snippet:CertificateSample3ImportPEM
 // prepare the parameters
-auto params = ImportCertificateOptions();
+ImportCertificateOptions params;
 params.Value = pemCertificate;
 
 params.Policy.Enabled = true;
@@ -54,7 +54,7 @@ Once the import parameters are setup we can call Import certificate and get back
 
 ```cpp Snippet:CertificateSample3ImportPKCS
  // prepare the parameters
-auto params = ImportCertificateOptions();
+ImportCertificateOptions params;
 params.Value = pkcsBase64;
 
 params.Policy.Enabled = true;
@@ -90,7 +90,3 @@ response2.PollUntilDone(defaultWait);
 certificateClient.PurgeDeletedCertificate(pkcsName);
 certificateClient.PurgeDeletedCertificate(pemName);
 ```
-
-## Source
-
-[defaultazurecredential]: https://github.com/Azure/azure-sdk-for-cpp/blob/main/sdk/identity/azure-identity/README.md

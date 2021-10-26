@@ -40,10 +40,9 @@ int main()
   {
     std::string certificateName = "Sample1";
     KeyVaultCertificateWithPolicy certificate;
-    auto params = CertificateCreateParameters();
+    CertificateCreateParameters params;
     // setup certificate create properties/policy
     {
-
       // create a lifetime action
       LifetimeAction action;
       action.LifetimePercentage = 80;
