@@ -21,10 +21,11 @@
 #include <string>
 
 namespace Azure { namespace Security { namespace KeyVault { namespace Certificates {
-
+#if defined(TESTING_BUILD)
   namespace Test {
     class KeyVaultCertificateClientTest;
-  };
+  }
+#endif
   /**
    * @brief The CertificateClient provides synchronous methods to manage KeyVaultCertificate in
    * Azure Key Vault.
@@ -37,7 +38,10 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
 #endif
   {
     friend class CreateCertificateOperation;
+
+#if defined(TESTING_BUILD)
     friend class Test::KeyVaultCertificateClientTest;
+#endif
 
   private:
     // Using a shared pipeline for a client to share it with LRO (like delete key)
@@ -78,14 +82,12 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
      * @remark This operation requires the certificates/get permission.
      *
      * @param name The name of the certificate.
-     * @param options Additional options for the operation.
      * @param context The context for the operation can be used for request cancellation.
      * @return A response containing the certificate and policy as a KeyVaultCertificateWithPolicy
      * instance.
      */
     Azure::Response<KeyVaultCertificateWithPolicy> GetCertificate(
         std::string const& name,
-        GetCertificateOptions const& options = GetCertificateOptions(),
         Azure::Core::Context const& context = Azure::Core::Context()) const;
 
     /**
@@ -97,7 +99,6 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
      *
      * @param name The name of the certificate.
      * @param version The version of the certificate.
-     * @param options Optional parameters for this operation.
      * @param context The context for the operation can be used for request cancellation.
      * @return A response containing the certificate and policy as a KeyVaultCertificateWithPolicy
      * instance.
@@ -105,7 +106,6 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
     Azure::Response<KeyVaultCertificateWithPolicy> GetCertificateVersion(
         std::string const& name,
         std::string const& version,
-        GetCertificateVersionOptions const& options = GetCertificateVersionOptions(),
         Azure::Core::Context const& context = Azure::Core::Context()) const;
 
     /**
@@ -117,14 +117,12 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
      *
      * @param name The name of the certificate.
      * @param parameters Parameters for this operation.
-     * @param options Additional options for the operation.
      * @param context The context for the operation can be used for request cancellation.
      * @return CreateCertificateOperation instance used to determine create status.
      */
     CreateCertificateOperation StartCreateCertificate(
         std::string const& name,
         CertificateCreateParameters const& parameters,
-        CreateCertificateOptions const& options = CreateCertificateOptions(),
         Azure::Core::Context const& context = Azure::Core::Context()) const;
 
     /**
@@ -136,14 +134,12 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
      *
      * @param name The certificate issuer name.
      * @param issuer The certificate issuer.
-     * @param options Additional options for the operation.
      * @param context The context for the operation can be used for request cancellation.
      * @return CertificateIssuer instance used to determine create status.
      */
     Azure::Response<CertificateIssuer> CreateIssuer(
         std::string const& name,
         CertificateIssuer const& issuer,
-        CreateIssuerOptions const& options = CreateIssuerOptions(),
         Azure::Core::Context const& context = Azure::Core::Context()) const;
 
     /**
@@ -155,13 +151,11 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
      * @remark This operation requires the certificates/manageissuers/getissuers permission.
      *
      * @param name The certificate issuer name.
-     * @param options Additional options for the operation.
      * @param context The context for the operation can be used for request cancellation.
      * @return CertificateIssuer instance.
      */
     Azure::Response<CertificateIssuer> GetIssuer(
         std::string const& name,
-        GetIssuerOptions const& options = GetIssuerOptions(),
         Azure::Core::Context const& context = Azure::Core::Context()) const;
 
     /**
@@ -172,13 +166,11 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
      * @remark This operation requires the certificates/setissuers permission.
      *
      * @param issuer The certificate issuer.
-     * @param options Additional options for the operation.
      * @param context The context for the operation can be used for request cancellation.
      * @return CertificateIssuer instance.
      */
     Azure::Response<CertificateIssuer> UpdateIssuer(
         CertificateIssuer const& issuer,
-        UpdateIssuerOptions const& options = UpdateIssuerOptions(),
         Azure::Core::Context const& context = Azure::Core::Context()) const;
 
     /**
@@ -189,13 +181,11 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
      * @remark This operation requires the certificates/manageissuers/deleteissuers permission.
      *
      * @param name The certificate issuer name.
-     * @param options Additional options for the operation.
      * @param context The context for the operation can be used for request cancellation.
      * @return CertificateIssuer instance.
      */
     Azure::Response<CertificateIssuer> DeleteIssuer(
         std::string const& name,
-        DeleteIssuerOptions const& options = DeleteIssuerOptions(),
         Azure::Core::Context const& context = Azure::Core::Context()) const;
 
     /**
@@ -206,12 +196,10 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
      *
      * @remark This operation requires the certificates/managecontacts permission.
      *
-     * @param options Additional options for the operation.
      * @param context The context for the operation can be used for request cancellation.
      * @return The contacts list for the key vault certificate.
      */
     Azure::Response<CertificateContactsResult> GetContacts(
-        GetContactsOptions const& options = GetContactsOptions(),
         Azure::Core::Context const& context = Azure::Core::Context()) const;
 
     /**
@@ -221,12 +209,10 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
      *
      * @remark This operation requires the certificates/managecontacts permission.
      *
-     * @param options Additional options for the operation.
      * @param context The context for the operation can be used for request cancellation.
      * @return The contacts for the key vault certificate.
      */
     Azure::Response<CertificateContactsResult> DeleteContacts(
-        DeleteContactsOptions const& options = DeleteContactsOptions(),
         Azure::Core::Context const& context = Azure::Core::Context()) const;
 
     /**
@@ -237,13 +223,11 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
      * @remark This operation requires the certificates/managecontacts permission.
      *
      * @param contacts The contacts for the key vault certificate.
-     * @param options Additional options for the operation.
      * @param context The context for the operation can be used for request cancellation.
      * @return The contacts for the key vault certificate.
      */
     Azure::Response<CertificateContactsResult> SetContacts(
         std::vector<CertificateContact> const& contacts,
-        SetContactsOptions const& options = SetContactsOptions(),
         Azure::Core::Context const& context = Azure::Core::Context()) const;
 
     /**
@@ -256,13 +240,11 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
      * @remark This operation requires the certificates/get permission.
      *
      * @param name The name of the certificate.
-     * @param options Additional options for the operation.
      * @param context The context for the operation can be used for request cancellation.
      * @return The deleted certificate.
      */
     Azure::Response<DeletedCertificate> GetDeletedCertificate(
         std::string const& name,
-        GetDeletedCertificateOptions const& options = GetDeletedCertificateOptions(),
         Azure::Core::Context const& context = Azure::Core::Context()) const;
 
     /**
@@ -275,13 +257,11 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
      * @remark This operation requires the certificate/purge permission.
      *
      * @param name The name of the certificate.
-     * @param options Additional options for the operation.
      * @param context The context for the operation can be used for request cancellation.
      * @return Empty object.
      */
     Azure::Response<PurgedCertificate> PurgeDeletedCertificate(
         std::string const& name,
-        PurgeDeletedCertificateOptions const& options = PurgeDeletedCertificateOptions(),
         Azure::Core::Context const& context = Azure::Core::Context()) const;
 
     /**
@@ -293,13 +273,11 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
      * @remark This operation requires the certificate/delete permission.
      *
      * @param name The name of the certificate.
-     * @param options Additional options for the operation.
      * @param context The context for the operation can be used for request cancellation.
      * @return Delete Certificate operation.
      */
     DeleteCertificateOperation StartDeleteCertificate(
         std::string const& name,
-        StartDeleteCertificateOptions const& options = StartDeleteCertificateOptions(),
         Azure::Core::Context const& context = Azure::Core::Context()) const;
 
     /**
@@ -312,14 +290,11 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
      * @remark This operation requires the certificate/recover permission.
      *
      * @param name The name of the certificate.
-     * @param options Additional options for the operation.
      * @param context The context for the operation can be used for request cancellation.
      * @return Recover deleted certificate operation.
      */
     RecoverDeletedCertificateOperation StartRecoverDeletedCertificate(
         std::string const& name,
-        StartRecoverDeletedCertificateOptions const& options
-        = StartRecoverDeletedCertificateOptions(),
         Azure::Core::Context const& context = Azure::Core::Context()) const;
 
     /**
@@ -331,13 +306,11 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
      * @remark This operation requires the certificates/get permission.
      *
      * @param name The name of the certificate.
-     * @param options Additional options for the operation.
      * @param context The context for the operation can be used for request cancellation.
      * @return The contact properties.
      */
     Azure::Response<CertificatePolicy> GetCertificatePolicy(
         std::string const& name,
-        GetCertificatePolicyOptions const& options = GetCertificatePolicyOptions(),
         Azure::Core::Context const& context = Azure::Core::Context()) const;
 
     /**
@@ -349,14 +322,12 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
      *
      * @param name The name of the certificate.
      * @param certificatePolicy The updated certificate policy.
-     * @param options Additional options for the operation.
      * @param context The context for the operation can be used for request cancellation.
      * @return The updated contact properties.
      */
     Azure::Response<CertificatePolicy> UpdateCertificatePolicy(
         std::string const& name,
         CertificatePolicy const& certificatePolicy,
-        UpdateCertificatePolicyOptions const& options = UpdateCertificatePolicyOptions(),
         Azure::Core::Context const& context = Azure::Core::Context()) const;
 
     /**
@@ -368,13 +339,11 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
      * @remark This operation requires the certificates/backup permission.
      *
      * @param name The name of the certificate.
-     * @param options Additional options for the operation.
      * @param context The context for the operation can be used for request cancellation.
      * @return Certificate backup.
      */
     Azure::Response<BackupCertificateResult> BackupCertificate(
         std::string name,
-        BackupCertificateOptions const& options = BackupCertificateOptions(),
         Azure::Core::Context const& context = Azure::Core::Context()) const;
 
     /**
@@ -385,13 +354,11 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
      * @remark This operation requires the certificates/restore permission.
      *
      * @param backup The backup to restore.
-     * @param options Additional options for the operation.
      * @param context The context for the operation can be used for request cancellation.
      * @return The restored certificate.
      */
     Azure::Response<KeyVaultCertificateWithPolicy> RestoreCertificateBackup(
         BackupCertificateResult const& backup,
-        RestoreCertificateBackupOptions const& options = RestoreCertificateBackupOptions(),
         Azure::Core::Context const& context = Azure::Core::Context()) const;
 
     /**

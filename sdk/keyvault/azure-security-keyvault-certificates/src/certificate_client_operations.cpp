@@ -167,9 +167,7 @@ std::unique_ptr<Azure::Core::Http::RawResponse> DeleteCertificateOperation::Poll
   try
   {
     rawResponse
-        = m_certificateClient
-              ->GetDeletedCertificate(m_continuationToken, GetDeletedCertificateOptions(), context)
-              .RawResponse;
+        = m_certificateClient->GetDeletedCertificate(m_continuationToken, context).RawResponse;
   }
   catch (Azure::Core::RequestFailedException& error)
   {
@@ -254,9 +252,7 @@ std::unique_ptr<Azure::Core::Http::RawResponse> RecoverDeletedCertificateOperati
 
   try
   {
-    rawResponse
-        = m_certificateClient->GetCertificate(m_continuationToken, GetCertificateOptions(), context)
-              .RawResponse;
+    rawResponse = m_certificateClient->GetCertificate(m_continuationToken, context).RawResponse;
   }
   catch (Azure::Core::RequestFailedException& error)
   {
