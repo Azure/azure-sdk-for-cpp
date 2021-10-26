@@ -142,7 +142,6 @@ jobs:
           inputs:
             checkCoverage: true
             coverageFailOption: build
-            forceCoverageImprovement: true
             coverageType: line
             allowCoverageVariance: true
             coverageVariance: 3.0
@@ -155,7 +154,6 @@ jobs:
           inputs:
             checkCoverage: true
             coverageFailOption: build
-            forceCoverageImprovement: true
             coverageType: branch
             allowCoverageVariance: true
             coverageVariance: 3.0
