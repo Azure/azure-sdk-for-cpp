@@ -137,7 +137,7 @@ jobs:
           displayName: Publish Code Coverage to DevOps
           condition: and(succeededOrFailed(), eq(variables['CODE_COVERAGE'], 'enabled'))
 
-        - task: mspremier.BuildQualityChecks.QualityChecks-task.BuildQualityChecks@6
+        - task: mspremier.BuildQualityChecks.QualityChecks-task.BuildQualityChecks@8
           displayName: Check line coverage
           inputs:
             checkCoverage: true
@@ -150,7 +150,7 @@ jobs:
             coverageThreshold: 60
           condition: and(succeededOrFailed(), eq(variables['CODE_COVERAGE'], 'enabled'), eq(variables['Skip.CoverageEnforcement'], ''))
 
-        - task: mspremier.BuildQualityChecks.QualityChecks-task.BuildQualityChecks@6
+        - task: mspremier.BuildQualityChecks.QualityChecks-task.BuildQualityChecks@8
           displayName: Check branch coverage
           inputs:
             checkCoverage: true
