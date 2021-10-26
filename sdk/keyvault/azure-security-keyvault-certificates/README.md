@@ -219,7 +219,7 @@ Once the import parameters are setup we can call Import certificate and get back
 ```cpp Snippet:CertificateSample3ImportPEM
 // prepare the parameters
 ImportCertificateOptions params;
-params.Value = pemCertificate;
+params.Value = GetPemCertificate();
 
 params.Policy.Enabled = true;
 params.Policy.KeyType = CertificateKeyType::Rsa;
@@ -241,7 +241,7 @@ Once the import parameters are setup we can call Import certificate and get back
 ```cpp Snippet:CertificateSample3ImportPKCS
  // prepare the parameters
 ImportCertificateOptions params;
-params.Value = pkcsBase64;
+params.Value = GetPemCertificate();
 
 params.Policy.Enabled = true;
 params.Policy.KeyType = CertificateKeyType::Rsa;
