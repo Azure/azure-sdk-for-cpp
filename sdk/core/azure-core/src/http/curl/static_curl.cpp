@@ -2,8 +2,9 @@
 // SPDX-License-Identifier: MIT
 
 #include "azure/core/http/policies/policy.hpp"
-#include "azure/core/http/static_curl_transport.hpp"
 #include "azure/core/internal/diagnostics/log.hpp"
+
+#include "static_curl_transport.hpp"
 
 #include <memory>
 
@@ -50,7 +51,7 @@ class StaticCurlImpl final : public Azure::Core::IO::BodyStream {
 private:
   CURL* m_libcurlHandle;
   struct curl_slist* m_headerHandle = NULL;
-  Azure::Core::Http::StaticCurlTransportOptions m_options;
+  Azure::Core::Http::CurlTransportOptions m_options;
   std::unique_ptr<RawResponse> m_response = nullptr;
   std::vector<uint8_t> m_responseData;
   std::vector<uint8_t> m_sendBuffer;
@@ -199,8 +200,8 @@ private:
 
 public:
   StaticCurlImpl(
-      Azure::Core::Http::StaticCurlTransportOptions const& options
-      = Azure::Core::Http::StaticCurlTransportOptions())
+      Azure::Core::Http::CurlTransportOptions const& options
+      = Azure::Core::Http::CurlTransportOptions())
       : m_options(options)
   {
     // ******************************************************************
@@ -301,7 +302,7 @@ public:
     }
 
     if (m_options.ConnectionTimeout
-        != Azure::Core::Http::StaticCurlTransportOptions::DefaultConnectionTimeout)
+        != Azure::Core::Http::CurlTransportOptions::DefaultConnectionTimeout)
     {
       if (!SetStaticLibcurlOption(
               m_libcurlHandle, CURLOPT_CONNECTTIMEOUT, m_options.ConnectionTimeout, &result))
