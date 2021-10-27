@@ -21,6 +21,7 @@
 
 #include <chrono>
 #include <iostream>
+#include <thread>
 
 using namespace Azure::Security::KeyVault::Certificates;
 using namespace std::chrono_literals;
