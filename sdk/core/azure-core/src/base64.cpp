@@ -381,18 +381,26 @@ static void Base64WriteThreeLowOrderBytes(std::vector<uint8_t>::iterator destina
 
 std::vector<uint8_t> Base64Decode(const std::string& text)
 {
-
-  if (text.size() < 4)
+  auto inputSize = text.size();
+  if (inputSize < 4)
   {
     return std::vector<uint8_t>(0);
   }
 
   size_t sourceIndex = 0;
-  auto inputSize = text.size();
   auto inputPtr = text.data();
-  // use the size for the max decoded size
-  auto maxDecodedSize = (inputSize / 4) * 3;
-  std::vector<uint8_t> destination(maxDecodedSize);
+  auto decodedSize = (inputSize / 4) * 3;
+
+  if (inputPtr[inputSize - 2] == EncodingPad)
+  {
+    decodedSize -= 2;
+  }
+  else if (inputPtr[inputSize - 1] == EncodingPad)
+  {
+    decodedSize -= 1;
+  }
+
+  std::vector<uint8_t> destination(decodedSize);
   auto destinationPtr = destination.begin();
 
   while (sourceIndex + 4 < inputSize)
@@ -449,12 +457,6 @@ std::vector<uint8_t> Base64Decode(const std::string& text)
     destinationPtr += 1;
   }
 
-  auto resultSize = static_cast<size_t>(destinationPtr - destination.begin());
-  if (resultSize < destination.size())
-  {
-    destination.resize(resultSize);
-    destination.shrink_to_fit();
-  }
   return destination;
 }
 
