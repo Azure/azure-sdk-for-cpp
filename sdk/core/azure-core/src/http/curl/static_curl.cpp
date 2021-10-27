@@ -305,7 +305,7 @@ public:
         != Azure::Core::Http::CurlTransportOptions::DefaultConnectionTimeout)
     {
       auto timeout = m_options.ConnectionTimeout == 0
-          ? Azure::Core::Http::StaticCurlTransportOptions::DefaultConnectionTimeout
+          ? Azure::Core::Http::CurlTransportOptions::DefaultConnectionTimeout
           : m_options.ConnectionTimeout;
 
       if (!SetStaticLibcurlOption(m_libcurlHandle, CURLOPT_CONNECTTIMEOUT_MS, timeout, &result))
