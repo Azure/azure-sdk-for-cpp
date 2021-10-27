@@ -210,11 +210,12 @@ namespace Azure { namespace Core { namespace Http {
     // previously called
     void StartTry();
 
+  public:
     /**
      * @brief Construct an #Azure::Core::Http::Request.
      *
      * @param httpMethod HttpMethod.
-     * @param url URL.
+     * @param url %Request URL.
      * @param bodyStream #Azure::Core::IO::BodyStream.
      * @param shouldBufferResponse A boolean value indicating whether the returned response should
      * be buffered or returned as a body stream instead.
@@ -227,9 +228,9 @@ namespace Azure { namespace Core { namespace Http {
         : m_method(std::move(httpMethod)), m_url(std::move(url)), m_bodyStream(bodyStream),
           m_retryModeEnabled(false), m_shouldBufferResponse(shouldBufferResponse)
     {
+      AZURE_ASSERT_MSG(bodyStream, "The bodyStream pointer cannot be null.");
     }
 
-  public:
     /**
      * @brief Constructs a `%Request`.
      *
@@ -240,7 +241,6 @@ namespace Azure { namespace Core { namespace Http {
     explicit Request(HttpMethod httpMethod, Url url, Azure::Core::IO::BodyStream* bodyStream)
         : Request(httpMethod, std::move(url), bodyStream, true)
     {
-      AZURE_ASSERT_MSG(bodyStream, "The bodyStream pointer cannot be null.");
     }
 
     /**
