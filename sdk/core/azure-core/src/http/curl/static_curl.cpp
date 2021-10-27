@@ -304,8 +304,11 @@ public:
     if (m_options.ConnectionTimeout
         != Azure::Core::Http::CurlTransportOptions::DefaultConnectionTimeout)
     {
-      if (!SetStaticLibcurlOption(
-              m_libcurlHandle, CURLOPT_CONNECTTIMEOUT, m_options.ConnectionTimeout, &result))
+      auto timeout = m_options.ConnectionTimeout == 0
+          ? Azure::Core::Http::StaticCurlTransportOptions::DefaultConnectionTimeout
+          : m_options.ConnectionTimeout;
+
+      if (!SetStaticLibcurlOption(m_libcurlHandle, CURLOPT_CONNECTTIMEOUT_MS, timeout, &result))
       {
         throw Azure::Core::Http::TransportException(
             FailedToGetNewConnectionTemplate + host

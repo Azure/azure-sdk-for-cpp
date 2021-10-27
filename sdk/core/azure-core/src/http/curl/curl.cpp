@@ -1340,12 +1340,15 @@ std::unique_ptr<CurlNetworkConnection> CurlConnectionPool::ExtractOrCreateCurlCo
 
   if (options.ConnectionTimeout != CurlTransportOptions::DefaultConnectionTimeout)
   {
-    if (!SetLibcurlOption(newHandle, CURLOPT_CONNECTTIMEOUT, options.ConnectionTimeout, &result))
+    // If value is 0, us Default.
+    auto timeout = options.ConnectionTimeout == 0 ? CurlTransportOptions::DefaultConnectionTimeout
+                                                  : options.ConnectionTimeout;
+    if (!SetLibcurlOption(newHandle, CURLOPT_CONNECTTIMEOUT_MS, timeout, &result))
     {
       throw Azure::Core::Http::TransportException(
           _detail::DefaultFailedToGetNewConnectionTemplate + host
-          + ". Fail setting connect timeout to: " + std::to_string(options.ConnectionTimeout) + ". "
-          + std::string(curl_easy_strerror(result)));
+          + ". Fail setting connect timeout to: " + std::to_string(options.ConnectionTimeout)
+          + " ms. " + std::string(curl_easy_strerror(result)));
     }
   }
 
