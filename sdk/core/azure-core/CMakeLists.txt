@@ -148,6 +148,7 @@ target_link_libraries(azure-core INTERFACE Threads::Threads)
 if(WIN32)
     target_link_libraries(azure-core PRIVATE bcrypt crypt32)
 else()
+    # Required for Hashing ( md5 and sha ).
     find_package(OpenSSL REQUIRED)
     target_link_libraries(azure-core PRIVATE OpenSSL::SSL)
 endif()

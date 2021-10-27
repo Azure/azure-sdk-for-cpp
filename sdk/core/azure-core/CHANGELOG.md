@@ -16,6 +16,9 @@
 
 ### Other Changes
 
+- Updated `base64` implementation to remove external dependency.
+- Updated `Uuid` implementation for Linux to remove external dependency.
+
 ## 1.2.1 (2021-09-02)
 
 ### Bugs Fixed
