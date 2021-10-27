@@ -158,7 +158,7 @@ std::string GetPemCertificate()
         "BkRGMfUngiT8oVyaMtZWYPM=\n"
         "-----END PRIVATE KEY-----\n";
   return pemCertificate;
-};
+}
 
 std::string GetPkcsCertificate()
 {
@@ -218,5 +218,5 @@ std::string GetPkcsCertificate()
         "BgUrDgMCGgUABBQ3xckfQUCgNMIXxUvrEUKgdeV8lQQIAPCuS/4UMrICAggA";
 
   return pkcsCertificate;
-};
+}
 /* cSpell:enable */
