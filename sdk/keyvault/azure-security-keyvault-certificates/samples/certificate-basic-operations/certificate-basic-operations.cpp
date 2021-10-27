@@ -88,7 +88,11 @@ int main()
       updateOptions.Properties = certificate.Properties;
       updateOptions.Properties.Enabled = false;
 
-      auto updatedCertificate = certificateClient.UpdateCertificateProperties(updateOptions).Value;
+      auto updatedCertificate
+          = certificateClient
+                .UpdateCertificateProperties(
+                    updateOptions.Properties.Name, updateOptions.Properties.Version, updateOptions)
+                .Value;
 
       std::cout << "After update certificate is enabled : "
                 << (updatedCertificate.Properties.Enabled.Value() ? "true" : "false");

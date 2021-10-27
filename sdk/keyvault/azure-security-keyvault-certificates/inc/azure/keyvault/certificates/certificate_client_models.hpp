@@ -232,6 +232,13 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
     }
 
     /**
+     * @brief Enables using the not equal operator for JWT.
+     *
+     * @param other A JWT to be compared.
+     */
+    bool operator!=(const CertificateKeyType& other) const noexcept { return !operator==(other); }
+
+    /**
      * @brief Return the JSON Web Token (JWT) as a string.
      *
      * @return The JWT represented as string.
@@ -301,6 +308,16 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
     bool operator==(const CertificateKeyCurveName& other) const noexcept
     {
       return m_value == other.m_value;
+    }
+
+    /**
+     * @brief Enables using the not equal operator for JWT.
+     *
+     * @param other A JWT to be compared.
+     */
+    bool operator!=(const CertificateKeyCurveName& other) const noexcept
+    {
+      return !operator==(other);
     }
 
     /**
@@ -416,6 +433,16 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
     }
 
     /**
+     * @brief Enables using the not equal operator for JWT.
+     *
+     * @param other A JWT to be compared.
+     */
+    bool operator!=(const CertificateContentType& other) const noexcept
+    {
+      return !operator==(other);
+    }
+
+    /**
      * @brief Get the string value of the key curve.
      *
      */
@@ -480,6 +507,13 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
     {
       return m_value == other.m_value;
     }
+
+    /**
+     * @brief Enables using the not equal operator for JWT.
+     *
+     * @param other A JWT to be compared.
+     */
+    bool operator!=(const CertificateKeyUsage& other) const noexcept { return !operator==(other); }
 
     /**
      * @brief Get the string value of the key curve.
@@ -588,6 +622,16 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
     bool operator==(const CertificatePolicyAction& other) const noexcept
     {
       return m_value == other.m_value;
+    }
+
+    /**
+     * @brief Enables using the not equal operator for JWT.
+     *
+     * @param other A JWT to be compared.
+     */
+    bool operator!=(const CertificatePolicyAction& other) const noexcept
+    {
+      return !operator==(other);
     }
 
     /**
@@ -774,8 +818,8 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
    * @brief A KeyVaultCertificate along with its CertificatePolicy.
    *
    */
-  struct KeyVaultCertificateWithPolicy : public KeyVaultCertificate
-  {
+  class KeyVaultCertificateWithPolicy : public KeyVaultCertificate {
+  public:
     /**
      * @brief Gets the current policy for the certificate.
      *
@@ -801,37 +845,11 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
   };
 
   /**
-   * @brief The options for calling GetCertificate.
-   *
-   */
-  struct GetCertificateVersionOptions final
-  {
-    /**
-     * @brief Certificate Version.
-     *
-     */
-    std::string Version;
-  };
-
-  /**
-   * @brief The options for calling DownloadCertificate.
-   *
-   */
-  struct DownloadCertificateOptions final
-  {
-    /**
-     * @brief Certificate Version.
-     *
-     */
-    Azure::Nullable<std::string> Version;
-  };
-
-  /**
    * @brief Parameters for StartCreateCertificate.
    *
    */
-  struct CertificateCreateParameters final
-  {
+  class CertificateCreateParameters final {
+  public:
     /**
      * @brief Certificate policy.
      *
@@ -1037,8 +1055,8 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
    * @brief Key vault server error
    *
    */
-  struct ServerError final
-  {
+  class ServerError final {
+  public:
     ~ServerError() = default;
     /**
      * @brief Error Code
@@ -1063,8 +1081,8 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
    * @brief A certificate operation.
    *
    */
-  struct CertificateOperationProperties final
-  {
+  class CertificateOperationProperties final {
+  public:
     /**
      * @brief The certificate id.
      *
@@ -1149,8 +1167,8 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
     ~CertificateOperationProperties() = default;
   };
 
-  struct DeletedCertificate final : public KeyVaultCertificateWithPolicy
-  {
+  class DeletedCertificate final : public KeyVaultCertificateWithPolicy {
+  public:
     /**
      * @brief Gets the identifier of the deleted certificate.
      *
@@ -1265,25 +1283,6 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
      *
      */
     std::string Provider;
-  };
-
-  /**
-   * @brief A certificate downloaded X509 data.
-   *
-   */
-  struct DownloadCertificateResult final
-  {
-    /**
-     * @brief Certificate data.
-     *
-     */
-    std::string Certificate;
-
-    /**
-     * @brief Content Type.
-     *
-     */
-    CertificateContentType ContentType;
   };
 
   /**
@@ -1509,4 +1508,18 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
      */
     std::unordered_map<std::string, std::string> Tags;
   };
+
+  /**
+   * @brief The certificate contacts API result.
+   *
+   */
+  struct CertificateContactsResult
+  {
+    /**
+     * @brief The certificate contacts list.
+     *
+     */
+    std::vector<CertificateContact> Contacts;
+  };
+
 }}}} // namespace Azure::Security::KeyVault::Certificates

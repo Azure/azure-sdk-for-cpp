@@ -547,10 +547,10 @@ std::string CertificateContactsSerializer::Serialize(
   return payload.dump();
 }
 
-std::vector<CertificateContact> CertificateContactsSerializer::Deserialize(
+CertificateContactsResult CertificateContactsSerializer::Deserialize(
     Azure::Core::Http::RawResponse const& rawResponse)
 {
-  std::vector<CertificateContact> response;
+  CertificateContactsResult response;
 
   auto const& body = rawResponse.GetBody();
   auto jsonResponse = json::parse(body);
@@ -565,7 +565,7 @@ std::vector<CertificateContact> CertificateContactsSerializer::Deserialize(
       JsonOptional::SetIfExists(contact.Name, contactJson, NamePropertyName);
       JsonOptional::SetIfExists(contact.Phone, contactJson, PhonePropertyName);
 
-      response.emplace_back(contact);
+      response.Contacts.emplace_back(contact);
     }
   }
 
