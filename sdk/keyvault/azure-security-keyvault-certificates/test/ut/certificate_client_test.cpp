@@ -173,11 +173,10 @@ TEST_F(KeyVaultCertificateClientTest, GetCertificateVersion)
 
   auto const& client
       = GetClientForTest(::testing::UnitTest::GetInstance()->current_test_info()->name());
-  GetCertificateVersionOptions options;
-  options.Version = CreateCertificate(certificateName, client, m_defaultWait).Properties.Version;
+  std::string version
+      = CreateCertificate(certificateName, client, m_defaultWait).Properties.Version;
   {
-
-    auto response = client.GetCertificateVersion(certificateName, options);
+    auto response = client.GetCertificateVersion(certificateName, version);
     CheckValidResponse(response);
     auto cert = response.Value;
     EXPECT_EQ(cert.Name(), cert.Properties.Name);
@@ -305,7 +304,7 @@ TEST_F(KeyVaultCertificateClientTest, CreateGetIssuer)
   issuer.Organization.AdminDetails.emplace_back(admin);
 
   {
-    auto result = client.CreateIssuer(issuer);
+    auto result = client.CreateIssuer(issuer.Name, issuer);
     CheckIssuers(result.Value, issuer);
   }
 
@@ -341,7 +340,7 @@ TEST_F(KeyVaultCertificateClientTest, UpdateIssuer)
   issuer.Organization.AdminDetails.emplace_back(admin);
 
   {
-    auto result = client.CreateIssuer(issuer);
+    auto result = client.CreateIssuer(issuer.Name, issuer);
     CheckIssuers(result.Value, issuer);
   }
 
@@ -380,11 +379,11 @@ TEST_F(KeyVaultCertificateClientTest, SetContacts)
 
   auto response = client.SetContacts(contacts);
 
-  CheckContactsCollections(contacts, response.Value);
+  CheckContactsCollections(contacts, response.Value.Contacts);
 
   auto response2 = client.DeleteContacts();
 
-  CheckContactsCollections(contacts, response2.Value);
+  CheckContactsCollections(contacts, response2.Value.Contacts);
 }
 
 TEST_F(KeyVaultCertificateClientTest, GetContacts)
@@ -411,11 +410,11 @@ TEST_F(KeyVaultCertificateClientTest, GetContacts)
   client.SetContacts(contacts);
   auto response = client.GetContacts();
 
-  CheckContactsCollections(contacts, response.Value);
+  CheckContactsCollections(contacts, response.Value.Contacts);
 
   auto response2 = client.DeleteContacts();
 
-  CheckContactsCollections(contacts, response2.Value);
+  CheckContactsCollections(contacts, response2.Value.Contacts);
 }
 
 TEST_F(KeyVaultCertificateClientTest, GetContactsPartial)
@@ -444,11 +443,11 @@ TEST_F(KeyVaultCertificateClientTest, GetContactsPartial)
   client.SetContacts(contacts);
   auto response = client.GetContacts();
 
-  CheckContactsCollections(contacts, response.Value);
+  CheckContactsCollections(contacts, response.Value.Contacts);
 
   auto response2 = client.DeleteContacts();
 
-  CheckContactsCollections(contacts, response2.Value);
+  CheckContactsCollections(contacts, response2.Value.Contacts);
 }
 
 TEST_F(KeyVaultCertificateClientTest, GetContactsDuplicateEmail)
@@ -477,11 +476,11 @@ TEST_F(KeyVaultCertificateClientTest, GetContactsDuplicateEmail)
   client.SetContacts(contacts);
   auto response = client.GetContacts();
 
-  CheckContactsCollections(contacts, response.Value);
+  CheckContactsCollections(contacts, response.Value.Contacts);
 
   auto response2 = client.DeleteContacts();
 
-  CheckContactsCollections(contacts, response2.Value);
+  CheckContactsCollections(contacts, response2.Value.Contacts);
 }
 
 TEST_F(KeyVaultCertificateClientTest, GetCertificatePolicy)
@@ -783,11 +782,11 @@ TEST_F(KeyVaultCertificateClientTest, GetPropertiesOfIssuers)
   issuer2.Organization.AdminDetails.emplace_back(admin);
 
   {
-    auto result = client.CreateIssuer(issuer);
+    auto result = client.CreateIssuer(issuer.Name, issuer);
     CheckIssuers(result.Value, issuer);
   }
   {
-    auto result = client.CreateIssuer(issuer2);
+    auto result = client.CreateIssuer(issuer2.Name, issuer2);
     CheckIssuers(result.Value, issuer2);
   }
   {
@@ -862,7 +861,7 @@ TEST_F(KeyVaultCertificateClientTest, DownloadImportPkcs)
       = CreateCertificate(pkcs, client, m_defaultWait, "CN=xyz", CertificateContentType::Pkcs12);
 
   {
-    auto result = client.DownloadCertificate(pkcs);
+    auto result = DownloadCertificate(pkcs, client);
     auto params = ImportCertificateOptions();
     params.Value = result.Value.Certificate;
 
@@ -911,7 +910,7 @@ TEST_F(KeyVaultCertificateClientTest, DownloadImportPem)
       = CreateCertificate(pem, client, m_defaultWait, "CN=xyz", CertificateContentType::Pem);
 
   {
-    auto result = client.DownloadCertificate(pem);
+    auto result = DownloadCertificate(pem, client);
     auto params = ImportCertificateOptions();
     params.Value = result.Value.Certificate;
 
@@ -957,7 +956,11 @@ TEST_F(KeyVaultCertificateClientTest, UpdateCertificate)
     certificate.Properties.Enabled = false;
     CertificateUpdateOptions updateOptions;
     updateOptions.Properties = certificate.Properties;
-    auto updatedCert = client.UpdateCertificateProperties(updateOptions).Value;
+    auto updatedCert
+        = client
+              .UpdateCertificateProperties(
+                  certificate.Properties.Name, certificate.Properties.Version, updateOptions)
+              .Value;
     EXPECT_FALSE(updatedCert.Properties.Enabled.Value());
   }
   {
@@ -991,7 +994,7 @@ TEST_F(KeyVaultCertificateClientTest, DISABLED_MergeCertificate)
 
   {
     auto certificate = CreateCertificate(pkcsToMerge, client, 1s, "CN=bbb");
-    auto result = client.DownloadCertificate(pkcsToMerge);
+    auto result = DownloadCertificate(pkcsToMerge, client);
     // mergeParams.Certificates.emplace_back(Azure::Core::Convert::Base64Encode(certificate.Cer));
   }
   {

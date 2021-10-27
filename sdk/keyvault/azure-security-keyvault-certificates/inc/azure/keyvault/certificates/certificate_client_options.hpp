@@ -3,7 +3,7 @@
 
 /**
  * @file
- * @brief Defines the supported options to create a Key Vault Keys client.
+ * @brief Defines the supported options to create a Key Vault Certificate client.
  *
  */
 
@@ -30,7 +30,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
     /**
      * @brief Construct a new Service Version object
      *
-     * @param version The string version for the Key Vault keys service.
+     * @param version The string version for the Key Vault Certificate service.
      */
     ServiceVersion(std::string version) : m_version(std::move(version)) {}
 
@@ -55,7 +55,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
   };
 
   /**
-   * @brief Define the options to create an SDK Keys client.
+   * @brief Define the options to create an SDK Certificate client.
    *
    */
   struct CertificateClientOptions final : public Azure::Core::_internal::ClientOptions
@@ -63,7 +63,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
     ServiceVersion Version;
 
     /**
-     * @brief Construct a new Key Client Options object.
+     * @brief Construct a new Certificate Client Options object.
      *
      * @param version Optional version for the client.
      */
