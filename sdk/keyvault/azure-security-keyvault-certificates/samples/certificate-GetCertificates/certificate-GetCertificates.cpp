@@ -159,13 +159,6 @@ KeyVaultCertificateWithPolicy CreateCertificate(
     auto response = certificateClient.StartCreateCertificate(certificateName, params);
     auto result = response.PollUntilDone(defaultWait);
 
-    // check that the operation completed
-    while (!response.IsCompleted())
-    {
-      response.UpdateProperties();
-      std::this_thread::sleep_for(defaultWait);
-    }
-
     // get the certificate
     auto certificate = certificateClient.GetCertificate(certificateName).Value;
 

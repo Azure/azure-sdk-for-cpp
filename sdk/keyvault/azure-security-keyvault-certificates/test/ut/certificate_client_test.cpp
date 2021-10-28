@@ -68,11 +68,6 @@ TEST_F(KeyVaultCertificateClientTest, CreateCertificateResumeToken)
         = CreateCertificateOperation::CreateFromResumeToken(response.GetResumeToken(), client);
 
     auto result = fromToken.PollUntilDone(m_defaultWait);
-    while (!response.IsCompleted())
-    {
-      response.UpdateProperties();
-      std::this_thread::sleep_for(m_defaultWait);
-    }
 
     auto cert = client.GetCertificate(certificateName);
     EXPECT_EQ(cert.Value.Name(), params.Properties.Name);

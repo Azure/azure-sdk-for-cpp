@@ -69,13 +69,6 @@ int main()
       auto response = certificateClient.StartCreateCertificate(certificateName, params);
       auto result = response.PollUntilDone(defaultWait);
 
-      // check that the operation completed
-      while (!response.IsCompleted())
-      {
-        response.UpdateProperties();
-        std::this_thread::sleep_for(defaultWait);
-      }
-
       // get the certificate
       certificate = certificateClient.GetCertificate(certificateName).Value;
 

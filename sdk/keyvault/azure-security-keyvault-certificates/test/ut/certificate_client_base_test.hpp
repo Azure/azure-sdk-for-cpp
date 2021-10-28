@@ -261,12 +261,6 @@ namespace Azure {
       auto response = client.StartCreateCertificate(name, params);
       auto result = response.PollUntilDone(defaultWait);
 
-      while (!response.IsCompleted())
-      {
-        response.UpdateProperties();
-        std::this_thread::sleep_for(defaultWait);
-      }
-
       auto cert = client.GetCertificate(name);
 
       EXPECT_EQ(cert.Value.Name(), params.Properties.Name);
