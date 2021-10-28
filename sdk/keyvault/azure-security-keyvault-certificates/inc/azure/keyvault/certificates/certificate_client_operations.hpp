@@ -64,18 +64,12 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
 
   public:
     /**
-     * @brief Get the #Azure::Security::KeyVault::Certificates::KeyVaultCertificateWithPolicy
+     * @brief Get the #Azure::Security::KeyVault::Certificates::CertificateOperationProperties
      * object.
      *
-     * @return A certificate object.
+     * @return A CertificateOperationProperties object.
      */
     CertificateOperationProperties Value() const override { return m_value; }
-
-    /**
-     * @brief Get the properties of the pending certificate operation.
-     *
-     */
-    CertificateOperationProperties Properties;
 
     /**
      * @brief Get an Url as string which can be used to get the status of the
@@ -101,15 +95,6 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
     static CreateCertificateOperation CreateFromResumeToken(
         std::string const& resumeToken,
         CertificateClient const& client,
-        Azure::Core::Context const& context = Azure::Core::Context());
-
-    /**
-     * @brief Updates the properties of the operation by querying the key vault.
-     *
-     * @param context A #Azure::Core::Context controlling the request lifetime.
-     * @return updated properties
-     */
-    CertificateOperationProperties UpdateProperties(
         Azure::Core::Context const& context = Azure::Core::Context());
 
     /**

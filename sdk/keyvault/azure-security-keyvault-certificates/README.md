@@ -82,13 +82,6 @@ CertificateCreateParameters params;
 // start the create process
 auto response = certificateClient.StartCreateCertificate(certificateName, params);
 auto result = response.PollUntilDone(defaultWait);
-
-// check that the operation completed
-while (!response.IsCompleted())
-{
-  response.UpdateProperties();
-  std::this_thread::sleep_for(defaultWait);
-}
 ```
 
 ### Getting a Certificate

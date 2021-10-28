@@ -16,7 +16,7 @@ Azure::Response<CertificateOperationProperties> CreateCertificateOperation::Poll
   while (true)
   {
     Poll(context);
-    if (IsDone())
+    if (IsDone() && IsCompleted())
     {
       break;
     }
@@ -70,9 +70,9 @@ CreateCertificateOperation::CreateCertificateOperation(
     Azure::Response<CertificateOperationProperties> response)
     : m_certificateClient(certificateClient)
 {
-  Properties = response.Value;
+  m_value = response.Value;
   m_rawResponse = std::move(response.RawResponse);
-  m_continuationToken = Properties.Name;
+  m_continuationToken = m_value.Name;
 
   if (!m_value.Name.empty())
   {
@@ -97,43 +97,30 @@ CreateCertificateOperation CreateCertificateOperation::CreateFromResumeToken(
   return operation;
 }
 
-CertificateOperationProperties CreateCertificateOperation::UpdateProperties(
-    Azure::Core::Context const& context)
-{
-  if (IsCompleted())
-  {
-    return Properties;
-  }
-
-  auto response = m_certificateClient->GetPendingCertificateOperation(m_continuationToken, context);
-  Properties = response.Value;
-  return Properties;
-}
-
 void CreateCertificateOperation::Cancel(Azure::Core::Context const& context)
 {
   auto response
       = m_certificateClient->CancelPendingCertificateOperation(m_continuationToken, context);
-  Properties = response.Value;
+  m_value = response.Value;
 }
 void CreateCertificateOperation::Delete(Azure::Core::Context const& context)
 {
   auto response
       = m_certificateClient->DeletePendingCertificateOperation(m_continuationToken, context);
-  Properties = response.Value;
+  m_value = response.Value;
 }
 
 bool CreateCertificateOperation::IsCompleted() const
 {
   bool completed = false;
 
-  if (Properties.Status.HasValue()
-      && (Properties.Status.Value() == _detail::CompletedValue
-          || Properties.Status.Value() == _detail::DeletedValue))
+  if (m_value.Status
+      && (m_value.Status.Value() == _detail::CompletedValue
+          || m_value.Status.Value() == _detail::DeletedValue))
   {
     completed = true;
   }
-  if (Properties.Error.HasValue())
+  if (m_value.Error.HasValue())
   {
     completed = true;
   }
