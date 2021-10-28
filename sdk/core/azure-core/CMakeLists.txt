@@ -39,12 +39,13 @@ if(BUILD_TRANSPORT_CURL)
     src/http/curl/curl_connection_pool_private.hpp
     src/http/curl/curl_connection_private.hpp
     src/http/curl/curl_session_private.hpp
+    src/http/curl/static_curl_transport.hpp
     src/http/curl/curl.cpp
     src/http/curl/static_curl.cpp
   )
   SET(CURL_TRANSPORT_ADAPTER_INC
     inc/azure/core/http/curl_transport.hpp
-    inc/azure/core/http/static_curl_transport.hpp)
+  )
 endif()
 if(BUILD_TRANSPORT_WINHTTP)
   SET(WIN_TRANSPORT_ADAPTER_SRC src/http/winhttp/win_http_transport.cpp)
