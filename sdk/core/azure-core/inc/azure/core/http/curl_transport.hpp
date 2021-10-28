@@ -40,11 +40,11 @@ namespace Azure { namespace Core { namespace Http {
   struct CurlTransportOptions final
   {
     /**
-     * @brief Default Maximum time in seconds that you allow the connection phase to the server to
-     * take.
+     * @brief Default Maximum time in milliseconds that you allow the connection phase to the server
+     * to take.
      *
      */
-    AZ_CORE_DLLEXPORT static const long DefaultConnectionTimeout = 300;
+    AZ_CORE_DLLEXPORT static const long DefaultConnectionTimeout = 300000;
 
     /**
      * @brief The string for the proxy is passed directly to the libcurl handle without any parsing

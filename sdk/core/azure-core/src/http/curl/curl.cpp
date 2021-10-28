@@ -1231,8 +1231,12 @@ inline std::string GetConnectionKey(std::string const& host, CurlTransportOption
   key.append(!options.SslOptions.EnableCertificateRevocationListCheck ? "1" : "0");
   key.append(options.SslVerifyPeer ? "1" : "0");
   key.append(options.NoSignal ? "1" : "0");
+  // using DefaultConnectionTimeout or 0 result in the same setting
   key.append(
-      options.ConnectionTimeout == CurlTransportOptions::DefaultConnectionTimeout ? "0" : "1");
+      (options.ConnectionTimeout == CurlTransportOptions::DefaultConnectionTimeout
+       || options.ConnectionTimeout == 0)
+          ? "0"
+          : "1");
 
   return key;
 }
@@ -1340,10 +1344,7 @@ std::unique_ptr<CurlNetworkConnection> CurlConnectionPool::ExtractOrCreateCurlCo
 
   if (options.ConnectionTimeout != CurlTransportOptions::DefaultConnectionTimeout)
   {
-    // If value is 0, us Default.
-    auto timeout = options.ConnectionTimeout == 0 ? CurlTransportOptions::DefaultConnectionTimeout
-                                                  : options.ConnectionTimeout;
-    if (!SetLibcurlOption(newHandle, CURLOPT_CONNECTTIMEOUT_MS, timeout, &result))
+    if (!SetLibcurlOption(newHandle, CURLOPT_CONNECTTIMEOUT_MS, options.ConnectionTimeout, &result))
     {
       throw Azure::Core::Http::TransportException(
           _detail::DefaultFailedToGetNewConnectionTemplate + host
