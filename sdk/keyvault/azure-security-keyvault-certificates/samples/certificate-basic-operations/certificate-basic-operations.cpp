@@ -21,6 +21,7 @@
 
 #include <chrono>
 #include <iostream>
+#include <thread>
 
 using namespace Azure::Security::KeyVault::Certificates;
 using namespace std::chrono_literals;
@@ -67,13 +68,6 @@ int main()
       // start the create process
       auto response = certificateClient.StartCreateCertificate(certificateName, params);
       auto result = response.PollUntilDone(defaultWait);
-
-      // check that the operation completed
-      while (!response.IsCompleted())
-      {
-        response.UpdateProperties();
-        std::this_thread::sleep_for(defaultWait);
-      }
 
       // get the certificate
       certificate = certificateClient.GetCertificate(certificateName).Value;

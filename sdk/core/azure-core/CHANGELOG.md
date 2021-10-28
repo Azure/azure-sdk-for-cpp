@@ -6,6 +6,7 @@
 
 - Add `NoSignal` option to the `CurlTransportAdapter`.
 - Add `ConnectionTimeout` option to the `CurlTransportAdapter`.
+- Add `Azure::Core::Http::Request` constructor overload to support payload and non-buffered response. 
 
 ### Breaking Changes
 
@@ -14,6 +15,9 @@
 [2848](https://github.com/Azure/azure-sdk-for-cpp/issues/2848) Update the libcurl transport adapter to work with HTTP/1.1 only.
 
 ### Other Changes
+
+- Updated `base64` implementation to remove external dependency.
+- Updated `Uuid` implementation for Linux to remove external dependency.
 
 ## 1.2.1 (2021-09-02)
 

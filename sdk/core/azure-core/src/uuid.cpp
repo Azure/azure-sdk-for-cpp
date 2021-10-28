@@ -3,12 +3,18 @@
 
 #include "azure/core/uuid.hpp"
 
-#if defined(AZ_PLATFORM_POSIX)
-#include <openssl/rand.h> //for RAND_bytes
-#endif
-
 #include <cstdio>
 #include <random>
+
+#if defined(AZ_PLATFORM_POSIX)
+#include <thread>
+namespace {
+// 64-bit Mersenne Twister by Matsumoto and Nishimura, 2000
+// Used to generate the random numbers for the Uuid.
+// The seed is generated with std::random_device.
+static thread_local std::mt19937_64 randomGenerator(std::random_device{}());
+} // namespace
+#endif
 
 namespace Azure { namespace Core {
   std::string Uuid::ToString()
@@ -47,22 +53,19 @@ namespace Azure { namespace Core {
 
 #if defined(AZ_PLATFORM_WINDOWS)
     std::random_device rd;
+#else
+    std::uniform_int_distribution<uint32_t> distribution;
+#endif
 
     for (size_t i = 0; i < UuidSize; i += 4)
     {
+#if defined(AZ_PLATFORM_WINDOWS)
       const uint32_t x = rd();
+#else
+      const uint32_t x = distribution(randomGenerator);
+#endif
       std::memcpy(uuid + i, &x, 4);
     }
-#elif defined(AZ_PLATFORM_POSIX)
-    // This static cast is safe since we know Uuid size, which is a const, will always fit an int.
-    int ret = RAND_bytes(uuid, static_cast<int>(UuidSize));
-    if (ret <= 0)
-    {
-      abort();
-    }
-#else
-    abort();
-#endif
 
     // SetVariant to ReservedRFC4122
     uuid[8] = (uuid[8] | ReservedRFC4122) & 0x7F;
