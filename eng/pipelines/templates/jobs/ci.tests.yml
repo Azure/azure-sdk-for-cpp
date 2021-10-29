@@ -148,10 +148,8 @@ jobs:
           displayName: Check line coverage
           inputs:
             checkCoverage: true
-            coverageFailOption: build
+            coverageFailOption: fixed
             coverageType: line
-            allowCoverageVariance: true
-            coverageVariance: 3.0
             # Minimum baseline for line coverage
             coverageThreshold: ${{ parameters.LineCoverageTarget }}
           condition: and(succeededOrFailed(), eq(variables['CODE_COVERAGE'], 'enabled'), eq(variables['Skip.CoverageEnforcement'], ''))
@@ -160,10 +158,8 @@ jobs:
           displayName: Check branch coverage
           inputs:
             checkCoverage: true
-            coverageFailOption: build
+            coverageFailOption: fixed
             coverageType: branches
-            allowCoverageVariance: true
-            coverageVariance: 3.0
             # Minimum baseline for branch coverage
             coverageThreshold: ${{ parameters.BranchCoverageTarget }}
           condition: and(succeededOrFailed(), eq(variables['CODE_COVERAGE'], 'enabled'), eq(variables['Skip.CoverageEnforcement'], ''))
