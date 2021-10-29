@@ -19,6 +19,13 @@ parameters:
     default: true
   - name: Matrix
     type: string
+  - name: LineCoverageTarget
+    type: number
+    default: 95
+  - name: BranchCoverageTarget
+    type: number
+    default: 70
+
 
   # Supplied by archetype-sdk-tests-generate.yml dynamic matrix generator
   - name: CloudConfig
@@ -146,7 +153,7 @@ jobs:
             allowCoverageVariance: true
             coverageVariance: 3.0
             # Minimum baseline for line coverage
-            coverageThreshold: 60
+            coverageThreshold: ${{ parameters.LineCoverageTarget }}
           condition: and(succeededOrFailed(), eq(variables['CODE_COVERAGE'], 'enabled'), eq(variables['Skip.CoverageEnforcement'], ''))
 
         - task: mspremier.BuildQualityChecks.QualityChecks-task.BuildQualityChecks@8
@@ -158,5 +165,5 @@ jobs:
             allowCoverageVariance: true
             coverageVariance: 3.0
             # Minimum baseline for branch coverage
-            coverageThreshold: 30
+            coverageThreshold: ${{ parameters.BranchCoverageTarget }}
           condition: and(succeededOrFailed(), eq(variables['CODE_COVERAGE'], 'enabled'), eq(variables['Skip.CoverageEnforcement'], ''))

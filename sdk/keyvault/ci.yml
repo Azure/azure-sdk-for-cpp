@@ -37,6 +37,8 @@ stages:
       LiveTestCtestRegex: "azure-security-keyvault.*"
       LiveTestTimeoutInMinutes: 120
       SubscriptionConfiguration: $(sub-config-azure-cloud-test-resources)
+      LineCoverageTarget: 15
+      BranchCoverageTarget: 37
       Artifacts:
         - Name: azure-security-keyvault-keys
           Path: azure-security-keyvault-keys
