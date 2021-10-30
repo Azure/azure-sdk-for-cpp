@@ -87,7 +87,7 @@ TEST_F(KeyVaultCertificateClientTest, CreateCertificateResumeToken)
   }
 }
 
-TEST_F(KeyVaultCertificateClientTest, GetCertificate)
+TEST_F(KeyVaultCertificateClientTest, DISABLED_GetCertificate)
 {
   // cspell: disable-next-line
   std::string const certificateName("vivazqu");
@@ -161,7 +161,7 @@ TEST_F(KeyVaultCertificateClientTest, GetCertificate)
   }
 }
 
-TEST_F(KeyVaultCertificateClientTest, GetCertificateVersion)
+TEST_F(KeyVaultCertificateClientTest, DISABLED_GetCertificateVersion)
 {
   // cspell: disable-next-line
   std::string const certificateName("vivazqu2");
