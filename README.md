@@ -14,7 +14,7 @@ For API reference docs, tutorials, samples, quick starts, and other documentatio
 
 ### Download & Install the SDK
 
-Temp The easiest way to acquire the C++ SDK is leveraging vcpkg package manager. You will need to install [Git](https://git-scm.com/downloads) before getting started.
+The easiest way to acquire the C++ SDK is leveraging vcpkg package manager. You will need to install [Git](https://git-scm.com/downloads) before getting started.
 
 First clone and bootstrap vcpkg itself. You can install it anywhere on your machine, but **make note** of the directory where you clone the vcpkg repo.
 
