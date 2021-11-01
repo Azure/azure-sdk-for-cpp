@@ -985,7 +985,7 @@ TEST_F(KeyVaultCertificateClientTest, DISABLED_MergeCertificate)
   std::string mergeTarget = "baaab";
   // cspell: disable-next-line
   std::string mergeTarget2 = "ccaac";
-  auto mergeoptions = MergeCertificateOptions();
+  auto mergeOptions = MergeCertificateOptions();
 
   {
     auto certificate = CreateCertificate(pkcsToMerge, client, 1s, "CN=bbb");
@@ -1017,7 +1017,7 @@ TEST_F(KeyVaultCertificateClientTest, DISABLED_MergeCertificate)
     {
       try
       {
-        auto merged = client.MergeCertificate(mergeTarget, mergeoptions);
+        auto merged = client.MergeCertificate(mergeTarget, mergeOptions);
         cont = false;
       }
       catch (...)
