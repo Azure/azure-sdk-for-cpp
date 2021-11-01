@@ -133,7 +133,7 @@ CreateCertificateOperation CertificateClient::StartCreateCertificate(
   auto responseT
       = Azure::Response<CertificateOperationProperties>(std::move(value), std::move(rawResponse));
   return CreateCertificateOperation(
-      std::make_shared<CertificateClient>(*this), std::move(responseT));
+      responseT.Value.Name, std::make_shared<CertificateClient>(*this));
 }
 
 Response<DeletedCertificate> CertificateClient::GetDeletedCertificate(

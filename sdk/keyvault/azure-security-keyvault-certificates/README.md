@@ -71,9 +71,9 @@ Then, in the sample below, you can set `keyVaultUrl` based on an environment var
 CertificateClient certificateClient(std::getenv("AZURE_KEYVAULT_URL"), credential);
 ```
 
-### Creating a Certificate
+### Start creating a Certificate
 
-Call StartCreateCertificate to create a new certificate, with specified properties and policy.
+Call StartCreateCertificate to start creating a new certificate, with specified properties and policy.
 
 ```cpp Snippet:CertificateSample1Create
 std::string certificateName = "Sample1";
@@ -81,16 +81,15 @@ CertificateCreateParameters params;
 ... 
 // start the create process
 auto response = certificateClient.StartCreateCertificate(certificateName, params);
-auto result = response.PollUntilDone(defaultWait);
 ```
 
-### Getting a Certificate
+### Getting a Certificate once completed
 
-Call GetCertificate to retrieve a certificate from Key Vault.
+Call PollUntilDone to poll the status of the creation. Once the opperation has completed it will return the certificate.
 
 ```cpp Snippet:CertificateSample1Get
-// get the certificate
-certificate = certificateClient.GetCertificate(certificateName).Value;
+// wait for complete to get the certificate
+certificate = response.PollUntilDone(defaultWait).Value;
 
 std::cout << "Created certificate with policy. Certificate name : " << certificate.Name();
 ```
