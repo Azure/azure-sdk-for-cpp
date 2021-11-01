@@ -1236,7 +1236,7 @@ inline std::string GetConnectionKey(std::string const& host, CurlTransportOption
       (options.ConnectionTimeout == CurlTransportOptions::DefaultConnectionTimeout
        || options.ConnectionTimeout == 0)
           ? "0"
-          : "1");
+          : std::to_string(options.ConnectionTimeout));
 
   return key;
 }
