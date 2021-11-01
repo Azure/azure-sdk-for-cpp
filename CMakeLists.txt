@@ -20,7 +20,7 @@ option(RUN_LONG_UNIT_TESTS "Tests that takes more than 5 minutes to complete. No
 option(BUILD_STORAGE_SAMPLES "Build sample application for Azure Storage clients" OFF)
 option(BUILD_PERFORMANCE_TESTS "Build the performance test library" OFF)
 option(MSVC_USE_STATIC_CRT "(MSVC only) Set to ON to link SDK with static CRT (/MT or /MTd switch)." OFF)
-option(BUILD_SAMPLES "build samples" ON)
+
 include(AzureTransportAdapters)
 include(AzureVcpkg)
 
