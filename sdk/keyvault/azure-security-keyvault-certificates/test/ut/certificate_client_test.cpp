@@ -19,8 +19,8 @@ using namespace std::chrono_literals;
 TEST_F(KeyVaultCertificateClientTest, CreateCertificate)
 {
   // cspell: disable-next-line
-  std::string const certificateName("magiqStuff");
-  m_defaultWait = 5s;
+  std::string const certificateName(GetCertificateName("magiqStuff"));
+
   auto const& client
       = GetClientForTest(::testing::UnitTest::GetInstance()->current_test_info()->name());
   // create certificate method contains all the checks
@@ -41,7 +41,7 @@ TEST_F(KeyVaultCertificateClientTest, CreateCertificate)
 TEST_F(KeyVaultCertificateClientTest, CreateCertificateResumeToken)
 {
   // cspell: disable-next-line
-  std::string const certificateName("magiqStuff2");
+  std::string const certificateName(GetCertificateName("magiqStuff2"));
 
   auto const& client
       = GetClientForTest(::testing::UnitTest::GetInstance()->current_test_info()->name());
@@ -90,7 +90,7 @@ TEST_F(KeyVaultCertificateClientTest, CreateCertificateResumeToken)
 TEST_F(KeyVaultCertificateClientTest, GetCertificate)
 {
   // cspell: disable-next-line
-  std::string const certificateName("vivazqu");
+  std::string const certificateName(GetCertificateName("vivazqu"));
 
   auto const& client
       = GetClientForTest(::testing::UnitTest::GetInstance()->current_test_info()->name());
@@ -164,7 +164,7 @@ TEST_F(KeyVaultCertificateClientTest, GetCertificate)
 TEST_F(KeyVaultCertificateClientTest, GetCertificateVersion)
 {
   // cspell: disable-next-line
-  std::string const certificateName("vivazqu2");
+  std::string const certificateName(GetCertificateName("vivazqu2"));
 
   auto const& client
       = GetClientForTest(::testing::UnitTest::GetInstance()->current_test_info()->name());
@@ -214,7 +214,7 @@ TEST_F(KeyVaultCertificateClientTest, GetCertificateVersion)
 TEST_F(KeyVaultCertificateClientTest, GetDeletedCertificate)
 {
   // cspell: disable-next-line
-  std::string const certificateName("vivazqu");
+  std::string const certificateName(GetCertificateName("vivazqu33"));
 
   auto const& client
       = GetClientForTest(::testing::UnitTest::GetInstance()->current_test_info()->name());
@@ -250,7 +250,7 @@ TEST_F(KeyVaultCertificateClientTest, GetDeletedCertificate)
 TEST_F(KeyVaultCertificateClientTest, DeleteWrongCertificate)
 {
   // cspell: disable-next-line
-  std::string const certificateName("unknownCert");
+  std::string const certificateName(GetCertificateName("unknownCert"));
 
   auto const& client
       = GetClientForTest(::testing::UnitTest::GetInstance()->current_test_info()->name());
@@ -481,7 +481,7 @@ TEST_F(KeyVaultCertificateClientTest, GetContactsDuplicateEmail)
 TEST_F(KeyVaultCertificateClientTest, GetCertificatePolicy)
 {
   // cspell: disable-next-line
-  std::string const certificateName("certPolicy");
+  std::string const certificateName(GetCertificateName("certPolicy"));
 
   auto const& client
       = GetClientForTest(::testing::UnitTest::GetInstance()->current_test_info()->name());
@@ -532,7 +532,7 @@ TEST_F(KeyVaultCertificateClientTest, GetCertificatePolicy)
 TEST_F(KeyVaultCertificateClientTest, UpdateCertificatePolicy)
 {
   // cspell: disable-next-line
-  std::string const certificateName("updateCertPolicy");
+  std::string const certificateName(GetCertificateName("updateCertPolicy"));
 
   auto const& client
       = GetClientForTest(::testing::UnitTest::GetInstance()->current_test_info()->name());
@@ -616,7 +616,7 @@ TEST_F(KeyVaultCertificateClientTest, UpdateCertificatePolicy)
 TEST_F(KeyVaultCertificateClientTest, BackupRestoreCertificate)
 {
   // cspell: disable-next-line
-  std::string const certificateName("certBackup");
+  std::string const certificateName(GetCertificateName("certBackup"));
 
   auto const& client
       = GetClientForTest(::testing::UnitTest::GetInstance()->current_test_info()->name());
@@ -662,9 +662,9 @@ TEST_F(KeyVaultCertificateClientTest, GetPropertiesOfCertificates)
   }
 
   // cspell: disable-next-line
-  std::string const certificateName("magiqStuff");
+  std::string const certificateName(GetCertificateName("magiqStuff"));
   // cspell: disable-next-line
-  std::string const certificateName2("magiqStuff2");
+  std::string const certificateName2(GetCertificateName("magiqStuff2"));
 
   CreateCertificate(certificateName, client, m_defaultWait);
   CreateCertificate(certificateName2, client, m_defaultWait);
@@ -699,7 +699,7 @@ TEST_F(KeyVaultCertificateClientTest, GetPropertiesOfCertificateVersions)
       = GetClientForTest(::testing::UnitTest::GetInstance()->current_test_info()->name());
 
   // cspell: disable-next-line
-  std::string const certificateName("magiqStuff");
+  std::string const certificateName(GetCertificateName("magiqStuff"));
 
   CreateCertificate(certificateName, client, m_defaultWait);
   CreateCertificate(certificateName, client, m_defaultWait);
@@ -726,7 +726,7 @@ TEST_F(KeyVaultCertificateClientTest, GetPropertiesOfCertificateVersions)
 TEST_F(KeyVaultCertificateClientTest, GetPropertiesOfCertificatesVersionsNoCert)
 {
   // cspell: disable-next-line
-  std::string const certificateName("magiqStuff");
+  std::string const certificateName(GetCertificateName("magiqStuff"));
 
   auto const& client
       = GetClientForTest(::testing::UnitTest::GetInstance()->current_test_info()->name());
@@ -809,9 +809,9 @@ TEST_F(KeyVaultCertificateClientTest, GetDeletedCertificates)
     EXPECT_EQ(result.Items.size(), size_t(0));
   }
   // cspell: disable-next-line
-  std::string const certificateName("magiqStuff");
+  std::string const certificateName(GetCertificateName("magiqStuff"));
   // cspell: disable-next-line
-  std::string const certificateName2("magiqStuff2");
+  std::string const certificateName2(GetCertificateName("magiqStuff2"));
 
   CreateCertificate(certificateName, client, m_defaultWait);
   CreateCertificate(certificateName2, client, m_defaultWait);
@@ -850,8 +850,8 @@ TEST_F(KeyVaultCertificateClientTest, DownloadImportPkcs)
   }
 
   // cspell: disable-next-line
-  std::string const pkcs("pemCert");
-  std::string const importName("pkcsCert2");
+  std::string const pkcs(GetCertificateName("pemCert"));
+  std::string const importName(GetCertificateName("pkcsCert2"));
   auto originalCertificate
       = CreateCertificate(pkcs, client, m_defaultWait, "CN=xyz", CertificateContentType::Pkcs12);
 
@@ -899,8 +899,8 @@ TEST_F(KeyVaultCertificateClientTest, DownloadImportPem)
   }
 
   // cspell: disable-next-line
-  std::string const pem("pemCert");
-  std::string const importName("pemCert2");
+  std::string const pem(GetCertificateName("pemCert"));
+  std::string const importName(GetCertificateName("pemCert2"));
   auto originalCertificate
       = CreateCertificate(pem, client, m_defaultWait, "CN=xyz", CertificateContentType::Pem);
 
@@ -944,7 +944,7 @@ TEST_F(KeyVaultCertificateClientTest, UpdateCertificate)
       = GetClientForTest(::testing::UnitTest::GetInstance()->current_test_info()->name());
 
   // cspell: disable-next-line
-  std::string const certificateName("magiqStuff");
+  std::string const certificateName(GetCertificateName("magiqStuff"));
   auto certificate = CreateCertificate(certificateName, client, m_defaultWait);
 
   {

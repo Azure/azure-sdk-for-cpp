@@ -6,6 +6,7 @@
  * @brief The base class to construct and init a Key Vault client.
  *
  */
+
 #include <gtest/gtest.h>
 
 #include "../src/private/certificate_serializers.hpp"
@@ -102,7 +103,7 @@ namespace Azure {
     Azure::Security::KeyVault::Certificates::CertificateClient const& GetClientForTest(
         std::string const& testName)
     {
-      // used to test/dev purposes _putenv_s("AZURE_TEST_MODE", "PLAYBACK");
+      // used to test/dev purposes _putenv_s("AZURE_TEST_MODE", "LIVE");
       InitializeClient();
       // set the interceptor for the current test
       m_testContext.RenameTest(testName);
@@ -301,6 +302,19 @@ namespace Azure {
         return Azure::Response<DownloadCertificateResult>(
             std::move(result), std::move(secretResponse));
       }
+    }
+
+    std::string GetCertificateName(std::string const& name)
+    {
+      std::string returnVal(name);
+      // due to delays in delete and purge we need to have different names for certificates as it
+      // will cause conflicts when trying to create a certificate in the process of
+      // purge/delete
+      if (GetEnv("AZURE_TEST_MODE") == "LIVE")
+      {
+        returnVal = Azure::Core::Uuid::CreateUuid().ToString();
+      }
+      return returnVal;
     }
   };
 }}}}} // namespace Azure::Security::KeyVault::Certificates::Test
