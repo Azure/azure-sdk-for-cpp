@@ -303,18 +303,5 @@ namespace Azure {
             std::move(result), std::move(secretResponse));
       }
     }
-
-    std::string GetCertificateName(std::string const& name)
-    {
-      std::string returnVal(name);
-      // due to delays in delete and purge we need to have different names for certificates as it
-      // will cause conflicts when trying to create a certificate in the process of
-      // purge/delete
-      if (GetEnv("AZURE_TEST_MODE") == "LIVE")
-      {
-        returnVal = Azure::Core::Uuid::CreateUuid().ToString();
-      }
-      return returnVal;
-    }
   };
 }}}}} // namespace Azure::Security::KeyVault::Certificates::Test
