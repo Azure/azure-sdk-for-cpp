@@ -109,13 +109,13 @@ jobs:
           BuildArgs: "$(BuildArgs)"
           Env: "$(CmakeEnvArg)"
 
-      - script: ctest -C Debug -VV --output-log ctest.log --tests-regex ${{ parameters.CtestRegex }}
+      - script: ctest -C Debug --tests-regex ${{ parameters.CtestRegex }} --no-compress-output -T Test
         workingDirectory: build
 
       - task: PublishTestResults@2
         inputs:
           testResultsFormat: cTest
-          testResultsFiles: ctest.log
+          testResultsFiles: Testing/*/Test.xml
           searchFolder: build
           mergeTestResults: true
           publishRunAttachments: true
