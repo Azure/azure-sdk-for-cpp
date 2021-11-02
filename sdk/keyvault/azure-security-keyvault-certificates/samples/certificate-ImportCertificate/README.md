@@ -28,21 +28,21 @@ CertificateClient certificateClient(std::getenv("AZURE_KEYVAULT_URL"), credentia
 
 You will need the certificate content in PEM format to perform this operation. One sample is provided in certificate-ImportCertificate.hpp as the GetPemCertificate() string.
 
-Once the import parameters are setup we can call Import certificate and get back the newly imported certificate.
+Once the import options are setup we can call Import certificate and get back the newly imported certificate.
 
 ```cpp Snippet:CertificateSample3ImportPEM
-// prepare the parameters
-ImportCertificateOptions params;
-params.Value = GetPemCertificate();
+// prepare the options
+ImportCertificateOptions options;
+options.Value = GetPemCertificate();
 
-params.Policy.Enabled = true;
-params.Policy.KeyType = CertificateKeyType::Rsa;
-params.Policy.KeySize = 2048;
-params.Policy.ContentType = CertificateContentType::Pem;
-params.Policy.Exportable = true;
-params.Properties.Name = pemName;
+options.Policy.Enabled = true;
+options.Policy.KeyType = CertificateKeyType::Rsa;
+options.Policy.KeySize = 2048;
+options.Policy.ContentType = CertificateContentType::Pem;
+options.Policy.Exportable = true;
+options.Properties.Name = pemName;
 // call import API
-auto imported = certificateClient.ImportCertificate(params).Value;
+auto imported = certificateClient.ImportCertificate(options).Value;
 // get some value from the certificate
 std::cout << "Imported pem certificate with name " << imported.Name();
 ```
@@ -51,21 +51,21 @@ std::cout << "Imported pem certificate with name " << imported.Name();
 
 You will need the certificate content in PKCS format to perform this operation. One sample is provided in certificate-ImportCertificate.hpp as the GetPkcsCertificate() string.
 
-Once the import parameters are setup we can call Import certificate and get back the newly imported certificate
+Once the import options are setup we can call Import certificate and get back the newly imported certificate
 
 ```cpp Snippet:CertificateSample3ImportPKCS
- // prepare the parameters
-ImportCertificateOptions params;
-params.Value = GetPemCertificate();
+ // prepare the options
+ImportCertificateOptions options;
+options.Value = GetPemCertificate();
 
-params.Policy.Enabled = true;
-params.Policy.KeyType = CertificateKeyType::Rsa;
-params.Policy.KeySize = 2048;
-params.Policy.ContentType = CertificateContentType::Pkcs12;
-params.Policy.Exportable = true;
-params.Properties.Name = pkcsName;
+options.Policy.Enabled = true;
+options.Policy.KeyType = CertificateKeyType::Rsa;
+options.Policy.KeySize = 2048;
+options.Policy.ContentType = CertificateContentType::Pkcs12;
+options.Policy.Exportable = true;
+options.Properties.Name = pkcsName;
 // call the import API
-auto imported = certificateClient.ImportCertificate(params).Value;
+auto imported = certificateClient.ImportCertificate(options).Value;
 // read something from the certificate
 std::cout << "Imported pkcs certificate with name " << imported.Name();
 ```

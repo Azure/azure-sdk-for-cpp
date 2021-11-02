@@ -84,11 +84,17 @@ function Get-cpp-GithubIoDocIndex()
   GenerateDocfxTocContent -tocContent $tocContent -lang "C++" -campaignId "UA-62780441-44"
 }
 
-function SetPackageVersion ($PackageName, $Version, $ServiceDirectory, $ReleaseDate)
+function SetPackageVersion ($PackageName, $Version, $ServiceDirectory, $ReleaseDate, $ReplaceLatestEntryTitle=$true)
 {
+  if($null -eq $ReleaseDate)
+  {
+    $ReleaseDate = Get-Date -Format "yyyy-MM-dd"
+  }
+
   & "$EngDir/scripts/Update-PkgVersion.ps1" `
     -ServiceDirectory $ServiceDirectory `
     -PackageName $PackageName `
     -NewVersionString $Version `
-    -ReleaseDate $ReleaseDate
+    -ReleaseDate $ReleaseDate `
+    -ReplaceLatestEntryTitle $ReplaceLatestEntryTitle
 }

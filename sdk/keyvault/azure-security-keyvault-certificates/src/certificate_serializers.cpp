@@ -395,8 +395,8 @@ Azure::Core::Json::_internal::json CertificatePolicySerializer::JsonSerialize(
   return result;
 }
 
-std::string CertificateCreateParametersSerializer::Serialize(
-    CertificateCreateParameters const& parameters)
+std::string CertificateCreateOptionsSerializer::Serialize(
+    CertificateCreateOptions const& parameters)
 {
   json parameter;
 
@@ -410,8 +410,8 @@ std::string CertificateCreateParametersSerializer::Serialize(
   return parameter.dump();
 }
 
-std::string CertificateOperationUpdateParameterSerializer::Serialize(
-    CertificateOperationUpdateParameter const& parameters)
+std::string CertificateOperationUpdateOptionSerializer::Serialize(
+    CertificateOperationUpdateOptions const& parameters)
 {
   json parameter;
 

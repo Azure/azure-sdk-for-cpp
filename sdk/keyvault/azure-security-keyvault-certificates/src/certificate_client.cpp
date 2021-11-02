@@ -117,16 +117,16 @@ Response<KeyVaultCertificateWithPolicy> CertificateClient::GetCertificateVersion
 }
 
 CreateCertificateOperation CertificateClient::StartCreateCertificate(
-    CertificateCreateParameters const& parameters,
+    CertificateCreateOptions const& options,
     Azure::Core::Context const& context) const
 {
-  auto payload = CertificateCreateParametersSerializer::Serialize(parameters);
+  auto payload = CertificateCreateOptionsSerializer::Serialize(options);
   Azure::Core::IO::MemoryBodyStream payloadStream(
       reinterpret_cast<const uint8_t*>(payload.data()), payload.size());
 
   auto request = CreateRequest(
       HttpMethod::Post,
-      {CertificatesPath, parameters.Properties.Name, CertificatesCreatePath},
+      {CertificatesPath, options.Properties.Name, CertificatesCreatePath},
       &payloadStream);
 
   auto rawResponse = SendRequest(request, context);
@@ -257,9 +257,9 @@ CertificateClient::CancelPendingCertificateOperation(
     std::string const& certificateName,
     Azure::Core::Context const& context) const
 {
-  CertificateOperationUpdateParameter parameter;
-  parameter.CancelationRequested = true;
-  auto payload = CertificateOperationUpdateParameterSerializer::Serialize(parameter);
+  CertificateOperationUpdateOptions option;
+  option.CancelationRequested = true;
+  auto payload = CertificateOperationUpdateOptionSerializer::Serialize(option);
   Azure::Core::IO::MemoryBodyStream payloadStream(
       reinterpret_cast<const uint8_t*>(payload.data()), payload.size());
 

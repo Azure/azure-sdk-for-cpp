@@ -115,13 +115,12 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
      *
      * @remark This operation requires the certificates/create permission.
      *
-     * @param certificateName The name of the certificate.
-     * @param parameters Parameters for this operation.
+     * @param options Options for this operation.
      * @param context The context for the operation can be used for request cancellation.
      * @return CreateCertificateOperation instance used to determine create status.
      */
     CreateCertificateOperation StartCreateCertificate(
-        CertificateCreateParameters const& parameters,
+        CertificateCreateOptions const& options,
         Azure::Core::Context const& context = Azure::Core::Context()) const;
 
     /**
