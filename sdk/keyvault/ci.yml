@@ -44,3 +44,6 @@ stages:
         - Name: azure-security-keyvault-secrets
           Path: azure-security-keyvault-secrets
           VcpkgPortName: azure-security-keyvault-secrets-cpp
+        - Name: azure-security-keyvault-certificates
+          Path: azure-security-keyvault-certificates
+          VcpkgPortName: azure-security-keyvault-certificates-cpp
