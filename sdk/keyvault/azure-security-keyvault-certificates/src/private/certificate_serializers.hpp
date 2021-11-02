@@ -98,18 +98,18 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
       static CertificatePolicy Deserialize(Azure::Core::Http::RawResponse const& rawResponse);
     };
 
-    class CertificateCreateParametersSerializer final {
-      CertificateCreateParametersSerializer() = delete;
+    class CertificateCreateOptionsSerializer final {
+      CertificateCreateOptionsSerializer() = delete;
 
     public:
-      static std::string Serialize(CertificateCreateParameters const& parameters);
+      static std::string Serialize(CertificateCreateOptions const& Options);
     };
 
-    class CertificateOperationUpdateParameterSerializer final {
-      CertificateOperationUpdateParameterSerializer() = delete;
+    class CertificateOperationUpdateOptionSerializer final {
+      CertificateOperationUpdateOptionSerializer() = delete;
 
     public:
-      static std::string Serialize(CertificateOperationUpdateParameter const& parameters);
+      static std::string Serialize(CertificateOperationUpdateOptions const& Options);
     };
 
     class ServerErrorSerializer final {
