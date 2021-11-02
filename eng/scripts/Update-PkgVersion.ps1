@@ -30,7 +30,8 @@ Param (
     [Parameter(Mandatory=$True)]
     [string] $PackageName,
     [string] $NewVersionString,
-    [string] $ReleaseDate
+    [string] $ReleaseDate,
+    [boolean] $ReplaceLatestEntryTitle=$True
 )
 
 . (Join-Path $PSScriptRoot ".." common scripts common.ps1)
@@ -98,6 +99,6 @@ else
         -SemVer $SemVer `
         -VersionHppLocation $versionHppLocation `
         -Unreleased $False `
-        -ReplaceLatestEntryTitle $True
+        -ReplaceLatestEntryTitle $ReplaceLatestEntryTitle
 }
 

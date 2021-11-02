@@ -6,6 +6,7 @@
  * @brief The base class to construct and init a Key Vault client.
  *
  */
+
 #include <gtest/gtest.h>
 
 #include "../src/private/certificate_serializers.hpp"
@@ -102,7 +103,7 @@ namespace Azure {
     Azure::Security::KeyVault::Certificates::CertificateClient const& GetClientForTest(
         std::string const& testName)
     {
-      // used to test/dev purposes _putenv_s("AZURE_TEST_MODE", "PLAYBACK");
+      // used to test/dev purposes _putenv_s("AZURE_TEST_MODE", "LIVE");
       InitializeClient();
       // set the interceptor for the current test
       m_testContext.RenameTest(testName);
@@ -243,34 +244,35 @@ namespace Azure {
         std::string const& subject = "CN=xyz",
         CertificateContentType certificateType = CertificateContentType::Pkcs12)
     {
-      auto params = CertificateCreateParameters();
-      params.Policy.Subject = subject;
-      params.Policy.ValidityInMonths = 12;
-      params.Policy.Enabled = true;
+      CertificateCreateOptions options;
+      options.Policy.Subject = subject;
+      options.Policy.ValidityInMonths = 12;
+      options.Policy.Enabled = true;
 
-      params.Properties.Enabled = true;
-      params.Properties.Name = name;
-      params.Policy.ContentType = certificateType;
-      params.Policy.IssuerName = "Self";
+      options.Properties.Enabled = true;
+      options.Properties.Name = name;
+      options.Policy.ContentType = certificateType;
+      options.Policy.IssuerName = "Self";
 
       LifetimeAction action;
       action.LifetimePercentage = 80;
       action.Action = CertificatePolicyAction::AutoRenew;
-      params.Policy.LifetimeActions.emplace_back(action);
+      options.Policy.LifetimeActions.emplace_back(action);
 
-      auto response = client.StartCreateCertificate(name, params);
+      auto response = client.StartCreateCertificate(name, options);
       auto result = response.PollUntilDone(defaultWait);
 
       auto cert = client.GetCertificate(name);
 
-      EXPECT_EQ(cert.Value.Name(), params.Properties.Name);
-      EXPECT_EQ(cert.Value.Properties.Name, params.Properties.Name);
+      EXPECT_EQ(cert.Value.Name(), options.Properties.Name);
+      EXPECT_EQ(cert.Value.Properties.Name, options.Properties.Name);
       EXPECT_EQ(cert.Value.Properties.Enabled.Value(), true);
-      EXPECT_EQ(cert.Value.Policy.IssuerName.Value(), params.Policy.IssuerName.Value());
-      EXPECT_EQ(cert.Value.Policy.ContentType.Value(), params.Policy.ContentType.Value());
-      EXPECT_EQ(cert.Value.Policy.Subject, params.Policy.Subject);
-      EXPECT_EQ(cert.Value.Policy.ValidityInMonths.Value(), params.Policy.ValidityInMonths.Value());
-      EXPECT_EQ(cert.Value.Policy.Enabled.Value(), params.Policy.Enabled.Value());
+      EXPECT_EQ(cert.Value.Policy.IssuerName.Value(), options.Policy.IssuerName.Value());
+      EXPECT_EQ(cert.Value.Policy.ContentType.Value(), options.Policy.ContentType.Value());
+      EXPECT_EQ(cert.Value.Policy.Subject, options.Policy.Subject);
+      EXPECT_EQ(
+          cert.Value.Policy.ValidityInMonths.Value(), options.Policy.ValidityInMonths.Value());
+      EXPECT_EQ(cert.Value.Policy.Enabled.Value(), options.Policy.Enabled.Value());
       EXPECT_EQ(cert.Value.Policy.LifetimeActions.size(), size_t(1));
       EXPECT_EQ(cert.Value.Policy.LifetimeActions[0].Action, action.Action);
       EXPECT_EQ(

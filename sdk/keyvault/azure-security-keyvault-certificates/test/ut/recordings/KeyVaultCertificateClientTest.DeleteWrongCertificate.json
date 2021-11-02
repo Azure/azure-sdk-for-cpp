@@ -4,55 +4,55 @@
       "Headers": {
         "content-type": "application/json",
         "user-agent": "azsdk-cpp-keyvault-certificates/4.0.0-beta.1 (Windows 10 Enterprise 6.3 22000 22000.1.amd64fre.co_release.210604-1628)",
-        "x-ms-client-request-id": "689b9dac-0058-4175-4c1e-3e28497aee39"
+        "x-ms-client-request-id": "3914e4ef-ae98-42c4-40de-b4c133d0ea89"
       },
       "Method": "DELETE",
       "Response": {
-        "BODY": "{\"error\":{\"code\":\"CertificateNotFound\",\"message\":\"A certificate with (name/id) unknownCert was not found in this key vault. If you recently deleted this certificate you may be able to recover it using the correct recovery command. For help resolving this issue, please see https://go.microsoft.com/fwlink/?linkid=2125182\"}}",
+        "BODY": "{\"error\":{\"code\":\"CertificateNotFound\",\"message\":\"A certificate with (name/id) DeleteWrongCertificate was not found in this key vault. If you recently deleted this certificate you may be able to recover it using the correct recovery command. For help resolving this issue, please see https://go.microsoft.com/fwlink/?linkid=2125182\"}}",
         "STATUS_CODE": "404",
         "cache-control": "no-cache",
-        "content-length": "323",
+        "content-length": "334",
         "content-type": "application/json; charset=utf-8",
-        "date": "Tue, 12 Oct 2021 02:04:48 GMT",
+        "date": "Mon, 01 Nov 2021 22:57:03 GMT",
         "expires": "-1",
         "pragma": "no-cache",
         "strict-transport-security": "max-age=31536000;includeSubDomains",
         "x-content-type-options": "nosniff",
-        "x-ms-client-request-id": "689b9dac-0058-4175-4c1e-3e28497aee39",
+        "x-ms-client-request-id": "3914e4ef-ae98-42c4-40de-b4c133d0ea89",
         "x-ms-keyvault-network-info": "conn_type=Ipv4;addr=24.22.157.72;act_addr_fam=InterNetwork;",
         "x-ms-keyvault-region": "westus2",
-        "x-ms-keyvault-service-version": "1.9.132.3",
-        "x-ms-request-id": "17559c94-4e57-4b18-8df4-57c7ec3e1066",
+        "x-ms-keyvault-service-version": "1.9.150.1",
+        "x-ms-request-id": "0881b829-257b-46b0-8c85-ededcfcc4142",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/certificates/unknownCert?api-version=7.2"
+      "Url": "https://REDACTED.vault.azure.net/certificates/DeleteWrongCertificate?api-version=7.2"
     },
     {
       "Headers": {
         "content-type": "application/json",
         "user-agent": "azsdk-cpp-keyvault-certificates/4.0.0-beta.1 (Windows 10 Enterprise 6.3 22000 22000.1.amd64fre.co_release.210604-1628)",
-        "x-ms-client-request-id": "6670e5ab-17cb-44f3-40b5-7f68eb245e52"
+        "x-ms-client-request-id": "c1e745e3-05bc-402e-4d6f-b67c6494a922"
       },
       "Method": "POST",
       "Response": {
-        "BODY": "{\"error\":{\"code\":\"CertificateNotFound\",\"message\":\"A certificate with (name/id) unknownCert was not found in this key vault. If you recently deleted this certificate you may be able to recover it using the correct recovery command. For help resolving this issue, please see https://go.microsoft.com/fwlink/?linkid=2125182\"}}",
+        "BODY": "{\"error\":{\"code\":\"CertificateNotFound\",\"message\":\"A certificate with (name/id) DeleteWrongCertificate was not found in this key vault. If you recently deleted this certificate you may be able to recover it using the correct recovery command. For help resolving this issue, please see https://go.microsoft.com/fwlink/?linkid=2125182\"}}",
         "STATUS_CODE": "404",
         "cache-control": "no-cache",
-        "content-length": "323",
+        "content-length": "334",
         "content-type": "application/json; charset=utf-8",
-        "date": "Tue, 12 Oct 2021 02:04:48 GMT",
+        "date": "Mon, 01 Nov 2021 22:57:03 GMT",
         "expires": "-1",
         "pragma": "no-cache",
         "strict-transport-security": "max-age=31536000;includeSubDomains",
         "x-content-type-options": "nosniff",
-        "x-ms-client-request-id": "6670e5ab-17cb-44f3-40b5-7f68eb245e52",
+        "x-ms-client-request-id": "c1e745e3-05bc-402e-4d6f-b67c6494a922",
         "x-ms-keyvault-network-info": "conn_type=Ipv4;addr=24.22.157.72;act_addr_fam=InterNetwork;",
         "x-ms-keyvault-region": "westus2",
-        "x-ms-keyvault-service-version": "1.9.132.3",
-        "x-ms-request-id": "f9048fb4-45a0-4c00-86fd-6fc40bb98a9b",
+        "x-ms-keyvault-service-version": "1.9.150.1",
+        "x-ms-request-id": "7552a0a7-67a3-4bc5-8a5b-2590c81639c6",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/deletedcertificates/unknownCert/recover?api-version=7.2"
+      "Url": "https://REDACTED.vault.azure.net/deletedcertificates/DeleteWrongCertificate/recover?api-version=7.2"
     }
   ]
 }
