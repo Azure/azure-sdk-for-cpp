@@ -50,7 +50,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
           std::string const& url)
       {
         Azure::Core::Url kid(url);
-        certificateProperties.Id = url;
+        certificateProperties.IdUrl = url;
         certificateProperties.VaultUrl = GetUrlAuthorityWithScheme(kid);
         auto const& path = kid.GetPath();
         //  path is in the form of `verb/keyName{/keyVersion}`
@@ -166,7 +166,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
           std::string const& url)
       {
         Azure::Core::Url kid(url);
-        certificateProperties.Id = url;
+        certificateProperties.IdUrl = url;
         certificateProperties.VaultUrl = GetUrlAuthorityWithScheme(kid);
         auto const& path = kid.GetPath();
         // path in format certificates/{name}/pending

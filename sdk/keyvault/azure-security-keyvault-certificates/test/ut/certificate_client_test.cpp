@@ -30,7 +30,7 @@ TEST_F(KeyVaultCertificateClientTest, CreateCertificate)
     auto result = response.PollUntilDone(m_defaultWait);
     EXPECT_EQ(result.Value.Name(), certificateName);
     EXPECT_EQ(result.Value.Properties.Enabled.Value(), true);
-    EXPECT_NE(result.Value.RecoveryId.length(), size_t(0));
+    EXPECT_NE(result.Value.RecoveryIdUrl.length(), size_t(0));
     EXPECT_TRUE(result.Value.DeletedOn);
     EXPECT_TRUE(result.Value.ScheduledPurgeDate);
     client.PurgeDeletedCertificate(certificateName);
@@ -78,7 +78,7 @@ TEST_F(KeyVaultCertificateClientTest, CreateCertificateResumeToken)
     auto result = fromToken.PollUntilDone(m_defaultWait);
     EXPECT_EQ(result.Value.Name(), options.Properties.Name);
     EXPECT_EQ(result.Value.Properties.Enabled.Value(), true);
-    EXPECT_NE(result.Value.RecoveryId.length(), size_t(0));
+    EXPECT_NE(result.Value.RecoveryIdUrl.length(), size_t(0));
     EXPECT_TRUE(result.Value.DeletedOn);
     EXPECT_TRUE(result.Value.ScheduledPurgeDate);
     client.PurgeDeletedCertificate(certificateName);
@@ -113,8 +113,8 @@ TEST_F(KeyVaultCertificateClientTest, DISABLED_GetCertificate)
   EXPECT_TRUE(cert.Properties.RecoveryLevel);
 
   // kid, sid, cer
-  EXPECT_NE(cert.KeyId, "");
-  EXPECT_NE(cert.SecretId, "");
+  EXPECT_NE(cert.KeyIdUrl, "");
+  EXPECT_NE(cert.SecretIdUrl, "");
   EXPECT_NE(cert.Cer.size(), 0);
 
   // policy
@@ -151,7 +151,7 @@ TEST_F(KeyVaultCertificateClientTest, DISABLED_GetCertificate)
     auto result = response.PollUntilDone(m_defaultWait);
     EXPECT_EQ(result.Value.Name(), certificateName);
     EXPECT_EQ(result.Value.Properties.Enabled.Value(), true);
-    EXPECT_NE(result.Value.RecoveryId.length(), size_t(0));
+    EXPECT_NE(result.Value.RecoveryIdUrl.length(), size_t(0));
     EXPECT_TRUE(result.Value.DeletedOn);
     EXPECT_TRUE(result.Value.ScheduledPurgeDate);
     client.PurgeDeletedCertificate(certificateName);
@@ -190,8 +190,8 @@ TEST_F(KeyVaultCertificateClientTest, DISABLED_GetCertificateVersion)
     EXPECT_TRUE(cert.Properties.RecoveryLevel);
 
     // kid, sid, cer
-    EXPECT_NE(cert.KeyId, "");
-    EXPECT_NE(cert.SecretId, "");
+    EXPECT_NE(cert.KeyIdUrl, "");
+    EXPECT_NE(cert.SecretIdUrl, "");
     EXPECT_NE(cert.Cer.size(), 0);
   }
 
@@ -200,7 +200,7 @@ TEST_F(KeyVaultCertificateClientTest, DISABLED_GetCertificateVersion)
     auto result = response.PollUntilDone(m_defaultWait);
     EXPECT_EQ(result.Value.Name(), certificateName);
     EXPECT_EQ(result.Value.Properties.Enabled.Value(), true);
-    EXPECT_NE(result.Value.RecoveryId.length(), size_t(0));
+    EXPECT_NE(result.Value.RecoveryIdUrl.length(), size_t(0));
     EXPECT_TRUE(result.Value.DeletedOn);
     EXPECT_TRUE(result.Value.ScheduledPurgeDate);
     client.PurgeDeletedCertificate(certificateName);
