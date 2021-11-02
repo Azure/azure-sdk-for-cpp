@@ -206,7 +206,7 @@ jobs:
     inputs:
       testResultsFormat: cTest
       testResultsFiles: Testing/*/Test.xml
-      buildConfiguration: $(Agent.JobName)
+      testRunTitle: $(Agent.JobName)
       searchFolder: build
       mergeTestResults: true
       publishRunAttachments: true
