@@ -40,8 +40,9 @@ params.Policy.KeyType = CertificateKeyType::Rsa;
 params.Policy.KeySize = 2048;
 params.Policy.ContentType = CertificateContentType::Pem;
 params.Policy.Exportable = true;
+params.Properties.Name = pemName;
 // call import API
-auto imported = certificateClient.ImportCertificate(pemName, params).Value;
+auto imported = certificateClient.ImportCertificate(params).Value;
 // get some value from the certificate
 std::cout << "Imported pem certificate with name " << imported.Name();
 ```
@@ -62,8 +63,9 @@ params.Policy.KeyType = CertificateKeyType::Rsa;
 params.Policy.KeySize = 2048;
 params.Policy.ContentType = CertificateContentType::Pkcs12;
 params.Policy.Exportable = true;
+params.Properties.Name = pkcsName;
 // call the import API
-auto imported = certificateClient.ImportCertificate(pkcsName, params).Value;
+auto imported = certificateClient.ImportCertificate(params).Value;
 // read something from the certificate
 std::cout << "Imported pkcs certificate with name " << imported.Name();
 ```

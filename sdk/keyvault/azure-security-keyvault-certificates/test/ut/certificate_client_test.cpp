@@ -60,7 +60,7 @@ TEST_F(KeyVaultCertificateClientTest, CreateCertificateResumeToken)
   params.Policy.LifetimeActions.emplace_back(action);
   {
 
-    auto response = client.StartCreateCertificate(certificateName, params);
+    auto response = client.StartCreateCertificate(params);
 
     auto fromToken
         = CreateCertificateOperation::CreateFromResumeToken(response.GetResumeToken(), client);
@@ -293,7 +293,7 @@ TEST_F(KeyVaultCertificateClientTest, CreateGetIssuer)
   issuer.Organization.AdminDetails.emplace_back(admin);
 
   {
-    auto result = client.CreateIssuer(issuer.Name, issuer);
+    auto result = client.CreateIssuer(issuer);
     CheckIssuers(result.Value, issuer);
   }
 
@@ -329,7 +329,7 @@ TEST_F(KeyVaultCertificateClientTest, UpdateIssuer)
   issuer.Organization.AdminDetails.emplace_back(admin);
 
   {
-    auto result = client.CreateIssuer(issuer.Name, issuer);
+    auto result = client.CreateIssuer(issuer);
     CheckIssuers(result.Value, issuer);
   }
 
@@ -626,7 +626,7 @@ TEST_F(KeyVaultCertificateClientTest, BackupRestoreCertificate)
     std::this_thread::sleep_for(m_defaultWait);
   }
   {
-    auto responseRestore = client.RestoreCertificateBackup(certBackup.Value);
+    auto responseRestore = client.RestoreCertificateBackup(certBackup.Value.Certificate);
     auto certificate = responseRestore.Value;
 
     EXPECT_EQ(certificate.Name(), certificateName);
@@ -762,11 +762,11 @@ TEST_F(KeyVaultCertificateClientTest, GetPropertiesOfIssuers)
   issuer2.Organization.AdminDetails.emplace_back(admin);
 
   {
-    auto result = client.CreateIssuer(issuer.Name, issuer);
+    auto result = client.CreateIssuer(issuer);
     CheckIssuers(result.Value, issuer);
   }
   {
-    auto result = client.CreateIssuer(issuer2.Name, issuer2);
+    auto result = client.CreateIssuer(issuer2);
     CheckIssuers(result.Value, issuer2);
   }
   {
@@ -850,8 +850,8 @@ TEST_F(KeyVaultCertificateClientTest, DownloadImportPkcs)
     params.Policy.KeySize = 2048;
     params.Policy.ContentType = CertificateContentType::Pkcs12;
     params.Policy.Exportable = true;
-
-    auto imported = client.ImportCertificate(importName, params).Value;
+    params.Properties.Name = importName;
+    auto imported = client.ImportCertificate(params).Value;
 
     EXPECT_EQ(imported.Properties.Name, importName);
     EXPECT_EQ(imported.Policy.ContentType.Value(), originalCertificate.Policy.ContentType.Value());
@@ -899,8 +899,9 @@ TEST_F(KeyVaultCertificateClientTest, DownloadImportPem)
     params.Policy.KeySize = 2048;
     params.Policy.ContentType = CertificateContentType::Pem;
     params.Policy.Exportable = true;
+    params.Properties.Name = importName;
 
-    auto imported = client.ImportCertificate(importName, params).Value;
+    auto imported = client.ImportCertificate(params).Value;
 
     EXPECT_EQ(imported.Properties.Name, importName);
     EXPECT_EQ(imported.Policy.ContentType.Value(), originalCertificate.Policy.ContentType.Value());
@@ -935,11 +936,7 @@ TEST_F(KeyVaultCertificateClientTest, UpdateCertificate)
     certificate.Properties.Enabled = false;
     CertificateUpdateOptions updateOptions;
     updateOptions.Properties = certificate.Properties;
-    auto updatedCert
-        = client
-              .UpdateCertificateProperties(
-                  certificate.Properties.Name, certificate.Properties.Version, updateOptions)
-              .Value;
+    auto updatedCert = client.UpdateCertificateProperties(updateOptions).Value;
     EXPECT_FALSE(updatedCert.Properties.Enabled.Value());
   }
   {
@@ -993,7 +990,7 @@ TEST_F(KeyVaultCertificateClientTest, DISABLED_MergeCertificate)
     params.Policy.ContentType = CertificateContentType::Pkcs12;
     params.Policy.IssuerName = "sss";
 
-    auto response = client.StartCreateCertificate(mergeTarget, params);
+    auto response = client.StartCreateCertificate(params);
     auto result = response.PollUntilDone(100ms);
 
     bool cont = true;
@@ -1001,7 +998,7 @@ TEST_F(KeyVaultCertificateClientTest, DISABLED_MergeCertificate)
     {
       try
       {
-        auto merged = client.MergeCertificate(mergeTarget, mergeParams);
+        auto merged = client.MergeCertificate(mergeParams);
         cont = false;
       }
       catch (...)

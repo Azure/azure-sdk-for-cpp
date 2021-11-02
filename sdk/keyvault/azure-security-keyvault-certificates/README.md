@@ -80,7 +80,7 @@ std::string certificateName = "Sample1";
 CertificateCreateParameters params;
 ... 
 // start the create process
-auto response = certificateClient.StartCreateCertificate(certificateName, params);
+auto response = certificateClient.StartCreateCertificate(params);
 auto result = response.PollUntilDone(defaultWait);
 ```
 
