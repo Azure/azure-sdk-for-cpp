@@ -27,7 +27,7 @@ parameters:
 # https://github.com/Azure/azure-sdk-for-cpp/issues/2944
 
 jobs:
-- job: Validate
+- job: ValidateLive
   condition: and(succeededOrFailed(), ne(variables['Skip.LiveTest'], 'true'))
   timeoutInMinutes: ${{ parameters.TimeoutInMinutes }}
   strategy:
