@@ -116,9 +116,11 @@ jobs:
         inputs:
           testResultsFormat: cTest
           testResultsFiles: Testing/*/Test.xml
+          buildConfiguration: $(Agent.JobName)
           searchFolder: build
           mergeTestResults: true
           publishRunAttachments: true
+        displayName: Publish test results
         condition: succeededOrFailed()
 
       - ${{ if eq(parameters.CoverageEnabled, true) }}:
