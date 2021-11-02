@@ -1188,16 +1188,6 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
     Azure::Nullable<DateTime> ScheduledPurgeDate;
 
     /**
-     * @brief Construct a new Key Vault Deleted Certificate
-     *
-     * @param properties The properties to create a new certificate.
-     */
-    DeletedCertificate(CertificateProperties const& properties)
-        : KeyVaultCertificateWithPolicy(properties)
-    {
-    }
-
-    /**
      * @brief Default constructor.
      *
      */
