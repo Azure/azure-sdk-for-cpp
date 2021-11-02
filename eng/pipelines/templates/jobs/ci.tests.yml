@@ -152,7 +152,7 @@ jobs:
             coverageType: line
             # Minimum baseline for line coverage
             coverageThreshold: ${{ parameters.LineCoverageTarget }}
-          condition: and(succeededOrFailed(), eq(variables['CODE_COVERAGE'], 'enabled'), eq(variables['Skip.CoverageEnforcement'], ''))
+          condition: and(succeededOrFailed(), eq(variables['CODE_COVERAGE'], 'enabled'), eq(variables['Skip.LineCoverageEnforcement'], ''))
 
         - task: mspremier.BuildQualityChecks.QualityChecks-task.BuildQualityChecks@8
           displayName: Check branch coverage
@@ -162,4 +162,4 @@ jobs:
             coverageType: branches
             # Minimum baseline for branch coverage
             coverageThreshold: ${{ parameters.BranchCoverageTarget }}
-          condition: and(succeededOrFailed(), eq(variables['CODE_COVERAGE'], 'enabled'), eq(variables['Skip.CoverageEnforcement'], ''))
+          condition: and(succeededOrFailed(), eq(variables['CODE_COVERAGE'], 'enabled'), eq(variables['Skip.BranchCoverageEnforcement'], ''))

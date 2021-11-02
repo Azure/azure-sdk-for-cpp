@@ -34,6 +34,12 @@ stages:
     parameters:
       ServiceDirectory: template
       CtestRegex: azure-template
+      # The azure-template project has lower branch coverage than the default.
+      # This overrides the branch coverage floor until the issue can be
+      # addressed. Once it is addressed this line should be removed so that
+      # projects generated from this ci.yml file don't set a coverage target
+      # that is lower than the baseline defined in archetype-sdk-client.yml
+      # Issue: https://github.com/Azure/azure-sdk-for-cpp/issues/3022
       BranchCoverageTarget: 33
       Artifacts:
         - Name: azure-template
