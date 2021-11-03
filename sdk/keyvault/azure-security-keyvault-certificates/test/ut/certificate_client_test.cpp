@@ -83,7 +83,6 @@ TEST_F(KeyVaultCertificateClientTest, GetCertificate)
   auto cert = CreateCertificate(certificateName, client, m_defaultWait);
   EXPECT_EQ(cert.Name(), cert.Properties.Name);
   EXPECT_EQ(cert.Properties.Name, certificateName);
-  EXPECT_EQ(cert.Properties.VaultUrl, m_keyVaultUrl);
   // There should be a version
   EXPECT_NE(cert.Properties.Version, "");
 
@@ -149,7 +148,6 @@ TEST_F(KeyVaultCertificateClientTest, GetCertificateVersion)
     auto cert = response.Value;
     EXPECT_EQ(cert.Name(), cert.Properties.Name);
     EXPECT_EQ(cert.Properties.Name, certificateName);
-    EXPECT_EQ(cert.Properties.VaultUrl, m_keyVaultUrl);
     // There should be a version
     EXPECT_NE(cert.Properties.Version, "");
 
