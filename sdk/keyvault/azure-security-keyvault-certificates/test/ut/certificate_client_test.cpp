@@ -169,6 +169,7 @@ TEST_F(KeyVaultCertificateClientTest, GetCertificateVersion)
   {
     auto response = client.GetCertificateVersion(certificateName, version);
     CheckValidResponse(response);
+
     auto cert = response.Value;
     EXPECT_EQ(cert.Name(), cert.Properties.Name);
     EXPECT_EQ(cert.Properties.Name, certificateName);
