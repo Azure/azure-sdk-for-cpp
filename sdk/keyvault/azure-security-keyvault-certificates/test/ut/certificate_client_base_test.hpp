@@ -6,6 +6,7 @@
  * @brief The base class to construct and init a Key Vault client.
  *
  */
+
 #include <gtest/gtest.h>
 
 #include "../src/private/certificate_serializers.hpp"
@@ -102,7 +103,7 @@ namespace Azure {
     Azure::Security::KeyVault::Certificates::CertificateClient const& GetClientForTest(
         std::string const& testName)
     {
-      // used to test/dev purposes _putenv_s("AZURE_TEST_MODE", "PLAYBACK");
+      // used to test/dev purposes _putenv_s("AZURE_TEST_MODE", "LIVE");
       InitializeClient();
       // set the interceptor for the current test
       m_testContext.RenameTest(testName);
@@ -243,22 +244,22 @@ namespace Azure {
         std::string const& subject = "CN=xyz",
         CertificateContentType certificateType = CertificateContentType::Pkcs12)
     {
-      auto params = CertificateCreateParameters();
-      params.Policy.Subject = subject;
-      params.Policy.ValidityInMonths = 12;
-      params.Policy.Enabled = true;
+      CertificateCreateOptions options;
+      options.Policy.Subject = subject;
+      options.Policy.ValidityInMonths = 12;
+      options.Policy.Enabled = true;
 
-      params.Properties.Enabled = true;
-      params.Properties.Name = name;
-      params.Policy.ContentType = certificateType;
-      params.Policy.IssuerName = "Self";
+      options.Properties.Enabled = true;
+      options.Properties.Name = name;
+      options.Policy.ContentType = certificateType;
+      options.Policy.IssuerName = "Self";
 
       LifetimeAction action;
       action.LifetimePercentage = 80;
       action.Action = CertificatePolicyAction::AutoRenew;
-      params.Policy.LifetimeActions.emplace_back(action);
+      options.Policy.LifetimeActions.emplace_back(action);
 
-      auto response = client.StartCreateCertificate(name, params);
+      auto response = client.StartCreateCertificate(name, options);
       auto result = response.PollUntilDone(defaultWait);
 
       EXPECT_EQ(result.Value.Name(), params.Properties.Name);

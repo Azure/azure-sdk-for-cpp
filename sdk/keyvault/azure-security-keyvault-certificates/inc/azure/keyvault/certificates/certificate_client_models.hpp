@@ -845,10 +845,10 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
   };
 
   /**
-   * @brief Parameters for StartCreateCertificate.
+   * @brief Options for StartCreateCertificate.
    *
    */
-  class CertificateCreateParameters final {
+  class CertificateCreateOptions final {
   public:
     /**
      * @brief Certificate policy.
@@ -876,10 +876,10 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
   };
 
   /**
-   * @brief The certificate operation update parameters.
+   * @brief The certificate operation update Options.
    *
    */
-  struct CertificateOperationUpdateParameter final
+  struct CertificateOperationUpdateOptions final
   {
 
     /**
@@ -1470,7 +1470,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
   };
 
   /**
-   * @brief The certificate merge parameters
+   * @brief The certificate merge Options
    *
    */
   struct MergeCertificateOptions final
@@ -1492,7 +1492,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
   };
 
   /**
-   * @brief The certificate update parameters.
+   * @brief The certificate update Options.
    *
    */
   struct CertificateUpdateOptions final

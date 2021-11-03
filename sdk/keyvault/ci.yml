@@ -37,6 +37,8 @@ stages:
       LiveTestCtestRegex: "azure-security-keyvault.*"
       LiveTestTimeoutInMinutes: 120
       SubscriptionConfiguration: $(sub-config-azure-cloud-test-resources)
+      LineCoverageTarget: 37
+      BranchCoverageTarget: 15
       Artifacts:
         - Name: azure-security-keyvault-keys
           Path: azure-security-keyvault-keys
@@ -44,3 +46,6 @@ stages:
         - Name: azure-security-keyvault-secrets
           Path: azure-security-keyvault-secrets
           VcpkgPortName: azure-security-keyvault-secrets-cpp
+        - Name: azure-security-keyvault-certificates
+          Path: azure-security-keyvault-certificates
+          VcpkgPortName: azure-security-keyvault-certificates-cpp

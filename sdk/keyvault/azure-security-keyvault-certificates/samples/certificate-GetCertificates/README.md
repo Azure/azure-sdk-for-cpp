@@ -39,7 +39,7 @@ Call PollUntilDone to poll the status of the creation. Once the opperation has c
 
 ```cpp Snippet:CertificateSample2Create
 std::string certificateName = "Sample1";
-auto params = CertificateCreateParameters();
+CertificateCreateOptions options
 ... 
 // start the create process
 auto response = certificateClient.StartCreateCertificate(certificateName, params);

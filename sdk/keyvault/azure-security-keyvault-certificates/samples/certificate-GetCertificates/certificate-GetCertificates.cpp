@@ -131,7 +131,7 @@ KeyVaultCertificateWithPolicy CreateCertificate(
     std::string const& certificateName,
     CertificateClient const& certificateClient)
 {
-  CertificateCreateParameters params;
+  CertificateCreateOptions options;
   std::chrono::milliseconds defaultWait(10s);
   // setup certificate create properties/policy
   {
@@ -141,20 +141,20 @@ KeyVaultCertificateWithPolicy CreateCertificate(
     action.Action = CertificatePolicyAction::AutoRenew;
 
     // setup properties
-    params.Properties.Enabled = true;
+    options.Properties.Enabled = true;
     // setup policy
-    params.Policy.Subject = "CN=sample1";
-    params.Policy.ValidityInMonths = 12;
-    params.Policy.Enabled = true;
-    params.Policy.ContentType = CertificateContentType::Pkcs12;
-    params.Policy.IssuerName = "Self";
+    options.Policy.Subject = "CN=sample1";
+    options.Policy.ValidityInMonths = 12;
+    options.Policy.Enabled = true;
+    options.Policy.ContentType = CertificateContentType::Pkcs12;
+    options.Policy.IssuerName = "Self";
 
     // add a lifetime action
-    params.Policy.LifetimeActions.emplace_back(action);
+    options.Policy.LifetimeActions.emplace_back(action);
   }
   // create a certificate
   {
-    params.Properties.Name = certificateName;
+    options.Properties.Name = certificateName;
     // start the create process
     auto response = certificateClient.StartCreateCertificate(certificateName, params);
     // wait for complete to get the certificate

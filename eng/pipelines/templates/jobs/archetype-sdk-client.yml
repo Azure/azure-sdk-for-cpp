@@ -20,6 +20,12 @@ parameters:
   - name: CoverageReportPath
     type: string
     default: 'sdk/*/*/*cov_xml.xml'
+  - name: LineCoverageTarget
+    type: number
+    default: 95
+  - name: BranchCoverageTarget
+    type: number
+    default: 70
 
 jobs:
   - template: /eng/common/pipelines/templates/jobs/archetype-sdk-tests-generate.yml
@@ -37,6 +43,8 @@ jobs:
         CtestRegex: ${{ parameters.CtestRegex }}
         CoverageReportPath: ${{ parameters.CoverageReportPath }}
         CoverageEnabled: ${{ parameters.CoverageEnabled }}
+        LineCoverageTarget: ${{ parameters.LineCoverageTarget }}
+        BranchCoverageTarget: ${{ parameters.BranchCoverageTarget }}
 
   # Disable build for cpp - client
   - ${{ if ne(parameters.ServiceDirectory, 'not-specified' )}}:

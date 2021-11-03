@@ -37,7 +37,7 @@ Call StartCreateCertificate to create a new certificate, with specified properti
 
 ```cpp Snippet:CertificateSample1Create
 std::string certificateName = "Sample1";
-CertificateCreateParameters params;
+CertificateCreateOptions options;
 ... 
 // start the create process
 auto response = certificateClient.StartCreateCertificate(certificateName, params);

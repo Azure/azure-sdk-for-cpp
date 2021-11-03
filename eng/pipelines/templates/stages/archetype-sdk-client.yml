@@ -26,6 +26,12 @@ parameters:
 - name: LiveTestTimeoutInMinutes
   type: number
   default: 60
+- name: LineCoverageTarget
+  type: number
+  default: 95
+- name: BranchCoverageTarget
+  type: number
+  default: 70
 
 stages:
   - stage: Build
@@ -37,6 +43,8 @@ stages:
           CtestRegex: ${{ parameters.CtestRegex }}
           CoverageEnabled: ${{ parameters.CoverageEnabled }}
           CoverageReportPath: ${{ parameters.CoverageReportPath }}
+          LineCoverageTarget: ${{ parameters.LineCoverageTarget }}
+          BranchCoverageTarget: ${{ parameters.BranchCoverageTarget }}
           ${{ if eq(parameters.ServiceDirectory, 'template') }}:
             TestPipeline: true
 
