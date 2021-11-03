@@ -19,6 +19,13 @@ parameters:
     default: true
   - name: Matrix
     type: string
+  - name: LineCoverageTarget
+    type: number
+    default: 95
+  - name: BranchCoverageTarget
+    type: number
+    default: 70
+
 
   # Supplied by archetype-sdk-tests-generate.yml dynamic matrix generator
   - name: CloudConfig
@@ -147,3 +154,23 @@ jobs:
             summaryFileLocation: '$(Build.SourcesDirectory)/**/Cobertura.xml'
           displayName: Publish Code Coverage to DevOps
           condition: and(succeededOrFailed(), eq(variables['CODE_COVERAGE'], 'enabled'))
+
+        - task: mspremier.BuildQualityChecks.QualityChecks-task.BuildQualityChecks@8
+          displayName: Check line coverage
+          inputs:
+            checkCoverage: true
+            coverageFailOption: fixed
+            coverageType: line
+            # Minimum baseline for line coverage
+            coverageThreshold: ${{ parameters.LineCoverageTarget }}
+          condition: and(succeededOrFailed(), eq(variables['CODE_COVERAGE'], 'enabled'), eq(variables['Skip.LineCoverageEnforcement'], ''))
+
+        - task: mspremier.BuildQualityChecks.QualityChecks-task.BuildQualityChecks@8
+          displayName: Check branch coverage
+          inputs:
+            checkCoverage: true
+            coverageFailOption: fixed
+            coverageType: branches
+            # Minimum baseline for branch coverage
+            coverageThreshold: ${{ parameters.BranchCoverageTarget }}
+          condition: and(succeededOrFailed(), eq(variables['CODE_COVERAGE'], 'enabled'), eq(variables['Skip.BranchCoverageEnforcement'], ''))
