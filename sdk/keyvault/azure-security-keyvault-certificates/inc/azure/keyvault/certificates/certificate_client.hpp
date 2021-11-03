@@ -471,12 +471,12 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
      *
      * @remark This operation requires the certificates/update permission.
      *
-     * @param options The options for the request.
+     * @param certificateProperties The the new properties of the certificate.
      * @param context The context for the operation can be used for request cancellation.
      * @return The updated certificate.
      */
-    Azure::Response<KeyVaultCertificateWithPolicy> UpdateCertificateProperties(
-        CertificateUpdateOptions const& options,
+    Azure::Response<KeyVaultCertificate> UpdateCertificateProperties(
+        CertificateProperties const& certificateProperties,
         Azure::Core::Context const& context = Azure::Core::Context()) const;
 
   private:
