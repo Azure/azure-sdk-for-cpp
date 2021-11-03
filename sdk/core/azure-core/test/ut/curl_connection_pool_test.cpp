@@ -119,7 +119,7 @@ namespace Azure { namespace Core { namespace Test {
         // Creating a new connection with options
         Azure::Core::Http::CurlTransportOptions options;
         options.SslVerifyPeer = false;
-        options.ConnectionTimeout = 200000;
+        options.ConnectionTimeout = std::chrono::seconds(200);
         auto connection
             = CurlConnectionPool::g_curlConnectionPool.ExtractOrCreateCurlConnection(req, options);
         EXPECT_EQ(connection->GetConnectionKey(), secondExpectedKey);

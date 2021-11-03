@@ -1233,10 +1233,10 @@ inline std::string GetConnectionKey(std::string const& host, CurlTransportOption
   key.append(options.NoSignal ? "1" : "0");
   // using DefaultConnectionTimeout or 0 result in the same setting
   key.append(
-      (options.ConnectionTimeout == CurlTransportOptions::DefaultConnectionTimeout
-       || options.ConnectionTimeout == 0)
+      (options.ConnectionTimeout == Azure::Core::Http::_detail::DefaultConnectionTimeout
+       || options.ConnectionTimeout == std::chrono::milliseconds(0))
           ? "0"
-          : std::to_string(options.ConnectionTimeout));
+          : std::to_string(options.ConnectionTimeout.count()));
 
   return key;
 }
@@ -1342,14 +1342,15 @@ std::unique_ptr<CurlNetworkConnection> CurlConnectionPool::ExtractOrCreateCurlCo
         + std::string(curl_easy_strerror(result)));
   }
 
-  if (options.ConnectionTimeout != CurlTransportOptions::DefaultConnectionTimeout)
+  if (options.ConnectionTimeout != Azure::Core::Http::_detail::DefaultConnectionTimeout)
   {
     if (!SetLibcurlOption(newHandle, CURLOPT_CONNECTTIMEOUT_MS, options.ConnectionTimeout, &result))
     {
       throw Azure::Core::Http::TransportException(
           _detail::DefaultFailedToGetNewConnectionTemplate + host
-          + ". Fail setting connect timeout to: " + std::to_string(options.ConnectionTimeout)
-          + " ms. " + std::string(curl_easy_strerror(result)));
+          + ". Fail setting connect timeout to: "
+          + std::to_string(options.ConnectionTimeout.count()) + " ms. "
+          + std::string(curl_easy_strerror(result)));
     }
   }
 

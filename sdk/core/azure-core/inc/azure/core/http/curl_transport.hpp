@@ -14,6 +14,16 @@
 
 namespace Azure { namespace Core { namespace Http {
 
+  namespace _detail {
+    /**
+     * @brief Default Maximum time in milliseconds that you allow the connection phase to the server
+     * to take.
+     *
+     */
+    AZ_CORE_DLLEXPORT static const std::chrono::milliseconds DefaultConnectionTimeout
+        = std::chrono::milliseconds(300000);
+  } // namespace _detail
+
   /**
    * @brief The available options to set libcurl SSL options.
    *
@@ -39,13 +49,6 @@ namespace Azure { namespace Core { namespace Http {
    */
   struct CurlTransportOptions final
   {
-    /**
-     * @brief Default Maximum time in milliseconds that you allow the connection phase to the server
-     * to take.
-     *
-     */
-    AZ_CORE_DLLEXPORT static const long DefaultConnectionTimeout = 300000;
-
     /**
      * @brief The string for the proxy is passed directly to the libcurl handle without any parsing
      *
@@ -107,15 +110,14 @@ namespace Azure { namespace Core { namespace Http {
     bool NoSignal = false;
 
     /**
-     * @brief Contain the maximum time in milliseconds that you allow the connection phase to the
-     * server to take.
+     * @brief Contain the maximum time that you allow the connection phase to the server to take.
      *
      * @details This only limits the connection phase, it has no impact once it has connected.
      *
-     * @remarks The default timeout is 300 seconds and using `0` would set the default value.
+     * @remarks The default timeout is 300 seconds and using `0` would set this default value.
      *
      */
-    long ConnectionTimeout = DefaultConnectionTimeout;
+    std::chrono::milliseconds ConnectionTimeout = _detail::DefaultConnectionTimeout;
   };
 
   /**
