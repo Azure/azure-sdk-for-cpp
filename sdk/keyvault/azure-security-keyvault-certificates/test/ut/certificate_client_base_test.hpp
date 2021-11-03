@@ -262,15 +262,15 @@ namespace Azure {
       auto response = client.StartCreateCertificate(name, options);
       auto result = response.PollUntilDone(defaultWait);
 
-      EXPECT_EQ(result.Value.Name(), params.Properties.Name);
-      EXPECT_EQ(result.Value.Properties.Name, params.Properties.Name);
+      EXPECT_EQ(result.Value.Name(), options.Properties.Name);
+      EXPECT_EQ(result.Value.Properties.Name, options.Properties.Name);
       EXPECT_EQ(result.Value.Properties.Enabled.Value(), true);
-      EXPECT_EQ(result.Value.Policy.IssuerName.Value(), params.Policy.IssuerName.Value());
-      EXPECT_EQ(result.Value.Policy.ContentType.Value(), params.Policy.ContentType.Value());
-      EXPECT_EQ(result.Value.Policy.Subject, params.Policy.Subject);
+      EXPECT_EQ(result.Value.Policy.IssuerName.Value(), options.Policy.IssuerName.Value());
+      EXPECT_EQ(result.Value.Policy.ContentType.Value(), options.Policy.ContentType.Value());
+      EXPECT_EQ(result.Value.Policy.Subject, options.Policy.Subject);
       EXPECT_EQ(
-          result.Value.Policy.ValidityInMonths.Value(), params.Policy.ValidityInMonths.Value());
-      EXPECT_EQ(result.Value.Policy.Enabled.Value(), params.Policy.Enabled.Value());
+          result.Value.Policy.ValidityInMonths.Value(), options.Policy.ValidityInMonths.Value());
+      EXPECT_EQ(result.Value.Policy.Enabled.Value(), options.Policy.Enabled.Value());
       EXPECT_EQ(result.Value.Policy.LifetimeActions.size(), size_t(1));
       EXPECT_EQ(result.Value.Policy.LifetimeActions[0].Action, action.Action);
       EXPECT_EQ(
