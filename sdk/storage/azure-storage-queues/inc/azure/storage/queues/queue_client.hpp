@@ -149,7 +149,8 @@ namespace Azure { namespace Storage { namespace Queues {
     /**
      * @brief Sets stored access policies for the queue that may be used with SAS.
      *
-     * @param accessPolicy Stored access policies that can be used to provide fine grained control over queue permissions.
+     * @param accessPolicy Stored access policies that can be used to provide fine grained control
+     * over queue permissions.
      * @param options Optional parameters to execute this function.
      * @param context Context for cancelling long running operations.
      * @return A SetQueueAccessPolicyResult describing the updated queue.
