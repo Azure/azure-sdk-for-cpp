@@ -1257,6 +1257,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
      */
     std::vector<uint8_t> Certificate;
   };
+
   /**
    * @brief represents on item from GetPropertiesOfIssuers
    *
@@ -1264,7 +1265,12 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
   struct CertificateIssuerItem final
   {
     /**
-     * @brief Certificate Identifier.
+     * @brief Certificate issuer name.
+     *
+     */
+    std::string Name;
+    /**
+     * @brief Certificate issuer identifier.
      *
      */
     std::string IdUrl;

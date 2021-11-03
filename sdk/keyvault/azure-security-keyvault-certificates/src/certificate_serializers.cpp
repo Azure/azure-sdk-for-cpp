@@ -719,7 +719,7 @@ IssuerPropertiesPagedResponse IssuerPropertiesPagedResponseSerializer::Deseriali
   IssuerPropertiesPagedResponse response;
   auto const& body = rawResponse.GetBody();
   auto jsonResponse = json::parse(body);
-
+  std::string data = jsonResponse.dump();
   JsonOptional::SetIfExists(response.NextPageToken, jsonResponse, NextLinkPropertyName);
 
   auto issuersPropertiesJson = jsonResponse[ValuePropertyName];
@@ -729,6 +729,7 @@ IssuerPropertiesPagedResponse IssuerPropertiesPagedResponseSerializer::Deseriali
     CertificateIssuerItem issuer;
     issuer.IdUrl = oneIssuer[IdName].get<std::string>();
     issuer.Provider = oneIssuer[ProviderPropertyValue].get<std::string>();
+    ParseIdUrl(issuer, issuer.IdUrl);
     response.Items.emplace_back(issuer);
   }
 

@@ -776,6 +776,7 @@ TEST_F(KeyVaultCertificateClientTest, GetPropertiesOfIssuers)
     for (auto oneIssuer : result.Items)
     {
       EXPECT_EQ(oneIssuer.Provider, issuer.Provider.Value());
+      EXPECT_TRUE(oneIssuer.Name == issuer.Name || oneIssuer.Name == issuer2.Name);
     }
   }
   {

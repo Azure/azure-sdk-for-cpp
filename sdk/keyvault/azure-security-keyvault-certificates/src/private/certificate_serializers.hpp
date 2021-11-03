@@ -215,6 +215,15 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
 
     class IssuerPropertiesPagedResponseSerializer final {
       IssuerPropertiesPagedResponseSerializer() = delete;
+      void static inline ParseIdUrl(CertificateIssuerItem& issuer, std::string const& url)
+      {
+        auto const separatorChar = '/';
+        auto separator = url.find_last_of(separatorChar);
+        if (separator + 1 < url.length())
+        {
+          issuer.Name = url.substr(separator + 1);
+        }
+      }
 
     public:
       static IssuerPropertiesPagedResponse Deserialize(
