@@ -73,7 +73,7 @@ TEST_F(KeyVaultCertificateClientTest, CreateCertificateResumeToken)
   }
 }
 
-TEST_F(KeyVaultCertificateClientTest, DISABLED_GetCertificate)
+TEST_F(KeyVaultCertificateClientTest, GetCertificate)
 {
   auto testName = ::testing::UnitTest::GetInstance()->current_test_info()->name();
   std::string const certificateName(testName);
@@ -134,7 +134,7 @@ TEST_F(KeyVaultCertificateClientTest, DISABLED_GetCertificate)
   }
 }
 
-TEST_F(KeyVaultCertificateClientTest, DISABLED_GetCertificateVersion)
+TEST_F(KeyVaultCertificateClientTest, GetCertificateVersion)
 {
   auto testName = ::testing::UnitTest::GetInstance()->current_test_info()->name();
   std::string const certificateName(testName);
