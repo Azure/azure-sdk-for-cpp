@@ -455,7 +455,6 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
      *
      * @remark This operation requires the certificates/create permission.
      *
-     * @param certificatename The name of the certificate.
      * @param options The options for the request.
      * @param context The context for the operation can be used for request cancellation.
      * @return Merged certificate bundle to the vault.
@@ -472,8 +471,6 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
      *
      * @remark This operation requires the certificates/update permission.
      *
-     * @param certificateName The certificate name.
-     * @param certificateVersion The certificate version.
      * @param options The options for the request.
      * @param context The context for the operation can be used for request cancellation.
      * @return The updated certificate.
@@ -483,17 +480,6 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
         Azure::Core::Context const& context = Azure::Core::Context()) const;
 
   private:
-    /**
-     * @brief Gets the creation operation of a certificate.
-     *
-     * @details Gets the creation operation associated with a specified certificate.
-     *
-     * @remark This operation requires the certificates/get permission.
-     *
-     * @param name The certificate name.
-     * @param context The context for the operation can be used for request cancellation.
-     * @return CertificateOperationProperties instance representing the status of the operation.
-     */
     Azure::Response<CertificateOperationProperties> GetPendingCertificateOperation(
         std::string const& certificateName,
         Azure::Core::Context const& context = Azure::Core::Context()) const;
