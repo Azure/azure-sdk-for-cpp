@@ -29,6 +29,11 @@ Azure::Response<KeyVaultCertificateWithPolicy> CreateCertificateOperation::PollU
     m_value = response.Value;
     m_rawResponse = std::move(response.RawResponse);
   }
+  else
+  {
+    // the raw response here is from the pending operation thus contains the Properties.
+    throw Azure::Core::RequestFailedException(m_rawResponse);
+  }
 
   return Azure::Response<KeyVaultCertificateWithPolicy>(
       m_value, std::make_unique<Azure::Core::Http::RawResponse>(*m_rawResponse));
