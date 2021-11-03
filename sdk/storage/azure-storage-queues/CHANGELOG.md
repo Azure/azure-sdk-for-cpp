@@ -6,6 +6,14 @@
 
 ### Breaking Changes
 
+- Renamed `GetServicePropertiesResult` to `QueueServiceProperties`.
+- Renamed `GetServiceStatisticsResult` to `ServiceStatistics`.
+- Renamed `GetQueuePropertiesResult` to `QueueProperties`.
+- Renamed `GetQueueAccessPolicyResult` to `QueueAccessPolicy`.
+- Wrapped the first parameter of `QueueClient::SetAccessPolicy`, a vector of signed identifiers into a struct `QueueAccessPolicy`.
+- Renamed `ReceiveMessagesResult` to `ReceivedMessages`.
+- Renamed `PeekMessagesResult` to `PeekMessagesResult`.
+
 ### Bugs Fixed
 
 ### Other Changes
