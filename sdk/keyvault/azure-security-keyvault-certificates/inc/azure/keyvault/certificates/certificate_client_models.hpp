@@ -1441,7 +1441,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
      * needs to contain the private key.
      *
      */
-    std::string Value;
+    std::string Certificate;
 
     /**
      * @brief If the private key in base64EncodedCertificate is encrypted, the password used for
@@ -1467,6 +1467,12 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
      *
      */
     std::unordered_map<std::string, std::string> Tags;
+
+    /**
+     * @brief The name of the certificate.
+     *
+     */
+    std::string Name;
   };
 
   /**
@@ -1489,6 +1495,12 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
      *
      */
     std::unordered_map<std::string, std::string> Tags;
+
+    /**
+     * @brief The name of the certificate
+     *
+     */
+    std::string Name;
   };
 
   /**
