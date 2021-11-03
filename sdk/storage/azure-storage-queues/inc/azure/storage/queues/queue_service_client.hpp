@@ -138,7 +138,7 @@ namespace Azure { namespace Storage { namespace Queues {
      * @param context Context for cancelling long running operations.
      * @return A GetServiceStatisticsResult describing the service replication statistics.
      */
-    Azure::Response<Models::GetServiceStatisticsResult> GetStatistics(
+    Azure::Response<Models::ServiceStatistics> GetStatistics(
         const GetQueueServiceStatisticsOptions& options = GetQueueServiceStatisticsOptions(),
         const Azure::Core::Context& context = Azure::Core::Context()) const;
 
