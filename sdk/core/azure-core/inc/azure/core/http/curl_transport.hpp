@@ -16,7 +16,7 @@ namespace Azure { namespace Core { namespace Http {
 
   namespace _detail {
     /**
-     * @brief Default Maximum time in milliseconds that you allow the connection phase to the server
+     * @brief Default maximum time in milliseconds that you allow the connection phase to the server
      * to take.
      *
      */
