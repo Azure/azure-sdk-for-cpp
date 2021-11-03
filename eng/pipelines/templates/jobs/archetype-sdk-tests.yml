@@ -199,7 +199,7 @@ jobs:
       Location: ${{ parameters.Location }}
       SubscriptionConfiguration: ${{ parameters.SubscriptionConfiguration }}
 
-  - script: ctest -C Debug --tests-regex ${{ parameters.CtestRegex }} --no-compress-output -T Test
+  - script: ctest -C Debug --tests-regex ${{ parameters.CtestRegex }} --no-compress-output -T Test -VV
     workingDirectory: build
     displayName: ctest
 
