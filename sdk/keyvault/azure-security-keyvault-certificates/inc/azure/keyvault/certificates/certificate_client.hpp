@@ -69,11 +69,11 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
         CertificateClientOptions options = CertificateClientOptions());
 
     /**
-     * @brief Construct a new Key Client object from another key client.
+     * @brief Construct a new Certificate Client object from another certificate client.
      *
-     * @param keyClient An existing key vault key client.
+     * @param certificateClient An existing key vault certificate client.
      */
-    explicit CertificateClient(CertificateClient const& keyClient) = default;
+    explicit CertificateClient(CertificateClient const& certificateClient) = default;
 
     /**
      * @brief Return the latest version of the KeyVaultCertificate along with its
@@ -100,10 +100,10 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
      * @param certificateName The name of the certificate.
      * @param certificateVersion The version of the certificate.
      * @param context The context for the operation can be used for request cancellation.
-     * @return A response containing the certificate and policy as a KeyVaultCertificateWithPolicy
+     * @return A response containing the certificate as a KeyVaultCertificate
      * instance.
      */
-    Azure::Response<KeyVaultCertificateWithPolicy> GetCertificateVersion(
+    Azure::Response<KeyVaultCertificate> GetCertificateVersion(
         std::string const& certificateName,
         std::string const& certificateVersion,
         Azure::Core::Context const& context = Azure::Core::Context()) const;

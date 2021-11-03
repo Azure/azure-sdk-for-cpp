@@ -100,7 +100,7 @@ Response<KeyVaultCertificateWithPolicy> CertificateClient::GetCertificate(
   return Azure::Response<KeyVaultCertificateWithPolicy>(std::move(value), std::move(rawResponse));
 }
 
-Response<KeyVaultCertificateWithPolicy> CertificateClient::GetCertificateVersion(
+Response<KeyVaultCertificate> CertificateClient::GetCertificateVersion(
     std::string const& certificateName,
     std::string const& certificateVersion,
     Context const& context) const
@@ -113,7 +113,7 @@ Response<KeyVaultCertificateWithPolicy> CertificateClient::GetCertificateVersion
   // Send and parse respone
   auto rawResponse = SendRequest(request, context);
   auto value = _detail::KeyVaultCertificateSerializer::Deserialize(certificateName, *rawResponse);
-  return Azure::Response<KeyVaultCertificateWithPolicy>(std::move(value), std::move(rawResponse));
+  return Azure::Response<KeyVaultCertificate>(std::move(value), std::move(rawResponse));
 }
 
 CreateCertificateOperation CertificateClient::StartCreateCertificate(
