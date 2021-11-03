@@ -115,9 +115,9 @@ namespace Azure { namespace Storage { namespace Queues {
      *
      * @param options Optional parameters to execute this function.
      * @param context Context for cancelling long running operations.
-     * @return A GetQueuePropertiesResult describing the queue and its properties.
+     * @return A QueueProperties describing the queue and its properties.
      */
-    Azure::Response<Models::GetQueuePropertiesResult> GetProperties(
+    Azure::Response<Models::QueueProperties> GetProperties(
         const GetQueuePropertiesOptions& options = GetQueuePropertiesOptions(),
         const Azure::Core::Context& context = Azure::Core::Context()) const;
 

@@ -338,22 +338,6 @@ namespace Azure { namespace Storage { namespace Queues {
     }; // struct GetQueueAccessPolicyResult
 
     /**
-     * @brief Response type for #Azure::Storage::Queues::QueueClient::GetProperties.
-     */
-    struct GetQueuePropertiesResult final
-    {
-      /**
-       * A set of name-value pairs associated with a queue as user-defined metadata.
-       */
-      Storage::Metadata Metadata;
-      /**
-       * The approximate number of messages in the queue. This number is not lower than the actual
-       * number of messages in the queue, but could be higher.
-       */
-      int64_t ApproximateMessageCount = 0;
-    }; // struct GetQueuePropertiesResult
-
-    /**
      * @brief Response tyoe for #Azure::Storage::Queues::QueueServiceClient::GetStatistics.
      */
     struct GetServiceStatisticsResult final
@@ -411,6 +395,22 @@ namespace Azure { namespace Storage { namespace Queues {
        */
       std::vector<PeekedQueueMessage> Messages;
     }; // struct PeekMessagesResult
+
+    /**
+     * @brief Response type for #Azure::Storage::Queues::QueueClient::GetProperties.
+     */
+    struct QueueProperties final
+    {
+      /**
+       * A set of name-value pairs associated with a queue as user-defined metadata.
+       */
+      Storage::Metadata Metadata;
+      /**
+       * The approximate number of messages in the queue. This number is not lower than the actual
+       * number of messages in the queue, but could be higher.
+       */
+      int64_t ApproximateMessageCount = 0;
+    }; // struct QueueProperties
 
     /**
      * @brief Properties of queue service.
@@ -1650,7 +1650,7 @@ namespace Azure { namespace Storage { namespace Queues {
           Azure::Nullable<int32_t> Timeout;
         }; // struct GetQueuePropertiesOptions
 
-        static Azure::Response<GetQueuePropertiesResult> GetProperties(
+        static Azure::Response<QueueProperties> GetProperties(
             Azure::Core::Http::_internal::HttpPipeline& pipeline,
             const Azure::Core::Url& url,
             const GetQueuePropertiesOptions& options,
@@ -1666,7 +1666,7 @@ namespace Azure { namespace Storage { namespace Queues {
           }
           auto pHttpResponse = pipeline.Send(request, context);
           Azure::Core::Http::RawResponse& httpResponse = *pHttpResponse;
-          GetQueuePropertiesResult response;
+          QueueProperties response;
           auto http_status_code = httpResponse.GetStatusCode();
           if (http_status_code != Azure::Core::Http::HttpStatusCode::Ok)
           {
@@ -1680,8 +1680,7 @@ namespace Azure { namespace Storage { namespace Queues {
           }
           response.ApproximateMessageCount
               = std::stoll(httpResponse.GetHeaders().at("x-ms-approximate-messages-count"));
-          return Azure::Response<GetQueuePropertiesResult>(
-              std::move(response), std::move(pHttpResponse));
+          return Azure::Response<QueueProperties>(std::move(response), std::move(pHttpResponse));
         }
 
         struct GetQueueAccessPolicyOptions final

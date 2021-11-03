@@ -150,7 +150,7 @@ namespace Azure { namespace Storage { namespace Queues {
     }
   }
 
-  Azure::Response<Models::GetQueuePropertiesResult> QueueClient::GetProperties(
+  Azure::Response<Models::QueueProperties> QueueClient::GetProperties(
       const GetQueuePropertiesOptions& options,
       const Azure::Core::Context& context) const
   {
