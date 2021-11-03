@@ -71,18 +71,6 @@ TEST_F(KeyVaultCertificateClientTest, CreateCertificateResumeToken)
     EXPECT_EQ(cert.Value.Name(), options.Properties.Name);
     EXPECT_EQ(cert.Value.Properties.Enabled.Value(), true);
   }
-  {
-    auto response = client.StartDeleteCertificate(certificateName);
-    auto fromToken
-        = DeleteCertificateOperation::CreateFromResumeToken(response.GetResumeToken(), client);
-    auto result = fromToken.PollUntilDone(m_defaultWait);
-    EXPECT_EQ(result.Value.Name(), options.Properties.Name);
-    EXPECT_EQ(result.Value.Properties.Enabled.Value(), true);
-    EXPECT_NE(result.Value.RecoveryId.length(), size_t(0));
-    EXPECT_TRUE(result.Value.DeletedOn);
-    EXPECT_TRUE(result.Value.ScheduledPurgeDate);
-    client.PurgeDeletedCertificate(certificateName);
-  }
 }
 
 TEST_F(KeyVaultCertificateClientTest, GetCertificate)
@@ -145,17 +133,6 @@ TEST_F(KeyVaultCertificateClientTest, GetCertificate)
     EXPECT_TRUE(policy.LifetimeActions.size() > 0);
     EXPECT_NE(policy.LifetimeActions[0].Action.ToString(), "");
   }
-
-  {
-    auto response = client.StartDeleteCertificate(certificateName);
-    auto result = response.PollUntilDone(m_defaultWait);
-    EXPECT_EQ(result.Value.Name(), certificateName);
-    EXPECT_EQ(result.Value.Properties.Enabled.Value(), true);
-    EXPECT_NE(result.Value.RecoveryId.length(), size_t(0));
-    EXPECT_TRUE(result.Value.DeletedOn);
-    EXPECT_TRUE(result.Value.ScheduledPurgeDate);
-    client.PurgeDeletedCertificate(certificateName);
-  }
 }
 
 TEST_F(KeyVaultCertificateClientTest, GetCertificateVersion)
@@ -194,17 +171,6 @@ TEST_F(KeyVaultCertificateClientTest, GetCertificateVersion)
     EXPECT_NE(cert.SecretId, "");
     EXPECT_NE(cert.Cer.size(), 0);
   }
-
-  {
-    auto response = client.StartDeleteCertificate(certificateName);
-    auto result = response.PollUntilDone(m_defaultWait);
-    EXPECT_EQ(result.Value.Name(), certificateName);
-    EXPECT_EQ(result.Value.Properties.Enabled.Value(), true);
-    EXPECT_NE(result.Value.RecoveryId.length(), size_t(0));
-    EXPECT_TRUE(result.Value.DeletedOn);
-    EXPECT_TRUE(result.Value.ScheduledPurgeDate);
-    client.PurgeDeletedCertificate(certificateName);
-  }
 }
 
 TEST_F(KeyVaultCertificateClientTest, GetDeletedCertificate)
@@ -233,12 +199,6 @@ TEST_F(KeyVaultCertificateClientTest, GetDeletedCertificate)
   {
     auto response = client.GetCertificate(certificateName);
     EXPECT_EQ(response.Value.Name(), certificateName);
-  }
-  {
-    auto response = client.StartDeleteCertificate(certificateName);
-    auto result = response.PollUntilDone(m_defaultWait);
-    EXPECT_EQ(result.Value.Name(), certificateName);
-    client.PurgeDeletedCertificate(certificateName);
   }
 }
 
@@ -513,13 +473,6 @@ TEST_F(KeyVaultCertificateClientTest, GetCertificatePolicy)
     EXPECT_TRUE(policy.LifetimeActions.size() > 0);
     EXPECT_NE(policy.LifetimeActions[0].Action.ToString(), "");
   }
-
-  {
-    auto response = client.StartDeleteCertificate(certificateName);
-    auto result = response.PollUntilDone(m_defaultWait);
-    EXPECT_EQ(result.Value.Name(), certificateName);
-    client.PurgeDeletedCertificate(certificateName);
-  }
 }
 
 TEST_F(KeyVaultCertificateClientTest, UpdateCertificatePolicy)
@@ -596,12 +549,6 @@ TEST_F(KeyVaultCertificateClientTest, UpdateCertificatePolicy)
     EXPECT_TRUE(updatedPolicy.LifetimeActions.size() > 0);
     EXPECT_NE(updatedPolicy.LifetimeActions[0].Action.ToString(), "");
   }
-  {
-    auto response = client.StartDeleteCertificate(certificateName);
-    auto result = response.PollUntilDone(m_defaultWait);
-    EXPECT_EQ(result.Value.Name(), certificateName);
-    client.PurgeDeletedCertificate(certificateName);
-  }
 }
 
 TEST_F(KeyVaultCertificateClientTest, BackupRestoreCertificate)
@@ -633,12 +580,6 @@ TEST_F(KeyVaultCertificateClientTest, BackupRestoreCertificate)
     EXPECT_EQ(certificate.Policy.ValidityInMonths.Value(), 12);
     EXPECT_EQ(certificate.Policy.IssuerName.Value(), "Self");
   }
-  {
-    auto response = client.StartDeleteCertificate(certificateName);
-    auto result = response.PollUntilDone(m_defaultWait);
-    EXPECT_EQ(result.Value.Name(), certificateName);
-    client.PurgeDeletedCertificate(certificateName);
-  }
 }
 
 TEST_F(KeyVaultCertificateClientTest, GetPropertiesOfCertificates)
@@ -648,35 +589,28 @@ TEST_F(KeyVaultCertificateClientTest, GetPropertiesOfCertificates)
   std::string const certificateName2(certificateName + "2");
 
   auto const& client = GetClientForTest(testName);
-  {
-    auto result = client.GetPropertiesOfCertificates(GetPropertiesOfCertificatesOptions());
-    EXPECT_EQ(result.Items.size(), size_t(0));
-  }
 
   CreateCertificate(certificateName, client, m_defaultWait);
   CreateCertificate(certificateName2, client, m_defaultWait);
 
   {
     auto result = client.GetPropertiesOfCertificates(GetPropertiesOfCertificatesOptions());
-    EXPECT_EQ(result.Items.size(), size_t(2));
+    EXPECT_TRUE(result.Items.size() >= size_t(2));
+    bool found1 = false;
+    bool found2 = false;
     for (CertificateProperties prop : result.Items)
     {
-      EXPECT_TRUE(prop.Name == certificateName || prop.Name == certificateName2);
+      if (!found1)
+      {
+        found1 = prop.Name == certificateName;
+      }
+
+      if (!found2)
+      {
+        found2 = prop.Name == certificateName2;
+      }
     }
-  }
-
-  {
-    auto response = client.StartDeleteCertificate(certificateName);
-    auto result = response.PollUntilDone(m_defaultWait);
-    EXPECT_EQ(result.Value.Name(), certificateName);
-    client.PurgeDeletedCertificate(certificateName);
-  }
-
-  {
-    auto response = client.StartDeleteCertificate(certificateName2);
-    auto result = response.PollUntilDone(m_defaultWait);
-    EXPECT_EQ(result.Value.Name(), certificateName2);
-    client.PurgeDeletedCertificate(certificateName2);
+    EXPECT_TRUE(found1 && found2);
   }
 }
 
@@ -699,13 +633,6 @@ TEST_F(KeyVaultCertificateClientTest, GetPropertiesOfCertificateVersions)
       EXPECT_TRUE(prop.Name == certificateName);
       EXPECT_TRUE(prop.Version.size() > size_t(0));
     }
-  }
-
-  {
-    auto response = client.StartDeleteCertificate(certificateName);
-    auto result = response.PollUntilDone(m_defaultWait);
-    EXPECT_EQ(result.Value.Name(), certificateName);
-    client.PurgeDeletedCertificate(certificateName);
   }
 }
 
@@ -732,11 +659,6 @@ TEST_F(KeyVaultCertificateClientTest, GetPropertiesOfIssuers)
 {
   auto const& client
       = GetClientForTest(::testing::UnitTest::GetInstance()->current_test_info()->name());
-
-  {
-    auto result = client.GetPropertiesOfIssuers(GetPropertiesOfIssuersOptions());
-    EXPECT_EQ(result.Items.size(), size_t(0));
-  }
 
   CertificateIssuer issuer;
   issuer.Name = "issuer01";
@@ -792,11 +714,6 @@ TEST_F(KeyVaultCertificateClientTest, GetDeletedCertificates)
 
   auto const& client = GetClientForTest(testName);
 
-  {
-    auto result = client.GetDeletedCertificates(GetDeletedCertificatesOptions());
-    EXPECT_EQ(result.Items.size(), size_t(0));
-  }
-
   CreateCertificate(certificateName, client, m_defaultWait);
   CreateCertificate(certificateName2, client, m_defaultWait);
 
@@ -832,11 +749,6 @@ TEST_F(KeyVaultCertificateClientTest, DownloadImportPkcs)
 
   auto const& client = GetClientForTest(testName);
 
-  {
-    auto result = client.GetPropertiesOfCertificates(GetPropertiesOfCertificatesOptions());
-    EXPECT_EQ(result.Items.size(), size_t(0));
-  }
-
   auto originalCertificate
       = CreateCertificate(pkcs, client, m_defaultWait, "CN=xyz", CertificateContentType::Pkcs12);
 
@@ -860,18 +772,6 @@ TEST_F(KeyVaultCertificateClientTest, DownloadImportPkcs)
     EXPECT_EQ(imported.Policy.Subject, originalCertificate.Policy.Subject);
     EXPECT_EQ(imported.Cer, originalCertificate.Cer);
   }
-  {
-    auto response = client.StartDeleteCertificate(pkcs);
-    auto result = response.PollUntilDone(m_defaultWait);
-    EXPECT_EQ(result.Value.Name(), pkcs);
-    client.PurgeDeletedCertificate(pkcs);
-  }
-  {
-    auto response = client.StartDeleteCertificate(importName);
-    auto result = response.PollUntilDone(m_defaultWait);
-    EXPECT_EQ(result.Value.Name(), importName);
-    client.PurgeDeletedCertificate(importName);
-  }
 }
 
 TEST_F(KeyVaultCertificateClientTest, DownloadImportPem)
@@ -881,10 +781,6 @@ TEST_F(KeyVaultCertificateClientTest, DownloadImportPem)
   std::string const importName(pem + "2");
 
   auto const& client = GetClientForTest(testName);
-  {
-    auto result = client.GetPropertiesOfCertificates(GetPropertiesOfCertificatesOptions());
-    EXPECT_EQ(result.Items.size(), size_t(0));
-  }
 
   auto originalCertificate
       = CreateCertificate(pem, client, m_defaultWait, "CN=xyz", CertificateContentType::Pem);
@@ -915,12 +811,6 @@ TEST_F(KeyVaultCertificateClientTest, DownloadImportPem)
     EXPECT_EQ(result.Value.Name(), pem);
     client.PurgeDeletedCertificate(pem);
   }
-  {
-    auto response = client.StartDeleteCertificate(importName);
-    auto result = response.PollUntilDone(m_defaultWait);
-    EXPECT_EQ(result.Value.Name(), importName);
-    client.PurgeDeletedCertificate(importName);
-  }
 }
 
 TEST_F(KeyVaultCertificateClientTest, UpdateCertificate)
@@ -942,12 +832,6 @@ TEST_F(KeyVaultCertificateClientTest, UpdateCertificate)
               .Value;
     EXPECT_FALSE(updatedCert.Properties.Enabled.Value());
   }
-  {
-    auto response = client.StartDeleteCertificate(certificate.Properties.Name);
-    auto result = response.PollUntilDone(m_defaultWait);
-    EXPECT_EQ(result.Value.Name(), certificateName);
-    client.PurgeDeletedCertificate(certificateName);
-  }
 }
 
 // the api implementation is correct according to swagger and other languages.
@@ -958,10 +842,6 @@ TEST_F(KeyVaultCertificateClientTest, DISABLED_MergeCertificate)
 {
   auto const& client
       = GetClientForTest(::testing::UnitTest::GetInstance()->current_test_info()->name());
-  {
-    auto result = client.GetPropertiesOfCertificates(GetPropertiesOfCertificatesOptions());
-    EXPECT_EQ(result.Items.size(), size_t(0));
-  }
 
   // cspell: disable-next-line
   std::string pkcsToMerge = "aaaaa";
