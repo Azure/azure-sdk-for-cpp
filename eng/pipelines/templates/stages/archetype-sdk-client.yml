@@ -43,6 +43,8 @@ stages:
           CtestRegex: ${{ parameters.CtestRegex }}
           CoverageEnabled: ${{ parameters.CoverageEnabled }}
           CoverageReportPath: ${{ parameters.CoverageReportPath }}
+          LineCoverageTarget: ${{ parameters.LineCoverageTarget }}
+          BranchCoverageTarget: ${{ parameters.BranchCoverageTarget }}
           ${{ if eq(parameters.ServiceDirectory, 'template') }}:
             TestPipeline: true
 
