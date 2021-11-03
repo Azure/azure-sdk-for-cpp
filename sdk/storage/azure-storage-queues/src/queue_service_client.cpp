@@ -152,7 +152,7 @@ namespace Azure { namespace Storage { namespace Queues {
         *m_pipeline, m_serviceUrl, protocolLayerOptions, context);
   }
 
-  Azure::Response<Models::GetServicePropertiesResult> QueueServiceClient::GetProperties(
+  Azure::Response<Models::QueueServiceProperties> QueueServiceClient::GetProperties(
       const GetServicePropertiesOptions& options,
       const Azure::Core::Context& context) const
   {
