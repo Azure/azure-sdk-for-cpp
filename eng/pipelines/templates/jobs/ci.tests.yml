@@ -109,8 +109,19 @@ jobs:
           BuildArgs: "$(BuildArgs)"
           Env: "$(CmakeEnvArg)"
 
-      - script: ctest -C Debug -V --tests-regex ${{ parameters.CtestRegex }}
+      - script: ctest -C Debug --tests-regex ${{ parameters.CtestRegex }} --no-compress-output -T Test
         workingDirectory: build
+
+      - task: PublishTestResults@2
+        inputs:
+          testResultsFormat: cTest
+          testResultsFiles: Testing/*/Test.xml
+          testRunTitle: $(Agent.JobName)
+          searchFolder: build
+          mergeTestResults: true
+          publishRunAttachments: true
+        displayName: Publish test results
+        condition: succeededOrFailed()
 
       - ${{ if eq(parameters.CoverageEnabled, true) }}:
         - pwsh: |

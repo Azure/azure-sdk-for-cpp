@@ -27,7 +27,7 @@ parameters:
 # https://github.com/Azure/azure-sdk-for-cpp/issues/2944
 
 jobs:
-- job: Validate
+- job: ValidateLive
   condition: and(succeededOrFailed(), ne(variables['Skip.LiveTest'], 'true'))
   timeoutInMinutes: ${{ parameters.TimeoutInMinutes }}
   strategy:
@@ -198,9 +198,20 @@ jobs:
       Location: ${{ parameters.Location }}
       SubscriptionConfiguration: ${{ parameters.SubscriptionConfiguration }}
 
-  - script: ctest -C Debug -V --tests-regex ${{ parameters.CtestRegex }}
+  - script: ctest -C Debug --tests-regex ${{ parameters.CtestRegex }} --no-compress-output -T Test
     workingDirectory: build
     displayName: ctest
+
+  - task: PublishTestResults@2
+    inputs:
+      testResultsFormat: cTest
+      testResultsFiles: Testing/*/Test.xml
+      testRunTitle: $(Agent.JobName)
+      searchFolder: build
+      mergeTestResults: true
+      publishRunAttachments: true
+    displayName: Publish test results
+    condition: succeededOrFailed()
 
   # Make coverage targets (specified in coverage_targets.txt) and assemble
   # coverage report
