@@ -195,7 +195,7 @@ void CertificatePolicySerializer::Deserialize(
     JsonOptional::SetIfExists<std::vector<std::string>, std::vector<CertificateKeyUsage>>(
         policy.KeyUsage,
         x509PropsJson,
-        UserPrincipalNamesPropertyName,
+        KeyUsagePropertyName,
         [](std::vector<std::string> const& values) {
           std::vector<CertificateKeyUsage> keyUsage;
           for (auto const& item : values)
