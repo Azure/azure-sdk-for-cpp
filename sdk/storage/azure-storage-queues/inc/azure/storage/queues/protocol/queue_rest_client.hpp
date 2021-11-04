@@ -433,7 +433,7 @@ namespace Azure { namespace Storage { namespace Queues {
     }; // struct ReceivedMessages
 
     /**
-     * @brief Response tyoe for #Azure::Storage::Queues::QueueServiceClient::GetStatistics.
+     * @brief Response type for #Azure::Storage::Queues::QueueServiceClient::GetStatistics.
      */
     struct ServiceStatistics final
     {
