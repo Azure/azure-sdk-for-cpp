@@ -151,7 +151,7 @@ namespace Azure {
         m_credential = std::make_shared<Azure::Identity::ClientSecretCredential>(
             tenantId, clientId, secretId);
         m_client = std::make_unique<CertificateClient>(m_keyVaultUrl, m_credential, options);
-        m_defaultWait = 10s;
+        m_defaultWait = 20s;
       }
 
       // When running live tests, service can return 429 error response if the client is
@@ -262,24 +262,22 @@ namespace Azure {
       auto response = client.StartCreateCertificate(name, options);
       auto result = response.PollUntilDone(defaultWait);
 
-      auto cert = client.GetCertificate(name);
-
-      EXPECT_EQ(cert.Value.Name(), options.Properties.Name);
-      EXPECT_EQ(cert.Value.Properties.Name, options.Properties.Name);
-      EXPECT_EQ(cert.Value.Properties.Enabled.Value(), true);
-      EXPECT_EQ(cert.Value.Policy.IssuerName.Value(), options.Policy.IssuerName.Value());
-      EXPECT_EQ(cert.Value.Policy.ContentType.Value(), options.Policy.ContentType.Value());
-      EXPECT_EQ(cert.Value.Policy.Subject, options.Policy.Subject);
+      EXPECT_EQ(result.Value.Name(), options.Properties.Name);
+      EXPECT_EQ(result.Value.Properties.Name, options.Properties.Name);
+      EXPECT_EQ(result.Value.Properties.Enabled.Value(), true);
+      EXPECT_EQ(result.Value.Policy.IssuerName.Value(), options.Policy.IssuerName.Value());
+      EXPECT_EQ(result.Value.Policy.ContentType.Value(), options.Policy.ContentType.Value());
+      EXPECT_EQ(result.Value.Policy.Subject, options.Policy.Subject);
       EXPECT_EQ(
-          cert.Value.Policy.ValidityInMonths.Value(), options.Policy.ValidityInMonths.Value());
-      EXPECT_EQ(cert.Value.Policy.Enabled.Value(), options.Policy.Enabled.Value());
-      EXPECT_EQ(cert.Value.Policy.LifetimeActions.size(), size_t(1));
-      EXPECT_EQ(cert.Value.Policy.LifetimeActions[0].Action, action.Action);
+          result.Value.Policy.ValidityInMonths.Value(), options.Policy.ValidityInMonths.Value());
+      EXPECT_EQ(result.Value.Policy.Enabled.Value(), options.Policy.Enabled.Value());
+      EXPECT_EQ(result.Value.Policy.LifetimeActions.size(), size_t(1));
+      EXPECT_EQ(result.Value.Policy.LifetimeActions[0].Action, action.Action);
       EXPECT_EQ(
-          cert.Value.Policy.LifetimeActions[0].LifetimePercentage.Value(),
+          result.Value.Policy.LifetimeActions[0].LifetimePercentage.Value(),
           action.LifetimePercentage.Value());
 
-      return cert.Value;
+      return result.Value;
     }
 
     Azure::Response<DownloadCertificateResult> DownloadCertificate(

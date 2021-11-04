@@ -156,11 +156,9 @@ KeyVaultCertificateWithPolicy CreateCertificate(
   {
     options.Properties.Name = certificateName;
     // start the create process
-    auto response = certificateClient.StartCreateCertificate(certificateName, options);
-    auto result = response.PollUntilDone(defaultWait);
-
-    // get the certificate
-    auto certificate = certificateClient.GetCertificate(certificateName).Value;
+    auto response = certificateClient.StartCreateCertificate(certificateName, params);
+    // wait for complete to get the certificate
+    auto certificate = response.PollUntilDone(defaultWait).Value;
 
     std::cout << "Created certificate with policy. Certificate name : " << certificate.Name();
 
