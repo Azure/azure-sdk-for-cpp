@@ -55,7 +55,7 @@ int main()
       options.Policy.KeySize = 2048;
       options.Policy.ContentType = CertificateContentType::Pem;
       options.Policy.Exportable = true;
-      options.Properties.Name = pemName;
+
       // call import API
       auto imported = certificateClient.ImportCertificate(pemName, options).Value;
       // get some value from the certificate
@@ -72,7 +72,7 @@ int main()
       options.Policy.KeySize = 2048;
       options.Policy.ContentType = CertificateContentType::Pkcs12;
       options.Policy.Exportable = true;
-      options.Properties.Name = pkcsName;
+
       // call the import API
       auto imported = certificateClient.ImportCertificate(pkcsName, options).Value;
       // read something from the certificate

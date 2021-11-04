@@ -41,7 +41,7 @@ std::string certificateName = "Sample1";
 CertificateCreateOptions options
 ... 
 // start the create process
-auto response = certificateClient.StartCreateCertificate(options);
+auto response = certificateClient.StartCreateCertificate(certificateName, options);
 auto result = response.PollUntilDone(defaultWait);
 ```
 
