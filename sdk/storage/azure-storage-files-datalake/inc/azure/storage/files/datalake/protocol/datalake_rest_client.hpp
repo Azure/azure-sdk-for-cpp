@@ -713,9 +713,16 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
           {
             result.FileSize = std::stoll(node["contentLength"].get<std::string>());
           }
-          result.Owner = node["owner"].get<std::string>();
-          result.Group = node["group"].get<std::string>();
-          result.Permissions = node["permissions"].get<std::string>();
+          #define READ_STR(PROP, FIELD)                      \
+            if (node.contains(#PROP)) {                      \
+              result.FIELD = node[#PROP].get<std::string>(); \
+            }
+
+          READ_STR(owner, Owner)
+          READ_STR(group, Group)
+          READ_STR(permissions, Permissions)
+          #undef READ_STR
+
           return result;
         }
 
