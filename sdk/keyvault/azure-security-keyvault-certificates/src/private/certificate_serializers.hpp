@@ -50,7 +50,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
           std::string const& url)
       {
         Azure::Core::Url kid(url);
-        certificateProperties.Id = url;
+        certificateProperties.IdUrl = url;
         certificateProperties.VaultUrl = GetUrlAuthorityWithScheme(kid);
         auto const& path = kid.GetPath();
         //  path is in the form of `verb/keyName{/keyVersion}`
@@ -166,7 +166,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
           std::string const& url)
       {
         Azure::Core::Url kid(url);
-        certificateProperties.Id = url;
+        certificateProperties.IdUrl = url;
         certificateProperties.VaultUrl = GetUrlAuthorityWithScheme(kid);
         auto const& path = kid.GetPath();
         // path in format certificates/{name}/pending
@@ -215,6 +215,15 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
 
     class IssuerPropertiesPagedResponseSerializer final {
       IssuerPropertiesPagedResponseSerializer() = delete;
+      void static inline ParseIdUrl(CertificateIssuerItem& issuer, std::string const& url)
+      {
+        auto const separatorChar = '/';
+        auto separator = url.find_last_of(separatorChar);
+        if (separator + 1 < url.length())
+        {
+          issuer.Name = url.substr(separator + 1);
+        }
+      }
 
     public:
       static IssuerPropertiesPagedResponse Deserialize(
@@ -254,7 +263,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
       CertificateUpdateOptionsSerializer() = delete;
 
     public:
-      static std::string Serialize(CertificateUpdateOptions const& options);
+      static std::string Serialize(CertificateProperties const& certificateProperties);
     };
 
 }}}}} // namespace Azure::Security::KeyVault::Certificates::_detail

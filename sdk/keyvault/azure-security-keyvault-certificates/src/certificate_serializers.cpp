@@ -62,11 +62,11 @@ KeyVaultCertificateWithPolicy _detail::KeyVaultCertificateSerializer::Deserializ
   if (jsonResponse.contains(KidPropertyName))
   {
 
-    certificate.KeyId = jsonResponse[KidPropertyName].get<std::string>();
+    certificate.KeyIdUrl = jsonResponse[KidPropertyName].get<std::string>();
   } // sid
   if (jsonResponse.contains(SidPropertyName))
   {
-    certificate.SecretId = jsonResponse[SidPropertyName].get<std::string>();
+    certificate.SecretIdUrl = jsonResponse[SidPropertyName].get<std::string>();
   }
   // cer
   if (jsonResponse.contains(CerPropertyName))
@@ -429,7 +429,7 @@ CertificateIssuer CertificateIssuerSerializer::Deserialize(
   auto const& body = rawResponse.GetBody();
   auto jsonResponse = json::parse(body);
 
-  issuer.Id = jsonResponse[IdName];
+  issuer.IdUrl = jsonResponse[IdName];
   issuer.Provider = jsonResponse[ProviderPropertyValue];
 
   if (jsonResponse.contains(CredentialsPropertyValue))
@@ -597,7 +597,7 @@ CertificateOperationProperties CertificateOperationSerializer ::Deserialize(
   JsonOptional::SetIfExists(operation.Status, jsonResponse, StatusPropertyName);
   JsonOptional::SetIfExists(operation.StatusDetails, jsonResponse, StatusDetailsPropertyName);
   JsonOptional::SetIfExists(operation.Target, jsonResponse, TargetPropertyName);
-  JsonOptional::SetIfExists(operation.RequestId, jsonResponse, RequestIdPropertyName);
+  JsonOptional::SetIfExists(operation.RequestIdUrl, jsonResponse, RequestIdPropertyName);
 
   if (jsonResponse.contains(ErrorPropertyName))
   {
@@ -635,7 +635,7 @@ DeletedCertificate DeletedCertificateSerializer::Deserialize(
   auto const& body = rawResponse.GetBody();
   auto jsonResponse = json::parse(body);
 
-  result.RecoveryId = jsonResponse[RecoveryIdPropertyName];
+  result.RecoveryIdUrl = jsonResponse[RecoveryIdPropertyName];
 
   JsonOptional::SetIfExists<int64_t, Azure::DateTime>(
       result.DeletedOn,
@@ -719,7 +719,7 @@ IssuerPropertiesPagedResponse IssuerPropertiesPagedResponseSerializer::Deseriali
   IssuerPropertiesPagedResponse response;
   auto const& body = rawResponse.GetBody();
   auto jsonResponse = json::parse(body);
-
+  std::string data = jsonResponse.dump();
   JsonOptional::SetIfExists(response.NextPageToken, jsonResponse, NextLinkPropertyName);
 
   auto issuersPropertiesJson = jsonResponse[ValuePropertyName];
@@ -727,8 +727,9 @@ IssuerPropertiesPagedResponse IssuerPropertiesPagedResponseSerializer::Deseriali
   for (auto const& oneIssuer : issuersPropertiesJson)
   {
     CertificateIssuerItem issuer;
-    issuer.Id = oneIssuer[IdName].get<std::string>();
+    issuer.IdUrl = oneIssuer[IdName].get<std::string>();
     issuer.Provider = oneIssuer[ProviderPropertyValue].get<std::string>();
+    ParseIdUrl(issuer, issuer.IdUrl);
     response.Items.emplace_back(issuer);
   }
 
@@ -805,13 +806,14 @@ std::string MergeCertificateOptionsSerializer::Serialize(MergeCertificateOptions
   return mergeOptions.dump();
 }
 
-std::string CertificateUpdateOptionsSerializer::Serialize(CertificateUpdateOptions const& options)
+std::string CertificateUpdateOptionsSerializer::Serialize(
+    CertificateProperties const& certificateProperties)
 {
   json updateOptions;
 
   updateOptions[AttributesPropertyName]
-      = CertificatePropertiesSerializer::JsonSerialize(options.Properties);
-  updateOptions[TagsPropertyName] = json(options.Tags);
+      = CertificatePropertiesSerializer::JsonSerialize(certificateProperties);
+  updateOptions[TagsPropertyName] = json(certificateProperties.Tags);
 
   return updateOptions.dump();
 }
