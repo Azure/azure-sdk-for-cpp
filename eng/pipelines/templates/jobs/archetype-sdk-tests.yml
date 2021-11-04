@@ -19,7 +19,7 @@ parameters:
   default: sdk/*/*/*cov_xml.xml
 - name: TimeoutInMinutes
   type: number
-  default: 60
+  default: 90
 
 # This job uses the legacy matrix format (matrix property of the job, one
 # build/test scenario per job). A new format (multiple build/test scenarios per
@@ -138,6 +138,7 @@ jobs:
     CmakeEnvArg: ""
     CmakeArgs: ""
     AZURE_TEST_MODE: "LIVE"
+    #AZURE_LOG_LEVEL: "1"
 
   steps:
   - checkout: self
@@ -198,7 +199,7 @@ jobs:
       Location: ${{ parameters.Location }}
       SubscriptionConfiguration: ${{ parameters.SubscriptionConfiguration }}
 
-  - script: ctest -C Debug --tests-regex ${{ parameters.CtestRegex }} --no-compress-output -T Test
+  - script: ctest -C Debug --tests-regex ${{ parameters.CtestRegex }} --no-compress-output -T Test -VV
     workingDirectory: build
     displayName: ctest
 
