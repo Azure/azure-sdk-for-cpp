@@ -66,7 +66,7 @@ int main()
     // create a certificate
     {
       // start the create process
-      auto response = certificateClient.StartCreateCertificate(certificateName, params);
+      auto response = certificateClient.StartCreateCertificate(certificateName, options);
       // wait for complete to get the certificate
       certificate = response.PollUntilDone(defaultWait).Value;
 
