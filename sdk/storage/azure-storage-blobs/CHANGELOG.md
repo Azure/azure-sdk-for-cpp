@@ -10,6 +10,8 @@
 
 ### Other Changes
 
+- `DefaultEncryptionScope` and `PreventEncryptionScopeOverride` in `BlobContainerProperties` were changed to optional.
+
 ## 12.2.0 (2021-09-08)
 
 ### Breaking Changes

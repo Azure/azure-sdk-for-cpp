@@ -301,16 +301,15 @@ public:
       }
     }
 
-    if (m_options.ConnectionTimeout
-        != Azure::Core::Http::CurlTransportOptions::DefaultConnectionTimeout)
+    if (m_options.ConnectionTimeout != Azure::Core::Http::_detail::DefaultConnectionTimeout)
     {
       if (!SetStaticLibcurlOption(
-              m_libcurlHandle, CURLOPT_CONNECTTIMEOUT, m_options.ConnectionTimeout, &result))
+              m_libcurlHandle, CURLOPT_CONNECTTIMEOUT_MS, m_options.ConnectionTimeout, &result))
       {
         throw Azure::Core::Http::TransportException(
-            FailedToGetNewConnectionTemplate + host
-            + ". Fail setting connect timeout to: " + std::to_string(m_options.ConnectionTimeout)
-            + ". " + std::string(curl_easy_strerror(result)));
+            FailedToGetNewConnectionTemplate + host + ". Fail setting connect timeout to: "
+            + std::to_string(m_options.ConnectionTimeout.count()) + ". "
+            + std::string(curl_easy_strerror(result)));
       }
     }
 

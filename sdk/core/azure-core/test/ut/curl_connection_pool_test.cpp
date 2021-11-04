@@ -114,11 +114,12 @@ namespace Azure { namespace Core { namespace Test {
 
       // Now test that using a different connection config won't re-use the same connection
       std::string const secondExpectedKey
-          = AzureSdkHttpbinServer::Schema() + AzureSdkHttpbinServer::Host() + "001000";
+          = AzureSdkHttpbinServer::Schema() + AzureSdkHttpbinServer::Host() + "00100200000";
       {
         // Creating a new connection with options
         Azure::Core::Http::CurlTransportOptions options;
         options.SslVerifyPeer = false;
+        options.ConnectionTimeout = std::chrono::seconds(200);
         auto connection
             = CurlConnectionPool::g_curlConnectionPool.ExtractOrCreateCurlConnection(req, options);
         EXPECT_EQ(connection->GetConnectionKey(), secondExpectedKey);

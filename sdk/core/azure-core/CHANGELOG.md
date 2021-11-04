@@ -6,7 +6,6 @@
 
 - Add `NoSignal` option to the `CurlTransportAdapter`.
 - Add `ConnectionTimeout` option to the `CurlTransportAdapter`.
-- Add `Azure::Core::Http::Request` constructor overload to support payload and non-buffered response. 
 
 ### Bugs Fixed
 
