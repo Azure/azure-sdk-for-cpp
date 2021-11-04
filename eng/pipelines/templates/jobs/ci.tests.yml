@@ -74,6 +74,15 @@ jobs:
         condition: and(succeeded(), ne(variables['AptDependencies'], ''))
         displayName: Install dependencies from apt
 
+      - pwsh: sudo xcode-select -s /Applications/Xcode_$(XCODE_VERSION).app/Contents/Developer
+        condition: >-
+          and(
+            succeeded(),
+            contains(variables['OSVmImage'], 'macOS'),
+            ne(variables['XCODE_VERSION'], '')
+          )
+        displayName: Set Xcode version
+
       - template: /eng/pipelines/templates/steps/vcpkg.yml
         parameters:
           DependenciesVariableName: VcpkgInstall

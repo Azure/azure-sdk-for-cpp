@@ -156,7 +156,7 @@ KeyVaultCertificateWithPolicy CreateCertificate(
   {
     options.Properties.Name = certificateName;
     // start the create process
-    auto response = certificateClient.StartCreateCertificate(certificateName, params);
+    auto response = certificateClient.StartCreateCertificate(certificateName, options);
     // wait for complete to get the certificate
     auto certificate = response.PollUntilDone(defaultWait).Value;
 

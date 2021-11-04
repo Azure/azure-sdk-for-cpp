@@ -186,7 +186,7 @@ namespace Azure {
       EXPECT_EQ(data.Name, issuer.Name);
       EXPECT_EQ(data.Provider.Value(), issuer.Provider.Value());
       EXPECT_TRUE(data.Properties.Enabled.Value());
-      EXPECT_TRUE(data.Id);
+      EXPECT_TRUE(data.IdUrl);
 
       EXPECT_EQ(data.Credentials.AccountId.Value(), issuer.Credentials.AccountId.Value());
       EXPECT_FALSE(data.Credentials.Password);
@@ -296,7 +296,7 @@ namespace Azure {
         auto response = client.GetCertificate(name, context);
         certificate = response.Value;
 
-        Azure::Core::Url url(certificate.SecretId);
+        Azure::Core::Url url(certificate.SecretIdUrl);
         auto secretRequest
             = client.CreateRequest(Azure::Core::Http::HttpMethod::Get, {url.GetPath()});
 

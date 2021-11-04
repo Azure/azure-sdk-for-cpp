@@ -4,7 +4,7 @@
       "Headers": {
         "content-type": "application/json",
         "user-agent": "azsdk-cpp-keyvault-certificates/4.0.0-beta.1 (Windows 10 Enterprise 6.3 22000 22000.1.amd64fre.co_release.210604-1628)",
-        "x-ms-client-request-id": "64da6c66-b570-4125-6816-a1a698ea8817"
+        "x-ms-client-request-id": "f971c41b-68b5-4b52-7f51-796a43a7dfc3"
       },
       "Method": "PUT",
       "Response": {
@@ -13,16 +13,16 @@
         "cache-control": "no-cache",
         "content-length": "196",
         "content-type": "application/json; charset=utf-8",
-        "date": "Mon, 01 Nov 2021 22:57:05 GMT",
+        "date": "Thu, 04 Nov 2021 20:49:36 GMT",
         "expires": "-1",
         "pragma": "no-cache",
         "strict-transport-security": "max-age=31536000;includeSubDomains",
         "x-content-type-options": "nosniff",
-        "x-ms-client-request-id": "64da6c66-b570-4125-6816-a1a698ea8817",
+        "x-ms-client-request-id": "f971c41b-68b5-4b52-7f51-796a43a7dfc3",
         "x-ms-keyvault-network-info": "conn_type=Ipv4;addr=24.22.157.72;act_addr_fam=InterNetwork;",
         "x-ms-keyvault-region": "westus2",
         "x-ms-keyvault-service-version": "1.9.150.1",
-        "x-ms-request-id": "0654e0ce-332d-4000-b7df-af4c6a6641ef",
+        "x-ms-request-id": "a2fd2a19-ffc8-4510-a56a-e33055869567",
         "x-powered-by": "ASP.NET"
       },
       "Url": "https://REDACTED.vault.azure.net/certificates/contacts?api-version=7.2"
@@ -31,7 +31,7 @@
       "Headers": {
         "content-type": "application/json",
         "user-agent": "azsdk-cpp-keyvault-certificates/4.0.0-beta.1 (Windows 10 Enterprise 6.3 22000 22000.1.amd64fre.co_release.210604-1628)",
-        "x-ms-client-request-id": "9663834d-ed28-4666-4ad5-ebb81269374a"
+        "x-ms-client-request-id": "b1f3e8dd-c755-4005-7419-94d4c8a1460a"
       },
       "Method": "GET",
       "Response": {
@@ -40,16 +40,16 @@
         "cache-control": "no-cache",
         "content-length": "196",
         "content-type": "application/json; charset=utf-8",
-        "date": "Mon, 01 Nov 2021 22:57:05 GMT",
+        "date": "Thu, 04 Nov 2021 20:49:36 GMT",
         "expires": "-1",
         "pragma": "no-cache",
         "strict-transport-security": "max-age=31536000;includeSubDomains",
         "x-content-type-options": "nosniff",
-        "x-ms-client-request-id": "9663834d-ed28-4666-4ad5-ebb81269374a",
+        "x-ms-client-request-id": "b1f3e8dd-c755-4005-7419-94d4c8a1460a",
         "x-ms-keyvault-network-info": "conn_type=Ipv4;addr=24.22.157.72;act_addr_fam=InterNetwork;",
         "x-ms-keyvault-region": "westus2",
         "x-ms-keyvault-service-version": "1.9.150.1",
-        "x-ms-request-id": "5dbbaaf9-d108-4451-a1f4-ef1602e54c6f",
+        "x-ms-request-id": "5c72479b-04d4-44ed-b88a-a9ac663493e6",
         "x-powered-by": "ASP.NET"
       },
       "Url": "https://REDACTED.vault.azure.net/certificates/contacts?api-version=7.2"
@@ -58,7 +58,7 @@
       "Headers": {
         "content-type": "application/json",
         "user-agent": "azsdk-cpp-keyvault-certificates/4.0.0-beta.1 (Windows 10 Enterprise 6.3 22000 22000.1.amd64fre.co_release.210604-1628)",
-        "x-ms-client-request-id": "fc43ce25-4596-4667-6446-2f8ee4c9cdbe"
+        "x-ms-client-request-id": "61db5e5e-6706-4807-740d-32cf0c19f470"
       },
       "Method": "DELETE",
       "Response": {
@@ -67,16 +67,16 @@
         "cache-control": "no-cache",
         "content-length": "196",
         "content-type": "application/json; charset=utf-8",
-        "date": "Mon, 01 Nov 2021 22:57:05 GMT",
+        "date": "Thu, 04 Nov 2021 20:49:36 GMT",
         "expires": "-1",
         "pragma": "no-cache",
         "strict-transport-security": "max-age=31536000;includeSubDomains",
         "x-content-type-options": "nosniff",
-        "x-ms-client-request-id": "fc43ce25-4596-4667-6446-2f8ee4c9cdbe",
+        "x-ms-client-request-id": "61db5e5e-6706-4807-740d-32cf0c19f470",
         "x-ms-keyvault-network-info": "conn_type=Ipv4;addr=24.22.157.72;act_addr_fam=InterNetwork;",
         "x-ms-keyvault-region": "westus2",
         "x-ms-keyvault-service-version": "1.9.150.1",
-        "x-ms-request-id": "74669437-a475-453e-8619-1c8e5c9e1c90",
+        "x-ms-request-id": "9d099504-8ab1-4c0d-a560-4c110c182126",
         "x-powered-by": "ASP.NET"
       },
       "Url": "https://REDACTED.vault.azure.net/certificates/contacts?api-version=7.2"

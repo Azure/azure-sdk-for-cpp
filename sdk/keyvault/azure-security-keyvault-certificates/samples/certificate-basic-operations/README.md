@@ -40,7 +40,7 @@ std::string certificateName = "Sample1";
 CertificateCreateOptions options;
 ... 
 // start the create process
-auto response = certificateClient.StartCreateCertificate(certificateName, params);
+auto response = certificateClient.StartCreateCertificate(certificateName, options);
 ```
 
 ## Getting a Certificate
@@ -64,7 +64,11 @@ CertificateUpdateOptions updateOptions;
 updateOptions.Properties = certificate.Properties;
 updateOptions.Properties.Enabled = false;
 
-auto updatedCertificate = certificateClient.UpdateCertificateProperties(updateOptions).Value;
+auto updatedCertificate
+        = certificateClient
+            .UpdateCertificateProperties(
+                certificateName, certificate.Properties.Version, updateOptions)
+            .Value;
 
 std::cout << "After update certificate is enabled : "
           << (updatedCertificate.Properties.Enabled.Value() ? "true" : "false");

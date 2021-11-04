@@ -91,7 +91,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
      * @brief The certificate identifier.
      *
      */
-    std::string Id;
+    std::string IdUrl;
 
     /**
      * @brief The Key Vault base Url.
@@ -142,14 +142,14 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
      * @brief Get the identifier of the certificate.
      *
      */
-    std::string KeyId;
+    std::string KeyIdUrl;
 
     /**
      * @brief Get the identifier of the Key Vault Secret which contains the PEM of PFX formatted
      * content of the certificate and its private key.
      *
      */
-    std::string SecretId;
+    std::string SecretIdUrl;
 
     /**
      * @brief Additional fields for the certificate.
@@ -177,7 +177,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
      *
      * @return The id of the certificate.
      */
-    std::string const& Id() const { return Properties.Id; }
+    std::string const& IdUrl() const { return Properties.IdUrl; }
 
     /**
      * @brief Construct a new Key Vault Certificate object
@@ -999,7 +999,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
      * @brief  Certificate issuer id.
      *
      */
-    Azure::Nullable<std::string> Id;
+    Azure::Nullable<std::string> IdUrl;
 
     /**
      * @brief Certificate issuer provider.
@@ -1087,7 +1087,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
      * @brief The certificate id.
      *
      */
-    std::string Id;
+    std::string IdUrl;
 
     /**
      * @brief The certificate name.
@@ -1135,7 +1135,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
      * @brief Identifier for the certificate operation.
      *
      */
-    Azure::Nullable<std::string> RequestId;
+    Azure::Nullable<std::string> RequestIdUrl;
 
     /**
      * @brief Name of the referenced issuer object or reserved names; for example, 'Self' or
@@ -1173,7 +1173,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
      * @brief Gets the identifier of the deleted certificate.
      *
      */
-    std::string RecoveryId;
+    std::string RecoveryIdUrl;
 
     /**
      * @brief DateTime indicating when the certificate was deleted.
@@ -1186,16 +1186,6 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
      *
      */
     Azure::Nullable<DateTime> ScheduledPurgeDate;
-
-    /**
-     * @brief Construct a new Key Vault Deleted Certificate
-     *
-     * @param properties The properties to create a new certificate.
-     */
-    DeletedCertificate(CertificateProperties const& properties)
-        : KeyVaultCertificateWithPolicy(properties)
-    {
-    }
 
     /**
      * @brief Default constructor.
@@ -1267,6 +1257,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
      */
     std::vector<uint8_t> Certificate;
   };
+
   /**
    * @brief represents on item from GetPropertiesOfIssuers
    *
@@ -1274,10 +1265,15 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
   struct CertificateIssuerItem final
   {
     /**
-     * @brief Certificate Identifier.
+     * @brief Certificate issuer name.
      *
      */
-    std::string Id;
+    std::string Name;
+    /**
+     * @brief Certificate issuer identifier.
+     *
+     */
+    std::string IdUrl;
     /**
      * @brief The issuer provider.
      *

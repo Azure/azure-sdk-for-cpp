@@ -30,7 +30,7 @@ TEST_F(KeyVaultCertificateClientTest, CreateCertificate)
     auto result = response.PollUntilDone(m_defaultWait);
     EXPECT_EQ(result.Value.Name(), certificateName);
     EXPECT_EQ(result.Value.Properties.Enabled.Value(), true);
-    EXPECT_NE(result.Value.RecoveryId.length(), size_t(0));
+    EXPECT_NE(result.Value.RecoveryIdUrl.length(), size_t(0));
     EXPECT_TRUE(result.Value.DeletedOn);
     EXPECT_TRUE(result.Value.ScheduledPurgeDate);
     client.PurgeDeletedCertificate(certificateName);
@@ -100,8 +100,8 @@ TEST_F(KeyVaultCertificateClientTest, DISABLED_GetCertificate)
   EXPECT_TRUE(cert.Properties.RecoveryLevel);
 
   // kid, sid, cer
-  EXPECT_NE(cert.KeyId, "");
-  EXPECT_NE(cert.SecretId, "");
+  EXPECT_NE(cert.KeyIdUrl, "");
+  EXPECT_NE(cert.SecretIdUrl, "");
   EXPECT_NE(cert.Cer.size(), 0);
 
   // policy
@@ -145,6 +145,7 @@ TEST_F(KeyVaultCertificateClientTest, DISABLED_GetCertificateVersion)
   {
     auto response = client.GetCertificateVersion(certificateName, version);
     CheckValidResponse(response);
+
     auto cert = response.Value;
     EXPECT_EQ(cert.Name(), cert.Properties.Name);
     EXPECT_EQ(cert.Properties.Name, certificateName);
@@ -165,8 +166,8 @@ TEST_F(KeyVaultCertificateClientTest, DISABLED_GetCertificateVersion)
     EXPECT_TRUE(cert.Properties.RecoveryLevel);
 
     // kid, sid, cer
-    EXPECT_NE(cert.KeyId, "");
-    EXPECT_NE(cert.SecretId, "");
+    EXPECT_NE(cert.KeyIdUrl, "");
+    EXPECT_NE(cert.SecretIdUrl, "");
     EXPECT_NE(cert.Cer.size(), 0);
   }
 }
@@ -571,7 +572,7 @@ TEST_F(KeyVaultCertificateClientTest, BackupRestoreCertificate)
     std::this_thread::sleep_for(m_defaultWait);
   }
   {
-    auto responseRestore = client.RestoreCertificateBackup(certBackup.Value);
+    auto responseRestore = client.RestoreCertificateBackup(certBackup.Value.Certificate);
     auto certificate = responseRestore.Value;
 
     EXPECT_EQ(certificate.Name(), certificateName);
@@ -696,6 +697,7 @@ TEST_F(KeyVaultCertificateClientTest, GetPropertiesOfIssuers)
     for (auto oneIssuer : result.Items)
     {
       EXPECT_EQ(oneIssuer.Provider, issuer.Provider.Value());
+      EXPECT_TRUE(oneIssuer.Name == issuer.Name || oneIssuer.Name == issuer2.Name);
     }
   }
   {
@@ -760,7 +762,7 @@ TEST_F(KeyVaultCertificateClientTest, DownloadImportPkcs)
     options.Policy.KeySize = 2048;
     options.Policy.ContentType = CertificateContentType::Pkcs12;
     options.Policy.Exportable = true;
-
+    options.Properties.Name = importName;
     auto imported = client.ImportCertificate(importName, options).Value;
 
     EXPECT_EQ(imported.Properties.Name, importName);
@@ -793,7 +795,7 @@ TEST_F(KeyVaultCertificateClientTest, DownloadImportPem)
     options.Policy.KeySize = 2048;
     options.Policy.ContentType = CertificateContentType::Pem;
     options.Policy.Exportable = true;
-
+    options.Properties.Name = importName;
     auto imported = client.ImportCertificate(importName, options).Value;
 
     EXPECT_EQ(imported.Properties.Name, importName);
@@ -821,12 +823,10 @@ TEST_F(KeyVaultCertificateClientTest, UpdateCertificate)
 
   {
     certificate.Properties.Enabled = false;
-    CertificateUpdateOptions updateOptions;
-    updateOptions.Properties = certificate.Properties;
     auto updatedCert
         = client
               .UpdateCertificateProperties(
-                  certificate.Properties.Name, certificate.Properties.Version, updateOptions)
+                  certificateName, certificate.Properties.Version, certificate.Properties)
               .Value;
     EXPECT_FALSE(updatedCert.Properties.Enabled.Value());
   }
