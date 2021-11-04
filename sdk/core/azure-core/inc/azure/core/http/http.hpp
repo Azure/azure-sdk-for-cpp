@@ -210,7 +210,6 @@ namespace Azure { namespace Core { namespace Http {
     // previously called
     void StartTry();
 
-  public:
     /**
      * @brief Construct an #Azure::Core::Http::Request.
      *
@@ -231,6 +230,7 @@ namespace Azure { namespace Core { namespace Http {
       AZURE_ASSERT_MSG(bodyStream, "The bodyStream pointer cannot be null.");
     }
 
+  public:
     /**
      * @brief Constructs a `%Request`.
      *

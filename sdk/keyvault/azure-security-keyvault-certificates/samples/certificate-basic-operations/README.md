@@ -40,17 +40,16 @@ std::string certificateName = "Sample1";
 CertificateCreateOptions options;
 ... 
 // start the create process
-auto response = certificateClient.StartCreateCertificate(certificateName, options);
-auto result = response.PollUntilDone(defaultWait);
+auto response = certificateClient.StartCreateCertificate(certificateName, params);
 ```
 
 ## Getting a Certificate
 
-Call GetCertificate to retrieve a certificate from Key Vault.
+Call PollUntilDone to poll the status of the creation. Once the opperation has completed it will return the certificate.
 
 ```cpp Snippet:CertificateSample1Get
-// get the certificate
-certificate = certificateClient.GetCertificate(certificateName).Value;
+// wait for complete to get the certificate
+certificate = response.PollUntilDone(defaultWait).Value;
 
 std::cout << "Created certificate with policy. Certificate name : " << certificate.Name();
 ```

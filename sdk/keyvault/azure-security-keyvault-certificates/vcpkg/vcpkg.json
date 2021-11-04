@@ -2,15 +2,14 @@
 # SPDX-License-Identifier: MIT
 
 {
-  "name": "azure-security-keyvault-keys-cpp",
+  "name": "azure-security-keyvault-certificates-cpp",
   "version-semver": "@AZ_LIBRARY_VERSION@",
   "description": [
-    "Microsoft Azure Key Vault Keys SDK for C++",
-    "This library provides Azure Key Vault Keys SDK."
+    "Microsoft Azure Key Vault Certificates SDK for C++",
+    "This library provides Azure Key Vault Certificates SDK."
   ],
-  "homepage": "https://github.com/Azure/azure-sdk-for-cpp/tree/main/sdk/keyvault/azure-security-keyvault-keys",
+  "homepage": "https://github.com/Azure/azure-sdk-for-cpp/tree/main/sdk/keyvault/azure-security-keyvault-certificates",
   "license": "MIT",
-  "builtin-baseline": "14c54c49b56a964ac7f2f701a6857adb02ae1bec",
   "dependencies": [
     {
       "name": "azure-core-cpp",

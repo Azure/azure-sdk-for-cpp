@@ -101,7 +101,7 @@ target_include_directories(
 target_include_directories(
   azure-security-keyvault-keys
     PRIVATE
-      $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/sdk/keyvault/azure-security-keyvault-shared/inc>
+      $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/../azure-security-keyvault-shared/inc>
 )
 
 target_link_libraries(azure-security-keyvault-keys PUBLIC Azure::azure-core)
