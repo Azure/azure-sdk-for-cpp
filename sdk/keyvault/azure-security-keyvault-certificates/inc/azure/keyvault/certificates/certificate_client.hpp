@@ -115,11 +115,13 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
      *
      * @remark This operation requires the certificates/create permission.
      *
+     * @param certificateName The name of the certificate.
      * @param options Options for this operation.
      * @param context The context for the operation can be used for request cancellation.
      * @return CreateCertificateOperation instance used to determine create status.
      */
     CreateCertificateOperation StartCreateCertificate(
+        std::string const& certificateName,
         CertificateCreateOptions const& options,
         Azure::Core::Context const& context = Azure::Core::Context()) const;
 
@@ -130,11 +132,13 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
      *
      * @remark This operation requires the certificates/setissuers permission.
      *
+     * @param issuerName The name of the issuer.
      * @param certificateIssuer The certificate issuer.
      * @param context The context for the operation can be used for request cancellation.
      * @return CertificateIssuer instance used to determine create status.
      */
     Azure::Response<CertificateIssuer> CreateIssuer(
+        std::string const& issuerName,
         CertificateIssuer const& certificateIssuer,
         Azure::Core::Context const& context = Azure::Core::Context()) const;
 
@@ -439,11 +443,13 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
      *
      * @remark This operation requires the certificates/import permission.
      *
+     * @param certificateName The name of the certificate
      * @param options The options for the request.
      * @param context The context for the operation can be used for request cancellation.
      * @return Imported certificate bundle to the vault.
      */
     Azure::Response<KeyVaultCertificateWithPolicy> ImportCertificate(
+        std::string const& certificateName,
         ImportCertificateOptions const& options,
         Azure::Core::Context const& context = Azure::Core::Context()) const;
 
@@ -455,11 +461,13 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
      *
      * @remark This operation requires the certificates/create permission.
      *
+     * @param certificateName The name of the certificate.
      * @param options The options for the request.
      * @param context The context for the operation can be used for request cancellation.
      * @return Merged certificate bundle to the vault.
      */
     Azure::Response<KeyVaultCertificateWithPolicy> MergeCertificate(
+        std::string const& certificateName,
         MergeCertificateOptions const& options,
         Azure::Core::Context const& context = Azure::Core::Context()) const;
 
@@ -471,11 +479,15 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
      *
      * @remark This operation requires the certificates/update permission.
      *
+     * @param certificateName The name of the certificate.
+     * @param certificateVersion The version of the certificate.
      * @param certificateProperties The the new properties of the certificate.
      * @param context The context for the operation can be used for request cancellation.
      * @return The updated certificate.
      */
     Azure::Response<KeyVaultCertificate> UpdateCertificateProperties(
+        std::string const& certificateName,
+        std::string const& certificateVersion,
         CertificateProperties const& certificateProperties,
         Azure::Core::Context const& context = Azure::Core::Context()) const;
 

@@ -66,7 +66,7 @@ int main()
     // create a certificate
     {
       // start the create process
-      auto response = certificateClient.StartCreateCertificate(options);
+      auto response = certificateClient.StartCreateCertificate(certificateName, options);
       auto result = response.PollUntilDone(defaultWait);
 
       // get the certificate
@@ -78,11 +78,14 @@ int main()
     {
       std::cout << "Certificate is enabled : "
                 << (certificate.Properties.Enabled.Value() ? "true" : "false");
-      CertificateUpdateOptions updateOptions;
-      updateOptions.Properties = certificate.Properties;
-      updateOptions.Properties.Enabled = false;
+      CertificateProperties updateOptions;
+      updateOptions = certificate.Properties;
+      updateOptions.Enabled = false;
 
-      auto updatedCertificate = certificateClient.UpdateCertificateProperties(updateOptions).Value;
+      auto updatedCertificate = certificateClient
+                                    .UpdateCertificateProperties(
+                                        updateOptions.Name, updateOptions.Version, updateOptions)
+                                    .Value;
 
       std::cout << "After update certificate is enabled : "
                 << (updatedCertificate.Properties.Enabled.Value() ? "true" : "false");

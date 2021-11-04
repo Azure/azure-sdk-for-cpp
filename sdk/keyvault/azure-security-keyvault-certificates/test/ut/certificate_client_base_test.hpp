@@ -259,7 +259,7 @@ namespace Azure {
       action.Action = CertificatePolicyAction::AutoRenew;
       options.Policy.LifetimeActions.emplace_back(action);
 
-      auto response = client.StartCreateCertificate(options);
+      auto response = client.StartCreateCertificate(name, options);
       auto result = response.PollUntilDone(defaultWait);
 
       auto cert = client.GetCertificate(name);

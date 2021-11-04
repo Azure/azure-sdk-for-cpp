@@ -60,7 +60,7 @@ TEST_F(KeyVaultCertificateClientTest, CreateCertificateResumeToken)
   options.Policy.LifetimeActions.emplace_back(action);
   {
 
-    auto response = client.StartCreateCertificate(options);
+    auto response = client.StartCreateCertificate(certificateName, options);
 
     auto fromToken
         = CreateCertificateOperation::CreateFromResumeToken(response.GetResumeToken(), client);
@@ -294,7 +294,7 @@ TEST_F(KeyVaultCertificateClientTest, CreateGetIssuer)
   issuer.Organization.AdminDetails.emplace_back(admin);
 
   {
-    auto result = client.CreateIssuer(issuer);
+    auto result = client.CreateIssuer(issuer.Name, issuer);
     CheckIssuers(result.Value, issuer);
   }
 
@@ -330,7 +330,7 @@ TEST_F(KeyVaultCertificateClientTest, UpdateIssuer)
   issuer.Organization.AdminDetails.emplace_back(admin);
 
   {
-    auto result = client.CreateIssuer(issuer);
+    auto result = client.CreateIssuer(issuer.Name, issuer);
     CheckIssuers(result.Value, issuer);
   }
 
@@ -763,11 +763,11 @@ TEST_F(KeyVaultCertificateClientTest, GetPropertiesOfIssuers)
   issuer2.Organization.AdminDetails.emplace_back(admin);
 
   {
-    auto result = client.CreateIssuer(issuer);
+    auto result = client.CreateIssuer(issuer.Name, issuer);
     CheckIssuers(result.Value, issuer);
   }
   {
-    auto result = client.CreateIssuer(issuer2);
+    auto result = client.CreateIssuer(issuer2.Name, issuer2);
     CheckIssuers(result.Value, issuer2);
   }
   {
@@ -853,7 +853,7 @@ TEST_F(KeyVaultCertificateClientTest, DownloadImportPkcs)
     options.Policy.ContentType = CertificateContentType::Pkcs12;
     options.Policy.Exportable = true;
     options.Properties.Name = importName;
-    auto imported = client.ImportCertificate(options).Value;
+    auto imported = client.ImportCertificate(importName, options).Value;
 
     EXPECT_EQ(imported.Properties.Name, importName);
     EXPECT_EQ(imported.Policy.ContentType.Value(), originalCertificate.Policy.ContentType.Value());
@@ -902,7 +902,7 @@ TEST_F(KeyVaultCertificateClientTest, DownloadImportPem)
     options.Policy.ContentType = CertificateContentType::Pem;
     options.Policy.Exportable = true;
     options.Properties.Name = importName;
-    auto imported = client.ImportCertificate(options).Value;
+    auto imported = client.ImportCertificate(importName, options).Value;
 
     EXPECT_EQ(imported.Properties.Name, importName);
     EXPECT_EQ(imported.Policy.ContentType.Value(), originalCertificate.Policy.ContentType.Value());
@@ -935,7 +935,11 @@ TEST_F(KeyVaultCertificateClientTest, UpdateCertificate)
 
   {
     certificate.Properties.Enabled = false;
-    auto updatedCert = client.UpdateCertificateProperties(certificate.Properties).Value;
+    auto updatedCert
+        = client
+              .UpdateCertificateProperties(
+                  certificateName, certificate.Properties.Version, certificate.Properties)
+              .Value;
     EXPECT_FALSE(updatedCert.Properties.Enabled.Value());
   }
   {
@@ -989,7 +993,7 @@ TEST_F(KeyVaultCertificateClientTest, DISABLED_MergeCertificate)
     options.Policy.ContentType = CertificateContentType::Pkcs12;
     options.Policy.IssuerName = "sss";
 
-    auto response = client.StartCreateCertificate(options);
+    auto response = client.StartCreateCertificate(mergeTarget, options);
     auto result = response.PollUntilDone(100ms);
 
     bool cont = true;
@@ -997,7 +1001,7 @@ TEST_F(KeyVaultCertificateClientTest, DISABLED_MergeCertificate)
     {
       try
       {
-        auto merged = client.MergeCertificate(mergeOptions);
+        auto merged = client.MergeCertificate(mergeTarget, mergeOptions);
         cont = false;
       }
       catch (...)

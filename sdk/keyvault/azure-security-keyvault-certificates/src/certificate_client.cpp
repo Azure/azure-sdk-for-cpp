@@ -117,6 +117,7 @@ Response<KeyVaultCertificate> CertificateClient::GetCertificateVersion(
 }
 
 CreateCertificateOperation CertificateClient::StartCreateCertificate(
+    std::string const& certificateName,
     CertificateCreateOptions const& options,
     Azure::Core::Context const& context) const
 {
@@ -126,7 +127,7 @@ CreateCertificateOperation CertificateClient::StartCreateCertificate(
 
   auto request = CreateRequest(
       HttpMethod::Post,
-      {CertificatesPath, options.Properties.Name, CertificatesCreatePath},
+      {CertificatesPath, certificateName, CertificatesCreatePath},
       &payloadStream);
 
   auto rawResponse = SendRequest(request, context);
@@ -172,6 +173,7 @@ Azure::Response<CertificateIssuer> CertificateClient::DeleteIssuer(
 }
 
 Azure::Response<CertificateIssuer> CertificateClient::CreateIssuer(
+    std::string const& issuerName,
     CertificateIssuer const& certificateIssuer,
     Azure::Core::Context const& context) const
 {
@@ -179,11 +181,11 @@ Azure::Response<CertificateIssuer> CertificateClient::CreateIssuer(
   Azure::Core::IO::MemoryBodyStream payloadStream(
       reinterpret_cast<const uint8_t*>(payload.data()), payload.size());
 
-  auto request = CreateRequest(
-      HttpMethod::Put, {CertificatesPath, IssuersPath, certificateIssuer.Name}, &payloadStream);
+  auto request
+      = CreateRequest(HttpMethod::Put, {CertificatesPath, IssuersPath, issuerName}, &payloadStream);
 
   auto rawResponse = SendRequest(request, context);
-  auto value = CertificateIssuerSerializer::Deserialize(certificateIssuer.Name, *rawResponse);
+  auto value = CertificateIssuerSerializer::Deserialize(issuerName, *rawResponse);
   return Azure::Response<CertificateIssuer>(std::move(value), std::move(rawResponse));
 }
 
@@ -441,6 +443,7 @@ DeletedCertificatesPagedResponse CertificateClient::GetDeletedCertificates(
 }
 
 Azure::Response<KeyVaultCertificateWithPolicy> CertificateClient::ImportCertificate(
+    std::string const& certificateName,
     ImportCertificateOptions const& options,
     Azure::Core::Context const& context) const
 {
@@ -449,14 +452,15 @@ Azure::Response<KeyVaultCertificateWithPolicy> CertificateClient::ImportCertific
       reinterpret_cast<const uint8_t*>(payload.data()), payload.size());
 
   auto request = CreateRequest(
-      HttpMethod::Post, {CertificatesPath, options.Properties.Name, ImportPath}, &payloadStream);
+      HttpMethod::Post, {CertificatesPath, certificateName, ImportPath}, &payloadStream);
 
   auto rawResponse = SendRequest(request, context);
-  auto value = KeyVaultCertificateSerializer::Deserialize(options.Properties.Name, *rawResponse);
+  auto value = KeyVaultCertificateSerializer::Deserialize(certificateName, *rawResponse);
   return Azure::Response<KeyVaultCertificateWithPolicy>(std::move(value), std::move(rawResponse));
 }
 
 Azure::Response<KeyVaultCertificateWithPolicy> CertificateClient::MergeCertificate(
+    std::string const& certificateName,
     MergeCertificateOptions const& options,
     Azure::Core::Context const& context) const
 {
@@ -466,15 +470,17 @@ Azure::Response<KeyVaultCertificateWithPolicy> CertificateClient::MergeCertifica
 
   auto request = CreateRequest(
       HttpMethod::Post,
-      {CertificatesPath, options.Properties.Name, PendingPath, MergePath},
+      {CertificatesPath, certificateName, PendingPath, MergePath},
       &payloadStream);
 
   auto rawResponse = SendRequest(request, context);
-  auto value = KeyVaultCertificateSerializer::Deserialize(options.Properties.Name, *rawResponse);
+  auto value = KeyVaultCertificateSerializer::Deserialize(certificateName, *rawResponse);
   return Azure::Response<KeyVaultCertificateWithPolicy>(std::move(value), std::move(rawResponse));
 }
 
 Azure::Response<KeyVaultCertificate> CertificateClient::UpdateCertificateProperties(
+    std::string const& certificateName,
+    std::string const& certificateVersion,
     CertificateProperties const& certificateProperties,
     Azure::Core::Context const& context) const
 {
@@ -483,12 +489,10 @@ Azure::Response<KeyVaultCertificate> CertificateClient::UpdateCertificatePropert
       reinterpret_cast<const uint8_t*>(payload.data()), payload.size());
 
   auto request = CreateRequest(
-      HttpMethod::Patch,
-      {CertificatesPath, certificateProperties.Name, certificateProperties.Version},
-      &payloadStream);
+      HttpMethod::Patch, {CertificatesPath, certificateName, certificateVersion}, &payloadStream);
 
   auto rawResponse = SendRequest(request, context);
-  auto value = KeyVaultCertificateSerializer::Deserialize(certificateProperties.Name, *rawResponse);
+  auto value = KeyVaultCertificateSerializer::Deserialize(certificateName, *rawResponse);
   return Azure::Response<KeyVaultCertificate>(std::move(value), std::move(rawResponse));
 }
 
