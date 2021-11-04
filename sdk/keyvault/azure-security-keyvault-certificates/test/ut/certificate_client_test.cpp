@@ -753,15 +753,15 @@ TEST_F(KeyVaultCertificateClientTest, DownloadImportPkcs)
   {
     auto result = DownloadCertificate(pkcs, client);
     ImportCertificateOptions options;
-    options.Value = result.Value.Certificate;
+    options.Certificate = result.Value.Certificate;
 
     options.Policy.Enabled = true;
     options.Policy.KeyType = CertificateKeyType::Rsa;
     options.Policy.KeySize = 2048;
     options.Policy.ContentType = CertificateContentType::Pkcs12;
     options.Policy.Exportable = true;
-
-    auto imported = client.ImportCertificate(importName, options).Value;
+    options.Name = importName;
+    auto imported = client.ImportCertificate(options).Value;
 
     EXPECT_EQ(imported.Properties.Name, importName);
     EXPECT_EQ(imported.Policy.ContentType.Value(), originalCertificate.Policy.ContentType.Value());
@@ -786,15 +786,16 @@ TEST_F(KeyVaultCertificateClientTest, DownloadImportPem)
   {
     auto result = DownloadCertificate(pem, client);
     ImportCertificateOptions options;
-    options.Value = result.Value.Certificate;
+    options.Certificate = result.Value.Certificate;
 
     options.Policy.Enabled = true;
     options.Policy.KeyType = CertificateKeyType::Rsa;
     options.Policy.KeySize = 2048;
     options.Policy.ContentType = CertificateContentType::Pem;
     options.Policy.Exportable = true;
+    options.Name = importName;
 
-    auto imported = client.ImportCertificate(importName, options).Value;
+    auto imported = client.ImportCertificate(options).Value;
 
     EXPECT_EQ(imported.Properties.Name, importName);
     EXPECT_EQ(imported.Policy.ContentType.Value(), originalCertificate.Policy.ContentType.Value());
@@ -879,7 +880,8 @@ TEST_F(KeyVaultCertificateClientTest, DISABLED_MergeCertificate)
     {
       try
       {
-        auto merged = client.MergeCertificate(mergeTarget, mergeOptions);
+        mergeOptions.Name = mergeTarget;
+        auto merged = client.MergeCertificate(mergeOptions);
         cont = false;
       }
       catch (...)
