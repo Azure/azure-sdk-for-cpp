@@ -1467,12 +1467,6 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
      *
      */
     std::unordered_map<std::string, std::string> Tags;
-
-    /**
-     * @brief The name of the certificate.
-     *
-     */
-    std::string Name;
   };
 
   /**
@@ -1495,12 +1489,6 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
      *
      */
     std::unordered_map<std::string, std::string> Tags;
-
-    /**
-     * @brief The name of the certificate
-     *
-     */
-    std::string Name;
   };
 
   /**
