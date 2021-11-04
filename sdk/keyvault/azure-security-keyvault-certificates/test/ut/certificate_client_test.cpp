@@ -850,7 +850,7 @@ TEST_F(KeyVaultCertificateClientTest, DownloadImportPkcs)
     options.Policy.KeySize = 2048;
     options.Policy.ContentType = CertificateContentType::Pkcs12;
     options.Policy.Exportable = true;
-    options.Name = importName;
+
     auto imported = client.ImportCertificate(importName, options).Value;
 
     EXPECT_EQ(imported.Properties.Name, importName);
@@ -899,7 +899,6 @@ TEST_F(KeyVaultCertificateClientTest, DownloadImportPem)
     options.Policy.KeySize = 2048;
     options.Policy.ContentType = CertificateContentType::Pem;
     options.Policy.Exportable = true;
-    options.Name = importName;
 
     auto imported = client.ImportCertificate(importName, options).Value;
 
@@ -1002,7 +1001,6 @@ TEST_F(KeyVaultCertificateClientTest, DISABLED_MergeCertificate)
     {
       try
       {
-        mergeOptions.Name = mergeTarget;
         auto merged = client.MergeCertificate(mergeTarget, mergeOptions);
         cont = false;
       }
