@@ -439,6 +439,7 @@ DeletedCertificatesPagedResponse CertificateClient::GetDeletedCertificates(
 }
 
 Azure::Response<KeyVaultCertificateWithPolicy> CertificateClient::ImportCertificate(
+    std::string const& name,
     ImportCertificateOptions const& options,
     Azure::Core::Context const& context) const
 {
@@ -446,15 +447,16 @@ Azure::Response<KeyVaultCertificateWithPolicy> CertificateClient::ImportCertific
   Azure::Core::IO::MemoryBodyStream payloadStream(
       reinterpret_cast<const uint8_t*>(payload.data()), payload.size());
 
-  auto request = CreateRequest(
-      HttpMethod::Post, {CertificatesPath, options.Name, ImportPath}, &payloadStream);
+  auto request
+      = CreateRequest(HttpMethod::Post, {CertificatesPath, name, ImportPath}, &payloadStream);
 
   auto rawResponse = SendRequest(request, context);
-  auto value = KeyVaultCertificateSerializer::Deserialize(options.Name, *rawResponse);
+  auto value = KeyVaultCertificateSerializer::Deserialize(name, *rawResponse);
   return Azure::Response<KeyVaultCertificateWithPolicy>(std::move(value), std::move(rawResponse));
 }
 
 Azure::Response<KeyVaultCertificateWithPolicy> CertificateClient::MergeCertificate(
+    std::string const& name,
     MergeCertificateOptions const& options,
     Azure::Core::Context const& context) const
 {
@@ -463,10 +465,10 @@ Azure::Response<KeyVaultCertificateWithPolicy> CertificateClient::MergeCertifica
       reinterpret_cast<const uint8_t*>(payload.data()), payload.size());
 
   auto request = CreateRequest(
-      HttpMethod::Post, {CertificatesPath, options.Name, PendingPath, MergePath}, &payloadStream);
+      HttpMethod::Post, {CertificatesPath, name, PendingPath, MergePath}, &payloadStream);
 
   auto rawResponse = SendRequest(request, context);
-  auto value = KeyVaultCertificateSerializer::Deserialize(options.Name, *rawResponse);
+  auto value = KeyVaultCertificateSerializer::Deserialize(name, *rawResponse);
   return Azure::Response<KeyVaultCertificateWithPolicy>(std::move(value), std::move(rawResponse));
 }
 

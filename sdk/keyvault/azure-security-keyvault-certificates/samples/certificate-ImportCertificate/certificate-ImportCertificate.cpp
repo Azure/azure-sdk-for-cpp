@@ -48,7 +48,7 @@ int main()
     {
       // prepare the parameters
       ImportCertificateOptions options;
-      options.Value = GetPemCertificate();
+      options.Certificate = GetPemCertificate();
 
       options.Policy.Enabled = true;
       options.Policy.KeyType = CertificateKeyType::Rsa;
@@ -64,7 +64,7 @@ int main()
     {
       // prepare the parameters
       ImportCertificateOptions options;
-      options.Value = GetPkcsCertificate();
+      options.Certificate = GetPkcsCertificate();
 
       options.Policy.Enabled = true;
       options.Policy.KeyType = CertificateKeyType::Rsa;
