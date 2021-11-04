@@ -783,7 +783,7 @@ std::string ImportCertificateOptionsSerializer::Serialize(ImportCertificateOptio
 {
   json importOptions;
 
-  importOptions[ValuePropertyName] = options.Certificate;
+  importOptions[ValuePropertyName] = options.Value;
   JsonOptional::SetFromNullable(options.Password, importOptions, PwdPropertyValue);
   importOptions[PolicyPropertyName] = CertificatePolicySerializer::JsonSerialize(options.Policy);
   importOptions[AttributesPropertyName]
