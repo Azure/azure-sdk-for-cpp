@@ -276,14 +276,14 @@ namespace Azure {
       EXPECT_EQ(
           result.Value.Policy.LifetimeActions[0].LifetimePercentage.Value(),
           action.LifetimePercentage.Value());
-      EXPECT_EQ(cert.Value.Policy.KeyUsage.size(), size_t(2));
-      auto keyUsage = cert.Value.Policy.KeyUsage;
+      EXPECT_EQ(result.Value.Policy.KeyUsage.size(), size_t(2));
+      auto keyUsage = result.Value.Policy.KeyUsage;
       EXPECT_TRUE(
           (keyUsage[0] == CertificateKeyUsage::DigitalSignature
            && keyUsage[1] == CertificateKeyUsage::KeyEncipherment)
           || (keyUsage[1] == CertificateKeyUsage::DigitalSignature
               && keyUsage[0] == CertificateKeyUsage::KeyEncipherment));
-      return cert.Value;
+      return result.Value;
     }
 
     Azure::Response<DownloadCertificateResult> DownloadCertificate(
