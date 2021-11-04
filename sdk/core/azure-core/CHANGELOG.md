@@ -299,7 +299,7 @@ Thank you to our developer community members who helped to make Azure Core bette
 ### Acknowledgments
 
 Thank you to our developer community members who helped to make Azure Core better with their contributions to this release:
-<!-- cspell:ignore Gyimesi -->
+
 - Gabor Gyimesi _([GitHub](https://github.com/lordgamez))_
 - Marcelo Juchem _([GitHub](https://github.com/juchem))_
 - `ku-sourav` _([GitHub](https://github.com/ku-sourav))_
