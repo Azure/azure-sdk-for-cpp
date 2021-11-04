@@ -12,7 +12,7 @@
 - Renamed `GetQueueAccessPolicyResult` to `QueueAccessPolicy`.
 - Wrapped the first parameter of `QueueClient::SetAccessPolicy`, a vector of signed identifiers into a struct `QueueAccessPolicy`.
 - Renamed `ReceiveMessagesResult` to `ReceivedMessages`.
-- Renamed `PeekMessagesResult` to `PeekMessagesResult`.
+- Renamed `PeekMessagesResult` to `PeekedMessages`.
 
 ### Bugs Fixed
 
