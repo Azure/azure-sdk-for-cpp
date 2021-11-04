@@ -804,6 +804,7 @@ namespace Azure { namespace Storage { namespace Queues {
           QueueServiceProperties ret;
           enum class XmlTagName
           {
+            k_StorageServiceProperties,
             k_Logging,
             k_HourMetrics,
             k_MinuteMetrics,
@@ -832,7 +833,11 @@ namespace Azure { namespace Storage { namespace Queues {
             }
             else if (node.Type == _internal::XmlNodeType::StartTag)
             {
-              if (node.Name == "Logging")
+              if (node.Name == "StorageServiceProperties")
+              {
+                path.emplace_back(XmlTagName::k_StorageServiceProperties);
+              }
+              else if (node.Name == "Logging")
               {
                 path.emplace_back(XmlTagName::k_Logging);
               }
@@ -856,24 +861,29 @@ namespace Azure { namespace Storage { namespace Queues {
               {
                 path.emplace_back(XmlTagName::k_Unknown);
               }
-              if (path.size() == 1 && path[0] == XmlTagName::k_Logging)
+              if (path.size() == 2 && path[0] == XmlTagName::k_StorageServiceProperties
+                  && path[1] == XmlTagName::k_Logging)
               {
                 ret.Logging = AnalyticsLoggingFromXml(reader);
                 path.pop_back();
               }
-              else if (path.size() == 1 && path[0] == XmlTagName::k_HourMetrics)
+              else if (
+                  path.size() == 2 && path[0] == XmlTagName::k_StorageServiceProperties
+                  && path[1] == XmlTagName::k_HourMetrics)
               {
                 ret.HourMetrics = MetricsFromXml(reader);
                 path.pop_back();
               }
-              else if (path.size() == 1 && path[0] == XmlTagName::k_MinuteMetrics)
+              else if (
+                  path.size() == 2 && path[0] == XmlTagName::k_StorageServiceProperties
+                  && path[1] == XmlTagName::k_MinuteMetrics)
               {
                 ret.MinuteMetrics = MetricsFromXml(reader);
                 path.pop_back();
               }
               else if (
-                  path.size() == 2 && path[0] == XmlTagName::k_Cors
-                  && path[1] == XmlTagName::k_CorsRule)
+                  path.size() == 3 && path[0] == XmlTagName::k_StorageServiceProperties
+                  && path[1] == XmlTagName::k_Cors && path[2] == XmlTagName::k_CorsRule)
               {
                 ret.Cors.emplace_back(CorsRuleFromXml(reader));
                 path.pop_back();
