@@ -278,7 +278,13 @@ namespace Azure {
       EXPECT_EQ(
           cert.Value.Policy.LifetimeActions[0].LifetimePercentage.Value(),
           action.LifetimePercentage.Value());
-
+      EXPECT_EQ(cert.Value.Policy.KeyUsage.size(), size_t(2));
+      auto keyUsage = cert.Value.Policy.KeyUsage;
+      EXPECT_TRUE(
+          (keyUsage[0] == CertificateKeyUsage::DigitalSignature
+           && keyUsage[1] == CertificateKeyUsage::KeyEncipherment)
+          || (keyUsage[1] == CertificateKeyUsage::DigitalSignature
+              && keyUsage[0] == CertificateKeyUsage::KeyEncipherment));
       return cert.Value;
     }
 
