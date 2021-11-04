@@ -1,13 +1,11 @@
 # Release History
 
-## 1.3.0-beta.1 (Unreleased)
+## 1.3.0 (2021-11-04)
 
 ### Features Added
 
 - Add `NoSignal` option to the `CurlTransportAdapter`.
 - Add `ConnectionTimeout` option to the `CurlTransportAdapter`.
-
-### Breaking Changes
 
 ### Bugs Fixed
 
