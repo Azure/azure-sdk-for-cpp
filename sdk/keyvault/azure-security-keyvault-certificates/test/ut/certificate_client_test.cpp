@@ -294,7 +294,7 @@ TEST_F(KeyVaultCertificateClientTest, UpdateIssuer)
 
   {
     issuer.Credentials.Password = "password2";
-    auto result = client.UpdateIssuer(issuer);
+    auto result = client.UpdateIssuer(issuer.Name, issuer);
     CheckIssuers(result.Value, issuer);
   }
 
