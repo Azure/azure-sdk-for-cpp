@@ -50,7 +50,7 @@
 #endif
 
 namespace Azure { namespace Core { namespace _internal {
-  [[noreturn]] void AzureNoReturnPath(std::string const& msg);
+  extern [[noreturn]] void AzureNoReturnPath(std::string const& msg);
 }}} // namespace Azure::Core::_internal
 
 #define AZURE_ASSERT_FALSE(exp) AZURE_ASSERT(!(exp))
