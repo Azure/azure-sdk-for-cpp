@@ -54,5 +54,5 @@ namespace Azure { namespace Core { namespace _internal {
 }}} // namespace Azure::Core::_internal
 
 #define AZURE_ASSERT_FALSE(exp) AZURE_ASSERT(!(exp))
-#define AZURE_UNREACHABLE_CODE() AzureNoReturnPath("unreachable code!")
-#define AZURE_NOT_IMPLEMENTED() AzureNoReturnPath("not implemented code!")
+#define AZURE_UNREACHABLE_CODE() ::Azure::Core::_internal::AzureNoReturnPath("unreachable code!")
+#define AZURE_NOT_IMPLEMENTED() ::Azure::Core::_internal::AzureNoReturnPath("not implemented code!")
