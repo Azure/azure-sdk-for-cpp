@@ -3,9 +3,7 @@
 
 #include "azure/core/internal/assert.hpp"
 
-using namespace Azure::Core::_internal;
-
-[[noreturn]] void AzureNoReturnPath(std::string const& msg)
+[[noreturn]] void Azure::Core::_internal::AzureNoReturnPath(std::string const& msg)
 {
   // void msg for Release build where Assert is ignored
   (void)msg;
