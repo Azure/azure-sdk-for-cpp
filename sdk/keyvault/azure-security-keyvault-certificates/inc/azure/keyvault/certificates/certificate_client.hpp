@@ -165,11 +165,13 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
      *
      * @remark This operation requires the certificates/setissuers permission.
      *
+     * @param issuerName The name of the issuer.
      * @param certificateIssuer The certificate issuer.
      * @param context The context for the operation can be used for request cancellation.
      * @return CertificateIssuer instance.
      */
     Azure::Response<CertificateIssuer> UpdateIssuer(
+        std::string const& issuerName,
         CertificateIssuer const& certificateIssuer,
         Azure::Core::Context const& context = Azure::Core::Context()) const;
 
