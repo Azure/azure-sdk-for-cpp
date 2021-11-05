@@ -12,7 +12,7 @@
 
 #pragma once
 
-#include "platform.hpp"
+#include "azure/core/platform.hpp"
 
 #include <cstdlib>
 #include <string>
