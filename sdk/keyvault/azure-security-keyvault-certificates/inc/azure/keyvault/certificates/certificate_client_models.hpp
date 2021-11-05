@@ -1437,7 +1437,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
      * needs to contain the private key.
      *
      */
-    std::string Value;
+    std::string Certificate;
 
     /**
      * @brief If the private key in base64EncodedCertificate is encrypted, the password used for
