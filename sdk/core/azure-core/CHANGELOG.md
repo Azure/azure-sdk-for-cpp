@@ -1,5 +1,11 @@
 # Release History
 
+## 1.3.1 (2021-11-04)
+
+### Bugs Fixed
+
+- Fixed linking error when Azure SDK is being built as DLL.
+
 ## 1.3.0 (2021-11-04)
 
 ### Features Added
