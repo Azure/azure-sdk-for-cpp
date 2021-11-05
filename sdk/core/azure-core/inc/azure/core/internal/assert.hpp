@@ -21,10 +21,10 @@
 
 /*
  * NDEBUG = defined = Build is on Release
- * Define AZURE_ASSERT to call abort directly on exp == false
+ * Define _azure_ASSERT to call abort directly on exp == false
  */
 
-#define AZURE_ASSERT(exp) \
+#define _azure_ASSERT(exp) \
   do \
   { \
     if (!(exp)) \
@@ -33,24 +33,26 @@
     } \
   } while (0)
 
-#define AZURE_ASSERT_MSG(exp, msg) AZURE_ASSERT(exp)
+#define _azure_ASSERT_MSG(exp, msg) _azure_ASSERT(exp)
 
 #else
 
 /*
  * NDEBUG = NOT defined = Build is on Debug
- * Define AZURE_ASSERT to call assert to provide better debug experience.
+ * Define _azure_ASSERT to call assert to provide better debug experience.
  */
 
 #include <cassert>
 
-#define AZURE_ASSERT(exp) assert((exp))
-#define AZURE_ASSERT_MSG(exp, msg) assert(((void)msg, (exp)))
+#define _azure_ASSERT(exp) assert((exp))
+#define _azure_ASSERT_MSG(exp, msg) assert(((void)msg, (exp)))
 
 #endif
 
-[[noreturn]] void AzureNoReturnPath(std::string const& msg);
+namespace Azure { namespace Core { namespace _internal {
+  [[noreturn]] void AzureNoReturnPath(std::string const& msg);
+}}} // namespace Azure::Core::_internal
 
-#define AZURE_ASSERT_FALSE(exp) AZURE_ASSERT(!(exp))
-#define AZURE_UNREACHABLE_CODE() AzureNoReturnPath("unreachable code!")
-#define AZURE_NOT_IMPLEMENTED() AzureNoReturnPath("not implemented code!")
+#define _azure_ASSERT_FALSE(exp) _azure_ASSERT(!(exp))
+#define _azure_UNREACHABLE_CODE() AzureNoReturnPath("unreachable code!")
+#define _azure_NOT_IMPLEMENTED() AzureNoReturnPath("not implemented code!")

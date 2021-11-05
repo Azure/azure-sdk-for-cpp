@@ -65,6 +65,7 @@ set(
     inc/azure/core/http/raw_response.hpp
     inc/azure/core/http/policies/policy.hpp
     inc/azure/core/http/transport.hpp
+    inc/azure/core/internal/assert.hpp
     inc/azure/core/internal/client_options.hpp
     inc/azure/core/internal/contract.hpp
     inc/azure/core/internal/cryptography/sha_hash.hpp
@@ -75,7 +76,6 @@ set(
     inc/azure/core/internal/json/json.hpp
     inc/azure/core/internal/strings.hpp
     inc/azure/core/io/body_stream.hpp
-    inc/azure/core/azure_assert.hpp
     inc/azure/core/rtti.hpp
     inc/azure/core/base64.hpp
     inc/azure/core/case_insensitive_containers.hpp
@@ -101,7 +101,7 @@ set(
   AZURE_CORE_SOURCE
     ${CURL_TRANSPORT_ADAPTER_SRC}
     ${WIN_TRANSPORT_ADAPTER_SRC}
-    src/azure_assert.cpp
+    src/assert.cpp
     src/cryptography/md5.cpp
     src/cryptography/sha_hash.cpp
     src/http/bearer_token_authentication_policy.cpp
