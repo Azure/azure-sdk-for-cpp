@@ -20,8 +20,7 @@ namespace Azure { namespace Core { namespace Http {
      * to take.
      *
      */
-    AZ_CORE_DLLEXPORT static const std::chrono::milliseconds DefaultConnectionTimeout
-        = std::chrono::milliseconds(300000);
+    constexpr std::chrono::milliseconds DefaultConnectionTimeout = std::chrono::minutes(5);
   } // namespace _detail
 
   /**

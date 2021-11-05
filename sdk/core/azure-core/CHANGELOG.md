@@ -1,12 +1,14 @@
 # Release History
 
-## 1.4.0-beta.1 (Unreleased)
+## 1.3.1 (Unreleased)
 
 ### Features Added
 
 ### Breaking Changes
 
 ### Bugs Fixed
+
+- Fixed linking error when Azure SDK is being built as DLL.
 
 ### Other Changes
 
