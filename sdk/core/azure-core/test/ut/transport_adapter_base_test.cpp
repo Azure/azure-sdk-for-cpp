@@ -593,15 +593,10 @@ namespace Azure { namespace Core { namespace Test {
     std::vector<uint8_t> bodyVector = response.GetBody();
     int64_t bodySize = bodyVector.size();
 
-    if (size > 0)
-    { // only for known body size
-      EXPECT_EQ(bodySize, size);
-    }
-
     if (expectedBody.size() > 0)
     {
       auto bodyString = std::string(bodyVector.begin(), bodyVector.end());
-      EXPECT_STREQ(expectedBody.data(), bodyString.data());
+      EXPECT_STREQ("Some Test string", bodyString.data());
     }
   }
 
