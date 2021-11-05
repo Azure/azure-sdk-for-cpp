@@ -54,7 +54,7 @@ namespace Azure { namespace Core { namespace Test {
       TransportAdapter,
       testing::Values(
           GetTransportOptions("winHttp", std::make_shared<Azure::Core::Http::WinHttpTransport>()),
-          GetTransportOptions("libCurl", std::make_shared<Azure::Core::Http::CurlTransport>()),
+          GetTransportOptions("libCurl", std::make_shared<Azure::Core::Http::CurlTransport>())),
       GetSuffix);
 
 #elif defined(BUILD_TRANSPORT_WINHTTP_ADAPTER)
@@ -72,7 +72,7 @@ namespace Azure { namespace Core { namespace Test {
       Test,
       TransportAdapter,
       testing::Values(
-          GetTransportOptions("libCurl", std::make_shared<Azure::Core::Http::CurlTransport>()),
+          GetTransportOptions("libCurl", std::make_shared<Azure::Core::Http::CurlTransport>())),
       GetSuffix);
 #else
   /* Custom adapter. Not adding tests */
