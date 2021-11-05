@@ -49,7 +49,9 @@
 
 #endif
 
-[[noreturn]] void AzureNoReturnPath(std::string const& msg);
+namespace Azure { namespace Core { namespace _internal {
+  [[noreturn]] void AzureNoReturnPath(std::string const& msg);
+}}} // namespace Azure::Core::_internal
 
 #define AZURE_ASSERT_FALSE(exp) AZURE_ASSERT(!(exp))
 #define AZURE_UNREACHABLE_CODE() AzureNoReturnPath("unreachable code!")
