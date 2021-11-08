@@ -11,6 +11,9 @@ parameters:
   - name: CtestRegex
     type: string
     default: .*
+  - name: CtestExcludeRegex
+    type: string
+    default: ''
   - name: CoverageReportPath
     type: string
     default: 'sdk/*/*/*cov_xml.xml'
@@ -125,8 +128,16 @@ jobs:
           BuildArgs: "$(BuildArgs)"
           Env: "$(CmakeEnvArg)"
 
-      - script: ctest -C Debug -V --tests-regex ${{ parameters.CtestRegex }} --no-compress-output -T Test
+      - pwsh: |
+          ctest `
+            -C Debug `
+            -V `
+            --tests-regex '${{ parameters.CtestRegex }}' `
+            --exclude-regex '${{ parameters.CtestExcludeRegex }}' `
+            --no-compress-output `
+            -T Test
         workingDirectory: build
+        displayName: Test
 
       - task: PublishTestResults@2
         inputs:
