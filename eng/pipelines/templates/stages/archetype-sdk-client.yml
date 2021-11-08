@@ -5,6 +5,9 @@ parameters:
 - name: CtestRegex
   type: string
   default: .*
+- name: CtestExcludeRegex
+  type: string
+  default: ''
 - name: CoverageEnabled
   type: boolean
   default: true
@@ -41,6 +44,7 @@ stages:
           ServiceDirectory: ${{ parameters.ServiceDirectory }}
           Artifacts: ${{ parameters.Artifacts }}
           CtestRegex: ${{ parameters.CtestRegex }}
+          CtestExcludeRegex: ${{ parameters.CtestExcludeRegex }}
           CoverageEnabled: ${{ parameters.CoverageEnabled }}
           CoverageReportPath: ${{ parameters.CoverageReportPath }}
           LineCoverageTarget: ${{ parameters.LineCoverageTarget }}
