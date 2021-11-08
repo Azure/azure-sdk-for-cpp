@@ -2,8 +2,6 @@
 
 ## 12.0.0-beta.2 (Unreleased)
 
-### Features Added
-
 ### Breaking Changes
 
 - Renamed `GetServicePropertiesResult` to `QueueServiceProperties`.
@@ -13,10 +11,6 @@
 - Wrapped the first parameter of `QueueClient::SetAccessPolicy`, a vector of signed identifiers into a struct `QueueAccessPolicy`.
 - Renamed `ReceiveMessagesResult` to `ReceivedMessages`.
 - Renamed `PeekMessagesResult` to `PeekedMessages`.
-
-### Bugs Fixed
-
-### Other Changes
 
 ## 12.0.0-beta.1 (2021-09-08)
 
