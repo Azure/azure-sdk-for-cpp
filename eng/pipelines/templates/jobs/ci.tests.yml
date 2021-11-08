@@ -137,6 +137,7 @@ jobs:
             --no-compress-output `
             -T Test
         workingDirectory: build
+        displayName: Test
 
       - task: PublishTestResults@2
         inputs:

@@ -38,7 +38,8 @@ stages:
       # In the case of changes to core we want to re-run all CI tests for all
       # libraries to check for potential regressions everywhere.
       CtestRegex: .*
-      CtestExcludeRegex: livetest
+      # Storage tests are live-only tests and must be excluded from CI runs
+      CtestExcludeRegex: livetest|azure-storage
       LiveTestCtestRegex: '"azure-core.|json-test"'
       LiveTestTimeoutInMinutes: 90 # default is 60 min. We need a little longer on worst case for Win+jsonTests
       LineCoverageTarget: 77

@@ -220,8 +220,6 @@ stages:
                             -IssueNumber "$(Submitted.PullRequest.Number)" `
                             -Comment $prComment
                         displayName: Comment notification to PR
-                        # Failure to comment on the PR should not block release
-                        continueOnError: true
 
           - ${{if ne(artifact.skipUpdatePackageVersion, 'true')}}:
             - deployment: UpdatePackageVersion
