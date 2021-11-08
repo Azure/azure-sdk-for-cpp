@@ -1424,8 +1424,6 @@ namespace Azure { namespace Storage { namespace Queues {
             _internal::XmlWriter& writer,
             const QueueServiceProperties& options)
         {
-          writer.Write(
-              _internal::XmlNode{_internal::XmlNodeType::StartTag, "StorageServiceProperties"});
           writer.Write(_internal::XmlNode{_internal::XmlNodeType::StartTag, "Logging"});
           AnalyticsLoggingToXml(writer, options.Logging);
           writer.Write(_internal::XmlNode{_internal::XmlNodeType::EndTag});
@@ -1440,7 +1438,6 @@ namespace Azure { namespace Storage { namespace Queues {
           {
             CorsRuleToXml(writer, i);
           }
-          writer.Write(_internal::XmlNode{_internal::XmlNodeType::EndTag});
           writer.Write(_internal::XmlNode{_internal::XmlNodeType::EndTag});
         }
 
