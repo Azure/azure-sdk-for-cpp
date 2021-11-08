@@ -8,24 +8,6 @@ trigger:
       - hotfix/*
   paths:
     include:
-      - cmake-modules/
-      - eng/
-      - CMakeLists.txt
-      - sdk/core
-      - sdk/identity
-      - sdk/storage
-
-# NOTE: Please refer to https://aka.ms/azsdk/engsys/ci-yaml before editing this file.
-triggers:
-  batch: true
-  branches:
-    include:
-      - main
-      - feature/*
-      - release/*
-      - hotfix/*
-  paths:
-    include:
       - sdk/storage
 
 pr:
