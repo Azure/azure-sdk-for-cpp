@@ -42,8 +42,8 @@ bool GetResponseHeaderBasedDelay(RawResponse const& response, std::chrono::milli
     // To be accurate, the Retry-After header is EITHER seconds, or a DateTime. So we need to
     // write a parser for that (and handle the case when parsing seconds fails).
     // More info:
-    // * Retry-After header: https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Retry-After
-    // * HTTP Date format: https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Date
+    // * Retry-After header: https://developer.mozilla.org/docs/Web/HTTP/Headers/Retry-After
+    // * HTTP Date format: https://developer.mozilla.org/docs/Web/HTTP/Headers/Date
     // * Parsing the date: https://en.cppreference.com/w/cpp/locale/time_get
     // * Get system datetime: https://en.cppreference.com/w/cpp/chrono/system_clock/now
     // * Subtract datetimes to get duration:

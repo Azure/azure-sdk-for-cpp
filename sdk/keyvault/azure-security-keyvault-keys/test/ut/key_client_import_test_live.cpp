@@ -27,7 +27,7 @@ TEST_F(KeyVaultClientTest, ImportKey)
   KeyClient keyClient(m_keyVaultUrl, m_credential);
   JsonWebKey key;
   key.KeyType = KeyVaultKeyType::Rsa;
-  // Values from https://docs.microsoft.com/en-us/rest/api/keyvault/importkey/importkey
+  // Values from https://docs.microsoft.com/rest/api/keyvault/importkey/importkey
   key.N = Base64Url::Base64UrlDecode(
       "nKAwarTrOpzd1hhH4cQNdVTgRF-b0ubPD8ZNVf0UXjb62QuAk3Dn68ESThcF7SoDYRx2QVcfoMC9WCcuQUQDieJF-"
       "lvJTSer1TwH72NBovwKlHvrXqEI0a6_uVYY5n-"
