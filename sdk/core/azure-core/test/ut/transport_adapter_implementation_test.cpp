@@ -58,7 +58,7 @@ namespace Azure { namespace Core { namespace Test {
           GetTransportOptions("libCurl", std::make_shared<Azure::Core::Http::CurlTransport>()),
           GetTransportOptions(
               "staticLibCurl",
-              std::make_shared<Azure::Core::Http::StaticCurlTransport>())),    
+              std::make_shared<Azure::Core::Http::StaticCurlTransport>())),
       GetSuffix);
 
 #elif defined(BUILD_TRANSPORT_WINHTTP_ADAPTER)
@@ -79,7 +79,7 @@ namespace Azure { namespace Core { namespace Test {
           GetTransportOptions("libCurl", std::make_shared<Azure::Core::Http::CurlTransport>()),
           GetTransportOptions(
               "staticLibCurl",
-              std::make_shared<Azure::Core::Http::StaticCurlTransport>())),    
+              std::make_shared<Azure::Core::Http::StaticCurlTransport>())),
       GetSuffix);
 #else
   /* Custom adapter. Not adding tests */
