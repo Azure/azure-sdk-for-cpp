@@ -1140,12 +1140,12 @@ namespace Azure { namespace Storage { namespace Blobs {
     {
       /**
        * The SKU name of the storage account. See
-       * https://docs.microsoft.com/en-us/rest/api/storagerp/srp_sku_types for more information.
+       * https://docs.microsoft.com/rest/api/storagerp/srp_sku_types for more information.
        */
       Models::SkuName SkuName;
       /**
        * The account kind of the storage account. See
-       * https://docs.microsoft.com/en-us/rest/api/storagerp/srp_sku_types for more information.
+       * https://docs.microsoft.com/rest/api/storagerp/srp_sku_types for more information.
        */
       Models::AccountKind AccountKind;
       /**
