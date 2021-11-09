@@ -39,7 +39,7 @@ namespace Azure { namespace Storage { namespace Blobs {
 
     /**
      * @brief Optional SQL statement to apply to the tags of the Blob. Refer to
-     * https://docs.microsoft.com/en-us/rest/api/storageservices/specifying-conditional-headers-for-blob-service-operations#tags-predicate-syntax
+     * https://docs.microsoft.com/rest/api/storageservices/specifying-conditional-headers-for-blob-service-operations#tags-predicate-syntax
      * for the format of SQL statements.
      */
     Azure::Nullable<std::string> TagConditions;
@@ -148,7 +148,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      * operation against another host. If SecondaryHostForRetryReads is "" (the default) then
      * operations are not retried against another host. NOTE: Before setting this field, make sure
      * you understand the issues around reading stale & potentially-inconsistent data at this
-     * webpage: https://docs.microsoft.com/en-us/azure/storage/common/geo-redundant-design.
+     * webpage: https://docs.microsoft.com/azure/storage/common/geo-redundant-design.
      */
     std::string SecondaryHostForRetryReads;
 
