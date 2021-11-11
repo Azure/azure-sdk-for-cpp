@@ -1636,6 +1636,41 @@ namespace Azure { namespace Storage { namespace Blobs {
     }; // struct CommitBlockListResult
 
     /**
+     * @brief Response type for #Azure::Storage::Blobs::BlobClient::CopyFromUri.
+     */
+    struct CopyBlobFromUriResult final
+    {
+      /**
+       * The ETag contains a value that you can use to perform operations conditionally.
+       */
+      Azure::ETag ETag;
+      /**
+       * The date and time the container was last modified. Any operation that modifies the blob,
+       * including an update of the metadata or properties, changes the last-modified time of the
+       * blob.
+       */
+      Azure::DateTime LastModified;
+      /**
+       * String identifier for the last attempted Copy Blob operation where this blob was the
+       * destination. This value is null if this blob has never been the destination of a copy
+       * operation, or if this blob has been modified after a concluded copy operation.
+       */
+      std::string CopyId;
+      /**
+       * State of the copy operation identified by the copy ID. Possible values include success,
+       * pending, aborted, failed etc. This value is null if this blob has never been the
+       * destination of a copy operation, or if this blob has been modified after a concluded copy
+       * operation.
+       */
+      Models::CopyStatus CopyStatus;
+      /**
+       * A string value that uniquely identifies the blob. This value is null if Blob Versioning is
+       * not enabled.
+       */
+      Azure::Nullable<std::string> VersionId;
+    }; // struct CopyBlobFromUriResult
+
+    /**
      * @brief Response type for #Azure::Storage::Blobs::AppendBlobClient::Create.
      */
     struct CreateAppendBlobResult final
@@ -7694,6 +7729,153 @@ namespace Azure { namespace Storage { namespace Blobs {
           auto request = SetAccessTierCreateMessage(url, options);
           auto pHttpResponse = pipeline.Send(request, context);
           return SetAccessTierCreateResponse(std::move(pHttpResponse), context);
+        }
+
+        struct CopyBlobFromUriOptions final
+        {
+          Azure::Nullable<int32_t> Timeout;
+          Storage::Metadata Metadata;
+          std::map<std::string, std::string> Tags;
+          std::string SourceUri;
+          Azure::Nullable<std::string> LeaseId;
+          Azure::Nullable<Models::AccessTier> AccessTier;
+          Azure::Nullable<Azure::DateTime> IfModifiedSince;
+          Azure::Nullable<Azure::DateTime> IfUnmodifiedSince;
+          Azure::ETag IfMatch;
+          Azure::ETag IfNoneMatch;
+          Azure::Nullable<std::string> IfTags;
+          Azure::Nullable<Azure::DateTime> SourceIfModifiedSince;
+          Azure::Nullable<Azure::DateTime> SourceIfUnmodifiedSince;
+          Azure::ETag SourceIfMatch;
+          Azure::ETag SourceIfNoneMatch;
+          Azure::Nullable<ContentHash> TransactionalContentHash;
+        }; // struct CopyBlobFromUriOptions
+
+        static Azure::Response<CopyBlobFromUriResult> CopyFromUri(
+            Azure::Core::Http::_internal::HttpPipeline& pipeline,
+            const Azure::Core::Url& url,
+            const CopyBlobFromUriOptions& options,
+            const Azure::Core::Context& context)
+        {
+          auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Put, url);
+          request.SetHeader("Content-Length", "0");
+          request.SetHeader("x-ms-requires-sync", "true");
+          request.SetHeader("x-ms-version", "2020-02-10");
+          if (options.Timeout.HasValue())
+          {
+            request.GetUrl().AppendQueryParameter(
+                "timeout", std::to_string(options.Timeout.Value()));
+          }
+          for (const auto& pair : options.Metadata)
+          {
+            request.SetHeader("x-ms-meta-" + pair.first, pair.second);
+          }
+          if (!options.Tags.empty())
+          {
+            std::string blobTagsValue;
+            for (const auto& tag : options.Tags)
+            {
+              if (!blobTagsValue.empty())
+              {
+                blobTagsValue += "&";
+              }
+              blobTagsValue += _internal::UrlEncodeQueryParameter(tag.first) + "="
+                  + _internal::UrlEncodeQueryParameter(tag.second);
+            }
+            request.SetHeader("x-ms-tags", std::move(blobTagsValue));
+          }
+          request.SetHeader("x-ms-copy-source", options.SourceUri);
+          if (options.LeaseId.HasValue())
+          {
+            request.SetHeader("x-ms-lease-id", options.LeaseId.Value());
+          }
+          if (options.AccessTier.HasValue())
+          {
+            request.SetHeader("x-ms-access-tier", options.AccessTier.Value().ToString());
+          }
+          if (options.IfModifiedSince.HasValue())
+          {
+            request.SetHeader(
+                "If-Modified-Since",
+                options.IfModifiedSince.Value().ToString(Azure::DateTime::DateFormat::Rfc1123));
+          }
+          if (options.IfUnmodifiedSince.HasValue())
+          {
+            request.SetHeader(
+                "If-Unmodified-Since",
+                options.IfUnmodifiedSince.Value().ToString(Azure::DateTime::DateFormat::Rfc1123));
+          }
+          if (options.IfMatch.HasValue() && !options.IfMatch.ToString().empty())
+          {
+            request.SetHeader("If-Match", options.IfMatch.ToString());
+          }
+          if (options.IfNoneMatch.HasValue() && !options.IfNoneMatch.ToString().empty())
+          {
+            request.SetHeader("If-None-Match", options.IfNoneMatch.ToString());
+          }
+          if (options.IfTags.HasValue())
+          {
+            request.SetHeader("x-ms-if-tags", options.IfTags.Value());
+          }
+          if (options.SourceIfModifiedSince.HasValue())
+          {
+            request.SetHeader(
+                "x-ms-source-if-modified-since",
+                options.SourceIfModifiedSince.Value().ToString(
+                    Azure::DateTime::DateFormat::Rfc1123));
+          }
+          if (options.SourceIfUnmodifiedSince.HasValue())
+          {
+            request.SetHeader(
+                "x-ms-source-if-unmodified-since",
+                options.SourceIfUnmodifiedSince.Value().ToString(
+                    Azure::DateTime::DateFormat::Rfc1123));
+          }
+          if (options.SourceIfMatch.HasValue() && !options.SourceIfMatch.ToString().empty())
+          {
+            request.SetHeader("x-ms-source-if-match", options.SourceIfMatch.ToString());
+          }
+          if (options.SourceIfNoneMatch.HasValue() && !options.SourceIfNoneMatch.ToString().empty())
+          {
+            request.SetHeader("x-ms-source-if-none-match", options.SourceIfNoneMatch.ToString());
+          }
+          if (options.TransactionalContentHash.HasValue())
+          {
+            if (options.TransactionalContentHash.Value().Algorithm == HashAlgorithm::Md5)
+            {
+              request.SetHeader(
+                  "x-ms-source-content-md5",
+                  Azure::Core::Convert::Base64Encode(
+                      options.TransactionalContentHash.Value().Value));
+            }
+            else if (options.TransactionalContentHash.Value().Algorithm == HashAlgorithm::Crc64)
+            {
+              request.SetHeader(
+                  "x-ms-source-content-crc64",
+                  Azure::Core::Convert::Base64Encode(
+                      options.TransactionalContentHash.Value().Value));
+            }
+          }
+          auto pHttpResponse = pipeline.Send(request, context);
+          Azure::Core::Http::RawResponse& httpResponse = *pHttpResponse;
+          CopyBlobFromUriResult response;
+          auto http_status_code = httpResponse.GetStatusCode();
+          if (http_status_code != Azure::Core::Http::HttpStatusCode::Accepted)
+          {
+            throw StorageException::CreateFromResponse(std::move(pHttpResponse));
+          }
+          response.ETag = Azure::ETag(httpResponse.GetHeaders().at("etag"));
+          response.LastModified = Azure::DateTime::Parse(
+              httpResponse.GetHeaders().at("last-modified"), Azure::DateTime::DateFormat::Rfc1123);
+          response.CopyId = httpResponse.GetHeaders().at("x-ms-copy-id");
+          response.CopyStatus = CopyStatus(httpResponse.GetHeaders().at("x-ms-copy-status"));
+          auto x_ms_version_id__iterator = httpResponse.GetHeaders().find("x-ms-version-id");
+          if (x_ms_version_id__iterator != httpResponse.GetHeaders().end())
+          {
+            response.VersionId = x_ms_version_id__iterator->second;
+          }
+          return Azure::Response<CopyBlobFromUriResult>(
+              std::move(response), std::move(pHttpResponse));
         }
 
         struct StartBlobCopyFromUriOptions final
