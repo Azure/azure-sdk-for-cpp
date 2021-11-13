@@ -203,7 +203,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         const Azure::Core::Context& context = Azure::Core::Context()) const;
 
     /**
-     * @brief Copies data at from the source to this blob synchronously.
+     * @brief Copies data from the source to this blob, synchronously.
      *
      * @param sourceUri Specifies the URL of the source blob. The value may be a URL of up to 2 KB
      * in length that specifies a blob. The value should be URL-encoded as it would appear in a
