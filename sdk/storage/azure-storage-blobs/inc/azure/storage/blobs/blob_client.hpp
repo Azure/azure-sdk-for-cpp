@@ -208,7 +208,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @param sourceUri Specifies the URL of the source blob. The value may be a URL of up to 2 KB
      * in length that specifies a blob. The value should be URL-encoded as it would appear in a
      * request URI. The source blob must either be public or must be authorized via a shared access
-     * signature. If the size of thesource blob is greater than 256 MB, the request will fail with
+     * signature. If the size of the source blob is greater than 256 MB, the request will fail with
      * 409 (Conflict). The blob type of the source blob has to be block blob.
      * @param options Optional parameters to execute this function.
      * @param context Context for cancelling long running operations.
