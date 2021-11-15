@@ -234,7 +234,7 @@ jobs:
     displayName: "Sample 1: Key Vault Keys 1"
     # Runs only if test-resources are happly deployed.
     # Run first sample
-    condition: and(succeeded(), eq(parameters['ServiceDirectory'], 'keyvault'),eq(variables['RunSamples'], '1'))
+    condition: and(succeeded(), eq(${{ parameters.ServiceDirectory }}, 'keyvault'),eq(variables['RunSamples'], '1'))
 
   # Make coverage targets (specified in coverage_targets.txt) and assemble
   # coverage report
