@@ -137,7 +137,7 @@
                     "CmakeArgs": " -DBUILD_TESTING=ON -DBUILD_PERFORMANCE_TESTS=ON -DRUN_LONG_UNIT_TESTS=ON"
                 },
                 "included_samples": {
-                    "CmakeArgs": " -DBUILD_TESTING=ON -DBUILD_SAMPLES=ON"
+                    "CmakeArgs": " -DBUILD_TESTING=ON -DBUILD_SAMPLES=ON -DBUILD_STORAGE_SAMPLES=ON"
                 }
             }
         },
