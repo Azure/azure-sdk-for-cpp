@@ -8,7 +8,7 @@
                 "macOS-10.14": {
                     "OSVmImage": "macOS-10.14"
                 },
-                "macOS-10.15": { 
+                "macOS-10.15": {
                     "OSVmImage": "macOS-10.15"
                 },
                 "macOS-11": {
@@ -131,10 +131,13 @@
                     "CODE_COVERAGE_COLLECT_ONLY": "1",
                     "CODE_COVERAGE": "enabled"
                 },
-                "included": { },
+                "included": {},
                 "included_release": {
                     "CMAKE_BUILD_TYPE": "Release",
                     "CmakeArgs": " -DBUILD_TESTING=ON -DBUILD_PERFORMANCE_TESTS=ON -DRUN_LONG_UNIT_TESTS=ON"
+                },
+                "included_samples": {
+                    "CmakeArgs": " -DBUILD_TESTING=ON -DBUILD_SAMPLES=ON"
                 }
             }
         },
@@ -157,7 +160,6 @@
                 },
                 "included_release": {
                     "CMAKE_BUILD_TYPE": "Release"
-
                 }
             }
         }
