@@ -236,6 +236,41 @@ jobs:
     # Run first sample
     condition: and(succeeded(), eq('${{ parameters.ServiceDirectory }}', 'keyvault'),eq(variables['RunSamples'], '1'))
 
+  - script: ./sdk/keyvault/azure-security-keyvault-keys/test/samples/sample2-backup-and-restore/sample2-backup-and-restore
+    workingDirectory: build
+    displayName: "Sample 1: Key Vault Keys 2"
+    # Runs only if test-resources are happly deployed.
+    # Run first sample
+    condition: and(succeeded(), eq('${{ parameters.ServiceDirectory }}', 'keyvault'),eq(variables['RunSamples'], '1'))
+
+  - script: ./sdk/keyvault/azure-security-keyvault-keys/test/samples/sample3-get-keys/sample3-get-keys
+    workingDirectory: build
+    displayName: "Sample 1: Key Vault Keys 3"
+    # Runs only if test-resources are happly deployed.
+    # Run first sample
+    condition: and(succeeded(), eq('${{ parameters.ServiceDirectory }}', 'keyvault'),eq(variables['RunSamples'], '1'))
+
+  - script: ./sdk/keyvault/azure-security-keyvault-keys/test/samples/sample4-encrypt-decrypt/sample4-encrypt-decrypt
+    workingDirectory: build
+    displayName: "Sample 1: Key Vault Keys 4"
+    # Runs only if test-resources are happly deployed.
+    # Run first sample
+    condition: and(succeeded(), eq('${{ parameters.ServiceDirectory }}', 'keyvault'),eq(variables['RunSamples'], '1'))
+
+  - script: ./sdk/keyvault/azure-security-keyvault-keys/test/samples/sample5-sign-verify/sample5-sign-verify
+    workingDirectory: build
+    displayName: "Sample 1: Key Vault Keys 5"
+    # Runs only if test-resources are happly deployed.
+    # Run first sample
+    condition: and(succeeded(), eq('${{ parameters.ServiceDirectory }}', 'keyvault'),eq(variables['RunSamples'], '1'))
+
+  - script: ./sdk/keyvault/azure-security-keyvault-keys/test/samples/sample5-sign-verify/sample6-wrap-unwrap/sample6-wrap-unwrap
+    workingDirectory: build
+    displayName: "Sample 1: Key Vault Keys 6"
+    # Runs only if test-resources are happly deployed.
+    # Run first sample
+    condition: and(succeeded(), eq('${{ parameters.ServiceDirectory }}', 'keyvault'),eq(variables['RunSamples'], '1'))    
+
   # Make coverage targets (specified in coverage_targets.txt) and assemble
   # coverage report
   - bash: |
