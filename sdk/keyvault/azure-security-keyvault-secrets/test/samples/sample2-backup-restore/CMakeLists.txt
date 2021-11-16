@@ -3,13 +3,13 @@
 
 cmake_minimum_required (VERSION 3.13)
 
-project (sample1-basic-operations LANGUAGES CXX)
+project (sample2-backup-restore LANGUAGES CXX)
 set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 
 add_executable (
-  sample1-basic-operations
-  sample1-basic-operations.cpp
+  sample2-backup-restore
+  sample2_backup_restore.cpp
 )
 
-target_link_libraries(sample1-basic-operations PRIVATE azure-security-keyvault-secrets azure-identity)
+target_link_libraries(sample2-backup-restore PRIVATE azure-security-keyvault-secrets azure-identity)

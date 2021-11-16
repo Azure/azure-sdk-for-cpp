@@ -9,7 +9,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED True)
 
 add_executable (
   certificate-basic-operations
-  certificate-basic-operations.cpp
+  certificate_basic_operations.cpp
 )
 
 target_link_libraries(certificate-basic-operations PRIVATE azure-security-keyvault-certificates azure-identity )
