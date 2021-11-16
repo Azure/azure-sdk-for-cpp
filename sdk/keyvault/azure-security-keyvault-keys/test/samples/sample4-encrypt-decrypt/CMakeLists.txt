@@ -12,4 +12,6 @@ add_executable (
   sample4_encrypt_decrypt.cpp
 )
 
+file(APPEND ${CMAKE_BINARY_DIR}/keyvault-samples.txt " ${CMAKE_CURRENT_BINARY_DIR}/sample4-encrypt-decrypt")
+
 target_link_libraries(sample4-encrypt-decrypt PRIVATE azure-security-keyvault-keys azure-identity)

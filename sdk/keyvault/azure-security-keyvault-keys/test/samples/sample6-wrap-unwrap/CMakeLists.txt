@@ -12,4 +12,6 @@ add_executable (
   sample6_wrap_unwrap.cpp
 )
 
+file(APPEND ${CMAKE_BINARY_DIR}/keyvault-samples.txt " ${CMAKE_CURRENT_BINARY_DIR}/sample6-wrap-unwrap")
+
 target_link_libraries(sample6-wrap-unwrap PRIVATE azure-security-keyvault-keys azure-identity)

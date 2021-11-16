@@ -229,47 +229,23 @@ jobs:
     # this step only makes sense when ctest has run
     condition: and(succeededOrFailed(), ne(variables['RunSamples'], '1'))
 
-  - script: ./sdk/keyvault/azure-security-keyvault-keys/test/samples/sample1-hello-world/sample1-hello-world
+    # Running Samples step.
+    # Will run samples described on a file name [service]-samples.txt within the build directory.
+    # For example keyvault-samples.txt.
+    # The file is written by CMake during configuration when building samples.
+  - bash: |
+      if [[ -f "./${{ parameters.ServiceDirectory }}-samples.txt" ]]; then
+        for sample in `cat ./${{ parameters.ServiceDirectory }}-samples.txt`
+        do
+          echo "**********Running sample***********: ${sample}"
+          $sample
+          status=$?
+          [ $status -eq 0 ] && echo "*********Sample completed*********" || exit 1
+        done
+      fi
     workingDirectory: build
-    displayName: "Sample 1: Key Vault Keys 1"
-    # Runs only if test-resources are happly deployed.
-    # Run first sample
-    condition: and(succeeded(), eq('${{ parameters.ServiceDirectory }}', 'keyvault'),eq(variables['RunSamples'], '1'))
-
-  - script: ./sdk/keyvault/azure-security-keyvault-keys/test/samples/sample2-backup-and-restore/sample2-backup-and-restore
-    workingDirectory: build
-    displayName: "Sample 1: Key Vault Keys 2"
-    # Runs only if test-resources are happly deployed.
-    # Run first sample
-    condition: and(succeeded(), eq('${{ parameters.ServiceDirectory }}', 'keyvault'),eq(variables['RunSamples'], '1'))
-
-  - script: ./sdk/keyvault/azure-security-keyvault-keys/test/samples/sample3-get-keys/sample3-get-keys
-    workingDirectory: build
-    displayName: "Sample 1: Key Vault Keys 3"
-    # Runs only if test-resources are happly deployed.
-    # Run first sample
-    condition: and(succeeded(), eq('${{ parameters.ServiceDirectory }}', 'keyvault'),eq(variables['RunSamples'], '1'))
-
-  - script: ./sdk/keyvault/azure-security-keyvault-keys/test/samples/sample4-encrypt-decrypt/sample4-encrypt-decrypt
-    workingDirectory: build
-    displayName: "Sample 1: Key Vault Keys 4"
-    # Runs only if test-resources are happly deployed.
-    # Run first sample
-    condition: and(succeeded(), eq('${{ parameters.ServiceDirectory }}', 'keyvault'),eq(variables['RunSamples'], '1'))
-
-  - script: ./sdk/keyvault/azure-security-keyvault-keys/test/samples/sample5-sign-verify/sample5-sign-verify
-    workingDirectory: build
-    displayName: "Sample 1: Key Vault Keys 5"
-    # Runs only if test-resources are happly deployed.
-    # Run first sample
-    condition: and(succeeded(), eq('${{ parameters.ServiceDirectory }}', 'keyvault'),eq(variables['RunSamples'], '1'))
-
-  - script: ./sdk/keyvault/azure-security-keyvault-keys/test/samples/sample5-sign-verify/sample6-wrap-unwrap/sample6-wrap-unwrap
-    workingDirectory: build
-    displayName: "Sample 1: Key Vault Keys 6"
-    # Runs only if test-resources are happly deployed.
-    # Run first sample
-    condition: and(succeeded(), eq('${{ parameters.ServiceDirectory }}', 'keyvault'),eq(variables['RunSamples'], '1'))    
+    displayName: "Run Samples for : ${{ parameters.ServiceDirectory }}"
+    condition: and(succeeded(), eq(variables['RunSamples'], '1'))
 
   # Make coverage targets (specified in coverage_targets.txt) and assemble
   # coverage report

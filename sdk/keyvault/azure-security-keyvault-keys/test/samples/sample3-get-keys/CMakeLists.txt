@@ -12,4 +12,6 @@ add_executable (
   sample3_get_keys.cpp
 )
 
+file(APPEND ${CMAKE_BINARY_DIR}/keyvault-samples.txt " ${CMAKE_CURRENT_BINARY_DIR}/sample3-get-keys")
+
 target_link_libraries(sample3-get-keys PRIVATE azure-security-keyvault-keys azure-identity)
