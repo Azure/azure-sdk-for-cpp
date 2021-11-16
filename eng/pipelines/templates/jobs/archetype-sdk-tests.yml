@@ -241,7 +241,12 @@ jobs:
           echo "**********Running sample: ${sample}"
           bash -c "$sample"
           status=$?
-          [ $status -eq 0 ] && echo "*********Sample completed*********" || echo "*Sample returned a failed code: $status" && exit 1
+          if [[ $status -eq 0 ]]; then
+            echo "*********Sample completed*********"
+          else
+            echo "*Sample returned a failed code: $status"
+            exit 1
+          fi
         done
       fi
     workingDirectory: build
