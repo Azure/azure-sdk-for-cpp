@@ -13,18 +13,46 @@
 
 #include "samples_common.hpp"
 
-std::string GetConnectionString()
-{
-  const static std::string ConnectionString = "";
+std::string GetFromEnv();
 
+std::string GetConnectionString(StorageAccountType type)
+{
+  // For manual code-override
+  const static std::string ConnectionString = "";
   if (!ConnectionString.empty())
   {
     return ConnectionString;
   }
-  const static std::string envConnectionString = std::getenv("AZURE_STORAGE_CONNECTION_STRING");
-  if (!envConnectionString.empty())
+
+  switch (type)
   {
-    return envConnectionString;
+    case StorageAccountType::Default: {
+      const static std::string envConnectionString = std::getenv("AZURE_STORAGE_CONNECTION_STRING");
+      if (!envConnectionString.empty())
+      {
+        return envConnectionString;
+      }
+      break;
+    }
+    case StorageAccountType::Gen2: {
+      const static std::string envConnectionStringGen2 = std::getenv("ADLS_GEN2_CONNECTION_STRING");
+      if (!envConnectionStringGen2.empty())
+      {
+        return envConnectionStringGen2;
+      }
+      break;
+    }
+    case StorageAccountType::PremiumFile: {
+      const static std::string envConnectionStringPremiumFile
+          = std::getenv("PREMIUM_FILE_CONNECTION_STRING");
+      if (!envConnectionStringPremiumFile.empty())
+      {
+        return envConnectionStringPremiumFile;
+      }
+      break;
+    }
+    default:
+      break;
   }
   throw std::runtime_error("Cannot find connection string.");
 }

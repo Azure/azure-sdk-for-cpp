@@ -7,7 +7,14 @@
 #include <map>
 #include <string>
 
-std::string GetConnectionString();
+enum class StorageAccountType
+{
+  Default,
+  Gen2,
+  PremiumFile
+};
+
+std::string GetConnectionString(StorageAccountType type = StorageAccountType::Default);
 std::string GetAccountName();
 std::string GetAccountKey();
 

@@ -16,7 +16,8 @@ void FileShareGettingStarted()
   std::string fileName = "sample-file";
   std::string fileContent = "Hello Azure!";
 
-  auto shareClient = ShareClient::CreateFromConnectionString(GetConnectionString(), shareName);
+  auto shareClient = ShareClient::CreateFromConnectionString(
+      GetConnectionString(StorageAccountType::PremiumFile), shareName);
   shareClient.CreateIfNotExists();
 
   ShareFileClient fileClient = shareClient.GetRootDirectoryClient().GetFileClient(fileName);
