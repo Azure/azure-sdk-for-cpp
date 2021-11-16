@@ -52,7 +52,7 @@ namespace Azure { namespace Storage { namespace Test {
       {
         return StandardStorageConnectionStringValue;
       }
-      return GetEnv("STANDARD_STORAGE_CONNECTION_STRING");
+      return GetEnv("AZURE_STORAGE_CONNECTION_STRING");
     }();
     return connectionString;
   }

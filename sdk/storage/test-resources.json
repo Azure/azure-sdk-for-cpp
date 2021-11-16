@@ -82,7 +82,9 @@
             "type": "Microsoft.Authorization/roleAssignments",
             "apiVersion": "[variables('authorizationApiVersion')]",
             "name": "[guid(concat('blobDataOwnerRoleId', variables('accountName')))]",
-            "dependsOn": [ "[variables('accountName')]" ],
+            "dependsOn": [
+                "[variables('accountName')]"
+            ],
             "properties": {
                 "roleDefinitionId": "[variables('blobDataOwnerRoleId')]",
                 "principalId": "[parameters('testApplicationOid')]"
@@ -101,10 +103,8 @@
             "properties": {
                 "networkAcls": {
                     "bypass": "AzureServices",
-                    "virtualNetworkRules": [
-                    ],
-                    "ipRules": [
-                    ],
+                    "virtualNetworkRules": [],
+                    "ipRules": [],
                     "defaultAction": "Allow"
                 },
                 "supportsHttpsTrafficOnly": true,
@@ -148,7 +148,9 @@
                 "cors": {
                     "corsRules": [
                         {
-                            "allowedOrigins": [ "*" ],
+                            "allowedOrigins": [
+                                "*"
+                            ],
                             "allowedMethods": [
                                 "DELETE",
                                 "GET",
@@ -160,8 +162,12 @@
                                 "PATCH"
                             ],
                             "maxAgeInSeconds": 86400,
-                            "exposedHeaders": [ "*" ],
-                            "allowedHeaders": [ "*" ]
+                            "exposedHeaders": [
+                                "*"
+                            ],
+                            "allowedHeaders": [
+                                "*"
+                            ]
                         }
                     ]
                 }
@@ -182,11 +188,25 @@
                 "cors": {
                     "corsRules": [
                         {
-                            "allowedOrigins": [ "*" ],
-                            "allowedMethods": [ "DELETE", "GET", "HEAD", "MERGE", "POST", "OPTIONS", "PUT" ],
+                            "allowedOrigins": [
+                                "*"
+                            ],
+                            "allowedMethods": [
+                                "DELETE",
+                                "GET",
+                                "HEAD",
+                                "MERGE",
+                                "POST",
+                                "OPTIONS",
+                                "PUT"
+                            ],
                             "maxAgeInSeconds": 86400,
-                            "exposedHeaders": [ "*" ],
-                            "allowedHeaders": [ "*" ]
+                            "exposedHeaders": [
+                                "*"
+                            ],
+                            "allowedHeaders": [
+                                "*"
+                            ]
                         }
                     ]
                 }
@@ -235,10 +255,8 @@
                 },
                 "networkAcls": {
                     "bypass": "AzureServices",
-                    "virtualNetworkRules": [
-                    ],
-                    "ipRules": [
-                    ],
+                    "virtualNetworkRules": [],
+                    "ipRules": [],
                     "defaultAction": "Allow"
                 },
                 "supportsHttpsTrafficOnly": true,
@@ -269,10 +287,8 @@
             "properties": {
                 "networkAcls": {
                     "bypass": "AzureServices",
-                    "virtualNetworkRules": [
-                    ],
-                    "ipRules": [
-                    ],
+                    "virtualNetworkRules": [],
+                    "ipRules": [],
                     "defaultAction": "Allow"
                 },
                 "supportsHttpsTrafficOnly": true,
@@ -308,7 +324,7 @@
             "type": "string",
             "value": "[concat('?', listAccountSas(variables('accountNameTidy'), variables('storageApiVersion'), variables('accountSasProperties')).accountSasToken)]"
         },
-        "STANDARD_STORAGE_CONNECTION_STRING": {
+        "AZURE_STORAGE_CONNECTION_STRING": {
             "type": "string",
             "value": "[concat('DefaultEndpointsProtocol=https;AccountName=', variables('accountName'), ';AccountKey=', listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('accountName')), variables('storageApiVersion')).keys[0].value, ';EndpointSuffix=', parameters('storageEndpointSuffix'))]"
         },
