@@ -234,13 +234,14 @@ jobs:
     # For example keyvault-samples.txt.
     # The file is written by CMake during configuration when building samples.
   - bash: |
+      IFS=$'\n'
       if [[ -f "./${{ parameters.ServiceDirectory }}-samples.txt" ]]; then
         for sample in `cat ./${{ parameters.ServiceDirectory }}-samples.txt`
         do
-          echo "**********Running sample***********: ${sample}"
-          $sample
+          echo "**********Running sample: ${sample}"
+          bash -c "$sample"
           status=$?
-          [ $status -eq 0 ] && echo "*********Sample completed*********" || exit 1
+          [ $status -eq 0 ] && echo "*********Sample completed*********" || echo "*Sample returned a failed code: $status" && exit 1
         done
       fi
     workingDirectory: build
