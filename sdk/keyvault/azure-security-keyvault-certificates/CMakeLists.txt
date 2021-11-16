@@ -87,7 +87,7 @@ endif()
 # endif()
 
 if(BUILD_SAMPLES)
-   add_subdirectory(samples)
+   add_subdirectory(test/samples)
 endif()
 
 az_vcpkg_export(
