@@ -16,8 +16,8 @@ void DataLakeGettingStarted()
   std::string directoryName = "sample-directory";
   std::string fileName = "sample-file";
 
-  auto fileSystemClient
-      = DataLakeFileSystemClient::CreateFromConnectionString(GetConnectionString(StorageAccountType::Gen2), fileSystemName);
+  auto fileSystemClient = DataLakeFileSystemClient::CreateFromConnectionString(
+      GetConnectionString(StorageAccountType::Gen2), fileSystemName);
   fileSystemClient.CreateIfNotExists();
 
   // Create a directory.
