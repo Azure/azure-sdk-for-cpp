@@ -118,4 +118,8 @@ if(BUILD_STORAGE_SAMPLES)
   )
 
   target_link_libraries(azure-storage-sample PRIVATE azure-storage-files-shares)
+
+  # Add the sample to be run on CI.
+  # CI pipeline reads the {service}-samples.txt and runs the binaries listed there.
+  file(APPEND ${CMAKE_BINARY_DIR}/storage-samples.txt "${CMAKE_CURRENT_BINARY_DIR}/../azure-storage-sample FileShareGettingStarted\n")
 endif()
