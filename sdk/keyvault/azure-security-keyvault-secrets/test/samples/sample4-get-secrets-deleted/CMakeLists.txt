@@ -9,7 +9,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED True)
 
 add_executable (
   sample4-get-secrets-deleted
-  sample4-get-secrets-deleted.cpp
+  sample4_get_secrets_deleted.cpp
 )
 
 target_link_libraries(sample4-get-secrets-deleted PRIVATE azure-security-keyvault-secrets azure-identity)
