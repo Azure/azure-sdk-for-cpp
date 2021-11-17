@@ -13,8 +13,6 @@
 
 #include "samples_common.hpp"
 
-std::string GetFromEnv();
-
 std::string GetConnectionString(StorageAccountType type)
 {
   // For manual code-override
