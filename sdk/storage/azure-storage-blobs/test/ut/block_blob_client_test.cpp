@@ -314,7 +314,39 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_THROW(blockBlobClient.Download(options), StorageException);
   }
 
-  TEST_F(BlockBlobClientTest, CopyFromUri)
+  TEST_F(BlockBlobClientTest, SyncCopyFromUri)
+  {
+    const std::string blobName = RandomString();
+    auto blobClient = m_blobContainerClient->GetBlobClient(blobName);
+    auto res = blobClient.CopyFromUri(m_blockBlobClient->GetUrl() + GetSas());
+    EXPECT_EQ(res.RawResponse->GetStatusCode(), Azure::Core::Http::HttpStatusCode::Accepted);
+    EXPECT_TRUE(res.Value.ETag.HasValue());
+    EXPECT_TRUE(IsValidTime(res.Value.LastModified));
+    EXPECT_FALSE(res.Value.CopyId.empty());
+    EXPECT_EQ(res.Value.CopyStatus, Azure::Storage::Blobs::Models::CopyStatus::Success);
+
+    auto downloadResult = blobClient.Download();
+    EXPECT_FALSE(downloadResult.Value.Details.CopyId.Value().empty());
+    EXPECT_FALSE(downloadResult.Value.Details.CopySource.Value().empty());
+    EXPECT_TRUE(
+        downloadResult.Value.Details.CopyStatus.Value()
+        == Azure::Storage::Blobs::Models::CopyStatus::Success);
+    EXPECT_FALSE(downloadResult.Value.Details.CopyProgress.Value().empty());
+    EXPECT_TRUE(IsValidTime(downloadResult.Value.Details.CopyCompletedOn.Value()));
+
+    auto blobItem = GetBlobItem(blobName, Blobs::Models::ListBlobsIncludeFlags::Copy);
+    EXPECT_FALSE(blobItem.Details.CopyId.Value().empty());
+    EXPECT_FALSE(blobItem.Details.CopySource.Value().empty());
+    EXPECT_TRUE(
+        blobItem.Details.CopyStatus.Value() == Azure::Storage::Blobs::Models::CopyStatus::Success);
+    EXPECT_FALSE(blobItem.Details.CopyProgress.Value().empty());
+    EXPECT_TRUE(IsValidTime(blobItem.Details.CopyCompletedOn.Value()));
+    ASSERT_TRUE(blobItem.Details.IsIncrementalCopy.HasValue());
+    EXPECT_FALSE(blobItem.Details.IsIncrementalCopy.Value());
+    EXPECT_FALSE(blobItem.Details.IncrementalCopyDestinationSnapshot.HasValue());
+  }
+
+  TEST_F(BlockBlobClientTest, AsyncCopyFromUri)
   {
     const std::string blobName = RandomString();
     auto blobClient = m_blobContainerClient->GetBlobClient(blobName);
@@ -353,15 +385,32 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_FALSE(blobItem.Details.IncrementalCopyDestinationSnapshot.HasValue());
   }
 
-  TEST_F(BlockBlobClientTest, CopyWithTags)
+  TEST_F(BlockBlobClientTest, CopyWithTagsMetadataTier)
   {
     auto blobClient = m_blobContainerClient->GetBlockBlobClient(RandomString());
     Blobs::StartBlobCopyFromUriOptions options;
     options.Tags["key1"] = "value1";
     options.Tags["key2"] = "value2";
     options.Tags["key3 +-./:=_"] = "v1 +-./:=_";
-    blobClient.StartCopyFromUri(m_blockBlobClient->GetUrl(), options);
+    options.Metadata["key1"] = "value1";
+    options.Metadata["key2"] = "value2";
+    options.AccessTier = Blobs::Models::AccessTier::Cool;
+    auto operation = blobClient.StartCopyFromUri(m_blockBlobClient->GetUrl(), options);
+    operation.PollUntilDone(std::chrono::seconds(1));
     EXPECT_EQ(blobClient.GetTags().Value, options.Tags);
+    auto properties = blobClient.GetProperties().Value;
+    EXPECT_EQ(properties.Metadata, options.Metadata);
+    EXPECT_EQ(properties.AccessTier.Value(), options.AccessTier.Value());
+
+    Blobs::CopyBlobFromUriOptions options2;
+    options2.Tags = options.Tags;
+    options2.Metadata = options.Metadata;
+    options2.AccessTier = options.AccessTier;
+    blobClient.CopyFromUri(m_blockBlobClient->GetUrl() + GetSas(), options2);
+    EXPECT_EQ(blobClient.GetTags().Value, options2.Tags);
+    properties = blobClient.GetProperties().Value;
+    EXPECT_EQ(properties.Metadata, options2.Metadata);
+    EXPECT_EQ(properties.AccessTier.Value(), options2.AccessTier.Value());
   }
 
   TEST_F(BlockBlobClientTest, SnapShotVersions)
@@ -1168,6 +1217,129 @@ namespace Azure { namespace Storage { namespace Test {
 
     auto blobItem = GetBlobItem(blobName, Blobs::Models::ListBlobsIncludeFlags::UncomittedBlobs);
     EXPECT_EQ(blobItem.BlobSize, 0);
+  }
+
+  TEST_F(BlobContainerClientTest, SourceTagsConditions)
+  {
+    auto sourceBlobClient = Azure::Storage::Blobs::BlockBlobClient::CreateFromConnectionString(
+        StandardStorageConnectionString(), m_containerName, RandomString());
+    std::vector<uint8_t> buffer;
+    buffer.resize(1024);
+  }
+
+  TEST_F(BlobContainerClientTest, SourceBlobAccessConditions)
+  {
+    auto sourceBlobClient = Azure::Storage::Blobs::BlockBlobClient::CreateFromConnectionString(
+        StandardStorageConnectionString(), m_containerName, RandomString());
+    std::vector<uint8_t> buffer;
+    buffer.resize(1024);
+    auto createResponse = sourceBlobClient.UploadFrom(buffer.data(), buffer.size());
+    Azure::ETag eTag = createResponse.Value.ETag;
+    auto lastModifiedTime = createResponse.Value.LastModified;
+    auto timeBeforeStr = lastModifiedTime - std::chrono::seconds(2);
+    auto timeAfterStr = lastModifiedTime + std::chrono::seconds(2);
+
+    auto destBlobClient = Azure::Storage::Blobs::BlockBlobClient::CreateFromConnectionString(
+        StandardStorageConnectionString(), m_containerName, RandomString());
+
+    {
+      Blobs::StartBlobCopyFromUriOptions options;
+      options.SourceAccessConditions.IfMatch = eTag;
+      EXPECT_NO_THROW(destBlobClient.StartCopyFromUri(sourceBlobClient.GetUrl(), options));
+      options.SourceAccessConditions.IfMatch = DummyETag;
+      EXPECT_THROW(
+          destBlobClient.StartCopyFromUri(sourceBlobClient.GetUrl(), options), StorageException);
+
+      Blobs::CopyBlobFromUriOptions options2;
+      options2.SourceAccessConditions.IfMatch = eTag;
+      EXPECT_NO_THROW(destBlobClient.CopyFromUri(sourceBlobClient.GetUrl() + GetSas(), options2));
+      options2.SourceAccessConditions.IfMatch = DummyETag;
+      EXPECT_THROW(
+          destBlobClient.CopyFromUri(sourceBlobClient.GetUrl() + GetSas(), options2),
+          StorageException);
+    }
+    {
+      Blobs::StartBlobCopyFromUriOptions options;
+      options.SourceAccessConditions.IfNoneMatch = DummyETag;
+      EXPECT_NO_THROW(destBlobClient.StartCopyFromUri(sourceBlobClient.GetUrl(), options));
+      options.SourceAccessConditions.IfNoneMatch = eTag;
+      EXPECT_THROW(
+          destBlobClient.StartCopyFromUri(sourceBlobClient.GetUrl(), options), StorageException);
+
+      Blobs::CopyBlobFromUriOptions options2;
+      options2.SourceAccessConditions.IfNoneMatch = DummyETag;
+      EXPECT_NO_THROW(destBlobClient.CopyFromUri(sourceBlobClient.GetUrl() + GetSas(), options2));
+      options2.SourceAccessConditions.IfNoneMatch = eTag;
+      EXPECT_THROW(
+          destBlobClient.CopyFromUri(sourceBlobClient.GetUrl() + GetSas(), options2),
+          StorageException);
+    }
+    {
+      Blobs::StartBlobCopyFromUriOptions options;
+      options.SourceAccessConditions.IfModifiedSince = timeBeforeStr;
+      EXPECT_NO_THROW(destBlobClient.StartCopyFromUri(sourceBlobClient.GetUrl(), options));
+      options.SourceAccessConditions.IfModifiedSince = timeAfterStr;
+      EXPECT_THROW(
+          destBlobClient.StartCopyFromUri(sourceBlobClient.GetUrl(), options), StorageException);
+
+      sourceBlobClient.GetProperties();
+      Blobs::CopyBlobFromUriOptions options2;
+      options2.SourceAccessConditions.IfModifiedSince = timeBeforeStr;
+      EXPECT_NO_THROW(destBlobClient.CopyFromUri(sourceBlobClient.GetUrl() + GetSas(), options2));
+      options2.SourceAccessConditions.IfModifiedSince = timeAfterStr;
+      EXPECT_THROW(
+          destBlobClient.CopyFromUri(sourceBlobClient.GetUrl() + GetSas(), options2),
+          StorageException);
+    }
+    {
+      Blobs::StartBlobCopyFromUriOptions options;
+      options.SourceAccessConditions.IfUnmodifiedSince = timeAfterStr;
+      EXPECT_NO_THROW(destBlobClient.StartCopyFromUri(sourceBlobClient.GetUrl(), options));
+      options.SourceAccessConditions.IfUnmodifiedSince = timeBeforeStr;
+      EXPECT_THROW(
+          destBlobClient.StartCopyFromUri(sourceBlobClient.GetUrl(), options), StorageException);
+
+      Blobs::CopyBlobFromUriOptions options2;
+      options2.SourceAccessConditions.IfUnmodifiedSince = timeAfterStr;
+      EXPECT_NO_THROW(destBlobClient.CopyFromUri(sourceBlobClient.GetUrl() + GetSas(), options2));
+      options2.SourceAccessConditions.IfUnmodifiedSince = timeBeforeStr;
+      EXPECT_THROW(
+          destBlobClient.CopyFromUri(sourceBlobClient.GetUrl() + GetSas(), options2),
+          StorageException);
+    }
+
+    // lease
+    {
+      const std::string leaseId = Blobs::BlobLeaseClient::CreateUniqueLeaseId();
+      const std::string dummyLeaseId = Blobs::BlobLeaseClient::CreateUniqueLeaseId();
+      Blobs::BlobLeaseClient leaseClient(destBlobClient, leaseId);
+
+      leaseClient.Acquire(std::chrono::seconds(60));
+
+      Blobs::CopyBlobFromUriOptions options;
+      options.AccessConditions.LeaseId = dummyLeaseId;
+      EXPECT_THROW(
+          destBlobClient.CopyFromUri(sourceBlobClient.GetUrl() + GetSas(), options),
+          StorageException);
+      options.AccessConditions.LeaseId = leaseId;
+      EXPECT_NO_THROW(destBlobClient.CopyFromUri(sourceBlobClient.GetUrl() + GetSas(), options));
+      leaseClient.Release();
+    }
+
+    // content md5
+    {
+      const auto hash = sourceBlobClient.GetProperties().Value.HttpHeaders.ContentHash;
+      ASSERT_FALSE(hash.Value.empty());
+
+      Blobs::CopyBlobFromUriOptions options;
+      options.TransactionalContentHash = hash;
+      options.TransactionalContentHash.Value().Value = Azure::Core::Convert::Base64Decode(DummyMd5);
+      EXPECT_THROW(
+          destBlobClient.CopyFromUri(sourceBlobClient.GetUrl() + GetSas(), options),
+          StorageException);
+      options.TransactionalContentHash = hash;
+      EXPECT_NO_THROW(destBlobClient.CopyFromUri(sourceBlobClient.GetUrl() + GetSas(), options));
+    }
   }
 
 }}} // namespace Azure::Storage::Test

@@ -1,5 +1,17 @@
 # Release History
 
+## 12.3.0 (Unreleased)
+
+### Features Added
+
+- New API: `BlobClient::CopyFromUri()`.
+
+### Breaking Changes
+
+### Bugs Fixed
+
+### Other Changes
+
 ## 12.2.1 (2021-11-08)
 
 ### Other Changes

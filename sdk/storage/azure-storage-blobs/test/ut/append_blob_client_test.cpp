@@ -210,53 +210,6 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_NO_THROW(appendBlobClient.Delete(options));
   }
 
-  TEST_F(AppendBlobClientTest, SourceBlobAccessConditions)
-  {
-    auto sourceBlobClient = Azure::Storage::Blobs::AppendBlobClient::CreateFromConnectionString(
-        StandardStorageConnectionString(), m_containerName, RandomString());
-    auto createResponse = sourceBlobClient.Create();
-    Azure::ETag eTag = createResponse.Value.ETag;
-    auto lastModifiedTime = createResponse.Value.LastModified;
-    auto timeBeforeStr = lastModifiedTime - std::chrono::seconds(1);
-    auto timeAfterStr = lastModifiedTime + std::chrono::seconds(1);
-
-    auto destBlobClient = Azure::Storage::Blobs::AppendBlobClient::CreateFromConnectionString(
-        StandardStorageConnectionString(), m_containerName, RandomString());
-
-    {
-      Blobs::StartBlobCopyFromUriOptions options;
-      options.SourceAccessConditions.IfMatch = eTag;
-      EXPECT_NO_THROW(destBlobClient.StartCopyFromUri(sourceBlobClient.GetUrl(), options));
-      options.SourceAccessConditions.IfMatch = DummyETag;
-      EXPECT_THROW(
-          destBlobClient.StartCopyFromUri(sourceBlobClient.GetUrl(), options), StorageException);
-    }
-    {
-      Blobs::StartBlobCopyFromUriOptions options;
-      options.SourceAccessConditions.IfNoneMatch = DummyETag;
-      EXPECT_NO_THROW(destBlobClient.StartCopyFromUri(sourceBlobClient.GetUrl(), options));
-      options.SourceAccessConditions.IfNoneMatch = eTag;
-      EXPECT_THROW(
-          destBlobClient.StartCopyFromUri(sourceBlobClient.GetUrl(), options), StorageException);
-    }
-    {
-      Blobs::StartBlobCopyFromUriOptions options;
-      options.SourceAccessConditions.IfModifiedSince = timeBeforeStr;
-      EXPECT_NO_THROW(destBlobClient.StartCopyFromUri(sourceBlobClient.GetUrl(), options));
-      options.SourceAccessConditions.IfModifiedSince = timeAfterStr;
-      EXPECT_THROW(
-          destBlobClient.StartCopyFromUri(sourceBlobClient.GetUrl(), options), StorageException);
-    }
-    {
-      Blobs::StartBlobCopyFromUriOptions options;
-      options.SourceAccessConditions.IfUnmodifiedSince = timeAfterStr;
-      EXPECT_NO_THROW(destBlobClient.StartCopyFromUri(sourceBlobClient.GetUrl(), options));
-      options.SourceAccessConditions.IfUnmodifiedSince = timeBeforeStr;
-      EXPECT_THROW(
-          destBlobClient.StartCopyFromUri(sourceBlobClient.GetUrl(), options), StorageException);
-    }
-  }
-
   TEST_F(AppendBlobClientTest, Seal)
   {
     std::string blobName = RandomString();
