@@ -5,18 +5,16 @@
 
 #include <azure/storage/files/shares.hpp>
 
-#include "samples_common.hpp"
-
-SAMPLE(FileShareGettingStarted, FileShareGettingStarted)
-void FileShareGettingStarted()
+int main()
 {
   using namespace Azure::Storage::Files::Shares;
 
-  std::string shareName = "sample-share";
-  std::string fileName = "sample-file";
-  std::string fileContent = "Hello Azure!";
+  const std::string connectionString = "";
+  const std::string shareName = "sample-share";
+  const std::string fileName = "sample-file";
+  const std::string fileContent = "Hello Azure!";
 
-  auto shareClient = ShareClient::CreateFromConnectionString(GetConnectionString(), shareName);
+  auto shareClient = ShareClient::CreateFromConnectionString(connectionString, shareName);
   shareClient.CreateIfNotExists();
 
   ShareFileClient fileClient = shareClient.GetRootDirectoryClient().GetFileClient(fileName);
@@ -38,4 +36,6 @@ void FileShareGettingStarted()
   fileClient.DownloadTo(buffer.data(), buffer.size());
 
   std::cout << std::string(buffer.begin(), buffer.end()) << std::endl;
+
+  return 0;
 }

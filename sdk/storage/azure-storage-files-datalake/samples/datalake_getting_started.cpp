@@ -5,19 +5,17 @@
 
 #include <azure/storage/files/datalake.hpp>
 
-#include "samples_common.hpp"
-
-SAMPLE(DataLakeGettingStarted, DataLakeGettingStarted)
-void DataLakeGettingStarted()
+int main()
 {
   using namespace Azure::Storage::Files::DataLake;
 
-  std::string fileSystemName = "sample-file-system";
-  std::string directoryName = "sample-directory";
-  std::string fileName = "sample-file";
+  const std::string connectionString = "";
+  const std::string fileSystemName = "sample-file-system";
+  const std::string directoryName = "sample-directory";
+  const std::string fileName = "sample-file";
 
   auto fileSystemClient
-      = DataLakeFileSystemClient::CreateFromConnectionString(GetConnectionString(), fileSystemName);
+      = DataLakeFileSystemClient::CreateFromConnectionString(connectionString, fileSystemName);
   fileSystemClient.CreateIfNotExists();
 
   // Create a directory.
@@ -57,4 +55,6 @@ void DataLakeGettingStarted()
   std::vector<uint8_t> downloaded = result.Value.Body->ReadToEnd(context);
   // downloaded contains your downloaded data.
   std::cout << std::string(downloaded.begin(), downloaded.end()) << std::endl;
+
+  return 0;
 }

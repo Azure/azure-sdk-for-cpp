@@ -129,14 +129,3 @@ if(BUILD_TESTING)
   target_link_libraries(azure-storage-test PRIVATE azure-identity)
   target_include_directories(azure-storage-test PRIVATE test)
 endif()
-
-if(BUILD_STORAGE_SAMPLES)
-  target_sources(
-    azure-storage-sample
-      PRIVATE
-        sample/main.cpp
-        sample/samples_common.hpp
-  )
-
-  target_include_directories(azure-storage-sample PRIVATE sample)
-endif()

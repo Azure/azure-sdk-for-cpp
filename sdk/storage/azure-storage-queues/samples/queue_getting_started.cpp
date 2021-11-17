@@ -6,14 +6,13 @@
 
 #include <azure/storage/queues.hpp>
 
-#include "samples_common.hpp"
-
 using namespace Azure::Storage::Queues;
-std::string QueueName = "sample-queue";
+const std::string connectionString = "";
+const std::string QueueName = "sample-queue";
 
 void ProducerFunc()
 {
-  auto queueClient = QueueClient::CreateFromConnectionString(GetConnectionString(), QueueName);
+  auto queueClient = QueueClient::CreateFromConnectionString(connectionString, QueueName);
 
   for (int i = 0; i < 5; ++i)
   {
@@ -33,7 +32,7 @@ void ProducerFunc()
 
 void ConsumerFunc()
 {
-  auto queueClient = QueueClient::CreateFromConnectionString(GetConnectionString(), QueueName);
+  auto queueClient = QueueClient::CreateFromConnectionString(connectionString, QueueName);
 
   int counter = 0;
   while (counter < 5)
@@ -54,7 +53,7 @@ void ConsumerFunc()
 
 void ConsumerFunc2()
 {
-  auto queueClient = QueueClient::CreateFromConnectionString(GetConnectionString(), QueueName);
+  auto queueClient = QueueClient::CreateFromConnectionString(connectionString, QueueName);
 
   int counter = 0;
   while (counter < 5)
@@ -76,13 +75,14 @@ void ConsumerFunc2()
   }
 }
 
-SAMPLE(QueuesGettingStarted, QueuesGettingStarted)
-void QueuesGettingStarted()
+int main()
 {
-  auto queueClient = QueueClient::CreateFromConnectionString(GetConnectionString(), QueueName);
+  auto queueClient = QueueClient::CreateFromConnectionString(connectionString, QueueName);
   queueClient.Create();
 
   ProducerFunc();
   ConsumerFunc();
   ConsumerFunc2();
+
+  return 0;
 }

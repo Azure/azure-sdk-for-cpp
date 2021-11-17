@@ -5,18 +5,16 @@
 
 #include <azure/storage/blobs.hpp>
 
-#include "samples_common.hpp"
-
-SAMPLE(TransactionalChecksum, TransactionalChecksum)
-void TransactionalChecksum()
+int main()
 {
   using namespace Azure::Storage::Blobs;
 
-  std::string containerName = "sample-container";
-  std::string blobName = "sample-blob";
+  const std::string connectionString = "";
+  const std::string containerName = "sample-container";
+  const std::string blobName = "sample-blob";
 
   auto containerClient
-      = BlobContainerClient::CreateFromConnectionString(GetConnectionString(), containerName);
+      = BlobContainerClient::CreateFromConnectionString(connectionString, containerName);
   containerClient.CreateIfNotExists();
   BlockBlobClient blobClient = containerClient.GetBlockBlobClient(blobName);
 
@@ -51,4 +49,6 @@ void TransactionalChecksum()
   {
     std::cout << "CRC-64 match" << std::endl;
   }
+
+  return 0;
 }

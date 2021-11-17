@@ -116,18 +116,9 @@ if(BUILD_TESTING)
 endif()
 
 if(BUILD_STORAGE_SAMPLES)
-  target_sources(
-    azure-storage-sample
-      PRIVATE
-        sample/blob_getting_started.cpp
-        sample/blob_list_operation.cpp
-        sample/blob_sas.cpp
-        sample/transactional_checksum.cpp
-  )
-
-  target_link_libraries(azure-storage-sample PRIVATE azure-storage-blobs)
+  add_subdirectory(samples)
 endif()
 
-if (BUILD_PERFORMANCE_TESTS)
+if(BUILD_PERFORMANCE_TESTS)
   add_subdirectory(test/perf)
 endif()

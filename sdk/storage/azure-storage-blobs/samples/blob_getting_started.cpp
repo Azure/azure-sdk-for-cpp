@@ -5,19 +5,17 @@
 
 #include <azure/storage/blobs.hpp>
 
-#include "samples_common.hpp"
-
-SAMPLE(BlobsGettingStarted, BlobsGettingStarted)
-void BlobsGettingStarted()
+int main()
 {
   using namespace Azure::Storage::Blobs;
 
-  std::string containerName = "sample-container";
-  std::string blobName = "sample-blob";
-  std::string blobContent = "Hello Azure!";
+  const std::string connectionString = "";
+  const std::string containerName = "sample-container";
+  const std::string blobName = "sample-blob";
+  const std::string blobContent = "Hello Azure!";
 
   auto containerClient
-      = BlobContainerClient::CreateFromConnectionString(GetConnectionString(), containerName);
+      = BlobContainerClient::CreateFromConnectionString(connectionString, containerName);
 
   containerClient.CreateIfNotExists();
 
@@ -40,4 +38,6 @@ void BlobsGettingStarted()
   blobClient.DownloadTo(buffer.data(), buffer.size());
 
   std::cout << std::string(buffer.begin(), buffer.end()) << std::endl;
+
+  return 0;
 }

@@ -5,23 +5,21 @@
 
 #include <azure/storage/blobs.hpp>
 
-#include "samples_common.hpp"
-
-SAMPLE(BlobListOperation, BlobListOperation)
-void BlobListOperation()
+int main()
 {
   using namespace Azure::Storage::Blobs;
 
-  std::string containerName = "sample-container";
-  std::string blobName = "sample-blob";
-  std::string blobContent = "Hello Azure!";
+  const std::string connectionString = "";
+  const std::string containerName = "sample-container";
+  const std::string blobName = "sample-blob";
+  const std::string blobContent = "Hello Azure!";
 
   {
     // Create some containers and blobs for test
     for (int i = 0; i < 2; ++i)
     {
       auto containerClient = BlobContainerClient::CreateFromConnectionString(
-          GetConnectionString(), containerName + std::to_string(i));
+          connectionString, containerName + std::to_string(i));
       containerClient.CreateIfNotExists();
       for (int j = 0; j < 3; ++j)
       {
@@ -33,7 +31,7 @@ void BlobListOperation()
     }
   }
 
-  auto serviceClient = BlobServiceClient::CreateFromConnectionString(GetConnectionString());
+  auto serviceClient = BlobServiceClient::CreateFromConnectionString(connectionString);
 
   for (auto containerPage = serviceClient.ListBlobContainers(); containerPage.HasPage();
        containerPage.MoveToNextPage())
@@ -54,4 +52,6 @@ void BlobListOperation()
       }
     }
   }
+
+  return 0;
 }

@@ -5,19 +5,15 @@
 
 #include <azure/storage/blobs.hpp>
 
-#include "samples_common.hpp"
-
-SAMPLE(BlobSas, BlobSas)
-void BlobSas()
+int main()
 {
   using namespace Azure::Storage::Blobs;
 
-  std::string accountName = GetAccountName();
-  std::string accountKey = GetAccountKey();
-
-  std::string containerName = "sample-container";
-  std::string blobName = "sample-blob";
-  std::string blobContent = "Hello Azure!";
+  const std::string accountName = "";
+  const std::string accountKey = "";
+  const std::string containerName = "sample-container";
+  const std::string blobName = "sample-blob";
+  const std::string blobContent = "Hello Azure!";
 
   // Create a container and a blob for test
   {
