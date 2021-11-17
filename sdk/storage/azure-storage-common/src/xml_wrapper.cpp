@@ -608,9 +608,7 @@ namespace Azure { namespace Storage { namespace _internal {
   std::string XmlWriter::GetDocument()
   {
     auto context = static_cast<XmlWriterContext*>(m_context);
-    xmlTextWriterPtr writer = context->writer;
     xmlBufferPtr buffer = context->buffer;
-    xmlTextWriterFlush(writer);
     return std::string(reinterpret_cast<const char*>(buffer->content), buffer->use);
   }
 
