@@ -183,10 +183,6 @@ public:
    * @brief #Azure::Core::ETag representing everything.
    * @note The any #Azure::Core::ETag is *, (unquoted).  It is NOT the same as "*".
    */
-  static const ETag& Any()
-  {
-    static ETag any = ETag("*");
-    return any;
-  }
+  static const ETag& Any();
 };
 } // namespace Azure
