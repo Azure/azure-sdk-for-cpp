@@ -148,7 +148,6 @@ jobs:
     CmakeArgs: ""
     AZURE_TEST_MODE: "LIVE"
 
-
   steps:
   - checkout: self
     submodules: recursive
