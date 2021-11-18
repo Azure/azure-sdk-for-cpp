@@ -88,7 +88,7 @@ az_rtti_setup(
 )
 
 # coverage. Has no effect if BUILD_CODE_COVERAGE is OFF
-create_code_coverage(storage azure-storage-files-shares azure-storage-test)
+create_code_coverage(storage azure-storage-files-shares azure-storage-test "tests?/*;samples?/*")
 
 if(BUILD_TESTING)
   target_sources(
