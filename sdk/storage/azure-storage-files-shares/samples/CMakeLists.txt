@@ -3,5 +3,5 @@
 
 cmake_minimum_required (VERSION 3.13)
 
-add_executable(file_share_getting_started file_share_getting_started.cpp)
-target_link_libraries(file_share_getting_started PRIVATE azure-storage-files-shares)
+add_executable(file-share-getting-started file_share_getting_started.cpp)
+target_link_libraries(file-share-getting-started PRIVATE azure-storage-files-shares)

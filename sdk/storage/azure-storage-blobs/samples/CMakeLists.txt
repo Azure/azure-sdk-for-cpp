@@ -3,14 +3,14 @@
 
 cmake_minimum_required (VERSION 3.13)
 
-add_executable(blob_getting_started blob_getting_started.cpp)
-target_link_libraries(blob_getting_started PRIVATE azure-storage-blobs)
+add_executable(blob-getting-started blob_getting_started.cpp)
+target_link_libraries(blob-getting-started PRIVATE azure-storage-blobs)
 
-add_executable(blob_list_operation blob_list_operation.cpp)
-target_link_libraries(blob_list_operation PRIVATE azure-storage-blobs)
+add_executable(blob-list-operation blob_list_operation.cpp)
+target_link_libraries(blob-list-operation  PRIVATE azure-storage-blobs)
 
-add_executable(blob_sas blob_sas.cpp)
-target_link_libraries(blob_sas PRIVATE azure-storage-blobs)
+add_executable(blob-sas blob_sas.cpp)
+target_link_libraries(blob-sas PRIVATE azure-storage-blobs)
 
-add_executable(transactional_checksum transactional_checksum.cpp)
-target_link_libraries(transactional_checksum PRIVATE azure-storage-blobs)
+add_executable(transactional-checksum transactional_checksum.cpp)
+target_link_libraries(transactional-checksum PRIVATE azure-storage-blobs)
