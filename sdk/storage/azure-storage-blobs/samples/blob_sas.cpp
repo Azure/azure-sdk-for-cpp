@@ -1,26 +1,56 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
 
+#if defined(_MSC_VER)
+#define _CRT_SECURE_NO_WARNINGS
+#endif
+
 #include <iostream>
+#include <cstdio>
+#include <stdexcept>
 
 #include <azure/storage/blobs.hpp>
+
+std::string GetConnectionString()
+{
+  const static std::string ConnectionString = "";
+
+  if (!ConnectionString.empty())
+  {
+    return ConnectionString;
+  }
+  const static std::string envConnectionString = std::getenv("AZURE_STORAGE_CONNECTION_STRING");
+  if (!envConnectionString.empty())
+  {
+    return envConnectionString;
+  }
+  throw std::runtime_error("Cannot find connection string.");
+}
+
+std::string GetAccountName()
+{
+  return Azure::Storage::_internal::ParseConnectionString(GetConnectionString()).AccountName;
+}
+
+std::string GetAccountKey()
+{
+  return Azure::Storage::_internal::ParseConnectionString(GetConnectionString()).AccountKey;
+}
 
 int main()
 {
   using namespace Azure::Storage::Blobs;
 
-  const std::string accountName = "";
-  const std::string accountKey = "";
   const std::string containerName = "sample-container";
   const std::string blobName = "sample-blob";
   const std::string blobContent = "Hello Azure!";
 
   // Create a container and a blob for test
   {
-    auto credential
-        = std::make_shared<Azure::Storage::StorageSharedKeyCredential>(accountName, accountKey);
+    auto credential = std::make_shared<Azure::Storage::StorageSharedKeyCredential>(
+        GetAccountName(), GetAccountKey());
     auto containerClient = BlobContainerClient(
-        "https://" + accountName + ".blob.core.windows.net/" + containerName, credential);
+        "https://" + GetAccountName() + ".blob.core.windows.net/" + containerName, credential);
     containerClient.CreateIfNotExists();
     BlockBlobClient blobClient = containerClient.GetBlockBlobClient(blobName);
     blobClient.UploadFrom(reinterpret_cast<const uint8_t*>(blobContent.data()), blobContent.size());
@@ -35,10 +65,10 @@ int main()
   sasBuilder.SetPermissions(Azure::Storage::Sas::BlobSasPermissions::Read);
 
   std::string sasToken = sasBuilder.GenerateSasToken(
-      Azure::Storage::StorageSharedKeyCredential(accountName, accountKey));
+      Azure::Storage::StorageSharedKeyCredential(GetAccountName(), GetAccountKey()));
 
   auto blobClient = BlobClient(
-      "https://" + accountName + ".blob.core.windows.net/" + containerName + "/" + blobName
+      "https://" + GetAccountName() + ".blob.core.windows.net/" + containerName + "/" + blobName
       + sasToken);
 
   // We can read the blob

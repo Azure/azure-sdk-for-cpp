@@ -1,20 +1,41 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
 
+#if defined(_MSC_VER)
+#define _CRT_SECURE_NO_WARNINGS
+#endif
+
 #include <iostream>
+#include <cstdio>
+#include <stdexcept>
 
 #include <azure/storage/files/shares.hpp>
+
+std::string GetConnectionString()
+{
+  const static std::string ConnectionString = "";
+
+  if (!ConnectionString.empty())
+  {
+    return ConnectionString;
+  }
+  const static std::string envConnectionString = std::getenv("AZURE_STORAGE_CONNECTION_STRING");
+  if (!envConnectionString.empty())
+  {
+    return envConnectionString;
+  }
+  throw std::runtime_error("Cannot find connection string.");
+}
 
 int main()
 {
   using namespace Azure::Storage::Files::Shares;
 
-  const std::string connectionString = "";
   const std::string shareName = "sample-share";
   const std::string fileName = "sample-file";
   const std::string fileContent = "Hello Azure!";
 
-  auto shareClient = ShareClient::CreateFromConnectionString(connectionString, shareName);
+  auto shareClient = ShareClient::CreateFromConnectionString(GetConnectionString(), shareName);
   shareClient.CreateIfNotExists();
 
   ShareFileClient fileClient = shareClient.GetRootDirectoryClient().GetFileClient(fileName);

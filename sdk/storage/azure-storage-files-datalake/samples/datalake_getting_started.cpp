@@ -1,21 +1,42 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
 
+#if defined(_MSC_VER)
+#define _CRT_SECURE_NO_WARNINGS
+#endif
+
 #include <iostream>
+#include <cstdio>
+#include <stdexcept>
 
 #include <azure/storage/files/datalake.hpp>
+
+std::string GetConnectionString()
+{
+  const static std::string ConnectionString = "";
+
+  if (!ConnectionString.empty())
+  {
+    return ConnectionString;
+  }
+  const static std::string envConnectionString = std::getenv("AZURE_STORAGE_CONNECTION_STRING");
+  if (!envConnectionString.empty())
+  {
+    return envConnectionString;
+  }
+  throw std::runtime_error("Cannot find connection string.");
+}
 
 int main()
 {
   using namespace Azure::Storage::Files::DataLake;
 
-  const std::string connectionString = "";
   const std::string fileSystemName = "sample-file-system";
   const std::string directoryName = "sample-directory";
   const std::string fileName = "sample-file";
 
   auto fileSystemClient
-      = DataLakeFileSystemClient::CreateFromConnectionString(connectionString, fileSystemName);
+      = DataLakeFileSystemClient::CreateFromConnectionString(GetConnectionString(), fileSystemName);
   fileSystemClient.CreateIfNotExists();
 
   // Create a directory.
