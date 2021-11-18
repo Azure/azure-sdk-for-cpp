@@ -46,8 +46,8 @@ int main()
 
   try
   {
-    std::string certificateName1 = "Sample1";
-    std::string certificateName2 = "Sample2";
+    std::string certificateName1 = "SampleCertificate1";
+    std::string certificateName2 = "SampleCertificate2";
     KeyVaultCertificateWithPolicy certificate1;
     KeyVaultCertificateWithPolicy certificate2;
     // create and get two certificates

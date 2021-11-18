@@ -62,6 +62,15 @@ jobs:
         CmakeArgs: ' -DBUILD_TESTING=ON -DBUILD_PERFORMANCE_TESTS=ON -DRUN_LONG_UNIT_TESTS=ON -DCMAKE_BUILD_TYPE=Release'
         AZURE_CORE_ENABLE_JSON_TESTS: 1
         BuildArgs: '-j 4'
+      Ubuntu20_samples:
+        Pool: azsdk-pool-mms-ubuntu-1804-general
+        OSVmImage: MMSUbuntu18.04
+        VcpkgInstall: 'curl[ssl] libxml2 openssl'
+        VCPKG_DEFAULT_TRIPLET: 'x64-linux'
+        # Builds samples and run them against the deployed resources. Samples requires Azure Account, so only works on live tests.
+        CmakeArgs: ' -DBUILD_TESTING=ON -DBUILD_SAMPLES=ON -DBUILD_STORAGE_SAMPLES=ON'
+        BuildArgs: '-j 4'
+        RunSamples: 1
       Ubuntu20_x64_no_rtti:
         Pool: azsdk-pool-mms-ubuntu-1804-general
         OSVmImage: MMSUbuntu18.04
@@ -201,6 +210,11 @@ jobs:
   - script: ctest -C Debug --tests-regex ${{ parameters.CtestRegex }} --no-compress-output -T Test
     workingDirectory: build
     displayName: ctest
+    # Runs only if test-resources are happly deployed.
+    # unit-tests runs for those configs where samples are not ran.
+    # This enables to run tests and samples at the same time as different matrix configuration.
+    # Then unit-tests runs, samples should not run.
+    condition: and(succeeded(), ne(variables['RunSamples'], '1'))
 
   - task: PublishTestResults@2
     inputs:
@@ -211,7 +225,32 @@ jobs:
       mergeTestResults: true
       publishRunAttachments: true
     displayName: Publish test results
-    condition: succeededOrFailed()
+    # this step only makes sense when ctest has run
+    condition: and(succeededOrFailed(), ne(variables['RunSamples'], '1'))
+
+    # Running Samples step.
+    # Will run samples described on a file name [service]-samples.txt within the build directory.
+    # For example keyvault-samples.txt.
+    # The file is written by CMake during configuration when building samples.
+  - bash: |
+      IFS=$'\n'
+      if [[ -f "./${{ parameters.ServiceDirectory }}-samples.txt" ]]; then
+        for sample in `cat ./${{ parameters.ServiceDirectory }}-samples.txt`
+        do
+          echo "**********Running sample: ${sample}"
+          bash -c "$sample"
+          status=$?
+          if [[ $status -eq 0 ]]; then
+            echo "*********Sample completed*********"
+          else
+            echo "*Sample returned a failed code: $status"
+            exit 1
+          fi
+        done
+      fi
+    workingDirectory: build
+    displayName: "Run Samples for : ${{ parameters.ServiceDirectory }}"
+    condition: and(succeeded(), eq(variables['RunSamples'], '1'))
 
   # Make coverage targets (specified in coverage_targets.txt) and assemble
   # coverage report
@@ -220,7 +259,7 @@ jobs:
       ../tools/reportgenerator "-reports:${{ parameters.CoverageReportPath }}" "-targetdir:." "-reporttypes:Cobertura"
     workingDirectory: build
     displayName: Generate Code Coverage Data
-    condition: and(succeededOrFailed(), ne(variables['CODE_COVERAGE'], 'disabled'), ne(variables['CODE_COVERAGE'], ''))
+    condition: and(succeeded(), ne(variables['CODE_COVERAGE'], 'disabled'), ne(variables['CODE_COVERAGE'], ''))
   
   - task: PublishCodeCoverageResults@1
     inputs:

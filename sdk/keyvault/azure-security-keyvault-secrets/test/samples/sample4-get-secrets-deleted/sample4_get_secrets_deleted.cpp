@@ -37,8 +37,8 @@ int main()
   // create client
   SecretClient secretClient(std::getenv("AZURE_KEYVAULT_URL"), credential);
 
-  std::string secretName("MySampleSecret");
-  std::string secretName2("MySampleSecret2");
+  std::string secretName("Secret1");
+  std::string secretName2("Secret2");
   std::string secretValue("my secret value");
 
   try
