@@ -9,7 +9,6 @@
 #pragma once
 
 // azure/core
-#include "azure/core/azure_assert.hpp"
 #include "azure/core/base64.hpp"
 #include "azure/core/case_insensitive_containers.hpp"
 #include "azure/core/context.hpp"

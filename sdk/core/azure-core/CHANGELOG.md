@@ -6,6 +6,8 @@
 
 ### Breaking Changes
 
+- `azure/core/azure_assert.hpp` header is moved to internal. `AzureNoReturnPath()` function is removed from global namespace. Associated macros, such as `AZURE_ASSERT` are renamed to indicate that they are internal. If your code was using the `AZURE_ASSERT` macro, consider using the standard library's `assert` as an alternative.
+
 ### Bugs Fixed
 
 ### Other Changes
