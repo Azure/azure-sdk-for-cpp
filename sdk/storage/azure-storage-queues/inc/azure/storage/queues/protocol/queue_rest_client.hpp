@@ -642,8 +642,8 @@ namespace Azure { namespace Storage { namespace Queues {
           {
             _internal::XmlWriter writer;
             SetServicePropertiesOptionsToXml(writer, options);
-            xml_body = writer.GetDocument();
             writer.Write(_internal::XmlNode{_internal::XmlNodeType::End});
+            xml_body = writer.GetDocument();
           }
           Azure::Core::IO::MemoryBodyStream xml_body_stream(
               reinterpret_cast<const uint8_t*>(xml_body.data()), xml_body.length());
@@ -1740,8 +1740,8 @@ namespace Azure { namespace Storage { namespace Queues {
           {
             _internal::XmlWriter writer;
             SetQueueAccessPolicyOptionsToXml(writer, options);
-            xml_body = writer.GetDocument();
             writer.Write(_internal::XmlNode{_internal::XmlNodeType::End});
+            xml_body = writer.GetDocument();
           }
           Azure::Core::IO::MemoryBodyStream xml_body_stream(
               reinterpret_cast<const uint8_t*>(xml_body.data()), xml_body.length());
@@ -1785,8 +1785,8 @@ namespace Azure { namespace Storage { namespace Queues {
           {
             _internal::XmlWriter writer;
             EnqueueMessageOptionsToXml(writer, options);
-            xml_body = writer.GetDocument();
             writer.Write(_internal::XmlNode{_internal::XmlNodeType::End});
+            xml_body = writer.GetDocument();
           }
           Azure::Core::IO::MemoryBodyStream xml_body_stream(
               reinterpret_cast<const uint8_t*>(xml_body.data()), xml_body.length());
@@ -2038,8 +2038,8 @@ namespace Azure { namespace Storage { namespace Queues {
           {
             _internal::XmlWriter writer;
             UpdateMessageOptionsToXml(writer, options);
-            xml_body = writer.GetDocument();
             writer.Write(_internal::XmlNode{_internal::XmlNodeType::End});
+            xml_body = writer.GetDocument();
           }
           Azure::Core::IO::MemoryBodyStream xml_body_stream(
               reinterpret_cast<const uint8_t*>(xml_body.data()), xml_body.length());

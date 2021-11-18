@@ -3035,8 +3035,8 @@ namespace Azure { namespace Storage { namespace Blobs {
           {
             _internal::XmlWriter writer;
             GetUserDelegationKeyOptionsToXml(writer, options);
-            xml_body = writer.GetDocument();
             writer.Write(_internal::XmlNode{_internal::XmlNodeType::End});
+            xml_body = writer.GetDocument();
           }
           Azure::Core::IO::MemoryBodyStream xml_body_stream(
               reinterpret_cast<const uint8_t*>(xml_body.data()), xml_body.length());
@@ -3122,8 +3122,8 @@ namespace Azure { namespace Storage { namespace Blobs {
           {
             _internal::XmlWriter writer;
             SetServicePropertiesOptionsToXml(writer, options);
-            xml_body = writer.GetDocument();
             writer.Write(_internal::XmlNode{_internal::XmlNodeType::End});
+            xml_body = writer.GetDocument();
           }
           Azure::Core::IO::MemoryBodyStream xml_body_stream(
               reinterpret_cast<const uint8_t*>(xml_body.data()), xml_body.length());
@@ -5182,8 +5182,8 @@ namespace Azure { namespace Storage { namespace Blobs {
           {
             _internal::XmlWriter writer;
             SetBlobContainerAccessPolicyOptionsToXml(writer, options);
-            xml_body = writer.GetDocument();
             writer.Write(_internal::XmlNode{_internal::XmlNodeType::End});
+            xml_body = writer.GetDocument();
           }
           Azure::Core::IO::MemoryBodyStream xml_body_stream(
               reinterpret_cast<const uint8_t*>(xml_body.data()), xml_body.length());
@@ -8246,8 +8246,8 @@ namespace Azure { namespace Storage { namespace Blobs {
           {
             _internal::XmlWriter writer;
             SetBlobTagsOptionsToXml(writer, options);
-            xml_body = writer.GetDocument();
             writer.Write(_internal::XmlNode{_internal::XmlNodeType::End});
+            xml_body = writer.GetDocument();
           }
           Azure::Core::IO::MemoryBodyStream xml_body_stream(
               reinterpret_cast<const uint8_t*>(xml_body.data()), xml_body.length());
@@ -9266,8 +9266,8 @@ namespace Azure { namespace Storage { namespace Blobs {
           {
             _internal::XmlWriter writer;
             CommitBlockListOptionsToXml(writer, options);
-            xml_body = writer.GetDocument();
             writer.Write(_internal::XmlNode{_internal::XmlNodeType::End});
+            xml_body = writer.GetDocument();
           }
           Azure::Core::IO::MemoryBodyStream xml_body_stream(
               reinterpret_cast<const uint8_t*>(xml_body.data()), xml_body.length());
