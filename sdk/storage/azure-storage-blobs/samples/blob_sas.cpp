@@ -5,8 +5,8 @@
 #define _CRT_SECURE_NO_WARNINGS
 #endif
 
-#include <iostream>
 #include <cstdio>
+#include <iostream>
 #include <stdexcept>
 
 #include <azure/storage/blobs.hpp>
