@@ -115,9 +115,9 @@ namespace Azure { namespace Storage { namespace Queues {
      *
      * @param options Optional parameters to execute this function.
      * @param context Context for cancelling long running operations.
-     * @return A GetQueuePropertiesResult describing the queue and its properties.
+     * @return A QueueProperties describing the queue and its properties.
      */
-    Azure::Response<Models::GetQueuePropertiesResult> GetProperties(
+    Azure::Response<Models::QueueProperties> GetProperties(
         const GetQueuePropertiesOptions& options = GetQueuePropertiesOptions(),
         const Azure::Core::Context& context = Azure::Core::Context()) const;
 
@@ -140,23 +140,23 @@ namespace Azure { namespace Storage { namespace Queues {
      *
      * @param options Optional parameters to execute this function.
      * @param context Context for cancelling long running operations.
-     * @return A GetQueueAccessPolicyResult describing the queue's access policy.
+     * @return A QueueAccessPolicy describing the queue's access policy.
      */
-    Azure::Response<Models::GetQueueAccessPolicyResult> GetAccessPolicy(
+    Azure::Response<Models::QueueAccessPolicy> GetAccessPolicy(
         const GetQueueAccessPolicyOptions& options = GetQueueAccessPolicyOptions(),
         const Azure::Core::Context& context = Azure::Core::Context()) const;
 
     /**
      * @brief Sets stored access policies for the queue that may be used with SAS.
      *
-     * @param signedIdentifiers Stored access policies that can be used to provide fine grained
-     * control over queue permissions.
+     * @param accessPolicy Stored access policies that can be used to provide fine grained control
+     * over queue permissions.
      * @param options Optional parameters to execute this function.
      * @param context Context for cancelling long running operations.
      * @return A SetQueueAccessPolicyResult describing the updated queue.
      */
     Azure::Response<Models::SetQueueAccessPolicyResult> SetAccessPolicy(
-        std::vector<Models::SignedIdentifier> signedIdentifiers,
+        const Models::QueueAccessPolicy& accessPolicy,
         const SetQueueAccessPolicyOptions& options = SetQueueAccessPolicyOptions(),
         const Azure::Core::Context& context = Azure::Core::Context()) const;
 
@@ -180,9 +180,9 @@ namespace Azure { namespace Storage { namespace Queues {
      *
      * @param options Optional parameters to execute this function.
      * @param context Context for cancelling long running operations.
-     * @return A ReceiveMessagesResult that contains a vector of queue messages.
+     * @return A ReceivedMessages that contains a vector of queue messages.
      */
-    Azure::Response<Models::ReceiveMessagesResult> ReceiveMessages(
+    Azure::Response<Models::ReceivedMessages> ReceiveMessages(
         const ReceiveMessagesOptions& options = ReceiveMessagesOptions(),
         const Azure::Core::Context& context = Azure::Core::Context()) const;
 
@@ -192,9 +192,9 @@ namespace Azure { namespace Storage { namespace Queues {
      *
      * @param options Optional parameters to execute this function.
      * @param context Context for cancelling long running operations.
-     * @return A PeekMessagesResult that contains a vector of queue messages.
+     * @return A PeekedMessages that contains a vector of queue messages.
      */
-    Azure::Response<Models::PeekMessagesResult> PeekMessages(
+    Azure::Response<Models::PeekedMessages> PeekMessages(
         const PeekMessagesOptions& options = PeekMessagesOptions(),
         const Azure::Core::Context& context = Azure::Core::Context()) const;
 

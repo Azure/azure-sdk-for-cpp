@@ -150,7 +150,7 @@ namespace Azure { namespace Storage { namespace Queues {
     }
   }
 
-  Azure::Response<Models::GetQueuePropertiesResult> QueueClient::GetProperties(
+  Azure::Response<Models::QueueProperties> QueueClient::GetProperties(
       const GetQueuePropertiesOptions& options,
       const Azure::Core::Context& context) const
   {
@@ -172,7 +172,7 @@ namespace Azure { namespace Storage { namespace Queues {
         *m_pipeline, m_queueUrl, protocolLayerOptions, context);
   }
 
-  Azure::Response<Models::GetQueueAccessPolicyResult> QueueClient::GetAccessPolicy(
+  Azure::Response<Models::QueueAccessPolicy> QueueClient::GetAccessPolicy(
       const GetQueueAccessPolicyOptions& options,
       const Azure::Core::Context& context) const
   {
@@ -183,13 +183,13 @@ namespace Azure { namespace Storage { namespace Queues {
   }
 
   Azure::Response<Models::SetQueueAccessPolicyResult> QueueClient::SetAccessPolicy(
-      std::vector<Models::SignedIdentifier> signedIdentifiers,
+      const Models::QueueAccessPolicy& accessPolicy,
       const SetQueueAccessPolicyOptions& options,
       const Azure::Core::Context& context) const
   {
     (void)options;
     _detail::QueueRestClient::Queue::SetQueueAccessPolicyOptions protocolLayerOptions;
-    protocolLayerOptions.SignedIdentifiers = std::move(signedIdentifiers);
+    protocolLayerOptions.SignedIdentifiers = accessPolicy.SignedIdentifiers;
     return _detail::QueueRestClient::Queue::SetAccessPolicy(
         *m_pipeline, m_queueUrl, protocolLayerOptions, context);
   }
@@ -209,7 +209,7 @@ namespace Azure { namespace Storage { namespace Queues {
         *m_pipeline, messagesUrl, protocolLayerOptions, context);
   }
 
-  Azure::Response<Models::ReceiveMessagesResult> QueueClient::ReceiveMessages(
+  Azure::Response<Models::ReceivedMessages> QueueClient::ReceiveMessages(
       const ReceiveMessagesOptions& options,
       const Azure::Core::Context& context) const
   {
@@ -222,7 +222,7 @@ namespace Azure { namespace Storage { namespace Queues {
         *m_pipeline, messagesUrl, protocolLayerOptions, context);
   }
 
-  Azure::Response<Models::PeekMessagesResult> QueueClient::PeekMessages(
+  Azure::Response<Models::PeekedMessages> QueueClient::PeekMessages(
       const PeekMessagesOptions& options,
       const Azure::Core::Context& context) const
   {

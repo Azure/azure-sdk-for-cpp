@@ -1127,6 +1127,38 @@ namespace Azure { namespace Storage { namespace Test {
       options.AccessConditions.TagConditions = successWhereExpression;
       EXPECT_NO_THROW(blockBlobClient.GetBlockList(options));
     }
+
+    {
+      auto sourceBlobClient = Azure::Storage::Blobs::BlockBlobClient::CreateFromConnectionString(
+          StandardStorageConnectionString(), m_containerName, RandomString());
+      std::vector<uint8_t> buffer;
+      buffer.resize(1024);
+      sourceBlobClient.UploadFrom(buffer.data(), buffer.size());
+
+      Blobs::CopyBlobFromUriOptions options;
+      options.AccessConditions.TagConditions = failWhereExpression;
+      EXPECT_THROW(
+          blockBlobClient.CopyFromUri(sourceBlobClient.GetUrl() + GetSas(), options),
+          StorageException);
+      options.AccessConditions.TagConditions = successWhereExpression;
+      EXPECT_NO_THROW(blockBlobClient.CopyFromUri(sourceBlobClient.GetUrl() + GetSas(), options));
+    }
+
+    {
+      auto sourceBlobClient = Azure::Storage::Blobs::BlockBlobClient::CreateFromConnectionString(
+          StandardStorageConnectionString(), m_containerName, RandomString());
+      std::vector<uint8_t> buffer;
+      buffer.resize(1024);
+      sourceBlobClient.UploadFrom(buffer.data(), buffer.size());
+      sourceBlobClient.SetTags(tags);
+
+      Blobs::StartBlobCopyFromUriOptions options;
+      options.SourceAccessConditions.TagConditions = failWhereExpression;
+      EXPECT_THROW(
+          blockBlobClient.StartCopyFromUri(sourceBlobClient.GetUrl(), options), StorageException);
+      options.SourceAccessConditions.TagConditions = successWhereExpression;
+      EXPECT_NO_THROW(blockBlobClient.StartCopyFromUri(sourceBlobClient.GetUrl(), options));
+    }
   }
 
   TEST_F(BlobContainerClientTest, SpecialBlobName)

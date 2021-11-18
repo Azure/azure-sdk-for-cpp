@@ -210,7 +210,9 @@ namespace Azure { namespace Storage { namespace Test {
       identifier.StartsOn = sasStartsOn;
       identifier.ExpiresOn = sasExpiresOn;
       identifier.Permissions = "r";
-      queueClient0.SetAccessPolicy({identifier});
+      Queues::Models::QueueAccessPolicy accessPolicy;
+      accessPolicy.SignedIdentifiers.push_back(identifier);
+      queueClient0.SetAccessPolicy(accessPolicy);
 
       Sas::QueueSasBuilder builder2 = queueSasBuilder;
       builder2.StartsOn.Reset();

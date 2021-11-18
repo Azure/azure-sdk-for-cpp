@@ -3,6 +3,7 @@
 
 #include "azure/storage/blobs/blob_client.hpp"
 
+#include <azure/core/azure_assert.hpp>
 #include <azure/core/http/policies/policy.hpp>
 #include <azure/storage/common/internal/concurrent_transfer.hpp>
 #include <azure/storage/common/internal/constants.hpp>
@@ -528,6 +529,38 @@ namespace Azure { namespace Storage { namespace Blobs {
     protocolLayerOptions.LeaseId = options.AccessConditions.LeaseId;
     protocolLayerOptions.IfTags = options.AccessConditions.TagConditions;
     return _detail::BlobRestClient::Blob::SetAccessTier(
+        *m_pipeline, m_blobUrl, protocolLayerOptions, context);
+  }
+
+  Azure::Response<Models::CopyBlobFromUriResult> BlobClient::CopyFromUri(
+      const std::string& sourceUri,
+      const CopyBlobFromUriOptions& options,
+      const Azure::Core::Context& context) const
+  {
+    _detail::BlobRestClient::Blob::CopyBlobFromUriOptions protocolLayerOptions;
+    protocolLayerOptions.Metadata = options.Metadata;
+    protocolLayerOptions.Tags = options.Tags;
+    protocolLayerOptions.SourceUri = sourceUri;
+    protocolLayerOptions.AccessTier = options.AccessTier;
+    protocolLayerOptions.LeaseId = options.AccessConditions.LeaseId;
+    protocolLayerOptions.IfModifiedSince = options.AccessConditions.IfModifiedSince;
+    protocolLayerOptions.IfUnmodifiedSince = options.AccessConditions.IfUnmodifiedSince;
+    protocolLayerOptions.IfMatch = options.AccessConditions.IfMatch;
+    protocolLayerOptions.IfNoneMatch = options.AccessConditions.IfNoneMatch;
+    protocolLayerOptions.IfTags = options.AccessConditions.TagConditions;
+    protocolLayerOptions.SourceIfModifiedSince = options.SourceAccessConditions.IfModifiedSince;
+    protocolLayerOptions.SourceIfUnmodifiedSince = options.SourceAccessConditions.IfUnmodifiedSince;
+    protocolLayerOptions.SourceIfMatch = options.SourceAccessConditions.IfMatch;
+    protocolLayerOptions.SourceIfNoneMatch = options.SourceAccessConditions.IfNoneMatch;
+    if (options.TransactionalContentHash.HasValue())
+    {
+      AZURE_ASSERT_MSG(
+          options.TransactionalContentHash.Value().Algorithm == HashAlgorithm::Md5,
+          "This operation only supports MD5 transactional content hash.");
+      protocolLayerOptions.TransactionalContentHash = options.TransactionalContentHash;
+    }
+
+    return _detail::BlobRestClient::Blob::CopyFromUri(
         *m_pipeline, m_blobUrl, protocolLayerOptions, context);
   }
 

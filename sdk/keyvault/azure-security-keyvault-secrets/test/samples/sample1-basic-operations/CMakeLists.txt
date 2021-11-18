@@ -3,13 +3,13 @@
 
 cmake_minimum_required (VERSION 3.13)
 
-project (sample3-delete-recover LANGUAGES CXX)
+project (sample1-basic-operations LANGUAGES CXX)
 set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 
 add_executable (
-  sample3-delete-recover
-  sample3-delete-recover.cpp
+  sample1-basic-operations
+  sample1_basic_operations.cpp
 )
 
-target_link_libraries(sample3-delete-recover PRIVATE azure-security-keyvault-secrets azure-identity)
+target_link_libraries(sample1-basic-operations PRIVATE azure-security-keyvault-secrets azure-identity)

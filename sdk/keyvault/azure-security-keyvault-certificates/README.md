@@ -277,14 +277,14 @@ You will notice that additional information is logged, like the client request I
 
 Several Azure Key Vault secrets client library samples are available to you in this GitHub repository. These samples provide example code for additional scenarios commonly encountered while working with Azure Key Vault:
 
-* [Certificate-Basic-Operations](https://github.com/Azure/azure-sdk-for-cpp/tree/main/sdk/keyvault/azure-security-keyvault-certificates/samples/certificate-basic-operations):
+* Certificate-Basic-Operations:
   * create a certificate
   * get a certificate
   * update a certificate
   * delete a certificate
   * purge a certificate
 
-* [Certificates-Get-Certificates](https://github.com/Azure/azure-sdk-for-cpp/tree/main/sdk/keyvault/azure-security-keyvault-certificates/samples/certificate-GetCertificates):
+* Certificates-Get-Certificates:
   * create certificates
   * get properties of certificates
   * get properties of certificate versions
@@ -292,7 +292,7 @@ Several Azure Key Vault secrets client library samples are available to you in t
   * get deleted certificates
   * purge a certificate
 
-* [Certificates-Import-Certificate](https://github.com/Azure/azure-sdk-for-cpp/tree/main/sdk/keyvault/azure-security-keyvault-certificates/samples/certificate-ImportCertificate):
+* Certificates-Import-Certificate:
   * Import a PEM certificate
   * import a PKCS certificate
 
@@ -326,7 +326,7 @@ Security issues and bugs should be reported privately, via email, to the Microso
 
 ### License
 
-Azure SDK for C++ is licensed under the [MIT](https://github.com/Azure/azure-sdk-for-cpp/blob/main/sdk/template/azure-template/LICENSE) license.
+Azure SDK for C++ is licensed under the [MIT](https://github.com/Azure/azure-sdk-for-cpp/blob/main/LICENSE.txt) license.
 
 <!-- LINKS -->
 [api_reference]: https://azure.github.io/azure-sdk-for-cpp/keyvault.html

@@ -294,7 +294,7 @@ TEST_F(KeyVaultCertificateClientTest, UpdateIssuer)
 
   {
     issuer.Credentials.Password = "password2";
-    auto result = client.UpdateIssuer(issuer);
+    auto result = client.UpdateIssuer(issuer.Name, issuer);
     CheckIssuers(result.Value, issuer);
   }
 
@@ -755,7 +755,7 @@ TEST_F(KeyVaultCertificateClientTest, DownloadImportPkcs)
   {
     auto result = DownloadCertificate(pkcs, client);
     ImportCertificateOptions options;
-    options.Value = result.Value.Certificate;
+    options.Certificate = result.Value.Certificate;
 
     options.Policy.Enabled = true;
     options.Policy.KeyType = CertificateKeyType::Rsa;
@@ -788,7 +788,7 @@ TEST_F(KeyVaultCertificateClientTest, DownloadImportPem)
   {
     auto result = DownloadCertificate(pem, client);
     ImportCertificateOptions options;
-    options.Value = result.Value.Certificate;
+    options.Certificate = result.Value.Certificate;
 
     options.Policy.Enabled = true;
     options.Policy.KeyType = CertificateKeyType::Rsa;

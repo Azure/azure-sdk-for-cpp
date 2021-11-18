@@ -188,19 +188,19 @@ Azure::Response<CertificateIssuer> CertificateClient::CreateIssuer(
 }
 
 Azure::Response<CertificateIssuer> CertificateClient::UpdateIssuer(
+    std::string const& issuerName,
     CertificateIssuer const& certificateIssuer,
     Azure::Core::Context const& context) const
 {
-  std::string name = certificateIssuer.Name;
   auto payload = CertificateIssuerSerializer::Serialize(certificateIssuer);
   Azure::Core::IO::MemoryBodyStream payloadStream(
       reinterpret_cast<const uint8_t*>(payload.data()), payload.size());
 
-  auto request
-      = CreateRequest(HttpMethod::Patch, {CertificatesPath, IssuersPath, name}, &payloadStream);
+  auto request = CreateRequest(
+      HttpMethod::Patch, {CertificatesPath, IssuersPath, issuerName}, &payloadStream);
 
   auto rawResponse = SendRequest(request, context);
-  auto value = CertificateIssuerSerializer::Deserialize(name, *rawResponse);
+  auto value = CertificateIssuerSerializer::Deserialize(issuerName, *rawResponse);
   return Azure::Response<CertificateIssuer>(std::move(value), std::move(rawResponse));
 }
 

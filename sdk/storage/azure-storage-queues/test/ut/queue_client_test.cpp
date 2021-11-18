@@ -156,7 +156,9 @@ namespace Azure { namespace Storage { namespace Test {
       signedIdentifiers.emplace_back(identifier);
     }
 
-    EXPECT_NO_THROW(queueClient.SetAccessPolicy(signedIdentifiers));
+    Queues::Models::QueueAccessPolicy accessPolicy;
+    accessPolicy.SignedIdentifiers = signedIdentifiers;
+    EXPECT_NO_THROW(queueClient.SetAccessPolicy(accessPolicy));
 
     auto ret = queueClient.GetAccessPolicy();
     EXPECT_EQ(ret.Value.SignedIdentifiers, signedIdentifiers);
