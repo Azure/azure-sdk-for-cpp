@@ -131,9 +131,9 @@ target_link_libraries(<your project name> PRIVATE Azure::azure-storage-files-sha
 ## Code Samples
 
 To get started with the coding, please visit the following code samples:
-- [How to use Blob Storage from C++](https://github.com/Azure/azure-sdk-for-cpp/blob/main/sdk/storage/azure-storage-blobs/sample/blob_getting_started.cpp)
-- [How to use DataLake Gen 2 Storage from C++](https://github.com/Azure/azure-sdk-for-cpp/blob/main/sdk/storage/azure-storage-files-datalake/sample/datalake_getting_started.cpp)
-- [How to use File Storage from C++](https://github.com/Azure/azure-sdk-for-cpp/blob/main/sdk/storage/azure-storage-files-shares/sample/file_share_getting_started.cpp)
+- [How to use Blob Storage from C++](https://github.com/Azure/azure-sdk-for-cpp/blob/main/sdk/storage/azure-storage-blobs/samples/blob_getting_started.cpp)
+- [How to use DataLake Gen 2 Storage from C++](https://github.com/Azure/azure-sdk-for-cpp/blob/main/sdk/storage/azure-storage-files-datalake/samples/datalake_getting_started.cpp)
+- [How to use File Storage from C++](https://github.com/Azure/azure-sdk-for-cpp/blob/main/sdk/storage/azure-storage-files-shares/samples/file_share_getting_started.cpp)
 
 <!-- LINKS -->
 [azsdk_vcpkg_install]: https://github.com/Azure/azure-sdk-for-cpp#download--install-the-sdk
