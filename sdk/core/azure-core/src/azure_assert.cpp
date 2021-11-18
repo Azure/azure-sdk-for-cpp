@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
 
-#include "azure/core/internal/assert.hpp"
+#include "azure/core/internal/azure_assert.hpp"
 
 [[noreturn]] void Azure::Core::_internal::AzureNoReturnPath(std::string const& msg)
 {

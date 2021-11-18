@@ -9,7 +9,7 @@
 
 #pragma once
 
-#include "azure/core/internal/assert.hpp"
+#include "azure/core/internal/azure_assert.hpp"
 
 #include <memory>
 #include <stdexcept>
