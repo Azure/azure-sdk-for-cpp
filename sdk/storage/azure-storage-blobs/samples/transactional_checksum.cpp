@@ -1,20 +1,41 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
 
+#if defined(_MSC_VER)
+#define _CRT_SECURE_NO_WARNINGS
+#endif
+
 #include <iostream>
+#include <cstdio>
+#include <stdexcept>
 
 #include <azure/storage/blobs.hpp>
+
+std::string GetConnectionString()
+{
+  const static std::string ConnectionString = "";
+
+  if (!ConnectionString.empty())
+  {
+    return ConnectionString;
+  }
+  const static std::string envConnectionString = std::getenv("AZURE_STORAGE_CONNECTION_STRING");
+  if (!envConnectionString.empty())
+  {
+    return envConnectionString;
+  }
+  throw std::runtime_error("Cannot find connection string.");
+}
 
 int main()
 {
   using namespace Azure::Storage::Blobs;
 
-  const std::string connectionString = "";
   const std::string containerName = "sample-container";
   const std::string blobName = "sample-blob";
 
   auto containerClient
-      = BlobContainerClient::CreateFromConnectionString(connectionString, containerName);
+      = BlobContainerClient::CreateFromConnectionString(GetConnectionString(), containerName);
   containerClient.CreateIfNotExists();
   BlockBlobClient blobClient = containerClient.GetBlockBlobClient(blobName);
 
