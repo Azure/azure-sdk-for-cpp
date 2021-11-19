@@ -111,11 +111,5 @@ if(BUILD_TESTING)
 endif()
 
 if(BUILD_STORAGE_SAMPLES)
-  target_sources(
-    azure-storage-sample
-      PRIVATE
-        sample/file_share_getting_started.cpp
-  )
-
-  target_link_libraries(azure-storage-sample PRIVATE azure-storage-files-shares)
+  add_subdirectory(samples)
 endif()

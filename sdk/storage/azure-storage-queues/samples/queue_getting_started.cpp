@@ -1,15 +1,35 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
 
+#if defined(_MSC_VER)
+#define _CRT_SECURE_NO_WARNINGS
+#endif
+
+#include <cstdio>
 #include <iostream>
+#include <stdexcept>
 #include <thread>
 
 #include <azure/storage/queues.hpp>
 
-#include "samples_common.hpp"
+std::string GetConnectionString()
+{
+  const static std::string ConnectionString = "";
+
+  if (!ConnectionString.empty())
+  {
+    return ConnectionString;
+  }
+  const static std::string envConnectionString = std::getenv("AZURE_STORAGE_CONNECTION_STRING");
+  if (!envConnectionString.empty())
+  {
+    return envConnectionString;
+  }
+  throw std::runtime_error("Cannot find connection string.");
+}
 
 using namespace Azure::Storage::Queues;
-std::string QueueName = "sample-queue";
+const std::string QueueName = "sample-queue";
 
 void ProducerFunc()
 {
@@ -76,8 +96,7 @@ void ConsumerFunc2()
   }
 }
 
-SAMPLE(QueuesGettingStarted, QueuesGettingStarted)
-void QueuesGettingStarted()
+int main()
 {
   auto queueClient = QueueClient::CreateFromConnectionString(GetConnectionString(), QueueName);
   queueClient.Create();
@@ -85,4 +104,6 @@ void QueuesGettingStarted()
   ProducerFunc();
   ConsumerFunc();
   ConsumerFunc2();
+
+  return 0;
 }

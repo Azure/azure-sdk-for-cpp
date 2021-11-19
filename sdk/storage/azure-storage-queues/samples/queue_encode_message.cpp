@@ -1,19 +1,39 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
 
+#if defined(_MSC_VER)
+#define _CRT_SECURE_NO_WARNINGS
+#endif
+
 #include <cassert>
+#include <cstdio>
 #include <iostream>
+#include <stdexcept>
 
 #include <azure/core/base64.hpp>
 #include <azure/storage/queues.hpp>
 
-#include "samples_common.hpp"
+std::string GetConnectionString()
+{
+  const static std::string ConnectionString = "";
 
-SAMPLE(QueuesEncodeMessage, QueuesEncodeMessage)
-void QueuesEncodeMessage()
+  if (!ConnectionString.empty())
+  {
+    return ConnectionString;
+  }
+  const static std::string envConnectionString = std::getenv("AZURE_STORAGE_CONNECTION_STRING");
+  if (!envConnectionString.empty())
+  {
+    return envConnectionString;
+  }
+  throw std::runtime_error("Cannot find connection string.");
+}
+
+int main()
 {
   using namespace Azure::Storage::Queues;
-  std::string QueueName = "sample-queue";
+
+  const std::string QueueName = "sample-queue";
 
   auto queueClient = QueueClient::CreateFromConnectionString(GetConnectionString(), QueueName);
   queueClient.Create();
@@ -32,4 +52,6 @@ void QueuesEncodeMessage()
   // message even it's in plaintext. We need to decode the message in that case.
   auto decodedMessage = Azure::Core::Convert::Base64Decode(receivedMessage.MessageText);
   assert(decodedMessage == binaryMessage);
+
+  return 0;
 }

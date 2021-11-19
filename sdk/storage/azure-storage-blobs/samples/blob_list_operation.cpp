@@ -1,20 +1,39 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
 
+#if defined(_MSC_VER)
+#define _CRT_SECURE_NO_WARNINGS
+#endif
+
+#include <cstdio>
 #include <iostream>
+#include <stdexcept>
 
 #include <azure/storage/blobs.hpp>
 
-#include "samples_common.hpp"
+std::string GetConnectionString()
+{
+  const static std::string ConnectionString = "";
 
-SAMPLE(BlobListOperation, BlobListOperation)
-void BlobListOperation()
+  if (!ConnectionString.empty())
+  {
+    return ConnectionString;
+  }
+  const static std::string envConnectionString = std::getenv("AZURE_STORAGE_CONNECTION_STRING");
+  if (!envConnectionString.empty())
+  {
+    return envConnectionString;
+  }
+  throw std::runtime_error("Cannot find connection string.");
+}
+
+int main()
 {
   using namespace Azure::Storage::Blobs;
 
-  std::string containerName = "sample-container";
-  std::string blobName = "sample-blob";
-  std::string blobContent = "Hello Azure!";
+  const std::string containerName = "sample-container";
+  const std::string blobName = "sample-blob";
+  const std::string blobContent = "Hello Azure!";
 
   {
     // Create some containers and blobs for test
@@ -54,4 +73,6 @@ void BlobListOperation()
       }
     }
   }
+
+  return 0;
 }

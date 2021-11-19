@@ -1,20 +1,39 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
 
+#if defined(_MSC_VER)
+#define _CRT_SECURE_NO_WARNINGS
+#endif
+
+#include <cstdio>
 #include <iostream>
+#include <stdexcept>
 
 #include <azure/storage/files/datalake.hpp>
 
-#include "samples_common.hpp"
+std::string GetConnectionString()
+{
+  const static std::string ConnectionString = "";
 
-SAMPLE(DataLakeGettingStarted, DataLakeGettingStarted)
-void DataLakeGettingStarted()
+  if (!ConnectionString.empty())
+  {
+    return ConnectionString;
+  }
+  const static std::string envConnectionString = std::getenv("AZURE_STORAGE_CONNECTION_STRING");
+  if (!envConnectionString.empty())
+  {
+    return envConnectionString;
+  }
+  throw std::runtime_error("Cannot find connection string.");
+}
+
+int main()
 {
   using namespace Azure::Storage::Files::DataLake;
 
-  std::string fileSystemName = "sample-file-system";
-  std::string directoryName = "sample-directory";
-  std::string fileName = "sample-file";
+  const std::string fileSystemName = "sample-file-system";
+  const std::string directoryName = "sample-directory";
+  const std::string fileName = "sample-file";
 
   auto fileSystemClient
       = DataLakeFileSystemClient::CreateFromConnectionString(GetConnectionString(), fileSystemName);
@@ -57,4 +76,6 @@ void DataLakeGettingStarted()
   std::vector<uint8_t> downloaded = result.Value.Body->ReadToEnd(context);
   // downloaded contains your downloaded data.
   std::cout << std::string(downloaded.begin(), downloaded.end()) << std::endl;
+
+  return 0;
 }
