@@ -6,6 +6,7 @@ param (
   [string]$ToolPath = (Join-Path ([System.IO.Path]::GetTempPath()) "codeowners-tool-path"), # The place to check the tool existence. Put temp path as default
   [string]$DevOpsFeed = "https://pkgs.dev.azure.com/azure-sdk/public/_packaging/azure-sdk-for-net/nuget/v3/index.json", # DevOp tool feeds.
   [string]$VsoVariable = "", # Option of write code owners into devop variable
+  [switch]$FilterNonUser, # Option to filter out the team alias in code owner list. e.g. Azure/azure-sdk-team
   [switch]$Test  #Run test functions against the script logic
 )
 
@@ -38,8 +39,13 @@ function Get-CodeOwners ([string]$targetDirectory = $TargetDirectory, [string]$c
   if ($RootDirectory -and !(Test-Path $codeOwnerFileLocation)) {
     $codeOwnerFileLocation = Join-Path $RootDirectory ".github/CODEOWNERS"
   }
+  if($FilterNonUser) {
+    $codeOwnersString = & $command --target-directory $targetDirectory --code-owner-file-path $codeOwnerFileLocation --filter-out-non-user-aliases 2>&1
+  }
+  else {
+    $codeOwnersString = & $command --target-directory $targetDirectory --code-owner-file-path $codeOwnerFileLocation 2>&1
+  }
   
-  $codeOwnersString = & $command --target-directory $targetDirectory --code-owner-file-path $codeOwnerFileLocation 2>&1
   # Failed at the command of fetching code owners.
   if ($LASTEXITCODE -ne 0) {
     Write-Host $codeOwnersString
