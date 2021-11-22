@@ -170,12 +170,9 @@ stages:
                           CloseAfterOpenForTesting: '${{ parameters.TestPipeline }}'
 
                       - pwsh: |
-                          # "person1,person2,Azure/group-name,person3" ->
-                          # "@person1, @person2, @person3"
-
                           $codeOwnersToNotify = $(Build.SourcesDirectory)/eng/common/scripts/get-codeowners.ps1 `
                             -TargetDirectory "/sdk/${{ parameters.ServiceDirectory }}/" `
-                            -CodeOwnerFileLocation "$(Build.SourcesDirectory)/.github/CODEOWNERS" -FilterNonUser
+                            -CodeOwnerFileLocation "$(Build.SourcesDirectory)/.github/CODEOWNERS"
 
                           $prComment = "Adding ${{ artifact.Name }} to release"
                           if ($codeOwnersToNotify) {
