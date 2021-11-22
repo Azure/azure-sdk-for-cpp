@@ -495,6 +495,11 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @brief If the destination blob should be sealed. Only applicable for Append Blobs.
      */
     Azure::Nullable<bool> ShouldSealDestination;
+
+    /**
+     * @brief Whether copy the properties of source to the destition, it's default by true
+     */
+    Azure::Nullable<bool> ShouldCopySourceBlobProperties;
   };
 
   /**
@@ -541,6 +546,11 @@ namespace Azure { namespace Storage { namespace Blobs {
      * that has arrived with the one that was sent.
      */
     Azure::Nullable<ContentHash> TransactionalContentHash;
+
+    /**
+     * @brief Whether copy the properties of source to the destition, it's default by true
+     */
+    Azure::Nullable<bool> ShouldCopySourceBlobProperties;
   };
 
   /**

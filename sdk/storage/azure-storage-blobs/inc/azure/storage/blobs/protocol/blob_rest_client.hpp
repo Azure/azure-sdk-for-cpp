@@ -7737,6 +7737,7 @@ namespace Azure { namespace Storage { namespace Blobs {
           Storage::Metadata Metadata;
           std::map<std::string, std::string> Tags;
           std::string SourceUri;
+          Azure::Nullable<bool> ShouldCopySourceBlobProperties;
           Azure::Nullable<std::string> LeaseId;
           Azure::Nullable<Models::AccessTier> AccessTier;
           Azure::Nullable<Azure::DateTime> IfModifiedSince;
@@ -7759,6 +7760,13 @@ namespace Azure { namespace Storage { namespace Blobs {
         {
           auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Put, url);
           request.SetHeader("Content-Length", "0");
+          request.SetHeader("x-ms-blob-type", "BlockBlob");
+          if (options.ShouldCopySourceBlobProperties.HasValue())
+          {
+            request.SetHeader(
+                "x-ms-copy-source-blob-properties",
+                options.ShouldCopySourceBlobProperties.Value() ? "true" : "false");
+          }
           request.SetHeader("x-ms-requires-sync", "true");
           request.SetHeader("x-ms-version", "2020-02-10");
           if (options.Timeout.HasValue())
@@ -7899,6 +7907,7 @@ namespace Azure { namespace Storage { namespace Blobs {
           Azure::Nullable<std::string> SourceIfTags;
           Azure::Nullable<std::string> SourceLeaseId;
           Azure::Nullable<bool> ShouldSealDestination;
+          Azure::Nullable<bool> ShouldCopySourceBlobProperties;
         }; // struct StartBlobCopyFromUriOptions
 
         static Azure::Response<Models::_detail::StartBlobCopyFromUriResult> StartCopyFromUri(
@@ -7933,6 +7942,7 @@ namespace Azure { namespace Storage { namespace Blobs {
             }
             request.SetHeader("x-ms-tags", std::move(blobTagsValue));
           }
+          request.SetHeader("x-ms-blob-type", "BlockBlob");
           request.SetHeader("x-ms-copy-source", options.SourceUri);
           if (options.LeaseId.HasValue())
           {
@@ -7951,6 +7961,12 @@ namespace Azure { namespace Storage { namespace Blobs {
           {
             request.SetHeader(
                 "x-ms-seal-blob", options.ShouldSealDestination.Value() ? "true" : "false");
+          }
+          if (options.ShouldCopySourceBlobProperties.HasValue())
+          {
+            request.SetHeader(
+                "x-ms-copy-source-blob-properties",
+                options.ShouldCopySourceBlobProperties.Value() ? "true" : "false");
           }
           if (options.IfModifiedSince.HasValue())
           {

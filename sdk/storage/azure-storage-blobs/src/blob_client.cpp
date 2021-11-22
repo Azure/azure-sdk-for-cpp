@@ -552,6 +552,8 @@ namespace Azure { namespace Storage { namespace Blobs {
     protocolLayerOptions.SourceIfUnmodifiedSince = options.SourceAccessConditions.IfUnmodifiedSince;
     protocolLayerOptions.SourceIfMatch = options.SourceAccessConditions.IfMatch;
     protocolLayerOptions.SourceIfNoneMatch = options.SourceAccessConditions.IfNoneMatch;
+    protocolLayerOptions.ShouldCopySourceBlobProperties = options.ShouldCopySourceBlobProperties;
+
     if (options.TransactionalContentHash.HasValue())
     {
       _azure_ASSERT_MSG(
@@ -588,6 +590,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     protocolLayerOptions.ShouldSealDestination = options.ShouldSealDestination;
     protocolLayerOptions.SourceLeaseId = options.SourceAccessConditions.LeaseId;
     protocolLayerOptions.SourceIfTags = options.SourceAccessConditions.TagConditions;
+    protocolLayerOptions.ShouldCopySourceBlobProperties = options.ShouldCopySourceBlobProperties;
 
     auto response = _detail::BlobRestClient::Blob::StartCopyFromUri(
         *m_pipeline, m_blobUrl, protocolLayerOptions, context);
