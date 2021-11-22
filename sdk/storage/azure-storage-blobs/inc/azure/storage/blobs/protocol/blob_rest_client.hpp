@@ -58,7 +58,6 @@ namespace Azure { namespace Storage { namespace Blobs {
        * Block Blob Storage account.
        */
       AZ_STORAGE_BLOBS_DLLEXPORT const static AccountKind BlockBlobStorage;
-
     private:
       std::string m_value;
     }; // extensible enum AccountKind
@@ -96,7 +95,6 @@ namespace Azure { namespace Storage { namespace Blobs {
        * Pending.
        */
       AZ_STORAGE_BLOBS_DLLEXPORT const static CopyStatus Pending;
-
     private:
       std::string m_value;
     }; // extensible enum CopyStatus
@@ -123,7 +121,6 @@ namespace Azure { namespace Storage { namespace Blobs {
        * The secondary location is temporarily unavailable.
        */
       AZ_STORAGE_BLOBS_DLLEXPORT const static GeoReplicationStatus Unavailable;
-
     private:
       std::string m_value;
     }; // extensible enum GeoReplicationStatus
@@ -146,7 +143,6 @@ namespace Azure { namespace Storage { namespace Blobs {
        * Fixed duration.
        */
       AZ_STORAGE_BLOBS_DLLEXPORT const static LeaseDurationType Fixed;
-
     private:
       std::string m_value;
     }; // extensible enum LeaseDurationType
@@ -182,7 +178,6 @@ namespace Azure { namespace Storage { namespace Blobs {
        * The lease has been broken, and the break period has expired.
        */
       AZ_STORAGE_BLOBS_DLLEXPORT const static LeaseState Broken;
-
     private:
       std::string m_value;
     }; // extensible enum LeaseState
@@ -205,7 +200,6 @@ namespace Azure { namespace Storage { namespace Blobs {
        * The lease is unlocked.
        */
       AZ_STORAGE_BLOBS_DLLEXPORT const static LeaseStatus Unlocked;
-
     private:
       std::string m_value;
     }; // extensible enum LeaseStatus
@@ -231,7 +225,6 @@ namespace Azure { namespace Storage { namespace Blobs {
        * Object replication to the destination container failed.
        */
       AZ_STORAGE_BLOBS_DLLEXPORT const static ObjectReplicationStatus Failed;
-
     private:
       std::string m_value;
     }; // extensible enum ObjectReplicationStatus
@@ -263,7 +256,6 @@ namespace Azure { namespace Storage { namespace Blobs {
        * Indicates the container is private to the account owner.
        */
       AZ_STORAGE_BLOBS_DLLEXPORT const static PublicAccessType None;
-
     private:
       std::string m_value;
     }; // extensible enum PublicAccessType
@@ -349,7 +341,6 @@ namespace Azure { namespace Storage { namespace Blobs {
        * Standard Read-access Geo-zone-redundant Storage
        */
       AZ_STORAGE_BLOBS_DLLEXPORT const static SkuName StandardRagzrs;
-
     private:
       std::string m_value;
     }; // extensible enum SkuName
@@ -647,7 +638,6 @@ namespace Azure { namespace Storage { namespace Blobs {
        * flexible latency requirements, on the order of hours.
        */
       AZ_STORAGE_BLOBS_DLLEXPORT const static AccessTier Archive;
-
     private:
       std::string m_value;
     }; // extensible enum AccessTier
@@ -671,7 +661,6 @@ namespace Azure { namespace Storage { namespace Blobs {
        * The blob is being rehydrated to cool tier.
        */
       AZ_STORAGE_BLOBS_DLLEXPORT const static ArchiveStatus RehydratePendingToCool;
-
     private:
       std::string m_value;
     }; // extensible enum ArchiveStatus
@@ -754,7 +743,6 @@ namespace Azure { namespace Storage { namespace Blobs {
        * Append blob.
        */
       AZ_STORAGE_BLOBS_DLLEXPORT const static BlobType AppendBlob;
-
     private:
       std::string m_value;
     }; // extensible enum BlobType
@@ -795,7 +783,6 @@ namespace Azure { namespace Storage { namespace Blobs {
        * Standard priority.
        */
       AZ_STORAGE_BLOBS_DLLEXPORT const static RehydratePriority Standard;
-
     private:
       std::string m_value;
     }; // extensible enum RehydratePriority
@@ -1540,7 +1527,6 @@ namespace Azure { namespace Storage { namespace Blobs {
        * List both committed and uncommitted blocks.
        */
       AZ_STORAGE_BLOBS_DLLEXPORT const static BlockListType All;
-
     private:
       std::string m_value;
     }; // extensible enum BlockListType
@@ -1568,7 +1554,6 @@ namespace Azure { namespace Storage { namespace Blobs {
        * list.
        */
       AZ_STORAGE_BLOBS_DLLEXPORT const static BlockType Latest;
-
     private:
       std::string m_value;
     }; // extensible enum BlockType
@@ -1854,7 +1839,6 @@ namespace Azure { namespace Storage { namespace Blobs {
        * Delete only the blob's snapshots and not the blob itself.
        */
       AZ_STORAGE_BLOBS_DLLEXPORT const static DeleteSnapshotsOption OnlySnapshots;
-
     private:
       std::string m_value;
     }; // extensible enum DeleteSnapshotsOption
@@ -1907,7 +1891,6 @@ namespace Azure { namespace Storage { namespace Blobs {
        * AES-256
        */
       AZ_STORAGE_BLOBS_DLLEXPORT const static EncryptionAlgorithmType Aes256;
-
     private:
       std::string m_value;
     }; // extensible enum EncryptionAlgorithmType
@@ -2103,7 +2086,6 @@ namespace Azure { namespace Storage { namespace Blobs {
        * Absolute time.
        */
       AZ_STORAGE_BLOBS_DLLEXPORT const static ScheduleBlobExpiryOriginType Absolute;
-
     private:
       std::string m_value;
     }; // extensible enum ScheduleBlobExpiryOriginType
@@ -2152,7 +2134,6 @@ namespace Azure { namespace Storage { namespace Blobs {
        * Increments the value of the sequence number by 1.
        */
       AZ_STORAGE_BLOBS_DLLEXPORT const static SequenceNumberAction Increment;
-
     private:
       std::string m_value;
     }; // extensible enum SequenceNumberAction
@@ -3035,8 +3016,8 @@ namespace Azure { namespace Storage { namespace Blobs {
           {
             _internal::XmlWriter writer;
             GetUserDelegationKeyOptionsToXml(writer, options);
-            xml_body = writer.GetDocument();
             writer.Write(_internal::XmlNode{_internal::XmlNodeType::End});
+            xml_body = writer.GetDocument();
           }
           Azure::Core::IO::MemoryBodyStream xml_body_stream(
               reinterpret_cast<const uint8_t*>(xml_body.data()), xml_body.length());
@@ -3122,8 +3103,8 @@ namespace Azure { namespace Storage { namespace Blobs {
           {
             _internal::XmlWriter writer;
             SetServicePropertiesOptionsToXml(writer, options);
-            xml_body = writer.GetDocument();
             writer.Write(_internal::XmlNode{_internal::XmlNodeType::End});
+            xml_body = writer.GetDocument();
           }
           Azure::Core::IO::MemoryBodyStream xml_body_stream(
               reinterpret_cast<const uint8_t*>(xml_body.data()), xml_body.length());
@@ -5182,8 +5163,8 @@ namespace Azure { namespace Storage { namespace Blobs {
           {
             _internal::XmlWriter writer;
             SetBlobContainerAccessPolicyOptionsToXml(writer, options);
-            xml_body = writer.GetDocument();
             writer.Write(_internal::XmlNode{_internal::XmlNodeType::End});
+            xml_body = writer.GetDocument();
           }
           Azure::Core::IO::MemoryBodyStream xml_body_stream(
               reinterpret_cast<const uint8_t*>(xml_body.data()), xml_body.length());
@@ -7737,6 +7718,7 @@ namespace Azure { namespace Storage { namespace Blobs {
           Storage::Metadata Metadata;
           std::map<std::string, std::string> Tags;
           std::string SourceUri;
+          Azure::Nullable<bool> ShouldCopySourceBlobProperties;
           Azure::Nullable<std::string> LeaseId;
           Azure::Nullable<Models::AccessTier> AccessTier;
           Azure::Nullable<Azure::DateTime> IfModifiedSince;
@@ -7759,6 +7741,13 @@ namespace Azure { namespace Storage { namespace Blobs {
         {
           auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Put, url);
           request.SetHeader("Content-Length", "0");
+          request.SetHeader("x-ms-blob-type", "BlockBlob");
+          if (options.ShouldCopySourceBlobProperties.HasValue())
+          {
+            request.SetHeader(
+                "x-ms-copy-source-blob-properties",
+                options.ShouldCopySourceBlobProperties.Value() ? "true" : "false");
+          }
           request.SetHeader("x-ms-requires-sync", "true");
           request.SetHeader("x-ms-version", "2020-02-10");
           if (options.Timeout.HasValue())
@@ -7899,6 +7888,7 @@ namespace Azure { namespace Storage { namespace Blobs {
           Azure::Nullable<std::string> SourceIfTags;
           Azure::Nullable<std::string> SourceLeaseId;
           Azure::Nullable<bool> ShouldSealDestination;
+          Azure::Nullable<bool> ShouldCopySourceBlobProperties;
         }; // struct StartBlobCopyFromUriOptions
 
         static Azure::Response<Models::_detail::StartBlobCopyFromUriResult> StartCopyFromUri(
@@ -7951,6 +7941,12 @@ namespace Azure { namespace Storage { namespace Blobs {
           {
             request.SetHeader(
                 "x-ms-seal-blob", options.ShouldSealDestination.Value() ? "true" : "false");
+          }
+          if (options.ShouldCopySourceBlobProperties.HasValue())
+          {
+            request.SetHeader(
+                "x-ms-copy-source-blob-properties",
+                options.ShouldCopySourceBlobProperties.Value() ? "true" : "false");
           }
           if (options.IfModifiedSince.HasValue())
           {
@@ -8246,8 +8242,8 @@ namespace Azure { namespace Storage { namespace Blobs {
           {
             _internal::XmlWriter writer;
             SetBlobTagsOptionsToXml(writer, options);
-            xml_body = writer.GetDocument();
             writer.Write(_internal::XmlNode{_internal::XmlNodeType::End});
+            xml_body = writer.GetDocument();
           }
           Azure::Core::IO::MemoryBodyStream xml_body_stream(
               reinterpret_cast<const uint8_t*>(xml_body.data()), xml_body.length());
@@ -8886,30 +8882,6 @@ namespace Azure { namespace Storage { namespace Blobs {
           {
             request.SetHeader("x-ms-access-tier", options.AccessTier.Value().ToString());
           }
-          if (options.IfModifiedSince.HasValue())
-          {
-            request.SetHeader(
-                "If-Modified-Since",
-                options.IfModifiedSince.Value().ToString(Azure::DateTime::DateFormat::Rfc1123));
-          }
-          if (options.IfUnmodifiedSince.HasValue())
-          {
-            request.SetHeader(
-                "If-Unmodified-Since",
-                options.IfUnmodifiedSince.Value().ToString(Azure::DateTime::DateFormat::Rfc1123));
-          }
-          if (options.IfMatch.HasValue() && !options.IfMatch.ToString().empty())
-          {
-            request.SetHeader("If-Match", options.IfMatch.ToString());
-          }
-          if (options.IfNoneMatch.HasValue() && !options.IfNoneMatch.ToString().empty())
-          {
-            request.SetHeader("If-None-Match", options.IfNoneMatch.ToString());
-          }
-          if (options.IfTags.HasValue())
-          {
-            request.SetHeader("x-ms-if-tags", options.IfTags.Value());
-          }
           auto pHttpResponse = pipeline.Send(request, context);
           Azure::Core::Http::RawResponse& httpResponse = *pHttpResponse;
           UploadBlockBlobResult response;
@@ -9266,8 +9238,8 @@ namespace Azure { namespace Storage { namespace Blobs {
           {
             _internal::XmlWriter writer;
             CommitBlockListOptionsToXml(writer, options);
-            xml_body = writer.GetDocument();
             writer.Write(_internal::XmlNode{_internal::XmlNodeType::End});
+            xml_body = writer.GetDocument();
           }
           Azure::Core::IO::MemoryBodyStream xml_body_stream(
               reinterpret_cast<const uint8_t*>(xml_body.data()), xml_body.length());

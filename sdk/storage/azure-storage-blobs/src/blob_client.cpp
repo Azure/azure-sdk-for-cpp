@@ -552,12 +552,19 @@ namespace Azure { namespace Storage { namespace Blobs {
     protocolLayerOptions.SourceIfUnmodifiedSince = options.SourceAccessConditions.IfUnmodifiedSince;
     protocolLayerOptions.SourceIfMatch = options.SourceAccessConditions.IfMatch;
     protocolLayerOptions.SourceIfNoneMatch = options.SourceAccessConditions.IfNoneMatch;
+    protocolLayerOptions.ShouldCopySourceBlobProperties = options.ShouldCopySourceBlobProperties;
+
     if (options.TransactionalContentHash.HasValue())
     {
       AZURE_ASSERT_MSG(
           options.TransactionalContentHash.Value().Algorithm == HashAlgorithm::Md5,
           "This operation only supports MD5 transactional content hash.");
       protocolLayerOptions.TransactionalContentHash = options.TransactionalContentHash;
+    }
+
+    if (!options.ShouldCopySourceBlobProperties.HasValue())
+    {
+      protocolLayerOptions.ShouldCopySourceBlobProperties = Azure::Nullable<bool>(true);
     }
 
     return _detail::BlobRestClient::Blob::CopyFromUri(
@@ -588,6 +595,12 @@ namespace Azure { namespace Storage { namespace Blobs {
     protocolLayerOptions.ShouldSealDestination = options.ShouldSealDestination;
     protocolLayerOptions.SourceLeaseId = options.SourceAccessConditions.LeaseId;
     protocolLayerOptions.SourceIfTags = options.SourceAccessConditions.TagConditions;
+    protocolLayerOptions.ShouldCopySourceBlobProperties = options.ShouldCopySourceBlobProperties;
+
+    if (!options.ShouldCopySourceBlobProperties.HasValue())
+    {
+      protocolLayerOptions.ShouldCopySourceBlobProperties = Azure::Nullable<bool>(true);
+    }
 
     auto response = _detail::BlobRestClient::Blob::StartCopyFromUri(
         *m_pipeline, m_blobUrl, protocolLayerOptions, context);
