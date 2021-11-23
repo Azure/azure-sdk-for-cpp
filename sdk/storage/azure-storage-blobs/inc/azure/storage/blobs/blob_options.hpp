@@ -497,7 +497,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     Azure::Nullable<bool> ShouldSealDestination;
 
     /**
-     * @brief Whether copy the properties of source to the destition, it's default by true
+     * @brief Whether copy the properties of source to the destination, it's default by true
      */
     bool ShouldCopySourceBlobProperties = true;
   };
@@ -548,7 +548,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     Azure::Nullable<ContentHash> TransactionalContentHash;
 
     /**
-     * @brief Whether copy the properties of source to the destition, it's default by true
+     * @brief Whether copy the properties of source to the destination, it's default by true
      */
     bool ShouldCopySourceBlobProperties = true;
   };
