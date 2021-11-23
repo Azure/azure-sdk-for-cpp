@@ -316,9 +316,17 @@ namespace Azure { namespace Storage { namespace Test {
 
   TEST_F(BlockBlobClientTest, SyncCopyFromUri)
   {
+    auto options = Azure::Storage::Blobs::CopyBlobFromUriOptions();
+    options.ShouldCopySourceBlobProperties = true;
+
+    auto sourceTags = std::map<std::string, std::string>();
+    sourceTags["hello"] = "world";
+    m_blockBlobClient->SetTags(sourceTags);
+
     const std::string blobName = RandomString();
     auto blobClient = m_blobContainerClient->GetBlobClient(blobName);
-    auto res = blobClient.CopyFromUri(m_blockBlobClient->GetUrl() + GetSas());
+    sleep(1);
+    auto res = blobClient.CopyFromUri(m_blockBlobClient->GetUrl() + GetSas(), options);
     EXPECT_EQ(res.RawResponse->GetStatusCode(), Azure::Core::Http::HttpStatusCode::Accepted);
     EXPECT_TRUE(res.Value.ETag.HasValue());
     EXPECT_TRUE(IsValidTime(res.Value.LastModified));
@@ -344,6 +352,66 @@ namespace Azure { namespace Storage { namespace Test {
     ASSERT_TRUE(blobItem.Details.IsIncrementalCopy.HasValue());
     EXPECT_FALSE(blobItem.Details.IsIncrementalCopy.Value());
     EXPECT_FALSE(blobItem.Details.IncrementalCopyDestinationSnapshot.HasValue());
+
+    auto sourceProperties = m_blockBlobClient->GetProperties();
+    auto destinationProperties = blobClient.GetProperties();
+
+    // Copy the source properties by default
+    EXPECT_TRUE(sourceProperties.Value.TagCount.HasValue());
+    EXPECT_EQ(sourceProperties.Value.TagCount.Value(), 1);
+    EXPECT_TRUE(destinationProperties.Value.TagCount.HasValue());
+    EXPECT_EQ(destinationProperties.Value.TagCount.Value(), 1);
+    EXPECT_EQ(
+        sourceProperties.Value.TagCount.Value(), destinationProperties.Value.TagCount.Value());
+  }
+
+  TEST_F(BlockBlobClientTest, SyncCopyFromUriWithoutProperties)
+  {
+    auto options = Azure::Storage::Blobs::CopyBlobFromUriOptions();
+    options.ShouldCopySourceBlobProperties = false;
+
+    auto sourceTags = std::map<std::string, std::string>();
+    sourceTags["hello"] = "world";
+    m_blockBlobClient->SetTags(sourceTags);
+
+    const std::string blobName = RandomString();
+    auto blobClient = m_blobContainerClient->GetBlobClient(blobName);
+    auto res = blobClient.CopyFromUri(m_blockBlobClient->GetUrl() + GetSas(), options);
+    EXPECT_EQ(res.RawResponse->GetStatusCode(), Azure::Core::Http::HttpStatusCode::Accepted);
+    EXPECT_TRUE(res.Value.ETag.HasValue());
+    EXPECT_TRUE(IsValidTime(res.Value.LastModified));
+    EXPECT_FALSE(res.Value.CopyId.empty());
+    EXPECT_EQ(res.Value.CopyStatus, Azure::Storage::Blobs::Models::CopyStatus::Success);
+
+    auto downloadResult = blobClient.Download();
+    EXPECT_FALSE(downloadResult.Value.Details.CopyId.Value().empty());
+    EXPECT_FALSE(downloadResult.Value.Details.CopySource.Value().empty());
+    EXPECT_TRUE(
+        downloadResult.Value.Details.CopyStatus.Value()
+        == Azure::Storage::Blobs::Models::CopyStatus::Success);
+    EXPECT_FALSE(downloadResult.Value.Details.CopyProgress.Value().empty());
+    EXPECT_TRUE(IsValidTime(downloadResult.Value.Details.CopyCompletedOn.Value()));
+
+    auto blobItem = GetBlobItem(blobName, Blobs::Models::ListBlobsIncludeFlags::Copy);
+    EXPECT_FALSE(blobItem.Details.CopyId.Value().empty());
+    EXPECT_FALSE(blobItem.Details.CopySource.Value().empty());
+    EXPECT_TRUE(
+        blobItem.Details.CopyStatus.Value() == Azure::Storage::Blobs::Models::CopyStatus::Success);
+    EXPECT_FALSE(blobItem.Details.CopyProgress.Value().empty());
+    EXPECT_TRUE(IsValidTime(blobItem.Details.CopyCompletedOn.Value()));
+    ASSERT_TRUE(blobItem.Details.IsIncrementalCopy.HasValue());
+    EXPECT_FALSE(blobItem.Details.IsIncrementalCopy.Value());
+    EXPECT_FALSE(blobItem.Details.IncrementalCopyDestinationSnapshot.HasValue());
+
+    auto sourceProperties = m_blockBlobClient->GetProperties();
+    auto destinationProperties = blobClient.GetProperties();
+
+    EXPECT_TRUE(sourceProperties.Value.TagCount.HasValue());
+    EXPECT_TRUE(destinationProperties.Value.TagCount.HasValue());
+    EXPECT_EQ(sourceProperties.Value.TagCount.Value(), 1);
+    EXPECT_EQ(destinationProperties.Value.TagCount.Value(), 0);
+    EXPECT_NE(
+        sourceProperties.Value.TagCount.Value(), destinationProperties.Value.TagCount.Value());
   }
 
   TEST_F(BlockBlobClientTest, AsyncCopyFromUri)
@@ -383,6 +451,60 @@ namespace Azure { namespace Storage { namespace Test {
     ASSERT_TRUE(blobItem.Details.IsIncrementalCopy.HasValue());
     EXPECT_FALSE(blobItem.Details.IsIncrementalCopy.Value());
     EXPECT_FALSE(blobItem.Details.IncrementalCopyDestinationSnapshot.HasValue());
+
+    auto sourceProperties = m_blockBlobClient->GetProperties();
+    auto destinationProperties = blobClient.GetProperties();
+
+    // Copy the source properties by default
+    EXPECT_EQ(
+        sourceProperties.Value.LastModified.ToString(),
+        destinationProperties.Value.LastModified.ToString());
+  }
+
+  TEST_F(BlockBlobClientTest, AsyncCopyFromUriWithoutProperties)
+  {
+    const std::string blobName = RandomString();
+    auto blobClient = m_blobContainerClient->GetBlobClient(blobName);
+    auto res = blobClient.StartCopyFromUri(m_blockBlobClient->GetUrl());
+    EXPECT_EQ(res.GetRawResponse().GetStatusCode(), Azure::Core::Http::HttpStatusCode::Accepted);
+    res.PollUntilDone(std::chrono::seconds(1));
+    auto properties = blobClient.GetProperties().Value;
+    EXPECT_FALSE(properties.CopyId.Value().empty());
+    EXPECT_FALSE(properties.CopySource.Value().empty());
+    EXPECT_TRUE(
+        properties.CopyStatus.Value() == Azure::Storage::Blobs::Models::CopyStatus::Success);
+    EXPECT_FALSE(properties.CopyProgress.Value().empty());
+    EXPECT_TRUE(IsValidTime(properties.CopyCompletedOn.Value()));
+    ASSERT_TRUE(properties.IsIncrementalCopy.HasValue());
+    EXPECT_FALSE(properties.IsIncrementalCopy.Value());
+    EXPECT_FALSE(properties.IncrementalCopyDestinationSnapshot.HasValue());
+
+    auto downloadResult = blobClient.Download();
+    EXPECT_FALSE(downloadResult.Value.Details.CopyId.Value().empty());
+    EXPECT_FALSE(downloadResult.Value.Details.CopySource.Value().empty());
+    EXPECT_TRUE(
+        downloadResult.Value.Details.CopyStatus.Value()
+        == Azure::Storage::Blobs::Models::CopyStatus::Success);
+    EXPECT_FALSE(downloadResult.Value.Details.CopyProgress.Value().empty());
+    EXPECT_TRUE(IsValidTime(downloadResult.Value.Details.CopyCompletedOn.Value()));
+
+    auto blobItem = GetBlobItem(blobName, Blobs::Models::ListBlobsIncludeFlags::Copy);
+    EXPECT_FALSE(blobItem.Details.CopyId.Value().empty());
+    EXPECT_FALSE(blobItem.Details.CopySource.Value().empty());
+    EXPECT_TRUE(
+        blobItem.Details.CopyStatus.Value() == Azure::Storage::Blobs::Models::CopyStatus::Success);
+    EXPECT_FALSE(blobItem.Details.CopyProgress.Value().empty());
+    EXPECT_TRUE(IsValidTime(blobItem.Details.CopyCompletedOn.Value()));
+    ASSERT_TRUE(blobItem.Details.IsIncrementalCopy.HasValue());
+    EXPECT_FALSE(blobItem.Details.IsIncrementalCopy.Value());
+    EXPECT_FALSE(blobItem.Details.IncrementalCopyDestinationSnapshot.HasValue());
+
+    auto sourceProperties = m_blockBlobClient->GetProperties();
+    auto destinationProperties = blobClient.GetProperties();
+
+    EXPECT_NE(
+        sourceProperties.Value.LastModified.ToString(),
+        destinationProperties.Value.LastModified.ToString());
   }
 
   TEST_F(BlockBlobClientTest, CopyWithTagsMetadataTier)

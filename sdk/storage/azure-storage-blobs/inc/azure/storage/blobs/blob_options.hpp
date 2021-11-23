@@ -499,7 +499,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     /**
      * @brief Whether copy the properties of source to the destition, it's default by true
      */
-    Azure::Nullable<bool> ShouldCopySourceBlobProperties;
+    bool ShouldCopySourceBlobProperties = true;
   };
 
   /**
@@ -550,7 +550,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     /**
      * @brief Whether copy the properties of source to the destition, it's default by true
      */
-    Azure::Nullable<bool> ShouldCopySourceBlobProperties;
+    bool ShouldCopySourceBlobProperties = true;
   };
 
   /**
