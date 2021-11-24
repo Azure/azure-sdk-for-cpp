@@ -316,8 +316,8 @@ namespace Azure { namespace Storage { namespace Test {
 
   TEST_F(BlockBlobClientTest, SyncCopyFromUri)
   {
-    auto options = Azure::Storage::Blobs::CopyBlobFromUriOptions();
-    options.ShouldCopySourceBlobProperties = true;
+    // auto options = Azure::Storage::Blobs::CopyBlobFromUriOptions();
+    // options.ShouldCopySourceBlobProperties = true;
 
     auto sourceTags = std::map<std::string, std::string>();
     sourceTags["hello"] = "world";
@@ -326,7 +326,7 @@ namespace Azure { namespace Storage { namespace Test {
     const std::string blobName = RandomString();
     auto blobClient = m_blobContainerClient->GetBlobClient(blobName);
     sleep(1);
-    auto res = blobClient.CopyFromUri(m_blockBlobClient->GetUrl() + GetSas(), options);
+    auto res = blobClient.CopyFromUri(m_blockBlobClient->GetUrl() + GetSas());
     EXPECT_EQ(res.RawResponse->GetStatusCode(), Azure::Core::Http::HttpStatusCode::Accepted);
     EXPECT_TRUE(res.Value.ETag.HasValue());
     EXPECT_TRUE(IsValidTime(res.Value.LastModified));
