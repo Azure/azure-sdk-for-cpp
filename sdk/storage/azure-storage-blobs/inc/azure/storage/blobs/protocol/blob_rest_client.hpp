@@ -8261,7 +8261,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         {
           Azure::Nullable<int32_t> Timeout;
           Azure::Nullable<std::string> IfTags;
-          std::string LeaseId;
+          Azure::Nullable<std::string> LeaseId;
         }; // struct GetBlobTagsOptions
 
         static Azure::Response<Models::_detail::GetBlobTagsResult> GetTags(
@@ -8282,7 +8282,10 @@ namespace Azure { namespace Storage { namespace Blobs {
           {
             request.SetHeader("x-ms-if-tags", options.IfTags.Value());
           }
-          request.SetHeader("x-ms-lease-id", options.LeaseId);
+          if (options.LeaseId.HasValue())
+          {
+            request.SetHeader("x-ms-lease-id", options.LeaseId.Value());
+          }
           auto pHttpResponse = pipeline.Send(request, context);
           Azure::Core::Http::RawResponse& httpResponse = *pHttpResponse;
           Models::_detail::GetBlobTagsResult response;
@@ -8306,7 +8309,7 @@ namespace Azure { namespace Storage { namespace Blobs {
           Azure::Nullable<int32_t> Timeout;
           std::map<std::string, std::string> Tags;
           Azure::Nullable<std::string> IfTags;
-          std::string LeaseId;
+          Azure::Nullable<std::string> LeaseId;
         }; // struct SetBlobTagsOptions
 
         static Azure::Response<SetBlobTagsResult> SetTags(
@@ -8339,7 +8342,10 @@ namespace Azure { namespace Storage { namespace Blobs {
           {
             request.SetHeader("x-ms-if-tags", options.IfTags.Value());
           }
-          request.SetHeader("x-ms-lease-id", options.LeaseId);
+          if (options.LeaseId.HasValue())
+          {
+            request.SetHeader("x-ms-lease-id", options.LeaseId.Value());
+          }
           auto pHttpResponse = pipeline.Send(request, context);
           Azure::Core::Http::RawResponse& httpResponse = *pHttpResponse;
           SetBlobTagsResult response;
