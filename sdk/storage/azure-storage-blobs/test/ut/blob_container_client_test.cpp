@@ -874,6 +874,9 @@ namespace Azure { namespace Storage { namespace Test {
     ASSERT_FALSE(findResults.empty());
     EXPECT_EQ(findResults[0].BlobName, blobName);
     EXPECT_EQ(findResults[0].BlobContainerName, m_containerName);
+    EXPECT_EQ(findResults[0].Tags[c1], v1);
+    EXPECT_EQ(findResults[0].Tags[c2], v2);
+    EXPECT_EQ(findResults[0].Tags[c3], v3);
   }
 
   TEST_F(BlobContainerClientTest, AccessConditionTags)
