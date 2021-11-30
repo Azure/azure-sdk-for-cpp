@@ -74,11 +74,11 @@ TEST(ManagedIdentityCredential, AppService)
   EXPECT_EQ(response1.AccessToken.Token, "ACCESSTOKEN2");
 
   using namespace std::chrono_literals;
-  EXPECT_GT(response0.AccessToken.ExpiresOn, response0.EarliestExpiration + 3600s);
-  EXPECT_LT(response0.AccessToken.ExpiresOn, response0.LatestExpiration + 3600s);
+  EXPECT_GE(response0.AccessToken.ExpiresOn, response0.EarliestExpiration + 3600s);
+  EXPECT_LE(response0.AccessToken.ExpiresOn, response0.LatestExpiration + 3600s);
 
-  EXPECT_GT(response1.AccessToken.ExpiresOn, response1.EarliestExpiration + 7200s);
-  EXPECT_LT(response1.AccessToken.ExpiresOn, response1.LatestExpiration + 7200s);
+  EXPECT_GE(response1.AccessToken.ExpiresOn, response1.EarliestExpiration + 7200s);
+  EXPECT_LE(response1.AccessToken.ExpiresOn, response1.LatestExpiration + 7200s);
 }
 
 TEST(ManagedIdentityCredential, AppServiceClientId)
@@ -143,11 +143,11 @@ TEST(ManagedIdentityCredential, AppServiceClientId)
   EXPECT_EQ(response1.AccessToken.Token, "ACCESSTOKEN2");
 
   using namespace std::chrono_literals;
-  EXPECT_GT(response0.AccessToken.ExpiresOn, response0.EarliestExpiration + 3600s);
-  EXPECT_LT(response0.AccessToken.ExpiresOn, response0.LatestExpiration + 3600s);
+  EXPECT_GE(response0.AccessToken.ExpiresOn, response0.EarliestExpiration + 3600s);
+  EXPECT_LE(response0.AccessToken.ExpiresOn, response0.LatestExpiration + 3600s);
 
-  EXPECT_GT(response1.AccessToken.ExpiresOn, response1.EarliestExpiration + 7200s);
-  EXPECT_LT(response1.AccessToken.ExpiresOn, response1.LatestExpiration + 7200s);
+  EXPECT_GE(response1.AccessToken.ExpiresOn, response1.EarliestExpiration + 7200s);
+  EXPECT_LE(response1.AccessToken.ExpiresOn, response1.LatestExpiration + 7200s);
 }
 
 TEST(ManagedIdentityCredential, AppServiceInvalidUrl)
@@ -232,11 +232,11 @@ TEST(ManagedIdentityCredential, CloudShell)
   EXPECT_EQ(response1.AccessToken.Token, "ACCESSTOKEN2");
 
   using namespace std::chrono_literals;
-  EXPECT_GT(response0.AccessToken.ExpiresOn, response0.EarliestExpiration + 3600s);
-  EXPECT_LT(response0.AccessToken.ExpiresOn, response0.LatestExpiration + 3600s);
+  EXPECT_GE(response0.AccessToken.ExpiresOn, response0.EarliestExpiration + 3600s);
+  EXPECT_LE(response0.AccessToken.ExpiresOn, response0.LatestExpiration + 3600s);
 
-  EXPECT_GT(response1.AccessToken.ExpiresOn, response1.EarliestExpiration + 7200s);
-  EXPECT_LT(response1.AccessToken.ExpiresOn, response1.LatestExpiration + 7200s);
+  EXPECT_GE(response1.AccessToken.ExpiresOn, response1.EarliestExpiration + 7200s);
+  EXPECT_LE(response1.AccessToken.ExpiresOn, response1.LatestExpiration + 7200s);
 }
 
 TEST(ManagedIdentityCredential, CloudShellClientId)
@@ -295,11 +295,11 @@ TEST(ManagedIdentityCredential, CloudShellClientId)
   EXPECT_EQ(response1.AccessToken.Token, "ACCESSTOKEN2");
 
   using namespace std::chrono_literals;
-  EXPECT_GT(response0.AccessToken.ExpiresOn, response0.EarliestExpiration + 3600s);
-  EXPECT_LT(response0.AccessToken.ExpiresOn, response0.LatestExpiration + 3600s);
+  EXPECT_GE(response0.AccessToken.ExpiresOn, response0.EarliestExpiration + 3600s);
+  EXPECT_LE(response0.AccessToken.ExpiresOn, response0.LatestExpiration + 3600s);
 
-  EXPECT_GT(response1.AccessToken.ExpiresOn, response1.EarliestExpiration + 7200s);
-  EXPECT_LT(response1.AccessToken.ExpiresOn, response1.LatestExpiration + 7200s);
+  EXPECT_GE(response1.AccessToken.ExpiresOn, response1.EarliestExpiration + 7200s);
+  EXPECT_LE(response1.AccessToken.ExpiresOn, response1.LatestExpiration + 7200s);
 }
 
 TEST(ManagedIdentityCredential, CloudShellInvalidUrl)
@@ -439,11 +439,11 @@ TEST(ManagedIdentityCredential, AzureArc)
   EXPECT_EQ(response1.AccessToken.Token, "ACCESSTOKEN2");
 
   using namespace std::chrono_literals;
-  EXPECT_GT(response0.AccessToken.ExpiresOn, response0.EarliestExpiration + 3600s);
-  EXPECT_LT(response0.AccessToken.ExpiresOn, response0.LatestExpiration + 3600s);
+  EXPECT_GE(response0.AccessToken.ExpiresOn, response0.EarliestExpiration + 3600s);
+  EXPECT_LE(response0.AccessToken.ExpiresOn, response0.LatestExpiration + 3600s);
 
-  EXPECT_GT(response1.AccessToken.ExpiresOn, response1.EarliestExpiration + 7200s);
-  EXPECT_LT(response1.AccessToken.ExpiresOn, response1.LatestExpiration + 7200s);
+  EXPECT_GE(response1.AccessToken.ExpiresOn, response1.EarliestExpiration + 7200s);
+  EXPECT_LE(response1.AccessToken.ExpiresOn, response1.LatestExpiration + 7200s);
 }
 
 TEST(ManagedIdentityCredential, AzureArcClientId)
@@ -663,11 +663,11 @@ TEST(ManagedIdentityCredential, Imds)
   EXPECT_EQ(response1.AccessToken.Token, "ACCESSTOKEN2");
 
   using namespace std::chrono_literals;
-  EXPECT_GT(response0.AccessToken.ExpiresOn, response0.EarliestExpiration + 3600s);
-  EXPECT_LT(response0.AccessToken.ExpiresOn, response0.LatestExpiration + 3600s);
+  EXPECT_GE(response0.AccessToken.ExpiresOn, response0.EarliestExpiration + 3600s);
+  EXPECT_LE(response0.AccessToken.ExpiresOn, response0.LatestExpiration + 3600s);
 
-  EXPECT_GT(response1.AccessToken.ExpiresOn, response1.EarliestExpiration + 7200s);
-  EXPECT_LT(response1.AccessToken.ExpiresOn, response1.LatestExpiration + 7200s);
+  EXPECT_GE(response1.AccessToken.ExpiresOn, response1.EarliestExpiration + 7200s);
+  EXPECT_LE(response1.AccessToken.ExpiresOn, response1.LatestExpiration + 7200s);
 }
 
 TEST(ManagedIdentityCredential, ImdsClientId)
@@ -732,9 +732,9 @@ TEST(ManagedIdentityCredential, ImdsClientId)
   EXPECT_EQ(response1.AccessToken.Token, "ACCESSTOKEN2");
 
   using namespace std::chrono_literals;
-  EXPECT_GT(response0.AccessToken.ExpiresOn, response0.EarliestExpiration + 3600s);
-  EXPECT_LT(response0.AccessToken.ExpiresOn, response0.LatestExpiration + 3600s);
+  EXPECT_GE(response0.AccessToken.ExpiresOn, response0.EarliestExpiration + 3600s);
+  EXPECT_LE(response0.AccessToken.ExpiresOn, response0.LatestExpiration + 3600s);
 
-  EXPECT_GT(response1.AccessToken.ExpiresOn, response1.EarliestExpiration + 7200s);
-  EXPECT_LT(response1.AccessToken.ExpiresOn, response1.LatestExpiration + 7200s);
+  EXPECT_GE(response1.AccessToken.ExpiresOn, response1.EarliestExpiration + 7200s);
+  EXPECT_LE(response1.AccessToken.ExpiresOn, response1.LatestExpiration + 7200s);
 }

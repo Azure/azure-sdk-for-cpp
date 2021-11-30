@@ -68,8 +68,8 @@ TEST(EnvironmentCredential, RegularClientSecretCredential)
   EXPECT_EQ(response.AccessToken.Token, "ACCESSTOKEN1");
 
   using namespace std::chrono_literals;
-  EXPECT_GT(response.AccessToken.ExpiresOn, response.EarliestExpiration + 3600s);
-  EXPECT_LT(response.AccessToken.ExpiresOn, response.LatestExpiration + 3600s);
+  EXPECT_GE(response.AccessToken.ExpiresOn, response.EarliestExpiration + 3600s);
+  EXPECT_LE(response.AccessToken.ExpiresOn, response.LatestExpiration + 3600s);
 }
 
 TEST(EnvironmentCredential, AzureStackClientSecretCredential)
@@ -126,8 +126,8 @@ TEST(EnvironmentCredential, AzureStackClientSecretCredential)
   EXPECT_EQ(response.AccessToken.Token, "ACCESSTOKEN1");
 
   using namespace std::chrono_literals;
-  EXPECT_GT(response.AccessToken.ExpiresOn, response.EarliestExpiration + 3600s);
-  EXPECT_LT(response.AccessToken.ExpiresOn, response.LatestExpiration + 3600s);
+  EXPECT_GE(response.AccessToken.ExpiresOn, response.EarliestExpiration + 3600s);
+  EXPECT_LE(response.AccessToken.ExpiresOn, response.LatestExpiration + 3600s);
 }
 
 TEST(EnvironmentCredential, Unavailable)
