@@ -1,0 +1,31 @@
+{
+  "networkCallRecords": [
+    {
+      "Headers": {
+        "content-type": "application/json",
+        "user-agent": "azsdk-cpp-keyvault-keys/4.3.0-beta.1 (Linux 5.4.0-1063-azure x86_64 #66~18.04.1-Ubuntu SMP Thu Oct 21 09:59:28 UTC 2021)",
+        "x-ms-client-request-id": "2fb5b601-8002-4424-6f35-0a549165637c"
+      },
+      "Method": "POST",
+      "Response": {
+        "BODY": "{\"key\":{\"kid\":\"https://cpp-recordings.vault.azure.net/keys/RemoteSignVerifyRSA384-987/579b1877d8b541d98fa5d93255bb7161\",\"kty\":\"RSA\",\"key_ops\":[\"encrypt\",\"decrypt\",\"sign\",\"verify\",\"wrapKey\",\"unwrapKey\"],\"n\":\"v5tNs_nLP23yI3XwAFNkIL8_d8ZuRZVzqt0tY6etKdH2XxKzkuKEqDseOhSfxfUUR0VnV6IE2_Y93Bk9vWeaaEtfPa8UeKiiE_B7mzIOUcXqONA64EvnoHN0oAuMOpiVTzggVyepel5iXJdUXuPrecDQm-kuE305fgVPL4_Pfg_lD7ahgq9hHeWWM44uBiLGMIWpjIFRbNC9m7vyTxhSJZjC4DzyrN86PYkLfEUwkfrw4EQkwF5tyv3ruJME-8b6z2WxynM9E443r5DNakYlKwI9SJJdck9Lv-HU4Dza2dlkaNp-76nwgWKCJNXqdvw9-h5ApURVWAva2HRvN-J3ZQ\",\"e\":\"AQAB\"},\"attributes\":{\"enabled\":true,\"created\":1638402233,\"updated\":1638402233,\"recoveryLevel\":\"Recoverable+Purgeable\",\"recoverableDays\":90}}",
+        "STATUS_CODE": "200",
+        "cache-control": "no-cache",
+        "content-length": "696",
+        "content-type": "application/json; charset=utf-8",
+        "date": "Wed, 01 Dec 2021 23:43:53 GMT",
+        "expires": "-1",
+        "pragma": "no-cache",
+        "strict-transport-security": "max-age=31536000;includeSubDomains",
+        "x-content-type-options": "nosniff",
+        "x-ms-client-request-id": "2fb5b601-8002-4424-6f35-0a549165637c",
+        "x-ms-keyvault-network-info": "conn_type=Ipv4;addr=20.49.4.206;act_addr_fam=InterNetwork;",
+        "x-ms-keyvault-region": "eastus",
+        "x-ms-keyvault-service-version": "1.9.195.1",
+        "x-ms-request-id": "d0113589-18f1-4f04-af69-fb2da3ce0159",
+        "x-powered-by": "ASP.NET"
+      },
+      "Url": "https://REDACTED.vault.azure.net/keys/RemoteSignVerifyRSA384-987/create?api-version=7.2"
+    }
+  ]
+}

@@ -12,7 +12,7 @@
 
 using namespace Azure::Security::KeyVault::Keys;
 
-TEST(KeyClient, initClient)
+TEST(KeyVaultKeyClientUnitTest, initClient)
 {
   auto credential
       = std::make_shared<Azure::Identity::ClientSecretCredential>("tenantID", "AppId", "SecretId");
@@ -26,7 +26,7 @@ TEST(KeyClient, initClient)
   }
 }
 
-TEST(KeyClient, ServiceVersion)
+TEST(KeyVaultKeyClientUnitTest, ServiceVersion)
 {
   auto credential
       = std::make_shared<Azure::Identity::ClientSecretCredential>("tenantID", "AppId", "SecretId");
@@ -44,7 +44,7 @@ TEST(KeyClient, ServiceVersion)
   }
 }
 
-TEST(KeyClient, GetUrl)
+TEST(KeyVaultKeyClientUnitTest, GetUrl)
 {
   auto credential
       = std::make_shared<Azure::Identity::ClientSecretCredential>("tenantID", "AppId", "SecretId");

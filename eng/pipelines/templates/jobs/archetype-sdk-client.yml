@@ -49,6 +49,7 @@ jobs:
         CoverageEnabled: ${{ parameters.CoverageEnabled }}
         LineCoverageTarget: ${{ parameters.LineCoverageTarget }}
         BranchCoverageTarget: ${{ parameters.BranchCoverageTarget }}
+        AZURE_TEST_MODE: "PLAYBACK"
 
   # Disable build for cpp - client
   - ${{ if ne(parameters.ServiceDirectory, 'not-specified' )}}:

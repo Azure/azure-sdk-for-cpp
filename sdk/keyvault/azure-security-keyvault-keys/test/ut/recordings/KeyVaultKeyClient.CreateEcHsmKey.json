@@ -1,0 +1,57 @@
+{
+  "networkCallRecords": [
+    {
+      "Headers": {
+        "content-type": "application/json",
+        "user-agent": "azsdk-cpp-keyvault-keys/4.3.0-beta.1 (Linux 5.4.0-1063-azure x86_64 #66~18.04.1-Ubuntu SMP Thu Oct 21 09:59:28 UTC 2021)",
+        "x-ms-client-request-id": "3c860cec-b458-499a-7168-ec01c5153d7b"
+      },
+      "Method": "POST",
+      "Response": {
+        "BODY": "{\"key\":{\"kid\":\"https://cpp-hsm-recordings.vault.azure.net/keys/CreateEcHsmKey/9e0294640f06412fba7b3565c01803c4\",\"kty\":\"EC-HSM\",\"key_ops\":[\"sign\",\"verify\"],\"crv\":\"P-256\",\"x\":\"6BEmszvKBUImwa_LDFXcgxYB5rflp1wKqke0Km67ies\",\"y\":\"30hT9pUDNDGjug6GhaC_9Zks4ltf0-eYVRMGqwm60-w\"},\"attributes\":{\"enabled\":true,\"created\":1638401411,\"updated\":1638401411,\"recoveryLevel\":\"Recoverable+Purgeable\",\"recoverableDays\":90}}",
+        "STATUS_CODE": "200",
+        "cache-control": "no-cache",
+        "content-length": "403",
+        "content-type": "application/json; charset=utf-8",
+        "date": "Wed, 01 Dec 2021 23:30:12 GMT",
+        "expires": "-1",
+        "pragma": "no-cache",
+        "strict-transport-security": "max-age=31536000;includeSubDomains",
+        "x-content-type-options": "nosniff",
+        "x-ms-client-request-id": "3c860cec-b458-499a-7168-ec01c5153d7b",
+        "x-ms-keyvault-network-info": "conn_type=Ipv4;addr=20.49.4.206;act_addr_fam=InterNetwork;",
+        "x-ms-keyvault-region": "eastus",
+        "x-ms-keyvault-service-version": "1.9.195.1",
+        "x-ms-request-id": "c1b0a07b-93af-43fd-8cec-b7d14db46522",
+        "x-powered-by": "ASP.NET"
+      },
+      "Url": "https://REDACTED.vault.azure.net/keys/CreateEcHsmKey/create?api-version=7.2"
+    },
+    {
+      "Headers": {
+        "user-agent": "azsdk-cpp-keyvault-keys/4.3.0-beta.1 (Linux 5.4.0-1063-azure x86_64 #66~18.04.1-Ubuntu SMP Thu Oct 21 09:59:28 UTC 2021)",
+        "x-ms-client-request-id": "420c9237-68dc-4cc0-556b-d560982394c8"
+      },
+      "Method": "GET",
+      "Response": {
+        "BODY": "{\"key\":{\"kid\":\"https://cpp-hsm-recordings.vault.azure.net/keys/CreateEcHsmKey/9e0294640f06412fba7b3565c01803c4\",\"kty\":\"EC-HSM\",\"key_ops\":[\"sign\",\"verify\"],\"crv\":\"P-256\",\"x\":\"6BEmszvKBUImwa_LDFXcgxYB5rflp1wKqke0Km67ies\",\"y\":\"30hT9pUDNDGjug6GhaC_9Zks4ltf0-eYVRMGqwm60-w\"},\"attributes\":{\"enabled\":true,\"created\":1638401411,\"updated\":1638401411,\"recoveryLevel\":\"Recoverable+Purgeable\",\"recoverableDays\":90}}",
+        "STATUS_CODE": "200",
+        "cache-control": "no-cache",
+        "content-length": "403",
+        "content-type": "application/json; charset=utf-8",
+        "date": "Wed, 01 Dec 2021 23:30:12 GMT",
+        "expires": "-1",
+        "pragma": "no-cache",
+        "strict-transport-security": "max-age=31536000;includeSubDomains",
+        "x-content-type-options": "nosniff",
+        "x-ms-client-request-id": "420c9237-68dc-4cc0-556b-d560982394c8",
+        "x-ms-keyvault-network-info": "conn_type=Ipv4;addr=20.49.4.206;act_addr_fam=InterNetwork;",
+        "x-ms-keyvault-region": "eastus",
+        "x-ms-keyvault-service-version": "1.9.195.1",
+        "x-ms-request-id": "72bed08e-c9a0-4f34-94f4-4df4f96cf897",
+        "x-powered-by": "ASP.NET"
+      },
+      "Url": "https://REDACTED.vault.azure.net/keys/CreateEcHsmKey?api-version=7.2"
+    }
+  ]
+}

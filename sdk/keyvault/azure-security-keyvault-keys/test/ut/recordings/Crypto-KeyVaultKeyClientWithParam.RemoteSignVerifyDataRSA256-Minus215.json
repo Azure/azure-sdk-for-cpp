@@ -1,0 +1,31 @@
+{
+  "networkCallRecords": [
+    {
+      "Headers": {
+        "content-type": "application/json",
+        "user-agent": "azsdk-cpp-keyvault-keys/4.3.0-beta.1 (Linux 5.4.0-1063-azure x86_64 #66~18.04.1-Ubuntu SMP Thu Oct 21 09:59:28 UTC 2021)",
+        "x-ms-client-request-id": "ca11c839-0d23-47ef-4c05-578e088db01d"
+      },
+      "Method": "POST",
+      "Response": {
+        "BODY": "{\"key\":{\"kid\":\"https://cpp-recordings.vault.azure.net/keys/RemoteSignVerifyDataRSA256-Minus215/fa7ec498693747f18db994a919e8301d\",\"kty\":\"RSA\",\"key_ops\":[\"encrypt\",\"decrypt\",\"sign\",\"verify\",\"wrapKey\",\"unwrapKey\"],\"n\":\"xaiS-L940eBOn1RbojvAeLxhMw-L2DlP4DSb8jVBiCG9ZF2LbW7YsYqC4MXpwzlu_X90oxKb6stSbvVQYUzLqdSsO-yjNwOU0HjY7KC2Aej0_TV6PGBXgdEuh3MK0ecIhkX75lUiPnerXyFGCjIn7tRHfmtoui11u8xdcJjGolt3D3Dq4j_WRaCZM0Dxqlpj1I4VNDqAgHEv0gSm4vlsjxKb6Q26LKO5hkk5EbvPHVLkApO5zN6tsVSl6LGe5YoVoE_b0IwsYt_Yl0YZtP0qPMRbh-TexWMb8Mo2kZ-Bh89tVbsCk-1bPb2xKaoS5zMq8tpN3M8bES8SYuveyCGegQ\",\"e\":\"AQAB\"},\"attributes\":{\"enabled\":true,\"created\":1638402241,\"updated\":1638402241,\"recoveryLevel\":\"Recoverable+Purgeable\",\"recoverableDays\":90}}",
+        "STATUS_CODE": "200",
+        "cache-control": "no-cache",
+        "content-length": "705",
+        "content-type": "application/json; charset=utf-8",
+        "date": "Wed, 01 Dec 2021 23:44:00 GMT",
+        "expires": "-1",
+        "pragma": "no-cache",
+        "strict-transport-security": "max-age=31536000;includeSubDomains",
+        "x-content-type-options": "nosniff",
+        "x-ms-client-request-id": "ca11c839-0d23-47ef-4c05-578e088db01d",
+        "x-ms-keyvault-network-info": "conn_type=Ipv4;addr=20.49.4.206;act_addr_fam=InterNetwork;",
+        "x-ms-keyvault-region": "eastus",
+        "x-ms-keyvault-service-version": "1.9.195.1",
+        "x-ms-request-id": "c5c342de-0607-43ec-880b-90548331b196",
+        "x-powered-by": "ASP.NET"
+      },
+      "Url": "https://REDACTED.vault.azure.net/keys/RemoteSignVerifyDataRSA256-Minus215/create?api-version=7.2"
+    }
+  ]
+}

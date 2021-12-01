@@ -1,0 +1,31 @@
+{
+  "networkCallRecords": [
+    {
+      "Headers": {
+        "content-type": "application/json",
+        "user-agent": "azsdk-cpp-keyvault-keys/4.3.0-beta.1 (Linux 5.4.0-1063-azure x86_64 #66~18.04.1-Ubuntu SMP Thu Oct 21 09:59:28 UTC 2021)",
+        "x-ms-client-request-id": "795c3b68-9590-472a-7102-9c02e266cfce"
+      },
+      "Method": "POST",
+      "Response": {
+        "BODY": "{\"key\":{\"kid\":\"https://cpp-recordings.vault.azure.net/keys/RemoteSignVerifyDataRSA256-2048/6c30e84bc5c54579979ab729b40ea5ef\",\"kty\":\"RSA\",\"key_ops\":[\"encrypt\",\"decrypt\",\"sign\",\"verify\",\"wrapKey\",\"unwrapKey\"],\"n\":\"0tuxD8w-CdyrKLxJt-QB1ZvI8b9Jaw6nmrurabSOcCaOp9KrmewiFMHSBkazwuWW8-uShO8gt3JpjyA0-6wUTgEjotSzdM4HRccX6XgHFeRkPmmgC1dkUvbOC6rfPSxY0mcZKpRAwaXcyjTptPAxGsX420EHR1VGI2hMUrjUy19zb3pVRHM4gzcm8ujWEUF6ujR0YATsGDWR6z7V-EVFDu3nn25reZ8NhlRaEL8rmAc4kTr_9OdVD73874rorlAU3ZVOhIsCy4XGL_4ID7CIYzMFy8vpbBn-VNDkMfV6GQugR3FPmavVL0LaLs1Rvhbaq7tveQOmVVp_Jixq1km3QQ\",\"e\":\"AQAB\"},\"attributes\":{\"enabled\":true,\"created\":1638402252,\"updated\":1638402252,\"recoveryLevel\":\"Recoverable+Purgeable\",\"recoverableDays\":90}}",
+        "STATUS_CODE": "200",
+        "cache-control": "no-cache",
+        "content-length": "701",
+        "content-type": "application/json; charset=utf-8",
+        "date": "Wed, 01 Dec 2021 23:44:12 GMT",
+        "expires": "-1",
+        "pragma": "no-cache",
+        "strict-transport-security": "max-age=31536000;includeSubDomains",
+        "x-content-type-options": "nosniff",
+        "x-ms-client-request-id": "795c3b68-9590-472a-7102-9c02e266cfce",
+        "x-ms-keyvault-network-info": "conn_type=Ipv4;addr=20.49.4.206;act_addr_fam=InterNetwork;",
+        "x-ms-keyvault-region": "eastus",
+        "x-ms-keyvault-service-version": "1.9.195.1",
+        "x-ms-request-id": "69579db8-4ef7-4a5d-9425-1300ff5893dd",
+        "x-powered-by": "ASP.NET"
+      },
+      "Url": "https://REDACTED.vault.azure.net/keys/RemoteSignVerifyDataRSA256-2048/create?api-version=7.2"
+    }
+  ]
+}

@@ -1,0 +1,31 @@
+{
+  "networkCallRecords": [
+    {
+      "Headers": {
+        "content-type": "application/json",
+        "user-agent": "azsdk-cpp-keyvault-keys/4.3.0-beta.1 (Linux 5.4.0-1063-azure x86_64 #66~18.04.1-Ubuntu SMP Thu Oct 21 09:59:28 UTC 2021)",
+        "x-ms-client-request-id": "d757bd6f-7319-4c94-7d31-76fcf1ce7fb4"
+      },
+      "Method": "POST",
+      "Response": {
+        "BODY": "{\"key\":{\"kid\":\"https://cpp-recordings.vault.azure.net/keys/RemoteEncrypt-Minus100/31d3c369333e462aabc3881a76ef0184\",\"kty\":\"RSA\",\"key_ops\":[\"encrypt\",\"decrypt\",\"sign\",\"verify\",\"wrapKey\",\"unwrapKey\"],\"n\":\"2fcC1E4Kec3FLKX9vPxPm61VE7dL1ZK4_zwr3SyD3P2vaW2dLTbfcbPgkOAuwB_oFvQ2x8N6Aw-d7Z5yPZnqtbXmpMNiJjfsrxCHdLEtfPI5xpMQ3bV0Q5ZNeWwMGqCOuA9bOddz4P-9VOjdpF5fsLgVF5aGpsHacaH2EGe1mbV6cLFqAcY3OYQw8vs5cWs7wb8R3zr1_sRdSJmHS2kzZEGePQZjuCEVefJzt76EA6S4h4mAyTgMzsNsZzlclta3UmpuUV1TUt0ccy9klL5jQjCTUR0wbgI9O8SwoysFp1x36jwXxmLX4XgRuFm2HLOLCfrVYNXHWvMMeAq0h9fReQ\",\"e\":\"AQAB\"},\"attributes\":{\"enabled\":true,\"created\":1638402178,\"updated\":1638402178,\"recoveryLevel\":\"Recoverable+Purgeable\",\"recoverableDays\":90}}",
+        "STATUS_CODE": "200",
+        "cache-control": "no-cache",
+        "content-length": "692",
+        "content-type": "application/json; charset=utf-8",
+        "date": "Wed, 01 Dec 2021 23:42:58 GMT",
+        "expires": "-1",
+        "pragma": "no-cache",
+        "strict-transport-security": "max-age=31536000;includeSubDomains",
+        "x-content-type-options": "nosniff",
+        "x-ms-client-request-id": "d757bd6f-7319-4c94-7d31-76fcf1ce7fb4",
+        "x-ms-keyvault-network-info": "conn_type=Ipv4;addr=20.49.4.206;act_addr_fam=InterNetwork;",
+        "x-ms-keyvault-region": "eastus",
+        "x-ms-keyvault-service-version": "1.9.195.1",
+        "x-ms-request-id": "d09b0773-09c2-422d-a04f-90bc0827539b",
+        "x-powered-by": "ASP.NET"
+      },
+      "Url": "https://REDACTED.vault.azure.net/keys/RemoteEncrypt-Minus100/create?api-version=7.2"
+    }
+  ]
+}

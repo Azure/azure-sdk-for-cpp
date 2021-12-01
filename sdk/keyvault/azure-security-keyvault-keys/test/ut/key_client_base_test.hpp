@@ -22,34 +22,16 @@
 
 namespace Azure { namespace Security { namespace KeyVault { namespace Keys { namespace Test {
 
-  class KeyVaultClientTest : public Azure::Core::Test::TestBase,
-                             public ::testing::WithParamInterface<int> {
+  class KeyVaultKeyClient : public Azure::Core::Test::TestBase {
   private:
     std::unique_ptr<Azure::Security::KeyVault::Keys::KeyClient> m_client;
-    std::string GetEnv(const std::string& name, std::string const& defaultValue = std::string())
-    {
-      const char* ret = std::getenv(name.data());
-      if (!ret)
-      {
-        if (defaultValue.size() > 0)
-        {
-          return defaultValue;
-        }
-
-        throw std::runtime_error(
-            name + " is required to run the tests but not set as an environment variable.");
-      }
-
-      return std::string(ret);
-    }
 
   protected:
-    int m_testPollingTimeOutMinutes = 20;
-    std::chrono::minutes m_testPollingIntervalMinutes = std::chrono::minutes(1);
-
     std::shared_ptr<Azure::Identity::ClientSecretCredential> m_credential;
     std::string m_keyVaultUrl;
     std::string m_keyVaultHsmUrl;
+    int m_testPollingTimeOutMinutes = 20;
+    std::chrono::milliseconds m_testPollingIntervalMs = std::chrono::minutes(1);
 
     Azure::Security::KeyVault::Keys::KeyClient const& GetClientForTest(std::string const& testName)
     {
@@ -61,47 +43,30 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys { nam
     // Create
     virtual void SetUp() override
     {
-      // Init interceptor from PlayBackRecorder
-      std::string recordingPath(AZURE_TEST_RECORDING_DIR);
-      recordingPath.append("/recordings");
-      Azure::Core::Test::TestBase::SetUpBase(recordingPath);
-
-      std::string tenantId = GetEnv("AZURE_TENANT_ID");
-      std::string clientId = GetEnv("AZURE_CLIENT_ID");
-      std::string secretId = GetEnv("AZURE_CLIENT_SECRET");
-      m_credential
-          = std::make_shared<Azure::Identity::ClientSecretCredential>(tenantId, clientId, secretId);
-
+      Azure::Core::Test::TestBase::SetUpTestBase(AZURE_TEST_RECORDING_DIR);
       m_keyVaultUrl = GetEnv("AZURE_KEYVAULT_URL");
       m_keyVaultHsmUrl = GetEnv("AZURE_KEYVAULT_HSM_URL");
 
-      // Create default client for the test
+      // Options and credential for the client
       KeyClientOptions options;
-      // Replace default transport adapter for playback
-      if (m_testContext.IsPlaybackMode())
-      {
-        options.Transport.Transport = m_interceptor->GetPlaybackClient();
-      }
-      // Insert Recording policy when Record mode is on (non playback and non LiveMode)
-      else if (!m_testContext.IsLiveMode())
-      {
-        // AZURE_TEST_RECORDING_DIR is exported by CMAKE
-        options.PerRetryPolicies.push_back(m_interceptor->GetRecordPolicy());
-      }
+      m_credential = std::make_shared<Azure::Identity::ClientSecretCredential>(
+          GetEnv("AZURE_TENANT_ID"), GetEnv("AZURE_CLIENT_ID"), GetEnv("AZURE_CLIENT_SECRET"));
 
-      m_client = std::make_unique<KeyClient>(m_keyVaultUrl, m_credential, options);
+      // `InitTestClient` takes care of setting up Record&Playback.
+      m_client = InitTestClient<
+          Azure::Security::KeyVault::Keys::KeyClient,
+          Azure::Security::KeyVault::Keys::KeyClientOptions>(m_keyVaultUrl, m_credential, options);
 
-      // When running live tests, service can return 429 error response if the client is sending
-      // multiple requests per second. This can happen if the network is fast and tests are running
-      // without any delay between them.
-      auto avoidTestThrottled = GetEnv("AZURE_KEYVAULT_AVOID_THROTTLED", "0");
+      UpdateWaitingTime(m_testPollingIntervalMs);
+    }
 
-      if (avoidTestThrottled != "0")
-      {
-        std::cout << "- Wait to avoid server throttled..." << std::endl;
-        // 10 sec should be enough to prevent from 429 error
-        std::this_thread::sleep_for(std::chrono::seconds(10));
-      }
+    void CreateHsmClient()
+    {
+      KeyClientOptions options;
+      m_client = InitTestClient<
+          Azure::Security::KeyVault::Keys::KeyClient,
+          Azure::Security::KeyVault::Keys::KeyClientOptions>(
+          m_keyVaultHsmUrl, m_credential, options);
     }
 
   public:
@@ -172,6 +137,17 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys { nam
           std::this_thread::sleep_for(std::chrono::minutes(1));
         }
       }
+    }
+  };
+
+  // This class makes crypto tests to have a delay before running to avoid server Throttled
+  class KeyVaultKeyClientWithParam : public KeyVaultKeyClient, public ::testing::WithParamInterface<int> {
+
+    // Just call base class setup and introduce the wait delay
+    virtual void SetUp() override
+    {
+      KeyVaultKeyClient::SetUp();
+      TestDelay();
     }
   };
 }}}}} // namespace Azure::Security::KeyVault::Keys::Test

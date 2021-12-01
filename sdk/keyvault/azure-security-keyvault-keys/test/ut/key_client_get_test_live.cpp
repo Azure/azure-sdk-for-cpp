@@ -17,14 +17,14 @@
 using namespace Azure::Security::KeyVault::Keys::Test;
 using namespace Azure::Security::KeyVault::Keys;
 
-TEST_F(KeyVaultClientTest, GetSingleKey)
+TEST_F(KeyVaultKeyClient, GetSingleKey)
 {
-  KeyClient keyClient(m_keyVaultUrl, m_credential);
-  std::string keyName(GetUniqueName());
+  auto const keyName = GetTestName();
+  auto const& client = GetClientForTest(keyName);
 
-  auto createKeyResponse = keyClient.CreateEcKey(CreateEcKeyOptions(keyName));
+  auto createKeyResponse = client.CreateEcKey(CreateEcKeyOptions(keyName));
   CheckValidResponse(createKeyResponse);
-  auto keyResponse = keyClient.GetKey(keyName);
+  auto keyResponse = client.GetKey(keyName);
   CheckValidResponse(keyResponse);
   auto key = keyResponse.Value;
 
@@ -32,27 +32,27 @@ TEST_F(KeyVaultClientTest, GetSingleKey)
   EXPECT_EQ(key.GetKeyType(), KeyVaultKeyType::Ec);
 }
 
-TEST_F(KeyVaultClientTest, GetPropertiesOfKeysOnePage)
+TEST_F(KeyVaultKeyClient, GetPropertiesOfKeysAllPages)
 {
-
-  KeyClient keyClient(m_keyVaultUrl, m_credential);
-  // Delete and purge anything before starting the test to ensure test will work
-  RemoveAllKeysFromVault(keyClient);
+  auto const keyName = GetTestName();
+  auto const& client = GetClientForTest(keyName);
 
   // Create 5 keys
   std::vector<std::string> keyNames;
-  for (int counter = 0; counter < 5; counter++)
+  for (int counter = 0; counter < 50; counter++)
   {
-    auto name = GetUniqueName();
+    std::string const name(keyName + std::to_string(counter));
     CreateEcKeyOptions options(name);
     keyNames.emplace_back(name);
-    auto response = keyClient.CreateEcKey(options);
+    auto response = client.CreateEcKey(options);
+    // Avoid server Throttled while creating keys
+    TestDelay();
     CheckValidResponse(response);
   }
   // Get Key properties
   std::vector<KeyProperties> keyPropertiesList;
   GetPropertiesOfKeysOptions options;
-  for (auto keyResponse = keyClient.GetPropertiesOfKeys(options); keyResponse.HasPage();
+  for (auto keyResponse = client.GetPropertiesOfKeys(options); keyResponse.HasPage();
        keyResponse.MoveToNextPage())
   {
     for (auto& key : keyResponse.Items)
@@ -61,32 +61,39 @@ TEST_F(KeyVaultClientTest, GetPropertiesOfKeysOnePage)
     }
   }
 
-  EXPECT_EQ(keyNames.size(), keyPropertiesList.size());
-  for (auto const& keyProperties : keyPropertiesList)
+  for (auto const& key : keyNames)
   {
-    // Check names are in the keyNames list
-    auto findKeyName = std::find(keyNames.begin(), keyNames.end(), keyProperties.Name);
-    EXPECT_NE(findKeyName, keyNames.end());
+    // Check names are in the returned list
+    auto findKeyName = std::find_if(
+        keyPropertiesList.begin(),
+        keyPropertiesList.end(),
+        [&key](KeyProperties const& returnedKey) { return returnedKey.Name == key; });
+    EXPECT_NE(findKeyName, keyPropertiesList.end());
+    EXPECT_EQ(key, findKeyName->Name);
   }
 }
 
-TEST_F(KeyVaultClientTest, GetKeysVersionsOnePage)
+TEST_F(KeyVaultKeyClient, GetKeysVersions)
 {
-  KeyClient keyClient(m_keyVaultUrl, m_credential);
+  auto const keyName = GetTestName();
+  auto const& client = GetClientForTest(keyName);
 
   // Create 5 key versions
-  std::string keyName(GetUniqueName());
-  size_t expectedVersions = 5;
+  size_t expectedVersions = 50;
   CreateEcKeyOptions createKeyOptions(keyName);
   for (size_t counter = 0; counter < expectedVersions; counter++)
   {
-    auto response = keyClient.CreateEcKey(createKeyOptions);
+    auto response = client.CreateEcKey(createKeyOptions);
     CheckValidResponse(response);
+    EXPECT_NE(response.Value.Properties.Version, std::string(""));
+    // Avoid server Throttled while creating keys
+    TestDelay();
   }
+
   // Get Key versions
   std::vector<KeyProperties> keyPropertiesList;
   GetPropertiesOfKeyVersionsOptions getKeyOptions;
-  for (auto keyResponse = keyClient.GetPropertiesOfKeyVersions(keyName); keyResponse.HasPage();
+  for (auto keyResponse = client.GetPropertiesOfKeyVersions(keyName); keyResponse.HasPage();
        keyResponse.MoveToNextPage())
   {
     for (auto& key : keyResponse.Items)
@@ -99,38 +106,51 @@ TEST_F(KeyVaultClientTest, GetKeysVersionsOnePage)
   for (auto const& keyProperties : keyPropertiesList)
   {
     EXPECT_EQ(keyName, keyProperties.Name);
+    // Check we can get key version from server
+    GetKeyOptions options;
+    options.Version = keyProperties.Version;
+    auto versionedKey = client.GetKey(keyProperties.Name, options);
+    CheckValidResponse(versionedKey);
+    EXPECT_EQ(keyProperties.Version, versionedKey.Value.Properties.Version);
+    // Avoid server Throttled while creating keys
+    TestDelay();
   }
 }
 
-TEST_F(KeyVaultClientTest, GetDeletedKeysOnePage)
+TEST_F(KeyVaultKeyClient, GetDeletedKeys)
 {
-  KeyClient keyClient(m_keyVaultUrl, m_credential);
+  auto const keyName = GetTestName();
+  auto const& client = GetClientForTest(keyName);
 
   // Create 5 keys
   std::vector<std::string> keyNames;
-  for (int counter = 0; counter < 5; counter++)
+  for (int counter = 0; counter < 50; counter++)
   {
-    auto name = GetUniqueName();
+    std::string const name(keyName + std::to_string(counter));
     CreateEcKeyOptions options(name);
     keyNames.emplace_back(name);
-    auto response = keyClient.CreateEcKey(options);
+    auto response = client.CreateEcKey(options);
     CheckValidResponse(response);
+    // Avoid server Throttled while creating keys
+    TestDelay();
   }
   // Delete keys
   std::vector<DeleteKeyOperation> operations;
   for (auto const& keyName : keyNames)
   {
-    operations.emplace_back(keyClient.StartDeleteKey(keyName));
+    operations.emplace_back(client.StartDeleteKey(keyName));
+    // Avoid server Throttled while creating keys
+    TestDelay();
   }
   // wait for all of the delete operations to complete
   for (auto& operation : operations)
   {
-    operation.PollUntilDone(m_testPollingIntervalMinutes);
+    operation.PollUntilDone(m_testPollingIntervalMs);
   }
 
   // Get all deleted Keys
   std::vector<std::string> deletedKeys;
-  for (auto keyResponse = keyClient.GetDeletedKeys(); keyResponse.HasPage();
+  for (auto keyResponse = client.GetDeletedKeys(); keyResponse.HasPage();
        keyResponse.MoveToNextPage())
   {
     for (auto& key : keyResponse.Items)

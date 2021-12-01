@@ -20,6 +20,7 @@
 
 #pragma once
 
+#include <azure/core/credentials/credentials.hpp>
 #include <azure/core/http/http.hpp>
 #include <azure/core/http/policies/policy.hpp>
 #include <memory>
@@ -31,6 +32,30 @@
 #include "azure/core/test/test_context_manager.hpp"
 
 namespace Azure { namespace Core { namespace Test {
+
+  /**
+   * @brief Client Certificate Credential authenticates with the Azure services using a
+   * Tenant ID, Client ID and a client secret.
+   *
+   */
+  class TestClientSecretCredential final : public Core::Credentials::TokenCredential {
+  public:
+    Core::Credentials::AccessToken GetToken(
+        Core::Credentials::TokenRequestContext const& tokenRequestContext,
+        Core::Context const& context) const override
+    {
+      Core::Credentials::AccessToken accessToken;
+      accessToken.Token = "magicToken";
+      accessToken.ExpiresOn = DateTime::max();
+
+      if (context.IsCancelled() || tokenRequestContext.Scopes.size() == 0)
+      {
+        accessToken.ExpiresOn = DateTime::min();
+      }
+
+      return accessToken;
+    }
+  };
 
   /**
    * @brief A class that keeps track of network calls by either reading the data from an existing
@@ -70,6 +95,17 @@ namespace Azure { namespace Core { namespace Test {
     std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy> GetRecordPolicy()
     {
       return std::make_unique<Azure::Core::Test::RecordNetworkCallPolicy>(this);
+    }
+
+    /**
+     * @brief Get a credential which token never expires. This is util for running on playback where
+     * the token is not relevant.
+     *
+     * @return std::unique_ptr<Core::Credentials::TokenCredential>
+     */
+    std::shared_ptr<Core::Credentials::TokenCredential> GetTestCredential()
+    {
+      return std::make_shared<TestClientSecretCredential>();
     }
 
     /**

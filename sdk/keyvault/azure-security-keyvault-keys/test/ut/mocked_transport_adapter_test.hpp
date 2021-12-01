@@ -117,7 +117,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys { nam
     }
   };
 
-  class MockedTransportAdapterTest : public ::testing::Test {
+  class KeyVaultKeyClientMocked : public ::testing::Test {
   protected:
     std::unique_ptr<KeyClientWithNoAuthenticationPolicy> m_client;
     Azure::Security::KeyVault::Keys::KeyClientOptions m_clientOptions;

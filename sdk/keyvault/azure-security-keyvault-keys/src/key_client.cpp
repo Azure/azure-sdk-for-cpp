@@ -383,7 +383,7 @@ Azure::Response<KeyVaultKey> KeyClient::ImportKey(
 
 Cryptography::CryptographyClient KeyClient::GetCryptographyClient(
     std::string const& name,
-    std::string const& version)
+    std::string const& version) const
 {
   Azure::Core::Url vaultUrl(m_vaultUrl);
   vaultUrl.AppendPath(_detail::KeysPath);
