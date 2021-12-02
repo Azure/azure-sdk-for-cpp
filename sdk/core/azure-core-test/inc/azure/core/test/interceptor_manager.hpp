@@ -38,7 +38,7 @@ namespace Azure { namespace Core { namespace Test {
    * Tenant ID, Client ID and a client secret.
    *
    */
-  class TestClientSecretCredential final : public Core::Credentials::TokenCredential {
+  class TestNonExpiringCredential final : public Core::Credentials::TokenCredential {
   public:
     Core::Credentials::AccessToken GetToken(
         Core::Credentials::TokenRequestContext const& tokenRequestContext,
@@ -105,7 +105,7 @@ namespace Azure { namespace Core { namespace Test {
      */
     std::shared_ptr<Core::Credentials::TokenCredential> GetTestCredential()
     {
-      return std::make_shared<TestClientSecretCredential>();
+      return std::make_shared<TestNonExpiringCredential>();
     }
 
     /**
