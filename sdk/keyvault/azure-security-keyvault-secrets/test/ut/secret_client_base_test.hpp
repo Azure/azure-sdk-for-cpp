@@ -15,41 +15,17 @@
 using namespace std::chrono_literals;
 
 namespace Azure { namespace Security { namespace KeyVault { namespace Secrets { namespace _test {
-  /**
-   * @brief Client Secret Credential authenticates with the Azure services using a Tenant ID, Client
-   * ID and a client secret.
-   *
-   */
-  class TestClientSecretCredential final : public Core::Credentials::TokenCredential {
-  public:
-    Core::Credentials::AccessToken GetToken(
-        Core::Credentials::TokenRequestContext const& tokenRequestContext,
-        Core::Context const& context) const override
-    {
-      Core::Credentials::AccessToken accessToken;
-      accessToken.Token = "magicToken";
-      accessToken.ExpiresOn = DateTime::max();
 
-      if (context.IsCancelled() || tokenRequestContext.Scopes.size() == 0)
-      {
-        accessToken.ExpiresOn = DateTime::min();
-      }
-
-      return accessToken;
-    }
-  };
   class KeyVaultSecretClientTest : public Azure::Core::Test::TestBase,
                                    public ::testing::WithParamInterface<int> {
   private:
     std::unique_ptr<Azure::Security::KeyVault::Secrets::SecretClient> m_client;
 
   protected:
-    int m_testPollingTimeOutMinutes = 20;
     std::chrono::minutes m_testPollingIntervalMs = std::chrono::minutes(1);
-    std::shared_ptr<Azure::Identity::ClientSecretCredential> m_credential;
-    std::shared_ptr<TestClientSecretCredential> m_testCredential;
+    std::shared_ptr<Azure::Core::Credentials::TokenCredential> m_credential;
     std::string m_keyVaultUrl;
-    std::chrono::milliseconds m_defaultWait;
+    std::chrono::milliseconds m_defaultWait = 1min;
 
     Azure::Security::KeyVault::Secrets::SecretClient const& GetClientForTest(
         std::string const& testName)

@@ -44,7 +44,7 @@ namespace Azure { namespace Core { namespace Test {
         // Playback mode uses:
         //  - playback transport adapter to read and return payload from json files
         //  - never-expiring test credential to never require a token
-        options.Transport.Transport = m_interceptor->GetPlaybackClient();
+        options.Transport.Transport = m_interceptor->GetPlaybackTransport();
         credential = m_interceptor->GetTestCredential();
       }
       else if (!m_testContext.IsLiveMode())
@@ -107,7 +107,7 @@ namespace Azure { namespace Core { namespace Test {
     }
 
     // Util for tests to introduce delays
-    void TestDelay(std::chrono::milliseconds const& ms = 1s)
+    void TestSleep(std::chrono::milliseconds const& ms = 1s)
     {
       if (m_testContext.IsPlaybackMode())
       {
@@ -139,8 +139,7 @@ namespace Azure { namespace Core { namespace Test {
 
       if (!ret)
       {
-        throw std::runtime_error(
-            "Missing required environment variable: " + name);
+        throw std::runtime_error("Missing required environment variable: " + name);
       }
 
       return std::string(ret);

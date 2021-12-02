@@ -101,7 +101,7 @@ namespace Azure { namespace Core { namespace Test {
      * @brief Get a credential which token never expires. This is util for running on playback where
      * the token is not relevant.
      *
-     * @return std::unique_ptr<Core::Credentials::TokenCredential>
+     * @return std::shared<Core::Credentials::TokenCredential>
      */
     std::shared_ptr<Core::Credentials::TokenCredential> GetTestCredential()
     {
@@ -114,7 +114,7 @@ namespace Azure { namespace Core { namespace Test {
      *
      * @return An HTTP client that plays back network calls from its recorded data.
      */
-    std::unique_ptr<Azure::Core::Http::HttpTransport> GetPlaybackClient()
+    std::unique_ptr<Azure::Core::Http::HttpTransport> GetPlaybackTransport()
     {
       return std::make_unique<Azure::Core::Test::PlaybackClient>(this);
     }

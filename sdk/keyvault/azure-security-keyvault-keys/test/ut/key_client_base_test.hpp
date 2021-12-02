@@ -148,7 +148,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys { nam
     virtual void SetUp() override
     {
       KeyVaultKeyClient::SetUp();
-      TestDelay();
+      TestSleep();
     }
   };
 }}}}} // namespace Azure::Security::KeyVault::Keys::Test

@@ -46,7 +46,7 @@ TEST_F(KeyVaultKeyClient, GetPropertiesOfKeysAllPages)
     keyNames.emplace_back(name);
     auto response = client.CreateEcKey(options);
     // Avoid server Throttled while creating keys
-    TestDelay();
+    TestSleep();
     CheckValidResponse(response);
   }
   // Get Key properties
@@ -87,7 +87,7 @@ TEST_F(KeyVaultKeyClient, GetKeysVersions)
     CheckValidResponse(response);
     EXPECT_NE(response.Value.Properties.Version, std::string(""));
     // Avoid server Throttled while creating keys
-    TestDelay();
+    TestSleep();
   }
 
   // Get Key versions
@@ -113,7 +113,7 @@ TEST_F(KeyVaultKeyClient, GetKeysVersions)
     CheckValidResponse(versionedKey);
     EXPECT_EQ(keyProperties.Version, versionedKey.Value.Properties.Version);
     // Avoid server Throttled while creating keys
-    TestDelay();
+    TestSleep();
   }
 }
 
@@ -132,7 +132,7 @@ TEST_F(KeyVaultKeyClient, GetDeletedKeys)
     auto response = client.CreateEcKey(options);
     CheckValidResponse(response);
     // Avoid server Throttled while creating keys
-    TestDelay();
+    TestSleep();
   }
   // Delete keys
   std::vector<DeleteKeyOperation> operations;
@@ -140,7 +140,7 @@ TEST_F(KeyVaultKeyClient, GetDeletedKeys)
   {
     operations.emplace_back(client.StartDeleteKey(key));
     // Avoid server Throttled while creating keys
-    TestDelay();
+    TestSleep();
   }
   // wait for all of the delete operations to complete
   for (auto& operation : operations)
