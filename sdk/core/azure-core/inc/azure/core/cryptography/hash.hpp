@@ -64,8 +64,11 @@ namespace Azure { namespace Core { namespace Cryptography {
      */
     void Append(const uint8_t* data, size_t length)
     {
+      // LCOV_EXCL_START
       _azure_ASSERT(data || length == 0);
       _azure_ASSERT_MSG(!m_isDone, "Cannot call Append after calling Final().");
+      // LCOV_EXCL_STOP
+
       OnAppend(data, length);
     }
 
@@ -80,8 +83,11 @@ namespace Azure { namespace Core { namespace Cryptography {
      */
     std::vector<uint8_t> Final(const uint8_t* data, size_t length)
     {
+      // LCOV_EXCL_START
       _azure_ASSERT(data || length == 0);
       _azure_ASSERT_MSG(!m_isDone, "Cannot call Final() multiple times.");
+      // LCOV_EXCL_STOP
+
       m_isDone = true;
       return OnFinal(data, length);
     }

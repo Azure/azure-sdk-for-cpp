@@ -63,7 +63,7 @@ Azure::Core::Credentials::AccessToken TokenCredentialImpl::GetToken(
   using Azure::Core::Http::HttpStatusCode;
   using Azure::Core::Http::RawResponse;
 
-  static std::string const errorMsgPrefix("GetToken: ");
+  static std::string const errorMsgPrefix("GetToken: "); // LCOV_EXCL_LINE
 
   try
   {
@@ -105,8 +105,8 @@ Azure::Core::Credentials::AccessToken TokenCredentialImpl::GetToken(
     // TODO: use JSON parser.
     auto const responseBodySize = responseBody.size();
 
-    static std::string const jsonExpiresIn = "expires_in";
-    static std::string const jsonAccessToken = "access_token";
+    static std::string const jsonExpiresIn = "expires_in"; // LCOV_EXCL_LINE
+    static std::string const jsonAccessToken = "access_token"; // LCOV_EXCL_LINE
 
     auto responseBodyPos = responseBody.find(':', responseBody.find(jsonExpiresIn));
     if (responseBodyPos == std::string::npos)

@@ -11,4 +11,6 @@ namespace Azure { namespace Core {
   const OperationStatus OperationStatus::Failed{"Failed"};
   const OperationStatus OperationStatus::Cancelled{"Cancelled"};
 
+  // LCOV_EXCL_START
 }} // namespace Azure::Core
+// LCOV_EXCL_STOP

@@ -139,7 +139,7 @@ EnvironmentLogLevelListener::GetLogListener()
                          .ToString(
                              DateTime::DateFormat::Rfc3339, DateTime::TimeFractionFormat::AllDigits)
                   << "] " << LogLevelToConsoleString(level) << " : " << message << std::endl;
-      };
+      }; // LCOV_EXCL_LINE
 
   return consoleLogger;
 }

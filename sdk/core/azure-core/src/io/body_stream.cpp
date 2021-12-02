@@ -43,7 +43,7 @@ static_assert(sizeof(void*) >= sizeof(HANDLE), "We must be able to cast HANDLE t
 // Keep reading until buffer is all fill out of the end of stream content is reached
 size_t BodyStream::ReadToCount(uint8_t* buffer, size_t count, Context const& context)
 {
-  _azure_ASSERT(buffer || count == 0);
+  _azure_ASSERT(buffer || count == 0); // LCOV_EXCL_LINE
 
   size_t totalRead = 0;
 
@@ -92,7 +92,9 @@ size_t MemoryBodyStream::OnRead(uint8_t* buffer, size_t count, Context const& co
 
 FileBodyStream::FileBodyStream(const std::string& filename)
 {
+  // LCOV_EXCL_START
   _azure_ASSERT_MSG(filename.size() > 0, "The file name must not be an empty string.");
+  // LCOV_EXCL_STOP
 
 #if defined(AZ_PLATFORM_WINDOWS)
   HANDLE fileHandle = INVALID_HANDLE_VALUE;
@@ -224,6 +226,6 @@ using Azure::Core::IO::_internal::NullBodyStream;
 
 NullBodyStream* NullBodyStream::GetNullBodyStream()
 {
-  static NullBodyStream nullBodyStream;
+  static NullBodyStream nullBodyStream; // LCOV_EXCL_LINE
   return &nullBodyStream;
 }

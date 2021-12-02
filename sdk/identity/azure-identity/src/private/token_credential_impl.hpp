@@ -83,12 +83,13 @@ namespace Azure { namespace Identity { namespace _detail {
       explicit TokenRequest(Core::Http::HttpMethod httpMethod, Core::Url url, std::string body)
           : m_body(new std::string(std::move(body))),
             m_memoryBodyStream(new Core::IO::MemoryBodyStream(
-                reinterpret_cast<uint8_t const*>(m_body->data()),
+                reinterpret_cast<uint8_t const*>(m_body->data()), // LCOV_EXCL_START
                 m_body->size())),
             HttpRequest(std::move(httpMethod), std::move(url), m_memoryBodyStream.get())
       {
         HttpRequest.SetHeader("Content-Type", "application/x-www-form-urlencoded");
         HttpRequest.SetHeader("Content-Length", std::to_string(m_body->size()));
+        // LCOV_EXCL_STOP
       }
 
       /**
@@ -116,6 +117,6 @@ namespace Azure { namespace Identity { namespace _detail {
         std::function<std::unique_ptr<TokenRequest>(
             Core::Http::HttpStatusCode statusCode,
             Core::Http::RawResponse const& response)> const& shouldRetry
-        = [](auto const, auto const&) { return nullptr; }) const;
+        = [](auto const, auto const&) { return nullptr; }) const; // LCOV_EXCL_LINE
   };
 }}} // namespace Azure::Identity::_detail

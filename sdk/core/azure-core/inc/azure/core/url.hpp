@@ -28,7 +28,7 @@ namespace Azure { namespace Core {
           auto separator = '?';
           for (const auto& q : encodedQueryParameters)
           {
-            queryStr += separator + q.first + '=' + q.second;
+            queryStr += separator + q.first + '=' + q.second; // LCOV_EXCL_LINE
             separator = '&';
           }
         }
@@ -44,7 +44,7 @@ namespace Azure { namespace Core {
    * @details It can be parsed and initialized from a string that contains all URL components
    * (scheme, host, path, etc.). Authority is not currently supported.
    */
-  class Url final {
+  class Url final { // LCOV_EXCL_LINE
   private:
     std::string m_scheme;
     std::string m_host;

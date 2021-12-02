@@ -126,7 +126,8 @@ public:
    */
   DateTime(std::chrono::system_clock::time_point const& systemTime)
       : DateTime(
-          SystemClockEpoch + std::chrono::duration_cast<duration>(systemTime.time_since_epoch()))
+          SystemClockEpoch
+          + std::chrono::duration_cast<duration>(systemTime.time_since_epoch())) // LCOV_EXCL_LINE
   {
   }
 
@@ -214,7 +215,10 @@ inline bool operator==(DateTime const& dt, std::chrono::system_clock::time_point
 
 inline bool operator<(DateTime const& dt, std::chrono::system_clock::time_point const& tp)
 {
-  return dt < DateTime(tp);
+  auto dt2 = DateTime(tp); // LCOV_EXCL_LINE
+
+  return static_cast<DateTime::time_point const&>(dt)
+      < static_cast<DateTime::time_point const&>(dt2);
 }
 
 inline bool operator<=(DateTime const& dt, std::chrono::system_clock::time_point const& tp)

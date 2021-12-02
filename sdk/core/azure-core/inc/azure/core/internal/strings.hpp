@@ -26,7 +26,7 @@ namespace Azure { namespace Core { namespace _internal {
         return std::lexicographical_compare(
             lhs.begin(), lhs.end(), rhs.begin(), rhs.end(), [](char c1, char c2) {
               return ToLower(c1) < ToLower(c2);
-            });
+            }); // LCOV_EXCL_LINE
       }
     };
 

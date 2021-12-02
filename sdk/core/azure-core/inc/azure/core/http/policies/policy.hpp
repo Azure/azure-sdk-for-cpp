@@ -64,7 +64,7 @@ namespace Azure { namespace Core { namespace Http { namespace Policies {
    * @note See https://azure.github.io/azure-sdk/general_azurecore.html#retry-policy.
    *
    */
-  struct RetryOptions final
+  struct RetryOptions final // LCOV_EXCL_LINE
   {
     /**
      * @brief The maximum number of retry attempts before giving up.
@@ -104,7 +104,7 @@ namespace Azure { namespace Core { namespace Http { namespace Policies {
    * @note See https://azure.github.io/azure-sdk/general_azurecore.html#logging-policy.
    *
    */
-  struct LogOptions final
+  struct LogOptions final // LCOV_EXCL_LINE
   {
     /**
      * @brief HTTP query parameter names that are allowed to be logged.
@@ -286,7 +286,7 @@ namespace Azure { namespace Core { namespace Http { namespace Policies {
     /**
      * @brief HTTP retry policy.
      */
-    class RetryPolicy
+    class RetryPolicy // LCOV_EXCL_LINE
 #if !defined(TESTING_BUILD)
         final
 #endif
@@ -367,10 +367,12 @@ namespace Azure { namespace Core { namespace Http { namespace Policies {
           NextHttpPolicy nextPolicy,
           Context const& context) const override
       {
+        // LCOV_EXCL_START
         auto uuid = Uuid::CreateUuid().ToString();
 
         request.SetHeader(RequestIdHeader, uuid);
         return nextPolicy.Send(request, context);
+        // LCOV_EXCL_STOP
       }
     };
 
@@ -402,8 +404,11 @@ namespace Azure { namespace Core { namespace Http { namespace Policies {
           std::string const& componentName,
           std::string const& componentVersion,
           TelemetryOptions options = TelemetryOptions())
-          : m_telemetryId(BuildTelemetryId(componentName, componentVersion, options.ApplicationId))
-      {
+          : m_telemetryId(BuildTelemetryId(
+              componentName,
+              componentVersion,
+              options.ApplicationId)) // LCOV_EXCL_START
+      { // LCOV_EXCL_STOP
       }
 
       std::unique_ptr<HttpPolicy> Clone() const override
@@ -443,7 +448,7 @@ namespace Azure { namespace Core { namespace Http { namespace Policies {
           std::shared_ptr<Credentials::TokenCredential const> credential,
           Credentials::TokenRequestContext tokenRequestContext)
           : m_credential(std::move(credential)),
-            m_tokenRequestContext(std::move(tokenRequestContext))
+            m_tokenRequestContext(std::move(tokenRequestContext)) // LCOV_EXCL_LINE
       {
       }
 

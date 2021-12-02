@@ -7,6 +7,6 @@ using Azure::ETag;
 
 const ETag& ETag::Any()
 {
-  static ETag any = ETag("*");
+  static ETag any = ETag("*"); // LCOV_EXCL_LINE
   return any;
 }

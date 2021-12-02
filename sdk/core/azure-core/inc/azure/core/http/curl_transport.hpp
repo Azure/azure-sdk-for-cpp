@@ -46,7 +46,7 @@ namespace Azure { namespace Core { namespace Http {
   /**
    * @brief Set the libcurl connection options like a proxy and CA path.
    */
-  struct CurlTransportOptions final
+  struct CurlTransportOptions final // LCOV_EXCL_LINE
   {
     /**
      * @brief The string for the proxy is passed directly to the libcurl handle without any parsing
@@ -132,7 +132,8 @@ namespace Azure { namespace Core { namespace Http {
      *
      * @param options Optional parameter to override the default options.
      */
-    CurlTransport(CurlTransportOptions const& options = CurlTransportOptions()) : m_options(options)
+    CurlTransport(CurlTransportOptions const& options = CurlTransportOptions())
+        : m_options(options) // LCOV_EXCL_LINE
     {
     }
 

@@ -87,7 +87,7 @@ public:
       return !left.m_value && !right.m_value;
     }
 
-    switch (comparisonKind)
+    switch (comparisonKind) // LCOV_EXCL_LINE
     {
       case ETagComparison::Strong:
         // Strong comparison
@@ -113,7 +113,7 @@ public:
         break;
     }
     // Unknown comparison
-    _azure_UNREACHABLE_CODE();
+    _azure_UNREACHABLE_CODE(); // LCOV_EXCL_LINE
   }
 
   /**
@@ -140,8 +140,10 @@ public:
    */
   const std::string& ToString() const
   {
+    // LCOV_EXCL_START
     _azure_ASSERT_MSG(
         m_value.HasValue(), "Empty ETag, check HasValue() before calling ToString().");
+    // LCOV_EXCL_STOP
 
     return m_value.Value();
   }

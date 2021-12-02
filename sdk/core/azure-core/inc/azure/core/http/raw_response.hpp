@@ -58,8 +58,13 @@ namespace Azure { namespace Core { namespace Http {
         int32_t minorVersion,
         HttpStatusCode statusCode,
         std::string const& reasonPhrase)
-        : RawResponse(majorVersion, minorVersion, statusCode, reasonPhrase, nullptr)
-    {
+        : RawResponse(
+            majorVersion,
+            minorVersion,
+            statusCode,
+            reasonPhrase,
+            nullptr) // LCOV_EXCL_START
+    { // LCOV_EXCL_STOP
     }
 
     /**
@@ -76,9 +81,11 @@ namespace Azure { namespace Core { namespace Http {
             response.m_statusCode,
             response.m_reasonPhrase)
     {
+      // LCOV_EXCL_START
       _azure_ASSERT(m_bodyStream == nullptr);
       // Copy body
       m_body = response.GetBody();
+      // LCOV_EXCL_STOP
     }
 
     /**

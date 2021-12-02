@@ -20,7 +20,7 @@ std::unique_ptr<_detail::ManagedIdentitySource> CreateManagedIdentitySource(
          AzureArcManagedIdentitySource::Create,
          ImdsManagedIdentitySource::Create};
 
-  for (auto create : managedIdentitySourceCreate)
+  for (auto create : managedIdentitySourceCreate) // LCOV_EXCL_LINE
   {
     if (auto source = create(clientId, options))
     {
@@ -28,8 +28,10 @@ std::unique_ptr<_detail::ManagedIdentitySource> CreateManagedIdentitySource(
     }
   }
 
+  // LCOV_EXCL_START
   throw AuthenticationException(
       "ManagedIdentityCredential authentication unavailable. No Managed Identity endpoint found.");
+  // LCOV_EXCL_STOP
 }
 } // namespace
 

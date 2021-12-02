@@ -21,7 +21,7 @@ Azure::Core::Url ManagedIdentitySource::ParseEndpointUrl(
 
   try
   {
-    return Url(url);
+    return Url(url); // LCOV_EXCL_LINE
   }
   catch (std::invalid_argument const&)
   {
@@ -44,8 +44,12 @@ std::unique_ptr<ManagedIdentitySource> AppServiceManagedIdentitySource::Create(
 
   return (msiEndpoint.empty() || msiSecret.empty())
       ? nullptr
-      : std::unique_ptr<ManagedIdentitySource>(new AppServiceManagedIdentitySource(
-          clientId, options, ParseEndpointUrl(msiEndpoint, EndpointVarName), msiSecret));
+      : std::unique_ptr<ManagedIdentitySource>(
+          new AppServiceManagedIdentitySource( // LCOV_EXCL_START
+              clientId,
+              options,
+              ParseEndpointUrl(msiEndpoint, EndpointVarName),
+              msiSecret)); // LCOV_EXCL_STOP
 }
 
 AppServiceManagedIdentitySource::AppServiceManagedIdentitySource(
@@ -99,7 +103,7 @@ std::unique_ptr<ManagedIdentitySource> CloudShellManagedIdentitySource::Create(
   return (msiEndpoint.empty())
       ? nullptr
       : std::unique_ptr<ManagedIdentitySource>(new CloudShellManagedIdentitySource(
-          clientId, options, ParseEndpointUrl(msiEndpoint, EndpointVarName)));
+          clientId, options, ParseEndpointUrl(msiEndpoint, EndpointVarName))); // LCOV_EXCL_LINE
 }
 
 CloudShellManagedIdentitySource::CloudShellManagedIdentitySource(
@@ -152,7 +156,9 @@ std::unique_ptr<ManagedIdentitySource> AzureArcManagedIdentitySource::Create(
   constexpr auto EndpointVarName = "IDENTITY_ENDPOINT";
   auto identityEndpoint = Environment::GetVariable(EndpointVarName);
 
+  // LCOV_EXCL_START
   if (identityEndpoint.empty() || Environment::GetVariable("IMDS_ENDPOINT").empty())
+  // LCOV_EXCL_STOP
   {
     return nullptr;
   }
