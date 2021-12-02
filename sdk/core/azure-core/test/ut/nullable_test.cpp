@@ -224,3 +224,36 @@ TEST(Nullable, Move)
   EXPECT_EQ(*taken, 123);
   // val.HasValue() would return true, but accessing a value after it has been moved is UB anyways.
 }
+
+TEST(Nullable, ConstexprAndRvalue)
+{
+#if defined(__clang__)
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wpessimizing-move" // cspell:disable-line
+#endif // __clang__
+
+  Nullable<int> nullableInt0(std::move(Nullable<int>()));
+  Nullable<int> nullableInt11(std::move(Nullable<int>(11)));
+
+#if defined(__clang__)
+#pragma clang diagnostic pop // NOLINT(clang-diagnostic-unknown-pragmas)
+#endif // __clang__
+
+  Nullable<int> nullableInt00(Nullable<int>{});
+  Nullable<int> nullableInt1(Nullable<int>(1));
+
+  EXPECT_FALSE(nullableInt0.HasValue());
+  EXPECT_FALSE(nullableInt00.HasValue());
+
+  nullableInt0.Reset();
+  EXPECT_FALSE(nullableInt0.HasValue());
+
+  EXPECT_TRUE(nullableInt1.HasValue());
+  EXPECT_TRUE(nullableInt11.HasValue());
+
+  EXPECT_EQ(*nullableInt1, 1);
+  EXPECT_EQ(*nullableInt11, 11);
+
+  std::string str(Nullable<std::string>(std::string("hello")).Value());
+  EXPECT_EQ(str, "hello");
+}

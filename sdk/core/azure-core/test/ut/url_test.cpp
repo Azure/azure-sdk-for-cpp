@@ -288,4 +288,28 @@ namespace Azure { namespace Core { namespace Test {
   {
     EXPECT_THROW(Core::Url url("http://test.com:99999999999999999"), std::out_of_range);
   }
+
+  TEST(URL, empty)
+  {
+    Core::Url url;
+    EXPECT_EQ(url.GetAbsoluteUrl(), std::string());
+  }
+
+  TEST(URL, AppendPathSlash)
+  {
+    Core::Url url1;
+    Core::Url url2;
+
+    url1.AppendPath("x");
+    EXPECT_EQ(url1.GetPath(), "x");
+
+    url2.AppendPath("x/");
+    EXPECT_EQ(url2.GetPath(), "x/");
+
+    url1.AppendPath("y");
+    url2.AppendPath("y");
+
+    EXPECT_EQ(url1.GetPath(), "x/y");
+    EXPECT_EQ(url2.GetPath(), "x/y");
+  }
 }}} // namespace Azure::Core::Test
