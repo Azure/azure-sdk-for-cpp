@@ -81,13 +81,6 @@ namespace Azure {
 
       // Update default time depending on test mode.
       UpdateWaitingTime(m_defaultWait);
-
-      // Service can return 429 error response if the client is
-      // sending multiple requests per second. This can happen if the network is fast and
-      // tests are running without any delay between them.
-      // Set `AZURE_KEYVAULT_AVOID_THROTTLED` env_var to the num of seconds to wait between each
-      // test
-      AvoidTestThrottled();
     }
 
   public:

@@ -49,7 +49,6 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets { 
     std::shared_ptr<Azure::Identity::ClientSecretCredential> m_credential;
     std::shared_ptr<TestClientSecretCredential> m_testCredential;
     std::string m_keyVaultUrl;
-    std::string m_keyVaultHsmUrl;
     std::chrono::milliseconds m_defaultWait;
 
     Azure::Security::KeyVault::Secrets::SecretClient const& GetClientForTest(
@@ -68,7 +67,6 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets { 
     {
       Azure::Core::Test::TestBase::SetUpTestBase(AZURE_TEST_RECORDING_DIR);
       m_keyVaultUrl = GetEnv("AZURE_KEYVAULT_URL");
-      m_keyVaultHsmUrl = GetEnv("AZURE_KEYVAULT_HSM_URL");
 
       // Options and credential for the client
       SecretClientOptions options;
@@ -83,13 +81,6 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets { 
 
       // Update default time depending on test mode.
       UpdateWaitingTime(m_defaultWait);
-
-      // Service can return 429 error response if the client is
-      // sending multiple requests per second. This can happen if the network is fast and
-      // tests are running without any delay between them.
-      // Set `AZURE_KEYVAULT_AVOID_THROTTLED` env_var to the num of seconds to wait between each
-      // test
-      AvoidTestThrottled();
     }
 
   public:

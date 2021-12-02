@@ -125,21 +125,6 @@ namespace Azure { namespace Core { namespace Test {
           "Test Log from: [ " + m_testContext.GetTestPlaybackRecordingName() + " ] - " + message);
     }
 
-    void AvoidTestThrottled()
-    {
-      // When running live tests, service can return 429 error response if the client is
-      // sending multiple requests per second. This can happen if the network is fast and
-      // tests are running without any delay between them.
-      auto const avoidTestThrottled = GetEnv("AZURE_KEYVAULT_AVOID_THROTTLED");
-      auto const waitTime = std::atoi(avoidTestThrottled.data());
-      if (waitTime > 0)
-      {
-        std::cout << "- Wait to avoid server throttled..." << std::endl;
-        // 10 sec should be enough to prevent from 429 error
-        std::this_thread::sleep_for(std::chrono::seconds(waitTime));
-      }
-    }
-
     // Util for tests getting env vars
     std::string GetEnv(const std::string& name)
     {
