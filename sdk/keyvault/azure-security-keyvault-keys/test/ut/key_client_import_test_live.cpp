@@ -69,6 +69,6 @@ TEST_F(KeyVaultKeyClient, ImportKey)
   EXPECT_EQ(key.N, returnedkey.Key.N);
   EXPECT_EQ(key.E, returnedkey.Key.E);
   EXPECT_EQ(key.CurveName.Value().ToString(), returnedkey.Key.CurveName.Value().ToString());
-  EXPECT_EQ(returnedkey.KeyOperations().size(), 1);
+  EXPECT_EQ(returnedkey.KeyOperations().size(), 1U);
   EXPECT_EQ(returnedkey.KeyOperations()[0].ToString(), KeyOperation::Sign.ToString());
 }

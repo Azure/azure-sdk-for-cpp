@@ -176,10 +176,9 @@ TEST_F(KeyVaultSecretClientTest, UpdateTest)
 
 TEST_F(KeyVaultSecretClientTest, BackupRestore)
 {
-  auto secretName = "BackupRestore";
+  auto secretName = GetTestName();
   BackupSecretResult backupData;
-  auto const& client
-      = GetClientForTest(::testing::UnitTest::GetInstance()->current_test_info()->name());
+  auto const& client = GetClientForTest(secretName);
 
   {
     auto secretResponse = client.SetSecret(secretName, "secretValue");
@@ -203,25 +202,13 @@ TEST_F(KeyVaultSecretClientTest, BackupRestore)
   {
     auto purgedResponse = client.PurgeDeletedSecret(secretName);
     CheckValidResponse(purgedResponse, Azure::Core::Http::HttpStatusCode::NoContent);
-    std::this_thread::sleep_for(m_defaultWait);
+    TestDelay(4min);
   }
   {
     auto restore = client.RestoreSecretBackup(backupData);
     CheckValidResponse(restore);
     auto restored = restore.Value;
     EXPECT_EQ(restored.Name, secretName);
-  }
-  {
-    auto operation = client.StartDeleteSecret(secretName);
-    operation.PollUntilDone(m_defaultWait);
-    auto deletedSecretResponse = client.GetDeletedSecret(secretName);
-    CheckValidResponse(deletedSecretResponse);
-    auto secret = deletedSecretResponse.Value;
-    EXPECT_EQ(secret.Name, secretName);
-  }
-  {
-    auto purgedResponse = client.PurgeDeletedSecret(secretName);
-    CheckValidResponse(purgedResponse, Azure::Core::Http::HttpStatusCode::NoContent);
   }
 }
 

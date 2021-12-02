@@ -136,9 +136,9 @@ TEST_F(KeyVaultKeyClient, GetDeletedKeys)
   }
   // Delete keys
   std::vector<DeleteKeyOperation> operations;
-  for (auto const& keyName : keyNames)
+  for (auto const& key : keyNames)
   {
-    operations.emplace_back(client.StartDeleteKey(keyName));
+    operations.emplace_back(client.StartDeleteKey(key));
     // Avoid server Throttled while creating keys
     TestDelay();
   }
