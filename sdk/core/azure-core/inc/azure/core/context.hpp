@@ -95,7 +95,7 @@ namespace Azure { namespace Core {
 
       explicit ContextSharedState()
           : Deadline(ToDateTimeRepresentation((DateTime::max)())), // LCOV_EXCL_LINE
-		    Value(nullptr)
+            Value(nullptr)
 #if defined(AZ_CORE_RTTI)
             ,
             ValueType(typeid(std::nullptr_t))
@@ -121,7 +121,7 @@ namespace Azure { namespace Core {
           Context::Key const& key,
           T value) // NOTE, should this be T&&
           : Parent(parent), Deadline(ToDateTimeRepresentation(deadline)), Key(key),
-		    Value(std::make_shared<T>(std::move(value))) // LCOV_EXCL_START
+            Value(std::make_shared<T>(std::move(value))) // LCOV_EXCL_START
 #if defined(AZ_CORE_RTTI)
             ,
             ValueType(typeid(T))
