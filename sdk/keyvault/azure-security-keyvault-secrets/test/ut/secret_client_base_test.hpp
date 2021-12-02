@@ -67,15 +67,13 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets { 
     void InitializeClient()
     {
       Azure::Core::Test::TestBase::SetUpTestBase(AZURE_TEST_RECORDING_DIR);
-      m_keyVaultUrl = GetEnv("AZURE_KEYVAULT_URL", "https://REDACTED.vault.azure.net/");
-      m_keyVaultHsmUrl = GetEnv("AZURE_KEYVAULT_HSM_URL", "https://REDACTED.vault.azure.net/");
+      m_keyVaultUrl = GetEnv("AZURE_KEYVAULT_URL");
+      m_keyVaultHsmUrl = GetEnv("AZURE_KEYVAULT_HSM_URL");
 
       // Options and credential for the client
       SecretClientOptions options;
       m_credential = std::make_shared<Azure::Identity::ClientSecretCredential>(
-          GetEnv("AZURE_TENANT_ID", "tenant"),
-          GetEnv("AZURE_CLIENT_ID", "client"),
-          GetEnv("AZURE_CLIENT_SECRET", "secret"));
+          GetEnv("AZURE_TENANT_ID"), GetEnv("AZURE_CLIENT_ID"), GetEnv("AZURE_CLIENT_SECRET"));
 
       // `InitTestClient` takes care of setting up Record&Playback.
       m_client = InitTestClient<

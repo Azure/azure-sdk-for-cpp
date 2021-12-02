@@ -130,7 +130,7 @@ namespace Azure { namespace Core { namespace Test {
       // When running live tests, service can return 429 error response if the client is
       // sending multiple requests per second. This can happen if the network is fast and
       // tests are running without any delay between them.
-      auto const avoidTestThrottled = GetEnv("AZURE_KEYVAULT_AVOID_THROTTLED", "0");
+      auto const avoidTestThrottled = GetEnv("AZURE_KEYVAULT_AVOID_THROTTLED");
       auto const waitTime = std::atoi(avoidTestThrottled.data());
       if (waitTime > 0)
       {
@@ -141,7 +141,7 @@ namespace Azure { namespace Core { namespace Test {
     }
 
     // Util for tests getting env vars
-    std::string GetEnv(const std::string& name, std::string const& defaultValue = std::string())
+    std::string GetEnv(const std::string& name)
     {
 #if defined(_MSC_VER)
 #pragma warning(push)
@@ -154,11 +154,6 @@ namespace Azure { namespace Core { namespace Test {
 
       if (!ret)
       {
-        if (!defaultValue.empty())
-        {
-          return defaultValue;
-        }
-
         throw std::runtime_error(
             name + " is required to run the tests but not set as an environment variable.");
       }

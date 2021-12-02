@@ -66,14 +66,12 @@ namespace Azure {
     virtual void SetUp() override
     {
       Azure::Core::Test::TestBase::SetUpTestBase(AZURE_TEST_RECORDING_DIR);
-      m_keyVaultUrl = GetEnv("AZURE_KEYVAULT_URL", "https://REDACTED.vault.azure.net");
+      m_keyVaultUrl = GetEnv("AZURE_KEYVAULT_URL");
 
       // Options and credential for the client
       CertificateClientOptions options;
       m_credential = std::make_shared<Azure::Identity::ClientSecretCredential>(
-          GetEnv("AZURE_TENANT_ID", "tenant"),
-          GetEnv("AZURE_CLIENT_ID", "client"),
-          GetEnv("AZURE_CLIENT_SECRET", "secret"));
+          GetEnv("AZURE_TENANT_ID"), GetEnv("AZURE_CLIENT_ID"), GetEnv("AZURE_CLIENT_SECRET"));
 
       // `InitTestClient` takes care of setting up Record&Playback.
       m_client = InitTestClient<
