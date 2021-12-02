@@ -48,7 +48,7 @@ namespace Azure {
     std::unique_ptr<Azure::Security::KeyVault::Certificates::CertificateClient> m_client;
 
   protected:
-    std::shared_ptr<Core::Credentials::TokenCredential> m_credential = nullptr;
+    std::shared_ptr<Core::Credentials::TokenCredential> m_credential;
     std::string m_keyVaultUrl;
     std::chrono::milliseconds m_defaultWait = 20s;
 

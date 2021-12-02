@@ -35,7 +35,7 @@ namespace Azure { namespace Core { namespace Test {
     // If Playback or Record is not set, no changes will be done to the clientOptions or credential.
     // Call this before creating the SDK client
     void PrepareClientOptions(
-        std::shared_ptr<Core::Credentials::TokenCredential> credential,
+        std::shared_ptr<Core::Credentials::TokenCredential>& credential,
         Azure::Core::_internal::ClientOptions& options)
     {
       // Set up client options depending on the test-mode
