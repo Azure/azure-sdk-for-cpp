@@ -68,6 +68,18 @@ jobs:
       value: ""
     - name: AZURE_TEST_MODE
       value: "PLAYBACK"
+# Even on playblack, tests will require ENV VARS
+    - name: AZURE_KEYVAULT_URL
+      value: "https://non-real-account.vault.azure.net"
+    - name: AZURE_KEYVAULT_HSM_URL
+      value: "https://non-real-account.vault.azure.net"
+    - name: AZURE_TENANT_ID
+      value: "non-real-tenant"
+    - name: AZURE_CLIENT_ID
+      value: "non-real-client"
+    - name: AZURE_CLIENT_SECRET
+      value: "non-real-secret"
+
     steps:
       - template: /eng/common/pipelines/templates/steps/verify-agent-os.yml
         parameters:
