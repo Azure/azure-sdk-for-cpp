@@ -28,8 +28,8 @@ stages:
       ServiceDirectory: identity
       CtestRegex: azure-identity-unittest.
       LiveTestCtestRegex: azure-identity-livetest.
-      LineCoverageTarget: 82
-      BranchCoverageTarget: 32
+      LineCoverageTarget: 99
+      BranchCoverageTarget: 62
       Artifacts:
         - Name: azure-identity
           Path: azure-identity
