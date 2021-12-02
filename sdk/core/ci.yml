@@ -39,7 +39,8 @@ stages:
       # libraries to check for potential regressions everywhere.
       CtestRegex: .*
       # Storage tests has no recordings yet
-      CtestExcludeRegex: azure-storage
+      # Identity live tests are pending to be recorded
+      CtestExcludeRegex: azure-storage|azure-identity-livetest
       LiveTestCtestRegex: '"azure-core.|json-test"'
       LiveTestTimeoutInMinutes: 90 # default is 60 min. We need a little longer on worst case for Win+jsonTests
       LineCoverageTarget: 77
