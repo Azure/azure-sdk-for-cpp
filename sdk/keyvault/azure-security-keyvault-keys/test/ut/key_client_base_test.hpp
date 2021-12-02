@@ -141,7 +141,8 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys { nam
   };
 
   // This class makes crypto tests to have a delay before running to avoid server Throttled
-  class KeyVaultKeyClientWithParam : public KeyVaultKeyClient, public ::testing::WithParamInterface<int> {
+  class KeyVaultKeyClientWithParam : public KeyVaultKeyClient,
+                                     public ::testing::WithParamInterface<int> {
 
     // Just call base class setup and introduce the wait delay
     virtual void SetUp() override
