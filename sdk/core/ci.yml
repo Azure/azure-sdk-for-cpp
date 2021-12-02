@@ -38,7 +38,7 @@ stages:
       # In the case of changes to core we want to re-run all CI tests for all
       # libraries to check for potential regressions everywhere.
       CtestRegex: .*
-      # Storage tests has no recordings yet
+      # Storage tests have no recordings
       # Identity live tests are pending to be recorded
       CtestExcludeRegex: azure-storage|azure-identity-livetest
       LiveTestCtestRegex: '"azure-core.|json-test"'

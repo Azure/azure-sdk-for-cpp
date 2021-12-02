@@ -140,7 +140,7 @@ namespace Azure { namespace Core { namespace Test {
       if (!ret)
       {
         throw std::runtime_error(
-            name + " is required to run the tests but not set as an environment variable.");
+            "Missing required environment variable: " + name);
       }
 
       return std::string(ret);
