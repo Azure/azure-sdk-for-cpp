@@ -11,6 +11,7 @@
 #include <azure/core/context.hpp>
 #include <azure/core/uuid.hpp>
 #include <azure/identity/client_secret_credential.hpp>
+#include <azure/keyvault/keys/cryptography/cryptography_client.hpp>
 #include <azure/keyvault/keyvault_keys.hpp>
 
 #include <azure/core/test/test_base.hpp>
@@ -27,7 +28,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys { nam
     std::unique_ptr<Azure::Security::KeyVault::Keys::KeyClient> m_client;
 
   protected:
-    std::shared_ptr<Azure::Identity::ClientSecretCredential> m_credential;
+    std::shared_ptr<Azure::Core::Credentials::TokenCredential> m_credential;
     std::string m_keyVaultUrl;
     std::string m_keyVaultHsmUrl;
     int m_testPollingTimeOutMinutes = 20;
@@ -38,6 +39,16 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys { nam
       // set the interceptor for the current test
       m_testContext.RenameTest(testName);
       return *m_client;
+    }
+
+    std::unique_ptr<Azure::Security::KeyVault::Keys::Cryptography::CryptographyClient>
+    GetCryptoClient(std::string const& keyId)
+    {
+      Azure::Security::KeyVault::Keys::Cryptography::CryptographyClientOptions options;
+      return InitTestClient<
+          Azure::Security::KeyVault::Keys::Cryptography::CryptographyClient,
+          Azure::Security::KeyVault::Keys::Cryptography::CryptographyClientOptions>(
+          keyId, &m_credential, options);
     }
 
     // Create
@@ -55,7 +66,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys { nam
       // `InitTestClient` takes care of setting up Record&Playback.
       m_client = InitTestClient<
           Azure::Security::KeyVault::Keys::KeyClient,
-          Azure::Security::KeyVault::Keys::KeyClientOptions>(m_keyVaultUrl, m_credential, options);
+          Azure::Security::KeyVault::Keys::KeyClientOptions>(m_keyVaultUrl, &m_credential, options);
 
       UpdateWaitingTime(m_testPollingIntervalMs);
     }
@@ -66,7 +77,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys { nam
       m_client = InitTestClient<
           Azure::Security::KeyVault::Keys::KeyClient,
           Azure::Security::KeyVault::Keys::KeyClientOptions>(
-          m_keyVaultHsmUrl, m_credential, options);
+          m_keyVaultHsmUrl, &m_credential, options);
     }
 
   public:
@@ -144,6 +155,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys { nam
   class KeyVaultKeyClientWithParam : public KeyVaultKeyClient,
                                      public ::testing::WithParamInterface<int> {
 
+  protected:
     // Just call base class setup and introduce the wait delay
     virtual void SetUp() override
     {
