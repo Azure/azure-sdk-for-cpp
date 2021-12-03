@@ -8,6 +8,7 @@
 #include <gtest/gtest.h>
 
 #include <azure/core/credentials/credentials.hpp>
+#include <azure/core/credentials/token_credential_options.hpp>
 #include <azure/core/internal/client_options.hpp>
 #include <azure/core/internal/diagnostics/log.hpp>
 
@@ -30,6 +31,19 @@ namespace Azure { namespace Core { namespace Test {
   class TestBase : public ::testing::Test {
 
   private:
+    void PrepareOptions(Azure::Core::_internal::ClientOptions& options)
+    {
+      // Set up client options depending on the test-mode
+      if (m_testContext.IsPlaybackMode())
+      {
+        options.Transport.Transport = m_interceptor->GetPlaybackTransport();
+      }
+      else if (!m_testContext.IsLiveMode())
+      {
+        options.PerRetryPolicies.push_back(m_interceptor->GetRecordPolicy());
+      }
+    }
+
     // Call this method to update client options with the required configuration to
     // support Record & Playback.
     // If Playback or Record is not set, no changes will be done to the clientOptions or credential.
@@ -82,6 +96,16 @@ namespace Azure { namespace Core { namespace Test {
       }
 
       return testName;
+    }
+
+    // Creates the sdk client for testing.
+    // The client will be set for record and playback before it is created.
+    Azure::Core::Credentials::TokenCredentialOptions GetTokenCredentialsOptions()
+    {
+      // Run instrumentation before creating the client
+      Azure::Core::Credentials::TokenCredentialOptions options;
+      PrepareOptions(options);
+      return options;
     }
 
     // Creates the sdk client for testing.
