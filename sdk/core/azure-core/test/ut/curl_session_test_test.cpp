@@ -136,6 +136,93 @@ namespace Azure { namespace Core { namespace Test {
         .clear();
   }
 
+  TEST_F(CurlSession, invalidHeader)
+  {
+    std::string response("HTTP/1.1 200 Ok\r\ninvalid header\r\n\r\nbody");
+    int32_t const payloadSize = static_cast<int32_t>(response.size());
+
+    // Can't mock the curMock directly from a unique ptr, heap allocate it first and then make a
+    // unique ptr for it
+    MockCurlNetworkConnection* curlMock = new MockCurlNetworkConnection();
+    EXPECT_CALL(*curlMock, SendBuffer(_, _, _)).WillOnce(Return(CURLE_OK));
+    EXPECT_CALL(*curlMock, ReadFromSocket(_, _, _))
+        .WillOnce(DoAll(
+            SetArrayArgument<0>(response.data(), response.data() + payloadSize),
+            Return(payloadSize)));
+
+    // Create the unique ptr to take care about memory free at the end
+    std::unique_ptr<MockCurlNetworkConnection> uniqueCurlMock(curlMock);
+
+    // Simulate a request to be sent
+    Azure::Core::Url url("http://microsoft.com");
+    Azure::Core::Http::Request request(Azure::Core::Http::HttpMethod::Get, url);
+
+    // Move the curlMock to build a session and then send the request
+    // The session will get the response we mock before, so it will pass for this GET
+    auto session = std::make_unique<Azure::Core::Http::CurlSession>(
+        request, std::move(uniqueCurlMock), true);
+
+    EXPECT_THROW(session->Perform(Azure::Core::Context::ApplicationContext), std::invalid_argument);
+  }
+
+  TEST_F(CurlSession, emptyHeaderValue)
+  {
+    std::string response("HTTP/1.1 200 Ok\r\nheader:\r\n\r\nbody");
+    int32_t const payloadSize = static_cast<int32_t>(response.size());
+
+    // Can't mock the curMock directly from a unique ptr, heap allocate it first and then make a
+    // unique ptr for it
+    MockCurlNetworkConnection* curlMock = new MockCurlNetworkConnection();
+    EXPECT_CALL(*curlMock, SendBuffer(_, _, _)).WillOnce(Return(CURLE_OK));
+    EXPECT_CALL(*curlMock, ReadFromSocket(_, _, _))
+        .WillOnce(DoAll(
+            SetArrayArgument<0>(response.data(), response.data() + payloadSize),
+            Return(payloadSize)));
+
+    // Create the unique ptr to take care about memory free at the end
+    std::unique_ptr<MockCurlNetworkConnection> uniqueCurlMock(curlMock);
+
+    // Simulate a request to be sent
+    Azure::Core::Url url("http://microsoft.com");
+    Azure::Core::Http::Request request(Azure::Core::Http::HttpMethod::Get, url);
+
+    // Move the curlMock to build a session and then send the request
+    // The session will get the response we mock before, so it will pass for this GET
+    auto session = std::make_unique<Azure::Core::Http::CurlSession>(
+        request, std::move(uniqueCurlMock), true);
+
+    EXPECT_NO_THROW(session->Perform(Azure::Core::Context::ApplicationContext));
+  }
+
+  TEST_F(CurlSession, headerValueWhitespace)
+  {
+    std::string response("HTTP/1.1 200 Ok\r\nheader: \tvalue\r\n\r\nbody");
+    int32_t const payloadSize = static_cast<int32_t>(response.size());
+
+    // Can't mock the curMock directly from a unique ptr, heap allocate it first and then make a
+    // unique ptr for it
+    MockCurlNetworkConnection* curlMock = new MockCurlNetworkConnection();
+    EXPECT_CALL(*curlMock, SendBuffer(_, _, _)).WillOnce(Return(CURLE_OK));
+    EXPECT_CALL(*curlMock, ReadFromSocket(_, _, _))
+        .WillOnce(DoAll(
+            SetArrayArgument<0>(response.data(), response.data() + payloadSize),
+            Return(payloadSize)));
+
+    // Create the unique ptr to take care about memory free at the end
+    std::unique_ptr<MockCurlNetworkConnection> uniqueCurlMock(curlMock);
+
+    // Simulate a request to be sent
+    Azure::Core::Url url("http://microsoft.com");
+    Azure::Core::Http::Request request(Azure::Core::Http::HttpMethod::Get, url);
+
+    // Move the curlMock to build a session and then send the request
+    // The session will get the response we mock before, so it will pass for this GET
+    auto session = std::make_unique<Azure::Core::Http::CurlSession>(
+        request, std::move(uniqueCurlMock), true);
+
+    EXPECT_NO_THROW(session->Perform(Azure::Core::Context::ApplicationContext));
+  }
+
   TEST_F(CurlSession, chunkSegmentedResponse)
   {
     // chunked response - simulate the data that the wire will return on every read
