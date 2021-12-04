@@ -14,26 +14,26 @@ add_compile_definitions(AZURE_TEST_RECORDING_DIR="${CMAKE_CURRENT_LIST_DIR}")
 
 add_executable (
   azure-storage-blobs-test
-    append_blob_client_test.cpp
-    append_blob_client_test.hpp
-    blob_container_client_test.cpp
-    blob_container_client_test.hpp
-    blob_sas_test.cpp
+    # append_blob_client_test.cpp
+    # append_blob_client_test.hpp
+    # blob_container_client_test.cpp
+    # blob_container_client_test.hpp
+    # blob_sas_test.cpp
     blob_service_client_test.cpp
-    block_blob_client_test.cpp
-    block_blob_client_test.hpp
-    macro_guard.cpp
-    page_blob_client_test.cpp
-    page_blob_client_test.hpp
-    storage_retry_policy_test.cpp
-    storage_timeout_test.cpp    
+    # block_blob_client_test.cpp
+    # block_blob_client_test.hpp
+    # macro_guard.cpp
+    # page_blob_client_test.cpp
+    # page_blob_client_test.hpp
+    # storage_retry_policy_test.cpp
+    # storage_timeout_test.cpp    
     # Include shared test source code
     ${CMAKE_CURRENT_SOURCE_DIR}/../../../azure-storage-common/test/ut/test_base.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/../../../azure-storage-common/test/ut/test_base.hpp
 )
 
 # Include shared test headers
-target_include_directories(azure-storage-blobs-test PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/../../../azure-storage-common/test)
+target_include_directories(azure-storage-blobs-test PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/../../../azure-storage-common)
 
 target_link_libraries(azure-storage-blobs-test PRIVATE azure-identity azure-storage-blobs azure-core-test-fw gtest gtest_main gmock)
 

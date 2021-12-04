@@ -1,0 +1,550 @@
+{
+  "networkCallRecords": [
+    {
+      "Headers": {
+        "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Linux 5.4.0-1063-azure x86_64 #66~18.04.1-Ubuntu SMP Thu Oct 21 09:59:28 UTC 2021)",
+        "x-ms-client-request-id": "59814d0a-ceac-418c-7ca1-3ed8bff77802",
+        "x-ms-version": "2020-02-10"
+      },
+      "Method": "PUT",
+      "Response": {
+        "BODY": "",
+        "REASON_PHRASE": "Created",
+        "STATUS_CODE": "201",
+        "content-length": "0",
+        "date": "Sat, 04 Dec 2021 01:44:46 GMT",
+        "etag": "\"0x8D9B6C7A72229EC\"",
+        "last-modified": "Sat, 04 Dec 2021 01:44:46 GMT",
+        "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
+        "x-ms-client-request-id": "59814d0a-ceac-418c-7ca1-3ed8bff77802",
+        "x-ms-request-id": "1cd20194-301e-0033-2ab0-e8411d000000",
+        "x-ms-version": "2020-02-10"
+      },
+      "Url": "https://REDACTED.blob.core.windows.net/listcontainers-prefix1-0?restype=container"
+    },
+    {
+      "Headers": {
+        "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Linux 5.4.0-1063-azure x86_64 #66~18.04.1-Ubuntu SMP Thu Oct 21 09:59:28 UTC 2021)",
+        "x-ms-client-request-id": "ff626625-21a8-4f70-515a-77b7b30830d5",
+        "x-ms-version": "2020-02-10"
+      },
+      "Method": "PUT",
+      "Response": {
+        "BODY": "",
+        "REASON_PHRASE": "Created",
+        "STATUS_CODE": "201",
+        "content-length": "0",
+        "date": "Sat, 04 Dec 2021 01:44:46 GMT",
+        "etag": "\"0x8D9B6C7A725F636\"",
+        "last-modified": "Sat, 04 Dec 2021 01:44:46 GMT",
+        "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
+        "x-ms-client-request-id": "ff626625-21a8-4f70-515a-77b7b30830d5",
+        "x-ms-request-id": "1cd2019a-301e-0033-2bb0-e8411d000000",
+        "x-ms-version": "2020-02-10"
+      },
+      "Url": "https://REDACTED.blob.core.windows.net/listcontainers-prefix1-1?restype=container"
+    },
+    {
+      "Headers": {
+        "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Linux 5.4.0-1063-azure x86_64 #66~18.04.1-Ubuntu SMP Thu Oct 21 09:59:28 UTC 2021)",
+        "x-ms-client-request-id": "f8a7d447-d56d-46fc-5e04-70c414741cc2",
+        "x-ms-version": "2020-02-10"
+      },
+      "Method": "PUT",
+      "Response": {
+        "BODY": "",
+        "REASON_PHRASE": "Created",
+        "STATUS_CODE": "201",
+        "content-length": "0",
+        "date": "Sat, 04 Dec 2021 01:44:46 GMT",
+        "etag": "\"0x8D9B6C7A727A205\"",
+        "last-modified": "Sat, 04 Dec 2021 01:44:46 GMT",
+        "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
+        "x-ms-client-request-id": "f8a7d447-d56d-46fc-5e04-70c414741cc2",
+        "x-ms-request-id": "1cd2019e-301e-0033-2cb0-e8411d000000",
+        "x-ms-version": "2020-02-10"
+      },
+      "Url": "https://REDACTED.blob.core.windows.net/listcontainers-prefix1-2?restype=container"
+    },
+    {
+      "Headers": {
+        "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Linux 5.4.0-1063-azure x86_64 #66~18.04.1-Ubuntu SMP Thu Oct 21 09:59:28 UTC 2021)",
+        "x-ms-client-request-id": "f5a0cb14-db65-403c-6238-a3f545e8c06e",
+        "x-ms-version": "2020-02-10"
+      },
+      "Method": "PUT",
+      "Response": {
+        "BODY": "",
+        "REASON_PHRASE": "Created",
+        "STATUS_CODE": "201",
+        "content-length": "0",
+        "date": "Sat, 04 Dec 2021 01:44:46 GMT",
+        "etag": "\"0x8D9B6C7A7294DD7\"",
+        "last-modified": "Sat, 04 Dec 2021 01:44:46 GMT",
+        "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
+        "x-ms-client-request-id": "f5a0cb14-db65-403c-6238-a3f545e8c06e",
+        "x-ms-request-id": "1cd201a2-301e-0033-2db0-e8411d000000",
+        "x-ms-version": "2020-02-10"
+      },
+      "Url": "https://REDACTED.blob.core.windows.net/listcontainers-prefix1-3?restype=container"
+    },
+    {
+      "Headers": {
+        "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Linux 5.4.0-1063-azure x86_64 #66~18.04.1-Ubuntu SMP Thu Oct 21 09:59:28 UTC 2021)",
+        "x-ms-client-request-id": "61088b97-14de-4f98-4a8b-0cf423a02c7d",
+        "x-ms-version": "2020-02-10"
+      },
+      "Method": "PUT",
+      "Response": {
+        "BODY": "",
+        "REASON_PHRASE": "Created",
+        "STATUS_CODE": "201",
+        "content-length": "0",
+        "date": "Sat, 04 Dec 2021 01:44:46 GMT",
+        "etag": "\"0x8D9B6C7A72AD2C3\"",
+        "last-modified": "Sat, 04 Dec 2021 01:44:46 GMT",
+        "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
+        "x-ms-client-request-id": "61088b97-14de-4f98-4a8b-0cf423a02c7d",
+        "x-ms-request-id": "1cd201a6-301e-0033-2eb0-e8411d000000",
+        "x-ms-version": "2020-02-10"
+      },
+      "Url": "https://REDACTED.blob.core.windows.net/listcontainers-prefix1-4?restype=container"
+    },
+    {
+      "Headers": {
+        "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Linux 5.4.0-1063-azure x86_64 #66~18.04.1-Ubuntu SMP Thu Oct 21 09:59:28 UTC 2021)",
+        "x-ms-client-request-id": "8ae60cdf-52e5-4c89-52a1-38e9ec03a16f",
+        "x-ms-version": "2020-02-10"
+      },
+      "Method": "PUT",
+      "Response": {
+        "BODY": "",
+        "REASON_PHRASE": "Created",
+        "STATUS_CODE": "201",
+        "content-length": "0",
+        "date": "Sat, 04 Dec 2021 01:44:46 GMT",
+        "etag": "\"0x8D9B6C7A72C57AD\"",
+        "last-modified": "Sat, 04 Dec 2021 01:44:46 GMT",
+        "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
+        "x-ms-client-request-id": "8ae60cdf-52e5-4c89-52a1-38e9ec03a16f",
+        "x-ms-request-id": "1cd201aa-301e-0033-2fb0-e8411d000000",
+        "x-ms-version": "2020-02-10"
+      },
+      "Url": "https://REDACTED.blob.core.windows.net/listcontainers-prefix2-0?restype=container"
+    },
+    {
+      "Headers": {
+        "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Linux 5.4.0-1063-azure x86_64 #66~18.04.1-Ubuntu SMP Thu Oct 21 09:59:28 UTC 2021)",
+        "x-ms-client-request-id": "a3aeaa7b-3a92-4dae-6b34-fa5113370185",
+        "x-ms-version": "2020-02-10"
+      },
+      "Method": "PUT",
+      "Response": {
+        "BODY": "",
+        "REASON_PHRASE": "Created",
+        "STATUS_CODE": "201",
+        "content-length": "0",
+        "date": "Sat, 04 Dec 2021 01:44:46 GMT",
+        "etag": "\"0x8D9B6C7A72DDC98\"",
+        "last-modified": "Sat, 04 Dec 2021 01:44:46 GMT",
+        "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
+        "x-ms-client-request-id": "a3aeaa7b-3a92-4dae-6b34-fa5113370185",
+        "x-ms-request-id": "1cd201ae-301e-0033-30b0-e8411d000000",
+        "x-ms-version": "2020-02-10"
+      },
+      "Url": "https://REDACTED.blob.core.windows.net/listcontainers-prefix2-1?restype=container"
+    },
+    {
+      "Headers": {
+        "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Linux 5.4.0-1063-azure x86_64 #66~18.04.1-Ubuntu SMP Thu Oct 21 09:59:28 UTC 2021)",
+        "x-ms-client-request-id": "85e43a62-9806-4823-5baa-bc0e82414469",
+        "x-ms-version": "2020-02-10"
+      },
+      "Method": "PUT",
+      "Response": {
+        "BODY": "",
+        "REASON_PHRASE": "Created",
+        "STATUS_CODE": "201",
+        "content-length": "0",
+        "date": "Sat, 04 Dec 2021 01:44:46 GMT",
+        "etag": "\"0x8D9B6C7A72F6182\"",
+        "last-modified": "Sat, 04 Dec 2021 01:44:46 GMT",
+        "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
+        "x-ms-client-request-id": "85e43a62-9806-4823-5baa-bc0e82414469",
+        "x-ms-request-id": "1cd201b2-301e-0033-31b0-e8411d000000",
+        "x-ms-version": "2020-02-10"
+      },
+      "Url": "https://REDACTED.blob.core.windows.net/listcontainers-prefix2-2?restype=container"
+    },
+    {
+      "Headers": {
+        "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Linux 5.4.0-1063-azure x86_64 #66~18.04.1-Ubuntu SMP Thu Oct 21 09:59:28 UTC 2021)",
+        "x-ms-client-request-id": "222fd548-c413-428d-7bd8-9d1c8ec39bc7",
+        "x-ms-version": "2020-02-10"
+      },
+      "Method": "PUT",
+      "Response": {
+        "BODY": "",
+        "REASON_PHRASE": "Created",
+        "STATUS_CODE": "201",
+        "content-length": "0",
+        "date": "Sat, 04 Dec 2021 01:44:46 GMT",
+        "etag": "\"0x8D9B6C7A730E66C\"",
+        "last-modified": "Sat, 04 Dec 2021 01:44:46 GMT",
+        "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
+        "x-ms-client-request-id": "222fd548-c413-428d-7bd8-9d1c8ec39bc7",
+        "x-ms-request-id": "1cd201b6-301e-0033-32b0-e8411d000000",
+        "x-ms-version": "2020-02-10"
+      },
+      "Url": "https://REDACTED.blob.core.windows.net/listcontainers-prefix2-3?restype=container"
+    },
+    {
+      "Headers": {
+        "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Linux 5.4.0-1063-azure x86_64 #66~18.04.1-Ubuntu SMP Thu Oct 21 09:59:28 UTC 2021)",
+        "x-ms-client-request-id": "3c7efd2b-ebe4-4a9e-72e7-ac917ddf4862",
+        "x-ms-version": "2020-02-10"
+      },
+      "Method": "PUT",
+      "Response": {
+        "BODY": "",
+        "REASON_PHRASE": "Created",
+        "STATUS_CODE": "201",
+        "content-length": "0",
+        "date": "Sat, 04 Dec 2021 01:44:46 GMT",
+        "etag": "\"0x8D9B6C7A7326B58\"",
+        "last-modified": "Sat, 04 Dec 2021 01:44:46 GMT",
+        "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
+        "x-ms-client-request-id": "3c7efd2b-ebe4-4a9e-72e7-ac917ddf4862",
+        "x-ms-request-id": "1cd201ba-301e-0033-33b0-e8411d000000",
+        "x-ms-version": "2020-02-10"
+      },
+      "Url": "https://REDACTED.blob.core.windows.net/listcontainers-prefix2-4?restype=container"
+    },
+    {
+      "Headers": {
+        "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Linux 5.4.0-1063-azure x86_64 #66~18.04.1-Ubuntu SMP Thu Oct 21 09:59:28 UTC 2021)",
+        "x-ms-client-request-id": "af5aea8d-6180-4e25-77f9-14cbb4dcfaff",
+        "x-ms-version": "2020-02-10"
+      },
+      "Method": "GET",
+      "Response": {
+        "BODY": "﻿<?xml version=\"1.0\" encoding=\"utf-8\"?><EnumerationResults ServiceEndpoint=\"https://deletedaccount.blob.core.windows.net/\"><MaxResults>4</MaxResults><Containers><Container><Name>$web</Name><Properties><Last-Modified>Sat, 04 Dec 2021 00:42:30 GMT</Last-Modified><Etag>\"0x8D9B6BEF40C5784\"</Etag><LeaseStatus>unlocked</LeaseStatus><LeaseState>available</LeaseState><DefaultEncryptionScope>$account-encryption-key</DefaultEncryptionScope><DenyEncryptionScopeOverride>false</DenyEncryptionScopeOverride><HasImmutabilityPolicy>false</HasImmutabilityPolicy><HasLegalHold>false</HasLegalHold></Properties></Container><Container><Name>listcontainers-prefix1-0</Name><Properties><Last-Modified>Sat, 04 Dec 2021 01:44:46 GMT</Last-Modified><Etag>\"0x8D9B6C7A72229EC\"</Etag><LeaseStatus>unlocked</LeaseStatus><LeaseState>available</LeaseState><DefaultEncryptionScope>$account-encryption-key</DefaultEncryptionScope><DenyEncryptionScopeOverride>false</DenyEncryptionScopeOverride><HasImmutabilityPolicy>false</HasImmutabilityPolicy><HasLegalHold>false</HasLegalHold></Properties></Container><Container><Name>listcontainers-prefix1-1</Name><Properties><Last-Modified>Sat, 04 Dec 2021 01:44:46 GMT</Last-Modified><Etag>\"0x8D9B6C7A725F636\"</Etag><LeaseStatus>unlocked</LeaseStatus><LeaseState>available</LeaseState><DefaultEncryptionScope>$account-encryption-key</DefaultEncryptionScope><DenyEncryptionScopeOverride>false</DenyEncryptionScopeOverride><HasImmutabilityPolicy>false</HasImmutabilityPolicy><HasLegalHold>false</HasLegalHold></Properties></Container><Container><Name>listcontainers-prefix1-2</Name><Properties><Last-Modified>Sat, 04 Dec 2021 01:44:46 GMT</Last-Modified><Etag>\"0x8D9B6C7A727A205\"</Etag><LeaseStatus>unlocked</LeaseStatus><LeaseState>available</LeaseState><DefaultEncryptionScope>$account-encryption-key</DefaultEncryptionScope><DenyEncryptionScopeOverride>false</DenyEncryptionScopeOverride><HasImmutabilityPolicy>false</HasImmutabilityPolicy><HasLegalHold>false</HasLegalHold></Properties></Container></Containers><NextMarker>/deletedaccount/listcontainers-prefix1-3</NextMarker></EnumerationResults>",
+        "REASON_PHRASE": "OK",
+        "STATUS_CODE": "200",
+        "content-type": "application/xml",
+        "date": "Sat, 04 Dec 2021 01:44:46 GMT",
+        "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
+        "transfer-encoding": "chunked",
+        "x-ms-client-request-id": "af5aea8d-6180-4e25-77f9-14cbb4dcfaff",
+        "x-ms-request-id": "1cd201be-301e-0033-34b0-e8411d000000",
+        "x-ms-version": "2020-02-10"
+      },
+      "Url": "https://REDACTED.blob.core.windows.net?comp=list&maxresults=4"
+    },
+    {
+      "Headers": {
+        "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Linux 5.4.0-1063-azure x86_64 #66~18.04.1-Ubuntu SMP Thu Oct 21 09:59:28 UTC 2021)",
+        "x-ms-client-request-id": "ffd805bc-b36a-4b1d-4fa8-8029a52d4c08",
+        "x-ms-version": "2020-02-10"
+      },
+      "Method": "GET",
+      "Response": {
+        "BODY": "﻿<?xml version=\"1.0\" encoding=\"utf-8\"?><EnumerationResults ServiceEndpoint=\"https://deletedaccount.blob.core.windows.net/\"><Marker>/deletedaccount/listcontainers-prefix1-3</Marker><MaxResults>4</MaxResults><Containers><Container><Name>listcontainers-prefix1-3</Name><Properties><Last-Modified>Sat, 04 Dec 2021 01:44:46 GMT</Last-Modified><Etag>\"0x8D9B6C7A7294DD7\"</Etag><LeaseStatus>unlocked</LeaseStatus><LeaseState>available</LeaseState><DefaultEncryptionScope>$account-encryption-key</DefaultEncryptionScope><DenyEncryptionScopeOverride>false</DenyEncryptionScopeOverride><HasImmutabilityPolicy>false</HasImmutabilityPolicy><HasLegalHold>false</HasLegalHold></Properties></Container><Container><Name>listcontainers-prefix1-4</Name><Properties><Last-Modified>Sat, 04 Dec 2021 01:44:46 GMT</Last-Modified><Etag>\"0x8D9B6C7A72AD2C3\"</Etag><LeaseStatus>unlocked</LeaseStatus><LeaseState>available</LeaseState><DefaultEncryptionScope>$account-encryption-key</DefaultEncryptionScope><DenyEncryptionScopeOverride>false</DenyEncryptionScopeOverride><HasImmutabilityPolicy>false</HasImmutabilityPolicy><HasLegalHold>false</HasLegalHold></Properties></Container><Container><Name>listcontainers-prefix2-0</Name><Properties><Last-Modified>Sat, 04 Dec 2021 01:44:46 GMT</Last-Modified><Etag>\"0x8D9B6C7A72C57AD\"</Etag><LeaseStatus>unlocked</LeaseStatus><LeaseState>available</LeaseState><DefaultEncryptionScope>$account-encryption-key</DefaultEncryptionScope><DenyEncryptionScopeOverride>false</DenyEncryptionScopeOverride><HasImmutabilityPolicy>false</HasImmutabilityPolicy><HasLegalHold>false</HasLegalHold></Properties></Container><Container><Name>listcontainers-prefix2-1</Name><Properties><Last-Modified>Sat, 04 Dec 2021 01:44:46 GMT</Last-Modified><Etag>\"0x8D9B6C7A72DDC98\"</Etag><LeaseStatus>unlocked</LeaseStatus><LeaseState>available</LeaseState><DefaultEncryptionScope>$account-encryption-key</DefaultEncryptionScope><DenyEncryptionScopeOverride>false</DenyEncryptionScopeOverride><HasImmutabilityPolicy>false</HasImmutabilityPolicy><HasLegalHold>false</HasLegalHold></Properties></Container></Containers><NextMarker>/deletedaccount/listcontainers-prefix2-2</NextMarker></EnumerationResults>",
+        "REASON_PHRASE": "OK",
+        "STATUS_CODE": "200",
+        "content-type": "application/xml",
+        "date": "Sat, 04 Dec 2021 01:44:46 GMT",
+        "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
+        "transfer-encoding": "chunked",
+        "x-ms-client-request-id": "ffd805bc-b36a-4b1d-4fa8-8029a52d4c08",
+        "x-ms-request-id": "1cd201c0-301e-0033-35b0-e8411d000000",
+        "x-ms-version": "2020-02-10"
+      },
+      "Url": "https://REDACTED.blob.core.windows.net?comp=list&marker=/deletedaccount/listcontainers-prefix1-3&maxresults=4"
+    },
+    {
+      "Headers": {
+        "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Linux 5.4.0-1063-azure x86_64 #66~18.04.1-Ubuntu SMP Thu Oct 21 09:59:28 UTC 2021)",
+        "x-ms-client-request-id": "5f6ed994-8c36-44a9-4599-366a31044fcc",
+        "x-ms-version": "2020-02-10"
+      },
+      "Method": "GET",
+      "Response": {
+        "BODY": "﻿<?xml version=\"1.0\" encoding=\"utf-8\"?><EnumerationResults ServiceEndpoint=\"https://deletedaccount.blob.core.windows.net/\"><Marker>/deletedaccount/listcontainers-prefix2-2</Marker><MaxResults>4</MaxResults><Containers><Container><Name>listcontainers-prefix2-2</Name><Properties><Last-Modified>Sat, 04 Dec 2021 01:44:46 GMT</Last-Modified><Etag>\"0x8D9B6C7A72F6182\"</Etag><LeaseStatus>unlocked</LeaseStatus><LeaseState>available</LeaseState><DefaultEncryptionScope>$account-encryption-key</DefaultEncryptionScope><DenyEncryptionScopeOverride>false</DenyEncryptionScopeOverride><HasImmutabilityPolicy>false</HasImmutabilityPolicy><HasLegalHold>false</HasLegalHold></Properties></Container><Container><Name>listcontainers-prefix2-3</Name><Properties><Last-Modified>Sat, 04 Dec 2021 01:44:46 GMT</Last-Modified><Etag>\"0x8D9B6C7A730E66C\"</Etag><LeaseStatus>unlocked</LeaseStatus><LeaseState>available</LeaseState><DefaultEncryptionScope>$account-encryption-key</DefaultEncryptionScope><DenyEncryptionScopeOverride>false</DenyEncryptionScopeOverride><HasImmutabilityPolicy>false</HasImmutabilityPolicy><HasLegalHold>false</HasLegalHold></Properties></Container><Container><Name>listcontainers-prefix2-4</Name><Properties><Last-Modified>Sat, 04 Dec 2021 01:44:46 GMT</Last-Modified><Etag>\"0x8D9B6C7A7326B58\"</Etag><LeaseStatus>unlocked</LeaseStatus><LeaseState>available</LeaseState><DefaultEncryptionScope>$account-encryption-key</DefaultEncryptionScope><DenyEncryptionScopeOverride>false</DenyEncryptionScopeOverride><HasImmutabilityPolicy>false</HasImmutabilityPolicy><HasLegalHold>false</HasLegalHold></Properties></Container><Container><Name>undeleteblobcontainer</Name><Properties><Last-Modified>Sat, 04 Dec 2021 01:15:47 GMT</Last-Modified><Etag>\"0x8D9B6C39A624BDD\"</Etag><LeaseStatus>unlocked</LeaseStatus><LeaseState>available</LeaseState><DefaultEncryptionScope>$account-encryption-key</DefaultEncryptionScope><DenyEncryptionScopeOverride>false</DenyEncryptionScopeOverride><HasImmutabilityPolicy>false</HasImmutabilityPolicy><HasLegalHold>false</HasLegalHold></Properties></Container></Containers><NextMarker>/deletedaccount/undeleteblobcontainer2</NextMarker></EnumerationResults>",
+        "REASON_PHRASE": "OK",
+        "STATUS_CODE": "200",
+        "content-type": "application/xml",
+        "date": "Sat, 04 Dec 2021 01:44:46 GMT",
+        "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
+        "transfer-encoding": "chunked",
+        "x-ms-client-request-id": "5f6ed994-8c36-44a9-4599-366a31044fcc",
+        "x-ms-request-id": "1cd201c2-301e-0033-36b0-e8411d000000",
+        "x-ms-version": "2020-02-10"
+      },
+      "Url": "https://REDACTED.blob.core.windows.net?comp=list&marker=/deletedaccount/listcontainers-prefix2-2&maxresults=4"
+    },
+    {
+      "Headers": {
+        "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Linux 5.4.0-1063-azure x86_64 #66~18.04.1-Ubuntu SMP Thu Oct 21 09:59:28 UTC 2021)",
+        "x-ms-client-request-id": "001a05b6-8a9d-447e-4cf6-648ab6d1f49b",
+        "x-ms-version": "2020-02-10"
+      },
+      "Method": "GET",
+      "Response": {
+        "BODY": "﻿<?xml version=\"1.0\" encoding=\"utf-8\"?><EnumerationResults ServiceEndpoint=\"https://deletedaccount.blob.core.windows.net/\"><Marker>/deletedaccount/undeleteblobcontainer2</Marker><MaxResults>4</MaxResults><Containers><Container><Name>undeleteblobcontainer2</Name><Properties><Last-Modified>Sat, 04 Dec 2021 01:29:26 GMT</Last-Modified><Etag>\"0x8D9B6C582A5B9F2\"</Etag><LeaseStatus>unlocked</LeaseStatus><LeaseState>available</LeaseState><DefaultEncryptionScope>$account-encryption-key</DefaultEncryptionScope><DenyEncryptionScopeOverride>false</DenyEncryptionScopeOverride><HasImmutabilityPolicy>false</HasImmutabilityPolicy><HasLegalHold>false</HasLegalHold></Properties></Container><Container><Name>undeleteblobcontainer3</Name><Properties><Last-Modified>Sat, 04 Dec 2021 01:35:35 GMT</Last-Modified><Etag>\"0x8D9B6C65E7E0CA0\"</Etag><LeaseStatus>unlocked</LeaseStatus><LeaseState>available</LeaseState><DefaultEncryptionScope>$account-encryption-key</DefaultEncryptionScope><DenyEncryptionScopeOverride>false</DenyEncryptionScopeOverride><HasImmutabilityPolicy>false</HasImmutabilityPolicy><HasLegalHold>false</HasLegalHold></Properties></Container></Containers><NextMarker /></EnumerationResults>",
+        "REASON_PHRASE": "OK",
+        "STATUS_CODE": "200",
+        "content-type": "application/xml",
+        "date": "Sat, 04 Dec 2021 01:44:46 GMT",
+        "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
+        "transfer-encoding": "chunked",
+        "x-ms-client-request-id": "001a05b6-8a9d-447e-4cf6-648ab6d1f49b",
+        "x-ms-request-id": "1cd201c4-301e-0033-37b0-e8411d000000",
+        "x-ms-version": "2020-02-10"
+      },
+      "Url": "https://REDACTED.blob.core.windows.net?comp=list&marker=/deletedaccount/undeleteblobcontainer2&maxresults=4"
+    },
+    {
+      "Headers": {
+        "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Linux 5.4.0-1063-azure x86_64 #66~18.04.1-Ubuntu SMP Thu Oct 21 09:59:28 UTC 2021)",
+        "x-ms-client-request-id": "c73b4b9f-054e-42e6-7674-bff8abdeb5ee",
+        "x-ms-version": "2020-02-10"
+      },
+      "Method": "GET",
+      "Response": {
+        "BODY": "﻿<?xml version=\"1.0\" encoding=\"utf-8\"?><EnumerationResults ServiceEndpoint=\"https://deletedaccount.blob.core.windows.net/\"><Prefix>listcontainers-prefix1-</Prefix><MaxResults>4</MaxResults><Containers><Container><Name>listcontainers-prefix1-0</Name><Properties><Last-Modified>Sat, 04 Dec 2021 01:44:46 GMT</Last-Modified><Etag>\"0x8D9B6C7A72229EC\"</Etag><LeaseStatus>unlocked</LeaseStatus><LeaseState>available</LeaseState><DefaultEncryptionScope>$account-encryption-key</DefaultEncryptionScope><DenyEncryptionScopeOverride>false</DenyEncryptionScopeOverride><HasImmutabilityPolicy>false</HasImmutabilityPolicy><HasLegalHold>false</HasLegalHold></Properties></Container><Container><Name>listcontainers-prefix1-1</Name><Properties><Last-Modified>Sat, 04 Dec 2021 01:44:46 GMT</Last-Modified><Etag>\"0x8D9B6C7A725F636\"</Etag><LeaseStatus>unlocked</LeaseStatus><LeaseState>available</LeaseState><DefaultEncryptionScope>$account-encryption-key</DefaultEncryptionScope><DenyEncryptionScopeOverride>false</DenyEncryptionScopeOverride><HasImmutabilityPolicy>false</HasImmutabilityPolicy><HasLegalHold>false</HasLegalHold></Properties></Container><Container><Name>listcontainers-prefix1-2</Name><Properties><Last-Modified>Sat, 04 Dec 2021 01:44:46 GMT</Last-Modified><Etag>\"0x8D9B6C7A727A205\"</Etag><LeaseStatus>unlocked</LeaseStatus><LeaseState>available</LeaseState><DefaultEncryptionScope>$account-encryption-key</DefaultEncryptionScope><DenyEncryptionScopeOverride>false</DenyEncryptionScopeOverride><HasImmutabilityPolicy>false</HasImmutabilityPolicy><HasLegalHold>false</HasLegalHold></Properties></Container><Container><Name>listcontainers-prefix1-3</Name><Properties><Last-Modified>Sat, 04 Dec 2021 01:44:46 GMT</Last-Modified><Etag>\"0x8D9B6C7A7294DD7\"</Etag><LeaseStatus>unlocked</LeaseStatus><LeaseState>available</LeaseState><DefaultEncryptionScope>$account-encryption-key</DefaultEncryptionScope><DenyEncryptionScopeOverride>false</DenyEncryptionScopeOverride><HasImmutabilityPolicy>false</HasImmutabilityPolicy><HasLegalHold>false</HasLegalHold></Properties></Container></Containers><NextMarker>/deletedaccount/listcontainers-prefix1-4</NextMarker></EnumerationResults>",
+        "REASON_PHRASE": "OK",
+        "STATUS_CODE": "200",
+        "content-type": "application/xml",
+        "date": "Sat, 04 Dec 2021 01:44:46 GMT",
+        "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
+        "transfer-encoding": "chunked",
+        "x-ms-client-request-id": "c73b4b9f-054e-42e6-7674-bff8abdeb5ee",
+        "x-ms-request-id": "1cd201c6-301e-0033-38b0-e8411d000000",
+        "x-ms-version": "2020-02-10"
+      },
+      "Url": "https://REDACTED.blob.core.windows.net?comp=list&maxresults=4&prefix=listcontainers-prefix1-"
+    },
+    {
+      "Headers": {
+        "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Linux 5.4.0-1063-azure x86_64 #66~18.04.1-Ubuntu SMP Thu Oct 21 09:59:28 UTC 2021)",
+        "x-ms-client-request-id": "d0c533eb-59e0-434d-4db3-da1760e1e072",
+        "x-ms-version": "2020-02-10"
+      },
+      "Method": "GET",
+      "Response": {
+        "BODY": "﻿<?xml version=\"1.0\" encoding=\"utf-8\"?><EnumerationResults ServiceEndpoint=\"https://deletedaccount.blob.core.windows.net/\"><Prefix>listcontainers-prefix1-</Prefix><Marker>/deletedaccount/listcontainers-prefix1-4</Marker><MaxResults>4</MaxResults><Containers><Container><Name>listcontainers-prefix1-4</Name><Properties><Last-Modified>Sat, 04 Dec 2021 01:44:46 GMT</Last-Modified><Etag>\"0x8D9B6C7A72AD2C3\"</Etag><LeaseStatus>unlocked</LeaseStatus><LeaseState>available</LeaseState><DefaultEncryptionScope>$account-encryption-key</DefaultEncryptionScope><DenyEncryptionScopeOverride>false</DenyEncryptionScopeOverride><HasImmutabilityPolicy>false</HasImmutabilityPolicy><HasLegalHold>false</HasLegalHold></Properties></Container></Containers><NextMarker /></EnumerationResults>",
+        "REASON_PHRASE": "OK",
+        "STATUS_CODE": "200",
+        "content-type": "application/xml",
+        "date": "Sat, 04 Dec 2021 01:44:46 GMT",
+        "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
+        "transfer-encoding": "chunked",
+        "x-ms-client-request-id": "d0c533eb-59e0-434d-4db3-da1760e1e072",
+        "x-ms-request-id": "1cd201c8-301e-0033-39b0-e8411d000000",
+        "x-ms-version": "2020-02-10"
+      },
+      "Url": "https://REDACTED.blob.core.windows.net?comp=list&marker=/deletedaccount/listcontainers-prefix1-4&maxresults=4&prefix=listcontainers-prefix1-"
+    },
+    {
+      "Headers": {
+        "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Linux 5.4.0-1063-azure x86_64 #66~18.04.1-Ubuntu SMP Thu Oct 21 09:59:28 UTC 2021)",
+        "x-ms-client-request-id": "d7ab77e1-2c0a-4930-63ce-e1e455147faa",
+        "x-ms-version": "2020-02-10"
+      },
+      "Method": "DELETE",
+      "Response": {
+        "BODY": "",
+        "REASON_PHRASE": "Accepted",
+        "STATUS_CODE": "202",
+        "content-length": "0",
+        "date": "Sat, 04 Dec 2021 01:44:46 GMT",
+        "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
+        "x-ms-client-request-id": "d7ab77e1-2c0a-4930-63ce-e1e455147faa",
+        "x-ms-request-id": "1cd201ca-301e-0033-3ab0-e8411d000000",
+        "x-ms-version": "2020-02-10"
+      },
+      "Url": "https://REDACTED.blob.core.windows.net/listcontainers-prefix1-0?restype=container"
+    },
+    {
+      "Headers": {
+        "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Linux 5.4.0-1063-azure x86_64 #66~18.04.1-Ubuntu SMP Thu Oct 21 09:59:28 UTC 2021)",
+        "x-ms-client-request-id": "05dd93c7-16fa-403f-5264-3e4e6556dcc0",
+        "x-ms-version": "2020-02-10"
+      },
+      "Method": "DELETE",
+      "Response": {
+        "BODY": "",
+        "REASON_PHRASE": "Accepted",
+        "STATUS_CODE": "202",
+        "content-length": "0",
+        "date": "Sat, 04 Dec 2021 01:44:46 GMT",
+        "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
+        "x-ms-client-request-id": "05dd93c7-16fa-403f-5264-3e4e6556dcc0",
+        "x-ms-request-id": "1cd201ce-301e-0033-3bb0-e8411d000000",
+        "x-ms-version": "2020-02-10"
+      },
+      "Url": "https://REDACTED.blob.core.windows.net/listcontainers-prefix1-1?restype=container"
+    },
+    {
+      "Headers": {
+        "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Linux 5.4.0-1063-azure x86_64 #66~18.04.1-Ubuntu SMP Thu Oct 21 09:59:28 UTC 2021)",
+        "x-ms-client-request-id": "fac9a278-405c-4fd5-4f89-f3ac6cfa657a",
+        "x-ms-version": "2020-02-10"
+      },
+      "Method": "DELETE",
+      "Response": {
+        "BODY": "",
+        "REASON_PHRASE": "Accepted",
+        "STATUS_CODE": "202",
+        "content-length": "0",
+        "date": "Sat, 04 Dec 2021 01:44:46 GMT",
+        "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
+        "x-ms-client-request-id": "fac9a278-405c-4fd5-4f89-f3ac6cfa657a",
+        "x-ms-request-id": "1cd201d0-301e-0033-3cb0-e8411d000000",
+        "x-ms-version": "2020-02-10"
+      },
+      "Url": "https://REDACTED.blob.core.windows.net/listcontainers-prefix1-2?restype=container"
+    },
+    {
+      "Headers": {
+        "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Linux 5.4.0-1063-azure x86_64 #66~18.04.1-Ubuntu SMP Thu Oct 21 09:59:28 UTC 2021)",
+        "x-ms-client-request-id": "ef60b150-3596-49f0-6adb-c5cc339cd368",
+        "x-ms-version": "2020-02-10"
+      },
+      "Method": "DELETE",
+      "Response": {
+        "BODY": "",
+        "REASON_PHRASE": "Accepted",
+        "STATUS_CODE": "202",
+        "content-length": "0",
+        "date": "Sat, 04 Dec 2021 01:44:46 GMT",
+        "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
+        "x-ms-client-request-id": "ef60b150-3596-49f0-6adb-c5cc339cd368",
+        "x-ms-request-id": "1cd201d2-301e-0033-3db0-e8411d000000",
+        "x-ms-version": "2020-02-10"
+      },
+      "Url": "https://REDACTED.blob.core.windows.net/listcontainers-prefix1-3?restype=container"
+    },
+    {
+      "Headers": {
+        "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Linux 5.4.0-1063-azure x86_64 #66~18.04.1-Ubuntu SMP Thu Oct 21 09:59:28 UTC 2021)",
+        "x-ms-client-request-id": "e42897b9-603a-4a91-6d23-60680fad44b4",
+        "x-ms-version": "2020-02-10"
+      },
+      "Method": "DELETE",
+      "Response": {
+        "BODY": "",
+        "REASON_PHRASE": "Accepted",
+        "STATUS_CODE": "202",
+        "content-length": "0",
+        "date": "Sat, 04 Dec 2021 01:44:46 GMT",
+        "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
+        "x-ms-client-request-id": "e42897b9-603a-4a91-6d23-60680fad44b4",
+        "x-ms-request-id": "1cd201d4-301e-0033-3eb0-e8411d000000",
+        "x-ms-version": "2020-02-10"
+      },
+      "Url": "https://REDACTED.blob.core.windows.net/listcontainers-prefix1-4?restype=container"
+    },
+    {
+      "Headers": {
+        "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Linux 5.4.0-1063-azure x86_64 #66~18.04.1-Ubuntu SMP Thu Oct 21 09:59:28 UTC 2021)",
+        "x-ms-client-request-id": "36ff5dbc-d56f-4d35-6596-d91ef6319660",
+        "x-ms-version": "2020-02-10"
+      },
+      "Method": "DELETE",
+      "Response": {
+        "BODY": "",
+        "REASON_PHRASE": "Accepted",
+        "STATUS_CODE": "202",
+        "content-length": "0",
+        "date": "Sat, 04 Dec 2021 01:44:46 GMT",
+        "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
+        "x-ms-client-request-id": "36ff5dbc-d56f-4d35-6596-d91ef6319660",
+        "x-ms-request-id": "1cd201d6-301e-0033-3fb0-e8411d000000",
+        "x-ms-version": "2020-02-10"
+      },
+      "Url": "https://REDACTED.blob.core.windows.net/listcontainers-prefix2-0?restype=container"
+    },
+    {
+      "Headers": {
+        "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Linux 5.4.0-1063-azure x86_64 #66~18.04.1-Ubuntu SMP Thu Oct 21 09:59:28 UTC 2021)",
+        "x-ms-client-request-id": "01effd1b-60d5-4878-7daf-dc2886aad9c4",
+        "x-ms-version": "2020-02-10"
+      },
+      "Method": "DELETE",
+      "Response": {
+        "BODY": "",
+        "REASON_PHRASE": "Accepted",
+        "STATUS_CODE": "202",
+        "content-length": "0",
+        "date": "Sat, 04 Dec 2021 01:44:46 GMT",
+        "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
+        "x-ms-client-request-id": "01effd1b-60d5-4878-7daf-dc2886aad9c4",
+        "x-ms-request-id": "1cd201d8-301e-0033-40b0-e8411d000000",
+        "x-ms-version": "2020-02-10"
+      },
+      "Url": "https://REDACTED.blob.core.windows.net/listcontainers-prefix2-1?restype=container"
+    },
+    {
+      "Headers": {
+        "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Linux 5.4.0-1063-azure x86_64 #66~18.04.1-Ubuntu SMP Thu Oct 21 09:59:28 UTC 2021)",
+        "x-ms-client-request-id": "399eabfb-2412-4f61-4b51-20ca17c323bf",
+        "x-ms-version": "2020-02-10"
+      },
+      "Method": "DELETE",
+      "Response": {
+        "BODY": "",
+        "REASON_PHRASE": "Accepted",
+        "STATUS_CODE": "202",
+        "content-length": "0",
+        "date": "Sat, 04 Dec 2021 01:44:46 GMT",
+        "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
+        "x-ms-client-request-id": "399eabfb-2412-4f61-4b51-20ca17c323bf",
+        "x-ms-request-id": "1cd201da-301e-0033-41b0-e8411d000000",
+        "x-ms-version": "2020-02-10"
+      },
+      "Url": "https://REDACTED.blob.core.windows.net/listcontainers-prefix2-2?restype=container"
+    },
+    {
+      "Headers": {
+        "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Linux 5.4.0-1063-azure x86_64 #66~18.04.1-Ubuntu SMP Thu Oct 21 09:59:28 UTC 2021)",
+        "x-ms-client-request-id": "536102ac-abcb-4428-6f50-2fbc181c0517",
+        "x-ms-version": "2020-02-10"
+      },
+      "Method": "DELETE",
+      "Response": {
+        "BODY": "",
+        "REASON_PHRASE": "Accepted",
+        "STATUS_CODE": "202",
+        "content-length": "0",
+        "date": "Sat, 04 Dec 2021 01:44:46 GMT",
+        "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
+        "x-ms-client-request-id": "536102ac-abcb-4428-6f50-2fbc181c0517",
+        "x-ms-request-id": "1cd201dc-301e-0033-42b0-e8411d000000",
+        "x-ms-version": "2020-02-10"
+      },
+      "Url": "https://REDACTED.blob.core.windows.net/listcontainers-prefix2-3?restype=container"
+    },
+    {
+      "Headers": {
+        "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Linux 5.4.0-1063-azure x86_64 #66~18.04.1-Ubuntu SMP Thu Oct 21 09:59:28 UTC 2021)",
+        "x-ms-client-request-id": "4219c57f-9e0b-4b3c-7633-b1539c8d9ed1",
+        "x-ms-version": "2020-02-10"
+      },
+      "Method": "DELETE",
+      "Response": {
+        "BODY": "",
+        "REASON_PHRASE": "Accepted",
+        "STATUS_CODE": "202",
+        "content-length": "0",
+        "date": "Sat, 04 Dec 2021 01:44:46 GMT",
+        "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
+        "x-ms-client-request-id": "4219c57f-9e0b-4b3c-7633-b1539c8d9ed1",
+        "x-ms-request-id": "1cd201de-301e-0033-43b0-e8411d000000",
+        "x-ms-version": "2020-02-10"
+      },
+      "Url": "https://REDACTED.blob.core.windows.net/listcontainers-prefix2-4?restype=container"
+    }
+  ]
+}

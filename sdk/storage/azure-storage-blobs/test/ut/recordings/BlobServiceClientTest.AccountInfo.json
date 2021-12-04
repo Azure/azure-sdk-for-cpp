@@ -1,0 +1,50 @@
+{
+  "networkCallRecords": [
+    {
+      "Headers": {
+        "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Linux 5.4.0-1063-azure x86_64 #66~18.04.1-Ubuntu SMP Thu Oct 21 09:59:28 UTC 2021)",
+        "x-ms-client-request-id": "c13be12d-a0f3-4059-566b-746deaf1f092",
+        "x-ms-version": "2020-02-10"
+      },
+      "Method": "HEAD",
+      "Response": {
+        "BODY": "",
+        "REASON_PHRASE": "OK",
+        "STATUS_CODE": "200",
+        "content-length": "0",
+        "date": "Sat, 04 Dec 2021 01:45:13 GMT",
+        "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
+        "x-ms-account-kind": "StorageV2",
+        "x-ms-client-request-id": "c13be12d-a0f3-4059-566b-746deaf1f092",
+        "x-ms-is-hns-enabled": "false",
+        "x-ms-request-id": "9bbc0d61-301e-009a-58b0-e8806f000000",
+        "x-ms-sku-name": "Standard_RAGRS",
+        "x-ms-version": "2020-02-10"
+      },
+      "Url": "https://REDACTED.blob.core.windows.net?comp=properties&restype=account"
+    },
+    {
+      "Headers": {
+        "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Linux 5.4.0-1063-azure x86_64 #66~18.04.1-Ubuntu SMP Thu Oct 21 09:59:28 UTC 2021)",
+        "x-ms-client-request-id": "c78f907e-2619-4db5-61f1-130648c9f6d4",
+        "x-ms-version": "2020-02-10"
+      },
+      "Method": "HEAD",
+      "Response": {
+        "BODY": "",
+        "REASON_PHRASE": "OK",
+        "STATUS_CODE": "200",
+        "content-length": "0",
+        "date": "Sat, 04 Dec 2021 01:45:13 GMT",
+        "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
+        "x-ms-account-kind": "StorageV2",
+        "x-ms-client-request-id": "c78f907e-2619-4db5-61f1-130648c9f6d4",
+        "x-ms-is-hns-enabled": "true",
+        "x-ms-request-id": "e8da72d0-a01e-0013-66b0-e8d48a000000",
+        "x-ms-sku-name": "Standard_LRS",
+        "x-ms-version": "2020-02-10"
+      },
+      "Url": "https://REDACTED.blob.core.windows.net?comp=properties&restype=account"
+    }
+  ]
+}

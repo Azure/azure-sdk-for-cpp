@@ -98,6 +98,15 @@ namespace Azure { namespace Core { namespace Test {
       return testName;
     }
 
+    // Reads the current test instance name.
+    // Name gets also sanitized (special chars are removed) to avoid issues when recording or
+    // creating
+    std::string GetTestNameLowerCase()
+    {
+      std::string testName(::testing::UnitTest::GetInstance()->current_test_info()->name());
+      return Azure::Core::_internal::StringExtensions::ToLower(testName);
+    }
+
     // Creates the sdk client for testing.
     // The client will be set for record and playback before it is created.
     Azure::Core::Credentials::TokenCredentialOptions GetTokenCredentialsOptions()
@@ -119,6 +128,14 @@ namespace Azure { namespace Core { namespace Test {
       // Run instrumentation before creating the client
       PrepareClientOptions(&credential, options);
       return std::make_unique<T>(url, *credential, options);
+    }
+
+    template <class T> T InitClientOptions()
+    {
+      // Run instrumentation before creating the client
+      T options;
+      PrepareOptions(options);
+      return options;
     }
 
     // Updates the time when test is on playback

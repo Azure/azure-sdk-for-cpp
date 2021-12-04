@@ -1,0 +1,48 @@
+{
+  "networkCallRecords": [
+    {
+      "Headers": {
+        "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Linux 5.4.0-1063-azure x86_64 #66~18.04.1-Ubuntu SMP Thu Oct 21 09:59:28 UTC 2021)",
+        "x-ms-client-request-id": "70f6b86e-6796-4b20-5149-5c7e2ca7319a",
+        "x-ms-version": "2020-02-10"
+      },
+      "Method": "GET",
+      "Response": {
+        "BODY": "﻿<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>InvalidQueryParameterValue</Code><Message>Value for one of the query parameters specified in the request URI is invalid.\nRequestId:47ed8910-a01e-001e-6db0-e8f26e000000\nTime:2021-12-04T01:45:16.5510979Z</Message><QueryParameterName>comp</QueryParameterName><QueryParameterValue>stats</QueryParameterValue><Reason /></Error>",
+        "REASON_PHRASE": "Value for one of the query parameters specified in the request URI is invalid.",
+        "STATUS_CODE": "400",
+        "content-length": "376",
+        "content-type": "application/xml",
+        "date": "Sat, 04 Dec 2021 01:45:15 GMT",
+        "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
+        "x-ms-client-request-id": "70f6b86e-6796-4b20-5149-5c7e2ca7319a",
+        "x-ms-error-code": "InvalidQueryParameterValue",
+        "x-ms-request-id": "47ed8910-a01e-001e-6db0-e8f26e000000",
+        "x-ms-version": "2020-02-10"
+      },
+      "Url": "https://REDACTED.blob.core.windows.net?comp=stats&restype=service"
+    },
+    {
+      "Headers": {
+        "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Linux 5.4.0-1063-azure x86_64 #66~18.04.1-Ubuntu SMP Thu Oct 21 09:59:28 UTC 2021)",
+        "x-ms-client-request-id": "82891e4f-f3b1-4ccc-7b5f-94909ef58fb3",
+        "x-ms-version": "2020-02-10"
+      },
+      "Method": "GET",
+      "Response": {
+        "BODY": "﻿<?xml version=\"1.0\" encoding=\"utf-8\"?><StorageServiceStats><GeoReplication><Status>live</Status><LastSyncTime>Sat, 04 Dec 2021 01:42:39 GMT</LastSyncTime></GeoReplication></StorageServiceStats>",
+        "REASON_PHRASE": "OK",
+        "STATUS_CODE": "200",
+        "content-type": "application/xml",
+        "date": "Sat, 04 Dec 2021 01:45:16 GMT",
+        "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
+        "transfer-encoding": "chunked",
+        "vary": "Origin",
+        "x-ms-client-request-id": "82891e4f-f3b1-4ccc-7b5f-94909ef58fb3",
+        "x-ms-request-id": "1da154ad-001e-004a-16b0-e852e6000000",
+        "x-ms-version": "2020-02-10"
+      },
+      "Url": "https://REDACTED.blob.core.windows.net?comp=stats&restype=service"
+    }
+  ]
+}

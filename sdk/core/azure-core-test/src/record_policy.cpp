@@ -76,6 +76,8 @@ std::unique_ptr<RawResponse> RecordNetworkCallPolicy::Send(
       std::to_string(static_cast<typename std::underlying_type<Http::HttpStatusCode>::type>(
           response->GetStatusCode())));
 
+  record.Response.emplace("REASON_PHRASE", response->GetReasonPhrase());
+
   for (auto const& header : response->GetHeaders())
   {
     if (header.first == "x-ms-encryption-key-sha256")

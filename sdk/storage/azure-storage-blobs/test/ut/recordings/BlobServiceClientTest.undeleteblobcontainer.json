@@ -1,0 +1,753 @@
+{
+  "networkCallRecords": [
+    {
+      "Headers": {
+        "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Linux 5.4.0-1063-azure x86_64 #66~18.04.1-Ubuntu SMP Thu Oct 21 09:59:28 UTC 2021)",
+        "x-ms-client-request-id": "f7e491c2-aba9-4168-69a5-d6a9ec1ad925",
+        "x-ms-version": "2020-02-10"
+      },
+      "Method": "PUT",
+      "Response": {
+        "BODY": "",
+        "REASON_PHRASE": "Created",
+        "STATUS_CODE": "201",
+        "content-length": "0",
+        "date": "Sat, 04 Dec 2021 01:35:04 GMT",
+        "etag": "\"0x8D9B6C64C7CD836\"",
+        "last-modified": "Sat, 04 Dec 2021 01:35:05 GMT",
+        "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
+        "x-ms-client-request-id": "f7e491c2-aba9-4168-69a5-d6a9ec1ad925",
+        "x-ms-request-id": "245c1d8d-a01e-006c-21af-e8f521000000",
+        "x-ms-version": "2020-02-10"
+      },
+      "Url": "https://REDACTED.blob.core.windows.net/undeleteblobcontainer?restype=container"
+    },
+    {
+      "Headers": {
+        "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Linux 5.4.0-1063-azure x86_64 #66~18.04.1-Ubuntu SMP Thu Oct 21 09:59:28 UTC 2021)",
+        "x-ms-client-request-id": "887095cc-15b4-41f5-66cd-c2636befb1cf",
+        "x-ms-version": "2020-02-10"
+      },
+      "Method": "DELETE",
+      "Response": {
+        "BODY": "",
+        "REASON_PHRASE": "Accepted",
+        "STATUS_CODE": "202",
+        "content-length": "0",
+        "date": "Sat, 04 Dec 2021 01:35:04 GMT",
+        "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
+        "x-ms-client-request-id": "887095cc-15b4-41f5-66cd-c2636befb1cf",
+        "x-ms-request-id": "245c1d90-a01e-006c-22af-e8f521000000",
+        "x-ms-version": "2020-02-10"
+      },
+      "Url": "https://REDACTED.blob.core.windows.net/undeleteblobcontainer?restype=container"
+    },
+    {
+      "Headers": {
+        "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Linux 5.4.0-1063-azure x86_64 #66~18.04.1-Ubuntu SMP Thu Oct 21 09:59:28 UTC 2021)",
+        "x-ms-client-request-id": "3aa922ae-4f01-4ee6-6d52-0804f7ad5e18",
+        "x-ms-version": "2020-02-10"
+      },
+      "Method": "GET",
+      "Response": {
+        "BODY": "﻿<?xml version=\"1.0\" encoding=\"utf-8\"?><EnumerationResults ServiceEndpoint=\"https://deletedaccount.blob.core.windows.net/\"><Prefix>undeleteblobcontainer</Prefix><Containers><Container><Name>undeleteblobcontainer</Name><Deleted>true</Deleted><Version>01D7E8AF2A070A14</Version><Properties><Last-Modified>Sat, 04 Dec 2021 01:35:05 GMT</Last-Modified><Etag>\"0x8D9B6C64C7CD836\"</Etag><LeaseStatus>locked</LeaseStatus><LeaseState>leased</LeaseState><LeaseDuration>fixed</LeaseDuration><DefaultEncryptionScope>$account-encryption-key</DefaultEncryptionScope><DenyEncryptionScopeOverride>false</DenyEncryptionScopeOverride><HasImmutabilityPolicy>false</HasImmutabilityPolicy><HasLegalHold>false</HasLegalHold><DeletedTime>Sat, 04 Dec 2021 01:35:05 GMT</DeletedTime><RemainingRetentionDays>7</RemainingRetentionDays></Properties></Container></Containers><NextMarker /></EnumerationResults>",
+        "REASON_PHRASE": "OK",
+        "STATUS_CODE": "200",
+        "content-type": "application/xml",
+        "date": "Sat, 04 Dec 2021 01:35:04 GMT",
+        "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
+        "transfer-encoding": "chunked",
+        "x-ms-client-request-id": "3aa922ae-4f01-4ee6-6d52-0804f7ad5e18",
+        "x-ms-request-id": "245c1d91-a01e-006c-23af-e8f521000000",
+        "x-ms-version": "2020-02-10"
+      },
+      "Url": "https://REDACTED.blob.core.windows.net?comp=list&include=deleted&prefix=undeleteblobcontainer"
+    },
+    {
+      "Headers": {
+        "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Linux 5.4.0-1063-azure x86_64 #66~18.04.1-Ubuntu SMP Thu Oct 21 09:59:28 UTC 2021)",
+        "x-ms-client-request-id": "b7747d69-18e3-4f8a-4df2-265c264b21b4",
+        "x-ms-version": "2020-02-10"
+      },
+      "Method": "PUT",
+      "Response": {
+        "BODY": "﻿<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<Error><Code>ContainerBeingDeleted</Code><Message>The specified container is being deleted.\nRequestId:245c1d92-a01e-006c-24af-e8f521000000\nTime:2021-12-04T01:35:05.3362859Z</Message></Error>",
+        "REASON_PHRASE": "The specified container is being deleted.",
+        "STATUS_CODE": "409",
+        "content-length": "232",
+        "content-type": "application/xml",
+        "date": "Sat, 04 Dec 2021 01:35:04 GMT",
+        "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
+        "x-ms-client-request-id": "b7747d69-18e3-4f8a-4df2-265c264b21b4",
+        "x-ms-error-code": "ContainerBeingDeleted",
+        "x-ms-request-id": "245c1d92-a01e-006c-24af-e8f521000000",
+        "x-ms-version": "2020-02-10"
+      },
+      "Url": "https://REDACTED.blob.core.windows.net/undeleteblobcontainer?comp=undelete&restype=container"
+    },
+    {
+      "Headers": {
+        "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Linux 5.4.0-1063-azure x86_64 #66~18.04.1-Ubuntu SMP Thu Oct 21 09:59:28 UTC 2021)",
+        "x-ms-client-request-id": "e235fc10-c714-4e80-7ba8-a73c74fea261",
+        "x-ms-version": "2020-02-10"
+      },
+      "Method": "PUT",
+      "Response": {
+        "BODY": "﻿<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<Error><Code>ContainerBeingDeleted</Code><Message>The specified container is being deleted.\nRequestId:36653997-301e-001c-64af-e84cd6000000\nTime:2021-12-04T01:35:06.3757596Z</Message></Error>",
+        "REASON_PHRASE": "The specified container is being deleted.",
+        "STATUS_CODE": "409",
+        "content-length": "232",
+        "content-type": "application/xml",
+        "date": "Sat, 04 Dec 2021 01:35:06 GMT",
+        "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
+        "x-ms-client-request-id": "e235fc10-c714-4e80-7ba8-a73c74fea261",
+        "x-ms-error-code": "ContainerBeingDeleted",
+        "x-ms-request-id": "36653997-301e-001c-64af-e84cd6000000",
+        "x-ms-version": "2020-02-10"
+      },
+      "Url": "https://REDACTED.blob.core.windows.net/undeleteblobcontainer?comp=undelete&restype=container"
+    },
+    {
+      "Headers": {
+        "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Linux 5.4.0-1063-azure x86_64 #66~18.04.1-Ubuntu SMP Thu Oct 21 09:59:28 UTC 2021)",
+        "x-ms-client-request-id": "8c193322-2bba-4a7c-6e29-8bc84479de81",
+        "x-ms-version": "2020-02-10"
+      },
+      "Method": "PUT",
+      "Response": {
+        "BODY": "﻿<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<Error><Code>ContainerBeingDeleted</Code><Message>The specified container is being deleted.\nRequestId:f8d04b6d-701e-007f-60af-e8d12d000000\nTime:2021-12-04T01:35:07.4076139Z</Message></Error>",
+        "REASON_PHRASE": "The specified container is being deleted.",
+        "STATUS_CODE": "409",
+        "content-length": "232",
+        "content-type": "application/xml",
+        "date": "Sat, 04 Dec 2021 01:35:06 GMT",
+        "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
+        "x-ms-client-request-id": "8c193322-2bba-4a7c-6e29-8bc84479de81",
+        "x-ms-error-code": "ContainerBeingDeleted",
+        "x-ms-request-id": "f8d04b6d-701e-007f-60af-e8d12d000000",
+        "x-ms-version": "2020-02-10"
+      },
+      "Url": "https://REDACTED.blob.core.windows.net/undeleteblobcontainer?comp=undelete&restype=container"
+    },
+    {
+      "Headers": {
+        "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Linux 5.4.0-1063-azure x86_64 #66~18.04.1-Ubuntu SMP Thu Oct 21 09:59:28 UTC 2021)",
+        "x-ms-client-request-id": "3a762b7c-c7d5-496d-4502-85578ca0f5e7",
+        "x-ms-version": "2020-02-10"
+      },
+      "Method": "PUT",
+      "Response": {
+        "BODY": "﻿<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<Error><Code>ContainerBeingDeleted</Code><Message>The specified container is being deleted.\nRequestId:ab75b28b-201e-002f-4daf-e8137d000000\nTime:2021-12-04T01:35:08.4442690Z</Message></Error>",
+        "REASON_PHRASE": "The specified container is being deleted.",
+        "STATUS_CODE": "409",
+        "content-length": "232",
+        "content-type": "application/xml",
+        "date": "Sat, 04 Dec 2021 01:35:07 GMT",
+        "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
+        "x-ms-client-request-id": "3a762b7c-c7d5-496d-4502-85578ca0f5e7",
+        "x-ms-error-code": "ContainerBeingDeleted",
+        "x-ms-request-id": "ab75b28b-201e-002f-4daf-e8137d000000",
+        "x-ms-version": "2020-02-10"
+      },
+      "Url": "https://REDACTED.blob.core.windows.net/undeleteblobcontainer?comp=undelete&restype=container"
+    },
+    {
+      "Headers": {
+        "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Linux 5.4.0-1063-azure x86_64 #66~18.04.1-Ubuntu SMP Thu Oct 21 09:59:28 UTC 2021)",
+        "x-ms-client-request-id": "e4da70a1-8315-4aed-7dc1-d50ab8bc89c5",
+        "x-ms-version": "2020-02-10"
+      },
+      "Method": "PUT",
+      "Response": {
+        "BODY": "﻿<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<Error><Code>ContainerBeingDeleted</Code><Message>The specified container is being deleted.\nRequestId:745b1416-c01e-006a-23af-e8c69e000000\nTime:2021-12-04T01:35:09.4756780Z</Message></Error>",
+        "REASON_PHRASE": "The specified container is being deleted.",
+        "STATUS_CODE": "409",
+        "content-length": "232",
+        "content-type": "application/xml",
+        "date": "Sat, 04 Dec 2021 01:35:08 GMT",
+        "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
+        "x-ms-client-request-id": "e4da70a1-8315-4aed-7dc1-d50ab8bc89c5",
+        "x-ms-error-code": "ContainerBeingDeleted",
+        "x-ms-request-id": "745b1416-c01e-006a-23af-e8c69e000000",
+        "x-ms-version": "2020-02-10"
+      },
+      "Url": "https://REDACTED.blob.core.windows.net/undeleteblobcontainer?comp=undelete&restype=container"
+    },
+    {
+      "Headers": {
+        "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Linux 5.4.0-1063-azure x86_64 #66~18.04.1-Ubuntu SMP Thu Oct 21 09:59:28 UTC 2021)",
+        "x-ms-client-request-id": "8ef801d6-07f9-4a1e-6fd2-395576cb6ddd",
+        "x-ms-version": "2020-02-10"
+      },
+      "Method": "PUT",
+      "Response": {
+        "BODY": "﻿<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<Error><Code>ContainerBeingDeleted</Code><Message>The specified container is being deleted.\nRequestId:1f7883d9-401e-00e2-1aaf-e82397000000\nTime:2021-12-04T01:35:10.5184013Z</Message></Error>",
+        "REASON_PHRASE": "The specified container is being deleted.",
+        "STATUS_CODE": "409",
+        "content-length": "232",
+        "content-type": "application/xml",
+        "date": "Sat, 04 Dec 2021 01:35:10 GMT",
+        "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
+        "x-ms-client-request-id": "8ef801d6-07f9-4a1e-6fd2-395576cb6ddd",
+        "x-ms-error-code": "ContainerBeingDeleted",
+        "x-ms-request-id": "1f7883d9-401e-00e2-1aaf-e82397000000",
+        "x-ms-version": "2020-02-10"
+      },
+      "Url": "https://REDACTED.blob.core.windows.net/undeleteblobcontainer?comp=undelete&restype=container"
+    },
+    {
+      "Headers": {
+        "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Linux 5.4.0-1063-azure x86_64 #66~18.04.1-Ubuntu SMP Thu Oct 21 09:59:28 UTC 2021)",
+        "x-ms-client-request-id": "ae0d37fb-f6d6-4b16-7488-aeeedb0b2598",
+        "x-ms-version": "2020-02-10"
+      },
+      "Method": "PUT",
+      "Response": {
+        "BODY": "﻿<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<Error><Code>ContainerBeingDeleted</Code><Message>The specified container is being deleted.\nRequestId:d83f0b77-e01e-0042-3eaf-e8a736000000\nTime:2021-12-04T01:35:11.5556631Z</Message></Error>",
+        "REASON_PHRASE": "The specified container is being deleted.",
+        "STATUS_CODE": "409",
+        "content-length": "232",
+        "content-type": "application/xml",
+        "date": "Sat, 04 Dec 2021 01:35:10 GMT",
+        "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
+        "x-ms-client-request-id": "ae0d37fb-f6d6-4b16-7488-aeeedb0b2598",
+        "x-ms-error-code": "ContainerBeingDeleted",
+        "x-ms-request-id": "d83f0b77-e01e-0042-3eaf-e8a736000000",
+        "x-ms-version": "2020-02-10"
+      },
+      "Url": "https://REDACTED.blob.core.windows.net/undeleteblobcontainer?comp=undelete&restype=container"
+    },
+    {
+      "Headers": {
+        "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Linux 5.4.0-1063-azure x86_64 #66~18.04.1-Ubuntu SMP Thu Oct 21 09:59:28 UTC 2021)",
+        "x-ms-client-request-id": "6076469b-1434-4abe-4994-f251525e5d6d",
+        "x-ms-version": "2020-02-10"
+      },
+      "Method": "PUT",
+      "Response": {
+        "BODY": "﻿<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<Error><Code>ContainerBeingDeleted</Code><Message>The specified container is being deleted.\nRequestId:65341ff6-101e-0104-01af-e86dbc000000\nTime:2021-12-04T01:35:12.6031591Z</Message></Error>",
+        "REASON_PHRASE": "The specified container is being deleted.",
+        "STATUS_CODE": "409",
+        "content-length": "232",
+        "content-type": "application/xml",
+        "date": "Sat, 04 Dec 2021 01:35:12 GMT",
+        "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
+        "x-ms-client-request-id": "6076469b-1434-4abe-4994-f251525e5d6d",
+        "x-ms-error-code": "ContainerBeingDeleted",
+        "x-ms-request-id": "65341ff6-101e-0104-01af-e86dbc000000",
+        "x-ms-version": "2020-02-10"
+      },
+      "Url": "https://REDACTED.blob.core.windows.net/undeleteblobcontainer?comp=undelete&restype=container"
+    },
+    {
+      "Headers": {
+        "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Linux 5.4.0-1063-azure x86_64 #66~18.04.1-Ubuntu SMP Thu Oct 21 09:59:28 UTC 2021)",
+        "x-ms-client-request-id": "d6ef7008-e0cd-453d-6ad5-3643cbd3486c",
+        "x-ms-version": "2020-02-10"
+      },
+      "Method": "PUT",
+      "Response": {
+        "BODY": "﻿<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<Error><Code>ContainerBeingDeleted</Code><Message>The specified container is being deleted.\nRequestId:f784cf76-a01e-0101-7eaf-e8bf67000000\nTime:2021-12-04T01:35:13.6478785Z</Message></Error>",
+        "REASON_PHRASE": "The specified container is being deleted.",
+        "STATUS_CODE": "409",
+        "content-length": "232",
+        "content-type": "application/xml",
+        "date": "Sat, 04 Dec 2021 01:35:12 GMT",
+        "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
+        "x-ms-client-request-id": "d6ef7008-e0cd-453d-6ad5-3643cbd3486c",
+        "x-ms-error-code": "ContainerBeingDeleted",
+        "x-ms-request-id": "f784cf76-a01e-0101-7eaf-e8bf67000000",
+        "x-ms-version": "2020-02-10"
+      },
+      "Url": "https://REDACTED.blob.core.windows.net/undeleteblobcontainer?comp=undelete&restype=container"
+    },
+    {
+      "Headers": {
+        "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Linux 5.4.0-1063-azure x86_64 #66~18.04.1-Ubuntu SMP Thu Oct 21 09:59:28 UTC 2021)",
+        "x-ms-client-request-id": "2dd4953e-e2bc-4880-59b0-bee3f1102103",
+        "x-ms-version": "2020-02-10"
+      },
+      "Method": "PUT",
+      "Response": {
+        "BODY": "﻿<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<Error><Code>ContainerBeingDeleted</Code><Message>The specified container is being deleted.\nRequestId:7f3943d2-a01e-00fa-5baf-e8fcf0000000\nTime:2021-12-04T01:35:14.6880000Z</Message></Error>",
+        "REASON_PHRASE": "The specified container is being deleted.",
+        "STATUS_CODE": "409",
+        "content-length": "232",
+        "content-type": "application/xml",
+        "date": "Sat, 04 Dec 2021 01:35:14 GMT",
+        "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
+        "x-ms-client-request-id": "2dd4953e-e2bc-4880-59b0-bee3f1102103",
+        "x-ms-error-code": "ContainerBeingDeleted",
+        "x-ms-request-id": "7f3943d2-a01e-00fa-5baf-e8fcf0000000",
+        "x-ms-version": "2020-02-10"
+      },
+      "Url": "https://REDACTED.blob.core.windows.net/undeleteblobcontainer?comp=undelete&restype=container"
+    },
+    {
+      "Headers": {
+        "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Linux 5.4.0-1063-azure x86_64 #66~18.04.1-Ubuntu SMP Thu Oct 21 09:59:28 UTC 2021)",
+        "x-ms-client-request-id": "1b88fbde-48b7-47a3-6b3a-b6151c07ac75",
+        "x-ms-version": "2020-02-10"
+      },
+      "Method": "PUT",
+      "Response": {
+        "BODY": "﻿<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<Error><Code>ContainerBeingDeleted</Code><Message>The specified container is being deleted.\nRequestId:af35cfec-b01e-00f6-69af-e86bf8000000\nTime:2021-12-04T01:35:15.7207379Z</Message></Error>",
+        "REASON_PHRASE": "The specified container is being deleted.",
+        "STATUS_CODE": "409",
+        "content-length": "232",
+        "content-type": "application/xml",
+        "date": "Sat, 04 Dec 2021 01:35:15 GMT",
+        "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
+        "x-ms-client-request-id": "1b88fbde-48b7-47a3-6b3a-b6151c07ac75",
+        "x-ms-error-code": "ContainerBeingDeleted",
+        "x-ms-request-id": "af35cfec-b01e-00f6-69af-e86bf8000000",
+        "x-ms-version": "2020-02-10"
+      },
+      "Url": "https://REDACTED.blob.core.windows.net/undeleteblobcontainer?comp=undelete&restype=container"
+    },
+    {
+      "Headers": {
+        "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Linux 5.4.0-1063-azure x86_64 #66~18.04.1-Ubuntu SMP Thu Oct 21 09:59:28 UTC 2021)",
+        "x-ms-client-request-id": "bcf6b64c-3274-40ae-5fbd-f94cdb18f69f",
+        "x-ms-version": "2020-02-10"
+      },
+      "Method": "PUT",
+      "Response": {
+        "BODY": "﻿<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<Error><Code>ContainerBeingDeleted</Code><Message>The specified container is being deleted.\nRequestId:7459f40e-001e-00f3-68af-e8b923000000\nTime:2021-12-04T01:35:16.7603811Z</Message></Error>",
+        "REASON_PHRASE": "The specified container is being deleted.",
+        "STATUS_CODE": "409",
+        "content-length": "232",
+        "content-type": "application/xml",
+        "date": "Sat, 04 Dec 2021 01:35:16 GMT",
+        "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
+        "x-ms-client-request-id": "bcf6b64c-3274-40ae-5fbd-f94cdb18f69f",
+        "x-ms-error-code": "ContainerBeingDeleted",
+        "x-ms-request-id": "7459f40e-001e-00f3-68af-e8b923000000",
+        "x-ms-version": "2020-02-10"
+      },
+      "Url": "https://REDACTED.blob.core.windows.net/undeleteblobcontainer?comp=undelete&restype=container"
+    },
+    {
+      "Headers": {
+        "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Linux 5.4.0-1063-azure x86_64 #66~18.04.1-Ubuntu SMP Thu Oct 21 09:59:28 UTC 2021)",
+        "x-ms-client-request-id": "7ca33519-9475-4fb1-66fd-fa4893d67a73",
+        "x-ms-version": "2020-02-10"
+      },
+      "Method": "PUT",
+      "Response": {
+        "BODY": "﻿<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<Error><Code>ContainerBeingDeleted</Code><Message>The specified container is being deleted.\nRequestId:9bb659d7-301e-00c7-7caf-e88aeb000000\nTime:2021-12-04T01:35:17.8008000Z</Message></Error>",
+        "REASON_PHRASE": "The specified container is being deleted.",
+        "STATUS_CODE": "409",
+        "content-length": "232",
+        "content-type": "application/xml",
+        "date": "Sat, 04 Dec 2021 01:35:17 GMT",
+        "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
+        "x-ms-client-request-id": "7ca33519-9475-4fb1-66fd-fa4893d67a73",
+        "x-ms-error-code": "ContainerBeingDeleted",
+        "x-ms-request-id": "9bb659d7-301e-00c7-7caf-e88aeb000000",
+        "x-ms-version": "2020-02-10"
+      },
+      "Url": "https://REDACTED.blob.core.windows.net/undeleteblobcontainer?comp=undelete&restype=container"
+    },
+    {
+      "Headers": {
+        "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Linux 5.4.0-1063-azure x86_64 #66~18.04.1-Ubuntu SMP Thu Oct 21 09:59:28 UTC 2021)",
+        "x-ms-client-request-id": "03e873c0-3568-40ed-728c-c4b35cf6779f",
+        "x-ms-version": "2020-02-10"
+      },
+      "Method": "PUT",
+      "Response": {
+        "BODY": "﻿<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<Error><Code>ContainerBeingDeleted</Code><Message>The specified container is being deleted.\nRequestId:b5b002c6-901e-0077-1aaf-e8cb22000000\nTime:2021-12-04T01:35:18.8385446Z</Message></Error>",
+        "REASON_PHRASE": "The specified container is being deleted.",
+        "STATUS_CODE": "409",
+        "content-length": "232",
+        "content-type": "application/xml",
+        "date": "Sat, 04 Dec 2021 01:35:18 GMT",
+        "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
+        "x-ms-client-request-id": "03e873c0-3568-40ed-728c-c4b35cf6779f",
+        "x-ms-error-code": "ContainerBeingDeleted",
+        "x-ms-request-id": "b5b002c6-901e-0077-1aaf-e8cb22000000",
+        "x-ms-version": "2020-02-10"
+      },
+      "Url": "https://REDACTED.blob.core.windows.net/undeleteblobcontainer?comp=undelete&restype=container"
+    },
+    {
+      "Headers": {
+        "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Linux 5.4.0-1063-azure x86_64 #66~18.04.1-Ubuntu SMP Thu Oct 21 09:59:28 UTC 2021)",
+        "x-ms-client-request-id": "c0ec814e-3d05-4014-7fba-74c5bf35d827",
+        "x-ms-version": "2020-02-10"
+      },
+      "Method": "PUT",
+      "Response": {
+        "BODY": "﻿<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<Error><Code>ContainerBeingDeleted</Code><Message>The specified container is being deleted.\nRequestId:cf47d87b-d01e-003b-0eaf-e85b12000000\nTime:2021-12-04T01:35:19.8773969Z</Message></Error>",
+        "REASON_PHRASE": "The specified container is being deleted.",
+        "STATUS_CODE": "409",
+        "content-length": "232",
+        "content-type": "application/xml",
+        "date": "Sat, 04 Dec 2021 01:35:19 GMT",
+        "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
+        "x-ms-client-request-id": "c0ec814e-3d05-4014-7fba-74c5bf35d827",
+        "x-ms-error-code": "ContainerBeingDeleted",
+        "x-ms-request-id": "cf47d87b-d01e-003b-0eaf-e85b12000000",
+        "x-ms-version": "2020-02-10"
+      },
+      "Url": "https://REDACTED.blob.core.windows.net/undeleteblobcontainer?comp=undelete&restype=container"
+    },
+    {
+      "Headers": {
+        "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Linux 5.4.0-1063-azure x86_64 #66~18.04.1-Ubuntu SMP Thu Oct 21 09:59:28 UTC 2021)",
+        "x-ms-client-request-id": "1dd8c689-a40b-4387-5ee3-d0f28ad5b062",
+        "x-ms-version": "2020-02-10"
+      },
+      "Method": "PUT",
+      "Response": {
+        "BODY": "﻿<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<Error><Code>ContainerBeingDeleted</Code><Message>The specified container is being deleted.\nRequestId:b8ce30da-101e-00b2-7caf-e8e1c7000000\nTime:2021-12-04T01:35:20.9150660Z</Message></Error>",
+        "REASON_PHRASE": "The specified container is being deleted.",
+        "STATUS_CODE": "409",
+        "content-length": "232",
+        "content-type": "application/xml",
+        "date": "Sat, 04 Dec 2021 01:35:20 GMT",
+        "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
+        "x-ms-client-request-id": "1dd8c689-a40b-4387-5ee3-d0f28ad5b062",
+        "x-ms-error-code": "ContainerBeingDeleted",
+        "x-ms-request-id": "b8ce30da-101e-00b2-7caf-e8e1c7000000",
+        "x-ms-version": "2020-02-10"
+      },
+      "Url": "https://REDACTED.blob.core.windows.net/undeleteblobcontainer?comp=undelete&restype=container"
+    },
+    {
+      "Headers": {
+        "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Linux 5.4.0-1063-azure x86_64 #66~18.04.1-Ubuntu SMP Thu Oct 21 09:59:28 UTC 2021)",
+        "x-ms-client-request-id": "46eeb944-057a-4f9e-590e-d60c34dc5093",
+        "x-ms-version": "2020-02-10"
+      },
+      "Method": "PUT",
+      "Response": {
+        "BODY": "﻿<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<Error><Code>ContainerBeingDeleted</Code><Message>The specified container is being deleted.\nRequestId:6bb8fdda-801e-0026-0caf-e856ae000000\nTime:2021-12-04T01:35:21.9528893Z</Message></Error>",
+        "REASON_PHRASE": "The specified container is being deleted.",
+        "STATUS_CODE": "409",
+        "content-length": "232",
+        "content-type": "application/xml",
+        "date": "Sat, 04 Dec 2021 01:35:21 GMT",
+        "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
+        "x-ms-client-request-id": "46eeb944-057a-4f9e-590e-d60c34dc5093",
+        "x-ms-error-code": "ContainerBeingDeleted",
+        "x-ms-request-id": "6bb8fdda-801e-0026-0caf-e856ae000000",
+        "x-ms-version": "2020-02-10"
+      },
+      "Url": "https://REDACTED.blob.core.windows.net/undeleteblobcontainer?comp=undelete&restype=container"
+    },
+    {
+      "Headers": {
+        "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Linux 5.4.0-1063-azure x86_64 #66~18.04.1-Ubuntu SMP Thu Oct 21 09:59:28 UTC 2021)",
+        "x-ms-client-request-id": "9f6e81cd-842a-4126-6b28-d4d55ec13974",
+        "x-ms-version": "2020-02-10"
+      },
+      "Method": "PUT",
+      "Response": {
+        "BODY": "﻿<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<Error><Code>ContainerBeingDeleted</Code><Message>The specified container is being deleted.\nRequestId:7a91c471-601e-00da-22af-e88757000000\nTime:2021-12-04T01:35:22.9909281Z</Message></Error>",
+        "REASON_PHRASE": "The specified container is being deleted.",
+        "STATUS_CODE": "409",
+        "content-length": "232",
+        "content-type": "application/xml",
+        "date": "Sat, 04 Dec 2021 01:35:22 GMT",
+        "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
+        "x-ms-client-request-id": "9f6e81cd-842a-4126-6b28-d4d55ec13974",
+        "x-ms-error-code": "ContainerBeingDeleted",
+        "x-ms-request-id": "7a91c471-601e-00da-22af-e88757000000",
+        "x-ms-version": "2020-02-10"
+      },
+      "Url": "https://REDACTED.blob.core.windows.net/undeleteblobcontainer?comp=undelete&restype=container"
+    },
+    {
+      "Headers": {
+        "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Linux 5.4.0-1063-azure x86_64 #66~18.04.1-Ubuntu SMP Thu Oct 21 09:59:28 UTC 2021)",
+        "x-ms-client-request-id": "0c687f0b-d680-4bb4-5abe-56c161955ed7",
+        "x-ms-version": "2020-02-10"
+      },
+      "Method": "PUT",
+      "Response": {
+        "BODY": "﻿<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<Error><Code>ContainerBeingDeleted</Code><Message>The specified container is being deleted.\nRequestId:d3b51136-201e-0062-3eaf-e8dc91000000\nTime:2021-12-04T01:35:24.0286817Z</Message></Error>",
+        "REASON_PHRASE": "The specified container is being deleted.",
+        "STATUS_CODE": "409",
+        "content-length": "232",
+        "content-type": "application/xml",
+        "date": "Sat, 04 Dec 2021 01:35:23 GMT",
+        "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
+        "x-ms-client-request-id": "0c687f0b-d680-4bb4-5abe-56c161955ed7",
+        "x-ms-error-code": "ContainerBeingDeleted",
+        "x-ms-request-id": "d3b51136-201e-0062-3eaf-e8dc91000000",
+        "x-ms-version": "2020-02-10"
+      },
+      "Url": "https://REDACTED.blob.core.windows.net/undeleteblobcontainer?comp=undelete&restype=container"
+    },
+    {
+      "Headers": {
+        "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Linux 5.4.0-1063-azure x86_64 #66~18.04.1-Ubuntu SMP Thu Oct 21 09:59:28 UTC 2021)",
+        "x-ms-client-request-id": "deeac946-b997-43d9-4876-6620050159b4",
+        "x-ms-version": "2020-02-10"
+      },
+      "Method": "PUT",
+      "Response": {
+        "BODY": "﻿<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<Error><Code>ContainerBeingDeleted</Code><Message>The specified container is being deleted.\nRequestId:dd8f9be3-501e-0025-43af-e8b7ca000000\nTime:2021-12-04T01:35:25.0697379Z</Message></Error>",
+        "REASON_PHRASE": "The specified container is being deleted.",
+        "STATUS_CODE": "409",
+        "content-length": "232",
+        "content-type": "application/xml",
+        "date": "Sat, 04 Dec 2021 01:35:24 GMT",
+        "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
+        "x-ms-client-request-id": "deeac946-b997-43d9-4876-6620050159b4",
+        "x-ms-error-code": "ContainerBeingDeleted",
+        "x-ms-request-id": "dd8f9be3-501e-0025-43af-e8b7ca000000",
+        "x-ms-version": "2020-02-10"
+      },
+      "Url": "https://REDACTED.blob.core.windows.net/undeleteblobcontainer?comp=undelete&restype=container"
+    },
+    {
+      "Headers": {
+        "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Linux 5.4.0-1063-azure x86_64 #66~18.04.1-Ubuntu SMP Thu Oct 21 09:59:28 UTC 2021)",
+        "x-ms-client-request-id": "ad403442-a554-4941-5f2c-a4e472f49a05",
+        "x-ms-version": "2020-02-10"
+      },
+      "Method": "PUT",
+      "Response": {
+        "BODY": "﻿<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<Error><Code>ContainerBeingDeleted</Code><Message>The specified container is being deleted.\nRequestId:212b9b1f-101e-009d-51af-e8ec0c000000\nTime:2021-12-04T01:35:26.1086142Z</Message></Error>",
+        "REASON_PHRASE": "The specified container is being deleted.",
+        "STATUS_CODE": "409",
+        "content-length": "232",
+        "content-type": "application/xml",
+        "date": "Sat, 04 Dec 2021 01:35:25 GMT",
+        "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
+        "x-ms-client-request-id": "ad403442-a554-4941-5f2c-a4e472f49a05",
+        "x-ms-error-code": "ContainerBeingDeleted",
+        "x-ms-request-id": "212b9b1f-101e-009d-51af-e8ec0c000000",
+        "x-ms-version": "2020-02-10"
+      },
+      "Url": "https://REDACTED.blob.core.windows.net/undeleteblobcontainer?comp=undelete&restype=container"
+    },
+    {
+      "Headers": {
+        "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Linux 5.4.0-1063-azure x86_64 #66~18.04.1-Ubuntu SMP Thu Oct 21 09:59:28 UTC 2021)",
+        "x-ms-client-request-id": "b195dfc3-c98a-499e-7d6b-2b402bab24b4",
+        "x-ms-version": "2020-02-10"
+      },
+      "Method": "PUT",
+      "Response": {
+        "BODY": "﻿<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<Error><Code>ContainerBeingDeleted</Code><Message>The specified container is being deleted.\nRequestId:2f345ef7-601e-0087-58af-e88dd3000000\nTime:2021-12-04T01:35:27.1486115Z</Message></Error>",
+        "REASON_PHRASE": "The specified container is being deleted.",
+        "STATUS_CODE": "409",
+        "content-length": "232",
+        "content-type": "application/xml",
+        "date": "Sat, 04 Dec 2021 01:35:26 GMT",
+        "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
+        "x-ms-client-request-id": "b195dfc3-c98a-499e-7d6b-2b402bab24b4",
+        "x-ms-error-code": "ContainerBeingDeleted",
+        "x-ms-request-id": "2f345ef7-601e-0087-58af-e88dd3000000",
+        "x-ms-version": "2020-02-10"
+      },
+      "Url": "https://REDACTED.blob.core.windows.net/undeleteblobcontainer?comp=undelete&restype=container"
+    },
+    {
+      "Headers": {
+        "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Linux 5.4.0-1063-azure x86_64 #66~18.04.1-Ubuntu SMP Thu Oct 21 09:59:28 UTC 2021)",
+        "x-ms-client-request-id": "395724da-4e58-4bdb-53e0-8f2b8aab7ea8",
+        "x-ms-version": "2020-02-10"
+      },
+      "Method": "PUT",
+      "Response": {
+        "BODY": "﻿<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<Error><Code>ContainerBeingDeleted</Code><Message>The specified container is being deleted.\nRequestId:7f170e1e-e01e-000f-49af-e868da000000\nTime:2021-12-04T01:35:28.1895404Z</Message></Error>",
+        "REASON_PHRASE": "The specified container is being deleted.",
+        "STATUS_CODE": "409",
+        "content-length": "232",
+        "content-type": "application/xml",
+        "date": "Sat, 04 Dec 2021 01:35:27 GMT",
+        "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
+        "x-ms-client-request-id": "395724da-4e58-4bdb-53e0-8f2b8aab7ea8",
+        "x-ms-error-code": "ContainerBeingDeleted",
+        "x-ms-request-id": "7f170e1e-e01e-000f-49af-e868da000000",
+        "x-ms-version": "2020-02-10"
+      },
+      "Url": "https://REDACTED.blob.core.windows.net/undeleteblobcontainer?comp=undelete&restype=container"
+    },
+    {
+      "Headers": {
+        "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Linux 5.4.0-1063-azure x86_64 #66~18.04.1-Ubuntu SMP Thu Oct 21 09:59:28 UTC 2021)",
+        "x-ms-client-request-id": "1aa25776-1f7d-4b39-4053-61060d7bf29c",
+        "x-ms-version": "2020-02-10"
+      },
+      "Method": "PUT",
+      "Response": {
+        "BODY": "﻿<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<Error><Code>ContainerBeingDeleted</Code><Message>The specified container is being deleted.\nRequestId:643653ad-601e-0073-08af-e84625000000\nTime:2021-12-04T01:35:29.2286436Z</Message></Error>",
+        "REASON_PHRASE": "The specified container is being deleted.",
+        "STATUS_CODE": "409",
+        "content-length": "232",
+        "content-type": "application/xml",
+        "date": "Sat, 04 Dec 2021 01:35:28 GMT",
+        "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
+        "x-ms-client-request-id": "1aa25776-1f7d-4b39-4053-61060d7bf29c",
+        "x-ms-error-code": "ContainerBeingDeleted",
+        "x-ms-request-id": "643653ad-601e-0073-08af-e84625000000",
+        "x-ms-version": "2020-02-10"
+      },
+      "Url": "https://REDACTED.blob.core.windows.net/undeleteblobcontainer?comp=undelete&restype=container"
+    },
+    {
+      "Headers": {
+        "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Linux 5.4.0-1063-azure x86_64 #66~18.04.1-Ubuntu SMP Thu Oct 21 09:59:28 UTC 2021)",
+        "x-ms-client-request-id": "a0e63a33-bfe7-4d02-44ee-3fc9f7bd045e",
+        "x-ms-version": "2020-02-10"
+      },
+      "Method": "PUT",
+      "Response": {
+        "BODY": "﻿<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<Error><Code>ContainerBeingDeleted</Code><Message>The specified container is being deleted.\nRequestId:1b22d353-301e-0023-1aaf-e88475000000\nTime:2021-12-04T01:35:30.2679709Z</Message></Error>",
+        "REASON_PHRASE": "The specified container is being deleted.",
+        "STATUS_CODE": "409",
+        "content-length": "232",
+        "content-type": "application/xml",
+        "date": "Sat, 04 Dec 2021 01:35:29 GMT",
+        "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
+        "x-ms-client-request-id": "a0e63a33-bfe7-4d02-44ee-3fc9f7bd045e",
+        "x-ms-error-code": "ContainerBeingDeleted",
+        "x-ms-request-id": "1b22d353-301e-0023-1aaf-e88475000000",
+        "x-ms-version": "2020-02-10"
+      },
+      "Url": "https://REDACTED.blob.core.windows.net/undeleteblobcontainer?comp=undelete&restype=container"
+    },
+    {
+      "Headers": {
+        "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Linux 5.4.0-1063-azure x86_64 #66~18.04.1-Ubuntu SMP Thu Oct 21 09:59:28 UTC 2021)",
+        "x-ms-client-request-id": "abdda2e9-b5ef-4c22-53a8-cd5ed455aaba",
+        "x-ms-version": "2020-02-10"
+      },
+      "Method": "PUT",
+      "Response": {
+        "BODY": "﻿<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<Error><Code>ContainerBeingDeleted</Code><Message>The specified container is being deleted.\nRequestId:1168639e-801e-00c2-59af-e85830000000\nTime:2021-12-04T01:35:31.3145606Z</Message></Error>",
+        "REASON_PHRASE": "The specified container is being deleted.",
+        "STATUS_CODE": "409",
+        "content-length": "232",
+        "content-type": "application/xml",
+        "date": "Sat, 04 Dec 2021 01:35:30 GMT",
+        "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
+        "x-ms-client-request-id": "abdda2e9-b5ef-4c22-53a8-cd5ed455aaba",
+        "x-ms-error-code": "ContainerBeingDeleted",
+        "x-ms-request-id": "1168639e-801e-00c2-59af-e85830000000",
+        "x-ms-version": "2020-02-10"
+      },
+      "Url": "https://REDACTED.blob.core.windows.net/undeleteblobcontainer?comp=undelete&restype=container"
+    },
+    {
+      "Headers": {
+        "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Linux 5.4.0-1063-azure x86_64 #66~18.04.1-Ubuntu SMP Thu Oct 21 09:59:28 UTC 2021)",
+        "x-ms-client-request-id": "e5386ba9-67f5-492c-7c9a-27d4a8d2a354",
+        "x-ms-version": "2020-02-10"
+      },
+      "Method": "PUT",
+      "Response": {
+        "BODY": "﻿<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<Error><Code>ContainerBeingDeleted</Code><Message>The specified container is being deleted.\nRequestId:c6b7422d-c01e-0055-44af-e80e3d000000\nTime:2021-12-04T01:35:32.3429664Z</Message></Error>",
+        "REASON_PHRASE": "The specified container is being deleted.",
+        "STATUS_CODE": "409",
+        "content-length": "232",
+        "content-type": "application/xml",
+        "date": "Sat, 04 Dec 2021 01:35:31 GMT",
+        "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
+        "x-ms-client-request-id": "e5386ba9-67f5-492c-7c9a-27d4a8d2a354",
+        "x-ms-error-code": "ContainerBeingDeleted",
+        "x-ms-request-id": "c6b7422d-c01e-0055-44af-e80e3d000000",
+        "x-ms-version": "2020-02-10"
+      },
+      "Url": "https://REDACTED.blob.core.windows.net/undeleteblobcontainer?comp=undelete&restype=container"
+    },
+    {
+      "Headers": {
+        "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Linux 5.4.0-1063-azure x86_64 #66~18.04.1-Ubuntu SMP Thu Oct 21 09:59:28 UTC 2021)",
+        "x-ms-client-request-id": "bfdaba81-7a58-4496-46ea-0035ca5d4eeb",
+        "x-ms-version": "2020-02-10"
+      },
+      "Method": "PUT",
+      "Response": {
+        "BODY": "﻿<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<Error><Code>ContainerBeingDeleted</Code><Message>The specified container is being deleted.\nRequestId:8f81dff3-001e-0091-42af-e87b04000000\nTime:2021-12-04T01:35:33.3875230Z</Message></Error>",
+        "REASON_PHRASE": "The specified container is being deleted.",
+        "STATUS_CODE": "409",
+        "content-length": "232",
+        "content-type": "application/xml",
+        "date": "Sat, 04 Dec 2021 01:35:32 GMT",
+        "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
+        "x-ms-client-request-id": "bfdaba81-7a58-4496-46ea-0035ca5d4eeb",
+        "x-ms-error-code": "ContainerBeingDeleted",
+        "x-ms-request-id": "8f81dff3-001e-0091-42af-e87b04000000",
+        "x-ms-version": "2020-02-10"
+      },
+      "Url": "https://REDACTED.blob.core.windows.net/undeleteblobcontainer?comp=undelete&restype=container"
+    },
+    {
+      "Headers": {
+        "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Linux 5.4.0-1063-azure x86_64 #66~18.04.1-Ubuntu SMP Thu Oct 21 09:59:28 UTC 2021)",
+        "x-ms-client-request-id": "b2ec4808-2eb0-46e5-62e4-46250766631d",
+        "x-ms-version": "2020-02-10"
+      },
+      "Method": "PUT",
+      "Response": {
+        "BODY": "﻿<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<Error><Code>ContainerBeingDeleted</Code><Message>The specified container is being deleted.\nRequestId:b104ec02-e01e-007d-1faf-e86f95000000\nTime:2021-12-04T01:35:34.4273035Z</Message></Error>",
+        "REASON_PHRASE": "The specified container is being deleted.",
+        "STATUS_CODE": "409",
+        "content-length": "232",
+        "content-type": "application/xml",
+        "date": "Sat, 04 Dec 2021 01:35:33 GMT",
+        "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
+        "x-ms-client-request-id": "b2ec4808-2eb0-46e5-62e4-46250766631d",
+        "x-ms-error-code": "ContainerBeingDeleted",
+        "x-ms-request-id": "b104ec02-e01e-007d-1faf-e86f95000000",
+        "x-ms-version": "2020-02-10"
+      },
+      "Url": "https://REDACTED.blob.core.windows.net/undeleteblobcontainer?comp=undelete&restype=container"
+    },
+    {
+      "Headers": {
+        "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Linux 5.4.0-1063-azure x86_64 #66~18.04.1-Ubuntu SMP Thu Oct 21 09:59:28 UTC 2021)",
+        "x-ms-client-request-id": "01c237fe-d257-40be-45d7-6442d99f5e17",
+        "x-ms-version": "2020-02-10"
+      },
+      "Method": "PUT",
+      "Response": {
+        "BODY": "",
+        "REASON_PHRASE": "Created",
+        "STATUS_CODE": "201",
+        "content-length": "0",
+        "date": "Sat, 04 Dec 2021 01:35:34 GMT",
+        "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
+        "x-ms-client-request-id": "01c237fe-d257-40be-45d7-6442d99f5e17",
+        "x-ms-request-id": "d113e2c2-301e-00a5-65af-e848cc000000",
+        "x-ms-version": "2020-02-10"
+      },
+      "Url": "https://REDACTED.blob.core.windows.net/undeleteblobcontainer?comp=undelete&restype=container"
+    },
+    {
+      "Headers": {
+        "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Linux 5.4.0-1063-azure x86_64 #66~18.04.1-Ubuntu SMP Thu Oct 21 09:59:28 UTC 2021)",
+        "x-ms-client-request-id": "ecb54858-a440-4043-5514-967a8527c952",
+        "x-ms-version": "2020-02-10"
+      },
+      "Method": "HEAD",
+      "Response": {
+        "BODY": "",
+        "REASON_PHRASE": "OK",
+        "STATUS_CODE": "200",
+        "content-length": "0",
+        "date": "Sat, 04 Dec 2021 01:35:34 GMT",
+        "etag": "\"0x8D9B6C65E7E0CA0\"",
+        "last-modified": "Sat, 04 Dec 2021 01:35:35 GMT",
+        "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
+        "x-ms-client-request-id": "ecb54858-a440-4043-5514-967a8527c952",
+        "x-ms-default-encryption-scope": "$account-encryption-key",
+        "x-ms-deny-encryption-scope-override": "false",
+        "x-ms-has-immutability-policy": "false",
+        "x-ms-has-legal-hold": "false",
+        "x-ms-lease-state": "available",
+        "x-ms-lease-status": "unlocked",
+        "x-ms-request-id": "d113e2c3-301e-00a5-66af-e848cc000000",
+        "x-ms-version": "2020-02-10"
+      },
+      "Url": "https://REDACTED.blob.core.windows.net/undeleteblobcontainer?restype=container"
+    }
+  ]
+}

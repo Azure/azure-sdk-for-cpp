@@ -39,7 +39,9 @@ std::unique_ptr<RawResponse> PlaybackClient::Send(
       // StatusCode
       auto const statusCode
           = HttpStatusCode(std::stoi(record->Response.find("STATUS_CODE")->second));
-      auto response = std::make_unique<RawResponse>(1, 1, statusCode, "recorded response");
+      auto rpIt = record->Response.find("REASON_PHRASE");
+      auto rp = rpIt != record->Response.end() ? rpIt->second : "recorded response";
+      auto response = std::make_unique<RawResponse>(1, 1, statusCode, rp);
 
       // Headers
       for (auto const& header : record->Response)
