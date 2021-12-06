@@ -111,8 +111,13 @@ namespace Azure { namespace Core { namespace Test {
     /**
      * Gets a new HTTP transport adapter that plays back test session records managed by the
      * InterceptorManager.
+     *
+     * @return An HTTP transport adapter that plays back network calls from its recorded data.
+     */
+    std::unique_ptr<Azure::Core::Http::HttpTransport> GetPlaybackTransport()
     {
       return std::make_unique<Azure::Core::Test::PlaybackClient>(this);
+    }
 
     /**
      * @brief Get the Test Context object.
