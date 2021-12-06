@@ -84,7 +84,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
      */
     Cryptography::CryptographyClient GetCryptographyClient(
         std::string const& name,
-        std::string const& version = std::string());
+        std::string const& version = std::string()) const;
 
     /**
      * @brief Gets the public part of a stored key.

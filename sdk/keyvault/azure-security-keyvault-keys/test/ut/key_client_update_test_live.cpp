@@ -19,13 +19,14 @@ using namespace Azure::Security::KeyVault::Keys::Test;
 using namespace Azure;
 using namespace Azure::Security::KeyVault::Keys;
 
-TEST_F(KeyVaultClientTest, UpdateProperties)
+TEST_F(KeyVaultKeyClient, UpdateProperties)
 {
-  KeyClient keyClient(m_keyVaultUrl, m_credential);
-  auto keyName = GetUniqueName();
+  auto const keyName = GetTestName();
+  auto const& client = GetClientForTest(keyName);
+
   auto updateTo = DateTime::Parse("20301031T00:00:00Z", DateTime::DateFormat::Rfc3339);
   {
-    auto keyResponse = keyClient.CreateKey(keyName, KeyVaultKeyType::Ec);
+    auto keyResponse = client.CreateKey(keyName, KeyVaultKeyType::Ec);
     CheckValidResponse(keyResponse);
     auto keyVaultKey = keyResponse.Value;
     EXPECT_EQ(keyVaultKey.Name(), keyName);
@@ -35,12 +36,12 @@ TEST_F(KeyVaultClientTest, UpdateProperties)
     // Update Key
     keyVaultKey.Properties.Enabled = false;
     keyVaultKey.Properties.ExpiresOn = updateTo;
-    auto updatedResponse = keyClient.UpdateKeyProperties(keyVaultKey.Properties);
+    auto updatedResponse = client.UpdateKeyProperties(keyVaultKey.Properties);
     CheckValidResponse(updatedResponse);
   }
   {
     // Get updated key to check values
-    auto updatedKey = keyClient.GetKey(keyName);
+    auto updatedKey = client.GetKey(keyName);
     CheckValidResponse(updatedKey);
     auto key = updatedKey.Value;
     EXPECT_TRUE(key.Properties.Enabled);

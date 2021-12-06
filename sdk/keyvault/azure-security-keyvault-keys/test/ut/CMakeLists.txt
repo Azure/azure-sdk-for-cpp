@@ -15,57 +15,34 @@ add_compile_definitions(AZURE_TEST_RECORDING_DIR="${CMAKE_CURRENT_LIST_DIR}")
 ################## Unit Tests ##########################
 add_executable (
   azure-security-keyvault-keys-test
-    azure_security_keyvault_keys_test.cpp
+    key_client_backup_test_live.cpp
     key_client_base_test.hpp
+    key_client_base_test.hpp
+    key_client_create_test_live.cpp
+    key_client_delete_test_live.cpp
+    key_client_get_test_live.cpp
+    key_client_import_test_live.cpp
     key_client_test.cpp
+    key_client_update_test_live.cpp
+    key_cryptographic_client_test_live.cpp
     macro_guard.cpp
-    mocked_transport_adapter_test.hpp
     mocked_client_test.cpp
+    mocked_transport_adapter_test.hpp
 )
 
 if (MSVC)
   target_compile_options(azure-security-keyvault-keys-test PUBLIC /wd6326 /wd26495 /wd26812)
 endif()
 
-target_link_libraries(azure-security-keyvault-keys-test PRIVATE azure-security-keyvault-keys azure-identity gtest gmock)
+target_link_libraries(azure-security-keyvault-keys-test PRIVATE azure-security-keyvault-keys azure-identity azure-core-test-fw gtest gtest_main gmock)
+
+# Adding private headers so we can test the private APIs with no relative paths include.
+target_include_directories (azure-security-keyvault-keys-test PRIVATE $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/../../src>)
 
 # gtest_add_tests will scan the test from azure-core-test and call add_test
 # for each test to ctest. This enables `ctest -r` to run specific tests directly.
 gtest_discover_tests(azure-security-keyvault-keys-test
-  TEST_PREFIX azure-security-keyvault-keys-unittest.
-  NO_PRETTY_TYPES
-  NO_PRETTY_VALUES
-)
-
-
-################## Live Tests ##########################
-add_executable (
-  azure-security-keyvault-keys-test-live
-    azure_security_keyvault_keys_test.cpp
-    key_client_backup_test_live.cpp
-    key_client_create_test_live.cpp
-    key_client_delete_test_live.cpp
-    key_client_get_test_live.cpp
-    key_client_import_test_live.cpp
-    key_client_update_test_live.cpp
-    key_cryptographic_client_test_live.cpp
-    key_client_base_test.hpp
-)
-
-if (MSVC)
-  # warning C4389: '==': signed/unsigned mismatch
-  target_compile_options(azure-security-keyvault-keys-test-live PUBLIC /wd6326 /wd26495 /wd26812 /wd4389)
-endif()
-
-target_link_libraries(azure-security-keyvault-keys-test-live PRIVATE azure-security-keyvault-keys azure-identity azure-core-test-fw gtest gmock)
-
-# Adding private headers so we can test the private APIs with no relative paths include.
-target_include_directories (azure-security-keyvault-keys-test-live PRIVATE $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/../../src>)
-
-# gtest_discover_tests will scan the test from azure-core-test and call add_test
-# for each test to ctest. This enables `ctest -r` to run specific tests directly.
-gtest_discover_tests(azure-security-keyvault-keys-test-live
-  TEST_PREFIX azure-security-keyvault-keys-livetest.
+  TEST_PREFIX azure-security-keyvault-keys.
   NO_PRETTY_TYPES
   NO_PRETTY_VALUES
 )

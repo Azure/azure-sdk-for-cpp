@@ -20,6 +20,7 @@
 
 #pragma once
 
+#include <azure/core/credentials/credentials.hpp>
 #include <azure/core/http/http.hpp>
 #include <azure/core/http/policies/policy.hpp>
 #include <memory>
@@ -31,6 +32,30 @@
 #include "azure/core/test/test_context_manager.hpp"
 
 namespace Azure { namespace Core { namespace Test {
+
+  /**
+   * @brief TestNonExpiringCredential Credential authenticates with the Azure services using a
+   * Tenant ID, Client ID and a client secret.
+   *
+   */
+  class TestNonExpiringCredential final : public Core::Credentials::TokenCredential {
+  public:
+    Core::Credentials::AccessToken GetToken(
+        Core::Credentials::TokenRequestContext const& tokenRequestContext,
+        Core::Context const& context) const override
+    {
+      Core::Credentials::AccessToken accessToken;
+      accessToken.Token = "magicToken";
+      accessToken.ExpiresOn = DateTime::max();
+
+      if (context.IsCancelled() || tokenRequestContext.Scopes.size() == 0)
+      {
+        accessToken.ExpiresOn = DateTime::min();
+      }
+
+      return accessToken;
+    }
+  };
 
   /**
    * @brief A class that keeps track of network calls by either reading the data from an existing
@@ -73,12 +98,23 @@ namespace Azure { namespace Core { namespace Test {
     }
 
     /**
-     * Gets a new HTTP client that plays back test session records managed by {@link
-     * InterceptorManager}.
+     * @brief Get a non-expiring token credential. This is a test utility for use in playback
+     * scenarios where the token is not relevant.
      *
-     * @return An HTTP client that plays back network calls from its recorded data.
+     * @return std::shared_ptr<Core::Credentials::TokenCredential>
      */
-    std::unique_ptr<Azure::Core::Http::HttpTransport> GetPlaybackClient()
+    std::shared_ptr<Core::Credentials::TokenCredential> GetTestCredential()
+    {
+      return std::make_shared<TestNonExpiringCredential>();
+    }
+
+    /**
+     * Gets a new HTTP transport adapter that plays back test session records managed by the
+     * InterceptorManager.
+     *
+     * @return An HTTP transport adapter that plays back network calls from its recorded data.
+     */
+    std::unique_ptr<Azure::Core::Http::HttpTransport> GetPlaybackTransport()
     {
       return std::make_unique<Azure::Core::Test::PlaybackClient>(this);
     }

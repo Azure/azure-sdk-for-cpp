@@ -16,11 +16,10 @@
 
 using namespace Azure::Security::KeyVault::Keys::Test;
 
-TEST_F(KeyVaultClientTest, CreateKey)
+TEST_F(KeyVaultKeyClient, CreateKey)
 {
-  auto keyName = "CreateKeyWithThisName";
-  auto const& client
-      = GetClientForTest(::testing::UnitTest::GetInstance()->current_test_info()->name());
+  auto const keyName = GetTestName();
+  auto const& client = GetClientForTest(keyName);
 
   {
     auto keyResponse
@@ -38,17 +37,17 @@ TEST_F(KeyVaultClientTest, CreateKey)
   }
 }
 
-TEST_F(KeyVaultClientTest, CreateKeyWithOptions)
+TEST_F(KeyVaultKeyClient, CreateKeyWithOptions)
 {
-  Azure::Security::KeyVault::Keys::KeyClient keyClient(m_keyVaultUrl, m_credential);
-  auto keyName = GetUniqueName();
+  auto const keyName = GetTestName();
+  auto const& client = GetClientForTest(keyName);
 
   Azure::Security::KeyVault::Keys::CreateKeyOptions options;
   options.KeyOperations.push_back(Azure::Security::KeyVault::Keys::KeyOperation::Sign);
   options.KeyOperations.push_back(Azure::Security::KeyVault::Keys::KeyOperation::Verify);
   {
-    auto keyResponse = keyClient.CreateKey(
-        keyName, Azure::Security::KeyVault::Keys::KeyVaultKeyType::Ec, options);
+    auto keyResponse
+        = client.CreateKey(keyName, Azure::Security::KeyVault::Keys::KeyVaultKeyType::Ec, options);
     CheckValidResponse(keyResponse);
     auto keyVaultKey = keyResponse.Value;
 
@@ -75,18 +74,18 @@ TEST_F(KeyVaultClientTest, CreateKeyWithOptions)
   }
 }
 
-TEST_F(KeyVaultClientTest, CreateKeyWithTags)
+TEST_F(KeyVaultKeyClient, CreateKeyWithTags)
 {
-  Azure::Security::KeyVault::Keys::KeyClient keyClient(m_keyVaultUrl, m_credential);
-  auto keyName = GetUniqueName();
+  auto const keyName = GetTestName();
+  auto const& client = GetClientForTest(keyName);
 
   Azure::Security::KeyVault::Keys::CreateKeyOptions options;
   options.Tags.emplace("one", "value=1");
   options.Tags.emplace("two", "value=2");
 
   {
-    auto keyResponse = keyClient.CreateKey(
-        keyName, Azure::Security::KeyVault::Keys::KeyVaultKeyType::Rsa, options);
+    auto keyResponse
+        = client.CreateKey(keyName, Azure::Security::KeyVault::Keys::KeyVaultKeyType::Rsa, options);
     CheckValidResponse(keyResponse);
     auto keyVaultKey = keyResponse.Value;
 
@@ -102,36 +101,36 @@ TEST_F(KeyVaultClientTest, CreateKeyWithTags)
 }
 
 /********************************* Create key overloads  *********************************/
-TEST_F(KeyVaultClientTest, CreateEcKey)
+TEST_F(KeyVaultKeyClient, CreateEcKey)
 {
-  Azure::Security::KeyVault::Keys::KeyClient keyClient(m_keyVaultUrl, m_credential);
-  auto keyName = GetUniqueName();
+  auto const keyName = GetTestName();
+  auto const& client = GetClientForTest(keyName);
 
   {
     auto ecKey = Azure::Security::KeyVault::Keys::CreateEcKeyOptions(keyName);
-    auto keyResponse = keyClient.CreateEcKey(ecKey);
+    auto keyResponse = client.CreateEcKey(ecKey);
     CheckValidResponse(keyResponse);
     auto keyVaultKey = keyResponse.Value;
     EXPECT_EQ(keyVaultKey.Name(), keyName);
   }
   {
     // Now get the key
-    auto keyResponse = keyClient.GetKey(keyName);
+    auto keyResponse = client.GetKey(keyName);
     CheckValidResponse(keyResponse);
     auto keyVaultKey = keyResponse.Value;
     EXPECT_EQ(keyVaultKey.Name(), keyName);
   }
 }
 
-TEST_F(KeyVaultClientTest, CreateEcKeyWithCurve)
+TEST_F(KeyVaultKeyClient, CreateEcKeyWithCurve)
 {
-  Azure::Security::KeyVault::Keys::KeyClient keyClient(m_keyVaultUrl, m_credential);
-  auto keyName = GetUniqueName();
+  auto const keyName = GetTestName();
+  auto const& client = GetClientForTest(keyName);
 
   {
     auto ecKey = Azure::Security::KeyVault::Keys::CreateEcKeyOptions(keyName);
     ecKey.CurveName = Azure::Security::KeyVault::Keys::KeyCurveName::P384;
-    auto keyResponse = keyClient.CreateEcKey(ecKey);
+    auto keyResponse = client.CreateEcKey(ecKey);
     CheckValidResponse(keyResponse);
     auto keyVaultKey = keyResponse.Value;
     EXPECT_EQ(keyVaultKey.Name(), keyName);
@@ -139,7 +138,7 @@ TEST_F(KeyVaultClientTest, CreateEcKeyWithCurve)
   }
   {
     // Now get the key
-    auto keyResponse = keyClient.GetKey(keyName);
+    auto keyResponse = client.GetKey(keyName);
     CheckValidResponse(keyResponse);
     auto keyVaultKey = keyResponse.Value;
     EXPECT_EQ(keyVaultKey.Name(), keyName);
@@ -150,21 +149,21 @@ TEST_F(KeyVaultClientTest, CreateEcKeyWithCurve)
   }
 }
 
-TEST_F(KeyVaultClientTest, CreateRsaKey)
+TEST_F(KeyVaultKeyClient, CreateRsaKey)
 {
-  Azure::Security::KeyVault::Keys::KeyClient keyClient(m_keyVaultUrl, m_credential);
-  auto keyName = GetUniqueName();
+  auto const keyName = GetTestName();
+  auto const& client = GetClientForTest(keyName);
 
   {
     auto rsaKey = Azure::Security::KeyVault::Keys::CreateRsaKeyOptions(keyName, false);
-    auto keyResponse = keyClient.CreateRsaKey(rsaKey);
+    auto keyResponse = client.CreateRsaKey(rsaKey);
     CheckValidResponse(keyResponse);
     auto keyVaultKey = keyResponse.Value;
     EXPECT_EQ(keyVaultKey.Name(), keyName);
   }
   {
     // Now get the key
-    auto keyResponse = keyClient.GetKey(keyName);
+    auto keyResponse = client.GetKey(keyName);
     CheckValidResponse(keyResponse);
     auto keyVaultKey = keyResponse.Value;
     EXPECT_EQ(keyVaultKey.Name(), keyName);
@@ -173,42 +172,46 @@ TEST_F(KeyVaultClientTest, CreateRsaKey)
 
 // No tests for octKey since the server does not support it.
 
-TEST_F(KeyVaultClientTest, CreateEcHsmKey)
+TEST_F(KeyVaultKeyClient, CreateEcHsmKey)
 {
-  Azure::Security::KeyVault::Keys::KeyClient keyClient(m_keyVaultHsmUrl, m_credential);
-  auto keyName = GetUniqueName();
+  auto const keyName = GetTestName();
+  // This client requires an HSM client
+  CreateHsmClient();
+  auto const& client = GetClientForTest(keyName);
 
   {
     auto ecHsmKey = Azure::Security::KeyVault::Keys::CreateEcKeyOptions(keyName, true);
-    auto keyResponse = keyClient.CreateEcKey(ecHsmKey);
+    auto keyResponse = client.CreateEcKey(ecHsmKey);
     CheckValidResponse(keyResponse);
     auto keyVaultKey = keyResponse.Value;
     EXPECT_EQ(keyVaultKey.Name(), keyName);
   }
   {
     // Now get the key
-    auto keyResponse = keyClient.GetKey(keyName);
+    auto keyResponse = client.GetKey(keyName);
     CheckValidResponse(keyResponse);
     auto keyVaultKey = keyResponse.Value;
     EXPECT_EQ(keyVaultKey.Name(), keyName);
   }
 }
 
-TEST_F(KeyVaultClientTest, CreateRsaHsmKey)
+TEST_F(KeyVaultKeyClient, CreateRsaHsmKey)
 {
-  Azure::Security::KeyVault::Keys::KeyClient keyClient(m_keyVaultHsmUrl, m_credential);
-  auto keyName = GetUniqueName();
+  auto const keyName = GetTestName();
+  // This client requires an HSM client
+  CreateHsmClient();
+  auto const& client = GetClientForTest(keyName);
 
   {
     auto rsaHsmKey = Azure::Security::KeyVault::Keys::CreateRsaKeyOptions(keyName, true);
-    auto keyResponse = keyClient.CreateRsaKey(rsaHsmKey);
+    auto keyResponse = client.CreateRsaKey(rsaHsmKey);
     CheckValidResponse(keyResponse);
     auto keyVaultKey = keyResponse.Value;
     EXPECT_EQ(keyVaultKey.Name(), keyName);
   }
   {
     // Now get the key
-    auto keyResponse = keyClient.GetKey(keyName);
+    auto keyResponse = client.GetKey(keyName);
     CheckValidResponse(keyResponse);
     auto keyVaultKey = keyResponse.Value;
     EXPECT_EQ(keyVaultKey.Name(), keyName);
