@@ -27,7 +27,7 @@ stages:
     parameters:
       ServiceDirectory: identity
       CtestRegex: azure-identity.
-      LiveTestCtestRegex: azure-identity-livetest.
+      LiveTestCtestRegex: azure-identity.
       LineCoverageTarget: 99
       BranchCoverageTarget: 62
       Artifacts:
