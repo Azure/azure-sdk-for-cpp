@@ -271,7 +271,7 @@ public:
    */
   T& Value() & noexcept
   {
-    _azure_ASSERT_MSG(m_hasValue, "Empty Nullable, check HasValue() first.");
+    _azure_ASSERT_MSG(m_hasValue, "Empty Nullable, check HasValue() first."); // LCOV_EXCL_LINE
 
     return m_value;
   }
