@@ -88,11 +88,6 @@ std::unique_ptr<RawResponse> RecordNetworkCallPolicy::Send(
     else
     {
       auto headerValue = header.second;
-      // Use hardcoded id
-      headerValue = std::regex_replace(
-          headerValue,
-          std::regex("[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}"),
-          "14a3ada2-0126-4805-4491-9693eacc9ab6");
       record.Response.emplace(header.first, headerValue);
     }
   }
@@ -100,11 +95,6 @@ std::unique_ptr<RawResponse> RecordNetworkCallPolicy::Send(
   // Capture response
   auto const& body = response->GetBody();
   std::string bodystr(body.begin(), body.end());
-  // Replace all id-like strings for a hardcoded ID
-  bodystr = std::regex_replace(
-      bodystr,
-      std::regex("[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}"),
-      "14a3ada2-0126-4805-4491-9693eacc9ab6");
   record.Response.emplace("BODY", bodystr);
   m_interceptorManager->GetRecordedData().NetworkCallRecords.push_back(record);
 

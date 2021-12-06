@@ -14,6 +14,60 @@
 using namespace Azure::Core::Http;
 using namespace Azure::Core::Test;
 
+/**
+ * @brief Infomation about special behavior headers.
+ *
+ * @details This structure helps to describe how to handle the playback response when there are
+ * special headers. For example, for unique id headers, the playback transport adapter can take one
+ * unique id comming from the request and use it as part of the playback response.
+ *
+ */
+struct UniqueIdInfo
+{
+  /**
+   * @brief If this header key is found in the request, the response should override the header
+   * defined by `ReplaceResponseHeader` in the response.
+   *
+   */
+  std::string RequestHeader;
+
+  /**
+   * @brief This field can be used to condition the replacement of the response header to only when
+   * the request header is equal to this value.
+   *
+   */
+  std::string RequestHeaderOnlyIfValue;
+
+  /**
+   * @brief This is the header in the response to be replaced.
+   *
+   */
+  std::string ReplaceResponseHeader;
+
+  /**
+   * @brief Use this field to override the response value with another header value from the
+   * request. Leave it empty to use the value from `RequestHeader`.
+   *
+   */
+  std::string ReplacedValueWithHeader;
+};
+
+/**
+ * @brief Define the special headers
+ *
+ * @details Current rules:
+ *
+ * - If header x-ms-proposed-lease-id is in the request, then use its value for the header
+ * x-ms-lease-id in the response.
+ *
+ * - If header x-ms-lease-action is in the request and its value is equals to renew, then use the
+ * value from request header x-ms-lease-id for the response header value of x-ms-lease-id
+ *
+ */
+std::vector<UniqueIdInfo> uniqueHeaders(
+    {{"x-ms-proposed-lease-id", "", "x-ms-lease-id", ""},
+     {"x-ms-lease-action", "renew", "x-ms-lease-id", "x-ms-lease-id"}});
+
 std::unique_ptr<RawResponse> PlaybackClient::Send(
     Request& request,
     Azure::Core::Context const& context)
@@ -27,6 +81,35 @@ std::unique_ptr<RawResponse> PlaybackClient::Send(
 
   auto& recordedData = m_interceptorManager->GetRecordedData();
   Azure::Core::Url const redactedUrl = m_interceptorManager->RedactUrl(request.GetUrl());
+
+  std::map<std::string, std::string> uniqueIds;
+  auto const& requestHeaders = request.GetHeaders();
+  for (auto const& requestHeader : requestHeaders)
+  {
+    auto const uniqueHeaderInRequest = std::find_if(
+        uniqueHeaders.begin(),
+        uniqueHeaders.end(),
+        [requestHeader](UniqueIdInfo const& uniqueHeaderInfo) {
+          if (uniqueHeaderInfo.RequestHeaderOnlyIfValue.empty())
+          {
+            return requestHeader.first == uniqueHeaderInfo.RequestHeader;
+          }
+          else
+          {
+            return requestHeader.first == uniqueHeaderInfo.RequestHeader
+                && requestHeader.second == uniqueHeaderInfo.RequestHeaderOnlyIfValue;
+          }
+        });
+    if (uniqueHeaderInRequest != uniqueHeaders.end())
+    {
+      // header is a uniqueHeader, save the value to use in the response.
+      auto const headerForReplacing = uniqueHeaderInRequest->ReplacedValueWithHeader.empty()
+          ? requestHeader.second
+          : requestHeaders.at(uniqueHeaderInRequest->ReplacedValueWithHeader);
+
+      uniqueIds.emplace(uniqueHeaderInRequest->ReplaceResponseHeader, headerForReplacing);
+    }
+  }
 
   for (auto record = recordedData.NetworkCallRecords.begin();
        record != recordedData.NetworkCallRecords.end();)
@@ -46,9 +129,24 @@ std::unique_ptr<RawResponse> PlaybackClient::Send(
       // Headers
       for (auto const& header : record->Response)
       {
-        if (header.first != "STATUS_CODE" && header.first != "BODY")
+        if (header.first != "STATUS_CODE" && header.first != "BODY"
+            && header.first != "REASON_PHRASE")
         {
-          response->SetHeader(header.first, header.second);
+          auto const replaceWithUnique = std::find_if(
+              uniqueIds.begin(),
+              uniqueIds.end(),
+              [header](std::pair<std::string, std::string> const& uniqueHeaderInfo) {
+                return header.first == uniqueHeaderInfo.first;
+              });
+
+          if (replaceWithUnique == uniqueIds.end())
+          {
+            response->SetHeader(header.first, header.second);
+          }
+          else
+          {
+            response->SetHeader(header.first, uniqueIds[header.first]);
+          }
         }
       }
 
