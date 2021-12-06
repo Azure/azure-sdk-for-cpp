@@ -54,6 +54,8 @@ namespace Azure { namespace Storage {
           uint64_t maxNumber = std::numeric_limits<uint64_t>::max());
 
       std::string RandomString(size_t size = 10);
+      
+      std::string GetStringOfSize(size_t size = 10);
 
       std::string LowercaseRandomString(size_t size = 10);
 

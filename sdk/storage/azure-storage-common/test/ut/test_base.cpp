@@ -190,6 +190,29 @@ namespace Azure { namespace Storage { namespace Test {
     return str;
   }
 
+  std::string StorageTest::GetStringOfSize(size_t size)
+  {
+    auto const testName = GetTestName();
+    auto const testNameSize = testName.size();
+    auto duplicationTimes = size / testNameSize;
+    auto leftToFill = size % testNameSize;
+    std::string str;
+
+    while (duplicationTimes != 0)
+    {
+      str.append(testName);
+      duplicationTimes -= 1;
+    }
+    while (leftToFill != 0)
+    {
+      // do % 10 to use only one digit per appending
+      str.append(std::to_string(leftToFill % 10));
+      leftToFill -= 1;
+    }
+
+    return str;
+  }
+
   std::string StorageTest::LowercaseRandomString(size_t size)
   {
     return Azure::Core::_internal::StringExtensions::ToLower(RandomString(size));

@@ -8,6 +8,7 @@
 
 #include <azure/core/internal/strings.hpp>
 
+#include <regex>
 #include <string>
 #include <vector>
 
@@ -86,13 +87,25 @@ std::unique_ptr<RawResponse> RecordNetworkCallPolicy::Send(
     }
     else
     {
-      record.Response.emplace(header.first, header.second);
+      auto headerValue = header.second;
+      // Use hardcoded id
+      headerValue = std::regex_replace(
+          headerValue,
+          std::regex("[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}"),
+          "14a3ada2-0126-4805-4491-9693eacc9ab6");
+      record.Response.emplace(header.first, headerValue);
     }
   }
 
   // Capture response
   auto const& body = response->GetBody();
-  record.Response.emplace("BODY", std::string(body.begin(), body.end()));
+  std::string bodystr(body.begin(), body.end());
+  // Replace all id-like strings for a hardcoded ID
+  bodystr = std::regex_replace(
+      bodystr,
+      std::regex("[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}"),
+      "14a3ada2-0126-4805-4491-9693eacc9ab6");
+  record.Response.emplace("BODY", bodystr);
   m_interceptorManager->GetRecordedData().NetworkCallRecords.push_back(record);
 
   return response;

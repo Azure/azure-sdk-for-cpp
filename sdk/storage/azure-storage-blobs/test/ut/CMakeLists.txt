@@ -16,13 +16,13 @@ add_executable (
   azure-storage-blobs-test
     # append_blob_client_test.cpp
     # append_blob_client_test.hpp
-    # blob_container_client_test.cpp
-    # blob_container_client_test.hpp
+    blob_container_client_test.cpp
+    blob_container_client_test.hpp
     # blob_sas_test.cpp
     blob_service_client_test.cpp
     # block_blob_client_test.cpp
     # block_blob_client_test.hpp
-    # macro_guard.cpp
+    macro_guard.cpp
     # page_blob_client_test.cpp
     # page_blob_client_test.hpp
     # storage_retry_policy_test.cpp

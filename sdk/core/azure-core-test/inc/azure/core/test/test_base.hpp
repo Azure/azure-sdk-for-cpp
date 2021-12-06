@@ -214,5 +214,13 @@ namespace Azure { namespace Core { namespace Test {
      *
      */
     void TearDown() override;
+
+    // // Util for comparing true unique IDs which *must* be always random on each test.
+    // // For example, if a test needs to call `Blobs::BlobLeaseClient::CreateUniqueLeaseId()`
+    // // The validation will only be made during LIVE and RECORD mode
+    // // In the future, the test framework could replace all ids with a
+    // bool CompareUniqueStrings(std::string const& uniqueA, std::string const& uniqueB) {
+
+    // }
   };
 }}} // namespace Azure::Core::Test
