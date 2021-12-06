@@ -36,7 +36,11 @@ namespace Azure { namespace Storage {
       const std::string& AadClientId();
       const std::string& AadClientSecret();
 
-      constexpr static const char* TestEncryptionScope = "EncryptionScopeForTest";
+      std::string GetTestEncryptionScope()
+      {
+        static const std::string TestEncryptionScope("EncryptionScopeForTest");
+        return TestEncryptionScope;
+      }
 
       std::string AppendQueryParameters(
           const Azure::Core::Url& url,
@@ -54,7 +58,7 @@ namespace Azure { namespace Storage {
           uint64_t maxNumber = std::numeric_limits<uint64_t>::max());
 
       std::string RandomString(size_t size = 10);
-      
+
       std::string GetStringOfSize(size_t size = 10);
 
       std::string LowercaseRandomString(size_t size = 10);

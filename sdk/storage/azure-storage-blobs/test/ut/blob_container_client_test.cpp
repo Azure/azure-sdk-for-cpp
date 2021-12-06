@@ -488,213 +488,216 @@ namespace Azure { namespace Storage { namespace Test {
     }
   }
 
-  // TEST_F(BlobContainerClientTest, DISABLED_EncryptionScope)
-  // {
-  //   {
-  //     auto properties = client.GetProperties().Value;
-  //     EXPECT_EQ(properties.DefaultEncryptionScope, AccountEncryptionKey);
-  //     EXPECT_EQ(properties.PreventEncryptionScopeOverride, false);
-  //   }
-  //   {
-  //     std::string containerName = LowercaseRandomString();
-  //     std::string blobName = RandomString();
-  //     Blobs::BlobClientOptions options;
-  //     options.EncryptionScope = TestEncryptionScope;
-  //     auto containerClient =
-  //     Azure::Storage::Blobs::BlobContainerClient::CreateFromConnectionString(
-  //         StandardStorageConnectionString(), containerName, options);
-  //     Blobs::CreateBlobContainerOptions createOptions;
-  //     createOptions.DefaultEncryptionScope = TestEncryptionScope;
-  //     createOptions.PreventEncryptionScopeOverride = true;
-  //     EXPECT_NO_THROW(containerClient.Create(createOptions));
-  //     auto properties = containerClient.GetProperties().Value;
-  //     EXPECT_EQ(properties.DefaultEncryptionScope,
-  //     createOptions.DefaultEncryptionScope.Value()); EXPECT_EQ(
-  //         properties.PreventEncryptionScopeOverride,
-  //         createOptions.PreventEncryptionScopeOverride.Value());
-  //     auto appendBlobClient = containerClient.GetAppendBlobClient(blobName);
-  //     auto blobContentInfo = appendBlobClient.Create();
-  //     {
-  //       Blobs::ListBlobsOptions listOptions;
-  //       listOptions.Prefix = blobName;
-  //       for (auto page = containerClient.ListBlobs(listOptions); page.HasPage();
-  //            page.MoveToNextPage())
-  //       {
-  //         for (auto& blob : page.Blobs)
-  //         {
-  //           if (blob.Name == blobName)
-  //           {
-  //             EXPECT_TRUE(blob.Details.IsServerEncrypted);
-  //             EXPECT_TRUE(blob.Details.EncryptionScope.HasValue());
-  //             EXPECT_EQ(blob.Details.EncryptionScope.Value(), TestEncryptionScope);
-  //           }
-  //         }
-  //       }
-  //     }
-  //     appendBlobClient.Delete();
-  //     EXPECT_TRUE(blobContentInfo.Value.EncryptionScope.HasValue());
-  //     EXPECT_EQ(blobContentInfo.Value.EncryptionScope.Value(), TestEncryptionScope);
-  //     auto appendBlobClientWithoutEncryptionScope
-  //         = Azure::Storage::Blobs::AppendBlobClient::CreateFromConnectionString(
-  //             StandardStorageConnectionString(), containerName, blobName);
-  //     blobContentInfo = appendBlobClientWithoutEncryptionScope.Create();
-  //     appendBlobClientWithoutEncryptionScope.Delete();
-  //     EXPECT_TRUE(blobContentInfo.Value.EncryptionScope.HasValue());
-  //     EXPECT_EQ(blobContentInfo.Value.EncryptionScope.Value(), TestEncryptionScope);
-  //     containerClient.Delete();
-  //   }
-  //   {
-  //     std::string blobName = RandomString();
-  //     Blobs::BlobClientOptions options;
-  //     options.EncryptionScope = TestEncryptionScope;
-  //     auto appendBlobClient =
-  //     Azure::Storage::Blobs::AppendBlobClient::CreateFromConnectionString(
-  //         StandardStorageConnectionString(), m_containerName, blobName, options);
-  //     auto blobContentInfo = appendBlobClient.Create();
-  //     EXPECT_TRUE(blobContentInfo.Value.EncryptionScope.HasValue());
-  //     EXPECT_EQ(blobContentInfo.Value.EncryptionScope.Value(), TestEncryptionScope);
-  //     auto setMetadataRes = appendBlobClient.SetMetadata({});
-  //     EXPECT_TRUE(setMetadataRes.Value.IsServerEncrypted);
-  //     ASSERT_TRUE(setMetadataRes.Value.EncryptionScope.HasValue());
-  //     EXPECT_EQ(setMetadataRes.Value.EncryptionScope.Value(), TestEncryptionScope);
-  //     auto properties = appendBlobClient.GetProperties().Value;
-  //     EXPECT_TRUE(properties.EncryptionScope.HasValue());
-  //     EXPECT_EQ(properties.EncryptionScope.Value(), TestEncryptionScope);
-  //     std::vector<uint8_t> appendContent(1);
-  //     Azure::Core::IO::MemoryBodyStream bodyStream(appendContent.data(), appendContent.size());
-  //     EXPECT_NO_THROW(appendBlobClient.AppendBlock(bodyStream));
+  TEST_F(BlobContainerClientTest, DISABLED_EncryptionScope)
+  {
+    std::string const testName = GetTestNameLowerCase();
+    auto client = GetBlobContainerClient(testName);
+    client.Create();
+    auto const& testEncryptionScope = GetTestEncryptionScope();
 
-  //     bodyStream.Rewind();
-  //     auto appendBlobClientWithoutEncryptionScope
-  //         = Azure::Storage::Blobs::AppendBlobClient::CreateFromConnectionString(
-  //             StandardStorageConnectionString(), m_containerName, blobName);
-  //     EXPECT_THROW(
-  //         appendBlobClientWithoutEncryptionScope.AppendBlock(bodyStream), StorageException);
-  //     EXPECT_THROW(appendBlobClientWithoutEncryptionScope.CreateSnapshot(), StorageException);
-  //     appendBlobClient.Delete();
-  //   }
-  // }
+    {
+      auto properties = client.GetProperties().Value;
+      EXPECT_EQ(properties.DefaultEncryptionScope, AccountEncryptionKey);
+      EXPECT_EQ(properties.PreventEncryptionScopeOverride, false);
+    }
+    {
+      std::string containerName = LowercaseRandomString();
+      std::string blobName = RandomString();
+      Blobs::BlobClientOptions options;
+      options.EncryptionScope = testEncryptionScope;
+      auto containerClient = Azure::Storage::Blobs::BlobContainerClient::CreateFromConnectionString(
+          StandardStorageConnectionString(), containerName, options);
+      Blobs::CreateBlobContainerOptions createOptions;
+      createOptions.DefaultEncryptionScope = testEncryptionScope;
+      createOptions.PreventEncryptionScopeOverride = true;
+      EXPECT_NO_THROW(containerClient.Create(createOptions));
+      auto properties = containerClient.GetProperties().Value;
+      EXPECT_EQ(properties.DefaultEncryptionScope, createOptions.DefaultEncryptionScope.Value());
+      EXPECT_EQ(
+          properties.PreventEncryptionScopeOverride,
+          createOptions.PreventEncryptionScopeOverride.Value());
+      auto appendBlobClient = containerClient.GetAppendBlobClient(blobName);
+      auto blobContentInfo = appendBlobClient.Create();
+      {
+        Blobs::ListBlobsOptions listOptions;
+        listOptions.Prefix = blobName;
+        for (auto page = containerClient.ListBlobs(listOptions); page.HasPage();
+             page.MoveToNextPage())
+        {
+          for (auto& blob : page.Blobs)
+          {
+            if (blob.Name == blobName)
+            {
+              EXPECT_TRUE(blob.Details.IsServerEncrypted);
+              EXPECT_TRUE(blob.Details.EncryptionScope.HasValue());
+              EXPECT_EQ(blob.Details.EncryptionScope.Value(), testEncryptionScope);
+            }
+          }
+        }
+      }
+      appendBlobClient.Delete();
+      EXPECT_TRUE(blobContentInfo.Value.EncryptionScope.HasValue());
+      EXPECT_EQ(blobContentInfo.Value.EncryptionScope.Value(), testEncryptionScope);
+      auto appendBlobClientWithoutEncryptionScope
+          = Azure::Storage::Blobs::AppendBlobClient::CreateFromConnectionString(
+              StandardStorageConnectionString(), containerName, blobName);
+      blobContentInfo = appendBlobClientWithoutEncryptionScope.Create();
+      appendBlobClientWithoutEncryptionScope.Delete();
+      EXPECT_TRUE(blobContentInfo.Value.EncryptionScope.HasValue());
+      EXPECT_EQ(blobContentInfo.Value.EncryptionScope.Value(), testEncryptionScope);
+      containerClient.Delete();
+    }
+    {
+      std::string blobName = RandomString();
+      Blobs::BlobClientOptions options;
+      options.EncryptionScope = testEncryptionScope;
+      auto appendBlobClient = Azure::Storage::Blobs::AppendBlobClient::CreateFromConnectionString(
+          StandardStorageConnectionString(), testName, blobName, options);
+      auto blobContentInfo = appendBlobClient.Create();
+      EXPECT_TRUE(blobContentInfo.Value.EncryptionScope.HasValue());
+      EXPECT_EQ(blobContentInfo.Value.EncryptionScope.Value(), testEncryptionScope);
+      auto setMetadataRes = appendBlobClient.SetMetadata({});
+      EXPECT_TRUE(setMetadataRes.Value.IsServerEncrypted);
+      ASSERT_TRUE(setMetadataRes.Value.EncryptionScope.HasValue());
+      EXPECT_EQ(setMetadataRes.Value.EncryptionScope.Value(), testEncryptionScope);
+      auto properties = appendBlobClient.GetProperties().Value;
+      EXPECT_TRUE(properties.EncryptionScope.HasValue());
+      EXPECT_EQ(properties.EncryptionScope.Value(), testEncryptionScope);
+      std::vector<uint8_t> appendContent(1);
+      Azure::Core::IO::MemoryBodyStream bodyStream(appendContent.data(), appendContent.size());
+      EXPECT_NO_THROW(appendBlobClient.AppendBlock(bodyStream));
 
-  // TEST_F(BlobContainerClientTest, CustomerProvidedKey)
-  // {
-  //   auto getRandomCustomerProvidedKey = []() {
-  //     Blobs::EncryptionKey key;
-  //     std::vector<uint8_t> aes256Key;
-  //     aes256Key.resize(32);
-  //     RandomBuffer(&aes256Key[0], aes256Key.size());
-  //     key.Key = Azure::Core::Convert::Base64Encode(aes256Key);
-  //     key.KeyHash = Azure::Core::Cryptography::_internal::Sha256Hash().Final(
-  //         aes256Key.data(), aes256Key.size());
-  //     key.Algorithm = Blobs::Models::EncryptionAlgorithmType::Aes256;
-  //     return key;
-  //   };
+      bodyStream.Rewind();
+      auto appendBlobClientWithoutEncryptionScope
+          = Azure::Storage::Blobs::AppendBlobClient::CreateFromConnectionString(
+              StandardStorageConnectionString(), testName, blobName);
+      EXPECT_THROW(
+          appendBlobClientWithoutEncryptionScope.AppendBlock(bodyStream), StorageException);
+      EXPECT_THROW(appendBlobClientWithoutEncryptionScope.CreateSnapshot(), StorageException);
+      appendBlobClient.Delete();
+    }
+  }
 
-  //   Blobs::BlobClientOptions options;
-  //   options.CustomerProvidedKey = getRandomCustomerProvidedKey();
-  //   auto containerClient =
-  //   Azure::Storage::Blobs::BlobContainerClient::CreateFromConnectionString(
-  //       StandardStorageConnectionString(), m_containerName, options);
+  TEST_F(BlobContainerClientTest, CustomerProvidedKey)
+  {
+    std::string const testName = GetTestNameLowerCase();
+    auto client = GetBlobContainerClient(testName);
+    client.Create();
 
-  //   std::vector<uint8_t> blobContent(512);
-  //   Azure::Core::IO::MemoryBodyStream bodyStream(blobContent.data(), blobContent.size());
-  //   auto copySourceBlob = client.GetBlockBlobClient(RandomString());
-  //   copySourceBlob.UploadFrom(blobContent.data(), blobContent.size());
+    auto getRandomCustomerProvidedKey = [&]() {
+      Blobs::EncryptionKey key;
+      std::vector<uint8_t> aes256Key;
+      aes256Key.resize(32);
+      RandomBuffer(&aes256Key[0], aes256Key.size());
+      key.Key = Azure::Core::Convert::Base64Encode(aes256Key);
+      key.KeyHash = Azure::Core::Cryptography::_internal::Sha256Hash().Final(
+          aes256Key.data(), aes256Key.size());
+      key.Algorithm = Blobs::Models::EncryptionAlgorithmType::Aes256;
+      return key;
+    };
 
-  //   {
-  //     std::string blockBlobName = RandomString();
-  //     auto blockBlob = containerClient.GetBlockBlobClient(blockBlobName);
-  //     bodyStream.Rewind();
-  //     EXPECT_NO_THROW(blockBlob.Upload(bodyStream));
-  //     std::string blockId1 = Base64EncodeText("1");
-  //     std::string blockId2 = Base64EncodeText("2");
-  //     bodyStream.Rewind();
-  //     EXPECT_NO_THROW(blockBlob.StageBlock(blockId1, bodyStream));
-  //     EXPECT_NO_THROW(blockBlob.StageBlockFromUri(blockId2, copySourceBlob.GetUrl() +
-  //     GetSas())); EXPECT_NO_THROW(blockBlob.CommitBlockList({blockId1, blockId2}));
-  //     EXPECT_THROW(blockBlob.SetAccessTier(Blobs::Models::AccessTier::Cool), StorageException);
+    Blobs::BlobClientOptions options(InitClientOptions<Blobs::BlobClientOptions>());
+    options.CustomerProvidedKey = getRandomCustomerProvidedKey();
+    auto containerClient = Azure::Storage::Blobs::BlobContainerClient::CreateFromConnectionString(
+        StandardStorageConnectionString(), testName, options);
 
-  //     auto appendBlobClientWithoutEncryptionKey
-  //         = Azure::Storage::Blobs::BlockBlobClient::CreateFromConnectionString(
-  //             StandardStorageConnectionString(), m_containerName, blockBlobName);
-  //     EXPECT_THROW(
-  //         appendBlobClientWithoutEncryptionKey.SetAccessTier(Blobs::Models::AccessTier::Cool),
-  //         StorageException);
-  //     EXPECT_NO_THROW(appendBlobClientWithoutEncryptionKey.GetBlockList());
-  //   }
+    std::vector<uint8_t> blobContent(512);
+    Azure::Core::IO::MemoryBodyStream bodyStream(blobContent.data(), blobContent.size());
+    auto copySourceBlob = client.GetBlockBlobClient(RandomString());
+    copySourceBlob.UploadFrom(blobContent.data(), blobContent.size());
 
-  //   {
-  //     std::string appendBlobName = RandomString();
-  //     auto appendBlob = containerClient.GetAppendBlobClient(appendBlobName);
-  //     auto blobContentInfo = appendBlob.Create().Value;
-  //     EXPECT_TRUE(blobContentInfo.IsServerEncrypted);
-  //     EXPECT_TRUE(blobContentInfo.EncryptionKeySha256.HasValue());
-  //     EXPECT_EQ(
-  //         blobContentInfo.EncryptionKeySha256.Value(),
-  //         options.CustomerProvidedKey.Value().KeyHash);
-  //     auto blobItem = GetBlobItem(appendBlobName);
-  //     EXPECT_TRUE(blobItem.Details.IsServerEncrypted);
-  //     EXPECT_TRUE(blobItem.Details.EncryptionKeySha256.HasValue());
-  //     EXPECT_EQ(
-  //         blobItem.Details.EncryptionKeySha256.Value(),
-  //         options.CustomerProvidedKey.Value().KeyHash);
+    {
+      std::string blockBlobName = RandomString();
+      auto blockBlob = containerClient.GetBlockBlobClient(blockBlobName);
+      bodyStream.Rewind();
+      EXPECT_NO_THROW(blockBlob.Upload(bodyStream));
+      std::string blockId1 = Base64EncodeText("1");
+      std::string blockId2 = Base64EncodeText("2");
+      bodyStream.Rewind();
+      EXPECT_NO_THROW(blockBlob.StageBlock(blockId1, bodyStream));
+      EXPECT_NO_THROW(blockBlob.StageBlockFromUri(blockId2, copySourceBlob.GetUrl() + GetSas()));
+      EXPECT_NO_THROW(blockBlob.CommitBlockList({blockId1, blockId2}));
+      EXPECT_THROW(blockBlob.SetAccessTier(Blobs::Models::AccessTier::Cool), StorageException);
 
-  //     bodyStream.Rewind();
-  //     EXPECT_NO_THROW(appendBlob.AppendBlock(bodyStream));
-  //     EXPECT_NO_THROW(appendBlob.AppendBlockFromUri(copySourceBlob.GetUrl() + GetSas()));
-  //     EXPECT_NO_THROW(appendBlob.Download());
-  //     EXPECT_NO_THROW(appendBlob.GetProperties());
-  //     auto setMetadataRes = appendBlob.SetMetadata({});
-  //     EXPECT_TRUE(setMetadataRes.Value.IsServerEncrypted);
-  //     ASSERT_TRUE(setMetadataRes.Value.EncryptionKeySha256.HasValue());
-  //     EXPECT_EQ(
-  //         setMetadataRes.Value.EncryptionKeySha256.Value(),
-  //         options.CustomerProvidedKey.Value().KeyHash);
-  //     EXPECT_NO_THROW(appendBlob.CreateSnapshot());
+      auto appendBlobClientWithoutEncryptionKey
+          = Azure::Storage::Blobs::BlockBlobClient::CreateFromConnectionString(
+              StandardStorageConnectionString(), testName, blockBlobName);
+      EXPECT_THROW(
+          appendBlobClientWithoutEncryptionKey.SetAccessTier(Blobs::Models::AccessTier::Cool),
+          StorageException);
+      EXPECT_NO_THROW(appendBlobClientWithoutEncryptionKey.GetBlockList());
+    }
 
-  //     auto appendBlobClientWithoutEncryptionKey
-  //         = Azure::Storage::Blobs::AppendBlobClient::CreateFromConnectionString(
-  //             StandardStorageConnectionString(), m_containerName, appendBlobName);
-  //     bodyStream.Rewind();
-  //     EXPECT_THROW(appendBlobClientWithoutEncryptionKey.AppendBlock(bodyStream),
-  //     StorageException); EXPECT_THROW(
-  //         appendBlobClientWithoutEncryptionKey.AppendBlockFromUri(
-  //             copySourceBlob.GetUrl() + GetSas()),
-  //         StorageException);
-  //     EXPECT_THROW(appendBlobClientWithoutEncryptionKey.Download(), StorageException);
-  //     EXPECT_THROW(appendBlobClientWithoutEncryptionKey.GetProperties(), StorageException);
-  //     EXPECT_THROW(appendBlobClientWithoutEncryptionKey.SetMetadata({}), StorageException);
-  //     EXPECT_THROW(appendBlobClientWithoutEncryptionKey.CreateSnapshot(), StorageException);
-  //     EXPECT_NO_THROW(
-  //         appendBlobClientWithoutEncryptionKey.SetHttpHeaders(Blobs::Models::BlobHttpHeaders()));
-  //     Blobs::DeleteBlobOptions deleteOptions;
-  //     deleteOptions.DeleteSnapshots = Blobs::Models::DeleteSnapshotsOption::IncludeSnapshots;
-  //     EXPECT_NO_THROW(appendBlobClientWithoutEncryptionKey.Delete(deleteOptions));
-  //   }
+    {
+      std::string appendBlobName = RandomString();
+      auto appendBlob = containerClient.GetAppendBlobClient(appendBlobName);
+      auto blobContentInfo = appendBlob.Create().Value;
+      EXPECT_TRUE(blobContentInfo.IsServerEncrypted);
+      EXPECT_TRUE(blobContentInfo.EncryptionKeySha256.HasValue());
+      EXPECT_EQ(
+          blobContentInfo.EncryptionKeySha256.Value(), options.CustomerProvidedKey.Value().KeyHash);
+      auto blobItem = GetBlobItem(appendBlobName);
+      EXPECT_TRUE(blobItem.Details.IsServerEncrypted);
+      EXPECT_TRUE(blobItem.Details.EncryptionKeySha256.HasValue());
+      EXPECT_EQ(
+          blobItem.Details.EncryptionKeySha256.Value(),
+          options.CustomerProvidedKey.Value().KeyHash);
 
-  //   {
-  //     std::string pageBlobName = RandomString();
-  //     auto pageBlob = containerClient.GetPageBlobClient(pageBlobName);
-  //     auto blobContentInfo = pageBlob.Create(0).Value;
-  //     EXPECT_TRUE(blobContentInfo.IsServerEncrypted);
-  //     EXPECT_TRUE(blobContentInfo.EncryptionKeySha256.HasValue());
-  //     EXPECT_EQ(
-  //         blobContentInfo.EncryptionKeySha256.Value(),
-  //         options.CustomerProvidedKey.Value().KeyHash);
-  //     bodyStream.Rewind();
-  //     EXPECT_NO_THROW(pageBlob.Resize(blobContent.size()));
-  //     EXPECT_NO_THROW(pageBlob.UploadPages(0, bodyStream));
-  //     EXPECT_NO_THROW(pageBlob.ClearPages({0, static_cast<int64_t>(blobContent.size())}));
-  //     EXPECT_NO_THROW(pageBlob.UploadPagesFromUri(
-  //         0, copySourceBlob.GetUrl() + GetSas(), {0,
-  //         static_cast<int64_t>(blobContent.size())}));
+      bodyStream.Rewind();
+      EXPECT_NO_THROW(appendBlob.AppendBlock(bodyStream));
+      EXPECT_NO_THROW(appendBlob.AppendBlockFromUri(copySourceBlob.GetUrl() + GetSas()));
+      appendBlob.Download();
+      EXPECT_NO_THROW(appendBlob.GetProperties());
+      auto setMetadataRes = appendBlob.SetMetadata({});
+      EXPECT_TRUE(setMetadataRes.Value.IsServerEncrypted);
+      ASSERT_TRUE(setMetadataRes.Value.EncryptionKeySha256.HasValue());
+      EXPECT_EQ(
+          setMetadataRes.Value.EncryptionKeySha256.Value(),
+          options.CustomerProvidedKey.Value().KeyHash);
+      EXPECT_NO_THROW(appendBlob.CreateSnapshot());
 
-  //     auto pageBlobClientWithoutEncryptionKey
-  //         = Azure::Storage::Blobs::PageBlobClient::CreateFromConnectionString(
-  //             StandardStorageConnectionString(), m_containerName, pageBlobName);
-  //     EXPECT_NO_THROW(pageBlobClientWithoutEncryptionKey.GetPageRanges());
-  //     EXPECT_NO_THROW(pageBlobClientWithoutEncryptionKey.Resize(blobContent.size() + 512));
-  //   }
-  // }
+      auto appendBlobClientWithoutEncryptionKey
+          = Azure::Storage::Blobs::AppendBlobClient::CreateFromConnectionString(
+              StandardStorageConnectionString(), testName, appendBlobName);
+      bodyStream.Rewind();
+      EXPECT_THROW(appendBlobClientWithoutEncryptionKey.AppendBlock(bodyStream), StorageException);
+      EXPECT_THROW(
+          appendBlobClientWithoutEncryptionKey.AppendBlockFromUri(
+              copySourceBlob.GetUrl() + GetSas()),
+          StorageException);
+      EXPECT_THROW(appendBlobClientWithoutEncryptionKey.Download(), StorageException);
+      EXPECT_THROW(appendBlobClientWithoutEncryptionKey.GetProperties(), StorageException);
+      EXPECT_THROW(appendBlobClientWithoutEncryptionKey.SetMetadata({}), StorageException);
+      EXPECT_THROW(appendBlobClientWithoutEncryptionKey.CreateSnapshot(), StorageException);
+      EXPECT_NO_THROW(
+          appendBlobClientWithoutEncryptionKey.SetHttpHeaders(Blobs::Models::BlobHttpHeaders()));
+      Blobs::DeleteBlobOptions deleteOptions;
+      deleteOptions.DeleteSnapshots = Blobs::Models::DeleteSnapshotsOption::IncludeSnapshots;
+      EXPECT_NO_THROW(appendBlobClientWithoutEncryptionKey.Delete(deleteOptions));
+    }
+
+    {
+      std::string pageBlobName = RandomString();
+      auto pageBlob = containerClient.GetPageBlobClient(pageBlobName);
+      auto blobContentInfo = pageBlob.Create(0).Value;
+      EXPECT_TRUE(blobContentInfo.IsServerEncrypted);
+      EXPECT_TRUE(blobContentInfo.EncryptionKeySha256.HasValue());
+      EXPECT_EQ(
+          blobContentInfo.EncryptionKeySha256.Value(), options.CustomerProvidedKey.Value().KeyHash);
+      bodyStream.Rewind();
+      EXPECT_NO_THROW(pageBlob.Resize(blobContent.size()));
+      EXPECT_NO_THROW(pageBlob.UploadPages(0, bodyStream));
+      EXPECT_NO_THROW(pageBlob.ClearPages({0, static_cast<int64_t>(blobContent.size())}));
+      EXPECT_NO_THROW(pageBlob.UploadPagesFromUri(
+          0, copySourceBlob.GetUrl() + GetSas(), {0, static_cast<int64_t>(blobContent.size())}));
+
+      auto pageBlobClientWithoutEncryptionKey
+          = Azure::Storage::Blobs::PageBlobClient::CreateFromConnectionString(
+              StandardStorageConnectionString(), testName, pageBlobName);
+      EXPECT_NO_THROW(pageBlobClientWithoutEncryptionKey.GetPageRanges());
+      EXPECT_NO_THROW(pageBlobClientWithoutEncryptionKey.Resize(blobContent.size() + 512));
+    }
+  }
 
   // TEST_F(BlobContainerClientTest, AccessConditionLastModifiedTime)
   // {
