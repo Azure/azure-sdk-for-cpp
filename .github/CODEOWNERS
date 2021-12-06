@@ -25,11 +25,11 @@
 /sdk/storage/            @vinjiang @katmsft @Jinming-Hu @antkmsft @rickwinter @vhvb1989 @gearama
 
 # PRLabel: %EngSys
-/sdk/template/           @danieljurek @Azure/azure-sdk-eng
+/sdk/template/           @danieljurek @weshaggard
 
 ###########
 # Eng Sys
 ###########
-/eng/                    @danieljurek @azure/azure-sdk-eng
-/**/ci.yml               @danieljurek @azure/azure-sdk-eng
-/**/tests.yml            @danieljurek @azure/azure-sdk-eng
+/eng/                    @danieljurek @weshaggard @benbp
+/**/ci.yml               @danieljurek
+/**/tests.yml            @danieljurek
