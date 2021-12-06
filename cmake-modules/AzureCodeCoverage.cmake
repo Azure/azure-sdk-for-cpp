@@ -100,7 +100,7 @@ function(add_gcovr_xml)
         ${RUN_EXE}
 
         # Running gcovr
-        COMMAND gcovr --xml
+        COMMAND ${GCOVR_PATH} --xml
             -r ${BASEDIR} ${EXCLUDE_ARGS}
             --object-directory=${PROJECT_BINARY_DIR}
             -o ${args_TARGET_NAME}.xml
