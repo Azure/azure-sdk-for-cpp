@@ -98,8 +98,8 @@ namespace Azure { namespace Core { namespace Test {
     }
 
     /**
-     * @brief Get a non-expiring token credential. This is a test utility for use in playback scenarios where
-     * the token is not relevant.
+     * @brief Get a non-expiring token credential. This is a test utility for use in playback
+     * scenarios where the token is not relevant.
      *
      * @return std::shared_ptr<Core::Credentials::TokenCredential>
      */
