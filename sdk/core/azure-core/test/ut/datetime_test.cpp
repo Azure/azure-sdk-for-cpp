@@ -652,11 +652,6 @@ TEST(DateTime, ComparisonOperators)
   DateTime const azcorePast = chronoPast;
   DateTime const azcoreFuture = chronoFuture;
 
-  EXPECT_FALSE(azcoreFuture < chronoPast);
-  EXPECT_FALSE(azcoreFuture < chronoFuture);
-  EXPECT_FALSE(azcorePast < chronoPast);
-  EXPECT_TRUE(azcorePast < chronoFuture);
-
   EXPECT_LT(azcorePast, chronoFuture);
   EXPECT_LT(chronoPast, azcoreFuture);
 
