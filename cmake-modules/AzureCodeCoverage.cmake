@@ -51,7 +51,7 @@ function(add_gcovr_html)
         COMMAND ${CMAKE_COMMAND} -E make_directory ${PROJECT_BINARY_DIR}/${args_TARGET_NAME}
 
         # Running gcovr
-        COMMAND gcovr --html --html-details
+        COMMAND ${GCOVR_PATH} --html --html-details
             -r ${BASEDIR} ${EXCLUDE_ARGS}
             --object-directory=${PROJECT_BINARY_DIR}
             -o ${args_TARGET_NAME}/index.html

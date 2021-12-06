@@ -125,6 +125,13 @@
                     "CC": "/usr/bin/gcc-9",
                     "CXX": "/usr/bin/g++-9"
                 },
+                "included_coverage": {
+                    "AptDependencies": "lcov",
+                    "PipDependencies": "gcovr",
+                    "CmakeArgs": " -DBUILD_TESTING=ON -DBUILD_PERFORMANCE_TESTS=ON -DRUN_LONG_UNIT_TESTS=ON -DCMAKE_BUILD_TYPE=Debug -DBUILD_CODE_COVERAGE=ON -DCMAKE_VERBOSE_MAKEFILE=ON",
+                    "CODE_COVERAGE_COLLECT_ONLY": "1",
+                    "CODE_COVERAGE": "enabled"
+                },
                 "included": {},
                 "included_release": {
                     "CMAKE_BUILD_TYPE": "Release",
@@ -142,28 +149,18 @@
                     "Pool": "azsdk-pool-mms-ubuntu-2004-general",
                     "VcpkgInstall": "curl[ssl] libxml2 openssl",
                     "VCPKG_DEFAULT_TRIPLET": "x64-linux",
-                    "BuildArgs": "-j 10"
+                    "BuildArgs": "-j 10",
+                    "CC": "/usr/bin/clang-11",
+                    "CXX": "/usr/bin/clang++-11",
+                    "CmakeArgs": " -DBUILD_TESTING=ON -DBUILD_PERFORMANCE_TESTS=ON -DRUN_LONG_UNIT_TESTS=ON"
                 }
             },
             "BuildSettings": {
                 "clang-11": {
-                    "CHECK_CLANG_FORMAT": "1",
-                    "CmakeArgs": " -DBUILD_TESTING=ON -DBUILD_PERFORMANCE_TESTS=ON -DRUN_LONG_UNIT_TESTS=ON",
-                    "CC": "/usr/bin/clang-11",
-                    "CXX": "/usr/bin/clang++-11"
+                    "CHECK_CLANG_FORMAT": "1"
                 },
                 "included_release": {
-                    "CMAKE_BUILD_TYPE": "Release",
-                    "CmakeArgs": " -DBUILD_TESTING=ON -DBUILD_PERFORMANCE_TESTS=ON -DRUN_LONG_UNIT_TESTS=ON",
-                    "CC": "/usr/bin/clang-11",
-                    "CXX": "/usr/bin/clang++-11"
-                },
-                "included_coverage": {
-                    "AptDependencies": "lcov",
-                    "PipDependencies": "gcovr",
-                    "CmakeArgs": " -DBUILD_TESTING=ON -DBUILD_PERFORMANCE_TESTS=ON -DRUN_LONG_UNIT_TESTS=ON -DCMAKE_BUILD_TYPE=Debug -DBUILD_CODE_COVERAGE=ON -DCMAKE_VERBOSE_MAKEFILE=ON",
-                    "CODE_COVERAGE_COLLECT_ONLY": "1",
-                    "CODE_COVERAGE": "enabled"
+                    "CMAKE_BUILD_TYPE": "Release"
                 }
             }
         }
