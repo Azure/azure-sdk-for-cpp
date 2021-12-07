@@ -13,6 +13,7 @@
 
 #include <fstream>
 #include <iostream>
+#include <regex>
 #include <stdexcept>
 #include <string>
 
@@ -62,7 +63,11 @@ Url InterceptorManager::RedactUrl(Url const& url)
   auto host = url.GetHost();
   auto hostWithNoAccount = std::find(host.begin(), host.end(), '.');
   redactedUrl.SetHost("REDACTED" + std::string(hostWithNoAccount, host.end()));
-  redactedUrl.SetPath(url.GetPath());
+  // replace any uniqueID from the path for a hardcoded id
+  redactedUrl.SetPath(std::regex_replace(
+      url.GetPath(),
+      std::regex("[a-f0-9]{8}-[a-f0-9]{4}-4[a-f0-9]{3}-[89aAbB][a-f0-9]{3}-[a-f0-9]{12}"),
+      "33333333-3333-3333-3333-333333333333"));
   // Query parameters
   for (auto const& qp : url.GetQueryParameters())
   {
