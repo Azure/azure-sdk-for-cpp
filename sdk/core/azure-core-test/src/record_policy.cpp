@@ -19,6 +19,31 @@ using namespace Azure::Core::_internal;
 // 2 MB max
 #define MAX_SUPPORTED_BODYSTREAM_SIZE 1024 * 2
 
+namespace {
+
+class SelfMemoryBodyStream : public Azure::Core::IO::BodyStream {
+private:
+  std::unique_ptr<std::vector<uint8_t>> m_buffer;
+  size_t m_totalRead = 0;
+  Azure::Core::IO::MemoryBodyStream m_memoryStream;
+
+  size_t OnRead(uint8_t* buffer, size_t count, Azure::Core::Context const& context) override
+  {
+    return m_memoryStream.Read(buffer, count, context);
+  }
+
+public:
+  SelfMemoryBodyStream(std::vector<uint8_t> const& buffer)
+      : m_buffer(std::make_unique<std::vector<uint8_t>>(buffer)), m_memoryStream(*m_buffer)
+  {
+  }
+
+  int64_t Length() const override { return m_memoryStream.Length(); }
+  void Rewind() override { m_memoryStream.Rewind(); }
+};
+
+} // namespace
+
 /**
  * @brief Records network request and response into RecordedData.
  *
@@ -100,12 +125,9 @@ std::unique_ptr<RawResponse> RecordNetworkCallPolicy::Send(
       throw std::runtime_error("Record mode don't support recording a body stream greater than "
                                "2Mb, update test to be LIVE only.");
     }
+    // SelfMemoryBodyStream would copy the response to memory
     response->SetBody(bodyStream->ReadToEnd());
-    // Create a body stream to the response so if anyone call Read from the bodyStream it works.
-    std::unique_ptr<Azure::Core::IO::BodyStream> bodyStreamToMemoryInResponse
-        = std::make_unique<Azure::Core::IO::MemoryBodyStream>(response->GetBody());
-
-    response->SetBodyStream(std::move(bodyStreamToMemoryInResponse));
+    response->SetBodyStream(std::make_unique<SelfMemoryBodyStream>(response->GetBody()));
   }
 
   // Capture response

@@ -14,8 +14,8 @@ add_compile_definitions(AZURE_TEST_RECORDING_DIR="${CMAKE_CURRENT_LIST_DIR}")
 
 add_executable (
   azure-storage-blobs-test
-    # append_blob_client_test.cpp
-    # append_blob_client_test.hpp
+    append_blob_client_test.cpp
+    append_blob_client_test.hpp
     blob_container_client_test.cpp
     blob_container_client_test.hpp
     # blob_sas_test.cpp

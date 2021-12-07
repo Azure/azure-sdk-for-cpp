@@ -11,16 +11,11 @@ namespace Azure { namespace Storage { namespace Test {
   private:
     std::shared_ptr<Azure::Storage::Blobs::BlobContainerClient> m_blobContainerClient;
     std::string m_containerName;
-    std::string m_testName;
 
   protected:
-    virtual void SetUp() override
-    {
-      StorageTest::SetUp();
+    std::string m_testName;
 
-      auto options = InitClientOptions<Azure::Storage::Blobs::BlobClientOptions>();
-      m_containerName = GetTestNameLowerCase();
-    }
+    virtual void SetUp() override { StorageTest::SetUp(); }
 
     virtual void TearDown() override
     {
@@ -42,6 +37,7 @@ namespace Azure { namespace Storage { namespace Test {
         m_testName = GetTestName(true);
         m_testContext.RenameTest(containerName);
       }
+      m_containerName = containerName;
       auto options = InitClientOptions<Azure::Storage::Blobs::BlobClientOptions>();
       m_blobContainerClient = std::make_unique<Azure::Storage::Blobs::BlobContainerClient>(
           Azure::Storage::Blobs::BlobContainerClient::CreateFromConnectionString(
