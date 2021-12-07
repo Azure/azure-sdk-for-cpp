@@ -369,7 +369,9 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_TRUE(foundMetadata);
   }
 
-  TEST_F(BlobContainerClientTest, AccessControlList)
+  // Test uses StartsOn and ExpiresOn values based on time now() + minutes
+  // Hence, the test can't be recorded and need to run on live mode always.
+  TEST_F(BlobContainerClientTest, AccessControlList_LIVEONLY_)
   {
     std::string const testName = GetTestNameLowerCase();
     auto client = GetBlobContainerClient(testName);
@@ -380,7 +382,6 @@ namespace Azure { namespace Storage { namespace Test {
     {
       Blobs::Models::SignedIdentifier identifier;
       identifier.Id = GetStringOfSize(63) + "1";
-      TestLog(identifier.Id);
       identifier.StartsOn = std::chrono::system_clock::now() - std::chrono::minutes(1);
       identifier.ExpiresOn = std::chrono::system_clock::now() + std::chrono::minutes(1);
       identifier.Permissions = "r";
@@ -389,7 +390,6 @@ namespace Azure { namespace Storage { namespace Test {
     {
       Blobs::Models::SignedIdentifier identifier;
       identifier.Id = GetStringOfSize(63) + "2";
-      TestLog(identifier.Id);
       identifier.StartsOn = std::chrono::system_clock::now() - std::chrono::minutes(2);
       identifier.ExpiresOn.Reset();
       /* cspell:disable-next-line */
@@ -399,14 +399,12 @@ namespace Azure { namespace Storage { namespace Test {
     {
       Blobs::Models::SignedIdentifier identifier;
       identifier.Id = GetStringOfSize(63) + "3";
-      TestLog(identifier.Id);
       identifier.Permissions = "r";
       options.SignedIdentifiers.emplace_back(identifier);
     }
     {
       Blobs::Models::SignedIdentifier identifier;
       identifier.Id = GetStringOfSize(63) + "4";
-      TestLog(identifier.Id);
       identifier.StartsOn = std::chrono::system_clock::now() - std::chrono::minutes(1);
       identifier.ExpiresOn = std::chrono::system_clock::now() + std::chrono::minutes(1);
       options.SignedIdentifiers.emplace_back(identifier);
