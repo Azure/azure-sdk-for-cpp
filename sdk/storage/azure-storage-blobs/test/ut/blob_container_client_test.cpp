@@ -578,9 +578,9 @@ namespace Azure { namespace Storage { namespace Test {
     }
   }
 
-  TEST_F(BlobContainerClientTest, CustomerProvidedKey)
+  TEST_F(BlobContainerClientTest, CustomerProvidedKey_LIVEONLY_)
   {
-    std::string const testName = GetTestNameLowerCase();
+    auto const testName(GetTestNameLowerCase());
     auto client = GetBlobContainerClient(testName);
     client.Create();
 
@@ -596,7 +596,7 @@ namespace Azure { namespace Storage { namespace Test {
       return key;
     };
 
-    Blobs::BlobClientOptions options(InitClientOptions<Blobs::BlobClientOptions>());
+    Blobs::BlobClientOptions options;
     options.CustomerProvidedKey = getRandomCustomerProvidedKey();
     auto containerClient = Azure::Storage::Blobs::BlobContainerClient::CreateFromConnectionString(
         StandardStorageConnectionString(), testName, options);
@@ -646,7 +646,7 @@ namespace Azure { namespace Storage { namespace Test {
       bodyStream.Rewind();
       EXPECT_NO_THROW(appendBlob.AppendBlock(bodyStream));
       EXPECT_NO_THROW(appendBlob.AppendBlockFromUri(copySourceBlob.GetUrl() + GetSas()));
-      appendBlob.Download();
+      EXPECT_NO_THROW(appendBlob.Download());
       EXPECT_NO_THROW(appendBlob.GetProperties());
       auto setMetadataRes = appendBlob.SetMetadata({});
       EXPECT_TRUE(setMetadataRes.Value.IsServerEncrypted);

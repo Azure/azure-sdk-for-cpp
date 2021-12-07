@@ -18,6 +18,7 @@
 
 #include <chrono>
 #include <memory>
+#include <regex>
 #include <thread>
 
 using namespace std::chrono_literals;
@@ -78,6 +79,31 @@ namespace Azure { namespace Core { namespace Test {
       return updated;
     }
 
+    void SkipTest() { GTEST_SKIP(); }
+
+    std::string RemovePreffix(std::string const& src)
+    {
+      std::string updated(src);
+      // Remove special marker for LIVEONLY
+      auto const noPrefix
+          = std::regex_replace(updated, std::regex(TestContextManager::LiveOnlyToken), "");
+      if (noPrefix != updated)
+      {
+        if (m_testContext.TestMode == TestMode::RECORD)
+        {
+          TestLog("Test is expected to run on LIVE mode only. Recording won't be created.");
+        }
+        else if (m_testContext.TestMode == TestMode::PLAYBACK)
+        {
+          TestLog("Test is expected to run on LIVE mode only. Skipping test on playback mode.");
+          SkipTest();
+        }
+        m_testContext.LiveOnly = true;
+        return noPrefix;
+      }
+      return updated;
+    }
+
   protected:
     Azure::Core::Test::TestContextManager m_testContext;
     std::unique_ptr<Azure::Core::Test::InterceptorManager> m_interceptor;
@@ -95,7 +121,7 @@ namespace Azure { namespace Core { namespace Test {
         return Sanitize(testName);
       }
 
-      return testName;
+      return RemovePreffix(testName);
     }
 
     // Reads the current test instance name.
@@ -103,7 +129,7 @@ namespace Azure { namespace Core { namespace Test {
     // creating
     std::string GetTestNameLowerCase()
     {
-      std::string testName(::testing::UnitTest::GetInstance()->current_test_info()->name());
+      std::string testName(GetTestName());
       return Azure::Core::_internal::StringExtensions::ToLower(testName);
     }
 

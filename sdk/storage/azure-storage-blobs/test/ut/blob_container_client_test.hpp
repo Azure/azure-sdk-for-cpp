@@ -24,7 +24,10 @@ namespace Azure { namespace Storage { namespace Test {
 
     virtual void TearDown() override
     {
-      m_blobContainerClient->Delete();
+      if (m_blobContainerClient)
+      {
+        m_blobContainerClient->Delete();
+      }
       StorageTest::TearDown();
     }
 
@@ -36,7 +39,7 @@ namespace Azure { namespace Storage { namespace Test {
       {
         // Internal state for the test name allows a test to create new container client with any
         // name but just the first name is used as the test name for recordings.
-        m_testName = containerName;
+        m_testName = GetTestName(true);
         m_testContext.RenameTest(containerName);
       }
       auto options = InitClientOptions<Azure::Storage::Blobs::BlobClientOptions>();

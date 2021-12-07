@@ -115,8 +115,7 @@ namespace Azure { namespace Core { namespace Test {
      */
     bool IsLiveMode() const { return TestMode == Azure::Core::Test::TestMode::LIVE; }
 
-  protected:
-    constexpr static const char* LiveOnlyToken = "LIVE";
+    constexpr static const char* LiveOnlyToken = "_LIVEONLY_";
 
   private:
     std::string m_testName;

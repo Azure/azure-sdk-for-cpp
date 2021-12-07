@@ -8,7 +8,6 @@
 
 #include <azure/core/internal/strings.hpp>
 
-#include <regex>
 #include <string>
 #include <vector>
 
@@ -16,6 +15,9 @@ using namespace Azure::Core::Http::Policies;
 using namespace Azure::Core::Http;
 using namespace Azure::Core::Test;
 using namespace Azure::Core::_internal;
+
+// 2 MB max
+#define MAX_SUPPORTED_BODYSTREAM_SIZE 1024 * 2
 
 /**
  * @brief Records network request and response into RecordedData.
@@ -30,7 +32,8 @@ std::unique_ptr<RawResponse> RecordNetworkCallPolicy::Send(
     NextHttpPolicy nextHttpPolicy,
     Context const& ctx) const
 {
-  if (m_interceptorManager->GetTestMode() != TestMode::RECORD)
+  if (m_interceptorManager->GetTestMode() != TestMode::RECORD
+      || m_interceptorManager->GetTestContext().LiveOnly)
   {
     return nextHttpPolicy.Send(request, ctx);
   }
@@ -66,12 +69,6 @@ std::unique_ptr<RawResponse> RecordNetworkCallPolicy::Send(
   // At this point, the request has been recorded. Send it to capture the response.
   auto response = nextHttpPolicy.Send(request, ctx);
 
-  // BodyStreams are currently not supported
-  if (response->ExtractBodyStream() != nullptr)
-  {
-    throw std::runtime_error("Record mode don't support recording a body stream");
-  }
-
   record.Response.emplace(
       "STATUS_CODE",
       std::to_string(static_cast<typename std::underlying_type<Http::HttpStatusCode>::type>(
@@ -90,6 +87,25 @@ std::unique_ptr<RawResponse> RecordNetworkCallPolicy::Send(
       auto headerValue = header.second;
       record.Response.emplace(header.first, headerValue);
     }
+  }
+
+  // BodyStreams are currently supported ony up to 1Mb
+  // The content is downloaded to the response body and the returned body stream from playback will
+  // stream from the memory buffer instead of the network.
+  auto bodyStream = response->ExtractBodyStream();
+  if (bodyStream != nullptr)
+  {
+    if (bodyStream->Length() > MAX_SUPPORTED_BODYSTREAM_SIZE)
+    {
+      throw std::runtime_error("Record mode don't support recording a body stream greater than "
+                               "2Mb, update test to be LIVE only.");
+    }
+    response->SetBody(bodyStream->ReadToEnd());
+    // Create a body stream to the response so if anyone call Read from the bodyStream it works.
+    std::unique_ptr<Azure::Core::IO::BodyStream> bodyStreamToMemoryInResponse
+        = std::make_unique<Azure::Core::IO::MemoryBodyStream>(response->GetBody());
+
+    response->SetBodyStream(std::move(bodyStreamToMemoryInResponse));
   }
 
   // Capture response
