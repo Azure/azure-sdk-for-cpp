@@ -697,569 +697,595 @@ namespace Azure { namespace Storage { namespace Test {
     }
   }
 
-  // TEST_F(BlobContainerClientTest, AccessConditionLastModifiedTime)
-  // {
-  //   auto containerClient =
-  //   Azure::Storage::Blobs::BlobContainerClient::CreateFromConnectionString(
-  //       StandardStorageConnectionString(), LowercaseRandomString());
-  //   containerClient.Create();
+  TEST_F(BlobContainerClientTest, AccessConditionLastModifiedTime)
+  {
+    auto const testName(GetTestNameLowerCase());
+    auto client = GetBlobContainerClient(testName);
+    client.Create();
 
-  //   enum class TimePoint
-  //   {
-  //     TimeBefore,
-  //     TimeAfter,
-  //     None,
-  //   };
+    enum class TimePoint
+    {
+      TimeBefore,
+      TimeAfter,
+      None,
+    };
 
-  //   enum class Condition
-  //   {
-  //     ModifiedSince,
-  //     UnmodifiedSince,
-  //   };
+    enum class Condition
+    {
+      ModifiedSince,
+      UnmodifiedSince,
+    };
 
-  //   for (auto condition : {Condition::ModifiedSince, Condition::UnmodifiedSince})
-  //   {
-  //     for (auto sinceTime : {TimePoint::TimeBefore, TimePoint::TimeAfter})
-  //     {
-  //       auto lastModifiedTime = containerClient.GetProperties().Value.LastModified;
-  //       auto timeBefore = lastModifiedTime - std::chrono::seconds(1);
-  //       auto timeAfter = lastModifiedTime + std::chrono::seconds(1);
+    for (auto condition : {Condition::ModifiedSince, Condition::UnmodifiedSince})
+    {
+      for (auto sinceTime : {TimePoint::TimeBefore, TimePoint::TimeAfter})
+      {
+        auto lastModifiedTime = client.GetProperties().Value.LastModified;
+        auto timeBefore = lastModifiedTime - std::chrono::seconds(1);
+        auto timeAfter = lastModifiedTime + std::chrono::seconds(1);
 
-  //       Blobs::SetBlobContainerAccessPolicyOptions options;
-  //       options.AccessType = Blobs::Models::PublicAccessType::None;
-  //       if (condition == Condition::ModifiedSince)
-  //       {
-  //         options.AccessConditions.IfModifiedSince
-  //             = sinceTime == TimePoint::TimeBefore ? timeBefore : timeAfter;
-  //       }
-  //       else if (condition == Condition::UnmodifiedSince)
-  //       {
-  //         options.AccessConditions.IfUnmodifiedSince
-  //             = sinceTime == TimePoint::TimeBefore ? timeBefore : timeAfter;
-  //       }
-  //       bool shouldThrow
-  //           = (condition == Condition::ModifiedSince && sinceTime == TimePoint::TimeAfter)
-  //           || (condition == Condition::UnmodifiedSince && sinceTime == TimePoint::TimeBefore);
-  //       if (shouldThrow)
-  //       {
-  //         EXPECT_THROW(containerClient.SetAccessPolicy(options), StorageException);
-  //       }
-  //       else
-  //       {
-  //         EXPECT_NO_THROW(containerClient.SetAccessPolicy(options));
-  //       }
-  //     }
-  //   }
-  //   containerClient.Delete();
-  // }
+        Blobs::SetBlobContainerAccessPolicyOptions options;
+        options.AccessType = Blobs::Models::PublicAccessType::None;
+        if (condition == Condition::ModifiedSince)
+        {
+          options.AccessConditions.IfModifiedSince
+              = sinceTime == TimePoint::TimeBefore ? timeBefore : timeAfter;
+        }
+        else if (condition == Condition::UnmodifiedSince)
+        {
+          options.AccessConditions.IfUnmodifiedSince
+              = sinceTime == TimePoint::TimeBefore ? timeBefore : timeAfter;
+        }
+        bool shouldThrow
+            = (condition == Condition::ModifiedSince && sinceTime == TimePoint::TimeAfter)
+            || (condition == Condition::UnmodifiedSince && sinceTime == TimePoint::TimeBefore);
+        if (shouldThrow)
+        {
+          EXPECT_THROW(client.SetAccessPolicy(options), StorageException);
+        }
+        else
+        {
+          EXPECT_NO_THROW(client.SetAccessPolicy(options));
+        }
+      }
+    }
+    client.Delete();
+  }
 
-  // TEST_F(BlobContainerClientTest, AccessConditionLeaseId)
-  // {
-  //   auto containerClient =
-  //   Azure::Storage::Blobs::BlobContainerClient::CreateFromConnectionString(
-  //       StandardStorageConnectionString(), LowercaseRandomString());
-  //   containerClient.Create();
+  TEST_F(BlobContainerClientTest, AccessConditionLeaseId)
+  {
+    auto const testName(GetTestNameLowerCase());
+    auto client = GetBlobContainerClient(testName);
+    client.Create();
 
-  //   const std::string leaseId = Blobs::BlobLeaseClient::CreateUniqueLeaseId();
-  //   const std::string dummyLeaseId = Blobs::BlobLeaseClient::CreateUniqueLeaseId();
-  //   Blobs::BlobLeaseClient leaseClient(containerClient, leaseId);
-  //   leaseClient.Acquire(std::chrono::seconds(30));
-  //   {
-  //     Blobs::GetBlobContainerPropertiesOptions options;
-  //     options.AccessConditions.LeaseId = dummyLeaseId;
-  //     EXPECT_THROW(containerClient.GetProperties(options), StorageException);
-  //     options.AccessConditions.LeaseId = leaseId;
-  //     EXPECT_NO_THROW(containerClient.GetProperties(options));
-  //   }
-  //   {
-  //     Blobs::SetBlobContainerMetadataOptions options;
-  //     options.AccessConditions.LeaseId = dummyLeaseId;
-  //     EXPECT_THROW(containerClient.SetMetadata({}, options), StorageException);
-  //     options.AccessConditions.LeaseId = leaseId;
-  //     EXPECT_NO_THROW(containerClient.SetMetadata({}, options));
-  //   }
-  //   {
-  //     Blobs::GetBlobContainerAccessPolicyOptions options;
-  //     options.AccessConditions.LeaseId = dummyLeaseId;
-  //     EXPECT_THROW(containerClient.GetAccessPolicy(options), StorageException);
-  //     options.AccessConditions.LeaseId = leaseId;
-  //     EXPECT_NO_THROW(containerClient.GetAccessPolicy(options));
-  //   }
-  //   {
-  //     Blobs::SetBlobContainerAccessPolicyOptions options;
-  //     options.AccessConditions.LeaseId = dummyLeaseId;
-  //     EXPECT_THROW(containerClient.SetAccessPolicy(options), StorageException);
-  //     options.AccessConditions.LeaseId = leaseId;
-  //     EXPECT_NO_THROW(containerClient.SetAccessPolicy(options));
-  //   }
-  //   {
-  //     EXPECT_THROW(containerClient.Delete(), StorageException);
-  //     Blobs::DeleteBlobContainerOptions options;
-  //     options.AccessConditions.LeaseId = leaseId;
-  //     EXPECT_NO_THROW(containerClient.Delete(options));
-  //   }
-  // }
+    const std::string leaseId = Blobs::BlobLeaseClient::CreateUniqueLeaseId();
+    const std::string dummyLeaseId = Blobs::BlobLeaseClient::CreateUniqueLeaseId();
+    Blobs::BlobLeaseClient leaseClient(client, leaseId);
+    leaseClient.Acquire(std::chrono::seconds(30));
+    {
+      Blobs::GetBlobContainerPropertiesOptions options;
+      options.AccessConditions.LeaseId = dummyLeaseId;
+      EXPECT_THROW(client.GetProperties(options), StorageException);
+      options.AccessConditions.LeaseId = leaseId;
+      EXPECT_NO_THROW(client.GetProperties(options));
+    }
+    {
+      Blobs::SetBlobContainerMetadataOptions options;
+      options.AccessConditions.LeaseId = dummyLeaseId;
+      EXPECT_THROW(client.SetMetadata({}, options), StorageException);
+      options.AccessConditions.LeaseId = leaseId;
+      EXPECT_NO_THROW(client.SetMetadata({}, options));
+    }
+    {
+      Blobs::GetBlobContainerAccessPolicyOptions options;
+      options.AccessConditions.LeaseId = dummyLeaseId;
+      EXPECT_THROW(client.GetAccessPolicy(options), StorageException);
+      options.AccessConditions.LeaseId = leaseId;
+      EXPECT_NO_THROW(client.GetAccessPolicy(options));
+    }
+    {
+      Blobs::SetBlobContainerAccessPolicyOptions options;
+      options.AccessConditions.LeaseId = dummyLeaseId;
+      EXPECT_THROW(client.SetAccessPolicy(options), StorageException);
+      options.AccessConditions.LeaseId = leaseId;
+      EXPECT_NO_THROW(client.SetAccessPolicy(options));
+    }
+    {
+      EXPECT_THROW(client.Delete(), StorageException);
+      Blobs::DeleteBlobContainerOptions options;
+      options.AccessConditions.LeaseId = leaseId;
+      EXPECT_NO_THROW(client.Delete(options));
+    }
+  }
 
-  // TEST_F(BlobContainerClientTest, Tags)
-  // {
-  //   std::string blobName = RandomString();
-  //   auto blobClient = Azure::Storage::Blobs::AppendBlobClient::CreateFromConnectionString(
-  //       StandardStorageConnectionString(), m_containerName, blobName);
-  //   blobClient.Create();
+  TEST_F(BlobContainerClientTest, Tags)
+  {
+    auto const testName(GetTestNameLowerCase());
+    auto client = GetBlobContainerClient(testName);
+    client.Create();
 
-  //   auto properties = blobClient.GetProperties().Value;
-  //   EXPECT_FALSE(properties.TagCount.HasValue());
+    std::string blobName = "blob" + testName;
+    auto blobClient = Azure::Storage::Blobs::AppendBlobClient::CreateFromConnectionString(
+        StandardStorageConnectionString(),
+        testName,
+        blobName,
+        InitClientOptions<Azure::Storage::Blobs::BlobClientOptions>());
+    blobClient.Create();
 
-  //   auto downloadRet = blobClient.Download();
-  //   EXPECT_FALSE(downloadRet.Value.Details.TagCount.HasValue());
+    auto properties = blobClient.GetProperties().Value;
+    EXPECT_FALSE(properties.TagCount.HasValue());
 
-  //   std::map<std::string, std::string> tags;
-  //   std::string c1 = "k" + RandomString();
-  //   std::string v1 = RandomString();
-  //   std::string c2 = "k" + RandomString();
-  //   std::string v2 = RandomString();
-  //   std::string c3 = "k" + RandomString();
-  //   std::string v3 = RandomString();
-  //   std::string c4 = "key3 +-./:=_";
-  //   std::string v4 = "v1 +-./:=_";
-  //   tags[c1] = v1;
-  //   tags[c2] = v2;
-  //   tags[c3] = v3;
+    auto downloadRet = blobClient.Download();
+    EXPECT_FALSE(downloadRet.Value.Details.TagCount.HasValue());
 
-  //   auto downloadedTags = blobClient.GetTags().Value;
-  //   EXPECT_TRUE(downloadedTags.empty());
-  //   blobClient.SetTags(tags);
-  //   downloadedTags = blobClient.GetTags().Value;
-  //   EXPECT_EQ(downloadedTags, tags);
+    std::map<std::string, std::string> tags;
+    std::string c1 = "k" + testName + "1";
+    std::string v1 = testName + "2";
+    std::string c2 = "k" + testName + "3";
+    std::string v2 = testName + "4";
+    std::string c3 = "k" + testName + "5";
+    std::string v3 = testName + "6";
+    std::string c4 = "key3 +-./:=_";
+    std::string v4 = "v1 +-./:=_";
+    tags[c1] = v1;
+    tags[c2] = v2;
+    tags[c3] = v3;
 
-  //   properties = blobClient.GetProperties().Value;
-  //   EXPECT_TRUE(properties.TagCount.HasValue());
-  //   EXPECT_EQ(properties.TagCount.Value(), static_cast<int32_t>(tags.size()));
+    auto downloadedTags = blobClient.GetTags().Value;
+    EXPECT_TRUE(downloadedTags.empty());
+    blobClient.SetTags(tags);
+    downloadedTags = blobClient.GetTags().Value;
+    EXPECT_EQ(downloadedTags, tags);
 
-  //   downloadRet = blobClient.Download();
-  //   ASSERT_TRUE(downloadRet.Value.Details.TagCount.HasValue());
-  //   EXPECT_EQ(downloadRet.Value.Details.TagCount.Value(), static_cast<int32_t>(tags.size()));
+    properties = blobClient.GetProperties().Value;
+    EXPECT_TRUE(properties.TagCount.HasValue());
+    EXPECT_EQ(properties.TagCount.Value(), static_cast<int32_t>(tags.size()));
 
-  //   auto blobItem = GetBlobItem(blobName, Blobs::Models::ListBlobsIncludeFlags::Tags);
-  //   EXPECT_EQ(blobItem.Details.Tags, tags);
+    downloadRet = blobClient.Download();
+    ASSERT_TRUE(downloadRet.Value.Details.TagCount.HasValue());
+    EXPECT_EQ(downloadRet.Value.Details.TagCount.Value(), static_cast<int32_t>(tags.size()));
 
-  //   auto blobServiceClient =
-  //   Azure::Storage::Blobs::BlobServiceClient::CreateFromConnectionString(
-  //       StandardStorageConnectionString());
-  //   std::string whereExpression
-  //       = c1 + " = '" + v1 + "' AND " + c2 + " >= '" + v2 + "' AND " + c3 + " <= '" + v3 + "'";
-  //   std::vector<Blobs::Models::TaggedBlobItem> findResults;
-  //   for (int i = 0; i < 30; ++i)
-  //   {
-  //     for (auto pageResult = blobServiceClient.FindBlobsByTags(whereExpression);
-  //          pageResult.HasPage();
-  //          pageResult.MoveToNextPage())
-  //     {
-  //       EXPECT_FALSE(pageResult.ServiceEndpoint.empty());
-  //       for (auto& item : pageResult.TaggedBlobs)
-  //       {
-  //         EXPECT_FALSE(item.BlobName.empty());
-  //         EXPECT_FALSE(item.BlobContainerName.empty());
-  //         findResults.emplace_back(std::move(item));
-  //       }
-  //     }
+    auto blobItem = GetBlobItem(blobName, Blobs::Models::ListBlobsIncludeFlags::Tags);
+    EXPECT_EQ(blobItem.Details.Tags, tags);
 
-  //     if (findResults.empty())
-  //     {
-  //       std::this_thread::sleep_for(std::chrono::seconds(1));
-  //     }
-  //     else
-  //     {
-  //       break;
-  //     }
-  //   }
-  //   ASSERT_FALSE(findResults.empty());
-  //   EXPECT_EQ(findResults[0].BlobName, blobName);
-  //   EXPECT_EQ(findResults[0].BlobContainerName, m_containerName);
-  // }
+    auto blobServiceClient = Azure::Storage::Blobs::BlobServiceClient::CreateFromConnectionString(
+        StandardStorageConnectionString(),
+        InitClientOptions<Azure::Storage::Blobs::BlobClientOptions>());
+    std::string whereExpression
+        = c1 + " = '" + v1 + "' AND " + c2 + " >= '" + v2 + "' AND " + c3 + " <= '" + v3 + "'";
+    std::vector<Blobs::Models::TaggedBlobItem> findResults;
+    for (int i = 0; i < 30; ++i)
+    {
+      for (auto pageResult = blobServiceClient.FindBlobsByTags(whereExpression);
+           pageResult.HasPage();
+           pageResult.MoveToNextPage())
+      {
+        EXPECT_FALSE(pageResult.ServiceEndpoint.empty());
+        for (auto& item : pageResult.TaggedBlobs)
+        {
+          EXPECT_FALSE(item.BlobName.empty());
+          EXPECT_FALSE(item.BlobContainerName.empty());
+          findResults.emplace_back(std::move(item));
+        }
+      }
 
-  // TEST_F(BlobContainerClientTest, AccessConditionTags)
-  // {
-  //   std::map<std::string, std::string> tags;
-  //   std::string c1 = "k" + RandomString();
-  //   std::string v1 = RandomString();
-  //   tags[c1] = v1;
+      if (findResults.empty())
+      {
+        TestSleep(1s);
+      }
+      else
+      {
+        break;
+      }
+    }
+    ASSERT_FALSE(findResults.empty());
+    EXPECT_EQ(findResults[0].BlobName, blobName);
+    EXPECT_EQ(findResults[0].BlobContainerName, testName);
+  }
 
-  //   std::string successWhereExpression = c1 + " = '" + v1 + "'";
-  //   std::string failWhereExpression = c1 + " != '" + v1 + "'";
+  TEST_F(BlobContainerClientTest, AccessConditionTags)
+  {
+    auto const testName(GetTestNameLowerCase());
+    auto client = GetBlobContainerClient(testName);
+    client.Create();
 
-  //   std::vector<uint8_t> contentData(512);
-  //   int64_t contentSize = static_cast<int64_t>(contentData.size());
-  //   auto content = Azure::Core::IO::MemoryBodyStream(contentData.data(), contentData.size());
+    std::map<std::string, std::string> tags;
+    std::string c1 = "k" + testName + "1";
+    std::string v1 = testName + "2";
+    tags[c1] = v1;
 
-  //   std::string blobName = RandomString();
-  //   auto appendBlobClient =
-  //   Azure::Storage::Blobs::AppendBlobClient::CreateFromConnectionString(
-  //       StandardStorageConnectionString(), m_containerName, blobName);
-  //   appendBlobClient.Create();
-  //   appendBlobClient.SetTags(tags);
+    std::string successWhereExpression = c1 + " = '" + v1 + "'";
+    std::string failWhereExpression = c1 + " != '" + v1 + "'";
 
-  //   {
-  //     Blobs::GetBlobPropertiesOptions options;
-  //     options.AccessConditions.TagConditions = successWhereExpression;
-  //     EXPECT_NO_THROW(appendBlobClient.GetProperties(options));
-  //     options.AccessConditions.TagConditions = failWhereExpression;
-  //     EXPECT_THROW(appendBlobClient.GetProperties(options), StorageException);
-  //   }
+    std::vector<uint8_t> contentData(512);
+    int64_t contentSize = static_cast<int64_t>(contentData.size());
+    auto content = Azure::Core::IO::MemoryBodyStream(contentData.data(), contentData.size());
 
-  //   {
-  //     Blobs::SetBlobHttpHeadersOptions options;
-  //     options.AccessConditions.TagConditions = successWhereExpression;
-  //     EXPECT_NO_THROW(appendBlobClient.SetHttpHeaders(Blobs::Models::BlobHttpHeaders(),
-  //     options)); options.AccessConditions.TagConditions = failWhereExpression; EXPECT_THROW(
-  //         appendBlobClient.SetHttpHeaders(Blobs::Models::BlobHttpHeaders(), options),
-  //         StorageException);
-  //   }
+    std::string blobName = testName;
+    auto appendBlobClient = Azure::Storage::Blobs::AppendBlobClient::CreateFromConnectionString(
+        StandardStorageConnectionString(),
+        testName,
+        blobName,
+        InitClientOptions<Azure::Storage::Blobs::BlobClientOptions>());
+    appendBlobClient.Create();
+    appendBlobClient.SetTags(tags);
 
-  //   {
-  //     Blobs::SetBlobMetadataOptions options;
-  //     options.AccessConditions.TagConditions = successWhereExpression;
-  //     EXPECT_NO_THROW(appendBlobClient.SetMetadata({}, options));
-  //     options.AccessConditions.TagConditions = failWhereExpression;
-  //     EXPECT_THROW(appendBlobClient.SetMetadata({}, options), StorageException);
-  //   }
+    {
+      Blobs::GetBlobPropertiesOptions options;
+      options.AccessConditions.TagConditions = successWhereExpression;
+      EXPECT_NO_THROW(appendBlobClient.GetProperties(options));
+      options.AccessConditions.TagConditions = failWhereExpression;
+      EXPECT_THROW(appendBlobClient.GetProperties(options), StorageException);
+    }
 
-  //   {
-  //     Blobs::DownloadBlobOptions options;
-  //     options.AccessConditions.TagConditions = successWhereExpression;
-  //     EXPECT_NO_THROW(appendBlobClient.Download(options));
-  //     options.AccessConditions.TagConditions = failWhereExpression;
-  //     EXPECT_THROW(appendBlobClient.Download(options), StorageException);
-  //   }
+    {
+      Blobs::SetBlobHttpHeadersOptions options;
+      options.AccessConditions.TagConditions = successWhereExpression;
+      EXPECT_NO_THROW(appendBlobClient.SetHttpHeaders(Blobs::Models::BlobHttpHeaders(), options));
+      options.AccessConditions.TagConditions = failWhereExpression;
+      EXPECT_THROW(
+          appendBlobClient.SetHttpHeaders(Blobs::Models::BlobHttpHeaders(), options),
+          StorageException);
+    }
 
-  //   {
-  //     Blobs::CreateBlobSnapshotOptions options;
-  //     options.AccessConditions.TagConditions = successWhereExpression;
-  //     EXPECT_NO_THROW(appendBlobClient.CreateSnapshot(options));
-  //     options.AccessConditions.TagConditions = failWhereExpression;
-  //     EXPECT_THROW(appendBlobClient.CreateSnapshot(options), StorageException);
-  //   }
+    {
+      Blobs::SetBlobMetadataOptions options;
+      options.AccessConditions.TagConditions = successWhereExpression;
+      EXPECT_NO_THROW(appendBlobClient.SetMetadata({}, options));
+      options.AccessConditions.TagConditions = failWhereExpression;
+      EXPECT_THROW(appendBlobClient.SetMetadata({}, options), StorageException);
+    }
 
-  //   {
-  //     Blobs::CreateAppendBlobOptions options;
-  //     options.AccessConditions.TagConditions = failWhereExpression;
-  //     EXPECT_THROW(appendBlobClient.Create(options), StorageException);
-  //     options.AccessConditions.TagConditions = successWhereExpression;
-  //     EXPECT_NO_THROW(appendBlobClient.Create(options));
-  //     appendBlobClient.SetTags(tags);
-  //   }
+    {
+      Blobs::DownloadBlobOptions options;
+      options.AccessConditions.TagConditions = successWhereExpression;
+      EXPECT_NO_THROW(appendBlobClient.Download(options));
+      options.AccessConditions.TagConditions = failWhereExpression;
+      EXPECT_THROW(appendBlobClient.Download(options), StorageException);
+    }
 
-  //   {
-  //     Blobs::AppendBlockOptions options;
-  //     options.AccessConditions.TagConditions = failWhereExpression;
-  //     content.Rewind();
-  //     EXPECT_THROW(appendBlobClient.AppendBlock(content, options), StorageException);
-  //     options.AccessConditions.TagConditions = successWhereExpression;
-  //     content.Rewind();
-  //     EXPECT_NO_THROW(appendBlobClient.AppendBlock(content, options));
+    {
+      Blobs::CreateBlobSnapshotOptions options;
+      options.AccessConditions.TagConditions = successWhereExpression;
+      EXPECT_NO_THROW(appendBlobClient.CreateSnapshot(options));
+      options.AccessConditions.TagConditions = failWhereExpression;
+      EXPECT_THROW(appendBlobClient.CreateSnapshot(options), StorageException);
+    }
 
-  //     std::string url = appendBlobClient.GetUrl() + GetSas();
-  //     Blobs::AppendBlockFromUriOptions options2;
-  //     options2.AccessConditions.TagConditions = failWhereExpression;
-  //     EXPECT_THROW(appendBlobClient.AppendBlockFromUri(url, options2), StorageException);
-  //     options2.AccessConditions.TagConditions = successWhereExpression;
-  //     EXPECT_NO_THROW(appendBlobClient.AppendBlockFromUri(url, options2));
-  //   }
+    {
+      Blobs::CreateAppendBlobOptions options;
+      options.AccessConditions.TagConditions = failWhereExpression;
+      EXPECT_THROW(appendBlobClient.Create(options), StorageException);
+      options.AccessConditions.TagConditions = successWhereExpression;
+      EXPECT_NO_THROW(appendBlobClient.Create(options));
+      appendBlobClient.SetTags(tags);
+    }
 
-  //   {
-  //     std::string url = appendBlobClient.GetUrl() + GetSas();
+    {
+      Blobs::AppendBlockOptions options;
+      options.AccessConditions.TagConditions = failWhereExpression;
+      content.Rewind();
+      EXPECT_THROW(appendBlobClient.AppendBlock(content, options), StorageException);
+      options.AccessConditions.TagConditions = successWhereExpression;
+      content.Rewind();
+      EXPECT_NO_THROW(appendBlobClient.AppendBlock(content, options));
 
-  //     Blobs::StartBlobCopyFromUriOptions options;
-  //     auto blobClient2 = Azure::Storage::Blobs::AppendBlobClient::CreateFromConnectionString(
-  //         StandardStorageConnectionString(), m_containerName, RandomString());
-  //     options.SourceAccessConditions.TagConditions = failWhereExpression;
-  //     EXPECT_THROW(blobClient2.StartCopyFromUri(url, options), StorageException);
-  //     options.SourceAccessConditions.TagConditions = successWhereExpression;
-  //     EXPECT_NO_THROW(blobClient2.StartCopyFromUri(url, options));
+      std::string url = appendBlobClient.GetUrl() + GetSas();
+      Blobs::AppendBlockFromUriOptions options2;
+      options2.AccessConditions.TagConditions = failWhereExpression;
+      EXPECT_THROW(appendBlobClient.AppendBlockFromUri(url, options2), StorageException);
+      options2.AccessConditions.TagConditions = successWhereExpression;
+      EXPECT_NO_THROW(appendBlobClient.AppendBlockFromUri(url, options2));
+    }
 
-  //     options.SourceAccessConditions.TagConditions.Reset();
-  //     blobClient2.SetTags(tags);
+    {
+      std::string url = appendBlobClient.GetUrl() + GetSas();
 
-  //     options.AccessConditions.TagConditions = failWhereExpression;
-  //     EXPECT_THROW(blobClient2.StartCopyFromUri(url, options), StorageException);
-  //     options.AccessConditions.TagConditions = successWhereExpression;
-  //     EXPECT_NO_THROW(blobClient2.StartCopyFromUri(url, options));
-  //   }
+      Blobs::StartBlobCopyFromUriOptions options;
+      auto blobClient2 = Azure::Storage::Blobs::AppendBlobClient::CreateFromConnectionString(
+          StandardStorageConnectionString(),
+          testName,
+          testName + "blobClient2",
+          InitClientOptions<Azure::Storage::Blobs::BlobClientOptions>());
+      options.SourceAccessConditions.TagConditions = failWhereExpression;
+      EXPECT_THROW(blobClient2.StartCopyFromUri(url, options), StorageException);
+      options.SourceAccessConditions.TagConditions = successWhereExpression;
+      EXPECT_NO_THROW(blobClient2.StartCopyFromUri(url, options));
 
-  //   {
-  //     std::string leaseId = Blobs::BlobLeaseClient::CreateUniqueLeaseId();
-  //     Blobs::AcquireLeaseOptions options;
-  //     options.AccessConditions.TagConditions = failWhereExpression;
-  //     Blobs::BlobLeaseClient leaseClient(appendBlobClient, leaseId);
-  //     EXPECT_THROW(leaseClient.Acquire(std::chrono::seconds(60), options), StorageException);
-  //     options.AccessConditions.TagConditions = successWhereExpression;
-  //     EXPECT_NO_THROW(leaseClient.Acquire(std::chrono::seconds(60), options));
+      options.SourceAccessConditions.TagConditions.Reset();
+      blobClient2.SetTags(tags);
 
-  //     Blobs::BreakLeaseOptions options2;
-  //     options2.AccessConditions.TagConditions = failWhereExpression;
-  //     EXPECT_THROW(leaseClient.Break(options2), StorageException);
-  //     options2.AccessConditions.TagConditions = successWhereExpression;
-  //     EXPECT_NO_THROW(leaseClient.Break(options2));
+      options.AccessConditions.TagConditions = failWhereExpression;
+      EXPECT_THROW(blobClient2.StartCopyFromUri(url, options), StorageException);
+      options.AccessConditions.TagConditions = successWhereExpression;
+      EXPECT_NO_THROW(blobClient2.StartCopyFromUri(url, options));
+    }
 
-  //     Blobs::DeleteBlobOptions options3;
-  //     options3.DeleteSnapshots = Blobs::Models::DeleteSnapshotsOption::IncludeSnapshots;
-  //     options3.AccessConditions.LeaseId = leaseId;
-  //     options3.AccessConditions.TagConditions = successWhereExpression;
-  //     EXPECT_NO_THROW(appendBlobClient.Delete(options3));
-  //     options3.AccessConditions.TagConditions = failWhereExpression;
-  //     EXPECT_THROW(appendBlobClient.Delete(options3), StorageException);
-  //   }
+    {
+      std::string leaseId = Blobs::BlobLeaseClient::CreateUniqueLeaseId();
+      Blobs::AcquireLeaseOptions options;
+      options.AccessConditions.TagConditions = failWhereExpression;
+      Blobs::BlobLeaseClient leaseClient(appendBlobClient, leaseId);
+      EXPECT_THROW(leaseClient.Acquire(std::chrono::seconds(60), options), StorageException);
+      options.AccessConditions.TagConditions = successWhereExpression;
+      EXPECT_NO_THROW(leaseClient.Acquire(std::chrono::seconds(60), options));
 
-  //   blobName = RandomString();
-  //   auto pageBlobClient = Azure::Storage::Blobs::PageBlobClient::CreateFromConnectionString(
-  //       StandardStorageConnectionString(), m_containerName, blobName);
-  //   pageBlobClient.Create(contentSize);
-  //   pageBlobClient.SetTags(tags);
+      Blobs::BreakLeaseOptions options2;
+      options2.AccessConditions.TagConditions = failWhereExpression;
+      EXPECT_THROW(leaseClient.Break(options2), StorageException);
+      options2.AccessConditions.TagConditions = successWhereExpression;
+      EXPECT_NO_THROW(leaseClient.Break(options2));
 
-  //   {
-  //     Blobs::CreatePageBlobOptions options;
-  //     options.AccessConditions.TagConditions = failWhereExpression;
-  //     EXPECT_THROW(pageBlobClient.Create(contentSize, options), StorageException);
-  //     options.AccessConditions.TagConditions = successWhereExpression;
-  //     EXPECT_NO_THROW(pageBlobClient.Create(contentSize, options));
+      Blobs::DeleteBlobOptions options3;
+      options3.DeleteSnapshots = Blobs::Models::DeleteSnapshotsOption::IncludeSnapshots;
+      options3.AccessConditions.LeaseId = leaseId;
+      options3.AccessConditions.TagConditions = successWhereExpression;
+      EXPECT_NO_THROW(appendBlobClient.Delete(options3));
+      options3.AccessConditions.TagConditions = failWhereExpression;
+      EXPECT_THROW(appendBlobClient.Delete(options3), StorageException);
+    }
 
-  //     pageBlobClient.SetTags(tags);
-  //   }
+    blobName = testName;
+    auto pageBlobClient = Azure::Storage::Blobs::PageBlobClient::CreateFromConnectionString(
+        StandardStorageConnectionString(),
+        testName,
+        blobName + "blob",
+        InitClientOptions<Azure::Storage::Blobs::BlobClientOptions>());
+    pageBlobClient.Create(contentSize);
+    pageBlobClient.SetTags(tags);
 
-  //   {
-  //     Blobs::UploadPagesOptions options;
-  //     options.AccessConditions.TagConditions = failWhereExpression;
-  //     content.Rewind();
-  //     EXPECT_THROW(pageBlobClient.UploadPages(0, content, options), StorageException);
-  //     options.AccessConditions.TagConditions = successWhereExpression;
-  //     content.Rewind();
-  //     EXPECT_NO_THROW(pageBlobClient.UploadPages(0, content, options));
-  //   }
+    {
+      Blobs::CreatePageBlobOptions options;
+      options.AccessConditions.TagConditions = failWhereExpression;
+      EXPECT_THROW(pageBlobClient.Create(contentSize, options), StorageException);
+      options.AccessConditions.TagConditions = successWhereExpression;
+      EXPECT_NO_THROW(pageBlobClient.Create(contentSize, options));
 
-  //   {
-  //     std::string url = pageBlobClient.GetUrl() + GetSas();
-  //     Blobs::UploadPagesFromUriOptions options;
-  //     options.AccessConditions.TagConditions = failWhereExpression;
-  //     EXPECT_THROW(
-  //         pageBlobClient.UploadPagesFromUri(0, url, {0, contentSize}, options),
-  //         StorageException);
-  //     options.AccessConditions.TagConditions = successWhereExpression;
-  //     EXPECT_NO_THROW(pageBlobClient.UploadPagesFromUri(0, url, {0, contentSize}, options));
-  //   }
+      pageBlobClient.SetTags(tags);
+    }
 
-  //   {
-  //     Blobs::ClearPagesOptions options;
-  //     options.AccessConditions.TagConditions = failWhereExpression;
-  //     EXPECT_THROW(pageBlobClient.ClearPages({0, contentSize}, options), StorageException);
-  //     options.AccessConditions.TagConditions = successWhereExpression;
-  //     EXPECT_NO_THROW(pageBlobClient.ClearPages({0, contentSize}, options));
-  //   }
+    {
+      Blobs::UploadPagesOptions options;
+      options.AccessConditions.TagConditions = failWhereExpression;
+      content.Rewind();
+      EXPECT_THROW(pageBlobClient.UploadPages(0, content, options), StorageException);
+      options.AccessConditions.TagConditions = successWhereExpression;
+      content.Rewind();
+      EXPECT_NO_THROW(pageBlobClient.UploadPages(0, content, options));
+    }
 
-  //   {
-  //     Blobs::ResizePageBlobOptions options;
-  //     options.AccessConditions.TagConditions = failWhereExpression;
-  //     EXPECT_THROW(pageBlobClient.Resize(contentSize, options), StorageException);
-  //     options.AccessConditions.TagConditions = successWhereExpression;
-  //     EXPECT_NO_THROW(pageBlobClient.Resize(contentSize, options));
-  //   }
+    {
+      std::string url = pageBlobClient.GetUrl() + GetSas();
+      Blobs::UploadPagesFromUriOptions options;
+      options.AccessConditions.TagConditions = failWhereExpression;
+      EXPECT_THROW(
+          pageBlobClient.UploadPagesFromUri(0, url, {0, contentSize}, options), StorageException);
+      options.AccessConditions.TagConditions = successWhereExpression;
+      EXPECT_NO_THROW(pageBlobClient.UploadPagesFromUri(0, url, {0, contentSize}, options));
+    }
 
-  //   {
-  //     Blobs::UpdatePageBlobSequenceNumberOptions options;
-  //     options.AccessConditions.TagConditions = failWhereExpression;
-  //     EXPECT_THROW(
-  //         pageBlobClient.UpdateSequenceNumber(
-  //             Blobs::Models::SequenceNumberAction::Increment, options),
-  //         StorageException);
-  //     options.AccessConditions.TagConditions = successWhereExpression;
-  //     EXPECT_NO_THROW(pageBlobClient.UpdateSequenceNumber(
-  //         Blobs::Models::SequenceNumberAction::Increment, options));
-  //   }
+    {
+      Blobs::ClearPagesOptions options;
+      options.AccessConditions.TagConditions = failWhereExpression;
+      EXPECT_THROW(pageBlobClient.ClearPages({0, contentSize}, options), StorageException);
+      options.AccessConditions.TagConditions = successWhereExpression;
+      EXPECT_NO_THROW(pageBlobClient.ClearPages({0, contentSize}, options));
+    }
 
-  //   {
-  //     Blobs::GetPageRangesOptions options;
-  //     options.AccessConditions.TagConditions = failWhereExpression;
-  //     EXPECT_THROW(pageBlobClient.GetPageRanges(options), StorageException);
-  //     options.AccessConditions.TagConditions = successWhereExpression;
-  //     EXPECT_NO_THROW(pageBlobClient.GetPageRanges(options));
-  //   }
+    {
+      Blobs::ResizePageBlobOptions options;
+      options.AccessConditions.TagConditions = failWhereExpression;
+      EXPECT_THROW(pageBlobClient.Resize(contentSize, options), StorageException);
+      options.AccessConditions.TagConditions = successWhereExpression;
+      EXPECT_NO_THROW(pageBlobClient.Resize(contentSize, options));
+    }
 
-  //   blobName = RandomString();
-  //   auto blockBlobClient = Azure::Storage::Blobs::BlockBlobClient::CreateFromConnectionString(
-  //       StandardStorageConnectionString(), m_containerName, blobName);
-  //   blockBlobClient.UploadFrom(contentData.data(), contentData.size());
-  //   blockBlobClient.SetTags(tags);
+    {
+      Blobs::UpdatePageBlobSequenceNumberOptions options;
+      options.AccessConditions.TagConditions = failWhereExpression;
+      EXPECT_THROW(
+          pageBlobClient.UpdateSequenceNumber(
+              Blobs::Models::SequenceNumberAction::Increment, options),
+          StorageException);
+      options.AccessConditions.TagConditions = successWhereExpression;
+      EXPECT_NO_THROW(pageBlobClient.UpdateSequenceNumber(
+          Blobs::Models::SequenceNumberAction::Increment, options));
+    }
 
-  //   {
-  //     Blobs::SetBlobAccessTierOptions options;
-  //     options.AccessConditions.TagConditions = successWhereExpression;
-  //     EXPECT_NO_THROW(blockBlobClient.SetAccessTier(Blobs::Models::AccessTier::Hot, options));
-  //     options.AccessConditions.TagConditions = failWhereExpression;
-  //     EXPECT_THROW(
-  //         blockBlobClient.SetAccessTier(Blobs::Models::AccessTier::Hot, options),
-  //         StorageException);
-  //   }
+    {
+      Blobs::GetPageRangesOptions options;
+      options.AccessConditions.TagConditions = failWhereExpression;
+      EXPECT_THROW(pageBlobClient.GetPageRanges(options), StorageException);
+      options.AccessConditions.TagConditions = successWhereExpression;
+      EXPECT_NO_THROW(pageBlobClient.GetPageRanges(options));
+    }
 
-  //   {
-  //     Blobs::UploadBlockBlobOptions options;
-  //     options.AccessConditions.TagConditions = failWhereExpression;
-  //     content.Rewind();
-  //     EXPECT_THROW(blockBlobClient.Upload(content, options), StorageException);
-  //     options.AccessConditions.TagConditions = successWhereExpression;
-  //     content.Rewind();
-  //     EXPECT_NO_THROW(blockBlobClient.Upload(content, options));
-  //     blockBlobClient.SetTags(tags);
-  //   }
+    blobName = testName;
+    auto blockBlobClient = Azure::Storage::Blobs::BlockBlobClient::CreateFromConnectionString(
+        StandardStorageConnectionString(),
+        testName,
+        blobName + "blockBlobClient",
+        InitClientOptions<Azure::Storage::Blobs::BlobClientOptions>());
+    blockBlobClient.UploadFrom(contentData.data(), contentData.size());
+    blockBlobClient.SetTags(tags);
 
-  //   {
-  //     std::string blockId = Base64EncodeText("1");
-  //     std::vector<std::string> blockIds = {blockId};
-  //     content.Rewind();
-  //     blockBlobClient.StageBlock(blockId, content);
+    {
+      Blobs::SetBlobAccessTierOptions options;
+      options.AccessConditions.TagConditions = successWhereExpression;
+      EXPECT_NO_THROW(blockBlobClient.SetAccessTier(Blobs::Models::AccessTier::Hot, options));
+      options.AccessConditions.TagConditions = failWhereExpression;
+      EXPECT_THROW(
+          blockBlobClient.SetAccessTier(Blobs::Models::AccessTier::Hot, options), StorageException);
+    }
 
-  //     Blobs::CommitBlockListOptions options;
-  //     options.AccessConditions.TagConditions = failWhereExpression;
-  //     EXPECT_THROW(blockBlobClient.CommitBlockList(blockIds, options), StorageException);
-  //     options.AccessConditions.TagConditions = successWhereExpression;
-  //     EXPECT_NO_THROW(blockBlobClient.CommitBlockList(blockIds, options));
-  //     blockBlobClient.SetTags(tags);
-  //   }
+    {
+      Blobs::UploadBlockBlobOptions options;
+      options.AccessConditions.TagConditions = failWhereExpression;
+      content.Rewind();
+      EXPECT_THROW(blockBlobClient.Upload(content, options), StorageException);
+      options.AccessConditions.TagConditions = successWhereExpression;
+      content.Rewind();
+      EXPECT_NO_THROW(blockBlobClient.Upload(content, options));
+      blockBlobClient.SetTags(tags);
+    }
 
-  //   {
-  //     Blobs::GetBlockListOptions options;
-  //     options.AccessConditions.TagConditions = failWhereExpression;
-  //     EXPECT_THROW(blockBlobClient.GetBlockList(options), StorageException);
-  //     options.AccessConditions.TagConditions = successWhereExpression;
-  //     EXPECT_NO_THROW(blockBlobClient.GetBlockList(options));
-  //   }
+    {
+      std::string blockId = Base64EncodeText("1");
+      std::vector<std::string> blockIds = {blockId};
+      content.Rewind();
+      blockBlobClient.StageBlock(blockId, content);
 
-  //   {
-  //     auto sourceBlobClient =
-  //     Azure::Storage::Blobs::BlockBlobClient::CreateFromConnectionString(
-  //         StandardStorageConnectionString(), m_containerName, RandomString());
-  //     std::vector<uint8_t> buffer;
-  //     buffer.resize(1024);
-  //     sourceBlobClient.UploadFrom(buffer.data(), buffer.size());
+      Blobs::CommitBlockListOptions options;
+      options.AccessConditions.TagConditions = failWhereExpression;
+      EXPECT_THROW(blockBlobClient.CommitBlockList(blockIds, options), StorageException);
+      options.AccessConditions.TagConditions = successWhereExpression;
+      EXPECT_NO_THROW(blockBlobClient.CommitBlockList(blockIds, options));
+      blockBlobClient.SetTags(tags);
+    }
 
-  //     Blobs::CopyBlobFromUriOptions options;
-  //     options.AccessConditions.TagConditions = failWhereExpression;
-  //     EXPECT_THROW(
-  //         blockBlobClient.CopyFromUri(sourceBlobClient.GetUrl() + GetSas(), options),
-  //         StorageException);
-  //     options.AccessConditions.TagConditions = successWhereExpression;
-  //     EXPECT_NO_THROW(blockBlobClient.CopyFromUri(sourceBlobClient.GetUrl() + GetSas(),
-  //     options));
-  //   }
+    {
+      Blobs::GetBlockListOptions options;
+      options.AccessConditions.TagConditions = failWhereExpression;
+      EXPECT_THROW(blockBlobClient.GetBlockList(options), StorageException);
+      options.AccessConditions.TagConditions = successWhereExpression;
+      EXPECT_NO_THROW(blockBlobClient.GetBlockList(options));
+    }
 
-  //   {
-  //     auto sourceBlobClient =
-  //     Azure::Storage::Blobs::BlockBlobClient::CreateFromConnectionString(
-  //         StandardStorageConnectionString(), m_containerName, RandomString());
-  //     std::vector<uint8_t> buffer;
-  //     buffer.resize(1024);
-  //     sourceBlobClient.UploadFrom(buffer.data(), buffer.size());
-  //     sourceBlobClient.SetTags(tags);
+    {
+      auto sourceBlobClient = Azure::Storage::Blobs::BlockBlobClient::CreateFromConnectionString(
+          StandardStorageConnectionString(),
+          testName,
+          testName + "sourceBlobClient",
+          InitClientOptions<Azure::Storage::Blobs::BlobClientOptions>());
+      std::vector<uint8_t> buffer;
+      buffer.resize(1024);
+      sourceBlobClient.UploadFrom(buffer.data(), buffer.size());
 
-  //     Blobs::StartBlobCopyFromUriOptions options;
-  //     options.SourceAccessConditions.TagConditions = failWhereExpression;
-  //     EXPECT_THROW(
-  //         blockBlobClient.StartCopyFromUri(sourceBlobClient.GetUrl(), options),
-  //         StorageException);
-  //     options.SourceAccessConditions.TagConditions = successWhereExpression;
-  //     EXPECT_NO_THROW(blockBlobClient.StartCopyFromUri(sourceBlobClient.GetUrl(), options));
-  //   }
-  // }
+      Blobs::CopyBlobFromUriOptions options;
+      options.AccessConditions.TagConditions = failWhereExpression;
+      EXPECT_THROW(
+          blockBlobClient.CopyFromUri(sourceBlobClient.GetUrl() + GetSas(), options),
+          StorageException);
+      options.AccessConditions.TagConditions = successWhereExpression;
+      EXPECT_NO_THROW(blockBlobClient.CopyFromUri(sourceBlobClient.GetUrl() + GetSas(), options));
+    }
 
-  // TEST_F(BlobContainerClientTest, SpecialBlobName)
-  // {
-  //   const std::string non_ascii_word = "\xE6\xB5\x8B\xE8\xAF\x95";
-  //   const std::string encoded_non_ascii_word = "%E6%B5%8B%E8%AF%95";
-  //   ASSERT_EQ(_internal::UrlEncodePath(non_ascii_word), encoded_non_ascii_word);
-  //   // blobName cannot contain backslash '\'
-  //   const std::string baseBlobName = "a b c / !@#$%^&*(?/<>,.;:'\"[]{}|`~) def" +
-  //   non_ascii_word;
+    {
+      auto sourceBlobClient = Azure::Storage::Blobs::BlockBlobClient::CreateFromConnectionString(
+          StandardStorageConnectionString(),
+          testName,
+          testName + "sourceBlobClient2",
+          InitClientOptions<Azure::Storage::Blobs::BlobClientOptions>());
+      std::vector<uint8_t> buffer;
+      buffer.resize(1024);
+      sourceBlobClient.UploadFrom(buffer.data(), buffer.size());
+      sourceBlobClient.SetTags(tags);
 
-  //   {
-  //     const std::string blobName = baseBlobName + RandomString();
-  //     auto blobClient = client.GetAppendBlobClient(blobName);
-  //     EXPECT_NO_THROW(blobClient.Create());
-  //     auto blobUrl = blobClient.GetUrl();
-  //     EXPECT_EQ(
-  //         blobUrl, client.GetUrl() + "/" + _internal::UrlEncodePath(blobName));
-  //     auto blobItem = GetBlobItem(blobName);
-  //     EXPECT_EQ(blobItem.Name, blobName);
-  //   }
-  //   {
-  //     const std::string blobName = baseBlobName + RandomString();
-  //     auto blobClient = client.GetPageBlobClient(blobName);
-  //     EXPECT_NO_THROW(blobClient.Create(1024));
-  //     auto blobUrl = blobClient.GetUrl();
-  //     EXPECT_EQ(
-  //         blobUrl, client.GetUrl() + "/" + _internal::UrlEncodePath(blobName));
-  //     auto blobItem = GetBlobItem(blobName);
-  //     EXPECT_EQ(blobItem.Name, blobName);
-  //   }
-  //   {
-  //     const std::string blobName = baseBlobName + RandomString();
-  //     auto blobClient = client.GetBlockBlobClient(blobName);
-  //     EXPECT_NO_THROW(blobClient.UploadFrom(nullptr, 0));
-  //     auto blobUrl = blobClient.GetUrl();
-  //     EXPECT_EQ(
-  //         blobUrl, client.GetUrl() + "/" + _internal::UrlEncodePath(blobName));
-  //     auto blobItem = GetBlobItem(blobName);
-  //     EXPECT_EQ(blobItem.Name, blobName);
-  //   }
-  //   {
-  //     const std::string blobName = baseBlobName + RandomString();
-  //     auto blobClient = Blobs::AppendBlobClient::CreateFromConnectionString(
-  //         StandardStorageConnectionString(), m_containerName, blobName);
-  //     EXPECT_NO_THROW(blobClient.Create());
-  //     auto blobUrl = blobClient.GetUrl();
-  //     EXPECT_EQ(
-  //         blobUrl, client.GetUrl() + "/" + _internal::UrlEncodePath(blobName));
-  //     auto blobItem = GetBlobItem(blobName);
-  //     EXPECT_EQ(blobItem.Name, blobName);
-  //   }
-  //   {
-  //     const std::string blobName = baseBlobName + RandomString();
-  //     auto blobClient = Blobs::PageBlobClient::CreateFromConnectionString(
-  //         StandardStorageConnectionString(), m_containerName, blobName);
-  //     EXPECT_NO_THROW(blobClient.Create(1024));
-  //     auto blobUrl = blobClient.GetUrl();
-  //     EXPECT_EQ(
-  //         blobUrl, client.GetUrl() + "/" + _internal::UrlEncodePath(blobName));
-  //     auto blobItem = GetBlobItem(blobName);
-  //     EXPECT_EQ(blobItem.Name, blobName);
-  //   }
-  //   {
-  //     const std::string blobName = baseBlobName + RandomString();
-  //     auto blobClient = Blobs::BlockBlobClient::CreateFromConnectionString(
-  //         StandardStorageConnectionString(), m_containerName, blobName);
-  //     EXPECT_NO_THROW(blobClient.UploadFrom(nullptr, 0));
-  //     auto blobUrl = blobClient.GetUrl();
-  //     EXPECT_EQ(
-  //         blobUrl, client.GetUrl() + "/" + _internal::UrlEncodePath(blobName));
-  //     auto blobItem = GetBlobItem(blobName);
-  //     EXPECT_EQ(blobItem.Name, blobName);
-  //   }
-  // }
+      Blobs::StartBlobCopyFromUriOptions options;
+      options.SourceAccessConditions.TagConditions = failWhereExpression;
+      EXPECT_THROW(
+          blockBlobClient.StartCopyFromUri(sourceBlobClient.GetUrl(), options), StorageException);
+      options.SourceAccessConditions.TagConditions = successWhereExpression;
+      EXPECT_NO_THROW(blockBlobClient.StartCopyFromUri(sourceBlobClient.GetUrl(), options));
+    }
+  }
 
-  // TEST_F(BlobContainerClientTest, QuestionMarkBlobName)
-  // {
-  //   std::string blobName = "?";
-  //   auto blobClient = client.GetAppendBlobClient(blobName);
-  //   EXPECT_NO_THROW(blobClient.Create());
-  //   auto blobUrl = blobClient.GetUrl();
-  //   EXPECT_EQ(blobUrl, client.GetUrl() + "/" +
-  //   _internal::UrlEncodePath(blobName));
-  // }
+  TEST_F(BlobContainerClientTest, SpecialBlobName)
+  {
+    auto const testName(GetTestNameLowerCase());
+    auto client = GetBlobContainerClient(testName);
+    client.Create();
 
-  // TEST_F(BlobContainerClientTest, DeleteBlob)
-  // {
-  //   std::string blobName = RandomString();
-  //   auto blobClient = client.GetAppendBlobClient(blobName);
-  //   blobClient.Create();
-  //   EXPECT_NO_THROW(blobClient.GetProperties());
-  //   blobClient.Delete();
-  //   EXPECT_THROW(blobClient.GetProperties(), StorageException);
-  // }
+    const std::string non_ascii_word = "\xE6\xB5\x8B\xE8\xAF\x95";
+    const std::string encoded_non_ascii_word = "%E6%B5%8B%E8%AF%95";
+    ASSERT_EQ(_internal::UrlEncodePath(non_ascii_word), encoded_non_ascii_word);
+    // blobName cannot contain backslash '\'
+    const std::string baseBlobName = "a b c / !@#$%^&*(?/<>,.;:'\"[]{}|`~) def" + non_ascii_word;
+
+    {
+      const std::string blobName = baseBlobName + testName;
+      auto blobClient = client.GetAppendBlobClient(blobName);
+      EXPECT_NO_THROW(blobClient.Create());
+      auto blobUrl = blobClient.GetUrl();
+      EXPECT_EQ(blobUrl, client.GetUrl() + "/" + _internal::UrlEncodePath(blobName));
+      auto blobItem = GetBlobItem(blobName);
+      EXPECT_EQ(blobItem.Name, blobName);
+    }
+    {
+      const std::string blobName = baseBlobName + testName + "1";
+      auto blobClient = client.GetPageBlobClient(blobName);
+      EXPECT_NO_THROW(blobClient.Create(1024));
+      auto blobUrl = blobClient.GetUrl();
+      EXPECT_EQ(blobUrl, client.GetUrl() + "/" + _internal::UrlEncodePath(blobName));
+      auto blobItem = GetBlobItem(blobName);
+      EXPECT_EQ(blobItem.Name, blobName);
+    }
+    {
+      const std::string blobName = baseBlobName + testName + "2";
+      auto blobClient = client.GetBlockBlobClient(blobName);
+      EXPECT_NO_THROW(blobClient.UploadFrom(nullptr, 0));
+      auto blobUrl = blobClient.GetUrl();
+      EXPECT_EQ(blobUrl, client.GetUrl() + "/" + _internal::UrlEncodePath(blobName));
+      auto blobItem = GetBlobItem(blobName);
+      EXPECT_EQ(blobItem.Name, blobName);
+    }
+    auto clientOptions = InitClientOptions<Azure::Storage::Blobs::BlobClientOptions>();
+    {
+      const std::string blobName = baseBlobName + testName + "3";
+      auto blobClient = Blobs::AppendBlobClient::CreateFromConnectionString(
+          StandardStorageConnectionString(), testName, blobName, clientOptions);
+      EXPECT_NO_THROW(blobClient.Create());
+      auto blobUrl = blobClient.GetUrl();
+      EXPECT_EQ(blobUrl, client.GetUrl() + "/" + _internal::UrlEncodePath(blobName));
+      auto blobItem = GetBlobItem(blobName);
+      EXPECT_EQ(blobItem.Name, blobName);
+    }
+    {
+      const std::string blobName = baseBlobName + testName + "4";
+      auto blobClient = Blobs::PageBlobClient::CreateFromConnectionString(
+          StandardStorageConnectionString(), testName, blobName, clientOptions);
+      EXPECT_NO_THROW(blobClient.Create(1024));
+      auto blobUrl = blobClient.GetUrl();
+      EXPECT_EQ(blobUrl, client.GetUrl() + "/" + _internal::UrlEncodePath(blobName));
+      auto blobItem = GetBlobItem(blobName);
+      EXPECT_EQ(blobItem.Name, blobName);
+    }
+    {
+      const std::string blobName = baseBlobName + testName + "5";
+      auto blobClient = Blobs::BlockBlobClient::CreateFromConnectionString(
+          StandardStorageConnectionString(), testName, blobName, clientOptions);
+      EXPECT_NO_THROW(blobClient.UploadFrom(nullptr, 0));
+      auto blobUrl = blobClient.GetUrl();
+      EXPECT_EQ(blobUrl, client.GetUrl() + "/" + _internal::UrlEncodePath(blobName));
+      auto blobItem = GetBlobItem(blobName);
+      EXPECT_EQ(blobItem.Name, blobName);
+    }
+  }
+
+  TEST_F(BlobContainerClientTest, QuestionMarkBlobName)
+  {
+    auto const testName(GetTestNameLowerCase());
+    auto client = GetBlobContainerClient(testName);
+    client.Create();
+
+    std::string blobName = "?";
+    auto blobClient = client.GetAppendBlobClient(blobName);
+    EXPECT_NO_THROW(blobClient.Create());
+    auto blobUrl = blobClient.GetUrl();
+    EXPECT_EQ(blobUrl, client.GetUrl() + "/" + _internal::UrlEncodePath(blobName));
+  }
+
+  TEST_F(BlobContainerClientTest, DeleteBlob)
+  {
+    auto const testName(GetTestNameLowerCase());
+    auto client = GetBlobContainerClient(testName);
+    client.Create();
+
+    std::string blobName = testName;
+    auto blobClient = client.GetAppendBlobClient(blobName);
+    blobClient.Create();
+    EXPECT_NO_THROW(blobClient.GetProperties());
+    blobClient.Delete();
+    EXPECT_THROW(blobClient.GetProperties(), StorageException);
+  }
 }}} // namespace Azure::Storage::Test
