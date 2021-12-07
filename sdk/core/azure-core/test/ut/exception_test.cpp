@@ -56,3 +56,17 @@ TEST(RequestFailedException, JSONErrorNoError)
   EXPECT_EQ(exception.RequestId, "1");
   EXPECT_EQ(exception.ClientRequestId, "2");
 }
+
+TEST(RequestFailedException, EmptyValues)
+{
+  auto response = std::make_unique<Azure::Core::Http::RawResponse>(
+      1, 1, Azure::Core::Http::HttpStatusCode::None, std::string());
+
+  auto exception = Azure::Core::RequestFailedException(response);
+
+  EXPECT_EQ(exception.StatusCode, Azure::Core::Http::HttpStatusCode::None);
+  EXPECT_EQ(exception.Message, std::string());
+  EXPECT_EQ(exception.ErrorCode, std::string());
+  EXPECT_EQ(exception.RequestId, std::string());
+  EXPECT_EQ(exception.ClientRequestId, std::string());
+}

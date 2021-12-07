@@ -802,3 +802,46 @@ TEST(DateTime, TimeRoundtrip)
   TestDateTimeRoundtrip<DateTime::TimeFractionFormat::AllDigits>("2021-02-05T10:00:00.0000000Z");
   TestDateTimeRoundtrip<DateTime::TimeFractionFormat::AllDigits>("2021-02-05T20:00:00.0000000Z");
 }
+
+TEST(DateTime, ToSystemClock)
+{
+  {
+    const auto minTimePoint
+        = std::chrono::system_clock::to_time_t(std::chrono::system_clock::time_point::min());
+
+    const auto maxTimePoint
+        = std::chrono::system_clock::to_time_t(std::chrono::system_clock::time_point::max());
+
+    if (std::gmtime(&minTimePoint)->tm_year > 0001)
+    {
+      EXPECT_THROW(
+          static_cast<std::chrono::system_clock::time_point>(DateTime(0001)),
+          std::invalid_argument);
+    }
+
+    if (std::gmtime(&minTimePoint)->tm_year < 9999)
+    {
+      EXPECT_THROW(
+          static_cast<std::chrono::system_clock::time_point>(DateTime(9999)),
+          std::invalid_argument);
+    }
+  }
+
+  {
+    const auto year2021 = std::chrono::system_clock::to_time_t(
+        static_cast<std::chrono::system_clock::time_point>(DateTime(2021, 7, 8, 2, 34, 56)));
+
+    EXPECT_EQ(std::gmtime(&year2021)->tm_year, 2021);
+    EXPECT_EQ(std::gmtime(&year2021)->tm_mon, 7);
+    EXPECT_EQ(std::gmtime(&year2021)->tm_mday, 8);
+    EXPECT_EQ(std::gmtime(&year2021)->tm_hour, 2);
+    EXPECT_EQ(std::gmtime(&year2021)->tm_min, 34);
+    EXPECT_EQ(std::gmtime(&year2021)->tm_sec, 56);
+  }
+}
+
+TEST(DateTime, OutOfToStringRange)
+{
+  EXPECT_THROW(DateTime(0000).ToString(), std::invalid_argument);
+  EXPECT_THROW(DateTime(9999 + 1).ToString(), std::invalid_argument);
+}
