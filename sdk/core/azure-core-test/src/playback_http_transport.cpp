@@ -155,30 +155,28 @@ std::unique_ptr<RawResponse> PlaybackClient::Send(
       {
         std::string const bodyStreamSentinel(RECORDING_BODY_STREAM_SENTINEL);
         auto const bodyStreamSentinelLen = bodyStreamSentinel.length();
-        if (body.length() > bodyStreamSentinelLen)
+        if (body.length() > bodyStreamSentinelLen
+            && bodyStreamSentinel
+                == std::string(body.begin(), body.begin() + bodyStreamSentinelLen))
         {
-          // Check if sentinel is here
-          if (bodyStreamSentinel == std::string(body.begin(), body.begin() + bodyStreamSentinelLen))
-          {
-            // Sentinel found. Generate bodyStream
-            std::string bodyStreamSettings(body.begin() + bodyStreamSentinelLen + 1, body.end());
-            auto const separator = bodyStreamSettings.find('_');
-            auto const bodyStreamSize = std::atoi(
-                std::string(bodyStreamSettings.begin(), bodyStreamSettings.begin() + separator)
-                    .data());
-            auto const bodyStreamFillWith = std::atoi(
-                std::string(bodyStreamSettings.begin() + separator + 1, bodyStreamSettings.end())
-                    .data());
+          // Sentinel found. Generate bodyStream
+          std::string bodyStreamSettings(body.begin() + bodyStreamSentinelLen, body.end());
+          auto const separator = bodyStreamSettings.find('_');
+          auto const bodyStreamSize = std::atoi(
+              std::string(bodyStreamSettings.begin(), bodyStreamSettings.begin() + separator)
+                  .data());
+          auto const bodyStreamFillWith = std::atoi(
+              std::string(bodyStreamSettings.begin() + separator + 1, bodyStreamSettings.end())
+                  .data());
 
-            response->SetBodyStream(
-                std::make_unique<CircularBodyStream>(bodyStreamSize, static_cast<uint8_t>(bodyStreamFillWith)));
-          }
-          else
-          {
-            // No special sentinel. Use the entire body from recording as the response.
-            std::vector<uint8_t> bodyVector(body.begin(), body.end());
-            response->SetBodyStream(std::make_unique<WithMemoryBodyStream>(bodyVector));
-          }
+          response->SetBodyStream(std::make_unique<CircularBodyStream>(
+              bodyStreamSize, static_cast<uint8_t>(bodyStreamFillWith)));
+        }
+        else
+        {
+          // No special sentinel. Use the entire body from recording as the response.
+          std::vector<uint8_t> bodyVector(body.begin(), body.end());
+          response->SetBodyStream(std::make_unique<WithMemoryBodyStream>(bodyVector));
         }
       }
 
