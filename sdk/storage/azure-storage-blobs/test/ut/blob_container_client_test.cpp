@@ -581,6 +581,9 @@ namespace Azure { namespace Storage { namespace Test {
 
   TEST_F(BlobContainerClientTest, CustomerProvidedKey_LIVEONLY_)
   {
+    // will skip test under some cased where test can't run (usually LIVE only tests)
+    CHECK_SKIP_TEST()
+
     auto const testName(GetTestNameLowerCase());
     auto client = GetBlobContainerClient(testName);
     client.Create();
