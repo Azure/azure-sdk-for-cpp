@@ -815,14 +815,14 @@ TEST(DateTime, ToSystemClock)
     if (std::gmtime(&minTimePoint)->tm_year > 0001)
     {
       EXPECT_THROW(
-          static_cast<std::chrono::system_clock::time_point>(DateTime(0001)),
+          static_cast<void>(static_cast<std::chrono::system_clock::time_point>(DateTime(0001))),
           std::invalid_argument);
     }
 
-    if (std::gmtime(&minTimePoint)->tm_year < 9999)
+    if (std::gmtime(&maxTimePoint)->tm_year < 9999)
     {
       EXPECT_THROW(
-          static_cast<std::chrono::system_clock::time_point>(DateTime(9999)),
+          static_cast<void>(static_cast<std::chrono::system_clock::time_point>(DateTime(9999))),
           std::invalid_argument);
     }
   }
@@ -842,6 +842,6 @@ TEST(DateTime, ToSystemClock)
 
 TEST(DateTime, OutOfToStringRange)
 {
-  EXPECT_THROW(DateTime(0000).ToString(), std::invalid_argument);
-  EXPECT_THROW(DateTime(9999 + 1).ToString(), std::invalid_argument);
+  EXPECT_THROW(static_cast<void>(DateTime(0000).ToString()), std::invalid_argument);
+  EXPECT_THROW(static_cast<void>(DateTime(9999 + 1).ToString()), std::invalid_argument);
 }
