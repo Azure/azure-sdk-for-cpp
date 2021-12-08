@@ -21,6 +21,13 @@
 #include <regex>
 #include <thread>
 
+#define CHECK_SKIP_TEST() \
+  std::string const readTestNameAndUpdateTestContext = GetTestName(); \
+  if (shouldSkipTest()) \
+  { \
+    GTEST_SKIP(); \
+  }
+
 using namespace std::chrono_literals;
 
 namespace Azure { namespace Core { namespace Test {
@@ -32,6 +39,12 @@ namespace Azure { namespace Core { namespace Test {
   class TestBase : public ::testing::Test {
 
   private:
+    /**
+     * @brief Whenever a test case is skipped
+     *
+     */
+    bool m_wasSkipped = false;
+
     void PrepareOptions(Azure::Core::_internal::ClientOptions& options)
     {
       // Set up client options depending on the test-mode
@@ -79,7 +92,11 @@ namespace Azure { namespace Core { namespace Test {
       return updated;
     }
 
-    void SkipTest() { GTEST_SKIP(); }
+    void SkipTest()
+    {
+      m_wasSkipped = true;
+      GTEST_SKIP();
+    }
 
     std::string RemovePreffix(std::string const& src)
     {
@@ -107,6 +124,16 @@ namespace Azure { namespace Core { namespace Test {
   protected:
     Azure::Core::Test::TestContextManager m_testContext;
     std::unique_ptr<Azure::Core::Test::InterceptorManager> m_interceptor;
+
+    bool shouldSkipTest() { return m_wasSkipped; }
+
+    inline void ValidateSkippingTest()
+    {
+      if (m_wasSkipped)
+      {
+        GTEST_SKIP();
+      }
+    }
 
     // Reads the current test instance name.
     // Name gets also sanitized (special chars are removed) to avoid issues when recording or

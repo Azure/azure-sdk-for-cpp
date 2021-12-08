@@ -373,6 +373,9 @@ namespace Azure { namespace Storage { namespace Test {
   // Hence, the test can't be recorded and need to run on live mode always.
   TEST_F(BlobContainerClientTest, AccessControlList_LIVEONLY_)
   {
+    // will skip test under some cased where test can't run (usually LIVE only tests)
+    CHECK_SKIP_TEST()
+
     std::string const testName = GetTestNameLowerCase();
     auto client = GetBlobContainerClient(testName);
     client.Create();

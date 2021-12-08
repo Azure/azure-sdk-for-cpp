@@ -1,0 +1,294 @@
+{
+  "networkCallRecords": [
+    {
+      "Headers": {
+        "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Linux 5.4.0-1063-azure x86_64 #66~18.04.1-Ubuntu SMP Thu Oct 21 09:59:28 UTC 2021)",
+        "x-ms-client-request-id": "c49318dd-764c-42c2-6339-375f0f909749",
+        "x-ms-version": "2020-02-10"
+      },
+      "Method": "PUT",
+      "Response": {
+        "BODY": "",
+        "REASON_PHRASE": "Created",
+        "STATUS_CODE": "201",
+        "content-length": "0",
+        "date": "Wed, 08 Dec 2021 01:40:45 GMT",
+        "etag": "\"0x8D9B9EBC1602621\"",
+        "last-modified": "Wed, 08 Dec 2021 01:40:46 GMT",
+        "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
+        "x-ms-client-request-id": "c49318dd-764c-42c2-6339-375f0f909749",
+        "x-ms-request-id": "b9b65185-701e-001b-06d4-ebda87000000",
+        "x-ms-version": "2020-02-10"
+      },
+      "Url": "https://REDACTED.blob.core.windows.net/accessconditionleaseid?restype=container"
+    },
+    {
+      "Headers": {
+        "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Linux 5.4.0-1063-azure x86_64 #66~18.04.1-Ubuntu SMP Thu Oct 21 09:59:28 UTC 2021)",
+        "x-ms-client-request-id": "99c331ff-838c-417a-62d9-b26d160e7058",
+        "x-ms-version": "2020-02-10"
+      },
+      "Method": "PUT",
+      "Response": {
+        "BODY": "",
+        "REASON_PHRASE": "Created",
+        "STATUS_CODE": "201",
+        "content-length": "0",
+        "date": "Wed, 08 Dec 2021 01:40:45 GMT",
+        "etag": "\"0x8D9B9EBC1602621\"",
+        "last-modified": "Wed, 08 Dec 2021 01:40:46 GMT",
+        "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
+        "x-ms-client-request-id": "99c331ff-838c-417a-62d9-b26d160e7058",
+        "x-ms-lease-id": "f65bbb9d-6094-4587-530a-f5ac7c9aff10",
+        "x-ms-request-id": "b9b6518a-701e-001b-08d4-ebda87000000",
+        "x-ms-version": "2020-02-10"
+      },
+      "Url": "https://REDACTED.blob.core.windows.net/accessconditionleaseid?comp=lease&restype=container"
+    },
+    {
+      "Headers": {
+        "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Linux 5.4.0-1063-azure x86_64 #66~18.04.1-Ubuntu SMP Thu Oct 21 09:59:28 UTC 2021)",
+        "x-ms-client-request-id": "039a5e1c-e174-4060-5260-d7d2bfda7ab9",
+        "x-ms-version": "2020-02-10"
+      },
+      "Method": "HEAD",
+      "Response": {
+        "BODY": "",
+        "REASON_PHRASE": "The lease ID specified did not match the lease ID for the container.",
+        "STATUS_CODE": "412",
+        "date": "Wed, 08 Dec 2021 01:40:45 GMT",
+        "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
+        "transfer-encoding": "chunked",
+        "x-ms-client-request-id": "039a5e1c-e174-4060-5260-d7d2bfda7ab9",
+        "x-ms-error-code": "LeaseIdMismatchWithContainerOperation",
+        "x-ms-request-id": "b9b6518c-701e-001b-0ad4-ebda87000000",
+        "x-ms-version": "2020-02-10"
+      },
+      "Url": "https://REDACTED.blob.core.windows.net/accessconditionleaseid?restype=container"
+    },
+    {
+      "Headers": {
+        "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Linux 5.4.0-1063-azure x86_64 #66~18.04.1-Ubuntu SMP Thu Oct 21 09:59:28 UTC 2021)",
+        "x-ms-client-request-id": "27a9662f-2d32-4c68-663f-be9b4313cf05",
+        "x-ms-version": "2020-02-10"
+      },
+      "Method": "HEAD",
+      "Response": {
+        "BODY": "",
+        "REASON_PHRASE": "OK",
+        "STATUS_CODE": "200",
+        "content-length": "0",
+        "date": "Wed, 08 Dec 2021 01:40:45 GMT",
+        "etag": "\"0x8D9B9EBC1602621\"",
+        "last-modified": "Wed, 08 Dec 2021 01:40:46 GMT",
+        "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
+        "x-ms-client-request-id": "27a9662f-2d32-4c68-663f-be9b4313cf05",
+        "x-ms-default-encryption-scope": "$account-encryption-key",
+        "x-ms-deny-encryption-scope-override": "false",
+        "x-ms-has-immutability-policy": "false",
+        "x-ms-has-legal-hold": "false",
+        "x-ms-lease-duration": "fixed",
+        "x-ms-lease-state": "leased",
+        "x-ms-lease-status": "locked",
+        "x-ms-request-id": "bd76f719-001e-0011-09d4-eb7e30000000",
+        "x-ms-version": "2020-02-10"
+      },
+      "Url": "https://REDACTED.blob.core.windows.net/accessconditionleaseid?restype=container"
+    },
+    {
+      "Headers": {
+        "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Linux 5.4.0-1063-azure x86_64 #66~18.04.1-Ubuntu SMP Thu Oct 21 09:59:28 UTC 2021)",
+        "x-ms-client-request-id": "5fd744fb-5795-4e69-470c-08297f5bee2f",
+        "x-ms-version": "2020-02-10"
+      },
+      "Method": "PUT",
+      "Response": {
+        "BODY": "﻿<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>LeaseIdMismatchWithContainerOperation</Code><Message>The lease ID specified did not match the lease ID for the container.\nRequestId:bd76f71c-001e-0011-0ad4-eb7e30000000\nTime:2021-12-08T01:40:46.3070260Z</Message></Error>",
+        "REASON_PHRASE": "The lease ID specified did not match the lease ID for the container.",
+        "STATUS_CODE": "412",
+        "content-length": "274",
+        "content-type": "application/xml",
+        "date": "Wed, 08 Dec 2021 01:40:45 GMT",
+        "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
+        "x-ms-client-request-id": "5fd744fb-5795-4e69-470c-08297f5bee2f",
+        "x-ms-error-code": "LeaseIdMismatchWithContainerOperation",
+        "x-ms-request-id": "bd76f71c-001e-0011-0ad4-eb7e30000000",
+        "x-ms-version": "2020-02-10"
+      },
+      "Url": "https://REDACTED.blob.core.windows.net/accessconditionleaseid?comp=metadata&restype=container"
+    },
+    {
+      "Headers": {
+        "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Linux 5.4.0-1063-azure x86_64 #66~18.04.1-Ubuntu SMP Thu Oct 21 09:59:28 UTC 2021)",
+        "x-ms-client-request-id": "ac01e2a0-3998-460e-5fab-324c6baa8e27",
+        "x-ms-version": "2020-02-10"
+      },
+      "Method": "PUT",
+      "Response": {
+        "BODY": "",
+        "REASON_PHRASE": "OK",
+        "STATUS_CODE": "200",
+        "content-length": "0",
+        "date": "Wed, 08 Dec 2021 01:40:45 GMT",
+        "etag": "\"0x8D9B9EBC1729038\"",
+        "last-modified": "Wed, 08 Dec 2021 01:40:46 GMT",
+        "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
+        "x-ms-client-request-id": "ac01e2a0-3998-460e-5fab-324c6baa8e27",
+        "x-ms-request-id": "3877b65d-f01e-002a-72d4-eb3b94000000",
+        "x-ms-version": "2020-02-10"
+      },
+      "Url": "https://REDACTED.blob.core.windows.net/accessconditionleaseid?comp=metadata&restype=container"
+    },
+    {
+      "Headers": {
+        "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Linux 5.4.0-1063-azure x86_64 #66~18.04.1-Ubuntu SMP Thu Oct 21 09:59:28 UTC 2021)",
+        "x-ms-client-request-id": "cb428439-d106-4736-6109-ab705de46852",
+        "x-ms-version": "2020-02-10"
+      },
+      "Method": "GET",
+      "Response": {
+        "BODY": "﻿<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>LeaseIdMismatchWithContainerOperation</Code><Message>The lease ID specified did not match the lease ID for the container.\nRequestId:3877b65f-f01e-002a-73d4-eb3b94000000\nTime:2021-12-08T01:40:46.3680656Z</Message></Error>",
+        "REASON_PHRASE": "The lease ID specified did not match the lease ID for the container.",
+        "STATUS_CODE": "412",
+        "content-length": "274",
+        "content-type": "application/xml",
+        "date": "Wed, 08 Dec 2021 01:40:45 GMT",
+        "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
+        "x-ms-client-request-id": "cb428439-d106-4736-6109-ab705de46852",
+        "x-ms-error-code": "LeaseIdMismatchWithContainerOperation",
+        "x-ms-request-id": "3877b65f-f01e-002a-73d4-eb3b94000000",
+        "x-ms-version": "2020-02-10"
+      },
+      "Url": "https://REDACTED.blob.core.windows.net/accessconditionleaseid?comp=acl&restype=container"
+    },
+    {
+      "Headers": {
+        "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Linux 5.4.0-1063-azure x86_64 #66~18.04.1-Ubuntu SMP Thu Oct 21 09:59:28 UTC 2021)",
+        "x-ms-client-request-id": "8857fbad-0503-4440-49d7-0221e7fc25f0",
+        "x-ms-version": "2020-02-10"
+      },
+      "Method": "GET",
+      "Response": {
+        "BODY": "﻿<?xml version=\"1.0\" encoding=\"utf-8\"?><SignedIdentifiers />",
+        "REASON_PHRASE": "OK",
+        "STATUS_CODE": "200",
+        "content-type": "application/xml",
+        "date": "Wed, 08 Dec 2021 01:40:46 GMT",
+        "etag": "\"0x8D9B9EBC1729038\"",
+        "last-modified": "Wed, 08 Dec 2021 01:40:46 GMT",
+        "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
+        "transfer-encoding": "chunked",
+        "x-ms-client-request-id": "8857fbad-0503-4440-49d7-0221e7fc25f0",
+        "x-ms-request-id": "8120277f-001e-005c-70d4-ebb1dc000000",
+        "x-ms-version": "2020-02-10"
+      },
+      "Url": "https://REDACTED.blob.core.windows.net/accessconditionleaseid?comp=acl&restype=container"
+    },
+    {
+      "Headers": {
+        "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Linux 5.4.0-1063-azure x86_64 #66~18.04.1-Ubuntu SMP Thu Oct 21 09:59:28 UTC 2021)",
+        "x-ms-client-request-id": "38bd3f48-0c06-4e16-4f20-521f485c2607",
+        "x-ms-version": "2020-02-10"
+      },
+      "Method": "PUT",
+      "Response": {
+        "BODY": "﻿<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>LeaseIdMismatchWithContainerOperation</Code><Message>The lease ID specified did not match the lease ID for the container.\nRequestId:81202781-001e-005c-71d4-ebb1dc000000\nTime:2021-12-08T01:40:46.4197949Z</Message></Error>",
+        "REASON_PHRASE": "The lease ID specified did not match the lease ID for the container.",
+        "STATUS_CODE": "412",
+        "content-length": "274",
+        "content-type": "application/xml",
+        "date": "Wed, 08 Dec 2021 01:40:46 GMT",
+        "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
+        "x-ms-client-request-id": "38bd3f48-0c06-4e16-4f20-521f485c2607",
+        "x-ms-error-code": "LeaseIdMismatchWithContainerOperation",
+        "x-ms-request-id": "81202781-001e-005c-71d4-ebb1dc000000",
+        "x-ms-version": "2020-02-10"
+      },
+      "Url": "https://REDACTED.blob.core.windows.net/accessconditionleaseid?comp=acl&restype=container"
+    },
+    {
+      "Headers": {
+        "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Linux 5.4.0-1063-azure x86_64 #66~18.04.1-Ubuntu SMP Thu Oct 21 09:59:28 UTC 2021)",
+        "x-ms-client-request-id": "6ddf73e2-eb4d-4826-5a52-a82a1a314f71",
+        "x-ms-version": "2020-02-10"
+      },
+      "Method": "PUT",
+      "Response": {
+        "BODY": "",
+        "REASON_PHRASE": "OK",
+        "STATUS_CODE": "200",
+        "content-length": "0",
+        "date": "Wed, 08 Dec 2021 01:40:46 GMT",
+        "etag": "\"0x8D9B9EBC182BA77\"",
+        "last-modified": "Wed, 08 Dec 2021 01:40:46 GMT",
+        "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
+        "x-ms-client-request-id": "6ddf73e2-eb4d-4826-5a52-a82a1a314f71",
+        "x-ms-request-id": "9fb6468f-801e-0052-7dd4-eb986c000000",
+        "x-ms-version": "2020-02-10"
+      },
+      "Url": "https://REDACTED.blob.core.windows.net/accessconditionleaseid?comp=acl&restype=container"
+    },
+    {
+      "Headers": {
+        "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Linux 5.4.0-1063-azure x86_64 #66~18.04.1-Ubuntu SMP Thu Oct 21 09:59:28 UTC 2021)",
+        "x-ms-client-request-id": "8d49df2d-56e4-4835-7d69-beddbc006525",
+        "x-ms-version": "2020-02-10"
+      },
+      "Method": "DELETE",
+      "Response": {
+        "BODY": "﻿<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>LeaseIdMissing</Code><Message>There is currently a lease on the container and no lease ID was specified in the request.\nRequestId:9fb64696-801e-0052-01d4-eb986c000000\nTime:2021-12-08T01:40:46.4750410Z</Message></Error>",
+        "REASON_PHRASE": "There is currently a lease on the container and no lease ID was specified in the request.",
+        "STATUS_CODE": "412",
+        "content-length": "272",
+        "content-type": "application/xml",
+        "date": "Wed, 08 Dec 2021 01:40:46 GMT",
+        "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
+        "x-ms-client-request-id": "8d49df2d-56e4-4835-7d69-beddbc006525",
+        "x-ms-error-code": "LeaseIdMissing",
+        "x-ms-request-id": "9fb64696-801e-0052-01d4-eb986c000000",
+        "x-ms-version": "2020-02-10"
+      },
+      "Url": "https://REDACTED.blob.core.windows.net/accessconditionleaseid?restype=container"
+    },
+    {
+      "Headers": {
+        "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Linux 5.4.0-1063-azure x86_64 #66~18.04.1-Ubuntu SMP Thu Oct 21 09:59:28 UTC 2021)",
+        "x-ms-client-request-id": "dd7be6f2-03bc-44aa-7f77-851bbecd66fd",
+        "x-ms-version": "2020-02-10"
+      },
+      "Method": "DELETE",
+      "Response": {
+        "BODY": "",
+        "REASON_PHRASE": "Accepted",
+        "STATUS_CODE": "202",
+        "content-length": "0",
+        "date": "Wed, 08 Dec 2021 01:40:46 GMT",
+        "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
+        "x-ms-client-request-id": "dd7be6f2-03bc-44aa-7f77-851bbecd66fd",
+        "x-ms-request-id": "a221747b-801e-0030-66d4-eb5a4b000000",
+        "x-ms-version": "2020-02-10"
+      },
+      "Url": "https://REDACTED.blob.core.windows.net/accessconditionleaseid?restype=container"
+    },
+    {
+      "Headers": {
+        "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Linux 5.4.0-1063-azure x86_64 #66~18.04.1-Ubuntu SMP Thu Oct 21 09:59:28 UTC 2021)",
+        "x-ms-client-request-id": "dc28fd1a-cb17-4420-5c28-27bb5fcbe6f5",
+        "x-ms-version": "2020-02-10"
+      },
+      "Method": "DELETE",
+      "Response": {
+        "BODY": "",
+        "REASON_PHRASE": "Accepted",
+        "STATUS_CODE": "202",
+        "content-length": "0",
+        "date": "Wed, 08 Dec 2021 01:40:46 GMT",
+        "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
+        "x-ms-client-request-id": "dc28fd1a-cb17-4420-5c28-27bb5fcbe6f5",
+        "x-ms-request-id": "a221747d-801e-0030-67d4-eb5a4b000000",
+        "x-ms-version": "2020-02-10"
+      },
+      "Url": "https://REDACTED.blob.core.windows.net/accessconditionleaseid?restype=container"
+    }
+  ]
+}
