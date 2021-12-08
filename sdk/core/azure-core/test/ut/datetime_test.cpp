@@ -803,40 +803,51 @@ TEST(DateTime, TimeRoundtrip)
   TestDateTimeRoundtrip<DateTime::TimeFractionFormat::AllDigits>("2021-02-05T20:00:00.0000000Z");
 }
 
+namespace {
+std::tm GmTime(std::chrono::system_clock::time_point const& tp)
+{
+  const auto timeT = std::chrono::system_clock::to_time_t(tp);
+#ifdef _MSC_VER
+#pragma warning(push)
+// warning C4996: 'gmtime': This function or variable may be unsafe. Consider using gmtime_s
+// instead.
+#pragma warning(disable : 4996)
+#endif
+  return *std::gmtime(&timeT);
+#ifdef _MSC_VER
+#pragma warning(pop)
+#endif
+}
+} // namespace
+
 TEST(DateTime, ToSystemClock)
 {
+  constexpr auto StdTmStartYear = 1900; // https://en.cppreference.com/w/cpp/chrono/c/tm
+
+  if (GmTime(std::chrono::system_clock::time_point::min()).tm_year > (0001 - StdTmStartYear))
   {
-    const auto minTimePoint
-        = std::chrono::system_clock::to_time_t(std::chrono::system_clock::time_point::min());
+    EXPECT_THROW(
+        static_cast<void>(static_cast<std::chrono::system_clock::time_point>(DateTime(0001))),
+        std::invalid_argument);
+  }
 
-    const auto maxTimePoint
-        = std::chrono::system_clock::to_time_t(std::chrono::system_clock::time_point::max());
-
-    if (std::gmtime(&minTimePoint)->tm_year > (0001 - 1900))
-    {
-      EXPECT_THROW(
-          static_cast<void>(static_cast<std::chrono::system_clock::time_point>(DateTime(0001))),
-          std::invalid_argument);
-    }
-
-    if (std::gmtime(&maxTimePoint)->tm_year < (9999 - 1900))
-    {
-      EXPECT_THROW(
-          static_cast<void>(static_cast<std::chrono::system_clock::time_point>(DateTime(9999))),
-          std::invalid_argument);
-    }
+  if (GmTime(std::chrono::system_clock::time_point::max()).tm_year < (9999 - StdTmStartYear))
+  {
+    EXPECT_THROW(
+        static_cast<void>(static_cast<std::chrono::system_clock::time_point>(DateTime(9999))),
+        std::invalid_argument);
   }
 
   {
-    const auto year2021 = std::chrono::system_clock::to_time_t(
+    auto tm = GmTime(
         static_cast<std::chrono::system_clock::time_point>(DateTime(2021, 7, 8, 2, 34, 56)));
 
-    EXPECT_EQ(std::gmtime(&year2021)->tm_year, (2021 - 1900));
-    EXPECT_EQ(std::gmtime(&year2021)->tm_mon, 6);
-    EXPECT_EQ(std::gmtime(&year2021)->tm_mday, 8);
-    EXPECT_EQ(std::gmtime(&year2021)->tm_hour, 2);
-    EXPECT_EQ(std::gmtime(&year2021)->tm_min, 34);
-    EXPECT_EQ(std::gmtime(&year2021)->tm_sec, 56);
+    EXPECT_EQ(tm.tm_year, (2021 - StdTmStartYear));
+    EXPECT_EQ(tm.tm_mon, 6); // std::tm::tm_mon is 0-based
+    EXPECT_EQ(tm.tm_mday, 8);
+    EXPECT_EQ(tm.tm_hour, 2);
+    EXPECT_EQ(tm.tm_min, 34);
+    EXPECT_EQ(tm.tm_sec, 56);
   }
 }
 
