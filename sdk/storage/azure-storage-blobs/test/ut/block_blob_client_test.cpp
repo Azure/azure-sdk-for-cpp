@@ -32,7 +32,7 @@ namespace Azure { namespace Storage { namespace Test {
   {
     if (m_blockBlobClient)
     {
-      m_blockBlobClient->Delete();
+      m_blockBlobClient->DeleteIfExists();
     }
     BlobContainerClientTest::TearDown();
   }
@@ -83,11 +83,49 @@ namespace Azure { namespace Storage { namespace Test {
     */
   }
 
-  TEST_F(BlockBlobClientTest, UploadDownload)
+  // small default 1Kb upload/download
+  TEST_F(BlockBlobClientTest, SmallUploadDownload)
   {
     auto const testName(GetTestName());
     auto client = GetBlockBlobClient(testName);
     UploadBlockBlob();
+
+    auto res = client.Download();
+    EXPECT_EQ(res.Value.BlobSize, static_cast<int64_t>(m_blobContent.size()));
+    EXPECT_EQ(res.Value.ContentRange.Offset, 0);
+    EXPECT_EQ(res.Value.ContentRange.Length.Value(), static_cast<int64_t>(m_blobContent.size()));
+    EXPECT_EQ(ReadBodyStream(res.Value.BodyStream), m_blobContent);
+    EXPECT_FALSE(res.RawResponse->GetHeaders().at(_internal::HttpHeaderRequestId).empty());
+    EXPECT_FALSE(res.RawResponse->GetHeaders().at(_internal::HttpHeaderDate).empty());
+    EXPECT_FALSE(res.RawResponse->GetHeaders().at(_internal::HttpHeaderXMsVersion).empty());
+    EXPECT_TRUE(res.Value.Details.ETag.HasValue());
+    EXPECT_TRUE(IsValidTime(res.Value.Details.LastModified));
+    EXPECT_TRUE(IsValidTime(res.Value.Details.CreatedOn));
+    EXPECT_EQ(res.Value.Details.HttpHeaders, m_blobUploadOptions.HttpHeaders);
+    EXPECT_EQ(res.Value.Details.Metadata, m_blobUploadOptions.Metadata);
+    EXPECT_EQ(res.Value.BlobType, Azure::Storage::Blobs::Models::BlobType::BlockBlob);
+    Azure::Storage::Blobs::DownloadBlobOptions options;
+    options.Range = {100, 200};
+    res = client.Download(options);
+    EXPECT_EQ(
+        ReadBodyStream(res.Value.BodyStream),
+        std::vector<uint8_t>(
+            m_blobContent.begin() + static_cast<size_t>(options.Range.Value().Offset),
+            m_blobContent.begin()
+                + static_cast<size_t>(
+                    options.Range.Value().Offset + options.Range.Value().Length.Value())));
+    EXPECT_EQ(res.Value.ContentRange.Offset, options.Range.Value().Offset);
+    EXPECT_EQ(res.Value.ContentRange.Length.Value(), options.Range.Value().Length.Value());
+    EXPECT_EQ(res.Value.BlobSize, static_cast<int64_t>(m_blobContent.size()));
+  }
+
+  // big 8Mb upload/download should be LIVE only to avoid big recording files
+  TEST_F(BlockBlobClientTest, UploadDownload_LIVEONLY_)
+  {
+    CHECK_SKIP_TEST();
+    auto const testName(GetTestName());
+    auto client = GetBlockBlobClient(testName);
+    UploadBlockBlob(8_MB);
 
     auto res = client.Download();
     EXPECT_EQ(res.Value.BlobSize, static_cast<int64_t>(m_blobContent.size()));
@@ -120,8 +158,9 @@ namespace Azure { namespace Storage { namespace Test {
 
   TEST_F(BlockBlobClientTest, UploadWithTags)
   {
-    auto blockBlobClient = Azure::Storage::Blobs::BlockBlobClient::CreateFromConnectionString(
-        StandardStorageConnectionString(), m_containerName, RandomString());
+    auto const testName(GetTestName());
+    auto client = GetBlockBlobClient(testName);
+
     std::map<std::string, std::string> tags;
     tags["key1"] = "value1";
     tags["key2"] = "value2";
@@ -132,9 +171,9 @@ namespace Azure { namespace Storage { namespace Test {
       Blobs::UploadBlockBlobOptions options;
       options.Tags = tags;
       auto stream = Azure::Core::IO::MemoryBodyStream(blobContent.data(), blobContent.size());
-      blockBlobClient.Upload(stream, options);
-      EXPECT_EQ(blockBlobClient.GetTags().Value, tags);
-      blockBlobClient.Delete();
+      client.Upload(stream, options);
+      EXPECT_EQ(client.GetTags().Value, tags);
+      client.Delete();
     }
 
     {
@@ -144,105 +183,107 @@ namespace Azure { namespace Storage { namespace Test {
       options.Tags = tags;
 
       {
-        blockBlobClient.UploadFrom(blobContent.data(), blobContent.size(), options);
-        EXPECT_EQ(blockBlobClient.GetTags().Value, tags);
-        blockBlobClient.Delete();
+        client.UploadFrom(blobContent.data(), blobContent.size(), options);
+        EXPECT_EQ(client.GetTags().Value, tags);
+        client.Delete();
       }
       {
-        const std::string tempFilename = RandomString();
+        const std::string tempFilename = testName;
         {
           Azure::Storage::_internal::FileWriter fileWriter(tempFilename);
           fileWriter.Write(blobContent.data(), blobContent.size(), 0);
         }
-        blockBlobClient.UploadFrom(tempFilename, options);
-        EXPECT_EQ(blockBlobClient.GetTags().Value, tags);
-        blockBlobClient.Delete();
+        client.UploadFrom(tempFilename, options);
+        EXPECT_EQ(client.GetTags().Value, tags);
+        client.Delete();
       }
     }
   }
 
-  // TEST_F(BlockBlobClientTest, DownloadTransactionalHash)
-  // {
-  //   const std::vector<uint8_t> dataPart1(static_cast<size_t>(4_MB + 1), 'a');
-  //   const std::vector<uint8_t> dataPart2(static_cast<size_t>(4_MB + 1), 'b');
+  TEST_F(BlockBlobClientTest, DownloadTransactionalHash)
+  {
+    auto const testName(GetTestName());
+    auto blobClient = GetBlockBlobClient(testName);
 
-  //   const std::string blockId1 = Base64EncodeText("0");
-  //   const std::string blockId2 = Base64EncodeText("1");
+    const std::vector<uint8_t> dataPart1(static_cast<size_t>(4_MB + 1), 'a');
+    const std::vector<uint8_t> dataPart2(static_cast<size_t>(4_MB + 1), 'b');
 
-  //   auto blobClient = m_blobContainerClient->GetBlockBlobClient(RandomString());
-  //   auto blockContent = Azure::Core::IO::MemoryBodyStream(dataPart1.data(), dataPart1.size());
-  //   blobClient.StageBlock(blockId1, blockContent);
-  //   blockContent = Azure::Core::IO::MemoryBodyStream(dataPart2.data(), dataPart2.size());
-  //   blobClient.StageBlock(blockId2, blockContent);
-  //   blobClient.CommitBlockList({blockId1, blockId2});
+    const std::string blockId1 = Base64EncodeText("0");
+    const std::string blockId2 = Base64EncodeText("1");
 
-  //   std::vector<uint8_t> blobMd5;
-  //   {
-  //     Azure::Core::Cryptography::Md5Hash instance;
-  //     instance.Append(dataPart1.data(), dataPart1.size());
-  //     blobMd5 = instance.Final(dataPart2.data(), dataPart2.size());
-  //   }
+    auto blockContent = Azure::Core::IO::MemoryBodyStream(dataPart1.data(), dataPart1.size());
+    blobClient.StageBlock(blockId1, blockContent);
+    blockContent = Azure::Core::IO::MemoryBodyStream(dataPart2.data(), dataPart2.size());
+    blobClient.StageBlock(blockId2, blockContent);
+    blobClient.CommitBlockList({blockId1, blockId2});
 
-  //   for (bool blobHasMd5 : {true, false})
-  //   {
-  //     if (blobHasMd5)
-  //     {
-  //       Blobs::Models::BlobHttpHeaders headers;
-  //       headers.ContentHash.Algorithm = HashAlgorithm::Md5;
-  //       headers.ContentHash.Value = blobMd5;
-  //       blobClient.SetHttpHeaders(headers);
-  //       ASSERT_FALSE(blobClient.GetProperties().Value.HttpHeaders.ContentHash.Value.empty());
-  //       EXPECT_EQ(blobClient.Download().Value.Details.HttpHeaders.ContentHash.Value, blobMd5);
-  //     }
-  //     else
-  //     {
-  //       blobClient.SetHttpHeaders(Blobs::Models::BlobHttpHeaders());
-  //       ASSERT_TRUE(blobClient.GetProperties().Value.HttpHeaders.ContentHash.Value.empty());
-  //       ASSERT_TRUE(blobClient.Download().Value.Details.HttpHeaders.ContentHash.Value.empty());
-  //     }
-  //     const int64_t downloadLength = 1;
-  //     Blobs::DownloadBlobOptions options;
-  //     options.Range = Azure::Core::Http::HttpRange();
-  //     options.Range.Value().Offset = 0;
-  //     options.Range.Value().Length = downloadLength;
-  //     options.RangeHashAlgorithm = HashAlgorithm::Md5;
-  //     auto res = blobClient.Download(options);
-  //     if (blobHasMd5)
-  //     {
-  //       EXPECT_EQ(res.Value.Details.HttpHeaders.ContentHash.Value, blobMd5);
-  //     }
-  //     else
-  //     {
-  //       EXPECT_TRUE(res.Value.Details.HttpHeaders.ContentHash.Value.empty());
-  //     }
-  //     ASSERT_TRUE(res.Value.TransactionalContentHash.HasValue());
-  //     EXPECT_EQ(res.Value.TransactionalContentHash.Value().Algorithm, HashAlgorithm::Md5);
-  //     {
-  //       Azure::Core::Cryptography::Md5Hash instance;
-  //       EXPECT_EQ(
-  //           res.Value.TransactionalContentHash.Value().Value,
-  //           instance.Final(dataPart1.data(), downloadLength));
-  //     }
-  //     options.RangeHashAlgorithm = HashAlgorithm::Crc64;
-  //     res = blobClient.Download(options);
-  //     if (blobHasMd5)
-  //     {
-  //       EXPECT_EQ(res.Value.Details.HttpHeaders.ContentHash.Value, blobMd5);
-  //     }
-  //     else
-  //     {
-  //       EXPECT_TRUE(res.Value.Details.HttpHeaders.ContentHash.Value.empty());
-  //     }
-  //     ASSERT_TRUE(res.Value.TransactionalContentHash.HasValue());
-  //     EXPECT_EQ(res.Value.TransactionalContentHash.Value().Algorithm, HashAlgorithm::Crc64);
-  //     {
-  //       Crc64Hash instance;
-  //       EXPECT_EQ(
-  //           res.Value.TransactionalContentHash.Value().Value,
-  //           instance.Final(dataPart1.data(), downloadLength));
-  //     }
-  //   }
-  // }
+    std::vector<uint8_t> blobMd5;
+    {
+      Azure::Core::Cryptography::Md5Hash instance;
+      instance.Append(dataPart1.data(), dataPart1.size());
+      blobMd5 = instance.Final(dataPart2.data(), dataPart2.size());
+    }
+
+    for (bool blobHasMd5 : {true, false})
+    {
+      if (blobHasMd5)
+      {
+        Blobs::Models::BlobHttpHeaders headers;
+        headers.ContentHash.Algorithm = HashAlgorithm::Md5;
+        headers.ContentHash.Value = blobMd5;
+        blobClient.SetHttpHeaders(headers);
+        ASSERT_FALSE(blobClient.GetProperties().Value.HttpHeaders.ContentHash.Value.empty());
+        EXPECT_EQ(blobClient.Download().Value.Details.HttpHeaders.ContentHash.Value, blobMd5);
+      }
+      else
+      {
+        blobClient.SetHttpHeaders(Blobs::Models::BlobHttpHeaders());
+        ASSERT_TRUE(blobClient.GetProperties().Value.HttpHeaders.ContentHash.Value.empty());
+        ASSERT_TRUE(blobClient.Download().Value.Details.HttpHeaders.ContentHash.Value.empty());
+      }
+      const int64_t downloadLength = 1;
+      Blobs::DownloadBlobOptions options;
+      options.Range = Azure::Core::Http::HttpRange();
+      options.Range.Value().Offset = 0;
+      options.Range.Value().Length = downloadLength;
+      options.RangeHashAlgorithm = HashAlgorithm::Md5;
+      auto res = blobClient.Download(options);
+      if (blobHasMd5)
+      {
+        EXPECT_EQ(res.Value.Details.HttpHeaders.ContentHash.Value, blobMd5);
+      }
+      else
+      {
+        EXPECT_TRUE(res.Value.Details.HttpHeaders.ContentHash.Value.empty());
+      }
+      ASSERT_TRUE(res.Value.TransactionalContentHash.HasValue());
+      EXPECT_EQ(res.Value.TransactionalContentHash.Value().Algorithm, HashAlgorithm::Md5);
+      {
+        Azure::Core::Cryptography::Md5Hash instance;
+        EXPECT_EQ(
+            res.Value.TransactionalContentHash.Value().Value,
+            instance.Final(dataPart1.data(), downloadLength));
+      }
+      options.RangeHashAlgorithm = HashAlgorithm::Crc64;
+      res = blobClient.Download(options);
+      if (blobHasMd5)
+      {
+        EXPECT_EQ(res.Value.Details.HttpHeaders.ContentHash.Value, blobMd5);
+      }
+      else
+      {
+        EXPECT_TRUE(res.Value.Details.HttpHeaders.ContentHash.Value.empty());
+      }
+      ASSERT_TRUE(res.Value.TransactionalContentHash.HasValue());
+      EXPECT_EQ(res.Value.TransactionalContentHash.Value().Algorithm, HashAlgorithm::Crc64);
+      {
+        Crc64Hash instance;
+        EXPECT_EQ(
+            res.Value.TransactionalContentHash.Value().Value,
+            instance.Final(dataPart1.data(), downloadLength));
+      }
+    }
+  }
 
   // TEST_F(BlockBlobClientTest, DISABLED_LastAccessTime)
   // {

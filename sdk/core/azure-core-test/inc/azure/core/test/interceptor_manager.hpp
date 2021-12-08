@@ -31,6 +31,10 @@
 #include "azure/core/test/record_network_call_policy.hpp"
 #include "azure/core/test/test_context_manager.hpp"
 
+// Used by recordPolicy and playback transport adapter.
+#if !defined(RECORDING_BODY_STREAM_SENTINEL)
+#define RECORDING_BODY_STREAM_SENTINEL "__bodyStream__"
+#endif
 namespace Azure { namespace Core { namespace Test {
 
   /**

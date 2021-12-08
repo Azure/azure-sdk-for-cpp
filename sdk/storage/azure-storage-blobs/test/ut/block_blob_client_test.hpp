@@ -32,9 +32,9 @@ namespace Azure { namespace Storage { namespace Test {
       return *m_blockBlobClient;
     }
 
-    void UploadBlockBlob()
+    void UploadBlockBlob(size_t blobSize = 1_KB)
     {
-      m_blobContent = std::vector<uint8_t>(8_MB, 'x');
+      m_blobContent = std::vector<uint8_t>(blobSize, 'x');
       m_blobUploadOptions.Metadata = {{"key1", "V1"}, {"key2", "Value2"}};
       m_blobUploadOptions.HttpHeaders.ContentType = "application/x-binary";
       m_blobUploadOptions.HttpHeaders.ContentLanguage = "en-US";

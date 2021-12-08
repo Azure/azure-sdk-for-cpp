@@ -16,33 +16,8 @@ using namespace Azure::Core::Http;
 using namespace Azure::Core::Test;
 using namespace Azure::Core::_internal;
 
-// 2 MB max
+// 2 Kb max
 #define MAX_SUPPORTED_BODYSTREAM_SIZE 1024 * 2
-
-namespace {
-
-class SelfMemoryBodyStream : public Azure::Core::IO::BodyStream {
-private:
-  std::unique_ptr<std::vector<uint8_t>> m_buffer;
-  size_t m_totalRead = 0;
-  Azure::Core::IO::MemoryBodyStream m_memoryStream;
-
-  size_t OnRead(uint8_t* buffer, size_t count, Azure::Core::Context const& context) override
-  {
-    return m_memoryStream.Read(buffer, count, context);
-  }
-
-public:
-  SelfMemoryBodyStream(std::vector<uint8_t> const& buffer)
-      : m_buffer(std::make_unique<std::vector<uint8_t>>(buffer)), m_memoryStream(*m_buffer)
-  {
-  }
-
-  int64_t Length() const override { return m_memoryStream.Length(); }
-  void Rewind() override { m_memoryStream.Rewind(); }
-};
-
-} // namespace
 
 /**
  * @brief Records network request and response into RecordedData.
@@ -120,14 +95,35 @@ std::unique_ptr<RawResponse> RecordNetworkCallPolicy::Send(
   auto bodyStream = response->ExtractBodyStream();
   if (bodyStream != nullptr)
   {
-    if (bodyStream->Length() > MAX_SUPPORTED_BODYSTREAM_SIZE)
+    auto const bodyStreamLen = bodyStream->Length();
+    if (bodyStreamLen > MAX_SUPPORTED_BODYSTREAM_SIZE)
     {
-      throw std::runtime_error("Record mode don't support recording a body stream greater than "
-                               "2Mb, update test to be LIVE only.");
+      // Avoid recording a long stream response, instead, let's use the first byte from the payload
+      // and record the size of the expected payload. This will work for Upload/Download big data
+
+      // Get the fist byte from request
+      auto requestStream = request.GetBodyStream();
+      requestStream->Rewind();
+      uint8_t symbol;
+      requestStream->Read(&symbol, 1, ctx);
+      requestStream->Rewind();
+
+      // Write body for recording
+      std::string bodyResponseStr(
+          RECORDING_BODY_STREAM_SENTINEL + std::to_string(bodyStreamLen) + "_"
+          + std::to_string(symbol));
+      std::vector<uint8_t> bodyResponseBytes(bodyResponseStr.begin(), bodyResponseStr.end());
+      response->SetBody(bodyResponseBytes);
+
+      // Let the response to own the body stream again
+      response->SetBodyStream(std::move(bodyStream));
     }
-    // SelfMemoryBodyStream would copy the response to memory
-    response->SetBody(bodyStream->ReadToEnd());
-    response->SetBodyStream(std::make_unique<SelfMemoryBodyStream>(response->GetBody()));
+    else
+    {
+      // SelfMemoryBodyStream would copy the response to memory
+      response->SetBody(bodyStream->ReadToEnd());
+      response->SetBodyStream(std::make_unique<WithMemoryBodyStream>(response->GetBody()));
+    }
   }
 
   // Capture response
