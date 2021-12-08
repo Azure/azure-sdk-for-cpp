@@ -812,14 +812,14 @@ TEST(DateTime, ToSystemClock)
     const auto maxTimePoint
         = std::chrono::system_clock::to_time_t(std::chrono::system_clock::time_point::max());
 
-    if (std::gmtime(&minTimePoint)->tm_year > 0001)
+    if (std::gmtime(&minTimePoint)->tm_year > (0001 - 1900))
     {
       EXPECT_THROW(
           static_cast<void>(static_cast<std::chrono::system_clock::time_point>(DateTime(0001))),
           std::invalid_argument);
     }
 
-    if (std::gmtime(&maxTimePoint)->tm_year < 9999)
+    if (std::gmtime(&maxTimePoint)->tm_year < (9999 - 1900))
     {
       EXPECT_THROW(
           static_cast<void>(static_cast<std::chrono::system_clock::time_point>(DateTime(9999))),
@@ -831,8 +831,8 @@ TEST(DateTime, ToSystemClock)
     const auto year2021 = std::chrono::system_clock::to_time_t(
         static_cast<std::chrono::system_clock::time_point>(DateTime(2021, 7, 8, 2, 34, 56)));
 
-    EXPECT_EQ(std::gmtime(&year2021)->tm_year, 2021);
-    EXPECT_EQ(std::gmtime(&year2021)->tm_mon, 7);
+    EXPECT_EQ(std::gmtime(&year2021)->tm_year, (2021 - 1900));
+    EXPECT_EQ(std::gmtime(&year2021)->tm_mon, 6);
     EXPECT_EQ(std::gmtime(&year2021)->tm_mday, 8);
     EXPECT_EQ(std::gmtime(&year2021)->tm_hour, 2);
     EXPECT_EQ(std::gmtime(&year2021)->tm_min, 34);
