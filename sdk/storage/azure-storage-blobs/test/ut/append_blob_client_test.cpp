@@ -24,7 +24,7 @@ namespace Azure { namespace Storage { namespace Test {
   {
 
     auto const testName(GetTestName());
-    auto client = GetAppendBlobClientClient(testName);
+    auto client = GetAppendBlobClient(testName);
     auto appendBlobClient = Blobs::AppendBlobClient::CreateFromConnectionString(
         StandardStorageConnectionString(),
         GetTestNameLowerCase(),
@@ -83,7 +83,7 @@ namespace Azure { namespace Storage { namespace Test {
   TEST_F(AppendBlobClientTest, CreateWithTags)
   {
     auto const testName(GetTestName());
-    auto client = GetAppendBlobClientClient(testName);
+    auto client = GetAppendBlobClient(testName);
     auto appendBlobClient = Blobs::AppendBlobClient::CreateFromConnectionString(
         StandardStorageConnectionString(),
         GetTestNameLowerCase(),
@@ -102,7 +102,7 @@ namespace Azure { namespace Storage { namespace Test {
   TEST_F(AppendBlobClientTest, AccessConditionLastModifiedTime)
   {
     auto const testName(GetTestName());
-    auto appendBlobClient = GetAppendBlobClientClient(testName);
+    auto appendBlobClient = GetAppendBlobClient(testName);
 
     enum class TimePoint
     {
@@ -153,7 +153,7 @@ namespace Azure { namespace Storage { namespace Test {
   TEST_F(AppendBlobClientTest, AccessConditionETag)
   {
     auto const testName(GetTestName());
-    auto client = GetAppendBlobClientClient(testName);
+    auto client = GetAppendBlobClient(testName);
     auto appendBlobClient = Blobs::AppendBlobClient::CreateFromConnectionString(
         StandardStorageConnectionString(),
         GetTestNameLowerCase(),
@@ -195,7 +195,7 @@ namespace Azure { namespace Storage { namespace Test {
   TEST_F(AppendBlobClientTest, AccessConditionLeaseId)
   {
     auto const testName(GetTestName());
-    auto client = GetAppendBlobClientClient(testName);
+    auto client = GetAppendBlobClient(testName);
     auto appendBlobClient = Blobs::AppendBlobClient::CreateFromConnectionString(
         StandardStorageConnectionString(),
         GetTestNameLowerCase(),
@@ -215,7 +215,7 @@ namespace Azure { namespace Storage { namespace Test {
   TEST_F(AppendBlobClientTest, Seal)
   {
     auto const testName(GetTestName());
-    auto client = GetAppendBlobClientClient(testName);
+    auto client = GetAppendBlobClient(testName);
     auto const extraBlobName = testName + "1";
     auto blobClient = Blobs::AppendBlobClient::CreateFromConnectionString(
         StandardStorageConnectionString(),
@@ -289,7 +289,7 @@ namespace Azure { namespace Storage { namespace Test {
   TEST_F(AppendBlobClientTest, CreateIfNotExists)
   {
     auto const testName(GetTestName());
-    auto client = GetAppendBlobClientClient(testName);
+    auto client = GetAppendBlobClient(testName);
     auto blobClient = Blobs::AppendBlobClient::CreateFromConnectionString(
         StandardStorageConnectionString(),
         GetTestNameLowerCase(),

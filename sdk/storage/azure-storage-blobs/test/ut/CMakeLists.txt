@@ -20,8 +20,8 @@ add_executable (
     blob_container_client_test.hpp
     blob_sas_test.cpp
     blob_service_client_test.cpp
-    # block_blob_client_test.cpp
-    # block_blob_client_test.hpp
+    block_blob_client_test.cpp
+    block_blob_client_test.hpp
     macro_guard.cpp
     # page_blob_client_test.cpp
     # page_blob_client_test.hpp

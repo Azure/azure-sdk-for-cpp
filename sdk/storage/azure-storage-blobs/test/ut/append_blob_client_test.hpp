@@ -19,8 +19,7 @@ namespace Azure { namespace Storage { namespace Test {
     virtual void SetUp() override;
     virtual void TearDown() override;
 
-    Azure::Storage::Blobs::AppendBlobClient const& GetAppendBlobClientClient(
-        std::string const& blobName)
+    Azure::Storage::Blobs::AppendBlobClient const& GetAppendBlobClient(std::string const& blobName)
     {
       // Create container
       auto const testName(GetTestNameLowerCase());
