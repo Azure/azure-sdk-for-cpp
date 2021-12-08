@@ -171,7 +171,7 @@ std::unique_ptr<RawResponse> PlaybackClient::Send(
                     .data());
 
             response->SetBodyStream(
-                std::make_unique<CircularBodyStream>(bodyStreamSize, bodyStreamFillWith));
+                std::make_unique<CircularBodyStream>(bodyStreamSize, static_cast<uint8_t>(bodyStreamFillWith)));
           }
           else
           {
