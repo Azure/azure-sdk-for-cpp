@@ -807,7 +807,8 @@ TEST(DateTime, TimeRoundtrip)
 
 TEST(DateTime, ToSystemClock)
 {
-  if (std::chrono::system_clock::time_point::min() > DateTime::time_point::min())
+  if (DateTime(std::chrono::system_clock::time_point::min())
+      > DateTime(DateTime::time_point::min()))
   {
     EXPECT_THROW(
         static_cast<void>(static_cast<std::chrono::system_clock::time_point>(
@@ -815,7 +816,8 @@ TEST(DateTime, ToSystemClock)
         std::invalid_argument);
   }
 
-  if (std::chrono::system_clock::time_point::max() < DateTime::time_point::max())
+  if (DateTime(std::chrono::system_clock::time_point::max())
+      < DateTime(DateTime::time_point::max()))
   {
     EXPECT_THROW(
         static_cast<void>(static_cast<std::chrono::system_clock::time_point>(
