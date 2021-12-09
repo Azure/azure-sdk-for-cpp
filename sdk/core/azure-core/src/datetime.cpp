@@ -26,7 +26,8 @@ DateTime GetSystemClockEpoch()
 // instead.
 #pragma warning(disable : 4996)
 #endif
-  auto const systemClockEpochUtcStructTm = std::gmtime(&systemClockEpochTimeT);
+  struct tm tmpBufSystemClockEpochUtcStructTm;
+  auto const systemClockEpochUtcStructTm = gmtime_r(&systemClockEpochTimeT, &tmpBufSystemClockEpochUtcStructTm);
 #ifdef _MSC_VER
 #pragma warning(pop)
 #endif
