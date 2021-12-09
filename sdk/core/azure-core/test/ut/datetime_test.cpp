@@ -6,7 +6,9 @@
 #include <azure/core/datetime.hpp>
 
 #include <chrono>
+#include <ctime>
 #include <limits>
+#include <type_traits>
 
 using namespace Azure;
 
@@ -803,51 +805,46 @@ TEST(DateTime, TimeRoundtrip)
   TestDateTimeRoundtrip<DateTime::TimeFractionFormat::AllDigits>("2021-02-05T20:00:00.0000000Z");
 }
 
-namespace {
-std::tm GmTime(std::chrono::system_clock::time_point const& tp)
+TEST(DateTime, ToSystemClock)
 {
-  const auto timeT = std::chrono::system_clock::to_time_t(tp);
+  if (std::chrono::system_clock::time_point::min() > DateTime::time_point::min())
+  {
+    EXPECT_THROW(
+        static_cast<void>(static_cast<std::chrono::system_clock::time_point>(
+            DateTime(DateTime::time_point::min()))),
+        std::invalid_argument);
+  }
+
+  if (std::chrono::system_clock::time_point::max() < DateTime::time_point::max())
+  {
+    EXPECT_THROW(
+        static_cast<void>(static_cast<std::chrono::system_clock::time_point>(
+            DateTime(DateTime::time_point::max()))),
+        std::invalid_argument);
+  }
+
+  {
+    auto const tt = std::chrono::system_clock::to_time_t(
+        static_cast<std::chrono::system_clock::time_point>(DateTime(2021, 7, 8, 15, 34, 56)));
+
 #ifdef _MSC_VER
 #pragma warning(push)
 // warning C4996: 'gmtime': This function or variable may be unsafe. Consider using gmtime_s
 // instead.
 #pragma warning(disable : 4996)
 #endif
-  return *std::gmtime(&timeT);
+    auto const tm = std::gmtime(&tt);
 #ifdef _MSC_VER
 #pragma warning(pop)
 #endif
-}
-} // namespace
 
-TEST(DateTime, ToSystemClock)
-{
-  constexpr auto StdTmStartYear = 1900; // https://en.cppreference.com/w/cpp/chrono/c/tm
-
-  if (GmTime(std::chrono::system_clock::time_point::min()).tm_year > (0001 - StdTmStartYear))
-  {
-    EXPECT_THROW(
-        static_cast<void>(static_cast<std::chrono::system_clock::time_point>(DateTime(0001))),
-        std::invalid_argument);
-  }
-
-  if (GmTime(std::chrono::system_clock::time_point::max()).tm_year < (9999 - StdTmStartYear))
-  {
-    EXPECT_THROW(
-        static_cast<void>(static_cast<std::chrono::system_clock::time_point>(DateTime(9999))),
-        std::invalid_argument);
-  }
-
-  {
-    auto tm = GmTime(
-        static_cast<std::chrono::system_clock::time_point>(DateTime(2021, 7, 8, 2, 34, 56)));
-
-    EXPECT_EQ(tm.tm_year, (2021 - StdTmStartYear));
-    EXPECT_EQ(tm.tm_mon, 6); // std::tm::tm_mon is 0-based
-    EXPECT_EQ(tm.tm_mday, 8);
-    EXPECT_EQ(tm.tm_hour, 2);
-    EXPECT_EQ(tm.tm_min, 34);
-    EXPECT_EQ(tm.tm_sec, 56);
+    // https://en.cppreference.com/w/cpp/chrono/c/tm
+    EXPECT_EQ(tm->tm_year, (2021 - 1900)); // std::tm::tm_year is 1900-based.
+    EXPECT_EQ(tm->tm_mon, 6); // std::tm::tm_mon is 0-based.
+    EXPECT_EQ(tm->tm_mday, 8);
+    EXPECT_EQ(tm->tm_hour, 15);
+    EXPECT_EQ(tm->tm_min, 34);
+    EXPECT_EQ(tm->tm_sec, 56);
   }
 }
 
