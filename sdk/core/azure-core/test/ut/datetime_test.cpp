@@ -817,7 +817,7 @@ TEST(DateTime, ToSystemClock)
   }
 
   if (DateTime(std::chrono::system_clock::time_point::max())
-      < DateTime(DateTime::time_point::max()))
+      > DateTime(DateTime::time_point::max()))
   {
     EXPECT_THROW(
         static_cast<void>(static_cast<std::chrono::system_clock::time_point>(
