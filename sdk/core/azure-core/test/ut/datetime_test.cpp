@@ -375,6 +375,18 @@ TEST(DateTime, ParseTimeRfc3339BoundaryCases)
       "2038-01-19T03:13:07-00:01",
       "2038-01-19T03:14:07Z"); // INT_MAX after subtacting 1
   TestDateTimeRoundtrip("2038-01-19T03:14:07-00:00", "2038-01-19T03:14:07Z");
+
+  // No ':' in time zone offset
+  EXPECT_THROW(
+      DateTime::Parse("2001-01-01T00:00:00+12345", DateTime::DateFormat::Rfc3339),
+      std::invalid_argument);
+}
+
+TEST(DateTime, ParseUnrecognizedFormat)
+{
+  EXPECT_THROW(
+      DateTime::Parse("2001-01-01T00:00:00", static_cast<DateTime::DateFormat>(42)),
+      std::invalid_argument);
 }
 
 TEST(DateTime, ParseTimeRfc3339UsesEachTimezoneDigit)
@@ -854,4 +866,11 @@ TEST(DateTime, OutOfToStringRange)
 {
   EXPECT_THROW(static_cast<void>(DateTime(0000).ToString()), std::invalid_argument);
   EXPECT_THROW(static_cast<void>(DateTime(9999 + 1).ToString()), std::invalid_argument);
+}
+
+TEST(DateTime, LeapYear)
+{
+  EXPECT_NO_THROW(static_cast<void>(DateTime(2021, 1, 29)));
+  EXPECT_NO_THROW(static_cast<void>(DateTime(2021, 2, 28)));
+  EXPECT_THROW(static_cast<void>(DateTime(2021, 2, 29)), std::invalid_argument);
 }
