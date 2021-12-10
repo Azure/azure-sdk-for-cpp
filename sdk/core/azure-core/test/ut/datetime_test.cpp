@@ -807,7 +807,7 @@ TEST(DateTime, ParseRoundUpInvalidDate)
 {
   EXPECT_THROW(
       static_cast<void>(
-          DateTime::Parse("9999-12-31T23:59:01-00:01", DateTime::DateFormat::Rfc3339)),
+          DateTime::Parse("9999-12-31T23:59:00-00:01", DateTime::DateFormat::Rfc3339)),
       std::invalid_argument);
 
   EXPECT_THROW(
