@@ -70,7 +70,7 @@ TEST(Pipeline, AdditionalPolicies)
     std::unique_ptr<Azure::Core::Http::RawResponse> Send(
         Azure::Core::Http::Request& request,
         Azure::Core::Http::Policies::NextHttpPolicy nextPolicy,
-        Azure::Core::Context const& context) const
+        Azure::Core::Context const& context) const override
     {
       return nextPolicy.Send(request, context);
     }
