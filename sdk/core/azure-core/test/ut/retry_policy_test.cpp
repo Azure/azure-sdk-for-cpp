@@ -767,14 +767,14 @@ TEST(RetryPolicy, LogMessages)
     using namespace std::chrono_literals;
     RetryOptions const retryOptions{5, 10s, 5min, {HttpStatusCode::InternalServerError}};
 
-    auto nrequest = 0;
+    auto requestNumber = 0;
 
     std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>> policies;
     policies.emplace_back(std::make_unique<RetryPolicyTest>(retryOptions, nullptr, nullptr));
     policies.emplace_back(std::make_unique<TestTransportPolicy>([&]() {
-      ++nrequest;
+      ++requestNumber;
 
-      if (nrequest == 1)
+      if (requestNumber == 1)
       {
         throw TransportException("Cable Unplugged");
       }
@@ -782,7 +782,8 @@ TEST(RetryPolicy, LogMessages)
       return std::make_unique<RawResponse>(
           1,
           1,
-          nrequest == 2 ? HttpStatusCode::InternalServerError : HttpStatusCode::ServiceUnavailable,
+          requestNumber == 2 ? HttpStatusCode::InternalServerError
+                             : HttpStatusCode::ServiceUnavailable,
           "Test");
     }));
 
