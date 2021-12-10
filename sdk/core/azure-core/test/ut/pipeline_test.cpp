@@ -101,9 +101,10 @@ TEST(Pipeline, AdditionalPolicies)
         {&options.PerRetryPolicies, &perRetryClientPolicyCloneCount},
     };
 
-    for (auto i = 0; i < initializations.size(); ++i)
+    const int size = static_cast<int>(initializations.size());
+    for (int i = 0; i < size; ++i)
     {
-      for (auto j = 0; j < i + 2; ++j)
+      for (int j = 0; j < i + 2; ++j)
       {
         initializations[i].Policies->emplace_back(
             std::make_unique<TestPolicy>(initializations[i].Counter));
