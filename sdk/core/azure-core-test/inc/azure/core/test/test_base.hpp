@@ -154,9 +154,9 @@ namespace Azure { namespace Core { namespace Test {
     // Reads the current test instance name.
     // Name gets also sanitized (special chars are removed) to avoid issues when recording or
     // creating
-    std::string GetTestNameLowerCase()
+    std::string GetTestNameLowerCase(bool sanitize = false)
     {
-      std::string testName(GetTestName());
+      std::string testName(GetTestName(sanitize));
       return Azure::Core::_internal::StringExtensions::ToLower(testName);
     }
 
@@ -198,6 +198,15 @@ namespace Azure { namespace Core { namespace Test {
       {
         current = 0ms;
       }
+    }
+
+    std::chrono::seconds PollInterval(std::chrono::seconds const& seconds = 1s)
+    {
+      if (m_testContext.IsPlaybackMode())
+      {
+        return 0s;
+      }
+      return seconds;
     }
 
     // Util for tests to introduce delays

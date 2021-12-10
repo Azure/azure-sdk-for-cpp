@@ -22,7 +22,7 @@ namespace Azure { namespace Storage { namespace Test {
     Azure::Storage::Blobs::BlockBlobClient const& GetBlockBlobClient(std::string const& blobName)
     {
       // Create container
-      auto const testName(GetTestNameLowerCase());
+      auto const testName(GetTestNameLowerCase(true));
       auto containerClient = GetBlobContainerClient(testName);
       containerClient.Create();
 
@@ -30,6 +30,17 @@ namespace Azure { namespace Storage { namespace Test {
           containerClient.GetBlockBlobClient(blobName));
 
       return *m_blockBlobClient;
+    }
+
+    std::unique_ptr<Azure::Storage::Blobs::BlobClient> GetBlobClient(std::string const& blobName)
+    {
+      // Create container
+      auto const testName(GetTestNameLowerCase());
+      auto containerClient = GetBlobContainerClient(testName);
+      containerClient.CreateIfNotExists();
+
+      return std::make_unique<Azure::Storage::Blobs::BlobClient>(
+          containerClient.GetBlobClient(blobName));
     }
 
     void UploadBlockBlob(unsigned long long blobSize = 1_KB)

@@ -89,9 +89,12 @@ std::unique_ptr<RawResponse> RecordNetworkCallPolicy::Send(
     }
   }
 
-  // BodyStreams are currently supported ony up to 1Mb
+  // BodyStreams are currently supported ony up to MAX_SUPPORTED_BODYSTREAM_SIZE
   // The content is downloaded to the response body and the returned body stream from playback will
   // stream from the memory buffer instead of the network.
+  // When bigger than MAX_SUPPORTED_BODYSTREAM_SIZE, the recording will use the symbol captured from
+  // the last request with a bodyStream as a sentinel to tell the playback transport adapter how to
+  // generate a bodyStream
   auto bodyStream = response->ExtractBodyStream();
   if (bodyStream != nullptr)
   {
@@ -100,18 +103,10 @@ std::unique_ptr<RawResponse> RecordNetworkCallPolicy::Send(
     {
       // Avoid recording a long stream response, instead, let's use the first byte from the payload
       // and record the size of the expected payload. This will work for Upload/Download big data
-
-      // Get the fist byte from request
-      auto requestStream = request.GetBodyStream();
-      requestStream->Rewind();
-      uint8_t symbol;
-      requestStream->Read(&symbol, 1, ctx);
-      requestStream->Rewind();
-
       // Write body for recording
       std::string bodyResponseStr(
           RECORDING_BODY_STREAM_SENTINEL + std::to_string(bodyStreamLen) + "_"
-          + std::to_string(symbol));
+          + std::to_string(*m_symbol));
       std::vector<uint8_t> bodyResponseBytes(bodyResponseStr.begin(), bodyResponseStr.end());
       response->SetBody(bodyResponseBytes);
 

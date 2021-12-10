@@ -1,0 +1,691 @@
+{
+  "networkCallRecords": [
+    {
+      "Headers": {
+        "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Linux 5.4.0-1063-azure x86_64 #66~18.04.1-Ubuntu SMP Thu Oct 21 09:59:28 UTC 2021)",
+        "x-ms-client-request-id": "e4bd2969-38b8-420b-7b41-9139ce2eb8cf",
+        "x-ms-version": "2020-02-10"
+      },
+      "Method": "PUT",
+      "Response": {
+        "BODY": "",
+        "REASON_PHRASE": "Created",
+        "STATUS_CODE": "201",
+        "content-length": "0",
+        "date": "Thu, 09 Dec 2021 22:36:33 GMT",
+        "etag": "\"0x8D9BB645A1A1606\"",
+        "last-modified": "Thu, 09 Dec 2021 22:36:33 GMT",
+        "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
+        "x-ms-client-request-id": "e4bd2969-38b8-420b-7b41-9139ce2eb8cf",
+        "x-ms-request-id": "677fd71b-a01e-0045-1e4d-ed3167000000",
+        "x-ms-version": "2020-02-10"
+      },
+      "Url": "https://REDACTED.blob.core.windows.net/snapshotversions?restype=container"
+    },
+    {
+      "Headers": {
+        "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Linux 5.4.0-1063-azure x86_64 #66~18.04.1-Ubuntu SMP Thu Oct 21 09:59:28 UTC 2021)",
+        "x-ms-client-request-id": "b522b8f2-a606-4de6-5b14-12df0bb68daa",
+        "x-ms-version": "2020-02-10"
+      },
+      "Method": "PUT",
+      "Response": {
+        "BODY": "",
+        "REASON_PHRASE": "Created",
+        "STATUS_CODE": "201",
+        "content-length": "0",
+        "content-md5": "IFj7U/ZD/NWKjYOgVUI5Kw==",
+        "date": "Thu, 09 Dec 2021 22:36:33 GMT",
+        "etag": "\"0x8D9BB645A29C680\"",
+        "last-modified": "Thu, 09 Dec 2021 22:36:33 GMT",
+        "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
+        "x-ms-client-request-id": "b522b8f2-a606-4de6-5b14-12df0bb68daa",
+        "x-ms-content-crc64": "DU01Kv81ewI=",
+        "x-ms-request-id": "677fd720-a01e-0045-214d-ed3167000000",
+        "x-ms-request-server-encrypted": "true",
+        "x-ms-version": "2020-02-10",
+        "x-ms-version-id": "2021-12-09T22:36:33.3446784Z"
+      },
+      "Url": "https://REDACTED.blob.core.windows.net/snapshotversions/SnapShotVersions"
+    },
+    {
+      "Headers": {
+        "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Linux 5.4.0-1063-azure x86_64 #66~18.04.1-Ubuntu SMP Thu Oct 21 09:59:28 UTC 2021)",
+        "x-ms-client-request-id": "166184ac-8daf-4fd8-77ac-8aa790d23f29",
+        "x-ms-version": "2020-02-10"
+      },
+      "Method": "HEAD",
+      "Response": {
+        "BODY": "",
+        "REASON_PHRASE": "OK",
+        "STATUS_CODE": "200",
+        "accept-ranges": "bytes",
+        "cache-control": "no-cache",
+        "content-disposition": "attachment",
+        "content-encoding": "identity",
+        "content-language": "en-US",
+        "content-length": "8388608",
+        "content-md5": "IFj7U/ZD/NWKjYOgVUI5Kw==",
+        "content-type": "application/x-binary",
+        "date": "Thu, 09 Dec 2021 22:36:33 GMT",
+        "etag": "\"0x8D9BB645A29C680\"",
+        "last-modified": "Thu, 09 Dec 2021 22:36:33 GMT",
+        "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
+        "x-ms-access-tier": "Hot",
+        "x-ms-access-tier-change-time": "Thu, 09 Dec 2021 22:36:33 GMT",
+        "x-ms-blob-type": "BlockBlob",
+        "x-ms-client-request-id": "166184ac-8daf-4fd8-77ac-8aa790d23f29",
+        "x-ms-creation-time": "Thu, 09 Dec 2021 22:36:33 GMT",
+        "x-ms-is-current-version": "true",
+        "x-ms-lease-state": "available",
+        "x-ms-lease-status": "unlocked",
+        "x-ms-meta-key1": "V1",
+        "x-ms-meta-key2": "Value2",
+        "x-ms-request-id": "677fd728-a01e-0045-284d-ed3167000000",
+        "x-ms-server-encrypted": "true",
+        "x-ms-version": "2020-02-10",
+        "x-ms-version-id": "2021-12-09T22:36:33.3446784Z"
+      },
+      "Url": "https://REDACTED.blob.core.windows.net/snapshotversions/SnapShotVersions"
+    },
+    {
+      "Headers": {
+        "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Linux 5.4.0-1063-azure x86_64 #66~18.04.1-Ubuntu SMP Thu Oct 21 09:59:28 UTC 2021)",
+        "x-ms-client-request-id": "3491ff40-175b-4e9b-46c1-c67d461fd0aa",
+        "x-ms-version": "2020-02-10"
+      },
+      "Method": "PUT",
+      "Response": {
+        "BODY": "",
+        "REASON_PHRASE": "Created",
+        "STATUS_CODE": "201",
+        "content-length": "0",
+        "date": "Thu, 09 Dec 2021 22:36:33 GMT",
+        "etag": "\"0x8D9BB645A29C680\"",
+        "last-modified": "Thu, 09 Dec 2021 22:36:33 GMT",
+        "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
+        "x-ms-client-request-id": "3491ff40-175b-4e9b-46c1-c67d461fd0aa",
+        "x-ms-request-id": "677fd72b-a01e-0045-2b4d-ed3167000000",
+        "x-ms-request-server-encrypted": "false",
+        "x-ms-snapshot": "2021-12-09T22:36:33.3676670Z",
+        "x-ms-version": "2020-02-10",
+        "x-ms-version-id": "2021-12-09T22:36:33.3686670Z"
+      },
+      "Url": "https://REDACTED.blob.core.windows.net/snapshotversions/SnapShotVersions?comp=snapshot"
+    },
+    {
+      "Headers": {
+        "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Linux 5.4.0-1063-azure x86_64 #66~18.04.1-Ubuntu SMP Thu Oct 21 09:59:28 UTC 2021)",
+        "x-ms-client-request-id": "7650af42-e7a1-432b-6855-32afdabb2826",
+        "x-ms-version": "2020-02-10"
+      },
+      "Method": "GET",
+      "Response": {
+        "BODY": "__bodyStream__8388608_120",
+        "REASON_PHRASE": "OK",
+        "STATUS_CODE": "200",
+        "accept-ranges": "bytes",
+        "cache-control": "no-cache",
+        "content-disposition": "attachment",
+        "content-encoding": "identity",
+        "content-language": "en-US",
+        "content-length": "8388608",
+        "content-md5": "IFj7U/ZD/NWKjYOgVUI5Kw==",
+        "content-type": "application/x-binary",
+        "date": "Thu, 09 Dec 2021 22:36:33 GMT",
+        "etag": "\"0x8D9BB645A29C680\"",
+        "last-modified": "Thu, 09 Dec 2021 22:36:33 GMT",
+        "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
+        "x-ms-blob-type": "BlockBlob",
+        "x-ms-client-request-id": "7650af42-e7a1-432b-6855-32afdabb2826",
+        "x-ms-creation-time": "Thu, 09 Dec 2021 22:36:33 GMT",
+        "x-ms-meta-key1": "V1",
+        "x-ms-meta-key2": "Value2",
+        "x-ms-request-id": "677fd72d-a01e-0045-2d4d-ed3167000000",
+        "x-ms-server-encrypted": "true",
+        "x-ms-version": "2020-02-10"
+      },
+      "Url": "https://REDACTED.blob.core.windows.net/snapshotversions/SnapShotVersions?snapshot=2021-12-09T22:36:33.3676670Z"
+    },
+    {
+      "Headers": {
+        "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Linux 5.4.0-1063-azure x86_64 #66~18.04.1-Ubuntu SMP Thu Oct 21 09:59:28 UTC 2021)",
+        "x-ms-client-request-id": "c9a8d0e0-f3ba-4f34-4bfd-175124c486ba",
+        "x-ms-version": "2020-02-10"
+      },
+      "Method": "HEAD",
+      "Response": {
+        "BODY": "",
+        "REASON_PHRASE": "OK",
+        "STATUS_CODE": "200",
+        "accept-ranges": "bytes",
+        "cache-control": "no-cache",
+        "content-disposition": "attachment",
+        "content-encoding": "identity",
+        "content-language": "en-US",
+        "content-length": "8388608",
+        "content-md5": "IFj7U/ZD/NWKjYOgVUI5Kw==",
+        "content-type": "application/x-binary",
+        "date": "Thu, 09 Dec 2021 22:36:33 GMT",
+        "etag": "\"0x8D9BB645A29C680\"",
+        "last-modified": "Thu, 09 Dec 2021 22:36:33 GMT",
+        "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
+        "x-ms-access-tier": "Hot",
+        "x-ms-access-tier-change-time": "Thu, 09 Dec 2021 22:36:33 GMT",
+        "x-ms-blob-type": "BlockBlob",
+        "x-ms-client-request-id": "c9a8d0e0-f3ba-4f34-4bfd-175124c486ba",
+        "x-ms-creation-time": "Thu, 09 Dec 2021 22:36:33 GMT",
+        "x-ms-meta-key1": "V1",
+        "x-ms-meta-key2": "Value2",
+        "x-ms-request-id": "677fd744-a01e-0045-414d-ed3167000000",
+        "x-ms-server-encrypted": "true",
+        "x-ms-version": "2020-02-10"
+      },
+      "Url": "https://REDACTED.blob.core.windows.net/snapshotversions/SnapShotVersions?snapshot=2021-12-09T22:36:33.3676670Z"
+    },
+    {
+      "Headers": {
+        "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Linux 5.4.0-1063-azure x86_64 #66~18.04.1-Ubuntu SMP Thu Oct 21 09:59:28 UTC 2021)",
+        "x-ms-client-request-id": "115407b4-6b65-4a17-4473-15076532abb6",
+        "x-ms-version": "2020-02-10"
+      },
+      "Method": "HEAD",
+      "Response": {
+        "BODY": "",
+        "REASON_PHRASE": "OK",
+        "STATUS_CODE": "200",
+        "accept-ranges": "bytes",
+        "cache-control": "no-cache",
+        "content-disposition": "attachment",
+        "content-encoding": "identity",
+        "content-language": "en-US",
+        "content-length": "8388608",
+        "content-md5": "IFj7U/ZD/NWKjYOgVUI5Kw==",
+        "content-type": "application/x-binary",
+        "date": "Thu, 09 Dec 2021 22:36:33 GMT",
+        "etag": "\"0x8D9BB645A29C680\"",
+        "last-modified": "Thu, 09 Dec 2021 22:36:33 GMT",
+        "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
+        "x-ms-access-tier": "Hot",
+        "x-ms-access-tier-change-time": "Thu, 09 Dec 2021 22:36:33 GMT",
+        "x-ms-blob-type": "BlockBlob",
+        "x-ms-client-request-id": "115407b4-6b65-4a17-4473-15076532abb6",
+        "x-ms-creation-time": "Thu, 09 Dec 2021 22:36:33 GMT",
+        "x-ms-meta-key1": "V1",
+        "x-ms-meta-key2": "Value2",
+        "x-ms-request-id": "677fd746-a01e-0045-434d-ed3167000000",
+        "x-ms-server-encrypted": "true",
+        "x-ms-version": "2020-02-10"
+      },
+      "Url": "https://REDACTED.blob.core.windows.net/snapshotversions/SnapShotVersions?snapshot=2021-12-09T22:36:33.3676670Z"
+    },
+    {
+      "Headers": {
+        "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Linux 5.4.0-1063-azure x86_64 #66~18.04.1-Ubuntu SMP Thu Oct 21 09:59:28 UTC 2021)",
+        "x-ms-client-request-id": "e02a23d5-6889-40b4-5a0a-fb5af12d86ed",
+        "x-ms-version": "2020-02-10"
+      },
+      "Method": "GET",
+      "Response": {
+        "BODY": "__bodyStream__8388608_120",
+        "REASON_PHRASE": "OK",
+        "STATUS_CODE": "200",
+        "accept-ranges": "bytes",
+        "cache-control": "no-cache",
+        "content-disposition": "attachment",
+        "content-encoding": "identity",
+        "content-language": "en-US",
+        "content-length": "8388608",
+        "content-md5": "IFj7U/ZD/NWKjYOgVUI5Kw==",
+        "content-type": "application/x-binary",
+        "date": "Thu, 09 Dec 2021 22:36:33 GMT",
+        "etag": "\"0x8D9BB645A29C680\"",
+        "last-modified": "Thu, 09 Dec 2021 22:36:33 GMT",
+        "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
+        "x-ms-blob-type": "BlockBlob",
+        "x-ms-client-request-id": "e02a23d5-6889-40b4-5a0a-fb5af12d86ed",
+        "x-ms-creation-time": "Thu, 09 Dec 2021 22:36:33 GMT",
+        "x-ms-is-current-version": "true",
+        "x-ms-meta-key1": "V1",
+        "x-ms-meta-key2": "Value2",
+        "x-ms-request-id": "677fd748-a01e-0045-444d-ed3167000000",
+        "x-ms-server-encrypted": "true",
+        "x-ms-version": "2020-02-10",
+        "x-ms-version-id": "2021-12-09T22:36:33.3686670Z"
+      },
+      "Url": "https://REDACTED.blob.core.windows.net/snapshotversions/SnapShotVersions?versionid=2021-12-09T22:36:33.3686670Z"
+    },
+    {
+      "Headers": {
+        "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Linux 5.4.0-1063-azure x86_64 #66~18.04.1-Ubuntu SMP Thu Oct 21 09:59:28 UTC 2021)",
+        "x-ms-client-request-id": "4115f8bb-39c7-4267-5edb-820c5de5043b",
+        "x-ms-version": "2020-02-10"
+      },
+      "Method": "HEAD",
+      "Response": {
+        "BODY": "",
+        "REASON_PHRASE": "OK",
+        "STATUS_CODE": "200",
+        "accept-ranges": "bytes",
+        "cache-control": "no-cache",
+        "content-disposition": "attachment",
+        "content-encoding": "identity",
+        "content-language": "en-US",
+        "content-length": "8388608",
+        "content-md5": "IFj7U/ZD/NWKjYOgVUI5Kw==",
+        "content-type": "application/x-binary",
+        "date": "Thu, 09 Dec 2021 22:36:33 GMT",
+        "etag": "\"0x8D9BB645A29C680\"",
+        "last-modified": "Thu, 09 Dec 2021 22:36:33 GMT",
+        "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
+        "x-ms-access-tier": "Hot",
+        "x-ms-access-tier-change-time": "Thu, 09 Dec 2021 22:36:33 GMT",
+        "x-ms-blob-type": "BlockBlob",
+        "x-ms-client-request-id": "4115f8bb-39c7-4267-5edb-820c5de5043b",
+        "x-ms-creation-time": "Thu, 09 Dec 2021 22:36:33 GMT",
+        "x-ms-is-current-version": "true",
+        "x-ms-meta-key1": "V1",
+        "x-ms-meta-key2": "Value2",
+        "x-ms-request-id": "677fd751-a01e-0045-4d4d-ed3167000000",
+        "x-ms-server-encrypted": "true",
+        "x-ms-version": "2020-02-10",
+        "x-ms-version-id": "2021-12-09T22:36:33.3686670Z"
+      },
+      "Url": "https://REDACTED.blob.core.windows.net/snapshotversions/SnapShotVersions?versionid=2021-12-09T22:36:33.3686670Z"
+    },
+    {
+      "Headers": {
+        "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Linux 5.4.0-1063-azure x86_64 #66~18.04.1-Ubuntu SMP Thu Oct 21 09:59:28 UTC 2021)",
+        "x-ms-client-request-id": "1c01b443-790b-420c-5807-a4b8d3384df9",
+        "x-ms-version": "2020-02-10"
+      },
+      "Method": "HEAD",
+      "Response": {
+        "BODY": "",
+        "REASON_PHRASE": "OK",
+        "STATUS_CODE": "200",
+        "accept-ranges": "bytes",
+        "cache-control": "no-cache",
+        "content-disposition": "attachment",
+        "content-encoding": "identity",
+        "content-language": "en-US",
+        "content-length": "8388608",
+        "content-md5": "IFj7U/ZD/NWKjYOgVUI5Kw==",
+        "content-type": "application/x-binary",
+        "date": "Thu, 09 Dec 2021 22:36:33 GMT",
+        "etag": "\"0x8D9BB645A29C680\"",
+        "last-modified": "Thu, 09 Dec 2021 22:36:33 GMT",
+        "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
+        "x-ms-access-tier": "Hot",
+        "x-ms-access-tier-change-time": "Thu, 09 Dec 2021 22:36:33 GMT",
+        "x-ms-blob-type": "BlockBlob",
+        "x-ms-client-request-id": "1c01b443-790b-420c-5807-a4b8d3384df9",
+        "x-ms-creation-time": "Thu, 09 Dec 2021 22:36:33 GMT",
+        "x-ms-is-current-version": "true",
+        "x-ms-meta-key1": "V1",
+        "x-ms-meta-key2": "Value2",
+        "x-ms-request-id": "677fd752-a01e-0045-4e4d-ed3167000000",
+        "x-ms-server-encrypted": "true",
+        "x-ms-version": "2020-02-10",
+        "x-ms-version-id": "2021-12-09T22:36:33.3686670Z"
+      },
+      "Url": "https://REDACTED.blob.core.windows.net/snapshotversions/SnapShotVersions?versionid=2021-12-09T22:36:33.3686670Z"
+    },
+    {
+      "Headers": {
+        "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Linux 5.4.0-1063-azure x86_64 #66~18.04.1-Ubuntu SMP Thu Oct 21 09:59:28 UTC 2021)",
+        "x-ms-client-request-id": "3bceca8b-8978-4186-4ced-02233c012833",
+        "x-ms-version": "2020-02-10"
+      },
+      "Method": "PUT",
+      "Response": {
+        "BODY": "﻿<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>InvalidQueryParameterValue</Code><Message>Value for one of the query parameters specified in the request URI is invalid.\nRequestId:677fd755-a01e-0045-514d-ed3167000000\nTime:2021-12-09T22:36:33.6236343Z</Message><QueryParameterName>snapshot</QueryParameterName><QueryParameterValue>2021-12-09T22:36:33.3676670Z</QueryParameterValue><Reason>This operation is only allowed on the root blob. Snapshot should not be provided.</Reason></Error>",
+        "REASON_PHRASE": "Value for one of the query parameters specified in the request URI is invalid.",
+        "STATUS_CODE": "400",
+        "content-length": "491",
+        "content-type": "application/xml",
+        "date": "Thu, 09 Dec 2021 22:36:33 GMT",
+        "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
+        "x-ms-client-request-id": "3bceca8b-8978-4186-4ced-02233c012833",
+        "x-ms-error-code": "InvalidQueryParameterValue",
+        "x-ms-request-id": "677fd755-a01e-0045-514d-ed3167000000",
+        "x-ms-version": "2020-02-10"
+      },
+      "Url": "https://REDACTED.blob.core.windows.net/snapshotversions/SnapShotVersions?snapshot=2021-12-09T22:36:33.3676670Z"
+    },
+    {
+      "Headers": {
+        "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Linux 5.4.0-1063-azure x86_64 #66~18.04.1-Ubuntu SMP Thu Oct 21 09:59:28 UTC 2021)",
+        "x-ms-client-request-id": "2d01f995-f153-4a7c-7f2f-451375d42696",
+        "x-ms-version": "2020-02-10"
+      },
+      "Method": "PUT",
+      "Response": {
+        "BODY": "﻿<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>InvalidQueryParameterValue</Code><Message>Value for one of the query parameters specified in the request URI is invalid.\nRequestId:719fe040-601e-0075-474d-ed8fa8000000\nTime:2021-12-09T22:36:33.8707040Z</Message><QueryParameterName>snapshot</QueryParameterName><QueryParameterValue>2021-12-09T22:36:33.3676670Z</QueryParameterValue><Reason>This operation is only allowed on the root blob. Snapshot should not be provided.</Reason></Error>",
+        "REASON_PHRASE": "Value for one of the query parameters specified in the request URI is invalid.",
+        "STATUS_CODE": "400",
+        "content-length": "491",
+        "content-type": "application/xml",
+        "date": "Thu, 09 Dec 2021 22:36:33 GMT",
+        "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
+        "x-ms-client-request-id": "2d01f995-f153-4a7c-7f2f-451375d42696",
+        "x-ms-error-code": "InvalidQueryParameterValue",
+        "x-ms-request-id": "719fe040-601e-0075-474d-ed8fa8000000",
+        "x-ms-version": "2020-02-10"
+      },
+      "Url": "https://REDACTED.blob.core.windows.net/snapshotversions/SnapShotVersions?comp=metadata&snapshot=2021-12-09T22:36:33.3676670Z"
+    },
+    {
+      "Headers": {
+        "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Linux 5.4.0-1063-azure x86_64 #66~18.04.1-Ubuntu SMP Thu Oct 21 09:59:28 UTC 2021)",
+        "x-ms-client-request-id": "99a5b35c-94ff-4603-72ac-2f0c8f53bb74",
+        "x-ms-version": "2020-02-10"
+      },
+      "Method": "PUT",
+      "Response": {
+        "BODY": "",
+        "REASON_PHRASE": "OK",
+        "STATUS_CODE": "200",
+        "content-length": "0",
+        "date": "Thu, 09 Dec 2021 22:36:33 GMT",
+        "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
+        "x-ms-client-request-id": "99a5b35c-94ff-4603-72ac-2f0c8f53bb74",
+        "x-ms-request-id": "a432303b-401e-0000-404d-ede484000000",
+        "x-ms-version": "2020-02-10"
+      },
+      "Url": "https://REDACTED.blob.core.windows.net/snapshotversions/SnapShotVersions?comp=tier&snapshot=2021-12-09T22:36:33.3676670Z"
+    },
+    {
+      "Headers": {
+        "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Linux 5.4.0-1063-azure x86_64 #66~18.04.1-Ubuntu SMP Thu Oct 21 09:59:28 UTC 2021)",
+        "x-ms-client-request-id": "953bb072-b9de-42cd-40dd-e7d259a017d0",
+        "x-ms-version": "2020-02-10"
+      },
+      "Method": "PUT",
+      "Response": {
+        "BODY": "﻿<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>InvalidQueryParameterValue</Code><Message>Value for one of the query parameters specified in the request URI is invalid.\nRequestId:a4323042-401e-0000-454d-ede484000000\nTime:2021-12-09T22:36:33.9974802Z</Message><QueryParameterName>snapshot</QueryParameterName><QueryParameterValue>2021-12-09T22:36:33.3676670Z</QueryParameterValue><Reason>This operation is only allowed on the root blob. Snapshot should not be provided.</Reason></Error>",
+        "REASON_PHRASE": "Value for one of the query parameters specified in the request URI is invalid.",
+        "STATUS_CODE": "400",
+        "content-length": "491",
+        "content-type": "application/xml",
+        "date": "Thu, 09 Dec 2021 22:36:33 GMT",
+        "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
+        "x-ms-client-request-id": "953bb072-b9de-42cd-40dd-e7d259a017d0",
+        "x-ms-error-code": "InvalidQueryParameterValue",
+        "x-ms-request-id": "a4323042-401e-0000-454d-ede484000000",
+        "x-ms-version": "2020-02-10"
+      },
+      "Url": "https://REDACTED.blob.core.windows.net/snapshotversions/SnapShotVersions?comp=properties&snapshot=2021-12-09T22:36:33.3676670Z"
+    },
+    {
+      "Headers": {
+        "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Linux 5.4.0-1063-azure x86_64 #66~18.04.1-Ubuntu SMP Thu Oct 21 09:59:28 UTC 2021)",
+        "x-ms-client-request-id": "88161d2b-e477-48f8-4e94-5e1641b3fad2",
+        "x-ms-version": "2020-02-10"
+      },
+      "Method": "PUT",
+      "Response": {
+        "BODY": "﻿<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>InvalidQueryParameterValue</Code><Message>Value for one of the query parameters specified in the request URI is invalid.\nRequestId:48acb300-801e-0030-554d-ed5a4b000000\nTime:2021-12-09T22:36:34.0379932Z</Message><QueryParameterName>versionid</QueryParameterName><QueryParameterValue>2021-12-09T22:36:33.3686670Z</QueryParameterValue><Reason>This operation is only allowed on the root blob. Version id should not be provided.</Reason></Error>",
+        "REASON_PHRASE": "Value for one of the query parameters specified in the request URI is invalid.",
+        "STATUS_CODE": "400",
+        "content-length": "494",
+        "content-type": "application/xml",
+        "date": "Thu, 09 Dec 2021 22:36:33 GMT",
+        "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
+        "x-ms-client-request-id": "88161d2b-e477-48f8-4e94-5e1641b3fad2",
+        "x-ms-error-code": "InvalidQueryParameterValue",
+        "x-ms-request-id": "48acb300-801e-0030-554d-ed5a4b000000",
+        "x-ms-version": "2020-02-10"
+      },
+      "Url": "https://REDACTED.blob.core.windows.net/snapshotversions/SnapShotVersions?versionid=2021-12-09T22:36:33.3686670Z"
+    },
+    {
+      "Headers": {
+        "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Linux 5.4.0-1063-azure x86_64 #66~18.04.1-Ubuntu SMP Thu Oct 21 09:59:28 UTC 2021)",
+        "x-ms-client-request-id": "4363b51a-8321-40a6-57c6-0a9ae3cf986d",
+        "x-ms-version": "2020-02-10"
+      },
+      "Method": "PUT",
+      "Response": {
+        "BODY": "﻿<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>InvalidQueryParameterValue</Code><Message>Value for one of the query parameters specified in the request URI is invalid.\nRequestId:6e11e416-f01e-0058-524d-ed3cdb000000\nTime:2021-12-09T22:36:34.0774253Z</Message><QueryParameterName>versionid</QueryParameterName><QueryParameterValue>2021-12-09T22:36:33.3686670Z</QueryParameterValue><Reason>This operation is only allowed on the root blob. Version id should not be provided.</Reason></Error>",
+        "REASON_PHRASE": "Value for one of the query parameters specified in the request URI is invalid.",
+        "STATUS_CODE": "400",
+        "content-length": "494",
+        "content-type": "application/xml",
+        "date": "Thu, 09 Dec 2021 22:36:33 GMT",
+        "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
+        "x-ms-client-request-id": "4363b51a-8321-40a6-57c6-0a9ae3cf986d",
+        "x-ms-error-code": "InvalidQueryParameterValue",
+        "x-ms-request-id": "6e11e416-f01e-0058-524d-ed3cdb000000",
+        "x-ms-version": "2020-02-10"
+      },
+      "Url": "https://REDACTED.blob.core.windows.net/snapshotversions/SnapShotVersions?comp=metadata&versionid=2021-12-09T22:36:33.3686670Z"
+    },
+    {
+      "Headers": {
+        "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Linux 5.4.0-1063-azure x86_64 #66~18.04.1-Ubuntu SMP Thu Oct 21 09:59:28 UTC 2021)",
+        "x-ms-client-request-id": "0da98bb4-b157-47da-66ae-8611680a4817",
+        "x-ms-version": "2020-02-10"
+      },
+      "Method": "PUT",
+      "Response": {
+        "BODY": "",
+        "REASON_PHRASE": "OK",
+        "STATUS_CODE": "200",
+        "content-length": "0",
+        "date": "Thu, 09 Dec 2021 22:36:33 GMT",
+        "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
+        "x-ms-client-request-id": "0da98bb4-b157-47da-66ae-8611680a4817",
+        "x-ms-request-id": "8413a8c2-d01e-003d-274d-ed929f000000",
+        "x-ms-version": "2020-02-10"
+      },
+      "Url": "https://REDACTED.blob.core.windows.net/snapshotversions/SnapShotVersions?comp=tier&versionid=2021-12-09T22:36:33.3686670Z"
+    },
+    {
+      "Headers": {
+        "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Linux 5.4.0-1063-azure x86_64 #66~18.04.1-Ubuntu SMP Thu Oct 21 09:59:28 UTC 2021)",
+        "x-ms-client-request-id": "97c57a75-0ccb-47cd-6a77-e8b59e826c11",
+        "x-ms-version": "2020-02-10"
+      },
+      "Method": "PUT",
+      "Response": {
+        "BODY": "﻿<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>InvalidQueryParameterValue</Code><Message>Value for one of the query parameters specified in the request URI is invalid.\nRequestId:8413a8cb-d01e-003d-2e4d-ed929f000000\nTime:2021-12-09T22:36:34.1680423Z</Message><QueryParameterName>versionid</QueryParameterName><QueryParameterValue>2021-12-09T22:36:33.3686670Z</QueryParameterValue><Reason>This operation is only allowed on the root blob. Version id should not be provided.</Reason></Error>",
+        "REASON_PHRASE": "Value for one of the query parameters specified in the request URI is invalid.",
+        "STATUS_CODE": "400",
+        "content-length": "494",
+        "content-type": "application/xml",
+        "date": "Thu, 09 Dec 2021 22:36:33 GMT",
+        "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
+        "x-ms-client-request-id": "97c57a75-0ccb-47cd-6a77-e8b59e826c11",
+        "x-ms-error-code": "InvalidQueryParameterValue",
+        "x-ms-request-id": "8413a8cb-d01e-003d-2e4d-ed929f000000",
+        "x-ms-version": "2020-02-10"
+      },
+      "Url": "https://REDACTED.blob.core.windows.net/snapshotversions/SnapShotVersions?comp=properties&versionid=2021-12-09T22:36:33.3686670Z"
+    },
+    {
+      "Headers": {
+        "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Linux 5.4.0-1063-azure x86_64 #66~18.04.1-Ubuntu SMP Thu Oct 21 09:59:28 UTC 2021)",
+        "x-ms-client-request-id": "33a09e7c-9c3d-44c9-7699-bae9b7c1f8d4",
+        "x-ms-version": "2020-02-10"
+      },
+      "Method": "PUT",
+      "Response": {
+        "BODY": "",
+        "REASON_PHRASE": "Created",
+        "STATUS_CODE": "201",
+        "content-length": "0",
+        "date": "Thu, 09 Dec 2021 22:36:34 GMT",
+        "etag": "\"0x8D9BB645AADFE5A\"",
+        "last-modified": "Thu, 09 Dec 2021 22:36:34 GMT",
+        "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
+        "x-ms-client-request-id": "33a09e7c-9c3d-44c9-7699-bae9b7c1f8d4",
+        "x-ms-request-id": "60a968e6-501e-0033-584d-edbb2f000000",
+        "x-ms-request-server-encrypted": "true",
+        "x-ms-snapshot": "2021-12-09T22:36:34.2111834Z",
+        "x-ms-version": "2020-02-10",
+        "x-ms-version-id": "2021-12-09T22:36:34.2121834Z"
+      },
+      "Url": "https://REDACTED.blob.core.windows.net/snapshotversions/SnapShotVersions?comp=snapshot"
+    },
+    {
+      "Headers": {
+        "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Linux 5.4.0-1063-azure x86_64 #66~18.04.1-Ubuntu SMP Thu Oct 21 09:59:28 UTC 2021)",
+        "x-ms-client-request-id": "36e2613a-c2dc-4312-5979-0c9e13301913",
+        "x-ms-version": "2020-02-10"
+      },
+      "Method": "HEAD",
+      "Response": {
+        "BODY": "",
+        "REASON_PHRASE": "OK",
+        "STATUS_CODE": "200",
+        "accept-ranges": "bytes",
+        "cache-control": "no-cache",
+        "content-disposition": "attachment",
+        "content-encoding": "identity",
+        "content-language": "en-US",
+        "content-length": "8388608",
+        "content-md5": "IFj7U/ZD/NWKjYOgVUI5Kw==",
+        "content-type": "application/x-binary",
+        "date": "Thu, 09 Dec 2021 22:36:34 GMT",
+        "etag": "\"0x8D9BB645AADFE5A\"",
+        "last-modified": "Thu, 09 Dec 2021 22:36:34 GMT",
+        "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
+        "x-ms-access-tier": "Cool",
+        "x-ms-access-tier-change-time": "Thu, 09 Dec 2021 22:36:34 GMT",
+        "x-ms-blob-type": "BlockBlob",
+        "x-ms-client-request-id": "36e2613a-c2dc-4312-5979-0c9e13301913",
+        "x-ms-creation-time": "Thu, 09 Dec 2021 22:36:33 GMT",
+        "x-ms-meta-snapshotkey1": "snapshotvalue1",
+        "x-ms-meta-snapshotkey2": "SNAPSHOTVALUE2",
+        "x-ms-request-id": "60a968e9-501e-0033-5a4d-edbb2f000000",
+        "x-ms-server-encrypted": "true",
+        "x-ms-version": "2020-02-10"
+      },
+      "Url": "https://REDACTED.blob.core.windows.net/snapshotversions/SnapShotVersions?snapshot=2021-12-09T22:36:34.2111834Z"
+    },
+    {
+      "Headers": {
+        "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Linux 5.4.0-1063-azure x86_64 #66~18.04.1-Ubuntu SMP Thu Oct 21 09:59:28 UTC 2021)",
+        "x-ms-client-request-id": "26b20e29-2e22-40a1-7a89-46b062f8aad8",
+        "x-ms-version": "2020-02-10"
+      },
+      "Method": "DELETE",
+      "Response": {
+        "BODY": "",
+        "REASON_PHRASE": "Accepted",
+        "STATUS_CODE": "202",
+        "content-length": "0",
+        "date": "Thu, 09 Dec 2021 22:36:34 GMT",
+        "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
+        "x-ms-client-request-id": "26b20e29-2e22-40a1-7a89-46b062f8aad8",
+        "x-ms-delete-type-permanent": "false",
+        "x-ms-request-id": "60a968eb-501e-0033-5b4d-edbb2f000000",
+        "x-ms-version": "2020-02-10"
+      },
+      "Url": "https://REDACTED.blob.core.windows.net/snapshotversions/SnapShotVersions?snapshot=2021-12-09T22:36:33.3676670Z"
+    },
+    {
+      "Headers": {
+        "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Linux 5.4.0-1063-azure x86_64 #66~18.04.1-Ubuntu SMP Thu Oct 21 09:59:28 UTC 2021)",
+        "x-ms-client-request-id": "8c373ef1-dc7e-4c58-5041-17f15947eef5",
+        "x-ms-version": "2020-02-10"
+      },
+      "Method": "DELETE",
+      "Response": {
+        "BODY": "",
+        "REASON_PHRASE": "Accepted",
+        "STATUS_CODE": "202",
+        "content-length": "0",
+        "date": "Thu, 09 Dec 2021 22:36:34 GMT",
+        "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
+        "x-ms-client-request-id": "8c373ef1-dc7e-4c58-5041-17f15947eef5",
+        "x-ms-delete-type-permanent": "false",
+        "x-ms-request-id": "60a968ec-501e-0033-5c4d-edbb2f000000",
+        "x-ms-version": "2020-02-10"
+      },
+      "Url": "https://REDACTED.blob.core.windows.net/snapshotversions/SnapShotVersions?snapshot=2021-12-09T22:36:34.2111834Z"
+    },
+    {
+      "Headers": {
+        "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Linux 5.4.0-1063-azure x86_64 #66~18.04.1-Ubuntu SMP Thu Oct 21 09:59:28 UTC 2021)",
+        "x-ms-client-request-id": "46af664f-e001-469a-7be5-c97284b24715",
+        "x-ms-version": "2020-02-10"
+      },
+      "Method": "DELETE",
+      "Response": {
+        "BODY": "",
+        "REASON_PHRASE": "Accepted",
+        "STATUS_CODE": "202",
+        "content-length": "0",
+        "date": "Thu, 09 Dec 2021 22:36:34 GMT",
+        "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
+        "x-ms-client-request-id": "46af664f-e001-469a-7be5-c97284b24715",
+        "x-ms-delete-type-permanent": "false",
+        "x-ms-request-id": "60a968ed-501e-0033-5d4d-edbb2f000000",
+        "x-ms-version": "2020-02-10"
+      },
+      "Url": "https://REDACTED.blob.core.windows.net/snapshotversions/SnapShotVersions?versionid=2021-12-09T22:36:33.3686670Z"
+    },
+    {
+      "Headers": {
+        "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Linux 5.4.0-1063-azure x86_64 #66~18.04.1-Ubuntu SMP Thu Oct 21 09:59:28 UTC 2021)",
+        "x-ms-client-request-id": "702d3a21-609c-44b2-6913-53b5dfa273c9",
+        "x-ms-version": "2020-02-10"
+      },
+      "Method": "HEAD",
+      "Response": {
+        "BODY": "",
+        "REASON_PHRASE": "OK",
+        "STATUS_CODE": "200",
+        "accept-ranges": "bytes",
+        "cache-control": "no-cache",
+        "content-disposition": "attachment",
+        "content-encoding": "identity",
+        "content-language": "en-US",
+        "content-length": "8388608",
+        "content-md5": "IFj7U/ZD/NWKjYOgVUI5Kw==",
+        "content-type": "application/x-binary",
+        "date": "Thu, 09 Dec 2021 22:36:34 GMT",
+        "etag": "\"0x8D9BB645A29C680\"",
+        "last-modified": "Thu, 09 Dec 2021 22:36:33 GMT",
+        "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
+        "x-ms-access-tier": "Cool",
+        "x-ms-access-tier-change-time": "Thu, 09 Dec 2021 22:36:34 GMT",
+        "x-ms-blob-type": "BlockBlob",
+        "x-ms-client-request-id": "702d3a21-609c-44b2-6913-53b5dfa273c9",
+        "x-ms-creation-time": "Thu, 09 Dec 2021 22:36:33 GMT",
+        "x-ms-is-current-version": "true",
+        "x-ms-lease-state": "available",
+        "x-ms-lease-status": "unlocked",
+        "x-ms-meta-key1": "V1",
+        "x-ms-meta-key2": "Value2",
+        "x-ms-request-id": "60a968ee-501e-0033-5e4d-edbb2f000000",
+        "x-ms-server-encrypted": "true",
+        "x-ms-version": "2020-02-10",
+        "x-ms-version-id": "2021-12-09T22:36:34.2121834Z"
+      },
+      "Url": "https://REDACTED.blob.core.windows.net/snapshotversions/SnapShotVersions"
+    },
+    {
+      "Headers": {
+        "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Linux 5.4.0-1063-azure x86_64 #66~18.04.1-Ubuntu SMP Thu Oct 21 09:59:28 UTC 2021)",
+        "x-ms-client-request-id": "014f6588-5245-49d7-5337-43b3611170b3",
+        "x-ms-version": "2020-02-10"
+      },
+      "Method": "DELETE",
+      "Response": {
+        "BODY": "",
+        "REASON_PHRASE": "Accepted",
+        "STATUS_CODE": "202",
+        "content-length": "0",
+        "date": "Thu, 09 Dec 2021 22:36:34 GMT",
+        "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
+        "x-ms-client-request-id": "014f6588-5245-49d7-5337-43b3611170b3",
+        "x-ms-request-id": "60a968ef-501e-0033-5f4d-edbb2f000000",
+        "x-ms-version": "2020-02-10"
+      },
+      "Url": "https://REDACTED.blob.core.windows.net/snapshotversions?restype=container"
+    }
+  ]
+}

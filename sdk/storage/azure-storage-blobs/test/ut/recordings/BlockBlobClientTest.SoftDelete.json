@@ -3,7 +3,7 @@
     {
       "Headers": {
         "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Linux 5.4.0-1063-azure x86_64 #66~18.04.1-Ubuntu SMP Thu Oct 21 09:59:28 UTC 2021)",
-        "x-ms-client-request-id": "31776909-4f05-4f03-61cc-71b0ca830c8d",
+        "x-ms-client-request-id": "f5a62a1b-4f09-485e-5f50-9ca02b39c5b9",
         "x-ms-version": "2020-02-10"
       },
       "Method": "PUT",
@@ -12,12 +12,12 @@
         "REASON_PHRASE": "Created",
         "STATUS_CODE": "201",
         "content-length": "0",
-        "date": "Thu, 09 Dec 2021 00:05:03 GMT",
-        "etag": "\"0x8D9BAA78CFE8468\"",
-        "last-modified": "Thu, 09 Dec 2021 00:05:03 GMT",
+        "date": "Thu, 09 Dec 2021 22:36:29 GMT",
+        "etag": "\"0x8D9BB6458557555\"",
+        "last-modified": "Thu, 09 Dec 2021 22:36:30 GMT",
         "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
-        "x-ms-client-request-id": "31776909-4f05-4f03-61cc-71b0ca830c8d",
-        "x-ms-request-id": "69c18362-b01e-0059-6b90-ec6307000000",
+        "x-ms-client-request-id": "f5a62a1b-4f09-485e-5f50-9ca02b39c5b9",
+        "x-ms-request-id": "1ba1b30f-d01e-0060-3d4d-ed981b000000",
         "x-ms-version": "2020-02-10"
       },
       "Url": "https://REDACTED.blob.core.windows.net/softdelete?restype=container"
@@ -25,7 +25,7 @@
     {
       "Headers": {
         "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Linux 5.4.0-1063-azure x86_64 #66~18.04.1-Ubuntu SMP Thu Oct 21 09:59:28 UTC 2021)",
-        "x-ms-client-request-id": "5ec0d38d-c520-4b2c-58df-c236e13eb2bc",
+        "x-ms-client-request-id": "5857ad00-ab12-402a-7725-178eaec1eb18",
         "x-ms-version": "2020-02-10"
       },
       "Method": "PUT",
@@ -35,36 +35,36 @@
         "STATUS_CODE": "201",
         "content-length": "0",
         "content-md5": "1B2M2Y8AsgTpgAmY7PhCfg==",
-        "date": "Thu, 09 Dec 2021 00:05:03 GMT",
-        "etag": "\"0x8D9BAA78CFFC9C3\"",
-        "last-modified": "Thu, 09 Dec 2021 00:05:03 GMT",
+        "date": "Thu, 09 Dec 2021 22:36:29 GMT",
+        "etag": "\"0x8D9BB64585794F4\"",
+        "last-modified": "Thu, 09 Dec 2021 22:36:30 GMT",
         "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
-        "x-ms-client-request-id": "5ec0d38d-c520-4b2c-58df-c236e13eb2bc",
+        "x-ms-client-request-id": "5857ad00-ab12-402a-7725-178eaec1eb18",
         "x-ms-content-crc64": "AAAAAAAAAAA=",
-        "x-ms-request-id": "69c1836d-b01e-0059-6f90-ec6307000000",
+        "x-ms-request-id": "1ba1b312-d01e-0060-3e4d-ed981b000000",
         "x-ms-request-server-encrypted": "true",
         "x-ms-version": "2020-02-10",
-        "x-ms-version-id": "2021-12-09T00:05:03.7524171Z"
+        "x-ms-version-id": "2021-12-09T22:36:30.2904318Z"
       },
       "Url": "https://REDACTED.blob.core.windows.net/softdelete/SoftDelete"
     },
     {
       "Headers": {
         "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Linux 5.4.0-1063-azure x86_64 #66~18.04.1-Ubuntu SMP Thu Oct 21 09:59:28 UTC 2021)",
-        "x-ms-client-request-id": "534222b6-3951-491f-79f3-793513e87cb8",
+        "x-ms-client-request-id": "408ee8c0-3075-4bc9-55c8-9a31af1736cf",
         "x-ms-version": "2020-02-10"
       },
       "Method": "GET",
       "Response": {
-        "BODY": "﻿<?xml version=\"1.0\" encoding=\"utf-8\"?><EnumerationResults ServiceEndpoint=\"https://justtocreatedata.blob.core.windows.net/\" ContainerName=\"softdelete\"><Prefix>SoftDelete</Prefix><Blobs><Blob><Name>SoftDelete</Name><VersionId>2021-12-09T00:05:03.7524171Z</VersionId><IsCurrentVersion>true</IsCurrentVersion><Properties><Creation-Time>Thu, 09 Dec 2021 00:05:03 GMT</Creation-Time><Last-Modified>Thu, 09 Dec 2021 00:05:03 GMT</Last-Modified><Etag>0x8D9BAA78CFFC9C3</Etag><Content-Length>0</Content-Length><Content-Type>application/octet-stream</Content-Type><Content-Encoding /><Content-Language /><Content-CRC64 /><Content-MD5>1B2M2Y8AsgTpgAmY7PhCfg==</Content-MD5><Cache-Control /><Content-Disposition /><BlobType>BlockBlob</BlobType><AccessTier>Hot</AccessTier><AccessTierInferred>true</AccessTierInferred><LeaseStatus>unlocked</LeaseStatus><LeaseState>available</LeaseState><ServerEncrypted>true</ServerEncrypted></Properties><OrMetadata /></Blob></Blobs><NextMarker /></EnumerationResults>",
+        "BODY": "﻿<?xml version=\"1.0\" encoding=\"utf-8\"?><EnumerationResults ServiceEndpoint=\"https://justtocreatedata.blob.core.windows.net/\" ContainerName=\"softdelete\"><Prefix>SoftDelete</Prefix><Blobs><Blob><Name>SoftDelete</Name><VersionId>2021-12-09T22:36:30.2904318Z</VersionId><IsCurrentVersion>true</IsCurrentVersion><Properties><Creation-Time>Thu, 09 Dec 2021 22:36:30 GMT</Creation-Time><Last-Modified>Thu, 09 Dec 2021 22:36:30 GMT</Last-Modified><Etag>0x8D9BB64585794F4</Etag><Content-Length>0</Content-Length><Content-Type>application/octet-stream</Content-Type><Content-Encoding /><Content-Language /><Content-CRC64 /><Content-MD5>1B2M2Y8AsgTpgAmY7PhCfg==</Content-MD5><Cache-Control /><Content-Disposition /><BlobType>BlockBlob</BlobType><AccessTier>Hot</AccessTier><AccessTierInferred>true</AccessTierInferred><LeaseStatus>unlocked</LeaseStatus><LeaseState>available</LeaseState><ServerEncrypted>true</ServerEncrypted></Properties><OrMetadata /></Blob></Blobs><NextMarker /></EnumerationResults>",
         "REASON_PHRASE": "OK",
         "STATUS_CODE": "200",
         "content-type": "application/xml",
-        "date": "Thu, 09 Dec 2021 00:05:03 GMT",
+        "date": "Thu, 09 Dec 2021 22:36:29 GMT",
         "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
         "transfer-encoding": "chunked",
-        "x-ms-client-request-id": "534222b6-3951-491f-79f3-793513e87cb8",
-        "x-ms-request-id": "69c18375-b01e-0059-7390-ec6307000000",
+        "x-ms-client-request-id": "408ee8c0-3075-4bc9-55c8-9a31af1736cf",
+        "x-ms-request-id": "1ba1b313-d01e-0060-3f4d-ed981b000000",
         "x-ms-version": "2020-02-10"
       },
       "Url": "https://REDACTED.blob.core.windows.net/softdelete?comp=list&prefix=SoftDelete&restype=container"
@@ -72,7 +72,7 @@
     {
       "Headers": {
         "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Linux 5.4.0-1063-azure x86_64 #66~18.04.1-Ubuntu SMP Thu Oct 21 09:59:28 UTC 2021)",
-        "x-ms-client-request-id": "a377df9f-80bf-4845-6a7c-b68e510c8504",
+        "x-ms-client-request-id": "69b07ea3-e4f5-4176-6e90-0d88605f8cd8",
         "x-ms-version": "2020-02-10"
       },
       "Method": "DELETE",
@@ -81,11 +81,11 @@
         "REASON_PHRASE": "Accepted",
         "STATUS_CODE": "202",
         "content-length": "0",
-        "date": "Thu, 09 Dec 2021 00:05:03 GMT",
+        "date": "Thu, 09 Dec 2021 22:36:29 GMT",
         "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
-        "x-ms-client-request-id": "a377df9f-80bf-4845-6a7c-b68e510c8504",
+        "x-ms-client-request-id": "69b07ea3-e4f5-4176-6e90-0d88605f8cd8",
         "x-ms-delete-type-permanent": "false",
-        "x-ms-request-id": "69c18378-b01e-0059-7590-ec6307000000",
+        "x-ms-request-id": "1ba1b315-d01e-0060-404d-ed981b000000",
         "x-ms-version": "2020-02-10"
       },
       "Url": "https://REDACTED.blob.core.windows.net/softdelete/SoftDelete"
@@ -93,29 +93,7 @@
     {
       "Headers": {
         "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Linux 5.4.0-1063-azure x86_64 #66~18.04.1-Ubuntu SMP Thu Oct 21 09:59:28 UTC 2021)",
-        "x-ms-client-request-id": "78390bbf-1162-4051-59d3-624128b8e21c",
-        "x-ms-version": "2020-02-10"
-      },
-      "Method": "DELETE",
-      "Response": {
-        "BODY": "﻿<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>BlobNotFound</Code><Message>The specified blob does not exist.\nRequestId:69c18388-b01e-0059-7d90-ec6307000000\nTime:2021-12-09T00:05:03.8150466Z</Message></Error>",
-        "REASON_PHRASE": "The specified blob does not exist.",
-        "STATUS_CODE": "404",
-        "content-length": "215",
-        "content-type": "application/xml",
-        "date": "Thu, 09 Dec 2021 00:05:03 GMT",
-        "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
-        "x-ms-client-request-id": "78390bbf-1162-4051-59d3-624128b8e21c",
-        "x-ms-error-code": "BlobNotFound",
-        "x-ms-request-id": "69c18388-b01e-0059-7d90-ec6307000000",
-        "x-ms-version": "2020-02-10"
-      },
-      "Url": "https://REDACTED.blob.core.windows.net/softdelete/SoftDelete"
-    },
-    {
-      "Headers": {
-        "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Linux 5.4.0-1063-azure x86_64 #66~18.04.1-Ubuntu SMP Thu Oct 21 09:59:28 UTC 2021)",
-        "x-ms-client-request-id": "6accf071-4454-4c4b-7a01-0a19d057fa63",
+        "x-ms-client-request-id": "dab9d216-72f3-4a33-48d1-8b125bb15941",
         "x-ms-version": "2020-02-10"
       },
       "Method": "DELETE",
@@ -124,10 +102,10 @@
         "REASON_PHRASE": "Accepted",
         "STATUS_CODE": "202",
         "content-length": "0",
-        "date": "Thu, 09 Dec 2021 00:05:03 GMT",
+        "date": "Thu, 09 Dec 2021 22:36:29 GMT",
         "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
-        "x-ms-client-request-id": "6accf071-4454-4c4b-7a01-0a19d057fa63",
-        "x-ms-request-id": "b2053c85-101e-001d-2490-ece938000000",
+        "x-ms-client-request-id": "dab9d216-72f3-4a33-48d1-8b125bb15941",
+        "x-ms-request-id": "1ba1b31b-d01e-0060-464d-ed981b000000",
         "x-ms-version": "2020-02-10"
       },
       "Url": "https://REDACTED.blob.core.windows.net/softdelete?restype=container"
