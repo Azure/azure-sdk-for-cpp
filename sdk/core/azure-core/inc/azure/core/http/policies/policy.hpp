@@ -174,7 +174,7 @@ namespace Azure { namespace Core { namespace Http { namespace Policies {
      * @brief Destructs `%HttpPolicy`.
      *
      */
-    virtual ~HttpPolicy() = default;
+    virtual ~HttpPolicy() {}
 
     /**
      * @brief Creates a clone of this `%HttpPolicy`.

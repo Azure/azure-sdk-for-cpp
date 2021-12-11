@@ -5,7 +5,6 @@
 #include <azure/core/internal/http/pipeline.hpp>
 #include <gtest/gtest.h>
 
-#include <functional>
 #include <vector>
 
 TEST(Pipeline, createPipeline)

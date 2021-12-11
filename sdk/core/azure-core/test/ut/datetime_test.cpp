@@ -8,7 +8,6 @@
 #include <chrono>
 #include <ctime>
 #include <limits>
-#include <type_traits>
 
 using namespace Azure;
 
