@@ -57,7 +57,7 @@ namespace Azure { namespace Core { namespace Http {
    *
    */
   class CurlNetworkConnection {
-  protected:
+  private:
     bool m_isShutDown = false;
 
   public:
