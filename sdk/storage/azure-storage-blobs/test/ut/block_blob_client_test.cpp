@@ -662,16 +662,7 @@ namespace Azure { namespace Storage { namespace Test {
 #define APPEND_IF_NOT_NULL(value, suffix, destination) \
   if (value) \
   { \
-    auto const v = value.Value(); \
-    if (v < 0) \
-    { \
-      std::string m("minus"); \
-      destination.append(suffix + m + std::to_string(std::abs(v))); \
-    } \
-    else \
-    { \
-      destination.append(suffix + std::to_string(v)); \
-    } \
+    destination.append(suffix + std::to_string(value.Value())); \
   }
 
     std::string GetSuffix(const testing::TestParamInfo<BlockBlobClient::ParamType>& info)
