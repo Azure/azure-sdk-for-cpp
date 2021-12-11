@@ -703,6 +703,8 @@ namespace Azure { namespace Storage { namespace Test {
         // Do offset
         testParametes.emplace_back(BlobConcurrentDownloadParameter({c, blobSize, 0, 1}));
         testParametes.emplace_back(BlobConcurrentDownloadParameter({c, blobSize, 1, 1}));
+        testParametes.emplace_back(BlobConcurrentDownloadParameter({c, blobSize, blobSize - 1, 1}));
+        testParametes.emplace_back(BlobConcurrentDownloadParameter({c, blobSize, blobSize - 1, 2}));
         testParametes.emplace_back(BlobConcurrentDownloadParameter({c, blobSize, blobSize, 1}));
         testParametes.emplace_back(BlobConcurrentDownloadParameter({c, blobSize, blobSize + 1, 2}));
 
@@ -1048,13 +1050,6 @@ namespace Azure { namespace Storage { namespace Test {
             client.DownloadTo(downloadBuffer.data(), static_cast<size_t>(length - 1), options),
             std::runtime_error);
       }
-
-      futures.emplace_back(
-          std::async(std::launch::async, testDownloadToBuffer, c, blobSize, -1, 1));
-      futures.emplace_back(std::async(std::launch::async, testDownloadToFile, c, blobSize, -1, 1));
-      futures.emplace_back(
-          std::async(std::launch::async, testDownloadToBuffer, c, blobSize, -1, 2));
-      futures.emplace_back(std::async(std::launch::async, testDownloadToFile, c, blobSize, -1, 2));
     }
     for (auto& f : futures)
     {
