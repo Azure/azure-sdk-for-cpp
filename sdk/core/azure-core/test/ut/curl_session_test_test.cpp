@@ -122,7 +122,11 @@ namespace Azure { namespace Core { namespace Test {
           request, std::move(uniqueCurlMock), true);
 
       EXPECT_NO_THROW(session->Perform(Azure::Core::Context::ApplicationContext));
+
       auto r = session->ExtractResponse();
+      EXPECT_NE(r, nullptr);
+      EXPECT_EQ(session->ExtractResponse(), nullptr);
+
       r->SetBodyStream(std::move(session));
       auto bodyS = r->ExtractBodyStream();
 
@@ -296,7 +300,11 @@ namespace Azure { namespace Core { namespace Test {
           request, std::move(uniqueCurlMock), true);
 
       EXPECT_NO_THROW(session->Perform(Azure::Core::Context::ApplicationContext));
+
       auto response = session->ExtractResponse();
+      EXPECT_NE(response, nullptr);
+      EXPECT_EQ(session->ExtractResponse(), nullptr);
+
       response->SetBodyStream(std::move(session));
       auto bodyS = response->ExtractBodyStream();
 

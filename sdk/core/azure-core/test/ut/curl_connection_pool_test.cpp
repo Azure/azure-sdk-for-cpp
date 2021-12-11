@@ -544,7 +544,9 @@ namespace Azure { namespace Core { namespace Test {
       auto connection
           = CurlConnectionPool::g_curlConnectionPool.ExtractOrCreateCurlConnection(req, options);
       // Simulate connection lost (like server disconnection).
+      ASSERT_FALSE(connection->IsShutdown());
       connection->Shutdown();
+      ASSERT_TRUE(connection->IsShutdown());
 
       {
         // Check that CURLE_SEND_ERROR is produced when trying to use the connection.
