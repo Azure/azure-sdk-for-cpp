@@ -1048,46 +1048,49 @@ namespace Azure { namespace Storage { namespace Test {
     }
   }
 
-  // TEST_F(BlockBlobClientTest, ConcurrentUploadFromNonExistingFile)
-  // {
-  //   auto blockBlobClient = Azure::Storage::Blobs::BlockBlobClient::CreateFromConnectionString(
-  //       StandardStorageConnectionString(), m_containerName, RandomString());
-  //   std::string emptyFilename = RandomString();
-  //   EXPECT_THROW(blockBlobClient.UploadFrom(emptyFilename), std::runtime_error);
-  //   EXPECT_THROW(blockBlobClient.Delete(), StorageException);
-  // }
+  TEST_F(BlockBlobClientTest, ConcurrentUploadFromNonExistingFile)
+  {
+    auto const testName(GetTestName());
+    auto blockBlobClient = GetBlockBlobClient(testName);
 
-  // TEST_F(BlockBlobClientTest, ConcurrentDownloadNonExistingBlob)
-  // {
-  //   auto blockBlobClient = Azure::Storage::Blobs::BlockBlobClient::CreateFromConnectionString(
-  //       StandardStorageConnectionString(), m_containerName, RandomString());
-  //   std::vector<uint8_t> blobContent(100);
-  //   std::string tempFilename = RandomString();
+    std::string emptyFilename(testName);
+    EXPECT_THROW(blockBlobClient.UploadFrom(emptyFilename), std::runtime_error);
+    EXPECT_THROW(blockBlobClient.Delete(), StorageException);
+  }
 
-  //   EXPECT_THROW(
-  //       blockBlobClient.DownloadTo(blobContent.data(), blobContent.size()), StorageException);
-  //   EXPECT_THROW(blockBlobClient.DownloadTo(tempFilename), StorageException);
-  //   DeleteFile(tempFilename);
-  // }
+  TEST_F(BlockBlobClientTest, ConcurrentDownloadNonExistingBlob)
+  {
+    auto const testName(GetTestName());
+    auto blockBlobClient = GetBlockBlobClient(testName);
 
-  // TEST_F(BlockBlobClientTest, ConcurrentUploadEmptyBlob)
-  // {
-  //   std::vector<uint8_t> emptyContent;
-  //   auto blockBlobClient = Azure::Storage::Blobs::BlockBlobClient::CreateFromConnectionString(
-  //       StandardStorageConnectionString(), m_containerName, RandomString());
+    std::vector<uint8_t> blobContent(100);
+    std::string tempFilename(testName);
 
-  //   blockBlobClient.UploadFrom(emptyContent.data(), emptyContent.size());
-  //   EXPECT_NO_THROW(blockBlobClient.Delete());
+    EXPECT_THROW(
+        blockBlobClient.DownloadTo(blobContent.data(), blobContent.size()), StorageException);
+    EXPECT_THROW(blockBlobClient.DownloadTo(tempFilename), StorageException);
+    DeleteFile(tempFilename);
+  }
 
-  //   std::string emptyFilename = RandomString();
-  //   {
-  //     _internal::FileWriter writer(emptyFilename);
-  //   }
-  //   blockBlobClient.UploadFrom(emptyFilename);
-  //   EXPECT_NO_THROW(blockBlobClient.Delete());
+  TEST_F(BlockBlobClientTest, ConcurrentUploadEmptyBlob)
+  {
+    auto const testName(GetTestName());
+    auto blockBlobClient = GetBlockBlobClient(testName);
 
-  //   DeleteFile(emptyFilename);
-  // }
+    std::vector<uint8_t> emptyContent;
+
+    blockBlobClient.UploadFrom(emptyContent.data(), emptyContent.size());
+    EXPECT_NO_THROW(blockBlobClient.Delete());
+
+    std::string emptyFilename(testName);
+    {
+      _internal::FileWriter writer(emptyFilename);
+    }
+    blockBlobClient.UploadFrom(emptyFilename);
+    EXPECT_NO_THROW(blockBlobClient.Delete());
+
+    DeleteFile(emptyFilename);
+  }
 
   // TEST_F(BlockBlobClientTest, ConcurrentDownloadEmptyBlob)
   // {
