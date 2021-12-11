@@ -703,8 +703,6 @@ namespace Azure { namespace Storage { namespace Test {
         // Do offset
         testParametes.emplace_back(BlobConcurrentDownloadParameter({c, blobSize, 0, 1}));
         testParametes.emplace_back(BlobConcurrentDownloadParameter({c, blobSize, 1, 1}));
-        testParametes.emplace_back(BlobConcurrentDownloadParameter({c, blobSize, -1, 1}));
-        testParametes.emplace_back(BlobConcurrentDownloadParameter({c, blobSize, -1, 2}));
         testParametes.emplace_back(BlobConcurrentDownloadParameter({c, blobSize, blobSize, 1}));
         testParametes.emplace_back(BlobConcurrentDownloadParameter({c, blobSize, blobSize + 1, 2}));
 
@@ -1034,22 +1032,29 @@ namespace Azure { namespace Storage { namespace Test {
             std::launch::async, testDownloadToBuffer, c, blobSize, offset, length, 4_KB, 4_KB));
         futures.emplace_back(std::async(
             std::launch::async, testDownloadToFile, c, blobSize, offset, length, 4_KB, 4_KB));
-
-        // // buffer not big enough
-        Blobs::DownloadBlobToOptions options;
-        options.TransferOptions.Concurrency = c;
-        options.Range = Core::Http::HttpRange();
-        options.Range.Value().Offset = 1;
-        for (int64_t length : {1ULL, 2ULL, 4_KB, 5_KB, 8_KB, 11_KB, 20_KB})
-        {
-          std::vector<uint8_t> downloadBuffer;
-          downloadBuffer.resize(static_cast<size_t>(length - 1));
-          options.Range.Value().Length = length;
-          EXPECT_THROW(
-              client.DownloadTo(downloadBuffer.data(), static_cast<size_t>(length - 1), options),
-              std::runtime_error);
-        }
       }
+
+      // // buffer not big enough
+      Blobs::DownloadBlobToOptions options;
+      options.TransferOptions.Concurrency = c;
+      options.Range = Core::Http::HttpRange();
+      options.Range.Value().Offset = 1;
+      for (int64_t length : {1ULL, 2ULL, 4_KB, 5_KB, 8_KB, 11_KB, 20_KB})
+      {
+        std::vector<uint8_t> downloadBuffer;
+        downloadBuffer.resize(static_cast<size_t>(length - 1));
+        options.Range.Value().Length = length;
+        EXPECT_THROW(
+            client.DownloadTo(downloadBuffer.data(), static_cast<size_t>(length - 1), options),
+            std::runtime_error);
+      }
+
+      futures.emplace_back(
+          std::async(std::launch::async, testDownloadToBuffer, c, blobSize, -1, 1));
+      futures.emplace_back(std::async(std::launch::async, testDownloadToFile, c, blobSize, -1, 1));
+      futures.emplace_back(
+          std::async(std::launch::async, testDownloadToBuffer, c, blobSize, -1, 2));
+      futures.emplace_back(std::async(std::launch::async, testDownloadToFile, c, blobSize, -1, 2));
     }
     for (auto& f : futures)
     {
