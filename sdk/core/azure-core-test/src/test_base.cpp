@@ -25,11 +25,6 @@ void Azure::Core::Test::TestBase::TearDown()
   json records;
   auto const& recordData = m_interceptor->GetRecordedData();
 
-  std::cout << std::endl
-            << std::endl
-            << recordData.NetworkCallRecords.size() << std::endl
-            << m_testContext.GetTestPlaybackRecordingName() << std::endl;
-
   if (recordData.NetworkCallRecords.size() == 0)
   {
     // Don't make empty recordings

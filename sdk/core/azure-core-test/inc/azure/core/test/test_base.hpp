@@ -138,14 +138,14 @@ namespace Azure { namespace Core { namespace Test {
     // Reads the current test instance name.
     // Name gets also sanitized (special chars are removed) to avoid issues when recording or
     // creating
-    std::string GetTestName(bool sanitize = false)
+    std::string GetTestName(bool sanitize = true)
     {
       std::string testName(::testing::UnitTest::GetInstance()->current_test_info()->name());
       if (sanitize)
       {
         // replace `/` for `-`. Parameterized tests adds this char automatically to join the test
         // name and the parameter suffix.
-        return Sanitize(testName);
+        testName = Sanitize(testName);
       }
 
       return RemovePreffix(testName);

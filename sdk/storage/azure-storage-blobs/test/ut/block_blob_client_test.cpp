@@ -662,7 +662,16 @@ namespace Azure { namespace Storage { namespace Test {
 #define APPEND_IF_NOT_NULL(value, suffix, destination) \
   if (value) \
   { \
-    destination.append(suffix + std::to_string(value.Value())); \
+    auto const v = value.Value(); \
+    if (v < 0) \
+    { \
+      std::string m("minus"); \
+      destination.append(suffix + m + std::to_string(std::abs(v))); \
+    } \
+    else \
+    { \
+      destination.append(suffix + std::to_string(v)); \
+    } \
   }
 
     std::string GetSuffix(const testing::TestParamInfo<BlockBlobClient::ParamType>& info)
@@ -691,61 +700,21 @@ namespace Azure { namespace Storage { namespace Test {
         testParametes.emplace_back(BlobConcurrentDownloadParameter({c, blobSize, 0, blobSize * 2}));
         testParametes.emplace_back(BlobConcurrentDownloadParameter({c, blobSize * 2}));
 
-        //    futures.emplace_back(std::async(std::launch::async, testDownloadToBuffer, c, blobSize,
-        //    0, 1));
-        // futures.emplace_back(std::async(std::launch::async, testDownloadToFile, c, blobSize, 0,
-        // 1)); futures.emplace_back(std::async(std::launch::async, testDownloadToBuffer, c,
-        // blobSize, 1, 1)); futures.emplace_back(std::async(std::launch::async, testDownloadToFile,
-        // c, blobSize, 1, 1)); futures.emplace_back(
-        //     std::async(std::launch::async, testDownloadToBuffer, c, blobSize, blobSize - 1, 1));
-        // futures.emplace_back(
-        //     std::async(std::launch::async, testDownloadToFile, c, blobSize, blobSize - 1, 1));
-        // futures.emplace_back(
-        //     std::async(std::launch::async, testDownloadToBuffer, c, blobSize, blobSize - 1, 2));
-        // futures.emplace_back(
-        //     std::async(std::launch::async, testDownloadToFile, c, blobSize, blobSize - 1, 2));
-        // futures.emplace_back(
-        //     std::async(std::launch::async, testDownloadToBuffer, c, blobSize, blobSize, 1));
-        // futures.emplace_back(
-        //     std::async(std::launch::async, testDownloadToFile, c, blobSize, blobSize, 1));
-        // futures.emplace_back(
-        //     std::async(std::launch::async, testDownloadToBuffer, c, blobSize, blobSize + 1, 2));
-        // futures.emplace_back(
-        //     std::async(std::launch::async, testDownloadToFile, c, blobSize, blobSize + 1, 2));
-
-        // // buffer not big enough
-        // Blobs::DownloadBlobToOptions options;
-        // options.TransferOptions.Concurrency = c;
-        // options.Range = Core::Http::HttpRange();
-        // options.Range.Value().Offset = 1;
-        // for (int64_t length : {1ULL, 2ULL, 4_KB, 5_KB, 8_KB, 11_KB, 20_KB})
-        // {
-        //   std::vector<uint8_t> downloadBuffer;
-        //   downloadBuffer.resize(static_cast<size_t>(length - 1));
-        //   options.Range.Value().Length = length;
-        //   EXPECT_THROW(
-        //       client.DownloadTo(downloadBuffer.data(), static_cast<size_t>(length - 1), options),
-        //       std::runtime_error);
-        // }
+        // Do offset
+        testParametes.emplace_back(BlobConcurrentDownloadParameter({c, blobSize, 0, 1}));
+        testParametes.emplace_back(BlobConcurrentDownloadParameter({c, blobSize, 1, 1}));
+        testParametes.emplace_back(BlobConcurrentDownloadParameter({c, blobSize, -1, 1}));
+        testParametes.emplace_back(BlobConcurrentDownloadParameter({c, blobSize, -1, 2}));
+        testParametes.emplace_back(BlobConcurrentDownloadParameter({c, blobSize, blobSize, 1}));
+        testParametes.emplace_back(BlobConcurrentDownloadParameter({c, blobSize, blobSize + 1, 2}));
 
         // // initial chunk size
-        // futures.emplace_back(
-        //     std::async(std::launch::async, testDownloadToBuffer, c, blobSize, 0, 1024, 512,
-        //     1024));
-        // futures.emplace_back(
-        //     std::async(std::launch::async, testDownloadToFile, c, blobSize, 0, 1024, 512, 1024));
-        // futures.emplace_back(
-        //     std::async(std::launch::async, testDownloadToBuffer, c, blobSize, 0, 1024, 1024,
-        //     1024));
-        // futures.emplace_back(
-        //     std::async(std::launch::async, testDownloadToFile, c, blobSize, 0, 1024, 1024,
-        //     1024));
-        // futures.emplace_back(
-        //     std::async(std::launch::async, testDownloadToBuffer, c, blobSize, 0, 1024, 2048,
-        //     1024));
-        // futures.emplace_back(
-        //     std::async(std::launch::async, testDownloadToFile, c, blobSize, 0, 1024, 2048,
-        //     1024));
+        testParametes.emplace_back(
+            BlobConcurrentDownloadParameter({c, blobSize, 0, 1024, 512, 1024}));
+        testParametes.emplace_back(
+            BlobConcurrentDownloadParameter({c, blobSize, 0, 1024, 1024, 1024}));
+        testParametes.emplace_back(
+            BlobConcurrentDownloadParameter({c, blobSize, 0, 1024, 2048, 1024}));
       }
       return testParametes;
     }
@@ -899,8 +868,9 @@ namespace Azure { namespace Storage { namespace Test {
       testing::ValuesIn(GetParameters(8_MB)),
       GetSuffix);
 
-  TEST_F(BlockBlobClientTest, ConcurrentDownload)
+  TEST_F(BlockBlobClientTest, ConcurrentDownload_LIVEONLY_)
   {
+    CHECK_SKIP_TEST();
     auto const testName(GetTestName());
     auto client = GetBlockBlobClient(testName);
     UploadBlockBlob(8_MB);
@@ -975,13 +945,18 @@ namespace Azure { namespace Storage { namespace Test {
             StorageException);
       }
     };
+
     auto testDownloadToFile = [&](int concurrency,
                                   int64_t downloadSize,
                                   Azure::Nullable<int64_t> offset = {},
                                   Azure::Nullable<int64_t> length = {},
                                   Azure::Nullable<int64_t> initialChunkSize = {},
                                   Azure::Nullable<int64_t> chunkSize = {}) {
-      std::string tempFilename = testName + "file";
+      std::string tempFilename = testName + "file" + std::to_string(concurrency);
+      if (offset)
+      {
+        tempFilename.append(std::to_string(offset.Value()));
+      }
       std::vector<uint8_t> expectedData = m_blobContent;
       int64_t blobSize = m_blobContent.size();
       int64_t actualDownloadSize = std::min(downloadSize, blobSize);
@@ -1059,6 +1034,21 @@ namespace Azure { namespace Storage { namespace Test {
             std::launch::async, testDownloadToBuffer, c, blobSize, offset, length, 4_KB, 4_KB));
         futures.emplace_back(std::async(
             std::launch::async, testDownloadToFile, c, blobSize, offset, length, 4_KB, 4_KB));
+
+        // // buffer not big enough
+        Blobs::DownloadBlobToOptions options;
+        options.TransferOptions.Concurrency = c;
+        options.Range = Core::Http::HttpRange();
+        options.Range.Value().Offset = 1;
+        for (int64_t length : {1ULL, 2ULL, 4_KB, 5_KB, 8_KB, 11_KB, 20_KB})
+        {
+          std::vector<uint8_t> downloadBuffer;
+          downloadBuffer.resize(static_cast<size_t>(length - 1));
+          options.Range.Value().Length = length;
+          EXPECT_THROW(
+              client.DownloadTo(downloadBuffer.data(), static_cast<size_t>(length - 1), options),
+              std::runtime_error);
+        }
       }
     }
     for (auto& f : futures)
