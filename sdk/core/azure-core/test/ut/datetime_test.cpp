@@ -864,8 +864,13 @@ TEST(DateTime, ToSystemClock)
 
 TEST(DateTime, OutOfToStringRange)
 {
-  EXPECT_THROW(static_cast<void>(DateTime(0000).ToString()), std::invalid_argument);
-  EXPECT_THROW(static_cast<void>(DateTime(9999 + 1).ToString()), std::invalid_argument);
+  using namespace std::literals::chrono_literals;
+
+  const DateTime underflow(DateTime(0001) - 1s);
+  const DateTime overflow(DateTime(9999, 12, 31, 23, 59, 59) + 1s);
+
+  EXPECT_THROW(static_cast<void>(underflow.ToString()), std::invalid_argument);
+  EXPECT_THROW(static_cast<void>(overflow.ToString()), std::invalid_argument);
 }
 
 TEST(DateTime, LeapYear)
