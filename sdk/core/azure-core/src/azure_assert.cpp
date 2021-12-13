@@ -3,6 +3,7 @@
 
 #include "azure/core/internal/azure_assert.hpp"
 
+// Calling this function would terminate program, therefore this function can't be covered in tests.
 // LCOV_EXCL_START
 [[noreturn]] void Azure::Core::_internal::AzureNoReturnPath(std::string const& msg)
 {
