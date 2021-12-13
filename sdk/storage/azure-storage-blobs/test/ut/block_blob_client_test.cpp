@@ -1092,111 +1092,112 @@ namespace Azure { namespace Storage { namespace Test {
     DeleteFile(emptyFilename);
   }
 
-  // TEST_F(BlockBlobClientTest, ConcurrentDownloadEmptyBlob)
-  // {
-  //   std::string tempFilename = RandomString();
+  TEST_F(BlockBlobClientTest, ConcurrentDownloadEmptyBlob)
+  {
+    auto const testName(GetTestName());
+    auto blockBlobClient = GetBlockBlobClient(testName);
+    std::string tempFilename(testName);
 
-  //   std::vector<uint8_t> emptyContent;
-  //   auto blockBlobClient = Azure::Storage::Blobs::BlockBlobClient::CreateFromConnectionString(
-  //       StandardStorageConnectionString(), m_containerName, RandomString());
-  //   auto blobContent = Azure::Core::IO::MemoryBodyStream(emptyContent.data(),
-  //   emptyContent.size()); blockBlobClient.Upload(blobContent);
-  //   blockBlobClient.SetHttpHeaders(m_blobUploadOptions.HttpHeaders);
-  //   blockBlobClient.SetMetadata(m_blobUploadOptions.Metadata);
+    std::vector<uint8_t> emptyContent;
 
-  //   auto res = blockBlobClient.DownloadTo(emptyContent.data(), 0);
-  //   EXPECT_EQ(res.Value.BlobSize, 0);
-  //   EXPECT_EQ(res.Value.ContentRange.Length.Value(), 0);
-  //   EXPECT_TRUE(res.Value.Details.ETag.HasValue());
-  //   EXPECT_TRUE(IsValidTime(res.Value.Details.LastModified));
-  //   EXPECT_EQ(res.Value.Details.HttpHeaders, m_blobUploadOptions.HttpHeaders);
-  //   EXPECT_EQ(res.Value.Details.Metadata, m_blobUploadOptions.Metadata);
-  //   EXPECT_EQ(res.Value.BlobType, Azure::Storage::Blobs::Models::BlobType::BlockBlob);
-  //   res = blockBlobClient.DownloadTo(tempFilename);
-  //   EXPECT_EQ(res.Value.BlobSize, 0);
-  //   EXPECT_EQ(res.Value.ContentRange.Length.Value(), 0);
-  //   EXPECT_TRUE(res.Value.Details.ETag.HasValue());
-  //   EXPECT_TRUE(IsValidTime(res.Value.Details.LastModified));
-  //   EXPECT_EQ(res.Value.Details.HttpHeaders, m_blobUploadOptions.HttpHeaders);
-  //   EXPECT_EQ(res.Value.Details.Metadata, m_blobUploadOptions.Metadata);
-  //   EXPECT_EQ(res.Value.BlobType, Azure::Storage::Blobs::Models::BlobType::BlockBlob);
-  //   EXPECT_TRUE(ReadFile(tempFilename).empty());
-  //   DeleteFile(tempFilename);
+    auto blobContent = Azure::Core::IO::MemoryBodyStream(emptyContent.data(), emptyContent.size());
+    blockBlobClient.Upload(blobContent);
+    blockBlobClient.SetHttpHeaders(m_blobUploadOptions.HttpHeaders);
+    blockBlobClient.SetMetadata(m_blobUploadOptions.Metadata);
 
-  //   res = blockBlobClient.DownloadTo(emptyContent.data(), static_cast<size_t>(8_MB));
-  //   EXPECT_EQ(res.Value.BlobSize, 0);
-  //   EXPECT_EQ(res.Value.ContentRange.Length.Value(), 0);
-  //   EXPECT_TRUE(res.Value.Details.ETag.HasValue());
-  //   EXPECT_TRUE(IsValidTime(res.Value.Details.LastModified));
-  //   EXPECT_EQ(res.Value.Details.HttpHeaders, m_blobUploadOptions.HttpHeaders);
-  //   EXPECT_EQ(res.Value.Details.Metadata, m_blobUploadOptions.Metadata);
-  //   EXPECT_EQ(res.Value.BlobType, Azure::Storage::Blobs::Models::BlobType::BlockBlob);
-  //   res = blockBlobClient.DownloadTo(tempFilename);
-  //   EXPECT_EQ(res.Value.BlobSize, 0);
-  //   EXPECT_EQ(res.Value.ContentRange.Length.Value(), 0);
-  //   EXPECT_TRUE(res.Value.Details.ETag.HasValue());
-  //   EXPECT_TRUE(IsValidTime(res.Value.Details.LastModified));
-  //   EXPECT_EQ(res.Value.Details.HttpHeaders, m_blobUploadOptions.HttpHeaders);
-  //   EXPECT_EQ(res.Value.Details.Metadata, m_blobUploadOptions.Metadata);
-  //   EXPECT_EQ(res.Value.BlobType, Azure::Storage::Blobs::Models::BlobType::BlockBlob);
-  //   EXPECT_TRUE(ReadFile(tempFilename).empty());
-  //   DeleteFile(tempFilename);
+    auto res = blockBlobClient.DownloadTo(emptyContent.data(), 0);
+    EXPECT_EQ(res.Value.BlobSize, 0);
+    EXPECT_EQ(res.Value.ContentRange.Length.Value(), 0);
+    EXPECT_TRUE(res.Value.Details.ETag.HasValue());
+    EXPECT_TRUE(IsValidTime(res.Value.Details.LastModified));
+    EXPECT_EQ(res.Value.Details.HttpHeaders, m_blobUploadOptions.HttpHeaders);
+    EXPECT_EQ(res.Value.Details.Metadata, m_blobUploadOptions.Metadata);
+    EXPECT_EQ(res.Value.BlobType, Azure::Storage::Blobs::Models::BlobType::BlockBlob);
+    res = blockBlobClient.DownloadTo(tempFilename);
+    EXPECT_EQ(res.Value.BlobSize, 0);
+    EXPECT_EQ(res.Value.ContentRange.Length.Value(), 0);
+    EXPECT_TRUE(res.Value.Details.ETag.HasValue());
+    EXPECT_TRUE(IsValidTime(res.Value.Details.LastModified));
+    EXPECT_EQ(res.Value.Details.HttpHeaders, m_blobUploadOptions.HttpHeaders);
+    EXPECT_EQ(res.Value.Details.Metadata, m_blobUploadOptions.Metadata);
+    EXPECT_EQ(res.Value.BlobType, Azure::Storage::Blobs::Models::BlobType::BlockBlob);
+    EXPECT_TRUE(ReadFile(tempFilename).empty());
+    DeleteFile(tempFilename);
 
-  //   for (int c : {1, 2})
-  //   {
-  //     Azure::Storage::Blobs::DownloadBlobToOptions options;
-  //     options.TransferOptions.InitialChunkSize = 10;
-  //     options.TransferOptions.ChunkSize = 10;
-  //     options.TransferOptions.Concurrency = c;
+    res = blockBlobClient.DownloadTo(emptyContent.data(), static_cast<size_t>(8_MB));
+    EXPECT_EQ(res.Value.BlobSize, 0);
+    EXPECT_EQ(res.Value.ContentRange.Length.Value(), 0);
+    EXPECT_TRUE(res.Value.Details.ETag.HasValue());
+    EXPECT_TRUE(IsValidTime(res.Value.Details.LastModified));
+    EXPECT_EQ(res.Value.Details.HttpHeaders, m_blobUploadOptions.HttpHeaders);
+    EXPECT_EQ(res.Value.Details.Metadata, m_blobUploadOptions.Metadata);
+    EXPECT_EQ(res.Value.BlobType, Azure::Storage::Blobs::Models::BlobType::BlockBlob);
+    res = blockBlobClient.DownloadTo(tempFilename);
+    EXPECT_EQ(res.Value.BlobSize, 0);
+    EXPECT_EQ(res.Value.ContentRange.Length.Value(), 0);
+    EXPECT_TRUE(res.Value.Details.ETag.HasValue());
+    EXPECT_TRUE(IsValidTime(res.Value.Details.LastModified));
+    EXPECT_EQ(res.Value.Details.HttpHeaders, m_blobUploadOptions.HttpHeaders);
+    EXPECT_EQ(res.Value.Details.Metadata, m_blobUploadOptions.Metadata);
+    EXPECT_EQ(res.Value.BlobType, Azure::Storage::Blobs::Models::BlobType::BlockBlob);
+    EXPECT_TRUE(ReadFile(tempFilename).empty());
+    DeleteFile(tempFilename);
 
-  //     res = blockBlobClient.DownloadTo(emptyContent.data(), static_cast<size_t>(8_MB), options);
-  //     EXPECT_EQ(res.Value.BlobSize, 0);
-  //     EXPECT_EQ(res.Value.ContentRange.Length.Value(), 0);
-  //     EXPECT_TRUE(res.Value.Details.ETag.HasValue());
-  //     EXPECT_TRUE(IsValidTime(res.Value.Details.LastModified));
-  //     EXPECT_EQ(res.Value.Details.HttpHeaders, m_blobUploadOptions.HttpHeaders);
-  //     EXPECT_EQ(res.Value.Details.Metadata, m_blobUploadOptions.Metadata);
-  //     EXPECT_EQ(res.Value.BlobType, Azure::Storage::Blobs::Models::BlobType::BlockBlob);
-  //     res = blockBlobClient.DownloadTo(tempFilename, options);
-  //     EXPECT_EQ(res.Value.BlobSize, 0);
-  //     EXPECT_EQ(res.Value.ContentRange.Length.Value(), 0);
-  //     EXPECT_TRUE(res.Value.Details.ETag.HasValue());
-  //     EXPECT_TRUE(IsValidTime(res.Value.Details.LastModified));
-  //     EXPECT_EQ(res.Value.Details.HttpHeaders, m_blobUploadOptions.HttpHeaders);
-  //     EXPECT_EQ(res.Value.Details.Metadata, m_blobUploadOptions.Metadata);
-  //     EXPECT_EQ(res.Value.BlobType, Azure::Storage::Blobs::Models::BlobType::BlockBlob);
-  //     EXPECT_TRUE(ReadFile(tempFilename).empty());
-  //     DeleteFile(tempFilename);
+    for (int c : {1, 2})
+    {
+      Azure::Storage::Blobs::DownloadBlobToOptions options;
+      options.TransferOptions.InitialChunkSize = 10;
+      options.TransferOptions.ChunkSize = 10;
+      options.TransferOptions.Concurrency = c;
 
-  //     options.Range = Core::Http::HttpRange();
-  //     options.Range.Value().Offset = 0;
-  //     EXPECT_THROW(
-  //         blockBlobClient.DownloadTo(emptyContent.data(), static_cast<size_t>(8_MB), options),
-  //         StorageException);
-  //     EXPECT_THROW(blockBlobClient.DownloadTo(tempFilename, options), StorageException);
+      res = blockBlobClient.DownloadTo(emptyContent.data(), static_cast<size_t>(8_MB), options);
+      EXPECT_EQ(res.Value.BlobSize, 0);
+      EXPECT_EQ(res.Value.ContentRange.Length.Value(), 0);
+      EXPECT_TRUE(res.Value.Details.ETag.HasValue());
+      EXPECT_TRUE(IsValidTime(res.Value.Details.LastModified));
+      EXPECT_EQ(res.Value.Details.HttpHeaders, m_blobUploadOptions.HttpHeaders);
+      EXPECT_EQ(res.Value.Details.Metadata, m_blobUploadOptions.Metadata);
+      EXPECT_EQ(res.Value.BlobType, Azure::Storage::Blobs::Models::BlobType::BlockBlob);
+      res = blockBlobClient.DownloadTo(tempFilename, options);
+      EXPECT_EQ(res.Value.BlobSize, 0);
+      EXPECT_EQ(res.Value.ContentRange.Length.Value(), 0);
+      EXPECT_TRUE(res.Value.Details.ETag.HasValue());
+      EXPECT_TRUE(IsValidTime(res.Value.Details.LastModified));
+      EXPECT_EQ(res.Value.Details.HttpHeaders, m_blobUploadOptions.HttpHeaders);
+      EXPECT_EQ(res.Value.Details.Metadata, m_blobUploadOptions.Metadata);
+      EXPECT_EQ(res.Value.BlobType, Azure::Storage::Blobs::Models::BlobType::BlockBlob);
+      EXPECT_TRUE(ReadFile(tempFilename).empty());
+      DeleteFile(tempFilename);
 
-  //     options.Range.Value().Offset = 1;
-  //     EXPECT_THROW(
-  //         blockBlobClient.DownloadTo(emptyContent.data(), static_cast<size_t>(8_MB), options),
-  //         StorageException);
-  //     EXPECT_THROW(blockBlobClient.DownloadTo(tempFilename, options), StorageException);
+      options.Range = Core::Http::HttpRange();
+      options.Range.Value().Offset = 0;
+      EXPECT_THROW(
+          blockBlobClient.DownloadTo(emptyContent.data(), static_cast<size_t>(8_MB), options),
+          StorageException);
+      EXPECT_THROW(blockBlobClient.DownloadTo(tempFilename, options), StorageException);
 
-  //     options.Range.Value().Offset = 0;
-  //     options.Range.Value().Length = 1;
-  //     EXPECT_THROW(
-  //         blockBlobClient.DownloadTo(emptyContent.data(), static_cast<size_t>(8_MB), options),
-  //         StorageException);
-  //     EXPECT_THROW(blockBlobClient.DownloadTo(tempFilename, options), StorageException);
+      options.Range.Value().Offset = 1;
+      EXPECT_THROW(
+          blockBlobClient.DownloadTo(emptyContent.data(), static_cast<size_t>(8_MB), options),
+          StorageException);
+      EXPECT_THROW(blockBlobClient.DownloadTo(tempFilename, options), StorageException);
 
-  //     options.Range.Value().Offset = 100;
-  //     options.Range.Value().Length = 100;
-  //     EXPECT_THROW(
-  //         blockBlobClient.DownloadTo(emptyContent.data(), static_cast<size_t>(8_MB), options),
-  //         StorageException);
-  //     EXPECT_THROW(blockBlobClient.DownloadTo(tempFilename, options), StorageException);
-  //     DeleteFile(tempFilename);
-  //   }
-  // }
+      options.Range.Value().Offset = 0;
+      options.Range.Value().Length = 1;
+      EXPECT_THROW(
+          blockBlobClient.DownloadTo(emptyContent.data(), static_cast<size_t>(8_MB), options),
+          StorageException);
+      EXPECT_THROW(blockBlobClient.DownloadTo(tempFilename, options), StorageException);
+
+      options.Range.Value().Offset = 100;
+      options.Range.Value().Length = 100;
+      EXPECT_THROW(
+          blockBlobClient.DownloadTo(emptyContent.data(), static_cast<size_t>(8_MB), options),
+          StorageException);
+      EXPECT_THROW(blockBlobClient.DownloadTo(tempFilename, options), StorageException);
+      DeleteFile(tempFilename);
+    }
+  }
 
   // TEST_F(BlockBlobClientTest, ConcurrentUpload)
   // {
