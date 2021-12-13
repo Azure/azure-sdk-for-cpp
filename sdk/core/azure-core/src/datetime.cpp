@@ -342,7 +342,7 @@ T ParseNumber(
   }
 
   ThrowParseError(description);
-  return T();
+  return T(); // LCOV_EXCL_LINE
 }
 
 template <typename T>
