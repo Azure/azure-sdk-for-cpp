@@ -877,3 +877,21 @@ TEST(DateTime, ToSystemClock)
     EXPECT_EQ(tm->tm_sec, 56);
   }
 }
+
+TEST(DateTime, OutOfToStringRange)
+{
+  using namespace std::literals::chrono_literals;
+
+  const DateTime underflow(DateTime(0001) - 1s);
+  const DateTime overflow(DateTime(9999, 12, 31, 23, 59, 59) + 1s);
+
+  EXPECT_THROW(static_cast<void>(underflow.ToString()), std::invalid_argument);
+  EXPECT_THROW(static_cast<void>(overflow.ToString()), std::invalid_argument);
+}
+
+TEST(DateTime, LeapYear)
+{
+  EXPECT_NO_THROW(static_cast<void>(DateTime(2021, 1, 29)));
+  EXPECT_NO_THROW(static_cast<void>(DateTime(2021, 2, 28)));
+  EXPECT_THROW(static_cast<void>(DateTime(2021, 2, 29)), std::invalid_argument);
+}
