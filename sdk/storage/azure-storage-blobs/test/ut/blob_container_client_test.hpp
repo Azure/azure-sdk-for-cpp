@@ -10,10 +10,10 @@ namespace Azure { namespace Storage { namespace Test {
   class BlobContainerClientTest : public StorageTest {
   private:
     std::shared_ptr<Azure::Storage::Blobs::BlobContainerClient> m_blobContainerClient;
-    std::string m_containerName;
 
   protected:
     std::string m_testName;
+    std::string m_containerName;
 
     virtual void SetUp() override { StorageTest::SetUp(); }
 

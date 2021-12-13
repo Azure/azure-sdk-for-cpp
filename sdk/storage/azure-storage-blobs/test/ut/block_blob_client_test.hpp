@@ -43,9 +43,8 @@ namespace Azure { namespace Storage { namespace Test {
           containerClient.GetBlobClient(blobName));
     }
 
-    void UploadBlockBlob(unsigned long long blobSize = 1_KB)
+    void SetOptions()
     {
-      m_blobContent = std::vector<uint8_t>(static_cast<size_t>(blobSize), 'x');
       m_blobUploadOptions.Metadata = {{"key1", "V1"}, {"key2", "Value2"}};
       m_blobUploadOptions.HttpHeaders.ContentType = "application/x-binary";
       m_blobUploadOptions.HttpHeaders.ContentLanguage = "en-US";
@@ -54,6 +53,12 @@ namespace Azure { namespace Storage { namespace Test {
       m_blobUploadOptions.HttpHeaders.ContentEncoding = "identity";
       m_blobUploadOptions.HttpHeaders.ContentHash.Value.clear();
       m_blobUploadOptions.AccessTier = Azure::Storage::Blobs::Models::AccessTier::Hot;
+    }
+
+    void UploadBlockBlob(unsigned long long blobSize = 1_KB)
+    {
+      m_blobContent = std::vector<uint8_t>(static_cast<size_t>(blobSize), 'x');
+      SetOptions();
       auto blobContent
           = Azure::Core::IO::MemoryBodyStream(m_blobContent.data(), m_blobContent.size());
       m_blockBlobClient->Upload(blobContent, m_blobUploadOptions);
