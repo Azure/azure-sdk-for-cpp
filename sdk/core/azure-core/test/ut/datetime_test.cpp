@@ -816,6 +816,23 @@ TEST(DateTime, TimeRoundtrip)
   TestDateTimeRoundtrip<DateTime::TimeFractionFormat::AllDigits>("2021-02-05T20:00:00.0000000Z");
 }
 
+TEST(DateTime, ParseRoundUpInvalidDate)
+{
+  EXPECT_THROW(
+      static_cast<void>(
+          DateTime::Parse("9999-12-31T23:59:00-00:01", DateTime::DateFormat::Rfc3339)),
+      std::invalid_argument);
+
+  EXPECT_THROW(
+      static_cast<void>(
+          DateTime::Parse("9999-12-31T23:59:59.99999995", DateTime::DateFormat::Rfc3339)),
+      std::invalid_argument);
+
+  EXPECT_THROW(
+      static_cast<void>(DateTime::Parse("9999-12-31T23:59:60", DateTime::DateFormat::Rfc3339)),
+      std::invalid_argument);
+}
+
 TEST(DateTime, ToSystemClock)
 {
   if (DateTime(std::chrono::system_clock::time_point::min())
@@ -859,22 +876,4 @@ TEST(DateTime, ToSystemClock)
     EXPECT_EQ(tm->tm_min, 34);
     EXPECT_EQ(tm->tm_sec, 56);
   }
-}
-
-TEST(DateTime, OutOfToStringRange)
-{
-  using namespace std::literals::chrono_literals;
-
-  const DateTime underflow(DateTime(0001) - 1s);
-  const DateTime overflow(DateTime(9999, 12, 31, 23, 59, 59) + 1s);
-
-  EXPECT_THROW(static_cast<void>(underflow.ToString()), std::invalid_argument);
-  EXPECT_THROW(static_cast<void>(overflow.ToString()), std::invalid_argument);
-}
-
-TEST(DateTime, LeapYear)
-{
-  EXPECT_NO_THROW(static_cast<void>(DateTime(2021, 1, 29)));
-  EXPECT_NO_THROW(static_cast<void>(DateTime(2021, 2, 28)));
-  EXPECT_THROW(static_cast<void>(DateTime(2021, 2, 29)), std::invalid_argument);
 }
