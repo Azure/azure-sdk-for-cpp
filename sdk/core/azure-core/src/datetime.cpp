@@ -236,7 +236,7 @@ void ValidateDate(
           + (hour * OneHourIn100ns) + (minute * OneMinuteIn100ns) + (second * OneSecondIn100ns)
           + fracSec + (roundFracSecUp ? 1 : 0);
 
-      constexpr auto FracSecTo9999_12_31_23_59_59_9999999 = (31 * OneDayIn100ns)
+      constexpr auto FracSecTo9999_12_31_23_59_59_9999999 = (30 * OneDayIn100ns)
           + (23 * OneHourIn100ns) + (59 * OneMinuteIn100ns) + (59 * OneSecondIn100ns) + 9999999;
 
       if (fracSecSince9999_12_01 - fracSecTimeAdjustment > FracSecTo9999_12_31_23_59_59_9999999)
