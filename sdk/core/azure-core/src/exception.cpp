@@ -24,10 +24,13 @@ namespace Azure { namespace Core {
 
     StatusCode = rawResponse->GetStatusCode();
     ReasonPhrase = rawResponse->GetReasonPhrase();
-    RequestId = HttpShared::GetHeaderOrEmptyString(headers, HttpShared::MsRequestId);
-    ClientRequestId = HttpShared::GetHeaderOrEmptyString(headers, HttpShared::MsClientRequestId);
-    Message = message;
     RawResponse = std::move(rawResponse);
+
+    // The response body may or may not have these fields
+    ErrorCode = GetRawResponseField(RawResponse, "code");
+
+    ClientRequestId = HttpShared::GetHeaderOrEmptyString(headers, HttpShared::MsClientRequestId);
+    RequestId = HttpShared::GetHeaderOrEmptyString(headers, HttpShared::MsRequestId);
   }
 
   RequestFailedException::RequestFailedException(
@@ -49,7 +52,7 @@ namespace Azure { namespace Core {
     RequestId = HttpShared::GetHeaderOrEmptyString(headers, HttpShared::MsRequestId);
   }
 
-  std::string RequestFailedException::GetRawResponseField(
+  std::string GetRawResponseField(
       std::unique_ptr<Azure::Core::Http::RawResponse>& rawResponse,
       std::string fieldName)
   {

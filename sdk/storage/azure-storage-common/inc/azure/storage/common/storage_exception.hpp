@@ -38,5 +38,13 @@ namespace Azure { namespace Storage {
      */
     static StorageException CreateFromResponse(
         std::unique_ptr<Azure::Core::Http::RawResponse> response);
+
+  private:
+    StorageException(
+        const std::string& whatArg,
+        std::unique_ptr<Azure::Core::Http::RawResponse> rawResponse)
+        : RequestFailedException(whatArg, std::move(rawResponse))
+    {
+    }
   };
 }} // namespace Azure::Storage

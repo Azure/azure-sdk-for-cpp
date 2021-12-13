@@ -5,6 +5,7 @@
 
 #include <type_traits>
 
+#include <azure/core/http/http.hpp>
 #include <azure/core/http/policies/policy.hpp>
 #include <azure/core/internal/json/json.hpp>
 
@@ -19,21 +20,12 @@ namespace Azure { namespace Storage {
 
     auto httpStatusCode = response->GetStatusCode();
     std::string reasonPhrase = response->GetReasonPhrase();
-    std::string requestId;
-    if (response->GetHeaders().find(_internal::HttpHeaderRequestId) != response->GetHeaders().end())
-    {
-      requestId = response->GetHeaders().at(_internal::HttpHeaderRequestId);
-    }
+    std::string requestId = Azure::Core::Http::_internal::HttpShared::GetHeaderOrEmptyString(
+        response->GetHeaders(), Azure::Core::Http::_internal::HttpShared::MsClientRequestId);
+    std::string clientRequestId = Azure::Core::Http::_internal::HttpShared::GetHeaderOrEmptyString(
+        response->GetHeaders(), Azure::Core::Http::_internal::HttpShared::MsClientRequestId);
 
-    std::string clientRequestId;
-    if (response->GetHeaders().find(_internal::HttpHeaderClientRequestId)
-        != response->GetHeaders().end())
-    {
-      clientRequestId = response->GetHeaders().at(_internal::HttpHeaderClientRequestId);
-    }
-
-    std::string errorCode;
-    std::string message;
+    std::string message = Azure::Core::GetRawResponseField(response, "message");
     std::map<std::string, std::string> additionalInformation;
 
     if (response->GetHeaders().find(_internal::HttpHeaderContentType)
@@ -97,18 +89,6 @@ namespace Azure { namespace Storage {
           else if (node.Type == _internal::XmlNodeType::Text)
           {
             if (path.size() == 2 && path[0] == XmlTagName::XmlTagError
-                && path[1] == XmlTagName::XmlTagCode)
-            {
-              errorCode = node.Value;
-            }
-            else if (
-                path.size() == 2 && path[0] == XmlTagName::XmlTagError
-                && path[1] == XmlTagName::XmlTagMessage)
-            {
-              message = node.Value;
-            }
-            else if (
-                path.size() == 2 && path[0] == XmlTagName::XmlTagError
                 && path[1] == XmlTagName::XmlTagUnknown)
             {
               if (!startTagName.empty())
@@ -126,14 +106,6 @@ namespace Azure { namespace Storage {
         // TODO: add a refined message parsed from result.
         message = std::string(bodyBuffer.begin(), bodyBuffer.end());
       }
-      else if (
-          response->GetHeaders().at(_internal::HttpHeaderContentType).find("json")
-          != std::string::npos)
-      {
-        auto jsonParser = Azure::Core::Json::_internal::json::parse(bodyBuffer);
-        errorCode = jsonParser["error"]["code"].get<std::string>();
-        message = jsonParser["error"]["message"].get<std::string>();
-      }
       else
       {
         // TODO: add a refined message parsed from result.
@@ -144,14 +116,9 @@ namespace Azure { namespace Storage {
     StorageException result = StorageException(
         std::to_string(static_cast<std::underlying_type<Azure::Core::Http::HttpStatusCode>::type>(
             httpStatusCode))
-        + " " + reasonPhrase + "\n" + message + "\nRequest ID: " + requestId);
-    result.StatusCode = httpStatusCode;
-    result.ReasonPhrase = std::move(reasonPhrase);
-    result.RequestId = std::move(requestId);
-    result.ClientRequestId = std::move(clientRequestId);
-    result.ErrorCode = std::move(errorCode);
+            + " " + reasonPhrase + "\n" + message + "\nRequest ID: " + requestId,
+        std::move(response));
     result.Message = std::move(message);
-    result.RawResponse = std::move(response);
     result.AdditionalInformation = std::move(additionalInformation);
     return result;
   }
