@@ -206,3 +206,17 @@ jobs:
             # Minimum baseline for branch coverage
             coverageThreshold: ${{ parameters.BranchCoverageTarget }}
           condition: and(succeededOrFailed(), eq(variables['CODE_COVERAGE'], 'enabled'), eq(variables['Skip.BranchCoverageEnforcement'], ''))
+
+
+      - task: CopyFiles@2
+        inputs:
+          contents: "**/*.map"
+          targetFolder: $(Build.ArtifactStagingDirectory)
+          flattenFolders: true
+        condition: eq(variables['PublishMapFiles'], 'true')
+
+      - task: PublishPipelineArtifact@1
+        inputs:
+          artifactName: map-files-$(System.PhaseName)
+          path: $(Build.ArtifactStagingDirectory)
+        condition: eq(variables['PublishMapFiles'], 'true')
