@@ -29,7 +29,7 @@ stages:
       CtestRegex: azure-identity-unittest.
       LiveTestCtestRegex: azure-identity-livetest.
       LineCoverageTarget: 99
-      BranchCoverageTarget: 62
+      BranchCoverageTarget: 63
       Artifacts:
         - Name: azure-identity
           Path: azure-identity
