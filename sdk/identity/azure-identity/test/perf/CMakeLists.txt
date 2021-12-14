@@ -23,6 +23,8 @@ add_executable (
      ${AZURE_IDENTITY_PERF_TEST_HEADER} ${AZURE_IDENTITY_PERF_TEST_SOURCE}
 )
 
+create_map_file(azure-identity-perf azure-identity-perf.map)
+
 # Include the headers from the project.
 target_include_directories(
   azure-identity-perf

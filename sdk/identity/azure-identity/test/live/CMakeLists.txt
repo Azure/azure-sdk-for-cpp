@@ -16,6 +16,7 @@ add_executable (
     environment_credential_test.cpp
     getenv.hpp
 )
+create_map_file(azure-identity-livetest azure-identity-livetest.map)
 
 if (MSVC)
   # Disable warnings:

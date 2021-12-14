@@ -26,6 +26,8 @@ add_executable (
     secret_paged_deserialize_test.hpp
     secret_client_base_test.hpp)
 
+create_map_file(azure-security-keyvault-secrets-test azure-security-keyvault-secrets-test.map)
+
 if (MSVC)
   target_compile_options(azure-security-keyvault-secrets-test PUBLIC /wd6326 /wd26495 /wd26812)
 endif()

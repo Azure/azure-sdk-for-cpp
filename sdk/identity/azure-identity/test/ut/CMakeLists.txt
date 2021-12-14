@@ -23,6 +23,8 @@ add_executable (
     simplified_header_test.cpp
     token_credential_impl_test.cpp)
 
+create_map_file(azure-identity-test azure-identity-test.map)
+
 if (MSVC)
   # Disable warnings:
   # - C26495: Variable
