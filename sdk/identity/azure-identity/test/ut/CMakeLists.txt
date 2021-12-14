@@ -11,9 +11,11 @@ set(CMAKE_CXX_STANDARD_REQUIRED True)
 
 include(GoogleTest)
 
+# Export the test folder for recordings access.
+add_compile_definitions(AZURE_TEST_RECORDING_DIR="${CMAKE_CURRENT_LIST_DIR}")
+
 add_executable (
   azure-identity-test
-    azure_identity_test.cpp
     client_secret_credential_test.cpp
     credential_test_helper.cpp
     credential_test_helper.hpp
@@ -21,7 +23,9 @@ add_executable (
     macro_guard_test.cpp
     managed_identity_credential_test.cpp
     simplified_header_test.cpp
-    token_credential_impl_test.cpp)
+    token_credential_impl_test.cpp
+    token_credential_test.cpp
+    )
 
 if (MSVC)
   # Disable warnings:
@@ -41,11 +45,11 @@ endif()
 # Adding private headers from identity to the tests so we can test the private APIs with no relative paths include.
 target_include_directories (azure-identity-test PRIVATE $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/../../src>)
 
-target_link_libraries(azure-identity-test PRIVATE azure-identity gtest gmock)
+target_link_libraries(azure-identity-test PRIVATE azure-identity azure-core-test-fw gtest gtest_main gmock)
 
 # gtest_discover_tests will scan the test from azure-identity-test and call add_test
 # for each test to ctest. This enables `ctest -r` to run specific tests directly.
 gtest_discover_tests(azure-identity-test
-     TEST_PREFIX azure-identity-unittest.
+     TEST_PREFIX azure-identity.
      NO_PRETTY_TYPES
      NO_PRETTY_VALUES)
