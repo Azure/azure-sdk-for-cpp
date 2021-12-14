@@ -90,7 +90,6 @@ if(BUILD_TESTING)
   endif()
 
   add_subdirectory(test/e2e)
-  add_subdirectory(test/live)
   add_subdirectory(test/ut)
 endif()
 
