@@ -27,7 +27,7 @@ macro(SetCompileOptions project)
         option(BUILD_PERFORMANCE_TESTS "Build the performance test library" OFF)
         option(MSVC_USE_STATIC_CRT "(MSVC only) Set to ON to link SDK with static CRT (/MT or /MTd switch)." OFF)
         option(BUILD_FROM_SOURCE_EXPORT "if export is built from source" ON)
-        option(BUILD_CERTIFICATES "only build certificates and dependancies" ON)
+        option(BUILD_CERTIFICATES "only build certificates and dependencies" ON)
         option(TESTING_BUILD "BUILD test cases" ON)
     endif()
 endmacro()
@@ -51,7 +51,7 @@ macro(DownloadDepVersion DEP_FOLDER DEP_NAME DEP_VERSION)
     file(ARCHIVE_EXTRACT INPUT ${DOWNLOAD_FOLDER}/${DEP_NAME}.tar DESTINATION ${CMAKE_SOURCE_DIR}/${DEP_FOLDER})
     #cleanup
     file(REMOVE_RECURSE ${DOWNLOAD_FOLDER})
-    #add dependancy folder to build list
+    #add dependency folder to build list
     list(APPEND BUILD_FOLDERS ${DEP_FOLDER})
 
 endmacro()

@@ -6,7 +6,7 @@ project(azure-security-keyvault-certificates LANGUAGES CXX)
 set(AZ_ALL_LIBRARIES ON)
 
 # Compile Options
-option(BUILD_SOURCE_DEPS "build source dependancies" ON)
+option(BUILD_SOURCE_DEPS "build source dependencies" ON)
 
 set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
