@@ -186,6 +186,16 @@ namespace Azure { namespace Core { namespace Test {
 
     // Creates the sdk client for testing.
     // The client will be set for record and playback before it is created.
+    Azure::Core::Credentials::TokenCredentialOptions GetTokenCredentialOptions()
+    {
+      // Run instrumentation before creating the client
+      Azure::Core::Credentials::TokenCredentialOptions options;
+      PrepareOptions(options);
+      return options;
+    }
+
+    // Creates the sdk client for testing.
+    // The client will be set for record and playback before it is created.
     template <class T, class O>
     std::unique_ptr<T> InitTestClient(
         std::string const& url,
