@@ -200,3 +200,20 @@ TEST_F(EnvironmentLogLevelListenerTest, GetLogListenerInformational)
   EXPECT_NE(buffer.str().find("INFO  : message"), std::string::npos);
   std::cerr.rdbuf(old);
 }
+
+TEST_F(EnvironmentLogLevelListenerTest, GetLogListenerUnknown)
+{
+  EnvironmentLogLevelListener::SetInitialized(false);
+  SetLogLevel("verbose");
+
+  std::stringstream buffer;
+  std::streambuf* old = std::cerr.rdbuf(buffer.rdbuf());
+
+  std::string text = buffer.str(); // text will now contain "Bla\n"
+  auto listener = EnvironmentLogLevelListener::GetLogListener();
+
+  listener(static_cast<Logger::Level>(42), "message");
+  EXPECT_NE(listener, nullptr);
+  EXPECT_NE(buffer.str().find("????? : message"), std::string::npos);
+  std::cerr.rdbuf(old);
+}

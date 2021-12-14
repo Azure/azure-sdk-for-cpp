@@ -6,6 +6,7 @@
 #include <azure/core/datetime.hpp>
 
 #include <chrono>
+#include <ctime>
 #include <limits>
 
 using namespace Azure;
@@ -373,6 +374,18 @@ TEST(DateTime, ParseTimeRfc3339BoundaryCases)
       "2038-01-19T03:13:07-00:01",
       "2038-01-19T03:14:07Z"); // INT_MAX after subtacting 1
   TestDateTimeRoundtrip("2038-01-19T03:14:07-00:00", "2038-01-19T03:14:07Z");
+
+  // No ':' in time zone offset
+  EXPECT_THROW(
+      DateTime::Parse("2001-01-01T00:00:00+12345", DateTime::DateFormat::Rfc3339),
+      std::invalid_argument);
+}
+
+TEST(DateTime, ParseUnrecognizedFormat)
+{
+  EXPECT_THROW(
+      DateTime::Parse("2001-01-01T00:00:00", static_cast<DateTime::DateFormat>(42)),
+      std::invalid_argument);
 }
 
 TEST(DateTime, ParseTimeRfc3339UsesEachTimezoneDigit)
@@ -801,4 +814,84 @@ TEST(DateTime, TimeRoundtrip)
 
   TestDateTimeRoundtrip<DateTime::TimeFractionFormat::AllDigits>("2021-02-05T10:00:00.0000000Z");
   TestDateTimeRoundtrip<DateTime::TimeFractionFormat::AllDigits>("2021-02-05T20:00:00.0000000Z");
+}
+
+TEST(DateTime, ParseRoundUpInvalidDate)
+{
+  EXPECT_THROW(
+      static_cast<void>(
+          DateTime::Parse("9999-12-31T23:59:00-00:01", DateTime::DateFormat::Rfc3339)),
+      std::invalid_argument);
+
+  EXPECT_THROW(
+      static_cast<void>(
+          DateTime::Parse("9999-12-31T23:59:59.99999995", DateTime::DateFormat::Rfc3339)),
+      std::invalid_argument);
+
+  EXPECT_THROW(
+      static_cast<void>(DateTime::Parse("9999-12-31T23:59:60", DateTime::DateFormat::Rfc3339)),
+      std::invalid_argument);
+}
+
+TEST(DateTime, ToSystemClock)
+{
+  if (DateTime(std::chrono::system_clock::time_point::min())
+      > DateTime(DateTime::time_point::min()))
+  {
+    EXPECT_THROW(
+        static_cast<void>(static_cast<std::chrono::system_clock::time_point>(
+            DateTime(DateTime::time_point::min()))),
+        std::invalid_argument);
+  }
+
+  if (DateTime(std::chrono::system_clock::time_point::max())
+      > DateTime(DateTime::time_point::max()))
+  {
+    EXPECT_THROW(
+        static_cast<void>(static_cast<std::chrono::system_clock::time_point>(
+            DateTime(DateTime::time_point::max()))),
+        std::invalid_argument);
+  }
+
+  {
+    auto const tt = std::chrono::system_clock::to_time_t(
+        static_cast<std::chrono::system_clock::time_point>(DateTime(2021, 7, 8, 15, 34, 56)));
+
+#ifdef _MSC_VER
+#pragma warning(push)
+// warning C4996: 'gmtime': This function or variable may be unsafe. Consider using gmtime_s
+// instead.
+#pragma warning(disable : 4996)
+#endif
+    auto const tm = std::gmtime(&tt);
+#ifdef _MSC_VER
+#pragma warning(pop)
+#endif
+
+    // https://en.cppreference.com/w/cpp/chrono/c/tm
+    EXPECT_EQ(tm->tm_year, (2021 - 1900)); // std::tm::tm_year is 1900-based.
+    EXPECT_EQ(tm->tm_mon, 6); // std::tm::tm_mon is 0-based.
+    EXPECT_EQ(tm->tm_mday, 8);
+    EXPECT_EQ(tm->tm_hour, 15);
+    EXPECT_EQ(tm->tm_min, 34);
+    EXPECT_EQ(tm->tm_sec, 56);
+  }
+}
+
+TEST(DateTime, OutOfToStringRange)
+{
+  using namespace std::literals::chrono_literals;
+
+  const DateTime underflow(DateTime(0001) - 1s);
+  const DateTime overflow(DateTime(9999, 12, 31, 23, 59, 59) + 1s);
+
+  EXPECT_THROW(static_cast<void>(underflow.ToString()), std::invalid_argument);
+  EXPECT_THROW(static_cast<void>(overflow.ToString()), std::invalid_argument);
+}
+
+TEST(DateTime, LeapYear)
+{
+  EXPECT_NO_THROW(static_cast<void>(DateTime(2021, 1, 29)));
+  EXPECT_NO_THROW(static_cast<void>(DateTime(2021, 2, 28)));
+  EXPECT_THROW(static_cast<void>(DateTime(2021, 2, 29)), std::invalid_argument);
 }

@@ -915,7 +915,7 @@ void CurlConnection::Shutdown()
 #elif defined(AZ_PLATFORM_WINDOWS)
   ::shutdown(m_curlSocket, SD_BOTH);
 #endif
-  m_isShutDown = true;
+  CurlNetworkConnection::Shutdown();
 }
 
 // Read from socket and return the number of bytes taken from socket

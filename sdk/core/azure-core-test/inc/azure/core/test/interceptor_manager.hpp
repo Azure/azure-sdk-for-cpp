@@ -38,7 +38,7 @@
 namespace Azure { namespace Core { namespace Test {
 
   /**
-   * @brief Client Certificate Credential authenticates with the Azure services using a
+   * @brief TestNonExpiringCredential Credential authenticates with the Azure services using a
    * Tenant ID, Client ID and a client secret.
    *
    */
@@ -102,10 +102,10 @@ namespace Azure { namespace Core { namespace Test {
     }
 
     /**
-     * @brief Get a credential which token never expires. This is util for running on playback where
-     * the token is not relevant.
+     * @brief Get a non-expiring token credential. This is a test utility for use in playback
+     * scenarios where the token is not relevant.
      *
-     * @return std::shared<Core::Credentials::TokenCredential>
+     * @return std::shared_ptr<Core::Credentials::TokenCredential>
      */
     std::shared_ptr<Core::Credentials::TokenCredential> GetTestCredential()
     {
@@ -113,10 +113,10 @@ namespace Azure { namespace Core { namespace Test {
     }
 
     /**
-     * Gets a new HTTP client that plays back test session records managed by {@link
-     * InterceptorManager}.
+     * Gets a new HTTP transport adapter that plays back test session records managed by the
+     * InterceptorManager.
      *
-     * @return An HTTP client that plays back network calls from its recorded data.
+     * @return An HTTP transport adapter that plays back network calls from its recorded data.
      */
     std::unique_ptr<Azure::Core::Http::HttpTransport> GetPlaybackTransport()
     {
