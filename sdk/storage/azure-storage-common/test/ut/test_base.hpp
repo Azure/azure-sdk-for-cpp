@@ -90,9 +90,7 @@ namespace Azure { namespace Storage {
       void DeleteFile(const std::string& filename);
 
       std::string InferSecondaryUrl(const std::string primaryUri);
-
-      bool IsValidTime(const Azure::DateTime& datetime);
-
+      
       inline std::string Base64EncodeText(const std::string& text)
       {
         return Azure::Core::Convert::Base64Encode(std::vector<uint8_t>(text.begin(), text.end()));

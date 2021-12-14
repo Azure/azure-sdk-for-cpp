@@ -135,6 +135,20 @@ namespace Azure { namespace Core { namespace Test {
       }
     }
 
+    bool IsValidTime(const Azure::DateTime& datetime)
+    {
+      // Playback won't check dates
+      if (m_testContext.IsPlaybackMode())
+      {
+        return true;
+      }
+
+      // We assume datetime within a week is valid.
+      const auto minTime = std::chrono::system_clock::now() - std::chrono::hours(24 * 7);
+      const auto maxTime = std::chrono::system_clock::now() + std::chrono::hours(24 * 7);
+      return datetime > minTime && datetime < maxTime;
+    }
+
     // Reads the current test instance name.
     // Name gets also sanitized (special chars are removed) to avoid issues when recording or
     // creating

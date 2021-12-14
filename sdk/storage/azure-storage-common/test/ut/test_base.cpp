@@ -294,14 +294,6 @@ namespace Azure { namespace Storage { namespace Test {
     return secondaryUri.GetAbsoluteUrl();
   }
 
-  bool StorageTest::IsValidTime(const Azure::DateTime& datetime)
-  {
-    // We assume datetime within a week is valid.
-    const auto minTime = std::chrono::system_clock::now() - std::chrono::hours(24 * 7);
-    const auto maxTime = std::chrono::system_clock::now() + std::chrono::hours(24 * 7);
-    return datetime > minTime && datetime < maxTime;
-  }
-
   const Azure::ETag StorageTest::DummyETag("0x8D83B58BDF51D75");
   const Azure::ETag StorageTest::DummyETag2("0x8D812645BFB0CDE");
 
