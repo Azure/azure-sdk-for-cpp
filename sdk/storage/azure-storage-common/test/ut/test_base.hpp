@@ -46,8 +46,6 @@ namespace Azure { namespace Storage {
           const Azure::Core::Url& url,
           const std::string& queryParameters);
 
-      const static Azure::ETag DummyETag;
-      const static Azure::ETag DummyETag2;
       /* cspell:disable-next-line */
       constexpr static const char* DummyMd5 = "tQbD1aMPeB+LiPffUwFQJQ==";
       /* cspell:disable-next-line */
@@ -90,7 +88,7 @@ namespace Azure { namespace Storage {
       void DeleteFile(const std::string& filename);
 
       std::string InferSecondaryUrl(const std::string primaryUri);
-      
+
       inline std::string Base64EncodeText(const std::string& text)
       {
         return Azure::Core::Convert::Base64Encode(std::vector<uint8_t>(text.begin(), text.end()));
@@ -100,6 +98,10 @@ namespace Azure { namespace Storage {
       {
         Azure::Core::Test::TestBase::SetUpTestBase(AZURE_TEST_RECORDING_DIR);
       }
+
+    public:
+      const static Azure::ETag DummyETag;
+      const static Azure::ETag DummyETag2;
     };
 
     constexpr inline unsigned long long operator""_KB(unsigned long long x) { return x * 1024; }
