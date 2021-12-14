@@ -10,6 +10,8 @@
 
 ### Bugs Fixed
 
+- Fixed `Azure::DateTime::Parse()` validation if the result is going to exceed `9999-12-31T23:59:59.9999999` due to time zone, leap second, or fractional digits rounding up adjustments.
+
 ### Other Changes
 
 ## 1.3.1 (2021-11-05)

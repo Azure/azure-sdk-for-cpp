@@ -161,6 +161,16 @@ namespace Azure { namespace Core { namespace Test {
         EXPECT_EQ(values->second.begin()->get()->GetConnectionKey(), expectedConnectionKey);
       }
 
+      {
+        Azure::Core::Http::CurlSession::ResponseBufferParser responseParser;
+        EXPECT_EQ(responseParser.ExtractResponse(), nullptr);
+
+        const uint8_t responseBuf[] = "HTTP/1.1 200 OK\r\n\r\n";
+        static_cast<void>(responseParser.Parse(responseBuf, sizeof(responseBuf) - 1));
+        EXPECT_NE(responseParser.ExtractResponse(), nullptr);
+        EXPECT_EQ(responseParser.ExtractResponse(), nullptr);
+      }
+
       // Test re-using same custom config
       {
         // Creating a new connection with default options

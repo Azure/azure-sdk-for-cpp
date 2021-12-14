@@ -129,7 +129,7 @@ jobs:
         #AZURE_CORE_ENABLE_JSON_TESTS: 1  # Testing Json lib on Win+WinHttp only, No need to repeat here as it is independent to the http transport adapter.
       MacOS_x64_with_unit_test:
         Pool: Azure Pipelines
-        OSVmImage: 'macOS-10.14'
+        OSVmImage: 'macOS-10.15'
         VcpkgInstall: 'curl[ssl] libxml2 openssl'
         VCPKG_DEFAULT_TRIPLET: 'x64-osx'
         CmakeArgs: ' -DBUILD_TESTING=ON -DRUN_LONG_UNIT_TESTS=ON -DBUILD_PERFORMANCE_TESTS=ON '
@@ -259,7 +259,7 @@ jobs:
     workingDirectory: build
     displayName: Generate Code Coverage Data
     condition: and(succeeded(), ne(variables['CODE_COVERAGE'], 'disabled'), ne(variables['CODE_COVERAGE'], ''))
-  
+
   - task: PublishCodeCoverageResults@1
     inputs:
       codeCoverageTool: Cobertura
