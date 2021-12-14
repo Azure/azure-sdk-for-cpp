@@ -15,7 +15,7 @@
     ".vscode/cspell.json",
     "eng/common/**/*",
     "json.hpp",
-    "Dockerfile"
+    "Dockerfile",
     "*nlohmann-json*",
     "eng/docs/api/assets/**/*",
     "sdk/keyvault/azure-security-keyvault-keys/test/ut/recordings/*.json",
