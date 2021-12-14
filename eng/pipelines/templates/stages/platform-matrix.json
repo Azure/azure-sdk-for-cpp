@@ -19,8 +19,7 @@
                     "VcpkgInstall": "curl[ssl] libxml2 openssl",
                     "BuildArgs": "-j 10",
                     "VCPKG_DEFAULT_TRIPLET": "x64-osx",
-                    "CmakeArgs": " -DBUILD_TESTING=ON -DBUILD_PERFORMANCE_TESTS=ON -DRUN_LONG_UNIT_TESTS=ON -DBUILD_TRANSPORT_CURL=ON",
-                    "PublishMapFiles": "true"
+                    "CmakeArgs": " -DBUILD_TESTING=ON -DBUILD_PERFORMANCE_TESTS=ON -DRUN_LONG_UNIT_TESTS=ON -DBUILD_TRANSPORT_CURL=ON"
                 }
             },
             "BuildConfig": {
@@ -155,8 +154,7 @@
                     "BuildArgs": "-j 10",
                     "CC": "/usr/bin/clang-11",
                     "CXX": "/usr/bin/clang++-11",
-                    "CmakeArgs": " -DBUILD_TESTING=ON -DBUILD_PERFORMANCE_TESTS=ON -DRUN_LONG_UNIT_TESTS=ON",
-                    "PublishMapFiles": "true"
+                    "CmakeArgs": " -DBUILD_TESTING=ON -DBUILD_PERFORMANCE_TESTS=ON -DRUN_LONG_UNIT_TESTS=ON"
                 }
             },
             "BuildSettings": {
