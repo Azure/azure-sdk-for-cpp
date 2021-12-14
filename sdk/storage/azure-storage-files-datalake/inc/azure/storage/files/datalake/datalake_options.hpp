@@ -34,7 +34,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
      * operation against another host. If SecondaryHostForRetryReads is "" (the default) then
      * operations are not retried against another host. NOTE: Before setting this field, make sure
      * you understand the issues around reading stale & potentially-inconsistent data at this
-     * webpage: https://docs.microsoft.com/en-us/azure/storage/common/geo-redundant-design.
+     * webpage: https://docs.microsoft.com/azure/storage/common/geo-redundant-design.
      */
     std::string SecondaryHostForRetryReads;
 
@@ -220,7 +220,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
    * #Azure::Storage::Files::DataLake::DataLakeFileSystemClient::RenameDirectory.
    * @remark Some optional parameter is mandatory in certain combination.
    *         More details:
-   * https://docs.microsoft.com/en-us/rest/api/storageservices/datalakestoragegen2/path/create
+   * https://docs.microsoft.com/rest/api/storageservices/datalakestoragegen2/path/create
    */
   struct RenameDirectoryOptions final
   {
@@ -373,7 +373,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
    * @brief Optional parameters for #Azure::Storage::Files::DataLake::PathClient::Create.
    * @remark Some optional parameter is mandatory in certain combination.
    *         More details:
-   * https://docs.microsoft.com/en-us/rest/api/storageservices/datalakestoragegen2/path/create
+   * https://docs.microsoft.com/rest/api/storageservices/datalakestoragegen2/path/create
    */
   struct CreatePathOptions final
   {
@@ -420,7 +420,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
    * @brief Optional parameters for #Azure::Storage::Files::DataLake::DirectoryClient::Delete.
    * @remark Some optional parameter is mandatory in certain combination.
    *         More details:
-   * https://docs.microsoft.com/en-us/rest/api/storageservices/datalakestoragegen2/path/delete
+   * https://docs.microsoft.com/rest/api/storageservices/datalakestoragegen2/path/delete
    */
   struct DeletePathOptions final
   {
@@ -440,7 +440,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
    * @brief Optional parameters for #Azure::Storage::Files::DataLake::PathClient::GetProperties.
    * @remark Some optional parameter is mandatory in certain combination.
    *         More details:
-   * https://docs.microsoft.com/en-us/rest/api/storageservices/datalakestoragegen2/path/getproperties
+   * https://docs.microsoft.com/rest/api/storageservices/datalakestoragegen2/path/getproperties
    */
   struct GetPathPropertiesOptions final
   {
@@ -466,7 +466,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
    * @brief Optional parameters for #Azure::Storage::Files::DataLake::PathClient::Read.
    * @remark Some optional parameter is mandatory in certain combination.
    *         More details:
-   * https://docs.microsoft.com/en-us/rest/api/storageservices/datalakestoragegen2/path/read
+   * https://docs.microsoft.com/rest/api/storageservices/datalakestoragegen2/path/read
    */
   struct DownloadFileOptions final
   {

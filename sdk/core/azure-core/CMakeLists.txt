@@ -39,9 +39,7 @@ if(BUILD_TRANSPORT_CURL)
     src/http/curl/curl_connection_pool_private.hpp
     src/http/curl/curl_connection_private.hpp
     src/http/curl/curl_session_private.hpp
-    src/http/curl/static_curl_transport.hpp
     src/http/curl/curl.cpp
-    src/http/curl/static_curl.cpp
   )
   SET(CURL_TRANSPORT_ADAPTER_INC
     inc/azure/core/http/curl_transport.hpp
@@ -65,6 +63,7 @@ set(
     inc/azure/core/http/raw_response.hpp
     inc/azure/core/http/policies/policy.hpp
     inc/azure/core/http/transport.hpp
+    inc/azure/core/internal/azure_assert.hpp
     inc/azure/core/internal/client_options.hpp
     inc/azure/core/internal/contract.hpp
     inc/azure/core/internal/cryptography/sha_hash.hpp
@@ -75,7 +74,6 @@ set(
     inc/azure/core/internal/json/json.hpp
     inc/azure/core/internal/strings.hpp
     inc/azure/core/io/body_stream.hpp
-    inc/azure/core/azure_assert.hpp
     inc/azure/core/rtti.hpp
     inc/azure/core/base64.hpp
     inc/azure/core/case_insensitive_containers.hpp
@@ -118,15 +116,16 @@ set(
     src/io/random_access_file_body_stream.cpp
     src/private/environment_log_level_listener.hpp
     src/private/package_version.hpp
-    src/uuid.cpp
     src/base64.cpp
     src/context.cpp
     src/datetime.cpp
     src/environment_log_level_listener.cpp
+    src/etag.cpp
     src/exception.cpp
     src/logger.cpp
     src/operation_status.cpp
     src/strings.cpp
+    src/uuid.cpp
 )
 
 add_library(azure-core ${AZURE_CORE_HEADER} ${AZURE_CORE_SOURCE})
@@ -142,7 +141,7 @@ target_include_directories(
 add_library(Azure::azure-core ALIAS azure-core)
 
 # coverage. Has no effect if BUILD_CODE_COVERAGE is OFF
-create_code_coverage(core azure-core azure-core-test)
+create_code_coverage(core azure-core azure-core-test "tests?/*;samples?/*;inc/azure/core/internal/json/json.hpp")
 
 target_link_libraries(azure-core INTERFACE Threads::Threads)
 

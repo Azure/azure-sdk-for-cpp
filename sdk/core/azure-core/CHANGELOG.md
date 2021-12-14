@@ -1,5 +1,19 @@
 # Release History
 
+## 1.4.0-beta.1 (Unreleased)
+
+### Features Added
+
+### Breaking Changes
+
+- `azure/core/azure_assert.hpp` header is moved to internal. `AzureNoReturnPath()` function is removed from global namespace. Associated macros, such as `AZURE_ASSERT` are renamed to indicate that they are internal. If your code was using the `AZURE_ASSERT` macro, consider using the standard library's `assert` as an alternative.
+
+### Bugs Fixed
+
+- Fixed `Azure::DateTime::Parse()` validation if the result is going to exceed `9999-12-31T23:59:59.9999999` due to time zone, leap second, or fractional digits rounding up adjustments.
+
+### Other Changes
+
 ## 1.3.1 (2021-11-05)
 
 ### Bugs Fixed

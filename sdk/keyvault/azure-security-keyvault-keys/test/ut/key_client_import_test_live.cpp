@@ -22,12 +22,14 @@ using namespace Azure::Security::KeyVault::Keys::Test;
 using namespace Azure::Security::KeyVault::Keys;
 using namespace Azure::Security::KeyVault::_detail;
 
-TEST_F(KeyVaultClientTest, ImportKey)
+TEST_F(KeyVaultKeyClient, ImportKey)
 {
-  KeyClient keyClient(m_keyVaultUrl, m_credential);
+  auto const keyName = GetTestName();
+  auto const& client = GetClientForTest(keyName);
+
   JsonWebKey key;
   key.KeyType = KeyVaultKeyType::Rsa;
-  // Values from https://docs.microsoft.com/en-us/rest/api/keyvault/importkey/importkey
+  // Values from https://docs.microsoft.com/rest/api/keyvault/importkey/importkey
   key.N = Base64Url::Base64UrlDecode(
       "nKAwarTrOpzd1hhH4cQNdVTgRF-b0ubPD8ZNVf0UXjb62QuAk3Dn68ESThcF7SoDYRx2QVcfoMC9WCcuQUQDieJF-"
       "lvJTSer1TwH72NBovwKlHvrXqEI0a6_uVYY5n-"
@@ -57,16 +59,16 @@ TEST_F(KeyVaultClientTest, ImportKey)
       "0Yv-Dj6qnvx_LL70lUnKA6MgHE_bUC4drl5ZNDDsUdUUYfxIK4G1rGU45kHGtp-Qg-"
       "Uyf9s52ywLylhcVE3jfbjOgEozlSwKyhqfXkLpMLWHqOKj9fcfYd4PWKPOgpzWsqjA6fJbBUM"
       "Yo0CU2G9cWCtVodO7sBJVSIZunWrAlBc");
-  std::string keyName(GetUniqueName());
+
   key.CurveName = KeyCurveName::P521;
   key.SetKeyOperations({KeyOperation::Sign});
 
-  auto response = keyClient.ImportKey(keyName, key);
+  auto response = client.ImportKey(keyName, key);
   CheckValidResponse(response);
   auto const& returnedkey = response.Value;
   EXPECT_EQ(key.N, returnedkey.Key.N);
   EXPECT_EQ(key.E, returnedkey.Key.E);
   EXPECT_EQ(key.CurveName.Value().ToString(), returnedkey.Key.CurveName.Value().ToString());
-  EXPECT_EQ(returnedkey.KeyOperations().size(), 1);
+  EXPECT_EQ(returnedkey.KeyOperations().size(), 1U);
   EXPECT_EQ(returnedkey.KeyOperations()[0].ToString(), KeyOperation::Sign.ToString());
 }

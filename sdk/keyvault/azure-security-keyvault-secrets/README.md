@@ -157,21 +157,21 @@ You will notice that additional information is logged, like the client request I
 
 Several Azure Key Vault secrets client library samples are available to you in this GitHub repository. These samples provide example code for additional scenarios commonly encountered while working with Azure Key Vault:
 
-* [Sample1-Basic-Operations](https://github.com/Azure/azure-sdk-for-cpp/blob/main/sdk/keyvault/azure-security-keyvault-secrets/samples/sample1-basic-operations):
+* Sample1-Basic-Operations:
   * Create a secret
   * Get a secret
   * Update a secret
   * Delete and Purge a secret
 
-* [Sample2-Backup-Restore](https://github.com/Azure/azure-sdk-for-cpp/blob/main/sdk/keyvault/azure-security-keyvault-secrets/samples/sample2-backup-restore):
+* Sample2-Backup-Restore:
   * Backup a secret
   * Restore a deleted secret
 
-* [Sample3-Delete-Recover](https://github.com/Azure/azure-sdk-for-cpp/blob/main/sdk/keyvault/azure-security-keyvault-secrets/samples/sample3-delete-recover):
+* Sample3-Delete-Recover:
   * Delete a secret
   * Recover a deleted Secret
 
-* [Sample4-Get-Secrets-Deleted](https://github.com/Azure/azure-sdk-for-cpp/blob/main/sdk/keyvault/azure-security-keyvault-secrets/samples/sample4-get-secrets-deleted):
+* Sample4-Get-Secrets-Deleted:
   * List all secrets
   * List all of a secrets versions
   * List all deletes secrets
@@ -207,7 +207,7 @@ Security issues and bugs should be reported privately, via email, to the Microso
 
 ### License
 
-Azure SDK for C++ is licensed under the [MIT](https://github.com/Azure/azure-sdk-for-cpp/blob/main/sdk/template/azure-template/LICENSE) license.
+Azure SDK for C++ is licensed under the [MIT](https://github.com/Azure/azure-sdk-for-cpp/blob/main/LICENSE.txt) license.
 
 <!-- LINKS -->
 [azure_sdk_for_cpp_contributing]: https://github.com/Azure/azure-sdk-for-cpp/blob/main/CONTRIBUTING.md

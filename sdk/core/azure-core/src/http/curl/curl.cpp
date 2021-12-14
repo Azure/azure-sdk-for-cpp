@@ -133,7 +133,7 @@ void WinSocketSetBuffSize(curl_socket_t socket)
   {
     // if WSAloctl succeeded (returned 0), set the socket buffer size.
     // Specifies the total per-socket buffer space reserved for sends.
-    // https://docs.microsoft.com/en-us/windows/win32/api/winsock/nf-winsock-setsockopt
+    // https://docs.microsoft.com/windows/win32/api/winsock/nf-winsock-setsockopt
     auto result = setsockopt(socket, SOL_SOCKET, SO_SNDBUF, (const char*)&ideal, sizeof(ideal));
 
     if (Log::ShouldWrite(Logger::Level::Verbose))
@@ -915,7 +915,7 @@ void CurlConnection::Shutdown()
 #elif defined(AZ_PLATFORM_WINDOWS)
   ::shutdown(m_curlSocket, SD_BOTH);
 #endif
-  m_isShutDown = true;
+  CurlNetworkConnection::Shutdown();
 }
 
 // Read from socket and return the number of bytes taken from socket
@@ -1026,7 +1026,7 @@ size_t CurlSession::ResponseBufferParser::Parse(
         {
           // Should never happen that parser is not statusLIne or Headers and we still try
           // to parse more.
-          AZURE_UNREACHABLE_CODE();
+          _azure_UNREACHABLE_CODE();
         }
         // clean internal buffer
         this->m_internalBuffer.clear();
@@ -1064,7 +1064,7 @@ size_t CurlSession::ResponseBufferParser::Parse(
         {
           // Should never happen that parser is not statusLIne or Headers and we still try
           // to parse more.
-          AZURE_UNREACHABLE_CODE();
+          _azure_UNREACHABLE_CODE();
         }
       }
     }

@@ -39,7 +39,7 @@ namespace Azure { namespace Storage { namespace Blobs {
 
     /**
      * @brief Optional SQL statement to apply to the tags of the Blob. Refer to
-     * https://docs.microsoft.com/en-us/rest/api/storageservices/specifying-conditional-headers-for-blob-service-operations#tags-predicate-syntax
+     * https://docs.microsoft.com/rest/api/storageservices/specifying-conditional-headers-for-blob-service-operations#tags-predicate-syntax
      * for the format of SQL statements.
      */
     Azure::Nullable<std::string> TagConditions;
@@ -148,7 +148,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      * operation against another host. If SecondaryHostForRetryReads is "" (the default) then
      * operations are not retried against another host. NOTE: Before setting this field, make sure
      * you understand the issues around reading stale & potentially-inconsistent data at this
-     * webpage: https://docs.microsoft.com/en-us/azure/storage/common/geo-redundant-design.
+     * webpage: https://docs.microsoft.com/azure/storage/common/geo-redundant-design.
      */
     std::string SecondaryHostForRetryReads;
 
@@ -495,6 +495,52 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @brief If the destination blob should be sealed. Only applicable for Append Blobs.
      */
     Azure::Nullable<bool> ShouldSealDestination;
+  };
+
+  /**
+   * @brief Optional parameters for #Azure::Storage::Blobs::BlobClient::CopyFromUri.
+   */
+  struct CopyBlobFromUriOptions
+  {
+    /**
+     * @brief Specifies user-defined name-value pairs associated with the blob. If no
+     * name-value pairs are specified, the operation will copy the metadata from the source blob or
+     * file to the destination blob. If one or more name-value pairs are specified, the destination
+     * blob is created with the specified metadata, and metadata is not copied from the source blob
+     * or file.
+     */
+    Storage::Metadata Metadata;
+
+    /**
+     * @brief The tags to set for this blob.
+     */
+    std::map<std::string, std::string> Tags;
+
+    /**
+     * @brief Optional conditions that must be met to perform this operation.
+     */
+    BlobAccessConditions AccessConditions;
+
+    /**
+     * @brief Optional conditions that the source must meet to perform this operation.
+     *
+     * @note Lease access condition only works for API versions before 2012-02-12.
+     */
+    struct : public Azure::ModifiedConditions, public Azure::MatchConditions
+    {
+    } SourceAccessConditions;
+
+    /**
+     * @brief Specifies the tier to be set on the target blob.
+     */
+    Azure::Nullable<Models::AccessTier> AccessTier;
+
+    /**
+     * @brief Hash of the blob content. This hash is used to verify the integrity of
+     * the blob during transport. When this header is specified, the storage service checks the hash
+     * that has arrived with the one that was sent.
+     */
+    Azure::Nullable<ContentHash> TransactionalContentHash;
   };
 
   /**

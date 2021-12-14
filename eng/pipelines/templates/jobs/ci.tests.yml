@@ -11,6 +11,9 @@ parameters:
   - name: CtestRegex
     type: string
     default: .*
+  - name: CtestExcludeRegex
+    type: string
+    default: ''
   - name: CoverageReportPath
     type: string
     default: 'sdk/*/*/*cov_xml.xml'
@@ -65,6 +68,18 @@ jobs:
       value: ""
     - name: AZURE_TEST_MODE
       value: "PLAYBACK"
+# Even on playblack, tests will require ENV VARS
+    - name: AZURE_KEYVAULT_URL
+      value: "https://non-real-account.vault.azure.net"
+    - name: AZURE_KEYVAULT_HSM_URL
+      value: "https://non-real-account.vault.azure.net"
+    - name: AZURE_TENANT_ID
+      value: "non-real-tenant"
+    - name: AZURE_CLIENT_ID
+      value: "non-real-client"
+    - name: AZURE_CLIENT_SECRET
+      value: "non-real-secret"
+
     steps:
       - template: /eng/common/pipelines/templates/steps/verify-agent-os.yml
         parameters:
@@ -125,8 +140,16 @@ jobs:
           BuildArgs: "$(BuildArgs)"
           Env: "$(CmakeEnvArg)"
 
-      - script: ctest -C Debug -V --tests-regex ${{ parameters.CtestRegex }} --no-compress-output -T Test
+      - pwsh: |
+          ctest `
+            -C Debug `
+            -V `
+            --tests-regex '${{ parameters.CtestRegex }}' `
+            --exclude-regex '${{ parameters.CtestExcludeRegex }}' `
+            --no-compress-output `
+            -T Test
         workingDirectory: build
+        displayName: Test
 
       - task: PublishTestResults@2
         inputs:

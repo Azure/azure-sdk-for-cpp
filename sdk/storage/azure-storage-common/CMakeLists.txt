@@ -85,7 +85,7 @@ if(WIN32)
     target_compile_options(azure-storage-common PUBLIC /wd28204 /wd28020)
 else()
     find_package(LibXml2 REQUIRED)
-    target_include_directories(azure-storage-common PRIVATE ${LIBXML2_INCLUDE_DIRS})
+    target_include_directories(azure-storage-common SYSTEM PRIVATE ${LIBXML2_INCLUDE_DIRS})
     target_link_libraries(azure-storage-common PRIVATE ${LIBXML2_LIBRARIES})
     find_package(OpenSSL REQUIRED)
     target_link_libraries(azure-storage-common PRIVATE OpenSSL::SSL OpenSSL::Crypto)
@@ -108,7 +108,7 @@ az_rtti_setup(
 
 # coverage. Has no effect if BUILD_CODE_COVERAGE is OFF
 # excluding json from coverage report
-create_code_coverage(storage azure-storage-common azure-storage-test "inc/azure/storage/common/json*")
+create_code_coverage(storage azure-storage-common azure-storage-test "tests?/*;samples?/*")
 
 if(BUILD_TESTING)
   target_sources(
@@ -128,15 +128,4 @@ if(BUILD_TESTING)
 
   target_link_libraries(azure-storage-test PRIVATE azure-identity)
   target_include_directories(azure-storage-test PRIVATE test)
-endif()
-
-if(BUILD_STORAGE_SAMPLES)
-  target_sources(
-    azure-storage-sample
-      PRIVATE
-        sample/main.cpp
-        sample/samples_common.hpp
-  )
-
-  target_include_directories(azure-storage-sample PRIVATE sample)
 endif()

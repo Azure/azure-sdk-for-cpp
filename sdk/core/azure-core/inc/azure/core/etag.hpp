@@ -8,7 +8,7 @@
 
 #pragma once
 
-#include "azure/core/azure_assert.hpp"
+#include "azure/core/internal/azure_assert.hpp"
 #include "azure/core/nullable.hpp"
 
 #include <string>
@@ -113,7 +113,7 @@ public:
         break;
     }
     // Unknown comparison
-    AZURE_UNREACHABLE_CODE();
+    _azure_UNREACHABLE_CODE();
   }
 
   /**
@@ -140,7 +140,8 @@ public:
    */
   const std::string& ToString() const
   {
-    AZURE_ASSERT_MSG(m_value.HasValue(), "Empty ETag, check HasValue() before calling ToString().");
+    _azure_ASSERT_MSG(
+        m_value.HasValue(), "Empty ETag, check HasValue() before calling ToString().");
 
     return m_value.Value();
   }
@@ -183,10 +184,6 @@ public:
    * @brief #Azure::Core::ETag representing everything.
    * @note The any #Azure::Core::ETag is *, (unquoted).  It is NOT the same as "*".
    */
-  static const ETag& Any()
-  {
-    static ETag any = ETag("*");
-    return any;
-  }
+  static const ETag& Any();
 };
 } // namespace Azure

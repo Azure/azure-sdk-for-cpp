@@ -288,4 +288,46 @@ namespace Azure { namespace Core { namespace Test {
   {
     EXPECT_THROW(Core::Url url("http://test.com:99999999999999999"), std::out_of_range);
   }
+
+  TEST(URL, empty)
+  {
+    Core::Url url;
+    EXPECT_EQ(url.GetAbsoluteUrl(), std::string());
+  }
+
+  TEST(URL, AppendPathSlash)
+  {
+    Core::Url url1;
+    Core::Url url2;
+
+    url1.AppendPath("x");
+    EXPECT_EQ(url1.GetPath(), "x");
+
+    url2.AppendPath("x/");
+    EXPECT_EQ(url2.GetPath(), "x/");
+
+    url1.AppendPath("y");
+    url2.AppendPath("y");
+
+    EXPECT_EQ(url1.GetPath(), "x/y");
+    EXPECT_EQ(url2.GetPath(), "x/y");
+  }
+
+  TEST(URL, Decode)
+  {
+    EXPECT_EQ(Core::Url::Decode("+%61b"), " ab");
+    EXPECT_THROW(Core::Url::Decode("%"), std::runtime_error);
+    EXPECT_THROW(Core::Url::Decode("%GA"), std::runtime_error);
+    EXPECT_THROW(Core::Url::Decode("%AG"), std::runtime_error);
+  }
+
+  TEST(URL, AppendQueryParameters)
+  {
+    Core::Url url("http://www.microsoft.com??param=value");
+    auto params = url.GetQueryParameters();
+
+    EXPECT_EQ(params.size(), 1);
+    EXPECT_NE(params.find("param"), params.end());
+    EXPECT_EQ(params["param"], "value");
+  }
 }}} // namespace Azure::Core::Test

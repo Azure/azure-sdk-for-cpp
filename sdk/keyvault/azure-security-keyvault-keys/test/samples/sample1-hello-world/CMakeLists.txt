@@ -12,4 +12,8 @@ add_executable (
   sample1_hello_world.cpp
 )
 
+# Add the sample to be run on CI. 
+# CI pipeline reads the {service}-samples.txt and runs the binaries listed there.
+file(APPEND ${CMAKE_BINARY_DIR}/keyvault-samples.txt "${CMAKE_CURRENT_BINARY_DIR}/sample1-hello-world\n")
+
 target_link_libraries(sample1-hello-world PRIVATE azure-security-keyvault-keys azure-identity)

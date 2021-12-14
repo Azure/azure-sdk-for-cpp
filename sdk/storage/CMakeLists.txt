@@ -17,10 +17,6 @@ if(BUILD_TESTING)
   add_gtest(azure-storage-test)
 endif()
 
-if(BUILD_STORAGE_SAMPLES)
-  add_executable(azure-storage-sample)
-endif()
-
 add_subdirectory(azure-storage-common)
 add_subdirectory(azure-storage-blobs)
 add_subdirectory(azure-storage-files-datalake)

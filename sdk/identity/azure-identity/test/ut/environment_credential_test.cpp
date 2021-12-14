@@ -68,8 +68,8 @@ TEST(EnvironmentCredential, RegularClientSecretCredential)
   EXPECT_EQ(response.AccessToken.Token, "ACCESSTOKEN1");
 
   using namespace std::chrono_literals;
-  EXPECT_GT(response.AccessToken.ExpiresOn, response.EarliestExpiration + 3600s);
-  EXPECT_LT(response.AccessToken.ExpiresOn, response.LatestExpiration + 3600s);
+  EXPECT_GE(response.AccessToken.ExpiresOn, response.EarliestExpiration + 3600s);
+  EXPECT_LE(response.AccessToken.ExpiresOn, response.LatestExpiration + 3600s);
 }
 
 TEST(EnvironmentCredential, AzureStackClientSecretCredential)
@@ -126,8 +126,8 @@ TEST(EnvironmentCredential, AzureStackClientSecretCredential)
   EXPECT_EQ(response.AccessToken.Token, "ACCESSTOKEN1");
 
   using namespace std::chrono_literals;
-  EXPECT_GT(response.AccessToken.ExpiresOn, response.EarliestExpiration + 3600s);
-  EXPECT_LT(response.AccessToken.ExpiresOn, response.LatestExpiration + 3600s);
+  EXPECT_GE(response.AccessToken.ExpiresOn, response.EarliestExpiration + 3600s);
+  EXPECT_LE(response.AccessToken.ExpiresOn, response.LatestExpiration + 3600s);
 }
 
 TEST(EnvironmentCredential, Unavailable)
@@ -145,6 +145,174 @@ TEST(EnvironmentCredential, Unavailable)
              {"AZURE_CLIENT_ID", ""},
              {"AZURE_CLIENT_SECRET", ""},
              {"AZURE_AUTHORITY_HOST", ""},
+             {"AZURE_USERNAME", ""},
+             {"AZURE_PASSWORD", ""},
+             {"AZURE_CLIENT_CERTIFICATE_PATH", ""}});
+
+        return std::make_unique<EnvironmentCredential>(options);
+      },
+      {{{"https://azure.com/.default"}}},
+      {"{\"expires_in\":3600, \"access_token\":\"ACCESSTOKEN1\"}"},
+      [](auto& credential, auto& tokenRequestContext, auto& context) {
+        AccessToken token;
+        EXPECT_THROW(
+            token = credential.GetToken(tokenRequestContext, context), AuthenticationException);
+        return token;
+      }));
+}
+
+TEST(EnvironmentCredential, ClientSecretDefaultAuthority)
+{
+  if (!CredentialTestHelper::EnvironmentOverride::IsEnvironmentAvailable)
+  {
+    return;
+  }
+
+  auto const actual = CredentialTestHelper::SimulateTokenRequest(
+      [](auto transport) {
+        TokenCredentialOptions options;
+        options.Transport.Transport = transport;
+
+        CredentialTestHelper::EnvironmentOverride const env(
+            {{"AZURE_TENANT_ID", "01234567-89ab-cdef-fedc-ba8976543210"},
+             {"AZURE_CLIENT_ID", "fedcba98-7654-3210-0123-456789abcdef"},
+             {"AZURE_CLIENT_SECRET", "CLIENTSECRET"},
+             {"AZURE_AUTHORITY_HOST", ""},
+             {"AZURE_USERNAME", ""},
+             {"AZURE_PASSWORD", ""},
+             {"AZURE_CLIENT_CERTIFICATE_PATH", ""}});
+
+        return std::make_unique<EnvironmentCredential>(options);
+      },
+      {{{"https://azure.com/.default"}}},
+      {"{\"expires_in\":3600, \"access_token\":\"ACCESSTOKEN1\"}"});
+
+  EXPECT_EQ(actual.Requests.size(), 1U);
+  EXPECT_EQ(actual.Responses.size(), 1U);
+  auto const& request = actual.Requests.at(0);
+  auto const& response = actual.Responses.at(0);
+
+  EXPECT_EQ(request.HttpMethod, HttpMethod::Post);
+
+  EXPECT_EQ(
+      request.AbsoluteUrl,
+      "https://login.microsoftonline.com/01234567-89ab-cdef-fedc-ba8976543210/oauth2/v2.0/token");
+
+  {
+    constexpr char expectedBody[]
+        = "grant_type=client_credentials"
+          "&client_id=fedcba98-7654-3210-0123-456789abcdef"
+          "&client_secret=CLIENTSECRET"
+          "&scope=https%3A%2F%2Fazure.com%2F.default"; // cspell:disable-line
+
+    EXPECT_EQ(request.Body, expectedBody);
+
+    EXPECT_NE(request.Headers.find("Content-Length"), request.Headers.end());
+    EXPECT_EQ(request.Headers.at("Content-Length"), std::to_string(sizeof(expectedBody) - 1));
+  }
+
+  EXPECT_NE(request.Headers.find("Content-Type"), request.Headers.end());
+  EXPECT_EQ(request.Headers.at("Content-Type"), "application/x-www-form-urlencoded");
+
+  EXPECT_EQ(response.AccessToken.Token, "ACCESSTOKEN1");
+
+  using namespace std::chrono_literals;
+  EXPECT_GE(response.AccessToken.ExpiresOn, response.EarliestExpiration + 3600s);
+  EXPECT_LE(response.AccessToken.ExpiresOn, response.LatestExpiration + 3600s);
+}
+
+TEST(EnvironmentCredential, ClientSecretNoTenantId)
+{
+  if (!CredentialTestHelper::EnvironmentOverride::IsEnvironmentAvailable)
+  {
+    return;
+  }
+
+  using Azure::Core::Credentials::AccessToken;
+  using Azure::Core::Credentials::AuthenticationException;
+
+  static_cast<void>(CredentialTestHelper::SimulateTokenRequest(
+      [](auto transport) {
+        TokenCredentialOptions options;
+        options.Transport.Transport = transport;
+
+        CredentialTestHelper::EnvironmentOverride const env(
+            {{"AZURE_TENANT_ID", ""},
+             {"AZURE_CLIENT_ID", "fedcba98-7654-3210-0123-456789abcdef"},
+             {"AZURE_CLIENT_SECRET", "CLIENTSECRET"},
+             {"AZURE_AUTHORITY_HOST", "https://microsoft.com/"},
+             {"AZURE_USERNAME", ""},
+             {"AZURE_PASSWORD", ""},
+             {"AZURE_CLIENT_CERTIFICATE_PATH", ""}});
+
+        return std::make_unique<EnvironmentCredential>(options);
+      },
+      {{{"https://azure.com/.default"}}},
+      {"{\"expires_in\":3600, \"access_token\":\"ACCESSTOKEN1\"}"},
+      [](auto& credential, auto& tokenRequestContext, auto& context) {
+        AccessToken token;
+        EXPECT_THROW(
+            token = credential.GetToken(tokenRequestContext, context), AuthenticationException);
+        return token;
+      }));
+}
+
+TEST(EnvironmentCredential, ClientSecretNoClientId)
+{
+  if (!CredentialTestHelper::EnvironmentOverride::IsEnvironmentAvailable)
+  {
+    return;
+  }
+
+  using Azure::Core::Credentials::AccessToken;
+  using Azure::Core::Credentials::AuthenticationException;
+
+  static_cast<void>(CredentialTestHelper::SimulateTokenRequest(
+      [](auto transport) {
+        TokenCredentialOptions options;
+        options.Transport.Transport = transport;
+
+        CredentialTestHelper::EnvironmentOverride const env(
+            {{"AZURE_TENANT_ID", "01234567-89ab-cdef-fedc-ba8976543210"},
+             {"AZURE_CLIENT_ID", ""},
+             {"AZURE_CLIENT_SECRET", "CLIENTSECRET"},
+             {"AZURE_AUTHORITY_HOST", "https://microsoft.com/"},
+             {"AZURE_USERNAME", ""},
+             {"AZURE_PASSWORD", ""},
+             {"AZURE_CLIENT_CERTIFICATE_PATH", ""}});
+
+        return std::make_unique<EnvironmentCredential>(options);
+      },
+      {{{"https://azure.com/.default"}}},
+      {"{\"expires_in\":3600, \"access_token\":\"ACCESSTOKEN1\"}"},
+      [](auto& credential, auto& tokenRequestContext, auto& context) {
+        AccessToken token;
+        EXPECT_THROW(
+            token = credential.GetToken(tokenRequestContext, context), AuthenticationException);
+        return token;
+      }));
+}
+
+TEST(EnvironmentCredential, ClientSecretNoClientSecret)
+{
+  if (!CredentialTestHelper::EnvironmentOverride::IsEnvironmentAvailable)
+  {
+    return;
+  }
+
+  using Azure::Core::Credentials::AccessToken;
+  using Azure::Core::Credentials::AuthenticationException;
+
+  static_cast<void>(CredentialTestHelper::SimulateTokenRequest(
+      [](auto transport) {
+        TokenCredentialOptions options;
+        options.Transport.Transport = transport;
+
+        CredentialTestHelper::EnvironmentOverride const env(
+            {{"AZURE_TENANT_ID", "01234567-89ab-cdef-fedc-ba8976543210"},
+             {"AZURE_CLIENT_ID", "fedcba98-7654-3210-0123-456789abcdef"},
+             {"AZURE_CLIENT_SECRET", ""},
+             {"AZURE_AUTHORITY_HOST", "https://microsoft.com/"},
              {"AZURE_USERNAME", ""},
              {"AZURE_PASSWORD", ""},
              {"AZURE_CLIENT_CERTIFICATE_PATH", ""}});

@@ -13,9 +13,8 @@
 #include <azure/core/test/test_base.hpp>
 #include <azure/identity/client_secret_credential.hpp>
 #include <azure/keyvault/keyvault_certificates.hpp>
+#include <chrono>
 #include <thread>
-
-using namespace std::chrono_literals;
 
 namespace Azure {
   namespace Security {
@@ -41,130 +40,47 @@ namespace Azure {
      */
     CertificateContentType ContentType;
   };
-  /**
-   * @brief Client Certificate Credential authenticates with the Azure services using a
-   * Tenant ID, Client ID and a client secret.
-   *
-   */
-  class TestClientSecretCredential final : public Core::Credentials::TokenCredential {
-  public:
-    Core::Credentials::AccessToken GetToken(
-        Core::Credentials::TokenRequestContext const& tokenRequestContext,
-        Core::Context const& context) const override
-    {
-      Core::Credentials::AccessToken accessToken;
-      accessToken.Token = "magicToken";
-      accessToken.ExpiresOn = DateTime::max();
-
-      if (context.IsCancelled() || tokenRequestContext.Scopes.size() == 0)
-      {
-        accessToken.ExpiresOn = DateTime::min();
-      }
-
-      return accessToken;
-    }
-  };
 
   class KeyVaultCertificateClientTest : public Azure::Core::Test::TestBase,
                                         public ::testing::WithParamInterface<int> {
+
   private:
     std::unique_ptr<Azure::Security::KeyVault::Certificates::CertificateClient> m_client;
-    std::string GetEnv(const std::string& name, std::string const& defaultValue = std::string())
-    {
-#if defined(_MSC_VER)
-#pragma warning(push)
-#pragma warning(disable : 4996)
-      const char* ret = std::getenv(name.data());
-#pragma warning(pop)
-#else
-      const char* ret = std::getenv(name.data());
-#endif
-
-      if (!ret)
-      {
-        if (!defaultValue.empty())
-        {
-          return defaultValue;
-        }
-
-        throw std::runtime_error(
-            name + " is required to run the tests but not set as an environment variable.");
-      }
-
-      return std::string(ret);
-    }
 
   protected:
-    std::shared_ptr<Azure::Identity::ClientSecretCredential> m_credential;
-    std::shared_ptr<TestClientSecretCredential> m_testCredential;
+    std::shared_ptr<Core::Credentials::TokenCredential> m_credential;
     std::string m_keyVaultUrl;
-    std::chrono::milliseconds m_defaultWait;
+    std::chrono::milliseconds m_defaultWait = 20s;
 
+    // Required to rename the test propertly once the test is started.
+    // We can only know the test instance name until the test instance is run.
     Azure::Security::KeyVault::Certificates::CertificateClient const& GetClientForTest(
         std::string const& testName)
     {
-      // used to test/dev purposes _putenv_s("AZURE_TEST_MODE", "LIVE");
-      InitializeClient();
       // set the interceptor for the current test
       m_testContext.RenameTest(testName);
       return *m_client;
     }
 
-    // Create
-    void InitializeClient()
+    // Runs before every test.
+    virtual void SetUp() override
     {
-      // Init interceptor from PlayBackRecorder
-      std::string recordingPath(AZURE_TEST_RECORDING_DIR);
-      recordingPath.append("/recordings");
-      Azure::Core::Test::TestBase::SetUpBase(recordingPath);
+      Azure::Core::Test::TestBase::SetUpTestBase(AZURE_TEST_RECORDING_DIR);
+      m_keyVaultUrl = GetEnv("AZURE_KEYVAULT_URL");
 
-      std::string tenantId = GetEnv("AZURE_TENANT_ID", "tenant");
-      std::string clientId = GetEnv("AZURE_CLIENT_ID", "client");
-      std::string secretId = GetEnv("AZURE_CLIENT_SECRET", "secret");
-
-      m_keyVaultUrl = GetEnv("AZURE_KEYVAULT_URL", "https://REDACTED.vault.azure.net");
-
-      // Create default client for the test
+      // Options and credential for the client
       CertificateClientOptions options;
-      // Replace default transport adapter for playback
-      if (m_testContext.IsPlaybackMode())
-      {
-        options.Transport.Transport = m_interceptor->GetPlaybackClient();
-      }
-      // Insert Recording policy when Record mode is on (non playback and non LiveMode)
-      else if (!m_testContext.IsLiveMode())
-      {
-        // AZURE_TEST_RECORDING_DIR is exported by CMAKE
-        options.PerRetryPolicies.push_back(m_interceptor->GetRecordPolicy());
-      }
+      m_credential = std::make_shared<Azure::Identity::ClientSecretCredential>(
+          GetEnv("AZURE_TENANT_ID"), GetEnv("AZURE_CLIENT_ID"), GetEnv("AZURE_CLIENT_SECRET"));
 
-      if (m_testContext.IsPlaybackMode())
-      { // inject fake token client here if it's test
-        m_testCredential = std::make_shared<TestClientSecretCredential>();
-        m_client = std::make_unique<CertificateClient>(m_keyVaultUrl, m_testCredential, options);
-        // we really dont need to wait for results
-        m_defaultWait = 1ms;
-        m_keyVaultUrl = "https://REDACTED.vault.azure.net";
-      }
-      else
-      {
-        m_credential = std::make_shared<Azure::Identity::ClientSecretCredential>(
-            tenantId, clientId, secretId);
-        m_client = std::make_unique<CertificateClient>(m_keyVaultUrl, m_credential, options);
-        m_defaultWait = 20s;
-      }
+      // `InitTestClient` takes care of setting up Record&Playback.
+      m_client = InitTestClient<
+          Azure::Security::KeyVault::Certificates::CertificateClient,
+          Azure::Security::KeyVault::Certificates::CertificateClientOptions>(
+          m_keyVaultUrl, &m_credential, options);
 
-      // When running live tests, service can return 429 error response if the client is
-      // sending multiple requests per second. This can happen if the network is fast and
-      // tests are running without any delay between them.
-      auto avoidTestThrottled = GetEnv("AZURE_KEYVAULT_AVOID_THROTTLED", "0");
-
-      if (avoidTestThrottled != "0")
-      {
-        std::cout << "- Wait to avoid server throttled..." << std::endl;
-        // 10 sec should be enough to prevent from 429 error
-        std::this_thread::sleep_for(std::chrono::seconds(10));
-      }
+      // Update default time depending on test mode.
+      UpdateWaitingTime(m_defaultWait);
     }
 
   public:

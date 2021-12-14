@@ -36,7 +36,7 @@ namespace Azure { namespace Identity {
      *
      * @note Example of a \p authority string: "https://login.microsoftonline.us/". See national
      * clouds' Azure AD authentication endpoints:
-     * https://docs.microsoft.com/en-us/azure/active-directory/develop/authentication-national-cloud.
+     * https://docs.microsoft.com/azure/active-directory/develop/authentication-national-cloud.
      */
     std::string AuthorityHost = _detail::g_aadGlobalAuthority;
   };

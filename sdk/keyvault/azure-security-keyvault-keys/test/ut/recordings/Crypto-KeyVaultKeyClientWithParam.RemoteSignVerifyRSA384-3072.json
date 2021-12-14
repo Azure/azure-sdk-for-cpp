@@ -1,0 +1,139 @@
+{
+  "networkCallRecords": [
+    {
+      "Headers": {
+        "content-type": "application/json",
+        "user-agent": "azsdk-cpp-keyvault-keys/4.3.0-beta.1 (Linux 5.4.0-1063-azure x86_64 #66~18.04.1-Ubuntu SMP Thu Oct 21 09:59:28 UTC 2021)",
+        "x-ms-client-request-id": "ae70a7f9-aa9c-40cf-42cb-6aa93b4d9595"
+      },
+      "Method": "POST",
+      "Response": {
+        "BODY": "{\"key\":{\"kid\":\"https://cpp-recordings.vault.azure.net/keys/RemoteSignVerifyRSA384-3072/b97906f03d3843dda4c281d1ee85ec00\",\"kty\":\"RSA\",\"key_ops\":[\"encrypt\",\"decrypt\",\"sign\",\"verify\",\"wrapKey\",\"unwrapKey\"],\"n\":\"yhzDO_isX5IjvD3Mf6JX6fnivlisPZzdEc9JeRJEIfsvXSALyl7lGW7Up442dlcDjWBCdZu2Z7YegLxVGamDoMI-0-ozF2CjY8eguJQ3FuSZGuV95xXUsYzTJf851ebNLK5C-jANpBuTmTXquSvlwtNyAb3gUchTjyjyc8hvAjrYlG-S3kkNnOL_MfszTrwlmLW6471xgMXX1O5l1fIPdGMgFTvj5oC3ygSP00kO6YENl7OVk7T9_ZrHXcuVnyBhhuz81A6GPewUzIhaG5bdwrqk7_-61qru6M8MnOpEVX3l01n2JtNs9xEWnQdYbyUtIrJd4mS3XC6Rj6OmfDycLQ\",\"e\":\"AQAB\"},\"attributes\":{\"enabled\":true,\"created\":1638482047,\"updated\":1638482047,\"recoveryLevel\":\"Recoverable+Purgeable\",\"recoverableDays\":90}}",
+        "STATUS_CODE": "200",
+        "cache-control": "no-cache",
+        "content-length": "697",
+        "content-type": "application/json; charset=utf-8",
+        "date": "Thu, 02 Dec 2021 21:54:07 GMT",
+        "expires": "-1",
+        "pragma": "no-cache",
+        "strict-transport-security": "max-age=31536000;includeSubDomains",
+        "x-content-type-options": "nosniff",
+        "x-ms-client-request-id": "ae70a7f9-aa9c-40cf-42cb-6aa93b4d9595",
+        "x-ms-keyvault-network-info": "conn_type=Ipv4;addr=20.49.4.206;act_addr_fam=InterNetwork;",
+        "x-ms-keyvault-region": "eastus",
+        "x-ms-keyvault-service-version": "1.9.195.1",
+        "x-ms-request-id": "2df85ddf-2957-4e3f-bd19-f3279fb3bf68",
+        "x-powered-by": "ASP.NET"
+      },
+      "Url": "https://REDACTED.vault.azure.net/keys/RemoteSignVerifyRSA384-3072/create?api-version=7.2"
+    },
+    {
+      "Headers": {
+        "content-type": "application/json",
+        "user-agent": "azsdk-cpp-KeyVault/4.3.0-beta.1 (Linux 5.4.0-1063-azure x86_64 #66~18.04.1-Ubuntu SMP Thu Oct 21 09:59:28 UTC 2021)",
+        "x-ms-client-request-id": "dd943637-00d5-417d-5036-326c7abbc0e3"
+      },
+      "Method": "POST",
+      "Response": {
+        "BODY": "{\"kid\":\"https://cpp-recordings.vault.azure.net/keys/RemoteSignVerifyRSA384-3072/b97906f03d3843dda4c281d1ee85ec00\",\"value\":\"S5vrKqBUW25b7OdHugF0qpraSz5h3KLymAtqbI-KE_7zl2xXLeQHAiGG7gpRC5idpmFUjQxP5PV4JyFVWauGnPTnOJknt2G8s0bJs7Va6CTBxgTq_vHpfGDoRg5D3sG-tOokPlpP07C_RaK0odkoXgprG0Es4Ms7By8OrIdUV3cX00-985uwmnERE9AHkJ9gX2CSvqSFpSOW2EdRBUEMqPbmUOr4HcGUUXgZHJjhxPPct1sJU8OR3TixLRWG4ES0zfkPnDM8nkkMdmnoZvTGVAl4OFVGPmMZ1oBgmskuaDi5xxG9IuyZmx-kYx5dU-4_FfrcFs1SkTrbe2lQc-wZng\"}",
+        "STATUS_CODE": "200",
+        "cache-control": "no-cache",
+        "content-length": "467",
+        "content-type": "application/json; charset=utf-8",
+        "date": "Thu, 02 Dec 2021 21:54:08 GMT",
+        "expires": "-1",
+        "pragma": "no-cache",
+        "strict-transport-security": "max-age=31536000;includeSubDomains",
+        "x-content-type-options": "nosniff",
+        "x-ms-client-request-id": "dd943637-00d5-417d-5036-326c7abbc0e3",
+        "x-ms-keyvault-network-info": "conn_type=Ipv4;addr=20.49.4.206;act_addr_fam=InterNetwork;",
+        "x-ms-keyvault-region": "eastus",
+        "x-ms-keyvault-service-version": "1.9.195.1",
+        "x-ms-request-id": "b11db04b-6ed6-4690-a048-2f9943dace78",
+        "x-powered-by": "ASP.NET"
+      },
+      "Url": "https://REDACTED.vault.azure.net/keys/RemoteSignVerifyRSA384-3072/b97906f03d3843dda4c281d1ee85ec00/sign?api-version=7.2"
+    },
+    {
+      "Headers": {
+        "content-type": "application/json",
+        "user-agent": "azsdk-cpp-KeyVault/4.3.0-beta.1 (Linux 5.4.0-1063-azure x86_64 #66~18.04.1-Ubuntu SMP Thu Oct 21 09:59:28 UTC 2021)",
+        "x-ms-client-request-id": "445b589b-4d67-49a7-49a7-7f7c166c60b3"
+      },
+      "Method": "POST",
+      "Response": {
+        "BODY": "{\"value\":true}",
+        "STATUS_CODE": "200",
+        "cache-control": "no-cache",
+        "content-length": "14",
+        "content-type": "application/json; charset=utf-8",
+        "date": "Thu, 02 Dec 2021 21:54:08 GMT",
+        "expires": "-1",
+        "pragma": "no-cache",
+        "strict-transport-security": "max-age=31536000;includeSubDomains",
+        "x-content-type-options": "nosniff",
+        "x-ms-client-request-id": "445b589b-4d67-49a7-49a7-7f7c166c60b3",
+        "x-ms-keyvault-network-info": "conn_type=Ipv4;addr=20.49.4.206;act_addr_fam=InterNetwork;",
+        "x-ms-keyvault-region": "eastus",
+        "x-ms-keyvault-service-version": "1.9.195.1",
+        "x-ms-request-id": "dbd13cff-23a9-4456-9a7e-e30f55a999a2",
+        "x-powered-by": "ASP.NET"
+      },
+      "Url": "https://REDACTED.vault.azure.net/keys/RemoteSignVerifyRSA384-3072/b97906f03d3843dda4c281d1ee85ec00/verify?api-version=7.2"
+    },
+    {
+      "Headers": {
+        "content-type": "application/json",
+        "user-agent": "azsdk-cpp-KeyVault/4.3.0-beta.1 (Linux 5.4.0-1063-azure x86_64 #66~18.04.1-Ubuntu SMP Thu Oct 21 09:59:28 UTC 2021)",
+        "x-ms-client-request-id": "d1a87317-03aa-4ee6-6e98-733a17a813ce"
+      },
+      "Method": "POST",
+      "Response": {
+        "BODY": "{\"kid\":\"https://cpp-recordings.vault.azure.net/keys/RemoteSignVerifyRSA384-3072/b97906f03d3843dda4c281d1ee85ec00\",\"value\":\"OrrwHBBflPBSr8rxGTX39uozvEWDlWFPq_mTTgBC4dsTeDax99GAhC_V0Q1ycTnCOcOuWq48tMrMjh_cRzjBPa--nbsQ0TxiCBhPTzRkQEYDA_MO3n_Jz-V6jhOWDLdtBi2ehHzjoFSdJ1qVm17WBvf-TKooNp0r516ANwCF3th39UW114S9KaSXvw2VMU6fdcUEKKmQOCUA7RfYdW3rtgsiyVOwOg3AU0p_5tHDPhALZtpgYpLBb8kquh72AC4n2VEkY2vd_qpyM4LrWKny-yXQQUCa6TmkWuBNn6XkKt2Ls0oNFb_H3b8x5KVVHfDz6QoUfQ24zl_6XbicHtn4iw\"}",
+        "STATUS_CODE": "200",
+        "cache-control": "no-cache",
+        "content-length": "467",
+        "content-type": "application/json; charset=utf-8",
+        "date": "Thu, 02 Dec 2021 21:54:08 GMT",
+        "expires": "-1",
+        "pragma": "no-cache",
+        "strict-transport-security": "max-age=31536000;includeSubDomains",
+        "x-content-type-options": "nosniff",
+        "x-ms-client-request-id": "d1a87317-03aa-4ee6-6e98-733a17a813ce",
+        "x-ms-keyvault-network-info": "conn_type=Ipv4;addr=20.49.4.206;act_addr_fam=InterNetwork;",
+        "x-ms-keyvault-region": "eastus",
+        "x-ms-keyvault-service-version": "1.9.195.1",
+        "x-ms-request-id": "80fb8d6b-2a43-4ee6-b507-d2db0c25720c",
+        "x-powered-by": "ASP.NET"
+      },
+      "Url": "https://REDACTED.vault.azure.net/keys/RemoteSignVerifyRSA384-3072/b97906f03d3843dda4c281d1ee85ec00/sign?api-version=7.2"
+    },
+    {
+      "Headers": {
+        "content-type": "application/json",
+        "user-agent": "azsdk-cpp-KeyVault/4.3.0-beta.1 (Linux 5.4.0-1063-azure x86_64 #66~18.04.1-Ubuntu SMP Thu Oct 21 09:59:28 UTC 2021)",
+        "x-ms-client-request-id": "e38c221b-2b2d-4ca4-65bb-92fbe2600bda"
+      },
+      "Method": "POST",
+      "Response": {
+        "BODY": "{\"value\":true}",
+        "STATUS_CODE": "200",
+        "cache-control": "no-cache",
+        "content-length": "14",
+        "content-type": "application/json; charset=utf-8",
+        "date": "Thu, 02 Dec 2021 21:54:08 GMT",
+        "expires": "-1",
+        "pragma": "no-cache",
+        "strict-transport-security": "max-age=31536000;includeSubDomains",
+        "x-content-type-options": "nosniff",
+        "x-ms-client-request-id": "e38c221b-2b2d-4ca4-65bb-92fbe2600bda",
+        "x-ms-keyvault-network-info": "conn_type=Ipv4;addr=20.49.4.206;act_addr_fam=InterNetwork;",
+        "x-ms-keyvault-region": "eastus",
+        "x-ms-keyvault-service-version": "1.9.195.1",
+        "x-ms-request-id": "d84da8de-704e-46dc-88c0-69762db353a1",
+        "x-powered-by": "ASP.NET"
+      },
+      "Url": "https://REDACTED.vault.azure.net/keys/RemoteSignVerifyRSA384-3072/b97906f03d3843dda4c281d1ee85ec00/verify?api-version=7.2"
+    }
+  ]
+}

@@ -1,5 +1,6 @@
 # NOTE: Please refer to https://aka.ms/azsdk/engsys/ci-yaml before editing this file.
 trigger:
+  batch: true
   branches:
     include:
       - master
@@ -34,11 +35,16 @@ stages:
     parameters:
       ServiceDirectory: core
       # CI has static code analysis disabled, while LiveTest will have it enabled
-      CtestRegex: azure-core.
+      # In the case of changes to core we want to re-run all CI tests for all
+      # libraries to check for potential regressions everywhere.
+      CtestRegex: .*
+      # Storage tests have no recordings
+      # Identity live tests are pending to be recorded
+      CtestExcludeRegex: azure-storage|azure-identity-livetest
       LiveTestCtestRegex: '"azure-core.|json-test"'
       LiveTestTimeoutInMinutes: 90 # default is 60 min. We need a little longer on worst case for Win+jsonTests
-      LineCoverageTarget: 77
-      BranchCoverageTarget: 30
+      LineCoverageTarget: 93
+      BranchCoverageTarget: 55
       Artifacts:
         - Name: azure-core
           Path: azure-core

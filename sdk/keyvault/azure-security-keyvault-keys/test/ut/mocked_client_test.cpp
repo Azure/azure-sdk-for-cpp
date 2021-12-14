@@ -16,7 +16,7 @@
 using namespace Azure::Security::KeyVault::Keys;
 using namespace Azure::Security::KeyVault::Keys::Test;
 
-TEST_F(MockedTransportAdapterTest, keyvaultTelemetryId)
+TEST_F(KeyVaultKeyClientMocked, keyvaultTelemetryId)
 {
   std::string applicationId("ourApplicationId");
   m_clientOptions.Telemetry.ApplicationId = applicationId;
@@ -49,7 +49,7 @@ TEST_F(MockedTransportAdapterTest, keyvaultTelemetryId)
   EXPECT_TRUE(foundHeader);
 }
 
-TEST_F(MockedTransportAdapterTest, keyvaultTelemetryIdVersion)
+TEST_F(KeyVaultKeyClientMocked, keyvaultTelemetryIdVersion)
 {
   m_client = std::make_unique<
       Azure::Security::KeyVault::Keys::Test::KeyClientWithNoAuthenticationPolicy>(
@@ -83,7 +83,7 @@ TEST_F(MockedTransportAdapterTest, keyvaultTelemetryIdVersion)
   EXPECT_TRUE(foundHeader);
 }
 
-TEST_F(MockedTransportAdapterTest, CreateKeyRSA)
+TEST_F(KeyVaultKeyClientMocked, CreateKeyRSA)
 {
   std::string applicationId("CreateKeyRSA");
   m_clientOptions.Telemetry.ApplicationId = applicationId;
@@ -97,7 +97,7 @@ TEST_F(MockedTransportAdapterTest, CreateKeyRSA)
   EXPECT_EQ(response.Value.GetKeyType(), KeyVaultKeyType::Rsa);
 }
 
-TEST_F(MockedTransportAdapterTest, CreateKeyRSA2)
+TEST_F(KeyVaultKeyClientMocked, CreateKeyRSA2)
 {
   std::string applicationId("CreateKeyRSA");
   m_clientOptions.Telemetry.ApplicationId = applicationId;
@@ -113,7 +113,7 @@ TEST_F(MockedTransportAdapterTest, CreateKeyRSA2)
 }
 
 // cspell: disable-next-line
-TEST_F(MockedTransportAdapterTest, CreateKeyRSAHSM)
+TEST_F(KeyVaultKeyClientMocked, CreateKeyRSAHSM)
 {
   // cspell: disable-next-line
   std::string applicationId("CreateKeyRSAHSM");
@@ -129,7 +129,7 @@ TEST_F(MockedTransportAdapterTest, CreateKeyRSAHSM)
   EXPECT_EQ(response.Value.GetKeyType(), KeyVaultKeyType::RsaHsm);
 }
 
-TEST_F(MockedTransportAdapterTest, CreateKeyEC)
+TEST_F(KeyVaultKeyClientMocked, CreateKeyEC)
 {
   std::string applicationId("CreateKeyEC");
   m_clientOptions.Telemetry.ApplicationId = applicationId;
@@ -145,7 +145,7 @@ TEST_F(MockedTransportAdapterTest, CreateKeyEC)
 }
 
 // cspell: disable-next-line
-TEST_F(MockedTransportAdapterTest, CreateKeyECHSM)
+TEST_F(KeyVaultKeyClientMocked, CreateKeyECHSM)
 {
   // cspell: disable-next-line
   std::string applicationId("CreateKeyECHSM");
@@ -161,7 +161,7 @@ TEST_F(MockedTransportAdapterTest, CreateKeyECHSM)
   EXPECT_EQ(response.Value.GetKeyType(), KeyVaultKeyType::EcHsm);
 }
 
-TEST_F(MockedTransportAdapterTest, CreateKeyOCT)
+TEST_F(KeyVaultKeyClientMocked, CreateKeyOCT)
 {
   std::string applicationId("CreateKeyOCT");
   m_clientOptions.Telemetry.ApplicationId = applicationId;
@@ -177,7 +177,7 @@ TEST_F(MockedTransportAdapterTest, CreateKeyOCT)
 }
 
 // cspell: disable-next-line
-TEST_F(MockedTransportAdapterTest, CreateKeyOCTHSM)
+TEST_F(KeyVaultKeyClientMocked, CreateKeyOCTHSM)
 {
   // cspell: disable-next-line
   std::string applicationId("CreateKeyOCTHSM");
@@ -193,7 +193,7 @@ TEST_F(MockedTransportAdapterTest, CreateKeyOCTHSM)
   EXPECT_EQ(response.Value.GetKeyType(), KeyVaultKeyType::OctHsm);
 }
 
-TEST_F(MockedTransportAdapterTest, GetPropertiesOfKeys)
+TEST_F(KeyVaultKeyClientMocked, GetPropertiesOfKeys)
 {
   std::string applicationId("CreateKey");
   m_clientOptions.Telemetry.ApplicationId = applicationId;

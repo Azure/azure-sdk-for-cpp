@@ -56,9 +56,8 @@ TEST(SecretClient, GetUrl)
 
 TEST_F(KeyVaultSecretClientTest, FirstCreateTest)
 {
-  auto secretName = "FirstCreateTest";
-  auto const& client
-      = GetClientForTest(::testing::UnitTest::GetInstance()->current_test_info()->name());
+  auto secretName = GetTestName();
+  auto const& client = GetClientForTest(secretName);
 
   {
     auto secretResponse = client.SetSecret(secretName, "secretValue");
@@ -73,25 +72,13 @@ TEST_F(KeyVaultSecretClientTest, FirstCreateTest)
     auto secret = secretResponse.Value;
     EXPECT_EQ(secret.Name, secretName);
   }
-  {
-    auto operation = client.StartDeleteSecret(secretName);
-    operation.PollUntilDone(m_defaultWait);
-    auto deletedSecretResponse = client.GetDeletedSecret(secretName);
-    CheckValidResponse(deletedSecretResponse);
-    auto secret = deletedSecretResponse.Value;
-    EXPECT_EQ(secret.Name, secretName);
-  }
-  {
-    auto purgedResponse = client.PurgeDeletedSecret(secretName);
-    CheckValidResponse(purgedResponse, Azure::Core::Http::HttpStatusCode::NoContent);
-  }
 }
 
 TEST_F(KeyVaultSecretClientTest, SecondCreateTest)
 {
-  auto secretName = "SecondCreateTest";
-  auto const& client
-      = GetClientForTest(::testing::UnitTest::GetInstance()->current_test_info()->name());
+  auto secretName = GetTestName();
+  auto const& client = GetClientForTest(secretName);
+
   std::string version1;
   std::string version2;
   {
@@ -176,10 +163,9 @@ TEST_F(KeyVaultSecretClientTest, UpdateTest)
 
 TEST_F(KeyVaultSecretClientTest, BackupRestore)
 {
-  auto secretName = "BackupRestore";
+  auto secretName = GetTestName();
   BackupSecretResult backupData;
-  auto const& client
-      = GetClientForTest(::testing::UnitTest::GetInstance()->current_test_info()->name());
+  auto const& client = GetClientForTest(secretName);
 
   {
     auto secretResponse = client.SetSecret(secretName, "secretValue");
@@ -203,7 +189,7 @@ TEST_F(KeyVaultSecretClientTest, BackupRestore)
   {
     auto purgedResponse = client.PurgeDeletedSecret(secretName);
     CheckValidResponse(purgedResponse, Azure::Core::Http::HttpStatusCode::NoContent);
-    std::this_thread::sleep_for(m_defaultWait);
+    TestSleep(4min);
   }
   {
     auto restore = client.RestoreSecretBackup(backupData);
@@ -211,26 +197,13 @@ TEST_F(KeyVaultSecretClientTest, BackupRestore)
     auto restored = restore.Value;
     EXPECT_EQ(restored.Name, secretName);
   }
-  {
-    auto operation = client.StartDeleteSecret(secretName);
-    operation.PollUntilDone(m_defaultWait);
-    auto deletedSecretResponse = client.GetDeletedSecret(secretName);
-    CheckValidResponse(deletedSecretResponse);
-    auto secret = deletedSecretResponse.Value;
-    EXPECT_EQ(secret.Name, secretName);
-  }
-  {
-    auto purgedResponse = client.PurgeDeletedSecret(secretName);
-    CheckValidResponse(purgedResponse, Azure::Core::Http::HttpStatusCode::NoContent);
-  }
 }
 
-TEST_F(KeyVaultSecretClientTest, Recover)
+TEST_F(KeyVaultSecretClientTest, RecoverSecret)
 {
-  auto secretName = "Recover";
+  auto secretName = GetTestName();
   std::vector<uint8_t> backupData;
-  auto const& client
-      = GetClientForTest(::testing::UnitTest::GetInstance()->current_test_info()->name());
+  auto const& client = GetClientForTest(secretName);
 
   {
     auto secretResponse = client.SetSecret(secretName, "secretValue");
@@ -263,70 +236,41 @@ TEST_F(KeyVaultSecretClientTest, Recover)
     EXPECT_EQ(operationResult.Name, secretName);
     EXPECT_EQ(operation.GetRawResponse().GetStatusCode(), Azure::Core::Http::HttpStatusCode::Ok);
   }
-  {
-    auto operation = client.StartDeleteSecret(secretName);
-    operation.PollUntilDone(m_defaultWait);
-    auto deletedSecretResponse = client.GetDeletedSecret(secretName);
-    CheckValidResponse(deletedSecretResponse);
-    auto secret = deletedSecretResponse.Value;
-    EXPECT_EQ(secret.Name, secretName);
-  }
-  {
-    auto purgedResponse = client.PurgeDeletedSecret(secretName);
-    CheckValidResponse(purgedResponse, Azure::Core::Http::HttpStatusCode::NoContent);
-  }
 }
-TEST_F(KeyVaultSecretClientTest, GetProperties)
+TEST_F(KeyVaultSecretClientTest, TestGetPropertiesOfSecret)
 {
-  auto secretName = "GetProperties";
-  auto secretName2 = "GetProperties2";
+  std::string const testName(GetTestName());
+  auto const& client = GetClientForTest(testName);
 
-  auto const& client
-      = GetClientForTest(::testing::UnitTest::GetInstance()->current_test_info()->name());
+  // Create 50 secrets
+  std::vector<std::string> secretNames;
+  for (int counter = 0; counter < 50; counter++)
   {
-    auto secretResponse = client.SetSecret(secretName, "secretValue");
+    std::string const name(testName + std::to_string(counter));
+    secretNames.emplace_back(name);
+    auto secretResponse = client.SetSecret(name, "secretValue");
     CheckValidResponse(secretResponse);
     auto secret = secretResponse.Value;
-    EXPECT_EQ(secret.Name, secretName);
+    EXPECT_EQ(secret.Name, name);
+    // Avoid server Throttled while creating keys
+    TestSleep();
   }
+  // Get Secret properties
+  std::vector<std::string> secretNameList;
+  for (auto secretResponse = client.GetPropertiesOfSecrets(); secretResponse.HasPage();
+       secretResponse.MoveToNextPage())
   {
-    auto secretResponse = client.SetSecret(secretName2, "secretValue2");
-    CheckValidResponse(secretResponse);
-    auto secret = secretResponse.Value;
-    EXPECT_EQ(secret.Name, secretName2);
+    for (auto& secret : secretResponse.Items)
+    {
+      secretNameList.emplace_back(secret.Name);
+    }
   }
+
+  for (auto const& secretName : secretNames)
   {
-    auto secretResponse = client.GetPropertiesOfSecrets();
-    EXPECT_EQ(secretResponse.Items.size(), size_t(2));
-    EXPECT_TRUE(
-        secretResponse.Items[0].Name == secretName || secretResponse.Items[0].Name == secretName2);
-    EXPECT_TRUE(
-        secretResponse.Items[1].Name == secretName || secretResponse.Items[1].Name == secretName2);
-  }
-  {
-    auto operation = client.StartDeleteSecret(secretName);
-    operation.PollUntilDone(m_defaultWait);
-  }
-  {
-    auto operation = client.StartDeleteSecret(secretName2);
-    operation.PollUntilDone(m_defaultWait);
-  }
-  {
-    auto deletedResponse = client.GetDeletedSecrets();
-    EXPECT_EQ(deletedResponse.Items.size(), size_t(2));
-    EXPECT_TRUE(
-        deletedResponse.Items[0].Name == secretName
-        || deletedResponse.Items[0].Name == secretName2);
-    EXPECT_TRUE(
-        deletedResponse.Items[1].Name == secretName
-        || deletedResponse.Items[1].Name == secretName2);
-  }
-  {
-    auto purgedResponse = client.PurgeDeletedSecret(secretName);
-    CheckValidResponse(purgedResponse, Azure::Core::Http::HttpStatusCode::NoContent);
-  }
-  {
-    auto purgedResponse = client.PurgeDeletedSecret(secretName2);
-    CheckValidResponse(purgedResponse, Azure::Core::Http::HttpStatusCode::NoContent);
+    // Check names are in the returned list
+    auto findKeyName = std::find(secretNameList.begin(), secretNameList.end(), secretName);
+    EXPECT_NE(findKeyName, secretNameList.end());
+    EXPECT_EQ(secretName, *findKeyName);
   }
 }

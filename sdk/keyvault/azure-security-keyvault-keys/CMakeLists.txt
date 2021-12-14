@@ -107,7 +107,7 @@ target_include_directories(
 target_link_libraries(azure-security-keyvault-keys PUBLIC Azure::azure-core)
 
 # coverage. Has no effect if BUILD_CODE_COVERAGE is OFF
-create_code_coverage(keyvault azure-security-keyvault-keys azure-security-keyvault-keys-test)
+create_code_coverage(keyvault azure-security-keyvault-keys azure-security-keyvault-keys-test "tests?/*;samples?/*")
 
 get_az_version("${CMAKE_CURRENT_SOURCE_DIR}/src/private/package_version.hpp")
 generate_documentation(azure-security-keyvault-keys ${AZ_LIBRARY_VERSION})
