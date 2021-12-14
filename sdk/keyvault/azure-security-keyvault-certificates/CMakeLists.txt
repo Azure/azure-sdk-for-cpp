@@ -3,12 +3,21 @@
 
 cmake_minimum_required (VERSION 3.13)
 project(azure-security-keyvault-certificates LANGUAGES CXX)
+set(AZ_ALL_LIBRARIES ON)
+
+# Compile Options
+option(BUILD_SOURCE_DEPS "build source dependancies" ON)
 
 set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
 
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/../../../cmake-modules")
+
+if(BUILD_SOURCE_DEPS)
+    include(FolderList)
+    SetCompileOptions(CERTIFICATES)
+endif()
 
 include(AzureVcpkg)
 include(AzureVersion)
@@ -20,12 +29,16 @@ include(AzureConfigRTTI)
 
 az_vcpkg_integrate()
 
-if(NOT AZ_ALL_LIBRARIES)
-  find_package(azure-core-cpp "1.2.0" CONFIG QUIET)
-  if(NOT azure-core-cpp_FOUND)
-    find_package(azure-core-cpp "1.2.0" REQUIRED)
-  endif()
+if(BUILD_SOURCE_DEPS)
+    GetFolderList(CERTIFICATES)
+    foreach(oneFolder IN LISTS BUILD_FOLDERS)
+	    message("add folder ${oneFolder}")
+	    add_subdirectory(${oneFolder})
+        include_directories(${oneFolder})
+    endforeach()
 endif()
+
+unset(BUILD_SOURCE_DEPS CACHE)
 
 set(
   AZURE_KEYVAULT_CERTIFICATES_HEADER
@@ -53,9 +66,12 @@ target_include_directories(
   azure-security-keyvault-certificates
     PUBLIC
       $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/inc>
+      $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/../../../sdk/core/inc>
+      $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/sdk/core/azure-core/inc>
+      $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/sdk/core/azure-core-test/inc>
       $<INSTALL_INTERFACE:include>
 )
-
+message($<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/inc)
 # Include shared source code
 # NOTE: Use shared-code only within .cpp files. DO NEVER consume the shared-code from header files.
 target_include_directories(
@@ -78,9 +94,12 @@ if(BUILD_TESTING)
     include(AddGoogleTest)
     enable_testing ()
   endif()
+include(AddGoogleTest)
+enable_testing ()
   
-  add_subdirectory(test/ut)
+add_subdirectory(test/ut)  
 endif()
+
 
 # if (BUILD_PERFORMANCE_TESTS)
 #   add_subdirectory(test/perf)

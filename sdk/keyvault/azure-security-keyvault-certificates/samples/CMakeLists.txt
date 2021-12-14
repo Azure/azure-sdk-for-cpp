@@ -4,5 +4,5 @@
 cmake_minimum_required (VERSION 3.13)
 
 add_subdirectory(certificate-basic-operations)
-add_subdirectory(certificate-GetCertificates)
-add_subdirectory(certificate-ImportCertificate)
+#add_subdirectory(certificate-GetCertificates)
+#add_subdirectory(certificate-ImportCertificate)
