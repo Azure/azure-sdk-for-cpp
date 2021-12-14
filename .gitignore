@@ -340,3 +340,6 @@ build/
 # vscode
 .vscode/
 .factorypath
+
+sdk/**/sdk/
+sdk/**/out/
