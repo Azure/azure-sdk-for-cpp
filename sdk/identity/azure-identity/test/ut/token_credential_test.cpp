@@ -14,7 +14,7 @@ namespace Azure { namespace Identity { namespace Test {
   class TokenCredentialTest : public Azure::Core::Test::TestBase {
 
   protected:
-    // Required to rename the test propertly once the test is started.
+    // Required to rename the test properly once the test is started.
     // We can only know the test instance name until the test instance is run.
     std::unique_ptr<Azure::Identity::ClientSecretCredential> GetClientSecretCredential(
         std::string const& testName)
@@ -30,7 +30,7 @@ namespace Azure { namespace Identity { namespace Test {
           options);
     }
 
-    // Required to rename the test propertly once the test is started.
+    // Required to rename the test properly once the test is started.
     // We can only know the test instance name until the test instance is run.
     std::unique_ptr<Azure::Identity::EnvironmentCredential> GetEnvironmentCredential(
         std::string const& testName)
