@@ -26,8 +26,9 @@ stages:
     parameters:
       ServiceDirectory: storage
       # Not running tests on CI but only on LiveTest mode
-      CtestRegex: no-run
-      CoverageEnabled: false
+      CtestRegex: azure-storage
+      LineCoverageTarget: 1
+      BranchCoverageTarget: 1
       LiveTestCtestRegex: azure-storage
       SubscriptionConfiguration: $(sub-config-azure-cloud-test-resources-preview)
       Artifacts:
