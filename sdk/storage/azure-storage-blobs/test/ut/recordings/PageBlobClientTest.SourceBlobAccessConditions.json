@@ -1,0 +1,278 @@
+{
+  "networkCallRecords": [
+    {
+      "Headers": {
+        "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Linux 5.4.0-1063-azure x86_64 #66~18.04.1-Ubuntu SMP Thu Oct 21 09:59:28 UTC 2021)",
+        "x-ms-client-request-id": "4af72b17-44ff-4114-5086-902e9ddd67fb",
+        "x-ms-version": "2020-02-10"
+      },
+      "Method": "PUT",
+      "Response": {
+        "BODY": "",
+        "REASON_PHRASE": "Created",
+        "STATUS_CODE": "201",
+        "content-length": "0",
+        "date": "Tue, 14 Dec 2021 02:59:05 GMT",
+        "etag": "\"0x8D9BEADB1080A50\"",
+        "last-modified": "Tue, 14 Dec 2021 02:59:05 GMT",
+        "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
+        "x-ms-client-request-id": "4af72b17-44ff-4114-5086-902e9ddd67fb",
+        "x-ms-request-id": "0ef89eaa-201e-0029-1596-f0daf0000000",
+        "x-ms-version": "2020-02-10"
+      },
+      "Url": "https://REDACTED.blob.core.windows.net/sourceblobaccessconditions?restype=container"
+    },
+    {
+      "Headers": {
+        "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Linux 5.4.0-1063-azure x86_64 #66~18.04.1-Ubuntu SMP Thu Oct 21 09:59:28 UTC 2021)",
+        "x-ms-client-request-id": "009b5c23-4ab0-48e6-5674-98f6d975bf48",
+        "x-ms-version": "2020-02-10"
+      },
+      "Method": "PUT",
+      "Response": {
+        "BODY": "",
+        "REASON_PHRASE": "Created",
+        "STATUS_CODE": "201",
+        "content-length": "0",
+        "date": "Tue, 14 Dec 2021 02:59:05 GMT",
+        "etag": "\"0x8D9BEADB10A290F\"",
+        "last-modified": "Tue, 14 Dec 2021 02:59:05 GMT",
+        "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
+        "x-ms-client-request-id": "009b5c23-4ab0-48e6-5674-98f6d975bf48",
+        "x-ms-request-id": "0ef89eb3-201e-0029-1c96-f0daf0000000",
+        "x-ms-request-server-encrypted": "true",
+        "x-ms-version": "2020-02-10",
+        "x-ms-version-id": "2021-12-14T02:59:05.8488591Z"
+      },
+      "Url": "https://REDACTED.blob.core.windows.net/sourceblobaccessconditions/SourceBlobAccessConditions"
+    },
+    {
+      "Headers": {
+        "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Linux 5.4.0-1063-azure x86_64 #66~18.04.1-Ubuntu SMP Thu Oct 21 09:59:28 UTC 2021)",
+        "x-ms-client-request-id": "877176d7-8c9c-4288-4f25-02088c588a7b",
+        "x-ms-version": "2020-02-10"
+      },
+      "Method": "PUT",
+      "Response": {
+        "BODY": "",
+        "REASON_PHRASE": "Created",
+        "STATUS_CODE": "201",
+        "content-length": "0",
+        "date": "Tue, 14 Dec 2021 02:59:05 GMT",
+        "etag": "\"0x8D9BEADB10BD676\"",
+        "last-modified": "Tue, 14 Dec 2021 02:59:05 GMT",
+        "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
+        "x-ms-client-request-id": "877176d7-8c9c-4288-4f25-02088c588a7b",
+        "x-ms-request-id": "0ef89eb4-201e-0029-1d96-f0daf0000000",
+        "x-ms-request-server-encrypted": "true",
+        "x-ms-version": "2020-02-10",
+        "x-ms-version-id": "2021-12-14T02:59:05.8598518Z"
+      },
+      "Url": "https://REDACTED.blob.core.windows.net/sourceblobaccessconditions/SourceBlobAccessConditions2"
+    },
+    {
+      "Headers": {
+        "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Linux 5.4.0-1063-azure x86_64 #66~18.04.1-Ubuntu SMP Thu Oct 21 09:59:28 UTC 2021)",
+        "x-ms-client-request-id": "f7932c80-10de-427b-7584-9b1312a74d95",
+        "x-ms-version": "2020-02-10"
+      },
+      "Method": "PUT",
+      "Response": {
+        "BODY": "",
+        "REASON_PHRASE": "Created",
+        "STATUS_CODE": "201",
+        "content-length": "0",
+        "content-md5": "v2GerAzfP2jUluqTRBN+iw==",
+        "date": "Tue, 14 Dec 2021 02:59:05 GMT",
+        "etag": "\"0x8D9BEADB1126532\"",
+        "last-modified": "Tue, 14 Dec 2021 02:59:05 GMT",
+        "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
+        "x-ms-blob-sequence-number": "0",
+        "x-ms-client-request-id": "f7932c80-10de-427b-7584-9b1312a74d95",
+        "x-ms-request-id": "0ef89eb5-201e-0029-1e96-f0daf0000000",
+        "x-ms-request-server-encrypted": "true",
+        "x-ms-version": "2020-02-10"
+      },
+      "Url": "https://REDACTED.blob.core.windows.net/sourceblobaccessconditions/SourceBlobAccessConditions2?comp=page"
+    },
+    {
+      "Headers": {
+        "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Linux 5.4.0-1063-azure x86_64 #66~18.04.1-Ubuntu SMP Thu Oct 21 09:59:28 UTC 2021)",
+        "x-ms-client-request-id": "304523d5-fe3c-4af5-590e-0685e11312cf",
+        "x-ms-version": "2020-02-10"
+      },
+      "Method": "PUT",
+      "Response": {
+        "BODY": "﻿<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<Error><Code>CannotVerifyCopySource</Code><Message>Could not verify the copy source within the specified time.\nRequestId:0ef89eb6-201e-0029-1f96-f0daf0000000\nTime:2021-12-14T02:59:05.9159189Z</Message></Error>",
+        "REASON_PHRASE": "The condition specified using HTTP conditional header(s) is not met.",
+        "STATUS_CODE": "412",
+        "content-length": "251",
+        "content-type": "application/xml",
+        "date": "Tue, 14 Dec 2021 02:59:05 GMT",
+        "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
+        "x-ms-client-request-id": "304523d5-fe3c-4af5-590e-0685e11312cf",
+        "x-ms-error-code": "CannotVerifyCopySource",
+        "x-ms-request-id": "0ef89eb6-201e-0029-1f96-f0daf0000000",
+        "x-ms-version": "2020-02-10"
+      },
+      "Url": "https://REDACTED.blob.core.windows.net/sourceblobaccessconditions/SourceBlobAccessConditions2?comp=page"
+    },
+    {
+      "Headers": {
+        "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Linux 5.4.0-1063-azure x86_64 #66~18.04.1-Ubuntu SMP Thu Oct 21 09:59:28 UTC 2021)",
+        "x-ms-client-request-id": "c850cc05-a88a-491a-72d0-78ce59184022",
+        "x-ms-version": "2020-02-10"
+      },
+      "Method": "PUT",
+      "Response": {
+        "BODY": "",
+        "REASON_PHRASE": "Created",
+        "STATUS_CODE": "201",
+        "content-length": "0",
+        "content-md5": "v2GerAzfP2jUluqTRBN+iw==",
+        "date": "Tue, 14 Dec 2021 02:59:05 GMT",
+        "etag": "\"0x8D9BEADB11D3912\"",
+        "last-modified": "Tue, 14 Dec 2021 02:59:05 GMT",
+        "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
+        "x-ms-blob-sequence-number": "0",
+        "x-ms-client-request-id": "c850cc05-a88a-491a-72d0-78ce59184022",
+        "x-ms-request-id": "30485a88-c01e-0053-3296-f0c7b0000000",
+        "x-ms-request-server-encrypted": "true",
+        "x-ms-version": "2020-02-10"
+      },
+      "Url": "https://REDACTED.blob.core.windows.net/sourceblobaccessconditions/SourceBlobAccessConditions2?comp=page"
+    },
+    {
+      "Headers": {
+        "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Linux 5.4.0-1063-azure x86_64 #66~18.04.1-Ubuntu SMP Thu Oct 21 09:59:28 UTC 2021)",
+        "x-ms-client-request-id": "2a22d359-baac-4b48-542a-721aba5aa376",
+        "x-ms-version": "2020-02-10"
+      },
+      "Method": "PUT",
+      "Response": {
+        "BODY": "",
+        "REASON_PHRASE": "The condition specified using HTTP conditional header(s) is not met.",
+        "STATUS_CODE": "304",
+        "date": "Tue, 14 Dec 2021 02:59:05 GMT",
+        "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
+        "x-ms-client-request-id": "2a22d359-baac-4b48-542a-721aba5aa376",
+        "x-ms-error-code": "CannotVerifyCopySource",
+        "x-ms-request-id": "30485a8c-c01e-0053-3696-f0c7b0000000",
+        "x-ms-version": "2020-02-10"
+      },
+      "Url": "https://REDACTED.blob.core.windows.net/sourceblobaccessconditions/SourceBlobAccessConditions2?comp=page"
+    },
+    {
+      "Headers": {
+        "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Linux 5.4.0-1063-azure x86_64 #66~18.04.1-Ubuntu SMP Thu Oct 21 09:59:28 UTC 2021)",
+        "x-ms-client-request-id": "28074e80-8fe6-45c4-4709-6c06bbc9ed1d",
+        "x-ms-version": "2020-02-10"
+      },
+      "Method": "PUT",
+      "Response": {
+        "BODY": "",
+        "REASON_PHRASE": "Created",
+        "STATUS_CODE": "201",
+        "content-length": "0",
+        "content-md5": "v2GerAzfP2jUluqTRBN+iw==",
+        "date": "Tue, 14 Dec 2021 02:59:05 GMT",
+        "etag": "\"0x8D9BEADB1291E3E\"",
+        "last-modified": "Tue, 14 Dec 2021 02:59:06 GMT",
+        "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
+        "x-ms-blob-sequence-number": "0",
+        "x-ms-client-request-id": "28074e80-8fe6-45c4-4709-6c06bbc9ed1d",
+        "x-ms-request-id": "b7b5f730-601e-0017-0e96-f04d8f000000",
+        "x-ms-request-server-encrypted": "true",
+        "x-ms-version": "2020-02-10"
+      },
+      "Url": "https://REDACTED.blob.core.windows.net/sourceblobaccessconditions/SourceBlobAccessConditions2?comp=page"
+    },
+    {
+      "Headers": {
+        "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Linux 5.4.0-1063-azure x86_64 #66~18.04.1-Ubuntu SMP Thu Oct 21 09:59:28 UTC 2021)",
+        "x-ms-client-request-id": "8407ea36-78d8-48b1-5346-8d15b6fb8585",
+        "x-ms-version": "2020-02-10"
+      },
+      "Method": "PUT",
+      "Response": {
+        "BODY": "",
+        "REASON_PHRASE": "The condition specified using HTTP conditional header(s) is not met.",
+        "STATUS_CODE": "304",
+        "date": "Tue, 14 Dec 2021 02:59:05 GMT",
+        "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
+        "x-ms-client-request-id": "8407ea36-78d8-48b1-5346-8d15b6fb8585",
+        "x-ms-error-code": "CannotVerifyCopySource",
+        "x-ms-request-id": "b7b5f732-601e-0017-1096-f04d8f000000",
+        "x-ms-version": "2020-02-10"
+      },
+      "Url": "https://REDACTED.blob.core.windows.net/sourceblobaccessconditions/SourceBlobAccessConditions2?comp=page"
+    },
+    {
+      "Headers": {
+        "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Linux 5.4.0-1063-azure x86_64 #66~18.04.1-Ubuntu SMP Thu Oct 21 09:59:28 UTC 2021)",
+        "x-ms-client-request-id": "1aadd1c2-63e0-4e03-447e-4243283dc913",
+        "x-ms-version": "2020-02-10"
+      },
+      "Method": "PUT",
+      "Response": {
+        "BODY": "",
+        "REASON_PHRASE": "Created",
+        "STATUS_CODE": "201",
+        "content-length": "0",
+        "content-md5": "v2GerAzfP2jUluqTRBN+iw==",
+        "date": "Tue, 14 Dec 2021 02:59:05 GMT",
+        "etag": "\"0x8D9BEADB135787C\"",
+        "last-modified": "Tue, 14 Dec 2021 02:59:06 GMT",
+        "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
+        "x-ms-blob-sequence-number": "0",
+        "x-ms-client-request-id": "1aadd1c2-63e0-4e03-447e-4243283dc913",
+        "x-ms-request-id": "e312718b-801e-007d-2696-f095a7000000",
+        "x-ms-request-server-encrypted": "true",
+        "x-ms-version": "2020-02-10"
+      },
+      "Url": "https://REDACTED.blob.core.windows.net/sourceblobaccessconditions/SourceBlobAccessConditions2?comp=page"
+    },
+    {
+      "Headers": {
+        "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Linux 5.4.0-1063-azure x86_64 #66~18.04.1-Ubuntu SMP Thu Oct 21 09:59:28 UTC 2021)",
+        "x-ms-client-request-id": "b3ca6520-501b-4665-550a-c93b7ec165f5",
+        "x-ms-version": "2020-02-10"
+      },
+      "Method": "PUT",
+      "Response": {
+        "BODY": "﻿<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<Error><Code>CannotVerifyCopySource</Code><Message>Could not verify the copy source within the specified time.\nRequestId:e312718e-801e-007d-2996-f095a7000000\nTime:2021-12-14T02:59:06.1454811Z</Message></Error>",
+        "REASON_PHRASE": "The condition specified using HTTP conditional header(s) is not met.",
+        "STATUS_CODE": "412",
+        "content-length": "251",
+        "content-type": "application/xml",
+        "date": "Tue, 14 Dec 2021 02:59:05 GMT",
+        "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
+        "x-ms-client-request-id": "b3ca6520-501b-4665-550a-c93b7ec165f5",
+        "x-ms-error-code": "CannotVerifyCopySource",
+        "x-ms-request-id": "e312718e-801e-007d-2996-f095a7000000",
+        "x-ms-version": "2020-02-10"
+      },
+      "Url": "https://REDACTED.blob.core.windows.net/sourceblobaccessconditions/SourceBlobAccessConditions2?comp=page"
+    },
+    {
+      "Headers": {
+        "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Linux 5.4.0-1063-azure x86_64 #66~18.04.1-Ubuntu SMP Thu Oct 21 09:59:28 UTC 2021)",
+        "x-ms-client-request-id": "b7537a28-56f9-4c15-4976-07a85c651f0f",
+        "x-ms-version": "2020-02-10"
+      },
+      "Method": "DELETE",
+      "Response": {
+        "BODY": "",
+        "REASON_PHRASE": "Accepted",
+        "STATUS_CODE": "202",
+        "content-length": "0",
+        "date": "Tue, 14 Dec 2021 02:59:05 GMT",
+        "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
+        "x-ms-client-request-id": "b7537a28-56f9-4c15-4976-07a85c651f0f",
+        "x-ms-request-id": "561c7d0f-b01e-0066-0396-f0aba4000000",
+        "x-ms-version": "2020-02-10"
+      },
+      "Url": "https://REDACTED.blob.core.windows.net/sourceblobaccessconditions?restype=container"
+    }
+  ]
+}
