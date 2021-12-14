@@ -16,8 +16,7 @@
     "json.hpp",
     "*nlohmann-json*",
     "eng/docs/api/assets/**/*",
-    "sdk/keyvault/azure-security-keyvault-keys/test/ut/recordings/*.json",
-    "sdk/keyvault/azure-security-keyvault-certificates/test/ut/recordings/*.json",
+    "**/test/ut/recordings/*.json",
     "sdk/keyvault/azure-security-keyvault-certificates/inc/azure/keyvault/certificates/certificate_client_models.hpp",
     "sdk/keyvault/azure-security-keyvault-keys/test/ut/key_client_import_test_live.cpp"
   ],
