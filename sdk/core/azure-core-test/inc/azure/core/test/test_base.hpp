@@ -168,7 +168,7 @@ namespace Azure { namespace Core { namespace Test {
     // Reads the current test instance name.
     // Name gets also sanitized (special chars are removed) to avoid issues when recording or
     // creating
-    std::string GetTestNameLowerCase(bool sanitize = false)
+    std::string GetTestNameLowerCase(bool sanitize = true)
     {
       std::string testName(GetTestName(sanitize));
       return Azure::Core::_internal::StringExtensions::ToLower(testName);

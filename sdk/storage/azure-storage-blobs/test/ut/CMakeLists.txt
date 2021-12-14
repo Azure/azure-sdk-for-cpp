@@ -26,7 +26,7 @@ add_executable (
     page_blob_client_test.cpp
     page_blob_client_test.hpp
     storage_retry_policy_test.cpp
-    # storage_timeout_test.cpp    
+    storage_timeout_test.cpp    
     # Include shared test source code
     ${CMAKE_CURRENT_SOURCE_DIR}/../../../azure-storage-common/test/ut/test_base.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/../../../azure-storage-common/test/ut/test_base.hpp
