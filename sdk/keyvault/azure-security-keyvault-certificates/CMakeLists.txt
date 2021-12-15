@@ -38,8 +38,6 @@ if(BUILD_SOURCE_DEPS)
     endforeach()
 endif()
 
-unset(BUILD_SOURCE_DEPS CACHE)
-
 set(
   AZURE_KEYVAULT_CERTIFICATES_HEADER
     inc/azure/keyvault/certificates/certificate_client.hpp
@@ -117,3 +115,5 @@ az_rtti_setup(
   SECURITY_KEYVAULT_CERTIFICATES
   "azure/keyvault/certificates/rtti.hpp"
 )
+
+unset(BUILD_SOURCE_DEPS CACHE)
