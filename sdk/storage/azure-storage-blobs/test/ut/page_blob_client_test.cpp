@@ -323,7 +323,8 @@ namespace Azure { namespace Storage { namespace Test {
     auto const testName(GetTestName());
     auto blobClient = GetPageBlobClient(testName);
 
-    auto blobClientWithoutAuth = Azure::Storage::Blobs::PageBlobClient(blobClient.GetUrl());
+    auto blobClientWithoutAuth = Azure::Storage::Blobs::PageBlobClient(
+        blobClient.GetUrl(), InitClientOptions<Azure::Storage::Blobs::BlobClientOptions>());
     EXPECT_THROW(blobClientWithoutAuth.CreateIfNotExists(m_blobContent.size()), StorageException);
     {
       auto response = blobClient.CreateIfNotExists(m_blobContent.size());

@@ -1345,7 +1345,8 @@ namespace Azure { namespace Storage { namespace Test {
     auto const testName(GetTestName());
     auto blobClient = GetBlockBlobClient(testName);
 
-    auto blobClientWithoutAuth = Azure::Storage::Blobs::BlockBlobClient(blobClient.GetUrl());
+    auto blobClientWithoutAuth = Azure::Storage::Blobs::BlockBlobClient(
+        blobClient.GetUrl(), InitClientOptions<Azure::Storage::Blobs::BlobClientOptions>());
     {
       auto response = blobClient.DeleteIfExists();
       EXPECT_FALSE(response.Value.Deleted);
