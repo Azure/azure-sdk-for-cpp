@@ -56,23 +56,29 @@ public:
           std::chrono::milliseconds&,
           double)> shouldRetryOnResponse)
       : RetryPolicy(retryOptions),
-      m_shouldRetryOnTransportFailure(
-          shouldRetryOnTransportFailure != nullptr
-            ? shouldRetryOnTransportFailure
-            : [&](auto options, auto attempt, auto retryAfter, auto jitter) {
-              retryAfter = std::chrono::milliseconds(0);
-              auto ignore = decltype(retryAfter)();
-              return RetryPolicy::ShouldRetryOnTransportFailure(options, attempt, ignore, jitter);
-        }),
+        m_shouldRetryOnTransportFailure(
+            shouldRetryOnTransportFailure != nullptr
+                ? shouldRetryOnTransportFailure
+                : static_cast<decltype(shouldRetryOnTransportFailure)>(
+                    [&](auto options, auto attempt, auto retryAfter, auto jitter) {
+                      retryAfter = std::chrono::milliseconds(0);
+                      auto ignore = decltype(retryAfter)();
+                      return RetryPolicy::ShouldRetryOnTransportFailure(
+                          options, attempt, ignore, jitter);
+                    })),
         m_shouldRetryOnResponse(
             shouldRetryOnResponse != nullptr
-            ? shouldRetryOnResponse
-            : [&](RawResponse const& response, auto options, auto attempt, auto retryAfter, auto jitter) {
-              retryAfter = std::chrono::milliseconds(0);
-              auto ignore = decltype(retryAfter)();
-              return RetryPolicy::ShouldRetryOnResponse(
-                  response, options, attempt, ignore, jitter);
-        })
+                ? shouldRetryOnResponse
+                : static_cast<decltype(shouldRetryOnResponse)>([&](RawResponse const& response,
+                                                                   auto options,
+                                                                   auto attempt,
+                                                                   auto retryAfter,
+                                                                   auto jitter) {
+                    retryAfter = std::chrono::milliseconds(0);
+                    auto ignore = decltype(retryAfter)();
+                    return RetryPolicy::ShouldRetryOnResponse(
+                        response, options, attempt, ignore, jitter);
+                  }))
   {
   }
 
