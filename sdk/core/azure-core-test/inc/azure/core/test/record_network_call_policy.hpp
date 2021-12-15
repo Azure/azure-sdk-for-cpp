@@ -54,7 +54,7 @@ namespace Azure { namespace Core { namespace Test {
      * data.
      */
     RecordNetworkCallPolicy(Azure::Core::Test::InterceptorManager* interceptorManager)
-        : m_interceptorManager(interceptorManager), m_symbol(std::make_unique<uint8_t>(120))
+        : m_interceptorManager(interceptorManager), m_symbol(std::make_unique<uint8_t>('x'))
     {
     }
 

@@ -269,7 +269,7 @@ namespace Azure { namespace Storage { namespace Test {
     auto const testName(GetTestName());
     auto pageBlobClient = GetPageBlobClient(testName);
 
-    std::vector<uint8_t> blobContent = std::vector<uint8_t>(4_KB, 'x');
+    std::vector<uint8_t> blobContent = std::vector<uint8_t>(static_cast<uint8_t>(4_KB), 'x');
 
     pageBlobClient.Create(blobContent.size(), m_blobUploadOptions);
     auto pageContent = Azure::Core::IO::MemoryBodyStream(blobContent.data(), blobContent.size());
@@ -296,7 +296,7 @@ namespace Azure { namespace Storage { namespace Test {
     auto const testName(GetTestName());
     auto pageBlobClient = GetPageBlobClient(testName);
 
-    std::vector<uint8_t> blobContent = std::vector<uint8_t>(4_KB, 'x');
+    std::vector<uint8_t> blobContent = std::vector<uint8_t>(static_cast<uint8_t>(4_KB), 'x');
 
     pageBlobClient.Create(blobContent.size(), m_blobUploadOptions);
     auto pageContent = Azure::Core::IO::MemoryBodyStream(blobContent.data(), blobContent.size());
