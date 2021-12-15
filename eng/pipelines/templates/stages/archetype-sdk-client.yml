@@ -35,6 +35,9 @@ parameters:
 - name: BranchCoverageTarget
   type: number
   default: 70
+- name: TestEnv
+  type: object
+  default: []
 
 stages:
   - stage: Build
@@ -51,6 +54,7 @@ stages:
           BranchCoverageTarget: ${{ parameters.BranchCoverageTarget }}
           ${{ if eq(parameters.ServiceDirectory, 'template') }}:
             TestPipeline: true
+          TestEnv: ${{ parameters.TestEnv }}
 
   - ${{ if and(eq(variables['System.TeamProject'], 'internal'), ne(parameters.LiveTestCtestRegex, '')) }}:
     - stage: LiveTest
