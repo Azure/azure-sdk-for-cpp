@@ -8,7 +8,7 @@
 #include "private/keyvault_certificates_common_request.hpp"
 #include "private/package_version.hpp"
 #include <azure/core/base64.hpp>
-#include <azure/keyvault/shared/keyvault_shared.hpp>
+#include "azure/keyvault/shared/keyvault_shared.hpp"
 
 #include <azure/core/credentials/credentials.hpp>
 #include <azure/core/http/http.hpp>

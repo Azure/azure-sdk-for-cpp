@@ -6,6 +6,7 @@ USER root
 WORKDIR /home/azure-sdk-for-cpp/src
 
 COPY ./sdk/keyvault/azure-security-keyvault-certificates ./sdk/keyvault/azure-security-keyvault-certificates
+COPY ./sdk/keyvault/azure-security-keyvault-shared ./sdk/keyvault/azure-security-keyvault-shared
 COPY  ./cmake-modules ./cmake-modules
 
 WORKDIR /home/azure-sdk-for-cpp/src/sdk/keyvault/azure-security-keyvault-certificates
