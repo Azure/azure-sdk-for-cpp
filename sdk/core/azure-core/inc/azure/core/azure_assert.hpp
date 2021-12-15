@@ -1,6 +1,14 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
 
+#pragma once
+
+/**
+ * @file
+ * @brief Deprecated assert macros.
+ *
+ */
+
 #include "azure/core/internal/azure_assert.hpp"
 
 #define AZURE_ASSERT(exp) _azure_ASSERT(exp)
