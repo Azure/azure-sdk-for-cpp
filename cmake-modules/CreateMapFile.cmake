@@ -5,14 +5,11 @@
 # Requires CMake version >= 3.13 to use add_link_options
 
 function(create_map_file TARGET_NAME MAP_FILE_NAME)
-    message("!!!!!!!!!!!!!!!!!!!!!!!!!!!!! CMAKE_CXX_COMPILER_ID ${CMAKE_CXX_COMPILER_ID}")
-    message("!!!!!!!!!!!!!!!!!!!!!!!!!!!!! CMAKE_CXX_LINKER_PREFERENCE ${CMAKE_CXX_LINKER_PREFERENCE}")
-    message("!!!!!!!!!!!!!!!!!!!!!!!!!!!!! CMAKE_CXX_LINK_EXECUTABLE ${CMAKE_CXX_LINK_EXECUTABLE}")
+    message("!!!!!!!!!!!!!!!!!!!!!!!!!!! CMAKE_CXX_COMPILER_ID ${CMAKE_CXX_COMPILER_ID}")
     if (${CMAKE_VERSION} VERSION_GREATER_EQUAL "3.13")
         if(MSVC)
             target_link_options(${TARGET_NAME} PRIVATE /MAP)
-        elseif(CMAKE_CXX_COMPILER_ID MATCHES "Clang")
-            target_link_options(${TARGET_NAME} PRIVATE "-v") 
+        elseif(CMAKE_CXX_COMPILER_ID MATCHES "Clang" AND ${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
             target_link_options(${TARGET_NAME} PRIVATE LINKER:SHELL:-Wl,-map,${MAP_FILE_NAME})
             target_link_options(${TARGET_NAME} PRIVATE -Os)
         else()
