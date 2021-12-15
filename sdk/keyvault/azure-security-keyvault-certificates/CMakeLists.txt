@@ -94,8 +94,9 @@ if(BUILD_TESTING)
     include(AddGoogleTest)
     enable_testing ()
   endif()
-include(AddGoogleTest)
-enable_testing ()
+  # figure out how to enable tests
+#include(AddGoogleTest)
+#enable_testing ()
   
 add_subdirectory(test/ut)  
 endif()
