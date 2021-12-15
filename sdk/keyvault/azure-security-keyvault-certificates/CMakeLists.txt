@@ -89,16 +89,12 @@ get_az_version("${CMAKE_CURRENT_SOURCE_DIR}/src/private/package_version.hpp")
 generate_documentation(azure-security-keyvault-certificates ${AZ_LIBRARY_VERSION})
 
 if(BUILD_TESTING)
-
-  if (NOT AZ_ALL_LIBRARIES)
+  if (NOT AZ_ALL_LIBRARIES OR BUILD_SOURCE_DEPS)
     include(AddGoogleTest)
     enable_testing ()
   endif()
-  # figure out how to enable tests
-#include(AddGoogleTest)
-#enable_testing ()
   
-add_subdirectory(test/ut)  
+  add_subdirectory(test/ut)  
 endif()
 
 
