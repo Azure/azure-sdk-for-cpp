@@ -62,7 +62,7 @@ public:
             : [&](auto options, auto attempt, auto retryAfter, auto jitter) {
               retryAfter = std::chrono::milliseconds(0);
               auto ignore = decltype(retryAfter)();
-              return RetryPolicy::ShouldRetryOnTransportFailure(options, attempt, ignore, jitter);
+              return this->ShouldRetryOnTransportFailure(options, attempt, ignore, jitter);
         }),
         m_shouldRetryOnResponse(
             shouldRetryOnResponse != nullptr
@@ -70,7 +70,7 @@ public:
             : [&](RawResponse const& response, auto options, auto attempt, auto retryAfter, auto jitter) {
               retryAfter = std::chrono::milliseconds(0);
               auto ignore = decltype(retryAfter)();
-              return RetryPolicy::ShouldRetryOnResponse(
+              return this->ShouldRetryOnResponse(
                   response, options, attempt, ignore, jitter);
         })
   {
