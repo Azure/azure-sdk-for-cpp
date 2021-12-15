@@ -46,3 +46,28 @@ stages:
         - Name: azure-core
           Path: azure-core
           VcpkgPortName: azure-core-cpp
+# Since Azure Core will run all service's tests, it requires all the expected env vars from services          
+      TestEnv:
+# Key Vault
+        - Name: AZURE_KEYVAULT_URL
+          Value: "https://non-real-account.vault.azure.net"
+        - Name: AZURE_KEYVAULT_HSM_URL
+          Value: "https://non-real-account.vault.azure.net"
+# Key Vault & Identity 
+        - Name: AZURE_TENANT_ID
+          Value: "33333333-3333-3333-3333-333333333333"
+        - Name: AZURE_CLIENT_ID
+          Value: "non-real-client"
+        - Name: AZURE_CLIENT_SECRET
+          Value: "non-real-secret"
+# Storage
+        - Name: AAD_TENANT_ID
+          Value: "33333333-3333-3333-3333-333333333333"
+        - Name: AAD_CLIENT_ID
+          Value: "non-real-client"
+        - Name: AAD_CLIENT_SECRET
+          Value: "non-real-secret"          
+        - Name: STANDARD_STORAGE_CONNECTION_STRING
+          Value: "DefaultEndpointsProtocol=https;AccountName=fake;AccountKey=X;EndpointSuffix=core.windows.net"
+        - Name: ADLS_GEN2_CONNECTION_STRING
+          Value: "DefaultEndpointsProtocol=https;AccountName=fake;AccountKey=X;EndpointSuffix=core.windows.net"          

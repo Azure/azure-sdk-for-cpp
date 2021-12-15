@@ -42,3 +42,15 @@ stages:
         - Name: azure-security-keyvault-certificates
           Path: azure-security-keyvault-certificates
           VcpkgPortName: azure-security-keyvault-certificates-cpp
+      TestEnv:
+        - Name: AZURE_KEYVAULT_URL
+          Value: "https://non-real-account.vault.azure.net"
+        - Name: AZURE_KEYVAULT_HSM_URL
+          Value: "https://non-real-account.vault.azure.net"
+        # Tenant ID should use the uniqueID format for playback recordings
+        - Name: AZURE_TENANT_ID
+          Value: "33333333-3333-3333-3333-333333333333"
+        - Name: AZURE_CLIENT_ID
+          Value: "non-real-client"
+        - Name: AZURE_CLIENT_SECRET
+          Value: "non-real-secret"
