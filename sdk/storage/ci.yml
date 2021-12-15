@@ -47,3 +47,14 @@ stages:
         - Name: azure-storage-queues
           Path: azure-storage-queues
           VcpkgPortName: azure-storage-queues-cpp
+      TestEnv:
+        - Name: AAD_TENANT_ID
+          Value: "33333333-3333-3333-3333-333333333333"
+        - Name: AAD_CLIENT_ID
+          Value: "non-real-client"
+        - Name: AAD_CLIENT_SECRET
+          Value: "non-real-secret"          
+        - Name: STANDARD_STORAGE_CONNECTION_STRING
+          Value: "DefaultEndpointsProtocol=https;AccountName=fake;AccountKey=X;EndpointSuffix=core.windows.net"
+        - Name: ADLS_GEN2_CONNECTION_STRING
+          Value: "DefaultEndpointsProtocol=https;AccountName=fake;AccountKey=X;EndpointSuffix=core.windows.net"          
