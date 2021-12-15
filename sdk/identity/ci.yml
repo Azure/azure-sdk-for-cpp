@@ -26,11 +26,19 @@ stages:
   - template: ../../eng/pipelines/templates/stages/archetype-sdk-client.yml
     parameters:
       ServiceDirectory: identity
-      CtestRegex: azure-identity-unittest.
-      LiveTestCtestRegex: azure-identity-livetest.
+      CtestRegex: azure-identity.
+      LiveTestCtestRegex: azure-identity.
       LineCoverageTarget: 99
-      BranchCoverageTarget: 62
+      BranchCoverageTarget: 63
       Artifacts:
         - Name: azure-identity
           Path: azure-identity
           VcpkgPortName: azure-identity-cpp
+      TestEnv:
+        # Tenant ID should use the uniqueID format for playback recordings
+        - Name: AZURE_TENANT_ID
+          Value: "33333333-3333-3333-3333-333333333333"
+        - Name: AZURE_CLIENT_ID
+          Value: "non-real-client"
+        - Name: AZURE_CLIENT_SECRET
+          Value: "non-real-secret"
