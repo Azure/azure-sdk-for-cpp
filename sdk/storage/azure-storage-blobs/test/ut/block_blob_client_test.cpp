@@ -185,7 +185,7 @@ namespace Azure { namespace Storage { namespace Test {
         client.Delete();
       }
       {
-        const std::string tempFilename = testName;
+        const std::string tempFilename = "file" + testName;
         {
           Azure::Storage::_internal::FileWriter fileWriter(tempFilename);
           fileWriter.Write(blobContent.data(), blobContent.size(), 0);
