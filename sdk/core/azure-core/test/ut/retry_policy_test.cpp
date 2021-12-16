@@ -72,16 +72,17 @@ public:
       decltype(m_shouldRetryOnResponse) shouldRetryOnResponse)
       : RetryPolicy(retryOptions),
         m_shouldRetryOnTransportFailure(
-            shouldRetryOnTransportFailure != nullptr
+            shouldRetryOnTransportFailure != nullptr //
                 ? shouldRetryOnTransportFailure
                 : static_cast<decltype(m_shouldRetryOnTransportFailure)>( //
                     [this](auto options, auto attempt, auto retryAfter, auto jitter) {
                       retryAfter = std::chrono::milliseconds(0);
                       auto ignore = decltype(retryAfter)();
-                      return BaseShouldRetryOnTransportFailure(options, attempt, ignore, jitter);
+                      return this->BaseShouldRetryOnTransportFailure(
+                          options, attempt, ignore, jitter);
                     })),
         m_shouldRetryOnResponse(
-            shouldRetryOnResponse != nullptr
+            shouldRetryOnResponse != nullptr //
                 ? shouldRetryOnResponse
                 : static_cast<decltype(m_shouldRetryOnResponse)>( //
                     [this](
@@ -92,7 +93,8 @@ public:
                         auto jitter) {
                       retryAfter = std::chrono::milliseconds(0);
                       auto ignore = decltype(retryAfter)();
-                      return BaseShouldRetryOnResponse(response, options, attempt, ignore, jitter);
+                      return this->BaseShouldRetryOnResponse(
+                          response, options, attempt, ignore, jitter);
                     }))
   {
   }
