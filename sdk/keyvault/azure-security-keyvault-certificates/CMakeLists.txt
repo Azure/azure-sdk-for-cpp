@@ -36,6 +36,11 @@ if(BUILD_SOURCE_DEPS)
 	    add_subdirectory(${oneFolder})
         include_directories(${oneFolder})
     endforeach()
+elseif(NOT AZ_ALL_LIBRARIES)
+  find_package(azure-core-cpp "1.2.0" CONFIG QUIET)
+  if(NOT azure-core-cpp_FOUND)
+    find_package(azure-core-cpp "1.2.0" REQUIRED)
+  endif()
 endif()
 
 set(
