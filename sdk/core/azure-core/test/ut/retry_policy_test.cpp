@@ -55,31 +55,31 @@ public:
           int32_t,
           std::chrono::milliseconds&,
           double)> shouldRetryOnResponse)
-      : RetryPolicy(retryOptions),
-        m_shouldRetryOnTransportFailure(
-            shouldRetryOnTransportFailure != nullptr
-                ? shouldRetryOnTransportFailure
-                : static_cast<decltype(shouldRetryOnTransportFailure)>(
-                    [&](auto options, auto attempt, auto retryAfter, auto jitter) {
-                      retryAfter = std::chrono::milliseconds(0);
-                      auto ignore = decltype(retryAfter)();
-                      return this->RetryPolicy::ShouldRetryOnTransportFailure(
-                          options, attempt, ignore, jitter);
-                    })),
-        m_shouldRetryOnResponse(
-            shouldRetryOnResponse != nullptr
-                ? shouldRetryOnResponse
-                : static_cast<decltype(shouldRetryOnResponse)>([&](RawResponse const& response,
-                                                                   auto options,
-                                                                   auto attempt,
-                                                                   auto retryAfter,
-                                                                   auto jitter) {
-                    retryAfter = std::chrono::milliseconds(0);
-                    auto ignore = decltype(retryAfter)();
-                    return this->RetryPolicy::ShouldRetryOnResponse(
-                        response, options, attempt, ignore, jitter);
-                  }))
+      : RetryPolicy(retryOptions), m_shouldRetryOnTransportFailure(shouldRetryOnTransportFailure),
+        m_shouldRetryOnResponse(shouldRetryOnResponse)
   {
+    if (m_shouldRetryOnTransportFailure == nullptr)
+    {
+      m_shouldRetryOnTransportFailure
+          = [&](auto options, auto attempt, auto retryAfter, auto jitter) {
+              retryAfter = std::chrono::milliseconds(0);
+              auto ignore = decltype(retryAfter)();
+              return RetryPolicy::ShouldRetryOnTransportFailure(options, attempt, ignore, jitter);
+            };
+    }
+
+    if (m_shouldRetryOnResponse == nullptr)
+    {
+      m_shouldRetryOnResponse = [&](RawResponse const& response,
+                                    auto options,
+                                    auto attempt,
+                                    auto retryAfter,
+                                    auto jitter) {
+        retryAfter = std::chrono::milliseconds(0);
+        auto ignore = decltype(retryAfter)();
+        return RetryPolicy::ShouldRetryOnResponse(response, options, attempt, ignore, jitter);
+      };
+    }
   }
 
   std::unique_ptr<HttpPolicy> Clone() const override
