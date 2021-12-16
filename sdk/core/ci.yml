@@ -68,6 +68,6 @@ stages:
         - Name: AAD_CLIENT_SECRET
           Value: "non-real-secret"          
         - Name: STANDARD_STORAGE_CONNECTION_STRING
-          Value: "DefaultEndpointsProtocol=https;AccountName=fake;AccountKey=X;EndpointSuffix=core.windows.net"
+          Value: "DefaultEndpointsProtocol=https;AccountName=notReal;AccountKey=3333333333333333333333333333333333333333333333333333333333333333333333333333333333333333;EndpointSuffix=core.windows.net"
         - Name: ADLS_GEN2_CONNECTION_STRING
-          Value: "DefaultEndpointsProtocol=https;AccountName=fake;AccountKey=X;EndpointSuffix=core.windows.net"          
+          Value: "DefaultEndpointsProtocol=https;AccountName=notReal;AccountKey=3333333333333333333333333333333333333333333333333333333333333333333333333333333333333333;EndpointSuffix=core.windows.net"
