@@ -3,7 +3,7 @@
     {
       "Headers": {
         "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Linux 5.4.0-1063-azure x86_64 #66~18.04.1-Ubuntu SMP Thu Oct 21 09:59:28 UTC 2021)",
-        "x-ms-client-request-id": "42d00fd6-9edc-4b62-6e38-abbdf4e71d71",
+        "x-ms-client-request-id": "a4644822-87b4-4c59-5c4d-35aead78b8d5",
         "x-ms-version": "2020-02-10"
       },
       "Method": "PUT",
@@ -12,42 +12,42 @@
         "REASON_PHRASE": "Created",
         "STATUS_CODE": "201",
         "content-length": "0",
-        "date": "Sat, 11 Dec 2021 00:43:48 GMT",
-        "etag": "\"0x8D9BC3F4B99F864\"",
-        "last-modified": "Sat, 11 Dec 2021 00:43:48 GMT",
+        "date": "Thu, 16 Dec 2021 21:30:30 GMT",
+        "etag": "\"0x8D9C0DB4915F943\"",
+        "last-modified": "Thu, 16 Dec 2021 21:30:30 GMT",
         "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
-        "x-ms-client-request-id": "42d00fd6-9edc-4b62-6e38-abbdf4e71d71",
-        "x-ms-request-id": "b4caba5f-401e-0000-1f28-eee484000000",
+        "x-ms-client-request-id": "a4644822-87b4-4c59-5c4d-35aead78b8d5",
+        "x-ms-request-id": "82cd1356-d01e-0028-6cc4-f2a937000000",
         "x-ms-version": "2020-02-10"
       },
-      "Url": "https://REDACTED.blob.core.windows.net/concurrentuploadfromnonexistingfile?restype=container"
+      "Url": "https://REDACTED.blob.core.windows.net/blockblobclienttestconcurrentuploadfromnonexistingfile?restype=container"
     },
     {
       "Headers": {
         "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Linux 5.4.0-1063-azure x86_64 #66~18.04.1-Ubuntu SMP Thu Oct 21 09:59:28 UTC 2021)",
-        "x-ms-client-request-id": "181ffba6-6f85-4644-610c-f2b310bbb819",
+        "x-ms-client-request-id": "c977e1ce-94f6-4876-513b-d8d49528510d",
         "x-ms-version": "2020-02-10"
       },
       "Method": "DELETE",
       "Response": {
-        "BODY": "﻿<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>BlobNotFound</Code><Message>The specified blob does not exist.\nRequestId:b4caba63-401e-0000-2128-eee484000000\nTime:2021-12-11T00:43:48.7388942Z</Message></Error>",
+        "BODY": "﻿<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>BlobNotFound</Code><Message>The specified blob does not exist.\nRequestId:82cd1359-d01e-0028-6ec4-f2a937000000\nTime:2021-12-16T21:30:30.6343401Z</Message></Error>",
         "REASON_PHRASE": "The specified blob does not exist.",
         "STATUS_CODE": "404",
         "content-length": "215",
         "content-type": "application/xml",
-        "date": "Sat, 11 Dec 2021 00:43:48 GMT",
+        "date": "Thu, 16 Dec 2021 21:30:30 GMT",
         "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
-        "x-ms-client-request-id": "181ffba6-6f85-4644-610c-f2b310bbb819",
+        "x-ms-client-request-id": "c977e1ce-94f6-4876-513b-d8d49528510d",
         "x-ms-error-code": "BlobNotFound",
-        "x-ms-request-id": "b4caba63-401e-0000-2128-eee484000000",
+        "x-ms-request-id": "82cd1359-d01e-0028-6ec4-f2a937000000",
         "x-ms-version": "2020-02-10"
       },
-      "Url": "https://REDACTED.blob.core.windows.net/concurrentuploadfromnonexistingfile/ConcurrentUploadFromNonExistingFile"
+      "Url": "https://REDACTED.blob.core.windows.net/blockblobclienttestconcurrentuploadfromnonexistingfile/ConcurrentUploadFromNonExistingFile"
     },
     {
       "Headers": {
         "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Linux 5.4.0-1063-azure x86_64 #66~18.04.1-Ubuntu SMP Thu Oct 21 09:59:28 UTC 2021)",
-        "x-ms-client-request-id": "a03a6d5a-8be2-4b90-44bb-449135c69a25",
+        "x-ms-client-request-id": "6f5a9ae6-8dd5-43c4-61e6-0c1f1a822585",
         "x-ms-version": "2020-02-10"
       },
       "Method": "DELETE",
@@ -56,13 +56,13 @@
         "REASON_PHRASE": "Accepted",
         "STATUS_CODE": "202",
         "content-length": "0",
-        "date": "Sat, 11 Dec 2021 00:43:48 GMT",
+        "date": "Thu, 16 Dec 2021 21:30:30 GMT",
         "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
-        "x-ms-client-request-id": "a03a6d5a-8be2-4b90-44bb-449135c69a25",
-        "x-ms-request-id": "6495f78f-201e-0064-1c28-ee151c000000",
+        "x-ms-client-request-id": "6f5a9ae6-8dd5-43c4-61e6-0c1f1a822585",
+        "x-ms-request-id": "19ae2b97-001e-0082-78c4-f28921000000",
         "x-ms-version": "2020-02-10"
       },
-      "Url": "https://REDACTED.blob.core.windows.net/concurrentuploadfromnonexistingfile?restype=container"
+      "Url": "https://REDACTED.blob.core.windows.net/blockblobclienttestconcurrentuploadfromnonexistingfile?restype=container"
     }
   ]
 }

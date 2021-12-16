@@ -3,7 +3,7 @@
     {
       "Headers": {
         "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Linux 5.4.0-1063-azure x86_64 #66~18.04.1-Ubuntu SMP Thu Oct 21 09:59:28 UTC 2021)",
-        "x-ms-client-request-id": "7895e273-b353-4bef-6bdb-e8d2daba2093",
+        "x-ms-client-request-id": "064dc856-abe3-4372-5f59-e6504a1206aa",
         "x-ms-version": "2020-02-10"
       },
       "Method": "PUT",
@@ -12,20 +12,20 @@
         "REASON_PHRASE": "Created",
         "STATUS_CODE": "201",
         "content-length": "0",
-        "date": "Wed, 08 Dec 2021 01:40:50 GMT",
-        "etag": "\"0x8D9B9EBC459C23F\"",
-        "last-modified": "Wed, 08 Dec 2021 01:40:51 GMT",
+        "date": "Thu, 16 Dec 2021 21:30:10 GMT",
+        "etag": "\"0x8D9C0DB3D8B3105\"",
+        "last-modified": "Thu, 16 Dec 2021 21:30:11 GMT",
         "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
-        "x-ms-client-request-id": "7895e273-b353-4bef-6bdb-e8d2daba2093",
-        "x-ms-request-id": "ecef7d56-001e-0001-2ad4-ebbb58000000",
+        "x-ms-client-request-id": "064dc856-abe3-4372-5f59-e6504a1206aa",
+        "x-ms-request-id": "47811f1b-f01e-004d-1ec4-f20773000000",
         "x-ms-version": "2020-02-10"
       },
-      "Url": "https://REDACTED.blob.core.windows.net/deleteblob?restype=container"
+      "Url": "https://REDACTED.blob.core.windows.net/blobcontainerclienttestdeleteblob?restype=container"
     },
     {
       "Headers": {
         "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Linux 5.4.0-1063-azure x86_64 #66~18.04.1-Ubuntu SMP Thu Oct 21 09:59:28 UTC 2021)",
-        "x-ms-client-request-id": "a67477d1-65ac-4e62-4f1b-39a8039a1c0c",
+        "x-ms-client-request-id": "cb5a8d19-3bef-4f5b-59cf-59a0b84c1690",
         "x-ms-version": "2020-02-10"
       },
       "Method": "PUT",
@@ -34,22 +34,22 @@
         "REASON_PHRASE": "Created",
         "STATUS_CODE": "201",
         "content-length": "0",
-        "date": "Wed, 08 Dec 2021 01:40:50 GMT",
-        "etag": "\"0x8D9B9EBC45C0B08\"",
-        "last-modified": "Wed, 08 Dec 2021 01:40:51 GMT",
+        "date": "Thu, 16 Dec 2021 21:30:10 GMT",
+        "etag": "\"0x8D9C0DB3D8E03FE\"",
+        "last-modified": "Thu, 16 Dec 2021 21:30:11 GMT",
         "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
-        "x-ms-client-request-id": "a67477d1-65ac-4e62-4f1b-39a8039a1c0c",
-        "x-ms-request-id": "ecef7d59-001e-0001-2bd4-ebbb58000000",
+        "x-ms-client-request-id": "cb5a8d19-3bef-4f5b-59cf-59a0b84c1690",
+        "x-ms-request-id": "47811f21-f01e-004d-23c4-f20773000000",
         "x-ms-request-server-encrypted": "true",
         "x-ms-version": "2020-02-10",
-        "x-ms-version-id": "2021-12-08T01:40:51.2455432Z"
+        "x-ms-version-id": "2021-12-16T21:30:11.2723966Z"
       },
-      "Url": "https://REDACTED.blob.core.windows.net/deleteblob/deleteblob"
+      "Url": "https://REDACTED.blob.core.windows.net/blobcontainerclienttestdeleteblob/blobcontainerclienttestdeleteblob"
     },
     {
       "Headers": {
         "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Linux 5.4.0-1063-azure x86_64 #66~18.04.1-Ubuntu SMP Thu Oct 21 09:59:28 UTC 2021)",
-        "x-ms-client-request-id": "5a7dce75-47aa-476f-722a-a29a5e9224f8",
+        "x-ms-client-request-id": "a0242484-d32c-4dd4-43d3-9c415d4912fc",
         "x-ms-version": "2020-02-10"
       },
       "Method": "HEAD",
@@ -60,28 +60,28 @@
         "accept-ranges": "bytes",
         "content-length": "0",
         "content-type": "application/octet-stream",
-        "date": "Wed, 08 Dec 2021 01:40:50 GMT",
-        "etag": "\"0x8D9B9EBC45C0B08\"",
-        "last-modified": "Wed, 08 Dec 2021 01:40:51 GMT",
+        "date": "Thu, 16 Dec 2021 21:30:10 GMT",
+        "etag": "\"0x8D9C0DB3D8E03FE\"",
+        "last-modified": "Thu, 16 Dec 2021 21:30:11 GMT",
         "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
         "x-ms-blob-committed-block-count": "0",
         "x-ms-blob-type": "AppendBlob",
-        "x-ms-client-request-id": "5a7dce75-47aa-476f-722a-a29a5e9224f8",
-        "x-ms-creation-time": "Wed, 08 Dec 2021 01:40:51 GMT",
+        "x-ms-client-request-id": "a0242484-d32c-4dd4-43d3-9c415d4912fc",
+        "x-ms-creation-time": "Thu, 16 Dec 2021 21:30:11 GMT",
         "x-ms-is-current-version": "true",
         "x-ms-lease-state": "available",
         "x-ms-lease-status": "unlocked",
-        "x-ms-request-id": "ecef7d5b-001e-0001-2dd4-ebbb58000000",
+        "x-ms-request-id": "47811f2a-f01e-004d-2bc4-f20773000000",
         "x-ms-server-encrypted": "true",
         "x-ms-version": "2020-02-10",
-        "x-ms-version-id": "2021-12-08T01:40:51.2455432Z"
+        "x-ms-version-id": "2021-12-16T21:30:11.2723966Z"
       },
-      "Url": "https://REDACTED.blob.core.windows.net/deleteblob/deleteblob"
+      "Url": "https://REDACTED.blob.core.windows.net/blobcontainerclienttestdeleteblob/blobcontainerclienttestdeleteblob"
     },
     {
       "Headers": {
         "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Linux 5.4.0-1063-azure x86_64 #66~18.04.1-Ubuntu SMP Thu Oct 21 09:59:28 UTC 2021)",
-        "x-ms-client-request-id": "3ec2c8f9-45bd-4dce-502c-8b6e6471e665",
+        "x-ms-client-request-id": "869d81fc-b9bb-4960-746e-892db5e2c4d6",
         "x-ms-version": "2020-02-10"
       },
       "Method": "DELETE",
@@ -90,19 +90,19 @@
         "REASON_PHRASE": "Accepted",
         "STATUS_CODE": "202",
         "content-length": "0",
-        "date": "Wed, 08 Dec 2021 01:40:50 GMT",
+        "date": "Thu, 16 Dec 2021 21:30:10 GMT",
         "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
-        "x-ms-client-request-id": "3ec2c8f9-45bd-4dce-502c-8b6e6471e665",
+        "x-ms-client-request-id": "869d81fc-b9bb-4960-746e-892db5e2c4d6",
         "x-ms-delete-type-permanent": "false",
-        "x-ms-request-id": "ecef7d5c-001e-0001-2ed4-ebbb58000000",
+        "x-ms-request-id": "47811f2d-f01e-004d-2ec4-f20773000000",
         "x-ms-version": "2020-02-10"
       },
-      "Url": "https://REDACTED.blob.core.windows.net/deleteblob/deleteblob"
+      "Url": "https://REDACTED.blob.core.windows.net/blobcontainerclienttestdeleteblob/blobcontainerclienttestdeleteblob"
     },
     {
       "Headers": {
         "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Linux 5.4.0-1063-azure x86_64 #66~18.04.1-Ubuntu SMP Thu Oct 21 09:59:28 UTC 2021)",
-        "x-ms-client-request-id": "818b734e-22c9-4a76-5b0c-8f6ff4915f69",
+        "x-ms-client-request-id": "68c3151f-669a-42ab-4022-327902f27fec",
         "x-ms-version": "2020-02-10"
       },
       "Method": "HEAD",
@@ -110,20 +110,20 @@
         "BODY": "",
         "REASON_PHRASE": "The specified blob does not exist.",
         "STATUS_CODE": "404",
-        "date": "Wed, 08 Dec 2021 01:40:50 GMT",
+        "date": "Thu, 16 Dec 2021 21:30:10 GMT",
         "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
         "transfer-encoding": "chunked",
-        "x-ms-client-request-id": "818b734e-22c9-4a76-5b0c-8f6ff4915f69",
+        "x-ms-client-request-id": "68c3151f-669a-42ab-4022-327902f27fec",
         "x-ms-error-code": "BlobNotFound",
-        "x-ms-request-id": "ecef7d60-001e-0001-32d4-ebbb58000000",
+        "x-ms-request-id": "47811f5f-f01e-004d-53c4-f20773000000",
         "x-ms-version": "2020-02-10"
       },
-      "Url": "https://REDACTED.blob.core.windows.net/deleteblob/deleteblob"
+      "Url": "https://REDACTED.blob.core.windows.net/blobcontainerclienttestdeleteblob/blobcontainerclienttestdeleteblob"
     },
     {
       "Headers": {
         "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Linux 5.4.0-1063-azure x86_64 #66~18.04.1-Ubuntu SMP Thu Oct 21 09:59:28 UTC 2021)",
-        "x-ms-client-request-id": "4ab2c7cb-946f-4033-6db2-9760490cb53a",
+        "x-ms-client-request-id": "08c9d459-109d-4761-628b-d46e93784dc2",
         "x-ms-version": "2020-02-10"
       },
       "Method": "DELETE",
@@ -132,13 +132,13 @@
         "REASON_PHRASE": "Accepted",
         "STATUS_CODE": "202",
         "content-length": "0",
-        "date": "Wed, 08 Dec 2021 01:40:51 GMT",
+        "date": "Thu, 16 Dec 2021 21:30:10 GMT",
         "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
-        "x-ms-client-request-id": "4ab2c7cb-946f-4033-6db2-9760490cb53a",
-        "x-ms-request-id": "963e971c-b01e-0049-4cd4-eba66f000000",
+        "x-ms-client-request-id": "08c9d459-109d-4761-628b-d46e93784dc2",
+        "x-ms-request-id": "c3f32a6f-f01e-005d-58c4-f2c21b000000",
         "x-ms-version": "2020-02-10"
       },
-      "Url": "https://REDACTED.blob.core.windows.net/deleteblob?restype=container"
+      "Url": "https://REDACTED.blob.core.windows.net/blobcontainerclienttestdeleteblob?restype=container"
     }
   ]
 }

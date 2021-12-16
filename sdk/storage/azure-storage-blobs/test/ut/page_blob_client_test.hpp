@@ -23,7 +23,6 @@ namespace Azure { namespace Storage { namespace Test {
     Azure::Storage::Blobs::PageBlobClient const& GetPageBlobClient(std::string const& blobName)
     {
       // Create container
-      auto const testName(GetTestNameLowerCase());
       auto containerClient = GetBlobContainerTestClient();
       containerClient.Create();
 

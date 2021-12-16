@@ -22,7 +22,6 @@ namespace Azure { namespace Storage { namespace Test {
     Azure::Storage::Blobs::AppendBlobClient const& GetAppendBlobClient(std::string const& blobName)
     {
       // Create container
-      auto const testName(GetTestNameLowerCase());
       auto containerClient = GetBlobContainerTestClient();
       containerClient.Create();
 

@@ -27,7 +27,7 @@ namespace Azure { namespace Storage { namespace Test {
     auto client = GetAppendBlobClient(testName);
     auto appendBlobClient = Blobs::AppendBlobClient::CreateFromConnectionString(
         StandardStorageConnectionString(),
-        GetTestNameLowerCase(),
+        m_containerName,
         testName + "1",
         InitClientOptions<Azure::Storage::Blobs::BlobClientOptions>());
 
@@ -86,7 +86,7 @@ namespace Azure { namespace Storage { namespace Test {
     auto client = GetAppendBlobClient(testName);
     auto appendBlobClient = Blobs::AppendBlobClient::CreateFromConnectionString(
         StandardStorageConnectionString(),
-        GetTestNameLowerCase(),
+        m_containerName,
         testName + "1",
         InitClientOptions<Azure::Storage::Blobs::BlobClientOptions>());
 
@@ -156,7 +156,7 @@ namespace Azure { namespace Storage { namespace Test {
     auto client = GetAppendBlobClient(testName);
     auto appendBlobClient = Blobs::AppendBlobClient::CreateFromConnectionString(
         StandardStorageConnectionString(),
-        GetTestNameLowerCase(),
+        m_containerName,
         testName + "1",
         InitClientOptions<Azure::Storage::Blobs::BlobClientOptions>());
 
@@ -198,7 +198,7 @@ namespace Azure { namespace Storage { namespace Test {
     auto client = GetAppendBlobClient(testName);
     auto appendBlobClient = Blobs::AppendBlobClient::CreateFromConnectionString(
         StandardStorageConnectionString(),
-        GetTestNameLowerCase(),
+        m_containerName,
         testName + "leaseId",
         InitClientOptions<Azure::Storage::Blobs::BlobClientOptions>());
     appendBlobClient.Create();
@@ -219,7 +219,7 @@ namespace Azure { namespace Storage { namespace Test {
     auto const extraBlobName = testName + "1";
     auto blobClient = Blobs::AppendBlobClient::CreateFromConnectionString(
         StandardStorageConnectionString(),
-        GetTestNameLowerCase(),
+        m_containerName,
         extraBlobName,
         InitClientOptions<Azure::Storage::Blobs::BlobClientOptions>());
     blobClient.Create();
@@ -265,7 +265,7 @@ namespace Azure { namespace Storage { namespace Test {
     auto const extraBlobName2 = testName + "2";
     auto blobClient2 = Blobs::AppendBlobClient::CreateFromConnectionString(
         StandardStorageConnectionString(),
-        GetTestNameLowerCase(),
+        m_containerName,
         extraBlobName2,
         InitClientOptions<Azure::Storage::Blobs::BlobClientOptions>());
 
@@ -292,7 +292,7 @@ namespace Azure { namespace Storage { namespace Test {
     auto client = GetAppendBlobClient(testName);
     auto blobClient = Blobs::AppendBlobClient::CreateFromConnectionString(
         StandardStorageConnectionString(),
-        GetTestNameLowerCase(),
+        m_containerName,
         testName + "test",
         InitClientOptions<Azure::Storage::Blobs::BlobClientOptions>());
 

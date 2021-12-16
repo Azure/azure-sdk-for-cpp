@@ -3,7 +3,7 @@
     {
       "Headers": {
         "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Linux 5.4.0-1063-azure x86_64 #66~18.04.1-Ubuntu SMP Thu Oct 21 09:59:28 UTC 2021)",
-        "x-ms-client-request-id": "cdbb9d4e-c424-4042-65af-2ddb92b11547",
+        "x-ms-client-request-id": "7ca75606-7a13-494f-7ab7-0e69e95af514",
         "x-ms-version": "2020-02-10"
       },
       "Method": "GET",
@@ -12,11 +12,11 @@
         "REASON_PHRASE": "OK",
         "STATUS_CODE": "200",
         "content-type": "application/xml",
-        "date": "Sat, 04 Dec 2021 01:44:51 GMT",
+        "date": "Thu, 16 Dec 2021 21:30:12 GMT",
         "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
         "transfer-encoding": "chunked",
-        "x-ms-client-request-id": "cdbb9d4e-c424-4042-65af-2ddb92b11547",
-        "x-ms-request-id": "24d6934d-a01e-00a7-31b0-e8f674000000",
+        "x-ms-client-request-id": "7ca75606-7a13-494f-7ab7-0e69e95af514",
+        "x-ms-request-id": "ed6e62df-401e-0015-7ac4-f2df2c000000",
         "x-ms-version": "2020-02-10"
       },
       "Url": "https://REDACTED.blob.core.windows.net?comp=properties&restype=service"

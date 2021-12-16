@@ -598,7 +598,7 @@ namespace Azure { namespace Storage { namespace Test {
     const std::string blockId2 = Base64EncodeText("1");
     auto blockBlobClient = Azure::Storage::Blobs::BlockBlobClient::CreateFromConnectionString(
         StandardStorageConnectionString(),
-        GetTestNameLowerCase(),
+        m_containerName,
         testName + "extra",
         InitClientOptions<Azure::Storage::Blobs::BlobClientOptions>());
     std::vector<uint8_t> block1Content;

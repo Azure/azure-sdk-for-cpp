@@ -39,6 +39,13 @@ namespace Azure { namespace Storage {
       std::string GetContainerValidName() const
       {
         std::string name(m_testContext.GetTestSuiteName() + m_testContext.GetTestName());
+        // Make sure the name is less than 63 characters long
+        auto const nameSize = name.size();
+        size_t const maxContainerNameSize = 63;
+        if (nameSize > maxContainerNameSize)
+        {
+          name = std::string(name.begin() + nameSize - maxContainerNameSize, name.end());
+        }
         return Azure::Core::_internal::StringExtensions::ToLower(name);
       }
 

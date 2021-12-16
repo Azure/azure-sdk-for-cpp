@@ -3,7 +3,7 @@
     {
       "Headers": {
         "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Linux 5.4.0-1063-azure x86_64 #66~18.04.1-Ubuntu SMP Thu Oct 21 09:59:28 UTC 2021)",
-        "x-ms-client-request-id": "e664b375-7955-4852-6c45-0c37858205b0",
+        "x-ms-client-request-id": "e9368b88-04bf-4035-560c-e3e7106650d4",
         "x-ms-version": "2020-02-10"
       },
       "Method": "GET",
@@ -12,11 +12,11 @@
         "REASON_PHRASE": "OK",
         "STATUS_CODE": "200",
         "content-type": "application/xml",
-        "date": "Sat, 04 Dec 2021 01:44:57 GMT",
+        "date": "Thu, 16 Dec 2021 21:30:13 GMT",
         "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
         "transfer-encoding": "chunked",
-        "x-ms-client-request-id": "e664b375-7955-4852-6c45-0c37858205b0",
-        "x-ms-request-id": "c5639857-701e-0022-13b0-e8dba9000000",
+        "x-ms-client-request-id": "e9368b88-04bf-4035-560c-e3e7106650d4",
+        "x-ms-request-id": "3370bbed-501e-0054-01c4-f287c8000000",
         "x-ms-version": "2020-02-10"
       },
       "Url": "https://REDACTED.blob.core.windows.net?comp=properties&restype=service"
@@ -24,7 +24,7 @@
     {
       "Headers": {
         "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Linux 5.4.0-1063-azure x86_64 #66~18.04.1-Ubuntu SMP Thu Oct 21 09:59:28 UTC 2021)",
-        "x-ms-client-request-id": "2b68af25-52d7-46a6-4205-d8b8a92067fc",
+        "x-ms-client-request-id": "36998fe7-e021-4ebd-6beb-9c3f3c8a11c6",
         "x-ms-version": "2020-02-10"
       },
       "Method": "PUT",
@@ -33,10 +33,10 @@
         "REASON_PHRASE": "Accepted",
         "STATUS_CODE": "202",
         "content-length": "0",
-        "date": "Sat, 04 Dec 2021 01:44:58 GMT",
+        "date": "Thu, 16 Dec 2021 21:30:13 GMT",
         "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
-        "x-ms-client-request-id": "2b68af25-52d7-46a6-4205-d8b8a92067fc",
-        "x-ms-request-id": "c5639859-701e-0022-14b0-e8dba9000000",
+        "x-ms-client-request-id": "36998fe7-e021-4ebd-6beb-9c3f3c8a11c6",
+        "x-ms-request-id": "3370bbef-501e-0054-03c4-f287c8000000",
         "x-ms-version": "2020-02-10"
       },
       "Url": "https://REDACTED.blob.core.windows.net?comp=properties&restype=service"
@@ -44,7 +44,7 @@
     {
       "Headers": {
         "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Linux 5.4.0-1063-azure x86_64 #66~18.04.1-Ubuntu SMP Thu Oct 21 09:59:28 UTC 2021)",
-        "x-ms-client-request-id": "6b560989-4f0c-4680-6e6e-49460b280827",
+        "x-ms-client-request-id": "8c39920c-10ce-4f6e-612e-405f51b9ea57",
         "x-ms-version": "2020-02-10"
       },
       "Method": "GET",
@@ -53,11 +53,11 @@
         "REASON_PHRASE": "OK",
         "STATUS_CODE": "200",
         "content-type": "application/xml",
-        "date": "Sat, 04 Dec 2021 01:45:07 GMT",
+        "date": "Thu, 16 Dec 2021 21:30:23 GMT",
         "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
         "transfer-encoding": "chunked",
-        "x-ms-client-request-id": "6b560989-4f0c-4680-6e6e-49460b280827",
-        "x-ms-request-id": "c56398a7-701e-0022-46b0-e8dba9000000",
+        "x-ms-client-request-id": "8c39920c-10ce-4f6e-612e-405f51b9ea57",
+        "x-ms-request-id": "3370cb95-501e-0054-30c4-f287c8000000",
         "x-ms-version": "2020-02-10"
       },
       "Url": "https://REDACTED.blob.core.windows.net?comp=properties&restype=service"
@@ -65,7 +65,7 @@
     {
       "Headers": {
         "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Linux 5.4.0-1063-azure x86_64 #66~18.04.1-Ubuntu SMP Thu Oct 21 09:59:28 UTC 2021)",
-        "x-ms-client-request-id": "c7aa53b4-06d5-413b-5a93-c5c6cc8734eb",
+        "x-ms-client-request-id": "52fa735f-8408-477d-4a29-08904ccebfcc",
         "x-ms-version": "2020-02-10"
       },
       "Method": "PUT",
@@ -74,10 +74,10 @@
         "REASON_PHRASE": "Accepted",
         "STATUS_CODE": "202",
         "content-length": "0",
-        "date": "Sat, 04 Dec 2021 01:45:07 GMT",
+        "date": "Thu, 16 Dec 2021 21:30:23 GMT",
         "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
-        "x-ms-client-request-id": "c7aa53b4-06d5-413b-5a93-c5c6cc8734eb",
-        "x-ms-request-id": "c56398a8-701e-0022-47b0-e8dba9000000",
+        "x-ms-client-request-id": "52fa735f-8408-477d-4a29-08904ccebfcc",
+        "x-ms-request-id": "3370cba0-501e-0054-3bc4-f287c8000000",
         "x-ms-version": "2020-02-10"
       },
       "Url": "https://REDACTED.blob.core.windows.net?comp=properties&restype=service"

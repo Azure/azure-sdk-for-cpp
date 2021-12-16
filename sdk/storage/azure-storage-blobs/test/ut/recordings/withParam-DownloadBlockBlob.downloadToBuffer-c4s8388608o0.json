@@ -3,7 +3,7 @@
     {
       "Headers": {
         "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Linux 5.4.0-1063-azure x86_64 #66~18.04.1-Ubuntu SMP Thu Oct 21 09:59:28 UTC 2021)",
-        "x-ms-client-request-id": "2f44764a-b04c-4cc9-7713-7e0975a68682",
+        "x-ms-client-request-id": "87aa235f-ff6d-453f-5af6-ea6c6908821e",
         "x-ms-version": "2020-02-10"
       },
       "Method": "PUT",
@@ -12,20 +12,20 @@
         "REASON_PHRASE": "Created",
         "STATUS_CODE": "201",
         "content-length": "0",
-        "date": "Mon, 13 Dec 2021 22:04:04 GMT",
-        "etag": "\"0x8D9BE847AC93A10\"",
-        "last-modified": "Mon, 13 Dec 2021 22:04:05 GMT",
+        "date": "Thu, 16 Dec 2021 21:30:47 GMT",
+        "etag": "\"0x8D9C0DB53DF3A87\"",
+        "last-modified": "Thu, 16 Dec 2021 21:30:48 GMT",
         "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
-        "x-ms-client-request-id": "2f44764a-b04c-4cc9-7713-7e0975a68682",
-        "x-ms-request-id": "2c120718-301e-0068-1e6d-f08214000000",
+        "x-ms-client-request-id": "87aa235f-ff6d-453f-5af6-ea6c6908821e",
+        "x-ms-request-id": "39e53b05-b01e-0001-71c4-f29743000000",
         "x-ms-version": "2020-02-10"
       },
-      "Url": "https://REDACTED.blob.core.windows.net/downloadtobuffer-c4s8388608o0?restype=container"
+      "Url": "https://REDACTED.blob.core.windows.net/withparam-downloadblockblobdownloadtobuffer-c4s8388608o0?restype=container"
     },
     {
       "Headers": {
         "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Linux 5.4.0-1063-azure x86_64 #66~18.04.1-Ubuntu SMP Thu Oct 21 09:59:28 UTC 2021)",
-        "x-ms-client-request-id": "23e31ff0-bbab-4a0d-7213-a0473be72ef2",
+        "x-ms-client-request-id": "b7f11f6c-a00b-4a50-438c-5b7a16186fe1",
         "x-ms-version": "2020-02-10"
       },
       "Method": "PUT",
@@ -35,23 +35,23 @@
         "STATUS_CODE": "201",
         "content-length": "0",
         "content-md5": "IFj7U/ZD/NWKjYOgVUI5Kw==",
-        "date": "Mon, 13 Dec 2021 22:04:05 GMT",
-        "etag": "\"0x8D9BE847AE10F17\"",
-        "last-modified": "Mon, 13 Dec 2021 22:04:05 GMT",
+        "date": "Thu, 16 Dec 2021 21:30:48 GMT",
+        "etag": "\"0x8D9C0DB53F99446\"",
+        "last-modified": "Thu, 16 Dec 2021 21:30:48 GMT",
         "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
-        "x-ms-client-request-id": "23e31ff0-bbab-4a0d-7213-a0473be72ef2",
+        "x-ms-client-request-id": "b7f11f6c-a00b-4a50-438c-5b7a16186fe1",
         "x-ms-content-crc64": "DU01Kv81ewI=",
-        "x-ms-request-id": "2c12071b-301e-0068-1f6d-f08214000000",
+        "x-ms-request-id": "39e53b0d-b01e-0001-76c4-f29743000000",
         "x-ms-request-server-encrypted": "true",
         "x-ms-version": "2020-02-10",
-        "x-ms-version-id": "2021-12-13T22:04:05.6166167Z"
+        "x-ms-version-id": "2021-12-16T21:30:48.8872006Z"
       },
-      "Url": "https://REDACTED.blob.core.windows.net/downloadtobuffer-c4s8388608o0/downloadToBuffer-c4s8388608o0"
+      "Url": "https://REDACTED.blob.core.windows.net/withparam-downloadblockblobdownloadtobuffer-c4s8388608o0/downloadToBuffer-c4s8388608o0"
     },
     {
       "Headers": {
         "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Linux 5.4.0-1063-azure x86_64 #66~18.04.1-Ubuntu SMP Thu Oct 21 09:59:28 UTC 2021)",
-        "x-ms-client-request-id": "8c9ee1bc-9419-4665-55a4-4711aae352bb",
+        "x-ms-client-request-id": "7eea28ef-e55c-4d3d-536b-c2382cdd3adb",
         "x-ms-version": "2020-02-10"
       },
       "Method": "HEAD",
@@ -67,31 +67,31 @@
         "content-length": "8388608",
         "content-md5": "IFj7U/ZD/NWKjYOgVUI5Kw==",
         "content-type": "application/x-binary",
-        "date": "Mon, 13 Dec 2021 22:04:05 GMT",
-        "etag": "\"0x8D9BE847AE10F17\"",
-        "last-modified": "Mon, 13 Dec 2021 22:04:05 GMT",
+        "date": "Thu, 16 Dec 2021 21:30:48 GMT",
+        "etag": "\"0x8D9C0DB53F99446\"",
+        "last-modified": "Thu, 16 Dec 2021 21:30:48 GMT",
         "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
         "x-ms-access-tier": "Hot",
-        "x-ms-access-tier-change-time": "Mon, 13 Dec 2021 22:04:05 GMT",
+        "x-ms-access-tier-change-time": "Thu, 16 Dec 2021 21:30:48 GMT",
         "x-ms-blob-type": "BlockBlob",
-        "x-ms-client-request-id": "8c9ee1bc-9419-4665-55a4-4711aae352bb",
-        "x-ms-creation-time": "Mon, 13 Dec 2021 22:04:05 GMT",
+        "x-ms-client-request-id": "7eea28ef-e55c-4d3d-536b-c2382cdd3adb",
+        "x-ms-creation-time": "Thu, 16 Dec 2021 21:30:48 GMT",
         "x-ms-is-current-version": "true",
         "x-ms-lease-state": "available",
         "x-ms-lease-status": "unlocked",
         "x-ms-meta-key1": "V1",
         "x-ms-meta-key2": "Value2",
-        "x-ms-request-id": "2c120730-301e-0068-316d-f08214000000",
+        "x-ms-request-id": "39e53b56-b01e-0001-34c4-f29743000000",
         "x-ms-server-encrypted": "true",
         "x-ms-version": "2020-02-10",
-        "x-ms-version-id": "2021-12-13T22:04:05.6166167Z"
+        "x-ms-version-id": "2021-12-16T21:30:48.8872006Z"
       },
-      "Url": "https://REDACTED.blob.core.windows.net/downloadtobuffer-c4s8388608o0/downloadToBuffer-c4s8388608o0"
+      "Url": "https://REDACTED.blob.core.windows.net/withparam-downloadblockblobdownloadtobuffer-c4s8388608o0/downloadToBuffer-c4s8388608o0"
     },
     {
       "Headers": {
         "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Linux 5.4.0-1063-azure x86_64 #66~18.04.1-Ubuntu SMP Thu Oct 21 09:59:28 UTC 2021)",
-        "x-ms-client-request-id": "be7838c4-32b5-44bd-5b21-7d9027c61326",
+        "x-ms-client-request-id": "b35b5cab-35c9-4efe-511b-be1facfc9716",
         "x-ms-version": "2020-02-10"
       },
       "Method": "GET",
@@ -107,30 +107,30 @@
         "content-length": "8388608",
         "content-range": "bytes 0-8388607/8388608",
         "content-type": "application/x-binary",
-        "date": "Mon, 13 Dec 2021 22:04:05 GMT",
-        "etag": "\"0x8D9BE847AE10F17\"",
-        "last-modified": "Mon, 13 Dec 2021 22:04:05 GMT",
+        "date": "Thu, 16 Dec 2021 21:30:48 GMT",
+        "etag": "\"0x8D9C0DB53F99446\"",
+        "last-modified": "Thu, 16 Dec 2021 21:30:48 GMT",
         "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
         "x-ms-blob-content-md5": "IFj7U/ZD/NWKjYOgVUI5Kw==",
         "x-ms-blob-type": "BlockBlob",
-        "x-ms-client-request-id": "be7838c4-32b5-44bd-5b21-7d9027c61326",
-        "x-ms-creation-time": "Mon, 13 Dec 2021 22:04:05 GMT",
+        "x-ms-client-request-id": "b35b5cab-35c9-4efe-511b-be1facfc9716",
+        "x-ms-creation-time": "Thu, 16 Dec 2021 21:30:48 GMT",
         "x-ms-is-current-version": "true",
         "x-ms-lease-state": "available",
         "x-ms-lease-status": "unlocked",
         "x-ms-meta-key1": "V1",
         "x-ms-meta-key2": "Value2",
-        "x-ms-request-id": "2c120733-301e-0068-346d-f08214000000",
+        "x-ms-request-id": "39e53b65-b01e-0001-42c4-f29743000000",
         "x-ms-server-encrypted": "true",
         "x-ms-version": "2020-02-10",
-        "x-ms-version-id": "2021-12-13T22:04:05.6166167Z"
+        "x-ms-version-id": "2021-12-16T21:30:48.8872006Z"
       },
-      "Url": "https://REDACTED.blob.core.windows.net/downloadtobuffer-c4s8388608o0/downloadToBuffer-c4s8388608o0"
+      "Url": "https://REDACTED.blob.core.windows.net/withparam-downloadblockblobdownloadtobuffer-c4s8388608o0/downloadToBuffer-c4s8388608o0"
     },
     {
       "Headers": {
         "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Linux 5.4.0-1063-azure x86_64 #66~18.04.1-Ubuntu SMP Thu Oct 21 09:59:28 UTC 2021)",
-        "x-ms-client-request-id": "335af303-bc0e-4364-614b-f62ae4a9ab7a",
+        "x-ms-client-request-id": "423a97b1-c675-4f98-61fb-2ea10d015799",
         "x-ms-version": "2020-02-10"
       },
       "Method": "DELETE",
@@ -139,13 +139,13 @@
         "REASON_PHRASE": "Accepted",
         "STATUS_CODE": "202",
         "content-length": "0",
-        "date": "Mon, 13 Dec 2021 22:04:05 GMT",
+        "date": "Thu, 16 Dec 2021 21:30:48 GMT",
         "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
-        "x-ms-client-request-id": "335af303-bc0e-4364-614b-f62ae4a9ab7a",
-        "x-ms-request-id": "2c12075b-301e-0068-586d-f08214000000",
+        "x-ms-client-request-id": "423a97b1-c675-4f98-61fb-2ea10d015799",
+        "x-ms-request-id": "39e53b9a-b01e-0001-75c4-f29743000000",
         "x-ms-version": "2020-02-10"
       },
-      "Url": "https://REDACTED.blob.core.windows.net/downloadtobuffer-c4s8388608o0?restype=container"
+      "Url": "https://REDACTED.blob.core.windows.net/withparam-downloadblockblobdownloadtobuffer-c4s8388608o0?restype=container"
     }
   ]
 }
