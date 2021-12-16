@@ -55,7 +55,7 @@ public:
     if (m_shouldRetryOnTransportFailure == nullptr)
     {
       m_shouldRetryOnTransportFailure = decltype(m_shouldRetryOnTransportFailure)(
-          [&](auto options, auto attempt, auto retryAfter, auto jitter) {
+          [this](auto options, auto attempt, auto retryAfter, auto jitter) {
             retryAfter = std::chrono::milliseconds(0);
             auto ignore = decltype(retryAfter)();
             return RetryPolicy::ShouldRetryOnTransportFailure(options, attempt, ignore, jitter);
@@ -65,7 +65,8 @@ public:
     if (m_shouldRetryOnResponse == nullptr)
     {
       m_shouldRetryOnResponse = decltype(m_shouldRetryOnResponse)( //
-          [&](RawResponse const& response,
+          [this](
+              RawResponse const& response,
               auto options,
               auto attempt,
               auto retryAfter,
