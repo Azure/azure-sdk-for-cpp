@@ -36,6 +36,12 @@ namespace Azure { namespace Storage {
       const std::string& AadClientId();
       const std::string& AadClientSecret();
 
+      std::string GetContainerValidName() const
+      {
+        std::string name(m_testContext.GetTestSuiteName() + m_testContext.GetTestName());
+        return Azure::Core::_internal::StringExtensions::ToLower(name);
+      }
+
       std::string GetTestEncryptionScope()
       {
         static const std::string TestEncryptionScope("EncryptionScopeForTest");

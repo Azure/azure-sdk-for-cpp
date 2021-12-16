@@ -27,8 +27,8 @@ namespace Azure { namespace Storage { namespace Test {
       StorageTest::TearDown();
     }
 
-    Azure::Storage::Blobs::BlobContainerClient const& GetBlobContainerClient(
-        std::string const& containerName)
+    Azure::Storage::Blobs::BlobContainerClient const& GetBlobContainerTestClient(
+        std::string const& prefix = std::string(""))
     {
       // set the interceptor for the current test
       if (m_testName.empty())
@@ -38,11 +38,11 @@ namespace Azure { namespace Storage { namespace Test {
         m_testName = GetTestName(true);
         m_testContext.RenameTest(m_testName);
       }
-      m_containerName = containerName;
+      m_containerName = prefix + GetContainerValidName();
       auto options = InitClientOptions<Azure::Storage::Blobs::BlobClientOptions>();
       m_blobContainerClient = std::make_unique<Azure::Storage::Blobs::BlobContainerClient>(
           Azure::Storage::Blobs::BlobContainerClient::CreateFromConnectionString(
-              StandardStorageConnectionString(), containerName, options));
+              StandardStorageConnectionString(), m_containerName, options));
 
       return *m_blobContainerClient;
     }

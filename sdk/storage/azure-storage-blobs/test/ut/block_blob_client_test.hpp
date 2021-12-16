@@ -23,7 +23,7 @@ namespace Azure { namespace Storage { namespace Test {
     {
       // Create container
       auto const testName(GetTestNameLowerCase(true));
-      auto containerClient = GetBlobContainerClient(testName);
+      auto containerClient = GetBlobContainerTestClient();
       containerClient.Create();
 
       m_blockBlobClient = std::make_shared<Azure::Storage::Blobs::BlockBlobClient>(
@@ -36,7 +36,7 @@ namespace Azure { namespace Storage { namespace Test {
     {
       // Create container
       auto const testName(GetTestNameLowerCase());
-      auto containerClient = GetBlobContainerClient(testName);
+      auto containerClient = GetBlobContainerTestClient();
       containerClient.CreateIfNotExists();
 
       return std::make_unique<Azure::Storage::Blobs::BlobClient>(

@@ -1498,7 +1498,7 @@ namespace Azure { namespace Storage { namespace Test {
   TEST_F(BlobContainerClientTest, SourceTagsConditions)
   {
     auto const testName(GetTestNameLowerCase());
-    auto containerClient = GetBlobContainerClient(testName);
+    auto containerClient = GetBlobContainerTestClient();
     containerClient.CreateIfNotExists();
 
     auto sourceBlobClient = Azure::Storage::Blobs::BlockBlobClient::CreateFromConnectionString(
@@ -1513,7 +1513,7 @@ namespace Azure { namespace Storage { namespace Test {
   TEST_F(BlobContainerClientTest, SourceBlobAccessConditions)
   {
     auto const testName(GetTestNameLowerCase());
-    auto containerClient = GetBlobContainerClient(testName);
+    auto containerClient = GetBlobContainerTestClient();
     containerClient.CreateIfNotExists();
 
     auto sourceBlobClient = containerClient.GetBlockBlobClient(testName);

@@ -15,7 +15,7 @@ namespace Azure { namespace Storage { namespace Test {
     CHECK_SKIP_TEST();
 
     std::string testName(GetTestNameLowerCase());
-    auto client = GetBlobContainerClient(testName);
+    auto client = GetBlobContainerTestClient();
     client.Create();
 
     auto sasStartsOn = std::chrono::system_clock::now() - std::chrono::minutes(5);

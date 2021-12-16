@@ -24,7 +24,7 @@ namespace Azure { namespace Storage { namespace Test {
     {
       // Create container
       auto const testName(GetTestNameLowerCase());
-      auto containerClient = GetBlobContainerClient(testName);
+      auto containerClient = GetBlobContainerTestClient();
       containerClient.Create();
 
       m_blobContent = std::vector<uint8_t>(static_cast<size_t>(1_KB), 'x');

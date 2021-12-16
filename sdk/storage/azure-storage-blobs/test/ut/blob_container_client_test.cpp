@@ -61,7 +61,7 @@ namespace Azure { namespace Storage { namespace Test {
 
   TEST_F(BlobContainerClientTest, CreateDelete)
   {
-    auto container_client = GetBlobContainerClient(GetTestNameLowerCase());
+    auto container_client = GetBlobContainerTestClient();
     Azure::Storage::Blobs::CreateBlobContainerOptions options;
     Azure::Storage::Metadata metadata;
     metadata["key1"] = "one";
@@ -80,9 +80,9 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_FALSE(res2.RawResponse->GetHeaders().at(_internal::HttpHeaderDate).empty());
     EXPECT_FALSE(res2.RawResponse->GetHeaders().at(_internal::HttpHeaderXMsVersion).empty());
 
-    container_client = GetBlobContainerClient(GetTestNameLowerCase() + "UPPERCASE");
+    container_client = GetBlobContainerTestClient("UPPERCASE");
     EXPECT_THROW(container_client.CreateIfNotExists(), StorageException);
-    container_client = GetBlobContainerClient(GetTestNameLowerCase() + "2");
+    container_client = GetBlobContainerTestClient("2");
     {
       auto response = container_client.DeleteIfExists();
       EXPECT_FALSE(response.Value.Deleted);
@@ -103,7 +103,7 @@ namespace Azure { namespace Storage { namespace Test {
 
   TEST_F(BlobContainerClientTest, Metadata)
   {
-    auto client = GetBlobContainerClient(GetTestNameLowerCase());
+    auto client = GetBlobContainerTestClient();
     client.Create();
     Azure::Storage::Metadata metadata;
     metadata["key1"] = "one";
@@ -133,7 +133,7 @@ namespace Azure { namespace Storage { namespace Test {
   TEST_F(BlobContainerClientTest, ListBlobsFlat)
   {
     std::string const testName = GetTestNameLowerCase();
-    auto client = GetBlobContainerClient(testName);
+    auto client = GetBlobContainerTestClient();
     client.Create();
 
     const std::string prefix1 = "prefix1-";
@@ -238,7 +238,7 @@ namespace Azure { namespace Storage { namespace Test {
   TEST_F(BlobContainerClientTest, ListBlobsByHierarchy)
   {
     std::string const testName = GetTestNameLowerCase();
-    auto client = GetBlobContainerClient(testName);
+    auto client = GetBlobContainerTestClient();
     client.Create();
 
     const std::string delimiter = "/";
@@ -298,7 +298,7 @@ namespace Azure { namespace Storage { namespace Test {
   TEST_F(BlobContainerClientTest, ListBlobsOtherStuff)
   {
     std::string const testName = GetTestNameLowerCase();
-    auto client = GetBlobContainerClient(testName);
+    auto client = GetBlobContainerTestClient();
     client.Create();
 
     std::string blobName = "blob" + testName;
@@ -377,7 +377,7 @@ namespace Azure { namespace Storage { namespace Test {
     CHECK_SKIP_TEST()
 
     std::string const testName = GetTestNameLowerCase();
-    auto client = GetBlobContainerClient(testName);
+    auto client = GetBlobContainerTestClient();
     client.Create();
 
     Blobs::SetBlobContainerAccessPolicyOptions options;
@@ -425,7 +425,7 @@ namespace Azure { namespace Storage { namespace Test {
   TEST_F(BlobContainerClientTest, Lease)
   {
     std::string const testName = GetTestNameLowerCase();
-    auto client = GetBlobContainerClient(testName);
+    auto client = GetBlobContainerTestClient();
     client.Create();
 
     {
@@ -492,7 +492,7 @@ namespace Azure { namespace Storage { namespace Test {
   TEST_F(BlobContainerClientTest, DISABLED_EncryptionScope)
   {
     std::string const testName = GetTestNameLowerCase();
-    auto client = GetBlobContainerClient(testName);
+    auto client = GetBlobContainerTestClient();
     client.Create();
     auto const& testEncryptionScope = GetTestEncryptionScope();
 
@@ -585,7 +585,7 @@ namespace Azure { namespace Storage { namespace Test {
     CHECK_SKIP_TEST()
 
     auto const testName(GetTestNameLowerCase());
-    auto client = GetBlobContainerClient(testName);
+    auto client = GetBlobContainerTestClient();
     client.Create();
 
     auto getRandomCustomerProvidedKey = [&]() {
@@ -706,7 +706,7 @@ namespace Azure { namespace Storage { namespace Test {
   TEST_F(BlobContainerClientTest, AccessConditionLastModifiedTime)
   {
     auto const testName(GetTestNameLowerCase());
-    auto client = GetBlobContainerClient(testName);
+    auto client = GetBlobContainerTestClient();
     client.Create();
 
     enum class TimePoint
@@ -761,7 +761,7 @@ namespace Azure { namespace Storage { namespace Test {
   TEST_F(BlobContainerClientTest, AccessConditionLeaseId)
   {
     auto const testName(GetTestNameLowerCase());
-    auto client = GetBlobContainerClient(testName);
+    auto client = GetBlobContainerTestClient();
     client.Create();
 
     const std::string leaseId = Blobs::BlobLeaseClient::CreateUniqueLeaseId();
@@ -807,7 +807,7 @@ namespace Azure { namespace Storage { namespace Test {
   TEST_F(BlobContainerClientTest, Tags)
   {
     auto const testName(GetTestNameLowerCase());
-    auto client = GetBlobContainerClient(testName);
+    auto client = GetBlobContainerTestClient();
     client.Create();
 
     std::string blobName = "blob" + testName;
@@ -892,7 +892,7 @@ namespace Azure { namespace Storage { namespace Test {
   TEST_F(BlobContainerClientTest, AccessConditionTags)
   {
     auto const testName(GetTestNameLowerCase());
-    auto client = GetBlobContainerClient(testName);
+    auto client = GetBlobContainerTestClient();
     client.Create();
 
     std::map<std::string, std::string> tags;
@@ -1199,7 +1199,7 @@ namespace Azure { namespace Storage { namespace Test {
   TEST_F(BlobContainerClientTest, SpecialBlobName)
   {
     auto const testName(GetTestNameLowerCase());
-    auto client = GetBlobContainerClient(testName);
+    auto client = GetBlobContainerTestClient();
     client.Create();
 
     const std::string non_ascii_word = "\xE6\xB5\x8B\xE8\xAF\x95";
@@ -1271,7 +1271,7 @@ namespace Azure { namespace Storage { namespace Test {
   TEST_F(BlobContainerClientTest, QuestionMarkBlobName)
   {
     auto const testName(GetTestNameLowerCase());
-    auto client = GetBlobContainerClient(testName);
+    auto client = GetBlobContainerTestClient();
     client.Create();
 
     std::string blobName = "?";
@@ -1284,7 +1284,7 @@ namespace Azure { namespace Storage { namespace Test {
   TEST_F(BlobContainerClientTest, DeleteBlob)
   {
     auto const testName(GetTestNameLowerCase());
-    auto client = GetBlobContainerClient(testName);
+    auto client = GetBlobContainerTestClient();
     client.Create();
 
     std::string blobName = testName;
