@@ -58,7 +58,8 @@ public:
           [this](auto options, auto attempt, auto retryAfter, auto jitter) {
             retryAfter = std::chrono::milliseconds(0);
             auto ignore = decltype(retryAfter)();
-            return RetryPolicy::ShouldRetryOnTransportFailure(options, attempt, ignore, jitter);
+            return this->RetryPolicy::ShouldRetryOnTransportFailure(
+                options, attempt, ignore, jitter);
           });
     }
 
@@ -73,7 +74,8 @@ public:
               auto jitter) {
             retryAfter = std::chrono::milliseconds(0);
             auto ignore = decltype(retryAfter)();
-            return RetryPolicy::ShouldRetryOnResponse(response, options, attempt, ignore, jitter);
+            return this->RetryPolicy::ShouldRetryOnResponse(
+                response, options, attempt, ignore, jitter);
           });
     }
   }
