@@ -45,6 +45,27 @@ private:
       m_shouldRetryOnResponse;
 
 public:
+  bool BaseShouldRetryOnTransportFailure(
+      RetryOptions const& retryOptions,
+      int32_t attempt,
+      std::chrono::milliseconds& retryAfter,
+      double jitterFactor) const
+  {
+    return RetryPolicy::ShouldRetryOnTransportFailure(
+        retryOptions, attempt, retryAfter, jitterFactor);
+  }
+
+  bool BaseShouldRetryOnResponse(
+      RawResponse const& response,
+      RetryOptions const& retryOptions,
+      int32_t attempt,
+      std::chrono::milliseconds& retryAfter,
+      double jitterFactor) const
+  {
+    return RetryPolicy::ShouldRetryOnResponse(
+        response, retryOptions, attempt, retryAfter, jitterFactor);
+  }
+
   RetryPolicyTest(
       RetryOptions const& retryOptions,
       decltype(m_shouldRetryOnTransportFailure) shouldRetryOnTransportFailure,
@@ -57,7 +78,7 @@ public:
                     [this](auto options, auto attempt, auto retryAfter, auto jitter) {
                       retryAfter = std::chrono::milliseconds(0);
                       auto ignore = decltype(retryAfter)();
-                      return this->RetryPolicy::ShouldRetryOnTransportFailure(
+                      return this->BaseShouldRetryOnTransportFailure(
                           options, attempt, ignore, jitter);
                     })),
         m_shouldRetryOnResponse(
@@ -72,7 +93,7 @@ public:
                         auto jitter) {
                       retryAfter = std::chrono::milliseconds(0);
                       auto ignore = decltype(retryAfter)();
-                      return this->RetryPolicy::ShouldRetryOnResponse(
+                      return this->BaseShouldRetryOnResponse(
                           response, options, attempt, ignore, jitter);
                     }))
   {
