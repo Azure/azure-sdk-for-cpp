@@ -49,7 +49,7 @@ public:
       RetryOptions const& retryOptions,
       int32_t attempt,
       std::chrono::milliseconds& retryAfter,
-      double jitterFactor) const override
+      double jitterFactor) const
   {
     return RetryPolicy::ShouldRetryOnTransportFailure(
         retryOptions, attempt, retryAfter, jitterFactor);
@@ -60,7 +60,7 @@ public:
       RetryOptions const& retryOptions,
       int32_t attempt,
       std::chrono::milliseconds& retryAfter,
-      double jitterFactor) const override
+      double jitterFactor) const
   {
     return RetryPolicy::ShouldRetryOnResponse(
         response, retryOptions, attempt, retryAfter, jitterFactor);
