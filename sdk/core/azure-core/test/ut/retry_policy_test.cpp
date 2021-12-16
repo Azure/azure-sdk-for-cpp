@@ -49,7 +49,7 @@ public:
       RetryOptions const& retryOptions,
       int32_t attempt,
       std::chrono::milliseconds& retryAfter,
-      double jitterFactor) const
+      double jitterFactor) const override
   {
     return RetryPolicy::ShouldRetryOnTransportFailure(
         retryOptions, attempt, retryAfter, jitterFactor);
@@ -60,7 +60,7 @@ public:
       RetryOptions const& retryOptions,
       int32_t attempt,
       std::chrono::milliseconds& retryAfter,
-      double jitterFactor) const
+      double jitterFactor) const override
   {
     return RetryPolicy::ShouldRetryOnResponse(
         response, retryOptions, attempt, retryAfter, jitterFactor);
@@ -70,27 +70,29 @@ public:
       RetryOptions const& retryOptions,
       decltype(m_shouldRetryOnTransportFailure) shouldRetryOnTransportFailure,
       decltype(m_shouldRetryOnResponse) shouldRetryOnResponse)
-      : RetryPolicy(retryOptions), m_shouldRetryOnTransportFailure(
-          shouldRetryOnTransportFailure != nullptr
-          ? shouldRetryOnTransportFailure
-          : [&](auto options, auto attempt, auto retryAfter, auto jitter) {
-            retryAfter = std::chrono::milliseconds(0);
-            auto ignore = decltype(retryAfter)();
-            return BaseShouldRetryOnTransportFailure(options, attempt, ignore, jitter);
-          }),
+      : RetryPolicy(retryOptions),
+        m_shouldRetryOnTransportFailure(
+            shouldRetryOnTransportFailure != nullptr
+                ? shouldRetryOnTransportFailure
+                : static_cast<decltype(m_shouldRetryOnTransportFailure)>( //
+                    [&](auto options, auto attempt, auto retryAfter, auto jitter) {
+                      retryAfter = std::chrono::milliseconds(0);
+                      auto ignore = decltype(retryAfter)();
+                      return BaseShouldRetryOnTransportFailure(options, attempt, ignore, jitter);
+                    })),
         m_shouldRetryOnResponse(
-            shouldRetryOnResponse != nullptr
-            ? shouldRetryOnResponse
-            : [&](RawResponse const& response,
-              auto options,
-              auto attempt,
-              auto retryAfter,
-              auto jitter) {
-            retryAfter = std::chrono::milliseconds(0);
-            auto ignore = decltype(retryAfter)();
-            return BaseShouldRetryOnResponse(
-                response, options, attempt, ignore, jitter);
-          })
+            shouldRetryOnResponse != shouldRetryOnResponse
+                ? shouldRetryOnResponse
+                : static_cast<decltype(m_shouldRetryOnResponse)>( //
+                    [&](RawResponse const& response,
+                        auto options,
+                        auto attempt,
+                        auto retryAfter,
+                        auto jitter) {
+                      retryAfter = std::chrono::milliseconds(0);
+                      auto ignore = decltype(retryAfter)();
+                      return BaseShouldRetryOnResponse(response, options, attempt, ignore, jitter);
+                    }))
   {
   }
 
