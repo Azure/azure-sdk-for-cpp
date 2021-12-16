@@ -5,7 +5,8 @@
 
 /**
  * @file
- * @brief Deprecated assert macros. It is only temporarily made available for compatibility and should NOT be used by any callers outside of the SDK.
+ * @brief Deprecated assert macros. It is only temporarily made available for compatibility and
+ * should NOT be used by any callers outside of the SDK.
  *
  */
 
