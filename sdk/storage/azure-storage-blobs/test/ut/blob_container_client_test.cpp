@@ -236,7 +236,6 @@ namespace Azure { namespace Storage { namespace Test {
 
   TEST_F(BlobContainerClientTest, ListBlobsByHierarchy)
   {
-    std::string const m_containerName = GetTestNameLowerCase();
     auto client = GetBlobContainerTestClient();
     client.Create();
 
@@ -296,7 +295,6 @@ namespace Azure { namespace Storage { namespace Test {
   // https://docs.microsoft.com/en-us/azure/storage/blobs/versioning-enable?tabs=portal
   TEST_F(BlobContainerClientTest, ListBlobsOtherStuff)
   {
-    std::string const m_containerName = GetTestNameLowerCase();
     auto client = GetBlobContainerTestClient();
     client.Create();
 
@@ -375,7 +373,6 @@ namespace Azure { namespace Storage { namespace Test {
     // will skip test under some cased where test can't run (usually LIVE only tests)
     CHECK_SKIP_TEST()
 
-    std::string const m_containerName = GetTestNameLowerCase();
     auto client = GetBlobContainerTestClient();
     client.Create();
 
@@ -423,7 +420,6 @@ namespace Azure { namespace Storage { namespace Test {
 
   TEST_F(BlobContainerClientTest, Lease)
   {
-    std::string const m_containerName = GetTestNameLowerCase();
     auto client = GetBlobContainerTestClient();
     client.Create();
 
@@ -490,7 +486,6 @@ namespace Azure { namespace Storage { namespace Test {
 
   TEST_F(BlobContainerClientTest, DISABLED_EncryptionScope)
   {
-    std::string const m_containerName = GetTestNameLowerCase();
     auto client = GetBlobContainerTestClient();
     client.Create();
     auto const& testEncryptionScope = GetTestEncryptionScope();
