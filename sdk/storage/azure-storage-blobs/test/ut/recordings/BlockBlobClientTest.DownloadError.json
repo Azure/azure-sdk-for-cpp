@@ -3,7 +3,7 @@
     {
       "Headers": {
         "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Linux 5.4.0-1063-azure x86_64 #66~18.04.1-Ubuntu SMP Thu Oct 21 09:59:28 UTC 2021)",
-        "x-ms-client-request-id": "9bc9bc68-7f60-4a4f-78b9-5e876be7167c",
+        "x-ms-client-request-id": "301c221a-0745-4f6f-5271-9349f2ead481",
         "x-ms-version": "2020-02-10"
       },
       "Method": "PUT",
@@ -12,12 +12,12 @@
         "REASON_PHRASE": "Created",
         "STATUS_CODE": "201",
         "content-length": "0",
-        "date": "Thu, 16 Dec 2021 21:30:30 GMT",
-        "etag": "\"0x8D9C0DB49C8524C\"",
-        "last-modified": "Thu, 16 Dec 2021 21:30:31 GMT",
+        "date": "Thu, 16 Dec 2021 22:04:24 GMT",
+        "etag": "\"0x8D9C0E005728775\"",
+        "last-modified": "Thu, 16 Dec 2021 22:04:24 GMT",
         "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
-        "x-ms-client-request-id": "9bc9bc68-7f60-4a4f-78b9-5e876be7167c",
-        "x-ms-request-id": "aef4effe-401e-0058-68c4-f210c0000000",
+        "x-ms-client-request-id": "301c221a-0745-4f6f-5271-9349f2ead481",
+        "x-ms-request-id": "9b7ad51a-c01e-003c-16c8-f24339000000",
         "x-ms-version": "2020-02-10"
       },
       "Url": "https://REDACTED.blob.core.windows.net/blockblobclienttestdownloaderror?restype=container"
@@ -25,21 +25,21 @@
     {
       "Headers": {
         "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Linux 5.4.0-1063-azure x86_64 #66~18.04.1-Ubuntu SMP Thu Oct 21 09:59:28 UTC 2021)",
-        "x-ms-client-request-id": "8b755e9b-41b6-4956-41a1-457bf7c52912",
+        "x-ms-client-request-id": "00c4cd7b-0880-409d-64dc-e0401d130c1f",
         "x-ms-version": "2020-02-10"
       },
       "Method": "GET",
       "Response": {
-        "BODY": "﻿<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>BlobNotFound</Code><Message>The specified blob does not exist.\nRequestId:aef4f003-401e-0058-6ac4-f210c0000000\nTime:2021-12-16T21:30:31.8021608Z</Message></Error>",
+        "BODY": "﻿<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>BlobNotFound</Code><Message>The specified blob does not exist.\nRequestId:9b7ad52e-c01e-003c-27c8-f24339000000\nTime:2021-12-16T22:04:24.6444874Z</Message></Error>",
         "REASON_PHRASE": "The specified blob does not exist.",
         "STATUS_CODE": "404",
         "content-length": "215",
         "content-type": "application/xml",
-        "date": "Thu, 16 Dec 2021 21:30:30 GMT",
+        "date": "Thu, 16 Dec 2021 22:04:24 GMT",
         "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
-        "x-ms-client-request-id": "8b755e9b-41b6-4956-41a1-457bf7c52912",
+        "x-ms-client-request-id": "00c4cd7b-0880-409d-64dc-e0401d130c1f",
         "x-ms-error-code": "BlobNotFound",
-        "x-ms-request-id": "aef4f003-401e-0058-6ac4-f210c0000000",
+        "x-ms-request-id": "9b7ad52e-c01e-003c-27c8-f24339000000",
         "x-ms-version": "2020-02-10"
       },
       "Url": "https://REDACTED.blob.core.windows.net/blockblobclienttestdownloaderror/DownloadError"
@@ -47,7 +47,7 @@
     {
       "Headers": {
         "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Linux 5.4.0-1063-azure x86_64 #66~18.04.1-Ubuntu SMP Thu Oct 21 09:59:28 UTC 2021)",
-        "x-ms-client-request-id": "ebdb6473-4176-4151-71f9-b1c4f478e13e",
+        "x-ms-client-request-id": "014a221f-a8e4-4216-7159-c2adfc1637bd",
         "x-ms-version": "2020-02-10"
       },
       "Method": "DELETE",
@@ -56,10 +56,10 @@
         "REASON_PHRASE": "Accepted",
         "STATUS_CODE": "202",
         "content-length": "0",
-        "date": "Thu, 16 Dec 2021 21:30:31 GMT",
+        "date": "Thu, 16 Dec 2021 22:04:24 GMT",
         "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
-        "x-ms-client-request-id": "ebdb6473-4176-4151-71f9-b1c4f478e13e",
-        "x-ms-request-id": "4a6543ec-b01e-005c-76c4-f29dc7000000",
+        "x-ms-client-request-id": "014a221f-a8e4-4216-7159-c2adfc1637bd",
+        "x-ms-request-id": "5dd55f64-601e-0057-64c8-f2c4cd000000",
         "x-ms-version": "2020-02-10"
       },
       "Url": "https://REDACTED.blob.core.windows.net/blockblobclienttestdownloaderror?restype=container"

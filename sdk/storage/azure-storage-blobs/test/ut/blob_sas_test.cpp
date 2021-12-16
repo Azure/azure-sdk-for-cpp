@@ -14,7 +14,6 @@ namespace Azure { namespace Storage { namespace Test {
   {
     CHECK_SKIP_TEST();
 
-    std::string testName(GetTestNameLowerCase());
     auto client = GetBlobContainerTestClient();
     client.Create();
 
@@ -34,7 +33,7 @@ namespace Azure { namespace Storage { namespace Test {
     blobSasBuilder.Protocol = Sas::SasProtocol::HttpsAndHttp;
     blobSasBuilder.StartsOn = sasStartsOn;
     blobSasBuilder.ExpiresOn = sasExpiresOn;
-    blobSasBuilder.BlobContainerName = testName;
+    blobSasBuilder.BlobContainerName = m_containerName;
     blobSasBuilder.BlobName = blobName;
     blobSasBuilder.Resource = Sas::BlobSasResource::Blob;
 
@@ -47,7 +46,7 @@ namespace Azure { namespace Storage { namespace Test {
     auto accountName = keyCredential->AccountName;
     auto blobServiceClient0
         = Blobs::BlobServiceClient::CreateFromConnectionString(StandardStorageConnectionString());
-    auto blobContainerClient0 = blobServiceClient0.GetBlobContainerClient(testName);
+    auto blobContainerClient0 = blobServiceClient0.GetBlobContainerClient(m_containerName);
     auto blobClient0 = blobContainerClient0.GetAppendBlobClient(blobName);
 
     auto serviceUrl = blobServiceClient0.GetUrl();

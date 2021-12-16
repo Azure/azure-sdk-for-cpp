@@ -3,7 +3,7 @@
     {
       "Headers": {
         "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Linux 5.4.0-1063-azure x86_64 #66~18.04.1-Ubuntu SMP Thu Oct 21 09:59:28 UTC 2021)",
-        "x-ms-client-request-id": "66044ed6-f136-494c-738d-7777d28c5013",
+        "x-ms-client-request-id": "ca9a4698-a73a-4713-4895-952b04dbc980",
         "x-ms-version": "2020-02-10"
       },
       "Method": "PUT",
@@ -12,12 +12,12 @@
         "REASON_PHRASE": "Created",
         "STATUS_CODE": "201",
         "content-length": "0",
-        "date": "Thu, 16 Dec 2021 21:30:03 GMT",
-        "etag": "\"0x8D9C0DB39534745\"",
-        "last-modified": "Thu, 16 Dec 2021 21:30:04 GMT",
+        "date": "Thu, 16 Dec 2021 22:02:56 GMT",
+        "etag": "\"0x8D9C0DFD1773656\"",
+        "last-modified": "Thu, 16 Dec 2021 22:02:57 GMT",
         "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
-        "x-ms-client-request-id": "66044ed6-f136-494c-738d-7777d28c5013",
-        "x-ms-request-id": "5a57391e-e01e-000c-23c4-f25f97000000",
+        "x-ms-client-request-id": "ca9a4698-a73a-4713-4895-952b04dbc980",
+        "x-ms-request-id": "9d0f5940-101e-0010-1fc8-f2af96000000",
         "x-ms-version": "2020-02-10"
       },
       "Url": "https://REDACTED.blob.core.windows.net/appendblobclienttestseal?restype=container"
@@ -25,7 +25,7 @@
     {
       "Headers": {
         "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Linux 5.4.0-1063-azure x86_64 #66~18.04.1-Ubuntu SMP Thu Oct 21 09:59:28 UTC 2021)",
-        "x-ms-client-request-id": "ac53b69a-eed9-4c6e-7fe5-b5747508aee7",
+        "x-ms-client-request-id": "cfde62f1-6194-4fc7-6a24-0127e849eadf",
         "x-ms-version": "2020-02-10"
       },
       "Method": "PUT",
@@ -34,22 +34,22 @@
         "REASON_PHRASE": "Created",
         "STATUS_CODE": "201",
         "content-length": "0",
-        "date": "Thu, 16 Dec 2021 21:30:03 GMT",
-        "etag": "\"0x8D9C0DB39558A0A\"",
-        "last-modified": "Thu, 16 Dec 2021 21:30:04 GMT",
+        "date": "Thu, 16 Dec 2021 22:02:56 GMT",
+        "etag": "\"0x8D9C0DFD179C0C1\"",
+        "last-modified": "Thu, 16 Dec 2021 22:02:57 GMT",
         "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
-        "x-ms-client-request-id": "ac53b69a-eed9-4c6e-7fe5-b5747508aee7",
-        "x-ms-request-id": "5a573923-e01e-000c-26c4-f25f97000000",
+        "x-ms-client-request-id": "cfde62f1-6194-4fc7-6a24-0127e849eadf",
+        "x-ms-request-id": "9d0f5953-101e-0010-2fc8-f2af96000000",
         "x-ms-request-server-encrypted": "true",
         "x-ms-version": "2020-02-10",
-        "x-ms-version-id": "2021-12-16T21:30:04.1913866Z"
+        "x-ms-version-id": "2021-12-16T22:02:57.4293185Z"
       },
       "Url": "https://REDACTED.blob.core.windows.net/appendblobclienttestseal/Seal"
     },
     {
       "Headers": {
         "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Linux 5.4.0-1063-azure x86_64 #66~18.04.1-Ubuntu SMP Thu Oct 21 09:59:28 UTC 2021)",
-        "x-ms-client-request-id": "b3751eda-f539-46b3-60c3-f687ef9a2909",
+        "x-ms-client-request-id": "58ddb1d7-d009-4862-6203-dde783c0efce",
         "x-ms-version": "2020-02-10"
       },
       "Method": "PUT",
@@ -58,15 +58,15 @@
         "REASON_PHRASE": "Created",
         "STATUS_CODE": "201",
         "content-length": "0",
-        "date": "Thu, 16 Dec 2021 21:30:03 GMT",
-        "etag": "\"0x8D9C0DB395848BC\"",
-        "last-modified": "Thu, 16 Dec 2021 21:30:04 GMT",
+        "date": "Thu, 16 Dec 2021 22:02:56 GMT",
+        "etag": "\"0x8D9C0DFD17CA685\"",
+        "last-modified": "Thu, 16 Dec 2021 22:02:57 GMT",
         "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
         "x-ms-blob-append-offset": "0",
         "x-ms-blob-committed-block-count": "1",
-        "x-ms-client-request-id": "b3751eda-f539-46b3-60c3-f687ef9a2909",
+        "x-ms-client-request-id": "58ddb1d7-d009-4862-6203-dde783c0efce",
         "x-ms-content-crc64": "YJI56OvZhxE=",
-        "x-ms-request-id": "5a573927-e01e-000c-2ac4-f25f97000000",
+        "x-ms-request-id": "9d0f595c-101e-0010-38c8-f2af96000000",
         "x-ms-request-server-encrypted": "true",
         "x-ms-version": "2020-02-10"
       },
@@ -75,7 +75,7 @@
     {
       "Headers": {
         "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Linux 5.4.0-1063-azure x86_64 #66~18.04.1-Ubuntu SMP Thu Oct 21 09:59:28 UTC 2021)",
-        "x-ms-client-request-id": "ad3b6068-1ff4-4188-6191-fec99f93f443",
+        "x-ms-client-request-id": "60e55d41-922d-42ba-4e2f-24f8455dd33b",
         "x-ms-version": "2020-02-10"
       },
       "Method": "HEAD",
@@ -90,30 +90,30 @@
         "content-language": "en-US",
         "content-length": "100",
         "content-type": "application/x-binary",
-        "date": "Thu, 16 Dec 2021 21:30:03 GMT",
-        "etag": "\"0x8D9C0DB395848BC\"",
-        "last-modified": "Thu, 16 Dec 2021 21:30:04 GMT",
+        "date": "Thu, 16 Dec 2021 22:02:56 GMT",
+        "etag": "\"0x8D9C0DFD17CA685\"",
+        "last-modified": "Thu, 16 Dec 2021 22:02:57 GMT",
         "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
         "x-ms-blob-committed-block-count": "1",
         "x-ms-blob-type": "AppendBlob",
-        "x-ms-client-request-id": "ad3b6068-1ff4-4188-6191-fec99f93f443",
-        "x-ms-creation-time": "Thu, 16 Dec 2021 21:30:04 GMT",
+        "x-ms-client-request-id": "60e55d41-922d-42ba-4e2f-24f8455dd33b",
+        "x-ms-creation-time": "Thu, 16 Dec 2021 22:02:57 GMT",
         "x-ms-is-current-version": "true",
         "x-ms-lease-state": "available",
         "x-ms-lease-status": "unlocked",
         "x-ms-meta-key1": "V1",
         "x-ms-meta-key2": "Value2",
-        "x-ms-request-id": "5a573931-e01e-000c-33c4-f25f97000000",
+        "x-ms-request-id": "9d0f5967-101e-0010-43c8-f2af96000000",
         "x-ms-server-encrypted": "true",
         "x-ms-version": "2020-02-10",
-        "x-ms-version-id": "2021-12-16T21:30:04.1913866Z"
+        "x-ms-version-id": "2021-12-16T22:02:57.4293185Z"
       },
       "Url": "https://REDACTED.blob.core.windows.net/appendblobclienttestseal/Seal"
     },
     {
       "Headers": {
         "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Linux 5.4.0-1063-azure x86_64 #66~18.04.1-Ubuntu SMP Thu Oct 21 09:59:28 UTC 2021)",
-        "x-ms-client-request-id": "77a6159b-8f8a-49da-6713-254bc9373daa",
+        "x-ms-client-request-id": "9c937bcd-91e6-42f6-4354-5aea8029dc8e",
         "x-ms-version": "2020-02-10"
       },
       "Method": "PUT",
@@ -122,22 +122,22 @@
         "REASON_PHRASE": "Created",
         "STATUS_CODE": "201",
         "content-length": "0",
-        "date": "Thu, 16 Dec 2021 21:30:03 GMT",
-        "etag": "\"0x8D9C0DB395B558F\"",
-        "last-modified": "Thu, 16 Dec 2021 21:30:04 GMT",
+        "date": "Thu, 16 Dec 2021 22:02:56 GMT",
+        "etag": "\"0x8D9C0DFD17FDA5A\"",
+        "last-modified": "Thu, 16 Dec 2021 22:02:57 GMT",
         "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
-        "x-ms-client-request-id": "77a6159b-8f8a-49da-6713-254bc9373daa",
-        "x-ms-request-id": "5a573935-e01e-000c-37c4-f25f97000000",
+        "x-ms-client-request-id": "9c937bcd-91e6-42f6-4354-5aea8029dc8e",
+        "x-ms-request-id": "9d0f596f-101e-0010-4ac8-f2af96000000",
         "x-ms-request-server-encrypted": "true",
         "x-ms-version": "2020-02-10",
-        "x-ms-version-id": "2021-12-16T21:30:04.2293647Z"
+        "x-ms-version-id": "2021-12-16T22:02:57.4692954Z"
       },
       "Url": "https://REDACTED.blob.core.windows.net/appendblobclienttestseal/Seal1"
     },
     {
       "Headers": {
         "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Linux 5.4.0-1063-azure x86_64 #66~18.04.1-Ubuntu SMP Thu Oct 21 09:59:28 UTC 2021)",
-        "x-ms-client-request-id": "2eb1a57a-72dc-4184-6f7c-2a41c79c12f9",
+        "x-ms-client-request-id": "f5cf48f7-22f4-4093-4a64-88571d0f9845",
         "x-ms-version": "2020-02-10"
       },
       "Method": "PUT",
@@ -146,15 +146,15 @@
         "REASON_PHRASE": "Created",
         "STATUS_CODE": "201",
         "content-length": "0",
-        "date": "Thu, 16 Dec 2021 21:30:03 GMT",
-        "etag": "\"0x8D9C0DB395D9F23\"",
-        "last-modified": "Thu, 16 Dec 2021 21:30:04 GMT",
+        "date": "Thu, 16 Dec 2021 22:02:56 GMT",
+        "etag": "\"0x8D9C0DFD1829915\"",
+        "last-modified": "Thu, 16 Dec 2021 22:02:57 GMT",
         "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
         "x-ms-blob-append-offset": "0",
         "x-ms-blob-committed-block-count": "1",
-        "x-ms-client-request-id": "2eb1a57a-72dc-4184-6f7c-2a41c79c12f9",
+        "x-ms-client-request-id": "f5cf48f7-22f4-4093-4a64-88571d0f9845",
         "x-ms-content-crc64": "YJI56OvZhxE=",
-        "x-ms-request-id": "5a573937-e01e-000c-39c4-f25f97000000",
+        "x-ms-request-id": "9d0f597a-101e-0010-55c8-f2af96000000",
         "x-ms-request-server-encrypted": "true",
         "x-ms-version": "2020-02-10"
       },
@@ -163,7 +163,7 @@
     {
       "Headers": {
         "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Linux 5.4.0-1063-azure x86_64 #66~18.04.1-Ubuntu SMP Thu Oct 21 09:59:28 UTC 2021)",
-        "x-ms-client-request-id": "e1d1a9ec-5f4f-47fe-5451-b537ad90714d",
+        "x-ms-client-request-id": "aaaeeed0-52a7-4442-534e-c68e2d745a22",
         "x-ms-version": "2020-02-10"
       },
       "Method": "GET",
@@ -174,28 +174,28 @@
         "accept-ranges": "bytes",
         "content-length": "100",
         "content-type": "application/octet-stream",
-        "date": "Thu, 16 Dec 2021 21:30:03 GMT",
-        "etag": "\"0x8D9C0DB395D9F23\"",
-        "last-modified": "Thu, 16 Dec 2021 21:30:04 GMT",
+        "date": "Thu, 16 Dec 2021 22:02:56 GMT",
+        "etag": "\"0x8D9C0DFD1829915\"",
+        "last-modified": "Thu, 16 Dec 2021 22:02:57 GMT",
         "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
         "x-ms-blob-committed-block-count": "1",
         "x-ms-blob-type": "AppendBlob",
-        "x-ms-client-request-id": "e1d1a9ec-5f4f-47fe-5451-b537ad90714d",
-        "x-ms-creation-time": "Thu, 16 Dec 2021 21:30:04 GMT",
+        "x-ms-client-request-id": "aaaeeed0-52a7-4442-534e-c68e2d745a22",
+        "x-ms-creation-time": "Thu, 16 Dec 2021 22:02:57 GMT",
         "x-ms-is-current-version": "true",
         "x-ms-lease-state": "available",
         "x-ms-lease-status": "unlocked",
-        "x-ms-request-id": "5a573945-e01e-000c-46c4-f25f97000000",
+        "x-ms-request-id": "9d0f598c-101e-0010-65c8-f2af96000000",
         "x-ms-server-encrypted": "true",
         "x-ms-version": "2020-02-10",
-        "x-ms-version-id": "2021-12-16T21:30:04.2293647Z"
+        "x-ms-version-id": "2021-12-16T22:02:57.4692954Z"
       },
       "Url": "https://REDACTED.blob.core.windows.net/appendblobclienttestseal/Seal1"
     },
     {
       "Headers": {
         "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Linux 5.4.0-1063-azure x86_64 #66~18.04.1-Ubuntu SMP Thu Oct 21 09:59:28 UTC 2021)",
-        "x-ms-client-request-id": "0b681d32-2500-4cd3-5edf-dcc94461ccc4",
+        "x-ms-client-request-id": "7932283b-5f37-43a1-620d-59336d41bf73",
         "x-ms-version": "2020-02-10"
       },
       "Method": "HEAD",
@@ -206,41 +206,41 @@
         "accept-ranges": "bytes",
         "content-length": "100",
         "content-type": "application/octet-stream",
-        "date": "Thu, 16 Dec 2021 21:30:03 GMT",
-        "etag": "\"0x8D9C0DB395D9F23\"",
-        "last-modified": "Thu, 16 Dec 2021 21:30:04 GMT",
+        "date": "Thu, 16 Dec 2021 22:02:56 GMT",
+        "etag": "\"0x8D9C0DFD1829915\"",
+        "last-modified": "Thu, 16 Dec 2021 22:02:57 GMT",
         "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
         "x-ms-blob-committed-block-count": "1",
         "x-ms-blob-type": "AppendBlob",
-        "x-ms-client-request-id": "0b681d32-2500-4cd3-5edf-dcc94461ccc4",
-        "x-ms-creation-time": "Thu, 16 Dec 2021 21:30:04 GMT",
+        "x-ms-client-request-id": "7932283b-5f37-43a1-620d-59336d41bf73",
+        "x-ms-creation-time": "Thu, 16 Dec 2021 22:02:57 GMT",
         "x-ms-is-current-version": "true",
         "x-ms-lease-state": "available",
         "x-ms-lease-status": "unlocked",
-        "x-ms-request-id": "5a57394a-e01e-000c-4ac4-f25f97000000",
+        "x-ms-request-id": "9d0f599d-101e-0010-74c8-f2af96000000",
         "x-ms-server-encrypted": "true",
         "x-ms-version": "2020-02-10",
-        "x-ms-version-id": "2021-12-16T21:30:04.2293647Z"
+        "x-ms-version-id": "2021-12-16T22:02:57.4692954Z"
       },
       "Url": "https://REDACTED.blob.core.windows.net/appendblobclienttestseal/Seal1"
     },
     {
       "Headers": {
         "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Linux 5.4.0-1063-azure x86_64 #66~18.04.1-Ubuntu SMP Thu Oct 21 09:59:28 UTC 2021)",
-        "x-ms-client-request-id": "f190a63b-5c3d-4b2b-59c8-91af53d80d90",
+        "x-ms-client-request-id": "ade74900-a47b-4d73-4fa1-3ad7dda6eb5d",
         "x-ms-version": "2020-02-10"
       },
       "Method": "GET",
       "Response": {
-        "BODY": "﻿<?xml version=\"1.0\" encoding=\"utf-8\"?><EnumerationResults ServiceEndpoint=\"https://notarealaccount.blob.core.windows.net/\" ContainerName=\"appendblobclienttestseal\"><Prefix>Seal1</Prefix><Blobs><Blob><Name>Seal1</Name><VersionId>2021-12-16T21:30:04.2293647Z</VersionId><IsCurrentVersion>true</IsCurrentVersion><Properties><Creation-Time>Thu, 16 Dec 2021 21:30:04 GMT</Creation-Time><Last-Modified>Thu, 16 Dec 2021 21:30:04 GMT</Last-Modified><Etag>0x8D9C0DB395D9F23</Etag><Content-Length>100</Content-Length><Content-Type>application/octet-stream</Content-Type><Content-Encoding /><Content-Language /><Content-CRC64 /><Content-MD5 /><Cache-Control /><Content-Disposition /><BlobType>AppendBlob</BlobType><LeaseStatus>unlocked</LeaseStatus><LeaseState>available</LeaseState><ServerEncrypted>true</ServerEncrypted></Properties><OrMetadata /></Blob></Blobs><NextMarker /></EnumerationResults>",
+        "BODY": "﻿<?xml version=\"1.0\" encoding=\"utf-8\"?><EnumerationResults ServiceEndpoint=\"https://forcpprecordings.blob.core.windows.net/\" ContainerName=\"appendblobclienttestseal\"><Prefix>Seal1</Prefix><Blobs><Blob><Name>Seal1</Name><VersionId>2021-12-16T22:02:57.4692954Z</VersionId><IsCurrentVersion>true</IsCurrentVersion><Properties><Creation-Time>Thu, 16 Dec 2021 22:02:57 GMT</Creation-Time><Last-Modified>Thu, 16 Dec 2021 22:02:57 GMT</Last-Modified><Etag>0x8D9C0DFD1829915</Etag><Content-Length>100</Content-Length><Content-Type>application/octet-stream</Content-Type><Content-Encoding /><Content-Language /><Content-CRC64 /><Content-MD5 /><Cache-Control /><Content-Disposition /><BlobType>AppendBlob</BlobType><LeaseStatus>unlocked</LeaseStatus><LeaseState>available</LeaseState><ServerEncrypted>true</ServerEncrypted></Properties><OrMetadata /></Blob></Blobs><NextMarker /></EnumerationResults>",
         "REASON_PHRASE": "OK",
         "STATUS_CODE": "200",
         "content-type": "application/xml",
-        "date": "Thu, 16 Dec 2021 21:30:03 GMT",
+        "date": "Thu, 16 Dec 2021 22:02:56 GMT",
         "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
         "transfer-encoding": "chunked",
-        "x-ms-client-request-id": "f190a63b-5c3d-4b2b-59c8-91af53d80d90",
-        "x-ms-request-id": "5a57394f-e01e-000c-4ec4-f25f97000000",
+        "x-ms-client-request-id": "ade74900-a47b-4d73-4fa1-3ad7dda6eb5d",
+        "x-ms-request-id": "9d0f59a9-101e-0010-7fc8-f2af96000000",
         "x-ms-version": "2020-02-10"
       },
       "Url": "https://REDACTED.blob.core.windows.net/appendblobclienttestseal?comp=list&prefix=Seal1&restype=container"
@@ -248,21 +248,21 @@
     {
       "Headers": {
         "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Linux 5.4.0-1063-azure x86_64 #66~18.04.1-Ubuntu SMP Thu Oct 21 09:59:28 UTC 2021)",
-        "x-ms-client-request-id": "5d739734-af7f-47ca-498c-ae03e2e39238",
+        "x-ms-client-request-id": "24b19e37-2594-4fad-44fb-9d89c7fc9d64",
         "x-ms-version": "2020-02-10"
       },
       "Method": "PUT",
       "Response": {
-        "BODY": "﻿<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<Error><Code>AppendPositionConditionNotMet</Code><Message>The append position condition specified was not met.\nRequestId:5a573957-e01e-000c-55c4-f25f97000000\nTime:2021-12-16T21:30:04.2815111Z</Message></Error>",
+        "BODY": "﻿<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<Error><Code>AppendPositionConditionNotMet</Code><Message>The append position condition specified was not met.\nRequestId:9d0f59b4-101e-0010-0ac8-f2af96000000\nTime:2021-12-16T22:02:57.5325991Z</Message></Error>",
         "REASON_PHRASE": "The append position condition specified was not met.",
         "STATUS_CODE": "412",
         "content-length": "251",
         "content-type": "application/xml",
-        "date": "Thu, 16 Dec 2021 21:30:03 GMT",
+        "date": "Thu, 16 Dec 2021 22:02:56 GMT",
         "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
-        "x-ms-client-request-id": "5d739734-af7f-47ca-498c-ae03e2e39238",
+        "x-ms-client-request-id": "24b19e37-2594-4fad-44fb-9d89c7fc9d64",
         "x-ms-error-code": "AppendPositionConditionNotMet",
-        "x-ms-request-id": "5a573957-e01e-000c-55c4-f25f97000000",
+        "x-ms-request-id": "9d0f59b4-101e-0010-0ac8-f2af96000000",
         "x-ms-version": "2020-02-10"
       },
       "Url": "https://REDACTED.blob.core.windows.net/appendblobclienttestseal/Seal1?comp=seal"
@@ -270,7 +270,7 @@
     {
       "Headers": {
         "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Linux 5.4.0-1063-azure x86_64 #66~18.04.1-Ubuntu SMP Thu Oct 21 09:59:28 UTC 2021)",
-        "x-ms-client-request-id": "2dcdf5b7-4436-4590-66a9-e3b5bd72d721",
+        "x-ms-client-request-id": "9c83ce16-9ba4-42da-6656-f856cb89b68c",
         "x-ms-version": "2020-02-10"
       },
       "Method": "PUT",
@@ -279,13 +279,13 @@
         "REASON_PHRASE": "OK",
         "STATUS_CODE": "200",
         "content-length": "0",
-        "date": "Thu, 16 Dec 2021 21:30:03 GMT",
-        "etag": "\"0x8D9C0DB39690F2D\"",
-        "last-modified": "Thu, 16 Dec 2021 21:30:04 GMT",
+        "date": "Thu, 16 Dec 2021 22:02:57 GMT",
+        "etag": "\"0x8D9C0DFD18F8F7F\"",
+        "last-modified": "Thu, 16 Dec 2021 22:02:57 GMT",
         "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
         "x-ms-blob-sealed": "true",
-        "x-ms-client-request-id": "2dcdf5b7-4436-4590-66a9-e3b5bd72d721",
-        "x-ms-request-id": "f8e2d83d-901e-0074-7bc4-f2fc6f000000",
+        "x-ms-client-request-id": "9c83ce16-9ba4-42da-6656-f856cb89b68c",
+        "x-ms-request-id": "afb8633c-301e-005a-38c8-f20c19000000",
         "x-ms-version": "2020-02-10"
       },
       "Url": "https://REDACTED.blob.core.windows.net/appendblobclienttestseal/Seal1?comp=seal"
@@ -293,7 +293,7 @@
     {
       "Headers": {
         "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Linux 5.4.0-1063-azure x86_64 #66~18.04.1-Ubuntu SMP Thu Oct 21 09:59:28 UTC 2021)",
-        "x-ms-client-request-id": "2b35381a-8768-4209-6e2e-7870e9a1acdd",
+        "x-ms-client-request-id": "1e09caff-6d20-463a-4c80-de30acb8282a",
         "x-ms-version": "2020-02-10"
       },
       "Method": "GET",
@@ -304,29 +304,29 @@
         "accept-ranges": "bytes",
         "content-length": "100",
         "content-type": "application/octet-stream",
-        "date": "Thu, 16 Dec 2021 21:30:03 GMT",
-        "etag": "\"0x8D9C0DB39690F2D\"",
-        "last-modified": "Thu, 16 Dec 2021 21:30:04 GMT",
+        "date": "Thu, 16 Dec 2021 22:02:57 GMT",
+        "etag": "\"0x8D9C0DFD18F8F7F\"",
+        "last-modified": "Thu, 16 Dec 2021 22:02:57 GMT",
         "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
         "x-ms-blob-committed-block-count": "1",
         "x-ms-blob-sealed": "true",
         "x-ms-blob-type": "AppendBlob",
-        "x-ms-client-request-id": "2b35381a-8768-4209-6e2e-7870e9a1acdd",
-        "x-ms-creation-time": "Thu, 16 Dec 2021 21:30:04 GMT",
+        "x-ms-client-request-id": "1e09caff-6d20-463a-4c80-de30acb8282a",
+        "x-ms-creation-time": "Thu, 16 Dec 2021 22:02:57 GMT",
         "x-ms-is-current-version": "true",
         "x-ms-lease-state": "available",
         "x-ms-lease-status": "unlocked",
-        "x-ms-request-id": "f8e2d83e-901e-0074-7cc4-f2fc6f000000",
+        "x-ms-request-id": "afb8635c-301e-005a-56c8-f20c19000000",
         "x-ms-server-encrypted": "true",
         "x-ms-version": "2020-02-10",
-        "x-ms-version-id": "2021-12-16T21:30:04.2293647Z"
+        "x-ms-version-id": "2021-12-16T22:02:57.4692954Z"
       },
       "Url": "https://REDACTED.blob.core.windows.net/appendblobclienttestseal/Seal1"
     },
     {
       "Headers": {
         "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Linux 5.4.0-1063-azure x86_64 #66~18.04.1-Ubuntu SMP Thu Oct 21 09:59:28 UTC 2021)",
-        "x-ms-client-request-id": "c618d912-6c47-4566-7cf5-463cfa387263",
+        "x-ms-client-request-id": "6ea280e9-7c0d-46d5-4ae4-5d0530dfdf83",
         "x-ms-version": "2020-02-10"
       },
       "Method": "HEAD",
@@ -337,42 +337,42 @@
         "accept-ranges": "bytes",
         "content-length": "100",
         "content-type": "application/octet-stream",
-        "date": "Thu, 16 Dec 2021 21:30:03 GMT",
-        "etag": "\"0x8D9C0DB39690F2D\"",
-        "last-modified": "Thu, 16 Dec 2021 21:30:04 GMT",
+        "date": "Thu, 16 Dec 2021 22:02:57 GMT",
+        "etag": "\"0x8D9C0DFD18F8F7F\"",
+        "last-modified": "Thu, 16 Dec 2021 22:02:57 GMT",
         "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
         "x-ms-blob-committed-block-count": "1",
         "x-ms-blob-sealed": "true",
         "x-ms-blob-type": "AppendBlob",
-        "x-ms-client-request-id": "c618d912-6c47-4566-7cf5-463cfa387263",
-        "x-ms-creation-time": "Thu, 16 Dec 2021 21:30:04 GMT",
+        "x-ms-client-request-id": "6ea280e9-7c0d-46d5-4ae4-5d0530dfdf83",
+        "x-ms-creation-time": "Thu, 16 Dec 2021 22:02:57 GMT",
         "x-ms-is-current-version": "true",
         "x-ms-lease-state": "available",
         "x-ms-lease-status": "unlocked",
-        "x-ms-request-id": "f8e2d841-901e-0074-7dc4-f2fc6f000000",
+        "x-ms-request-id": "afb86374-301e-005a-6cc8-f20c19000000",
         "x-ms-server-encrypted": "true",
         "x-ms-version": "2020-02-10",
-        "x-ms-version-id": "2021-12-16T21:30:04.2293647Z"
+        "x-ms-version-id": "2021-12-16T22:02:57.4692954Z"
       },
       "Url": "https://REDACTED.blob.core.windows.net/appendblobclienttestseal/Seal1"
     },
     {
       "Headers": {
         "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Linux 5.4.0-1063-azure x86_64 #66~18.04.1-Ubuntu SMP Thu Oct 21 09:59:28 UTC 2021)",
-        "x-ms-client-request-id": "e7585517-c68c-44ec-7e64-eb3dbb308df1",
+        "x-ms-client-request-id": "9556309f-089c-4f5d-7508-baa02352a071",
         "x-ms-version": "2020-02-10"
       },
       "Method": "GET",
       "Response": {
-        "BODY": "﻿<?xml version=\"1.0\" encoding=\"utf-8\"?><EnumerationResults ServiceEndpoint=\"https://notarealaccount.blob.core.windows.net/\" ContainerName=\"appendblobclienttestseal\"><Prefix>Seal1</Prefix><Blobs><Blob><Name>Seal1</Name><VersionId>2021-12-16T21:30:04.2293647Z</VersionId><IsCurrentVersion>true</IsCurrentVersion><Properties><Creation-Time>Thu, 16 Dec 2021 21:30:04 GMT</Creation-Time><Last-Modified>Thu, 16 Dec 2021 21:30:04 GMT</Last-Modified><Etag>0x8D9C0DB39690F2D</Etag><Content-Length>100</Content-Length><Content-Type>application/octet-stream</Content-Type><Content-Encoding /><Content-Language /><Content-CRC64 /><Content-MD5 /><Cache-Control /><Content-Disposition /><BlobType>AppendBlob</BlobType><LeaseStatus>unlocked</LeaseStatus><LeaseState>available</LeaseState><ServerEncrypted>true</ServerEncrypted><Sealed>true</Sealed></Properties><OrMetadata /></Blob></Blobs><NextMarker /></EnumerationResults>",
+        "BODY": "﻿<?xml version=\"1.0\" encoding=\"utf-8\"?><EnumerationResults ServiceEndpoint=\"https://forcpprecordings.blob.core.windows.net/\" ContainerName=\"appendblobclienttestseal\"><Prefix>Seal1</Prefix><Blobs><Blob><Name>Seal1</Name><VersionId>2021-12-16T22:02:57.4692954Z</VersionId><IsCurrentVersion>true</IsCurrentVersion><Properties><Creation-Time>Thu, 16 Dec 2021 22:02:57 GMT</Creation-Time><Last-Modified>Thu, 16 Dec 2021 22:02:57 GMT</Last-Modified><Etag>0x8D9C0DFD18F8F7F</Etag><Content-Length>100</Content-Length><Content-Type>application/octet-stream</Content-Type><Content-Encoding /><Content-Language /><Content-CRC64 /><Content-MD5 /><Cache-Control /><Content-Disposition /><BlobType>AppendBlob</BlobType><LeaseStatus>unlocked</LeaseStatus><LeaseState>available</LeaseState><ServerEncrypted>true</ServerEncrypted><Sealed>true</Sealed></Properties><OrMetadata /></Blob></Blobs><NextMarker /></EnumerationResults>",
         "REASON_PHRASE": "OK",
         "STATUS_CODE": "200",
         "content-type": "application/xml",
-        "date": "Thu, 16 Dec 2021 21:30:03 GMT",
+        "date": "Thu, 16 Dec 2021 22:02:57 GMT",
         "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
         "transfer-encoding": "chunked",
-        "x-ms-client-request-id": "e7585517-c68c-44ec-7e64-eb3dbb308df1",
-        "x-ms-request-id": "f8e2d843-901e-0074-7fc4-f2fc6f000000",
+        "x-ms-client-request-id": "9556309f-089c-4f5d-7508-baa02352a071",
+        "x-ms-request-id": "afb86380-301e-005a-78c8-f20c19000000",
         "x-ms-version": "2020-02-10"
       },
       "Url": "https://REDACTED.blob.core.windows.net/appendblobclienttestseal?comp=list&prefix=Seal1&restype=container"
@@ -380,7 +380,7 @@
     {
       "Headers": {
         "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Linux 5.4.0-1063-azure x86_64 #66~18.04.1-Ubuntu SMP Thu Oct 21 09:59:28 UTC 2021)",
-        "x-ms-client-request-id": "93b3fe86-7963-4d43-6756-f5e69f695726",
+        "x-ms-client-request-id": "ed1b2681-3ef9-4476-6e9a-14282f551f71",
         "x-ms-version": "2020-02-10"
       },
       "Method": "PUT",
@@ -389,23 +389,23 @@
         "REASON_PHRASE": "Accepted",
         "STATUS_CODE": "202",
         "content-length": "0",
-        "date": "Thu, 16 Dec 2021 21:30:03 GMT",
-        "etag": "\"0x8D9C0DB3974A64C\"",
-        "last-modified": "Thu, 16 Dec 2021 21:30:04 GMT",
+        "date": "Thu, 16 Dec 2021 22:02:57 GMT",
+        "etag": "\"0x8D9C0DFD1A1673F\"",
+        "last-modified": "Thu, 16 Dec 2021 22:02:57 GMT",
         "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
-        "x-ms-client-request-id": "93b3fe86-7963-4d43-6756-f5e69f695726",
-        "x-ms-copy-id": "8349f69e-8460-4606-971b-23e4793cd483",
+        "x-ms-client-request-id": "ed1b2681-3ef9-4476-6e9a-14282f551f71",
+        "x-ms-copy-id": "72a3bb44-525b-4da1-9492-e70b78a89b53",
         "x-ms-copy-status": "success",
-        "x-ms-request-id": "f8e2d847-901e-0074-02c4-f2fc6f000000",
+        "x-ms-request-id": "afb8638f-301e-005a-06c8-f20c19000000",
         "x-ms-version": "2020-02-10",
-        "x-ms-version-id": "2021-12-16T21:30:04.3962712Z"
+        "x-ms-version-id": "2021-12-16T22:02:57.6901700Z"
       },
       "Url": "https://REDACTED.blob.core.windows.net/appendblobclienttestseal/Seal2"
     },
     {
       "Headers": {
         "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Linux 5.4.0-1063-azure x86_64 #66~18.04.1-Ubuntu SMP Thu Oct 21 09:59:28 UTC 2021)",
-        "x-ms-client-request-id": "3d84720a-882a-41fd-6332-d338a1fcc30c",
+        "x-ms-client-request-id": "f034771e-7efa-4459-7e62-c035371c74d2",
         "x-ms-version": "2020-02-10"
       },
       "Method": "HEAD",
@@ -416,33 +416,33 @@
         "accept-ranges": "bytes",
         "content-length": "100",
         "content-type": "application/octet-stream",
-        "date": "Thu, 16 Dec 2021 21:30:03 GMT",
-        "etag": "\"0x8D9C0DB3974A64C\"",
-        "last-modified": "Thu, 16 Dec 2021 21:30:04 GMT",
+        "date": "Thu, 16 Dec 2021 22:02:57 GMT",
+        "etag": "\"0x8D9C0DFD1A1673F\"",
+        "last-modified": "Thu, 16 Dec 2021 22:02:57 GMT",
         "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
         "x-ms-blob-committed-block-count": "1",
         "x-ms-blob-type": "AppendBlob",
-        "x-ms-client-request-id": "3d84720a-882a-41fd-6332-d338a1fcc30c",
-        "x-ms-copy-completion-time": "Thu, 16 Dec 2021 21:30:04 GMT",
-        "x-ms-copy-id": "8349f69e-8460-4606-971b-23e4793cd483",
+        "x-ms-client-request-id": "f034771e-7efa-4459-7e62-c035371c74d2",
+        "x-ms-copy-completion-time": "Thu, 16 Dec 2021 22:02:57 GMT",
+        "x-ms-copy-id": "72a3bb44-525b-4da1-9492-e70b78a89b53",
         "x-ms-copy-progress": "100/100",
-        "x-ms-copy-source": "https://notarealaccount.blob.core.windows.net/appendblobclienttestseal/Seal1?se=2021-12-19T21:30:04Z&sp=racwdxlt&spr=https,http&sr=c&sv=2020-02-10",
+        "x-ms-copy-source": "https://forcpprecordings.blob.core.windows.net/appendblobclienttestseal/Seal1?se=2021-12-19T22:02:57Z&sp=racwdxlt&spr=https,http&sr=c&sv=2020-02-10",
         "x-ms-copy-status": "success",
-        "x-ms-creation-time": "Thu, 16 Dec 2021 21:30:04 GMT",
+        "x-ms-creation-time": "Thu, 16 Dec 2021 22:02:57 GMT",
         "x-ms-is-current-version": "true",
         "x-ms-lease-state": "available",
         "x-ms-lease-status": "unlocked",
-        "x-ms-request-id": "f8e2d861-901e-0074-1cc4-f2fc6f000000",
+        "x-ms-request-id": "afb86405-301e-005a-73c8-f20c19000000",
         "x-ms-server-encrypted": "true",
         "x-ms-version": "2020-02-10",
-        "x-ms-version-id": "2021-12-16T21:30:04.3962712Z"
+        "x-ms-version-id": "2021-12-16T22:02:57.6901700Z"
       },
       "Url": "https://REDACTED.blob.core.windows.net/appendblobclienttestseal/Seal2"
     },
     {
       "Headers": {
         "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Linux 5.4.0-1063-azure x86_64 #66~18.04.1-Ubuntu SMP Thu Oct 21 09:59:28 UTC 2021)",
-        "x-ms-client-request-id": "40c0cfec-0c9d-481a-4b3e-445f95e39b83",
+        "x-ms-client-request-id": "5846b1c1-8e29-48d1-6581-612a6b315b7f",
         "x-ms-version": "2020-02-10"
       },
       "Method": "PUT",
@@ -451,23 +451,23 @@
         "REASON_PHRASE": "Accepted",
         "STATUS_CODE": "202",
         "content-length": "0",
-        "date": "Thu, 16 Dec 2021 21:30:03 GMT",
-        "etag": "\"0x8D9C0DB397A98D4\"",
-        "last-modified": "Thu, 16 Dec 2021 21:30:04 GMT",
+        "date": "Thu, 16 Dec 2021 22:02:57 GMT",
+        "etag": "\"0x8D9C0DFD1B0A73A\"",
+        "last-modified": "Thu, 16 Dec 2021 22:02:57 GMT",
         "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
-        "x-ms-client-request-id": "40c0cfec-0c9d-481a-4b3e-445f95e39b83",
-        "x-ms-copy-id": "a5b397cb-9b78-450d-9d53-1a8e2efaeedd",
+        "x-ms-client-request-id": "5846b1c1-8e29-48d1-6581-612a6b315b7f",
+        "x-ms-copy-id": "ca2d183b-87ae-48cc-ac9a-2b3797005bd6",
         "x-ms-copy-status": "success",
-        "x-ms-request-id": "f8e2d868-901e-0074-23c4-f2fc6f000000",
+        "x-ms-request-id": "afb86443-301e-005a-2ec8-f20c19000000",
         "x-ms-version": "2020-02-10",
-        "x-ms-version-id": "2021-12-16T21:30:04.4352484Z"
+        "x-ms-version-id": "2021-12-16T22:02:57.7901130Z"
       },
       "Url": "https://REDACTED.blob.core.windows.net/appendblobclienttestseal/Seal2"
     },
     {
       "Headers": {
         "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Linux 5.4.0-1063-azure x86_64 #66~18.04.1-Ubuntu SMP Thu Oct 21 09:59:28 UTC 2021)",
-        "x-ms-client-request-id": "7d8c48fb-a0b8-4145-57b6-004727280b15",
+        "x-ms-client-request-id": "95af5a10-783b-40c6-728e-b0d8b5b3ba00",
         "x-ms-version": "2020-02-10"
       },
       "Method": "HEAD",
@@ -478,34 +478,34 @@
         "accept-ranges": "bytes",
         "content-length": "100",
         "content-type": "application/octet-stream",
-        "date": "Thu, 16 Dec 2021 21:30:03 GMT",
-        "etag": "\"0x8D9C0DB397A98D4\"",
-        "last-modified": "Thu, 16 Dec 2021 21:30:04 GMT",
+        "date": "Thu, 16 Dec 2021 22:02:57 GMT",
+        "etag": "\"0x8D9C0DFD1B0A73A\"",
+        "last-modified": "Thu, 16 Dec 2021 22:02:57 GMT",
         "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
         "x-ms-blob-committed-block-count": "1",
         "x-ms-blob-sealed": "true",
         "x-ms-blob-type": "AppendBlob",
-        "x-ms-client-request-id": "7d8c48fb-a0b8-4145-57b6-004727280b15",
-        "x-ms-copy-completion-time": "Thu, 16 Dec 2021 21:30:04 GMT",
-        "x-ms-copy-id": "a5b397cb-9b78-450d-9d53-1a8e2efaeedd",
+        "x-ms-client-request-id": "95af5a10-783b-40c6-728e-b0d8b5b3ba00",
+        "x-ms-copy-completion-time": "Thu, 16 Dec 2021 22:02:57 GMT",
+        "x-ms-copy-id": "ca2d183b-87ae-48cc-ac9a-2b3797005bd6",
         "x-ms-copy-progress": "100/100",
-        "x-ms-copy-source": "https://notarealaccount.blob.core.windows.net/appendblobclienttestseal/Seal1?se=2021-12-19T21:30:04Z&sp=racwdxlt&spr=https,http&sr=c&sv=2020-02-10",
+        "x-ms-copy-source": "https://forcpprecordings.blob.core.windows.net/appendblobclienttestseal/Seal1?se=2021-12-19T22:02:57Z&sp=racwdxlt&spr=https,http&sr=c&sv=2020-02-10",
         "x-ms-copy-status": "success",
-        "x-ms-creation-time": "Thu, 16 Dec 2021 21:30:04 GMT",
+        "x-ms-creation-time": "Thu, 16 Dec 2021 22:02:57 GMT",
         "x-ms-is-current-version": "true",
         "x-ms-lease-state": "available",
         "x-ms-lease-status": "unlocked",
-        "x-ms-request-id": "f8e2d874-901e-0074-2fc4-f2fc6f000000",
+        "x-ms-request-id": "afb86465-301e-005a-4dc8-f20c19000000",
         "x-ms-server-encrypted": "true",
         "x-ms-version": "2020-02-10",
-        "x-ms-version-id": "2021-12-16T21:30:04.4352484Z"
+        "x-ms-version-id": "2021-12-16T22:02:57.7901130Z"
       },
       "Url": "https://REDACTED.blob.core.windows.net/appendblobclienttestseal/Seal2"
     },
     {
       "Headers": {
         "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Linux 5.4.0-1063-azure x86_64 #66~18.04.1-Ubuntu SMP Thu Oct 21 09:59:28 UTC 2021)",
-        "x-ms-client-request-id": "3d33965f-bb24-4442-7921-f5b063356e6e",
+        "x-ms-client-request-id": "22571434-fb6b-4511-4a7a-9e448a84c31c",
         "x-ms-version": "2020-02-10"
       },
       "Method": "DELETE",
@@ -514,11 +514,11 @@
         "REASON_PHRASE": "Accepted",
         "STATUS_CODE": "202",
         "content-length": "0",
-        "date": "Thu, 16 Dec 2021 21:30:03 GMT",
+        "date": "Thu, 16 Dec 2021 22:02:57 GMT",
         "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
-        "x-ms-client-request-id": "3d33965f-bb24-4442-7921-f5b063356e6e",
+        "x-ms-client-request-id": "22571434-fb6b-4511-4a7a-9e448a84c31c",
         "x-ms-delete-type-permanent": "false",
-        "x-ms-request-id": "f8e2d877-901e-0074-32c4-f2fc6f000000",
+        "x-ms-request-id": "afb86476-301e-005a-5cc8-f20c19000000",
         "x-ms-version": "2020-02-10"
       },
       "Url": "https://REDACTED.blob.core.windows.net/appendblobclienttestseal/Seal"
@@ -526,7 +526,7 @@
     {
       "Headers": {
         "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Linux 5.4.0-1063-azure x86_64 #66~18.04.1-Ubuntu SMP Thu Oct 21 09:59:28 UTC 2021)",
-        "x-ms-client-request-id": "033467f0-bb35-4bf6-7286-4cc37a908922",
+        "x-ms-client-request-id": "68bf7d64-467a-44fb-6580-b143c84cb3e3",
         "x-ms-version": "2020-02-10"
       },
       "Method": "DELETE",
@@ -535,10 +535,10 @@
         "REASON_PHRASE": "Accepted",
         "STATUS_CODE": "202",
         "content-length": "0",
-        "date": "Thu, 16 Dec 2021 21:30:03 GMT",
+        "date": "Thu, 16 Dec 2021 22:02:57 GMT",
         "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
-        "x-ms-client-request-id": "033467f0-bb35-4bf6-7286-4cc37a908922",
-        "x-ms-request-id": "f8e2d881-901e-0074-39c4-f2fc6f000000",
+        "x-ms-client-request-id": "68bf7d64-467a-44fb-6580-b143c84cb3e3",
+        "x-ms-request-id": "afb86484-301e-005a-6ac8-f20c19000000",
         "x-ms-version": "2020-02-10"
       },
       "Url": "https://REDACTED.blob.core.windows.net/appendblobclienttestseal?restype=container"

@@ -3,7 +3,7 @@
     {
       "Headers": {
         "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Linux 5.4.0-1063-azure x86_64 #66~18.04.1-Ubuntu SMP Thu Oct 21 09:59:28 UTC 2021)",
-        "x-ms-client-request-id": "5154e2ba-488a-4642-7869-502a5ced566c",
+        "x-ms-client-request-id": "da0274a5-c6b9-41a5-7826-a8d451ecc8f4",
         "x-ms-version": "2020-02-10"
       },
       "Method": "PUT",
@@ -12,12 +12,12 @@
         "REASON_PHRASE": "Created",
         "STATUS_CODE": "201",
         "content-length": "0",
-        "date": "Thu, 16 Dec 2021 21:30:31 GMT",
-        "etag": "\"0x8D9C0DB4A032F09\"",
-        "last-modified": "Thu, 16 Dec 2021 21:30:32 GMT",
+        "date": "Thu, 16 Dec 2021 22:04:24 GMT",
+        "etag": "\"0x8D9C0E005B1BDD3\"",
+        "last-modified": "Thu, 16 Dec 2021 22:04:25 GMT",
         "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
-        "x-ms-client-request-id": "5154e2ba-488a-4642-7869-502a5ced566c",
-        "x-ms-request-id": "39e52225-b01e-0001-17c4-f29743000000",
+        "x-ms-client-request-id": "da0274a5-c6b9-41a5-7826-a8d451ecc8f4",
+        "x-ms-request-id": "3f71828b-501e-003e-60c8-f2fd81000000",
         "x-ms-version": "2020-02-10"
       },
       "Url": "https://REDACTED.blob.core.windows.net/blockblobclienttestdeletesnapshots?restype=container"
@@ -25,7 +25,7 @@
     {
       "Headers": {
         "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Linux 5.4.0-1063-azure x86_64 #66~18.04.1-Ubuntu SMP Thu Oct 21 09:59:28 UTC 2021)",
-        "x-ms-client-request-id": "a6b6b232-e0b1-4059-4760-3c38080f5c16",
+        "x-ms-client-request-id": "5ecb76e8-7584-45a2-5c6b-fd00776914b3",
         "x-ms-version": "2020-02-10"
       },
       "Method": "PUT",
@@ -35,23 +35,23 @@
         "STATUS_CODE": "201",
         "content-length": "0",
         "content-md5": "1B2M2Y8AsgTpgAmY7PhCfg==",
-        "date": "Thu, 16 Dec 2021 21:30:31 GMT",
-        "etag": "\"0x8D9C0DB4A059394\"",
-        "last-modified": "Thu, 16 Dec 2021 21:30:32 GMT",
+        "date": "Thu, 16 Dec 2021 22:04:24 GMT",
+        "etag": "\"0x8D9C0E005B462F8\"",
+        "last-modified": "Thu, 16 Dec 2021 22:04:25 GMT",
         "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
-        "x-ms-client-request-id": "a6b6b232-e0b1-4059-4760-3c38080f5c16",
+        "x-ms-client-request-id": "5ecb76e8-7584-45a2-5c6b-fd00776914b3",
         "x-ms-content-crc64": "AAAAAAAAAAA=",
-        "x-ms-request-id": "39e52229-b01e-0001-1ac4-f29743000000",
+        "x-ms-request-id": "3f718293-501e-003e-67c8-f2fd81000000",
         "x-ms-request-server-encrypted": "true",
         "x-ms-version": "2020-02-10",
-        "x-ms-version-id": "2021-12-16T21:30:32.1886100Z"
+        "x-ms-version-id": "2021-12-16T22:04:25.0551032Z"
       },
       "Url": "https://REDACTED.blob.core.windows.net/blockblobclienttestdeletesnapshots/DeleteSnapshots"
     },
     {
       "Headers": {
         "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Linux 5.4.0-1063-azure x86_64 #66~18.04.1-Ubuntu SMP Thu Oct 21 09:59:28 UTC 2021)",
-        "x-ms-client-request-id": "27520364-74d1-4632-54d0-c2020365c10f",
+        "x-ms-client-request-id": "9be06ba2-0a55-48f4-7fe2-8031cd9afbcf",
         "x-ms-version": "2020-02-10"
       },
       "Method": "PUT",
@@ -60,37 +60,37 @@
         "REASON_PHRASE": "Created",
         "STATUS_CODE": "201",
         "content-length": "0",
-        "date": "Thu, 16 Dec 2021 21:30:31 GMT",
-        "etag": "\"0x8D9C0DB4A059394\"",
-        "last-modified": "Thu, 16 Dec 2021 21:30:32 GMT",
+        "date": "Thu, 16 Dec 2021 22:04:24 GMT",
+        "etag": "\"0x8D9C0E005B462F8\"",
+        "last-modified": "Thu, 16 Dec 2021 22:04:25 GMT",
         "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
-        "x-ms-client-request-id": "27520364-74d1-4632-54d0-c2020365c10f",
-        "x-ms-request-id": "39e52232-b01e-0001-23c4-f29743000000",
+        "x-ms-client-request-id": "9be06ba2-0a55-48f4-7fe2-8031cd9afbcf",
+        "x-ms-request-id": "3f71829d-501e-003e-70c8-f2fd81000000",
         "x-ms-request-server-encrypted": "false",
-        "x-ms-snapshot": "2021-12-16T21:30:32.2085993Z",
+        "x-ms-snapshot": "2021-12-16T22:04:25.0730945Z",
         "x-ms-version": "2020-02-10",
-        "x-ms-version-id": "2021-12-16T21:30:32.2095993Z"
+        "x-ms-version-id": "2021-12-16T22:04:25.0740945Z"
       },
       "Url": "https://REDACTED.blob.core.windows.net/blockblobclienttestdeletesnapshots/DeleteSnapshots?comp=snapshot"
     },
     {
       "Headers": {
         "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Linux 5.4.0-1063-azure x86_64 #66~18.04.1-Ubuntu SMP Thu Oct 21 09:59:28 UTC 2021)",
-        "x-ms-client-request-id": "c04640f8-4e26-4745-47ea-aff72c45e34c",
+        "x-ms-client-request-id": "a6712b00-4182-4757-563e-b50417aa8813",
         "x-ms-version": "2020-02-10"
       },
       "Method": "DELETE",
       "Response": {
-        "BODY": "﻿<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>SnapshotsPresent</Code><Message>This operation is not permitted because the blob has snapshots.\nRequestId:39e5223d-b01e-0001-2cc4-f29743000000\nTime:2021-12-16T21:30:32.2768692Z</Message></Error>",
+        "BODY": "﻿<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>SnapshotsPresent</Code><Message>This operation is not permitted because the blob has snapshots.\nRequestId:3f7182ac-501e-003e-7ec8-f2fd81000000\nTime:2021-12-16T22:04:25.0887390Z</Message></Error>",
         "REASON_PHRASE": "This operation is not permitted because the blob has snapshots.",
         "STATUS_CODE": "409",
         "content-length": "248",
         "content-type": "application/xml",
-        "date": "Thu, 16 Dec 2021 21:30:31 GMT",
+        "date": "Thu, 16 Dec 2021 22:04:24 GMT",
         "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
-        "x-ms-client-request-id": "c04640f8-4e26-4745-47ea-aff72c45e34c",
+        "x-ms-client-request-id": "a6712b00-4182-4757-563e-b50417aa8813",
         "x-ms-error-code": "SnapshotsPresent",
-        "x-ms-request-id": "39e5223d-b01e-0001-2cc4-f29743000000",
+        "x-ms-request-id": "3f7182ac-501e-003e-7ec8-f2fd81000000",
         "x-ms-version": "2020-02-10"
       },
       "Url": "https://REDACTED.blob.core.windows.net/blockblobclienttestdeletesnapshots/DeleteSnapshots"
@@ -98,7 +98,7 @@
     {
       "Headers": {
         "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Linux 5.4.0-1063-azure x86_64 #66~18.04.1-Ubuntu SMP Thu Oct 21 09:59:28 UTC 2021)",
-        "x-ms-client-request-id": "815face7-5ab6-4743-6bc6-4d8ee35c5d2a",
+        "x-ms-client-request-id": "ae3f1950-f0ce-48a4-5083-e6d1d3cb69d4",
         "x-ms-version": "2020-02-10"
       },
       "Method": "DELETE",
@@ -107,11 +107,11 @@
         "REASON_PHRASE": "Accepted",
         "STATUS_CODE": "202",
         "content-length": "0",
-        "date": "Thu, 16 Dec 2021 21:30:31 GMT",
+        "date": "Thu, 16 Dec 2021 22:04:24 GMT",
         "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
-        "x-ms-client-request-id": "815face7-5ab6-4743-6bc6-4d8ee35c5d2a",
+        "x-ms-client-request-id": "ae3f1950-f0ce-48a4-5083-e6d1d3cb69d4",
         "x-ms-delete-type-permanent": "false",
-        "x-ms-request-id": "f05dd7a4-e01e-0041-23c4-f2907b000000",
+        "x-ms-request-id": "9097cc85-401e-0032-1bc8-f26a89000000",
         "x-ms-version": "2020-02-10"
       },
       "Url": "https://REDACTED.blob.core.windows.net/blockblobclienttestdeletesnapshots/DeleteSnapshots"
@@ -119,7 +119,7 @@
     {
       "Headers": {
         "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Linux 5.4.0-1063-azure x86_64 #66~18.04.1-Ubuntu SMP Thu Oct 21 09:59:28 UTC 2021)",
-        "x-ms-client-request-id": "4c7f3569-9a79-407a-5990-12dc3b5e1386",
+        "x-ms-client-request-id": "e0f100d2-7293-493e-662d-a1d82de53af2",
         "x-ms-version": "2020-02-10"
       },
       "Method": "HEAD",
@@ -131,29 +131,29 @@
         "content-length": "0",
         "content-md5": "1B2M2Y8AsgTpgAmY7PhCfg==",
         "content-type": "application/octet-stream",
-        "date": "Thu, 16 Dec 2021 21:30:31 GMT",
-        "etag": "\"0x8D9C0DB4A059394\"",
-        "last-modified": "Thu, 16 Dec 2021 21:30:32 GMT",
+        "date": "Thu, 16 Dec 2021 22:04:24 GMT",
+        "etag": "\"0x8D9C0E005B462F8\"",
+        "last-modified": "Thu, 16 Dec 2021 22:04:25 GMT",
         "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
         "x-ms-access-tier": "Hot",
         "x-ms-access-tier-inferred": "true",
         "x-ms-blob-type": "BlockBlob",
-        "x-ms-client-request-id": "4c7f3569-9a79-407a-5990-12dc3b5e1386",
-        "x-ms-creation-time": "Thu, 16 Dec 2021 21:30:32 GMT",
+        "x-ms-client-request-id": "e0f100d2-7293-493e-662d-a1d82de53af2",
+        "x-ms-creation-time": "Thu, 16 Dec 2021 22:04:25 GMT",
         "x-ms-is-current-version": "true",
         "x-ms-lease-state": "available",
         "x-ms-lease-status": "unlocked",
-        "x-ms-request-id": "f05dd7a7-e01e-0041-25c4-f2907b000000",
+        "x-ms-request-id": "9097cc9e-401e-0032-30c8-f26a89000000",
         "x-ms-server-encrypted": "true",
         "x-ms-version": "2020-02-10",
-        "x-ms-version-id": "2021-12-16T21:30:32.2095993Z"
+        "x-ms-version-id": "2021-12-16T22:04:25.0740945Z"
       },
       "Url": "https://REDACTED.blob.core.windows.net/blockblobclienttestdeletesnapshots/DeleteSnapshots"
     },
     {
       "Headers": {
         "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Linux 5.4.0-1063-azure x86_64 #66~18.04.1-Ubuntu SMP Thu Oct 21 09:59:28 UTC 2021)",
-        "x-ms-client-request-id": "0c427300-5a0c-48cc-68fd-9722f0d68874",
+        "x-ms-client-request-id": "b1037d9f-3159-4ce9-6eb7-cbca8bbdc1fc",
         "x-ms-version": "2020-02-10"
       },
       "Method": "HEAD",
@@ -161,21 +161,21 @@
         "BODY": "",
         "REASON_PHRASE": "The specified blob does not exist.",
         "STATUS_CODE": "404",
-        "date": "Thu, 16 Dec 2021 21:30:31 GMT",
+        "date": "Thu, 16 Dec 2021 22:04:24 GMT",
         "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
         "transfer-encoding": "chunked",
-        "x-ms-client-request-id": "0c427300-5a0c-48cc-68fd-9722f0d68874",
+        "x-ms-client-request-id": "b1037d9f-3159-4ce9-6eb7-cbca8bbdc1fc",
         "x-ms-error-code": "BlobNotFound",
         "x-ms-is-soft-deleted": "true",
-        "x-ms-request-id": "f05dd7ad-e01e-0041-2bc4-f2907b000000",
+        "x-ms-request-id": "9097ccaf-401e-0032-40c8-f26a89000000",
         "x-ms-version": "2020-02-10"
       },
-      "Url": "https://REDACTED.blob.core.windows.net/blockblobclienttestdeletesnapshots/DeleteSnapshots?snapshot=2021-12-16T21:30:32.2085993Z"
+      "Url": "https://REDACTED.blob.core.windows.net/blockblobclienttestdeletesnapshots/DeleteSnapshots?snapshot=2021-12-16T22:04:25.0730945Z"
     },
     {
       "Headers": {
         "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Linux 5.4.0-1063-azure x86_64 #66~18.04.1-Ubuntu SMP Thu Oct 21 09:59:28 UTC 2021)",
-        "x-ms-client-request-id": "fa827022-6179-49d9-41b4-9c965b85602b",
+        "x-ms-client-request-id": "cb1cd468-7df1-49b5-664a-973639e101ae",
         "x-ms-version": "2020-02-10"
       },
       "Method": "PUT",
@@ -184,23 +184,23 @@
         "REASON_PHRASE": "Created",
         "STATUS_CODE": "201",
         "content-length": "0",
-        "date": "Thu, 16 Dec 2021 21:30:32 GMT",
-        "etag": "\"0x8D9C0DB4A059394\"",
-        "last-modified": "Thu, 16 Dec 2021 21:30:32 GMT",
+        "date": "Thu, 16 Dec 2021 22:04:24 GMT",
+        "etag": "\"0x8D9C0E005B462F8\"",
+        "last-modified": "Thu, 16 Dec 2021 22:04:25 GMT",
         "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
-        "x-ms-client-request-id": "fa827022-6179-49d9-41b4-9c965b85602b",
-        "x-ms-request-id": "e80b6a43-f01e-0062-80c4-f20ab8000000",
+        "x-ms-client-request-id": "cb1cd468-7df1-49b5-664a-973639e101ae",
+        "x-ms-request-id": "b6a0a2d7-501e-002e-1cc8-f238e9000000",
         "x-ms-request-server-encrypted": "false",
-        "x-ms-snapshot": "2021-12-16T21:30:32.3745056Z",
+        "x-ms-snapshot": "2021-12-16T22:04:25.2120144Z",
         "x-ms-version": "2020-02-10",
-        "x-ms-version-id": "2021-12-16T21:30:32.3755056Z"
+        "x-ms-version-id": "2021-12-16T22:04:25.2130144Z"
       },
       "Url": "https://REDACTED.blob.core.windows.net/blockblobclienttestdeletesnapshots/DeleteSnapshots?comp=snapshot"
     },
     {
       "Headers": {
         "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Linux 5.4.0-1063-azure x86_64 #66~18.04.1-Ubuntu SMP Thu Oct 21 09:59:28 UTC 2021)",
-        "x-ms-client-request-id": "e3a4e4a8-cf8e-46d6-760f-aeaba32a4106",
+        "x-ms-client-request-id": "5832eb1b-c941-40c8-744d-222f797e0b27",
         "x-ms-version": "2020-02-10"
       },
       "Method": "DELETE",
@@ -209,11 +209,11 @@
         "REASON_PHRASE": "Accepted",
         "STATUS_CODE": "202",
         "content-length": "0",
-        "date": "Thu, 16 Dec 2021 21:30:32 GMT",
+        "date": "Thu, 16 Dec 2021 22:04:24 GMT",
         "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
-        "x-ms-client-request-id": "e3a4e4a8-cf8e-46d6-760f-aeaba32a4106",
+        "x-ms-client-request-id": "5832eb1b-c941-40c8-744d-222f797e0b27",
         "x-ms-delete-type-permanent": "false",
-        "x-ms-request-id": "e80b6a4c-f01e-0062-09c4-f20ab8000000",
+        "x-ms-request-id": "b6a0a2f0-501e-002e-33c8-f238e9000000",
         "x-ms-version": "2020-02-10"
       },
       "Url": "https://REDACTED.blob.core.windows.net/blockblobclienttestdeletesnapshots/DeleteSnapshots"
@@ -221,7 +221,7 @@
     {
       "Headers": {
         "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Linux 5.4.0-1063-azure x86_64 #66~18.04.1-Ubuntu SMP Thu Oct 21 09:59:28 UTC 2021)",
-        "x-ms-client-request-id": "29c937a2-b2d4-4d7f-53d8-d33febe30503",
+        "x-ms-client-request-id": "80d1f6c3-f3d4-4f35-5dd4-a621e2c4bb23",
         "x-ms-version": "2020-02-10"
       },
       "Method": "HEAD",
@@ -229,12 +229,12 @@
         "BODY": "",
         "REASON_PHRASE": "The specified blob does not exist.",
         "STATUS_CODE": "404",
-        "date": "Thu, 16 Dec 2021 21:30:32 GMT",
+        "date": "Thu, 16 Dec 2021 22:04:24 GMT",
         "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
         "transfer-encoding": "chunked",
-        "x-ms-client-request-id": "29c937a2-b2d4-4d7f-53d8-d33febe30503",
+        "x-ms-client-request-id": "80d1f6c3-f3d4-4f35-5dd4-a621e2c4bb23",
         "x-ms-error-code": "BlobNotFound",
-        "x-ms-request-id": "e80b6a5e-f01e-0062-19c4-f20ab8000000",
+        "x-ms-request-id": "b6a0a305-501e-002e-44c8-f238e9000000",
         "x-ms-version": "2020-02-10"
       },
       "Url": "https://REDACTED.blob.core.windows.net/blockblobclienttestdeletesnapshots/DeleteSnapshots"
@@ -242,7 +242,7 @@
     {
       "Headers": {
         "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Linux 5.4.0-1063-azure x86_64 #66~18.04.1-Ubuntu SMP Thu Oct 21 09:59:28 UTC 2021)",
-        "x-ms-client-request-id": "61e30d59-ec1a-4d5b-4a4d-c981e88c9e38",
+        "x-ms-client-request-id": "e1862c92-7360-4d87-6818-9857c0bf0e0f",
         "x-ms-version": "2020-02-10"
       },
       "Method": "HEAD",
@@ -250,21 +250,21 @@
         "BODY": "",
         "REASON_PHRASE": "The specified blob does not exist.",
         "STATUS_CODE": "404",
-        "date": "Thu, 16 Dec 2021 21:30:32 GMT",
+        "date": "Thu, 16 Dec 2021 22:04:24 GMT",
         "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
         "transfer-encoding": "chunked",
-        "x-ms-client-request-id": "61e30d59-ec1a-4d5b-4a4d-c981e88c9e38",
+        "x-ms-client-request-id": "e1862c92-7360-4d87-6818-9857c0bf0e0f",
         "x-ms-error-code": "BlobNotFound",
         "x-ms-is-soft-deleted": "true",
-        "x-ms-request-id": "c713fd99-b01e-004c-19c4-f258af000000",
+        "x-ms-request-id": "f19cd529-c01e-005e-02c8-f2811e000000",
         "x-ms-version": "2020-02-10"
       },
-      "Url": "https://REDACTED.blob.core.windows.net/blockblobclienttestdeletesnapshots/DeleteSnapshots?snapshot=2021-12-16T21:30:32.3745056Z"
+      "Url": "https://REDACTED.blob.core.windows.net/blockblobclienttestdeletesnapshots/DeleteSnapshots?snapshot=2021-12-16T22:04:25.2120144Z"
     },
     {
       "Headers": {
         "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Linux 5.4.0-1063-azure x86_64 #66~18.04.1-Ubuntu SMP Thu Oct 21 09:59:28 UTC 2021)",
-        "x-ms-client-request-id": "7627147b-210c-4980-6776-bbbf8b9e3944",
+        "x-ms-client-request-id": "4f0ae5b1-3e93-4958-568c-a50304d78bfa",
         "x-ms-version": "2020-02-10"
       },
       "Method": "DELETE",
@@ -273,10 +273,10 @@
         "REASON_PHRASE": "Accepted",
         "STATUS_CODE": "202",
         "content-length": "0",
-        "date": "Thu, 16 Dec 2021 21:30:31 GMT",
+        "date": "Thu, 16 Dec 2021 22:04:25 GMT",
         "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
-        "x-ms-client-request-id": "7627147b-210c-4980-6776-bbbf8b9e3944",
-        "x-ms-request-id": "b1d97024-801e-000a-17c4-f26c28000000",
+        "x-ms-client-request-id": "4f0ae5b1-3e93-4958-568c-a50304d78bfa",
+        "x-ms-request-id": "69e2baf4-e01e-0014-05c8-f22291000000",
         "x-ms-version": "2020-02-10"
       },
       "Url": "https://REDACTED.blob.core.windows.net/blockblobclienttestdeletesnapshots?restype=container"
