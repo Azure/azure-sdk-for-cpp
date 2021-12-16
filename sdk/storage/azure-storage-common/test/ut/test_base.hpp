@@ -46,6 +46,11 @@ namespace Azure { namespace Storage {
         {
           name = std::string(name.begin() + nameSize - maxContainerNameSize, name.end());
         }
+        // Check name won't start with `-`
+        if (name[0] == '-')
+        {
+          name = std::string(name.begin() + 1, name.end());
+        }
         return Azure::Core::_internal::StringExtensions::ToLower(name);
       }
 

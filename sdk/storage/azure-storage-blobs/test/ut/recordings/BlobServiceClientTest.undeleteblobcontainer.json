@@ -3,21 +3,21 @@
     {
       "Headers": {
         "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Linux 5.4.0-1063-azure x86_64 #66~18.04.1-Ubuntu SMP Thu Oct 21 09:59:28 UTC 2021)",
-        "x-ms-client-request-id": "30a13bd3-c416-4e5e-5b55-31d85864823b",
+        "x-ms-client-request-id": "74bbe657-4138-4513-4ff5-63b64a92426a",
         "x-ms-version": "2020-02-10"
       },
       "Method": "PUT",
       "Response": {
-        "BODY": "﻿<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>ContainerAlreadyExists</Code><Message>The specified container already exists.\nRequestId:faa174a3-901e-004b-7cc4-f234cc000000\nTime:2021-12-16T21:30:24.3642758Z</Message></Error>",
+        "BODY": "﻿<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>ContainerAlreadyExists</Code><Message>The specified container already exists.\nRequestId:02038ef0-701e-0031-3fc5-f2298c000000\nTime:2021-12-16T21:36:52.4514943Z</Message></Error>",
         "REASON_PHRASE": "The specified container already exists.",
         "STATUS_CODE": "409",
         "content-length": "230",
         "content-type": "application/xml",
-        "date": "Thu, 16 Dec 2021 21:30:24 GMT",
+        "date": "Thu, 16 Dec 2021 21:36:51 GMT",
         "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
-        "x-ms-client-request-id": "30a13bd3-c416-4e5e-5b55-31d85864823b",
+        "x-ms-client-request-id": "74bbe657-4138-4513-4ff5-63b64a92426a",
         "x-ms-error-code": "ContainerAlreadyExists",
-        "x-ms-request-id": "faa174a3-901e-004b-7cc4-f234cc000000",
+        "x-ms-request-id": "02038ef0-701e-0031-3fc5-f2298c000000",
         "x-ms-version": "2020-02-10"
       },
       "Url": "https://REDACTED.blob.core.windows.net/undeleteblobcontainer?restype=container"
