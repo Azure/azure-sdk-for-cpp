@@ -75,7 +75,7 @@ public:
             shouldRetryOnTransportFailure != nullptr
                 ? shouldRetryOnTransportFailure
                 : static_cast<decltype(m_shouldRetryOnTransportFailure)>( //
-                    [&](auto options, auto attempt, auto retryAfter, auto jitter) {
+                    [this](auto options, auto attempt, auto retryAfter, auto jitter) {
                       retryAfter = std::chrono::milliseconds(0);
                       auto ignore = decltype(retryAfter)();
                       return BaseShouldRetryOnTransportFailure(options, attempt, ignore, jitter);
@@ -84,7 +84,8 @@ public:
             shouldRetryOnResponse != nullptr
                 ? shouldRetryOnResponse
                 : static_cast<decltype(m_shouldRetryOnResponse)>( //
-                    [&](RawResponse const& response,
+                    [this](
+                        RawResponse const& response,
                         auto options,
                         auto attempt,
                         auto retryAfter,
