@@ -47,14 +47,8 @@ private:
 public:
   RetryPolicyTest(
       RetryOptions const& retryOptions,
-      std::function<bool(RetryOptions const&, int32_t, std::chrono::milliseconds&, double)>
-          shouldRetryOnTransportFailure,
-      std::function<bool(
-          RawResponse const&,
-          RetryOptions const&,
-          int32_t,
-          std::chrono::milliseconds&,
-          double)> shouldRetryOnResponse)
+      decltype(m_shouldRetryOnTransportFailure) shouldRetryOnTransportFailure,
+      decltype(m_shouldRetryOnResponse) shouldRetryOnResponse)
       : RetryPolicy(retryOptions), m_shouldRetryOnTransportFailure(shouldRetryOnTransportFailure),
         m_shouldRetryOnResponse(shouldRetryOnResponse)
   {
