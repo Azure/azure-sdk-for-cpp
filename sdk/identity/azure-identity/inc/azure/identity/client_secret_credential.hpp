@@ -88,13 +88,7 @@ namespace Azure { namespace Identity {
         std::string clientId,
         std::string clientSecret,
         Core::Credentials::TokenCredentialOptions const& options
-        = Core::Credentials::TokenCredentialOptions())
-        : ClientSecretCredential(
-            tenantId,
-            clientId,
-            clientSecret,
-            _detail::g_aadGlobalAuthority,
-            options);
+        = Core::Credentials::TokenCredentialOptions());
 
     /**
      * @brief Destructs `%ClientSecretCredential`.
