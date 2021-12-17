@@ -8,7 +8,7 @@
 #include "private/keyvault_certificates_common_request.hpp"
 #include "private/package_version.hpp"
 #include <azure/core/base64.hpp>
-#include <azure/keyvault/shared/keyvault_shared.hpp>
+#include "private/keyvault_urlScope.hpp"
 
 #include <azure/core/credentials/credentials.hpp>
 #include <azure/core/http/http.hpp>
@@ -73,7 +73,7 @@ CertificateClient::CertificateClient(
   std::vector<std::unique_ptr<HttpPolicy>> perRetrypolicies;
   {
     Azure::Core::Credentials::TokenRequestContext const tokenContext
-        = {{_internal::UrlScope::GetScopeFromUrl(m_vaultUrl)}};
+        = {{_detail::UrlScope::GetScopeFromUrl(m_vaultUrl)}};
 
     perRetrypolicies.emplace_back(
         std::make_unique<BearerTokenAuthenticationPolicy>(credential, std::move(tokenContext)));

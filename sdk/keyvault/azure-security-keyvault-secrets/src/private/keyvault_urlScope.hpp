@@ -13,7 +13,7 @@
 
 #include <string>
 
-namespace Azure { namespace Security { namespace KeyVault { namespace _internal {
+namespace Azure { namespace Security { namespace KeyVault { namespace Secrets { namespace _detail {
 
   /**
    * @brief Provides functionality to get scope information from a URL.
@@ -32,8 +32,8 @@ namespace Azure { namespace Security { namespace KeyVault { namespace _internal 
 
       // Insert the calculated scope only when the host in the url contains at least a `.`
       // Otherwise, only the default scope will be there.
-      // We don't want to throw/validate input but just leave the values go to azure to decide what
-      // to do.
+      // We don't want to throw/validate input but just leave the values go to azure to decide
+      // what to do.
       if (hostNoAccountStart != hostWithAccount.end())
       {
         calculatedScope.append(hostNoAccountStart + 1, hostWithAccount.end());
@@ -44,4 +44,4 @@ namespace Azure { namespace Security { namespace KeyVault { namespace _internal 
     }
   };
 
-}}}} // namespace Azure::Security::KeyVault::_internal
+}}}}} // namespace Azure::Security::KeyVault::Keys::_detail

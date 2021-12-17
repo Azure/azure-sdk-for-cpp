@@ -9,11 +9,10 @@
 #include "azure/keyvault/secrets/secret_client.hpp"
 #include "azure/keyvault/secrets/keyvault_operations.hpp"
 #include "private/keyvault_protocol.hpp"
+#include "private/keyvault_urlScope.hpp"
 #include "private/package_version.hpp"
 #include "private/secret_constants.hpp"
 #include "private/secret_serializers.hpp"
-
-#include <azure/keyvault/shared/keyvault_shared.hpp>
 
 #include <azure/core/credentials/credentials.hpp>
 #include <azure/core/http/http.hpp>
@@ -71,7 +70,7 @@ SecretClient::SecretClient(
   std::vector<std::unique_ptr<HttpPolicy>> perRetrypolicies;
   {
     Azure::Core::Credentials::TokenRequestContext const tokenContext
-        = {{_internal::UrlScope::GetScopeFromUrl(url)}};
+        = {{_detail::UrlScope::GetScopeFromUrl(url)}};
 
     perRetrypolicies.emplace_back(
         std::make_unique<BearerTokenAuthenticationPolicy>(credential, tokenContext));

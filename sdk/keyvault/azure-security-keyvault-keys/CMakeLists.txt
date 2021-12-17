@@ -66,6 +66,7 @@ set(
     src/private/key_wrap_parameters.hpp
     src/private/keyvault_constants.hpp
     src/private/keyvault_protocol.hpp
+    src/private/keyvault_urlScope.hpp
     src/private/package_version.hpp
     src/delete_key_operation.cpp
     src/deleted_key.cpp
@@ -94,14 +95,6 @@ target_include_directories(
     PUBLIC
       $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/inc>
       $<INSTALL_INTERFACE:include>
-)
-
-# Include shared source code
-# NOTE: Use shared-code only within .cpp files. DO NEVER consume the shared-code from header files.
-target_include_directories(
-  azure-security-keyvault-keys
-    PRIVATE
-      $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/../azure-security-keyvault-shared/inc>
 )
 
 target_link_libraries(azure-security-keyvault-keys PUBLIC Azure::azure-core)

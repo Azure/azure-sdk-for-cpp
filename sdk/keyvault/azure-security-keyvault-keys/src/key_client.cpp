@@ -6,8 +6,6 @@
 #include <azure/core/http/policies/policy.hpp>
 #include <azure/core/internal/http/pipeline.hpp>
 
-#include <azure/keyvault/shared/keyvault_shared.hpp>
-
 #include "azure/keyvault/keys/key_client.hpp"
 #include "private/cryptography_internal_access.hpp"
 #include "private/key_backup.hpp"
@@ -15,6 +13,7 @@
 #include "private/key_request_parameters.hpp"
 #include "private/key_serializers.hpp"
 #include "private/keyvault_protocol.hpp"
+#include "private/keyvault_urlScope.hpp"
 #include "private/package_version.hpp"
 
 #include <algorithm>
@@ -74,7 +73,7 @@ KeyClient::KeyClient(
   std::vector<std::unique_ptr<HttpPolicy>> perRetrypolicies;
   {
     Azure::Core::Credentials::TokenRequestContext const tokenContext
-        = {{_internal::UrlScope::GetScopeFromUrl(m_vaultUrl)}};
+        = {{_detail::UrlScope::GetScopeFromUrl(m_vaultUrl)}};
 
     perRetrypolicies.emplace_back(
         std::make_unique<BearerTokenAuthenticationPolicy>(credential, std::move(tokenContext)));

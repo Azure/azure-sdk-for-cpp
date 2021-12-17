@@ -45,6 +45,7 @@ set(
   AZURE_SECURITY_KEYVAULT_SECRETS_SOURCE
     src/private/package_version.hpp
     src/private/keyvault_protocol.hpp
+    src/private/keyvault_urlScope.hpp
     src/private/secret_constants.hpp
     src/private/secret_serializers.hpp
     src/keyvault_protocol.cpp
@@ -63,14 +64,6 @@ target_include_directories(
     PUBLIC
       $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/inc>
       $<INSTALL_INTERFACE:include>
-)
-
-# Include shared source code
-# NOTE: Use shared-code only within .cpp files. DO NEVER consume the shared-code from header files.
-target_include_directories(
-  azure-security-keyvault-secrets
-    PRIVATE
-      $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/../azure-security-keyvault-shared/inc>
 )
 
 target_link_libraries(azure-security-keyvault-secrets PUBLIC Azure::azure-core)
