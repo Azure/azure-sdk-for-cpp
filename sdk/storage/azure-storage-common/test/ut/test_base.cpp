@@ -34,20 +34,9 @@ namespace Azure { namespace Storage { namespace Test {
   constexpr static const char* AadClientIdValue = "";
   constexpr static const char* AadClientSecretValue = "";
 
-  std::string GetEnv(const std::string& name)
+  const std::string& StorageTest::StandardStorageConnectionString()
   {
-    const char* ret = std::getenv(name.data());
-    if (!ret)
-    {
-      throw std::runtime_error(
-          name + " is required to run the tests but not set as an environment variable.");
-    }
-    return std::string(ret);
-  }
-
-  const std::string& StandardStorageConnectionString()
-  {
-    const static std::string connectionString = []() -> std::string {
+    const static std::string connectionString = [&]() -> std::string {
       if (strlen(StandardStorageConnectionStringValue) != 0)
       {
         return StandardStorageConnectionStringValue;
@@ -57,9 +46,9 @@ namespace Azure { namespace Storage { namespace Test {
     return connectionString;
   }
 
-  const std::string& PremiumStorageConnectionString()
+  const std::string& StorageTest::PremiumStorageConnectionString()
   {
-    const static std::string connectionString = []() -> std::string {
+    const static std::string connectionString = [&]() -> std::string {
       if (strlen(PremiumStorageConnectionStringValue) != 0)
       {
         return PremiumStorageConnectionStringValue;
@@ -69,9 +58,9 @@ namespace Azure { namespace Storage { namespace Test {
     return connectionString;
   }
 
-  const std::string& BlobStorageConnectionString()
+  const std::string& StorageTest::BlobStorageConnectionString()
   {
-    const static std::string connectionString = []() -> std::string {
+    const static std::string connectionString = [&]() -> std::string {
       if (strlen(BlobStorageConnectionStringValue) != 0)
       {
         return BlobStorageConnectionStringValue;
@@ -81,9 +70,9 @@ namespace Azure { namespace Storage { namespace Test {
     return connectionString;
   }
 
-  const std::string& PremiumFileConnectionString()
+  const std::string& StorageTest::PremiumFileConnectionString()
   {
-    const static std::string connectionString = []() -> std::string {
+    const static std::string connectionString = [&]() -> std::string {
       if (strlen(PremiumFileConnectionStringValue) != 0)
       {
         return PremiumFileConnectionStringValue;
@@ -93,9 +82,9 @@ namespace Azure { namespace Storage { namespace Test {
     return connectionString;
   }
 
-  const std::string& AdlsGen2ConnectionString()
+  const std::string& StorageTest::AdlsGen2ConnectionString()
   {
-    const static std::string connectionString = []() -> std::string {
+    const static std::string connectionString = [&]() -> std::string {
       if (strlen(AdlsGen2ConnectionStringValue) != 0)
       {
         return AdlsGen2ConnectionStringValue;
@@ -105,9 +94,9 @@ namespace Azure { namespace Storage { namespace Test {
     return connectionString;
   }
 
-  const std::string& AadTenantId()
+  const std::string& StorageTest::AadTenantId()
   {
-    const static std::string connectionString = []() -> std::string {
+    const static std::string connectionString = [&]() -> std::string {
       if (strlen(AadTenantIdValue) != 0)
       {
         return AadTenantIdValue;
@@ -117,9 +106,9 @@ namespace Azure { namespace Storage { namespace Test {
     return connectionString;
   }
 
-  const std::string& AadClientId()
+  const std::string& StorageTest::AadClientId()
   {
-    const static std::string connectionString = []() -> std::string {
+    const static std::string connectionString = [&]() -> std::string {
       if (strlen(AadClientIdValue) != 0)
       {
         return AadClientIdValue;
@@ -129,9 +118,9 @@ namespace Azure { namespace Storage { namespace Test {
     return connectionString;
   }
 
-  const std::string& AadClientSecret()
+  const std::string& StorageTest::AadClientSecret()
   {
-    const static std::string connectionString = []() -> std::string {
+    const static std::string connectionString = [&]() -> std::string {
       if (strlen(AadClientSecretValue) != 0)
       {
         return AadClientSecretValue;
@@ -141,7 +130,9 @@ namespace Azure { namespace Storage { namespace Test {
     return connectionString;
   }
 
-  std::string AppendQueryParameters(const Azure::Core::Url& url, const std::string& queryParameters)
+  std::string StorageTest::AppendQueryParameters(
+      const Azure::Core::Url& url,
+      const std::string& queryParameters)
   {
     std::string absoluteUrl = url.GetAbsoluteUrl();
     if (queryParameters.empty())
@@ -178,7 +169,7 @@ namespace Azure { namespace Storage { namespace Test {
 
   static thread_local std::mt19937_64 random_generator(std::random_device{}());
 
-  uint64_t RandomInt(uint64_t minNumber, uint64_t maxNumber)
+  uint64_t StorageTest::RandomInt(uint64_t minNumber, uint64_t maxNumber)
   {
     std::uniform_int_distribution<uint64_t> distribution(minNumber, maxNumber);
     return distribution(random_generator);
@@ -191,7 +182,7 @@ namespace Azure { namespace Storage { namespace Test {
     return charset[distribution(random_generator)];
   }
 
-  std::string RandomString(size_t size)
+  std::string StorageTest::RandomString(size_t size)
   {
     std::string str;
     str.resize(size);
@@ -199,12 +190,35 @@ namespace Azure { namespace Storage { namespace Test {
     return str;
   }
 
-  std::string LowercaseRandomString(size_t size)
+  std::string StorageTest::GetStringOfSize(size_t size)
+  {
+    auto const testName = GetTestName();
+    auto const testNameSize = testName.size();
+    auto duplicationTimes = size / testNameSize;
+    auto leftToFill = size % testNameSize;
+    std::string str;
+
+    while (duplicationTimes != 0)
+    {
+      str.append(testName);
+      duplicationTimes -= 1;
+    }
+    while (leftToFill != 0)
+    {
+      // do % 10 to use only one digit per appending
+      str.append(std::to_string(leftToFill % 10));
+      leftToFill -= 1;
+    }
+
+    return str;
+  }
+
+  std::string StorageTest::LowercaseRandomString(size_t size)
   {
     return Azure::Core::_internal::StringExtensions::ToLower(RandomString(size));
   }
 
-  Storage::Metadata RandomMetadata(size_t size)
+  Storage::Metadata StorageTest::RandomMetadata(size_t size)
   {
     Storage::Metadata result;
     for (size_t i = 0; i < size; ++i)
@@ -214,7 +228,7 @@ namespace Azure { namespace Storage { namespace Test {
     return result;
   }
 
-  void RandomBuffer(char* buffer, size_t length)
+  void StorageTest::RandomBuffer(char* buffer, size_t length)
   {
     char* start_addr = buffer;
     char* end_addr = buffer + length;
@@ -239,7 +253,7 @@ namespace Azure { namespace Storage { namespace Test {
     }
   }
 
-  std::vector<uint8_t> ReadFile(const std::string& filename)
+  std::vector<uint8_t> StorageTest::ReadFile(const std::string& filename)
   {
     FILE* fin = fopen(filename.data(), "rb");
     if (!fin)
@@ -259,9 +273,9 @@ namespace Azure { namespace Storage { namespace Test {
     return fileContent;
   }
 
-  void DeleteFile(const std::string& filename) { std::remove(filename.data()); }
+  void StorageTest::DeleteFile(const std::string& filename) { std::remove(filename.data()); }
 
-  std::vector<uint8_t> RandomBuffer(size_t length)
+  std::vector<uint8_t> StorageTest::RandomBuffer(size_t length)
   {
     std::vector<uint8_t> result(length);
     char* dataPtr = reinterpret_cast<char*>(&result[0]);
@@ -269,7 +283,7 @@ namespace Azure { namespace Storage { namespace Test {
     return result;
   }
 
-  std::string InferSecondaryUrl(const std::string primaryUrl)
+  std::string StorageTest::InferSecondaryUrl(const std::string primaryUrl)
   {
     Azure::Core::Url secondaryUri(primaryUrl);
     std::string primaryHost = secondaryUri.GetHost();
@@ -280,12 +294,7 @@ namespace Azure { namespace Storage { namespace Test {
     return secondaryUri.GetAbsoluteUrl();
   }
 
-  bool IsValidTime(const Azure::DateTime& datetime)
-  {
-    // We assume datetime within a week is valid.
-    const auto minTime = std::chrono::system_clock::now() - std::chrono::hours(24 * 7);
-    const auto maxTime = std::chrono::system_clock::now() + std::chrono::hours(24 * 7);
-    return datetime > minTime && datetime < maxTime;
-  }
+  const Azure::ETag StorageTest::DummyETag("0x8D83B58BDF51D75");
+  const Azure::ETag StorageTest::DummyETag2("0x8D812645BFB0CDE");
 
 }}} // namespace Azure::Storage::Test

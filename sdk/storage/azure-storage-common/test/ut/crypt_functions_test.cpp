@@ -15,7 +15,7 @@ namespace Azure { namespace Storage { namespace Test {
     return std::vector<uint8_t>(start, start + strlen(text));
   }
 
-  TEST(CryptFunctionsTest, HmacSha256)
+  TEST_F(CryptFunctionsTest, HmacSha256)
   {
     std::string key = "8CwtGFF1mGR4bPEP9eZ0x1fxKiQ3Ca5N";
     std::vector<uint8_t> binaryKey(key.begin(), key.end());
@@ -35,7 +35,7 @@ namespace Azure { namespace Storage { namespace Test {
     return instance.Final(ptr, data.length());
   }
 
-  TEST(CryptFunctionsTest, Crc64Hash_Basic)
+  TEST_F(CryptFunctionsTest, Crc64Hash_Basic)
   {
     Crc64Hash crc64empty;
     EXPECT_EQ(Azure::Core::Convert::Base64Encode(crc64empty.Final()), "AAAAAAAAAAA=");
@@ -111,7 +111,7 @@ namespace Azure { namespace Storage { namespace Test {
         crc64Single.Final(reinterpret_cast<const uint8_t*>(allData.data()), allData.size()));
   }
 
-  TEST(CryptFunctionsTest, Crc64Hash_ExpectThrow)
+  TEST_F(CryptFunctionsTest, Crc64Hash_ExpectThrow)
   {
     std::string data = "";
     const uint8_t* ptr = reinterpret_cast<const uint8_t*>(data.data());
@@ -135,7 +135,7 @@ namespace Azure { namespace Storage { namespace Test {
 #endif
   }
 
-  TEST(CryptFunctionsTest, Crc64Hash_CtorDtor)
+  TEST_F(CryptFunctionsTest, Crc64Hash_CtorDtor)
   {
     {
       Crc64Hash instance;

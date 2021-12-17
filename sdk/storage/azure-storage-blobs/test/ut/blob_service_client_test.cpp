@@ -6,7 +6,7 @@
 #include <azure/identity/client_secret_credential.hpp>
 #include <azure/storage/blobs.hpp>
 
-#include "test_base.hpp"
+#include "test/ut/test_base.hpp"
 
 namespace Azure { namespace Storage { namespace Blobs { namespace Models {
 
@@ -70,21 +70,49 @@ namespace Azure { namespace Storage { namespace Blobs { namespace Models {
 
 namespace Azure { namespace Storage { namespace Test {
 
-  class BlobServiceClientTest : public ::testing::Test {
+  class BlobServiceClientTest : public Azure::Storage::Test::StorageTest {
+
+  private:
+    std::unique_ptr<Azure::Storage::Blobs::BlobServiceClient> m_client;
+
   protected:
-    BlobServiceClientTest()
-        : m_blobServiceClient(Azure::Storage::Blobs::BlobServiceClient::CreateFromConnectionString(
-            StandardStorageConnectionString()))
+    // Required to rename the test propertly once the test is started.
+    // We can only know the test instance name until the test instance is run.
+    Azure::Storage::Blobs::BlobServiceClient const& GetClientForTest(std::string const& testName)
     {
+      // set the interceptor for the current test
+      m_testContext.RenameTest(testName);
+      return *m_client;
     }
 
-    Azure::Storage::Blobs::BlobServiceClient m_blobServiceClient;
+    Azure::Storage::Blobs::BlobServiceClient const& GetDataLakeClientService()
+    {
+      // set the interceptor for the current test
+      auto options = InitClientOptions<Azure::Storage::Blobs::BlobClientOptions>();
+      m_client = std::make_unique<Azure::Storage::Blobs::BlobServiceClient>(
+          Azure::Storage::Blobs::BlobServiceClient::CreateFromConnectionString(
+              AdlsGen2ConnectionString(), options));
+      return *m_client;
+    }
+
+    virtual void SetUp() override
+    {
+      StorageTest::SetUp();
+
+      auto options = InitClientOptions<Azure::Storage::Blobs::BlobClientOptions>();
+      m_client = std::make_unique<Azure::Storage::Blobs::BlobServiceClient>(
+          Azure::Storage::Blobs::BlobServiceClient::CreateFromConnectionString(
+              StandardStorageConnectionString(), options));
+    }
   };
 
   TEST_F(BlobServiceClientTest, ListContainers)
   {
-    const std::string prefix1 = "prefix1-" + LowercaseRandomString() + "-";
-    const std::string prefix2 = "prefix2-" + LowercaseRandomString() + "-";
+    const std::string testName = GetTestNameLowerCase();
+    auto client = GetClientForTest(testName);
+
+    const std::string prefix1 = testName + "-prefix1-";
+    const std::string prefix2 = testName + "-prefix2-";
 
     std::set<std::string> p1Containers;
     std::set<std::string> p2Containers;
@@ -92,16 +120,16 @@ namespace Azure { namespace Storage { namespace Test {
 
     for (int i = 0; i < 5; ++i)
     {
-      std::string containerName = prefix1 + LowercaseRandomString();
-      auto containerClient = m_blobServiceClient.GetBlobContainerClient(containerName);
+      std::string containerName = prefix1 + std::to_string(i);
+      auto containerClient = client.GetBlobContainerClient(containerName);
       containerClient.Create();
       p1Containers.insert(containerName);
       p1p2Containers.insert(containerName);
     }
     for (int i = 0; i < 5; ++i)
     {
-      std::string containerName = prefix2 + LowercaseRandomString();
-      auto containerClient = m_blobServiceClient.GetBlobContainerClient(containerName);
+      std::string containerName = prefix2 + std::to_string(i);
+      auto containerClient = client.GetBlobContainerClient(containerName);
       containerClient.Create();
       p2Containers.insert(containerName);
       p1p2Containers.insert(containerName);
@@ -110,7 +138,7 @@ namespace Azure { namespace Storage { namespace Test {
     Azure::Storage::Blobs::ListBlobContainersOptions options;
     options.PageSizeHint = 4;
     std::set<std::string> listContainers;
-    for (auto pageResult = m_blobServiceClient.ListBlobContainers(options); pageResult.HasPage();
+    for (auto pageResult = client.ListBlobContainers(options); pageResult.HasPage();
          pageResult.MoveToNextPage())
     {
       EXPECT_FALSE(pageResult.RawResponse->GetHeaders().at(_internal::HttpHeaderRequestId).empty());
@@ -129,9 +157,10 @@ namespace Azure { namespace Storage { namespace Test {
         p1p2Containers.begin(),
         p1p2Containers.end()));
 
+    // List with prefix
     options.Prefix = prefix1;
     listContainers.clear();
-    for (auto pageResult = m_blobServiceClient.ListBlobContainers(options); pageResult.HasPage();
+    for (auto pageResult = client.ListBlobContainers(options); pageResult.HasPage();
          pageResult.MoveToNextPage())
     {
       EXPECT_FALSE(pageResult.RawResponse->GetHeaders().at(_internal::HttpHeaderRequestId).empty());
@@ -156,16 +185,20 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_TRUE(std::includes(
         listContainers.begin(), listContainers.end(), p1Containers.begin(), p1Containers.end()));
 
+    // Remove all containers
     for (const auto& container : p1p2Containers)
     {
-      auto container_client = m_blobServiceClient.GetBlobContainerClient(container);
+      auto container_client = client.GetBlobContainerClient(container);
       container_client.Delete();
     }
   }
 
   TEST_F(BlobServiceClientTest, GetProperties)
   {
-    auto ret = m_blobServiceClient.GetProperties();
+    const std::string testName = GetTestName();
+    auto client = GetClientForTest(testName);
+
+    auto ret = client.GetProperties();
     auto properties = ret.Value;
     auto logging = properties.Logging;
     EXPECT_FALSE(logging.Version.empty());
@@ -200,7 +233,10 @@ namespace Azure { namespace Storage { namespace Test {
 
   TEST_F(BlobServiceClientTest, SetProperties)
   {
-    auto getServicePropertiesResult = m_blobServiceClient.GetProperties().Value;
+    const std::string testName = GetTestName();
+    auto client = GetClientForTest(testName);
+
+    auto getServicePropertiesResult = client.GetProperties().Value;
     Blobs::Models::BlobServiceProperties properties;
     properties.Logging = getServicePropertiesResult.Logging;
     properties.HourMetrics = getServicePropertiesResult.HourMetrics;
@@ -253,12 +289,12 @@ namespace Azure { namespace Storage { namespace Test {
     properties.DeleteRetentionPolicy.IsEnabled = true;
     properties.DeleteRetentionPolicy.Days = 7;
 
-    EXPECT_NO_THROW(m_blobServiceClient.SetProperties(properties));
+    EXPECT_NO_THROW(client.SetProperties(properties));
 
     // It takes some time before the new properties comes into effect.
     using namespace std::chrono_literals;
-    std::this_thread::sleep_for(10s);
-    auto downloadedProperties = m_blobServiceClient.GetProperties().Value;
+    TestSleep(10s);
+    auto downloadedProperties = client.GetProperties().Value;
     EXPECT_EQ(downloadedProperties.Logging.Version, properties.Logging.Version);
     EXPECT_EQ(downloadedProperties.Logging.Delete, properties.Logging.Delete);
     EXPECT_EQ(downloadedProperties.Logging.Read, properties.Logging.Read);
@@ -311,30 +347,39 @@ namespace Azure { namespace Storage { namespace Test {
 
     EXPECT_EQ(downloadedProperties.DeleteRetentionPolicy, properties.DeleteRetentionPolicy);
 
-    auto res = m_blobServiceClient.SetProperties(originalProperties);
+    auto res = client.SetProperties(originalProperties);
   }
 
   TEST_F(BlobServiceClientTest, AccountInfo)
   {
-    auto accountInfo = m_blobServiceClient.GetAccountInfo().Value;
+    const std::string testName = GetTestName();
+    auto client = GetClientForTest(testName);
+
+    auto accountInfo = client.GetAccountInfo().Value;
     EXPECT_FALSE(accountInfo.SkuName.ToString().empty());
     EXPECT_FALSE(accountInfo.AccountKind.ToString().empty());
     EXPECT_FALSE(accountInfo.IsHierarchicalNamespaceEnabled);
 
-    auto dataLakeServiceClient
-        = Blobs::BlobServiceClient::CreateFromConnectionString(AdlsGen2ConnectionString());
+    auto dataLakeServiceClient = GetDataLakeClientService();
     accountInfo = dataLakeServiceClient.GetAccountInfo().Value;
     EXPECT_TRUE(accountInfo.IsHierarchicalNamespaceEnabled);
   }
 
   TEST_F(BlobServiceClientTest, Statistics)
   {
-    EXPECT_THROW(m_blobServiceClient.GetStatistics(), StorageException);
+    const std::string testName = GetTestName();
+    auto client = GetClientForTest(testName);
+
+    EXPECT_THROW(client.GetStatistics(), StorageException);
 
     auto keyCredential
         = _internal::ParseConnectionString(StandardStorageConnectionString()).KeyCredential;
-    auto secondaryServiceClient
-        = Blobs::BlobServiceClient(InferSecondaryUrl(m_blobServiceClient.GetUrl()), keyCredential);
+
+    auto secondaryServiceClient = Blobs::BlobServiceClient(
+        InferSecondaryUrl(client.GetUrl()),
+        keyCredential,
+        InitClientOptions<Azure::Storage::Blobs::BlobClientOptions>());
+
     auto serviceStatistics = secondaryServiceClient.GetStatistics().Value;
     EXPECT_FALSE(serviceStatistics.GeoReplication.Status.ToString().empty());
     if (serviceStatistics.GeoReplication.LastSyncedOn.HasValue())
@@ -345,18 +390,24 @@ namespace Azure { namespace Storage { namespace Test {
 
   TEST_F(BlobServiceClientTest, CreateDeleteBlobContainer)
   {
-    std::string containerName = LowercaseRandomString();
-    auto containerClient = m_blobServiceClient.CreateBlobContainer(containerName);
+    const std::string testName = GetTestNameLowerCase();
+    auto client = GetClientForTest(testName);
+
+    std::string containerName = testName;
+    auto containerClient = client.CreateBlobContainer(containerName);
     EXPECT_NO_THROW(containerClient.Value.GetProperties());
 
-    m_blobServiceClient.DeleteBlobContainer(containerName);
+    client.DeleteBlobContainer(containerName);
     EXPECT_THROW(containerClient.Value.GetProperties(), StorageException);
   }
 
   TEST_F(BlobServiceClientTest, UndeleteBlobContainer)
   {
-    std::string containerName = LowercaseRandomString();
-    auto containerClient = m_blobServiceClient.GetBlobContainerClient(containerName);
+    const std::string testName = GetTestNameLowerCase();
+    auto client = GetClientForTest(testName);
+
+    std::string containerName = testName;
+    auto containerClient = client.GetBlobContainerClient(containerName);
     containerClient.Create();
     containerClient.Delete();
 
@@ -365,7 +416,7 @@ namespace Azure { namespace Storage { namespace Test {
       Azure::Storage::Blobs::ListBlobContainersOptions options;
       options.Prefix = containerName;
       options.Include = Blobs::Models::ListBlobContainersIncludeFlags::Deleted;
-      for (auto pageResult = m_blobServiceClient.ListBlobContainers(options); pageResult.HasPage();
+      for (auto pageResult = client.ListBlobContainers(options); pageResult.HasPage();
            pageResult.MoveToNextPage())
       {
         for (const auto& container : pageResult.BlobContainers)
@@ -391,7 +442,7 @@ namespace Azure { namespace Storage { namespace Test {
     {
       try
       {
-        m_blobServiceClient.UndeleteBlobContainer(
+        client.UndeleteBlobContainer(
             deletedContainerItem.Name, deletedContainerItem.VersionId.Value());
         break;
       }
@@ -400,7 +451,7 @@ namespace Azure { namespace Storage { namespace Test {
         if (e.StatusCode == Azure::Core::Http::HttpStatusCode::Conflict
             && e.ReasonPhrase == "The specified container is being deleted.")
         {
-          std::this_thread::sleep_for(std::chrono::seconds(1));
+          TestSleep(1s);
         }
         else
         {
@@ -413,14 +464,20 @@ namespace Azure { namespace Storage { namespace Test {
 
   TEST_F(BlobServiceClientTest, UserDelegationKey)
   {
+    const std::string testName = GetTestName();
+    auto client = GetClientForTest(testName);
+
     auto sasExpiresOn = std::chrono::system_clock::now() + std::chrono::minutes(60);
 
-    auto blobServiceClient1 = Blobs::BlobServiceClient(
-        m_blobServiceClient.GetUrl(),
-        std::make_shared<Azure::Identity::ClientSecretCredential>(
-            AadTenantId(), AadClientId(), AadClientSecret()));
+    std::shared_ptr<Azure::Core::Credentials::TokenCredential> credential
+        = std::make_shared<Azure::Identity::ClientSecretCredential>(
+            AadTenantId(), AadClientId(), AadClientSecret());
+    Blobs::BlobClientOptions options;
 
-    auto userDelegationKey = blobServiceClient1.GetUserDelegationKey(sasExpiresOn).Value;
+    auto blobServiceClient1 = InitTestClient<Blobs::BlobServiceClient, Blobs::BlobClientOptions>(
+        client.GetUrl(), &credential, options);
+
+    auto userDelegationKey = blobServiceClient1->GetUserDelegationKey(sasExpiresOn).Value;
 
     EXPECT_FALSE(userDelegationKey.SignedObjectId.empty());
     EXPECT_FALSE(userDelegationKey.SignedTenantId.empty());
@@ -430,5 +487,4 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_FALSE(userDelegationKey.SignedVersion.empty());
     EXPECT_FALSE(userDelegationKey.Value.empty());
   }
-
 }}} // namespace Azure::Storage::Test
