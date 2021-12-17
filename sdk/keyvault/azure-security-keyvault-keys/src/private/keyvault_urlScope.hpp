@@ -3,7 +3,7 @@
 
 /**
  * @file
- * @brief Shared code between Key Vault services.
+ * @brief UrlScope definition.
  *
  */
 
