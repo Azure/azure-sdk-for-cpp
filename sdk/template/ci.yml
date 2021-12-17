@@ -33,7 +33,8 @@ stages:
       # projects generated from this ci.yml file don't set a coverage target
       # that is lower than the baseline defined in archetype-sdk-client.yml
       # Issue: https://github.com/Azure/azure-sdk-for-cpp/issues/3022
-      BranchCoverageTarget: 33
+      LineCoverageTarget: 75
+      BranchCoverageTarget: 55
       Artifacts:
         - Name: azure-template
           Path: azure-template
