@@ -45,8 +45,7 @@ ClientSecretCredential::ClientSecretCredential(
     std::string tenantId,
     std::string clientId,
     std::string clientSecret,
-    Core::Credentials::TokenCredentialOptions const& options
-    = Core::Credentials::TokenCredentialOptions())
+    Core::Credentials::TokenCredentialOptions const& options)
     : ClientSecretCredential(
         tenantId,
         clientId,
