@@ -98,15 +98,15 @@ namespace Azure { namespace Core { namespace Credentials {
    * @brief An exception that gets thrown when an authentication error occurs.
    */
   class AuthenticationException final : public std::exception {
-    std::string m_whatArg;
+    std::string m_what;
 
   public:
     /**
      * @brief Constructs `%AuthenticationException` with a message string.
      *
-     * @param whatArg The explanatory string.
+     * @param what The explanatory string.
      */
-    explicit AuthenticationException(std::string whatArg) : m_whatArg(std::move(whatArg)) {}
+    explicit AuthenticationException(std::string what) : m_what(std::move(what)) {}
 
     /**
      * Gets the explanatory string.
@@ -115,6 +115,6 @@ namespace Azure { namespace Core { namespace Credentials {
      *
      * @return C string with explanatory information.
      */
-    char const* what() const noexcept override { return m_whatArg.c_str(); }
+    char const* what() const noexcept override { return m_what.c_str(); }
   };
 }}} // namespace Azure::Core::Credentials
