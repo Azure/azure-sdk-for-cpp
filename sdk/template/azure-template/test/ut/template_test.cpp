@@ -13,3 +13,10 @@ TEST(Template, Basic)
 
   EXPECT_FALSE(templateClient.ClientVersion().empty());
 }
+
+TEST(Template, GetValue)
+{
+  TemplateClient templateClient;
+
+  EXPECT_GE(templateClient.GetValue(), 1);
+}

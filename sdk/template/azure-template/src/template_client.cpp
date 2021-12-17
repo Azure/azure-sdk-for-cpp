@@ -11,3 +11,5 @@ using namespace Azure::Template;
 using namespace Azure::Template::_detail;
 
 std::string TemplateClient::ClientVersion() const { return PackageVersion::ToString(); }
+
+int TemplateClient::GetValue() const { return 1; }
