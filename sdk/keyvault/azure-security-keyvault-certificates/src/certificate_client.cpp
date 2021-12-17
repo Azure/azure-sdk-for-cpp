@@ -6,9 +6,9 @@
 #include "private/certificate_constants.hpp"
 #include "private/certificate_serializers.hpp"
 #include "private/keyvault_certificates_common_request.hpp"
+#include "private/keyvault_urlScope.hpp"
 #include "private/package_version.hpp"
 #include <azure/core/base64.hpp>
-#include "private/keyvault_urlScope.hpp"
 
 #include <azure/core/credentials/credentials.hpp>
 #include <azure/core/http/http.hpp>
