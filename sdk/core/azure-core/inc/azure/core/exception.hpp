@@ -73,9 +73,9 @@ namespace Azure { namespace Core {
      * @note An Exception without an HTTP raw response represents an exception that happened
      * before sending the request to the server.
      *
-     * @param whatArg The explanatory string.
+     * @param what The explanatory string.
      */
-    explicit RequestFailedException(std::string const& whatArg) : std::runtime_error(whatArg) {}
+    explicit RequestFailedException(std::string const& what) : std::runtime_error(what) {}
 
     /**
      * @brief Constructs a new `%RequestFailedException` object with an HTTP raw response.
@@ -85,12 +85,12 @@ namespace Azure { namespace Core {
      * Service exception which derives from this exception uses its constructor to parse the HTTP
      * raw response adding the service specific values to the exception.
      *
-     * @param message The error description.
+     * @param what The explanatory string.
      * @param rawResponse The HTTP raw response from the service.
      */
     explicit RequestFailedException(
-        const std::string& message,
-        std::unique_ptr<Azure::Core::Http::RawResponse> rawResponse);
+        const std::string& what,
+        std::unique_ptr<Azure::Core::Http::RawResponse>& rawResponse);
 
     /**
      * @brief Constructs a new `%RequestFailedException` object with an HTTP raw response.
