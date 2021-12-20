@@ -3,23 +3,36 @@
 
 #include <azure/storage/files/datalake.hpp>
 
-#include "test_base.hpp"
+#include "test/ut/test_base.hpp"
 
 namespace Azure { namespace Storage { namespace Test {
 
-  class DataLakeServiceClientTest : public ::testing::Test {
+  class DataLakeServiceClientTest : public Azure::Storage::Test::StorageTest {
   protected:
-    static void SetUpTestSuite();
-    static void TearDownTestSuite();
+    std::shared_ptr<Files::DataLake::DataLakeServiceClient> m_dataLakeServiceClient;
+    std::vector<std::string> m_fileSystemNameSetA;
+    std::string m_fileSystemPrefixA;
+    std::vector<std::string> m_fileSystemNameSetB;
+    std::string m_fileSystemPrefixB;
 
-    static std::vector<Files::DataLake::Models::FileSystemItem> ListAllFileSystems(
+    virtual void SetUp() override;
+
+    virtual void TearDown() override
+    {
+      for (const auto& name : m_fileSystemNameSetA)
+      {
+        m_dataLakeServiceClient->GetFileSystemClient(name).Delete();
+      }
+      for (const auto& name : m_fileSystemNameSetB)
+      {
+        m_dataLakeServiceClient->GetFileSystemClient(name).Delete();
+      }
+
+      StorageTest::TearDown();
+    }
+
+    std::vector<Files::DataLake::Models::FileSystemItem> ListAllFileSystems(
         const std::string& prefix = std::string());
-
-    static std::shared_ptr<Files::DataLake::DataLakeServiceClient> m_dataLakeServiceClient;
-    static std::vector<std::string> m_fileSystemNameSetA;
-    static std::string m_fileSystemPrefixA;
-    static std::vector<std::string> m_fileSystemNameSetB;
-    static std::string m_fileSystemPrefixB;
   };
 
 }}} // namespace Azure::Storage::Test

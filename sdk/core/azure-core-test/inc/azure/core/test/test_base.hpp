@@ -89,7 +89,7 @@ namespace Azure { namespace Core { namespace Test {
     {
       std::string updated(src);
       std::replace(updated.begin(), updated.end(), '/', '-');
-      return updated;
+      return RemovePreffix(updated);
     }
 
     void SkipTest()
@@ -270,6 +270,8 @@ namespace Azure { namespace Core { namespace Test {
      */
     void SetUpTestBase(std::string const& baseRecordingPath)
     {
+      CHECK_SKIP_TEST();
+      
       // Init interceptor from PlayBackRecorder
       std::string recordingPath(baseRecordingPath);
       recordingPath.append("/recordings");
