@@ -68,12 +68,6 @@ RUN apt-get update \
     && apt-get clean -y \
     && rm -rf /var/lib/apt/lists/*
 
-#RUN cd / \
-#    && git clone https://github.com/microsoft/vcpkg.git \
-#    && cd vcpkg \
-#    && ./bootstrap-vcpkg.sh \
-#    && ./vcpkg install curl 
-
 RUN wget https://github.com/Kitware/CMake/releases/download/v3.20.2/cmake-3.20.2.tar.gz \
     && tar -zxvf cmake-3.20.2.tar.gz \
     && cd cmake-3.20.2 \

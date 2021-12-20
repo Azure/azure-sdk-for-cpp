@@ -32,9 +32,8 @@ az_vcpkg_integrate()
 if(BUILD_SOURCE_DEPS)
     GetFolderList(CERTIFICATES)
     foreach(oneFolder IN LISTS BUILD_FOLDERS)
-	    message("add folder ${oneFolder}")
-	    add_subdirectory(${oneFolder})
-        include_directories(${oneFolder})
+        message("add folder ${oneFolder}")
+        add_subdirectory(${oneFolder})
     endforeach()
 elseif(NOT AZ_ALL_LIBRARIES)
   find_package(azure-core-cpp "1.2.0" CONFIG QUIET)
@@ -71,7 +70,6 @@ target_include_directories(
       $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/inc>
       $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/../../../sdk/core/inc>
       $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/sdk/core/azure-core/inc>
-      $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/sdk/core/azure-core-test/inc>
       $<INSTALL_INTERFACE:include>
 )
 message($<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/inc)

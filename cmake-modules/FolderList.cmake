@@ -4,7 +4,6 @@ macro(GetFolderList project)
     if(${project} STREQUAL CERTIFICATES)
         DownloadDepVersion(sdk/core azure-core 1.2.1)
         DownloadDepVersion(sdk/identity azure-identity 1.1.0)
-        #list(APPEND BUILD_FOLDERS "sdk/keyvault/azure-security-keyvault-certificates")
     endif()
 
     list(REMOVE_DUPLICATES BUILD_FOLDERS)
@@ -46,7 +45,7 @@ macro(DownloadDepVersion DEP_FOLDER DEP_NAME DEP_VERSION)
     #make target folder
     file(MAKE_DIRECTORY ${CMAKE_SOURCE_DIR}/${DEP_FOLDER})
     # need a nicer way to copy/move folder 
-    # this is stupid, i need to archive the folder then extract at new location
+    # i need to archive the folder then extract at new location
     execute_process(COMMAND tar -cf  ${DOWNLOAD_FOLDER}/${DEP_NAME}.tar -C ${DOWNLOAD_FOLDER}/${DEP_NAME}/${DEP_PREFIX}-${DEP_NAME}_${DEP_VERSION}/${DEP_FOLDER} .)
     file(ARCHIVE_EXTRACT INPUT ${DOWNLOAD_FOLDER}/${DEP_NAME}.tar DESTINATION ${CMAKE_SOURCE_DIR}/${DEP_FOLDER})
     #cleanup
