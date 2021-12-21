@@ -14,6 +14,8 @@ namespace Azure { namespace Storage { namespace Test {
   {
     StorageTest::SetUp();
 
+    CHECK_SKIP_TEST();
+
     m_dataLakeServiceClient = std::make_shared<Files::DataLake::DataLakeServiceClient>(
         Files::DataLake::DataLakeServiceClient::CreateFromConnectionString(
             AdlsGen2ConnectionString(),

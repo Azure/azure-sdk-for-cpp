@@ -270,21 +270,19 @@ namespace Azure { namespace Core { namespace Test {
      */
     void SetUpTestBase(std::string const& baseRecordingPath)
     {
-      CHECK_SKIP_TEST();
-      
       // Init interceptor from PlayBackRecorder
       std::string recordingPath(baseRecordingPath);
-      recordingPath.append("/recordings");
+      recordingPath.append("/recordingss");
 
+      m_testContext.TestMode = Azure::Core::Test::InterceptorManager::GetTestMode();
       // Use the test info to init the test context and interceptor.
       auto testNameInfo = ::testing::UnitTest::GetInstance()->current_test_info();
-
       // set the interceptor for the current test
       m_testContext.RenameTest(
           Sanitize(testNameInfo->test_suite_name()), Sanitize(testNameInfo->name()));
       m_testContext.RecordingPath = recordingPath;
-      m_testContext.TestMode = Azure::Core::Test::InterceptorManager::GetTestMode();
       m_interceptor = std::make_unique<Azure::Core::Test::InterceptorManager>(m_testContext);
+
     }
 
     /**
