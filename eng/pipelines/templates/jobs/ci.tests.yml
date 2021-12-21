@@ -44,7 +44,9 @@ parameters:
   - name: UsePlatformContainer
     type: boolean
     default: false
-
+  - name: AZURE_LOG_LEVEL
+    type: string
+    default: ''
 jobs:
   - job:
     displayName: "Validate"
@@ -71,7 +73,7 @@ jobs:
     - name: AZURE_TEST_MODE
       value: "PLAYBACK"
     - name: AZURE_LOG_LEVEL
-      value: "verbose"
+      value: "parameters.AZURE_LOG_LEVEL"
     - ${{ each testEnvVar in parameters.TestEnv }}:
       - name: ${{ testEnvVar.Name }}
         value: ${{ testEnvVar.Value }}
@@ -139,7 +141,7 @@ jobs:
       - pwsh: |
           ctest `
             -C Debug `
-            -VV `
+            -V `
             --tests-regex '${{ parameters.CtestRegex }}' `
             --exclude-regex '${{ parameters.CtestExcludeRegex }}' `
             --no-compress-output `
