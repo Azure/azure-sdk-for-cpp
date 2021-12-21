@@ -272,7 +272,7 @@ namespace Azure { namespace Core { namespace Test {
     {
       // Init interceptor from PlayBackRecorder
       std::string recordingPath(baseRecordingPath);
-      recordingPath.append("/recordingss");
+      recordingPath.append("/recordings");
 
       m_testContext.TestMode = Azure::Core::Test::InterceptorManager::GetTestMode();
       // Use the test info to init the test context and interceptor.
@@ -282,7 +282,6 @@ namespace Azure { namespace Core { namespace Test {
           Sanitize(testNameInfo->test_suite_name()), Sanitize(testNameInfo->name()));
       m_testContext.RecordingPath = recordingPath;
       m_interceptor = std::make_unique<Azure::Core::Test::InterceptorManager>(m_testContext);
-
     }
 
     /**
