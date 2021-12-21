@@ -137,7 +137,7 @@ jobs:
       - pwsh: |
           ctest `
             -C Debug `
-            -V `
+            -VV `
             --tests-regex '${{ parameters.CtestRegex }}' `
             --exclude-regex '${{ parameters.CtestExcludeRegex }}' `
             --no-compress-output `
