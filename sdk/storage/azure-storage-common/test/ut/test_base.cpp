@@ -218,12 +218,12 @@ namespace Azure { namespace Storage { namespace Test {
     return Azure::Core::_internal::StringExtensions::ToLower(RandomString(size));
   }
 
-  Storage::Metadata StorageTest::RandomMetadata(size_t size)
+  Storage::Metadata StorageTest::GetMetadata(size_t size)
   {
     Storage::Metadata result;
     for (size_t i = 0; i < size; ++i)
     {
-      result["m" + LowercaseRandomString(5)] = RandomString(5);
+      result["meta" + std::to_string(i % 10)] = "value";
     }
     return result;
   }

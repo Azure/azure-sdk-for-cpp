@@ -10,19 +10,12 @@ namespace Azure { namespace Storage { namespace Test {
 
   const size_t FileSystemTestSize = 5;
 
-  void DataLakeServiceClientTest::SetUp()
+  void DataLakeServiceClientTest::CreateFileSystemList()
   {
-    StorageTest::SetUp();
-
-    CHECK_SKIP_TEST();
-
-    m_dataLakeServiceClient = std::make_shared<Files::DataLake::DataLakeServiceClient>(
-        Files::DataLake::DataLakeServiceClient::CreateFromConnectionString(
-            AdlsGen2ConnectionString(),
-            InitClientOptions<Files::DataLake::DataLakeClientOptions>()));
-
-    m_fileSystemPrefixA = GetFileSystemValidName() + "a";
-    m_fileSystemPrefixB = GetFileSystemValidName() + "b";
+    std::string const fileSystemName(GetFileSystemValidName());
+    std::string const prefix(fileSystemName.begin(), fileSystemName.end() - 2);
+    m_fileSystemPrefixA = prefix + "a";
+    m_fileSystemPrefixB = prefix + "b";
     m_fileSystemNameSetA.clear();
     m_fileSystemNameSetB.clear();
     for (size_t i = 0; i < FileSystemTestSize; ++i)
@@ -38,6 +31,18 @@ namespace Azure { namespace Storage { namespace Test {
         m_fileSystemNameSetB.emplace_back(std::move(name));
       }
     }
+  }
+
+  void DataLakeServiceClientTest::SetUp()
+  {
+    StorageTest::SetUp();
+
+    CHECK_SKIP_TEST();
+
+    m_dataLakeServiceClient = std::make_shared<Files::DataLake::DataLakeServiceClient>(
+        Files::DataLake::DataLakeServiceClient::CreateFromConnectionString(
+            AdlsGen2ConnectionString(),
+            InitClientOptions<Files::DataLake::DataLakeClientOptions>()));
   }
 
   std::vector<Files::DataLake::Models::FileSystemItem>
@@ -60,6 +65,7 @@ namespace Azure { namespace Storage { namespace Test {
 
   TEST_F(DataLakeServiceClientTest, ListFileSystemsSegment)
   {
+    CreateFileSystemList();
     {
       // Normal list without prefix.
       auto result = ListAllFileSystems();

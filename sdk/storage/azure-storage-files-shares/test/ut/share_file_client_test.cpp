@@ -119,8 +119,8 @@ namespace Azure { namespace Storage { namespace Test {
 
   TEST_F(FileShareFileClientTest, FileMetadata)
   {
-    auto metadata1 = RandomMetadata();
-    auto metadata2 = RandomMetadata();
+    auto metadata1 = GetMetadata();
+    auto metadata2 = GetMetadata();
     {
       // Set/Get Metadata works
       EXPECT_NO_THROW(m_fileClient->SetMetadata(metadata1));
@@ -376,7 +376,7 @@ namespace Azure { namespace Storage { namespace Test {
       options.TransferOptions.ChunkSize = 512_KB;
       options.TransferOptions.Concurrency = concurrency;
       options.HttpHeaders = GetInterestingHttpHeaders();
-      options.Metadata = RandomMetadata();
+      options.Metadata = GetMetadata();
 
       auto res = fileClient.UploadFrom(fileContent.data(), static_cast<size_t>(fileSize), options);
 
@@ -398,7 +398,7 @@ namespace Azure { namespace Storage { namespace Test {
       options.TransferOptions.ChunkSize = 512_KB;
       options.TransferOptions.Concurrency = concurrency;
       options.HttpHeaders = GetInterestingHttpHeaders();
-      options.Metadata = RandomMetadata();
+      options.Metadata = GetMetadata();
 
       std::string tempFilename = RandomString();
       {

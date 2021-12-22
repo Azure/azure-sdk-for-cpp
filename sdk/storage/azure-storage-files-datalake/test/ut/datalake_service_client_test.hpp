@@ -17,6 +17,8 @@ namespace Azure { namespace Storage { namespace Test {
 
     virtual void SetUp() override;
 
+    void CreateFileSystemList();
+
     virtual void TearDown() override
     {
       for (const auto& name : m_fileSystemNameSetA)

@@ -59,8 +59,8 @@ namespace Azure { namespace Storage { namespace Test {
 
   TEST_F(DataLakePathClientTest, PathMetadata)
   {
-    auto metadata1 = RandomMetadata();
-    auto metadata2 = RandomMetadata();
+    auto metadata1 = GetMetadata();
+    auto metadata2 = GetMetadata();
     {
       // Set/Get Metadata works
       EXPECT_NO_THROW(m_pathClient->SetMetadata(metadata1));
@@ -91,8 +91,8 @@ namespace Azure { namespace Storage { namespace Test {
 
   TEST_F(DataLakePathClientTest, GetDataLakePathPropertiesResult)
   {
-    auto metadata1 = RandomMetadata();
-    auto metadata2 = RandomMetadata();
+    auto metadata1 = GetMetadata();
+    auto metadata2 = GetMetadata();
     {
       // Get Metadata via properties works
       EXPECT_NO_THROW(m_pathClient->SetMetadata(metadata1));

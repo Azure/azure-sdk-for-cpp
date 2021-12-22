@@ -3,7 +3,7 @@
     {
       "Headers": {
         "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Linux 5.4.0-1063-azure x86_64 #66~18.04.1-Ubuntu SMP Thu Oct 21 09:59:28 UTC 2021)",
-        "x-ms-client-request-id": "e7e4b92f-6aa5-4901-4089-b0ea834e5725",
+        "x-ms-client-request-id": "68391c33-3e34-4626-592d-91493d99086d",
         "x-ms-version": "2020-02-10"
       },
       "Method": "PUT",
@@ -12,20 +12,20 @@
         "REASON_PHRASE": "Created",
         "STATUS_CODE": "201",
         "content-length": "0",
-        "date": "Fri, 17 Dec 2021 01:03:18 GMT",
-        "etag": "\"0x8D9C0F903AA8CF9\"",
-        "last-modified": "Fri, 17 Dec 2021 01:03:19 GMT",
+        "date": "Wed, 22 Dec 2021 01:18:27 GMT",
+        "etag": "\"0x8D9C4E8F5BBA97E\"",
+        "last-modified": "Wed, 22 Dec 2021 01:18:28 GMT",
         "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
-        "x-ms-client-request-id": "e7e4b92f-6aa5-4901-4089-b0ea834e5725",
-        "x-ms-request-id": "da662ff2-801e-003b-38e1-f2804b000000",
+        "x-ms-client-request-id": "68391c33-3e34-4626-592d-91493d99086d",
+        "x-ms-request-id": "7531e0bd-e01e-002d-59d1-f6769c000000",
         "x-ms-version": "2020-02-10"
       },
-      "Url": "https://REDACTED.blob.core.windows.net/datalakeserviceclienttestlistfilesystemssegmenta0?restype=container"
+      "Url": "https://REDACTED.blob.core.windows.net/datalakeserviceclienttestlistfilesystemssegmea0?restype=container"
     },
     {
       "Headers": {
         "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Linux 5.4.0-1063-azure x86_64 #66~18.04.1-Ubuntu SMP Thu Oct 21 09:59:28 UTC 2021)",
-        "x-ms-client-request-id": "c8e74075-adb3-482c-5135-9a81793174d1",
+        "x-ms-client-request-id": "41fc57d5-e95f-4221-588d-9b5fdeb27a12",
         "x-ms-version": "2020-02-10"
       },
       "Method": "PUT",
@@ -34,20 +34,20 @@
         "REASON_PHRASE": "Created",
         "STATUS_CODE": "201",
         "content-length": "0",
-        "date": "Fri, 17 Dec 2021 01:03:18 GMT",
-        "etag": "\"0x8D9C0F903B49D99\"",
-        "last-modified": "Fri, 17 Dec 2021 01:03:19 GMT",
+        "date": "Wed, 22 Dec 2021 01:18:27 GMT",
+        "etag": "\"0x8D9C4E8F5C40CB1\"",
+        "last-modified": "Wed, 22 Dec 2021 01:18:28 GMT",
         "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
-        "x-ms-client-request-id": "c8e74075-adb3-482c-5135-9a81793174d1",
-        "x-ms-request-id": "da66301c-801e-003b-5ee1-f2804b000000",
+        "x-ms-client-request-id": "41fc57d5-e95f-4221-588d-9b5fdeb27a12",
+        "x-ms-request-id": "7531e0cd-e01e-002d-66d1-f6769c000000",
         "x-ms-version": "2020-02-10"
       },
-      "Url": "https://REDACTED.blob.core.windows.net/datalakeserviceclienttestlistfilesystemssegmentb0?restype=container"
+      "Url": "https://REDACTED.blob.core.windows.net/datalakeserviceclienttestlistfilesystemssegmeb0?restype=container"
     },
     {
       "Headers": {
         "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Linux 5.4.0-1063-azure x86_64 #66~18.04.1-Ubuntu SMP Thu Oct 21 09:59:28 UTC 2021)",
-        "x-ms-client-request-id": "8e4971b5-8ef4-4b87-6c74-3715a7f0d8cd",
+        "x-ms-client-request-id": "f2797fa6-a8f9-4a84-420c-88d9d8408516",
         "x-ms-version": "2020-02-10"
       },
       "Method": "PUT",
@@ -56,20 +56,20 @@
         "REASON_PHRASE": "Created",
         "STATUS_CODE": "201",
         "content-length": "0",
-        "date": "Fri, 17 Dec 2021 01:03:18 GMT",
-        "etag": "\"0x8D9C0F903B894A0\"",
-        "last-modified": "Fri, 17 Dec 2021 01:03:19 GMT",
+        "date": "Wed, 22 Dec 2021 01:18:27 GMT",
+        "etag": "\"0x8D9C4E8F5C7DCB9\"",
+        "last-modified": "Wed, 22 Dec 2021 01:18:28 GMT",
         "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
-        "x-ms-client-request-id": "8e4971b5-8ef4-4b87-6c74-3715a7f0d8cd",
-        "x-ms-request-id": "da66302b-801e-003b-69e1-f2804b000000",
+        "x-ms-client-request-id": "f2797fa6-a8f9-4a84-420c-88d9d8408516",
+        "x-ms-request-id": "7531e0d6-e01e-002d-6cd1-f6769c000000",
         "x-ms-version": "2020-02-10"
       },
-      "Url": "https://REDACTED.blob.core.windows.net/datalakeserviceclienttestlistfilesystemssegmenta1?restype=container"
+      "Url": "https://REDACTED.blob.core.windows.net/datalakeserviceclienttestlistfilesystemssegmea1?restype=container"
     },
     {
       "Headers": {
         "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Linux 5.4.0-1063-azure x86_64 #66~18.04.1-Ubuntu SMP Thu Oct 21 09:59:28 UTC 2021)",
-        "x-ms-client-request-id": "603a48ae-7e2d-4e25-6e9a-d833d17c9f6f",
+        "x-ms-client-request-id": "64c0f4c9-31a7-4499-7485-83f2faeaeeab",
         "x-ms-version": "2020-02-10"
       },
       "Method": "PUT",
@@ -78,20 +78,20 @@
         "REASON_PHRASE": "Created",
         "STATUS_CODE": "201",
         "content-length": "0",
-        "date": "Fri, 17 Dec 2021 01:03:18 GMT",
-        "etag": "\"0x8D9C0F903BC649D\"",
-        "last-modified": "Fri, 17 Dec 2021 01:03:19 GMT",
+        "date": "Wed, 22 Dec 2021 01:18:27 GMT",
+        "etag": "\"0x8D9C4E8F5CBD3C3\"",
+        "last-modified": "Wed, 22 Dec 2021 01:18:28 GMT",
         "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
-        "x-ms-client-request-id": "603a48ae-7e2d-4e25-6e9a-d833d17c9f6f",
-        "x-ms-request-id": "da663037-801e-003b-74e1-f2804b000000",
+        "x-ms-client-request-id": "64c0f4c9-31a7-4499-7485-83f2faeaeeab",
+        "x-ms-request-id": "7531e0dc-e01e-002d-70d1-f6769c000000",
         "x-ms-version": "2020-02-10"
       },
-      "Url": "https://REDACTED.blob.core.windows.net/datalakeserviceclienttestlistfilesystemssegmentb1?restype=container"
+      "Url": "https://REDACTED.blob.core.windows.net/datalakeserviceclienttestlistfilesystemssegmeb1?restype=container"
     },
     {
       "Headers": {
         "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Linux 5.4.0-1063-azure x86_64 #66~18.04.1-Ubuntu SMP Thu Oct 21 09:59:28 UTC 2021)",
-        "x-ms-client-request-id": "cafdd072-8ebd-4def-41e7-d46042922945",
+        "x-ms-client-request-id": "c263b723-a7b1-412f-5926-6cbcfda67d20",
         "x-ms-version": "2020-02-10"
       },
       "Method": "PUT",
@@ -100,20 +100,20 @@
         "REASON_PHRASE": "Created",
         "STATUS_CODE": "201",
         "content-length": "0",
-        "date": "Fri, 17 Dec 2021 01:03:18 GMT",
-        "etag": "\"0x8D9C0F903C0349B\"",
-        "last-modified": "Fri, 17 Dec 2021 01:03:19 GMT",
+        "date": "Wed, 22 Dec 2021 01:18:28 GMT",
+        "etag": "\"0x8D9C4E8F5D0DC12\"",
+        "last-modified": "Wed, 22 Dec 2021 01:18:28 GMT",
         "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
-        "x-ms-client-request-id": "cafdd072-8ebd-4def-41e7-d46042922945",
-        "x-ms-request-id": "da663041-801e-003b-7de1-f2804b000000",
+        "x-ms-client-request-id": "c263b723-a7b1-412f-5926-6cbcfda67d20",
+        "x-ms-request-id": "7531e0e7-e01e-002d-76d1-f6769c000000",
         "x-ms-version": "2020-02-10"
       },
-      "Url": "https://REDACTED.blob.core.windows.net/datalakeserviceclienttestlistfilesystemssegmenta2?restype=container"
+      "Url": "https://REDACTED.blob.core.windows.net/datalakeserviceclienttestlistfilesystemssegmea2?restype=container"
     },
     {
       "Headers": {
         "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Linux 5.4.0-1063-azure x86_64 #66~18.04.1-Ubuntu SMP Thu Oct 21 09:59:28 UTC 2021)",
-        "x-ms-client-request-id": "5a1894e1-36af-4858-445d-f1c95dc1937d",
+        "x-ms-client-request-id": "7bac858a-8b2b-42f0-6895-bf5e2155ac59",
         "x-ms-version": "2020-02-10"
       },
       "Method": "PUT",
@@ -122,20 +122,20 @@
         "REASON_PHRASE": "Created",
         "STATUS_CODE": "201",
         "content-length": "0",
-        "date": "Fri, 17 Dec 2021 01:03:18 GMT",
-        "etag": "\"0x8D9C0F903C42BA6\"",
-        "last-modified": "Fri, 17 Dec 2021 01:03:19 GMT",
+        "date": "Wed, 22 Dec 2021 01:18:28 GMT",
+        "etag": "\"0x8D9C4E8F5D4FA29\"",
+        "last-modified": "Wed, 22 Dec 2021 01:18:28 GMT",
         "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
-        "x-ms-client-request-id": "5a1894e1-36af-4858-445d-f1c95dc1937d",
-        "x-ms-request-id": "da66304c-801e-003b-06e1-f2804b000000",
+        "x-ms-client-request-id": "7bac858a-8b2b-42f0-6895-bf5e2155ac59",
+        "x-ms-request-id": "7531e0f1-e01e-002d-7cd1-f6769c000000",
         "x-ms-version": "2020-02-10"
       },
-      "Url": "https://REDACTED.blob.core.windows.net/datalakeserviceclienttestlistfilesystemssegmentb2?restype=container"
+      "Url": "https://REDACTED.blob.core.windows.net/datalakeserviceclienttestlistfilesystemssegmeb2?restype=container"
     },
     {
       "Headers": {
         "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Linux 5.4.0-1063-azure x86_64 #66~18.04.1-Ubuntu SMP Thu Oct 21 09:59:28 UTC 2021)",
-        "x-ms-client-request-id": "64898b77-0456-4251-79c3-fa03e0109ebd",
+        "x-ms-client-request-id": "9c91b067-15a4-491c-4b6c-549291231801",
         "x-ms-version": "2020-02-10"
       },
       "Method": "PUT",
@@ -144,20 +144,20 @@
         "REASON_PHRASE": "Created",
         "STATUS_CODE": "201",
         "content-length": "0",
-        "date": "Fri, 17 Dec 2021 01:03:18 GMT",
-        "etag": "\"0x8D9C0F903C7FBA2\"",
-        "last-modified": "Fri, 17 Dec 2021 01:03:19 GMT",
+        "date": "Wed, 22 Dec 2021 01:18:28 GMT",
+        "etag": "\"0x8D9C4E8F5D8F139\"",
+        "last-modified": "Wed, 22 Dec 2021 01:18:28 GMT",
         "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
-        "x-ms-client-request-id": "64898b77-0456-4251-79c3-fa03e0109ebd",
-        "x-ms-request-id": "da66305a-801e-003b-12e1-f2804b000000",
+        "x-ms-client-request-id": "9c91b067-15a4-491c-4b6c-549291231801",
+        "x-ms-request-id": "7531e0f6-e01e-002d-80d1-f6769c000000",
         "x-ms-version": "2020-02-10"
       },
-      "Url": "https://REDACTED.blob.core.windows.net/datalakeserviceclienttestlistfilesystemssegmenta3?restype=container"
+      "Url": "https://REDACTED.blob.core.windows.net/datalakeserviceclienttestlistfilesystemssegmea3?restype=container"
     },
     {
       "Headers": {
         "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Linux 5.4.0-1063-azure x86_64 #66~18.04.1-Ubuntu SMP Thu Oct 21 09:59:28 UTC 2021)",
-        "x-ms-client-request-id": "ee07bb53-b483-4aa2-45d4-cf244ca4a9b2",
+        "x-ms-client-request-id": "12524a14-747f-4453-5aed-5d251a68d8a0",
         "x-ms-version": "2020-02-10"
       },
       "Method": "PUT",
@@ -166,20 +166,20 @@
         "REASON_PHRASE": "Created",
         "STATUS_CODE": "201",
         "content-length": "0",
-        "date": "Fri, 17 Dec 2021 01:03:18 GMT",
-        "etag": "\"0x8D9C0F903CBA495\"",
-        "last-modified": "Fri, 17 Dec 2021 01:03:19 GMT",
+        "date": "Wed, 22 Dec 2021 01:18:28 GMT",
+        "etag": "\"0x8D9C4E8F5DCC131\"",
+        "last-modified": "Wed, 22 Dec 2021 01:18:28 GMT",
         "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
-        "x-ms-client-request-id": "ee07bb53-b483-4aa2-45d4-cf244ca4a9b2",
-        "x-ms-request-id": "da66306c-801e-003b-22e1-f2804b000000",
+        "x-ms-client-request-id": "12524a14-747f-4453-5aed-5d251a68d8a0",
+        "x-ms-request-id": "7531e0fd-e01e-002d-05d1-f6769c000000",
         "x-ms-version": "2020-02-10"
       },
-      "Url": "https://REDACTED.blob.core.windows.net/datalakeserviceclienttestlistfilesystemssegmentb3?restype=container"
+      "Url": "https://REDACTED.blob.core.windows.net/datalakeserviceclienttestlistfilesystemssegmeb3?restype=container"
     },
     {
       "Headers": {
         "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Linux 5.4.0-1063-azure x86_64 #66~18.04.1-Ubuntu SMP Thu Oct 21 09:59:28 UTC 2021)",
-        "x-ms-client-request-id": "41e2e67d-bfb8-4ca2-5634-b7783ec013e0",
+        "x-ms-client-request-id": "5db781c2-4ed1-4bd7-54d4-02afb94a4f7a",
         "x-ms-version": "2020-02-10"
       },
       "Method": "PUT",
@@ -188,20 +188,20 @@
         "REASON_PHRASE": "Created",
         "STATUS_CODE": "201",
         "content-length": "0",
-        "date": "Fri, 17 Dec 2021 01:03:18 GMT",
-        "etag": "\"0x8D9C0F903CF748E\"",
-        "last-modified": "Fri, 17 Dec 2021 01:03:19 GMT",
+        "date": "Wed, 22 Dec 2021 01:18:28 GMT",
+        "etag": "\"0x8D9C4E8F5E0B840\"",
+        "last-modified": "Wed, 22 Dec 2021 01:18:28 GMT",
         "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
-        "x-ms-client-request-id": "41e2e67d-bfb8-4ca2-5634-b7783ec013e0",
-        "x-ms-request-id": "da66307f-801e-003b-33e1-f2804b000000",
+        "x-ms-client-request-id": "5db781c2-4ed1-4bd7-54d4-02afb94a4f7a",
+        "x-ms-request-id": "7531e101-e01e-002d-08d1-f6769c000000",
         "x-ms-version": "2020-02-10"
       },
-      "Url": "https://REDACTED.blob.core.windows.net/datalakeserviceclienttestlistfilesystemssegmenta4?restype=container"
+      "Url": "https://REDACTED.blob.core.windows.net/datalakeserviceclienttestlistfilesystemssegmea4?restype=container"
     },
     {
       "Headers": {
         "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Linux 5.4.0-1063-azure x86_64 #66~18.04.1-Ubuntu SMP Thu Oct 21 09:59:28 UTC 2021)",
-        "x-ms-client-request-id": "ed72cacc-8bee-4137-734c-2e7ad17af5ab",
+        "x-ms-client-request-id": "305c8d2e-5a65-472a-4550-c35a212ac32d",
         "x-ms-version": "2020-02-10"
       },
       "Method": "PUT",
@@ -210,33 +210,33 @@
         "REASON_PHRASE": "Created",
         "STATUS_CODE": "201",
         "content-length": "0",
-        "date": "Fri, 17 Dec 2021 01:03:18 GMT",
-        "etag": "\"0x8D9C0F903D392A2\"",
-        "last-modified": "Fri, 17 Dec 2021 01:03:19 GMT",
+        "date": "Wed, 22 Dec 2021 01:18:28 GMT",
+        "etag": "\"0x8D9C4E8F5E4AF4C\"",
+        "last-modified": "Wed, 22 Dec 2021 01:18:28 GMT",
         "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
-        "x-ms-client-request-id": "ed72cacc-8bee-4137-734c-2e7ad17af5ab",
-        "x-ms-request-id": "da66308c-801e-003b-3ee1-f2804b000000",
+        "x-ms-client-request-id": "305c8d2e-5a65-472a-4550-c35a212ac32d",
+        "x-ms-request-id": "7531e107-e01e-002d-0dd1-f6769c000000",
         "x-ms-version": "2020-02-10"
       },
-      "Url": "https://REDACTED.blob.core.windows.net/datalakeserviceclienttestlistfilesystemssegmentb4?restype=container"
+      "Url": "https://REDACTED.blob.core.windows.net/datalakeserviceclienttestlistfilesystemssegmeb4?restype=container"
     },
     {
       "Headers": {
         "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Linux 5.4.0-1063-azure x86_64 #66~18.04.1-Ubuntu SMP Thu Oct 21 09:59:28 UTC 2021)",
-        "x-ms-client-request-id": "4717791a-f53a-4232-446f-1c44b058d7bc",
+        "x-ms-client-request-id": "dc7ef92c-bbc1-4a09-73b7-f0e1600c8f25",
         "x-ms-version": "2020-02-10"
       },
       "Method": "GET",
       "Response": {
-        "BODY": "﻿<?xml version=\"1.0\" encoding=\"utf-8\"?><EnumerationResults ServiceEndpoint=\"https://datalakelivenow.blob.core.windows.net/\"><Containers><Container><Name>datalakeserviceclienttestlistfilesystemssegmenta0</Name><Properties><Last-Modified>Fri, 17 Dec 2021 01:03:19 GMT</Last-Modified><Etag>\"0x8D9C0F903AA8CF9\"</Etag><LeaseStatus>unlocked</LeaseStatus><LeaseState>available</LeaseState><DefaultEncryptionScope>$account-encryption-key</DefaultEncryptionScope><DenyEncryptionScopeOverride>false</DenyEncryptionScopeOverride><HasImmutabilityPolicy>false</HasImmutabilityPolicy><HasLegalHold>false</HasLegalHold></Properties></Container><Container><Name>datalakeserviceclienttestlistfilesystemssegmenta1</Name><Properties><Last-Modified>Fri, 17 Dec 2021 01:03:19 GMT</Last-Modified><Etag>\"0x8D9C0F903B894A0\"</Etag><LeaseStatus>unlocked</LeaseStatus><LeaseState>available</LeaseState><DefaultEncryptionScope>$account-encryption-key</DefaultEncryptionScope><DenyEncryptionScopeOverride>false</DenyEncryptionScopeOverride><HasImmutabilityPolicy>false</HasImmutabilityPolicy><HasLegalHold>false</HasLegalHold></Properties></Container><Container><Name>datalakeserviceclienttestlistfilesystemssegmenta2</Name><Properties><Last-Modified>Fri, 17 Dec 2021 01:03:19 GMT</Last-Modified><Etag>\"0x8D9C0F903C0349B\"</Etag><LeaseStatus>unlocked</LeaseStatus><LeaseState>available</LeaseState><DefaultEncryptionScope>$account-encryption-key</DefaultEncryptionScope><DenyEncryptionScopeOverride>false</DenyEncryptionScopeOverride><HasImmutabilityPolicy>false</HasImmutabilityPolicy><HasLegalHold>false</HasLegalHold></Properties></Container><Container><Name>datalakeserviceclienttestlistfilesystemssegmenta3</Name><Properties><Last-Modified>Fri, 17 Dec 2021 01:03:19 GMT</Last-Modified><Etag>\"0x8D9C0F903C7FBA2\"</Etag><LeaseStatus>unlocked</LeaseStatus><LeaseState>available</LeaseState><DefaultEncryptionScope>$account-encryption-key</DefaultEncryptionScope><DenyEncryptionScopeOverride>false</DenyEncryptionScopeOverride><HasImmutabilityPolicy>false</HasImmutabilityPolicy><HasLegalHold>false</HasLegalHold></Properties></Container><Container><Name>datalakeserviceclienttestlistfilesystemssegmenta4</Name><Properties><Last-Modified>Fri, 17 Dec 2021 01:03:19 GMT</Last-Modified><Etag>\"0x8D9C0F903CF748E\"</Etag><LeaseStatus>unlocked</LeaseStatus><LeaseState>available</LeaseState><DefaultEncryptionScope>$account-encryption-key</DefaultEncryptionScope><DenyEncryptionScopeOverride>false</DenyEncryptionScopeOverride><HasImmutabilityPolicy>false</HasImmutabilityPolicy><HasLegalHold>false</HasLegalHold></Properties></Container><Container><Name>datalakeserviceclienttestlistfilesystemssegmentb0</Name><Properties><Last-Modified>Fri, 17 Dec 2021 01:03:19 GMT</Last-Modified><Etag>\"0x8D9C0F903B49D99\"</Etag><LeaseStatus>unlocked</LeaseStatus><LeaseState>available</LeaseState><DefaultEncryptionScope>$account-encryption-key</DefaultEncryptionScope><DenyEncryptionScopeOverride>false</DenyEncryptionScopeOverride><HasImmutabilityPolicy>false</HasImmutabilityPolicy><HasLegalHold>false</HasLegalHold></Properties></Container><Container><Name>datalakeserviceclienttestlistfilesystemssegmentb1</Name><Properties><Last-Modified>Fri, 17 Dec 2021 01:03:19 GMT</Last-Modified><Etag>\"0x8D9C0F903BC649D\"</Etag><LeaseStatus>unlocked</LeaseStatus><LeaseState>available</LeaseState><DefaultEncryptionScope>$account-encryption-key</DefaultEncryptionScope><DenyEncryptionScopeOverride>false</DenyEncryptionScopeOverride><HasImmutabilityPolicy>false</HasImmutabilityPolicy><HasLegalHold>false</HasLegalHold></Properties></Container><Container><Name>datalakeserviceclienttestlistfilesystemssegmentb2</Name><Properties><Last-Modified>Fri, 17 Dec 2021 01:03:19 GMT</Last-Modified><Etag>\"0x8D9C0F903C42BA6\"</Etag><LeaseStatus>unlocked</LeaseStatus><LeaseState>available</LeaseState><DefaultEncryptionScope>$account-encryption-key</DefaultEncryptionScope><DenyEncryptionScopeOverride>false</DenyEncryptionScopeOverride><HasImmutabilityPolicy>false</HasImmutabilityPolicy><HasLegalHold>false</HasLegalHold></Properties></Container><Container><Name>datalakeserviceclienttestlistfilesystemssegmentb3</Name><Properties><Last-Modified>Fri, 17 Dec 2021 01:03:19 GMT</Last-Modified><Etag>\"0x8D9C0F903CBA495\"</Etag><LeaseStatus>unlocked</LeaseStatus><LeaseState>available</LeaseState><DefaultEncryptionScope>$account-encryption-key</DefaultEncryptionScope><DenyEncryptionScopeOverride>false</DenyEncryptionScopeOverride><HasImmutabilityPolicy>false</HasImmutabilityPolicy><HasLegalHold>false</HasLegalHold></Properties></Container><Container><Name>datalakeserviceclienttestlistfilesystemssegmentb4</Name><Properties><Last-Modified>Fri, 17 Dec 2021 01:03:19 GMT</Last-Modified><Etag>\"0x8D9C0F903D392A2\"</Etag><LeaseStatus>unlocked</LeaseStatus><LeaseState>available</LeaseState><DefaultEncryptionScope>$account-encryption-key</DefaultEncryptionScope><DenyEncryptionScopeOverride>false</DenyEncryptionScopeOverride><HasImmutabilityPolicy>false</HasImmutabilityPolicy><HasLegalHold>false</HasLegalHold></Properties></Container></Containers><NextMarker /></EnumerationResults>",
+        "BODY": "﻿<?xml version=\"1.0\" encoding=\"utf-8\"?><EnumerationResults ServiceEndpoint=\"https://datalakelivenow.blob.core.windows.net/\"><Containers><Container><Name>datalakeserviceclienttestlistfilesystemssegmea0</Name><Properties><Last-Modified>Wed, 22 Dec 2021 01:18:28 GMT</Last-Modified><Etag>\"0x8D9C4E8F5BBA97E\"</Etag><LeaseStatus>unlocked</LeaseStatus><LeaseState>available</LeaseState><DefaultEncryptionScope>$account-encryption-key</DefaultEncryptionScope><DenyEncryptionScopeOverride>false</DenyEncryptionScopeOverride><HasImmutabilityPolicy>false</HasImmutabilityPolicy><HasLegalHold>false</HasLegalHold></Properties></Container><Container><Name>datalakeserviceclienttestlistfilesystemssegmea1</Name><Properties><Last-Modified>Wed, 22 Dec 2021 01:18:28 GMT</Last-Modified><Etag>\"0x8D9C4E8F5C7DCB9\"</Etag><LeaseStatus>unlocked</LeaseStatus><LeaseState>available</LeaseState><DefaultEncryptionScope>$account-encryption-key</DefaultEncryptionScope><DenyEncryptionScopeOverride>false</DenyEncryptionScopeOverride><HasImmutabilityPolicy>false</HasImmutabilityPolicy><HasLegalHold>false</HasLegalHold></Properties></Container><Container><Name>datalakeserviceclienttestlistfilesystemssegmea2</Name><Properties><Last-Modified>Wed, 22 Dec 2021 01:18:28 GMT</Last-Modified><Etag>\"0x8D9C4E8F5D0DC12\"</Etag><LeaseStatus>unlocked</LeaseStatus><LeaseState>available</LeaseState><DefaultEncryptionScope>$account-encryption-key</DefaultEncryptionScope><DenyEncryptionScopeOverride>false</DenyEncryptionScopeOverride><HasImmutabilityPolicy>false</HasImmutabilityPolicy><HasLegalHold>false</HasLegalHold></Properties></Container><Container><Name>datalakeserviceclienttestlistfilesystemssegmea3</Name><Properties><Last-Modified>Wed, 22 Dec 2021 01:18:28 GMT</Last-Modified><Etag>\"0x8D9C4E8F5D8F139\"</Etag><LeaseStatus>unlocked</LeaseStatus><LeaseState>available</LeaseState><DefaultEncryptionScope>$account-encryption-key</DefaultEncryptionScope><DenyEncryptionScopeOverride>false</DenyEncryptionScopeOverride><HasImmutabilityPolicy>false</HasImmutabilityPolicy><HasLegalHold>false</HasLegalHold></Properties></Container><Container><Name>datalakeserviceclienttestlistfilesystemssegmea4</Name><Properties><Last-Modified>Wed, 22 Dec 2021 01:18:28 GMT</Last-Modified><Etag>\"0x8D9C4E8F5E0B840\"</Etag><LeaseStatus>unlocked</LeaseStatus><LeaseState>available</LeaseState><DefaultEncryptionScope>$account-encryption-key</DefaultEncryptionScope><DenyEncryptionScopeOverride>false</DenyEncryptionScopeOverride><HasImmutabilityPolicy>false</HasImmutabilityPolicy><HasLegalHold>false</HasLegalHold></Properties></Container><Container><Name>datalakeserviceclienttestlistfilesystemssegmeb0</Name><Properties><Last-Modified>Wed, 22 Dec 2021 01:18:28 GMT</Last-Modified><Etag>\"0x8D9C4E8F5C40CB1\"</Etag><LeaseStatus>unlocked</LeaseStatus><LeaseState>available</LeaseState><DefaultEncryptionScope>$account-encryption-key</DefaultEncryptionScope><DenyEncryptionScopeOverride>false</DenyEncryptionScopeOverride><HasImmutabilityPolicy>false</HasImmutabilityPolicy><HasLegalHold>false</HasLegalHold></Properties></Container><Container><Name>datalakeserviceclienttestlistfilesystemssegmeb1</Name><Properties><Last-Modified>Wed, 22 Dec 2021 01:18:28 GMT</Last-Modified><Etag>\"0x8D9C4E8F5CBD3C3\"</Etag><LeaseStatus>unlocked</LeaseStatus><LeaseState>available</LeaseState><DefaultEncryptionScope>$account-encryption-key</DefaultEncryptionScope><DenyEncryptionScopeOverride>false</DenyEncryptionScopeOverride><HasImmutabilityPolicy>false</HasImmutabilityPolicy><HasLegalHold>false</HasLegalHold></Properties></Container><Container><Name>datalakeserviceclienttestlistfilesystemssegmeb2</Name><Properties><Last-Modified>Wed, 22 Dec 2021 01:18:28 GMT</Last-Modified><Etag>\"0x8D9C4E8F5D4FA29\"</Etag><LeaseStatus>unlocked</LeaseStatus><LeaseState>available</LeaseState><DefaultEncryptionScope>$account-encryption-key</DefaultEncryptionScope><DenyEncryptionScopeOverride>false</DenyEncryptionScopeOverride><HasImmutabilityPolicy>false</HasImmutabilityPolicy><HasLegalHold>false</HasLegalHold></Properties></Container><Container><Name>datalakeserviceclienttestlistfilesystemssegmeb3</Name><Properties><Last-Modified>Wed, 22 Dec 2021 01:18:28 GMT</Last-Modified><Etag>\"0x8D9C4E8F5DCC131\"</Etag><LeaseStatus>unlocked</LeaseStatus><LeaseState>available</LeaseState><DefaultEncryptionScope>$account-encryption-key</DefaultEncryptionScope><DenyEncryptionScopeOverride>false</DenyEncryptionScopeOverride><HasImmutabilityPolicy>false</HasImmutabilityPolicy><HasLegalHold>false</HasLegalHold></Properties></Container><Container><Name>datalakeserviceclienttestlistfilesystemssegmeb4</Name><Properties><Last-Modified>Wed, 22 Dec 2021 01:18:28 GMT</Last-Modified><Etag>\"0x8D9C4E8F5E4AF4C\"</Etag><LeaseStatus>unlocked</LeaseStatus><LeaseState>available</LeaseState><DefaultEncryptionScope>$account-encryption-key</DefaultEncryptionScope><DenyEncryptionScopeOverride>false</DenyEncryptionScopeOverride><HasImmutabilityPolicy>false</HasImmutabilityPolicy><HasLegalHold>false</HasLegalHold></Properties></Container></Containers><NextMarker /></EnumerationResults>",
         "REASON_PHRASE": "OK",
         "STATUS_CODE": "200",
         "content-type": "application/xml",
-        "date": "Fri, 17 Dec 2021 01:03:18 GMT",
+        "date": "Wed, 22 Dec 2021 01:18:28 GMT",
         "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
         "transfer-encoding": "chunked",
-        "x-ms-client-request-id": "4717791a-f53a-4232-446f-1c44b058d7bc",
-        "x-ms-request-id": "da6630a0-801e-003b-50e1-f2804b000000",
+        "x-ms-client-request-id": "dc7ef92c-bbc1-4a09-73b7-f0e1600c8f25",
+        "x-ms-request-id": "7531e10a-e01e-002d-0fd1-f6769c000000",
         "x-ms-version": "2020-02-10"
       },
       "Url": "https://REDACTED.blob.core.windows.net?comp=list"
@@ -244,41 +244,41 @@
     {
       "Headers": {
         "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Linux 5.4.0-1063-azure x86_64 #66~18.04.1-Ubuntu SMP Thu Oct 21 09:59:28 UTC 2021)",
-        "x-ms-client-request-id": "7866b463-160b-4a1d-4c74-4572cd5495b4",
+        "x-ms-client-request-id": "f6cb8594-6476-4222-67a3-234d9b729efd",
         "x-ms-version": "2020-02-10"
       },
       "Method": "GET",
       "Response": {
-        "BODY": "﻿<?xml version=\"1.0\" encoding=\"utf-8\"?><EnumerationResults ServiceEndpoint=\"https://datalakelivenow.blob.core.windows.net/\"><Prefix>datalakeserviceclienttestlistfilesystemssegmenta</Prefix><Containers><Container><Name>datalakeserviceclienttestlistfilesystemssegmenta0</Name><Properties><Last-Modified>Fri, 17 Dec 2021 01:03:19 GMT</Last-Modified><Etag>\"0x8D9C0F903AA8CF9\"</Etag><LeaseStatus>unlocked</LeaseStatus><LeaseState>available</LeaseState><DefaultEncryptionScope>$account-encryption-key</DefaultEncryptionScope><DenyEncryptionScopeOverride>false</DenyEncryptionScopeOverride><HasImmutabilityPolicy>false</HasImmutabilityPolicy><HasLegalHold>false</HasLegalHold></Properties></Container><Container><Name>datalakeserviceclienttestlistfilesystemssegmenta1</Name><Properties><Last-Modified>Fri, 17 Dec 2021 01:03:19 GMT</Last-Modified><Etag>\"0x8D9C0F903B894A0\"</Etag><LeaseStatus>unlocked</LeaseStatus><LeaseState>available</LeaseState><DefaultEncryptionScope>$account-encryption-key</DefaultEncryptionScope><DenyEncryptionScopeOverride>false</DenyEncryptionScopeOverride><HasImmutabilityPolicy>false</HasImmutabilityPolicy><HasLegalHold>false</HasLegalHold></Properties></Container><Container><Name>datalakeserviceclienttestlistfilesystemssegmenta2</Name><Properties><Last-Modified>Fri, 17 Dec 2021 01:03:19 GMT</Last-Modified><Etag>\"0x8D9C0F903C0349B\"</Etag><LeaseStatus>unlocked</LeaseStatus><LeaseState>available</LeaseState><DefaultEncryptionScope>$account-encryption-key</DefaultEncryptionScope><DenyEncryptionScopeOverride>false</DenyEncryptionScopeOverride><HasImmutabilityPolicy>false</HasImmutabilityPolicy><HasLegalHold>false</HasLegalHold></Properties></Container><Container><Name>datalakeserviceclienttestlistfilesystemssegmenta3</Name><Properties><Last-Modified>Fri, 17 Dec 2021 01:03:19 GMT</Last-Modified><Etag>\"0x8D9C0F903C7FBA2\"</Etag><LeaseStatus>unlocked</LeaseStatus><LeaseState>available</LeaseState><DefaultEncryptionScope>$account-encryption-key</DefaultEncryptionScope><DenyEncryptionScopeOverride>false</DenyEncryptionScopeOverride><HasImmutabilityPolicy>false</HasImmutabilityPolicy><HasLegalHold>false</HasLegalHold></Properties></Container><Container><Name>datalakeserviceclienttestlistfilesystemssegmenta4</Name><Properties><Last-Modified>Fri, 17 Dec 2021 01:03:19 GMT</Last-Modified><Etag>\"0x8D9C0F903CF748E\"</Etag><LeaseStatus>unlocked</LeaseStatus><LeaseState>available</LeaseState><DefaultEncryptionScope>$account-encryption-key</DefaultEncryptionScope><DenyEncryptionScopeOverride>false</DenyEncryptionScopeOverride><HasImmutabilityPolicy>false</HasImmutabilityPolicy><HasLegalHold>false</HasLegalHold></Properties></Container></Containers><NextMarker /></EnumerationResults>",
+        "BODY": "﻿<?xml version=\"1.0\" encoding=\"utf-8\"?><EnumerationResults ServiceEndpoint=\"https://datalakelivenow.blob.core.windows.net/\"><Prefix>datalakeserviceclienttestlistfilesystemssegmea</Prefix><Containers><Container><Name>datalakeserviceclienttestlistfilesystemssegmea0</Name><Properties><Last-Modified>Wed, 22 Dec 2021 01:18:28 GMT</Last-Modified><Etag>\"0x8D9C4E8F5BBA97E\"</Etag><LeaseStatus>unlocked</LeaseStatus><LeaseState>available</LeaseState><DefaultEncryptionScope>$account-encryption-key</DefaultEncryptionScope><DenyEncryptionScopeOverride>false</DenyEncryptionScopeOverride><HasImmutabilityPolicy>false</HasImmutabilityPolicy><HasLegalHold>false</HasLegalHold></Properties></Container><Container><Name>datalakeserviceclienttestlistfilesystemssegmea1</Name><Properties><Last-Modified>Wed, 22 Dec 2021 01:18:28 GMT</Last-Modified><Etag>\"0x8D9C4E8F5C7DCB9\"</Etag><LeaseStatus>unlocked</LeaseStatus><LeaseState>available</LeaseState><DefaultEncryptionScope>$account-encryption-key</DefaultEncryptionScope><DenyEncryptionScopeOverride>false</DenyEncryptionScopeOverride><HasImmutabilityPolicy>false</HasImmutabilityPolicy><HasLegalHold>false</HasLegalHold></Properties></Container><Container><Name>datalakeserviceclienttestlistfilesystemssegmea2</Name><Properties><Last-Modified>Wed, 22 Dec 2021 01:18:28 GMT</Last-Modified><Etag>\"0x8D9C4E8F5D0DC12\"</Etag><LeaseStatus>unlocked</LeaseStatus><LeaseState>available</LeaseState><DefaultEncryptionScope>$account-encryption-key</DefaultEncryptionScope><DenyEncryptionScopeOverride>false</DenyEncryptionScopeOverride><HasImmutabilityPolicy>false</HasImmutabilityPolicy><HasLegalHold>false</HasLegalHold></Properties></Container><Container><Name>datalakeserviceclienttestlistfilesystemssegmea3</Name><Properties><Last-Modified>Wed, 22 Dec 2021 01:18:28 GMT</Last-Modified><Etag>\"0x8D9C4E8F5D8F139\"</Etag><LeaseStatus>unlocked</LeaseStatus><LeaseState>available</LeaseState><DefaultEncryptionScope>$account-encryption-key</DefaultEncryptionScope><DenyEncryptionScopeOverride>false</DenyEncryptionScopeOverride><HasImmutabilityPolicy>false</HasImmutabilityPolicy><HasLegalHold>false</HasLegalHold></Properties></Container><Container><Name>datalakeserviceclienttestlistfilesystemssegmea4</Name><Properties><Last-Modified>Wed, 22 Dec 2021 01:18:28 GMT</Last-Modified><Etag>\"0x8D9C4E8F5E0B840\"</Etag><LeaseStatus>unlocked</LeaseStatus><LeaseState>available</LeaseState><DefaultEncryptionScope>$account-encryption-key</DefaultEncryptionScope><DenyEncryptionScopeOverride>false</DenyEncryptionScopeOverride><HasImmutabilityPolicy>false</HasImmutabilityPolicy><HasLegalHold>false</HasLegalHold></Properties></Container></Containers><NextMarker /></EnumerationResults>",
         "REASON_PHRASE": "OK",
         "STATUS_CODE": "200",
         "content-type": "application/xml",
-        "date": "Fri, 17 Dec 2021 01:03:18 GMT",
+        "date": "Wed, 22 Dec 2021 01:18:28 GMT",
         "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
         "transfer-encoding": "chunked",
-        "x-ms-client-request-id": "7866b463-160b-4a1d-4c74-4572cd5495b4",
-        "x-ms-request-id": "da6630a9-801e-003b-59e1-f2804b000000",
+        "x-ms-client-request-id": "f6cb8594-6476-4222-67a3-234d9b729efd",
+        "x-ms-request-id": "7531e10d-e01e-002d-12d1-f6769c000000",
         "x-ms-version": "2020-02-10"
       },
-      "Url": "https://REDACTED.blob.core.windows.net?comp=list&prefix=datalakeserviceclienttestlistfilesystemssegmenta"
+      "Url": "https://REDACTED.blob.core.windows.net?comp=list&prefix=datalakeserviceclienttestlistfilesystemssegmea"
     },
     {
       "Headers": {
         "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Linux 5.4.0-1063-azure x86_64 #66~18.04.1-Ubuntu SMP Thu Oct 21 09:59:28 UTC 2021)",
-        "x-ms-client-request-id": "ced8e16d-d915-4d29-60a6-6c01fc4c0b80",
+        "x-ms-client-request-id": "618a2bcd-0a3c-4d3a-7c38-d126350bdd92",
         "x-ms-version": "2020-02-10"
       },
       "Method": "GET",
       "Response": {
-        "BODY": "﻿<?xml version=\"1.0\" encoding=\"utf-8\"?><EnumerationResults ServiceEndpoint=\"https://datalakelivenow.blob.core.windows.net/\"><MaxResults>2</MaxResults><Containers><Container><Name>datalakeserviceclienttestlistfilesystemssegmenta0</Name><Properties><Last-Modified>Fri, 17 Dec 2021 01:03:19 GMT</Last-Modified><Etag>\"0x8D9C0F903AA8CF9\"</Etag><LeaseStatus>unlocked</LeaseStatus><LeaseState>available</LeaseState><DefaultEncryptionScope>$account-encryption-key</DefaultEncryptionScope><DenyEncryptionScopeOverride>false</DenyEncryptionScopeOverride><HasImmutabilityPolicy>false</HasImmutabilityPolicy><HasLegalHold>false</HasLegalHold></Properties></Container><Container><Name>datalakeserviceclienttestlistfilesystemssegmenta1</Name><Properties><Last-Modified>Fri, 17 Dec 2021 01:03:19 GMT</Last-Modified><Etag>\"0x8D9C0F903B894A0\"</Etag><LeaseStatus>unlocked</LeaseStatus><LeaseState>available</LeaseState><DefaultEncryptionScope>$account-encryption-key</DefaultEncryptionScope><DenyEncryptionScopeOverride>false</DenyEncryptionScopeOverride><HasImmutabilityPolicy>false</HasImmutabilityPolicy><HasLegalHold>false</HasLegalHold></Properties></Container></Containers><NextMarker>/datalakelivenow/datalakeserviceclienttestlistfilesystemssegmenta2</NextMarker></EnumerationResults>",
+        "BODY": "﻿<?xml version=\"1.0\" encoding=\"utf-8\"?><EnumerationResults ServiceEndpoint=\"https://datalakelivenow.blob.core.windows.net/\"><MaxResults>2</MaxResults><Containers><Container><Name>datalakeserviceclienttestlistfilesystemssegmea0</Name><Properties><Last-Modified>Wed, 22 Dec 2021 01:18:28 GMT</Last-Modified><Etag>\"0x8D9C4E8F5BBA97E\"</Etag><LeaseStatus>unlocked</LeaseStatus><LeaseState>available</LeaseState><DefaultEncryptionScope>$account-encryption-key</DefaultEncryptionScope><DenyEncryptionScopeOverride>false</DenyEncryptionScopeOverride><HasImmutabilityPolicy>false</HasImmutabilityPolicy><HasLegalHold>false</HasLegalHold></Properties></Container><Container><Name>datalakeserviceclienttestlistfilesystemssegmea1</Name><Properties><Last-Modified>Wed, 22 Dec 2021 01:18:28 GMT</Last-Modified><Etag>\"0x8D9C4E8F5C7DCB9\"</Etag><LeaseStatus>unlocked</LeaseStatus><LeaseState>available</LeaseState><DefaultEncryptionScope>$account-encryption-key</DefaultEncryptionScope><DenyEncryptionScopeOverride>false</DenyEncryptionScopeOverride><HasImmutabilityPolicy>false</HasImmutabilityPolicy><HasLegalHold>false</HasLegalHold></Properties></Container></Containers><NextMarker>/datalakelivenow/datalakeserviceclienttestlistfilesystemssegmea2</NextMarker></EnumerationResults>",
         "REASON_PHRASE": "OK",
         "STATUS_CODE": "200",
         "content-type": "application/xml",
-        "date": "Fri, 17 Dec 2021 01:03:18 GMT",
+        "date": "Wed, 22 Dec 2021 01:18:28 GMT",
         "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
         "transfer-encoding": "chunked",
-        "x-ms-client-request-id": "ced8e16d-d915-4d29-60a6-6c01fc4c0b80",
-        "x-ms-request-id": "da6630b1-801e-003b-61e1-f2804b000000",
+        "x-ms-client-request-id": "618a2bcd-0a3c-4d3a-7c38-d126350bdd92",
+        "x-ms-request-id": "7531e10f-e01e-002d-14d1-f6769c000000",
         "x-ms-version": "2020-02-10"
       },
       "Url": "https://REDACTED.blob.core.windows.net?comp=list&maxresults=2"
@@ -286,7 +286,7 @@
     {
       "Headers": {
         "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Linux 5.4.0-1063-azure x86_64 #66~18.04.1-Ubuntu SMP Thu Oct 21 09:59:28 UTC 2021)",
-        "x-ms-client-request-id": "110f0afe-9fbf-46a1-5b7d-dbc009c879ab",
+        "x-ms-client-request-id": "db33bd66-e2b5-4758-6efa-7725862e3bd0",
         "x-ms-version": "2020-02-10"
       },
       "Method": "DELETE",
@@ -295,18 +295,18 @@
         "REASON_PHRASE": "Accepted",
         "STATUS_CODE": "202",
         "content-length": "0",
-        "date": "Fri, 17 Dec 2021 01:03:18 GMT",
+        "date": "Wed, 22 Dec 2021 01:18:28 GMT",
         "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
-        "x-ms-client-request-id": "110f0afe-9fbf-46a1-5b7d-dbc009c879ab",
-        "x-ms-request-id": "da6630b5-801e-003b-65e1-f2804b000000",
+        "x-ms-client-request-id": "db33bd66-e2b5-4758-6efa-7725862e3bd0",
+        "x-ms-request-id": "7531e114-e01e-002d-18d1-f6769c000000",
         "x-ms-version": "2020-02-10"
       },
-      "Url": "https://REDACTED.blob.core.windows.net/datalakeserviceclienttestlistfilesystemssegmenta0?restype=container"
+      "Url": "https://REDACTED.blob.core.windows.net/datalakeserviceclienttestlistfilesystemssegmea0?restype=container"
     },
     {
       "Headers": {
         "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Linux 5.4.0-1063-azure x86_64 #66~18.04.1-Ubuntu SMP Thu Oct 21 09:59:28 UTC 2021)",
-        "x-ms-client-request-id": "8b91f7bc-fc93-4e91-6171-52aba08eadce",
+        "x-ms-client-request-id": "2cc96143-1fea-4bc3-6de2-557ad9ee5b01",
         "x-ms-version": "2020-02-10"
       },
       "Method": "DELETE",
@@ -315,18 +315,18 @@
         "REASON_PHRASE": "Accepted",
         "STATUS_CODE": "202",
         "content-length": "0",
-        "date": "Fri, 17 Dec 2021 01:03:18 GMT",
+        "date": "Wed, 22 Dec 2021 01:18:28 GMT",
         "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
-        "x-ms-client-request-id": "8b91f7bc-fc93-4e91-6171-52aba08eadce",
-        "x-ms-request-id": "da6630cf-801e-003b-7ee1-f2804b000000",
+        "x-ms-client-request-id": "2cc96143-1fea-4bc3-6de2-557ad9ee5b01",
+        "x-ms-request-id": "7531e117-e01e-002d-1bd1-f6769c000000",
         "x-ms-version": "2020-02-10"
       },
-      "Url": "https://REDACTED.blob.core.windows.net/datalakeserviceclienttestlistfilesystemssegmenta1?restype=container"
+      "Url": "https://REDACTED.blob.core.windows.net/datalakeserviceclienttestlistfilesystemssegmea1?restype=container"
     },
     {
       "Headers": {
         "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Linux 5.4.0-1063-azure x86_64 #66~18.04.1-Ubuntu SMP Thu Oct 21 09:59:28 UTC 2021)",
-        "x-ms-client-request-id": "3dd2d05c-05fa-4d37-689a-8de5afe9f985",
+        "x-ms-client-request-id": "31cc0ea7-230c-423c-61b5-7363d7b7c29a",
         "x-ms-version": "2020-02-10"
       },
       "Method": "DELETE",
@@ -335,18 +335,18 @@
         "REASON_PHRASE": "Accepted",
         "STATUS_CODE": "202",
         "content-length": "0",
-        "date": "Fri, 17 Dec 2021 01:03:18 GMT",
+        "date": "Wed, 22 Dec 2021 01:18:28 GMT",
         "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
-        "x-ms-client-request-id": "3dd2d05c-05fa-4d37-689a-8de5afe9f985",
-        "x-ms-request-id": "da6630d2-801e-003b-01e1-f2804b000000",
+        "x-ms-client-request-id": "31cc0ea7-230c-423c-61b5-7363d7b7c29a",
+        "x-ms-request-id": "7531e11c-e01e-002d-20d1-f6769c000000",
         "x-ms-version": "2020-02-10"
       },
-      "Url": "https://REDACTED.blob.core.windows.net/datalakeserviceclienttestlistfilesystemssegmenta2?restype=container"
+      "Url": "https://REDACTED.blob.core.windows.net/datalakeserviceclienttestlistfilesystemssegmea2?restype=container"
     },
     {
       "Headers": {
         "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Linux 5.4.0-1063-azure x86_64 #66~18.04.1-Ubuntu SMP Thu Oct 21 09:59:28 UTC 2021)",
-        "x-ms-client-request-id": "8de92e7a-9e5d-4fcb-6fcb-c5aa3ce81a91",
+        "x-ms-client-request-id": "93851ff4-02bf-4522-6ec6-c631554d7e49",
         "x-ms-version": "2020-02-10"
       },
       "Method": "DELETE",
@@ -355,18 +355,18 @@
         "REASON_PHRASE": "Accepted",
         "STATUS_CODE": "202",
         "content-length": "0",
-        "date": "Fri, 17 Dec 2021 01:03:18 GMT",
+        "date": "Wed, 22 Dec 2021 01:18:28 GMT",
         "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
-        "x-ms-client-request-id": "8de92e7a-9e5d-4fcb-6fcb-c5aa3ce81a91",
-        "x-ms-request-id": "da6630dd-801e-003b-0ce1-f2804b000000",
+        "x-ms-client-request-id": "93851ff4-02bf-4522-6ec6-c631554d7e49",
+        "x-ms-request-id": "7531e11f-e01e-002d-21d1-f6769c000000",
         "x-ms-version": "2020-02-10"
       },
-      "Url": "https://REDACTED.blob.core.windows.net/datalakeserviceclienttestlistfilesystemssegmenta3?restype=container"
+      "Url": "https://REDACTED.blob.core.windows.net/datalakeserviceclienttestlistfilesystemssegmea3?restype=container"
     },
     {
       "Headers": {
         "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Linux 5.4.0-1063-azure x86_64 #66~18.04.1-Ubuntu SMP Thu Oct 21 09:59:28 UTC 2021)",
-        "x-ms-client-request-id": "c38d76f9-d86b-4685-6b1d-799cb93f9178",
+        "x-ms-client-request-id": "bbcb87b7-fad0-4842-7659-ee58a919c607",
         "x-ms-version": "2020-02-10"
       },
       "Method": "DELETE",
@@ -375,18 +375,18 @@
         "REASON_PHRASE": "Accepted",
         "STATUS_CODE": "202",
         "content-length": "0",
-        "date": "Fri, 17 Dec 2021 01:03:18 GMT",
+        "date": "Wed, 22 Dec 2021 01:18:28 GMT",
         "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
-        "x-ms-client-request-id": "c38d76f9-d86b-4685-6b1d-799cb93f9178",
-        "x-ms-request-id": "da6630e3-801e-003b-12e1-f2804b000000",
+        "x-ms-client-request-id": "bbcb87b7-fad0-4842-7659-ee58a919c607",
+        "x-ms-request-id": "7531e123-e01e-002d-25d1-f6769c000000",
         "x-ms-version": "2020-02-10"
       },
-      "Url": "https://REDACTED.blob.core.windows.net/datalakeserviceclienttestlistfilesystemssegmenta4?restype=container"
+      "Url": "https://REDACTED.blob.core.windows.net/datalakeserviceclienttestlistfilesystemssegmea4?restype=container"
     },
     {
       "Headers": {
         "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Linux 5.4.0-1063-azure x86_64 #66~18.04.1-Ubuntu SMP Thu Oct 21 09:59:28 UTC 2021)",
-        "x-ms-client-request-id": "7913e3bb-b20a-49e4-56e2-64e2e189300d",
+        "x-ms-client-request-id": "70ea304d-f725-4a8a-48b7-0ca111f75727",
         "x-ms-version": "2020-02-10"
       },
       "Method": "DELETE",
@@ -395,18 +395,18 @@
         "REASON_PHRASE": "Accepted",
         "STATUS_CODE": "202",
         "content-length": "0",
-        "date": "Fri, 17 Dec 2021 01:03:18 GMT",
+        "date": "Wed, 22 Dec 2021 01:18:28 GMT",
         "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
-        "x-ms-client-request-id": "7913e3bb-b20a-49e4-56e2-64e2e189300d",
-        "x-ms-request-id": "da6630eb-801e-003b-19e1-f2804b000000",
+        "x-ms-client-request-id": "70ea304d-f725-4a8a-48b7-0ca111f75727",
+        "x-ms-request-id": "7531e12b-e01e-002d-2cd1-f6769c000000",
         "x-ms-version": "2020-02-10"
       },
-      "Url": "https://REDACTED.blob.core.windows.net/datalakeserviceclienttestlistfilesystemssegmentb0?restype=container"
+      "Url": "https://REDACTED.blob.core.windows.net/datalakeserviceclienttestlistfilesystemssegmeb0?restype=container"
     },
     {
       "Headers": {
         "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Linux 5.4.0-1063-azure x86_64 #66~18.04.1-Ubuntu SMP Thu Oct 21 09:59:28 UTC 2021)",
-        "x-ms-client-request-id": "22e684ce-39b2-4465-5ede-e6a39dcaa3fc",
+        "x-ms-client-request-id": "55816b21-2b42-41ee-6cae-428fa7cb7d2a",
         "x-ms-version": "2020-02-10"
       },
       "Method": "DELETE",
@@ -415,18 +415,18 @@
         "REASON_PHRASE": "Accepted",
         "STATUS_CODE": "202",
         "content-length": "0",
-        "date": "Fri, 17 Dec 2021 01:03:18 GMT",
+        "date": "Wed, 22 Dec 2021 01:18:28 GMT",
         "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
-        "x-ms-client-request-id": "22e684ce-39b2-4465-5ede-e6a39dcaa3fc",
-        "x-ms-request-id": "da6630ef-801e-003b-1de1-f2804b000000",
+        "x-ms-client-request-id": "55816b21-2b42-41ee-6cae-428fa7cb7d2a",
+        "x-ms-request-id": "7531e12f-e01e-002d-2fd1-f6769c000000",
         "x-ms-version": "2020-02-10"
       },
-      "Url": "https://REDACTED.blob.core.windows.net/datalakeserviceclienttestlistfilesystemssegmentb1?restype=container"
+      "Url": "https://REDACTED.blob.core.windows.net/datalakeserviceclienttestlistfilesystemssegmeb1?restype=container"
     },
     {
       "Headers": {
         "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Linux 5.4.0-1063-azure x86_64 #66~18.04.1-Ubuntu SMP Thu Oct 21 09:59:28 UTC 2021)",
-        "x-ms-client-request-id": "17099085-bc6f-4b7d-6d5c-2350395c9ccc",
+        "x-ms-client-request-id": "7f4005c5-f70f-42e5-7cb6-e5ff086b729f",
         "x-ms-version": "2020-02-10"
       },
       "Method": "DELETE",
@@ -435,18 +435,18 @@
         "REASON_PHRASE": "Accepted",
         "STATUS_CODE": "202",
         "content-length": "0",
-        "date": "Fri, 17 Dec 2021 01:03:18 GMT",
+        "date": "Wed, 22 Dec 2021 01:18:28 GMT",
         "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
-        "x-ms-client-request-id": "17099085-bc6f-4b7d-6d5c-2350395c9ccc",
-        "x-ms-request-id": "da6630f3-801e-003b-21e1-f2804b000000",
+        "x-ms-client-request-id": "7f4005c5-f70f-42e5-7cb6-e5ff086b729f",
+        "x-ms-request-id": "7531e136-e01e-002d-34d1-f6769c000000",
         "x-ms-version": "2020-02-10"
       },
-      "Url": "https://REDACTED.blob.core.windows.net/datalakeserviceclienttestlistfilesystemssegmentb2?restype=container"
+      "Url": "https://REDACTED.blob.core.windows.net/datalakeserviceclienttestlistfilesystemssegmeb2?restype=container"
     },
     {
       "Headers": {
         "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Linux 5.4.0-1063-azure x86_64 #66~18.04.1-Ubuntu SMP Thu Oct 21 09:59:28 UTC 2021)",
-        "x-ms-client-request-id": "8a669673-7f9e-4bd4-6d5a-5713f5b263db",
+        "x-ms-client-request-id": "d10e3b40-c9a3-4be5-671c-edad1d46b63d",
         "x-ms-version": "2020-02-10"
       },
       "Method": "DELETE",
@@ -455,18 +455,18 @@
         "REASON_PHRASE": "Accepted",
         "STATUS_CODE": "202",
         "content-length": "0",
-        "date": "Fri, 17 Dec 2021 01:03:18 GMT",
+        "date": "Wed, 22 Dec 2021 01:18:28 GMT",
         "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
-        "x-ms-client-request-id": "8a669673-7f9e-4bd4-6d5a-5713f5b263db",
-        "x-ms-request-id": "da6630f9-801e-003b-26e1-f2804b000000",
+        "x-ms-client-request-id": "d10e3b40-c9a3-4be5-671c-edad1d46b63d",
+        "x-ms-request-id": "7531e139-e01e-002d-37d1-f6769c000000",
         "x-ms-version": "2020-02-10"
       },
-      "Url": "https://REDACTED.blob.core.windows.net/datalakeserviceclienttestlistfilesystemssegmentb3?restype=container"
+      "Url": "https://REDACTED.blob.core.windows.net/datalakeserviceclienttestlistfilesystemssegmeb3?restype=container"
     },
     {
       "Headers": {
         "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Linux 5.4.0-1063-azure x86_64 #66~18.04.1-Ubuntu SMP Thu Oct 21 09:59:28 UTC 2021)",
-        "x-ms-client-request-id": "a7a865bc-8846-466b-43f1-7d9bf89331e0",
+        "x-ms-client-request-id": "9de25eb2-2066-477a-74ba-fad741846620",
         "x-ms-version": "2020-02-10"
       },
       "Method": "DELETE",
@@ -475,13 +475,13 @@
         "REASON_PHRASE": "Accepted",
         "STATUS_CODE": "202",
         "content-length": "0",
-        "date": "Fri, 17 Dec 2021 01:03:18 GMT",
+        "date": "Wed, 22 Dec 2021 01:18:28 GMT",
         "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
-        "x-ms-client-request-id": "a7a865bc-8846-466b-43f1-7d9bf89331e0",
-        "x-ms-request-id": "da663103-801e-003b-30e1-f2804b000000",
+        "x-ms-client-request-id": "9de25eb2-2066-477a-74ba-fad741846620",
+        "x-ms-request-id": "7531e13d-e01e-002d-3bd1-f6769c000000",
         "x-ms-version": "2020-02-10"
       },
-      "Url": "https://REDACTED.blob.core.windows.net/datalakeserviceclienttestlistfilesystemssegmentb4?restype=container"
+      "Url": "https://REDACTED.blob.core.windows.net/datalakeserviceclienttestlistfilesystemssegmeb4?restype=container"
     }
   ]
 }

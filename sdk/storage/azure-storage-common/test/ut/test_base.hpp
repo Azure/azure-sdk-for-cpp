@@ -97,7 +97,7 @@ namespace Azure { namespace Storage {
 
       std::string LowercaseRandomString(size_t size = 10);
 
-      Storage::Metadata RandomMetadata(size_t size = 5);
+      Storage::Metadata GetMetadata(size_t size = 5);
 
       void RandomBuffer(char* buffer, size_t length);
       inline void RandomBuffer(uint8_t* buffer, size_t length)

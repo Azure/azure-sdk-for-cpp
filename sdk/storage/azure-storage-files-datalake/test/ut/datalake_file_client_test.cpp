@@ -131,8 +131,8 @@ namespace Azure { namespace Storage { namespace Test {
 
   TEST_F(DataLakeFileClientTest, FileMetadata)
   {
-    auto metadata1 = RandomMetadata();
-    auto metadata2 = RandomMetadata();
+    auto metadata1 = GetMetadata();
+    auto metadata2 = GetMetadata();
     {
       // Set/Get Metadata works
       EXPECT_NO_THROW(m_fileClient->SetMetadata(metadata1));
@@ -163,8 +163,8 @@ namespace Azure { namespace Storage { namespace Test {
 
   TEST_F(DataLakeFileClientTest, FileProperties)
   {
-    auto metadata1 = RandomMetadata();
-    auto metadata2 = RandomMetadata();
+    auto metadata1 = GetMetadata();
+    auto metadata2 = GetMetadata();
     {
       // Get Metadata via properties works
       EXPECT_NO_THROW(m_fileClient->SetMetadata(metadata1));
@@ -398,7 +398,7 @@ namespace Azure { namespace Storage { namespace Test {
       options.TransferOptions.ChunkSize = 1_MB;
       options.TransferOptions.Concurrency = concurrency;
       options.HttpHeaders = GetInterestingHttpHeaders();
-      options.Metadata = RandomMetadata();
+      options.Metadata = GetMetadata();
       auto res = fileClient.UploadFrom(fileContent.data(), static_cast<size_t>(fileSize), options);
       auto lastModified = fileClient.GetProperties().Value.LastModified;
       EXPECT_TRUE(res.Value.ETag.HasValue());
@@ -426,7 +426,7 @@ namespace Azure { namespace Storage { namespace Test {
       options.TransferOptions.ChunkSize = 1_MB;
       options.TransferOptions.Concurrency = concurrency;
       options.HttpHeaders = GetInterestingHttpHeaders();
-      options.Metadata = RandomMetadata();
+      options.Metadata = GetMetadata();
 
       std::string tempFilename = RandomString();
       {
