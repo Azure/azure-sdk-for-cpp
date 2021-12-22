@@ -3,7 +3,7 @@
     {
       "Headers": {
         "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Linux 5.4.0-1063-azure x86_64 #66~18.04.1-Ubuntu SMP Thu Oct 21 09:59:28 UTC 2021)",
-        "x-ms-client-request-id": "fc47cacc-cc3d-4b32-57d9-2cd5640845cb",
+        "x-ms-client-request-id": "54393748-25e3-4fe8-7b4b-4266fb6928ad",
         "x-ms-version": "2020-02-10"
       },
       "Method": "PUT",
@@ -12,12 +12,12 @@
         "REASON_PHRASE": "Created",
         "STATUS_CODE": "201",
         "content-length": "0",
-        "date": "Wed, 22 Dec 2021 01:18:04 GMT",
-        "etag": "\"0x8D9C4E8E7DA5531\"",
-        "last-modified": "Wed, 22 Dec 2021 01:18:05 GMT",
+        "date": "Wed, 22 Dec 2021 01:19:32 GMT",
+        "etag": "\"0x8D9C4E91C3B21A6\"",
+        "last-modified": "Wed, 22 Dec 2021 01:19:32 GMT",
         "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
-        "x-ms-client-request-id": "fc47cacc-cc3d-4b32-57d9-2cd5640845cb",
-        "x-ms-request-id": "d5488912-f01e-0021-31d1-f6e194000000",
+        "x-ms-client-request-id": "54393748-25e3-4fe8-7b4b-4266fb6928ad",
+        "x-ms-request-id": "ea4ff61e-101e-0006-68d1-f6f650000000",
         "x-ms-version": "2020-02-10"
       },
       "Url": "https://REDACTED.blob.core.windows.net/talakefilesystemclienttestgetdatalakefilesystempropertiesresult?restype=container"
@@ -25,7 +25,7 @@
     {
       "Headers": {
         "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Linux 5.4.0-1063-azure x86_64 #66~18.04.1-Ubuntu SMP Thu Oct 21 09:59:28 UTC 2021)",
-        "x-ms-client-request-id": "39f52060-96c1-4afa-49aa-3ff37158d171",
+        "x-ms-client-request-id": "68f160ef-6197-4fcc-67bd-40f69a5634d2",
         "x-ms-version": "2020-02-10"
       },
       "Method": "PUT",
@@ -34,12 +34,12 @@
         "REASON_PHRASE": "OK",
         "STATUS_CODE": "200",
         "content-length": "0",
-        "date": "Wed, 22 Dec 2021 01:18:04 GMT",
-        "etag": "\"0x8D9C4E8E7E3BB7D\"",
-        "last-modified": "Wed, 22 Dec 2021 01:18:05 GMT",
+        "date": "Wed, 22 Dec 2021 01:19:32 GMT",
+        "etag": "\"0x8D9C4E91C41863F\"",
+        "last-modified": "Wed, 22 Dec 2021 01:19:33 GMT",
         "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
-        "x-ms-client-request-id": "39f52060-96c1-4afa-49aa-3ff37158d171",
-        "x-ms-request-id": "d548892f-f01e-0021-4bd1-f6e194000000",
+        "x-ms-client-request-id": "68f160ef-6197-4fcc-67bd-40f69a5634d2",
+        "x-ms-request-id": "ea4ff62d-101e-0006-74d1-f6f650000000",
         "x-ms-version": "2020-02-10"
       },
       "Url": "https://REDACTED.blob.core.windows.net/talakefilesystemclienttestgetdatalakefilesystempropertiesresult?comp=metadata&restype=container"
@@ -47,7 +47,7 @@
     {
       "Headers": {
         "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Linux 5.4.0-1063-azure x86_64 #66~18.04.1-Ubuntu SMP Thu Oct 21 09:59:28 UTC 2021)",
-        "x-ms-client-request-id": "25e8a513-d0fa-46b1-5992-956f4ed0f805",
+        "x-ms-client-request-id": "9d36f3b6-dad9-41b9-5fa4-983b1867c35e",
         "x-ms-version": "2020-02-10"
       },
       "Method": "HEAD",
@@ -56,11 +56,11 @@
         "REASON_PHRASE": "OK",
         "STATUS_CODE": "200",
         "content-length": "0",
-        "date": "Wed, 22 Dec 2021 01:18:04 GMT",
-        "etag": "\"0x8D9C4E8E7E3BB7D\"",
-        "last-modified": "Wed, 22 Dec 2021 01:18:05 GMT",
+        "date": "Wed, 22 Dec 2021 01:19:32 GMT",
+        "etag": "\"0x8D9C4E91C41863F\"",
+        "last-modified": "Wed, 22 Dec 2021 01:19:33 GMT",
         "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
-        "x-ms-client-request-id": "25e8a513-d0fa-46b1-5992-956f4ed0f805",
+        "x-ms-client-request-id": "9d36f3b6-dad9-41b9-5fa4-983b1867c35e",
         "x-ms-default-encryption-scope": "$account-encryption-key",
         "x-ms-deny-encryption-scope-override": "false",
         "x-ms-has-immutability-policy": "false",
@@ -72,7 +72,7 @@
         "x-ms-meta-meta2": "value",
         "x-ms-meta-meta3": "value",
         "x-ms-meta-meta4": "value",
-        "x-ms-request-id": "d5488936-f01e-0021-52d1-f6e194000000",
+        "x-ms-request-id": "ea4ff62f-101e-0006-76d1-f6f650000000",
         "x-ms-version": "2020-02-10"
       },
       "Url": "https://REDACTED.blob.core.windows.net/talakefilesystemclienttestgetdatalakefilesystempropertiesresult?restype=container"
@@ -80,7 +80,7 @@
     {
       "Headers": {
         "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Linux 5.4.0-1063-azure x86_64 #66~18.04.1-Ubuntu SMP Thu Oct 21 09:59:28 UTC 2021)",
-        "x-ms-client-request-id": "cf22c649-6847-4cb3-5faf-96fe2de83911",
+        "x-ms-client-request-id": "cbf7f596-9d38-40de-467b-ad68540a1b1b",
         "x-ms-version": "2020-02-10"
       },
       "Method": "PUT",
@@ -89,12 +89,12 @@
         "REASON_PHRASE": "OK",
         "STATUS_CODE": "200",
         "content-length": "0",
-        "date": "Wed, 22 Dec 2021 01:18:04 GMT",
-        "etag": "\"0x8D9C4E8E7E6C83B\"",
-        "last-modified": "Wed, 22 Dec 2021 01:18:05 GMT",
+        "date": "Wed, 22 Dec 2021 01:19:32 GMT",
+        "etag": "\"0x8D9C4E91C449310\"",
+        "last-modified": "Wed, 22 Dec 2021 01:19:33 GMT",
         "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
-        "x-ms-client-request-id": "cf22c649-6847-4cb3-5faf-96fe2de83911",
-        "x-ms-request-id": "d5488939-f01e-0021-55d1-f6e194000000",
+        "x-ms-client-request-id": "cbf7f596-9d38-40de-467b-ad68540a1b1b",
+        "x-ms-request-id": "ea4ff630-101e-0006-77d1-f6f650000000",
         "x-ms-version": "2020-02-10"
       },
       "Url": "https://REDACTED.blob.core.windows.net/talakefilesystemclienttestgetdatalakefilesystempropertiesresult?comp=metadata&restype=container"
@@ -102,7 +102,7 @@
     {
       "Headers": {
         "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Linux 5.4.0-1063-azure x86_64 #66~18.04.1-Ubuntu SMP Thu Oct 21 09:59:28 UTC 2021)",
-        "x-ms-client-request-id": "3462d63b-0f8d-49d2-5e27-766c6cae131a",
+        "x-ms-client-request-id": "47a34ca1-e649-4324-4054-639ffb0b5c2e",
         "x-ms-version": "2020-02-10"
       },
       "Method": "HEAD",
@@ -111,11 +111,11 @@
         "REASON_PHRASE": "OK",
         "STATUS_CODE": "200",
         "content-length": "0",
-        "date": "Wed, 22 Dec 2021 01:18:04 GMT",
-        "etag": "\"0x8D9C4E8E7E6C83B\"",
-        "last-modified": "Wed, 22 Dec 2021 01:18:05 GMT",
+        "date": "Wed, 22 Dec 2021 01:19:32 GMT",
+        "etag": "\"0x8D9C4E91C449310\"",
+        "last-modified": "Wed, 22 Dec 2021 01:19:33 GMT",
         "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
-        "x-ms-client-request-id": "3462d63b-0f8d-49d2-5e27-766c6cae131a",
+        "x-ms-client-request-id": "47a34ca1-e649-4324-4054-639ffb0b5c2e",
         "x-ms-default-encryption-scope": "$account-encryption-key",
         "x-ms-deny-encryption-scope-override": "false",
         "x-ms-has-immutability-policy": "false",
@@ -127,7 +127,7 @@
         "x-ms-meta-meta2": "value",
         "x-ms-meta-meta3": "value",
         "x-ms-meta-meta4": "value",
-        "x-ms-request-id": "d548893e-f01e-0021-5ad1-f6e194000000",
+        "x-ms-request-id": "ea4ff631-101e-0006-78d1-f6f650000000",
         "x-ms-version": "2020-02-10"
       },
       "Url": "https://REDACTED.blob.core.windows.net/talakefilesystemclienttestgetdatalakefilesystempropertiesresult?restype=container"
@@ -135,7 +135,7 @@
     {
       "Headers": {
         "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Linux 5.4.0-1063-azure x86_64 #66~18.04.1-Ubuntu SMP Thu Oct 21 09:59:28 UTC 2021)",
-        "x-ms-client-request-id": "e002c735-2e1d-4b85-7cd7-f630b2472977",
+        "x-ms-client-request-id": "151e3922-fa6a-4396-6e28-ae6f57c5320a",
         "x-ms-version": "2020-02-10"
       },
       "Method": "HEAD",
@@ -144,11 +144,11 @@
         "REASON_PHRASE": "OK",
         "STATUS_CODE": "200",
         "content-length": "0",
-        "date": "Wed, 22 Dec 2021 01:18:04 GMT",
-        "etag": "\"0x8D9C4E8E7E6C83B\"",
-        "last-modified": "Wed, 22 Dec 2021 01:18:05 GMT",
+        "date": "Wed, 22 Dec 2021 01:19:32 GMT",
+        "etag": "\"0x8D9C4E91C449310\"",
+        "last-modified": "Wed, 22 Dec 2021 01:19:33 GMT",
         "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
-        "x-ms-client-request-id": "e002c735-2e1d-4b85-7cd7-f630b2472977",
+        "x-ms-client-request-id": "151e3922-fa6a-4396-6e28-ae6f57c5320a",
         "x-ms-default-encryption-scope": "$account-encryption-key",
         "x-ms-deny-encryption-scope-override": "false",
         "x-ms-has-immutability-policy": "false",
@@ -160,7 +160,7 @@
         "x-ms-meta-meta2": "value",
         "x-ms-meta-meta3": "value",
         "x-ms-meta-meta4": "value",
-        "x-ms-request-id": "d5488945-f01e-0021-61d1-f6e194000000",
+        "x-ms-request-id": "ea4ff632-101e-0006-79d1-f6f650000000",
         "x-ms-version": "2020-02-10"
       },
       "Url": "https://REDACTED.blob.core.windows.net/talakefilesystemclienttestgetdatalakefilesystempropertiesresult?restype=container"
@@ -168,7 +168,7 @@
     {
       "Headers": {
         "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Linux 5.4.0-1063-azure x86_64 #66~18.04.1-Ubuntu SMP Thu Oct 21 09:59:28 UTC 2021)",
-        "x-ms-client-request-id": "e619d0a8-8dec-4367-6420-6f981b769b3f",
+        "x-ms-client-request-id": "16475c2f-9572-42c9-4da8-8af8039bd2f1",
         "x-ms-version": "2020-02-10"
       },
       "Method": "HEAD",
@@ -177,11 +177,11 @@
         "REASON_PHRASE": "OK",
         "STATUS_CODE": "200",
         "content-length": "0",
-        "date": "Wed, 22 Dec 2021 01:18:04 GMT",
-        "etag": "\"0x8D9C4E8E7E6C83B\"",
-        "last-modified": "Wed, 22 Dec 2021 01:18:05 GMT",
+        "date": "Wed, 22 Dec 2021 01:19:32 GMT",
+        "etag": "\"0x8D9C4E91C449310\"",
+        "last-modified": "Wed, 22 Dec 2021 01:19:33 GMT",
         "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
-        "x-ms-client-request-id": "e619d0a8-8dec-4367-6420-6f981b769b3f",
+        "x-ms-client-request-id": "16475c2f-9572-42c9-4da8-8af8039bd2f1",
         "x-ms-default-encryption-scope": "$account-encryption-key",
         "x-ms-deny-encryption-scope-override": "false",
         "x-ms-has-immutability-policy": "false",
@@ -193,7 +193,7 @@
         "x-ms-meta-meta2": "value",
         "x-ms-meta-meta3": "value",
         "x-ms-meta-meta4": "value",
-        "x-ms-request-id": "d548894b-f01e-0021-67d1-f6e194000000",
+        "x-ms-request-id": "ea4ff637-101e-0006-7ed1-f6f650000000",
         "x-ms-version": "2020-02-10"
       },
       "Url": "https://REDACTED.blob.core.windows.net/talakefilesystemclienttestgetdatalakefilesystempropertiesresult?restype=container"
@@ -201,7 +201,7 @@
     {
       "Headers": {
         "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Linux 5.4.0-1063-azure x86_64 #66~18.04.1-Ubuntu SMP Thu Oct 21 09:59:28 UTC 2021)",
-        "x-ms-client-request-id": "1a9f063e-138e-43dc-72e9-c793b2113519",
+        "x-ms-client-request-id": "c49a3453-2d2a-4d54-5f4b-12008adf90fc",
         "x-ms-version": "2020-02-10"
       },
       "Method": "PUT",
@@ -210,12 +210,12 @@
         "REASON_PHRASE": "OK",
         "STATUS_CODE": "200",
         "content-length": "0",
-        "date": "Wed, 22 Dec 2021 01:18:04 GMT",
-        "etag": "\"0x8D9C4E8E7ECBAD4\"",
-        "last-modified": "Wed, 22 Dec 2021 01:18:05 GMT",
+        "date": "Wed, 22 Dec 2021 01:19:32 GMT",
+        "etag": "\"0x8D9C4E91C49E972\"",
+        "last-modified": "Wed, 22 Dec 2021 01:19:33 GMT",
         "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
-        "x-ms-client-request-id": "1a9f063e-138e-43dc-72e9-c793b2113519",
-        "x-ms-request-id": "d5488953-f01e-0021-6fd1-f6e194000000",
+        "x-ms-client-request-id": "c49a3453-2d2a-4d54-5f4b-12008adf90fc",
+        "x-ms-request-id": "ea4ff63b-101e-0006-02d1-f6f650000000",
         "x-ms-version": "2020-02-10"
       },
       "Url": "https://REDACTED.blob.core.windows.net/talakefilesystemclienttestgetdatalakefilesystempropertiesresult?comp=metadata&restype=container"
@@ -223,7 +223,7 @@
     {
       "Headers": {
         "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Linux 5.4.0-1063-azure x86_64 #66~18.04.1-Ubuntu SMP Thu Oct 21 09:59:28 UTC 2021)",
-        "x-ms-client-request-id": "014fd43f-12a0-4735-43b5-813f29afe6ec",
+        "x-ms-client-request-id": "064af756-a4b4-4061-72ac-4beecf3193e4",
         "x-ms-version": "2020-02-10"
       },
       "Method": "HEAD",
@@ -232,11 +232,11 @@
         "REASON_PHRASE": "OK",
         "STATUS_CODE": "200",
         "content-length": "0",
-        "date": "Wed, 22 Dec 2021 01:18:04 GMT",
-        "etag": "\"0x8D9C4E8E7ECBAD4\"",
-        "last-modified": "Wed, 22 Dec 2021 01:18:05 GMT",
+        "date": "Wed, 22 Dec 2021 01:19:32 GMT",
+        "etag": "\"0x8D9C4E91C49E972\"",
+        "last-modified": "Wed, 22 Dec 2021 01:19:33 GMT",
         "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
-        "x-ms-client-request-id": "014fd43f-12a0-4735-43b5-813f29afe6ec",
+        "x-ms-client-request-id": "064af756-a4b4-4061-72ac-4beecf3193e4",
         "x-ms-default-encryption-scope": "$account-encryption-key",
         "x-ms-deny-encryption-scope-override": "false",
         "x-ms-has-immutability-policy": "false",
@@ -248,7 +248,7 @@
         "x-ms-meta-meta2": "value",
         "x-ms-meta-meta3": "value",
         "x-ms-meta-meta4": "value",
-        "x-ms-request-id": "d5488962-f01e-0021-7ed1-f6e194000000",
+        "x-ms-request-id": "ea4ff63e-101e-0006-05d1-f6f650000000",
         "x-ms-version": "2020-02-10"
       },
       "Url": "https://REDACTED.blob.core.windows.net/talakefilesystemclienttestgetdatalakefilesystempropertiesresult?restype=container"
@@ -256,7 +256,7 @@
     {
       "Headers": {
         "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Linux 5.4.0-1063-azure x86_64 #66~18.04.1-Ubuntu SMP Thu Oct 21 09:59:28 UTC 2021)",
-        "x-ms-client-request-id": "e4a8856c-33dc-423f-6dfa-583cf8f27d14",
+        "x-ms-client-request-id": "acbb698b-8f95-46a8-7110-374472e5d5b7",
         "x-ms-version": "2020-02-10"
       },
       "Method": "DELETE",
@@ -265,10 +265,10 @@
         "REASON_PHRASE": "Accepted",
         "STATUS_CODE": "202",
         "content-length": "0",
-        "date": "Wed, 22 Dec 2021 01:18:04 GMT",
+        "date": "Wed, 22 Dec 2021 01:19:32 GMT",
         "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
-        "x-ms-client-request-id": "e4a8856c-33dc-423f-6dfa-583cf8f27d14",
-        "x-ms-request-id": "d5488964-f01e-0021-80d1-f6e194000000",
+        "x-ms-client-request-id": "acbb698b-8f95-46a8-7110-374472e5d5b7",
+        "x-ms-request-id": "ea4ff641-101e-0006-08d1-f6f650000000",
         "x-ms-version": "2020-02-10"
       },
       "Url": "https://REDACTED.blob.core.windows.net/talakefilesystemclienttestgetdatalakefilesystempropertiesresult?restype=container"
