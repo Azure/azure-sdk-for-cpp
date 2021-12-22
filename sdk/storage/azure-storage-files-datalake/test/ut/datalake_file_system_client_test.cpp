@@ -260,66 +260,63 @@ namespace Azure { namespace Storage { namespace Test {
     }
   }
 
-  // TEST_F(DataLakeFileSystemClientTest, ListPaths)
-  // {
-  //   {
-  //     // Normal list recursively.
-  //     auto result = ListAllPaths(true);
-  //     for (const auto& name : m_pathNameSetA)
-  //     {
-  //       auto iter = std::find_if(
-  //           result.begin(), result.end(), [&name](const Files::DataLake::Models::PathItem& path)
-  //           {
-  //             return path.Name == name;
-  //           });
-  //       EXPECT_NE(result.end(), iter);
-  //       EXPECT_EQ(iter->Name, name);
-  //       EXPECT_EQ(iter->Name.substr(0U, m_directoryA.size()), m_directoryA);
-  //     }
-  //     for (const auto& name : m_pathNameSetB)
-  //     {
-  //       auto iter = std::find_if(
-  //           result.begin(), result.end(), [&name](const Files::DataLake::Models::PathItem& path)
-  //           {
-  //             return path.Name == name;
-  //           });
-  //       EXPECT_NE(result.end(), iter);
-  //       EXPECT_EQ(iter->Name, name);
-  //       EXPECT_EQ(iter->Name.substr(0U, m_directoryB.size()), m_directoryB);
-  //     }
-  //   }
-  //   {
-  //     // List with directory.
-  //     auto result = ListAllPaths(true, m_directoryA);
-  //     for (const auto& name : m_pathNameSetA)
-  //     {
-  //       auto iter = std::find_if(
-  //           result.begin(), result.end(), [&name](const Files::DataLake::Models::PathItem& path)
-  //           {
-  //             return path.Name == name;
-  //           });
-  //       EXPECT_NE(result.end(), iter);
-  //       EXPECT_EQ(iter->Name, name);
-  //       EXPECT_EQ(iter->Name.substr(0U, m_directoryA.size()), m_directoryA);
-  //     }
-  //     for (const auto& name : m_pathNameSetB)
-  //     {
-  //       auto iter = std::find_if(
-  //           result.begin(), result.end(), [&name](const Files::DataLake::Models::PathItem& path)
-  //           {
-  //             return path.Name == name;
-  //           });
-  //       EXPECT_EQ(result.end(), iter);
-  //     }
-  //   }
-  //   {
-  //     // List max result
-  //     Files::DataLake::ListPathsOptions options;
-  //     options.PageSizeHint = 2;
-  //     auto response = m_fileSystemClient->ListPaths(true, options);
-  //     EXPECT_LE(2U, response.Paths.size());
-  //   }
-  // }
+  TEST_F(DataLakeFileSystemClientTest, ListPaths)
+  {
+    CreateDirectoryList();
+    {
+      // Normal list recursively.
+      auto result = ListAllPaths(true);
+      for (const auto& name : m_pathNameSetA)
+      {
+        auto iter = std::find_if(
+            result.begin(), result.end(), [&name](const Files::DataLake::Models::PathItem& path) {
+              return path.Name == name;
+            });
+        EXPECT_NE(result.end(), iter);
+        EXPECT_EQ(iter->Name, name);
+        EXPECT_EQ(iter->Name.substr(0U, m_directoryA.size()), m_directoryA);
+      }
+      for (const auto& name : m_pathNameSetB)
+      {
+        auto iter = std::find_if(
+            result.begin(), result.end(), [&name](const Files::DataLake::Models::PathItem& path) {
+              return path.Name == name;
+            });
+        EXPECT_NE(result.end(), iter);
+        EXPECT_EQ(iter->Name, name);
+        EXPECT_EQ(iter->Name.substr(0U, m_directoryB.size()), m_directoryB);
+      }
+    }
+    {
+      // List with directory.
+      auto result = ListAllPaths(true, m_directoryA);
+      for (const auto& name : m_pathNameSetA)
+      {
+        auto iter = std::find_if(
+            result.begin(), result.end(), [&name](const Files::DataLake::Models::PathItem& path) {
+              return path.Name == name;
+            });
+        EXPECT_NE(result.end(), iter);
+        EXPECT_EQ(iter->Name, name);
+        EXPECT_EQ(iter->Name.substr(0U, m_directoryA.size()), m_directoryA);
+      }
+      for (const auto& name : m_pathNameSetB)
+      {
+        auto iter = std::find_if(
+            result.begin(), result.end(), [&name](const Files::DataLake::Models::PathItem& path) {
+              return path.Name == name;
+            });
+        EXPECT_EQ(result.end(), iter);
+      }
+    }
+    {
+      // List max result
+      Files::DataLake::ListPathsOptions options;
+      options.PageSizeHint = 2;
+      auto response = m_fileSystemClient->ListPaths(true, options);
+      EXPECT_LE(2U, response.Paths.size());
+    }
+  }
 
   // TEST_F(DataLakeFileSystemClientTest, UnencodedPathDirectoryFileNameWorks)
   // {
