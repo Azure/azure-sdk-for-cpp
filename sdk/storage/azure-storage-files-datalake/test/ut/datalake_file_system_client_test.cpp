@@ -355,7 +355,9 @@ namespace Azure { namespace Storage { namespace Test {
       auto fileSystemName = GetTestNameLowerCase() + "1";
       auto connectionStringClient
           = Azure::Storage::Files::DataLake::DataLakeFileSystemClient::CreateFromConnectionString(
-              AdlsGen2ConnectionString(), fileSystemName);
+              AdlsGen2ConnectionString(),
+              fileSystemName,
+              InitClientOptions<Azure::Storage::Files::DataLake::DataLakeClientOptions>());
       EXPECT_NO_THROW(connectionStringClient.Create());
       EXPECT_NO_THROW(connectionStringClient.Delete());
     }
@@ -371,7 +373,7 @@ namespace Azure { namespace Storage { namespace Test {
           Azure::Storage::Files::DataLake::DataLakeFileSystemClient,
           Azure::Storage::Files::DataLake::DataLakeClientOptions>(
           Azure::Storage::Files::DataLake::DataLakeFileSystemClient::CreateFromConnectionString(
-              AdlsGen2ConnectionString(), LowercaseRandomString())
+              AdlsGen2ConnectionString(), GetTestNameLowerCase())
               .GetUrl(),
           &credential,
           options);
