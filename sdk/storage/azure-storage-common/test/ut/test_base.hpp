@@ -54,6 +54,24 @@ namespace Azure { namespace Storage {
         return Azure::Core::_internal::StringExtensions::ToLower(name);
       }
 
+      std::string GetFileSystemValidName() const
+      {
+        std::string name(m_testContext.GetTestSuiteName() + m_testContext.GetTestName());
+        // Make sure the name is less than 63 characters long
+        auto const nameSize = name.size();
+        size_t const maxContainerNameSize = 63;
+        if (nameSize > maxContainerNameSize)
+        {
+          name = std::string(name.begin() + nameSize - maxContainerNameSize, name.end());
+        }
+        // Check name won't start with `-`
+        if (name[0] == '-')
+        {
+          name = std::string(name.begin() + 1, name.end());
+        }
+        return Azure::Core::_internal::StringExtensions::ToLower(name);
+      }
+
       std::string GetTestEncryptionScope()
       {
         static const std::string TestEncryptionScope("EncryptionScopeForTest");
@@ -79,7 +97,7 @@ namespace Azure { namespace Storage {
 
       std::string LowercaseRandomString(size_t size = 10);
 
-      Storage::Metadata RandomMetadata(size_t size = 5);
+      Storage::Metadata GetMetadata(size_t size = 5);
 
       void RandomBuffer(char* buffer, size_t length);
       inline void RandomBuffer(uint8_t* buffer, size_t length)

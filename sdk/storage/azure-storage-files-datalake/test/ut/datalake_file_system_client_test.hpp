@@ -4,29 +4,30 @@
 #include <azure/storage/files/datalake.hpp>
 
 #include "datalake_service_client_test.hpp"
-#include "test_base.hpp"
+#include "test/ut/test_base.hpp"
 
 namespace Azure { namespace Storage { namespace Test {
 
   class DataLakeFileSystemClientTest : public DataLakeServiceClientTest {
   protected:
-    static void SetUpTestSuite();
-    static void TearDownTestSuite();
+    void SetUp();
+    void TearDown();
+    void CreateDirectoryList();
 
-    static std::vector<Files::DataLake::Models::PathItem> ListAllPaths(
+    std::vector<Files::DataLake::Models::PathItem> ListAllPaths(
         bool recursive,
         const std::string& directory = std::string());
 
-    static Files::DataLake::Models::PathHttpHeaders GetInterestingHttpHeaders();
+    Files::DataLake::Models::PathHttpHeaders GetInterestingHttpHeaders();
 
-    static std::shared_ptr<Files::DataLake::DataLakeFileSystemClient> m_fileSystemClient;
-    static std::string m_fileSystemName;
+    std::shared_ptr<Files::DataLake::DataLakeFileSystemClient> m_fileSystemClient;
+    std::string m_fileSystemName;
 
     // Path related
-    static std::vector<std::string> m_pathNameSetA;
-    static std::string m_directoryA;
-    static std::vector<std::string> m_pathNameSetB;
-    static std::string m_directoryB;
+    std::vector<std::string> m_pathNameSetA;
+    std::string m_directoryA;
+    std::vector<std::string> m_pathNameSetB;
+    std::string m_directoryB;
   };
 
 }}} // namespace Azure::Storage::Test

@@ -92,26 +92,9 @@ az_rtti_setup(
 # coverage. Has no effect if BUILD_CODE_COVERAGE is OFF
 create_code_coverage(storage azure-storage-files-datalake azure-storage-test "tests?/*;samples?/*")
 
-# if(BUILD_TESTING)
-#   target_sources(
-#     azure-storage-test
-#       PRIVATE
-#         test/datalake_directory_client_test.cpp
-#         test/datalake_directory_client_test.hpp
-#         test/datalake_file_client_test.cpp
-#         test/datalake_file_client_test.hpp
-#         test/datalake_file_system_client_test.cpp
-#         test/datalake_file_system_client_test.hpp
-#         test/datalake_path_client_test.cpp
-#         test/datalake_path_client_test.hpp
-#         test/datalake_sas_test.cpp
-#         test/datalake_service_client_test.cpp
-#         test/datalake_service_client_test.hpp
-#         test/macro_guard.cpp
-#   )
-
-#   target_link_libraries(azure-storage-test PRIVATE azure-storage-files-datalake)
-# endif()
+if(BUILD_TESTING)
+  add_subdirectory(test/ut)
+endif()
 
 if(BUILD_STORAGE_SAMPLES)
   add_subdirectory(samples)

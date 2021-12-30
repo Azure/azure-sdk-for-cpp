@@ -23,6 +23,19 @@
 #include <azure/core/internal/strings.hpp>
 #include <azure/core/platform.hpp>
 
+namespace Azure { namespace Storage { namespace Blobs { namespace Models {
+
+  bool operator==(const SignedIdentifier& lhs, const SignedIdentifier& rhs)
+  {
+    return lhs.Id == rhs.Id && lhs.StartsOn.HasValue() == rhs.StartsOn.HasValue()
+        && (!lhs.StartsOn.HasValue() || lhs.StartsOn.Value() == rhs.StartsOn.Value())
+        && lhs.ExpiresOn.HasValue() == rhs.ExpiresOn.HasValue()
+        && (!lhs.ExpiresOn.HasValue() || lhs.ExpiresOn.Value() == rhs.ExpiresOn.Value())
+        && lhs.Permissions == rhs.Permissions;
+  }
+
+}}}} // namespace Azure::Storage::Blobs::Models
+
 namespace Azure { namespace Storage { namespace Test {
 
   constexpr static const char* StandardStorageConnectionStringValue = "";
@@ -218,12 +231,12 @@ namespace Azure { namespace Storage { namespace Test {
     return Azure::Core::_internal::StringExtensions::ToLower(RandomString(size));
   }
 
-  Storage::Metadata StorageTest::RandomMetadata(size_t size)
+  Storage::Metadata StorageTest::GetMetadata(size_t size)
   {
     Storage::Metadata result;
     for (size_t i = 0; i < size; ++i)
     {
-      result["m" + LowercaseRandomString(5)] = RandomString(5);
+      result["meta" + std::to_string(i % 10)] = "value";
     }
     return result;
   }
