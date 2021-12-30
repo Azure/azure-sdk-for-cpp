@@ -43,9 +43,8 @@ namespace Azure { namespace Storage { namespace Test {
 
   void DataLakeFileSystemClientTest::SetUp()
   {
-    CHECK_SKIP_TEST();
-
     DataLakeServiceClientTest::SetUp();
+    CHECK_SKIP_TEST();
 
     m_fileSystemName = GetFileSystemValidName();
     m_fileSystemClient = std::make_shared<Files::DataLake::DataLakeFileSystemClient>(
