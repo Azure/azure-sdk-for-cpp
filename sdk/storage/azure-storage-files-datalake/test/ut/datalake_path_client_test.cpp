@@ -10,22 +10,22 @@
 
 namespace Azure { namespace Storage { namespace Test {
 
-  std::shared_ptr<Files::DataLake::DataLakePathClient> DataLakePathClientTest::m_pathClient;
-  std::string DataLakePathClientTest::m_pathName;
-
-  void DataLakePathClientTest::SetUpTestSuite()
+  void DataLakePathClientTest::SetUp()
   {
-    DataLakeFileSystemClientTest::SetUpTestSuite();
-    m_pathName = RandomString();
+    DataLakeFileSystemClientTest::SetUp();
+    CHECK_SKIP_TEST();
+
+    m_pathName = GetFileSystemValidName();
     m_pathClient = std::make_shared<Files::DataLake::DataLakePathClient>(
         m_fileSystemClient->GetFileClient(m_pathName));
     m_fileSystemClient->GetFileClient(m_pathName).Create();
   }
 
-  void DataLakePathClientTest::TearDownTestSuite()
+  void DataLakePathClientTest::TearDown()
   {
+    CHECK_SKIP_TEST();
     m_pathClient->Delete();
-    DataLakeFileSystemClientTest::TearDownTestSuite();
+    DataLakeFileSystemClientTest::TearDown();
   }
 
   std::vector<Files::DataLake::Models::Acl> DataLakePathClientTest::GetValidAcls()
@@ -73,8 +73,9 @@ namespace Azure { namespace Storage { namespace Test {
 
     {
       // Create path with metadata works
-      auto client1 = m_fileSystemClient->GetFileClient(RandomString());
-      auto client2 = m_fileSystemClient->GetFileClient(RandomString());
+      std::string const testName(GetTestName());
+      auto client1 = m_fileSystemClient->GetFileClient(testName + "1");
+      auto client2 = m_fileSystemClient->GetFileClient(testName + "1");
       Files::DataLake::CreatePathOptions options1;
       Files::DataLake::CreatePathOptions options2;
       options1.Metadata = metadata1;
@@ -121,13 +122,14 @@ namespace Azure { namespace Storage { namespace Test {
 
   TEST_F(DataLakePathClientTest, PathHttpHeaders)
   {
+    const std::string testName(GetTestName());
     {
       // HTTP headers works with create.
       auto httpHeader = GetInterestingHttpHeaders();
       std::vector<Files::DataLake::DataLakePathClient> pathClient;
       for (int32_t i = 0; i < 2; ++i)
       {
-        auto client = m_fileSystemClient->GetFileClient(RandomString());
+        auto client = m_fileSystemClient->GetFileClient(testName + std::to_string(i));
         Files::DataLake::CreatePathOptions options;
         options.HttpHeaders = httpHeader;
         EXPECT_NO_THROW(client.Create(options));
@@ -140,6 +142,7 @@ namespace Azure { namespace Storage { namespace Test {
         EXPECT_EQ(httpHeader.ContentDisposition, result.Value.HttpHeaders.ContentDisposition);
         EXPECT_EQ(httpHeader.ContentLanguage, result.Value.HttpHeaders.ContentLanguage);
         EXPECT_EQ(httpHeader.ContentType, result.Value.HttpHeaders.ContentType);
+        client.Delete();
       }
     }
 
@@ -149,7 +152,7 @@ namespace Azure { namespace Storage { namespace Test {
       std::vector<Files::DataLake::DataLakePathClient> pathClient;
       for (int32_t i = 0; i < 2; ++i)
       {
-        auto client = m_fileSystemClient->GetFileClient(RandomString());
+        auto client = m_fileSystemClient->GetFileClient(testName + "2" + std::to_string(i));
         EXPECT_NO_THROW(client.Create());
         EXPECT_NO_THROW(client.SetHttpHeaders(httpHeader));
         pathClient.emplace_back(std::move(client));
@@ -161,6 +164,7 @@ namespace Azure { namespace Storage { namespace Test {
         EXPECT_EQ(httpHeader.ContentDisposition, result.Value.HttpHeaders.ContentDisposition);
         EXPECT_EQ(httpHeader.ContentLanguage, result.Value.HttpHeaders.ContentLanguage);
         EXPECT_EQ(httpHeader.ContentType, result.Value.HttpHeaders.ContentType);
+        client.Delete();
       }
     }
 
@@ -240,9 +244,13 @@ namespace Azure { namespace Storage { namespace Test {
 
   TEST_F(DataLakePathClientTest, PathSetPermissions)
   {
+    std::string const testName(GetTestName());
     {
       auto pathClient = Files::DataLake::DataLakePathClient::CreateFromConnectionString(
-          AdlsGen2ConnectionString(), m_fileSystemName, RandomString());
+          AdlsGen2ConnectionString(),
+          m_fileSystemName,
+          testName + "1",
+          InitClientOptions<Files::DataLake::DataLakeClientOptions>());
       pathClient.Create(Files::DataLake::Models::PathResourceType::File);
       std::string pathPermissions = "rwxrw-rw-";
       EXPECT_NO_THROW(pathClient.SetPermissions(pathPermissions));
@@ -261,7 +269,10 @@ namespace Azure { namespace Storage { namespace Test {
     {
       // Set/Get Permissions works with last modified access condition.
       auto pathClient = Files::DataLake::DataLakePathClient::CreateFromConnectionString(
-          AdlsGen2ConnectionString(), m_fileSystemName, RandomString());
+          AdlsGen2ConnectionString(),
+          m_fileSystemName,
+          testName + "2",
+          InitClientOptions<Files::DataLake::DataLakeClientOptions>());
       auto response = pathClient.Create(Files::DataLake::Models::PathResourceType::File);
       Files::DataLake::SetPathPermissionsOptions options1, options2;
       options1.AccessConditions.IfUnmodifiedSince = response.Value.LastModified;
@@ -273,7 +284,10 @@ namespace Azure { namespace Storage { namespace Test {
     {
       // Set/Get Permissions works with if match access condition.
       auto pathClient = Files::DataLake::DataLakePathClient::CreateFromConnectionString(
-          AdlsGen2ConnectionString(), m_fileSystemName, RandomString());
+          AdlsGen2ConnectionString(),
+          m_fileSystemName,
+          testName + "3",
+          InitClientOptions<Files::DataLake::DataLakeClientOptions>());
       auto response = pathClient.Create(Files::DataLake::Models::PathResourceType::File);
       Files::DataLake::SetPathPermissionsOptions options1, options2;
       options1.AccessConditions.IfMatch = response.Value.ETag;
@@ -284,75 +298,80 @@ namespace Azure { namespace Storage { namespace Test {
     }
   }
 #if 0
-  TEST_F(DataLakePathClientTest, LeaseRelated)
-  {
-    std::string leaseId1 = CreateUniqueLeaseId();
-    int32_t leaseDuration = 20;
-    auto lastModified = m_pathClient->GetProperties().Value.LastModified;
-    auto aLease = *m_pathClient->AcquireLease(leaseId1, leaseDuration);
-    EXPECT_FALSE(aLease.ETag.empty());
-    EXPECT_FALSE(aLease.LastModified > lastModified);
-    EXPECT_EQ(aLease.LeaseId, leaseId1);
-    aLease = *m_pathClient->AcquireLease(leaseId1, leaseDuration);
-    EXPECT_FALSE(aLease.ETag.empty());
-    EXPECT_FALSE(aLease.LastModified > lastModified);
-    EXPECT_EQ(aLease.LeaseId, leaseId1);
+    TEST_F(DataLakePathClientTest, LeaseRelated)
+    {
+      std::string leaseId1 = CreateUniqueLeaseId();
+      int32_t leaseDuration = 20;
+      auto lastModified = m_pathClient->GetProperties().Value.LastModified;
+      auto aLease = *m_pathClient->AcquireLease(leaseId1, leaseDuration);
+      EXPECT_FALSE(aLease.ETag.empty());
+      EXPECT_FALSE(aLease.LastModified > lastModified);
+      EXPECT_EQ(aLease.LeaseId, leaseId1);
+      aLease = *m_pathClient->AcquireLease(leaseId1, leaseDuration);
+      EXPECT_FALSE(aLease.ETag.empty());
+      EXPECT_FALSE(aLease.LastModified > lastModified);
+      EXPECT_EQ(aLease.LeaseId, leaseId1);
 
-    auto properties = *m_pathClient->GetProperties();
-    EXPECT_EQ(properties.LeaseState.Value(), Files::DataLake::Models::LeaseStateType::Leased);
-    EXPECT_EQ(properties.LeaseStatus.Value(), Files::DataLake::Models::LeaseStatusType::Locked);
-    EXPECT_FALSE(properties.LeaseDuration.Value().empty());
+      auto properties = *m_pathClient->GetProperties();
+      EXPECT_EQ(properties.LeaseState.Value(),
+      Files::DataLake::Models::LeaseStateType::Leased);
+      EXPECT_EQ(properties.LeaseStatus.Value(),
+      Files::DataLake::Models::LeaseStatusType::Locked);
+      EXPECT_FALSE(properties.LeaseDuration.Value().empty());
 
-    lastModified = properties.LastModified;
-    auto rLease = *m_pathClient->RenewLease(leaseId1);
-    EXPECT_FALSE(rLease.ETag.empty());
-    EXPECT_FALSE(rLease.LastModified > lastModified);
-    EXPECT_EQ(rLease.LeaseId, leaseId1);
+      lastModified = properties.LastModified;
+      auto rLease = *m_pathClient->RenewLease(leaseId1);
+      EXPECT_FALSE(rLease.ETag.empty());
+      EXPECT_FALSE(rLease.LastModified > lastModified);
+      EXPECT_EQ(rLease.LeaseId, leaseId1);
 
-    std::string leaseId2 = CreateUniqueLeaseId();
-    EXPECT_NE(leaseId1, leaseId2);
-    lastModified = m_pathClient->GetProperties().Value.LastModified;
-    auto cLease = *m_pathClient->ChangeLease(leaseId1, leaseId2);
-    EXPECT_FALSE(cLease.ETag.empty());
-    EXPECT_FALSE(cLease.LastModified > lastModified);
-    EXPECT_EQ(cLease.LeaseId, leaseId2);
+      std::string leaseId2 = CreateUniqueLeaseId();
+      EXPECT_NE(leaseId1, leaseId2);
+      lastModified = m_pathClient->GetProperties().Value.LastModified;
+      auto cLease = *m_pathClient->ChangeLease(leaseId1, leaseId2);
+      EXPECT_FALSE(cLease.ETag.empty());
+      EXPECT_FALSE(cLease.LastModified > lastModified);
+      EXPECT_EQ(cLease.LeaseId, leaseId2);
 
-    lastModified = m_pathClient->GetProperties().Value.LastModified;
-    auto pathInfo = *m_pathClient->ReleaseLease(leaseId2);
-    EXPECT_FALSE(pathInfo.ETag.empty());
-    EXPECT_FALSE(pathInfo.LastModified > lastModified);
+      lastModified = m_pathClient->GetProperties().Value.LastModified;
+      auto pathInfo = *m_pathClient->ReleaseLease(leaseId2);
+      EXPECT_FALSE(pathInfo.ETag.empty());
+      EXPECT_FALSE(pathInfo.LastModified > lastModified);
 
-    lastModified = m_pathClient->GetProperties().Value.LastModified;
-    aLease = *m_pathClient->AcquireLease(CreateUniqueLeaseId(), InfiniteLeaseDuration);
-    properties = *m_pathClient->GetProperties();
-    EXPECT_FALSE(properties.LeaseDuration.Value().empty());
-    auto brokenLease = *m_pathClient->BreakLease();
-    EXPECT_FALSE(brokenLease.ETag.empty());
-    EXPECT_FALSE(brokenLease.LastModified > lastModified);
-    EXPECT_EQ(brokenLease.LeaseTime, 0);
+      lastModified = m_pathClient->GetProperties().Value.LastModified;
+      aLease = *m_pathClient->AcquireLease(CreateUniqueLeaseId(), InfiniteLeaseDuration);
+      properties = *m_pathClient->GetProperties();
+      EXPECT_FALSE(properties.LeaseDuration.Value().empty());
+      auto brokenLease = *m_pathClient->BreakLease();
+      EXPECT_FALSE(brokenLease.ETag.empty());
+      EXPECT_FALSE(brokenLease.LastModified > lastModified);
+      EXPECT_EQ(brokenLease.LeaseTime, 0);
 
-    aLease = *m_pathClient->AcquireLease(CreateUniqueLeaseId(), leaseDuration);
-    Files::DataLake::BreakDataLakePathLeaseOptions breakOptions;
-    breakOptions.BreakPeriod = 30;
-    lastModified = m_pathClient->GetProperties().Value.LastModified;
-    brokenLease = *m_pathClient->BreakLease(breakOptions);
-    EXPECT_FALSE(brokenLease.ETag.empty());
-    EXPECT_FALSE(brokenLease.LastModified > lastModified);
-    EXPECT_NE(brokenLease.LeaseTime, 0);
+      aLease = *m_pathClient->AcquireLease(CreateUniqueLeaseId(), leaseDuration);
+      Files::DataLake::BreakDataLakePathLeaseOptions breakOptions;
+      breakOptions.BreakPeriod = 30;
+      lastModified = m_pathClient->GetProperties().Value.LastModified;
+      brokenLease = *m_pathClient->BreakLease(breakOptions);
+      EXPECT_FALSE(brokenLease.ETag.empty());
+      EXPECT_FALSE(brokenLease.LastModified > lastModified);
+      EXPECT_NE(brokenLease.LeaseTime, 0);
 
-    Files::DataLake::BreakDataLakePathLeaseOptions options;
-    options.BreakPeriod = 0;
-    m_pathClient->BreakLease(options);
-  }
+      Files::DataLake::BreakDataLakePathLeaseOptions options;
+      options.BreakPeriod = 0;
+      m_pathClient->BreakLease(options);
+    }
 #endif
   TEST_F(DataLakePathClientTest, ConstructorsWorks)
   {
     {
       // Create from connection string validates static creator function and shared key constructor.
-      auto pathName = RandomString();
+      auto pathName = GetTestName();
       auto connectionStringClient
           = Azure::Storage::Files::DataLake::DataLakePathClient::CreateFromConnectionString(
-              AdlsGen2ConnectionString(), m_fileSystemName, pathName);
+              AdlsGen2ConnectionString(),
+              m_fileSystemName,
+              pathName,
+              InitClientOptions<Files::DataLake::DataLakeClientOptions>());
       EXPECT_NO_THROW(
           connectionStringClient.Create(Files::DataLake::Models::PathResourceType::File));
       EXPECT_NO_THROW(connectionStringClient.Delete());
@@ -360,38 +379,51 @@ namespace Azure { namespace Storage { namespace Test {
 
     {
       // Create from client secret credential.
-      auto credential = std::make_shared<Azure::Identity::ClientSecretCredential>(
-          AadTenantId(), AadClientId(), AadClientSecret());
+      std::shared_ptr<Azure::Core::Credentials::TokenCredential> credential
+          = std::make_shared<Azure::Identity::ClientSecretCredential>(
+              AadTenantId(), AadClientId(), AadClientSecret());
+      Files::DataLake::DataLakeClientOptions options;
 
-      auto clientSecretClient = Azure::Storage::Files::DataLake::DataLakePathClient(
+      auto clientSecretClient = InitTestClient<
+          Azure::Storage::Files::DataLake::DataLakePathClient,
+          Files::DataLake::DataLakeClientOptions>(
           Files::DataLake::_detail::GetDfsUrlFromUrl(
               Azure::Storage::Files::DataLake::DataLakePathClient::CreateFromConnectionString(
-                  AdlsGen2ConnectionString(), m_fileSystemName, RandomString())
+                  AdlsGen2ConnectionString(),
+                  m_fileSystemName,
+                  GetTestName() + "withSecret",
+                  InitClientOptions<Files::DataLake::DataLakeClientOptions>())
                   .GetUrl()),
-          credential);
+          &credential,
+          options);
 
-      EXPECT_NO_THROW(clientSecretClient.Create(Files::DataLake::Models::PathResourceType::File));
-      EXPECT_NO_THROW(clientSecretClient.Delete());
+      EXPECT_NO_THROW(clientSecretClient->Create(Files::DataLake::Models::PathResourceType::File));
+      EXPECT_NO_THROW(clientSecretClient->Delete());
     }
 
     {
       // Create from Anonymous credential.
-      auto objectName = RandomString();
+      auto objectName = "objectName";
       auto containerClient = Azure::Storage::Blobs::BlobContainerClient::CreateFromConnectionString(
-          AdlsGen2ConnectionString(), m_fileSystemName);
+          AdlsGen2ConnectionString(),
+          m_fileSystemName,
+          InitClientOptions<Azure::Storage::Blobs::BlobClientOptions>());
       Azure::Storage::Blobs::SetBlobContainerAccessPolicyOptions options;
       options.AccessType = Azure::Storage::Blobs::Models::PublicAccessType::BlobContainer;
       containerClient.SetAccessPolicy(options);
 
       auto pathClient
           = Azure::Storage::Files::DataLake::DataLakePathClient::CreateFromConnectionString(
-              AdlsGen2ConnectionString(), m_fileSystemName, objectName);
+              AdlsGen2ConnectionString(),
+              m_fileSystemName,
+              objectName,
+              InitClientOptions<Files::DataLake::DataLakeClientOptions>());
       EXPECT_NO_THROW(pathClient.Create(Files::DataLake::Models::PathResourceType::File));
 
-      auto anonymousClient
-          = Azure::Storage::Files::DataLake::DataLakePathClient(pathClient.GetUrl());
+      auto anonymousClient = Azure::Storage::Files::DataLake::DataLakePathClient(
+          pathClient.GetUrl(), InitClientOptions<Files::DataLake::DataLakeClientOptions>());
 
-      std::this_thread::sleep_for(std::chrono::seconds(30));
+      TestSleep(std::chrono::seconds(30));
 
       EXPECT_NO_THROW(anonymousClient.GetProperties());
     }
