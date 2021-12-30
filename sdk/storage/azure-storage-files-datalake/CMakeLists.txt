@@ -51,7 +51,7 @@ set(
     inc/azure/storage/files/datalake/datalake_sas_builder.hpp
     inc/azure/storage/files/datalake/datalake_service_client.hpp
     inc/azure/storage/files/datalake/dll_import_export.hpp
-    inc/azure/storage/files/datalake/protocol/datalake_rest_client.hpp
+    inc/azure/storage/files/datalake/rest_client.hpp
 )
 
 set(
@@ -65,10 +65,10 @@ set(
     src/datalake_lease_client.cpp
     src/datalake_path_client.cpp
     src/datalake_responses.cpp
-    src/datalake_rest_client.cpp
     src/datalake_sas_builder.cpp
     src/datalake_service_client.cpp
     src/datalake_utilities.cpp
+    src/rest_client.cpp
 )
 
 add_library(azure-storage-files-datalake ${AZURE_STORAGE_FILES_DATALAKE_HEADER} ${AZURE_STORAGE_FILES_DATALAKE_SOURCE})

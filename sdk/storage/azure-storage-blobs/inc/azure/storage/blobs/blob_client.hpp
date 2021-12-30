@@ -13,7 +13,6 @@
 
 #include "azure/storage/blobs/blob_options.hpp"
 #include "azure/storage/blobs/blob_responses.hpp"
-#include "azure/storage/blobs/protocol/blob_rest_client.hpp"
 
 namespace Azure { namespace Storage { namespace Files { namespace DataLake {
   class DataLakeFileSystemClient;

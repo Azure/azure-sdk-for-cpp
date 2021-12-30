@@ -168,6 +168,12 @@
       ]
     },
     {
+      "filename": "**/sdk/storage/azure-storage-queues/src/rest_client.cpp",
+      "words": [
+        "numofmessages"
+      ]
+    },
+    {
       "filename": "**/cmake-modules/**/*",
       "words": [
         "fprofile",

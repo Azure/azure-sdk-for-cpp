@@ -3,8 +3,12 @@
 
 #include "azure/storage/blobs/append_blob_client.hpp"
 
+#include <numeric>
+
+#include <azure/storage/common/crypt.hpp>
 #include <azure/storage/common/internal/constants.hpp>
 #include <azure/storage/common/storage_common.hpp>
+#include <azure/storage/common/storage_exception.hpp>
 
 namespace Azure { namespace Storage { namespace Blobs {
 
@@ -76,10 +80,23 @@ namespace Azure { namespace Storage { namespace Blobs {
       const CreateAppendBlobOptions& options,
       const Azure::Core::Context& context) const
   {
-    _detail::BlobRestClient::AppendBlob::CreateAppendBlobOptions protocolLayerOptions;
-    protocolLayerOptions.HttpHeaders = options.HttpHeaders;
-    protocolLayerOptions.Metadata = options.Metadata;
-    protocolLayerOptions.Tags = options.Tags;
+    _detail::AppendBlobClient::CreateAppendBlobOptions protocolLayerOptions;
+    protocolLayerOptions.BlobContentType = options.HttpHeaders.ContentType;
+    protocolLayerOptions.BlobContentEncoding = options.HttpHeaders.ContentEncoding;
+    protocolLayerOptions.BlobContentLanguage = options.HttpHeaders.ContentLanguage;
+    protocolLayerOptions.BlobContentMD5 = options.HttpHeaders.ContentHash.Value;
+    protocolLayerOptions.BlobContentDisposition = options.HttpHeaders.ContentDisposition;
+    protocolLayerOptions.BlobCacheControl = options.HttpHeaders.CacheControl;
+    protocolLayerOptions.Metadata
+        = std::map<std::string, std::string>(options.Metadata.begin(), options.Metadata.end());
+    protocolLayerOptions.BlobTagsString = std::accumulate(
+        options.Tags.begin(),
+        options.Tags.end(),
+        std::string(),
+        [](const std::string& a, const std::pair<std::string, std::string>& b) {
+          return a + (a.empty() ? "" : "&") + _internal::UrlEncodeQueryParameter(b.first) + "="
+              + _internal::UrlEncodeQueryParameter(b.second);
+        });
     protocolLayerOptions.LeaseId = options.AccessConditions.LeaseId;
     protocolLayerOptions.IfModifiedSince = options.AccessConditions.IfModifiedSince;
     protocolLayerOptions.IfUnmodifiedSince = options.AccessConditions.IfUnmodifiedSince;
@@ -90,11 +107,10 @@ namespace Azure { namespace Storage { namespace Blobs {
     {
       protocolLayerOptions.EncryptionKey = m_customerProvidedKey.Value().Key;
       protocolLayerOptions.EncryptionKeySha256 = m_customerProvidedKey.Value().KeyHash;
-      protocolLayerOptions.EncryptionAlgorithm = m_customerProvidedKey.Value().Algorithm;
+      protocolLayerOptions.EncryptionAlgorithm = m_customerProvidedKey.Value().Algorithm.ToString();
     }
     protocolLayerOptions.EncryptionScope = m_encryptionScope;
-    return _detail::BlobRestClient::AppendBlob::Create(
-        *m_pipeline, m_blobUrl, protocolLayerOptions, context);
+    return _detail::AppendBlobClient::Create(*m_pipeline, m_blobUrl, protocolLayerOptions, context);
   }
 
   Azure::Response<Models::CreateAppendBlobResult> AppendBlobClient::CreateIfNotExists(
@@ -126,8 +142,20 @@ namespace Azure { namespace Storage { namespace Blobs {
       const AppendBlockOptions& options,
       const Azure::Core::Context& context) const
   {
-    _detail::BlobRestClient::AppendBlob::AppendBlockOptions protocolLayerOptions;
-    protocolLayerOptions.TransactionalContentHash = options.TransactionalContentHash;
+    _detail::AppendBlobClient::AppendAppendBlobBlockOptions protocolLayerOptions;
+    if (options.TransactionalContentHash.HasValue())
+    {
+      if (options.TransactionalContentHash.Value().Algorithm == HashAlgorithm::Md5)
+      {
+        protocolLayerOptions.TransactionalContentMD5
+            = options.TransactionalContentHash.Value().Value;
+      }
+      else if (options.TransactionalContentHash.Value().Algorithm == HashAlgorithm::Crc64)
+      {
+        protocolLayerOptions.TransactionalContentCrc64
+            = options.TransactionalContentHash.Value().Value;
+      }
+    }
     protocolLayerOptions.LeaseId = options.AccessConditions.LeaseId;
     protocolLayerOptions.MaxSize = options.AccessConditions.IfMaxSizeLessThanOrEqual;
     protocolLayerOptions.AppendPosition = options.AccessConditions.IfAppendPositionEqual;
@@ -140,10 +168,10 @@ namespace Azure { namespace Storage { namespace Blobs {
     {
       protocolLayerOptions.EncryptionKey = m_customerProvidedKey.Value().Key;
       protocolLayerOptions.EncryptionKeySha256 = m_customerProvidedKey.Value().KeyHash;
-      protocolLayerOptions.EncryptionAlgorithm = m_customerProvidedKey.Value().Algorithm;
+      protocolLayerOptions.EncryptionAlgorithm = m_customerProvidedKey.Value().Algorithm.ToString();
     }
     protocolLayerOptions.EncryptionScope = m_encryptionScope;
-    return _detail::BlobRestClient::AppendBlob::AppendBlock(
+    return _detail::AppendBlobClient::AppendBlock(
         *m_pipeline, m_blobUrl, content, protocolLayerOptions, context);
   }
 
@@ -152,10 +180,29 @@ namespace Azure { namespace Storage { namespace Blobs {
       const AppendBlockFromUriOptions& options,
       const Azure::Core::Context& context) const
   {
-    _detail::BlobRestClient::AppendBlob::AppendBlockFromUriOptions protocolLayerOptions;
-    protocolLayerOptions.SourceUri = sourceUri;
-    protocolLayerOptions.SourceRange = options.SourceRange;
-    protocolLayerOptions.TransactionalContentHash = options.TransactionalContentHash;
+    _detail::AppendBlobClient::AppendAppendBlobBlockFromUriOptions protocolLayerOptions;
+    protocolLayerOptions.SourceUrl = sourceUri;
+    if (options.SourceRange.HasValue())
+    {
+      std::string rangeStr = "bytes=" + std::to_string(options.SourceRange.Value().Offset) + "-";
+      if (options.SourceRange.Value().Length.HasValue())
+      {
+        rangeStr += std::to_string(
+            options.SourceRange.Value().Offset + options.SourceRange.Value().Length.Value() - 1);
+      }
+      protocolLayerOptions.SourceRange = rangeStr;
+    }
+    if (options.TransactionalContentHash.HasValue())
+    {
+      if (options.TransactionalContentHash.Value().Algorithm == HashAlgorithm::Md5)
+      {
+        protocolLayerOptions.SourceContentMD5 = options.TransactionalContentHash.Value().Value;
+      }
+      else if (options.TransactionalContentHash.Value().Algorithm == HashAlgorithm::Crc64)
+      {
+        protocolLayerOptions.SourceContentcrc64 = options.TransactionalContentHash.Value().Value;
+      }
+    }
     protocolLayerOptions.LeaseId = options.AccessConditions.LeaseId;
     protocolLayerOptions.MaxSize = options.AccessConditions.IfMaxSizeLessThanOrEqual;
     protocolLayerOptions.AppendPosition = options.AccessConditions.IfAppendPositionEqual;
@@ -168,10 +215,10 @@ namespace Azure { namespace Storage { namespace Blobs {
     {
       protocolLayerOptions.EncryptionKey = m_customerProvidedKey.Value().Key;
       protocolLayerOptions.EncryptionKeySha256 = m_customerProvidedKey.Value().KeyHash;
-      protocolLayerOptions.EncryptionAlgorithm = m_customerProvidedKey.Value().Algorithm;
+      protocolLayerOptions.EncryptionAlgorithm = m_customerProvidedKey.Value().Algorithm.ToString();
     }
     protocolLayerOptions.EncryptionScope = m_encryptionScope;
-    return _detail::BlobRestClient::AppendBlob::AppendBlockFromUri(
+    return _detail::AppendBlobClient::AppendBlockFromUri(
         *m_pipeline, m_blobUrl, protocolLayerOptions, context);
   }
 
@@ -179,16 +226,14 @@ namespace Azure { namespace Storage { namespace Blobs {
       const SealAppendBlobOptions& options,
       const Azure::Core::Context& context) const
   {
-    _detail::BlobRestClient::AppendBlob::SealAppendBlobOptions protocolLayerOptions;
+    _detail::AppendBlobClient::SealAppendBlobOptions protocolLayerOptions;
     protocolLayerOptions.LeaseId = options.AccessConditions.LeaseId;
     protocolLayerOptions.AppendPosition = options.AccessConditions.IfAppendPositionEqual;
     protocolLayerOptions.IfModifiedSince = options.AccessConditions.IfModifiedSince;
     protocolLayerOptions.IfUnmodifiedSince = options.AccessConditions.IfUnmodifiedSince;
     protocolLayerOptions.IfMatch = options.AccessConditions.IfMatch;
     protocolLayerOptions.IfNoneMatch = options.AccessConditions.IfNoneMatch;
-    protocolLayerOptions.IfTags = options.AccessConditions.TagConditions;
-    return _detail::BlobRestClient::AppendBlob::Seal(
-        *m_pipeline, m_blobUrl, protocolLayerOptions, context);
+    return _detail::AppendBlobClient::Seal(*m_pipeline, m_blobUrl, protocolLayerOptions, context);
   }
 
 }}} // namespace Azure::Storage::Blobs

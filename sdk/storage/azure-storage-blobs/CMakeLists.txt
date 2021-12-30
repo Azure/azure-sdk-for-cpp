@@ -40,7 +40,6 @@ endif()
 
 set(
   AZURE_STORAGE_BLOB_HEADER
-    inc/azure/storage/blobs/protocol/blob_rest_client.hpp
     inc/azure/storage/blobs/append_blob_client.hpp
     inc/azure/storage/blobs/blob_client.hpp
     inc/azure/storage/blobs/blob_container_client.hpp
@@ -52,6 +51,7 @@ set(
     inc/azure/storage/blobs/block_blob_client.hpp
     inc/azure/storage/blobs/dll_import_export.hpp
     inc/azure/storage/blobs/page_blob_client.hpp
+    inc/azure/storage/blobs/rest_client.hpp
     inc/azure/storage/blobs.hpp
 )
 
@@ -63,11 +63,11 @@ set(
     src/blob_container_client.cpp
     src/blob_lease_client.cpp
     src/blob_responses.cpp
-    src/blob_rest_client.cpp
     src/blob_sas_builder.cpp
     src/blob_service_client.cpp
     src/block_blob_client.cpp
     src/page_blob_client.cpp
+    src/rest_client.cpp
 )
 
 add_library(azure-storage-blobs ${AZURE_STORAGE_BLOB_HEADER} ${AZURE_STORAGE_BLOB_SOURCE})

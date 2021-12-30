@@ -10,7 +10,6 @@
 #include <azure/storage/blobs/blob_responses.hpp>
 
 #include "azure/storage/files/datalake/datalake_options.hpp"
-#include "azure/storage/files/datalake/protocol/datalake_rest_client.hpp"
 
 namespace Azure { namespace Storage { namespace Files { namespace DataLake {
 
@@ -18,6 +17,11 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
   class DataLakePathClient;
 
   namespace Models {
+
+    using LeaseDurationType = Blobs::Models::LeaseDurationType;
+    using LeaseDuration [[deprecated]] = LeaseDurationType;
+    using LeaseState = Blobs::Models::LeaseState;
+    using LeaseStatus = Blobs::Models::LeaseStatus;
 
     // ServiceClient models:
 
@@ -61,7 +65,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
       /**
        * The duration of the lease on the file system if it has one.
        */
-      Azure::Nullable<Models::LeaseDuration> LeaseDuration;
+      Azure::Nullable<Models::LeaseDurationType> LeaseDuration;
 
       /**
        * The lease state of the file system.
@@ -181,17 +185,6 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
 
     // PathClient models:
 
-    /**
-     * @brief The information returned when deleting the path.
-     */
-    struct DeletePathResult final
-    {
-      /**
-       * If the object is deleted.
-       */
-      bool Deleted = true;
-    };
-
     using AcquireLeaseResult = Blobs::Models::AcquireLeaseResult;
     using RenewLeaseResult = Blobs::Models::RenewLeaseResult;
     using ReleaseLeaseResult = Blobs::Models::ReleaseLeaseResult;
@@ -287,7 +280,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
       /**
        * The duration of the lease on the path.
        */
-      Azure::Nullable<Models::LeaseDuration> LeaseDuration;
+      Azure::Nullable<Models::LeaseDurationType> LeaseDuration;
 
       /**
        * The state of the lease on the path.
@@ -448,32 +441,6 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
       DateTime LastModified;
     };
 
-    /**
-     * @brief The information returned when creating a path.
-     */
-    struct CreatePathResult final
-    {
-      /**
-       * A boolean indicates if the path is created.
-       */
-      bool Created = true;
-
-      /**
-       * An HTTP entity tag associated with the path.
-       */
-      Azure::ETag ETag;
-
-      /**
-       * The data and time the path was last modified.
-       */
-      DateTime LastModified;
-
-      /**
-       * The size of the file.
-       */
-      Azure::Nullable<int64_t> FileSize;
-    };
-
     using SetPathPermissionsResult = SetPathAccessControlListResult;
 
     // FileClient models:
@@ -500,7 +467,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
       /**
        * The lease duration of the file.
        */
-      Azure::Nullable<Models::LeaseDuration> LeaseDuration;
+      Azure::Nullable<Models::LeaseDurationType> LeaseDuration;
 
       /**
        * The lease state of the file.
@@ -625,17 +592,6 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     };
 
     /**
-     * @brief The information returned when deleting a file.
-     */
-    struct DeleteFileResult final
-    {
-      /**
-       * A boolean indicates if the file is deleted.
-       */
-      bool Deleted = true;
-    };
-
-    /**
      * @brief The information returned when downloading a file to a specific destination.
      */
     struct DownloadFileToResult final
@@ -657,6 +613,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     };
 
     using CreateFileResult = CreatePathResult;
+    using DeleteFileResult = DeletePathResult;
 
     // DirectoryClient models:
 
@@ -747,7 +704,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     std::shared_ptr<DataLakePathClient> m_dataLakePathClient;
     SetPathAccessControlListRecursiveOptions m_operationOptions;
     std::vector<Models::Acl> m_acls;
-    _detail::PathSetAccessControlRecursiveMode m_mode;
+    Models::_detail::PathSetAccessControlListRecursiveMode m_mode;
 
     friend class DataLakePathClient;
     friend class Azure::Core::PagedResponse<SetPathAccessControlListRecursivePagedResponse>;

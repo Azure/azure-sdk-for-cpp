@@ -42,12 +42,12 @@ set(
   AZURE_STORAGE_QUEUE_HEADER
     inc/azure/storage/queues.hpp
     inc/azure/storage/queues/dll_import_export.hpp
-    inc/azure/storage/queues/protocol/queue_rest_client.hpp
     inc/azure/storage/queues/queue_client.hpp
     inc/azure/storage/queues/queue_options.hpp
     inc/azure/storage/queues/queue_responses.hpp
     inc/azure/storage/queues/queue_sas_builder.hpp
     inc/azure/storage/queues/queue_service_client.hpp
+    inc/azure/storage/queues/rest_client.hpp
 )
 
 set(
@@ -56,9 +56,9 @@ set(
     src/queue_client.cpp
     src/queue_options.cpp
     src/queue_responses.cpp
-    src/queue_rest_client.cpp
     src/queue_sas_builder.cpp
     src/queue_service_client.cpp
+    src/rest_client.cpp
 )
 
 add_library(azure-storage-queues ${AZURE_STORAGE_QUEUE_HEADER} ${AZURE_STORAGE_QUEUE_SOURCE})
