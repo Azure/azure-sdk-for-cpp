@@ -27,22 +27,19 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake { nam
 
 namespace Azure { namespace Storage { namespace Test {
 
-  std::shared_ptr<Files::DataLake::DataLakeFileClient> DataLakeFileClientTest::m_fileClient;
-  std::string DataLakeFileClientTest::m_fileName;
-
-  void DataLakeFileClientTest::SetUpTestSuite()
+  void DataLakeFileClientTest::SetUp()
   {
-    DataLakeFileSystemClientTest::SetUpTestSuite();
-    m_fileName = RandomString();
+    DataLakeFileSystemClientTest::SetUp();
+    m_fileName = GetFileSystemValidName();
     m_fileClient = std::make_shared<Files::DataLake::DataLakeFileClient>(
         m_fileSystemClient->GetFileClient(m_fileName));
-    m_fileClient->Create();
+    m_fileClient->CreateIfNotExists();
   }
 
-  void DataLakeFileClientTest::TearDownTestSuite()
+  void DataLakeFileClientTest::TearDown()
   {
     m_fileSystemClient->GetFileClient(m_fileName).Delete();
-    DataLakeFileSystemClientTest::TearDownTestSuite();
+    DataLakeFileSystemClientTest::TearDown();
   }
 
   TEST_F(DataLakeFileClientTest, CreateDeleteFiles)
@@ -52,7 +49,7 @@ namespace Azure { namespace Storage { namespace Test {
       std::vector<Files::DataLake::DataLakeFileClient> fileClient;
       for (int32_t i = 0; i < 5; ++i)
       {
-        auto client = m_fileSystemClient->GetFileClient(RandomString());
+        auto client = m_fileSystemClient->GetFileClient("file" + std::to_string(i));
         EXPECT_NO_THROW(client.Create());
         fileClient.emplace_back(std::move(client));
       }
@@ -66,7 +63,7 @@ namespace Azure { namespace Storage { namespace Test {
       std::vector<Files::DataLake::DataLakeFileClient> fileClient;
       for (int32_t i = 0; i < 2; ++i)
       {
-        auto client = m_fileSystemClient->GetFileClient(RandomString());
+        auto client = m_fileSystemClient->GetFileClient("fileCondition" + std::to_string(i));
         EXPECT_NO_THROW(client.Create());
         fileClient.emplace_back(std::move(client));
       }
@@ -88,7 +85,7 @@ namespace Azure { namespace Storage { namespace Test {
       std::vector<Files::DataLake::DataLakeFileClient> fileClient;
       for (int32_t i = 0; i < 2; ++i)
       {
-        auto client = m_fileSystemClient->GetFileClient(RandomString());
+        auto client = m_fileSystemClient->GetFileClient("fileMatch" + std::to_string(i));
         EXPECT_NO_THROW(client.Create());
         fileClient.emplace_back(std::move(client));
       }
@@ -108,7 +105,7 @@ namespace Azure { namespace Storage { namespace Test {
   TEST_F(DataLakeFileClientTest, CreateDeleteIfExistsFiles)
   {
     {
-      auto client = m_fileSystemClient->GetFileClient(RandomString());
+      auto client = m_fileSystemClient->GetFileClient("aver");
       bool created = false;
       bool deleted = false;
       EXPECT_NO_THROW(created = client.Create().Value.Created);
@@ -145,8 +142,8 @@ namespace Azure { namespace Storage { namespace Test {
 
     {
       // Create path with metadata works
-      auto client1 = m_fileSystemClient->GetFileClient(RandomString());
-      auto client2 = m_fileSystemClient->GetFileClient(RandomString());
+      auto client1 = m_fileSystemClient->GetFileClient("path1");
+      auto client2 = m_fileSystemClient->GetFileClient("path2");
       Files::DataLake::CreateFileOptions options1;
       Files::DataLake::CreateFileOptions options2;
       options1.Metadata = metadata1;
@@ -158,6 +155,8 @@ namespace Azure { namespace Storage { namespace Test {
       EXPECT_EQ(metadata1, result);
       result = client2.GetProperties().Value.Metadata;
       EXPECT_EQ(metadata2, result);
+      EXPECT_NO_THROW(client1.Delete());
+      EXPECT_NO_THROW(client2.Delete());
     }
   }
 
@@ -196,7 +195,7 @@ namespace Azure { namespace Storage { namespace Test {
       std::vector<Files::DataLake::DataLakeFileClient> fileClient;
       for (int32_t i = 0; i < 2; ++i)
       {
-        auto client = m_fileSystemClient->GetFileClient(RandomString());
+        auto client = m_fileSystemClient->GetFileClient("client" + std::to_string(i));
         Files::DataLake::CreateFileOptions options;
         options.HttpHeaders = httpHeader;
         EXPECT_NO_THROW(client.Create(options));
@@ -217,7 +216,7 @@ namespace Azure { namespace Storage { namespace Test {
   TEST_F(DataLakeFileClientTest, FileDataActions)
   {
     const int32_t bufferSize = 4 * 1024; // 4KB data size
-    auto buffer = RandomBuffer(bufferSize);
+    std::vector<uint8_t> buffer(bufferSize, 'x');
     auto bufferStream = std::make_unique<Azure::Core::IO::MemoryBodyStream>(
         Azure::Core::IO::MemoryBodyStream(buffer));
     auto properties1 = m_fileClient->GetProperties();
@@ -244,10 +243,10 @@ namespace Azure { namespace Storage { namespace Test {
   TEST_F(DataLakeFileClientTest, FileReadReturns)
   {
     const int32_t bufferSize = 4 * 1024; // 4KB data size
-    auto buffer = RandomBuffer(bufferSize);
+    std::vector<uint8_t> buffer(bufferSize, 'x');
     auto bufferStream = std::make_unique<Azure::Core::IO::MemoryBodyStream>(
         Azure::Core::IO::MemoryBodyStream(buffer));
-    auto newFileName = RandomString();
+    std::string newFileName("fileForTest");
     auto newFileClient = std::make_shared<Files::DataLake::DataLakeFileClient>(
         m_fileSystemClient->GetFileClient(newFileName));
     newFileClient->Create();
@@ -331,25 +330,26 @@ namespace Azure { namespace Storage { namespace Test {
 
   TEST_F(DataLakeFileClientTest, ReadEmptyFile)
   {
-    auto fileClient = m_fileSystemClient->GetFileClient(RandomString());
+    auto fileClient = m_fileSystemClient->GetFileClient(GetTestNameLowerCase());
     fileClient.Create();
 
     auto res = fileClient.Download();
     EXPECT_EQ(res.Value.Body->Length(), 0);
 
-    std::string tempFilename = RandomString();
+    std::string tempFilename(GetTestNameLowerCase());
     EXPECT_NO_THROW(fileClient.DownloadTo(tempFilename));
     EXPECT_TRUE(ReadFile(tempFilename).empty());
     DeleteFile(tempFilename);
 
     std::vector<uint8_t> buff;
     EXPECT_NO_THROW(fileClient.DownloadTo(buff.data(), 0));
+    fileClient.Delete();
   }
 
   TEST_F(DataLakeFileClientTest, ScheduleForDeletion)
   {
     {
-      auto client = m_fileSystemClient->GetFileClient(RandomString());
+      auto client = m_fileSystemClient->GetFileClient(GetTestNameLowerCase());
       auto createResponse = client.Create();
       auto scheduleDeletionResponse
           = client.ScheduleDeletion(Files::DataLake::ScheduleFileExpiryOriginType::NeverExpire);
@@ -357,7 +357,7 @@ namespace Azure { namespace Storage { namespace Test {
       EXPECT_EQ(scheduleDeletionResponse.Value.LastModified, createResponse.Value.LastModified);
     }
     {
-      auto client = m_fileSystemClient->GetFileClient(RandomString());
+      auto client = m_fileSystemClient->GetFileClient(GetTestNameLowerCase() + "1");
       EXPECT_NO_THROW(client.Create());
       Files::DataLake::ScheduleFileDeletionOptions options;
       EXPECT_THROW(
@@ -369,7 +369,7 @@ namespace Azure { namespace Storage { namespace Test {
           Files::DataLake::ScheduleFileExpiryOriginType::RelativeToNow, options));
     }
     {
-      auto client = m_fileSystemClient->GetFileClient(RandomString());
+      auto client = m_fileSystemClient->GetFileClient(GetTestNameLowerCase() + "2");
       EXPECT_NO_THROW(client.Create());
       Files::DataLake::ScheduleFileDeletionOptions options;
       EXPECT_THROW(
@@ -387,132 +387,170 @@ namespace Azure { namespace Storage { namespace Test {
     }
   }
 
-  TEST_F(DataLakeFileClientTest, ConcurrentUploadDownload)
+  namespace {
+
+    struct FileConcurrentUploadParameter
+    {
+      int Concurrency;
+      int64_t FileSize;
+    };
+
+    class UploadFile : public DataLakeFileClientTest,
+                       public ::testing::WithParamInterface<FileConcurrentUploadParameter> {
+    };
+
+    std::string GetUploadSuffix(const testing::TestParamInfo<UploadFile::ParamType>& info)
+    {
+      // Can't use empty spaces or underscores (_) as per google test documentation
+      // http://google.github.io/googletest/advanced.html#specifying-names-for-value-parameterized-test-parameters
+      auto const& p = info.param;
+      std::string suffix("c" + std::to_string(p.Concurrency) + "s" + std::to_string(p.FileSize));
+      return suffix;
+    }
+
+    std::vector<FileConcurrentUploadParameter> GetUploadParameters()
+    {
+      std::vector<FileConcurrentUploadParameter> testParametes;
+      for (int c : {1, 2, 5})
+      {
+        for (int64_t l :
+             {0ULL, 1ULL, 2ULL, 2_KB, 4_KB, 999_KB, 1_MB, 2_MB - 1, 3_MB, 5_MB, 8_MB - 1234, 8_MB})
+        {
+          testParametes.emplace_back(FileConcurrentUploadParameter({c, l}));
+        }
+      }
+      return testParametes;
+    }
+  } // namespace
+
+  TEST_P(UploadFile, fromBuffer)
   {
-    std::vector<uint8_t> fileContent = RandomBuffer(static_cast<size_t>(8_MB));
+    auto const p = GetParam();
+    std::vector<uint8_t> fileContent(static_cast<size_t>(8_MB), 'x');
+    auto fileClient = m_fileSystemClient->GetFileClient(GetTestNameLowerCase());
 
-    auto testUploadFromBuffer = [&](int concurrency, int64_t fileSize) {
-      auto fileClient = m_fileSystemClient->GetFileClient(RandomString());
-
-      Azure::Storage::Files::DataLake::UploadFileFromOptions options;
-      options.TransferOptions.ChunkSize = 1_MB;
-      options.TransferOptions.Concurrency = concurrency;
-      options.HttpHeaders = GetInterestingHttpHeaders();
-      options.Metadata = GetMetadata();
-      auto res = fileClient.UploadFrom(fileContent.data(), static_cast<size_t>(fileSize), options);
-      auto lastModified = fileClient.GetProperties().Value.LastModified;
-      EXPECT_TRUE(res.Value.ETag.HasValue());
-      EXPECT_TRUE(IsValidTime(res.Value.LastModified));
-      EXPECT_EQ(res.Value.LastModified, lastModified);
-      auto properties = fileClient.GetProperties().Value;
-      EXPECT_EQ(properties.FileSize, fileSize);
-      EXPECT_EQ(properties.HttpHeaders, options.HttpHeaders);
-      EXPECT_EQ(properties.Metadata, options.Metadata);
-      EXPECT_EQ(properties.ETag, res.Value.ETag);
-      EXPECT_TRUE(IsValidTime(res.Value.LastModified));
-      EXPECT_EQ(properties.LastModified, res.Value.LastModified);
-      std::vector<uint8_t> downloadContent(static_cast<size_t>(fileSize), '\x00');
-      fileClient.DownloadTo(downloadContent.data(), static_cast<size_t>(fileSize));
-      EXPECT_EQ(
-          downloadContent,
-          std::vector<uint8_t>(
-              fileContent.begin(), fileContent.begin() + static_cast<size_t>(fileSize)));
-    };
-
-    auto testUploadFromFile = [&](int concurrency, int64_t fileSize) {
-      auto fileClient = m_fileSystemClient->GetFileClient(RandomString());
-
-      Azure::Storage::Files::DataLake::UploadFileFromOptions options;
-      options.TransferOptions.ChunkSize = 1_MB;
-      options.TransferOptions.Concurrency = concurrency;
-      options.HttpHeaders = GetInterestingHttpHeaders();
-      options.Metadata = GetMetadata();
-
-      std::string tempFilename = RandomString();
-      {
-        Azure::Storage::_internal::FileWriter fileWriter(tempFilename);
-        fileWriter.Write(fileContent.data(), static_cast<size_t>(fileSize), 0);
-      }
-      auto res = fileClient.UploadFrom(tempFilename, options);
-      auto lastModified = fileClient.GetProperties().Value.LastModified;
-      EXPECT_TRUE(res.Value.ETag.HasValue());
-      EXPECT_TRUE(IsValidTime(res.Value.LastModified));
-      EXPECT_EQ(res.Value.LastModified, lastModified);
-      auto properties = fileClient.GetProperties().Value;
-      EXPECT_EQ(properties.FileSize, fileSize);
-      EXPECT_EQ(properties.HttpHeaders, options.HttpHeaders);
-      EXPECT_EQ(properties.Metadata, options.Metadata);
-      EXPECT_EQ(properties.ETag, res.Value.ETag);
-      EXPECT_EQ(properties.LastModified, res.Value.LastModified);
-      std::vector<uint8_t> downloadContent(static_cast<size_t>(fileSize), '\x00');
-      fileClient.DownloadTo(downloadContent.data(), static_cast<size_t>(fileSize));
-      EXPECT_EQ(
-          downloadContent,
-          std::vector<uint8_t>(
-              fileContent.begin(), fileContent.begin() + static_cast<size_t>(fileSize)));
-      std::string tempFileDestinationName = RandomString();
-      fileClient.DownloadTo(tempFileDestinationName);
-      Azure::Storage::_internal::FileReader fileReader(tempFileDestinationName);
-      auto size = fileReader.GetFileSize();
-      EXPECT_EQ(fileSize, size);
-      DeleteFile(tempFileDestinationName);
-      DeleteFile(tempFilename);
-    };
-
-    std::vector<std::future<void>> futures;
-    for (int c : {1, 2, 5})
-    {
-      for (int64_t l :
-           {0ULL, 1ULL, 2ULL, 2_KB, 4_KB, 999_KB, 1_MB, 2_MB - 1, 3_MB, 5_MB, 8_MB - 1234, 8_MB})
-      {
-        ASSERT_GE(fileContent.size(), static_cast<size_t>(l));
-        futures.emplace_back(std::async(std::launch::async, testUploadFromBuffer, c, l));
-        futures.emplace_back(std::async(std::launch::async, testUploadFromFile, c, l));
-      }
-    }
-    for (auto& f : futures)
-    {
-      f.get();
-    }
+    Azure::Storage::Files::DataLake::UploadFileFromOptions options;
+    options.TransferOptions.ChunkSize = 1_MB;
+    options.TransferOptions.Concurrency = p.Concurrency;
+    options.HttpHeaders = GetInterestingHttpHeaders();
+    options.Metadata = GetMetadata();
+    auto res = fileClient.UploadFrom(fileContent.data(), static_cast<size_t>(p.FileSize), options);
+    auto lastModified = fileClient.GetProperties().Value.LastModified;
+    EXPECT_TRUE(res.Value.ETag.HasValue());
+    EXPECT_TRUE(IsValidTime(res.Value.LastModified));
+    EXPECT_EQ(res.Value.LastModified, lastModified);
+    auto properties = fileClient.GetProperties().Value;
+    EXPECT_EQ(properties.FileSize, p.FileSize);
+    EXPECT_EQ(properties.HttpHeaders, options.HttpHeaders);
+    EXPECT_EQ(properties.Metadata, options.Metadata);
+    EXPECT_EQ(properties.ETag, res.Value.ETag);
+    EXPECT_TRUE(IsValidTime(res.Value.LastModified));
+    EXPECT_EQ(properties.LastModified, res.Value.LastModified);
+    std::vector<uint8_t> downloadContent(static_cast<size_t>(p.FileSize), '\x00');
+    fileClient.DownloadTo(downloadContent.data(), static_cast<size_t>(p.FileSize));
+    EXPECT_EQ(
+        downloadContent,
+        std::vector<uint8_t>(
+            fileContent.begin(), fileContent.begin() + static_cast<size_t>(p.FileSize)));
+    fileClient.Delete();
   }
+
+  TEST_P(UploadFile, fromFile)
+  {
+    auto const p = GetParam();
+    std::vector<uint8_t> fileContent(static_cast<size_t>(8_MB), 'x');
+    auto fileClient = m_fileSystemClient->GetFileClient(GetTestNameLowerCase());
+
+    Azure::Storage::Files::DataLake::UploadFileFromOptions options;
+    options.TransferOptions.ChunkSize = 1_MB;
+    options.TransferOptions.Concurrency = p.Concurrency;
+    options.HttpHeaders = GetInterestingHttpHeaders();
+    options.Metadata = GetMetadata();
+
+    std::string tempFilename = GetTestNameLowerCase();
+    {
+      Azure::Storage::_internal::FileWriter fileWriter(tempFilename);
+      fileWriter.Write(fileContent.data(), static_cast<size_t>(p.FileSize), 0);
+    }
+    auto res = fileClient.UploadFrom(tempFilename, options);
+    auto lastModified = fileClient.GetProperties().Value.LastModified;
+    EXPECT_TRUE(res.Value.ETag.HasValue());
+    EXPECT_TRUE(IsValidTime(res.Value.LastModified));
+    EXPECT_EQ(res.Value.LastModified, lastModified);
+    auto properties = fileClient.GetProperties().Value;
+    EXPECT_EQ(properties.FileSize, p.FileSize);
+    EXPECT_EQ(properties.HttpHeaders, options.HttpHeaders);
+    EXPECT_EQ(properties.Metadata, options.Metadata);
+    EXPECT_EQ(properties.ETag, res.Value.ETag);
+    EXPECT_EQ(properties.LastModified, res.Value.LastModified);
+    std::vector<uint8_t> downloadContent(static_cast<size_t>(p.FileSize), '\x00');
+    fileClient.DownloadTo(downloadContent.data(), static_cast<size_t>(p.FileSize));
+    EXPECT_EQ(
+        downloadContent,
+        std::vector<uint8_t>(
+            fileContent.begin(), fileContent.begin() + static_cast<size_t>(p.FileSize)));
+    std::string tempFileDestinationName = RandomString();
+    fileClient.DownloadTo(tempFileDestinationName);
+    Azure::Storage::_internal::FileReader fileReader(tempFileDestinationName);
+    auto size = fileReader.GetFileSize();
+    EXPECT_EQ(p.FileSize, size);
+    DeleteFile(tempFileDestinationName);
+    DeleteFile(tempFilename);
+    fileClient.Delete();
+  }
+
+  INSTANTIATE_TEST_SUITE_P(
+      withParam,
+      UploadFile,
+      testing::ValuesIn(GetUploadParameters()),
+      GetUploadSuffix);
 
   TEST_F(DataLakeFileClientTest, ConstructorsWorks)
   {
     {
       // Create from connection string validates static creator function and shared key
       // constructor.
-      auto fileName = RandomString();
+      auto fileName = GetTestNameLowerCase();
       auto connectionStringClient
           = Azure::Storage::Files::DataLake::DataLakeFileClient::CreateFromConnectionString(
-              AdlsGen2ConnectionString(), m_fileSystemName, fileName);
+              AdlsGen2ConnectionString(),
+              m_fileSystemName,
+              fileName,
+              InitClientOptions<Azure::Storage::Files::DataLake::DataLakeClientOptions>());
       EXPECT_NO_THROW(connectionStringClient.Create());
       EXPECT_NO_THROW(connectionStringClient.Delete());
     }
 
     {
       // Create from client secret credential.
-      auto credential = std::make_shared<Azure::Identity::ClientSecretCredential>(
-          AadTenantId(), AadClientId(), AadClientSecret());
+      std::shared_ptr<Azure::Core::Credentials::TokenCredential> credential
+          = std::make_shared<Azure::Identity::ClientSecretCredential>(
+              AadTenantId(), AadClientId(), AadClientSecret());
+      Azure::Storage::Files::DataLake::DataLakeClientOptions options;
 
-      auto clientSecretClient = Azure::Storage::Files::DataLake::DataLakeFileClient(
+      auto clientSecretClient = InitTestClient<
+          Azure::Storage::Files::DataLake::DataLakeFileClient,
+          Azure::Storage::Files::DataLake::DataLakeClientOptions>(
           Azure::Storage::Files::DataLake::_detail::GetDfsUrlFromUrl(
               Azure::Storage::Files::DataLake::DataLakeFileClient::CreateFromConnectionString(
-                  AdlsGen2ConnectionString(), m_fileSystemName, RandomString())
+                  AdlsGen2ConnectionString(), m_fileSystemName, "credential")
                   .GetUrl()),
-          credential);
+          &credential,
+          options);
 
-      EXPECT_NO_THROW(clientSecretClient.Create());
-      EXPECT_NO_THROW(clientSecretClient.Delete());
+      EXPECT_NO_THROW(clientSecretClient->Create());
+      EXPECT_NO_THROW(clientSecretClient->Delete());
     }
 
     {
       // Create from Anonymous credential.
-      std::vector<uint8_t> blobContent;
-      blobContent.resize(static_cast<size_t>(1_MB));
-      RandomBuffer(reinterpret_cast<char*>(&blobContent[0]), blobContent.size());
-      auto objectName = RandomString();
+      std::vector<uint8_t> blobContent(static_cast<size_t>(1_MB), 'x');
+
+      auto objectName = "testObject";
       auto containerClient = Azure::Storage::Blobs::BlobContainerClient::CreateFromConnectionString(
-          AdlsGen2ConnectionString(), m_fileSystemName);
+          AdlsGen2ConnectionString(),
+          m_fileSystemName,
+          InitClientOptions<Azure::Storage::Blobs::BlobClientOptions>());
       Azure::Storage::Blobs::SetBlobContainerAccessPolicyOptions options;
       options.AccessType = Azure::Storage::Blobs::Models::PublicAccessType::Blob;
       containerClient.SetAccessPolicy(options);
@@ -523,9 +561,10 @@ namespace Azure { namespace Storage { namespace Test {
       auto anonymousClient = Azure::Storage::Files::DataLake::DataLakeFileClient(
           Azure::Storage::Files::DataLake::DataLakeFileClient::CreateFromConnectionString(
               AdlsGen2ConnectionString(), m_fileSystemName, objectName)
-              .GetUrl());
+              .GetUrl(),
+          InitClientOptions<Azure::Storage::Files::DataLake::DataLakeClientOptions>());
 
-      std::this_thread::sleep_for(std::chrono::seconds(30));
+      TestSleep(std::chrono::seconds(30));
 
       EXPECT_NO_THROW(anonymousClient.Download());
     }

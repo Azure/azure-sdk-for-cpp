@@ -11,19 +11,6 @@
 #include <azure/storage/blobs/blob_sas_builder.hpp>
 #include <azure/storage/common/crypt.hpp>
 
-namespace Azure { namespace Storage { namespace Blobs { namespace Models {
-
-  bool operator==(const SignedIdentifier& lhs, const SignedIdentifier& rhs)
-  {
-    return lhs.Id == rhs.Id && lhs.StartsOn.HasValue() == rhs.StartsOn.HasValue()
-        && (!lhs.StartsOn.HasValue() || lhs.StartsOn.Value() == rhs.StartsOn.Value())
-        && lhs.ExpiresOn.HasValue() == rhs.ExpiresOn.HasValue()
-        && (!lhs.ExpiresOn.HasValue() || lhs.ExpiresOn.Value() == rhs.ExpiresOn.Value())
-        && lhs.Permissions == rhs.Permissions;
-  }
-
-}}}} // namespace Azure::Storage::Blobs::Models
-
 namespace Azure { namespace Storage { namespace Test {
 
   std::string BlobContainerClientTest::GetSas()

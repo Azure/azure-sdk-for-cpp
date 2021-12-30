@@ -48,7 +48,7 @@ namespace Azure { namespace Storage { namespace Test {
     m_fileSystemName = GetFileSystemValidName();
     m_fileSystemClient = std::make_shared<Files::DataLake::DataLakeFileSystemClient>(
         m_dataLakeServiceClient->GetFileSystemClient(m_fileSystemName));
-    m_fileSystemClient->Create();
+    m_fileSystemClient->CreateIfNotExists();
   }
 
   void DataLakeFileSystemClientTest::TearDown()
@@ -318,223 +318,228 @@ namespace Azure { namespace Storage { namespace Test {
     }
   }
 
-  // TEST_F(DataLakeFileSystemClientTest, UnencodedPathDirectoryFileNameWorks)
-  // {
-  //   const std::string non_ascii_word = "\xE6\xB5\x8B\xE8\xAF\x95";
-  //   const std::string encoded_non_ascii_word = "%E6%B5%8B%E8%AF%95";
-  //   std::string baseName = "a b c / !@#$%^&*(?/<>,.;:'\"[]{}|`~\\) def" + non_ascii_word;
-  //   {
-  //     std::string pathName = baseName + RandomString();
-  //     auto fileClient = m_fileSystemClient->GetFileClient(pathName);
-  //     EXPECT_NO_THROW(fileClient.Create());
-  //     auto fileUrl = fileClient.GetUrl();
-  //     EXPECT_EQ(fileUrl, m_fileSystemClient->GetUrl() + "/" +
-  //     _internal::UrlEncodePath(pathName));
-  //   }
-  //   {
-  //     std::string directoryName = baseName + RandomString();
-  //     auto directoryClient = m_fileSystemClient->GetDirectoryClient(directoryName);
-  //     EXPECT_NO_THROW(directoryClient.Create());
-  //     auto directoryUrl = directoryClient.GetUrl();
-  //     EXPECT_EQ(
-  //         directoryUrl,
-  //         m_fileSystemClient->GetUrl() + "/" + _internal::UrlEncodePath(directoryName));
-  //   }
-  //   {
-  //     std::string fileName = baseName + RandomString();
-  //     auto fileClient = m_fileSystemClient->GetFileClient(fileName);
-  //     EXPECT_NO_THROW(fileClient.Create());
-  //     auto fileUrl = fileClient.GetUrl();
-  //     EXPECT_EQ(fileUrl, m_fileSystemClient->GetUrl() + "/" +
-  //     _internal::UrlEncodePath(fileName));
-  //   }
-  // }
+  TEST_F(DataLakeFileSystemClientTest, UnencodedPathDirectoryFileNameWorks)
+  {
+    const std::string non_ascii_word = "\xE6\xB5\x8B\xE8\xAF\x95";
+    const std::string encoded_non_ascii_word = "%E6%B5%8B%E8%AF%95";
+    std::string baseName = "a b c / !@#$%^&*(?/<>,.;:'\"[]{}|`~\\) def" + non_ascii_word;
+    {
+      std::string pathName = baseName + GetTestNameLowerCase();
+      auto fileClient = m_fileSystemClient->GetFileClient(pathName);
+      EXPECT_NO_THROW(fileClient.Create());
+      auto fileUrl = fileClient.GetUrl();
+      EXPECT_EQ(fileUrl, m_fileSystemClient->GetUrl() + "/" + _internal::UrlEncodePath(pathName));
+    }
+    {
+      std::string directoryName = baseName + GetTestNameLowerCase() + "1";
+      auto directoryClient = m_fileSystemClient->GetDirectoryClient(directoryName);
+      EXPECT_NO_THROW(directoryClient.Create());
+      auto directoryUrl = directoryClient.GetUrl();
+      EXPECT_EQ(
+          directoryUrl,
+          m_fileSystemClient->GetUrl() + "/" + _internal::UrlEncodePath(directoryName));
+    }
+    {
+      std::string fileName = baseName + GetTestNameLowerCase() + "2";
+      auto fileClient = m_fileSystemClient->GetFileClient(fileName);
+      EXPECT_NO_THROW(fileClient.Create());
+      auto fileUrl = fileClient.GetUrl();
+      EXPECT_EQ(fileUrl, m_fileSystemClient->GetUrl() + "/" + _internal::UrlEncodePath(fileName));
+    }
+  }
 
-  // TEST_F(DataLakeFileSystemClientTest, ConstructorsWorks)
-  // {
-  //   {
-  //     // Create from connection string validates static creator function and shared key
-  //     constructor. auto fileSystemName = LowercaseRandomString(); auto connectionStringClient
-  //         =
-  //         Azure::Storage::Files::DataLake::DataLakeFileSystemClient::CreateFromConnectionString(
-  //             AdlsGen2ConnectionString(), fileSystemName);
-  //     EXPECT_NO_THROW(connectionStringClient.Create());
-  //     EXPECT_NO_THROW(connectionStringClient.Delete());
-  //   }
+  TEST_F(DataLakeFileSystemClientTest, ConstructorsWorks)
+  {
+    {
+      // Create from connection string validates static creator function and shared key constructor.
+      auto fileSystemName = GetTestNameLowerCase() + "1";
+      auto connectionStringClient
+          = Azure::Storage::Files::DataLake::DataLakeFileSystemClient::CreateFromConnectionString(
+              AdlsGen2ConnectionString(), fileSystemName);
+      EXPECT_NO_THROW(connectionStringClient.Create());
+      EXPECT_NO_THROW(connectionStringClient.Delete());
+    }
 
-  //   {
-  //     // Create from client secret credential.
-  //     auto credential = std::make_shared<Azure::Identity::ClientSecretCredential>(
-  //         AadTenantId(), AadClientId(), AadClientSecret());
+    {
+      // Create from client secret credential.
+      std::shared_ptr<Azure::Core::Credentials::TokenCredential> credential
+          = std::make_shared<Azure::Identity::ClientSecretCredential>(
+              AadTenantId(), AadClientId(), AadClientSecret());
+      Azure::Storage::Files::DataLake::DataLakeClientOptions options;
 
-  //     auto clientSecretClient = Azure::Storage::Files::DataLake::DataLakeFileSystemClient(
-  //         Azure::Storage::Files::DataLake::DataLakeFileSystemClient::CreateFromConnectionString(
-  //             AdlsGen2ConnectionString(), LowercaseRandomString())
-  //             .GetUrl(),
-  //         credential);
+      auto clientSecretClient = InitTestClient<
+          Azure::Storage::Files::DataLake::DataLakeFileSystemClient,
+          Azure::Storage::Files::DataLake::DataLakeClientOptions>(
+          Azure::Storage::Files::DataLake::DataLakeFileSystemClient::CreateFromConnectionString(
+              AdlsGen2ConnectionString(), LowercaseRandomString())
+              .GetUrl(),
+          &credential,
+          options);
 
-  //     EXPECT_NO_THROW(clientSecretClient.Create());
-  //     EXPECT_NO_THROW(clientSecretClient.Delete());
-  //   }
-  // }
+      EXPECT_NO_THROW(clientSecretClient->Create());
+      EXPECT_NO_THROW(clientSecretClient->Delete());
+    }
+  }
 
-  // TEST_F(DataLakeFileSystemClientTest, GetSetAccessPolicy)
-  // {
-  //   {
-  //     auto fileSystem = Files::DataLake::DataLakeFileSystemClient::CreateFromConnectionString(
-  //         AdlsGen2ConnectionString(), LowercaseRandomString());
-  //     fileSystem.Create();
+  TEST_F(DataLakeFileSystemClientTest, GetSetAccessPolicy)
+  {
+    {
+      auto fileSystem = Files::DataLake::DataLakeFileSystemClient::CreateFromConnectionString(
+          AdlsGen2ConnectionString(), GetTestNameLowerCase());
+      fileSystem.Create();
 
-  //     Files::DataLake::SetFileSystemAccessPolicyOptions options;
-  //     options.AccessType = Files::DataLake::Models::PublicAccessType::Path;
-  //     {
-  //       Files::DataLake::Models::SignedIdentifier identifier;
-  //       identifier.Id = RandomString(64);
-  //       identifier.StartsOn = std::chrono::system_clock::now() - std::chrono::minutes(1);
-  //       identifier.ExpiresOn = std::chrono::system_clock::now() + std::chrono::minutes(1);
-  //       identifier.Permissions = "r";
-  //       options.SignedIdentifiers.emplace_back(identifier);
-  //     }
-  //     {
-  //       Files::DataLake::Models::SignedIdentifier identifier;
-  //       identifier.Id = RandomString(64);
-  //       identifier.StartsOn = std::chrono::system_clock::now() - std::chrono::minutes(2);
-  //       identifier.ExpiresOn.Reset();
-  //       /* cspell:disable-next-line */
-  //       identifier.Permissions = "racwdxlt";
-  //       options.SignedIdentifiers.emplace_back(identifier);
-  //     }
-  //     {
-  //       Files::DataLake::Models::SignedIdentifier identifier;
-  //       identifier.Id = RandomString(64);
-  //       identifier.Permissions = "r";
-  //       options.SignedIdentifiers.emplace_back(identifier);
-  //     }
-  //     {
-  //       Files::DataLake::Models::SignedIdentifier identifier;
-  //       identifier.Id = RandomString(64);
-  //       identifier.StartsOn = std::chrono::system_clock::now() - std::chrono::minutes(1);
-  //       identifier.ExpiresOn = std::chrono::system_clock::now() + std::chrono::minutes(1);
-  //       options.SignedIdentifiers.emplace_back(identifier);
-  //     }
+      Files::DataLake::SetFileSystemAccessPolicyOptions options;
+      options.AccessType = Files::DataLake::Models::PublicAccessType::Path;
+      {
+        Files::DataLake::Models::SignedIdentifier identifier;
+        identifier.Id = std::string(64, 'a');
+        identifier.StartsOn = std::chrono::system_clock::now() - std::chrono::minutes(1);
+        identifier.ExpiresOn = std::chrono::system_clock::now() + std::chrono::minutes(1);
+        identifier.Permissions = "r";
+        options.SignedIdentifiers.emplace_back(identifier);
+      }
+      {
+        Files::DataLake::Models::SignedIdentifier identifier;
+        identifier.Id = std::string(64, 'b');
+        identifier.StartsOn = std::chrono::system_clock::now() - std::chrono::minutes(2);
+        identifier.ExpiresOn.Reset();
+        /* cspell:disable-next-line */
+        identifier.Permissions = "racwdxlt";
+        options.SignedIdentifiers.emplace_back(identifier);
+      }
+      {
+        Files::DataLake::Models::SignedIdentifier identifier;
+        identifier.Id = std::string(64, 'c');
+        identifier.Permissions = "r";
+        options.SignedIdentifiers.emplace_back(identifier);
+      }
+      {
+        Files::DataLake::Models::SignedIdentifier identifier;
+        identifier.Id = std::string(64, 'd');
+        identifier.StartsOn = std::chrono::system_clock::now() - std::chrono::minutes(1);
+        identifier.ExpiresOn = std::chrono::system_clock::now() + std::chrono::minutes(1);
+        options.SignedIdentifiers.emplace_back(identifier);
+      }
 
-  //     auto ret = fileSystem.SetAccessPolicy(options);
-  //     EXPECT_TRUE(ret.Value.ETag.HasValue());
-  //     EXPECT_TRUE(IsValidTime(ret.Value.LastModified));
+      auto ret = fileSystem.SetAccessPolicy(options);
+      EXPECT_TRUE(ret.Value.ETag.HasValue());
+      EXPECT_TRUE(IsValidTime(ret.Value.LastModified));
 
-  //     auto ret2 = fileSystem.GetAccessPolicy();
-  //     EXPECT_EQ(ret2.Value.AccessType, options.AccessType);
-  //     ASSERT_EQ(ret2.Value.SignedIdentifiers.size(), options.SignedIdentifiers.size());
-  //     for (size_t i = 0; i < ret2.Value.SignedIdentifiers.size(); ++i)
-  //     {
-  //       EXPECT_EQ(ret2.Value.SignedIdentifiers[i], options.SignedIdentifiers[i]);
-  //     }
+      auto ret2 = fileSystem.GetAccessPolicy();
+      EXPECT_EQ(ret2.Value.AccessType, options.AccessType);
+      ASSERT_EQ(ret2.Value.SignedIdentifiers.size(), options.SignedIdentifiers.size());
+      for (size_t i = 0; i < ret2.Value.SignedIdentifiers.size(); ++i)
+      {
+        EXPECT_EQ(ret2.Value.SignedIdentifiers[i], options.SignedIdentifiers[i]);
+      }
 
-  //     options.AccessType = Files::DataLake::Models::PublicAccessType::FileSystem;
-  //     EXPECT_NO_THROW(fileSystem.SetAccessPolicy(options));
-  //     ret2 = fileSystem.GetAccessPolicy();
-  //     EXPECT_EQ(ret2.Value.AccessType, options.AccessType);
+      options.AccessType = Files::DataLake::Models::PublicAccessType::FileSystem;
+      EXPECT_NO_THROW(fileSystem.SetAccessPolicy(options));
+      ret2 = fileSystem.GetAccessPolicy();
+      EXPECT_EQ(ret2.Value.AccessType, options.AccessType);
 
-  //     options.AccessType = Files::DataLake::Models::PublicAccessType::None;
-  //     EXPECT_NO_THROW(fileSystem.SetAccessPolicy(options));
-  //     ret2 = fileSystem.GetAccessPolicy();
-  //     EXPECT_EQ(ret2.Value.AccessType, options.AccessType);
+      options.AccessType = Files::DataLake::Models::PublicAccessType::None;
+      EXPECT_NO_THROW(fileSystem.SetAccessPolicy(options));
+      ret2 = fileSystem.GetAccessPolicy();
+      EXPECT_EQ(ret2.Value.AccessType, options.AccessType);
 
-  //     fileSystem.Delete();
-  //   }
-  //   {
-  //     auto fileSystem = Files::DataLake::DataLakeFileSystemClient::CreateFromConnectionString(
-  //         AdlsGen2ConnectionString(), LowercaseRandomString());
-  //     Files::DataLake::CreateFileSystemOptions options;
-  //     options.AccessType = Files::DataLake::Models::PublicAccessType::FileSystem;
-  //     fileSystem.Create(options);
-  //     auto ret = fileSystem.GetAccessPolicy();
-  //     EXPECT_EQ(Files::DataLake::Models::PublicAccessType::FileSystem, ret.Value.AccessType);
-  //   }
-  //   {
-  //     auto fileSystem = Files::DataLake::DataLakeFileSystemClient::CreateFromConnectionString(
-  //         AdlsGen2ConnectionString(), LowercaseRandomString());
-  //     Files::DataLake::CreateFileSystemOptions options;
-  //     options.AccessType = Files::DataLake::Models::PublicAccessType::Path;
-  //     fileSystem.Create(options);
-  //     auto ret = fileSystem.GetAccessPolicy();
-  //     EXPECT_EQ(Files::DataLake::Models::PublicAccessType::Path, ret.Value.AccessType);
-  //   }
-  //   {
-  //     auto fileSystem = Files::DataLake::DataLakeFileSystemClient::CreateFromConnectionString(
-  //         AdlsGen2ConnectionString(), LowercaseRandomString());
-  //     Files::DataLake::CreateFileSystemOptions options;
-  //     options.AccessType = Files::DataLake::Models::PublicAccessType::Path;
-  //     fileSystem.Create(options);
-  //     auto ret = fileSystem.GetAccessPolicy();
-  //     EXPECT_EQ(Files::DataLake::Models::PublicAccessType::Path, ret.Value.AccessType);
-  //   }
-  // }
+      fileSystem.Delete();
+    }
+    {
+      auto fileSystem = Files::DataLake::DataLakeFileSystemClient::CreateFromConnectionString(
+          AdlsGen2ConnectionString(), GetTestNameLowerCase() + "1");
+      Files::DataLake::CreateFileSystemOptions options;
+      options.AccessType = Files::DataLake::Models::PublicAccessType::FileSystem;
+      fileSystem.Create(options);
+      auto ret = fileSystem.GetAccessPolicy();
+      EXPECT_EQ(Files::DataLake::Models::PublicAccessType::FileSystem, ret.Value.AccessType);
+      fileSystem.Delete();
+    }
+    {
+      auto fileSystem = Files::DataLake::DataLakeFileSystemClient::CreateFromConnectionString(
+          AdlsGen2ConnectionString(), GetTestNameLowerCase() + "2");
+      Files::DataLake::CreateFileSystemOptions options;
+      options.AccessType = Files::DataLake::Models::PublicAccessType::Path;
+      fileSystem.Create(options);
+      auto ret = fileSystem.GetAccessPolicy();
+      EXPECT_EQ(Files::DataLake::Models::PublicAccessType::Path, ret.Value.AccessType);
+      fileSystem.Delete();
+    }
+    {
+      auto fileSystem = Files::DataLake::DataLakeFileSystemClient::CreateFromConnectionString(
+          AdlsGen2ConnectionString(), GetTestNameLowerCase() + "3");
+      Files::DataLake::CreateFileSystemOptions options;
+      options.AccessType = Files::DataLake::Models::PublicAccessType::Path;
+      fileSystem.Create(options);
+      auto ret = fileSystem.GetAccessPolicy();
+      EXPECT_EQ(Files::DataLake::Models::PublicAccessType::Path, ret.Value.AccessType);
+      fileSystem.Delete();
+    }
+  }
 
-  // TEST_F(DataLakeFileSystemClientTest, RenameFile)
-  // {
-  //   const std::string oldFilename = RandomString();
-  //   const std::string newFilename = RandomString();
+  TEST_F(DataLakeFileSystemClientTest, RenameFile)
+  {
+    const std::string oldFilename = GetTestName() + "1";
+    const std::string newFilename = GetTestName() + "2";
 
-  //   auto oldFileClient = m_fileSystemClient->GetFileClient(oldFilename);
-  //   oldFileClient.Create();
+    auto oldFileClient = m_fileSystemClient->GetFileClient(oldFilename);
+    oldFileClient.Create();
 
-  //   auto newFileClient = m_fileSystemClient->RenameFile(oldFilename, newFilename).Value;
+    auto newFileClient = m_fileSystemClient->RenameFile(oldFilename, newFilename).Value;
 
-  //   EXPECT_NO_THROW(newFileClient.GetProperties());
-  //   EXPECT_NO_THROW(m_fileSystemClient->GetFileClient(newFilename).GetProperties());
-  //   EXPECT_THROW(oldFileClient.GetProperties(), StorageException);
+    EXPECT_NO_THROW(newFileClient.GetProperties());
+    EXPECT_NO_THROW(m_fileSystemClient->GetFileClient(newFilename).GetProperties());
+    EXPECT_THROW(oldFileClient.GetProperties(), StorageException);
 
-  //   const std::string newFileSystemName = LowercaseRandomString();
-  //   const std::string newFilename2 = RandomString();
+    const std::string newFileSystemName = GetTestNameLowerCase() + "1";
+    const std::string newFilename2 = GetTestName() + "3";
 
-  //   auto newFileSystem = m_dataLakeServiceClient->GetFileSystemClient(newFileSystemName);
-  //   newFileSystem.Create();
+    auto newFileSystem = m_dataLakeServiceClient->GetFileSystemClient(newFileSystemName);
+    newFileSystem.Create();
 
-  //   Files::DataLake::RenameFileOptions options;
-  //   options.DestinationFileSystem = newFileSystemName;
-  //   auto newFileClient2 = m_fileSystemClient->RenameFile(newFilename, newFilename2,
-  //   options).Value;
+    Files::DataLake::RenameFileOptions options;
+    options.DestinationFileSystem = newFileSystemName;
+    auto newFileClient2 = m_fileSystemClient->RenameFile(newFilename, newFilename2, options).Value;
 
-  //   EXPECT_NO_THROW(newFileClient2.GetProperties());
-  //   EXPECT_NO_THROW(newFileSystem.GetFileClient(newFilename2).GetProperties());
-  //   newFileSystem.Delete();
-  //   EXPECT_THROW(newFileClient.GetProperties(), StorageException);
-  // }
+    EXPECT_NO_THROW(newFileClient2.GetProperties());
+    EXPECT_NO_THROW(newFileSystem.GetFileClient(newFilename2).GetProperties());
+    newFileSystem.Delete();
+    EXPECT_THROW(newFileClient.GetProperties(), StorageException);
+  }
 
-  // TEST_F(DataLakeFileSystemClientTest, RenameDirectory)
-  // {
-  //   const std::string oldDirectoryName = RandomString();
-  //   const std::string newDirectoryName = RandomString();
+  TEST_F(DataLakeFileSystemClientTest, RenameDirectory)
+  {
+    const std::string testName(GetTestName());
+    const std::string oldDirectoryName = testName + "1";
+    const std::string newDirectoryName = testName + "2";
 
-  //   auto oldDirectoryClient = m_fileSystemClient->GetDirectoryClient(oldDirectoryName);
-  //   oldDirectoryClient.Create();
-  //   oldDirectoryClient.GetFileClient(RandomString()).Create();
-  //   oldDirectoryClient.GetSubdirectoryClient(RandomString()).Create();
+    auto oldDirectoryClient = m_fileSystemClient->GetDirectoryClient(oldDirectoryName);
+    oldDirectoryClient.Create();
+    oldDirectoryClient.GetFileClient(testName + "3").Create();
+    oldDirectoryClient.GetSubdirectoryClient(testName + "4").Create();
 
-  //   auto newDirectoryClient
-  //       = m_fileSystemClient->RenameDirectory(oldDirectoryName, newDirectoryName).Value;
+    auto newDirectoryClient
+        = m_fileSystemClient->RenameDirectory(oldDirectoryName, newDirectoryName).Value;
 
-  //   EXPECT_NO_THROW(newDirectoryClient.GetProperties());
-  //   EXPECT_NO_THROW(m_fileSystemClient->GetDirectoryClient(newDirectoryName).GetProperties());
-  //   EXPECT_THROW(oldDirectoryClient.GetProperties(), StorageException);
+    EXPECT_NO_THROW(newDirectoryClient.GetProperties());
+    EXPECT_NO_THROW(m_fileSystemClient->GetDirectoryClient(newDirectoryName).GetProperties());
+    EXPECT_THROW(oldDirectoryClient.GetProperties(), StorageException);
 
-  //   const std::string newFileSystemName = LowercaseRandomString();
-  //   const std::string newDirectoryName2 = RandomString();
+    const std::string newFileSystemName = GetTestNameLowerCase();
+    const std::string newDirectoryName2 = testName + "5";
 
-  //   auto newFileSystem = m_dataLakeServiceClient->GetFileSystemClient(newFileSystemName);
-  //   newFileSystem.Create();
+    auto newFileSystem = m_dataLakeServiceClient->GetFileSystemClient(newFileSystemName);
+    newFileSystem.Create();
 
-  //   Files::DataLake::RenameDirectoryOptions options;
-  //   options.DestinationFileSystem = newFileSystemName;
-  //   auto newDirectoryClient2
-  //       = m_fileSystemClient->RenameDirectory(newDirectoryName, newDirectoryName2,
-  //       options).Value;
+    Files::DataLake::RenameDirectoryOptions options;
+    options.DestinationFileSystem = newFileSystemName;
+    auto newDirectoryClient2
+        = m_fileSystemClient->RenameDirectory(newDirectoryName, newDirectoryName2, options).Value;
 
-  //   EXPECT_NO_THROW(newDirectoryClient2.GetProperties());
-  //   EXPECT_NO_THROW(newFileSystem.GetDirectoryClient(newDirectoryName2).GetProperties());
-  //   newFileSystem.Delete();
-  //   EXPECT_THROW(newDirectoryClient.GetProperties(), StorageException);
-  // }
+    EXPECT_NO_THROW(newDirectoryClient2.GetProperties());
+    EXPECT_NO_THROW(newFileSystem.GetDirectoryClient(newDirectoryName2).GetProperties());
+    newFileSystem.Delete();
+    EXPECT_THROW(newDirectoryClient.GetProperties(), StorageException);
+  }
 
 }}} // namespace Azure::Storage::Test
