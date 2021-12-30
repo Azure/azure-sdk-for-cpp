@@ -8,14 +8,7 @@
 
 namespace Azure { namespace Storage { namespace Queues { namespace Models {
 
-  bool operator==(const SignedIdentifier& lhs, const SignedIdentifier& rhs)
-  {
-    return lhs.Id == rhs.Id && lhs.StartsOn.HasValue() == rhs.StartsOn.HasValue()
-        && (!lhs.StartsOn.HasValue() || lhs.StartsOn.Value() == rhs.StartsOn.Value())
-        && lhs.ExpiresOn.HasValue() == rhs.ExpiresOn.HasValue()
-        && (!lhs.ExpiresOn.HasValue() || lhs.ExpiresOn.Value() == rhs.ExpiresOn.Value())
-        && lhs.Permissions == rhs.Permissions;
-  }
+  bool operator==(const SignedIdentifier& lhs, const SignedIdentifier& rhs);
 
 }}}} // namespace Azure::Storage::Queues::Models
 

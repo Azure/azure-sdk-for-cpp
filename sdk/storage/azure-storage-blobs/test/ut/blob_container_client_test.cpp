@@ -11,6 +11,12 @@
 #include <azure/storage/blobs/blob_sas_builder.hpp>
 #include <azure/storage/common/crypt.hpp>
 
+namespace Azure { namespace Storage { namespace Blobs { namespace Models {
+
+  bool operator==(const SignedIdentifier& lhs, const SignedIdentifier& rhs);
+
+}}}} // namespace Azure::Storage::Blobs::Models
+
 namespace Azure { namespace Storage { namespace Test {
 
   std::string BlobContainerClientTest::GetSas()

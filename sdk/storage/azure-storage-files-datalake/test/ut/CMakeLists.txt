@@ -22,7 +22,7 @@ add_executable (
     datalake_file_system_client_test.hpp
     # datalake_path_client_test.cpp
     # datalake_path_client_test.hpp
-    # datalake_sas_test.cpp
+    datalake_sas_test.cpp
     datalake_service_client_test.cpp
     datalake_service_client_test.hpp
     macro_guard.cpp

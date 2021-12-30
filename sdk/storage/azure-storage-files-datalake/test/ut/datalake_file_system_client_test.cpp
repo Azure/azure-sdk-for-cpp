@@ -43,6 +43,8 @@ namespace Azure { namespace Storage { namespace Test {
 
   void DataLakeFileSystemClientTest::SetUp()
   {
+    CHECK_SKIP_TEST();
+
     DataLakeServiceClientTest::SetUp();
 
     m_fileSystemName = GetFileSystemValidName();
@@ -53,6 +55,7 @@ namespace Azure { namespace Storage { namespace Test {
 
   void DataLakeFileSystemClientTest::TearDown()
   {
+    CHECK_SKIP_TEST();
     m_fileSystemClient->Delete();
     DataLakeServiceClientTest::TearDown();
   }
