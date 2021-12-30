@@ -14,8 +14,8 @@ add_compile_definitions(AZURE_TEST_RECORDING_DIR="${CMAKE_CURRENT_LIST_DIR}")
 
 add_executable (
   azure-storage-files-datalake-test
-    # datalake_directory_client_test.cpp
-    # datalake_directory_client_test.hpp
+    datalake_directory_client_test.cpp
+    datalake_directory_client_test.hpp
     datalake_file_client_test.cpp
     datalake_file_client_test.hpp
     datalake_file_system_client_test.cpp

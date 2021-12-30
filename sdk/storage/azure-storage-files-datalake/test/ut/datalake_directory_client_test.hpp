@@ -4,17 +4,17 @@
 #include <azure/storage/files/datalake.hpp>
 
 #include "datalake_path_client_test.hpp"
-#include "test_base.hpp"
+#include "test/ut/test_base.hpp"
 
 namespace Azure { namespace Storage { namespace Test {
 
   class DataLakeDirectoryClientTest : public DataLakePathClientTest {
   protected:
-    static void SetUpTestSuite();
-    static void TearDownTestSuite();
+    void SetUp();
+    void TearDown();
 
-    static std::shared_ptr<Files::DataLake::DataLakeDirectoryClient> m_directoryClient;
-    static std::string m_directoryName;
+    std::shared_ptr<Files::DataLake::DataLakeDirectoryClient> m_directoryClient;
+    std::string m_directoryName;
   };
 
 }}} // namespace Azure::Storage::Test
