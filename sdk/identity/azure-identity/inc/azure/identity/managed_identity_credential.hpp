@@ -51,10 +51,7 @@ namespace Azure { namespace Identity {
      * @param options Options for token retrieval.
      */
     explicit ManagedIdentityCredential(
-        Azure::Core::Credentials::TokenCredentialOptions const& options)
-        : ManagedIdentityCredential(std::string(), options)
-    {
-    }
+        Azure::Core::Credentials::TokenCredentialOptions const& options);
 
     /**
      * @brief Gets an authentication token.

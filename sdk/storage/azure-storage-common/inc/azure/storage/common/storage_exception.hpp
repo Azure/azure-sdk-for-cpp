@@ -21,9 +21,9 @@ namespace Azure { namespace Storage {
     /**
      * @brief Constructs a #StorageException with a message.
      *
-     * @param whatArg The explanatory string.
+     * @param what The explanatory string.
      */
-    explicit StorageException(const std::string& whatArg) : RequestFailedException(whatArg) {}
+    explicit StorageException(const std::string& what) : RequestFailedException(what) {}
 
     /**
      * Some storage-specific information in response body.

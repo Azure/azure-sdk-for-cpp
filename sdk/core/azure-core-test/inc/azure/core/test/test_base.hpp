@@ -89,7 +89,7 @@ namespace Azure { namespace Core { namespace Test {
     {
       std::string updated(src);
       std::replace(updated.begin(), updated.end(), '/', '-');
-      return updated;
+      return RemovePreffix(updated);
     }
 
     void SkipTest()
@@ -274,14 +274,13 @@ namespace Azure { namespace Core { namespace Test {
       std::string recordingPath(baseRecordingPath);
       recordingPath.append("/recordings");
 
+      m_testContext.TestMode = Azure::Core::Test::InterceptorManager::GetTestMode();
       // Use the test info to init the test context and interceptor.
       auto testNameInfo = ::testing::UnitTest::GetInstance()->current_test_info();
-
       // set the interceptor for the current test
       m_testContext.RenameTest(
           Sanitize(testNameInfo->test_suite_name()), Sanitize(testNameInfo->name()));
       m_testContext.RecordingPath = recordingPath;
-      m_testContext.TestMode = Azure::Core::Test::InterceptorManager::GetTestMode();
       m_interceptor = std::make_unique<Azure::Core::Test::InterceptorManager>(m_testContext);
     }
 

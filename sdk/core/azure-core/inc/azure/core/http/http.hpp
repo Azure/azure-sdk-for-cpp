@@ -61,10 +61,9 @@ namespace Azure { namespace Core { namespace Http {
      * @remark The transport policy will throw this error whenever the transport adapter fail to
      * perform a request.
      *
-     * @param whatArg The explanatory string.
+     * @param what The explanatory string.
      */
-    explicit TransportException(std::string const& whatArg)
-        : Azure::Core::RequestFailedException(whatArg)
+    explicit TransportException(std::string const& what) : Azure::Core::RequestFailedException(what)
     {
     }
   };
