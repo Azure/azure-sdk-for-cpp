@@ -46,6 +46,12 @@ ManagedIdentityCredential::ManagedIdentityCredential(
 {
 }
 
+ManagedIdentityCredential::ManagedIdentityCredential(
+    Azure::Core::Credentials::TokenCredentialOptions const& options)
+    : ManagedIdentityCredential(std::string(), options)
+{
+}
+
 Azure::Core::Credentials::AccessToken ManagedIdentityCredential::GetToken(
     Azure::Core::Credentials::TokenRequestContext const& tokenRequestContext,
     Azure::Core::Context const& context) const
