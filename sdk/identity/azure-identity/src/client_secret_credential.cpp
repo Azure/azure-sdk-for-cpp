@@ -32,6 +32,29 @@ ClientSecretCredential::ClientSecretCredential(
   m_requestBody = body.str();
 }
 
+ClientSecretCredential::ClientSecretCredential(
+    std::string const& tenantId,
+    std::string const& clientId,
+    std::string const& clientSecret,
+    ClientSecretCredentialOptions const& options)
+    : ClientSecretCredential(tenantId, clientId, clientSecret, options.AuthorityHost, options)
+{
+}
+
+ClientSecretCredential::ClientSecretCredential(
+    std::string tenantId,
+    std::string clientId,
+    std::string clientSecret,
+    Core::Credentials::TokenCredentialOptions const& options)
+    : ClientSecretCredential(
+        tenantId,
+        clientId,
+        clientSecret,
+        _detail::g_aadGlobalAuthority,
+        options)
+{
+}
+
 ClientSecretCredential::~ClientSecretCredential() = default;
 
 Azure::Core::Credentials::AccessToken ClientSecretCredential::GetToken(

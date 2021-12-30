@@ -30,11 +30,9 @@ namespace Azure { namespace Core {
     /**
      * @brief Constructs an `OperationCancelledException` with message string as the description.
      *
-     * @param whatArg The explanatory string.
+     * @param what The explanatory string.
      */
-    explicit OperationCancelledException(std::string const& whatArg) : std::runtime_error(whatArg)
-    {
-    }
+    explicit OperationCancelledException(std::string const& what) : std::runtime_error(what) {}
   };
 
   /**
