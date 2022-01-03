@@ -11,5 +11,5 @@ add_executable (
   azure-identity-e2e-test
     azure_identity_e2e_test.cpp
 )
-
+create_map_file(azure-identity-e2e-test azure-identity-e2e-test.map)
 target_link_libraries(azure-identity-e2e-test PRIVATE azure-identity)

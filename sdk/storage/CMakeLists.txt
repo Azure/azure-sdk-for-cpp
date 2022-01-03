@@ -14,6 +14,7 @@ if(BUILD_TESTING)
   endif()
 
   add_executable(azure-storage-test)
+  create_map_file(azure-storage-test azure-storage-test.map)
   add_gtest(azure-storage-test)
 endif()
 

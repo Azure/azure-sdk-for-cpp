@@ -84,6 +84,9 @@ endif()
 # compiler warning flags globally
 include(AzureGlobalCompileOptions)
 
+# Add create_map_file function
+include(CreateMapFile)
+
 # Documentation automation function
 include(AzureDoxygen)
 

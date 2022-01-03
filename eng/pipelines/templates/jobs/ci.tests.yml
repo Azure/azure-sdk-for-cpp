@@ -200,3 +200,28 @@ jobs:
             # Minimum baseline for branch coverage
             coverageThreshold: ${{ parameters.BranchCoverageTarget }}
           condition: and(succeededOrFailed(), eq(variables['CODE_COVERAGE'], 'enabled'), eq(variables['Skip.BranchCoverageEnforcement'], ''))
+
+      # Use the job name to create the artifact name for MAP file publishing.
+      # "Validate Windows2019_UWP_debug_x86" -> "Windows2019_UWP_debug_x86"
+      - pwsh: |
+          $artifactName = '$(Agent.JobName)'
+          $parts = $artifactName -split ' '
+          if ($parts[1]) {
+            $artifactName = $parts[1]
+          }
+          Write-Host "##vso[task.setvariable variable=MapFileArtifactName;]$artifactName"
+        displayName: Set map file artifact name
+        condition: eq(variables['PublishMapFiles'], 'true')
+
+      - task: CopyFiles@2
+        inputs:
+          contents: "**/*.map"
+          targetFolder: $(Build.ArtifactStagingDirectory)
+          flattenFolders: true
+        condition: eq(variables['PublishMapFiles'], 'true')
+
+      - task: PublishPipelineArtifact@1
+        inputs:
+          artifactName: map-files-$(MapFileArtifactName)
+          path: $(Build.ArtifactStagingDirectory)
+        condition: eq(variables['PublishMapFiles'], 'true')
