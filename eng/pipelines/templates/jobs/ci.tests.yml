@@ -44,9 +44,7 @@ parameters:
   - name: UsePlatformContainer
     type: boolean
     default: false
-  - name: AZURE_LOG_LEVEL
-    type: string
-    default: ''
+
 jobs:
   - job:
     displayName: "Validate"
@@ -72,8 +70,6 @@ jobs:
 # Apply to all services running public pipeline
     - name: AZURE_TEST_MODE
       value: "PLAYBACK"
-    - name: AZURE_LOG_LEVEL
-      value: "parameters.AZURE_LOG_LEVEL"
     - ${{ each testEnvVar in parameters.TestEnv }}:
       - name: ${{ testEnvVar.Name }}
         value: ${{ testEnvVar.Value }}
