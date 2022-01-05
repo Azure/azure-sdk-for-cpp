@@ -128,6 +128,8 @@ namespace Azure { namespace Storage { namespace Test {
 
   TEST_F(DataLakeServiceClientTest, AnonymousConstructorsWorks_LIVEONLY_)
   {
+    CHECK_SKIP_TEST();
+
     auto keyCredential
         = Azure::Storage::_internal::ParseConnectionString(AdlsGen2ConnectionString())
               .KeyCredential;

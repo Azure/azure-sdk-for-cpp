@@ -385,11 +385,14 @@ namespace Azure { namespace Storage { namespace Test {
     }
   }
 
-  TEST_F(DataLakeFileSystemClientTest, GetSetAccessPolicy)
+  TEST_F(DataLakeFileSystemClientTest, GetSetAccessPolicy_LIVEONLY_)
   {
+    CHECK_SKIP_TEST()
     {
       auto fileSystem = Files::DataLake::DataLakeFileSystemClient::CreateFromConnectionString(
-          AdlsGen2ConnectionString(), GetTestNameLowerCase());
+          AdlsGen2ConnectionString(),
+          GetTestNameLowerCase(),
+          InitClientOptions<Files::DataLake::DataLakeClientOptions>());
       fileSystem.Create();
 
       Files::DataLake::SetFileSystemAccessPolicyOptions options;
@@ -451,7 +454,9 @@ namespace Azure { namespace Storage { namespace Test {
     }
     {
       auto fileSystem = Files::DataLake::DataLakeFileSystemClient::CreateFromConnectionString(
-          AdlsGen2ConnectionString(), GetTestNameLowerCase() + "1");
+          AdlsGen2ConnectionString(),
+          GetTestNameLowerCase() + "1",
+          InitClientOptions<Files::DataLake::DataLakeClientOptions>());
       Files::DataLake::CreateFileSystemOptions options;
       options.AccessType = Files::DataLake::Models::PublicAccessType::FileSystem;
       fileSystem.Create(options);
@@ -461,7 +466,9 @@ namespace Azure { namespace Storage { namespace Test {
     }
     {
       auto fileSystem = Files::DataLake::DataLakeFileSystemClient::CreateFromConnectionString(
-          AdlsGen2ConnectionString(), GetTestNameLowerCase() + "2");
+          AdlsGen2ConnectionString(),
+          GetTestNameLowerCase() + "2",
+          InitClientOptions<Files::DataLake::DataLakeClientOptions>());
       Files::DataLake::CreateFileSystemOptions options;
       options.AccessType = Files::DataLake::Models::PublicAccessType::Path;
       fileSystem.Create(options);
@@ -471,7 +478,9 @@ namespace Azure { namespace Storage { namespace Test {
     }
     {
       auto fileSystem = Files::DataLake::DataLakeFileSystemClient::CreateFromConnectionString(
-          AdlsGen2ConnectionString(), GetTestNameLowerCase() + "3");
+          AdlsGen2ConnectionString(),
+          GetTestNameLowerCase() + "3",
+          InitClientOptions<Files::DataLake::DataLakeClientOptions>());
       Files::DataLake::CreateFileSystemOptions options;
       options.AccessType = Files::DataLake::Models::PublicAccessType::Path;
       fileSystem.Create(options);

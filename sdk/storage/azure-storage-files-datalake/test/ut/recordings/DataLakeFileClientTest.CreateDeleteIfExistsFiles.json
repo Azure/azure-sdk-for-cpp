@@ -3,7 +3,7 @@
     {
       "Headers": {
         "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Linux 5.4.0-1063-azure x86_64 #66~18.04.1-Ubuntu SMP Thu Oct 21 09:59:28 UTC 2021)",
-        "x-ms-client-request-id": "82a2db09-0e5c-4d59-499f-e5321e60ac77",
+        "x-ms-client-request-id": "2e75ec33-14c6-4def-4b55-d17fa082a4e1",
         "x-ms-version": "2020-02-10"
       },
       "Method": "PUT",
@@ -12,12 +12,12 @@
         "REASON_PHRASE": "Created",
         "STATUS_CODE": "201",
         "content-length": "0",
-        "date": "Thu, 30 Dec 2021 06:06:53 GMT",
-        "etag": "\"0x8D9CB5A93919A61\"",
-        "last-modified": "Thu, 30 Dec 2021 06:06:53 GMT",
+        "date": "Thu, 30 Dec 2021 22:24:16 GMT",
+        "etag": "\"0x8D9CBE31DBB76EC\"",
+        "last-modified": "Thu, 30 Dec 2021 22:24:16 GMT",
         "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
-        "x-ms-client-request-id": "82a2db09-0e5c-4d59-499f-e5321e60ac77",
-        "x-ms-request-id": "cc9c1c5c-101e-005b-2443-fdfcd4000000",
+        "x-ms-client-request-id": "2e75ec33-14c6-4def-4b55-d17fa082a4e1",
+        "x-ms-request-id": "3b5daebd-701e-0072-55cb-fdc2a0000000",
         "x-ms-version": "2020-02-10"
       },
       "Url": "https://REDACTED.blob.core.windows.net/datalakefileclienttestcreatedeleteifexistsfiles?restype=container"
@@ -25,7 +25,7 @@
     {
       "Headers": {
         "user-agent": "azsdk-cpp-storage-files-datalake/12.3.0-beta.1 (Linux 5.4.0-1063-azure x86_64 #66~18.04.1-Ubuntu SMP Thu Oct 21 09:59:28 UTC 2021)",
-        "x-ms-client-request-id": "62ef5e26-e603-48fb-6954-cbd24d2b8b78",
+        "x-ms-client-request-id": "a5e4c995-c174-484f-4246-a19940e809c9",
         "x-ms-version": "2020-02-10"
       },
       "Method": "PUT",
@@ -34,12 +34,12 @@
         "REASON_PHRASE": "Created",
         "STATUS_CODE": "201",
         "content-length": "0",
-        "date": "Thu, 30 Dec 2021 06:06:52 GMT",
-        "etag": "\"0x8D9CB5A93A02DE4\"",
-        "last-modified": "Thu, 30 Dec 2021 06:06:53 GMT",
+        "date": "Thu, 30 Dec 2021 22:24:16 GMT",
+        "etag": "\"0x8D9CBE31DD6C135\"",
+        "last-modified": "Thu, 30 Dec 2021 22:24:16 GMT",
         "server": "Windows-Azure-HDFS/1.0 Microsoft-HTTPAPI/2.0",
-        "x-ms-client-request-id": "62ef5e26-e603-48fb-6954-cbd24d2b8b78",
-        "x-ms-request-id": "894a3319-101f-0029-0143-fdfb9b000000",
+        "x-ms-client-request-id": "a5e4c995-c174-484f-4246-a19940e809c9",
+        "x-ms-request-id": "1ee48a91-f01f-0053-7ccb-fde6db000000",
         "x-ms-request-server-encrypted": "true",
         "x-ms-version": "2020-02-10"
       },
@@ -48,7 +48,7 @@
     {
       "Headers": {
         "user-agent": "azsdk-cpp-storage-files-datalake/12.3.0-beta.1 (Linux 5.4.0-1063-azure x86_64 #66~18.04.1-Ubuntu SMP Thu Oct 21 09:59:28 UTC 2021)",
-        "x-ms-client-request-id": "392c2361-b9af-40ef-5868-d898477aa645",
+        "x-ms-client-request-id": "1be71e54-9dcd-4019-73ce-1f72a9e9134e",
         "x-ms-version": "2020-02-10"
       },
       "Method": "PUT",
@@ -57,12 +57,12 @@
         "REASON_PHRASE": "Created",
         "STATUS_CODE": "201",
         "content-length": "0",
-        "date": "Thu, 30 Dec 2021 06:06:52 GMT",
-        "etag": "\"0x8D9CB5A93A5A8EB\"",
-        "last-modified": "Thu, 30 Dec 2021 06:06:53 GMT",
+        "date": "Thu, 30 Dec 2021 22:24:16 GMT",
+        "etag": "\"0x8D9CBE31DD9DE46\"",
+        "last-modified": "Thu, 30 Dec 2021 22:24:16 GMT",
         "server": "Windows-Azure-HDFS/1.0 Microsoft-HTTPAPI/2.0",
-        "x-ms-client-request-id": "392c2361-b9af-40ef-5868-d898477aa645",
-        "x-ms-request-id": "894a331a-101f-0029-0243-fdfb9b000000",
+        "x-ms-client-request-id": "1be71e54-9dcd-4019-73ce-1f72a9e9134e",
+        "x-ms-request-id": "1ee48a94-f01f-0053-7fcb-fde6db000000",
         "x-ms-request-server-encrypted": "true",
         "x-ms-version": "2020-02-10"
       },
@@ -71,21 +71,21 @@
     {
       "Headers": {
         "user-agent": "azsdk-cpp-storage-files-datalake/12.3.0-beta.1 (Linux 5.4.0-1063-azure x86_64 #66~18.04.1-Ubuntu SMP Thu Oct 21 09:59:28 UTC 2021)",
-        "x-ms-client-request-id": "1a16266a-dcfe-4f68-6d09-918aad930dbb",
+        "x-ms-client-request-id": "e26a5036-de00-43eb-437f-451af0f4b169",
         "x-ms-version": "2020-02-10"
       },
       "Method": "PUT",
       "Response": {
-        "BODY": "{\"error\":{\"code\":\"PathAlreadyExists\",\"message\":\"The specified path already exists.\\nRequestId:894a331b-101f-0029-0343-fdfb9b000000\\nTime:2021-12-30T06:06:53.4483632Z\"}}",
+        "BODY": "{\"error\":{\"code\":\"PathAlreadyExists\",\"message\":\"The specified path already exists.\\nRequestId:1ee48a95-f01f-0053-80cb-fde6db000000\\nTime:2021-12-30T22:24:16.8657943Z\"}}",
         "REASON_PHRASE": "The specified path already exists.",
         "STATUS_CODE": "409",
         "content-length": "168",
         "content-type": "application/json;charset=utf-8",
-        "date": "Thu, 30 Dec 2021 06:06:52 GMT",
+        "date": "Thu, 30 Dec 2021 22:24:16 GMT",
         "server": "Windows-Azure-HDFS/1.0 Microsoft-HTTPAPI/2.0",
-        "x-ms-client-request-id": "1a16266a-dcfe-4f68-6d09-918aad930dbb",
+        "x-ms-client-request-id": "e26a5036-de00-43eb-437f-451af0f4b169",
         "x-ms-error-code": "PathAlreadyExists",
-        "x-ms-request-id": "894a331b-101f-0029-0343-fdfb9b000000",
+        "x-ms-request-id": "1ee48a95-f01f-0053-80cb-fde6db000000",
         "x-ms-version": "2020-02-10"
       },
       "Url": "https://REDACTED.dfs.core.windows.net/datalakefileclienttestcreatedeleteifexistsfiles/aver?resource=file"
@@ -93,7 +93,7 @@
     {
       "Headers": {
         "user-agent": "azsdk-cpp-storage-files-datalake/12.3.0-beta.1 (Linux 5.4.0-1063-azure x86_64 #66~18.04.1-Ubuntu SMP Thu Oct 21 09:59:28 UTC 2021)",
-        "x-ms-client-request-id": "9b54079e-5daf-4665-5c08-fad959e3872d",
+        "x-ms-client-request-id": "37f7225e-f256-4097-5edf-3db0290e1c42",
         "x-ms-version": "2020-02-10"
       },
       "Method": "DELETE",
@@ -102,10 +102,10 @@
         "REASON_PHRASE": "OK",
         "STATUS_CODE": "200",
         "content-length": "0",
-        "date": "Thu, 30 Dec 2021 06:06:52 GMT",
+        "date": "Thu, 30 Dec 2021 22:24:16 GMT",
         "server": "Windows-Azure-HDFS/1.0 Microsoft-HTTPAPI/2.0",
-        "x-ms-client-request-id": "9b54079e-5daf-4665-5c08-fad959e3872d",
-        "x-ms-request-id": "20b2dfcc-801f-0014-3643-fd8d80000000",
+        "x-ms-client-request-id": "37f7225e-f256-4097-5edf-3db0290e1c42",
+        "x-ms-request-id": "079510a6-b01f-0052-3acb-fdb907000000",
         "x-ms-version": "2020-02-10"
       },
       "Url": "https://REDACTED.dfs.core.windows.net/datalakefileclienttestcreatedeleteifexistsfiles/aver"
@@ -113,21 +113,21 @@
     {
       "Headers": {
         "user-agent": "azsdk-cpp-storage-files-datalake/12.3.0-beta.1 (Linux 5.4.0-1063-azure x86_64 #66~18.04.1-Ubuntu SMP Thu Oct 21 09:59:28 UTC 2021)",
-        "x-ms-client-request-id": "538608ef-8d64-4492-5250-3e2ebd26a16b",
+        "x-ms-client-request-id": "643bc92a-03cc-4f6b-6f58-96e48bbec088",
         "x-ms-version": "2020-02-10"
       },
       "Method": "DELETE",
       "Response": {
-        "BODY": "{\"error\":{\"code\":\"PathNotFound\",\"message\":\"The specified path does not exist.\\nRequestId:20b2dfd5-801f-0014-3f43-fd8d80000000\\nTime:2021-12-30T06:06:53.6087408Z\"}}",
+        "BODY": "{\"error\":{\"code\":\"PathNotFound\",\"message\":\"The specified path does not exist.\\nRequestId:079510a8-b01f-0052-3ccb-fdb907000000\\nTime:2021-12-30T22:24:17.0174340Z\"}}",
         "REASON_PHRASE": "The specified path does not exist.",
         "STATUS_CODE": "404",
         "content-length": "163",
         "content-type": "application/json;charset=utf-8",
-        "date": "Thu, 30 Dec 2021 06:06:52 GMT",
+        "date": "Thu, 30 Dec 2021 22:24:16 GMT",
         "server": "Windows-Azure-HDFS/1.0 Microsoft-HTTPAPI/2.0",
-        "x-ms-client-request-id": "538608ef-8d64-4492-5250-3e2ebd26a16b",
+        "x-ms-client-request-id": "643bc92a-03cc-4f6b-6f58-96e48bbec088",
         "x-ms-error-code": "PathNotFound",
-        "x-ms-request-id": "20b2dfd5-801f-0014-3f43-fd8d80000000",
+        "x-ms-request-id": "079510a8-b01f-0052-3ccb-fdb907000000",
         "x-ms-version": "2020-02-10"
       },
       "Url": "https://REDACTED.dfs.core.windows.net/datalakefileclienttestcreatedeleteifexistsfiles/aver"
@@ -135,7 +135,29 @@
     {
       "Headers": {
         "user-agent": "azsdk-cpp-storage-files-datalake/12.3.0-beta.1 (Linux 5.4.0-1063-azure x86_64 #66~18.04.1-Ubuntu SMP Thu Oct 21 09:59:28 UTC 2021)",
-        "x-ms-client-request-id": "3b01cea1-c391-46c8-498a-9a864115deab",
+        "x-ms-client-request-id": "f8753995-ef80-4163-7786-a5601a8e06de",
+        "x-ms-version": "2020-02-10"
+      },
+      "Method": "DELETE",
+      "Response": {
+        "BODY": "{\"error\":{\"code\":\"FilesystemNotFound\",\"message\":\"The specified filesystem does not exist.\\nRequestId:964ae042-f01f-000e-22cb-fdec5f000000\\nTime:2021-12-30T22:24:17.0597993Z\"}}",
+        "REASON_PHRASE": "The specified filesystem does not exist.",
+        "STATUS_CODE": "404",
+        "content-length": "175",
+        "content-type": "application/json;charset=utf-8",
+        "date": "Thu, 30 Dec 2021 22:24:16 GMT",
+        "server": "Windows-Azure-HDFS/1.0 Microsoft-HTTPAPI/2.0",
+        "x-ms-client-request-id": "f8753995-ef80-4163-7786-a5601a8e06de",
+        "x-ms-error-code": "FilesystemNotFound",
+        "x-ms-request-id": "964ae042-f01f-000e-22cb-fdec5f000000",
+        "x-ms-version": "2020-02-10"
+      },
+      "Url": "https://REDACTED.dfs.core.windows.net/createdeleteifexistsfiles/CreateDeleteIfExistsFiles"
+    },
+    {
+      "Headers": {
+        "user-agent": "azsdk-cpp-storage-files-datalake/12.3.0-beta.1 (Linux 5.4.0-1063-azure x86_64 #66~18.04.1-Ubuntu SMP Thu Oct 21 09:59:28 UTC 2021)",
+        "x-ms-client-request-id": "d55f83f0-60ce-4bbb-7ffc-34109e0db8e9",
         "x-ms-version": "2020-02-10"
       },
       "Method": "DELETE",
@@ -144,10 +166,10 @@
         "REASON_PHRASE": "OK",
         "STATUS_CODE": "200",
         "content-length": "0",
-        "date": "Thu, 30 Dec 2021 06:06:52 GMT",
+        "date": "Thu, 30 Dec 2021 22:24:16 GMT",
         "server": "Windows-Azure-HDFS/1.0 Microsoft-HTTPAPI/2.0",
-        "x-ms-client-request-id": "3b01cea1-c391-46c8-498a-9a864115deab",
-        "x-ms-request-id": "09765c5c-901f-0027-5943-fdd22b000000",
+        "x-ms-client-request-id": "d55f83f0-60ce-4bbb-7ffc-34109e0db8e9",
+        "x-ms-request-id": "169931dc-801f-0049-52cb-fd8704000000",
         "x-ms-version": "2020-02-10"
       },
       "Url": "https://REDACTED.dfs.core.windows.net/datalakefileclienttestcreatedeleteifexistsfiles/datalakefileclienttestcreatedeleteifexistsfiles"
@@ -155,7 +177,7 @@
     {
       "Headers": {
         "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Linux 5.4.0-1063-azure x86_64 #66~18.04.1-Ubuntu SMP Thu Oct 21 09:59:28 UTC 2021)",
-        "x-ms-client-request-id": "ed865f56-59f1-4747-4abe-cb15aea04c2a",
+        "x-ms-client-request-id": "1503d6ed-99da-4c38-4f59-e36deb397179",
         "x-ms-version": "2020-02-10"
       },
       "Method": "DELETE",
@@ -164,10 +186,10 @@
         "REASON_PHRASE": "Accepted",
         "STATUS_CODE": "202",
         "content-length": "0",
-        "date": "Thu, 30 Dec 2021 06:06:53 GMT",
+        "date": "Thu, 30 Dec 2021 22:24:16 GMT",
         "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
-        "x-ms-client-request-id": "ed865f56-59f1-4747-4abe-cb15aea04c2a",
-        "x-ms-request-id": "cc9c1d73-101e-005b-2143-fdfcd4000000",
+        "x-ms-client-request-id": "1503d6ed-99da-4c38-4f59-e36deb397179",
+        "x-ms-request-id": "3b5daf9c-701e-0072-17cb-fdc2a0000000",
         "x-ms-version": "2020-02-10"
       },
       "Url": "https://REDACTED.blob.core.windows.net/datalakefileclienttestcreatedeleteifexistsfiles?restype=container"
