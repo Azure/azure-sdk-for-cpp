@@ -93,7 +93,7 @@ namespace Azure { namespace Storage {
 
       std::string RandomString(size_t size = 10);
 
-      std::string GetStringOfSize(size_t size = 10);
+      std::string GetStringOfSize(size_t size = 10, bool lowercase = false);
 
       std::string LowercaseRandomString(size_t size = 10);
 

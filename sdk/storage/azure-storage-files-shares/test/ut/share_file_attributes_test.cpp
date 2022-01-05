@@ -3,7 +3,7 @@
 
 #include <azure/storage/files/shares/share_file_attributes.hpp>
 
-#include "test_base.hpp"
+#include "test/ut/test_base.hpp"
 
 namespace Azure { namespace Storage { namespace Test {
 

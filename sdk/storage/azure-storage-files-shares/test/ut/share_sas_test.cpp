@@ -9,7 +9,7 @@
 
 namespace Azure { namespace Storage { namespace Test {
 
-  TEST_F(FileShareClientTest, FileSasTest)
+  TEST_F(FileShareClientTest, FileSasTest_LIVEONLY_)
   {
     auto sasStartsOn = std::chrono::system_clock::now() - std::chrono::minutes(5);
     auto sasExpiredOn = std::chrono::system_clock::now() - std::chrono::minutes(1);

@@ -18,39 +18,39 @@ namespace Azure { namespace Storage { namespace Test {
 
   const size_t ShareTestSize = 5;
 
-  std::shared_ptr<Files::Shares::ShareServiceClient>
-      FileShareServiceClientTest::m_fileShareServiceClient;
-  std::vector<std::string> FileShareServiceClientTest::m_shareNameSetA;
-  std::vector<std::string> FileShareServiceClientTest::m_shareNameSetB;
-  std::string FileShareServiceClientTest::m_sharePrefixA;
-  std::string FileShareServiceClientTest::m_sharePrefixB;
-
-  void FileShareServiceClientTest::SetUpTestSuite()
+  void FileShareServiceClientTest::SetUp()
   {
+    StorageTest::SetUp();
+    CHECK_SKIP_TEST();
+
+    m_options = InitClientOptions<Files::Shares::ShareClientOptions>();
     m_fileShareServiceClient = std::make_shared<Files::Shares::ShareServiceClient>(
         Files::Shares::ShareServiceClient::CreateFromConnectionString(
-            StandardStorageConnectionString()));
-    m_sharePrefixA = LowercaseRandomString();
-    m_sharePrefixB = LowercaseRandomString();
+            StandardStorageConnectionString(), m_options));
+    m_testName = GetTestName();
+    m_testNameLowercase = GetTestNameLowerCase();
+    m_sharePrefixA = m_testNameLowercase + "a";
+    m_sharePrefixB = m_testNameLowercase + "b";
     m_shareNameSetA.clear();
     m_shareNameSetB.clear();
     for (size_t i = 0; i < ShareTestSize; ++i)
     {
       {
-        auto name = m_sharePrefixA + LowercaseRandomString();
+        auto name = m_sharePrefixA + "a" + std::to_string(i);
         m_fileShareServiceClient->GetShareClient(name).Create();
         m_shareNameSetA.emplace_back(std::move(name));
       }
       {
-        auto name = m_sharePrefixB + LowercaseRandomString();
+        auto name = m_sharePrefixB + "b" + std::to_string(i);
         m_fileShareServiceClient->GetShareClient(name).Create();
         m_shareNameSetB.emplace_back(std::move(name));
       }
     }
   }
 
-  void FileShareServiceClientTest::TearDownTestSuite()
+  void FileShareServiceClientTest::TearDown()
   {
+    CHECK_SKIP_TEST();
     for (const auto& name : m_shareNameSetA)
     {
       m_fileShareServiceClient->GetShareClient(name).Delete();
@@ -59,6 +59,7 @@ namespace Azure { namespace Storage { namespace Test {
     {
       m_fileShareServiceClient->GetShareClient(name).Delete();
     }
+    StorageTest::TearDown();
   }
 
   std::vector<Files::Shares::Models::ShareItem> FileShareServiceClientTest::ListAllShares(
@@ -183,7 +184,7 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_NO_THROW(m_fileShareServiceClient->SetProperties(properties));
     // It takes some time before the new properties comes into effect.
     using namespace std::chrono_literals;
-    std::this_thread::sleep_for(10s);
+    TestSleep(10s);
     auto downloadedProperties = m_fileShareServiceClient->GetProperties().Value;
 
     EXPECT_EQ(downloadedProperties.HourMetrics.Version, properties.HourMetrics.Version);
@@ -279,7 +280,7 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_NO_THROW(premiumFileShareServiceClient->SetProperties(properties));
     // It takes some time before the new properties comes into effect.
     using namespace std::chrono_literals;
-    std::this_thread::sleep_for(10s);
+    TestSleep(10s);
     auto downloadedProperties = premiumFileShareServiceClient->GetProperties().Value;
 
     EXPECT_EQ(downloadedProperties.HourMetrics.Version, properties.HourMetrics.Version);

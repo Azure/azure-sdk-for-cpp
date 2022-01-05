@@ -203,7 +203,7 @@ namespace Azure { namespace Storage { namespace Test {
     return str;
   }
 
-  std::string StorageTest::GetStringOfSize(size_t size)
+  std::string StorageTest::GetStringOfSize(size_t size, bool lowercase)
   {
     auto const testName = GetTestName();
     auto const testNameSize = testName.size();
@@ -223,6 +223,10 @@ namespace Azure { namespace Storage { namespace Test {
       leftToFill -= 1;
     }
 
+    if (lowercase)
+    {
+      return Azure::Core::_internal::StringExtensions::ToLower(str);
+    }
     return str;
   }
 

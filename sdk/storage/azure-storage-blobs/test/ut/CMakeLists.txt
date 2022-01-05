@@ -32,6 +32,8 @@ add_executable (
     ${CMAKE_CURRENT_SOURCE_DIR}/../../../azure-storage-common/test/ut/test_base.hpp
 )
 
+create_map_file(azure-storage-blobs-test azure-storage-blobs-test.map)
+
 # Include shared test headers
 target_include_directories(azure-storage-blobs-test PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/../../../azure-storage-common)
 

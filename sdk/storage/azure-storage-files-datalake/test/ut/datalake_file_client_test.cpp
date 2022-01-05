@@ -118,10 +118,11 @@ namespace Azure { namespace Storage { namespace Test {
       EXPECT_FALSE(deleted);
     }
     {
+      std::string testName(GetTestNameLowerCase());
       auto client = Files::DataLake::DataLakeFileClient::CreateFromConnectionString(
           AdlsGen2ConnectionString(),
-          GetTestNameLowerCase(),
-          GetTestName(),
+          testName + "a",
+          testName + "b",
           InitClientOptions<Files::DataLake::DataLakeClientOptions>());
       bool deleted = false;
       EXPECT_NO_THROW(deleted = client.DeleteIfExists().Value.Deleted);

@@ -27,23 +27,30 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares { names
 
 namespace Azure { namespace Storage { namespace Test {
 
-  std::shared_ptr<Files::Shares::ShareClient> FileShareClientTest::m_shareClient;
-  std::string FileShareClientTest::m_shareName;
-
-  void FileShareClientTest::SetUpTestSuite()
+  void FileShareClientTest::SetUp()
   {
-    m_shareName = LowercaseRandomString();
+    StorageTest::SetUp();
+    CHECK_SKIP_TEST();
+
+    m_shareName = GetFileSystemValidName();
+    m_testName = GetTestName();
+    m_testNameLowercase = GetTestNameLowerCase();
+    m_options = InitClientOptions<Files::Shares::ShareClientOptions>();
     m_shareClient = std::make_shared<Files::Shares::ShareClient>(
         Files::Shares::ShareClient::CreateFromConnectionString(
-            StandardStorageConnectionString(), m_shareName));
+            StandardStorageConnectionString(), m_shareName, m_options));
     m_shareClient->Create();
   }
 
-  void FileShareClientTest::TearDownTestSuite()
+  void FileShareClientTest::TearDown()
   {
+    CHECK_SKIP_TEST();
+
     auto deleteOptions = Files::Shares::DeleteShareOptions();
     deleteOptions.DeleteSnapshots = true;
     m_shareClient->Delete(deleteOptions);
+
+    StorageTest::TearDown();
   }
 
   Files::Shares::Models::FileHttpHeaders FileShareClientTest::GetInterestingHttpHeaders()
@@ -62,13 +69,14 @@ namespace Azure { namespace Storage { namespace Test {
 
   TEST_F(FileShareClientTest, CreateDeleteShares)
   {
+
     {
       // Normal create/delete.
       std::vector<Files::Shares::ShareClient> shareClients;
       for (int32_t i = 0; i < 5; ++i)
       {
         auto client = Files::Shares::ShareClient::CreateFromConnectionString(
-            StandardStorageConnectionString(), LowercaseRandomString());
+            StandardStorageConnectionString(), m_testNameLowercase + std::to_string(i), m_options);
         EXPECT_NO_THROW(client.Create());
         shareClients.emplace_back(std::move(client));
       }
@@ -81,7 +89,7 @@ namespace Azure { namespace Storage { namespace Test {
       // CreateIfNotExists & DeleteIfExists.
       {
         auto client = Files::Shares::ShareClient::CreateFromConnectionString(
-            StandardStorageConnectionString(), LowercaseRandomString());
+            StandardStorageConnectionString(), m_testNameLowercase + "if", m_options);
         EXPECT_NO_THROW(client.Create());
         EXPECT_NO_THROW(client.CreateIfNotExists());
         EXPECT_NO_THROW(client.Delete());
@@ -89,14 +97,14 @@ namespace Azure { namespace Storage { namespace Test {
       }
       {
         auto client = Files::Shares::ShareClient::CreateFromConnectionString(
-            StandardStorageConnectionString(), LowercaseRandomString());
+            StandardStorageConnectionString(), m_testNameLowercase + "if2", m_options);
         EXPECT_NO_THROW(client.CreateIfNotExists());
         EXPECT_THROW(client.Create(), StorageException);
         EXPECT_NO_THROW(client.DeleteIfExists());
       }
       {
         auto client = Files::Shares::ShareClient::CreateFromConnectionString(
-            StandardStorageConnectionString(), LowercaseRandomString());
+            StandardStorageConnectionString(), m_testNameLowercase + "if3", m_options);
         auto created = client.Create().Value.Created;
         EXPECT_TRUE(created);
         auto createResult = client.CreateIfNotExists();
@@ -108,7 +116,7 @@ namespace Azure { namespace Storage { namespace Test {
       }
       {
         auto client = Files::Shares::ShareClient::CreateFromConnectionString(
-            StandardStorageConnectionString(), LowercaseRandomString());
+            StandardStorageConnectionString(), m_testNameLowercase + "if4", m_options);
         auto deleteResult = client.DeleteIfExists();
         EXPECT_FALSE(deleteResult.Value.Deleted);
       }
@@ -130,11 +138,12 @@ namespace Azure { namespace Storage { namespace Test {
     }
 
     {
+
       // Create share with metadata works
       auto client1 = Files::Shares::ShareClient::CreateFromConnectionString(
-          AdlsGen2ConnectionString(), LowercaseRandomString());
+          StandardStorageConnectionString(), m_testNameLowercase + "1", m_options);
       auto client2 = Files::Shares::ShareClient::CreateFromConnectionString(
-          AdlsGen2ConnectionString(), LowercaseRandomString());
+          StandardStorageConnectionString(), m_testNameLowercase + "2", m_options);
       Files::Shares::CreateShareOptions options1;
       Files::Shares::CreateShareOptions options2;
       options1.Metadata = metadata1;
@@ -170,10 +179,11 @@ namespace Azure { namespace Storage { namespace Test {
 
     {
       // Create share with quota works
+
       auto client1 = Files::Shares::ShareClient::CreateFromConnectionString(
-          AdlsGen2ConnectionString(), LowercaseRandomString());
+          StandardStorageConnectionString(), m_testNameLowercase + "1", m_options);
       auto client2 = Files::Shares::ShareClient::CreateFromConnectionString(
-          AdlsGen2ConnectionString(), LowercaseRandomString());
+          StandardStorageConnectionString(), m_testNameLowercase + "2", m_options);
       Files::Shares::CreateShareOptions options1;
       Files::Shares::CreateShareOptions options2;
       options1.ShareQuotaInGiB = quota32GB;
@@ -197,8 +207,10 @@ namespace Azure { namespace Storage { namespace Test {
     }
   }
 
-  TEST_F(FileShareClientTest, ShareAccessPolicy)
+  TEST_F(FileShareClientTest, ShareAccessPolicy_LIVEONLY_)
   {
+    CHECK_SKIP_TEST();
+
     std::vector<Files::Shares::Models::SignedIdentifier> identifiers;
     for (unsigned i = 0; i < 3; ++i)
     {
@@ -217,8 +229,10 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_EQ(ret2.Value.SignedIdentifiers, identifiers);
   }
 
-  TEST_F(FileShareClientTest, ShareAccessPolicyNullable)
+  TEST_F(FileShareClientTest, ShareAccessPolicyNullable_LIVEONLY_)
   {
+    CHECK_SKIP_TEST();
+
     std::vector<Files::Shares::Models::SignedIdentifier> identifiers;
     {
       Files::Shares::Models::SignedIdentifier identifier;
@@ -380,7 +394,7 @@ namespace Azure { namespace Storage { namespace Test {
     std::string baseName = "a b c !@#$%^&(,.;'[]{}`~) def" + non_ascii_word;
 
     {
-      std::string directoryName = baseName + RandomString();
+      std::string directoryName = baseName + m_testNameLowercase + "1";
       auto directoryClient
           = m_shareClient->GetRootDirectoryClient().GetSubdirectoryClient(directoryName);
       EXPECT_NO_THROW(directoryClient.Create());
@@ -389,7 +403,7 @@ namespace Azure { namespace Storage { namespace Test {
           directoryUrl, m_shareClient->GetUrl() + "/" + _internal::UrlEncodePath(directoryName));
     }
     {
-      std::string fileName = baseName + RandomString();
+      std::string fileName = baseName + m_testNameLowercase + "2";
       auto fileClient = m_shareClient->GetRootDirectoryClient().GetFileClient(fileName);
       EXPECT_NO_THROW(fileClient.Create(1024));
       auto fileUrl = fileClient.GetUrl();
@@ -401,12 +415,12 @@ namespace Azure { namespace Storage { namespace Test {
   {
     // Create/Get properties works
     std::unordered_map<std::string, Files::Shares::ShareClient> shareClients;
-    std::string prefix = LowercaseRandomString(5);
+    std::string prefix = "prefix";
     Files::Shares::Models::ShareProperties properties;
     {
-      auto shareName = prefix + LowercaseRandomString(5);
+      auto shareName = prefix + GetStringOfSize(5, true) + "1";
       auto shareClient = Files::Shares::ShareClient::CreateFromConnectionString(
-          StandardStorageConnectionString(), shareName);
+          StandardStorageConnectionString(), shareName, m_options);
       auto options = Files::Shares::CreateShareOptions();
       options.AccessTier = Files::Shares::Models::AccessTier::TransactionOptimized;
       EXPECT_NO_THROW(shareClient.Create(options));
@@ -418,9 +432,9 @@ namespace Azure { namespace Storage { namespace Test {
       shareClients.emplace(std::move(shareName), std::move(shareClient));
     }
     {
-      auto shareName = prefix + LowercaseRandomString(5);
+      auto shareName = prefix + GetStringOfSize(5, true) + "2";
       auto shareClient = Files::Shares::ShareClient::CreateFromConnectionString(
-          StandardStorageConnectionString(), shareName);
+          StandardStorageConnectionString(), shareName, m_options);
       auto options = Files::Shares::CreateShareOptions();
       options.AccessTier = Files::Shares::Models::AccessTier::Hot;
       EXPECT_NO_THROW(shareClient.Create(options));
@@ -431,9 +445,9 @@ namespace Azure { namespace Storage { namespace Test {
       shareClients.emplace(std::move(shareName), std::move(shareClient));
     }
     {
-      auto shareName = prefix + LowercaseRandomString(5);
+      auto shareName = prefix + GetStringOfSize(5, true) + "3";
       auto shareClient = Files::Shares::ShareClient::CreateFromConnectionString(
-          StandardStorageConnectionString(), shareName);
+          StandardStorageConnectionString(), shareName, m_options);
       auto options = Files::Shares::CreateShareOptions();
       options.AccessTier = Files::Shares::Models::AccessTier::Cool;
       EXPECT_NO_THROW(shareClient.Create(options));
@@ -447,7 +461,7 @@ namespace Azure { namespace Storage { namespace Test {
     // Set properties works
     {
       auto shareClient = Files::Shares::ShareClient::CreateFromConnectionString(
-          StandardStorageConnectionString(), LowercaseRandomString());
+          StandardStorageConnectionString(), m_testNameLowercase + "1", m_options);
       auto options = Files::Shares::CreateShareOptions();
       options.AccessTier = Files::Shares::Models::AccessTier::Cool;
       EXPECT_NO_THROW(shareClient.Create(options));
@@ -475,7 +489,7 @@ namespace Azure { namespace Storage { namespace Test {
     listOptions.Prefix = prefix;
     std::vector<Files::Shares::Models::ShareItem> shareItems;
     for (auto pageResult = Files::Shares::ShareServiceClient::CreateFromConnectionString(
-                               StandardStorageConnectionString())
+                               StandardStorageConnectionString(), m_options)
                                .ListShares(listOptions);
          pageResult.HasPage();
          pageResult.MoveToNextPage())
@@ -504,9 +518,9 @@ namespace Azure { namespace Storage { namespace Test {
 
   TEST_F(FileShareClientTest, PremiumShare)
   {
-    auto shareName = LowercaseRandomString();
+    auto shareName = m_testNameLowercase;
     auto shareClient = Files::Shares::ShareClient::CreateFromConnectionString(
-        PremiumFileConnectionString(), shareName);
+        PremiumFileConnectionString(), shareName, m_options);
     EXPECT_NO_THROW(shareClient.Create());
     Files::Shares::Models::ShareProperties properties;
     EXPECT_NO_THROW(properties = shareClient.GetProperties().Value);
@@ -518,7 +532,7 @@ namespace Azure { namespace Storage { namespace Test {
     listOptions.Prefix = shareName;
     std::vector<Files::Shares::Models::ShareItem> shareItems;
     for (auto pageResult = Files::Shares::ShareServiceClient::CreateFromConnectionString(
-                               PremiumFileConnectionString())
+                               PremiumFileConnectionString(), m_options)
                                .ListShares(listOptions);
          pageResult.HasPage();
          pageResult.MoveToNextPage())

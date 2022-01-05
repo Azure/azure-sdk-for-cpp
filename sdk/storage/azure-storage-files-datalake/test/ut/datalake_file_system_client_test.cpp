@@ -387,7 +387,7 @@ namespace Azure { namespace Storage { namespace Test {
 
   TEST_F(DataLakeFileSystemClientTest, GetSetAccessPolicy_LIVEONLY_)
   {
-    CHECK_SKIP_TEST()
+    CHECK_SKIP_TEST();
     {
       auto fileSystem = Files::DataLake::DataLakeFileSystemClient::CreateFromConnectionString(
           AdlsGen2ConnectionString(),

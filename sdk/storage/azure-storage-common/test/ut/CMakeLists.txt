@@ -22,6 +22,8 @@ add_executable (
     test_base.hpp
 )
 
+create_map_file(azure-storage-common-test azure-storage-common-test.map)
+
 if (MSVC)
   target_compile_options(azure-storage-common-test PUBLIC /wd6326 /wd26495 /wd26812)
 endif()
