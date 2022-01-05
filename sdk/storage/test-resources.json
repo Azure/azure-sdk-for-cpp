@@ -58,7 +58,7 @@
             "signedPermission": "rwdlacup",
             "signedResourceTypes": "sco",
             "keyToSign": "key2",
-            "signedExpiry": "2022-01-01T23:59:00Z"
+            "signedExpiry": "2023-01-01T23:59:00Z"
         },
         "authorizationApiVersion": "2018-01-01-preview",
         "blobDataContributorRoleId": "[concat('/subscriptions/', subscription().subscriptionId, '/providers/Microsoft.Authorization/roleDefinitions/ba92f5b4-2d11-453d-a403-e96b0029c9fe')]",
@@ -82,7 +82,9 @@
             "type": "Microsoft.Authorization/roleAssignments",
             "apiVersion": "[variables('authorizationApiVersion')]",
             "name": "[guid(concat('blobDataOwnerRoleId', variables('accountName')))]",
-            "dependsOn": [ "[variables('accountName')]" ],
+            "dependsOn": [
+                "[variables('accountName')]"
+            ],
             "properties": {
                 "roleDefinitionId": "[variables('blobDataOwnerRoleId')]",
                 "principalId": "[parameters('testApplicationOid')]"
@@ -101,10 +103,8 @@
             "properties": {
                 "networkAcls": {
                     "bypass": "AzureServices",
-                    "virtualNetworkRules": [
-                    ],
-                    "ipRules": [
-                    ],
+                    "virtualNetworkRules": [],
+                    "ipRules": [],
                     "defaultAction": "Allow"
                 },
                 "supportsHttpsTrafficOnly": true,
@@ -148,7 +148,9 @@
                 "cors": {
                     "corsRules": [
                         {
-                            "allowedOrigins": [ "*" ],
+                            "allowedOrigins": [
+                                "*"
+                            ],
                             "allowedMethods": [
                                 "DELETE",
                                 "GET",
@@ -160,8 +162,12 @@
                                 "PATCH"
                             ],
                             "maxAgeInSeconds": 86400,
-                            "exposedHeaders": [ "*" ],
-                            "allowedHeaders": [ "*" ]
+                            "exposedHeaders": [
+                                "*"
+                            ],
+                            "allowedHeaders": [
+                                "*"
+                            ]
                         }
                     ]
                 }
@@ -182,11 +188,25 @@
                 "cors": {
                     "corsRules": [
                         {
-                            "allowedOrigins": [ "*" ],
-                            "allowedMethods": [ "DELETE", "GET", "HEAD", "MERGE", "POST", "OPTIONS", "PUT" ],
+                            "allowedOrigins": [
+                                "*"
+                            ],
+                            "allowedMethods": [
+                                "DELETE",
+                                "GET",
+                                "HEAD",
+                                "MERGE",
+                                "POST",
+                                "OPTIONS",
+                                "PUT"
+                            ],
                             "maxAgeInSeconds": 86400,
-                            "exposedHeaders": [ "*" ],
-                            "allowedHeaders": [ "*" ]
+                            "exposedHeaders": [
+                                "*"
+                            ],
+                            "allowedHeaders": [
+                                "*"
+                            ]
                         }
                     ]
                 }
@@ -235,10 +255,8 @@
                 },
                 "networkAcls": {
                     "bypass": "AzureServices",
-                    "virtualNetworkRules": [
-                    ],
-                    "ipRules": [
-                    ],
+                    "virtualNetworkRules": [],
+                    "ipRules": [],
                     "defaultAction": "Allow"
                 },
                 "supportsHttpsTrafficOnly": true,
@@ -269,10 +287,8 @@
             "properties": {
                 "networkAcls": {
                     "bypass": "AzureServices",
-                    "virtualNetworkRules": [
-                    ],
-                    "ipRules": [
-                    ],
+                    "virtualNetworkRules": [],
+                    "ipRules": [],
                     "defaultAction": "Allow"
                 },
                 "supportsHttpsTrafficOnly": true,
