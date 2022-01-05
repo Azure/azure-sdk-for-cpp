@@ -30,6 +30,8 @@ add_executable (
     mocked_transport_adapter_test.hpp
 )
 
+create_map_file(azure-security-keyvault-keys-test azure-security-keyvault-keys-test.map)
+
 if (MSVC)
   target_compile_options(azure-security-keyvault-keys-test PUBLIC /wd6326 /wd26495 /wd26812)
 endif()

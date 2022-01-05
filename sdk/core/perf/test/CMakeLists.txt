@@ -29,6 +29,8 @@ add_executable (
      ${AZURE_PERF_TEST_HEADER} ${AZURE_PERF_TEST_SOURCE}
 )
 
+create_map_file(azure-perf-test azure-perf-test.map)
+
 # Include the headers from the project.
 target_include_directories(
   azure-perf-test

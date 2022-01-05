@@ -172,7 +172,8 @@
         "fprofile",
         "ftest",
         "mathjax",
-        "mdfile"
+        "mdfile",
+        "Xlinker"
       ]
     }
   ],
