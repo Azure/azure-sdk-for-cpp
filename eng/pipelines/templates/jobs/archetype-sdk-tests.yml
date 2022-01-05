@@ -146,6 +146,7 @@ jobs:
     CmakeEnvArg: ""
     CmakeArgs: ""
     AZURE_TEST_MODE: "LIVE"
+    #AZURE_LOG_LEVEL: "verbose"
 
   steps:
   - checkout: self

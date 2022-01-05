@@ -15,3 +15,5 @@ add_executable (
 )
 
 target_link_libraries(azure-core-test-fault-injector PRIVATE azure-core)
+
+create_map_file(azure-core-test-fault-injector azure-core-test-fault-injector.map)
