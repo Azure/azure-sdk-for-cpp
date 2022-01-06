@@ -1,0 +1,83 @@
+{
+  "networkCallRecords": [
+    {
+      "Headers": {
+        "user-agent": "azsdk-cpp-storage-queues/12.0.0-beta.3 (Linux 5.4.0-1063-azure x86_64 #66~18.04.1-Ubuntu SMP Thu Oct 21 09:59:28 UTC 2021)",
+        "x-ms-client-request-id": "1eff8ebd-68bc-47aa-4607-95e28fa4b95a",
+        "x-ms-version": "2018-03-28"
+      },
+      "Method": "PUT",
+      "Response": {
+        "BODY": "",
+        "REASON_PHRASE": "Created",
+        "STATUS_CODE": "201",
+        "content-length": "0",
+        "date": "Thu, 06 Jan 2022 00:05:56 GMT",
+        "server": "Windows-Azure-Queue/1.0 Microsoft-HTTPAPI/2.0",
+        "x-ms-request-id": "392e8e6f-5003-001c-7b91-02b6e4000000",
+        "x-ms-version": "2018-03-28"
+      },
+      "Url": "https://REDACTED.queue.core.windows.net/createdeletequeue"
+    },
+    {
+      "Headers": {
+        "user-agent": "azsdk-cpp-storage-queues/12.0.0-beta.3 (Linux 5.4.0-1063-azure x86_64 #66~18.04.1-Ubuntu SMP Thu Oct 21 09:59:28 UTC 2021)",
+        "x-ms-client-request-id": "cce3ec81-0e69-40d9-6b04-23c10b58fb0c",
+        "x-ms-version": "2018-03-28"
+      },
+      "Method": "HEAD",
+      "Response": {
+        "BODY": "",
+        "REASON_PHRASE": "OK",
+        "STATUS_CODE": "200",
+        "cache-control": "no-cache",
+        "content-length": "0",
+        "date": "Thu, 06 Jan 2022 00:05:56 GMT",
+        "server": "Windows-Azure-Queue/1.0 Microsoft-HTTPAPI/2.0",
+        "x-ms-approximate-messages-count": "0",
+        "x-ms-request-id": "392e8e75-5003-001c-7f91-02b6e4000000",
+        "x-ms-version": "2018-03-28"
+      },
+      "Url": "https://REDACTED.queue.core.windows.net/createdeletequeue?comp=metadata"
+    },
+    {
+      "Headers": {
+        "user-agent": "azsdk-cpp-storage-queues/12.0.0-beta.3 (Linux 5.4.0-1063-azure x86_64 #66~18.04.1-Ubuntu SMP Thu Oct 21 09:59:28 UTC 2021)",
+        "x-ms-client-request-id": "4b8074e8-2331-49b3-5c98-94fb040bc70f",
+        "x-ms-version": "2018-03-28"
+      },
+      "Method": "DELETE",
+      "Response": {
+        "BODY": "",
+        "REASON_PHRASE": "No Content",
+        "STATUS_CODE": "204",
+        "content-length": "0",
+        "date": "Thu, 06 Jan 2022 00:05:56 GMT",
+        "server": "Windows-Azure-Queue/1.0 Microsoft-HTTPAPI/2.0",
+        "x-ms-request-id": "392e8e79-5003-001c-0391-02b6e4000000",
+        "x-ms-version": "2018-03-28"
+      },
+      "Url": "https://REDACTED.queue.core.windows.net/createdeletequeue"
+    },
+    {
+      "Headers": {
+        "user-agent": "azsdk-cpp-storage-queues/12.0.0-beta.3 (Linux 5.4.0-1063-azure x86_64 #66~18.04.1-Ubuntu SMP Thu Oct 21 09:59:28 UTC 2021)",
+        "x-ms-client-request-id": "0070e024-beda-45ff-670c-82c10ca0e946",
+        "x-ms-version": "2018-03-28"
+      },
+      "Method": "HEAD",
+      "Response": {
+        "BODY": "",
+        "REASON_PHRASE": "The specified queue does not exist.",
+        "STATUS_CODE": "404",
+        "date": "Thu, 06 Jan 2022 00:05:56 GMT",
+        "server": "Windows-Azure-Queue/1.0 Microsoft-HTTPAPI/2.0",
+        "transfer-encoding": "chunked",
+        "x-ms-error-code": "QueueNotFound",
+        "x-ms-request-id": "392e8e7d-5003-001c-0791-02b6e4000000",
+        "x-ms-version": "2018-03-28"
+      },
+      "Url": "https://REDACTED.queue.core.windows.net/createdeletequeue?comp=metadata"
+    }
+  ]
+}
