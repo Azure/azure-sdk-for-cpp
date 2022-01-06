@@ -8,32 +8,48 @@
 
 namespace Azure { namespace Storage { namespace Queues { namespace Models {
 
-  bool operator==(const SignedIdentifier& lhs, const SignedIdentifier& rhs);
+  bool operator==(const SignedIdentifier& lhs, const SignedIdentifier& rhs)
+  {
+    return lhs.Id == rhs.Id && lhs.StartsOn.HasValue() == rhs.StartsOn.HasValue()
+        && (!lhs.StartsOn.HasValue() || lhs.StartsOn.Value() == rhs.StartsOn.Value())
+        && lhs.ExpiresOn.HasValue() == rhs.ExpiresOn.HasValue()
+        && (!lhs.ExpiresOn.HasValue() || lhs.ExpiresOn.Value() == rhs.ExpiresOn.Value())
+        && lhs.Permissions == rhs.Permissions;
+  }
 
 }}}} // namespace Azure::Storage::Queues::Models
 
 namespace Azure { namespace Storage { namespace Test {
 
-  std::shared_ptr<Queues::QueueServiceClient> QueueClientTest::m_queueServiceClient;
-  std::shared_ptr<Queues::QueueClient> QueueClientTest::m_queueClient;
-  std::string QueueClientTest::m_queueName;
-
-  void QueueClientTest::SetUpTestSuite()
+  void QueueClientTest::SetUp()
   {
+    StorageTest::SetUp();
+    CHECK_SKIP_TEST();
+
+    m_options = InitClientOptions<Queues::QueueClientOptions>();
     m_queueServiceClient = std::make_shared<Queues::QueueServiceClient>(
-        Queues::QueueServiceClient::CreateFromConnectionString(StandardStorageConnectionString()));
-    m_queueName = LowercaseRandomString();
+        Queues::QueueServiceClient::CreateFromConnectionString(
+            StandardStorageConnectionString(), m_options));
+    m_testName = GetTestName();
+    m_testNameLowercase = GetTestNameLowerCase();
+
+    m_queueName = m_testNameLowercase + "base";
     m_queueClient
         = std::make_shared<Queues::QueueClient>(m_queueServiceClient->GetQueueClient(m_queueName));
     m_queueClient->Create();
   }
 
-  void QueueClientTest::TearDownTestSuite() { m_queueClient->Delete(); }
+  void QueueClientTest::TearDown()
+  {
+    CHECK_SKIP_TEST();
+    m_queueClient->Delete();
+    StorageTest::TearDown();
+  }
 
   TEST_F(QueueClientTest, CreateDelete)
   {
     auto queueClient = Azure::Storage::Queues::QueueClient::CreateFromConnectionString(
-        StandardStorageConnectionString(), LowercaseRandomString());
+        StandardStorageConnectionString(), m_testNameLowercase, m_options);
     Azure::Storage::Queues::CreateQueueOptions options;
     Azure::Storage::Metadata metadata;
     metadata["key1"] = "one";
@@ -55,10 +71,10 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_FALSE(res2.RawResponse->GetHeaders().at(_internal::HttpHeaderXMsVersion).empty());
 
     queueClient = Azure::Storage::Queues::QueueClient::CreateFromConnectionString(
-        StandardStorageConnectionString(), LowercaseRandomString() + "UPPERCASE");
+        StandardStorageConnectionString(), m_testNameLowercase + "UPPERCASE", m_options);
     EXPECT_THROW(queueClient.Create(), StorageException);
     queueClient = Azure::Storage::Queues::QueueClient::CreateFromConnectionString(
-        StandardStorageConnectionString(), LowercaseRandomString());
+        StandardStorageConnectionString(), m_testNameLowercase + "2", m_options);
     {
       auto response = queueClient.Delete();
       EXPECT_FALSE(response.Value.Deleted);
@@ -111,7 +127,7 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_TRUE(properties.Metadata.empty());
   }
 
-  TEST_F(QueueClientTest, AccessControlList)
+  TEST_F(QueueClientTest, AccessControlList_LIVEONLY_)
   {
     auto queueClient = Azure::Storage::Queues::QueueClient::CreateFromConnectionString(
         StandardStorageConnectionString(), LowercaseRandomString());

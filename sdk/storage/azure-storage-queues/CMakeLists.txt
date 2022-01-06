@@ -82,20 +82,9 @@ az_rtti_setup(
 # coverage. Has no effect if BUILD_CODE_COVERAGE is OFF
 create_code_coverage(storage azure-storage-queues azure-storage-test "tests?/*;samples?/*")
 
-# if(BUILD_TESTING)
-#   target_sources(
-#     azure-storage-test
-#       PRIVATE
-#         test/ut/macro_guard.cpp
-#         test/ut/queue_client_messages_test.cpp
-#         test/ut/queue_client_test.cpp
-#         test/ut/queue_client_test.hpp
-#         test/ut/queue_sas_test.cpp
-#         test/ut/queue_service_client_test.cpp
-#   )
-
-#   target_link_libraries(azure-storage-test PRIVATE azure-storage-queues)
-# endif()
+if(BUILD_TESTING)
+  add_subdirectory(test/ut)
+endif()
 
 if(BUILD_STORAGE_SAMPLES)
   add_subdirectory(samples)
