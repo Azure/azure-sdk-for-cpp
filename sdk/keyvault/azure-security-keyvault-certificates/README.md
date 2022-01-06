@@ -277,14 +277,14 @@ You will notice that additional information is logged, like the client request I
 
 Several Azure Key Vault secrets client library samples are available to you in this GitHub repository. These samples provide example code for additional scenarios commonly encountered while working with Azure Key Vault:
 
-* Certificate-Basic-Operations:
+* [Certificate-Basic-Operations](https://github.com/Azure/azure-sdk-for-cpp/tree/main/sdk/keyvault/azure-security-keyvault-certificates/test/samples/certificate-basic-operations):
   * create a certificate
   * get a certificate
   * update a certificate
   * delete a certificate
   * purge a certificate
 
-* Certificates-Get-Certificates:
+* [Certificates-Get-Certificates](https://github.com/Azure/azure-sdk-for-cpp/tree/main/sdk/keyvault/azure-security-keyvault-certificates/test/samples/certificate-get-certificates):
   * create certificates
   * get properties of certificates
   * get properties of certificate versions
@@ -292,7 +292,7 @@ Several Azure Key Vault secrets client library samples are available to you in t
   * get deleted certificates
   * purge a certificate
 
-* Certificates-Import-Certificate:
+* [Certificates-Import-Certificate](https://github.com/Azure/azure-sdk-for-cpp/tree/main/sdk/keyvault/azure-security-keyvault-certificates/test/samples/certificate-import-certificate):
   * Import a PEM certificate
   * import a PKCS certificate
 
@@ -301,7 +301,7 @@ For details on contributing to this repository, see the [contributing guide][azu
 
 This project welcomes contributions and suggestions.  Most contributions require you to agree to a
 Contributor License Agreement (CLA) declaring that you have the right to, and actually do, grant us
-the rights to use your contribution. For details, visit https://cla.microsoft.com.
+the rights to use your contribution. For details, visit [Contributor License Agreement](https://cla.microsoft.com).
 
 When you submit a pull request, a CLA-bot will automatically determine whether you need to provide
 a CLA and decorate the PR appropriately (e.g., label, comment). Simply follow the instructions

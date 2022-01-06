@@ -209,7 +209,7 @@ We guarantee that all client instance methods are thread-safe and independent of
 The Azure.Security.KeyVault.Keys package supports synchronous APIs.
 
 The following section provides several code snippets using the `client` [created above](#create-keyclient), covering some of the most common Azure Key Vault key service related tasks:
-
+<!--
 ### Examples
 
 - [Create a key](#create-a-key)
@@ -218,7 +218,7 @@ The following section provides several code snippets using the `client` [created
 - [Delete a key](#delete-a-key)
 - [Delete and purge a key](#delete-and-purge-a-key)
 - [List keys](#list-keys)
-<!-- - [Encrypt and Decrypt](#encrypt-and-decrypt) -->
+ - [Encrypt and Decrypt](#encrypt-and-decrypt) -->
 
 ### Create a key
 
@@ -281,7 +281,7 @@ std::cout << updatedKey.Properties.UpdatedOn->ToString();
 
 `StartDeleteKey` starts a long-running operation to delete a key previously stored in the Azure Key Vault.
 You can retrieve the key immediately without waiting for the operation to complete.
-When [soft-delete][soft_delete] is not enabled for the Azure Key Vault, this operation permanently deletes the key.
+When [soft-delete](https://docs.microsoft.com/en-us/azure/key-vault/general/soft-delete-overview) is not enabled for the Azure Key Vault, this operation permanently deletes the key.
 
 ```cpp
 DeleteKeyOperation operation = client.StartDeleteKey("key-name");
@@ -325,20 +325,6 @@ for (auto keys = client.GetPropertiesOfKeys(); keys.HasPage(); keys.MoveToNextPa
       }
     }
 ```
-
-<!-- ### Encrypt and Decrypt
-
-This example creates a `CryptographyClient` and uses it to encrypt and decrypt with a key in Azure Key Vault.
-
-```cpp
-byte[] plaintext = Encoding.UTF8.GetBytes("A single block of plaintext");
-
-// encrypt the data using the algorithm RSAOAEP
-EncryptResult encryptResult = cryptoClient.Encrypt(EncryptionAlgorithm.RsaOaep, plaintext);
-
-// decrypt the encrypted data.
-DecryptResult decryptResult = cryptoClient.Decrypt(EncryptionAlgorithm.RsaOaep, encryptResult.Ciphertext);
-``` -->
 
 ## Troubleshooting
 
@@ -433,7 +419,7 @@ Several Azure Key Vault keys client library samples are available to you in this
 See the [CONTRIBUTING.md][contributing] for details on building, testing, and contributing to these libraries.
 
 This project welcomes contributions and suggestions. Most contributions require you to agree to a Contributor License Agreement (CLA)
-declaring that you have the right to, and actually do, grant us the rights to use your contribution. For details, visit https://cla.microsoft.com.
+declaring that you have the right to, and actually do, grant us the rights to use your contribution. For details, visit [Contributor License Agreement](https://cla.microsoft.com).
 
 When you submit a pull request, a CLA-bot will automatically determine whether you need to provide a CLA and decorate the PR appropriately (e.g., label, comment).
 Simply follow the instructions provided by the bot. You will only need to do this once across all repos using our CLA.
