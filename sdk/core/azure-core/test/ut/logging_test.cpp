@@ -223,8 +223,8 @@ std::string GetSuffix(const testing::TestParamInfo<LoggerTest::ParamType>& info)
 std::vector<LoggerTestParameter> GetTestParameters()
 {
   std::vector<LoggerTestParameter> parameters;
-  parameters.emplace_back(LoggerTestParameter{"halfMillion", 500000U});
-  parameters.emplace_back(LoggerTestParameter{"oneMillion", 1000000U});
+  parameters.emplace_back(LoggerTestParameter{"thousand", 1000U});
+  parameters.emplace_back(LoggerTestParameter{"tenThousand", 10000U});
   return parameters;
 }
 
