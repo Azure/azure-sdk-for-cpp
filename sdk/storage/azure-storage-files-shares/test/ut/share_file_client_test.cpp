@@ -531,7 +531,7 @@ namespace Azure { namespace Storage { namespace Test {
   TEST_P(DowloadShare, fromBuffer)
   {
     auto const p = GetParam();
-    m_fileContent = std::vector<uint8_t>(8_MB, 'x');
+    m_fileContent = std::vector<uint8_t>(static_cast<size_t>(8_MB), 'x');
     m_fileClient->UploadFrom(m_fileContent.data(), m_fileContent.size());
 
     std::vector<uint8_t> downloadBuffer;
@@ -606,7 +606,7 @@ namespace Azure { namespace Storage { namespace Test {
   TEST_P(DowloadShare, fromFile)
   {
     auto const p = GetParam();
-    m_fileContent = std::vector<uint8_t>(8_MB, 'x');
+    m_fileContent = std::vector<uint8_t>(static_cast<size_t>(8_MB), 'x');
     m_fileClient->UploadFrom(m_fileContent.data(), m_fileContent.size());
     auto offset = p.Offset;
     auto length = p.Length;
