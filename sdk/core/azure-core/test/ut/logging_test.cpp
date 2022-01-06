@@ -201,3 +201,23 @@ TEST(Logger, Message)
     throw;
   }
 }
+
+namespace {
+struct LoggerTestParameter
+{
+  std::string Suffix;
+};
+
+class LoggerTest : public testing::TestWithParam<LoggerTestParameter> {
+};
+
+std::string GetSuffix(const testing::TestParamInfo<LoggerTest::ParamType>& info)
+{
+  return info.param.Suffix;
+}
+
+std::vector<LoggerTestParameter> GetTestParameters();
+
+INSTANTIATE_TEST_SUITE_P(withParam, LoggerTest, GetTestParameters(), GetSuffix);
+
+} // namespace
