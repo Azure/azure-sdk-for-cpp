@@ -109,6 +109,18 @@ jobs:
               -DBUILD_TRANSPORT_CURL=OFF
               -DBUILD_DOCUMENTATION=YES
 
+        - template: /eng/pipelines/templates/steps/cmake-build.yml
+          parameters:
+            Build: false
+            GenerateArgs: >-
+              -DINSTALL_GTEST=OFF
+              -DBUILD_TESTING=OFF
+              -DBUILD_TRANSPORT_CURL=OFF
+              -DBUILD_DOCUMENTATION=YES
+              -DBUILD_SOURCE_DEPS=ON
+            workingDirectory: /sdk/keyvault/azure-security-keyvault-certificates
+            displayName: Build Source Deps
+
         - pwsh: npm install -g moxygen
           displayName: Install Moxygen to generate markdown for docs.microsoft.com
 
