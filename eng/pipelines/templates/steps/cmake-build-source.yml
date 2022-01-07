@@ -14,13 +14,13 @@ steps:
 
   - script: cmake --version
     workingDirectory: sdk/keyvault/azure-security-keyvault-certificates/build
-    displayName: cmake --version
+    displayName: BSD cmake --version
 
   - script: ${{ parameters.Env }} cmake ${{ parameters.GenerateArgs }} ..
     workingDirectory: sdk/keyvault/azure-security-keyvault-certificates/build
-    displayName: cmake generate
+    displayName: BSD cmake generate
 
   - ${{ if eq(parameters.Build, true) }}:
     - script: cmake --build . ${{ parameters.BuildArgs }}
       workingDirectory: sdk/keyvault/azure-security-keyvault-certificates/build
-      displayName: cmake build
+      displayName: BSD cmake build
