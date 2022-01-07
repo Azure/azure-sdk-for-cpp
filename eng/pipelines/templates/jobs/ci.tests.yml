@@ -134,6 +134,16 @@ jobs:
           BuildArgs: "$(BuildArgs)"
           Env: "$(CmakeEnvArg)"
 
+      - template: /eng/pipelines/templates/steps/cmake-build-source.yml
+        parameters:
+        Build: false
+        GenerateArgs: >-
+            -DINSTALL_GTEST=OFF
+            -DBUILD_TESTING=OFF
+            -DBUILD_TRANSPORT_CURL=OFF
+            -DBUILD_DOCUMENTATION=YES
+            -DBUILD_SOURCE_DEPS=ON
+
       - pwsh: |
           ctest `
             -C Debug `
