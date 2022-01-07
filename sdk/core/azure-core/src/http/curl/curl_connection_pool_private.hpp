@@ -50,6 +50,8 @@ namespace Azure { namespace Core { namespace Http { namespace _detail {
 #endif
 
   public:
+    std::mutex ConnectionPoolMutex;
+
     ~CurlConnectionPool()
     {
       using namespace Azure::Core::Http::_detail;
@@ -104,8 +106,6 @@ namespace Azure { namespace Core { namespace Http { namespace _detail {
      * @remark There might be multiple connections for each host.
      */
     std::map<std::string, std::list<std::unique_ptr<CurlNetworkConnection>>> ConnectionPoolIndex;
-
-    std::mutex ConnectionPoolMutex;
 
     // This is used to put the cleaning pool thread to sleep and yet to be able to wake it if the
     // application finishes.
