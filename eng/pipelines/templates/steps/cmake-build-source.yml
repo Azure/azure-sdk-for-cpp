@@ -6,10 +6,7 @@ parameters:
 
 
 steps:
-  - script: cd sdk/keyvault/azure-security-keyvault-certificates
-    displayName: Build Source Deps
-      
-  - script: mkdir sdk/keyvault/azure-security-keyvault-certificates/build
+  - script: cd sdk/keyvault/azure-security-keyvault-certificates && mkdir build
     displayName: BSD create working directory
 
   - script: cmake --version
