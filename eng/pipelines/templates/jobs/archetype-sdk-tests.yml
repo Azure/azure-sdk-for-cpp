@@ -200,12 +200,6 @@ jobs:
       GenerateArgs: $(CmakeArgs)
       BuildArgs: "$(BuildArgs)"
       Env: "$(CmakeEnvArg)"
-  
-  - template: /eng/pipelines/templates/steps/cmake-build-source.yml
-    parameters:
-      GenerateArgs: "$(CmakeArgs) -DBUILD_SOURCE_DEPS=ON"
-      BuildArgs: "$(BuildArgs) -DBUILD_SOURCE_DEPS=ON"
-      Env: "$(CmakeEnvArg)"
 
   - template: /eng/common/TestResources/deploy-test-resources.yml
     parameters:
