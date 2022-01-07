@@ -136,12 +136,7 @@ jobs:
 
       - template: /eng/pipelines/templates/steps/cmake-build-source.yml
         parameters:
-          GenerateArgs: >-
-              -DINSTALL_GTEST=OFF
-              -DBUILD_TESTING=OFF
-              -DBUILD_TRANSPORT_CURL=OFF
-              -DBUILD_DOCUMENTATION=YES
-              -DBUILD_SOURCE_DEPS=ON
+          GenerateArgs: "$(CmakeArgs) -DBUILD_SOURCE_DEPS=ON"
           BuildArgs: "$(BuildArgs) -DBUILD_SOURCE_DEPS=ON"
           Env: "$(CmakeEnvArg)"
 
