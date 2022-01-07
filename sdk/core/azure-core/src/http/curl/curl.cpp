@@ -191,7 +191,7 @@ static void CleanupThread()
   using namespace Azure::Core::Http::_detail;
   for (;;)
   {
-    // Log::Write(Logger::Level::Verbose, "Clean pool check now...");
+    Log::Write(Logger::Level::Verbose, "Clean pool check now...");
     // Won't continue until the ConnectionPoolMutex is released from MoveConnectionBackToPool
     std::unique_lock<std::mutex> lockForPoolCleaning(
         CurlConnectionPool::g_curlConnectionPool.ConnectionPoolMutex);
@@ -206,10 +206,10 @@ static void CleanupThread()
               return CurlConnectionPool::g_curlConnectionPool.ConnectionPoolIndex.size() == 0;
             }))
     {
-      // Cancelled by another thead or no connections on wakeup
-      // Log::Write(
-      //     Logger::Level::Verbose,
-      //     "Clean pool - no connections on wake - return *************************");
+      // NOTE: Avoid using Log::Write in here as it may fail on MacOS,
+      // see issue: https://github.com/Azure/azure-sdk-for-cpp/issues/3224
+      // This method can wake up in de-attached mode after the application has been terminated.
+      // If that happens, trying to use `Log` would cause `abort` as it was previously deallocated.
       CurlConnectionPool::g_curlConnectionPool.IsCleanThreadRunning = false;
       break;
     }
@@ -249,7 +249,6 @@ static void CleanupThread()
 
       if (connectionList.empty())
       {
-        // Log::Write(Logger::Level::Verbose, "Clean pool - remove index " + index->first);
         index = CurlConnectionPool::g_curlConnectionPool.ConnectionPoolIndex.erase(index);
       }
       else
