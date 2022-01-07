@@ -71,7 +71,7 @@ jobs:
     - name: AZURE_TEST_MODE
       value: "PLAYBACK"
     - name: AZURE_LOG_LEVEL
-      value: "info"
+      value: "verbose"
     - ${{ each testEnvVar in parameters.TestEnv }}:
       - name: ${{ testEnvVar.Name }}
         value: ${{ testEnvVar.Value }}
