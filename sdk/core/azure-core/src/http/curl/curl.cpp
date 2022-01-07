@@ -195,7 +195,7 @@ static void CleanupThread()
     // Won't continue until the ConnectionPoolMutex is released from MoveConnectionBackToPool
     std::unique_lock<std::mutex> lockForPoolCleaning(
         CurlConnectionPool::g_curlConnectionPool.ConnectionPoolMutex);
-    // Log::Write(Logger::Level::Verbose, "Clean pool sleep");
+
     // Wait for the default time OR to the signal from the conditional variable.
     // wait_for releases the mutex lock when it goes to sleep and it takes the lock again when it
     // wakes up (or it's cancelled).
