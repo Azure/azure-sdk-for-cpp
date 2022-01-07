@@ -5,6 +5,7 @@ Azure Security Keyvault Secrets Package client library for C++ (`azure-security-
 The library allows client libraries to expose common functionality in a consistent fashion.  Once you learn how to use these APIs in one client library, you will know how to use them in other client libraries.
 
 [Source code][secrets_client_src] | [API reference documentation][api_reference] | [Product documentation][keyvault_docs]
+
 ## Getting started
 
 ### Install the package
@@ -183,7 +184,7 @@ For details on contributing to this repository, see the [contributing guide][azu
 
 This project welcomes contributions and suggestions.  Most contributions require you to agree to a
 Contributor License Agreement (CLA) declaring that you have the right to, and actually do, grant us
-the rights to use your contribution. For details, visit [Contributor License Agreement](https://cla.microsoft.com).
+the rights to use your contribution. For details, visit the [Contributor License Agreement](https://cla.microsoft.com).
 
 When you submit a pull request, a CLA-bot will automatically determine whether you need to provide
 a CLA and decorate the PR appropriately (e.g., label, comment). Simply follow the instructions

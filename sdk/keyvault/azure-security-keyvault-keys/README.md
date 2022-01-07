@@ -281,7 +281,7 @@ std::cout << updatedKey.Properties.UpdatedOn->ToString();
 
 `StartDeleteKey` starts a long-running operation to delete a key previously stored in the Azure Key Vault.
 You can retrieve the key immediately without waiting for the operation to complete.
-When [soft-delete](https://docs.microsoft.com/en-us/azure/key-vault/general/soft-delete-overview) is not enabled for the Azure Key Vault, this operation permanently deletes the key.
+When [soft-delete](https://docs.microsoft.com/azure/key-vault/general/soft-delete-overview) is not enabled for the Azure Key Vault, this operation permanently deletes the key.
 
 ```cpp
 DeleteKeyOperation operation = client.StartDeleteKey("key-name");
@@ -419,7 +419,7 @@ Several Azure Key Vault keys client library samples are available to you in this
 See the [CONTRIBUTING.md][contributing] for details on building, testing, and contributing to these libraries.
 
 This project welcomes contributions and suggestions. Most contributions require you to agree to a Contributor License Agreement (CLA)
-declaring that you have the right to, and actually do, grant us the rights to use your contribution. For details, visit [Contributor License Agreement](https://cla.microsoft.com).
+declaring that you have the right to, and actually do, grant us the rights to use your contribution. For details, visit the [Contributor License Agreement](https://cla.microsoft.com).
 
 When you submit a pull request, a CLA-bot will automatically determine whether you need to provide a CLA and decorate the PR appropriately (e.g., label, comment).
 Simply follow the instructions provided by the bot. You will only need to do this once across all repos using our CLA.
