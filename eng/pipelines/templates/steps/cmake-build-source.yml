@@ -1,0 +1,26 @@
+parameters:
+  Env: ''
+  GenerateArgs: ''
+  Build: true
+  BuildArgs: ''
+
+
+steps:
+  - script: cd sdk/keyvault/azure-security-keyvault-certificates
+    displayName: Build Source Deps
+      
+  - script: mkdir sdk/keyvault/azure-security-keyvault-certificates/build
+    displayName: BSD create working directory
+
+  - script: cmake --version
+    workingDirectory: sdk/keyvault/azure-security-keyvault-certificates/build
+    displayName: cmake --version
+
+  - script: ${{ parameters.Env }} cmake ${{ parameters.GenerateArgs }} ..
+    workingDirectory: sdk/keyvault/azure-security-keyvault-certificates/build
+    displayName: cmake generate
+
+  - ${{ if eq(parameters.Build, true) }}:
+    - script: cmake --build . ${{ parameters.BuildArgs }}
+      workingDirectory: sdk/keyvault/azure-security-keyvault-certificates/build
+      displayName: cmake build
