@@ -140,13 +140,13 @@ jobs:
               -DINSTALL_GTEST=OFF
               -DBUILD_TESTING=OFF
               -DBUILD_TRANSPORT_CURL=OFF
-              -DBUILD_DOCUMENTATION=YES
+              -DBUILD_DOCUMENTATION=OFF
               -DBUILD_SOURCE_DEPS=ON
           BuildArgs:  >- 
               -DINSTALL_GTEST=OFF
               -DBUILD_TESTING=OFF
               -DBUILD_TRANSPORT_CURL=OFF
-              -DBUILD_DOCUMENTATION=YES
+              -DBUILD_DOCUMENTATION=OFF
               -DBUILD_SOURCE_DEPS=ON
           Env: "$(CmakeEnvArg)"
 
