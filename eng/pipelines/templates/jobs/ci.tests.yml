@@ -92,6 +92,17 @@ jobs:
           )
         displayName: Set Xcode version
 
+      - template: /eng/pipelines/templates/steps/cmake-build-source.yml
+        parameters:
+          GenerateArgs: >-
+              $(CmakeArgs)
+              -DBUILD_TESTING=OFF
+              -DBUILD_TRANSPORT_CURL=OFF
+              -DBUILD_DOCUMENTATION=OFF
+              -DBUILD_SOURCE_DEPS=ON
+          BuildArgs: ""
+          Env: "$(CmakeEnvArg)"
+
       - template: /eng/pipelines/templates/steps/vcpkg.yml
         parameters:
           DependenciesVariableName: VcpkgInstall
@@ -132,17 +143,6 @@ jobs:
         parameters:
           GenerateArgs: "$(CmakeArgs)"
           BuildArgs: "$(BuildArgs)"
-          Env: "$(CmakeEnvArg)"
-
-      - template: /eng/pipelines/templates/steps/cmake-build-source.yml
-        parameters:
-          GenerateArgs: >-
-              $(CmakeArgs)
-              -DBUILD_TESTING=OFF
-              -DBUILD_TRANSPORT_CURL=OFF
-              -DBUILD_DOCUMENTATION=OFF
-              -DBUILD_SOURCE_DEPS=ON
-          BuildArgs: "$(BuildArgs) -DBUILD_SOURCE_DEPS=ON"
           Env: "$(CmakeEnvArg)"
 
       - pwsh: |
