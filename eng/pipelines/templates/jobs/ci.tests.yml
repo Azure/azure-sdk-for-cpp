@@ -202,26 +202,27 @@ jobs:
           condition: and(succeededOrFailed(), eq(variables['CODE_COVERAGE'], 'enabled'), eq(variables['Skip.BranchCoverageEnforcement'], ''))
 
       # Use the job name to create the artifact name for MAP file publishing.
-      # "Validate Windows2019_UWP_debug_x86" -> "Windows2019_UWP_debug_x86"
+      # Attempts are also noted starting with 1
+      # "Validate Windows2019_UWP_debug_x86" -> "Windows2019_UWP_debug_x86_attempt_1"
       - pwsh: |
-          $artifactName = '$(Agent.JobName)'
+          $artifactName = "$(Agent.JobName)_attempt_$(Agent.JobAttempt)"
           $parts = $artifactName -split ' '
           if ($parts[1]) {
             $artifactName = $parts[1]
           }
           Write-Host "##vso[task.setvariable variable=MapFileArtifactName;]$artifactName"
         displayName: Set map file artifact name
-        condition: and(succeeded(), eq(variables['PublishMapFiles'], 'true'))
+        condition: eq(variables['PublishMapFiles'], 'true')
 
       - task: CopyFiles@2
         inputs:
           contents: "**/*.map"
           targetFolder: $(Build.ArtifactStagingDirectory)
           flattenFolders: true
-        condition: and(succeeded(), eq(variables['PublishMapFiles'], 'true'))
+        condition: eq(variables['PublishMapFiles'], 'true')
 
       - task: PublishPipelineArtifact@1
         inputs:
           artifactName: map-files-$(MapFileArtifactName)
           path: $(Build.ArtifactStagingDirectory)
-        condition: and(succeeded(), eq(variables['PublishMapFiles'], 'true'))
+        condition: eq(variables['PublishMapFiles'], 'true')
