@@ -14,20 +14,20 @@ steps:
 
   - script: cd sdk/keyvault/azure-security-keyvault-certificates && mkdir build
     displayName: BSD create working directory
-    condition: contains(variables['OSVmImage'], 'Windows')
+    condition: contains(variables['Agent.OS'], 'Windows')
 
   - script: cmake --version
     workingDirectory: sdk/keyvault/azure-security-keyvault-certificates/build
     displayName: BSD cmake --version
-    condition: contains(variables['OSVmImage'], 'Windows')
+    condition: contains(variables['Agent.OS'], 'Windows')
 
   - script: ${{ parameters.Env }} cmake ${{ parameters.GenerateArgs }} ..
     workingDirectory: sdk/keyvault/azure-security-keyvault-certificates/build
     displayName: BSD cmake generate
-    condition: contains(variables['OSVmImage'], 'Windows')
+    condition: contains(variables['Agent.OS'], 'Windows')
 
   - ${{ if eq(parameters.Build, true) }}:
     - script: cmake --build . ${{ parameters.BuildArgs }}
       workingDirectory: sdk/keyvault/azure-security-keyvault-certificates/build
       displayName: BSD cmake build
-      condition: contains(variables['OSVmImage'], 'Windows')
+      condition: contains(variables['Agent.OS'], 'Windows')
