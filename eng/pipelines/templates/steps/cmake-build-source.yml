@@ -10,6 +10,7 @@ steps:
       Write-Host "ENV: ${{parameters.Env}}"
       Write-Host "GenerateArgs: ${{parameters.GenerateArgs}}"
       Write-Host "BuildArgs: ${{parameters.BuildArgs}}"
+      Write-Host "OS: $(Agent.OS)"
 
   - script: cd sdk/keyvault/azure-security-keyvault-certificates && mkdir build
     displayName: BSD create working directory
