@@ -1,0 +1,17 @@
+# CMake generation dependency list for this directory.
+C:/Program Files/CMake/share/cmake-3.22/Modules/BasicConfigVersion-SameMajorVersion.cmake.in
+C:/Program Files/CMake/share/cmake-3.22/Modules/CMakePackageConfigHelpers.cmake
+C:/Program Files/CMake/share/cmake-3.22/Modules/GNUInstallDirs.cmake
+C:/Program Files/CMake/share/cmake-3.22/Modules/WriteBasicConfigVersionFile.cmake
+G:/Az/LarryO/azure-sdk-for-cpp/cmake-modules/AzureCodeCoverage.cmake
+G:/Az/LarryO/azure-sdk-for-cpp/cmake-modules/AzureConfigRTTI.cmake
+G:/Az/LarryO/azure-sdk-for-cpp/cmake-modules/AzureDoxygen.cmake
+G:/Az/LarryO/azure-sdk-for-cpp/cmake-modules/AzureGlobalCompileOptions.cmake
+G:/Az/LarryO/azure-sdk-for-cpp/cmake-modules/AzureTransportAdapters.cmake
+G:/Az/LarryO/azure-sdk-for-cpp/cmake-modules/AzureVcpkg.cmake
+G:/Az/LarryO/azure-sdk-for-cpp/cmake-modules/AzureVersion.cmake
+G:/Az/LarryO/azure-sdk-for-cpp/sdk/attestation/azure-security-attestation/CMakeLists.txt
+G:/Az/LarryO/azure-sdk-for-cpp/sdk/attestation/azure-security-attestation/inc/azure/attestation/rtti.hpp
+G:/Az/LarryO/azure-sdk-for-cpp/sdk/attestation/azure-security-attestation/vcpkg/Config.cmake.in
+G:/Az/LarryO/azure-sdk-for-cpp/vcpkg_prep/azure-security-attestation/portfile.cmake
+G:/Az/LarryO/azure-sdk-for-cpp/vcpkg_prep/azure-security-attestation/vcpkg.json
