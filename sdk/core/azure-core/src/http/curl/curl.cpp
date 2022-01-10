@@ -209,6 +209,7 @@ static void CleanupThread()
               return CurlConnectionPool::g_curlConnectionPool.ConnectionPoolIndex.size() == 0;
             }))
     {
+      // Cancelled by another thead or no connections on wakeup
       CurlConnectionPool::g_curlConnectionPool.IsCleanThreadRunning = false;
       break;
     }
