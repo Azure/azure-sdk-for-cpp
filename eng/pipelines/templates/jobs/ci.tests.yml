@@ -211,17 +211,17 @@ jobs:
           }
           Write-Host "##vso[task.setvariable variable=MapFileArtifactName;]$artifactName"
         displayName: Set map file artifact name
-        condition: eq(variables['PublishMapFiles'], 'true')
+        condition: and(succeeded(), eq(variables['PublishMapFiles'], 'true'))
 
       - task: CopyFiles@2
         inputs:
           contents: "**/*.map"
           targetFolder: $(Build.ArtifactStagingDirectory)
           flattenFolders: true
-        condition: eq(variables['PublishMapFiles'], 'true')
+        condition: and(succeeded(), eq(variables['PublishMapFiles'], 'true'))
 
       - task: PublishPipelineArtifact@1
         inputs:
           artifactName: map-files-$(MapFileArtifactName)
           path: $(Build.ArtifactStagingDirectory)
-        condition: eq(variables['PublishMapFiles'], 'true')
+        condition: and(succeeded(), eq(variables['PublishMapFiles'], 'true'))
