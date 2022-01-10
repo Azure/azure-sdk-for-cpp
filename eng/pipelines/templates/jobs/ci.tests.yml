@@ -104,7 +104,6 @@ jobs:
               -DBUILD_TRANSPORT_CURL=OFF
           BuildArgs: "$(BuildArgs)"
           Env: "$(CmakeEnvArg)"
-        condition: contains($(Agent.OS), 'Windows')
 
       - template: /eng/pipelines/templates/steps/vcpkg.yml
         parameters:
