@@ -1,0 +1,19 @@
+parameters:
+  Path: ''
+  Env: ''
+  GenerateArgs: ''
+
+steps:
+  - script: cd ${{ Path }}
+    displayName: Navigate to ${{ Path }}
+
+  - script: mkdir build
+    displayName: create working directory
+
+  - script: cmake --version
+    workingDirectory: build
+    displayName: cmake --version
+
+  - script: ${{ parameters.Env }} cmake ${{ parameters.GenerateArgs }} ..
+    workingDirectory: build
+    displayName: cmake generate

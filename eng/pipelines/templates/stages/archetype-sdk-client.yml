@@ -55,6 +55,14 @@ stages:
           ${{ if eq(parameters.ServiceDirectory, 'template') }}:
             TestPipeline: true
           TestEnv: ${{ parameters.TestEnv }}
+  
+  - stage: CMake Generation
+    jobs:
+      - template: /eng/pipelines/templates/steps/cmake-generate.yml
+        parameters:
+          Path: "sdk/core/azure-core"
+          Env: "$(CmakeEnvArg)"
+          GenerateArgs: "$(CmakeArgs)"
 
   - ${{ if and(eq(variables['System.TeamProject'], 'internal'), ne(parameters.LiveTestCtestRegex, '')) }}:
     - stage: LiveTest
