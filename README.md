@@ -226,6 +226,7 @@ The following SDK library releases are available on [vcpkg](https://github.com/m
 * `azure-identity-cpp`
 * `azure-storage-blobs-cpp`
 * `azure-storage-files-datalake-cpp`
+* `azure-storage-files-shares-cpp`
 * `azure-security-keyvault-keys-cpp`
 * `azure-security-keyvault-secrets-cpp`
 * `azure-security-keyvault-certificates-cpp`

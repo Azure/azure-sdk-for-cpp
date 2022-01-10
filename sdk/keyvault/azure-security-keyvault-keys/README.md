@@ -209,7 +209,7 @@ We guarantee that all client instance methods are thread-safe and independent of
 The Azure.Security.KeyVault.Keys package supports synchronous APIs.
 
 The following section provides several code snippets using the `client` [created above](#create-keyclient), covering some of the most common Azure Key Vault key service related tasks:
-<!--
+
 ### Examples
 
 - [Create a key](#create-a-key)
@@ -217,10 +217,10 @@ The following section provides several code snippets using the `client` [created
 - [Update an existing key](#update-an-existing-key)
 - [Delete a key](#delete-a-key)
 - [Delete and purge a key](#delete-and-purge-a-key)
-- [List keys](#list-keys)
- - [Encrypt and Decrypt](#encrypt-and-decrypt) -->
+- [List Keys](#list-keys)
+<!-- - [Encrypt and Decrypt](#encrypt-and-decrypt) -->
 
-### Create a key
+#### Create a key
 
 Create a key to be stored in the Azure Key Vault. If a key with the same name already exists, then a new version of the key is created.
 
@@ -249,7 +249,7 @@ std::cout << ecKey.Name();
 std::cout << ecKey.KeyType.ToString();
 ```
 
-### Retrieve a key
+#### Retrieve a key
 
 `GetKey` retrieves a key previously stored in the Azure Key Vault.
 
@@ -260,7 +260,7 @@ std::cout << key.Name();
 std::cout << key.KeyType.ToString();
 ```
 
-### Update an existing key
+#### Update an existing key
 
 `UpdateKeyProperties` updates a key previously stored in the Azure Key Vault.
 
@@ -277,7 +277,7 @@ std::cout << updatedKey.Properties.Version;
 std::cout << updatedKey.Properties.UpdatedOn->ToString();
 ```
 
-### Delete a key
+#### Delete a key
 
 `StartDeleteKey` starts a long-running operation to delete a key previously stored in the Azure Key Vault.
 You can retrieve the key immediately without waiting for the operation to complete.
@@ -291,7 +291,7 @@ std::cout << key.Name();
 std::cout << key.DeletedOn->ToString();
 ```
 
-### Delete and purge a key
+#### Delete and purge a key
 
 You will need to wait for the long-running operation to complete before trying to purge or recover the key.
 
@@ -310,7 +310,7 @@ DeletedKey key = operation.Value();
 client.PurgeDeletedKey(key.Name());
 ```
 
-### List Keys
+#### List Keys
 
 This example lists all the keys in the specified Azure Key Vault.
 

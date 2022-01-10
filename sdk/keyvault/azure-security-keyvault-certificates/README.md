@@ -276,14 +276,14 @@ You will notice that additional information is logged, like the client request I
 
 Several Azure Key Vault secrets client library samples are available to you in this GitHub repository. These samples provide example code for additional scenarios commonly encountered while working with Azure Key Vault:
 
-* [Certificate-Basic-Operations](https://github.com/Azure/azure-sdk-for-cpp/tree/main/sdk/keyvault/azure-security-keyvault-certificates/test/samples/certificate-basic-operations):
+* [Certificate-Basic-Operations](https://github.com/Azure/azure-sdk-for-cpp/blob/main/sdk/keyvault/azure-security-keyvault-certificates/samples/certificate_basic_operations.md):
   * create a certificate
   * get a certificate
   * update a certificate
   * delete a certificate
   * purge a certificate
 
-* [Certificates-Get-Certificates](https://github.com/Azure/azure-sdk-for-cpp/tree/main/sdk/keyvault/azure-security-keyvault-certificates/test/samples/certificate-get-certificates):
+* [Certificates-Get-Certificates](https://github.com/Azure/azure-sdk-for-cpp/blob/main/sdk/keyvault/azure-security-keyvault-certificates/samples/certificate_get_certificates.md):
   * create certificates
   * get properties of certificates
   * get properties of certificate versions
@@ -291,7 +291,7 @@ Several Azure Key Vault secrets client library samples are available to you in t
   * get deleted certificates
   * purge a certificate
 
-* [Certificates-Import-Certificate](https://github.com/Azure/azure-sdk-for-cpp/tree/main/sdk/keyvault/azure-security-keyvault-certificates/test/samples/certificate-import-certificate):
+* [Certificates-Import-Certificate](https://github.com/Azure/azure-sdk-for-cpp/blob/main/sdk/keyvault/azure-security-keyvault-certificates/samples/certificate_import_certificate.md):
   * Import a PEM certificate
   * import a PKCS certificate
 

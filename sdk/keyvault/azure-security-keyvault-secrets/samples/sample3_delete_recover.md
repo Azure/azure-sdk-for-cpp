@@ -68,4 +68,5 @@ Secret restoredSecret = recoverOperation.PollUntilDone(2s).Value;
 
 ## Source
 
-[defaultazurecredential]: https://github.com/Azure/azure-sdk-for-cpp/blob/main/sdk/identity/azure-identity/README.md
+[Source Code](https://github.com/Azure/azure-sdk-for-cpp/tree/main/sdk/keyvault/azure-security-keyvault-secrets/test/samples/sample3-delete-recover)
+
