@@ -28,6 +28,6 @@ jobs:
 
   - template: /eng/pipelines/templates/steps/cmake-generate.yml
     parameters:
-      CmakeGeneratePath: ${CmakeGeneratePath}
+      CmakeGeneratePath: $(CmakeGeneratePath)
       GenerateArgs: $(CmakeArgs)
       Env: "$(CmakeEnvArg)"
