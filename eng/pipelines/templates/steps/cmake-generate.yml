@@ -1,11 +1,11 @@
 parameters:
-  Path: ''
+  CmakeGeneratePath: ''
   Env: ''
   GenerateArgs: ''
 
 steps:
-  - script: cd ${{ Path }}
-    displayName: Navigate to ${{ Path }}
+  - script: cd ${{ parameters.CmakeGeneratePath }}
+    displayName: Navigate to ${{ parameters.CmakeGeneratePath }}
 
   - script: mkdir build
     displayName: create working directory
