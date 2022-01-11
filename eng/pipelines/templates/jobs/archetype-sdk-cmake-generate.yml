@@ -27,7 +27,6 @@ jobs:
         OSVmImage: macOS-10.15
         CmakeEnvArg: ''
         CmakeArgs: ''
-        AptDependencies: 'libcurl4-openssl-dev'
   pool:
     name: $(Pool)
     vmImage: $(OSVmImage)
