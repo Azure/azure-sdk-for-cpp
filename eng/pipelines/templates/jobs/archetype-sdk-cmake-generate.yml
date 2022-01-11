@@ -9,6 +9,7 @@ jobs:
         CmakeEnvArg: ''
         CmakeArgs: ''
         CmakeGeneratePath: "sdk/core/azure-core"
+        AptDependencies: 'libcurl4-openssl-dev'
   pool:
     name: $(Pool)
     vmImage: $(OSVmImage)
@@ -25,6 +26,23 @@ jobs:
       AgentImage: $(OSVmImage)
 
   - template: /eng/common/pipelines/templates/steps/bypass-local-dns.yml
+
+  - pwsh: sudo apt update && sudo apt install -y $(AptDependencies)
+    condition: and(succeeded(), ne(variables['AptDependencies'], ''))
+    displayName: Install dependencies from apt
+
+  - pwsh: sudo xcode-select -s /Applications/Xcode_$(XCODE_VERSION).app/Contents/Developer
+    condition: >-
+      and(
+        succeeded(),
+        contains(variables['OSVmImage'], 'macOS'),
+        ne(variables['XCODE_VERSION'], '')
+      )
+    displayName: Set Xcode version
+
+  - template: /eng/pipelines/templates/steps/vcpkg.yml
+    parameters:
+      DependenciesVariableName: VcpkgInstall
 
   - template: /eng/pipelines/templates/steps/cmake-generate.yml
     parameters:
