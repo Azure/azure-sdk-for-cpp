@@ -8,6 +8,9 @@ parameters:
   - name: CMakeTestOptions
     type: object
     default: []
+  - name: CMakeTestDependencies
+    type: string
+    default: ''
 
 jobs:
 - job: CMakeGenerate
@@ -27,7 +30,7 @@ jobs:
         Pool: Azure Pipelines
         OSVmImage: macOS-10.15
         CmakeEnvArg: ''
-        VcpkgInstall: 'openssl'
+        VcpkgInstall: 'openssl ${{ parameters.CMakeTestDependencies }}'
         VCPKG_DEFAULT_TRIPLET: 'x64-osx'
   pool:
     name: $(Pool)
