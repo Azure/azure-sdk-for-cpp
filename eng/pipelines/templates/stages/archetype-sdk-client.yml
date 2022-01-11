@@ -44,7 +44,10 @@ stages:
     dependsOn: []
     jobs:
       - template: /eng/pipelines/templates/jobs/archetype-sdk-cmake-generate.yml
-      
+        parameters:
+          ServiceDirectory: ${{ parameters.ServiceDirectory }}
+          Artifacts: ${{ parameters.Artifacts }}
+
   - stage: Build
     jobs:
       - template: /eng/pipelines/templates/jobs/archetype-sdk-client.yml

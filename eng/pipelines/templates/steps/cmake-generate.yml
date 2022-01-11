@@ -15,8 +15,12 @@ steps:
 
   - script: pwd
     workingDirectory: ${{ parameters.CmakeGeneratePath }}/build
-    displayName: cmake --version
+    displayName: Show current path
 
   - script: ${{ parameters.Env }} cmake ${{ parameters.GenerateArgs }} ..
     workingDirectory: ${{ parameters.CmakeGeneratePath }}/build
     displayName: cmake generate
+
+  - script: rm -rf build
+    workingDirectory: ${{ parameters.CmakeGeneratePath }}
+    displayName: clean build folder
