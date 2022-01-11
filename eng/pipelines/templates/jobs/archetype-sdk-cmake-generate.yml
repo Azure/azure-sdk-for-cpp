@@ -27,6 +27,7 @@ jobs:
         Pool: Azure Pipelines
         OSVmImage: macOS-10.15
         CmakeEnvArg: ''
+        VcpkgInstall: 'openssl'
   pool:
     name: $(Pool)
     vmImage: $(OSVmImage)
@@ -46,14 +47,6 @@ jobs:
   - pwsh: sudo apt update && sudo apt install -y $(AptDependencies)
     condition: and(succeeded(), ne(variables['AptDependencies'], ''))
     displayName: Install dependencies from apt
-
-  - pwsh: brew install openssl
-    condition: >-
-      and(
-        succeeded(),
-        contains(variables['OSVmImage'], 'macOS')
-      )
-    displayName: Install openSSL for Mac
 
   - template: /eng/pipelines/templates/steps/vcpkg.yml
     parameters:
