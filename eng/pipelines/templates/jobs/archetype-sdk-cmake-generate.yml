@@ -47,14 +47,13 @@ jobs:
     condition: and(succeeded(), ne(variables['AptDependencies'], ''))
     displayName: Install dependencies from apt
 
-  - pwsh: sudo xcode-select -s /Applications/Xcode_$(XCODE_VERSION).app/Contents/Developer
+  - pwsh: brew install openssl
     condition: >-
       and(
         succeeded(),
-        contains(variables['OSVmImage'], 'macOS'),
-        ne(variables['XCODE_VERSION'], '')
+        contains(variables['OSVmImage'], 'macOS')
       )
-    displayName: Set Xcode version
+    displayName: Install openSSL for Mac
 
   - template: /eng/pipelines/templates/steps/vcpkg.yml
     parameters:
