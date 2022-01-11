@@ -40,6 +40,11 @@ parameters:
   default: []
 
 stages:
+  - stage: CMakeGeneration
+    dependsOn: []
+    jobs:
+      - template: /eng/pipelines/templates/jobs/archetype-sdk-cmake-generate.yml
+      
   - stage: Build
     jobs:
       - template: /eng/pipelines/templates/jobs/archetype-sdk-client.yml
@@ -55,11 +60,6 @@ stages:
           ${{ if eq(parameters.ServiceDirectory, 'template') }}:
             TestPipeline: true
           TestEnv: ${{ parameters.TestEnv }}
-  
-  - stage: CMakeGeneration
-    dependsOn: []
-    jobs:
-      - template: /eng/pipelines/templates/jobs/archetype-sdk-cmake-generate.yml
 
   - ${{ if and(eq(variables['System.TeamProject'], 'internal'), ne(parameters.LiveTestCtestRegex, '')) }}:
     - stage: LiveTest
