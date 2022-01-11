@@ -58,7 +58,7 @@ stages:
   
   - stage: CMake Generation
     jobs:
-      - template: /eng/pipelines/templates/steps/archetype-sdk-cmake-generate.yml
+      - template: /eng/pipelines/templates/jobs/archetype-sdk-cmake-generate.yml
         parameters:
           Path: "sdk/core/azure-core"
           Env: "$(CmakeEnvArg)"
