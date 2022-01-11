@@ -115,6 +115,46 @@ inline std::string const& LogLevelToConsoleString(Logger::Level logLevel)
       return UnknownText;
   }
 }
+
+class ConsoleLogger {
+private:
+  static bool g_isAlive;
+
+  static void Log(Logger::Level level, std::string const& message);
+
+  ConsoleLogger();
+  ~ConsoleLogger();
+
+public:
+  std::function<void(Logger::Level level, std::string const& message)> Callback;
+
+  static ConsoleLogger const& Instance();
+};
+
+bool ConsoleLogger::g_isAlive = false;
+
+void ConsoleLogger::Log(Logger::Level level, std::string const& message)
+{
+  using Azure::DateTime;
+
+  if (g_isAlive)
+  {
+    std::cerr << '['
+              << DateTime(std::chrono::system_clock::now())
+                     .ToString(
+                         DateTime::DateFormat::Rfc3339, DateTime::TimeFractionFormat::AllDigits)
+              << "] " << LogLevelToConsoleString(level) << " : " << message << std::endl;
+  }
+}
+
+ConsoleLogger::ConsoleLogger() : Callback(Log) { g_isAlive = true; }
+ConsoleLogger::~ConsoleLogger() { g_isAlive = false; }
+
+ConsoleLogger const& ConsoleLogger::Instance()
+{
+  static ConsoleLogger const instance = ConsoleLogger();
+  return instance;
+}
 } // namespace
 
 Logger::Level EnvironmentLogLevelListener::GetLogLevel(Logger::Level defaultValue)
@@ -132,16 +172,7 @@ EnvironmentLogLevelListener::GetLogListener()
     return nullptr;
   }
 
-  static std::function<void(Logger::Level level, std::string const& message)> const consoleLogger =
-      [](auto level, auto message) {
-        std::cerr << '['
-                  << Azure::DateTime(std::chrono::system_clock::now())
-                         .ToString(
-                             DateTime::DateFormat::Rfc3339, DateTime::TimeFractionFormat::AllDigits)
-                  << "] " << LogLevelToConsoleString(level) << " : " << message << std::endl;
-      };
-
-  return consoleLogger;
+  return ConsoleLogger::Instance().Callback;
 }
 
 namespace {

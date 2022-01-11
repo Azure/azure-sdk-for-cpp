@@ -5,47 +5,60 @@
 #include "azure/core/internal/diagnostics/log.hpp"
 
 #include <mutex>
-#include <shared_mutex>
 
 #include "private/environment_log_level_listener.hpp"
 
 using namespace Azure::Core::Diagnostics;
 using namespace Azure::Core::Diagnostics::_internal;
 
-namespace {
-static std::shared_timed_mutex g_logListenerMutex;
-static std::function<void(Logger::Level level, std::string const& message)> g_logListener(
-    _detail::EnvironmentLogLevelListener::GetLogListener());
-} // namespace
+bool Log::Impl::IsAlive;
+Log::Impl Log::Impl::Instance;
 
-std::atomic<bool> Log::g_isLoggingEnabled(
-    _detail::EnvironmentLogLevelListener::GetLogListener() != nullptr);
+Log::Impl::Impl()
+    : LogLevel(_detail::EnvironmentLogLevelListener::GetLogLevel(Logger::Level::Warning)),
+      LogListener(_detail::EnvironmentLogLevelListener::GetLogListener())
 
-std::atomic<Logger::Level> Log::g_logLevel(
-    _detail::EnvironmentLogLevelListener::GetLogLevel(Logger::Level::Warning));
+{
+  IsLoggingEnabled = (LogListener != nullptr);
+  IsAlive = true;
+}
 
-inline void Log::EnableLogging(bool isEnabled) { g_isLoggingEnabled = isEnabled; }
+Log::Impl::~Impl() { IsAlive = false; }
 
-inline void Log::SetLogLevel(Logger::Level logLevel) { g_logLevel = logLevel; }
+inline void Log::SetLogLevel(Logger::Level logLevel)
+{
+  if (Impl::IsAlive)
+  {
+    Impl::Instance.LogLevel = logLevel;
+  }
+}
 
 void Log::Write(Logger::Level level, std::string const& message)
 {
   if (ShouldWrite(level))
   {
-    std::shared_lock<std::shared_timed_mutex> loggerLock(g_logListenerMutex);
-    if (g_logListener)
+    std::shared_lock<std::shared_timed_mutex> loggerLock(Impl::Instance.LogListenerMutex);
+    if (Impl::Instance.LogListener)
     {
-      g_logListener(level, message);
+      Impl::Instance.LogListener(level, message);
     }
+  }
+}
+
+void Log::SetListener(std::function<void(Logger::Level level, std::string const& message)> listener)
+{
+  if (Impl::IsAlive)
+  {
+    std::unique_lock<std::shared_timed_mutex> loggerLock(Impl::Instance.LogListenerMutex);
+    Impl::Instance.LogListener = std::move(listener);
+    Impl::Instance.IsLoggingEnabled = (Impl::Instance.LogListener != nullptr);
   }
 }
 
 void Logger::SetListener(
     std::function<void(Logger::Level level, std::string const& message)> listener)
 {
-  std::unique_lock<std::shared_timed_mutex> loggerLock(g_logListenerMutex);
-  g_logListener = std::move(listener);
-  Log::EnableLogging(g_logListener != nullptr);
+  Log::SetListener(listener);
 }
 
 void Logger::SetLevel(Logger::Level level) { Log::SetLogLevel(level); }

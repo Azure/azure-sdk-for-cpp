@@ -7,20 +7,35 @@
 #include "azure/core/dll_import_export.hpp"
 
 #include <atomic>
+#include <shared_mutex>
 #include <type_traits>
 
 namespace Azure { namespace Core { namespace Diagnostics { namespace _internal {
   class Log final {
-    static_assert(
-        std::is_same<int, std::underlying_type<Logger::Level>::type>::value == true,
-        "Logger::Level values must be representable as lock-free");
+  private:
+    class Impl {
+    private:
+      Impl();
+      ~Impl();
 
-    static_assert(ATOMIC_INT_LOCK_FREE == 2, "atomic<int> must be lock-free");
+    public:
+      static AZ_CORE_DLLEXPORT bool IsAlive;
+      static AZ_CORE_DLLEXPORT Impl Instance;
 
-    static_assert(ATOMIC_BOOL_LOCK_FREE == 2, "atomic<bool> must be lock-free");
+      static_assert(
+          std::is_same<int, std::underlying_type<Logger::Level>::type>::value == true,
+          "Logger::Level values must be representable as lock-free");
 
-    static AZ_CORE_DLLEXPORT std::atomic<bool> g_isLoggingEnabled;
-    static AZ_CORE_DLLEXPORT std::atomic<Logger::Level> g_logLevel;
+      static_assert(ATOMIC_INT_LOCK_FREE == 2, "atomic<int> must be lock-free");
+
+      static_assert(ATOMIC_BOOL_LOCK_FREE == 2, "atomic<bool> must be lock-free");
+
+      std::atomic<bool> IsLoggingEnabled;
+      std::atomic<Logger::Level> LogLevel;
+
+      std::shared_timed_mutex LogListenerMutex;
+      std::function<void(Logger::Level level, std::string const& message)> LogListener;
+    };
 
     Log() = delete;
     ~Log() = delete;
@@ -28,12 +43,14 @@ namespace Azure { namespace Core { namespace Diagnostics { namespace _internal {
   public:
     static bool ShouldWrite(Logger::Level level)
     {
-      return g_isLoggingEnabled && level >= g_logLevel;
+      return Impl::IsAlive && Impl::Instance.IsLoggingEnabled && level >= Impl::Instance.LogLevel;
     }
 
     static void Write(Logger::Level level, std::string const& message);
 
-    static void EnableLogging(bool isEnabled);
     static void SetLogLevel(Logger::Level logLevel);
+
+    static void SetListener(
+        std::function<void(Logger::Level level, std::string const& message)> listener);
   };
 }}}} // namespace Azure::Core::Diagnostics::_internal
