@@ -27,7 +27,7 @@ jobs:
         Pool: Azure Pipelines
         OSVmImage: macOS-10.15
         CmakeEnvArg: ''
-        VcpkgInstall: 'openssl'
+        VcpkgInstall: 'curl[ssl] openssl'
         VCPKG_DEFAULT_TRIPLET: 'x64-osx'
   pool:
     name: $(Pool)
