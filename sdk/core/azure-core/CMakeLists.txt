@@ -2,6 +2,7 @@
 # SPDX-License-Identifier: MIT
 
 # setting CMAKE_TOOLCHAIN_FILE must happen before creating the project
+list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/../../../cmake-modules")
 include(AzureVcpkg)
 if (NOT AZ_ALL_LIBRARIES)
   # only if root integration didn't run
@@ -15,8 +16,6 @@ project(azure-core LANGUAGES CXX)
 set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
-
-list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/../../../cmake-modules")
 
 include(AzureVersion)
 include(AzureCodeCoverage)
