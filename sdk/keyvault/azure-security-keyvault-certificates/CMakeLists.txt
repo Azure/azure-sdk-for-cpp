@@ -1,6 +1,11 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # SPDX-License-Identifier: MIT
 
+# setting CMAKE_TOOLCHAIN_FILE must happen before creating the project
+list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/../../../cmake-modules")
+include(AzureVcpkg)
+az_vcpkg_integrate()
+
 cmake_minimum_required (VERSION 3.13)
 project(azure-security-keyvault-certificates LANGUAGES CXX)
 set(AZ_ALL_LIBRARIES ON)
@@ -12,22 +17,19 @@ set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
 
-list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/../../../cmake-modules")
-
 if(BUILD_SOURCE_DEPS)
     include(FolderList)
     SetCompileOptions(CERTIFICATES)
 endif()
 
-include(AzureVcpkg)
 include(AzureVersion)
 include(AzureCodeCoverage)
 include(AzureTransportAdapters)
 include(AzureDoxygen)
 include(AzureGlobalCompileOptions)
 include(AzureConfigRTTI)
-
-az_vcpkg_integrate()
+# Add create_map_file function
+include(CreateMapFile)
 
 if(BUILD_SOURCE_DEPS)
     GetFolderList(CERTIFICATES)

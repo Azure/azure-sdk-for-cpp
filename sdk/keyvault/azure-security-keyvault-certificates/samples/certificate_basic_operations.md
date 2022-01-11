@@ -91,3 +91,7 @@ If the Azure Key Vault is soft delete-enabled and you want to permanently delete
 auto result = response.PollUntilDone(defaultWait);
 certificateClient.PurgeDeletedCertificate(certificateName);
 ```
+## Source
+
+To see the full example source, see:
+[Source Code](https://github.com/Azure/azure-sdk-for-cpp/tree/main/sdk/keyvault/azure-security-keyvault-certificates/test/samples/certificate-basic-operations)
