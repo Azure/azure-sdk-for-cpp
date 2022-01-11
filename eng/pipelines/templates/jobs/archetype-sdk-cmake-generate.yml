@@ -1,7 +1,6 @@
 jobs:
 - job: CMakeGenerate
   condition: and(succeededOrFailed(), ne(variables['Skip.CMakeGenerate'], 'true'))
-  timeoutInMinutes: ${{ parameters.TimeoutInMinutes }}
   strategy:
     matrix:
       Linux_x64_gcc5_with_unit_test:
