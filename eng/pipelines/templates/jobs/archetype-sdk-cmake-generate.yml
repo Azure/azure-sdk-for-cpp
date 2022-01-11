@@ -3,11 +3,11 @@ jobs:
   condition: and(succeededOrFailed(), ne(variables['Skip.CMakeGenerate'], 'true'))
   strategy:
     matrix:
-      Linux_x64_gcc5_with_unit_test:
+      Linux_Core:
         Pool: azsdk-pool-mms-ubuntu-1804-general
         OSVmImage: MMSUbuntu18.04
-        CmakeEnvArg: 'CC=/usr/bin/gcc-5 CXX=/usr/bin/g++-5 cmake'
-        CmakeArgs: ' -DBUILD_TESTING=ON -DRUN_LONG_UNIT_TESTS=ON'
+        CmakeEnvArg: ''
+        CmakeArgs: ''
         CmakeGeneratePath: "sdk/core/azure-core"
   pool:
     name: $(Pool)
