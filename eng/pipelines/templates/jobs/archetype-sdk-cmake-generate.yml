@@ -28,6 +28,7 @@ jobs:
         OSVmImage: macOS-10.15
         CmakeEnvArg: ''
         VcpkgInstall: 'openssl'
+        VCPKG_DEFAULT_TRIPLET: 'x64-osx'
   pool:
     name: $(Pool)
     vmImage: $(OSVmImage)
