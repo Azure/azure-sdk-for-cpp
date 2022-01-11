@@ -9,10 +9,6 @@ steps:
     workingDirectory: ${{ parameters.CmakeGeneratePath }}
     displayName: create working directory
 
-  - script: cmake --version
-    workingDirectory: ${{ parameters.CmakeGeneratePath }}/build
-    displayName: cmake --version
-
   - script: pwd
     workingDirectory: ${{ parameters.CmakeGeneratePath }}/build
     displayName: Show current path

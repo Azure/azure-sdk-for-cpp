@@ -60,6 +60,9 @@ jobs:
     parameters:
       DependenciesVariableName: VcpkgInstall
 
+  - script: cmake --version
+    displayName: cmake --version
+
   - ${{ each artifact in parameters.Artifacts }}:
     - ${{ each cmakeOption in parameters.CMakeTestOptions }}:
       - template: /eng/pipelines/templates/steps/cmake-generate.yml

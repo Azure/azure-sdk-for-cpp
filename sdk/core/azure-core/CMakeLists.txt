@@ -18,6 +18,8 @@ include(AzureTransportAdapters)
 include(AzureDoxygen)
 include(AzureGlobalCompileOptions)
 include(AzureConfigRTTI)
+# Add create_map_file function
+include(CreateMapFile)
 
 az_vcpkg_integrate()
 
