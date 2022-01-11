@@ -1,26 +1,3 @@
-parameters:
-- name: Location
-  type: string
-  default: ''
-- name: SubscriptionConfiguration
-  type: string
-  default: $(sub-config-azure-cloud-test-resources)
-- name: ServiceDirectory
-  type: string
-  default: not-specified
-- name: CtestRegex
-  type: string
-  default: .*
-- name: Coverage
-  type: string
-  default: 'enabled'
-- name: CoverageReportPath
-  type: string
-  default: sdk/*/*/*cov_xml.xml
-- name: TimeoutInMinutes
-  type: number
-  default: 60
-
 jobs:
 - job: CMakeGenerate
   condition: and(succeededOrFailed(), ne(variables['Skip.CMakeGenerate'], 'true'))
