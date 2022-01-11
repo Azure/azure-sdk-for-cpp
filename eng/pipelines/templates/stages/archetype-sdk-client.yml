@@ -56,7 +56,7 @@ stages:
             TestPipeline: true
           TestEnv: ${{ parameters.TestEnv }}
   
-  - stage: CMake Generation
+  - stage: CMakeGeneration
     jobs:
       - template: /eng/pipelines/templates/jobs/archetype-sdk-cmake-generate.yml
 
