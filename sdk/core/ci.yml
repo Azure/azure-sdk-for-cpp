@@ -72,4 +72,9 @@ stages:
         - Name: STANDARD_STORAGE_CONNECTION_STRING
           Value: "DefaultEndpointsProtocol=https;AccountName=fake;AccountKey=X;EndpointSuffix=core.windows.net"
         - Name: ADLS_GEN2_CONNECTION_STRING
-          Value: "DefaultEndpointsProtocol=https;AccountName=fake;AccountKey=X;EndpointSuffix=core.windows.net"          
+          Value: "DefaultEndpointsProtocol=https;AccountName=fake;AccountKey=X;EndpointSuffix=core.windows.net"
+      CMakeTestOptions:
+        - Name: Default
+          Value: ''
+        - Name: Test
+          Value: '-DBUILD_TESTING=ON'

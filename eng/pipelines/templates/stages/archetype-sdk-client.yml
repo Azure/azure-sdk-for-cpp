@@ -38,9 +38,26 @@ parameters:
 - name: TestEnv
   type: object
   default: []
+- name: CMakeTestOptions
+  type: object
+  default: []
+- name: CMakeTestDependencies
+  type: string
+  default: ''
 
 stages:
+  - ${{ if eq(variables['System.TeamProject'], 'public') }}:
+    - stage: CMakeGeneration
+      jobs:
+        - template: /eng/pipelines/templates/jobs/archetype-sdk-cmake-generate.yml
+          parameters:
+            ServiceDirectory: ${{ parameters.ServiceDirectory }}
+            Artifacts: ${{ parameters.Artifacts }}
+            CMakeTestOptions: ${{ parameters.CMakeTestOptions }}
+            CMakeTestDependencies: ${{ parameters.CMakeTestDependencies }}
+
   - stage: Build
+    dependsOn: []
     jobs:
       - template: /eng/pipelines/templates/jobs/archetype-sdk-client.yml
         parameters:
