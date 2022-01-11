@@ -64,6 +64,8 @@ jobs:
     displayName: cmake --version
 
   - ${{ each artifact in parameters.Artifacts }}:
+    - script: echo 'CMake generate tests for ${{ artifact.Name }}'
+        displayName: ${{ artifact.Name }}
     - ${{ each cmakeOption in parameters.CMakeTestOptions }}:
       - template: /eng/pipelines/templates/steps/cmake-generate.yml
         parameters:

@@ -61,3 +61,7 @@ stages:
           Value: ''
         - Name: Test
           Value: '-DBUILD_TESTING=ON'
+        - Name: Samples
+          Value: '-DBUILD_TESTING=ON -DBUILD_SAMPLES=ON'
+        - Name: Performance
+          Value: '-DBUILD_TESTING=ON -DBUILD_SAMPLES=ON -DBUILD_PERFORMANCE_TESTS=ON'
