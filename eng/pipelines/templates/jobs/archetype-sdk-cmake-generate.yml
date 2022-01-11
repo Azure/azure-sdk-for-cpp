@@ -5,6 +5,9 @@ parameters:
   - name: ServiceDirectory
     type: string
     default: not-specified
+  - name: CMakeTestOptions
+    type: object
+    default: []
 
 jobs:
 - job: CMakeGenerate
@@ -15,18 +18,15 @@ jobs:
         Pool: azsdk-pool-mms-ubuntu-1804-general
         OSVmImage: MMSUbuntu18.04
         CmakeEnvArg: ''
-        CmakeArgs: ''
         AptDependencies: 'libcurl4-openssl-dev'
       Windows:
         Pool: azsdk-pool-mms-win-2019-general
         OSVmImage: MMS2019
         CmakeEnvArg: ''
-        CmakeArgs: ''
       Mac:
         Pool: Azure Pipelines
         OSVmImage: macOS-10.15
         CmakeEnvArg: ''
-        CmakeArgs: ''
   pool:
     name: $(Pool)
     vmImage: $(OSVmImage)
@@ -61,8 +61,9 @@ jobs:
       DependenciesVariableName: VcpkgInstall
 
   - ${{ each artifact in parameters.Artifacts }}:
-    - template: /eng/pipelines/templates/steps/cmake-generate.yml
-      parameters:
-        CmakeGeneratePath: sdk/${{ parameters.ServiceDirectory }}/${{ artifact.Path }}
-        GenerateArgs: $(CmakeArgs)
-        Env: "$(CmakeEnvArg)"
+    - ${{ each cmakeOption in parameters.CMakeTestOptions }}:
+      - template: /eng/pipelines/templates/steps/cmake-generate.yml
+        parameters:
+          CmakeGeneratePath: sdk/${{ parameters.ServiceDirectory }}/${{ artifact.Path }}
+          GenerateArgs: ${{ cmakeOption.Value }}
+          Env: "$(CmakeEnvArg)"

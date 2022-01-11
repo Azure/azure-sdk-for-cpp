@@ -38,6 +38,9 @@ parameters:
 - name: TestEnv
   type: object
   default: []
+- name: CMakeTestOptions
+  type: object
+  default: []
 
 stages:
   - stage: CMakeGeneration
@@ -47,6 +50,7 @@ stages:
         parameters:
           ServiceDirectory: ${{ parameters.ServiceDirectory }}
           Artifacts: ${{ parameters.Artifacts }}
+          CMakeTestOptions: ${{ parameters.CMakeTestOptions }}
 
   - stage: Build
     jobs:
