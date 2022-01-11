@@ -4,10 +4,8 @@
 # setting CMAKE_TOOLCHAIN_FILE must happen before creating the project
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/../../../cmake-modules")
 include(AzureVcpkg)
-if (NOT AZ_ALL_LIBRARIES)
-  # only if root integration didn't run
-  az_vcpkg_integrate()
-endif()
+az_vcpkg_integrate()
+
 
 # Azure core is compatible with CMake 3.12
 cmake_minimum_required (VERSION 3.12)
