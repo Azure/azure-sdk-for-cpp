@@ -4,16 +4,19 @@ parameters:
   GenerateArgs: ''
 
 steps:
-  - script: cd ${{ parameters.CmakeGeneratePath }}
-    displayName: Navigate to ${{ parameters.CmakeGeneratePath }}
 
   - script: mkdir build
+    workingDirectory: ${{ parameters.CmakeGeneratePath }}
     displayName: create working directory
 
   - script: cmake --version
-    workingDirectory: build
+    workingDirectory: ${{ parameters.CmakeGeneratePath }}/build
+    displayName: cmake --version
+
+  - script: pwd
+    workingDirectory: ${{ parameters.CmakeGeneratePath }}/build
     displayName: cmake --version
 
   - script: ${{ parameters.Env }} cmake ${{ parameters.GenerateArgs }} ..
-    workingDirectory: build
+    workingDirectory: ${{ parameters.CmakeGeneratePath }}/build
     displayName: cmake generate
