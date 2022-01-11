@@ -1,0 +1,57 @@
+parameters:
+- name: Location
+  type: string
+  default: ''
+- name: SubscriptionConfiguration
+  type: string
+  default: $(sub-config-azure-cloud-test-resources)
+- name: ServiceDirectory
+  type: string
+  default: not-specified
+- name: CtestRegex
+  type: string
+  default: .*
+- name: Coverage
+  type: string
+  default: 'enabled'
+- name: CoverageReportPath
+  type: string
+  default: sdk/*/*/*cov_xml.xml
+- name: TimeoutInMinutes
+  type: number
+  default: 60
+
+jobs:
+- job: CMakeGenerate
+  condition: and(succeededOrFailed(), ne(variables['Skip.CMakeGenerate'], 'true'))
+  timeoutInMinutes: ${{ parameters.TimeoutInMinutes }}
+  strategy:
+    matrix:
+      Linux_x64_gcc5_with_unit_test:
+        Pool: azsdk-pool-mms-ubuntu-1804-general
+        OSVmImage: MMSUbuntu18.04
+        CmakeEnvArg: 'CC=/usr/bin/gcc-5 CXX=/usr/bin/g++-5 cmake'
+        CmakeArgs: ' -DBUILD_TESTING=ON -DRUN_LONG_UNIT_TESTS=ON'
+        CmakeGeneratePath: "sdk/core/azure-core"
+  pool:
+    name: $(Pool)
+    vmImage: $(OSVmImage)
+  variables:
+    CMOCKA_XML_FILE: "%g-test-results.xml"
+    CMOCKA_MESSAGE_OUTPUT: "xml"
+
+  steps:
+  - checkout: self
+    submodules: recursive
+
+  - template: /eng/common/pipelines/templates/steps/verify-agent-os.yml
+    parameters:
+      AgentImage: $(OSVmImage)
+
+  - template: /eng/common/pipelines/templates/steps/bypass-local-dns.yml
+
+  - template: /eng/pipelines/templates/steps/cmake-generate.yml
+    parameters:
+      Path: ${CmakeGeneratePath}
+      GenerateArgs: $(CmakeArgs)
+      Env: "$(CmakeEnvArg)"
