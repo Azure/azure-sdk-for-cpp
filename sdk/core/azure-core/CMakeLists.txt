@@ -1,6 +1,13 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # SPDX-License-Identifier: MIT
 
+# setting CMAKE_TOOLCHAIN_FILE must happen before creating the project
+include(AzureVcpkg)
+if (NOT AZ_ALL_LIBRARIES)
+  # only if root integration didn't run
+  az_vcpkg_integrate()
+endif()
+
 # Azure core is compatible with CMake 3.12
 cmake_minimum_required (VERSION 3.12)
 project(azure-core LANGUAGES CXX)
@@ -11,7 +18,6 @@ set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
 
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/../../../cmake-modules")
 
-include(AzureVcpkg)
 include(AzureVersion)
 include(AzureCodeCoverage)
 include(AzureTransportAdapters)
@@ -20,8 +26,6 @@ include(AzureGlobalCompileOptions)
 include(AzureConfigRTTI)
 # Add create_map_file function
 include(CreateMapFile)
-
-az_vcpkg_integrate()
 
 find_package(Threads REQUIRED)
 
