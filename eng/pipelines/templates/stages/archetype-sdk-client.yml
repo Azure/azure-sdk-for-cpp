@@ -43,16 +43,17 @@ parameters:
   default: []
 
 stages:
-  - stage: CMakeGeneration
-    dependsOn: []
-    jobs:
-      - template: /eng/pipelines/templates/jobs/archetype-sdk-cmake-generate.yml
-        parameters:
-          ServiceDirectory: ${{ parameters.ServiceDirectory }}
-          Artifacts: ${{ parameters.Artifacts }}
-          CMakeTestOptions: ${{ parameters.CMakeTestOptions }}
+  - ${{ if eq(variables['System.TeamProject'], 'public') }}:
+    - stage: CMakeGeneration
+      jobs:
+        - template: /eng/pipelines/templates/jobs/archetype-sdk-cmake-generate.yml
+          parameters:
+            ServiceDirectory: ${{ parameters.ServiceDirectory }}
+            Artifacts: ${{ parameters.Artifacts }}
+            CMakeTestOptions: ${{ parameters.CMakeTestOptions }}
 
   - stage: Build
+    dependsOn: []
     jobs:
       - template: /eng/pipelines/templates/jobs/archetype-sdk-client.yml
         parameters:
