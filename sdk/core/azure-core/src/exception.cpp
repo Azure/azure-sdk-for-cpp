@@ -15,6 +15,18 @@ using namespace Azure::Core::Http::_internal;
 
 namespace Azure { namespace Core {
 
+  // LCOV_EXCL_START
+  // This constructor is only kept for compatibility with the old azure-security-keyvault-common.
+  RequestFailedException::RequestFailedException(
+      const std::string& what,
+      std::unique_ptr<Azure::Core::Http::RawResponse>&& rawResponse)
+      : RequestFailedException(
+          what,
+          static_cast<std::unique_ptr<Azure::Core::Http::RawResponse>&>(rawResponse))
+  {
+  }
+  // LCOV_EXCL_STOP
+
   RequestFailedException::RequestFailedException(
       const std::string& what,
       std::unique_ptr<Azure::Core::Http::RawResponse>& rawResponse)
