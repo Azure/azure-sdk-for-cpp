@@ -109,6 +109,17 @@ jobs:
               -DBUILD_TRANSPORT_CURL=OFF
               -DBUILD_DOCUMENTATION=YES
 
+        - task: AzureArtifacts.manifest-generator-task.manifest-generator-task.ManifestGeneratorTask@0
+          displayName: 'Generate BOM'
+          inputs:
+            BuildDropPath: $(Build.SourcesDirectory)/build
+
+        - task: PublishPipelineArtifact@1
+          displayName: 'Publish BOM Manifest'
+          inputs:
+            artifact: 'manifest'
+            path: $(Build.SourcesDirectory)/build/_manifest
+
         - pwsh: npm install -g moxygen
           displayName: Install Moxygen to generate markdown for docs.microsoft.com
 
