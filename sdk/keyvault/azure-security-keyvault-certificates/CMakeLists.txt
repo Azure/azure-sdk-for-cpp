@@ -8,7 +8,7 @@ az_vcpkg_integrate()
 
 cmake_minimum_required (VERSION 3.13)
 project(azure-security-keyvault-certificates LANGUAGES CXX)
-set(AZ_ALL_LIBRARIES ON)
+#set(AZ_ALL_LIBRARIES ON)
 
 # Compile Options
 option(BUILD_SOURCE_DEPS "build source dependencies" OFF)
