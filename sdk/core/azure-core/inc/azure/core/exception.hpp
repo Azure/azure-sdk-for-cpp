@@ -16,11 +16,28 @@
 #include <string>
 #include <vector>
 
-namespace Azure { namespace Core {
+namespace Azure {
+namespace Security { namespace Keyvault { namespace _internal {
+  class KeyVaultException;
+}}} // namespace Security::Keyvault::_internal
+
+namespace Core {
+
   /**
    * @brief An error while trying to send a request to Azure service.
    */
   class RequestFailedException : public std::runtime_error {
+    friend class Azure::Security::Keyvault::_internal::KeyVaultException;
+
+    explicit RequestFailedException(
+        const std::string& what,
+        std::unique_ptr<Azure::Core::Http::RawResponse> rawResponse)
+        : RequestFailedException(
+            what,
+            static_cast<std::unique_ptr<Azure::Core::Http::RawResponse>&>(rawResponse))
+    {
+    }
+
   public:
     /**
      * @brief The HTTP response code.
@@ -151,4 +168,5 @@ namespace Azure { namespace Core {
         std::unique_ptr<Azure::Core::Http::RawResponse>& rawResponse,
         std::string fieldName);
   };
-}} // namespace Azure::Core
+} // namespace Core
+} // namespace Azure
