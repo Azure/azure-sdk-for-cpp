@@ -27,6 +27,7 @@ namespace Core {
    * @brief An error while trying to send a request to Azure service.
    */
   class RequestFailedException : public std::runtime_error {
+    // Compatibility layer for azure-security-keyvault-common using constructor with old signature.
     friend class Azure::Security::Keyvault::_internal::KeyVaultException;
 
     explicit RequestFailedException(
