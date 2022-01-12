@@ -17,7 +17,7 @@ namespace Azure { namespace Core {
 
   RequestFailedException::RequestFailedException(
       const std::string& what,
-      std::unique_ptr<Azure::Core::Http::RawResponse>& rawResponse)
+      std::unique_ptr<Azure::Core::Http::RawResponse> rawResponse)
       : std::runtime_error(what)
   {
     const auto& headers = rawResponse->GetHeaders();
@@ -37,7 +37,7 @@ namespace Azure { namespace Core {
 
   RequestFailedException::RequestFailedException(
       std::unique_ptr<Azure::Core::Http::RawResponse>& rawResponse)
-      : RequestFailedException("Received an HTTP unsuccessful status code.", rawResponse)
+      : RequestFailedException("Received an HTTP unsuccessful status code.", std::move(rawResponse))
   {
   }
 

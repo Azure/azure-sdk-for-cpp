@@ -90,7 +90,7 @@ namespace Azure { namespace Core {
      */
     explicit RequestFailedException(
         const std::string& what,
-        std::unique_ptr<Azure::Core::Http::RawResponse>& rawResponse);
+        std::unique_ptr<Azure::Core::Http::RawResponse> rawResponse);
 
     /**
      * @brief Constructs a new `%RequestFailedException` object with an HTTP raw response.

@@ -93,7 +93,7 @@ TEST(RequestFailedException, Message)
   response->SetBodyStream(std::make_unique<Azure::Core::IO::MemoryBodyStream>(
       responseBodyStream, sizeof(responseBodyStream) - 1));
 
-  auto exception = Azure::Core::RequestFailedException("what", response);
+  auto exception = Azure::Core::RequestFailedException("what", std::move(response));
 
   EXPECT_EQ(exception.StatusCode, Azure::Core::Http::HttpStatusCode::ServiceUnavailable);
   EXPECT_EQ(exception.Message, "JT");
