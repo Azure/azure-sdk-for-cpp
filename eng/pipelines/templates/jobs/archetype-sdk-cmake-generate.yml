@@ -11,9 +11,6 @@ parameters:
   - name: CMakeTestOptions
     type: object
     default: []
-  - name: CMakeTestOptions
-    type: object
-    default: []
   - name: CMakeSourceTestOptions
     type: object
     default: []
