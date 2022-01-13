@@ -18,6 +18,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED True)
 set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
 
 if(BUILD_SOURCE_DEPS)
+    set(AZ_ALL_LIBRARIES ON)
     include(FolderList)
     SetCompileOptions(CERTIFICATES)
 endif()
