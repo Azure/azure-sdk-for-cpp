@@ -118,7 +118,7 @@ jobs:
     condition: and(succeeded(), ne(variables['AptDependencies'], ''))
     displayName: Install dependencies from apt
 
-  - pwsh: 
+  - pwsh: |
       brew install $(BrewDependencies)
       $Env:LDFLAGS="-L/usr/local/opt/openssl@3/lib" 
       $Env:CPPFLAGS="-I/usr/local/opt/openssl@3/include"
