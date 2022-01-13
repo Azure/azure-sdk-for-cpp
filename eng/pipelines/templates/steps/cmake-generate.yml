@@ -4,13 +4,13 @@ parameters:
   GenerateArgs: ''
 
 steps:
-  - pwsh: Write-Host "ENVs - ${{ parameters.Env }} "
-    workingDirectory: ${{ parameters.CmakeGeneratePath }}/build
-    displayName: ENVs
-
   - script: mkdir build
     workingDirectory: ${{ parameters.CmakeGeneratePath }}
     displayName: create working directory
+
+  - pwsh: Write-Host "ENVs - ${{ parameters.Env }} "
+    workingDirectory: ${{ parameters.CmakeGeneratePath }}/build
+    displayName: ENVs
 
   - script: pwd
     workingDirectory: ${{ parameters.CmakeGeneratePath }}/build
