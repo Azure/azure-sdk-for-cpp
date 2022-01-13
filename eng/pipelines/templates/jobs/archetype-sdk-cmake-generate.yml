@@ -118,7 +118,7 @@ jobs:
     condition: and(succeeded(), ne(variables['AptDependencies'], ''))
     displayName: Install dependencies from apt
 
-  - pwsh: brew install $(BrewDependencies)
+  - pwsh: brew install $(BrewDependencies) && export LDFLAGS="-L/opt/homebrew/opt/openssl@3/lib" && export CPPFLAGS="-I/opt/homebrew/opt/openssl@3/include"
     condition: and(succeeded(), ne(variables['BrewDependencies'], ''))
     displayName: Install dependencies from brew
 
