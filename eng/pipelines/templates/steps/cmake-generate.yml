@@ -1,0 +1,22 @@
+parameters:
+  CmakeGeneratePath: ''
+  Env: ''
+  GenerateArgs: ''
+
+steps:
+
+  - script: mkdir build
+    workingDirectory: ${{ parameters.CmakeGeneratePath }}
+    displayName: create working directory
+
+  - script: pwd
+    workingDirectory: ${{ parameters.CmakeGeneratePath }}/build
+    displayName: Show current path
+
+  - script: ${{ parameters.Env }} cmake ${{ parameters.GenerateArgs }} ..
+    workingDirectory: ${{ parameters.CmakeGeneratePath }}/build
+    displayName: cmake generate
+
+  - script: rm -rf build
+    workingDirectory: ${{ parameters.CmakeGeneratePath }}
+    displayName: clean build folder
