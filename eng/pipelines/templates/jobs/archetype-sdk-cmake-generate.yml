@@ -123,8 +123,8 @@ jobs:
       $Env:LDFLAGS="-L/usr/local/opt/openssl@3/lib" 
       $Env:CPPFLAGS="-I/usr/local/opt/openssl@3/include"
       Write-Host "Setting up ENVs"
-      [Environment]::SetEnvironmentVariable("OPENSSL_INCLUDE_DIR", "/usr/local/opt/openssl@3/include")
-      [Environment]::SetEnvironmentVariable("OPENSSL_ROOT_DIR", "/usr/local/opt/openssl@3/")
+      [Environment]::SetEnvironmentVariable("OPENSSL_INCLUDE_DIR", "/usr/local/opt/openssl@3/include","User")
+      [Environment]::SetEnvironmentVariable("OPENSSL_ROOT_DIR", "/usr/local/opt/openssl@3/","User")
     condition: and(succeeded(), ne(variables['BrewDependencies'], ''))
     displayName: Install dependencies from brew
 
