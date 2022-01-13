@@ -130,7 +130,7 @@ jobs:
     - script: echo 'CMake generate tests for ${{ artifact.Name }}'
       displayName: ${{ artifact.Name }}
     - ${{ each cmakeOption in parameters.CMakeSourceTestOptions }}:
-      - ${{ if(ne(variables['BrewDependencies'], '') )}}:
+        ${{ if(ne(variables['BrewDependencies'], '') )}}:
         - template: /eng/pipelines/templates/steps/cmake-generate.yml
           parameters:
             CmakeGeneratePath: sdk/${{ parameters.ServiceDirectory }}/${{ artifact.Path }}
