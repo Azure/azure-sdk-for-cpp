@@ -12,7 +12,7 @@
 
 - Fixed `Azure::DateTime::Parse()` validation if the result is going to exceed `9999-12-31T23:59:59.9999999` due to time zone, leap second, or fractional digits rounding up adjustments.
 
-- Fixed issue [3224](https://github.com/Azure/azure-sdk-for-cpp/issues/3224) on MacOS crashing application when azure logs are turned on.
+- [[#3224]](https://github.com/Azure/azure-sdk-for-cpp/issues/3224) Fixed intermittent crash on MacOS when logging is turned on.
 
 ### Other Changes
 
