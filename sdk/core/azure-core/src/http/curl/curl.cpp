@@ -188,7 +188,7 @@ static inline std::string GetHTTPMessagePreBody(Azure::Core::Http::Request const
 
 static void CleanupThread()
 {
-  // NOTE: Avoid using Log::Write in here as it may fail on MacOS,
+  // NOTE: Avoid using Log::Write in here as it may fail on macOS,
   // see issue: https://github.com/Azure/azure-sdk-for-cpp/issues/3224
   // This method can wake up in de-attached mode after the application has been terminated.
   // If that happens, trying to use `Log` would cause `abort` as it was previously deallocated.
