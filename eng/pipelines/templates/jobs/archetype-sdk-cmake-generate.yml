@@ -92,6 +92,10 @@ jobs:
         OSVmImage: MMSUbuntu18.04
         CmakeEnvArg: ''
         AptDependencies: 'libcurl4-openssl-dev'
+      Mac:
+        Pool: Azure Pipelines
+        OSVmImage: macOS-10.15
+        CmakeEnvArg: ''
   pool:
     name: $(Pool)
     vmImage: $(OSVmImage)
