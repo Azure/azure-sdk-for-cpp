@@ -188,14 +188,17 @@ static inline std::string GetHTTPMessagePreBody(Azure::Core::Http::Request const
 
 static void CleanupThread()
 {
+  // NOTE: Avoid using Log::Write in here as it may fail on macOS,
+  // see issue: https://github.com/Azure/azure-sdk-for-cpp/issues/3224
+  // This method can wake up in de-attached mode after the application has been terminated.
+  // If that happens, trying to use `Log` would cause `abort` as it was previously deallocated.
   using namespace Azure::Core::Http::_detail;
   for (;;)
   {
-    Log::Write(Logger::Level::Verbose, "Clean pool check now...");
     // Won't continue until the ConnectionPoolMutex is released from MoveConnectionBackToPool
     std::unique_lock<std::mutex> lockForPoolCleaning(
         CurlConnectionPool::g_curlConnectionPool.ConnectionPoolMutex);
-    Log::Write(Logger::Level::Verbose, "Clean pool sleep");
+
     // Wait for the default time OR to the signal from the conditional variable.
     // wait_for releases the mutex lock when it goes to sleep and it takes the lock again when it
     // wakes up (or it's cancelled).
@@ -207,9 +210,6 @@ static void CleanupThread()
             }))
     {
       // Cancelled by another thead or no connections on wakeup
-      Log::Write(
-          Logger::Level::Verbose,
-          "Clean pool - no connections on wake - return *************************");
       CurlConnectionPool::g_curlConnectionPool.IsCleanThreadRunning = false;
       break;
     }
@@ -217,7 +217,6 @@ static void CleanupThread()
     decltype(CurlConnectionPool::g_curlConnectionPool
                  .ConnectionPoolIndex)::mapped_type connectionsToBeCleaned;
 
-    Log::Write(Logger::Level::Verbose, "Clean pool - inspect pool");
     // loop the connection pool index - Note: lock is re-taken for the mutex
     // Notes: The size of each host-index is always expected to be greater than 0 because the
     // host-index is removed anytime it becomes empty.
@@ -249,7 +248,6 @@ static void CleanupThread()
 
       if (connectionList.empty())
       {
-        Log::Write(Logger::Level::Verbose, "Clean pool - remove index " + index->first);
         index = CurlConnectionPool::g_curlConnectionPool.ConnectionPoolIndex.erase(index);
       }
       else
