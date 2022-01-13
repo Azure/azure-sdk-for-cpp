@@ -5,7 +5,7 @@ parameters:
 
 steps:
   - pwsh: Write-Host "ENVs - ${{ parameters.Env }} "
-    workingDirectory: ${{ parameters.Env }}
+    workingDirectory: ${{ parameters.CmakeGeneratePath }}/build
     displayName: ENVs
 
   - script: mkdir build
