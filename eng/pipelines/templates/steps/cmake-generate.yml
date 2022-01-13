@@ -4,7 +4,7 @@ parameters:
   GenerateArgs: ''
 
 steps:
-  - pwsh: Write-Host "Downloading and extracting Cosmos DB Emulator - ${{ parameters.Env }} "
+  - pwsh: Write-Host "ENVs - ${{ parameters.Env }} "
     workingDirectory: ${{ parameters.CmakeGeneratePath }}
     displayName: ENVs
 
