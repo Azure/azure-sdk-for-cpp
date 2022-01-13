@@ -95,7 +95,7 @@ jobs:
       Mac:
         Pool: Azure Pipelines
         OSVmImage: macOS-10.15
-        CmakeEnvArg: ''
+        CmakeEnvArg: 'OPENSSL_ROOT_DIR=/usr/local/opt/openssl@3 OPENSSL_INCLUDE_DIR=/usr/local/opt/openssl@3/include '
         BrewDependencies: 'openssl'
 
   pool:
@@ -130,15 +130,8 @@ jobs:
     - script: echo 'CMake generate tests for ${{ artifact.Name }}'
       displayName: ${{ artifact.Name }}
     - ${{ each cmakeOption in parameters.CMakeSourceTestOptions }}:
-      - ${{ if ne(variables['BrewDependencies'], '') }}:
-        - template: /eng/pipelines/templates/steps/cmake-generate.yml
-          parameters:
-            CmakeGeneratePath: sdk/${{ parameters.ServiceDirectory }}/${{ artifact.Path }}
-            GenerateArgs: ${{ cmakeOption.Value }}
-            Env: "$(CmakeEnvArg) OPENSSL_ROOT_DIR=/usr/local/opt/openssl@3 OPENSSL_INCLUDE_DIR=/usr/local/opt/openssl@3/include "
-      - ${{ else }}:
-        - template: /eng/pipelines/templates/steps/cmake-generate.yml
-          parameters:
-            CmakeGeneratePath: sdk/${{ parameters.ServiceDirectory }}/${{ artifact.Path }}
-            GenerateArgs: ${{ cmakeOption.Value }}
-            Env: "$(CmakeEnvArg)"
+      - template: /eng/pipelines/templates/steps/cmake-generate.yml
+        parameters:
+          CmakeGeneratePath: sdk/${{ parameters.ServiceDirectory }}/${{ artifact.Path }}
+          GenerateArgs: ${{ cmakeOption.Value }}
+          Env: "$(CmakeEnvArg)"
