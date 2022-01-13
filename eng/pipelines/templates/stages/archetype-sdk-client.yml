@@ -17,6 +17,9 @@ parameters:
 - name: Artifacts
   type: object
   default: []
+- name: ArtifactsSource
+  type: object
+  default: []
 - name: Location
   type: string
   default: ''
@@ -39,6 +42,9 @@ parameters:
   type: object
   default: []
 - name: CMakeTestOptions
+  type: object
+  default: []
+- name: CMakeSourceTestOptions
   type: object
   default: []
 - name: CMakeTestDependencies
