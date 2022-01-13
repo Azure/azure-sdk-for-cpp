@@ -121,7 +121,7 @@ jobs:
   - pwsh: | 
       brew install $(BrewDependencies) 
       export LDFLAGS="-L/usr/local/opt/openssl@3/lib" 
-      export CPPFLAGS="-I/usr/local/opt/openssl@3/include
+      export CPPFLAGS="-I/usr/local/opt/openssl@3/include"
     condition: and(succeeded(), ne(variables['BrewDependencies'], ''))
     displayName: Install dependencies from brew
 
