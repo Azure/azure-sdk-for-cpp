@@ -107,10 +107,6 @@ jobs:
     condition: and(succeeded(), ne(variables['AptDependencies'], ''))
     displayName: Install dependencies from apt
 
-  - template: /eng/pipelines/templates/steps/vcpkg.yml
-    parameters:
-      DependenciesVariableName: VcpkgInstall
-
   - script: cmake --version
     displayName: cmake --version
 
