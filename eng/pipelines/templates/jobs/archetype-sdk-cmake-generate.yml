@@ -80,7 +80,7 @@ jobs:
           Env: "$(CmakeEnvArg)"
 
 - job: CMakeSourceGenerate
-  condition: and(succeededOrFailed(), ne(variables['Skip.CMakeGenerate'], 'true'), ne(length(join('',${{ parameters.CMakeSourceTestOptions }})),0))
+  condition: and(succeededOrFailed(), ne(variables['Skip.CMakeGenerate'], 'true'), ne(${{ parameters.CMakeSourceTestOptions }},null))
   strategy:
     matrix:
       Windows:
