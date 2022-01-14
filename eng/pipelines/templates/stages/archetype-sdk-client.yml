@@ -17,6 +17,9 @@ parameters:
 - name: Artifacts
   type: object
   default: []
+- name: ArtifactsSource
+  type: object
+  default: []
 - name: Location
   type: string
   default: ''
@@ -41,6 +44,9 @@ parameters:
 - name: CMakeTestOptions
   type: object
   default: []
+- name: CMakeSourceTestOptions
+  type: object
+  default: []
 - name: CMakeTestDependencies
   type: string
   default: ''
@@ -53,7 +59,9 @@ stages:
           parameters:
             ServiceDirectory: ${{ parameters.ServiceDirectory }}
             Artifacts: ${{ parameters.Artifacts }}
+            ArtifactsSource: ${{ parameters.ArtifactsSource }}
             CMakeTestOptions: ${{ parameters.CMakeTestOptions }}
+            CMakeSourceTestOptions: ${{ parameters.CMakeSourceTestOptions }}
             CMakeTestDependencies: ${{ parameters.CMakeTestDependencies }}
 
   - stage: Build

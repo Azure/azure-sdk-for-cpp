@@ -44,6 +44,10 @@ stages:
         - Name: azure-security-keyvault-certificates
           Path: azure-security-keyvault-certificates
           VcpkgPortName: azure-security-keyvault-certificates-cpp
+      ArtifactsSource:
+        - Name: azure-security-keyvault-certificates
+          Path: azure-security-keyvault-certificates
+          VcpkgPortName: azure-security-keyvault-keys-cpp
       TestEnv:
         - Name: AZURE_KEYVAULT_URL
           Value: "https://non-real-account.vault.azure.net"
@@ -65,3 +69,6 @@ stages:
           Value: '-DBUILD_TESTING=ON -DBUILD_SAMPLES=ON'
         - Name: Performance
           Value: '-DBUILD_TESTING=ON -DBUILD_SAMPLES=ON -DBUILD_PERFORMANCE_TESTS=ON'
+      CMakeSourceTestOptions:
+        - Name: Source
+          Value: '-DBUILD_SOURCE_DEPS=ON'
