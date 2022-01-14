@@ -228,3 +228,22 @@ jobs:
           path: $(Build.ArtifactStagingDirectory)
         condition: eq(variables['PublishMapFiles'], 'true')
         displayName : Publish map file artifacts
+        
+      - pwsh: |
+          $artifactName = "$(Agent.JobName)"
+          $parts = $artifactName -split ' '
+          if ($parts[1]) {
+            $artifactName = $parts[1]
+          }
+          Write-Host "##vso[task.setvariable variable=BomArtifactName;]$artifactName"
+        displayName: Set bom file artifact name
+
+      - task: AzureArtifacts.manifest-generator-task.manifest-generator-task.ManifestGeneratorTask@0
+        displayName: 'Generate BOM'
+        inputs:
+          BuildDropPath: $(Build.ArtifactStagingDirectory)
+
+      - template: /eng/common/pipelines/templates/steps/publish-artifact.yml
+        parameters:
+          ArtifactPath: '$(Build.ArtifactStagingDirectory)/_manifest'
+          ArtifactName: 'bom_manifest_$(BomArtifactName)'
