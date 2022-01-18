@@ -10,13 +10,12 @@ param(
     [switch] $CI = ($null -ne $env:SYSTEM_TEAMPROJECTID)
 )
 
-$targetExtension = "lib"
-if ($IsLinux -or $IsMacOS) {
-    $targetExtension = "a"
+$searchPath = "$BuildDirectory/sdk/$ServiceDirectory/*/*.a"
+if ($IsWindows) {
+    $searchPath = "$BuildDirectory/sdk/$ServiceDirectory/*/*/*.lib"
 }
 
-$binaries = Get-ChildItem `
-    -Path "$BuildDirectory/sdk/$ServiceDirectory/*/*.$targetExtension" `
+$binaries = Get-ChildItem -Path $searchPath
 
 if ($CI) {
     foreach ($binary in $binaries) {
@@ -32,11 +31,10 @@ if ($CI) {
         $metricLogJson = ConvertTo-Json $metricLogObject -Depth 2 -Compress
         Write-Host "logmetric: $metricLogJson"
     }
-    
 }
-$bins `
+$binaries `
     | Format-Table -Property Name, @{Name="SizeInKB"; Expression={"{0:N2}" -f ($_.Length / 1KB)}; Alignment='right'} `
-    | Out-String ` 
+    | Out-String `
     | Write-Host 
 
 return $binaries
