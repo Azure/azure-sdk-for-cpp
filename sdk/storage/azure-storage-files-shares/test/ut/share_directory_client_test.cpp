@@ -22,7 +22,7 @@ namespace Azure { namespace Storage { namespace Test {
   void FileShareDirectoryClientTest::TearDown()
   {
     CHECK_SKIP_TEST();
-    m_shareClient->Delete();
+    m_shareClient->DeleteIfExists();
     FileShareClientTest::TearDown();
   }
 
