@@ -37,24 +37,25 @@
                 "Windows2019": {
                     "OSVmImage": "MMS2019",
                     "Pool": "azsdk-pool-mms-win-2019-general",
-                    "BuildArgs": "--parallel 8",
                     "CMAKE_GENERATOR": "Visual Studio 16 2019"
                 }
             },
             "TargetPlatform": {
                 "Win32Api_curl": {
-                    "VcpkgInstall": "curl[winssl] openssl",
-                    "CmakeArgs": " -DBUILD_TRANSPORT_CURL=ON"
+                    "VcpkgInstall": "curl[winssl]",
+                    "CmakeArgs": " -DBUILD_TRANSPORT_CURL=ON",
+                    "BuildArgs": "--parallel 8"
                 },
                 "Win32Api_release_curl": {
                     "VcpkgInstall": "curl[winssl] openssl",
                     "CmakeArgs": " -DBUILD_TESTING=ON -DBUILD_PERFORMANCE_TESTS=ON -DRUN_LONG_UNIT_TESTS=ON -DBUILD_TRANSPORT_CURL=ON",
-                    "CMAKE_BUILD_TYPE": "Release",
+                    "BuildArgs": "--parallel 8 --config Release",
                     "PublishMapFiles": "true"
                 },
                 "Win32Api_debug_tests": {
                     "VcpkgInstall": "curl[winssl] openssl",
                     "CmakeArgs": " -DBUILD_TESTING=ON -DBUILD_PERFORMANCE_TESTS=ON -DRUN_LONG_UNIT_TESTS=ON -DBUILD_TRANSPORT_CURL=ON -DBUILD_TRANSPORT_WINHTTP=ON",
+                    "BuildArgs": "--parallel 8 --config Debug",
                     "PublishMapFiles": "true"
                 }
             },
@@ -74,7 +75,6 @@
                 "Windows2019": {
                     "OSVmImage": "MMS2019",
                     "Pool": "azsdk-pool-mms-win-2019-general",
-                    "BuildArgs": "--parallel 8",
                     "CMAKE_GENERATOR": "Visual Studio 16 2019",
                     "CmakeArgs": " -DBUILD_TRANSPORT_WINHTTP=ON ",
                     "PublishMapFiles": "true"
@@ -84,22 +84,25 @@
                 "UWP_debug": {
                     "VcpkgInstall": "openssl",
                     "CMAKE_SYSTEM_NAME": "WindowsStore",
-                    "CMAKE_SYSTEM_VERSION": "10.0"
+                    "CMAKE_SYSTEM_VERSION": "10.0",
+                    "BuildArgs": "--parallel 8 --config Debug"
                 },
                 "UWP_release": {
                     "VcpkgInstall": "openssl",
                     "CMAKE_SYSTEM_NAME": "WindowsStore",
                     "CMAKE_SYSTEM_VERSION": "10.0",
-                    "CMAKE_BUILD_TYPE": "Release"
+                    "BuildArgs": "--parallel 8 --config Release"
                 }
             },
             "TargetArchitecture": {
                 "x86": {
-                    "CMAKE_GENERATOR_PLATFORM": "Win32"
+                    "CMAKE_GENERATOR_PLATFORM": "Win32",
+                    "BuildArgs": "--parallel 8"
                 },
                 "x64": {
                     "CMAKE_GENERATOR_PLATFORM": "x64",
-                    "VCPKG_DEFAULT_TRIPLET": "x64-uwp"
+                    "VCPKG_DEFAULT_TRIPLET": "x64-uwp",
+                    "BuildArgs": "--parallel 8"
                 }
             }
         },
