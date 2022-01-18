@@ -73,3 +73,9 @@ stages:
           Value: "DefaultEndpointsProtocol=https;AccountName=notReal;AccountKey=3333333333333333333333333333333333333333333333333333333333333333333333333333333333333333;EndpointSuffix=core.windows.net"
         - Name: PREMIUM_FILE_CONNECTION_STRING
           Value: "DefaultEndpointsProtocol=https;AccountName=notReal;AccountKey=3333333333333333333333333333333333333333333333333333333333333333333333333333333333333333;EndpointSuffix=core.windows.net"
+          Value: "DefaultEndpointsProtocol=https;AccountName=fake;AccountKey=X;EndpointSuffix=core.windows.net"
+      CMakeTestOptions:
+        - Name: Default
+          Value: ''
+        - Name: Test
+          Value: '-DBUILD_TESTING=ON'

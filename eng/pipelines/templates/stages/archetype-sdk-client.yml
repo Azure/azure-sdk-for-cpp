@@ -17,6 +17,9 @@ parameters:
 - name: Artifacts
   type: object
   default: []
+- name: ArtifactsSource
+  type: object
+  default: []
 - name: Location
   type: string
   default: ''
@@ -38,9 +41,31 @@ parameters:
 - name: TestEnv
   type: object
   default: []
+- name: CMakeTestOptions
+  type: object
+  default: []
+- name: CMakeSourceTestOptions
+  type: object
+  default: []
+- name: CMakeTestDependencies
+  type: string
+  default: ''
 
 stages:
+  - ${{ if eq(variables['System.TeamProject'], 'public') }}:
+    - stage: CMakeGeneration
+      jobs:
+        - template: /eng/pipelines/templates/jobs/archetype-sdk-cmake-generate.yml
+          parameters:
+            ServiceDirectory: ${{ parameters.ServiceDirectory }}
+            Artifacts: ${{ parameters.Artifacts }}
+            ArtifactsSource: ${{ parameters.ArtifactsSource }}
+            CMakeTestOptions: ${{ parameters.CMakeTestOptions }}
+            CMakeSourceTestOptions: ${{ parameters.CMakeSourceTestOptions }}
+            CMakeTestDependencies: ${{ parameters.CMakeTestDependencies }}
+
   - stage: Build
+    dependsOn: []
     jobs:
       - template: /eng/pipelines/templates/jobs/archetype-sdk-client.yml
         parameters:

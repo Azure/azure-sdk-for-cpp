@@ -1,26 +1,44 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # SPDX-License-Identifier: MIT
 
+# setting CMAKE_TOOLCHAIN_FILE must happen before creating the project
+list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/../../../cmake-modules")
+include(AzureVcpkg)
+az_vcpkg_integrate()
+
 cmake_minimum_required (VERSION 3.13)
 project(azure-security-keyvault-certificates LANGUAGES CXX)
+
+
+# Compile Options
+option(BUILD_SOURCE_DEPS "build source dependencies" OFF)
 
 set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
 
-list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/../../../cmake-modules")
+if(BUILD_SOURCE_DEPS)
+    set(AZ_ALL_LIBRARIES ON)
+    include(FolderList)
+    SetCompileOptions(CERTIFICATES)
+endif()
 
-include(AzureVcpkg)
 include(AzureVersion)
 include(AzureCodeCoverage)
 include(AzureTransportAdapters)
 include(AzureDoxygen)
 include(AzureGlobalCompileOptions)
 include(AzureConfigRTTI)
+# Add create_map_file function
+include(CreateMapFile)
 
-az_vcpkg_integrate()
-
-if(NOT AZ_ALL_LIBRARIES)
+if(BUILD_SOURCE_DEPS)
+    GetFolderList(CERTIFICATES)
+    foreach(oneFolder IN LISTS BUILD_FOLDERS)
+        message("add folder ${oneFolder}")
+        add_subdirectory(${oneFolder})
+    endforeach()
+elseif(NOT AZ_ALL_LIBRARIES)
   find_package(azure-core-cpp "1.2.0" CONFIG QUIET)
   if(NOT azure-core-cpp_FOUND)
     find_package(azure-core-cpp "1.2.0" REQUIRED)
@@ -53,9 +71,11 @@ target_include_directories(
   azure-security-keyvault-certificates
     PUBLIC
       $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/inc>
+      $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/../../../sdk/core/inc>
+      $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/sdk/core/azure-core/inc>
       $<INSTALL_INTERFACE:include>
 )
-
+message($<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/inc)
 # Include shared source code
 # NOTE: Use shared-code only within .cpp files. DO NEVER consume the shared-code from header files.
 target_include_directories(
@@ -73,14 +93,14 @@ get_az_version("${CMAKE_CURRENT_SOURCE_DIR}/src/private/package_version.hpp")
 generate_documentation(azure-security-keyvault-certificates ${AZ_LIBRARY_VERSION})
 
 if(BUILD_TESTING)
-
-  if (NOT AZ_ALL_LIBRARIES)
+  if (NOT AZ_ALL_LIBRARIES OR BUILD_SOURCE_DEPS)
     include(AddGoogleTest)
     enable_testing ()
   endif()
   
-  add_subdirectory(test/ut)
+  add_subdirectory(test/ut)  
 endif()
+
 
 # if (BUILD_PERFORMANCE_TESTS)
 #   add_subdirectory(test/perf)
@@ -101,3 +121,5 @@ az_rtti_setup(
   SECURITY_KEYVAULT_CERTIFICATES
   "azure/keyvault/certificates/rtti.hpp"
 )
+
+unset(BUILD_SOURCE_DEPS CACHE)
