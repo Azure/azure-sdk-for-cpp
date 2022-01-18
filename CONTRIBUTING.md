@@ -176,14 +176,44 @@ The following CMake options are available for adding/removing project features.
 
 #### Testing the project
 
-If you want to run tests also, generate build files using below command and then build.
+##### Test Mode
+
+Before running unit tests, you have to decide what is the test mode you want to use. To set the test mode,
+use the environment variable `AZURE_TEST_MODE`. See the supported values next:
+
+- LIVE
+
+When setting `AZURE_TEST_MODE=LIVE`, test cases will try to connect to `AZURE` cloud services using the [test environment configuration](#test-environment-configuration). Make sure to set up the environment variables required to run test cases.
+
+This is the default test mode if `AZURE_TEST_MODE` is not even set.
+
+- PLAYBACK
+
+When setting `AZURE_TEST_MODE=PLAYBACK`, test cases will consume pre-recorded data instead of sending requests to an AZURE cloud service. The [test environment configuration](#test-environment-configuration) is still required, but the configuration values won't be relevant. Use this test mode to run tests cases without a network connection.
+
+- RECORD
+
+When setting `AZURE_TEST_MODE=RECORD`, test cases will run the as when running `LIVE`. All the AZURE service network responses are recorded in a json file within the /recordings folder from the /test/ut directory. Use this test mode to generate pre-recorded data to be used on `PLAYBACK` mode.
+
+##### Test Environment Configuration
+
+Some environment variables are expected to be defined for some test binaries. For example, for `azure-storage-blobs-test`, there should be a `STANDARD_STORAGE_CONNECTION_STRING` variable to let tests know how to connect to the Azure Storage account.
+
+Even for running on `PLAYBACK` mode, the env configuration is mandatory. This is because a test case does not know about the test modes. A test case will always look for the environment configuration to connect/authenticate to Azure.
+
+Take a look to [this file](https://github.com/Azure/azure-sdk-for-cpp/blob/main/sdk/core/ci.yml#L52) which defines the required configuarion for each SDK package. Those settings are used to run all unit test on `PLAYBACK` mode on CI, you can use the same settings from that file to run on `PLAYBACK` locally.
+
+
+##### Running tests
+
+If you want to run tests, generate build files using below command and then build.
 
 ```sh
 cmake -DBUILD_TESTING=ON ..
 cmake --build .
 ```
 
-Tests are executed via the `ctest` command included with CMake. From the build directory, run:
+Tests are executed via the `ctest` command included with CMake. After setting a [test mode](#test-mode), from the build directory, run:
 
 ```sh
 # use -V for verbose
@@ -192,6 +222,7 @@ ctest -V
 ctest -N
 # Use -R to use a regular exp for what to run
 ctest -R Http # runs only HTTP tests
+ctest -R storage # runs all the azure storage unit tests
 ```
 
 #### Generating Code Coverage reports

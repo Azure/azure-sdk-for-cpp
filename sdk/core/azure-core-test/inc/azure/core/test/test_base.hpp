@@ -18,7 +18,15 @@
 
 #include <chrono>
 #include <memory>
+#include <regex>
 #include <thread>
+
+#define CHECK_SKIP_TEST() \
+  std::string const readTestNameAndUpdateTestContext = GetTestName(); \
+  if (shouldSkipTest()) \
+  { \
+    GTEST_SKIP(); \
+  }
 
 using namespace std::chrono_literals;
 
@@ -31,6 +39,12 @@ namespace Azure { namespace Core { namespace Test {
   class TestBase : public ::testing::Test {
 
   private:
+    /**
+     * @brief Whenever a test case is skipped
+     *
+     */
+    bool m_wasSkipped = false;
+
     void PrepareOptions(Azure::Core::_internal::ClientOptions& options)
     {
       // Set up client options depending on the test-mode
@@ -75,6 +89,35 @@ namespace Azure { namespace Core { namespace Test {
     {
       std::string updated(src);
       std::replace(updated.begin(), updated.end(), '/', '-');
+      return RemovePreffix(updated);
+    }
+
+    void SkipTest()
+    {
+      m_wasSkipped = true;
+      GTEST_SKIP();
+    }
+
+    std::string RemovePreffix(std::string const& src)
+    {
+      std::string updated(src);
+      // Remove special marker for LIVEONLY
+      auto const noPrefix
+          = std::regex_replace(updated, std::regex(TestContextManager::LiveOnlyToken), "");
+      if (noPrefix != updated)
+      {
+        if (m_testContext.TestMode == TestMode::RECORD)
+        {
+          TestLog("Test is expected to run on LIVE mode only. Recording won't be created.");
+        }
+        else if (m_testContext.TestMode == TestMode::PLAYBACK)
+        {
+          TestLog("Test is expected to run on LIVE mode only. Skipping test on playback mode.");
+          SkipTest();
+        }
+        m_testContext.LiveOnly = true;
+        return noPrefix;
+      }
       return updated;
     }
 
@@ -82,20 +125,53 @@ namespace Azure { namespace Core { namespace Test {
     Azure::Core::Test::TestContextManager m_testContext;
     std::unique_ptr<Azure::Core::Test::InterceptorManager> m_interceptor;
 
+    bool shouldSkipTest() { return m_wasSkipped; }
+
+    inline void ValidateSkippingTest()
+    {
+      if (m_wasSkipped)
+      {
+        GTEST_SKIP();
+      }
+    }
+
+    bool IsValidTime(const Azure::DateTime& datetime)
+    {
+      // Playback won't check dates
+      if (m_testContext.IsPlaybackMode())
+      {
+        return true;
+      }
+
+      // We assume datetime within a week is valid.
+      const auto minTime = std::chrono::system_clock::now() - std::chrono::hours(24 * 7);
+      const auto maxTime = std::chrono::system_clock::now() + std::chrono::hours(24 * 7);
+      return datetime > minTime && datetime < maxTime;
+    }
+
     // Reads the current test instance name.
     // Name gets also sanitized (special chars are removed) to avoid issues when recording or
     // creating
-    std::string GetTestName(bool sanitize = false)
+    std::string GetTestName(bool sanitize = true)
     {
       std::string testName(::testing::UnitTest::GetInstance()->current_test_info()->name());
       if (sanitize)
       {
         // replace `/` for `-`. Parameterized tests adds this char automatically to join the test
         // name and the parameter suffix.
-        return Sanitize(testName);
+        testName = Sanitize(testName);
       }
 
-      return testName;
+      return RemovePreffix(testName);
+    }
+
+    // Reads the current test instance name.
+    // Name gets also sanitized (special chars are removed) to avoid issues when recording or
+    // creating
+    std::string GetTestNameLowerCase(bool sanitize = true)
+    {
+      std::string testName(GetTestName(sanitize));
+      return Azure::Core::_internal::StringExtensions::ToLower(testName);
     }
 
     // Creates the sdk client for testing.
@@ -121,6 +197,14 @@ namespace Azure { namespace Core { namespace Test {
       return std::make_unique<T>(url, *credential, options);
     }
 
+    template <class T> T InitClientOptions()
+    {
+      // Run instrumentation before creating the client
+      T options;
+      PrepareOptions(options);
+      return options;
+    }
+
     // Updates the time when test is on playback
     void UpdateWaitingTime(std::chrono::milliseconds& current)
     {
@@ -128,6 +212,15 @@ namespace Azure { namespace Core { namespace Test {
       {
         current = 0ms;
       }
+    }
+
+    std::chrono::seconds PollInterval(std::chrono::seconds const& seconds = 1s)
+    {
+      if (m_testContext.IsPlaybackMode())
+      {
+        return 0s;
+      }
+      return seconds;
     }
 
     // Util for tests to introduce delays
@@ -181,14 +274,13 @@ namespace Azure { namespace Core { namespace Test {
       std::string recordingPath(baseRecordingPath);
       recordingPath.append("/recordings");
 
+      m_testContext.TestMode = Azure::Core::Test::InterceptorManager::GetTestMode();
       // Use the test info to init the test context and interceptor.
       auto testNameInfo = ::testing::UnitTest::GetInstance()->current_test_info();
-
       // set the interceptor for the current test
       m_testContext.RenameTest(
           Sanitize(testNameInfo->test_suite_name()), Sanitize(testNameInfo->name()));
       m_testContext.RecordingPath = recordingPath;
-      m_testContext.TestMode = Azure::Core::Test::InterceptorManager::GetTestMode();
       m_interceptor = std::make_unique<Azure::Core::Test::InterceptorManager>(m_testContext);
     }
 
