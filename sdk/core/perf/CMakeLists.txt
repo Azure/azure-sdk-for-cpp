@@ -28,6 +28,7 @@ set(
 set(
   AZURE_PERFORMANCE_SOURCE
   src/arg_parser.cpp
+  src/base_test.cpp
   src/options.cpp
   src/program.cpp
   src/random_stream.cpp

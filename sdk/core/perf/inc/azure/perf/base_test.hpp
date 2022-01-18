@@ -77,5 +77,27 @@ namespace Azure { namespace Perf {
      *
      */
     virtual void GlobalCleanup() {}
+
+    /**
+     * @brief Update an existing \p clientOptions with the test configuration set by the
+     * environment.
+     *
+     * @note If test proxy env var is set, the proxy policy is added to the \p clientOptions.
+     *
+     * @param clientOptions
+     */
+    template <class T> void ConfigureClientOptions(T& clientOptions) const;
+
+    /**
+     * @brief Create and return client options with test configuration set in the environment.
+     *
+     * @note If test proxy env var is set, the proxy policy is added to the \p clientOptions.
+     */
+    template <class T> T InitClientOptions() const
+    {
+      T options;
+      ConfigureClientOptions(options);
+      return options;
+    }
   };
 }} // namespace Azure::Perf
