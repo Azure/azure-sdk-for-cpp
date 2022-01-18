@@ -3,18 +3,21 @@
 
 #include <azure/storage/queues.hpp>
 
-#include "test_base.hpp"
+#include "test/ut/test_base.hpp"
 
 namespace Azure { namespace Storage { namespace Test {
 
-  class QueueClientTest : public ::testing::Test {
+  class QueueClientTest : public Azure::Storage::Test::StorageTest {
   protected:
-    static void SetUpTestSuite();
-    static void TearDownTestSuite();
+    void SetUp();
+    void TearDown();
 
-    static std::shared_ptr<Queues::QueueServiceClient> m_queueServiceClient;
-    static std::shared_ptr<Queues::QueueClient> m_queueClient;
-    static std::string m_queueName;
+    std::shared_ptr<Queues::QueueServiceClient> m_queueServiceClient;
+    std::shared_ptr<Queues::QueueClient> m_queueClient;
+    std::string m_queueName;
+    Queues::QueueClientOptions m_options;
+    std::string m_testName;
+    std::string m_testNameLowercase;
   };
 
 }}} // namespace Azure::Storage::Test

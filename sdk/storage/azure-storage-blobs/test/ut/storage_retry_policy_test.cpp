@@ -7,7 +7,7 @@
 
 #include <azure/storage/blobs.hpp>
 
-#include "test_base.hpp"
+#include "test/ut/test_base.hpp"
 
 namespace Azure { namespace Storage { namespace Test {
 
@@ -17,15 +17,17 @@ namespace Azure { namespace Storage { namespace Test {
 
     explicit MockTransportPolicy(std::string primaryContent)
         : m_primaryContent(std::make_shared<std::string>(std::move(primaryContent))),
-          m_primaryETag(DummyETag)
+          m_primaryETag(StorageTest::DummyETag)
     {
     }
 
     explicit MockTransportPolicy(std::string primaryContent, std::string secondaryContent)
         : m_primaryContent(std::make_shared<std::string>(std::move(primaryContent))),
           m_secondaryContent(std::make_shared<std::string>(std::move(secondaryContent))),
-          m_primaryETag(DummyETag),
-          m_secondaryETag(*m_secondaryContent == *m_primaryContent ? DummyETag : DummyETag2)
+          m_primaryETag(StorageTest::DummyETag),
+          m_secondaryETag(
+              *m_secondaryContent == *m_primaryContent ? StorageTest::DummyETag
+                                                       : StorageTest::DummyETag2)
     {
     }
 
@@ -246,7 +248,7 @@ namespace Azure { namespace Storage { namespace Test {
     std::function<ResponseType(Region)> m_failPolicy;
   };
 
-  TEST(StorageRetryPolicyTest, Basic)
+  TEST_F(StorageTest, StorageRetryPolicyTest_Basic)
   {
     std::string primaryContent = "primary content";
     auto transportPolicyPtr = std::make_unique<MockTransportPolicy>(primaryContent);
@@ -259,7 +261,7 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_EQ(std::string(responseBody.begin(), responseBody.end()), primaryContent);
   }
 
-  TEST(StorageRetryPolicyTest, Retry)
+  TEST_F(StorageTest, StorageRetryPolicyTest_Retry)
   {
     std::string primaryContent = "primary content";
     auto transportPolicyPtr = std::make_unique<MockTransportPolicy>(primaryContent);
@@ -294,7 +296,7 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_LE(elapsedTime, delayMs * 4);
   }
 
-  TEST(StorageRetryPolicyTest, Failover)
+  TEST_F(StorageTest, StorageRetryPolicyTest_Failover)
   {
     std::string primaryContent = "primary content";
     std::string secondaryContent = "secondary content";
@@ -330,7 +332,7 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_EQ(std::string(responseBody.begin(), responseBody.end()), secondaryContent);
   }
 
-  TEST(StorageRetryPolicyTest, Secondary404)
+  TEST_F(StorageTest, StorageRetryPolicyTest_Secondary404)
   {
     std::string primaryContent = "primary content";
     std::string secondaryContent = "secondary content";
@@ -380,7 +382,7 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_EQ(numSecondaryTrial, 1);
   }
 
-  TEST(StorageRetryPolicyTest, Secondary412)
+  TEST_F(StorageTest, StorageRetryPolicyTest_Secondary412)
   {
     std::string primaryContent = "primary content";
     std::string secondaryContent = "secondary content";

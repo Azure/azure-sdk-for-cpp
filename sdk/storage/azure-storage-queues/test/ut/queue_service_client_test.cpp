@@ -6,7 +6,7 @@
 #include <azure/identity/client_secret_credential.hpp>
 #include <azure/storage/queues.hpp>
 
-#include "test_base.hpp"
+#include "test/ut/test_base.hpp"
 
 namespace Azure { namespace Storage { namespace Queues { namespace Models {
 
@@ -38,22 +38,32 @@ namespace Azure { namespace Storage { namespace Queues { namespace Models {
 
 namespace Azure { namespace Storage { namespace Test {
 
-  class QueueServiceClientTest : public ::testing::Test {
+  class QueueServiceClientTest : public Azure::Storage::Test::StorageTest {
   protected:
-    QueueServiceClientTest()
-        : m_queueServiceClient(
-            Azure::Storage::Queues::QueueServiceClient::CreateFromConnectionString(
-                StandardStorageConnectionString()))
+    void SetUp()
     {
-    }
+      StorageTest::SetUp();
+      CHECK_SKIP_TEST();
 
-    Azure::Storage::Queues::QueueServiceClient m_queueServiceClient;
+      m_options = InitClientOptions<Queues::QueueClientOptions>();
+      m_testName = GetTestName();
+      m_testNameLowercase = GetTestNameLowerCase();
+      m_queueServiceClient = std::make_shared<Queues::QueueServiceClient>(
+          Queues::QueueServiceClient::CreateFromConnectionString(
+              StandardStorageConnectionString(), m_options));
+    }
+    void TearDown() { StorageTest::TearDown(); }
+
+    std::shared_ptr<Queues::QueueServiceClient> m_queueServiceClient;
+    Queues::QueueClientOptions m_options;
+    std::string m_testName;
+    std::string m_testNameLowercase;
   };
 
   TEST_F(QueueServiceClientTest, ListQueues)
   {
-    const std::string prefix1 = "prefix1-" + LowercaseRandomString() + "-";
-    const std::string prefix2 = "prefix2-" + LowercaseRandomString() + "-";
+    const std::string prefix1 = "prefix1-a-";
+    const std::string prefix2 = "prefix2-b-";
 
     std::set<std::string> p1Queues;
     std::set<std::string> p2Queues;
@@ -61,16 +71,16 @@ namespace Azure { namespace Storage { namespace Test {
 
     for (int i = 0; i < 5; ++i)
     {
-      std::string queueName = prefix1 + LowercaseRandomString();
-      auto queueClient = m_queueServiceClient.GetQueueClient(queueName);
+      std::string queueName = prefix1 + "a" + std::to_string(i);
+      auto queueClient = m_queueServiceClient->GetQueueClient(queueName);
       queueClient.Create();
       p1Queues.insert(queueName);
       p1p2Queues.insert(queueName);
     }
     for (int i = 0; i < 5; ++i)
     {
-      std::string queueName = prefix2 + LowercaseRandomString();
-      auto queueClient = m_queueServiceClient.GetQueueClient(queueName);
+      std::string queueName = prefix2 + "b" + std::to_string(i);
+      auto queueClient = m_queueServiceClient->GetQueueClient(queueName);
       queueClient.Create();
       p2Queues.insert(queueName);
       p1p2Queues.insert(queueName);
@@ -79,7 +89,7 @@ namespace Azure { namespace Storage { namespace Test {
     Azure::Storage::Queues::ListQueuesOptions options;
     options.PageSizeHint = 4;
     std::set<std::string> listQueues;
-    for (auto pageResult = m_queueServiceClient.ListQueues(options); pageResult.HasPage();
+    for (auto pageResult = m_queueServiceClient->ListQueues(options); pageResult.HasPage();
          pageResult.MoveToNextPage())
     {
       EXPECT_FALSE(pageResult.RawResponse->GetHeaders().at(_internal::HttpHeaderRequestId).empty());
@@ -97,7 +107,7 @@ namespace Azure { namespace Storage { namespace Test {
 
     options.Prefix = prefix1;
     listQueues.clear();
-    for (auto pageResult = m_queueServiceClient.ListQueues(options); pageResult.HasPage();
+    for (auto pageResult = m_queueServiceClient->ListQueues(options); pageResult.HasPage();
          pageResult.MoveToNextPage())
     {
       EXPECT_FALSE(pageResult.RawResponse->GetHeaders().at(_internal::HttpHeaderRequestId).empty());
@@ -116,14 +126,14 @@ namespace Azure { namespace Storage { namespace Test {
 
     for (const auto& q : p1p2Queues)
     {
-      auto queueClient = m_queueServiceClient.GetQueueClient(q);
+      auto queueClient = m_queueServiceClient->GetQueueClient(q);
       queueClient.Delete();
     }
   }
 
   TEST_F(QueueServiceClientTest, GetProperties)
   {
-    auto ret = m_queueServiceClient.GetProperties();
+    auto ret = m_queueServiceClient->GetProperties();
     auto properties = ret.Value;
     auto logging = properties.Logging;
     EXPECT_FALSE(logging.Version.empty());
@@ -153,7 +163,7 @@ namespace Azure { namespace Storage { namespace Test {
 
   TEST_F(QueueServiceClientTest, SetProperties)
   {
-    auto getServicePropertiesResult = m_queueServiceClient.GetProperties().Value;
+    auto getServicePropertiesResult = m_queueServiceClient->GetProperties().Value;
     Queues::Models::QueueServiceProperties properties;
     properties.Logging = getServicePropertiesResult.Logging;
     properties.HourMetrics = getServicePropertiesResult.HourMetrics;
@@ -193,12 +203,12 @@ namespace Azure { namespace Storage { namespace Test {
     corsRule.MaxAgeInSeconds = 20;
     properties.Cors.emplace_back(corsRule);
 
-    EXPECT_NO_THROW(m_queueServiceClient.SetProperties(properties));
+    EXPECT_NO_THROW(m_queueServiceClient->SetProperties(properties));
 
     // It takes some time before the new properties comes into effect.
     using namespace std::chrono_literals;
-    std::this_thread::sleep_for(10s);
-    auto downloadedProperties = m_queueServiceClient.GetProperties().Value;
+    TestSleep(10s);
+    auto downloadedProperties = m_queueServiceClient->GetProperties().Value;
     EXPECT_EQ(downloadedProperties.Logging.Version, properties.Logging.Version);
     EXPECT_EQ(downloadedProperties.Logging.Delete, properties.Logging.Delete);
     EXPECT_EQ(downloadedProperties.Logging.Read, properties.Logging.Read);
@@ -238,17 +248,17 @@ namespace Azure { namespace Storage { namespace Test {
 
     EXPECT_EQ(downloadedProperties.Cors, properties.Cors);
 
-    auto res = m_queueServiceClient.SetProperties(originalProperties);
+    auto res = m_queueServiceClient->SetProperties(originalProperties);
   }
 
   TEST_F(QueueServiceClientTest, Statistics)
   {
-    EXPECT_THROW(m_queueServiceClient.GetStatistics(), StorageException);
+    EXPECT_THROW(m_queueServiceClient->GetStatistics(), StorageException);
 
     auto keyCredential
         = _internal::ParseConnectionString(StandardStorageConnectionString()).KeyCredential;
     auto secondaryServiceClient = Queues::QueueServiceClient(
-        InferSecondaryUrl(m_queueServiceClient.GetUrl()), keyCredential);
+        InferSecondaryUrl(m_queueServiceClient->GetUrl()), keyCredential, m_options);
     auto serviceStatistics = secondaryServiceClient.GetStatistics().Value;
     EXPECT_FALSE(serviceStatistics.GeoReplication.Status.ToString().empty());
     if (serviceStatistics.GeoReplication.LastSyncedOn.HasValue())
@@ -259,11 +269,11 @@ namespace Azure { namespace Storage { namespace Test {
 
   TEST_F(QueueServiceClientTest, CreateDeleteQueue)
   {
-    std::string queueName = LowercaseRandomString();
-    auto queueClient = m_queueServiceClient.CreateQueue(queueName);
+    std::string queueName = m_testNameLowercase;
+    auto queueClient = m_queueServiceClient->CreateQueue(queueName);
     EXPECT_NO_THROW(queueClient.Value.GetProperties());
 
-    m_queueServiceClient.DeleteQueue(queueName);
+    m_queueServiceClient->DeleteQueue(queueName);
     EXPECT_THROW(queueClient.Value.GetProperties(), StorageException);
   }
 

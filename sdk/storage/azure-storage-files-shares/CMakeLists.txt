@@ -91,23 +91,7 @@ az_rtti_setup(
 create_code_coverage(storage azure-storage-files-shares azure-storage-test "tests?/*;samples?/*")
 
 if(BUILD_TESTING)
-  target_sources(
-    azure-storage-test
-      PRIVATE
-        test/macro_guard.cpp
-        test/share_client_test.cpp
-        test/share_client_test.hpp
-        test/share_directory_client_test.cpp
-        test/share_directory_client_test.hpp
-        test/share_file_attributes_test.cpp
-        test/share_file_client_test.cpp
-        test/share_file_client_test.hpp
-        test/share_sas_test.cpp
-        test/share_service_client_test.cpp
-        test/share_service_client_test.hpp
-  )
-
-  target_link_libraries(azure-storage-test PRIVATE azure-storage-files-shares)
+  add_subdirectory(test/ut)
 endif()
 
 if(BUILD_STORAGE_SAMPLES)
