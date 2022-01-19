@@ -50,7 +50,7 @@ namespace Azure { namespace Perf {
     /**
      * @brief Set the client options depending on the test options.
      *
-     * @param clientOptions
+     * @param clientOptions ref to the client options that contains the http pipeline policies.
      */
     void ConfigureCoreClientOptions(Azure::Core::_internal::ClientOptions* clientOptions);
 
@@ -120,7 +120,7 @@ namespace Azure { namespace Perf {
      *
      * @note If test proxy env var is set, the proxy policy is added to the \p clientOptions.
      *
-     * @param clientOptions
+     * @param clientOptions Ref to the client options that contains the Http client policies.
      */
     template <class T> void ConfigureClientOptions(T* clientOptions)
     {
