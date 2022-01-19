@@ -32,15 +32,29 @@ set(
     inc/azure/attestation/dll_import_export.hpp
     inc/azure/attestation/attestation_client.hpp
     inc/azure/attestation.hpp
-)
+    inc/azure/attestation/attestation_client_models.hpp
+    inc/azure/attestation/attestation_client_options.hpp
+    src/private/package_version.hpp
+    src/private/attestation_common_request.hpp
+    src/private/attestation_deserializer.hpp
+    src/private/jsonwebkeyset.hpp 
+    src/private/attestation_client_models_private.hpp)
 
 set(
   AZURE_ATTESTATION_SOURCE
-    src/private/package_version.hpp
     src/attestation_client.cpp
-)
+    src/attestation_client_options.cpp
+    src/attestation_common_request.cpp)
 
 add_library(azure-security-attestation ${AZURE_ATTESTATION_HEADER} ${AZURE_ATTESTATION_SOURCE})
+
+if(WIN32)
+    target_link_libraries(azure-core PRIVATE bcrypt crypt32)
+else()
+    # Required for Hashing ( md5 and sha ).
+    find_package(OpenSSL REQUIRED)
+    target_link_libraries(azure-core PRIVATE OpenSSL::SSL)
+endif()
 
 target_include_directories(
   azure-security-attestation
@@ -52,7 +66,7 @@ target_include_directories(
 )
 
 # Disable dependency on azure-core until azure-core has released to vcpkg
-# target_link_libraries(azure-attestation PUBLIC Azure::azure-core)
+target_link_libraries(azure-security-attestation PUBLIC Azure::azure-core)
 
 # make sure that users can consume the project as a library.
 add_library(Azure::azure-security-attestation ALIAS azure-security-attestation)
