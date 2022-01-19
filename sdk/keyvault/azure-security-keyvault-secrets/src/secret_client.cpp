@@ -9,10 +9,10 @@
 #include "azure/keyvault/secrets/secret_client.hpp"
 #include "azure/keyvault/secrets/keyvault_operations.hpp"
 #include "private/keyvault_protocol.hpp"
+#include "private/keyvault_secrets_common_request.hpp"
 #include "private/package_version.hpp"
 #include "private/secret_constants.hpp"
 #include "private/secret_serializers.hpp"
-
 #include <azure/keyvault/shared/keyvault_shared.hpp>
 
 #include <azure/core/credentials/credentials.hpp>
@@ -21,7 +21,7 @@
 
 #include <algorithm>
 #include <string>
-
+using namespace Azure::Core::Http;
 using namespace Azure::Security::KeyVault::Secrets;
 using namespace Azure::Core::Http::Policies;
 using namespace Azure::Core::Http::Policies::_internal;
@@ -60,10 +60,27 @@ static inline RequestWithContinuationToken BuildRequestFromContinuationToken(
 
 const ServiceVersion ServiceVersion::V7_2("7.2");
 
+std::unique_ptr<RawResponse> SecretClient::SendRequest(
+    Azure::Core::Http::Request& request,
+    Azure::Core::Context const& context) const
+{
+  return KeyVaultSecretsCommonRequest::SendRequest(*m_pipeline, request, context);
+}
+
+Request SecretClient::CreateRequest(
+    HttpMethod method,
+    std::vector<std::string> const& path,
+    Azure::Core::IO::BodyStream* content) const
+{
+  return KeyVaultSecretsCommonRequest::CreateRequest(
+      m_vaultUrl, m_apiVersion, method, path, content);
+}
+
 SecretClient::SecretClient(
     std::string const& vaultUrl,
     std::shared_ptr<Core::Credentials::TokenCredential const> credential,
     SecretClientOptions options)
+    : m_vaultUrl(vaultUrl), m_apiVersion(options.Version.ToString())
 {
   auto apiVersion = options.Version.ToString();
   Azure::Core::Url url(vaultUrl);
@@ -77,11 +94,14 @@ SecretClient::SecretClient(
         std::make_unique<BearerTokenAuthenticationPolicy>(credential, tokenContext));
   }
 
-  m_protocolClient = std::make_shared<Azure::Security::KeyVault::_detail::KeyVaultProtocolClient>(
-      std::move(url),
-      apiVersion,
-      Azure::Core::Http::_internal::HttpPipeline(
-          options, TelemetryName, PackageVersion::ToString(), std::move(perRetrypolicies), {}));
+  std::vector<std::unique_ptr<HttpPolicy>> perCallpolicies;
+
+  m_pipeline = std::make_shared<Azure::Core::Http::_internal::HttpPipeline>(
+      options,
+      KeyVaultServicePackageName,
+      PackageVersion::ToString(),
+      std::move(perRetrypolicies),
+      std::move(perCallpolicies));
 }
 
 Azure::Response<KeyVaultSecret> SecretClient::GetSecret(
@@ -89,26 +109,24 @@ Azure::Response<KeyVaultSecret> SecretClient::GetSecret(
     GetSecretOptions const& options,
     Azure::Core::Context const& context) const
 {
-  return m_protocolClient->SendRequest<KeyVaultSecret>(
-      context,
-      Azure::Core::Http::HttpMethod::Get,
-      [&name](Azure::Core::Http::RawResponse const& rawResponse) {
-        return _detail::SecretSerializer::Deserialize(name, rawResponse);
-      },
-      {_detail::SecretPath, name, options.Version});
+  auto request = CreateRequest(HttpMethod::Get, {_detail::SecretPath, name, options.Version});
+
+  // Send and parse respone
+  auto rawResponse = SendRequest(request, context);
+  auto value = _detail::SecretSerializer::Deserialize(name, *rawResponse);
+  return Azure::Response<KeyVaultSecret>(std::move(value), std::move(rawResponse));
 }
 
 Azure::Response<DeletedSecret> SecretClient::GetDeletedSecret(
     std::string const& name,
     Azure::Core::Context const& context) const
 {
-  return m_protocolClient->SendRequest<DeletedSecret>(
-      context,
-      Azure::Core::Http::HttpMethod::Get,
-      [&name](Azure::Core::Http::RawResponse const& rawResponse) {
-        return _detail::DeletedSecretSerializer::Deserialize(name, rawResponse);
-      },
-      {_detail::DeletedSecretPath, name});
+  auto request = CreateRequest(HttpMethod::Get, {_detail::DeletedSecretPath, name});
+
+  // Send and parse respone
+  auto rawResponse = SendRequest(request, context);
+  auto value = _detail::DeletedSecretSerializer::Deserialize(name, *rawResponse);
+  return Azure::Response<DeletedSecret>(std::move(value), std::move(rawResponse));
 }
 
 Azure::Response<KeyVaultSecret> SecretClient::SetSecret(
@@ -125,66 +143,73 @@ Azure::Response<KeyVaultSecret> SecretClient::SetSecret(
     KeyVaultSecret const& secret,
     Azure::Core::Context const& context) const
 {
-  return m_protocolClient->SendRequest<KeyVaultSecret>(
-      context,
-      Azure::Core::Http::HttpMethod::Put,
-      [&secret]() { return _detail::SecretSerializer::Serialize(secret); },
-      [&name](Azure::Core::Http::RawResponse const& rawResponse) {
-        return _detail::SecretSerializer::Deserialize(name, rawResponse);
-      },
-      {_detail::SecretPath, name});
+  auto payload = _detail::SecretSerializer::Serialize(secret);
+  Azure::Core::IO::MemoryBodyStream payloadStream(
+      reinterpret_cast<const uint8_t*>(payload.data()), payload.size());
+
+  auto request = CreateRequest(HttpMethod::Put, {_detail::SecretPath, name}, &payloadStream);
+  // Send and parse respone
+  auto rawResponse = SendRequest(request, context);
+  auto value = _detail::SecretSerializer::Deserialize(name, *rawResponse);
+  return Azure::Response<KeyVaultSecret>(std::move(value), std::move(rawResponse));
 }
 
 Azure::Response<KeyVaultSecret> SecretClient::UpdateSecretProperties(
     SecretProperties const& properties,
     Azure::Core::Context const& context) const
 {
-  return m_protocolClient->SendRequest<KeyVaultSecret>(
-      context,
-      Azure::Core::Http::HttpMethod::Patch,
-      [&properties]() { return _detail::SecretPropertiesSerializer::Serialize(properties); },
-      [&properties](Azure::Core::Http::RawResponse const& rawResponse) {
-        return _detail::SecretSerializer::Deserialize(properties.Name, rawResponse);
-      },
-      {_detail::SecretPath, properties.Name, properties.Version});
+  auto payload = _detail::SecretPropertiesSerializer::Serialize(properties);
+  Azure::Core::IO::MemoryBodyStream payloadStream(
+      reinterpret_cast<const uint8_t*>(payload.data()), payload.size());
+
+  auto request = CreateRequest(
+      HttpMethod::Patch,
+      {_detail::SecretPath, properties.Name, properties.Version},
+      &payloadStream);
+  // Send and parse respone
+  auto rawResponse = SendRequest(request, context);
+  auto value = _detail::SecretSerializer::Deserialize(properties.Name, *rawResponse);
+  return Azure::Response<KeyVaultSecret>(std::move(value), std::move(rawResponse));
 }
 
 Azure::Response<BackupSecretResult> SecretClient::BackupSecret(
     std::string const& name,
     Azure::Core::Context const& context) const
 {
-  return m_protocolClient->SendRequest<BackupSecretResult>(
-      context,
-      Azure::Core::Http::HttpMethod::Post,
-      [](Azure::Core::Http::RawResponse const& rawResponse) {
-        return _detail::BackupSecretSerializer::Deserialize(rawResponse);
-      },
-      {_detail::SecretPath, name, _detail::BackupSecretPath});
+  auto request
+      = CreateRequest(HttpMethod::Post, {_detail::SecretPath, name, _detail::BackupSecretPath});
+  // Send and parse respone
+  auto rawResponse = SendRequest(request, context);
+  auto value = _detail::BackupSecretSerializer::Deserialize(*rawResponse);
+  return Azure::Response<BackupSecretResult>(std::move(value), std::move(rawResponse));
 }
 
 Azure::Response<KeyVaultSecret> SecretClient::RestoreSecretBackup(
     BackupSecretResult const& backup,
     Azure::Core::Context const& context) const
 {
-  return m_protocolClient->SendRequest<KeyVaultSecret>(
-      context,
-      Azure::Core::Http::HttpMethod::Post,
-      [&backup]() { return _detail::RestoreSecretSerializer::Serialize(backup.Secret); },
-      [](Azure::Core::Http::RawResponse const& rawResponse) {
-        return _detail::SecretSerializer::Deserialize(rawResponse);
-      },
-      {_detail::SecretPath, _detail::RestoreSecretPath});
+  auto payload = _detail::RestoreSecretSerializer::Serialize(backup.Secret);
+  Azure::Core::IO::MemoryBodyStream payloadStream(
+      reinterpret_cast<const uint8_t*>(payload.data()), payload.size());
+
+  auto request = CreateRequest(
+      HttpMethod::Post, {_detail::SecretPath, _detail::RestoreSecretPath},
+      &payloadStream);
+  // Send and parse respone
+  auto rawResponse = SendRequest(request, context);
+  auto value = _detail::SecretSerializer::Deserialize(*rawResponse);
+  return Azure::Response<KeyVaultSecret>(std::move(value), std::move(rawResponse));
 }
 
 Azure::Response<PurgedSecret> SecretClient::PurgeDeletedSecret(
     std::string const& name,
     Azure::Core::Context const& context) const
 {
-  return m_protocolClient->SendRequest<PurgedSecret>(
-      context,
-      Azure::Core::Http::HttpMethod::Delete,
-      [](Azure::Core::Http::RawResponse const&) { return PurgedSecret(); },
-      {_detail::DeletedSecretPath, name});
+  auto request = CreateRequest(HttpMethod::Delete, {_detail::DeletedSecretPath, name});
+  // Send and parse respone
+  auto rawResponse = SendRequest(request, context);
+  PurgedSecret value;
+  return Azure::Response<PurgedSecret>(std::move(value), std::move(rawResponse));
 }
 
 Azure::Security::KeyVault::Secrets::DeleteSecretOperation SecretClient::StartDeleteSecret(
