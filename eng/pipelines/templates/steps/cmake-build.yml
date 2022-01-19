@@ -3,6 +3,7 @@ parameters:
   GenerateArgs: ''
   Build: true
   BuildArgs: ''
+  ServiceDirectory: ''
 
 
 steps:
@@ -17,7 +18,15 @@ steps:
     workingDirectory: build
     displayName: cmake generate
 
-  - ${{ if eq(parameters.Build, true) }}:
+# Core should build all cmake tagets
+  - ${{ if and(eq(parameters.Build, true), eq(parameters.ServiceDirectory, 'core')) }}:
     - script: cmake --build . ${{ parameters.BuildArgs }}
       workingDirectory: build
-      displayName: cmake build
+      displayName: cmake build All
+
+# Non-core services defines the list of targets to build
+  - ${{ if and(eq(parameters.Build, true) , ne(parameters.ServiceDirectory, 'core')) }}:
+    - script: cmake --build . ${{ parameters.BuildArgs }} --target `cat ${{ parameters.ServiceDirectory }}-targets-build.txt`
+      workingDirectory: build
+      displayName: cmake build Targets
+

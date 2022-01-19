@@ -103,6 +103,7 @@ jobs:
 
         - template: /eng/pipelines/templates/steps/cmake-build.yml
           parameters:
+            ServiceDirectory: ${{ parameters.ServiceDirectory }}
             Build: false
             GenerateArgs: >-
               -DINSTALL_GTEST=OFF

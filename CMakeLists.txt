@@ -13,16 +13,17 @@ option(BUILD_TRANSPORT_CURL "Build an HTTP transport implementation with CURL" O
 option(BUILD_TRANSPORT_WINHTTP "Build an HTTP transport implementation with WIN HTTP" OFF)
 option(BUILD_TRANSPORT_CUSTOM "Implementation for AzureSdkGetCustomHttpTransport function must be linked to the final application" OFF)
 option(BUILD_TESTING "Build test cases" OFF)
+option(BUILD_SAMPLES "Build test cases" OFF)
 option(BUILD_RTTI "Build libraries with run-time type information." ON)
 option(BUILD_CODE_COVERAGE "Build gcov targets for HTML and XML reports. Requires debug build and BUILD_TESTING" OFF)
 option(BUILD_DOCUMENTATION "Create HTML based API documentation (requires Doxygen)" OFF)
 option(RUN_LONG_UNIT_TESTS "Tests that takes more than 5 minutes to complete. No effect if BUILD_TESTING is OFF" OFF)
-option(BUILD_STORAGE_SAMPLES "Build sample application for Azure Storage clients" OFF)
 option(BUILD_PERFORMANCE_TESTS "Build the performance test library" OFF)
 option(MSVC_USE_STATIC_CRT "(MSVC only) Set to ON to link SDK with static CRT (/MT or /MTd switch)." OFF)
 
 include(AzureTransportAdapters)
 include(AzureVcpkg)
+include(AzureBuildTargetForCI)
 
 az_vcpkg_integrate()
 
