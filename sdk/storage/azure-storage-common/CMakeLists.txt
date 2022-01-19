@@ -17,6 +17,7 @@ include(AzureTransportAdapters)
 include(AzureDoxygen)
 include(AzureGlobalCompileOptions)
 include(AzureConfigRTTI)
+include(AzureBuildTargetForCI)
 
 az_vcpkg_integrate()
 

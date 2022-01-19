@@ -11,6 +11,7 @@ add_executable (
   sample3-get-keys
   sample3_get_keys.cpp
 )
+create_per_service_target_build(sample3-get-keys keyvault)
 
 # Add the sample to be run on CI. 
 # CI pipeline reads the {service}-samples.txt and runs the binaries listed there.

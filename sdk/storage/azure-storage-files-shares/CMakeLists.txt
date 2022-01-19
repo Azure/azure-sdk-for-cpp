@@ -17,6 +17,7 @@ include(AzureTransportAdapters)
 include(AzureDoxygen)
 include(AzureGlobalCompileOptions)
 include(AzureConfigRTTI)
+include(AzureBuildTargetForCI)
 
 az_vcpkg_integrate()
 
@@ -94,6 +95,6 @@ if(BUILD_TESTING)
   add_subdirectory(test/ut)
 endif()
 
-if(BUILD_STORAGE_SAMPLES)
+if(BUILD_SAMPLES)
   add_subdirectory(samples)
 endif()
