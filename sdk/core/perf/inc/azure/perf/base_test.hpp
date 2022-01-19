@@ -39,6 +39,15 @@ namespace Azure { namespace Perf {
     void PostSetUp();
 
     /**
+     * @brief Define actions to run after test test run.
+     *
+     * @details This method enabled the performance framework to remove test proxy forwarding before
+     * letting test do clean up.
+     *
+     */
+    void PreCleanUp();
+
+    /**
      * @brief Set the client options depending on the test options.
      *
      * @param clientOptions

@@ -316,10 +316,10 @@ void Azure::Perf::Program::Run(
   }
 
   /******************** Global Set up ******************************/
-  std::cout << std::endl << "Running Global SetUp." << std::endl;
+  std::cout << std::endl << "=== Global Setup ===" << std::endl;
   test->GlobalSetup();
 
-  std::cout << std::endl << "Running Test SetUp." << std::endl;
+  std::cout << std::endl << "=== Test Setup ===" << std::endl;
 
   /******************** Set up ******************************/
   {
@@ -336,7 +336,7 @@ void Azure::Perf::Program::Run(
   }
 
   // instrument test for recordings if the env is set up.
-  std::cout << std::endl << "Running post test set up." << std::endl;
+  std::cout << std::endl << "=== Post Setup ===" << std::endl;
   {
     std::vector<std::thread> tasks(parallelTasks);
     for (int i = 0; i < parallelTasks; i++)
@@ -349,8 +349,6 @@ void Azure::Perf::Program::Run(
       t.join();
     }
   }
-
-  std::cout << std::endl << "Running tests now..." << std::endl;
 
   /******************** WarmUp ******************************/
   if (options.Warmup)
@@ -374,6 +372,20 @@ void Azure::Perf::Program::Run(
   catch (std::exception const& error)
   {
     std::cout << "Error: " << error.what();
+  }
+
+  std::cout << std::endl << "=== Pre-Cleanup ===" << std::endl;
+  {
+    std::vector<std::thread> tasks(parallelTasks);
+    for (int i = 0; i < parallelTasks; i++)
+    {
+      tasks[i] = std::thread([&parallelTest, i]() { parallelTest[i]->PreCleanUp(); });
+    }
+    // Wait for all tests to complete setUp
+    for (auto& t : tasks)
+    {
+      t.join();
+    }
   }
 
   /******************** Clean up ******************************/

@@ -44,13 +44,18 @@ public:
     {
       redirectRequest.SetHeader(header.first, header.second);
     }
+    // QP
+    for (auto const& qp : request.GetUrl().GetQueryParameters())
+    {
+      redirectRequest.GetUrl().AppendQueryParameter(qp.first, qp.second);
+    }
     // Set x-recording-upstream-base-uri
     {
       auto const& url = request.GetUrl();
       auto const port = url.GetPort();
-      redirectRequest.SetHeader(
-          "x-recording-upstream-base-uri",
-          url.GetHost() + (port != 0 ? ":" + std::to_string(port) : ""));
+      auto const host
+          = url.GetScheme() + "://" + url.GetHost() + (port != 0 ? ":" + std::to_string(port) : "");
+      redirectRequest.SetHeader("x-recording-upstream-base-uri", host);
     }
     // Set recording-id
     redirectRequest.SetHeader("x-recording-id", RecordId);
@@ -143,7 +148,48 @@ namespace Azure { namespace Perf {
         startPlayback.AppendPath("start");
         Azure::Core::Http::Request request(Azure::Core::Http::HttpMethod::Post, startPlayback);
         request.SetHeader("x-recording-id", RecordId);
+        auto response = pipeline.Send(request, ctx);
+
+        auto const& headers = response->GetHeaders();
+        auto findHeader = std::find_if(
+            headers.begin(),
+            headers.end(),
+            [](std::pair<std::string const&, std::string const&> h) {
+              return h.first == "x-recording-id";
+            });
+        RecordId.clear();
+        RecordId.append(findHeader->second);
+        IsPlayBackMode = true;
+      }
+    }
+  }
+
+  void BaseTest::PreCleanUp()
+  {
+    if (!RecordId.empty())
+    {
+      std::string proxy(m_options.GetOptionOrDefault("Proxy", ""));
+      Azure::Core::_internal::ClientOptions clientOp;
+      clientOp.Retry.MaxRetries = 0;
+      std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>> policiesOp;
+      std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>> policiesRe;
+      Azure::Core::Http::_internal::HttpPipeline pipeline(
+          clientOp, "PerfFw", "na", std::move(policiesRe), std::move(policiesOp));
+      Azure::Core::Context ctx;
+
+      // Stop playback
+      {
+        Azure::Core::Url stopPlaybackReq(proxy);
+        stopPlaybackReq.AppendPath("playback");
+        stopPlaybackReq.AppendPath("stop");
+        Azure::Core::Http::Request request(Azure::Core::Http::HttpMethod::Post, stopPlaybackReq);
+        request.SetHeader("x-recording-id", RecordId);
+        request.SetHeader("x-purge-inmemory-recording", "true");
+
         pipeline.Send(request, ctx);
+
+        RecordId.clear();
+        IsPlayBackMode = false;
       }
     }
   }

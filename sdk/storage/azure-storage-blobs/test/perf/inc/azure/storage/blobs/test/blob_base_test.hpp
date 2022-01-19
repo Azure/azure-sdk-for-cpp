@@ -62,7 +62,7 @@ namespace Azure { namespace Storage { namespace Blobs { namespace Test {
     void Setup() override
     {
       // Get connection string from env
-      const static std::string envConnectionString = std::getenv("STORAGE_CONNECTION_STRING");
+      const static std::string envConnectionString = std::getenv("STANDARD_STORAGE_CONNECTION_STRING");
       m_connectionString = envConnectionString;
 
       // Generate random container and blob names.
@@ -71,7 +71,8 @@ namespace Azure { namespace Storage { namespace Blobs { namespace Test {
 
       // Create client, container and blobClient
       m_serviceClient = std::make_unique<Azure::Storage::Blobs::BlobServiceClient>(
-          Azure::Storage::Blobs::BlobServiceClient::CreateFromConnectionString(m_connectionString));
+          Azure::Storage::Blobs::BlobServiceClient::CreateFromConnectionString(
+              m_connectionString, InitClientOptions<Azure::Storage::Blobs::BlobClientOptions>()));
       m_containerClient = std::make_unique<Azure::Storage::Blobs::BlobContainerClient>(
           m_serviceClient->GetBlobContainerClient(m_containerName));
       m_containerClient->CreateIfNotExists();
