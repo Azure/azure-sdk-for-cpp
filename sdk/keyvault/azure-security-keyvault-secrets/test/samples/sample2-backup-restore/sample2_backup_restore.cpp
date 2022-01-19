@@ -124,7 +124,7 @@ void AssertSecretsEqual(KeyVaultSecret const& expected, KeyVaultSecret const& ac
   (void)expected;
   (void)actual;
 #endif
-  // assert(expected.Name == actual.Name);
-  // assert(expected.Properties.Version == actual.Properties.Version);
-  // assert(expected.Id == actual.Id);
+  assert(expected.Name == actual.Name);
+  assert(expected.Properties.Version == actual.Properties.Version);
+  assert(expected.Id == actual.Id);
 }
