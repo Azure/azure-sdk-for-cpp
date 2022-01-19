@@ -9,21 +9,48 @@
 
 #pragma once
 
-#include <azure/core/context.hpp>
-
+#include "azure/perf/options.hpp"
 #include "azure/perf/test_options.hpp"
+#include <azure/core/context.hpp>
+#include <azure/core/internal/client_options.hpp>
 
 #include <string>
 #include <vector>
 
 namespace Azure { namespace Perf {
+  class Program;
 
   /**
    * @brief The base interface for a performance test.
    *
    */
-  struct BaseTest
-  {
+  class BaseTest {
+    // Provides private access so a test program can run PostSetup.
+    friend class Program;
+
+  private:
+    /**
+     * @brief Define actions to run after test set up and before the actual test.
+     *
+     * @details This method enables the performance framework to set the proxy server for recordings
+     * or any other configuration to happen after a test set up definition.
+     *
+     */
+    void PostSetUp();
+
+    /**
+     * @brief Set the client options depending on the test options.
+     *
+     * @param clientOptions
+     */
+    void ConfigureCoreClientOptions(Azure::Core::_internal::ClientOptions* clientOptions);
+
+  protected:
+    Azure::Perf::TestOptions m_options;
+
+  public:
+    BaseTest(Azure::Perf::TestOptions options) : m_options(options) {}
+
     /**
      * @brief Run one time at the beggining and before any test.
      *
@@ -86,17 +113,20 @@ namespace Azure { namespace Perf {
      *
      * @param clientOptions
      */
-    template <class T> void ConfigureClientOptions(T& clientOptions) const;
+    template <class T> void ConfigureClientOptions(T* clientOptions)
+    {
+      ConfigureCoreClientOptions(clientOptions);
+    }
 
     /**
      * @brief Create and return client options with test configuration set in the environment.
      *
      * @note If test proxy env var is set, the proxy policy is added to the \p clientOptions.
      */
-    template <class T> T InitClientOptions() const
+    template <class T> T InitClientOptions()
     {
       T options;
-      ConfigureClientOptions(options);
+      ConfigureClientOptions(&options);
       return options;
     }
   };

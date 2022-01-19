@@ -20,12 +20,12 @@ argagg::parser_results Azure::Perf::Program::ArgParser::Parse(
   for (auto option : testOptions)
   {
     argParser.definitions.push_back(
-        {option.Name, option.Activators, option.DisplayMessage, option.expectedArgs});
+        {option.Name, option.Activators, option.DisplayMessage, option.ExpectedArgs});
   }
   for (auto option : optionsMetadata)
   {
     argParser.definitions.push_back(
-        {option.Name, option.Activators, option.DisplayMessage, option.expectedArgs});
+        {option.Name, option.Activators, option.DisplayMessage, option.ExpectedArgs});
   }
 
   // Will throw on fail
@@ -92,6 +92,10 @@ Azure::Perf::GlobalTestOptions Azure::Perf::Program::ArgParser::Parse(
   if (parsedArgs["Warmup"])
   {
     options.Warmup = parsedArgs["Warmup"];
+  }
+  if (parsedArgs["Proxy"])
+  {
+    options.Proxy = parsedArgs["Proxy"].as<std::string>();
   }
 
   return options;

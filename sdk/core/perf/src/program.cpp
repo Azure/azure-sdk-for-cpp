@@ -84,11 +84,11 @@ inline void PrintOptions(
       try
       {
         optionsAsJson[option.Name]
-            = option.sensitiveData ? "***" : parsedArgs[option.Name].as<std::string>();
+            = option.SensitiveData ? "***" : parsedArgs[option.Name].as<std::string>();
       }
       catch (std::out_of_range const&)
       {
-        if (!option.required)
+        if (!option.Required)
         {
           // arg was not parsed
           optionsAsJson[option.Name] = "default value";
@@ -316,7 +316,10 @@ void Azure::Perf::Program::Run(
   }
 
   /******************** Global Set up ******************************/
+  std::cout << std::endl << "Running Global SetUp." << std::endl;
   test->GlobalSetup();
+
+  std::cout << std::endl << "Running Test SetUp." << std::endl;
 
   /******************** Set up ******************************/
   {
@@ -331,6 +334,23 @@ void Azure::Perf::Program::Run(
       t.join();
     }
   }
+
+  // instrument test for recordings if the env is set up.
+  std::cout << std::endl << "Running post test set up." << std::endl;
+  {
+    std::vector<std::thread> tasks(parallelTasks);
+    for (int i = 0; i < parallelTasks; i++)
+    {
+      tasks[i] = std::thread([&parallelTest, i]() { parallelTest[i]->PostSetUp(); });
+    }
+    // Wait for all tests to complete setUp
+    for (auto& t : tasks)
+    {
+      t.join();
+    }
+  }
+
+  std::cout << std::endl << "Running tests now..." << std::endl;
 
   /******************** WarmUp ******************************/
   if (options.Warmup)

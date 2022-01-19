@@ -97,6 +97,15 @@ namespace Azure { namespace Perf {
     int Warmup = 5;
 
     /**
+     * @brief Redirect test requests thru this server proxy.
+     *
+     * @note Only the requests from the test are redirected. Any request from set up won't be
+     * redirected.
+     *
+     */
+    std::string Proxy;
+
+    /**
      * @brief Create an array of the performance framework options.
      *
      * @return An array of the options as #Azure::Perf::TestOption.
