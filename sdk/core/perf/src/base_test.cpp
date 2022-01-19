@@ -29,16 +29,46 @@ public:
       NextHttpPolicy nextPolicy,
       Context const& context) const override
   {
+    if (RecordId.empty())
+    {
+      return nextPolicy.Send(request, context);
+    }
+
+    // Use a new request to redirect
+    auto redirectRequest
+        = Azure::Core::Http::Request(request.GetMethod(), m_proxy, request.GetBodyStream());
+    redirectRequest.GetUrl().SetPath(request.GetUrl().GetPath());
+
+    // Copy all headers
+    for (auto& header : request.GetHeaders())
+    {
+      redirectRequest.SetHeader(header.first, header.second);
+    }
+    // Set x-recording-upstream-base-uri
+    {
+      auto const& url = request.GetUrl();
+      auto const port = url.GetPort();
+      redirectRequest.SetHeader(
+          "x-recording-upstream-base-uri",
+          url.GetHost() + (port != 0 ? ":" + std::to_string(port) : ""));
+    }
+    // Set recording-id
+    redirectRequest.SetHeader("x-recording-id", RecordId);
+    redirectRequest.SetHeader("x-recording-remove", "false");
+
+    // Using recordId, find out MODE
     if (IsPlayBackMode)
     {
-      std::cout << "-----From POLICY PLAYBACK" << std::endl;
+      // PLAYBACK mode
+      redirectRequest.SetHeader("x-recording-mode", "playback");
     }
     else
     {
-      std::cout << "-----From POLICY NON PLAYBACK" << std::endl;
+      // RECORDING mode
+      redirectRequest.SetHeader("x-recording-mode", "record");
     }
 
-    return nextPolicy.Send(request, context);
+    return nextPolicy.Send(redirectRequest, context);
   }
 
   std::unique_ptr<HttpPolicy> Clone() const override
@@ -108,10 +138,10 @@ namespace Azure { namespace Perf {
 
       // Start playback
       {
-        Azure::Core::Url startPlaybak(proxy);
-        startPlaybak.AppendPath("playback");
-        startPlaybak.AppendPath("start");
-        Azure::Core::Http::Request request(Azure::Core::Http::HttpMethod::Post, startPlaybak);
+        Azure::Core::Url startPlayback(proxy);
+        startPlayback.AppendPath("playback");
+        startPlayback.AppendPath("start");
+        Azure::Core::Http::Request request(Azure::Core::Http::HttpMethod::Post, startPlayback);
         request.SetHeader("x-recording-id", RecordId);
         pipeline.Send(request, ctx);
       }
