@@ -62,7 +62,8 @@ namespace Azure { namespace Storage { namespace Blobs { namespace Test {
     void Setup() override
     {
       // Get connection string from env
-      const static std::string envConnectionString = std::getenv("STANDARD_STORAGE_CONNECTION_STRING");
+      const static std::string envConnectionString
+          = std::getenv("STANDARD_STORAGE_CONNECTION_STRING");
       m_connectionString = envConnectionString;
 
       // Generate random container and blob names.
