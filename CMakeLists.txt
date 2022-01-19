@@ -20,6 +20,12 @@ option(RUN_LONG_UNIT_TESTS "Tests that takes more than 5 minutes to complete. No
 option(BUILD_STORAGE_SAMPLES "Build sample application for Azure Storage clients" OFF)
 option(BUILD_PERFORMANCE_TESTS "Build the performance test library" OFF)
 option(MSVC_USE_STATIC_CRT "(MSVC only) Set to ON to link SDK with static CRT (/MT or /MTd switch)." OFF)
+option(BUILD_SOURCE_DEPS "build source dependencies, not for global use, instead use when building specific component" OFF)
+
+if(BUILD_SOURCE_DEPS)
+  message(FATAL_ERROR, "BUILD_SOURCE_DEPS flag not for global use, instead use when building individual components")
+  return()
+endif()
 
 include(AzureTransportAdapters)
 include(AzureVcpkg)

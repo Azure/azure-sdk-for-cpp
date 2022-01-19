@@ -2,10 +2,10 @@ macro(GetFolderList project)
     message ("project found ${project}")
   
     if(${project} STREQUAL CERTIFICATES)
-        DownloadDepVersion(sdk/core azure-core 1.3.1)
+        DownloadDepVersion(sdk/core azure-core 1.2.0)
         DownloadDepVersion(sdk/identity azure-identity 1.1.0)
     elseif(${project} STREQUAL IDENTITY)
-        DownloadDepVersion(sdk/core azure-core 1.3.1)
+        DownloadDepVersion(sdk/core azure-core 1.2.0)
     endif()
 
     list(REMOVE_DUPLICATES BUILD_FOLDERS)
@@ -33,8 +33,8 @@ endmacro()
 
 macro(DownloadDepVersion DEP_FOLDER DEP_NAME DEP_VERSION)
 
-    file(REMOVE_RECURSE ${CMAKE_SOURCE_DIR}/${DEP_FOLDER})
-    set(DOWNLOAD_FOLDER ${CMAKE_SOURCE_DIR}/downloads)
+    file(REMOVE_RECURSE ${CMAKE_SOURCE_DIR}/build/${DEP_FOLDER})
+    set(DOWNLOAD_FOLDER ${CMAKE_SOURCE_DIR}/build/downloads)
     set(DOWNLOAD_FILE ${DEP_NAME}_${DEP_VERSION}.zip)
     set(DEP_PREFIX azure-sdk-for-cpp)
     # get the zip
@@ -43,14 +43,14 @@ macro(DownloadDepVersion DEP_FOLDER DEP_NAME DEP_VERSION)
     #extract the zip
     file(ARCHIVE_EXTRACT INPUT ${DOWNLOAD_FOLDER}/${DOWNLOAD_FILE} DESTINATION ${DOWNLOAD_FOLDER}/${DEP_NAME})
     #make target folder
-    file(MAKE_DIRECTORY ${CMAKE_SOURCE_DIR}/${DEP_FOLDER})
+    file(MAKE_DIRECTORY ${CMAKE_SOURCE_DIR}/build/${DEP_FOLDER})
     # need a nicer way to copy/move folder 
     # i need to archive the folder then extract at new location
     execute_process(COMMAND tar -cf  ${DOWNLOAD_FOLDER}/${DEP_NAME}.tar -C ${DOWNLOAD_FOLDER}/${DEP_NAME}/${DEP_PREFIX}-${DEP_NAME}_${DEP_VERSION}/${DEP_FOLDER} .)
-    file(ARCHIVE_EXTRACT INPUT ${DOWNLOAD_FOLDER}/${DEP_NAME}.tar DESTINATION ${CMAKE_SOURCE_DIR}/${DEP_FOLDER})
+    file(ARCHIVE_EXTRACT INPUT ${DOWNLOAD_FOLDER}/${DEP_NAME}.tar DESTINATION ${CMAKE_SOURCE_DIR}/build/${DEP_FOLDER})
     #cleanup
     file(REMOVE_RECURSE ${DOWNLOAD_FOLDER})
     #add dependency folder to build list
-    list(APPEND BUILD_FOLDERS ${DEP_FOLDER})
+    list(APPEND BUILD_FOLDERS build/${DEP_FOLDER})
 
 endmacro()

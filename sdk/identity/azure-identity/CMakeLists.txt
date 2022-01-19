@@ -34,7 +34,7 @@ if(BUILD_SOURCE_DEPS)
     GetFolderList(IDENTITY)
     foreach(oneFolder IN LISTS BUILD_FOLDERS)
         message("add folder ${oneFolder}")
-        add_subdirectory(${oneFolder})
+        add_subdirectory(${oneFolder} EXCLUDE_FROM_ALL)
     endforeach()
 elseif(NOT AZ_ALL_LIBRARIES)
   find_package(azure-core-cpp "1.2.0" CONFIG QUIET)
@@ -77,7 +77,7 @@ target_include_directories(
   azure-identity
     PUBLIC
       $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/inc>
-      $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/sdk/core/azure-core/inc>
+      $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/build/sdk/core/azure-core/inc>
       $<INSTALL_INTERFACE:include>
       ${azure-core-cpp_INCLUDE_DIRS}
 )
