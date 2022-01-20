@@ -17,7 +17,6 @@ include(AzureTransportAdapters)
 include(AzureDoxygen)
 include(AzureGlobalCompileOptions)
 include(AzureConfigRTTI)
-include(AzureBuildTargetForCI)
 
 az_vcpkg_integrate()
 
@@ -60,7 +59,7 @@ set(
 )
 
 add_library(azure-storage-files-shares ${AZURE_STORAGE_FILES_SHARES_HEADER} ${AZURE_STORAGE_FILES_SHARES_SOURCE})
-create_per_service_target_build(azure-storage-files-shares storage)
+
 # make sure that users can consume the project as a library.
 add_library(Azure::azure-storage-files-shares ALIAS azure-storage-files-shares)
 
@@ -95,6 +94,6 @@ if(BUILD_TESTING)
   add_subdirectory(test/ut)
 endif()
 
-if(BUILD_SAMPLES)
+if(BUILD_STORAGE_SAMPLES)
   add_subdirectory(samples)
 endif()

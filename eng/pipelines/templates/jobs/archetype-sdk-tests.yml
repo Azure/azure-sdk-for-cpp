@@ -68,7 +68,7 @@ jobs:
         VcpkgInstall: 'curl[ssl] libxml2 openssl'
         VCPKG_DEFAULT_TRIPLET: 'x64-linux'
         # Builds samples and run them against the deployed resources. Samples requires Azure Account, so only works on live tests.
-        CmakeArgs: ' -DBUILD_TESTING=ON -DBUILD_SAMPLES=ON '
+        CmakeArgs: ' -DBUILD_TESTING=ON -DBUILD_SAMPLES=ON -DBUILD_STORAGE_SAMPLES=ON'
         BuildArgs: '-j 4'
         RunSamples: 1
       Ubuntu20_x64_no_rtti:
@@ -197,7 +197,6 @@ jobs:
 
   - template: /eng/pipelines/templates/steps/cmake-build.yml
     parameters:
-      ServiceDirectory: ${{ parameters.ServiceDirectory }}
       GenerateArgs: $(CmakeArgs)
       BuildArgs: "$(BuildArgs)"
       Env: "$(CmakeEnvArg)"

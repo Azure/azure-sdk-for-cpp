@@ -132,7 +132,6 @@ jobs:
 
       - template: /eng/pipelines/templates/steps/cmake-build.yml
         parameters:
-          ServiceDirectory: ${{ parameters.ServiceDirectory }}
           GenerateArgs: "$(CmakeArgs)"
           BuildArgs: "$(BuildArgs)"
           Env: "$(CmakeEnvArg)"
@@ -203,26 +202,6 @@ jobs:
             # Minimum baseline for branch coverage
             coverageThreshold: ${{ parameters.BranchCoverageTarget }}
           condition: and(succeededOrFailed(), eq(variables['CODE_COVERAGE'], 'enabled'), eq(variables['Skip.BranchCoverageEnforcement'], ''))
-
-      - task: Powershell@2
-        inputs:
-          filePath: $(Build.SourcesDirectory)/eng/scripts/Get-BinarySizes.ps1
-          arguments: >-
-            -ServiceDirectory ${{parameters.ServiceDirectory}}
-            -ExtraLabels @{
-              Job = '$(Agent.JobName)';
-              BuildReason = '$(Build.Reason)';
-              SourceBranchName = '$(Build.SourceBranchName)';
-              TargetOs = '$(METRIC_TARGET_OS)';
-              Toolchain = '$(METRIC_TOOLCHAIN)';
-              BuildConfig = '$(METRIC_BUILD_CONFIG)';
-              TargetArchitecture = '$(METRIC_TARGET_ARCHITECTURE)';
-              TargetPlatform = '$(METRIC_TARGET_PLATFORM)';
-              TestVersion = 1;
-            }
-          pwsh: true
-          workingDirectory: $(Pipeline.Workspace)
-        displayName: Report Binary Sizes
 
       # Use the job name to create the artifact name for MAP file publishing.
       # Attempts are also noted starting with 1

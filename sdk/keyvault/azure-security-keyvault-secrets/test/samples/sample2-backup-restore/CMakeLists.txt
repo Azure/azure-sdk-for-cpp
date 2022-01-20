@@ -12,8 +12,6 @@ add_executable (
   sample2_backup_restore.cpp
 )
 
-create_per_service_target_build(sample2-backup-restore keyvault)
-
 target_link_libraries(sample2-backup-restore PRIVATE azure-security-keyvault-secrets azure-identity)
 
 # Add the sample to be run on CI. 

@@ -12,8 +12,6 @@ add_executable (
   sample4_get_secrets_deleted.cpp
 )
 
-create_per_service_target_build(sample4-get-secrets-deleted keyvault)
-
 target_link_libraries(sample4-get-secrets-deleted PRIVATE azure-security-keyvault-secrets azure-identity)
 
 # Add the sample to be run on CI. 

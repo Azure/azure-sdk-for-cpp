@@ -11,7 +11,6 @@ add_executable (
   certificate-basic-operations
   certificate_basic_operations.cpp
 )
-create_per_service_target_build(certificate-basic-operations keyvault)
 
 target_link_libraries(certificate-basic-operations PRIVATE azure-security-keyvault-certificates azure-identity )
 

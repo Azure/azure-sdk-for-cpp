@@ -29,7 +29,6 @@ include(AzureTransportAdapters)
 include(AzureDoxygen)
 include(AzureGlobalCompileOptions)
 include(AzureConfigRTTI)
-include(AzureBuildTargetForCI)
 # Add create_map_file function
 include(CreateMapFile)
 
@@ -67,7 +66,6 @@ add_library(azure-security-keyvault-certificates
   ${AZURE_KEYVAULT_CERTIFICATES_HEADER} ${AZURE_KEYVAULT_CERTIFICATES_SOURCE}
 )
 add_library(Azure::azure-security-keyvault-certificates ALIAS azure-security-keyvault-certificates)
-create_per_service_target_build(azure-security-keyvault-certificates keyvault)
 
 target_include_directories(
   azure-security-keyvault-certificates

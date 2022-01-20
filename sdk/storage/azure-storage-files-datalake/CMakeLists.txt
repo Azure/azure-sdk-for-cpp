@@ -17,7 +17,6 @@ include(AzureTransportAdapters)
 include(AzureDoxygen)
 include(AzureGlobalCompileOptions)
 include(AzureConfigRTTI)
-include(AzureBuildTargetForCI)
 
 az_vcpkg_integrate()
 
@@ -65,7 +64,6 @@ add_library(azure-storage-files-datalake ${AZURE_STORAGE_FILES_DATALAKE_HEADER} 
 
 # make sure that users can consume the project as a library.
 add_library(Azure::azure-storage-files-datalake ALIAS azure-storage-files-datalake)
-create_per_service_target_build(azure-storage-files-datalake storage)
 
 target_include_directories(
   azure-storage-files-datalake
@@ -98,6 +96,6 @@ if(BUILD_TESTING)
   add_subdirectory(test/ut)
 endif()
 
-if(BUILD_SAMPLES)
+if(BUILD_STORAGE_SAMPLES)
   add_subdirectory(samples)
 endif()

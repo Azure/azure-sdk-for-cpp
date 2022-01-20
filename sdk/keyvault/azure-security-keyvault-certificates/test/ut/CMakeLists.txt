@@ -18,8 +18,6 @@ add_executable (
     certificate_client_test.cpp
     certificate_client_base_test.hpp)
 
-create_per_service_target_build(azure-security-keyvault-certificates-test keyvault)
-
 create_map_file(azure-security-keyvault-certificates-test azure-security-keyvault-certificates-test.map)
 
 if (MSVC)

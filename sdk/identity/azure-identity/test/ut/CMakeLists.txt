@@ -26,8 +26,6 @@ add_executable (
     token_credential_impl_test.cpp
     token_credential_test.cpp
     )
-  
-create_per_service_target_build(azure-identity-test identity)
 
 create_map_file(azure-identity-test azure-identity-test.map)
 
