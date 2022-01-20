@@ -216,30 +216,28 @@ Azure::Security::KeyVault::Secrets::DeleteSecretOperation SecretClient::StartDel
     std::string const& name,
     Azure::Core::Context const& context) const
 {
-  return Azure::Security::KeyVault::Secrets::DeleteSecretOperation(
-      std::make_shared<SecretClient>(*this),
-      m_protocolClient->SendRequest<DeletedSecret>(
-          context,
-          Azure::Core::Http::HttpMethod::Delete,
-          [&name](Azure::Core::Http::RawResponse const& rawResponse) {
-            return _detail::DeletedSecretSerializer::Deserialize(name, rawResponse);
-          },
-          {_detail::SecretPath, name}));
+  auto request = CreateRequest(HttpMethod::Delete, {_detail::SecretPath, name});
+  // Send and parse respone
+  auto rawResponse = SendRequest(request, context);
+  auto value = _detail::DeletedSecretSerializer::Deserialize(name, *rawResponse);
+  auto responseT
+      = Azure::Response<DeletedSecret>(std::move(value), std::move(rawResponse));
+  return DeleteSecretOperation(
+      std::make_shared<SecretClient>(*this), std::move(responseT));
 }
 
 Azure::Security::KeyVault::Secrets::RecoverDeletedSecretOperation SecretClient::
     StartRecoverDeletedSecret(std::string const& name, Azure::Core::Context const& context) const
 {
-  return Azure::Security::KeyVault::Secrets::RecoverDeletedSecretOperation(
-      std::make_shared<SecretClient>(*this),
-      m_protocolClient->SendRequest<SecretProperties>(
-          context,
-          Azure::Core::Http::HttpMethod::Post,
-          [&name](Azure::Core::Http::RawResponse const& rawResponse) {
-            auto parsedResponse = _detail::SecretSerializer::Deserialize(name, rawResponse);
-            return parsedResponse.Properties;
-          },
-          {_detail::DeletedSecretPath, name, _detail::RecoverDeletedSecretPath}));
+  auto request = CreateRequest(
+      HttpMethod::Post, {_detail::DeletedSecretPath, name, _detail::RecoverDeletedSecretPath});
+  // Send and parse respone
+  auto rawResponse = SendRequest(request, context);
+  auto parsedResponse = _detail::SecretSerializer::Deserialize(name, *rawResponse);
+  
+  auto value = parsedResponse.Properties;
+  auto responseT = Azure::Response<SecretProperties>(std::move(value), std::move(rawResponse));
+  return RecoverDeletedSecretOperation(std::make_shared<SecretClient>(*this), std::move(responseT));
 }
 
 SecretPropertiesPagedResponse SecretClient::GetPropertiesOfSecrets(
