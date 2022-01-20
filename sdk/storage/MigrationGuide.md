@@ -211,7 +211,7 @@ block_blob_client.upload_from_stream(stream);
 
 v12
 ```C++
-blockBlobClinet.Upload(stream);
+blockBlobClient.Upload(stream);
 ```
 
 #### Uploading text
