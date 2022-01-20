@@ -24,7 +24,7 @@ steps:
       workingDirectory: build
       displayName: cmake build All
 
-# Non-core services defines the list of targets to build
+# Non-core services define the list of targets to build
   - ${{ if and(eq(parameters.Build, true) , ne(parameters.ServiceDirectory, 'core')) }}:
     - pwsh: cmake --build . ${{ parameters.BuildArgs }} --target (Get-Content ${{ parameters.ServiceDirectory }}-targets-build.txt)
       workingDirectory: build
