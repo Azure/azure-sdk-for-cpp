@@ -213,6 +213,11 @@ jobs:
               Job = '$(Agent.JobName)';
               BuildReason = '$(Build.Reason)';
               SourceBranchName = '$(Build.SourceBranchName)';
+              TargetOs = '$(METRIC_TARGET_OS)';
+              Toolchain = '$(METRIC_TOOLCHAIN)';
+              BuildConfig = '$(METRIC_BUILD_CONFIG)';
+              TargetArchitecture = '$(METRIC_TARGET_ARCHITECTURE)';
+              TargetPlatform = '$(METRIC_TARGET_PLATFORM)';
               TestVersion = 1;
             }
           pwsh: true
