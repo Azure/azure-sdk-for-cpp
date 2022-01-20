@@ -71,8 +71,10 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
      * @param keyClient An existing key vault key client.
      */
     explicit SecretClient(SecretClient const& keyClient)
-        : m_pipeline(keyClient.m_pipeline), m_apiVersion(keyClient.m_apiVersion),
-          m_vaultUrl(keyClient.m_vaultUrl)
+        : m_vaultUrl(keyClient.m_vaultUrl),
+          m_apiVersion(keyClient.m_apiVersion),
+          m_pipeline(keyClient.m_pipeline)
+          
     {
     }
 
