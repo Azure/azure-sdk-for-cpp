@@ -38,23 +38,30 @@ set(
     src/private/attestation_common_request.hpp
     src/private/attestation_deserializer.hpp
     src/private/jsonwebkeyset.hpp 
-    src/private/attestation_client_models_private.hpp)
+    src/private/attestation_client_models_private.hpp
+    src/private/crypto/inc/crypto.hpp
+    src/private/crypto/inc/cryptocert.hpp
+    src/private/crypto/inc/cryptokeys.hpp
+)
 
 set(
   AZURE_ATTESTATION_SOURCE
     src/attestation_client.cpp
     src/attestation_client_options.cpp
-    src/attestation_common_request.cpp)
+    src/attestation_common_request.cpp
+    src/private/crypto/openssl/opensslkeys.cpp
+)
 
 add_library(azure-security-attestation ${AZURE_ATTESTATION_HEADER} ${AZURE_ATTESTATION_SOURCE})
 
-if(WIN32)
-    target_link_libraries(azure-core PRIVATE bcrypt crypt32)
-else()
+#if(WIN32)
+#    target_link_libraries(azure-core PRIVATE bcrypt crypt32)
+#else()
     # Required for Hashing ( md5 and sha ).
     find_package(OpenSSL REQUIRED)
-    target_link_libraries(azure-core PRIVATE OpenSSL::SSL)
-endif()
+    target_link_libraries(azure-core PUBLIC OpenSSL::Crypto OpenSSL::SSL)
+#endif()
+add_subdirectory(src/private/crypto EXCLUDE_FROM_ALL)
 
 target_include_directories(
   azure-security-attestation

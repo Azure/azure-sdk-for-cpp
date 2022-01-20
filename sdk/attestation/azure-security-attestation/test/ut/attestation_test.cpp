@@ -39,25 +39,27 @@ class AttestationTests : public Azure::Core::Test::TestBase,
     }
 
     std::unique_ptr<AttestationClient> CreateClient() {
-      AttestationClientOptions options;
         // `InitTestClient` takes care of setting up Record&Playback.
-      return InitTestClient<
+      auto options = InitClientOptions<Azure::Security::Attestation::AttestationClientOptions>();
+      return std::make_unique<
           Azure::Security::Attestation::AttestationClient>(
-          m_endpoint, nullptr, options);
+          m_endpoint, options);
     }
-//    std::unique_ptr<AttestationClient> CreateAuthenticatedClient()
-//    {
-//      // `InitTestClient` takes care of setting up Record&Playback.
-//      return InitTestClient<
-//          Azure::Security::Attestation::AttestationClient,
-//          Azure::Security::Attestation::AttestationClientOptions>(
-//          m_endpoint, new Azure::Identity::ClientSecretCredential(), AttestationClientOptions{});
-//    }
+    std::unique_ptr<AttestationClient> CreateAuthenticatedClient()
+    {
+      // `InitClientOptions` takes care of setting up Record&Playback.
+      auto options = InitClientOptions<Azure::Security::Attestation::AttestationClientOptions>();
+      auto credential = std::make_shared<Azure::Identity::ClientSecretCredential>(
+          GetEnv("AZURE_TENANT_ID"), GetEnv("AZURE_CLIENT_ID"), GetEnv("AZURE_CLIENT_SECRET"));
+
+      return std::make_unique<AttestationClient>(
+          m_endpoint, credential, options);
+    }
 };
 
   TEST_P(AttestationTests, GetOpenIdMetadata) 
   {
-    auto attestationClient(std::make_unique<AttestationClient>(m_endpoint));
+    auto attestationClient(CreateClient());
 
     auto openIdMetadata = attestationClient->GetOpenIdMetadata();
 
@@ -73,7 +75,7 @@ class AttestationTests : public Azure::Core::Test::TestBase,
 
   TEST_P(AttestationTests, GetSigningCertificates)
   {
-    auto attestationClient(std::make_unique<AttestationClient>(m_endpoint));
+    auto attestationClient(CreateClient());
 
     auto attestationSigners = attestationClient->GetAttestationSigningCertificates();
     EXPECT_LE(1UL, attestationSigners.Value.size());
@@ -90,7 +92,7 @@ class AttestationTests : public Azure::Core::Test::TestBase,
 
   TEST_P(AttestationTests, SimpleAttestOpenEnclave)
   {
-    auto client(std::make_unique<AttestationClient>(m_endpoint));
+    auto client(CreateClient());
     auto report = AttestationCollateral::OpenEnclaveReport();
 
     auto attestResponse = client->AttestOpenEnclave(report);
@@ -98,7 +100,7 @@ class AttestationTests : public Azure::Core::Test::TestBase,
 
   TEST_P(AttestationTests, SimpleAttestSgxEnclave)
   {
-    auto client(std::make_unique<AttestationClient>(m_endpoint));
+    auto client(CreateClient());
     auto sgxQuote = AttestationCollateral::SgxQuote();
 
     auto attestResponse = client->AttestSgxEnclave(sgxQuote);
@@ -106,7 +108,7 @@ class AttestationTests : public Azure::Core::Test::TestBase,
 
   TEST_P(AttestationTests, AttestOpenEnclaveWithRuntimeData)
   {
-    auto client(std::make_unique<AttestationClient>(m_endpoint));
+    auto client(CreateClient());
     auto report = AttestationCollateral::OpenEnclaveReport();
     auto runtimeData = AttestationCollateral::RuntimeData();
 
@@ -116,7 +118,7 @@ class AttestationTests : public Azure::Core::Test::TestBase,
 
   TEST_P(AttestationTests, AttestSgxEnclaveWithRuntimeData)
   {
-    auto client(std::make_unique<AttestationClient>(m_endpoint));
+    auto client(CreateClient());
     auto sgxQuote = AttestationCollateral::SgxQuote();
     auto runtimeData = AttestationCollateral::RuntimeData();
 

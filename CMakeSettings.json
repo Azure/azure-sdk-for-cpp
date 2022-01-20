@@ -15,6 +15,16 @@
           "name": "VCPKG_TARGET_TRIPLET",
           "value": "x64-windows-static",
           "type": "STRING"
+        },
+        {
+          "name": "LIB_EAY_RELEASE",
+          "value": "G:/Az/LarryO/vcpkg/packages/openssl_x64-windows-static/lib/libcrypto.lib",
+          "type": "FILEPATH"
+        },
+        {
+          "name": "LIB_EAY_DEBUG",
+          "value": "G:/Az/LarryO/vcpkg/packages/openssl_x64-windows-static/lib/libcrypto.lib",
+          "type": "FILEPATH"
         }
       ]
     },
