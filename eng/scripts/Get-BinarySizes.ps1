@@ -7,7 +7,10 @@ param(
     [string] $ServiceDirectory = "*",
 
     [Parameter()]
-    [switch] $CI = ($null -ne $env:SYSTEM_TEAMPROJECTID)
+    [switch] $CI = ($null -ne $env:SYSTEM_TEAMPROJECTID),
+
+    [Parameter()]
+    [hashtable]$ExtraLabels = @{}
 )
 
 $searchPath = "$BuildDirectory/sdk/$ServiceDirectory/*/*.a"
@@ -24,8 +27,8 @@ if ($CI) {
             value = $binary.Length
             timestamp = (Get-Date -AsUTC).ToString()
             labels = @{ 
-                BinaryName = $binary.Name
-            }
+                BinaryName = $binary.Name;
+            } + $ExtraLabels
         }
 
         $metricLogJson = ConvertTo-Json $metricLogObject -Depth 2 -Compress
