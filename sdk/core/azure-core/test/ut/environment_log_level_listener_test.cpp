@@ -1,6 +1,7 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
 
+
 #include <gtest/gtest.h>
 #include <private/environment_log_level_listener.hpp>
 
