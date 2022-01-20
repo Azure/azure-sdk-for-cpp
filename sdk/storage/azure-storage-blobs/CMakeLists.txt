@@ -17,6 +17,7 @@ include(AzureTransportAdapters)
 include(AzureDoxygen)
 include(AzureGlobalCompileOptions)
 include(AzureConfigRTTI)
+include(AzureBuildTargetForCI)
 
 az_vcpkg_integrate()
 
@@ -60,6 +61,7 @@ set(
 )
 
 add_library(azure-storage-blobs ${AZURE_STORAGE_BLOB_HEADER} ${AZURE_STORAGE_BLOB_SOURCE})
+create_per_service_target_build(azure-storage-blobs storage)
 
 # make sure that users can consume the project as a library.
 add_library(Azure::azure-storage-blobs ALIAS azure-storage-blobs)
@@ -96,7 +98,7 @@ if(BUILD_TESTING)
   add_subdirectory(test/fault-injector)
 endif()
 
-if(BUILD_STORAGE_SAMPLES)
+if(BUILD_SAMPLES)
   add_subdirectory(samples)
 endif()
 

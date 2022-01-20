@@ -17,6 +17,7 @@ include(AzureTransportAdapters)
 include(AzureDoxygen)
 include(AzureGlobalCompileOptions)
 include(AzureConfigRTTI)
+include(AzureBuildTargetForCI)
 
 az_vcpkg_integrate()
 
@@ -51,7 +52,7 @@ set(
 )
 
 add_library(azure-storage-queues ${AZURE_STORAGE_QUEUE_HEADER} ${AZURE_STORAGE_QUEUE_SOURCE})
-
+create_per_service_target_build(azure-storage-queues storage)
 # make sure that users can consume the project as a library.
 add_library(Azure::azure-storage-queues ALIAS azure-storage-queues)
 
@@ -86,6 +87,6 @@ if(BUILD_TESTING)
   add_subdirectory(test/ut)
 endif()
 
-if(BUILD_STORAGE_SAMPLES)
+if(BUILD_SAMPLES)
   add_subdirectory(samples)
 endif()

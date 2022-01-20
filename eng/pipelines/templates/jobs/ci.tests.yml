@@ -132,6 +132,7 @@ jobs:
 
       - template: /eng/pipelines/templates/steps/cmake-build.yml
         parameters:
+          ServiceDirectory: ${{ parameters.ServiceDirectory }}
           GenerateArgs: "$(CmakeArgs)"
           BuildArgs: "$(BuildArgs)"
           Env: "$(CmakeEnvArg)"
