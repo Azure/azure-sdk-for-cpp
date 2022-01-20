@@ -139,7 +139,7 @@ The following CMake options are available for adding/removing project features.
 </tr>
 <tr>
 <td>BUILD_SAMPLES</td>
-<td>Build Azure clients sample application.</td>
+<td>Build Azure SDK for C++ sample applications. </td>
 <td>OFF</td>
 </tr>
 <tr>
