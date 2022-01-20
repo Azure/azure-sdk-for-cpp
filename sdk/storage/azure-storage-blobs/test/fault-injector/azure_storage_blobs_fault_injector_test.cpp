@@ -10,6 +10,11 @@
  *
  */
 
+#if defined(_MSC_VER)
+// For using std::getenv()
+#define _CRT_SECURE_NO_WARNINGS
+#endif
+
 #include <azure/core/platform.hpp>
 
 #if defined(AZ_PLATFORM_WINDOWS)
@@ -21,11 +26,6 @@
 #endif
 
 #include <windows.h>
-#endif
-
-#if defined(_MSC_VER)
-// For using std::getenv()
-#define _CRT_SECURE_NO_WARNINGS
 #endif
 
 #include <azure/storage/blobs.hpp>
