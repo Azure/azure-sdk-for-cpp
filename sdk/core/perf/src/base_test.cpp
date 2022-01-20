@@ -184,7 +184,7 @@ namespace Azure { namespace Perf {
         stopPlaybackReq.AppendPath("stop");
         Azure::Core::Http::Request request(Azure::Core::Http::HttpMethod::Post, stopPlaybackReq);
         request.SetHeader("x-recording-id", RecordId);
-        request.SetHeader("x-purge-inmemory-recording", "true");
+        request.SetHeader("x-purge-inmemory-recording", "true"); // cspell:disable-line
 
         pipeline.Send(request, ctx);
 
