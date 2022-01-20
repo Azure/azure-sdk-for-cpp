@@ -19,6 +19,7 @@ include(AzureTransportAdapters)
 include(AzureDoxygen)
 include(AzureGlobalCompileOptions)
 include(AzureConfigRTTI)
+include(AzureBuildTargetForCI)
 # Add create_map_file function
 include(CreateMapFile)
 
@@ -53,6 +54,7 @@ set(
 )
 
 add_library(azure-identity ${AZURE_IDENTITY_HEADER} ${AZURE_IDENTITY_SOURCE})
+create_per_service_target_build(azure-identity identity)
 
 # make sure that users can consume the project as a library.
 add_library(Azure::azure-identity ALIAS azure-identity)
@@ -93,12 +95,13 @@ if(BUILD_TESTING)
 
   add_subdirectory(test/e2e)
   add_subdirectory(test/ut)
+
+endif()
+
+if (BUILD_SAMPLES)
+  add_subdirectory(samples)
 endif()
 
 if (BUILD_PERFORMANCE_TESTS)
   add_subdirectory(test/perf)
-endif()
-
-if (AZ_ALL_LIBRARIES)
-  add_subdirectory(samples)
 endif()
