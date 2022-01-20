@@ -96,13 +96,11 @@
             },
             "TargetArchitecture": {
                 "x86": {
-                    "CMAKE_GENERATOR_PLATFORM": "Win32",
-                    "BuildArgs": "--parallel 8"
+                    "CMAKE_GENERATOR_PLATFORM": "Win32"
                 },
                 "x64": {
                     "CMAKE_GENERATOR_PLATFORM": "x64",
-                    "VCPKG_DEFAULT_TRIPLET": "x64-uwp",
-                    "BuildArgs": "--parallel 8"
+                    "VCPKG_DEFAULT_TRIPLET": "x64-uwp"
                 }
             }
         },
