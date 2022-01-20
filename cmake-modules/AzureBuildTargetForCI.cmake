@@ -6,6 +6,6 @@
 
 macro(create_per_service_target_build target service)
 
-    file(APPEND ${CMAKE_BINARY_DIR}/${service}-targets-build.txt " ${target}")
+    file(APPEND ${CMAKE_BINARY_DIR}/${service}-targets-build.txt "${target}\n")
 
 endmacro()
