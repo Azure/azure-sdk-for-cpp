@@ -207,7 +207,14 @@ jobs:
       - task: Powershell@2
         inputs:
           filePath: $(Build.SourcesDirectory)/eng/scripts/Get-BinarySizes.ps1
-          arguments: -ServiceDirectory ${{parameters.ServiceDirectory}}
+          arguments: >-
+            -ServiceDirectory ${{parameters.ServiceDirectory}}
+            -ExtraLabels @{
+              Job = '$(Agent.JobName)';
+              BuildReason = '$(Build.Reason)';
+              SourceBranchName = '$(Build.SourceBranchName)';
+              TestVersion = 1;
+            }
           pwsh: true
           workingDirectory: $(Pipeline.Workspace)
         displayName: Report Binary Sizes
