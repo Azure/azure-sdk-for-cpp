@@ -9,6 +9,19 @@
 
 #pragma once
 
+#include <azure/core/platform.hpp>
+
+#if defined(AZ_PLATFORM_WINDOWS)
+#if !defined(WIN32_LEAN_AND_MEAN)
+#define WIN32_LEAN_AND_MEAN
+#endif
+#if !defined(NOMINMAX)
+#define NOMINMAX
+#endif
+
+#include <windows.h>
+#endif
+
 #include <azure/core/uuid.hpp>
 #include <azure/perf.hpp>
 
@@ -61,8 +74,14 @@ namespace Azure { namespace Storage { namespace Blobs { namespace Test {
      */
     void Setup() override
     {
-      // Get connection string from env
-      const static std::string envConnectionString = std::getenv("STORAGE_CONNECTION_STRING");
+      const static std::string envConnectionString =
+#if (!defined(WINAPI_PARTITION_DESKTOP) || WINAPI_PARTITION_DESKTOP) // See azure/core/platform.hpp
+                                                                     // for explanation.
+          // Get connection string from env
+          std::getenv("STORAGE_CONNECTION_STRING");
+#else
+          "";
+#endif
       m_connectionString = envConnectionString;
 
       // Generate random container and blob names.

@@ -10,6 +10,19 @@
  *
  */
 
+#include <azure/core/platform.hpp>
+
+#if defined(AZ_PLATFORM_WINDOWS)
+#if !defined(WIN32_LEAN_AND_MEAN)
+#define WIN32_LEAN_AND_MEAN
+#endif
+#if !defined(NOMINMAX)
+#define NOMINMAX
+#endif
+
+#include <windows.h>
+#endif
+
 #if defined(_MSC_VER)
 // For using std::getenv()
 #define _CRT_SECURE_NO_WARNINGS
@@ -88,7 +101,14 @@ int main()
   auto implementationClient = std::make_shared<Azure::Core::Http::WinHttpTransport>(winHttpOptions);
 #endif
 
-  std::string connectionString(std::getenv("STORAGE_CONNECTION_STRING"));
+  std::string connectionString(
+#if (!defined(WINAPI_PARTITION_DESKTOP) || WINAPI_PARTITION_DESKTOP) // See azure/core/platform.hpp
+                                                                     // for explanation.
+      std::getenv("STORAGE_CONNECTION_STRING")
+#else
+      ""
+#endif
+  );
 
   // Set the options for the FaultInjectorClient
   FaultInjectionClientOptions options;
