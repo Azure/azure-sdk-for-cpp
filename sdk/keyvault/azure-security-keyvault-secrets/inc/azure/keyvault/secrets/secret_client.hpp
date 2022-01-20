@@ -71,7 +71,8 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
      * @param keyClient An existing key vault key client.
      */
     explicit SecretClient(SecretClient const& keyClient)
-        : m_pipeline(keyClient.m_pipeline), m_apiVersion(keyClient.m_apiVersion), m_vaultUrl(keyClient.m_vaultUrl)
+        : m_pipeline(keyClient.m_pipeline), m_apiVersion(keyClient.m_apiVersion),
+          m_vaultUrl(keyClient.m_vaultUrl)
     {
     }
 
@@ -280,10 +281,6 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
      */
     std::string GetUrl() const;
 
-        std::unique_ptr<Azure::Core::Http::RawResponse> SendRequest(
-        Azure::Core::Http::Request& request,
-        Azure::Core::Context const& context) const;
-
   private:
     Azure::Core::Http::Request CreateRequest(
         Azure::Core::Http::HttpMethod method,
@@ -292,5 +289,8 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
     Azure::Core::Http::Request ContinuationTokenRequest(
         std::vector<std::string> const& path,
         const Azure::Nullable<std::string>& NextPageToken) const;
+    std::unique_ptr<Azure::Core::Http::RawResponse> SendRequest(
+        Azure::Core::Http::Request& request,
+        Azure::Core::Context const& context) const;
   };
 }}}} // namespace Azure::Security::KeyVault::Secrets

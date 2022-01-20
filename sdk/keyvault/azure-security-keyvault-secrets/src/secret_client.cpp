@@ -13,8 +13,8 @@
 #include "private/package_version.hpp"
 #include "private/secret_constants.hpp"
 #include "private/secret_serializers.hpp"
-#include <azure/keyvault/shared/keyvault_shared.hpp>
 
+#include <azure/keyvault/shared/keyvault_shared.hpp>
 #include <azure/core/credentials/credentials.hpp>
 #include <azure/core/http/http.hpp>
 #include <azure/core/http/policies/policy.hpp>
