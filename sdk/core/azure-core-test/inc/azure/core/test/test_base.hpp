@@ -46,7 +46,8 @@ using namespace std::chrono_literals;
 namespace Azure { namespace Core { namespace Test {
 
   /**
-   * @brief The base class provides the tools for a test to use the Record&PlayBack functionalities.
+   * @brief The base class provides the tools for a test to use the Record&PlayBack
+   * functionalities.
    *
    */
   class TestBase : public ::testing::Test {
@@ -73,8 +74,8 @@ namespace Azure { namespace Core { namespace Test {
 
     // Call this method to update client options with the required configuration to
     // support Record & Playback.
-    // If Playback or Record is not set, no changes will be done to the clientOptions or credential.
-    // Call this before creating the SDK client
+    // If Playback or Record is not set, no changes will be done to the clientOptions or
+    // credential. Call this before creating the SDK client
     void PrepareClientOptions(
         std::shared_ptr<Core::Credentials::TokenCredential>** credential,
         Azure::Core::_internal::ClientOptions& options)
@@ -105,10 +106,18 @@ namespace Azure { namespace Core { namespace Test {
       return RemovePreffix(updated);
     }
 
-    void SkipTest()
+    void SkipTest(const char* message = nullptr)
     {
       m_wasSkipped = true;
-      GTEST_SKIP();
+
+      if (message == nullptr)
+      {
+        GTEST_SKIP();
+      }
+      else
+      {
+        GTEST_SKIP() << message;
+      }
     }
 
     std::string RemovePreffix(std::string const& src)
@@ -260,8 +269,14 @@ namespace Azure { namespace Core { namespace Test {
     {
       const char* ret = nullptr;
 
-#if !defined(WINAPI_PARTITION_DESKTOP) \
-    || WINAPI_PARTITION_DESKTOP // See azure/core/platform.hpp for explanation.
+#if defined(WINAPI_PARTITION_DESKTOP) \
+    && !WINAPI_PARTITION_DESKTOP // See azure/core/platform.hpp for explanation.
+
+      static_cast<void>(name);
+      SkipTest("The test will be skipped because it uses Environment Variables which are not "
+               "available on UWP platform.");
+#else
+
 #if defined(_MSC_VER)
 #pragma warning(push)
 #pragma warning(disable : 4996)
@@ -270,6 +285,7 @@ namespace Azure { namespace Core { namespace Test {
 #if defined(_MSC_VER)
 #pragma warning(pop)
 #endif
+
 #endif
 
       if (!ret)

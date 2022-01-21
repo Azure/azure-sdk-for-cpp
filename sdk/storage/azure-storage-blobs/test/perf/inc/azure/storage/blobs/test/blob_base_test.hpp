@@ -31,7 +31,8 @@
 #include <string>
 #include <vector>
 
-namespace Azure { namespace Storage { namespace Blobs { namespace Test {
+namespace Azure {
+namespace Storage { namespace Blobs { namespace Test {
 
   /**
    * @brief A base test that set up a blobs performance test.
@@ -74,14 +75,13 @@ namespace Azure { namespace Storage { namespace Blobs { namespace Test {
      */
     void Setup() override
     {
-      const static std::string envConnectionString =
-#if !defined(WINAPI_PARTITION_DESKTOP) \
-    || WINAPI_PARTITION_DESKTOP // See azure/core/platform.hpp for explanation.
-          // Get connection string from env
-          std::getenv("STORAGE_CONNECTION_STRING");
+#if defined(WINAPI_PARTITION_DESKTOP) \
+    && !WINAPI_PARTITION_DESKTOP // See azure/core/platform.hpp for explanation.
+      GTEST_SKIP() << "The test will be skipped because it uses Environment Variables which are "
+                      "not available on UWP platform.";
 #else
-          "";
-#endif
+      // Get connection string from env
+      const static std::string envConnectionString = std::getenv("STORAGE_CONNECTION_STRING");
       m_connectionString = envConnectionString;
 
       // Generate random container and blob names.
@@ -101,20 +101,21 @@ namespace Azure { namespace Storage { namespace Blobs { namespace Test {
     }
 
     void Cleanup() override { m_containerClient->DeleteIfExists(); }
+#endif
 
-    /**
-     * @brief Construct a new BlobsTest test.
-     *
-     * @param options The test options.
-     */
-    BlobsTest(Azure::Perf::TestOptions options) : PerfTest(options) {}
+      /**
+       * @brief Construct a new BlobsTest test.
+       *
+       * @param options The test options.
+       */
+      BlobsTest(Azure::Perf::TestOptions options) : PerfTest(options) {}
 
-    /**
-     * @brief Define the test options for the test.
-     *
-     * @return The list of test options.
-     */
-    std::vector<Azure::Perf::TestOption> GetTestOptions() override { return {}; }
-  };
-
-}}}} // namespace Azure::Storage::Blobs::Test
+      /**
+       * @brief Define the test options for the test.
+       *
+       * @return The list of test options.
+       */
+      std::vector<Azure::Perf::TestOption> GetTestOptions() override { return {}; }
+    };
+  }
+}}} // namespace Azure::Storage::Blobs::Test

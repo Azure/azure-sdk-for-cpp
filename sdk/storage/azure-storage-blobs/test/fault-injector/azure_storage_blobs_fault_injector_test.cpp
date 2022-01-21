@@ -28,6 +28,8 @@
 #include <windows.h>
 #endif
 
+#include <gtest/gtest.h>
+
 #include <azure/storage/blobs.hpp>
 
 #if defined(BUILD_CURL_HTTP_TRANSPORT_ADAPTER)
@@ -88,6 +90,12 @@ public:
 
 int main()
 {
+#if defined(WINAPI_PARTITION_DESKTOP) \
+    && !WINAPI_PARTITION_DESKTOP // See azure/core/platform.hpp for explanation.
+  std::cout << "The test relies on using Environment Variables, which are not available on UWP "
+               "platform.";
+  return 0;
+#else
   /* The transport adapter must allow insecure SSL certs.
   If both curl and winHttp are available, curl is preferred for this test.for*/
 #if defined(BUILD_CURL_HTTP_TRANSPORT_ADAPTER)
@@ -101,14 +109,7 @@ int main()
   auto implementationClient = std::make_shared<Azure::Core::Http::WinHttpTransport>(winHttpOptions);
 #endif
 
-  std::string connectionString(
-#if !defined(WINAPI_PARTITION_DESKTOP) \
-    || WINAPI_PARTITION_DESKTOP // See azure/core/platform.hpp for explanation.
-      std::getenv("STORAGE_CONNECTION_STRING")
-#else
-      ""
-#endif
-  );
+  std::string connectionString(std::getenv("STORAGE_CONNECTION_STRING"));
 
   // Set the options for the FaultInjectorClient
   FaultInjectionClientOptions options;
@@ -130,4 +131,5 @@ int main()
   std::cout << "Content: " << std::string(content.begin(), content.end()) << std::endl;
 
   return 0;
+#endif
 }
