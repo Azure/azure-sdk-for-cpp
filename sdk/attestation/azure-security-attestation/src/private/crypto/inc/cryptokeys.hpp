@@ -28,21 +28,10 @@ namespace Azure {
               ECDSA
             };
 
-            virtual bool VerifySignature() const = 0;
+            virtual bool VerifySignature(std::vector<uint8_t> const&payload, std::vector<uint8_t> const&signature) const = 0;
             virtual std::vector<uint8_t> SignBuffer(std::vector<uint8_t> const&bufferToSign) const = 0;
             virtual std::string ExportPrivateKey() = 0;
             virtual std::string ExportPublicKey() = 0;
-          };
-
-          /** @brief The Crypto class contains basic functionality to 
-          */
-          class Crypto {
-          public:
-            static std::unique_ptr<AsymmetricKey> CreateRsaKey(size_t keySizeInBytes);
-            static std::unique_ptr<AsymmetricKey> ImportPublicKey(std::string const& pemEncodedString);
-            static std::unique_ptr<AsymmetricKey> ImportPrivateKey(
-                std::string const& pemEncodedString);
-
           };
 
 }}}}} // namespace Azure::Security::Attestation::_private::Crypto

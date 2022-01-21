@@ -1,5 +1,6 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
+#pragma once
 
 #include <memory>
 #include <type_traits>
@@ -23,10 +24,6 @@ namespace _details {
     {
       using type = basic_openssl_unique_ptr<EVP_PKEY, EVP_PKEY_free>;
     };
-    template <> struct type_map_helper<RSA>
-    {
-      using type = basic_openssl_unique_ptr<RSA, RSA_free>;
-    };
 
     template <> struct type_map_helper<BIO>
     {
@@ -39,7 +36,6 @@ namespace _details {
     // *** Or the current solution's convenience aliases:
     using openssl_evp_pkey = openssl_unique_ptr<EVP_PKEY>;
     using openssl_bio = openssl_unique_ptr<BIO>;
-    using openssl_rsa = openssl_unique_ptr<RSA>;
 
 #ifdef __cpp_nontype_template_parameter_auto
     // *** Wrapper function that calls a given OpensslApi, and returns the corresponding

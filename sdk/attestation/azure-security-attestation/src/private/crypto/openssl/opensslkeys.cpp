@@ -26,6 +26,7 @@
 #include <openssl/evp.h>
 #include <openssl/pem.h>
 #include <openssl/rsa.h>
+#include <openssl/ecdsa.h>
 
 namespace Azure { namespace Security { namespace Attestation { namespace _private {
   namespace Cryptography {
@@ -34,6 +35,11 @@ namespace Azure { namespace Security { namespace Attestation { namespace _privat
       template <> struct type_map_helper<EVP_PKEY_CTX>
       {
         using type = basic_openssl_unique_ptr<EVP_PKEY_CTX, EVP_PKEY_CTX_free>;
+      };
+
+      template <> struct type_map_helper<EVP_MD_CTX>
+      {
+        using type = basic_openssl_unique_ptr<EVP_MD_CTX, EVP_MD_CTX_free>;
       };
     } // namespace _details
 
@@ -72,7 +78,6 @@ namespace Azure { namespace Security { namespace Attestation { namespace _privat
       return std::string(returnValue.begin(), returnValue.end());
     }
 
-
     std::unique_ptr<AsymmetricKey> OpenSSLAsymmetricKey::ImportPublicKey(
         std::string const& pemEncodedKey)
     {
@@ -89,6 +94,10 @@ namespace Azure { namespace Security { namespace Attestation { namespace _privat
       if (EVP_PKEY_id(pkey.get()) == EVP_PKEY_RSA)
       {
         return std::make_unique<RsaOpenSSLAsymmetricKey>(std::move(pkey));
+      }
+      else if (EVP_PKEY_id(pkey.get()) == EVP_PKEY_EC)
+      {
+        return std::make_unique<EcdsaOpenSSLAsymmetricKey>(std::move(pkey));
       }
       throw std::runtime_error("Unknown key type passed to ImportPublicKey.");
     }
@@ -113,6 +122,10 @@ namespace Azure { namespace Security { namespace Attestation { namespace _privat
       {
         return std::make_unique<RsaOpenSSLAsymmetricKey>(std::move(pkey));
       }
+      else if (EVP_PKEY_id(pkey.get()) == EVP_PKEY_EC)
+      {
+        return std::make_unique<EcdsaOpenSSLAsymmetricKey>(std::move(pkey));
+      }
       throw std::runtime_error("Unknown key type passed to ImportPublicKey.");
     }
 
@@ -136,25 +149,91 @@ namespace Azure { namespace Security { namespace Attestation { namespace _privat
       m_pkey.reset(pkey);
     }
 
-    bool RsaOpenSSLAsymmetricKey::VerifySignature() const { return false; }
-    std::vector<uint8_t> RsaOpenSSLAsymmetricKey::SignBuffer(std::vector<uint8_t> const&) const
+    /** Sign a buffer with an RSA key.
+     */
+    std::vector<uint8_t> OpenSSLAsymmetricKey::SignBuffer(
+        std::vector<uint8_t> const& payload) const
     {
-      return {};
+      auto mdContext(_details::make_openssl_unique(EVP_MD_CTX_new));
+      if (EVP_DigestSignInit(mdContext.get(), nullptr, EVP_sha256(), nullptr, m_pkey.get()) != 1)
+      {
+        throw _details::OpenSSLException("EVP_DigestSignInit");
+      }
+
+      if (EVP_DigestSignUpdate(mdContext.get(), payload.data(), static_cast<int>(payload.size()))
+          != 1)
+      {
+        throw _details::OpenSSLException("EVP_DigestSignUpdate");
+      }
+
+      size_t signatureLength = 0;
+      if (EVP_DigestSignFinal(mdContext.get(), nullptr, &signatureLength) != 1)
+      {
+        throw _details::OpenSSLException("EVP_DigestSignFinal(sizing)");
+      }
+
+      std::vector<uint8_t> returnValue(signatureLength);
+      if (EVP_DigestSignFinal(mdContext.get(), returnValue.data(), &signatureLength) != 1)
+      {
+        throw _details::OpenSSLException("EVP_DigestSignFinal(sizing)");
+      }
+      returnValue.resize(signatureLength);
+      return returnValue;
     }
 
-    std::unique_ptr<AsymmetricKey> Crypto::CreateRsaKey(size_t keySize)
+    bool OpenSSLAsymmetricKey::VerifySignature(
+        std::vector<uint8_t> const& payload,
+        std::vector<uint8_t> const& signature) const
     {
-      return std::make_unique<RsaOpenSSLAsymmetricKey>(keySize);
+      auto mdContext(_details::make_openssl_unique(EVP_MD_CTX_new));
+      if (EVP_DigestVerifyInit(mdContext.get(), nullptr, EVP_sha256(), nullptr, m_pkey.get()) != 1)
+      {
+        throw _details::OpenSSLException("EVP_DigestVerifyInit");
+      }
+
+      if (EVP_DigestVerifyUpdate(mdContext.get(), payload.data(), static_cast<int>(payload.size())) != 1)
+      {
+            throw _details::OpenSSLException("EVP_DigestVerifyUpdate");
+      }
+
+      auto rv = EVP_DigestVerifyFinal(
+          mdContext.get(), signature.data(), static_cast<int>(signature.size()));
+
+      if (rv == 1)
+      {
+        return true;
+      }
+      else if (rv == 0)
+      {
+        return false;
+      }
+      else
+      {
+        throw _details::OpenSSLException("EVP_DigestVerifyFinal");
+      }
+
     }
 
-    std::unique_ptr<AsymmetricKey> Crypto::ImportPublicKey(std::string const& pemEncodedKey)
-    {
-      return OpenSSLAsymmetricKey::ImportPublicKey(pemEncodedKey);
-    }
+    EcdsaOpenSSLAsymmetricKey::EcdsaOpenSSLAsymmetricKey() {
 
-    std::unique_ptr<AsymmetricKey> Crypto::ImportPrivateKey(std::string const& pemEncodedKey)
-    {
-      return OpenSSLAsymmetricKey::ImportPrivateKey(pemEncodedKey);
+      auto evpContext(
+          _details::make_openssl_unique(EVP_PKEY_CTX_new_id, EVP_PKEY_EC, nullptr));
+      if (EVP_PKEY_keygen_init(evpContext.get()) != 1)
+      {
+        throw _details::OpenSSLException("EVP_PKEY_keygen_init");
+      }
+
+      if (EVP_PKEY_CTX_set_ec_paramgen_curve_nid(evpContext.get(), NID_X9_62_prime256v1) != 1)
+      {
+        throw _details::OpenSSLException("EVP_PKEY_CTX_set_ec_paramgen_curve_nid");
+      }
+
+      EVP_PKEY* pkey = nullptr;
+      if (EVP_PKEY_keygen(evpContext.get(), &pkey) != 1)
+      {
+        throw _details::OpenSSLException("EVP_PKEY_keygen");
+      }
+      m_pkey.reset(pkey);
     }
 
     namespace _details {

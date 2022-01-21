@@ -15,46 +15,70 @@
 #include <azure/core/base64.hpp>
 #include <memory>
 #include <string>
-#include <vector>
 #include <type_traits>
 #include <utility>
+#include <vector>
 
-#include <openssl/evp.h>
-#include <openssl/rsa.h>
-#include <openssl/bio.h>
-#include <openssl/pem.h>
 #include "..\inc\crypto.hpp"
 #include "openssl_helpers.hpp"
+#include <openssl/bio.h>
+#include <openssl/evp.h>
+#include <openssl/pem.h>
+#include <openssl/rsa.h>
 
 namespace Azure { namespace Security { namespace Attestation { namespace _private {
   namespace Cryptography {
 
+    /** Represents an Asymmetric Key.
+     *
+     * There are several operations that can be performed with an Asymmetric key.
+     *
+     * If the key is a full key (either created with Crypto::CreateRsaKey or Crypto::CreateEcdsKey
+     * or imported with ImportPrivateKey) then the SignBuffer API is available to allow signing an
+     * arbitrary buffer. This returns the signature of the buffer.
+     *
+     * If the key is a public key (created by ImportPublicKey), then the VerifySignature API can be
+     * used to verify an signed buffer.
+     */
     class OpenSSLAsymmetricKey : public AsymmetricKey {
+      friend class OpenSSLX509Certificate;
+      
     protected:
       _details::openssl_evp_pkey m_pkey;
 
       OpenSSLAsymmetricKey() = default;
       OpenSSLAsymmetricKey(_details::openssl_evp_pkey&& pkey) : m_pkey(std::move(pkey)) {}
-      virtual bool VerifySignature() const override = 0;
-      virtual std::vector<uint8_t> SignBuffer(std::vector<uint8_t> const& bufferToSign) const override = 0;
+      virtual bool VerifySignature(
+          std::vector<uint8_t> const& payload,
+          std::vector<uint8_t> const& signature) const override;
+      virtual std::vector<uint8_t> SignBuffer(
+          std::vector<uint8_t> const& bufferToSign) const override;
       virtual std::string ExportPrivateKey() override;
       virtual std::string ExportPublicKey() override;
+
+      _details::openssl_evp_pkey const& GetKey() { return m_pkey; }
 
     public:
       static std::unique_ptr<AsymmetricKey> ImportPublicKey(std::string const& pemEncodedKey);
       static std::unique_ptr<AsymmetricKey> ImportPrivateKey(std::string const& pemEncodedKey);
     };
 
-    class RsaOpenSSLAsymmetricKey: public OpenSSLAsymmetricKey {
+    class RsaOpenSSLAsymmetricKey : public OpenSSLAsymmetricKey {
     public:
       RsaOpenSSLAsymmetricKey(size_t keySize);
       RsaOpenSSLAsymmetricKey(_details::openssl_evp_pkey&& key)
           : OpenSSLAsymmetricKey(std::move(key))
       {
       }
-      virtual bool VerifySignature() const override;
-      virtual std::vector<uint8_t> SignBuffer(std::vector<uint8_t> const& bufferToSign) const override;
     };
 
+    class EcdsaOpenSSLAsymmetricKey : public OpenSSLAsymmetricKey {
+    public:
+      EcdsaOpenSSLAsymmetricKey();
+      EcdsaOpenSSLAsymmetricKey(_details::openssl_evp_pkey&& key)
+          : OpenSSLAsymmetricKey(std::move(key))
+      {
+      }
+    };
 
 }}}}} // namespace Azure::Security::Attestation::_private::Cryptography
