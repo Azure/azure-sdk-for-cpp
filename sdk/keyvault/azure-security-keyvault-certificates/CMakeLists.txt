@@ -11,13 +11,13 @@ project(azure-security-keyvault-certificates LANGUAGES CXX)
 
 
 # Compile Options
-option(BUILD_SOURCE_DEPS "build source dependencies" OFF)
+option(FETCH_SOURCE_DEPS "build source dependencies" OFF)
 
 set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
 
-if(BUILD_SOURCE_DEPS)
+if(FETCH_SOURCE_DEPS)
     set(AZ_ALL_LIBRARIES ON)
     include(FolderList)
     SetCompileOptions(CERTIFICATES)
@@ -32,7 +32,7 @@ include(AzureConfigRTTI)
 # Add create_map_file function
 include(CreateMapFile)
 
-if(BUILD_SOURCE_DEPS)
+if(FETCH_SOURCE_DEPS)
     GetFolderList(CERTIFICATES)
     foreach(oneFolder IN LISTS BUILD_FOLDERS)
         message("add folder ${oneFolder}")
@@ -93,7 +93,10 @@ get_az_version("${CMAKE_CURRENT_SOURCE_DIR}/src/private/package_version.hpp")
 generate_documentation(azure-security-keyvault-certificates ${AZ_LIBRARY_VERSION})
 
 if(BUILD_TESTING)
-  if (NOT AZ_ALL_LIBRARIES OR BUILD_SOURCE_DEPS)
+  # define a symbol that enables some test hooks in code
+  add_compile_definitions(TESTING_BUILD)
+
+  if (NOT AZ_ALL_LIBRARIES OR FETCH_SOURCE_DEPS)
     include(AddGoogleTest)
     enable_testing ()
   endif()
@@ -122,4 +125,6 @@ az_rtti_setup(
   "azure/keyvault/certificates/rtti.hpp"
 )
 
-unset(BUILD_SOURCE_DEPS CACHE)
+unset(FETCH_SOURCE_DEPS CACHE)
+unset(FETCH_SOURCE_DEPS PARENT_SCOPE)
+

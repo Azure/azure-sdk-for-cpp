@@ -13,9 +13,9 @@ set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
 # Compile Options
-option(BUILD_SOURCE_DEPS "build source dependencies" OFF)
+option(FETCH_SOURCE_DEPS "build source dependencies" OFF)
 
-if(BUILD_SOURCE_DEPS)
+if(FETCH_SOURCE_DEPS)
     set(AZ_ALL_LIBRARIES ON)
     include(FolderList)
     SetCompileOptions(IDENTITY)
@@ -30,7 +30,7 @@ include(AzureConfigRTTI)
 # Add create_map_file function
 include(CreateMapFile)
 
-if(BUILD_SOURCE_DEPS)
+if(FETCH_SOURCE_DEPS)
     GetFolderList(IDENTITY)
     foreach(oneFolder IN LISTS BUILD_FOLDERS)
         message("add folder ${oneFolder}")
@@ -77,7 +77,6 @@ target_include_directories(
   azure-identity
     PUBLIC
       $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/inc>
-      $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/build/sdk/core/azure-core/inc>
       $<INSTALL_INTERFACE:include>
       ${azure-core-cpp_INCLUDE_DIRS}
 )
@@ -101,7 +100,7 @@ az_rtti_setup(
 
 if(BUILD_TESTING)
   # tests
-  if (NOT AZ_ALL_LIBRARIES)
+  if (NOT AZ_ALL_LIBRARIES OR FETCH_SOURCE_DEPS)
     include(AddGoogleTest)
     enable_testing ()
   endif()
@@ -117,3 +116,6 @@ endif()
 if (AZ_ALL_LIBRARIES)
   add_subdirectory(samples)
 endif()
+
+unset(FETCH_SOURCE_DEPS CACHE)
+unset(FETCH_SOURCE_DEPS PARENT_SCOPE)

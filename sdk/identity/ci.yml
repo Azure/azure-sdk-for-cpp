@@ -59,4 +59,4 @@ stages:
           Value: '-DBUILD_TESTING=ON -DBUILD_SAMPLES=ON -DBUILD_PERFORMANCE_TESTS=ON'
       CMakeSourceTestOptions:
         - Name: Source
-          Value: '-DBUILD_SOURCE_DEPS=ON'
+          Value: '-DFETCH_SOURCE_DEPS=ON'

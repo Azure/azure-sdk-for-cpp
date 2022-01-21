@@ -11,10 +11,7 @@ macro(GetFolderList project)
     list(REMOVE_DUPLICATES BUILD_FOLDERS)
 endmacro()
 
-macro(SetCompileOptions project)
-    message ("setting up compile options for ${project}")
-   
-    # Compile Options
+macro(SetGlobalOptions)
     option(WARNINGS_AS_ERRORS "Treat compiler warnings as errors" ON)
     option(BUILD_TRANSPORT_CURL "Build an HTTP transport implementation with CURL" OFF)
     option(BUILD_TRANSPORT_WINHTTP "Build an HTTP transport implementation with WIN HTTP" OFF)
@@ -24,11 +21,17 @@ macro(SetCompileOptions project)
     option(BUILD_CODE_COVERAGE "Build gcov targets for HTML and XML reports. Requires debug build and BUILD_TESTING" OFF)
     option(BUILD_DOCUMENTATION "Create HTML based API documentation (requires Doxygen)" OFF)
     option(RUN_LONG_UNIT_TESTS "Tests that takes more than 5 minutes to complete. No effect if BUILD_TESTING is OFF" OFF)
+    option(BUILD_STORAGE_SAMPLES "Build sample application for Azure Storage clients" OFF)
     option(BUILD_PERFORMANCE_TESTS "Build the performance test library" OFF)
     option(MSVC_USE_STATIC_CRT "(MSVC only) Set to ON to link SDK with static CRT (/MT or /MTd switch)." OFF)
-    option(BUILD_FROM_SOURCE_EXPORT "if export is built from source" ON)
-    option(TESTING_BUILD "BUILD test cases" OFF)
-    
+    option(FETCH_SOURCE_DEPS "fetch source dependencies for a package, not for global use, instead use when building specific component" OFF)
+endmacro()
+
+macro(SetCompileOptions project)
+    message ("setting up compile options for ${project}")
+   
+    # Compile Options
+    SetGlobalOptions()
 endmacro()
 
 macro(DownloadDepVersion DEP_FOLDER DEP_NAME DEP_VERSION)
