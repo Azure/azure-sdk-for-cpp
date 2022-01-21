@@ -5,6 +5,19 @@
  * Base class for running live and playback tests using the interceptor manager
  */
 
+#include <azure/core/platform.hpp>
+
+#if defined(AZ_PLATFORM_WINDOWS)
+#if !defined(WIN32_LEAN_AND_MEAN)
+#define WIN32_LEAN_AND_MEAN
+#endif
+#if !defined(NOMINMAX)
+#define NOMINMAX
+#endif
+
+#include <windows.h>
+#endif
+
 #include <gtest/gtest.h>
 
 #include <azure/core/credentials/credentials.hpp>
@@ -245,13 +258,20 @@ namespace Azure { namespace Core { namespace Test {
     // Util for tests getting env vars
     std::string GetEnv(const std::string& name)
     {
+      const char* ret = nullptr;
+
+#if !defined(WINAPI_PARTITION_DESKTOP) \
+    || WINAPI_PARTITION_DESKTOP // See azure/core/platform.hpp for explanation.
+
 #if defined(_MSC_VER)
 #pragma warning(push)
 #pragma warning(disable : 4996)
-      const char* ret = std::getenv(name.data());
+#endif
+      ret = std::getenv(name.data());
+#if defined(_MSC_VER)
 #pragma warning(pop)
-#else
-      const char* ret = std::getenv(name.data());
+#endif
+
 #endif
 
       if (!ret)
