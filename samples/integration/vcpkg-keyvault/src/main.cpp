@@ -43,7 +43,6 @@ using namespace Azure::Security::KeyVault::Keys;
 
 int main()
 {
-#if defined(UWP)
   auto tenantId = GetEnv("AZURE_TENANT_ID");
   auto clientId = GetEnv("AZURE_CLIENT_ID");
   auto clientSecret = GetEnv("AZURE_CLIENT_SECRET");
