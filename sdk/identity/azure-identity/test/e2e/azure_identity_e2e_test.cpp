@@ -1,6 +1,19 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
 
+#include <azure/core/platform.hpp>
+
+#if defined(AZ_PLATFORM_WINDOWS)
+#if !defined(WIN32_LEAN_AND_MEAN)
+#define WIN32_LEAN_AND_MEAN
+#endif
+#if !defined(NOMINMAX)
+#define NOMINMAX
+#endif
+
+#include <windows.h>
+#endif
+
 #include <azure/identity/managed_identity_credential.hpp>
 
 #include <chrono>
@@ -13,6 +26,8 @@
 namespace {
 std::string GetEnv(std::string const& varName)
 {
+#if (!defined(WINAPI_PARTITION_DESKTOP) || WINAPI_PARTITION_DESKTOP) // See azure/core/platform.hpp
+                                                                     // for explanation.
 #if defined(_MSC_VER)
 #pragma warning(push)
 // warning C4996: 'getenv': This function or variable may be unsafe. Consider using _dupenv_s
@@ -24,6 +39,11 @@ std::string GetEnv(std::string const& varName)
 #pragma warning(pop)
 #endif
   return value ? std::string(value) : std::string();
+#else
+  static_cast<void>(varName);
+  throw std::runtime_error("ManagedIdentityCredential relies on envronment variables, which are "
+                           "not supported by the UWP platform.");
+#endif
 }
 
 std::string FormatEnvVarValue(std::string const& varName, bool isSecret)
