@@ -41,6 +41,8 @@ std::string Environment::GetVariable(const char* name)
 #if defined(_MSC_VER)
 #pragma warning(pop)
 #endif
+#else
+  static_cast<void>(name);
 #endif
 
   return std::string();
