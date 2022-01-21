@@ -75,8 +75,8 @@ namespace Azure { namespace Storage { namespace Blobs { namespace Test {
     void Setup() override
     {
       const static std::string envConnectionString =
-#if (!defined(WINAPI_PARTITION_DESKTOP) || WINAPI_PARTITION_DESKTOP) // See azure/core/platform.hpp
-                                                                     // for explanation.
+#if !defined(WINAPI_PARTITION_DESKTOP) \
+    || WINAPI_PARTITION_DESKTOP // See azure/core/platform.hpp for explanation.
           // Get connection string from env
           std::getenv("STORAGE_CONNECTION_STRING");
 #else

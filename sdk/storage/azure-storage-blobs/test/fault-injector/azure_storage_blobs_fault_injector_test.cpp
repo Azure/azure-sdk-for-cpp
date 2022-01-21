@@ -102,8 +102,8 @@ int main()
 #endif
 
   std::string connectionString(
-#if (!defined(WINAPI_PARTITION_DESKTOP) || WINAPI_PARTITION_DESKTOP) // See azure/core/platform.hpp
-                                                                     // for explanation.
+#if !defined(WINAPI_PARTITION_DESKTOP) \
+    || WINAPI_PARTITION_DESKTOP // See azure/core/platform.hpp for explanation.
       std::getenv("STORAGE_CONNECTION_STRING")
 #else
       ""

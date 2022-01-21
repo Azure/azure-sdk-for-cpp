@@ -23,8 +23,8 @@ using Azure::Core::Diagnostics::_detail::EnvironmentLogLevelListener;
 namespace {
 
 constexpr bool IsUwp =
-#if (!defined(WINAPI_PARTITION_DESKTOP) || WINAPI_PARTITION_DESKTOP) // See azure/core/platform.hpp
-                                                                     // for explanation.
+#if !defined(WINAPI_PARTITION_DESKTOP) \
+    || WINAPI_PARTITION_DESKTOP // See azure/core/platform.hpp for explanation.
     false
 #else
     true
@@ -35,8 +35,8 @@ std::string environmentVariable = "AZURE_LOG_LEVEL";
 
 void SetLogLevel(std::string const& value)
 {
-#if (!defined(WINAPI_PARTITION_DESKTOP) || WINAPI_PARTITION_DESKTOP) // See azure/core/platform.hpp
-                                                                     // for explanation.
+#if !defined(WINAPI_PARTITION_DESKTOP) \
+    || WINAPI_PARTITION_DESKTOP // See azure/core/platform.hpp for explanation.
 #if defined(_MSC_VER)
   static_cast<void>(_putenv((environmentVariable + "=" + value).c_str()));
 #else
@@ -49,8 +49,8 @@ void SetLogLevel(std::string const& value)
 
 } // namespace
 class EnvironmentLogLevelListenerTest : public testing::Test {
-#if (!defined(WINAPI_PARTITION_DESKTOP) || WINAPI_PARTITION_DESKTOP) // See azure/core/platform.hpp
-                                                                     // for explanation.
+#if !defined(WINAPI_PARTITION_DESKTOP) \
+    || WINAPI_PARTITION_DESKTOP // See azure/core/platform.hpp for explanation.
 protected:
   void SetUp() override
   {

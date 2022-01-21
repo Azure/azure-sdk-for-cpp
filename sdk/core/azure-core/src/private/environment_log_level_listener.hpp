@@ -30,8 +30,9 @@ namespace Azure { namespace Core { namespace Diagnostics { namespace _detail {
     static void SetInitialized(bool value);
   };
 
-#if (defined(WINAPI_PARTITION_DESKTOP) && !WINAPI_PARTITION_DESKTOP) // See azure/core/platform.hpp
-                                                                     // for explanation.
+#if defined(WINAPI_PARTITION_DESKTOP) \
+    && !WINAPI_PARTITION_DESKTOP // See azure/core/platform.hpp for explanation.
+
   inline Logger::Level EnvironmentLogLevelListener::GetLogLevel(Logger::Level defaultValue)
   {
     return defaultValue;
@@ -42,5 +43,6 @@ namespace Azure { namespace Core { namespace Diagnostics { namespace _detail {
   {
     return nullptr;
   }
+
 #endif
 }}}} // namespace Azure::Core::Diagnostics::_detail

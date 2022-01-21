@@ -26,8 +26,8 @@ using namespace Azure::Core::Diagnostics;
 using namespace Azure::Core::Diagnostics::_detail;
 using Azure::Core::Diagnostics::_detail::EnvironmentLogLevelListener;
 
-#if (!defined(WINAPI_PARTITION_DESKTOP) || WINAPI_PARTITION_DESKTOP) // See azure/core/platform.hpp
-                                                                     // for explanation.
+#if !defined(WINAPI_PARTITION_DESKTOP) \
+    || WINAPI_PARTITION_DESKTOP // See azure/core/platform.hpp for explanation.
 
 namespace {
 Logger::Level const* GetEnvironmentLogLevel()
