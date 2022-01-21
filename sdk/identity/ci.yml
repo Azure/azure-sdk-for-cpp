@@ -36,6 +36,10 @@ stages:
         - Name: azure-identity
           Path: azure-identity
           VcpkgPortName: azure-identity-cpp
+      ArtifactsSource:
+        - Name: azure-identity
+          Path: azure-identity
+          VcpkgPortName: azure-identity-cpp
       TestEnv:
         # Tenant ID should use the uniqueID format for playback recordings
         - Name: AZURE_TENANT_ID
@@ -53,3 +57,6 @@ stages:
           Value: '-DBUILD_TESTING=ON -DBUILD_SAMPLES=ON'
         - Name: Performance
           Value: '-DBUILD_TESTING=ON -DBUILD_SAMPLES=ON -DBUILD_PERFORMANCE_TESTS=ON'
+      CMakeSourceTestOptions:
+        - Name: Source
+          Value: '-DFETCH_SOURCE_DEPS=ON'

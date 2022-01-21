@@ -26,8 +26,9 @@ stages:
     parameters:
       ServiceDirectory: storage
       # Not running tests on CI but only on LiveTest mode
-      CtestRegex: no-run
-      CoverageEnabled: false
+      CtestRegex: azure-storage
+      LineCoverageTarget: 76
+      BranchCoverageTarget: 41
       LiveTestCtestRegex: azure-storage
       SubscriptionConfiguration: $(sub-config-azure-cloud-test-resources-preview)
       Artifacts:
@@ -46,3 +47,16 @@ stages:
         - Name: azure-storage-queues
           Path: azure-storage-queues
           VcpkgPortName: azure-storage-queues-cpp
+      TestEnv:
+        - Name: AAD_TENANT_ID
+          Value: "33333333-3333-3333-3333-333333333333"
+        - Name: AAD_CLIENT_ID
+          Value: "non-real-client"
+        - Name: AAD_CLIENT_SECRET
+          Value: "non-real-secret"          
+        - Name: STANDARD_STORAGE_CONNECTION_STRING
+          Value: "DefaultEndpointsProtocol=https;AccountName=notReal;AccountKey=3333333333333333333333333333333333333333333333333333333333333333333333333333333333333333;EndpointSuffix=core.windows.net"
+        - Name: ADLS_GEN2_CONNECTION_STRING
+          Value: "DefaultEndpointsProtocol=https;AccountName=notReal;AccountKey=3333333333333333333333333333333333333333333333333333333333333333333333333333333333333333;EndpointSuffix=core.windows.net"
+        - Name: PREMIUM_FILE_CONNECTION_STRING
+          Value: "DefaultEndpointsProtocol=https;AccountName=notReal;AccountKey=3333333333333333333333333333333333333333333333333333333333333333333333333333333333333333;EndpointSuffix=core.windows.net"

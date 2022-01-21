@@ -84,6 +84,9 @@ namespace Azure { namespace Core { namespace Test {
       return fullName;
     }
 
+    std::string GetTestName() const { return m_testName; }
+    std::string GetTestSuiteName() const { return m_testSuite; }
+
     /**
      * @brief Get the Test Mode object for the current test.
      *
@@ -115,8 +118,7 @@ namespace Azure { namespace Core { namespace Test {
      */
     bool IsLiveMode() const { return TestMode == Azure::Core::Test::TestMode::LIVE; }
 
-  protected:
-    constexpr static const char* LiveOnlyToken = "LIVE";
+    constexpr static const char* LiveOnlyToken = "_LIVEONLY_";
 
   private:
     std::string m_testName;

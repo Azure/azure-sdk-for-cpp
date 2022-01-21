@@ -16,7 +16,7 @@ set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
 
-if(BUILD_SOURCE_DEPS)
+if(FETCH_SOURCE_DEPS)
     set(AZ_ALL_LIBRARIES ON)
     include(FolderList)
     SetCompileOptions(SECRETS)
@@ -28,10 +28,11 @@ include(AzureTransportAdapters)
 include(AzureDoxygen)
 include(AzureGlobalCompileOptions)
 include(AzureConfigRTTI)
+include(AzureBuildTargetForCI)
 # Add create_map_file function
 include(CreateMapFile)
 
-if(BUILD_SOURCE_DEPS)
+if(FETCH_SOURCE_DEPS)
     GetFolderList(SECRETS)
     foreach(oneFolder IN LISTS BUILD_FOLDERS)
         message("add folder ${oneFolder}")
@@ -74,13 +75,14 @@ set(
 
 add_library(azure-security-keyvault-secrets ${AZURE_SECURITY_KEYVAULT_SECRETS_HEADER} ${AZURE_SECURITY_KEYVAULT_SECRETS_SOURCE})
 add_library(Azure::azure-security-keyvault-secrets ALIAS azure-security-keyvault-secrets)
+create_per_service_target_build(azure-security-keyvault-secrets keyvault)
 
 target_include_directories(
   azure-security-keyvault-secrets
     PUBLIC
       $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/inc>
       $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/../../../sdk/core/inc>
-      $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/sdk/core/azure-core/inc>
+      $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/build/sdk/core/azure-core/inc>
       $<INSTALL_INTERFACE:include>
 )
 
@@ -101,7 +103,7 @@ get_az_version("${CMAKE_CURRENT_SOURCE_DIR}/src/private/package_version.hpp")
 generate_documentation(azure-security-keyvault-secrets ${AZ_LIBRARY_VERSION})
 if(BUILD_TESTING)
 
-  if (NOT AZ_ALL_LIBRARIES)
+  if (NOT AZ_ALL_LIBRARIES OR FETCH_SOURCE_DEPS)
     include(AddGoogleTest)
     enable_testing ()
   endif()
@@ -130,4 +132,4 @@ az_rtti_setup(
   "azure/keyvault/secrets/rtti.hpp"
 )
 
-unset(BUILD_SOURCE_DEPS CACHE)
+unset(FETCH_SOURCE_DEPS CACHE)

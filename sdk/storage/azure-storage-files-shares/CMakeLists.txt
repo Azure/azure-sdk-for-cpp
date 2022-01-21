@@ -17,6 +17,7 @@ include(AzureTransportAdapters)
 include(AzureDoxygen)
 include(AzureGlobalCompileOptions)
 include(AzureConfigRTTI)
+include(AzureBuildTargetForCI)
 
 az_vcpkg_integrate()
 
@@ -59,7 +60,7 @@ set(
 )
 
 add_library(azure-storage-files-shares ${AZURE_STORAGE_FILES_SHARES_HEADER} ${AZURE_STORAGE_FILES_SHARES_SOURCE})
-
+create_per_service_target_build(azure-storage-files-shares storage)
 # make sure that users can consume the project as a library.
 add_library(Azure::azure-storage-files-shares ALIAS azure-storage-files-shares)
 
@@ -91,25 +92,9 @@ az_rtti_setup(
 create_code_coverage(storage azure-storage-files-shares azure-storage-test "tests?/*;samples?/*")
 
 if(BUILD_TESTING)
-  target_sources(
-    azure-storage-test
-      PRIVATE
-        test/macro_guard.cpp
-        test/share_client_test.cpp
-        test/share_client_test.hpp
-        test/share_directory_client_test.cpp
-        test/share_directory_client_test.hpp
-        test/share_file_attributes_test.cpp
-        test/share_file_client_test.cpp
-        test/share_file_client_test.hpp
-        test/share_sas_test.cpp
-        test/share_service_client_test.cpp
-        test/share_service_client_test.hpp
-  )
-
-  target_link_libraries(azure-storage-test PRIVATE azure-storage-files-shares)
+  add_subdirectory(test/ut)
 endif()
 
-if(BUILD_STORAGE_SAMPLES)
+if(BUILD_SAMPLES)
   add_subdirectory(samples)
 endif()
