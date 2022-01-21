@@ -7,7 +7,7 @@
 
 #include <azure/storage/blobs.hpp>
 
-#include "test_base.hpp"
+#include "test/ut/test_base.hpp"
 
 namespace Azure { namespace Storage { namespace Test {
 
@@ -36,7 +36,7 @@ namespace Azure { namespace Storage { namespace Test {
     std::function<void(const Core::Http::Request&)> m_callback;
   };
 
-  TEST(StoragetimeoutTest, Basic)
+  TEST_F(StorageTest, StoragetimeoutTestBasic)
   {
     Azure::Nullable<int64_t> timeout;
     auto callback = [&timeout](const Core::Http::Request& request) {
@@ -52,11 +52,13 @@ namespace Azure { namespace Storage { namespace Test {
       }
     };
 
+    m_testContext.RenameTest(GetTestName());
+
     auto peekPolicyPtr = std::make_unique<PeekHttpRequestPolicy>(callback);
-    Blobs::BlobClientOptions clientOptions;
+    Blobs::BlobClientOptions clientOptions = InitClientOptions<Blobs::BlobClientOptions>();
     clientOptions.PerRetryPolicies.emplace_back(std::move(peekPolicyPtr));
     auto containerClient = Azure::Storage::Blobs::BlobContainerClient::CreateFromConnectionString(
-        StandardStorageConnectionString(), LowercaseRandomString(), clientOptions);
+        StandardStorageConnectionString(), GetTestNameLowerCase(), clientOptions);
     containerClient.DeleteIfExists();
     EXPECT_FALSE(timeout.HasValue());
 
@@ -69,7 +71,7 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_LE(timeout.Value(), 301);
   }
 
-  TEST(StoragetimeoutTest, Cancelled)
+  TEST_F(StorageTest, StoragetimeoutTest_Cancelled)
   {
     Blobs::BlobClientOptions clientOptions;
     auto containerClient = Azure::Storage::Blobs::BlobContainerClient::CreateFromConnectionString(

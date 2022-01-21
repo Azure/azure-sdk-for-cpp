@@ -140,7 +140,7 @@
                     "PublishMapFiles": "true"
                 },
                 "included_samples": {
-                    "CmakeArgs": " -DBUILD_TESTING=ON -DBUILD_SAMPLES=ON -DBUILD_STORAGE_SAMPLES=ON",
+                    "CmakeArgs": " -DBUILD_TESTING=ON -DBUILD_SAMPLES=ON ",
                     "PublishMapFiles": "true"
                 }
             }

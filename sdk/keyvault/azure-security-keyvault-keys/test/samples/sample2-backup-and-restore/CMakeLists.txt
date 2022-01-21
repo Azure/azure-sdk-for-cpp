@@ -11,6 +11,7 @@ add_executable (
   sample2-backup-and-restore
   sample2_backup_and_restore.cpp
 )
+create_per_service_target_build(sample2-backup-and-restore keyvault)
 
 # Add the sample to be run on CI. 
 # CI pipeline reads the {service}-samples.txt and runs the binaries listed there.
