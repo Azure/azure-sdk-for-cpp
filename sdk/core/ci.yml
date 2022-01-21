@@ -38,8 +38,6 @@ stages:
       # In the case of changes to core we want to re-run all CI tests for all
       # libraries to check for potential regressions everywhere.
       CtestRegex: .*
-      # Storage tests have no recordings
-      CtestExcludeRegex: azure-storage
       LiveTestCtestRegex: '"azure-core.|json-test"'
       LiveTestTimeoutInMinutes: 90 # default is 60 min. We need a little longer on worst case for Win+jsonTests
       LineCoverageTarget: 93
@@ -70,9 +68,11 @@ stages:
         - Name: AAD_CLIENT_SECRET
           Value: "non-real-secret"          
         - Name: STANDARD_STORAGE_CONNECTION_STRING
-          Value: "DefaultEndpointsProtocol=https;AccountName=fake;AccountKey=X;EndpointSuffix=core.windows.net"
+          Value: "DefaultEndpointsProtocol=https;AccountName=notReal;AccountKey=3333333333333333333333333333333333333333333333333333333333333333333333333333333333333333;EndpointSuffix=core.windows.net"
         - Name: ADLS_GEN2_CONNECTION_STRING
-          Value: "DefaultEndpointsProtocol=https;AccountName=fake;AccountKey=X;EndpointSuffix=core.windows.net"
+          Value: "DefaultEndpointsProtocol=https;AccountName=notReal;AccountKey=3333333333333333333333333333333333333333333333333333333333333333333333333333333333333333;EndpointSuffix=core.windows.net"
+        - Name: PREMIUM_FILE_CONNECTION_STRING
+          Value: "DefaultEndpointsProtocol=https;AccountName=notReal;AccountKey=3333333333333333333333333333333333333333333333333333333333333333333333333333333333333333;EndpointSuffix=core.windows.net"
       CMakeTestOptions:
         - Name: Default
           Value: ''

@@ -18,6 +18,7 @@ endif()
 
 include(AzureTransportAdapters)
 include(AzureVcpkg)
+include(AzureBuildTargetForCI)
 
 az_vcpkg_integrate()
 

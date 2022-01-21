@@ -11,6 +11,7 @@ add_executable (
   certificate-get-certificates
   certificate_get_certificates.cpp
 )
+create_per_service_target_build(certificate-get-certificates keyvault)
 
 target_link_libraries(certificate-get-certificates PRIVATE azure-security-keyvault-certificates azure-identity )
 

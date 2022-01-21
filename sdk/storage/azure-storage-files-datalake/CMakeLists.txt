@@ -17,6 +17,7 @@ include(AzureTransportAdapters)
 include(AzureDoxygen)
 include(AzureGlobalCompileOptions)
 include(AzureConfigRTTI)
+include(AzureBuildTargetForCI)
 
 az_vcpkg_integrate()
 
@@ -64,6 +65,7 @@ add_library(azure-storage-files-datalake ${AZURE_STORAGE_FILES_DATALAKE_HEADER} 
 
 # make sure that users can consume the project as a library.
 add_library(Azure::azure-storage-files-datalake ALIAS azure-storage-files-datalake)
+create_per_service_target_build(azure-storage-files-datalake storage)
 
 target_include_directories(
   azure-storage-files-datalake
@@ -93,26 +95,9 @@ az_rtti_setup(
 create_code_coverage(storage azure-storage-files-datalake azure-storage-test "tests?/*;samples?/*")
 
 if(BUILD_TESTING)
-  target_sources(
-    azure-storage-test
-      PRIVATE
-        test/datalake_directory_client_test.cpp
-        test/datalake_directory_client_test.hpp
-        test/datalake_file_client_test.cpp
-        test/datalake_file_client_test.hpp
-        test/datalake_file_system_client_test.cpp
-        test/datalake_file_system_client_test.hpp
-        test/datalake_path_client_test.cpp
-        test/datalake_path_client_test.hpp
-        test/datalake_sas_test.cpp
-        test/datalake_service_client_test.cpp
-        test/datalake_service_client_test.hpp
-        test/macro_guard.cpp
-  )
-
-  target_link_libraries(azure-storage-test PRIVATE azure-storage-files-datalake)
+  add_subdirectory(test/ut)
 endif()
 
-if(BUILD_STORAGE_SAMPLES)
+if(BUILD_SAMPLES)
   add_subdirectory(samples)
 endif()

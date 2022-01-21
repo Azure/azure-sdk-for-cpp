@@ -10,8 +10,13 @@
 
 namespace Azure { namespace Storage { namespace Test {
 
-  TEST_F(BlobContainerClientTest, BlobSasTest)
+  TEST_F(BlobContainerClientTest, BlobSasTest_LIVEONLY_)
   {
+    CHECK_SKIP_TEST();
+
+    auto client = GetBlobContainerTestClient();
+    client.Create();
+
     auto sasStartsOn = std::chrono::system_clock::now() - std::chrono::minutes(5);
     auto sasExpiredOn = std::chrono::system_clock::now() - std::chrono::minutes(1);
     auto sasExpiresOn = std::chrono::system_clock::now() + std::chrono::minutes(60);
@@ -377,7 +382,7 @@ namespace Azure { namespace Storage { namespace Test {
       identifier.ExpiresOn = sasExpiresOn;
       identifier.Permissions = "r";
       options.SignedIdentifiers.emplace_back(identifier);
-      m_blobContainerClient->SetAccessPolicy(options);
+      client.SetAccessPolicy(options);
 
       Sas::BlobSasBuilder builder2 = blobSasBuilder;
       builder2.StartsOn.Reset();

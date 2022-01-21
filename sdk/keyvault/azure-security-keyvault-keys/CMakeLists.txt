@@ -19,6 +19,7 @@ include(AzureTransportAdapters)
 include(AzureDoxygen)
 include(AzureGlobalCompileOptions)
 include(AzureConfigRTTI)
+include(AzureBuildTargetForCI)
 # Add create_map_file function
 include(CreateMapFile)
 
@@ -89,6 +90,7 @@ set(
 add_library(azure-security-keyvault-keys
   ${AZURE_KEYVAULT_KEYS_HEADER} ${AZURE_KEYVAULT_KEYS_SOURCE}
 )
+create_per_service_target_build(azure-security-keyvault-keys keyvault)
 add_library(Azure::azure-security-keyvault-keys ALIAS azure-security-keyvault-keys)
 
 target_include_directories(
