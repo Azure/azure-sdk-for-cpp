@@ -28,8 +28,6 @@
 #include <windows.h>
 #endif
 
-#include <gtest/gtest.h>
-
 #include <azure/storage/blobs.hpp>
 
 #if defined(BUILD_CURL_HTTP_TRANSPORT_ADAPTER)

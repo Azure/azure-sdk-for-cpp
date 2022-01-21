@@ -22,6 +22,8 @@
 #include <windows.h>
 #endif
 
+#include <gtest/gtest.h>
+
 #include <azure/core/uuid.hpp>
 #include <azure/perf.hpp>
 
