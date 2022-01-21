@@ -41,7 +41,7 @@ std::string GetEnv(std::string const& varName)
   return value ? std::string(value) : std::string();
 #else
   static_cast<void>(varName);
-  throw std::runtime_error("ManagedIdentityCredential relies on envronment variables, which are "
+  throw std::runtime_error("ManagedIdentityCredential relies on environment variables, which are "
                            "not supported by the UWP platform.");
 #endif
 }
