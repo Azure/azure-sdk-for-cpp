@@ -49,9 +49,9 @@ void SetLogLevel(std::string const& value)
 
 } // namespace
 class EnvironmentLogLevelListenerTest : public testing::Test {
-protected:
 #if (!defined(WINAPI_PARTITION_DESKTOP) || WINAPI_PARTITION_DESKTOP) // See azure/core/platform.hpp
                                                                      // for explanation.
+protected:
   void SetUp() override
   {
 #if defined(_MSC_VER)

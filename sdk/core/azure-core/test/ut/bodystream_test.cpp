@@ -67,7 +67,6 @@ TEST(BodyStream, Rewind)
 TEST(BodyStream, BadInput)
 {
   TestBodyStream tb;
-
   ASSERT_DEATH(tb.Read(NULL, 1), "");
   ASSERT_DEATH(tb.Read(NULL, 1, Azure::Core::Context::ApplicationContext), "");
   ASSERT_DEATH(tb.ReadToCount(NULL, 1), "");
