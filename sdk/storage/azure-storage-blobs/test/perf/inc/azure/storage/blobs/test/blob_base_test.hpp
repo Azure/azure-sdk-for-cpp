@@ -9,19 +9,6 @@
 
 #pragma once
 
-#include <azure/core/platform.hpp>
-
-#if defined(AZ_PLATFORM_WINDOWS)
-#if !defined(WIN32_LEAN_AND_MEAN)
-#define WIN32_LEAN_AND_MEAN
-#endif
-#if !defined(NOMINMAX)
-#define NOMINMAX
-#endif
-
-#include <windows.h>
-#endif
-
 #include <azure/core/uuid.hpp>
 #include <azure/perf.hpp>
 
@@ -68,8 +55,6 @@ namespace Azure { namespace Storage { namespace Blobs { namespace Test {
     }
 
   public:
-#if !defined(WINAPI_PARTITION_DESKTOP) \
-    || WINAPI_PARTITION_DESKTOP // See azure/core/platform.hpp for explanation.
     /**
      * @brief Creat the container client
      *
@@ -97,7 +82,6 @@ namespace Azure { namespace Storage { namespace Blobs { namespace Test {
     }
 
     void Cleanup() override { m_containerClient->DeleteIfExists(); }
-#endif
 
     /**
      * @brief Construct a new BlobsTest test.
@@ -113,4 +97,5 @@ namespace Azure { namespace Storage { namespace Blobs { namespace Test {
      */
     std::vector<Azure::Perf::TestOption> GetTestOptions() override { return {}; }
   };
+
 }}}} // namespace Azure::Storage::Blobs::Test

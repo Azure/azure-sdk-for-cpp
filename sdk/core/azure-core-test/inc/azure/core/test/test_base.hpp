@@ -5,19 +5,6 @@
  * Base class for running live and playback tests using the interceptor manager
  */
 
-#include <azure/core/platform.hpp>
-
-#if defined(AZ_PLATFORM_WINDOWS)
-#if !defined(WIN32_LEAN_AND_MEAN)
-#define WIN32_LEAN_AND_MEAN
-#endif
-#if !defined(NOMINMAX)
-#define NOMINMAX
-#endif
-
-#include <windows.h>
-#endif
-
 #include <gtest/gtest.h>
 
 #include <azure/core/credentials/credentials.hpp>
@@ -46,8 +33,7 @@ using namespace std::chrono_literals;
 namespace Azure { namespace Core { namespace Test {
 
   /**
-   * @brief The base class provides the tools for a test to use the Record&PlayBack
-   * functionalities.
+   * @brief The base class provides the tools for a test to use the Record&PlayBack functionalities.
    *
    */
   class TestBase : public ::testing::Test {
@@ -74,8 +60,8 @@ namespace Azure { namespace Core { namespace Test {
 
     // Call this method to update client options with the required configuration to
     // support Record & Playback.
-    // If Playback or Record is not set, no changes will be done to the clientOptions or
-    // credential. Call this before creating the SDK client
+    // If Playback or Record is not set, no changes will be done to the clientOptions or credential.
+    // Call this before creating the SDK client
     void PrepareClientOptions(
         std::shared_ptr<Core::Credentials::TokenCredential>** credential,
         Azure::Core::_internal::ClientOptions& options)
@@ -106,18 +92,10 @@ namespace Azure { namespace Core { namespace Test {
       return RemovePreffix(updated);
     }
 
-    void SkipTest(const char* message = nullptr)
+    void SkipTest()
     {
       m_wasSkipped = true;
-
-      if (message == nullptr)
-      {
-        GTEST_SKIP();
-      }
-      else
-      {
-        GTEST_SKIP() << message;
-      }
+      GTEST_SKIP();
     }
 
     std::string RemovePreffix(std::string const& src)
@@ -267,25 +245,13 @@ namespace Azure { namespace Core { namespace Test {
     // Util for tests getting env vars
     std::string GetEnv(const std::string& name)
     {
-      const char* ret = nullptr;
-
-#if defined(WINAPI_PARTITION_DESKTOP) \
-    && !WINAPI_PARTITION_DESKTOP // See azure/core/platform.hpp for explanation.
-
-      static_cast<void>(name);
-      SkipTest("The test will be skipped because it uses Environment Variables which are not "
-               "available on UWP platform.");
-#else
-
 #if defined(_MSC_VER)
 #pragma warning(push)
 #pragma warning(disable : 4996)
-#endif
-      ret = std::getenv(name.data());
-#if defined(_MSC_VER)
+      const char* ret = std::getenv(name.data());
 #pragma warning(pop)
-#endif
-
+#else
+      const char* ret = std::getenv(name.data());
 #endif
 
       if (!ret)
