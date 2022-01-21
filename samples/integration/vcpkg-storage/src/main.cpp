@@ -58,10 +58,18 @@ const std::string& GetConnectionString()
   {
     return ConnectionString;
   }
+
+#if defined(UWP)
+  // UWP platform does not support environment variables.
+  // Implement some other way to get these values, such as reading them from a config file.
+  // Do not put values directly in code, especially secrets.
+#else
   const static std::string envConnectionString = std::getenv("AZURE_STORAGE_CONNECTION_STRING");
   if (!envConnectionString.empty())
   {
     return envConnectionString;
   }
+#endif
+
   throw std::runtime_error("Cannot find connection string");
 }

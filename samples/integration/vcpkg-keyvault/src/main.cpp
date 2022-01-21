@@ -32,7 +32,7 @@ const char* GetEnv(const char* varName)
 #if defined(UWP)
   // UWP platform does not support environment variables.
   // Implement some other way to get these values, such as reading them from a config file.
-  // It is not recommended to put values directly in code, especially secrets.
+  // Do not put values directly in code, especially secrets.
   throw std::exception();
 #else
   return std::getenv(varName);

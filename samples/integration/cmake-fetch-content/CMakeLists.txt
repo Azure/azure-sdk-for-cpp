@@ -26,5 +26,9 @@ add_executable (
      src/main
 )
 
+if (WINDOWS_STORE OR WINDOWS_PHONE)
+  target_compile_definitions(application PRIVATE UWP)
+endif()
+
 # Link to Azure SDK
 target_link_libraries(application Azure::azure-storage-blobs)

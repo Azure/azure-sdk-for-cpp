@@ -16,6 +16,18 @@
 
 using namespace Azure::Storage::Blobs;
 
+const char* GetConnectionString()
+{
+#if defined(UWP)
+  // UWP platform does not support environment variables.
+  // Implement some other way to get these values, such as reading them from a config file.
+  // Do not put values directly in code, especially secrets.
+  throw std::exception();
+#else
+  return std::getenv("STORAGE_CONNECTION_STRING");
+#endif
+}
+
 int main(int argc, char* argv[])
 {
   (void)argc;
@@ -25,8 +37,8 @@ int main(int argc, char* argv[])
   /****************   Create container  ************************/
   try
   {
-    auto containerClient = BlobContainerClient::CreateFromConnectionString(
-        std::getenv("STORAGE_CONNECTION_STRING"), "sample");
+    auto containerClient
+        = BlobContainerClient::CreateFromConnectionString(GetConnectionString(), "sample");
 
     containerClient.CreateIfNotExists();
 
