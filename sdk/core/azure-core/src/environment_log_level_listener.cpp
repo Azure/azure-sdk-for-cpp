@@ -16,9 +16,6 @@
 
 #include "private/environment_log_level_listener.hpp"
 
-#if (!defined(WINAPI_PARTITION_DESKTOP) || WINAPI_PARTITION_DESKTOP) // See azure/core/platform.hpp
-                                                                     // for explanation.
-
 #include "azure/core/datetime.hpp"
 #include "azure/core/internal/strings.hpp"
 
@@ -28,6 +25,9 @@
 using namespace Azure::Core::Diagnostics;
 using namespace Azure::Core::Diagnostics::_detail;
 using Azure::Core::Diagnostics::_detail::EnvironmentLogLevelListener;
+
+#if (!defined(WINAPI_PARTITION_DESKTOP) || WINAPI_PARTITION_DESKTOP) // See azure/core/platform.hpp
+                                                                     // for explanation.
 
 namespace {
 Logger::Level const* GetEnvironmentLogLevel()
