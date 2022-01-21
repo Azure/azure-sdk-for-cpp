@@ -14,10 +14,10 @@
 #include <windows.h>
 #endif
 
+#include "private/environment_log_level_listener.hpp"
+
 #if (!defined(WINAPI_PARTITION_DESKTOP) || WINAPI_PARTITION_DESKTOP) // See azure/core/platform.hpp
                                                                      // for explanation.
-
-#include "private/environment_log_level_listener.hpp"
 
 #include "azure/core/datetime.hpp"
 #include "azure/core/internal/strings.hpp"
