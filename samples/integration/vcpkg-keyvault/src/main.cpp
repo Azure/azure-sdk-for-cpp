@@ -22,21 +22,35 @@
 #include <azure/keyvault/keyvault_keys.hpp>
 
 #include <chrono>
+#include <exception>
 #include <iostream>
 #include <memory>
 #include <thread>
+
+const char* GetEnv(const char* varName)
+{
+#if defined(UWP)
+  // UWP platform does not support environment variables.
+  // Implement some other way to get these values, such as reading them from a config file.
+  // It is not recommended to put values directly in code, especially secrets.
+  throw std::exception();
+#else
+  return std::getenv(varName);
+#endif
+}
 
 using namespace Azure::Security::KeyVault::Keys;
 
 int main()
 {
-  auto tenantId = std::getenv("AZURE_TENANT_ID");
-  auto clientId = std::getenv("AZURE_CLIENT_ID");
-  auto clientSecret = std::getenv("AZURE_CLIENT_SECRET");
+#if defined(UWP)
+  auto tenantId = GetEnv("AZURE_TENANT_ID");
+  auto clientId = GetEnv("AZURE_CLIENT_ID");
+  auto clientSecret = GetEnv("AZURE_CLIENT_SECRET");
   auto credential
       = std::make_shared<Azure::Identity::ClientSecretCredential>(tenantId, clientId, clientSecret);
 
-  KeyClient keyClient(std::getenv("AZURE_KEYVAULT_URL"), credential);
+  KeyClient keyClient(GetEnv("AZURE_KEYVAULT_URL"), credential);
 
   std::string rsaKeyName("CloudRsaKey" + Azure::Core::Uuid::CreateUuid().ToString());
   try
