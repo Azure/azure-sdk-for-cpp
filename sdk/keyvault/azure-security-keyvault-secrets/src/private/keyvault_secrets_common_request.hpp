@@ -2,8 +2,7 @@
 // SPDX-License-Identifier: MIT
 
 /**
- * @brief Provides a wrapper class for the Azure Core Pipeline for all Key Vault services where
- * common functionality is set up.
+ * @brief Provides a wrapper class for the Azure Core Pipeline for Secrets service.
  *
  */
 
