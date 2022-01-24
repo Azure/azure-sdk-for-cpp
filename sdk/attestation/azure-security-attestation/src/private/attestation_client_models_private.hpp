@@ -24,6 +24,7 @@
 #include <memory>
 #include <string>
 #include <vector>
+#include "crypto/inc/crypto.hpp"
 
 namespace Azure {
   namespace Security {
@@ -112,6 +113,10 @@ namespace Azure {
     {
       m_token.RawToken = std::string(jwt);
       ParseRawToken(response);
+    }
+
+    void ValidateToken() {
+
     }
     operator AttestationToken<T>&&() { return std::move(m_token); }
   };

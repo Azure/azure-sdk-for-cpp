@@ -6,7 +6,8 @@
 
 namespace Azure { namespace Security { namespace Attestation { namespace Test {
 
-const std::string OpenEnclaveQuote(
+// spell-checker:disable
+  const std::string OpenEnclaveQuote(
       "AQAAAAIAAADoEQAAAAAAAAMAAgAAAAAABQAKAJOacjP3nEyplAoNs5V_Bgfl_L18zrEJejtqk6RDB0IzAAAAABERAwX_"
       "gAYAAAAAAAAAAAAAAAAAAAA"
       "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAcAAAAAAAAABwAAAAAAAAApKh9LUZ5GYn6yR4o9mFFAVlPFtLCmkl3oQ4N"
@@ -238,6 +239,7 @@ const std::string OpenEnclaveQuote(
       "IsCiAgICAgICAgICAgICAgICAieCI6IjE4d0hMZUlnVzl3Vk42VkQxVHhncHF5MkxzellrTWY2Sjhua"
       "lZBaWJ2aE0iLAogICAgICAgICAgICAgICAgInkiOiJjVjRkUzRVYUxNZ1BfNGZZNGo4aXI3Y2wxVFhs"
       "RmRBZ2N4NTVvN1RrY1NBIgogICAgICAgICAgICB9CiAgICAgICAgfQogICAgICAgIAA";
+// spell-checker:enable
   
 
 

@@ -20,6 +20,8 @@ namespace Azure { namespace Security { namespace Attestation {
     std::string m_apiVersion;
     std::shared_ptr<Azure::Core::Http::_internal::HttpPipeline> m_pipeline;
 
+    std::mutex m_sharedStateLock;
+
   public:
     /**
      * @brief Destructor.

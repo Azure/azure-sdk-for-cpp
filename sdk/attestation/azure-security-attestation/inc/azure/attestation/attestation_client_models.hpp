@@ -76,6 +76,9 @@ namespace Azure { namespace Security { namespace Attestation {
     std::string SgxCollateral;
   };
 
+  /// An AttestationToken represents an RFC 7515 JSON Web Token returned from the attestation
+  /// service.
+  /// <typeparam name="T"></typeparam>
   template <typename T>
   struct AttestationToken
   {
@@ -83,5 +86,16 @@ namespace Azure { namespace Security { namespace Attestation {
     std::string RawHeader;
     std::string RawBody;
     T Body;
+  };
+
+  /// An AttestationSigningKey represents a pair of signing keys and certificates.
+  struct AttestationSigningKey
+  {
+    std::string SigningPrivateKey; /// A PEM encoded RSA or ECDSA private key which will be used to
+                                   /// sign an attestation token.
+    std::string SigningCertificate; /// A PEM encoded X.509 certificate which will be sent to the
+                                    /// attestation service to validate an attestation token. The
+                                    /// public key embedded in the certificate MUST be the public
+                                    /// key of the SigningPrivateKey.
   };
 }}} // namespace Azure::Security::Attestation

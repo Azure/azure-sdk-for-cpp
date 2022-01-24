@@ -49,7 +49,7 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
     // Undo tampering the signature.
     signature[5] ^= 0x55;
 
-    // Now tamper the payload, it shoudl also fail.
+    // Now tamper the payload, it should also fail.
     signaturePayload[5] ^= 0x55;
     EXPECT_FALSE(publicKey->VerifySignature(signaturePayload, signature));
   }
@@ -110,7 +110,7 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
       // Undo tampering the signature.
       signature[5] ^= 0x55;
 
-      // Now tamper the payload, it shoudl also fail.
+      // Now tamper the payload, it should also fail.
       signaturePayload[5 % payloadSize] ^= 0x55;
       EXPECT_FALSE(publicKey->VerifySignature(signaturePayload, signature));
     }
@@ -160,6 +160,7 @@ qQKwhjIj5sw3iOCKAiAUEIuF2ylJk2KDexNEW7t/zGmnBT0FgCRwdvKAh8S2EQ==
     EXPECT_EQ(0, exportedCert.find("-----BEGIN CERTIFICATE-----"));
 
     auto publicKey = x509cert->GetPublicKey();
+    EXPECT_NE(nullptr, publicKey.get());
   }
 
   TEST(CryptoTests, CreateX509Certificate)
