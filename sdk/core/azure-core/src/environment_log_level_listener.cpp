@@ -24,7 +24,7 @@ Logger::Level const* GetEnvironmentLogLevel()
   {
     EnvironmentLogLevelListener::SetInitialized(true);
 
-    auto envVar = std::string(); // Environment::GetVariable("AZURE_LOG_LEVEL");
+    auto envVar = Environment::GetVariable("AZURE_LOG_LEVEL");
 
     if (!envVar.empty())
     {
