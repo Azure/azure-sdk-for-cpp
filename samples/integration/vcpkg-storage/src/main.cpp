@@ -69,6 +69,5 @@ const std::string& GetConnectionString()
   {
     return envConnectionString;
   }
-
   throw std::runtime_error("Cannot find connection string");
 }

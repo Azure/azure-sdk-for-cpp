@@ -1,11 +1,11 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
 
+#include <azure/core/environment.hpp>
 #include <azure/core/internal/json/json.hpp>
 #include <azure/core/internal/strings.hpp>
 
 #include "azure/core/test/interceptor_manager.hpp"
-#include "private/environment.hpp"
 
 #include <fstream>
 #include <iostream>
@@ -17,7 +17,33 @@ using namespace Azure::Core::Test;
 using namespace Azure::Core::Json::_internal;
 using namespace Azure::Core;
 
-TestMode InterceptorManager::GetTestMode() { return _detail::Environment::GetTestMode(); }
+TestMode InterceptorManager::GetTestMode()
+{
+  auto value = Environment::GetVariable("AZURE_TEST_MODE");
+  if (value.empty())
+  {
+    return Azure::Core::Test::TestMode::LIVE;
+  }
+
+  if (Azure::Core::_internal::StringExtensions::LocaleInvariantCaseInsensitiveEqual(
+          value, "RECORD"))
+  {
+    return Azure::Core::Test::TestMode::RECORD;
+  }
+  else if (Azure::Core::_internal::StringExtensions::LocaleInvariantCaseInsensitiveEqual(
+               value, "PLAYBACK"))
+  {
+    return Azure::Core::Test::TestMode::PLAYBACK;
+  }
+  else if (Azure::Core::_internal::StringExtensions::LocaleInvariantCaseInsensitiveEqual(
+               value, "LIVE"))
+  {
+    return Azure::Core::Test::TestMode::LIVE;
+  }
+
+  // unexpected variable value
+  throw std::runtime_error("Invalid environment variable: " + value);
+}
 
 void InterceptorManager::LoadTestData()
 {
