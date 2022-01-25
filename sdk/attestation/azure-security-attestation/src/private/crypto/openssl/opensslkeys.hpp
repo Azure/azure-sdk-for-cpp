@@ -41,7 +41,7 @@ namespace Azure { namespace Security { namespace Attestation { namespace _privat
      * used to verify an signed buffer.
      */
     class OpenSSLAsymmetricKey : public AsymmetricKey {
-      friend class OpenSSLX509Certificate;
+      friend class OpenSSLX509Certificate; // cspell: disable-line
       
     protected:
       _details::openssl_evp_pkey m_pkey;
