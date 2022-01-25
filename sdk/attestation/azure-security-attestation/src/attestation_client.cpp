@@ -126,3 +126,13 @@ Azure::Response<AttestationToken<AttestationResult>> AttestationClient::AttestOp
       responseToken, response);
   return Response<AttestationToken<AttestationResult>>(token, std::move(response));
 }
+
+void AttestationClient::CacheAttestationSigners(Azure::Core::Context const& context)
+{
+  std::unique_lock<std::shared_mutex> stateLock(m_sharedStateLock);
+
+  if (m_attestationSigners.size() == 0)
+  {
+    m_attestationSigners = GetAttestationSigningCertificates(context).Value;
+  }
+}

@@ -4,6 +4,7 @@
 #pragma once
 
 #include <string>
+#include <shared_mutex>
 #include <azure/core/internal/json/json.hpp>
 
 #include <azure/attestation/attestation_client_models.hpp>
@@ -20,7 +21,10 @@ namespace Azure { namespace Security { namespace Attestation {
     std::string m_apiVersion;
     std::shared_ptr<Azure::Core::Http::_internal::HttpPipeline> m_pipeline;
 
-    std::mutex m_sharedStateLock;
+    std::shared_mutex m_sharedStateLock;
+    std::vector<AttestationSigner> m_attestationSigners;
+
+    void CacheAttestationSigners(Azure::Core::Context const& context);
 
   public:
     /**

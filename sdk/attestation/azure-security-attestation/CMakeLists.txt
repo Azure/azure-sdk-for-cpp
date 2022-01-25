@@ -17,6 +17,7 @@ include(AzureTransportAdapters)
 include(AzureDoxygen)
 include(AzureGlobalCompileOptions)
 include(AzureConfigRTTI)
+include(AzureBuildTargetForCI)
 
 az_vcpkg_integrate()
 
@@ -42,7 +43,7 @@ set(
     src/private/crypto/inc/crypto.hpp
     src/private/crypto/inc/cryptocert.hpp
     src/private/crypto/inc/cryptokeys.hpp
-)
+ )
 
 set(
   AZURE_ATTESTATION_SOURCE
@@ -51,7 +52,9 @@ set(
     src/attestation_common_request.cpp
     src/private/crypto/openssl/opensslcrypto.cpp
     src/private/crypto/openssl/opensslkeys.cpp
- "src/private/crypto/openssl/opensslcert.cpp")
+    src/private/crypto/openssl/opensslcert.cpp )
+
+create_per_service_target_build(azure-security-attestation attestation)
 
 add_library(azure-security-attestation ${AZURE_ATTESTATION_HEADER} ${AZURE_ATTESTATION_SOURCE})
 
