@@ -116,12 +116,14 @@
                 "x86": {
                     "CMAKE_GENERATOR_PLATFORM": "Win32",
                     "METRIC_TARGET_ARCHITECTURE": "x86",
-                    "VCPKG_DEFAULT_TRIPLET": "x86-uwp"
+                    "VCPKG_DEFAULT_TRIPLET": "x86-uwp",
+                    "CMAKE_EXE_LINKER_FLAGS":"/libpath:%VCToolsInstallDir%lib\\x86\\"
                 },
                 "x64": {
                     "CMAKE_GENERATOR_PLATFORM": "x64",
                     "METRIC_TARGET_ARCHITECTURE": "x64",
-                    "VCPKG_DEFAULT_TRIPLET": "x64-uwp"
+                    "VCPKG_DEFAULT_TRIPLET": "x64-uwp",
+                    "CMAKE_EXE_LINKER_FLAGS":"/libpath:%VCToolsInstallDir%lib\\x64\\"
                 }
             }
         },
