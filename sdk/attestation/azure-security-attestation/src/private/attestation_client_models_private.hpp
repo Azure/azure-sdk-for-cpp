@@ -124,7 +124,7 @@ namespace Azure {
   /// <summary>
   /// Private Model types used for interoperability with the attestation service.
   /// </summary>
-  class DataType final {
+  class AttestationDataType final {
   private:
     std::string m_dataType;
 
@@ -134,15 +134,15 @@ namespace Azure {
      *
      * @param type The expected type of the specified data.
      */
-    DataType(std::string type) : m_dataType(std::move(type)) {}
-    DataType() {}
+    AttestationDataType(std::string type) : m_dataType(std::move(type)) {}
+    AttestationDataType() {}
 
     /**
      * @brief Enable comparing the ext enum.
      *
      * @param other Another #ServiceVersion to be compared.
      */
-    bool operator==(DataType const& other) const { return m_dataType == other.m_dataType; }
+    bool operator==(AttestationDataType const& other) const { return m_dataType == other.m_dataType; }
 
     /**
      * @brief Return the #ServiceVersion string representation.
@@ -151,17 +151,18 @@ namespace Azure {
     std::string const& ToString() const { return m_dataType; }
 
     /**
-     * @brief Use to send request to the 2020-10-01 version of Attestation service.
+     * @brief Use to specify Attestation Data Type as JSON or Binary
      *
      */
-    AZ_ATTESTATION_DLLEXPORT static const DataType JSON;
-    AZ_ATTESTATION_DLLEXPORT static const DataType BINARY;
+    AZ_ATTESTATION_DLLEXPORT static const AttestationDataType JSON;
+    AZ_ATTESTATION_DLLEXPORT static const AttestationDataType BINARY;
   };
 
+  // Implementation Model types.
   struct AttestationData
   {
     std::vector<uint8_t> Data;
-    DataType DataType;
+    AttestationDataType DataType;
   };
 
   struct AttestSgxEnclaveRequest

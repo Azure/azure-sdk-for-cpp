@@ -213,7 +213,6 @@ struct JsonWebKeySerializer final
       returnValue.qi = ParseStringField(jwk, "qi", response);
 
       return returnValue;
-      response;
     }
   };
 

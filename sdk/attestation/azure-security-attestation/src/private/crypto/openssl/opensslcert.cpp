@@ -354,13 +354,22 @@ namespace Azure { namespace Security { namespace Attestation {
     {
       // This certificate expires in 8 hours.
       struct std::tm currentTime;
+#if _WINDOWS
       gmtime_s(&currentTime, &utcTime);
+#else
+      struct tm* result;
+      currentTime = gmtime_r(sourceTime, tmDest);
+#endif
       // Our derived certificates expire in 8 hours (they're only used for test).
       currentTime.tm_hour += 8;
 
       // Normalize the expiration time based on the adjustments. This will handle
       // wrapping hours, days, etc.
+#if _WINDOWS
       expirationTime = _mkgmtime(&currentTime); // cspell:disable-line
+#else
+      expirationTime = timegm(&currentTime);
+#endif
     }
     _details::openssl_x509 certificate(CreateCertificate(
         key, // Key for the derived certificate.
