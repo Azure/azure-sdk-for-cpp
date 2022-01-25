@@ -113,7 +113,8 @@
             "TargetArchitecture": {
                 "x86": {
                     "CMAKE_GENERATOR_PLATFORM": "Win32",
-                    "METRIC_TARGET_ARCHITECTURE": "x86"
+                    "METRIC_TARGET_ARCHITECTURE": "x86",
+                    "VCPKG_DEFAULT_TRIPLET": "x86-uwp"
                 },
                 "x64": {
                     "CMAKE_GENERATOR_PLATFORM": "x64",
