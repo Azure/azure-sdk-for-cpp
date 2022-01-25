@@ -30,6 +30,7 @@ TEST_F(KeyVaultKeyClient, ImportKey)
   JsonWebKey key;
   key.KeyType = KeyVaultKeyType::Rsa;
   // Values from https://docs.microsoft.com/rest/api/keyvault/importkey/importkey
+  // cspell:disable
   key.N = Base64Url::Base64UrlDecode(
       "nKAwarTrOpzd1hhH4cQNdVTgRF-b0ubPD8ZNVf0UXjb62QuAk3Dn68ESThcF7SoDYRx2QVcfoMC9WCcuQUQDieJF-"
       "lvJTSer1TwH72NBovwKlHvrXqEI0a6_uVYY5n-"
@@ -59,6 +60,7 @@ TEST_F(KeyVaultKeyClient, ImportKey)
       "0Yv-Dj6qnvx_LL70lUnKA6MgHE_bUC4drl5ZNDDsUdUUYfxIK4G1rGU45kHGtp-Qg-"
       "Uyf9s52ywLylhcVE3jfbjOgEozlSwKyhqfXkLpMLWHqOKj9fcfYd4PWKPOgpzWsqjA6fJbBUM"
       "Yo0CU2G9cWCtVodO7sBJVSIZunWrAlBc");
+  // cspell:enable
 
   key.CurveName = KeyCurveName::P521;
   key.SetKeyOperations({KeyOperation::Sign});
