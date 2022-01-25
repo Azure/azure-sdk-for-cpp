@@ -170,6 +170,11 @@
           "name": "BUILD_PERFORMANCE_TESTS",
           "value": "True",
           "type": "BOOL"
+        },
+        {
+          "name": "BUILD_SAMPLES",
+          "value": "True",
+          "type": "BOOL"
         }
       ]
     },

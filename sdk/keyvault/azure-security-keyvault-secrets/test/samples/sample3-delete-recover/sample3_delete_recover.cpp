@@ -20,9 +20,9 @@
 #include <azure/identity.hpp>
 #include <azure/keyvault/keyvault_secrets.hpp>
 
+#include <assert.h>
 #include <chrono>
 #include <iostream>
-
 using namespace Azure::Security::KeyVault::Secrets;
 using namespace std::chrono_literals;
 void AssertSecretsEqual(KeyVaultSecret const& expected, KeyVaultSecret const& actual);
