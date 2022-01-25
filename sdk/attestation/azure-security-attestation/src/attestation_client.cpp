@@ -130,7 +130,7 @@ Azure::Response<AttestationToken<AttestationResult>> AttestationClient::AttestOp
 
 void AttestationClient::CacheAttestationSigners(Azure::Core::Context const& context)
 {
-  std::unique_lock<std::shared_mutex> stateLock(m_sharedStateLock);
+  std::unique_lock<std::shared_timed_mutex> stateLock(m_sharedStateLock);
 
   if (m_attestationSigners.size() == 0)
   {

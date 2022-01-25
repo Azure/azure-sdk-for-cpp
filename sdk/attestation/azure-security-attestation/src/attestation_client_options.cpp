@@ -6,6 +6,6 @@
 namespace Azure { namespace Security { namespace Attestation {
   const ServiceVersion ServiceVersion::V2020_10_01("2020-10-01");
 
-  const DataType DataType::Binary("Binary");
-  const DataType DataType::Json("Json");
+  const AttestationDataType AttestationDataType ::Binary("Binary");
+  const AttestationDataType AttestationDataType::Json("Json");
 }}} // namespace Azure::Security::Attestation

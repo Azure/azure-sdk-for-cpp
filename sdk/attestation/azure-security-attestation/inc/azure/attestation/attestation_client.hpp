@@ -21,7 +21,7 @@ namespace Azure { namespace Security { namespace Attestation {
     std::string m_apiVersion;
     std::shared_ptr<Azure::Core::Http::_internal::HttpPipeline> m_pipeline;
 
-    std::shared_mutex m_sharedStateLock;
+    std::shared_timed_mutex m_sharedStateLock;
     std::vector<AttestationSigner> m_attestationSigners;
 
     void CacheAttestationSigners(Azure::Core::Context const& context);

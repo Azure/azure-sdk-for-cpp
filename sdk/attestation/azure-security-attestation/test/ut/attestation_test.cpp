@@ -113,7 +113,7 @@ class AttestationTests : public Azure::Core::Test::TestBase,
     auto runtimeData = AttestationCollateral::RuntimeData();
 
     auto attestResponse
-        = client->AttestOpenEnclave(report, {{runtimeData, DataType::Binary}});
+        = client->AttestOpenEnclave(report, {{runtimeData, AttestationDataType::Binary}});
   }
 
   TEST_P(AttestationTests, AttestSgxEnclaveWithRuntimeData)
@@ -123,7 +123,7 @@ class AttestationTests : public Azure::Core::Test::TestBase,
     auto runtimeData = AttestationCollateral::RuntimeData();
 
     auto attestResponse
-        = client->AttestSgxEnclave(sgxQuote, {{runtimeData, DataType::Binary}});
+        = client->AttestSgxEnclave(sgxQuote, {{runtimeData, AttestationDataType::Binary}});
   }
 
 

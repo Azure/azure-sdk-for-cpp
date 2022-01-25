@@ -67,7 +67,7 @@ namespace Azure { namespace Security { namespace Attestation {
     }
   };
 
-  class DataType final {
+  class AttestationDataType final {
   private:
     std::string m_dataType;
 
@@ -77,14 +77,14 @@ namespace Azure { namespace Security { namespace Attestation {
      *
      * @param dataType The string version for the Key Vault keys service.
      */
-    DataType(std::string dataType) : m_dataType(std::move(dataType)) {}
-    DataType() {}
+    AttestationDataType(std::string dataType) : m_dataType(std::move(dataType)) {}
+    AttestationDataType() {}
     /**
      * @brief Enable comparing the ext enum.
      *
      * @param other Another #ServiceVersion to be compared.
      */
-    bool operator==(DataType const& other) const { return m_dataType == other.m_dataType; }
+    bool operator==(AttestationDataType const& other) const { return m_dataType == other.m_dataType; }
 
     /**
      * @brief Return the #ServiceVersion string representation.
@@ -96,20 +96,20 @@ namespace Azure { namespace Security { namespace Attestation {
      * @brief Specified to express the runtime data in the generated token as a JSON object.
      *
      */
-    AZ_ATTESTATION_DLLEXPORT static const DataType Json;
+    AZ_ATTESTATION_DLLEXPORT static const AttestationDataType Json;
 
     /**
      * @brief Specified to express the runtime data in the generated token as a Binary object.
      *
      */
-    AZ_ATTESTATION_DLLEXPORT static const DataType Binary;
+    AZ_ATTESTATION_DLLEXPORT static const AttestationDataType Binary;
 
   };
 
   struct AttestationData final
   {
     std::vector<uint8_t> Data;
-    DataType DataType;
+    AttestationDataType DataType;
   };
 
   struct AttestOptions final
