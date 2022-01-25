@@ -29,7 +29,7 @@ TEST_F(KeyVaultKeyClient, ImportKey)
 
   JsonWebKey key;
   key.KeyType = KeyVaultKeyType::Rsa;
-  // Values from https://docs.microsoft.com/rest/api/keyvault/importkey/
+  // Values from https://docs.microsoft.com/rest/api/keyvault/importkey/importkey
   // cspell:disable
   key.N = Base64Url::Base64UrlDecode(
       "nKAwarTrOpzd1hhH4cQNdVTgRF-b0ubPD8ZNVf0UXjb62QuAk3Dn68ESThcF7SoDYRx2QVcfoMC9WCcuQUQDieJF-"
