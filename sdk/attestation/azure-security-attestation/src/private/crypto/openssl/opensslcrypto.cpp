@@ -17,7 +17,7 @@
 #include <utility>
 #include <vector>
 
-#include "..\inc\crypto.hpp"
+#include "../inc/crypto.hpp"
 #include "opensslkeys.hpp"
 #include "opensslcert.hpp"
 

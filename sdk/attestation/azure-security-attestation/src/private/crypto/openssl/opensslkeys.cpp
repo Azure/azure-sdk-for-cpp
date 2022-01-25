@@ -8,8 +8,6 @@
  *
  */
 
-#pragma once
-
 #include <azure/core/internal/json/json.hpp>
 
 #include <azure/core/base64.hpp>
@@ -19,7 +17,7 @@
 #include <utility>
 #include <vector>
 
-#include "..\inc\crypto.hpp"
+#include "../inc/crypto.hpp"
 #include "opensslkeys.hpp"
 #include <openssl/bio.h>
 #include <openssl/err.h>
