@@ -30,6 +30,7 @@
 #include <string>
 #include <vector>
 
+//cspell: words jwks MrSigner MrEnclave
 namespace Azure { namespace Security { namespace Attestation{ namespace _detail {
 
   using namespace Azure::Core::Json::_internal;
@@ -167,7 +168,7 @@ namespace Azure { namespace Security { namespace Attestation{ namespace _detail 
       AttestationOpenIdMetadata returnValue;
       auto parsedBody = json::parse(response->GetBody());
       returnValue.Issuer = ParseStringField(parsedBody, "issuer", response);
-      returnValue.JsonWebKeySetUrl = ParseStringField(parsedBody, "jwks_uri", response);
+      returnValue.JsonWebKeySetUrl = ParseStringField(parsedBody, "jwks_uri", response); 
       returnValue.SupportedClaims = ParseStringArrayField(parsedBody, "claims_supported", response);
       returnValue.SupportedTokenSigningAlgorithms
           = ParseStringArrayField(parsedBody, "id_token_signing_alg_values_supported", response);
@@ -197,7 +198,7 @@ struct JsonWebKeySerializer final
       returnValue.x5u = ParseStringField(jwk, "x5u", response);
       returnValue.x5c = ParseStringArrayField(jwk, "x5c", response);
 
-      // ECDS key values.
+      // ECDSA key values.
       returnValue.crv = ParseStringField(jwk, "crv", response);
       returnValue.x = ParseStringField(jwk, "x", response);
       returnValue.y = ParseStringField(jwk, "y", response);

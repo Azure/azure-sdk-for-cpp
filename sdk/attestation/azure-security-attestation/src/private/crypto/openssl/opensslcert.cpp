@@ -153,7 +153,7 @@ namespace Azure { namespace Security { namespace Attestation {
       {
         X509V3_CTX context;
 
-        X509V3_set_ctx_nodb(&context);
+        X509V3_set_ctx_nodb(&context); //cspell: disable-line
         X509V3_set_ctx(&context, issuer.get(), subject.get(), nullptr, nullptr, 0);
 
         return _details::make_openssl_unique(X509V3_EXT_conf_nid, 
@@ -360,7 +360,7 @@ namespace Azure { namespace Security { namespace Attestation {
 
       // Normalize the expiration time based on the adjustments. This will handle
       // wrapping hours, days, etc.
-      expirationTime = _mkgmtime(&currentTime);
+      expirationTime = _mkgmtime(&currentTime); // cspell:disable-line
     }
     _details::openssl_x509 certificate(CreateCertificate(
         key, // Key for the derived certificate.

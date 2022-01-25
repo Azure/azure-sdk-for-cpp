@@ -37,7 +37,7 @@ namespace Azure { namespace Security { namespace Attestation{ namespace _detail 
     std::string dq;
     std::string qi;
     std::string oth;
-    // ECDS Public Keys (alg == 'ES256' | 'ES384' | 'ES512').
+    // ECDSA Public Keys (alg == 'ES256' | 'ES384' | 'ES512').
     std::string crv;
     std::string x;
     std::string y;
