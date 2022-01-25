@@ -19,7 +19,7 @@
 #include <utility>
 #include <vector>
 
-#include "..\inc\crypto.hpp"
+#include "../inc/crypto.hpp"
 #include "openssl_helpers.hpp"
 #include <openssl/bio.h>
 #include <openssl/evp.h>

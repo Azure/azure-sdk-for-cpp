@@ -41,10 +41,10 @@ namespace Azure { namespace Security { namespace Attestation {
     AttestationOpenIdMetadata() {}
     ~AttestationOpenIdMetadata() {}
     AttestationOpenIdMetadata(AttestationOpenIdMetadata&& that) noexcept
-        : Issuer(::std::move(that.Issuer)), JsonWebKeySetUrl(::std::move(that.JsonWebKeySetUrl)),
-          SupportedClaims(::std::move(that.SupportedClaims)),
-          SupportedTokenSigningAlgorithms(::std::move(that.SupportedTokenSigningAlgorithms)),
-          SupportedResponseTypes(::std::move(that.SupportedResponseTypes))
+        : Issuer(::std::move(that.Issuer)), JsonWebKeySetUrl(::std::move(that.JsonWebKeySetUrl))
+        , SupportedResponseTypes(::std::move(that.SupportedResponseTypes))
+        , SupportedTokenSigningAlgorithms(::std::move(that.SupportedTokenSigningAlgorithms))
+        , SupportedClaims(::std::move(that.SupportedClaims))
     {
     }
   };

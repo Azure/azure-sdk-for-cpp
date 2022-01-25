@@ -6,7 +6,7 @@
 #include <azure/identity/client_secret_credential.hpp>
 #include <gtest/gtest.h>
 
-#include "..\..\src\private\crypto\inc\crypto.hpp"
+#include "../../src/private/crypto/inc/crypto.hpp"
 #include <random>
 
 namespace Azure { namespace Security { namespace Attestation { namespace Test {

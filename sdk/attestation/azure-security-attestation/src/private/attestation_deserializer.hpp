@@ -233,7 +233,7 @@ struct JsonWebKeySerializer final
       {
         throw Azure::Core::RequestFailedException("Field 'keys' is not an array.", response);
       }
-      for (const auto key : parsedBody["keys"])
+      for (const auto &key : parsedBody["keys"])
       {
         returnValue.Keys.push_back(JsonWebKeySerializer::Deserialize(response, key));
       }
