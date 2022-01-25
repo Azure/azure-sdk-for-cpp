@@ -357,8 +357,7 @@ namespace Azure { namespace Security { namespace Attestation {
 #if _WINDOWS
       gmtime_s(&currentTime, &utcTime);
 #else
-      struct tm* result;
-      currentTime = gmtime_r(sourceTime, tmDest);
+      gmtime_r(&utcTime, &currentTime);
 #endif
       // Our derived certificates expire in 8 hours (they're only used for test).
       currentTime.tm_hour += 8;
@@ -368,7 +367,7 @@ namespace Azure { namespace Security { namespace Attestation {
 #if _WINDOWS
       expirationTime = _mkgmtime(&currentTime); // cspell:disable-line
 #else
-      expirationTime = timegm(&currentTime);
+      expirationTime = timegm(&currentTime); // cspell:disable-line
 #endif
     }
     _details::openssl_x509 certificate(CreateCertificate(
