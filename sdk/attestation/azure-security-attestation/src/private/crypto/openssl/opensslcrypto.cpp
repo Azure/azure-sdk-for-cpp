@@ -21,6 +21,8 @@
 #include "opensslkeys.hpp"
 #include "opensslcert.hpp"
 
+// cspell::words OpenSSL X509 OpenSSLX509
+
 namespace Azure { namespace Security { namespace Attestation { namespace _private {
   namespace Cryptography {
 

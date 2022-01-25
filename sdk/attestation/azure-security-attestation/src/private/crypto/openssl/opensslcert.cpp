@@ -31,6 +31,8 @@
 #include <openssl/rsa.h>
 #include <openssl/x509v3.h>
 
+// cspell::words OpenSSL X509 OpenSSLX509
+
 namespace Azure { namespace Security { namespace Attestation {
   namespace _private {
     namespace Cryptography {
