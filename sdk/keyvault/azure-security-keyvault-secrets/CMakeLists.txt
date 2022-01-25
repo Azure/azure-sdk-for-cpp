@@ -65,12 +65,14 @@ set(
     src/private/keyvault_protocol.hpp
     src/private/secret_constants.hpp
     src/private/secret_serializers.hpp
+    src/private/keyvault_secrets_common_request.hpp
     src/keyvault_protocol.cpp
     src/secret_client.cpp
     src/secret_serializers.cpp
     src/keyvault_operations.cpp
     src/keyvault_secret_paged_response.cpp
     src/keyvault_secret_properties.cpp
+    src/keyvault_secrets_common_request.cpp
 )
 
 add_library(azure-security-keyvault-secrets ${AZURE_SECURITY_KEYVAULT_SECRETS_HEADER} ${AZURE_SECURITY_KEYVAULT_SECRETS_SOURCE})
