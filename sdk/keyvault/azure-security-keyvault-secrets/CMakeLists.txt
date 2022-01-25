@@ -10,7 +10,7 @@ cmake_minimum_required (VERSION 3.13)
 project(azure-security-keyvault-secrets LANGUAGES CXX)
 
 # Compile Options
-option(BUILD_SOURCE_DEPS "build source dependencies" OFF)
+option(FETCH_SOURCE_DEPS "build source dependencies" OFF)
 
 set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
