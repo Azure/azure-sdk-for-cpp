@@ -100,12 +100,12 @@
             },
             "TargetPlatform": {
                 "UWP_debug": {
-                    "CmakeArgs": " -DBUILD_TRANSPORT_WINHTTP=ON -DBUILD_TESTING=ON -DBUILD_PERFORMANCE_TESTS=ON -DRUN_LONG_UNIT_TESTS=ON -DCMAKE_SYSTEM_NAME=WindowsStore -DCMAKE_SYSTEM_VERSION=10.0 -D__WRL_NO_DEFAULT_LIB__",
+                    "CmakeArgs": " -DBUILD_TRANSPORT_WINHTTP=ON -DBUILD_TESTING=ON -DBUILD_PERFORMANCE_TESTS=ON -DRUN_LONG_UNIT_TESTS=ON -DCMAKE_SYSTEM_NAME=WindowsStore -DCMAKE_SYSTEM_VERSION=10.0 -D__WRL_NO_DEFAULT_LIB__=ON",
                     "BuildArgs": "--parallel 8 --config Debug",
                     "METRIC_BUILD_CONFIG": "Debug"
                 },
                 "UWP_release": {
-                    "CmakeArgs": " -DBUILD_TRANSPORT_WINHTTP=ON -DBUILD_TESTING=ON -DBUILD_PERFORMANCE_TESTS=ON -DRUN_LONG_UNIT_TESTS=ON -DCMAKE_SYSTEM_NAME=WindowsStore -DCMAKE_SYSTEM_VERSION=10.0 -D__WRL_NO_DEFAULT_LIB__",
+                    "CmakeArgs": " -DBUILD_TRANSPORT_WINHTTP=ON -DBUILD_TESTING=ON -DBUILD_PERFORMANCE_TESTS=ON -DRUN_LONG_UNIT_TESTS=ON -DCMAKE_SYSTEM_NAME=WindowsStore -DCMAKE_SYSTEM_VERSION=10.0 -D__WRL_NO_DEFAULT_LIB__=ON",
                     "BuildArgs": "--parallel 8 --config Release",
                     "METRIC_BUILD_CONFIG": "Release"
                 }
