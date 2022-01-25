@@ -1,14 +1,11 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
 
-#if defined(_MSC_VER)
-#define _CRT_SECURE_NO_WARNINGS
-#endif
-
 #include <cstdio>
 #include <iostream>
 #include <stdexcept>
 
+#include <azure/core/environment.hpp>
 #include <azure/storage/blobs.hpp>
 
 std::string GetConnectionString()
@@ -19,7 +16,8 @@ std::string GetConnectionString()
   {
     return ConnectionString;
   }
-  const static std::string envConnectionString = std::getenv("AZURE_STORAGE_CONNECTION_STRING");
+  const static std::string envConnectionString
+      = Azure::Core::Environment::GetVariable("AZURE_STORAGE_CONNECTION_STRING");
   if (!envConnectionString.empty())
   {
     return envConnectionString;

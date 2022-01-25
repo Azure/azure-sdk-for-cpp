@@ -83,6 +83,7 @@ set(
     inc/azure/core/context.hpp
     inc/azure/core/datetime.hpp
     inc/azure/core/dll_import_export.hpp
+    inc/azure/core/environment.hpp
     inc/azure/core/etag.hpp
     inc/azure/core/exception.hpp
     inc/azure/core/match_conditions.hpp
@@ -122,6 +123,7 @@ set(
     src/base64.cpp
     src/context.cpp
     src/datetime.cpp
+    src/environment.cpp
     src/environment_log_level_listener.cpp
     src/etag.cpp
     src/exception.cpp

@@ -3,7 +3,7 @@
 
 #include "private/managed_identity_source.hpp"
 
-#include "private/environment.hpp"
+#include <azure/core/environment.hpp>
 
 #include <fstream>
 #include <iterator>
@@ -11,6 +11,7 @@
 #include <utility>
 
 using namespace Azure::Identity::_detail;
+using Azure::Core::Environment;
 
 Azure::Core::Url ManagedIdentitySource::ParseEndpointUrl(
     std::string const& url,

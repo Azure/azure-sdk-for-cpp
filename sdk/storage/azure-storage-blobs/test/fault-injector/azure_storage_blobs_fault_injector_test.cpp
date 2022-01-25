@@ -10,23 +10,7 @@
  *
  */
 
-#if defined(_MSC_VER)
-// For using std::getenv()
-#define _CRT_SECURE_NO_WARNINGS
-#endif
-
-#include <azure/core/platform.hpp>
-
-#if defined(AZ_PLATFORM_WINDOWS)
-#if !defined(WIN32_LEAN_AND_MEAN)
-#define WIN32_LEAN_AND_MEAN
-#endif
-#if !defined(NOMINMAX)
-#define NOMINMAX
-#endif
-
-#include <windows.h>
-#endif
+#include <azure/core/environment.hpp>
 
 #include <azure/storage/blobs.hpp>
 
@@ -88,12 +72,6 @@ public:
 
 int main()
 {
-#if defined(WINAPI_PARTITION_DESKTOP) \
-    && !WINAPI_PARTITION_DESKTOP // See azure/core/platform.hpp for explanation.
-  std::cout << "The test relies on using Environment Variables, which are not available on UWP "
-               "platform.";
-  return 0;
-#else
   /* The transport adapter must allow insecure SSL certs.
   If both curl and winHttp are available, curl is preferred for this test.for*/
 #if defined(BUILD_CURL_HTTP_TRANSPORT_ADAPTER)
@@ -107,7 +85,7 @@ int main()
   auto implementationClient = std::make_shared<Azure::Core::Http::WinHttpTransport>(winHttpOptions);
 #endif
 
-  std::string connectionString(std::getenv("STORAGE_CONNECTION_STRING"));
+  std::string connectionString(Azure::Core::Environment::GetVariable("STORAGE_CONNECTION_STRING"));
 
   // Set the options for the FaultInjectorClient
   FaultInjectionClientOptions options;
@@ -129,5 +107,4 @@ int main()
   std::cout << "Content: " << std::string(content.begin(), content.end()) << std::endl;
 
   return 0;
-#endif
 }

@@ -1,10 +1,6 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
 
-#ifdef _MSC_VER
-#define _CRT_SECURE_NO_WARNINGS // for std::getenv()
-#endif
-
 #include <azure/core/internal/json/json.hpp>
 #include <azure/core/internal/strings.hpp>
 

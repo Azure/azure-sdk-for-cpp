@@ -30,7 +30,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets { 
     Azure::Security::KeyVault::Secrets::SecretClient const& GetClientForTest(
         std::string const& testName)
     {
-      //_putenv_s("AZURE_TEST_MODE", "PLAYBACK");
+      // Azure::Core::Environment::GetVariable("AZURE_TEST_MODE", "PLAYBACK");
       // keep this here to quickly switch between test modes
       InitializeClient();
       // set the interceptor for the current test

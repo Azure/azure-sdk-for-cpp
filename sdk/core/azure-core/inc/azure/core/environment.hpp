@@ -5,7 +5,7 @@
 
 #include <string>
 
-namespace Azure { namespace Identity { namespace _detail {
+namespace Azure { namespace Core {
   class Environment final {
   private:
     Environment() = delete;
@@ -13,5 +13,6 @@ namespace Azure { namespace Identity { namespace _detail {
 
   public:
     static std::string GetVariable(const char* name);
+    static void SetVariable(const char* name, const char* value);
   };
-}}} // namespace Azure::Identity::_detail
+}} // namespace Azure::Core

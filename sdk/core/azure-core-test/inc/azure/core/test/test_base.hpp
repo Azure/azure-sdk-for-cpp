@@ -5,23 +5,11 @@
  * Base class for running live and playback tests using the interceptor manager
  */
 
-#include <azure/core/platform.hpp>
-
-#if defined(AZ_PLATFORM_WINDOWS)
-#if !defined(WIN32_LEAN_AND_MEAN)
-#define WIN32_LEAN_AND_MEAN
-#endif
-#if !defined(NOMINMAX)
-#define NOMINMAX
-#endif
-
-#include <windows.h>
-#endif
-
 #include <gtest/gtest.h>
 
 #include <azure/core/credentials/credentials.hpp>
 #include <azure/core/credentials/token_credential_options.hpp>
+#include <azure/core/environment.hpp>
 #include <azure/core/internal/client_options.hpp>
 #include <azure/core/internal/diagnostics/log.hpp>
 
@@ -258,28 +246,14 @@ namespace Azure { namespace Core { namespace Test {
     // Util for tests getting env vars
     std::string GetEnv(const std::string& name)
     {
-      const char* ret = nullptr;
+      const auto ret = Azure::Core::Environment::GetVariable(name.c_str());
 
-#if !defined(WINAPI_PARTITION_DESKTOP) \
-    || WINAPI_PARTITION_DESKTOP // See azure/core/platform.hpp for explanation.
-
-#if defined(_MSC_VER)
-#pragma warning(push)
-#pragma warning(disable : 4996)
-#endif
-      ret = std::getenv(name.data());
-#if defined(_MSC_VER)
-#pragma warning(pop)
-#endif
-
-#endif
-
-      if (!ret)
+      if (ret.empty())
       {
         throw std::runtime_error("Missing required environment variable: " + name);
       }
 
-      return std::string(ret);
+      return ret;
     }
 
     // Util to set recording path
