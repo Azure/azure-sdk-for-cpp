@@ -16,7 +16,7 @@ param (
     [Parameter(ValueFromRemainingArguments = $true)]
     $RemainingArguments
 )
-
+# spell-checker:disable
 $ServiceRegionMap = @{
     "east asia" = "EastAsia";
     "southeast asia" = "SoutheastAsia";
@@ -81,6 +81,7 @@ $AbbreviatedRegionMap = @{
     "canadawest" = "caw";
     "centraluseuap" = "cuse";
 }
+# spell-checker:enable
 
 # By default stop for any error.
 if (!$PSBoundParameters.ContainsKey('ErrorAction')) {
