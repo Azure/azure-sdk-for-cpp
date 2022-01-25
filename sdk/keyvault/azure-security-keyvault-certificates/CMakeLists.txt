@@ -128,5 +128,4 @@ az_rtti_setup(
 )
 
 unset(FETCH_SOURCE_DEPS CACHE)
-unset(FETCH_SOURCE_DEPS PARENT_SCOPE)
 
