@@ -31,3 +31,4 @@ stages:
         - Name: azure-security-attestation
           Path: azure-security-attestation
           VcpkgPortName: azure-security-attestation-cpp
+        

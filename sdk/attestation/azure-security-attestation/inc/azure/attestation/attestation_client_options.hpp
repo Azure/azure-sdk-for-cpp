@@ -115,7 +115,7 @@ namespace Azure { namespace Security { namespace Attestation {
   struct AttestOptions final
   {
     AttestationData RuntimeData;
-    AttestationData InittimeData;
-    std::string DraftPolicyForAttestation;
+    AttestationData InittimeData={};
+    std::string DraftPolicyForAttestation={};
   };
 }}} // namespace Azure::Security::Attestation

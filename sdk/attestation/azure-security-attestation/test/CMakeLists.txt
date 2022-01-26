@@ -21,6 +21,8 @@ add_executable (
      ut/attestation_test.cpp
 )
 
+create_per_service_target_build(azure-security-attestation-test attestation)
+
 create_map_file(azure-security-attestation-test azure-security-attestation-test.map)
 
 target_link_libraries(azure-security-attestation-test PRIVATE Azure::azure-security-attestation azure-identity azure-core-test-fw gtest_main)
