@@ -18,7 +18,6 @@
 #include <azure/keyvault/keyvault_keys.hpp>
 
 #include <chrono>
-#include <exception>
 #include <iostream>
 #include <memory>
 #include <thread>
