@@ -25,7 +25,13 @@ class AttestationTests : public Azure::Core::Test::TestBase,
       Azure::Core::Test::TestBase::SetUpTestBase(AZURE_TEST_RECORDING_DIR);
       if (GetParam() == "Shared")
       {
-        m_endpoint = "https://sharedwus.wus.attest.azure.net";
+        std::string shortLocation = GetEnv("locationShortName");
+        if (shortLocation.empty())
+        {
+          throw std::runtime_error(
+              "Could not find required environment variable locationShortName");
+        }
+        m_endpoint = "https://shared" + shortLocation + "." + shortLocation + ".attest.azure.net";
       }
       else if (GetParam() == "Aad")
       {
@@ -65,7 +71,10 @@ class AttestationTests : public Azure::Core::Test::TestBase,
 
     EXPECT_FALSE(openIdMetadata.Value.Issuer.empty());
     EXPECT_FALSE(openIdMetadata.Value.JsonWebKeySetUrl.empty());
-    EXPECT_EQ(m_endpoint, openIdMetadata.Value.Issuer);
+    if (!m_testContext.IsPlaybackMode())
+    {
+      EXPECT_EQ(m_endpoint, openIdMetadata.Value.Issuer);
+    }
     EXPECT_EQ(0UL, openIdMetadata.Value.JsonWebKeySetUrl.find(openIdMetadata.Value.Issuer));
     EXPECT_EQ(m_endpoint + "/certs", openIdMetadata.Value.JsonWebKeySetUrl);
     EXPECT_NE(0UL, openIdMetadata.Value.SupportedClaims.size());
