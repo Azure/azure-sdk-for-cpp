@@ -8,6 +8,16 @@ macro(GetFolderList project)
         DownloadDepVersion(sdk/core azure-core 1.2.0)
     endif()
 
+    if(${project} STREQUAL SECRETS)
+        DownloadDepVersion(sdk/core azure-core 1.2.0)
+        DownloadDepVersion(sdk/identity azure-identity 1.1.0)
+    endif()
+
+    if(${project} STREQUAL KEYS)
+        DownloadDepVersion(sdk/core azure-core 1.2.0)
+        DownloadDepVersion(sdk/identity azure-identity 1.1.0)
+    endif()
+
     list(REMOVE_DUPLICATES BUILD_FOLDERS)
 endmacro()
 

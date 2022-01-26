@@ -9,9 +9,18 @@ az_vcpkg_integrate()
 cmake_minimum_required (VERSION 3.13)
 project(azure-security-keyvault-keys LANGUAGES CXX)
 
+# Compile Options
+option(FETCH_SOURCE_DEPS "build source dependencies" OFF)
+
 set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
+
+if(FETCH_SOURCE_DEPS)
+    set(AZ_ALL_LIBRARIES ON)
+    include(FolderList)
+    SetCompileOptions(KEYS)
+endif()
 
 include(AzureVersion)
 include(AzureCodeCoverage)
@@ -23,7 +32,13 @@ include(AzureBuildTargetForCI)
 # Add create_map_file function
 include(CreateMapFile)
 
-if(NOT AZ_ALL_LIBRARIES)
+if(FETCH_SOURCE_DEPS)
+    GetFolderList(KEYS)
+    foreach(oneFolder IN LISTS BUILD_FOLDERS)
+        message("add folder ${oneFolder}")
+        add_subdirectory(${oneFolder} EXCLUDE_FROM_ALL)
+    endforeach()
+elseif(NOT AZ_ALL_LIBRARIES)
   find_package(azure-core-cpp "1.2.0" CONFIG QUIET)
   if(NOT azure-core-cpp_FOUND)
     find_package(azure-core-cpp "1.2.0" REQUIRED)
@@ -97,6 +112,8 @@ target_include_directories(
   azure-security-keyvault-keys
     PUBLIC
       $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/inc>
+      $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/../../../sdk/core/inc>
+      $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/build/sdk/core/azure-core/inc>
       $<INSTALL_INTERFACE:include>
 )
 
@@ -118,7 +135,7 @@ generate_documentation(azure-security-keyvault-keys ${AZ_LIBRARY_VERSION})
 
 if(BUILD_TESTING)
 
-  if (NOT AZ_ALL_LIBRARIES)
+  if (NOT AZ_ALL_LIBRARIES OR FETCH_SOURCE_DEPS)
     include(AddGoogleTest)
     enable_testing ()
   endif()
@@ -145,3 +162,5 @@ az_rtti_setup(
   SECURITY_KEYVAULT_KEYS
   "azure/keyvault/keys/rtti.hpp"
 )
+
+unset(FETCH_SOURCE_DEPS CACHE)

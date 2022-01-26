@@ -16,6 +16,7 @@
 #include <azure/identity.hpp>
 #include <azure/keyvault/keyvault_secrets.hpp>
 
+#include <assert.h>
 #include <chrono>
 #include <iostream>
 
