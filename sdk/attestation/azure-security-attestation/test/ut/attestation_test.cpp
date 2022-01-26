@@ -26,12 +26,6 @@ class AttestationTests : public Azure::Core::Test::TestBase,
       if (GetParam() == "Shared")
       {
         std::string shortLocation = GetEnv("locationShortName");
-        if (shortLocation.empty())
-        {
-//          throw std::runtime_error(
-//              "Could not find required environment variable locationShortName");
-          shortLocation = "Unk";
-        }
         m_endpoint = "https://shared" + shortLocation + "." + shortLocation + ".attest.azure.net";
       }
       else if (GetParam() == "Aad")
