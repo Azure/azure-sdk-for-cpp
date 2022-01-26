@@ -76,7 +76,7 @@ class AttestationTests : public Azure::Core::Test::TestBase,
       EXPECT_EQ(m_endpoint, openIdMetadata.Value.Issuer);
     }
     EXPECT_EQ(0UL, openIdMetadata.Value.JsonWebKeySetUrl.find(openIdMetadata.Value.Issuer));
-    EXPECT_EQ(m_endpoint + "/certs", openIdMetadata.Value.JsonWebKeySetUrl);
+    EXPECT_EQ(openIdMetadata.Value.Issuer + "/certs", openIdMetadata.Value.JsonWebKeySetUrl);
     EXPECT_NE(0UL, openIdMetadata.Value.SupportedClaims.size());
     EXPECT_NE(0UL, openIdMetadata.Value.SupportedResponseTypes.size());
     EXPECT_NE(0UL, openIdMetadata.Value.SupportedTokenSigningAlgorithms.size());
