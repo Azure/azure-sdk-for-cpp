@@ -30,7 +30,7 @@ class AttestationTests : public Azure::Core::Test::TestBase,
         {
 //          throw std::runtime_error(
 //              "Could not find required environment variable locationShortName");
-          shortLocation = "Unknown";
+          shortLocation = "Unk";
         }
         m_endpoint = "https://shared" + shortLocation + "." + shortLocation + ".attest.azure.net";
       }
