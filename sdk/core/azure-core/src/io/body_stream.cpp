@@ -98,8 +98,8 @@ FileBodyStream::FileBodyStream(const std::string& filename)
   HANDLE fileHandle = INVALID_HANDLE_VALUE;
   try
   {
-#if !defined(WINAPI_PARTITION_DESKTOP) \
-    || WINAPI_PARTITION_DESKTOP // See azure/core/platform.hpp for explanation.
+#if (!defined(WINAPI_PARTITION_DESKTOP) || WINAPI_PARTITION_DESKTOP) \
+    && (!defined(WINAPI_FAMILY_APP)) // See azure/core/platform.hpp for explanation.
     fileHandle = CreateFile(
         filename.data(),
         GENERIC_READ,
