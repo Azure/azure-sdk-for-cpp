@@ -76,6 +76,27 @@ namespace Azure { namespace Security { namespace Attestation {
     std::string SgxCollateral;
   };
 
+  /// An AttestationTokenHeader represents common properties in an the RFC 7515 JSON Web Token.
+
+  struct AttestationTokenHeader
+  {
+    std::string Algorithm;
+    std::string KeyId;
+
+    Azure::DateTime ExpiresOn;
+    Azure::DateTime NotBefore;
+    Azure::DateTime IssuedOn;
+    std::string ContentType;
+    std::string KeyURL;
+    Azure::Nullable<bool> Critical;
+    std::string X509Url;
+    std::string Type;
+    std::string CertificateThumbprint;
+    std::string CertificateSha256Thumbprint;
+    std::string Issuer;
+    std::vector<std::string> X509CertificateChain;
+  };
+
   /// An AttestationToken represents an RFC 7515 JSON Web Token returned from the attestation
   /// service.
   /// <typeparam name="T"></typeparam>
@@ -86,6 +107,7 @@ namespace Azure { namespace Security { namespace Attestation {
     std::string RawHeader;
     std::string RawBody;
     T Body;
+    AttestationTokenHeader Header;
   };
 
   /// An AttestationSigningKey represents a pair of signing keys and certificates.

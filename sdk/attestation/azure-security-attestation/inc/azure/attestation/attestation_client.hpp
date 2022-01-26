@@ -3,17 +3,17 @@
 
 #pragma once
 
-#include <string>
-#include <shared_mutex>
 #include <azure/core/internal/json/json.hpp>
+#include <shared_mutex>
+#include <string>
 
-#include <azure/attestation/attestation_client_models.hpp>
 #include "attestation_client_options.hpp"
+#include <azure/attestation/attestation_client_models.hpp>
 #include <azure/core/internal/http/pipeline.hpp>
 
 namespace Azure { namespace Security { namespace Attestation {
 
-    using namespace Azure::Core;
+  using namespace Azure::Core;
   class AttestationClient final {
   private:
     // Using a shared pipeline for a client to share it with LRO (like delete key)
@@ -58,11 +58,13 @@ namespace Azure { namespace Security { namespace Attestation {
      *
      * @param keyClient An existing key vault key client.
      */
-    explicit AttestationClient(AttestationClient const& attestationClient) = default;
+    explicit AttestationClient(AttestationClient const& attestationClient)
+        : m_endpoint(attestationClient.m_endpoint), m_apiVersion(attestationClient.m_apiVersion),
+          m_pipeline(attestationClient.m_pipeline){};
 
     /**
      * @brief Retrieve the metadata signing certificates for this attestation instance.
-     * 
+     *
      * @returns Attestation Metadata.
      */
     Response<AttestationOpenIdMetadata> GetOpenIdMetadata(
@@ -77,14 +79,13 @@ namespace Azure { namespace Security { namespace Attestation {
         Azure::Core::Context const& context = Azure::Core::Context::ApplicationContext);
 
     /**
-    * @brief Attest an SGX enclave, returning an attestation token representing the result
-    * of the attestation operation.
-    */
+     * @brief Attest an SGX enclave, returning an attestation token representing the result
+     * of the attestation operation.
+     */
     Response<AttestationToken<AttestationResult>> AttestSgxEnclave(
-        std::vector<uint8_t> const &sgxQuoteToAttest, 
+        std::vector<uint8_t> const& sgxQuoteToAttest,
         AttestOptions options = AttestOptions(),
-        Azure::Core::Context const& context
-        = Azure::Core::Context::ApplicationContext);
+        Azure::Core::Context const& context = Azure::Core::Context::ApplicationContext);
 
     /**
      * @brief Attest an OpenEnclave report, returning an attestation token representing the result

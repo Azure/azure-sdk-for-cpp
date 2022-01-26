@@ -119,12 +119,12 @@ namespace Azure { namespace Security { namespace Attestation { namespace _privat
 
       virtual std::unique_ptr<AsymmetricKey> GetPublicKey() const override;
       virtual std::string ExportAsPEM() const override;
-      std::string GetSubjectName() const
+      std::string GetSubjectName() const override
       {
         return GetFormattedDnString(X509_get_subject_name(m_certificate.get()));
       }
 
-      std::string GetIssuerName() const
+      std::string GetIssuerName() const override
       {
         return GetFormattedDnString(X509_get_issuer_name(m_certificate.get()));
       }

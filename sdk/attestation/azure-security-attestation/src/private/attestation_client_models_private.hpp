@@ -96,11 +96,13 @@ namespace Azure {
       {
         throw RequestFailedException("Could not find required second . in token.");
       }
+      m_token.RawHeader = header;
 
       std::string body(token);
       body.erase(bodyIndex);
       token.erase(0, bodyIndex + 1);
       std::string signature(token);
+      m_token.RawBody = body;
 
 
       auto jsonHeader(json::parse(Azure::Core::_internal::Base64Url::Base64UrlDecode(header)));
