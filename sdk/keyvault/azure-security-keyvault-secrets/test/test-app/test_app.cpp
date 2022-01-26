@@ -2,14 +2,14 @@
 // SPDX-License-Identifier: MIT
 
 #include "azure/keyvault/keyvault_secrets.hpp"
-#include <azure/core/environment.hpp>
+#include <azure/core/internal/environment.hpp>
 #include <azure/identity.hpp>
 
 using namespace Azure::Security::KeyVault::Secrets;
 
 int main()
 {
-  using Azure::Core::Environment;
+  using Azure::Core::_internal::Environment;
 
   auto tenantId = Environment::GetVariable("AZURE_TENANT_ID");
   auto clientId = Environment::GetVariable("AZURE_CLIENT_ID");

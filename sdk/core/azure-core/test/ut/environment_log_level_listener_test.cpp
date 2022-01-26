@@ -3,7 +3,7 @@
 
 #include <private/environment_log_level_listener.hpp>
 
-#include <azure/core/environment.hpp>
+#include <azure/core/internal/environment.hpp>
 
 #include <gtest/gtest.h>
 
@@ -16,7 +16,7 @@ const auto EnvironmentVariable = "AZURE_LOG_LEVEL";
 
 void SetLogLevel(std::string const& value)
 {
-  Azure::Core::Environment::SetVariable(EnvironmentVariable, value.c_str());
+  Azure::Core::_internal::Environment::SetVariable(EnvironmentVariable, value.c_str());
 }
 
 } // namespace
@@ -24,7 +24,7 @@ class EnvironmentLogLevelListenerTest : public testing::Test {
 protected:
   void SetUp() override
   {
-    m_previousValue = Azure::Core::Environment::GetVariable(EnvironmentVariable);
+    m_previousValue = Azure::Core::_internal::Environment::GetVariable(EnvironmentVariable);
   }
 
   void TearDown() override { SetLogLevel(m_previousValue); }

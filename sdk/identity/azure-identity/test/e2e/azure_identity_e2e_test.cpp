@@ -3,7 +3,7 @@
 
 #include <azure/identity/managed_identity_credential.hpp>
 
-#include <azure/core/environment.hpp>
+#include <azure/core/internal/environment.hpp>
 
 #include <chrono>
 #include <cstdlib>
@@ -12,7 +12,7 @@
 #include <iostream>
 #include <string>
 
-using Azure::Core::Environment;
+using Azure::Core::_internal::Environment;
 
 namespace {
 std::string FormatEnvVarValue(std::string const& varName, bool isSecret)

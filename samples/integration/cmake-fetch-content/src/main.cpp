@@ -11,10 +11,10 @@
 
 #include <azure/storage/blobs.hpp>
 
-#include <azure/core/environment.hpp>
-
 #include <exception>
 #include <iostream>
+
+#include "get_env.hpp"
 
 using namespace Azure::Storage::Blobs;
 
@@ -28,7 +28,7 @@ int main(int argc, char* argv[])
   try
   {
     auto containerClient = BlobContainerClient::CreateFromConnectionString(
-        Azure::Core::Environment::GetVariable("STORAGE_CONNECTION_STRING"), "sample");
+        GetEnv("STORAGE_CONNECTION_STRING"), "sample");
 
     containerClient.CreateIfNotExists();
 

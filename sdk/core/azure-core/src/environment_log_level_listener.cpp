@@ -4,13 +4,13 @@
 #include "private/environment_log_level_listener.hpp"
 
 #include "azure/core/datetime.hpp"
-#include "azure/core/environment.hpp"
+#include "azure/core/internal/environment.hpp"
 #include "azure/core/internal/strings.hpp"
 
 #include <iostream>
 #include <string>
 
-using Azure::Core::Environment;
+using Azure::Core::_internal::Environment;
 using namespace Azure::Core::Diagnostics;
 using namespace Azure::Core::Diagnostics::_detail;
 using Azure::Core::Diagnostics::_detail::EnvironmentLogLevelListener;

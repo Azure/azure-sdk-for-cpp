@@ -9,9 +9,9 @@
 
 #include <azure/core/credentials/credentials.hpp>
 #include <azure/core/credentials/token_credential_options.hpp>
-#include <azure/core/environment.hpp>
 #include <azure/core/internal/client_options.hpp>
 #include <azure/core/internal/diagnostics/log.hpp>
+#include <azure/core/internal/environment.hpp>
 
 #include "azure/core/test/interceptor_manager.hpp"
 #include "azure/core/test/network_models.hpp"
@@ -246,7 +246,7 @@ namespace Azure { namespace Core { namespace Test {
     // Util for tests getting env vars
     std::string GetEnv(const std::string& name)
     {
-      const auto ret = Azure::Core::Environment::GetVariable(name.c_str());
+      const auto ret = Azure::Core::_internal::Environment::GetVariable(name.c_str());
 
       if (ret.empty())
       {

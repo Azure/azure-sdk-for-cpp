@@ -71,6 +71,7 @@ set(
     inc/azure/core/internal/contract.hpp
     inc/azure/core/internal/cryptography/sha_hash.hpp
     inc/azure/core/internal/diagnostics/log.hpp
+    inc/azure/core/internal/environment.hpp
     inc/azure/core/internal/http/pipeline.hpp
     inc/azure/core/internal/io/null_body_stream.hpp
     inc/azure/core/internal/json/json_serializable.hpp
@@ -83,7 +84,6 @@ set(
     inc/azure/core/context.hpp
     inc/azure/core/datetime.hpp
     inc/azure/core/dll_import_export.hpp
-    inc/azure/core/environment.hpp
     inc/azure/core/etag.hpp
     inc/azure/core/exception.hpp
     inc/azure/core/match_conditions.hpp

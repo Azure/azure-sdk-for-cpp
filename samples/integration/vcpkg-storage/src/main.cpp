@@ -14,7 +14,7 @@
 
 #include <azure/storage/blobs.hpp>
 
-#include <azure/core/environment.hpp>
+#include "get_env.hpp"
 
 const std::string& GetConnectionString();
 
@@ -60,11 +60,7 @@ const std::string& GetConnectionString()
   {
     return ConnectionString;
   }
-
-  using Azure::Core::Environment;
-  const static std::string envConnectionString
-      = Environment::GetVariable("AZURE_STORAGE_CONNECTION_STRING");
-
+  const static std::string envConnectionString = GetEnv("AZURE_STORAGE_CONNECTION_STRING");
   if (!envConnectionString.empty())
   {
     return envConnectionString;

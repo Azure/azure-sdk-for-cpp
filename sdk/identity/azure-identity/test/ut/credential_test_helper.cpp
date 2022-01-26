@@ -3,7 +3,7 @@
 
 #include "credential_test_helper.hpp"
 
-#include <azure/core/environment.hpp>
+#include <azure/core/internal/environment.hpp>
 
 #include <stdlib.h>
 #include <type_traits>
@@ -37,7 +37,7 @@ void CredentialTestHelper::EnvironmentOverride::SetVariables(
 {
   for (auto var : vars)
   {
-    Azure::Core::Environment::SetVariable(var.first.c_str(), var.second.c_str());
+    Azure::Core::_internal::Environment::SetVariable(var.first.c_str(), var.second.c_str());
   }
 }
 
@@ -46,7 +46,7 @@ CredentialTestHelper::EnvironmentOverride::EnvironmentOverride(
 {
   for (auto var : environment)
   {
-    m_originalEnv[var.first] = Azure::Core::Environment::GetVariable(var.first.c_str());
+    m_originalEnv[var.first] = Azure::Core::_internal::Environment::GetVariable(var.first.c_str());
   }
 
   SetVariables(environment);

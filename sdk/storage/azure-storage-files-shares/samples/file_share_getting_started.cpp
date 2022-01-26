@@ -5,8 +5,9 @@
 #include <iostream>
 #include <stdexcept>
 
-#include <azure/core/environment.hpp>
 #include <azure/storage/files/shares.hpp>
+
+#include "get_env.hpp"
 
 std::string GetConnectionString()
 {
@@ -16,8 +17,9 @@ std::string GetConnectionString()
   {
     return ConnectionString;
   }
-  const static std::string envConnectionString
-      = Azure::Core::Environment::GetVariable("AZURE_STORAGE_CONNECTION_STRING");
+
+  const static std::string envConnectionString = GetEnv("AZURE_STORAGE_CONNECTION_STRING");
+
   if (!envConnectionString.empty())
   {
     return envConnectionString;

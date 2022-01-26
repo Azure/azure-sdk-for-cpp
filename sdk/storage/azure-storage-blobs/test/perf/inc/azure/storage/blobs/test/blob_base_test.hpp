@@ -9,7 +9,7 @@
 
 #pragma once
 
-#include <azure/core/environment.hpp>
+#include <azure/core/internal/environment.hpp>
 #include <azure/core/uuid.hpp>
 #include <azure/perf.hpp>
 
@@ -64,7 +64,7 @@ namespace Azure { namespace Storage { namespace Blobs { namespace Test {
     {
       // Get connection string from env
       const static std::string envConnectionString
-          = Azure::Core::Environment::GetVariable("STORAGE_CONNECTION_STRING");
+          = Azure::Core::_internal::Environment::GetVariable("STORAGE_CONNECTION_STRING");
       m_connectionString = envConnectionString;
 
       // Generate random container and blob names.

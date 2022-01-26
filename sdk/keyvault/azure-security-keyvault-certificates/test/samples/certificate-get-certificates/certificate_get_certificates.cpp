@@ -16,13 +16,14 @@
  *
  */
 
-#include <azure/core/environment.hpp>
 #include <azure/identity.hpp>
 #include <azure/keyvault/keyvault_certificates.hpp>
 
 #include <chrono>
 #include <iostream>
 #include <thread>
+
+#include "get_env.hpp"
 
 using namespace Azure::Security::KeyVault::Certificates;
 using namespace std::chrono_literals;
@@ -33,16 +34,14 @@ KeyVaultCertificateWithPolicy CreateCertificate(
 
 int main()
 {
-  using Azure::Core::Environment;
-
-  auto tenantId = Environment::GetVariable("AZURE_TENANT_ID");
-  auto clientId = Environment::GetVariable("AZURE_CLIENT_ID");
-  auto clientSecret = Environment::GetVariable("AZURE_CLIENT_SECRET");
+  auto tenantId = GetEnv("AZURE_TENANT_ID");
+  auto clientId = GetEnv("AZURE_CLIENT_ID");
+  auto clientSecret = GetEnv("AZURE_CLIENT_SECRET");
   auto credential
       = std::make_shared<Azure::Identity::ClientSecretCredential>(tenantId, clientId, clientSecret);
   std::chrono::milliseconds defaultWait(10s);
   // create client
-  CertificateClient certificateClient(Environment::GetVariable("AZURE_KEYVAULT_URL"), credential);
+  CertificateClient certificateClient(GetEnv("AZURE_KEYVAULT_URL"), credential);
 
   try
   {

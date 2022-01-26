@@ -14,7 +14,6 @@
  */
 
 #include <azure/core.hpp>
-#include <azure/core/environment.hpp>
 #include <azure/identity.hpp>
 #include <azure/keyvault/keyvault_keys.hpp>
 
@@ -22,21 +21,21 @@
 #include <iostream>
 #include <vector>
 
+#include "get_env.hpp"
+
 using namespace Azure::Security::KeyVault::Keys;
 using namespace Azure::Security::KeyVault::Keys::Cryptography;
 using namespace std::chrono_literals;
 
 int main()
 {
-  using Azure::Core::Environment;
-
-  auto tenantId = Environment::GetVariable("AZURE_TENANT_ID");
-  auto clientId = Environment::GetVariable("AZURE_CLIENT_ID");
-  auto clientSecret = Environment::GetVariable("AZURE_CLIENT_SECRET");
+  auto tenantId = GetEnv("AZURE_TENANT_ID");
+  auto clientId = GetEnv("AZURE_CLIENT_ID");
+  auto clientSecret = GetEnv("AZURE_CLIENT_SECRET");
   auto credential
       = std::make_shared<Azure::Identity::ClientSecretCredential>(tenantId, clientId, clientSecret);
 
-  KeyClient keyClient(Environment::GetVariable("AZURE_KEYVAULT_URL"), credential);
+  KeyClient keyClient(GetEnv("AZURE_KEYVAULT_URL"), credential);
 
   // Let's create a RSA key which will be used to encrypt and decrypt
   auto rsaKeyName = "CloudRsaKey-" + Azure::Core::Uuid::CreateUuid().ToString();

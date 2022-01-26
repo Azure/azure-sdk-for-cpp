@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
 
-#include <azure/core/environment.hpp>
+#include <azure/core/internal/environment.hpp>
 #include <azure/core/internal/json/json.hpp>
 #include <azure/core/internal/strings.hpp>
 
@@ -16,6 +16,7 @@
 using namespace Azure::Core::Test;
 using namespace Azure::Core::Json::_internal;
 using namespace Azure::Core;
+using Azure::Core::_internal::Environment;
 
 TestMode InterceptorManager::GetTestMode()
 {

@@ -13,12 +13,13 @@
  *
  */
 
-#include <azure/core/environment.hpp>
 #include <azure/identity.hpp>
 #include <azure/keyvault/keyvault_secrets.hpp>
 
 #include <chrono>
 #include <iostream>
+
+#include "get_env.hpp"
 
 using namespace Azure::Security::KeyVault::Secrets;
 using namespace std::chrono_literals;
@@ -26,16 +27,14 @@ void AssertSecretsEqual(KeyVaultSecret const& expected, KeyVaultSecret const& ac
 
 int main()
 {
-  using Azure::Core::Environment;
-
-  auto tenantId = Environment::GetVariable("AZURE_TENANT_ID");
-  auto clientId = Environment::GetVariable("AZURE_CLIENT_ID");
-  auto clientSecret = Environment::GetVariable("AZURE_CLIENT_SECRET");
+  auto tenantId = GetEnv("AZURE_TENANT_ID");
+  auto clientId = GetEnv("AZURE_CLIENT_ID");
+  auto clientSecret = GetEnv("AZURE_CLIENT_SECRET");
   auto credential
       = std::make_shared<Azure::Identity::ClientSecretCredential>(tenantId, clientId, clientSecret);
 
   // create client
-  SecretClient secretClient(Environment::GetVariable("AZURE_KEYVAULT_URL"), credential);
+  SecretClient secretClient(GetEnv("AZURE_KEYVAULT_URL"), credential);
 
   std::string secretName("MySampleSecret");
   std::string secretValue("my secret value");

@@ -1,18 +1,15 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
 
-#include "azure/core/platform.hpp"
+#include "get_env.hpp"
 
-#include "azure/core/internal/environment.hpp"
-
-#if defined(AZ_PLATFORM_WINDOWS)
+#if defined(_MSC_VER)
 #if !defined(WIN32_LEAN_AND_MEAN)
 #define WIN32_LEAN_AND_MEAN
 #endif
 #if !defined(NOMINMAX)
 #define NOMINMAX
 #endif
-
 #include <vector>
 
 #include <windows.h>
@@ -20,15 +17,13 @@
 #include <stdlib.h>
 #endif
 
-using Azure::Core::_internal::Environment;
-
-std::string Environment::GetVariable(const char* name)
+std::string GetEnv(const char* name)
 {
   if (name != nullptr && name[0] != 0)
   {
-#if defined(AZ_PLATFORM_WINDOWS)
-    std::vector<std::string::value_type> bufferVector;
-    std::string::value_type* buffer = nullptr;
+#if defined(_MSC_VER)
+    std::vector<char> bufferVector;
+    char* buffer = nullptr;
     DWORD bufferSize = 0;
     while (const auto requiredSize = GetEnvironmentVariableA(name, buffer, bufferSize))
     {
@@ -49,25 +44,4 @@ std::string Environment::GetVariable(const char* name)
 #endif
   }
   return std::string();
-}
-
-void Environment::SetVariable(const char* name, const char* value)
-{
-  if (name != nullptr && name[0] != 0)
-  {
-    const auto isEmptyValue = (value == nullptr || value[0] == 0);
-
-#if defined(AZ_PLATFORM_WINDOWS)
-    static_cast<void>(SetEnvironmentVariableA(name, isEmptyValue ? nullptr : value));
-#else
-    if (isEmptyValue)
-    {
-      static_cast<void>(unsetenv(name));
-    }
-    else
-    {
-      static_cast<void>(setenv(name, value, 1));
-    }
-#endif
-  }
 }
