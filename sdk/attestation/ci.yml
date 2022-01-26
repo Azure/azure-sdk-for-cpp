@@ -31,4 +31,14 @@ stages:
         - Name: azure-security-attestation
           Path: azure-security-attestation
           VcpkgPortName: azure-security-attestation-cpp
-        
+      TestEnv:
+      - Name: ATTESTATION_ISOLATED_URL
+        Value: https://NotRealAttestationInstanceiso.wus.attest.azure.net
+      - Name: ATTESTATION_AAD_URL
+        Value: https://NotRealAttestationInstanceaad.wus.attest.azure.net
+      - Name: AZURE_TENANT_ID
+        Value: "33333333-3333-3333-3333-333333333333"
+      - Name: AZURE_CLIENT_ID
+        Value: "non-real-client"
+      - Name: AZURE_CLIENT_SECRET
+        Value: "non-real-secret"

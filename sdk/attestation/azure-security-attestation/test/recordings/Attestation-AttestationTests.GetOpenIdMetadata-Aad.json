@@ -1,0 +1,24 @@
+{
+  "networkCallRecords": [
+    {
+      "Headers": {
+        "content-type": "application/json",
+        "user-agent": "azsdk-cpp-Attestation/1.0.0-beta.1 (Linux 5.10.60.1-microsoft-standard-WSL2 x86_64 #1 SMP Wed Aug 25 23:20:18 UTC 2021)",
+        "x-ms-client-request-id": "4eab56eb-f823-4147-77ee-9c3144e0f59f"
+      },
+      "Method": "GET",
+      "Response": {
+        "BODY": "{\"response_types_supported\":[\"token\",\"none\"],\"id_token_signing_alg_values_supported\":[\"RS256\"],\"revocation_endpoint\":\"https://cplarryoattestationaad.wus.attest.azure.net/revoke\",\"issuer\":\"https://cplarryoattestationaad.wus.attest.azure.net\",\"jwks_uri\":\"https://cplarryoattestationaad.wus.attest.azure.net/certs\",\"claims_supported\":[\"cnf\",\"nonce\",\"x-ms-ver\",\"x-ms-attestation-type\",\"x-ms-policy-hash\",\"x-ms-policy-signer\",\"x-ms-sgx-is-debuggable\",\"x-ms-sgx-mrenclave\",\"x-ms-sgx-mrsigner\",\"x-ms-sgx-svn\",\"x-ms-sgx-ehd\",\"x-ms-sgx-collateral\",\"is-debuggable\",\"sgx-mrsigner\",\"sgx-mrenclave\",\"product-id\",\"svn\",\"tee\"]}",
+        "REASON_PHRASE": "OK",
+        "STATUS_CODE": "200",
+        "content-length": "612",
+        "content-type": "application/json; charset=utf-8",
+        "date": "Wed, 26 Jan 2022 20:04:39 GMT",
+        "server": "Kestrel",
+        "x-ms-maa-service-version": "1.10.01780.0001",
+        "x-ms-request-id": "00-35793acd03de6e2ee0139a1cd41f9712-0000000000000000-00"
+      },
+      "Url": "https://REDACTED.wus.attest.azure.net/.well-known/openid-configuration"
+    }
+  ]
+}
