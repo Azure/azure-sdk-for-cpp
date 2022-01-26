@@ -89,6 +89,10 @@ include(AzureDoxygen)
 # Functions for library versions
 include(AzureVersion)
 
+if(BUILD_SAMPLES)
+  add_subdirectory(samples/helpers/get-env)
+endif()
+
 # sub-projects
 add_subdirectory(sdk/core)
 add_subdirectory(sdk/identity)

@@ -13,30 +13,29 @@
  *
  */
 
-#if defined(_MSC_VER)
-#define _CRT_SECURE_NO_WARNINGS
-#endif
-
 #include <azure/identity.hpp>
 #include <azure/keyvault/keyvault_secrets.hpp>
 
 #include <assert.h>
 #include <chrono>
 #include <iostream>
+
+#include "get_env.hpp"
+
 using namespace Azure::Security::KeyVault::Secrets;
 using namespace std::chrono_literals;
 void AssertSecretsEqual(KeyVaultSecret const& expected, KeyVaultSecret const& actual);
 
 int main()
 {
-  auto tenantId = std::getenv("AZURE_TENANT_ID");
-  auto clientId = std::getenv("AZURE_CLIENT_ID");
-  auto clientSecret = std::getenv("AZURE_CLIENT_SECRET");
+  auto tenantId = GetEnv("AZURE_TENANT_ID");
+  auto clientId = GetEnv("AZURE_CLIENT_ID");
+  auto clientSecret = GetEnv("AZURE_CLIENT_SECRET");
   auto credential
       = std::make_shared<Azure::Identity::ClientSecretCredential>(tenantId, clientId, clientSecret);
 
   // create client
-  SecretClient secretClient(std::getenv("AZURE_KEYVAULT_URL"), credential);
+  SecretClient secretClient(GetEnv("AZURE_KEYVAULT_URL"), credential);
 
   std::string secretName("MySampleSecret");
   std::string secretValue("my secret value");

@@ -17,4 +17,4 @@ create_per_service_target_build(sample2-backup-and-restore keyvault)
 # CI pipeline reads the {service}-samples.txt and runs the binaries listed there.
 file(APPEND ${CMAKE_BINARY_DIR}/keyvault-samples.txt "${CMAKE_CURRENT_BINARY_DIR}/sample2-backup-and-restore\n")
 
-target_link_libraries(sample2-backup-and-restore PRIVATE azure-security-keyvault-keys azure-identity)
+target_link_libraries(sample2-backup-and-restore PRIVATE azure-security-keyvault-keys azure-identity get-env-helper)

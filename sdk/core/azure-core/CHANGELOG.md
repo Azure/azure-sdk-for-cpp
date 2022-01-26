@@ -4,6 +4,8 @@
 
 ### Features Added
 
+- Enabled environment-controlled console logging on UWP.
+
 ### Breaking Changes
 
 - Removed the `AzureNoReturnPath()` function from the global namespace, and deprecated the associated macros, such as `AZURE_ASSERT` since they are meant for internal use only. If your code was using the `AZURE_ASSERT` macro, consider using the standard library's `assert` as an alternative.

@@ -1,30 +1,16 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
 
-#include "azure/core/platform.hpp"
-
-#if defined(AZ_PLATFORM_WINDOWS)
-#if !defined(WIN32_LEAN_AND_MEAN)
-#define WIN32_LEAN_AND_MEAN
-#endif
-#if !defined(NOMINMAX)
-#define NOMINMAX
-#endif
-
-#include <windows.h>
-#endif
-
-#if (!defined(WINAPI_PARTITION_DESKTOP) || WINAPI_PARTITION_DESKTOP) // See azure/core/platform.hpp
-                                                                     // for explanation.
-
 #include "private/environment_log_level_listener.hpp"
 
 #include "azure/core/datetime.hpp"
+#include "azure/core/internal/environment.hpp"
 #include "azure/core/internal/strings.hpp"
 
 #include <iostream>
 #include <string>
 
+using Azure::Core::_internal::Environment;
 using namespace Azure::Core::Diagnostics;
 using namespace Azure::Core::Diagnostics::_detail;
 using Azure::Core::Diagnostics::_detail::EnvironmentLogLevelListener;
@@ -38,18 +24,8 @@ Logger::Level const* GetEnvironmentLogLevel()
   {
     EnvironmentLogLevelListener::SetInitialized(true);
 
-#if defined(_MSC_VER)
-#pragma warning(push)
-// warning C4996: 'getenv': This function or variable may be unsafe. Consider using _dupenv_s
-// instead.
-#pragma warning(disable : 4996)
-#endif
-    auto envVar = std::getenv("AZURE_LOG_LEVEL");
-#if defined(_MSC_VER)
-#pragma warning(pop)
-#endif
-
-    if (envVar)
+    auto const envVar = Environment::GetVariable("AZURE_LOG_LEVEL");
+    if (!envVar.empty())
     {
       auto const logLevelStr = Azure::Core::_internal::StringExtensions::ToLower(envVar);
 
@@ -151,4 +127,3 @@ static bool g_initialized;
 bool EnvironmentLogLevelListener::IsInitialized() { return g_initialized; }
 
 void EnvironmentLogLevelListener::SetInitialized(bool value) { g_initialized = value; }
-#endif

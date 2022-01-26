@@ -14,7 +14,7 @@ add_executable (
 
 create_per_service_target_build(sample4-get-secrets-deleted keyvault)
 
-target_link_libraries(sample4-get-secrets-deleted PRIVATE azure-security-keyvault-secrets azure-identity)
+target_link_libraries(sample4-get-secrets-deleted PRIVATE azure-security-keyvault-secrets azure-identity get-env-helper)
 
 # Add the sample to be run on CI. 
 # CI pipeline reads the {service}-samples.txt and runs the binaries listed there.

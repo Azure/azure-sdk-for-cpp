@@ -13,10 +13,6 @@
  *
  */
 
-#if defined(_MSC_VER)
-#define _CRT_SECURE_NO_WARNINGS
-#endif
-
 #include <azure/core.hpp>
 #include <azure/identity.hpp>
 #include <azure/keyvault/keyvault_keys.hpp>
@@ -25,19 +21,21 @@
 #include <iostream>
 #include <vector>
 
+#include "get_env.hpp"
+
 using namespace Azure::Security::KeyVault::Keys;
 using namespace Azure::Security::KeyVault::Keys::Cryptography;
 using namespace std::chrono_literals;
 
 int main()
 {
-  auto tenantId = std::getenv("AZURE_TENANT_ID");
-  auto clientId = std::getenv("AZURE_CLIENT_ID");
-  auto clientSecret = std::getenv("AZURE_CLIENT_SECRET");
+  auto tenantId = GetEnv("AZURE_TENANT_ID");
+  auto clientId = GetEnv("AZURE_CLIENT_ID");
+  auto clientSecret = GetEnv("AZURE_CLIENT_SECRET");
   auto credential
       = std::make_shared<Azure::Identity::ClientSecretCredential>(tenantId, clientId, clientSecret);
 
-  KeyClient keyClient(std::getenv("AZURE_KEYVAULT_URL"), credential);
+  KeyClient keyClient(GetEnv("AZURE_KEYVAULT_URL"), credential);
 
   auto rsaKeyName = "CloudRsaKey-" + Azure::Core::Uuid::CreateUuid().ToString();
   auto keyOptions = CreateRsaKeyOptions(rsaKeyName, false);

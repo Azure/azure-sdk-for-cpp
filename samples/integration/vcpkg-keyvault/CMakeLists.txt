@@ -26,4 +26,5 @@ target_link_libraries(application
      PRIVATE
      Azure::azure-security-keyvault-keys
      Azure::azure-identity
+     get-env-helper
 )
