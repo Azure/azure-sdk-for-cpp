@@ -101,5 +101,5 @@ az_rtti_setup(
 
 if(BUILD_TESTING)
     # tests
-    add_subdirectory(test)
+    add_subdirectory(test/ut)
 endif()

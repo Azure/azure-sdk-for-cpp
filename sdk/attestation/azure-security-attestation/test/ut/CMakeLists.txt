@@ -16,9 +16,9 @@ include(GoogleTest)
 
 add_executable (
      azure-security-attestation-test
-     ut/macro_guard.cpp
-     ut/crypto_test.cpp
-     ut/attestation_test.cpp
+     macro_guard.cpp
+     crypto_test.cpp
+     attestation_test.cpp
 )
 
 create_per_service_target_build(azure-security-attestation-test attestation)
