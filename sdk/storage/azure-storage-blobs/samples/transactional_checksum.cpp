@@ -17,6 +17,7 @@ std::string GetConnectionString()
   {
     return ConnectionString;
   }
+
   const static std::string envConnectionString = GetEnv("AZURE_STORAGE_CONNECTION_STRING");
   if (!envConnectionString.empty())
   {

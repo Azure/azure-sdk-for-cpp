@@ -11,7 +11,6 @@ add_executable (
   sample4-encrypt-decrypt
   sample4_encrypt_decrypt.cpp
 )
-
 create_per_service_target_build(sample4-encrypt-decrypt keyvault)
 
 # Add the sample to be run on CI. 

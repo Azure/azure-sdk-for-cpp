@@ -11,7 +11,6 @@ add_executable (
   sample5-sign-verify
   sample5_sign_verify.cpp
 )
-
 create_per_service_target_build(sample5-sign-verify keyvault)
 
 # Add the sample to be run on CI. 

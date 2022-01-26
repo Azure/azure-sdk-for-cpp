@@ -24,8 +24,7 @@ Logger::Level const* GetEnvironmentLogLevel()
   {
     EnvironmentLogLevelListener::SetInitialized(true);
 
-    auto envVar = Environment::GetVariable("AZURE_LOG_LEVEL");
-
+    auto const envVar = Environment::GetVariable("AZURE_LOG_LEVEL");
     if (!envVar.empty())
     {
       auto const logLevelStr = Azure::Core::_internal::StringExtensions::ToLower(envVar);
