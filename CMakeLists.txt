@@ -99,4 +99,7 @@ add_subdirectory(sdk/identity)
 add_subdirectory(sdk/keyvault)
 add_subdirectory(sdk/storage)
 add_subdirectory(sdk/template)
-add_subdirectory(samples/integration/vcpkg-keyvault)
+
+if(BUILD_SAMPLES)
+  add_subdirectory(samples/integration/vcpkg-keyvault)
+endif()
