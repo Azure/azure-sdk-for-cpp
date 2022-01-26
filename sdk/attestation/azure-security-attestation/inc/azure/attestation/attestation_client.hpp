@@ -16,7 +16,6 @@ namespace Azure { namespace Security { namespace Attestation {
   using namespace Azure::Core;
   class AttestationClient final {
   private:
-    // Using a shared pipeline for a client to share it with LRO (like delete key)
     Azure::Core::Url m_endpoint;
     std::string m_apiVersion;
     std::shared_ptr<Azure::Core::Http::_internal::HttpPipeline> m_pipeline;
@@ -56,7 +55,7 @@ namespace Azure { namespace Security { namespace Attestation {
     /**
      * @brief Construct a new Key Client object from another key client.
      *
-     * @param keyClient An existing key vault key client.
+     * @param attestationClient An existing attestation client.
      */
     explicit AttestationClient(AttestationClient const& attestationClient)
         : m_endpoint(attestationClient.m_endpoint), m_apiVersion(attestationClient.m_apiVersion),
@@ -81,6 +80,12 @@ namespace Azure { namespace Security { namespace Attestation {
     /**
      * @brief Attest an SGX enclave, returning an attestation token representing the result
      * of the attestation operation.
+     * 
+     * @param sgxQuoteToAttest - SGX Quote to be validated by the attestation service.
+     * @param options - Options to the attestation request (runtime data, inittime data, etc).
+     * @param context - Context for the operation.
+     * 
+     * @returns Response<AttestationToken<AttestationResult>> - The result of the attestation operation
      */
     Response<AttestationToken<AttestationResult>> AttestSgxEnclave(
         std::vector<uint8_t> const& sgxQuoteToAttest,
@@ -90,6 +95,13 @@ namespace Azure { namespace Security { namespace Attestation {
     /**
      * @brief Attest an OpenEnclave report, returning an attestation token representing the result
      * of the attestation operation.
+     * 
+     * @param openEnclaveReportToAttest - OpenEnclave Report to be validated by the attestation service.
+     * @param options - Options to the attestation request (runtime data, inittime data, etc).
+     * @param context - Context for the operation.
+     *
+     * @returns Response<AttestationToken<AttestationResult>> - The result of the attestation
+     * operation
      */
     Response<AttestationToken<AttestationResult>> AttestOpenEnclave(
         std::vector<uint8_t> const& openEnclaveReportToAttest,
