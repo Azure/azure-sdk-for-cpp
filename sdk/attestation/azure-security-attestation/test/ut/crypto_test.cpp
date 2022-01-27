@@ -116,6 +116,15 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
     }
   }
 
+  TEST(CryptoTests, ImportBogusKey) { const std::string pemEncodedGarbage = R"(-----BEGIN UNKNOWN-----
+MIIEejCCBCCgAwIBAgIVAKL12jjpSW7HPPHpJIYhFhGrJxJTMAoGCCqGSM49BAMC
+MHExIzAhBgNVBAMMGkludGVsIFNHWCBQQ0sgUHJvY2Vzc29yIENBMRowGAYDVQQK
+-----END UNKNOWN-----)";
+    
+    EXPECT_THROW(Crypto::ImportPrivateKey(pemEncodedGarbage), std::runtime_error);
+    EXPECT_THROW(Crypto::ImportPublicKey(pemEncodedGarbage), std::runtime_error);
+  }
+
   const std::string pemEncodedCertificate1 =
       R"(-----BEGIN CERTIFICATE-----
 MIIEejCCBCCgAwIBAgIVAKL12jjpSW7HPPHpJIYhFhGrJxJTMAoGCCqGSM49BAMC
@@ -166,9 +175,9 @@ qQKwhjIj5sw3iOCKAiAUEIuF2ylJk2KDexNEW7t/zGmnBT0FgCRwdvKAh8S2EQ==
   TEST(CryptoTests, CreateX509Certificate)
   {
     auto privateKey = Crypto::CreateRsaKey(2048);
-    auto x509cert = Crypto::CreateX509CertificateForPrivateKey(privateKey, "CN=TestSubject1");
+    auto x509cert = Crypto::CreateX509CertificateForPrivateKey(privateKey, "CN=Test\\Subject1, O=Microsoft Corporation, L=Redmond, ST=WA, C=US");
 
-    EXPECT_EQ("CN=TestSubject1", x509cert->GetSubjectName());
-    EXPECT_EQ("CN=TestSubject1", x509cert->GetIssuerName());
+    EXPECT_EQ("CN=TestSubject1, O=Microsoft Corporation, L=Redmond, ST=WA, C=US", x509cert->GetSubjectName());
+    EXPECT_EQ("CN=TestSubject1, O=Microsoft Corporation, L=Redmond, ST=WA, C=US", x509cert->GetIssuerName());
   }
 }}}} // namespace Azure::Security::Attestation::Test

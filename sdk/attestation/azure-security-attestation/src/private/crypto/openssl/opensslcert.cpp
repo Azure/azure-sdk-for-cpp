@@ -71,6 +71,29 @@ namespace Security {
           return std::string(returnValue.begin(), returnValue.end());
         }
 
+        /// Trim whitespace from the start of the string.
+        /// @param s string to trim.
+        static inline void ltrim(std::string& s)
+        {
+          s.erase(s.begin(), std::find_if(s.begin(), s.end(), [](unsigned char ch) {
+                    return !std::isspace(ch);
+                  }));
+        }
+
+        static inline void rtrim(std::string& s)
+        {
+          s.erase(
+              std::find_if(s.rbegin(), s.rend(), [](unsigned char ch) { return !std::isspace(ch); })
+                  .base(),
+              s.end());
+        }
+
+        static inline void trim(std::string& s)
+        {
+          rtrim(s);
+          ltrim(s);
+        }
+
         _details::openssl_x509_name OpenSSLX509Certificate::ParseX509Name(std::string const& name)
         {
           _details::openssl_x509_name returnValue(_details::make_openssl_unique(X509_NAME_new));
@@ -94,6 +117,8 @@ namespace Security {
             {
               if (!value.empty() && !type.empty())
               {
+                trim(type);
+                trim(value);
                 components.push_back(std::make_pair(type, value));
               }
               collectType = true;
@@ -122,6 +147,8 @@ namespace Security {
           // Include the final element.
           if (!value.empty() && !type.empty())
           {
+            trim(type);
+            trim(value);
             components.push_back(std::make_pair(type, value));
           }
           for (auto comp : components)
