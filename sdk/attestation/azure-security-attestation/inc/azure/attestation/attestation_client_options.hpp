@@ -11,8 +11,8 @@
 
 #include <azure/core/internal/client_options.hpp>
 
-#include "azure/attestation/dll_import_export.hpp"
 #include "azure/attestation/attestation_client_models.hpp"
+#include "azure/attestation/dll_import_export.hpp"
 
 namespace Azure { namespace Security { namespace Attestation {
 
@@ -84,7 +84,10 @@ namespace Azure { namespace Security { namespace Attestation {
      *
      * @param other Another #ServiceVersion to be compared.
      */
-    bool operator==(AttestationDataType const& other) const { return m_dataType == other.m_dataType; }
+    bool operator==(AttestationDataType const& other) const
+    {
+      return m_dataType == other.m_dataType;
+    }
 
     /**
      * @brief Return the #ServiceVersion string representation.
@@ -103,7 +106,6 @@ namespace Azure { namespace Security { namespace Attestation {
      *
      */
     AZ_ATTESTATION_DLLEXPORT static const AttestationDataType Binary;
-
   };
 
   struct AttestationData final
@@ -115,7 +117,7 @@ namespace Azure { namespace Security { namespace Attestation {
   struct AttestOptions final
   {
     AttestationData RuntimeData;
-    AttestationData InittimeData={};
-    std::string DraftPolicyForAttestation={};
+    AttestationData InittimeData = {};
+    std::string DraftPolicyForAttestation = {};
   };
 }}} // namespace Azure::Security::Attestation

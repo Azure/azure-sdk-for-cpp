@@ -13,7 +13,7 @@
 #include <string>
 #include <vector>
 
-namespace Azure { namespace Security { namespace Attestation{ namespace _detail {
+namespace Azure { namespace Security { namespace Attestation { namespace _detail {
 
   struct JsonWebKey final
   {
@@ -43,7 +43,6 @@ namespace Azure { namespace Security { namespace Attestation{ namespace _detail 
     std::string y;
     // Private key
     std::string d; // Shared with RSA Public Key.
-    
   };
 
   struct JsonWebKeySet final

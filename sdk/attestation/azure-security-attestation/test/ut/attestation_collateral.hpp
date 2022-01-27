@@ -6,7 +6,7 @@
 
 namespace Azure { namespace Security { namespace Attestation { namespace Test {
 
-// spell-checker:disable
+  // spell-checker:disable
   const std::string OpenEnclaveQuote(
       "AQAAAAIAAADoEQAAAAAAAAMAAgAAAAAABQAKAJOacjP3nEyplAoNs5V_Bgfl_L18zrEJejtqk6RDB0IzAAAAABERAwX_"
       "gAYAAAAAAAAAAAAAAAAAAAA"
@@ -222,7 +222,7 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
       "R2bzhoMms1ZHUxaVdEZEJrQW4rMGlp"
       "QT09Ci0tLS0tRU5EIENFUlRJRklDQVRFLS0tLS0KAA");
 
-    std::string RuntimeJWKClaim = R"(
+  std::string RuntimeJWKClaim = R"(
         {
             "jwk" : {
                 "kty":"EC",
@@ -235,35 +235,33 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
         )";
   std::string EnclaveHeldData
       = "CiAgICAgICAgewogICAgICAgICAgICAiandrIiA6IHsKICAgICAgICAgICAgICAgICJrdHkiOiJFQyI"
-      "sCiAgICAgICAgICAgICAgICAidXNlIjoic2lnIiwKICAgICAgICAgICAgICAgICJjcnYiOiJQLTI1Ni"
-      "IsCiAgICAgICAgICAgICAgICAieCI6IjE4d0hMZUlnVzl3Vk42VkQxVHhncHF5MkxzellrTWY2Sjhua"
-      "lZBaWJ2aE0iLAogICAgICAgICAgICAgICAgInkiOiJjVjRkUzRVYUxNZ1BfNGZZNGo4aXI3Y2wxVFhs"
-      "RmRBZ2N4NTVvN1RrY1NBIgogICAgICAgICAgICB9CiAgICAgICAgfQogICAgICAgIAA";
-// spell-checker:enable
-  
+        "sCiAgICAgICAgICAgICAgICAidXNlIjoic2lnIiwKICAgICAgICAgICAgICAgICJjcnYiOiJQLTI1Ni"
+        "IsCiAgICAgICAgICAgICAgICAieCI6IjE4d0hMZUlnVzl3Vk42VkQxVHhncHF5MkxzellrTWY2Sjhua"
+        "lZBaWJ2aE0iLAogICAgICAgICAgICAgICAgInkiOiJjVjRkUzRVYUxNZ1BfNGZZNGo4aXI3Y2wxVFhs"
+        "RmRBZ2N4NTVvN1RrY1NBIgogICAgICAgICAgICB9CiAgICAgICAgfQogICAgICAgIAA";
+  // spell-checker:enable
 
-
- class AttestationCollateral {
-public:
-  static std::vector<uint8_t> OpenEnclaveReport()
-  {
-    return Azure::Core::_internal::Base64Url::Base64UrlDecode(OpenEnclaveQuote);
-  }
-  static std::vector<uint8_t> SgxQuote()
-  {
-    // An OpenEnclave report is a wrapper around an SGX quote - there are
-    // 16 bytes of OpenEnclave header at the start of the report and what remains is
-    // an SGX quote, so to convert from an OE report to an SGX quote simply strip
-    // the first 16 bytes of the report.
-    auto openEnclaveReport = OpenEnclaveReport();
-    openEnclaveReport.erase(openEnclaveReport.begin(), openEnclaveReport.begin() + 16);
-    return openEnclaveReport;
-    //    return std::vector<uint8_t>(openEnclaveReport.begin() + 0x10, openEnclaveReport.end());
-  }
-  static std::vector<uint8_t> RuntimeData()
-  {
-    return Azure::Core::_internal::Base64Url::Base64UrlDecode(EnclaveHeldData);
-    //    return std::vector<uint8_t>(RuntimeJWKClaim.begin(), RuntimeJWKClaim.end());
-  }
-};
+  class AttestationCollateral {
+  public:
+    static std::vector<uint8_t> OpenEnclaveReport()
+    {
+      return Azure::Core::_internal::Base64Url::Base64UrlDecode(OpenEnclaveQuote);
+    }
+    static std::vector<uint8_t> SgxQuote()
+    {
+      // An OpenEnclave report is a wrapper around an SGX quote - there are
+      // 16 bytes of OpenEnclave header at the start of the report and what remains is
+      // an SGX quote, so to convert from an OE report to an SGX quote simply strip
+      // the first 16 bytes of the report.
+      auto openEnclaveReport = OpenEnclaveReport();
+      openEnclaveReport.erase(openEnclaveReport.begin(), openEnclaveReport.begin() + 16);
+      return openEnclaveReport;
+      //    return std::vector<uint8_t>(openEnclaveReport.begin() + 0x10, openEnclaveReport.end());
+    }
+    static std::vector<uint8_t> RuntimeData()
+    {
+      return Azure::Core::_internal::Base64Url::Base64UrlDecode(EnclaveHeldData);
+      //    return std::vector<uint8_t>(RuntimeJWKClaim.begin(), RuntimeJWKClaim.end());
+    }
+  };
 }}}} // namespace Azure::Security::Attestation::Test

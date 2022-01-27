@@ -80,12 +80,13 @@ namespace Azure { namespace Security { namespace Attestation {
     /**
      * @brief Attest an SGX enclave, returning an attestation token representing the result
      * of the attestation operation.
-     * 
+     *
      * @param sgxQuoteToAttest - SGX Quote to be validated by the attestation service.
      * @param options - Options to the attestation request (runtime data, inittime data, etc).
      * @param context - Context for the operation.
-     * 
-     * @returns Response<AttestationToken<AttestationResult>> - The result of the attestation operation
+     *
+     * @returns Response<AttestationToken<AttestationResult>> - The result of the attestation
+     * operation
      */
     Response<AttestationToken<AttestationResult>> AttestSgxEnclave(
         std::vector<uint8_t> const& sgxQuoteToAttest,
@@ -95,8 +96,9 @@ namespace Azure { namespace Security { namespace Attestation {
     /**
      * @brief Attest an OpenEnclave report, returning an attestation token representing the result
      * of the attestation operation.
-     * 
-     * @param openEnclaveReportToAttest - OpenEnclave Report to be validated by the attestation service.
+     *
+     * @param openEnclaveReportToAttest - OpenEnclave Report to be validated by the attestation
+     * service.
      * @param options - Options to the attestation request (runtime data, inittime data, etc).
      * @param context - Context for the operation.
      *

@@ -10,8 +10,7 @@
 using namespace Azure::Security::Attestation;
 using namespace Azure::Core::Http::_internal;
 
-std::unique_ptr<Azure::Core::Http::RawResponse>
-_detail::AttestationCommonRequest::SendRequest(
+std::unique_ptr<Azure::Core::Http::RawResponse> _detail::AttestationCommonRequest::SendRequest(
     Azure::Core::Http::_internal::HttpPipeline const& pipeline,
     Azure::Core::Http::Request& request,
     Azure::Core::Context const& context)
@@ -43,7 +42,6 @@ Azure::Core::Http::Request _detail::AttestationCommonRequest::CreateRequest(
   using namespace Azure::Core::Http;
   return CreateRequest(url, "", method, path, content);
 }
-
 
 Azure::Core::Http::Request _detail::AttestationCommonRequest::CreateRequest(
     Azure::Core::Url url,

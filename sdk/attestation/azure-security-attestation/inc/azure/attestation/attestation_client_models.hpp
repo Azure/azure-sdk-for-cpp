@@ -16,11 +16,11 @@
 #include <azure/core/nullable.hpp>
 #include <azure/core/paged_response.hpp>
 #include <azure/core/response.hpp>
+#include <iostream>
 #include <memory>
 #include <string>
 #include <unordered_map>
 #include <vector>
-#include <iostream>
 
 namespace Azure { namespace Security { namespace Attestation {
   class AttestationClient;
@@ -41,10 +41,10 @@ namespace Azure { namespace Security { namespace Attestation {
     AttestationOpenIdMetadata() {}
     ~AttestationOpenIdMetadata() {}
     AttestationOpenIdMetadata(AttestationOpenIdMetadata&& that) noexcept
-        : Issuer(::std::move(that.Issuer)), JsonWebKeySetUrl(::std::move(that.JsonWebKeySetUrl))
-        , SupportedResponseTypes(::std::move(that.SupportedResponseTypes))
-        , SupportedTokenSigningAlgorithms(::std::move(that.SupportedTokenSigningAlgorithms))
-        , SupportedClaims(::std::move(that.SupportedClaims))
+        : Issuer(::std::move(that.Issuer)), JsonWebKeySetUrl(::std::move(that.JsonWebKeySetUrl)),
+          SupportedResponseTypes(::std::move(that.SupportedResponseTypes)),
+          SupportedTokenSigningAlgorithms(::std::move(that.SupportedTokenSigningAlgorithms)),
+          SupportedClaims(::std::move(that.SupportedClaims))
     {
     }
   };
@@ -100,8 +100,7 @@ namespace Azure { namespace Security { namespace Attestation {
   /// An AttestationToken represents an RFC 7515 JSON Web Token returned from the attestation
   /// service.
   /// <typeparam name="T"></typeparam>
-  template <typename T>
-  struct AttestationToken
+  template <typename T> struct AttestationToken
   {
     std::string RawToken;
     std::string RawHeader;

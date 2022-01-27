@@ -23,7 +23,7 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
 
     std::string exportedPublicKey = privateKey->ExportPublicKey();
 
-    EXPECT_EQ(0, exportedPublicKey.find("-----BEGIN PUBLIC KEY-----"));
+    EXPECT_EQ(0ul, exportedPublicKey.find("-----BEGIN PUBLIC KEY-----"));
     auto importedPublicKey = Crypto::ImportPublicKey(exportedPublicKey);
 
     EXPECT_THROW(Crypto::ImportPrivateKey(exportedPublicKey), std::runtime_error);
@@ -59,13 +59,13 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
     auto privateKey = Crypto::CreateEcdsaKey();
     std::string exportedPrivateKey = privateKey->ExportPrivateKey();
 
-    EXPECT_EQ(0, exportedPrivateKey.find("-----BEGIN PRIVATE KEY-----"));
+    EXPECT_EQ(0ul, exportedPrivateKey.find("-----BEGIN PRIVATE KEY-----"));
 
     auto importedKey = Crypto::ImportPrivateKey(exportedPrivateKey);
 
     std::string exportedPublicKey = privateKey->ExportPublicKey();
 
-    EXPECT_EQ(0, exportedPublicKey.find("-----BEGIN PUBLIC KEY-----"));
+    EXPECT_EQ(0ul, exportedPublicKey.find("-----BEGIN PUBLIC KEY-----"));
     auto importedPublicKey = Crypto::ImportPublicKey(exportedPublicKey);
 
     EXPECT_THROW(Crypto::ImportPrivateKey(exportedPublicKey), std::runtime_error);
@@ -157,7 +157,7 @@ qQKwhjIj5sw3iOCKAiAUEIuF2ylJk2KDexNEW7t/zGmnBT0FgCRwdvKAh8S2EQ==
         x509cert->GetIssuerName());
 
     std::string exportedCert = x509cert->ExportAsPEM();
-    EXPECT_EQ(0, exportedCert.find("-----BEGIN CERTIFICATE-----"));
+    EXPECT_EQ(0ul, exportedCert.find("-----BEGIN CERTIFICATE-----"));
 
     auto publicKey = x509cert->GetPublicKey();
     EXPECT_NE(nullptr, publicKey.get());

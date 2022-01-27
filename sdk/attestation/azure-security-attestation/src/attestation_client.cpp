@@ -1,16 +1,16 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
 
-#include <shared_mutex>
 #include "azure/attestation/attestation_client.hpp"
+#include <shared_mutex>
 
-#include "private/package_version.hpp"
-#include <azure/core/internal/http/pipeline.hpp>
-#include <azure/core/http/policies/policy.hpp>
-#include <azure/core/base64.hpp>
+#include "private/attestation_client_models_private.hpp"
 #include "private/attestation_common_request.hpp"
 #include "private/attestation_deserializer.hpp"
-#include "private/attestation_client_models_private.hpp"
+#include "private/package_version.hpp"
+#include <azure/core/base64.hpp>
+#include <azure/core/http/policies/policy.hpp>
+#include <azure/core/internal/http/pipeline.hpp>
 
 #include <string>
 
@@ -50,7 +50,6 @@ AttestationClient::AttestationClient(
       std::move(perCallpolicies));
 }
 
-
 Azure::Response<AttestationOpenIdMetadata> AttestationClient::GetOpenIdMetadata(
     Azure::Core::Context const& context)
 {
@@ -62,23 +61,22 @@ Azure::Response<AttestationOpenIdMetadata> AttestationClient::GetOpenIdMetadata(
   return Response<AttestationOpenIdMetadata>(std::move(openIdMetadata), std::move(response));
 }
 
-Azure::Response<std::vector<AttestationSigner>> AttestationClient::GetAttestationSigningCertificates(
-    Azure::Core::Context const& context)
+Azure::Response<std::vector<AttestationSigner>>
+AttestationClient::GetAttestationSigningCertificates(Azure::Core::Context const& context)
 {
-  auto request = AttestationCommonRequest::CreateRequest(
-      m_endpoint, HttpMethod::Get, {"certs"}, nullptr);
+  auto request
+      = AttestationCommonRequest::CreateRequest(m_endpoint, HttpMethod::Get, {"certs"}, nullptr);
 
   auto response = AttestationCommonRequest::SendRequest(*m_pipeline, request, context);
   auto jsonWebKeySet(JsonWebKeySetSerializer::Deserialize(response));
   std::vector<AttestationSigner> signers;
-  for (const auto &jwk : jsonWebKeySet.Keys)
+  for (const auto& jwk : jsonWebKeySet.Keys)
   {
     AttestationSignerInternal internalSigner(jwk);
     signers.push_back(internalSigner);
   }
   return Response<std::vector<AttestationSigner>>(signers, std::move(response));
 }
-
 
 Azure::Response<AttestationToken<AttestationResult>> AttestationClient::AttestSgxEnclave(
     std::vector<uint8_t> const& sgxQuote,
@@ -99,7 +97,8 @@ Azure::Response<AttestationToken<AttestationResult>> AttestationClient::AttestSg
 
   auto response = AttestationCommonRequest::SendRequest(*m_pipeline, request, context);
   std::string responseToken = AttestationServiceTokenResponseSerializer::Deserialize(response);
-  auto token = AttestationTokenInternal<AttestationResult, AttestationResultDeserializer>(responseToken, response);
+  auto token = AttestationTokenInternal<AttestationResult, AttestationResultDeserializer>(
+      responseToken, response);
   auto returnedToken = AttestationToken<AttestationResult>(token);
   return Response<AttestationToken<AttestationResult>>(returnedToken, std::move(response));
 }

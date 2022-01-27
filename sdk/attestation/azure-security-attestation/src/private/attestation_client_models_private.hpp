@@ -3,7 +3,7 @@
 
 /**
  * @brief Attestation client model support classes and functions.
- * 
+ *
  * This file contains private classes used to support public model types.
  *
  */
@@ -13,18 +13,18 @@
 #include <azure/core/context.hpp>
 #include <azure/core/http/http.hpp>
 #include <azure/core/internal/http/pipeline.hpp>
-#include <azure/core/response.hpp>
 #include <azure/core/internal/json/json.hpp>
 #include <azure/core/internal/json/json_serializable.hpp>
+#include <azure/core/response.hpp>
 
+#include "attestation_deserializer.hpp"
+#include "crypto/inc/crypto.hpp"
 #include "jsonwebkeyset.hpp"
 #include <azure/attestation/attestation_client_models.hpp>
-#include "attestation_deserializer.hpp"
 #include <azure/core/base64.hpp>
 #include <memory>
 #include <string>
 #include <vector>
-#include "crypto/inc/crypto.hpp"
 
 namespace Azure {
   namespace Security {
@@ -32,7 +32,7 @@ namespace Azure {
       namespace Models {
         namespace _detail {
 
-            using namespace Azure::Core::Json::_internal;
+  using namespace Azure::Core::Json::_internal;
   using namespace Azure::Core::Http;
   using namespace Azure::Security::Attestation::_detail;
   /**
@@ -74,16 +74,14 @@ namespace Azure {
     operator AttestationSigner&&() { return std::move(m_signer); }
   };
 
-  template<class T, typename TDeserializer>
-  class AttestationTokenInternal
-      {
+  template <class T, typename TDeserializer> class AttestationTokenInternal {
   private:
     AttestationToken<T> m_token;
 
-    void ParseRawToken(std::unique_ptr<RawResponse>& response) 
+    void ParseRawToken(std::unique_ptr<RawResponse>& response)
     {
       std::string token(m_token.RawToken);
-      size_t headerIndex = token.find('.'); 
+      size_t headerIndex = token.find('.');
       if (headerIndex == std::string::npos)
       {
         throw RequestFailedException("Could not find required . in token.");
@@ -92,7 +90,7 @@ namespace Azure {
       header.erase(headerIndex);
       token.erase(0, headerIndex + 1);
       size_t bodyIndex = token.find('.');
-    if (headerIndex == std::string::npos)
+      if (headerIndex == std::string::npos)
       {
         throw RequestFailedException("Could not find required second . in token.");
       }
@@ -104,22 +102,19 @@ namespace Azure {
       std::string signature(token);
       m_token.RawBody = body;
 
-
       auto jsonHeader(json::parse(Azure::Core::_internal::Base64Url::Base64UrlDecode(header)));
       auto jsonBody(json::parse(Azure::Core::_internal::Base64Url::Base64UrlDecode(body)));
       m_token.Body = TDeserializer::Deserialize(jsonBody, response);
     }
 
   public:
-    AttestationTokenInternal(std::string& jwt, std::unique_ptr<RawResponse>& response) 
+    AttestationTokenInternal(std::string& jwt, std::unique_ptr<RawResponse>& response)
     {
       m_token.RawToken = std::string(jwt);
       ParseRawToken(response);
     }
 
-    void ValidateToken() {
-
-    }
+    void ValidateToken() {}
     operator AttestationToken<T>&&() { return std::move(m_token); }
   };
 
@@ -144,7 +139,10 @@ namespace Azure {
      *
      * @param other Another #ServiceVersion to be compared.
      */
-    bool operator==(AttestationDataType const& other) const { return m_dataType == other.m_dataType; }
+    bool operator==(AttestationDataType const& other) const
+    {
+      return m_dataType == other.m_dataType;
+    }
 
     /**
      * @brief Return the #ServiceVersion string representation.
@@ -182,5 +180,4 @@ namespace Azure {
     std::string DraftPolicyForAttestation;
   };
 
-}}}}}
-
+}}}}} // namespace Azure::Security::Attestation::Models::_detail

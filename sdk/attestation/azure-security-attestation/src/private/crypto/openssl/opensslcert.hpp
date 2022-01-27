@@ -45,17 +45,17 @@ namespace Azure { namespace Security { namespace Attestation { namespace _privat
 
       template <> struct type_map_helper<ASN1_TIME>
       {
-          using type = basic_openssl_unique_ptr<ASN1_TIME, ASN1_TIME_free>;
+        using type = basic_openssl_unique_ptr<ASN1_TIME, ASN1_TIME_free>;
       };
       template <> struct type_map_helper<X509_EXTENSION>
       {
         using type = basic_openssl_unique_ptr<X509_EXTENSION, X509_EXTENSION_free>;
       };
 
-      using openssl_x509=openssl_unique_ptr<X509>;
+      using openssl_x509 = openssl_unique_ptr<X509>;
       using openssl_x509_name = openssl_unique_ptr<X509_NAME>;
       using openssl_asn1_time = openssl_unique_ptr<ASN1_TIME>;
-      using openssl_x509_extension= openssl_unique_ptr<X509_EXTENSION>;
+      using openssl_x509_extension = openssl_unique_ptr<X509_EXTENSION>;
     } // namespace _details
 
     /** Represents an X509 Certificate.
@@ -64,13 +64,15 @@ namespace Azure { namespace Security { namespace Attestation { namespace _privat
     class OpenSSLX509Certificate final : public X509Certificate {
       _details::openssl_x509 m_certificate;
       friend class Crypto;
+
     private:
       OpenSSLX509Certificate() = default;
 
     private:
-      OpenSSLX509Certificate(_details::openssl_x509 && x509) 
-          : X509Certificate()
-          , m_certificate(std::move(x509)) {}
+      OpenSSLX509Certificate(_details::openssl_x509&& x509)
+          : X509Certificate(), m_certificate(std::move(x509))
+      {
+      }
 
       static _details::openssl_x509_name ParseX509Name(std::string const& name);
 
@@ -115,8 +117,8 @@ namespace Azure { namespace Security { namespace Attestation { namespace _privat
       static std::unique_ptr<X509Certificate> CreateFromPrivateKey(
           std::unique_ptr<AsymmetricKey> const& key,
           std::string const& subjectName);
-    public:
 
+    public:
       virtual std::unique_ptr<AsymmetricKey> GetPublicKey() const override;
       virtual std::string ExportAsPEM() const override;
       std::string GetSubjectName() const override

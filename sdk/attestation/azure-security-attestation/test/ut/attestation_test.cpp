@@ -1,10 +1,10 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
 
-#include <gtest/gtest.h>
-#include <azure/core/test/test_base.hpp>
 #include <azure/attestation/attestation_client.hpp>
+#include <azure/core/test/test_base.hpp>
 #include <azure/identity/client_secret_credential.hpp>
+#include <gtest/gtest.h>
 
 #include "attestation_collateral.hpp"
 
@@ -12,7 +12,7 @@ using namespace Azure::Security::Attestation;
 
 namespace Azure { namespace Security { namespace Attestation { namespace Test {
 
-class AttestationTests : public Azure::Core::Test::TestBase,
+  class AttestationTests : public Azure::Core::Test::TestBase,
                            public testing::WithParamInterface<std::string> {
   private:
   protected:
@@ -48,15 +48,13 @@ class AttestationTests : public Azure::Core::Test::TestBase,
       {
         m_endpoint = GetEnv("ATTESTATION_ISOLATED_URL");
       }
-
     }
 
-    std::unique_ptr<AttestationClient> CreateClient() {
-        // `InitTestClient` takes care of setting up Record&Playback.
+    std::unique_ptr<AttestationClient> CreateClient()
+    {
+      // `InitTestClient` takes care of setting up Record&Playback.
       auto options = InitClientOptions<Azure::Security::Attestation::AttestationClientOptions>();
-      return std::make_unique<
-          Azure::Security::Attestation::AttestationClient>(
-          m_endpoint, options);
+      return std::make_unique<Azure::Security::Attestation::AttestationClient>(m_endpoint, options);
     }
     std::unique_ptr<AttestationClient> CreateAuthenticatedClient()
     {
@@ -65,12 +63,11 @@ class AttestationTests : public Azure::Core::Test::TestBase,
       auto credential = std::make_shared<Azure::Identity::ClientSecretCredential>(
           GetEnv("AZURE_TENANT_ID"), GetEnv("AZURE_CLIENT_ID"), GetEnv("AZURE_CLIENT_SECRET"));
 
-      return std::make_unique<AttestationClient>(
-          m_endpoint, credential, options);
+      return std::make_unique<AttestationClient>(m_endpoint, credential, options);
     }
-};
+  };
 
-  TEST_P(AttestationTests, GetOpenIdMetadata) 
+  TEST_P(AttestationTests, GetOpenIdMetadata)
   {
     auto attestationClient(CreateClient());
 
@@ -142,14 +139,13 @@ class AttestationTests : public Azure::Core::Test::TestBase,
         = client->AttestSgxEnclave(sgxQuote, {{runtimeData, AttestationDataType::Binary}});
   }
 
-
   namespace {
     static std::string GetSuffix(const testing::TestParamInfo<std::string>& info)
     {
       return info.param;
     }
-  }
-  
+  } // namespace
+
   INSTANTIATE_TEST_SUITE_P(
       Attestation,
       AttestationTests,

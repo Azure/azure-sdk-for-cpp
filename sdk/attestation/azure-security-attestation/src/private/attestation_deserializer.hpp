@@ -3,35 +3,35 @@
 
 /**
  * @brief JSON Deserialization support functions.
- * 
- * This file contains a set of support functions to aid in serializing and deserializing JSON objects.
- * It also contains Deserializer classes, one for each model type which each support a static Serialize and Deserialize
- * function which serialize and deserialize the specified model types from and to JSON objects.
+ *
+ * This file contains a set of support functions to aid in serializing and deserializing JSON
+ * objects. It also contains Deserializer classes, one for each model type which each support a
+ * static Serialize and Deserialize function which serialize and deserialize the specified model
+ * types from and to JSON objects.
  *
  */
 
 #pragma once
 
+#include "jsonwebkeyset.hpp"
+#include <azure/core/base64.hpp>
 #include <azure/core/context.hpp>
 #include <azure/core/http/http.hpp>
 #include <azure/core/internal/http/pipeline.hpp>
 #include <azure/core/internal/json/json.hpp>
-#include <azure/core/internal/json/json_serializable.hpp>
 #include <azure/core/internal/json/json_optional.hpp>
+#include <azure/core/internal/json/json_serializable.hpp>
 #include <azure/core/nullable.hpp>
-#include <azure/core/base64.hpp>
 #include <azure/core/response.hpp>
-#include <azure/core/base64.hpp>
-#include "jsonwebkeyset.hpp"
 
-#include <azure/attestation/attestation_client_models.hpp>
 #include "attestation_client_models_private.hpp"
+#include <azure/attestation/attestation_client_models.hpp>
 #include <memory>
 #include <string>
 #include <vector>
 
-//cspell: words jwks MrSigner MrEnclave
-namespace Azure { namespace Security { namespace Attestation{ namespace _detail {
+// cspell: words jwks MrSigner MrEnclave
+namespace Azure { namespace Security { namespace Attestation { namespace _detail {
 
   using namespace Azure::Core::Json::_internal;
   using namespace Azure::Core::Http;
@@ -140,7 +140,7 @@ namespace Azure { namespace Security { namespace Attestation{ namespace _detail 
     return returnValue;
   }
 
-    Azure::Nullable<int> ParseIntNumberField(
+  Azure::Nullable<int> ParseIntNumberField(
       const json& field,
       const std::string& fieldName,
       std::unique_ptr<RawResponse>& response)
@@ -159,8 +159,6 @@ namespace Azure { namespace Security { namespace Attestation{ namespace _detail 
     return returnValue;
   }
 
-
-
   struct OpenIdMetadataDeserializer final
   {
     static AttestationOpenIdMetadata Deserialize(std::unique_ptr<RawResponse>& response)
@@ -168,7 +166,7 @@ namespace Azure { namespace Security { namespace Attestation{ namespace _detail 
       AttestationOpenIdMetadata returnValue;
       auto parsedBody = json::parse(response->GetBody());
       returnValue.Issuer = ParseStringField(parsedBody, "issuer", response);
-      returnValue.JsonWebKeySetUrl = ParseStringField(parsedBody, "jwks_uri", response); 
+      returnValue.JsonWebKeySetUrl = ParseStringField(parsedBody, "jwks_uri", response);
       returnValue.SupportedClaims = ParseStringArrayField(parsedBody, "claims_supported", response);
       returnValue.SupportedTokenSigningAlgorithms
           = ParseStringArrayField(parsedBody, "id_token_signing_alg_values_supported", response);
@@ -178,7 +176,7 @@ namespace Azure { namespace Security { namespace Attestation{ namespace _detail 
     }
   };
 
-struct JsonWebKeySerializer final
+  struct JsonWebKeySerializer final
   {
     static JsonWebKey Deserialize(std::unique_ptr<RawResponse>& response, const json& jwk)
     {
@@ -216,7 +214,6 @@ struct JsonWebKeySerializer final
     }
   };
 
-
   struct JsonWebKeySetSerializer final
   {
     static JsonWebKeySet Deserialize(std::unique_ptr<RawResponse>& response)
@@ -225,14 +222,13 @@ struct JsonWebKeySerializer final
       auto parsedBody = json::parse(response->GetBody());
       if (!parsedBody.contains("keys"))
       {
-        throw Azure::Core::RequestFailedException(
-            "Field 'keys' not found in JWKS.", response);
+        throw Azure::Core::RequestFailedException("Field 'keys' not found in JWKS.", response);
       }
       if (!parsedBody["keys"].is_array())
       {
         throw Azure::Core::RequestFailedException("Field 'keys' is not an array.", response);
       }
-      for (const auto &key : parsedBody["keys"])
+      for (const auto& key : parsedBody["keys"])
       {
         returnValue.Keys.push_back(JsonWebKeySerializer::Deserialize(response, key));
       }
@@ -240,10 +236,9 @@ struct JsonWebKeySerializer final
     };
   };
 
-
   struct AttestSgxEnclaveRequestSerializer final
   {
-    static std::string Serialize(AttestSgxEnclaveRequest const & request)
+    static std::string Serialize(AttestSgxEnclaveRequest const& request)
     {
       json serializedRequest;
       serializedRequest["quote"]
@@ -299,18 +294,19 @@ struct JsonWebKeySerializer final
 
   struct AttestationServiceTokenResponseSerializer final
   {
-      static std::string Deserialize(std::unique_ptr<RawResponse>& response) {
-        auto parsedBody = json::parse(response->GetBody());
-        if (!parsedBody.contains("token"))
-        {
-          throw new Azure::Core::RequestFailedException(
-              "Field 'token' not found in Attestation Service Response", response);
-        }
-        if (!parsedBody["token"].is_string())
-        {
-          throw new Azure::Core::RequestFailedException("Field 'token' is not a string", response);
-        }
-        return parsedBody["token"].get<std::string>();
+    static std::string Deserialize(std::unique_ptr<RawResponse>& response)
+    {
+      auto parsedBody = json::parse(response->GetBody());
+      if (!parsedBody.contains("token"))
+      {
+        throw new Azure::Core::RequestFailedException(
+            "Field 'token' not found in Attestation Service Response", response);
+      }
+      if (!parsedBody["token"].is_string())
+      {
+        throw new Azure::Core::RequestFailedException("Field 'token' is not a string", response);
+      }
+      return parsedBody["token"].get<std::string>();
     }
   };
 
@@ -328,8 +324,8 @@ struct JsonWebKeySerializer final
       result.Nonce = ParseStringField(parsedJson, "nonce", response);
       result.Version = ParseStringField(parsedJson, "x-ms-ver", response);
       result.RuntimeClaims = ParseStringJsonField(parsedJson, "x-ms-runtime", response);
-      result.InitTimeClaims= ParseStringJsonField(parsedJson, "x-ms-inittime", response);
-      result.PolicyClaims= ParseStringJsonField(parsedJson, "x-ms-policy", response);
+      result.InitTimeClaims = ParseStringJsonField(parsedJson, "x-ms-inittime", response);
+      result.PolicyClaims = ParseStringJsonField(parsedJson, "x-ms-policy", response);
       result.VerifierType = ParseStringField(parsedJson, "x-ms-attestation-type", response);
       if (parsedJson.contains("x-ms-policy-signer"))
       {
@@ -347,4 +343,4 @@ struct JsonWebKeySerializer final
     }
   };
 
-}}}} // namespace Azure::Security::KeyVault::_detail
+}}}} // namespace Azure::Security::Attestation::_detail

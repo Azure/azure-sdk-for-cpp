@@ -48,9 +48,7 @@ namespace Azure {
  * @brief Azure ATTESTATION SDK abstractions.
  *
  */
-namespace Security {
-namespace Attestation{
-    
-}
-}
+namespace Security { namespace Attestation {
+
+}}
 } // namespace Azure

@@ -201,17 +201,18 @@ std::string GetHeadersAsString(Azure::Core::Http::Request const& request)
 void GetErrorAndThrow(const std::string& exceptionMessage)
 {
   DWORD error = GetLastError();
-  char * errorString = nullptr;
+  char* errorString = nullptr;
   std::string errorMessage = exceptionMessage + " Error Code: " + std::to_string(error);
 
   if (FormatMessage(
-      FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_FROM_HMODULE | FORMAT_MESSAGE_ALLOCATE_BUFFER,
+          FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_FROM_HMODULE | FORMAT_MESSAGE_ALLOCATE_BUFFER,
           GetModuleHandle("winhttp.dll"),
           error,
-      MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),
-      reinterpret_cast<LPSTR>(&errorString),
-      0,
-      nullptr) != 0)
+          MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),
+          reinterpret_cast<LPSTR>(&errorString),
+          0,
+          nullptr)
+      != 0)
   {
     errorMessage += ": ";
     errorMessage += errorString;
@@ -325,11 +326,6 @@ void WinHttpTransport::CreateRequestHandle(std::unique_ptr<_detail::HandleManage
     // ERROR_WINHTTP_UNRECOGNIZED_SCHEME
     // ERROR_NOT_ENOUGH_MEMORY
     GetErrorAndThrow("Error while getting a request handle.");
-  }
-
-  if (!WinHttpSetOption(handleManager->m_requestHandle, WINHTTP_OPTION_CLIENT_CERT_CONTEXT, WINHTTP_NO_CLIENT_CERT_CONTEXT, 0))
-  {
-    GetErrorAndThrow("Error while setting client cert context to ignore..");
   }
 }
 

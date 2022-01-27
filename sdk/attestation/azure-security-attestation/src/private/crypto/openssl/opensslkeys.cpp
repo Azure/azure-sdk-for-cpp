@@ -20,11 +20,11 @@
 #include "../inc/crypto.hpp"
 #include "opensslkeys.hpp"
 #include <openssl/bio.h>
+#include <openssl/ecdsa.h>
 #include <openssl/err.h>
 #include <openssl/evp.h>
 #include <openssl/pem.h>
 #include <openssl/rsa.h>
-#include <openssl/ecdsa.h>
 
 namespace Azure { namespace Security { namespace Attestation { namespace _private {
   namespace Cryptography {
@@ -149,8 +149,7 @@ namespace Azure { namespace Security { namespace Attestation { namespace _privat
 
     /** Sign a buffer with an RSA key.
      */
-    std::vector<uint8_t> OpenSSLAsymmetricKey::SignBuffer(
-        std::vector<uint8_t> const& payload) const
+    std::vector<uint8_t> OpenSSLAsymmetricKey::SignBuffer(std::vector<uint8_t> const& payload) const
     {
       auto mdContext(_details::make_openssl_unique(EVP_MD_CTX_new));
       if (EVP_DigestSignInit(mdContext.get(), nullptr, EVP_sha256(), nullptr, m_pkey.get()) != 1)
@@ -189,9 +188,10 @@ namespace Azure { namespace Security { namespace Attestation { namespace _privat
         throw _details::OpenSSLException("EVP_DigestVerifyInit");
       }
 
-      if (EVP_DigestVerifyUpdate(mdContext.get(), payload.data(), static_cast<int>(payload.size())) != 1)
+      if (EVP_DigestVerifyUpdate(mdContext.get(), payload.data(), static_cast<int>(payload.size()))
+          != 1)
       {
-            throw _details::OpenSSLException("EVP_DigestVerifyUpdate");
+        throw _details::OpenSSLException("EVP_DigestVerifyUpdate");
       }
 
       auto rv = EVP_DigestVerifyFinal(
@@ -209,13 +209,12 @@ namespace Azure { namespace Security { namespace Attestation { namespace _privat
       {
         throw _details::OpenSSLException("EVP_DigestVerifyFinal");
       }
-
     }
 
-    EcdsaOpenSSLAsymmetricKey::EcdsaOpenSSLAsymmetricKey() {
+    EcdsaOpenSSLAsymmetricKey::EcdsaOpenSSLAsymmetricKey()
+    {
 
-      auto evpContext(
-          _details::make_openssl_unique(EVP_PKEY_CTX_new_id, EVP_PKEY_EC, nullptr));
+      auto evpContext(_details::make_openssl_unique(EVP_PKEY_CTX_new_id, EVP_PKEY_EC, nullptr));
       if (EVP_PKEY_keygen_init(evpContext.get()) != 1)
       {
         throw _details::OpenSSLException("EVP_PKEY_keygen_init");
