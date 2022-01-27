@@ -147,7 +147,7 @@ finally {
    $isolatedKey.Dispose()
 }
 
-$EnvironmentVariables["locationShortName"] = $shortLocation
+$EnvironmentVariables["LOCATION_SHORT_NAME"] = $shortLocation
 $templateFileParameters.locationShortName = $shortLocation
 
 Log 'Creating 3 X509 certificates which can be used to sign policies.'

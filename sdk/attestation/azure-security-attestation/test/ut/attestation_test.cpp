@@ -25,7 +25,7 @@ class AttestationTests : public Azure::Core::Test::TestBase,
       Azure::Core::Test::TestBase::SetUpTestBase(AZURE_TEST_RECORDING_DIR);
       if (GetParam() == "Shared")
       {
-        std::string shortLocation = GetEnv("locationShortName");
+        std::string shortLocation = GetEnv("LOCATION_SHORT_NAME");
         m_endpoint = "https://shared" + shortLocation + "." + shortLocation + ".attest.azure.net";
       }
       else if (GetParam() == "Aad")
