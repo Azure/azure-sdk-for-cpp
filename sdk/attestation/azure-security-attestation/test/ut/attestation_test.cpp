@@ -23,16 +23,17 @@ class AttestationTests : public Azure::Core::Test::TestBase,
     virtual void SetUp() override
     {
       Azure::Core::Test::TestBase::SetUpTestBase(AZURE_TEST_RECORDING_DIR);
-      if (GetParam() == "Shared")
+      std::string mode(GetParam());
+      if (mode == "Shared")
       {
-        std::string shortLocation = GetEnv("LOCATION_SHORT_NAME");
+        std::string shortLocation(GetEnv("locationShortName"));
         m_endpoint = "https://shared" + shortLocation + "." + shortLocation + ".attest.azure.net";
       }
-      else if (GetParam() == "Aad")
+      else if (mode == "Aad")
       {
         m_endpoint = GetEnv("ATTESTATION_AAD_URL");
       }
-      else if (GetParam() == "Isolated")
+      else if (mode == "Isolated")
       {
         m_endpoint = GetEnv("ATTESTATION_ISOLATED_URL");
       }
