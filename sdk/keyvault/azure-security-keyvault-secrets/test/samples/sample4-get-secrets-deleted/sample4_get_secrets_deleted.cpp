@@ -26,14 +26,14 @@ using namespace std::chrono_literals;
 
 int main()
 {
-  auto tenantId = GetEnv("AZURE_TENANT_ID");
-  auto clientId = GetEnv("AZURE_CLIENT_ID");
-  auto clientSecret = GetEnv("AZURE_CLIENT_SECRET");
+  auto tenantId = getenv("AZURE_TENANT_ID");
+  auto clientId = getenv("AZURE_CLIENT_ID");
+  auto clientSecret = getenv("AZURE_CLIENT_SECRET");
   auto credential
       = std::make_shared<Azure::Identity::ClientSecretCredential>(tenantId, clientId, clientSecret);
 
   // create client
-  SecretClient secretClient(GetEnv("AZURE_KEYVAULT_URL"), credential);
+  SecretClient secretClient(getenv("AZURE_KEYVAULT_URL"), credential);
 
   std::string secretName("Secret1");
   std::string secretName2("Secret2");

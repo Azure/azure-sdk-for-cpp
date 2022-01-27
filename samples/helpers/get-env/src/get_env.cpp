@@ -3,45 +3,46 @@
 
 #include "get_env.hpp"
 
-#if defined(_MSC_VER)
-#if !defined(WIN32_LEAN_AND_MEAN)
-#define WIN32_LEAN_AND_MEAN
-#endif
-#if !defined(NOMINMAX)
-#define NOMINMAX
-#endif
-#include <vector>
+#include <cctype>
 
-#include <windows.h>
-#else
-#include <stdlib.h>
-#endif
+#if defined(WINAPI_PARTITION_DESKTOP) && !WINAPI_PARTITION_DESKTOP
 
-std::string GetEnv(const char* name)
+char* getenv(const char* name)
 {
-  if (name != nullptr && name[0] != 0)
-  {
-#if defined(_MSC_VER)
-    std::vector<char> bufferVector;
-    char* buffer = nullptr;
-    DWORD bufferSize = 0;
-    while (const auto requiredSize = GetEnvironmentVariableA(name, buffer, bufferSize))
-    {
-      if (requiredSize < bufferSize)
-      {
-        return std::string(buffer, buffer + (bufferSize - 1));
-      }
+  char* buf = GetEnvironmentStringsA();
 
-      bufferVector.resize(static_cast<decltype(bufferVector)::size_type>(requiredSize));
-      bufferSize = requiredSize;
-      buffer = bufferVector.data();
-    }
-#else
-    if (const auto value = getenv(name))
+  for (auto i = 0; *buf != '\0';)
+  {
+    if (name[i] == '\0' && *buf == '=')
     {
-      return std::string(value);
+      // We've found "name=", the rest will be the value with '\0' at the end.
+      return buf + 1;
     }
-#endif
+
+    // We're still trying to match the name.
+    if (std::toupper(*buf) == std::toupper(name[i]))
+    {
+      // Matching so far, keep matching name and buffer, char by char, case insensitive.
+      ++i;
+      ++buf;
+
+      continue;
+    }
+
+    // Variable name character did not match the buffer, reset.
+    i = 0;
+
+    // Skip till the end of current "name=value" pair.
+    do
+    {
+      ++buf;
+    } while (*buf != '\0');
+
+    // Increment buf to point to the start of the next "name=value" pair.
+    ++buf;
   }
-  return std::string();
+
+  return nullptr;
 }
+
+#endif
