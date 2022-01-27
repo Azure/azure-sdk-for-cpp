@@ -13,7 +13,7 @@
       "variables": [
         {
           "name": "VCPKG_TARGET_TRIPLET",
-          "value": "arm64-WindowsStore-static",
+          "value": "arm64-uwp",
           "type": "STRING"
         }
       ]
@@ -31,7 +31,7 @@
       "variables": [
         {
           "name": "VCPKG_TARGET_TRIPLET",
-          "value": "arm-WindowsStore-static",
+          "value": "arm-uwp",
           "type": "STRING"
         }
       ]
