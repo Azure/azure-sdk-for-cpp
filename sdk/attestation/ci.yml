@@ -43,4 +43,6 @@ stages:
       - Name: AZURE_CLIENT_SECRET
         Value: "non-real-secret"
       - Name: LOCATION_SHORT_NAME
-        Value: "imaginaryLocation"
+        Value: "wus"
+      - Name: locationShortName
+        Value: "wus"
