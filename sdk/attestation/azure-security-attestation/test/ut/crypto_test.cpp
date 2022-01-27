@@ -17,7 +17,7 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
     auto privateKey = Crypto::CreateRsaKey(2048);
     std::string exportedPrivateKey = privateKey->ExportPrivateKey();
 
-    EXPECT_EQ(0, exportedPrivateKey.find("-----BEGIN PRIVATE KEY-----"));
+    EXPECT_EQ(0ul, exportedPrivateKey.find("-----BEGIN PRIVATE KEY-----"));
 
     auto importedKey = Crypto::ImportPrivateKey(exportedPrivateKey);
 
