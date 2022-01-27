@@ -32,6 +32,9 @@ stages:
           Path: azure-security-attestation
           VcpkgPortName: azure-security-attestation-cpp
       TestEnv:
+      # NOTE: The CI pipeline uppercases all "Name" values in the TestEnv, so if you
+      # add a mixed case name, be careful to ensure it is read using an upper case
+      # name.
       - Name: ATTESTATION_ISOLATED_URL
         Value: https://NotRealAttestationInstanceiso.wus.attest.azure.net
       - Name: ATTESTATION_AAD_URL
@@ -43,6 +46,4 @@ stages:
       - Name: AZURE_CLIENT_SECRET
         Value: "non-real-secret"
       - Name: LOCATION_SHORT_NAME
-        Value: "wus"
-      - Name: locationShortName
         Value: "wus"
