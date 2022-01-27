@@ -47,7 +47,7 @@ namespace Azure { namespace Security { namespace Attestation { namespace _privat
       if (PEM_write_bio_PrivateKey(bio.get(), m_pkey.get(), nullptr, nullptr, 0, nullptr, nullptr)
           != 1)
       {
-        throw std::runtime_error("Could not write private key");
+        throw _details::OpenSSLException("Could not write private key");
       }
       std::vector<uint8_t> returnValue(BIO_ctrl_pending(bio.get()));
 
@@ -64,7 +64,7 @@ namespace Azure { namespace Security { namespace Attestation { namespace _privat
       auto bio(_details::make_openssl_unique(BIO_new, BIO_s_mem()));
       if (PEM_write_bio_PUBKEY(bio.get(), m_pkey.get()) != 1)
       {
-        throw std::runtime_error("Could not write public key");
+        throw _details::OpenSSLException("Could not write public key");
       }
       std::vector<uint8_t> returnValue(BIO_ctrl_pending(bio.get()));
 

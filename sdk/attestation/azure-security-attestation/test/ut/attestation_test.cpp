@@ -61,6 +61,8 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
   {
     auto attestationClient(CreateClient());
 
+    EXPECT_FALSE(attestationClient->ClientVersion().empty());
+
     auto openIdMetadata = attestationClient->GetOpenIdMetadata();
 
     EXPECT_FALSE(openIdMetadata.Value.Issuer.empty());

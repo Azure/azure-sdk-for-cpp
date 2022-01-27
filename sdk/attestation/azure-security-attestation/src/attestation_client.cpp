@@ -99,6 +99,8 @@ Azure::Response<AttestationToken<AttestationResult>> AttestationClient::AttestSg
   std::string responseToken = AttestationServiceTokenResponseSerializer::Deserialize(response);
   auto token = AttestationTokenInternal<AttestationResult, AttestationResultDeserializer>(
       responseToken, response);
+  CacheAttestationSigners(context);
+  token.ValidateToken(m_attestationSigners);
   auto returnedToken = AttestationToken<AttestationResult>(token);
   return Response<AttestationToken<AttestationResult>>(returnedToken, std::move(response));
 }
