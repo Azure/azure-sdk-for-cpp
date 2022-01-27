@@ -17,7 +17,6 @@
 #include <azure/core/internal/json/json_serializable.hpp>
 #include <azure/core/response.hpp>
 
-#include "attestation_deserializer.hpp"
 #include "crypto/inc/crypto.hpp"
 #include "jsonwebkeyset.hpp"
 #include <azure/attestation/attestation_client_models.hpp>

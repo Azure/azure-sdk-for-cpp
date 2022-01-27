@@ -35,7 +35,6 @@ namespace Azure { namespace Security { namespace Attestation { namespace _detail
 
   using namespace Azure::Core::Json::_internal;
   using namespace Azure::Core::Http;
-  using namespace Azure::Security::Attestation::Models::_detail;
   using namespace Azure::Core::_internal;
 
   std::string ParseStringField(
@@ -238,7 +237,8 @@ namespace Azure { namespace Security { namespace Attestation { namespace _detail
 
   struct AttestSgxEnclaveRequestSerializer final
   {
-    static std::string Serialize(AttestSgxEnclaveRequest const& request)
+    static std::string Serialize(
+        Azure::Security::Attestation::Models::_detail::AttestSgxEnclaveRequest const& request)
     {
       json serializedRequest;
       serializedRequest["quote"]
@@ -264,7 +264,8 @@ namespace Azure { namespace Security { namespace Attestation { namespace _detail
   };
   struct AttestOpenEnclaveRequestSerializer final
   {
-    static std::string Serialize(AttestOpenEnclaveRequest const& request)
+    static std::string Serialize(
+        Azure::Security::Attestation::Models::_detail::AttestOpenEnclaveRequest const& request)
     {
       json serializedRequest;
       serializedRequest["report"]
@@ -329,8 +330,9 @@ namespace Azure { namespace Security { namespace Attestation { namespace _detail
       result.VerifierType = ParseStringField(parsedJson, "x-ms-attestation-type", response);
       if (parsedJson.contains("x-ms-policy-signer"))
       {
-        result.PolicySigner = AttestationSignerInternal(
-            JsonWebKeySerializer::Deserialize(response, parsedJson["x-ms-policy-signer"]));
+        result.PolicySigner
+            = Azure::Security::Attestation::Models::_detail::AttestationSignerInternal(
+                JsonWebKeySerializer::Deserialize(response, parsedJson["x-ms-policy-signer"]));
       }
       result.PolicyHash = ParseBase64UrlField(parsedJson, "x-ms-policy-hash", response);
       result.IsDebuggable = ParseBooleanField(parsedJson, "x-ms-sgx-is-debuggable", response);
