@@ -20,7 +20,7 @@
 #include <string>
 #include <vector>
 
-namespace Azure { namespace Security { namespace Attestation{ namespace _detail {
+namespace Azure { namespace Security { namespace Attestation { namespace _detail {
 
   constexpr static const char ContentHeaderName[] = "content-type";
   constexpr static const char ApplicationJsonValue[] = "application/json";
@@ -36,11 +36,11 @@ namespace Azure { namespace Security { namespace Attestation{ namespace _detail 
         Azure::Core::IO::BodyStream* content);
 
     /**
-    * 
-    * @brief Create a new request without an API version parameter.
-    * 
-    * Used for the GetOpenIdMetadata and other APIs that do not take an API version parameter.
-    */
+     *
+     * @brief Create a new request without an API version parameter.
+     *
+     * Used for the GetOpenIdMetadata and other APIs that do not take an API version parameter.
+     */
     static Azure::Core::Http::Request CreateRequest(
         Azure::Core::Url url,
         Azure::Core::Http::HttpMethod method,
