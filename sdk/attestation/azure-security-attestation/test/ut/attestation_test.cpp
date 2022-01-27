@@ -23,6 +23,17 @@ class AttestationTests : public Azure::Core::Test::TestBase,
     virtual void SetUp() override
     {
       Azure::Core::Test::TestBase::SetUpTestBase(AZURE_TEST_RECORDING_DIR);
+
+      TestLog("Dumping environment.");
+      auto env = environ;
+      char* var = *env;
+      while (var != nullptr)
+      {
+        TestLog(std::string("EnvVar: ") + var);
+        env++;
+        var = *env;
+      }
+
       std::string mode(GetParam());
       if (mode == "Shared")
       {
