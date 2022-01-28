@@ -183,6 +183,7 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
       EXPECT_THROW(
           JsonWebKeySerializer::Deserialize(json::parse(R"({"alg": "none"})")), std::runtime_error);
     }
+    // cspell:disable
     {
       auto val(JsonWebKeySerializer::Deserialize(json::parse(R"(
       {"kty":"EC",
@@ -215,6 +216,7 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
       EXPECT_EQ("AQAB", val.e);
       EXPECT_EQ("2011-04-29", val.kid);
     }
+    // cspell:enable
   }
 
   TEST(SerializationTests, TestDeserializeJWKS)
@@ -224,6 +226,7 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
           JsonWebKeySetSerializer::Deserialize(json::parse(R"({"keys": [{"alg": "none"}]})")),
           std::runtime_error);
     }
+    //cspell:disable
     {
       auto val(JsonWebKeySetSerializer::Deserialize(json::parse(R"(
     {"keys": [
@@ -257,6 +260,7 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
       EXPECT_EQ("AQAB", val.Keys[1].e);
       EXPECT_EQ("2011-04-29", val.Keys[1].kid);
     }
+    // cspell:enable
   }
 
   TEST(SerializationTests, TestSerializeAttestOpenEnclaveRequest)
