@@ -37,126 +37,121 @@ namespace Azure { namespace Security { namespace Attestation { namespace _detail
   using namespace Azure::Core::Http;
   using namespace Azure::Core::_internal;
 
-  std::string ParseStringField(
-      const json& field,
-      const std::string& fieldName,
-      std::unique_ptr<RawResponse>& response)
+  struct JsonHelpers
   {
-    if (field.contains(fieldName))
+    static std::string ParseStringField(
+        const json& field,
+        const std::string& fieldName)
     {
-      const auto& fieldVal = field[fieldName];
-      if (!fieldVal.is_string())
+      if (field.contains(fieldName))
       {
-        throw Azure::Core::RequestFailedException(
-            "Field " + fieldName + " is not a string.", response);
-      }
-      return fieldVal.get<std::string>();
-    }
-    return "";
-  }
-
-  std::vector<std::string> ParseStringArrayField(
-      const json& field,
-      const std::string& fieldName,
-      std::unique_ptr<RawResponse>& response)
-  {
-    std::vector<std::string> returnValue;
-    if (field.contains(fieldName))
-    {
-      const auto& fieldVal = field[fieldName];
-      if (!fieldVal.is_array())
-      {
-        throw Azure::Core::RequestFailedException(
-            "Field " + fieldName + " is not an array.", response);
-      }
-      for (const auto& item : fieldVal)
-      {
-        if (!item.is_string())
+        const auto& fieldVal = field[fieldName];
+        if (!fieldVal.is_string())
         {
-          throw Azure::Core::RequestFailedException(
-              "Field " + fieldName + " element is not a string.");
+          throw std::runtime_error(
+              "Field " + fieldName + " is not a string.");
         }
-        returnValue.push_back(item.get<std::string>());
+        return fieldVal.get<std::string>();
       }
+      return "";
     }
-    return returnValue;
-  }
 
-  std::string ParseStringJsonField(
-      const json& field,
-      const std::string& fieldName,
-      std::unique_ptr<RawResponse>& response)
-  {
-    std::string returnValue;
-    if (field.contains(fieldName))
+    static std::vector<std::string> ParseStringArrayField(
+        const json& field,
+        const std::string& fieldName)
     {
-      const auto& fieldVal = field[fieldName];
-      if (!fieldVal.is_object())
+      std::vector<std::string> returnValue;
+      if (field.contains(fieldName))
       {
-        throw Azure::Core::RequestFailedException(
-            "Field " + fieldName + " is not an object.", response);
+        const auto& fieldVal = field[fieldName];
+        if (!fieldVal.is_array())
+        {
+          throw std::runtime_error(
+              "Field " + fieldName + " is not an array.");
+        }
+        for (const auto& item : fieldVal)
+        {
+          if (!item.is_string())
+          {
+            throw std::runtime_error(
+                "Field " + fieldName + " element is not a string.");
+          }
+          returnValue.push_back(item.get<std::string>());
+        }
       }
-      returnValue = field[fieldName].dump();
+      return returnValue;
     }
-    return returnValue;
-  }
 
-  std::vector<uint8_t> ParseBase64UrlField(
-      const json& field,
-      const std::string& fieldName,
-      std::unique_ptr<RawResponse>& response)
-  {
-    std::vector<uint8_t> returnValue;
-    if (field.contains(fieldName))
+    static std::string ParseStringJsonField(
+        const json& field,
+        const std::string& fieldName)
     {
-      const auto& fieldVal = field[fieldName];
-      if (!fieldVal.is_string())
+      std::string returnValue;
+      if (field.contains(fieldName))
       {
-        throw Azure::Core::RequestFailedException(
-            "Field " + fieldName + " is not a string.", response);
+        const auto& fieldVal = field[fieldName];
+        if (!fieldVal.is_object())
+        {
+          throw std::runtime_error(
+              "Field " + fieldName + " is not an object.");
+        }
+        returnValue = field[fieldName].dump();
       }
-      returnValue = Base64Url::Base64UrlDecode(field[fieldName].get<std::string>());
+      return returnValue;
     }
-    return returnValue;
-  }
 
-  Azure::Nullable<bool> ParseBooleanField(
-      const json& field,
-      const std::string& fieldName,
-      std::unique_ptr<RawResponse>& response)
-  {
-    Azure::Nullable<bool> returnValue;
-    if (field.contains(fieldName))
+    static std::vector<uint8_t> ParseBase64UrlField(
+        const json& field,
+        const std::string& fieldName)
     {
-      const auto& fieldVal = field[fieldName];
-      if (!fieldVal.is_boolean())
+      std::vector<uint8_t> returnValue;
+      if (field.contains(fieldName))
       {
-        throw Azure::Core::RequestFailedException(
-            "Field " + fieldName + " is not a boolean.", response);
+        const auto& fieldVal = field[fieldName];
+        if (!fieldVal.is_string())
+        {
+          throw std::runtime_error(
+              std::string("Field ") + fieldName + " is not a string.");
+        }
+        returnValue = Base64Url::Base64UrlDecode(field[fieldName].get<std::string>());
       }
-      returnValue.Emplace(field[fieldName].get<bool>());
+      return returnValue;
     }
-    return returnValue;
-  }
 
-  Azure::Nullable<int> ParseIntNumberField(
-      const json& field,
-      const std::string& fieldName,
-      std::unique_ptr<RawResponse>& response)
-  {
-    Azure::Nullable<int> returnValue;
-    if (field.contains(fieldName))
+    static Azure::Nullable<bool> ParseBooleanField(
+        const json& field,
+        const std::string& fieldName)
     {
-      const auto& fieldVal = field[fieldName];
-      if (!fieldVal.is_number_integer())
+      if (field.contains(fieldName))
       {
-        throw Azure::Core::RequestFailedException(
-            "Field " + fieldName + " is not a number.", response);
+        const auto& fieldVal = field[fieldName];
+        if (!fieldVal.is_boolean())
+        {
+          throw std::runtime_error(
+              "Field " + fieldName + " is not a boolean.");
+        }
+        return field[fieldName].get<bool>();
       }
-      returnValue.Emplace(field[fieldName].get<int>());
+      return Azure::Nullable<bool>();
     }
-    return returnValue;
-  }
+
+    static Azure::Nullable<int> ParseIntNumberField(
+        const json& field,
+        const std::string& fieldName)
+    {
+      if (field.contains(fieldName))
+      {
+        const auto& fieldVal = field[fieldName];
+        if (!fieldVal.is_number_integer())
+        {
+          throw std::runtime_error(
+              "Field " + fieldName + " is not a number.");
+        }
+        return field[fieldName].get<int>();
+      }
+      return Azure::Nullable<int>();
+    }
+  };
 
   struct OpenIdMetadataDeserializer final
   {
@@ -164,13 +159,15 @@ namespace Azure { namespace Security { namespace Attestation { namespace _detail
     {
       AttestationOpenIdMetadata returnValue;
       auto parsedBody = json::parse(response->GetBody());
-      returnValue.Issuer = ParseStringField(parsedBody, "issuer", response);
-      returnValue.JsonWebKeySetUrl = ParseStringField(parsedBody, "jwks_uri", response);
-      returnValue.SupportedClaims = ParseStringArrayField(parsedBody, "claims_supported", response);
+      returnValue.Issuer = JsonHelpers::ParseStringField(parsedBody, "issuer");
+      returnValue.JsonWebKeySetUrl
+          = JsonHelpers::ParseStringField(parsedBody, "jwks_uri");
+      returnValue.SupportedClaims
+          = JsonHelpers::ParseStringArrayField(parsedBody, "claims_supported");
       returnValue.SupportedTokenSigningAlgorithms
-          = ParseStringArrayField(parsedBody, "id_token_signing_alg_values_supported", response);
+          = JsonHelpers::ParseStringArrayField(parsedBody, "id_token_signing_alg_values_supported");
       returnValue.SupportedResponseTypes
-          = ParseStringArrayField(parsedBody, "response_types_supported", response);
+          = JsonHelpers::ParseStringArrayField(parsedBody, "response_types_supported");
       return returnValue;
     }
   };
@@ -180,34 +177,34 @@ namespace Azure { namespace Security { namespace Attestation { namespace _detail
     static JsonWebKey Deserialize(std::unique_ptr<RawResponse>& response, const json& jwk)
     {
       JsonWebKey returnValue;
-      returnValue.kty = ParseStringField(jwk, "kty", response);
+      returnValue.kty = JsonHelpers::ParseStringField(jwk, "kty");
       if (returnValue.kty.empty())
       {
         throw Azure::Core::RequestFailedException(
             "JsonWebKey missing required field 'kty'", response);
       }
-      returnValue.alg = ParseStringField(jwk, "alg", response);
-      returnValue.kid = ParseStringField(jwk, "kid", response);
-      returnValue.use = ParseStringField(jwk, "use", response);
-      returnValue.keyops = ParseStringArrayField(jwk, "key_ops", response);
-      returnValue.x5t = ParseStringField(jwk, "x5t", response);
-      returnValue.x5t256 = ParseStringField(jwk, "x5t#S256", response);
-      returnValue.x5u = ParseStringField(jwk, "x5u", response);
-      returnValue.x5c = ParseStringArrayField(jwk, "x5c", response);
+      returnValue.alg = JsonHelpers::ParseStringField(jwk, "alg");
+      returnValue.kid = JsonHelpers::ParseStringField(jwk, "kid");
+      returnValue.use = JsonHelpers::ParseStringField(jwk, "use");
+      returnValue.keyops = JsonHelpers::ParseStringArrayField(jwk, "key_ops");
+      returnValue.x5t = JsonHelpers::ParseStringField(jwk, "x5t");
+      returnValue.x5t256 = JsonHelpers::ParseStringField(jwk, "x5t#S256");
+      returnValue.x5u = JsonHelpers::ParseStringField(jwk, "x5u");
+      returnValue.x5c = JsonHelpers::ParseStringArrayField(jwk, "x5c");
 
       // ECDSA key values.
-      returnValue.crv = ParseStringField(jwk, "crv", response);
-      returnValue.x = ParseStringField(jwk, "x", response);
-      returnValue.y = ParseStringField(jwk, "y", response);
-      returnValue.d = ParseStringField(jwk, "d", response);
+      returnValue.crv = JsonHelpers::ParseStringField(jwk, "crv");
+      returnValue.x = JsonHelpers::ParseStringField(jwk, "x");
+      returnValue.y = JsonHelpers::ParseStringField(jwk, "y");
+      returnValue.d = JsonHelpers::ParseStringField(jwk, "d");
 
       // RSA key values.
-      returnValue.n = ParseStringField(jwk, "n", response);
-      returnValue.e = ParseStringField(jwk, "e", response);
-      returnValue.q = ParseStringField(jwk, "p", response);
-      returnValue.dp = ParseStringField(jwk, "dp", response);
-      returnValue.dq = ParseStringField(jwk, "dq", response);
-      returnValue.qi = ParseStringField(jwk, "qi", response);
+      returnValue.n = JsonHelpers::ParseStringField(jwk, "n");
+      returnValue.e = JsonHelpers::ParseStringField(jwk, "e");
+      returnValue.q = JsonHelpers::ParseStringField(jwk, "p");
+      returnValue.dp = JsonHelpers::ParseStringField(jwk, "dp");
+      returnValue.dq = JsonHelpers::ParseStringField(jwk, "dq");
+      returnValue.qi = JsonHelpers::ParseStringField(jwk, "qi");
 
       return returnValue;
     }
@@ -320,27 +317,36 @@ namespace Azure { namespace Security { namespace Attestation { namespace _detail
     {
       AttestationResult result;
 
-      result.Issuer = ParseStringField(parsedJson, "iss", response);
-      result.UniqueIdentifier = ParseStringField(parsedJson, "jti", response);
-      result.Nonce = ParseStringField(parsedJson, "nonce", response);
-      result.Version = ParseStringField(parsedJson, "x-ms-ver", response);
-      result.RuntimeClaims = ParseStringJsonField(parsedJson, "x-ms-runtime", response);
-      result.InitTimeClaims = ParseStringJsonField(parsedJson, "x-ms-inittime", response);
-      result.PolicyClaims = ParseStringJsonField(parsedJson, "x-ms-policy", response);
-      result.VerifierType = ParseStringField(parsedJson, "x-ms-attestation-type", response);
+      result.Issuer = JsonHelpers::ParseStringField(parsedJson, "iss");
+      result.UniqueIdentifier = JsonHelpers::ParseStringField(parsedJson, "jti");
+      result.Nonce = JsonHelpers::ParseStringField(parsedJson, "nonce");
+      result.Version = JsonHelpers::ParseStringField(parsedJson, "x-ms-ver");
+      result.RuntimeClaims
+          = JsonHelpers::ParseStringJsonField(parsedJson, "x-ms-runtime");
+      result.InitTimeClaims
+          = JsonHelpers::ParseStringJsonField(parsedJson, "x-ms-inittime");
+      result.PolicyClaims = JsonHelpers::ParseStringJsonField(parsedJson, "x-ms-policy");
+      result.VerifierType
+          = JsonHelpers::ParseStringField(parsedJson, "x-ms-attestation-type");
       if (parsedJson.contains("x-ms-policy-signer"))
       {
         result.PolicySigner
             = Azure::Security::Attestation::Models::_detail::AttestationSignerInternal(
                 JsonWebKeySerializer::Deserialize(response, parsedJson["x-ms-policy-signer"]));
       }
-      result.PolicyHash = ParseBase64UrlField(parsedJson, "x-ms-policy-hash", response);
-      result.IsDebuggable = ParseBooleanField(parsedJson, "x-ms-sgx-is-debuggable", response);
-      result.ProductId = ParseIntNumberField(parsedJson, "x-ms-sgx-product-id", response);
-      result.MrEnclave = ParseBase64UrlField(parsedJson, "x-ms-sgx-mrenclave", response);
-      result.MrSigner = ParseBase64UrlField(parsedJson, "x-ms-sgx-mrsigner", response);
-      result.EnclaveHeldData = ParseBase64UrlField(parsedJson, "x-ms-sgx-ehd", response);
-      result.SgxCollateral = ParseStringJsonField(parsedJson, "x-ms-sgx-collateral", response);
+      result.PolicyHash
+          = JsonHelpers::ParseBase64UrlField(parsedJson, "x-ms-policy-hash");
+      result.IsDebuggable
+          = JsonHelpers::ParseBooleanField(parsedJson, "x-ms-sgx-is-debuggable");
+      result.ProductId
+          = JsonHelpers::ParseIntNumberField(parsedJson, "x-ms-sgx-product-id");
+      result.MrEnclave
+          = JsonHelpers::ParseBase64UrlField(parsedJson, "x-ms-sgx-mrenclave");
+      result.MrSigner = JsonHelpers::ParseBase64UrlField(parsedJson, "x-ms-sgx-mrsigner");
+      result.EnclaveHeldData
+          = JsonHelpers::ParseBase64UrlField(parsedJson, "x-ms-sgx-ehd");
+      result.SgxCollateral
+          = JsonHelpers::ParseStringJsonField(parsedJson, "x-ms-sgx-collateral");
       return result;
     }
   };

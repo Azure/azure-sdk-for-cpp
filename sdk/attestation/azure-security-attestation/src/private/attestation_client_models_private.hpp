@@ -83,7 +83,7 @@ namespace Azure {
       size_t headerIndex = token.find('.');
       if (headerIndex == std::string::npos)
       {
-        throw RequestFailedException("Could not find required . in token.");
+        throw Azure::Core::RequestFailedException("Could not find required . in token.");
       }
       std::string header(token);
       header.erase(headerIndex);
@@ -91,7 +91,7 @@ namespace Azure {
       size_t bodyIndex = token.find('.');
       if (headerIndex == std::string::npos)
       {
-        throw RequestFailedException("Could not find required second . in token.");
+        throw Azure::Core::RequestFailedException("Could not find required second . in token.");
       }
       m_token.RawHeader = header;
 
