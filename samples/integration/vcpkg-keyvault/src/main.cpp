@@ -13,6 +13,8 @@
  *
  */
 
+#include "get_env.hpp"
+
 #include <azure/core.hpp>
 #include <azure/identity.hpp>
 #include <azure/keyvault/keyvault_keys.hpp>
@@ -22,19 +24,17 @@
 #include <memory>
 #include <thread>
 
-#include "get_env.hpp"
-
 using namespace Azure::Security::KeyVault::Keys;
 
 int main()
 {
-  auto tenantId = GetEnv("AZURE_TENANT_ID");
-  auto clientId = GetEnv("AZURE_CLIENT_ID");
-  auto clientSecret = GetEnv("AZURE_CLIENT_SECRET");
+  auto tenantId = std::getenv("AZURE_TENANT_ID");
+  auto clientId = std::getenv("AZURE_CLIENT_ID");
+  auto clientSecret = std::getenv("AZURE_CLIENT_SECRET");
   auto credential
       = std::make_shared<Azure::Identity::ClientSecretCredential>(tenantId, clientId, clientSecret);
 
-  KeyClient keyClient(GetEnv("AZURE_KEYVAULT_URL"), credential);
+  KeyClient keyClient(std::getenv("AZURE_KEYVAULT_URL"), credential);
 
   std::string rsaKeyName("CloudRsaKey" + Azure::Core::Uuid::CreateUuid().ToString());
   try

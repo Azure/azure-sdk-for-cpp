@@ -1,13 +1,13 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
 
+#include "get_env.hpp"
+
 #include <cstdio>
 #include <iostream>
 #include <stdexcept>
 
 #include <azure/storage/files/shares.hpp>
-
-#include "get_env.hpp"
 
 std::string GetConnectionString()
 {
@@ -17,8 +17,7 @@ std::string GetConnectionString()
   {
     return ConnectionString;
   }
-
-  const static std::string envConnectionString = GetEnv("AZURE_STORAGE_CONNECTION_STRING");
+  const static std::string envConnectionString = std::getenv("AZURE_STORAGE_CONNECTION_STRING");
   if (!envConnectionString.empty())
   {
     return envConnectionString;

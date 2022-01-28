@@ -10,11 +10,11 @@
  *
  */
 
+#include "get_env.hpp"
+
 #include <iostream>
 
 #include <azure/storage/blobs.hpp>
-
-#include "get_env.hpp"
 
 const std::string& GetConnectionString();
 
@@ -60,8 +60,7 @@ const std::string& GetConnectionString()
   {
     return ConnectionString;
   }
-
-  const static std::string envConnectionString = GetEnv("AZURE_STORAGE_CONNECTION_STRING");
+  const static std::string envConnectionString = std::getenv("AZURE_STORAGE_CONNECTION_STRING");
   if (!envConnectionString.empty())
   {
     return envConnectionString;

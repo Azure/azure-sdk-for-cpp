@@ -13,6 +13,8 @@
  *
  */
 
+#include "get_env.hpp"
+
 #include <azure/core.hpp>
 #include <azure/identity.hpp>
 #include <azure/keyvault/keyvault_keys.hpp>
@@ -22,16 +24,14 @@
 #include <memory>
 #include <thread>
 
-#include "get_env.hpp"
-
 using namespace Azure::Security::KeyVault::Keys;
 
 int main()
 {
-  auto const tenantId = GetEnv("AZURE_TENANT_ID");
-  auto const clientId = GetEnv("AZURE_CLIENT_ID");
-  auto const clientSecret = GetEnv("AZURE_CLIENT_SECRET");
-  auto const keyVaultUrl = GetEnv("AZURE_KEYVAULT_URL");
+  auto const tenantId = std::getenv("AZURE_TENANT_ID");
+  auto const clientId = std::getenv("AZURE_CLIENT_ID");
+  auto const clientSecret = std::getenv("AZURE_CLIENT_SECRET");
+  auto const keyVaultUrl = std::getenv("AZURE_KEYVAULT_URL");
   auto credential
       = std::make_shared<Azure::Identity::ClientSecretCredential>(tenantId, clientId, clientSecret);
 
