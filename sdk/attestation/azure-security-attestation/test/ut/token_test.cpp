@@ -263,13 +263,11 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
     }
 
     {
-
       EXPECT_THROW(
           JsonWebKeySetSerializer::Deserialize(json::parse(R"({"xxx": [{"alg": "none"}]})")),
           std::runtime_error);
     }
     {
-
       EXPECT_THROW(
           JsonWebKeySetSerializer::Deserialize(json::parse(R"({"keys": {"alg": "none"}})")),
           std::runtime_error);

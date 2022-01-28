@@ -281,8 +281,7 @@ namespace Azure { namespace Security { namespace Attestation { namespace _detail
     {
       if (!parsedBody.contains("token"))
       {
-        throw std::runtime_error(
-            "Field 'token' not found in Attestation Service Response");
+        throw std::runtime_error("Field 'token' not found in Attestation Service Response");
       }
       if (!parsedBody["token"].is_string())
       {

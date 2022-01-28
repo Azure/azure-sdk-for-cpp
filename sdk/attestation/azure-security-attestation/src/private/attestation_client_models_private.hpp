@@ -114,7 +114,7 @@ namespace Azure {
       ParseRawToken();
     }
 
-    void ValidateToken(std::vector<AttestationSigner> const& ) {}
+    void ValidateToken(std::vector<AttestationSigner> const&) {}
     operator AttestationToken<T>&&() { return std::move(m_token); }
   };
 
