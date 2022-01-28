@@ -77,6 +77,31 @@ namespace Azure { namespace Security { namespace Attestation { namespace _detail
       return returnValue;
     }
 
+    static Azure::Nullable<std::vector<int>> ParseIntArrayField(
+        const json& field,
+        const std::string& fieldName)
+    {
+      std::vector<int> returnValue;
+      if (field.contains(fieldName))
+      {
+        const auto& fieldVal = field[fieldName];
+        if (!fieldVal.is_array())
+        {
+          throw std::runtime_error("Field " + fieldName + " is not an array.");
+        }
+        for (const auto& item : fieldVal)
+        {
+          if (!item.is_number_integer())
+          {
+            throw std::runtime_error("Field " + fieldName + " element is not an integer.");
+          }
+          returnValue.push_back(item.get<int>());
+        }
+        return returnValue;
+      }
+      return Azure::Nullable<std::vector<int>>();
+    }
+
     static std::string ParseStringJsonField(const json& field, const std::string& fieldName)
     {
       std::string returnValue;
@@ -90,6 +115,25 @@ namespace Azure { namespace Security { namespace Attestation { namespace _detail
         returnValue = field[fieldName].dump();
       }
       return returnValue;
+    }
+
+    static Azure::Nullable<Azure::DateTime> ParseDateTimeField(
+        json const& object,
+        std::string const& fieldName)
+    {
+      Azure::DateTime returnValue;
+      if (object.contains(fieldName))
+      {
+        const auto& fieldVal = object[fieldName];
+        if (!fieldVal.is_number())
+        {
+          throw std::runtime_error("Field " + fieldName + " is not a number.");
+        }
+
+        int64_t epochTime = fieldVal.get<int64_t>();
+        return Azure::Core::_internal::PosixTimeConverter::PosixTimeToDateTime(epochTime);
+      }
+      return Azure::Nullable<Azure::DateTime>();
     }
 
     static std::vector<uint8_t> ParseBase64UrlField(const json& field, const std::string& fieldName)
@@ -133,6 +177,59 @@ namespace Azure { namespace Security { namespace Attestation { namespace _detail
         return field[fieldName].get<int>();
       }
       return Azure::Nullable<int>();
+    }
+
+    // Serialization helpers.
+
+    static void SetField(json& object, std::string const& fieldValue, std::string const& fieldName)
+    {
+      object[fieldName] = fieldValue;
+    }
+    static void SetField(json& object, int fieldValue, std::string const& fieldName)
+    {
+      object[fieldName] = fieldValue;
+    }
+    static void SetField(
+        json& object,
+        Azure::Nullable<int> const& fieldValue,
+        std::string const& fieldName)
+    {
+      if (fieldValue.HasValue())
+      {
+        SetField(object, fieldValue.Value(), fieldName);
+      }
+    }
+    static void SetField(
+        json& object,
+        std::vector<int> const& fieldValue,
+        std::string const& fieldName)
+    {
+      object[fieldName] = fieldValue;
+    }
+    static void SetField(
+        json& object,
+        Azure::Nullable<std::vector<int>> const& fieldValue,
+        std::string const& fieldName)
+    {
+      if (fieldValue.HasValue())
+      {
+        SetField(object, fieldValue.Value(), fieldName);
+      }
+    }
+
+    static void SetField(json& object, Azure::Nullable<Azure::DateTime> const&fieldValue, std::string const& fieldName)
+    {
+      if (fieldValue.HasValue())
+      {
+        SetField(object, fieldValue.Value(), fieldName);
+      }
+    }
+    static void SetField(
+        json& object,
+        Azure::DateTime const& fieldValue,
+        std::string const& fieldName)
+    {
+      object[fieldName] = Azure::Core::_internal::PosixTimeConverter::DateTimeToPosixTime(fieldValue);
     }
   };
 
