@@ -20,6 +20,7 @@
 #include "crypto/inc/crypto.hpp"
 #include "jsonwebkeyset.hpp"
 #include <azure/attestation/attestation_client_models.hpp>
+#include <azure/attestation/attestation_client_options.hpp>
 #include <azure/core/base64.hpp>
 #include <memory>
 #include <string>
@@ -77,7 +78,7 @@ namespace Azure {
   private:
     AttestationToken<T> m_token;
 
-    void ParseRawToken(std::unique_ptr<RawResponse>& response)
+    void ParseRawToken()
     {
       std::string token(m_token.RawToken);
       size_t headerIndex = token.find('.');
@@ -103,14 +104,14 @@ namespace Azure {
 
       auto jsonHeader(json::parse(Azure::Core::_internal::Base64Url::Base64UrlDecode(header)));
       auto jsonBody(json::parse(Azure::Core::_internal::Base64Url::Base64UrlDecode(body)));
-      m_token.Body = TDeserializer::Deserialize(jsonBody, response);
+      m_token.Body = TDeserializer::Deserialize(jsonBody);
     }
 
   public:
-    AttestationTokenInternal(std::string& jwt, std::unique_ptr<RawResponse>& response)
+    AttestationTokenInternal(std::string& jwt)
     {
       m_token.RawToken = std::string(jwt);
-      ParseRawToken(response);
+      ParseRawToken();
     }
 
     void ValidateToken(std::vector<AttestationSigner> const& ) {}
@@ -120,48 +121,12 @@ namespace Azure {
   /// <summary>
   /// Private Model types used for interoperability with the attestation service.
   /// </summary>
-  class AttestationDataType final {
-  private:
-    std::string m_dataType;
-
-  public:
-    /**
-     * @brief Construct a new DataType object
-     *
-     * @param type The expected type of the specified data.
-     */
-    AttestationDataType(std::string type) : m_dataType(std::move(type)) {}
-    AttestationDataType() {}
-
-    /**
-     * @brief Enable comparing the ext enum.
-     *
-     * @param other Another #ServiceVersion to be compared.
-     */
-    bool operator==(AttestationDataType const& other) const
-    {
-      return m_dataType == other.m_dataType;
-    }
-
-    /**
-     * @brief Return the #ServiceVersion string representation.
-     *
-     */
-    std::string const& ToString() const { return m_dataType; }
-
-    /**
-     * @brief Use to specify Attestation Data Type as JSON or Binary
-     *
-     */
-    AZ_ATTESTATION_DLLEXPORT static const AttestationDataType JSON;
-    AZ_ATTESTATION_DLLEXPORT static const AttestationDataType BINARY;
-  };
 
   // Implementation Model types.
   struct AttestationData
   {
     std::vector<uint8_t> Data;
-    AttestationDataType DataType;
+    Azure::Security::Attestation::AttestationDataType DataType;
   };
 
   struct AttestSgxEnclaveRequest
