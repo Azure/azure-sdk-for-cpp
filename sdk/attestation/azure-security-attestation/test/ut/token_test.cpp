@@ -36,7 +36,7 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
     }
     {
       EXPECT_THROW(
-          Azure::Security::Attestation::_detail::JsonHelpers::ParseBooleanField(
+          JsonHelpers::ParseBooleanField(
               json::parse("{ \"bool\": 27 }"), "bool"),
           std::runtime_error);
     }
@@ -99,22 +99,58 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
     }
     // Not present field.
     {
-      auto val(Azure::Security::Attestation::_detail::JsonHelpers::ParseStringArrayField(
+      auto val(JsonHelpers::ParseStringArrayField(
           json::parse("{ \"arrayValue\": \"String Field\"}"), "intValue"));
       EXPECT_EQ(0ul, val.size());
     }
     // Not an array.
     {
       EXPECT_THROW(
-          Azure::Security::Attestation::_detail::JsonHelpers::ParseStringArrayField(
+          JsonHelpers::ParseStringArrayField(
               json::parse("{ \"stringArray\": true}"), "stringArray"),
           std::runtime_error);
     }
     // Not an array of strings.
     {
       EXPECT_THROW(
-          Azure::Security::Attestation::_detail::JsonHelpers::ParseStringArrayField(
+          JsonHelpers::ParseStringArrayField(
               json::parse("{ \"stringArray\": [1, 2, 3, 4]}"), "stringArray"),
+          std::runtime_error);
+    }
+  }
+
+  TEST(SerializationTests, TestDeserializePrimitivesIntArray)
+  {
+    // Present string array field.
+    {
+      auto val(JsonHelpers::ParseIntArrayField(
+          json::parse(R"({ "intArrayValue": [1, 3, 7, 5]})"), "intArrayValue"));
+      EXPECT_TRUE(val.HasValue());
+
+      EXPECT_EQ(4ul, val.Value().size());
+      EXPECT_EQ(1, val.Value()[0]);
+      EXPECT_EQ(3, val.Value()[1]);
+      EXPECT_EQ(7, val.Value()[2]);
+      EXPECT_EQ(5, val.Value()[3]);
+    }
+    // Not present field.
+    {
+      auto val(JsonHelpers::ParseIntArrayField(
+          json::parse(R"({ "arrayValue": [1, 3, 5]})"), "intValue"));
+      EXPECT_FALSE(val.HasValue());
+    }
+    // Not an array.
+    {
+      EXPECT_THROW(
+          JsonHelpers::ParseIntArrayField(
+              json::parse(R"({ "stringArray": true})"), "stringArray"),
+          std::runtime_error);
+    }
+    // Not an array of strings.
+    {
+      EXPECT_THROW(
+          JsonHelpers::ParseIntArrayField(
+              json::parse(R"({ "intArray": ["abc", "def", "ghi", "jkl"]})"), "intArray"),
           std::runtime_error);
     }
   }
@@ -123,20 +159,20 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
   {
     // Present JSON field.
     {
-      auto val(JsonHelpers::ParseStringJsonField(
-          json::parse("{ \"jsonObjectValue\": {\"stringField\": \"SF2\"}}"), "jsonObjectValue"));
-      EXPECT_EQ("{\"stringField\":\"SF2\"}", val);
+      auto val(JsonHelpers::ParseStringJsonField(json::parse(
+              R"({ "jsonObjectValue": {"stringField": "SF2"}})"), "jsonObjectValue"));
+      EXPECT_EQ(R"({"stringField":"SF2"})", val);
     }
     // Not present field.
     {
-      auto val(Azure::Security::Attestation::_detail::JsonHelpers::ParseStringJsonField(
+      auto val(JsonHelpers::ParseStringJsonField(
           json::parse("{ \"objectValue\":{\"String Field\": 27}}"), "intValue"));
       EXPECT_TRUE(val.empty());
     }
     // Not a JSON object.
     {
       EXPECT_THROW(
-          Azure::Security::Attestation::_detail::JsonHelpers::ParseStringJsonField(
+          JsonHelpers::ParseStringJsonField(
               json::parse("{ \"stringArray\": true}"), "stringArray"),
           std::runtime_error);
     }
@@ -172,7 +208,7 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
     // Not base64url. This does not currently throw.
     {
       //      EXPECT_THROW(
-      //          Azure::Security::Attestation::_detail::JsonHelpers::ParseBase64UrlField(
+      //          JsonHelpers::ParseBase64UrlField(
       //              json::parse("{ \"base64Urlfield\": \"!@#%@!!%!!\"}"), "base64Urlfield"),
       //          std::runtime_error);
     }
