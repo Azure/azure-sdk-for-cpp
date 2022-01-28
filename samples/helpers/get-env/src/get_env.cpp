@@ -7,7 +7,7 @@
 
 #if defined(WINAPI_PARTITION_DESKTOP) && !WINAPI_PARTITION_DESKTOP
 
-char* getenv(const char* name)
+char* std::getenv(const char* name)
 {
   char* buf = GetEnvironmentStringsA();
 

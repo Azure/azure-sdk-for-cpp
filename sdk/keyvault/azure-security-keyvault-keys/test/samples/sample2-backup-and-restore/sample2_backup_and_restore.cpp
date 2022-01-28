@@ -32,13 +32,13 @@ static void AssertKeysEqual(KeyProperties const& expected, KeyProperties const& 
 
 int main()
 {
-  auto tenantId = getenv("AZURE_TENANT_ID");
-  auto clientId = getenv("AZURE_CLIENT_ID");
-  auto clientSecret = getenv("AZURE_CLIENT_SECRET");
+  auto tenantId = std::getenv("AZURE_TENANT_ID");
+  auto clientId = std::getenv("AZURE_CLIENT_ID");
+  auto clientSecret = std::getenv("AZURE_CLIENT_SECRET");
   auto credential
       = std::make_shared<Azure::Identity::ClientSecretCredential>(tenantId, clientId, clientSecret);
 
-  KeyClient keyClient(getenv("AZURE_KEYVAULT_URL"), credential);
+  KeyClient keyClient(std::getenv("AZURE_KEYVAULT_URL"), credential);
 
   std::string rsaKeyName("CloudRsaKey" + Azure::Core::Uuid::CreateUuid().ToString());
   try

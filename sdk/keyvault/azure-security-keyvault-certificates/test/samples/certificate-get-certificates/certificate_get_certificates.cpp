@@ -34,14 +34,14 @@ KeyVaultCertificateWithPolicy CreateCertificate(
 
 int main()
 {
-  auto tenantId = getenv("AZURE_TENANT_ID");
-  auto clientId = getenv("AZURE_CLIENT_ID");
-  auto clientSecret = getenv("AZURE_CLIENT_SECRET");
+  auto tenantId = std::getenv("AZURE_TENANT_ID");
+  auto clientId = std::getenv("AZURE_CLIENT_ID");
+  auto clientSecret = std::getenv("AZURE_CLIENT_SECRET");
   auto credential
       = std::make_shared<Azure::Identity::ClientSecretCredential>(tenantId, clientId, clientSecret);
   std::chrono::milliseconds defaultWait(10s);
   // create client
-  CertificateClient certificateClient(getenv("AZURE_KEYVAULT_URL"), credential);
+  CertificateClient certificateClient(std::getenv("AZURE_KEYVAULT_URL"), credential);
 
   try
   {

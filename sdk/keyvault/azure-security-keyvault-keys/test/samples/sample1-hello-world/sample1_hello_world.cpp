@@ -28,10 +28,10 @@ using namespace Azure::Security::KeyVault::Keys;
 
 int main()
 {
-  auto const tenantId = getenv("AZURE_TENANT_ID");
-  auto const clientId = getenv("AZURE_CLIENT_ID");
-  auto const clientSecret = getenv("AZURE_CLIENT_SECRET");
-  auto const keyVaultUrl = getenv("AZURE_KEYVAULT_URL");
+  auto const tenantId = std::getenv("AZURE_TENANT_ID");
+  auto const clientId = std::getenv("AZURE_CLIENT_ID");
+  auto const clientSecret = std::getenv("AZURE_CLIENT_SECRET");
+  auto const keyVaultUrl = std::getenv("AZURE_KEYVAULT_URL");
   auto credential
       = std::make_shared<Azure::Identity::ClientSecretCredential>(tenantId, clientId, clientSecret);
 
