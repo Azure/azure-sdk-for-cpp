@@ -11,6 +11,7 @@
 #include <gtest/gtest.h>
 #include <random>
 
+// cspell:words jwk jwks
 namespace Azure { namespace Security { namespace Attestation { namespace Test {
   using namespace Azure::Core::Json::_internal;
   using namespace Azure::Core::Http;
@@ -151,7 +152,7 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
     {
       auto val(Azure::Security::Attestation::_detail::JsonHelpers::ParseBase64UrlField(
           json::parse("{ \"base64Urlfield\": \"" + encodedData + "\"}"), "base64Urlfield"));
-      EXPECT_EQ(9, val.size());
+      EXPECT_EQ(9ul, val.size());
       EXPECT_EQ(testData, std::string(val.begin(), val.end()));
     }
     // Not present field.
@@ -226,7 +227,7 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
           JsonWebKeySetSerializer::Deserialize(json::parse(R"({"keys": [{"alg": "none"}]})")),
           std::runtime_error);
     }
-    //cspell:disable
+    // cspell:disable
     {
       auto val(JsonWebKeySetSerializer::Deserialize(json::parse(R"(
     {"keys": [
@@ -260,6 +261,19 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
       EXPECT_EQ("AQAB", val.Keys[1].e);
       EXPECT_EQ("2011-04-29", val.Keys[1].kid);
     }
+
+    {
+
+      EXPECT_THROW(
+          JsonWebKeySetSerializer::Deserialize(json::parse(R"({"xxx": [{"alg": "none"}]})")),
+          std::runtime_error);
+    }
+    {
+
+      EXPECT_THROW(
+          JsonWebKeySetSerializer::Deserialize(json::parse(R"({"keys": {"alg": "none"}})")),
+          std::runtime_error);
+    }
     // cspell:enable
   }
 
@@ -284,15 +298,18 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
     }
   }
 
-  TEST(SerializationTests, TestDeserializeTokenResponse) {
+  TEST(SerializationTests, TestDeserializeTokenResponse)
+  {
     {
       auto val(AttestationServiceTokenResponseSerializer::Deserialize(
           json::parse(R"({"token": "ABCDEFG.123.456"} )")));
       EXPECT_EQ("ABCDEFG.123.456", val);
     }
     {
-      EXPECT_THROW(AttestationServiceTokenResponseSerializer::Deserialize(
-          json::parse(R"({"fred": "ABCDEFG.123.456"} )")), std::runtime_error);
+      EXPECT_THROW(
+          AttestationServiceTokenResponseSerializer::Deserialize(
+              json::parse(R"({"fred": "ABCDEFG.123.456"} )")),
+          std::runtime_error);
     }
     {
       EXPECT_THROW(
@@ -300,6 +317,5 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
               json::parse(R"({"token": [12345]})")),
           std::runtime_error);
     }
-
   }
 }}}} // namespace Azure::Security::Attestation::Test
