@@ -13,6 +13,8 @@
  *
  */
 
+#include "get_env.hpp"
+
 #include <azure/core.hpp>
 #include <azure/identity.hpp>
 #include <azure/keyvault/keyvault_keys.hpp>
@@ -20,8 +22,6 @@
 #include <chrono>
 #include <iostream>
 #include <vector>
-
-#include "get_env.hpp"
 
 using namespace Azure::Security::KeyVault::Keys;
 using namespace Azure::Security::KeyVault::Keys::Cryptography;

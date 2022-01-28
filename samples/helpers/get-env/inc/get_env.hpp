@@ -13,6 +13,7 @@
 #include <stdlib.h>
 
 #else
+#define _CRT_SECURE_NO_WARNINGS
 
 #if !defined(WIN32_LEAN_AND_MEAN)
 #define WIN32_LEAN_AND_MEAN
@@ -25,22 +26,6 @@
 #if !defined(WINAPI_PARTITION_DESKTOP) || WINAPI_PARTITION_DESKTOP
 // Win32
 #include <stdlib.h>
-inline char* getenv_nowarning(const char* name)
-{
-#ifdef _MSC_VER
-#pragma warning(push)
-// warning C4996: 'gmtime': This function or variable may be unsafe. Consider using gmtime_s
-// instead.
-#pragma warning(disable : 4996)
-#endif
-  return getenv(name);
-#ifdef _MSC_VER
-#pragma warning(pop)
-#endif
-}
-
-#define getenv(name) getenv_nowarning(name)
-
 #else
 // UWP
 char* getenv(const char* name);

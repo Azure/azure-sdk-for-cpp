@@ -9,12 +9,12 @@
  *
  */
 
+#include "get_env.hpp"
+
 #include <azure/storage/blobs.hpp>
 
 #include <exception>
 #include <iostream>
-
-#include "get_env.hpp"
 
 using namespace Azure::Storage::Blobs;
 

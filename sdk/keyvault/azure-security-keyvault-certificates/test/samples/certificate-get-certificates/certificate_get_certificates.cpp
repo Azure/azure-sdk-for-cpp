@@ -16,14 +16,14 @@
  *
  */
 
+#include "get_env.hpp"
+
 #include <azure/identity.hpp>
 #include <azure/keyvault/keyvault_certificates.hpp>
 
 #include <chrono>
 #include <iostream>
 #include <thread>
-
-#include "get_env.hpp"
 
 using namespace Azure::Security::KeyVault::Certificates;
 using namespace std::chrono_literals;

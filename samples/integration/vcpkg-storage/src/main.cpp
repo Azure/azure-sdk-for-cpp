@@ -10,11 +10,11 @@
  *
  */
 
+#include "get_env.hpp"
+
 #include <iostream>
 
 #include <azure/storage/blobs.hpp>
-
-#include "get_env.hpp"
 
 const std::string& GetConnectionString();
 

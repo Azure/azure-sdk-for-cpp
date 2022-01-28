@@ -1,14 +1,14 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
 
+#include "get_env.hpp"
+
 #include <cstdio>
 #include <iostream>
 #include <stdexcept>
 #include <thread>
 
 #include <azure/storage/queues.hpp>
-
-#include "get_env.hpp"
 
 std::string GetConnectionString()
 {
