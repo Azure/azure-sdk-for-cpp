@@ -121,7 +121,6 @@ namespace Azure { namespace Security { namespace Attestation { namespace _detail
         json const& object,
         std::string const& fieldName)
     {
-      Azure::DateTime returnValue;
       if (object.contains(fieldName))
       {
         const auto& fieldVal = object[fieldName];
