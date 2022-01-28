@@ -348,7 +348,6 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
     return true;
   }
 
-
   struct TestObject
   {
     std::string Algorithm;
@@ -430,7 +429,7 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
       testObject.Integer = 314;
       testObject.ExpiresAt = std::chrono::system_clock::now();
       testObject.IssuedOn = std::chrono::system_clock::now();
-      testObject.NotBefore= std::chrono::system_clock::now();
+      testObject.NotBefore = std::chrono::system_clock::now();
       testObject.IntegerArray = {1, 2, 99, 32};
       testObject.Issuer = "George";
 
@@ -452,4 +451,5 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
       EXPECT_TRUE(testObject == targetObject);
     }
   }
+
 }}}} // namespace Azure::Security::Attestation::Test

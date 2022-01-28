@@ -216,7 +216,10 @@ namespace Azure { namespace Security { namespace Attestation { namespace _detail
       }
     }
 
-    static void SetField(json& object, Azure::Nullable<Azure::DateTime> const&fieldValue, std::string const& fieldName)
+    static void SetField(
+        json& object,
+        Azure::Nullable<Azure::DateTime> const& fieldValue,
+        std::string const& fieldName)
     {
       if (fieldValue.HasValue())
       {
@@ -228,7 +231,8 @@ namespace Azure { namespace Security { namespace Attestation { namespace _detail
         Azure::DateTime const& fieldValue,
         std::string const& fieldName)
     {
-      object[fieldName] = Azure::Core::_internal::PosixTimeConverter::DateTimeToPosixTime(fieldValue);
+      object[fieldName]
+          = Azure::Core::_internal::PosixTimeConverter::DateTimeToPosixTime(fieldValue);
     }
   };
 
