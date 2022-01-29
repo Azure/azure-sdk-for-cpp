@@ -36,8 +36,7 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
     }
     {
       EXPECT_THROW(
-          JsonHelpers::ParseBooleanField(
-              json::parse("{ \"bool\": 27 }"), "bool"),
+          JsonHelpers::ParseBooleanField(json::parse("{ \"bool\": 27 }"), "bool"),
           std::runtime_error);
     }
   }
@@ -142,8 +141,7 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
     // Not an array.
     {
       EXPECT_THROW(
-          JsonHelpers::ParseIntArrayField(
-              json::parse(R"({ "stringArray": true})"), "stringArray"),
+          JsonHelpers::ParseIntArrayField(json::parse(R"({ "stringArray": true})"), "stringArray"),
           std::runtime_error);
     }
     // Not an array of strings.
@@ -159,8 +157,8 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
   {
     // Present JSON field.
     {
-      auto val(JsonHelpers::ParseStringJsonField(json::parse(
-              R"({ "jsonObjectValue": {"stringField": "SF2"}})"), "jsonObjectValue"));
+      auto val(JsonHelpers::ParseStringJsonField(
+          json::parse(R"({ "jsonObjectValue": {"stringField": "SF2"}})"), "jsonObjectValue"));
       EXPECT_EQ(R"({"stringField":"SF2"})", val);
     }
     // Not present field.
@@ -172,8 +170,7 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
     // Not a JSON object.
     {
       EXPECT_THROW(
-          JsonHelpers::ParseStringJsonField(
-              json::parse("{ \"stringArray\": true}"), "stringArray"),
+          JsonHelpers::ParseStringJsonField(json::parse("{ \"stringArray\": true}"), "stringArray"),
           std::runtime_error);
     }
   }
@@ -207,10 +204,10 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
     }
     // Not base64url. This does not currently throw.
     {
-      //      EXPECT_THROW(
-      //          JsonHelpers::ParseBase64UrlField(
-      //              json::parse("{ \"base64Urlfield\": \"!@#%@!!%!!\"}"), "base64Urlfield"),
-      //          std::runtime_error);
+      EXPECT_THROW(
+          JsonHelpers::ParseBase64UrlField(
+              json::parse("{ \"base64Urlfield\": \"!@#%@!!%!!\"}"), "base64Urlfield"),
+          std::runtime_error);
     }
   }
 
