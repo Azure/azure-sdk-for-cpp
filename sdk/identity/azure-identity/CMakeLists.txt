@@ -55,12 +55,10 @@ set(
 
 set(
   AZURE_IDENTITY_SOURCE
-    src/private/environment.hpp
     src/private/managed_identity_source.hpp
     src/private/package_version.hpp
     src/private/token_credential_impl.hpp
     src/client_secret_credential.cpp
-    src/environment.cpp
     src/environment_credential.cpp
     src/managed_identity_credential.cpp
     src/managed_identity_source.cpp

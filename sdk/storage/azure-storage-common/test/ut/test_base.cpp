@@ -1,10 +1,6 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
 
-#if defined(_MSC_VER)
-#define _CRT_SECURE_NO_WARNINGS
-#endif
-
 #include "test_base.hpp"
 
 #include <algorithm>
@@ -272,7 +268,15 @@ namespace Azure { namespace Storage { namespace Test {
 
   std::vector<uint8_t> StorageTest::ReadFile(const std::string& filename)
   {
+#if defined(_MSC_VER)
+#pragma warning(push)
+#pragma warning(disable : 4996)
+#endif
     FILE* fin = fopen(filename.data(), "rb");
+#if defined(_MSC_VER)
+#pragma warning(pop)
+#endif
+
     if (!fin)
     {
       throw std::runtime_error("Failed to open file.");
