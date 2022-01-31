@@ -8,6 +8,7 @@ set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
 
+option(FETCH_SOURCE_DEPS "build source dependencies" OFF)
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/../../../cmake-modules")
 
 include(AzureVcpkg)
@@ -21,7 +22,19 @@ include(AzureBuildTargetForCI)
 
 az_vcpkg_integrate()
 
-if(NOT AZ_ALL_LIBRARIES)
+if(FETCH_SOURCE_DEPS)
+    set(AZ_ALL_LIBRARIES ON)
+    include(FolderList)
+    SetCompileOptions(STORAGE_COMMON)
+endif()
+
+if(FETCH_SOURCE_DEPS)
+    GetFolderList(STORAGE_COMMON)
+    foreach(oneFolder IN LISTS BUILD_FOLDERS)
+        message("add folder ${oneFolder}")
+        add_subdirectory(${oneFolder} EXCLUDE_FROM_ALL)
+    endforeach()
+elseif(NOT AZ_ALL_LIBRARIES)
   find_package(azure-core-cpp "1.0.0" CONFIG QUIET)
   if(NOT azure-core-cpp_FOUND)
     find_package(azure-core-cpp "1.0.0" REQUIRED)
@@ -76,6 +89,7 @@ target_include_directories(
   azure-storage-common
     PUBLIC
       $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/inc>
+      $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/build/sdk/core/azure-core/inc>
       $<INSTALL_INTERFACE:include>
 )
 
@@ -115,3 +129,5 @@ create_code_coverage(storage azure-storage-common azure-storage-test "tests?/*;s
 if(BUILD_TESTING)
   add_subdirectory(test/ut)
 endif()
+
+unset(FETCH_SOURCE_DEPS CACHE)
