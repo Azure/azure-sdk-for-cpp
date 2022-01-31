@@ -13,9 +13,7 @@
  *
  */
 
-#if defined(_MSC_VER)
-#define _CRT_SECURE_NO_WARNINGS
-#endif
+#include "get_env.hpp"
 
 #include <azure/core.hpp>
 #include <azure/identity.hpp>
@@ -30,10 +28,10 @@ using namespace Azure::Security::KeyVault::Keys;
 
 int main()
 {
-  auto const tenantId = std::string(std::getenv("AZURE_TENANT_ID"));
-  auto const clientId = std::string(std::getenv("AZURE_CLIENT_ID"));
-  auto const clientSecret = std::string(std::getenv("AZURE_CLIENT_SECRET"));
-  auto const keyVaultUrl = std::string(std::getenv("AZURE_KEYVAULT_URL"));
+  auto const tenantId = std::getenv("AZURE_TENANT_ID");
+  auto const clientId = std::getenv("AZURE_CLIENT_ID");
+  auto const clientSecret = std::getenv("AZURE_CLIENT_SECRET");
+  auto const keyVaultUrl = std::getenv("AZURE_KEYVAULT_URL");
   auto credential
       = std::make_shared<Azure::Identity::ClientSecretCredential>(tenantId, clientId, clientSecret);
 

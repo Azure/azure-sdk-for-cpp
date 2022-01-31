@@ -11,6 +11,7 @@
 #include <azure/core/credentials/token_credential_options.hpp>
 #include <azure/core/internal/client_options.hpp>
 #include <azure/core/internal/diagnostics/log.hpp>
+#include <azure/core/internal/environment.hpp>
 
 #include "azure/core/test/interceptor_manager.hpp"
 #include "azure/core/test/network_models.hpp"
@@ -245,21 +246,14 @@ namespace Azure { namespace Core { namespace Test {
     // Util for tests getting env vars
     std::string GetEnv(const std::string& name)
     {
-#if defined(_MSC_VER)
-#pragma warning(push)
-#pragma warning(disable : 4996)
-      const char* ret = std::getenv(name.data());
-#pragma warning(pop)
-#else
-      const char* ret = std::getenv(name.data());
-#endif
+      const auto ret = Azure::Core::_internal::Environment::GetVariable(name.c_str());
 
-      if (!ret)
+      if (ret.empty())
       {
         throw std::runtime_error("Missing required environment variable: " + name);
       }
 
-      return std::string(ret);
+      return ret;
     }
 
     // Util to set recording path

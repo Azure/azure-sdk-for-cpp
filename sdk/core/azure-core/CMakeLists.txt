@@ -71,6 +71,7 @@ set(
     inc/azure/core/internal/contract.hpp
     inc/azure/core/internal/cryptography/sha_hash.hpp
     inc/azure/core/internal/diagnostics/log.hpp
+    inc/azure/core/internal/environment.hpp
     inc/azure/core/internal/http/pipeline.hpp
     inc/azure/core/internal/io/null_body_stream.hpp
     inc/azure/core/internal/json/json_serializable.hpp
@@ -122,6 +123,7 @@ set(
     src/base64.cpp
     src/context.cpp
     src/datetime.cpp
+    src/environment.cpp
     src/environment_log_level_listener.cpp
     src/etag.cpp
     src/exception.cpp

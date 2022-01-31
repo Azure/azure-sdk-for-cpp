@@ -30,8 +30,6 @@ namespace Azure { namespace Identity { namespace Test { namespace _detail {
       static void SetVariables(std::map<std::string, std::string> const& vars);
 
     public:
-      static bool const IsEnvironmentAvailable;
-
       virtual ~EnvironmentOverride() { SetVariables(m_originalEnv); }
       explicit EnvironmentOverride(std::map<std::string, std::string> const& environment);
     };
