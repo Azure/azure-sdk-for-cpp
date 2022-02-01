@@ -133,7 +133,7 @@ ENDMACRO()
   message("=== Does not exist! ===")
   endif()
 
-  SUBDIRLIST(ANTK_SD "C:/Program Files/Microsoft Visual Studio/2019/Enterprise/VC/Redist/MSVC")
+  SUBDIRLIST(ANTK_SD "C:/Program Files")
   message ("${ANTK_SD}")
 
 create_map_file(azure-core-global-context-test azure-core-global-context-test.map)
