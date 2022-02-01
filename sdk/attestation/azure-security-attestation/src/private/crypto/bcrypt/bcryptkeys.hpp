@@ -26,6 +26,7 @@
 #include "../inc/crypto.hpp"
 #include "bcrypt_helpers.hpp"
 #include <wil/resource.h>
+// cspell: words PCERT PCRYPT hcryptprov hcryptkey
 
 namespace Azure { namespace Security { namespace Attestation { namespace _private {
   namespace Cryptography {
