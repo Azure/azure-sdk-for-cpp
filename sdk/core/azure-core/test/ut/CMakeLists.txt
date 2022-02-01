@@ -111,13 +111,13 @@ add_executable (
 if(CMAKE_SYSTEM_NAME STREQUAL "WindowsStore")
   # cspell:words VCRUNTIME
   set(VCRUNTIME_PATH "C:/Program Files (x86)/Microsoft Visual Studio/2019/Enterprise/VC/Redist/MSVC/14.29.30133/onecore/debug_nonredist/x86/Microsoft.VC142.DebugCRT/VCRUNTIME140D.dll")
+  set(VCRUNTIME_APP_PATH "Debug/VCRUNTIME140D_APP.dll")
   if (EXISTS "${VCRUNTIME_PATH}")
     get_filename_component(VCRUNTIME_FILENAME "${VCRUNTIME_PATH}" NAME_WE)
     add_custom_command(
         TARGET azure-core-global-context-test
           POST_BUILD
-            COMMAND ${CMAKE_COMMAND} -E "echo copy /Y ${VCRUNTIME_PATH} ${CMAKE_CURRENT_BINARY_DIR}/${METRIC_BUILD_CONFIG}/${VCRUNTIME_FILENAME}_APP.dll"
-            COMMAND ${CMAKE_COMMAND} -E "copy /Y ${VCRUNTIME_PATH} ${CMAKE_CURRENT_BINARY_DIR}/${METRIC_BUILD_CONFIG}/${VCRUNTIME_FILENAME}_APP.dll"
+            COMMAND ${CMAKE_COMMAND} -E "copy_if_different ${VCRUNTIME_PATH} ${CMAKE_CURRENT_BINARY_DIR}/${VCRUNTIME_APP_PATH}"
     )
   endif()
 endif()
