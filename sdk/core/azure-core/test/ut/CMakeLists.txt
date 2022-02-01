@@ -109,7 +109,6 @@ add_executable (
 )
 
 # cspell:words VCRUNTIME
-if (CMAKE_SYSTEM_NAME EQUAL WindowsStore)
   message("=== ${CMAKE_RUNTIME_OUTPUT_DIRECTORY} ===")
   message("=== ${RUNTIME_OUTPUT_DIRECTORY} ===")
   message("=== ${RUNTIME_OUTPUT_DIRECTORY_DEBUG} ===")
@@ -121,7 +120,6 @@ if (CMAKE_SYSTEM_NAME EQUAL WindowsStore)
   else()
   message("=== Does not exist! ===")
   endif()
-endif()
 
 create_map_file(azure-core-global-context-test azure-core-global-context-test.map)
 
