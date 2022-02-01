@@ -107,26 +107,9 @@ add_executable (
   azure-core-global-context-test
   global_context_test.cpp
 )
-
-MACRO(SUBDIRLIST result curdir)
-  FILE(GLOB children RELATIVE ${curdir} ${curdir}/*)
-  SET(dirlist "")
-  FOREACH(child ${children})
-    IF(IS_DIRECTORY ${curdir}/${child})
-      LIST(APPEND dirlist ${child})
-    ENDIF()
-  ENDFOREACH()
-  SET(${result} ${dirlist})
-ENDMACRO()
-
 # cspell:words VCRUNTIME
-  message("=== ${CMAKE_SYSTEM_NAME} ===")
-  message("=== ${CMAKE_RUNTIME_OUTPUT_DIRECTORY} ===")
-  message("=== ${RUNTIME_OUTPUT_DIRECTORY} ===")
-  message("=== ${RUNTIME_OUTPUT_DIRECTORY_DEBUG} ===")
-  message("=== ${RUNTIME_OUTPUT_DIRECTORY_RELEASE} ===")
-  message("$ENV{VCToolsRedistDir}")
-  string(SUBSTRING ${VCPKG_TARGET_TRIPLET} 0 3 UWP_BITS)
+  message(STATUS "CMAKE_CURRENT_BINARY_DIR = ${CMAKE_CURRENT_BINARY_DIR}")
+  message(STATUS "CMAKE_BUILD_TYPE = ${CMAKE_BUILD_TYPE}")
   if (EXISTS "C:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\Enterprise\\VC\\Redist\\MSVC\\14.29.30133\\onecore\\debug_nonredist\\x86\\Microsoft.VC142.DebugCRT\\VCRUNTIME140D.dll")
   message("=== Exists! ===")
   get_filename_component(FILENAME "C:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\Enterprise\\VC\\Redist\\MSVC\\14.29.30133\\onecore\\debug_nonredist\\x86\\Microsoft.VC142.DebugCRT\\VCRUNTIME140D.dll" NAME_WE)
@@ -142,33 +125,6 @@ ENDMACRO()
   else()
   message("=== Does not exist! ===")
   endif()
-
-  # MergeModules;arm;arm64;debug_nonredist;onecore;spectre;x64;x86
-  # debug_nonredist;onecore;x64;x86
-  # Auxiliary;MergeModules;arm;arm64;debug_nonredist;onecore;spectre;x64;x86
-  # MergeModules
-  # SUBDIRLIST(ANTK_SD "C:/Program Files (x86)/Microsoft Visual Studio/2019/Enterprise/VC/Redist/MSVC/14.16.27012/onecore")
-  # message ("${ANTK_SD}")
-  # SUBDIRLIST(ANTK_SD "C:/Program Files (x86)/Microsoft Visual Studio/2019/Enterprise/VC/Redist/MSVC/14.25.28508/onecore")
-  # message ("${ANTK_SD}")
-  # SUBDIRLIST(ANTK_SD "C:/Program Files (x86)/Microsoft Visual Studio/2019/Enterprise/VC/Redist/MSVC/14.29.30133/onecore")
-  # message ("${ANTK_SD}")
-  # SUBDIRLIST(ANTK_SD "C:/Program Files (x86)/Microsoft Visual Studio/2019/Enterprise/VC/Redist/MSVC/v142/MergeModules")
-  # message ("${ANTK_SD}")
-  # 
-  #   SUBDIRLIST(ANTK_SD "C:/Program Files (x86)/Microsoft Visual Studio/2019/Enterprise/VC/Redist/MSVC/14.16.27012/onecore/debug_nonredist/x64")
-  # message ("${ANTK_SD}")
-  # SUBDIRLIST(ANTK_SD "C:/Program Files (x86)/Microsoft Visual Studio/2019/Enterprise/VC/Redist/MSVC/14.25.28508/onecore/debug_nonredist/x64")
-  # message ("${ANTK_SD}")
-  # SUBDIRLIST(ANTK_SD "C:/Program Files (x86)/Microsoft Visual Studio/2019/Enterprise/VC/Redist/MSVC/14.29.30133/onecore/debug_nonredist/x64")
-  # message ("${ANTK_SD}")
-  # 
-  # SUBDIRLIST(ANTK_SD "C:/Program Files (x86)/Microsoft Visual Studio/2019/Enterprise/VC/Redist/MSVC/14.16.27012/onecore/debug_nonredist/x86")
-  # message ("${ANTK_SD}")
-  # SUBDIRLIST(ANTK_SD "C:/Program Files (x86)/Microsoft Visual Studio/2019/Enterprise/VC/Redist/MSVC/14.25.28508/onecore/debug_nonredist/x86")
-  # message ("${ANTK_SD}")
-  # SUBDIRLIST(ANTK_SD "C:/Program Files (x86)/Microsoft Visual Studio/2019/Enterprise/VC/Redist/MSVC/14.29.30133/onecore/debug_nonredist/x86")
-  # message ("${ANTK_SD}")
 
 create_map_file(azure-core-global-context-test azure-core-global-context-test.map)
 
