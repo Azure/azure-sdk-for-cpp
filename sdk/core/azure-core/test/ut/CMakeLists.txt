@@ -107,24 +107,24 @@ add_executable (
   azure-core-global-context-test
   global_context_test.cpp
 )
-# cspell:words VCRUNTIME
-  message(STATUS "CMAKE_CURRENT_BINARY_DIR = ${CMAKE_CURRENT_BINARY_DIR}")
-  message(STATUS "CMAKE_BUILD_TYPE = ${CMAKE_BUILD_TYPE}")
-  if (EXISTS "C:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\Enterprise\\VC\\Redist\\MSVC\\14.29.30133\\onecore\\debug_nonredist\\x86\\Microsoft.VC142.DebugCRT\\VCRUNTIME140D.dll")
-  message("=== Exists! ===")
-  get_filename_component(FILENAME "C:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\Enterprise\\VC\\Redist\\MSVC\\14.29.30133\\onecore\\debug_nonredist\\x86\\Microsoft.VC142.DebugCRT\\VCRUNTIME140D.dll" NAME_WE)
-  message ("${FILENAME}_APP.dll")
-  else()
-  message("=== Does not exist! ===")
-  endif()
 
-  if (EXISTS "C:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\Enterprise\\VC\\Redist\\MSVC\\14.29.30133\\onecore\\debug_nonredist\\x64\\Microsoft.VC142.DebugCRT\\VCRUNTIME140D.dll")
-  message("=== Exists! ===")
-  get_filename_component(FILENAME "C:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\Enterprise\\VC\\Redist\\MSVC\\14.29.30133\\onecore\\debug_nonredist\\x86\\Microsoft.VC142.DebugCRT\\VCRUNTIME140D.dll" NAME_WE)
-  message ("${FILENAME}_APP.dll")
-  else()
-  message("=== Does not exist! ===")
+if(CMAKE_SYSTEM_NAME STREQUAL "WindowsStore")
+  # cspell:words VCRUNTIME
+  set(VCRUNTIME_PATH "C:/Program Files (x86)/Microsoft Visual Studio/2019/Enterprise/VC/Redist/MSVC/14.29.30133/onecore/debug_nonredist/x86/Microsoft.VC142.DebugCRT/VCRUNTIME140D.dll")
+  if (EXISTS "${VCRUNTIME_PATH}")
+    get_filename_component(VCRUNTIME_FILENAME "${VCRUNTIME_PATH}" NAME_WE)
+    add_custom_command(
+        TARGET azure-core-global-context-test
+          POST_BUILD
+            COMMAND
+              file(
+                RENAME "${VCRUNTIME_PATH}"
+                DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_BUILD_TYPE}/${VCRUNTIME_FILENAME}_APP.dll"
+                NO_REPLACE
+              )
+    )
   endif()
+endif()
 
 create_map_file(azure-core-global-context-test azure-core-global-context-test.map)
 
