@@ -2,13 +2,13 @@
 # SPDX-License-Identifier: MIT
 
 cmake_minimum_required (VERSION 3.13)
+list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/../../../cmake-modules")
+az_vcpkg_integrate()
 project(azure-security-attestation LANGUAGES CXX)
 
 set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
-
-list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/../../../cmake-modules")
 
 include(AzureVcpkg)
 include(AzureVersion)
@@ -18,8 +18,6 @@ include(AzureDoxygen)
 include(AzureGlobalCompileOptions)
 include(AzureConfigRTTI)
 include(AzureBuildTargetForCI)
-
-az_vcpkg_integrate()
 
 if(NOT AZ_ALL_LIBRARIES)
   find_package(azure-core-cpp "1.2.0" CONFIG QUIET)

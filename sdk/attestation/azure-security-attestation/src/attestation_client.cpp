@@ -51,7 +51,7 @@ AttestationClient::AttestationClient(
 }
 
 Azure::Response<AttestationOpenIdMetadata> AttestationClient::GetOpenIdMetadata(
-    Azure::Core::Context const& context)
+    Azure::Core::Context const& context) const
 {
   auto request = AttestationCommonRequest::CreateRequest(
       m_endpoint, HttpMethod::Get, {".well-known/openid-configuration"}, nullptr);
@@ -62,7 +62,7 @@ Azure::Response<AttestationOpenIdMetadata> AttestationClient::GetOpenIdMetadata(
 }
 
 Azure::Response<std::vector<AttestationSigner>>
-AttestationClient::GetAttestationSigningCertificates(Azure::Core::Context const& context)
+AttestationClient::GetAttestationSigningCertificates(Azure::Core::Context const& context) const
 {
   auto request
       = AttestationCommonRequest::CreateRequest(m_endpoint, HttpMethod::Get, {"certs"}, nullptr);
@@ -81,7 +81,7 @@ AttestationClient::GetAttestationSigningCertificates(Azure::Core::Context const&
 Azure::Response<AttestationToken<AttestationResult>> AttestationClient::AttestSgxEnclave(
     std::vector<uint8_t> const& sgxQuote,
     AttestOptions options,
-    Azure::Core::Context const& context)
+    Azure::Core::Context const& context) const
 {
   AttestSgxEnclaveRequest attestRequest{
       sgxQuote,
@@ -108,7 +108,7 @@ Azure::Response<AttestationToken<AttestationResult>> AttestationClient::AttestSg
 Azure::Response<AttestationToken<AttestationResult>> AttestationClient::AttestOpenEnclave(
     std::vector<uint8_t> const& openEnclaveReport,
     AttestOptions options,
-    Azure::Core::Context const& context)
+    Azure::Core::Context const& context) const
 {
   AttestOpenEnclaveRequest attestRequest{
       openEnclaveReport,
@@ -129,7 +129,7 @@ Azure::Response<AttestationToken<AttestationResult>> AttestationClient::AttestOp
   return Response<AttestationToken<AttestationResult>>(token, std::move(response));
 }
 
-void AttestationClient::CacheAttestationSigners(Azure::Core::Context const& context)
+void AttestationClient::CacheAttestationSigners(Azure::Core::Context const& context) const
 {
   std::unique_lock<std::shared_timed_mutex> stateLock(m_sharedStateLock);
 

@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: MIT
 
 /**
- * @brief JSON Deserialization support functions.
+ * @brief Azure::Core::Json::_internal::json Deserialization support functions.
  *
  * This file contains a set of support functions to aid in serializing and deserializing JSON
  * objects. It also contains Deserializer classes, one for each model type which each support a
@@ -33,13 +33,9 @@
 // cspell: words jwks MrSigner MrEnclave
 namespace Azure { namespace Security { namespace Attestation { namespace _detail {
 
-  using namespace Azure::Core::Json::_internal;
-  using namespace Azure::Core::Http;
-  using namespace Azure::Core::_internal;
-
   struct JsonHelpers
   {
-    static std::string ParseStringField(const json& field, const std::string& fieldName)
+    static std::string ParseStringField(const Azure::Core::Json::_internal::json& field, const std::string& fieldName)
     {
       if (field.contains(fieldName))
       {
@@ -54,7 +50,7 @@ namespace Azure { namespace Security { namespace Attestation { namespace _detail
     }
 
     static std::vector<std::string> ParseStringArrayField(
-        const json& field,
+        const Azure::Core::Json::_internal::json& field,
         const std::string& fieldName)
     {
       std::vector<std::string> returnValue;
@@ -78,7 +74,7 @@ namespace Azure { namespace Security { namespace Attestation { namespace _detail
     }
 
     static Azure::Nullable<std::vector<int>> ParseIntArrayField(
-        const json& field,
+        const Azure::Core::Json::_internal::json& field,
         const std::string& fieldName)
     {
       std::vector<int> returnValue;
@@ -102,7 +98,7 @@ namespace Azure { namespace Security { namespace Attestation { namespace _detail
       return Azure::Nullable<std::vector<int>>();
     }
 
-    static std::string ParseStringJsonField(const json& field, const std::string& fieldName)
+    static std::string ParseStringJsonField(const Azure::Core::Json::_internal::json& field, const std::string& fieldName)
     {
       std::string returnValue;
       if (field.contains(fieldName))
@@ -118,7 +114,7 @@ namespace Azure { namespace Security { namespace Attestation { namespace _detail
     }
 
     static Azure::Nullable<Azure::DateTime> ParseDateTimeField(
-        json const& object,
+        Azure::Core::Json::_internal::json const& object,
         std::string const& fieldName)
     {
       if (object.contains(fieldName))
@@ -135,7 +131,7 @@ namespace Azure { namespace Security { namespace Attestation { namespace _detail
       return Azure::Nullable<Azure::DateTime>();
     }
 
-    static std::vector<uint8_t> ParseBase64UrlField(const json& field, const std::string& fieldName)
+    static std::vector<uint8_t> ParseBase64UrlField(const Azure::Core::Json::_internal::json& field, const std::string& fieldName)
     {
       std::vector<uint8_t> returnValue;
       if (field.contains(fieldName))
@@ -145,12 +141,12 @@ namespace Azure { namespace Security { namespace Attestation { namespace _detail
         {
           throw std::runtime_error(std::string("Field ") + fieldName + " is not a string.");
         }
-        returnValue = Base64Url::Base64UrlDecode(field[fieldName].get<std::string>());
+        returnValue = Azure::Core::_internal::Base64Url::Base64UrlDecode(field[fieldName].get<std::string>());
       }
       return returnValue;
     }
 
-    static Azure::Nullable<bool> ParseBooleanField(const json& field, const std::string& fieldName)
+    static Azure::Nullable<bool> ParseBooleanField(const Azure::Core::Json::_internal::json& field, const std::string& fieldName)
     {
       if (field.contains(fieldName))
       {
@@ -164,7 +160,7 @@ namespace Azure { namespace Security { namespace Attestation { namespace _detail
       return Azure::Nullable<bool>();
     }
 
-    static Azure::Nullable<int> ParseIntNumberField(const json& field, const std::string& fieldName)
+    static Azure::Nullable<int> ParseIntNumberField(const Azure::Core::Json::_internal::json& field, const std::string& fieldName)
     {
       if (field.contains(fieldName))
       {
@@ -180,16 +176,16 @@ namespace Azure { namespace Security { namespace Attestation { namespace _detail
 
     // Serialization helpers.
 
-    static void SetField(json& object, std::string const& fieldValue, std::string const& fieldName)
+    static void SetField(Azure::Core::Json::_internal::json& object, std::string const& fieldValue, std::string const& fieldName)
     {
       object[fieldName] = fieldValue;
     }
-    static void SetField(json& object, int fieldValue, std::string const& fieldName)
+    static void SetField(Azure::Core::Json::_internal::json& object, int fieldValue, std::string const& fieldName)
     {
       object[fieldName] = fieldValue;
     }
     static void SetField(
-        json& object,
+        Azure::Core::Json::_internal::json& object,
         Azure::Nullable<int> const& fieldValue,
         std::string const& fieldName)
     {
@@ -199,14 +195,14 @@ namespace Azure { namespace Security { namespace Attestation { namespace _detail
       }
     }
     static void SetField(
-        json& object,
+        Azure::Core::Json::_internal::json& object,
         std::vector<int> const& fieldValue,
         std::string const& fieldName)
     {
       object[fieldName] = fieldValue;
     }
     static void SetField(
-        json& object,
+        Azure::Core::Json::_internal::json& object,
         Azure::Nullable<std::vector<int>> const& fieldValue,
         std::string const& fieldName)
     {
@@ -217,7 +213,7 @@ namespace Azure { namespace Security { namespace Attestation { namespace _detail
     }
 
     static void SetField(
-        json& object,
+        Azure::Core::Json::_internal::json& object,
         Azure::Nullable<Azure::DateTime> const& fieldValue,
         std::string const& fieldName)
     {
@@ -227,7 +223,7 @@ namespace Azure { namespace Security { namespace Attestation { namespace _detail
       }
     }
     static void SetField(
-        json& object,
+        Azure::Core::Json::_internal::json& object,
         Azure::DateTime const& fieldValue,
         std::string const& fieldName)
     {
@@ -238,10 +234,10 @@ namespace Azure { namespace Security { namespace Attestation { namespace _detail
 
   struct OpenIdMetadataDeserializer final
   {
-    static AttestationOpenIdMetadata Deserialize(std::unique_ptr<RawResponse>& response)
+    static AttestationOpenIdMetadata Deserialize(std::unique_ptr<Azure::Core::Http::RawResponse>& response)
     {
       AttestationOpenIdMetadata returnValue;
-      auto parsedBody = json::parse(response->GetBody());
+      auto parsedBody = Azure::Core::Json::_internal::json::parse(response->GetBody());
       returnValue.Issuer = JsonHelpers::ParseStringField(parsedBody, "issuer");
       returnValue.JsonWebKeySetUrl = JsonHelpers::ParseStringField(parsedBody, "jwks_uri");
       returnValue.SupportedClaims
@@ -256,7 +252,7 @@ namespace Azure { namespace Security { namespace Attestation { namespace _detail
 
   struct JsonWebKeySerializer final
   {
-    static JsonWebKey Deserialize(const json& jwk)
+    static JsonWebKey Deserialize(const Azure::Core::Json::_internal::json& jwk)
     {
       JsonWebKey returnValue;
       returnValue.kty = JsonHelpers::ParseStringField(jwk, "kty");
@@ -293,12 +289,12 @@ namespace Azure { namespace Security { namespace Attestation { namespace _detail
 
   struct JsonWebKeySetSerializer final
   {
-    static JsonWebKeySet Deserialize(std::unique_ptr<RawResponse>& response)
+    static JsonWebKeySet Deserialize(std::unique_ptr<Azure::Core::Http::RawResponse>& response)
     {
-      auto parsedBody = json::parse(response->GetBody());
+      auto parsedBody = Azure::Core::Json::_internal::json::parse(response->GetBody());
       return Deserialize(parsedBody);
     }
-    static JsonWebKeySet Deserialize(json const& parsedBody)
+    static JsonWebKeySet Deserialize(Azure::Core::Json::_internal::json const& parsedBody)
     {
       JsonWebKeySet returnValue;
       if (!parsedBody.contains("keys"))
@@ -322,7 +318,7 @@ namespace Azure { namespace Security { namespace Attestation { namespace _detail
     static std::string Serialize(
         Azure::Security::Attestation::Models::_detail::AttestSgxEnclaveRequest const& request)
     {
-      json serializedRequest;
+      Azure::Core::Json::_internal::json serializedRequest;
       serializedRequest["quote"]
           = Azure::Core::_internal::Base64Url::Base64UrlEncode(request.Quote);
       if (!request.RunTimeData.Data.empty())
@@ -349,7 +345,7 @@ namespace Azure { namespace Security { namespace Attestation { namespace _detail
     static std::string Serialize(
         Azure::Security::Attestation::Models::_detail::AttestOpenEnclaveRequest const& request)
     {
-      json serializedRequest;
+      Azure::Core::Json::_internal::json serializedRequest;
       serializedRequest["report"]
           = Azure::Core::_internal::Base64Url::Base64UrlEncode(request.Report);
 
@@ -377,7 +373,7 @@ namespace Azure { namespace Security { namespace Attestation { namespace _detail
 
   struct AttestationServiceTokenResponseSerializer final
   {
-    static std::string Deserialize(json const& parsedBody)
+    static std::string Deserialize(Azure::Core::Json::_internal::json const& parsedBody)
     {
       if (!parsedBody.contains("token"))
       {
@@ -390,9 +386,9 @@ namespace Azure { namespace Security { namespace Attestation { namespace _detail
       return parsedBody["token"].get<std::string>();
     }
 
-    static std::string Deserialize(std::unique_ptr<RawResponse>& response)
+    static std::string Deserialize(std::unique_ptr<Azure::Core::Http::RawResponse>& response)
     {
-      auto parsedBody = json::parse(response->GetBody());
+      auto parsedBody = Azure::Core::Json::_internal::json::parse(response->GetBody());
       return Deserialize(parsedBody);
     }
   };
@@ -400,7 +396,7 @@ namespace Azure { namespace Security { namespace Attestation { namespace _detail
   struct AttestationResultDeserializer final
   {
   public:
-    static AttestationResult Deserialize(json const& parsedJson)
+    static AttestationResult Deserialize(Azure::Core::Json::_internal::json const& parsedJson)
     {
       AttestationResult result;
 

@@ -32,21 +32,11 @@ namespace Azure { namespace Security { namespace Attestation {
   {
     /**
      */
-    ::std::string Issuer;
-    ::std::string JsonWebKeySetUrl;
-    ::std::vector<::std::string> SupportedResponseTypes;
-    ::std::vector<::std::string> SupportedTokenSigningAlgorithms;
-    ::std::vector<::std::string> SupportedClaims;
-
-    AttestationOpenIdMetadata() {}
-    ~AttestationOpenIdMetadata() {}
-    AttestationOpenIdMetadata(AttestationOpenIdMetadata&& that) noexcept
-        : Issuer(::std::move(that.Issuer)), JsonWebKeySetUrl(::std::move(that.JsonWebKeySetUrl)),
-          SupportedResponseTypes(::std::move(that.SupportedResponseTypes)),
-          SupportedTokenSigningAlgorithms(::std::move(that.SupportedTokenSigningAlgorithms)),
-          SupportedClaims(::std::move(that.SupportedClaims))
-    {
-    }
+    std::string Issuer;
+    std::string JsonWebKeySetUrl;
+    std::vector<std::string> SupportedResponseTypes;
+    std::vector<std::string> SupportedTokenSigningAlgorithms;
+    std::vector<std::string> SupportedClaims;
   };
 
   struct AttestationSigner final

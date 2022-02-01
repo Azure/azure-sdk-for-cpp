@@ -32,9 +32,6 @@ namespace Azure {
       namespace Models {
         namespace _detail {
 
-  using namespace Azure::Core::Json::_internal;
-  using namespace Azure::Core::Http;
-  using namespace Azure::Security::Attestation::_detail;
   /**
    * @brief Internal implementation class implementing private methods for public model type
    * AttestationSigner.
@@ -102,8 +99,10 @@ namespace Azure {
       std::string signature(token);
       m_token.RawBody = body;
 
-      auto jsonHeader(json::parse(Azure::Core::_internal::Base64Url::Base64UrlDecode(header)));
-      auto jsonBody(json::parse(Azure::Core::_internal::Base64Url::Base64UrlDecode(body)));
+      auto jsonHeader(Azure::Core::Json::_internal::json::parse(
+          Azure::Core::_internal::Base64Url::Base64UrlDecode(header)));
+      auto jsonBody(Azure::Core::Json::_internal::json::parse(
+          Azure::Core::_internal::Base64Url::Base64UrlDecode(body)));
       m_token.Body = TDeserializer::Deserialize(jsonBody);
     }
 

@@ -3,27 +3,25 @@
 
 #pragma once
 
-#include <azure/core/internal/json/json.hpp>
 #include <shared_mutex>
 #include <string>
 
 #include "attestation_client_options.hpp"
-#include <azure/attestation/attestation_client_models.hpp>
+#include "azure/attestation/attestation_client_models.hpp"
 #include <azure/core/internal/http/pipeline.hpp>
 
 namespace Azure { namespace Security { namespace Attestation {
 
-  using namespace Azure::Core;
   class AttestationClient final {
   private:
     Azure::Core::Url m_endpoint;
     std::string m_apiVersion;
     std::shared_ptr<Azure::Core::Http::_internal::HttpPipeline> m_pipeline;
 
-    std::shared_timed_mutex m_sharedStateLock;
-    std::vector<AttestationSigner> m_attestationSigners;
+    mutable std::shared_timed_mutex m_sharedStateLock;
+    mutable std::vector<AttestationSigner> m_attestationSigners;
 
-    void CacheAttestationSigners(Azure::Core::Context const& context);
+    void CacheAttestationSigners(Azure::Core::Context const& context) const;
 
   public:
     /**
@@ -67,7 +65,7 @@ namespace Azure { namespace Security { namespace Attestation {
      * @returns Attestation Metadata.
      */
     Response<AttestationOpenIdMetadata> GetOpenIdMetadata(
-        Azure::Core::Context const& context = Azure::Core::Context::ApplicationContext);
+        Azure::Core::Context const& context = Azure::Core::Context::ApplicationContext) const;
 
     /**
      * @brief Retrieve the attestation signing certificates for this attestation instance.
@@ -75,7 +73,7 @@ namespace Azure { namespace Security { namespace Attestation {
      * @returns Attestation Metadata.
      */
     Response<std::vector<AttestationSigner>> GetAttestationSigningCertificates(
-        Azure::Core::Context const& context = Azure::Core::Context::ApplicationContext);
+        Azure::Core::Context const& context = Azure::Core::Context::ApplicationContext) const;
 
     /**
      * @brief Attest an SGX enclave, returning an attestation token representing the result
@@ -91,7 +89,7 @@ namespace Azure { namespace Security { namespace Attestation {
     Response<AttestationToken<AttestationResult>> AttestSgxEnclave(
         std::vector<uint8_t> const& sgxQuoteToAttest,
         AttestOptions options = AttestOptions(),
-        Azure::Core::Context const& context = Azure::Core::Context::ApplicationContext);
+        Azure::Core::Context const& context = Azure::Core::Context::ApplicationContext) const;
 
     /**
      * @brief Attest an OpenEnclave report, returning an attestation token representing the result
@@ -108,7 +106,7 @@ namespace Azure { namespace Security { namespace Attestation {
     Response<AttestationToken<AttestationResult>> AttestOpenEnclave(
         std::vector<uint8_t> const& openEnclaveReportToAttest,
         AttestOptions options = AttestOptions(),
-        Azure::Core::Context const& context = Azure::Core::Context::ApplicationContext);
+        Azure::Core::Context const& context = Azure::Core::Context::ApplicationContext) const;
   };
 
 }}} // namespace Azure::Security::Attestation
