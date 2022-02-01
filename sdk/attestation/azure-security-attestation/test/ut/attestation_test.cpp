@@ -27,7 +27,7 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
       std::string mode(GetParam());
       if (mode == "Shared")
       {
-        std::string shortLocation(GetEnv("locationShortName"));
+        std::string shortLocation(GetEnv("LOCATION_SHORT_NAME"));
         m_endpoint = "https://shared" + shortLocation + "." + shortLocation + ".attest.azure.net";
       }
       else if (mode == "Aad")
