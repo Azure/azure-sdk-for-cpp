@@ -28,4 +28,5 @@ add_executable (
 target_link_libraries(application
      PRIVATE
      Azure::azure-storage-blobs
+     get-env-helper
 )

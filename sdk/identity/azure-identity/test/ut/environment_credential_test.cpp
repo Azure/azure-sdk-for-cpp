@@ -14,11 +14,6 @@ using Azure::Identity::Test::_detail::CredentialTestHelper;
 
 TEST(EnvironmentCredential, RegularClientSecretCredential)
 {
-  if (!CredentialTestHelper::EnvironmentOverride::IsEnvironmentAvailable)
-  {
-    return;
-  }
-
   auto const actual = CredentialTestHelper::SimulateTokenRequest(
       [](auto transport) {
         TokenCredentialOptions options;
@@ -74,11 +69,6 @@ TEST(EnvironmentCredential, RegularClientSecretCredential)
 
 TEST(EnvironmentCredential, AzureStackClientSecretCredential)
 {
-  if (!CredentialTestHelper::EnvironmentOverride::IsEnvironmentAvailable)
-  {
-    return;
-  }
-
   auto const actual = CredentialTestHelper::SimulateTokenRequest(
       [](auto transport) {
         TokenCredentialOptions options;
@@ -163,11 +153,6 @@ TEST(EnvironmentCredential, Unavailable)
 
 TEST(EnvironmentCredential, ClientSecretDefaultAuthority)
 {
-  if (!CredentialTestHelper::EnvironmentOverride::IsEnvironmentAvailable)
-  {
-    return;
-  }
-
   auto const actual = CredentialTestHelper::SimulateTokenRequest(
       [](auto transport) {
         TokenCredentialOptions options;
@@ -223,11 +208,6 @@ TEST(EnvironmentCredential, ClientSecretDefaultAuthority)
 
 TEST(EnvironmentCredential, ClientSecretNoTenantId)
 {
-  if (!CredentialTestHelper::EnvironmentOverride::IsEnvironmentAvailable)
-  {
-    return;
-  }
-
   using Azure::Core::Credentials::AccessToken;
   using Azure::Core::Credentials::AuthenticationException;
 
@@ -259,11 +239,6 @@ TEST(EnvironmentCredential, ClientSecretNoTenantId)
 
 TEST(EnvironmentCredential, ClientSecretNoClientId)
 {
-  if (!CredentialTestHelper::EnvironmentOverride::IsEnvironmentAvailable)
-  {
-    return;
-  }
-
   using Azure::Core::Credentials::AccessToken;
   using Azure::Core::Credentials::AuthenticationException;
 
@@ -295,11 +270,6 @@ TEST(EnvironmentCredential, ClientSecretNoClientId)
 
 TEST(EnvironmentCredential, ClientSecretNoClientSecret)
 {
-  if (!CredentialTestHelper::EnvironmentOverride::IsEnvironmentAvailable)
-  {
-    return;
-  }
-
   using Azure::Core::Credentials::AccessToken;
   using Azure::Core::Credentials::AuthenticationException;
 

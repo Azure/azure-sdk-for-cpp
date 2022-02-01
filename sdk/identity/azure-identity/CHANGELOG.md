@@ -4,6 +4,8 @@
 
 ### Features Added
 
+- Enabled `EnvironmentCredential` and `ManagedIdentityCredential` to work on UWP.
+
 ### Breaking Changes
 
 ### Bugs Fixed

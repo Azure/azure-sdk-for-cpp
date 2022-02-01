@@ -34,6 +34,7 @@ TEST(BodyStream, Rewind)
 {
   TestBodyStream tb;
 
+#if GTEST_HAS_DEATH_TEST
 #if defined(NDEBUG)
   // Release build won't provide assert msg
   ASSERT_DEATH(tb.Rewind(), "");
@@ -41,6 +42,7 @@ TEST(BodyStream, Rewind)
   ASSERT_DEATH(
       tb.Rewind(),
       "The specified BodyStream doesn't support Rewind which is required to guarantee fault ");
+#endif
 #endif
 
   std::string testDataPath(AZURE_TEST_DATA_PATH);
@@ -61,6 +63,7 @@ TEST(BodyStream, Rewind)
   EXPECT_NO_THROW(ms.Rewind());
 }
 
+#if GTEST_HAS_DEATH_TEST
 TEST(BodyStream, BadInput)
 {
   TestBodyStream tb;
@@ -71,14 +74,17 @@ TEST(BodyStream, BadInput)
 }
 
 TEST(MemoryBodyStream, BadInput) { ASSERT_DEATH(MemoryBodyStream(NULL, 1), ""); }
+#endif
 
 TEST(FileBodyStream, BadInput)
 {
+#if GTEST_HAS_DEATH_TEST
 #if defined(NDEBUG)
   // Release build won't provide assert msg
   ASSERT_DEATH(FileBodyStream(""), "");
 #else
   ASSERT_DEATH(FileBodyStream(""), "The file name must not be an empty string.");
+#endif
 #endif
 
   EXPECT_THROW(Azure::Core::IO::FileBodyStream("FileNotFound"), std::runtime_error);

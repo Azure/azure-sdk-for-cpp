@@ -4,7 +4,6 @@
 #include "azure/core/test/interceptor_manager.hpp"
 #include "azure/core/test/network_models.hpp"
 #include "azure/core/test/record_network_call_policy.hpp"
-#include "private/environment.hpp"
 
 #include <azure/core/internal/strings.hpp>
 

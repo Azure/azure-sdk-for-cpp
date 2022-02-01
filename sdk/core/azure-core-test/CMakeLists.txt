@@ -20,9 +20,7 @@ set(
 
 set(
   AZURE_CORE_TEST_SOURCE
-  src/private/environment.hpp
   src/private/package_version.hpp
-  src/environment.cpp
   src/interceptor_manager.cpp
   src/playback_http_transport.cpp
   src/record_policy.cpp

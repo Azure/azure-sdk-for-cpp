@@ -4,14 +4,14 @@
 #include "azure/identity/environment_credential.hpp"
 #include "azure/identity/client_secret_credential.hpp"
 
-#include "private/environment.hpp"
+#include <azure/core/internal/environment.hpp>
 
 using namespace Azure::Identity;
 
 EnvironmentCredential::EnvironmentCredential(
     Azure::Core::Credentials::TokenCredentialOptions options)
 {
-  using _detail::Environment;
+  using Azure::Core::_internal::Environment;
 
   auto tenantId = Environment::GetVariable("AZURE_TENANT_ID");
   auto clientId = Environment::GetVariable("AZURE_CLIENT_ID");

@@ -13,13 +13,12 @@
  *
  */
 
-#if defined(_MSC_VER)
-#define _CRT_SECURE_NO_WARNINGS
-#endif
+#include "get_env.hpp"
 
 #include <azure/identity.hpp>
 #include <azure/keyvault/keyvault_secrets.hpp>
 
+#include <assert.h>
 #include <chrono>
 #include <fstream>
 #include <iostream>

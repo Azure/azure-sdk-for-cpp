@@ -12,6 +12,14 @@ project(azure-identity LANGUAGES CXX)
 set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
+# Compile Options
+option(FETCH_SOURCE_DEPS "build source dependencies" OFF)
+
+if(FETCH_SOURCE_DEPS)
+    set(AZ_ALL_LIBRARIES ON)
+    include(FolderList)
+    SetCompileOptions(IDENTITY)
+endif()
 
 include(AzureVersion)
 include(AzureCodeCoverage)
@@ -19,10 +27,17 @@ include(AzureTransportAdapters)
 include(AzureDoxygen)
 include(AzureGlobalCompileOptions)
 include(AzureConfigRTTI)
+include(AzureBuildTargetForCI)
 # Add create_map_file function
 include(CreateMapFile)
 
-if(NOT AZ_ALL_LIBRARIES)
+if(FETCH_SOURCE_DEPS)
+    GetFolderList(IDENTITY)
+    foreach(oneFolder IN LISTS BUILD_FOLDERS)
+        message("add folder ${oneFolder}")
+        add_subdirectory(${oneFolder} EXCLUDE_FROM_ALL)
+    endforeach()
+elseif(NOT AZ_ALL_LIBRARIES)
   find_package(azure-core-cpp "1.2.0" CONFIG QUIET)
   if(NOT azure-core-cpp_FOUND)
     find_package(azure-core-cpp "1.2.0" REQUIRED)
@@ -40,12 +55,10 @@ set(
 
 set(
   AZURE_IDENTITY_SOURCE
-    src/private/environment.hpp
     src/private/managed_identity_source.hpp
     src/private/package_version.hpp
     src/private/token_credential_impl.hpp
     src/client_secret_credential.cpp
-    src/environment.cpp
     src/environment_credential.cpp
     src/managed_identity_credential.cpp
     src/managed_identity_source.cpp
@@ -53,6 +66,7 @@ set(
 )
 
 add_library(azure-identity ${AZURE_IDENTITY_HEADER} ${AZURE_IDENTITY_SOURCE})
+create_per_service_target_build(azure-identity identity)
 
 # make sure that users can consume the project as a library.
 add_library(Azure::azure-identity ALIAS azure-identity)
@@ -86,19 +100,22 @@ az_rtti_setup(
 
 if(BUILD_TESTING)
   # tests
-  if (NOT AZ_ALL_LIBRARIES)
+  if (NOT AZ_ALL_LIBRARIES OR FETCH_SOURCE_DEPS)
     include(AddGoogleTest)
     enable_testing ()
   endif()
 
   add_subdirectory(test/e2e)
   add_subdirectory(test/ut)
+
+endif()
+
+if (BUILD_SAMPLES)
+  add_subdirectory(samples)
 endif()
 
 if (BUILD_PERFORMANCE_TESTS)
   add_subdirectory(test/perf)
 endif()
 
-if (AZ_ALL_LIBRARIES)
-  add_subdirectory(samples)
-endif()
+unset(FETCH_SOURCE_DEPS CACHE)

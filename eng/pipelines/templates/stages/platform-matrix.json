@@ -71,38 +71,6 @@
         },
         {
             "StaticConfigs": {
-                "Windows2019": {
-                    "OSVmImage": "MMS2019",
-                    "Pool": "azsdk-pool-mms-win-2019-general",
-                    "BuildArgs": "--parallel 8",
-                    "CMAKE_GENERATOR": "Visual Studio 16 2019",
-                    "CmakeArgs": " -DBUILD_TRANSPORT_WINHTTP=ON -DBUILD_TESTING=ON -DBUILD_PERFORMANCE_TESTS=ON -DRUN_LONG_UNIT_TESTS=ON",
-                    "PublishMapFiles": "true"
-                }
-            },
-            "TargetPlatform": {
-                "UWP_debug": {
-                    "CMAKE_SYSTEM_NAME": "WindowsStore",
-                    "CMAKE_SYSTEM_VERSION": "10.0"
-                },
-                "UWP_release": {
-                    "CMAKE_SYSTEM_NAME": "WindowsStore",
-                    "CMAKE_SYSTEM_VERSION": "10.0",
-                    "CMAKE_BUILD_TYPE": "Release"
-                }
-            },
-            "TargetArchitecture": {
-                "x86": {
-                    "CMAKE_GENERATOR_PLATFORM": "Win32"
-                },
-                "x64": {
-                    "CMAKE_GENERATOR_PLATFORM": "x64",
-                    "VCPKG_DEFAULT_TRIPLET": "x64-uwp"
-                }
-            }
-        },
-        {
-            "StaticConfigs": {
                 "Ubuntu18": {
                     "OSVmImage": "MMSUbuntu18.04",
                     "Pool": "azsdk-pool-mms-ubuntu-1804-general",
@@ -140,7 +108,7 @@
                     "PublishMapFiles": "true"
                 },
                 "included_samples": {
-                    "CmakeArgs": " -DBUILD_TESTING=ON -DBUILD_SAMPLES=ON -DBUILD_STORAGE_SAMPLES=ON",
+                    "CmakeArgs": " -DBUILD_TESTING=ON -DBUILD_SAMPLES=ON ",
                     "PublishMapFiles": "true"
                 }
             }

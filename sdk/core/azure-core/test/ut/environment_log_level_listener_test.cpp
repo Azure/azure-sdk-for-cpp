@@ -1,23 +1,22 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
 
-#include <gtest/gtest.h>
 #include <private/environment_log_level_listener.hpp>
+
+#include <azure/core/internal/environment.hpp>
+
+#include <gtest/gtest.h>
 
 using Azure::Core::Diagnostics::Logger;
 using Azure::Core::Diagnostics::_detail::EnvironmentLogLevelListener;
 
 namespace {
 
-std::string environmentVariable = "AZURE_LOG_LEVEL";
+const auto EnvironmentVariable = "AZURE_LOG_LEVEL";
 
 void SetLogLevel(std::string const& value)
 {
-#if defined(_MSC_VER)
-  static_cast<void>(_putenv((environmentVariable + "=" + value).c_str()));
-#else
-  static_cast<void>(setenv(environmentVariable.c_str(), value.c_str(), 1));
-#endif
+  Azure::Core::_internal::Environment::SetVariable(EnvironmentVariable, value.c_str());
 }
 
 } // namespace
@@ -25,17 +24,7 @@ class EnvironmentLogLevelListenerTest : public testing::Test {
 protected:
   void SetUp() override
   {
-#if defined(_MSC_VER)
-#pragma warning(push)
-// warning C4996: 'getenv': This function or variable may be unsafe. Consider using _dupenv_s
-// instead.
-#pragma warning(disable : 4996)
-#endif
-    auto const value = std::getenv(environmentVariable.c_str());
-    m_previousValue = value == nullptr ? "" : value;
-#if defined(_MSC_VER)
-#pragma warning(pop)
-#endif
+    m_previousValue = Azure::Core::_internal::Environment::GetVariable(EnvironmentVariable);
   }
 
   void TearDown() override { SetLogLevel(m_previousValue); }
@@ -119,17 +108,17 @@ TEST_F(EnvironmentLogLevelListenerTest, LogLevelVerbose)
 {
   EnvironmentLogLevelListener::SetInitialized(false);
   SetLogLevel("verbose");
-  auto level = EnvironmentLogLevelListener::GetLogLevel(Logger::Level::Verbose);
+  auto level = EnvironmentLogLevelListener::GetLogLevel(Logger::Level::Error);
   EXPECT_EQ(level, Logger::Level::Verbose);
 
   EnvironmentLogLevelListener::SetInitialized(false);
   SetLogLevel("debug");
-  level = EnvironmentLogLevelListener::GetLogLevel(Logger::Level::Verbose);
+  level = EnvironmentLogLevelListener::GetLogLevel(Logger::Level::Error);
   EXPECT_EQ(level, Logger::Level::Verbose);
 
   EnvironmentLogLevelListener::SetInitialized(false);
   SetLogLevel("1");
-  level = EnvironmentLogLevelListener::GetLogLevel(Logger::Level::Verbose);
+  level = EnvironmentLogLevelListener::GetLogLevel(Logger::Level::Error);
   EXPECT_EQ(level, Logger::Level::Verbose);
 }
 
@@ -144,8 +133,9 @@ TEST_F(EnvironmentLogLevelListenerTest, GetLogListenerVerbose)
   std::string text = buffer.str(); // text will now contain "Bla\n"
   auto listener = EnvironmentLogLevelListener::GetLogListener();
 
-  listener(Logger::Level::Verbose, "message");
   EXPECT_NE(listener, nullptr);
+
+  listener(Logger::Level::Verbose, "message");
   EXPECT_NE(buffer.str().find("DEBUG : message"), std::string::npos);
   std::cerr.rdbuf(old);
 }
@@ -161,8 +151,9 @@ TEST_F(EnvironmentLogLevelListenerTest, GetLogListenerError)
   std::string text = buffer.str(); // text will now contain "Bla\n"
   auto listener = EnvironmentLogLevelListener::GetLogListener();
 
-  listener(Logger::Level::Error, "message");
   EXPECT_NE(listener, nullptr);
+
+  listener(Logger::Level::Error, "message");
   EXPECT_NE(buffer.str().find("ERROR : message"), std::string::npos);
   std::cerr.rdbuf(old);
 }
@@ -178,8 +169,9 @@ TEST_F(EnvironmentLogLevelListenerTest, GetLogListenerWarning)
   std::string text = buffer.str(); // text will now contain "Bla\n"
   auto listener = EnvironmentLogLevelListener::GetLogListener();
 
-  listener(Logger::Level::Warning, "message");
   EXPECT_NE(listener, nullptr);
+
+  listener(Logger::Level::Warning, "message");
   EXPECT_NE(buffer.str().find("WARN  : message"), std::string::npos);
   std::cerr.rdbuf(old);
 }
@@ -195,8 +187,9 @@ TEST_F(EnvironmentLogLevelListenerTest, GetLogListenerInformational)
   std::string text = buffer.str(); // text will now contain "Bla\n"
   auto listener = EnvironmentLogLevelListener::GetLogListener();
 
-  listener(Logger::Level::Informational, "message");
   EXPECT_NE(listener, nullptr);
+
+  listener(Logger::Level::Informational, "message");
   EXPECT_NE(buffer.str().find("INFO  : message"), std::string::npos);
   std::cerr.rdbuf(old);
 }
@@ -212,8 +205,9 @@ TEST_F(EnvironmentLogLevelListenerTest, GetLogListenerUnknown)
   std::string text = buffer.str(); // text will now contain "Bla\n"
   auto listener = EnvironmentLogLevelListener::GetLogListener();
 
-  listener(static_cast<Logger::Level>(42), "message");
   EXPECT_NE(listener, nullptr);
+
+  listener(static_cast<Logger::Level>(42), "message");
   EXPECT_NE(buffer.str().find("????? : message"), std::string::npos);
   std::cerr.rdbuf(old);
 }

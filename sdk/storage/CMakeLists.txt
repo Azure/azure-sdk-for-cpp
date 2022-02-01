@@ -4,7 +4,6 @@
 cmake_minimum_required (VERSION 3.13)
 
 project (azure-storage LANGUAGES CXX)
-option(BUILD_STORAGE_SAMPLES "Build storage sample codes" ON)
 
 add_subdirectory(azure-storage-common)
 add_subdirectory(azure-storage-blobs)

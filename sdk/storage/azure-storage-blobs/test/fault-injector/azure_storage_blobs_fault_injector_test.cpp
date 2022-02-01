@@ -10,10 +10,7 @@
  *
  */
 
-#if defined(_MSC_VER)
-// For using std::getenv()
-#define _CRT_SECURE_NO_WARNINGS
-#endif
+#include <azure/core/internal/environment.hpp>
 
 #include <azure/storage/blobs.hpp>
 
@@ -88,7 +85,8 @@ int main()
   auto implementationClient = std::make_shared<Azure::Core::Http::WinHttpTransport>(winHttpOptions);
 #endif
 
-  std::string connectionString(std::getenv("STORAGE_CONNECTION_STRING"));
+  std::string connectionString(
+      Azure::Core::_internal::Environment::GetVariable("STORAGE_CONNECTION_STRING"));
 
   // Set the options for the FaultInjectorClient
   FaultInjectionClientOptions options;
