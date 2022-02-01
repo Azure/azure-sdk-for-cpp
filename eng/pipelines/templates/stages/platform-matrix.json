@@ -81,15 +81,17 @@
                 }
             },
             "TargetPlatform": {
-                "UWP_debug": {
-                    "CMAKE_SYSTEM_NAME": "WindowsStore",
-                    "CMAKE_SYSTEM_VERSION": "10.0"
-                },
-                "UWP_release": {
-                    "CMAKE_SYSTEM_NAME": "WindowsStore",
-                    "CMAKE_SYSTEM_VERSION": "10.0",
-                    "CMAKE_BUILD_TYPE": "Release"
-                }
+              "UWP_debug": {
+                "CMAKE_SYSTEM_NAME": "WindowsStore",
+                "CMAKE_SYSTEM_VERSION": "10.0",
+                "VcpkgInstall": "openssl"
+              },
+              "UWP_release": {
+                "CMAKE_SYSTEM_NAME": "WindowsStore",
+                "CMAKE_SYSTEM_VERSION": "10.0",
+                "CMAKE_BUILD_TYPE": "Release",
+                "VcpkgInstall": "openssl"
+              }
             },
             "TargetArchitecture": {
                 "x86": {
