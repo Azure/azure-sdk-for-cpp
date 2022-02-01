@@ -108,6 +108,17 @@ add_executable (
   global_context_test.cpp
 )
 
+MACRO(SUBDIRLIST result curdir)
+  FILE(GLOB children RELATIVE ${curdir} ${curdir}/*)
+  SET(dirlist "")
+  FOREACH(child ${children})
+    IF(IS_DIRECTORY ${curdir}/${child})
+      LIST(APPEND dirlist ${child})
+    ENDIF()
+  ENDFOREACH()
+  SET(${result} ${dirlist})
+ENDMACRO()
+
 # cspell:words VCRUNTIME
   message("=== ${CMAKE_SYSTEM_NAME} ===")
   message("=== ${CMAKE_RUNTIME_OUTPUT_DIRECTORY} ===")
@@ -116,11 +127,14 @@ add_executable (
   message("=== ${RUNTIME_OUTPUT_DIRECTORY_RELEASE} ===")
   message("$ENV{VCToolsRedistDir}")
   string(SUBSTRING ${VCPKG_TARGET_TRIPLET} 0 3 UWP_BITS)
-  if (EXISTS "C:\\Program Files\\Microsoft Visual Studio\\2022\\Enterprise\\VC\\Redist\\MSVC\\14.30.30704\\onecore\\debug_nonredist\\x64\\Microsoft.VC143.DebugCRT\\VCRUNTIME140D.dll")
+  if (EXISTS "C:\\Program Files\\Microsoft Visual Studio\\2019\\Enterprise\\VC\\Redist\\MSVC\\14.30.30704\\onecore\\debug_nonredist\\x64\\Microsoft.VC143.DebugCRT\\VCRUNTIME140D.dll")
   message("=== Exists! ===")
   else()
   message("=== Does not exist! ===")
   endif()
+
+  SUBDIRLIST(ANTK_SD "C:\\Program Files\\Microsoft Visual Studio\\2019\\Enterprise\\VC\\Redist\\MSVC\\")
+  message ("${ANTK_SD}")
 
 create_map_file(azure-core-global-context-test azure-core-global-context-test.map)
 
