@@ -26,9 +26,6 @@ if(FETCH_SOURCE_DEPS)
     set(AZ_ALL_LIBRARIES ON)
     include(FolderList)
     SetCompileOptions(STORAGE_COMMON)
-endif()
-
-if(FETCH_SOURCE_DEPS)
     GetFolderList(STORAGE_COMMON)
     foreach(oneFolder IN LISTS BUILD_FOLDERS)
         message("add folder ${oneFolder}")
@@ -89,7 +86,6 @@ target_include_directories(
   azure-storage-common
     PUBLIC
       $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/inc>
-      $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/build/sdk/core/azure-core/inc>
       $<INSTALL_INTERFACE:include>
 )
 

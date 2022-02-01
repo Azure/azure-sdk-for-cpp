@@ -80,8 +80,6 @@ target_include_directories(
   azure-storage-blobs
     PUBLIC
       $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/inc>
-      $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/build/sdk/core/azure-core/inc>
-      $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/build/sdk/storage/azure-storage-common/inc>
       $<INSTALL_INTERFACE:include>
 )
 
