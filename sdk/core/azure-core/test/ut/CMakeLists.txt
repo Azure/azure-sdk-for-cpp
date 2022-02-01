@@ -116,12 +116,8 @@ if(CMAKE_SYSTEM_NAME STREQUAL "WindowsStore")
     add_custom_command(
         TARGET azure-core-global-context-test
           POST_BUILD
-            COMMAND
-              file(
-                RENAME "${VCRUNTIME_PATH}"
-                DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_BUILD_TYPE}/${VCRUNTIME_FILENAME}_APP.dll"
-                NO_REPLACE
-              )
+            COMMAND ${CMAKE_COMMAND} -E "echo copy /Y ${VCRUNTIME_PATH} ${CMAKE_CURRENT_BINARY_DIR}/${METRIC_BUILD_CONFIG}/${VCRUNTIME_FILENAME}_APP.dll"
+            COMMAND ${CMAKE_COMMAND} -E "copy /Y ${VCRUNTIME_PATH} ${CMAKE_CURRENT_BINARY_DIR}/${METRIC_BUILD_CONFIG}/${VCRUNTIME_FILENAME}_APP.dll"
     )
   endif()
 endif()
