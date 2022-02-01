@@ -109,6 +109,7 @@ add_executable (
 )
 
 # cspell:words VCRUNTIME
+  message("=== ${CMAKE_SYSTEM_NAME} ===")
   message("=== ${CMAKE_RUNTIME_OUTPUT_DIRECTORY} ===")
   message("=== ${RUNTIME_OUTPUT_DIRECTORY} ===")
   message("=== ${RUNTIME_OUTPUT_DIRECTORY_DEBUG} ===")
