@@ -35,7 +35,9 @@ namespace Azure { namespace Security { namespace Attestation { namespace _detail
 
   struct JsonHelpers
   {
-    static std::string ParseStringField(const Azure::Core::Json::_internal::json& field, const std::string& fieldName)
+    static std::string ParseStringField(
+        const Azure::Core::Json::_internal::json& field,
+        const std::string& fieldName)
     {
       if (field.contains(fieldName))
       {
@@ -98,7 +100,9 @@ namespace Azure { namespace Security { namespace Attestation { namespace _detail
       return Azure::Nullable<std::vector<int>>();
     }
 
-    static std::string ParseStringJsonField(const Azure::Core::Json::_internal::json& field, const std::string& fieldName)
+    static std::string ParseStringJsonField(
+        const Azure::Core::Json::_internal::json& field,
+        const std::string& fieldName)
     {
       std::string returnValue;
       if (field.contains(fieldName))
@@ -131,7 +135,9 @@ namespace Azure { namespace Security { namespace Attestation { namespace _detail
       return Azure::Nullable<Azure::DateTime>();
     }
 
-    static std::vector<uint8_t> ParseBase64UrlField(const Azure::Core::Json::_internal::json& field, const std::string& fieldName)
+    static std::vector<uint8_t> ParseBase64UrlField(
+        const Azure::Core::Json::_internal::json& field,
+        const std::string& fieldName)
     {
       std::vector<uint8_t> returnValue;
       if (field.contains(fieldName))
@@ -141,12 +147,15 @@ namespace Azure { namespace Security { namespace Attestation { namespace _detail
         {
           throw std::runtime_error(std::string("Field ") + fieldName + " is not a string.");
         }
-        returnValue = Azure::Core::_internal::Base64Url::Base64UrlDecode(field[fieldName].get<std::string>());
+        returnValue = Azure::Core::_internal::Base64Url::Base64UrlDecode(
+            field[fieldName].get<std::string>());
       }
       return returnValue;
     }
 
-    static Azure::Nullable<bool> ParseBooleanField(const Azure::Core::Json::_internal::json& field, const std::string& fieldName)
+    static Azure::Nullable<bool> ParseBooleanField(
+        const Azure::Core::Json::_internal::json& field,
+        const std::string& fieldName)
     {
       if (field.contains(fieldName))
       {
@@ -160,7 +169,9 @@ namespace Azure { namespace Security { namespace Attestation { namespace _detail
       return Azure::Nullable<bool>();
     }
 
-    static Azure::Nullable<int> ParseIntNumberField(const Azure::Core::Json::_internal::json& field, const std::string& fieldName)
+    static Azure::Nullable<int> ParseIntNumberField(
+        const Azure::Core::Json::_internal::json& field,
+        const std::string& fieldName)
     {
       if (field.contains(fieldName))
       {
@@ -176,11 +187,17 @@ namespace Azure { namespace Security { namespace Attestation { namespace _detail
 
     // Serialization helpers.
 
-    static void SetField(Azure::Core::Json::_internal::json& object, std::string const& fieldValue, std::string const& fieldName)
+    static void SetField(
+        Azure::Core::Json::_internal::json& object,
+        std::string const& fieldValue,
+        std::string const& fieldName)
     {
       object[fieldName] = fieldValue;
     }
-    static void SetField(Azure::Core::Json::_internal::json& object, int fieldValue, std::string const& fieldName)
+    static void SetField(
+        Azure::Core::Json::_internal::json& object,
+        int fieldValue,
+        std::string const& fieldName)
     {
       object[fieldName] = fieldValue;
     }
@@ -234,7 +251,8 @@ namespace Azure { namespace Security { namespace Attestation { namespace _detail
 
   struct OpenIdMetadataDeserializer final
   {
-    static AttestationOpenIdMetadata Deserialize(std::unique_ptr<Azure::Core::Http::RawResponse>& response)
+    static AttestationOpenIdMetadata Deserialize(
+        std::unique_ptr<Azure::Core::Http::RawResponse>& response)
     {
       AttestationOpenIdMetadata returnValue;
       auto parsedBody = Azure::Core::Json::_internal::json::parse(response->GetBody());
