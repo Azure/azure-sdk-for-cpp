@@ -3,10 +3,10 @@
 #pragma once
 
 #include <memory>
+#include <openssl/bio.h>
+#include <openssl/evp.h>
 #include <type_traits>
 #include <utility>
-#include <openssl/evp.h>
-#include <openssl/bio.h>
 
 namespace Azure { namespace Security { namespace Attestation { namespace _private {
   namespace Cryptography {

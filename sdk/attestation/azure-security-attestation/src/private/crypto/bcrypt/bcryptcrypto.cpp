@@ -9,9 +9,9 @@
  *
  */
 
+#include <azure/core/base64.hpp>
 #include <azure/core/internal/json/json.hpp>
 #include <azure/core/platform.hpp>
-#include <azure/core/base64.hpp>
 #include <memory>
 #include <string>
 #include <type_traits>
@@ -61,5 +61,5 @@ namespace Azure { namespace Security { namespace Attestation { namespace _privat
       return BCryptX509Certificate::CreateFromPrivateKey(privateKey, subjectName);
     }
 }}}}} // namespace Azure::Security::Attestation::_private::Cryptography
-#endif //defined(AZ_PLATFORM_POSIX)
+#endif // defined(AZ_PLATFORM_POSIX)
 #endif // NOT FUNCTIONING

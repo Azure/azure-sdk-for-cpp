@@ -5,8 +5,8 @@
 //
 
 #pragma once
-#include <string>
 #include "crypto.hpp"
+#include <string>
 
 namespace Azure { namespace Security { namespace Attestation { namespace _private {
   namespace Cryptography {

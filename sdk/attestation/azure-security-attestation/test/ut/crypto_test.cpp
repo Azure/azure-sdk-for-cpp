@@ -81,7 +81,7 @@ GQIDAQAB
     }
     // Verify we can round trip the public key.
     {
-      auto publicKey= Crypto::ImportPublicKey(pemPublicKey);
+      auto publicKey = Crypto::ImportPublicKey(pemPublicKey);
       auto exportedPublicKey = publicKey->ExportPublicKey();
 
       EXPECT_EQ(exportedPublicKey, pemPublicKey);
