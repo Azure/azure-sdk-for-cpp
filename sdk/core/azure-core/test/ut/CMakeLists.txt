@@ -133,14 +133,18 @@ ENDMACRO()
   message("=== Does not exist! ===")
   endif()
 
+  # MergeModules;arm;arm64;debug_nonredist;onecore;spectre;x64;x86
+  # debug_nonredist;onecore;x64;x86
+  # Auxiliary;MergeModules;arm;arm64;debug_nonredist;onecore;spectre;x64;x86
+  # MergeModules
   SUBDIRLIST(ANTK_SD "C:/Program Files (x86)/Microsoft Visual Studio/2019/Enterprise/VC/Redist/MSVC/14.16.27012/onecore")
   message ("${ANTK_SD}")
   SUBDIRLIST(ANTK_SD "C:/Program Files (x86)/Microsoft Visual Studio/2019/Enterprise/VC/Redist/MSVC/14.25.28508/onecore")
   message ("${ANTK_SD}")
   SUBDIRLIST(ANTK_SD "C:/Program Files (x86)/Microsoft Visual Studio/2019/Enterprise/VC/Redist/MSVC/14.29.30133/onecore")
   message ("${ANTK_SD}")
-  #SUBDIRLIST(ANTK_SD "C:/Program Files (x86)/Microsoft Visual Studio/2019/Enterprise/VC/Redist/MSVC/v142")
-  #message ("${ANTK_SD}")
+  SUBDIRLIST(ANTK_SD "C:/Program Files (x86)/Microsoft Visual Studio/2019/Enterprise/VC/Redist/MSVC/v142/MergeModules")
+  message ("${ANTK_SD}")
 
     SUBDIRLIST(ANTK_SD "C:/Program Files (x86)/Microsoft Visual Studio/2019/Enterprise/VC/Redist/MSVC/14.16.27012/onecore/debug_noredist/x64")
   message ("${ANTK_SD}")
