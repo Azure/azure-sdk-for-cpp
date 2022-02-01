@@ -108,6 +108,7 @@ add_executable (
   global_context_test.cpp
 )
 
+# cspell:words VCRUNTIME
 if (CMAKE_SYSTEM_NAME EQUAL WindowsStore)
   message("=== ${CMAKE_RUNTIME_OUTPUT_DIRECTORY} ===")
   message("=== ${RUNTIME_OUTPUT_DIRECTORY} ===")
