@@ -66,13 +66,21 @@ stages:
         - Name: AAD_CLIENT_ID
           Value: "non-real-client"
         - Name: AAD_CLIENT_SECRET
-          Value: "non-real-secret"          
+          Value: "non-real-secret"
         - Name: STANDARD_STORAGE_CONNECTION_STRING
           Value: "DefaultEndpointsProtocol=https;AccountName=notReal;AccountKey=3333333333333333333333333333333333333333333333333333333333333333333333333333333333333333;EndpointSuffix=core.windows.net"
         - Name: ADLS_GEN2_CONNECTION_STRING
           Value: "DefaultEndpointsProtocol=https;AccountName=notReal;AccountKey=3333333333333333333333333333333333333333333333333333333333333333333333333333333333333333;EndpointSuffix=core.windows.net"
         - Name: PREMIUM_FILE_CONNECTION_STRING
           Value: "DefaultEndpointsProtocol=https;AccountName=notReal;AccountKey=3333333333333333333333333333333333333333333333333333333333333333333333333333333333333333;EndpointSuffix=core.windows.net"
+# Attestation
+        - Name: LOCATION_SHORT_NAME
+          Value: "wus"
+        - Name: ATTESTATION_ISOLATED_URL
+          Value: https://NotRealAttestationInstanceiso.wus.attest.azure.net
+        - Name: ATTESTATION_AAD_URL
+          Value: https://NotRealAttestationInstanceaad.wus.attest.azure.net
+
       CMakeTestOptions:
         - Name: Default
           Value: ''
