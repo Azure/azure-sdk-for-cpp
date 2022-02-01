@@ -133,15 +133,15 @@ TEST(Base64, InvalidDecode)
   EXPECT_THROW(Convert::Base64Decode("AB"), std::runtime_error);
   EXPECT_THROW(Convert::Base64Decode("AB="), std::runtime_error);
   EXPECT_THROW(Convert::Base64Decode("@#!%"), std::runtime_error);
-  EXPECT_THROW(Convert::Base64Decode("ABCD%GA="), std::runtime_error);
-  EXPECT_THROW(Convert::Base64Decode("ABCDE^A="), std::runtime_error);
-  EXPECT_THROW(Convert::Base64Decode("ABCDEF&="), std::runtime_error);
+  EXPECT_THROW(Convert::Base64Decode("ABCD%GA="), std::runtime_error); // cspell:disable-line
+  EXPECT_THROW(Convert::Base64Decode("ABCDE^A="), std::runtime_error); // cspell:disable-line
+  EXPECT_THROW(Convert::Base64Decode("ABCDEF&="), std::runtime_error); // cspell:disable-line
 
-  EXPECT_THROW(Convert::Base64Decode("ABD%GA=="), std::runtime_error);
-  EXPECT_THROW(Convert::Base64Decode("ABDE^A=="), std::runtime_error);
-  EXPECT_THROW(Convert::Base64Decode("ABDEF&=="), std::runtime_error);
+  EXPECT_THROW(Convert::Base64Decode("ABD%GA=="), std::runtime_error); // cspell:disable-line
+  EXPECT_THROW(Convert::Base64Decode("ABDE^A=="), std::runtime_error); // cspell:disable-line
+  EXPECT_THROW(Convert::Base64Decode("ABDEF&=="), std::runtime_error); // cspell:disable-line
 
-  EXPECT_THROW(Convert::Base64Decode("AD%GA==="), std::runtime_error);
-  EXPECT_THROW(Convert::Base64Decode("ADE^A==="), std::runtime_error);
-  EXPECT_THROW(Convert::Base64Decode("ADEF&==="), std::runtime_error);
+  EXPECT_THROW(Convert::Base64Decode("AD%GA==="), std::runtime_error); // cspell:disable-line
+  EXPECT_THROW(Convert::Base64Decode("ADE^A==="), std::runtime_error); // cspell:disable-line
+  EXPECT_THROW(Convert::Base64Decode("ADEF&==="), std::runtime_error); // cspell:disable-line
 }

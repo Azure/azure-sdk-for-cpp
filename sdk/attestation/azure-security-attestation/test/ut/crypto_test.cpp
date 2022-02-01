@@ -9,6 +9,7 @@
 #include "../../src/private/crypto/inc/crypto.hpp"
 #include <random>
 
+// cspell: words ECDS
 namespace Azure { namespace Security { namespace Attestation { namespace Test {
   using namespace Azure::Security::Attestation::_private::Cryptography;
   using namespace Azure::Core::Diagnostics::_internal;

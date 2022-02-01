@@ -8,7 +8,7 @@
  * This file contains private classes used to support public model types.
  *
  */
-
+// cspell: words PCERT PCRYPT hcryptprov hcryptkey
 #include <azure/core/internal/json/json.hpp>
 
 #include <azure/core/base64.hpp>
