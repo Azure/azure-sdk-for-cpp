@@ -259,6 +259,7 @@ TEST(ETag, EqualsWeak)
   EXPECT_FALSE(ETag::Equals(weakTagtwo, weakTagTwo, ETag::ETagComparison::Weak));
 }
 
+#if GTEST_HAS_DEATH_TEST
 TEST(ETag, PreCondition)
 {
   ETag emptyTag;
@@ -270,3 +271,4 @@ TEST(ETag, PreCondition)
   ASSERT_DEATH(emptyTag.ToString(), "Empty ETag");
 #endif
 }
+#endif
