@@ -130,8 +130,6 @@ TEST(Base64, InvalidDecode)
 {
   EXPECT_NO_THROW(Convert::Base64Decode(Convert::Base64Encode(std::vector<uint8_t>{})));
   EXPECT_NO_THROW(Convert::Base64Decode(""));
-  EXPECT_THROW(Convert::Base64Decode("AB"), std::runtime_error);
-  EXPECT_THROW(Convert::Base64Decode("AB="), std::runtime_error);
   EXPECT_THROW(Convert::Base64Decode("@#!%"), std::runtime_error);
   EXPECT_THROW(Convert::Base64Decode("ABCD%GA="), std::runtime_error); // cspell:disable-line
   EXPECT_THROW(Convert::Base64Decode("ABCDE^A="), std::runtime_error); // cspell:disable-line
