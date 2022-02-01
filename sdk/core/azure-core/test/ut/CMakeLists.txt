@@ -108,6 +108,29 @@ add_executable (
   global_context_test.cpp
 )
 
+if (CMAKE_SYSTEM_NAME EQUAL WindowsStore)
+  message("=== ${CMAKE_RUNTIME_OUTPUT_DIRECTORY} ===")
+  message("=== ${RUNTIME_OUTPUT_DIRECTORY} ===")
+  message("=== ${RUNTIME_OUTPUT_DIRECTORY_DEBUG} ===")
+  message("=== ${RUNTIME_OUTPUT_DIRECTORY_RELEASE} ===")
+  string(SUBSTRING ${VCPKG_TARGET_TRIPLET} 0 3 UWP_BITS)
+  message("=== $ENV{VCToolsRedistDir}onecore\\debug_nonredist\\${UWP_BITS}\\Microsoft.VC143.DebugCRT\\VCRUNTIME140D.dll ===")
+  if (EXISTS "$ENV{VCToolsRedistDir}onecore\\debug_nonredist\\${UWP_BITS}\\Microsoft.VC143.DebugCRT\\VCRUNTIME140D.dll")
+  message("=== Exists! ===")
+  else()
+  message("=== Does not exist! ===")
+  endif()
+endif()
+
+if (CMAKE_SYSTEM_NAME EQUAL WindowsStore OR 1)
+  set(uwp_bits VCPKG_TARGET_TRIPLET)
+  if (exists($ENV{VCToolsRedistDir}onecore\debug_nonredist\${uwp_bits}\Microsoft.VC143.DebugCRT\VCRUNTIME140D.dll))
+  message("${CMAKE_RUNTIME_OUTPUT_DIRECTORY}")
+  message($ENV{VCToolsRedistDir}onecore\debug_nonredist\${uwp_bits}\Microsoft.VC143.DebugCRT\VCRUNTIME140D.dll)
+  endif()
+  unset(uwp_bits)
+endif()
+
 create_map_file(azure-core-global-context-test azure-core-global-context-test.map)
 
 if (MSVC)
