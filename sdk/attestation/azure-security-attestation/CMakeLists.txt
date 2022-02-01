@@ -50,15 +50,32 @@ set(
     src/attestation_client.cpp
     src/attestation_client_options.cpp
     src/attestation_common_request.cpp
+)
+
+#if(WIN32)
+#set(
+#    AZURE_ATTESTATION_SOURCE
+#    ${AZURE_ATTESTATION_SOURCE}
+#    src/private/crypto/bcrypt/bcryptcrypto.cpp
+#    src/private/crypto/bcrypt/bcryptkeys.cpp
+#    src/private/crypto/bcrypt/bcryptcert.cpp)
+#else()
+set(
+    AZURE_ATTESTATION_SOURCE
+    ${AZURE_ATTESTATION_SOURCE}
     src/private/crypto/openssl/opensslcrypto.cpp
     src/private/crypto/openssl/opensslkeys.cpp
-    src/private/crypto/openssl/opensslcert.cpp )
+    src/private/crypto/openssl/opensslcert.cpp)
+#endif()
+
 
 create_per_service_target_build(azure-security-attestation attestation)
 
 add_library(azure-security-attestation ${AZURE_ATTESTATION_HEADER} ${AZURE_ATTESTATION_SOURCE})
 
 #if(WIN32)
+#    find_package(WIL CONFIG REQUIRED)
+#    target_link_libraries(WIL::WIL)
 #    target_link_libraries(azure-core PRIVATE bcrypt crypt32)
 #else()
     # Required for Hashing ( md5 and sha ).

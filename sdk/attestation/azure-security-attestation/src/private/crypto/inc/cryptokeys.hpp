@@ -6,10 +6,7 @@
 
 #pragma once
 #include <string>
-//#include <azure/core/cryptography/hash.hpp>
-//#include <azure/core/internal/cryptography/sha_hash.hpp>
 #include "crypto.hpp"
-#include <openssl/evp.h>
 
 namespace Azure { namespace Security { namespace Attestation { namespace _private {
   namespace Cryptography {

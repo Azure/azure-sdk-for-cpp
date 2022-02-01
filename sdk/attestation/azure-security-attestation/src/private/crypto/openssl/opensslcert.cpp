@@ -20,6 +20,7 @@
 
 #include "../inc/crypto.hpp"
 #include "opensslcert.hpp"
+#include "openssl_helpers.hpp"
 #include "opensslkeys.hpp"
 #include <openssl/bio.h>
 #include <openssl/ecdsa.h>
