@@ -35,6 +35,12 @@ namespace Azure { namespace Security { namespace Attestation { namespace _detail
 
   struct JsonHelpers
   {
+    /// @brief - parse a string field from a JSON object.
+    ///
+    /// @param field - JSON object containing the field.
+    /// @param fieldName - name of the JSON property to retrieve.
+    /// @returns A `std::string` referencing the property in the JSON object, an empty string if the
+    /// field does not exist.
     static std::string ParseStringField(
         const Azure::Core::Json::_internal::json& field,
         const std::string& fieldName)
@@ -51,6 +57,12 @@ namespace Azure { namespace Security { namespace Attestation { namespace _detail
       return "";
     }
 
+    /// @brief - parse an array of strins from a JSON object.
+    ///
+    /// @param field - JSON object containing the field.
+    /// @param fieldName - name of the JSON property to retrieve.
+    /// @returns A `std::vector<std::string>` referencing the property in the JSON object, an empty
+    /// array if the field does not exist.
     static std::vector<std::string> ParseStringArrayField(
         const Azure::Core::Json::_internal::json& field,
         const std::string& fieldName)

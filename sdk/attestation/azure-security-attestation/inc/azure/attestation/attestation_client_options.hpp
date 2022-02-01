@@ -67,6 +67,9 @@ namespace Azure { namespace Security { namespace Attestation {
     }
   };
 
+  /** @brief The AttestationDataType represents how the attestation service should interpret the
+   * {@link AttestOptions::RuntimeData} and {@link AttestOptions::InittimeData} fields.
+   */
   class AttestationDataType final {
   private:
     std::string m_dataType;
@@ -82,7 +85,7 @@ namespace Azure { namespace Security { namespace Attestation {
     /**
      * @brief Enable comparing the ext enum.
      *
-     * @param other Another #ServiceVersion to be compared.
+     * @param other Another AttestationDataType to be compared.
      */
     bool operator==(AttestationDataType const& other) const
     {
@@ -90,34 +93,53 @@ namespace Azure { namespace Security { namespace Attestation {
     }
 
     /**
-     * @brief Return the #ServiceVersion string representation.
+     * @brief Return the #AttestationDataType string representation.
      *
      */
     std::string const& ToString() const { return m_dataType; }
 
     /**
-     * @brief Specified to express the runtime data in the generated token as a JSON object.
+     * @brief When specified, instructs the attestation service to express the runtime data in the
+     * generated token as a JSON object.
      *
      */
     AZ_ATTESTATION_DLLEXPORT static const AttestationDataType Json;
 
     /**
-     * @brief Specified to express the runtime data in the generated token as a Binary object.
+     * @brief When specified, instructs the attestation service to express the runtime data in the
+     * generated token as a Binary object.
      *
      */
     AZ_ATTESTATION_DLLEXPORT static const AttestationDataType Binary;
   };
 
+  /** @brief AttestationData represents a block of data to be sent to the attestation service.
+   * See the description of the {@link AttestationClient} class for more information about how the
+   * AttestationData type works.
+   */
   struct AttestationData final
   {
+    /// Data contained within attestation evidence. The attestation service will verify that the
+    /// evidence does contain this data and will include the Data in the attestation token. A
+    /// relying party can then use this data.
     std::vector<uint8_t> Data;
+
+    /// Reflects how the Data field should be represented in the resulting attestation token.
     AttestationDataType DataType;
   };
 
+  /** @brief Parameters sent to the attestation service to be consumed in the attestation operation.
+   */
   struct AttestOptions final
   {
+    /// Data created dynamically by the enclave
     AttestationData RuntimeData;
+
+    /// Data created when the enclave is created.
     AttestationData InittimeData = {};
+
+    /// A test hook which allows developers to test attestation policies before they commit them to
+    /// the service.
     std::string DraftPolicyForAttestation = {};
   };
 }}} // namespace Azure::Security::Attestation
