@@ -155,6 +155,11 @@ namespace Azure { namespace Security { namespace Attestation {
     {
     }
 
+    /**
+    * @brief Returns the version the client was configured with.
+    * 
+    * @returns The API version used when communicating with the attestation service.
+    */
     std::string ClientVersion() const;
     /**
      * @brief Construct a new Key Client object from another key client.

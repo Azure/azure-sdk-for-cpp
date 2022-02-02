@@ -1,7 +1,6 @@
 // Copyright (c) Microsoft Corp. All Rights Reserved
 #pragma once
 #include "cryptokeys.hpp"
-#include <azure/core/internal/json/json.hpp>
 
 namespace Azure { namespace Security { namespace Attestation { namespace _private {
   namespace Cryptography {

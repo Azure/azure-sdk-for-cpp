@@ -2,14 +2,8 @@
 // SPDX-License-Identifier: MIT
 
 #include "../../src/private/attestation_deserializer.hpp"
-#include <azure/attestation/attestation_client.hpp>
-#include <azure/core/exception.hpp>
-#include <azure/core/http/raw_response.hpp>
-#include <azure/core/internal/json/json.hpp>
-#include <azure/core/test/test_base.hpp>
-#include <azure/identity/client_secret_credential.hpp>
+#include "azure/core/test/test_base.hpp"
 #include <gtest/gtest.h>
-#include <random>
 
 // cspell:words jwk jwks
 namespace Azure { namespace Security { namespace Attestation { namespace Test {

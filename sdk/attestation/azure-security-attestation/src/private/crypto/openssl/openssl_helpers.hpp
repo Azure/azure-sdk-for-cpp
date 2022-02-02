@@ -7,6 +7,7 @@
 #include <openssl/evp.h>
 #include <type_traits>
 #include <utility>
+#include <stdexcept>
 
 namespace Azure { namespace Security { namespace Attestation { namespace _private {
   namespace Cryptography {

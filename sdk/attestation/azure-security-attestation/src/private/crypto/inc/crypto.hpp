@@ -2,7 +2,6 @@
 // SPDX-License-Identifier: MIT
 
 #pragma once
-#include <azure/core/internal/json/json.hpp>
 #include <ctime>
 #include <list>
 #include <memory>
