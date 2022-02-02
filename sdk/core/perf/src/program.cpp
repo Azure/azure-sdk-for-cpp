@@ -203,7 +203,8 @@ inline void RunTests(
   uint64_t lastCompleted = 0;
   auto progressThread = std::thread(
       [&title, &completedOperations, &lastCompletionTimes, &lastCompleted, &progresToken]() {
-        std::cout << "=== " << title << " ===" << std::endl
+        std::cout << std::endl
+                  << "=== " << title << " ===" << std::endl
                   << "Current\t\tTotal\t\tAverage" << std::endl;
         while (!progresToken.IsCancelled())
         {
@@ -344,6 +345,12 @@ void Azure::Perf::Program::Run(
   // instrument test for recordings if the env is set up.
   std::cout << std::endl << "=== Post Setup ===" << std::endl;
   {
+    if (!options.TestProxies.empty())
+    {
+      std::cout << " - Creating test recordgins for each test using test-proxies..." << std::endl;
+      std::cout << " - Enabling test-proxy playback" << std::endl;
+    }
+
     std::vector<std::thread> tasks(parallelTasks);
     for (int i = 0; i < parallelTasks; i++)
     {
@@ -382,6 +389,12 @@ void Azure::Perf::Program::Run(
 
   std::cout << std::endl << "=== Pre-Cleanup ===" << std::endl;
   {
+    if (!options.TestProxies.empty())
+    {
+      std::cout << " - Deleting test recordings from test-proxies..." << std::endl;
+      std::cout << " - Disabling test-proxy playback" << std::endl;
+    }
+
     std::vector<std::thread> tasks(parallelTasks);
     for (int i = 0; i < parallelTasks; i++)
     {
