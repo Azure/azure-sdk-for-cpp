@@ -147,7 +147,7 @@ namespace Azure { namespace Security { namespace Attestation {
     /// section 4.1.1</a>
     std::string Algorithm;
 
-    /// The "kid" token header property See 
+    /// The "kid" token header property See
     /// <a href='https://datatracker.ietf.org/doc/html/rfc7515#section-4.1.4'>RFC 7515
     /// section 4.1.4</a>
     std::string KeyId;
@@ -155,24 +155,26 @@ namespace Azure { namespace Security { namespace Attestation {
     /**
      * The expiration time after which the token is no longer valid. The
      * ExpiresOn property corresponds to the "exp" claim in a Json Web Token.  See
-     * <a href="https://datatracker.ietf.org/doc/html/rfc7519#section-4.1.4">RFC 7519 section 4.1.4</a>
+     * <a href="https://datatracker.ietf.org/doc/html/rfc7519#section-4.1.4">RFC 7519
+     * section 4.1.4</a>
      *
      */
     Azure::Nullable<Azure::DateTime> ExpiresOn;
 
     /**
      * The time before which a token cannot be considered valid. The
-     * ExpiresOn property corresponds to the "exp" claim in a Json Web Token.  See 
-     * <a href="https://datatracker.ietf.org/doc/html/rfc7519#section-4.1.4">RFC 7519 section 4.1.4</a>
+     * ExpiresOn property corresponds to the "exp" claim in a Json Web Token.  See
+     * <a href="https://datatracker.ietf.org/doc/html/rfc7519#section-4.1.4">RFC 7519
+     * section 4.1.4</a>
      *
      */
     Azure::Nullable<Azure::DateTime> NotBefore;
 
     /**
      * The time at which the token was issued. The IssuedAt property
-     * corresponds to the "iat" claim in a Json Web Token. See 
-     * <a href="https://datatracker.ietf.org/doc/html/rfc7519#section-4.1.6">RFC 7519 section 4.1.6</a>
-     * for more information.
+     * corresponds to the "iat" claim in a Json Web Token. See
+     * <a href="https://datatracker.ietf.org/doc/html/rfc7519#section-4.1.6">RFC 7519
+     * section 4.1.6</a> for more information.
      *
      */
     Azure::Nullable<Azure::DateTime> IssuedOn;
@@ -246,9 +248,9 @@ namespace Azure { namespace Security { namespace Attestation {
 
     /**
      * Retrieve the issuer of the attestation token. The issuer corresponds to the "iss" claim
-     * in a Json Web Token. See 
-     * <a href="https://datatracker.ietf.org/doc/html/rfc7519#section-4.1.1">RFC 7519 section 4.1.1</a>
-     * for more information.
+     * in a Json Web Token. See
+     * <a href="https://datatracker.ietf.org/doc/html/rfc7519#section-4.1.1">RFC 7519
+     * section 4.1.1</a> for more information.
      *
      * The issuer will always be the same as the attestation service instance endpoint URL.
      */
