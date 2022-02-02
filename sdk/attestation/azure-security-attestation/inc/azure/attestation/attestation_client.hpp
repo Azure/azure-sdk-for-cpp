@@ -28,7 +28,7 @@ namespace Azure { namespace Security { namespace Attestation {
    * host first).
    *
    * To solve the communication problem, the Attest API can be used to facilitate what is
-   * known as the "Secure Key Release" (SKR) protocol.</p>
+   * known as the "Secure Key Release" (SKR) protocol.
    *
    * There are 4 parties involved in an attestation operation:
    *
@@ -48,11 +48,11 @@ namespace Azure { namespace Security { namespace Attestation {
    * (thus they need to be treated as opaque arrays of bytes by the SDK):
    *
    * -# Evidence. For Intel SGX enclaves, this has two forms, either an SGX 'Quote' or an
-   * OpenEnclave 'Report'. It is required for attestation operations.</li>
-   * -# InitTimeData  This is data which is specified at Initialization Time. It is optional
-   * (and not currently supported on all enclave types in Azure)</li>
-   * -# RunTimeData  this is data which is specified at the time the quote is generated (at
-   * runtime). It is optional, but required for the Secure Key Release protocol.</li>
+   * OpenEnclave 'Report'. It is required for attestation operations.
+   * -# InitTimeData - This is data which is specified at Initialization Time. It is optional
+   * (and not currently supported on all enclave types in Azure)
+   * -# RunTimeData - this is data which is specified at the time the quote is generated (at
+   * "runtime"). It is optional, but required for the Secure Key Release protocol.
    *
    * The Evidence is cryptographically signed by a known authority (for Intel SGX Quotes or
    * OpenEnclave reports, this is a key owned by Intel which represents that the SGX enclave is
