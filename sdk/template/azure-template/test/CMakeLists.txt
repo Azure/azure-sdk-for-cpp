@@ -17,7 +17,7 @@ add_executable (
      ut/template_test.cpp
      )
 
-if(CMAKE_SYSTEM_NAME STREQUAL "WindowsStore")
+#if(CMAKE_SYSTEM_NAME STREQUAL "WindowsStore")
   # cspell:words VCRUNTIME
   set(AZ_UWP_VCRUNTIME_PATH "C:/Program Files (x86)/Microsoft Visual Studio/2019/Enterprise/VC/Redist/MSVC/14.29.30133/onecore/debug_nonredist/x86/Microsoft.VC142.DebugCRT/VCRUNTIME140D.dll")
   set(AZ_UWP_BUILD_CONFIG "Debug")
@@ -31,7 +31,7 @@ if(CMAKE_SYSTEM_NAME STREQUAL "WindowsStore")
     )
     unset(AZ_UWP_VCRUNTIME_FILENAME)
   endif()
-endif()
+#endif()
 
 create_per_service_target_build(azure-template-test template)
 create_map_file(azure-template-test azure-template-test.map)
