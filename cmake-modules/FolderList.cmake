@@ -49,7 +49,6 @@ endmacro()
 
 macro(SetCompileOptions project)
     message ("setting up compile options for ${project}")
-   
     # Compile Options
     SetGlobalOptions()
 endmacro()
