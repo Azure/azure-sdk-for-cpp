@@ -92,23 +92,8 @@ namespace Azure { namespace Perf {
 
   void BaseTest::ConfigureCoreClientOptions(Azure::Core::_internal::ClientOptions* clientOptions)
   {
-    std::vector<std::string> proxyList;
+    if (!m_proxy.empty())
     {
-      std::string proxy;
-      std::istringstream fullArg(m_options.GetOptionOrDefault<std::string>("Proxy", ""));
-      while (std::getline(fullArg, proxy, ','))
-      {
-        proxyList.push_back(proxy);
-      }
-    }
-
-    if (!proxyList.empty())
-    {
-      // Depending on test index, select one of the proxy from the list
-      m_proxy = proxyList[m_testIndex % proxyList.size()];
-      // std::cout << "testId: " << m_testIndex << " assigned with test proxy: " << m_proxy
-      //           << std::endl;
-      // If proxy is set in the options, the proxy policy is attached in RECORD MODE
       clientOptions->PerRetryPolicies.push_back(std::make_unique<ProxyPolicy>(this));
     }
   }

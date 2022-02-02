@@ -38,9 +38,8 @@ namespace Azure { namespace Perf {
     std::string m_recordId;
     std::string m_proxy;
     bool m_isPlayBackMode = false;
-    int m_testIndex = 0;
 
-    void SetTestIndex(int index) { m_testIndex = index; }
+    void SetTestProxy(std::string const& proxy) { m_proxy = proxy; }
 
     /**
      * @brief Define actions to run after test set up and before the actual test.

@@ -33,13 +33,13 @@ void Azure::Perf::to_json(Azure::Core::Json::_internal::json& j, const GlobalTes
   {
     j["Rate"] = nullptr;
   }
-  if (p.Proxy.empty())
+  if (p.TestProxies.empty())
   {
-    j["Proxy"] = "N/A";
+    j["TestProxies"] = "N/A";
   }
   else
   {
-    j["Proxy"] = p.Proxy;
+    j["TestProxies"] = p.TestProxies;
   }
 }
 
@@ -84,6 +84,6 @@ std::vector<Azure::Perf::TestOption> Azure::Perf::GlobalTestOptions::GetOptionMe
       {"Port", {"--port"}, "Port to redirect HTTP requests. Default to no redirection.", 1},
       {"Rate", {"-r", "--rate"}, "Target throughput (ops/sec). Default to no throughput.", 1},
       {"Warmup", {"-w", "--warmup"}, "Duration of warmup in seconds. Default to 5 seconds.", 1},
-      {"Proxy", {"-x", "--proxy"}, "Proxy Server", 1},
+      {"TestProxies", {"-x", "--test-proxies"}, "URIs of TestProxy Servers (separated by ';')", 1},
       {"help", {"-h", "--help"}, "Display help information.", 0}};
 }

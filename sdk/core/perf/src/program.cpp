@@ -313,8 +313,12 @@ void Azure::Perf::Program::Run(
   for (int i = 0; i < parallelTasks; i++)
   {
     parallelTest[i] = testGenerator(Azure::Perf::TestOptions(argResults));
-    // Let the test know its index
-    parallelTest[i]->SetTestIndex(i);
+    // Let the test know it should use a proxy
+    if (!options.TestProxies.empty())
+    {
+      // Take the corresponding proxy from the list in round robin
+      parallelTest[i]->SetTestProxy(options.TestProxies[i % options.TestProxies.size()]);
+    }
   }
 
   /******************** Global Set up ******************************/

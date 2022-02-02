@@ -94,13 +94,13 @@ Azure::Perf::GlobalTestOptions Azure::Perf::Program::ArgParser::Parse(
   {
     options.Warmup = parsedArgs["Warmup"];
   }
-  if (parsedArgs["Proxy"])
+  if (parsedArgs["TestProxies"])
   {
     std::string proxy;
-    std::istringstream fullArg(parsedArgs["Proxy"].as<std::string>());
-    while (std::getline(fullArg, proxy, ','))
+    std::istringstream fullArg(parsedArgs["TestProxies"].as<std::string>());
+    while (std::getline(fullArg, proxy, ';'))
     {
-      options.Proxy.push_back(proxy);
+      options.TestProxies.push_back(proxy);
     }
   }
 
