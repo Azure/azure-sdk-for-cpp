@@ -9,7 +9,7 @@
 
 #pragma once
 
-#include "azure/attestation/dll_import_export.hpp"
+#include "dll_import_export.hpp"
 
 #include <azure/core/context.hpp>
 #include <azure/core/http/http.hpp>

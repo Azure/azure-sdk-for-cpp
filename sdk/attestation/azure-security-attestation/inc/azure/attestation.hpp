@@ -8,5 +8,5 @@
 
 #pragma once
 
-#include "azure/attestation/attestation_client.hpp"
-#include "azure/attestation/dll_import_export.hpp"
+#include "attestation/attestation_client.hpp"
+#include "attestation/dll_import_export.hpp"

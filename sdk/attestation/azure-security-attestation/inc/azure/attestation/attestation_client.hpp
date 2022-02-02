@@ -7,8 +7,12 @@
 #include <string>
 
 #include "attestation_client_options.hpp"
-#include "azure/attestation/attestation_client_models.hpp"
-#include <azure/core/internal/http/pipeline.hpp>
+#include "attestation_client_models.hpp"
+
+namespace Azure { namespace Core { namespace Http { namespace _internal {
+  class HttpPipeline;
+}}}}
+
 
 namespace Azure { namespace Security { namespace Attestation {
 
