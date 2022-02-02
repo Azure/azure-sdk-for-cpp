@@ -14,29 +14,33 @@ using namespace Azure::Core::Http::Policies;
 using namespace Azure::Core;
 namespace {
 
-bool IsPlayBackMode = false;
-std::string RecordId;
-
 class ProxyPolicy final : public HttpPolicy {
 private:
-  Azure::Core::Url m_proxy;
+  Azure::Perf::BaseTest* m_testContext;
 
 public:
-  ProxyPolicy(std::string const& proxy) : m_proxy(proxy) {}
+  ProxyPolicy(Azure::Perf::BaseTest* proxyManager) : m_testContext(proxyManager) {}
+
+  // copy
+  ProxyPolicy(ProxyPolicy const& other) : ProxyPolicy{other.m_testContext} {}
+
+  // move
+  ProxyPolicy(ProxyPolicy&& other) : m_testContext{other.m_testContext} {}
 
   std::unique_ptr<RawResponse> Send(
       Request& request,
       NextHttpPolicy nextPolicy,
       Context const& context) const override
   {
-    if (RecordId.empty())
+    std::string const recordId(m_testContext->m_recordId);
+    if (recordId.empty())
     {
       return nextPolicy.Send(request, context);
     }
 
     // Use a new request to redirect
-    auto redirectRequest
-        = Azure::Core::Http::Request(request.GetMethod(), m_proxy, request.GetBodyStream());
+    auto redirectRequest = Azure::Core::Http::Request(
+        request.GetMethod(), Azure::Core::Url(m_testContext->m_proxy), request.GetBodyStream());
     redirectRequest.GetUrl().SetPath(request.GetUrl().GetPath());
 
     // Copy all headers
@@ -58,11 +62,11 @@ public:
       redirectRequest.SetHeader("x-recording-upstream-base-uri", host);
     }
     // Set recording-id
-    redirectRequest.SetHeader("x-recording-id", RecordId);
+    redirectRequest.SetHeader("x-recording-id", recordId);
     redirectRequest.SetHeader("x-recording-remove", "false");
 
     // Using recordId, find out MODE
-    if (IsPlayBackMode)
+    if (m_testContext->m_isPlayBackMode)
     {
       // PLAYBACK mode
       redirectRequest.SetHeader("x-recording-mode", "playback");
@@ -88,19 +92,31 @@ namespace Azure { namespace Perf {
 
   void BaseTest::ConfigureCoreClientOptions(Azure::Core::_internal::ClientOptions* clientOptions)
   {
-    std::string proxy(m_options.GetOptionOrDefault("Proxy", ""));
-    if (!proxy.empty())
+    std::vector<std::string> proxyList;
     {
+      std::string proxy;
+      std::istringstream fullArg(m_options.GetOptionOrDefault<std::string>("Proxy", ""));
+      while (std::getline(fullArg, proxy, ','))
+      {
+        proxyList.push_back(proxy);
+      }
+    }
+
+    if (!proxyList.empty())
+    {
+      // Depending on test index, select one of the proxy from the list
+      m_proxy = proxyList[m_testIndex % proxyList.size()];
+      // std::cout << "testId: " << m_testIndex << " assigned with test proxy: " << m_proxy
+      //           << std::endl;
       // If proxy is set in the options, the proxy policy is attached in RECORD MODE
-      clientOptions->PerRetryPolicies.push_back(std::make_unique<ProxyPolicy>(proxy));
+      clientOptions->PerRetryPolicies.push_back(std::make_unique<ProxyPolicy>(this));
     }
   }
 
   void BaseTest::PostSetUp()
   {
-    std::string proxy(m_options.GetOptionOrDefault("Proxy", ""));
 
-    if (!proxy.empty())
+    if (!m_proxy.empty())
     {
       Azure::Core::_internal::ClientOptions clientOp;
       clientOp.Retry.MaxRetries = 0;
@@ -112,7 +128,7 @@ namespace Azure { namespace Perf {
 
       // Send start-record call
       {
-        Azure::Core::Url startRecordReq(proxy);
+        Azure::Core::Url startRecordReq(m_proxy);
         startRecordReq.AppendPath("record");
         startRecordReq.AppendPath("start");
         Azure::Core::Http::Request request(Azure::Core::Http::HttpMethod::Post, startRecordReq);
@@ -125,29 +141,31 @@ namespace Azure { namespace Perf {
             [](std::pair<std::string const&, std::string const&> h) {
               return h.first == "x-recording-id";
             });
-        RecordId.append(findHeader->second);
+        m_recordId = findHeader->second;
       }
 
       // play one test to generate a recording
       this->Run(ctx);
+      // Run twice to alling with how all other SDK perf langs run
+      this->Run(ctx);
 
       // Stop recording
       {
-        Azure::Core::Url stopRecordReq(proxy);
+        Azure::Core::Url stopRecordReq(m_proxy);
         stopRecordReq.AppendPath("record");
         stopRecordReq.AppendPath("stop");
         Azure::Core::Http::Request request(Azure::Core::Http::HttpMethod::Post, stopRecordReq);
-        request.SetHeader("x-recording-id", RecordId);
+        request.SetHeader("x-recording-id", m_recordId);
         pipeline.Send(request, ctx);
       }
 
       // Start playback
       {
-        Azure::Core::Url startPlayback(proxy);
+        Azure::Core::Url startPlayback(m_proxy);
         startPlayback.AppendPath("playback");
         startPlayback.AppendPath("start");
         Azure::Core::Http::Request request(Azure::Core::Http::HttpMethod::Post, startPlayback);
-        request.SetHeader("x-recording-id", RecordId);
+        request.SetHeader("x-recording-id", m_recordId);
         auto response = pipeline.Send(request, ctx);
 
         auto const& headers = response->GetHeaders();
@@ -157,18 +175,16 @@ namespace Azure { namespace Perf {
             [](std::pair<std::string const&, std::string const&> h) {
               return h.first == "x-recording-id";
             });
-        RecordId.clear();
-        RecordId.append(findHeader->second);
-        IsPlayBackMode = true;
+        m_recordId = findHeader->second;
+        m_isPlayBackMode = true;
       }
     }
   }
 
   void BaseTest::PreCleanUp()
   {
-    if (!RecordId.empty())
+    if (!m_recordId.empty())
     {
-      std::string proxy(m_options.GetOptionOrDefault("Proxy", ""));
       Azure::Core::_internal::ClientOptions clientOp;
       clientOp.Retry.MaxRetries = 0;
       std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>> policiesOp;
@@ -179,17 +195,17 @@ namespace Azure { namespace Perf {
 
       // Stop playback
       {
-        Azure::Core::Url stopPlaybackReq(proxy);
+        Azure::Core::Url stopPlaybackReq(m_proxy);
         stopPlaybackReq.AppendPath("playback");
         stopPlaybackReq.AppendPath("stop");
         Azure::Core::Http::Request request(Azure::Core::Http::HttpMethod::Post, stopPlaybackReq);
-        request.SetHeader("x-recording-id", RecordId);
+        request.SetHeader("x-recording-id", m_recordId);
         request.SetHeader("x-purge-inmemory-recording", "true"); // cspell:disable-line
 
         pipeline.Send(request, ctx);
 
-        RecordId.clear();
-        IsPlayBackMode = false;
+        m_recordId.clear();
+        m_isPlayBackMode = false;
       }
     }
   }

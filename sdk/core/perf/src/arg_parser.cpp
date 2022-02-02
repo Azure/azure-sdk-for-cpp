@@ -5,6 +5,7 @@
 #include "azure/perf/program.hpp"
 
 #include <stdexcept>
+#include <string>
 #include <vector>
 
 #define GET_ARG(Name, Is)
@@ -95,7 +96,12 @@ Azure::Perf::GlobalTestOptions Azure::Perf::Program::ArgParser::Parse(
   }
   if (parsedArgs["Proxy"])
   {
-    options.Proxy = parsedArgs["Proxy"].as<std::string>();
+    std::string proxy;
+    std::istringstream fullArg(parsedArgs["Proxy"].as<std::string>());
+    while (std::getline(fullArg, proxy, ','))
+    {
+      options.Proxy.push_back(proxy);
+    }
   }
 
   return options;

@@ -293,7 +293,7 @@ void Azure::Perf::Program::Run(
   argResults = Azure::Perf::Program::ArgParser::Parse(argc, argv, testOptions);
   // ReCreate Test with parsed results
   test = testGenerator(Azure::Perf::TestOptions(argResults));
-  auto options = Azure::Perf::Program::ArgParser::Parse(argResults);
+  GlobalTestOptions options = Azure::Perf::Program::ArgParser::Parse(argResults);
 
   if (options.JobStatistics)
   {
@@ -313,6 +313,8 @@ void Azure::Perf::Program::Run(
   for (int i = 0; i < parallelTasks; i++)
   {
     parallelTest[i] = testGenerator(Azure::Perf::TestOptions(argResults));
+    // Let the test know its index
+    parallelTest[i]->SetTestIndex(i);
   }
 
   /******************** Global Set up ******************************/

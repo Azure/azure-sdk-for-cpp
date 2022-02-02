@@ -13,9 +13,14 @@
 #include "azure/perf/test_options.hpp"
 #include <azure/core/context.hpp>
 #include <azure/core/internal/client_options.hpp>
+#include <azure/core/url.hpp>
 
 #include <string>
 #include <vector>
+
+namespace {
+class ProxyPolicy;
+}
 
 namespace Azure { namespace Perf {
   class Program;
@@ -27,8 +32,16 @@ namespace Azure { namespace Perf {
   class BaseTest {
     // Provides private access so a test program can run PostSetup.
     friend class Program;
+    friend class ::ProxyPolicy;
 
   private:
+    std::string m_recordId;
+    std::string m_proxy;
+    bool m_isPlayBackMode = false;
+    int m_testIndex = 0;
+
+    void SetTestIndex(int index) { m_testIndex = index; }
+
     /**
      * @brief Define actions to run after test set up and before the actual test.
      *

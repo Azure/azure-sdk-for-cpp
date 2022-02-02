@@ -99,11 +99,15 @@ namespace Azure { namespace Perf {
     /**
      * @brief Redirect test requests thru this server proxy.
      *
+     * @details More than one proxy address can be added using comma separated format. Do not use
+     * spaces after the coma as it would be considered as another command argument. When multiple
+     * proxy are set, each server is assigned to a performance test run on round-robin.
+     *
      * @note Only the requests from the test are redirected. Any request from set up won't be
      * redirected.
      *
      */
-    std::string Proxy;
+    std::vector<std::string> Proxy;
 
     /**
      * @brief Create an array of the performance framework options.
