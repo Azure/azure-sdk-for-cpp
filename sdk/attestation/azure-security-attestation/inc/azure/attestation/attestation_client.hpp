@@ -188,8 +188,8 @@ namespace Azure { namespace Security { namespace Attestation {
      * @param options - Options to the attestation request (runtime data, inittime data, etc).
      * @param context - Context for the operation.
      *
-     * @returns Response<{@link AttestationToken}<{@link AttestationResult}>> - The result of the attestation
-     * operation
+     * @returns Response<{@link AttestationToken}<{@link AttestationResult}>> - The result of the
+     * attestation operation
      */
     Response<AttestationToken<AttestationResult>> AttestSgxEnclave(
         std::vector<uint8_t> const& sgxQuoteToAttest,
