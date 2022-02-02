@@ -79,20 +79,18 @@ add_executable (
     exception_test.cpp
 )
 
-if(CMAKE_SYSTEM_NAME STREQUAL "WindowsStore")
-  # cspell:words VCRUNTIME
-  set(AZ_UWP_VCRUNTIME_PATH "C:/Program Files (x86)/Microsoft Visual Studio/2019/Enterprise/VC/Redist/MSVC/14.29.30133/onecore/debug_nonredist/x86/Microsoft.VC142.DebugCRT/VCRUNTIME140D.dll")
-  set(AZ_UWP_BUILD_CONFIG "Debug")
-  if (EXISTS "${VCRUNTIME_PATH}")
-    get_filename_component(AZ_UWP_VCRUNTIME_FILENAME "${VCRUNTIME_PATH}" NAME_WE)
-    add_custom_command(
-        TARGET azure-core-test
-          POST_BUILD
-            COMMAND ${CMAKE_COMMAND} -E "copy_if_different \"${AZ_UWP_VCRUNTIME_PATH}\" ${CMAKE_CURRENT_BINARY_DIR}/${AZ_UWP_BUILD_CONFIG}/"
-            COMMAND ${CMAKE_COMMAND} -E "rename \"${CMAKE_CURRENT_BINARY_DIR}/${AZ_UWP_BUILD_CONFIG}/${AZ_UWP_VCRUNTIME_FILENAME}.dll ${CMAKE_CURRENT_BINARY_DIR}/${AZ_UWP_BUILD_CONFIG}/${AZ_UWP_VCRUNTIME_FILENAME}_APP.dll"
-    )
-    unset()
-  endif()
+# cspell:words VCRUNTIME
+set(AZ_UWP_VCRUNTIME_PATH "C:/Program Files (x86)/Microsoft Visual Studio/2019/Enterprise/VC/Redist/MSVC/14.29.30133/onecore/debug_nonredist/x86/Microsoft.VC142.DebugCRT/VCRUNTIME140D.dll")
+set(AZ_UWP_BUILD_CONFIG "Debug")
+if (EXISTS "${VCRUNTIME_PATH}")
+get_filename_component(AZ_UWP_VCRUNTIME_FILENAME "${VCRUNTIME_PATH}" NAME_WE)
+add_custom_command(
+    TARGET azure-core-test
+        POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E "copy_if_different \"${AZ_UWP_VCRUNTIME_PATH}\" ${CMAKE_CURRENT_BINARY_DIR}/${AZ_UWP_BUILD_CONFIG}/"
+        COMMAND ${CMAKE_COMMAND} -E "rename \"${CMAKE_CURRENT_BINARY_DIR}/${AZ_UWP_BUILD_CONFIG}/${AZ_UWP_VCRUNTIME_FILENAME}.dll ${CMAKE_CURRENT_BINARY_DIR}/${AZ_UWP_BUILD_CONFIG}/${AZ_UWP_VCRUNTIME_FILENAME}_APP.dll"
+)
+unset(AZ_UWP_VCRUNTIME_FILENAME)
 endif()
 
 if (MSVC)
@@ -124,20 +122,18 @@ add_executable (
   global_context_test.cpp
 )
 
-if(CMAKE_SYSTEM_NAME STREQUAL "WindowsStore")
-  # cspell:words VCRUNTIME
-  set(AZ_UWP_VCRUNTIME_PATH "C:/Program Files (x86)/Microsoft Visual Studio/2019/Enterprise/VC/Redist/MSVC/14.29.30133/onecore/debug_nonredist/x86/Microsoft.VC142.DebugCRT/VCRUNTIME140D.dll")
-  set(AZ_UWP_BUILD_CONFIG "Debug")
-  if (EXISTS "${VCRUNTIME_PATH}")
-    get_filename_component(AZ_UWP_VCRUNTIME_FILENAME "${VCRUNTIME_PATH}" NAME_WE)
-    add_custom_command(
-        TARGET azure-core-global-context-test
-          POST_BUILD
-            COMMAND ${CMAKE_COMMAND} -E "copy_if_different \"${AZ_UWP_VCRUNTIME_PATH}\" ${CMAKE_CURRENT_BINARY_DIR}/${AZ_UWP_BUILD_CONFIG}/"
-            COMMAND ${CMAKE_COMMAND} -E "rename \"${CMAKE_CURRENT_BINARY_DIR}/${AZ_UWP_BUILD_CONFIG}/${AZ_UWP_VCRUNTIME_FILENAME}.dll ${CMAKE_CURRENT_BINARY_DIR}/${AZ_UWP_BUILD_CONFIG}/${AZ_UWP_VCRUNTIME_FILENAME}_APP.dll"
-    )
-    unset()
-  endif()
+# cspell:words VCRUNTIME
+set(AZ_UWP_VCRUNTIME_PATH "C:/Program Files (x86)/Microsoft Visual Studio/2019/Enterprise/VC/Redist/MSVC/14.29.30133/onecore/debug_nonredist/x86/Microsoft.VC142.DebugCRT/VCRUNTIME140D.dll")
+set(AZ_UWP_BUILD_CONFIG "Debug")
+if (EXISTS "${VCRUNTIME_PATH}")
+get_filename_component(AZ_UWP_VCRUNTIME_FILENAME "${VCRUNTIME_PATH}" NAME_WE)
+add_custom_command(
+    TARGET azure-core-global-context-test
+        POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E "copy_if_different \"${AZ_UWP_VCRUNTIME_PATH}\" ${CMAKE_CURRENT_BINARY_DIR}/${AZ_UWP_BUILD_CONFIG}/"
+        COMMAND ${CMAKE_COMMAND} -E "rename \"${CMAKE_CURRENT_BINARY_DIR}/${AZ_UWP_BUILD_CONFIG}/${AZ_UWP_VCRUNTIME_FILENAME}.dll ${CMAKE_CURRENT_BINARY_DIR}/${AZ_UWP_BUILD_CONFIG}/${AZ_UWP_VCRUNTIME_FILENAME}_APP.dll"
+)
+unset(AZ_UWP_VCRUNTIME_FILENAME)
 endif()
 
 create_map_file(azure-core-global-context-test azure-core-global-context-test.map)
@@ -165,21 +161,20 @@ if(BUILD_TRANSPORT_CURL)
     azure_libcurl_core_main_test.cpp
   )
 
-  if(CMAKE_SYSTEM_NAME STREQUAL "WindowsStore")
-    # cspell:words VCRUNTIME
-    set(AZ_UWP_VCRUNTIME_PATH "C:/Program Files (x86)/Microsoft Visual Studio/2019/Enterprise/VC/Redist/MSVC/14.29.30133/onecore/debug_nonredist/x86/Microsoft.VC142.DebugCRT/VCRUNTIME140D.dll")
-    set(AZ_UWP_BUILD_CONFIG "Debug")
-    if (EXISTS "${VCRUNTIME_PATH}")
+  # cspell:words VCRUNTIME
+  set(AZ_UWP_VCRUNTIME_PATH "C:/Program Files (x86)/Microsoft Visual Studio/2019/Enterprise/VC/Redist/MSVC/14.29.30133/onecore/debug_nonredist/x86/Microsoft.VC142.DebugCRT/VCRUNTIME140D.dll")
+  set(AZ_UWP_BUILD_CONFIG "Debug")
+  if (EXISTS "${VCRUNTIME_PATH}")
       get_filename_component(AZ_UWP_VCRUNTIME_FILENAME "${VCRUNTIME_PATH}" NAME_WE)
       add_custom_command(
           TARGET azure-core-libcurl-test
-            POST_BUILD
+          POST_BUILD
               COMMAND ${CMAKE_COMMAND} -E "copy_if_different \"${AZ_UWP_VCRUNTIME_PATH}\" ${CMAKE_CURRENT_BINARY_DIR}/${AZ_UWP_BUILD_CONFIG}/"
               COMMAND ${CMAKE_COMMAND} -E "rename \"${CMAKE_CURRENT_BINARY_DIR}/${AZ_UWP_BUILD_CONFIG}/${AZ_UWP_VCRUNTIME_FILENAME}.dll ${CMAKE_CURRENT_BINARY_DIR}/${AZ_UWP_BUILD_CONFIG}/${AZ_UWP_VCRUNTIME_FILENAME}_APP.dll"
       )
-      unset()
-    endif()
+      unset(AZ_UWP_VCRUNTIME_FILENAME)
   endif()
+ 
 
   create_map_file(azure-core-libcurl-test azure-core-libcurl-test.map)
 
