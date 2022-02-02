@@ -79,6 +79,22 @@ add_executable (
     exception_test.cpp
 )
 
+if(CMAKE_SYSTEM_NAME STREQUAL "WindowsStore")
+  # cspell:words VCRUNTIME
+  set(AZ_UWP_VCRUNTIME_PATH "C:/Program Files (x86)/Microsoft Visual Studio/2019/Enterprise/VC/Redist/MSVC/14.29.30133/onecore/debug_nonredist/x86/Microsoft.VC142.DebugCRT/VCRUNTIME140D.dll")
+  set(AZ_UWP_BUILD_CONFIG "Debug")
+  if (EXISTS "${VCRUNTIME_PATH}")
+    get_filename_component(AZ_UWP_VCRUNTIME_FILENAME "${VCRUNTIME_PATH}" NAME_WE)
+    add_custom_command(
+        TARGET azure-core-test
+          POST_BUILD
+            COMMAND ${CMAKE_COMMAND} -E "copy_if_different \"${AZ_UWP_VCRUNTIME_PATH}\" ${CMAKE_CURRENT_BINARY_DIR}/${AZ_UWP_BUILD_CONFIG}/"
+            COMMAND ${CMAKE_COMMAND} -E "rename \"${CMAKE_CURRENT_BINARY_DIR}/${AZ_UWP_BUILD_CONFIG}/${AZ_UWP_VCRUNTIME_FILENAME}.dll ${CMAKE_CURRENT_BINARY_DIR}/${AZ_UWP_BUILD_CONFIG}/${AZ_UWP_VCRUNTIME_FILENAME}_APP.dll"
+    )
+    unset()
+  endif()
+endif()
+
 if (MSVC)
   # Disable warnings:
   # - C26495: Variable
@@ -148,6 +164,22 @@ if(BUILD_TRANSPORT_CURL)
     azure-core-libcurl-test
     azure_libcurl_core_main_test.cpp
   )
+
+  if(CMAKE_SYSTEM_NAME STREQUAL "WindowsStore")
+    # cspell:words VCRUNTIME
+    set(AZ_UWP_VCRUNTIME_PATH "C:/Program Files (x86)/Microsoft Visual Studio/2019/Enterprise/VC/Redist/MSVC/14.29.30133/onecore/debug_nonredist/x86/Microsoft.VC142.DebugCRT/VCRUNTIME140D.dll")
+    set(AZ_UWP_BUILD_CONFIG "Debug")
+    if (EXISTS "${VCRUNTIME_PATH}")
+      get_filename_component(AZ_UWP_VCRUNTIME_FILENAME "${VCRUNTIME_PATH}" NAME_WE)
+      add_custom_command(
+          TARGET azure-core-libcurl-test
+            POST_BUILD
+              COMMAND ${CMAKE_COMMAND} -E "copy_if_different \"${AZ_UWP_VCRUNTIME_PATH}\" ${CMAKE_CURRENT_BINARY_DIR}/${AZ_UWP_BUILD_CONFIG}/"
+              COMMAND ${CMAKE_COMMAND} -E "rename \"${CMAKE_CURRENT_BINARY_DIR}/${AZ_UWP_BUILD_CONFIG}/${AZ_UWP_VCRUNTIME_FILENAME}.dll ${CMAKE_CURRENT_BINARY_DIR}/${AZ_UWP_BUILD_CONFIG}/${AZ_UWP_VCRUNTIME_FILENAME}_APP.dll"
+      )
+      unset()
+    endif()
+  endif()
 
   create_map_file(azure-core-libcurl-test azure-core-libcurl-test.map)
 
