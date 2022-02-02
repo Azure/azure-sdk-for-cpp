@@ -174,6 +174,7 @@ TEST(Nullable, ValueOr)
 
 void Foo(int&& rValue) { (void)rValue; }
 
+#if GTEST_HAS_DEATH_TEST
 TEST(Nullable, PreCondition)
 {
   Nullable<int> emptyNullable;
@@ -207,6 +208,7 @@ TEST(Nullable, PreCondition3)
   ASSERT_DEATH(Foo(Nullable<int>().Value());, "Empty Nullable");
 #endif
 }
+#endif
 
 TEST(Nullable, Operator)
 {
