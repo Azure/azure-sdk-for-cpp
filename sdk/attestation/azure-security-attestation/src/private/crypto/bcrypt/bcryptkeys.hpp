@@ -12,10 +12,7 @@
 
 #pragma once
 
-#include "azure/core/internal/json/json.hpp"
-
 #include <Windows.h>
-#include "azure/core/base64.hpp"
 #include <bcrypt.h>
 #include <memory>
 #include <string>

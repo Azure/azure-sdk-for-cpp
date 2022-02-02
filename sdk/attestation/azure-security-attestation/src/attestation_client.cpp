@@ -4,13 +4,13 @@
 #include "azure/attestation/attestation_client.hpp"
 #include <shared_mutex>
 
+#include "azure/core/base64.hpp"
+#include "azure/core/http/policies/policy.hpp"
+#include "azure/core/internal/http/pipeline.hpp"
 #include "private/attestation_client_models_private.hpp"
 #include "private/attestation_common_request.hpp"
 #include "private/attestation_deserializer.hpp"
 #include "private/package_version.hpp"
-#include "azure/core/base64.hpp"
-#include "azure/core/http/policies/policy.hpp"
-#include "azure/core/internal/http/pipeline.hpp"
 
 #include <string>
 

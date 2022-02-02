@@ -6,13 +6,12 @@
 #include <shared_mutex>
 #include <string>
 
-#include "attestation_client_options.hpp"
 #include "attestation_client_models.hpp"
+#include "attestation_client_options.hpp"
 
 namespace Azure { namespace Core { namespace Http { namespace _internal {
   class HttpPipeline;
-}}}}
-
+}}}} // namespace Azure::Core::Http::_internal
 
 namespace Azure { namespace Security { namespace Attestation {
 
@@ -156,10 +155,10 @@ namespace Azure { namespace Security { namespace Attestation {
     }
 
     /**
-    * @brief Returns the version the client was configured with.
-    * 
-    * @returns The API version used when communicating with the attestation service.
-    */
+     * @brief Returns the version the client was configured with.
+     *
+     * @returns The API version used when communicating with the attestation service.
+     */
     std::string ClientVersion() const;
     /**
      * @brief Construct a new Key Client object from another key client.

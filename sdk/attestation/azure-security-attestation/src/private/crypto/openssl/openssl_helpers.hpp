@@ -5,9 +5,9 @@
 #include <memory>
 #include <openssl/bio.h>
 #include <openssl/evp.h>
+#include <stdexcept>
 #include <type_traits>
 #include <utility>
-#include <stdexcept>
 
 namespace Azure { namespace Security { namespace Attestation { namespace _private {
   namespace Cryptography {
