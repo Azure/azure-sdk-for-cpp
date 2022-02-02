@@ -22,6 +22,8 @@
 #include <unordered_map>
 #include <vector>
 
+
+//cspell: words MRSIGNER MRENCLAVE
 namespace Azure { namespace Security { namespace Attestation {
   /**
    * @brief Contains information about this instance of the attestation service, which can be used
