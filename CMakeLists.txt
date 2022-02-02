@@ -95,7 +95,7 @@ endif()
 
 # sub-projects
 add_subdirectory(sdk/core)
-sadd_subdirectory(sdk/identity)
+add_subdirectory(sdk/identity)
 add_subdirectory(sdk/keyvault)
 add_subdirectory(sdk/storage)
 add_subdirectory(sdk/template)
