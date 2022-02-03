@@ -3,7 +3,7 @@
 
 #include "azure/storage/blobs/blob_lease_client.hpp"
 
-#include <azure/core/internal/azure_assert.hpp>
+#include <azure/core/azure_assert.hpp>
 #include <azure/core/uuid.hpp>
 
 namespace Azure { namespace Storage { namespace Blobs {
@@ -53,13 +53,13 @@ namespace Azure { namespace Storage { namespace Blobs {
       protocolLayerOptions.IfModifiedSince = options.AccessConditions.IfModifiedSince;
       protocolLayerOptions.IfUnmodifiedSince = options.AccessConditions.IfUnmodifiedSince;
 
-      _azure_ASSERT_MSG(
+      AZURE_ASSERT_MSG(
           !options.AccessConditions.IfMatch.HasValue(),
           "Blob container lease doesn't support If-Match condition.");
-      _azure_ASSERT_MSG(
+      AZURE_ASSERT_MSG(
           !options.AccessConditions.IfNoneMatch.HasValue(),
           "Blob container lease doesn't support If-None-Match condition.");
-      _azure_ASSERT_MSG(
+      AZURE_ASSERT_MSG(
           !options.AccessConditions.TagConditions.HasValue(),
           "Blob container lease doesn't support tag condition.");
 
@@ -79,7 +79,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     }
     else
     {
-      _azure_UNREACHABLE_CODE();
+      AZURE_UNREACHABLE_CODE();
     }
   }
 
@@ -118,13 +118,13 @@ namespace Azure { namespace Storage { namespace Blobs {
       protocolLayerOptions.IfModifiedSince = options.AccessConditions.IfModifiedSince;
       protocolLayerOptions.IfUnmodifiedSince = options.AccessConditions.IfUnmodifiedSince;
 
-      _azure_ASSERT_MSG(
+      AZURE_ASSERT_MSG(
           !options.AccessConditions.IfMatch.HasValue(),
           "Blob container lease doesn't support If-Match condition.");
-      _azure_ASSERT_MSG(
+      AZURE_ASSERT_MSG(
           !options.AccessConditions.IfNoneMatch.HasValue(),
           "Blob container lease doesn't support If-None-Match condition.");
-      _azure_ASSERT_MSG(
+      AZURE_ASSERT_MSG(
           !options.AccessConditions.TagConditions.HasValue(),
           "Blob container lease doesn't support tag condition.");
 
@@ -144,7 +144,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     }
     else
     {
-      _azure_UNREACHABLE_CODE();
+      AZURE_UNREACHABLE_CODE();
     }
   }
 
@@ -182,13 +182,13 @@ namespace Azure { namespace Storage { namespace Blobs {
       protocolLayerOptions.IfModifiedSince = options.AccessConditions.IfModifiedSince;
       protocolLayerOptions.IfUnmodifiedSince = options.AccessConditions.IfUnmodifiedSince;
 
-      _azure_ASSERT_MSG(
+      AZURE_ASSERT_MSG(
           !options.AccessConditions.IfMatch.HasValue(),
           "Blob container lease doesn't support If-Match condition.");
-      _azure_ASSERT_MSG(
+      AZURE_ASSERT_MSG(
           !options.AccessConditions.IfNoneMatch.HasValue(),
           "Blob container lease doesn't support If-None-Match condition.");
-      _azure_ASSERT_MSG(
+      AZURE_ASSERT_MSG(
           !options.AccessConditions.TagConditions.HasValue(),
           "Blob container lease doesn't support tag condition.");
 
@@ -207,7 +207,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     }
     else
     {
-      _azure_UNREACHABLE_CODE();
+      AZURE_UNREACHABLE_CODE();
     }
   }
 
@@ -254,13 +254,13 @@ namespace Azure { namespace Storage { namespace Blobs {
       protocolLayerOptions.IfModifiedSince = options.AccessConditions.IfModifiedSince;
       protocolLayerOptions.IfUnmodifiedSince = options.AccessConditions.IfUnmodifiedSince;
 
-      _azure_ASSERT_MSG(
+      AZURE_ASSERT_MSG(
           !options.AccessConditions.IfMatch.HasValue(),
           "Blob container lease doesn't support If-Match condition.");
-      _azure_ASSERT_MSG(
+      AZURE_ASSERT_MSG(
           !options.AccessConditions.IfNoneMatch.HasValue(),
           "Blob container lease doesn't support If-None-Match condition.");
-      _azure_ASSERT_MSG(
+      AZURE_ASSERT_MSG(
           !options.AccessConditions.TagConditions.HasValue(),
           "Blob container lease doesn't support tag condition.");
 
@@ -285,7 +285,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     }
     else
     {
-      _azure_UNREACHABLE_CODE();
+      AZURE_UNREACHABLE_CODE();
     }
   }
 
@@ -323,13 +323,13 @@ namespace Azure { namespace Storage { namespace Blobs {
       protocolLayerOptions.IfModifiedSince = options.AccessConditions.IfModifiedSince;
       protocolLayerOptions.IfUnmodifiedSince = options.AccessConditions.IfUnmodifiedSince;
 
-      _azure_ASSERT_MSG(
+      AZURE_ASSERT_MSG(
           !options.AccessConditions.IfMatch.HasValue(),
           "Blob container lease doesn't support If-Match condition.");
-      _azure_ASSERT_MSG(
+      AZURE_ASSERT_MSG(
           !options.AccessConditions.IfNoneMatch.HasValue(),
           "Blob container lease doesn't support If-None-Match condition.");
-      _azure_ASSERT_MSG(
+      AZURE_ASSERT_MSG(
           !options.AccessConditions.TagConditions.HasValue(),
           "Blob container lease doesn't support tag condition.");
 
@@ -348,7 +348,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     }
     else
     {
-      _azure_UNREACHABLE_CODE();
+      AZURE_UNREACHABLE_CODE();
     }
   }
 }}} // namespace Azure::Storage::Blobs

@@ -103,7 +103,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       *this = m_pageBlobClient->GetManagedDiskPageRangesDiff(
           m_previousSnapshotUrl.Value(), m_operationOptions, context);
     }
-    _azure_UNREACHABLE_CODE();
+    AZURE_UNREACHABLE_CODE();
   }
 
 }}} // namespace Azure::Storage::Blobs
