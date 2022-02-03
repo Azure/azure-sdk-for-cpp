@@ -8,21 +8,17 @@ list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake-modules")
 set(AZ_ALL_LIBRARIES ON)
 
 # Compile Options
-option(WARNINGS_AS_ERRORS "Treat compiler warnings as errors" ON)
-option(BUILD_TRANSPORT_CURL "Build an HTTP transport implementation with CURL" OFF)
-option(BUILD_TRANSPORT_WINHTTP "Build an HTTP transport implementation with WIN HTTP" OFF)
-option(BUILD_TRANSPORT_CUSTOM "Implementation for AzureSdkGetCustomHttpTransport function must be linked to the final application" OFF)
-option(BUILD_TESTING "Build test cases" OFF)
-option(BUILD_RTTI "Build libraries with run-time type information." ON)
-option(BUILD_CODE_COVERAGE "Build gcov targets for HTML and XML reports. Requires debug build and BUILD_TESTING" OFF)
-option(BUILD_DOCUMENTATION "Create HTML based API documentation (requires Doxygen)" OFF)
-option(RUN_LONG_UNIT_TESTS "Tests that takes more than 5 minutes to complete. No effect if BUILD_TESTING is OFF" OFF)
-option(BUILD_STORAGE_SAMPLES "Build sample application for Azure Storage clients" OFF)
-option(BUILD_PERFORMANCE_TESTS "Build the performance test library" OFF)
-option(MSVC_USE_STATIC_CRT "(MSVC only) Set to ON to link SDK with static CRT (/MT or /MTd switch)." OFF)
+include(FolderList)
+SetGlobalOptions()
+
+if(FETCH_SOURCE_DEPS)
+  message(FATAL_ERROR, "FETCH_SOURCE_DEPS flag not for global use, instead use when building individual components")
+  return()
+endif()
 
 include(AzureTransportAdapters)
 include(AzureVcpkg)
+include(AzureBuildTargetForCI)
 
 az_vcpkg_integrate()
 
@@ -93,10 +89,17 @@ include(AzureDoxygen)
 # Functions for library versions
 include(AzureVersion)
 
+if(BUILD_SAMPLES)
+  add_subdirectory(samples/helpers/get-env)
+endif()
+
 # sub-projects
 add_subdirectory(sdk/core)
 add_subdirectory(sdk/identity)
 add_subdirectory(sdk/keyvault)
 add_subdirectory(sdk/storage)
 add_subdirectory(sdk/template)
-add_subdirectory(samples/integration/vcpkg-keyvault)
+
+if(BUILD_SAMPLES)
+  add_subdirectory(samples/integration/vcpkg-keyvault)
+endif()

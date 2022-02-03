@@ -4,19 +4,6 @@
 cmake_minimum_required (VERSION 3.13)
 
 project (azure-storage LANGUAGES CXX)
-option(BUILD_STORAGE_SAMPLES "Build storage sample codes" ON)
-
-if(BUILD_TESTING)
-
-  if (NOT AZ_ALL_LIBRARIES)
-    include(AddGoogleTest)
-    enable_testing ()
-  endif()
-
-  add_executable(azure-storage-test)
-  create_map_file(azure-storage-test azure-storage-test.map)
-  add_gtest(azure-storage-test)
-endif()
 
 add_subdirectory(azure-storage-common)
 add_subdirectory(azure-storage-blobs)

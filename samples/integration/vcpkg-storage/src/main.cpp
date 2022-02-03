@@ -10,6 +10,8 @@
  *
  */
 
+#include "get_env.hpp"
+
 #include <iostream>
 
 #include <azure/storage/blobs.hpp>

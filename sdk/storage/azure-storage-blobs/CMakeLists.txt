@@ -17,6 +17,7 @@ include(AzureTransportAdapters)
 include(AzureDoxygen)
 include(AzureGlobalCompileOptions)
 include(AzureConfigRTTI)
+include(AzureBuildTargetForCI)
 
 az_vcpkg_integrate()
 
@@ -60,6 +61,7 @@ set(
 )
 
 add_library(azure-storage-blobs ${AZURE_STORAGE_BLOB_HEADER} ${AZURE_STORAGE_BLOB_SOURCE})
+create_per_service_target_build(azure-storage-blobs storage)
 
 # make sure that users can consume the project as a library.
 add_library(Azure::azure-storage-blobs ALIAS azure-storage-blobs)
@@ -92,30 +94,11 @@ az_rtti_setup(
 create_code_coverage(storage azure-storage-blobs azure-storage-test "tests?/*;samples?/*")
 
 if(BUILD_TESTING)
-  target_sources(
-    azure-storage-test
-      PRIVATE
-        test/ut/append_blob_client_test.cpp
-        test/ut/append_blob_client_test.hpp
-        test/ut/blob_container_client_test.cpp
-        test/ut/blob_container_client_test.hpp
-        test/ut/blob_sas_test.cpp
-        test/ut/blob_service_client_test.cpp
-        test/ut/block_blob_client_test.cpp
-        test/ut/block_blob_client_test.hpp
-        test/ut/macro_guard.cpp
-        test/ut/page_blob_client_test.cpp
-        test/ut/page_blob_client_test.hpp
-        test/ut/storage_retry_policy_test.cpp
-        test/ut/storage_timeout_test.cpp
-  )
-
-  target_link_libraries(azure-storage-test PRIVATE azure-storage-blobs)
-
+  add_subdirectory(test/ut)
   add_subdirectory(test/fault-injector)
 endif()
 
-if(BUILD_STORAGE_SAMPLES)
+if(BUILD_SAMPLES)
   add_subdirectory(samples)
 endif()
 

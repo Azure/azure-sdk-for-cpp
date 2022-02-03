@@ -17,6 +17,7 @@ include(AzureTransportAdapters)
 include(AzureDoxygen)
 include(AzureGlobalCompileOptions)
 include(AzureConfigRTTI)
+include(AzureBuildTargetForCI)
 
 az_vcpkg_integrate()
 
@@ -51,7 +52,7 @@ set(
 )
 
 add_library(azure-storage-queues ${AZURE_STORAGE_QUEUE_HEADER} ${AZURE_STORAGE_QUEUE_SOURCE})
-
+create_per_service_target_build(azure-storage-queues storage)
 # make sure that users can consume the project as a library.
 add_library(Azure::azure-storage-queues ALIAS azure-storage-queues)
 
@@ -83,20 +84,9 @@ az_rtti_setup(
 create_code_coverage(storage azure-storage-queues azure-storage-test "tests?/*;samples?/*")
 
 if(BUILD_TESTING)
-  target_sources(
-    azure-storage-test
-      PRIVATE
-        test/ut/macro_guard.cpp
-        test/ut/queue_client_messages_test.cpp
-        test/ut/queue_client_test.cpp
-        test/ut/queue_client_test.hpp
-        test/ut/queue_sas_test.cpp
-        test/ut/queue_service_client_test.cpp
-  )
-
-  target_link_libraries(azure-storage-test PRIVATE azure-storage-queues)
+  add_subdirectory(test/ut)
 endif()
 
-if(BUILD_STORAGE_SAMPLES)
+if(BUILD_SAMPLES)
   add_subdirectory(samples)
 endif()

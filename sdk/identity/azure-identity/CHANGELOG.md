@@ -4,13 +4,19 @@
 
 ### Features Added
 
+- Enabled `EnvironmentCredential` and `ManagedIdentityCredential` to work on UWP.
+
 ### Breaking Changes
 
 ### Bugs Fixed
 
-- [2741](https://github.com/Azure/azure-sdk-for-cpp/issues/2741) Fixed linking problem when Azure SDK is built as DLL.
-
 ### Other Changes
+
+## 1.1.1 (2022-01-11)
+
+### Bugs Fixed
+
+- [2741](https://github.com/Azure/azure-sdk-for-cpp/issues/2741) Fixed linking problem when Azure SDK is built as DLL.
 
 ## 1.1.0 (2021-08-10)
 

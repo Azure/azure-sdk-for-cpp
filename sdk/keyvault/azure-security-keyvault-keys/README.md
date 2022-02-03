@@ -217,10 +217,10 @@ The following section provides several code snippets using the `client` [created
 - [Update an existing key](#update-an-existing-key)
 - [Delete a key](#delete-a-key)
 - [Delete and purge a key](#delete-and-purge-a-key)
-- [List keys](#list-keys)
+- [List Keys](#list-keys)
 <!-- - [Encrypt and Decrypt](#encrypt-and-decrypt) -->
 
-### Create a key
+#### Create a key
 
 Create a key to be stored in the Azure Key Vault. If a key with the same name already exists, then a new version of the key is created.
 
@@ -249,7 +249,7 @@ std::cout << ecKey.Name();
 std::cout << ecKey.KeyType.ToString();
 ```
 
-### Retrieve a key
+#### Retrieve a key
 
 `GetKey` retrieves a key previously stored in the Azure Key Vault.
 
@@ -260,7 +260,7 @@ std::cout << key.Name();
 std::cout << key.KeyType.ToString();
 ```
 
-### Update an existing key
+#### Update an existing key
 
 `UpdateKeyProperties` updates a key previously stored in the Azure Key Vault.
 
@@ -277,11 +277,11 @@ std::cout << updatedKey.Properties.Version;
 std::cout << updatedKey.Properties.UpdatedOn->ToString();
 ```
 
-### Delete a key
+#### Delete a key
 
 `StartDeleteKey` starts a long-running operation to delete a key previously stored in the Azure Key Vault.
 You can retrieve the key immediately without waiting for the operation to complete.
-When [soft-delete][soft_delete] is not enabled for the Azure Key Vault, this operation permanently deletes the key.
+When [soft-delete](https://docs.microsoft.com/azure/key-vault/general/soft-delete-overview) is not enabled for the Azure Key Vault, this operation permanently deletes the key.
 
 ```cpp
 DeleteKeyOperation operation = client.StartDeleteKey("key-name");
@@ -291,7 +291,7 @@ std::cout << key.Name();
 std::cout << key.DeletedOn->ToString();
 ```
 
-### Delete and purge a key
+#### Delete and purge a key
 
 You will need to wait for the long-running operation to complete before trying to purge or recover the key.
 
@@ -310,7 +310,7 @@ DeletedKey key = operation.Value();
 client.PurgeDeletedKey(key.Name());
 ```
 
-### List Keys
+#### List Keys
 
 This example lists all the keys in the specified Azure Key Vault.
 
@@ -325,20 +325,6 @@ for (auto keys = client.GetPropertiesOfKeys(); keys.HasPage(); keys.MoveToNextPa
       }
     }
 ```
-
-<!-- ### Encrypt and Decrypt
-
-This example creates a `CryptographyClient` and uses it to encrypt and decrypt with a key in Azure Key Vault.
-
-```cpp
-byte[] plaintext = Encoding.UTF8.GetBytes("A single block of plaintext");
-
-// encrypt the data using the algorithm RSAOAEP
-EncryptResult encryptResult = cryptoClient.Encrypt(EncryptionAlgorithm.RsaOaep, plaintext);
-
-// decrypt the encrypted data.
-DecryptResult decryptResult = cryptoClient.Decrypt(EncryptionAlgorithm.RsaOaep, encryptResult.Ciphertext);
-``` -->
 
 ## Troubleshooting
 
@@ -433,7 +419,7 @@ Several Azure Key Vault keys client library samples are available to you in this
 See the [CONTRIBUTING.md][contributing] for details on building, testing, and contributing to these libraries.
 
 This project welcomes contributions and suggestions. Most contributions require you to agree to a Contributor License Agreement (CLA)
-declaring that you have the right to, and actually do, grant us the rights to use your contribution. For details, visit https://cla.microsoft.com.
+declaring that you have the right to, and actually do, grant us the rights to use your contribution. For details, visit the [Contributor License Agreement](https://cla.microsoft.com).
 
 When you submit a pull request, a CLA-bot will automatically determine whether you need to provide a CLA and decorate the PR appropriately (e.g., label, comment).
 Simply follow the instructions provided by the bot. You will only need to do this once across all repos using our CLA.

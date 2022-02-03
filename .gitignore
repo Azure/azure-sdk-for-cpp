@@ -24,6 +24,9 @@ bld/
 [Oo]bj/
 [Ll]og/
 [Oo]ut/
+#these are for build from source temp directories 
+[Ss]dk/**/[Ss]dk/
+**/[Oo]ut/**
 
 # Visual Studio 2015/2017 cache/options directory
 .vs/
