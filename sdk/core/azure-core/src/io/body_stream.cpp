@@ -18,10 +18,10 @@
 #include <windows.h>
 #endif
 
+#include "azure/core/azure_assert.hpp"
 #include "azure/core/context.hpp"
 #include "azure/core/internal/io/null_body_stream.hpp"
 #include "azure/core/io/body_stream.hpp"
-#include "azure/core/azure_assert.hpp"
 
 #include <algorithm>
 #include <codecvt>
