@@ -1,6 +1,6 @@
 # Release History
 
-## 1.4.0-beta.1 (2022-02-03)
+## 1.4.0-beta.1 (2022-02-04)
 
 ### Features Added
 
