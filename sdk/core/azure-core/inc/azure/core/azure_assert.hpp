@@ -12,8 +12,22 @@
 
 #include "azure/core/internal/azure_assert.hpp"
 
+[[deprecated("The Azure Assert macros are meant for internal use within the SDK only, use the STL "
+             "assert instead.")]]
 #define AZURE_ASSERT(exp) _azure_ASSERT(exp)
+
+[[deprecated("The Azure Assert macros are meant for internal use within the SDK only, use the STL "
+             "assert instead.")]]
 #define AZURE_ASSERT_MSG(exp, msg) _azure_ASSERT_MSG(exp, msg)
+
+[[deprecated("The Azure Assert macros are meant for internal use within the SDK only, use the STL "
+             "assert instead.")]]
 #define AZURE_ASSERT_FALSE(exp) _azure_ASSERT_FALSE(exp)
+
+[[deprecated("The Azure Assert macros are meant for internal use within the SDK only, use the STL "
+             "assert instead.")]]
 #define AZURE_UNREACHABLE_CODE() _azure_UNREACHABLE_CODE()
+
+[[deprecated("The Azure Assert macros are meant for internal use within the SDK only, use the STL "
+             "assert instead.")]]
 #define AZURE_NOT_IMPLEMENTED() _azure_NOT_IMPLEMENTED()
