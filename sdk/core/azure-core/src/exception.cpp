@@ -15,9 +15,13 @@ using namespace Azure::Core::Http::_internal;
 
 namespace Azure { namespace Core {
 
+  RequestFailedException::RequestFailedException(std::string const& what) : std::runtime_error(what)
+  {
+  }
+
   RequestFailedException::RequestFailedException(
       std::unique_ptr<Azure::Core::Http::RawResponse>& rawResponse)
-      : std::runtime_error("Received an HTTP unsuccessful status code.")
+      : RequestFailedException("Received an HTTP unsuccessful status code.")
   {
     const auto& headers = rawResponse->GetHeaders();
 
