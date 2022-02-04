@@ -141,7 +141,6 @@ public:
   const std::string& ToString() const
   {
     AZURE_ASSERT_MSG(m_value.HasValue(), "Empty ETag, check HasValue() before calling ToString().");
-
     return m_value.Value();
   }
 
