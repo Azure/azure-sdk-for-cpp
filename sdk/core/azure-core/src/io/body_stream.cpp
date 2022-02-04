@@ -21,6 +21,7 @@
 #include "azure/core/context.hpp"
 #include "azure/core/internal/io/null_body_stream.hpp"
 #include "azure/core/io/body_stream.hpp"
+#include "azure/core/azure_assert.hpp"
 
 #include <algorithm>
 #include <codecvt>
@@ -43,7 +44,7 @@ static_assert(sizeof(void*) >= sizeof(HANDLE), "We must be able to cast HANDLE t
 // Keep reading until buffer is all fill out of the end of stream content is reached
 size_t BodyStream::ReadToCount(uint8_t* buffer, size_t count, Context const& context)
 {
-  _azure_ASSERT(buffer || count == 0);
+  AZURE_ASSERT(buffer || count == 0);
 
   size_t totalRead = 0;
 
