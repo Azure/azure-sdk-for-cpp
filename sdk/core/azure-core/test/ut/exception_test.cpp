@@ -93,7 +93,7 @@ TEST(RequestFailedException, Message)
   response->SetBodyStream(std::make_unique<Azure::Core::IO::MemoryBodyStream>(
       responseBodyStream, sizeof(responseBodyStream) - 1));
 
-  auto exception = Azure::Core::RequestFailedException("what", response);
+  auto exception = Azure::Core::RequestFailedException(response);
 
   EXPECT_EQ(exception.StatusCode, Azure::Core::Http::HttpStatusCode::ServiceUnavailable);
   EXPECT_EQ(exception.Message, "JT");
@@ -101,5 +101,5 @@ TEST(RequestFailedException, Message)
   EXPECT_EQ(exception.RequestId, "1");
   EXPECT_EQ(exception.ClientRequestId, "2");
   EXPECT_EQ(exception.ReasonPhrase, "retry please :");
-  EXPECT_EQ(exception.what(), std::string("what"));
+  EXPECT_EQ(exception.what(), std::string("Received an HTTP unsuccessful status code."));
 }
