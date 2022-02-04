@@ -12,8 +12,38 @@
 
 #include "azure/core/internal/azure_assert.hpp"
 
-#define AZURE_ASSERT(exp) _azure_ASSERT(exp)
-#define AZURE_ASSERT_MSG(exp, msg) _azure_ASSERT_MSG(exp, msg)
-#define AZURE_ASSERT_FALSE(exp) _azure_ASSERT_FALSE(exp)
-#define AZURE_UNREACHABLE_CODE() _azure_UNREACHABLE_CODE()
-#define AZURE_NOT_IMPLEMENTED() _azure_NOT_IMPLEMENTED()
+namespace Azure { namespace Core { namespace _internal {
+  // LCOV_EXCL_START
+  [[deprecated("The Azure Assert macros are meant for internal use within the SDK only, use the "
+               "standard library's assert() instead.")]] [[noreturn]] inline void
+  DeprecatedAzureAssert(bool exp, const char* msg = nullptr)
+  {
+    static_cast<void>(msg);
+#if defined(NDEBUG)
+    if (!exp)
+    {
+      std::abort();
+    }
+#else
+    assert(exp);
+#endif
+  }
+
+  [[deprecated("The Azure Unreachable Code macros are meant for internal use within the SDK only, "
+               "use std::abort() instead.")]] [[noreturn]] inline void
+  DeprecatedAzureUnreachableCode(std::string const& msg)
+  {
+    AzureNoReturnPath(std::string const& msg);
+  }
+  // LCOV_EXCL_STOP
+}}} // namespace Azure::Core::_internal
+
+#define AZURE_ASSERT(exp) ::Azure::Core::_internal::DeprecatedAzureAssert(exp)
+#define AZURE_ASSERT_MSG(exp, msg) ::Azure::Core::_internal::DeprecatedAzureAssert(exp, msg)
+#define AZURE_ASSERT_FALSE(exp) AZURE_ASSERT(!(exp))
+
+#define AZURE_UNREACHABLE_CODE() \
+  ::Azure::Core::_internal::DeprecatedAzureUnreachableCode("unreachable code!")
+
+#define AZURE_NOT_IMPLEMENTED() \
+  ::Azure::Core::_internal::DeprecatedAzureUnreachableCode("not implemented code!")
