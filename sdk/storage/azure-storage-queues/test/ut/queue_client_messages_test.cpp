@@ -11,7 +11,7 @@ namespace Azure { namespace Storage { namespace Test {
   TEST_F(QueueClientTest, EnqueueMessage)
   {
     auto queueClient = Azure::Storage::Queues::QueueClient::CreateFromConnectionString(
-        StandardStorageConnectionString(), LowercaseRandomString());
+        StandardStorageConnectionString(), m_testNameLowercase, m_options);
     queueClient.Create();
 
     const std::string message = "message content.";
@@ -35,7 +35,7 @@ namespace Azure { namespace Storage { namespace Test {
   TEST_F(QueueClientTest, EnqueueMessageTTL)
   {
     auto queueClient = Azure::Storage::Queues::QueueClient::CreateFromConnectionString(
-        StandardStorageConnectionString(), LowercaseRandomString());
+        StandardStorageConnectionString(), m_testNameLowercase, m_options);
     queueClient.Create();
 
     const std::string message = "message content.";
@@ -45,9 +45,9 @@ namespace Azure { namespace Storage { namespace Test {
     auto res = queueClient.EnqueueMessage(message, enqueueOptions).Value;
 
     EXPECT_TRUE(queueClient.PeekMessages().Value.Messages.empty());
-    std::this_thread::sleep_for(std::chrono::milliseconds(1200));
+    TestSleep(std::chrono::milliseconds(1200));
     EXPECT_FALSE(queueClient.PeekMessages().Value.Messages.empty());
-    std::this_thread::sleep_for(std::chrono::milliseconds(1200));
+    TestSleep(std::chrono::milliseconds(1200));
     EXPECT_TRUE(queueClient.PeekMessages().Value.Messages.empty());
 
     enqueueOptions = Queues::EnqueueMessageOptions();
@@ -71,7 +71,7 @@ namespace Azure { namespace Storage { namespace Test {
   TEST_F(QueueClientTest, ReceiveMessage)
   {
     auto queueClient = Azure::Storage::Queues::QueueClient::CreateFromConnectionString(
-        StandardStorageConnectionString(), LowercaseRandomString());
+        StandardStorageConnectionString(), m_testNameLowercase, m_options);
     queueClient.Create();
 
     EXPECT_TRUE(queueClient.ReceiveMessages().Value.Messages.empty());
@@ -91,7 +91,7 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_TRUE(IsValidTime(receivedMessage.NextVisibleOn));
     EXPECT_EQ(receivedMessage.DequeueCount, 1);
 
-    std::this_thread::sleep_for(std::chrono::milliseconds(1200));
+    TestSleep(std::chrono::milliseconds(1200));
     receivedMessage = queueClient.ReceiveMessages().Value.Messages[0];
     EXPECT_EQ(receivedMessage.DequeueCount, 2);
 
@@ -101,7 +101,7 @@ namespace Azure { namespace Storage { namespace Test {
   TEST_F(QueueClientTest, ReceiveMessages)
   {
     auto queueClient = Azure::Storage::Queues::QueueClient::CreateFromConnectionString(
-        StandardStorageConnectionString(), LowercaseRandomString());
+        StandardStorageConnectionString(), m_testNameLowercase, m_options);
     queueClient.Create();
 
     Queues::ReceiveMessagesOptions receiveOptions;
@@ -142,7 +142,7 @@ namespace Azure { namespace Storage { namespace Test {
   TEST_F(QueueClientTest, PeekMessage)
   {
     auto queueClient = Azure::Storage::Queues::QueueClient::CreateFromConnectionString(
-        StandardStorageConnectionString(), LowercaseRandomString());
+        StandardStorageConnectionString(), m_testNameLowercase, m_options);
     queueClient.Create();
 
     EXPECT_TRUE(queueClient.PeekMessages().Value.Messages.empty());
@@ -164,7 +164,7 @@ namespace Azure { namespace Storage { namespace Test {
   TEST_F(QueueClientTest, PeekMessages)
   {
     auto queueClient = Azure::Storage::Queues::QueueClient::CreateFromConnectionString(
-        StandardStorageConnectionString(), LowercaseRandomString());
+        StandardStorageConnectionString(), m_testNameLowercase, m_options);
     queueClient.Create();
 
     Queues::PeekMessagesOptions peekOptions;
@@ -207,7 +207,7 @@ namespace Azure { namespace Storage { namespace Test {
   TEST_F(QueueClientTest, UpdateMessage)
   {
     auto queueClient = Azure::Storage::Queues::QueueClient::CreateFromConnectionString(
-        StandardStorageConnectionString(), LowercaseRandomString());
+        StandardStorageConnectionString(), m_testNameLowercase, m_options);
     queueClient.Create();
 
     const std::string message = "message content.";
@@ -228,7 +228,7 @@ namespace Azure { namespace Storage { namespace Test {
         res.MessageId, updateRes.PopReceipt, std::chrono::seconds(1), updateOptions);
     EXPECT_TRUE(queueClient.PeekMessages().Value.Messages.empty());
 
-    std::this_thread::sleep_for(std::chrono::milliseconds(1200));
+    TestSleep(std::chrono::milliseconds(1200));
     peekedMessage = queueClient.PeekMessages().Value.Messages[0];
     EXPECT_EQ(peekedMessage.MessageText, updatedMessage);
 
@@ -238,7 +238,7 @@ namespace Azure { namespace Storage { namespace Test {
   TEST_F(QueueClientTest, DeleteMessage)
   {
     auto queueClient = Azure::Storage::Queues::QueueClient::CreateFromConnectionString(
-        StandardStorageConnectionString(), LowercaseRandomString());
+        StandardStorageConnectionString(), m_testNameLowercase, m_options);
     queueClient.Create();
 
     const std::string message = "message content.";
@@ -253,7 +253,7 @@ namespace Azure { namespace Storage { namespace Test {
   TEST_F(QueueClientTest, ClearMessages)
   {
     auto queueClient = Azure::Storage::Queues::QueueClient::CreateFromConnectionString(
-        StandardStorageConnectionString(), LowercaseRandomString());
+        StandardStorageConnectionString(), m_testNameLowercase, m_options);
     queueClient.Create();
 
     const std::string message = "message content.";
@@ -268,7 +268,7 @@ namespace Azure { namespace Storage { namespace Test {
   TEST_F(QueueClientTest, MessageSpecialCharacters)
   {
     auto queueClient = Azure::Storage::Queues::QueueClient::CreateFromConnectionString(
-        StandardStorageConnectionString(), LowercaseRandomString());
+        StandardStorageConnectionString(), m_testNameLowercase, m_options);
     queueClient.Create();
 
     const std::string message = "message content`~!@#$%^&*()-=_+[]{}\\|;':\",.<>/?";

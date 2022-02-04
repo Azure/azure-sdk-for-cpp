@@ -12,9 +12,8 @@
  * - AZURE_CLIENT_SECRET: The client secret.
  *
  */
-#if defined(_MSC_VER)
-#define _CRT_SECURE_NO_WARNINGS
-#endif
+
+#include "get_env.hpp"
 
 #include <azure/core.hpp>
 #include <azure/identity.hpp>

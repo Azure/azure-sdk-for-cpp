@@ -57,6 +57,12 @@ target_link_libraries(<your project name> PRIVATE Azure::azure-storage-blobs)
 
 You can reference this [vcpkg Quick Start](https://github.com/microsoft/vcpkg#quick-start-windows) for more details.
 
+#### Getting Beta Releases in Vcpkg
+
+Official vcpkg registry may have beta versions of Azure SDK client libraries, up until a given library gets released as General Availability (GA) version. After that, we don't publish post-GA beta releases of that library in the official registry.
+
+If you are interested in both GA releases and post-GA beta releases, see [Azure SDK Beta Vcpkg Registry](https://github.com/azure-sdk/vcpkg-betas).
+
 ### Building your Application
 
 In order to use the SDK installed via vcpkg with CMake, you can use the toolchain file from vcpkg:
@@ -227,6 +233,9 @@ The following SDK library releases are available on [vcpkg](https://github.com/m
 * `azure-storage-blobs-cpp`
 * `azure-storage-files-datalake-cpp`
 * `azure-storage-files-shares-cpp`
+* `azure-security-keyvault-keys-cpp`
+* `azure-security-keyvault-secrets-cpp`
+* `azure-security-keyvault-certificates-cpp`
 
 > NOTE: In case of getting linker errors when consuming the SDK on Windows, make sure that [vcpkg triplet](https://vcpkg.readthedocs.io/en/latest/users/triplets/) being consumed matches the [CRT link flags](https://docs.microsoft.com/cpp/build/reference/md-mt-ld-use-run-time-library?view=msvc-160) being set for your app or library build. See also `MSVC_USE_STATIC_CRT` build flag.
 

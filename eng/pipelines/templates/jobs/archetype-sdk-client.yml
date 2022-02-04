@@ -63,6 +63,7 @@ jobs:
       variables:
         VcpkgDependencies: curl[winssl] libxml2
         VCPKG_DEFAULT_TRIPLET: 'x64-windows-static'
+        Package.EnableSBOMSigning: true
       steps:
         - template: /eng/common/pipelines/templates/steps/check-spelling.yml
           parameters:
@@ -102,6 +103,7 @@ jobs:
 
         - template: /eng/pipelines/templates/steps/cmake-build.yml
           parameters:
+            ServiceDirectory: ${{ parameters.ServiceDirectory }}
             Build: false
             GenerateArgs: >-
               -DINSTALL_GTEST=OFF
@@ -209,3 +211,14 @@ jobs:
             path: $(Build.ArtifactStagingDirectory)/docs
 
         - template: /eng/common/pipelines/templates/steps/eng-common-workflow-enforcer.yml
+
+        - task: AzureArtifacts.manifest-generator-task.manifest-generator-task.ManifestGeneratorTask@0
+          displayName: 'Generate BOM'
+          condition: succeededOrFailed()
+          inputs:
+            BuildDropPath: $(Build.SourcesDirectory)/build
+
+        - template: /eng/common/pipelines/templates/steps/publish-artifact.yml
+          parameters:
+            ArtifactPath: '$(Build.SourcesDirectory)/build/_manifest'
+            ArtifactName: 'release_artifact_manifest'

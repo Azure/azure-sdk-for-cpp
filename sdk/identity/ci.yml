@@ -30,7 +30,13 @@ stages:
       LiveTestCtestRegex: azure-identity.
       LineCoverageTarget: 99
       BranchCoverageTarget: 63
+# Dependencies per package is not supported. List the dependencies for all packages.
+      CMakeTestDependencies: 'azure-core-cpp'
       Artifacts:
+        - Name: azure-identity
+          Path: azure-identity
+          VcpkgPortName: azure-identity-cpp
+      ArtifactsSource:
         - Name: azure-identity
           Path: azure-identity
           VcpkgPortName: azure-identity-cpp
@@ -42,3 +48,15 @@ stages:
           Value: "non-real-client"
         - Name: AZURE_CLIENT_SECRET
           Value: "non-real-secret"
+      CMakeTestOptions:
+        - Name: Default
+          Value: ''
+        - Name: Test
+          Value: '-DBUILD_TESTING=ON'
+        - Name: Samples
+          Value: '-DBUILD_TESTING=ON -DBUILD_SAMPLES=ON'
+        - Name: Performance
+          Value: '-DBUILD_TESTING=ON -DBUILD_SAMPLES=ON -DBUILD_PERFORMANCE_TESTS=ON'
+      CMakeSourceTestOptions:
+        - Name: Source
+          Value: '-DFETCH_SOURCE_DEPS=ON'

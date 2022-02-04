@@ -3,23 +3,10 @@
 
 #include "credential_test_helper.hpp"
 
-#include "private/environment.hpp"
-
-#include <azure/core/platform.hpp>
+#include <azure/core/internal/environment.hpp>
 
 #include <stdlib.h>
 #include <type_traits>
-
-#if defined(AZ_PLATFORM_WINDOWS)
-#if !defined(WIN32_LEAN_AND_MEAN)
-#define WIN32_LEAN_AND_MEAN
-#endif
-#if !defined(NOMINMAX)
-#define NOMINMAX
-#endif
-
-#include <windows.h>
-#endif
 
 namespace {
 class TestTransport final : public Azure::Core::Http::HttpTransport {
@@ -45,39 +32,13 @@ public:
 
 using namespace Azure::Identity::Test::_detail;
 
-bool const CredentialTestHelper::EnvironmentOverride::IsEnvironmentAvailable(
-#if !defined(WINAPI_PARTITION_DESKTOP) \
-    || WINAPI_PARTITION_DESKTOP // See azure/core/platform.hpp for explanation.
-    true
-#else
-    false
-#endif
-);
-
 void CredentialTestHelper::EnvironmentOverride::SetVariables(
     std::map<std::string, std::string> const& vars)
 {
-#if !defined(WINAPI_PARTITION_DESKTOP) \
-    || WINAPI_PARTITION_DESKTOP // See azure/core/platform.hpp for explanation.
   for (auto var : vars)
   {
-    auto const& name = var.first;
-    auto const& value = var.second;
-
-#if defined(_MSC_VER)
-    static_cast<void>(_putenv((name + "=" + value).c_str()));
-#else
-    if (value.empty())
-    {
-      static_cast<void>(unsetenv(name.c_str()));
-    }
-    else
-    {
-      static_cast<void>(setenv(name.c_str(), value.c_str(), 1));
-    }
-#endif
+    Azure::Core::_internal::Environment::SetVariable(var.first.c_str(), var.second.c_str());
   }
-#endif
 }
 
 CredentialTestHelper::EnvironmentOverride::EnvironmentOverride(
@@ -85,7 +46,7 @@ CredentialTestHelper::EnvironmentOverride::EnvironmentOverride(
 {
   for (auto var : environment)
   {
-    m_originalEnv[var.first] = Identity::_detail::Environment::GetVariable(var.first.c_str());
+    m_originalEnv[var.first] = Azure::Core::_internal::Environment::GetVariable(var.first.c_str());
   }
 
   SetVariables(environment);

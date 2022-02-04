@@ -17,6 +17,7 @@ include(AzureTransportAdapters)
 include(AzureDoxygen)
 include(AzureGlobalCompileOptions)
 include(AzureConfigRTTI)
+include(AzureBuildTargetForCI)
 
 az_vcpkg_integrate()
 
@@ -66,6 +67,7 @@ set(
 )
 
 add_library(azure-storage-common ${AZURE_STORAGE_COMMON_HEADER} ${AZURE_STORAGE_COMMON_SOURCE})
+create_per_service_target_build(azure-storage-common storage)
 
 # make sure that users can consume the project as a library.
 add_library(Azure::azure-storage-common ALIAS azure-storage-common)
@@ -111,21 +113,5 @@ az_rtti_setup(
 create_code_coverage(storage azure-storage-common azure-storage-test "tests?/*;samples?/*")
 
 if(BUILD_TESTING)
-  target_sources(
-    azure-storage-test
-      PRIVATE
-        test/bearer_token_test.cpp
-        test/crypt_functions_test.cpp
-        test/metadata_test.cpp
-        test/storage_credential_test.cpp
-        test/test_base.cpp
-        test/test_base.hpp
-  )
-
-  if (MSVC)
-    target_compile_options(azure-storage-test PUBLIC /wd6326 /wd26495 /wd26812)
-  endif()
-
-  target_link_libraries(azure-storage-test PRIVATE azure-identity)
-  target_include_directories(azure-storage-test PRIVATE test)
+  add_subdirectory(test/ut)
 endif()

@@ -70,6 +70,8 @@ jobs:
 # Apply to all services running public pipeline
     - name: AZURE_TEST_MODE
       value: "PLAYBACK"
+    - name: AZURE_LOG_LEVEL
+      value: "verbose"
     - ${{ each testEnvVar in parameters.TestEnv }}:
       - name: ${{ testEnvVar.Name }}
         value: ${{ testEnvVar.Value }}
@@ -130,6 +132,7 @@ jobs:
 
       - template: /eng/pipelines/templates/steps/cmake-build.yml
         parameters:
+          ServiceDirectory: ${{ parameters.ServiceDirectory }}
           GenerateArgs: "$(CmakeArgs)"
           BuildArgs: "$(BuildArgs)"
           Env: "$(CmakeEnvArg)"
@@ -202,9 +205,10 @@ jobs:
           condition: and(succeededOrFailed(), eq(variables['CODE_COVERAGE'], 'enabled'), eq(variables['Skip.BranchCoverageEnforcement'], ''))
 
       # Use the job name to create the artifact name for MAP file publishing.
-      # "Validate Windows2019_UWP_debug_x86" -> "Windows2019_UWP_debug_x86"
+      # Attempts are also noted starting with 1
+      # "Validate Windows2019_UWP_debug_x86" -> "Windows2019_UWP_debug_x86_attempt_1"
       - pwsh: |
-          $artifactName = '$(Agent.JobName)'
+          $artifactName = "$(Agent.JobName)_attempt_$(System.JobAttempt)"
           $parts = $artifactName -split ' '
           if ($parts[1]) {
             $artifactName = $parts[1]
@@ -219,9 +223,32 @@ jobs:
           targetFolder: $(Build.ArtifactStagingDirectory)
           flattenFolders: true
         condition: eq(variables['PublishMapFiles'], 'true')
+        displayName: Stage map files
 
       - task: PublishPipelineArtifact@1
         inputs:
           artifactName: map-files-$(MapFileArtifactName)
           path: $(Build.ArtifactStagingDirectory)
         condition: eq(variables['PublishMapFiles'], 'true')
+        displayName : Publish map file artifacts
+        
+      - pwsh: |
+          $artifactName = "$(Agent.JobName)"
+          $parts = $artifactName -split ' '
+          if ($parts[1]) {
+            $artifactName = $parts[1]
+          }
+          Write-Host "##vso[task.setvariable variable=BomArtifactName;]$artifactName"
+        displayName: Set bom file artifact name
+        condition: succeededOrFailed()
+
+      - task: AzureArtifacts.manifest-generator-task.manifest-generator-task.ManifestGeneratorTask@0
+        displayName: 'Generate BOM'
+        condition: succeededOrFailed()
+        inputs:
+          BuildDropPath: $(Build.ArtifactStagingDirectory)
+
+      - template: /eng/common/pipelines/templates/steps/publish-artifact.yml
+        parameters:
+          ArtifactPath: '$(Build.ArtifactStagingDirectory)/_manifest'
+          ArtifactName: 'bom_manifest_$(BomArtifactName)'

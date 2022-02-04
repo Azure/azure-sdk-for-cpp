@@ -30,6 +30,14 @@ namespace Azure { namespace Core { namespace Test {
   class RecordNetworkCallPolicy : public Azure::Core::Http::Policies::HttpPolicy {
   private:
     Azure::Core::Test::InterceptorManager* m_interceptorManager;
+    // Used to save the first byte from request payloads.
+    // Then, get a subsequent request ask for a bodyStream response, the symbol is used to generate
+    // a bodyStream from it.
+    // This feature is helpful to let a storage tests ( for example ) to upload a big payload (more
+    // than 10Kb) and download it later.
+    // The request for upload will contain the payload to upload.
+    // Then the request for download will use the symbol to generate a bodyStream.
+    std::unique_ptr<uint8_t> m_symbol;
 
   public:
     /**
@@ -46,7 +54,7 @@ namespace Azure { namespace Core { namespace Test {
      * data.
      */
     RecordNetworkCallPolicy(Azure::Core::Test::InterceptorManager* interceptorManager)
-        : m_interceptorManager(interceptorManager)
+        : m_interceptorManager(interceptorManager), m_symbol(std::make_unique<uint8_t>('x'))
     {
     }
 

@@ -17,6 +17,7 @@ include(AzureTransportAdapters)
 include(AzureDoxygen)
 include(AzureGlobalCompileOptions)
 include(AzureConfigRTTI)
+include(AzureBuildTargetForCI)
 
 az_vcpkg_integrate()
 
@@ -41,6 +42,7 @@ set(
 )
 
 add_library(azure-template ${AZURE_TEMPLATE_HEADER} ${AZURE_TEMPLATE_SOURCE})
+create_per_service_target_build(azure-template template)
 
 target_include_directories(
   azure-template

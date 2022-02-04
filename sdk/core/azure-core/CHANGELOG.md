@@ -4,14 +4,17 @@
 
 ### Features Added
 
+- Enabled environment-controlled console logging on UWP.
+
 ### Breaking Changes
 
-- `azure/core/azure_assert.hpp` header is moved to internal. `AzureNoReturnPath()` function is removed from global namespace. Associated macros, such as `AZURE_ASSERT` are renamed to indicate that they are internal. If your code was using the `AZURE_ASSERT` macro, consider using the standard library's `assert` as an alternative.
+- Removed the `AzureNoReturnPath()` function from the global namespace, and deprecated the associated macros, such as `AZURE_ASSERT` since they are meant for internal use only. If your code was using the `AZURE_ASSERT` macro, consider using the standard library's `assert` as an alternative.
 - Removed the two parameter `RequestFailedException` ctor, it has no use case and wasn't intended for public use.
 
 ### Bugs Fixed
 
 - Fixed `Azure::DateTime::Parse()` validation if the result is going to exceed `9999-12-31T23:59:59.9999999` due to time zone, leap second, or fractional digits rounding up adjustments.
+- [[#3224]](https://github.com/Azure/azure-sdk-for-cpp/issues/3224) Fixed intermittent crash on macOS when logging is turned on.
 
 ### Other Changes
 

@@ -3,6 +3,8 @@
 
 #include <azure/identity/managed_identity_credential.hpp>
 
+#include <azure/core/internal/environment.hpp>
+
 #include <chrono>
 #include <cstdlib>
 #include <exception>
@@ -10,25 +12,12 @@
 #include <iostream>
 #include <string>
 
-namespace {
-std::string GetEnv(std::string const& varName)
-{
-#if defined(_MSC_VER)
-#pragma warning(push)
-// warning C4996: 'getenv': This function or variable may be unsafe. Consider using _dupenv_s
-// instead.
-#pragma warning(disable : 4996)
-#endif
-  auto const value = std::getenv(varName.c_str());
-#if defined(_MSC_VER)
-#pragma warning(pop)
-#endif
-  return value ? std::string(value) : std::string();
-}
+using Azure::Core::_internal::Environment;
 
+namespace {
 std::string FormatEnvVarValue(std::string const& varName, bool isSecret)
 {
-  auto const value = GetEnv(varName);
+  auto const value = Environment::GetVariable(varName.c_str());
   if (value.empty())
   {
     return varName + " is not defined.";
@@ -76,7 +65,7 @@ int main(int argc, char** argv)
     constexpr char const* resourceUrlEnvVarName = "AZURE_IDENTITY_TEST_VAULT_URL";
     std::string const defaultResourceUrl = "https://management.azure.com/";
 
-    auto resourceUrl = GetEnv(resourceUrlEnvVarName);
+    auto resourceUrl = Environment::GetVariable(resourceUrlEnvVarName);
     if (resourceUrl.empty())
     {
       constexpr char const* simpleSwitch = "--simple";
@@ -103,7 +92,7 @@ int main(int argc, char** argv)
     options.Log.AllowedHttpHeaders.insert("Metadata");
 
     ManagedIdentityCredential credential(
-        GetEnv("AZURE_IDENTITY_TEST_MANAGED_IDENTITY_CLIENT_ID"), options);
+        Environment::GetVariable("AZURE_IDENTITY_TEST_MANAGED_IDENTITY_CLIENT_ID"), options);
 
     auto const token = credential.GetToken({{resourceUrl}}, Context());
 

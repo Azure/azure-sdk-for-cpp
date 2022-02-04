@@ -17,26 +17,43 @@ endif()
 # On POSIX: Make sure to build Curl either if it was user-requested or no transport was selected at all.
 if (WIN32 OR MINGW OR MSYS OR CYGWIN)
   if (BUILD_TRANSPORT_CURL)
+    # Specified by user on CMake input Libcurl
     add_compile_definitions(BUILD_CURL_HTTP_TRANSPORT_ADAPTER)
   endif()
   if (BUILD_TRANSPORT_WINHTTP OR (NOT BUILD_TRANSPORT_CURL AND NOT BUILD_TRANSPORT_CUSTOM))
-    message("By default, if no option is selected, on Windows, WinHTTP transport adapter is used.")
+    # WinHTTP selected by user on CMake input 
+    # OR Nothing selected by CMake input (not libcurl or custom). Then set default for Windows.
+    
+    if (NOT BUILD_TRANSPORT_WINHTTP AND NOT BUILD_TRANSPORT_CUSTOM)
+      # No custom and No winHTTP. 
+      message("No transport adapter was selected, using WinHTTP as the default option for Windows.")
+    endif()
+    
     add_compile_definitions(BUILD_TRANSPORT_WINHTTP_ADAPTER)
-    if(AZ_ALL_LIBRARIES)
+    
+    if (NOT BUILD_TRANSPORT_WINHTTP)
+      # When user did not provide the input option, we need to turn it ON as it is used to include the src code
       SET(BUILD_TRANSPORT_WINHTTP ON)
     endif()
+
   endif()
 elseif (UNIX)
   if (BUILD_TRANSPORT_WINHTTP)
     message(FATAL_ERROR "WinHTTP transport adapter is not supported for POSIX platforms.")
   endif()
-  if (BUILD_TRANSPORT_CURL OR (NOT BUILD_TRANSPORT_CUSTOM))
-    message("By default, if no option is selected, on POSIX, libcurl transport adapter is used.")
-    add_compile_definitions(BUILD_CURL_HTTP_TRANSPORT_ADAPTER)
-    if(AZ_ALL_LIBRARIES)
-      SET(BUILD_TRANSPORT_CURL ON)
+
+  if (BUILD_TRANSPORT_CURL OR (NOT BUILD_TRANSPORT_CURL AND NOT BUILD_TRANSPORT_CUSTOM))
+
+    if(NOT BUILD_TRANSPORT_CURL)
+      message("No transport adapter was selected, using libcurl as the default option for POSIX.")
     endif()
+
+    add_compile_definitions(BUILD_CURL_HTTP_TRANSPORT_ADAPTER)
+
+    
+    SET(BUILD_TRANSPORT_CURL ON)
   endif()
+
 else()
   message(FATAL_ERROR "Unsupported platform.")
 endif()
