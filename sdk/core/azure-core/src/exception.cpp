@@ -16,9 +16,8 @@ using namespace Azure::Core::Http::_internal;
 namespace Azure { namespace Core {
 
   RequestFailedException::RequestFailedException(
-      const std::string& what,
       std::unique_ptr<Azure::Core::Http::RawResponse>& rawResponse)
-      : std::runtime_error(what)
+      : std::runtime_error("Received an HTTP unsuccessful status code.")
   {
     const auto& headers = rawResponse->GetHeaders();
 
@@ -33,12 +32,6 @@ namespace Azure { namespace Core {
 
     ClientRequestId = HttpShared::GetHeaderOrEmptyString(headers, HttpShared::MsClientRequestId);
     RequestId = HttpShared::GetHeaderOrEmptyString(headers, HttpShared::MsRequestId);
-  }
-
-  RequestFailedException::RequestFailedException(
-      std::unique_ptr<Azure::Core::Http::RawResponse>& rawResponse)
-      : RequestFailedException("Received an HTTP unsuccessful status code.", rawResponse)
-  {
   }
 
   std::string RequestFailedException::GetRawResponseField(

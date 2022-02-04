@@ -9,6 +9,7 @@
 ### Breaking Changes
 
 - Removed the `AzureNoReturnPath()` function from the global namespace, and deprecated the associated macros, such as `AZURE_ASSERT` since they are meant for internal use only. If your code was using the `AZURE_ASSERT` macro, consider using the standard library's `assert` as an alternative.
+- Removed the two parameter `RequestFailedException` ctor, it has no use case and wasn't intended for public use.
 
 ### Bugs Fixed
 
