@@ -75,7 +75,7 @@ namespace Azure { namespace Core {
      *
      * @param what The explanatory string.
      */
-    explicit RequestFailedException(std::string const& what) : std::runtime_error(what) {}
+    explicit RequestFailedException(std::string const& what);
 
     /**
      * @brief Constructs a new `%RequestFailedException` object with an HTTP raw response.
