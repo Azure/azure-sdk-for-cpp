@@ -382,12 +382,13 @@ static void Base64WriteThreeLowOrderBytes(std::vector<uint8_t>::iterator destina
 std::vector<uint8_t> Base64Decode(const std::string& text)
 {
   auto inputSize = text.size();
-  if (inputSize > 3 && inputSize % 4 != 0)
+  if (inputSize % 4 != 0)
   {
     throw std::runtime_error("Unexpected end of Base64 encoded string.");
   }
 
-  if (inputSize < 4)
+  // An empty input should result in an empty output.
+  if (inputSize == 0)
   {
     return std::vector<uint8_t>();
   }
