@@ -126,18 +126,23 @@ TEST(Base64, Roundtrip)
   }
 }
 
-TEST(Base64, InvalidDecode)
+TEST(Base64, ValidDecode)
 {
+  // cspell::disable
   EXPECT_NO_THROW(Convert::Base64Decode(Convert::Base64Encode(std::vector<uint8_t>{})));
   EXPECT_NO_THROW(Convert::Base64Decode(""));
+  EXPECT_NO_THROW(Convert::Base64Decode("aa=="));
+  EXPECT_NO_THROW(Convert::Base64Decode("aaa="));
+  // cspell::enable
+}
+TEST(Base64, InvalidDecode)
+{
+  // cspell::disable
   EXPECT_THROW(Convert::Base64Decode("a"), std::runtime_error);
   EXPECT_THROW(Convert::Base64Decode("aa"), std::runtime_error);
   EXPECT_THROW(Convert::Base64Decode("aaa"), std::runtime_error);
   EXPECT_THROW(Convert::Base64Decode("a==="), std::runtime_error);
-  EXPECT_NO_THROW(Convert::Base64Decode("aa=="));
-  EXPECT_NO_THROW(Convert::Base64Decode("aaa="));
   EXPECT_THROW(Convert::Base64Decode("@#!%"), std::runtime_error);
-  // cspell::disable
   EXPECT_THROW(Convert::Base64Decode("ABCD%GA="), std::runtime_error);
   EXPECT_THROW(Convert::Base64Decode("ABCDE^A="), std::runtime_error);
   EXPECT_THROW(Convert::Base64Decode("ABCDEF&="), std::runtime_error);
