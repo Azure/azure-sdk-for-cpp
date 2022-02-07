@@ -17,7 +17,6 @@
 - [[#3224]](https://github.com/Azure/azure-sdk-for-cpp/issues/3224) Fixed intermittent crash on macOS when logging is turned on.
 - The `Base64::Decode` API will throw a `std::runtime_error` exception if presented with invalid inputs.
 
-
 ### Other Changes
 
 ## 1.3.1 (2021-11-05)
