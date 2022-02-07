@@ -487,31 +487,71 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
 
   TEST(AttestationTokenTests, CreateUnsecuredTokenFromObject)
   {
-    TestObject testObject;
-    testObject.Algorithm = "RSA";
-    testObject.Integer = 314;
-    testObject.ExpiresAt = std::chrono::system_clock::now();
-    testObject.IssuedOn = std::chrono::system_clock::now();
-    testObject.NotBefore = std::chrono::system_clock::now();
-    testObject.IntegerArray = {1, 2, 99, 32};
-    testObject.Issuer = "George";
+    {
+      TestObject testObject;
+      testObject.Algorithm = "RSA";
+      testObject.Integer = 314;
+      testObject.ExpiresAt = std::chrono::system_clock::now();
+      testObject.IssuedOn = std::chrono::system_clock::now();
+      testObject.NotBefore = std::chrono::system_clock::now();
+      testObject.IntegerArray = {1, 2, 99, 32};
+      testObject.Issuer = "George";
 
-    auto testToken
-        = AttestationTokenInternal<TestObject, TestObjectSerializer>::CreateToken(testObject);
+      auto testToken
+          = AttestationTokenInternal<TestObject, TestObjectSerializer>::CreateToken(testObject);
 
-    EXPECT_NO_THROW(testToken.ValidateToken({}));
+      EXPECT_NO_THROW(testToken.ValidateToken({}));
 
-    AttestationToken<TestObject> token = testToken;
+      AttestationToken<TestObject> token = testToken;
 
-    EXPECT_EQ(testObject, token.Body);
+      EXPECT_EQ(testObject, token.Body);
 
-    EXPECT_TRUE(token.ExpiresOn.HasValue());
-    EXPECT_TRUE(token.IssuedOn.HasValue());
-    EXPECT_TRUE(token.NotBefore.HasValue());
-    EXPECT_TRUE(token.Issuer.HasValue());
-    EXPECT_EQ(token.Issuer.Value(), "George");
-    EXPECT_TRUE(token.Header.Algorithm);
-    EXPECT_EQ("none", token.Header.Algorithm.Value());
+      EXPECT_TRUE(token.ExpiresOn.HasValue());
+      EXPECT_TRUE(token.IssuedOn.HasValue());
+      EXPECT_TRUE(token.NotBefore.HasValue());
+      EXPECT_TRUE(token.Issuer.HasValue());
+      EXPECT_EQ(token.Issuer.Value(), "George");
+      EXPECT_TRUE(token.Header.Algorithm);
+      EXPECT_EQ("none", token.Header.Algorithm.Value());
+    }
+
+    // Test expired tokens.
+    {
+      // Capture the current time, needed for future validation.
+      auto now = std::chrono::system_clock::now();
+
+      TestObject testObject;
+
+      testObject.Algorithm = "RSA";
+      testObject.Integer = 314;
+      testObject.IntegerArray = {1, 2, 99, 32};
+      testObject.Issuer = "George";
+
+      // This token was issued 40 seconds ago, and is valid for 30 seconds.
+      testObject.ExpiresAt = now + std::chrono::seconds(30);
+      testObject.IssuedOn = now - std::chrono::seconds(40);
+      testObject.NotBefore = now - std::chrono::seconds(40);
+
+      auto testToken
+          = AttestationTokenInternal<TestObject, TestObjectSerializer>::CreateToken(testObject);
+
+      // Simple valdation should throw an exception.
+      EXPECT_THROW(testToken.ValidateToken({}), std::runtime_error);
+
+      // Validate the token asking to ignore token validation.
+      {
+        AttestationTokenValidationOptions tokenOptions{};
+        tokenOptions.ValidateToken = false;
+        EXPECT_NO_THROW(testToken.ValidateToken(tokenOptions));
+      }
+
+      // Validate the token asking to ignore token expiration time.
+      {
+        AttestationTokenValidationOptions tokenOptions{};
+        tokenOptions.ValidateExpirationTime = false;
+        EXPECT_NO_THROW(testToken.ValidateToken(tokenOptions));
+      }
+    }
   }
 
   TEST(AttestationTokenTests, CreateSecuredTokenFromObject)
