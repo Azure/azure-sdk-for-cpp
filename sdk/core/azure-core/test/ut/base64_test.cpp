@@ -135,6 +135,7 @@ TEST(Base64, ValidDecode)
   EXPECT_NO_THROW(Convert::Base64Decode("aaa="));
   // cspell::enable
 }
+
 TEST(Base64, InvalidDecode)
 {
   // cspell::disable
