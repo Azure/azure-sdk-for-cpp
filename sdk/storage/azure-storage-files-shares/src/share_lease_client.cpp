@@ -62,7 +62,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     }
     else
     {
-      _azure_UNREACHABLE_CODE();
+      AZURE_UNREACHABLE_CODE();
     }
   }
 
@@ -73,8 +73,8 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     (void)options;
     if (m_fileClient.HasValue())
     {
-      _azure_ASSERT_MSG(false, "Share lease doesn't support renew");
-      _azure_NOT_IMPLEMENTED();
+      AZURE_ASSERT_MSG(false, "Share lease doesn't support renew");
+      AZURE_NOT_IMPLEMENTED();
     }
     else if (m_shareClient.HasValue())
     {
@@ -97,7 +97,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     }
     else
     {
-      _azure_UNREACHABLE_CODE();
+      AZURE_UNREACHABLE_CODE();
     }
   }
 
@@ -144,7 +144,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     }
     else
     {
-      _azure_UNREACHABLE_CODE();
+      AZURE_UNREACHABLE_CODE();
     }
   }
 
@@ -206,7 +206,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     }
     else
     {
-      _azure_UNREACHABLE_CODE();
+      AZURE_UNREACHABLE_CODE();
     }
   }
 
@@ -251,7 +251,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     }
     else
     {
-      _azure_UNREACHABLE_CODE();
+      AZURE_UNREACHABLE_CODE();
     }
   }
 }}}} // namespace Azure::Storage::Files::Shares

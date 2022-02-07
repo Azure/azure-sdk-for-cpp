@@ -3,8 +3,8 @@
 
 #include "azure/storage/blobs/blob_client.hpp"
 
+#include <azure/core/azure_assert.hpp>
 #include <azure/core/http/policies/policy.hpp>
-#include <azure/core/internal/azure_assert.hpp>
 #include <azure/storage/common/internal/concurrent_transfer.hpp>
 #include <azure/storage/common/internal/constants.hpp>
 #include <azure/storage/common/internal/file_io.hpp>
@@ -554,7 +554,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     protocolLayerOptions.SourceIfNoneMatch = options.SourceAccessConditions.IfNoneMatch;
     if (options.TransactionalContentHash.HasValue())
     {
-      _azure_ASSERT_MSG(
+      AZURE_ASSERT_MSG(
           options.TransactionalContentHash.Value().Algorithm == HashAlgorithm::Md5,
           "This operation only supports MD5 transactional content hash.");
       protocolLayerOptions.TransactionalContentHash = options.TransactionalContentHash;

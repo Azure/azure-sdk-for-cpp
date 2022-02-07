@@ -66,7 +66,6 @@ set(
     inc/azure/core/http/raw_response.hpp
     inc/azure/core/http/policies/policy.hpp
     inc/azure/core/http/transport.hpp
-    inc/azure/core/internal/azure_assert.hpp
     inc/azure/core/internal/client_options.hpp
     inc/azure/core/internal/contract.hpp
     inc/azure/core/internal/cryptography/sha_hash.hpp

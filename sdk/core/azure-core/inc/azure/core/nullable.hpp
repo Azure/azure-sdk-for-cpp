@@ -8,7 +8,7 @@
 
 #pragma once
 
-#include "azure/core/internal/azure_assert.hpp"
+#include "azure/core/azure_assert.hpp"
 
 #include <new> // for placement new
 #include <type_traits>
@@ -234,7 +234,7 @@ public:
    */
   const T& Value() const& noexcept
   {
-    _azure_ASSERT_MSG(m_hasValue, "Empty Nullable, check HasValue() first.");
+    AZURE_ASSERT_MSG(m_hasValue, "Empty Nullable, check HasValue() first.");
 
     return m_value;
   }
@@ -245,7 +245,7 @@ public:
    */
   T& Value() & noexcept
   {
-    _azure_ASSERT_MSG(m_hasValue, "Empty Nullable, check HasValue() first.");
+    AZURE_ASSERT_MSG(m_hasValue, "Empty Nullable, check HasValue() first.");
 
     return m_value;
   }
@@ -256,7 +256,7 @@ public:
    */
   T&& Value() && noexcept
   {
-    _azure_ASSERT_MSG(m_hasValue, "Empty Nullable, check HasValue() first.");
+    AZURE_ASSERT_MSG(m_hasValue, "Empty Nullable, check HasValue() first.");
 
     return std::move(m_value);
   }

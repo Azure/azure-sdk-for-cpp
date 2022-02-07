@@ -8,9 +8,9 @@
 
 #pragma once
 
+#include "azure/core/azure_assert.hpp"
 #include "azure/core/datetime.hpp"
 #include "azure/core/dll_import_export.hpp"
-#include "azure/core/internal/azure_assert.hpp"
 #include "azure/core/rtti.hpp"
 
 #include <atomic>
@@ -208,7 +208,7 @@ namespace Azure { namespace Core {
         if (ptr->Key == key)
         {
 #if defined(AZ_CORE_RTTI)
-          _azure_ASSERT_MSG(
+          AZURE_ASSERT_MSG(
               typeid(T) == ptr->ValueType, "Type mismatch for Context::TryGetValue().");
 #endif
 
