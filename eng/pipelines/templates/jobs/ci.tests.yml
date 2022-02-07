@@ -75,6 +75,10 @@ jobs:
     - ${{ each testEnvVar in parameters.TestEnv }}:
       - name: ${{ testEnvVar.Name }}
         value: ${{ testEnvVar.Value }}
+# VCPKG cpp - public cache for vcpkg binary - cache
+# Cache is not written from public pipelines.
+    - name: VCPKG_BINARY_SOURCES
+      value: "clear;x-azblob,https://cppvcpkgcache.blob.core.windows.net/public-vcpkg-container,,read"
 
     steps:
       - template: /eng/common/pipelines/templates/steps/verify-agent-os.yml
@@ -95,8 +99,6 @@ jobs:
         displayName: Set Xcode version
 
       - template: /eng/pipelines/templates/steps/vcpkg.yml
-        parameters:
-          DependenciesVariableName: VcpkgInstall
 
       # Validate all the files are formatted correctly according to the
       # .clang-format file. This step runs on linux only only and assumes that

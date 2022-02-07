@@ -1,9 +1,3 @@
-parameters:
-  # Use the variable name itself (no $() or other wrapping syntax). This is
-  # because we use runtime and macro expressions for conditions and script
-  # invocations
-  DependenciesVariableName: vcpkg.deps
-
 steps:
   - pwsh: |
       $TargetPath = "$(Agent.TempDirectory)/vcpkg"
@@ -19,30 +13,7 @@ steps:
       Write-Host "##vso[task.setvariable variable=VcpkgCommit]$VcpkgCommit"
     displayName: Set Vcpkg Variables
     condition: >-
-      and(
-        succeeded(),
-        not(eq(variables['${{ parameters.DependenciesVariableName }}'], ''))
-      )
-
-  # This task times out after 10 minutes. An analysis of a subset of Vcpkg Cache
-  # runs showed that after 10 minutes the cache step is very unlikely to
-  # succeed.
-  - task: Cache@2
-    inputs:
-      key: >-
-        $(Agent.JobName)
-        | "$(VcpkgCommit)"
-        | $(Agent.Os)
-      path: $(VCPKG_INSTALLATION_ROOT)
-      cacheHitVar: VcpkgRestoredFromCache
-    displayName: Vcpkg Cache
-    timeoutInMinutes: 10
-    condition: >-
-      and(
-        succeeded(),
-        not(eq(variables['${{ parameters.DependenciesVariableName }}'], '')),
-        not(eq(variables['Skip.VcpkgCache'], 'true'))
-      )
+      succeeded()
 
   - task: PowerShell@2
     inputs:
@@ -50,12 +21,7 @@ steps:
       filePath: eng/scripts/vcpkg.ps1
       arguments: >-
         -Ref $(VcpkgCommit)
-        -Dependencies "$(${{ parameters.DependenciesVariableName }})"
         -VcpkgPath $(VCPKG_INSTALLATION_ROOT)
       pwsh: true
     condition: >-
-      and(
-        succeeded(),
-        not(eq(variables['${{ parameters.DependenciesVariableName }}'], '')),
-        ne(variables['VcpkgRestoredFromCache'], true)
-      )
+      succeeded()

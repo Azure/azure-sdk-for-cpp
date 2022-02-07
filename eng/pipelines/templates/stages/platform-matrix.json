@@ -16,7 +16,6 @@
             "StaticConfigs": {
                 "_": {
                     "Pool": "Azure Pipelines",
-                    "VcpkgInstall": "curl[ssl] libxml2 openssl",
                     "BuildArgs": "-j 10",
                     "VCPKG_DEFAULT_TRIPLET": "x64-osx",
                     "CmakeArgs": " -DBUILD_TESTING=ON -DBUILD_PERFORMANCE_TESTS=ON -DRUN_LONG_UNIT_TESTS=ON -DBUILD_TRANSPORT_CURL=ON",
@@ -43,17 +42,14 @@
             },
             "TargetPlatform": {
                 "Win32Api_curl": {
-                    "VcpkgInstall": "curl[winssl]",
                     "CmakeArgs": " -DBUILD_TRANSPORT_CURL=ON"
                 },
                 "Win32Api_release_curl": {
-                    "VcpkgInstall": "curl[winssl]",
                     "CmakeArgs": " -DBUILD_TESTING=ON -DBUILD_PERFORMANCE_TESTS=ON -DRUN_LONG_UNIT_TESTS=ON -DBUILD_TRANSPORT_CURL=ON",
                     "CMAKE_BUILD_TYPE": "Release",
                     "PublishMapFiles": "true"
                 },
                 "Win32Api_debug_tests": {
-                    "VcpkgInstall": "curl[winssl]",
                     "CmakeArgs": " -DBUILD_TESTING=ON -DBUILD_PERFORMANCE_TESTS=ON -DRUN_LONG_UNIT_TESTS=ON -DBUILD_TRANSPORT_CURL=ON -DBUILD_TRANSPORT_WINHTTP=ON",
                     "PublishMapFiles": "true"
                 }
@@ -106,7 +102,6 @@
                 "Ubuntu18": {
                     "OSVmImage": "MMSUbuntu18.04",
                     "Pool": "azsdk-pool-mms-ubuntu-1804-general",
-                    "VcpkgInstall": "curl[ssl] libxml2 openssl",
                     "VCPKG_DEFAULT_TRIPLET": "x64-linux",
                     "BuildArgs": "-j 10"
                 }
@@ -150,7 +145,6 @@
                 "Ubuntu20": {
                     "OSVmImage": "MMSUbuntu20.04",
                     "Pool": "azsdk-pool-mms-ubuntu-2004-general",
-                    "VcpkgInstall": "curl[ssl] libxml2 openssl",
                     "VCPKG_DEFAULT_TRIPLET": "x64-linux",
                     "BuildArgs": "-j 10",
                     "CC": "/usr/bin/clang-11",

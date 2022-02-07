@@ -35,7 +35,6 @@ jobs:
       Linux_x64_gcc5_with_unit_test:
         Pool: azsdk-pool-mms-ubuntu-1804-general
         OSVmImage: MMSUbuntu18.04
-        VcpkgInstall: 'curl[ssl] libxml2 openssl'
         VCPKG_DEFAULT_TRIPLET: 'x64-linux'
         # Can't set CC and CXX to env because it would affect VCPKG building which requires g++ > 7
         # So, this conf will set the CXX for cmake inline.
@@ -45,7 +44,6 @@ jobs:
       Linux_x64_with_unit_test:
         Pool: azsdk-pool-mms-ubuntu-1804-general
         OSVmImage: MMSUbuntu18.04
-        VcpkgInstall: 'curl[ssl] libxml2 openssl'
         VCPKG_DEFAULT_TRIPLET: 'x64-linux'
         CmakeArgs: ' -DBUILD_TESTING=ON -DBUILD_PERFORMANCE_TESTS=ON -DRUN_LONG_UNIT_TESTS=ON -DCMAKE_BUILD_TYPE=Debug -DBUILD_CODE_COVERAGE=ON'
         AptDependencies: 'gcovr lcov'
@@ -57,7 +55,6 @@ jobs:
       Ubuntu20_x64_with_unit_test:
         Pool: azsdk-pool-mms-ubuntu-1804-general
         OSVmImage: MMSUbuntu18.04
-        VcpkgInstall: 'curl[ssl] libxml2 openssl'
         VCPKG_DEFAULT_TRIPLET: 'x64-linux'
         CmakeArgs: ' -DBUILD_TESTING=ON -DBUILD_PERFORMANCE_TESTS=ON -DRUN_LONG_UNIT_TESTS=ON -DCMAKE_BUILD_TYPE=Release -DBUILD_SAMPLES=ON'
         AZURE_CORE_ENABLE_JSON_TESTS: 1
@@ -65,7 +62,6 @@ jobs:
       Ubuntu20_samples:
         Pool: azsdk-pool-mms-ubuntu-1804-general
         OSVmImage: MMSUbuntu18.04
-        VcpkgInstall: 'curl[ssl] libxml2 openssl'
         VCPKG_DEFAULT_TRIPLET: 'x64-linux'
         # Builds samples and run them against the deployed resources. Samples requires Azure Account, so only works on live tests.
         CmakeArgs: ' -DBUILD_TESTING=ON -DBUILD_SAMPLES=ON '
@@ -74,7 +70,6 @@ jobs:
       Ubuntu20_x64_no_rtti:
         Pool: azsdk-pool-mms-ubuntu-1804-general
         OSVmImage: MMSUbuntu18.04
-        VcpkgInstall: 'curl[ssl] libxml2 openssl'
         VCPKG_DEFAULT_TRIPLET: 'x64-linux'
         CmakeArgs: ' -DBUILD_RTTI=OFF -DCMAKE_BUILD_TYPE=Release'
         BuildArgs: '-j 4'
@@ -91,7 +86,6 @@ jobs:
       Win_x86_no_rtti_whit_unit_test:
         Pool: azsdk-pool-mms-win-2019-general
         OSVmImage: MMS2019
-        VcpkgInstall: 'libxml2'
         VCPKG_DEFAULT_TRIPLET: 'x86-windows-static'
         CMAKE_GENERATOR: 'Visual Studio 16 2019'
         CMAKE_GENERATOR_PLATFORM: Win32
@@ -110,7 +104,6 @@ jobs:
       Win_x86_with_unit_test_libcurl:
         Pool: azsdk-pool-mms-win-2019-general
         OSVmImage: MMS2019
-        VcpkgInstall: 'curl[winssl]'
         VCPKG_DEFAULT_TRIPLET: 'x86-windows-static'
         CMAKE_GENERATOR: 'Visual Studio 16 2019'
         CMAKE_GENERATOR_PLATFORM: Win32
@@ -120,7 +113,6 @@ jobs:
       Win_x64_with_unit_test_libcurl:
         Pool: azsdk-pool-mms-win-2019-general
         OSVmImage: MMS2019
-        VcpkgInstall: 'curl[winssl]'
         VCPKG_DEFAULT_TRIPLET: 'x64-windows-static'
         CMAKE_GENERATOR: 'Visual Studio 16 2019'
         CMAKE_GENERATOR_PLATFORM: x64
@@ -130,7 +122,6 @@ jobs:
       MacOS_x64_with_unit_test:
         Pool: Azure Pipelines
         OSVmImage: 'macOS-10.15'
-        VcpkgInstall: 'curl[ssl] libxml2 openssl'
         VCPKG_DEFAULT_TRIPLET: 'x64-osx'
         CmakeArgs: ' -DBUILD_TESTING=ON -DRUN_LONG_UNIT_TESTS=ON -DBUILD_PERFORMANCE_TESTS=ON -DBUILD_SAMPLES=ON'
         AZURE_CORE_ENABLE_JSON_TESTS: 1
@@ -147,6 +138,8 @@ jobs:
     CmakeArgs: ""
     AZURE_TEST_MODE: "LIVE"
     AZURE_LOG_LEVEL: "verbose"
+# Need to update to writeRead value with SAS here (daniel's help to add the secret SAS to this pipeline)
+    VCPKG_BINARY_SOURCES: "clear;x-azblob,https://cppvcpkgcache.blob.core.windows.net/public-vcpkg-container,,read"
 
   steps:
   - checkout: self
@@ -184,8 +177,6 @@ jobs:
     displayName: Install dependencies from apt
 
   - template: /eng/pipelines/templates/steps/vcpkg.yml
-    parameters:
-      DependenciesVariableName: VcpkgInstall
 
   - script: |
       dotnet tool install -g dotnet-reportgenerator-globaltool
