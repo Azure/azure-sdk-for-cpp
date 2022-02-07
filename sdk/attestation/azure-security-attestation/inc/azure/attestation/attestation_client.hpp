@@ -122,9 +122,10 @@ namespace Azure { namespace Security { namespace Attestation {
     Azure::Core::Url m_endpoint;
     std::string m_apiVersion;
     std::shared_ptr<Azure::Core::Http::_internal::HttpPipeline> m_pipeline;
+    AttestationTokenValidationOptions m_tokenValidationOptions;
 
     mutable std::shared_timed_mutex m_sharedStateLock;
-    mutable std::vector<AttestationSigner> m_attestationSigners;
+    mutable std::vector<Models::AttestationSigner> m_attestationSigners;
 
     void CacheAttestationSigners(Azure::Core::Context const& context) const;
 
@@ -177,7 +178,7 @@ namespace Azure { namespace Security { namespace Attestation {
      * @return an {@link AttestationOpenIdMetadata} containing metadata about the specified service
      * instance.
      */
-    Response<AttestationOpenIdMetadata> GetOpenIdMetadata(
+    Response<Models::AttestationOpenIdMetadata> GetOpenIdMetadata(
         Azure::Core::Context const& context = Azure::Core::Context::ApplicationContext) const;
 
     /**
@@ -185,7 +186,7 @@ namespace Azure { namespace Security { namespace Attestation {
      *
      * @returns Attestation Metadata.
      */
-    Response<std::vector<AttestationSigner>> GetAttestationSigningCertificates(
+    Response<std::vector<Models::AttestationSigner>> GetAttestationSigningCertificates(
         Azure::Core::Context const& context = Azure::Core::Context::ApplicationContext) const;
 
     /**
@@ -199,7 +200,7 @@ namespace Azure { namespace Security { namespace Attestation {
      * @returns Response<{@link AttestationToken}<{@link AttestationResult}>> - The result of the
      * attestation operation
      */
-    Response<AttestationToken<AttestationResult>> AttestSgxEnclave(
+    Response<Models::AttestationToken<Models::AttestationResult>> AttestSgxEnclave(
         std::vector<uint8_t> const& sgxQuoteToAttest,
         AttestOptions options = AttestOptions(),
         Azure::Core::Context const& context = Azure::Core::Context::ApplicationContext) const;
@@ -216,7 +217,7 @@ namespace Azure { namespace Security { namespace Attestation {
      * @returns Response<AttestationToken<AttestationResult>> - The result of the attestation
      * operation
      */
-    Response<AttestationToken<AttestationResult>> AttestOpenEnclave(
+    Response<Models::AttestationToken<Models::AttestationResult>> AttestOpenEnclave(
         std::vector<uint8_t> const& openEnclaveReportToAttest,
         AttestOptions options = AttestOptions(),
         Azure::Core::Context const& context = Azure::Core::Context::ApplicationContext) const;

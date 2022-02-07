@@ -1,7 +1,9 @@
 // Copyright(c) Microsoft Corporation.All rights reserved.
 // SPDX-License-Identifier: MIT
 
+#include "../../src/private/attestation_client_models_private.hpp"
 #include "../../src/private/attestation_deserializer.hpp"
+#include "../../src/private/crypto/inc/crypto.hpp"
 #include "azure/core/test/test_base.hpp"
 #include <gtest/gtest.h>
 
@@ -9,8 +11,11 @@
 namespace Azure { namespace Security { namespace Attestation { namespace Test {
   using namespace Azure::Core::Json::_internal;
   using namespace Azure::Core::Http;
+  using namespace Azure::Security::Attestation;
   using namespace Azure::Security::Attestation::_detail;
-
+  using namespace Azure::Security::Attestation::Models;
+  using namespace Azure::Security::Attestation::Models::_detail;
+  using namespace Azure::Security::Attestation::_private::Cryptography;
   TEST(SerializationTests, TestDeserializePrimitivesBoolean)
   {
     {
@@ -62,16 +67,16 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
   {
     {
       auto val(JsonHelpers::ParseStringField(json::parse("{ \"int\": \"127\"}"), "int"));
-      EXPECT_EQ("127", val);
+      EXPECT_EQ("127", val.Value());
     }
     {
       auto val(JsonHelpers::ParseStringField(json::parse("{ \"intVal\": \"127\"}"), "int"));
-      EXPECT_TRUE(val.empty());
+      EXPECT_FALSE(val.HasValue());
     }
     {
       auto val(JsonHelpers::ParseStringField(
           json::parse("{ \"intValue\": \"String Field\"}"), "intValue"));
-      EXPECT_EQ("String Field", val);
+      EXPECT_EQ("String Field", val.Value());
     }
     {
       EXPECT_THROW(
@@ -86,15 +91,15 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
     {
       auto val(JsonHelpers::ParseStringArrayField(
           json::parse("{ \"stringArrayValue\": [\"String Field\", \"SF2\"]}"), "stringArrayValue"));
-      EXPECT_EQ(2ul, val.size());
-      EXPECT_EQ("String Field", val[0]);
-      EXPECT_EQ("SF2", val[1]);
+      EXPECT_EQ(2ul, val.Value().size());
+      EXPECT_EQ("String Field", val.Value()[0]);
+      EXPECT_EQ("SF2", val.Value()[1]);
     }
     // Not present field.
     {
       auto val(JsonHelpers::ParseStringArrayField(
           json::parse("{ \"arrayValue\": \"String Field\"}"), "intValue"));
-      EXPECT_EQ(0ul, val.size());
+      EXPECT_FALSE(val.HasValue());
     }
     // Not an array.
     {
@@ -220,12 +225,12 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
        "y":"4Etl6SRW2YiLUrN5vfvVHuhp7x8PxltmWWlbbM4IFyM",
        "use":"enc",
        "kid":"1"})")));
-      EXPECT_EQ("EC", val.kty);
-      EXPECT_EQ("P-256", val.crv);
-      EXPECT_EQ("MKBCTNIcKUSDii11ySs3526iDZ8AiTo7Tu6KPAqv7D4", val.x);
-      EXPECT_EQ("4Etl6SRW2YiLUrN5vfvVHuhp7x8PxltmWWlbbM4IFyM", val.y);
-      EXPECT_EQ("enc", val.use);
-      EXPECT_EQ("1", val.kid);
+      EXPECT_EQ("EC", val.kty.Value());
+      EXPECT_EQ("P-256", val.crv.Value());
+      EXPECT_EQ("MKBCTNIcKUSDii11ySs3526iDZ8AiTo7Tu6KPAqv7D4", val.x.Value());
+      EXPECT_EQ("4Etl6SRW2YiLUrN5vfvVHuhp7x8PxltmWWlbbM4IFyM", val.y.Value());
+      EXPECT_EQ("enc", val.use.Value());
+      EXPECT_EQ("1", val.kid.Value());
     }
 
     {
@@ -234,15 +239,15 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
        "e":"AQAB",
        "alg":"RS256",
        "kid":"2011-04-29"})")));
-      EXPECT_EQ("RS256", val.alg);
+      EXPECT_EQ("RS256", val.alg.Value());
       EXPECT_EQ(
           "0vx7agoebGcQSuuPiLJXZptN9nndrQmbXEps2aiAFbWhM78LhWx4cbbfAAtVT86zwu1RK7aPFFxuhDR1L6tSoc_"
           "BJECPebWKRXjBZCiFV4n3oknjhMstn64tZ_2W-5JsGY4Hc5n9yBXArwl93lqt7_RN5w6Cf0h4QyQ5v-65YGjQR0_"
           "FDW2QvzqY368QQMicAtaSqzs8KJZgnYb9c7d0zgdAZHzu6qMQvRL5hajrn1n91CbOpbISD08qNLyrdkt-"
           "bFTWhAI4vMQFh6WeZu0fM4lFd2NcRwr3XPksINHaQ-G_xBniIqbw0Ls1jF44-csFCur-kEgU8awapJzKnqDKgw",
-          val.n);
-      EXPECT_EQ("AQAB", val.e);
-      EXPECT_EQ("2011-04-29", val.kid);
+          val.n.Value());
+      EXPECT_EQ("AQAB", val.e.Value());
+      EXPECT_EQ("2011-04-29", val.kid.Value());
     }
     // cspell:enable
   }
@@ -272,21 +277,21 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
        "kid":"2011-04-29"}
     ]})")));
       EXPECT_EQ(2ul, val.Keys.size());
-      EXPECT_EQ("EC", val.Keys[0].kty);
-      EXPECT_EQ("P-256", val.Keys[0].crv);
-      EXPECT_EQ("MKBCTNIcKUSDii11ySs3526iDZ8AiTo7Tu6KPAqv7D4", val.Keys[0].x);
-      EXPECT_EQ("4Etl6SRW2YiLUrN5vfvVHuhp7x8PxltmWWlbbM4IFyM", val.Keys[0].y);
-      EXPECT_EQ("enc", val.Keys[0].use);
-      EXPECT_EQ("1", val.Keys[0].kid);
-      EXPECT_EQ("RS256", val.Keys[1].alg);
+      EXPECT_EQ("EC", val.Keys[0].kty.Value());
+      EXPECT_EQ("P-256", val.Keys[0].crv.Value());
+      EXPECT_EQ("MKBCTNIcKUSDii11ySs3526iDZ8AiTo7Tu6KPAqv7D4", val.Keys[0].x.Value());
+      EXPECT_EQ("4Etl6SRW2YiLUrN5vfvVHuhp7x8PxltmWWlbbM4IFyM", val.Keys[0].y.Value());
+      EXPECT_EQ("enc", val.Keys[0].use.Value());
+      EXPECT_EQ("1", val.Keys[0].kid.Value());
+      EXPECT_EQ("RS256", val.Keys[1].alg.Value());
       EXPECT_EQ(
           "0vx7agoebGcQSuuPiLJXZptN9nndrQmbXEps2aiAFbWhM78LhWx4cbbfAAtVT86zwu1RK7aPFFxuhDR1L6tSoc_"
           "BJECPebWKRXjBZCiFV4n3oknjhMstn64tZ_2W-5JsGY4Hc5n9yBXArwl93lqt7_RN5w6Cf0h4QyQ5v-65YGjQR0_"
           "FDW2QvzqY368QQMicAtaSqzs8KJZgnYb9c7d0zgdAZHzu6qMQvRL5hajrn1n91CbOpbISD08qNLyrdkt-"
           "bFTWhAI4vMQFh6WeZu0fM4lFd2NcRwr3XPksINHaQ-G_xBniIqbw0Ls1jF44-csFCur-kEgU8awapJzKnqDKgw",
-          val.Keys[1].n);
-      EXPECT_EQ("AQAB", val.Keys[1].e);
-      EXPECT_EQ("2011-04-29", val.Keys[1].kid);
+          val.Keys[1].n.Value());
+      EXPECT_EQ("AQAB", val.Keys[1].e.Value());
+      EXPECT_EQ("2011-04-29", val.Keys[1].kid.Value());
     }
 
     {
@@ -307,11 +312,10 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
     {
       Models::_detail::AttestOpenEnclaveRequest request;
       request.Report = {1, 2, 3, 4};
-      request.RunTimeData.Data = {4, 5, 7, 8};
-      request.RunTimeData.DataType = AttestationDataType::Binary;
-      request.InitTimeData.Data = {1, 2, 3, 4};
-      request.InitTimeData.DataType = AttestationDataType::Json;
+      request.RunTimeData = AttestationData{{4, 5, 7, 8}, AttestationDataType::Binary};
+      request.InitTimeData = AttestationData{{1, 2, 3, 4}, AttestationDataType::Json};
       request.DraftPolicyForAttestation = "Draft";
+      request.Nonce = "My Nonce";
 
       std::string val = AttestOpenEnclaveRequestSerializer::Serialize(request);
       json parsedRequest = json::parse(val);
@@ -320,6 +324,7 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
       EXPECT_TRUE(parsedRequest["inittimeData"].is_object());
       EXPECT_TRUE(parsedRequest["runtimeData"].is_object());
       EXPECT_TRUE(parsedRequest["draftPolicyForAttestation"].is_string());
+      EXPECT_TRUE(parsedRequest["nonce"].is_string());
     }
   }
 
@@ -377,17 +382,17 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
 
   struct TestObject
   {
-    std::string Algorithm;
+    Azure::Nullable<std::string> Algorithm;
     Azure::Nullable<int> Integer;
     Azure::Nullable<Azure::DateTime> ExpiresAt;
     Azure::Nullable<Azure::DateTime> IssuedOn;
     Azure::Nullable<Azure::DateTime> NotBefore;
     Azure::Nullable<std::vector<int>> IntegerArray;
-    std::string Issuer;
+    Azure::Nullable<std::string> Issuer;
 
-    bool operator==(TestObject const& that)
+    bool operator==(TestObject const& that) const
     {
-      if (Algorithm != that.Algorithm)
+      if (!CompareNullable(Algorithm, that.Algorithm))
       {
         return false;
       }
@@ -411,15 +416,16 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
       {
         return false;
       }
-      if (Issuer != that.Issuer)
+      if (!CompareNullable(Issuer, that.Issuer))
       {
         return false;
       }
       return true;
     }
+    bool operator!=(TestObject const& that) { return !(*this == that); }
   };
 
-  struct TestObjectDeserializer
+  struct TestObjectSerializer
   {
     static TestObject Deserialize(json const& serialized)
     {
@@ -460,10 +466,10 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
       testObject.IntegerArray = {1, 2, 99, 32};
       testObject.Issuer = "George";
 
-      auto serializedObject = TestObjectDeserializer::Serialize(testObject);
+      auto serializedObject = TestObjectSerializer::Serialize(testObject);
 
-      auto targetObject = TestObjectDeserializer::Deserialize(json::parse(serializedObject));
-      EXPECT_TRUE(testObject == targetObject);
+      auto targetObject = TestObjectSerializer::Deserialize(json::parse(serializedObject));
+      EXPECT_EQ(testObject, targetObject);
     }
     {
       TestObject testObject;
@@ -472,10 +478,78 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
       testObject.IssuedOn = std::chrono::system_clock::now();
       testObject.IntegerArray = {1, 2, 99, 32};
 
-      auto serializedObject = TestObjectDeserializer::Serialize(testObject);
+      auto serializedObject = TestObjectSerializer::Serialize(testObject);
 
-      auto targetObject = TestObjectDeserializer::Deserialize(json::parse(serializedObject));
+      auto targetObject = TestObjectSerializer::Deserialize(json::parse(serializedObject));
       EXPECT_TRUE(testObject == targetObject);
+    }
+  }
+
+  TEST(AttestationTokenTests, CreateUnsecuredTokenFromObject)
+  {
+    TestObject testObject;
+    testObject.Algorithm = "RSA";
+    testObject.Integer = 314;
+    testObject.ExpiresAt = std::chrono::system_clock::now();
+    testObject.IssuedOn = std::chrono::system_clock::now();
+    testObject.NotBefore = std::chrono::system_clock::now();
+    testObject.IntegerArray = {1, 2, 99, 32};
+    testObject.Issuer = "George";
+
+    auto testToken
+        = AttestationTokenInternal<TestObject, TestObjectSerializer>::CreateToken(testObject);
+
+    EXPECT_NO_THROW(testToken.ValidateToken({}));
+
+    AttestationToken<TestObject> token = testToken;
+
+    EXPECT_EQ(testObject, token.Body);
+
+    EXPECT_TRUE(token.ExpiresOn.HasValue());
+    EXPECT_TRUE(token.IssuedOn.HasValue());
+    EXPECT_TRUE(token.NotBefore.HasValue());
+    EXPECT_TRUE(token.Issuer.HasValue());
+    EXPECT_EQ(token.Issuer.Value(), "George");
+    EXPECT_TRUE(token.Header.Algorithm);
+    EXPECT_EQ("none", token.Header.Algorithm.Value());
+  }
+
+  TEST(AttestationTokenTests, CreateSecuredTokenFromObject)
+  {
+    {
+      TestObject testObject;
+      testObject.Algorithm = "UnknownAlgorithm";
+      testObject.Integer = 314;
+      // Capture the current time, needed for future validation.
+      auto now = std::chrono::system_clock::now();
+
+      // This token was issued now, and is valid for 30 seconds.
+      testObject.ExpiresAt = now + std::chrono::seconds(30);
+      testObject.IssuedOn = now;
+      testObject.NotBefore = now;
+      testObject.IntegerArray = {1, 2, 99, 32};
+      testObject.Issuer = "George";
+
+      // Create an RSA public/private key pair.
+      auto asymmetricKey = Crypto::CreateRsaKey(2048);
+      auto cert = Crypto::CreateX509CertificateForPrivateKey(asymmetricKey, "CN=TestSubject, C=US");
+      AttestationSigningKey signingKey{asymmetricKey->ExportPrivateKey(), cert->ExportAsPEM()};
+
+      // Create a secured attestation token wrapped around the TestObject.
+      auto testToken = AttestationTokenInternal<TestObject, TestObjectSerializer>::CreateToken(
+          testObject, signingKey);
+
+      // Validate this token - it should not throw.
+      EXPECT_NO_THROW(testToken.ValidateToken({}));
+
+      AttestationToken<TestObject> token = testToken;
+      EXPECT_EQ(testObject, token.Body);
+
+      EXPECT_TRUE(token.ExpiresOn.HasValue());
+      EXPECT_TRUE(token.IssuedOn.HasValue());
+      EXPECT_TRUE(token.NotBefore.HasValue());
+      EXPECT_TRUE(token.Issuer.HasValue());
+      EXPECT_EQ(token.Issuer.Value(), "George");
     }
   }
 

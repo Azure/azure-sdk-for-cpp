@@ -86,9 +86,9 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
     EXPECT_LE(1UL, attestationSigners.Value.size());
     for (const auto& signer : attestationSigners.Value)
     {
-      EXPECT_FALSE(signer.KeyId.empty());
-      EXPECT_LE(1UL, signer.CertificateChain.size());
-      for (const auto& cert : signer.CertificateChain)
+      EXPECT_TRUE(signer.KeyId.HasValue());
+      EXPECT_LE(1UL, signer.CertificateChain.Value().size());
+      for (const auto& cert : signer.CertificateChain.Value())
       {
         EXPECT_EQ(0UL, cert.find("-----BEGIN CERTIFICATE-----\r\n"));
       }
@@ -118,7 +118,7 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
     auto runtimeData = AttestationCollateral::RuntimeData();
 
     auto attestResponse
-        = client->AttestOpenEnclave(report, {{runtimeData, AttestationDataType::Binary}});
+        = client->AttestOpenEnclave(report, {AttestationData{runtimeData, AttestationDataType::Binary}});
   }
 
   TEST_P(AttestationTests, AttestSgxEnclaveWithRuntimeData)
@@ -128,7 +128,7 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
     auto runtimeData = AttestationCollateral::RuntimeData();
 
     auto attestResponse
-        = client->AttestSgxEnclave(sgxQuote, {{runtimeData, AttestationDataType::Binary}});
+        = client->AttestSgxEnclave(sgxQuote, {AttestationData{runtimeData, AttestationDataType::Binary}});
   }
 
   namespace {

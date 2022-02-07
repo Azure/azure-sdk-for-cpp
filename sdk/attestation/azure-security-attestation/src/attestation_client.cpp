@@ -15,6 +15,7 @@
 #include <string>
 
 using namespace Azure::Security::Attestation;
+using namespace Azure::Security::Attestation::Models;
 using namespace Azure::Security::Attestation::_detail;
 using namespace Azure::Security::Attestation::Models::_detail;
 using namespace Azure::Core::Http;
@@ -27,7 +28,7 @@ AttestationClient::AttestationClient(
     std::string const& endpoint,
     std::shared_ptr<Core::Credentials::TokenCredential const> credential,
     AttestationClientOptions options)
-    : m_endpoint(endpoint)
+    : m_endpoint(endpoint), m_tokenValidationOptions(options.TokenValidationOptions)
 {
   std::vector<std::unique_ptr<HttpPolicy>> perRetrypolicies;
   if (credential)
@@ -57,7 +58,7 @@ Azure::Response<AttestationOpenIdMetadata> AttestationClient::GetOpenIdMetadata(
       m_endpoint, HttpMethod::Get, {".well-known/openid-configuration"}, nullptr);
 
   auto response = AttestationCommonRequest::SendRequest(*m_pipeline, request, context);
-  auto openIdMetadata(OpenIdMetadataDeserializer::Deserialize(response));
+  auto openIdMetadata(OpenIdMetadataSerializer::Deserialize(response));
   return Response<AttestationOpenIdMetadata>(std::move(openIdMetadata), std::move(response));
 }
 
@@ -69,7 +70,7 @@ AttestationClient::GetAttestationSigningCertificates(Azure::Core::Context const&
 
   auto response = AttestationCommonRequest::SendRequest(*m_pipeline, request, context);
   auto jsonWebKeySet(JsonWebKeySetSerializer::Deserialize(response));
-  std::vector<AttestationSigner> signers;
+  std::vector<Models::AttestationSigner> signers;
   for (const auto& jwk : jsonWebKeySet.Keys)
   {
     AttestationSignerInternal internalSigner(jwk);
@@ -85,9 +86,11 @@ Azure::Response<AttestationToken<AttestationResult>> AttestationClient::AttestSg
 {
   AttestSgxEnclaveRequest attestRequest{
       sgxQuote,
-      {options.InittimeData.Data, options.InittimeData.DataType.ToString()},
-      {options.RuntimeData.Data, options.RuntimeData.DataType.ToString()},
-      options.DraftPolicyForAttestation};
+      options.InittimeData,
+      options.RuntimeData,
+      options.DraftPolicyForAttestation,
+      options.Nonce};
+
   std::string serializedRequest(AttestSgxEnclaveRequestSerializer::Serialize(attestRequest));
 
   auto encodedVector = std::vector<uint8_t>(serializedRequest.begin(), serializedRequest.end());
@@ -95,12 +98,25 @@ Azure::Response<AttestationToken<AttestationResult>> AttestationClient::AttestSg
   auto request = AttestationCommonRequest::CreateRequest(
       m_endpoint, m_apiVersion, HttpMethod::Post, {"attest/SgxEnclave"}, &stream);
 
+  // Send the request to the service.
   auto response = AttestationCommonRequest::SendRequest(*m_pipeline, request, context);
+
+  // Deserialize the Service response token and return the JSON web token returned by the service.
   std::string responseToken = AttestationServiceTokenResponseSerializer::Deserialize(response);
+
+  // Parse the JWT returned by the attestation service.
   auto token
-      = AttestationTokenInternal<AttestationResult, AttestationResultDeserializer>(responseToken);
+      = AttestationTokenInternal<AttestationResult, AttestationResultSerializer>(responseToken);
+
+  // Validate the token returned by the service. Use the cached attestation signers in the
+  // validation.
   CacheAttestationSigners(context);
-  token.ValidateToken(m_attestationSigners);
+  token.ValidateToken(
+      options.TokenValidationOptions.HasValue() ? options.TokenValidationOptions.Value()
+                                                : this->m_tokenValidationOptions,
+      m_attestationSigners);
+
+  // And return the attestation result to the caller.
   auto returnedToken = AttestationToken<AttestationResult>(token);
   return Response<AttestationToken<AttestationResult>>(returnedToken, std::move(response));
 }
@@ -112,8 +128,8 @@ Azure::Response<AttestationToken<AttestationResult>> AttestationClient::AttestOp
 {
   AttestOpenEnclaveRequest attestRequest{
       openEnclaveReport,
-      {options.InittimeData.Data, options.InittimeData.DataType.ToString()},
-      {options.RuntimeData.Data, options.RuntimeData.DataType.ToString()},
+      options.InittimeData,
+      options.RuntimeData,
       options.DraftPolicyForAttestation};
   std::string serializedRequest(AttestOpenEnclaveRequestSerializer::Serialize(attestRequest));
 
@@ -125,7 +141,7 @@ Azure::Response<AttestationToken<AttestationResult>> AttestationClient::AttestOp
   auto response = AttestationCommonRequest::SendRequest(*m_pipeline, request, context);
   std::string responseToken = AttestationServiceTokenResponseSerializer::Deserialize(response);
   auto token
-      = AttestationTokenInternal<AttestationResult, AttestationResultDeserializer>(responseToken);
+      = AttestationTokenInternal<AttestationResult, AttestationResultSerializer>(responseToken);
   return Response<AttestationToken<AttestationResult>>(token, std::move(response));
 }
 

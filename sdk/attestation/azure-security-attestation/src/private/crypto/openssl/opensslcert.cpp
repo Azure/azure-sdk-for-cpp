@@ -19,6 +19,7 @@
 #include "openssl_helpers.hpp"
 #include "opensslcert.hpp"
 #include "opensslkeys.hpp"
+#include <openssl/asn1.h>
 #include <openssl/bio.h>
 #include <openssl/ecdsa.h>
 #include <openssl/err.h>
@@ -67,6 +68,41 @@ namespace Security {
             throw _details::OpenSSLException("BIO_read");
           }
           return std::string(returnValue.begin(), returnValue.end());
+        }
+
+        std::string OpenSSLX509Certificate::ExportAsBase64() const
+        {
+          // Create a base64 encoding BIO - this will base64 encode all data written to it.
+          auto base64bio(_details::make_openssl_unique(BIO_new, BIO_f_base64()));
+          BIO_set_flags(base64bio.get(), BIO_FLAGS_BASE64_NO_NL);
+
+          // Allocate a raw BIO that will hold the actual base64 encoded output.
+          auto bio(_details::make_openssl_unique(BIO_new, BIO_s_mem()));
+
+          // And associate the output BIO with the base64 bio. Note that by associating these
+          // the base64bio takes ownership of the output BIO.
+          BIO_push(base64bio.get(), bio.release());
+          // Serialize the certificate as a Base64 encoded DER encoded blob into the bio.
+          if (i2d_X509_bio(base64bio.get(), m_certificate.get()) != 1)
+          {
+            throw std::runtime_error("Could not write X509 certificate.");
+          }
+          if (BIO_flush(base64bio.get()) != 1)
+          {
+            throw std::runtime_error("Could not flush base64 stream.");
+          }
+
+          // Now that we've written to the underlying bio, pop it back
+          // to the bio local so we can retrieve the base64 data which was written.
+          bio.reset(BIO_pop(base64bio.get()));
+
+          uint8_t* base64data;
+          long bufferSize = BIO_get_mem_data(bio.get(), &base64data);
+          std::string returnValue;
+          returnValue.resize(bufferSize);
+          memcpy(&returnValue[0], base64data, bufferSize);
+
+          return returnValue;
         }
 
         /// Trim whitespace from the start of the string.
