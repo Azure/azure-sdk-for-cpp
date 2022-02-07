@@ -491,7 +491,7 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
       TestObject testObject;
       testObject.Algorithm = "RSA";
       testObject.Integer = 314;
-      testObject.ExpiresAt = std::chrono::system_clock::now();
+      testObject.ExpiresAt = std::chrono::system_clock::now() + std::chrono::seconds(30);
       testObject.IssuedOn = std::chrono::system_clock::now();
       testObject.NotBefore = std::chrono::system_clock::now();
       testObject.IntegerArray = {1, 2, 99, 32};
@@ -518,7 +518,7 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
     // Test expired tokens.
     {
       // Capture the current time, needed for future validation.
-      auto now = std::chrono::system_clock::now();
+      auto now = std::chrono::system_clock::now() - std::chrono::seconds(30);
 
       TestObject testObject;
 
@@ -528,9 +528,9 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
       testObject.Issuer = "George";
 
       // This token was issued 40 seconds ago, and is valid for 30 seconds.
-      testObject.ExpiresAt = now + std::chrono::seconds(30);
-      testObject.IssuedOn = now - std::chrono::seconds(40);
-      testObject.NotBefore = now - std::chrono::seconds(40);
+      testObject.ExpiresAt = now + std::chrono::seconds(15);
+      testObject.IssuedOn = now;
+      testObject.NotBefore = now;
 
       auto testToken
           = AttestationTokenInternal<TestObject, TestObjectSerializer>::CreateToken(testObject);

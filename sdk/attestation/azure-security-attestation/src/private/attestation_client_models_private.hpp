@@ -22,7 +22,9 @@
 #include "crypto/inc/crypto.hpp"
 #include "jsonhelpers.hpp"
 #include "jsonwebkeyset.hpp"
+#include <chrono>
 #include <memory>
+#include <sstream>
 #include <string>
 #include <vector>
 
@@ -309,7 +311,8 @@ namespace Azure {
       {
         // Sign the first two pieces of the JWS
         auto signedBuffer = signingKey->SignBuffer(std::vector<uint8_t>(jwt.begin(), jwt.end()));
-        // Append the separator between the signed data (first two components of the JWS) and the signature.
+        // Append the separator between the signed data (first two components of the JWS) and the
+        // signature.
         jwt += ".";
         jwt += Azure::Core::_internal::Base64Url::Base64UrlEncode(signedBuffer);
       }
@@ -392,6 +395,49 @@ namespace Azure {
       return Azure::Nullable<AttestationSigner>();
     }
 
+    void ValidateTokenTimeElements(AttestationTokenValidationOptions const& validationOptions)
+    {
+      // Snapshot "now" to provide a base time for subsequent checks.
+      time_t timeNowSeconds = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
+      auto timeNow = std::chrono::system_clock::from_time_t(timeNowSeconds);
+      //      auto timeNowInSeconds = std::chrono::duration_cast<std::chrono::seconds>(timeNow).;
+
+      if (m_token.ExpiresOn.HasValue() && validationOptions.ValidateExpirationTime)
+      {
+        if (timeNow > m_token.ExpiresOn.Value())
+        {
+          auto expiresOn
+              = static_cast<std::chrono::system_clock::time_point>(m_token.ExpiresOn.Value());
+          auto timeDelta = timeNow - expiresOn;
+          if (timeDelta > validationOptions.ValidationTimeSlack)
+          {
+            std::stringstream ss;
+            ss << "Attestation token has expired. Token expiration time: "
+               << m_token.ExpiresOn.Value().ToString()
+               << ". Current time: " << Azure::DateTime(timeNow).ToString();
+            throw std::runtime_error(ss.str());
+          }
+        }
+      }
+      if (m_token.NotBefore.HasValue() && validationOptions.ValidateExpirationTime)
+      {
+        if (timeNow < m_token.NotBefore.Value())
+        {
+          auto notBefore
+              = static_cast<std::chrono::system_clock::time_point>(m_token.NotBefore.Value());
+          auto timeDelta = timeNow - notBefore;
+          if (timeDelta > validationOptions.ValidationTimeSlack)
+          {
+            std::stringstream ss;
+            ss << "Attestation token is not yet valid. Token becomes valid at time: "
+               << m_token.NotBefore.Value().ToString()
+               << ". Current time: " << Azure::DateTime(timeNow).ToString();
+            throw std::runtime_error(ss.str());
+          }
+        }
+      }
+    }
+
     /// @brief: Validate this attestation token.
     /// @param validationOptions - Options which can be used when validating the token.
     /// @param signers - Potential signers for this attestation token.
@@ -416,7 +462,11 @@ namespace Azure {
           throw std::runtime_error("Unable to verify the attestation token signature.");
         }
       }
+
+      // Now check the expiration time
+      ValidateTokenTimeElements(validationOptions);
     }
+
     operator AttestationToken<T>&&() { return std::move(m_token); }
   };
 
