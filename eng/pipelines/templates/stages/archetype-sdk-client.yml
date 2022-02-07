@@ -47,9 +47,6 @@ parameters:
 - name: CMakeSourceTestOptions
   type: object
   default: []
-- name: CMakeTestDependencies
-  type: string
-  default: ''
 
 stages:
   - ${{ if eq(variables['System.TeamProject'], 'public') }}:
@@ -62,7 +59,6 @@ stages:
             ArtifactsSource: ${{ parameters.ArtifactsSource }}
             CMakeTestOptions: ${{ parameters.CMakeTestOptions }}
             CMakeSourceTestOptions: ${{ parameters.CMakeSourceTestOptions }}
-            CMakeTestDependencies: ${{ parameters.CMakeTestDependencies }}
 
   - stage: Build
     dependsOn: []
