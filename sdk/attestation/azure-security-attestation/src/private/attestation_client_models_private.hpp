@@ -397,10 +397,11 @@ namespace Azure {
 
     void ValidateTokenTimeElements(AttestationTokenValidationOptions const& validationOptions)
     {
-      // Snapshot "now" to provide a base time for subsequent checks.
-      time_t timeNowSeconds = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
+      // Snapshot "now" to provide a base time for subsequent checks. Note that this code
+      // round-trips the time through time_t to round to the nearest second.
+      time_t timeNowSeconds
+          = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
       auto timeNow = std::chrono::system_clock::from_time_t(timeNowSeconds);
-      //      auto timeNowInSeconds = std::chrono::duration_cast<std::chrono::seconds>(timeNow).;
 
       if (m_token.ExpiresOn.HasValue() && validationOptions.ValidateExpirationTime)
       {
@@ -419,13 +420,13 @@ namespace Azure {
           }
         }
       }
-      if (m_token.NotBefore.HasValue() && validationOptions.ValidateExpirationTime)
+      if (m_token.NotBefore.HasValue() && validationOptions.ValidateNotBeforeTime)
       {
         if (timeNow < m_token.NotBefore.Value())
         {
           auto notBefore
               = static_cast<std::chrono::system_clock::time_point>(m_token.NotBefore.Value());
-          auto timeDelta = timeNow - notBefore;
+          auto timeDelta = notBefore - timeNow;
           if (timeDelta > validationOptions.ValidationTimeSlack)
           {
             std::stringstream ss;

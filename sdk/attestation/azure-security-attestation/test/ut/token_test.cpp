@@ -527,7 +527,7 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
       testObject.IntegerArray = {1, 2, 99, 32};
       testObject.Issuer = "George";
 
-      // This token was issued 40 seconds ago, and is valid for 30 seconds.
+      // This token was issued 40 seconds ago, and is valid for 15 seconds.
       testObject.ExpiresAt = now + std::chrono::seconds(15);
       testObject.IssuedOn = now;
       testObject.NotBefore = now;
@@ -549,6 +549,44 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
       {
         AttestationTokenValidationOptions tokenOptions{};
         tokenOptions.ValidateExpirationTime = false;
+        EXPECT_NO_THROW(testToken.ValidateToken(tokenOptions));
+      }
+    }
+
+    // Test tokens which are not yet ready.
+    {
+      // Capture the current time, 30 seconds in the future.
+      auto now = std::chrono::system_clock::now() + std::chrono::seconds(30);
+
+      TestObject testObject;
+
+      testObject.Algorithm = "RSA";
+      testObject.Integer = 314;
+      testObject.IntegerArray = {1, 2, 99, 32};
+      testObject.Issuer = "George";
+
+      // This token will be issued 30 seconds from now, and is valid for 15 seconds.
+      testObject.ExpiresAt = now + std::chrono::seconds(15);
+      testObject.IssuedOn = now;
+      testObject.NotBefore = now;
+
+      auto testToken
+          = AttestationTokenInternal<TestObject, TestObjectSerializer>::CreateToken(testObject);
+
+      // Simple valdation should throw an exception.
+      EXPECT_THROW(testToken.ValidateToken({}), std::runtime_error);
+
+      // Validate the token asking to ignore token validation.
+      {
+        AttestationTokenValidationOptions tokenOptions{};
+        tokenOptions.ValidateToken = false;
+        EXPECT_NO_THROW(testToken.ValidateToken(tokenOptions));
+      }
+
+      // Validate the token asking to ignore token expiration time.
+      {
+        AttestationTokenValidationOptions tokenOptions{};
+        tokenOptions.ValidateNotBeforeTime = false;
         EXPECT_NO_THROW(testToken.ValidateToken(tokenOptions));
       }
     }
