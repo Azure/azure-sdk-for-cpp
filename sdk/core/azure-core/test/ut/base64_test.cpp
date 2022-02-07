@@ -143,6 +143,7 @@ TEST(Base64, InvalidDecode)
   EXPECT_THROW(Convert::Base64Decode("aa"), std::runtime_error);
   EXPECT_THROW(Convert::Base64Decode("aaa"), std::runtime_error);
   EXPECT_THROW(Convert::Base64Decode("a==="), std::runtime_error);
+  EXPECT_THROW(Convert::Base64Decode("===="), std::runtime_error);
   EXPECT_THROW(Convert::Base64Decode("@#!%"), std::runtime_error);
   EXPECT_THROW(Convert::Base64Decode("ABCD%GA="), std::runtime_error);
   EXPECT_THROW(Convert::Base64Decode("ABCDE^A="), std::runtime_error);
@@ -159,6 +160,7 @@ TEST(Base64, InvalidDecode)
   EXPECT_THROW(Convert::Base64Decode("ABCD===="), std::runtime_error);
   EXPECT_THROW(Convert::Base64Decode("ADEF====="), std::runtime_error);
   EXPECT_THROW(Convert::Base64Decode("ADEF======"), std::runtime_error);
+  EXPECT_THROW(Convert::Base64Decode("QQ======"), std::runtime_error);
 
   EXPECT_THROW(Convert::Base64Decode("AB===CD="), std::runtime_error);
   EXPECT_THROW(Convert::Base64Decode("AB==CD=="), std::runtime_error);
