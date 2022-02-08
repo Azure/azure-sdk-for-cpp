@@ -153,7 +153,7 @@ namespace Azure { namespace Security { namespace Attestation { namespace _privat
       {
         // X.509 thumbprints are calculated using SHA1, even though SHA1 is insecure.
         auto hash(_details::make_openssl_unique(EVP_MD_CTX_new));
-        EVP_DigestInit(hash.get(), EVP_sha1());
+        EVP_DigestInit_ex(hash.get(), EVP_sha1(), nullptr);
 
         int len = i2d_X509(m_certificate.get(), nullptr);
         std::vector<uint8_t> thumbprintBuffer(len);
@@ -166,16 +166,13 @@ namespace Azure { namespace Security { namespace Attestation { namespace _privat
         {
           throw _details::OpenSSLException("EVP_DigestUpdate");
         }
-        uint32_t hashLength;
-        if (EVP_DigestFinal(hash.get(), nullptr, &hashLength) != 1)
+        uint32_t hashLength = EVP_MAX_MD_SIZE;
+        std::vector<uint8_t> hashedThumbprint(EVP_MAX_MD_SIZE);
+        if (EVP_DigestFinal_ex(hash.get(), hashedThumbprint.data(), &hashLength) != 1)
         {
           throw _details::OpenSSLException("EVP_DigestUpdate");
         }
-        std::vector<uint8_t> hashedThumbprint(hashLength);
-        if (EVP_DigestFinal(hash.get(), hashedThumbprint.data(), &hashLength) != 1)
-        {
-          throw _details::OpenSSLException("EVP_DigestUpdate");
-        }
+        hashedThumbprint.resize(hashLength);
 
         auto hexThumbprint(ToHexString(hashedThumbprint));
         // HexString uses an "a"-"f" alphabet, but the CLR hex encoder uses an "A"-"F" alphabet,

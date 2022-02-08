@@ -270,7 +270,7 @@ qQKwhjIj5sw3iOCKAiAUEIuF2ylJk2KDexNEW7t/zGmnBT0FgCRwdvKAh8S2EQ==
     EXPECT_NE(nullptr, publicKey.get());
   }
 
-  TEST(CryptoTests, CreateX509Certificate)
+  TEST(CryptoTests, CreateRsaX509Certificate)
   {
     auto privateKey = Crypto::CreateRsaKey(2048);
     auto x509cert = Crypto::CreateX509CertificateForPrivateKey(
@@ -282,5 +282,26 @@ qQKwhjIj5sw3iOCKAiAUEIuF2ylJk2KDexNEW7t/zGmnBT0FgCRwdvKAh8S2EQ==
     EXPECT_EQ(
         "CN=TestSubject1, O=Microsoft Corporation, L=Redmond, ST=WA, C=US",
         x509cert->GetIssuerName());
+
+    std::string certThumbprint(x509cert->GetThumbprint());
+    EXPECT_FALSE(certThumbprint.empty());
   }
+  TEST(CryptoTests, CreateEcdsX509Certificate)
+  {
+    auto privateKey = Crypto::CreateEcdsaKey();
+    auto x509cert = Crypto::CreateX509CertificateForPrivateKey(
+        privateKey, "CN=ECDSATest\\Subject1, O=Microsoft Corporation, L=Redmond, ST=WA, C=US");
+
+    EXPECT_EQ(
+        "CN=ECDSATestSubject1, O=Microsoft Corporation, L=Redmond, ST=WA, C=US",
+        x509cert->GetSubjectName());
+    EXPECT_EQ(
+        "CN=ECDSATestSubject1, O=Microsoft Corporation, L=Redmond, ST=WA, C=US",
+        x509cert->GetIssuerName());
+
+    std::string certThumbprint(x509cert->GetThumbprint());
+    EXPECT_FALSE(certThumbprint.empty());
+  }
+
+
 }}}} // namespace Azure::Security::Attestation::Test

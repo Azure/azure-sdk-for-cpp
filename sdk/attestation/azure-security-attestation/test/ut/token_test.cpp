@@ -349,6 +349,26 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
     }
   }
 
+  TEST(SerializationTests, TestDeserializeSignerToJson)
+  {
+    auto asymmetricKey = Crypto::CreateRsaKey(2048);
+    auto cert = Crypto::CreateX509CertificateForPrivateKey(asymmetricKey, "CN=TestSubject, C=US");
+
+    AttestationSigner signer{
+        std::string{"ABCDEFG"}, std::vector<std::string>{cert->ExportAsBase64()}};
+
+    std::string serializedSigner = AttestationSignerInternal::SerializeToJson(signer).dump();
+    auto jsonSigner(json::parse(serializedSigner));
+    EXPECT_TRUE(jsonSigner["kid"].is_string());
+    EXPECT_EQ(signer.KeyId.Value(), jsonSigner["kid"].get<std::string>());
+    EXPECT_TRUE(jsonSigner["x5c"].is_array());
+    auto x5c = jsonSigner["x5c"].get<std::vector<json>>();
+    EXPECT_TRUE(x5c[0].is_string());
+
+    EXPECT_EQ(x5c[0].get<std::string>(), signer.CertificateChain.Value()[0]);
+
+  }
+
   template <typename T> bool CompareNullable(Nullable<T> const& me, Nullable<T> const& them)
   {
     if (me.HasValue() != them.HasValue())
