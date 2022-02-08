@@ -90,7 +90,7 @@ jobs:
         displayName: Install dependencies from apt
 
         # Add g++5 repo to ubuntu
-      - bash: sudo sh -c "echo $(COPY_VALUE) -- $MY_MAPPED_ENV_VAR"
+      - bash: sudo sh -c "echo $ATT -- $MY_MAPPED_ENV_VAR"
         displayName: Aver
         env:
           MY_MAPPED_ENV_VAR: $(ATT)
