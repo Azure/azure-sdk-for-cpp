@@ -187,17 +187,17 @@ namespace Azure { namespace Security { namespace Attestation {
     Azure::Nullable<AttestationData> RuntimeData;
 
     /// Data created when the enclave is created.
-    Azure::Nullable<AttestationData> InittimeData;
+    Azure::Nullable<AttestationData> InittimeData{};
 
     /// Nonce which is sent to the attestation service to allow a caller to prevent replay attacks.
-    Azure::Nullable<std::string> Nonce = {};
+    Azure::Nullable<std::string> Nonce{};
 
     /// A test hook which allows developers to test attestation policies before they commit them to
     /// the service.
-    Azure::Nullable<std::string> DraftPolicyForAttestation = {};
+    Azure::Nullable<std::string> DraftPolicyForAttestation{};
 
     /// Specifies the options which 
-    Azure::Nullable<AttestationTokenValidationOptions> TokenValidationOptions;
+    Azure::Nullable<AttestationTokenValidationOptions> TokenValidationOptions{};
   };
 
   /** @brief The AttestationSigningKey represents a tuple of asymmetric private cryptographic key

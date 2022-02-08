@@ -66,7 +66,6 @@ set(
     src/private/crypto/openssl/opensslcert.cpp)
 #endif()
 
-
 create_per_service_target_build(azure-security-attestation attestation)
 
 add_library(azure-security-attestation ${AZURE_ATTESTATION_HEADER} ${AZURE_ATTESTATION_SOURCE})
