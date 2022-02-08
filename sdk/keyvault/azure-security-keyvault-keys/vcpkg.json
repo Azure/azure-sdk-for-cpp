@@ -1,5 +1,5 @@
 {
-    "name": "azure-key-vault-cpp",
+    "name": "azure-security-keyvault-keys",
     "version-string": "1.0.0",
     "dependencies": [
         "azure-core-cpp",

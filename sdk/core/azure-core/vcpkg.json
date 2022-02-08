@@ -1,0 +1,7 @@
+{
+    "name": "azure-core-cpp",
+    "version-string": "1.0.0",
+    "dependencies": [
+        "curl"
+    ]
+}
