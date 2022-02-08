@@ -44,6 +44,12 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
     {
       // `InitTestClient` takes care of setting up Record&Playback.
       auto options = InitClientOptions<Azure::Security::Attestation::AttestationClientOptions>();
+      if (m_testContext.IsPlaybackMode())
+      {
+        // Skip validating time stamps if using recordings.
+        options.TokenValidationOptions.ValidateNotBeforeTime = false;
+        options.TokenValidationOptions.ValidateExpirationTime = false;
+      }
       return std::make_unique<Azure::Security::Attestation::AttestationClient>(m_endpoint, options);
     }
     std::unique_ptr<AttestationClient> CreateAuthenticatedClient()
@@ -117,8 +123,8 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
     auto report = AttestationCollateral::OpenEnclaveReport();
     auto runtimeData = AttestationCollateral::RuntimeData();
 
-    auto attestResponse
-        = client->AttestOpenEnclave(report, {AttestationData{runtimeData, AttestationDataType::Binary}});
+    auto attestResponse = client->AttestOpenEnclave(
+        report, {AttestationData{runtimeData, AttestationDataType::Binary}});
   }
 
   TEST_P(AttestationTests, AttestSgxEnclaveWithRuntimeData)
@@ -127,8 +133,8 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
     auto sgxQuote = AttestationCollateral::SgxQuote();
     auto runtimeData = AttestationCollateral::RuntimeData();
 
-    auto attestResponse
-        = client->AttestSgxEnclave(sgxQuote, {AttestationData{runtimeData, AttestationDataType::Binary}});
+    auto attestResponse = client->AttestSgxEnclave(
+        sgxQuote, {AttestationData{runtimeData, AttestationDataType::Binary}});
   }
 
   namespace {

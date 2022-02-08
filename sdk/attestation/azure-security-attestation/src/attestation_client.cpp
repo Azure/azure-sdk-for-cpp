@@ -130,7 +130,8 @@ Azure::Response<AttestationToken<AttestationResult>> AttestationClient::AttestOp
       openEnclaveReport,
       options.InittimeData,
       options.RuntimeData,
-      options.DraftPolicyForAttestation};
+      options.DraftPolicyForAttestation,
+      options.Nonce};
   std::string serializedRequest(AttestOpenEnclaveRequestSerializer::Serialize(attestRequest));
 
   auto encodedVector = std::vector<uint8_t>(serializedRequest.begin(), serializedRequest.end());

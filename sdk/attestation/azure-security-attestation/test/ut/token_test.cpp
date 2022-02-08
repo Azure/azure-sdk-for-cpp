@@ -753,7 +753,7 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
         EXPECT_NO_THROW(badToken.ValidateToken(tokenOptions));
       }
 
-      // Validate the token asking to ignore token signature validaiton.
+      // Validate the token asking to ignore token signature validation.
       {
         AttestationTokenValidationOptions tokenOptions{};
         tokenOptions.ValidateSigner = false;
