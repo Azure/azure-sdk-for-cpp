@@ -77,8 +77,8 @@ jobs:
         value: ${{ testEnvVar.Value }}
 # VCPKG cpp - public cache for vcpkg binary - cache
 # Cache is not written from public pipelines.
-    - name: VCPKG_BINARY_SOURCES
-      value: "clear;x-azblob,https://cppvcpkgcache.blob.core.windows.net/public-vcpkg-container,,read"
+    - name: VCPKG_CACHE_MODE
+      value: "read"
 
     steps:
       - template: /eng/common/pipelines/templates/steps/verify-agent-os.yml
@@ -88,12 +88,6 @@ jobs:
       - pwsh: sudo apt update && sudo apt install -y $(AptDependencies)
         condition: and(succeeded(), ne(variables['AptDependencies'], ''))
         displayName: Install dependencies from apt
-
-        # Add g++5 repo to ubuntu
-      - bash: sudo sh -c "echo $ATT -- $MY_MAPPED_ENV_VAR"
-        displayName: Aver
-        env:
-          MY_MAPPED_ENV_VAR: $(ATT)
 
       - pwsh: sudo xcode-select -s /Applications/Xcode_$(XCODE_VERSION).app/Contents/Developer
         condition: >-
