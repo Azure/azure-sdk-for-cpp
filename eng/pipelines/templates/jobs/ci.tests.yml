@@ -79,8 +79,6 @@ jobs:
 # Cache is not written from public pipelines.
     - name: VCPKG_BINARY_SOURCES
       value: "clear;x-azblob,https://cppvcpkgcache.blob.core.windows.net/public-vcpkg-container,,read"
-    - name: COPY_VALUE
-      value: "What I want: %ATT%"
 
     steps:
       - template: /eng/common/pipelines/templates/steps/verify-agent-os.yml
@@ -92,8 +90,10 @@ jobs:
         displayName: Install dependencies from apt
 
         # Add g++5 repo to ubuntu
-      - bash: sudo sh -c "echo $(COPY_VALUE) -- $(ATT)"
+      - bash: sudo sh -c "echo $(COPY_VALUE) -- $MY_MAPPED_ENV_VAR"
         displayName: Aver
+        env:
+          MY_MAPPED_ENV_VAR: $(ATT)
 
       - pwsh: sudo xcode-select -s /Applications/Xcode_$(XCODE_VERSION).app/Contents/Developer
         condition: >-
