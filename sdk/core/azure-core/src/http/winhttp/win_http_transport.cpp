@@ -201,7 +201,7 @@ std::string GetHeadersAsString(Azure::Core::Http::Request const& request)
 void GetErrorAndThrow(const std::string& exceptionMessage)
 {
   DWORD error = GetLastError();
-  char* errorString = nullptr;
+
   std::string errorMessage = exceptionMessage + " Error Code: " + std::to_string(error);
 
   char* errorMsg = nullptr;
