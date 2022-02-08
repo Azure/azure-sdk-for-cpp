@@ -2,6 +2,6 @@
     "name": "azure-sdk-for-cpp",
     "version-string": "1.0.0",
     "dependencies": [
-        "azure-core-cpp"
+        "curl"
     ]
 }
