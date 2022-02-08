@@ -303,5 +303,4 @@ qQKwhjIj5sw3iOCKAiAUEIuF2ylJk2KDexNEW7t/zGmnBT0FgCRwdvKAh8S2EQ==
     EXPECT_FALSE(certThumbprint.empty());
   }
 
-
 }}}} // namespace Azure::Security::Attestation::Test

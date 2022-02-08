@@ -366,7 +366,6 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
     EXPECT_TRUE(x5c[0].is_string());
 
     EXPECT_EQ(x5c[0].get<std::string>(), signer.CertificateChain.Value()[0]);
-
   }
 
   template <typename T> bool CompareNullable(Nullable<T> const& me, Nullable<T> const& them)
