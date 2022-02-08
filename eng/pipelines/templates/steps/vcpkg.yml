@@ -7,6 +7,8 @@ steps:
       $VcpkgCommit = $(Get-Content eng/vcpkg-commit.txt)
       Write-Host "Target Path for vcpkg: $TargetPath"
       Write-Host "Vcpkg SHA: $VcpkgCommit"
+      Write-Host "Cache mode: $env:VCPKG_CACHE_MODE"
+      Write-Host "Cache SAS: $env:VCPKG_CACHE_SAS"
 
       Write-Host "##vso[task.prependpath]$TargetPath"
       Write-Host "##vso[task.setvariable variable=VCPKG_INSTALLATION_ROOT]$TargetPath"
