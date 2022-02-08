@@ -2,7 +2,6 @@
     "name": "azure-identity-cpp",
     "version-string": "1.0.0",
     "dependencies": [
-        "",
-        "libxml2"
+        "azure-core-cpp"
     ]
 }
