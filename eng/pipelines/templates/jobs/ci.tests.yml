@@ -80,7 +80,7 @@ jobs:
     - name: VCPKG_BINARY_SOURCES
       value: "clear;x-azblob,https://cppvcpkgcache.blob.core.windows.net/public-vcpkg-container,,read"
     - name: COPY_VALUE
-      value: "What I want: $(ATT)"
+      value: "What I want: %ATT%"
 
     steps:
       - template: /eng/common/pipelines/templates/steps/verify-agent-os.yml
