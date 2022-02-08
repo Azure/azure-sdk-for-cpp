@@ -204,19 +204,23 @@ void GetErrorAndThrow(const std::string& exceptionMessage)
   char* errorString = nullptr;
   std::string errorMessage = exceptionMessage + " Error Code: " + std::to_string(error);
 
+  char* errorMsg = nullptr;
   if (FormatMessage(
           FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_FROM_HMODULE | FORMAT_MESSAGE_ALLOCATE_BUFFER,
           GetModuleHandle("winhttp.dll"),
           error,
           MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),
-          reinterpret_cast<LPSTR>(&errorString),
+          reinterpret_cast<LPSTR>(&errorMsg),
           0,
           nullptr)
       != 0)
   {
+    // Use a unique_ptr to manage the lifetime of errorMsg.
+    std::unique_ptr<char, decltype(&LocalFree)> errorString(errorMsg, &LocalFree);
+    errorMsg = nullptr;
+
     errorMessage += ": ";
-    errorMessage += errorString;
-    LocalFree(errorString);
+    errorMessage += errorString.get();
   }
   errorMessage += '.';
 
