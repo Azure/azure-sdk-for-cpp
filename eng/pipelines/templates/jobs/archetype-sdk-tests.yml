@@ -139,7 +139,7 @@ jobs:
     AZURE_TEST_MODE: "LIVE"
     AZURE_LOG_LEVEL: "verbose"
 # Need to update to writeRead value with SAS here (daniel's help to add the secret SAS to this pipeline)
-    VCPKG_BINARY_SOURCES: "clear;x-azblob,https://cppvcpkgcache.blob.core.windows.net/public-vcpkg-container,$(VcpkgPublicCacheSAS),readwrite"
+    VCPKG_BINARY_SOURCES: "clear;x-azblob,https://cppvcpkgcache.blob.core.windows.net/public-vcpkg-container,$(VCPKGPUBLICCACHESAS),readwrite"
 
   steps:
   - checkout: self
@@ -162,7 +162,7 @@ jobs:
       )
 
   # Add g++5 repo to ubuntu
-  - bash: sudo sh -c "echo $VCPKG_BINARY_SOURCES -- $VcpkgPublicCacheSAS"
+  - bash: sudo sh -c "echo $(VCPKG_BINARY_SOURCES) -- $(VCPKGPUBLICCACHESAS)"
     displayName: Aver
 
   # Install g++5
