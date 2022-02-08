@@ -201,8 +201,26 @@ std::string GetHeadersAsString(Azure::Core::Http::Request const& request)
 void GetErrorAndThrow(const std::string& exceptionMessage)
 {
   DWORD error = GetLastError();
-  throw Azure::Core::Http::TransportException(
-      exceptionMessage + " Error Code: " + std::to_string(error) + ".");
+  char* errorString = nullptr;
+  std::string errorMessage = exceptionMessage + " Error Code: " + std::to_string(error);
+
+  if (FormatMessage(
+          FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_FROM_HMODULE | FORMAT_MESSAGE_ALLOCATE_BUFFER,
+          GetModuleHandle("winhttp.dll"),
+          error,
+          MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),
+          reinterpret_cast<LPSTR>(&errorString),
+          0,
+          nullptr)
+      != 0)
+  {
+    errorMessage += ": ";
+    errorMessage += errorString;
+    LocalFree(errorString);
+  }
+  errorMessage += '.';
+
+  throw Azure::Core::Http::TransportException(errorMessage);
 }
 
 void WinHttpTransport::CreateSessionHandle(std::unique_ptr<_detail::HandleManager>& handleManager)
