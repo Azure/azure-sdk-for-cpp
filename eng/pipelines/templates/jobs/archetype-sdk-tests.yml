@@ -139,7 +139,7 @@ jobs:
     AZURE_TEST_MODE: "LIVE"
     AZURE_LOG_LEVEL: "verbose"
 # Need to update to writeRead value with SAS here (daniel's help to add the secret SAS to this pipeline)
-    VCPKG_BINARY_SOURCES: "clear;x-azblob,https://cppvcpkgcache.blob.core.windows.net/public-vcpkg-container,$(VCPKGPUBLICCACHESAS),readwrite"
+    VCPKG_CACHE_MODE: "readwrite"
 
   steps:
   - checkout: self

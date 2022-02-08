@@ -41,7 +41,7 @@ jobs:
     vmImage: $(OSVmImage)
   variables:
     CMOCKA_XML_FILE: "%g-test-results.xml"
-    VCPKG_BINARY_SOURCES: "clear;x-azblob,https://cppvcpkgcache.blob.core.windows.net/public-vcpkg-container,,read"
+    VCPKG_CACHE_MODE: "read"
 
   steps:
   - checkout: self

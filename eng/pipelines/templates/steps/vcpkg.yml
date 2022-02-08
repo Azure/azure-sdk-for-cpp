@@ -16,7 +16,7 @@ steps:
       Write-Host "##vso[task.setvariable variable=VCPKG_BINARY_SOURCES]clear;x-azblob,https://cppvcpkgcache.blob.core.windows.net/public-vcpkg-container,$env:VCPKG_CACHE_SAS,$env:VCPKG_CACHE_MODE"
     displayName: Set Vcpkg Variables
     env:
-      VCPKG_CACHE_SAS: $(mySecret)
+      VCPKG_CACHE_SAS: $(VcpkgPublicCacheSAS)
     condition: >-
       succeeded()
 
