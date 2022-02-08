@@ -184,7 +184,7 @@ namespace Azure { namespace Security { namespace Attestation {
   struct AttestOptions final
   {
     /// Data created dynamically by the enclave
-    Azure::Nullable<AttestationData> RuntimeData;
+    Azure::Nullable<AttestationData> RuntimeData{};
 
     /// Data created when the enclave is created.
     Azure::Nullable<AttestationData> InittimeData{};
@@ -196,7 +196,9 @@ namespace Azure { namespace Security { namespace Attestation {
     /// the service.
     Azure::Nullable<std::string> DraftPolicyForAttestation{};
 
-    /// Specifies the options which 
+    /// Specifies the options which should be used to validate the attestation token returned
+    /// by the attestation service. If not provided by the caller, the token validation options
+    /// specified when the @{link AttestationClient} was created will be used.
     Azure::Nullable<AttestationTokenValidationOptions> TokenValidationOptions{};
   };
 
