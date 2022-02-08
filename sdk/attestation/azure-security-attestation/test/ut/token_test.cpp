@@ -615,49 +615,62 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
     }
   }
 
+  void CreateSecuredToken(
+      std::unique_ptr<AsymmetricKey> const& key,
+      std::unique_ptr<X509Certificate> const& cert)
+  {
+    TestObject testObject;
+    testObject.Algorithm = "UnknownAlgorithm";
+    testObject.Integer = 314;
+    // Capture the current time, needed for future validation.
+    auto now = std::chrono::system_clock::now();
+
+    // This token was issued now, and is valid for 30 seconds.
+    testObject.ExpiresAt = now + std::chrono::seconds(30);
+    testObject.IssuedOn = now;
+    testObject.NotBefore = now;
+    testObject.IntegerArray = {1, 2, 99, 32};
+    testObject.Issuer = "George";
+
+    AttestationSigningKey signingKey{key->ExportPrivateKey(), cert->ExportAsPEM()};
+
+    // Create a secured attestation token wrapped around the TestObject.
+    auto testToken = AttestationTokenInternal<TestObject, TestObjectSerializer>::CreateToken(
+        testObject, signingKey);
+
+    // Validate this token - it should not throw.
+    EXPECT_NO_THROW(testToken.ValidateToken({}));
+
+    {
+      AttestationTokenValidationOptions validationOptions;
+      validationOptions.ValidateIssuer = true;
+      validationOptions.ExpectedIssuer = "George";
+      EXPECT_NO_THROW(testToken.ValidateToken(validationOptions));
+    }
+
+    AttestationToken<TestObject> token = testToken;
+    EXPECT_EQ(testObject, token.Body);
+
+    EXPECT_TRUE(token.ExpiresOn.HasValue());
+    EXPECT_TRUE(token.IssuedOn.HasValue());
+    EXPECT_TRUE(token.NotBefore.HasValue());
+    EXPECT_TRUE(token.Issuer.HasValue());
+    EXPECT_EQ(token.Issuer.Value(), "George");
+  }
   TEST(AttestationTokenTests, CreateSecuredTokenFromObject)
   {
     {
-      TestObject testObject;
-      testObject.Algorithm = "UnknownAlgorithm";
-      testObject.Integer = 314;
-      // Capture the current time, needed for future validation.
-      auto now = std::chrono::system_clock::now();
-
-      // This token was issued now, and is valid for 30 seconds.
-      testObject.ExpiresAt = now + std::chrono::seconds(30);
-      testObject.IssuedOn = now;
-      testObject.NotBefore = now;
-      testObject.IntegerArray = {1, 2, 99, 32};
-      testObject.Issuer = "George";
-
       // Create an RSA public/private key pair.
       auto asymmetricKey = Crypto::CreateRsaKey(2048);
       auto cert = Crypto::CreateX509CertificateForPrivateKey(asymmetricKey, "CN=TestSubject, C=US");
-      AttestationSigningKey signingKey{asymmetricKey->ExportPrivateKey(), cert->ExportAsPEM()};
+      CreateSecuredToken(asymmetricKey, cert);
+    }
 
-      // Create a secured attestation token wrapped around the TestObject.
-      auto testToken = AttestationTokenInternal<TestObject, TestObjectSerializer>::CreateToken(
-          testObject, signingKey);
-
-      // Validate this token - it should not throw.
-      EXPECT_NO_THROW(testToken.ValidateToken({}));
-
-      {
-        AttestationTokenValidationOptions validationOptions;
-        validationOptions.ValidateIssuer = true;
-        validationOptions.ExpectedIssuer = "George";
-        EXPECT_NO_THROW(testToken.ValidateToken(validationOptions));
-      }
-
-      AttestationToken<TestObject> token = testToken;
-      EXPECT_EQ(testObject, token.Body);
-
-      EXPECT_TRUE(token.ExpiresOn.HasValue());
-      EXPECT_TRUE(token.IssuedOn.HasValue());
-      EXPECT_TRUE(token.NotBefore.HasValue());
-      EXPECT_TRUE(token.Issuer.HasValue());
-      EXPECT_EQ(token.Issuer.Value(), "George");
+    {
+      // Create an RSA public/private key pair.
+      auto asymmetricKey = Crypto::CreateEcdsaKey();
+      auto cert = Crypto::CreateX509CertificateForPrivateKey(asymmetricKey, "CN=TestSubject, C=US");
+      CreateSecuredToken(asymmetricKey, cert);
     }
   }
 

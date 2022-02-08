@@ -233,24 +233,25 @@ namespace Azure { namespace Security { namespace Attestation { namespace _privat
     namespace _details {
       std::string GetOpenSSLError(std::string const& what)
       {
-        auto _bio(make_openssl_unique(BIO_new, BIO_s_mem()));
+        auto bio(make_openssl_unique(BIO_new, BIO_s_mem()));
 
+        BIO_printf(bio.get(), "Error in %hs: ", what.c_str());
         if (ERR_peek_error() != 0)
         {
-          ERR_print_errors(_bio.get());
+          ERR_print_errors(bio.get());
         }
         else
         {
-          BIO_printf(_bio.get(), "Unknown error: %hs.", what.c_str());
+          BIO_printf(bio.get(), "Unknown error.");
         }
-        std::vector<uint8_t> returnValue(BIO_ctrl_pending(_bio.get()));
 
-        int res = BIO_read(_bio.get(), returnValue.data(), static_cast<int>(returnValue.size()));
-        if (res == 0 || res == -1 || res == -2)
-        {
-          return std::string(returnValue.begin(), returnValue.end());
-        }
-        return "Uknown error" + what;
+        uint8_t* bioData;
+        long bufferSize = BIO_get_mem_data(bio.get(), &bioData);
+        std::string returnValue;
+        returnValue.resize(bufferSize);
+        memcpy(&returnValue[0], bioData, bufferSize);
+
+        return returnValue;
       }
 
       OpenSSLException::OpenSSLException(std::string const& what)
