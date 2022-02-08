@@ -76,6 +76,8 @@ stages:
           ${{ if eq(parameters.ServiceDirectory, 'template') }}:
             TestPipeline: true
           TestEnv: ${{ parameters.TestEnv }}
+          ${{ if eq(variables['System.TeamProject'], 'internal') }}:
+            VcpkgCacheMode: 'readwrite'
 
   - ${{ if and(eq(variables['System.TeamProject'], 'internal'), ne(parameters.LiveTestCtestRegex, '')) }}:
     - stage: LiveTest

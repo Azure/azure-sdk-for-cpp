@@ -32,6 +32,9 @@ parameters:
   - name: TestEnv
     type: object
     default: []
+  - name: VcpkgCacheMode
+    type: string
+    default: 'read'    
 
 jobs:
   - template: /eng/common/pipelines/templates/jobs/archetype-sdk-tests-generate.yml
@@ -53,6 +56,7 @@ jobs:
         LineCoverageTarget: ${{ parameters.LineCoverageTarget }}
         BranchCoverageTarget: ${{ parameters.BranchCoverageTarget }}
         TestEnv: ${{ parameters.TestEnv }}
+        VcpkgCacheMode: ${{ parameters.VcpkgCacheMode }}
 
   # Disable build for cpp - client
   - ${{ if ne(parameters.ServiceDirectory, 'not-specified' )}}:
