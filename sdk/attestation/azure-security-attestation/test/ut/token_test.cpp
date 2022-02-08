@@ -624,6 +624,13 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
       // Validate this token - it should not throw.
       EXPECT_NO_THROW(testToken.ValidateToken({}));
 
+      {
+        AttestationTokenValidationOptions validationOptions;
+        validationOptions.ValidateIssuer = true;
+        validationOptions.ExpectedIssuer = "George";
+        EXPECT_NO_THROW(testToken.ValidateToken(validationOptions));
+      }
+
       AttestationToken<TestObject> token = testToken;
       EXPECT_EQ(testObject, token.Body);
 
@@ -759,6 +766,69 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
         tokenOptions.ValidateSigner = false;
         EXPECT_NO_THROW(badToken.ValidateToken(tokenOptions));
       }
+    }
+
+    // Test incorrect issuer...
+    {
+      // Capture the current time.
+      auto now = std::chrono::system_clock::now();
+
+      TestObject testObject;
+
+      testObject.Algorithm = "RSA";
+      testObject.Integer = 314;
+      testObject.IntegerArray = {1, 2, 99, 32};
+      testObject.Issuer = "George";
+
+      // This token will be issued 30 seconds from now, and is valid for 15 seconds.
+      testObject.ExpiresAt = now + std::chrono::seconds(15);
+      testObject.IssuedOn = now;
+      testObject.NotBefore = now;
+
+      auto testToken = AttestationTokenInternal<TestObject, TestObjectSerializer>::CreateToken(
+          testObject, signingKey);
+
+      AttestationTokenValidationOptions validationOptions;
+      validationOptions.ValidateIssuer = true;
+      validationOptions.ExpectedIssuer = "Fred";
+
+      // Simple valdation should throw an exception - the signature of the token is invalid.
+      EXPECT_THROW(testToken.ValidateToken(validationOptions), std::runtime_error);
+
+      // Validate the token asking to ignore token signature validation.
+      {
+        AttestationTokenValidationOptions tokenOptions{};
+        tokenOptions.ValidateIssuer = false;
+        tokenOptions.ExpectedIssuer = "Fred";
+        EXPECT_NO_THROW(testToken.ValidateToken(tokenOptions));
+      }
+    }
+
+    // Test no issuer but issuer validation requested.
+    {
+      // Capture the current time.
+      auto now = std::chrono::system_clock::now();
+
+      TestObject testObject;
+
+      testObject.Algorithm = "RSA";
+      testObject.Integer = 314;
+      testObject.IntegerArray = {1, 2, 99, 32};
+
+      // This token will be issued 30 seconds from now, and is valid for 15 seconds.
+      testObject.ExpiresAt = now + std::chrono::seconds(15);
+      testObject.IssuedOn = now;
+      testObject.NotBefore = now;
+
+      auto testToken = AttestationTokenInternal<TestObject, TestObjectSerializer>::CreateToken(
+          testObject, signingKey);
+
+      AttestationTokenValidationOptions validationOptions;
+      validationOptions.ValidateIssuer = true;
+      validationOptions.ExpectedIssuer = "Fred";
+
+      // Simple valdation should throw an exception - the signature of the token is invalid.
+      EXPECT_THROW(testToken.ValidateToken(validationOptions), std::runtime_error);
     }
   }
 

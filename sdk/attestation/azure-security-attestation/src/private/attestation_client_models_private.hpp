@@ -439,6 +439,25 @@ namespace Azure {
       }
     }
 
+    void ValidateTokenIssuer(AttestationTokenValidationOptions const& validationOptions)
+    {
+      if (validationOptions.ValidateIssuer)
+      {
+        if (!m_token.Issuer.HasValue())
+        {
+          throw std::runtime_error(
+              "Attestation token issuer validation requested but token has no issuer.");
+        }
+        if (validationOptions.ExpectedIssuer != m_token.Issuer.Value())
+        {
+          std::stringstream ss;
+          ss << "Expected issuer (" << validationOptions.ExpectedIssuer
+             << ") does not match actual issuer of token (" << m_token.Issuer.Value() << ")";
+          throw std::runtime_error(ss.str());
+        }
+      }
+    }
+
     /// @brief: Validate this attestation token.
     /// @param validationOptions - Options which can be used when validating the token.
     /// @param signers - Potential signers for this attestation token.
@@ -466,6 +485,9 @@ namespace Azure {
 
       // Now check the expiration time
       ValidateTokenTimeElements(validationOptions);
+
+      // And finally check the issuer.
+      ValidateTokenIssuer(validationOptions);
     }
 
     operator AttestationToken<T>&&() { return std::move(m_token); }
