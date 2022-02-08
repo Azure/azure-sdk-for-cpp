@@ -9,6 +9,7 @@
  */
 
 #include <memory>
+#include <cstring>
 #include <string>
 #include <type_traits>
 #include <utility>
