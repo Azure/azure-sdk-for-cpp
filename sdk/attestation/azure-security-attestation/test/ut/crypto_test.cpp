@@ -214,7 +214,8 @@ GQIDAQAB
 
   TEST(CryptoTests, ImportBogusKey)
   {
-    const std::string pemEncodedGarbage = R"(-----BEGIN UNKNOWN-----
+    const std::string pemEncodedGarbage =
+        R"(-----BEGIN UNKNOWN-----
 MIIEejCCBCCgAwIBAgIVAKL12jjpSW7HPPHpJIYhFhGrJxJTMAoGCCqGSM49BAMC
 MHExIzAhBgNVBAMMGkludGVsIFNHWCBQQ0sgUHJvY2Vzc29yIENBMRowGAYDVQQK
 -----END UNKNOWN-----)";
