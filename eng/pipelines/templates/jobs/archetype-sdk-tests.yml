@@ -161,6 +161,10 @@ jobs:
         contains(variables['CmakeEnvArg'], 'CC=/usr/bin/gcc-5 CXX=/usr/bin/g++-5 cmake')
       )
 
+  # Add g++5 repo to ubuntu
+  - bash: sudo sh -c "echo $VCPKG_BINARY_SOURCES -- $VcpkgPublicCacheSAS"
+    displayName: Aver
+
   # Install g++5
   - bash: sudo apt-get update & sudo apt-get install g++-5
     displayName: Install g++ 5
