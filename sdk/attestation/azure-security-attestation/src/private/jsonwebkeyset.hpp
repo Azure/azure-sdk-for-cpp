@@ -112,6 +112,7 @@ namespace Azure { namespace Security { namespace Attestation { namespace _detail
     }
   };
 
+  // cspell: words jwks
   struct JsonWebKeySetSerializer final
   {
     static JsonWebKeySet Deserialize(std::unique_ptr<Azure::Core::Http::RawResponse>& response)
