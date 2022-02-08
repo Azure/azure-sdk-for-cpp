@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
 
-#include "azure/core/internal/azure_assert.hpp"
+#include "azure/core/azure_assert.hpp"
 
 // Calling this function would terminate program, therefore this function can't be covered in tests.
 // LCOV_EXCL_START
@@ -9,7 +9,7 @@
 {
   // void msg for Release build where Assert is ignored
   (void)msg;
-  _azure_ASSERT_MSG(false, msg);
+  AZURE_ASSERT_MSG(false, msg);
   std::abort();
 }
 // LCOV_EXCL_STOP

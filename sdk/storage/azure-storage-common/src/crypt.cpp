@@ -152,7 +152,7 @@ namespace Azure { namespace Storage {
         const std::vector<uint8_t>& data,
         const std::vector<uint8_t>& key)
     {
-      _azure_ASSERT_MSG(data.size() <= std::numeric_limits<ULONG>::max(), "Data size is too big.");
+      AZURE_ASSERT_MSG(data.size() <= std::numeric_limits<ULONG>::max(), "Data size is too big.");
 
       static AlgorithmProviderInstance AlgorithmProvider(AlgorithmType::HmacSha256);
 

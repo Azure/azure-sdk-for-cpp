@@ -75,22 +75,7 @@ namespace Azure { namespace Core {
      *
      * @param what The explanatory string.
      */
-    explicit RequestFailedException(std::string const& what) : std::runtime_error(what) {}
-
-    /**
-     * @brief Constructs a new `%RequestFailedException` object with an HTTP raw response.
-     *
-     * @note The HTTP raw response is parsed to populate information expected from all Azure
-     * Services like the status code, reason phrase and some headers like the request ID. A concrete
-     * Service exception which derives from this exception uses its constructor to parse the HTTP
-     * raw response adding the service specific values to the exception.
-     *
-     * @param what The explanatory string.
-     * @param rawResponse The HTTP raw response from the service.
-     */
-    explicit RequestFailedException(
-        const std::string& what,
-        std::unique_ptr<Azure::Core::Http::RawResponse>& rawResponse);
+    explicit RequestFailedException(std::string const& what);
 
     /**
      * @brief Constructs a new `%RequestFailedException` object with an HTTP raw response.

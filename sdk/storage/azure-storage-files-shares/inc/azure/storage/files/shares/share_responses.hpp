@@ -226,7 +226,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     ~StartFileCopyOperation() override {}
 
   private:
-    std::string GetResumeToken() const override { _azure_NOT_IMPLEMENTED(); }
+    std::string GetResumeToken() const override { AZURE_NOT_IMPLEMENTED(); }
 
     std::unique_ptr<Azure::Core::Http::RawResponse> PollInternal(
         const Azure::Core::Context& context) override;

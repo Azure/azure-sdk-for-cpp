@@ -159,7 +159,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     protocolLayerOptions.ContentLength = 0;
     if (options.ContentHash.HasValue())
     {
-      _azure_ASSERT_MSG(
+      AZURE_ASSERT_MSG(
           options.ContentHash.Value().Algorithm == HashAlgorithm::Md5,
           "This operation only supports MD5 content hash.");
     }
@@ -377,7 +377,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
   {
     Blobs::_detail::BlobRestClient::Blob::SetBlobExpiryOptions protocolLayerOptions;
     protocolLayerOptions.ExpiryOrigin = expiryOrigin;
-    _azure_ASSERT_MSG(
+    AZURE_ASSERT_MSG(
         !(options.ExpiresOn.HasValue() && options.TimeToExpire.HasValue()),
         "ExpiresOn and TimeToExpire are mutually exclusive.");
 
