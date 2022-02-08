@@ -82,8 +82,6 @@ jobs:
 # Cache is not written from public pipelines.
     - name: VCPKG_CACHE_MODE
       value: ${{ parameters.VcpkgCacheMode }}
-    - name: VcpkgPublicCacheSAS
-      value: ''
 
     steps:
       - template: /eng/common/pipelines/templates/steps/verify-agent-os.yml
