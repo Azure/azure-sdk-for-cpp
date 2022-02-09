@@ -33,7 +33,7 @@ steps:
         $(Agent.JobName)
         | "$(VcpkgCommit)"
         | $(Agent.Os)
-        | variables['${{ parameters.DependenciesVariableName }}']
+        | $(${{ parameters.DependenciesVariableName }})
       path: $(VCPKG_INSTALLATION_ROOT)
       cacheHitVar: VcpkgRestoredFromCache
     displayName: Vcpkg Cache
