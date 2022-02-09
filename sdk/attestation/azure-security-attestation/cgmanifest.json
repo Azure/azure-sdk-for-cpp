@@ -24,11 +24,11 @@
         {
             "Component": {
                 "Type": "other",
-                "Other": {
-                    "Name": "doxygen",
-                    "Version": "1.8.20",
-                    "DownloadUrl": "http://doxygen.nl/files/doxygen-1.8.20-setup.exe"
-                }
+              "Other": {
+                "Name": "doxygen",
+                "Version": "1.8.20",
+                "DownloadUrl": "https://azuresdktooling.blob.core.windows.net/dependencies/doxygen-1.8.18-setup.exe"
+              }
             },
             "DevelopmentDependency": true
         }
