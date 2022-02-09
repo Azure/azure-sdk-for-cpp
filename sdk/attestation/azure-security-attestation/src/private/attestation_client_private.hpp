@@ -35,6 +35,13 @@ namespace Azure { namespace Security { namespace Attestation { namespace _detail
   private:
     AttestationToken<T> m_token;
 
+/**
+ * @brief Validate the time elements in a JSON Web token as controlled by the provided validation options.
+ * 
+ * @param validationOptions Options which control how the time validation is performed.
+ * 
+ * @throws std::runtime_error Thrown when the time in the token is invalid (the token has expired or is not yet valid).
+ */
     void ValidateTokenTimeElements(AttestationTokenValidationOptions const& validationOptions)
     {
       // Snapshot "now" to provide a base time for subsequent checks. Note that this code
@@ -79,8 +86,11 @@ namespace Azure { namespace Security { namespace Attestation { namespace _detail
       }
     }
 
-    /// Validate the issuer of the attestation token based on the validation options provided.
-    /// <param name="validationOptions">Options controlling the validation.</param>
+/**
+ * @brief Validate the issuer of the attestation token based on the validation options provided.
+ * 
+ * @param validationOptions Options controlling the validation
+ */
     void ValidateTokenIssuer(AttestationTokenValidationOptions const& validationOptions)
     {
       if (validationOptions.ValidateIssuer)
@@ -187,7 +197,7 @@ namespace Azure { namespace Security { namespace Attestation { namespace _detail
     }
 
   public:
-    /** Constructs a new instance of an AttestationToken object from a JSON Web Token or JSON
+    /** @brief Constructs a new instance of an AttestationToken object from a JSON Web Token or JSON
      * Web Signature.
      *
      * See <a href='https://datatracker.ietf.org/doc/html/rfc7519'>RFC 7519 (JWT)</a> or
@@ -277,7 +287,13 @@ namespace Azure { namespace Security { namespace Attestation { namespace _detail
       }
     }
 
-    // Returns a signed Attestation Token created with the specified body.
+/**
+ * @brief Create a new attestation token object with a body containing the tokenBody provided.
+ * 
+ * @param tokenBody A structure representing the body of the attestation token. The body will be serialized using the {@link TDeserializer} class.
+ * @param tokenSigner An optional signer for the token. If provided, will be used to sign the token.
+ * @return AttestationTokenInternal<T, TDeserializer> A newly created token object.
+ */
     static AttestationTokenInternal<T, TDeserializer> CreateToken(
         T const& tokenBody,
         AttestationSigningKey const& tokenSigner = AttestationSigningKey{})
@@ -293,7 +309,7 @@ namespace Azure { namespace Security { namespace Attestation { namespace _detail
         // If the private key and certificate are empty, it's an unsecured JWS.
         // An unsecured JWS is represented by an "alg" header with a value of "none" and an
         // empty signature block.
-        isUnsecuredToken = true; // This is an unsecured token, don't sign it.
+        isUnsecuredToken = true;
         tokenHeader.Algorithm = "none"; // Specifies an unsecured attestation token.
       }
       else
