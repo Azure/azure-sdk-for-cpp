@@ -60,6 +60,6 @@ namespace Azure { namespace Security { namespace Attestation { namespace _intern
     {
       return BCryptX509Certificate::CreateFromPrivateKey(privateKey, subjectName);
     }
-}}}}} // namespace Azure::Security::Attestation::_private::Cryptography
+}}}}} // namespace Azure::Security::Attestation::_internal::Cryptography
 #endif // defined(AZ_PLATFORM_POSIX)
 #endif // NOT FUNCTIONING

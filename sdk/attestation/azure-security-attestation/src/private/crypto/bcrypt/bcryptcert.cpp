@@ -49,5 +49,5 @@ namespace Azure { namespace Security { namespace Attestation { namespace _intern
     {
       throw std::runtime_error("Not implemented");
     }
-}}}}} // namespace Azure::Security::Attestation::_private::Cryptography
+}}}}} // namespace Azure::Security::Attestation::_internal::Cryptography
 #endif // NOTFUNCTIONAL

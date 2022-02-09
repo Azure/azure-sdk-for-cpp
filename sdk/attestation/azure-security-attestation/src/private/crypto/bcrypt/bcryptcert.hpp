@@ -59,5 +59,5 @@ namespace Azure { namespace Security { namespace Attestation { namespace _intern
       static std::unique_ptr<X509Certificate> Import(std::string const& pemEncodedKey);
     };
 
-}}}}} // namespace Azure::Security::Attestation::_private::Cryptography
+}}}}} // namespace Azure::Security::Attestation::_internal::Cryptography
 #endif // NONFUNCTIONAL

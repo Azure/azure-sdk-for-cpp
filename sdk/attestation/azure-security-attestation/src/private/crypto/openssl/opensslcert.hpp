@@ -114,6 +114,22 @@ namespace Azure { namespace Security { namespace Attestation { namespace _intern
           time_t const expirationTime,
           bool isLeafCertificate);
 
+      static std::string ToHexString(std::vector<uint8_t> const& buffer)
+      {
+        static constexpr char hexMap[]
+            = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f'};
+        std::string output(static_cast<size_t>(buffer.size()) * 2, ' ');
+        const uint8_t* input = buffer.data();
+
+        for (size_t i = 0; i < buffer.size(); i++)
+        {
+          output[2 * i] = hexMap[(input[i] & 0xF0) >> 4];
+          output[2 * i + 1] = hexMap[input[i] & 0x0F];
+        }
+
+        return output;
+      }
+
     protected:
       static std::unique_ptr<X509Certificate> CreateFromPrivateKey(
           std::unique_ptr<AsymmetricKey> const& key,
@@ -131,22 +147,6 @@ namespace Azure { namespace Security { namespace Attestation { namespace _intern
       std::string GetIssuerName() const override
       {
         return GetFormattedDnString(X509_get_issuer_name(m_certificate.get()));
-      }
-
-      static std::string ToHexString(std::vector<uint8_t> const& buffer)
-      {
-        static constexpr char hexMap[]
-            = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f'};
-        std::string output(static_cast<size_t>(buffer.size()) * 2, ' ');
-        const uint8_t* input = buffer.data();
-
-        for (size_t i = 0; i < buffer.size(); i++)
-        {
-          output[2 * i] = hexMap[(input[i] & 0xF0) >> 4];
-          output[2 * i + 1] = hexMap[input[i] & 0x0F];
-        }
-
-        return output;
       }
 
       std::string GetThumbprint() const override
