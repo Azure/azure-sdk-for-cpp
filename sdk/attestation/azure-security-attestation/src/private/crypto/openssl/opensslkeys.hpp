@@ -23,7 +23,7 @@
 #include <openssl/pem.h>
 #include <openssl/rsa.h>
 
-namespace Azure { namespace Security { namespace Attestation { namespace _internal {
+namespace Azure { namespace Security { namespace Attestation { namespace _detail {
   namespace Cryptography {
 
     /** Represents an Asymmetric Key.
@@ -78,4 +78,4 @@ namespace Azure { namespace Security { namespace Attestation { namespace _intern
       }
     };
 
-}}}}} // namespace Azure::Security::Attestation::_internal::Cryptography
+}}}}} // namespace Azure::Security::Attestation::_detail::Cryptography

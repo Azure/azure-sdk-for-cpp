@@ -16,7 +16,7 @@
 #define AZURE_ATTESTATION_VERSION_ITOA_HELPER(i) #i
 #define AZURE_ATTESTATION_VERSION_ITOA(i) AZURE_ATTESTATION_VERSION_ITOA_HELPER(i)
 
-namespace Azure { namespace Security { namespace Attestation { namespace _internal {
+namespace Azure { namespace Security { namespace Attestation { namespace _detail {
   /**
    * @brief Provides version information.
    */
@@ -47,7 +47,7 @@ namespace Azure { namespace Security { namespace Attestation { namespace _intern
               AZURE_ATTESTATION_VERSION_MINOR) "." AZURE_ATTESTATION_VERSION_ITOA(AZURE_ATTESTATION_VERSION_PATCH);
     }
   };
-}}}} // namespace Azure::Security::Attestation::_internal
+}}}} // namespace Azure::Security::Attestation::_detail
 
 #undef AZURE_ATTESTATION_VERSION_ITOA_HELPER
 #undef AZURE_ATTESTATION_VERSION_ITOA

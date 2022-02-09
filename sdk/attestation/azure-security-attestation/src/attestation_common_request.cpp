@@ -8,7 +8,7 @@
 #include <memory>
 
 using namespace Azure::Security::Attestation;
-using namespace Azure::Security::Attestation::_internal;
+using namespace Azure::Security::Attestation::_detail;
 using namespace Azure::Core::Http::_internal;
 
 std::unique_ptr<Azure::Core::Http::RawResponse> AttestationCommonRequest::SendRequest(

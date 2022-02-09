@@ -13,25 +13,16 @@
 
 #pragma once
 
-#include "azure/core/base64.hpp"
-#include "azure/core/context.hpp"
-#include "azure/core/http/http.hpp"
-#include "azure/core/internal/http/pipeline.hpp"
 #include "azure/core/internal/json/json.hpp"
-#include "azure/core/internal/json/json_optional.hpp"
-#include "azure/core/internal/json/json_serializable.hpp"
-#include "azure/core/nullable.hpp"
-#include "azure/core/response.hpp"
-#include "jsonhelpers.hpp"
 
-#include "attestation_client_models_internal.hpp"
+#include "attestation_client_models_private.hpp"
+#include "azure/attestation/attestation_client.hpp"
 #include "azure/attestation/attestation_client_models.hpp"
 #include <memory>
 #include <string>
-#include <vector>
 
 // cspell: words jwks MrSigner MrEnclave
-namespace Azure { namespace Security { namespace Attestation { namespace _internal {
+namespace Azure { namespace Security { namespace Attestation { namespace _detail {
 
   /***************************************
    * A quick note on the naming convention for the Serialize/Deserialize classes.
@@ -56,13 +47,13 @@ namespace Azure { namespace Security { namespace Attestation { namespace _intern
   struct AttestSgxEnclaveRequestSerializer final
   {
     static std::string Serialize(
-        Azure::Security::Attestation::Models::_internal::AttestSgxEnclaveRequest const& request);
+        Azure::Security::Attestation::Models::_detail::AttestSgxEnclaveRequest const& request);
   };
 
   struct AttestOpenEnclaveRequestSerializer final
   {
     static std::string Serialize(
-        Azure::Security::Attestation::Models::_internal::AttestOpenEnclaveRequest const& request);
+        Azure::Security::Attestation::Models::_detail::AttestOpenEnclaveRequest const& request);
   };
 
   struct AttestationServiceTokenResponseSerializer final
@@ -80,17 +71,18 @@ namespace Azure { namespace Security { namespace Attestation { namespace _intern
 
   struct JsonWebKeySerializer final
   {
-    static Models::_internal::JsonWebKey Deserialize(const Azure::Core::Json::_internal::json& jwk);
+    static Models::_detail::JsonWebKey Deserialize(const Azure::Core::Json::_internal::json& jwk);
   };
 
   // cspell: words jwks
   struct JsonWebKeySetSerializer final
   {
-    static Models::_internal::JsonWebKeySet Deserialize(
+    static Azure::Security::Attestation::Models::_detail::JsonWebKeySet Deserialize(
         std::unique_ptr<Azure::Core::Http::RawResponse>& response);
-    static Models::_internal::JsonWebKeySet Deserialize(
+    static Azure::Security::Attestation::Models::_detail::JsonWebKeySet Deserialize(
         const Azure::Core::Json::_internal::json& jwk);
   };
+
   /// Serializer/Deserializer for RFC 7515/7517 JSON Web Token/JSON Web SIgnature header objects.
   struct AttestationTokenHeaderSerializer final
   {
@@ -98,4 +90,4 @@ namespace Azure { namespace Security { namespace Attestation { namespace _intern
     static std::string Serialize(AttestationTokenHeader const& tokenHeader);
   };
 
-}}}} // namespace Azure::Security::Attestation::_internal
+}}}} // namespace Azure::Security::Attestation::_detail

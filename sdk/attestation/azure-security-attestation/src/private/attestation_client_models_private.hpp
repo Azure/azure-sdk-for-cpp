@@ -10,11 +10,9 @@
 
 #pragma once
 
-#include "azure/attestation/attestation_client.hpp"
 #include "azure/attestation/attestation_client_models.hpp"
 #include "azure/attestation/attestation_client_options.hpp"
 #include "azure/core/nullable.hpp"
-#include "jsonhelpers.hpp"
 #include <memory>
 #include <string>
 #include <vector>
@@ -23,7 +21,7 @@ namespace Azure {
   namespace Security {
     namespace Attestation {
       namespace Models {
-        namespace _internal {
+        namespace _detail {
 
   struct JsonWebKey final
   {
@@ -92,4 +90,4 @@ namespace Azure {
     Azure::Nullable<std::string> Nonce;
   };
 
-}}}}} // namespace Azure::Security::Attestation::Models::_internal
+}}}}} // namespace Azure::Security::Attestation::Models::_detail

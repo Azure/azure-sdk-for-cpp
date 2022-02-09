@@ -11,7 +11,7 @@
  *
  */
 
-#include "attestation_deserializers.hpp"
+#include "attestation_deserializers_private.hpp"
 #include "azure/core/base64.hpp"
 #include "azure/core/context.hpp"
 #include "azure/core/http/http.hpp"
@@ -21,19 +21,19 @@
 #include "azure/core/internal/json/json_serializable.hpp"
 #include "azure/core/nullable.hpp"
 #include "azure/core/response.hpp"
-#include "jsonhelpers.hpp"
+#include "jsonhelpers_private.hpp"
 
-#include "attestation_client_internal.hpp"
-#include "attestation_client_models_internal.hpp"
+#include "attestation_client_models_private.hpp"
+#include "attestation_client_private.hpp"
 #include "azure/attestation/attestation_client_models.hpp"
 #include <memory>
 #include <string>
 #include <vector>
 
 // cspell: words jwks MrSigner MrEnclave
-namespace Azure { namespace Security { namespace Attestation { namespace _internal {
-  using namespace Azure::Security::Attestation::Models::_internal;
+namespace Azure { namespace Security { namespace Attestation { namespace _detail {
   using namespace Azure::Security::Attestation::Models;
+  using namespace Azure::Security::Attestation::Models::_detail;
   using namespace Azure::Security::Attestation;
 
   /***************************************
@@ -50,7 +50,7 @@ namespace Azure { namespace Security { namespace Attestation { namespace _intern
    *
    */
 
-  Models::AttestationOpenIdMetadata OpenIdMetadataSerializer::Deserialize(
+  AttestationOpenIdMetadata OpenIdMetadataSerializer::Deserialize(
       std::unique_ptr<Azure::Core::Http::RawResponse>& response)
   {
     Models::AttestationOpenIdMetadata returnValue;
@@ -93,8 +93,7 @@ namespace Azure { namespace Security { namespace Attestation { namespace _intern
     return serializedRequest.dump();
   }
 
-  std::string AttestOpenEnclaveRequestSerializer::Serialize(
-      Azure::Security::Attestation::Models::_internal::AttestOpenEnclaveRequest const& request)
+  std::string AttestOpenEnclaveRequestSerializer::Serialize(AttestOpenEnclaveRequest const& request)
   {
     Azure::Core::Json::_internal::json serializedRequest;
     serializedRequest["report"]
@@ -278,4 +277,4 @@ namespace Azure { namespace Security { namespace Attestation { namespace _intern
     }
     return returnValue;
   }
-}}}} // namespace Azure::Security::Attestation::_internal
+}}}} // namespace Azure::Security::Attestation::_detail

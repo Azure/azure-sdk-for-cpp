@@ -31,7 +31,7 @@
 
 // cspell::words OpenSSL X509 OpenSSLX509
 
-namespace Azure { namespace Security { namespace Attestation { namespace _internal {
+namespace Azure { namespace Security { namespace Attestation { namespace _detail {
   namespace Cryptography {
 
     std::unique_ptr<X509Certificate> OpenSSLX509Certificate::Import(
@@ -435,4 +435,4 @@ namespace Azure { namespace Security { namespace Attestation { namespace _intern
       }
       return std::unique_ptr<OpenSSLAsymmetricKey>(new OpenSSLAsymmetricKey(std::move(pkey)));
     }
-}}}}} // namespace Azure::Security::Attestation::_internal::Cryptography
+}}}}} // namespace Azure::Security::Attestation::_detail::Cryptography

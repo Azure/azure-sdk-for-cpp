@@ -26,7 +26,7 @@
 
 // cspell::words OpenSSL X509 OpenSSLX509
 
-namespace Azure { namespace Security { namespace Attestation { namespace _internal {
+namespace Azure { namespace Security { namespace Attestation { namespace _detail {
   namespace Cryptography {
 
     namespace _details {
@@ -244,4 +244,4 @@ namespace Azure { namespace Security { namespace Attestation { namespace _intern
       static std::unique_ptr<X509Certificate> Import(std::string const& pemEncodedKey);
     };
 
-}}}}} // namespace Azure::Security::Attestation::_internal::Cryptography
+}}}}} // namespace Azure::Security::Attestation::_detail::Cryptography

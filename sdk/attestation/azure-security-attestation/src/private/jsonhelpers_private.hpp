@@ -13,11 +13,8 @@
 
 #pragma once
 
-#include "azure/core/base64.hpp"
 #include "azure/core/datetime.hpp"
 #include "azure/core/internal/json/json.hpp"
-#include "azure/core/internal/json/json_optional.hpp"
-#include "azure/core/internal/json/json_serializable.hpp"
 #include "azure/core/nullable.hpp"
 
 #include <memory>
@@ -25,7 +22,7 @@
 #include <vector>
 
 // cspell: words jwks MrSigner MrEnclave
-namespace Azure { namespace Security { namespace Attestation { namespace _internal {
+namespace Azure { namespace Security { namespace Attestation { namespace _detail {
   struct JsonHelpers
   {
     /// @brief - parse a string field from a JSON object.
@@ -128,4 +125,4 @@ namespace Azure { namespace Security { namespace Attestation { namespace _intern
         Azure::Core::Json::_internal::json& fieldValue,
         std::string const& fieldName);
   };
-}}}} // namespace Azure::Security::Attestation::_internal
+}}}} // namespace Azure::Security::Attestation::_detail

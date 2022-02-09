@@ -10,26 +10,21 @@
 
 #pragma once
 
-#include "attestation_deserializers.hpp"
+#include "attestation_deserializers_private.hpp"
 #include "azure/attestation/attestation_client.hpp"
 #include "azure/attestation/attestation_client_models.hpp"
 #include "azure/attestation/attestation_client_options.hpp"
 #include "azure/core/base64.hpp"
-#include "azure/core/context.hpp"
-#include "azure/core/http/http.hpp"
 #include "azure/core/internal/json/json.hpp"
-#include "azure/core/internal/json/json_optional.hpp"
-#include "azure/core/internal/json/json_serializable.hpp"
-#include "azure/core/response.hpp"
 #include "crypto/inc/crypto.hpp"
-#include "jsonhelpers.hpp"
+#include "jsonhelpers_private.hpp"
 #include <chrono>
 #include <memory>
 #include <sstream>
 #include <string>
 #include <vector>
 
-namespace Azure { namespace Security { namespace Attestation { namespace _internal {
+namespace Azure { namespace Security { namespace Attestation { namespace _detail {
 
   template <class T, typename TDeserializer> class AttestationTokenInternal {
   private:
@@ -161,8 +156,7 @@ namespace Azure { namespace Security { namespace Attestation { namespace _intern
           std::vector<std::string> pemEncodedChain;
           for (auto x5c : m_token.Header.X509CertificateChain.Value())
           {
-            pemEncodedChain.push_back(
-                Models::_internal::AttestationSignerInternal::PemFromX5c(x5c));
+            pemEncodedChain.push_back(Models::_detail::AttestationSignerInternal::PemFromX5c(x5c));
           }
           returnValue.push_back(
               Models::AttestationSigner{Azure::Nullable<std::string>(), pemEncodedChain});
@@ -183,9 +177,10 @@ namespace Azure { namespace Security { namespace Attestation { namespace _intern
     {
       for (const auto& signer : possibleSigners)
       {
-        std::unique_ptr<Azure::Security::Attestation::_internal::Cryptography::X509Certificate>
-            certificate(Azure::Security::Attestation::_internal::Cryptography::Crypto::
-                            ImportX509Certificate(signer.CertificateChain.Value()[0]));
+        std::unique_ptr<Azure::Security::Attestation::_detail::Cryptography::X509Certificate>
+            certificate(
+                Azure::Security::Attestation::_detail::Cryptography::Crypto::ImportX509Certificate(
+                    signer.CertificateChain.Value()[0]));
         auto publicKey = certificate->GetPublicKey();
         // If the key associated with this certificate signed the token,
         if (publicKey->VerifySignature(
@@ -232,8 +227,9 @@ namespace Azure { namespace Security { namespace Attestation { namespace _intern
         auto jsonHeader(Azure::Core::Json::_internal::json::parse(
             Azure::Core::_internal::Base64Url::Base64UrlDecode(header)));
 
-        m_token.Header = Azure::Security::Attestation::_internal::AttestationTokenHeaderSerializer::
-            Deserialize(jsonHeader);
+        m_token.Header
+            = Azure::Security::Attestation::_detail::AttestationTokenHeaderSerializer::Deserialize(
+                jsonHeader);
 
         // Remove the header from the token, we've remembered its contents.
         token.erase(0, headerIndex + 1);
@@ -261,23 +257,20 @@ namespace Azure { namespace Security { namespace Attestation { namespace _intern
 
         // Parse the RFC 7519 JSON Web Token body properties.
         // Note that if this is a JWS, these properties will NOT be present.
-        m_token.ExpiresOn
-            = Azure::Security::Attestation::_internal::JsonHelpers::ParseDateTimeField(
-                jsonBody, "exp");
-        m_token.IssuedOn = Azure::Security::Attestation::_internal::JsonHelpers::ParseDateTimeField(
+        m_token.ExpiresOn = Azure::Security::Attestation::_detail::JsonHelpers::ParseDateTimeField(
+            jsonBody, "exp");
+        m_token.IssuedOn = Azure::Security::Attestation::_detail::JsonHelpers::ParseDateTimeField(
             jsonBody, "iat");
-        m_token.NotBefore
-            = Azure::Security::Attestation::_internal::JsonHelpers::ParseDateTimeField(
-                jsonBody, "nbf");
-        m_token.Issuer = Azure::Security::Attestation::_internal::JsonHelpers::ParseStringField(
-            jsonBody, "iss");
-        m_token.Subject = Azure::Security::Attestation::_internal::JsonHelpers::ParseStringField(
-            jsonBody, "sub");
-        m_token.Audience = Azure::Security::Attestation::_internal::JsonHelpers::ParseStringField(
-            jsonBody, "aud");
+        m_token.NotBefore = Azure::Security::Attestation::_detail::JsonHelpers::ParseDateTimeField(
+            jsonBody, "nbf");
+        m_token.Issuer
+            = Azure::Security::Attestation::_detail::JsonHelpers::ParseStringField(jsonBody, "iss");
+        m_token.Subject
+            = Azure::Security::Attestation::_detail::JsonHelpers::ParseStringField(jsonBody, "sub");
+        m_token.Audience
+            = Azure::Security::Attestation::_detail::JsonHelpers::ParseStringField(jsonBody, "aud");
         m_token.UniqueIdentifier
-            = Azure::Security::Attestation::_internal::JsonHelpers::ParseStringField(
-                jsonBody, "jti");
+            = Azure::Security::Attestation::_detail::JsonHelpers::ParseStringField(jsonBody, "jti");
 
         m_token.Body = TDeserializer::Deserialize(jsonBody);
 
@@ -305,9 +298,9 @@ namespace Azure { namespace Security { namespace Attestation { namespace _intern
         AttestationSigningKey const& tokenSigner = AttestationSigningKey{})
     {
       bool isUnsecuredToken = false;
-      std::unique_ptr<Azure::Security::Attestation::_internal::Cryptography::X509Certificate>
+      std::unique_ptr<Azure::Security::Attestation::_detail::Cryptography::X509Certificate>
           signingCert;
-      std::unique_ptr<Azure::Security::Attestation::_internal::Cryptography::AsymmetricKey>
+      std::unique_ptr<Azure::Security::Attestation::_detail::Cryptography::AsymmetricKey>
           signingKey;
       AttestationTokenHeader tokenHeader;
       if (tokenSigner.PemEncodedPrivateKey.empty() && tokenSigner.PemEncodedX509Certificate.empty())
@@ -322,11 +315,10 @@ namespace Azure { namespace Security { namespace Attestation { namespace _intern
       {
         // Deserialize the signing key and certificate and use them to create the JWS header.
         signingCert
-            = Azure::Security::Attestation::_internal::Cryptography::Crypto::ImportX509Certificate(
+            = Azure::Security::Attestation::_detail::Cryptography::Crypto::ImportX509Certificate(
                 tokenSigner.PemEncodedX509Certificate);
-        signingKey
-            = Azure::Security::Attestation::_internal::Cryptography::Crypto::ImportPrivateKey(
-                tokenSigner.PemEncodedPrivateKey);
+        signingKey = Azure::Security::Attestation::_detail::Cryptography::Crypto::ImportPrivateKey(
+            tokenSigner.PemEncodedPrivateKey);
 
         tokenHeader.Algorithm = signingCert->GetAlgorithm();
         tokenHeader.Type = signingCert->GetKeyType();
@@ -395,4 +387,4 @@ namespace Azure { namespace Security { namespace Attestation { namespace _intern
 
     operator AttestationToken<T>&&() { return std::move(m_token); }
   };
-}}}} // namespace Azure::Security::Attestation::_internal
+}}}} // namespace Azure::Security::Attestation::_detail

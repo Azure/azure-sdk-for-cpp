@@ -8,7 +8,7 @@
 #include "crypto.hpp"
 #include <string>
 
-namespace Azure { namespace Security { namespace Attestation { namespace _internal {
+namespace Azure { namespace Security { namespace Attestation { namespace _detail {
   namespace Cryptography {
 
     class AsymmetricKey {
@@ -30,4 +30,4 @@ namespace Azure { namespace Security { namespace Attestation { namespace _intern
       virtual std::string ExportPublicKey() = 0;
     };
 
-}}}}} // namespace Azure::Security::Attestation::_internal::Cryptography
+}}}}} // namespace Azure::Security::Attestation::_detail::Cryptography

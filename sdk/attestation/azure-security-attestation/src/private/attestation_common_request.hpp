@@ -9,18 +9,14 @@
 
 #pragma once
 
-#include "azure/core/context.hpp"
 #include "azure/core/http/http.hpp"
 #include "azure/core/internal/http/pipeline.hpp"
-#include "azure/core/internal/json/json.hpp"
-#include "azure/core/internal/json/json_serializable.hpp"
-#include "azure/core/response.hpp"
 
 #include <memory>
 #include <string>
 #include <vector>
 
-namespace Azure { namespace Security { namespace Attestation { namespace _internal {
+namespace Azure { namespace Security { namespace Attestation { namespace _detail {
 
   constexpr static const char ContentHeaderName[] = "content-type";
   constexpr static const char ApplicationJsonValue[] = "application/json";
@@ -53,4 +49,4 @@ namespace Azure { namespace Security { namespace Attestation { namespace _intern
         Azure::Core::Context const& context);
   };
 
-}}}} // namespace Azure::Security::Attestation::_internal
+}}}} // namespace Azure::Security::Attestation::_detail
