@@ -2,8 +2,10 @@
 // SPDX-License-Identifier: MIT
 
 #include "../../src/private/attestation_client_models_private.hpp"
+#include "../../src/private/attestation_client_private.hpp"
 #include "../../src/private/attestation_deserializer.hpp"
 #include "../../src/private/crypto/inc/crypto.hpp"
+#include "azure/attestation/attestation_client.hpp"
 #include "azure/core/test/test_base.hpp"
 #include <gtest/gtest.h>
 
@@ -357,7 +359,7 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
     AttestationSigner signer{
         std::string{"ABCDEFG"}, std::vector<std::string>{cert->ExportAsBase64()}};
 
-    std::string serializedSigner = AttestationSignerInternal::SerializeToJson(signer).dump();
+    std::string serializedSigner = AttestationSignerInternal::SerializeToJson(signer);
     auto jsonSigner(json::parse(serializedSigner));
     EXPECT_TRUE(jsonSigner["kid"].is_string());
     EXPECT_EQ(signer.KeyId.Value(), jsonSigner["kid"].get<std::string>());

@@ -14,6 +14,7 @@
 #pragma once
 
 #include "azure/core/base64.hpp"
+#include "azure/core/datetime.hpp"
 #include "azure/core/internal/json/json.hpp"
 #include "azure/core/internal/json/json_optional.hpp"
 #include "azure/core/internal/json/json_serializable.hpp"
@@ -35,19 +36,7 @@ namespace Azure { namespace Security { namespace Attestation { namespace _detail
     /// field does not exist.
     static Azure::Nullable<std::string> ParseStringField(
         const Azure::Core::Json::_internal::json& field,
-        const std::string& fieldName)
-    {
-      if (field.contains(fieldName))
-      {
-        const auto& fieldVal = field[fieldName];
-        if (!fieldVal.is_string())
-        {
-          throw std::runtime_error("Field " + fieldName + " is not a string.");
-        }
-        return fieldVal.get<std::string>();
-      }
-      return Azure::Nullable<std::string>();
-    }
+        const std::string& fieldName);
 
     /// @brief - parse an array of strings from a JSON object.
     ///
@@ -57,28 +46,7 @@ namespace Azure { namespace Security { namespace Attestation { namespace _detail
     /// array if the field does not exist.
     static Azure::Nullable<std::vector<std::string>> ParseStringArrayField(
         const Azure::Core::Json::_internal::json& field,
-        const std::string& fieldName)
-    {
-      if (field.contains(fieldName))
-      {
-        std::vector<std::string> returnValue;
-        const auto& fieldVal = field[fieldName];
-        if (!fieldVal.is_array())
-        {
-          throw std::runtime_error("Field " + fieldName + " is not an array.");
-        }
-        for (const auto& item : fieldVal)
-        {
-          if (!item.is_string())
-          {
-            throw std::runtime_error("Field " + fieldName + " element is not a string.");
-          }
-          returnValue.push_back(item.get<std::string>());
-        }
-        return returnValue;
-      }
-      return Azure::Nullable<std::vector<std::string>>();
-    }
+        const std::string& fieldName);
 
     /// @brief - parse an array of integers from a JSON object.
     ///
@@ -88,216 +56,76 @@ namespace Azure { namespace Security { namespace Attestation { namespace _detail
     /// array if the field does not exist.
     static Azure::Nullable<std::vector<int>> ParseIntArrayField(
         const Azure::Core::Json::_internal::json& field,
-        const std::string& fieldName)
-    {
-      std::vector<int> returnValue;
-      if (field.contains(fieldName))
-      {
-        const auto& fieldVal = field[fieldName];
-        if (!fieldVal.is_array())
-        {
-          throw std::runtime_error("Field " + fieldName + " is not an array.");
-        }
-        for (const auto& item : fieldVal)
-        {
-          if (!item.is_number_integer())
-          {
-            throw std::runtime_error("Field " + fieldName + " element is not an integer.");
-          }
-          returnValue.push_back(item.get<int>());
-        }
-        return returnValue;
-      }
-      return Azure::Nullable<std::vector<int>>();
-    }
+        const std::string& fieldName);
 
     static std::string ParseStringJsonField(
         const Azure::Core::Json::_internal::json& field,
-        const std::string& fieldName)
-    {
-      std::string returnValue;
-      if (field.contains(fieldName))
-      {
-        const auto& fieldVal = field[fieldName];
-        if (!fieldVal.is_object())
-        {
-          throw std::runtime_error("Field " + fieldName + " is not an object.");
-        }
-        returnValue = field[fieldName].dump();
-      }
-      return returnValue;
-    }
+        const std::string& fieldName);
 
     static Azure::Nullable<Azure::DateTime> ParseDateTimeField(
         Azure::Core::Json::_internal::json const& object,
-        std::string const& fieldName)
-    {
-      if (object.contains(fieldName))
-      {
-        const auto& fieldVal = object[fieldName];
-        if (!fieldVal.is_number())
-        {
-          throw std::runtime_error("Field " + fieldName + " is not a number.");
-        }
-
-        int64_t epochTime = fieldVal.get<int64_t>();
-        return Azure::Core::_internal::PosixTimeConverter::PosixTimeToDateTime(epochTime);
-      }
-      return Azure::Nullable<Azure::DateTime>();
-    }
+        std::string const& fieldName);
 
     static std::vector<uint8_t> ParseBase64UrlField(
         const Azure::Core::Json::_internal::json& field,
-        const std::string& fieldName)
-    {
-      std::vector<uint8_t> returnValue;
-      if (field.contains(fieldName))
-      {
-        const auto& fieldVal = field[fieldName];
-        if (!fieldVal.is_string())
-        {
-          throw std::runtime_error(std::string("Field ") + fieldName + " is not a string.");
-        }
-        returnValue = Azure::Core::_internal::Base64Url::Base64UrlDecode(
-            field[fieldName].get<std::string>());
-      }
-      return returnValue;
-    }
+        const std::string& fieldName);
 
     static Azure::Nullable<bool> ParseBooleanField(
         const Azure::Core::Json::_internal::json& field,
-        const std::string& fieldName)
-    {
-      if (field.contains(fieldName))
-      {
-        const auto& fieldVal = field[fieldName];
-        if (!fieldVal.is_boolean())
-        {
-          throw std::runtime_error("Field " + fieldName + " is not a boolean.");
-        }
-        return field[fieldName].get<bool>();
-      }
-      return Azure::Nullable<bool>();
-    }
+        const std::string& fieldName);
 
     static Azure::Nullable<int> ParseIntNumberField(
         const Azure::Core::Json::_internal::json& field,
-        const std::string& fieldName)
-    {
-      if (field.contains(fieldName))
-      {
-        const auto& fieldVal = field[fieldName];
-        if (!fieldVal.is_number_integer())
-        {
-          throw std::runtime_error("Field " + fieldName + " is not a number.");
-        }
-        return field[fieldName].get<int>();
-      }
-      return Azure::Nullable<int>();
-    }
+        const std::string& fieldName);
 
     // Serialization helpers.
-
     static void SetField(
         Azure::Core::Json::_internal::json& object,
         std::string const& fieldValue,
-        std::string const& fieldName)
-    {
-      object[fieldName] = fieldValue;
-    }
+        std::string const& fieldName);
     static void SetField(
         Azure::Core::Json::_internal::json& object,
         Azure::Nullable<std::string> const& fieldValue,
-        std::string const& fieldName)
-    {
-      if (fieldValue.HasValue())
-      {
-        SetField(object, fieldValue.Value(), fieldName);
-      }
-    }
+        std::string const& fieldName);
 
     static void SetField(
         Azure::Core::Json::_internal::json& object,
         std::vector<std::string> const& fieldValue,
-        std::string const& fieldName)
-    {
-      object[fieldName] = fieldValue;
-    }
+        std::string const& fieldName);
 
     static void SetField(
         Azure::Core::Json::_internal::json& object,
         Azure::Nullable<std::vector<std::string>> const& fieldValue,
-        std::string const& fieldName)
-    {
-      if (fieldValue.HasValue())
-      {
-        SetField(object, fieldValue.Value(), fieldName);
-      }
-    }
+        std::string const& fieldName);
 
     static void SetField(
         Azure::Core::Json::_internal::json& object,
         int fieldValue,
-        std::string const& fieldName)
-    {
-      object[fieldName] = fieldValue;
-    }
+        std::string const& fieldName);
     static void SetField(
         Azure::Core::Json::_internal::json& object,
         Azure::Nullable<int> const& fieldValue,
-        std::string const& fieldName)
-    {
-      if (fieldValue.HasValue())
-      {
-        SetField(object, fieldValue.Value(), fieldName);
-      }
-    }
+        std::string const& fieldName);
     static void SetField(
         Azure::Core::Json::_internal::json& object,
         std::vector<int> const& fieldValue,
-        std::string const& fieldName)
-    {
-      if (!fieldValue.empty())
-      {
-        object[fieldName] = fieldValue;
-      }
-    }
+        std::string const& fieldName);
     static void SetField(
         Azure::Core::Json::_internal::json& object,
         Azure::Nullable<std::vector<int>> const& fieldValue,
-        std::string const& fieldName)
-    {
-      if (fieldValue.HasValue())
-      {
-        SetField(object, fieldValue.Value(), fieldName);
-      }
-    }
+        std::string const& fieldName);
 
     static void SetField(
         Azure::Core::Json::_internal::json& object,
         Azure::Nullable<Azure::DateTime> const& fieldValue,
-        std::string const& fieldName)
-    {
-      if (fieldValue.HasValue())
-      {
-        SetField(object, fieldValue.Value(), fieldName);
-      }
-    }
+        std::string const& fieldName);
     static void SetField(
         Azure::Core::Json::_internal::json& object,
         Azure::DateTime const& fieldValue,
-        std::string const& fieldName)
-    {
-      object[fieldName]
-          = Azure::Core::_internal::PosixTimeConverter::DateTimeToPosixTime(fieldValue);
-    }
-
+        std::string const& fieldName);
     static void SetField(
         Azure::Core::Json::_internal::json& object,
         Azure::Core::Json::_internal::json& fieldValue,
-        std::string const& fieldName)
-    {
-      object[fieldName] = fieldValue;
-    }
+        std::string const& fieldName);
   };
 }}}} // namespace Azure::Security::Attestation::_detail

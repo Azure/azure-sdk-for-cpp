@@ -6,6 +6,7 @@
 #include <shared_mutex>
 #include <string>
 
+#include "attestation_client.hpp"
 #include "attestation_client_models.hpp"
 #include "attestation_client_options.hpp"
 
@@ -14,6 +15,189 @@ namespace Azure { namespace Core { namespace Http { namespace _internal {
 }}}} // namespace Azure::Core::Http::_internal
 
 namespace Azure { namespace Security { namespace Attestation {
+  /** @brief An AttestationTokenHeader represents common properties in an the RFC 7515 JSON Web
+   * Token.
+   */
+  struct AttestationTokenHeader
+  {
+    /// The ""alg" token header property. See
+    ///  <a href='https://datatracker.ietf.org/doc/html/rfc7515#section-4.1.1'>RFC 7515
+    /// section 4.1.1</a>
+    Azure::Nullable<std::string> Algorithm;
+
+    /// The "kid" token header property See
+    /// <a href='https://datatracker.ietf.org/doc/html/rfc7515#section-4.1.4'>RFC 7515
+    /// section 4.1.4</a>
+    Azure::Nullable<std::string> KeyId;
+
+    /**
+     * Returns the signer for this token if the caller provided a JSON Web Key.
+     *
+     * See <a href='https://datatracker.ietf.org/doc/html/rfc7515#section-4.1.3'>RFC 7515
+     * section 4.1.3</a> for more information.
+     *
+     */
+    Azure::Nullable<Models::AttestationSigner> Key;
+
+    /**
+     * The "cty" header property of the JWS.
+     *
+     * See <a href='https://datatracker.ietf.org/doc/html/rfc7515#section-4.1.10'>RFC 7515
+     * section 4.1.10</a> for more information.
+     *
+     */
+    Azure::Nullable<std::string> ContentType;
+
+    /**
+     * A URI which can be used to retrieve a JSON Web Key which can verify the signature on
+     * this token.
+     *
+     * See <a href='https://datatracker.ietf.org/doc/html/rfc7515#section-4.1.5'>RFC 7515
+     * section 4.1.5</a> for more information.
+     *
+     */
+    Azure::Nullable<std::string> KeyURL;
+
+    /**
+     * Returns the "crit" header property from the JSON Web Signature object.
+     *
+     * See <a href='https://datatracker.ietf.org/doc/html/rfc7515#section-4.1.11'>RFC 7515
+     * section 4.1.11</a> for more information.
+     *
+     */
+    Azure::Nullable<std::vector<std::string>> Critical;
+
+    /**
+     * Returns a URI which can be used to retrieve an X.509 certificate which can verify the
+     * signature on this token.
+     *
+     * See <a href='https://datatracker.ietf.org/doc/html/rfc7515#section-4.1.5'>RFC 7515
+     * section 4.1.5</a> for more information.
+     *
+     */
+    Azure::Nullable<std::string> X509Url;
+
+    /**
+     * Returns the "typ" header property from the JWS.
+     *
+     * See <a href='https://datatracker.ietf.org/doc/html/rfc7515#section-4.1.9'>RFC 7515
+     * section 4.1.9</a> for more information.
+     *
+     */
+    Azure::Nullable<std::string> Type;
+
+    /**
+     * Returns the SHA-1 thumbprint of the leaf certificate in the getCertificateChain.
+     *
+     * See <a href='https://datatracker.ietf.org/doc/html/rfc7515#section-4.1.7'>RFC 7515
+     * section 4.1.7</a> for more information.
+     *
+     */
+    Azure::Nullable<std::string> CertificateThumbprint;
+
+    /**
+     * Returns the SHA-256 thumbprint of the leaf certificate in the getCertificateChain.
+     *
+     * See <a href='https://datatracker.ietf.org/doc/html/rfc7515#section-4.1.8'>RFC 7515
+     * section 4.1.8</a> for more information.
+     *
+     */
+    Azure::Nullable<std::string> CertificateSha256Thumbprint;
+
+    /**
+     * Returns the signing certificate chain as an AttestationSigner.
+     *
+     * See <a href='https://datatracker.ietf.org/doc/html/rfc7515#section-4.1.6'>RFC 7515
+     * section 4.1.6</a> for more information.
+     *
+     */
+    Azure::Nullable<std::vector<std::string>> X509CertificateChain;
+  };
+
+  /** An AttestationToken represents an RFC 7519 JSON Web Token returned from the attestation
+   * service with the specialized body type.
+   * <typeparam name="T"></typeparam> The type which represents the body of the attestation token.
+   */
+  template <typename T> class AttestationToken final {
+  public:
+    /// The full RFC 7515 token returned by the attestation service.
+    std::string RawToken;
+
+    /// The elements of the raw token which will be signed by the Signature.
+    std::string SignedElements;
+
+    /// Signature (if present) for the attestation token.
+    std::vector<uint8_t> Signature;
+
+    /// RFC 7515 header properties.
+    AttestationTokenHeader Header;
+
+    // RFC 7519 properties.
+
+    /**
+     *  The Expiration time for this attestation token.
+     *
+     * After this time, the token cannot be considered valid.
+     *
+     * See <a href='https://datatracker.ietf.org/doc/html/rfc7519#section-4.1.4'>RFC 7519
+     * Section 4.1.4</a> for more information.
+     */
+    Azure::Nullable<Azure::DateTime> ExpiresOn;
+
+    /**
+     *  The time at which this token was issued.
+     *
+     *
+     * See <a href='https://datatracker.ietf.org/doc/html/rfc7519#section-4.1.6'>RFC 7519
+     * Section 4.1.6</a> for more information.
+     */
+    Azure::Nullable<Azure::DateTime> IssuedOn;
+
+    /**
+     *  The time before which this token cannot be considered valid.
+     *
+     *
+     * See <a href='https://datatracker.ietf.org/doc/html/rfc7519#section-4.1.5'>RFC 7519
+     * Section 4.1.5</a> for more information.
+     */
+    Azure::Nullable<Azure::DateTime> NotBefore;
+
+    /**
+     *  The issuer of this attestation token
+     *
+     *
+     * See <a href='https://datatracker.ietf.org/doc/html/rfc7519#section-4.1.1'>RFC 7519
+     * Section 4.1.1</a> for more information.
+     */
+    Azure::Nullable<std::string> Issuer;
+
+    /**
+     *  An identifier which uniquely identifies this token.
+     *
+     * See <a href='https://datatracker.ietf.org/doc/html/rfc7519#section-4.1.7'>RFC 7519
+     * Section 4.1.7</a> for more information.
+     */
+    Azure::Nullable<std::string> UniqueIdentifier;
+
+    /**
+     * The subject for this attestation token.
+     *
+     * See <a href='https://datatracker.ietf.org/doc/html/rfc7519#section-4.1.2'>RFC 7519
+     * Section 4.1.2</a> for more information.
+     */
+    Azure::Nullable<std::string> Subject;
+
+    /**
+     * The audience for this attestation token.
+     *
+     * See <a href='https://datatracker.ietf.org/doc/html/rfc7519#section-4.1.3'>RFC 7519
+     * Section 4.1.3</a> for more information.
+     */
+    Azure::Nullable<std::string> Audience;
+
+    /// The deserialized body of the attestation token.
+    T Body;
+  };
 
   /**
    *
@@ -200,7 +384,7 @@ namespace Azure { namespace Security { namespace Attestation {
      * @returns Response<{@link AttestationToken}<{@link AttestationResult}>> - The result of the
      * attestation operation
      */
-    Response<Models::AttestationToken<Models::AttestationResult>> AttestSgxEnclave(
+    Response<AttestationToken<Models::AttestationResult>> AttestSgxEnclave(
         std::vector<uint8_t> const& sgxQuoteToAttest,
         AttestOptions options = AttestOptions(),
         Azure::Core::Context const& context = Azure::Core::Context::ApplicationContext) const;
@@ -217,7 +401,7 @@ namespace Azure { namespace Security { namespace Attestation {
      * @returns Response<AttestationToken<AttestationResult>> - The result of the attestation
      * operation
      */
-    Response<Models::AttestationToken<Models::AttestationResult>> AttestOpenEnclave(
+    Response<AttestationToken<Models::AttestationResult>> AttestOpenEnclave(
         std::vector<uint8_t> const& openEnclaveReportToAttest,
         AttestOptions options = AttestOptions(),
         Azure::Core::Context const& context = Azure::Core::Context::ApplicationContext) const;

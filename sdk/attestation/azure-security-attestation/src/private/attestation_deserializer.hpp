@@ -23,9 +23,8 @@
 #include "azure/core/nullable.hpp"
 #include "azure/core/response.hpp"
 #include "jsonhelpers.hpp"
-#include "jsonwebkeyset.hpp"
 
-//#include "attestation_client_models_private.hpp"
+#include "attestation_client_models_private.hpp"
 #include "azure/attestation/attestation_client_models.hpp"
 #include <memory>
 #include <string>
@@ -51,137 +50,52 @@ namespace Azure { namespace Security { namespace Attestation { namespace _detail
   struct OpenIdMetadataSerializer final
   {
     static Models::AttestationOpenIdMetadata Deserialize(
-        std::unique_ptr<Azure::Core::Http::RawResponse>& response)
-    {
-      Models::AttestationOpenIdMetadata returnValue;
-      auto parsedBody = Azure::Core::Json::_internal::json::parse(response->GetBody());
-      returnValue.Issuer = JsonHelpers::ParseStringField(parsedBody, "issuer").Value();
-      returnValue.JsonWebKeySetUrl = JsonHelpers::ParseStringField(parsedBody, "jwks_uri").Value();
-      returnValue.SupportedClaims
-          = JsonHelpers::ParseStringArrayField(parsedBody, "claims_supported").Value();
-      returnValue.SupportedTokenSigningAlgorithms
-          = JsonHelpers::ParseStringArrayField(parsedBody, "id_token_signing_alg_values_supported")
-                .Value();
-      returnValue.SupportedResponseTypes
-          = JsonHelpers::ParseStringArrayField(parsedBody, "response_types_supported").Value();
-      return returnValue;
-    }
+        std::unique_ptr<Azure::Core::Http::RawResponse>& response);
   };
 
   struct AttestSgxEnclaveRequestSerializer final
   {
     static std::string Serialize(
-        Azure::Security::Attestation::Models::_detail::AttestSgxEnclaveRequest const& request)
-    {
-      Azure::Core::Json::_internal::json serializedRequest;
-      serializedRequest["quote"]
-          = Azure::Core::_internal::Base64Url::Base64UrlEncode(request.Quote);
-      if (request.RunTimeData.HasValue())
-      {
-        serializedRequest["runtimeData"] = {
-            {"data",
-             Azure::Core::_internal::Base64Url::Base64UrlEncode(request.RunTimeData.Value().Data)},
-            {"dataType", request.RunTimeData.Value().DataType.ToString()}};
-      }
-
-      if (request.InitTimeData.HasValue())
-      {
-        serializedRequest["inittimeData"] = {
-            {"data",
-             Azure::Core::_internal::Base64Url::Base64UrlEncode(request.InitTimeData.Value().Data)},
-            {"dataType", request.InitTimeData.Value().DataType.ToString()}};
-      }
-
-      JsonHelpers::SetField(
-          serializedRequest, request.DraftPolicyForAttestation, "draftPolicyForAttestation");
-      JsonHelpers::SetField(serializedRequest, request.Nonce, "nonce");
-      return serializedRequest.dump();
-    }
+        Azure::Security::Attestation::Models::_detail::AttestSgxEnclaveRequest const& request);
   };
+
   struct AttestOpenEnclaveRequestSerializer final
   {
     static std::string Serialize(
-        Azure::Security::Attestation::Models::_detail::AttestOpenEnclaveRequest const& request)
-    {
-      Azure::Core::Json::_internal::json serializedRequest;
-      serializedRequest["report"]
-          = Azure::Core::_internal::Base64Url::Base64UrlEncode(request.Report);
-
-      if (request.RunTimeData.HasValue())
-      {
-        serializedRequest["runtimeData"] = {
-            {"data",
-             Azure::Core::_internal::Base64Url::Base64UrlEncode(request.RunTimeData.Value().Data)},
-            {"dataType", request.RunTimeData.Value().DataType.ToString()}};
-      }
-
-      if (request.InitTimeData.HasValue())
-      {
-        serializedRequest["inittimeData"] = {
-            {"data",
-             Azure::Core::_internal::Base64Url::Base64UrlEncode(request.InitTimeData.Value().Data)},
-            {"dataType", request.InitTimeData.Value().DataType.ToString()}};
-      }
-
-      JsonHelpers::SetField(
-          serializedRequest, request.DraftPolicyForAttestation, "draftPolicyForAttestation");
-      JsonHelpers::SetField(serializedRequest, request.Nonce, "nonce");
-      return serializedRequest.dump();
-    }
+        Azure::Security::Attestation::Models::_detail::AttestOpenEnclaveRequest const& request);
   };
 
   struct AttestationServiceTokenResponseSerializer final
   {
-    static std::string Deserialize(Azure::Core::Json::_internal::json const& parsedBody)
-    {
-      if (!parsedBody.contains("token"))
-      {
-        throw std::runtime_error("Field 'token' not found in Attestation Service Response");
-      }
-      if (!parsedBody["token"].is_string())
-      {
-        throw std::runtime_error("Field 'token' is not a string");
-      }
-      return parsedBody["token"].get<std::string>();
-    }
-
-    static std::string Deserialize(std::unique_ptr<Azure::Core::Http::RawResponse>& response)
-    {
-      auto parsedBody = Azure::Core::Json::_internal::json::parse(response->GetBody());
-      return Deserialize(parsedBody);
-    }
+    static std::string Deserialize(Azure::Core::Json::_internal::json const& parsedBody);
+    static std::string Deserialize(std::unique_ptr<Azure::Core::Http::RawResponse>& response);
   };
 
   struct AttestationResultSerializer final
   {
   public:
     static Models::AttestationResult Deserialize(
-        Azure::Core::Json::_internal::json const& parsedJson)
-    {
-      Models::AttestationResult result;
+        Azure::Core::Json::_internal::json const& parsedJson);
+  };
 
-      result.Nonce = JsonHelpers::ParseStringField(parsedJson, "nonce");
-      result.Version = JsonHelpers::ParseStringField(parsedJson, "x-ms-ver").Value();
-      result.RuntimeClaims = JsonHelpers::ParseStringJsonField(parsedJson, "x-ms-runtime");
-      result.InitTimeClaims = JsonHelpers::ParseStringJsonField(parsedJson, "x-ms-inittime");
-      result.PolicyClaims = JsonHelpers::ParseStringJsonField(parsedJson, "x-ms-policy");
-      result.VerifierType
-          = JsonHelpers::ParseStringField(parsedJson, "x-ms-attestation-type").Value();
-      if (parsedJson.contains("x-ms-policy-signer"))
-      {
-        result.PolicySigner
-            = Azure::Security::Attestation::Models::_detail::AttestationSignerInternal(
-                JsonWebKeySerializer::Deserialize(parsedJson["x-ms-policy-signer"]));
-      }
-      result.PolicyHash = JsonHelpers::ParseBase64UrlField(parsedJson, "x-ms-policy-hash");
-      result.IsDebuggable = JsonHelpers::ParseBooleanField(parsedJson, "x-ms-sgx-is-debuggable");
-      result.ProductId = JsonHelpers::ParseIntNumberField(parsedJson, "x-ms-sgx-product-id");
-      result.MrEnclave = JsonHelpers::ParseBase64UrlField(parsedJson, "x-ms-sgx-mrenclave");
-      result.MrSigner = JsonHelpers::ParseBase64UrlField(parsedJson, "x-ms-sgx-mrsigner");
-      result.EnclaveHeldData = JsonHelpers::ParseBase64UrlField(parsedJson, "x-ms-sgx-ehd");
-      result.SgxCollateral = JsonHelpers::ParseStringJsonField(parsedJson, "x-ms-sgx-collateral");
-      return result;
-    }
+  struct JsonWebKeySerializer final
+  {
+    static Models::_detail::JsonWebKey Deserialize(const Azure::Core::Json::_internal::json& jwk);
+  };
+
+  // cspell: words jwks
+  struct JsonWebKeySetSerializer final
+  {
+    static Models::_detail::JsonWebKeySet Deserialize(
+        std::unique_ptr<Azure::Core::Http::RawResponse>& response);
+    static Models::_detail::JsonWebKeySet Deserialize(
+        const Azure::Core::Json::_internal::json& jwk);
+  };
+  /// Serializer/Deserializer for RFC 7515/7517 JSON Web Token/JSON Web SIgnature header objects.
+  struct AttestationTokenHeaderSerializer final
+  {
+    static AttestationTokenHeader Deserialize(Azure::Core::Json::_internal::json const& jsonHeader);
+    static std::string Serialize(AttestationTokenHeader const& tokenHeader);
   };
 
 }}}} // namespace Azure::Security::Attestation::_detail
