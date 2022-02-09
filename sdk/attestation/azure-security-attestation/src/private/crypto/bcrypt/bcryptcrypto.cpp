@@ -25,7 +25,7 @@
 // cspell::words OpenSSL X509 OpenSSLX509
 
 #if defined(AZ_PLATFORM_WINDOWS)
-namespace Azure { namespace Security { namespace Attestation { namespace _private {
+namespace Azure { namespace Security { namespace Attestation { namespace _internal {
   namespace Cryptography {
 
     std::unique_ptr<AsymmetricKey> Crypto::CreateRsaKey(size_t keySize)

@@ -24,7 +24,7 @@
 #include <openssl/pem.h>
 #include <openssl/rsa.h>
 
-namespace Azure { namespace Security { namespace Attestation { namespace _private {
+namespace Azure { namespace Security { namespace Attestation { namespace _internal {
   namespace Cryptography {
 
     namespace _details {
@@ -261,4 +261,4 @@ namespace Azure { namespace Security { namespace Attestation { namespace _privat
       }
 
     } // namespace _details
-}}}}} // namespace Azure::Security::Attestation::_private::Cryptography
+}}}}} // namespace Azure::Security::Attestation::_internal::Cryptography

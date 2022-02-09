@@ -23,7 +23,7 @@
 // cspell::words OpenSSL X509 OpenSSLX509
 
 //#if defined(AZ_PLATFORM_POSIX)
-namespace Azure { namespace Security { namespace Attestation { namespace _private {
+namespace Azure { namespace Security { namespace Attestation { namespace _internal {
   namespace Cryptography {
 
     std::unique_ptr<AsymmetricKey> Crypto::CreateRsaKey(size_t keySize)
@@ -58,5 +58,5 @@ namespace Azure { namespace Security { namespace Attestation { namespace _privat
     {
       return OpenSSLX509Certificate::CreateFromPrivateKey(privateKey, subjectName);
     }
-}}}}} // namespace Azure::Security::Attestation::_private::Cryptography
+}}}}} // namespace Azure::Security::Attestation::_internal::Cryptography
 //#endif //defined(AZ_PLATFORM_POSIX)

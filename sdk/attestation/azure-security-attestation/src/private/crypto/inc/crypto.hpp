@@ -11,7 +11,7 @@
 
 /** @brief The Crypto class contains basic functionality to
  */
-namespace Azure { namespace Security { namespace Attestation { namespace _private {
+namespace Azure { namespace Security { namespace Attestation { namespace _internal {
   namespace Cryptography {
     class Crypto {
     public:
@@ -26,4 +26,4 @@ namespace Azure { namespace Security { namespace Attestation { namespace _privat
       static std::unique_ptr<X509Certificate> ImportX509Certificate(
           std::string const& pemEncodedCertificate);
     };
-}}}}} // namespace Azure::Security::Attestation::_private::Cryptography
+}}}}} // namespace Azure::Security::Attestation::_internal::Cryptography

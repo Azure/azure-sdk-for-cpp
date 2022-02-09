@@ -9,7 +9,7 @@
 
 // cspell: words ECDS
 namespace Azure { namespace Security { namespace Attestation { namespace Test {
-  using namespace Azure::Security::Attestation::_private::Cryptography;
+  using namespace Azure::Security::Attestation::_internal::Cryptography;
   using namespace Azure::Core::Diagnostics::_internal;
   using namespace Azure::Core::Diagnostics;
 

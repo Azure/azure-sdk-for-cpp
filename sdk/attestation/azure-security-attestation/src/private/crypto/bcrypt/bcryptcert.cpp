@@ -24,7 +24,7 @@
 
 // cspell::words BCrypt X509 BCryptX509
 
-namespace Azure { namespace Security { namespace Attestation { namespace _private {
+namespace Azure { namespace Security { namespace Attestation { namespace _internal {
   namespace Cryptography {
 
     std::unique_ptr<X509Certificate> BCryptX509Certificate::Import(

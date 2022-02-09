@@ -23,9 +23,9 @@
 #include "azure/core/response.hpp"
 #include "jsonhelpers.hpp"
 
-#include "azure/attestation/attestation_client_models.hpp"
-#include "attestation_client_models_internal.hpp"
 #include "attestation_client_internal.hpp"
+#include "attestation_client_models_internal.hpp"
+#include "azure/attestation/attestation_client_models.hpp"
 #include <memory>
 #include <string>
 #include <vector>

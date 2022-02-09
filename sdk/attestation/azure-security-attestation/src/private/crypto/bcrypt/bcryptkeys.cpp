@@ -22,7 +22,7 @@
 #include "bcryptkeys.hpp"
 #include <wil/result.h>
 
-namespace Azure { namespace Security { namespace Attestation { namespace _private {
+namespace Azure { namespace Security { namespace Attestation { namespace _internal {
   namespace Cryptography {
 
     using unique_private_key_info

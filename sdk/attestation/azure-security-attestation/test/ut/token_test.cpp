@@ -17,7 +17,7 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
   using namespace Azure::Security::Attestation::_internal;
   using namespace Azure::Security::Attestation::Models;
   using namespace Azure::Security::Attestation::Models::_internal;
-  using namespace Azure::Security::Attestation::_private::Cryptography;
+  using namespace Azure::Security::Attestation::_internal::Cryptography;
   TEST(SerializationTests, TestDeserializePrimitivesBoolean)
   {
     {

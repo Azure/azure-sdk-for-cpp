@@ -2,7 +2,7 @@
 #pragma once
 #include "cryptokeys.hpp"
 
-namespace Azure { namespace Security { namespace Attestation { namespace _private {
+namespace Azure { namespace Security { namespace Attestation { namespace _internal {
   namespace Cryptography {
 
     class X509Certificate {
@@ -24,4 +24,4 @@ namespace Azure { namespace Security { namespace Attestation { namespace _privat
       virtual std::string GetKeyType() const = 0;
       virtual std::string GetThumbprint() const = 0;
     };
-}}}}} // namespace Azure::Security::Attestation::_private::Cryptography
+}}}}} // namespace Azure::Security::Attestation::_internal::Cryptography

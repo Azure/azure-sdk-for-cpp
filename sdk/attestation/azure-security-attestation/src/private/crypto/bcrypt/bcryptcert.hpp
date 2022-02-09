@@ -26,7 +26,7 @@
 
 // cspell::words BCrypt X509 BCryptX509
 
-namespace Azure { namespace Security { namespace Attestation { namespace _private {
+namespace Azure { namespace Security { namespace Attestation { namespace _internal {
   namespace Cryptography {
 
     /** Represents an X509 Certificate.

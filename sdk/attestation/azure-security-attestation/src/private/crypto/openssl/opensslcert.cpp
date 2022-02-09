@@ -34,7 +34,7 @@
 namespace Azure {
 namespace Security {
   namespace Attestation {
-    namespace _private {
+    namespace _internal {
       namespace Cryptography {
 
         std::unique_ptr<X509Certificate> OpenSSLX509Certificate::Import(
@@ -342,7 +342,7 @@ namespace Security {
       {
         throw _details::OpenSSLException("X509_add_ext");
       }
-    } // namespace _private
+    } // namespace _internal
 
     // Add the authority Key ID - Note that this needs to be done *after* setting the subject key
     // identifier.

@@ -25,7 +25,7 @@
 #include <wil/resource.h>
 // cspell: words PCERT PCRYPT hcryptprov hcryptkey
 
-namespace Azure { namespace Security { namespace Attestation { namespace _private {
+namespace Azure { namespace Security { namespace Attestation { namespace _internal {
   namespace Cryptography {
 
     /** Represents an Asymmetric Key.

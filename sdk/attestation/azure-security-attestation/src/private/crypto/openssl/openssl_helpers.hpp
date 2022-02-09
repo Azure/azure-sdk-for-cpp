@@ -9,7 +9,7 @@
 #include <type_traits>
 #include <utility>
 
-namespace Azure { namespace Security { namespace Attestation { namespace _private {
+namespace Azure { namespace Security { namespace Attestation { namespace _internal {
   namespace Cryptography {
 
     // Helpers to provide RAII wrappers for OpenSSL types.
@@ -70,4 +70,4 @@ namespace Azure { namespace Security { namespace Attestation { namespace _privat
         OpenSSLException(std::string const& what);
       };
     } // namespace _details
-}}}}} // namespace Azure::Security::Attestation::_private::Cryptography
+}}}}} // namespace Azure::Security::Attestation::_internal::Cryptography

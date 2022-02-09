@@ -7,7 +7,7 @@
 #include <type_traits>
 #include <utility>
 
-namespace Azure { namespace Security { namespace Attestation { namespace _private {
+namespace Azure { namespace Security { namespace Attestation { namespace _internal {
   namespace Cryptography {
 
       namespace _details {
