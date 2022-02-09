@@ -20,7 +20,7 @@
 #include <string>
 #include <vector>
 
-namespace Azure { namespace Security { namespace Attestation { namespace _detail {
+namespace Azure { namespace Security { namespace Attestation { namespace _internal {
 
   constexpr static const char ContentHeaderName[] = "content-type";
   constexpr static const char ApplicationJsonValue[] = "application/json";
@@ -53,4 +53,4 @@ namespace Azure { namespace Security { namespace Attestation { namespace _detail
         Azure::Core::Context const& context);
   };
 
-}}}} // namespace Azure::Security::Attestation::_detail
+}}}} // namespace Azure::Security::Attestation::_internal

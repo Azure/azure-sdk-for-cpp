@@ -7,8 +7,8 @@
  * This file contains private classes used to support public model types.
  *
  */
-#include "attestation_client_models_private.hpp"
-#include "attestation_deserializer.hpp"
+#include "attestation_client_models_internal.hpp"
+#include "attestation_deserializers.hpp"
 #include "azure/attestation/attestation_client.hpp"
 #include "azure/attestation/attestation_client_models.hpp"
 #include "azure/attestation/attestation_client_options.hpp"
@@ -27,15 +27,15 @@
 #include <string>
 #include <vector>
 
-namespace Azure { namespace Security { namespace Attestation { namespace _detail {
+namespace Azure { namespace Security { namespace Attestation { namespace _internal {
 
-}}}} // namespace Azure::Security::Attestation::_detail
+}}}} // namespace Azure::Security::Attestation::_internal
 
 namespace Azure {
   namespace Security {
     namespace Attestation {
       namespace Models {
-        namespace _detail {
+        namespace _internal {
 
   AttestationSignerInternal::AttestationSignerInternal(JsonWebKey const& jwk)
   {
@@ -83,4 +83,4 @@ namespace Azure {
     }
     return rv.dump();
   }
-}}}}} // namespace Azure::Security::Attestation::Models::_detail
+}}}}} // namespace Azure::Security::Attestation::Models::_internal

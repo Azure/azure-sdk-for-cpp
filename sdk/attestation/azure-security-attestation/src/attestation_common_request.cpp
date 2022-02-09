@@ -8,9 +8,10 @@
 #include <memory>
 
 using namespace Azure::Security::Attestation;
+using namespace Azure::Security::Attestation::_internal;
 using namespace Azure::Core::Http::_internal;
 
-std::unique_ptr<Azure::Core::Http::RawResponse> _detail::AttestationCommonRequest::SendRequest(
+std::unique_ptr<Azure::Core::Http::RawResponse> AttestationCommonRequest::SendRequest(
     Azure::Core::Http::_internal::HttpPipeline const& pipeline,
     Azure::Core::Http::Request& request,
     Azure::Core::Context const& context)
@@ -33,7 +34,7 @@ std::unique_ptr<Azure::Core::Http::RawResponse> _detail::AttestationCommonReques
   return response;
 }
 
-Azure::Core::Http::Request _detail::AttestationCommonRequest::CreateRequest(
+Azure::Core::Http::Request AttestationCommonRequest::CreateRequest(
     Azure::Core::Url url,
     Azure::Core::Http::HttpMethod method,
     std::vector<std::string> const& path,
@@ -43,7 +44,7 @@ Azure::Core::Http::Request _detail::AttestationCommonRequest::CreateRequest(
   return CreateRequest(url, "", method, path, content);
 }
 
-Azure::Core::Http::Request _detail::AttestationCommonRequest::CreateRequest(
+Azure::Core::Http::Request AttestationCommonRequest::CreateRequest(
     Azure::Core::Url url,
     std::string const& apiVersion,
     Azure::Core::Http::HttpMethod method,

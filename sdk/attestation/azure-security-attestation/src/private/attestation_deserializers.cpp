@@ -11,7 +11,7 @@
  *
  */
 
-#include "attestation_deserializer.hpp"
+#include "attestation_deserializers.hpp"
 #include "azure/core/base64.hpp"
 #include "azure/core/context.hpp"
 #include "azure/core/http/http.hpp"
@@ -24,12 +24,17 @@
 #include "jsonhelpers.hpp"
 
 #include "azure/attestation/attestation_client_models.hpp"
+#include "attestation_client_models_internal.hpp"
+#include "attestation_client_internal.hpp"
 #include <memory>
 #include <string>
 #include <vector>
 
 // cspell: words jwks MrSigner MrEnclave
-namespace Azure { namespace Security { namespace Attestation { namespace _detail {
+namespace Azure { namespace Security { namespace Attestation { namespace _internal {
+  using namespace Azure::Security::Attestation::Models::_internal;
+  using namespace Azure::Security::Attestation::Models;
+  using namespace Azure::Security::Attestation;
 
   /***************************************
    * A quick note on the naming convention for the Serialize/Deserialize classes.
@@ -62,8 +67,7 @@ namespace Azure { namespace Security { namespace Attestation { namespace _detail
     return returnValue;
   }
 
-  std::string AttestSgxEnclaveRequestSerializer::Serialize(
-      Azure::Security::Attestation::Models::_detail::AttestSgxEnclaveRequest const& request)
+  std::string AttestSgxEnclaveRequestSerializer::Serialize(AttestSgxEnclaveRequest const& request)
   {
     Azure::Core::Json::_internal::json serializedRequest;
     serializedRequest["quote"] = Azure::Core::_internal::Base64Url::Base64UrlEncode(request.Quote);
@@ -90,7 +94,7 @@ namespace Azure { namespace Security { namespace Attestation { namespace _detail
   }
 
   std::string AttestOpenEnclaveRequestSerializer::Serialize(
-      Azure::Security::Attestation::Models::_detail::AttestOpenEnclaveRequest const& request)
+      Azure::Security::Attestation::Models::_internal::AttestOpenEnclaveRequest const& request)
   {
     Azure::Core::Json::_internal::json serializedRequest;
     serializedRequest["report"]
@@ -153,9 +157,8 @@ namespace Azure { namespace Security { namespace Attestation { namespace _detail
         = JsonHelpers::ParseStringField(parsedJson, "x-ms-attestation-type").Value();
     if (parsedJson.contains("x-ms-policy-signer"))
     {
-      result.PolicySigner
-          = Azure::Security::Attestation::Models::_detail::AttestationSignerInternal(
-              JsonWebKeySerializer::Deserialize(parsedJson["x-ms-policy-signer"]));
+      result.PolicySigner = AttestationSignerInternal(
+          JsonWebKeySerializer::Deserialize(parsedJson["x-ms-policy-signer"]));
     }
     result.PolicyHash = JsonHelpers::ParseBase64UrlField(parsedJson, "x-ms-policy-hash");
     result.IsDebuggable = JsonHelpers::ParseBooleanField(parsedJson, "x-ms-sgx-is-debuggable");
@@ -178,8 +181,7 @@ namespace Azure { namespace Security { namespace Attestation { namespace _detail
     if (jsonHeader.contains("jwk"))
     {
       auto jwk = JsonWebKeySerializer::Deserialize(jsonHeader["jwk"]);
-      returnValue.Key
-          = Azure::Security::Attestation::Models::_detail::AttestationSignerInternal(jwk);
+      returnValue.Key = AttestationSignerInternal(jwk);
     }
     returnValue.KeyId = JsonHelpers::ParseStringField(jsonHeader, "kid");
     returnValue.X509Url = JsonHelpers::ParseStringField(jsonHeader, "x5u");
@@ -194,101 +196,74 @@ namespace Azure { namespace Security { namespace Attestation { namespace _detail
   std::string AttestationTokenHeaderSerializer::Serialize(AttestationTokenHeader const& tokenHeader)
   {
     Azure::Core::Json::_internal::json serializedHeader;
-    Azure::Security::Attestation::_detail::JsonHelpers::SetField(
-        serializedHeader, tokenHeader.Algorithm, "alg");
-    Azure::Security::Attestation::_detail::JsonHelpers::SetField(
-        serializedHeader, tokenHeader.KeyURL, "jku");
+    JsonHelpers::SetField(serializedHeader, tokenHeader.Algorithm, "alg");
+    JsonHelpers::SetField(serializedHeader, tokenHeader.KeyURL, "jku");
     if (tokenHeader.Key.HasValue())
     {
-      auto jsonSigner(
-          Models::_detail::AttestationSignerInternal::SerializeToJson(tokenHeader.Key.Value()));
-      Azure::Security::Attestation::_detail::JsonHelpers::SetField(
-          serializedHeader, jsonSigner, "jwk");
+      auto jsonSigner(AttestationSignerInternal::SerializeToJson(tokenHeader.Key.Value()));
+      JsonHelpers::SetField(serializedHeader, jsonSigner, "jwk");
     }
-    Azure::Security::Attestation::_detail::JsonHelpers::SetField(
-        serializedHeader, tokenHeader.ContentType, "cty");
-    Azure::Security::Attestation::_detail::JsonHelpers::SetField(
-        serializedHeader, tokenHeader.Critical, "crit");
-    Azure::Security::Attestation::_detail::JsonHelpers::SetField(
-        serializedHeader, tokenHeader.KeyId, "kid");
-    Azure::Security::Attestation::_detail::JsonHelpers::SetField(
-        serializedHeader, tokenHeader.Type, "typ");
+    JsonHelpers::SetField(serializedHeader, tokenHeader.ContentType, "cty");
+    JsonHelpers::SetField(serializedHeader, tokenHeader.Critical, "crit");
+    JsonHelpers::SetField(serializedHeader, tokenHeader.KeyId, "kid");
+    JsonHelpers::SetField(serializedHeader, tokenHeader.Type, "typ");
 
-    Azure::Security::Attestation::_detail::JsonHelpers::SetField(
-        serializedHeader, tokenHeader.X509CertificateChain, "x5c");
-    Azure::Security::Attestation::_detail::JsonHelpers::SetField(
-        serializedHeader, tokenHeader.X509Url, "x5u");
-    Azure::Security::Attestation::_detail::JsonHelpers::SetField(
-        serializedHeader, tokenHeader.CertificateSha256Thumbprint, "x5t#S256");
-    Azure::Security::Attestation::_detail::JsonHelpers::SetField(
-        serializedHeader, tokenHeader.CertificateThumbprint, "x5t");
+    JsonHelpers::SetField(serializedHeader, tokenHeader.X509CertificateChain, "x5c");
+    JsonHelpers::SetField(serializedHeader, tokenHeader.X509Url, "x5u");
+    JsonHelpers::SetField(serializedHeader, tokenHeader.CertificateSha256Thumbprint, "x5t#S256");
+    JsonHelpers::SetField(serializedHeader, tokenHeader.CertificateThumbprint, "x5t");
 
     return serializedHeader.dump();
   }
 
-  Models::_detail::JsonWebKey JsonWebKeySerializer::Deserialize(
-      const Azure::Core::Json::_internal::json& jwk)
+  JsonWebKey JsonWebKeySerializer::Deserialize(const Azure::Core::Json::_internal::json& jwk)
   {
-    Models::_detail::JsonWebKey returnValue;
+    JsonWebKey returnValue;
     if (jwk.contains("kty"))
     {
-      returnValue.kty
-          = Azure::Security::Attestation::_detail::JsonHelpers::ParseStringField(jwk, "kty")
-                .Value();
+      returnValue.kty = JsonHelpers::ParseStringField(jwk, "kty").Value();
     }
     else
     {
       throw std::runtime_error("Could not find required field 'kty' in JSON Web Key");
     }
-    returnValue.alg
-        = Azure::Security::Attestation::_detail::JsonHelpers::ParseStringField(jwk, "alg");
-    returnValue.kid
-        = Azure::Security::Attestation::_detail::JsonHelpers::ParseStringField(jwk, "kid");
-    returnValue.use
-        = Azure::Security::Attestation::_detail::JsonHelpers::ParseStringField(jwk, "use");
-    returnValue.keyops
-        = Azure::Security::Attestation::_detail::JsonHelpers::ParseStringArrayField(jwk, "key_ops");
-    returnValue.x5t
-        = Azure::Security::Attestation::_detail::JsonHelpers::ParseStringField(jwk, "x5t");
-    returnValue.x5t256
-        = Azure::Security::Attestation::_detail::JsonHelpers::ParseStringField(jwk, "x5t#S256");
-    returnValue.x5u
-        = Azure::Security::Attestation::_detail::JsonHelpers::ParseStringField(jwk, "x5u");
-    returnValue.x5c
-        = Azure::Security::Attestation::_detail::JsonHelpers::ParseStringArrayField(jwk, "x5c");
+    returnValue.alg = JsonHelpers::ParseStringField(jwk, "alg");
+    returnValue.kid = JsonHelpers::ParseStringField(jwk, "kid");
+    returnValue.use = JsonHelpers::ParseStringField(jwk, "use");
+    returnValue.keyops = JsonHelpers::ParseStringArrayField(jwk, "key_ops");
+    returnValue.x5t = JsonHelpers::ParseStringField(jwk, "x5t");
+    returnValue.x5t256 = JsonHelpers::ParseStringField(jwk, "x5t#S256");
+    returnValue.x5u = JsonHelpers::ParseStringField(jwk, "x5u");
+    returnValue.x5c = JsonHelpers::ParseStringArrayField(jwk, "x5c");
 
     // ECDSA key values.
-    returnValue.crv
-        = Azure::Security::Attestation::_detail::JsonHelpers::ParseStringField(jwk, "crv");
-    returnValue.x = Azure::Security::Attestation::_detail::JsonHelpers::ParseStringField(jwk, "x");
-    returnValue.y = Azure::Security::Attestation::_detail::JsonHelpers::ParseStringField(jwk, "y");
-    returnValue.d = Azure::Security::Attestation::_detail::JsonHelpers::ParseStringField(jwk, "d");
+    returnValue.crv = JsonHelpers::ParseStringField(jwk, "crv");
+    returnValue.x = JsonHelpers::ParseStringField(jwk, "x");
+    returnValue.y = JsonHelpers::ParseStringField(jwk, "y");
+    returnValue.d = JsonHelpers::ParseStringField(jwk, "d");
 
     // RSA key values.
-    returnValue.n = Azure::Security::Attestation::_detail::JsonHelpers::ParseStringField(jwk, "n");
-    returnValue.e = Azure::Security::Attestation::_detail::JsonHelpers::ParseStringField(jwk, "e");
-    returnValue.q = Azure::Security::Attestation::_detail::JsonHelpers::ParseStringField(jwk, "p");
-    returnValue.dp
-        = Azure::Security::Attestation::_detail::JsonHelpers::ParseStringField(jwk, "dp");
-    returnValue.dq
-        = Azure::Security::Attestation::_detail::JsonHelpers::ParseStringField(jwk, "dq");
-    returnValue.qi
-        = Azure::Security::Attestation::_detail::JsonHelpers::ParseStringField(jwk, "qi");
+    returnValue.n = JsonHelpers::ParseStringField(jwk, "n");
+    returnValue.e = JsonHelpers::ParseStringField(jwk, "e");
+    returnValue.q = JsonHelpers::ParseStringField(jwk, "p");
+    returnValue.dp = JsonHelpers::ParseStringField(jwk, "dp");
+    returnValue.dq = JsonHelpers::ParseStringField(jwk, "dq");
+    returnValue.qi = JsonHelpers::ParseStringField(jwk, "qi");
 
     return returnValue;
   }
 
   // cspell: words jwks
-  Models::_detail::JsonWebKeySet JsonWebKeySetSerializer::Deserialize(
+  JsonWebKeySet JsonWebKeySetSerializer::Deserialize(
       std::unique_ptr<Azure::Core::Http::RawResponse>& response)
   {
     auto parsedBody = Azure::Core::Json::_internal::json::parse(response->GetBody());
     return Deserialize(parsedBody);
   }
-  Models::_detail::JsonWebKeySet JsonWebKeySetSerializer::Deserialize(
+  JsonWebKeySet JsonWebKeySetSerializer::Deserialize(
       Azure::Core::Json::_internal::json const& parsedBody)
   {
-    Models::_detail::JsonWebKeySet returnValue;
+    JsonWebKeySet returnValue;
     if (!parsedBody.contains("keys"))
     {
       throw std::runtime_error("Field 'keys' not found in JWKS.");
@@ -303,4 +278,4 @@ namespace Azure { namespace Security { namespace Attestation { namespace _detail
     }
     return returnValue;
   }
-}}}} // namespace Azure::Security::Attestation::_detail
+}}}} // namespace Azure::Security::Attestation::_internal

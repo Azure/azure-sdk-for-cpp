@@ -25,7 +25,7 @@
 #include <vector>
 
 // cspell: words jwks MrSigner MrEnclave
-namespace Azure { namespace Security { namespace Attestation { namespace _detail {
+namespace Azure { namespace Security { namespace Attestation { namespace _internal {
   struct JsonHelpers
   {
     /// @brief - parse a string field from a JSON object.
@@ -128,4 +128,4 @@ namespace Azure { namespace Security { namespace Attestation { namespace _detail
         Azure::Core::Json::_internal::json& fieldValue,
         std::string const& fieldName);
   };
-}}}} // namespace Azure::Security::Attestation::_detail
+}}}} // namespace Azure::Security::Attestation::_internal

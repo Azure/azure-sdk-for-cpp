@@ -179,7 +179,7 @@ namespace Azure { namespace Security { namespace Attestation {
     AttestationDataType DataType;
   };
 
-  /** @brief Parameters sent to the attestation service to be consumed in the attestation operation.
+  /** @brief Parameters sent to the attestation service to be consumed in an attestation operation.
    */
   struct AttestOptions final
   {

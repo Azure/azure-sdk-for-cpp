@@ -10,21 +10,12 @@
 
 #pragma once
 
+#include "azure/core/nullable.hpp"
 #include "azure/attestation/attestation_client.hpp"
 #include "azure/attestation/attestation_client_models.hpp"
 #include "azure/attestation/attestation_client_options.hpp"
-#include "azure/core/base64.hpp"
-#include "azure/core/context.hpp"
-#include "azure/core/http/http.hpp"
-#include "azure/core/internal/json/json.hpp"
-#include "azure/core/internal/json/json_optional.hpp"
-#include "azure/core/internal/json/json_serializable.hpp"
-#include "azure/core/response.hpp"
-#include "crypto/inc/crypto.hpp"
 #include "jsonhelpers.hpp"
-#include <chrono>
 #include <memory>
-#include <sstream>
 #include <string>
 #include <vector>
 
@@ -32,7 +23,7 @@ namespace Azure {
   namespace Security {
     namespace Attestation {
       namespace Models {
-        namespace _detail {
+        namespace _internal {
 
   struct JsonWebKey final
   {
@@ -101,4 +92,4 @@ namespace Azure {
     Azure::Nullable<std::string> Nonce;
   };
 
-}}}}} // namespace Azure::Security::Attestation::Models::_detail
+}}}}} // namespace Azure::Security::Attestation::Models::_internal

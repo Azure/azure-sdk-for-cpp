@@ -36,13 +36,13 @@ set(
     
     src/private/package_version.hpp
     src/private/attestation_common_request.hpp
-    src/private/attestation_deserializer.hpp
+    src/private/attestation_deserializers.hpp
      
-    src/private/attestation_client_models_private.hpp
+    "src/private/attestation_client_models_internal.hpp"
     src/private/crypto/inc/crypto.hpp
     src/private/crypto/inc/cryptocert.hpp
     src/private/crypto/inc/cryptokeys.hpp
-    src/private/attestation_client_private.hpp)
+    src/private/attestation_client_internal.hpp)
 
 set(
   AZURE_ATTESTATION_SOURCE
@@ -51,7 +51,7 @@ set(
     src/attestation_common_request.cpp
     src/private/attestation_deserializers.cpp
     src/private/jsonhelpers.cpp
-    src/private/attestation_client_private.cpp)
+    "src/private/attestation_client_internal.cpp")
 
 #if(WIN32)
 #set(
@@ -71,7 +71,7 @@ set(
 
 create_per_service_target_build(azure-security-attestation attestation)
 
-add_library(azure-security-attestation ${AZURE_ATTESTATION_HEADER} ${AZURE_ATTESTATION_SOURCE} "src/private/attestation_client_private.hpp")
+add_library(azure-security-attestation ${AZURE_ATTESTATION_HEADER} ${AZURE_ATTESTATION_SOURCE} "src/private/attestation_client_internal.hpp")
 
 #if(WIN32)
 #    find_package(WIL CONFIG REQUIRED)

@@ -10,7 +10,7 @@
 
 #pragma once
 
-#include "attestation_deserializer.hpp"
+#include "attestation_deserializers.hpp"
 #include "azure/attestation/attestation_client.hpp"
 #include "azure/attestation/attestation_client_models.hpp"
 #include "azure/attestation/attestation_client_options.hpp"
@@ -29,19 +29,21 @@
 #include <string>
 #include <vector>
 
-namespace Azure { namespace Security { namespace Attestation { namespace _detail {
+namespace Azure { namespace Security { namespace Attestation { namespace _internal {
 
   template <class T, typename TDeserializer> class AttestationTokenInternal {
   private:
     AttestationToken<T> m_token;
 
-/**
- * @brief Validate the time elements in a JSON Web token as controlled by the provided validation options.
- * 
- * @param validationOptions Options which control how the time validation is performed.
- * 
- * @throws std::runtime_error Thrown when the time in the token is invalid (the token has expired or is not yet valid).
- */
+    /**
+     * @brief Validate the time elements in a JSON Web token as controlled by the provided
+     * validation options.
+     *
+     * @param validationOptions Options which control how the time validation is performed.
+     *
+     * @throws std::runtime_error Thrown when the time in the token is invalid (the token has
+     * expired or is not yet valid).
+     */
     void ValidateTokenTimeElements(AttestationTokenValidationOptions const& validationOptions)
     {
       // Snapshot "now" to provide a base time for subsequent checks. Note that this code
@@ -86,11 +88,11 @@ namespace Azure { namespace Security { namespace Attestation { namespace _detail
       }
     }
 
-/**
- * @brief Validate the issuer of the attestation token based on the validation options provided.
- * 
- * @param validationOptions Options controlling the validation
- */
+    /**
+     * @brief Validate the issuer of the attestation token based on the validation options provided.
+     *
+     * @param validationOptions Options controlling the validation
+     */
     void ValidateTokenIssuer(AttestationTokenValidationOptions const& validationOptions)
     {
       if (validationOptions.ValidateIssuer)
@@ -159,7 +161,7 @@ namespace Azure { namespace Security { namespace Attestation { namespace _detail
           std::vector<std::string> pemEncodedChain;
           for (auto x5c : m_token.Header.X509CertificateChain.Value())
           {
-            pemEncodedChain.push_back(Models::_detail::AttestationSignerInternal::PemFromX5c(x5c));
+            pemEncodedChain.push_back(Models::_internal::AttestationSignerInternal::PemFromX5c(x5c));
           }
           returnValue.push_back(
               Models::AttestationSigner{Azure::Nullable<std::string>(), pemEncodedChain});
@@ -231,7 +233,7 @@ namespace Azure { namespace Security { namespace Attestation { namespace _detail
             Azure::Core::_internal::Base64Url::Base64UrlDecode(header)));
 
         m_token.Header
-            = Azure::Security::Attestation::_detail::AttestationTokenHeaderSerializer::Deserialize(
+            = Azure::Security::Attestation::_internal::AttestationTokenHeaderSerializer::Deserialize(
                 jsonHeader);
 
         // Remove the header from the token, we've remembered its contents.
@@ -260,20 +262,20 @@ namespace Azure { namespace Security { namespace Attestation { namespace _detail
 
         // Parse the RFC 7519 JSON Web Token body properties.
         // Note that if this is a JWS, these properties will NOT be present.
-        m_token.ExpiresOn = Azure::Security::Attestation::_detail::JsonHelpers::ParseDateTimeField(
+        m_token.ExpiresOn = Azure::Security::Attestation::_internal::JsonHelpers::ParseDateTimeField(
             jsonBody, "exp");
-        m_token.IssuedOn = Azure::Security::Attestation::_detail::JsonHelpers::ParseDateTimeField(
+        m_token.IssuedOn = Azure::Security::Attestation::_internal::JsonHelpers::ParseDateTimeField(
             jsonBody, "iat");
-        m_token.NotBefore = Azure::Security::Attestation::_detail::JsonHelpers::ParseDateTimeField(
+        m_token.NotBefore = Azure::Security::Attestation::_internal::JsonHelpers::ParseDateTimeField(
             jsonBody, "nbf");
         m_token.Issuer
-            = Azure::Security::Attestation::_detail::JsonHelpers::ParseStringField(jsonBody, "iss");
+            = Azure::Security::Attestation::_internal::JsonHelpers::ParseStringField(jsonBody, "iss");
         m_token.Subject
-            = Azure::Security::Attestation::_detail::JsonHelpers::ParseStringField(jsonBody, "sub");
+            = Azure::Security::Attestation::_internal::JsonHelpers::ParseStringField(jsonBody, "sub");
         m_token.Audience
-            = Azure::Security::Attestation::_detail::JsonHelpers::ParseStringField(jsonBody, "aud");
+            = Azure::Security::Attestation::_internal::JsonHelpers::ParseStringField(jsonBody, "aud");
         m_token.UniqueIdentifier
-            = Azure::Security::Attestation::_detail::JsonHelpers::ParseStringField(jsonBody, "jti");
+            = Azure::Security::Attestation::_internal::JsonHelpers::ParseStringField(jsonBody, "jti");
 
         m_token.Body = TDeserializer::Deserialize(jsonBody);
 
@@ -287,13 +289,15 @@ namespace Azure { namespace Security { namespace Attestation { namespace _detail
       }
     }
 
-/**
- * @brief Create a new attestation token object with a body containing the tokenBody provided.
- * 
- * @param tokenBody A structure representing the body of the attestation token. The body will be serialized using the {@link TDeserializer} class.
- * @param tokenSigner An optional signer for the token. If provided, will be used to sign the token.
- * @return AttestationTokenInternal<T, TDeserializer> A newly created token object.
- */
+    /**
+     * @brief Create a new attestation token object with a body containing the tokenBody provided.
+     *
+     * @param tokenBody A structure representing the body of the attestation token. The body will be
+     * serialized using the {@link TDeserializer} class.
+     * @param tokenSigner An optional signer for the token. If provided, will be used to sign the
+     * token.
+     * @return AttestationTokenInternal<T, TDeserializer> A newly created token object.
+     */
     static AttestationTokenInternal<T, TDeserializer> CreateToken(
         T const& tokenBody,
         AttestationSigningKey const& tokenSigner = AttestationSigningKey{})
@@ -388,4 +392,4 @@ namespace Azure { namespace Security { namespace Attestation { namespace _detail
 
     operator AttestationToken<T>&&() { return std::move(m_token); }
   };
-}}}} // namespace Azure::Security::Attestation::_detail
+}}}} // namespace Azure::Security::Attestation::_internal

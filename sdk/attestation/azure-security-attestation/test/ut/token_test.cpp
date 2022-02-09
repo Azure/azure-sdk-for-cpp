@@ -1,9 +1,9 @@
 // Copyright(c) Microsoft Corporation.All rights reserved.
 // SPDX-License-Identifier: MIT
 
-#include "../../src/private/attestation_client_models_private.hpp"
-#include "../../src/private/attestation_client_private.hpp"
-#include "../../src/private/attestation_deserializer.hpp"
+#include "../../src/private/attestation_client_internal.hpp"
+#include "../../src/private/attestation_client_models_internal.hpp"
+#include "../../src/private/attestation_deserializers.hpp"
 #include "../../src/private/crypto/inc/crypto.hpp"
 #include "azure/attestation/attestation_client.hpp"
 #include "azure/core/test/test_base.hpp"
@@ -14,9 +14,9 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
   using namespace Azure::Core::Json::_internal;
   using namespace Azure::Core::Http;
   using namespace Azure::Security::Attestation;
-  using namespace Azure::Security::Attestation::_detail;
+  using namespace Azure::Security::Attestation::_internal;
   using namespace Azure::Security::Attestation::Models;
-  using namespace Azure::Security::Attestation::Models::_detail;
+  using namespace Azure::Security::Attestation::Models::_internal;
   using namespace Azure::Security::Attestation::_private::Cryptography;
   TEST(SerializationTests, TestDeserializePrimitivesBoolean)
   {
@@ -312,7 +312,7 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
   TEST(SerializationTests, TestSerializeAttestOpenEnclaveRequest)
   {
     {
-      Models::_detail::AttestOpenEnclaveRequest request;
+      Models::_internal::AttestOpenEnclaveRequest request;
       request.Report = {1, 2, 3, 4};
       request.RunTimeData = AttestationData{{4, 5, 7, 8}, AttestationDataType::Binary};
       request.InitTimeData = AttestationData{{1, 2, 3, 4}, AttestationDataType::Json};
