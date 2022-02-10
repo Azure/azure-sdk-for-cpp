@@ -165,13 +165,14 @@ namespace Azure { namespace Security { namespace Attestation { namespace _detail
       return returnValue;
     }
 
-    /// @brief Given a set of possible signers, verify that the token was signed by one of those
-    /// signers.
-    /// @param possibleSigners - a list of possible AttestationSigner objects that could have
-    /// signed the token.
-    /// @returns Azure::Nullable<AttestationSigner> - If the return value has a value, it will
-    /// be the certificate which signed the token, otherwise the token signature could not be
-    /// validated.
+    /** @brief Given a set of possible signers, verify that the token was signed by one of those
+     * signers.
+     * @param possibleSigners - a list of possible AttestationSigner objects that could have
+     * signed the token.
+     * @returns Azure::Nullable<AttestationSigner> - If the return value has a value, it will
+     * be the certificate which signed the token, otherwise the token signature could not be
+     * validated.
+     */
     Azure::Nullable<Models::AttestationSigner> VerifyTokenSignature(
         std::vector<Models::AttestationSigner> const& possibleSigners)
     {

@@ -79,13 +79,58 @@ namespace Azure { namespace Security { namespace Attestation { namespace _detail
 
     public:
       virtual ~X509Certificate() {}
+      /**
+       * @brief Returns the public key associated with this X.509 certificate.
+       *
+       * @return std::unique_ptr<AsymmetricKey> The public key for the certificate.
+       */
       virtual std::unique_ptr<AsymmetricKey> GetPublicKey() const = 0;
+      /**
+       * @brief Exports the current certificate as a PEM encoded string.
+       *
+       * @return std::string PEM encoded representation of the X.509 certificate.
+       */
       virtual std::string ExportAsPEM() const = 0;
+      /**
+       * @brief Exports the current certificate as a Base64 encoded string.
+       *
+       * @return std::string Base64 encoded representation of the X.509 certificate.
+       */
       virtual std::string ExportAsBase64() const = 0;
+      /**
+       * @brief Get the Subject Name of the X.509 certificate.
+       *
+       * @return std::string Certificate subject name.
+       */
       virtual std::string GetSubjectName() const = 0;
+      /**
+       * @brief Get the Issuer Name of the X.509 certificate
+       *
+       * @return std::string Certificate issuer name.
+       */
       virtual std::string GetIssuerName() const = 0;
+      /**
+       * @brief Get the Algorithm for this certificate, either "RSA" or "EC".
+       *
+       * @return std::string String representation of the certificate key algorithm, suitable for
+       * use within a JSON Web Key.
+       */
       virtual std::string GetAlgorithm() const = 0;
+      /**
+       * @brief Get the Key Type for this certificate
+       *
+       * @return std::string String representation of the key type for the certificate, suitable for
+       * use within a JSON Web Key
+       */
       virtual std::string GetKeyType() const = 0;
+      /**
+       * @brief Get the Thumbprint for this certificate.
+       *
+       * @details The Thumbprint of a certificate is a hex encoded SHA1 hash of the DER
+       * serialization of the certificate. It can be used to uniquely identify a certificate.
+       *
+       * @return std::string Certificate thumbprint.
+       */
       virtual std::string GetThumbprint() const = 0;
     };
 

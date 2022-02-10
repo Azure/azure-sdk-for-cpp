@@ -4,12 +4,12 @@
 vcpkg_from_github(
     OUT_SOURCE_PATH SOURCE_PATH
     REPO Azure/azure-sdk-for-cpp
-    REF azure-template_@AZ_LIBRARY_VERSION@
+    REF azure-security-attestation_@AZ_LIBRARY_VERSION@
     SHA512 0
 )
 
 vcpkg_cmake_configure(
-    SOURCE_PATH ${SOURCE_PATH}/sdk/template/azure-template/
+    SOURCE_PATH ${SOURCE_PATH}/sdk/attestation/azure-security-attestation/
     OPTIONS
         -DWARNINGS_AS_ERRORS=OFF
 )

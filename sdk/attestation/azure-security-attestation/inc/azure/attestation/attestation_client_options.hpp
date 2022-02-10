@@ -48,9 +48,11 @@ namespace Azure { namespace Security { namespace Attestation {
     AZ_ATTESTATION_DLLEXPORT static const ServiceVersion V2020_10_01;
   };
 
-  /// The TokenValidationCallbackFn represents a callback which is called to allow the caller
-  /// to perform additional token validation options beyond the validations performed by the
-  /// attestation SDK.
+  /**
+   * @brief The TokenValidationCallbackFn represents a callback which is called to allow the caller
+   *  to perform additional token validation options beyond the validations performed by the
+   * attestation SDK.
+   */
   using TokenValidationCallbackFn = std::function<
       void(std::string const& rawToken, Models::AttestationSigner const& tokenSigner)>;
 
@@ -58,56 +60,66 @@ namespace Azure { namespace Security { namespace Attestation {
    * attestation tokens are validated. */
   struct AttestationTokenValidationOptions final
   {
-    /// Controls whether attestation tokens are validated at all.
-    ///
-    /// Default value: true.
+    /** @brief Controls whether attestation tokens are validated at all.
+     *
+     * Default value: true.
+     */
     bool ValidateToken{true};
 
-    /// Controls whether the signature for the attestation token should be validated.
-    ///
-    /// Default value: true.
+    /**
+     * @brief Controls whether the signature for the attestation token should be validated.
+     *
+     * Default Value: true:
+     */
     bool ValidateSigner{true};
 
-    /// Controls whether the attestation token expiration time is checked.
-    ///
-    /// Default value: true.
+    /** @brief Controls whether the attestation token expiration time is checked.
+     *
+     * Default value: true.
+     */
     bool ValidateExpirationTime{true};
 
-    /// Controls whether or not the attestation token start time is checked.
-    ///
-    /// Default value: true.
+    /** @brief Controls whether or not the attestation token start time is checked.
+     *
+     * Default value: true.
+     */
     bool ValidateNotBeforeTime{true};
 
-    /// Controls whether the issuer of the attestation token is checked.
-    ///
-    /// Default value: false;
+    /** @brief Controls whether the issuer of the attestation token is checked.
+     *
+     * Default value: false.
+     */
     bool ValidateIssuer{false};
 
-    /// The expected issuer for this attestation token.
-    ///
-    /// Ignored unless {@link AttestationTokenValidationOptions::ValidateIssuer} is true.
+    /** @brief The expected issuer for this attestation token.
+     *
+     * Ignored unless {@link AttestationTokenValidationOptions::ValidateIssuer} is true.
+     */
     std::string ExpectedIssuer;
 
-    /// The slack used when comparing two time elements.
+    /** @brief The slack used when comparing two time elements.
+     */
     std::chrono::seconds ValidationTimeSlack{0};
 
-    /// The TokenValidationCallback specifies a callback function which can perform additional token
-    /// validation actions.
+    /** @brief The TokenValidationCallback specifies a callback function which can perform
+     * additional token validation actions.
+     */
     TokenValidationCallbackFn ValidationCallback;
   };
 
   /**
    * @brief Define the options to create an SDK Keys client.
-   *
    */
   struct AttestationClientOptions final : public Azure::Core::_internal::ClientOptions
   {
     ServiceVersion Version;
     AttestationTokenValidationOptions TokenValidationOptions;
     /**
-     * @brief Construct a new Key Client Options object.
+     * @brief Construct a new Attestation Client Options object.
      *
      * @param version Optional version for the client.
+     * @param tokenValidationOptions Options applied when validating attestation tokens returned by
+     * the service.
      */
     AttestationClientOptions(
         ServiceVersion version = ServiceVersion::V2020_10_01,
@@ -170,12 +182,16 @@ namespace Azure { namespace Security { namespace Attestation {
    */
   struct AttestationData final
   {
-    /// Data contained within attestation evidence. The attestation service will verify that the
-    /// evidence does contain this data and will include the Data in the attestation token. A
-    /// relying party can then use this data.
+    /**
+     * @brief Data contained within attestation evidence.
+     * @details The attestation service will verify that the
+     * evidence does contain this data and will include the Data in the attestation token. A
+     * relying party can then use this data.
+     */
     std::vector<uint8_t> Data;
 
-    /// Reflects how the Data field should be represented in the resulting attestation token.
+    /** @brief Reflects how the Data field should be represented in the resulting attestation token.
+     */
     AttestationDataType DataType;
   };
 
@@ -183,22 +199,33 @@ namespace Azure { namespace Security { namespace Attestation {
    */
   struct AttestOptions final
   {
-    /// Data created dynamically by the enclave
+    /**
+     * @brief Data created dynamically within the enclave
+     */
     Azure::Nullable<AttestationData> RuntimeData{};
 
-    /// Data created when the enclave is created.
+    /**
+     * @brief Data created when the enclave was created. Not supported on Coffeelake processors.
+     */
     Azure::Nullable<AttestationData> InittimeData{};
 
-    /// Nonce which is sent to the attestation service to allow a caller to prevent replay attacks.
+    /**
+     * @brief Nonce which is sent to the attestation service to allow a caller to prevent replay
+     * attacks.
+     */
     Azure::Nullable<std::string> Nonce{};
 
-    /// A test hook which allows developers to test attestation policies before they commit them to
-    /// the service.
+    /**
+     * @brief A test hook which allows developers to test attestation policies before they commit
+     * them to the service.
+     */
     Azure::Nullable<std::string> DraftPolicyForAttestation{};
 
-    /// Specifies the options which should be used to validate the attestation token returned
-    /// by the attestation service. If not provided by the caller, the token validation options
-    /// specified when the @{link AttestationClient} was created will be used.
+    /** @brief Specifies the options which should be used to validate the attestation token returned
+     * by the attestation service.
+     * @details If not provided by the caller, the token validation options
+     * specified when the @{link AttestationClient} was created will be used.
+     */
     Azure::Nullable<AttestationTokenValidationOptions> TokenValidationOptions{};
   };
 
@@ -210,14 +237,16 @@ namespace Azure { namespace Security { namespace Attestation {
    */
   struct AttestationSigningKey final
   {
-    /// A PEM encoded RSA or ECDSA private key which will be used to
-    /// sign an attestation token.
+    /** @brief A PEM encoded RSA or ECDSA private key which will be used to
+    * sign an attestation token.
+    */
     std::string PemEncodedPrivateKey;
 
-    /// A PEM encoded X.509 certificate which will be sent to the
-    /// attestation service to validate an attestation token. The
-    /// public key embedded in the certificate MUST be the public
-    /// key of the SigningPrivateKey.
+    /** @brief A PEM encoded X.509 certificate which will be sent to the
+    * attestation service to validate an attestation token. The
+    * public key embedded in the certificate MUST be the public
+    * key of the SigningPrivateKey.
+    */
     std::string PemEncodedX509Certificate;
   };
 

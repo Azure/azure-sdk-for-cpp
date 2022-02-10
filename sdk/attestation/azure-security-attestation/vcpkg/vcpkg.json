@@ -2,14 +2,13 @@
 # SPDX-License-Identifier: MIT
 
 {
-  "name": "azure-template-cpp",
+  "name": "azure-security-attestation-cpp",
   "version-semver": "@AZ_LIBRARY_VERSION@",
   "description": [
-    "Microsoft Azure Template SDK for C++",
-    "This is a template library meant to illustrate initial client library development process for Azure SDK.",
-    "It is not meant to be published to vcpkg."
+    "Microsoft Azure Attestation Service SDK for C++",
+    "This library provides API access to the Microsoft Azure Attestation service."
   ],
-  "homepage": "https://github.com/Azure/azure-sdk-for-cpp/tree/main/sdk/template/azure-template",
+  "homepage": "https://github.com/Azure/azure-sdk-for-cpp/tree/main/sdk/attestation/azure-security-attestation",
   "license": "MIT",
   "dependencies": [
     {
