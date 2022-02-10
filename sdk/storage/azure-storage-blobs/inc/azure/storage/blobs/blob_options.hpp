@@ -999,8 +999,8 @@ namespace Azure { namespace Storage { namespace Blobs {
   {
     /**
      * @brief Optional conditions that must be met to perform this operation.
-     * @remarks Azure storage service doesn't support tags access conditon for this operation. Don't
-     * use it.
+     * @remarks Azure storage service doesn't support tags access condition for this operation.
+     * Don't use it.
      */
     AppendBlobAccessConditions AccessConditions;
   };
