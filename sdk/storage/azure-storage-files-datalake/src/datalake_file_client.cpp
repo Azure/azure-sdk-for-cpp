@@ -14,69 +14,6 @@
 
 namespace Azure { namespace Storage { namespace Files { namespace DataLake {
 
-  namespace {
-    Models::PathHttpHeaders FromBlobHttpHeaders(Blobs::Models::BlobHttpHeaders headers)
-    {
-      Models::PathHttpHeaders ret;
-      ret.CacheControl = std::move(headers.CacheControl);
-      ret.ContentDisposition = std::move(headers.ContentDisposition);
-      ret.ContentEncoding = std::move(headers.ContentEncoding);
-      ret.ContentLanguage = std::move(headers.ContentLanguage);
-      ret.ContentType = std::move(headers.ContentType);
-      ret.ContentHash = std::move(headers.ContentHash);
-      return ret;
-    }
-
-    Blobs::Models::BlobHttpHeaders FromPathHttpHeaders(Models::PathHttpHeaders headers)
-    {
-      Blobs::Models::BlobHttpHeaders ret;
-      ret.CacheControl = std::move(headers.CacheControl);
-      ret.ContentDisposition = std::move(headers.ContentDisposition);
-      ret.ContentEncoding = std::move(headers.ContentEncoding);
-      ret.ContentLanguage = std::move(headers.ContentLanguage);
-      ret.ContentType = std::move(headers.ContentType);
-      return ret;
-    }
-
-    Models::LeaseState FromBlobLeaseState(Blobs::Models::LeaseState state)
-    {
-      if (state == Blobs::Models::LeaseState::Available)
-      {
-        return Models::LeaseState::Available;
-      }
-      if (state == Blobs::Models::LeaseState::Breaking)
-      {
-        return Models::LeaseState::Breaking;
-      }
-      if (state == Blobs::Models::LeaseState::Broken)
-      {
-        return Models::LeaseState::Broken;
-      }
-      if (state == Blobs::Models::LeaseState::Expired)
-      {
-        return Models::LeaseState::Expired;
-      }
-      if (state == Blobs::Models::LeaseState::Leased)
-      {
-        return Models::LeaseState::Leased;
-      }
-      return Models::LeaseState();
-    }
-
-    Models::LeaseStatus FromBlobLeaseStatus(Blobs::Models::LeaseStatus status)
-    {
-      if (status == Blobs::Models::LeaseStatus::Locked)
-      {
-        return Models::LeaseStatus::Locked;
-      }
-      if (status == Blobs::Models::LeaseStatus::Unlocked)
-      {
-        return Models::LeaseStatus::Unlocked;
-      }
-      return Models::LeaseStatus();
-    }
-  } // namespace
-
   DataLakeFileClient DataLakeFileClient::CreateFromConnectionString(
       const std::string& connectionString,
       const std::string& fileSystemName,
@@ -219,7 +156,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     auto response = m_blobClient.Download(blobOptions, context);
     Models::DownloadFileResult ret;
     ret.Body = std::move(response.Value.BodyStream);
-    ret.Details.HttpHeaders = FromBlobHttpHeaders(std::move(response.Value.Details.HttpHeaders));
+    ret.Details.HttpHeaders = std::move(response.Value.Details.HttpHeaders);
     ret.ContentRange = std::move(response.Value.ContentRange);
     ret.FileSize = response.Value.BlobSize;
     ret.TransactionalContentHash = std::move(response.Value.TransactionalContentHash);
@@ -263,7 +200,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
         = options.TransferOptions.SingleUploadThreshold;
     blobOptions.TransferOptions.ChunkSize = options.TransferOptions.ChunkSize;
     blobOptions.TransferOptions.Concurrency = options.TransferOptions.Concurrency;
-    blobOptions.HttpHeaders = FromPathHttpHeaders(options.HttpHeaders);
+    blobOptions.HttpHeaders = options.HttpHeaders;
     blobOptions.Metadata = options.Metadata;
     return m_blobClient.AsBlockBlobClient().UploadFrom(fileName, blobOptions, context);
   }
@@ -279,7 +216,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
         = options.TransferOptions.SingleUploadThreshold;
     blobOptions.TransferOptions.ChunkSize = options.TransferOptions.ChunkSize;
     blobOptions.TransferOptions.Concurrency = options.TransferOptions.Concurrency;
-    blobOptions.HttpHeaders = FromPathHttpHeaders(options.HttpHeaders);
+    blobOptions.HttpHeaders = options.HttpHeaders;
     blobOptions.Metadata = options.Metadata;
     return m_blobClient.AsBlockBlobClient().UploadFrom(buffer, bufferSize, blobOptions, context);
   }
@@ -295,7 +232,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     Models::DownloadFileToResult ret;
     ret.ContentRange = std::move(response.Value.ContentRange);
     ret.FileSize = response.Value.BlobSize;
-    ret.Details.HttpHeaders = FromBlobHttpHeaders(std::move(response.Value.Details.HttpHeaders));
+    ret.Details.HttpHeaders = std::move(response.Value.Details.HttpHeaders);
     ret.Details.ETag = std::move(response.Value.Details.ETag);
     ret.Details.LastModified = std::move(response.Value.Details.LastModified);
     ret.Details.LeaseDuration = std::move(response.Value.Details.LeaseDuration);
@@ -335,7 +272,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     Models::DownloadFileToResult ret;
     ret.ContentRange = std::move(response.Value.ContentRange);
     ret.FileSize = response.Value.BlobSize;
-    ret.Details.HttpHeaders = FromBlobHttpHeaders(std::move(response.Value.Details.HttpHeaders));
+    ret.Details.HttpHeaders = std::move(response.Value.Details.HttpHeaders);
     ret.Details.ETag = std::move(response.Value.Details.ETag);
     ret.Details.LastModified = std::move(response.Value.Details.LastModified);
     ret.Details.LeaseDuration = std::move(response.Value.Details.LeaseDuration);

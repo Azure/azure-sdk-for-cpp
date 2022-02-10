@@ -19,46 +19,6 @@
 
 namespace Azure { namespace Storage { namespace Files { namespace DataLake {
 
-  namespace {
-    Models::LeaseState FromBlobLeaseState(Blobs::Models::LeaseState state)
-    {
-      if (state == Blobs::Models::LeaseState::Available)
-      {
-        return Models::LeaseState::Available;
-      }
-      if (state == Blobs::Models::LeaseState::Breaking)
-      {
-        return Models::LeaseState::Breaking;
-      }
-      if (state == Blobs::Models::LeaseState::Broken)
-      {
-        return Models::LeaseState::Broken;
-      }
-      if (state == Blobs::Models::LeaseState::Expired)
-      {
-        return Models::LeaseState::Expired;
-      }
-      if (state == Blobs::Models::LeaseState::Leased)
-      {
-        return Models::LeaseState::Leased;
-      }
-      return Models::LeaseState();
-    }
-
-    Models::LeaseStatus FromBlobLeaseStatus(Blobs::Models::LeaseStatus status)
-    {
-      if (status == Blobs::Models::LeaseStatus::Locked)
-      {
-        return Models::LeaseStatus::Locked;
-      }
-      if (status == Blobs::Models::LeaseStatus::Unlocked)
-      {
-        return Models::LeaseStatus::Unlocked;
-      }
-      return Models::LeaseStatus();
-    }
-  } // namespace
-
   DataLakePathClient DataLakePathClient::CreateFromConnectionString(
       const std::string& connectionString,
       const std::string& fileSystemName,
