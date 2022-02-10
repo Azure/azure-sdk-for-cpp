@@ -999,29 +999,10 @@ namespace Azure { namespace Storage { namespace Blobs {
   {
     /**
      * @brief Optional conditions that must be met to perform this operation.
+     * @remarks Azure storage service doesn't support tags access conditon for this operation. Don't
+     * use it.
      */
-    struct : public Azure::ModifiedConditions,
-             public Azure::MatchConditions,
-             public LeaseAccessConditions
-    {
-      /**
-       * @brief Ensures that the AppendBlock operation succeeds only if the append blob's size
-       * is less than or equal to this value.
-       */
-      Azure::Nullable<int64_t> IfMaxSizeLessThanOrEqual;
-
-      /**
-       * @brief Ensures that the AppendBlock operation succeeds only if the append position is equal
-       * to this value.
-       */
-      Azure::Nullable<int64_t> IfAppendPositionEqual;
-
-      /**
-       * @brief Azure storage service doesn't support this access condition, so it's deprecated.
-       * Don't use it.
-       */
-      [[deprecated]] Azure::Nullable<std::string> TagConditions;
-    } AccessConditions;
+    AppendBlobAccessConditions AccessConditions;
   };
 
   /**
