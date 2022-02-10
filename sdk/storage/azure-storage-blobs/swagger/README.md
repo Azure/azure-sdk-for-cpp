@@ -991,7 +991,6 @@ directive:
             "type": "integer",
             "format": "int64",
             "x-nullable": true,
-            "x-ms-deprecated": true,
             "x-ms-xml": {"name": ""},
             "description": "The field is deprecated and is always null. Use GetProperties() instead to check sequence number for a page blob."
           }
@@ -1016,14 +1015,12 @@ directive:
             "type": "string",
             "format": "byte",
             "x-nullable": true,
-            "x-ms-deprecated": true,
             "x-ms-xml": {"name": ""},
             "description": "The field is deprecated and is always null. Use GetProperties() instead to get SHA256 of the encryption key."
           },
           "EncryptionScope" : {
             "type": "string",
             "x-nullable": true,
-            "x-ms-deprecated": true,
             "x-ms-xml": {"name": ""},
             "description": "The field is deprecated and is always null. Use GetProperties() instead to check the encryption scope."
           }
@@ -1111,7 +1108,6 @@ directive:
             "type": "integer",
             "format": "int64",
             "x-nullable": true,
-            "x-ms-deprecated": true,
             "x-ms-xml": {"name": ""},
             "description": "The field is deprecated and is always null. Use GetProperties() instead to check sequence number for a page blob."
           }

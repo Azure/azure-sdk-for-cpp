@@ -1821,7 +1821,7 @@ namespace Azure { namespace Storage { namespace Blobs {
        * The field is deprecated and is always null. Use GetProperties() instead to check sequence
        * number for a page blob.
        */
-      [[deprecated]] Nullable<int64_t> SequenceNumber;
+      Nullable<int64_t> SequenceNumber;
       /**
        * The ETag contains a value that you can use to perform operations conditionally. If the
        * request version is 2011-08-18 or newer, the ETag value will be in quotes.
@@ -1968,12 +1968,12 @@ namespace Azure { namespace Storage { namespace Blobs {
        * The field is deprecated and is always null. Use GetProperties() instead to get SHA256 of
        * the encryption key.
        */
-      [[deprecated]] Nullable<std::vector<uint8_t>> EncryptionKeySha256;
+      Nullable<std::vector<uint8_t>> EncryptionKeySha256;
       /**
        * The field is deprecated and is always null. Use GetProperties() instead to check the
        * encryption scope.
        */
-      [[deprecated]] Nullable<std::string> EncryptionScope;
+      Nullable<std::string> EncryptionScope;
       /**
        * Uniquely identifies the snapshot and indicates the snapshot version. It may be used in
        * subsequent requests to access the snapshot.
@@ -2104,7 +2104,7 @@ namespace Azure { namespace Storage { namespace Blobs {
        * The field is deprecated and is always null. Use GetProperties() instead to check sequence
        * number for a page blob.
        */
-      [[deprecated]] Nullable<int64_t> SequenceNumber;
+      Nullable<int64_t> SequenceNumber;
       /**
        * The ETag contains a value that you can use to perform operations conditionally. If the
        * request version is 2011-08-18 or newer, the ETag value will be in quotes.
