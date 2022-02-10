@@ -17,8 +17,8 @@
 #include <vector>
 
 #include "../inc/crypto.hpp"
-#include "opensslkeys.hpp"
 #include "opensslcert.hpp"
+#include "opensslkeys.hpp"
 
 // cspell::words OpenSSL X509 OpenSSLX509
 
@@ -35,12 +35,14 @@ namespace Azure { namespace Security { namespace Attestation { namespace _detail
     return std::make_unique<EcdsaOpenSSLAsymmetricKey>();
   }
 
-  std::unique_ptr<Cryptography::AsymmetricKey> Cryptography::ImportPublicKey(std::string const& pemEncodedKey)
+  std::unique_ptr<Cryptography::AsymmetricKey> Cryptography::ImportPublicKey(
+      std::string const& pemEncodedKey)
   {
     return OpenSSLAsymmetricKey::ImportPublicKey(pemEncodedKey);
   }
 
-  std::unique_ptr<Cryptography::AsymmetricKey> Cryptography::ImportPrivateKey(std::string const& pemEncodedKey)
+  std::unique_ptr<Cryptography::AsymmetricKey> Cryptography::ImportPrivateKey(
+      std::string const& pemEncodedKey)
   {
     return OpenSSLAsymmetricKey::ImportPrivateKey(pemEncodedKey);
   }

@@ -66,8 +66,7 @@ namespace Azure { namespace Security { namespace Attestation { namespace _detail
     OpenSSLX509Certificate() = default;
 
   private:
-    OpenSSLX509Certificate(openssl_x509&& x509)
-        : X509Certificate(), m_certificate(std::move(x509))
+    OpenSSLX509Certificate(openssl_x509&& x509) : X509Certificate(), m_certificate(std::move(x509))
     {
     }
 

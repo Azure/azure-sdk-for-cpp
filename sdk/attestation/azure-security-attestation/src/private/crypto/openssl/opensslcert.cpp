@@ -204,8 +204,7 @@ namespace Azure { namespace Security { namespace Attestation { namespace _detail
     X509V3_set_ctx_nodb(&context); // cspell: disable-line
     X509V3_set_ctx(&context, issuer.get(), subject.get(), nullptr, nullptr, 0);
 
-    return make_openssl_unique(
-        X509V3_EXT_conf_nid, nullptr, &context, nid, nidValue.c_str());
+    return make_openssl_unique(X509V3_EXT_conf_nid, nullptr, &context, nid, nidValue.c_str());
   }
 
   /// <summary>

@@ -353,8 +353,8 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
   TEST(SerializationTests, TestDeserializeSignerToJson)
   {
     auto asymmetricKey = Cryptography::CreateRsaKey(2048);
-    auto cert = Cryptography::CreateX509CertificateForPrivateKey(
-        asymmetricKey, "CN=TestSubject, C=US");
+    auto cert
+        = Cryptography::CreateX509CertificateForPrivateKey(asymmetricKey, "CN=TestSubject, C=US");
 
     AttestationSigner signer{
         std::string{"ABCDEFG"}, std::vector<std::string>{cert->ExportAsBase64()}};
@@ -664,16 +664,16 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
     {
       // Create an RSA public/private key pair.
       auto asymmetricKey = Cryptography::CreateRsaKey(2048);
-      auto cert = Cryptography::CreateX509CertificateForPrivateKey(
-          asymmetricKey, "CN=TestSubject, C=US");
+      auto cert
+          = Cryptography::CreateX509CertificateForPrivateKey(asymmetricKey, "CN=TestSubject, C=US");
       CreateSecuredToken(asymmetricKey, cert);
     }
 
     {
       // Create an RSA public/private key pair.
       auto asymmetricKey = Cryptography::CreateEcdsaKey();
-      auto cert = Cryptography::CreateX509CertificateForPrivateKey(
-          asymmetricKey, "CN=TestSubject, C=US");
+      auto cert
+          = Cryptography::CreateX509CertificateForPrivateKey(asymmetricKey, "CN=TestSubject, C=US");
       CreateSecuredToken(asymmetricKey, cert);
     }
   }
@@ -682,8 +682,8 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
   {
     // Create an RSA public/private key pair. Use these for the subsequent tests.
     auto asymmetricKey = Cryptography::CreateRsaKey(2048);
-    auto cert = Cryptography::CreateX509CertificateForPrivateKey(
-        asymmetricKey, "CN=TestSubject, C=US");
+    auto cert
+        = Cryptography::CreateX509CertificateForPrivateKey(asymmetricKey, "CN=TestSubject, C=US");
     AttestationSigningKey signingKey{asymmetricKey->ExportPrivateKey(), cert->ExportAsPEM()};
 
     // Test expired tokens.

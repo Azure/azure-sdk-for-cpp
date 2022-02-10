@@ -62,18 +62,13 @@ namespace Azure { namespace Security { namespace Attestation { namespace _detail
   class RsaOpenSSLAsymmetricKey : public OpenSSLAsymmetricKey {
   public:
     RsaOpenSSLAsymmetricKey(size_t keySize);
-    RsaOpenSSLAsymmetricKey(openssl_evp_pkey&& key) : OpenSSLAsymmetricKey(std::move(key))
-    {
-    }
+    RsaOpenSSLAsymmetricKey(openssl_evp_pkey&& key) : OpenSSLAsymmetricKey(std::move(key)) {}
   };
 
   class EcdsaOpenSSLAsymmetricKey : public OpenSSLAsymmetricKey {
   public:
     EcdsaOpenSSLAsymmetricKey();
-    EcdsaOpenSSLAsymmetricKey(openssl_evp_pkey&& key)
-        : OpenSSLAsymmetricKey(std::move(key))
-    {
-    }
+    EcdsaOpenSSLAsymmetricKey(openssl_evp_pkey&& key) : OpenSSLAsymmetricKey(std::move(key)) {}
   };
 
 }}}} // namespace Azure::Security::Attestation::_detail
