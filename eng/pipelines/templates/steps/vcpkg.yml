@@ -17,9 +17,9 @@ steps:
     displayName: Set Vcpkg Variables
     condition: >-
       succeeded()
-    env:
-      ${{ eq(variables['System.TeamProject'], 'internal') }}:
-        - VCPKG_CACHE_SAS: $(cpp-vcpkg-cache-write-sas)
+    - ${{ eq(variables['System.TeamProject'], 'internal') }}:
+      env:
+        VCPKG_CACHE_SAS: $(cpp-vcpkg-cache-write-sas)
 
   - task: PowerShell@2
     inputs:
