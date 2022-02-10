@@ -19,7 +19,7 @@ steps:
       succeeded()
     env:
       ${{ eq(variables['System.TeamProject'], 'internal') }}:
-        VCPKG_CACHE_SAS: $(cpp-vcpkg-cache-write-sas)
+        - VCPKG_CACHE_SAS: $(cpp-vcpkg-cache-write-sas)
 
   - task: PowerShell@2
     inputs:
