@@ -17,7 +17,6 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
   using namespace Azure::Security::Attestation::_detail;
   using namespace Azure::Security::Attestation::Models;
   using namespace Azure::Security::Attestation::Models::_detail;
-  using namespace Azure::Security::Attestation::_detail::Cryptography;
   TEST(SerializationTests, TestDeserializePrimitivesBoolean)
   {
     {
@@ -353,8 +352,9 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
 
   TEST(SerializationTests, TestDeserializeSignerToJson)
   {
-    auto asymmetricKey = Crypto::CreateRsaKey(2048);
-    auto cert = Crypto::CreateX509CertificateForPrivateKey(asymmetricKey, "CN=TestSubject, C=US");
+    auto asymmetricKey = Cryptography::CreateRsaKey(2048);
+    auto cert = Cryptography::CreateX509CertificateForPrivateKey(
+        asymmetricKey, "CN=TestSubject, C=US");
 
     AttestationSigner signer{
         std::string{"ABCDEFG"}, std::vector<std::string>{cert->ExportAsBase64()}};
@@ -618,8 +618,8 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
   }
 
   void CreateSecuredToken(
-      std::unique_ptr<AsymmetricKey> const& key,
-      std::unique_ptr<X509Certificate> const& cert)
+      std::unique_ptr<Cryptography::AsymmetricKey> const& key,
+      std::unique_ptr<Cryptography::X509Certificate> const& cert)
   {
     TestObject testObject;
     testObject.Algorithm = "UnknownAlgorithm";
@@ -663,15 +663,17 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
   {
     {
       // Create an RSA public/private key pair.
-      auto asymmetricKey = Crypto::CreateRsaKey(2048);
-      auto cert = Crypto::CreateX509CertificateForPrivateKey(asymmetricKey, "CN=TestSubject, C=US");
+      auto asymmetricKey = Cryptography::CreateRsaKey(2048);
+      auto cert = Cryptography::CreateX509CertificateForPrivateKey(
+          asymmetricKey, "CN=TestSubject, C=US");
       CreateSecuredToken(asymmetricKey, cert);
     }
 
     {
       // Create an RSA public/private key pair.
-      auto asymmetricKey = Crypto::CreateEcdsaKey();
-      auto cert = Crypto::CreateX509CertificateForPrivateKey(asymmetricKey, "CN=TestSubject, C=US");
+      auto asymmetricKey = Cryptography::CreateEcdsaKey();
+      auto cert = Cryptography::CreateX509CertificateForPrivateKey(
+          asymmetricKey, "CN=TestSubject, C=US");
       CreateSecuredToken(asymmetricKey, cert);
     }
   }
@@ -679,8 +681,9 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
   TEST(AttestationTokenTests, TestSecuredTokenValidation)
   {
     // Create an RSA public/private key pair. Use these for the subsequent tests.
-    auto asymmetricKey = Crypto::CreateRsaKey(2048);
-    auto cert = Crypto::CreateX509CertificateForPrivateKey(asymmetricKey, "CN=TestSubject, C=US");
+    auto asymmetricKey = Cryptography::CreateRsaKey(2048);
+    auto cert = Cryptography::CreateX509CertificateForPrivateKey(
+        asymmetricKey, "CN=TestSubject, C=US");
     AttestationSigningKey signingKey{asymmetricKey->ExportPrivateKey(), cert->ExportAsPEM()};
 
     // Test expired tokens.

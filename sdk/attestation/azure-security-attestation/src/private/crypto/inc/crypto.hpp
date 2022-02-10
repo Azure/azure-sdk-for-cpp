@@ -6,24 +6,137 @@
 #include <list>
 #include <memory>
 
-#include "cryptocert.hpp"
-#include "cryptokeys.hpp"
-
-/** @brief The Crypto class contains basic functionality to
- */
 namespace Azure { namespace Security { namespace Attestation { namespace _detail {
-  namespace Cryptography {
-    class Crypto {
-    public:
-      static std::unique_ptr<AsymmetricKey> CreateRsaKey(size_t keySizeInBytes);
-      static std::unique_ptr<AsymmetricKey> CreateEcdsaKey();
-      static std::unique_ptr<AsymmetricKey> ImportPublicKey(std::string const& pemEncodedString);
-      static std::unique_ptr<AsymmetricKey> ImportPrivateKey(std::string const& pemEncodedString);
+  /**
+   * @brief THe Cryptography class provides a set of basic cryptographic functions required
+   * by the attestation service client implementation and test collateral.
+   *
+   * It contains two subclasses: {@link Cryptography::AsymmetricKey}, which represents an Asymmetric
+   * key and
+   * {@link Cryptography::X509Certificate} which represents an X.509 certificate.
+   *
+   *
+   */
+  class Cryptography {
+  public:
+    /**
+     * @brief The AsymmetricKey class expresses a set of basic functionality asymmetric key
+     * signatures.
+     *
+     */
+    class AsymmetricKey {
 
-      static std::unique_ptr<X509Certificate> CreateX509CertificateForPrivateKey(
-          std::unique_ptr<AsymmetricKey> const& key,
-          std::string const& certificateSubject);
-      static std::unique_ptr<X509Certificate> ImportX509Certificate(
-          std::string const& pemEncodedCertificate);
+    public:
+      virtual ~AsymmetricKey() {}
+
+      /**
+       * @brief Verifies an Asymmetric Key signature. Valid for all asymmetric keys.
+       *
+       * @param payload The payload to verify.
+       * @param signature The signature of this payload, signed with a private key
+       * @return true The signature was valid.
+       * @return false The signature did not match the payload.
+       */
+      virtual bool VerifySignature(
+          std::vector<uint8_t> const& payload,
+          std::vector<uint8_t> const& signature) const = 0;
+      /**
+       * @brief Signs a buffer with an Asymmetric private key. Only valid for private asymmetric
+       * keys.
+       *
+       * @param bufferToSign The buffer to be signed.
+       * @return std::vector<uint8_t> Returns the signature of that buffer, signed with the private
+       * key.
+       */
+      virtual std::vector<uint8_t> SignBuffer(std::vector<uint8_t> const& bufferToSign) const = 0;
+      /**
+       * @brief Exports the current asymmetric key as a private key (only valid for private
+       * asymmetric keys)
+       *
+       * @return std::string The PEM encoded private key for this key.
+       */
+      virtual std::string ExportPrivateKey() = 0;
+      /**
+       * @brief Exports the current asymmetric key as a public key (valid for all  asymmetric keys).
+       *
+       * @return std::string The PEM encoded public key for this key.
+       */
+      virtual std::string ExportPublicKey() = 0;
     };
-}}}}} // namespace Azure::Security::Attestation::_detail::Cryptography
+
+    /**
+     * @brief Represents an X.509 certificate.
+     *
+     */
+    class X509Certificate {
+    private:
+      // Delete the copy constructor and assignment operator for this certificate.
+      X509Certificate(const X509Certificate&) = delete;
+      X509Certificate& operator=(const X509Certificate&) = delete;
+
+    protected:
+      X509Certificate() {}
+
+    public:
+      virtual ~X509Certificate() {}
+      virtual std::unique_ptr<AsymmetricKey> GetPublicKey() const = 0;
+      virtual std::string ExportAsPEM() const = 0;
+      virtual std::string ExportAsBase64() const = 0;
+      virtual std::string GetSubjectName() const = 0;
+      virtual std::string GetIssuerName() const = 0;
+      virtual std::string GetAlgorithm() const = 0;
+      virtual std::string GetKeyType() const = 0;
+      virtual std::string GetThumbprint() const = 0;
+    };
+
+    /**
+     * @brief Create an asymmetric key implementing the RSA asymmetric algorithm
+     *
+     * @param keySizeInBytes Specifies the size of the key to be created.
+     * @return std::unique_ptr<AsymmetricKey> Returns the newly created asymmetric key.
+     */
+    static std::unique_ptr<AsymmetricKey> CreateRsaKey(size_t keySizeInBytes);
+    /**
+     * @brief Create an asymmetric key implementing the ECDSA asymmetric algorithm.
+     *
+     * @return std::unique_ptr<AsymmetricKey> Returns the newly created asymmetric key.
+     */
+    static std::unique_ptr<AsymmetricKey> CreateEcdsaKey();
+    /**
+     * @brief Imports a PEM encoded public key (either RSA or ECDSA).
+     *
+     * @param pemEncodedString The PEM encoded serialized key.
+     * @return std::unique_ptr<AsymmetricKey> Returns an asymmetric key corresponding to the
+     * pemEncodedString.
+     */
+    static std::unique_ptr<AsymmetricKey> ImportPublicKey(std::string const& pemEncodedString);
+    /**
+     * @brief Imports a PEM encoded private key (either RSA or ECDSA).
+     *
+     * @param pemEncodedString The PEM encoded serialized key.
+     * @return std::unique_ptr<AsymmetricKey> Returns an asymmetric key corresponding to the
+     * pemEncodedString.
+     */
+    static std::unique_ptr<AsymmetricKey> ImportPrivateKey(std::string const& pemEncodedString);
+
+    /**
+     * @brief Creates a self-signed X.509 certificate associated with the specified private key.
+     *
+     * @param key Asymmetric private key to sign the self-signed X.509 certificate.
+     * @param certificateSubject The Subject DN (and Issuer DN) for the specified certificate.
+     * @return std::unique_ptr<X509Certificate> Returns an X.509 certificate for the specified key.
+     */
+    static std::unique_ptr<X509Certificate> CreateX509CertificateForPrivateKey(
+        std::unique_ptr<AsymmetricKey> const& key,
+        std::string const& certificateSubject);
+    /**
+     * @brief Imports a PEM encoded X.509 certificate.
+     *
+     * @param pemEncodedCertificate PEM encoded X.509 certificate.
+     * @return std::unique_ptr<X509Certificate> Returns an X.509 certificate decoded from the
+     * pemEncodedCertificate parameter.
+     */
+    static std::unique_ptr<X509Certificate> ImportX509Certificate(
+        std::string const& pemEncodedCertificate);
+  };
+}}}} // namespace Azure::Security::Attestation::_detail

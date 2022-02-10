@@ -9,7 +9,7 @@
 
 // cspell: words ECDS
 namespace Azure { namespace Security { namespace Attestation { namespace Test {
-  using namespace Azure::Security::Attestation::_detail::Cryptography;
+  using namespace Azure::Security::Attestation::_detail;
   using namespace Azure::Core::Diagnostics::_internal;
   using namespace Azure::Core::Diagnostics;
 
@@ -72,21 +72,21 @@ GQIDAQAB
   {
     // Verify we can round trip the private key.
     {
-      auto privateKey = Crypto::ImportPrivateKey(pemPrivateKey);
+      auto privateKey = Cryptography::ImportPrivateKey(pemPrivateKey);
       auto exportedPrivateKey = privateKey->ExportPrivateKey();
 
       EXPECT_EQ(exportedPrivateKey, pemPrivateKey);
     }
     // Verify we can round trip the public key.
     {
-      auto publicKey = Crypto::ImportPublicKey(pemPublicKey);
+      auto publicKey = Cryptography::ImportPublicKey(pemPublicKey);
       auto exportedPublicKey = publicKey->ExportPublicKey();
 
       EXPECT_EQ(exportedPublicKey, pemPublicKey);
     }
     // Exported public key of private key matches.
     {
-      auto privateKey = Crypto::ImportPrivateKey(pemPrivateKey);
+      auto privateKey = Cryptography::ImportPrivateKey(pemPrivateKey);
       auto exportedPublicKey = privateKey->ExportPublicKey();
 
       EXPECT_EQ(exportedPublicKey, pemPublicKey);
@@ -99,19 +99,19 @@ GQIDAQAB
   }
   TEST(CryptoTests, CreateRsaKey)
   {
-    auto privateKey = Crypto::CreateRsaKey(2048);
+    auto privateKey = Cryptography::CreateRsaKey(2048);
     std::string exportedPrivateKey = privateKey->ExportPrivateKey();
 
     EXPECT_EQ(0ul, exportedPrivateKey.find("-----BEGIN PRIVATE KEY-----"));
 
-    auto importedKey = Crypto::ImportPrivateKey(exportedPrivateKey);
+    auto importedKey = Cryptography::ImportPrivateKey(exportedPrivateKey);
 
     std::string exportedPublicKey = privateKey->ExportPublicKey();
 
     EXPECT_EQ(0ul, exportedPublicKey.find("-----BEGIN PUBLIC KEY-----"));
-    auto importedPublicKey = Crypto::ImportPublicKey(exportedPublicKey);
+    auto importedPublicKey = Cryptography::ImportPublicKey(exportedPublicKey);
 
-    EXPECT_THROW(Crypto::ImportPrivateKey(exportedPublicKey), std::runtime_error);
+    EXPECT_THROW(Cryptography::ImportPrivateKey(exportedPublicKey), std::runtime_error);
 
     Azure::Core::Diagnostics::_internal::Log::Write(
         Logger::Level::Informational, exportedPrivateKey);
@@ -122,7 +122,7 @@ GQIDAQAB
 
   TEST(CryptoTests, SignRsaBuffer)
   {
-    auto privateKey = Crypto::CreateRsaKey(2048);
+    auto privateKey = Cryptography::CreateRsaKey(2048);
 
     std::vector<uint8_t> signaturePayload{0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
 
@@ -131,7 +131,7 @@ GQIDAQAB
     EXPECT_TRUE(privateKey->VerifySignature(signaturePayload, signature));
 
     auto exportedPublicKey = privateKey->ExportPublicKey();
-    auto publicKey = Crypto::ImportPublicKey(exportedPublicKey);
+    auto publicKey = Cryptography::ImportPublicKey(exportedPublicKey);
     EXPECT_TRUE(publicKey->VerifySignature(signaturePayload, signature));
 
     // Tamper the signature, the validation should fail.
@@ -147,18 +147,18 @@ GQIDAQAB
 
   TEST(CryptoTests, CreateEcdsaKey)
   {
-    auto privateKey = Crypto::CreateEcdsaKey();
+    auto privateKey = Cryptography::CreateEcdsaKey();
     std::string exportedPrivateKey = privateKey->ExportPrivateKey();
 
     EXPECT_EQ(0ul, exportedPrivateKey.find("-----BEGIN PRIVATE KEY-----"));
-    auto importedKey = Crypto::ImportPrivateKey(exportedPrivateKey);
+    auto importedKey = Cryptography::ImportPrivateKey(exportedPrivateKey);
 
     std::string exportedPublicKey = privateKey->ExportPublicKey();
 
     EXPECT_EQ(0ul, exportedPublicKey.find("-----BEGIN PUBLIC KEY-----"));
-    auto importedPublicKey = Crypto::ImportPublicKey(exportedPublicKey);
+    auto importedPublicKey = Cryptography::ImportPublicKey(exportedPublicKey);
 
-    EXPECT_THROW(Crypto::ImportPrivateKey(exportedPublicKey), std::runtime_error);
+    EXPECT_THROW(Cryptography::ImportPrivateKey(exportedPublicKey), std::runtime_error);
 
     Azure::Core::Diagnostics::_internal::Log::Write(
         Logger::Level::Informational, exportedPrivateKey);
@@ -169,10 +169,10 @@ GQIDAQAB
 
   TEST(CryptoTests, SignEcdaBuffer)
   {
-    auto privateKey = Crypto::CreateEcdsaKey();
+    auto privateKey = Cryptography::CreateEcdsaKey();
 
     auto exportedPublicKey = privateKey->ExportPublicKey();
-    auto publicKey = Crypto::ImportPublicKey(exportedPublicKey);
+    auto publicKey = Cryptography::ImportPublicKey(exportedPublicKey);
 
     std::random_device rd;
     std::uniform_int_distribution<> payloaddist(0, 255);
@@ -220,8 +220,8 @@ MIIEejCCBCCgAwIBAgIVAKL12jjpSW7HPPHpJIYhFhGrJxJTMAoGCCqGSM49BAMC
 MHExIzAhBgNVBAMMGkludGVsIFNHWCBQQ0sgUHJvY2Vzc29yIENBMRowGAYDVQQK
 -----END UNKNOWN-----)";
 
-    EXPECT_THROW(Crypto::ImportPrivateKey(pemEncodedGarbage), std::runtime_error);
-    EXPECT_THROW(Crypto::ImportPublicKey(pemEncodedGarbage), std::runtime_error);
+    EXPECT_THROW(Cryptography::ImportPrivateKey(pemEncodedGarbage), std::runtime_error);
+    EXPECT_THROW(Cryptography::ImportPublicKey(pemEncodedGarbage), std::runtime_error);
   }
 
   const std::string pemEncodedCertificate1 =
@@ -254,7 +254,7 @@ qQKwhjIj5sw3iOCKAiAUEIuF2ylJk2KDexNEW7t/zGmnBT0FgCRwdvKAh8S2EQ==
 
   TEST(CryptoTests, ImportX509Certificate)
   {
-    auto x509cert(Crypto::ImportX509Certificate(pemEncodedCertificate1));
+    auto x509cert(Cryptography::ImportX509Certificate(pemEncodedCertificate1));
     EXPECT_NE(nullptr, x509cert);
 
     EXPECT_EQ(
@@ -273,8 +273,8 @@ qQKwhjIj5sw3iOCKAiAUEIuF2ylJk2KDexNEW7t/zGmnBT0FgCRwdvKAh8S2EQ==
 
   TEST(CryptoTests, CreateRsaX509Certificate)
   {
-    auto privateKey = Crypto::CreateRsaKey(2048);
-    auto x509cert = Crypto::CreateX509CertificateForPrivateKey(
+    auto privateKey = Cryptography::CreateRsaKey(2048);
+    auto x509cert = Cryptography::CreateX509CertificateForPrivateKey(
         privateKey, "CN=Test\\Subject1, O=Microsoft Corporation, L=Redmond, ST=WA, C=US");
 
     EXPECT_EQ(
@@ -289,8 +289,8 @@ qQKwhjIj5sw3iOCKAiAUEIuF2ylJk2KDexNEW7t/zGmnBT0FgCRwdvKAh8S2EQ==
   }
   TEST(CryptoTests, CreateEcdsX509Certificate)
   {
-    auto privateKey = Crypto::CreateEcdsaKey();
-    auto x509cert = Crypto::CreateX509CertificateForPrivateKey(
+    auto privateKey = Cryptography::CreateEcdsaKey();
+    auto x509cert = Cryptography::CreateX509CertificateForPrivateKey(
         privateKey, "CN=ECDSATest\\Subject1, O=Microsoft Corporation, L=Redmond, ST=WA, C=US");
 
     EXPECT_EQ(

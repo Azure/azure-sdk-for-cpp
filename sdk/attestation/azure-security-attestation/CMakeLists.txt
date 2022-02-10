@@ -40,8 +40,7 @@ set(
      
     src/private/attestation_client_models_private.hpp
     src/private/crypto/inc/crypto.hpp
-    src/private/crypto/inc/cryptocert.hpp
-    src/private/crypto/inc/cryptokeys.hpp
+    
     src/private/attestation_client_private.hpp)
 
 set(

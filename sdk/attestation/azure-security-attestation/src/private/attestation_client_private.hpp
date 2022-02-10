@@ -179,7 +179,7 @@ namespace Azure { namespace Security { namespace Attestation { namespace _detail
       {
         std::unique_ptr<Azure::Security::Attestation::_detail::Cryptography::X509Certificate>
             certificate(
-                Azure::Security::Attestation::_detail::Cryptography::Crypto::ImportX509Certificate(
+                Azure::Security::Attestation::_detail::Cryptography::ImportX509Certificate(
                     signer.CertificateChain.Value()[0]));
         auto publicKey = certificate->GetPublicKey();
         // If the key associated with this certificate signed the token,
@@ -315,9 +315,9 @@ namespace Azure { namespace Security { namespace Attestation { namespace _detail
       {
         // Deserialize the signing key and certificate and use them to create the JWS header.
         signingCert
-            = Azure::Security::Attestation::_detail::Cryptography::Crypto::ImportX509Certificate(
+            = Azure::Security::Attestation::_detail::Cryptography::ImportX509Certificate(
                 tokenSigner.PemEncodedX509Certificate);
-        signingKey = Azure::Security::Attestation::_detail::Cryptography::Crypto::ImportPrivateKey(
+        signingKey = Azure::Security::Attestation::_detail::Cryptography::ImportPrivateKey(
             tokenSigner.PemEncodedPrivateKey);
 
         tokenHeader.Algorithm = signingCert->GetAlgorithm();
