@@ -110,7 +110,7 @@ namespace Azure { namespace Security { namespace Attestation {
   /**
    * @brief Define the options to create an SDK Keys client.
    */
-  struct AttestationClientOptions final : public Azure::Core::_internal::ClientOptions
+  struct AttestationClientOptions final : public Azure::Core::sr_internal::ClientOptions
   {
     ServiceVersion Version;
     AttestationTokenValidationOptions TokenValidationOptions;
@@ -238,15 +238,15 @@ namespace Azure { namespace Security { namespace Attestation {
   struct AttestationSigningKey final
   {
     /** @brief A PEM encoded RSA or ECDSA private key which will be used to
-    * sign an attestation token.
-    */
+     * sign an attestation token.
+     */
     std::string PemEncodedPrivateKey;
 
     /** @brief A PEM encoded X.509 certificate which will be sent to the
-    * attestation service to validate an attestation token. The
-    * public key embedded in the certificate MUST be the public
-    * key of the SigningPrivateKey.
-    */
+     * attestation service to validate an attestation token. The
+     * public key embedded in the certificate MUST be the public
+     * key of the SigningPrivateKey.
+     */
     std::string PemEncodedX509Certificate;
   };
 
