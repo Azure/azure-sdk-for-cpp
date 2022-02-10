@@ -15,11 +15,11 @@ steps:
       Write-Host "##vso[task.setvariable variable=VcpkgCommit]$VcpkgCommit"
       Write-Host "##vso[task.setvariable variable=VCPKG_BINARY_SOURCES;issecret=true]clear;x-azblob,https://cppvcpkgcache.blob.core.windows.net/public-vcpkg-container,$env:VCPKG_CACHE_SAS,$VcpkgCommit"
     displayName: Set Vcpkg Variables
-    env:
-      ${{ eq(variables['System.TeamProject'], 'internal') }}:
-        VCPKG_CACHE_SAS: $(cpp-vcpkg-cache-write-sas)
     condition: >-
       succeeded()
+    env:
+      - ${{ eq(variables['System.TeamProject'], 'internal') }}:
+        VCPKG_CACHE_SAS: $(cpp-vcpkg-cache-write-sas)
 
   - task: PowerShell@2
     inputs:
