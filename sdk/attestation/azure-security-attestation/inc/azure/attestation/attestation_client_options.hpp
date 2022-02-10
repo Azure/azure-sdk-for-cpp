@@ -110,7 +110,7 @@ namespace Azure { namespace Security { namespace Attestation {
   /**
    * @brief Define the options to create an SDK Keys client.
    */
-  struct AttestationClientOptions final : public Azure::Core::sr_internal::ClientOptions
+  struct AttestationClientOptions final : public Azure::Core::_internal::ClientOptions
   {
     ServiceVersion Version;
     AttestationTokenValidationOptions TokenValidationOptions;
