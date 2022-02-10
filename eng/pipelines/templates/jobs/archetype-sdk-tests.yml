@@ -138,7 +138,6 @@ jobs:
     CmakeArgs: ""
     AZURE_TEST_MODE: "LIVE"
     AZURE_LOG_LEVEL: "verbose"
-    VCPKG_CACHE_MODE: "readwrite"
 
   steps:
   - checkout: self

@@ -41,7 +41,6 @@ jobs:
     vmImage: $(OSVmImage)
   variables:
     CMOCKA_XML_FILE: "%g-test-results.xml"
-    VCPKG_CACHE_MODE: "read"
 
   steps:
   - checkout: self

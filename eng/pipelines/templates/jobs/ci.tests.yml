@@ -44,9 +44,6 @@ parameters:
   - name: UsePlatformContainer
     type: boolean
     default: false
-  - name: VcpkgCacheMode
-    type: string
-    default: 'read'
 
 jobs:
   - job:
@@ -78,10 +75,6 @@ jobs:
     - ${{ each testEnvVar in parameters.TestEnv }}:
       - name: ${{ testEnvVar.Name }}
         value: ${{ testEnvVar.Value }}
-# VCPKG cpp - public cache for vcpkg binary - cache
-# Cache is not written from public pipelines.
-    - name: VCPKG_CACHE_MODE
-      value: ${{ parameters.VcpkgCacheMode }}
 
     steps:
       - template: /eng/common/pipelines/templates/steps/verify-agent-os.yml

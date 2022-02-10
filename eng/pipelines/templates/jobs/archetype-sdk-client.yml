@@ -32,9 +32,6 @@ parameters:
   - name: TestEnv
     type: object
     default: []
-  - name: VcpkgCacheMode
-    type: string
-    default: 'read'    
 
 jobs:
   - template: /eng/common/pipelines/templates/jobs/archetype-sdk-tests-generate.yml
@@ -56,7 +53,6 @@ jobs:
         LineCoverageTarget: ${{ parameters.LineCoverageTarget }}
         BranchCoverageTarget: ${{ parameters.BranchCoverageTarget }}
         TestEnv: ${{ parameters.TestEnv }}
-        VcpkgCacheMode: ${{ parameters.VcpkgCacheMode }}
 
   # Disable build for cpp - client
   - ${{ if ne(parameters.ServiceDirectory, 'not-specified' )}}:
@@ -67,7 +63,6 @@ jobs:
       variables:
         VCPKG_DEFAULT_TRIPLET: 'x64-windows-static'
         Package.EnableSBOMSigning: true
-        VCPKG_CACHE_MODE: ${{ parameters.VcpkgCacheMode }}
       steps:
         - template: /eng/common/pipelines/templates/steps/check-spelling.yml
           parameters:
