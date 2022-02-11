@@ -1,15 +1,5 @@
 steps:
   - pwsh: |
-      $VcpkgCacheMode = If (Test-Path 'env:VCPKG_CACHE_SAS') {"readwrite"} Else {"read"}
-      Write-Host "Cache mode: $VcpkgCacheMode"
-      Write-Host "##vso[task.setvariable variable=VCPKG_BINARY_SOURCES;issecret=true]clear;x-azblob,https://cppvcpkgcache.blob.core.windows.net/public-vcpkg-container,$env:VCPKG_CACHE_SAS,$VcpkgCommit"
-    displayName: Set Vcpkg Cache
-    env:
-      VCPKG_CACHE_SAS: $(cpp-vcpkg-cache-write-sas)
-    condition: >-
-      and(succeeded(), eq(variables['System.TeamProject'], 'internal'))
-
-  - pwsh: |
       $TargetPath = "$(Agent.TempDirectory)/vcpkg"
       Remove-Item -Path $TargetPath -Recurse -Force -ErrorAction Ignore
       New-Item -ItemType Directory -Path $TargetPath  -Force
@@ -21,9 +11,19 @@ steps:
       Write-Host "##vso[task.prependpath]$TargetPath"
       Write-Host "##vso[task.setvariable variable=VCPKG_INSTALLATION_ROOT]$TargetPath"
       Write-Host "##vso[task.setvariable variable=VcpkgCommit]$VcpkgCommit"
+      Write-Host "##vso[task.setvariable variable=VCPKG_BINARY_SOURCES]clear;x-azblob,https://cppvcpkgcache.blob.core.windows.net/public-vcpkg-container,,read"
     displayName: Set Vcpkg Variables
     condition: >-
       succeeded()
+
+  - pwsh: |
+      Write-Host "Setting vcpkg binary cache to read and write"
+      Write-Host "##vso[task.setvariable variable=VCPKG_BINARY_SOURCES;issecret=true]clear;x-azblob,https://cppvcpkgcache.blob.core.windows.net/public-vcpkg-container,$env:VCPKG_CACHE_SAS,readwrite"
+    displayName: Set Vcpkg Write-mode Cache
+    env:
+      VCPKG_CACHE_SAS: $(cpp-vcpkg-cache-write-sas)
+    condition: >-
+      and(succeeded(), eq(variables['System.TeamProject'], 'internal'))
 
   - task: PowerShell@2
     inputs:
