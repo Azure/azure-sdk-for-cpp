@@ -1,14 +1,10 @@
 # Release History
 
-## 12.3.0-beta.1 (Unreleased)
-
-### Features Added
-
-### Breaking Changes
-
-### Bugs Fixed
+## 12.2.1 (2022-02-14)
 
 ### Other Changes
+
+- No public changes in this release.
 
 ## 12.2.0 (2021-09-08)
 
