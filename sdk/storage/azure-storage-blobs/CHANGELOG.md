@@ -4,7 +4,6 @@
 
 ### Features Added
 
-- New API: `BlobClient::CopyFromUri()`.
 - Added `VersionId` in `SetBlobMetadataResult`.
 
 ### Breaking Changes
