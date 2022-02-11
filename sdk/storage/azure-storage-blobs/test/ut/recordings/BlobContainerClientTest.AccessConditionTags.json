@@ -2,8 +2,8 @@
   "networkCallRecords": [
     {
       "Headers": {
-        "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Linux 5.4.0-1063-azure x86_64 #66~18.04.1-Ubuntu SMP Thu Oct 21 09:59:28 UTC 2021)",
-        "x-ms-client-request-id": "26d1948f-983c-4ef2-62d8-0d4cf7eaafb5",
+        "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Windows 10 Pro 6.3 19041 19041.1.amd64fre.vb_release.191206-1406)",
+        "x-ms-client-request-id": "04e1acc0-f23d-4c6d-7ff2-006173f740ec",
         "x-ms-version": "2020-02-10"
       },
       "Method": "PUT",
@@ -12,20 +12,20 @@
         "REASON_PHRASE": "Created",
         "STATUS_CODE": "201",
         "content-length": "0",
-        "date": "Thu, 16 Dec 2021 22:03:02 GMT",
-        "etag": "\"0x8D9C0DFD4C9BDA0\"",
-        "last-modified": "Thu, 16 Dec 2021 22:03:02 GMT",
+        "date": "Fri, 11 Feb 2022 03:11:33 GMT",
+        "etag": "\"0x8D9ED0C3518269C\"",
+        "last-modified": "Fri, 11 Feb 2022 03:11:33 GMT",
         "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
-        "x-ms-client-request-id": "26d1948f-983c-4ef2-62d8-0d4cf7eaafb5",
-        "x-ms-request-id": "249362e0-501e-0063-24c8-f2f705000000",
+        "x-ms-client-request-id": "04e1acc0-f23d-4c6d-7ff2-006173f740ec",
+        "x-ms-request-id": "961cc0e6-a01e-00a6-69f5-1e7b4b000000",
         "x-ms-version": "2020-02-10"
       },
       "Url": "https://REDACTED.blob.core.windows.net/blobcontainerclienttestaccessconditiontags?restype=container"
     },
     {
       "Headers": {
-        "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Linux 5.4.0-1063-azure x86_64 #66~18.04.1-Ubuntu SMP Thu Oct 21 09:59:28 UTC 2021)",
-        "x-ms-client-request-id": "2f82922a-fb24-406a-4498-00dd4d7e0e0b",
+        "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Windows 10 Pro 6.3 19041 19041.1.amd64fre.vb_release.191206-1406)",
+        "x-ms-client-request-id": "02f2258d-7c25-4fd5-6ab8-7abb954ee8ef",
         "x-ms-version": "2020-02-10"
       },
       "Method": "PUT",
@@ -34,23 +34,23 @@
         "REASON_PHRASE": "Created",
         "STATUS_CODE": "201",
         "content-length": "0",
-        "date": "Thu, 16 Dec 2021 22:03:02 GMT",
-        "etag": "\"0x8D9C0DFD4CC3F8C\"",
-        "last-modified": "Thu, 16 Dec 2021 22:03:03 GMT",
+        "date": "Fri, 11 Feb 2022 03:11:33 GMT",
+        "etag": "\"0x8D9ED0C35420583\"",
+        "last-modified": "Fri, 11 Feb 2022 03:11:33 GMT",
         "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
-        "x-ms-client-request-id": "2f82922a-fb24-406a-4498-00dd4d7e0e0b",
-        "x-ms-request-id": "249362f6-501e-0063-34c8-f2f705000000",
+        "x-ms-client-request-id": "02f2258d-7c25-4fd5-6ab8-7abb954ee8ef",
+        "x-ms-request-id": "961cc14d-a01e-00a6-45f5-1e7b4b000000",
         "x-ms-request-server-encrypted": "true",
         "x-ms-version": "2020-02-10",
-        "x-ms-version-id": "2021-12-16T22:03:03.0031244Z"
+        "x-ms-version-id": "2022-02-11T03:11:33.8545539Z"
       },
       "Url": "https://REDACTED.blob.core.windows.net/blobcontainerclienttestaccessconditiontags/blobcontainerclienttestaccessconditiontags"
     },
     {
       "Headers": {
         "content-type": "application/xml; charset=UTF-8",
-        "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Linux 5.4.0-1063-azure x86_64 #66~18.04.1-Ubuntu SMP Thu Oct 21 09:59:28 UTC 2021)",
-        "x-ms-client-request-id": "685e705e-2a3c-4e1d-7b2b-8021dfd211d2",
+        "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Windows 10 Pro 6.3 19041 19041.1.amd64fre.vb_release.191206-1406)",
+        "x-ms-client-request-id": "a4126488-0721-4a05-7337-9b129d7a981b",
         "x-ms-version": "2020-02-10"
       },
       "Method": "PUT",
@@ -58,18 +58,18 @@
         "BODY": "",
         "REASON_PHRASE": "No Content",
         "STATUS_CODE": "204",
-        "date": "Thu, 16 Dec 2021 22:03:02 GMT",
+        "date": "Fri, 11 Feb 2022 03:11:33 GMT",
         "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
-        "x-ms-client-request-id": "685e705e-2a3c-4e1d-7b2b-8021dfd211d2",
-        "x-ms-request-id": "249362fe-501e-0063-3bc8-f2f705000000",
+        "x-ms-client-request-id": "a4126488-0721-4a05-7337-9b129d7a981b",
+        "x-ms-request-id": "961cc1ae-a01e-00a6-21f5-1e7b4b000000",
         "x-ms-version": "2020-02-10"
       },
       "Url": "https://REDACTED.blob.core.windows.net/blobcontainerclienttestaccessconditiontags/blobcontainerclienttestaccessconditiontags?comp=tags"
     },
     {
       "Headers": {
-        "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Linux 5.4.0-1063-azure x86_64 #66~18.04.1-Ubuntu SMP Thu Oct 21 09:59:28 UTC 2021)",
-        "x-ms-client-request-id": "93b74d84-3f87-4059-522b-96b1c240c3f4",
+        "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Windows 10 Pro 6.3 19041 19041.1.amd64fre.vb_release.191206-1406)",
+        "x-ms-client-request-id": "5dbb0b09-3eb9-483c-545d-21ea728c6d67",
         "x-ms-version": "2020-02-10"
       },
       "Method": "HEAD",
@@ -80,29 +80,30 @@
         "accept-ranges": "bytes",
         "content-length": "0",
         "content-type": "application/octet-stream",
-        "date": "Thu, 16 Dec 2021 22:03:02 GMT",
-        "etag": "\"0x8D9C0DFD4CC3F8C\"",
-        "last-modified": "Thu, 16 Dec 2021 22:03:03 GMT",
+        "date": "Fri, 11 Feb 2022 03:11:33 GMT",
+        "etag": "\"0x8D9ED0C35420583\"",
+        "last-modified": "Fri, 11 Feb 2022 03:11:33 GMT",
         "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
+        "vary": "Origin",
         "x-ms-blob-committed-block-count": "0",
         "x-ms-blob-type": "AppendBlob",
-        "x-ms-client-request-id": "93b74d84-3f87-4059-522b-96b1c240c3f4",
-        "x-ms-creation-time": "Thu, 16 Dec 2021 22:03:03 GMT",
+        "x-ms-client-request-id": "5dbb0b09-3eb9-483c-545d-21ea728c6d67",
+        "x-ms-creation-time": "Fri, 11 Feb 2022 03:11:33 GMT",
         "x-ms-is-current-version": "true",
         "x-ms-lease-state": "available",
         "x-ms-lease-status": "unlocked",
-        "x-ms-request-id": "24936308-501e-0063-44c8-f2f705000000",
+        "x-ms-request-id": "961cc1f5-a01e-00a6-5ef5-1e7b4b000000",
         "x-ms-server-encrypted": "true",
         "x-ms-tag-count": "1",
         "x-ms-version": "2020-02-10",
-        "x-ms-version-id": "2021-12-16T22:03:03.0031244Z"
+        "x-ms-version-id": "2022-02-11T03:11:33.8545539Z"
       },
       "Url": "https://REDACTED.blob.core.windows.net/blobcontainerclienttestaccessconditiontags/blobcontainerclienttestaccessconditiontags"
     },
     {
       "Headers": {
-        "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Linux 5.4.0-1063-azure x86_64 #66~18.04.1-Ubuntu SMP Thu Oct 21 09:59:28 UTC 2021)",
-        "x-ms-client-request-id": "4938e63e-de79-490a-696d-abc8726d4af9",
+        "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Windows 10 Pro 6.3 19041 19041.1.amd64fre.vb_release.191206-1406)",
+        "x-ms-client-request-id": "57643086-73c0-4370-661d-11c6382669b7",
         "x-ms-version": "2020-02-10"
       },
       "Method": "HEAD",
@@ -110,20 +111,21 @@
         "BODY": "",
         "REASON_PHRASE": "The condition specified using HTTP conditional header(s) is not met.",
         "STATUS_CODE": "412",
-        "date": "Thu, 16 Dec 2021 22:03:02 GMT",
+        "date": "Fri, 11 Feb 2022 03:11:34 GMT",
         "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
         "transfer-encoding": "chunked",
-        "x-ms-client-request-id": "4938e63e-de79-490a-696d-abc8726d4af9",
+        "vary": "Origin",
+        "x-ms-client-request-id": "57643086-73c0-4370-661d-11c6382669b7",
         "x-ms-error-code": "ConditionNotMet",
-        "x-ms-request-id": "2493631a-501e-0063-54c8-f2f705000000",
+        "x-ms-request-id": "961cc243-a01e-00a6-22f5-1e7b4b000000",
         "x-ms-version": "2020-02-10"
       },
       "Url": "https://REDACTED.blob.core.windows.net/blobcontainerclienttestaccessconditiontags/blobcontainerclienttestaccessconditiontags"
     },
     {
       "Headers": {
-        "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Linux 5.4.0-1063-azure x86_64 #66~18.04.1-Ubuntu SMP Thu Oct 21 09:59:28 UTC 2021)",
-        "x-ms-client-request-id": "cff65aff-c8b5-4d44-7aa3-d0eff7dfce4d",
+        "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Windows 10 Pro 6.3 19041 19041.1.amd64fre.vb_release.191206-1406)",
+        "x-ms-client-request-id": "77a28a63-7731-4a28-60a2-ee3c083da858",
         "x-ms-version": "2020-02-10"
       },
       "Method": "PUT",
@@ -132,42 +134,42 @@
         "REASON_PHRASE": "OK",
         "STATUS_CODE": "200",
         "content-length": "0",
-        "date": "Thu, 16 Dec 2021 22:03:02 GMT",
-        "etag": "\"0x8D9C0DFD4DD2CFF\"",
-        "last-modified": "Thu, 16 Dec 2021 22:03:03 GMT",
+        "date": "Fri, 11 Feb 2022 03:11:34 GMT",
+        "etag": "\"0x8D9ED0C35E3FA12\"",
+        "last-modified": "Fri, 11 Feb 2022 03:11:34 GMT",
         "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
-        "x-ms-client-request-id": "cff65aff-c8b5-4d44-7aa3-d0eff7dfce4d",
-        "x-ms-request-id": "621d0c22-501e-005c-20c8-f23fa6000000",
+        "x-ms-client-request-id": "77a28a63-7731-4a28-60a2-ee3c083da858",
+        "x-ms-request-id": "961cc28e-a01e-00a6-67f5-1e7b4b000000",
         "x-ms-version": "2020-02-10"
       },
       "Url": "https://REDACTED.blob.core.windows.net/blobcontainerclienttestaccessconditiontags/blobcontainerclienttestaccessconditiontags?comp=properties"
     },
     {
       "Headers": {
-        "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Linux 5.4.0-1063-azure x86_64 #66~18.04.1-Ubuntu SMP Thu Oct 21 09:59:28 UTC 2021)",
-        "x-ms-client-request-id": "24e28746-eb39-425b-5400-9ce54377fae9",
+        "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Windows 10 Pro 6.3 19041 19041.1.amd64fre.vb_release.191206-1406)",
+        "x-ms-client-request-id": "2e492ea9-bd10-485e-70b0-b4249757c824",
         "x-ms-version": "2020-02-10"
       },
       "Method": "PUT",
       "Response": {
-        "BODY": "﻿<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>ConditionNotMet</Code><Message>The condition specified using HTTP conditional header(s) is not met.\nRequestId:621d0c41-501e-005c-3ac8-f23fa6000000\nTime:2021-12-16T22:03:03.1450352Z</Message></Error>",
+        "BODY": "﻿<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>ConditionNotMet</Code><Message>The condition specified using HTTP conditional header(s) is not met.\nRequestId:961cc369-a01e-00a6-1df5-1e7b4b000000\nTime:2022-02-11T03:11:35.4879608Z</Message></Error>",
         "REASON_PHRASE": "The condition specified using HTTP conditional header(s) is not met.",
         "STATUS_CODE": "412",
         "content-length": "252",
         "content-type": "application/xml",
-        "date": "Thu, 16 Dec 2021 22:03:02 GMT",
+        "date": "Fri, 11 Feb 2022 03:11:34 GMT",
         "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
-        "x-ms-client-request-id": "24e28746-eb39-425b-5400-9ce54377fae9",
+        "x-ms-client-request-id": "2e492ea9-bd10-485e-70b0-b4249757c824",
         "x-ms-error-code": "ConditionNotMet",
-        "x-ms-request-id": "621d0c41-501e-005c-3ac8-f23fa6000000",
+        "x-ms-request-id": "961cc369-a01e-00a6-1df5-1e7b4b000000",
         "x-ms-version": "2020-02-10"
       },
       "Url": "https://REDACTED.blob.core.windows.net/blobcontainerclienttestaccessconditiontags/blobcontainerclienttestaccessconditiontags?comp=properties"
     },
     {
       "Headers": {
-        "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Linux 5.4.0-1063-azure x86_64 #66~18.04.1-Ubuntu SMP Thu Oct 21 09:59:28 UTC 2021)",
-        "x-ms-client-request-id": "04049f98-17c5-4a1e-572a-de417429ae28",
+        "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Windows 10 Pro 6.3 19041 19041.1.amd64fre.vb_release.191206-1406)",
+        "x-ms-client-request-id": "31820034-27c4-4775-76f1-4ead0ab994d0",
         "x-ms-version": "2020-02-10"
       },
       "Method": "PUT",
@@ -176,44 +178,44 @@
         "REASON_PHRASE": "OK",
         "STATUS_CODE": "200",
         "content-length": "0",
-        "date": "Thu, 16 Dec 2021 22:03:23 GMT",
-        "etag": "\"0x8D9C0DFE1C8743A\"",
-        "last-modified": "Thu, 16 Dec 2021 22:03:24 GMT",
+        "date": "Fri, 11 Feb 2022 03:11:35 GMT",
+        "etag": "\"0x8D9ED0C36612DE5\"",
+        "last-modified": "Fri, 11 Feb 2022 03:11:35 GMT",
         "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
-        "x-ms-client-request-id": "04049f98-17c5-4a1e-572a-de417429ae28",
-        "x-ms-request-id": "c7c62a69-a01e-0048-79c8-f277c9000000",
+        "x-ms-client-request-id": "31820034-27c4-4775-76f1-4ead0ab994d0",
+        "x-ms-request-id": "961cc3d2-a01e-00a6-79f5-1e7b4b000000",
         "x-ms-request-server-encrypted": "true",
         "x-ms-version": "2020-02-10",
-        "x-ms-version-id": "2021-12-16T22:03:24.7896394Z"
+        "x-ms-version-id": "2022-02-11T03:11:35.7384707Z"
       },
       "Url": "https://REDACTED.blob.core.windows.net/blobcontainerclienttestaccessconditiontags/blobcontainerclienttestaccessconditiontags?comp=metadata"
     },
     {
       "Headers": {
-        "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Linux 5.4.0-1063-azure x86_64 #66~18.04.1-Ubuntu SMP Thu Oct 21 09:59:28 UTC 2021)",
-        "x-ms-client-request-id": "e5669473-d058-40f2-7cdd-59ca4d3446eb",
+        "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Windows 10 Pro 6.3 19041 19041.1.amd64fre.vb_release.191206-1406)",
+        "x-ms-client-request-id": "85cad523-c051-4495-7461-3e86e3762a6c",
         "x-ms-version": "2020-02-10"
       },
       "Method": "PUT",
       "Response": {
-        "BODY": "﻿<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>ConditionNotMet</Code><Message>The condition specified using HTTP conditional header(s) is not met.\nRequestId:c7c62a81-a01e-0048-0ec8-f277c9000000\nTime:2021-12-16T22:03:24.8102739Z</Message></Error>",
+        "BODY": "﻿<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>ConditionNotMet</Code><Message>The condition specified using HTTP conditional header(s) is not met.\nRequestId:961cc42c-a01e-00a6-4bf5-1e7b4b000000\nTime:2022-02-11T03:11:35.9996427Z</Message></Error>",
         "REASON_PHRASE": "The condition specified using HTTP conditional header(s) is not met.",
         "STATUS_CODE": "412",
         "content-length": "252",
         "content-type": "application/xml",
-        "date": "Thu, 16 Dec 2021 22:03:23 GMT",
+        "date": "Fri, 11 Feb 2022 03:11:35 GMT",
         "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
-        "x-ms-client-request-id": "e5669473-d058-40f2-7cdd-59ca4d3446eb",
+        "x-ms-client-request-id": "85cad523-c051-4495-7461-3e86e3762a6c",
         "x-ms-error-code": "ConditionNotMet",
-        "x-ms-request-id": "c7c62a81-a01e-0048-0ec8-f277c9000000",
+        "x-ms-request-id": "961cc42c-a01e-00a6-4bf5-1e7b4b000000",
         "x-ms-version": "2020-02-10"
       },
       "Url": "https://REDACTED.blob.core.windows.net/blobcontainerclienttestaccessconditiontags/blobcontainerclienttestaccessconditiontags?comp=metadata"
     },
     {
       "Headers": {
-        "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Linux 5.4.0-1063-azure x86_64 #66~18.04.1-Ubuntu SMP Thu Oct 21 09:59:28 UTC 2021)",
-        "x-ms-client-request-id": "55753a25-3cc9-4b42-7961-40fb5b933b1e",
+        "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Windows 10 Pro 6.3 19041 19041.1.amd64fre.vb_release.191206-1406)",
+        "x-ms-client-request-id": "82d106e2-5cda-45eb-5878-4e1e922392db",
         "x-ms-version": "2020-02-10"
       },
       "Method": "GET",
@@ -223,51 +225,53 @@
         "STATUS_CODE": "200",
         "accept-ranges": "bytes",
         "content-length": "0",
-        "date": "Thu, 16 Dec 2021 22:03:24 GMT",
-        "etag": "\"0x8D9C0DFE1C8743A\"",
-        "last-modified": "Thu, 16 Dec 2021 22:03:24 GMT",
+        "date": "Fri, 11 Feb 2022 03:11:35 GMT",
+        "etag": "\"0x8D9ED0C36612DE5\"",
+        "last-modified": "Fri, 11 Feb 2022 03:11:35 GMT",
         "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
+        "vary": "Origin",
         "x-ms-blob-committed-block-count": "0",
         "x-ms-blob-type": "AppendBlob",
-        "x-ms-client-request-id": "55753a25-3cc9-4b42-7961-40fb5b933b1e",
-        "x-ms-creation-time": "Thu, 16 Dec 2021 22:03:03 GMT",
+        "x-ms-client-request-id": "82d106e2-5cda-45eb-5878-4e1e922392db",
+        "x-ms-creation-time": "Fri, 11 Feb 2022 03:11:33 GMT",
         "x-ms-is-current-version": "true",
         "x-ms-lease-state": "available",
         "x-ms-lease-status": "unlocked",
-        "x-ms-request-id": "83ccc581-801e-004f-4fc8-f21baa000000",
+        "x-ms-request-id": "961cc47c-a01e-00a6-16f5-1e7b4b000000",
         "x-ms-server-encrypted": "true",
         "x-ms-tag-count": "1",
         "x-ms-version": "2020-02-10",
-        "x-ms-version-id": "2021-12-16T22:03:24.7896394Z"
+        "x-ms-version-id": "2022-02-11T03:11:35.7384707Z"
       },
       "Url": "https://REDACTED.blob.core.windows.net/blobcontainerclienttestaccessconditiontags/blobcontainerclienttestaccessconditiontags"
     },
     {
       "Headers": {
-        "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Linux 5.4.0-1063-azure x86_64 #66~18.04.1-Ubuntu SMP Thu Oct 21 09:59:28 UTC 2021)",
-        "x-ms-client-request-id": "d473c0c6-3dd8-4062-4869-0ccba0569543",
+        "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Windows 10 Pro 6.3 19041 19041.1.amd64fre.vb_release.191206-1406)",
+        "x-ms-client-request-id": "f711fefc-421a-44d8-7b30-4ec1a7d10882",
         "x-ms-version": "2020-02-10"
       },
       "Method": "GET",
       "Response": {
-        "BODY": "﻿<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>ConditionNotMet</Code><Message>The condition specified using HTTP conditional header(s) is not met.\nRequestId:83ccc59d-801e-004f-69c8-f21baa000000\nTime:2021-12-16T22:03:24.8737953Z</Message></Error>",
+        "BODY": "﻿<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>ConditionNotMet</Code><Message>The condition specified using HTTP conditional header(s) is not met.\nRequestId:961cc4db-a01e-00a6-65f5-1e7b4b000000\nTime:2022-02-11T03:11:36.5173205Z</Message></Error>",
         "REASON_PHRASE": "The condition specified using HTTP conditional header(s) is not met.",
         "STATUS_CODE": "412",
         "content-length": "252",
         "content-type": "application/xml",
-        "date": "Thu, 16 Dec 2021 22:03:24 GMT",
+        "date": "Fri, 11 Feb 2022 03:11:35 GMT",
         "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
-        "x-ms-client-request-id": "d473c0c6-3dd8-4062-4869-0ccba0569543",
+        "vary": "Origin",
+        "x-ms-client-request-id": "f711fefc-421a-44d8-7b30-4ec1a7d10882",
         "x-ms-error-code": "ConditionNotMet",
-        "x-ms-request-id": "83ccc59d-801e-004f-69c8-f21baa000000",
+        "x-ms-request-id": "961cc4db-a01e-00a6-65f5-1e7b4b000000",
         "x-ms-version": "2020-02-10"
       },
       "Url": "https://REDACTED.blob.core.windows.net/blobcontainerclienttestaccessconditiontags/blobcontainerclienttestaccessconditiontags"
     },
     {
       "Headers": {
-        "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Linux 5.4.0-1063-azure x86_64 #66~18.04.1-Ubuntu SMP Thu Oct 21 09:59:28 UTC 2021)",
-        "x-ms-client-request-id": "acd58cda-3754-4276-4649-7df768e8434f",
+        "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Windows 10 Pro 6.3 19041 19041.1.amd64fre.vb_release.191206-1406)",
+        "x-ms-client-request-id": "39798ed5-b9d8-444f-4e87-af3765dbc18d",
         "x-ms-version": "2020-02-10"
       },
       "Method": "PUT",
@@ -276,67 +280,67 @@
         "REASON_PHRASE": "Created",
         "STATUS_CODE": "201",
         "content-length": "0",
-        "date": "Thu, 16 Dec 2021 22:03:24 GMT",
-        "etag": "\"0x8D9C0DFE1C8743A\"",
-        "last-modified": "Thu, 16 Dec 2021 22:03:24 GMT",
+        "date": "Fri, 11 Feb 2022 03:11:36 GMT",
+        "etag": "\"0x8D9ED0C36612DE5\"",
+        "last-modified": "Fri, 11 Feb 2022 03:11:35 GMT",
         "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
-        "x-ms-client-request-id": "acd58cda-3754-4276-4649-7df768e8434f",
-        "x-ms-request-id": "98ef487d-601e-001a-46c8-f20b21000000",
+        "x-ms-client-request-id": "39798ed5-b9d8-444f-4e87-af3765dbc18d",
+        "x-ms-request-id": "961cc54f-a01e-00a6-45f5-1e7b4b000000",
         "x-ms-request-server-encrypted": "false",
-        "x-ms-snapshot": "2021-12-16T22:03:24.9275613Z",
+        "x-ms-snapshot": "2022-02-11T03:11:36.7668811Z",
         "x-ms-version": "2020-02-10",
-        "x-ms-version-id": "2021-12-16T22:03:24.9285613Z"
+        "x-ms-version-id": "2022-02-11T03:11:36.7678811Z"
       },
       "Url": "https://REDACTED.blob.core.windows.net/blobcontainerclienttestaccessconditiontags/blobcontainerclienttestaccessconditiontags?comp=snapshot"
     },
     {
       "Headers": {
-        "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Linux 5.4.0-1063-azure x86_64 #66~18.04.1-Ubuntu SMP Thu Oct 21 09:59:28 UTC 2021)",
-        "x-ms-client-request-id": "adbcedb7-5775-4d54-499f-bd0ad245c583",
+        "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Windows 10 Pro 6.3 19041 19041.1.amd64fre.vb_release.191206-1406)",
+        "x-ms-client-request-id": "805c6b91-0096-4a63-7b82-6fe2e92f16cc",
         "x-ms-version": "2020-02-10"
       },
       "Method": "PUT",
       "Response": {
-        "BODY": "﻿<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>ConditionNotMet</Code><Message>The condition specified using HTTP conditional header(s) is not met.\nRequestId:98ef488e-601e-001a-55c8-f20b21000000\nTime:2021-12-16T22:03:24.9440747Z</Message></Error>",
+        "BODY": "﻿<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>ConditionNotMet</Code><Message>The condition specified using HTTP conditional header(s) is not met.\nRequestId:961cc5a1-a01e-00a6-10f5-1e7b4b000000\nTime:2022-02-11T03:11:37.0290021Z</Message></Error>",
         "REASON_PHRASE": "The condition specified using HTTP conditional header(s) is not met.",
         "STATUS_CODE": "412",
         "content-length": "252",
         "content-type": "application/xml",
-        "date": "Thu, 16 Dec 2021 22:03:24 GMT",
+        "date": "Fri, 11 Feb 2022 03:11:36 GMT",
         "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
-        "x-ms-client-request-id": "adbcedb7-5775-4d54-499f-bd0ad245c583",
+        "x-ms-client-request-id": "805c6b91-0096-4a63-7b82-6fe2e92f16cc",
         "x-ms-error-code": "ConditionNotMet",
-        "x-ms-request-id": "98ef488e-601e-001a-55c8-f20b21000000",
+        "x-ms-request-id": "961cc5a1-a01e-00a6-10f5-1e7b4b000000",
         "x-ms-version": "2020-02-10"
       },
       "Url": "https://REDACTED.blob.core.windows.net/blobcontainerclienttestaccessconditiontags/blobcontainerclienttestaccessconditiontags?comp=snapshot"
     },
     {
       "Headers": {
-        "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Linux 5.4.0-1063-azure x86_64 #66~18.04.1-Ubuntu SMP Thu Oct 21 09:59:28 UTC 2021)",
-        "x-ms-client-request-id": "703f78b9-290c-4d96-4edb-8eb1d349ac09",
+        "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Windows 10 Pro 6.3 19041 19041.1.amd64fre.vb_release.191206-1406)",
+        "x-ms-client-request-id": "7b4b21e3-3d91-4412-57f8-d61899f279dd",
         "x-ms-version": "2020-02-10"
       },
       "Method": "PUT",
       "Response": {
-        "BODY": "﻿<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>ConditionNotMet</Code><Message>The condition specified using HTTP conditional header(s) is not met.\nRequestId:740b8477-401e-000d-18c8-f2a22a000000\nTime:2021-12-16T22:03:25.0001750Z</Message></Error>",
+        "BODY": "﻿<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>ConditionNotMet</Code><Message>The condition specified using HTTP conditional header(s) is not met.\nRequestId:961cc606-a01e-00a6-6cf5-1e7b4b000000\nTime:2022-02-11T03:11:37.2808454Z</Message></Error>",
         "REASON_PHRASE": "The condition specified using HTTP conditional header(s) is not met.",
         "STATUS_CODE": "412",
         "content-length": "252",
         "content-type": "application/xml",
-        "date": "Thu, 16 Dec 2021 22:03:24 GMT",
+        "date": "Fri, 11 Feb 2022 03:11:36 GMT",
         "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
-        "x-ms-client-request-id": "703f78b9-290c-4d96-4edb-8eb1d349ac09",
+        "x-ms-client-request-id": "7b4b21e3-3d91-4412-57f8-d61899f279dd",
         "x-ms-error-code": "ConditionNotMet",
-        "x-ms-request-id": "740b8477-401e-000d-18c8-f2a22a000000",
+        "x-ms-request-id": "961cc606-a01e-00a6-6cf5-1e7b4b000000",
         "x-ms-version": "2020-02-10"
       },
       "Url": "https://REDACTED.blob.core.windows.net/blobcontainerclienttestaccessconditiontags/blobcontainerclienttestaccessconditiontags"
     },
     {
       "Headers": {
-        "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Linux 5.4.0-1063-azure x86_64 #66~18.04.1-Ubuntu SMP Thu Oct 21 09:59:28 UTC 2021)",
-        "x-ms-client-request-id": "4a267628-eec7-47f6-6c22-0b7572e06870",
+        "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Windows 10 Pro 6.3 19041 19041.1.amd64fre.vb_release.191206-1406)",
+        "x-ms-client-request-id": "4b526d8f-f5e8-46d2-4ab1-ed7699663603",
         "x-ms-version": "2020-02-10"
       },
       "Method": "PUT",
@@ -345,23 +349,23 @@
         "REASON_PHRASE": "Created",
         "STATUS_CODE": "201",
         "content-length": "0",
-        "date": "Thu, 16 Dec 2021 22:03:24 GMT",
-        "etag": "\"0x8D9C0DFE1EFCC99\"",
-        "last-modified": "Thu, 16 Dec 2021 22:03:25 GMT",
+        "date": "Fri, 11 Feb 2022 03:11:36 GMT",
+        "etag": "\"0x8D9ED0C377311D8\"",
+        "last-modified": "Fri, 11 Feb 2022 03:11:37 GMT",
         "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
-        "x-ms-client-request-id": "4a267628-eec7-47f6-6c22-0b7572e06870",
-        "x-ms-request-id": "89b4294d-301e-0028-3dc8-f20b56000000",
+        "x-ms-client-request-id": "4b526d8f-f5e8-46d2-4ab1-ed7699663603",
+        "x-ms-request-id": "961cc660-a01e-00a6-3af5-1e7b4b000000",
         "x-ms-request-server-encrypted": "true",
         "x-ms-version": "2020-02-10",
-        "x-ms-version-id": "2021-12-16T22:03:25.0474921Z"
+        "x-ms-version-id": "2022-02-11T03:11:37.5324392Z"
       },
       "Url": "https://REDACTED.blob.core.windows.net/blobcontainerclienttestaccessconditiontags/blobcontainerclienttestaccessconditiontags"
     },
     {
       "Headers": {
         "content-type": "application/xml; charset=UTF-8",
-        "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Linux 5.4.0-1063-azure x86_64 #66~18.04.1-Ubuntu SMP Thu Oct 21 09:59:28 UTC 2021)",
-        "x-ms-client-request-id": "98dfbf5e-de93-49ea-571d-a6bc35496e9c",
+        "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Windows 10 Pro 6.3 19041 19041.1.amd64fre.vb_release.191206-1406)",
+        "x-ms-client-request-id": "45dc4ce7-d4fe-440d-6ef2-585ae9e0b43d",
         "x-ms-version": "2020-02-10"
       },
       "Method": "PUT",
@@ -369,40 +373,40 @@
         "BODY": "",
         "REASON_PHRASE": "No Content",
         "STATUS_CODE": "204",
-        "date": "Thu, 16 Dec 2021 22:03:24 GMT",
+        "date": "Fri, 11 Feb 2022 03:11:37 GMT",
         "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
-        "x-ms-client-request-id": "98dfbf5e-de93-49ea-571d-a6bc35496e9c",
-        "x-ms-request-id": "89b42973-301e-0028-5ec8-f20b56000000",
+        "x-ms-client-request-id": "45dc4ce7-d4fe-440d-6ef2-585ae9e0b43d",
+        "x-ms-request-id": "961cc6bb-a01e-00a6-09f5-1e7b4b000000",
         "x-ms-version": "2020-02-10"
       },
       "Url": "https://REDACTED.blob.core.windows.net/blobcontainerclienttestaccessconditiontags/blobcontainerclienttestaccessconditiontags?comp=tags"
     },
     {
       "Headers": {
-        "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Linux 5.4.0-1063-azure x86_64 #66~18.04.1-Ubuntu SMP Thu Oct 21 09:59:28 UTC 2021)",
-        "x-ms-client-request-id": "1f3d7ab6-6ce3-4948-7a7e-cdcfa139416e",
+        "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Windows 10 Pro 6.3 19041 19041.1.amd64fre.vb_release.191206-1406)",
+        "x-ms-client-request-id": "63eb6e6f-ab0d-4ee9-5b4f-ac6743a3db98",
         "x-ms-version": "2020-02-10"
       },
       "Method": "PUT",
       "Response": {
-        "BODY": "﻿<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>ConditionNotMet</Code><Message>The condition specified using HTTP conditional header(s) is not met.\nRequestId:89b42982-301e-0028-6cc8-f20b56000000\nTime:2021-12-16T22:03:25.0989747Z</Message></Error>",
+        "BODY": "﻿<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>ConditionNotMet</Code><Message>The condition specified using HTTP conditional header(s) is not met.\nRequestId:961cc71b-a01e-00a6-62f5-1e7b4b000000\nTime:2022-02-11T03:11:38.0473685Z</Message></Error>",
         "REASON_PHRASE": "The condition specified using HTTP conditional header(s) is not met.",
         "STATUS_CODE": "412",
         "content-length": "252",
         "content-type": "application/xml",
-        "date": "Thu, 16 Dec 2021 22:03:24 GMT",
+        "date": "Fri, 11 Feb 2022 03:11:37 GMT",
         "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
-        "x-ms-client-request-id": "1f3d7ab6-6ce3-4948-7a7e-cdcfa139416e",
+        "x-ms-client-request-id": "63eb6e6f-ab0d-4ee9-5b4f-ac6743a3db98",
         "x-ms-error-code": "ConditionNotMet",
-        "x-ms-request-id": "89b42982-301e-0028-6cc8-f20b56000000",
+        "x-ms-request-id": "961cc71b-a01e-00a6-62f5-1e7b4b000000",
         "x-ms-version": "2020-02-10"
       },
       "Url": "https://REDACTED.blob.core.windows.net/blobcontainerclienttestaccessconditiontags/blobcontainerclienttestaccessconditiontags?comp=appendblock"
     },
     {
       "Headers": {
-        "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Linux 5.4.0-1063-azure x86_64 #66~18.04.1-Ubuntu SMP Thu Oct 21 09:59:28 UTC 2021)",
-        "x-ms-client-request-id": "c4beb67f-a9f0-4fa8-402a-a2af5e231f67",
+        "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Windows 10 Pro 6.3 19041 19041.1.amd64fre.vb_release.191206-1406)",
+        "x-ms-client-request-id": "633bde53-6d20-4271-4cc4-4adeffc03034",
         "x-ms-version": "2020-02-10"
       },
       "Method": "PUT",
@@ -411,15 +415,15 @@
         "REASON_PHRASE": "Created",
         "STATUS_CODE": "201",
         "content-length": "0",
-        "date": "Thu, 16 Dec 2021 22:03:25 GMT",
-        "etag": "\"0x8D9C0DFE20044F4\"",
-        "last-modified": "Thu, 16 Dec 2021 22:03:25 GMT",
+        "date": "Fri, 11 Feb 2022 03:11:37 GMT",
+        "etag": "\"0x8D9ED0C37E6F846\"",
+        "last-modified": "Fri, 11 Feb 2022 03:11:38 GMT",
         "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
         "x-ms-blob-append-offset": "0",
         "x-ms-blob-committed-block-count": "1",
-        "x-ms-client-request-id": "c4beb67f-a9f0-4fa8-402a-a2af5e231f67",
+        "x-ms-client-request-id": "633bde53-6d20-4271-4cc4-4adeffc03034",
         "x-ms-content-crc64": "6YKnaCgO5h0=",
-        "x-ms-request-id": "04151d8e-101e-002f-04c8-f26735000000",
+        "x-ms-request-id": "961cc789-a01e-00a6-47f5-1e7b4b000000",
         "x-ms-request-server-encrypted": "true",
         "x-ms-version": "2020-02-10"
       },
@@ -427,30 +431,30 @@
     },
     {
       "Headers": {
-        "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Linux 5.4.0-1063-azure x86_64 #66~18.04.1-Ubuntu SMP Thu Oct 21 09:59:28 UTC 2021)",
-        "x-ms-client-request-id": "b30ea637-29dc-4e31-7507-2e47a1cbafa5",
+        "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Windows 10 Pro 6.3 19041 19041.1.amd64fre.vb_release.191206-1406)",
+        "x-ms-client-request-id": "d54ce086-a66d-4223-642c-de395e48d7cb",
         "x-ms-version": "2020-02-10"
       },
       "Method": "PUT",
       "Response": {
-        "BODY": "﻿<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<Error><Code>ConditionNotMet</Code><Message>The condition specified using HTTP conditional header(s) is not met.\nRequestId:04151da3-101e-002f-13c8-f26735000000\nTime:2021-12-16T22:03:25.1783516Z</Message></Error>",
+        "BODY": "﻿<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<Error><Code>ConditionNotMet</Code><Message>The condition specified using HTTP conditional header(s) is not met.\nRequestId:961cc7da-a01e-00a6-13f5-1e7b4b000000\nTime:2022-02-11T03:11:38.5920298Z</Message></Error>",
         "REASON_PHRASE": "The condition specified using HTTP conditional header(s) is not met.",
         "STATUS_CODE": "412",
         "content-length": "253",
         "content-type": "application/xml",
-        "date": "Thu, 16 Dec 2021 22:03:25 GMT",
+        "date": "Fri, 11 Feb 2022 03:11:38 GMT",
         "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
-        "x-ms-client-request-id": "b30ea637-29dc-4e31-7507-2e47a1cbafa5",
+        "x-ms-client-request-id": "d54ce086-a66d-4223-642c-de395e48d7cb",
         "x-ms-error-code": "ConditionNotMet",
-        "x-ms-request-id": "04151da3-101e-002f-13c8-f26735000000",
+        "x-ms-request-id": "961cc7da-a01e-00a6-13f5-1e7b4b000000",
         "x-ms-version": "2020-02-10"
       },
       "Url": "https://REDACTED.blob.core.windows.net/blobcontainerclienttestaccessconditiontags/blobcontainerclienttestaccessconditiontags?comp=appendblock"
     },
     {
       "Headers": {
-        "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Linux 5.4.0-1063-azure x86_64 #66~18.04.1-Ubuntu SMP Thu Oct 21 09:59:28 UTC 2021)",
-        "x-ms-client-request-id": "30ac4185-0ab2-4d2b-5ba3-788e4da09879",
+        "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Windows 10 Pro 6.3 19041 19041.1.amd64fre.vb_release.191206-1406)",
+        "x-ms-client-request-id": "021b0f44-0823-4b39-5d25-360237c72cb0",
         "x-ms-version": "2020-02-10"
       },
       "Method": "PUT",
@@ -460,14 +464,14 @@
         "STATUS_CODE": "201",
         "content-length": "0",
         "content-md5": "v2GerAzfP2jUluqTRBN+iw==",
-        "date": "Thu, 16 Dec 2021 22:03:24 GMT",
-        "etag": "\"0x8D9C0DFE2106F2E\"",
-        "last-modified": "Thu, 16 Dec 2021 22:03:25 GMT",
+        "date": "Fri, 11 Feb 2022 03:11:38 GMT",
+        "etag": "\"0x8D9ED0C383B7475\"",
+        "last-modified": "Fri, 11 Feb 2022 03:11:38 GMT",
         "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
         "x-ms-blob-append-offset": "512",
         "x-ms-blob-committed-block-count": "2",
-        "x-ms-client-request-id": "30ac4185-0ab2-4d2b-5ba3-788e4da09879",
-        "x-ms-request-id": "2300521d-701e-004b-7bc8-f296ad000000",
+        "x-ms-client-request-id": "021b0f44-0823-4b39-5d25-360237c72cb0",
+        "x-ms-request-id": "961cc831-a01e-00a6-62f5-1e7b4b000000",
         "x-ms-request-server-encrypted": "true",
         "x-ms-version": "2020-02-10"
       },
@@ -475,30 +479,30 @@
     },
     {
       "Headers": {
-        "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Linux 5.4.0-1063-azure x86_64 #66~18.04.1-Ubuntu SMP Thu Oct 21 09:59:28 UTC 2021)",
-        "x-ms-client-request-id": "6bea7474-1ecd-4b3d-7742-0d66b02141e7",
+        "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Windows 10 Pro 6.3 19041 19041.1.amd64fre.vb_release.191206-1406)",
+        "x-ms-client-request-id": "4b29c6f6-6b3e-43c1-7a67-62f0cdae0c26",
         "x-ms-version": "2020-02-10"
       },
       "Method": "PUT",
       "Response": {
-        "BODY": "﻿<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>ConditionNotMet</Code><Message>The condition specified using HTTP conditional header(s) is not met.\nRequestId:2300525c-701e-004b-35c8-f296ad000000\nTime:2021-12-16T22:03:25.3094641Z</Message></Error>",
+        "BODY": "﻿<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>ConditionNotMet</Code><Message>The condition specified using HTTP conditional header(s) is not met.\nRequestId:961cc88c-a01e-00a6-37f5-1e7b4b000000\nTime:2022-02-11T03:11:39.1356915Z</Message></Error>",
         "REASON_PHRASE": "The condition specified using HTTP conditional header(s) is not met.",
         "STATUS_CODE": "412",
         "content-length": "252",
         "content-type": "application/xml",
-        "date": "Thu, 16 Dec 2021 22:03:24 GMT",
+        "date": "Fri, 11 Feb 2022 03:11:38 GMT",
         "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
-        "x-ms-client-request-id": "6bea7474-1ecd-4b3d-7742-0d66b02141e7",
+        "x-ms-client-request-id": "4b29c6f6-6b3e-43c1-7a67-62f0cdae0c26",
         "x-ms-error-code": "ConditionNotMet",
-        "x-ms-request-id": "2300525c-701e-004b-35c8-f296ad000000",
+        "x-ms-request-id": "961cc88c-a01e-00a6-37f5-1e7b4b000000",
         "x-ms-version": "2020-02-10"
       },
       "Url": "https://REDACTED.blob.core.windows.net/blobcontainerclienttestaccessconditiontags/blobcontainerclienttestaccessconditiontagsblobClient2"
     },
     {
       "Headers": {
-        "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Linux 5.4.0-1063-azure x86_64 #66~18.04.1-Ubuntu SMP Thu Oct 21 09:59:28 UTC 2021)",
-        "x-ms-client-request-id": "8e75ff96-3f58-4c2e-492e-b190fc95fa8b",
+        "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Windows 10 Pro 6.3 19041 19041.1.amd64fre.vb_release.191206-1406)",
+        "x-ms-client-request-id": "f55f8ab3-fee7-4409-5f37-db769f43534a",
         "x-ms-version": "2020-02-10"
       },
       "Method": "PUT",
@@ -507,24 +511,24 @@
         "REASON_PHRASE": "Accepted",
         "STATUS_CODE": "202",
         "content-length": "0",
-        "date": "Thu, 16 Dec 2021 22:03:24 GMT",
-        "etag": "\"0x8D9C0DFE227763C\"",
-        "last-modified": "Thu, 16 Dec 2021 22:03:25 GMT",
+        "date": "Fri, 11 Feb 2022 03:11:38 GMT",
+        "etag": "\"0x8D9ED0C388E914A\"",
+        "last-modified": "Fri, 11 Feb 2022 03:11:39 GMT",
         "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
-        "x-ms-client-request-id": "8e75ff96-3f58-4c2e-492e-b190fc95fa8b",
-        "x-ms-copy-id": "5a360e83-a4f2-4b7a-a3e7-8b15633d0760",
+        "x-ms-client-request-id": "f55f8ab3-fee7-4409-5f37-db769f43534a",
+        "x-ms-copy-id": "1606a559-bd41-4b33-a763-d1d5573ea565",
         "x-ms-copy-status": "success",
-        "x-ms-request-id": "b7ce3ee2-301e-0065-74c8-f2c4ba000000",
+        "x-ms-request-id": "961cc902-a01e-00a6-20f5-1e7b4b000000",
         "x-ms-version": "2020-02-10",
-        "x-ms-version-id": "2021-12-16T22:03:25.4112828Z"
+        "x-ms-version-id": "2022-02-11T03:11:39.3893706Z"
       },
       "Url": "https://REDACTED.blob.core.windows.net/blobcontainerclienttestaccessconditiontags/blobcontainerclienttestaccessconditiontagsblobClient2"
     },
     {
       "Headers": {
         "content-type": "application/xml; charset=UTF-8",
-        "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Linux 5.4.0-1063-azure x86_64 #66~18.04.1-Ubuntu SMP Thu Oct 21 09:59:28 UTC 2021)",
-        "x-ms-client-request-id": "fb5fe8d9-9b8f-4d3b-73c6-f767ddb08dea",
+        "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Windows 10 Pro 6.3 19041 19041.1.amd64fre.vb_release.191206-1406)",
+        "x-ms-client-request-id": "2778edff-56b3-4aae-68c0-96741ece4ec7",
         "x-ms-version": "2020-02-10"
       },
       "Method": "PUT",
@@ -532,40 +536,40 @@
         "BODY": "",
         "REASON_PHRASE": "No Content",
         "STATUS_CODE": "204",
-        "date": "Thu, 16 Dec 2021 22:03:24 GMT",
+        "date": "Fri, 11 Feb 2022 03:11:39 GMT",
         "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
-        "x-ms-client-request-id": "fb5fe8d9-9b8f-4d3b-73c6-f767ddb08dea",
-        "x-ms-request-id": "b7ce3f38-301e-0065-40c8-f2c4ba000000",
+        "x-ms-client-request-id": "2778edff-56b3-4aae-68c0-96741ece4ec7",
+        "x-ms-request-id": "961cc96a-a01e-00a6-05f5-1e7b4b000000",
         "x-ms-version": "2020-02-10"
       },
       "Url": "https://REDACTED.blob.core.windows.net/blobcontainerclienttestaccessconditiontags/blobcontainerclienttestaccessconditiontagsblobClient2?comp=tags"
     },
     {
       "Headers": {
-        "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Linux 5.4.0-1063-azure x86_64 #66~18.04.1-Ubuntu SMP Thu Oct 21 09:59:28 UTC 2021)",
-        "x-ms-client-request-id": "f2848dc9-ecd1-456a-6070-b7660aef8405",
+        "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Windows 10 Pro 6.3 19041 19041.1.amd64fre.vb_release.191206-1406)",
+        "x-ms-client-request-id": "96c23271-0f2c-4531-7393-08d69c742aac",
         "x-ms-version": "2020-02-10"
       },
       "Method": "PUT",
       "Response": {
-        "BODY": "﻿<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>ConditionNotMet</Code><Message>The condition specified using HTTP conditional header(s) is not met.\nRequestId:b7ce3f51-301e-0065-57c8-f2c4ba000000\nTime:2021-12-16T22:03:25.4625049Z</Message></Error>",
+        "BODY": "﻿<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>ConditionNotMet</Code><Message>The condition specified using HTTP conditional header(s) is not met.\nRequestId:961cc9c7-a01e-00a6-59f5-1e7b4b000000\nTime:2022-02-11T03:11:39.9261991Z</Message></Error>",
         "REASON_PHRASE": "The condition specified using HTTP conditional header(s) is not met.",
         "STATUS_CODE": "412",
         "content-length": "252",
         "content-type": "application/xml",
-        "date": "Thu, 16 Dec 2021 22:03:24 GMT",
+        "date": "Fri, 11 Feb 2022 03:11:39 GMT",
         "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
-        "x-ms-client-request-id": "f2848dc9-ecd1-456a-6070-b7660aef8405",
+        "x-ms-client-request-id": "96c23271-0f2c-4531-7393-08d69c742aac",
         "x-ms-error-code": "ConditionNotMet",
-        "x-ms-request-id": "b7ce3f51-301e-0065-57c8-f2c4ba000000",
+        "x-ms-request-id": "961cc9c7-a01e-00a6-59f5-1e7b4b000000",
         "x-ms-version": "2020-02-10"
       },
       "Url": "https://REDACTED.blob.core.windows.net/blobcontainerclienttestaccessconditiontags/blobcontainerclienttestaccessconditiontagsblobClient2"
     },
     {
       "Headers": {
-        "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Linux 5.4.0-1063-azure x86_64 #66~18.04.1-Ubuntu SMP Thu Oct 21 09:59:28 UTC 2021)",
-        "x-ms-client-request-id": "7ad76eb4-ce5a-4a46-54bc-dd5c6a82a3f9",
+        "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Windows 10 Pro 6.3 19041 19041.1.amd64fre.vb_release.191206-1406)",
+        "x-ms-client-request-id": "15055eb4-425f-48c0-4fd9-2c8cc1fe2bbd",
         "x-ms-version": "2020-02-10"
       },
       "Method": "PUT",
@@ -574,45 +578,45 @@
         "REASON_PHRASE": "Accepted",
         "STATUS_CODE": "202",
         "content-length": "0",
-        "date": "Thu, 16 Dec 2021 22:03:25 GMT",
-        "etag": "\"0x8D9C0DFE23F197A\"",
-        "last-modified": "Thu, 16 Dec 2021 22:03:25 GMT",
+        "date": "Fri, 11 Feb 2022 03:11:39 GMT",
+        "etag": "\"0x8D9ED0C39070AE4\"",
+        "last-modified": "Fri, 11 Feb 2022 03:11:40 GMT",
         "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
-        "x-ms-client-request-id": "7ad76eb4-ce5a-4a46-54bc-dd5c6a82a3f9",
-        "x-ms-copy-id": "9f071524-e39a-4eb5-8762-7538078688dc",
+        "x-ms-client-request-id": "15055eb4-425f-48c0-4fd9-2c8cc1fe2bbd",
+        "x-ms-copy-id": "13567ad2-fb55-4a38-9489-7337800cb088",
         "x-ms-copy-status": "success",
-        "x-ms-request-id": "c26a3e5a-e01e-0059-25c8-f2ed7d000000",
+        "x-ms-request-id": "961cca23-a01e-00a6-26f5-1e7b4b000000",
         "x-ms-version": "2020-02-10",
-        "x-ms-version-id": "2021-12-16T22:03:25.5681940Z"
+        "x-ms-version-id": "2022-02-11T03:11:40.1809152Z"
       },
       "Url": "https://REDACTED.blob.core.windows.net/blobcontainerclienttestaccessconditiontags/blobcontainerclienttestaccessconditiontagsblobClient2"
     },
     {
       "Headers": {
-        "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Linux 5.4.0-1063-azure x86_64 #66~18.04.1-Ubuntu SMP Thu Oct 21 09:59:28 UTC 2021)",
-        "x-ms-client-request-id": "01b8b1fb-a06e-45da-52b5-e8ce30e28029",
+        "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Windows 10 Pro 6.3 19041 19041.1.amd64fre.vb_release.191206-1406)",
+        "x-ms-client-request-id": "e6051d71-209c-4473-67bc-abd194a80e35",
         "x-ms-version": "2020-02-10"
       },
       "Method": "PUT",
       "Response": {
-        "BODY": "﻿<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>ConditionNotMet</Code><Message>The condition specified using HTTP conditional header(s) is not met.\nRequestId:c26a3e93-e01e-0059-59c8-f2ed7d000000\nTime:2021-12-16T22:03:25.5868226Z</Message></Error>",
+        "BODY": "﻿<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>ConditionNotMet</Code><Message>The condition specified using HTTP conditional header(s) is not met.\nRequestId:961cca89-a01e-00a6-02f5-1e7b4b000000\nTime:2022-02-11T03:11:40.4418787Z</Message></Error>",
         "REASON_PHRASE": "The condition specified using HTTP conditional header(s) is not met.",
         "STATUS_CODE": "412",
         "content-length": "252",
         "content-type": "application/xml",
-        "date": "Thu, 16 Dec 2021 22:03:25 GMT",
+        "date": "Fri, 11 Feb 2022 03:11:39 GMT",
         "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
-        "x-ms-client-request-id": "01b8b1fb-a06e-45da-52b5-e8ce30e28029",
+        "x-ms-client-request-id": "e6051d71-209c-4473-67bc-abd194a80e35",
         "x-ms-error-code": "ConditionNotMet",
-        "x-ms-request-id": "c26a3e93-e01e-0059-59c8-f2ed7d000000",
+        "x-ms-request-id": "961cca89-a01e-00a6-02f5-1e7b4b000000",
         "x-ms-version": "2020-02-10"
       },
       "Url": "https://REDACTED.blob.core.windows.net/blobcontainerclienttestaccessconditiontags/blobcontainerclienttestaccessconditiontags?comp=lease"
     },
     {
       "Headers": {
-        "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Linux 5.4.0-1063-azure x86_64 #66~18.04.1-Ubuntu SMP Thu Oct 21 09:59:28 UTC 2021)",
-        "x-ms-client-request-id": "f412ded2-36ea-423b-5d8f-0abcdd9c068c",
+        "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Windows 10 Pro 6.3 19041 19041.1.amd64fre.vb_release.191206-1406)",
+        "x-ms-client-request-id": "964e5d66-f845-4816-6fd1-4b90964408db",
         "x-ms-version": "2020-02-10"
       },
       "Method": "PUT",
@@ -621,43 +625,43 @@
         "REASON_PHRASE": "Created",
         "STATUS_CODE": "201",
         "content-length": "0",
-        "date": "Thu, 16 Dec 2021 22:03:25 GMT",
-        "etag": "\"0x8D9C0DFE2106F2E\"",
-        "last-modified": "Thu, 16 Dec 2021 22:03:25 GMT",
+        "date": "Fri, 11 Feb 2022 03:11:40 GMT",
+        "etag": "\"0x8D9ED0C383B7475\"",
+        "last-modified": "Fri, 11 Feb 2022 03:11:38 GMT",
         "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
-        "x-ms-client-request-id": "f412ded2-36ea-423b-5d8f-0abcdd9c068c",
-        "x-ms-lease-id": "a35c27b2-5a0c-4fc5-5894-4f12d6600071",
-        "x-ms-request-id": "1367db0f-501e-004c-0fc8-f2face000000",
+        "x-ms-client-request-id": "964e5d66-f845-4816-6fd1-4b90964408db",
+        "x-ms-lease-id": "0ab82e65-6168-45c8-79f3-661cf42b6855",
+        "x-ms-request-id": "961ccac4-a01e-00a6-3bf5-1e7b4b000000",
         "x-ms-version": "2020-02-10"
       },
       "Url": "https://REDACTED.blob.core.windows.net/blobcontainerclienttestaccessconditiontags/blobcontainerclienttestaccessconditiontags?comp=lease"
     },
     {
       "Headers": {
-        "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Linux 5.4.0-1063-azure x86_64 #66~18.04.1-Ubuntu SMP Thu Oct 21 09:59:28 UTC 2021)",
-        "x-ms-client-request-id": "aa369621-ee61-44d8-6e4c-187182a6c64d",
+        "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Windows 10 Pro 6.3 19041 19041.1.amd64fre.vb_release.191206-1406)",
+        "x-ms-client-request-id": "28908a64-3868-44af-4eed-f704715b35ea",
         "x-ms-version": "2020-02-10"
       },
       "Method": "PUT",
       "Response": {
-        "BODY": "﻿<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>ConditionNotMet</Code><Message>The condition specified using HTTP conditional header(s) is not met.\nRequestId:1367db3e-501e-004c-39c8-f2face000000\nTime:2021-12-16T22:03:25.7017529Z</Message></Error>",
+        "BODY": "﻿<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>ConditionNotMet</Code><Message>The condition specified using HTTP conditional header(s) is not met.\nRequestId:961ccb0d-a01e-00a6-7cf5-1e7b4b000000\nTime:2022-02-11T03:11:40.9455651Z</Message></Error>",
         "REASON_PHRASE": "The condition specified using HTTP conditional header(s) is not met.",
         "STATUS_CODE": "412",
         "content-length": "252",
         "content-type": "application/xml",
-        "date": "Thu, 16 Dec 2021 22:03:25 GMT",
+        "date": "Fri, 11 Feb 2022 03:11:40 GMT",
         "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
-        "x-ms-client-request-id": "aa369621-ee61-44d8-6e4c-187182a6c64d",
+        "x-ms-client-request-id": "28908a64-3868-44af-4eed-f704715b35ea",
         "x-ms-error-code": "ConditionNotMet",
-        "x-ms-request-id": "1367db3e-501e-004c-39c8-f2face000000",
+        "x-ms-request-id": "961ccb0d-a01e-00a6-7cf5-1e7b4b000000",
         "x-ms-version": "2020-02-10"
       },
       "Url": "https://REDACTED.blob.core.windows.net/blobcontainerclienttestaccessconditiontags/blobcontainerclienttestaccessconditiontags?comp=lease"
     },
     {
       "Headers": {
-        "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Linux 5.4.0-1063-azure x86_64 #66~18.04.1-Ubuntu SMP Thu Oct 21 09:59:28 UTC 2021)",
-        "x-ms-client-request-id": "870ffbfb-ff5d-4c52-4cff-6e38cbe45906",
+        "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Windows 10 Pro 6.3 19041 19041.1.amd64fre.vb_release.191206-1406)",
+        "x-ms-client-request-id": "3795bbf8-8d98-45ce-548d-77a9f07d71da",
         "x-ms-version": "2020-02-10"
       },
       "Method": "PUT",
@@ -666,21 +670,21 @@
         "REASON_PHRASE": "Accepted",
         "STATUS_CODE": "202",
         "content-length": "0",
-        "date": "Thu, 16 Dec 2021 22:03:24 GMT",
-        "etag": "\"0x8D9C0DFE2106F2E\"",
-        "last-modified": "Thu, 16 Dec 2021 22:03:25 GMT",
+        "date": "Fri, 11 Feb 2022 03:11:40 GMT",
+        "etag": "\"0x8D9ED0C383B7475\"",
+        "last-modified": "Fri, 11 Feb 2022 03:11:38 GMT",
         "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
-        "x-ms-client-request-id": "870ffbfb-ff5d-4c52-4cff-6e38cbe45906",
+        "x-ms-client-request-id": "3795bbf8-8d98-45ce-548d-77a9f07d71da",
         "x-ms-lease-time": "59",
-        "x-ms-request-id": "2e0f2339-801e-0002-5dc8-f2d446000000",
+        "x-ms-request-id": "961ccb74-a01e-00a6-57f5-1e7b4b000000",
         "x-ms-version": "2020-02-10"
       },
       "Url": "https://REDACTED.blob.core.windows.net/blobcontainerclienttestaccessconditiontags/blobcontainerclienttestaccessconditiontags?comp=lease"
     },
     {
       "Headers": {
-        "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Linux 5.4.0-1063-azure x86_64 #66~18.04.1-Ubuntu SMP Thu Oct 21 09:59:28 UTC 2021)",
-        "x-ms-client-request-id": "f1e45b11-ecdc-4dcc-6c91-7d29e0a41d52",
+        "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Windows 10 Pro 6.3 19041 19041.1.amd64fre.vb_release.191206-1406)",
+        "x-ms-client-request-id": "18a53de2-7b76-4200-46d7-23fc9949fd1e",
         "x-ms-version": "2020-02-10"
       },
       "Method": "DELETE",
@@ -689,41 +693,41 @@
         "REASON_PHRASE": "Accepted",
         "STATUS_CODE": "202",
         "content-length": "0",
-        "date": "Thu, 16 Dec 2021 22:03:24 GMT",
+        "date": "Fri, 11 Feb 2022 03:11:40 GMT",
         "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
-        "x-ms-client-request-id": "f1e45b11-ecdc-4dcc-6c91-7d29e0a41d52",
+        "x-ms-client-request-id": "18a53de2-7b76-4200-46d7-23fc9949fd1e",
         "x-ms-delete-type-permanent": "false",
-        "x-ms-request-id": "2e0f2342-801e-0002-64c8-f2d446000000",
+        "x-ms-request-id": "961ccbd0-a01e-00a6-28f5-1e7b4b000000",
         "x-ms-version": "2020-02-10"
       },
       "Url": "https://REDACTED.blob.core.windows.net/blobcontainerclienttestaccessconditiontags/blobcontainerclienttestaccessconditiontags"
     },
     {
       "Headers": {
-        "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Linux 5.4.0-1063-azure x86_64 #66~18.04.1-Ubuntu SMP Thu Oct 21 09:59:28 UTC 2021)",
-        "x-ms-client-request-id": "02ac1a57-0fd6-488f-447e-5622ff274aef",
+        "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Windows 10 Pro 6.3 19041 19041.1.amd64fre.vb_release.191206-1406)",
+        "x-ms-client-request-id": "87a6c717-0865-4d0a-5009-897a6be080cb",
         "x-ms-version": "2020-02-10"
       },
       "Method": "DELETE",
       "Response": {
-        "BODY": "﻿<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>BlobNotFound</Code><Message>The specified blob does not exist.\nRequestId:2e0f2345-801e-0002-66c8-f2d446000000\nTime:2021-12-16T22:03:25.7784088Z</Message></Error>",
+        "BODY": "﻿<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>BlobNotFound</Code><Message>The specified blob does not exist.\nRequestId:961ccc2d-a01e-00a6-73f5-1e7b4b000000\nTime:2022-02-11T03:11:41.7060924Z</Message></Error>",
         "REASON_PHRASE": "The specified blob does not exist.",
         "STATUS_CODE": "404",
         "content-length": "215",
         "content-type": "application/xml",
-        "date": "Thu, 16 Dec 2021 22:03:24 GMT",
+        "date": "Fri, 11 Feb 2022 03:11:41 GMT",
         "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
-        "x-ms-client-request-id": "02ac1a57-0fd6-488f-447e-5622ff274aef",
+        "x-ms-client-request-id": "87a6c717-0865-4d0a-5009-897a6be080cb",
         "x-ms-error-code": "BlobNotFound",
-        "x-ms-request-id": "2e0f2345-801e-0002-66c8-f2d446000000",
+        "x-ms-request-id": "961ccc2d-a01e-00a6-73f5-1e7b4b000000",
         "x-ms-version": "2020-02-10"
       },
       "Url": "https://REDACTED.blob.core.windows.net/blobcontainerclienttestaccessconditiontags/blobcontainerclienttestaccessconditiontags"
     },
     {
       "Headers": {
-        "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Linux 5.4.0-1063-azure x86_64 #66~18.04.1-Ubuntu SMP Thu Oct 21 09:59:28 UTC 2021)",
-        "x-ms-client-request-id": "422a5032-8c0d-4b3a-7340-5ba1685d33ba",
+        "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Windows 10 Pro 6.3 19041 19041.1.amd64fre.vb_release.191206-1406)",
+        "x-ms-client-request-id": "e66cc045-0c82-4c11-595a-3de96b9984b1",
         "x-ms-version": "2020-02-10"
       },
       "Method": "PUT",
@@ -732,23 +736,23 @@
         "REASON_PHRASE": "Created",
         "STATUS_CODE": "201",
         "content-length": "0",
-        "date": "Thu, 16 Dec 2021 22:03:24 GMT",
-        "etag": "\"0x8D9C0DFE2653987\"",
-        "last-modified": "Thu, 16 Dec 2021 22:03:25 GMT",
+        "date": "Fri, 11 Feb 2022 03:11:41 GMT",
+        "etag": "\"0x8D9ED0C3A171A5E\"",
+        "last-modified": "Fri, 11 Feb 2022 03:11:41 GMT",
         "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
-        "x-ms-client-request-id": "422a5032-8c0d-4b3a-7340-5ba1685d33ba",
-        "x-ms-request-id": "9998d14a-901e-001e-03c8-f28626000000",
+        "x-ms-client-request-id": "e66cc045-0c82-4c11-595a-3de96b9984b1",
+        "x-ms-request-id": "961ccc88-a01e-00a6-48f5-1e7b4b000000",
         "x-ms-request-server-encrypted": "true",
         "x-ms-version": "2020-02-10",
-        "x-ms-version-id": "2021-12-16T22:03:25.8170508Z"
+        "x-ms-version-id": "2022-02-11T03:11:41.9628899Z"
       },
       "Url": "https://REDACTED.blob.core.windows.net/blobcontainerclienttestaccessconditiontags/blobcontainerclienttestaccessconditiontagsblob"
     },
     {
       "Headers": {
         "content-type": "application/xml; charset=UTF-8",
-        "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Linux 5.4.0-1063-azure x86_64 #66~18.04.1-Ubuntu SMP Thu Oct 21 09:59:28 UTC 2021)",
-        "x-ms-client-request-id": "7dc868f3-26db-4b5a-4dc4-9dca6fedd762",
+        "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Windows 10 Pro 6.3 19041 19041.1.amd64fre.vb_release.191206-1406)",
+        "x-ms-client-request-id": "a9f2fa63-1ce8-418b-49f2-60ceb47dfeb2",
         "x-ms-version": "2020-02-10"
       },
       "Method": "PUT",
@@ -756,40 +760,40 @@
         "BODY": "",
         "REASON_PHRASE": "No Content",
         "STATUS_CODE": "204",
-        "date": "Thu, 16 Dec 2021 22:03:24 GMT",
+        "date": "Fri, 11 Feb 2022 03:11:41 GMT",
         "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
-        "x-ms-client-request-id": "7dc868f3-26db-4b5a-4dc4-9dca6fedd762",
-        "x-ms-request-id": "9998d15b-901e-001e-12c8-f28626000000",
+        "x-ms-client-request-id": "a9f2fa63-1ce8-418b-49f2-60ceb47dfeb2",
+        "x-ms-request-id": "961cccee-a01e-00a6-2af5-1e7b4b000000",
         "x-ms-version": "2020-02-10"
       },
       "Url": "https://REDACTED.blob.core.windows.net/blobcontainerclienttestaccessconditiontags/blobcontainerclienttestaccessconditiontagsblob?comp=tags"
     },
     {
       "Headers": {
-        "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Linux 5.4.0-1063-azure x86_64 #66~18.04.1-Ubuntu SMP Thu Oct 21 09:59:28 UTC 2021)",
-        "x-ms-client-request-id": "a23550e1-cda8-482d-5b1f-e7e1fc540118",
+        "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Windows 10 Pro 6.3 19041 19041.1.amd64fre.vb_release.191206-1406)",
+        "x-ms-client-request-id": "98a48980-11bd-44d2-4a61-4e093931bc0c",
         "x-ms-version": "2020-02-10"
       },
       "Method": "PUT",
       "Response": {
-        "BODY": "﻿<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>ConditionNotMet</Code><Message>The condition specified using HTTP conditional header(s) is not met.\nRequestId:9998d16f-901e-001e-24c8-f28626000000\nTime:2021-12-16T22:03:25.8625882Z</Message></Error>",
+        "BODY": "﻿<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>ConditionNotMet</Code><Message>The condition specified using HTTP conditional header(s) is not met.\nRequestId:961ccd5c-a01e-00a6-0ef5-1e7b4b000000\nTime:2022-02-11T03:11:42.4786122Z</Message></Error>",
         "REASON_PHRASE": "The condition specified using HTTP conditional header(s) is not met.",
         "STATUS_CODE": "412",
         "content-length": "252",
         "content-type": "application/xml",
-        "date": "Thu, 16 Dec 2021 22:03:25 GMT",
+        "date": "Fri, 11 Feb 2022 03:11:41 GMT",
         "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
-        "x-ms-client-request-id": "a23550e1-cda8-482d-5b1f-e7e1fc540118",
+        "x-ms-client-request-id": "98a48980-11bd-44d2-4a61-4e093931bc0c",
         "x-ms-error-code": "ConditionNotMet",
-        "x-ms-request-id": "9998d16f-901e-001e-24c8-f28626000000",
+        "x-ms-request-id": "961ccd5c-a01e-00a6-0ef5-1e7b4b000000",
         "x-ms-version": "2020-02-10"
       },
       "Url": "https://REDACTED.blob.core.windows.net/blobcontainerclienttestaccessconditiontags/blobcontainerclienttestaccessconditiontagsblob"
     },
     {
       "Headers": {
-        "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Linux 5.4.0-1063-azure x86_64 #66~18.04.1-Ubuntu SMP Thu Oct 21 09:59:28 UTC 2021)",
-        "x-ms-client-request-id": "b59e2926-ae16-4c08-5f8e-87e2a07b292d",
+        "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Windows 10 Pro 6.3 19041 19041.1.amd64fre.vb_release.191206-1406)",
+        "x-ms-client-request-id": "018b6ffc-ac4f-4e9e-753f-872860f67c79",
         "x-ms-version": "2020-02-10"
       },
       "Method": "PUT",
@@ -798,23 +802,23 @@
         "REASON_PHRASE": "Created",
         "STATUS_CODE": "201",
         "content-length": "0",
-        "date": "Thu, 16 Dec 2021 22:03:25 GMT",
-        "etag": "\"0x8D9C0DFE273DD5A\"",
-        "last-modified": "Thu, 16 Dec 2021 22:03:25 GMT",
+        "date": "Fri, 11 Feb 2022 03:11:42 GMT",
+        "etag": "\"0x8D9ED0C3A8B4EDD\"",
+        "last-modified": "Fri, 11 Feb 2022 03:11:42 GMT",
         "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
-        "x-ms-client-request-id": "b59e2926-ae16-4c08-5f8e-87e2a07b292d",
-        "x-ms-request-id": "081fd2c1-e01e-0076-60c8-f2e0b6000000",
+        "x-ms-client-request-id": "018b6ffc-ac4f-4e9e-753f-872860f67c79",
+        "x-ms-request-id": "961ccdb8-a01e-00a6-60f5-1e7b4b000000",
         "x-ms-request-server-encrypted": "true",
         "x-ms-version": "2020-02-10",
-        "x-ms-version-id": "2021-12-16T22:03:25.9129962Z"
+        "x-ms-version-id": "2022-02-11T03:11:42.7254521Z"
       },
       "Url": "https://REDACTED.blob.core.windows.net/blobcontainerclienttestaccessconditiontags/blobcontainerclienttestaccessconditiontagsblob"
     },
     {
       "Headers": {
         "content-type": "application/xml; charset=UTF-8",
-        "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Linux 5.4.0-1063-azure x86_64 #66~18.04.1-Ubuntu SMP Thu Oct 21 09:59:28 UTC 2021)",
-        "x-ms-client-request-id": "b732efc5-1308-4b1c-6724-98d9cc9270d4",
+        "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Windows 10 Pro 6.3 19041 19041.1.amd64fre.vb_release.191206-1406)",
+        "x-ms-client-request-id": "03430ee5-449f-4300-44b7-3904ebe5ea33",
         "x-ms-version": "2020-02-10"
       },
       "Method": "PUT",
@@ -822,40 +826,40 @@
         "BODY": "",
         "REASON_PHRASE": "No Content",
         "STATUS_CODE": "204",
-        "date": "Thu, 16 Dec 2021 22:03:25 GMT",
+        "date": "Fri, 11 Feb 2022 03:11:42 GMT",
         "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
-        "x-ms-client-request-id": "b732efc5-1308-4b1c-6724-98d9cc9270d4",
-        "x-ms-request-id": "081fd346-e01e-0076-5fc8-f2e0b6000000",
+        "x-ms-client-request-id": "03430ee5-449f-4300-44b7-3904ebe5ea33",
+        "x-ms-request-id": "961cce3b-a01e-00a6-58f5-1e7b4b000000",
         "x-ms-version": "2020-02-10"
       },
       "Url": "https://REDACTED.blob.core.windows.net/blobcontainerclienttestaccessconditiontags/blobcontainerclienttestaccessconditiontagsblob?comp=tags"
     },
     {
       "Headers": {
-        "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Linux 5.4.0-1063-azure x86_64 #66~18.04.1-Ubuntu SMP Thu Oct 21 09:59:28 UTC 2021)",
-        "x-ms-client-request-id": "94b583a3-7ced-49ca-4222-a7db2c06f577",
+        "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Windows 10 Pro 6.3 19041 19041.1.amd64fre.vb_release.191206-1406)",
+        "x-ms-client-request-id": "c0142630-d7c9-4244-4dce-41e72ce79906",
         "x-ms-version": "2020-02-10"
       },
       "Method": "PUT",
       "Response": {
-        "BODY": "﻿<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>ConditionNotMet</Code><Message>The condition specified using HTTP conditional header(s) is not met.\nRequestId:081fd350-e01e-0076-69c8-f2e0b6000000\nTime:2021-12-16T22:03:26.0431737Z</Message></Error>",
+        "BODY": "﻿<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>ConditionNotMet</Code><Message>The condition specified using HTTP conditional header(s) is not met.\nRequestId:961ccea5-a01e-00a6-3bf5-1e7b4b000000\nTime:2022-02-11T03:11:43.2801137Z</Message></Error>",
         "REASON_PHRASE": "The condition specified using HTTP conditional header(s) is not met.",
         "STATUS_CODE": "412",
         "content-length": "252",
         "content-type": "application/xml",
-        "date": "Thu, 16 Dec 2021 22:03:25 GMT",
+        "date": "Fri, 11 Feb 2022 03:11:42 GMT",
         "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
-        "x-ms-client-request-id": "94b583a3-7ced-49ca-4222-a7db2c06f577",
+        "x-ms-client-request-id": "c0142630-d7c9-4244-4dce-41e72ce79906",
         "x-ms-error-code": "ConditionNotMet",
-        "x-ms-request-id": "081fd350-e01e-0076-69c8-f2e0b6000000",
+        "x-ms-request-id": "961ccea5-a01e-00a6-3bf5-1e7b4b000000",
         "x-ms-version": "2020-02-10"
       },
       "Url": "https://REDACTED.blob.core.windows.net/blobcontainerclienttestaccessconditiontags/blobcontainerclienttestaccessconditiontagsblob?comp=page"
     },
     {
       "Headers": {
-        "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Linux 5.4.0-1063-azure x86_64 #66~18.04.1-Ubuntu SMP Thu Oct 21 09:59:28 UTC 2021)",
-        "x-ms-client-request-id": "dc6a784b-34ed-44cc-58c4-0cdd2a1f3160",
+        "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Windows 10 Pro 6.3 19041 19041.1.amd64fre.vb_release.191206-1406)",
+        "x-ms-client-request-id": "1047c4aa-dc46-411e-6361-8ff6bb7800d5",
         "x-ms-version": "2020-02-10"
       },
       "Method": "PUT",
@@ -864,14 +868,14 @@
         "REASON_PHRASE": "Created",
         "STATUS_CODE": "201",
         "content-length": "0",
-        "date": "Thu, 16 Dec 2021 22:03:25 GMT",
-        "etag": "\"0x8D9C0DFE290AFE9\"",
-        "last-modified": "Thu, 16 Dec 2021 22:03:26 GMT",
+        "date": "Fri, 11 Feb 2022 03:11:42 GMT",
+        "etag": "\"0x8D9ED0C3B0575EF\"",
+        "last-modified": "Fri, 11 Feb 2022 03:11:43 GMT",
         "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
         "x-ms-blob-sequence-number": "0",
-        "x-ms-client-request-id": "dc6a784b-34ed-44cc-58c4-0cdd2a1f3160",
+        "x-ms-client-request-id": "1047c4aa-dc46-411e-6361-8ff6bb7800d5",
         "x-ms-content-crc64": "6YKnaCgO5h0=",
-        "x-ms-request-id": "fb0ed132-401e-0040-66c8-f26dc6000000",
+        "x-ms-request-id": "961ccf07-a01e-00a6-16f5-1e7b4b000000",
         "x-ms-request-server-encrypted": "true",
         "x-ms-version": "2020-02-10"
       },
@@ -879,30 +883,30 @@
     },
     {
       "Headers": {
-        "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Linux 5.4.0-1063-azure x86_64 #66~18.04.1-Ubuntu SMP Thu Oct 21 09:59:28 UTC 2021)",
-        "x-ms-client-request-id": "1eed739a-1422-42b5-69ff-a2fa84da2246",
+        "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Windows 10 Pro 6.3 19041 19041.1.amd64fre.vb_release.191206-1406)",
+        "x-ms-client-request-id": "b8f71fd9-60db-476e-4926-dea996380318",
         "x-ms-version": "2020-02-10"
       },
       "Method": "PUT",
       "Response": {
-        "BODY": "﻿<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<Error><Code>ConditionNotMet</Code><Message>The condition specified using HTTP conditional header(s) is not met.\nRequestId:fb0ed14e-401e-0040-7fc8-f26dc6000000\nTime:2021-12-16T22:03:26.1489142Z</Message></Error>",
+        "BODY": "﻿<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<Error><Code>ConditionNotMet</Code><Message>The condition specified using HTTP conditional header(s) is not met.\nRequestId:961ccf4d-a01e-00a6-52f5-1e7b4b000000\nTime:2022-02-11T03:11:43.7887985Z</Message></Error>",
         "REASON_PHRASE": "The condition specified using HTTP conditional header(s) is not met.",
         "STATUS_CODE": "412",
         "content-length": "253",
         "content-type": "application/xml",
-        "date": "Thu, 16 Dec 2021 22:03:25 GMT",
+        "date": "Fri, 11 Feb 2022 03:11:43 GMT",
         "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
-        "x-ms-client-request-id": "1eed739a-1422-42b5-69ff-a2fa84da2246",
+        "x-ms-client-request-id": "b8f71fd9-60db-476e-4926-dea996380318",
         "x-ms-error-code": "ConditionNotMet",
-        "x-ms-request-id": "fb0ed14e-401e-0040-7fc8-f26dc6000000",
+        "x-ms-request-id": "961ccf4d-a01e-00a6-52f5-1e7b4b000000",
         "x-ms-version": "2020-02-10"
       },
       "Url": "https://REDACTED.blob.core.windows.net/blobcontainerclienttestaccessconditiontags/blobcontainerclienttestaccessconditiontagsblob?comp=page"
     },
     {
       "Headers": {
-        "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Linux 5.4.0-1063-azure x86_64 #66~18.04.1-Ubuntu SMP Thu Oct 21 09:59:28 UTC 2021)",
-        "x-ms-client-request-id": "938f6d9f-484f-4a04-414f-cc9ba7b3ede4",
+        "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Windows 10 Pro 6.3 19041 19041.1.amd64fre.vb_release.191206-1406)",
+        "x-ms-client-request-id": "073121a1-37ed-4ded-63a7-716ed69ac655",
         "x-ms-version": "2020-02-10"
       },
       "Method": "PUT",
@@ -912,13 +916,13 @@
         "STATUS_CODE": "201",
         "content-length": "0",
         "content-md5": "v2GerAzfP2jUluqTRBN+iw==",
-        "date": "Thu, 16 Dec 2021 22:03:25 GMT",
-        "etag": "\"0x8D9C0DFE2A54655\"",
-        "last-modified": "Thu, 16 Dec 2021 22:03:26 GMT",
+        "date": "Fri, 11 Feb 2022 03:11:43 GMT",
+        "etag": "\"0x8D9ED0C3B53B17A\"",
+        "last-modified": "Fri, 11 Feb 2022 03:11:44 GMT",
         "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
         "x-ms-blob-sequence-number": "0",
-        "x-ms-client-request-id": "938f6d9f-484f-4a04-414f-cc9ba7b3ede4",
-        "x-ms-request-id": "39a80fdb-201e-0034-55c8-f25936000000",
+        "x-ms-client-request-id": "073121a1-37ed-4ded-63a7-716ed69ac655",
+        "x-ms-request-id": "961ccf90-a01e-00a6-0df5-1e7b4b000000",
         "x-ms-request-server-encrypted": "true",
         "x-ms-version": "2020-02-10"
       },
@@ -926,30 +930,30 @@
     },
     {
       "Headers": {
-        "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Linux 5.4.0-1063-azure x86_64 #66~18.04.1-Ubuntu SMP Thu Oct 21 09:59:28 UTC 2021)",
-        "x-ms-client-request-id": "bc032936-d830-46fa-6a29-af5d5abb1b9b",
+        "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Windows 10 Pro 6.3 19041 19041.1.amd64fre.vb_release.191206-1406)",
+        "x-ms-client-request-id": "8afb4a92-8e62-42b2-6f17-958e9eb77b9e",
         "x-ms-version": "2020-02-10"
       },
       "Method": "PUT",
       "Response": {
-        "BODY": "﻿<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>ConditionNotMet</Code><Message>The condition specified using HTTP conditional header(s) is not met.\nRequestId:39a81004-201e-0034-7cc8-f25936000000\nTime:2021-12-16T22:03:26.2703992Z</Message></Error>",
+        "BODY": "﻿<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>ConditionNotMet</Code><Message>The condition specified using HTTP conditional header(s) is not met.\nRequestId:961cd012-a01e-00a6-06f5-1e7b4b000000\nTime:2022-02-11T03:11:44.2964822Z</Message></Error>",
         "REASON_PHRASE": "The condition specified using HTTP conditional header(s) is not met.",
         "STATUS_CODE": "412",
         "content-length": "252",
         "content-type": "application/xml",
-        "date": "Thu, 16 Dec 2021 22:03:25 GMT",
+        "date": "Fri, 11 Feb 2022 03:11:43 GMT",
         "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
-        "x-ms-client-request-id": "bc032936-d830-46fa-6a29-af5d5abb1b9b",
+        "x-ms-client-request-id": "8afb4a92-8e62-42b2-6f17-958e9eb77b9e",
         "x-ms-error-code": "ConditionNotMet",
-        "x-ms-request-id": "39a81004-201e-0034-7cc8-f25936000000",
+        "x-ms-request-id": "961cd012-a01e-00a6-06f5-1e7b4b000000",
         "x-ms-version": "2020-02-10"
       },
       "Url": "https://REDACTED.blob.core.windows.net/blobcontainerclienttestaccessconditiontags/blobcontainerclienttestaccessconditiontagsblob?comp=page"
     },
     {
       "Headers": {
-        "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Linux 5.4.0-1063-azure x86_64 #66~18.04.1-Ubuntu SMP Thu Oct 21 09:59:28 UTC 2021)",
-        "x-ms-client-request-id": "c671ae8e-fa5a-4ee1-5d6c-68b156dd1133",
+        "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Windows 10 Pro 6.3 19041 19041.1.amd64fre.vb_release.191206-1406)",
+        "x-ms-client-request-id": "0de68f9b-b051-4458-401c-0211611a1cb4",
         "x-ms-version": "2020-02-10"
       },
       "Method": "PUT",
@@ -958,43 +962,43 @@
         "REASON_PHRASE": "Created",
         "STATUS_CODE": "201",
         "content-length": "0",
-        "date": "Thu, 16 Dec 2021 22:03:26 GMT",
-        "etag": "\"0x8D9C0DFE2B37518\"",
-        "last-modified": "Thu, 16 Dec 2021 22:03:26 GMT",
+        "date": "Fri, 11 Feb 2022 03:11:43 GMT",
+        "etag": "\"0x8D9ED0C3BA08DA8\"",
+        "last-modified": "Fri, 11 Feb 2022 03:11:44 GMT",
         "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
         "x-ms-blob-sequence-number": "0",
-        "x-ms-client-request-id": "c671ae8e-fa5a-4ee1-5d6c-68b156dd1133",
-        "x-ms-request-id": "f9700521-e01e-003b-18c8-f22f5a000000",
+        "x-ms-client-request-id": "0de68f9b-b051-4458-401c-0211611a1cb4",
+        "x-ms-request-id": "961cd06e-a01e-00a6-61f5-1e7b4b000000",
         "x-ms-version": "2020-02-10"
       },
       "Url": "https://REDACTED.blob.core.windows.net/blobcontainerclienttestaccessconditiontags/blobcontainerclienttestaccessconditiontagsblob?comp=page"
     },
     {
       "Headers": {
-        "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Linux 5.4.0-1063-azure x86_64 #66~18.04.1-Ubuntu SMP Thu Oct 21 09:59:28 UTC 2021)",
-        "x-ms-client-request-id": "670890ba-d315-4ab5-4d00-c9b3dde85e0a",
+        "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Windows 10 Pro 6.3 19041 19041.1.amd64fre.vb_release.191206-1406)",
+        "x-ms-client-request-id": "6d23a043-9d50-4389-5065-9eb9fa060053",
         "x-ms-version": "2020-02-10"
       },
       "Method": "PUT",
       "Response": {
-        "BODY": "﻿<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>ConditionNotMet</Code><Message>The condition specified using HTTP conditional header(s) is not met.\nRequestId:f970053f-e01e-003b-30c8-f22f5a000000\nTime:2021-12-16T22:03:26.3488196Z</Message></Error>",
+        "BODY": "﻿<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>ConditionNotMet</Code><Message>The condition specified using HTTP conditional header(s) is not met.\nRequestId:961cd0ca-a01e-00a6-39f5-1e7b4b000000\nTime:2022-02-11T03:11:44.8001684Z</Message></Error>",
         "REASON_PHRASE": "The condition specified using HTTP conditional header(s) is not met.",
         "STATUS_CODE": "412",
         "content-length": "252",
         "content-type": "application/xml",
-        "date": "Thu, 16 Dec 2021 22:03:26 GMT",
+        "date": "Fri, 11 Feb 2022 03:11:44 GMT",
         "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
-        "x-ms-client-request-id": "670890ba-d315-4ab5-4d00-c9b3dde85e0a",
+        "x-ms-client-request-id": "6d23a043-9d50-4389-5065-9eb9fa060053",
         "x-ms-error-code": "ConditionNotMet",
-        "x-ms-request-id": "f970053f-e01e-003b-30c8-f22f5a000000",
+        "x-ms-request-id": "961cd0ca-a01e-00a6-39f5-1e7b4b000000",
         "x-ms-version": "2020-02-10"
       },
       "Url": "https://REDACTED.blob.core.windows.net/blobcontainerclienttestaccessconditiontags/blobcontainerclienttestaccessconditiontagsblob?comp=properties"
     },
     {
       "Headers": {
-        "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Linux 5.4.0-1063-azure x86_64 #66~18.04.1-Ubuntu SMP Thu Oct 21 09:59:28 UTC 2021)",
-        "x-ms-client-request-id": "dda141da-90dd-426f-6eed-6cc8e19db657",
+        "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Windows 10 Pro 6.3 19041 19041.1.amd64fre.vb_release.191206-1406)",
+        "x-ms-client-request-id": "e07334fa-adb7-43b1-6895-560c8d7eddb9",
         "x-ms-version": "2020-02-10"
       },
       "Method": "PUT",
@@ -1003,43 +1007,43 @@
         "REASON_PHRASE": "OK",
         "STATUS_CODE": "200",
         "content-length": "0",
-        "date": "Thu, 16 Dec 2021 22:03:26 GMT",
-        "etag": "\"0x8D9C0DFE2BF0C1F\"",
-        "last-modified": "Thu, 16 Dec 2021 22:03:26 GMT",
+        "date": "Fri, 11 Feb 2022 03:11:44 GMT",
+        "etag": "\"0x8D9ED0C3BED69D2\"",
+        "last-modified": "Fri, 11 Feb 2022 03:11:45 GMT",
         "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
         "x-ms-blob-sequence-number": "0",
-        "x-ms-client-request-id": "dda141da-90dd-426f-6eed-6cc8e19db657",
-        "x-ms-request-id": "b69fff1b-501e-002e-6cc8-f238e9000000",
+        "x-ms-client-request-id": "e07334fa-adb7-43b1-6895-560c8d7eddb9",
+        "x-ms-request-id": "961cd127-a01e-00a6-10f5-1e7b4b000000",
         "x-ms-version": "2020-02-10"
       },
       "Url": "https://REDACTED.blob.core.windows.net/blobcontainerclienttestaccessconditiontags/blobcontainerclienttestaccessconditiontagsblob?comp=properties"
     },
     {
       "Headers": {
-        "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Linux 5.4.0-1063-azure x86_64 #66~18.04.1-Ubuntu SMP Thu Oct 21 09:59:28 UTC 2021)",
-        "x-ms-client-request-id": "f32bf934-bfad-4b21-6fca-b8ad5c572dfd",
+        "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Windows 10 Pro 6.3 19041 19041.1.amd64fre.vb_release.191206-1406)",
+        "x-ms-client-request-id": "27388f15-d52c-423b-57f0-e1feb3422c6a",
         "x-ms-version": "2020-02-10"
       },
       "Method": "PUT",
       "Response": {
-        "BODY": "﻿<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>ConditionNotMet</Code><Message>The condition specified using HTTP conditional header(s) is not met.\nRequestId:b69fff2c-501e-002e-79c8-f238e9000000\nTime:2021-12-16T22:03:26.4295017Z</Message></Error>",
+        "BODY": "﻿<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>ConditionNotMet</Code><Message>The condition specified using HTTP conditional header(s) is not met.\nRequestId:961cd19d-a01e-00a6-7bf5-1e7b4b000000\nTime:2022-02-11T03:11:45.3058544Z</Message></Error>",
         "REASON_PHRASE": "The condition specified using HTTP conditional header(s) is not met.",
         "STATUS_CODE": "412",
         "content-length": "252",
         "content-type": "application/xml",
-        "date": "Thu, 16 Dec 2021 22:03:26 GMT",
+        "date": "Fri, 11 Feb 2022 03:11:44 GMT",
         "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
-        "x-ms-client-request-id": "f32bf934-bfad-4b21-6fca-b8ad5c572dfd",
+        "x-ms-client-request-id": "27388f15-d52c-423b-57f0-e1feb3422c6a",
         "x-ms-error-code": "ConditionNotMet",
-        "x-ms-request-id": "b69fff2c-501e-002e-79c8-f238e9000000",
+        "x-ms-request-id": "961cd19d-a01e-00a6-7bf5-1e7b4b000000",
         "x-ms-version": "2020-02-10"
       },
       "Url": "https://REDACTED.blob.core.windows.net/blobcontainerclienttestaccessconditiontags/blobcontainerclienttestaccessconditiontagsblob?comp=properties"
     },
     {
       "Headers": {
-        "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Linux 5.4.0-1063-azure x86_64 #66~18.04.1-Ubuntu SMP Thu Oct 21 09:59:28 UTC 2021)",
-        "x-ms-client-request-id": "ef7d3a54-7f1f-4933-74bd-90f55f217b19",
+        "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Windows 10 Pro 6.3 19041 19041.1.amd64fre.vb_release.191206-1406)",
+        "x-ms-client-request-id": "7fcf06a4-8031-4eb1-7ab8-7c227f871a87",
         "x-ms-version": "2020-02-10"
       },
       "Method": "PUT",
@@ -1048,43 +1052,44 @@
         "REASON_PHRASE": "OK",
         "STATUS_CODE": "200",
         "content-length": "0",
-        "date": "Thu, 16 Dec 2021 22:03:25 GMT",
-        "etag": "\"0x8D9C0DFE2CB3F55\"",
-        "last-modified": "Thu, 16 Dec 2021 22:03:26 GMT",
+        "date": "Fri, 11 Feb 2022 03:11:44 GMT",
+        "etag": "\"0x8D9ED0C3C3A6CFF\"",
+        "last-modified": "Fri, 11 Feb 2022 03:11:45 GMT",
         "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
         "x-ms-blob-sequence-number": "1",
-        "x-ms-client-request-id": "ef7d3a54-7f1f-4933-74bd-90f55f217b19",
-        "x-ms-request-id": "f19bf824-c01e-005e-24c8-f2811e000000",
+        "x-ms-client-request-id": "7fcf06a4-8031-4eb1-7ab8-7c227f871a87",
+        "x-ms-request-id": "961cd1f7-a01e-00a6-4ef5-1e7b4b000000",
         "x-ms-version": "2020-02-10"
       },
       "Url": "https://REDACTED.blob.core.windows.net/blobcontainerclienttestaccessconditiontags/blobcontainerclienttestaccessconditiontagsblob?comp=properties"
     },
     {
       "Headers": {
-        "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Linux 5.4.0-1063-azure x86_64 #66~18.04.1-Ubuntu SMP Thu Oct 21 09:59:28 UTC 2021)",
-        "x-ms-client-request-id": "28e2b7a1-3c02-4dc4-6f83-2ef95ad4b516",
+        "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Windows 10 Pro 6.3 19041 19041.1.amd64fre.vb_release.191206-1406)",
+        "x-ms-client-request-id": "48c979a9-ac20-4ec5-6b1a-ed07aad7d805",
         "x-ms-version": "2020-02-10"
       },
       "Method": "GET",
       "Response": {
-        "BODY": "﻿<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>ConditionNotMet</Code><Message>The condition specified using HTTP conditional header(s) is not met.\nRequestId:f19bf837-c01e-005e-34c8-f2811e000000\nTime:2021-12-16T22:03:26.5066213Z</Message></Error>",
+        "BODY": "﻿<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>ConditionNotMet</Code><Message>The condition specified using HTTP conditional header(s) is not met.\nRequestId:961cd24f-a01e-00a6-17f5-1e7b4b000000\nTime:2022-02-11T03:11:45.8095412Z</Message></Error>",
         "REASON_PHRASE": "The condition specified using HTTP conditional header(s) is not met.",
         "STATUS_CODE": "412",
         "content-length": "252",
         "content-type": "application/xml",
-        "date": "Thu, 16 Dec 2021 22:03:25 GMT",
+        "date": "Fri, 11 Feb 2022 03:11:45 GMT",
         "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
-        "x-ms-client-request-id": "28e2b7a1-3c02-4dc4-6f83-2ef95ad4b516",
+        "vary": "Origin",
+        "x-ms-client-request-id": "48c979a9-ac20-4ec5-6b1a-ed07aad7d805",
         "x-ms-error-code": "ConditionNotMet",
-        "x-ms-request-id": "f19bf837-c01e-005e-34c8-f2811e000000",
+        "x-ms-request-id": "961cd24f-a01e-00a6-17f5-1e7b4b000000",
         "x-ms-version": "2020-02-10"
       },
       "Url": "https://REDACTED.blob.core.windows.net/blobcontainerclienttestaccessconditiontags/blobcontainerclienttestaccessconditiontagsblob?comp=pagelist"
     },
     {
       "Headers": {
-        "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Linux 5.4.0-1063-azure x86_64 #66~18.04.1-Ubuntu SMP Thu Oct 21 09:59:28 UTC 2021)",
-        "x-ms-client-request-id": "2c9c9cbd-b60f-4b13-7129-3721147feb25",
+        "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Windows 10 Pro 6.3 19041 19041.1.amd64fre.vb_release.191206-1406)",
+        "x-ms-client-request-id": "76cf1950-8302-42cb-475c-e10bc5c829dc",
         "x-ms-version": "2020-02-10"
       },
       "Method": "GET",
@@ -1093,22 +1098,23 @@
         "REASON_PHRASE": "OK",
         "STATUS_CODE": "200",
         "content-type": "application/xml",
-        "date": "Thu, 16 Dec 2021 22:03:26 GMT",
-        "etag": "\"0x8D9C0DFE2CB3F55\"",
-        "last-modified": "Thu, 16 Dec 2021 22:03:26 GMT",
+        "date": "Fri, 11 Feb 2022 03:11:45 GMT",
+        "etag": "\"0x8D9ED0C3C3A6CFF\"",
+        "last-modified": "Fri, 11 Feb 2022 03:11:45 GMT",
         "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
         "transfer-encoding": "chunked",
+        "vary": "Origin",
         "x-ms-blob-content-length": "512",
-        "x-ms-client-request-id": "2c9c9cbd-b60f-4b13-7129-3721147feb25",
-        "x-ms-request-id": "69e20a1d-e01e-0014-19c8-f22291000000",
+        "x-ms-client-request-id": "76cf1950-8302-42cb-475c-e10bc5c829dc",
+        "x-ms-request-id": "961cd2c4-a01e-00a6-07f5-1e7b4b000000",
         "x-ms-version": "2020-02-10"
       },
       "Url": "https://REDACTED.blob.core.windows.net/blobcontainerclienttestaccessconditiontags/blobcontainerclienttestaccessconditiontagsblob?comp=pagelist"
     },
     {
       "Headers": {
-        "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Linux 5.4.0-1063-azure x86_64 #66~18.04.1-Ubuntu SMP Thu Oct 21 09:59:28 UTC 2021)",
-        "x-ms-client-request-id": "6d1f587b-3efb-4ee4-5210-94ae73c14d6d",
+        "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Windows 10 Pro 6.3 19041 19041.1.amd64fre.vb_release.191206-1406)",
+        "x-ms-client-request-id": "0f1c4440-cb86-4fe1-405e-0e783d68ba0e",
         "x-ms-version": "2020-02-10"
       },
       "Method": "PUT",
@@ -1118,24 +1124,24 @@
         "STATUS_CODE": "201",
         "content-length": "0",
         "content-md5": "v2GerAzfP2jUluqTRBN+iw==",
-        "date": "Thu, 16 Dec 2021 22:03:26 GMT",
-        "etag": "\"0x8D9C0DFE2D9BC26\"",
-        "last-modified": "Thu, 16 Dec 2021 22:03:26 GMT",
+        "date": "Fri, 11 Feb 2022 03:11:45 GMT",
+        "etag": "\"0x8D9ED0C3CAE053D\"",
+        "last-modified": "Fri, 11 Feb 2022 03:11:46 GMT",
         "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
-        "x-ms-client-request-id": "6d1f587b-3efb-4ee4-5210-94ae73c14d6d",
+        "x-ms-client-request-id": "0f1c4440-cb86-4fe1-405e-0e783d68ba0e",
         "x-ms-content-crc64": "6YKnaCgO5h0=",
-        "x-ms-request-id": "69e20a30-e01e-0014-2ac8-f22291000000",
+        "x-ms-request-id": "961cd322-a01e-00a6-5df5-1e7b4b000000",
         "x-ms-request-server-encrypted": "true",
         "x-ms-version": "2020-02-10",
-        "x-ms-version-id": "2021-12-16T22:03:26.5796134Z"
+        "x-ms-version-id": "2022-02-11T03:11:46.3063869Z"
       },
       "Url": "https://REDACTED.blob.core.windows.net/blobcontainerclienttestaccessconditiontags/blobcontainerclienttestaccessconditiontagsblockBlobClient"
     },
     {
       "Headers": {
         "content-type": "application/xml; charset=UTF-8",
-        "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Linux 5.4.0-1063-azure x86_64 #66~18.04.1-Ubuntu SMP Thu Oct 21 09:59:28 UTC 2021)",
-        "x-ms-client-request-id": "89c72a49-fa97-45f6-439c-c6b57206227f",
+        "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Windows 10 Pro 6.3 19041 19041.1.amd64fre.vb_release.191206-1406)",
+        "x-ms-client-request-id": "4a7628b7-b3c4-4daa-5b39-90045774b9f5",
         "x-ms-version": "2020-02-10"
       },
       "Method": "PUT",
@@ -1143,18 +1149,18 @@
         "BODY": "",
         "REASON_PHRASE": "No Content",
         "STATUS_CODE": "204",
-        "date": "Thu, 16 Dec 2021 22:03:26 GMT",
+        "date": "Fri, 11 Feb 2022 03:11:46 GMT",
         "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
-        "x-ms-client-request-id": "89c72a49-fa97-45f6-439c-c6b57206227f",
-        "x-ms-request-id": "69e20a3a-e01e-0014-34c8-f22291000000",
+        "x-ms-client-request-id": "4a7628b7-b3c4-4daa-5b39-90045774b9f5",
+        "x-ms-request-id": "961cd380-a01e-00a6-35f5-1e7b4b000000",
         "x-ms-version": "2020-02-10"
       },
       "Url": "https://REDACTED.blob.core.windows.net/blobcontainerclienttestaccessconditiontags/blobcontainerclienttestaccessconditiontagsblockBlobClient?comp=tags"
     },
     {
       "Headers": {
-        "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Linux 5.4.0-1063-azure x86_64 #66~18.04.1-Ubuntu SMP Thu Oct 21 09:59:28 UTC 2021)",
-        "x-ms-client-request-id": "5e0fd232-0190-49ee-7029-2b552948a069",
+        "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Windows 10 Pro 6.3 19041 19041.1.amd64fre.vb_release.191206-1406)",
+        "x-ms-client-request-id": "494ab2ed-6cd9-4fdf-4d38-9f33e82a307c",
         "x-ms-version": "2020-02-10"
       },
       "Method": "PUT",
@@ -1163,62 +1169,62 @@
         "REASON_PHRASE": "OK",
         "STATUS_CODE": "200",
         "content-length": "0",
-        "date": "Thu, 16 Dec 2021 22:03:26 GMT",
+        "date": "Fri, 11 Feb 2022 03:11:46 GMT",
         "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
-        "x-ms-client-request-id": "5e0fd232-0190-49ee-7029-2b552948a069",
-        "x-ms-request-id": "69e20a41-e01e-0014-3bc8-f22291000000",
+        "x-ms-client-request-id": "494ab2ed-6cd9-4fdf-4d38-9f33e82a307c",
+        "x-ms-request-id": "961cd3cb-a01e-00a6-79f5-1e7b4b000000",
         "x-ms-version": "2020-02-10"
       },
       "Url": "https://REDACTED.blob.core.windows.net/blobcontainerclienttestaccessconditiontags/blobcontainerclienttestaccessconditiontagsblockBlobClient?comp=tier"
     },
     {
       "Headers": {
-        "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Linux 5.4.0-1063-azure x86_64 #66~18.04.1-Ubuntu SMP Thu Oct 21 09:59:28 UTC 2021)",
-        "x-ms-client-request-id": "d83a0029-9364-4e64-7c72-7298d228e023",
+        "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Windows 10 Pro 6.3 19041 19041.1.amd64fre.vb_release.191206-1406)",
+        "x-ms-client-request-id": "e5b56b25-4df8-4e8b-607c-7daf3b311182",
         "x-ms-version": "2020-02-10"
       },
       "Method": "PUT",
       "Response": {
-        "BODY": "﻿<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>ConditionNotMet</Code><Message>The condition specified using HTTP conditional header(s) is not met.\nRequestId:69e20a51-e01e-0014-4bc8-f22291000000\nTime:2021-12-16T22:03:26.6341069Z</Message></Error>",
+        "BODY": "﻿<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>ConditionNotMet</Code><Message>The condition specified using HTTP conditional header(s) is not met.\nRequestId:961cd42d-a01e-00a6-4ef5-1e7b4b000000\nTime:2022-02-11T03:11:47.0757546Z</Message></Error>",
         "REASON_PHRASE": "The condition specified using HTTP conditional header(s) is not met.",
         "STATUS_CODE": "412",
         "content-length": "252",
         "content-type": "application/xml",
-        "date": "Thu, 16 Dec 2021 22:03:26 GMT",
+        "date": "Fri, 11 Feb 2022 03:11:46 GMT",
         "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
-        "x-ms-client-request-id": "d83a0029-9364-4e64-7c72-7298d228e023",
+        "x-ms-client-request-id": "e5b56b25-4df8-4e8b-607c-7daf3b311182",
         "x-ms-error-code": "ConditionNotMet",
-        "x-ms-request-id": "69e20a51-e01e-0014-4bc8-f22291000000",
+        "x-ms-request-id": "961cd42d-a01e-00a6-4ef5-1e7b4b000000",
         "x-ms-version": "2020-02-10"
       },
       "Url": "https://REDACTED.blob.core.windows.net/blobcontainerclienttestaccessconditiontags/blobcontainerclienttestaccessconditiontagsblockBlobClient?comp=tier"
     },
     {
       "Headers": {
-        "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Linux 5.4.0-1063-azure x86_64 #66~18.04.1-Ubuntu SMP Thu Oct 21 09:59:28 UTC 2021)",
-        "x-ms-client-request-id": "5c26497d-563a-4fbb-6532-644036a2b354",
+        "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Windows 10 Pro 6.3 19041 19041.1.amd64fre.vb_release.191206-1406)",
+        "x-ms-client-request-id": "95db1bfd-7d40-4dcf-6b3d-a34994cf025e",
         "x-ms-version": "2020-02-10"
       },
       "Method": "PUT",
       "Response": {
-        "BODY": "﻿<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>ConditionNotMet</Code><Message>The condition specified using HTTP conditional header(s) is not met.\nRequestId:a6760995-001e-001c-37c8-f2389e000000\nTime:2021-12-16T22:03:26.6923377Z</Message></Error>",
+        "BODY": "﻿<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>ConditionNotMet</Code><Message>The condition specified using HTTP conditional header(s) is not met.\nRequestId:961cd4a0-a01e-00a6-34f5-1e7b4b000000\nTime:2022-02-11T03:11:47.3295960Z</Message></Error>",
         "REASON_PHRASE": "The condition specified using HTTP conditional header(s) is not met.",
         "STATUS_CODE": "412",
         "content-length": "252",
         "content-type": "application/xml",
-        "date": "Thu, 16 Dec 2021 22:03:26 GMT",
+        "date": "Fri, 11 Feb 2022 03:11:46 GMT",
         "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
-        "x-ms-client-request-id": "5c26497d-563a-4fbb-6532-644036a2b354",
+        "x-ms-client-request-id": "95db1bfd-7d40-4dcf-6b3d-a34994cf025e",
         "x-ms-error-code": "ConditionNotMet",
-        "x-ms-request-id": "a6760995-001e-001c-37c8-f2389e000000",
+        "x-ms-request-id": "961cd4a0-a01e-00a6-34f5-1e7b4b000000",
         "x-ms-version": "2020-02-10"
       },
       "Url": "https://REDACTED.blob.core.windows.net/blobcontainerclienttestaccessconditiontags/blobcontainerclienttestaccessconditiontagsblockBlobClient"
     },
     {
       "Headers": {
-        "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Linux 5.4.0-1063-azure x86_64 #66~18.04.1-Ubuntu SMP Thu Oct 21 09:59:28 UTC 2021)",
-        "x-ms-client-request-id": "3b3e0283-c8d2-4a0d-731c-9ef46804c798",
+        "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Windows 10 Pro 6.3 19041 19041.1.amd64fre.vb_release.191206-1406)",
+        "x-ms-client-request-id": "703e740d-de28-4bc8-6ce6-457c32defd19",
         "x-ms-version": "2020-02-10"
       },
       "Method": "PUT",
@@ -1228,24 +1234,24 @@
         "STATUS_CODE": "201",
         "content-length": "0",
         "content-md5": "v2GerAzfP2jUluqTRBN+iw==",
-        "date": "Thu, 16 Dec 2021 22:03:26 GMT",
-        "etag": "\"0x8D9C0DFE2F3A8F9\"",
-        "last-modified": "Thu, 16 Dec 2021 22:03:26 GMT",
+        "date": "Fri, 11 Feb 2022 03:11:47 GMT",
+        "etag": "\"0x8D9ED0C3D6FB1EA\"",
+        "last-modified": "Fri, 11 Feb 2022 03:11:47 GMT",
         "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
-        "x-ms-client-request-id": "3b3e0283-c8d2-4a0d-731c-9ef46804c798",
+        "x-ms-client-request-id": "703e740d-de28-4bc8-6ce6-457c32defd19",
         "x-ms-content-crc64": "6YKnaCgO5h0=",
-        "x-ms-request-id": "2abfe168-d01e-000f-32c8-f21c92000000",
+        "x-ms-request-id": "961cd4fd-a01e-00a6-01f5-1e7b4b000000",
         "x-ms-request-server-encrypted": "true",
         "x-ms-version": "2020-02-10",
-        "x-ms-version-id": "2021-12-16T22:03:26.7505161Z"
+        "x-ms-version-id": "2022-02-11T03:11:47.5766522Z"
       },
       "Url": "https://REDACTED.blob.core.windows.net/blobcontainerclienttestaccessconditiontags/blobcontainerclienttestaccessconditiontagsblockBlobClient"
     },
     {
       "Headers": {
         "content-type": "application/xml; charset=UTF-8",
-        "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Linux 5.4.0-1063-azure x86_64 #66~18.04.1-Ubuntu SMP Thu Oct 21 09:59:28 UTC 2021)",
-        "x-ms-client-request-id": "2e67de96-e4d0-43c1-4a02-8287bbaec139",
+        "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Windows 10 Pro 6.3 19041 19041.1.amd64fre.vb_release.191206-1406)",
+        "x-ms-client-request-id": "b421391c-eb72-4edd-650d-a1fed2a76c28",
         "x-ms-version": "2020-02-10"
       },
       "Method": "PUT",
@@ -1253,18 +1259,18 @@
         "BODY": "",
         "REASON_PHRASE": "No Content",
         "STATUS_CODE": "204",
-        "date": "Thu, 16 Dec 2021 22:03:26 GMT",
+        "date": "Fri, 11 Feb 2022 03:11:47 GMT",
         "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
-        "x-ms-client-request-id": "2e67de96-e4d0-43c1-4a02-8287bbaec139",
-        "x-ms-request-id": "2abfe19c-d01e-000f-61c8-f21c92000000",
+        "x-ms-client-request-id": "b421391c-eb72-4edd-650d-a1fed2a76c28",
+        "x-ms-request-id": "961cd54f-a01e-00a6-4cf5-1e7b4b000000",
         "x-ms-version": "2020-02-10"
       },
       "Url": "https://REDACTED.blob.core.windows.net/blobcontainerclienttestaccessconditiontags/blobcontainerclienttestaccessconditiontagsblockBlobClient?comp=tags"
     },
     {
       "Headers": {
-        "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Linux 5.4.0-1063-azure x86_64 #66~18.04.1-Ubuntu SMP Thu Oct 21 09:59:28 UTC 2021)",
-        "x-ms-client-request-id": "29a6e78a-84be-41c9-606e-2f222c93a176",
+        "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Windows 10 Pro 6.3 19041 19041.1.amd64fre.vb_release.191206-1406)",
+        "x-ms-client-request-id": "49dc4051-d889-4391-5e2d-6b0e4f4af83f",
         "x-ms-version": "2020-02-10"
       },
       "Method": "PUT",
@@ -1273,11 +1279,11 @@
         "REASON_PHRASE": "Created",
         "STATUS_CODE": "201",
         "content-length": "0",
-        "date": "Thu, 16 Dec 2021 22:03:26 GMT",
+        "date": "Fri, 11 Feb 2022 03:11:47 GMT",
         "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
-        "x-ms-client-request-id": "29a6e78a-84be-41c9-606e-2f222c93a176",
+        "x-ms-client-request-id": "49dc4051-d889-4391-5e2d-6b0e4f4af83f",
         "x-ms-content-crc64": "6YKnaCgO5h0=",
-        "x-ms-request-id": "2abfe1b3-d01e-000f-78c8-f21c92000000",
+        "x-ms-request-id": "961cd5d7-a01e-00a6-4af5-1e7b4b000000",
         "x-ms-request-server-encrypted": "true",
         "x-ms-version": "2020-02-10"
       },
@@ -1285,30 +1291,32 @@
     },
     {
       "Headers": {
-        "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Linux 5.4.0-1063-azure x86_64 #66~18.04.1-Ubuntu SMP Thu Oct 21 09:59:28 UTC 2021)",
-        "x-ms-client-request-id": "730aa293-48be-40be-5361-846ed9fa3f9c",
+        "content-type": "application/xml; charset=UTF-8",
+        "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Windows 10 Pro 6.3 19041 19041.1.amd64fre.vb_release.191206-1406)",
+        "x-ms-client-request-id": "dc65f102-1e7d-47dd-4ca3-e6578d4c9662",
         "x-ms-version": "2020-02-10"
       },
       "Method": "PUT",
       "Response": {
-        "BODY": "﻿<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>ConditionNotMet</Code><Message>The condition specified using HTTP conditional header(s) is not met.\nRequestId:2abfe1ce-d01e-000f-12c8-f21c92000000\nTime:2021-12-16T22:03:26.8120444Z</Message></Error>",
+        "BODY": "﻿<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>ConditionNotMet</Code><Message>The condition specified using HTTP conditional header(s) is not met.\nRequestId:961cd65c-a01e-00a6-44f5-1e7b4b000000\nTime:2022-02-11T03:11:48.3539608Z</Message></Error>",
         "REASON_PHRASE": "The condition specified using HTTP conditional header(s) is not met.",
         "STATUS_CODE": "412",
         "content-length": "252",
         "content-type": "application/xml",
-        "date": "Thu, 16 Dec 2021 22:03:26 GMT",
+        "date": "Fri, 11 Feb 2022 03:11:47 GMT",
         "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
-        "x-ms-client-request-id": "730aa293-48be-40be-5361-846ed9fa3f9c",
+        "x-ms-client-request-id": "dc65f102-1e7d-47dd-4ca3-e6578d4c9662",
         "x-ms-error-code": "ConditionNotMet",
-        "x-ms-request-id": "2abfe1ce-d01e-000f-12c8-f21c92000000",
+        "x-ms-request-id": "961cd65c-a01e-00a6-44f5-1e7b4b000000",
         "x-ms-version": "2020-02-10"
       },
       "Url": "https://REDACTED.blob.core.windows.net/blobcontainerclienttestaccessconditiontags/blobcontainerclienttestaccessconditiontagsblockBlobClient?comp=blocklist"
     },
     {
       "Headers": {
-        "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Linux 5.4.0-1063-azure x86_64 #66~18.04.1-Ubuntu SMP Thu Oct 21 09:59:28 UTC 2021)",
-        "x-ms-client-request-id": "d396d684-acde-4ec1-73b4-44d0a9080720",
+        "content-type": "application/xml; charset=UTF-8",
+        "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Windows 10 Pro 6.3 19041 19041.1.amd64fre.vb_release.191206-1406)",
+        "x-ms-client-request-id": "bcf6265f-aaa9-4251-4e51-d60e1cc717fb",
         "x-ms-version": "2020-02-10"
       },
       "Method": "PUT",
@@ -1317,24 +1325,24 @@
         "REASON_PHRASE": "Created",
         "STATUS_CODE": "201",
         "content-length": "0",
-        "date": "Thu, 16 Dec 2021 22:03:26 GMT",
-        "etag": "\"0x8D9C0DFE305A7B4\"",
-        "last-modified": "Thu, 16 Dec 2021 22:03:26 GMT",
+        "date": "Fri, 11 Feb 2022 03:11:48 GMT",
+        "etag": "\"0x8D9ED0C3E0C01D6\"",
+        "last-modified": "Fri, 11 Feb 2022 03:11:48 GMT",
         "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
-        "x-ms-client-request-id": "d396d684-acde-4ec1-73b4-44d0a9080720",
-        "x-ms-content-crc64": "HbLJv8y/Oxg=",
-        "x-ms-request-id": "82462837-701e-0029-59c8-f2548a000000",
+        "x-ms-client-request-id": "bcf6265f-aaa9-4251-4e51-d60e1cc717fb",
+        "x-ms-content-crc64": "/E8YwjlkcTc=",
+        "x-ms-request-id": "961cd6e0-a01e-00a6-3cf5-1e7b4b000000",
         "x-ms-request-server-encrypted": "true",
         "x-ms-version": "2020-02-10",
-        "x-ms-version-id": "2021-12-16T22:03:26.8684484Z"
+        "x-ms-version-id": "2022-02-11T03:11:48.6010598Z"
       },
       "Url": "https://REDACTED.blob.core.windows.net/blobcontainerclienttestaccessconditiontags/blobcontainerclienttestaccessconditiontagsblockBlobClient?comp=blocklist"
     },
     {
       "Headers": {
         "content-type": "application/xml; charset=UTF-8",
-        "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Linux 5.4.0-1063-azure x86_64 #66~18.04.1-Ubuntu SMP Thu Oct 21 09:59:28 UTC 2021)",
-        "x-ms-client-request-id": "d1c9c872-12f4-47e9-711c-8933fad79e91",
+        "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Windows 10 Pro 6.3 19041 19041.1.amd64fre.vb_release.191206-1406)",
+        "x-ms-client-request-id": "17e2386e-2930-487e-5281-140d843dbfa4",
         "x-ms-version": "2020-02-10"
       },
       "Method": "PUT",
@@ -1342,40 +1350,41 @@
         "BODY": "",
         "REASON_PHRASE": "No Content",
         "STATUS_CODE": "204",
-        "date": "Thu, 16 Dec 2021 22:03:26 GMT",
+        "date": "Fri, 11 Feb 2022 03:11:48 GMT",
         "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
-        "x-ms-client-request-id": "d1c9c872-12f4-47e9-711c-8933fad79e91",
-        "x-ms-request-id": "8246284d-701e-0029-6ec8-f2548a000000",
+        "x-ms-client-request-id": "17e2386e-2930-487e-5281-140d843dbfa4",
+        "x-ms-request-id": "961cd75c-a01e-00a6-2bf5-1e7b4b000000",
         "x-ms-version": "2020-02-10"
       },
       "Url": "https://REDACTED.blob.core.windows.net/blobcontainerclienttestaccessconditiontags/blobcontainerclienttestaccessconditiontagsblockBlobClient?comp=tags"
     },
     {
       "Headers": {
-        "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Linux 5.4.0-1063-azure x86_64 #66~18.04.1-Ubuntu SMP Thu Oct 21 09:59:28 UTC 2021)",
-        "x-ms-client-request-id": "8e58283a-3385-43cf-6fd9-fcb0c484c27d",
+        "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Windows 10 Pro 6.3 19041 19041.1.amd64fre.vb_release.191206-1406)",
+        "x-ms-client-request-id": "d8c7a3c9-2c1a-408c-5115-1c9675bc8238",
         "x-ms-version": "2020-02-10"
       },
       "Method": "GET",
       "Response": {
-        "BODY": "﻿<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>ConditionNotMet</Code><Message>The condition specified using HTTP conditional header(s) is not met.\nRequestId:82462853-701e-0029-74c8-f2548a000000\nTime:2021-12-16T22:03:26.9046246Z</Message></Error>",
+        "BODY": "﻿<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>ConditionNotMet</Code><Message>The condition specified using HTTP conditional header(s) is not met.\nRequestId:961cd7f6-a01e-00a6-39f5-1e7b4b000000\nTime:2022-02-11T03:11:49.1164865Z</Message></Error>",
         "REASON_PHRASE": "The condition specified using HTTP conditional header(s) is not met.",
         "STATUS_CODE": "412",
         "content-length": "252",
         "content-type": "application/xml",
-        "date": "Thu, 16 Dec 2021 22:03:26 GMT",
+        "date": "Fri, 11 Feb 2022 03:11:48 GMT",
         "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
-        "x-ms-client-request-id": "8e58283a-3385-43cf-6fd9-fcb0c484c27d",
+        "vary": "Origin",
+        "x-ms-client-request-id": "d8c7a3c9-2c1a-408c-5115-1c9675bc8238",
         "x-ms-error-code": "ConditionNotMet",
-        "x-ms-request-id": "82462853-701e-0029-74c8-f2548a000000",
+        "x-ms-request-id": "961cd7f6-a01e-00a6-39f5-1e7b4b000000",
         "x-ms-version": "2020-02-10"
       },
       "Url": "https://REDACTED.blob.core.windows.net/blobcontainerclienttestaccessconditiontags/blobcontainerclienttestaccessconditiontagsblockBlobClient?blocklisttype=committed&comp=blocklist"
     },
     {
       "Headers": {
-        "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Linux 5.4.0-1063-azure x86_64 #66~18.04.1-Ubuntu SMP Thu Oct 21 09:59:28 UTC 2021)",
-        "x-ms-client-request-id": "5885fccf-7684-417c-491d-02567c619464",
+        "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Windows 10 Pro 6.3 19041 19041.1.amd64fre.vb_release.191206-1406)",
+        "x-ms-client-request-id": "ec955bba-6b7f-433c-46d2-3cc618717d60",
         "x-ms-version": "2020-02-10"
       },
       "Method": "GET",
@@ -1384,22 +1393,23 @@
         "REASON_PHRASE": "OK",
         "STATUS_CODE": "200",
         "content-type": "application/xml",
-        "date": "Thu, 16 Dec 2021 22:03:26 GMT",
-        "etag": "\"0x8D9C0DFE305A7B4\"",
-        "last-modified": "Thu, 16 Dec 2021 22:03:26 GMT",
+        "date": "Fri, 11 Feb 2022 03:11:48 GMT",
+        "etag": "\"0x8D9ED0C3E0C01D6\"",
+        "last-modified": "Fri, 11 Feb 2022 03:11:48 GMT",
         "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
         "transfer-encoding": "chunked",
+        "vary": "Origin",
         "x-ms-blob-content-length": "512",
-        "x-ms-client-request-id": "5885fccf-7684-417c-491d-02567c619464",
-        "x-ms-request-id": "5f82daab-c01e-004e-64c8-f24476000000",
+        "x-ms-client-request-id": "ec955bba-6b7f-433c-46d2-3cc618717d60",
+        "x-ms-request-id": "961cd876-a01e-00a6-2ff5-1e7b4b000000",
         "x-ms-version": "2020-02-10"
       },
       "Url": "https://REDACTED.blob.core.windows.net/blobcontainerclienttestaccessconditiontags/blobcontainerclienttestaccessconditiontagsblockBlobClient?blocklisttype=committed&comp=blocklist"
     },
     {
       "Headers": {
-        "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Linux 5.4.0-1063-azure x86_64 #66~18.04.1-Ubuntu SMP Thu Oct 21 09:59:28 UTC 2021)",
-        "x-ms-client-request-id": "f56a711e-e458-4a66-44a1-4bfad40049ad",
+        "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Windows 10 Pro 6.3 19041 19041.1.amd64fre.vb_release.191206-1406)",
+        "x-ms-client-request-id": "84518dc4-4bab-46ee-6eba-06249c1aeb48",
         "x-ms-version": "2020-02-10"
       },
       "Method": "PUT",
@@ -1409,98 +1419,24 @@
         "STATUS_CODE": "201",
         "content-length": "0",
         "content-md5": "DzQ7CTESaiDxM9Z8KwGKOw==",
-        "date": "Thu, 16 Dec 2021 22:03:26 GMT",
-        "etag": "\"0x8D9C0DFE3162009\"",
-        "last-modified": "Thu, 16 Dec 2021 22:03:26 GMT",
+        "date": "Fri, 11 Feb 2022 03:11:49 GMT",
+        "etag": "\"0x8D9ED0C3EA6A44F\"",
+        "last-modified": "Fri, 11 Feb 2022 03:11:49 GMT",
         "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
-        "x-ms-client-request-id": "f56a711e-e458-4a66-44a1-4bfad40049ad",
+        "x-ms-client-request-id": "84518dc4-4bab-46ee-6eba-06249c1aeb48",
         "x-ms-content-crc64": "iknlm7CyG2k=",
-        "x-ms-request-id": "5f82dabc-c01e-004e-74c8-f24476000000",
+        "x-ms-request-id": "961cd8eb-a01e-00a6-17f5-1e7b4b000000",
         "x-ms-request-server-encrypted": "true",
         "x-ms-version": "2020-02-10",
-        "x-ms-version-id": "2021-12-16T22:03:26.9753865Z"
-      },
-      "Url": "https://REDACTED.blob.core.windows.net/blobcontainerclienttestaccessconditiontags/blobcontainerclienttestaccessconditiontagssourceBlobClient"
-    },
-    {
-      "Headers": {
-        "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Linux 5.4.0-1063-azure x86_64 #66~18.04.1-Ubuntu SMP Thu Oct 21 09:59:28 UTC 2021)",
-        "x-ms-client-request-id": "ac512558-561f-490b-4e92-776f9273aa19",
-        "x-ms-version": "2020-02-10"
-      },
-      "Method": "PUT",
-      "Response": {
-        "BODY": "﻿<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>ConditionNotMet</Code><Message>The condition specified using HTTP conditional header(s) is not met.\nRequestId:5f82daca-c01e-004e-02c8-f24476000000\nTime:2021-12-16T22:03:27.0382521Z</Message></Error>",
-        "REASON_PHRASE": "The condition specified using HTTP conditional header(s) is not met.",
-        "STATUS_CODE": "412",
-        "content-length": "252",
-        "content-type": "application/xml",
-        "date": "Thu, 16 Dec 2021 22:03:26 GMT",
-        "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
-        "x-ms-client-request-id": "ac512558-561f-490b-4e92-776f9273aa19",
-        "x-ms-error-code": "ConditionNotMet",
-        "x-ms-request-id": "5f82daca-c01e-004e-02c8-f24476000000",
-        "x-ms-version": "2020-02-10"
-      },
-      "Url": "https://REDACTED.blob.core.windows.net/blobcontainerclienttestaccessconditiontags/blobcontainerclienttestaccessconditiontagsblockBlobClient"
-    },
-    {
-      "Headers": {
-        "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Linux 5.4.0-1063-azure x86_64 #66~18.04.1-Ubuntu SMP Thu Oct 21 09:59:28 UTC 2021)",
-        "x-ms-client-request-id": "90d4193e-a22b-4878-49e5-9d4aa1145e56",
-        "x-ms-version": "2020-02-10"
-      },
-      "Method": "PUT",
-      "Response": {
-        "BODY": "",
-        "REASON_PHRASE": "Accepted",
-        "STATUS_CODE": "202",
-        "content-length": "0",
-        "date": "Thu, 16 Dec 2021 22:03:26 GMT",
-        "etag": "\"0x8D9C0DFE32EE847\"",
-        "last-modified": "Thu, 16 Dec 2021 22:03:27 GMT",
-        "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
-        "x-ms-client-request-id": "90d4193e-a22b-4878-49e5-9d4aa1145e56",
-        "x-ms-content-crc64": "iknlm7CyG2k=",
-        "x-ms-copy-id": "b246543e-f61a-4c55-89bf-20eb0e880343",
-        "x-ms-copy-status": "success",
-        "x-ms-request-id": "2cb15d31-f01e-0018-36c8-f2b599000000",
-        "x-ms-version": "2020-02-10",
-        "x-ms-version-id": "2021-12-16T22:03:27.1502870Z"
-      },
-      "Url": "https://REDACTED.blob.core.windows.net/blobcontainerclienttestaccessconditiontags/blobcontainerclienttestaccessconditiontagsblockBlobClient"
-    },
-    {
-      "Headers": {
-        "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Linux 5.4.0-1063-azure x86_64 #66~18.04.1-Ubuntu SMP Thu Oct 21 09:59:28 UTC 2021)",
-        "x-ms-client-request-id": "915f672c-0b8f-4a32-5146-335ac2990d00",
-        "x-ms-version": "2020-02-10"
-      },
-      "Method": "PUT",
-      "Response": {
-        "BODY": "",
-        "REASON_PHRASE": "Created",
-        "STATUS_CODE": "201",
-        "content-length": "0",
-        "content-md5": "DzQ7CTESaiDxM9Z8KwGKOw==",
-        "date": "Thu, 16 Dec 2021 22:03:26 GMT",
-        "etag": "\"0x8D9C0DFE33451FC\"",
-        "last-modified": "Thu, 16 Dec 2021 22:03:27 GMT",
-        "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
-        "x-ms-client-request-id": "915f672c-0b8f-4a32-5146-335ac2990d00",
-        "x-ms-content-crc64": "iknlm7CyG2k=",
-        "x-ms-request-id": "2cb15d7b-f01e-0018-77c8-f2b599000000",
-        "x-ms-request-server-encrypted": "true",
-        "x-ms-version": "2020-02-10",
-        "x-ms-version-id": "2021-12-16T22:03:27.1732732Z"
+        "x-ms-version-id": "2022-02-11T03:11:49.6134735Z"
       },
       "Url": "https://REDACTED.blob.core.windows.net/blobcontainerclienttestaccessconditiontags/blobcontainerclienttestaccessconditiontagssourceBlobClient2"
     },
     {
       "Headers": {
         "content-type": "application/xml; charset=UTF-8",
-        "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Linux 5.4.0-1063-azure x86_64 #66~18.04.1-Ubuntu SMP Thu Oct 21 09:59:28 UTC 2021)",
-        "x-ms-client-request-id": "5bedb104-987c-4e7b-7dd2-c824860021f1",
+        "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Windows 10 Pro 6.3 19041 19041.1.amd64fre.vb_release.191206-1406)",
+        "x-ms-client-request-id": "910cc5c0-40b8-4c7c-6f65-9a85abdade17",
         "x-ms-version": "2020-02-10"
       },
       "Method": "PUT",
@@ -1508,40 +1444,40 @@
         "BODY": "",
         "REASON_PHRASE": "No Content",
         "STATUS_CODE": "204",
-        "date": "Thu, 16 Dec 2021 22:03:26 GMT",
+        "date": "Fri, 11 Feb 2022 03:11:49 GMT",
         "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
-        "x-ms-client-request-id": "5bedb104-987c-4e7b-7dd2-c824860021f1",
-        "x-ms-request-id": "2cb15d89-f01e-0018-03c8-f2b599000000",
+        "x-ms-client-request-id": "910cc5c0-40b8-4c7c-6f65-9a85abdade17",
+        "x-ms-request-id": "961cd969-a01e-00a6-0bf5-1e7b4b000000",
         "x-ms-version": "2020-02-10"
       },
       "Url": "https://REDACTED.blob.core.windows.net/blobcontainerclienttestaccessconditiontags/blobcontainerclienttestaccessconditiontagssourceBlobClient2?comp=tags"
     },
     {
       "Headers": {
-        "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Linux 5.4.0-1063-azure x86_64 #66~18.04.1-Ubuntu SMP Thu Oct 21 09:59:28 UTC 2021)",
-        "x-ms-client-request-id": "2c1b0075-b2bf-4120-6366-0bf0a0f23f4b",
+        "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Windows 10 Pro 6.3 19041 19041.1.amd64fre.vb_release.191206-1406)",
+        "x-ms-client-request-id": "90f7cfc3-e223-444c-722d-b75bee8fd73f",
         "x-ms-version": "2020-02-10"
       },
       "Method": "PUT",
       "Response": {
-        "BODY": "﻿<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>ConditionNotMet</Code><Message>The condition specified using HTTP conditional header(s) is not met.\nRequestId:2cb15d96-f01e-0018-0fc8-f2b599000000\nTime:2021-12-16T22:03:27.2077600Z</Message></Error>",
+        "BODY": "﻿<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>ConditionNotMet</Code><Message>The condition specified using HTTP conditional header(s) is not met.\nRequestId:961cd9ef-a01e-00a6-03f5-1e7b4b000000\nTime:2022-02-11T03:11:50.1278579Z</Message></Error>",
         "REASON_PHRASE": "The condition specified using HTTP conditional header(s) is not met.",
         "STATUS_CODE": "412",
         "content-length": "252",
         "content-type": "application/xml",
-        "date": "Thu, 16 Dec 2021 22:03:26 GMT",
+        "date": "Fri, 11 Feb 2022 03:11:49 GMT",
         "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
-        "x-ms-client-request-id": "2c1b0075-b2bf-4120-6366-0bf0a0f23f4b",
+        "x-ms-client-request-id": "90f7cfc3-e223-444c-722d-b75bee8fd73f",
         "x-ms-error-code": "ConditionNotMet",
-        "x-ms-request-id": "2cb15d96-f01e-0018-0fc8-f2b599000000",
+        "x-ms-request-id": "961cd9ef-a01e-00a6-03f5-1e7b4b000000",
         "x-ms-version": "2020-02-10"
       },
       "Url": "https://REDACTED.blob.core.windows.net/blobcontainerclienttestaccessconditiontags/blobcontainerclienttestaccessconditiontagsblockBlobClient"
     },
     {
       "Headers": {
-        "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Linux 5.4.0-1063-azure x86_64 #66~18.04.1-Ubuntu SMP Thu Oct 21 09:59:28 UTC 2021)",
-        "x-ms-client-request-id": "66a9b381-c502-49f1-4884-a3154c1c8f6c",
+        "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Windows 10 Pro 6.3 19041 19041.1.amd64fre.vb_release.191206-1406)",
+        "x-ms-client-request-id": "d1995524-ee60-4392-6ea1-4823a932f188",
         "x-ms-version": "2020-02-10"
       },
       "Method": "PUT",
@@ -1550,23 +1486,23 @@
         "REASON_PHRASE": "Accepted",
         "STATUS_CODE": "202",
         "content-length": "0",
-        "date": "Thu, 16 Dec 2021 22:03:26 GMT",
-        "etag": "\"0x8D9C0DFE3451867\"",
-        "last-modified": "Thu, 16 Dec 2021 22:03:27 GMT",
+        "date": "Fri, 11 Feb 2022 03:11:49 GMT",
+        "etag": "\"0x8D9ED0C3F1B4DD5\"",
+        "last-modified": "Fri, 11 Feb 2022 03:11:50 GMT",
         "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
-        "x-ms-client-request-id": "66a9b381-c502-49f1-4884-a3154c1c8f6c",
-        "x-ms-copy-id": "c42a50e9-6c0c-4899-b002-a885ee394554",
+        "x-ms-client-request-id": "d1995524-ee60-4392-6ea1-4823a932f188",
+        "x-ms-copy-id": "51e6f365-d047-42fd-a055-8b9a734519d1",
         "x-ms-copy-status": "success",
-        "x-ms-request-id": "6853e42b-801e-0070-51c8-f2d309000000",
+        "x-ms-request-id": "961cda52-a01e-00a6-5df5-1e7b4b000000",
         "x-ms-version": "2020-02-10",
-        "x-ms-version-id": "2021-12-16T22:03:27.2842097Z"
+        "x-ms-version-id": "2022-02-11T03:11:50.3790309Z"
       },
       "Url": "https://REDACTED.blob.core.windows.net/blobcontainerclienttestaccessconditiontags/blobcontainerclienttestaccessconditiontagsblockBlobClient"
     },
     {
       "Headers": {
-        "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Linux 5.4.0-1063-azure x86_64 #66~18.04.1-Ubuntu SMP Thu Oct 21 09:59:28 UTC 2021)",
-        "x-ms-client-request-id": "7375fdf0-07f6-46f0-5b92-fa57c603f2e1",
+        "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Windows 10 Pro 6.3 19041 19041.1.amd64fre.vb_release.191206-1406)",
+        "x-ms-client-request-id": "337edfb2-56d5-4b8a-6bc5-86457397057e",
         "x-ms-version": "2020-02-10"
       },
       "Method": "DELETE",
@@ -1575,10 +1511,10 @@
         "REASON_PHRASE": "Accepted",
         "STATUS_CODE": "202",
         "content-length": "0",
-        "date": "Thu, 16 Dec 2021 22:03:26 GMT",
+        "date": "Fri, 11 Feb 2022 03:11:50 GMT",
         "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
-        "x-ms-client-request-id": "7375fdf0-07f6-46f0-5b92-fa57c603f2e1",
-        "x-ms-request-id": "6853e444-801e-0070-67c8-f2d309000000",
+        "x-ms-client-request-id": "337edfb2-56d5-4b8a-6bc5-86457397057e",
+        "x-ms-request-id": "961cdaf6-a01e-00a6-69f5-1e7b4b000000",
         "x-ms-version": "2020-02-10"
       },
       "Url": "https://REDACTED.blob.core.windows.net/blobcontainerclienttestaccessconditiontags?restype=container"
