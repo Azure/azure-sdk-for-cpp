@@ -3,7 +3,7 @@
     {
       "Headers": {
         "user-agent": "azsdk-cpp-storage-queues/12.0.0-beta.3 (Linux 5.4.0-1063-azure x86_64 #66~18.04.1-Ubuntu SMP Thu Oct 21 09:59:28 UTC 2021)",
-        "x-ms-client-request-id": "1eff8ebd-68bc-47aa-4607-95e28fa4b95a",
+        "x-ms-client-request-id": "e72d0ffc-79b3-42dd-5e73-cee39dbcf05c",
         "x-ms-version": "2018-03-28"
       },
       "Method": "PUT",
@@ -12,9 +12,9 @@
         "REASON_PHRASE": "Created",
         "STATUS_CODE": "201",
         "content-length": "0",
-        "date": "Thu, 06 Jan 2022 00:05:56 GMT",
+        "date": "Thu, 20 Jan 2022 18:13:54 GMT",
         "server": "Windows-Azure-Queue/1.0 Microsoft-HTTPAPI/2.0",
-        "x-ms-request-id": "392e8e6f-5003-001c-7b91-02b6e4000000",
+        "x-ms-request-id": "065fa93e-0003-002e-7229-0eb693000000",
         "x-ms-version": "2018-03-28"
       },
       "Url": "https://REDACTED.queue.core.windows.net/createdeletequeue"
@@ -22,20 +22,20 @@
     {
       "Headers": {
         "user-agent": "azsdk-cpp-storage-queues/12.0.0-beta.3 (Linux 5.4.0-1063-azure x86_64 #66~18.04.1-Ubuntu SMP Thu Oct 21 09:59:28 UTC 2021)",
-        "x-ms-client-request-id": "cce3ec81-0e69-40d9-6b04-23c10b58fb0c",
+        "x-ms-client-request-id": "21f8d2d3-0f3d-4a07-68c0-aebc8461e93c",
         "x-ms-version": "2018-03-28"
       },
-      "Method": "HEAD",
+      "Method": "GET",
       "Response": {
         "BODY": "",
         "REASON_PHRASE": "OK",
         "STATUS_CODE": "200",
         "cache-control": "no-cache",
         "content-length": "0",
-        "date": "Thu, 06 Jan 2022 00:05:56 GMT",
+        "date": "Thu, 20 Jan 2022 18:13:54 GMT",
         "server": "Windows-Azure-Queue/1.0 Microsoft-HTTPAPI/2.0",
         "x-ms-approximate-messages-count": "0",
-        "x-ms-request-id": "392e8e75-5003-001c-7f91-02b6e4000000",
+        "x-ms-request-id": "065fa974-0003-002e-2229-0eb693000000",
         "x-ms-version": "2018-03-28"
       },
       "Url": "https://REDACTED.queue.core.windows.net/createdeletequeue?comp=metadata"
@@ -43,7 +43,7 @@
     {
       "Headers": {
         "user-agent": "azsdk-cpp-storage-queues/12.0.0-beta.3 (Linux 5.4.0-1063-azure x86_64 #66~18.04.1-Ubuntu SMP Thu Oct 21 09:59:28 UTC 2021)",
-        "x-ms-client-request-id": "4b8074e8-2331-49b3-5c98-94fb040bc70f",
+        "x-ms-client-request-id": "2213531c-47e8-4df9-6928-075af5c5be99",
         "x-ms-version": "2018-03-28"
       },
       "Method": "DELETE",
@@ -52,9 +52,9 @@
         "REASON_PHRASE": "No Content",
         "STATUS_CODE": "204",
         "content-length": "0",
-        "date": "Thu, 06 Jan 2022 00:05:56 GMT",
+        "date": "Thu, 20 Jan 2022 18:13:54 GMT",
         "server": "Windows-Azure-Queue/1.0 Microsoft-HTTPAPI/2.0",
-        "x-ms-request-id": "392e8e79-5003-001c-0391-02b6e4000000",
+        "x-ms-request-id": "065fa979-0003-002e-2729-0eb693000000",
         "x-ms-version": "2018-03-28"
       },
       "Url": "https://REDACTED.queue.core.windows.net/createdeletequeue"
@@ -62,19 +62,20 @@
     {
       "Headers": {
         "user-agent": "azsdk-cpp-storage-queues/12.0.0-beta.3 (Linux 5.4.0-1063-azure x86_64 #66~18.04.1-Ubuntu SMP Thu Oct 21 09:59:28 UTC 2021)",
-        "x-ms-client-request-id": "0070e024-beda-45ff-670c-82c10ca0e946",
+        "x-ms-client-request-id": "71da5f86-1533-4544-50a2-ebec752a12d9",
         "x-ms-version": "2018-03-28"
       },
-      "Method": "HEAD",
+      "Method": "GET",
       "Response": {
-        "BODY": "",
+        "BODY": "﻿<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>QueueNotFound</Code><Message>The specified queue does not exist.\nRequestId:065fa980-0003-002e-2e29-0eb693000000\nTime:2022-01-20T18:13:55.1233269Z</Message></Error>",
         "REASON_PHRASE": "The specified queue does not exist.",
         "STATUS_CODE": "404",
-        "date": "Thu, 06 Jan 2022 00:05:56 GMT",
+        "content-length": "217",
+        "content-type": "application/xml",
+        "date": "Thu, 20 Jan 2022 18:13:54 GMT",
         "server": "Windows-Azure-Queue/1.0 Microsoft-HTTPAPI/2.0",
-        "transfer-encoding": "chunked",
         "x-ms-error-code": "QueueNotFound",
-        "x-ms-request-id": "392e8e7d-5003-001c-0791-02b6e4000000",
+        "x-ms-request-id": "065fa980-0003-002e-2e29-0eb693000000",
         "x-ms-version": "2018-03-28"
       },
       "Url": "https://REDACTED.queue.core.windows.net/createdeletequeue?comp=metadata"

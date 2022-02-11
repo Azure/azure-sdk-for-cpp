@@ -12,11 +12,13 @@
 #include <azure/storage/blobs/blob_options.hpp>
 #include <azure/storage/common/access_conditions.hpp>
 
-#include "azure/storage/files/datalake/protocol/datalake_rest_client.hpp"
+#include "azure/storage/blobs/rest_client.hpp"
+#include "azure/storage/files/datalake/rest_client.hpp"
 
 namespace Azure { namespace Storage { namespace Files { namespace DataLake {
 
   namespace Models {
+    using PathHttpHeaders = Blobs::Models::BlobHttpHeaders;
     using ListFileSystemsIncludeFlags = Blobs::Models::ListBlobContainersIncludeFlags;
     using SignedIdentifier = Blobs::Models::SignedIdentifier;
   } // namespace Models
@@ -41,7 +43,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     /**
      * API version used by this client.
      */
-    std::string ApiVersion = _detail::DefaultServiceApiVersion;
+    std::string ApiVersion = _detail::ApiVersion;
   };
 
   /**

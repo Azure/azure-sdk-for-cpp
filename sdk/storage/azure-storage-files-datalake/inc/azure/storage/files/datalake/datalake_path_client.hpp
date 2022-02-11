@@ -17,7 +17,6 @@
 #include "azure/storage/files/datalake/datalake_file_system_client.hpp"
 #include "azure/storage/files/datalake/datalake_options.hpp"
 #include "azure/storage/files/datalake/datalake_responses.hpp"
-#include "azure/storage/files/datalake/protocol/datalake_rest_client.hpp"
 
 namespace Azure { namespace Storage { namespace Files { namespace DataLake {
 
@@ -245,7 +244,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
         const Azure::Core::Context& context = Azure::Core::Context()) const
     {
       return SetAccessControlListRecursiveInternal(
-          _detail::PathSetAccessControlRecursiveMode::Set, acls, options, context);
+          Models::_detail::PathSetAccessControlListRecursiveMode::Set, acls, options, context);
     }
 
     /**
@@ -267,7 +266,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
         const Azure::Core::Context& context = Azure::Core::Context()) const
     {
       return SetAccessControlListRecursiveInternal(
-          _detail::PathSetAccessControlRecursiveMode::Modify, acls, options, context);
+          Models::_detail::PathSetAccessControlListRecursiveMode::Modify, acls, options, context);
     }
 
     /**
@@ -289,7 +288,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
         const Azure::Core::Context& context = Azure::Core::Context()) const
     {
       return SetAccessControlListRecursiveInternal(
-          _detail::PathSetAccessControlRecursiveMode::Remove, acls, options, context);
+          Models::_detail::PathSetAccessControlListRecursiveMode::Remove, acls, options, context);
     }
 
   protected:
@@ -308,7 +307,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
 
   private:
     SetPathAccessControlListRecursivePagedResponse SetAccessControlListRecursiveInternal(
-        _detail::PathSetAccessControlRecursiveMode mode,
+        Models::_detail::PathSetAccessControlListRecursiveMode mode,
         const std::vector<Models::Acl>& acls,
         const SetPathAccessControlListRecursiveOptions& options,
         const Azure::Core::Context& context) const;

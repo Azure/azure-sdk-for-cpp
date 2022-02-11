@@ -14,7 +14,7 @@
 #include <azure/core/modified_conditions.hpp>
 #include <azure/storage/common/access_conditions.hpp>
 
-#include "azure/storage/blobs/protocol/blob_rest_client.hpp"
+#include "azure/storage/blobs/rest_client.hpp"
 
 namespace Azure { namespace Storage { namespace Blobs {
 
@@ -999,6 +999,8 @@ namespace Azure { namespace Storage { namespace Blobs {
   {
     /**
      * @brief Optional conditions that must be met to perform this operation.
+     * @remarks Azure storage service doesn't support tags access condition for this operation.
+     * Don't use it.
      */
     AppendBlobAccessConditions AccessConditions;
   };

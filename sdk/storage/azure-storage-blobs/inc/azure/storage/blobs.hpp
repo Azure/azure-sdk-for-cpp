@@ -17,3 +17,4 @@
 #include "azure/storage/blobs/block_blob_client.hpp"
 #include "azure/storage/blobs/dll_import_export.hpp"
 #include "azure/storage/blobs/page_blob_client.hpp"
+#include "azure/storage/common/storage_exception.hpp"
