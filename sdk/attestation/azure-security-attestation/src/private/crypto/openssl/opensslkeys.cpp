@@ -8,22 +8,21 @@
  *
  */
 
-#include <cstring>
-#include <memory>
-#include <string>
-#include <type_traits>
-#include <utility>
-#include <vector>
-
+#include "opensslkeys.hpp"
 #include "../inc/crypto.hpp"
 #include "openssl_helpers.hpp"
-#include "opensslkeys.hpp"
+#include <cstring>
+#include <memory>
 #include <openssl/bio.h>
 #include <openssl/ecdsa.h>
 #include <openssl/err.h>
 #include <openssl/evp.h>
 #include <openssl/pem.h>
 #include <openssl/rsa.h>
+#include <string>
+#include <type_traits>
+#include <utility>
+#include <vector>
 
 namespace Azure { namespace Security { namespace Attestation { namespace _detail {
 

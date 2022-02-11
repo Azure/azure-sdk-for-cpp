@@ -8,17 +8,15 @@
  *
  */
 
-#include "azure/core/platform.hpp"
-
+#include "../inc/crypto.hpp"
+#include "opensslcert.hpp"
+#include "opensslkeys.hpp"
+#include <azure/core/platform.hpp>
 #include <memory>
 #include <string>
 #include <type_traits>
 #include <utility>
 #include <vector>
-
-#include "../inc/crypto.hpp"
-#include "opensslcert.hpp"
-#include "opensslkeys.hpp"
 
 // cspell::words OpenSSL X509 OpenSSLX509
 

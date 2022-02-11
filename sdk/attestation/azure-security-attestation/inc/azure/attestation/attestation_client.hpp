@@ -3,12 +3,12 @@
 
 #pragma once
 
+#include "azure/attestation/attestation_client_models.hpp"
+#include "azure/attestation/attestation_client_options.hpp"
+#include <azure/core/context.hpp>
+#include <azure/core/url.hpp>
 #include <shared_mutex>
 #include <string>
-
-#include "attestation_client.hpp"
-#include "attestation_client_models.hpp"
-#include "attestation_client_options.hpp"
 
 namespace Azure { namespace Core { namespace Http { namespace _internal {
   class HttpPipeline;
@@ -20,14 +20,17 @@ namespace Azure { namespace Security { namespace Attestation {
    */
   struct AttestationTokenHeader
   {
-    /// The ""alg" token header property. See
-    ///  <a href='https://datatracker.ietf.org/doc/html/rfc7515#section-4.1.1'>RFC 7515
-    /// section 4.1.1</a>
+    /** The "" alg " token header property. See
+     *  <a href='https://datatracker.ietf.org/doc/html/rfc7515#section-4.1.1'>RFC 7515
+     * section 4.1.1</a>
+     */
     Azure::Nullable<std::string> Algorithm;
 
-    /// The "kid" token header property See
-    /// <a href='https://datatracker.ietf.org/doc/html/rfc7515#section-4.1.4'>RFC 7515
-    /// section 4.1.4</a>
+    /**
+     * @brief The "kid" token header property See
+     * <a href='https://datatracker.ietf.org/doc/html/rfc7515#section-4.1.4'>RFC 7515
+     * section 4.1.4</a>
+     */
     Azure::Nullable<std::string> KeyId;
 
     /**
@@ -120,16 +123,24 @@ namespace Azure { namespace Security { namespace Attestation {
    */
   template <typename T> class AttestationToken final {
   public:
-    /// The full RFC 7515 token returned by the attestation service.
+    /**
+     * @brief The full RFC 7515 JWS/JWT token returned by the attestation service.
+     */
     std::string RawToken;
 
-    /// The elements of the raw token which will be signed by the Signature.
+    /**
+     * @brief      The elements of the raw token which will be signed by the Signature.
+     */
     std::string SignedElements;
 
-    /// Signature (if present) for the attestation token.
+    /**
+     * @brief  Signature (if present) for the attestation token.
+     */
     std::vector<uint8_t> Signature;
 
-    /// RFC 7515 header properties.
+    /**
+     * @brief RFC 7515 header properties.
+     */
     AttestationTokenHeader Header;
 
     // RFC 7519 properties.
@@ -195,7 +206,10 @@ namespace Azure { namespace Security { namespace Attestation {
      */
     Azure::Nullable<std::string> Audience;
 
-    /// The deserialized body of the attestation token.
+    /**
+     * @brief     The deserialized body of the attestation token.
+     *
+     */
     T Body;
   };
 
@@ -340,11 +354,12 @@ namespace Azure { namespace Security { namespace Attestation {
     }
 
     /**
-     * @brief Returns the version the client was configured with.
+     * @brief Returns the API version the client was configured with.
      *
      * @returns The API version used when communicating with the attestation service.
      */
-    std::string ClientVersion() const;
+    std::string const& ClientVersion() const { return m_apiVersion; }
+
     /**
      * @brief Construct a new Key Client object from another key client.
      *
@@ -352,7 +367,8 @@ namespace Azure { namespace Security { namespace Attestation {
      */
     explicit AttestationClient(AttestationClient const& attestationClient)
         : m_endpoint(attestationClient.m_endpoint), m_apiVersion(attestationClient.m_apiVersion),
-          m_pipeline(attestationClient.m_pipeline){};
+          m_pipeline(attestationClient.m_pipeline),
+          m_tokenValidationOptions(attestationClient.m_tokenValidationOptions){};
 
     /**
      * Retrieves metadata about the attestation signing keys in use by the attestation service.

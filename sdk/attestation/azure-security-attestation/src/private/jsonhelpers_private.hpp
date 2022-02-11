@@ -13,10 +13,9 @@
 
 #pragma once
 
-#include "azure/core/datetime.hpp"
-#include "azure/core/internal/json/json.hpp"
-#include "azure/core/nullable.hpp"
-
+#include <azure/core/datetime.hpp>
+#include <azure/core/internal/json/json.hpp>
+#include <azure/core/nullable.hpp>
 #include <memory>
 #include <string>
 #include <vector>
@@ -25,32 +24,35 @@
 namespace Azure { namespace Security { namespace Attestation { namespace _detail {
   struct JsonHelpers
   {
-    /// @brief - parse a string field from a JSON object.
-    ///
-    /// @param field - JSON object containing the field.
-    /// @param fieldName - name of the JSON property to retrieve.
-    /// @returns A `std::string` referencing the property in the JSON object, an empty string if the
-    /// field does not exist.
+    /**
+     * @brief Parse a string field from a JSON object.
+     *
+     * @param field JSON object containing the field.
+     * @param fieldName name of the JSON property to retrieve.
+     * @return Azure::Nullable<std::string> A `std::string` referencing the property in the JSON
+     * object
+     */
     static Azure::Nullable<std::string> ParseStringField(
         const Azure::Core::Json::_internal::json& field,
         const std::string& fieldName);
 
-    /// @brief - parse an array of strings from a JSON object.
-    ///
-    /// @param field - JSON object containing the field.
-    /// @param fieldName - name of the JSON property to retrieve.
-    /// @returns A `std::vector<std::string>` referencing the property in the JSON object, an empty
-    /// array if the field does not exist.
+    /** @brief - parse an array of strings from a JSON object.
+     *
+     *     @param field - JSON object containing the field.
+     * @param fieldName - name of the JSON property to retrieve.
+     * @returns A `std::vector<std::string>` referencing the property in the JSON object, an empty
+     * array if the field does not exist.
+     */
     static Azure::Nullable<std::vector<std::string>> ParseStringArrayField(
         const Azure::Core::Json::_internal::json& field,
         const std::string& fieldName);
 
-    /// @brief - parse an array of integers from a JSON object.
-    ///
-    /// @param field - JSON object containing the field.
-    /// @param fieldName - name of the JSON property to retrieve.
-    /// @returns A `std::vector<std::string>` referencing the property in the JSON object, an empty
-    /// array if the field does not exist.
+    /** @brief - parse an array of integers from a JSON object.
+     *
+     * @param field - JSON object containing the field.
+     * @param fieldName - name of the JSON property to retrieve.
+     * @returns A `std::vector<std::string>` referencing the property in the JSON object
+     */
     static Azure::Nullable<std::vector<int>> ParseIntArrayField(
         const Azure::Core::Json::_internal::json& field,
         const std::string& fieldName);

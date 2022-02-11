@@ -2,16 +2,15 @@
 // SPDX-License-Identifier: MIT
 
 #include "azure/attestation/attestation_client.hpp"
-#include <shared_mutex>
-
-#include "azure/core/base64.hpp"
-#include "azure/core/http/policies/policy.hpp"
-#include "azure/core/internal/http/pipeline.hpp"
 #include "private/attestation_client_models_private.hpp"
 #include "private/attestation_client_private.hpp"
 #include "private/attestation_common_request.hpp"
 #include "private/attestation_deserializers_private.hpp"
 #include "private/package_version.hpp"
+#include <azure/core/base64.hpp>
+#include <azure/core/http/policies/policy.hpp>
+#include <azure/core/internal/http/pipeline.hpp>
+#include <shared_mutex>
 
 #include <string>
 
@@ -22,8 +21,6 @@ using namespace Azure::Security::Attestation::Models::_detail;
 using namespace Azure::Core::Http;
 using namespace Azure::Core::Http::Policies;
 using namespace Azure::Core::Http::_internal;
-
-std::string AttestationClient::ClientVersion() const { return PackageVersion::ToString(); }
 
 AttestationClient::AttestationClient(
     std::string const& endpoint,

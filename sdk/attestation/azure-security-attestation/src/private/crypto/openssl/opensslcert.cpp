@@ -8,18 +8,13 @@
  *
  */
 
+#include "opensslcert.hpp"
+#include "../inc/crypto.hpp"
+#include "openssl_helpers.hpp"
+#include "opensslkeys.hpp"
 #include <cstring>
 #include <ctime>
 #include <memory>
-#include <string>
-#include <type_traits>
-#include <utility>
-#include <vector>
-
-#include "../inc/crypto.hpp"
-#include "openssl_helpers.hpp"
-#include "opensslcert.hpp"
-#include "opensslkeys.hpp"
 #include <openssl/asn1.h>
 #include <openssl/bio.h>
 #include <openssl/ecdsa.h>
@@ -28,6 +23,10 @@
 #include <openssl/pem.h>
 #include <openssl/rsa.h>
 #include <openssl/x509v3.h>
+#include <string>
+#include <type_traits>
+#include <utility>
+#include <vector>
 
 // cspell::words OpenSSL X509 OpenSSLX509
 
@@ -101,12 +100,25 @@ namespace Azure { namespace Security { namespace Attestation { namespace _detail
     return returnValue;
   }
 
-  /// Trim whitespace from the start of the string.
-  /// @param s string to trim.
+  /**
+   * @brief Trim whitespace from the start of the string.
+   *
+   * @param s String to trim.
+   */
   static inline void ltrim(std::string& s) { s.erase(s.find_last_not_of(" \t\r\n") + 1); }
 
+  /**
+   * @brief Trim whitespace from the end of the string.
+   *
+   * @param s String to trim.
+   */
   static inline void rtrim(std::string& s) { s.erase(0, s.find_first_not_of(" \t\r\n")); }
 
+  /**
+   * @brief Trim whitespace from the start and of the string.
+   *
+   * @param s String to trim.
+   */
   static inline void trim(std::string& s)
   {
     rtrim(s);
@@ -207,19 +219,20 @@ namespace Azure { namespace Security { namespace Attestation { namespace _detail
     return make_openssl_unique(X509V3_EXT_conf_nid, nullptr, &context, nid, nidValue.c_str());
   }
 
-  /// <summary>
-  /// Create or derive a new X.509 certificate.
-  /// </summary>
-  /// <param name="newCertificateKey">Public key for the new certificate.</param>
-  /// <param name="newCertificateSubject">Subject Name for the new certificate.</param>
-  /// <param name="signingKey">Private key used to sign the new certificate. This can be the
-  /// same as the newCertificateKey or it can be an issuer private key.</param> <param
-  /// name="issuer">If this is to be a derived certificate, the issuer of the certificate, or
-  /// null if this is self signed.</param> <param name="currentTime">The issuance time (in
-  /// UTC) for the certificate.</param> <param name="expirationTime">The expiration time (in
-  /// UTC) for the certificate.</param> <param name="isLeafCertificate">True if this is a leaf
-  /// certificate.</param> <param name="extensionsToAdd">The set of X.509v3 extensions to add
-  /// to the stock extensions.</param> <returns></returns>
+  /**
+   * @brief Create or derive a new X.509 certificate.
+   *
+   * @param newCertificateKey Public key for the new certificate.
+   * @param newCertificateSubject Subject name for the new certificate.
+   * @param signingKey Private key used to sign the new certificate. This can be the same as the
+   * newCertificateKey or it can be an issuer private key.
+   * @param issuer If this is to be a derived certificate, the issuer of the certificat, or null if
+   * this is self signed.
+   * @param currentTime The issuance time (in UTC) for the certificate.
+   * @param expirationTime The expiration time (in UTC) for the certificate.
+   * @param isLeafCertificate True if this is a leaf certificate.
+   * @return openssl_x509 Returns the newly created certificate.
+   */
   openssl_x509 OpenSSLX509Certificate::CreateCertificate(
       std::unique_ptr<Cryptography::AsymmetricKey> const& newCertificateKey,
       std::string const& newCertificateSubject,

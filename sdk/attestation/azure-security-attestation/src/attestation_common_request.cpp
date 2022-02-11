@@ -2,9 +2,8 @@
 // SPDX-License-Identifier: MIT
 
 #include "private/attestation_common_request.hpp"
-
-#include "azure/core/exception.hpp"
-#include "azure/core/http/http.hpp"
+#include <azure/core/exception.hpp>
+#include <azure/core/http/http.hpp>
 #include <memory>
 
 using namespace Azure::Security::Attestation;

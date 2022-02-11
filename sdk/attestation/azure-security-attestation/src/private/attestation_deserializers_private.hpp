@@ -13,11 +13,10 @@
 
 #pragma once
 
-#include "azure/core/internal/json/json.hpp"
-
 #include "attestation_client_models_private.hpp"
 #include "azure/attestation/attestation_client.hpp"
 #include "azure/attestation/attestation_client_models.hpp"
+#include <azure/core/internal/json/json.hpp>
 #include <memory>
 #include <string>
 
@@ -83,7 +82,11 @@ namespace Azure { namespace Security { namespace Attestation { namespace _detail
         const Azure::Core::Json::_internal::json& jwk);
   };
 
-  /// Serializer/Deserializer for RFC 7515/7517 JSON Web Token/JSON Web SIgnature header objects.
+  /**
+   * @brief Serializer/Deserializer for RFC 7515/7517 JSON Web Token/JSON Web SIgnature header
+   * objects.
+   *
+   */
   struct AttestationTokenHeaderSerializer final
   {
     static AttestationTokenHeader Deserialize(Azure::Core::Json::_internal::json const& jsonHeader);

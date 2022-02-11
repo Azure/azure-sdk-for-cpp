@@ -9,9 +9,9 @@
  *
  */
 // cspell: words PCERT PCRYPT hcryptprov hcryptkey
-#include "azure/core/internal/json/json.hpp"
+#include <azure/core/internal/json/json.hpp"
 
-#include "azure/core/base64.hpp"
+#include <azure/core/base64.hpp"
 #include <memory>
 #include <string>
 #include <type_traits>

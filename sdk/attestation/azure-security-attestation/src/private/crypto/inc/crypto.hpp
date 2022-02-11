@@ -3,8 +3,9 @@
 
 #pragma once
 #include <ctime>
-#include <list>
 #include <memory>
+#include <string>
+#include <vector>
 
 namespace Azure { namespace Security { namespace Attestation { namespace _detail {
   /**

@@ -14,10 +14,10 @@
 #include "azure/attestation/attestation_client.hpp"
 #include "azure/attestation/attestation_client_models.hpp"
 #include "azure/attestation/attestation_client_options.hpp"
-#include "azure/core/base64.hpp"
-#include "azure/core/internal/json/json.hpp"
 #include "crypto/inc/crypto.hpp"
 #include "jsonhelpers_private.hpp"
+#include <azure/core/base64.hpp>
+#include <azure/core/internal/json/json.hpp>
 #include <chrono>
 #include <memory>
 #include <sstream>
@@ -107,15 +107,21 @@ namespace Azure { namespace Security { namespace Attestation { namespace _detail
       }
     }
 
-    /// @brief Find the set of possible signers for this attestation token.
-    ///
-    /// If the caller provided a set of signers, then use that set of signers exclusively to find
-    /// the possible signer for this token.
-    ///
-    /// Otherwise, inspect the token itself for evidence of the signers - the token header may
-    /// contain possible signers for this token.
-    /// @param signers - A set of possible signers for this token.
-    /// <returns>The set of possible signers found, or an empty array if none were found.</returns>
+    /**
+     * @brief  Find the set of possible signers for this attestation token.
+     *
+     * @details  If the caller provided a set of signers, then use that set of signers exclusively
+     to find
+        * the possible signer for this token.
+
+        * Otherwise, inspect the token itself for evidence of the signers - the token header may
+        * contain possible signers for this token.
+
+     * @param signers A set of possible signers for this token.
+     *
+     * @return std::vector<Models::AttestationSigner> The set of possible signers found, or an empty
+     array if none were found.
+     */
     std::vector<Models::AttestationSigner> FindPossibleSigners(
         std::vector<Models::AttestationSigner> const& signers)
     {
@@ -351,9 +357,17 @@ namespace Azure { namespace Security { namespace Attestation { namespace _detail
       return AttestationTokenInternal(jwt);
     }
 
-    /// @brief: Validate this attestation token.
-    /// @param validationOptions - Options which can be used when validating the token.
-    /// @param signers - Potential signers for this attestation token.
+    /**
+     * @brief Validate this attestation token.
+     *
+     * @note If the "signers" parameter is provided, then only the signers from the
+     * "signers" value will be considered when validating the token signature. If no
+     * "signers" are provided, then the ValidateToken API will attempt to find signers
+     * in the token itself
+     *
+     * @param validationOptions Options which can be used when validating the token.
+     * @param signers Potential signers for this attestation token.
+     */
     void ValidateToken(
         AttestationTokenValidationOptions const& validationOptions,
         std::vector<Models::AttestationSigner> const& signers
