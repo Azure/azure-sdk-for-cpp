@@ -1,5 +1,5 @@
 steps:
-- pwsh: |
+  - pwsh: |
       $VcpkgCacheMode = If (Test-Path 'env:VCPKG_CACHE_SAS') {"readwrite"} Else {"read"}
       Write-Host "Cache mode: $VcpkgCacheMode"
       Write-Host "##vso[task.setvariable variable=VCPKG_BINARY_SOURCES;issecret=true]clear;x-azblob,https://cppvcpkgcache.blob.core.windows.net/public-vcpkg-container,$env:VCPKG_CACHE_SAS,$VcpkgCommit"
