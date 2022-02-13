@@ -1,6 +1,6 @@
 # Release History
 
-## 12.0.0-beta.3 (2022-02-11)
+## 12.0.0-beta.3 (2022-02-14)
 
 ### Other Changes
 
