@@ -1,16 +1,10 @@
 # Release History
 
-## 12.3.0 (Unreleased)
+## 12.3.0 (2022-02-14)
 
 ### Features Added
 
 - Added `VersionId` in `SetBlobMetadataResult`.
-
-### Breaking Changes
-
-### Bugs Fixed
-
-### Other Changes
 
 ## 12.2.1 (2021-11-08)
 
