@@ -63,8 +63,32 @@ namespace Azure { namespace Security { namespace Attestation { namespace _detail
   }
 #endif // ^^^ C++14 ^^^
 
+  extern std::string GetOpenSSLError(std::string const& what);
+
   struct OpenSSLException : public std::runtime_error
   {
     OpenSSLException(std::string const& what);
   };
+
+#define OPENSSL_CHECK(x) do { \
+  if ((x) != 1) \
+  { \
+   AZURE_ASSERT_MSG(false, GetOpenSSLError(#x).c_str()); \
+   } \
+   } while (0);
+
+#define OPENSSL_CHECK_NULL(x) do { \
+  if ((x) == nullptr) \
+  { \
+   AZURE_ASSERT_MSG(false, GetOpenSSLError(#x).c_str()); \
+   } \
+   } while (0);
+
+#define OPENSSL_CHECK_BIO(x) do { \
+  if ((x) == 0 || (x) == -1 || (x) == -2) \
+  { \
+   AZURE_ASSERT_MSG(false, GetOpenSSLError(#x).c_str()); \
+   } \
+   } while (0);
+
 }}}} // namespace Azure::Security::Attestation::_detail

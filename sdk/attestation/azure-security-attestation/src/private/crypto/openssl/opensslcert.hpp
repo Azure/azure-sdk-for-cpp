@@ -88,10 +88,7 @@ namespace Azure { namespace Security { namespace Attestation { namespace _detail
       }
       std::vector<uint8_t> formattedName(BIO_ctrl_pending(bio.get()));
       int res = BIO_read(bio.get(), formattedName.data(), static_cast<int>(formattedName.size()));
-      if (res == 0 || res == -1 || res == -2)
-      {
-        throw OpenSSLException("BIO_read");
-      }
+      OPENSSL_CHECK_BIO(res);
       return std::string(formattedName.begin(), formattedName.end());
     }
     static openssl_x509_extension CreateExtensionFromConfiguration(
@@ -141,16 +138,10 @@ namespace Azure { namespace Security { namespace Attestation { namespace _detail
       {
         throw OpenSSLException("i2d_x509");
       }
-      if (EVP_DigestUpdate(hash.get(), buf, thumbprintBuffer.size()) != 1)
-      {
-        throw OpenSSLException("EVP_DigestUpdate");
-      }
+      OPENSSL_CHECK(EVP_DigestUpdate(hash.get(), buf, thumbprintBuffer.size()));
       uint32_t hashLength = EVP_MAX_MD_SIZE;
       std::vector<uint8_t> hashedThumbprint(EVP_MAX_MD_SIZE);
-      if (EVP_DigestFinal_ex(hash.get(), hashedThumbprint.data(), &hashLength) != 1)
-      {
-        throw OpenSSLException("EVP_DigestUpdate");
-      }
+      OPENSSL_CHECK(EVP_DigestFinal_ex(hash.get(), hashedThumbprint.data(), &hashLength));
       hashedThumbprint.resize(hashLength);
 
       auto hexThumbprint(JsonHelpers::BinaryToHexString(hashedThumbprint));
@@ -173,13 +164,9 @@ namespace Azure { namespace Security { namespace Attestation { namespace _detail
       const unsigned char* publicKey;
       int publicKeyLen;
       X509_ALGOR* algorithm;
-      if (X509_PUBKEY_get0_param(&asn1Algorithm, &publicKey, &publicKeyLen, &algorithm, pubkey)
-          != 1)
-      {
-        throw OpenSSLException("X509_PUBKEY_get0_param");
-      }
-      int nid = OBJ_obj2nid(asn1Algorithm);
+      OPENSSL_CHECK(X509_PUBKEY_get0_param(&asn1Algorithm, &publicKey, &publicKeyLen, &algorithm, pubkey));
 
+      int nid = OBJ_obj2nid(asn1Algorithm);
       if (nid == NID_rsaEncryption)
       {
         return "RS256";
@@ -200,11 +187,7 @@ namespace Azure { namespace Security { namespace Attestation { namespace _detail
       const unsigned char* publicKey;
       int publicKeyLen;
       X509_ALGOR* algorithm;
-      if (X509_PUBKEY_get0_param(&asn1Algorithm, &publicKey, &publicKeyLen, &algorithm, pubkey)
-          != 1)
-      {
-        throw OpenSSLException("X509_PUBKEY_get0_param");
-      }
+      OPENSSL_CHECK(X509_PUBKEY_get0_param(&asn1Algorithm, &publicKey, &publicKeyLen, &algorithm, pubkey));
       int nid = OBJ_obj2nid(asn1Algorithm);
 
       if (nid == NID_rsaEncryption)

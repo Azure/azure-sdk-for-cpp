@@ -71,6 +71,24 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
     }
   }
 
+  TEST(SerializationTests, TestHexString)
+  {
+    {
+      auto bin(JsonHelpers::HexStringToBinary("010203AABBccddee"));
+      EXPECT_EQ(bin[0], 0x01);
+      EXPECT_EQ(bin[1], 0x02);
+      EXPECT_EQ(bin[2], 0x03);
+      EXPECT_EQ(bin[3], 0xaa);
+      EXPECT_EQ(bin[4], 0xbb);
+      EXPECT_EQ(bin[5], 0xcc);
+      EXPECT_EQ(bin[6], 0xdd);
+      EXPECT_EQ(bin[7], 0xee);
+    }
+    {
+      EXPECT_THROW(JsonHelpers::HexStringToBinary("ABCEQWERTY"), std::runtime_error);
+    }
+  }
+
   TEST(SerializationTests, TestDeserializeJWK)
   {
     {

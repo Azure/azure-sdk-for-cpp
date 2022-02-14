@@ -71,7 +71,7 @@ namespace Azure { namespace Security { namespace Attestation { namespace _detail
     }
     else
     {
-      throw std::invalid_argument("Invalid character presented to FromHexChar");
+      throw std::runtime_error("Invalid character presented to FromHexChar");
     }
     return val;
   }

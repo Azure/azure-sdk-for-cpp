@@ -39,10 +39,7 @@ namespace Azure { namespace Security { namespace Attestation { namespace _detail
         BIO_new_mem_buf, pemEncodedString.data(), static_cast<int>(pemEncodedString.size())));
     X509* raw_x509 = nullptr;
     raw_x509 = PEM_read_bio_X509(bio.get(), nullptr, nullptr, nullptr);
-    if (raw_x509 == nullptr)
-    {
-      throw OpenSSLException("PEM_read_bio_PUBKEY");
-    }
+    OPENSSL_CHECK_NULL(raw_x509);
     openssl_x509 x509(raw_x509);
     raw_x509 = nullptr;
     return std::unique_ptr<OpenSSLX509Certificate>(new OpenSSLX509Certificate(std::move(x509)));
@@ -51,17 +48,11 @@ namespace Azure { namespace Security { namespace Attestation { namespace _detail
   std::string OpenSSLX509Certificate::ExportAsPEM() const
   {
     auto bio(make_openssl_unique(BIO_new, BIO_s_mem()));
-    if (PEM_write_bio_X509(bio.get(), m_certificate.get()) != 1)
-    {
-      throw std::runtime_error("Could not write X509 certificate.");
-    }
+    OPENSSL_CHECK(PEM_write_bio_X509(bio.get(), m_certificate.get()));
     std::vector<uint8_t> returnValue(BIO_ctrl_pending(bio.get()));
 
     int res = BIO_read(bio.get(), returnValue.data(), static_cast<int>(returnValue.size()));
-    if (res == 0 || res == -1 || res == -2)
-    {
-      throw OpenSSLException("BIO_read");
-    }
+    OPENSSL_CHECK_BIO(res);
     return std::string(returnValue.begin(), returnValue.end());
   }
 
@@ -78,14 +69,8 @@ namespace Azure { namespace Security { namespace Attestation { namespace _detail
     // the base64bio takes ownership of the output BIO.
     BIO_push(base64bio.get(), bio.release());
     // Serialize the certificate as a Base64 encoded DER encoded blob into the bio.
-    if (i2d_X509_bio(base64bio.get(), m_certificate.get()) != 1)
-    {
-      throw std::runtime_error("Could not write X509 certificate.");
-    }
-    if (BIO_flush(base64bio.get()) != 1)
-    {
-      throw std::runtime_error("Could not flush base64 stream.");
-    }
+    OPENSSL_CHECK(i2d_X509_bio(base64bio.get(), m_certificate.get()));
+    OPENSSL_CHECK(BIO_flush(base64bio.get()));
 
     // Now that we've written to the underlying bio, pop it back
     // to the bio local so we can retrieve the base64 data which was written.
@@ -189,18 +174,14 @@ namespace Azure { namespace Security { namespace Attestation { namespace _detail
       {
         throw std::runtime_error("Could not parse unknown attribute " + comp.first);
       }
-      if (X509_NAME_add_entry_by_NID(
+      OPENSSL_CHECK(X509_NAME_add_entry_by_NID(
               returnValue.get(),
               nid,
               MBSTRING_UTF8,
               reinterpret_cast<const unsigned char*>(comp.second.c_str()),
               static_cast<int>(comp.second.length()),
               -1,
-              0)
-          != 1)
-      {
-        throw OpenSSLException("X509_NAME_add_entry_by_NID");
-      }
+              0));
     }
     return returnValue;
   }
@@ -253,17 +234,11 @@ namespace Azure { namespace Security { namespace Attestation { namespace _detail
 
     if (issuer)
     {
-      if (X509_set_issuer_name(certificate.get(), X509_get_subject_name(issuer.get())) != 1)
-      {
-        throw OpenSSLException("X509_set_issuer_name");
-      }
+      OPENSSL_CHECK(X509_set_issuer_name(certificate.get(), X509_get_subject_name(issuer.get())));
     }
     else
     {
-      if (X509_set_issuer_name(certificate.get(), subjectName.get()) != 1)
-      {
-        throw OpenSSLException("X509_set_issuer_name");
-      }
+      OPENSSL_CHECK(X509_set_issuer_name(certificate.get(), subjectName.get()));
     }
 
     // Export the key to be included in the certificate.
@@ -273,36 +248,22 @@ namespace Azure { namespace Security { namespace Attestation { namespace _detail
       // We know that Crypto::ImportPublicKey always returns an OpenSSLAsymmetricKey.
       // THis is a bit of a hack but it's an acceptable assumption to make.
       OpenSSLAsymmetricKey* key = static_cast<OpenSSLAsymmetricKey*>(publicKey.get());
-      if (X509_set_pubkey(certificate.get(), key->GetKey().get()) != 1)
-      {
-        throw OpenSSLException("X509_set_pubkey");
-      }
+      OPENSSL_CHECK(X509_set_pubkey(certificate.get(), key->GetKey().get()));
     }
 
-    if (X509_set_version(certificate.get(), 2) != 1) // Version 3 certificate.
-    {
-      throw OpenSSLException("X509_set_version");
-    }
+    OPENSSL_CHECK(X509_set_version(certificate.get(), 2)); // Version 3 certificate.
+
     // Transfer the serial number from the current certificate to the child if this is a
     // derived certificate.
     if (issuer)
     {
-      if (X509_set_serialNumber(certificate.get(), X509_get_serialNumber(issuer.get())) != 1)
-      {
-        throw OpenSSLException("X509_set_serialNumber");
-      }
+      OPENSSL_CHECK(X509_set_serialNumber(certificate.get(), X509_get_serialNumber(issuer.get())));
     }
     else
     {
       auto serialNumber(make_openssl_unique(ASN1_INTEGER_new));
-      if (ASN1_INTEGER_set(serialNumber.get(), 1) != 1)
-      {
-        throw OpenSSLException("ASN1_INTEGER_set");
-      }
-      if (X509_set_serialNumber(certificate.get(), serialNumber.get()) != 1)
-      {
-        throw OpenSSLException("X509_set_serialNumber");
-      }
+      OPENSSL_CHECK(ASN1_INTEGER_set(serialNumber.get(), 1));
+      OPENSSL_CHECK(X509_set_serialNumber(certificate.get(), serialNumber.get()));
     }
 
     {
@@ -311,20 +272,14 @@ namespace Azure { namespace Security { namespace Attestation { namespace _detail
           certificate,
           NID_basic_constraints,
           (isLeafCertificate ? "CA:FALSE" : "CA:TRUE, pathlen:0"));
-      if (X509_add_ext(certificate.get(), extension.get(), -1) != 1)
-      {
-        throw OpenSSLException("X509_add_ext");
-      }
+      OPENSSL_CHECK(X509_add_ext(certificate.get(), extension.get(), -1));
     }
 
     { // Set Not Before Time (time before which certificate is not valid).
       openssl_asn1_time notBeforeTime(
           make_openssl_unique(ASN1_TIME_adj, nullptr, currentTime, 0, 0));
 
-      if (X509_set1_notBefore(certificate.get(), notBeforeTime.get()) != 1)
-      {
-        throw OpenSSLException("X509_set1_notBefore");
-      }
+      OPENSSL_CHECK(X509_set1_notBefore(certificate.get(), notBeforeTime.get()));
     }
 
     // Set Not After Time (time after which certificate is not valid).
@@ -332,20 +287,14 @@ namespace Azure { namespace Security { namespace Attestation { namespace _detail
       openssl_asn1_time notAfterTime(
           make_openssl_unique(ASN1_TIME_adj, nullptr, expirationTime, 0, 0));
 
-      if (X509_set1_notAfter(certificate.get(), notAfterTime.get()) != 1)
-      {
-        throw OpenSSLException("X509_set1_notAfter");
-      }
+      OPENSSL_CHECK(X509_set1_notAfter(certificate.get(), notAfterTime.get()));
     }
 
     { // Add the subject Key ID - this is the thumbprint of the public key. Note that we have to
       // have called X509_set_pubkey before this call.
       auto extension = CreateExtensionFromConfiguration(
           certificate, certificate, NID_subject_key_identifier, "hash");
-      if (X509_add_ext(certificate.get(), extension.get(), -1) != 1)
-      {
-        throw OpenSSLException("X509_add_ext");
-      }
+      OPENSSL_CHECK(X509_add_ext(certificate.get(), extension.get(), -1));
     } // namespace _internal
 
     // Add the authority Key ID - Note that this needs to be done *after* setting the subject key
@@ -362,10 +311,7 @@ namespace Azure { namespace Security { namespace Attestation { namespace _detail
         extension = CreateExtensionFromConfiguration(
             certificate, certificate, NID_authority_key_identifier, "keyid:always");
       }
-      if (X509_add_ext(certificate.get(), extension.get(), -1) != 1)
-      {
-        throw OpenSSLException("X509_add_ext");
-      }
+      OPENSSL_CHECK(X509_add_ext(certificate.get(), extension.get(), -1));
     }
 
     {
@@ -374,10 +320,7 @@ namespace Azure { namespace Security { namespace Attestation { namespace _detail
           certificate,
           NID_key_usage,
           (issuer ? "critical,keyCertSign,digitalSignature" : "critical,keyCertSign"));
-      if (X509_add_ext(certificate.get(), extension.get(), -1) != 1)
-      {
-        throw OpenSSLException("X509_add_ext");
-      }
+      OPENSSL_CHECK(X509_add_ext(certificate.get(), extension.get(), -1));
     }
 
     // Export the key to sign the certificate.
@@ -440,10 +383,7 @@ namespace Azure { namespace Security { namespace Attestation { namespace _detail
   std::unique_ptr<Cryptography::AsymmetricKey> OpenSSLX509Certificate::GetPublicKey() const
   {
     openssl_evp_pkey pkey(X509_get0_pubkey(m_certificate.get()));
-    if (EVP_PKEY_up_ref(pkey.get()) != 1)
-    {
-      throw std::runtime_error("Could not write X509 certificate.");
-    }
+    OPENSSL_CHECK(EVP_PKEY_up_ref(pkey.get()));
     return std::unique_ptr<OpenSSLAsymmetricKey>(new OpenSSLAsymmetricKey(std::move(pkey)));
   }
 }}}} // namespace Azure::Security::Attestation::_detail
