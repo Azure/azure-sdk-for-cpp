@@ -164,7 +164,8 @@ namespace Azure { namespace Security { namespace Attestation { namespace _detail
       const unsigned char* publicKey;
       int publicKeyLen;
       X509_ALGOR* algorithm;
-      OPENSSL_CHECK(X509_PUBKEY_get0_param(&asn1Algorithm, &publicKey, &publicKeyLen, &algorithm, pubkey));
+      OPENSSL_CHECK(
+          X509_PUBKEY_get0_param(&asn1Algorithm, &publicKey, &publicKeyLen, &algorithm, pubkey));
 
       int nid = OBJ_obj2nid(asn1Algorithm);
       if (nid == NID_rsaEncryption)
@@ -187,7 +188,8 @@ namespace Azure { namespace Security { namespace Attestation { namespace _detail
       const unsigned char* publicKey;
       int publicKeyLen;
       X509_ALGOR* algorithm;
-      OPENSSL_CHECK(X509_PUBKEY_get0_param(&asn1Algorithm, &publicKey, &publicKeyLen, &algorithm, pubkey));
+      OPENSSL_CHECK(
+          X509_PUBKEY_get0_param(&asn1Algorithm, &publicKey, &publicKeyLen, &algorithm, pubkey));
       int nid = OBJ_obj2nid(asn1Algorithm);
 
       if (nid == NID_rsaEncryption)

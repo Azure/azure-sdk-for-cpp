@@ -70,25 +70,31 @@ namespace Azure { namespace Security { namespace Attestation { namespace _detail
     OpenSSLException(std::string const& what);
   };
 
-#define OPENSSL_CHECK(x) do { \
-  if ((x) != 1) \
+#define OPENSSL_CHECK(x) \
+  do \
   { \
-   AZURE_ASSERT_MSG(false, GetOpenSSLError(#x).c_str()); \
-   } \
-   } while (0);
+    if ((x) != 1) \
+    { \
+      AZURE_ASSERT_MSG(false, GetOpenSSLError(#x).c_str()); \
+    } \
+  } while (0);
 
-#define OPENSSL_CHECK_NULL(x) do { \
-  if ((x) == nullptr) \
+#define OPENSSL_CHECK_NULL(x) \
+  do \
   { \
-   AZURE_ASSERT_MSG(false, GetOpenSSLError(#x).c_str()); \
-   } \
-   } while (0);
+    if ((x) == nullptr) \
+    { \
+      AZURE_ASSERT_MSG(false, GetOpenSSLError(#x).c_str()); \
+    } \
+  } while (0);
 
-#define OPENSSL_CHECK_BIO(x) do { \
-  if ((x) == 0 || (x) == -1 || (x) == -2) \
+#define OPENSSL_CHECK_BIO(x) \
+  do \
   { \
-   AZURE_ASSERT_MSG(false, GetOpenSSLError(#x).c_str()); \
-   } \
-   } while (0);
+    if ((x) == 0 || (x) == -1 || (x) == -2) \
+    { \
+      AZURE_ASSERT_MSG(false, GetOpenSSLError(#x).c_str()); \
+    } \
+  } while (0);
 
 }}}} // namespace Azure::Security::Attestation::_detail

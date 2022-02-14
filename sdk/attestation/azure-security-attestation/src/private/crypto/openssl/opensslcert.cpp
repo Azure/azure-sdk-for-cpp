@@ -175,13 +175,13 @@ namespace Azure { namespace Security { namespace Attestation { namespace _detail
         throw std::runtime_error("Could not parse unknown attribute " + comp.first);
       }
       OPENSSL_CHECK(X509_NAME_add_entry_by_NID(
-              returnValue.get(),
-              nid,
-              MBSTRING_UTF8,
-              reinterpret_cast<const unsigned char*>(comp.second.c_str()),
-              static_cast<int>(comp.second.length()),
-              -1,
-              0));
+          returnValue.get(),
+          nid,
+          MBSTRING_UTF8,
+          reinterpret_cast<const unsigned char*>(comp.second.c_str()),
+          static_cast<int>(comp.second.length()),
+          -1,
+          0));
     }
     return returnValue;
   }

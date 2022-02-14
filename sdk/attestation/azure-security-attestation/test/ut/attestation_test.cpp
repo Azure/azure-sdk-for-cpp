@@ -76,8 +76,12 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
     {
       EXPECT_EQ(m_endpoint, openIdMetadata.Value.Issuer.Value());
     }
-    EXPECT_EQ(0UL, openIdMetadata.Value.JsonWebKeySetUrl.Value().find(openIdMetadata.Value.Issuer.Value()));
-    EXPECT_EQ(openIdMetadata.Value.Issuer.Value() + "/certs", openIdMetadata.Value.JsonWebKeySetUrl.Value());
+    EXPECT_EQ(
+        0UL,
+        openIdMetadata.Value.JsonWebKeySetUrl.Value().find(openIdMetadata.Value.Issuer.Value()));
+    EXPECT_EQ(
+        openIdMetadata.Value.Issuer.Value() + "/certs",
+        openIdMetadata.Value.JsonWebKeySetUrl.Value());
     EXPECT_NE(0UL, openIdMetadata.Value.SupportedClaims.Value().size());
     EXPECT_NE(0UL, openIdMetadata.Value.SupportedResponseTypes.Value().size());
     EXPECT_NE(0UL, openIdMetadata.Value.SupportedTokenSigningAlgorithms.Value().size());
