@@ -9,7 +9,7 @@
 
 #pragma once
 
-#include "attestation_client_models.hpp"
+#include "azure/attestation/attestation_client_models.hpp"
 #include "dll_import_export.hpp"
 #include <azure/core/internal/client_options.hpp>
 

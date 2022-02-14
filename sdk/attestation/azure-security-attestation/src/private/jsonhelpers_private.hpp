@@ -22,109 +22,17 @@
 
 // cspell: words jwks MrSigner MrEnclave
 namespace Azure { namespace Security { namespace Attestation { namespace _detail {
-  struct JsonHelpers
-  {
-    /**
-     * @brief Parse a string field from a JSON object.
-     *
-     * @param field JSON object containing the field.
-     * @param fieldName name of the JSON property to retrieve.
-     * @return Azure::Nullable<std::string> A `std::string` referencing the property in the JSON
-     * object
-     */
-    static Azure::Nullable<std::string> ParseStringField(
+  class JsonHelpers {
+  private:
+    static constexpr uint8_t FromHexChar(char hex);
+
+  public:
+    static std::vector<uint8_t> HexStringToBinary(std::string const& hexString);
+    static std::string BinaryToHexString(std::vector<uint8_t> const& src);
+
+    static void SetIfExistsJson(
+        Azure::Nullable<std::string>& rv,
         const Azure::Core::Json::_internal::json& field,
         const std::string& fieldName);
-
-    /** @brief - parse an array of strings from a JSON object.
-     *
-     *     @param field - JSON object containing the field.
-     * @param fieldName - name of the JSON property to retrieve.
-     * @returns A `std::vector<std::string>` referencing the property in the JSON object, an empty
-     * array if the field does not exist.
-     */
-    static Azure::Nullable<std::vector<std::string>> ParseStringArrayField(
-        const Azure::Core::Json::_internal::json& field,
-        const std::string& fieldName);
-
-    /** @brief - parse an array of integers from a JSON object.
-     *
-     * @param field - JSON object containing the field.
-     * @param fieldName - name of the JSON property to retrieve.
-     * @returns A `std::vector<std::string>` referencing the property in the JSON object
-     */
-    static Azure::Nullable<std::vector<int>> ParseIntArrayField(
-        const Azure::Core::Json::_internal::json& field,
-        const std::string& fieldName);
-
-    static std::string ParseStringJsonField(
-        const Azure::Core::Json::_internal::json& field,
-        const std::string& fieldName);
-
-    static Azure::Nullable<Azure::DateTime> ParseDateTimeField(
-        Azure::Core::Json::_internal::json const& object,
-        std::string const& fieldName);
-
-    static std::vector<uint8_t> ParseBase64UrlField(
-        const Azure::Core::Json::_internal::json& field,
-        const std::string& fieldName);
-
-    static Azure::Nullable<bool> ParseBooleanField(
-        const Azure::Core::Json::_internal::json& field,
-        const std::string& fieldName);
-
-    static Azure::Nullable<int> ParseIntNumberField(
-        const Azure::Core::Json::_internal::json& field,
-        const std::string& fieldName);
-
-    // Serialization helpers.
-    static void SetField(
-        Azure::Core::Json::_internal::json& object,
-        std::string const& fieldValue,
-        std::string const& fieldName);
-    static void SetField(
-        Azure::Core::Json::_internal::json& object,
-        Azure::Nullable<std::string> const& fieldValue,
-        std::string const& fieldName);
-
-    static void SetField(
-        Azure::Core::Json::_internal::json& object,
-        std::vector<std::string> const& fieldValue,
-        std::string const& fieldName);
-
-    static void SetField(
-        Azure::Core::Json::_internal::json& object,
-        Azure::Nullable<std::vector<std::string>> const& fieldValue,
-        std::string const& fieldName);
-
-    static void SetField(
-        Azure::Core::Json::_internal::json& object,
-        int fieldValue,
-        std::string const& fieldName);
-    static void SetField(
-        Azure::Core::Json::_internal::json& object,
-        Azure::Nullable<int> const& fieldValue,
-        std::string const& fieldName);
-    static void SetField(
-        Azure::Core::Json::_internal::json& object,
-        std::vector<int> const& fieldValue,
-        std::string const& fieldName);
-    static void SetField(
-        Azure::Core::Json::_internal::json& object,
-        Azure::Nullable<std::vector<int>> const& fieldValue,
-        std::string const& fieldName);
-
-    static void SetField(
-        Azure::Core::Json::_internal::json& object,
-        Azure::Nullable<Azure::DateTime> const& fieldValue,
-        std::string const& fieldName);
-    static void SetField(
-        Azure::Core::Json::_internal::json& object,
-        Azure::DateTime const& fieldValue,
-        std::string const& fieldName);
-    static void SetField(
-        Azure::Core::Json::_internal::json& object,
-        Azure::Core::Json::_internal::json& fieldValue,
-        std::string const& fieldName);
   };
 }}}} // namespace Azure::Security::Attestation::_detail

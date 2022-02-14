@@ -233,7 +233,7 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
             }
         }
         )";
-  std::string EnclaveHeldData
+  std::string SgxEnclaveHeldData
       = "CiAgICAgICAgewogICAgICAgICAgICAiandrIiA6IHsKICAgICAgICAgICAgICAgICJrdHkiOiJFQyI"
         "sCiAgICAgICAgICAgICAgICAidXNlIjoic2lnIiwKICAgICAgICAgICAgICAgICJjcnYiOiJQLTI1Ni"
         "IsCiAgICAgICAgICAgICAgICAieCI6IjE4d0hMZUlnVzl3Vk42VkQxVHhncHF5MkxzellrTWY2Sjhua"
@@ -260,7 +260,7 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
     }
     static std::vector<uint8_t> RuntimeData()
     {
-      return Azure::Core::_internal::Base64Url::Base64UrlDecode(EnclaveHeldData);
+      return Azure::Core::_internal::Base64Url::Base64UrlDecode(SgxEnclaveHeldData);
       //    return std::vector<uint8_t>(RuntimeJWKClaim.begin(), RuntimeJWKClaim.end());
     }
   };

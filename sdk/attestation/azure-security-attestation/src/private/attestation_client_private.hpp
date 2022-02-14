@@ -18,6 +18,7 @@
 #include "jsonhelpers_private.hpp"
 #include <azure/core/base64.hpp>
 #include <azure/core/internal/json/json.hpp>
+#include <azure/core/internal/json/json_optional.hpp>
 #include <chrono>
 #include <memory>
 #include <sstream>
@@ -263,20 +264,26 @@ namespace Azure { namespace Security { namespace Attestation { namespace _detail
 
         // Parse the RFC 7519 JSON Web Token body properties.
         // Note that if this is a JWS, these properties will NOT be present.
-        m_token.ExpiresOn = Azure::Security::Attestation::_detail::JsonHelpers::ParseDateTimeField(
-            jsonBody, "exp");
-        m_token.IssuedOn = Azure::Security::Attestation::_detail::JsonHelpers::ParseDateTimeField(
-            jsonBody, "iat");
-        m_token.NotBefore = Azure::Security::Attestation::_detail::JsonHelpers::ParseDateTimeField(
-            jsonBody, "nbf");
-        m_token.Issuer
-            = Azure::Security::Attestation::_detail::JsonHelpers::ParseStringField(jsonBody, "iss");
-        m_token.Subject
-            = Azure::Security::Attestation::_detail::JsonHelpers::ParseStringField(jsonBody, "sub");
-        m_token.Audience
-            = Azure::Security::Attestation::_detail::JsonHelpers::ParseStringField(jsonBody, "aud");
-        m_token.UniqueIdentifier
-            = Azure::Security::Attestation::_detail::JsonHelpers::ParseStringField(jsonBody, "jti");
+        Azure::Core::Json::_internal::JsonOptional::SetIfExists<int64_t, Azure::DateTime>(
+            m_token.ExpiresOn,
+            jsonBody,
+            "exp",
+            Azure::Core::_internal::PosixTimeConverter::PosixTimeToDateTime);
+        Azure::Core::Json::_internal::JsonOptional::SetIfExists<int64_t, Azure::DateTime>(
+            m_token.IssuedOn,
+            jsonBody,
+            "iat",
+            Azure::Core::_internal::PosixTimeConverter::PosixTimeToDateTime);
+        Azure::Core::Json::_internal::JsonOptional::SetIfExists<int64_t, Azure::DateTime>(
+            m_token.NotBefore,
+            jsonBody,
+            "nbf",
+            Azure::Core::_internal::PosixTimeConverter::PosixTimeToDateTime);
+        Azure::Core::Json::_internal::JsonOptional::SetIfExists(m_token.Issuer, jsonBody, "iss");
+        Azure::Core::Json::_internal::JsonOptional::SetIfExists(m_token.Subject, jsonBody, "sub");
+        Azure::Core::Json::_internal::JsonOptional::SetIfExists(m_token.Audience, jsonBody, "aud");
+        Azure::Core::Json::_internal::JsonOptional::SetIfExists(
+            m_token.UniqueIdentifier, jsonBody, "jti");
 
         m_token.Body = TDeserializer::Deserialize(jsonBody);
 

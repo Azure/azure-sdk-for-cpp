@@ -11,6 +11,7 @@
 #pragma once
 
 #include "../inc/crypto.hpp"
+#include "../private/jsonhelpers_private.hpp"
 #include "openssl_helpers.hpp"
 #include <memory>
 #include <openssl/bio.h>
@@ -108,22 +109,6 @@ namespace Azure { namespace Security { namespace Attestation { namespace _detail
         time_t const expirationTime,
         bool isLeafCertificate);
 
-    static std::string ToHexString(std::vector<uint8_t> const& buffer)
-    {
-      static constexpr char hexMap[]
-          = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f'};
-      std::string output(static_cast<size_t>(buffer.size()) * 2, ' ');
-      const uint8_t* input = buffer.data();
-
-      for (size_t i = 0; i < buffer.size(); i++)
-      {
-        output[2 * i] = hexMap[(input[i] & 0xF0) >> 4];
-        output[2 * i + 1] = hexMap[input[i] & 0x0F];
-      }
-
-      return output;
-    }
-
   protected:
     static std::unique_ptr<X509Certificate> CreateFromPrivateKey(
         std::unique_ptr<Cryptography::AsymmetricKey> const& key,
@@ -168,7 +153,7 @@ namespace Azure { namespace Security { namespace Attestation { namespace _detail
       }
       hashedThumbprint.resize(hashLength);
 
-      auto hexThumbprint(ToHexString(hashedThumbprint));
+      auto hexThumbprint(JsonHelpers::BinaryToHexString(hashedThumbprint));
       // HexString uses an "a"-"f" alphabet, but the CLR hex encoder uses an "A"-"F" alphabet,
       // convert between them.
       for (auto& ch : hexThumbprint)

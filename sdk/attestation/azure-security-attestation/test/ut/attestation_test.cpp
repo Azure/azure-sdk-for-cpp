@@ -70,17 +70,17 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
 
     auto openIdMetadata = attestationClient->GetOpenIdMetadata();
 
-    EXPECT_FALSE(openIdMetadata.Value.Issuer.empty());
-    EXPECT_FALSE(openIdMetadata.Value.JsonWebKeySetUrl.empty());
+    EXPECT_TRUE(openIdMetadata.Value.Issuer.HasValue());
+    EXPECT_TRUE(openIdMetadata.Value.JsonWebKeySetUrl.HasValue());
     if (!m_testContext.IsPlaybackMode())
     {
-      EXPECT_EQ(m_endpoint, openIdMetadata.Value.Issuer);
+      EXPECT_EQ(m_endpoint, openIdMetadata.Value.Issuer.Value());
     }
-    EXPECT_EQ(0UL, openIdMetadata.Value.JsonWebKeySetUrl.find(openIdMetadata.Value.Issuer));
-    EXPECT_EQ(openIdMetadata.Value.Issuer + "/certs", openIdMetadata.Value.JsonWebKeySetUrl);
-    EXPECT_NE(0UL, openIdMetadata.Value.SupportedClaims.size());
-    EXPECT_NE(0UL, openIdMetadata.Value.SupportedResponseTypes.size());
-    EXPECT_NE(0UL, openIdMetadata.Value.SupportedTokenSigningAlgorithms.size());
+    EXPECT_EQ(0UL, openIdMetadata.Value.JsonWebKeySetUrl.Value().find(openIdMetadata.Value.Issuer.Value()));
+    EXPECT_EQ(openIdMetadata.Value.Issuer.Value() + "/certs", openIdMetadata.Value.JsonWebKeySetUrl.Value());
+    EXPECT_NE(0UL, openIdMetadata.Value.SupportedClaims.Value().size());
+    EXPECT_NE(0UL, openIdMetadata.Value.SupportedResponseTypes.Value().size());
+    EXPECT_NE(0UL, openIdMetadata.Value.SupportedTokenSigningAlgorithms.Value().size());
   }
 
   TEST_P(AttestationTests, GetSigningCertificates)

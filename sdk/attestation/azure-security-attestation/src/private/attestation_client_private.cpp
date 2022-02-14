@@ -8,19 +8,7 @@
  *
  */
 #include "attestation_client_models_private.hpp"
-#include "attestation_deserializers_private.hpp"
-#include "azure/attestation/attestation_client.hpp"
-#include "azure/attestation/attestation_client_models.hpp"
-#include "azure/attestation/attestation_client_options.hpp"
-#include "crypto/inc/crypto.hpp"
-#include "jsonhelpers_private.hpp"
-#include <azure/core/base64.hpp>
-#include <azure/core/context.hpp>
-#include <azure/core/http/http.hpp>
 #include <azure/core/internal/json/json.hpp>
-#include <azure/core/internal/json/json_optional.hpp>
-#include <azure/core/internal/json/json_serializable.hpp>
-#include <azure/core/response.hpp>
 #include <chrono>
 #include <memory>
 #include <sstream>

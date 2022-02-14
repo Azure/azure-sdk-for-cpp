@@ -25,275 +25,72 @@
 
 // cspell: words jwks MrSigner MrEnclave
 namespace Azure { namespace Security { namespace Attestation { namespace _detail {
-  /** @brief - parse a string field from a JSON object.
-   *
-   * @param field - JSON object containing the field.
-   * @param fieldName - name of the JSON property to retrieve.
-   * @returns A `std::string` referencing the property in the JSON object
-   */
-  Azure::Nullable<std::string> JsonHelpers::ParseStringField(
-      const Azure::Core::Json::_internal::json& field,
-      const std::string& fieldName)
-  {
-    if (field.contains(fieldName))
-    {
-      const auto& fieldVal = field[fieldName];
-      if (!fieldVal.is_string())
-      {
-        throw std::runtime_error("Field " + fieldName + " is not a string.");
-      }
-      return fieldVal.get<std::string>();
-    }
-    return Azure::Nullable<std::string>();
-  }
 
-  /** @brief - parse an array of strings from a JSON object.
-   *
-   * @param field - JSON object containing the field.
-   * @param fieldName - name of the JSON property to retrieve.
-   * @returns A `std::vector<std::string>` referencing the property in the JSON object
-   */
-  Azure::Nullable<std::vector<std::string>> JsonHelpers::ParseStringArrayField(
+  using namespace Azure::Core::Json::_internal;
+  void JsonHelpers::SetIfExistsJson(
+      Azure::Nullable<std::string>& returnValue,
       const Azure::Core::Json::_internal::json& field,
       const std::string& fieldName)
   {
     if (field.contains(fieldName))
     {
-      std::vector<std::string> returnValue;
-      const auto& fieldVal = field[fieldName];
-      if (!fieldVal.is_array())
-      {
-        throw std::runtime_error("Field " + fieldName + " is not an array.");
-      }
-      for (const auto& item : fieldVal)
-      {
-        if (!item.is_string())
-        {
-          throw std::runtime_error("Field " + fieldName + " element is not a string.");
-        }
-        returnValue.push_back(item.get<std::string>());
-      }
-      return returnValue;
-    }
-    return Azure::Nullable<std::vector<std::string>>();
-  }
-
-  /** @brief - parse an array of integers from a JSON object.
-   *
-   * @param field - JSON object containing the field.
-   * @param fieldName - name of the JSON property to retrieve.
-   * @returns A `std::vector<std::string>` referencing the property in the JSON object
-   */
-  Azure::Nullable<std::vector<int>> JsonHelpers::ParseIntArrayField(
-      const Azure::Core::Json::_internal::json& field,
-      const std::string& fieldName)
-  {
-    std::vector<int> returnValue;
-    if (field.contains(fieldName))
-    {
-      const auto& fieldVal = field[fieldName];
-      if (!fieldVal.is_array())
-      {
-        throw std::runtime_error("Field " + fieldName + " is not an array.");
-      }
-      for (const auto& item : fieldVal)
-      {
-        if (!item.is_number_integer())
-        {
-          throw std::runtime_error("Field " + fieldName + " element is not an integer.");
-        }
-        returnValue.push_back(item.get<int>());
-      }
-      return returnValue;
-    }
-    return Azure::Nullable<std::vector<int>>();
-  }
-
-  std::string JsonHelpers::ParseStringJsonField(
-      const Azure::Core::Json::_internal::json& field,
-      const std::string& fieldName)
-  {
-    std::string returnValue;
-    if (field.contains(fieldName))
-    {
-      const auto& fieldVal = field[fieldName];
-      if (!fieldVal.is_object())
-      {
-        throw std::runtime_error("Field " + fieldName + " is not an object.");
-      }
       returnValue = field[fieldName].dump();
     }
-    return returnValue;
   }
 
-  Azure::Nullable<Azure::DateTime> JsonHelpers::ParseDateTimeField(
-      Azure::Core::Json::_internal::json const& object,
-      std::string const& fieldName)
+  std::string JsonHelpers::BinaryToHexString(std::vector<uint8_t> const& src)
   {
-    if (object.contains(fieldName))
+    static constexpr char hexMap[]
+        = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f'};
+    std::string output(static_cast<size_t>(src.size()) * 2, ' ');
+    const uint8_t* input = src.data();
+
+    for (size_t i = 0; i < src.size(); i++)
     {
-      const auto& fieldVal = object[fieldName];
-      if (!fieldVal.is_number())
-      {
-        throw std::runtime_error("Field " + fieldName + " is not a number.");
-      }
-
-      int64_t epochTime = fieldVal.get<int64_t>();
-      return Azure::Core::_internal::PosixTimeConverter::PosixTimeToDateTime(epochTime);
+      output[2 * i] = hexMap[(input[i] & 0xF0) >> 4];
+      output[2 * i + 1] = hexMap[input[i] & 0x0F];
     }
-    return Azure::Nullable<Azure::DateTime>();
+
+    return output;
   }
 
-  std::vector<uint8_t> JsonHelpers::ParseBase64UrlField(
-      const Azure::Core::Json::_internal::json& field,
-      const std::string& fieldName)
+  constexpr uint8_t JsonHelpers::FromHexChar(char hex)
   {
-    std::vector<uint8_t> returnValue;
-    if (field.contains(fieldName))
+    uint8_t val = 0;
+    if (hex >= '0' && hex <= '9')
     {
-      const auto& fieldVal = field[fieldName];
-      if (!fieldVal.is_string())
-      {
-        throw std::runtime_error(std::string("Field ") + fieldName + " is not a string.");
-      }
-      returnValue
-          = Azure::Core::_internal::Base64Url::Base64UrlDecode(field[fieldName].get<std::string>());
+      val = hex - '0';
     }
-    return returnValue;
-  }
-
-  Azure::Nullable<bool> JsonHelpers::ParseBooleanField(
-      const Azure::Core::Json::_internal::json& field,
-      const std::string& fieldName)
-  {
-    if (field.contains(fieldName))
+    else if (hex >= 'a' && hex <= 'f')
     {
-      const auto& fieldVal = field[fieldName];
-      if (!fieldVal.is_boolean())
-      {
-        throw std::runtime_error("Field " + fieldName + " is not a boolean.");
-      }
-      return field[fieldName].get<bool>();
+      val = hex - 'a' + 10;
     }
-    return Azure::Nullable<bool>();
-  }
-
-  Azure::Nullable<int> JsonHelpers::ParseIntNumberField(
-      const Azure::Core::Json::_internal::json& field,
-      const std::string& fieldName)
-  {
-    if (field.contains(fieldName))
+    else if (hex >= 'A' && hex <= 'F')
     {
-      const auto& fieldVal = field[fieldName];
-      if (!fieldVal.is_number_integer())
-      {
-        throw std::runtime_error("Field " + fieldName + " is not a number.");
-      }
-      return field[fieldName].get<int>();
+      val = hex - 'A' + 10;
     }
-    return Azure::Nullable<int>();
-  }
-
-  // Serialization helpers.
-
-  void JsonHelpers::SetField(
-      Azure::Core::Json::_internal::json& object,
-      std::string const& fieldValue,
-      std::string const& fieldName)
-  {
-    object[fieldName] = fieldValue;
-  }
-  void JsonHelpers::SetField(
-      Azure::Core::Json::_internal::json& object,
-      Azure::Nullable<std::string> const& fieldValue,
-      std::string const& fieldName)
-  {
-    if (fieldValue.HasValue())
+    else
     {
-      SetField(object, fieldValue.Value(), fieldName);
+      throw std::invalid_argument("Invalid character presented to FromHexChar");
     }
+    return val;
   }
 
-  void JsonHelpers::SetField(
-      Azure::Core::Json::_internal::json& object,
-      std::vector<std::string> const& fieldValue,
-      std::string const& fieldName)
+  std::vector<uint8_t> JsonHelpers::HexStringToBinary(std::string const& hexString)
   {
-    object[fieldName] = fieldValue;
-  }
+    if (hexString.size() % 2 != 0)
+    {
+      throw std::invalid_argument("FromHexString called with an odd length string.");
+    }
 
-  void JsonHelpers::SetField(
-      Azure::Core::Json::_internal::json& object,
-      Azure::Nullable<std::vector<std::string>> const& fieldValue,
-      std::string const& fieldName)
-  {
-    if (fieldValue.HasValue())
+    std::vector<uint8_t> decodedBuffer;
+    for (int i = 0; i < static_cast<int>(hexString.size()); i += 2)
     {
-      SetField(object, fieldValue.Value(), fieldName);
+      uint8_t first = FromHexChar(hexString[i]);
+      uint8_t second = FromHexChar(hexString[i + 1]);
+      decodedBuffer.push_back(static_cast<uint8_t>((first << 4) + second));
     }
-  }
 
-  void JsonHelpers::SetField(
-      Azure::Core::Json::_internal::json& object,
-      int fieldValue,
-      std::string const& fieldName)
-  {
-    object[fieldName] = fieldValue;
-  }
-  void JsonHelpers::SetField(
-      Azure::Core::Json::_internal::json& object,
-      Azure::Nullable<int> const& fieldValue,
-      std::string const& fieldName)
-  {
-    if (fieldValue.HasValue())
-    {
-      SetField(object, fieldValue.Value(), fieldName);
-    }
-  }
-  void JsonHelpers::SetField(
-      Azure::Core::Json::_internal::json& object,
-      std::vector<int> const& fieldValue,
-      std::string const& fieldName)
-  {
-    if (!fieldValue.empty())
-    {
-      object[fieldName] = fieldValue;
-    }
-  }
-  void JsonHelpers::SetField(
-      Azure::Core::Json::_internal::json& object,
-      Azure::Nullable<std::vector<int>> const& fieldValue,
-      std::string const& fieldName)
-  {
-    if (fieldValue.HasValue())
-    {
-      SetField(object, fieldValue.Value(), fieldName);
-    }
-  }
-
-  void JsonHelpers::SetField(
-      Azure::Core::Json::_internal::json& object,
-      Azure::Nullable<Azure::DateTime> const& fieldValue,
-      std::string const& fieldName)
-  {
-    if (fieldValue.HasValue())
-    {
-      SetField(object, fieldValue.Value(), fieldName);
-    }
-  }
-  void JsonHelpers::SetField(
-      Azure::Core::Json::_internal::json& object,
-      Azure::DateTime const& fieldValue,
-      std::string const& fieldName)
-  {
-    object[fieldName] = Azure::Core::_internal::PosixTimeConverter::DateTimeToPosixTime(fieldValue);
-  }
-
-  void JsonHelpers::SetField(
-      Azure::Core::Json::_internal::json& object,
-      Azure::Core::Json::_internal::json& fieldValue,
-      std::string const& fieldName)
-  {
-    object[fieldName] = fieldValue;
+    return decodedBuffer;
   }
 }}}} // namespace Azure::Security::Attestation::_detail

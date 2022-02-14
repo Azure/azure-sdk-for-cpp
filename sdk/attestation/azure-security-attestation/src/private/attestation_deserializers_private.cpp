@@ -34,7 +34,7 @@ namespace Azure { namespace Security { namespace Attestation { namespace _detail
   using namespace Azure::Security::Attestation::Models;
   using namespace Azure::Security::Attestation::Models::_detail;
   using namespace Azure::Security::Attestation;
-
+  using namespace Azure::Core::Json::_internal;
   /***************************************
    * A quick note on the naming convention for the Serialize/Deserialize classes.
    *
@@ -54,15 +54,16 @@ namespace Azure { namespace Security { namespace Attestation { namespace _detail
   {
     Models::AttestationOpenIdMetadata returnValue;
     auto parsedBody = Azure::Core::Json::_internal::json::parse(response->GetBody());
-    returnValue.Issuer = JsonHelpers::ParseStringField(parsedBody, "issuer").Value();
-    returnValue.JsonWebKeySetUrl = JsonHelpers::ParseStringField(parsedBody, "jwks_uri").Value();
-    returnValue.SupportedClaims
-        = JsonHelpers::ParseStringArrayField(parsedBody, "claims_supported").Value();
-    returnValue.SupportedTokenSigningAlgorithms
-        = JsonHelpers::ParseStringArrayField(parsedBody, "id_token_signing_alg_values_supported")
-              .Value();
-    returnValue.SupportedResponseTypes
-        = JsonHelpers::ParseStringArrayField(parsedBody, "response_types_supported").Value();
+
+    JsonOptional::SetIfExists(returnValue.Issuer, parsedBody, "issuer");
+    JsonOptional::SetIfExists(returnValue.JsonWebKeySetUrl, parsedBody, "jwks_uri");
+    JsonOptional::SetIfExists(returnValue.SupportedClaims, parsedBody, "claims_supported");
+    JsonOptional::SetIfExists(
+        returnValue.SupportedTokenSigningAlgorithms,
+        parsedBody,
+        "id_token_signing_alg_values_supported");
+    JsonOptional::SetIfExists(
+        returnValue.SupportedResponseTypes, parsedBody, "response_types_supported");
     return returnValue;
   }
 
@@ -70,25 +71,30 @@ namespace Azure { namespace Security { namespace Attestation { namespace _detail
   {
     Azure::Core::Json::_internal::json serializedRequest;
     serializedRequest["quote"] = Azure::Core::_internal::Base64Url::Base64UrlEncode(request.Quote);
-    if (request.RunTimeData.HasValue())
-    {
-      serializedRequest["runtimeData"]
-          = {{"data",
-              Azure::Core::_internal::Base64Url::Base64UrlEncode(request.RunTimeData.Value().Data)},
-             {"dataType", request.RunTimeData.Value().DataType.ToString()}};
-    }
 
-    if (request.InitTimeData.HasValue())
-    {
-      serializedRequest["inittimeData"] = {
-          {"data",
-           Azure::Core::_internal::Base64Url::Base64UrlEncode(request.InitTimeData.Value().Data)},
-          {"dataType", request.InitTimeData.Value().DataType.ToString()}};
-    }
+    JsonOptional::SetFromNullable<AttestationData, std::map<std::string, std::string>>(
+        request.RunTimeData,
+        serializedRequest,
+        "runtimeData",
+        [](AttestationData const& value) -> std::map<std::string, std::string> {
+          return {
+              {"data", Azure::Core::_internal::Base64Url::Base64UrlEncode(value.Data)},
+              {"dataType", value.DataType.ToString()}};
+        });
 
-    JsonHelpers::SetField(
-        serializedRequest, request.DraftPolicyForAttestation, "draftPolicyForAttestation");
-    JsonHelpers::SetField(serializedRequest, request.Nonce, "nonce");
+    JsonOptional::SetFromNullable<AttestationData, std::map<std::string, std::string>>(
+        request.InitTimeData,
+        serializedRequest,
+        "inittimeData",
+        [](AttestationData const& value) -> std::map<std::string, std::string> {
+          return {
+              {"data", Azure::Core::_internal::Base64Url::Base64UrlEncode(value.Data)},
+              {"dataType", value.DataType.ToString()}};
+        });
+
+    JsonOptional::SetFromNullable(request.Nonce, serializedRequest, "nonce");
+    JsonOptional::SetFromNullable(
+        request.DraftPolicyForAttestation, serializedRequest, "draftPolicyForAttestation");
     return serializedRequest.dump();
   }
 
@@ -98,40 +104,43 @@ namespace Azure { namespace Security { namespace Attestation { namespace _detail
     serializedRequest["report"]
         = Azure::Core::_internal::Base64Url::Base64UrlEncode(request.Report);
 
-    if (request.RunTimeData.HasValue())
-    {
-      serializedRequest["runtimeData"]
-          = {{"data",
-              Azure::Core::_internal::Base64Url::Base64UrlEncode(request.RunTimeData.Value().Data)},
-             {"dataType", request.RunTimeData.Value().DataType.ToString()}};
-    }
+    JsonOptional::SetFromNullable<AttestationData, std::map<std::string, std::string>>(
+        request.RunTimeData,
+        serializedRequest,
+        "runtimeData",
+        [](AttestationData const& value) -> std::map<std::string, std::string> {
+          return {
+              {"data", Azure::Core::_internal::Base64Url::Base64UrlEncode(value.Data)},
+              {"dataType", value.DataType.ToString()}};
+        });
 
-    if (request.InitTimeData.HasValue())
-    {
-      serializedRequest["inittimeData"] = {
-          {"data",
-           Azure::Core::_internal::Base64Url::Base64UrlEncode(request.InitTimeData.Value().Data)},
-          {"dataType", request.InitTimeData.Value().DataType.ToString()}};
-    }
+    JsonOptional::SetFromNullable<AttestationData, std::map<std::string, std::string>>(
+        request.InitTimeData,
+        serializedRequest,
+        "inittimeData",
+        [](AttestationData const& value) -> std::map<std::string, std::string> {
+          return {
+              {"data", Azure::Core::_internal::Base64Url::Base64UrlEncode(value.Data)},
+              {"dataType", value.DataType.ToString()}};
+        });
 
-    JsonHelpers::SetField(
-        serializedRequest, request.DraftPolicyForAttestation, "draftPolicyForAttestation");
-    JsonHelpers::SetField(serializedRequest, request.Nonce, "nonce");
+    JsonOptional::SetFromNullable(request.Nonce, serializedRequest, "nonce");
+    JsonOptional::SetFromNullable(
+        request.DraftPolicyForAttestation, serializedRequest, "draftPolicyForAttestation");
     return serializedRequest.dump();
   }
 
   std::string AttestationServiceTokenResponseSerializer::Deserialize(
       Azure::Core::Json::_internal::json const& parsedBody)
   {
-    if (!parsedBody.contains("token"))
+    Azure::Nullable<std::string> token;
+    JsonOptional::SetIfExists(token, parsedBody, "token");
+    if (token.HasValue())
     {
-      throw std::runtime_error("Field 'token' not found in Attestation Service Response");
+      return token.Value();
     }
-    if (!parsedBody["token"].is_string())
-    {
-      throw std::runtime_error("Field 'token' is not a string");
-    }
-    return parsedBody["token"].get<std::string>();
+
+    throw std::runtime_error("Field 'token' not found in Attestation Service Response");
   }
 
   std::string AttestationServiceTokenResponseSerializer::Deserialize(
@@ -146,25 +155,36 @@ namespace Azure { namespace Security { namespace Attestation { namespace _detail
   {
     Models::AttestationResult result;
 
-    result.Nonce = JsonHelpers::ParseStringField(parsedJson, "nonce");
-    result.Version = JsonHelpers::ParseStringField(parsedJson, "x-ms-ver").Value();
-    result.RuntimeClaims = JsonHelpers::ParseStringJsonField(parsedJson, "x-ms-runtime");
-    result.InitTimeClaims = JsonHelpers::ParseStringJsonField(parsedJson, "x-ms-inittime");
-    result.PolicyClaims = JsonHelpers::ParseStringJsonField(parsedJson, "x-ms-policy");
-    result.VerifierType
-        = JsonHelpers::ParseStringField(parsedJson, "x-ms-attestation-type").Value();
+    JsonOptional::SetIfExists(result.Nonce, parsedJson, "nonce");
+    JsonOptional::SetIfExists(result.Version, parsedJson, "x-ms-ver");
+    JsonHelpers::SetIfExistsJson(result.RuntimeClaims, parsedJson, "x-ms-runtime");
+    JsonHelpers::SetIfExistsJson(result.InitTimeClaims, parsedJson, "x-ms-inittime");
+    JsonHelpers::SetIfExistsJson(result.PolicyClaims, parsedJson, "x-ms-policy");
+    JsonOptional::SetIfExists(result.VerifierType, parsedJson, "x-ms-attestation-type");
     if (parsedJson.contains("x-ms-policy-signer"))
     {
       result.PolicySigner = AttestationSignerInternal(
           JsonWebKeySerializer::Deserialize(parsedJson["x-ms-policy-signer"]));
     }
-    result.PolicyHash = JsonHelpers::ParseBase64UrlField(parsedJson, "x-ms-policy-hash");
-    result.IsDebuggable = JsonHelpers::ParseBooleanField(parsedJson, "x-ms-sgx-is-debuggable");
-    result.ProductId = JsonHelpers::ParseIntNumberField(parsedJson, "x-ms-sgx-product-id");
-    result.MrEnclave = JsonHelpers::ParseBase64UrlField(parsedJson, "x-ms-sgx-mrenclave");
-    result.MrSigner = JsonHelpers::ParseBase64UrlField(parsedJson, "x-ms-sgx-mrsigner");
-    result.EnclaveHeldData = JsonHelpers::ParseBase64UrlField(parsedJson, "x-ms-sgx-ehd");
-    result.SgxCollateral = JsonHelpers::ParseStringJsonField(parsedJson, "x-ms-sgx-collateral");
+
+    JsonOptional::SetIfExists<std::string, std::vector<uint8_t>>(
+        result.PolicyHash,
+        parsedJson,
+        "x-ms-policy-hash",
+        Azure::Core::_internal::Base64Url::Base64UrlDecode);
+
+    JsonOptional::SetIfExists(result.SgxIsDebuggable, parsedJson, "x-ms-sgx-is-debuggable");
+    JsonOptional::SetIfExists(result.SgxProductId, parsedJson, "x-ms-sgx-product-id");
+    JsonOptional::SetIfExists<std::string, std::vector<uint8_t>>(
+        result.SgxMrEnclave, parsedJson, "x-ms-sgx-mrenclave", JsonHelpers::HexStringToBinary);
+    JsonOptional::SetIfExists<std::string, std::vector<uint8_t>>(
+        result.SgxMrSigner, parsedJson, "x-ms-sgx-mrsigner", JsonHelpers::HexStringToBinary);
+    JsonOptional::SetIfExists<std::string, std::vector<uint8_t>>(
+        result.SgxEnclaveHeldData,
+        parsedJson,
+        "x-ms-sgx-ehd",
+        Azure::Core::_internal::Base64Url::Base64UrlDecode);
+    JsonHelpers::SetIfExistsJson(result.SgxCollateral, parsedJson, "x-ms-sgx-collateral");
     return result;
   }
 
@@ -173,43 +193,43 @@ namespace Azure { namespace Security { namespace Attestation { namespace _detail
   {
     AttestationTokenHeader returnValue;
 
-    returnValue.Algorithm = JsonHelpers::ParseStringField(jsonHeader, "alg");
-    returnValue.KeyURL = JsonHelpers::ParseStringField(jsonHeader, "jku");
+    JsonOptional::SetIfExists(returnValue.Algorithm, jsonHeader, "alg");
+    JsonOptional::SetIfExists(returnValue.KeyURL, jsonHeader, "jku");
 
     if (jsonHeader.contains("jwk"))
     {
       auto jwk = JsonWebKeySerializer::Deserialize(jsonHeader["jwk"]);
       returnValue.Key = AttestationSignerInternal(jwk);
     }
-    returnValue.KeyId = JsonHelpers::ParseStringField(jsonHeader, "kid");
-    returnValue.X509Url = JsonHelpers::ParseStringField(jsonHeader, "x5u");
-    returnValue.X509CertificateChain = JsonHelpers::ParseStringArrayField(jsonHeader, "x5c");
-    returnValue.CertificateSha256Thumbprint = JsonHelpers::ParseStringField(jsonHeader, "x5t#S256");
-    returnValue.CertificateThumbprint = JsonHelpers::ParseStringField(jsonHeader, "x5t");
-    returnValue.Type = JsonHelpers::ParseStringField(jsonHeader, "typ");
-    returnValue.ContentType = JsonHelpers::ParseStringField(jsonHeader, "cty");
-    returnValue.Critical = JsonHelpers::ParseStringArrayField(jsonHeader, "crit");
+    JsonOptional::SetIfExists(returnValue.KeyId, jsonHeader, "kid");
+    JsonOptional::SetIfExists(returnValue.X509Url, jsonHeader, "x5u");
+    JsonOptional::SetIfExists(returnValue.X509CertificateChain, jsonHeader, "x5c");
+    JsonOptional::SetIfExists(returnValue.CertificateSha256Thumbprint, jsonHeader, "x5t#S256");
+    JsonOptional::SetIfExists(returnValue.CertificateThumbprint, jsonHeader, "x5t");
+    JsonOptional::SetIfExists(returnValue.Type, jsonHeader, "typ");
+    JsonOptional::SetIfExists(returnValue.ContentType, jsonHeader, "cty");
+    JsonOptional::SetIfExists(returnValue.Critical, jsonHeader, "crit");
     return returnValue;
   }
   std::string AttestationTokenHeaderSerializer::Serialize(AttestationTokenHeader const& tokenHeader)
   {
     Azure::Core::Json::_internal::json serializedHeader;
-    JsonHelpers::SetField(serializedHeader, tokenHeader.Algorithm, "alg");
-    JsonHelpers::SetField(serializedHeader, tokenHeader.KeyURL, "jku");
-    if (tokenHeader.Key.HasValue())
-    {
-      auto jsonSigner(AttestationSignerInternal::SerializeToJson(tokenHeader.Key.Value()));
-      JsonHelpers::SetField(serializedHeader, jsonSigner, "jwk");
-    }
-    JsonHelpers::SetField(serializedHeader, tokenHeader.ContentType, "cty");
-    JsonHelpers::SetField(serializedHeader, tokenHeader.Critical, "crit");
-    JsonHelpers::SetField(serializedHeader, tokenHeader.KeyId, "kid");
-    JsonHelpers::SetField(serializedHeader, tokenHeader.Type, "typ");
+    JsonOptional::SetFromNullable(tokenHeader.Algorithm, serializedHeader, "alg");
+    JsonOptional::SetFromNullable(tokenHeader.KeyURL, serializedHeader, "jku");
+    JsonOptional::SetFromNullable<AttestationSigner, std::string>(
+        tokenHeader.Key, serializedHeader, "jwk", [](AttestationSigner const& signer) {
+          return AttestationSignerInternal::SerializeToJson(signer);
+        });
+    JsonOptional::SetFromNullable(tokenHeader.ContentType, serializedHeader, "cty");
+    JsonOptional::SetFromNullable(tokenHeader.Critical, serializedHeader, "crit");
+    JsonOptional::SetFromNullable(tokenHeader.KeyId, serializedHeader, "kid");
+    JsonOptional::SetFromNullable(tokenHeader.Type, serializedHeader, "typ");
 
-    JsonHelpers::SetField(serializedHeader, tokenHeader.X509CertificateChain, "x5c");
-    JsonHelpers::SetField(serializedHeader, tokenHeader.X509Url, "x5u");
-    JsonHelpers::SetField(serializedHeader, tokenHeader.CertificateSha256Thumbprint, "x5t#S256");
-    JsonHelpers::SetField(serializedHeader, tokenHeader.CertificateThumbprint, "x5t");
+    JsonOptional::SetFromNullable(tokenHeader.X509CertificateChain, serializedHeader, "x5c");
+    JsonOptional::SetFromNullable(tokenHeader.X509Url, serializedHeader, "x5u");
+    JsonOptional::SetFromNullable(
+        tokenHeader.CertificateSha256Thumbprint, serializedHeader, "x5t#S256");
+    JsonOptional::SetFromNullable(tokenHeader.CertificateThumbprint, serializedHeader, "x5t");
 
     return serializedHeader.dump();
   }
@@ -217,36 +237,38 @@ namespace Azure { namespace Security { namespace Attestation { namespace _detail
   JsonWebKey JsonWebKeySerializer::Deserialize(const Azure::Core::Json::_internal::json& jwk)
   {
     JsonWebKey returnValue;
-    if (jwk.contains("kty"))
+    Azure::Nullable<std::string> kty;
+    JsonOptional::SetIfExists(kty, jwk, "kty");
+    if (kty.HasValue())
     {
-      returnValue.kty = JsonHelpers::ParseStringField(jwk, "kty").Value();
+      returnValue.kty = kty.Value();
     }
     else
     {
       throw std::runtime_error("Could not find required field 'kty' in JSON Web Key");
     }
-    returnValue.alg = JsonHelpers::ParseStringField(jwk, "alg");
-    returnValue.kid = JsonHelpers::ParseStringField(jwk, "kid");
-    returnValue.use = JsonHelpers::ParseStringField(jwk, "use");
-    returnValue.keyops = JsonHelpers::ParseStringArrayField(jwk, "key_ops");
-    returnValue.x5t = JsonHelpers::ParseStringField(jwk, "x5t");
-    returnValue.x5t256 = JsonHelpers::ParseStringField(jwk, "x5t#S256");
-    returnValue.x5u = JsonHelpers::ParseStringField(jwk, "x5u");
-    returnValue.x5c = JsonHelpers::ParseStringArrayField(jwk, "x5c");
+    JsonOptional::SetIfExists(returnValue.alg, jwk, "alg");
+    JsonOptional::SetIfExists(returnValue.kid, jwk, "kid");
+    JsonOptional::SetIfExists(returnValue.use, jwk, "use");
+    JsonOptional::SetIfExists(returnValue.keyops, jwk, "key_ops");
+    JsonOptional::SetIfExists(returnValue.x5t, jwk, "x5t");
+    JsonOptional::SetIfExists(returnValue.x5t256, jwk, "x5t#S256");
+    JsonOptional::SetIfExists(returnValue.x5u, jwk, "x5u");
+    JsonOptional::SetIfExists(returnValue.x5c, jwk, "x5c");
 
     // ECDSA key values.
-    returnValue.crv = JsonHelpers::ParseStringField(jwk, "crv");
-    returnValue.x = JsonHelpers::ParseStringField(jwk, "x");
-    returnValue.y = JsonHelpers::ParseStringField(jwk, "y");
-    returnValue.d = JsonHelpers::ParseStringField(jwk, "d");
+    JsonOptional::SetIfExists(returnValue.crv, jwk, "crv");
+    JsonOptional::SetIfExists(returnValue.x, jwk, "x");
+    JsonOptional::SetIfExists(returnValue.y, jwk, "y");
+    JsonOptional::SetIfExists(returnValue.d, jwk, "d");
 
     // RSA key values.
-    returnValue.n = JsonHelpers::ParseStringField(jwk, "n");
-    returnValue.e = JsonHelpers::ParseStringField(jwk, "e");
-    returnValue.q = JsonHelpers::ParseStringField(jwk, "p");
-    returnValue.dp = JsonHelpers::ParseStringField(jwk, "dp");
-    returnValue.dq = JsonHelpers::ParseStringField(jwk, "dq");
-    returnValue.qi = JsonHelpers::ParseStringField(jwk, "qi");
+    JsonOptional::SetIfExists(returnValue.n, jwk, "n");
+    JsonOptional::SetIfExists(returnValue.e, jwk, "e");
+    JsonOptional::SetIfExists(returnValue.q, jwk, "p");
+    JsonOptional::SetIfExists(returnValue.dp, jwk, "dp");
+    JsonOptional::SetIfExists(returnValue.dq, jwk, "dq");
+    JsonOptional::SetIfExists(returnValue.qi, jwk, "qi");
 
     return returnValue;
   }
@@ -265,10 +287,6 @@ namespace Azure { namespace Security { namespace Attestation { namespace _detail
     if (!parsedBody.contains("keys"))
     {
       throw std::runtime_error("Field 'keys' not found in JWKS.");
-    }
-    if (!parsedBody["keys"].is_array())
-    {
-      throw std::runtime_error("Field 'keys' is not an array.");
     }
     for (const auto& key : parsedBody["keys"])
     {

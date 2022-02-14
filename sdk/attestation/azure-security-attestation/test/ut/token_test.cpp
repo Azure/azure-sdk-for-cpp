@@ -6,6 +6,9 @@
 #include "../../src/private/attestation_deserializers_private.hpp"
 #include "../../src/private/crypto/inc/crypto.hpp"
 #include "azure/attestation/attestation_client.hpp"
+#include <azure/core/datetime.hpp>
+#include <azure/core/internal/json/json.hpp>
+#include <azure/core/internal/json/json_optional.hpp>
 #include <azure/core/test/test_base.hpp>
 #include <gtest/gtest.h>
 
@@ -17,161 +20,24 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
   using namespace Azure::Security::Attestation::_detail;
   using namespace Azure::Security::Attestation::Models;
   using namespace Azure::Security::Attestation::Models::_detail;
-  TEST(SerializationTests, TestDeserializePrimitivesBoolean)
-  {
-    {
-      auto val = JsonHelpers::ParseBooleanField(json::parse("{ \"boolean\": true }"), "boolean");
-      EXPECT_TRUE(val.HasValue());
-      EXPECT_EQ(true, val.Value());
-    }
-    {
-      auto val(
-          JsonHelpers::ParseBooleanField(json::parse("{ \"boolValue\": false }"), "boolValue"));
-      EXPECT_TRUE(val.HasValue());
-      EXPECT_EQ(false, val.Value());
-    }
-    {
-      auto val(JsonHelpers::ParseBooleanField(json::parse("{ \"boolValue2\": true}"), "intValue"));
-      EXPECT_FALSE(val.HasValue());
-    }
-    {
-      EXPECT_THROW(
-          JsonHelpers::ParseBooleanField(json::parse("{ \"bool\": 27 }"), "bool"),
-          std::runtime_error);
-    }
-  }
-
-  TEST(SerializationTests, TestDeserializePrimitivesNumberInt)
-  {
-    {
-      auto val(JsonHelpers::ParseIntNumberField(json::parse("{ \"int\": 27}"), "int"));
-      EXPECT_TRUE(val.HasValue());
-      EXPECT_EQ(27, val.Value());
-    }
-    {
-      auto val(JsonHelpers::ParseIntNumberField(json::parse("{ \"intValue\": 35}"), "intValue"));
-      EXPECT_TRUE(val.HasValue());
-      EXPECT_EQ(35, val.Value());
-    }
-    {
-      auto val(JsonHelpers::ParseIntNumberField(json::parse("{ \"intValue2\": 35}"), "intValue"));
-      EXPECT_FALSE(val.HasValue());
-    }
-    {
-      EXPECT_THROW(
-          JsonHelpers::ParseIntNumberField(json::parse("{ \"bool\": \"stringValue\"}"), "bool"),
-          std::runtime_error);
-    }
-  }
-
-  TEST(SerializationTests, TestDeserializePrimitivesString)
-  {
-    {
-      auto val(JsonHelpers::ParseStringField(json::parse("{ \"int\": \"127\"}"), "int"));
-      EXPECT_EQ("127", val.Value());
-    }
-    {
-      auto val(JsonHelpers::ParseStringField(json::parse("{ \"intVal\": \"127\"}"), "int"));
-      EXPECT_FALSE(val.HasValue());
-    }
-    {
-      auto val(JsonHelpers::ParseStringField(
-          json::parse("{ \"intValue\": \"String Field\"}"), "intValue"));
-      EXPECT_EQ("String Field", val.Value());
-    }
-    {
-      EXPECT_THROW(
-          JsonHelpers::ParseStringField(json::parse("{ \"bool\": true}"), "bool"),
-          std::runtime_error);
-    }
-  }
-
-  TEST(SerializationTests, TestDeserializePrimitivesStringArray)
-  {
-    // Present string array field.
-    {
-      auto val(JsonHelpers::ParseStringArrayField(
-          json::parse("{ \"stringArrayValue\": [\"String Field\", \"SF2\"]}"), "stringArrayValue"));
-      EXPECT_EQ(2ul, val.Value().size());
-      EXPECT_EQ("String Field", val.Value()[0]);
-      EXPECT_EQ("SF2", val.Value()[1]);
-    }
-    // Not present field.
-    {
-      auto val(JsonHelpers::ParseStringArrayField(
-          json::parse("{ \"arrayValue\": \"String Field\"}"), "intValue"));
-      EXPECT_FALSE(val.HasValue());
-    }
-    // Not an array.
-    {
-      EXPECT_THROW(
-          JsonHelpers::ParseStringArrayField(
-              json::parse("{ \"stringArray\": true}"), "stringArray"),
-          std::runtime_error);
-    }
-    // Not an array of strings.
-    {
-      EXPECT_THROW(
-          JsonHelpers::ParseStringArrayField(
-              json::parse("{ \"stringArray\": [1, 2, 3, 4]}"), "stringArray"),
-          std::runtime_error);
-    }
-  }
-
-  TEST(SerializationTests, TestDeserializePrimitivesIntArray)
-  {
-    // Present string array field.
-    {
-      auto val(JsonHelpers::ParseIntArrayField(
-          json::parse(R"({ "intArrayValue": [1, 3, 7, 5]})"), "intArrayValue"));
-      EXPECT_TRUE(val.HasValue());
-
-      EXPECT_EQ(4ul, val.Value().size());
-      EXPECT_EQ(1, val.Value()[0]);
-      EXPECT_EQ(3, val.Value()[1]);
-      EXPECT_EQ(7, val.Value()[2]);
-      EXPECT_EQ(5, val.Value()[3]);
-    }
-    // Not present field.
-    {
-      auto val(JsonHelpers::ParseIntArrayField(
-          json::parse(R"({ "arrayValue": [1, 3, 5]})"), "intValue"));
-      EXPECT_FALSE(val.HasValue());
-    }
-    // Not an array.
-    {
-      EXPECT_THROW(
-          JsonHelpers::ParseIntArrayField(json::parse(R"({ "stringArray": true})"), "stringArray"),
-          std::runtime_error);
-    }
-    // Not an array of strings.
-    {
-      EXPECT_THROW(
-          JsonHelpers::ParseIntArrayField(
-              json::parse(R"({ "intArray": ["abc", "def", "ghi", "jkl"]})"), "intArray"),
-          std::runtime_error);
-    }
-  }
 
   TEST(SerializationTests, TestDeserializePrimitivesJsonObject)
   {
     // Present JSON field.
     {
-      auto val(JsonHelpers::ParseStringJsonField(
-          json::parse(R"({ "jsonObjectValue": {"stringField": "SF2"}})"), "jsonObjectValue"));
-      EXPECT_EQ(R"({"stringField":"SF2"})", val);
+      Azure::Nullable<std::string> val;
+
+      JsonHelpers::SetIfExistsJson(
+          val, json::parse(R"({ "jsonObjectValue": {"stringField": "SF2"}})"), "jsonObjectValue");
+      EXPECT_TRUE(val.HasValue());
+      EXPECT_EQ(R"({"stringField":"SF2"})", val.Value());
     }
     // Not present field.
     {
-      auto val(JsonHelpers::ParseStringJsonField(
-          json::parse("{ \"objectValue\":{\"String Field\": 27}}"), "intValue"));
-      EXPECT_TRUE(val.empty());
-    }
-    // Not a JSON object.
-    {
-      EXPECT_THROW(
-          JsonHelpers::ParseStringJsonField(json::parse("{ \"stringArray\": true}"), "stringArray"),
-          std::runtime_error);
+      Azure::Nullable<std::string> val;
+      JsonHelpers::SetIfExistsJson(
+          val, json::parse("{ \"objectValue\":{\"String Field\": 27}}"), "intValue");
+      EXPECT_FALSE(val.HasValue());
     }
   }
 
@@ -183,31 +49,25 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
 
     // Present JSON field.
     {
-      auto val(JsonHelpers::ParseBase64UrlField(
-          json::parse("{ \"base64Urlfield\": \"" + encodedData + "\"}"), "base64Urlfield"));
-      EXPECT_EQ(9ul, val.size());
-      EXPECT_EQ(testData, std::string(val.begin(), val.end()));
+      Azure::Nullable<std::vector<uint8_t>> val;
+      JsonOptional::SetIfExists<std::string, std::vector<uint8_t>>(
+          val,
+          json::parse("{ \"base64Urlfield\": \"" + encodedData + "\"}"),
+          "base64Urlfield",
+          Azure::Core::_internal::Base64Url::Base64UrlDecode);
+      EXPECT_EQ(9ul, val.Value().size());
+      EXPECT_EQ(testData, std::string(val.Value().begin(), val.Value().end()));
     }
     // Not present field.
     {
-      auto val(JsonHelpers::ParseBase64UrlField(
-          json::parse("{ \"base64Urlfield\": \"" + encodedData + "\"}"), "intValue"));
-      EXPECT_TRUE(val.empty());
-    }
+      Azure::Nullable<std::vector<uint8_t>> val;
+      JsonOptional::SetIfExists<std::string, std::vector<uint8_t>>(
+          val,
+          json::parse("{ \"base64Urlfield\": \"" + encodedData + "\"}"),
+          "intValue",
+          Azure::Core::_internal::Base64Url::Base64UrlDecode);
 
-    // Not a string.
-    {
-      EXPECT_THROW(
-          JsonHelpers::ParseBase64UrlField(
-              json::parse("{ \"base64Urlfield\": true}"), "base64Urlfield"),
-          std::runtime_error);
-    }
-    // Not base64url. This does not currently throw.
-    {
-      EXPECT_THROW(
-          JsonHelpers::ParseBase64UrlField(
-              json::parse("{ \"base64Urlfield\": \"!@#%@!!%!!\"}"), "base64Urlfield"),
-          std::runtime_error);
+      EXPECT_FALSE(val.HasValue());
     }
   }
 
@@ -343,10 +203,10 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
           std::runtime_error);
     }
     {
-      EXPECT_THROW(
+      EXPECT_DEATH(
           AttestationServiceTokenResponseSerializer::Deserialize(
               json::parse(R"({"token": [12345]})")),
-          std::runtime_error);
+          ".*");
     }
   }
 
@@ -451,13 +311,25 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
     static TestObject Deserialize(json const& serialized)
     {
       TestObject returnValue;
-      returnValue.Algorithm = JsonHelpers::ParseStringField(serialized, "alg");
-      returnValue.ExpiresAt = JsonHelpers::ParseDateTimeField(serialized, "exp");
-      returnValue.IssuedOn = JsonHelpers::ParseDateTimeField(serialized, "iat");
-      returnValue.NotBefore = JsonHelpers::ParseDateTimeField(serialized, "nbf");
-      returnValue.IntegerArray = JsonHelpers::ParseIntArrayField(serialized, "intArray");
-      returnValue.Issuer = JsonHelpers::ParseStringField(serialized, "iss");
-      returnValue.Integer = JsonHelpers::ParseIntNumberField(serialized, "int");
+      JsonOptional::SetIfExists(returnValue.Algorithm, serialized, "alg");
+      JsonOptional::SetIfExists<int64_t, Azure::DateTime>(
+          returnValue.ExpiresAt,
+          serialized,
+          "exp",
+          Azure::Core::_internal::PosixTimeConverter::PosixTimeToDateTime);
+      JsonOptional::SetIfExists<int64_t, Azure::DateTime>(
+          returnValue.IssuedOn,
+          serialized,
+          "iat",
+          Azure::Core::_internal::PosixTimeConverter::PosixTimeToDateTime);
+      JsonOptional::SetIfExists<int64_t, Azure::DateTime>(
+          returnValue.NotBefore,
+          serialized,
+          "nbf",
+          Azure::Core::_internal::PosixTimeConverter::PosixTimeToDateTime);
+      JsonOptional::SetIfExists(returnValue.IntegerArray, serialized, "intArray");
+      JsonOptional::SetIfExists(returnValue.Issuer, serialized, "iss");
+      JsonOptional::SetIfExists(returnValue.Integer, serialized, "int");
 
       return returnValue;
     }
@@ -465,13 +337,27 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
     static std::string Serialize(TestObject const& testObject)
     {
       json returnValue;
-      JsonHelpers::SetField(returnValue, testObject.Algorithm, "alg");
-      JsonHelpers::SetField(returnValue, testObject.Integer, "int");
-      JsonHelpers::SetField(returnValue, testObject.IntegerArray, "intArray");
-      JsonHelpers::SetField(returnValue, testObject.ExpiresAt, "exp");
-      JsonHelpers::SetField(returnValue, testObject.Issuer, "iss");
-      JsonHelpers::SetField(returnValue, testObject.IssuedOn, "iat");
-      JsonHelpers::SetField(returnValue, testObject.NotBefore, "nbf");
+
+      JsonOptional::SetFromNullable(testObject.Algorithm, returnValue, "alg");
+      JsonOptional::SetFromNullable(testObject.Integer, returnValue, "int");
+      JsonOptional::SetFromNullable(testObject.IntegerArray, returnValue, "intArray");
+      JsonOptional::SetFromNullable<Azure::DateTime, int64_t>(
+          testObject.ExpiresAt,
+          returnValue,
+          "exp",
+          Azure::Core::_internal::PosixTimeConverter::DateTimeToPosixTime);
+
+      JsonOptional::SetFromNullable(testObject.Issuer, returnValue, "iss");
+      JsonOptional::SetFromNullable<Azure::DateTime, int64_t>(
+          testObject.IssuedOn,
+          returnValue,
+          "iat",
+          Azure::Core::_internal::PosixTimeConverter::DateTimeToPosixTime);
+      JsonOptional::SetFromNullable<Azure::DateTime, int64_t>(
+          testObject.NotBefore,
+          returnValue,
+          "nbf",
+          Azure::Core::_internal::PosixTimeConverter::DateTimeToPosixTime);
       return returnValue.dump();
     }
   };
@@ -868,5 +754,4 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
       EXPECT_THROW(testToken.ValidateToken(validationOptions), std::runtime_error);
     }
   }
-
 }}}} // namespace Azure::Security::Attestation::Test
