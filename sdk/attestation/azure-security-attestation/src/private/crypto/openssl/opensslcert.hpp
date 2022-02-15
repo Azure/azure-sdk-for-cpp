@@ -171,11 +171,8 @@ namespace Azure { namespace Security { namespace Attestation { namespace _detail
       {
         return "EC";
       }
-      std::stringstream ss;
-      ss << "Unknown Key algorithm: " << std::to_string(nid) << " for certificate "
-         << GetSubjectName() << " " << GetIssuerName() << GetThumbprint();
-      AZURE_ASSERT_MSG(false, ss.str().c_str());
-      throw std::runtime_error("Not reached");
+      AZURE_ASSERT(false);
+      abort();
     }
 
     std::string GetKeyType() const override
@@ -197,11 +194,8 @@ namespace Azure { namespace Security { namespace Attestation { namespace _detail
       {
         return "EC";
       }
-      std::stringstream ss;
-      ss << "Unknown Key type: " << std::to_string(nid) << " for certificate " << GetSubjectName()
-         << " " << GetIssuerName() << " " << GetThumbprint();
-      AZURE_ASSERT_MSG(false, ss.str().c_str());
-      throw std::runtime_error("Not reached");
+      AZURE_ASSERT(false);
+      abort();
     }
 
     static std::unique_ptr<X509Certificate> Import(std::string const& pemEncodedKey);

@@ -78,7 +78,8 @@ namespace Azure { namespace Security { namespace Attestation { namespace _detail
     {
       return std::make_unique<EcdsaOpenSSLAsymmetricKey>(std::move(pkey));
     }
-    throw std::runtime_error("Unknown key type passed to ImportPublicKey.");
+    assert(false);
+    abort();
   }
 
   /**
@@ -103,7 +104,8 @@ namespace Azure { namespace Security { namespace Attestation { namespace _detail
     {
       return std::make_unique<EcdsaOpenSSLAsymmetricKey>(std::move(pkey));
     }
-    throw std::runtime_error("Unknown key type passed to ImportPublicKey.");
+    assert(false);
+    abort();
   }
 
   RsaOpenSSLAsymmetricKey::RsaOpenSSLAsymmetricKey(size_t keySize)
@@ -171,21 +173,12 @@ namespace Azure { namespace Security { namespace Attestation { namespace _detail
   {
 
     auto evpContext(make_openssl_unique(EVP_PKEY_CTX_new_id, EVP_PKEY_EC, nullptr));
-    if (EVP_PKEY_keygen_init(evpContext.get()) != 1)
-    {
-      throw OpenSSLException("EVP_PKEY_keygen_init");
-    }
+    OPENSSL_CHECK(EVP_PKEY_keygen_init(evpContext.get()));
 
-    if (EVP_PKEY_CTX_set_ec_paramgen_curve_nid(evpContext.get(), NID_X9_62_prime256v1) != 1)
-    {
-      throw OpenSSLException("EVP_PKEY_CTX_set_ec_paramgen_curve_nid");
-    }
+    OPENSSL_CHECK(EVP_PKEY_CTX_set_ec_paramgen_curve_nid(evpContext.get(), NID_X9_62_prime256v1));
 
     EVP_PKEY* pkey = nullptr;
-    if (EVP_PKEY_keygen(evpContext.get(), &pkey) != 1)
-    {
-      throw OpenSSLException("EVP_PKEY_keygen");
-    }
+    OPENSSL_CHECK(EVP_PKEY_keygen(evpContext.get(), &pkey));
     m_pkey.reset(pkey);
   }
 
