@@ -187,7 +187,7 @@ namespace Azure { namespace Security { namespace Attestation { namespace _detail
       {
         return "EC";
       }
-      //LCOV_EXCL_START
+      // LCOV_EXCL_START
       std::stringstream ss;
       ss << "Unknown Certificate Key Algorithm: " << std::to_string(nid) << " for certificate "
          << GetSubjectName() << " " << GetIssuerName() << GetThumbprint();
