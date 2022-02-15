@@ -74,6 +74,16 @@ namespace Azure { namespace Security { namespace Attestation { namespace Models 
     Azure::Nullable<std::vector<std::string>> CertificateChain;
   };
 
+  /** @brief A collection of {@link AttestationSigner} objects.
+   *
+   */
+  struct AttestationSigningCertificateResult final
+  {
+    /** @brief The collection of signers.
+     */
+    std::vector<AttestationSigner> Signers;
+  };
+
   /** @brief An AttestationResult reflects the result of an Attestation operation.
    *
    * The fields in the AttestationResult represent the claims in the AttestationToken returned

@@ -53,7 +53,7 @@ namespace Azure { namespace Security { namespace Attestation { namespace _detail
       std::unique_ptr<Azure::Core::Http::RawResponse>& response)
   {
     Models::AttestationOpenIdMetadata returnValue;
-    auto parsedBody = Azure::Core::Json::_internal::json::parse(response->GetBody());
+    auto const parsedBody = Azure::Core::Json::_internal::json::parse(response->GetBody());
 
     JsonOptional::SetIfExists(returnValue.Issuer, parsedBody, "issuer");
     JsonOptional::SetIfExists(returnValue.JsonWebKeySetUrl, parsedBody, "jwks_uri");
@@ -76,21 +76,13 @@ namespace Azure { namespace Security { namespace Attestation { namespace _detail
         request.RunTimeData,
         serializedRequest,
         "runtimeData",
-        [](AttestationData const& value) -> std::map<std::string, std::string> {
-          return {
-              {"data", Azure::Core::_internal::Base64Url::Base64UrlEncode(value.Data)},
-              {"dataType", value.DataType.ToString()}};
-        });
+        JsonHelpers::DecorateAttestationData);
 
     JsonOptional::SetFromNullable<AttestationData, std::map<std::string, std::string>>(
         request.InitTimeData,
         serializedRequest,
         "inittimeData",
-        [](AttestationData const& value) -> std::map<std::string, std::string> {
-          return {
-              {"data", Azure::Core::_internal::Base64Url::Base64UrlEncode(value.Data)},
-              {"dataType", value.DataType.ToString()}};
-        });
+        JsonHelpers::DecorateAttestationData);
 
     JsonOptional::SetFromNullable(request.Nonce, serializedRequest, "nonce");
     JsonOptional::SetFromNullable(
@@ -108,21 +100,13 @@ namespace Azure { namespace Security { namespace Attestation { namespace _detail
         request.RunTimeData,
         serializedRequest,
         "runtimeData",
-        [](AttestationData const& value) -> std::map<std::string, std::string> {
-          return {
-              {"data", Azure::Core::_internal::Base64Url::Base64UrlEncode(value.Data)},
-              {"dataType", value.DataType.ToString()}};
-        });
+        JsonHelpers::DecorateAttestationData);
 
     JsonOptional::SetFromNullable<AttestationData, std::map<std::string, std::string>>(
         request.InitTimeData,
         serializedRequest,
         "inittimeData",
-        [](AttestationData const& value) -> std::map<std::string, std::string> {
-          return {
-              {"data", Azure::Core::_internal::Base64Url::Base64UrlEncode(value.Data)},
-              {"dataType", value.DataType.ToString()}};
-        });
+        JsonHelpers::DecorateAttestationData);
 
     JsonOptional::SetFromNullable(request.Nonce, serializedRequest, "nonce");
     JsonOptional::SetFromNullable(
@@ -237,13 +221,8 @@ namespace Azure { namespace Security { namespace Attestation { namespace _detail
   JsonWebKey JsonWebKeySerializer::Deserialize(const Azure::Core::Json::_internal::json& jwk)
   {
     JsonWebKey returnValue;
-    Azure::Nullable<std::string> kty;
-    JsonOptional::SetIfExists(kty, jwk, "kty");
-    if (kty.HasValue())
-    {
-      returnValue.kty = kty.Value();
-    }
-    else
+    JsonOptional::SetIfExists(returnValue.kty, jwk, "kty");
+    if (!returnValue.kty)
     {
       throw std::runtime_error("Could not find required field 'kty' in JSON Web Key");
     }

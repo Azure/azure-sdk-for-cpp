@@ -93,4 +93,13 @@ namespace Azure { namespace Security { namespace Attestation { namespace _detail
 
     return decodedBuffer;
   }
+
+  std::map<std::string, std::string> JsonHelpers::DecorateAttestationData(
+      AttestationData const& value)
+  {
+    return {
+        {"data", Azure::Core::_internal::Base64Url::Base64UrlEncode(value.Data)},
+        {"dataType", value.DataType.ToString()}};
+  }
+
 }}}} // namespace Azure::Security::Attestation::_detail

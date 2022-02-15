@@ -20,23 +20,13 @@ set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
 
-
 if(NOT AZ_ALL_LIBRARIES)
   find_package(azure-core-cpp "1.2.0" CONFIG QUIET)
   if(NOT azure-core-cpp_FOUND)
     find_package(azure-core-cpp "1.2.0" REQUIRED)
   endif()
 endif()
-
-#if(WIN32)
-#    find_package(WIL CONFIG REQUIRED)
-#    target_link_libraries(WIL::WIL)
-#    target_link_libraries(azure-core PRIVATE bcrypt crypt32)
-#else()
-    find_package(OpenSSL REQUIRED)
-    target_link_libraries(azure-core PUBLIC OpenSSL::Crypto OpenSSL::SSL)
-#endif()
-
+find_package(OpenSSL REQUIRED)
 
 set(
   AZURE_ATTESTATION_HEADER
@@ -64,21 +54,12 @@ set(
     src/private/jsonhelpers.cpp
     src/private/attestation_client_private.cpp)
 
-#if(WIN32)
-#set(
-#    AZURE_ATTESTATION_SOURCE
-#    ${AZURE_ATTESTATION_SOURCE}
-#    src/private/crypto/bcrypt/bcryptcrypto.cpp
-#    src/private/crypto/bcrypt/bcryptkeys.cpp
-#    src/private/crypto/bcrypt/bcryptcert.cpp)
-#else()
 set(
     AZURE_ATTESTATION_SOURCE
     ${AZURE_ATTESTATION_SOURCE}
     src/private/crypto/openssl/opensslcrypto.cpp
     src/private/crypto/openssl/opensslkeys.cpp
     src/private/crypto/openssl/opensslcert.cpp)
-#endif()
 
 create_per_service_target_build(azure-security-attestation attestation)
 
@@ -98,7 +79,7 @@ target_include_directories(
 )
 
 # Disable dependency on azure-core until azure-core has released to vcpkg
-target_link_libraries(azure-security-attestation PUBLIC Azure::azure-core)
+target_link_libraries(azure-security-attestation PUBLIC Azure::azure-core OpenSSL::Crypto OpenSSL::SSL)
 
 # make sure that users can consume the project as a library.
 add_library(Azure::azure-security-attestation ALIAS azure-security-attestation)

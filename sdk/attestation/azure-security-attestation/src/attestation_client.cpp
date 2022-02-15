@@ -60,7 +60,7 @@ Azure::Response<AttestationOpenIdMetadata> AttestationClient::GetOpenIdMetadata(
   return Response<AttestationOpenIdMetadata>(std::move(openIdMetadata), std::move(response));
 }
 
-Azure::Response<std::vector<AttestationSigner>>
+Azure::Response<AttestationSigningCertificateResult>
 AttestationClient::GetAttestationSigningCertificates(Azure::Core::Context const& context) const
 {
   auto request
@@ -68,13 +68,13 @@ AttestationClient::GetAttestationSigningCertificates(Azure::Core::Context const&
 
   auto response = AttestationCommonRequest::SendRequest(*m_pipeline, request, context);
   auto jsonWebKeySet(JsonWebKeySetSerializer::Deserialize(response));
-  std::vector<Models::AttestationSigner> signers;
+  AttestationSigningCertificateResult returnValue;
   for (const auto& jwk : jsonWebKeySet.Keys)
   {
     AttestationSignerInternal internalSigner(jwk);
-    signers.push_back(internalSigner);
+    returnValue.Signers.push_back(internalSigner);
   }
-  return Response<std::vector<AttestationSigner>>(signers, std::move(response));
+  return Response<AttestationSigningCertificateResult>(returnValue, std::move(response));
 }
 
 Azure::Response<AttestationToken<AttestationResult>> AttestationClient::AttestSgxEnclave(
@@ -108,11 +108,11 @@ Azure::Response<AttestationToken<AttestationResult>> AttestationClient::AttestSg
 
   // Validate the token returned by the service. Use the cached attestation signers in the
   // validation.
-  CacheAttestationSigners(context);
+  std::vector<AttestationSigner> const& signers = GetAttestationSigners(context);
   token.ValidateToken(
       options.TokenValidationOptions.HasValue() ? options.TokenValidationOptions.Value()
                                                 : this->m_tokenValidationOptions,
-      m_attestationSigners);
+      signers);
 
   // And return the attestation result to the caller.
   auto returnedToken = AttestationToken<AttestationResult>(token);
@@ -141,15 +141,27 @@ Azure::Response<AttestationToken<AttestationResult>> AttestationClient::AttestOp
   std::string responseToken = AttestationServiceTokenResponseSerializer::Deserialize(response);
   auto token
       = AttestationTokenInternal<AttestationResult, AttestationResultSerializer>(responseToken);
+
+  std::vector<AttestationSigner> const& signers = GetAttestationSigners(context);
+  token.ValidateToken(
+      options.TokenValidationOptions.HasValue() ? options.TokenValidationOptions.Value()
+                                                : this->m_tokenValidationOptions,
+      signers);
+
   return Response<AttestationToken<AttestationResult>>(token, std::move(response));
 }
 
-void AttestationClient::CacheAttestationSigners(Azure::Core::Context const& context) const
+namespace {
+std::shared_timed_mutex SharedStateLock;
+}
+
+std::vector<AttestationSigner> const &AttestationClient::GetAttestationSigners(Azure::Core::Context const& context) const
 {
-  std::unique_lock<std::shared_timed_mutex> stateLock(m_sharedStateLock);
+  std::unique_lock<std::shared_timed_mutex> stateLock(SharedStateLock);
 
   if (m_attestationSigners.size() == 0)
   {
-    m_attestationSigners = GetAttestationSigningCertificates(context).Value;
+    m_attestationSigners = GetAttestationSigningCertificates(context).Value.Signers;
   }
+  return m_attestationSigners;
 }

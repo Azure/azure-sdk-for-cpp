@@ -92,8 +92,8 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
     auto attestationClient(CreateClient());
 
     auto attestationSigners = attestationClient->GetAttestationSigningCertificates();
-    EXPECT_LE(1UL, attestationSigners.Value.size());
-    for (const auto& signer : attestationSigners.Value)
+    EXPECT_LE(1UL, attestationSigners.Value.Signers.size());
+    for (const auto& signer : attestationSigners.Value.Signers)
     {
       EXPECT_TRUE(signer.KeyId.HasValue());
       EXPECT_LE(1UL, signer.CertificateChain.Value().size());

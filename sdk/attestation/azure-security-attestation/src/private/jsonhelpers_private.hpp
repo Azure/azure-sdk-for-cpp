@@ -13,6 +13,7 @@
 
 #pragma once
 
+#include "azure/attestation/attestation_client.hpp"
 #include <azure/core/datetime.hpp>
 #include <azure/core/internal/json/json.hpp>
 #include <azure/core/nullable.hpp>
@@ -29,6 +30,8 @@ namespace Azure { namespace Security { namespace Attestation { namespace _detail
   public:
     static std::vector<uint8_t> HexStringToBinary(std::string const& hexString);
     static std::string BinaryToHexString(std::vector<uint8_t> const& src);
+
+    static std::map<std::string, std::string> DecorateAttestationData(Azure::Security::Attestation::AttestationData const& data);
 
     static void SetIfExistsJson(
         Azure::Nullable<std::string>& rv,

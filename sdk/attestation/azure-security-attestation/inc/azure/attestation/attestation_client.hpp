@@ -7,7 +7,6 @@
 #include "azure/attestation/attestation_client_options.hpp"
 #include <azure/core/context.hpp>
 #include <azure/core/url.hpp>
-#include <shared_mutex>
 #include <string>
 
 namespace Azure { namespace Core { namespace Http { namespace _internal {
@@ -322,10 +321,9 @@ namespace Azure { namespace Security { namespace Attestation {
     std::shared_ptr<Azure::Core::Http::_internal::HttpPipeline> m_pipeline;
     AttestationTokenValidationOptions m_tokenValidationOptions;
 
-    mutable std::shared_timed_mutex m_sharedStateLock;
     mutable std::vector<Models::AttestationSigner> m_attestationSigners;
 
-    void CacheAttestationSigners(Azure::Core::Context const& context) const;
+    std::vector<Models::AttestationSigner> const& GetAttestationSigners(Azure::Core::Context const& context) const;
 
   public:
     /**
@@ -386,7 +384,7 @@ namespace Azure { namespace Security { namespace Attestation {
      *
      * @returns Attestation Metadata.
      */
-    Response<std::vector<Models::AttestationSigner>> GetAttestationSigningCertificates(
+    Response<Models::AttestationSigningCertificateResult> GetAttestationSigningCertificates(
         Azure::Core::Context const& context = Azure::Core::Context::ApplicationContext) const;
 
     /**
