@@ -54,7 +54,7 @@ namespace Azure { namespace Security { namespace Attestation { namespace _detail
     return output;
   }
 
-  constexpr uint8_t JsonHelpers::FromHexChar(char hex)
+  uint8_t JsonHelpers::FromHexChar(char hex)
   {
     uint8_t val = 0;
     if (hex >= '0' && hex <= '9')
@@ -71,7 +71,7 @@ namespace Azure { namespace Security { namespace Attestation { namespace _detail
     }
     else
     {
-      throw std::runtime_error("Invalid character presented to FromHexChar");
+      throw std::invalid_argument("Invalid character presented to FromHexChar");
     }
     return val;
   }
@@ -86,8 +86,8 @@ namespace Azure { namespace Security { namespace Attestation { namespace _detail
     std::vector<uint8_t> decodedBuffer;
     for (int i = 0; i < static_cast<int>(hexString.size()); i += 2)
     {
-      uint8_t first = FromHexChar(hexString[i]);
-      uint8_t second = FromHexChar(hexString[i + 1]);
+      uint8_t first = JsonHelpers::FromHexChar(hexString[i]);
+      uint8_t second = JsonHelpers::FromHexChar(hexString[i + 1]);
       decodedBuffer.push_back(static_cast<uint8_t>((first << 4) + second));
     }
 

@@ -24,7 +24,7 @@
 namespace Azure { namespace Security { namespace Attestation { namespace _detail {
   class JsonHelpers {
   private:
-    static constexpr uint8_t FromHexChar(char hex);
+    static uint8_t FromHexChar(char hex);
 
   public:
     static std::vector<uint8_t> HexStringToBinary(std::string const& hexString);

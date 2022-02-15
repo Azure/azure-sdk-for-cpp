@@ -227,10 +227,7 @@ namespace Azure { namespace Security { namespace Attestation { namespace _detail
 
     openssl_x509_name subjectName(ParseX509Name(newCertificateSubject));
 
-    if (X509_set_subject_name(certificate.get(), subjectName.get()) != 1)
-    {
-      throw OpenSSLException("X509_set_subject_name");
-    }
+    OPENSSL_CHECK(X509_set_subject_name(certificate.get(), subjectName.get()));
 
     if (issuer)
     {

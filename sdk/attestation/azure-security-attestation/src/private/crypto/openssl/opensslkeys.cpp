@@ -11,6 +11,7 @@
 #include "opensslkeys.hpp"
 #include "../inc/crypto.hpp"
 #include "openssl_helpers.hpp"
+#include <azure/core/azure_assert.hpp>
 #include <cstring>
 #include <memory>
 #include <openssl/bio.h>
@@ -39,35 +40,23 @@ namespace Azure { namespace Security { namespace Attestation { namespace _detail
   std::string OpenSSLAsymmetricKey::ExportPrivateKey()
   {
     auto bio(make_openssl_unique(BIO_new, BIO_s_mem()));
-    if (PEM_write_bio_PrivateKey(bio.get(), m_pkey.get(), nullptr, nullptr, 0, nullptr, nullptr)
-        != 1)
-    {
-      throw OpenSSLException("Could not write private key");
-    }
+    OPENSSL_CHECK(
+        PEM_write_bio_PrivateKey(bio.get(), m_pkey.get(), nullptr, nullptr, 0, nullptr, nullptr));
     std::vector<uint8_t> returnValue(BIO_ctrl_pending(bio.get()));
 
     int res = BIO_read(bio.get(), returnValue.data(), static_cast<int>(returnValue.size()));
-    if (res == 0 || res == -1 || res == -2)
-    {
-      throw OpenSSLException("BIO_read");
-    }
+    OPENSSL_CHECK_BIO(res);
     return std::string(returnValue.begin(), returnValue.end());
   }
 
   std::string OpenSSLAsymmetricKey::ExportPublicKey()
   {
     auto bio(make_openssl_unique(BIO_new, BIO_s_mem()));
-    if (PEM_write_bio_PUBKEY(bio.get(), m_pkey.get()) != 1)
-    {
-      throw OpenSSLException("Could not write public key");
-    }
+    OPENSSL_CHECK(PEM_write_bio_PUBKEY(bio.get(), m_pkey.get()));
     std::vector<uint8_t> returnValue(BIO_ctrl_pending(bio.get()));
 
     int res = BIO_read(bio.get(), returnValue.data(), static_cast<int>(returnValue.size()));
-    if (res == 0 || res == -1 || res == -2)
-    {
-      throw OpenSSLException("BIO_read");
-    }
+    OPENSSL_CHECK_BIO(res);
     return std::string(returnValue.begin(), returnValue.end());
   }
 
@@ -78,10 +67,7 @@ namespace Azure { namespace Security { namespace Attestation { namespace _detail
         BIO_new_mem_buf, pemEncodedKey.data(), static_cast<int>(pemEncodedKey.size())));
     EVP_PKEY* raw_pkey = nullptr;
     raw_pkey = PEM_read_bio_PUBKEY(bio.get(), nullptr, nullptr, nullptr);
-    if (raw_pkey == nullptr)
-    {
-      throw OpenSSLException("PEM_read_bio_PUBKEY");
-    }
+    OPENSSL_CHECK_NULL(raw_pkey);
     openssl_evp_pkey pkey(raw_pkey);
     raw_pkey = nullptr;
     if (EVP_PKEY_id(pkey.get()) == EVP_PKEY_RSA)
@@ -105,10 +91,8 @@ namespace Azure { namespace Security { namespace Attestation { namespace _detail
         BIO_new_mem_buf, pemEncodedKey.data(), static_cast<int>(pemEncodedKey.size())));
     EVP_PKEY* raw_pkey = nullptr;
     raw_pkey = PEM_read_bio_PrivateKey(bio.get(), nullptr, nullptr, nullptr);
-    if (raw_pkey == nullptr)
-    {
-      throw OpenSSLException("PEM_read_bio_PUBKEY");
-    }
+    OPENSSL_CHECK_NULL(raw_pkey);
+
     openssl_evp_pkey pkey(raw_pkey);
     raw_pkey = nullptr;
     if (EVP_PKEY_id(pkey.get()) == EVP_PKEY_RSA)
@@ -126,19 +110,10 @@ namespace Azure { namespace Security { namespace Attestation { namespace _detail
   {
     auto evpContext(make_openssl_unique(EVP_PKEY_CTX_new_id, EVP_PKEY_RSA, nullptr));
 
-    if (EVP_PKEY_keygen_init(evpContext.get()) != 1)
-    {
-      throw OpenSSLException("Could not initialize keygen");
-    }
-    if (EVP_PKEY_CTX_set_rsa_keygen_bits(evpContext.get(), static_cast<int>(keySize)) != 1)
-    {
-      throw OpenSSLException("Could not set keygen bits");
-    }
+    OPENSSL_CHECK(EVP_PKEY_keygen_init(evpContext.get()));
+    OPENSSL_CHECK(EVP_PKEY_CTX_set_rsa_keygen_bits(evpContext.get(), static_cast<int>(keySize)));
     EVP_PKEY* pkey = nullptr;
-    if (EVP_PKEY_keygen(evpContext.get(), &pkey) != 1)
-    {
-      throw OpenSSLException("Could not keygen");
-    }
+    OPENSSL_CHECK(EVP_PKEY_keygen(evpContext.get(), &pkey));
     m_pkey.reset(pkey);
   }
 
@@ -147,28 +122,17 @@ namespace Azure { namespace Security { namespace Attestation { namespace _detail
   std::vector<uint8_t> OpenSSLAsymmetricKey::SignBuffer(std::vector<uint8_t> const& payload) const
   {
     auto mdContext(make_openssl_unique(EVP_MD_CTX_new));
-    if (EVP_DigestSignInit(mdContext.get(), nullptr, EVP_sha256(), nullptr, m_pkey.get()) != 1)
-    {
-      throw OpenSSLException("EVP_DigestSignInit");
-    }
+    OPENSSL_CHECK(
+        EVP_DigestSignInit(mdContext.get(), nullptr, EVP_sha256(), nullptr, m_pkey.get()));
 
-    if (EVP_DigestSignUpdate(mdContext.get(), payload.data(), static_cast<int>(payload.size()))
-        != 1)
-    {
-      throw OpenSSLException("EVP_DigestSignUpdate");
-    }
+    OPENSSL_CHECK(
+        EVP_DigestSignUpdate(mdContext.get(), payload.data(), static_cast<int>(payload.size())));
 
     size_t signatureLength = 0;
-    if (EVP_DigestSignFinal(mdContext.get(), nullptr, &signatureLength) != 1)
-    {
-      throw OpenSSLException("EVP_DigestSignFinal(sizing)");
-    }
+    OPENSSL_CHECK(EVP_DigestSignFinal(mdContext.get(), nullptr, &signatureLength));
 
     std::vector<uint8_t> returnValue(signatureLength);
-    if (EVP_DigestSignFinal(mdContext.get(), returnValue.data(), &signatureLength) != 1)
-    {
-      throw OpenSSLException("EVP_DigestSignFinal(sizing)");
-    }
+    OPENSSL_CHECK(EVP_DigestSignFinal(mdContext.get(), returnValue.data(), &signatureLength));
     returnValue.resize(signatureLength);
     return returnValue;
   }
@@ -178,16 +142,11 @@ namespace Azure { namespace Security { namespace Attestation { namespace _detail
       std::vector<uint8_t> const& signature) const
   {
     auto mdContext(make_openssl_unique(EVP_MD_CTX_new));
-    if (EVP_DigestVerifyInit(mdContext.get(), nullptr, EVP_sha256(), nullptr, m_pkey.get()) != 1)
-    {
-      throw OpenSSLException("EVP_DigestVerifyInit");
-    }
+    OPENSSL_CHECK(
+        EVP_DigestVerifyInit(mdContext.get(), nullptr, EVP_sha256(), nullptr, m_pkey.get()));
 
-    if (EVP_DigestVerifyUpdate(mdContext.get(), payload.data(), static_cast<int>(payload.size()))
-        != 1)
-    {
-      throw OpenSSLException("EVP_DigestVerifyUpdate");
-    }
+    OPENSSL_CHECK(
+        EVP_DigestVerifyUpdate(mdContext.get(), payload.data(), static_cast<int>(payload.size())));
 
     auto rv = EVP_DigestVerifyFinal(
         mdContext.get(), signature.data(), static_cast<int>(signature.size()));
@@ -202,7 +161,9 @@ namespace Azure { namespace Security { namespace Attestation { namespace _detail
     }
     else
     {
-      throw OpenSSLException("EVP_DigestVerifyFinal");
+      // Force a failure.
+      AZURE_ASSERT_MSG(false, GetOpenSSLError("EVP_DigestVerifyFinal").c_str());
+      throw std::runtime_error("Not reached");
     }
   }
 

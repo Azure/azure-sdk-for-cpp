@@ -20,6 +20,7 @@
 #include <openssl/rsa.h>
 #include <openssl/x509.h>
 #include <string>
+#include <sstream>
 #include <type_traits>
 #include <utility>
 #include <vector>
@@ -78,10 +79,7 @@ namespace Azure { namespace Security { namespace Attestation { namespace _detail
       // Print the DN in a single line, but don't add spaces around the equals sign (mbedtls
       // doesn't add them, so if we want them to compare properly, we remove the spaces).
       int length = X509_NAME_print_ex(bio.get(), dn, 0, XN_FLAG_ONELINE & ~XN_FLAG_SPC_EQ);
-      if (length < 0)
-      {
-        throw OpenSSLException("X509_NAME_print_ex");
-      }
+      OPENSSL_CHECK_LEN(length);
       if (length == 0)
       {
         return "";
@@ -134,10 +132,7 @@ namespace Azure { namespace Security { namespace Attestation { namespace _detail
       int len = i2d_X509(m_certificate.get(), nullptr);
       std::vector<uint8_t> thumbprintBuffer(len);
       unsigned char* buf = thumbprintBuffer.data();
-      if (i2d_X509(m_certificate.get(), &buf) < 0)
-      {
-        throw OpenSSLException("i2d_x509");
-      }
+      OPENSSL_CHECK_LEN(i2d_X509(m_certificate.get(), &buf));
       OPENSSL_CHECK(EVP_DigestUpdate(hash.get(), buf, thumbprintBuffer.size()));
       uint32_t hashLength = EVP_MAX_MD_SIZE;
       std::vector<uint8_t> hashedThumbprint(EVP_MAX_MD_SIZE);
@@ -176,9 +171,11 @@ namespace Azure { namespace Security { namespace Attestation { namespace _detail
       {
         return "EC";
       }
-      throw std::runtime_error(
-          "Unknown Key algorithm type: " + std::to_string(nid) + " for certificate "
-          + GetSubjectName() + " " + GetIssuerName() + GetThumbprint());
+      std::stringstream ss;
+      ss << "Unknown Key algorithm: " << std::to_string(nid) << " for certificate "
+         << GetSubjectName() << " " << GetIssuerName() << GetThumbprint();
+      AZURE_ASSERT_MSG(false, ss.str().c_str());
+      throw std::runtime_error("Not reached");
     }
 
     std::string GetKeyType() const override
@@ -200,9 +197,11 @@ namespace Azure { namespace Security { namespace Attestation { namespace _detail
       {
         return "EC";
       }
-      throw std::runtime_error(
-          "Unknown Key algorithm type: " + std::to_string(nid) + " for certificate "
-          + GetSubjectName() + " " + GetIssuerName() + GetThumbprint());
+      std::stringstream ss;
+      ss << "Unknown Key type: " << std::to_string(nid) << " for certificate "
+         << GetSubjectName() << " " << GetIssuerName() << " " << GetThumbprint();
+      AZURE_ASSERT_MSG(false, ss.str().c_str());
+      throw std::runtime_error("Not reached");
     }
 
     static std::unique_ptr<X509Certificate> Import(std::string const& pemEncodedKey);

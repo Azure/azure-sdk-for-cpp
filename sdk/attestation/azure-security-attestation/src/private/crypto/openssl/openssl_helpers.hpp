@@ -97,4 +97,13 @@ namespace Azure { namespace Security { namespace Attestation { namespace _detail
     } \
   } while (0);
 
+#define OPENSSL_CHECK_LEN(x) \
+  do \
+  { \
+    if ((x) < 0) \
+    { \
+      AZURE_ASSERT_MSG(false, GetOpenSSLError(#x).c_str()); \
+    } \
+  } while (0);
+
 }}}} // namespace Azure::Security::Attestation::_detail
