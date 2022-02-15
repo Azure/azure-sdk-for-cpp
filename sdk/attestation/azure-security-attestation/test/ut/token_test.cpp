@@ -89,6 +89,11 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
       EXPECT_THROW(JsonHelpers::HexStringToBinary("ABCEQWERTY"), std::invalid_argument);
       // cspell: enable
     }
+    {
+      // cspell: disable
+      EXPECT_THROW(JsonHelpers::HexStringToBinary("ABC"), std::invalid_argument);
+      // cspell: enable
+    }
   }
 
   TEST(SerializationTests, TestDeserializeJWK)
