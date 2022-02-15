@@ -19,8 +19,8 @@
 #include <openssl/pem.h>
 #include <openssl/rsa.h>
 #include <openssl/x509.h>
-#include <string>
 #include <sstream>
+#include <string>
 #include <type_traits>
 #include <utility>
 #include <vector>
@@ -198,8 +198,8 @@ namespace Azure { namespace Security { namespace Attestation { namespace _detail
         return "EC";
       }
       std::stringstream ss;
-      ss << "Unknown Key type: " << std::to_string(nid) << " for certificate "
-         << GetSubjectName() << " " << GetIssuerName() << " " << GetThumbprint();
+      ss << "Unknown Key type: " << std::to_string(nid) << " for certificate " << GetSubjectName()
+         << " " << GetIssuerName() << " " << GetThumbprint();
       AZURE_ASSERT_MSG(false, ss.str().c_str());
       throw std::runtime_error("Not reached");
     }
