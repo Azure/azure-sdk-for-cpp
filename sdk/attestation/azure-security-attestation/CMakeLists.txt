@@ -74,8 +74,6 @@ target_include_directories(
       $<INSTALL_INTERFACE:include>
       # Disable dependency on azure-core until azure-core has released to vcpkg
       # ${azure-core-cpp_INCLUDE_DIRS}
-    PRIVATE
-      "src/private"
 )
 
 # Disable dependency on azure-core until azure-core has released to vcpkg

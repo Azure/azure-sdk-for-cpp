@@ -11,7 +11,7 @@
 #pragma once
 
 #include "../inc/crypto.hpp"
-#include "../private/jsonhelpers_private.hpp"
+#include "../../jsonhelpers_private.hpp"
 #include "openssl_helpers.hpp"
 #include <memory>
 #include <openssl/bio.h>
