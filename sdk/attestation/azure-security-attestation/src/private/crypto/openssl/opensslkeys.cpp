@@ -12,6 +12,7 @@
 #include "../inc/crypto.hpp"
 #include "openssl_helpers.hpp"
 #include <azure/core/azure_assert.hpp>
+#include <cassert>
 #include <cstring>
 #include <memory>
 #include <openssl/bio.h>
