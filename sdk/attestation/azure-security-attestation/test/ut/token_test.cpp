@@ -222,12 +222,6 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
               json::parse(R"({"fred": "ABCDEFG.123.456"} )")),
           std::runtime_error);
     }
-    {
-      EXPECT_DEATH(
-          AttestationServiceTokenResponseSerializer::Deserialize(
-              json::parse(R"({"token": [12345]})")),
-          ".*");
-    }
   }
 
   TEST(SerializationTests, TestDeserializeSignerToJson)

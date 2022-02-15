@@ -41,24 +41,34 @@ namespace Azure { namespace Security { namespace Attestation { namespace _detail
   std::string OpenSSLAsymmetricKey::ExportPrivateKey()
   {
     auto bio(make_openssl_unique(BIO_new, BIO_s_mem()));
-    OPENSSL_CHECK(
-        PEM_write_bio_PrivateKey(bio.get(), m_pkey.get(), nullptr, nullptr, 0, nullptr, nullptr));
-    std::vector<uint8_t> returnValue(BIO_ctrl_pending(bio.get()));
-
-    int res = BIO_read(bio.get(), returnValue.data(), static_cast<int>(returnValue.size()));
-    OPENSSL_CHECK_BIO(res);
-    return std::string(returnValue.begin(), returnValue.end());
+    if (PEM_write_bio_PrivateKey(bio.get(), m_pkey.get(), nullptr, nullptr, 0, nullptr, nullptr)
+        != 1)
+    {
+      throw OpenSSLException("PEM_write_bio_PrivateKey");
+    }
+    // Now extract the data from the BIO and return it as a string.
+    uint8_t* base64data;
+    long bufferSize = BIO_get_mem_data(bio.get(), &base64data);
+    std::string returnValue;
+    returnValue.resize(bufferSize);
+    memcpy(&returnValue[0], base64data, bufferSize);
+    return returnValue;
   }
 
   std::string OpenSSLAsymmetricKey::ExportPublicKey()
   {
     auto bio(make_openssl_unique(BIO_new, BIO_s_mem()));
-    OPENSSL_CHECK(PEM_write_bio_PUBKEY(bio.get(), m_pkey.get()));
-    std::vector<uint8_t> returnValue(BIO_ctrl_pending(bio.get()));
-
-    int res = BIO_read(bio.get(), returnValue.data(), static_cast<int>(returnValue.size()));
-    OPENSSL_CHECK_BIO(res);
-    return std::string(returnValue.begin(), returnValue.end());
+    if (PEM_write_bio_PUBKEY(bio.get(), m_pkey.get()) != 1)
+    {
+      throw OpenSSLException("PEM_write_bio_PUBKEY");
+    }
+    // Now extract the data from the BIO and return it as a string.
+    uint8_t* base64data;
+    long bufferSize = BIO_get_mem_data(bio.get(), &base64data);
+    std::string returnValue;
+    returnValue.resize(bufferSize);
+    memcpy(&returnValue[0], base64data, bufferSize);
+    return returnValue;
   }
 
   std::unique_ptr<Cryptography::AsymmetricKey> OpenSSLAsymmetricKey::ImportPublicKey(
@@ -68,7 +78,10 @@ namespace Azure { namespace Security { namespace Attestation { namespace _detail
         BIO_new_mem_buf, pemEncodedKey.data(), static_cast<int>(pemEncodedKey.size())));
     EVP_PKEY* raw_pkey = nullptr;
     raw_pkey = PEM_read_bio_PUBKEY(bio.get(), nullptr, nullptr, nullptr);
-    OPENSSL_CHECK_NULL(raw_pkey);
+    if (raw_pkey == nullptr)
+    {
+      throw OpenSSLException("Parse Public Key Import");
+    }
     openssl_evp_pkey pkey(raw_pkey);
     raw_pkey = nullptr;
     if (EVP_PKEY_id(pkey.get()) == EVP_PKEY_RSA)
@@ -79,8 +92,7 @@ namespace Azure { namespace Security { namespace Attestation { namespace _detail
     {
       return std::make_unique<EcdsaOpenSSLAsymmetricKey>(std::move(pkey));
     }
-    assert(false);
-    abort();
+    throw std::invalid_argument("Unknown key type passed to ImportPublicKey");
   }
 
   /**
@@ -93,7 +105,10 @@ namespace Azure { namespace Security { namespace Attestation { namespace _detail
         BIO_new_mem_buf, pemEncodedKey.data(), static_cast<int>(pemEncodedKey.size())));
     EVP_PKEY* raw_pkey = nullptr;
     raw_pkey = PEM_read_bio_PrivateKey(bio.get(), nullptr, nullptr, nullptr);
-    OPENSSL_CHECK_NULL(raw_pkey);
+    if (raw_pkey == nullptr)
+    {
+      throw OpenSSLException("Parse Private Key Import");
+    }
 
     openssl_evp_pkey pkey(raw_pkey);
     raw_pkey = nullptr;
@@ -105,18 +120,26 @@ namespace Azure { namespace Security { namespace Attestation { namespace _detail
     {
       return std::make_unique<EcdsaOpenSSLAsymmetricKey>(std::move(pkey));
     }
-    assert(false);
-    abort();
+    throw std::invalid_argument("Unknown key type passed to ImportPrivateKey");
   }
 
   RsaOpenSSLAsymmetricKey::RsaOpenSSLAsymmetricKey(size_t keySize)
   {
     auto evpContext(make_openssl_unique(EVP_PKEY_CTX_new_id, EVP_PKEY_RSA, nullptr));
 
-    OPENSSL_CHECK(EVP_PKEY_keygen_init(evpContext.get()));
-    OPENSSL_CHECK(EVP_PKEY_CTX_set_rsa_keygen_bits(evpContext.get(), static_cast<int>(keySize)));
+    if (EVP_PKEY_keygen_init(evpContext.get()) != 1)
+    {
+      throw OpenSSLException("EVP_PKEY_keygen_init");
+    }
+    if (EVP_PKEY_CTX_set_rsa_keygen_bits(evpContext.get(), static_cast<int>(keySize)) != 1)
+    {
+      throw OpenSSLException("EVP_PKEY_CTX_set_rsa_keygen_bits");
+    }
     EVP_PKEY* pkey = nullptr;
-    OPENSSL_CHECK(EVP_PKEY_keygen(evpContext.get(), &pkey));
+    if (EVP_PKEY_keygen(evpContext.get(), &pkey) != 1)
+    {
+      throw OpenSSLException("EVP_PKEY_keygen");
+    }
     m_pkey.reset(pkey);
   }
 
@@ -125,17 +148,28 @@ namespace Azure { namespace Security { namespace Attestation { namespace _detail
   std::vector<uint8_t> OpenSSLAsymmetricKey::SignBuffer(std::vector<uint8_t> const& payload) const
   {
     auto mdContext(make_openssl_unique(EVP_MD_CTX_new));
-    OPENSSL_CHECK(
-        EVP_DigestSignInit(mdContext.get(), nullptr, EVP_sha256(), nullptr, m_pkey.get()));
+    if (EVP_DigestSignInit(mdContext.get(), nullptr, EVP_sha256(), nullptr, m_pkey.get()) != 1)
+    {
+      throw OpenSSLException("EVP_DigestSignInit");
+    }
 
-    OPENSSL_CHECK(
-        EVP_DigestSignUpdate(mdContext.get(), payload.data(), static_cast<int>(payload.size())));
+    if (EVP_DigestSignUpdate(mdContext.get(), payload.data(), static_cast<int>(payload.size()))
+        != 1)
+    {
+      throw OpenSSLException("EVP_DigestSignUpdate");
+    }
 
     size_t signatureLength = 0;
-    OPENSSL_CHECK(EVP_DigestSignFinal(mdContext.get(), nullptr, &signatureLength));
+    if (EVP_DigestSignFinal(mdContext.get(), nullptr, &signatureLength) != 1)
+    {
+      throw OpenSSLException("EVP_DigestSignFinal");
+    }
 
     std::vector<uint8_t> returnValue(signatureLength);
-    OPENSSL_CHECK(EVP_DigestSignFinal(mdContext.get(), returnValue.data(), &signatureLength));
+    if (EVP_DigestSignFinal(mdContext.get(), returnValue.data(), &signatureLength) != 1)
+    {
+      throw OpenSSLException("EVP_DigestSignFinal");
+    }
     returnValue.resize(signatureLength);
     return returnValue;
   }
@@ -145,11 +179,16 @@ namespace Azure { namespace Security { namespace Attestation { namespace _detail
       std::vector<uint8_t> const& signature) const
   {
     auto mdContext(make_openssl_unique(EVP_MD_CTX_new));
-    OPENSSL_CHECK(
-        EVP_DigestVerifyInit(mdContext.get(), nullptr, EVP_sha256(), nullptr, m_pkey.get()));
+    if (EVP_DigestVerifyInit(mdContext.get(), nullptr, EVP_sha256(), nullptr, m_pkey.get()) != 1)
+    {
+      throw OpenSSLException("EVP_DigestVerifyInit");
+    }
 
-    OPENSSL_CHECK(
-        EVP_DigestVerifyUpdate(mdContext.get(), payload.data(), static_cast<int>(payload.size())));
+    if (EVP_DigestVerifyUpdate(mdContext.get(), payload.data(), static_cast<int>(payload.size()))
+        != 1)
+    {
+      throw OpenSSLException("EVP_DigestVerifyInit");
+    }
 
     auto rv = EVP_DigestVerifyFinal(
         mdContext.get(), signature.data(), static_cast<int>(signature.size()));
@@ -165,8 +204,7 @@ namespace Azure { namespace Security { namespace Attestation { namespace _detail
     else
     {
       // Force a failure.
-      AZURE_ASSERT_MSG(false, GetOpenSSLError("EVP_DigestVerifyFinal").c_str());
-      throw std::runtime_error("Not reached");
+      throw OpenSSLException("EVP_DigestVerifyFinal");
     }
   }
 
@@ -174,12 +212,21 @@ namespace Azure { namespace Security { namespace Attestation { namespace _detail
   {
 
     auto evpContext(make_openssl_unique(EVP_PKEY_CTX_new_id, EVP_PKEY_EC, nullptr));
-    OPENSSL_CHECK(EVP_PKEY_keygen_init(evpContext.get()));
+    if (EVP_PKEY_keygen_init(evpContext.get()) != 1)
+    {
+      throw OpenSSLException("EVP_PKEY_keygen_init");
+    }
 
-    OPENSSL_CHECK(EVP_PKEY_CTX_set_ec_paramgen_curve_nid(evpContext.get(), NID_X9_62_prime256v1));
+    if (EVP_PKEY_CTX_set_ec_paramgen_curve_nid(evpContext.get(), NID_X9_62_prime256v1) != 1)
+    {
+      throw OpenSSLException("EVP_PKEY_CTX_set_ec_paramgen_curve_nid");
+    }
 
     EVP_PKEY* pkey = nullptr;
-    OPENSSL_CHECK(EVP_PKEY_keygen(evpContext.get(), &pkey));
+    if (EVP_PKEY_keygen(evpContext.get(), &pkey) != 1)
+    {
+      throw OpenSSLException("EVP_PKEY_keygen");
+    }
     m_pkey.reset(pkey);
   }
 

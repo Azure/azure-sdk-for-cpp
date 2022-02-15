@@ -110,7 +110,7 @@ GQIDAQAB
     EXPECT_EQ(0ul, exportedPublicKey.find("-----BEGIN PUBLIC KEY-----"));
     auto importedPublicKey = Cryptography::ImportPublicKey(exportedPublicKey);
 
-    EXPECT_DEATH(Cryptography::ImportPrivateKey(exportedPublicKey), ".*");
+    EXPECT_THROW(Cryptography::ImportPrivateKey(exportedPublicKey), std::runtime_error);
 
     Azure::Core::Diagnostics::_internal::Log::Write(
         Logger::Level::Informational, exportedPrivateKey);
@@ -157,7 +157,7 @@ GQIDAQAB
     EXPECT_EQ(0ul, exportedPublicKey.find("-----BEGIN PUBLIC KEY-----"));
     auto importedPublicKey = Cryptography::ImportPublicKey(exportedPublicKey);
 
-    EXPECT_DEATH(Cryptography::ImportPrivateKey(exportedPublicKey), ".*");
+    EXPECT_THROW(Cryptography::ImportPrivateKey(exportedPublicKey), std::runtime_error);
 
     Azure::Core::Diagnostics::_internal::Log::Write(
         Logger::Level::Informational, exportedPrivateKey);
@@ -219,8 +219,8 @@ MIIEejCCBCCgAwIBAgIVAKL12jjpSW7HPPHpJIYhFhGrJxJTMAoGCCqGSM49BAMC
 MHExIzAhBgNVBAMMGkludGVsIFNHWCBQQ0sgUHJvY2Vzc29yIENBMRowGAYDVQQK
 -----END UNKNOWN-----)";
 
-    EXPECT_DEATH(Cryptography::ImportPrivateKey(pemEncodedGarbage), ".*");
-    EXPECT_DEATH(Cryptography::ImportPublicKey(pemEncodedGarbage), ".*");
+    EXPECT_THROW(Cryptography::ImportPrivateKey(pemEncodedGarbage), std::runtime_error);
+    EXPECT_THROW(Cryptography::ImportPublicKey(pemEncodedGarbage), std::runtime_error);
   }
 
   const std::string pemEncodedCertificate1 =

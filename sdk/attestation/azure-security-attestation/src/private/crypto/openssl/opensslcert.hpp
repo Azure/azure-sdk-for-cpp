@@ -79,16 +79,20 @@ namespace Azure { namespace Security { namespace Attestation { namespace _detail
       // Print the DN in a single line, but don't add spaces around the equals sign (mbedtls
       // doesn't add them, so if we want them to compare properly, we remove the spaces).
       int length = X509_NAME_print_ex(bio.get(), dn, 0, XN_FLAG_ONELINE & ~XN_FLAG_SPC_EQ);
-      OPENSSL_CHECK_LEN(length);
-      if (length == 0)
+      if (length < 0)
       {
-        return "";
+        throw OpenSSLException("X509_NAME_print_ex");
       }
-      std::vector<uint8_t> formattedName(BIO_ctrl_pending(bio.get()));
-      int res = BIO_read(bio.get(), formattedName.data(), static_cast<int>(formattedName.size()));
-      OPENSSL_CHECK_BIO(res);
-      return std::string(formattedName.begin(), formattedName.end());
+
+      // Now extract the data from the BIO and return it as a string.
+      uint8_t* base64data;
+      long bufferSize = BIO_get_mem_data(bio.get(), &base64data);
+      std::string returnValue;
+      returnValue.resize(bufferSize);
+      memcpy(&returnValue[0], base64data, bufferSize);
+      return returnValue;
     }
+
     static openssl_x509_extension CreateExtensionFromConfiguration(
         openssl_x509 const& subject,
         openssl_x509 const& issuer,
@@ -132,11 +136,20 @@ namespace Azure { namespace Security { namespace Attestation { namespace _detail
       int len = i2d_X509(m_certificate.get(), nullptr);
       std::vector<uint8_t> thumbprintBuffer(len);
       unsigned char* buf = thumbprintBuffer.data();
-      OPENSSL_CHECK_LEN(i2d_X509(m_certificate.get(), &buf));
-      OPENSSL_CHECK(EVP_DigestUpdate(hash.get(), buf, thumbprintBuffer.size()));
+      if (i2d_X509(m_certificate.get(), &buf) < 0)
+      {
+        throw OpenSSLException("i2d_X509");
+      }
+      if (EVP_DigestUpdate(hash.get(), buf, thumbprintBuffer.size()) != 1)
+      {
+        throw OpenSSLException("EVP_DigestUpdate");
+      }
       uint32_t hashLength = EVP_MAX_MD_SIZE;
       std::vector<uint8_t> hashedThumbprint(EVP_MAX_MD_SIZE);
-      OPENSSL_CHECK(EVP_DigestFinal_ex(hash.get(), hashedThumbprint.data(), &hashLength));
+      if (EVP_DigestFinal_ex(hash.get(), hashedThumbprint.data(), &hashLength) != 1)
+      {
+        throw OpenSSLException("EVP_DigestFinal_ex");
+      }
       hashedThumbprint.resize(hashLength);
 
       auto hexThumbprint(JsonHelpers::BinaryToHexString(hashedThumbprint));
@@ -159,8 +172,11 @@ namespace Azure { namespace Security { namespace Attestation { namespace _detail
       const unsigned char* publicKey;
       int publicKeyLen;
       X509_ALGOR* algorithm;
-      OPENSSL_CHECK(
-          X509_PUBKEY_get0_param(&asn1Algorithm, &publicKey, &publicKeyLen, &algorithm, pubkey));
+      if (X509_PUBKEY_get0_param(&asn1Algorithm, &publicKey, &publicKeyLen, &algorithm, pubkey)
+          != 1)
+      {
+        throw OpenSSLException("0");
+      }
 
       int nid = OBJ_obj2nid(asn1Algorithm);
       if (nid == NID_rsaEncryption)
@@ -171,8 +187,10 @@ namespace Azure { namespace Security { namespace Attestation { namespace _detail
       {
         return "EC";
       }
-      AZURE_ASSERT(false);
-      abort();
+      std::stringstream ss;
+      ss << "Unknown Certificate Key Algorithm: " << std::to_string(nid) << " for certificate "
+         << GetSubjectName() << " " << GetIssuerName() << GetThumbprint();
+      throw std::invalid_argument(ss.str());
     }
 
     std::string GetKeyType() const override
@@ -182,8 +200,11 @@ namespace Azure { namespace Security { namespace Attestation { namespace _detail
       const unsigned char* publicKey;
       int publicKeyLen;
       X509_ALGOR* algorithm;
-      OPENSSL_CHECK(
-          X509_PUBKEY_get0_param(&asn1Algorithm, &publicKey, &publicKeyLen, &algorithm, pubkey));
+      if (X509_PUBKEY_get0_param(&asn1Algorithm, &publicKey, &publicKeyLen, &algorithm, pubkey)
+          != 1)
+      {
+        throw OpenSSLException("X509_PUBKEY_get0_param");
+      }
       int nid = OBJ_obj2nid(asn1Algorithm);
 
       if (nid == NID_rsaEncryption)
@@ -194,8 +215,10 @@ namespace Azure { namespace Security { namespace Attestation { namespace _detail
       {
         return "EC";
       }
-      AZURE_ASSERT(false);
-      abort();
+      std::stringstream ss;
+      ss << "Unknown Certificate Key Type: " << std::to_string(nid) << " for certificate "
+         << GetSubjectName() << " " << GetIssuerName() << GetThumbprint();
+      throw std::invalid_argument(ss.str());
     }
 
     static std::unique_ptr<X509Certificate> Import(std::string const& pemEncodedKey);
