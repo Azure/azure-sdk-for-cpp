@@ -4,6 +4,7 @@
 #include "azure/storage/blobs/blob_service_client.hpp"
 
 #include <azure/core/http/policies/policy.hpp>
+#include <azure/storage/common/crypt.hpp>
 #include <azure/storage/common/internal/constants.hpp>
 #include <azure/storage/common/internal/shared_key_policy.hpp>
 #include <azure/storage/common/internal/storage_per_retry_policy.hpp>
@@ -120,15 +121,12 @@ namespace Azure { namespace Storage { namespace Blobs {
       const ListBlobContainersOptions& options,
       const Azure::Core::Context& context) const
   {
-    _detail::BlobRestClient::Service::ListBlobContainersOptions protocolLayerOptions;
+    _detail::ServiceClient::ListServiceBlobContainersOptions protocolLayerOptions;
     protocolLayerOptions.Prefix = options.Prefix;
-    if (options.ContinuationToken.HasValue() && !options.ContinuationToken.Value().empty())
-    {
-      protocolLayerOptions.ContinuationToken = options.ContinuationToken;
-    }
+    protocolLayerOptions.Marker = options.ContinuationToken;
     protocolLayerOptions.MaxResults = options.PageSizeHint;
     protocolLayerOptions.Include = options.Include;
-    auto response = _detail::BlobRestClient::Service::ListBlobContainers(
+    auto response = _detail::ServiceClient::ListBlobContainers(
         *m_pipeline, m_serviceUrl, protocolLayerOptions, _internal::WithReplicaStatus(context));
 
     ListBlobContainersPagedResponse pagedResponse;
@@ -149,10 +147,12 @@ namespace Azure { namespace Storage { namespace Blobs {
       const GetUserDelegationKeyOptions& options,
       const Azure::Core::Context& context) const
   {
-    _detail::BlobRestClient::Service::GetUserDelegationKeyOptions protocolLayerOptions;
-    protocolLayerOptions.StartsOn = options.StartsOn;
-    protocolLayerOptions.ExpiresOn = expiresOn;
-    return _detail::BlobRestClient::Service::GetUserDelegationKey(
+    _detail::ServiceClient::GetServiceUserDelegationKeyOptions protocolLayerOptions;
+    protocolLayerOptions.KeyInfo.Start = options.StartsOn.ToString(
+        Azure::DateTime::DateFormat::Rfc3339, Azure::DateTime::TimeFractionFormat::Truncate);
+    protocolLayerOptions.KeyInfo.Expiry = expiresOn.ToString(
+        Azure::DateTime::DateFormat::Rfc3339, Azure::DateTime::TimeFractionFormat::Truncate);
+    return _detail::ServiceClient::GetUserDelegationKey(
         *m_pipeline, m_serviceUrl, protocolLayerOptions, _internal::WithReplicaStatus(context));
   }
 
@@ -162,9 +162,9 @@ namespace Azure { namespace Storage { namespace Blobs {
       const Azure::Core::Context& context) const
   {
     (void)options;
-    _detail::BlobRestClient::Service::SetServicePropertiesOptions protocolLayerOptions;
-    protocolLayerOptions.Properties = std::move(properties);
-    return _detail::BlobRestClient::Service::SetProperties(
+    _detail::ServiceClient::SetServicePropertiesOptions protocolLayerOptions;
+    protocolLayerOptions.BlobServiceProperties = std::move(properties);
+    return _detail::ServiceClient::SetProperties(
         *m_pipeline, m_serviceUrl, protocolLayerOptions, context);
   }
 
@@ -173,8 +173,8 @@ namespace Azure { namespace Storage { namespace Blobs {
       const Azure::Core::Context& context) const
   {
     (void)options;
-    _detail::BlobRestClient::Service::GetServicePropertiesOptions protocolLayerOptions;
-    return _detail::BlobRestClient::Service::GetProperties(
+    _detail::ServiceClient::GetServicePropertiesOptions protocolLayerOptions;
+    return _detail::ServiceClient::GetProperties(
         *m_pipeline, m_serviceUrl, protocolLayerOptions, _internal::WithReplicaStatus(context));
   }
 
@@ -183,8 +183,8 @@ namespace Azure { namespace Storage { namespace Blobs {
       const Azure::Core::Context& context) const
   {
     (void)options;
-    _detail::BlobRestClient::Service::GetAccountInfoOptions protocolLayerOptions;
-    return _detail::BlobRestClient::Service::GetAccountInfo(
+    _detail::ServiceClient::GetServiceAccountInfoOptions protocolLayerOptions;
+    return _detail::ServiceClient::GetAccountInfo(
         *m_pipeline, m_serviceUrl, protocolLayerOptions, _internal::WithReplicaStatus(context));
   }
 
@@ -193,8 +193,8 @@ namespace Azure { namespace Storage { namespace Blobs {
       const Azure::Core::Context& context) const
   {
     (void)options;
-    _detail::BlobRestClient::Service::GetServiceStatisticsOptions protocolLayerOptions;
-    return _detail::BlobRestClient::Service::GetStatistics(
+    _detail::ServiceClient::GetServiceStatisticsOptions protocolLayerOptions;
+    return _detail::ServiceClient::GetStatistics(
         *m_pipeline, m_serviceUrl, protocolLayerOptions, context);
   }
 
@@ -203,14 +203,11 @@ namespace Azure { namespace Storage { namespace Blobs {
       const FindBlobsByTagsOptions& options,
       const Azure::Core::Context& context) const
   {
-    _detail::BlobRestClient::Service::FindBlobsByTagsOptions protocolLayerOptions;
+    _detail::ServiceClient::FindServiceBlobsByTagsOptions protocolLayerOptions;
     protocolLayerOptions.Where = tagFilterSqlExpression;
-    if (options.ContinuationToken.HasValue() && !options.ContinuationToken.Value().empty())
-    {
-      protocolLayerOptions.ContinuationToken = options.ContinuationToken;
-    }
+    protocolLayerOptions.Marker = options.ContinuationToken;
     protocolLayerOptions.MaxResults = options.PageSizeHint;
-    auto response = _detail::BlobRestClient::Service::FindBlobsByTags(
+    auto response = _detail::ServiceClient::FindBlobsByTags(
         *m_pipeline, m_serviceUrl, protocolLayerOptions, _internal::WithReplicaStatus(context));
 
     FindBlobsByTagsPagedResponse pagedResponse;
@@ -256,10 +253,10 @@ namespace Azure { namespace Storage { namespace Blobs {
 
     auto blobContainerClient = GetBlobContainerClient(deletedBlobContainerName);
 
-    _detail::BlobRestClient::BlobContainer::UndeleteBlobContainerOptions protocolLayerOptions;
-    protocolLayerOptions.DeletedBlobContainerName = deletedBlobContainerName;
-    protocolLayerOptions.DeletedBlobContainerVersion = deletedBlobContainerVersion;
-    auto response = _detail::BlobRestClient::BlobContainer::Undelete(
+    _detail::BlobContainerClient::UndeleteBlobContainerOptions protocolLayerOptions;
+    protocolLayerOptions.DeletedContainerName = deletedBlobContainerName;
+    protocolLayerOptions.DeletedContainerVersion = deletedBlobContainerVersion;
+    auto response = _detail::BlobContainerClient::Undelete(
         *m_pipeline, Azure::Core::Url(blobContainerClient.GetUrl()), protocolLayerOptions, context);
 
     return Azure::Response<BlobContainerClient>(

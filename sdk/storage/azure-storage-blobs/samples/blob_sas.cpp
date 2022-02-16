@@ -8,6 +8,7 @@
 #include <stdexcept>
 
 #include <azure/storage/blobs.hpp>
+#include <azure/storage/common/storage_exception.hpp>
 
 std::string GetConnectionString()
 {

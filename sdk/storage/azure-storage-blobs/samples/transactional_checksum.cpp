@@ -8,6 +8,7 @@
 #include <stdexcept>
 
 #include <azure/storage/blobs.hpp>
+#include <azure/storage/common/crypt.hpp>
 
 std::string GetConnectionString()
 {

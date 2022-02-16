@@ -13,8 +13,8 @@
 
 #include <azure/core/paged_response.hpp>
 
-#include "azure/storage/queues/protocol/queue_rest_client.hpp"
 #include "azure/storage/queues/queue_options.hpp"
+#include "azure/storage/queues/rest_client.hpp"
 
 namespace Azure { namespace Storage { namespace Queues {
 

@@ -13,7 +13,6 @@
 
 #include "azure/storage/blobs/blob_options.hpp"
 #include "azure/storage/blobs/blob_responses.hpp"
-#include "azure/storage/blobs/protocol/blob_rest_client.hpp"
 
 namespace Azure { namespace Storage { namespace Files { namespace DataLake {
   class DataLakeFileSystemClient;
@@ -200,23 +199,6 @@ namespace Azure { namespace Storage { namespace Blobs {
     Azure::Response<Models::SetBlobAccessTierResult> SetAccessTier(
         Models::AccessTier accessTier,
         const SetBlobAccessTierOptions& options = SetBlobAccessTierOptions(),
-        const Azure::Core::Context& context = Azure::Core::Context()) const;
-
-    /**
-     * @brief Copies data from the source to this blob, synchronously.
-     *
-     * @param sourceUri Specifies the URL of the source blob. The value may be a URL of up to 2 KB
-     * in length that specifies a blob. The value should be URL-encoded as it would appear in a
-     * request URI. The source blob must either be public or must be authorized via a shared access
-     * signature. If the size of the source blob is greater than 256 MB, the request will fail with
-     * 409 (Conflict). The blob type of the source blob has to be block blob.
-     * @param options Optional parameters to execute this function.
-     * @param context Context for cancelling long running operations.
-     * @return A CopyBlobFromUriResult describing the copy result.
-     */
-    Azure::Response<Models::CopyBlobFromUriResult> CopyFromUri(
-        const std::string& sourceUri,
-        const CopyBlobFromUriOptions& options = CopyBlobFromUriOptions(),
         const Azure::Core::Context& context = Azure::Core::Context()) const;
 
     /**

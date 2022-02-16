@@ -32,9 +32,9 @@ if(FETCH_SOURCE_DEPS)
         add_subdirectory(${oneFolder} EXCLUDE_FROM_ALL)
     endforeach()
 elseif(NOT AZ_ALL_LIBRARIES)
-  find_package(azure-storage-common-cpp "12.2.0" CONFIG QUIET)
+  find_package(azure-storage-common-cpp "12.2.1" CONFIG QUIET)
   if(NOT azure-storage-common-cpp_FOUND)
-    find_package(azure-storage-common-cpp "12.2.0" REQUIRED)
+    find_package(azure-storage-common-cpp "12.2.1" REQUIRED)
   endif()
 endif()
 
@@ -42,12 +42,12 @@ set(
   AZURE_STORAGE_QUEUE_HEADER
     inc/azure/storage/queues.hpp
     inc/azure/storage/queues/dll_import_export.hpp
-    inc/azure/storage/queues/protocol/queue_rest_client.hpp
     inc/azure/storage/queues/queue_client.hpp
     inc/azure/storage/queues/queue_options.hpp
     inc/azure/storage/queues/queue_responses.hpp
     inc/azure/storage/queues/queue_sas_builder.hpp
     inc/azure/storage/queues/queue_service_client.hpp
+    inc/azure/storage/queues/rest_client.hpp
 )
 
 set(
@@ -56,9 +56,9 @@ set(
     src/queue_client.cpp
     src/queue_options.cpp
     src/queue_responses.cpp
-    src/queue_rest_client.cpp
     src/queue_sas_builder.cpp
     src/queue_service_client.cpp
+    src/rest_client.cpp
 )
 
 add_library(azure-storage-queues ${AZURE_STORAGE_QUEUE_HEADER} ${AZURE_STORAGE_QUEUE_SOURCE})

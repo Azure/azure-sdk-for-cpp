@@ -5,7 +5,6 @@
 
 #include <azure/storage/common/crypt.hpp>
 
-#include "azure/storage/files/datalake/protocol/datalake_rest_client.hpp"
 #include "private/datalake_constants.hpp"
 
 namespace Azure { namespace Storage { namespace Files { namespace DataLake { namespace _detail {

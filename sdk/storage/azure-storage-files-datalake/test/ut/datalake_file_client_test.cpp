@@ -14,16 +14,16 @@
 #include <azure/storage/common/internal/file_io.hpp>
 #include <azure/storage/common/internal/shared_key_policy.hpp>
 
-namespace Azure { namespace Storage { namespace Files { namespace DataLake { namespace Models {
+namespace Azure { namespace Storage { namespace Blobs { namespace Models {
 
-  bool operator==(const PathHttpHeaders& lhs, const PathHttpHeaders& rhs)
+  bool operator==(const BlobHttpHeaders& lhs, const BlobHttpHeaders& rhs)
   {
     return lhs.ContentType == rhs.ContentType && lhs.ContentEncoding == rhs.ContentEncoding
         && lhs.ContentLanguage == rhs.ContentLanguage && lhs.CacheControl == rhs.CacheControl
         && lhs.ContentDisposition == rhs.ContentDisposition;
   }
 
-}}}}} // namespace Azure::Storage::Files::DataLake::Models
+}}}} // namespace Azure::Storage::Blobs::Models
 
 namespace Azure { namespace Storage { namespace Test {
 

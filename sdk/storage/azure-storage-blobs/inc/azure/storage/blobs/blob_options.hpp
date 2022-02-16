@@ -14,7 +14,7 @@
 #include <azure/core/modified_conditions.hpp>
 #include <azure/storage/common/access_conditions.hpp>
 
-#include "azure/storage/blobs/protocol/blob_rest_client.hpp"
+#include "azure/storage/blobs/rest_client.hpp"
 
 namespace Azure { namespace Storage { namespace Blobs {
 
@@ -498,52 +498,6 @@ namespace Azure { namespace Storage { namespace Blobs {
   };
 
   /**
-   * @brief Optional parameters for #Azure::Storage::Blobs::BlobClient::CopyFromUri.
-   */
-  struct CopyBlobFromUriOptions
-  {
-    /**
-     * @brief Specifies user-defined name-value pairs associated with the blob. If no
-     * name-value pairs are specified, the operation will copy the metadata from the source blob or
-     * file to the destination blob. If one or more name-value pairs are specified, the destination
-     * blob is created with the specified metadata, and metadata is not copied from the source blob
-     * or file.
-     */
-    Storage::Metadata Metadata;
-
-    /**
-     * @brief The tags to set for this blob.
-     */
-    std::map<std::string, std::string> Tags;
-
-    /**
-     * @brief Optional conditions that must be met to perform this operation.
-     */
-    BlobAccessConditions AccessConditions;
-
-    /**
-     * @brief Optional conditions that the source must meet to perform this operation.
-     *
-     * @note Lease access condition only works for API versions before 2012-02-12.
-     */
-    struct : public Azure::ModifiedConditions, public Azure::MatchConditions
-    {
-    } SourceAccessConditions;
-
-    /**
-     * @brief Specifies the tier to be set on the target blob.
-     */
-    Azure::Nullable<Models::AccessTier> AccessTier;
-
-    /**
-     * @brief Hash of the blob content. This hash is used to verify the integrity of
-     * the blob during transport. When this header is specified, the storage service checks the hash
-     * that has arrived with the one that was sent.
-     */
-    Azure::Nullable<ContentHash> TransactionalContentHash;
-  };
-
-  /**
    * @brief Optional parameters for #Azure::Storage::Blobs::BlobClient::AbortCopyFromUri.
    */
   struct AbortBlobCopyFromUriOptions final
@@ -999,6 +953,8 @@ namespace Azure { namespace Storage { namespace Blobs {
   {
     /**
      * @brief Optional conditions that must be met to perform this operation.
+     * @remarks Azure storage service doesn't support tags access condition for this operation.
+     * Don't use it.
      */
     AppendBlobAccessConditions AccessConditions;
   };

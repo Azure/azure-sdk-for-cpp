@@ -103,10 +103,10 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     destinationDfsUrl.SetPath(_internal::UrlEncodePath(destinationFileSystem));
     destinationDfsUrl.AppendPath(_internal::UrlEncodePath(destinationFilePath));
 
-    _detail::DataLakeRestClient::Path::CreateOptions protocolLayerOptions;
-    protocolLayerOptions.Mode = _detail::PathRenameMode::Legacy;
+    _detail::PathClient::CreatePathOptions protocolLayerOptions;
+    protocolLayerOptions.Mode = Models::_detail::PathRenameMode::Legacy.ToString();
     protocolLayerOptions.SourceLeaseId = options.SourceAccessConditions.LeaseId;
-    protocolLayerOptions.LeaseIdOptional = options.AccessConditions.LeaseId;
+    protocolLayerOptions.LeaseId = options.AccessConditions.LeaseId;
     protocolLayerOptions.IfMatch = options.AccessConditions.IfMatch;
     protocolLayerOptions.IfNoneMatch = options.AccessConditions.IfNoneMatch;
     protocolLayerOptions.IfModifiedSince = options.AccessConditions.IfModifiedSince;
@@ -116,15 +116,15 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     protocolLayerOptions.SourceIfModifiedSince = options.SourceAccessConditions.IfModifiedSince;
     protocolLayerOptions.SourceIfUnmodifiedSince = options.SourceAccessConditions.IfUnmodifiedSince;
     protocolLayerOptions.RenameSource = "/" + sourceDfsUrl.GetPath();
-    auto result = _detail::DataLakeRestClient::Path::Create(
-        destinationDfsUrl, *m_pipeline, context, protocolLayerOptions);
+    auto response = _detail::PathClient::Create(
+        *m_pipeline, destinationDfsUrl, protocolLayerOptions, context);
 
     auto renamedBlobClient
         = Blobs::BlobClient(_detail::GetBlobUrlFromUrl(destinationDfsUrl), m_pipeline);
     auto renamedFileClient = DataLakeFileClient(
         std::move(destinationDfsUrl), std::move(renamedBlobClient), m_pipeline);
     return Azure::Response<DataLakeFileClient>(
-        std::move(renamedFileClient), std::move(result.RawResponse));
+        std::move(renamedFileClient), std::move(response.RawResponse));
   }
 
   Azure::Response<DataLakeDirectoryClient> DataLakeDirectoryClient::RenameSubdirectory(
@@ -151,10 +151,10 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     destinationDfsUrl.SetPath(_internal::UrlEncodePath(destinationFileSystem));
     destinationDfsUrl.AppendPath(_internal::UrlEncodePath(destinationDirectoryPath));
 
-    _detail::DataLakeRestClient::Path::CreateOptions protocolLayerOptions;
-    protocolLayerOptions.Mode = _detail::PathRenameMode::Legacy;
+    _detail::PathClient::CreatePathOptions protocolLayerOptions;
+    protocolLayerOptions.Mode = Models::_detail::PathRenameMode::Legacy.ToString();
     protocolLayerOptions.SourceLeaseId = options.SourceAccessConditions.LeaseId;
-    protocolLayerOptions.LeaseIdOptional = options.AccessConditions.LeaseId;
+    protocolLayerOptions.LeaseId = options.AccessConditions.LeaseId;
     protocolLayerOptions.IfMatch = options.AccessConditions.IfMatch;
     protocolLayerOptions.IfNoneMatch = options.AccessConditions.IfNoneMatch;
     protocolLayerOptions.IfModifiedSince = options.AccessConditions.IfModifiedSince;
@@ -164,15 +164,15 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     protocolLayerOptions.SourceIfModifiedSince = options.SourceAccessConditions.IfModifiedSince;
     protocolLayerOptions.SourceIfUnmodifiedSince = options.SourceAccessConditions.IfUnmodifiedSince;
     protocolLayerOptions.RenameSource = "/" + sourceDfsUrl.GetPath();
-    auto result = _detail::DataLakeRestClient::Path::Create(
-        destinationDfsUrl, *m_pipeline, context, protocolLayerOptions);
+    auto response = _detail::PathClient::Create(
+        *m_pipeline, destinationDfsUrl, protocolLayerOptions, context);
 
     auto renamedBlobClient
         = Blobs::BlobClient(_detail::GetBlobUrlFromUrl(destinationDfsUrl), m_pipeline);
     auto renamedDirectoryClient = DataLakeDirectoryClient(
         std::move(destinationDfsUrl), std::move(renamedBlobClient), m_pipeline);
     return Azure::Response<DataLakeDirectoryClient>(
-        std::move(renamedDirectoryClient), std::move(result.RawResponse));
+        std::move(renamedDirectoryClient), std::move(response.RawResponse));
   }
 
   Azure::Response<Models::DeleteDirectoryResult> DataLakeDirectoryClient::Delete(
@@ -202,12 +202,10 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
       const ListPathsOptions& options,
       const Azure::Core::Context& context) const
   {
-    _detail::DataLakeRestClient::FileSystem::ListPathsOptions protocolLayerOptions;
-    protocolLayerOptions.Resource = _detail::FileSystemResource::Filesystem;
+    _detail::FileSystemClient::ListFileSystemPathsOptions protocolLayerOptions;
     protocolLayerOptions.Upn = options.UserPrincipalName;
-
     protocolLayerOptions.MaxResults = options.PageSizeHint;
-    protocolLayerOptions.RecursiveRequired = recursive;
+    protocolLayerOptions.Recursive = recursive;
 
     const std::string currentPath = m_pathUrl.GetPath();
     auto firstSlashPos = std::find(currentPath.begin(), currentPath.end(), '/');
@@ -219,7 +217,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     const std::string directoryPath(firstSlashPos, currentPath.end());
     if (!directoryPath.empty())
     {
-      protocolLayerOptions.Directory = directoryPath;
+      protocolLayerOptions.Path = directoryPath;
     }
 
     auto fileSystemUrl = m_pathUrl;
@@ -234,15 +232,15 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
       {
         protocolLayerOptionsCopy.ContinuationToken = continuationToken;
       }
-      auto response = _detail::DataLakeRestClient::FileSystem::ListPaths(
-          fileSystemUrl,
+      auto response = _detail::FileSystemClient::ListPaths(
           *clientCopy.m_pipeline,
-          _internal::WithReplicaStatus(context),
-          protocolLayerOptionsCopy);
+          fileSystemUrl,
+          protocolLayerOptionsCopy,
+          _internal::WithReplicaStatus(context));
 
       ListPathsPagedResponse pagedResponse;
 
-      pagedResponse.Paths = std::move(response.Value.Items);
+      pagedResponse.Paths = std::move(response.Value.Paths);
       pagedResponse.m_onNextPageFunc = func;
       pagedResponse.CurrentPageToken = continuationToken;
       pagedResponse.NextPageToken = response.Value.ContinuationToken;
