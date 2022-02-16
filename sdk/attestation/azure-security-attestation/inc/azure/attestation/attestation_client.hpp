@@ -259,7 +259,7 @@ namespace Azure { namespace Security { namespace Attestation {
     std::string const& ClientVersion() const { return m_apiVersion; }
 
     /**
-     * @brief Construct a new Attestation Client object from another attestatio nclient.
+     * @brief Construct a new Attestation Client object from another attestation client.
      *
      * @param attestationClient An existing attestation client.
      */
