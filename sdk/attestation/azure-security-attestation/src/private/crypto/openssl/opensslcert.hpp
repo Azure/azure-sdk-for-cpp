@@ -10,8 +10,8 @@
 
 #pragma once
 
-#include "../inc/crypto.hpp"
 #include "../../jsonhelpers_private.hpp"
+#include "../inc/crypto.hpp"
 #include "openssl_helpers.hpp"
 #include <memory>
 #include <openssl/bio.h>

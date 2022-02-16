@@ -110,8 +110,8 @@ Azure::Response<AttestationToken<AttestationResult>> AttestationClient::AttestSg
   // validation.
   std::vector<AttestationSigner> const& signers = GetAttestationSigners(context);
   token.ValidateToken(
-      options.TokenValidationOptions.HasValue() ? options.TokenValidationOptions.Value()
-                                                : this->m_tokenValidationOptions,
+      options.TokenValidationOptions ? options.TokenValidationOptions.Value()
+                                     : this->m_tokenValidationOptions,
       signers);
 
   // And return the attestation result to the caller.
@@ -144,8 +144,8 @@ Azure::Response<AttestationToken<AttestationResult>> AttestationClient::AttestOp
 
   std::vector<AttestationSigner> const& signers = GetAttestationSigners(context);
   token.ValidateToken(
-      options.TokenValidationOptions.HasValue() ? options.TokenValidationOptions.Value()
-                                                : this->m_tokenValidationOptions,
+      options.TokenValidationOptions ? options.TokenValidationOptions.Value()
+                                     : this->m_tokenValidationOptions,
       signers);
 
   return Response<AttestationToken<AttestationResult>>(token, std::move(response));
@@ -155,7 +155,8 @@ namespace {
 std::shared_timed_mutex SharedStateLock;
 }
 
-std::vector<AttestationSigner> const &AttestationClient::GetAttestationSigners(Azure::Core::Context const& context) const
+std::vector<AttestationSigner> const& AttestationClient::GetAttestationSigners(
+    Azure::Core::Context const& context) const
 {
   std::unique_lock<std::shared_timed_mutex> stateLock(SharedStateLock);
 

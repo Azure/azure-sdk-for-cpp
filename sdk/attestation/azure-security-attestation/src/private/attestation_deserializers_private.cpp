@@ -119,7 +119,7 @@ namespace Azure { namespace Security { namespace Attestation { namespace _detail
   {
     Azure::Nullable<std::string> token;
     JsonOptional::SetIfExists(token, parsedBody, "token");
-    if (token.HasValue())
+    if (token)
     {
       return token.Value();
     }

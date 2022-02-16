@@ -28,7 +28,7 @@ namespace Azure {
   AttestationSignerInternal::AttestationSignerInternal(JsonWebKey const& jwk)
   {
     m_signer.KeyId = jwk.kid;
-    if (jwk.x5c.HasValue())
+    if (jwk.x5c)
     {
       m_signer.CertificateChain = std::vector<std::string>();
       for (const auto& x5c : jwk.x5c.Value())
@@ -61,11 +61,11 @@ namespace Azure {
   {
     Azure::Core::Json::_internal::json rv;
 
-    if (signer.KeyId.HasValue())
+    if (signer.KeyId)
     {
       rv["kid"] = signer.KeyId.Value();
     }
-    if (signer.CertificateChain.HasValue())
+    if (signer.CertificateChain)
     {
       rv["x5c"] = signer.CertificateChain.Value();
     }

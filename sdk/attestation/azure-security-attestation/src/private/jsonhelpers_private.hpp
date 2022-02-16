@@ -31,7 +31,8 @@ namespace Azure { namespace Security { namespace Attestation { namespace _detail
     static std::vector<uint8_t> HexStringToBinary(std::string const& hexString);
     static std::string BinaryToHexString(std::vector<uint8_t> const& src);
 
-    static std::map<std::string, std::string> DecorateAttestationData(Azure::Security::Attestation::AttestationData const& data);
+    static std::map<std::string, std::string> DecorateAttestationData(
+        Azure::Security::Attestation::AttestationData const& data);
 
     static void SetIfExistsJson(
         Azure::Nullable<std::string>& rv,

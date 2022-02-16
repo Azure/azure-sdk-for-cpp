@@ -48,7 +48,7 @@ namespace Azure { namespace Security { namespace Attestation { namespace _detail
           = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
       auto timeNow = std::chrono::system_clock::from_time_t(timeNowSeconds);
 
-      if (m_token.ExpiresOn.HasValue() && validationOptions.ValidateExpirationTime)
+      if (m_token.ExpiresOn && validationOptions.ValidateExpirationTime)
       {
         if (timeNow > m_token.ExpiresOn.Value())
         {
@@ -65,7 +65,7 @@ namespace Azure { namespace Security { namespace Attestation { namespace _detail
           }
         }
       }
-      if (m_token.NotBefore.HasValue() && validationOptions.ValidateNotBeforeTime)
+      if (m_token.NotBefore && validationOptions.ValidateNotBeforeTime)
       {
         if (timeNow < m_token.NotBefore.Value())
         {
@@ -93,7 +93,7 @@ namespace Azure { namespace Security { namespace Attestation { namespace _detail
     {
       if (validationOptions.ValidateIssuer)
       {
-        if (!m_token.Issuer.HasValue())
+        if (!m_token.Issuer)
         {
           throw std::runtime_error(
               "Attestation token issuer validation requested but token has no issuer.");
@@ -132,11 +132,11 @@ namespace Azure { namespace Security { namespace Attestation { namespace _detail
       if (!signers.empty())
       {
         // If the token header has a Key ID, search the signers for that key ID.
-        if (m_token.Header.KeyId.HasValue())
+        if (m_token.Header.KeyId)
         {
           for (const auto& signer : signers)
           {
-            if (signer.KeyId.HasValue() && m_token.Header.KeyId.Value() == signer.KeyId.Value())
+            if (signer.KeyId && m_token.Header.KeyId.Value() == signer.KeyId.Value())
             {
               returnValue.push_back(signer);
             }
@@ -154,11 +154,11 @@ namespace Azure { namespace Security { namespace Attestation { namespace _detail
       }
       else
       {
-        if (m_token.Header.Key.HasValue())
+        if (m_token.Header.Key)
         {
           returnValue.push_back(m_token.Header.Key.Value());
         }
-        if (m_token.Header.X509CertificateChain.HasValue())
+        if (m_token.Header.X509CertificateChain)
         {
           std::vector<std::string> pemEncodedChain;
           for (auto x5c : m_token.Header.X509CertificateChain.Value())
@@ -315,7 +315,7 @@ namespace Azure { namespace Security { namespace Attestation { namespace _detail
           signingCert;
       std::unique_ptr<Azure::Security::Attestation::_detail::Cryptography::AsymmetricKey>
           signingKey;
-      AttestationTokenHeader tokenHeader;
+      Models::AttestationTokenHeader tokenHeader;
       if (tokenSigner.PemEncodedPrivateKey.empty() && tokenSigner.PemEncodedX509Certificate.empty())
       {
         // If the private key and certificate are empty, it's an unsecured JWS.
@@ -387,12 +387,12 @@ namespace Azure { namespace Security { namespace Attestation { namespace _detail
 
       // If this is a secured token, find a set of possible signers for the token and
       // verify that one of them signed the token.
-      if (m_token.Header.Algorithm.HasValue() && m_token.Header.Algorithm.Value() != "none"
+      if (m_token.Header.Algorithm && m_token.Header.Algorithm.Value() != "none"
           && validationOptions.ValidateSigner)
       {
         Azure::Nullable<Models::AttestationSigner> foundSigner
             = VerifyTokenSignature(FindPossibleSigners(signers));
-        if (!foundSigner.HasValue())
+        if (!foundSigner)
         {
           throw std::runtime_error("Unable to verify the attestation token signature.");
         }

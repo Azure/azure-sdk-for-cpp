@@ -23,6 +23,7 @@
 
 // cspell: words MRSIGNER MRENCLAVE
 namespace Azure { namespace Security { namespace Attestation { namespace Models {
+
   /**
    * @brief Contains information about this instance of the attestation service, which can be
    * used to validate attestation service responses.
@@ -72,6 +73,108 @@ namespace Azure { namespace Security { namespace Attestation { namespace Models 
      * will be used to sign an attestation token or policy.
      */
     Azure::Nullable<std::vector<std::string>> CertificateChain;
+  };
+
+  /** @brief An AttestationTokenHeader represents common properties in an the RFC 7515 JSON Web
+   * Token.
+   */
+  struct AttestationTokenHeader
+  {
+    /** The "" alg " token header property. See
+     *  <a href='https://datatracker.ietf.org/doc/html/rfc7515#section-4.1.1'>RFC 7515
+     * section 4.1.1</a>
+     */
+    Azure::Nullable<std::string> Algorithm;
+
+    /**
+     * @brief The "kid" token header property See
+     * <a href='https://datatracker.ietf.org/doc/html/rfc7515#section-4.1.4'>RFC 7515
+     * section 4.1.4</a>
+     */
+    Azure::Nullable<std::string> KeyId;
+
+    /**
+     * Returns the signer for this token if the caller provided a JSON Web Key.
+     *
+     * See <a href='https://datatracker.ietf.org/doc/html/rfc7515#section-4.1.3'>RFC 7515
+     * section 4.1.3</a> for more information.
+     *
+     */
+    Azure::Nullable<AttestationSigner> Key;
+
+    /**
+     * The "cty" header property of the JWS.
+     *
+     * See <a href='https://datatracker.ietf.org/doc/html/rfc7515#section-4.1.10'>RFC 7515
+     * section 4.1.10</a> for more information.
+     *
+     */
+    Azure::Nullable<std::string> ContentType;
+
+    /**
+     * A URI which can be used to retrieve a JSON Web Key which can verify the signature on
+     * this token.
+     *
+     * See <a href='https://datatracker.ietf.org/doc/html/rfc7515#section-4.1.5'>RFC 7515
+     * section 4.1.5</a> for more information.
+     *
+     */
+    Azure::Nullable<std::string> KeyURL;
+
+    /**
+     * Returns the "crit" header property from the JSON Web Signature object.
+     *
+     * See <a href='https://datatracker.ietf.org/doc/html/rfc7515#section-4.1.11'>RFC 7515
+     * section 4.1.11</a> for more information.
+     *
+     */
+    Azure::Nullable<std::vector<std::string>> Critical;
+
+    /**
+     * Returns a URI which can be used to retrieve an X.509 certificate which can verify the
+     * signature on this token.
+     *
+     * See <a href='https://datatracker.ietf.org/doc/html/rfc7515#section-4.1.5'>RFC 7515
+     * section 4.1.5</a> for more information.
+     *
+     */
+    Azure::Nullable<std::string> X509Url;
+
+    /**
+     * Returns the "typ" header property from the JWS.
+     *
+     * See <a href='https://datatracker.ietf.org/doc/html/rfc7515#section-4.1.9'>RFC 7515
+     * section 4.1.9</a> for more information.
+     *
+     */
+    Azure::Nullable<std::string> Type;
+
+    /**
+     * Returns the SHA-1 thumbprint of the leaf certificate in the getCertificateChain.
+     *
+     * See <a href='https://datatracker.ietf.org/doc/html/rfc7515#section-4.1.7'>RFC 7515
+     * section 4.1.7</a> for more information.
+     *
+     */
+    Azure::Nullable<std::string> CertificateThumbprint;
+
+    /**
+     * Returns the SHA-256 thumbprint of the leaf certificate in the getCertificateChain.
+     *
+     * See <a href='https://datatracker.ietf.org/doc/html/rfc7515#section-4.1.8'>RFC 7515
+     * section 4.1.8</a> for more information.
+     *
+     */
+    Azure::Nullable<std::string> CertificateSha256Thumbprint;
+
+    /**
+     * Returns the signing certificate chain as an AttestationSigner.
+     *
+     * See <a href='https://datatracker.ietf.org/doc/html/rfc7515#section-4.1.6'>RFC 7515
+     * section 4.1.6</a> for more information.
+     *
+     */
+    Azure::Nullable<std::vector<std::string>> X509CertificateChain;
   };
 
   /** @brief A collection of {@link AttestationSigner} objects.
