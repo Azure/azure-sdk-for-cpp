@@ -76,7 +76,6 @@ target_include_directories(
       # ${azure-core-cpp_INCLUDE_DIRS}
 )
 
-# Disable dependency on azure-core until azure-core has released to vcpkg
 target_link_libraries(azure-security-attestation PUBLIC Azure::azure-core OpenSSL::Crypto OpenSSL::SSL)
 
 # make sure that users can consume the project as a library.

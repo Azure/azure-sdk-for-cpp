@@ -27,7 +27,7 @@ namespace Azure { namespace Security { namespace Attestation {
     std::string RawToken;
 
     /**
-     * @brief      The elements of the raw token which will be signed by the Signature.
+     * @brief The elements of the raw token which will be signed by the Signature.
      */
     std::string SignedElements;
 
@@ -259,7 +259,7 @@ namespace Azure { namespace Security { namespace Attestation {
     std::string const& ClientVersion() const { return m_apiVersion; }
 
     /**
-     * @brief Construct a new Key Client object from another key client.
+     * @brief Construct a new Attestation Client object from another attestatio nclient.
      *
      * @param attestationClient An existing attestation client.
      */
@@ -296,7 +296,7 @@ namespace Azure { namespace Security { namespace Attestation {
      * @param context - Context for the operation.
      *
      * @returns Response<{@link AttestationToken}<{@link AttestationResult}>> - The result of the
-     * attestation operation
+     * attestation operation.
      */
     Response<AttestationToken<Models::AttestationResult>> AttestSgxEnclave(
         std::vector<uint8_t> const& sgxQuoteToAttest,

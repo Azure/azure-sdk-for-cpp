@@ -17,6 +17,7 @@
 #include "crypto/inc/crypto.hpp"
 #include "jsonhelpers_private.hpp"
 #include <azure/core/base64.hpp>
+#include <azure/core/diagnostics/logger.hpp>
 #include <azure/core/internal/json/json.hpp>
 #include <azure/core/internal/json/json_optional.hpp>
 #include <chrono>

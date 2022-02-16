@@ -9,6 +9,7 @@
 #include "private/package_version.hpp"
 #include <azure/core/base64.hpp>
 #include <azure/core/http/policies/policy.hpp>
+#include <azure/core/internal/diagnostics/log.hpp>
 #include <azure/core/internal/http/pipeline.hpp>
 #include <shared_mutex>
 
@@ -141,7 +142,6 @@ Azure::Response<AttestationToken<AttestationResult>> AttestationClient::AttestOp
   std::string responseToken = AttestationServiceTokenResponseSerializer::Deserialize(response);
   auto token
       = AttestationTokenInternal<AttestationResult, AttestationResultSerializer>(responseToken);
-
   std::vector<AttestationSigner> const& signers = GetAttestationSigners(context);
   token.ValidateToken(
       options.TokenValidationOptions ? options.TokenValidationOptions.Value()

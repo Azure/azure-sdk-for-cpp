@@ -12,6 +12,7 @@
 #include "../inc/crypto.hpp"
 #include "openssl_helpers.hpp"
 #include "opensslkeys.hpp"
+#include <azure/core/platform.hpp>
 #include <cstring>
 #include <ctime>
 #include <memory>
@@ -409,7 +410,7 @@ namespace Azure { namespace Security { namespace Attestation { namespace _detail
     {
       // This certificate expires in 8 hours.
       struct std::tm currentTime;
-#if _WINDOWS
+#if defined(AZ_PLATFORM_WINDOWS)
       gmtime_s(&currentTime, &utcTime);
 #else
       gmtime_r(&utcTime, &currentTime);
