@@ -49,14 +49,18 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
       // `InitTestClient` takes care of setting up Record&Playback.
       auto options = InitClientOptions<
           Azure::Security::Attestation::AttestationAdministrationClientOptions>();
+      std::shared_ptr<Azure::Identity::ClientSecretCredential const> credential;
       if (m_testContext.IsPlaybackMode())
       {
         // Skip validating time stamps if using recordings.
         options.TokenValidationOptions.ValidateNotBeforeTime = false;
         options.TokenValidationOptions.ValidateExpirationTime = false;
       }
-      auto credential = std::make_shared<Azure::Identity::ClientSecretCredential const>(
+      else
+      {
+        credential = std::make_shared<Azure::Identity::ClientSecretCredential const>(
           GetEnv("AZURE_TENANT_ID"), GetEnv("AZURE_CLIENT_ID"), GetEnv("AZURE_CLIENT_SECRET"));
+      }
       return std::make_unique<Azure::Security::Attestation::AttestationAdministrationClient>(
           m_endpoint, credential, options);
     }

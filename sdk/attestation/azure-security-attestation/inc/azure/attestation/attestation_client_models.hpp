@@ -425,7 +425,7 @@ namespace Azure { namespace Security { namespace Attestation { namespace Models 
     /**
      * @brief Construct a new PolicyResolution object
      *
-     * @param resolution The string resolution used for the result of an attestation policy
+     * @param modification The string resolution used for the result of an attestation policy
      * operation.
      */
     PolicyModification(std::string modification) : m_policyModification(std::move(modification)) {}
