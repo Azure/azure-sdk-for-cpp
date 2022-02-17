@@ -4,6 +4,8 @@
 
 ### Features Added
 
+- New API: `BlobClient::CopyFromUri()`.
+
 ### Breaking Changes
 
 ### Bugs Fixed

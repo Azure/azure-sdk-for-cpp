@@ -641,6 +641,45 @@ namespace Azure { namespace Storage { namespace Blobs {
     return _detail::BlobClient::SetTier(*m_pipeline, m_blobUrl, protocolLayerOptions, context);
   }
 
+  Azure::Response<Models::CopyBlobFromUriResult> BlobClient::CopyFromUri(
+      const std::string& sourceUri,
+      const CopyBlobFromUriOptions& options,
+      const Azure::Core::Context& context) const
+  {
+    _detail::BlobClient::CopyBlobFromUriOptions protocolLayerOptions;
+    protocolLayerOptions.Metadata
+        = std::map<std::string, std::string>(options.Metadata.begin(), options.Metadata.end());
+    protocolLayerOptions.BlobTagsString = std::accumulate(
+        options.Tags.begin(),
+        options.Tags.end(),
+        std::string(),
+        [](const std::string& a, const std::pair<std::string, std::string>& b) {
+          return a + (a.empty() ? "" : "&") + _internal::UrlEncodeQueryParameter(b.first) + "="
+              + _internal::UrlEncodeQueryParameter(b.second);
+        });
+    protocolLayerOptions.CopySource = sourceUri;
+    protocolLayerOptions.Tier = options.AccessTier;
+    protocolLayerOptions.LeaseId = options.AccessConditions.LeaseId;
+    protocolLayerOptions.IfModifiedSince = options.AccessConditions.IfModifiedSince;
+    protocolLayerOptions.IfUnmodifiedSince = options.AccessConditions.IfUnmodifiedSince;
+    protocolLayerOptions.IfMatch = options.AccessConditions.IfMatch;
+    protocolLayerOptions.IfNoneMatch = options.AccessConditions.IfNoneMatch;
+    protocolLayerOptions.IfTags = options.AccessConditions.TagConditions;
+    protocolLayerOptions.SourceIfModifiedSince = options.SourceAccessConditions.IfModifiedSince;
+    protocolLayerOptions.SourceIfUnmodifiedSince = options.SourceAccessConditions.IfUnmodifiedSince;
+    protocolLayerOptions.SourceIfMatch = options.SourceAccessConditions.IfMatch;
+    protocolLayerOptions.SourceIfNoneMatch = options.SourceAccessConditions.IfNoneMatch;
+    if (options.TransactionalContentHash.HasValue())
+    {
+      AZURE_ASSERT_MSG(
+          options.TransactionalContentHash.Value().Algorithm == HashAlgorithm::Md5,
+          "This operation only supports MD5 transactional content hash.");
+      protocolLayerOptions.SourceContentMD5 = options.TransactionalContentHash.Value().Value;
+    }
+
+    return _detail::BlobClient::CopyFromUri(*m_pipeline, m_blobUrl, protocolLayerOptions, context);
+  }
+
   StartBlobCopyOperation BlobClient::StartCopyFromUri(
       const std::string& sourceUri,
       const StartBlobCopyFromUriOptions& options,

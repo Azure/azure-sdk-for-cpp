@@ -2038,6 +2038,42 @@ namespace Azure { namespace Storage { namespace Blobs {
       };
     } // namespace _detail
     /**
+     * @brief Response type for #Azure::Storage::Blobs::BlobClient::CopyFromUri.
+     */
+    struct CopyBlobFromUriResult final
+    {
+      /**
+       * The ETag contains a value that you can use to perform operations conditionally. If the
+       * request version is 2011-08-18 or newer, the ETag value will be in quotes.
+       */
+      Azure::ETag ETag;
+      /**
+       * Returns the date and time the container was last modified. Any operation that modifies the
+       * blob, including an update of the blob's metadata or properties, changes the last-modified
+       * time of the blob.
+       */
+      DateTime LastModified;
+      /**
+       * A DateTime value returned by the service that uniquely identifies the blob. The value of
+       * this header indicates the blob version, and may be used in subsequent requests to access
+       * this version of the blob.
+       */
+      Nullable<std::string> VersionId;
+      /**
+       * String identifier for this copy operation.
+       */
+      std::string CopyId;
+      /**
+       * State of the copy operation identified by x-ms-copy-id.
+       */
+      Models::CopyStatus CopyStatus;
+      /**
+       * This response header is returned so that the client can check for the integrity of the
+       * copied content. This header is only returned if the source content MD5 was specified.
+       */
+      Nullable<ContentHash> TransactionalContentHash;
+    };
+    /**
      * @brief Response type for #Azure::Storage::Blobs::BlobClient::AbortCopyFromUri.
      */
     struct AbortBlobCopyFromUriResult final
@@ -3212,6 +3248,11 @@ namespace Azure { namespace Storage { namespace Blobs {
         Nullable<std::vector<uint8_t>> SourceContentMD5;
         Nullable<std::string> BlobTagsString;
       };
+      static Response<Models::CopyBlobFromUriResult> CopyFromUri(
+          Core::Http::_internal::HttpPipeline& pipeline,
+          const Core::Url& url,
+          const CopyBlobFromUriOptions& options,
+          const Core::Context& context);
       struct AbortBlobCopyFromUriOptions final
       {
         std::string CopyId;

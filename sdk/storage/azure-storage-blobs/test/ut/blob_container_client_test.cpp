@@ -1143,6 +1143,25 @@ namespace Azure { namespace Storage { namespace Test {
       auto sourceBlobClient = Azure::Storage::Blobs::BlockBlobClient::CreateFromConnectionString(
           StandardStorageConnectionString(),
           m_containerName,
+          m_containerName + "sourceBlobClient",
+          InitClientOptions<Azure::Storage::Blobs::BlobClientOptions>());
+      std::vector<uint8_t> buffer;
+      buffer.resize(1024);
+      sourceBlobClient.UploadFrom(buffer.data(), buffer.size());
+
+      Blobs::CopyBlobFromUriOptions options;
+      options.AccessConditions.TagConditions = failWhereExpression;
+      EXPECT_THROW(
+          blockBlobClient.CopyFromUri(sourceBlobClient.GetUrl() + GetSas(), options),
+          StorageException);
+      options.AccessConditions.TagConditions = successWhereExpression;
+      EXPECT_NO_THROW(blockBlobClient.CopyFromUri(sourceBlobClient.GetUrl() + GetSas(), options));
+    }
+
+    {
+      auto sourceBlobClient = Azure::Storage::Blobs::BlockBlobClient::CreateFromConnectionString(
+          StandardStorageConnectionString(),
+          m_containerName,
           m_containerName + "sourceBlobClient2",
           InitClientOptions<Azure::Storage::Blobs::BlobClientOptions>());
       std::vector<uint8_t> buffer;
