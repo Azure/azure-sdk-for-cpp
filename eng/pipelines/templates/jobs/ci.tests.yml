@@ -212,7 +212,7 @@ jobs:
             -ExtraLabels @{
               Job = '$(Agent.JobName)';
               BuildReason = '$(Build.Reason)';
-              SourceBranchName = '$(Build.SourceBranchName)';
+              SourceBranch = '$(Build.SourceBranch)';
               TargetOs = '$(METRIC_TARGET_OS)';
               Toolchain = '$(METRIC_TOOLCHAIN)';
               BuildConfig = '$(METRIC_BUILD_CONFIG)';

@@ -38,6 +38,6 @@ if ($CI) {
 $binaries `
     | Format-Table -Property Name, @{Name="SizeInKB"; Expression={"{0:N2}" -f ($_.Length / 1KB)}; Alignment='right'} `
     | Out-String `
-    | Write-Host 
+    | Write-Host
 
 return $binaries
