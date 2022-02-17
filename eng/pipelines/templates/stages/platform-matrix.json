@@ -52,7 +52,7 @@
             },
             "TargetPlatform": {
                 "Win32Api_curl": {
-                    "VcpkgInstall": "curl[winssl]",
+                    "VcpkgInstall": "curl[winssl] openssl",
                     "CmakeArgs": " -DBUILD_TRANSPORT_CURL=ON",
                     "BuildArgs": "--parallel 8",
                     "METRIC_BUILD_CONFIG": "Debug"
