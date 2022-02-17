@@ -47,6 +47,7 @@ namespace Azure { namespace Security { namespace Attestation {
     AZ_ATTESTATION_DLLEXPORT static const ServiceVersion V2020_10_01;
   };
 
+
   /**
    * @brief The TokenValidationCallbackFn represents a callback which is called to allow the caller
    *  to perform additional token validation options beyond the validations performed by the
@@ -107,7 +108,7 @@ namespace Azure { namespace Security { namespace Attestation {
   };
 
   /**
-   * @brief Define the options to create an SDK Keys client.
+   * @brief Define the options to create an Attestation client.
    */
   struct AttestationClientOptions final : public Azure::Core::_internal::ClientOptions
   {
@@ -128,6 +129,30 @@ namespace Azure { namespace Security { namespace Attestation {
     {
     }
   };
+
+    /**
+   * @brief Define the options to create an Attestation Administration client.
+   */
+  struct AttestationAdministrationClientOptions final : public Azure::Core::_internal::ClientOptions
+  {
+    ServiceVersion Version;
+    AttestationTokenValidationOptions TokenValidationOptions;
+    /**
+     * @brief Construct a new Attestation Client Options object.
+     *
+     * @param version Optional version for the client.
+     * @param tokenValidationOptions Options applied when validating attestation tokens returned by
+     * the service.
+     */
+    AttestationAdministrationClientOptions(
+        ServiceVersion version = ServiceVersion::V2020_10_01,
+        AttestationTokenValidationOptions const& tokenValidationOptions = {})
+        : Azure::Core::_internal::ClientOptions(), Version(version),
+          TokenValidationOptions(tokenValidationOptions)
+    {
+    }
+  };
+
 
   /** @brief The AttestationDataType represents how the attestation service should interpret the
    * {@link AttestOptions::RuntimeData} and {@link AttestOptions::InittimeData} fields.
@@ -248,5 +273,18 @@ namespace Azure { namespace Security { namespace Attestation {
      */
     std::string PemEncodedX509Certificate;
   };
+
+    /** @brief Parameters sent to the attestation service when retrieving an attestation policy.
+   */
+  struct GetPolicyOptions final
+  {
+    /** @brief Specifies the options which should be used to validate the attestation token returned
+     * by the attestation service.
+     * @details If not provided by the caller, the token validation options
+     * specified when the @{link AttestationAdministrationClient} was created will be used.
+     */
+    Azure::Nullable<AttestationTokenValidationOptions> TokenValidationOptions{};
+  };
+
 
 }}} // namespace Azure::Security::Attestation

@@ -8,4 +8,5 @@ namespace Azure { namespace Security { namespace Attestation {
 
   const AttestationDataType AttestationDataType ::Binary("Binary");
   const AttestationDataType AttestationDataType::Json("Json");
+
 }}} // namespace Azure::Security::Attestation

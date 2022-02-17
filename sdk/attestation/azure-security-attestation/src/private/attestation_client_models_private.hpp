@@ -241,4 +241,38 @@ namespace Azure {
     Azure::Nullable<std::string> Nonce;
   };
 
+  /**
+   * @brief Result of a GetPolicy, SetPolicy, or ResetPolicy operation.
+   */
+  struct PolicyResult
+  {
+    /**
+     * @brief Result of a modification.
+     */
+    Azure::Nullable<std::string> PolicyResolution;
+
+    /**
+     * @brief The SHA256 hash of the policy object which was received by the service.
+     */
+    Azure::Nullable<std::string> PolicyTokenHash;
+    /**
+     * @brief A JSON Web Key containing the signer of the policy token.
+     */
+    Azure::Nullable<JsonWebKey> PolicySigner;
+    /**
+     * @brief The policy token returned by the service.
+     */
+    Azure::Nullable<std::string> PolicyToken;
+  };
+
+  /** 
+  * @brief A StoredAttestationPolicy is a JWS object which represents a (possibly signed) attestation policy received by the attestation service.
+  */
+  struct StoredAttestationPolicy
+  {
+    /** @brief UTF-8 encoded representation of the attestation policy.
+    */
+    Azure::Nullable<std::vector<uint8_t>> AttestationPolicy;
+  };
+
 }}}}} // namespace Azure::Security::Attestation::Models::_detail

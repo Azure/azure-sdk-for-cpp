@@ -15,101 +15,7 @@ namespace Azure { namespace Core { namespace Http { namespace _internal {
 
 namespace Azure { namespace Security { namespace Attestation {
 
-  /** An AttestationToken represents an RFC 7519 JSON Web Token returned from the attestation
-   * service with the specialized body type.
-   * <typeparam name="T"></typeparam> The type which represents the body of the attestation token.
-   */
-  template <typename T> class AttestationToken final {
-  public:
-    /**
-     * @brief The full RFC 7515 JWS/JWT token returned by the attestation service.
-     */
-    std::string RawToken;
-
-    /**
-     * @brief The elements of the raw token which will be signed by the Signature.
-     */
-    std::string SignedElements;
-
-    /**
-     * @brief  Signature (if present) for the attestation token.
-     */
-    std::vector<uint8_t> Signature;
-
-    /**
-     * @brief RFC 7515 header properties.
-     */
-    Models::AttestationTokenHeader Header;
-
-    // RFC 7519 properties.
-
-    /**
-     *  The Expiration time for this attestation token.
-     *
-     * After this time, the token cannot be considered valid.
-     *
-     * See <a href='https://datatracker.ietf.org/doc/html/rfc7519#section-4.1.4'>RFC 7519
-     * Section 4.1.4</a> for more information.
-     */
-    Azure::Nullable<Azure::DateTime> ExpiresOn;
-
-    /**
-     *  The time at which this token was issued.
-     *
-     *
-     * See <a href='https://datatracker.ietf.org/doc/html/rfc7519#section-4.1.6'>RFC 7519
-     * Section 4.1.6</a> for more information.
-     */
-    Azure::Nullable<Azure::DateTime> IssuedOn;
-
-    /**
-     *  The time before which this token cannot be considered valid.
-     *
-     *
-     * See <a href='https://datatracker.ietf.org/doc/html/rfc7519#section-4.1.5'>RFC 7519
-     * Section 4.1.5</a> for more information.
-     */
-    Azure::Nullable<Azure::DateTime> NotBefore;
-
-    /**
-     *  The issuer of this attestation token
-     *
-     *
-     * See <a href='https://datatracker.ietf.org/doc/html/rfc7519#section-4.1.1'>RFC 7519
-     * Section 4.1.1</a> for more information.
-     */
-    Azure::Nullable<std::string> Issuer;
-
-    /**
-     *  An identifier which uniquely identifies this token.
-     *
-     * See <a href='https://datatracker.ietf.org/doc/html/rfc7519#section-4.1.7'>RFC 7519
-     * Section 4.1.7</a> for more information.
-     */
-    Azure::Nullable<std::string> UniqueIdentifier;
-
-    /**
-     * The subject for this attestation token.
-     *
-     * See <a href='https://datatracker.ietf.org/doc/html/rfc7519#section-4.1.2'>RFC 7519
-     * Section 4.1.2</a> for more information.
-     */
-    Azure::Nullable<std::string> Subject;
-
-    /**
-     * The audience for this attestation token.
-     *
-     * See <a href='https://datatracker.ietf.org/doc/html/rfc7519#section-4.1.3'>RFC 7519
-     * Section 4.1.3</a> for more information.
-     */
-    Azure::Nullable<std::string> Audience;
-
-    /**
-     * @brief     The deserialized body of the attestation token.
-     *
-     */
-    T Body;
-  };
+  class AttestationAdministrationClient;
 
   /**
    *
@@ -214,17 +120,6 @@ namespace Azure { namespace Security { namespace Attestation {
    */
 
   class AttestationClient final {
-  private:
-    Azure::Core::Url m_endpoint;
-    std::string m_apiVersion;
-    std::shared_ptr<Azure::Core::Http::_internal::HttpPipeline> m_pipeline;
-    AttestationTokenValidationOptions m_tokenValidationOptions;
-
-    mutable std::vector<Models::AttestationSigner> m_attestationSigners;
-
-    std::vector<Models::AttestationSigner> const& GetAttestationSigners(
-        Azure::Core::Context const& context) const;
-
   public:
     /**
      * @brief Destructor.
@@ -298,7 +193,7 @@ namespace Azure { namespace Security { namespace Attestation {
      * @returns Response<{@link AttestationToken}<{@link AttestationResult}>> - The result of the
      * attestation operation.
      */
-    Response<AttestationToken<Models::AttestationResult>> AttestSgxEnclave(
+    Response<Models::AttestationToken<Models::AttestationResult>> AttestSgxEnclave(
         std::vector<uint8_t> const& sgxQuoteToAttest,
         AttestOptions options = AttestOptions(),
         Azure::Core::Context const& context = Azure::Core::Context::ApplicationContext) const;
@@ -315,10 +210,25 @@ namespace Azure { namespace Security { namespace Attestation {
      * @returns Response<AttestationToken<AttestationResult>> - The result of the attestation
      * operation
      */
-    Response<AttestationToken<Models::AttestationResult>> AttestOpenEnclave(
+    Response<Models::AttestationToken<Models::AttestationResult>> AttestOpenEnclave(
         std::vector<uint8_t> const& openEnclaveReportToAttest,
         AttestOptions options = AttestOptions(),
         Azure::Core::Context const& context = Azure::Core::Context::ApplicationContext) const;
+
+  protected:
+    Azure::Core::Url m_endpoint;
+    std::string m_apiVersion;
+    std::shared_ptr<Azure::Core::Credentials::TokenCredential const> m_credentials;
+    std::shared_ptr<Azure::Core::Http::_internal::HttpPipeline> m_pipeline;
+    AttestationTokenValidationOptions m_tokenValidationOptions;
+
+    mutable std::vector<Models::AttestationSigner> m_attestationSigners;
+
+    std::vector<Models::AttestationSigner> const& GetAttestationSigners(
+        Azure::Core::Context const& context) const;
+        
+    friend class AttestationAdministrationClient;
+
   };
 
 }}} // namespace Azure::Security::Attestation
