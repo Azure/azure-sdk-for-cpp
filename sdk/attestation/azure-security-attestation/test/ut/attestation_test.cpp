@@ -65,7 +65,7 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
       else
       {
         credential = std::make_shared<Azure::Identity::ClientSecretCredential const>(
-          GetEnv("AZURE_TENANT_ID"), GetEnv("AZURE_CLIENT_ID"), GetEnv("AZURE_CLIENT_SECRET"));
+            GetEnv("AZURE_TENANT_ID"), GetEnv("AZURE_CLIENT_ID"), GetEnv("AZURE_CLIENT_SECRET"));
       }
 
       return std::make_unique<AttestationClient>(m_endpoint, credential, options);
