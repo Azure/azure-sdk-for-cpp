@@ -41,6 +41,12 @@ public:
     // Use a new request to redirect
     auto redirectRequest = Azure::Core::Http::Request(
         request.GetMethod(), Azure::Core::Url(m_testContext->m_proxy), request.GetBodyStream());
+    if (!request.ShouldBufferResponse())
+    {
+      // This is a download with keep connection open. Let's switch the request
+      redirectRequest = Azure::Core::Http::Request(
+          request.GetMethod(), Azure::Core::Url(m_testContext->m_proxy), false);
+    }
     redirectRequest.GetUrl().SetPath(request.GetUrl().GetPath());
 
     // Copy all headers
