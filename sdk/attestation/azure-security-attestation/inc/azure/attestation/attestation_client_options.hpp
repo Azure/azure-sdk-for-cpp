@@ -47,7 +47,6 @@ namespace Azure { namespace Security { namespace Attestation {
     AZ_ATTESTATION_DLLEXPORT static const ServiceVersion V2020_10_01;
   };
 
-
   /**
    * @brief The TokenValidationCallbackFn represents a callback which is called to allow the caller
    *  to perform additional token validation options beyond the validations performed by the
@@ -130,7 +129,7 @@ namespace Azure { namespace Security { namespace Attestation {
     }
   };
 
-    /**
+  /**
    * @brief Define the options to create an Attestation Administration client.
    */
   struct AttestationAdministrationClientOptions final : public Azure::Core::_internal::ClientOptions
@@ -152,7 +151,6 @@ namespace Azure { namespace Security { namespace Attestation {
     {
     }
   };
-
 
   /** @brief The AttestationDataType represents how the attestation service should interpret the
    * {@link AttestOptions::RuntimeData} and {@link AttestOptions::InittimeData} fields.
@@ -274,7 +272,7 @@ namespace Azure { namespace Security { namespace Attestation {
     std::string PemEncodedX509Certificate;
   };
 
-    /** @brief Parameters sent to the attestation service when retrieving an attestation policy.
+  /** @brief Parameters sent to the attestation service when retrieving an attestation policy.
    */
   struct GetPolicyOptions final
   {
@@ -285,6 +283,5 @@ namespace Azure { namespace Security { namespace Attestation {
      */
     Azure::Nullable<AttestationTokenValidationOptions> TokenValidationOptions{};
   };
-
 
 }}} // namespace Azure::Security::Attestation

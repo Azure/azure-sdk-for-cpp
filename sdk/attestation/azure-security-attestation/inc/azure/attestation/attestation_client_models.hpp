@@ -475,7 +475,8 @@ namespace Azure { namespace Security { namespace Attestation { namespace Models 
     Azure::Nullable<std::vector<uint8_t>> PolicyTokenHash;
 
     /**
-     * @brief A JSON Web Key containing the signer of the policy token. If not present, the token was unsecured.
+     * @brief A JSON Web Key containing the signer of the policy token. If not present, the token
+     * was unsecured.
      */
     Azure::Nullable<AttestationSigner> PolicySigner;
   };

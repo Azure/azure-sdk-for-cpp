@@ -6,7 +6,6 @@
 
 namespace Azure { namespace Security { namespace Attestation { namespace Test {
 
-
   class AttestationCollateral {
   public:
     static std::vector<uint8_t> OpenEnclaveReport();

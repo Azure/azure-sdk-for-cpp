@@ -226,9 +226,8 @@ namespace Azure { namespace Security { namespace Attestation {
 
     std::vector<Models::AttestationSigner> const& GetAttestationSigners(
         Azure::Core::Context const& context) const;
-        
-    friend class AttestationAdministrationClient;
 
+    friend class AttestationAdministrationClient;
   };
 
 }}} // namespace Azure::Security::Attestation
