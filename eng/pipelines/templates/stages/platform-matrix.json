@@ -6,11 +6,13 @@
         {
             "OSConfiguration": {
                 "macOS-10.15": {
-                    "OSVmImage": "macOS-10.15"
+                    "OSVmImage": "macOS-10.15",
+                    "METRIC_TARGET_OS": "macOS-10.15"
                 },
                 "macOS-11": {
                     "OSVmImage": "macOS-11",
-                    "XCODE_VERSION": "12.5.1"
+                    "XCODE_VERSION": "12.5.1",
+                    "METRIC_TARGET_OS": "macOS-11"
                 }
             },
             "StaticConfigs": {
@@ -20,15 +22,20 @@
                     "BuildArgs": "-j 10",
                     "VCPKG_DEFAULT_TRIPLET": "x64-osx",
                     "CmakeArgs": " -DBUILD_TESTING=ON -DBUILD_PERFORMANCE_TESTS=ON -DRUN_LONG_UNIT_TESTS=ON -DBUILD_TRANSPORT_CURL=ON",
-                    "PublishMapFiles": "true"
+                    "PublishMapFiles": "true",
+                    "METRIC_TARGET_ARCHITECTURE": "x64",
+                    "METRIC_TOOLCHAIN": "AppleClang 12",
+                    "METRIC_TARGET_PLATFORM": "macos"
                 }
             },
             "BuildConfig": {
                 "debug": {
-                    "CMAKE_BUILD_TYPE": "Debug"
+                    "CMAKE_BUILD_TYPE": "Debug",
+                    "METRIC_BUILD_CONFIG": "Debug"
                 },
                 "release": {
-                    "CMAKE_BUILD_TYPE": "Release"
+                    "CMAKE_BUILD_TYPE": "Release",
+                    "METRIC_BUILD_CONFIG": "Release"
                 }
             }
         },
@@ -37,36 +44,44 @@
                 "Windows2019": {
                     "OSVmImage": "MMS2019",
                     "Pool": "azsdk-pool-mms-win-2019-general",
-                    "CMAKE_GENERATOR": "Visual Studio 16 2019"
+                    "CMAKE_GENERATOR": "Visual Studio 16 2019",
+                    "METRIC_TARGET_OS": "win-2019",
+                    "METRIC_TOOLCHAIN": "MSVC",
+                    "METRIC_TARGET_PLATFORM": "win32"
                 }
             },
             "TargetPlatform": {
                 "Win32Api_curl": {
                     "VcpkgInstall": "curl[winssl]",
                     "CmakeArgs": " -DBUILD_TRANSPORT_CURL=ON",
-                    "BuildArgs": "--parallel 8"
+                    "BuildArgs": "--parallel 8",
+                    "METRIC_BUILD_CONFIG": "Debug"
                 },
                 "Win32Api_release_curl": {
                     "VcpkgInstall": "curl[winssl] openssl",
                     "CmakeArgs": " -DBUILD_TESTING=ON -DBUILD_PERFORMANCE_TESTS=ON -DRUN_LONG_UNIT_TESTS=ON -DBUILD_TRANSPORT_CURL=ON",
                     "BuildArgs": "--parallel 8 --config Release",
-                    "PublishMapFiles": "true"
+                    "PublishMapFiles": "true",
+                    "METRIC_BUILD_CONFIG": "Release"
                 },
                 "Win32Api_debug_tests": {
                     "VcpkgInstall": "curl[winssl] openssl",
                     "CmakeArgs": " -DBUILD_TESTING=ON -DBUILD_PERFORMANCE_TESTS=ON -DRUN_LONG_UNIT_TESTS=ON -DBUILD_TRANSPORT_CURL=ON -DBUILD_TRANSPORT_WINHTTP=ON",
                     "BuildArgs": "--parallel 8 --config Debug",
-                    "PublishMapFiles": "true"
+                    "PublishMapFiles": "true",
+                    "METRIC_BUILD_CONFIG": "Debug"
                 }
             },
             "TargetArchitecture": {
                 "x86": {
                     "CMAKE_GENERATOR_PLATFORM": "Win32",
-                    "VCPKG_DEFAULT_TRIPLET": "x86-windows-static"
+                    "VCPKG_DEFAULT_TRIPLET": "x86-windows-static",
+                    "METRIC_TARGET_ARCHITECTURE": "x86"
                 },
                 "x64": {
                     "CMAKE_GENERATOR_PLATFORM": "x64",
-                    "VCPKG_DEFAULT_TRIPLET": "x64-windows-static"
+                    "VCPKG_DEFAULT_TRIPLET": "x64-windows-static",
+                    "METRIC_TARGET_ARCHITECTURE": "x64"
                 }
             }
         },
@@ -77,7 +92,10 @@
                     "Pool": "azsdk-pool-mms-win-2019-general",
                     "CMAKE_GENERATOR": "Visual Studio 16 2019",
                     "CmakeArgs": " -DBUILD_TRANSPORT_WINHTTP=ON ",
-                    "PublishMapFiles": "true"
+                    "PublishMapFiles": "true",
+                    "METRIC_TARGET_OS": "win-2019",
+                    "METRIC_TOOLCHAIN": "MSVC",
+                    "METRIC_TARGET_PLATFORM": "uwp"
                 }
             },
             "TargetPlatform": {
@@ -85,22 +103,26 @@
                     "VcpkgInstall": "openssl",
                     "CMAKE_SYSTEM_NAME": "WindowsStore",
                     "CMAKE_SYSTEM_VERSION": "10.0",
-                    "BuildArgs": "--parallel 8 --config Debug"
+                    "BuildArgs": "--parallel 8 --config Debug",
+                    "METRIC_BUILD_CONFIG": "Debug"
                 },
                 "UWP_release": {
                     "VcpkgInstall": "openssl",
                     "CMAKE_SYSTEM_NAME": "WindowsStore",
                     "CMAKE_SYSTEM_VERSION": "10.0",
-                    "BuildArgs": "--parallel 8 --config Release"
+                    "BuildArgs": "--parallel 8 --config Release",
+                    "METRIC_BUILD_CONFIG": "Release"
                 }
             },
             "TargetArchitecture": {
                 "x86": {
-                    "CMAKE_GENERATOR_PLATFORM": "Win32"
+                    "CMAKE_GENERATOR_PLATFORM": "Win32",
+                    "METRIC_TARGET_ARCHITECTURE": "x86"
                 },
                 "x64": {
                     "CMAKE_GENERATOR_PLATFORM": "x64",
-                    "VCPKG_DEFAULT_TRIPLET": "x64-uwp"
+                    "VCPKG_DEFAULT_TRIPLET": "x64-uwp",
+                    "METRIC_TARGET_ARCHITECTURE": "x64"
                 }
             }
         },
@@ -111,40 +133,55 @@
                     "Pool": "azsdk-pool-mms-ubuntu-1804-general",
                     "VcpkgInstall": "curl[ssl] libxml2 openssl",
                     "VCPKG_DEFAULT_TRIPLET": "x64-linux",
-                    "BuildArgs": "-j 10"
+                    "BuildArgs": "-j 10",
+                    "METRIC_TARGET_OS": "ubuntu-18.04",
+                    "METRIC_TARGET_ARCHITECTURE": "x64",
+                    "METRIC_TARGET_PLATFORM": "linux"
                 }
             },
             "BuildSettings": {
                 "gpp-5": {
                     "AptDependencies": "g++-5",
-                    "CmakeEnvArg": "CC=/usr/bin/gcc-5 CXX=/usr/bin/g++-5 "
+                    "CmakeEnvArg": "CC=/usr/bin/gcc-5 CXX=/usr/bin/g++-5 ",
+                    "METRIC_TOOLCHAIN": "g++-5",
+                    "METRIC_BUILD_CONFIG": "Debug"
                 },
                 "gpp-8": {
                     "AptDependencies": "g++-8",
                     "CC": "/usr/bin/gcc-8",
-                    "CXX": "/usr/bin/g++-8"
+                    "CXX": "/usr/bin/g++-8",
+                    "METRIC_TOOLCHAIN": "g++-8",
+                    "METRIC_BUILD_CONFIG": "Debug"
                 },
                 "gpp-9": {
                     "AptDependencies": "g++-9",
                     "CC": "/usr/bin/gcc-9",
-                    "CXX": "/usr/bin/g++-9"
+                    "CXX": "/usr/bin/g++-9",
+                    "METRIC_TOOLCHAIN": "g++-9",
+                    "METRIC_BUILD_CONFIG": "Debug"
                 },
                 "included_coverage": {
                     "AptDependencies": "gcovr lcov",
                     "CmakeArgs": " -DBUILD_TESTING=ON -DBUILD_PERFORMANCE_TESTS=ON -DRUN_LONG_UNIT_TESTS=ON -DCMAKE_BUILD_TYPE=Debug -DBUILD_CODE_COVERAGE=ON -DCMAKE_VERBOSE_MAKEFILE=ON",
                     "CODE_COVERAGE_COLLECT_ONLY": "1",
                     "CODE_COVERAGE": "enabled",
-                    "PublishMapFiles": "true"
+                    "PublishMapFiles": "true",
+                    "METRIC_TOOLCHAIN": "g++-7",
+                    "METRIC_BUILD_CONFIG": "Debug"
                 },
                 "included": {},
                 "included_release": {
                     "CMAKE_BUILD_TYPE": "Release",
                     "CmakeArgs": " -DBUILD_TESTING=ON -DBUILD_PERFORMANCE_TESTS=ON -DRUN_LONG_UNIT_TESTS=ON",
-                    "PublishMapFiles": "true"
+                    "PublishMapFiles": "true",
+                    "METRIC_TOOLCHAIN": "g++-7",
+                    "METRIC_BUILD_CONFIG": "Release"
                 },
                 "included_samples": {
                     "CmakeArgs": " -DBUILD_TESTING=ON -DBUILD_SAMPLES=ON ",
-                    "PublishMapFiles": "true"
+                    "PublishMapFiles": "true",
+                    "METRIC_TOOLCHAIN": "g++-7",
+                    "METRIC_BUILD_CONFIG": "Release"
                 }
             }
         },
@@ -159,15 +196,21 @@
                     "CC": "/usr/bin/clang-11",
                     "CXX": "/usr/bin/clang++-11",
                     "CmakeArgs": " -DBUILD_TESTING=ON -DBUILD_PERFORMANCE_TESTS=ON -DRUN_LONG_UNIT_TESTS=ON",
-                    "PublishMapFiles": "true"
+                    "PublishMapFiles": "true",
+                    "METRIC_TARGET_PLATFORM": "linux",
+                    "METRIC_TOOLCHAIN": "clang-11",
+                    "METRIC_TARGET_ARCHITECTURE": "x64",
+                    "METRIC_TARGET_OS": "ubuntu-20.04"
                 }
             },
             "BuildSettings": {
                 "clang-11": {
-                    "CHECK_CLANG_FORMAT": "1"
+                    "CHECK_CLANG_FORMAT": "1",
+                    "METRIC_BUILD_CONFIG": "Debug"
                 },
                 "included_release": {
-                    "CMAKE_BUILD_TYPE": "Release"
+                    "CMAKE_BUILD_TYPE": "Release",
+                    "METRIC_BUILD_CONFIG": "Release"
                 }
             }
         }

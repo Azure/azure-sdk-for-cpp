@@ -213,7 +213,12 @@ jobs:
               Job = '$(Agent.JobName)';
               BuildReason = '$(Build.Reason)';
               SourceBranchName = '$(Build.SourceBranchName)';
-              TestVersion = 1;
+              TargetOs = '$(METRIC_TARGET_OS)';
+              Toolchain = '$(METRIC_TOOLCHAIN)';
+              BuildConfig = '$(METRIC_BUILD_CONFIG)';
+              TargetArchitecture = '$(METRIC_TARGET_ARCHITECTURE)';
+              TargetPlatform = '$(METRIC_TARGET_PLATFORM)';
+              MetricVersion = 1;
             }
           pwsh: true
           workingDirectory: $(Pipeline.Workspace)

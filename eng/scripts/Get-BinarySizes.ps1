@@ -23,10 +23,10 @@ $binaries = Get-ChildItem -Path $searchPath
 if ($CI) {
     foreach ($binary in $binaries) {
         $metricLogObject = @{
-            name = "TestBinarySize";
+            name = "BinarySize";
             value = $binary.Length
             timestamp = (Get-Date -AsUTC).ToString()
-            labels = @{ 
+            labels = @{
                 BinaryName = $binary.Name;
             } + $ExtraLabels
         }
