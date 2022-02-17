@@ -79,7 +79,10 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
     {
       EXPECT_FALSE(policy.Value.Body.empty());
     }
-    EXPECT_EQ(m_endpoint, policy.Value.Issuer.Value());
+    if (!m_testContext.IsPlaybackMode())
+    {
+      EXPECT_EQ(m_endpoint, policy.Value.Issuer.Value());
+    }
   }
 
   namespace {
