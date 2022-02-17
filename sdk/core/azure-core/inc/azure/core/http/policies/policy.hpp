@@ -14,6 +14,7 @@
 #include "azure/core/dll_import_export.hpp"
 #include "azure/core/http/http.hpp"
 #include "azure/core/http/transport.hpp"
+#include "azure/core/url.hpp"
 #include "azure/core/uuid.hpp"
 
 #include <chrono>
@@ -22,10 +23,10 @@
 #include <memory>
 #include <mutex>
 #include <set>
+#include <sstream>
 #include <string>
 #include <utility>
 #include <vector>
-
 /**
  * A function that should be implemented and linked to the end-user application in order to override
  * an HTTP transport implementation provided by Azure SDK with custom implementation.
@@ -40,6 +41,14 @@ namespace Azure { namespace Core { namespace Http { namespace Policies {
   namespace _detail {
     std::shared_ptr<HttpTransport> GetTransportAdapter();
     AZ_CORE_DLLEXPORT extern Azure::Core::CaseInsensitiveSet const g_defaultAllowedHttpHeaders;
+    static constexpr char const ResourceName[] = "resource";
+    static constexpr char const ScopeName[] = "scope";
+    static constexpr char const AuthorizationName[] = "authorization";
+    static constexpr char const AuthorizationUriName[] = "authorization_uri";
+    static constexpr char const BearerName[] = "Bearer";
+    static constexpr char const SpaceSeparator = ' ';
+    static constexpr char const QuoteSeparator = '\"';
+    static constexpr char const EqualSeparator = '=';
   } // namespace _detail
 
   /**
@@ -421,16 +430,17 @@ namespace Azure { namespace Core { namespace Http { namespace Policies {
      * @brief Bearer Token authentication policy.
      *
      */
-    class BearerTokenAuthenticationPolicy final : public HttpPolicy {
+    class BearerTokenAuthenticationPolicy : public HttpPolicy {
     private:
+      BearerTokenAuthenticationPolicy(BearerTokenAuthenticationPolicy const&) = delete;
+      void operator=(BearerTokenAuthenticationPolicy const&) = delete;
+
+    protected:
       std::shared_ptr<Credentials::TokenCredential const> const m_credential;
       Credentials::TokenRequestContext m_tokenRequestContext;
 
       mutable Credentials::AccessToken m_accessToken;
       mutable std::mutex m_accessTokenMutex;
-
-      BearerTokenAuthenticationPolicy(BearerTokenAuthenticationPolicy const&) = delete;
-      void operator=(BearerTokenAuthenticationPolicy const&) = delete;
 
     public:
       /**
@@ -457,6 +467,67 @@ namespace Azure { namespace Core { namespace Http { namespace Policies {
           Request& request,
           NextHttpPolicy nextPolicy,
           Context const& context) const override;
+    };
+
+    class ChallengeParameters {
+    public:
+      ChallengeParameters() = default;
+      ChallengeParameters(std::string const& rawValue);
+
+      bool IsEmpty() { return AuthorizationUri.GetPath().empty(); }
+      /// <summary>
+      /// Gets the "authorization" or "authorization_uri" parameter from the challenge response.
+      /// </summary>
+      Url AuthorizationUri;
+
+      /// <summary>
+      /// Gets the "resource" or "scope" parameter from the challenge response. This should end with
+      /// "/.default".
+      /// </summary>
+      std::vector<std::string> Scopes;
+
+      /// <summary>
+      /// Gets the tenant ID from <see cref="AuthorizationUri"/>.
+      /// </summary>
+      std::string TenantId;
+
+      std::string Schema;
+
+    private:
+      std::vector<std::string> GetParts(std::string const& inputString, char const& separator);
+      void ProcessFragment(std::string const& fragment);
+    };
+
+    class ChallengeBasedAuthenticationPolicy final : public BearerTokenAuthenticationPolicy {
+    public:
+      ChallengeBasedAuthenticationPolicy(
+          std::shared_ptr<Credentials::TokenCredential const> credential,
+          Credentials::TokenRequestContext tokenRequestContext)
+          : BearerTokenAuthenticationPolicy(credential, tokenRequestContext)
+      {
+      }
+      std::unique_ptr<HttpPolicy> Clone() const override
+      {
+        return std::make_unique<ChallengeBasedAuthenticationPolicy>(
+            m_credential, m_tokenRequestContext);
+      }
+
+      std::unique_ptr<RawResponse> Send(
+          Request& request,
+          NextHttpPolicy nextPolicy,
+          Context const& context) const override;
+
+    private:
+      /// <summary>
+      /// Gets the host name and port of the Key Vault or Managed HSM endpoint.
+      /// </summary>
+      /// <param name="request"></param>
+      /// <returns></returns>
+      static std::string GetRequestAuthority(Request request);
+
+    private:
+      const std::string KeyVaultStashedContentKey = "KeyVaultContent";
+      ChallengeParameters _challenge;
     };
 
     /**
