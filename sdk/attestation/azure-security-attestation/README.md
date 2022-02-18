@@ -2,7 +2,7 @@
 
 Microsoft Azure Attestation (preview) is a unified solution for remotely verifying the trustworthiness of a platform and integrity 
 of the binaries running inside it. The service supports attestation of the platforms backed by Trusted Platform Modules (TPMs) 
-alongside the ability to attest to the state of Trusted Execution Environments (TEEs) such as Intel® Software Guard Extensions 
+alongside the ability to attest to the state of Trusted Execution Environments (TEEs) such as Intelï¿½ Software Guard Extensions 
 (SGX) enclaves and Virtualization-based Security (VBS) enclaves.
 
 Attestation is a process for demonstrating that software binaries were properly instantiated on a trusted platform. Remote 
@@ -23,12 +23,11 @@ For the best development experience, we recommend that developers use the [CMake
 
 ## Prerequisites
 
-- A [Java Development Kit (JDK)][jdk_link], version 8 or later.
 - [Azure Subscription][azure_subscription]. Sign up for a [free trial](https://azure.microsoft.com/pricing/free-trial/) or use your [MSDN subscriber benefits](https://azure.microsoft.com/pricing/member-offers/msdn-benefits-details/).
 - An existing [Azure Attestation instance][azure_attestation]. If you need to create an attestation instance, you can use the [Azure Cloud Shell][azure_cloud_shell] to create one with this Azure CLI command. Replace `<your-resource-group-name>` and `<your-instance-name>` with your own, unique names:
 
 ```bash
-az attestation create --resource-group <your-resource-group-name> --name <your-key-vault-name>
+az attestation create --resource-group <your-resource-group-name> --name <your-service instance name>
 ```
 
 ## Download & Install
@@ -120,54 +119,76 @@ target_link_libraries(<your project name> PRIVATE Azure::azure-security-attestat
 
 ### Authenticate the client
 
-In order to interact with the Azure Attestation service, your client must present an Azure Active Directory bearer token to the service.
+Many of the APIs supported by the Azure Attestation service require authentication (some do not, if an API does not require
+authentication, the documentation for that API will reflect that the attestation service instance does not require authentication).
+
+To interact with the authenticated APIs supported by the Azure Attestation service, your client must present an Azure Active Directory bearer token to the service.
 
 The simplest way of providing a bearer token is to use the  `DefaultAzureCredential` authentication method by providing client secret credentials is being used in this getting started section, but you can find more ways to authenticate with [azure-identity][azure_identity].
 
-## Key concepts
+# Key concepts
 
 The Microsoft Azure Attestation service runs in two separate modes: "Isolated" and "AAD". When the service is running in "Isolated" mode, the customer needs to
 provide additional information beyond their authentication credentials to verify that they are authorized to modify the state of an attestation instance.
 
-There are four major client types provided in this preview SDK:
+There are four major client types provided in this SDK:
 
 - [SGX and TPM enclave attestation.](#attestation)
 - [MAA Attestation Token signing certificate discovery and validation.](#attestation-token-signing-certificate-discovery-and-validation)  
 - [Attestation Policy management.](#policy-management)
 - [Attestation policy management certificate management](#policy-management-certificate-management) (yes, policy management management).
 
-Each attestation instance operates in one of two separate modes of operation:
+Each attestation instance operates in one of three separate modes of operation:
 
+- Isolated mode.
 - AAD mode.
-- Isolated mode
+- Shared mode.
 
-In "AAD" mode, access to the service is controlled solely by Azure Role Based Access Control.  In "Isolated" mode,
-the client is expected to provide additional evidence to prove that the client is authorized
-to modify the service.
+## Isolated Mode Attestation Instances.
+In "Isolated" mode, the customer indicates that they want to ensure that Microsoft administrators cannot influence the inputs or outputs of an attestation service instance. When the attestation service instance is running in Isolated mode, the customer is expected to provide additional proof that they are authorized to make changes to the attestation service instance.
 
-Finally, each region in which the Microsoft Azure Attestation service is available supports a "shared" instance, which
+## AAD Mode Attestation Instances.
+
+In "AAD" mode, access to the service is controlled solely by Azure Role Based Access Control. When the 
+
+## Shared Mode Attestation Instances.
+Each region in which the Microsoft Azure Attestation service is available supports a "shared" instance, which
 can be used to attest SGX enclaves which only need verification against the azure baseline (there are no policies applied to the
-shared instance). TPM attestation is not available in the shared instance. While the shared instance requires AAD authentication,
-it does not have any RBAC policies - any customer with a valid AAD bearer token can attest using the shared instance.
+shared instance). 
 
-### Attestation
+The following APIs are available in the shared instance:
+- AttestSgxEnclave
+- AttestOpenEnclave
+- GetAttestationPolicy
+- GetPolicyManagementCertificates (always returns an empty set)
+
+The following APIs are not available in the shared instance:
+- AttestTPMEnclave
+- SetAttestationPolicy
+- ResetAttestationPolicy
+- AddPolicyManagementCertificate
+- RemovePolicyManagementCertificate
+
+The APIs available in the shared instance do not require AAD authentication.
+
+## Attestation
 
 SGX or TPM attestation is the process of validating evidence collected from a trusted execution environment to ensure that it 
 meets both the Azure baseline for that environment and customer defined policies applied to that environment.
 
-### Attestation token signing certificate discovery and validation
+## Attestation token signing certificate discovery and validation
 
 Most responses from the MAA service are expressed in the form of a JSON Web Token. This token will be signed by a signing certificate
 issued by the MAA service for the specified instance. If the MAA service instance is running in a region where the service runs in an SGX enclave, then
 the certificate issued by the server can be verified using the [oe_verify_attestation_certificate() API](https://openenclave.github.io/openenclave/api/enclave_8h_a3b75c5638360adca181a0d945b45ad86.html).
 
-### Policy Management
+## Policy Management
 
 Each attestation service instance has a policy applied to it which defines additional criteria which the customer has defined.
 
 For more information on attestation policies, see [Attestation Policy](https://docs.microsoft.com/azure/attestation/author-sign-policy)
 
-### Policy Management certificate management
+## Policy Management certificate management
 
 When an attestation instance is running in "Isolated" mode, the customer who created the instance will have provided
 a policy management certificate at the time the instance is created. All policy modification operations require that the customer sign

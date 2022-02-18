@@ -87,13 +87,6 @@ namespace Azure { namespace Security { namespace Attestation {
           m_pipeline(attestationClient.m_pipeline),
           m_tokenValidationOptions(attestationClient.m_tokenValidationOptions){};
 
-    /** @brief Creates a new {@link AttestationClient} with the same URL and HTTP
-     * pipeline as this AttestationAdministrationClient.
-     *
-     * @return A new {@link AttestationClient} instance..
-     */
-    AttestationClient AsAttestationClient() const;
-
     /** @brief Retrieves the attestation policy for the specified attestation type.
      */
 
@@ -102,7 +95,7 @@ namespace Azure { namespace Security { namespace Attestation {
         GetPolicyOptions const& options = GetPolicyOptions(),
         Azure::Core::Context const& context = Azure::Core::Context::ApplicationContext) const;
 
-  protected:
+  private:
     Azure::Core::Url m_endpoint;
     std::string m_apiVersion;
     std::shared_ptr<Azure::Core::Credentials::TokenCredential const> m_credentials;
@@ -113,9 +106,6 @@ namespace Azure { namespace Security { namespace Attestation {
 
     std::vector<Models::AttestationSigner> const& GetAttestationSigners(
         Azure::Core::Context const& context) const;
-
-  private:
-    friend class AttestationClient;
   };
 
 }}} // namespace Azure::Security::Attestation

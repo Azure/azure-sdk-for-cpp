@@ -215,7 +215,7 @@ namespace Azure { namespace Security { namespace Attestation {
         AttestOptions options = AttestOptions(),
         Azure::Core::Context const& context = Azure::Core::Context::ApplicationContext) const;
 
-  protected:
+  private:
     Azure::Core::Url m_endpoint;
     std::string m_apiVersion;
     std::shared_ptr<Azure::Core::Credentials::TokenCredential const> m_credentials;
@@ -226,8 +226,6 @@ namespace Azure { namespace Security { namespace Attestation {
 
     std::vector<Models::AttestationSigner> const& GetAttestationSigners(
         Azure::Core::Context const& context) const;
-
-    friend class AttestationAdministrationClient;
   };
 
 }}} // namespace Azure::Security::Attestation

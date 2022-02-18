@@ -24,6 +24,11 @@
 // cspell: words MRSIGNER MRENCLAVE
 namespace Azure { namespace Security { namespace Attestation { namespace Models {
 
+  /**
+   * @brief The AttestationType type represent a Trusted Execution Environment supported by
+   * the attestation service.
+   *
+   */
   class AttestationType final {
   private:
     std::string m_attestationType;
@@ -39,7 +44,7 @@ namespace Azure { namespace Security { namespace Attestation { namespace Models 
     /**
      * @brief Enable comparing the ext enum.
      *
-     * @param other Another #ServiceVersion to be compared.
+     * @param other Another #AttestationType to be compared.
      */
     bool operator==(AttestationType const& other) const
     {
@@ -47,7 +52,7 @@ namespace Azure { namespace Security { namespace Attestation { namespace Models 
     }
 
     /**
-     * @brief Return the #ServiceVersion string representation.
+     * @brief Return the #AttestationType string representation.
      *
      */
     std::string const& ToString() const { return m_attestationType; }
@@ -417,6 +422,11 @@ namespace Azure { namespace Security { namespace Attestation { namespace Models 
     Azure::Nullable<std::string> SgxCollateral;
   };
 
+  /**
+   * @brief The PolicyModification enumeration represents the result of an attestation
+   * policy modification.
+   *
+   */
   class PolicyModification final {
   private:
     std::string m_policyModification;
@@ -433,7 +443,7 @@ namespace Azure { namespace Security { namespace Attestation { namespace Models 
     /**
      * @brief Enable comparing the ext enum.
      *
-     * @param other Another #ServiceVersion to be compared.
+     * @param other Another #PolicyModification to be compared.
      */
     bool operator==(PolicyModification const& other) const
     {
@@ -441,7 +451,7 @@ namespace Azure { namespace Security { namespace Attestation { namespace Models 
     }
 
     /**
-     * @brief Return the #ServiceVersion string representation.
+     * @brief Return the #PolicyModification string representation.
      *
      */
     std::string const& ToString() const { return m_policyModification; }

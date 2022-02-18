@@ -27,11 +27,10 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
     {
       Azure::Core::Test::TestBase::SetUpTestBase(AZURE_TEST_RECORDING_DIR);
 
-      std::string mode(std::get<0>(GetParam()));
-      //      std::string mode(GetParam());
+      std::string const mode(std::get<0>(GetParam()));
       if (mode == "Shared")
       {
-        std::string shortLocation(GetEnv("LOCATION_SHORT_NAME"));
+        std::string const shortLocation(GetEnv("LOCATION_SHORT_NAME"));
         m_endpoint = "https://shared" + shortLocation + "." + shortLocation + ".attest.azure.net";
       }
       else if (mode == "Aad")
@@ -85,14 +84,6 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
     }
   }
 
-  namespace {
-    std::string GetTestName(testing::TestParamInfo<AdministrationTests::ParamType> const& info)
-    {
-      std::string instanceType = std::get<0>(info.param);
-      return instanceType + "_" + std::get<1>(info.param).ToString();
-    }
-  } // namespace
-
   INSTANTIATE_TEST_SUITE_P(
       Administration,
       AdministrationTests,
@@ -102,11 +93,9 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
               AttestationType::SgxEnclave,
               AttestationType::OpenEnclave,
               AttestationType::Tpm)),
-      GetTestName);
-  //      [](testing::TestParamInfo<AdministrationTests::ParamType> const& info)
-  //          -> std::string {
-  //        std::string instanceType = std::get<0>(info.param);
-  //        return instanceType + "_" + std::get<1>(info.param).ToString();
-  //      });
+      [](testing::TestParamInfo<AdministrationTests::ParamType> const& info) -> std::string {
+        std::string instanceType = std::get<0>(info.param);
+        return instanceType + "_" + std::get<1>(info.param).ToString();
+      });
 
 }}}} // namespace Azure::Security::Attestation::Test
