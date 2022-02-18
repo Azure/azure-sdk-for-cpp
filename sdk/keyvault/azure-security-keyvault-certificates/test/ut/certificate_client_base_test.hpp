@@ -77,7 +77,7 @@ namespace Azure {
       m_client = InitTestClient<
           Azure::Security::KeyVault::Certificates::CertificateClient,
           Azure::Security::KeyVault::Certificates::CertificateClientOptions>(
-          m_keyVaultUrl, &m_credential, options);
+          m_keyVaultUrl, m_credential, options);
 
       // Update default time depending on test mode.
       UpdateWaitingTime(m_defaultWait);

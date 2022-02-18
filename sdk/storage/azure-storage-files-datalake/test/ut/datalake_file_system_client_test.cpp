@@ -377,7 +377,7 @@ namespace Azure { namespace Storage { namespace Test {
           Azure::Storage::Files::DataLake::DataLakeFileSystemClient::CreateFromConnectionString(
               AdlsGen2ConnectionString(), GetTestNameLowerCase())
               .GetUrl(),
-          &credential,
+          credential,
           options);
 
       EXPECT_NO_THROW(clientSecretClient->Create());

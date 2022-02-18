@@ -475,7 +475,7 @@ namespace Azure { namespace Storage { namespace Test {
     Blobs::BlobClientOptions options;
 
     auto blobServiceClient1 = InitTestClient<Blobs::BlobServiceClient, Blobs::BlobClientOptions>(
-        client.GetUrl(), &credential, options);
+        client.GetUrl(), credential, options);
 
     auto userDelegationKey = blobServiceClient1->GetUserDelegationKey(sasExpiresOn).Value;
 
