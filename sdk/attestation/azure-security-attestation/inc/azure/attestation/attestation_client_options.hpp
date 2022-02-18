@@ -28,7 +28,7 @@ namespace Azure { namespace Security { namespace Attestation {
     ServiceVersion(std::string version) : m_version(std::move(version)) {}
 
     /**
-     * @brief Enable comparing the ext enum.
+     * @brief Enable comparing the extensible enum.
      *
      * @param other Another #ServiceVersion to be compared.
      */
@@ -168,7 +168,7 @@ namespace Azure { namespace Security { namespace Attestation {
     AttestationDataType(std::string dataType) : m_dataType(std::move(dataType)) {}
     AttestationDataType() {}
     /**
-     * @brief Enable comparing the ext enum.
+     * @brief Enable comparing the extensible enum.
      *
      * @param other Another AttestationDataType to be compared.
      */

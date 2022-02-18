@@ -54,7 +54,7 @@ namespace Azure { namespace Security { namespace Attestation {
     virtual ~AttestationAdministrationClient() = default;
 
     /**
-     * @brief Construct a new Attestation Administration Client object
+     * @brief Construct a new Attestation Administration Client object.
      *
      * @param endpoint The URL address where the client will send the requests to.
      * @param credential The authentication token to use.
@@ -87,7 +87,6 @@ namespace Azure { namespace Security { namespace Attestation {
 
     /** @brief Retrieves the attestation policy for the specified attestation type.
      */
-
     Response<Models::AttestationToken<std::string>> GetAttestationPolicy(
         Models::AttestationType const& attestationType,
         GetPolicyOptions const& options = GetPolicyOptions(),
