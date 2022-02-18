@@ -119,7 +119,6 @@ set(
     src/http/url.cpp
     src/io/body_stream.cpp
     src/io/random_access_file_body_stream.cpp
-    src/private/core_string_consts.hpp
     src/private/environment_log_level_listener.hpp
     src/private/package_version.hpp
     src/base64.cpp

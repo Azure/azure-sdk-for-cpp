@@ -1,7 +1,6 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
 
-#include "../private/core_string_consts.hpp"
 #include "azure/core/http/policies/policy.hpp"
 #include <chrono>
 

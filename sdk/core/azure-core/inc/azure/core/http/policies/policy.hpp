@@ -441,7 +441,7 @@ namespace Azure { namespace Core { namespace Http { namespace Policies {
 
       mutable Credentials::AccessToken m_accessToken;
       mutable std::mutex m_accessTokenMutex;
-
+      
     public:
       /**
        * @brief Construct a Bearer Token authentication policy.
@@ -469,28 +469,55 @@ namespace Azure { namespace Core { namespace Http { namespace Policies {
           Context const& context) const override;
     };
 
+    /**
+    * @brief Challenge parameters model
+    * 
+    */
     class ChallengeParameters {
     public:
+      /**
+       * @brief Default constructor
+       *
+       */
       ChallengeParameters() = default;
+
+      /**
+       * @brief Constructor consuming the header value and parsing it into its components.
+       *
+       * @param rawValue Raw value of the challange header.
+       */
       ChallengeParameters(std::string const& rawValue);
 
+      /**
+       * @brief Determines weather there is a challenge.
+       *
+       * @returns challenge present
+       */
       bool IsEmpty() { return AuthorizationUri.GetPath().empty(); }
-      /// <summary>
-      /// Gets the "authorization" or "authorization_uri" parameter from the challenge response.
-      /// </summary>
+      /**
+       * @brief Gets the "authorization" or "authorization_uri" parameter from the challenge response.
+       * 
+       */
       Url AuthorizationUri;
 
-      /// <summary>
-      /// Gets the "resource" or "scope" parameter from the challenge response. This should end with
-      /// "/.default".
-      /// </summary>
+      /**
+       * @brief Gets the "resource" or "scope" parameter from the challenge response. This should end with
+       *     
+       */
       std::vector<std::string> Scopes;
 
-      /// <summary>
-      /// Gets the tenant ID from <see cref="AuthorizationUri"/>.
-      /// </summary>
+      /**
+       * @brief Gets the tenant ID from <see cref="AuthorizationUri"/>.
+       * end with
+       *
+       */
       std::string TenantId;
 
+      /**
+       * @brief Gets the Schema used for the challenge.
+       * end with
+       *
+       */
       std::string Schema;
 
     private:
@@ -498,8 +525,18 @@ namespace Azure { namespace Core { namespace Http { namespace Policies {
       void ProcessFragment(std::string const& fragment);
     };
 
+    /**
+     * @brief Challenge parameters model
+     *
+     */
     class ChallengeBasedAuthenticationPolicy final : public BearerTokenAuthenticationPolicy {
     public:
+      /**
+       * @brief Construct a Challenge based authentication policy.
+       *
+       * @param credential An #Azure::Core::TokenCredential to use with this policy.
+       * @param tokenRequestContext A context to get the token in.
+       */
       ChallengeBasedAuthenticationPolicy(
           std::shared_ptr<Credentials::TokenCredential const> credential,
           Credentials::TokenRequestContext tokenRequestContext)
@@ -518,11 +555,6 @@ namespace Azure { namespace Core { namespace Http { namespace Policies {
           Context const& context) const override;
 
     private:
-      /// <summary>
-      /// Gets the host name and port of the Key Vault or Managed HSM endpoint.
-      /// </summary>
-      /// <param name="request"></param>
-      /// <returns></returns>
       static std::string GetRequestAuthority(Request request);
 
     private:
