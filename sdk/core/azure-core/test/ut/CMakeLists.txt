@@ -37,6 +37,7 @@ add_executable (
   azure-core-test
     azure_core_test.cpp
     base64_test.cpp
+    challenge_test.cpp
     bearer_token_authentication_policy_test.cpp
     bodystream_test.cpp
     case_insensitive_containers_test.cpp
