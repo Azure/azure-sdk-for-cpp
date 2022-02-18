@@ -62,13 +62,12 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
         options.TokenValidationOptions.ValidateNotBeforeTime = false;
         options.TokenValidationOptions.ValidateExpirationTime = false;
       }
-      auto credential = std::make_shared<Azure::Identity::ClientSecretCredential>(
+      std::shared_ptr<Azure::Core::Credentials::TokenCredential> credential
+          = std::make_shared<Azure::Identity::ClientSecretCredential>(
           GetEnv("AZURE_TENANT_ID"), GetEnv("AZURE_CLIENT_ID"), GetEnv("AZURE_CLIENT_SECRET"));
 
-      std::shared_ptr<Azure::Core::Credentials::TokenCredential> tokenCred = credential;
-
       return InitTestClient<AttestationClient, AttestationClientOptions>(
-          m_endpoint, &tokenCred, options);
+          m_endpoint, &credential, options);
     }
   };
 
