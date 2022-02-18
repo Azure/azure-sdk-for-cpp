@@ -38,7 +38,11 @@ namespace Azure { namespace Security { namespace Attestation {
    * exist to allow customers to perform attestation operations without requiring any
    * customizations.
    *
-   * AAD Mode instances exist to enable
+   * AAD Mode instances allow customers to modify attestation policies. When the attestation instance
+   * is in AAD mode, the creator of the instance indicates that they trust ARM RBAC and Microsoft AAD
+   * to validate client connections to the service. As such, additional authentication is not required
+   * for administrative operations.
+   * 
    *
    */
 
@@ -55,7 +59,7 @@ namespace Azure { namespace Security { namespace Attestation {
      * @brief Construct a new Attestation Administration Client object
      *
      * @param endpoint The URL address where the client will send the requests to.
-     * @param credential OPTIONAL The authentication method to use (required for TPM attestation).
+     * @param credential The authentication token to use.
      * @param options The options to customize the client behavior.
      */
     explicit AttestationAdministrationClient(
