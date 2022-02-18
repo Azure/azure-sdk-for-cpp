@@ -1,21 +1,13 @@
 # Azure Attestation Package client library for C++
 
-Microsoft Azure Attestation (preview) is a unified solution for remotely verifying the trustworthiness of a platform and integrity 
-of the binaries running inside it. The service supports attestation of the platforms backed by Trusted Platform Modules (TPMs) 
-alongside the ability to attest to the state of Trusted Execution Environments (TEEs) such as Intel(tm) Software Guard Extensions 
-(SGX) enclaves and Virtualization-based Security (VBS) enclaves.
+Microsoft Azure Attestation is a unified solution for remotely verifying the trustworthiness of a platform and integrity of the binaries running inside it. The service supports attestation of the platforms backed by Trusted Platform Modules (TPMs) alongside the ability to attest to the state of Trusted Execution Environments (TEEs) such as Intel(tm) Software Guard Extensions (SGX) enclaves and Virtualization-based Security (VBS) enclaves.
 
 Attestation is a process for demonstrating that software binaries were properly instantiated on a trusted platform. Remote 
 relying parties can then gain confidence that only such intended software is running on trusted hardware. 
 
-Azure Attestation enables cutting-edge security paradigms such as Azure Confidential computing and Intelligent Edge 
-protection. Customers have been requesting the ability to independently verify the location of a machine, the posture 
-of a virtual machine (VM) on that machine, and the environment within which enclaves are running on that VM. Azure 
-Attestation will empower these and many additional customer requests.
+Azure Attestation enables cutting-edge security paradigms such as Azure Confidential computing and Intelligent Edge protection. Customers have been requesting the ability to independently verify the location of a machine, the posture of a virtual machine (VM) on that machine, and the environment within which enclaves are running on that VM. Azure Attestation will empower these and many additional customer requests.
 
-Azure Attestation receives evidence from compute entities, turns them into a set of claims, validates them against 
-configurable policies, and produces cryptographic proofs for claims-based applications (for example, relying parties 
-and auditing authorities).
+Azure Attestation receives evidence from compute entities, turns them into a set of claims, validates them against configurable policies, and produces cryptographic proofs for claims-based applications (for example, relying parties and auditing authorities).
 
 # Getting started
 For the best development experience, we recommend that developers use the [CMake projects in Visual Studio](https://docs.microsoft.com/cpp/build/cmake-projects-in-visual-studio?view=vs-2019) to view and build the source code together with its dependencies.
@@ -42,7 +34,6 @@ After Vcpkg is initialized and bootstrapped, you can install the dependencies:
 vcpkg.exe install curl:x64-windows-static
 vcpkg.exe install openssl:x64-windows-static
 ```
-
 #### POSIX Platforms
 
 You can use the package manager on different POSIX platforms to install the dependencies. The dependencies to be installed are:
@@ -114,8 +105,6 @@ target_link_libraries(<your project name> PRIVATE Azure::azure-security-attestat
 
   - [Azure Core SDK](https://github.com/Azure/azure-sdk-for-cpp/blob/main/README.md)
   - OpenSSL
-
-
 
 ### Authenticate the client
 

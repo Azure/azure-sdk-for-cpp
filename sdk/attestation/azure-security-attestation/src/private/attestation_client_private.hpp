@@ -425,6 +425,6 @@ namespace Azure { namespace Security { namespace Attestation { namespace _detail
       ValidateTokenIssuer(validationOptions);
     }
 
-    operator Models::AttestationToken<T> &&() { return std::move(m_token); }
+    operator Models::AttestationToken<T>&&() { return std::move(m_token); }
   };
 }}}} // namespace Azure::Security::Attestation::_detail
