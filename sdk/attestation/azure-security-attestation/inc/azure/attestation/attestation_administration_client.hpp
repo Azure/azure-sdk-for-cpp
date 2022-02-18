@@ -15,8 +15,6 @@ namespace Azure { namespace Core { namespace Http { namespace _internal {
 
 namespace Azure { namespace Security { namespace Attestation {
 
-  class AttestationClient;
-
   /**
    *
    * The AttestationAdministrationClient implements the functionality required by the

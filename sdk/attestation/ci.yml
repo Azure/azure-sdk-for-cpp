@@ -49,5 +49,6 @@ stages:
         Value: "non-real-client"
       - Name: AZURE_CLIENT_SECRET
         Value: "non-real-secret"
+        # NOTE: The LOCATION_SHORT_NAME *must* match the region in which the tests were created.
       - Name: LOCATION_SHORT_NAME
         Value: "wus"

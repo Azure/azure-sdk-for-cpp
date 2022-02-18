@@ -46,22 +46,22 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
     std::unique_ptr<AttestationAdministrationClient> CreateClient()
     {
       // `InitTestClient` takes care of setting up Record&Playback.
-      auto options = InitClientOptions<
-          Azure::Security::Attestation::AttestationAdministrationClientOptions>();
-      std::shared_ptr<Azure::Identity::ClientSecretCredential const> credential;
+      Azure::Security::Attestation::AttestationAdministrationClientOptions options;
       if (m_testContext.IsPlaybackMode())
       {
         // Skip validating time stamps if using recordings.
         options.TokenValidationOptions.ValidateNotBeforeTime = false;
         options.TokenValidationOptions.ValidateExpirationTime = false;
       }
-      else
-      {
-        credential = std::make_shared<Azure::Identity::ClientSecretCredential const>(
-            GetEnv("AZURE_TENANT_ID"), GetEnv("AZURE_CLIENT_ID"), GetEnv("AZURE_CLIENT_SECRET"));
-      }
-      return std::make_unique<Azure::Security::Attestation::AttestationAdministrationClient>(
-          m_endpoint, credential, options);
+      auto credential = std::make_shared<Azure::Identity::ClientSecretCredential>(
+          GetEnv("AZURE_TENANT_ID"), GetEnv("AZURE_CLIENT_ID"), GetEnv("AZURE_CLIENT_SECRET"));
+
+      std::shared_ptr<Azure::Core::Credentials::TokenCredential> tokenCred = credential;
+
+      return InitTestClient<
+          Azure::Security::Attestation::AttestationAdministrationClient,
+          Azure::Security::Attestation::AttestationAdministrationClientOptions>(
+          m_endpoint, &tokenCred, options);
     }
   };
 
@@ -70,22 +70,34 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
     auto adminClient(CreateClient());
 
     EXPECT_FALSE(adminClient->ClientVersion().empty());
-    Models::AttestationType attestationType(std::get<1>(GetParam()));
-    auto policy = adminClient->GetAttestationPolicy(attestationType);
 
-    // The policy should have a value, and the token should have been issued by the service.
-    if (!(attestationType == AttestationType::Tpm))
+    AttestationType attestationType(std::get<1>(GetParam()));
     {
-      EXPECT_FALSE(policy.Value.Body.empty());
+      auto policy = adminClient->GetAttestationPolicy(attestationType);
+
+      // The policy should have a value, and the token should have been issued by the service.
+      if (policy.Value.Body.empty())
+      {
+        EXPECT_EQ(AttestationType::Tpm, attestationType);
+      }
+      else
+      {
+        EXPECT_EQ(0, policy.Value.Body.find("version"));
+      }
+      if (!m_testContext.IsPlaybackMode())
+      {
+        EXPECT_EQ(m_endpoint, policy.Value.Issuer.Value());
+      }
     }
-    if (!m_testContext.IsPlaybackMode())
+
     {
-      EXPECT_EQ(m_endpoint, policy.Value.Issuer.Value());
+      GetPolicyOptions gpOptions;
+      EXPECT_FALSE(gpOptions.TokenValidationOptions);
     }
   }
 
   INSTANTIATE_TEST_SUITE_P(
-      Administration,
+      Attestation,
       AdministrationTests,
       testing::Combine(
           ::testing::Values("Shared", "Aad", "Isolated"),
