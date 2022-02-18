@@ -64,7 +64,7 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
       }
       std::shared_ptr<Azure::Core::Credentials::TokenCredential> credential
           = std::make_shared<Azure::Identity::ClientSecretCredential>(
-          GetEnv("AZURE_TENANT_ID"), GetEnv("AZURE_CLIENT_ID"), GetEnv("AZURE_CLIENT_SECRET"));
+              GetEnv("AZURE_TENANT_ID"), GetEnv("AZURE_CLIENT_ID"), GetEnv("AZURE_CLIENT_SECRET"));
 
       return InitTestClient<AttestationClient, AttestationClientOptions>(
           m_endpoint, &credential, options);
