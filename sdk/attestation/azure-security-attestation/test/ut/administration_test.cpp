@@ -82,7 +82,7 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
       }
       else
       {
-        EXPECT_EQ(0, policy.Value.Body.find("version"));
+        EXPECT_EQ(0UL, policy.Value.Body.find("version"));
       }
       if (!m_testContext.IsPlaybackMode())
       {

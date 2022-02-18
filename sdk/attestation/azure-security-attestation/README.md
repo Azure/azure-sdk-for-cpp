@@ -2,7 +2,7 @@
 
 Microsoft Azure Attestation (preview) is a unified solution for remotely verifying the trustworthiness of a platform and integrity 
 of the binaries running inside it. The service supports attestation of the platforms backed by Trusted Platform Modules (TPMs) 
-alongside the ability to attest to the state of Trusted Execution Environments (TEEs) such as Intel� Software Guard Extensions 
+alongside the ability to attest to the state of Trusted Execution Environments (TEEs) such as Intel(tm) Software Guard Extensions 
 (SGX) enclaves and Virtualization-based Security (VBS) enclaves.
 
 Attestation is a process for demonstrating that software binaries were properly instantiated on a trusted platform. Remote 
