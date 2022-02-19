@@ -14,6 +14,7 @@ TEST(ChallengeParameters, emptyString)
   EXPECT_TRUE(challenge.AuthorizationUri.GetPath().empty());
   EXPECT_EQ(challenge.Scopes.size(), size_t(0));
   EXPECT_TRUE(challenge.TenantId.empty());
+  EXPECT_TRUE(challenge.IsEmpty());
 }
 
 TEST(ChallengeParameters, validString)
@@ -27,6 +28,7 @@ TEST(ChallengeParameters, validString)
   EXPECT_EQ(challenge.Scopes.size(), size_t(1));
   EXPECT_EQ(challenge.Scopes[0], "https://vault.azure.net");
   EXPECT_EQ(challenge.TenantId, "72f988bf-86f1-41af-91ab-2d7cd011db47");
+  EXPECT_FALSE(challenge.IsEmpty());
 }
 
 TEST(ChallengeParameters, validString2)
@@ -38,6 +40,7 @@ TEST(ChallengeParameters, validString2)
   EXPECT_EQ(challenge.AuthorizationUri.GetPath(), challenge.TenantId);
   EXPECT_EQ(challenge.Scopes.size(), size_t(0));
   EXPECT_EQ(challenge.TenantId, "72f988bf-86f1-41af-91ab-2d7cd011db47");
+  EXPECT_FALSE(challenge.IsEmpty());
 }
 
 TEST(ChallengeParameters, validString3)
@@ -50,4 +53,5 @@ TEST(ChallengeParameters, validString3)
   EXPECT_EQ(challenge.Scopes.size(), size_t(1));
   EXPECT_EQ(challenge.Scopes[0], "https://vault.azure.net");
   EXPECT_TRUE(challenge.TenantId.empty());
+  EXPECT_FALSE(challenge.IsEmpty());
 }

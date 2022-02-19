@@ -493,7 +493,7 @@ namespace Azure { namespace Core { namespace Http { namespace Policies {
        *
        * @returns challenge present
        */
-      bool IsEmpty() { return AuthorizationUri.GetPath().empty(); }
+      bool IsEmpty() { return Schema.empty(); }
       /**
        * @brief Gets the "authorization" or "authorization_uri" parameter from the challenge response.
        * 
@@ -556,8 +556,6 @@ namespace Azure { namespace Core { namespace Http { namespace Policies {
 
     private:
       static std::string GetRequestAuthority(Request request);
-
-    private:
       const std::string KeyVaultStashedContentKey = "KeyVaultContent";
       ChallengeParameters _challenge;
     };

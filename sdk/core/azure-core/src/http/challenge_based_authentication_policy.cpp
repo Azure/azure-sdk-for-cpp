@@ -14,10 +14,6 @@ std::unique_ptr<RawResponse> ChallengeBasedAuthenticationPolicy::Send(
     NextHttpPolicy nextPolicy,
     Context const& context) const
 {
-  (void)request;
-  (void)nextPolicy;
-  (void)context;
-
   auto result = BearerTokenAuthenticationPolicy::Send(request, nextPolicy, context);
   if (result->GetStatusCode() == HttpStatusCode::Unauthorized)
   {
