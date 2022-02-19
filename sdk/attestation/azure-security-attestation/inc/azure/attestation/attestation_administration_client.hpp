@@ -17,11 +17,12 @@ namespace Azure { namespace Security { namespace Attestation {
 
   /**
    *
-   * The AttestationAdministrationClient implements the functionality required by the
+   * @brief The AttestationAdministrationClient implements the functionality required by the
    * "Administration" family of attestation service APIs.
    *
    * @note: Attestation administration APIs cannot be used on shared attestation service instances.
    *
+   * @details
    * The Administration family of APIs provide APIs to manage:
    *
    * - Attestation policies.
@@ -38,12 +39,10 @@ namespace Azure { namespace Security { namespace Attestation {
    *
    * AAD Mode instances allow customers to modify attestation policies. When the attestation
    * instance is in AAD mode, the creator of the instance indicates that they trust ARM RBAC and
-   * Microsoft AAD to validate client connections to the service. As such, additional authentication
-   * is not required for administrative operations.
-   *
+   * Microsoft AAD to validate client connections to the service. As such, additional proof of
+   * authorization is not required for administrative operations.
    *
    */
-
   class AttestationAdministrationClient final {
 
   public:

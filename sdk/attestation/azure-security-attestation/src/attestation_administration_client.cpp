@@ -126,6 +126,18 @@ AttestationAdministrationClient::GetAttestationPolicy(
   return Response<AttestationToken<std::string>>(returnedToken, std::move(response));
 }
 
+/**
+ * @brief Retrieve the attestation signers to validate the attestation token returned from the
+ * service.
+ *
+ * @details Validating attestation tokens returned by the attestation service requires a set of
+ * possible signers for the attestation token. Retrieving this can take a significant amount of time
+ * (tens or hundreds of milliseconds), so we cache the results for the lifetime of this client.
+ *
+ * @param context Cient context for the request to the service.
+ * @return std::vector<AttestationSigner> const& Returns a reference to the private member filled in
+ * with the signers returned by the service.
+ */
 std::vector<AttestationSigner> const& AttestationAdministrationClient::GetAttestationSigners(
     Azure::Core::Context const& context) const
 {
