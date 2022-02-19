@@ -67,7 +67,7 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
               GetEnv("AZURE_TENANT_ID"), GetEnv("AZURE_CLIENT_ID"), GetEnv("AZURE_CLIENT_SECRET"));
 
       return InitTestClient<AttestationClient, AttestationClientOptions>(
-          m_endpoint, &credential, options);
+          m_endpoint, credential, options);
     }
   };
 

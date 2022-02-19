@@ -60,7 +60,7 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
       return InitTestClient<
           Azure::Security::Attestation::AttestationAdministrationClient,
           Azure::Security::Attestation::AttestationAdministrationClientOptions>(
-          m_endpoint, &credential, options);
+          m_endpoint, credential, options);
     }
   };
 
