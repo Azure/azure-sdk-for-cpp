@@ -134,7 +134,7 @@ AttestationAdministrationClient::GetAttestationPolicy(
  * possible signers for the attestation token. Retrieving this can take a significant amount of time
  * (tens or hundreds of milliseconds), so we cache the results for the lifetime of this client.
  *
- * @param context Cient context for the request to the service.
+ * @param context Client context for the request to the service.
  * @return std::vector<AttestationSigner> const& Returns a reference to the private member filled in
  * with the signers returned by the service.
  */
