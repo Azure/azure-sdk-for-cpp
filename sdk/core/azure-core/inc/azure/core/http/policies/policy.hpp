@@ -441,7 +441,7 @@ namespace Azure { namespace Core { namespace Http { namespace Policies {
 
       mutable Credentials::AccessToken m_accessToken;
       mutable std::mutex m_accessTokenMutex;
-      
+
     public:
       /**
        * @brief Construct a Bearer Token authentication policy.
@@ -470,9 +470,9 @@ namespace Azure { namespace Core { namespace Http { namespace Policies {
     };
 
     /**
-    * @brief Challenge parameters model
-    * 
-    */
+     * @brief Challenge parameters model
+     *
+     */
     class ChallengeParameters {
     public:
       /**
@@ -495,14 +495,16 @@ namespace Azure { namespace Core { namespace Http { namespace Policies {
        */
       bool IsEmpty() { return Schema.empty(); }
       /**
-       * @brief Gets the "authorization" or "authorization_uri" parameter from the challenge response.
-       * 
+       * @brief Gets the "authorization" or "authorization_uri" parameter from the challenge
+       * response.
+       *
        */
       Url AuthorizationUri;
 
       /**
-       * @brief Gets the "resource" or "scope" parameter from the challenge response. This should end with
-       *     
+       * @brief Gets the "resource" or "scope" parameter from the challenge response. This should
+       * end with
+       *
        */
       std::vector<std::string> Scopes;
 
@@ -543,7 +545,7 @@ namespace Azure { namespace Core { namespace Http { namespace Policies {
           : BearerTokenAuthenticationPolicy(credential, tokenRequestContext)
       {
       }
-      
+
       std::unique_ptr<HttpPolicy> Clone() const override
       {
         return std::make_unique<ChallengeBasedAuthenticationPolicy>(
@@ -556,6 +558,7 @@ namespace Azure { namespace Core { namespace Http { namespace Policies {
           Context const& context) const override;
 
       const ChallengeParameters GetChallenge() { return _challenge; }
+
     private:
       static std::string GetRequestAuthority(Request request);
       ChallengeParameters _challenge;

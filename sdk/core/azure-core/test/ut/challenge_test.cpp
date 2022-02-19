@@ -45,8 +45,7 @@ TEST(ChallengeParameters, validString2)
 
 TEST(ChallengeParameters, validString3)
 {
-  std::string validData
-      = "Bearer resource=\"https://vault.azure.net\"";
+  std::string validData = "Bearer resource=\"https://vault.azure.net\"";
   ChallengeParameters challenge(validData);
   EXPECT_EQ(challenge.Schema, Azure::Core::Http::Policies::_detail::BearerName);
   EXPECT_TRUE(challenge.AuthorizationUri.GetPath().empty());
