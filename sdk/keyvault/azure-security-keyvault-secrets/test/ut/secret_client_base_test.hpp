@@ -53,7 +53,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets { 
       m_client = InitTestClient<
           Azure::Security::KeyVault::Secrets::SecretClient,
           Azure::Security::KeyVault::Secrets::SecretClientOptions>(
-          m_keyVaultUrl, &m_credential, options);
+          m_keyVaultUrl, m_credential, options);
 
       // Update default time depending on test mode.
       UpdateWaitingTime(m_defaultWait);

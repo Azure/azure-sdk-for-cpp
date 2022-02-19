@@ -64,7 +64,7 @@ namespace Azure { namespace Core { namespace Test {
     // If Playback or Record is not set, no changes will be done to the clientOptions or credential.
     // Call this before creating the SDK client
     void PrepareClientOptions(
-        std::shared_ptr<Core::Credentials::TokenCredential>** credential,
+        std::shared_ptr<Core::Credentials::TokenCredential>& credential,
         Azure::Core::_internal::ClientOptions& options)
     {
       // Set up client options depending on the test-mode
@@ -74,7 +74,7 @@ namespace Azure { namespace Core { namespace Test {
         //  - playback transport adapter to read and return payload from json files
         //  - never-expiring test credential to never require a token
         options.Transport.Transport = m_interceptor->GetPlaybackTransport();
-        **credential = m_interceptor->GetTestCredential();
+        credential = m_interceptor->GetTestCredential();
       }
       else if (!m_testContext.IsLiveMode())
       {
@@ -190,12 +190,12 @@ namespace Azure { namespace Core { namespace Test {
     template <class T, class O>
     std::unique_ptr<T> InitTestClient(
         std::string const& url,
-        std::shared_ptr<Core::Credentials::TokenCredential>* credential,
+        std::shared_ptr<Core::Credentials::TokenCredential>& credential,
         O& options)
     {
       // Run instrumentation before creating the client
-      PrepareClientOptions(&credential, options);
-      return std::make_unique<T>(url, *credential, options);
+      PrepareClientOptions(credential, options);
+      return std::make_unique<T>(url, credential, options);
     }
 
     template <class T> T InitClientOptions()
