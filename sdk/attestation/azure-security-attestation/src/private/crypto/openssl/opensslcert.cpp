@@ -420,7 +420,7 @@ namespace Azure { namespace Security { namespace Attestation { namespace _detail
 
       // Normalize the expiration time based on the adjustments. This will handle
       // wrapping hours, days, etc.
-#if defined(AZ_PLATFORM_WINDOWS)
+#if _WINDOWS
       expirationTime = _mkgmtime(&currentTime); // cspell:disable-line
 #else
       expirationTime = timegm(&currentTime); // cspell:disable-line
