@@ -94,4 +94,23 @@ namespace Azure { namespace Security { namespace Attestation { namespace _detail
     static std::string Serialize(Models::AttestationTokenHeader const& tokenHeader);
   };
 
+  /**
+   * @brief Serializer/Deserializer for internal PolicyResult objects.
+   */
+  struct PolicyResultSerializer final
+  {
+    static Models::_detail::PolicyResult Deserialize(
+        Azure::Core::Json::_internal::json const& json);
+  };
+
+  /**
+   * @brief Serializer/Deserializer for internal PolicyResult objects.
+   */
+  struct StoredAttestationPolicySerializer final
+  {
+    static Models::_detail::StoredAttestationPolicy Deserialize(
+        Azure::Core::Json::_internal::json const& json);
+    static std::string Serialize(Models::_detail::StoredAttestationPolicy const& policy);
+  };
+
 }}}} // namespace Azure::Security::Attestation::_detail

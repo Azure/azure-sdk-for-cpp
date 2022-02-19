@@ -26,7 +26,9 @@ stages:
   - template: ../../eng/pipelines/templates/stages/archetype-sdk-client.yml
     parameters:
       ServiceDirectory: attestation
+      Location: WestUS
       CtestRegex: azure-security-attestation.*
+      LiveTestCtestRegex: azure-security-attestation.*
       LineCoverageTarget: 90
       BranchCoverageTarget: 45
       Artifacts:
@@ -47,5 +49,6 @@ stages:
         Value: "non-real-client"
       - Name: AZURE_CLIENT_SECRET
         Value: "non-real-secret"
+        # NOTE: The LOCATION_SHORT_NAME *must* match the region in which the tests were created.
       - Name: LOCATION_SHORT_NAME
         Value: "wus"

@@ -19,7 +19,8 @@ add_executable (
      macro_guard.cpp
      crypto_test.cpp
      attestation_test.cpp
-     token_test.cpp)
+     token_test.cpp administration_test.cpp
+     attestation_collateral.cpp)
 
 create_per_service_target_build(azure-security-attestation-test attestation)
 

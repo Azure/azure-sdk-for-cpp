@@ -25,6 +25,58 @@
 namespace Azure { namespace Security { namespace Attestation { namespace Models {
 
   /**
+   * @brief The AttestationType type represent a Trusted Execution Environment supported by
+   * the attestation service.
+   *
+   */
+  class AttestationType final {
+  private:
+    std::string m_attestationType;
+
+  public:
+    /**
+     * @brief Construct a new AttestationType object
+     *
+     * @param attestationType The string attestationType used for the attestation policy operation.
+     */
+    AttestationType(std::string attestationType) : m_attestationType(std::move(attestationType)) {}
+
+    /**
+     * @brief Enable comparing the ext enum.
+     *
+     * @param other Another #AttestationType to be compared.
+     */
+    bool operator==(AttestationType const& other) const
+    {
+      return m_attestationType == other.m_attestationType;
+    }
+
+    /**
+     * @brief Return the #AttestationType string representation.
+     *
+     */
+    std::string const& ToString() const { return m_attestationType; }
+
+    /**
+     * @brief Specifies that this should apply to SGX enclaves.
+     *
+     */
+    AZ_ATTESTATION_DLLEXPORT static const AttestationType SgxEnclave;
+
+    /**
+     * @brief Specifies that this should apply to SGX enclaves using the OpenEnclave APIs.
+     *
+     */
+    AZ_ATTESTATION_DLLEXPORT static const AttestationType OpenEnclave;
+
+    /**
+     * @brief Specifies that this should apply to TPM enclaves.
+     *
+     */
+    AZ_ATTESTATION_DLLEXPORT static const AttestationType Tpm;
+  };
+
+  /**
    * @brief Contains information about this instance of the attestation service, which can be
    * used to validate attestation service responses.
    *
@@ -187,6 +239,102 @@ namespace Azure { namespace Security { namespace Attestation { namespace Models 
     std::vector<AttestationSigner> Signers;
   };
 
+  /** An AttestationToken represents an RFC 7519 JSON Web Token returned from the attestation
+   * service with the specialized body type.
+   * <typeparam name="T"></typeparam> The type which represents the body of the attestation token.
+   */
+  template <typename T> class AttestationToken final {
+  public:
+    /**
+     * @brief The full RFC 7515 JWS/JWT token returned by the attestation service.
+     */
+    std::string RawToken;
+
+    /**
+     * @brief The elements of the raw token which will be signed by the Signature.
+     */
+    std::string SignedElements;
+
+    /**
+     * @brief Signature (if present) for the attestation token.
+     */
+    std::vector<uint8_t> Signature;
+
+    /**
+     * @brief RFC 7515 header properties.
+     */
+    Models::AttestationTokenHeader Header;
+
+    // RFC 7519 properties.
+
+    /**
+     *  The Expiration time for this attestation token.
+     *
+     * After this time, the token cannot be considered valid.
+     *
+     * See <a href='https://datatracker.ietf.org/doc/html/rfc7519#section-4.1.4'>RFC 7519
+     * Section 4.1.4</a> for more information.
+     */
+    Azure::Nullable<Azure::DateTime> ExpiresOn;
+
+    /**
+     *  The time at which this token was issued.
+     *
+     *
+     * See <a href='https://datatracker.ietf.org/doc/html/rfc7519#section-4.1.6'>RFC 7519
+     * Section 4.1.6</a> for more information.
+     */
+    Azure::Nullable<Azure::DateTime> IssuedOn;
+
+    /**
+     *  The time before which this token cannot be considered valid.
+     *
+     *
+     * See <a href='https://datatracker.ietf.org/doc/html/rfc7519#section-4.1.5'>RFC 7519
+     * Section 4.1.5</a> for more information.
+     */
+    Azure::Nullable<Azure::DateTime> NotBefore;
+
+    /**
+     *  The issuer of this attestation token
+     *
+     *
+     * See <a href='https://datatracker.ietf.org/doc/html/rfc7519#section-4.1.1'>RFC 7519
+     * Section 4.1.1</a> for more information.
+     */
+    Azure::Nullable<std::string> Issuer;
+
+    /**
+     *  An identifier which uniquely identifies this token.
+     *
+     * See <a href='https://datatracker.ietf.org/doc/html/rfc7519#section-4.1.7'>RFC 7519
+     * Section 4.1.7</a> for more information.
+     */
+    Azure::Nullable<std::string> UniqueIdentifier;
+
+    /**
+     * The subject for this attestation token.
+     *
+     * See <a href='https://datatracker.ietf.org/doc/html/rfc7519#section-4.1.2'>RFC 7519
+     * Section 4.1.2</a> for more information.
+     */
+    Azure::Nullable<std::string> Subject;
+
+    /**
+     * The audience for this attestation token.
+     *
+     * See <a href='https://datatracker.ietf.org/doc/html/rfc7519#section-4.1.3'>RFC 7519
+     * Section 4.1.3</a> for more information.
+     */
+    Azure::Nullable<std::string> Audience;
+
+    /**
+     * @brief The deserialized body of the attestation token.
+     *
+     */
+    T Body;
+  };
+
   /** @brief An AttestationResult reflects the result of an Attestation operation.
    *
    * The fields in the AttestationResult represent the claims in the AttestationToken returned
@@ -272,6 +420,75 @@ namespace Azure { namespace Security { namespace Attestation { namespace Models 
      * @note : If VerifierType is "sgx", then this field *must* be present
      */
     Azure::Nullable<std::string> SgxCollateral;
+  };
+
+  /**
+   * @brief The PolicyModification enumeration represents the result of an attestation
+   * policy modification.
+   *
+   */
+  class PolicyModification final {
+  private:
+    std::string m_policyModification;
+
+  public:
+    /**
+     * @brief Construct a new PolicyResolution object
+     *
+     * @param modification The string resolution used for the result of an attestation policy
+     * operation.
+     */
+    PolicyModification(std::string modification) : m_policyModification(std::move(modification)) {}
+
+    /**
+     * @brief Enable comparing the ext enum.
+     *
+     * @param other Another #PolicyModification to be compared.
+     */
+    bool operator==(PolicyModification const& other) const
+    {
+      return m_policyModification == other.m_policyModification;
+    }
+
+    /**
+     * @brief Return the #PolicyModification string representation.
+     *
+     */
+    std::string const& ToString() const { return m_policyModification; }
+
+    /**
+     * @brief Specifies that the policy object was updated.
+     *
+     */
+    AZ_ATTESTATION_DLLEXPORT static const PolicyModification Updated;
+
+    /**
+     * @brief Specifies that the policy object was removed.
+     *
+     */
+    AZ_ATTESTATION_DLLEXPORT static const PolicyModification Removed;
+  };
+
+  /**
+   * @brief Result of a SetPolicy or ResetPolicy operation.
+   */
+  struct PolicyResult
+  {
+    /**
+     * @brief Result of a modification.
+     */
+    Azure::Nullable<PolicyModification> PolicyResolution;
+
+    /**
+     * @brief The SHA256 hash of the policy object which was received by the service.
+     */
+    Azure::Nullable<std::vector<uint8_t>> PolicyTokenHash;
+
+    /**
+     * @brief A JSON Web Key containing the signer of the policy token. If not present, the token
+     * was unsecured.
+     */
+    Azure::Nullable<AttestationSigner> PolicySigner;
   };
 
 }}}} // namespace Azure::Security::Attestation::Models

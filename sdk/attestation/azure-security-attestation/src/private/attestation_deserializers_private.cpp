@@ -273,4 +273,31 @@ namespace Azure { namespace Security { namespace Attestation { namespace _detail
     }
     return returnValue;
   }
+
+  Models::_detail::PolicyResult PolicyResultSerializer::Deserialize(
+      Azure::Core::Json::_internal::json const& parsedResult)
+  {
+    Models::_detail::PolicyResult returnValue;
+    JsonOptional::SetIfExists(returnValue.PolicyResolution, parsedResult, "x-ms-policy-result");
+    JsonOptional::SetIfExists(returnValue.PolicyTokenHash, parsedResult, "x-ms-policy-token-hash");
+    if (parsedResult.contains("x-ms-policy-signer"))
+    {
+      returnValue.PolicySigner
+          = JsonWebKeySerializer::Deserialize(parsedResult["x-ms-policy-signer"]);
+    }
+    JsonOptional::SetIfExists(returnValue.PolicyToken, parsedResult, "x-ms-policy");
+    return returnValue;
+  }
+  Models::_detail::StoredAttestationPolicy StoredAttestationPolicySerializer::Deserialize(
+      Azure::Core::Json::_internal::json const& parsedResult)
+  {
+    Models::_detail::StoredAttestationPolicy returnValue;
+    JsonOptional::SetIfExists<std::string, std::vector<uint8_t>>(
+        returnValue.AttestationPolicy,
+        parsedResult,
+        "AttestationPolicy",
+        Azure::Core::_internal::Base64Url::Base64UrlDecode);
+
+    return returnValue;
+  }
 }}}} // namespace Azure::Security::Attestation::_detail

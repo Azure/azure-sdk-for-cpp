@@ -28,9 +28,17 @@
 
 namespace Azure { namespace Security { namespace Attestation { namespace _detail {
 
-  template <class T, typename TDeserializer> class AttestationTokenInternal {
+  template <class T> class EmptyDeserializer {
+  public:
+    static std::string Deserialize(Azure::Core::Json::_internal::json const&)
+    {
+      return std::string();
+    }
+  };
+
+  template <class T, class TDeserializer = EmptyDeserializer<T>> class AttestationTokenInternal {
   private:
-    AttestationToken<T> m_token;
+    Models::AttestationToken<T> m_token;
 
     /**
      * @brief Validate the time elements in a JSON Web token as controlled by the provided
@@ -211,7 +219,9 @@ namespace Azure { namespace Security { namespace Attestation { namespace _detail
      *
      * @param jwt - the JSON Web Token/JSON Web Signature to be parsed.
      */
-    AttestationTokenInternal(std::string const& jwt)
+    AttestationTokenInternal(
+        std::string const& jwt,
+        Azure::Nullable<T> preferredBody = Azure::Nullable<T>())
     {
       m_token.RawToken = jwt;
 
@@ -259,35 +269,44 @@ namespace Azure { namespace Security { namespace Attestation { namespace _detail
 
         // Now add the encoded body to the signed elements.
         m_token.SignedElements += body;
+        if (!body.empty())
+        {
+          auto jsonBody(Azure::Core::Json::_internal::json::parse(
+              Azure::Core::_internal::Base64Url::Base64UrlDecode(body)));
 
-        auto jsonBody(Azure::Core::Json::_internal::json::parse(
-            Azure::Core::_internal::Base64Url::Base64UrlDecode(body)));
+          // Parse the RFC 7519 JSON Web Token body properties.
+          // Note that if this is a JWS, these properties will NOT be present.
+          Azure::Core::Json::_internal::JsonOptional::SetIfExists<int64_t, Azure::DateTime>(
+              m_token.ExpiresOn,
+              jsonBody,
+              "exp",
+              Azure::Core::_internal::PosixTimeConverter::PosixTimeToDateTime);
+          Azure::Core::Json::_internal::JsonOptional::SetIfExists<int64_t, Azure::DateTime>(
+              m_token.IssuedOn,
+              jsonBody,
+              "iat",
+              Azure::Core::_internal::PosixTimeConverter::PosixTimeToDateTime);
+          Azure::Core::Json::_internal::JsonOptional::SetIfExists<int64_t, Azure::DateTime>(
+              m_token.NotBefore,
+              jsonBody,
+              "nbf",
+              Azure::Core::_internal::PosixTimeConverter::PosixTimeToDateTime);
+          Azure::Core::Json::_internal::JsonOptional::SetIfExists(m_token.Issuer, jsonBody, "iss");
+          Azure::Core::Json::_internal::JsonOptional::SetIfExists(m_token.Subject, jsonBody, "sub");
+          Azure::Core::Json::_internal::JsonOptional::SetIfExists(
+              m_token.Audience, jsonBody, "aud");
+          Azure::Core::Json::_internal::JsonOptional::SetIfExists(
+              m_token.UniqueIdentifier, jsonBody, "jti");
 
-        // Parse the RFC 7519 JSON Web Token body properties.
-        // Note that if this is a JWS, these properties will NOT be present.
-        Azure::Core::Json::_internal::JsonOptional::SetIfExists<int64_t, Azure::DateTime>(
-            m_token.ExpiresOn,
-            jsonBody,
-            "exp",
-            Azure::Core::_internal::PosixTimeConverter::PosixTimeToDateTime);
-        Azure::Core::Json::_internal::JsonOptional::SetIfExists<int64_t, Azure::DateTime>(
-            m_token.IssuedOn,
-            jsonBody,
-            "iat",
-            Azure::Core::_internal::PosixTimeConverter::PosixTimeToDateTime);
-        Azure::Core::Json::_internal::JsonOptional::SetIfExists<int64_t, Azure::DateTime>(
-            m_token.NotBefore,
-            jsonBody,
-            "nbf",
-            Azure::Core::_internal::PosixTimeConverter::PosixTimeToDateTime);
-        Azure::Core::Json::_internal::JsonOptional::SetIfExists(m_token.Issuer, jsonBody, "iss");
-        Azure::Core::Json::_internal::JsonOptional::SetIfExists(m_token.Subject, jsonBody, "sub");
-        Azure::Core::Json::_internal::JsonOptional::SetIfExists(m_token.Audience, jsonBody, "aud");
-        Azure::Core::Json::_internal::JsonOptional::SetIfExists(
-            m_token.UniqueIdentifier, jsonBody, "jti");
-
-        m_token.Body = TDeserializer::Deserialize(jsonBody);
-
+          if (preferredBody)
+          {
+            m_token.Body = preferredBody.Value();
+          }
+          else
+          {
+            m_token.Body = TDeserializer::Deserialize(jsonBody);
+          }
+        }
         // Remove the body from the token, we've remembered its contents.
         token.erase(0, bodyIndex + 1);
       }
@@ -406,6 +425,6 @@ namespace Azure { namespace Security { namespace Attestation { namespace _detail
       ValidateTokenIssuer(validationOptions);
     }
 
-    operator AttestationToken<T>&&() { return std::move(m_token); }
+    operator Models::AttestationToken<T>&&() { return std::move(m_token); }
   };
 }}}} // namespace Azure::Security::Attestation::_detail

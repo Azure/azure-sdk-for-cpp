@@ -32,6 +32,7 @@ set(
   AZURE_ATTESTATION_HEADER
     inc/azure/attestation/dll_import_export.hpp
     inc/azure/attestation/attestation_client.hpp
+    inc/azure/attestation/attestation_administration_client.hpp
     inc/azure/attestation.hpp
     inc/azure/attestation/attestation_client_models.hpp
     inc/azure/attestation/attestation_client_options.hpp
@@ -48,6 +49,7 @@ set(
 set(
   AZURE_ATTESTATION_SOURCE
     src/attestation_client.cpp
+    src/attestation_administration_client.cpp
     src/attestation_client_options.cpp
     src/attestation_common_request.cpp
     src/private/attestation_deserializers_private.cpp

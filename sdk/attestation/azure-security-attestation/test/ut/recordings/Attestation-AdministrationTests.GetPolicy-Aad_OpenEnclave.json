@@ -4,7 +4,27 @@
       "Headers": {
         "content-type": "application/json",
         "user-agent": "azsdk-cpp-Attestation/1.0.0-beta.1 (Windows 10 Enterprise 6.3 22000 22000.1.amd64fre.co_release.210604-1628)",
-        "x-ms-client-request-id": "e14c8513-a0a3-4f84-7af8-4a1c80d73e97"
+        "x-ms-client-request-id": "02331b81-871c-474a-55b1-c1a9bc864282"
+      },
+      "Method": "GET",
+      "Response": {
+        "BODY": "{\"token\":\"eyJhbGciOiJSUzI1NiIsImprdSI6Imh0dHBzOi8vY3BsYXJyeW9hdHRlc3RhdGlvbmFhZC53dXMuYXR0ZXN0LmF6dXJlLm5ldC9jZXJ0cyIsImtpZCI6InJQdEJHUldUbFBtenM1dTM1TDBRUkQ5V2R5bWVLUFJ4dGVUZVRsd04wRWM9IiwidHlwIjoiSldUIn0.eyJleHAiOjE2NDUyMjg0ODIsImlhdCI6MTY0NTIyNDg4MiwiaXNzIjoiaHR0cHM6Ly9jcGxhcnJ5b2F0dGVzdGF0aW9uYWFkLnd1cy5hdHRlc3QuYXp1cmUubmV0IiwibmJmIjoxNjQ1MjI0ODgyLCJ4LW1zLXBvbGljeSI6ImV5SmhiR2NpT2lKdWIyNWxJbjAuZXlKQmRIUmxjM1JoZEdsdmJsQnZiR2xqZVNJNkltUnRWbmxqTW14Mlltb3daMDFUTkhkUE1rWXhaRWRvZG1OdGJEWlpXRkp3WWpJMWVXUlhlR3hqTTNNNVVHbENkMXBZU25SaFdGRnZTMVIwT1U4eWJIcGpNMVpvWW0xT2JHTnVWbk5hV0U0M1dYcHdZbVJJYkhkYVZEQTVTVzVuZEdKWVRYUmpNbVEwVEZkc2VreFhVbXhaYmxadVdqSkdhV0pIVldsWVUwRTVVR2xDY0dNelRqRmFVMmd3WlZoQ2JGQlRTbkJqZVRGcldsZEtNVm95WkdoWmJYaHNTV2wzWjJSdFJuTmtWMVU1V1hrMU1sbFhlREZhVTJzM1dYcHdZbVJJYkhkYVZEQTVTVzVuZEdKWVRYUmpNbVEwVEZjeGVXTXliRzVpYlZaNVNXd3daMUJVTkdkaFdFNTZaRmRWYjJSSWJIZGFWREJwWXpKa05FeFhNWGxqTW14dVltMVdlVWxwZDJka2JVWnpaRmRWT1ZsNU5USlpWM2d4V2xOck4xbDZjR0prU0d4M1dsUXdPVWx1WjNSaVdFMTBZekprTkV4WE1YbGFWelZxWWtkR01scFRTbVJKUkRBdFNVZHNlbU16Vm14TFNGSTFZMGRWT1VsdVRtNWxRekYwWTIxV2RWa3llR2hrYlZWcFRFTkNNbGxYZURGYVZERnFURzVhYUdKSVZteExWSFJxVDJ4ME1HVllRbXhRVkRCcFpVTXhkR041TVhwYU0yZDBZMGhLZGxwSVZtcGtRekZ3V2tOS1pFbEVNQzFKUjJ4Nll6TldiRXRJVWpWalIxVTVTVzVDZVdJeVVqRlpNMUYwWVZkUmFVeERRakpaVjNneFdsUXhha3h1V21oaVNGWnNTMVIwYWs5c2REQmxXRUpzVUZRd2FXVkRNWFJqZVRGNldqTm5kR016V25WSmJEQm5VRlEwWjJGWVRucGtWMVZ2WkVoc2QxcFVNR2xqTTFwMVNXbDNaMlJ0Um5Oa1YxVTVXWGsxTWxsWGVERmFVMnMzV1hwd1ltUkliSGRhVkRBNVNXNW5kR0pZVFhSWldGSXdXbGhPTUZsWVVuQmlNalIwWkVoc2QxcFRTbVJKUkRBdFNVZHNlbU16Vm14TFNGSTFZMGRWT1VsdVVteGFVMGx6U1VoYWFHSklWbXhRVjAxMVpHMUdjMlJYVlhCUE16QTNJbjAuIn0.G7BWV3ZV0KOPe6jVytEC3sNBfjCr4GJ4CsuTiti4S8VAjq1NCPantwiMvVx4RxV-xJUYSyrtVRKLzMb5yPOcjPbJVjJF00WwmkQm6hrRweVK7jcMzRn67ymPq9C81sirOm476pw2zRAzvwaOEVm44bMq5rXh1qCyZivhz5uKcGimVRov_OyFBEVdXpnJhJiffnOObYvJDu2sznswwFV9ytrIedUB1C6tWllFnj-UWwwrDW2DBqvYw6qXWv3IYjGT1Js9c2cCpluxksCDCqf0czaHqhZ7rNpXU497A1NZSCJKIZMRBNqlsEzpnLIBvGNXAx2JSuykkxSUaxGxRTpFtg\"}",
+        "REASON_PHRASE": "OK",
+        "STATUS_CODE": "200",
+        "content-length": "1982",
+        "content-type": "application/json; charset=utf-8",
+        "date": "Fri, 18 Feb 2022 22:54:41 GMT",
+        "server": "Kestrel",
+        "x-ms-maa-service-version": "1.10.01847.0002",
+        "x-ms-request-id": "00-d2f8f8610c5a4b2b4d5eba2687001184-0000000000000000-00"
+      },
+      "Url": "https://REDACTED.wus.attest.azure.net/policies/OpenEnclave?api-version=2020-10-01"
+    },
+    {
+      "Headers": {
+        "content-type": "application/json",
+        "user-agent": "azsdk-cpp-Attestation/1.0.0-beta.1 (Windows 10 Enterprise 6.3 22000 22000.1.amd64fre.co_release.210604-1628)",
+        "x-ms-client-request-id": "fe9f9bed-5a14-4a58-703d-f6f5de3bd617"
       },
       "Method": "GET",
       "Response": {
@@ -13,10 +33,10 @@
         "STATUS_CODE": "200",
         "content-length": "27632",
         "content-type": "application/json; charset=utf-8",
-        "date": "Fri, 18 Feb 2022 22:54:36 GMT",
+        "date": "Fri, 18 Feb 2022 22:54:41 GMT",
         "server": "Kestrel",
         "x-ms-maa-service-version": "1.10.01847.0002",
-        "x-ms-request-id": "00-28f40b1857434aa9d85cfa3743439f74-0000000000000000-00"
+        "x-ms-request-id": "00-d762f8e336824a92e4c3602a786943ac-0000000000000000-00"
       },
       "Url": "https://REDACTED.wus.attest.azure.net/certs"
     }

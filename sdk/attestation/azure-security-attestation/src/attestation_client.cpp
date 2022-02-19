@@ -2,12 +2,14 @@
 // SPDX-License-Identifier: MIT
 
 #include "azure/attestation/attestation_client.hpp"
+#include "azure/attestation/attestation_administration_client.hpp"
 #include "private/attestation_client_models_private.hpp"
 #include "private/attestation_client_private.hpp"
 #include "private/attestation_common_request.hpp"
 #include "private/attestation_deserializers_private.hpp"
 #include "private/package_version.hpp"
 #include <azure/core/base64.hpp>
+#include <azure/core/credentials/credentials.hpp>
 #include <azure/core/http/policies/policy.hpp>
 #include <azure/core/internal/diagnostics/log.hpp>
 #include <azure/core/internal/http/pipeline.hpp>
@@ -21,23 +23,25 @@ using namespace Azure::Security::Attestation::_detail;
 using namespace Azure::Security::Attestation::Models::_detail;
 using namespace Azure::Core::Http;
 using namespace Azure::Core::Http::Policies;
+using namespace Azure::Core::Http::Policies::_internal;
 using namespace Azure::Core::Http::_internal;
 
 AttestationClient::AttestationClient(
     std::string const& endpoint,
     std::shared_ptr<Core::Credentials::TokenCredential const> credential,
     AttestationClientOptions options)
-    : m_endpoint(endpoint), m_tokenValidationOptions(options.TokenValidationOptions)
+    : m_endpoint(endpoint), m_credentials(credential),
+      m_tokenValidationOptions(options.TokenValidationOptions)
 {
   std::vector<std::unique_ptr<HttpPolicy>> perRetrypolicies;
   if (credential)
   {
-    //      Azure::Core::Credentials::TokenRequestContext const tokenContext
-    //          = {{_internal::UrlScope::GetScopeFromUrl(m_vaultUrl)}};
+    m_credentials = credential;
+    Azure::Core::Credentials::TokenRequestContext const tokenContext
+        = {{"https://attest.azure.net/.default"}};
 
-    //      perRetrypolicies.emplace_back(
-    //          std::make_unique<BearerTokenAuthenticationPolicy>(credential,
-    //          std::move(tokenContext)));
+    perRetrypolicies.emplace_back(
+        std::make_unique<BearerTokenAuthenticationPolicy>(credential, tokenContext));
   }
   m_apiVersion = options.Version.ToString();
   std::vector<std::unique_ptr<HttpPolicy>> perCallpolicies;

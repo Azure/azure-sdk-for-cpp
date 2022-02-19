@@ -8,6 +8,7 @@
 #include <gtest/gtest.h>
 
 using namespace Azure::Security::Attestation;
+using namespace Azure::Core;
 
 namespace Azure { namespace Security { namespace Attestation { namespace Test {
 
@@ -54,11 +55,19 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
     std::unique_ptr<AttestationClient> CreateAuthenticatedClient()
     {
       // `InitClientOptions` takes care of setting up Record&Playback.
-      auto options = InitClientOptions<Azure::Security::Attestation::AttestationClientOptions>();
-      auto credential = std::make_shared<Azure::Identity::ClientSecretCredential>(
-          GetEnv("AZURE_TENANT_ID"), GetEnv("AZURE_CLIENT_ID"), GetEnv("AZURE_CLIENT_SECRET"));
+      AttestationClientOptions options;
+      if (m_testContext.IsPlaybackMode())
+      {
+        // Skip validating time stamps if using recordings.
+        options.TokenValidationOptions.ValidateNotBeforeTime = false;
+        options.TokenValidationOptions.ValidateExpirationTime = false;
+      }
+      std::shared_ptr<Azure::Core::Credentials::TokenCredential> credential
+          = std::make_shared<Azure::Identity::ClientSecretCredential>(
+              GetEnv("AZURE_TENANT_ID"), GetEnv("AZURE_CLIENT_ID"), GetEnv("AZURE_CLIENT_SECRET"));
 
-      return std::make_unique<AttestationClient>(m_endpoint, credential, options);
+      return InitTestClient<AttestationClient, AttestationClientOptions>(
+          m_endpoint, credential, options);
     }
   };
 
