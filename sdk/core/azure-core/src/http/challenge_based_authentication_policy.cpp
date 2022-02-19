@@ -24,7 +24,7 @@ std::unique_ptr<RawResponse> ChallengeBasedAuthenticationPolicy::Send(
     }
   }
   return result;
-};
+}
 
 std::string ChallengeBasedAuthenticationPolicy::GetRequestAuthority(Request request)
 {
