@@ -484,7 +484,7 @@ namespace Azure { namespace Core { namespace Http { namespace Policies {
       /**
        * @brief Constructor consuming the header value and parsing it into its components.
        *
-       * @param rawValue Raw value of the challange header.
+       * @param rawValue Raw value of the challenge header.
        */
       ChallengeParameters(std::string const& rawValue);
 
@@ -543,6 +543,7 @@ namespace Azure { namespace Core { namespace Http { namespace Policies {
           : BearerTokenAuthenticationPolicy(credential, tokenRequestContext)
       {
       }
+      
       std::unique_ptr<HttpPolicy> Clone() const override
       {
         return std::make_unique<ChallengeBasedAuthenticationPolicy>(
@@ -554,9 +555,9 @@ namespace Azure { namespace Core { namespace Http { namespace Policies {
           NextHttpPolicy nextPolicy,
           Context const& context) const override;
 
+      const ChallengeParameters GetChallenge() { return _challenge; }
     private:
       static std::string GetRequestAuthority(Request request);
-      const std::string KeyVaultStashedContentKey = "KeyVaultContent";
       ChallengeParameters _challenge;
     };
 

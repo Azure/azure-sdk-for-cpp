@@ -47,7 +47,7 @@ ChallengeParameters::ChallengeParameters(std::string const& rawValue)
     Schema = _detail::BearerName;
 
     auto parts = GetParts(rawValue, _detail::SpaceSeparator);
-    for (int i = 1; i < parts.size(); i++)
+    for (size_t i = 1; i < parts.size(); i++)
     {
       ProcessFragment(parts[i]);
     }
@@ -61,9 +61,9 @@ void ChallengeParameters::ProcessFragment(std::string const& fragment)
   {
     auto subParts = GetParts(fragment, _detail::EqualSeparator);
 
-    for (int i = 0; i < subParts.size(); i++)
+    for (size_t i = 0; i < subParts.size(); i++)
     {
-      // some parts (values) have quotes around , thus clean them on qutes
+      // some parts (values) have quotes around , thus clean them on quotes
       auto trimmedParts = GetParts(subParts[i], _detail::QuoteSeparator);
 
       if (trimmedParts.size() > 0)
