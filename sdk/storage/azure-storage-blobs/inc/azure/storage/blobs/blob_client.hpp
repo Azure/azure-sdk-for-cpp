@@ -366,6 +366,46 @@ namespace Azure { namespace Storage { namespace Blobs {
         const GetBlobTagsOptions& options = GetBlobTagsOptions(),
         const Azure::Core::Context& context = Azure::Core::Context()) const;
 
+    /**
+     * @brief Sets the immutability policy on a blob, snapshot or version. Note that Blob Versioning must be enabled on your storage account, and the blob must be in a Container with immutable storage with versioning enabled to call this API.
+     * 
+     * @param immutabilityPolicy The blob immutability policy to set.
+     * @param options Optional parameters to execute this function.
+     * @param context Context for cancelling long running operations.
+     * @return The blob's immutability policy.
+     */
+    Azure::Response<Models::SetBlobImmutabilityPolicyResult> SetImmutabilityPolicy(
+        Models::BlobImmutabilityPolicy immutabilityPolicy,
+        const SetBlobImmutabilityPolicyOptions& options = SetBlobImmutabilityPolicyOptions(),
+        const Azure::Core::Context& context = Azure::Core::Context()) const;
+
+    /**
+     * @brief Deletes the Immutability Policy associated with the Blob..
+     * 
+     * @param options Optional parameters to execute this function.
+     * @param context Context for cancelling long running operations.
+     * @return A DeleteBlobImmutabilityPolicyResult on successfully deleting immutability policy.
+     */
+    Azure::Response<Models::DeleteBlobImmutabilityPolicyResult> DeleteImmutabilityPolicy(
+        const DeleteBlobImmutabilityPolicyOptions& options = DeleteBlobImmutabilityPolicyOptions(),
+        const Azure::Core::Context& context = Azure::Core::Context()) const;
+
+    /**
+     * @brief Sets a legal hold on the blob. Note that Blob Versioning must be enabled on your
+     * storage account, and the blob must be in a Container with immutable storage with versioning
+     * enabled to call this API.
+     *
+     * @param hasLegalHold Set to true to set a legal hold on the blob. Set to false to remove an
+     * existing legal hold.
+     * @param options Optional parameters to execute this function.
+     * @param context Context for cancelling long running operations.
+     * @return A SetBlobLegalHoldResult on successfully setting legal hold.
+     */
+    Azure::Response<Models::SetBlobLegalHoldResult> SetLegalHold(
+        bool hasLegalHold,
+        const SetBlobLegalHoldOptions& options = SetBlobLegalHoldOptions(),
+        const Azure::Core::Context& context = Azure::Core::Context()) const;
+
   protected:
     Azure::Core::Url m_blobUrl;
     std::shared_ptr<Azure::Core::Http::_internal::HttpPipeline> m_pipeline;

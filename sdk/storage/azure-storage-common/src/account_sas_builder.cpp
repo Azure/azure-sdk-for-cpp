@@ -49,6 +49,11 @@ namespace Azure { namespace Storage { namespace Sas {
     {
       Permissions += "p";
     }
+    if ((permissions & AccountSasPermissions::SetImmutabilityPolicy)
+        == AccountSasPermissions::SetImmutabilityPolicy)
+    {
+      Permissions += "i";
+    }
     if ((permissions & AccountSasPermissions::Tags) == AccountSasPermissions::Tags)
     {
       Permissions += "t";

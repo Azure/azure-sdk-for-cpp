@@ -289,10 +289,22 @@ namespace Azure { namespace Storage { namespace Blobs {
   };
 
   /**
-   * @brief Optional parameters for #Azure::Storage::Blobs::BlobContainerClient::Undelete.
+   * @brief Optional parameters for
+   * #Azure::Storage::Blobs::BlobServiceClient::UndeleteBlobContainer.
    */
   struct UndeleteBlobContainerOptions final
   {
+  };
+
+  /**
+   * @brief Optional parameters for #Azure::Storage::Blobs::BlobServiceClient::RenameBlobContainer.
+   */
+  struct RenameBlobContainerOptions final
+  {
+    /**
+     * @brief Optional conditions that must be met to perform this operation.
+     */
+    LeaseAccessConditions SourceAccessConditions;
   };
 
   /**
@@ -495,6 +507,16 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @brief If the destination blob should be sealed. Only applicable for Append Blobs.
      */
     Azure::Nullable<bool> ShouldSealDestination;
+
+    /**
+     * Immutability policy to set on the destination blob.
+     */
+    Azure::Nullable<Models::BlobImmutabilityPolicy> ImmutabilityPolicy;
+
+    /**
+     * Indicates whether the destination blob has a legal hold.
+     */
+    Azure::Nullable<bool> HasLegalHold;
   };
 
   /**
@@ -541,6 +563,15 @@ namespace Azure { namespace Storage { namespace Blobs {
      * that has arrived with the one that was sent.
      */
     Azure::Nullable<ContentHash> TransactionalContentHash;
+
+    /**
+     * Immutability policy to set on the destination blob.
+     */
+    Azure::Nullable<Models::BlobImmutabilityPolicy> ImmutabilityPolicy;
+    /**
+     * Indicates whether the destination blob has a legal hold.
+     */
+    Azure::Nullable<bool> HasLegalHold;
   };
 
   /**
@@ -726,7 +757,9 @@ namespace Azure { namespace Storage { namespace Blobs {
     /**
      * @brief Optional conditions that must be met to perform this operation.
      */
-    TagAccessConditions AccessConditions;
+    struct : public LeaseAccessConditions, public TagAccessConditions
+    {
+    } AccessConditions;
   };
 
   /**
@@ -737,7 +770,9 @@ namespace Azure { namespace Storage { namespace Blobs {
     /**
      * @brief Optional conditions that must be met to perform this operation.
      */
-    TagAccessConditions AccessConditions;
+    struct : public LeaseAccessConditions, public TagAccessConditions
+    {
+    } AccessConditions;
   };
 
   /**
@@ -776,6 +811,16 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @brief Optional conditions that must be met to perform this operation.
      */
     BlobAccessConditions AccessConditions;
+
+    /**
+     * Immutability policy to set on the blob.
+     */
+    Azure::Nullable<Models::BlobImmutabilityPolicy> ImmutabilityPolicy;
+
+    /**
+     * Indicates whether the blob has a legal hold.
+     */
+    Azure::Nullable<bool> HasLegalHold;
   };
 
   /**
@@ -825,6 +870,66 @@ namespace Azure { namespace Storage { namespace Blobs {
        */
       int32_t Concurrency = 5;
     } TransferOptions;
+
+    /**
+     * Immutability policy to set on the blob.
+     */
+    Azure::Nullable<Models::BlobImmutabilityPolicy> ImmutabilityPolicy;
+
+    /**
+     * Indicates whether the blob has a legal hold.
+     */
+    Azure::Nullable<bool> HasLegalHold;
+  };
+
+  struct UploadBlockBlobFromUriOptions final
+  {
+    /**
+     * If true, the properties of the source blob will be copied to the new blob.
+     */
+    bool CopySourceBlobProperties = true;
+
+    /**
+     * @brief The standard HTTP header system properties to set.
+     */
+    Models::BlobHttpHeaders HttpHeaders;
+
+    /**
+     * @brief Name-value pairs associated with the blob as metadata.
+     */
+    Storage::Metadata Metadata;
+
+    /**
+     * @brief The tags to set for this blob.
+     */
+    std::map<std::string, std::string> Tags;
+
+    /**
+     * @brief Indicates the tier to be set on blob.
+     */
+    Azure::Nullable<Models::AccessTier> AccessTier;
+
+    /**
+     * @brief Optional conditions that must be met to perform this operation.
+     */
+    BlobAccessConditions AccessConditions;
+
+    /**
+     * @brief Optional conditions that source must meet to perform this operation.
+     */
+    struct : public Azure::ModifiedConditions,
+             public Azure::MatchConditions,
+             public TagAccessConditions
+    {
+    } SourceAccessConditions;
+
+    /**
+     * @brief Hash of the blob content. This hash is used to verify the integrity of
+     * the blob during transport. When this header is specified, the storage service checks the hash
+     * that has arrived with the one that was sent. Note that this hash is not stored with the blob.
+     * If the two hashes do not match, the operation will fail.
+     */
+    Azure::Nullable<ContentHash> TransactionalContentHash;
   };
 
   /**
@@ -904,6 +1009,16 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @brief Optional conditions that must be met to perform this operation.
      */
     BlobAccessConditions AccessConditions;
+
+    /**
+     * Immutability policy to set on the blob.
+     */
+    Azure::Nullable<Models::BlobImmutabilityPolicy> ImmutabilityPolicy;
+
+    /**
+     * Indicates whether the blob has a legal hold.
+     */
+    Azure::Nullable<bool> HasLegalHold;
   };
 
   /**
@@ -949,6 +1064,16 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @brief Optional conditions that must be met to perform this operation.
      */
     BlobAccessConditions AccessConditions;
+
+    /**
+     * Immutability policy to set on the blob.
+     */
+    Azure::Nullable<Models::BlobImmutabilityPolicy> ImmutabilityPolicy;
+
+    /**
+     * Indicates whether the blob has a legal hold.
+     */
+    Azure::Nullable<bool> HasLegalHold;
   };
 
   /**
@@ -1040,6 +1165,16 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @brief Optional conditions that must be met to perform this operation.
      */
     BlobAccessConditions AccessConditions;
+
+    /**
+     * Immutability policy to set on the blob.
+     */
+    Azure::Nullable<Models::BlobImmutabilityPolicy> ImmutabilityPolicy;
+
+    /**
+     * Indicates whether the blob has a legal hold.
+     */
+    Azure::Nullable<bool> HasLegalHold;
   };
 
   /**
@@ -1151,4 +1286,35 @@ namespace Azure { namespace Storage { namespace Blobs {
     BlobAccessConditions AccessConditions;
   };
 
+  /**
+   * @brief Optional parameters for #Azure::Storage::Blobs::BlobClient::SetLegalHold.
+   */
+  struct SetBlobLegalHoldOptions final
+  {
+  };
+
+  /**
+   * @brief Optional parameters for #Azure::Storage::Blobs::BlobClient::SetImmutabilityPolicy.
+   */
+  struct SetBlobImmutabilityPolicyOptions final
+  {
+    /**
+     * @brief Optional conditions that must be met to perform this operation.
+     */
+    struct
+    {
+      /**
+       * @brief Specify this header to perform the operation only if the resource has not been
+       * modified since the specified time. This timestamp will be truncated to second.
+       */
+      Azure::Nullable<Azure::DateTime> IfUnmodifiedSince;
+    } AccessConditions;
+  };
+
+  /**
+   * @brief Optional parameters for #Azure::Storage::Blobs::BlobClient::DeleteImmutabilityPolicy.
+   */
+  struct DeleteBlobImmutabilityPolicyOptions final
+  {
+  };
 }}} // namespace Azure::Storage::Blobs

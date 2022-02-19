@@ -110,6 +110,13 @@ namespace Azure { namespace Storage { namespace Blobs {
       protocolLayerOptions.EncryptionAlgorithm = m_customerProvidedKey.Value().Algorithm.ToString();
     }
     protocolLayerOptions.EncryptionScope = m_encryptionScope;
+    if (options.ImmutabilityPolicy.HasValue())
+    {
+      protocolLayerOptions.ImmutabilityPolicyExpiry = options.ImmutabilityPolicy.Value().ExpiresOn;
+      protocolLayerOptions.ImmutabilityPolicyMode = options.ImmutabilityPolicy.Value().PolicyMode;
+    }
+    protocolLayerOptions.LegalHold = options.HasLegalHold;
+
     return _detail::AppendBlobClient::Create(*m_pipeline, m_blobUrl, protocolLayerOptions, context);
   }
 

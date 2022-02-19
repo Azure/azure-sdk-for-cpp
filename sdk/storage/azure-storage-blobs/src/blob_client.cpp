@@ -676,6 +676,12 @@ namespace Azure { namespace Storage { namespace Blobs {
           "This operation only supports MD5 transactional content hash.");
       protocolLayerOptions.SourceContentMD5 = options.TransactionalContentHash.Value().Value;
     }
+    if (options.ImmutabilityPolicy.HasValue())
+    {
+      protocolLayerOptions.ImmutabilityPolicyExpiry = options.ImmutabilityPolicy.Value().ExpiresOn;
+      protocolLayerOptions.ImmutabilityPolicyMode = options.ImmutabilityPolicy.Value().PolicyMode;
+    }
+    protocolLayerOptions.LegalHold = options.HasLegalHold;
 
     return _detail::BlobClient::CopyFromUri(*m_pipeline, m_blobUrl, protocolLayerOptions, context);
   }
@@ -712,6 +718,12 @@ namespace Azure { namespace Storage { namespace Blobs {
     protocolLayerOptions.SourceIfNoneMatch = options.SourceAccessConditions.IfNoneMatch;
     protocolLayerOptions.SealBlob = options.ShouldSealDestination;
     protocolLayerOptions.SourceIfTags = options.SourceAccessConditions.TagConditions;
+    if (options.ImmutabilityPolicy.HasValue())
+    {
+      protocolLayerOptions.ImmutabilityPolicyExpiry = options.ImmutabilityPolicy.Value().ExpiresOn;
+      protocolLayerOptions.ImmutabilityPolicyMode = options.ImmutabilityPolicy.Value().PolicyMode;
+    }
+    protocolLayerOptions.LegalHold = options.HasLegalHold;
 
     auto response = _detail::BlobClient::StartCopyFromUri(
         *m_pipeline, m_blobUrl, protocolLayerOptions, context);
@@ -810,6 +822,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     _detail::BlobClient::SetBlobTagsOptions protocolLayerOptions;
     protocolLayerOptions.Tags = std::move(tags);
     protocolLayerOptions.IfTags = options.AccessConditions.TagConditions;
+    protocolLayerOptions.LeaseId = options.AccessConditions.LeaseId;
     return _detail::BlobClient::SetTags(*m_pipeline, m_blobUrl, protocolLayerOptions, context);
   }
 
@@ -819,8 +832,43 @@ namespace Azure { namespace Storage { namespace Blobs {
   {
     _detail::BlobClient::GetBlobTagsOptions protocolLayerOptions;
     protocolLayerOptions.IfTags = options.AccessConditions.TagConditions;
+    protocolLayerOptions.LeaseId = options.AccessConditions.LeaseId;
     return _detail::BlobClient::GetTags(
         *m_pipeline, m_blobUrl, protocolLayerOptions, _internal::WithReplicaStatus(context));
+  }
+
+  Azure::Response<Models::SetBlobImmutabilityPolicyResult> BlobClient::SetImmutabilityPolicy(
+      Models::BlobImmutabilityPolicy immutabilityPolicy,
+      const SetBlobImmutabilityPolicyOptions& options,
+      const Azure::Core::Context& context) const
+  {
+    _detail::BlobClient::SetBlobImmutabilityPolicyOptions protocolLayerOptions;
+    protocolLayerOptions.ImmutabilityPolicyExpiry = immutabilityPolicy.ExpiresOn;
+    protocolLayerOptions.ImmutabilityPolicyMode = immutabilityPolicy.PolicyMode;
+    protocolLayerOptions.IfUnmodifiedSince = options.AccessConditions.IfUnmodifiedSince;
+    return _detail::BlobClient::SetImmutabilityPolicy(
+        *m_pipeline, m_blobUrl, protocolLayerOptions, context);
+  }
+
+  Azure::Response<Models::DeleteBlobImmutabilityPolicyResult> BlobClient::DeleteImmutabilityPolicy(
+      const DeleteBlobImmutabilityPolicyOptions& options,
+      const Azure::Core::Context& context) const
+  {
+    (void)options;
+    _detail::BlobClient::DeleteBlobImmutabilityPolicyOptions protocolLayerOptions;
+    return _detail::BlobClient::DeleteImmutabilityPolicy(
+        *m_pipeline, m_blobUrl, protocolLayerOptions, context);
+  }
+
+  Azure::Response<Models::SetBlobLegalHoldResult> BlobClient::SetLegalHold(
+      bool hasLegalHold,
+      const SetBlobLegalHoldOptions& options,
+      const Azure::Core::Context& context) const
+  {
+    (void)options;
+    _detail::BlobClient::SetBlobLegalHoldOptions protocolLayerOptions;
+    protocolLayerOptions.LegalHold = hasLegalHold;
+    return _detail::BlobClient::SetLegalHold(*m_pipeline, m_blobUrl, protocolLayerOptions, context);
   }
 
 }}} // namespace Azure::Storage::Blobs
