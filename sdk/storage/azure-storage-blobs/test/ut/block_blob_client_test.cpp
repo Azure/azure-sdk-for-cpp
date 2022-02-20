@@ -1796,7 +1796,7 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_EQ(destBlobProperties.HttpHeaders, options.HttpHeaders);
     EXPECT_EQ(destBlobProperties.Metadata, options.Metadata);
     EXPECT_EQ(destBlobProperties.AccessTier.Value(), options.AccessTier.Value());
-    EXPECT_EQ(destBlobProperties.TagCount.Value(), options.Tags.size());
+    EXPECT_EQ(static_cast<size_t>(destBlobProperties.TagCount.Value()), options.Tags.size());
   }
 
   TEST_F(BlockBlobClientTest, SetGetTagsWithLeaseId)
