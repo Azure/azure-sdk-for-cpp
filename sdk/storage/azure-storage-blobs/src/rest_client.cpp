@@ -4789,6 +4789,13 @@ namespace Azure { namespace Storage { namespace Blobs {
       {
         request.SetHeader("x-ms-legal-hold", options.LegalHold.Value() ? "true" : "false");
       }
+      if (options.SourceContentcrc64.HasValue()
+          && !Core::Convert::Base64Encode(options.SourceContentcrc64.Value()).empty())
+      {
+        request.SetHeader(
+            "x-ms-source-content-crc64",
+            Core::Convert::Base64Encode(options.SourceContentcrc64.Value()));
+      }
       auto pRawResponse = pipeline.Send(request, context);
       auto httpStatusCode = pRawResponse->GetStatusCode();
       if (httpStatusCode != Core::Http::HttpStatusCode::Accepted)

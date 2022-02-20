@@ -3,7 +3,9 @@
 
 #include "append_blob_client_test.hpp"
 
+#include <azure/core/cryptography/hash.hpp>
 #include <azure/storage/blobs/blob_lease_client.hpp>
+#include <azure/storage/common/crypt.hpp>
 
 namespace Azure { namespace Storage { namespace Test {
 
@@ -22,7 +24,6 @@ namespace Azure { namespace Storage { namespace Test {
   // Requires blob versioning?
   TEST_F(AppendBlobClientTest, CreateAppendDelete)
   {
-
     auto const testName(GetTestName());
     auto client = GetAppendBlobClient(testName);
     auto appendBlobClient = Blobs::AppendBlobClient::CreateFromConnectionString(
@@ -312,6 +313,63 @@ namespace Azure { namespace Storage { namespace Test {
     }
     auto downloadStream = std::move(blobClient.Download().Value.BodyStream);
     EXPECT_EQ(downloadStream->ReadToEnd(Azure::Core::Context()), m_blobContent);
+  }
+
+  TEST_F(AppendBlobClientTest, ContentHash)
+  {
+    auto const testName(GetTestName());
+    auto appendBlobClient = GetAppendBlobClient(testName);
+
+    const std::vector<uint8_t> blobContent = RandomBuffer(10);
+    const std::vector<uint8_t> contentMd5
+        = Azure::Core::Cryptography::Md5Hash().Final(blobContent.data(), blobContent.size());
+    const std::vector<uint8_t> contentCrc64
+        = Azure::Storage::Crc64Hash().Final(blobContent.data(), blobContent.size());
+
+    appendBlobClient.Create();
+    auto contentStream = Azure::Core::IO::MemoryBodyStream(blobContent.data(), blobContent.size());
+    appendBlobClient.AppendBlock(contentStream);
+
+    auto appendBlobClient2 = GetAppendBlobClient(testName + "2");
+    appendBlobClient2.Create();
+
+    Blobs::AppendBlockOptions options1;
+    options1.TransactionalContentHash = ContentHash();
+    options1.TransactionalContentHash.Value().Algorithm = HashAlgorithm::Md5;
+    options1.TransactionalContentHash.Value().Value = Azure::Core::Convert::Base64Decode(DummyMd5);
+    contentStream.Rewind();
+    EXPECT_THROW(appendBlobClient2.AppendBlock(contentStream, options1), StorageException);
+    options1.TransactionalContentHash.Value().Value = contentMd5;
+    contentStream.Rewind();
+    EXPECT_NO_THROW(appendBlobClient2.AppendBlock(contentStream, options1));
+    options1.TransactionalContentHash.Value().Algorithm = HashAlgorithm::Crc64;
+    options1.TransactionalContentHash.Value().Value
+        = Azure::Core::Convert::Base64Decode(DummyCrc64);
+    contentStream.Rewind();
+    EXPECT_THROW(appendBlobClient2.AppendBlock(contentStream, options1), StorageException);
+    options1.TransactionalContentHash.Value().Value = contentCrc64;
+    contentStream.Rewind();
+    EXPECT_NO_THROW(appendBlobClient2.AppendBlock(contentStream, options1));
+
+    Blobs::AppendBlockFromUriOptions options2;
+    options2.TransactionalContentHash = ContentHash();
+    options2.TransactionalContentHash.Value().Algorithm = HashAlgorithm::Md5;
+    options2.TransactionalContentHash.Value().Value = Azure::Core::Convert::Base64Decode(DummyMd5);
+    EXPECT_THROW(
+        appendBlobClient2.AppendBlockFromUri(appendBlobClient.GetUrl() + GetSas(), options2),
+        StorageException);
+    options2.TransactionalContentHash.Value().Value = contentMd5;
+    EXPECT_NO_THROW(
+        appendBlobClient2.AppendBlockFromUri(appendBlobClient.GetUrl() + GetSas(), options2));
+    options2.TransactionalContentHash.Value().Algorithm = HashAlgorithm::Crc64;
+    options2.TransactionalContentHash.Value().Value
+        = Azure::Core::Convert::Base64Decode(DummyCrc64);
+    EXPECT_THROW(
+        appendBlobClient2.AppendBlockFromUri(appendBlobClient.GetUrl() + GetSas(), options2),
+        StorageException);
+    options2.TransactionalContentHash.Value().Value = contentCrc64;
+    EXPECT_NO_THROW(
+        appendBlobClient2.AppendBlockFromUri(appendBlobClient.GetUrl() + GetSas(), options2));
   }
 
 }}} // namespace Azure::Storage::Test

@@ -3438,6 +3438,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         Nullable<DateTime> ImmutabilityPolicyExpiry;
         Nullable<Models::BlobImmutabilityPolicyMode> ImmutabilityPolicyMode;
         Nullable<bool> LegalHold;
+        Nullable<std::vector<uint8_t>> SourceContentcrc64;
       };
       static Response<Models::CopyBlobFromUriResult> CopyFromUri(
           Core::Http::_internal::HttpPipeline& pipeline,

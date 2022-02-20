@@ -1616,21 +1616,6 @@ namespace Azure { namespace Storage { namespace Test {
       EXPECT_NO_THROW(destBlobClient.CopyFromUri(sourceBlobClient.GetUrl() + GetSas(), options));
       leaseClient.Release();
     }
-
-    // content md5
-    {
-      const auto hash = sourceBlobClient.GetProperties().Value.HttpHeaders.ContentHash;
-      ASSERT_FALSE(hash.Value.empty());
-
-      Blobs::CopyBlobFromUriOptions options;
-      options.TransactionalContentHash = hash;
-      options.TransactionalContentHash.Value().Value = Azure::Core::Convert::Base64Decode(DummyMd5);
-      EXPECT_THROW(
-          destBlobClient.CopyFromUri(sourceBlobClient.GetUrl() + GetSas(), options),
-          StorageException);
-      options.TransactionalContentHash = hash;
-      EXPECT_NO_THROW(destBlobClient.CopyFromUri(sourceBlobClient.GetUrl() + GetSas(), options));
-    }
   }
 
   TEST_F(BlockBlobClientTest, DISABLED_Immutability)
@@ -1751,11 +1736,134 @@ namespace Azure { namespace Storage { namespace Test {
     }
   }
 
-  TEST_F(BlockBlobClientTest, UploadFromUri)
+  TEST_F(BlockBlobClientTest, ContentHash)
   {
     auto const testName(GetTestName());
     auto srcBlobClient = GetBlockBlobClient(testName + "src");
     std::vector<uint8_t> blobContent = RandomBuffer(100);
+    srcBlobClient.UploadFrom(blobContent.data(), blobContent.size());
+    const std::vector<uint8_t> contentMd5
+        = Azure::Core::Cryptography::Md5Hash().Final(blobContent.data(), blobContent.size());
+    const std::vector<uint8_t> contentCrc64
+        = Azure::Storage::Crc64Hash().Final(blobContent.data(), blobContent.size());
+
+    Azure::Core::IO::MemoryBodyStream stream(blobContent.data(), blobContent.size());
+
+    {
+      auto destBlobClient = GetBlockBlobClient(testName + "dest0");
+      Blobs::UploadBlockBlobOptions options;
+      options.TransactionalContentHash = ContentHash();
+      options.TransactionalContentHash.Value().Algorithm = HashAlgorithm::Md5;
+      options.TransactionalContentHash.Value().Value = Azure::Core::Convert::Base64Decode(DummyMd5);
+      stream.Rewind();
+      EXPECT_THROW(destBlobClient.Upload(stream, options), StorageException);
+      options.TransactionalContentHash.Value().Value = contentMd5;
+      stream.Rewind();
+      EXPECT_NO_THROW(destBlobClient.Upload(stream, options));
+      options.TransactionalContentHash.Value().Algorithm = HashAlgorithm::Crc64;
+      options.TransactionalContentHash.Value().Value
+          = Azure::Core::Convert::Base64Decode(DummyCrc64);
+      stream.Rewind();
+      EXPECT_THROW(destBlobClient.Upload(stream, options), StorageException);
+      options.TransactionalContentHash.Value().Value = contentCrc64;
+      stream.Rewind();
+      EXPECT_NO_THROW(destBlobClient.Upload(stream, options));
+    }
+    {
+      auto destBlobClient = GetBlockBlobClient(testName + "dest1");
+      Blobs::UploadBlockBlobFromUriOptions options;
+      options.TransactionalContentHash = ContentHash();
+      options.TransactionalContentHash.Value().Algorithm = HashAlgorithm::Md5;
+      options.TransactionalContentHash.Value().Value = Azure::Core::Convert::Base64Decode(DummyMd5);
+      stream.Rewind();
+      EXPECT_THROW(
+          destBlobClient.UploadFromUri(srcBlobClient.GetUrl() + GetSas(), options),
+          StorageException);
+      options.TransactionalContentHash.Value().Value = contentMd5;
+      stream.Rewind();
+      EXPECT_NO_THROW(destBlobClient.UploadFromUri(srcBlobClient.GetUrl() + GetSas(), options));
+      options.TransactionalContentHash.Value().Algorithm = HashAlgorithm::Crc64;
+      options.TransactionalContentHash.Value().Value
+          = Azure::Core::Convert::Base64Decode(DummyCrc64);
+      stream.Rewind();
+      EXPECT_THROW(
+          destBlobClient.UploadFromUri(srcBlobClient.GetUrl() + GetSas(), options),
+          StorageException);
+      options.TransactionalContentHash.Value().Value = contentCrc64;
+      stream.Rewind();
+      EXPECT_NO_THROW(destBlobClient.UploadFromUri(srcBlobClient.GetUrl() + GetSas(), options));
+    }
+    {
+      auto destBlobClient = GetBlockBlobClient(testName + "dest2");
+      Blobs::CopyBlobFromUriOptions options;
+      options.TransactionalContentHash = ContentHash();
+      options.TransactionalContentHash.Value().Algorithm = HashAlgorithm::Md5;
+      options.TransactionalContentHash.Value().Value = Azure::Core::Convert::Base64Decode(DummyMd5);
+      stream.Rewind();
+      EXPECT_THROW(
+          destBlobClient.CopyFromUri(srcBlobClient.GetUrl() + GetSas(), options), StorageException);
+      options.TransactionalContentHash.Value().Value = contentMd5;
+      stream.Rewind();
+      EXPECT_NO_THROW(destBlobClient.CopyFromUri(srcBlobClient.GetUrl() + GetSas(), options));
+      options.TransactionalContentHash.Value().Algorithm = HashAlgorithm::Crc64;
+      options.TransactionalContentHash.Value().Value
+          = Azure::Core::Convert::Base64Decode(DummyCrc64);
+      stream.Rewind();
+      EXPECT_THROW(
+          destBlobClient.CopyFromUri(srcBlobClient.GetUrl() + GetSas(), options), StorageException);
+      options.TransactionalContentHash.Value().Value = contentCrc64;
+      stream.Rewind();
+      EXPECT_NO_THROW(destBlobClient.CopyFromUri(srcBlobClient.GetUrl() + GetSas(), options));
+    }
+    {
+      auto destBlobClient = GetBlockBlobClient(testName + "dest3");
+      Blobs::StageBlockOptions options;
+      options.TransactionalContentHash = ContentHash();
+      options.TransactionalContentHash.Value().Algorithm = HashAlgorithm::Md5;
+      options.TransactionalContentHash.Value().Value = Azure::Core::Convert::Base64Decode(DummyMd5);
+      stream.Rewind();
+      EXPECT_THROW(destBlobClient.StageBlock("YWJjZA==", stream, options), StorageException);
+      options.TransactionalContentHash.Value().Value = contentMd5;
+      stream.Rewind();
+      EXPECT_NO_THROW(destBlobClient.StageBlock("YWJjZA==", stream, options));
+      options.TransactionalContentHash.Value().Algorithm = HashAlgorithm::Crc64;
+      options.TransactionalContentHash.Value().Value
+          = Azure::Core::Convert::Base64Decode(DummyCrc64);
+      stream.Rewind();
+      EXPECT_THROW(destBlobClient.StageBlock("YWJjZA==", stream, options), StorageException);
+      options.TransactionalContentHash.Value().Value = contentCrc64;
+      stream.Rewind();
+      EXPECT_NO_THROW(destBlobClient.StageBlock("YWJjZA==", stream, options));
+    }
+    {
+      auto destBlobClient = GetBlockBlobClient(testName + "dest4");
+      Blobs::StageBlockFromUriOptions options;
+      options.TransactionalContentHash = ContentHash();
+      options.TransactionalContentHash.Value().Algorithm = HashAlgorithm::Md5;
+      options.TransactionalContentHash.Value().Value = Azure::Core::Convert::Base64Decode(DummyMd5);
+      EXPECT_THROW(
+          destBlobClient.StageBlockFromUri("YWJjZA==", srcBlobClient.GetUrl() + GetSas(), options),
+          StorageException);
+      options.TransactionalContentHash.Value().Value = contentMd5;
+      EXPECT_NO_THROW(
+          destBlobClient.StageBlockFromUri("YWJjZA==", srcBlobClient.GetUrl() + GetSas(), options));
+      options.TransactionalContentHash.Value().Algorithm = HashAlgorithm::Crc64;
+      options.TransactionalContentHash.Value().Value
+          = Azure::Core::Convert::Base64Decode(DummyCrc64);
+      EXPECT_THROW(
+          destBlobClient.StageBlockFromUri("YWJjZA==", srcBlobClient.GetUrl() + GetSas(), options),
+          StorageException);
+      options.TransactionalContentHash.Value().Value = contentCrc64;
+      EXPECT_NO_THROW(
+          destBlobClient.StageBlockFromUri("YWJjZA==", srcBlobClient.GetUrl() + GetSas(), options));
+    }
+  }
+
+  TEST_F(BlockBlobClientTest, UploadFromUri)
+  {
+    auto const testName(GetTestName());
+    auto srcBlobClient = GetBlockBlobClient(testName + "src");
+    std::vector<uint8_t> blobContent(100, 'a');
     srcBlobClient.UploadFrom(blobContent.data(), blobContent.size());
 
     const std::vector<uint8_t> blobMd5
@@ -1788,9 +1896,6 @@ namespace Azure { namespace Storage { namespace Test {
     options.Metadata["k"] = "v";
     options.AccessTier = Blobs::Models::AccessTier::Cool;
     options.Tags["k1"] = "v1";
-    options.TransactionalContentHash = ContentHash();
-    options.TransactionalContentHash.Value().Algorithm = HashAlgorithm::Crc64;
-    options.TransactionalContentHash.Value().Value = blobCrc64;
     uploadFromUriResult = destBlobClient.UploadFromUri(srcBlobClient.GetUrl() + GetSas(), options);
     auto destBlobProperties = destBlobClient.GetProperties().Value;
     destBlobProperties.HttpHeaders.ContentHash.Value.clear();

@@ -23,7 +23,7 @@ namespace Azure { namespace Storage { namespace Test {
     {
       // Create container
       auto containerClient = GetBlobContainerTestClient();
-      containerClient.Create();
+      containerClient.CreateIfNotExists();
 
       m_appendBlobClient = std::make_unique<Azure::Storage::Blobs::AppendBlobClient>(
           containerClient.GetAppendBlobClient(blobName));

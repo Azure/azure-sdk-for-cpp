@@ -1,0 +1,644 @@
+{
+  "networkCallRecords": [
+    {
+      "Headers": {
+        "user-agent": "azsdk-cpp-storage-blobs/12.4.0-beta.1 (Windows 10 Pro 6.3 19041 19041.1.amd64fre.vb_release.191206-1406)",
+        "x-ms-client-request-id": "f91797ac-3565-4a5e-66f9-8452df3a2689",
+        "x-ms-version": "2020-08-04"
+      },
+      "Method": "PUT",
+      "Response": {
+        "BODY": "",
+        "REASON_PHRASE": "Created",
+        "STATUS_CODE": "201",
+        "content-length": "0",
+        "date": "Sun, 20 Feb 2022 07:03:28 GMT",
+        "etag": "\"0x8D9F43F18893934\"",
+        "last-modified": "Sun, 20 Feb 2022 07:03:28 GMT",
+        "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
+        "x-ms-client-request-id": "f91797ac-3565-4a5e-66f9-8452df3a2689",
+        "x-ms-request-id": "4356c37a-601e-008b-7c27-26deaf000000",
+        "x-ms-version": "2020-08-04"
+      },
+      "Url": "https://REDACTED.blob.core.windows.net/blockblobclienttestcontenthash?restype=container"
+    },
+    {
+      "Headers": {
+        "user-agent": "azsdk-cpp-storage-blobs/12.4.0-beta.1 (Windows 10 Pro 6.3 19041 19041.1.amd64fre.vb_release.191206-1406)",
+        "x-ms-client-request-id": "377636d8-5738-48ad-5040-dd665bca2b74",
+        "x-ms-version": "2020-08-04"
+      },
+      "Method": "PUT",
+      "Response": {
+        "BODY": "",
+        "REASON_PHRASE": "Created",
+        "STATUS_CODE": "201",
+        "content-length": "0",
+        "content-md5": "FBLpmVVPUl+YPffL+89qYA==",
+        "date": "Sun, 20 Feb 2022 07:03:28 GMT",
+        "etag": "\"0x8D9F43F18AE50E6\"",
+        "last-modified": "Sun, 20 Feb 2022 07:03:28 GMT",
+        "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
+        "x-ms-client-request-id": "377636d8-5738-48ad-5040-dd665bca2b74",
+        "x-ms-content-crc64": "vlZ/i6sDoXE=",
+        "x-ms-request-id": "4356c3b0-601e-008b-2227-26deaf000000",
+        "x-ms-request-server-encrypted": "true",
+        "x-ms-version": "2020-08-04",
+        "x-ms-version-id": "2022-02-20T07:03:28.3829990Z"
+      },
+      "Url": "https://REDACTED.blob.core.windows.net/blockblobclienttestcontenthash/ContentHashsrc"
+    },
+    {
+      "Headers": {
+        "user-agent": "azsdk-cpp-storage-blobs/12.4.0-beta.1 (Windows 10 Pro 6.3 19041 19041.1.amd64fre.vb_release.191206-1406)",
+        "x-ms-client-request-id": "7e4f1c4e-4db9-40b4-6c4f-cb43a4324ffb",
+        "x-ms-version": "2020-08-04"
+      },
+      "Method": "PUT",
+      "Response": {
+        "BODY": "﻿<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>ContainerAlreadyExists</Code><Message>The specified container already exists.\nRequestId:4356c3df-601e-008b-4a27-26deaf000000\nTime:2022-02-20T07:03:28.6216302Z</Message></Error>",
+        "REASON_PHRASE": "The specified container already exists.",
+        "STATUS_CODE": "409",
+        "content-length": "230",
+        "content-type": "application/xml",
+        "date": "Sun, 20 Feb 2022 07:03:28 GMT",
+        "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
+        "x-ms-client-request-id": "7e4f1c4e-4db9-40b4-6c4f-cb43a4324ffb",
+        "x-ms-error-code": "ContainerAlreadyExists",
+        "x-ms-request-id": "4356c3df-601e-008b-4a27-26deaf000000",
+        "x-ms-version": "2020-08-04"
+      },
+      "Url": "https://REDACTED.blob.core.windows.net/blockblobclienttestcontenthash?restype=container"
+    },
+    {
+      "Headers": {
+        "user-agent": "azsdk-cpp-storage-blobs/12.4.0-beta.1 (Windows 10 Pro 6.3 19041 19041.1.amd64fre.vb_release.191206-1406)",
+        "x-ms-client-request-id": "7957d4fe-710d-4eea-4f7c-d69cf94e34da",
+        "x-ms-version": "2020-08-04"
+      },
+      "Method": "PUT",
+      "Response": {
+        "BODY": "﻿<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>Md5Mismatch</Code><Message>The MD5 value specified in the request did not match with the MD5 value calculated by the server.\nRequestId:4356c3fd-601e-008b-6627-26deaf000000\nTime:2022-02-20T07:03:28.9144607Z</Message><UserSpecifiedMd5>tQbD1aMPeB+LiPffUwFQJQ==</UserSpecifiedMd5><ServerCalculatedMd5>FBLpmVVPUl+YPffL+89qYA==</ServerCalculatedMd5></Error>",
+        "REASON_PHRASE": "The MD5 value specified in the request did not match with the MD5 value calculated by the server.",
+        "STATUS_CODE": "400",
+        "content-length": "405",
+        "content-type": "application/xml",
+        "date": "Sun, 20 Feb 2022 07:03:28 GMT",
+        "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
+        "x-ms-client-request-id": "7957d4fe-710d-4eea-4f7c-d69cf94e34da",
+        "x-ms-error-code": "Md5Mismatch",
+        "x-ms-request-id": "4356c3fd-601e-008b-6627-26deaf000000",
+        "x-ms-version": "2020-08-04"
+      },
+      "Url": "https://REDACTED.blob.core.windows.net/blockblobclienttestcontenthash/ContentHashdest0"
+    },
+    {
+      "Headers": {
+        "user-agent": "azsdk-cpp-storage-blobs/12.4.0-beta.1 (Windows 10 Pro 6.3 19041 19041.1.amd64fre.vb_release.191206-1406)",
+        "x-ms-client-request-id": "7714f481-2fbf-4a72-7580-4b2cf8cf2861",
+        "x-ms-version": "2020-08-04"
+      },
+      "Method": "PUT",
+      "Response": {
+        "BODY": "",
+        "REASON_PHRASE": "Created",
+        "STATUS_CODE": "201",
+        "content-length": "0",
+        "content-md5": "FBLpmVVPUl+YPffL+89qYA==",
+        "date": "Sun, 20 Feb 2022 07:03:29 GMT",
+        "etag": "\"0x8D9F43F192348CB\"",
+        "last-modified": "Sun, 20 Feb 2022 07:03:29 GMT",
+        "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
+        "x-ms-client-request-id": "7714f481-2fbf-4a72-7580-4b2cf8cf2861",
+        "x-ms-content-crc64": "vlZ/i6sDoXE=",
+        "x-ms-request-id": "4356c438-601e-008b-1927-26deaf000000",
+        "x-ms-request-server-encrypted": "true",
+        "x-ms-version": "2020-08-04",
+        "x-ms-version-id": "2022-02-20T07:03:29.1495627Z"
+      },
+      "Url": "https://REDACTED.blob.core.windows.net/blockblobclienttestcontenthash/ContentHashdest0"
+    },
+    {
+      "Headers": {
+        "user-agent": "azsdk-cpp-storage-blobs/12.4.0-beta.1 (Windows 10 Pro 6.3 19041 19041.1.amd64fre.vb_release.191206-1406)",
+        "x-ms-client-request-id": "77348050-8048-4873-5606-58c275fa0fb7",
+        "x-ms-version": "2020-08-04"
+      },
+      "Method": "PUT",
+      "Response": {
+        "BODY": "﻿<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>Crc64Mismatch</Code><Message>The CRC64 value specified in the request did not match with the CRC64 value calculated by the server.\nRequestId:4356c454-601e-008b-3027-26deaf000000\nTime:2022-02-20T07:03:29.3891852Z</Message><UserSpecifiedCrc>+DNR5PON4EM=</UserSpecifiedCrc><ServerCalculatedCrc>vlZ/i6sDoXE=</ServerCalculatedCrc></Error>",
+        "REASON_PHRASE": "The CRC64 value specified in the request did not match with the CRC64 value calculated by the server.",
+        "STATUS_CODE": "400",
+        "content-length": "387",
+        "content-type": "application/xml",
+        "date": "Sun, 20 Feb 2022 07:03:29 GMT",
+        "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
+        "x-ms-client-request-id": "77348050-8048-4873-5606-58c275fa0fb7",
+        "x-ms-error-code": "Crc64Mismatch",
+        "x-ms-request-id": "4356c454-601e-008b-3027-26deaf000000",
+        "x-ms-version": "2020-08-04"
+      },
+      "Url": "https://REDACTED.blob.core.windows.net/blockblobclienttestcontenthash/ContentHashdest0"
+    },
+    {
+      "Headers": {
+        "user-agent": "azsdk-cpp-storage-blobs/12.4.0-beta.1 (Windows 10 Pro 6.3 19041 19041.1.amd64fre.vb_release.191206-1406)",
+        "x-ms-client-request-id": "090ade46-6e0a-4e54-7db0-f403f5bb61ce",
+        "x-ms-version": "2020-08-04"
+      },
+      "Method": "PUT",
+      "Response": {
+        "BODY": "",
+        "REASON_PHRASE": "Created",
+        "STATUS_CODE": "201",
+        "content-length": "0",
+        "content-md5": "FBLpmVVPUl+YPffL+89qYA==",
+        "date": "Sun, 20 Feb 2022 07:03:29 GMT",
+        "etag": "\"0x8D9F43F196B91E5\"",
+        "last-modified": "Sun, 20 Feb 2022 07:03:29 GMT",
+        "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
+        "x-ms-client-request-id": "090ade46-6e0a-4e54-7db0-f403f5bb61ce",
+        "x-ms-content-crc64": "vlZ/i6sDoXE=",
+        "x-ms-request-id": "4356c47e-601e-008b-5227-26deaf000000",
+        "x-ms-request-server-encrypted": "true",
+        "x-ms-version": "2020-08-04",
+        "x-ms-version-id": "2022-02-20T07:03:29.6242933Z"
+      },
+      "Url": "https://REDACTED.blob.core.windows.net/blockblobclienttestcontenthash/ContentHashdest0"
+    },
+    {
+      "Headers": {
+        "user-agent": "azsdk-cpp-storage-blobs/12.4.0-beta.1 (Windows 10 Pro 6.3 19041 19041.1.amd64fre.vb_release.191206-1406)",
+        "x-ms-client-request-id": "afdac7ee-575e-4df1-5bfb-670f8e518b2d",
+        "x-ms-version": "2020-08-04"
+      },
+      "Method": "PUT",
+      "Response": {
+        "BODY": "﻿<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>ContainerAlreadyExists</Code><Message>The specified container already exists.\nRequestId:4356c4a4-601e-008b-7627-26deaf000000\nTime:2022-02-20T07:03:29.8609123Z</Message></Error>",
+        "REASON_PHRASE": "The specified container already exists.",
+        "STATUS_CODE": "409",
+        "content-length": "230",
+        "content-type": "application/xml",
+        "date": "Sun, 20 Feb 2022 07:03:29 GMT",
+        "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
+        "x-ms-client-request-id": "afdac7ee-575e-4df1-5bfb-670f8e518b2d",
+        "x-ms-error-code": "ContainerAlreadyExists",
+        "x-ms-request-id": "4356c4a4-601e-008b-7627-26deaf000000",
+        "x-ms-version": "2020-08-04"
+      },
+      "Url": "https://REDACTED.blob.core.windows.net/blockblobclienttestcontenthash?restype=container"
+    },
+    {
+      "Headers": {
+        "user-agent": "azsdk-cpp-storage-blobs/12.4.0-beta.1 (Windows 10 Pro 6.3 19041 19041.1.amd64fre.vb_release.191206-1406)",
+        "x-ms-client-request-id": "0ec9a36b-bcd6-4350-7140-45c827636092",
+        "x-ms-version": "2020-08-04"
+      },
+      "Method": "PUT",
+      "Response": {
+        "BODY": "﻿<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>Md5Mismatch</Code><Message>The MD5 value specified in the request did not match with the MD5 value calculated by the server.\nRequestId:4356c4c9-601e-008b-0f27-26deaf000000\nTime:2022-02-20T07:03:30.4615642Z</Message><UserSpecifiedMd5>tQbD1aMPeB+LiPffUwFQJQ==</UserSpecifiedMd5><ServerCalculatedMd5>FBLpmVVPUl+YPffL+89qYA==</ServerCalculatedMd5></Error>",
+        "REASON_PHRASE": "The MD5 value specified in the request did not match with the MD5 value calculated by the server.",
+        "STATUS_CODE": "400",
+        "content-length": "405",
+        "content-type": "application/xml",
+        "date": "Sun, 20 Feb 2022 07:03:30 GMT",
+        "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
+        "x-ms-client-request-id": "0ec9a36b-bcd6-4350-7140-45c827636092",
+        "x-ms-error-code": "Md5Mismatch",
+        "x-ms-request-id": "4356c4c9-601e-008b-0f27-26deaf000000",
+        "x-ms-version": "2020-08-04"
+      },
+      "Url": "https://REDACTED.blob.core.windows.net/blockblobclienttestcontenthash/ContentHashdest1"
+    },
+    {
+      "Headers": {
+        "user-agent": "azsdk-cpp-storage-blobs/12.4.0-beta.1 (Windows 10 Pro 6.3 19041 19041.1.amd64fre.vb_release.191206-1406)",
+        "x-ms-client-request-id": "8d5f5b3e-1695-46f8-5afd-9d98d1a16c03",
+        "x-ms-version": "2020-08-04"
+      },
+      "Method": "PUT",
+      "Response": {
+        "BODY": "",
+        "REASON_PHRASE": "Created",
+        "STATUS_CODE": "201",
+        "content-length": "0",
+        "content-md5": "FBLpmVVPUl+YPffL+89qYA==",
+        "date": "Sun, 20 Feb 2022 07:03:30 GMT",
+        "etag": "\"0x8D9F43F1A10E194\"",
+        "last-modified": "Sun, 20 Feb 2022 07:03:30 GMT",
+        "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
+        "x-ms-client-request-id": "8d5f5b3e-1695-46f8-5afd-9d98d1a16c03",
+        "x-ms-request-id": "4356c55d-601e-008b-0a27-26deaf000000",
+        "x-ms-request-server-encrypted": "true",
+        "x-ms-version": "2020-08-04",
+        "x-ms-version-id": "2022-02-20T07:03:30.7066772Z"
+      },
+      "Url": "https://REDACTED.blob.core.windows.net/blockblobclienttestcontenthash/ContentHashdest1"
+    },
+    {
+      "Headers": {
+        "user-agent": "azsdk-cpp-storage-blobs/12.4.0-beta.1 (Windows 10 Pro 6.3 19041 19041.1.amd64fre.vb_release.191206-1406)",
+        "x-ms-client-request-id": "8bef27e9-8d6b-49da-756a-1214f9c0e03d",
+        "x-ms-version": "2020-08-04"
+      },
+      "Method": "PUT",
+      "Response": {
+        "BODY": "﻿<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>Crc64Mismatch</Code><Message>The CRC64 value specified in the request did not match with the CRC64 value calculated by the server.\nRequestId:4356c58b-601e-008b-3627-26deaf000000\nTime:2022-02-20T07:03:30.9522801Z</Message><UserSpecifiedCrc>+DNR5PON4EM=</UserSpecifiedCrc><ServerCalculatedCrc>vlZ/i6sDoXE=</ServerCalculatedCrc></Error>",
+        "REASON_PHRASE": "The CRC64 value specified in the request did not match with the CRC64 value calculated by the server.",
+        "STATUS_CODE": "400",
+        "content-length": "387",
+        "content-type": "application/xml",
+        "date": "Sun, 20 Feb 2022 07:03:30 GMT",
+        "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
+        "x-ms-client-request-id": "8bef27e9-8d6b-49da-756a-1214f9c0e03d",
+        "x-ms-error-code": "Crc64Mismatch",
+        "x-ms-request-id": "4356c58b-601e-008b-3627-26deaf000000",
+        "x-ms-version": "2020-08-04"
+      },
+      "Url": "https://REDACTED.blob.core.windows.net/blockblobclienttestcontenthash/ContentHashdest1"
+    },
+    {
+      "Headers": {
+        "user-agent": "azsdk-cpp-storage-blobs/12.4.0-beta.1 (Windows 10 Pro 6.3 19041 19041.1.amd64fre.vb_release.191206-1406)",
+        "x-ms-client-request-id": "5edd98fc-7bf7-46c7-7f31-ffdabbaf18a1",
+        "x-ms-version": "2020-08-04"
+      },
+      "Method": "PUT",
+      "Response": {
+        "BODY": "",
+        "REASON_PHRASE": "Created",
+        "STATUS_CODE": "201",
+        "content-length": "0",
+        "date": "Sun, 20 Feb 2022 07:03:31 GMT",
+        "etag": "\"0x8D9F43F1A5B9B53\"",
+        "last-modified": "Sun, 20 Feb 2022 07:03:31 GMT",
+        "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
+        "x-ms-client-request-id": "5edd98fc-7bf7-46c7-7f31-ffdabbaf18a1",
+        "x-ms-content-crc64": "vlZ/i6sDoXE=",
+        "x-ms-request-id": "4356c5b7-601e-008b-5c27-26deaf000000",
+        "x-ms-request-server-encrypted": "true",
+        "x-ms-version": "2020-08-04",
+        "x-ms-version-id": "2022-02-20T07:03:31.1973987Z"
+      },
+      "Url": "https://REDACTED.blob.core.windows.net/blockblobclienttestcontenthash/ContentHashdest1"
+    },
+    {
+      "Headers": {
+        "user-agent": "azsdk-cpp-storage-blobs/12.4.0-beta.1 (Windows 10 Pro 6.3 19041 19041.1.amd64fre.vb_release.191206-1406)",
+        "x-ms-client-request-id": "e942b03b-4d09-4379-4ee0-b6b4de8a1ec8",
+        "x-ms-version": "2020-08-04"
+      },
+      "Method": "PUT",
+      "Response": {
+        "BODY": "﻿<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>ContainerAlreadyExists</Code><Message>The specified container already exists.\nRequestId:4356c5fa-601e-008b-1327-26deaf000000\nTime:2022-02-20T07:03:31.4350017Z</Message></Error>",
+        "REASON_PHRASE": "The specified container already exists.",
+        "STATUS_CODE": "409",
+        "content-length": "230",
+        "content-type": "application/xml",
+        "date": "Sun, 20 Feb 2022 07:03:31 GMT",
+        "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
+        "x-ms-client-request-id": "e942b03b-4d09-4379-4ee0-b6b4de8a1ec8",
+        "x-ms-error-code": "ContainerAlreadyExists",
+        "x-ms-request-id": "4356c5fa-601e-008b-1327-26deaf000000",
+        "x-ms-version": "2020-08-04"
+      },
+      "Url": "https://REDACTED.blob.core.windows.net/blockblobclienttestcontenthash?restype=container"
+    },
+    {
+      "Headers": {
+        "user-agent": "azsdk-cpp-storage-blobs/12.4.0-beta.1 (Windows 10 Pro 6.3 19041 19041.1.amd64fre.vb_release.191206-1406)",
+        "x-ms-client-request-id": "fbf3a4e6-4892-496d-53c7-0c67c3dbbe11",
+        "x-ms-version": "2020-08-04"
+      },
+      "Method": "PUT",
+      "Response": {
+        "BODY": "﻿<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>Md5Mismatch</Code><Message>The MD5 value specified in the request did not match with the MD5 value calculated by the server.\nRequestId:4356c637-601e-008b-4527-26deaf000000\nTime:2022-02-20T07:03:31.7907946Z</Message><UserSpecifiedMd5>tQbD1aMPeB+LiPffUwFQJQ==</UserSpecifiedMd5><ServerCalculatedMd5>FBLpmVVPUl+YPffL+89qYA==</ServerCalculatedMd5></Error>",
+        "REASON_PHRASE": "The MD5 value specified in the request did not match with the MD5 value calculated by the server.",
+        "STATUS_CODE": "400",
+        "content-length": "405",
+        "content-type": "application/xml",
+        "date": "Sun, 20 Feb 2022 07:03:31 GMT",
+        "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
+        "x-ms-client-request-id": "fbf3a4e6-4892-496d-53c7-0c67c3dbbe11",
+        "x-ms-error-code": "Md5Mismatch",
+        "x-ms-request-id": "4356c637-601e-008b-4527-26deaf000000",
+        "x-ms-version": "2020-08-04"
+      },
+      "Url": "https://REDACTED.blob.core.windows.net/blockblobclienttestcontenthash/ContentHashdest2"
+    },
+    {
+      "Headers": {
+        "user-agent": "azsdk-cpp-storage-blobs/12.4.0-beta.1 (Windows 10 Pro 6.3 19041 19041.1.amd64fre.vb_release.191206-1406)",
+        "x-ms-client-request-id": "55f86c66-4d92-4614-777f-38ef235244ec",
+        "x-ms-version": "2020-08-04"
+      },
+      "Method": "PUT",
+      "Response": {
+        "BODY": "",
+        "REASON_PHRASE": "Accepted",
+        "STATUS_CODE": "202",
+        "content-length": "0",
+        "content-md5": "FBLpmVVPUl+YPffL+89qYA==",
+        "date": "Sun, 20 Feb 2022 07:03:32 GMT",
+        "etag": "\"0x8D9F43F1ADA4B58\"",
+        "last-modified": "Sun, 20 Feb 2022 07:03:32 GMT",
+        "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
+        "x-ms-client-request-id": "55f86c66-4d92-4614-777f-38ef235244ec",
+        "x-ms-copy-id": "d8ca009a-0d76-40ec-9c33-c1f77ca2c94b",
+        "x-ms-copy-status": "success",
+        "x-ms-request-id": "4356c66b-601e-008b-6e27-26deaf000000",
+        "x-ms-version": "2020-08-04",
+        "x-ms-version-id": "2022-02-20T07:03:32.0369208Z"
+      },
+      "Url": "https://REDACTED.blob.core.windows.net/blockblobclienttestcontenthash/ContentHashdest2"
+    },
+    {
+      "Headers": {
+        "user-agent": "azsdk-cpp-storage-blobs/12.4.0-beta.1 (Windows 10 Pro 6.3 19041 19041.1.amd64fre.vb_release.191206-1406)",
+        "x-ms-client-request-id": "797c7955-f5ff-40ad-4f6e-b9ea29107b7e",
+        "x-ms-version": "2020-08-04"
+      },
+      "Method": "PUT",
+      "Response": {
+        "BODY": "﻿<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>Crc64Mismatch</Code><Message>The CRC64 value specified in the request did not match with the CRC64 value calculated by the server.\nRequestId:4356c69c-601e-008b-1727-26deaf000000\nTime:2022-02-20T07:03:32.2885074Z</Message><UserSpecifiedCrc>+DNR5PON4EM=</UserSpecifiedCrc><ServerCalculatedCrc>vlZ/i6sDoXE=</ServerCalculatedCrc></Error>",
+        "REASON_PHRASE": "The CRC64 value specified in the request did not match with the CRC64 value calculated by the server.",
+        "STATUS_CODE": "400",
+        "content-length": "387",
+        "content-type": "application/xml",
+        "date": "Sun, 20 Feb 2022 07:03:32 GMT",
+        "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
+        "x-ms-client-request-id": "797c7955-f5ff-40ad-4f6e-b9ea29107b7e",
+        "x-ms-error-code": "Crc64Mismatch",
+        "x-ms-request-id": "4356c69c-601e-008b-1727-26deaf000000",
+        "x-ms-version": "2020-08-04"
+      },
+      "Url": "https://REDACTED.blob.core.windows.net/blockblobclienttestcontenthash/ContentHashdest2"
+    },
+    {
+      "Headers": {
+        "user-agent": "azsdk-cpp-storage-blobs/12.4.0-beta.1 (Windows 10 Pro 6.3 19041 19041.1.amd64fre.vb_release.191206-1406)",
+        "x-ms-client-request-id": "dccc46ca-73a6-4f5a-452e-1b3fe57427d3",
+        "x-ms-version": "2020-08-04"
+      },
+      "Method": "PUT",
+      "Response": {
+        "BODY": "",
+        "REASON_PHRASE": "Accepted",
+        "STATUS_CODE": "202",
+        "content-length": "0",
+        "date": "Sun, 20 Feb 2022 07:03:32 GMT",
+        "etag": "\"0x8D9F43F1B26162C\"",
+        "last-modified": "Sun, 20 Feb 2022 07:03:32 GMT",
+        "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
+        "x-ms-client-request-id": "dccc46ca-73a6-4f5a-452e-1b3fe57427d3",
+        "x-ms-content-crc64": "vlZ/i6sDoXE=",
+        "x-ms-copy-id": "d58293f0-246f-426c-a5d4-ff7c4f434b69",
+        "x-ms-copy-status": "success",
+        "x-ms-request-id": "4356c6da-601e-008b-3e27-26deaf000000",
+        "x-ms-version": "2020-08-04",
+        "x-ms-version-id": "2022-02-20T07:03:32.5336391Z"
+      },
+      "Url": "https://REDACTED.blob.core.windows.net/blockblobclienttestcontenthash/ContentHashdest2"
+    },
+    {
+      "Headers": {
+        "user-agent": "azsdk-cpp-storage-blobs/12.4.0-beta.1 (Windows 10 Pro 6.3 19041 19041.1.amd64fre.vb_release.191206-1406)",
+        "x-ms-client-request-id": "b71b85c8-bbe8-4548-64e7-af071e5e8123",
+        "x-ms-version": "2020-08-04"
+      },
+      "Method": "PUT",
+      "Response": {
+        "BODY": "﻿<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>ContainerAlreadyExists</Code><Message>The specified container already exists.\nRequestId:4356c701-601e-008b-6027-26deaf000000\nTime:2022-02-20T07:03:32.7732262Z</Message></Error>",
+        "REASON_PHRASE": "The specified container already exists.",
+        "STATUS_CODE": "409",
+        "content-length": "230",
+        "content-type": "application/xml",
+        "date": "Sun, 20 Feb 2022 07:03:32 GMT",
+        "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
+        "x-ms-client-request-id": "b71b85c8-bbe8-4548-64e7-af071e5e8123",
+        "x-ms-error-code": "ContainerAlreadyExists",
+        "x-ms-request-id": "4356c701-601e-008b-6027-26deaf000000",
+        "x-ms-version": "2020-08-04"
+      },
+      "Url": "https://REDACTED.blob.core.windows.net/blockblobclienttestcontenthash?restype=container"
+    },
+    {
+      "Headers": {
+        "user-agent": "azsdk-cpp-storage-blobs/12.4.0-beta.1 (Windows 10 Pro 6.3 19041 19041.1.amd64fre.vb_release.191206-1406)",
+        "x-ms-client-request-id": "fb25e0cc-f7bd-4a5b-5a9f-96ef3f3d1f46",
+        "x-ms-version": "2020-08-04"
+      },
+      "Method": "PUT",
+      "Response": {
+        "BODY": "﻿<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>Md5Mismatch</Code><Message>The MD5 value specified in the request did not match with the MD5 value calculated by the server.\nRequestId:4356c730-601e-008b-0a27-26deaf000000\nTime:2022-02-20T07:03:33.1310192Z</Message><UserSpecifiedMd5>tQbD1aMPeB+LiPffUwFQJQ==</UserSpecifiedMd5><ServerCalculatedMd5>FBLpmVVPUl+YPffL+89qYA==</ServerCalculatedMd5></Error>",
+        "REASON_PHRASE": "The MD5 value specified in the request did not match with the MD5 value calculated by the server.",
+        "STATUS_CODE": "400",
+        "content-length": "405",
+        "content-type": "application/xml",
+        "date": "Sun, 20 Feb 2022 07:03:33 GMT",
+        "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
+        "x-ms-client-request-id": "fb25e0cc-f7bd-4a5b-5a9f-96ef3f3d1f46",
+        "x-ms-error-code": "Md5Mismatch",
+        "x-ms-request-id": "4356c730-601e-008b-0a27-26deaf000000",
+        "x-ms-version": "2020-08-04"
+      },
+      "Url": "https://REDACTED.blob.core.windows.net/blockblobclienttestcontenthash/ContentHashdest3?blockid=YWJjZA%3D%3D&comp=block"
+    },
+    {
+      "Headers": {
+        "user-agent": "azsdk-cpp-storage-blobs/12.4.0-beta.1 (Windows 10 Pro 6.3 19041 19041.1.amd64fre.vb_release.191206-1406)",
+        "x-ms-client-request-id": "39f64847-1735-43aa-6a56-043c2f5441e0",
+        "x-ms-version": "2020-08-04"
+      },
+      "Method": "PUT",
+      "Response": {
+        "BODY": "",
+        "REASON_PHRASE": "Created",
+        "STATUS_CODE": "201",
+        "content-length": "0",
+        "content-md5": "FBLpmVVPUl+YPffL+89qYA==",
+        "date": "Sun, 20 Feb 2022 07:03:33 GMT",
+        "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
+        "x-ms-client-request-id": "39f64847-1735-43aa-6a56-043c2f5441e0",
+        "x-ms-request-id": "4356c790-601e-008b-5a27-26deaf000000",
+        "x-ms-request-server-encrypted": "true",
+        "x-ms-version": "2020-08-04"
+      },
+      "Url": "https://REDACTED.blob.core.windows.net/blockblobclienttestcontenthash/ContentHashdest3?blockid=YWJjZA%3D%3D&comp=block"
+    },
+    {
+      "Headers": {
+        "user-agent": "azsdk-cpp-storage-blobs/12.4.0-beta.1 (Windows 10 Pro 6.3 19041 19041.1.amd64fre.vb_release.191206-1406)",
+        "x-ms-client-request-id": "051d3232-c6dd-49a9-6014-63db5105245a",
+        "x-ms-version": "2020-08-04"
+      },
+      "Method": "PUT",
+      "Response": {
+        "BODY": "﻿<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>Crc64Mismatch</Code><Message>The CRC64 value specified in the request did not match with the CRC64 value calculated by the server.\nRequestId:4356c7b8-601e-008b-7c27-26deaf000000\nTime:2022-02-20T07:03:33.5987481Z</Message><UserSpecifiedCrc>+DNR5PON4EM=</UserSpecifiedCrc><ServerCalculatedCrc>vlZ/i6sDoXE=</ServerCalculatedCrc></Error>",
+        "REASON_PHRASE": "The CRC64 value specified in the request did not match with the CRC64 value calculated by the server.",
+        "STATUS_CODE": "400",
+        "content-length": "387",
+        "content-type": "application/xml",
+        "date": "Sun, 20 Feb 2022 07:03:33 GMT",
+        "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
+        "x-ms-client-request-id": "051d3232-c6dd-49a9-6014-63db5105245a",
+        "x-ms-error-code": "Crc64Mismatch",
+        "x-ms-request-id": "4356c7b8-601e-008b-7c27-26deaf000000",
+        "x-ms-version": "2020-08-04"
+      },
+      "Url": "https://REDACTED.blob.core.windows.net/blockblobclienttestcontenthash/ContentHashdest3?blockid=YWJjZA%3D%3D&comp=block"
+    },
+    {
+      "Headers": {
+        "user-agent": "azsdk-cpp-storage-blobs/12.4.0-beta.1 (Windows 10 Pro 6.3 19041 19041.1.amd64fre.vb_release.191206-1406)",
+        "x-ms-client-request-id": "eed8abe4-02d6-4329-7419-e085c230e679",
+        "x-ms-version": "2020-08-04"
+      },
+      "Method": "PUT",
+      "Response": {
+        "BODY": "",
+        "REASON_PHRASE": "Created",
+        "STATUS_CODE": "201",
+        "content-length": "0",
+        "date": "Sun, 20 Feb 2022 07:03:33 GMT",
+        "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
+        "x-ms-client-request-id": "eed8abe4-02d6-4329-7419-e085c230e679",
+        "x-ms-content-crc64": "vlZ/i6sDoXE=",
+        "x-ms-request-id": "4356c7e1-601e-008b-1d27-26deaf000000",
+        "x-ms-request-server-encrypted": "true",
+        "x-ms-version": "2020-08-04"
+      },
+      "Url": "https://REDACTED.blob.core.windows.net/blockblobclienttestcontenthash/ContentHashdest3?blockid=YWJjZA%3D%3D&comp=block"
+    },
+    {
+      "Headers": {
+        "user-agent": "azsdk-cpp-storage-blobs/12.4.0-beta.1 (Windows 10 Pro 6.3 19041 19041.1.amd64fre.vb_release.191206-1406)",
+        "x-ms-client-request-id": "c8e13248-bcbb-40de-561c-9e8583f6a4cc",
+        "x-ms-version": "2020-08-04"
+      },
+      "Method": "PUT",
+      "Response": {
+        "BODY": "﻿<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>ContainerAlreadyExists</Code><Message>The specified container already exists.\nRequestId:4356c813-601e-008b-4727-26deaf000000\nTime:2022-02-20T07:03:34.0674770Z</Message></Error>",
+        "REASON_PHRASE": "The specified container already exists.",
+        "STATUS_CODE": "409",
+        "content-length": "230",
+        "content-type": "application/xml",
+        "date": "Sun, 20 Feb 2022 07:03:34 GMT",
+        "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
+        "x-ms-client-request-id": "c8e13248-bcbb-40de-561c-9e8583f6a4cc",
+        "x-ms-error-code": "ContainerAlreadyExists",
+        "x-ms-request-id": "4356c813-601e-008b-4727-26deaf000000",
+        "x-ms-version": "2020-08-04"
+      },
+      "Url": "https://REDACTED.blob.core.windows.net/blockblobclienttestcontenthash?restype=container"
+    },
+    {
+      "Headers": {
+        "user-agent": "azsdk-cpp-storage-blobs/12.4.0-beta.1 (Windows 10 Pro 6.3 19041 19041.1.amd64fre.vb_release.191206-1406)",
+        "x-ms-client-request-id": "af91f8e5-5b3d-46ac-726b-911c62732741",
+        "x-ms-version": "2020-08-04"
+      },
+      "Method": "PUT",
+      "Response": {
+        "BODY": "﻿<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>Md5Mismatch</Code><Message>The MD5 value specified in the request did not match with the MD5 value calculated by the server.\nRequestId:4356c841-601e-008b-7327-26deaf000000\nTime:2022-02-20T07:03:34.4432594Z</Message><UserSpecifiedMd5>tQbD1aMPeB+LiPffUwFQJQ==</UserSpecifiedMd5><ServerCalculatedMd5>FBLpmVVPUl+YPffL+89qYA==</ServerCalculatedMd5></Error>",
+        "REASON_PHRASE": "The MD5 value specified in the request did not match with the MD5 value calculated by the server.",
+        "STATUS_CODE": "400",
+        "content-length": "405",
+        "content-type": "application/xml",
+        "date": "Sun, 20 Feb 2022 07:03:34 GMT",
+        "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
+        "x-ms-client-request-id": "af91f8e5-5b3d-46ac-726b-911c62732741",
+        "x-ms-error-code": "Md5Mismatch",
+        "x-ms-request-id": "4356c841-601e-008b-7327-26deaf000000",
+        "x-ms-version": "2020-08-04"
+      },
+      "Url": "https://REDACTED.blob.core.windows.net/blockblobclienttestcontenthash/ContentHashdest4?blockid=YWJjZA%3D%3D&comp=block"
+    },
+    {
+      "Headers": {
+        "user-agent": "azsdk-cpp-storage-blobs/12.4.0-beta.1 (Windows 10 Pro 6.3 19041 19041.1.amd64fre.vb_release.191206-1406)",
+        "x-ms-client-request-id": "34c44fab-6008-4cc5-5ae7-9f1e461e74d2",
+        "x-ms-version": "2020-08-04"
+      },
+      "Method": "PUT",
+      "Response": {
+        "BODY": "",
+        "REASON_PHRASE": "Created",
+        "STATUS_CODE": "201",
+        "content-length": "0",
+        "content-md5": "FBLpmVVPUl+YPffL+89qYA==",
+        "date": "Sun, 20 Feb 2022 07:03:34 GMT",
+        "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
+        "x-ms-client-request-id": "34c44fab-6008-4cc5-5ae7-9f1e461e74d2",
+        "x-ms-request-id": "4356c88a-601e-008b-3027-26deaf000000",
+        "x-ms-request-server-encrypted": "true",
+        "x-ms-version": "2020-08-04"
+      },
+      "Url": "https://REDACTED.blob.core.windows.net/blockblobclienttestcontenthash/ContentHashdest4?blockid=YWJjZA%3D%3D&comp=block"
+    },
+    {
+      "Headers": {
+        "user-agent": "azsdk-cpp-storage-blobs/12.4.0-beta.1 (Windows 10 Pro 6.3 19041 19041.1.amd64fre.vb_release.191206-1406)",
+        "x-ms-client-request-id": "32dd51cc-bdc6-4c3e-684a-d1858d044382",
+        "x-ms-version": "2020-08-04"
+      },
+      "Method": "PUT",
+      "Response": {
+        "BODY": "﻿<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>Crc64Mismatch</Code><Message>The CRC64 value specified in the request did not match with the CRC64 value calculated by the server.\nRequestId:4356c8a5-601e-008b-4827-26deaf000000\nTime:2022-02-20T07:03:34.9249804Z</Message><UserSpecifiedCrc>+DNR5PON4EM=</UserSpecifiedCrc><ServerCalculatedCrc>vlZ/i6sDoXE=</ServerCalculatedCrc></Error>",
+        "REASON_PHRASE": "The CRC64 value specified in the request did not match with the CRC64 value calculated by the server.",
+        "STATUS_CODE": "400",
+        "content-length": "387",
+        "content-type": "application/xml",
+        "date": "Sun, 20 Feb 2022 07:03:34 GMT",
+        "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
+        "x-ms-client-request-id": "32dd51cc-bdc6-4c3e-684a-d1858d044382",
+        "x-ms-error-code": "Crc64Mismatch",
+        "x-ms-request-id": "4356c8a5-601e-008b-4827-26deaf000000",
+        "x-ms-version": "2020-08-04"
+      },
+      "Url": "https://REDACTED.blob.core.windows.net/blockblobclienttestcontenthash/ContentHashdest4?blockid=YWJjZA%3D%3D&comp=block"
+    },
+    {
+      "Headers": {
+        "user-agent": "azsdk-cpp-storage-blobs/12.4.0-beta.1 (Windows 10 Pro 6.3 19041 19041.1.amd64fre.vb_release.191206-1406)",
+        "x-ms-client-request-id": "782658e4-6aa8-4819-7e74-c8656b79fcc9",
+        "x-ms-version": "2020-08-04"
+      },
+      "Method": "PUT",
+      "Response": {
+        "BODY": "",
+        "REASON_PHRASE": "Created",
+        "STATUS_CODE": "201",
+        "content-length": "0",
+        "date": "Sun, 20 Feb 2022 07:03:35 GMT",
+        "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
+        "x-ms-client-request-id": "782658e4-6aa8-4819-7e74-c8656b79fcc9",
+        "x-ms-content-crc64": "vlZ/i6sDoXE=",
+        "x-ms-request-id": "4356c8e9-601e-008b-7b27-26deaf000000",
+        "x-ms-request-server-encrypted": "true",
+        "x-ms-version": "2020-08-04"
+      },
+      "Url": "https://REDACTED.blob.core.windows.net/blockblobclienttestcontenthash/ContentHashdest4?blockid=YWJjZA%3D%3D&comp=block"
+    },
+    {
+      "Headers": {
+        "user-agent": "azsdk-cpp-storage-blobs/12.4.0-beta.1 (Windows 10 Pro 6.3 19041 19041.1.amd64fre.vb_release.191206-1406)",
+        "x-ms-client-request-id": "e08e71cb-005a-4cb7-4a23-1a1ef98d159c",
+        "x-ms-version": "2020-08-04"
+      },
+      "Method": "DELETE",
+      "Response": {
+        "BODY": "",
+        "REASON_PHRASE": "Accepted",
+        "STATUS_CODE": "202",
+        "content-length": "0",
+        "date": "Sun, 20 Feb 2022 07:03:35 GMT",
+        "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
+        "x-ms-client-request-id": "e08e71cb-005a-4cb7-4a23-1a1ef98d159c",
+        "x-ms-request-id": "4356c91b-601e-008b-2527-26deaf000000",
+        "x-ms-version": "2020-08-04"
+      },
+      "Url": "https://REDACTED.blob.core.windows.net/blockblobclienttestcontenthash?restype=container"
+    }
+  ]
+}

@@ -1153,6 +1153,10 @@ directive:
 ```yaml
 directive:
   - from: swagger-document
+    where: $["x-ms-paths"]["/{containerName}/{blob}?comp=copy&sync"].put.parameters
+    transform: >
+      $.push({"$ref": "#/parameters/SourceContentCRC64"});
+  - from: swagger-document
     where: $["x-ms-paths"]["/{containerName}/{blob}?comp=copy&sync"].put.responses["202"].headers
     transform: >
       $["x-ms-version-id"]["x-nullable"] = true;

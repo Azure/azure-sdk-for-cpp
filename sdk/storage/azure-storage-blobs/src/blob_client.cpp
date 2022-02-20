@@ -671,10 +671,14 @@ namespace Azure { namespace Storage { namespace Blobs {
     protocolLayerOptions.SourceIfNoneMatch = options.SourceAccessConditions.IfNoneMatch;
     if (options.TransactionalContentHash.HasValue())
     {
-      AZURE_ASSERT_MSG(
-          options.TransactionalContentHash.Value().Algorithm == HashAlgorithm::Md5,
-          "This operation only supports MD5 transactional content hash.");
-      protocolLayerOptions.SourceContentMD5 = options.TransactionalContentHash.Value().Value;
+      if (options.TransactionalContentHash.Value().Algorithm == HashAlgorithm::Md5)
+      {
+        protocolLayerOptions.SourceContentMD5 = options.TransactionalContentHash.Value().Value;
+      }
+      else if (options.TransactionalContentHash.Value().Algorithm == HashAlgorithm::Crc64)
+      {
+        protocolLayerOptions.SourceContentcrc64 = options.TransactionalContentHash.Value().Value;
+      }
     }
     if (options.ImmutabilityPolicy.HasValue())
     {
