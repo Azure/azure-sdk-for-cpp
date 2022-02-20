@@ -367,8 +367,10 @@ namespace Azure { namespace Storage { namespace Blobs {
         const Azure::Core::Context& context = Azure::Core::Context()) const;
 
     /**
-     * @brief Sets the immutability policy on a blob, snapshot or version. Note that Blob Versioning must be enabled on your storage account, and the blob must be in a Container with immutable storage with versioning enabled to call this API.
-     * 
+     * @brief Sets the immutability policy on a blob, snapshot or version. Note that Blob Versioning
+     * must be enabled on your storage account, and the blob must be in a Container with immutable
+     * storage with versioning enabled to call this API.
+     *
      * @param immutabilityPolicy The blob immutability policy to set.
      * @param options Optional parameters to execute this function.
      * @param context Context for cancelling long running operations.
@@ -381,7 +383,7 @@ namespace Azure { namespace Storage { namespace Blobs {
 
     /**
      * @brief Deletes the Immutability Policy associated with the Blob..
-     * 
+     *
      * @param options Optional parameters to execute this function.
      * @param context Context for cancelling long running operations.
      * @return A DeleteBlobImmutabilityPolicyResult on successfully deleting immutability policy.

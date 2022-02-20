@@ -157,7 +157,7 @@ namespace Azure { namespace Storage { namespace Sas {
 
     /**
      * @brief Indicates that setting immutability policy is permitted.
-    */
+     */
     SetImmutabilityPolicy = 128,
 
     /**

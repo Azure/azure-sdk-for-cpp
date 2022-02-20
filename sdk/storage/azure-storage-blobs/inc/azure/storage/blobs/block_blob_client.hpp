@@ -159,7 +159,7 @@ namespace Azure { namespace Storage { namespace Blobs {
 
     /**
      * @brief Creates a new Block Blob where the contents of the blob are read from a given URL.
-     * 
+     *
      * @param sourceUri Specifies the URL of the source blob.
      * @param options Optional parameters to execute this function.
      * @param context Context for cancelling long running operations.
