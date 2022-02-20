@@ -488,7 +488,7 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_FALSE(userDelegationKey.Value.empty());
   }
 
-  TEST_F(BlobServiceClientTest, RenameBlobContainer)
+  TEST_F(BlobServiceClientTest, RenameBlobContainer_DISABLED)
   {
     const std::string testName = GetTestNameLowerCase();
     auto serviceClient = GetClientForTest(testName);

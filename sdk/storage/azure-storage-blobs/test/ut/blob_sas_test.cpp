@@ -125,14 +125,16 @@ namespace Azure { namespace Storage { namespace Test {
     };
 
     auto verify_blob_immutability = [&](const std::string& sas) {
-      blobClient0.Create();
-      auto blobClient = Blobs::AppendBlobClient(blobUrl + sas);
-      Blobs::Models::BlobImmutabilityPolicy policy;
-      policy.ExpiresOn = std::chrono::system_clock::now() + std::chrono::minutes(10);
-      policy.PolicyMode = Blobs::Models::BlobImmutabilityPolicyMode::Unlocked;
-      EXPECT_NO_THROW(blobClient.SetImmutabilityPolicy(policy));
-      blobClient0.DeleteImmutabilityPolicy();
-      blobClient0.Delete();
+      (void)sas;
+      // Disabled because there's no way to enable immutability on a container with dataplane API
+      // blobClient0.Create();
+      // auto blobClient = Blobs::AppendBlobClient(blobUrl + sas);
+      // Blobs::Models::BlobImmutabilityPolicy policy;
+      // policy.ExpiresOn = std::chrono::system_clock::now() + std::chrono::minutes(10);
+      // policy.PolicyMode = Blobs::Models::BlobImmutabilityPolicyMode::Unlocked;
+      // EXPECT_NO_THROW(blobClient.SetImmutabilityPolicy(policy));
+      // blobClient0.DeleteImmutabilityPolicy();
+      // blobClient0.Delete();
     };
 
     for (auto permissions : {

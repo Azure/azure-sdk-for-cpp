@@ -1633,15 +1633,16 @@ namespace Azure { namespace Storage { namespace Test {
     }
   }
 
-  TEST_F(BlockBlobClientTest, Immutability)
+  TEST_F(BlockBlobClientTest, Immutability_DISABLED)
   {
     auto const testName(GetTestName());
-    auto blobContainerClient = GetBlobContainerTestClient();
-    ASSERT_TRUE(blobContainerClient.GetProperties().Value.IsImmutableStorageWithVersioningEnabled);
 
     auto blobClient = GetBlockBlobClient(testName);
     std::vector<uint8_t> emptyContent;
     blobClient.UploadFrom(emptyContent.data(), emptyContent.size());
+
+    auto blobContainerClient = GetBlobContainerTestClient();
+    ASSERT_TRUE(blobContainerClient.GetProperties().Value.IsImmutableStorageWithVersioningEnabled);
 
     Blobs::Models::BlobImmutabilityPolicy policy;
     policy.ExpiresOn = Azure::DateTime::Parse(
@@ -1688,7 +1689,7 @@ namespace Azure { namespace Storage { namespace Test {
     }
   }
 
-  TEST_F(BlockBlobClientTest, ImmutabilityAccessCondition)
+  TEST_F(BlockBlobClientTest, ImmutabilityAccessCondition_DISABLED)
   {
     auto const testName(GetTestName());
     auto blobClient = GetBlockBlobClient(testName);
@@ -1712,7 +1713,7 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_NO_THROW(blobClient.SetImmutabilityPolicy(policy, options));
   }
 
-  TEST_F(BlockBlobClientTest, LegalHold)
+  TEST_F(BlockBlobClientTest, LegalHold_DISABLED)
   {
     auto const testName(GetTestName());
     auto blobClient = GetBlockBlobClient(testName);
