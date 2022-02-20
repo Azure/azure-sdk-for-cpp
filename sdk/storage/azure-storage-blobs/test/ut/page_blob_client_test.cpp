@@ -269,7 +269,7 @@ namespace Azure { namespace Storage { namespace Test {
     auto const testName(GetTestName());
     auto pageBlobClient = GetPageBlobClient(testName);
 
-    std::vector<uint8_t> blobContent = RandomBuffer(4_KB);
+    std::vector<uint8_t> blobContent = RandomBuffer(static_cast<size_t>(4_KB));
     const std::vector<uint8_t> contentMd5
         = Azure::Core::Cryptography::Md5Hash().Final(blobContent.data(), blobContent.size());
     const std::vector<uint8_t> contentCrc64
