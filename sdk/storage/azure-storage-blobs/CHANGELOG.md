@@ -4,7 +4,9 @@
 
 ### Features Added
 
-- New API: `BlobClient::CopyFromUri()`.
+- Added support for immutability policy.
+- New API: `BlobClient::CopyFromUri()`, `BlobClient::SetImmutabilityPolicy()`, `BlobClient::DeleteImmutabilityPolicy()`, `BlobClient::SetLegalHold()`, `BlockBlobClient::UploadFromUri()` and `BlobServiceClient::RenameBlobContainer()`.
+- Added lease access condition support for `BlobClient::SetTags()` and `BlobClient::GetTags()`.
 
 ### Breaking Changes
 
