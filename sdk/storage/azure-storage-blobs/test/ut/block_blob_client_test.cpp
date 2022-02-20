@@ -1633,7 +1633,7 @@ namespace Azure { namespace Storage { namespace Test {
     }
   }
 
-  TEST_F(BlockBlobClientTest, Immutability_DISABLED)
+  TEST_F(BlockBlobClientTest, DISABLED_Immutability)
   {
     auto const testName(GetTestName());
 
@@ -1689,7 +1689,7 @@ namespace Azure { namespace Storage { namespace Test {
     }
   }
 
-  TEST_F(BlockBlobClientTest, ImmutabilityAccessCondition_DISABLED)
+  TEST_F(BlockBlobClientTest, DISABLED_ImmutabilityAccessCondition)
   {
     auto const testName(GetTestName());
     auto blobClient = GetBlockBlobClient(testName);
@@ -1713,7 +1713,7 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_NO_THROW(blobClient.SetImmutabilityPolicy(policy, options));
   }
 
-  TEST_F(BlockBlobClientTest, LegalHold_DISABLED)
+  TEST_F(BlockBlobClientTest, DISABLED_LegalHold)
   {
     auto const testName(GetTestName());
     auto blobClient = GetBlockBlobClient(testName);
