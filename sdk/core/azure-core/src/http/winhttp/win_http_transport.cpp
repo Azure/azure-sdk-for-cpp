@@ -330,6 +330,19 @@ void WinHttpTransport::CreateRequestHandle(std::unique_ptr<_detail::HandleManage
     // ERROR_NOT_ENOUGH_MEMORY
     GetErrorAndThrow("Error while getting a request handle.");
   }
+
+  // If the service requests TLS client certificates, we want to let the WinHTTP APIs know that it's ok
+  // to initiate the request without a client certificate.
+  //
+  // Note: If/When TLS client certificate support is added to the pipeline, this line may need to be revisited.
+  if (!WinHttpSetOption(
+          handleManager->m_requestHandle,
+          WINHTTP_OPTION_CLIENT_CERT_CONTEXT,
+          WINHTTP_NO_CLIENT_CERT_CONTEXT,
+          0))
+  {
+    GetErrorAndThrow("Error while setting client cert context to ignore..");
+  }
 }
 
 // For PUT/POST requests, send additional data using WinHttpWriteData.
