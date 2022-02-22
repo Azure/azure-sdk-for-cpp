@@ -25,7 +25,7 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
     // Create
     virtual void SetUp() override
     {
-      Azure::Core::Test::TestBase::SetUpTestBase(AZURE_TEST_RECORDING_DIR);
+      Azure::Core::Test::TestBase::SetUpTestBase("ATTESTATION", AZURE_TEST_RECORDING_DIR);
 
       std::string const mode(std::get<0>(GetParam()));
       if (mode == "Shared")

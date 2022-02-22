@@ -17,6 +17,7 @@
 #include "azure/core/test/network_models.hpp"
 #include "azure/core/test/test_context_manager.hpp"
 
+#include <algorithm>
 #include <chrono>
 #include <memory>
 #include <regex>
@@ -45,6 +46,7 @@ namespace Azure { namespace Core { namespace Test {
      *
      */
     bool m_wasSkipped = false;
+    std::string m_serviceName{};
 
     void PrepareOptions(Azure::Core::_internal::ClientOptions& options)
     {
@@ -244,10 +246,26 @@ namespace Azure { namespace Core { namespace Test {
     }
 
     // Util for tests getting env vars
-    std::string GetEnv(const std::string& name)
+    std::string GetEnv(std::string const& name)
     {
-      const auto ret = Azure::Core::_internal::Environment::GetVariable(name.c_str());
-
+#if !defined(NDEBUG)
+      // The azure CI pipeline uppercases all EnvVar values from ci.yml files.
+      // That means that any mixed case strings will not be found when run from the CI
+      // pipeline.
+      //
+      // Check to ensure that the filename is upper case
+      {
+        std::string ucName = name;
+        std::transform(ucName.begin(), ucName.end(), ucName.begin(), [](char const& ch) {
+          return static_cast<char>(std::toupper(ch));
+        });
+        if (ucName != name)
+        {
+          throw std::runtime_error("All Azure SDK environment variables must be all upper case.");
+        }
+      }
+#endif
+      auto ret = Azure::Core::_internal::Environment::GetVariable(name.c_str());
       if (ret.empty())
       {
         throw std::runtime_error("Missing required environment variable: " + name);
@@ -262,8 +280,11 @@ namespace Azure { namespace Core { namespace Test {
      * @brief Run before each test.
      *
      */
-    void SetUpTestBase(std::string const& baseRecordingPath)
+    void SetUpTestBase(std::string const& serviceName, std::string const& baseRecordingPath)
     {
+
+      m_serviceName = serviceName;
+
       // Init interceptor from PlayBackRecorder
       std::string recordingPath(baseRecordingPath);
       recordingPath.append("/recordings");
@@ -276,6 +297,24 @@ namespace Azure { namespace Core { namespace Test {
           Sanitize(testNameInfo->test_suite_name()), Sanitize(testNameInfo->name()));
       m_testContext.RecordingPath = recordingPath;
       m_interceptor = std::make_unique<Azure::Core::Test::InterceptorManager>(m_testContext);
+
+      if (!m_testContext.IsPlaybackMode())
+      {
+        auto SetBuiltinEnvironment
+            = [](std::string const& serviceName, std::string const& targetVariable) {
+                std::string targetValue = Azure::Core::_internal::Environment::GetVariable(
+                    (serviceName + targetVariable).c_str());
+                if (!targetValue.empty())
+                {
+                  Azure::Core::_internal::Environment::SetVariable(
+                      ("AZURE" + targetVariable).c_str(), targetValue.c_str());
+                }
+              };
+        ;
+        SetBuiltinEnvironment(serviceName, "_TENANT_ID");
+        SetBuiltinEnvironment(serviceName, "_CLIENT_ID");
+        SetBuiltinEnvironment(serviceName, "_CLIENT_SECRET");
+      }
     }
 
     /**
