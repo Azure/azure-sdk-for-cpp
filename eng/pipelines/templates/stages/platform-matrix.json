@@ -169,6 +169,10 @@
                     "METRIC_TOOLCHAIN": "g++-7",
                     "METRIC_BUILD_CONFIG": "Debug"
                 },
+                "included": {
+                    "METRIC_TOOLCHAIN": "g++-7",
+                    "METRIC_BUILD_CONFIG": "Debug"
+                },
                 "included_release": {
                     "CMAKE_BUILD_TYPE": "Release",
                     "CmakeArgs": " -DBUILD_TESTING=ON -DBUILD_PERFORMANCE_TESTS=ON -DRUN_LONG_UNIT_TESTS=ON",
