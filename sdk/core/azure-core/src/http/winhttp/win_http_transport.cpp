@@ -331,10 +331,11 @@ void WinHttpTransport::CreateRequestHandle(std::unique_ptr<_detail::HandleManage
     GetErrorAndThrow("Error while getting a request handle.");
   }
 
-  // If the service requests TLS client certificates, we want to let the WinHTTP APIs know that it's ok
-  // to initiate the request without a client certificate.
+  // If the service requests TLS client certificates, we want to let the WinHTTP APIs know that it's
+  // ok to initiate the request without a client certificate.
   //
-  // Note: If/When TLS client certificate support is added to the pipeline, this line may need to be revisited.
+  // Note: If/When TLS client certificate support is added to the pipeline, this line may need to be
+  // revisited.
   if (!WinHttpSetOption(
           handleManager->m_requestHandle,
           WINHTTP_OPTION_CLIENT_CERT_CONTEXT,
