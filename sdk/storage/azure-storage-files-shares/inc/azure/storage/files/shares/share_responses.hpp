@@ -6,7 +6,6 @@
 #include <azure/core/operation.hpp>
 #include <azure/core/paged_response.hpp>
 
-#include "azure/storage/files/shares/protocol/share_rest_client.hpp"
 #include "azure/storage/files/shares/share_constants.hpp"
 #include "azure/storage/files/shares/share_options.hpp"
 
@@ -18,123 +17,13 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
   namespace Models {
 
+    using LeaseDuration [[deprecated]] = LeaseDurationType;
+
     /**
      * @brief The information returned when forcing the directory handles to close.
      */
     struct ForceCloseDirectoryHandleResult final
     {
-    };
-
-    /**
-     * @brief The detailed information returned when downloading a file.
-     */
-    struct DownloadFileDetails final
-    {
-      /**
-       * An HTTP entity tag associated with the file.
-       */
-      Azure::ETag ETag;
-
-      /**
-       * The data and time the file was last modified.
-       */
-      DateTime LastModified;
-
-      /**
-       * The metadata of the file.
-       */
-      Storage::Metadata Metadata;
-
-      /**
-       * The copy completed time of the file, if the file is created from a copy operation.
-       */
-      Nullable<DateTime> CopyCompletedOn;
-
-      /**
-       * The copy status's description of the file, if the file is created from a copy operation.
-       */
-      Nullable<std::string> CopyStatusDescription;
-
-      /**
-       * The copy ID of the file, if the file is created from a copy operation.
-       */
-      Nullable<std::string> CopyId;
-
-      /**
-       * The copy progress of the file, if the file is created from a copy operation.
-       */
-      Nullable<std::string> CopyProgress;
-
-      /**
-       * The copy source of the file, if the file is created from a copy operation.
-       */
-      Nullable<std::string> CopySource;
-
-      /**
-       * The copy status of the file, if the file is created from a copy operation.
-       */
-      Nullable<Models::CopyStatus> CopyStatus;
-
-      /**
-       * A boolean indicates if the service is encrypted.
-       */
-      bool IsServerEncrypted = bool();
-
-      /**
-       * The SMB related properties of the file or directory.
-       */
-      FileSmbProperties SmbProperties;
-
-      /**
-       * When a file is leased, specifies whether the lease is of infinite or fixed duration.
-       */
-      Nullable<Models::LeaseDuration> LeaseDuration;
-
-      /**
-       * Lease state of the file.
-       */
-      Nullable<Models::LeaseState> LeaseState;
-
-      /**
-       * The current lease status of the file.
-       */
-      Nullable<Models::LeaseStatus> LeaseStatus;
-    };
-
-    /**
-     * @brief The content and information returned when downloading a file.
-     */
-    struct DownloadFileResult final
-    {
-      /**
-       * The body of the downloaded result.
-       */
-      std::unique_ptr<Azure::Core::IO::BodyStream> BodyStream;
-
-      /**
-       * The range of the downloaded content.
-       */
-      Azure::Core::Http::HttpRange ContentRange;
-
-      /**
-       * The size of the file.
-       */
-      int64_t FileSize = 0;
-
-      /**
-       * The transactional hash of the downloaded content.
-       */
-      Nullable<Storage::ContentHash> TransactionalContentHash;
-
-      /**
-       * The common HTTP headers of the file.
-       */
-      FileHttpHeaders HttpHeaders;
-
-      /**
-       * The detailed information of the downloaded file.
-       */
-      DownloadFileDetails Details;
     };
 
     /**
@@ -202,6 +91,111 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       bool IsServerEncrypted = false;
     };
 
+    /**
+     * @brief Response type for #Azure::Storage::Files::Shares::ShareLeaseClient::AcquireLease.
+     */
+    struct AcquireLeaseResult final
+    {
+      /**
+       * The ETag contains a value that you can use to perform operations conditionally, in
+       * quotes.
+       */
+      Azure::ETag ETag;
+      /**
+       * Returns the date and time the share was last modified. Any operation that modifies the
+       * share or its properties updates the last modified time. Operations on files do not affect
+       * the last modified time of the share.
+       */
+      DateTime LastModified;
+      /**
+       * Uniquely identifies a share's or file's lease.
+       */
+      std::string LeaseId;
+    };
+    /**
+     * @brief Response type for #Azure::Storage::Files::Shares::ShareLeaseClient::ReleaseLease.
+     */
+    struct ReleaseLeaseResult final
+    {
+      /**
+       * The ETag contains a value that you can use to perform operations conditionally, in
+       * quotes.
+       */
+      Azure::ETag ETag;
+      /**
+       * Returns the date and time the share was last modified. Any operation that modifies the
+       * share or its properties updates the last modified time. Operations on files do not affect
+       * the last modified time of the share.
+       */
+      DateTime LastModified;
+    };
+    /**
+     * @brief Response type for #Azure::Storage::Files::Shares::ShareLeaseClient::ChangeLease.
+     */
+    struct ChangeLeaseResult final
+    {
+      /**
+       * The ETag contains a value that you can use to perform operations conditionally, in
+       * quotes.
+       */
+      Azure::ETag ETag;
+      /**
+       * Returns the date and time the share was last modified. Any operation that modifies the
+       * share or its properties updates the last modified time. Operations on files do not affect
+       * the last modified time of the share.
+       */
+      DateTime LastModified;
+      /**
+       * Uniquely identifies a share's or file's lease.
+       */
+      std::string LeaseId;
+    };
+    /**
+     * @brief Response type for #Azure::Storage::Files::Shares::ShareLeaseClient::RenewLease.
+     */
+    struct RenewLeaseResult final
+    {
+      /**
+       * The ETag contains a value that you can use to perform operations conditionally, in
+       * quotes.
+       */
+      Azure::ETag ETag;
+      /**
+       * Returns the date and time the share was last modified. Any operation that modifies the
+       * share or its properties updates the last modified time. Operations on files do not affect
+       * the last modified time of the share.
+       */
+      DateTime LastModified;
+      /**
+       * Uniquely identifies a share's or file's lease.
+       */
+      std::string LeaseId;
+    };
+    /**
+     * @brief Response type for #Azure::Storage::Files::Shares::ShareLeaseClient::BreakLease.
+     */
+    struct BreakLeaseResult final
+    {
+      /**
+       * The ETag contains a value that you can use to perform operations conditionally, in
+       * quotes.
+       */
+      Azure::ETag ETag;
+      /**
+       * Returns the date and time the share was last modified. Any operation that modifies the
+       * share or its properties updates the last modified time. Operations on files do not affect
+       * the last modified time of the share.
+       */
+      DateTime LastModified;
+      /**
+       * Approximate time remaining in the lease period, in seconds.
+       */
+      int32_t LeaseTime = int32_t();
+      /**
+       * Uniquely identifies a share's or file's lease.
+       */
+      std::string LeaseId;
+    };
   } // namespace Models
 
   /**
