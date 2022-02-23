@@ -308,12 +308,16 @@ namespace Azure { namespace Core { namespace Test {
       {
         auto SetBuiltinEnvironment
             = [](std::string const& serviceName, std::string const& targetVariable) {
-                std::string targetValue = Azure::Core::_internal::Environment::GetVariable(
-                    (serviceName + targetVariable).c_str());
-                if (!targetValue.empty())
+                std::string azureVariable = "AZURE" + targetVariable;
+                if (Azure::Core::_internal::Environment::GetVariable(azureVariable.c_str()).empty())
                 {
-                  Azure::Core::_internal::Environment::SetVariable(
-                      ("AZURE" + targetVariable).c_str(), targetValue.c_str());
+                  std::string targetValue = Azure::Core::_internal::Environment::GetVariable(
+                      (serviceName + targetVariable).c_str());
+                  if (!targetValue.empty())
+                  {
+                    Azure::Core::_internal::Environment::SetVariable(
+                        azureVariable.c_str(), targetValue.c_str());
+                  }
                 }
               };
         ;
