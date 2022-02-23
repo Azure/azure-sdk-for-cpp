@@ -1191,7 +1191,7 @@ namespace Azure { namespace Storage { namespace Test {
     auto const testName(GetTestName());
     auto blockBlobClient = GetBlockBlobClient(testName);
     SetOptions();
-    BlobConcurrentDownloadParameter const& p(GetParam());
+    UploadBlockBlob::ParamType const& p(GetParam());
     auto const blobSize = p.Size;
     std::vector<uint8_t> blobContent(static_cast<size_t>(8_MB), 'x');
 
@@ -1227,7 +1227,7 @@ namespace Azure { namespace Storage { namespace Test {
     auto const testName(GetTestName());
     auto blockBlobClient = GetBlockBlobClient(testName);
     SetOptions();
-    BlobConcurrentDownloadParameter const& p(GetParam());
+    UploadBlockBlob::ParamType const& p(GetParam());
     auto const blobSize = p.Size;
     std::vector<uint8_t> blobContent(static_cast<size_t>(8_MB), 'x');
 

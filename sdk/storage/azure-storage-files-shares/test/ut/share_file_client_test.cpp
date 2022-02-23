@@ -395,7 +395,7 @@ namespace Azure { namespace Storage { namespace Test {
 
   TEST_P(UploadShare, fromBuffer)
   {
-    auto const p = GetParam();
+    UploadShare::ParamType const& p(GetParam());
     auto fileClient = m_fileShareDirectoryClient->GetFileClient(m_testName);
     std::vector<uint8_t> fileContent(static_cast<size_t>(p.FileSize), 'x');
 
@@ -418,7 +418,7 @@ namespace Azure { namespace Storage { namespace Test {
   TEST_P(UploadShare, fromFile)
   {
 
-    auto const p = GetParam();
+    UploadShare::ParamType const& p(GetParam());
     auto fileClient = m_fileShareDirectoryClient->GetFileClient(m_testName);
     std::vector<uint8_t> fileContent = std::vector<uint8_t>(static_cast<size_t>(p.FileSize), 'x');
 

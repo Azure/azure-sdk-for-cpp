@@ -429,7 +429,7 @@ namespace Azure { namespace Storage { namespace Test {
 
   TEST_P(UploadFile, fromBuffer)
   {
-    auto const p = GetParam();
+    UploadFile::ParamType const& p(GetParam());
     std::vector<uint8_t> fileContent(static_cast<size_t>(8_MB), 'x');
     auto fileClient = m_fileSystemClient->GetFileClient(GetTestNameLowerCase());
 
@@ -461,7 +461,7 @@ namespace Azure { namespace Storage { namespace Test {
 
   TEST_P(UploadFile, fromFile)
   {
-    auto const p = GetParam();
+    UploadFile::ParamType const& p(GetParam());
     std::vector<uint8_t> fileContent(static_cast<size_t>(8_MB), 'x');
     auto fileClient = m_fileSystemClient->GetFileClient(GetTestNameLowerCase());
 
