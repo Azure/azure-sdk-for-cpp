@@ -274,11 +274,22 @@ namespace Azure { namespace Core { namespace Test {
     /**
      * @brief Run before each test.
      *
+     * @param serviceDirectory - the Service Directory as provided to the new-testresources.ps1
+     * script.
+     * @param baseRecordingPath - the base recording path to be used for this test. Normally this is
+     * `AZURE_TEST_RECORDING_DIR`.
+     *
+     * For example:
+     *
+     * \code{.cpp}
+     *         Azure::Core::Test::TestBase::SetUpTestBase("STORAGE", AZURE_TEST_RECORDING_DIR);
+     * \endcode
+     *
      */
-    void SetUpTestBase(std::string const& serviceName, std::string const& baseRecordingPath)
+    void SetUpTestBase(std::string const& serviceDirectory, std::string const& baseRecordingPath)
     {
 
-      m_serviceName = serviceName;
+      m_serviceName = serviceDirectory;
 
       // Init interceptor from PlayBackRecorder
       std::string recordingPath(baseRecordingPath);
@@ -306,9 +317,9 @@ namespace Azure { namespace Core { namespace Test {
                 }
               };
         ;
-        SetBuiltinEnvironment(serviceName, "_TENANT_ID");
-        SetBuiltinEnvironment(serviceName, "_CLIENT_ID");
-        SetBuiltinEnvironment(serviceName, "_CLIENT_SECRET");
+        SetBuiltinEnvironment(serviceDirectory, "_TENANT_ID");
+        SetBuiltinEnvironment(serviceDirectory, "_CLIENT_ID");
+        SetBuiltinEnvironment(serviceDirectory, "_CLIENT_SECRET");
       }
     }
 
