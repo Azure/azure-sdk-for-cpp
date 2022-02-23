@@ -274,8 +274,6 @@ namespace Azure { namespace Core { namespace Test {
     /**
      * @brief Run before each test.
      *
-     * @param serviceDirectory - the Service Directory as provided to the new-testresources.ps1
-     * script.
      * @param baseRecordingPath - the base recording path to be used for this test. Normally this is
      * `AZURE_TEST_RECORDING_DIR`.
      *
@@ -286,10 +284,8 @@ namespace Azure { namespace Core { namespace Test {
      * \endcode
      *
      */
-    void SetUpTestBase(std::string const& serviceDirectory, std::string const& baseRecordingPath)
+    void SetUpTestBase(std::string const& baseRecordingPath)
     {
-
-      m_serviceName = serviceDirectory;
 
       // Init interceptor from PlayBackRecorder
       std::string recordingPath(baseRecordingPath);
@@ -307,10 +303,16 @@ namespace Azure { namespace Core { namespace Test {
       if (!m_testContext.IsPlaybackMode())
       {
         auto SetBuiltinEnvironment
-            = [](std::string const& serviceName, std::string const& targetVariable) {
+            = [](std::string const& targetVariable) {
                 std::string azureVariable = "AZURE" + targetVariable;
                 if (Azure::Core::_internal::Environment::GetVariable(azureVariable.c_str()).empty())
                 {
+                  std::string serviceName = Azure::Core::_internal::Environment::GetVariable("AZURE_SERVICE_DIRECTORY");
+                  if (serviceName.empty())
+                  {
+                    throw std::runtime_error("Could not find a value for AZURE_SERVICE_DIRECTORY. Check ci.yml "
+                                             "to confirm that it has been configured.");
+                  }
                   std::string targetValue = Azure::Core::_internal::Environment::GetVariable(
                       (serviceName + targetVariable).c_str());
                   if (!targetValue.empty())
@@ -321,9 +323,9 @@ namespace Azure { namespace Core { namespace Test {
                 }
               };
         ;
-        SetBuiltinEnvironment(serviceDirectory, "_TENANT_ID");
-        SetBuiltinEnvironment(serviceDirectory, "_CLIENT_ID");
-        SetBuiltinEnvironment(serviceDirectory, "_CLIENT_SECRET");
+        SetBuiltinEnvironment("_TENANT_ID");
+        SetBuiltinEnvironment("_CLIENT_ID");
+        SetBuiltinEnvironment("_CLIENT_SECRET");
       }
     }
 

@@ -132,7 +132,7 @@ namespace Azure { namespace Storage {
 
       virtual void SetUp() override
       {
-        Azure::Core::Test::TestBase::SetUpTestBase("STORAGE", AZURE_TEST_RECORDING_DIR);
+        Azure::Core::Test::TestBase::SetUpTestBase(AZURE_TEST_RECORDING_DIR);
       }
 
     public:

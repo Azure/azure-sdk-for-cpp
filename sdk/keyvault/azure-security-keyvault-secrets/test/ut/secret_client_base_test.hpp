@@ -41,7 +41,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets { 
     // Create
     void InitializeClient()
     {
-      Azure::Core::Test::TestBase::SetUpTestBase("KEYVAULT", AZURE_TEST_RECORDING_DIR);
+      Azure::Core::Test::TestBase::SetUpTestBase(AZURE_TEST_RECORDING_DIR);
       m_keyVaultUrl = GetEnv("AZURE_KEYVAULT_URL");
 
       // Options and credential for the client
