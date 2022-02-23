@@ -77,7 +77,7 @@ add_executable (
     url_test.cpp
     uuid_test.cpp
     exception_test.cpp
-)
+    )
 
 if (MSVC)
   # Disable warnings:

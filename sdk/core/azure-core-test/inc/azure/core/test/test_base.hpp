@@ -251,15 +251,10 @@ namespace Azure { namespace Core { namespace Test {
 #if !defined(NDEBUG)
       // The azure CI pipeline uppercases all EnvVar values from ci.yml files.
       // That means that any mixed case strings will not be found when run from the CI
-      // pipeline.
-      //
-      // Check to ensure that the filename is upper case
+      // pipeline. Check to make sure that the developer only passed in an upper case environment
+      // variable.
       {
-        std::string ucName = name;
-        std::transform(ucName.begin(), ucName.end(), ucName.begin(), [](char const& ch) {
-          return static_cast<char>(std::toupper(ch));
-        });
-        if (ucName != name)
+        if (name != Azure::Core::_internal::StringExtensions::ToUpper(name))
         {
           throw std::runtime_error("All Azure SDK environment variables must be all upper case.");
         }
