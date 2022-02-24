@@ -149,6 +149,7 @@ jobs:
     CmakeArgs: ""
     AZURE_TEST_MODE: "LIVE"
     AZURE_LOG_LEVEL: "verbose"
+    AZURE_SERVICE_DIRECTORY: ${{ parameters.ServiceDirectory }}
 
   steps:
   - checkout: self
@@ -218,8 +219,6 @@ jobs:
     # This enables to run tests and samples at the same time as different matrix configuration.
     # Then unit-tests runs, samples should not run.
     condition: and(succeeded(), ne(variables['RunSamples'], '1'))
-    env: 
-      AZURE_SERVICE_DIRECTORY: ${{ parameters.ServiceDirectory }}
       
 
   - task: PublishTestResults@2
