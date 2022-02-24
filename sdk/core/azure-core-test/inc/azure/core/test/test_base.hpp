@@ -276,7 +276,8 @@ namespace Azure { namespace Core { namespace Test {
       auto ret = Azure::Core::_internal::Environment::GetVariable(name.c_str());
       if (ret.empty())
       {
-        if (!m_testContext.IsPlaybackMode() && name.find("AZURE_") == 0)
+        static const char azurePrefix[] = "AZURE_";
+        if (!m_testContext.IsPlaybackMode() && name.find(azurePrefix) == 0)
         {
           std::string serviceDirectory
               = Azure::Core::_internal::Environment::GetVariable("AZURE_SERVICE_DIRECTORY");
@@ -291,7 +292,7 @@ namespace Azure { namespace Core { namespace Test {
           // variables are upper cased.
           std::string serviceDirectoryEnvVar
               = Azure::Core::_internal::StringExtensions::ToUpper(serviceDirectory);
-          serviceDirectoryEnvVar += name.substr(sizeof("AZURE") - 1);
+          serviceDirectoryEnvVar += name.substr(sizeof(azurePrefix) - 2);
           ret = Azure::Core::_internal::Environment::GetVariable(serviceDirectoryEnvVar.c_str());
           if (!ret.empty())
           {
