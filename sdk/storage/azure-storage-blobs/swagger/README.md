@@ -556,7 +556,7 @@ directive:
       $.ContainerProperties.properties["DeletedTime"]["x-ms-client-name"] = "DeletedOn";
       $.ContainerProperties.properties["ImmutableStorageWithVersioningEnabled"] = $.ContainerProperties.properties["VersionLevelWormEnabled"];
       delete $.ContainerProperties.properties["VersionLevelWormEnabled"];
-      $.ContainerProperties.properties["ImmutableStorageWithVersioningEnabled"]["x-ms-client-name"] = "IsImmutableStorageWithVersioningEnabled";
+      $.ContainerProperties.properties["ImmutableStorageWithVersioningEnabled"]["x-ms-client-name"] = "HasImmutableStorageWithVersioning ";
       $.ContainerProperties.properties["ImmutableStorageWithVersioningEnabled"]["x-ms-client-default"] = false;
       delete $.ContainerProperties.required;
       $.ContainerProperties.properties["LeaseDuration"]["x-nullable"] = true;
@@ -662,7 +662,7 @@ directive:
       $["x-ms-meta"].description = "A set of name-value pair associated with this blob container.";
       $["x-ms-immutable-storage-with-versioning-enabled"] = $["x-ms-version-level-worm-enabled"];
       delete $["x-ms-version-level-worm-enabled"];
-      $["x-ms-immutable-storage-with-versioning-enabled"]["x-ms-client-name"] = "IsImmutableStorageWithVersioningEnabled";
+      $["x-ms-immutable-storage-with-versioning-enabled"]["x-ms-client-name"] = "HasImmutableStorageWithVersioning";
       $["x-ms-immutable-storage-with-versioning-enabled"]["x-ms-client-default"] = false;
       $["x-ms-immutable-storage-with-versioning-enabled"]["x-nullable"] = true;
 ```
