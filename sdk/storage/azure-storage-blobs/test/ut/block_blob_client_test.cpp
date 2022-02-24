@@ -701,7 +701,7 @@ namespace Azure { namespace Storage { namespace Test {
 
   TEST_P(DownloadBlockBlob, downloadToBuffer)
   {
-    auto const p = GetParam();
+    BlobConcurrentDownloadParameter const& p(GetParam());
     auto const testName(GetTestName(true));
     auto client = GetBlockBlobClient(testName);
     UploadBlockBlob(8_MB);
@@ -773,7 +773,7 @@ namespace Azure { namespace Storage { namespace Test {
 
   TEST_P(DownloadBlockBlob, downloadToFile)
   {
-    auto const p = GetParam();
+    BlobConcurrentDownloadParameter const& p(GetParam());
     auto const testName(GetTestName(true));
     auto client = GetBlockBlobClient(testName);
     UploadBlockBlob(8_MB);
@@ -1191,7 +1191,7 @@ namespace Azure { namespace Storage { namespace Test {
     auto const testName(GetTestName());
     auto blockBlobClient = GetBlockBlobClient(testName);
     SetOptions();
-    auto const p = GetParam();
+    UploadBlockBlob::ParamType const& p(GetParam());
     auto const blobSize = p.Size;
     std::vector<uint8_t> blobContent(static_cast<size_t>(8_MB), 'x');
 
@@ -1227,7 +1227,7 @@ namespace Azure { namespace Storage { namespace Test {
     auto const testName(GetTestName());
     auto blockBlobClient = GetBlockBlobClient(testName);
     SetOptions();
-    auto const p = GetParam();
+    UploadBlockBlob::ParamType const& p(GetParam());
     auto const blobSize = p.Size;
     std::vector<uint8_t> blobContent(static_cast<size_t>(8_MB), 'x');
 

@@ -5,6 +5,7 @@
 #include "azure/identity/client_secret_credential.hpp"
 #include <azure/attestation/attestation_client_models.hpp>
 #include <azure/core/test/test_base.hpp>
+#include <cstdlib>
 #include <gtest/gtest.h>
 #include <string>
 #include <tuple>
