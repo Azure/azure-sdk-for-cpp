@@ -46,8 +46,8 @@ namespace Azure { namespace Identity {
    * ID and a client secret.
    *
    */
-  class ClientSecretCredential final : public Core::Credentials::TokenCredential {
-  private:
+  class ClientSecretCredential : public Core::Credentials::TokenCredential {
+  protected:
     std::unique_ptr<_detail::TokenCredentialImpl> m_tokenCredentialImpl;
     Core::Url m_requestUrl;
     std::string m_requestBody;
@@ -109,4 +109,72 @@ namespace Azure { namespace Identity {
         Core::Context const& context) const override;
   };
 
+  
+  /**
+   * @brief Client Secret Credential authenticates with the Azure services using a Tenant ID, Client
+   * ID and a client secret.
+   *
+   */
+  class ChallengeClientSecretCredential : public Core::Credentials::TokenCredential {
+  protected:
+    std::unique_ptr<_detail::TokenCredentialImpl> m_tokenCredentialImpl;
+    Core::Url m_requestUrl;
+    std::string m_requestBody;
+    bool m_isAdfs;
+
+    ChallengeClientSecretCredential(
+        std::string const& tenantId,
+        std::string const& clientId,
+        std::string const& clientSecret,
+        std::string const& authorityHost,
+        Core::Credentials::TokenCredentialOptions const& options);
+
+  public:
+    /**
+     * @brief Constructs a Client Secret Credential.
+     *
+     * @param tenantId Tenant ID.
+     * @param clientId Client ID.
+     * @param clientSecret Client secret.
+     * @param options Options for token retrieval.
+     */
+    explicit ChallengeClientSecretCredential(
+        std::string const& tenantId,
+        std::string const& clientId,
+        std::string const& clientSecret,
+        ClientSecretCredentialOptions const& options);
+
+    /**
+     * @brief Constructs a Client Secret Credential.
+     *
+     * @param tenantId Tenant ID.
+     * @param clientId Client ID.
+     * @param clientSecret Client Secret.
+     * @param options Options for token retrieval.
+     */
+    explicit ChallengeClientSecretCredential(
+        std::string tenantId,
+        std::string clientId,
+        std::string clientSecret,
+        Core::Credentials::TokenCredentialOptions const& options
+        = Core::Credentials::TokenCredentialOptions());
+
+    /**
+     * @brief Destructs `%ClientSecretCredential`.
+     *
+     */
+    ~ChallengeClientSecretCredential() override;
+
+    /**
+     * @brief Gets an authentication token.
+     *
+     * @param tokenRequestContext A context to get the token in.
+     * @param context A context to control the request lifetime.
+     *
+     * @throw Azure::Core::Credentials::AuthenticationException Authentication error occurred.
+     */
+    Core::Credentials::AccessToken GetToken(
+        Core::Credentials::TokenRequestContext const& tokenRequestContext,
+        Core::Context const& context) const override;
+  };
 }} // namespace Azure::Identity

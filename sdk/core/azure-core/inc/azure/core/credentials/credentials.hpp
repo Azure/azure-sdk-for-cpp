@@ -10,6 +10,8 @@
 
 #include "azure/core/context.hpp"
 #include "azure/core/datetime.hpp"
+#include "azure/core/url.hpp"
+#include "azure/core/nullable.hpp"
 
 #include <exception>
 #include <memory>
@@ -48,6 +50,20 @@ namespace Azure { namespace Core { namespace Credentials {
      *
      */
     std::vector<std::string> Scopes;
+
+    /**
+     * @brief Gets the "authorization" or "authorization_uri" parameter from the challenge
+     * response.
+     *
+     */
+    Azure::Nullable<Url> AuthorizationUri;
+
+    /**
+     * @brief Gets the tenant ID from <see cref="AuthorizationUri"/>.
+     * end with
+     *
+     */
+    Azure::Nullable<std::string> TenantId;
   };
 
   /**

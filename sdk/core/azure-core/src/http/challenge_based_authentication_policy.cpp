@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: MIT
 
 #include "azure/core/http/policies/policy.hpp"
+#include <vector>
 #include <chrono>
 
 using Azure::Core::Context;
@@ -21,8 +22,23 @@ std::unique_ptr<RawResponse> ChallengeBasedAuthenticationPolicy::Send(
     if (rawData != result->GetHeaders().end())
     {
       ChallengeParameters challenge(rawData->second);
+      Credentials::TokenRequestContext tokenRequestContext;
+      
+      tokenRequestContext.TenantId = std::move(challenge.TenantId);
+      tokenRequestContext.AuthorizationUri = std::move(challenge.AuthorizationUri);
+      tokenRequestContext.Scopes = std::move(challenge.Scopes);
+
+      {
+        std::lock_guard<std::mutex> lock(m_accessTokenMutex);
+        m_accessToken = m_credential->GetToken(tokenRequestContext, context);
+        request.SetHeader("authorization", "Bearer " + m_accessToken.Token);
+      }
+
+      return nextPolicy.Send(request, context);
     }
+    
   }
+
   return result;
 }
 
@@ -81,7 +97,11 @@ void ChallengeParameters::ProcessFragment(std::string const& fragment)
       TenantId = AuthorizationUri.GetPath();
     }
     // scopes are either resource or scope
-    else if (subParts[0] == _detail::ResourceName || subParts[0] == _detail::ScopeName)
+    else if (subParts[0] == _detail::ResourceName)
+    {
+      Scopes.emplace_back(subParts[1] + _detail::DefaultSuffix);
+    }
+    else if(subParts[0] == _detail::ScopeName)
     {
       Scopes.emplace_back(subParts[1]);
     }

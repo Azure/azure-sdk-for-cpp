@@ -45,6 +45,7 @@ namespace Azure { namespace Core { namespace Http { namespace Policies {
     static constexpr char const ScopeName[] = "scope";
     static constexpr char const AuthorizationName[] = "authorization";
     static constexpr char const AuthorizationUriName[] = "authorization_uri";
+    static constexpr char const DefaultSuffix[] = "/.default";
     static constexpr char const BearerName[] = "Bearer";
     static constexpr char const SpaceSeparator = ' ';
     static constexpr char const QuoteSeparator = '\"';
