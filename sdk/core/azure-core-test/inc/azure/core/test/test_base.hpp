@@ -17,7 +17,6 @@
 #include "azure/core/test/network_models.hpp"
 #include "azure/core/test/test_context_manager.hpp"
 
-#include <algorithm>
 #include <chrono>
 #include <memory>
 #include <regex>
@@ -46,7 +45,6 @@ namespace Azure { namespace Core { namespace Test {
      *
      */
     bool m_wasSkipped = false;
-    std::string m_serviceName{};
 
     void PrepareOptions(Azure::Core::_internal::ClientOptions& options)
     {
@@ -260,7 +258,7 @@ namespace Azure { namespace Core { namespace Test {
         }
       }
 #endif
-      auto ret = Azure::Core::_internal::Environment::GetVariable(name.c_str());
+      const auto ret = Azure::Core::_internal::Environment::GetVariable(name.c_str());
       if (ret.empty())
       {
         throw std::runtime_error("Missing required environment variable: " + name);
@@ -280,8 +278,12 @@ namespace Azure { namespace Core { namespace Test {
      * For example:
      *
      * \code{.cpp}
-     *         Azure::Core::Test::TestBase::SetUpTestBase("STORAGE", AZURE_TEST_RECORDING_DIR);
+     *         Azure::Core::Test::TestBase::SetUpTestBase(AZURE_TEST_RECORDING_DIR);
      * \endcode
+     *
+     * @note If AZURE_TENANT_ID, AZURE_CLIENT_ID, or AZURE_CLIENT_SECRET are not available in the
+     * environment, the AZURE_SERVICE_DIRECTORY environment variable is used to set those values
+     * with the values emitted by the New-TestResources.ps1 script.
      *
      */
     void SetUpTestBase(std::string const& baseRecordingPath)
