@@ -302,27 +302,27 @@ namespace Azure { namespace Core { namespace Test {
 
       if (!m_testContext.IsPlaybackMode())
       {
-        auto SetBuiltinEnvironment
-            = [](std::string const& targetVariable) {
-                std::string azureVariable = "AZURE" + targetVariable;
-                if (Azure::Core::_internal::Environment::GetVariable(azureVariable.c_str()).empty())
-                {
-                  std::string serviceName = Azure::Core::_internal::Environment::GetVariable("AZURE_SERVICE_DIRECTORY");
-                  if (serviceName.empty())
-                  {
-                    throw std::runtime_error("Could not find a value for AZURE_SERVICE_DIRECTORY. Check ci.yml "
-                                             "to confirm that it has been configured.");
-                  }
-                  std::string targetValue = Azure::Core::_internal::Environment::GetVariable(
-                      (serviceName + targetVariable).c_str());
-                  if (!targetValue.empty())
-                  {
-                    Azure::Core::_internal::Environment::SetVariable(
-                        azureVariable.c_str(), targetValue.c_str());
-                  }
-                }
-              };
-        ;
+        auto SetBuiltinEnvironment = [](std::string const& targetVariable) {
+          std::string azureVariable = "AZURE" + targetVariable;
+          if (Azure::Core::_internal::Environment::GetVariable(azureVariable.c_str()).empty())
+          {
+            std::string serviceName
+                = Azure::Core::_internal::Environment::GetVariable("AZURE_SERVICE_DIRECTORY");
+            if (serviceName.empty())
+            {
+              throw std::runtime_error(
+                  "Could not find a value for AZURE_SERVICE_DIRECTORY. Check ci.yml "
+                  "to confirm that it has been configured.");
+            }
+            std::string targetValue = Azure::Core::_internal::Environment::GetVariable(
+                (serviceName + targetVariable).c_str());
+            if (!targetValue.empty())
+            {
+              Azure::Core::_internal::Environment::SetVariable(
+                  azureVariable.c_str(), targetValue.c_str());
+            }
+          }
+        };
         SetBuiltinEnvironment("_TENANT_ID");
         SetBuiltinEnvironment("_CLIENT_ID");
         SetBuiltinEnvironment("_CLIENT_SECRET");
