@@ -243,7 +243,22 @@ namespace Azure { namespace Core { namespace Test {
           "Test Log from: [ " + m_testContext.GetTestPlaybackRecordingName() + " ] - " + message);
     }
 
-    // Util for tests getting env vars
+    /**
+     * @brief Utility function used by tests to retrieve env vars
+     *
+     * @param name Environment variable name to retrieve.
+     *
+     * @return The value of the environment variable retrieved.
+     *
+     * @note If AZURE_TENANT_ID, AZURE_CLIENT_ID, or AZURE_CLIENT_SECRET are not available in the
+     * environment, the AZURE_SERVICE_DIRECTORY environment variable is used to set those values
+     * with the values emitted by the New-TestResources.ps1 script.
+     *
+     * @note The Azure CI pipeline upper cases all environment variables defined in the pipeline.
+     * Since some operating systems have case sensitive environment variables, on debug builds, this
+     * function ensures that the environment variable being retrieved is all upper case.
+     *
+     */
     std::string GetEnv(std::string const& name)
     {
 #if !defined(NDEBUG)
@@ -302,10 +317,6 @@ namespace Azure { namespace Core { namespace Test {
      * \code{.cpp}
      *  Azure::Core::Test::TestBase::SetUpTestBase(AZURE_TEST_RECORDING_DIR);
      * \endcode
-     *
-     * @note If AZURE_TENANT_ID, AZURE_CLIENT_ID, or AZURE_CLIENT_SECRET are not available in the
-     * environment, the AZURE_SERVICE_DIRECTORY environment variable is used to set those values
-     * with the values emitted by the New-TestResources.ps1 script.
      *
      */
     void SetUpTestBase(std::string const& baseRecordingPath)
