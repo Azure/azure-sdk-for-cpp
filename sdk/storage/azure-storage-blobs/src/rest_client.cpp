@@ -998,7 +998,7 @@ namespace Azure { namespace Storage { namespace Blobs {
                 && xmlPath[3] == XmlTagEnum::kProperties
                 && xmlPath[4] == XmlTagEnum::kImmutableStorageWithVersioningEnabled)
             {
-              vectorElement1.Details.IsImmutableStorageWithVersioningEnabled
+              vectorElement1.Details.HasImmutableStorageWithVersioning
                   = node.Value == std::string("true");
             }
           }
@@ -1436,7 +1436,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       }
       if (pRawResponse->GetHeaders().count("x-ms-immutable-storage-with-versioning-enabled") != 0)
       {
-        response.IsImmutableStorageWithVersioningEnabled
+        response.HasImmutableStorageWithVersioning
             = pRawResponse->GetHeaders().at("x-ms-immutable-storage-with-versioning-enabled")
             == std::string("true");
       }

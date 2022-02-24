@@ -1321,7 +1321,7 @@ namespace Azure { namespace Storage { namespace Blobs {
   };
 
   namespace _detail {
-    std::string TagsToString(const std::map<std::string, std::string>& tags)
+    inline std::string TagsToString(const std::map<std::string, std::string>& tags)
     {
       return std::accumulate(
           tags.begin(),

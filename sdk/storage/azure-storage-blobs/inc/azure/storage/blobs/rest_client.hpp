@@ -413,7 +413,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       /**
        * Indicates if version level worm is enabled on this container.
        */
-      bool IsImmutableStorageWithVersioningEnabled = false;
+      bool HasImmutableStorageWithVersioning = false;
     };
     /**
      * @brief An Azure Storage container.
@@ -712,7 +712,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       /**
        * Indicates whether version level worm is enabled on a container.
        */
-      bool IsImmutableStorageWithVersioningEnabled = false;
+      bool HasImmutableStorageWithVersioning = false;
     };
     /**
      * @brief Response type for #Azure::Storage::Blobs::BlobContainerClient::Delete.

@@ -1627,7 +1627,7 @@ namespace Azure { namespace Storage { namespace Test {
     blobClient.UploadFrom(emptyContent.data(), emptyContent.size());
 
     auto blobContainerClient = GetBlobContainerTestClient();
-    ASSERT_TRUE(blobContainerClient.GetProperties().Value.IsImmutableStorageWithVersioningEnabled);
+    ASSERT_TRUE(blobContainerClient.GetProperties().Value.HasImmutableStorageWithVersioning);
 
     Blobs::Models::BlobImmutabilityPolicy policy;
     policy.ExpiresOn = Azure::DateTime::Parse(
