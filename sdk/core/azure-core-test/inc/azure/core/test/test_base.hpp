@@ -313,9 +313,13 @@ namespace Azure { namespace Core { namespace Test {
             if (serviceName.empty())
             {
               throw std::runtime_error(
-                  "Could not find a value for AZURE_SERVICE_DIRECTORY. Check ci.yml "
-                  "to confirm that it has been configured.");
+                  "Could not find a value for AZURE_" + targetVariable
+                  + " and AZURE_SERVICE_DIRECTORY was not defined. Define either AZURE_"
+                  + targetVariable + " or AZURE_SERVICE_DIRECTORY to resolve.");
             }
+            // Upper case the serviceName environment variable because all ci.yml environment
+            // variables are upper cased.
+            serviceName = Azure::Core::_internal::StringExtensions::ToUpper(serviceName);
             std::string targetValue = Azure::Core::_internal::Environment::GetVariable(
                 (serviceName + targetVariable).c_str());
             if (!targetValue.empty())

@@ -54,15 +54,6 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
         options.TokenValidationOptions.ValidateNotBeforeTime = false;
         options.TokenValidationOptions.ValidateExpirationTime = false;
       }
-      char** env = environ;
-      Azure::Core::Test::TestBase::TestLog("Dumping Environment variables");
-      while (*env != nullptr)
-      {
-        std::stringstream ss;
-        ss << "Env Variable " << *env << std::endl;
-        Azure::Core::Test::TestBase::TestLog(ss.str());
-        env += 1;
-      }
       std::shared_ptr<Azure::Core::Credentials::TokenCredential> credential
           = std::make_shared<Azure::Identity::ClientSecretCredential>(
               GetEnv("AZURE_TENANT_ID"), GetEnv("AZURE_CLIENT_ID"), GetEnv("AZURE_CLIENT_SECRET"));
