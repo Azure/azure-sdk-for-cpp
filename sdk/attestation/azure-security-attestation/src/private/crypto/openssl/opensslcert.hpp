@@ -140,7 +140,7 @@ namespace Azure { namespace Security { namespace Attestation { namespace _detail
       {
         throw OpenSSLException("i2d_X509");
       }
-      if (EVP_DigestUpdate(hash.get(), buf, thumbprintBuffer.size()) != 1)
+      if (EVP_DigestUpdate(hash.get(), thumbprintBuffer.data(), thumbprintBuffer.size()) != 1)
       {
         throw OpenSSLException("EVP_DigestUpdate");
       }
