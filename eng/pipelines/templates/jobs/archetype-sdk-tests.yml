@@ -219,7 +219,7 @@ jobs:
     # Then unit-tests runs, samples should not run.
     condition: and(succeeded(), ne(variables['RunSamples'], '1'))
     env: 
-      AZURE_SERVICE_DIRECTORY: {{ parameters.ServiceDirectory }}
+      AZURE_SERVICE_DIRECTORY: ${{ parameters.ServiceDirectory }}
       
 
   - task: PublishTestResults@2
