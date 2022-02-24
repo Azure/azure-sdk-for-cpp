@@ -105,3 +105,7 @@ if(BUILD_TESTING)
     # tests
     add_subdirectory(test/ut)
 endif()
+
+if(BUILD_SAMPLES)
+   add_subdirectory(test/samples)
+endif()
