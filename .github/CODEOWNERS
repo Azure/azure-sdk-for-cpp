@@ -6,30 +6,37 @@
 ################
 
 # Git Hub integration and bot rules
-/.github/                @AlexGhiondea @jsquire
+/.github/                @AlexGhiondea @jsquire @rickwinter
 
 ###########
 # SDK
 ###########
 
 # Catch all for non-code project files and unowned files | folders
-*                        @rickwinter @ahsonkhan @antkmsft @vhvb1989 @gearama
-/sdk/                    @rickwinter @ahsonkhan @antkmsft @vhvb1989 @gearama
+*                        @rickwinter @ahsonkhan @antkmsft @vhvb1989 @gearama @LarryOsterman
+/sdk/                    @rickwinter @ahsonkhan @antkmsft @vhvb1989 @gearama @LarryOsterman
 
 # Samples
-/samples/                @rickwinter @ahsonkhan @antkmsft @vhvb1989 @gearama
+/samples/                @rickwinter @ahsonkhan @antkmsft @vhvb1989 @gearama @LarryOsterman
 
 # PRLabel: %Azure.Core
-/sdk/core/               @rickwinter @ahsonkhan @antkmsft @vhvb1989 @gearama
+/sdk/core/               @rickwinter @ahsonkhan @antkmsft @vhvb1989 @gearama @LarryOsterman
 
 # PRLabel: %Azure.Identity
 /sdk/identity/           @antkmsft @schaabs @ahsonkhan @rickwinter @vhvb1989 @gearama
+
+###########
+# Client SDKs
+###########
+
+# PRLabel: %Attestation
+/sdk/attestation/        @LarryOsterman
 
 # PRLabel: %KeyVault
 /sdk/keyvault/           @vhvb1989 @gearama @antkmsft @rickwinter
 
 # PRLabel: %Storage
-/sdk/storage/            @vinjiang @katmsft @Jinming-Hu @antkmsft @rickwinter @vhvb1989 @gearama
+/sdk/storage/            @vinjiang @katmsft @Jinming-Hu @antkmsft @vhvb1989 @gearama @LarryOsterman
 
 # PRLabel: %EngSys
 /sdk/template/           @danieljurek @weshaggard
