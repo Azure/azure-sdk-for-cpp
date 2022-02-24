@@ -1352,7 +1352,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       Versions = 32,
       Tags = 64,
       ImmutabilityPolicy = 128,
-      LegalLold = 256,
+      LegalHold = 256,
     };
     inline ListBlobsIncludeFlags operator|(ListBlobsIncludeFlags lhs, ListBlobsIncludeFlags rhs)
     {

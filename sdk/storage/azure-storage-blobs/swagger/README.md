@@ -272,7 +272,7 @@ directive:
           {"value": "versions", "name": "Versions"},
           {"value": "tags", "name": "Tags"},
           {"value": "immutabilitypolicy", "name": "ImmutabilityPolicy"},
-          {"value": "legalhold", "name": "LegalLold"}
+          {"value": "legalhold", "name": "LegalHold"}
       ];
       $.DeleteSnapshots["x-ms-enum"]["name"] = "DeleteSnapshotsOption";
       $.DeleteSnapshots["x-ms-enum"]["values"] = [{"value": "include", "name": "IncludeSnapshots"},{"value":"only", "name": "OnlySnapshots"}];

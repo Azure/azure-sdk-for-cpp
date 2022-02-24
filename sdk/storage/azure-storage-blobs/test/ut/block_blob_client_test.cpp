@@ -1711,7 +1711,7 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_TRUE(blobProperties.HasLegalHold);
     auto downloadResponse = blobClient.Download();
     EXPECT_TRUE(downloadResponse.Value.Details.HasLegalHold);
-    auto blobItem = GetBlobItem(testName, Blobs::Models::ListBlobsIncludeFlags::LegalLold);
+    auto blobItem = GetBlobItem(testName, Blobs::Models::ListBlobsIncludeFlags::LegalHold);
     EXPECT_TRUE(blobItem.Details.HasLegalHold);
 
     setLegalHoldResponse = blobClient.SetLegalHold(false);

@@ -382,7 +382,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         const Azure::Core::Context& context = Azure::Core::Context()) const;
 
     /**
-     * @brief Deletes the Immutability Policy associated with the Blob..
+     * @brief Deletes the Immutability Policy associated with the Blob.
      *
      * @param options Optional parameters to execute this function.
      * @param context Context for cancelling long running operations.

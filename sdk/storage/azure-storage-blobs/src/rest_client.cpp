@@ -64,7 +64,7 @@ std::string ListBlobsIncludeFlagsToString(
       Azure::Storage::Blobs::Models::ListBlobsIncludeFlags::Versions,
       Azure::Storage::Blobs::Models::ListBlobsIncludeFlags::Tags,
       Azure::Storage::Blobs::Models::ListBlobsIncludeFlags::ImmutabilityPolicy,
-      Azure::Storage::Blobs::Models::ListBlobsIncludeFlags::LegalLold,
+      Azure::Storage::Blobs::Models::ListBlobsIncludeFlags::LegalHold,
   };
   const char* stringList[] = {
       "copy",
