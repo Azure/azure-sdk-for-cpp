@@ -258,9 +258,30 @@ namespace Azure { namespace Core { namespace Test {
         }
       }
 #endif
-      const auto ret = Azure::Core::_internal::Environment::GetVariable(name.c_str());
+      auto ret = Azure::Core::_internal::Environment::GetVariable(name.c_str());
       if (ret.empty())
       {
+        if (!m_testContext.IsPlaybackMode() && name.find("AZURE_") == 0)
+        {
+          std::string serviceDirectory
+              = Azure::Core::_internal::Environment::GetVariable("AZURE_SERVICE_DIRECTORY");
+          if (serviceDirectory.empty())
+          {
+            throw std::runtime_error(
+                "Could not find a value for " + name
+                + " and AZURE_SERVICE_DIRECTORY was not defined. Define either "
+                + name + " or AZURE_SERVICE_DIRECTORY to resolve.");
+          }
+          // Upper case the serviceName environment variable because all ci.yml environment
+          // variables are upper cased.
+          std::string serviceDirectoryEnvVar = Azure::Core::_internal::StringExtensions::ToUpper(serviceDirectory);
+          serviceDirectoryEnvVar += name.substr(sizeof("AZURE") - 1);
+          ret = Azure::Core::_internal::Environment::GetVariable(serviceDirectoryEnvVar.c_str());
+          if (!ret.empty())
+          {
+            return ret;
+          }
+        }
         throw std::runtime_error("Missing required environment variable: " + name);
       }
 
@@ -278,7 +299,7 @@ namespace Azure { namespace Core { namespace Test {
      * For example:
      *
      * \code{.cpp}
-     *         Azure::Core::Test::TestBase::SetUpTestBase(AZURE_TEST_RECORDING_DIR);
+     *  Azure::Core::Test::TestBase::SetUpTestBase(AZURE_TEST_RECORDING_DIR);
      * \endcode
      *
      * @note If AZURE_TENANT_ID, AZURE_CLIENT_ID, or AZURE_CLIENT_SECRET are not available in the
@@ -288,7 +309,6 @@ namespace Azure { namespace Core { namespace Test {
      */
     void SetUpTestBase(std::string const& baseRecordingPath)
     {
-
       // Init interceptor from PlayBackRecorder
       std::string recordingPath(baseRecordingPath);
       recordingPath.append("/recordings");
@@ -301,38 +321,6 @@ namespace Azure { namespace Core { namespace Test {
           Sanitize(testNameInfo->test_suite_name()), Sanitize(testNameInfo->name()));
       m_testContext.RecordingPath = recordingPath;
       m_interceptor = std::make_unique<Azure::Core::Test::InterceptorManager>(m_testContext);
-
-      if (!m_testContext.IsPlaybackMode())
-      {
-        auto SetBuiltinEnvironment = [](std::string const& targetVariable) {
-          std::string azureVariable = "AZURE" + targetVariable;
-          if (Azure::Core::_internal::Environment::GetVariable(azureVariable.c_str()).empty())
-          {
-            std::string serviceName
-                = Azure::Core::_internal::Environment::GetVariable("AZURE_SERVICE_DIRECTORY");
-            if (serviceName.empty())
-            {
-              throw std::runtime_error(
-                  "Could not find a value for AZURE_" + targetVariable
-                  + " and AZURE_SERVICE_DIRECTORY was not defined. Define either AZURE_"
-                  + targetVariable + " or AZURE_SERVICE_DIRECTORY to resolve.");
-            }
-            // Upper case the serviceName environment variable because all ci.yml environment
-            // variables are upper cased.
-            serviceName = Azure::Core::_internal::StringExtensions::ToUpper(serviceName);
-            std::string targetValue = Azure::Core::_internal::Environment::GetVariable(
-                (serviceName + targetVariable).c_str());
-            if (!targetValue.empty())
-            {
-              Azure::Core::_internal::Environment::SetVariable(
-                  azureVariable.c_str(), targetValue.c_str());
-            }
-          }
-        };
-        SetBuiltinEnvironment("_TENANT_ID");
-        SetBuiltinEnvironment("_CLIENT_ID");
-        SetBuiltinEnvironment("_CLIENT_SECRET");
-      }
     }
 
     /**
