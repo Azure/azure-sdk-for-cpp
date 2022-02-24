@@ -6,6 +6,7 @@
 #include <chrono>
 #include <cstdint>
 #include <memory>
+#include <numeric>
 #include <string>
 #include <vector>
 
@@ -13,6 +14,7 @@
 #include <azure/core/match_conditions.hpp>
 #include <azure/core/modified_conditions.hpp>
 #include <azure/storage/common/access_conditions.hpp>
+#include <azure/storage/common/crypt.hpp>
 
 #include "azure/storage/blobs/rest_client.hpp"
 
@@ -1317,4 +1319,18 @@ namespace Azure { namespace Storage { namespace Blobs {
   struct DeleteBlobImmutabilityPolicyOptions final
   {
   };
+
+  namespace _detail {
+    std::string TagsToString(const std::map<std::string, std::string>& tags)
+    {
+      return std::accumulate(
+          tags.begin(),
+          tags.end(),
+          std::string(),
+          [](const std::string& a, const std::pair<std::string, std::string>& b) {
+            return a + (a.empty() ? "" : "&") + _internal::UrlEncodeQueryParameter(b.first) + "="
+                + _internal::UrlEncodeQueryParameter(b.second);
+          });
+    }
+  } // namespace _detail
 }}} // namespace Azure::Storage::Blobs

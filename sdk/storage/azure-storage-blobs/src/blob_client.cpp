@@ -3,8 +3,6 @@
 
 #include "azure/storage/blobs/blob_client.hpp"
 
-#include <numeric>
-
 #include <azure/core/azure_assert.hpp>
 #include <azure/core/http/policies/policy.hpp>
 #include <azure/storage/common/crypt.hpp>
@@ -649,14 +647,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     _detail::BlobClient::CopyBlobFromUriOptions protocolLayerOptions;
     protocolLayerOptions.Metadata
         = std::map<std::string, std::string>(options.Metadata.begin(), options.Metadata.end());
-    protocolLayerOptions.BlobTagsString = std::accumulate(
-        options.Tags.begin(),
-        options.Tags.end(),
-        std::string(),
-        [](const std::string& a, const std::pair<std::string, std::string>& b) {
-          return a + (a.empty() ? "" : "&") + _internal::UrlEncodeQueryParameter(b.first) + "="
-              + _internal::UrlEncodeQueryParameter(b.second);
-        });
+    protocolLayerOptions.BlobTagsString = _detail::TagsToString(options.Tags);
     protocolLayerOptions.CopySource = sourceUri;
     protocolLayerOptions.Tier = options.AccessTier;
     protocolLayerOptions.LeaseId = options.AccessConditions.LeaseId;
@@ -698,14 +689,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     _detail::BlobClient::StartBlobCopyFromUriOptions protocolLayerOptions;
     protocolLayerOptions.Metadata
         = std::map<std::string, std::string>(options.Metadata.begin(), options.Metadata.end());
-    protocolLayerOptions.BlobTagsString = std::accumulate(
-        options.Tags.begin(),
-        options.Tags.end(),
-        std::string(),
-        [](const std::string& a, const std::pair<std::string, std::string>& b) {
-          return a + (a.empty() ? "" : "&") + _internal::UrlEncodeQueryParameter(b.first) + "="
-              + _internal::UrlEncodeQueryParameter(b.second);
-        });
+    protocolLayerOptions.BlobTagsString = _detail::TagsToString(options.Tags);
     protocolLayerOptions.CopySource = sourceUri;
     protocolLayerOptions.Tier = options.AccessTier;
     protocolLayerOptions.RehydratePriority = options.RehydratePriority;
