@@ -1,7 +1,7 @@
 [CmdletBinding()]
 param(
     [Parameter()]
-    [string] $BuildDirectory = "$PSScriptRoot../../../build/",
+    [string] $BuildDirectory = "$PSScriptRoot/../../../build/",
 
     [Parameter()]
     [string] $ServiceDirectory = "*",
@@ -25,13 +25,13 @@ if ($CI) {
         $metricLogObject = @{
             name = "BinarySize";
             value = $binary.Length
-            timestamp = (Get-Date -AsUTC).ToString()
+            timestamp = (Get-Date -AsUTC).ToString("o")
             labels = @{
                 BinaryName = $binary.Name;
             } + $ExtraLabels
         }
 
-        $metricLogJson = ConvertTo-Json $metricLogObject -Depth 2 -Compress
+        $metricLogJson = ConvertTo-Json $metricLogObject -Compress
         Write-Host "logmetric: $metricLogJson"
     }
 }
