@@ -207,16 +207,38 @@ clients to add, remove or enumerate the policy management certificates.
 The `AttestationClientBuilder` class is used to create instances of the attestation client:
 
 ```cpp readme-sample-create-synchronous-client
+    std::string endpoint = std::getenv("ATTESTATION_AAD_URL");
+    AttestationClientOptions options;
+    return std::make_unique<Azure::Security::Attestation::AttestationClient>(m_endpoint, options);
 ```
+
+If the attestation APIs require authentication, use the following:
+
+```cpp readme-sample-create-synchronous-client
+std::string endpoint = std::getenv("ATTESTATION_AAD_URL");
+AttestationClientOptions options;
+    std::shared_ptr<Azure::Core::Credentials::TokenCredential> credential
+        = std::make_shared<Azure::Identity::ClientSecretCredential>(
+            GetEnv("AZURE_TENANT_ID"), GetEnv("AZURE_CLIENT_ID"), GetEnv("AZURE_CLIENT_SECRET"));
+return std::make_unique<Azure::Security::Attestation::AttestationClient>(m_endpoint, credential, options);
+```
+
+The same pattern is used to create an `Azure::Security::Attestation::AttestationAdministrationClient`.
 
 #### Retrieve Token Certificates
 
-Use `listAttestationSigners` to retrieve the set of certificates, which can be used to validate the token returned from the attestation service.
+Use `GetAttestationSigningCertificates` to retrieve the set of certificates, which can be used to validate the token returned from the attestation service.
 Normally, this information is not required as the attestation SDK will perform the validation as a part of the interaction with the
 attestation service, however the APIs are provided for completeness and to facilitate customer's independently validating
 attestation results.
 
 ```cpp readme-sample-getSigningCertificates
+auto attestationSigners = attestationClient->GetAttestationSigningCertificates();
+// Enumerate the signers.
+for (const auto& signer : attestationSigners.Value.Signers)
+{
+}
+
 ```
 
 #### Attest an SGX Enclave
@@ -230,22 +252,22 @@ Use the `AttestSgxEnclave` method to attest an SGX enclave.
 
 All administrative clients are authenticated.
 
-```cpp readme-sample-create-admin-client
-AttestationAdministrationClientBuilder attestationBuilder = new AttestationAdministrationClientBuilder();
-// Note that the "policy" calls require authentication.
-AttestationAdministrationClient client = attestationBuilder
-    .endpoint(endpoint)
-    .credential(new DefaultAzureCredentialBuilder().build())
-    .buildClient();
+```cpp readme-sample-create-synchronous-client
+std::string endpoint = std::getenv("ATTESTATION_AAD_URL");
+AttestationClientOptions options;
+  std::shared_ptr<Azure::Core::Credentials::TokenCredential> credential
+        = std::make_shared<Azure::Identity::ClientSecretCredential>(
+            GetEnv("AZURE_TENANT_ID"), GetEnv("AZURE_CLIENT_ID"), GetEnv("AZURE_CLIENT_SECRET"));
+auto adminClient =  std::make_unique<AttestationAdministrationClient>(m_endpoint, credential, options);
 ```
 
 #### Retrieve current attestation policy for OpenEnclave
 
 Use the `GetAttestationPolicy` API to retrieve the current attestation policy for a given TEE.
 
-```java readme-sample-getCurrentPolicy
-String currentPolicy = client.getAttestationPolicy(AttestationType.OPEN_ENCLAVE);
-System.out.printf("Current policy for OpenEnclave is: %s\n", currentPolicy);
+```cpp readme-sample-getCurrentPolicy
+auto currentPolicy = adminClient->GetAttestationPolicy(AttestationType.OPEN_ENCLAVE);
+std::cout << "Current policy for OpenEnclave is " << currentPolicy.Value.Body << std::endl;
 ```
 
 #### Set unsigned attestation policy (AAD clients only)
