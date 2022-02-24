@@ -5,6 +5,7 @@
 #include "azure/identity/client_secret_credential.hpp"
 #include <azure/attestation/attestation_client_models.hpp>
 #include <azure/core/test/test_base.hpp>
+#include <cstdlib>
 #include <gtest/gtest.h>
 #include <string>
 #include <tuple>
@@ -52,6 +53,15 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
         // Skip validating time stamps if using recordings.
         options.TokenValidationOptions.ValidateNotBeforeTime = false;
         options.TokenValidationOptions.ValidateExpirationTime = false;
+      }
+      char** env = environ;
+      Azure::Core::Test::TestBase::TestLog("Dumping Environment variables");
+      while (*env != nullptr)
+      {
+        std::stringstream ss;
+        ss << "Env Variable " << *env << std::endl;
+        Azure::Core::Test::TestBase::TestLog(ss.str());
+        env += 1;
       }
       std::shared_ptr<Azure::Core::Credentials::TokenCredential> credential
           = std::make_shared<Azure::Identity::ClientSecretCredential>(
