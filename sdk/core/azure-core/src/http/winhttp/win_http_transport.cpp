@@ -303,7 +303,7 @@ void WinHttpTransport::CreateRequestHandle(std::unique_ptr<_detail::HandleManage
 {
   const std::string& path = handleManager->m_request.GetUrl().GetRelativeUrl();
   HttpMethod requestMethod = handleManager->m_request.GetMethod();
-  bool requestSecureHttp(
+  bool const requestSecureHttp(
       !Azure::Core::_internal::StringExtensions::LocaleInvariantCaseInsensitiveEqual(
           handleManager->m_request.GetUrl().GetScheme(), HttpScheme));
 
