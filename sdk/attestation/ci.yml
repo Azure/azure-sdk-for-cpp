@@ -52,5 +52,3 @@ stages:
         # NOTE: The LOCATION_SHORT_NAME *must* match the region in which the tests were created.
       - Name: LOCATION_SHORT_NAME
         Value: "wus"
-      - Name: AZURE_SERVICE_DIRECTORY
-        Value: ATTESTATION

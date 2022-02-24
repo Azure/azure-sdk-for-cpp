@@ -66,8 +66,6 @@ stages:
           Value: "non-real-client"
         - Name: AZURE_CLIENT_SECRET
           Value: "non-real-secret"
-        - Name: AZURE_SERVICE_DIRECTORY
-          Value: KEYVAULT
       CMakeTestOptions:
         - Name: Default
           Value: ''

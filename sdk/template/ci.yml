@@ -31,9 +31,3 @@ stages:
         - Name: azure-template
           Path: azure-template
           VcpkgPortName: azure-template-cpp
-      TestEnv:
-      # NOTE: The CI pipeline uppercases all "Name" values in the TestEnv, so if you
-      # add a mixed case name, be careful to ensure it is read using an upper case
-      # name.
-      - Name: AZURE_SERVICE_DIRECTORY
-        Value: TEMPLATE
