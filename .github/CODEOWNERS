@@ -13,14 +13,14 @@
 ###########
 
 # Catch all for non-code project files and unowned files | folders
-*                        @rickwinter @ahsonkhan @antkmsft @vhvb1989 @gearama @larryo
-/sdk/                    @rickwinter @ahsonkhan @antkmsft @vhvb1989 @gearama @larryo
+*                        @rickwinter @ahsonkhan @antkmsft @vhvb1989 @gearama @LarryOsterman
+/sdk/                    @rickwinter @ahsonkhan @antkmsft @vhvb1989 @gearama @LarryOsterman
 
 # Samples
-/samples/                @rickwinter @ahsonkhan @antkmsft @vhvb1989 @gearama @larryo
+/samples/                @rickwinter @ahsonkhan @antkmsft @vhvb1989 @gearama @LarryOsterman
 
 # PRLabel: %Azure.Core
-/sdk/core/               @rickwinter @ahsonkhan @antkmsft @vhvb1989 @gearama @larryo
+/sdk/core/               @rickwinter @ahsonkhan @antkmsft @vhvb1989 @gearama @LarryOsterman
 
 # PRLabel: %Azure.Identity
 /sdk/identity/           @antkmsft @schaabs @ahsonkhan @rickwinter @vhvb1989 @gearama
@@ -30,13 +30,13 @@
 ###########
 
 # PRLabel: %Attestation
-/sdk/attestation/        @larryo
+/sdk/attestation/        @LarryOsterman
 
 # PRLabel: %KeyVault
 /sdk/keyvault/           @vhvb1989 @gearama @antkmsft @rickwinter
 
 # PRLabel: %Storage
-/sdk/storage/            @vinjiang @katmsft @Jinming-Hu @antkmsft @vhvb1989 @gearama @larryo
+/sdk/storage/            @vinjiang @katmsft @Jinming-Hu @antkmsft @vhvb1989 @gearama @LarryOsterman
 
 # PRLabel: %EngSys
 /sdk/template/           @danieljurek @weshaggard
