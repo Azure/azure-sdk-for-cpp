@@ -558,5 +558,6 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_EQ(Files::Shares::Models::AccessTier::Premium, properties.AccessTier.Value());
     EXPECT_FALSE(properties.AccessTierTransitionState.HasValue());
     EXPECT_FALSE(properties.AccessTierChangedOn.HasValue());
+    shareClient.DeleteIfExists();
   }
 }}} // namespace Azure::Storage::Test
