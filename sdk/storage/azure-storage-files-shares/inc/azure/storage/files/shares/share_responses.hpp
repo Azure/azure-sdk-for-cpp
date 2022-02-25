@@ -187,14 +187,6 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
        * the last modified time of the share.
        */
       DateTime LastModified;
-      /**
-       * Approximate time remaining in the lease period, in seconds.
-       */
-      int32_t LeaseTime = int32_t();
-      /**
-       * Uniquely identifies a share's or file's lease.
-       */
-      std::string LeaseId;
     };
   } // namespace Models
 

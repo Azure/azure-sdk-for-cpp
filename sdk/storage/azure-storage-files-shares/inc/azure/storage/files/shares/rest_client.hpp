@@ -712,7 +712,17 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
        * The approximate size of the data stored in bytes. Note that this value may not include all
        * recently created or recently resized files.
        */
-      int64_t ShareUsageBytes = int64_t();
+      int64_t ShareUsageInBytes = int64_t();
+      /**
+       * The ETag contains a value that you can use to perform operations conditionally, in quotes.
+       */
+      Azure::ETag ETag;
+      /**
+       * Returns the date and time the share was last modified. Any operation that modifies the
+       * share or its properties updates the last modified time. Operations on files do not affect
+       * the last modified time of the share.
+       */
+      DateTime LastModified;
     };
     /**
      * @brief Attributes for a file or directory.
@@ -728,17 +738,17 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       FileAttributes operator|(const FileAttributes& other) const;
       FileAttributes operator&(const FileAttributes& other) const;
       FileAttributes operator^(const FileAttributes& other) const;
-      FileAttributes operator|=(const FileAttributes& other)
+      FileAttributes& operator|=(const FileAttributes& other)
       {
         *this = *this | other;
         return *this;
       }
-      FileAttributes operator&=(const FileAttributes& other)
+      FileAttributes& operator&=(const FileAttributes& other)
       {
         *this = *this & other;
         return *this;
       }
-      FileAttributes operator^=(const FileAttributes& other)
+      FileAttributes& operator^=(const FileAttributes& other)
       {
         *this = *this ^ other;
         return *this;

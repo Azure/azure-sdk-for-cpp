@@ -359,14 +359,25 @@ directive:
   - from: swagger-document
     where: $.definitions
     transform: >
-      $.ShareStats.properties["ShareUsageBytes"]["format"] = "int64";
-      $.ShareStatistics = $.ShareStats;
-      $.ShareStatistics.xml = {"name": "ShareStats"};
       delete $.ShareStats;
   - from: swagger-document
-    where: $["x-ms-paths"]["/{shareName}?restype=share&comp=stats"].get.responses["200"].schema
+    where: $["x-ms-paths"]["/{shareName}?restype=share&comp=stats"].get.responses["200"]
     transform: >
-      $["$ref"] = "#/definitions/ShareStatistics";
+      $.schema = {
+        "description": "Stats for the share.",
+        "type": "object",
+        "x-ms-sealed": false,
+        "x-ms-client-name": "ShareStatistics",
+        "xml": {"name": "ShareStats"},
+        "properties": {
+          "ShareUsageBytes": {
+            "description": "The approximate size of the data stored in bytes. Note that this value may not include all recently created or recently resized files.",
+            "type": "integer",
+            "format": "int64",
+            "x-ms-client-name": "ShareUsageInBytes"
+          }
+        }
+      };
 ```
 
 ### ListShares

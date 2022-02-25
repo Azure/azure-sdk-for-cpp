@@ -1547,7 +1547,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
             if (xmlPath.size() == 2 && xmlPath[0] == XmlTagEnum::kShareStats
                 && xmlPath[1] == XmlTagEnum::kShareUsageBytes)
             {
-              response.ShareUsageBytes = std::stoll(node.Value);
+              response.ShareUsageInBytes = std::stoll(node.Value);
             }
           }
           else if (node.Type == _internal::XmlNodeType::Attribute)
@@ -1560,6 +1560,9 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           }
         }
       }
+      response.ETag = ETag(pRawResponse->GetHeaders().at("ETag"));
+      response.LastModified = DateTime::Parse(
+          pRawResponse->GetHeaders().at("Last-Modified"), Azure::DateTime::DateFormat::Rfc1123);
       return Response<Models::ShareStatistics>(std::move(response), std::move(pRawResponse));
     }
     Response<Models::CreateDirectoryResult> DirectoryClient::Create(
