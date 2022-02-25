@@ -15,9 +15,14 @@ using namespace Azure::Security::Attestation::Models;
 
 namespace Azure { namespace Security { namespace Attestation { namespace Test {
 
-  class AdministrationTests
-      : public Azure::Core::Test::TestBase,
-        public testing::WithParamInterface<std::tuple<std::string, AttestationType>> {
+  struct AttestationTestParam
+  {
+    std::string TypeNameString;
+    AttestationType Type;
+  };
+
+  class AdministrationTests : public Azure::Core::Test::TestBase,
+                              public testing::WithParamInterface<AttestationTestParam> {
   private:
   protected:
     std::shared_ptr<Azure::Core::Credentials::TokenCredential> m_credential;
@@ -28,7 +33,7 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
     {
       Azure::Core::Test::TestBase::SetUpTestBase(AZURE_TEST_RECORDING_DIR);
 
-      std::string const mode(std::get<0>(GetParam()));
+      std::string const mode(GetParam().TypeNameString);
       if (mode == "Shared")
       {
         std::string const shortLocation(GetEnv("LOCATION_SHORT_NAME"));
@@ -71,7 +76,7 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
 
     EXPECT_FALSE(adminClient->ClientVersion().empty());
 
-    AttestationType attestationType(std::get<1>(GetParam()));
+    AttestationType attestationType(GetParam().Type);
     {
       auto policy = adminClient->GetAttestationPolicy(attestationType);
 
@@ -96,18 +101,65 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
     }
   }
 
+  // enum to control the output of the GetTestInput
+  enum class TestCaseType
+  {
+    Get,
+    SetNoSigned,
+    SetSigned,
+    Policy
+  };
+
+  std::vector<AttestationTestParam> GetTestInput(TestCaseType testCaseType)
+  {
+    std::vector<AttestationTestParam> returnCases;
+    std::vector<std::string> typeNameList{"Isolated"}; // everyone support this
+    if (testCaseType == TestCaseType::Get || testCaseType == TestCaseType::SetNoSigned)
+    {
+      typeNameList.emplace_back("AAD");
+      if (testCaseType != TestCaseType::SetNoSigned)
+      {
+        typeNameList.emplace_back("Shared"); // only for GetPolicy
+      }
+    }
+    for (auto const& value : typeNameList)
+    {
+      for (auto const& type :
+           {AttestationType::SgxEnclave, AttestationType::OpenEnclave, AttestationType::Tpm})
+      {
+        returnCases.emplace_back(AttestationTestParam{value, type});
+      }
+    }
+    return returnCases;
+  }
+  std::string GetTestName(testing::TestParamInfo<AdministrationTests::ParamType> const& info)
+  {
+    std::string instanceType = info.param.TypeNameString;
+    return instanceType + "_" + info.param.Type.ToString();
+  }
+
   INSTANTIATE_TEST_SUITE_P(
-      Attestation,
+      AdministrationTestsGet,
       AdministrationTests,
-      testing::Combine(
-          ::testing::Values("Shared", "Aad", "Isolated"),
-          ::testing::Values(
-              AttestationType::SgxEnclave,
-              AttestationType::OpenEnclave,
-              AttestationType::Tpm)),
-      [](testing::TestParamInfo<AdministrationTests::ParamType> const& info) -> std::string {
-        std::string instanceType = std::get<0>(info.param);
-        return instanceType + "_" + std::get<1>(info.param).ToString();
-      });
+      testing::ValuesIn(GetTestInput(TestCaseType::Get)),
+      GetTestName);
+
+  INSTANTIATE_TEST_SUITE_P(
+      AdministrationTestsSetNoSigned,
+      AdministrationTests,
+      testing::ValuesIn(GetTestInput(TestCaseType::SetNoSigned)),
+      GetTestName);
+
+  INSTANTIATE_TEST_SUITE_P(
+      AdministrationTestsSet,
+      AdministrationTests,
+      testing::ValuesIn(GetTestInput(TestCaseType::SetSigned)),
+      GetTestName);
+
+  INSTANTIATE_TEST_SUITE_P(
+      AdministrationTestsPolicy,
+      AdministrationTests,
+      testing::ValuesIn(GetTestInput(TestCaseType::Policy)),
+      GetTestName);
 
 }}}} // namespace Azure::Security::Attestation::Test

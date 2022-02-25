@@ -149,17 +149,17 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
         sgxQuote, {AttestationData{runtimeData, AttestationDataType::Binary}});
   }
 
-  namespace {
-    static std::string GetSuffix(const testing::TestParamInfo<std::string>& info)
-    {
-      return info.param;
-    }
-  } // namespace
+  // namespace {
+  //   static std::string GetSuffix(const testing::TestParamInfo<std::string>& info)
+  //   {
+  //     return info.param;
+  //   }
+  // } // namespace
 
-  INSTANTIATE_TEST_SUITE_P(
-      Attestation,
-      AttestationTests,
-      ::testing::Values("Shared", "Aad", "Isolated"),
-      GetSuffix);
+  // INSTANTIATE_TEST_SUITE_P(
+  //     Attestation,
+  //     AttestationTests,
+  //     ::testing::Values("Shared", "Aad", "Isolated"),
+  //     GetSuffix);
 
 }}}} // namespace Azure::Security::Attestation::Test
