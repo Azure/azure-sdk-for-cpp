@@ -84,12 +84,64 @@ namespace Azure { namespace Security { namespace Attestation {
           m_pipeline(attestationClient.m_pipeline),
           m_tokenValidationOptions(attestationClient.m_tokenValidationOptions){};
 
-    /** @brief Retrieves the attestation policy for the specified attestation type.
+    /**
+     * @brief Retrieves an Attestation Policy from the service.
+     *
+     * @param attestationType Attestation type to be used when retrieving the policy.
+     * @param options Options to be used when retrieving the policy.
+     * @param context User defined context for the operation.
+     * @return Response<Models::AttestationToken<std::string>> The returned policy from the service.
      */
     Response<Models::AttestationToken<std::string>> GetAttestationPolicy(
         Models::AttestationType const& attestationType,
         GetPolicyOptions const& options = GetPolicyOptions(),
         Azure::Core::Context const& context = Azure::Core::Context::ApplicationContext) const;
+
+    /**
+     * @brief Sets the attestation policy for the specified AttestationType.
+     *
+     * @param attestatationType Sets the policy on the specified AttestationType.
+     * @param policyToSet The policy document to set.
+     * @param options Options used when setting the policy, including signer.
+     * @param context User defined context for the operation.
+     * @return Response<Models::AttestationToken<Models::PolicyResult>> The result of the set policy
+     * operation.
+     */
+    Response<Models::AttestationToken<Models::PolicyResult>> SetAttestationPolicy(
+        Models::AttestationType const& attestatationType,
+        std::string const& policyToSet,
+        SetPolicyOptions const& options = SetPolicyOptions(),
+        Azure::Core::Context const& context = Azure::Core::Context::ApplicationContext) const;
+
+    /**
+     * @brief Resets the attestation policy for the specified AttestationType to its default.
+     *
+     * @param attestatationType Sets the policy on the specified AttestationType.
+     * @param options Options used when setting the policy, including signer.
+     * @param context User defined context for the operation.
+     * @return Response<Models::AttestationToken<Models::PolicyResult>> The result of the reset
+     * policy operation.
+     */
+    Response<Models::AttestationToken<Models::PolicyResult>> ResetAttestationPolicy(
+        Models::AttestationType const& attestatationType,
+        SetPolicyOptions const& options = SetPolicyOptions(),
+        Azure::Core::Context const& context = Azure::Core::Context::ApplicationContext) const;
+
+    /**
+     * @brief Returns an Attestation Token object which would be sent to the attestation service to
+     * set an attestation policy.
+     *
+     * @param policyToSet The policy document to set.
+     * @param signingKey Optional Attestation Signing Key to be used to sign the policy.
+     * @return Models::AttestationToken<std::nullptr_t> Attestation token which would be sent to the
+     * attestation service based on this signing key.
+     *
+     * @note: If policyToSet is null, then this generates a policy reset token.
+     */
+    Models::AttestationToken<std::nullptr_t> CreateSetAttestationPolicyToken(
+        Azure::Nullable<std::string> const& policyToSet,
+        Azure::Nullable<AttestationSigningKey> const& signingKey
+        = Azure::Nullable<AttestationSigningKey>()) const;
 
   private:
     Azure::Core::Url m_endpoint;

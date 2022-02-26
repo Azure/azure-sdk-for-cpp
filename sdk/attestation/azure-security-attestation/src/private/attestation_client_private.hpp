@@ -30,10 +30,7 @@ namespace Azure { namespace Security { namespace Attestation { namespace _detail
 
   template <class T> class EmptyDeserializer {
   public:
-    static std::string Deserialize(Azure::Core::Json::_internal::json const&)
-    {
-      return std::string();
-    }
+    static T Deserialize(Azure::Core::Json::_internal::json const&) { return T(); }
   };
 
   template <class T, class TDeserializer = EmptyDeserializer<T>> class AttestationTokenInternal {
@@ -172,7 +169,7 @@ namespace Azure { namespace Security { namespace Attestation { namespace _detail
           std::vector<std::string> pemEncodedChain;
           for (auto x5c : m_token.Header.X509CertificateChain.Value())
           {
-            pemEncodedChain.push_back(Models::_detail::AttestationSignerInternal::PemFromX5c(x5c));
+            pemEncodedChain.push_back(_detail::Cryptography::PemFromBase64(x5c, "CERTIFICATE"));
           }
           returnValue.push_back(
               Models::AttestationSigner{Azure::Nullable<std::string>(), pemEncodedChain});
@@ -327,8 +324,9 @@ namespace Azure { namespace Security { namespace Attestation { namespace _detail
      * @return AttestationTokenInternal<T, TDeserializer> A newly created token object.
      */
     static AttestationTokenInternal<T, TDeserializer> CreateToken(
-        T const& tokenBody,
-        AttestationSigningKey const& tokenSigner = AttestationSigningKey{})
+        Azure::Nullable<T> const& tokenBody,
+        Azure::Nullable<AttestationSigningKey> const& tokenSigner
+        = Azure::Nullable<AttestationSigningKey>{})
     {
       bool isUnsecuredToken = false;
       std::unique_ptr<Azure::Security::Attestation::_detail::Cryptography::X509Certificate>
@@ -336,7 +334,19 @@ namespace Azure { namespace Security { namespace Attestation { namespace _detail
       std::unique_ptr<Azure::Security::Attestation::_detail::Cryptography::AsymmetricKey>
           signingKey;
       Models::AttestationTokenHeader tokenHeader;
-      if (tokenSigner.PemEncodedPrivateKey.empty() && tokenSigner.PemEncodedX509Certificate.empty())
+
+      if (tokenSigner)
+      {
+        // Deserialize the signing key and certificate and use them to create the JWS header.
+        signingCert = Azure::Security::Attestation::_detail::Cryptography::ImportX509Certificate(
+            tokenSigner.Value().PemEncodedX509Certificate);
+        signingKey = Azure::Security::Attestation::_detail::Cryptography::ImportPrivateKey(
+            tokenSigner.Value().PemEncodedPrivateKey);
+
+        tokenHeader.Algorithm = signingCert->GetAlgorithm();
+        tokenHeader.X509CertificateChain = std::vector<std::string>{signingCert->ExportAsBase64()};
+      }
+      else
       {
         // If the private key and certificate are empty, it's an unsecured JWS.
         // An unsecured JWS is represented by an "alg" header with a value of "none" and an
@@ -344,20 +354,13 @@ namespace Azure { namespace Security { namespace Attestation { namespace _detail
         isUnsecuredToken = true;
         tokenHeader.Algorithm = "none"; // Specifies an unsecured attestation token.
       }
-      else
-      {
-        // Deserialize the signing key and certificate and use them to create the JWS header.
-        signingCert = Azure::Security::Attestation::_detail::Cryptography::ImportX509Certificate(
-            tokenSigner.PemEncodedX509Certificate);
-        signingKey = Azure::Security::Attestation::_detail::Cryptography::ImportPrivateKey(
-            tokenSigner.PemEncodedPrivateKey);
-
-        tokenHeader.Algorithm = signingCert->GetAlgorithm();
-        tokenHeader.Type = signingCert->GetKeyType();
-        tokenHeader.X509CertificateChain = std::vector<std::string>{signingCert->ExportAsBase64()};
-      }
       std::string serializedHeader(AttestationTokenHeaderSerializer::Serialize(tokenHeader));
-      std::string serializedBody(TDeserializer::Serialize(tokenBody));
+      std::string serializedBody;
+      if (tokenBody)
+      {
+        serializedBody = TDeserializer::Serialize(tokenBody.Value());
+      }
+
       std::string encodedHeader = Azure::Core::_internal::Base64Url::Base64UrlEncode(
           std::vector<uint8_t>(serializedHeader.begin(), serializedHeader.end()));
       std::string encodedBody = Azure::Core::_internal::Base64Url::Base64UrlEncode(
@@ -428,6 +431,6 @@ namespace Azure { namespace Security { namespace Attestation { namespace _detail
     /**
      * @brief Convert the internal attestation token to a public AttestationToken object.
      */
-    operator Models::AttestationToken<T>&() { return m_token; }
+    operator Models::AttestationToken<T> &() { return m_token; }
   };
 }}}} // namespace Azure::Security::Attestation::_detail

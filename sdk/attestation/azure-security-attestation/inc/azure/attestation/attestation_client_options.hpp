@@ -284,4 +284,20 @@ namespace Azure { namespace Security { namespace Attestation {
     Azure::Nullable<AttestationTokenValidationOptions> TokenValidationOptions{};
   };
 
+  /** @brief Parameters sent to the attestation service when setting an attestation policy.
+   */
+  struct SetPolicyOptions final
+  {
+    /** @brief Optional Signing Key which is used to sign the SetPolicy request.
+     */
+    Azure::Nullable<AttestationSigningKey> SigningKey;
+
+    /** @brief Specifies the options which should be used to validate the attestation token returned
+     * by the attestation service.
+     * @details If not provided by the caller, the token validation options
+     * specified when the @{link AttestationAdministrationClient} was created will be used.
+     */
+    Azure::Nullable<AttestationTokenValidationOptions> TokenValidationOptions{};
+  };
+
 }}} // namespace Azure::Security::Attestation

@@ -8,7 +8,8 @@
  * @remark The following environment variables must be set before running the sample.
  * - ATTESTATION_AAD_URL:  Points to an Attestation Service Instance in AAD mode.
  * - ATTESTATION_ISOLATED_URL:  Points to an Attestation Service Instance in Isolated mode.
- * - LOCATION_SHORT_NAME:  Specifies the short name of an Azure region to use for shared mode operations.
+ * - LOCATION_SHORT_NAME:  Specifies the short name of an Azure region to use for shared mode
+ * operations.
  * - AZURE_TENANT_ID:     Tenant ID for the Azure account.
  * - AZURE_CLIENT_ID:     The Client ID to authenticate the request.
  * - AZURE_CLIENT_SECRET: The client secret.
@@ -17,8 +18,8 @@
 
 #include "get_env.hpp"
 
-#include <azure/identity.hpp>
 #include <azure/attestation.hpp>
+#include <azure/identity.hpp>
 
 #include <chrono>
 #include <iostream>
@@ -34,11 +35,10 @@ void SampleGetOpenIdMetadata()
   // create client
   AttestationClient attestationClient(std::getenv("ATTESTATION_AAD_URL"), clientOptions);
 
-// Retrieve the OpenId metadata from this attestation service instance.
-Azure::Response<AttestationOpenIdMetadata> openIdMetadata = attestationClient.GetOpenIdMetadata();
-std::cout << "Attestation Certificate Endpoint is: " << openIdMetadata.Value.JsonWebKeySetUrl.Value() << std::endl;
-
-
+  // Retrieve the OpenId metadata from this attestation service instance.
+  Azure::Response<AttestationOpenIdMetadata> openIdMetadata = attestationClient.GetOpenIdMetadata();
+  std::cout << "Attestation Certificate Endpoint is: "
+            << openIdMetadata.Value.JsonWebKeySetUrl.Value() << std::endl;
 }
 
 int main()
@@ -54,8 +54,7 @@ int main()
   }
   catch (Azure::Core::RequestFailedException const& e)
   {
-    std::cout << "Attestation Client Exception happened:" << std::endl
-              << e.Message << std::endl;
+    std::cout << "Attestation Client Exception happened:" << std::endl << e.Message << std::endl;
     return 1;
   }
   return 0;

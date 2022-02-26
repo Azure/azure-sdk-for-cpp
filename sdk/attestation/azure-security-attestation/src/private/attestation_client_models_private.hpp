@@ -177,7 +177,6 @@ namespace Azure {
   public:
     AttestationSignerInternal(JsonWebKey const& jwk);
 
-    static std::string PemFromX5c(std::string const& x5c);
     operator AttestationSigner&&() { return std::move(m_signer); }
     static std::string SerializeToJson(AttestationSigner const& signer);
   };
