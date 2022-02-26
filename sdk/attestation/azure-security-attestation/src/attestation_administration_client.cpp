@@ -71,10 +71,6 @@ AttestationAdministrationClient::GetAttestationPolicy(
     GetPolicyOptions const& options,
     Azure::Core::Context const& context) const
 {
-  Log::Write(
-      Logger::Level::Informational,
-      std::string("Get Policy for AttestationType:") + attestationType.ToString());
-
   auto request = AttestationCommonRequest::CreateRequest(
       m_endpoint,
       m_apiVersion,
@@ -155,9 +151,6 @@ AttestationAdministrationClient::SetAttestationPolicy(
     SetPolicyOptions const& options,
     Azure::Core::Context const& context) const
 {
-  Log::Write(
-      Logger::Level::Informational,
-      std::string("Set Policy for AttestationType:") + attestationType.ToString());
   // Calculate a signed (or unsigned) attestation policy token to send to the service.
   Models::AttestationToken<std::nullptr_t> tokenToSend(
       CreateSetAttestationPolicyToken(newAttestationPolicy, options.SigningKey));
@@ -225,9 +218,6 @@ AttestationAdministrationClient::ResetAttestationPolicy(
     SetPolicyOptions const& options,
     Azure::Core::Context const& context) const
 {
-  Log::Write(
-      Logger::Level::Informational,
-      std::string("Set Policy for AttestationType:") + attestationType.ToString());
   // Calculate a signed (or unsigned) attestation policy token to send to the service.
   Models::AttestationToken<std::nullptr_t> tokenToSend(
       CreateSetAttestationPolicyToken(Azure::Nullable<std::string>(), options.SigningKey));

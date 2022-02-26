@@ -27,7 +27,7 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
     ModifyPolicyIsolated,
   };
 
-  enum class InstanceType
+  enum class ServiceInstanceType
   {
     Shared,
     AAD,
@@ -37,7 +37,7 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
   struct PolicyTestParam
   {
     TestCaseType TestType;
-    InstanceType InstanceType;
+    ServiceInstanceType InstanceType;
     AttestationType TeeType;
   };
 
@@ -53,16 +53,16 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
     {
       Azure::Core::Test::TestBase::SetUpTestBase(AZURE_TEST_RECORDING_DIR);
 
-      if (GetParam().InstanceType == InstanceType::Shared)
+      if (GetParam().InstanceType == ServiceInstanceType::Shared)
       {
         std::string const shortLocation(GetEnv("LOCATION_SHORT_NAME"));
         m_endpoint = "https://shared" + shortLocation + "." + shortLocation + ".attest.azure.net";
       }
-      else if (GetParam().InstanceType == InstanceType::AAD)
+      else if (GetParam().InstanceType == ServiceInstanceType::AAD)
       {
         m_endpoint = GetEnv("ATTESTATION_AAD_URL");
       }
-      else if (GetParam().InstanceType == InstanceType::Isolated)
+      else if (GetParam().InstanceType == ServiceInstanceType::Isolated)
       {
         m_endpoint = GetEnv("ATTESTATION_ISOLATED_URL");
       }
@@ -205,22 +205,22 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
           TestCaseType::ModifyPolicyIsolated};
       for (auto const& testCaseType : testTypes)
       {
-        std::vector<InstanceType> typeNameList;
+        std::vector<ServiceInstanceType> typeNameList;
 
         switch (testCaseType)
         {
           case TestCaseType::GetPolicy:
-            typeNameList.emplace_back(InstanceType::AAD);
-            typeNameList.emplace_back(InstanceType::Isolated);
-            typeNameList.emplace_back(InstanceType::Shared);
+            typeNameList.emplace_back(ServiceInstanceType::AAD);
+            typeNameList.emplace_back(ServiceInstanceType::Isolated);
+            typeNameList.emplace_back(ServiceInstanceType::Shared);
             break;
           case TestCaseType::ModifyPolicyIsolated:
-            typeNameList.emplace_back(InstanceType::AAD); // The isolated key will work in AAD mode.
-            typeNameList.emplace_back(InstanceType::Isolated);
+            typeNameList.emplace_back(ServiceInstanceType::AAD); // The isolated key will work in AAD mode.
+            typeNameList.emplace_back(ServiceInstanceType::Isolated);
             break;
           case TestCaseType::ModifyPolicySecured:
           case TestCaseType::ModifyPolicyUnsecured:
-            typeNameList.emplace_back(InstanceType::AAD);
+            typeNameList.emplace_back(ServiceInstanceType::AAD);
             break;
           default:
             throw std::runtime_error("Unknown TestCaseType in GetTestInputs");
@@ -354,13 +354,13 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
       testName += "_";
       switch (testInfo.param.InstanceType)
       {
-        case InstanceType::AAD:
+        case ServiceInstanceType::AAD:
           testName += "AAD";
           break;
-        case InstanceType::Isolated:
+        case ServiceInstanceType::Isolated:
           testName += "Isolated";
           break;
-        case InstanceType::Shared:
+        case ServiceInstanceType::Shared:
           testName += "Shared";
           break;
         default:
