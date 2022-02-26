@@ -243,6 +243,7 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
   {
     switch (GetParam().TestType)
     {
+      // Tests for the GetAttestationPolicy APIs.
       case TestCaseType::GetPolicy: {
         auto adminClient(CreateClient());
 
@@ -278,22 +279,32 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
         }
         break;
       }
+
+      // Modify attestation policies using an unsecured attestation JWS. This exercises the
+      // SetPolicy and ResetPolicy APIs.
       case TestCaseType::ModifyPolicyUnsecured: {
         SetPolicyTest();
         ResetPolicyTest();
       }
 
+      // Modify attestation policies using an ephemeral secured attestation JWS. This exercises the
+      // SetPolicy and ResetPolicy APIs.
       case TestCaseType::ModifyPolicySecured: {
         auto rsaKey(Cryptography::CreateRsaKey(2048));
         auto signingCert(Cryptography::CreateX509CertificateForPrivateKey(
             rsaKey, "CN=TestSetPolicyCertificate"));
-        SetPolicyTest(
+
+        auto signingKey(
             AttestationSigningKey{rsaKey->ExportPrivateKey(), signingCert->ExportAsPEM()});
 
-        ResetPolicyTest(
-            AttestationSigningKey{rsaKey->ExportPrivateKey(), signingCert->ExportAsPEM()});
+        SetPolicyTest(signingKey);
+        ResetPolicyTest(signingKey);
         break;
       }
+
+      // Modify attestation policies using a predefined signing key and certificate.
+      // The key and certificate were created at test resource creation time.
+      // Exercises the SetPolicy and ResetPolicy APIs.
       case TestCaseType::ModifyPolicyIsolated: {
         // In PlaybackMode, the values of ISOLATED_SIGNING_CERTIFICATE and ISOLATED_SIGNING_KEY are
         // replaced with dummy values which cannot be converted into actual certificates. So skip
@@ -338,7 +349,7 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
           testName += "ModifyUnsecured";
           break;
         default:
-          throw std::runtime_error("Unknown instance type");
+          throw std::runtime_error("Unknown test case type");
       }
       testName += "_";
       switch (testInfo.param.InstanceType)

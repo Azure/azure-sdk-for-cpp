@@ -135,8 +135,8 @@ AttestationAdministrationClient::CreateSetAttestationPolicyToken(
   Azure::Nullable<StoredAttestationPolicy> storedPolicy;
   if (newAttestationPolicy)
   {
-    storedPolicy = StoredAttestationPolicy{
-        std::vector<uint8_t>(newAttestationPolicy.Value().begin(), newAttestationPolicy.Value().end())};
+    storedPolicy = StoredAttestationPolicy{std::vector<uint8_t>(
+        newAttestationPolicy.Value().begin(), newAttestationPolicy.Value().end())};
   }
 
   auto tokenToSet(
@@ -288,7 +288,6 @@ AttestationAdministrationClient::ResetAttestationPolicy(
       = AttestationTokenInternal<Models::PolicyResult>(responseToken, returnedResult);
   return Response<AttestationToken<Models::PolicyResult>>(returnedToken, std::move(response));
 }
-
 
 /**
  * @brief Retrieve the attestation signers to validate the attestation token returned from the

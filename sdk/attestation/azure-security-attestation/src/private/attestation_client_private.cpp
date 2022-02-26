@@ -34,7 +34,8 @@ namespace Azure {
       m_signer.CertificateChain = std::vector<std::string>();
       for (const auto& x5c : jwk.x5c.Value())
       {
-        m_signer.CertificateChain.Value().push_back(Azure::Security::Attestation::_detail::Cryptography::PemFromBase64(x5c, "CERTIFICATE"));
+        m_signer.CertificateChain.Value().push_back(
+            Azure::Security::Attestation::_detail::Cryptography::PemFromBase64(x5c, "CERTIFICATE"));
       }
     }
   }
