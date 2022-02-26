@@ -100,7 +100,7 @@ namespace Azure { namespace Security { namespace Attestation {
     /**
      * @brief Sets the attestation policy for the specified AttestationType.
      *
-     * @param attestatationType Sets the policy on the specified AttestationType.
+     * @param attestationType Sets the policy on the specified AttestationType.
      * @param policyToSet The policy document to set.
      * @param options Options used when setting the policy, including signer.
      * @param context User defined context for the operation.
@@ -108,7 +108,7 @@ namespace Azure { namespace Security { namespace Attestation {
      * operation.
      */
     Response<Models::AttestationToken<Models::PolicyResult>> SetAttestationPolicy(
-        Models::AttestationType const& attestatationType,
+        Models::AttestationType const& attestationType,
         std::string const& policyToSet,
         SetPolicyOptions const& options = SetPolicyOptions(),
         Azure::Core::Context const& context = Azure::Core::Context::ApplicationContext) const;
@@ -116,14 +116,14 @@ namespace Azure { namespace Security { namespace Attestation {
     /**
      * @brief Resets the attestation policy for the specified AttestationType to its default.
      *
-     * @param attestatationType Sets the policy on the specified AttestationType.
+     * @param attestationType Sets the policy on the specified AttestationType.
      * @param options Options used when setting the policy, including signer.
      * @param context User defined context for the operation.
      * @return Response<Models::AttestationToken<Models::PolicyResult>> The result of the reset
      * policy operation.
      */
     Response<Models::AttestationToken<Models::PolicyResult>> ResetAttestationPolicy(
-        Models::AttestationType const& attestatationType,
+        Models::AttestationType const& attestationType,
         SetPolicyOptions const& options = SetPolicyOptions(),
         Azure::Core::Context const& context = Azure::Core::Context::ApplicationContext) const;
 
