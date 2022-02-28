@@ -34,14 +34,16 @@ void SampleGetPolicy()
   AttestationAdministrationClientOptions clientOptions;
   // create client
   auto credential = std::make_shared<Azure::Identity::ClientSecretCredential>(
-      std::getenv(AZURE_TENANT_ID), std::getenv(AZURE_CLIENT_ID), std::getenv(AZURE_CLIENT_SECRET));
+      std::getenv("AZURE_TENANT_ID"),
+      std::getenv("AZURE_CLIENT_ID"),
+      std::getenv("AZURE_CLIENT_SECRET"));
   AttestationAdministrationClient adminClient(
       std::getenv("ATTESTATION_AAD_URL"), credential, clientOptions);
 
   // Retrieve the OpenId metadata from this attestation service instance.
   Azure::Response<AttestationToken<std::string>> sgxPolicy
       = adminClient.GetAttestationPolicy(AttestationType::SgxEnclave);
-  std::cout << "SGX Attestation Policy is: " << sgxPolicy.Value.Body.Value() << std::endl;
+  std::cout << "SGX Attestation Policy is: " << sgxPolicy.Value.Body << std::endl;
 }
 
 int main()
