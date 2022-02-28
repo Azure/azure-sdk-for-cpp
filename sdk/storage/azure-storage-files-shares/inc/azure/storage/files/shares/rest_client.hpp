@@ -393,7 +393,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
        */
       int64_t Quota = int64_t();
       /**
-       * Returns the current share provisioned ipos.
+       * Returns the current share provisioned IOPS.
        */
       Nullable<int32_t> ProvisionedIops;
       /**
@@ -425,7 +425,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
        */
       Nullable<DateTime> AccessTierChangedOn;
       /**
-       * Returns the transition state betweeen access tiers, when present.
+       * Returns the transition state between access tiers, when present.
        */
       Nullable<std::string> AccessTierTransitionState;
     };

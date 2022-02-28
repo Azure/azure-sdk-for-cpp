@@ -439,6 +439,8 @@ directive:
       $["x-ms-access-tier-change-time"]["x-nullable"] = true;
       $["x-ms-access-tier-change-time"]["x-ms-client-name"] = "AccessTierChangedOn";
       $["x-ms-access-tier-transition-state"]["x-nullable"] = true;
+      $["x-ms-access-tier-transition-state"].description = "Returns the transition state between access tiers, when present.";
+      $["x-ms-share-provisioned-iops"].description = "Returns the current share provisioned IOPS.";
   - from: swagger-document
     where: $["x-ms-paths"]["/{shareName}?restype=share"].get.responses["200"]
     transform: >
