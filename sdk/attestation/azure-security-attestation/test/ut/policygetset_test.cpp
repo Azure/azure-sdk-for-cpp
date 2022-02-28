@@ -285,6 +285,7 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
       case TestCaseType::ModifyPolicyUnsecured: {
         SetPolicyTest();
         ResetPolicyTest();
+        break;
       }
 
       // Modify attestation policies using an ephemeral secured attestation JWS. This exercises the
