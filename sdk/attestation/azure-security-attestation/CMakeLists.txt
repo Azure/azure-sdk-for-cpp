@@ -51,7 +51,7 @@ set(
     src/attestation_client.cpp
     src/attestation_administration_client.cpp
     src/attestation_client_options.cpp
-    src/attestation_common_request.cpp
+    src/private/attestation_common_request.cpp
     src/private/attestation_deserializers_private.cpp
     src/private/jsonhelpers.cpp
     src/private/attestation_client_private.cpp)

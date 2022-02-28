@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
 
-#include "private/attestation_common_request.hpp"
+#include "attestation_common_request.hpp"
 #include <azure/core/exception.hpp>
 #include <azure/core/http/http.hpp>
 #include <memory>

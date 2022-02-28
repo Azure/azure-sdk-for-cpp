@@ -23,6 +23,12 @@ namespace Azure { namespace Security { namespace Attestation { namespace _detail
 
   struct AttestationCommonRequest final
   {
+    /**
+     *
+     * @brief Create a new request with an API version parameter.
+     *
+     * Used for the GetOpenIdMetadata and other APIs that do not take an API version parameter.
+     */
     static Azure::Core::Http::Request CreateRequest(
         Azure::Core::Url url,
         std::string const& apiVersion,
@@ -42,6 +48,10 @@ namespace Azure { namespace Security { namespace Attestation { namespace _detail
         std::vector<std::string> const& path,
         Azure::Core::IO::BodyStream* content);
 
+    /**
+    * @brief Send a request to the service and process the response.
+    * 
+    */
     static std::unique_ptr<Azure::Core::Http::RawResponse> SendRequest(
         Azure::Core::Http::_internal::HttpPipeline const& pipeline,
         Azure::Core::Http::Request& request,

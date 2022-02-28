@@ -367,7 +367,7 @@ namespace Azure { namespace Security { namespace Attestation { namespace Models 
     Azure::Nullable<std::string> PolicyClaims;
 
     /** @brief If the RuntimeData parameter is specified as being of
-     * {@link Models::DataType}::Binary, this will be the
+     * DataType::Binary, this will be the
      * value of the RuntimeData input.
      */
     Azure::Nullable<std::vector<uint8_t>> EnclaveHeldData;
