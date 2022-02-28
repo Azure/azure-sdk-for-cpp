@@ -141,7 +141,8 @@
     {
       "filename": "**/eng/**",
       "words": [
-        "TEAMPROJECTID"
+        "TEAMPROJECTID",
+        "issecret"
       ]
     },
     {
