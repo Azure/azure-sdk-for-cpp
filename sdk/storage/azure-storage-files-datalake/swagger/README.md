@@ -268,6 +268,7 @@ directive:
     transform: >
       $.operationId = "Path_GetAccessControlList";
       $.parameters[0]["enum"] = ["getAccessControl"];
+      $.parameters.push({"$ref": "#/parameters/ApiVersionParameter"});
       delete $.responses["200"].headers["Accept-Ranges"];
       delete $.responses["200"].headers["Cache-Control"];
       delete $.responses["200"].headers["Content-Disposition"];

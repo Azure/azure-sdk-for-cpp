@@ -31,7 +31,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     /**
      * The version used for the operations to Azure storage services.
      */
-    constexpr static const char* ApiVersion = "2020-02-10";
+    constexpr static const char* ApiVersion = "2020-08-04";
   } // namespace _detail
   namespace Models {
     /**
@@ -410,6 +410,10 @@ namespace Azure { namespace Storage { namespace Blobs {
           std::string,
           Core::_internal::StringExtensions::CaseInsensitiveComparator>
           Metadata;
+      /**
+       * Indicates if version level worm is enabled on this container.
+       */
+      bool HasImmutableStorageWithVersioning = false;
     };
     /**
      * @brief An Azure Storage container.
@@ -609,6 +613,10 @@ namespace Azure { namespace Storage { namespace Blobs {
        * Blob container name.
        */
       std::string BlobContainerName;
+      /**
+       * User-defined tags for this blob.
+       */
+      std::map<std::string, std::string> Tags;
     };
     namespace _detail {
       /**
@@ -701,6 +709,10 @@ namespace Azure { namespace Storage { namespace Blobs {
        * Indicates whether the container's default encryption scope can be overriden.
        */
       bool PreventEncryptionScopeOverride = false;
+      /**
+       * Indicates whether version level worm is enabled on a container.
+       */
+      bool HasImmutableStorageWithVersioning = false;
     };
     /**
      * @brief Response type for #Azure::Storage::Blobs::BlobContainerClient::Delete.
@@ -787,6 +799,12 @@ namespace Azure { namespace Storage { namespace Blobs {
        * @brief Response type for #Azure::Storage::Blobs::BlobContainerClient::Undelete.
        */
       struct UndeleteBlobContainerResult final
+      {
+      };
+      /**
+       * @brief Response type for #Azure::Storage::Blobs::BlobContainerClient::Rename.
+       */
+      struct RenameBlobContainerResult final
       {
       };
       /**
@@ -1056,6 +1074,39 @@ namespace Azure { namespace Storage { namespace Blobs {
       std::vector<ObjectReplicationRule> Rules;
     };
     /**
+     * @brief Specifies the immutability policy mode to set on the blob.
+     */
+    class BlobImmutabilityPolicyMode final {
+    public:
+      BlobImmutabilityPolicyMode() = default;
+      explicit BlobImmutabilityPolicyMode(std::string value) : m_value(std::move(value)) {}
+      bool operator==(const BlobImmutabilityPolicyMode& other) const
+      {
+        return m_value == other.m_value;
+      }
+      bool operator!=(const BlobImmutabilityPolicyMode& other) const { return !(*this == other); }
+      const std::string& ToString() const { return m_value; }
+      AZ_STORAGE_BLOBS_DLLEXPORT const static BlobImmutabilityPolicyMode Unlocked;
+      AZ_STORAGE_BLOBS_DLLEXPORT const static BlobImmutabilityPolicyMode Locked;
+
+    private:
+      std::string m_value;
+    };
+    /**
+     * @brief Immutability policy associated with the blob.
+     */
+    struct BlobImmutabilityPolicy final
+    {
+      /**
+       * The date until which the blob can be protected from being modified or deleted.
+       */
+      DateTime ExpiresOn;
+      /**
+       * Specifies the immutability policy mode set on the blob.
+       */
+      BlobImmutabilityPolicyMode PolicyMode;
+    };
+    /**
      * @brief Properties of a blob.
      */
     struct BlobItemDetails final
@@ -1204,6 +1255,10 @@ namespace Azure { namespace Storage { namespace Blobs {
        */
       Nullable<DateTime> LastAccessedOn;
       /**
+       * Indicates whether the blob has a legal hold.
+       */
+      bool HasLegalHold = false;
+      /**
        * Standard HTTP properties supported by containers and blobs.
        */
       BlobHttpHeaders HttpHeaders;
@@ -1223,6 +1278,10 @@ namespace Azure { namespace Storage { namespace Blobs {
        * Array of ObjectReplicationPolicy.
        */
       std::vector<ObjectReplicationPolicy> ObjectReplicationSourceProperties;
+      /**
+       * Immutability policy associated with the blob.
+       */
+      Nullable<BlobImmutabilityPolicy> ImmutabilityPolicy;
     };
     /**
      * @brief Type of the blob.
@@ -1292,6 +1351,8 @@ namespace Azure { namespace Storage { namespace Blobs {
       UncomittedBlobs = 16,
       Versions = 32,
       Tags = 64,
+      ImmutabilityPolicy = 128,
+      LegalHold = 256,
     };
     inline ListBlobsIncludeFlags operator|(ListBlobsIncludeFlags lhs, ListBlobsIncludeFlags rhs)
     {
@@ -1488,6 +1549,14 @@ namespace Azure { namespace Storage { namespace Blobs {
        * Indicates whether version of this blob is the current version.
        */
       Nullable<bool> IsCurrentVersion;
+      /**
+       * Immutability policy associated with the blob.
+       */
+      Nullable<BlobImmutabilityPolicy> ImmutabilityPolicy;
+      /**
+       * Indicates whether the blob has a legal hold.
+       */
+      bool HasLegalHold = false;
     };
     /**
      * @brief Response type for #Azure::Storage::Blobs::BlobClient::Download.
@@ -1528,6 +1597,10 @@ namespace Azure { namespace Storage { namespace Blobs {
        * Array of ObjectReplicationPolicy.
        */
       std::vector<ObjectReplicationPolicy> ObjectReplicationSourceProperties;
+      /**
+       * Immutability policy associated with the blob.
+       */
+      Nullable<BlobImmutabilityPolicy> ImmutabilityPolicy;
       /**
        * Standard HTTP properties supported by containers and blobs.
        */
@@ -1717,6 +1790,10 @@ namespace Azure { namespace Storage { namespace Blobs {
        * last read or written to.
        */
       Nullable<DateTime> LastAccessedOn;
+      /**
+       * Indicates if a legal hold is present on the blob.
+       */
+      bool HasLegalHold = false;
     };
     /**
      * @brief Required if the blob has associated snapshots. Specify one of the following two
@@ -1811,6 +1888,32 @@ namespace Azure { namespace Storage { namespace Blobs {
        * append blobs.
        */
       Nullable<int64_t> SequenceNumber;
+    };
+    /**
+     * @brief Response type for #Azure::Storage::Blobs::BlobClient::SetImmutabilityPolicy.
+     */
+    struct SetBlobImmutabilityPolicyResult final
+    {
+      /**
+       * Immutability policy associated with the blob.
+       */
+      BlobImmutabilityPolicy ImmutabilityPolicy;
+    };
+    /**
+     * @brief Response type for #Azure::Storage::Blobs::BlobClient::DeleteImmutabilityPolicy.
+     */
+    struct DeleteBlobImmutabilityPolicyResult final
+    {
+    };
+    /**
+     * @brief Response type for #Azure::Storage::Blobs::BlobClient::SetLegalHold.
+     */
+    struct SetBlobLegalHoldResult final
+    {
+      /**
+       * Indicates if the blob has a legal hold.
+       */
+      bool HasLegalHold = bool();
     };
     /**
      * @brief Response type for #Azure::Storage::Blobs::BlobClient::SetMetadata.
@@ -2037,6 +2140,42 @@ namespace Azure { namespace Storage { namespace Blobs {
         Models::CopyStatus CopyStatus;
       };
     } // namespace _detail
+    /**
+     * @brief Response type for #Azure::Storage::Blobs::BlobClient::CopyFromUri.
+     */
+    struct CopyBlobFromUriResult final
+    {
+      /**
+       * The ETag contains a value that you can use to perform operations conditionally. If the
+       * request version is 2011-08-18 or newer, the ETag value will be in quotes.
+       */
+      Azure::ETag ETag;
+      /**
+       * Returns the date and time the container was last modified. Any operation that modifies the
+       * blob, including an update of the blob's metadata or properties, changes the last-modified
+       * time of the blob.
+       */
+      DateTime LastModified;
+      /**
+       * A DateTime value returned by the service that uniquely identifies the blob. The value of
+       * this header indicates the blob version, and may be used in subsequent requests to access
+       * this version of the blob.
+       */
+      Nullable<std::string> VersionId;
+      /**
+       * String identifier for this copy operation.
+       */
+      std::string CopyId;
+      /**
+       * State of the copy operation identified by x-ms-copy-id.
+       */
+      Models::CopyStatus CopyStatus;
+      /**
+       * This response header is returned so that the client can check for the integrity of the
+       * copied content. This header is only returned if the source content MD5 was specified.
+       */
+      Nullable<ContentHash> TransactionalContentHash;
+    };
     /**
      * @brief Response type for #Azure::Storage::Blobs::BlobClient::AbortCopyFromUri.
      */
@@ -2552,6 +2691,50 @@ namespace Azure { namespace Storage { namespace Blobs {
       Nullable<std::string> EncryptionScope;
     };
     /**
+     * @brief Response type for #Azure::Storage::Blobs::BlockBlobClient::UploadFromUri.
+     */
+    struct UploadBlockBlobFromUriResult final
+    {
+      /**
+       * The ETag contains a value that you can use to perform operations conditionally. If the
+       * request version is 2011-08-18 or newer, the ETag value will be in quotes.
+       */
+      Azure::ETag ETag;
+      /**
+       * Returns the date and time the container was last modified. Any operation that modifies the
+       * blob, including an update of the blob's metadata or properties, changes the last-modified
+       * time of the blob.
+       */
+      DateTime LastModified;
+      /**
+       * If the blob has an MD5 hash and this operation is to read the full blob, this response
+       * header is returned so that the client can check for message content integrity.
+       */
+      Nullable<ContentHash> TransactionalContentHash;
+      /**
+       * A DateTime value returned by the service that uniquely identifies the blob. The value of
+       * this header indicates the blob version, and may be used in subsequent requests to access
+       * this version of the blob.
+       */
+      Nullable<std::string> VersionId;
+      /**
+       * The value of this header is set to true if the contents of the request are successfully
+       * encrypted using the specified algorithm, and false otherwise.
+       */
+      bool IsServerEncrypted = bool();
+      /**
+       * The SHA-256 hash of the encryption key used to encrypt the blob. This header is only
+       * returned when the blob was encrypted with a customer-provided key.
+       */
+      Nullable<std::vector<uint8_t>> EncryptionKeySha256;
+      /**
+       * Returns the name of the encryption scope used to encrypt the blob contents and application
+       * metadata.  Note that the absence of this header implies use of the default account
+       * encryption scope.
+       */
+      Nullable<std::string> EncryptionScope;
+    };
+    /**
      * @brief Response type for #Azure::Storage::Blobs::BlockBlobClient::StageBlock.
      */
     struct StageBlockResult final
@@ -2877,6 +3060,16 @@ namespace Azure { namespace Storage { namespace Blobs {
           const Core::Url& url,
           const UndeleteBlobContainerOptions& options,
           const Core::Context& context);
+      struct RenameBlobContainerOptions final
+      {
+        std::string SourceContainerName;
+        Nullable<std::string> SourceLeaseId;
+      };
+      static Response<Models::_detail::RenameBlobContainerResult> Rename(
+          Core::Http::_internal::HttpPipeline& pipeline,
+          const Core::Url& url,
+          const RenameBlobContainerOptions& options,
+          const Core::Context& context);
       struct AcquireBlobContainerLeaseOptions final
       {
         Nullable<int32_t> Duration;
@@ -3058,6 +3251,34 @@ namespace Azure { namespace Storage { namespace Blobs {
           const Core::Url& url,
           const SetBlobHttpHeadersOptions& options,
           const Core::Context& context);
+      struct SetBlobImmutabilityPolicyOptions final
+      {
+        Nullable<DateTime> IfUnmodifiedSince;
+        Nullable<DateTime> ImmutabilityPolicyExpiry;
+        Nullable<Models::BlobImmutabilityPolicyMode> ImmutabilityPolicyMode;
+      };
+      static Response<Models::SetBlobImmutabilityPolicyResult> SetImmutabilityPolicy(
+          Core::Http::_internal::HttpPipeline& pipeline,
+          const Core::Url& url,
+          const SetBlobImmutabilityPolicyOptions& options,
+          const Core::Context& context);
+      struct DeleteBlobImmutabilityPolicyOptions final
+      {
+      };
+      static Response<Models::DeleteBlobImmutabilityPolicyResult> DeleteImmutabilityPolicy(
+          Core::Http::_internal::HttpPipeline& pipeline,
+          const Core::Url& url,
+          const DeleteBlobImmutabilityPolicyOptions& options,
+          const Core::Context& context);
+      struct SetBlobLegalHoldOptions final
+      {
+        bool LegalHold = bool();
+      };
+      static Response<Models::SetBlobLegalHoldResult> SetLegalHold(
+          Core::Http::_internal::HttpPipeline& pipeline,
+          const Core::Url& url,
+          const SetBlobLegalHoldOptions& options,
+          const Core::Context& context);
       struct SetBlobMetadataOptions final
       {
         std::map<std::string, std::string> Metadata;
@@ -3188,6 +3409,9 @@ namespace Azure { namespace Storage { namespace Blobs {
         Nullable<std::string> LeaseId;
         Nullable<std::string> BlobTagsString;
         Nullable<bool> SealBlob;
+        Nullable<DateTime> ImmutabilityPolicyExpiry;
+        Nullable<Models::BlobImmutabilityPolicyMode> ImmutabilityPolicyMode;
+        Nullable<bool> LegalHold;
       };
       static Response<Models::_detail::StartBlobCopyFromUriResult> StartCopyFromUri(
           Core::Http::_internal::HttpPipeline& pipeline,
@@ -3211,7 +3435,16 @@ namespace Azure { namespace Storage { namespace Blobs {
         Nullable<std::string> LeaseId;
         Nullable<std::vector<uint8_t>> SourceContentMD5;
         Nullable<std::string> BlobTagsString;
+        Nullable<DateTime> ImmutabilityPolicyExpiry;
+        Nullable<Models::BlobImmutabilityPolicyMode> ImmutabilityPolicyMode;
+        Nullable<bool> LegalHold;
+        Nullable<std::vector<uint8_t>> SourceContentcrc64;
       };
+      static Response<Models::CopyBlobFromUriResult> CopyFromUri(
+          Core::Http::_internal::HttpPipeline& pipeline,
+          const Core::Url& url,
+          const CopyBlobFromUriOptions& options,
+          const Core::Context& context);
       struct AbortBlobCopyFromUriOptions final
       {
         std::string CopyId;
@@ -3241,6 +3474,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         Nullable<std::string> Snapshot;
         Nullable<std::string> VersionId;
         Nullable<std::string> IfTags;
+        Nullable<std::string> LeaseId;
       };
       static Response<std::map<std::string, std::string>> GetTags(
           Core::Http::_internal::HttpPipeline& pipeline,
@@ -3254,6 +3488,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         Nullable<std::vector<uint8_t>> TransactionalContentMD5;
         Nullable<std::vector<uint8_t>> TransactionalContentCrc64;
         Nullable<std::string> IfTags;
+        Nullable<std::string> LeaseId;
       };
       static Response<Models::SetBlobTagsResult> SetTags(
           Core::Http::_internal::HttpPipeline& pipeline,
@@ -3286,6 +3521,9 @@ namespace Azure { namespace Storage { namespace Blobs {
         int64_t BlobContentLength = int64_t();
         Nullable<int64_t> BlobSequenceNumber;
         Nullable<std::string> BlobTagsString;
+        Nullable<DateTime> ImmutabilityPolicyExpiry;
+        Nullable<Models::BlobImmutabilityPolicyMode> ImmutabilityPolicyMode;
+        Nullable<bool> LegalHold;
       };
       static Response<Models::CreatePageBlobResult> Create(
           Core::Http::_internal::HttpPipeline& pipeline,
@@ -3475,6 +3713,9 @@ namespace Azure { namespace Storage { namespace Blobs {
         ETag IfNoneMatch;
         Nullable<std::string> IfTags;
         Nullable<std::string> BlobTagsString;
+        Nullable<DateTime> ImmutabilityPolicyExpiry;
+        Nullable<Models::BlobImmutabilityPolicyMode> ImmutabilityPolicyMode;
+        Nullable<bool> LegalHold;
       };
       static Response<Models::CreateAppendBlobResult> Create(
           Core::Http::_internal::HttpPipeline& pipeline,
@@ -3572,6 +3813,9 @@ namespace Azure { namespace Storage { namespace Blobs {
         ETag IfNoneMatch;
         Nullable<std::string> IfTags;
         Nullable<std::string> BlobTagsString;
+        Nullable<DateTime> ImmutabilityPolicyExpiry;
+        Nullable<Models::BlobImmutabilityPolicyMode> ImmutabilityPolicyMode;
+        Nullable<bool> LegalHold;
         Nullable<std::vector<uint8_t>> TransactionalContentCrc64;
       };
       static Response<Models::UploadBlockBlobResult> Upload(
@@ -3579,6 +3823,42 @@ namespace Azure { namespace Storage { namespace Blobs {
           const Core::Url& url,
           Core::IO::BodyStream& requestBody,
           const UploadBlockBlobOptions& options,
+          const Core::Context& context);
+      struct UploadBlockBlobFromUriOptions final
+      {
+        std::string BlobContentType;
+        std::string BlobContentEncoding;
+        std::string BlobContentLanguage;
+        std::vector<uint8_t> BlobContentMD5;
+        std::string BlobCacheControl;
+        std::map<std::string, std::string> Metadata;
+        Nullable<std::string> LeaseId;
+        std::string BlobContentDisposition;
+        Nullable<std::string> EncryptionKey;
+        Nullable<std::vector<uint8_t>> EncryptionKeySha256;
+        Nullable<std::string> EncryptionAlgorithm;
+        Nullable<std::string> EncryptionScope;
+        Nullable<Models::AccessTier> Tier;
+        Nullable<DateTime> IfModifiedSince;
+        Nullable<DateTime> IfUnmodifiedSince;
+        ETag IfMatch;
+        ETag IfNoneMatch;
+        Nullable<std::string> IfTags;
+        Nullable<DateTime> SourceIfModifiedSince;
+        Nullable<DateTime> SourceIfUnmodifiedSince;
+        ETag SourceIfMatch;
+        ETag SourceIfNoneMatch;
+        Nullable<std::string> SourceIfTags;
+        Nullable<std::vector<uint8_t>> SourceContentMD5;
+        Nullable<std::string> BlobTagsString;
+        std::string CopySource;
+        Nullable<bool> CopySourceBlobProperties;
+        Nullable<std::vector<uint8_t>> SourceContentcrc64;
+      };
+      static Response<Models::UploadBlockBlobFromUriResult> UploadFromUri(
+          Core::Http::_internal::HttpPipeline& pipeline,
+          const Core::Url& url,
+          const UploadBlockBlobFromUriOptions& options,
           const Core::Context& context);
       struct StageBlockBlobBlockOptions final
       {
@@ -3643,6 +3923,9 @@ namespace Azure { namespace Storage { namespace Blobs {
         ETag IfNoneMatch;
         Nullable<std::string> IfTags;
         Nullable<std::string> BlobTagsString;
+        Nullable<DateTime> ImmutabilityPolicyExpiry;
+        Nullable<Models::BlobImmutabilityPolicyMode> ImmutabilityPolicyMode;
+        Nullable<bool> LegalHold;
       };
       static Response<Models::CommitBlockListResult> CommitBlockList(
           Core::Http::_internal::HttpPipeline& pipeline,
