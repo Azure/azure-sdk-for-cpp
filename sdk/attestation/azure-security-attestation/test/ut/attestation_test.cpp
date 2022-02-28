@@ -3,17 +3,28 @@
 
 #include "attestation_collateral.hpp"
 #include "azure/attestation/attestation_client.hpp"
-#include "azure/identity/client_secret_credential.hpp"
+#include <azure/core/internal/json/json.hpp>
 #include <azure/core/test/test_base.hpp>
+#include <azure/identity/client_secret_credential.hpp>
 #include <gtest/gtest.h>
+#include <tuple>
 
 using namespace Azure::Security::Attestation;
+using namespace Azure::Security::Attestation::Models;
 using namespace Azure::Core;
 
 namespace Azure { namespace Security { namespace Attestation { namespace Test {
 
-  class AttestationTests : public Azure::Core::Test::TestBase,
-                           public testing::WithParamInterface<std::string> {
+  enum class InstanceType
+  {
+    Shared,
+    AAD,
+    Isolated
+  };
+
+  class AttestationTests
+      : public Azure::Core::Test::TestBase,
+        public testing::WithParamInterface<std::tuple<InstanceType, AttestationType>> {
   private:
   protected:
     std::shared_ptr<Azure::Core::Credentials::TokenCredential> m_credential;
@@ -24,17 +35,17 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
     {
       Azure::Core::Test::TestBase::SetUpTestBase(AZURE_TEST_RECORDING_DIR);
 
-      std::string mode(GetParam());
-      if (mode == "Shared")
+      InstanceType instanceType(std::get<0>(GetParam()));
+      if (instanceType == InstanceType::Shared)
       {
         std::string shortLocation(GetEnv("LOCATION_SHORT_NAME"));
         m_endpoint = "https://shared" + shortLocation + "." + shortLocation + ".attest.azure.net";
       }
-      else if (mode == "Aad")
+      else if (instanceType == InstanceType::AAD)
       {
         m_endpoint = GetEnv("ATTESTATION_AAD_URL");
       }
-      else if (mode == "Isolated")
+      else if (instanceType == InstanceType::Isolated)
       {
         m_endpoint = GetEnv("ATTESTATION_ISOLATED_URL");
       }
@@ -68,6 +79,40 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
 
       return InitTestClient<AttestationClient, AttestationClientOptions>(
           m_endpoint, credential, options);
+    }
+
+    void ValidateAttestResponse(
+        Azure::Response<AttestationToken<AttestationResult>> const& response,
+        Azure::Nullable<AttestationData> data = Azure::Nullable<AttestationData>())
+    {
+      EXPECT_TRUE(response.Value.Issuer);
+      if (!m_testContext.IsPlaybackMode())
+      {
+        EXPECT_EQ(m_endpoint, response.Value.Issuer.Value());
+      }
+      EXPECT_TRUE(response.Value.Body.SgxMrEnclave);
+      EXPECT_TRUE(response.Value.Body.SgxMrSigner);
+      EXPECT_TRUE(response.Value.Body.SgxSvn);
+      EXPECT_TRUE(response.Value.Body.SgxProductId);
+      if (data)
+      {
+        if (data.Value().DataType == AttestationDataType::Json)
+        {
+          EXPECT_TRUE(response.Value.Body.RuntimeClaims);
+          EXPECT_FALSE(response.Value.Body.EnclaveHeldData);
+          // canonicalize the JSON sent to the service before checking with the service output.
+          auto sentJson(Azure::Core::Json::_internal::json::parse(data.Value().Data));
+          EXPECT_EQ(sentJson.dump(), response.Value.Body.RuntimeClaims.Value());
+        }
+        else
+        {
+          EXPECT_FALSE(response.Value.Body.RuntimeClaims);
+          EXPECT_TRUE(response.Value.Body.EnclaveHeldData);
+          // If we expected binary, the EnclaveHeldData in the response should be the value sent.
+          EXPECT_EQ(data.Value().Data, response.Value.Body.EnclaveHeldData.Value());
+
+        }
+      }
     }
   };
 
@@ -113,11 +158,24 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
     }
   }
 
-  TEST_P(AttestationTests, SimpleAttestOpenEnclave)
+  TEST_P(AttestationTests, SimpleAttest)
   {
     auto client(CreateClient());
-    auto report = AttestationCollateral::OpenEnclaveReport();
 
+    if (std::get<1>(GetParam()) == AttestationType::OpenEnclave)
+    {
+      auto report = AttestationCollateral::OpenEnclaveReport();
+      auto attestResponse = client->AttestOpenEnclave(report);
+      ValidateAttestResponse(attestResponse);
+    }
+    else if (std::get<1>(GetParam()) == AttestationType::SgxEnclave)
+    {
+      auto quote = AttestationCollateral::SgxQuote();
+      auto attestResponse = client->AttestSgxEnclave(quote);
+      ValidateAttestResponse(attestResponse);
+    }
+
+    auto report = AttestationCollateral::OpenEnclaveReport();
     auto attestResponse = client->AttestOpenEnclave(report);
   }
 
@@ -129,37 +187,76 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
     auto attestResponse = client->AttestSgxEnclave(sgxQuote);
   }
 
-  TEST_P(AttestationTests, AttestOpenEnclaveWithRuntimeData)
+  TEST_P(AttestationTests, AttestWithRuntimeData)
   {
     auto client(CreateClient());
-    auto report = AttestationCollateral::OpenEnclaveReport();
     auto runtimeData = AttestationCollateral::RuntimeData();
 
-    auto attestResponse = client->AttestOpenEnclave(
-        report, {AttestationData{runtimeData, AttestationDataType::Binary}});
+    if (std::get<1>(GetParam()) == AttestationType::OpenEnclave)
+    {
+      auto report = AttestationCollateral::OpenEnclaveReport();
+      AttestationData data{runtimeData, AttestationDataType::Binary};
+      auto attestResponse = client->AttestOpenEnclave(report, {data});
+      ValidateAttestResponse(attestResponse, data);
+    }
+    else if (std::get<1>(GetParam()) == AttestationType::SgxEnclave)
+    {
+      auto quote = AttestationCollateral::SgxQuote();
+      AttestationData data{runtimeData, AttestationDataType::Binary};
+      auto attestResponse = client->AttestSgxEnclave(quote, {data});
+      ValidateAttestResponse(attestResponse, data);
+    }
   }
-
-  TEST_P(AttestationTests, AttestSgxEnclaveWithRuntimeData)
+  TEST_P(AttestationTests, AttestWithRuntimeDataJson)
   {
     auto client(CreateClient());
-    auto sgxQuote = AttestationCollateral::SgxQuote();
     auto runtimeData = AttestationCollateral::RuntimeData();
 
-    auto attestResponse = client->AttestSgxEnclave(
-        sgxQuote, {AttestationData{runtimeData, AttestationDataType::Binary}});
+    if (std::get<1>(GetParam()) == AttestationType::OpenEnclave)
+    {
+      auto report = AttestationCollateral::OpenEnclaveReport();
+      AttestationData data{runtimeData, AttestationDataType::Json};
+      auto attestResponse = client->AttestOpenEnclave(report, {data});
+      ValidateAttestResponse(attestResponse, data);
+    }
+    else if (std::get<1>(GetParam()) == AttestationType::SgxEnclave)
+    {
+      auto quote = AttestationCollateral::SgxQuote();
+      AttestationData data{runtimeData, AttestationDataType::Json};
+      auto attestResponse = client->AttestSgxEnclave(quote, {data});
+      ValidateAttestResponse(attestResponse, data);
+    }
   }
 
   namespace {
-    static std::string GetSuffix(const testing::TestParamInfo<std::string>& info)
+    static std::string GetSuffix(const testing::TestParamInfo<AttestationTests::ParamType>& info)
     {
-      return info.param;
+      std::string rv = std::get<1>(info.param).ToString();
+      rv += "_";
+      switch (std::get<0>(info.param))
+      {
+        case InstanceType::Shared:
+          rv += "Shared";
+          break;
+        case InstanceType::AAD:
+          rv += "Aad";
+          break;
+        case InstanceType::Isolated:
+          rv += "Isolated";
+          break;
+        default:
+          throw std::runtime_error("Unknown instance type");
+      }
+      return rv;
     }
   } // namespace
 
   INSTANTIATE_TEST_SUITE_P(
       Attestation,
       AttestationTests,
-      ::testing::Values("Shared", "Aad", "Isolated"),
+      ::testing::Combine(
+          ::testing::Values(InstanceType::Shared, InstanceType::AAD, InstanceType::Isolated),
+          ::testing::Values(AttestationType::OpenEnclave, AttestationType::SgxEnclave)),
       GetSuffix);
 
 }}}} // namespace Azure::Security::Attestation::Test

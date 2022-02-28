@@ -10,7 +10,8 @@ set(CMAKE_CXX_STANDARD_REQUIRED True)
 add_executable (
   attestation-attestation
   attestation.cpp
-)
+  attestation_collateral.cpp 
+  attestation_collateral.hpp)
 
 create_per_service_target_build(attestation-attestation attestation)
 

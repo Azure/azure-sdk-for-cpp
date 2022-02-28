@@ -159,12 +159,13 @@ namespace Azure { namespace Security { namespace Attestation { namespace _detail
 
     JsonOptional::SetIfExists(result.SgxIsDebuggable, parsedJson, "x-ms-sgx-is-debuggable");
     JsonOptional::SetIfExists(result.SgxProductId, parsedJson, "x-ms-sgx-product-id");
+    JsonOptional::SetIfExists(result.SgxSvn, parsedJson, "x-ms-sgx-svn");
     JsonOptional::SetIfExists<std::string, std::vector<uint8_t>>(
         result.SgxMrEnclave, parsedJson, "x-ms-sgx-mrenclave", JsonHelpers::HexStringToBinary);
     JsonOptional::SetIfExists<std::string, std::vector<uint8_t>>(
         result.SgxMrSigner, parsedJson, "x-ms-sgx-mrsigner", JsonHelpers::HexStringToBinary);
     JsonOptional::SetIfExists<std::string, std::vector<uint8_t>>(
-        result.SgxEnclaveHeldData,
+        result.EnclaveHeldData,
         parsedJson,
         "x-ms-sgx-ehd",
         Azure::Core::_internal::Base64Url::Base64UrlDecode);

@@ -370,7 +370,7 @@ namespace Azure { namespace Security { namespace Attestation { namespace Models 
      * {@link Models::DataType}::Binary, this will be the
      * value of the RuntimeData input.
      */
-    Azure::Nullable<std::vector<uint8_t>> SgxEnclaveHeldData;
+    Azure::Nullable<std::vector<uint8_t>> EnclaveHeldData;
 
     /** @brief  The verifier which generated this AttestationResult. */
     Azure::Nullable<std::string> VerifierType;

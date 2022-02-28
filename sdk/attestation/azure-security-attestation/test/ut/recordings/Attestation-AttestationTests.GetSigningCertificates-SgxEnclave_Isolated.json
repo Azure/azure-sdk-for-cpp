@@ -4,27 +4,7 @@
       "Headers": {
         "content-type": "application/json",
         "user-agent": "azsdk-cpp-Attestation/1.0.0-beta.1 (Windows 10 Enterprise 6.3 22000 22000.1.amd64fre.co_release.210604-1628)",
-        "x-ms-client-request-id": "08b060b2-25f4-4b39-4720-2ebbb1a5a785"
-      },
-      "Method": "GET",
-      "Response": {
-        "BODY": "{\"token\":\"eyJhbGciOiJSUzI1NiIsImprdSI6Imh0dHBzOi8vY3BsYXJyeW9hdHRlc3RhdGlvbmlzby53dXMuYXR0ZXN0LmF6dXJlLm5ldC9jZXJ0cyIsImtpZCI6InJQdEJHUldUbFBtenM1dTM1TDBRUkQ5V2R5bWVLUFJ4dGVUZVRsd04wRWM9IiwidHlwIjoiSldUIn0.eyJleHAiOjE2NDYwODE1NzgsImlhdCI6MTY0NjA3Nzk3OCwiaXNzIjoiaHR0cHM6Ly9jcGxhcnJ5b2F0dGVzdGF0aW9uaXNvLnd1cy5hdHRlc3QuYXp1cmUubmV0IiwibmJmIjoxNjQ2MDc3OTc4LCJ4LW1zLXBvbGljeSI6ImV5SmhiR2NpT2lKdWIyNWxJbjAuLiJ9.HeQGhEpC1WmEeMjG1RbPU9_VWhQ6wM96JzQ4PK5RQzkPxGboJ78r32qyLpK9ssNnRp--34cCKN6XkLTfFUP5cMYGydPeX6KH-mfcL4PwHQ-y_YVE8aImXlusooHqDkrJWtOGew8dv4rJkjaTsP8ck5tFeD107XV-R0G-D--VwbHQcTHviIDFY8uc5jb0XoEElLkEJ57FJsF3R_Kx7EvBZVK9BWwpxDfcFF6M_SqkrwCVqItj9WEKrHdk3j6CcTDr6RsbiXMVZM2ALqWcTvGlM8n-CiNBjhO6kvZDgE6BtMWJB0BHDhQ8glhbER_FXFvijfUuHIlJUidqvzf-Iiak8g\"}",
-        "REASON_PHRASE": "OK",
-        "STATUS_CODE": "200",
-        "content-length": "751",
-        "content-type": "application/json; charset=utf-8",
-        "date": "Mon, 28 Feb 2022 19:52:58 GMT",
-        "server": "Kestrel",
-        "x-ms-maa-service-version": "1.10.01857.0001",
-        "x-ms-request-id": "00-41933f404037b6898703680d6bcbeec5-0000000000000000-00"
-      },
-      "Url": "https://REDACTED.wus.attest.azure.net/policies/Tpm?api-version=2020-10-01"
-    },
-    {
-      "Headers": {
-        "content-type": "application/json",
-        "user-agent": "azsdk-cpp-Attestation/1.0.0-beta.1 (Windows 10 Enterprise 6.3 22000 22000.1.amd64fre.co_release.210604-1628)",
-        "x-ms-client-request-id": "02fb46d4-7401-40e2-6160-b7d726b5f9ed"
+        "x-ms-client-request-id": "c778ad05-1676-404c-4967-acb5aae38edc"
       },
       "Method": "GET",
       "Response": {
@@ -33,10 +13,10 @@
         "STATUS_CODE": "200",
         "content-length": "27632",
         "content-type": "application/json; charset=utf-8",
-        "date": "Mon, 28 Feb 2022 19:52:58 GMT",
+        "date": "Mon, 28 Feb 2022 19:52:48 GMT",
         "server": "Kestrel",
         "x-ms-maa-service-version": "1.10.01857.0001",
-        "x-ms-request-id": "00-9c9a66ce5d4d2abbe445ee51d8062461-0000000000000000-00"
+        "x-ms-request-id": "00-862153b1e1be037abbd752dc2310934a-0000000000000000-00"
       },
       "Url": "https://REDACTED.wus.attest.azure.net/certs"
     }
