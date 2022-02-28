@@ -24,9 +24,9 @@ namespace Azure { namespace Security { namespace Attestation {
    * (think: "encrypted VM" or "encrypted container"). But there's one key attribute of the enclave:
    * It is encrypted.That means that
    * if data is sent from the enclave, there is no way of knowing that the data came from the
-   * enclave. And even worse, there is no way of securely communicating with the enclave (since the enclave
-   * is fully isolated from the host, all information passed into the enclave has to go through its
-   * host first).
+   * enclave. And even worse, there is no way of securely communicating with the enclave (since the
+   * enclave is fully isolated from the host, all information passed into the enclave has to go
+   * through its host first).
    *
    * To solve the communication problem, the Attest API can be used to facilitate what is
    * known as the "Secure Key Release" (SKR) protocol.
@@ -167,8 +167,8 @@ namespace Azure { namespace Security { namespace Attestation {
      *
      * Retrieve the OpenID metadata for this attestation service instance..
      *
-     * @return an \ref Models::AttestationOpenIdMetadata object containing metadata about the specified service
-     * instance.
+     * @return an \ref Models::AttestationOpenIdMetadata object containing metadata about the
+     * specified service instance.
      */
     Response<Models::AttestationOpenIdMetadata> GetOpenIdMetadata(
         Azure::Core::Context const& context = Azure::Core::Context::ApplicationContext) const;
@@ -176,7 +176,8 @@ namespace Azure { namespace Security { namespace Attestation {
     /**
      * @brief Retrieve the attestation signing certificates for this attestation instance.
      *
-     * @returns A Models::AttestationSigningCertificateResult containing a list of certificates one of which will be used to validate tokens received by the attestation service.
+     * @returns A Models::AttestationSigningCertificateResult containing a list of certificates one
+     * of which will be used to validate tokens received by the attestation service.
      */
     Response<Models::AttestationSigningCertificateResult> GetAttestationSigningCertificates(
         Azure::Core::Context const& context = Azure::Core::Context::ApplicationContext) const;

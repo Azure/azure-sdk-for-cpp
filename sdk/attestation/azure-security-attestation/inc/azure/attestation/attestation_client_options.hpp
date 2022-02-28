@@ -141,7 +141,7 @@ namespace Azure { namespace Security { namespace Attestation {
   struct AttestationAdministrationClientOptions final : public Azure::Core::_internal::ClientOptions
   {
     /** @brief Version to use when communicating with the attestation service.
-    */
+     */
     ServiceVersion Version;
     /** @brief Options sent when validating tokens received by the attestation service.
      */

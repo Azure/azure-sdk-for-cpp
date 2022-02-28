@@ -49,9 +49,9 @@ namespace Azure { namespace Security { namespace Attestation { namespace _detail
         Azure::Core::IO::BodyStream* content);
 
     /**
-    * @brief Send a request to the service and process the response.
-    * 
-    */
+     * @brief Send a request to the service and process the response.
+     *
+     */
     static std::unique_ptr<Azure::Core::Http::RawResponse> SendRequest(
         Azure::Core::Http::_internal::HttpPipeline const& pipeline,
         Azure::Core::Http::Request& request,
