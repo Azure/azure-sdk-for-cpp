@@ -145,10 +145,16 @@ Azure::Core::Credentials::AccessToken ChallengeClientSecretCredential::GetToken(
     body << m_requestBody;
     {
       auto const& scopes = tokenRequestContext.Scopes;
+      body << "&response_type=token";
       if (!scopes.empty())
       {
         body << "&scope=" << TokenCredentialImpl::FormatScopes(scopes, m_isAdfs);
       }
+      
+    /* if (tokenRequestContext.TenantId)
+      {
+        body << "&tenantId=" << tokenRequestContext.TenantId.Value();
+      }*/
     }
 
     auto request = std::make_unique<TokenCredentialImpl::TokenRequest>(

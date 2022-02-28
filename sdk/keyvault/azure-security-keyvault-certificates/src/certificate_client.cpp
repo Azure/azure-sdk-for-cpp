@@ -76,7 +76,7 @@ CertificateClient::CertificateClient(
         = {{_internal::UrlScope::GetScopeFromUrl(m_vaultUrl)}};
 
     perRetrypolicies.emplace_back(
-        std::make_unique<BearerTokenAuthenticationPolicy>(credential, std::move(tokenContext)));
+        std::make_unique<ChallengeBasedAuthenticationPolicy>(credential, std::move(tokenContext)));
   }
   std::vector<std::unique_ptr<HttpPolicy>> perCallpolicies;
 

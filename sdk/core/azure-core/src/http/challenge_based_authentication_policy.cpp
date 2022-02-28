@@ -21,22 +21,23 @@ std::unique_ptr<RawResponse> ChallengeBasedAuthenticationPolicy::Send(
     auto rawData = result->GetHeaders().find("www-authenticate");
     if (rawData != result->GetHeaders().end())
     {
-      ChallengeParameters challenge(rawData->second);
-      Credentials::TokenRequestContext tokenRequestContext;
-      
-      tokenRequestContext.TenantId = std::move(challenge.TenantId);
-      tokenRequestContext.AuthorizationUri = std::move(challenge.AuthorizationUri);
-      tokenRequestContext.Scopes = std::move(challenge.Scopes);
-
+      if (std::chrono::system_clock::now() > (m_accessToken.ExpiresOn - std::chrono::minutes(2)))
       {
-        std::lock_guard<std::mutex> lock(m_accessTokenMutex);
-        m_accessToken = m_credential->GetToken(tokenRequestContext, context);
-        request.SetHeader("authorization", "Bearer " + m_accessToken.Token);
-      }
+        ChallengeParameters challenge(rawData->second);
+        Credentials::TokenRequestContext tokenRequestContext;
 
-      return nextPolicy.Send(request, context);
+        tokenRequestContext.TenantId = std::move(challenge.TenantId);
+        tokenRequestContext.AuthorizationUri = std::move(challenge.AuthorizationUri);
+        tokenRequestContext.Scopes = std::move(m_tokenRequestContext.Scopes);
+
+        {
+          std::lock_guard<std::mutex> lock(m_accessTokenMutex);
+          m_accessToken = m_credential->GetToken(tokenRequestContext, context);
+          request.SetHeader("authorization", "Bearer " + m_accessToken.Token);
+        }
+      }
     }
-    
+    return nextPolicy.Send(request, context);
   }
 
   return result;
@@ -95,6 +96,7 @@ void ChallengeParameters::ProcessFragment(std::string const& fragment)
       AuthorizationUri = Url(subParts[1]);
       // auth tenant is part of the authorization uri
       TenantId = AuthorizationUri.GetPath();
+      AuthorizationUri.AppendPath("oauth2/v2.0/token");
     }
     // scopes are either resource or scope
     else if (subParts[0] == _detail::ResourceName)
