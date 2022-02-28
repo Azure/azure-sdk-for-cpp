@@ -1793,7 +1793,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       /**
        * Indicates if a legal hold is present on the blob.
        */
-      bool HasLegalHold = bool();
+      bool HasLegalHold = false;
     };
     /**
      * @brief Required if the blob has associated snapshots. Specify one of the following two

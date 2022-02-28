@@ -3855,8 +3855,11 @@ namespace Azure { namespace Storage { namespace Blobs {
         response.ImmutabilityPolicy.Value().PolicyMode = Models::BlobImmutabilityPolicyMode(
             pRawResponse->GetHeaders().at("x-ms-immutability-policy-mode"));
       }
-      response.HasLegalHold
-          = pRawResponse->GetHeaders().at("x-ms-legal-hold") == std::string("true");
+      if (pRawResponse->GetHeaders().count("x-ms-legal-hold") != 0)
+      {
+        response.HasLegalHold
+            = pRawResponse->GetHeaders().at("x-ms-legal-hold") == std::string("true");
+      }
       return Response<Models::BlobProperties>(std::move(response), std::move(pRawResponse));
     }
     Response<Models::DeleteBlobResult> BlobClient::Delete(

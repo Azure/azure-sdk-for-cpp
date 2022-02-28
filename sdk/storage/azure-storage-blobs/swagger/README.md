@@ -1040,6 +1040,8 @@ directive:
       $["x-ms-immutability-policy-mode"]["x-ms-client-path"] = "ImmutabilityPolicy.PolicyMode";
       $["x-ms-immutability-policy-until-date"]["x-ms-client-path"] = "ImmutabilityPolicy.ExpiresOn";
       $["x-ms-legal-hold"]["x-ms-client-name"] = "HasLegalHold";
+      $["x-ms-legal-hold"]["x-ms-client-default"] = false;
+      $["x-ms-legal-hold"]["x-nullable"] = true;
       delete $["Accept-Ranges"];
       delete $["x-ms-or"];
       $["x-ms-meta"].description = "A set of name-value pair associated with this blob.";
