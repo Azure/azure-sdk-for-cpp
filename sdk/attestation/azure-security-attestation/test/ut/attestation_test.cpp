@@ -110,7 +110,6 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
           EXPECT_TRUE(response.Value.Body.EnclaveHeldData);
           // If we expected binary, the EnclaveHeldData in the response should be the value sent.
           EXPECT_EQ(data.Value().Data, response.Value.Body.EnclaveHeldData.Value());
-
         }
       }
     }

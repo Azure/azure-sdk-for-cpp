@@ -22,9 +22,8 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
     Isolated
   };
 
-  class MetadataTests
-      : public Azure::Core::Test::TestBase,
-        public testing::WithParamInterface<InstanceType> {
+  class MetadataTests : public Azure::Core::Test::TestBase,
+                        public testing::WithParamInterface<InstanceType> {
   private:
   protected:
     std::shared_ptr<Azure::Core::Credentials::TokenCredential> m_credential;

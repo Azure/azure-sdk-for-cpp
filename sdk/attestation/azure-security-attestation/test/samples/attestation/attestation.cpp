@@ -43,7 +43,7 @@ namespace Azure { namespace Security { namespace Attestation { namespace Samples
    */
   void SampleAttestSgxEnclaveSimple()
   {
-    std::cout << "In function: " __FUNCTION__ << std::endl;
+    std::cout << "In function: SampleAttestSgxEnclaveSimple" << std::endl;
     AttestationClientOptions clientOptions;
     // create client
     AttestationClient attestationClient(std::getenv("ATTESTATION_AAD_URL"), clientOptions);
@@ -67,7 +67,7 @@ namespace Azure { namespace Security { namespace Attestation { namespace Samples
    */
   void SampleAttestSgxEnclaveWithJSONRuntimeData()
   {
-    std::cout << "In function: " __FUNCTION__ << std::endl;
+    std::cout << "In function: SampleAttestSgxEnclaveWithJSONRuntimeData" << std::endl;
     AttestationClientOptions clientOptions;
     // create client
     AttestationClient attestationClient(std::getenv("ATTESTATION_AAD_URL"), clientOptions);
@@ -91,6 +91,40 @@ namespace Azure { namespace Security { namespace Attestation { namespace Samples
               << std::endl;
 
     std::cout << "Attestation Token runtimeData is " << sgxResult.Value.Body.RuntimeClaims.Value()
+              << std::endl;
+  }
+
+  /** @brief Simple call to attestation specifying a predefined SGX quote.
+   *
+   * Note that calls to AttestSgxEnclave are anonymous and do not require authentication.
+   */
+  void SampleAttestSgxEnclaveWithBinaryRuntimeData()
+  {
+    std::cout << "In function: SampleAttestSgxEnclaveWithBinaryRuntimeData" << std::endl;
+    AttestationClientOptions clientOptions;
+    // create client
+    AttestationClient attestationClient(std::getenv("ATTESTATION_ISOLATED_URL"), clientOptions);
+
+    std::vector<uint8_t> sgxEnclaveQuote = AttestationCollateral::SgxQuote();
+
+    // Set the RuntimeData in the request to the service. Ask the service to interpret the
+    // RuntimeData as a JSON object when it is returned in the resulting token.
+    AttestOptions attestOptions;
+    attestOptions.RuntimeData
+        = AttestationData{AttestationCollateral::RuntimeData(), AttestationDataType::Binary};
+
+    Azure::Response<AttestationToken<AttestationResult>> sgxResult
+        = attestationClient.AttestSgxEnclave(sgxEnclaveQuote, attestOptions);
+
+    std::cout << "SGX Quote MRSIGNER is: "
+              << Azure::Core::Convert::Base64Encode(sgxResult.Value.Body.SgxMrSigner.Value())
+              << std::endl;
+    std::cout << "SGX Quote MRENCLAVE is: "
+              << Azure::Core::Convert::Base64Encode(sgxResult.Value.Body.SgxMrEnclave.Value())
+              << std::endl;
+
+    std::cout << "Attestation Token runtimeData is "
+              << Azure::Core::Convert::Base64Encode(sgxResult.Value.Body.EnclaveHeldData.Value())
               << std::endl;
   }
 
