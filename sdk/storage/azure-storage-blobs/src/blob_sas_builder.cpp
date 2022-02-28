@@ -73,6 +73,11 @@ namespace Azure { namespace Storage { namespace Sas {
     {
       Permissions += "t";
     }
+    if ((permissions & BlobContainerSasPermissions::SetImmutabilityPolicy)
+        == BlobContainerSasPermissions::SetImmutabilityPolicy)
+    {
+      Permissions += "i";
+    }
   }
 
   void BlobSasBuilder::SetPermissions(BlobSasPermissions permissions)
@@ -106,6 +111,11 @@ namespace Azure { namespace Storage { namespace Sas {
     if ((permissions & BlobSasPermissions::Tags) == BlobSasPermissions::Tags)
     {
       Permissions += "t";
+    }
+    if ((permissions & BlobSasPermissions::SetImmutabilityPolicy)
+        == BlobSasPermissions::SetImmutabilityPolicy)
+    {
+      Permissions += "i";
     }
   }
 

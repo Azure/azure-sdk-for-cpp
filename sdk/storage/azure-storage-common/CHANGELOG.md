@@ -4,6 +4,8 @@
 
 ### Features Added
 
+- Bumped up SAS token service version to `2020-08-04`.
+
 ### Breaking Changes
 
 ### Bugs Fixed

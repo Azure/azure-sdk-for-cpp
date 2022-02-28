@@ -14,8 +14,8 @@ namespace Azure { namespace Storage { namespace Test {
   {
     CHECK_SKIP_TEST();
 
-    auto client = GetBlobContainerTestClient();
-    client.Create();
+    auto blobContainerClient = GetBlobContainerTestClient();
+    blobContainerClient.CreateIfNotExists();
 
     auto sasStartsOn = std::chrono::system_clock::now() - std::chrono::minutes(5);
     auto sasExpiredOn = std::chrono::system_clock::now() - std::chrono::minutes(1);
@@ -124,6 +124,19 @@ namespace Azure { namespace Storage { namespace Test {
       EXPECT_NO_THROW(serviceClient.FindBlobsByTags("\"tag_key1\" = 'tag_value1'"));
     };
 
+    auto verify_blob_immutability = [&](const std::string& sas) {
+      (void)sas;
+      // Disabled because there's no way to enable immutability on a container with dataplane API
+      // blobClient0.Create();
+      // auto blobClient = Blobs::AppendBlobClient(blobUrl + sas);
+      // Blobs::Models::BlobImmutabilityPolicy policy;
+      // policy.ExpiresOn = std::chrono::system_clock::now() + std::chrono::minutes(10);
+      // policy.PolicyMode = Blobs::Models::BlobImmutabilityPolicyMode::Unlocked;
+      // EXPECT_NO_THROW(blobClient.SetImmutabilityPolicy(policy));
+      // blobClient0.DeleteImmutabilityPolicy();
+      // blobClient0.Delete();
+    };
+
     for (auto permissions : {
              Sas::AccountSasPermissions::All,
              Sas::AccountSasPermissions::Read,
@@ -135,6 +148,7 @@ namespace Azure { namespace Storage { namespace Test {
              Sas::AccountSasPermissions::Create,
              Sas::AccountSasPermissions::Tags,
              Sas::AccountSasPermissions::Filter,
+             Sas::AccountSasPermissions::SetImmutabilityPolicy,
          })
     {
       accountSasBuilder.SetPermissions(permissions);
@@ -172,17 +186,24 @@ namespace Azure { namespace Storage { namespace Test {
       {
         verify_blob_filter(sasToken);
       }
+      if ((permissions & Sas::AccountSasPermissions::SetImmutabilityPolicy)
+          == Sas::AccountSasPermissions::SetImmutabilityPolicy)
+      {
+        verify_blob_immutability(sasToken);
+      }
     }
 
-    for (auto permissions :
-         {Sas::BlobSasPermissions::All,
-          Sas::BlobSasPermissions::Read,
-          Sas::BlobSasPermissions::Write,
-          Sas::BlobSasPermissions::Delete,
-          Sas::BlobSasPermissions::Add,
-          Sas::BlobSasPermissions::Create,
-          Sas::BlobSasPermissions::Tags,
-          Sas::BlobSasPermissions::DeleteVersion})
+    for (auto permissions : {
+             Sas::BlobSasPermissions::All,
+             Sas::BlobSasPermissions::Read,
+             Sas::BlobSasPermissions::Write,
+             Sas::BlobSasPermissions::Delete,
+             Sas::BlobSasPermissions::Add,
+             Sas::BlobSasPermissions::Create,
+             Sas::BlobSasPermissions::Tags,
+             Sas::BlobSasPermissions::DeleteVersion,
+             Sas::BlobSasPermissions::SetImmutabilityPolicy,
+         })
     {
       blobSasBuilder.SetPermissions(permissions);
       auto sasToken = blobSasBuilder.GenerateSasToken(*keyCredential);
@@ -217,6 +238,11 @@ namespace Azure { namespace Storage { namespace Test {
       {
         verify_blob_tags(sasToken);
         verify_blob_tags(sasToken2);
+      }
+      if ((permissions & Sas::BlobSasPermissions::SetImmutabilityPolicy)
+          == Sas::BlobSasPermissions::SetImmutabilityPolicy)
+      {
+        verify_blob_immutability(sasToken);
       }
     }
 
@@ -274,15 +300,17 @@ namespace Azure { namespace Storage { namespace Test {
       EXPECT_NO_THROW(serviceClient.ListBlobContainers());
     }
 
-    for (auto permissions :
-         {Sas::BlobContainerSasPermissions::All,
-          Sas::BlobContainerSasPermissions::Read,
-          Sas::BlobContainerSasPermissions::Write,
-          Sas::BlobContainerSasPermissions::Delete,
-          Sas::BlobContainerSasPermissions::List,
-          Sas::BlobContainerSasPermissions::Add,
-          Sas::BlobContainerSasPermissions::Create,
-          Sas::BlobContainerSasPermissions::Tags})
+    for (auto permissions : {
+             Sas::BlobContainerSasPermissions::All,
+             Sas::BlobContainerSasPermissions::Read,
+             Sas::BlobContainerSasPermissions::Write,
+             Sas::BlobContainerSasPermissions::Delete,
+             Sas::BlobContainerSasPermissions::List,
+             Sas::BlobContainerSasPermissions::Add,
+             Sas::BlobContainerSasPermissions::Create,
+             Sas::BlobContainerSasPermissions::Tags,
+             Sas::BlobContainerSasPermissions::SetImmutabilityPolicy,
+         })
     {
       containerSasBuilder.SetPermissions(permissions);
       auto sasToken = containerSasBuilder.GenerateSasToken(*keyCredential);
@@ -329,6 +357,11 @@ namespace Azure { namespace Storage { namespace Test {
       {
         verify_blob_tags(sasToken);
         verify_blob_tags(sasToken2);
+      }
+      if ((permissions & Sas::BlobContainerSasPermissions::SetImmutabilityPolicy)
+          == Sas::BlobContainerSasPermissions::SetImmutabilityPolicy)
+      {
+        verify_blob_immutability(sasToken);
       }
     }
 
@@ -382,7 +415,7 @@ namespace Azure { namespace Storage { namespace Test {
       identifier.ExpiresOn = sasExpiresOn;
       identifier.Permissions = "r";
       options.SignedIdentifiers.emplace_back(identifier);
-      client.SetAccessPolicy(options);
+      blobContainerClient.SetAccessPolicy(options);
 
       Sas::BlobSasBuilder builder2 = blobSasBuilder;
       builder2.StartsOn.Reset();
