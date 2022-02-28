@@ -34,7 +34,7 @@
 using namespace Azure::Security::Attestation;
 using namespace Azure::Security::Attestation::Models;
 using namespace std::chrono_literals;
-
+// cspell: words MRENCLAVE MRSIGNER
 namespace Azure { namespace Security { namespace Attestation { namespace Samples {
 
   /** @brief Simple call to attestation specifying a predefined SGX quote.
