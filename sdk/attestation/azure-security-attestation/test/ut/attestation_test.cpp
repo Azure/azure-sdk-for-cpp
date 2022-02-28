@@ -116,48 +116,6 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
     }
   };
 
-  TEST_P(AttestationTests, GetOpenIdMetadata)
-  {
-    auto attestationClient(CreateClient());
-
-    EXPECT_FALSE(attestationClient->ClientVersion().empty());
-
-    auto openIdMetadata = attestationClient->GetOpenIdMetadata();
-
-    EXPECT_TRUE(openIdMetadata.Value.Issuer.HasValue());
-    EXPECT_TRUE(openIdMetadata.Value.JsonWebKeySetUrl.HasValue());
-    if (!m_testContext.IsPlaybackMode())
-    {
-      EXPECT_EQ(m_endpoint, openIdMetadata.Value.Issuer.Value());
-    }
-    EXPECT_EQ(
-        0UL,
-        openIdMetadata.Value.JsonWebKeySetUrl.Value().find(openIdMetadata.Value.Issuer.Value()));
-    EXPECT_EQ(
-        openIdMetadata.Value.Issuer.Value() + "/certs",
-        openIdMetadata.Value.JsonWebKeySetUrl.Value());
-    EXPECT_NE(0UL, openIdMetadata.Value.SupportedClaims.Value().size());
-    EXPECT_NE(0UL, openIdMetadata.Value.SupportedResponseTypes.Value().size());
-    EXPECT_NE(0UL, openIdMetadata.Value.SupportedTokenSigningAlgorithms.Value().size());
-  }
-
-  TEST_P(AttestationTests, GetSigningCertificates)
-  {
-    auto attestationClient(CreateClient());
-
-    auto attestationSigners = attestationClient->GetAttestationSigningCertificates();
-    EXPECT_LE(1UL, attestationSigners.Value.Signers.size());
-    for (const auto& signer : attestationSigners.Value.Signers)
-    {
-      EXPECT_TRUE(signer.KeyId.HasValue());
-      EXPECT_LE(1UL, signer.CertificateChain.Value().size());
-      for (const auto& cert : signer.CertificateChain.Value())
-      {
-        EXPECT_EQ(0UL, cert.find("-----BEGIN CERTIFICATE-----\r\n"));
-      }
-    }
-  }
-
   TEST_P(AttestationTests, SimpleAttest)
   {
     auto client(CreateClient());
@@ -177,14 +135,6 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
 
     auto report = AttestationCollateral::OpenEnclaveReport();
     auto attestResponse = client->AttestOpenEnclave(report);
-  }
-
-  TEST_P(AttestationTests, SimpleAttestSgxEnclave)
-  {
-    auto client(CreateClient());
-    auto sgxQuote = AttestationCollateral::SgxQuote();
-
-    auto attestResponse = client->AttestSgxEnclave(sgxQuote);
   }
 
   TEST_P(AttestationTests, AttestWithRuntimeData)

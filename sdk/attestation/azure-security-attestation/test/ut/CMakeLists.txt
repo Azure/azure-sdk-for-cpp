@@ -21,7 +21,8 @@ add_executable (
      attestation_test.cpp
      token_test.cpp 
      policygetset_test.cpp
-     attestation_collateral.cpp)
+     attestation_collateral.cpp 
+     attestation_metadata.cpp)
 
 create_per_service_target_build(azure-security-attestation-test attestation)
 
