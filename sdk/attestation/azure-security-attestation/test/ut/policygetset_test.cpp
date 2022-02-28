@@ -215,7 +215,8 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
             typeNameList.emplace_back(ServiceInstanceType::Shared);
             break;
           case TestCaseType::ModifyPolicyIsolated:
-            typeNameList.emplace_back(ServiceInstanceType::AAD); // The isolated key will work in AAD mode.
+            typeNameList.emplace_back(
+                ServiceInstanceType::AAD); // The isolated key will work in AAD mode.
             typeNameList.emplace_back(ServiceInstanceType::Isolated);
             break;
           case TestCaseType::ModifyPolicySecured:
