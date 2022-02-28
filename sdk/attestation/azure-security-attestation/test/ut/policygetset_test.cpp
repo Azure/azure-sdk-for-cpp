@@ -103,8 +103,8 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
       {
         EXPECT_EQ(PolicyModification::Updated, result.Value.Body.PolicyResolution.Value());
 
-        // The attestation service only returns the PolicySigner and PolicySigningHash on SetPolicy
-        // calls, not ResetPolicy calls.
+        // The attestation service only returns the PolicySigner and PolicySigningHash on
+        // SetPolicy calls, not ResetPolicy calls.
 
         // Now check the policy signer if appropriate.
         if (signingKey)
@@ -113,8 +113,8 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
           EXPECT_FALSE(result.Value.Body.PolicySigner.Value().CertificateChain.Value().empty());
 
           // When the test case type is secured, playback mode, the signing certificate was the
-          // certificate retrieved at the time the recordings were made, and it will *not* match the
-          // dummy value provided for the recorded tests.
+          // certificate retrieved at the time the recordings were made, and it will *not* match
+          // the dummy value provided for the recorded tests.
           if (!m_testContext.IsPlaybackMode())
           {
             auto signerCertificate = Cryptography::ImportX509Certificate(
@@ -131,9 +131,10 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
 
         EXPECT_TRUE(result.Value.Body.PolicyTokenHash);
 
-        // The returned PolicyTokenHash value is the hash of the entire policy JWS that was sent to
-        // the service. In playback mode, the JWS which is calculated for the tests is different
-        // from the JWS which was recorded (because the signing certificate is different).
+        // The returned PolicyTokenHash value is the hash of the entire policy JWS that was sent
+        // to the service. In playback mode, the JWS which is calculated for the tests is
+        // different from the JWS which was recorded (because the signing certificate is
+        // different).
         //
         // So skip verifying the PolicyTokenHash in playback mode.
         if (!m_testContext.IsPlaybackMode())
@@ -194,6 +195,113 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
       EXPECT_NE(AttestationCollateral::GetMinimalPolicy(), getResponse.Value.Body);
     }
 
+    /** @brief Tests for the `GetAttestationPolicy` API.
+     *
+     * These tests are relatively straightforward. Call the API on the provided TeeType and verify
+     * that the returned policy makes sense as an attestation policy (starts with the text "version"
+     * - beyond that, we can't verify the response).
+     *
+     * Note that VSM/VBS/TPM policies can be empty, so if we encounter an empty policy, verify that
+     * the policy came from TPM attestation.
+     *
+     * One additional check is performed in live mode: We verify that the issuer of the returned
+     * attestation token matches the endpoint. This check cannot be run against recorded collateral
+     * because the `m_endpoint` value is mocked on recorded clients.
+     */
+    void GetPolicyTest()
+    {
+      auto adminClient(CreateClient());
+
+      EXPECT_FALSE(adminClient->ClientVersion().empty());
+
+      AttestationType attestationType(GetParam().TeeType);
+      {
+        auto policy = adminClient->GetAttestationPolicy(attestationType);
+
+        // The policy should have a value, and the token should have been issued by the service.
+        // Note that if the policy *doesn't* have a body, then the attestation type must be TPM
+        // since TPM attestation is the only attestation type which allows empty policy
+        // documents.
+        if (policy.Value.Body.empty())
+        {
+          EXPECT_EQ(AttestationType::Tpm, attestationType);
+        }
+        else
+        {
+          EXPECT_EQ(0UL, policy.Value.Body.find("version"));
+        }
+
+        // In playback mode, the endpoint is a mocked value so the Issuer in the result will not
+        // match.
+        if (!m_testContext.IsPlaybackMode())
+        {
+          EXPECT_EQ(m_endpoint, policy.Value.Issuer.Value());
+        }
+      }
+
+      {
+        GetPolicyOptions gpOptions;
+        EXPECT_FALSE(gpOptions.TokenValidationOptions);
+      }
+    }
+
+    /** @brief Tests for policy modification using an unsecured JWS.
+     *
+     * Forwards to the `SetPolicyTest` and `ResetPolicyTest` with a non-present AttestationSigingKey
+     * parameter.
+     */
+    void ModifyPolicyUnsecuredTest()
+    {
+      SetPolicyTest();
+      ResetPolicyTest();
+    }
+
+    /** @brief Tests for policy modification using a secured JWS with an emphemerally generated key.
+     *
+     * Forwards to the `SetPolicyTest` and `ResetPolicyTest` with a newly created
+     * AttestationSigingKey parameter.
+     */
+    void ModifyPolicySecuredTest()
+    {
+      auto rsaKey(Cryptography::CreateRsaKey(2048));
+      auto signingCert(
+          Cryptography::CreateX509CertificateForPrivateKey(rsaKey, "CN=TestSetPolicyCertificate"));
+
+      auto signingKey(
+          AttestationSigningKey{rsaKey->ExportPrivateKey(), signingCert->ExportAsPEM()});
+
+      SetPolicyTest(signingKey);
+      ResetPolicyTest(signingKey);
+    }
+
+    /** @brief Tests for policy modification using a secured JWS with a predefined key.
+     *
+     * Forwards to the `SetPolicyTest` and `ResetPolicyTest` with an AttestationSigingKey parameter
+     * defined in new-testresources.ps1.
+     *
+     * Note that this is a live-only test, because
+     */
+    void ModifyPolicyIsolatedTest()
+    {
+      // In PlaybackMode, the values of ISOLATED_SIGNING_CERTIFICATE and ISOLATED_SIGNING_KEY are
+      // replaced with dummy values which cannot be converted into actual certificates. So skip
+      // the isolated mode tests when we are in playback or record mode (there's no point in
+      // recording something that cannot work).
+      if (m_testContext.IsLiveMode())
+      {
+        std::string isolatedCertificate(GetEnv("ISOLATED_SIGNING_CERTIFICATE"));
+        std::string isolatedKey(GetEnv("ISOLATED_SIGNING_KEY"));
+
+        AttestationSigningKey signingKey;
+        signingKey.PemEncodedPrivateKey = Cryptography::PemFromBase64(isolatedKey, "PRIVATE KEY");
+        signingKey.PemEncodedX509Certificate
+            = Cryptography::PemFromBase64(isolatedCertificate, "CERTIFICATE");
+
+        SetPolicyTest(signingKey);
+        ResetPolicyTest(signingKey);
+      }
+    }
+
   public:
     static std::vector<PolicyTestParam> GetTestInputs()
     {
@@ -238,99 +346,39 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
       }
       return returnCases;
     }
-  };
+  }; // namespace Test
 
   TEST_P(PolicyTests, PolicyTests)
   {
     switch (GetParam().TestType)
     {
       // Tests for the GetAttestationPolicy APIs.
-      case TestCaseType::GetPolicy: {
-        auto adminClient(CreateClient());
-
-        EXPECT_FALSE(adminClient->ClientVersion().empty());
-
-        AttestationType attestationType(GetParam().TeeType);
-        {
-          auto policy = adminClient->GetAttestationPolicy(attestationType);
-
-          // The policy should have a value, and the token should have been issued by the service.
-          // Note that if the policy *doesn't* have a body, then the attestation type must be TPM
-          // since TPM attestation is the only attestation type which allows empty policy documents.
-          if (policy.Value.Body.empty())
-          {
-            EXPECT_EQ(AttestationType::Tpm, attestationType);
-          }
-          else
-          {
-            EXPECT_EQ(0UL, policy.Value.Body.find("version"));
-          }
-
-          // In playback mode, the endpoint is a mocked value so the Issuer in the result will not
-          // match.
-          if (!m_testContext.IsPlaybackMode())
-          {
-            EXPECT_EQ(m_endpoint, policy.Value.Issuer.Value());
-          }
-        }
-
-        {
-          GetPolicyOptions gpOptions;
-          EXPECT_FALSE(gpOptions.TokenValidationOptions);
-        }
+      case TestCaseType::GetPolicy:
+        GetPolicyTest();
         break;
-      }
 
       // Modify attestation policies using an unsecured attestation JWS. This exercises the
       // SetPolicy and ResetPolicy APIs.
-      case TestCaseType::ModifyPolicyUnsecured: {
-        SetPolicyTest();
-        ResetPolicyTest();
+      case TestCaseType::ModifyPolicyUnsecured:
+        ModifyPolicyUnsecuredTest();
         break;
-      }
 
       // Modify attestation policies using an ephemeral secured attestation JWS. This exercises the
       // SetPolicy and ResetPolicy APIs.
-      case TestCaseType::ModifyPolicySecured: {
-        auto rsaKey(Cryptography::CreateRsaKey(2048));
-        auto signingCert(Cryptography::CreateX509CertificateForPrivateKey(
-            rsaKey, "CN=TestSetPolicyCertificate"));
-
-        auto signingKey(
-            AttestationSigningKey{rsaKey->ExportPrivateKey(), signingCert->ExportAsPEM()});
-
-        SetPolicyTest(signingKey);
-        ResetPolicyTest(signingKey);
+      case TestCaseType::ModifyPolicySecured:
+        ModifyPolicySecuredTest();
         break;
-      }
 
       // Modify attestation policies using a predefined signing key and certificate.
       // The key and certificate were created at test resource creation time.
       // Exercises the SetPolicy and ResetPolicy APIs.
-      case TestCaseType::ModifyPolicyIsolated: {
-        // In PlaybackMode, the values of ISOLATED_SIGNING_CERTIFICATE and ISOLATED_SIGNING_KEY are
-        // replaced with dummy values which cannot be converted into actual certificates. So skip
-        // the isolated mode tests when we are in playback or record mode (there's no point in
-        // recording something that cannot work).
-        if (m_testContext.IsLiveMode())
-        {
-          std::string isolatedCertificate(GetEnv("ISOLATED_SIGNING_CERTIFICATE"));
-          std::string isolatedKey(GetEnv("ISOLATED_SIGNING_KEY"));
-
-          AttestationSigningKey signingKey;
-          signingKey.PemEncodedPrivateKey = Cryptography::PemFromBase64(isolatedKey, "PRIVATE KEY");
-          signingKey.PemEncodedX509Certificate
-              = Cryptography::PemFromBase64(isolatedCertificate, "CERTIFICATE");
-
-          SetPolicyTest(signingKey);
-          ResetPolicyTest(signingKey);
-        }
+      case TestCaseType::ModifyPolicyIsolated:
+        ModifyPolicyIsolatedTest(); // LIVE-ONLY test!
         break;
-      }
       default:
         ASSERT_FALSE(true) << "Unknown test parameter";
     }
-  }
+  } // namespace Test
 
   namespace {
     std::string GetTestName(testing::TestParamInfo<PolicyTests::ParamType> const& testInfo)
