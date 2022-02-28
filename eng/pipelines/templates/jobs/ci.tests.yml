@@ -212,9 +212,9 @@ jobs:
             -OsVMImage '$(OSVmImage)'
             -CmakeEnvArg '$(CmakeEnvArg)'
             -BuildArgs '$(BuildArgs)'
-            -Job = '$(Agent.JobName)'
-            -BuildReason = '$(Build.Reason)'
-            -SourceBranch = '$(Build.SourceBranch)'
+            -Job '$(Agent.JobName)'
+            -BuildReason '$(Build.Reason)'
+            -SourceBranch '$(Build.SourceBranch)'
             -ExtraLabels @{
               MetricVersion = 1;
             }
