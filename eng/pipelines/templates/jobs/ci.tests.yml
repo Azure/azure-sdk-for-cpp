@@ -209,15 +209,13 @@ jobs:
           filePath: $(Build.SourcesDirectory)/eng/scripts/Get-BinarySizes.ps1
           arguments: >-
             -ServiceDirectory ${{parameters.ServiceDirectory}}
+            -OsVMImage '$(OSVmImage)'
+            -CmakeEnvArg '$(CmakeEnvArg)'
+            -BuildArgs '$(BuildArgs)'
+            -Job = '$(Agent.JobName)'
+            -BuildReason = '$(Build.Reason)'
+            -SourceBranch = '$(Build.SourceBranch)'
             -ExtraLabels @{
-              Job = '$(Agent.JobName)';
-              BuildReason = '$(Build.Reason)';
-              SourceBranch = '$(Build.SourceBranch)';
-              TargetOs = '$(METRIC_TARGET_OS)';
-              Toolchain = '$(METRIC_TOOLCHAIN)';
-              BuildConfig = '$(METRIC_BUILD_CONFIG)';
-              TargetArchitecture = '$(METRIC_TARGET_ARCHITECTURE)';
-              TargetPlatform = '$(METRIC_TARGET_PLATFORM)';
               MetricVersion = 1;
             }
           pwsh: true
