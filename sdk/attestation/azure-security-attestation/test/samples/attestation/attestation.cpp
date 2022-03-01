@@ -33,6 +33,8 @@
 
 using namespace Azure::Security::Attestation;
 using namespace Azure::Security::Attestation::Models;
+using namespace Azure::Core;
+
 using namespace std::chrono_literals;
 // cspell: words MRENCLAVE MRSIGNER
 namespace Azure { namespace Security { namespace Attestation { namespace Samples {
@@ -54,11 +56,9 @@ namespace Azure { namespace Security { namespace Attestation { namespace Samples
         = attestationClient.AttestSgxEnclave(sgxEnclaveQuote);
 
     std::cout << "SGX Quote MRSIGNER is: "
-              << Azure::Core::Convert::Base64Encode(sgxResult.Value.Body.SgxMrSigner.Value())
-              << std::endl;
+              << Convert::Base64Encode(*sgxResult.Value.Body.SgxMrSigner) << std::endl;
     std::cout << "SGX Quote MRENCLAVE is: "
-              << Azure::Core::Convert::Base64Encode(sgxResult.Value.Body.SgxMrEnclave.Value())
-              << std::endl;
+              << Convert::Base64Encode(*sgxResult.Value.Body.SgxMrEnclave) << std::endl;
   }
 
   /** @brief Simple call to attestation specifying a predefined SGX quote.
@@ -84,13 +84,11 @@ namespace Azure { namespace Security { namespace Attestation { namespace Samples
         = attestationClient.AttestSgxEnclave(sgxEnclaveQuote, attestOptions);
 
     std::cout << "SGX Quote MRSIGNER is: "
-              << Azure::Core::Convert::Base64Encode(sgxResult.Value.Body.SgxMrSigner.Value())
-              << std::endl;
+              << Convert::Base64Encode(*sgxResult.Value.Body.SgxMrSigner) << std::endl;
     std::cout << "SGX Quote MRENCLAVE is: "
-              << Azure::Core::Convert::Base64Encode(sgxResult.Value.Body.SgxMrEnclave.Value())
-              << std::endl;
+              << Convert::Base64Encode(*sgxResult.Value.Body.SgxMrEnclave) << std::endl;
 
-    std::cout << "Attestation Token runtimeData is " << sgxResult.Value.Body.RuntimeClaims.Value()
+    std::cout << "Attestation Token runtimeData is " << *sgxResult.Value.Body.RuntimeClaims
               << std::endl;
   }
 
@@ -117,15 +115,12 @@ namespace Azure { namespace Security { namespace Attestation { namespace Samples
         = attestationClient.AttestSgxEnclave(sgxEnclaveQuote, attestOptions);
 
     std::cout << "SGX Quote MRSIGNER is: "
-              << Azure::Core::Convert::Base64Encode(sgxResult.Value.Body.SgxMrSigner.Value())
-              << std::endl;
+              << Convert::Base64Encode(*sgxResult.Value.Body.SgxMrSigner) << std::endl;
     std::cout << "SGX Quote MRENCLAVE is: "
-              << Azure::Core::Convert::Base64Encode(sgxResult.Value.Body.SgxMrEnclave.Value())
-              << std::endl;
+              << Convert::Base64Encode(*sgxResult.Value.Body.SgxMrEnclave) << std::endl;
 
     std::cout << "Attestation Token runtimeData is "
-              << Azure::Core::Convert::Base64Encode(sgxResult.Value.Body.EnclaveHeldData.Value())
-              << std::endl;
+              << Convert::Base64Encode(*sgxResult.Value.Body.EnclaveHeldData) << std::endl;
   }
 
 }}}} // namespace Azure::Security::Attestation::Samples

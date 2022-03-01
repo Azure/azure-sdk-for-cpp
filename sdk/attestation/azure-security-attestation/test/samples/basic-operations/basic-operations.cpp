@@ -38,7 +38,7 @@ void SampleGetOpenIdMetadata()
   // Retrieve the OpenId metadata from this attestation service instance.
   Azure::Response<AttestationOpenIdMetadata> openIdMetadata = attestationClient.GetOpenIdMetadata();
   std::cout << "Attestation Certificate Endpoint is: "
-            << openIdMetadata.Value.JsonWebKeySetUrl.Value() << std::endl;
+            << *openIdMetadata.Value.JsonWebKeySetUrl << std::endl;
 }
 
 int main()

@@ -56,16 +56,15 @@ namespace Azure { namespace Security { namespace Attestation { namespace _detail
 
       if (m_token.ExpiresOn && validationOptions.ValidateExpirationTime)
       {
-        if (timeNow > m_token.ExpiresOn.Value())
+        if (timeNow > *m_token.ExpiresOn)
         {
-          auto expiresOn
-              = static_cast<std::chrono::system_clock::time_point>(m_token.ExpiresOn.Value());
+          auto expiresOn = static_cast<std::chrono::system_clock::time_point>(*m_token.ExpiresOn);
           auto timeDelta = timeNow - expiresOn;
           if (timeDelta > validationOptions.ValidationTimeSlack)
           {
             std::stringstream ss;
             ss << "Attestation token has expired. Token expiration time: "
-               << m_token.ExpiresOn.Value().ToString()
+               << m_token.ExpiresOn->ToString()
                << ". Current time: " << Azure::DateTime(timeNow).ToString();
             throw std::runtime_error(ss.str());
           }
@@ -73,16 +72,15 @@ namespace Azure { namespace Security { namespace Attestation { namespace _detail
       }
       if (m_token.NotBefore && validationOptions.ValidateNotBeforeTime)
       {
-        if (timeNow < m_token.NotBefore.Value())
+        if (timeNow < *m_token.NotBefore)
         {
-          auto notBefore
-              = static_cast<std::chrono::system_clock::time_point>(m_token.NotBefore.Value());
+          auto notBefore = static_cast<std::chrono::system_clock::time_point>(*m_token.NotBefore);
           auto timeDelta = notBefore - timeNow;
           if (timeDelta > validationOptions.ValidationTimeSlack)
           {
             std::stringstream ss;
             ss << "Attestation token is not yet valid. Token becomes valid at time: "
-               << m_token.NotBefore.Value().ToString()
+               << m_token.NotBefore->ToString()
                << ". Current time: " << Azure::DateTime(timeNow).ToString();
             throw std::runtime_error(ss.str());
           }
@@ -104,11 +102,11 @@ namespace Azure { namespace Security { namespace Attestation { namespace _detail
           throw std::runtime_error(
               "Attestation token issuer validation requested but token has no issuer.");
         }
-        if (validationOptions.ExpectedIssuer != m_token.Issuer.Value())
+        if (validationOptions.ExpectedIssuer != *m_token.Issuer)
         {
           std::stringstream ss;
           ss << "Expected issuer (" << validationOptions.ExpectedIssuer
-             << ") does not match actual issuer of token (" << m_token.Issuer.Value() << ")";
+             << ") does not match actual issuer of token (" << *m_token.Issuer << ")";
           throw std::runtime_error(ss.str());
         }
       }
@@ -142,7 +140,7 @@ namespace Azure { namespace Security { namespace Attestation { namespace _detail
         {
           for (const auto& signer : signers)
           {
-            if (signer.KeyId && m_token.Header.KeyId.Value() == signer.KeyId.Value())
+            if (signer.KeyId && *m_token.Header.KeyId == *signer.KeyId)
             {
               returnValue.push_back(signer);
             }
@@ -162,12 +160,12 @@ namespace Azure { namespace Security { namespace Attestation { namespace _detail
       {
         if (m_token.Header.Key)
         {
-          returnValue.push_back(m_token.Header.Key.Value());
+          returnValue.push_back(*m_token.Header.Key);
         }
         if (m_token.Header.X509CertificateChain)
         {
           std::vector<std::string> pemEncodedChain;
-          for (auto x5c : m_token.Header.X509CertificateChain.Value())
+          for (auto x5c : *m_token.Header.X509CertificateChain)
           {
             pemEncodedChain.push_back(_detail::Cryptography::PemFromBase64(x5c, "CERTIFICATE"));
           }
@@ -193,7 +191,7 @@ namespace Azure { namespace Security { namespace Attestation { namespace _detail
       {
         std::unique_ptr<Azure::Security::Attestation::_detail::Cryptography::X509Certificate>
             certificate(Azure::Security::Attestation::_detail::Cryptography::ImportX509Certificate(
-                signer.CertificateChain.Value()[0]));
+                (*signer.CertificateChain)[0]));
         auto publicKey = certificate->GetPublicKey();
         // If the key associated with this certificate signed the token,
         if (publicKey->VerifySignature(
@@ -297,7 +295,7 @@ namespace Azure { namespace Security { namespace Attestation { namespace _detail
 
           if (preferredBody)
           {
-            m_token.Body = preferredBody.Value();
+            m_token.Body = *preferredBody;
           }
           else
           {
@@ -339,9 +337,9 @@ namespace Azure { namespace Security { namespace Attestation { namespace _detail
       {
         // Deserialize the signing key and certificate and use them to create the JWS header.
         signingCert = Azure::Security::Attestation::_detail::Cryptography::ImportX509Certificate(
-            tokenSigner.Value().PemEncodedX509Certificate);
+            tokenSigner->PemEncodedX509Certificate);
         signingKey = Azure::Security::Attestation::_detail::Cryptography::ImportPrivateKey(
-            tokenSigner.Value().PemEncodedPrivateKey);
+            tokenSigner->PemEncodedPrivateKey);
 
         tokenHeader.Algorithm = signingCert->GetAlgorithm();
         tokenHeader.X509CertificateChain = std::vector<std::string>{signingCert->ExportAsBase64()};
@@ -358,7 +356,7 @@ namespace Azure { namespace Security { namespace Attestation { namespace _detail
       std::string serializedBody;
       if (tokenBody)
       {
-        serializedBody = TDeserializer::Serialize(tokenBody.Value());
+        serializedBody = TDeserializer::Serialize(*tokenBody);
       }
 
       std::string encodedHeader = Azure::Core::_internal::Base64Url::Base64UrlEncode(
@@ -410,7 +408,7 @@ namespace Azure { namespace Security { namespace Attestation { namespace _detail
 
       // If this is a secured token, find a set of possible signers for the token and
       // verify that one of them signed the token.
-      if (m_token.Header.Algorithm && m_token.Header.Algorithm.Value() != "none"
+      if (m_token.Header.Algorithm && *m_token.Header.Algorithm != "none"
           && validationOptions.ValidateSigner)
       {
         Azure::Nullable<Models::AttestationSigner> foundSigner

@@ -101,7 +101,7 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
       EXPECT_TRUE(result.Value.Body.PolicyResolution);
       if (policyToValidate)
       {
-        EXPECT_EQ(PolicyModification::Updated, result.Value.Body.PolicyResolution.Value());
+        EXPECT_EQ(PolicyModification::Updated, *result.Value.Body.PolicyResolution);
 
         // The attestation service only returns the PolicySigner and PolicySigningHash on
         // SetPolicy calls, not ResetPolicy calls.
@@ -110,7 +110,7 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
         if (signingKey)
         {
           EXPECT_TRUE(result.Value.Body.PolicySigner);
-          EXPECT_FALSE(result.Value.Body.PolicySigner.Value().CertificateChain.Value().empty());
+          EXPECT_FALSE(result.Value.Body.PolicySigner->CertificateChain->empty());
 
           // When the test case type is secured, playback mode, the signing certificate was the
           // certificate retrieved at the time the recordings were made, and it will *not* match
@@ -118,9 +118,9 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
           if (!m_testContext.IsPlaybackMode())
           {
             auto signerCertificate = Cryptography::ImportX509Certificate(
-                result.Value.Body.PolicySigner.Value().CertificateChain.Value()[0]);
+                (*result.Value.Body.PolicySigner->CertificateChain)[0]);
             auto expectedCertificate
-                = Cryptography::ImportX509Certificate(signingKey.Value().PemEncodedX509Certificate);
+                = Cryptography::ImportX509Certificate(signingKey->PemEncodedX509Certificate);
             EXPECT_EQ(expectedCertificate->GetThumbprint(), signerCertificate->GetThumbprint());
           }
         }
@@ -146,12 +146,12 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
           std::vector<uint8_t> rawTokenHash = hasher.Final(
               reinterpret_cast<const uint8_t*>(sentToken.RawToken.data()),
               sentToken.RawToken.size());
-          EXPECT_EQ(result.Value.Body.PolicyTokenHash.Value(), rawTokenHash);
+          EXPECT_EQ(*result.Value.Body.PolicyTokenHash, rawTokenHash);
         }
       }
       else
       {
-        EXPECT_EQ(PolicyModification::Removed, result.Value.Body.PolicyResolution.Value());
+        EXPECT_EQ(PolicyModification::Removed, *result.Value.Body.PolicyResolution);
       }
 
       return true;
@@ -235,7 +235,7 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
         // match.
         if (!m_testContext.IsPlaybackMode())
         {
-          EXPECT_EQ(m_endpoint, policy.Value.Issuer.Value());
+          EXPECT_EQ(m_endpoint, *policy.Value.Issuer);
         }
       }
 

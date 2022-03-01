@@ -15,6 +15,7 @@
 #include <sstream>
 #include <string>
 #include <vector>
+using namespace Azure::Security::Attestation::_detail;
 
 namespace Azure { namespace Security { namespace Attestation { namespace _detail {
 
@@ -32,10 +33,9 @@ namespace Azure {
     if (jwk.x5c)
     {
       m_signer.CertificateChain = std::vector<std::string>();
-      for (const auto& x5c : jwk.x5c.Value())
+      for (const auto& x5c : *jwk.x5c)
       {
-        m_signer.CertificateChain.Value().push_back(
-            Azure::Security::Attestation::_detail::Cryptography::PemFromBase64(x5c, "CERTIFICATE"));
+        m_signer.CertificateChain->push_back(Cryptography::PemFromBase64(x5c, "CERTIFICATE"));
       }
     }
   }
@@ -46,11 +46,11 @@ namespace Azure {
 
     if (signer.KeyId)
     {
-      rv["kid"] = signer.KeyId.Value();
+      rv["kid"] = *signer.KeyId;
     }
     if (signer.CertificateChain)
     {
-      rv["x5c"] = signer.CertificateChain.Value();
+      rv["x5c"] = *signer.CertificateChain;
     }
     return rv.dump();
   }

@@ -77,21 +77,17 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
 
     auto openIdMetadata = attestationClient->GetOpenIdMetadata();
 
-    EXPECT_TRUE(openIdMetadata.Value.Issuer.HasValue());
-    EXPECT_TRUE(openIdMetadata.Value.JsonWebKeySetUrl.HasValue());
+    EXPECT_TRUE(openIdMetadata.Value.Issuer);
+    EXPECT_TRUE(openIdMetadata.Value.JsonWebKeySetUrl);
     if (!m_testContext.IsPlaybackMode())
     {
-      EXPECT_EQ(m_endpoint, openIdMetadata.Value.Issuer.Value());
+      EXPECT_EQ(m_endpoint, *openIdMetadata.Value.Issuer);
     }
-    EXPECT_EQ(
-        0UL,
-        openIdMetadata.Value.JsonWebKeySetUrl.Value().find(openIdMetadata.Value.Issuer.Value()));
-    EXPECT_EQ(
-        openIdMetadata.Value.Issuer.Value() + "/certs",
-        openIdMetadata.Value.JsonWebKeySetUrl.Value());
-    EXPECT_NE(0UL, openIdMetadata.Value.SupportedClaims.Value().size());
-    EXPECT_NE(0UL, openIdMetadata.Value.SupportedResponseTypes.Value().size());
-    EXPECT_NE(0UL, openIdMetadata.Value.SupportedTokenSigningAlgorithms.Value().size());
+    EXPECT_EQ(0UL, openIdMetadata.Value.JsonWebKeySetUrl->find(*openIdMetadata.Value.Issuer));
+    EXPECT_EQ(*openIdMetadata.Value.Issuer + "/certs", *openIdMetadata.Value.JsonWebKeySetUrl);
+    EXPECT_NE(0UL, openIdMetadata.Value.SupportedClaims->size());
+    EXPECT_NE(0UL, openIdMetadata.Value.SupportedResponseTypes->size());
+    EXPECT_NE(0UL, openIdMetadata.Value.SupportedTokenSigningAlgorithms->size());
   }
 
   TEST_P(MetadataTests, GetSigningCertificates)
@@ -102,9 +98,9 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
     EXPECT_LE(1UL, attestationSigners.Value.Signers.size());
     for (const auto& signer : attestationSigners.Value.Signers)
     {
-      EXPECT_TRUE(signer.KeyId.HasValue());
-      EXPECT_LE(1UL, signer.CertificateChain.Value().size());
-      for (const auto& cert : signer.CertificateChain.Value())
+      EXPECT_TRUE(signer.KeyId);
+      EXPECT_LE(1UL, signer.CertificateChain->size());
+      for (const auto& cert : *signer.CertificateChain)
       {
         EXPECT_EQ(0UL, cert.find("-----BEGIN CERTIFICATE-----\r\n"));
       }

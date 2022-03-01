@@ -26,6 +26,7 @@ using namespace Azure::Core::Http::Policies::_internal;
 using namespace Azure::Core::Http::_internal;
 using namespace Azure::Core::Diagnostics::_internal;
 using namespace Azure::Core::Diagnostics;
+using namespace Azure::Core::_internal;
 
 const Models::AttestationType AttestationType::SgxEnclave("SgxEnclave");
 const Models::AttestationType AttestationType::OpenEnclave("OpenEnclave");
@@ -94,14 +95,14 @@ AttestationAdministrationClient::GetAttestationPolicy(
   // validation.
   std::vector<AttestationSigner> const& signers = GetAttestationSigners(context);
   resultToken.ValidateToken(
-      options.TokenValidationOptions ? options.TokenValidationOptions.Value()
+      options.TokenValidationOptions ? *options.TokenValidationOptions
                                      : this->m_tokenValidationOptions,
       signers);
 
   // Extract the underlying policy token from the response.
   std::string policyTokenValue
-      = static_cast<AttestationToken<Models::_detail::PolicyResult>>(resultToken)
-            .Body.PolicyToken.Value();
+      = *static_cast<AttestationToken<Models::_detail::PolicyResult>>(resultToken)
+            .Body.PolicyToken;
 
   // TPM policies are empty by default, at least in our test instances, so handle the empty policy
   // token case.
@@ -112,7 +113,7 @@ AttestationAdministrationClient::GetAttestationPolicy(
   std::string returnPolicy;
   if (policyToken.Body.AttestationPolicy)
   {
-    std::vector<uint8_t> policyUtf8 = policyToken.Body.AttestationPolicy.Value();
+    std::vector<uint8_t> policyUtf8 = *policyToken.Body.AttestationPolicy;
     returnPolicy = std::string(policyUtf8.begin(), policyUtf8.end());
   }
 
@@ -131,8 +132,8 @@ AttestationAdministrationClient::CreateSetAttestationPolicyToken(
   Azure::Nullable<StoredAttestationPolicy> storedPolicy;
   if (newAttestationPolicy)
   {
-    storedPolicy = StoredAttestationPolicy{std::vector<uint8_t>(
-        newAttestationPolicy.Value().begin(), newAttestationPolicy.Value().end())};
+    storedPolicy = StoredAttestationPolicy{
+        std::vector<uint8_t>(newAttestationPolicy->begin(), newAttestationPolicy->end())};
   }
 
   auto tokenToSet(
@@ -181,7 +182,7 @@ AttestationAdministrationClient::SetAttestationPolicy(
   // validation.
   std::vector<AttestationSigner> const& signers = GetAttestationSigners(context);
   resultToken.ValidateToken(
-      options.TokenValidationOptions ? options.TokenValidationOptions.Value()
+      options.TokenValidationOptions ? *options.TokenValidationOptions
                                      : this->m_tokenValidationOptions,
       signers);
 
@@ -192,17 +193,16 @@ AttestationAdministrationClient::SetAttestationPolicy(
   Models::PolicyResult returnedResult;
   if (internalResult.PolicyResolution)
   {
-    returnedResult.PolicyResolution
-        = Models::PolicyModification(internalResult.PolicyResolution.Value());
+    returnedResult.PolicyResolution = Models::PolicyModification(*internalResult.PolicyResolution);
   }
   if (internalResult.PolicySigner)
   {
-    returnedResult.PolicySigner = AttestationSignerInternal(internalResult.PolicySigner.Value());
+    returnedResult.PolicySigner = AttestationSignerInternal(*internalResult.PolicySigner);
   }
   if (internalResult.PolicyTokenHash)
   {
-    returnedResult.PolicyTokenHash = Azure::Core::_internal::Base64Url::Base64UrlDecode(
-        internalResult.PolicyTokenHash.Value());
+    returnedResult.PolicyTokenHash
+        = Base64Url::Base64UrlDecode(*internalResult.PolicyTokenHash);
   }
 
   // Construct a token whose body is the policy result, but whose token is the response from the
@@ -248,7 +248,7 @@ AttestationAdministrationClient::ResetAttestationPolicy(
   // validation.
   std::vector<AttestationSigner> const& signers = GetAttestationSigners(context);
   resultToken.ValidateToken(
-      options.TokenValidationOptions ? options.TokenValidationOptions.Value()
+      options.TokenValidationOptions ? *options.TokenValidationOptions
                                      : this->m_tokenValidationOptions,
       signers);
 
@@ -259,17 +259,16 @@ AttestationAdministrationClient::ResetAttestationPolicy(
   Models::PolicyResult returnedResult;
   if (internalResult.PolicyResolution)
   {
-    returnedResult.PolicyResolution
-        = Models::PolicyModification(internalResult.PolicyResolution.Value());
+    returnedResult.PolicyResolution = Models::PolicyModification(*internalResult.PolicyResolution);
   }
   if (internalResult.PolicySigner)
   {
-    returnedResult.PolicySigner = AttestationSignerInternal(internalResult.PolicySigner.Value());
+    returnedResult.PolicySigner = AttestationSignerInternal(*internalResult.PolicySigner);
   }
   if (internalResult.PolicyTokenHash)
   {
-    returnedResult.PolicyTokenHash = Azure::Core::_internal::Base64Url::Base64UrlDecode(
-        internalResult.PolicyTokenHash.Value());
+    returnedResult.PolicyTokenHash
+        = Base64Url::Base64UrlDecode(*internalResult.PolicyTokenHash);
   }
 
   // Construct a token whose body is the policy result, but whose token is the response from the

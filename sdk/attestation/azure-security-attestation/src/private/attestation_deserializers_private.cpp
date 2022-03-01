@@ -121,7 +121,7 @@ namespace Azure { namespace Security { namespace Attestation { namespace _detail
     JsonOptional::SetIfExists(token, parsedBody, "token");
     if (token)
     {
-      return token.Value();
+      return *token;
     }
 
     throw std::runtime_error("Field 'token' not found in Attestation Service Response");

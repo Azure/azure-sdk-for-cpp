@@ -88,7 +88,7 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
       EXPECT_TRUE(response.Value.Issuer);
       if (!m_testContext.IsPlaybackMode())
       {
-        EXPECT_EQ(m_endpoint, response.Value.Issuer.Value());
+        EXPECT_EQ(m_endpoint, *response.Value.Issuer);
       }
       EXPECT_TRUE(response.Value.Body.SgxMrEnclave);
       EXPECT_TRUE(response.Value.Body.SgxMrSigner);
@@ -96,20 +96,20 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
       EXPECT_TRUE(response.Value.Body.SgxProductId);
       if (data)
       {
-        if (data.Value().DataType == AttestationDataType::Json)
+        if (data->DataType == AttestationDataType::Json)
         {
           EXPECT_TRUE(response.Value.Body.RuntimeClaims);
           EXPECT_FALSE(response.Value.Body.EnclaveHeldData);
           // canonicalize the JSON sent to the service before checking with the service output.
-          auto sentJson(Azure::Core::Json::_internal::json::parse(data.Value().Data));
-          EXPECT_EQ(sentJson.dump(), response.Value.Body.RuntimeClaims.Value());
+          auto sentJson(Azure::Core::Json::_internal::json::parse(data->Data));
+          EXPECT_EQ(sentJson.dump(), *response.Value.Body.RuntimeClaims);
         }
         else
         {
           EXPECT_FALSE(response.Value.Body.RuntimeClaims);
           EXPECT_TRUE(response.Value.Body.EnclaveHeldData);
           // If we expected binary, the EnclaveHeldData in the response should be the value sent.
-          EXPECT_EQ(data.Value().Data, response.Value.Body.EnclaveHeldData.Value());
+          EXPECT_EQ(data->Data, *response.Value.Body.EnclaveHeldData);
         }
       }
     }
