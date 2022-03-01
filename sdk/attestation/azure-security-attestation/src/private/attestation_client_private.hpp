@@ -214,9 +214,7 @@ namespace Azure { namespace Security { namespace Attestation { namespace _detail
      *
      * @param jwt - the JSON Web Token/JSON Web Signature to be parsed.
      */
-    AttestationTokenInternal(
-        std::string const& jwt,
-        Azure::Nullable<T> preferredBody = Azure::Nullable<T>())
+    AttestationTokenInternal(std::string const& jwt, Azure::Nullable<T> preferredBody = {})
     {
       m_token.RawToken = jwt;
 
@@ -323,8 +321,7 @@ namespace Azure { namespace Security { namespace Attestation { namespace _detail
      */
     static AttestationTokenInternal<T, TDeserializer> CreateToken(
         Azure::Nullable<T> const& tokenBody,
-        Azure::Nullable<AttestationSigningKey> const& tokenSigner
-        = Azure::Nullable<AttestationSigningKey>{})
+        Azure::Nullable<AttestationSigningKey> const& tokenSigner = {})
     {
       bool isUnsecuredToken = false;
       std::unique_ptr<Azure::Security::Attestation::_detail::Cryptography::X509Certificate>

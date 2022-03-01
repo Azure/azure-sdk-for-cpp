@@ -21,7 +21,7 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
   using namespace Azure::Security::Attestation::Models;
   using namespace Azure::Security::Attestation::Models::_detail;
   using namespace Azure::Core::_internal;
-  
+
   TEST(SerializationTests, TestDeserializePrimitivesJsonObject)
   {
     // Present JSON field.

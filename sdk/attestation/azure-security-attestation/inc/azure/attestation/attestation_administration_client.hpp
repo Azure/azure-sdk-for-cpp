@@ -131,6 +131,17 @@ namespace Azure { namespace Security { namespace Attestation {
      * @brief Returns an Attestation Token object which would be sent to the attestation service to
      * set an attestation policy.
      *
+     * @details
+     * To verify that the attestation service received the attestation policy, the service returns
+     * the SHA256 hash of the policy token which was sent ot the service. To simplify the customer
+     * experience of interacting with the SetPolicy APIs, CreateSetAttestationPolicyToken API will
+     * generate the same token that would be send to the service.
+     *
+     * To ensure that the token which was sent from the client matches the token which was received
+     * by the attestation service, the customer can call CreateSetAttestationPolicyToken and then
+     * generate the SHA256 of that token and compare it with the value returned by the service - the
+     * two hash values should be identical.
+     *
      * @param policyToSet The policy document to set.
      * @param signingKey Optional Attestation Signing Key to be used to sign the policy.
      * @return Models::AttestationToken<std::nullptr_t> Attestation token which would be sent to the
@@ -140,8 +151,7 @@ namespace Azure { namespace Security { namespace Attestation {
      */
     Models::AttestationToken<std::nullptr_t> CreateSetAttestationPolicyToken(
         Azure::Nullable<std::string> const& policyToSet,
-        Azure::Nullable<AttestationSigningKey> const& signingKey
-        = Azure::Nullable<AttestationSigningKey>()) const;
+        Azure::Nullable<AttestationSigningKey> const& signingKey = {}) const;
 
   private:
     Azure::Core::Url m_endpoint;

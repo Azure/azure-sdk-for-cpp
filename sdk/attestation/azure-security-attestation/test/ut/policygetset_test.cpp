@@ -52,17 +52,17 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
     virtual void SetUp() override
     {
       Azure::Core::Test::TestBase::SetUpTestBase(AZURE_TEST_RECORDING_DIR);
-
-      if (GetParam().InstanceType == ServiceInstanceType::Shared)
+      ServiceInstanceType type = GetParam().InstanceType;
+      if (type == ServiceInstanceType::Shared)
       {
         std::string const shortLocation(GetEnv("LOCATION_SHORT_NAME"));
         m_endpoint = "https://shared" + shortLocation + "." + shortLocation + ".attest.azure.net";
       }
-      else if (GetParam().InstanceType == ServiceInstanceType::AAD)
+      else if (type == ServiceInstanceType::AAD)
       {
         m_endpoint = GetEnv("ATTESTATION_AAD_URL");
       }
-      else if (GetParam().InstanceType == ServiceInstanceType::Isolated)
+      else if (type == ServiceInstanceType::Isolated)
       {
         m_endpoint = GetEnv("ATTESTATION_ISOLATED_URL");
       }
@@ -92,8 +92,7 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
         std::unique_ptr<AttestationAdministrationClient> const& client,
         Response<AttestationToken<PolicyResult>> const& result,
         Azure::Nullable<std::string> policyToValidate,
-        Azure::Nullable<AttestationSigningKey> const& signingKey
-        = Azure::Nullable<AttestationSigningKey>())
+        Azure::Nullable<AttestationSigningKey> const& signingKey = {})
     {
       EXPECT_EQ(result.RawResponse->GetStatusCode(), Azure::Core::Http::HttpStatusCode::Ok);
 
@@ -157,9 +156,7 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
       return true;
     }
 
-    void SetPolicyTest(
-        Azure::Nullable<AttestationSigningKey> const& signingKey
-        = Azure::Nullable<AttestationSigningKey>())
+    void SetPolicyTest(Azure::Nullable<AttestationSigningKey> const& signingKey = {})
     {
       auto adminClient(CreateClient());
 
@@ -177,9 +174,7 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
       EXPECT_EQ(policyToSet, getResponse.Value.Body);
     }
 
-    void ResetPolicyTest(
-        Azure::Nullable<AttestationSigningKey> const& signingKey
-        = Azure::Nullable<AttestationSigningKey>())
+    void ResetPolicyTest(Azure::Nullable<AttestationSigningKey> const& signingKey = {})
     {
       auto adminClient(CreateClient());
 

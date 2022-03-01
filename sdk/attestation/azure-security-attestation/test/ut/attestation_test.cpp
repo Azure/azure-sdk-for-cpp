@@ -83,7 +83,7 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
 
     void ValidateAttestResponse(
         Azure::Response<AttestationToken<AttestationResult>> const& response,
-        Azure::Nullable<AttestationData> data = Azure::Nullable<AttestationData>())
+        Azure::Nullable<AttestationData> data = {})
     {
       EXPECT_TRUE(response.Value.Issuer);
       if (!m_testContext.IsPlaybackMode())
@@ -119,21 +119,19 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
   {
     auto client(CreateClient());
 
-    if (std::get<1>(GetParam()) == AttestationType::OpenEnclave)
+    AttestationType type = std::get<1>(GetParam());
+    if (type == AttestationType::OpenEnclave)
     {
       auto report = AttestationCollateral::OpenEnclaveReport();
       auto attestResponse = client->AttestOpenEnclave(report);
       ValidateAttestResponse(attestResponse);
     }
-    else if (std::get<1>(GetParam()) == AttestationType::SgxEnclave)
+    else if (type == AttestationType::SgxEnclave)
     {
       auto quote = AttestationCollateral::SgxQuote();
       auto attestResponse = client->AttestSgxEnclave(quote);
       ValidateAttestResponse(attestResponse);
     }
-
-    auto report = AttestationCollateral::OpenEnclaveReport();
-    auto attestResponse = client->AttestOpenEnclave(report);
   }
 
   TEST_P(AttestationTests, AttestWithRuntimeData)
@@ -141,14 +139,15 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
     auto client(CreateClient());
     auto runtimeData = AttestationCollateral::RuntimeData();
 
-    if (std::get<1>(GetParam()) == AttestationType::OpenEnclave)
+    AttestationType type = std::get<1>(GetParam());
+    if (type == AttestationType::OpenEnclave)
     {
       auto report = AttestationCollateral::OpenEnclaveReport();
       AttestationData data{runtimeData, AttestationDataType::Binary};
       auto attestResponse = client->AttestOpenEnclave(report, {data});
       ValidateAttestResponse(attestResponse, data);
     }
-    else if (std::get<1>(GetParam()) == AttestationType::SgxEnclave)
+    else if (type == AttestationType::SgxEnclave)
     {
       auto quote = AttestationCollateral::SgxQuote();
       AttestationData data{runtimeData, AttestationDataType::Binary};
@@ -161,14 +160,15 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
     auto client(CreateClient());
     auto runtimeData = AttestationCollateral::RuntimeData();
 
-    if (std::get<1>(GetParam()) == AttestationType::OpenEnclave)
+    AttestationType type = std::get<1>(GetParam());
+    if (type == AttestationType::OpenEnclave)
     {
       auto report = AttestationCollateral::OpenEnclaveReport();
       AttestationData data{runtimeData, AttestationDataType::Json};
       auto attestResponse = client->AttestOpenEnclave(report, {data});
       ValidateAttestResponse(attestResponse, data);
     }
-    else if (std::get<1>(GetParam()) == AttestationType::SgxEnclave)
+    else if (type == AttestationType::SgxEnclave)
     {
       auto quote = AttestationCollateral::SgxQuote();
       AttestationData data{runtimeData, AttestationDataType::Json};

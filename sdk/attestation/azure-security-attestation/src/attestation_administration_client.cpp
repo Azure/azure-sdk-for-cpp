@@ -101,8 +101,7 @@ AttestationAdministrationClient::GetAttestationPolicy(
 
   // Extract the underlying policy token from the response.
   std::string policyTokenValue
-      = *static_cast<AttestationToken<Models::_detail::PolicyResult>>(resultToken)
-            .Body.PolicyToken;
+      = *static_cast<AttestationToken<Models::_detail::PolicyResult>>(resultToken).Body.PolicyToken;
 
   // TPM policies are empty by default, at least in our test instances, so handle the empty policy
   // token case.
@@ -201,8 +200,7 @@ AttestationAdministrationClient::SetAttestationPolicy(
   }
   if (internalResult.PolicyTokenHash)
   {
-    returnedResult.PolicyTokenHash
-        = Base64Url::Base64UrlDecode(*internalResult.PolicyTokenHash);
+    returnedResult.PolicyTokenHash = Base64Url::Base64UrlDecode(*internalResult.PolicyTokenHash);
   }
 
   // Construct a token whose body is the policy result, but whose token is the response from the
@@ -267,8 +265,7 @@ AttestationAdministrationClient::ResetAttestationPolicy(
   }
   if (internalResult.PolicyTokenHash)
   {
-    returnedResult.PolicyTokenHash
-        = Base64Url::Base64UrlDecode(*internalResult.PolicyTokenHash);
+    returnedResult.PolicyTokenHash = Base64Url::Base64UrlDecode(*internalResult.PolicyTokenHash);
   }
 
   // Construct a token whose body is the policy result, but whose token is the response from the
