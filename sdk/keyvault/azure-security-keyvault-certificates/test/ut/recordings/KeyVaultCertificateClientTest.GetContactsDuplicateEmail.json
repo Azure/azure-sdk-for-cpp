@@ -3,26 +3,28 @@
     {
       "Headers": {
         "content-type": "application/json",
-        "user-agent": "azsdk-cpp-keyvault-certificates/4.0.0-beta.1 (Windows 10 Enterprise 6.3 22000 22000.1.amd64fre.co_release.210604-1628)",
-        "x-ms-client-request-id": "b135b24d-b231-4aed-546b-17c5724e41b9"
+        "user-agent": "azsdk-cpp-keyvault-certificates/4.0.0-beta.2 (Windows 10 Enterprise 6.3 22000 22000.1.amd64fre.co_release.210604-1628)",
+        "x-ms-client-request-id": "344481ef-65ed-4b17-6611-3e35661c7114"
       },
       "Method": "PUT",
       "Response": {
-        "BODY": "{\"id\":\"https://REDACTED.vault.azure.net/certificates/contacts\",\"contacts\":[{\"email\":\"one1@two.org\"},{\"email\":\"two@three.org\",\"name\":\"giqu2\"},{\"email\":\"two@three.org\",\"phone\":\"1234567891\"}]}",
-        "STATUS_CODE": "200",
+        "BODY": "{\"error\":{\"code\":\"Unauthorized\",\"message\":\"AKV10000: Request is missing a Bearer or PoP token.\"}}",
+        "REASON_PHRASE": "Unauthorized",
+        "STATUS_CODE": "401",
         "cache-control": "no-cache",
-        "content-length": "194",
+        "content-length": "97",
         "content-type": "application/json; charset=utf-8",
-        "date": "Thu, 04 Nov 2021 20:49:36 GMT",
+        "date": "Tue, 01 Mar 2022 23:31:47 GMT",
         "expires": "-1",
         "pragma": "no-cache",
         "strict-transport-security": "max-age=31536000;includeSubDomains",
+        "www-authenticate": "Bearer authorization=\"https://login.windows.net/72f988bf-86f1-41af-91ab-2d7cd011db47\", resource=\"https://vault.azure.net\"",
         "x-content-type-options": "nosniff",
-        "x-ms-client-request-id": "b135b24d-b231-4aed-546b-17c5724e41b9",
+        "x-ms-client-request-id": "344481ef-65ed-4b17-6611-3e35661c7114",
         "x-ms-keyvault-network-info": "conn_type=Ipv4;addr=24.22.157.72;act_addr_fam=InterNetwork;",
         "x-ms-keyvault-region": "westus2",
-        "x-ms-keyvault-service-version": "1.9.150.1",
-        "x-ms-request-id": "04b73b41-d182-4514-bbdf-c0b7924cf195",
+        "x-ms-keyvault-service-version": "1.9.291.1",
+        "x-ms-request-id": "d8b000e7-42f4-41d6-af57-33e433a1e3a0",
         "x-powered-by": "ASP.NET"
       },
       "Url": "https://REDACTED.vault.azure.net/certificates/contacts?api-version=7.2"
@@ -30,26 +32,55 @@
     {
       "Headers": {
         "content-type": "application/json",
-        "user-agent": "azsdk-cpp-keyvault-certificates/4.0.0-beta.1 (Windows 10 Enterprise 6.3 22000 22000.1.amd64fre.co_release.210604-1628)",
-        "x-ms-client-request-id": "8ebfe585-4ba2-4bb4-63cd-900eeb4a430d"
+        "user-agent": "azsdk-cpp-keyvault-certificates/4.0.0-beta.2 (Windows 10 Enterprise 6.3 22000 22000.1.amd64fre.co_release.210604-1628)",
+        "x-ms-client-request-id": "344481ef-65ed-4b17-6611-3e35661c7114"
+      },
+      "Method": "PUT",
+      "Response": {
+        "BODY": "{\"id\":\"https://gearama-test2.vault.azure.net/certificates/contacts\",\"contacts\":[{\"email\":\"one1@two.org\"},{\"email\":\"two@three.org\",\"name\":\"giqu2\"},{\"email\":\"two@three.org\",\"phone\":\"1234567891\"}]}",
+        "REASON_PHRASE": "OK",
+        "STATUS_CODE": "200",
+        "cache-control": "no-cache",
+        "content-length": "194",
+        "content-type": "application/json; charset=utf-8",
+        "date": "Tue, 01 Mar 2022 23:32:52 GMT",
+        "expires": "-1",
+        "pragma": "no-cache",
+        "strict-transport-security": "max-age=31536000;includeSubDomains",
+        "x-content-type-options": "nosniff",
+        "x-ms-client-request-id": "344481ef-65ed-4b17-6611-3e35661c7114",
+        "x-ms-keyvault-network-info": "conn_type=Ipv4;addr=24.22.157.72;act_addr_fam=InterNetwork;",
+        "x-ms-keyvault-region": "westus2",
+        "x-ms-keyvault-service-version": "1.9.291.1",
+        "x-ms-request-id": "dd0351aa-a59c-4ddb-bd30-6af6b42e228a",
+        "x-powered-by": "ASP.NET"
+      },
+      "Url": "https://REDACTED.vault.azure.net/certificates/contacts?api-version=7.2"
+    },
+    {
+      "Headers": {
+        "content-type": "application/json",
+        "user-agent": "azsdk-cpp-keyvault-certificates/4.0.0-beta.2 (Windows 10 Enterprise 6.3 22000 22000.1.amd64fre.co_release.210604-1628)",
+        "x-ms-client-request-id": "e084af35-d393-4410-765f-bf3f015ec111"
       },
       "Method": "GET",
       "Response": {
-        "BODY": "{\"id\":\"https://REDACTED.vault.azure.net/certificates/contacts\",\"contacts\":[{\"email\":\"one1@two.org\"},{\"email\":\"two@three.org\",\"name\":\"giqu2\"},{\"email\":\"two@three.org\",\"phone\":\"1234567891\"}]}",
+        "BODY": "{\"id\":\"https://gearama-test2.vault.azure.net/certificates/contacts\",\"contacts\":[{\"email\":\"one1@two.org\"},{\"email\":\"two@three.org\",\"name\":\"giqu2\"},{\"email\":\"two@three.org\",\"phone\":\"1234567891\"}]}",
+        "REASON_PHRASE": "OK",
         "STATUS_CODE": "200",
         "cache-control": "no-cache",
         "content-length": "194",
         "content-type": "application/json; charset=utf-8",
-        "date": "Thu, 04 Nov 2021 20:49:36 GMT",
+        "date": "Tue, 01 Mar 2022 23:32:52 GMT",
         "expires": "-1",
         "pragma": "no-cache",
         "strict-transport-security": "max-age=31536000;includeSubDomains",
         "x-content-type-options": "nosniff",
-        "x-ms-client-request-id": "8ebfe585-4ba2-4bb4-63cd-900eeb4a430d",
+        "x-ms-client-request-id": "e084af35-d393-4410-765f-bf3f015ec111",
         "x-ms-keyvault-network-info": "conn_type=Ipv4;addr=24.22.157.72;act_addr_fam=InterNetwork;",
         "x-ms-keyvault-region": "westus2",
-        "x-ms-keyvault-service-version": "1.9.150.1",
-        "x-ms-request-id": "3d4d4251-30a8-45ad-8488-47e0dad506c6",
+        "x-ms-keyvault-service-version": "1.9.291.1",
+        "x-ms-request-id": "2573507c-b075-4a06-ad5f-b7705d61c99d",
         "x-powered-by": "ASP.NET"
       },
       "Url": "https://REDACTED.vault.azure.net/certificates/contacts?api-version=7.2"
@@ -57,26 +88,27 @@
     {
       "Headers": {
         "content-type": "application/json",
-        "user-agent": "azsdk-cpp-keyvault-certificates/4.0.0-beta.1 (Windows 10 Enterprise 6.3 22000 22000.1.amd64fre.co_release.210604-1628)",
-        "x-ms-client-request-id": "c79d8587-8fd0-45a2-49c3-8ef8163ef145"
+        "user-agent": "azsdk-cpp-keyvault-certificates/4.0.0-beta.2 (Windows 10 Enterprise 6.3 22000 22000.1.amd64fre.co_release.210604-1628)",
+        "x-ms-client-request-id": "c2552a48-8ead-45b6-490c-f1e32daa511d"
       },
       "Method": "DELETE",
       "Response": {
-        "BODY": "{\"id\":\"https://REDACTED.vault.azure.net/certificates/contacts\",\"contacts\":[{\"email\":\"one1@two.org\"},{\"email\":\"two@three.org\",\"name\":\"giqu2\"},{\"email\":\"two@three.org\",\"phone\":\"1234567891\"}]}",
+        "BODY": "{\"id\":\"https://gearama-test2.vault.azure.net/certificates/contacts\",\"contacts\":[{\"email\":\"one1@two.org\"},{\"email\":\"two@three.org\",\"name\":\"giqu2\"},{\"email\":\"two@three.org\",\"phone\":\"1234567891\"}]}",
+        "REASON_PHRASE": "OK",
         "STATUS_CODE": "200",
         "cache-control": "no-cache",
         "content-length": "194",
         "content-type": "application/json; charset=utf-8",
-        "date": "Thu, 04 Nov 2021 20:49:36 GMT",
+        "date": "Tue, 01 Mar 2022 23:32:52 GMT",
         "expires": "-1",
         "pragma": "no-cache",
         "strict-transport-security": "max-age=31536000;includeSubDomains",
         "x-content-type-options": "nosniff",
-        "x-ms-client-request-id": "c79d8587-8fd0-45a2-49c3-8ef8163ef145",
+        "x-ms-client-request-id": "c2552a48-8ead-45b6-490c-f1e32daa511d",
         "x-ms-keyvault-network-info": "conn_type=Ipv4;addr=24.22.157.72;act_addr_fam=InterNetwork;",
         "x-ms-keyvault-region": "westus2",
-        "x-ms-keyvault-service-version": "1.9.150.1",
-        "x-ms-request-id": "95b3a41f-0a9b-40de-97d6-44e00206a168",
+        "x-ms-keyvault-service-version": "1.9.291.1",
+        "x-ms-request-id": "96b829f0-60a6-46b3-9278-ff5a30d4ecf9",
         "x-powered-by": "ASP.NET"
       },
       "Url": "https://REDACTED.vault.azure.net/certificates/contacts?api-version=7.2"

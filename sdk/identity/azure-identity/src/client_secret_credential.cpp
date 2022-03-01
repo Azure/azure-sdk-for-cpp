@@ -87,7 +87,6 @@ Azure::Core::Credentials::AccessToken ClientSecretCredential::GetToken(
   });
 }
 
-
 ChallengeClientSecretCredential::ChallengeClientSecretCredential(
     std::string const& tenantId,
     std::string const& clientId,
@@ -113,7 +112,12 @@ ChallengeClientSecretCredential::ChallengeClientSecretCredential(
     std::string const& clientId,
     std::string const& clientSecret,
     ClientSecretCredentialOptions const& options)
-    : ChallengeClientSecretCredential(tenantId, clientId, clientSecret, options.AuthorityHost, options)
+    : ChallengeClientSecretCredential(
+        tenantId,
+        clientId,
+        clientSecret,
+        options.AuthorityHost,
+        options)
 {
 }
 
@@ -150,11 +154,11 @@ Azure::Core::Credentials::AccessToken ChallengeClientSecretCredential::GetToken(
       {
         body << "&scope=" << TokenCredentialImpl::FormatScopes(scopes, m_isAdfs);
       }
-      
-    /* if (tokenRequestContext.TenantId)
-      {
-        body << "&tenantId=" << tokenRequestContext.TenantId.Value();
-      }*/
+
+      /* if (tokenRequestContext.TenantId)
+       {
+         body << "&tenantId=" << tokenRequestContext.TenantId.Value();
+       }*/
     }
 
     auto request = std::make_unique<TokenCredentialImpl::TokenRequest>(

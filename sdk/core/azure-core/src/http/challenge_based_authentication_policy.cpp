@@ -2,8 +2,8 @@
 // SPDX-License-Identifier: MIT
 
 #include "azure/core/http/policies/policy.hpp"
-#include <vector>
 #include <chrono>
+#include <vector>
 
 using Azure::Core::Context;
 using namespace Azure::Core::Http;
@@ -15,26 +15,25 @@ std::unique_ptr<RawResponse> ChallengeBasedAuthenticationPolicy::Send(
     NextHttpPolicy nextPolicy,
     Context const& context) const
 {
-  auto result = BearerTokenAuthenticationPolicy::Send(request, nextPolicy, context);
+  request.SetHeader("authorization", "Bearer " + m_accessToken.Token);
+  auto result = nextPolicy.Send(request, context);
+
   if (result->GetStatusCode() == HttpStatusCode::Unauthorized)
   {
     auto rawData = result->GetHeaders().find("www-authenticate");
     if (rawData != result->GetHeaders().end())
     {
-      if (std::chrono::system_clock::now() > (m_accessToken.ExpiresOn - std::chrono::minutes(2)))
+      ChallengeParameters challenge(rawData->second);
+      Credentials::TokenRequestContext tokenRequestContext;
+
+      tokenRequestContext.TenantId = std::move(challenge.TenantId);
+      tokenRequestContext.AuthorizationUri = std::move(challenge.AuthorizationUri);
+      tokenRequestContext.Scopes = std::move(m_tokenRequestContext.Scopes);
+
       {
-        ChallengeParameters challenge(rawData->second);
-        Credentials::TokenRequestContext tokenRequestContext;
-
-        tokenRequestContext.TenantId = std::move(challenge.TenantId);
-        tokenRequestContext.AuthorizationUri = std::move(challenge.AuthorizationUri);
-        tokenRequestContext.Scopes = std::move(m_tokenRequestContext.Scopes);
-
-        {
-          std::lock_guard<std::mutex> lock(m_accessTokenMutex);
-          m_accessToken = m_credential->GetToken(tokenRequestContext, context);
-          request.SetHeader("authorization", "Bearer " + m_accessToken.Token);
-        }
+        std::lock_guard<std::mutex> lock(m_accessTokenMutex);
+        m_accessToken = m_credential->GetToken(tokenRequestContext, context);
+        request.SetHeader("authorization", "Bearer " + m_accessToken.Token);
       }
     }
     return nextPolicy.Send(request, context);
@@ -103,7 +102,7 @@ void ChallengeParameters::ProcessFragment(std::string const& fragment)
     {
       Scopes.emplace_back(subParts[1] + _detail::DefaultSuffix);
     }
-    else if(subParts[0] == _detail::ScopeName)
+    else if (subParts[0] == _detail::ScopeName)
     {
       Scopes.emplace_back(subParts[1]);
     }
