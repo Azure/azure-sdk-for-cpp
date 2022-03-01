@@ -65,6 +65,7 @@ jobs:
         VCPKG_DEFAULT_TRIPLET: 'x64-windows-static'
         Package.EnableSBOMSigning: true
       steps:
+        - template: /eng/common/pipelines/templates/steps/credscan.yml
         - template: /eng/common/pipelines/templates/steps/check-spelling.yml
           parameters:
             ContinueOnError: false
