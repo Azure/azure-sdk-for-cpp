@@ -30,7 +30,7 @@
 #include <thread>
 #include <vector>
 
-// cspell:: words mrsigner mrenclave
+// cspell:: words mrsigner mrenclave mitm
 using namespace Azure::Security::Attestation;
 using namespace Azure::Security::Attestation::Models;
 using namespace std::chrono_literals;
