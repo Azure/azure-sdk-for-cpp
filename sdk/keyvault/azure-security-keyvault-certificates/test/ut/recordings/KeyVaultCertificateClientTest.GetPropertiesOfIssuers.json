@@ -37,7 +37,7 @@
       },
       "Method": "PUT",
       "Response": {
-        "BODY": "{\"id\":\"https://gearama-test2.vault.azure.net/certificates/issuers/issuer01\",\"provider\":\"Test\",\"credentials\":{\"account_id\":\"keyvaultuser\"},\"org_details\":{\"zip\":0,\"admin_details\":[{\"first_name\":\"John\",\"last_name\":\"Doe\",\"email\":\"admin@microsoft.com\",\"phone\":\"4255555555\"}]},\"attributes\":{\"enabled\":true,\"created\":1646178153,\"updated\":1646178153}}",
+        "BODY": "{\"id\":\"https://REDACTED.vault.azure.net/certificates/issuers/issuer01\",\"provider\":\"Test\",\"credentials\":{\"account_id\":\"keyvaultuser\"},\"org_details\":{\"zip\":0,\"admin_details\":[{\"first_name\":\"John\",\"last_name\":\"Doe\",\"email\":\"admin@microsoft.com\",\"phone\":\"4255555555\"}]},\"attributes\":{\"enabled\":true,\"created\":1646178153,\"updated\":1646178153}}",
         "REASON_PHRASE": "OK",
         "STATUS_CODE": "200",
         "cache-control": "no-cache",
@@ -65,7 +65,7 @@
       },
       "Method": "PUT",
       "Response": {
-        "BODY": "{\"id\":\"https://gearama-test2.vault.azure.net/certificates/issuers/issuer02\",\"provider\":\"Test\",\"credentials\":{\"account_id\":\"keyvaultuser\"},\"org_details\":{\"zip\":0,\"admin_details\":[{\"first_name\":\"John\",\"last_name\":\"Doe\",\"email\":\"admin@microsoft.com\",\"phone\":\"4255555555\"}]},\"attributes\":{\"enabled\":true,\"created\":1646178153,\"updated\":1646178153}}",
+        "BODY": "{\"id\":\"https://REDACTED.vault.azure.net/certificates/issuers/issuer02\",\"provider\":\"Test\",\"credentials\":{\"account_id\":\"keyvaultuser\"},\"org_details\":{\"zip\":0,\"admin_details\":[{\"first_name\":\"John\",\"last_name\":\"Doe\",\"email\":\"admin@microsoft.com\",\"phone\":\"4255555555\"}]},\"attributes\":{\"enabled\":true,\"created\":1646178153,\"updated\":1646178153}}",
         "REASON_PHRASE": "OK",
         "STATUS_CODE": "200",
         "cache-control": "no-cache",
@@ -93,7 +93,7 @@
       },
       "Method": "GET",
       "Response": {
-        "BODY": "{\"value\":[{\"id\":\"https://gearama-test2.vault.azure.net/certificates/issuers/issuer01\",\"provider\":\"Test\"},{\"id\":\"https://gearama-test2.vault.azure.net/certificates/issuers/issuer02\",\"provider\":\"Test\"}],\"nextLink\":null}",
+        "BODY": "{\"value\":[{\"id\":\"https://REDACTED.vault.azure.net/certificates/issuers/issuer01\",\"provider\":\"Test\"},{\"id\":\"https://REDACTED.vault.azure.net/certificates/issuers/issuer02\",\"provider\":\"Test\"}],\"nextLink\":null}",
         "REASON_PHRASE": "OK",
         "STATUS_CODE": "200",
         "cache-control": "no-cache",
@@ -121,7 +121,7 @@
       },
       "Method": "DELETE",
       "Response": {
-        "BODY": "{\"id\":\"https://gearama-test2.vault.azure.net/certificates/issuers/issuer01\",\"provider\":\"Test\",\"credentials\":{\"account_id\":\"keyvaultuser\"},\"org_details\":{\"zip\":0,\"admin_details\":[{\"first_name\":\"John\",\"last_name\":\"Doe\",\"email\":\"admin@microsoft.com\",\"phone\":\"4255555555\"}]},\"attributes\":{\"enabled\":true,\"created\":1646178153,\"updated\":1646178153}}",
+        "BODY": "{\"id\":\"https://REDACTED.vault.azure.net/certificates/issuers/issuer01\",\"provider\":\"Test\",\"credentials\":{\"account_id\":\"keyvaultuser\"},\"org_details\":{\"zip\":0,\"admin_details\":[{\"first_name\":\"John\",\"last_name\":\"Doe\",\"email\":\"admin@microsoft.com\",\"phone\":\"4255555555\"}]},\"attributes\":{\"enabled\":true,\"created\":1646178153,\"updated\":1646178153}}",
         "REASON_PHRASE": "OK",
         "STATUS_CODE": "200",
         "cache-control": "no-cache",
@@ -149,7 +149,7 @@
       },
       "Method": "DELETE",
       "Response": {
-        "BODY": "{\"id\":\"https://gearama-test2.vault.azure.net/certificates/issuers/issuer02\",\"provider\":\"Test\",\"credentials\":{\"account_id\":\"keyvaultuser\"},\"org_details\":{\"zip\":0,\"admin_details\":[{\"first_name\":\"John\",\"last_name\":\"Doe\",\"email\":\"admin@microsoft.com\",\"phone\":\"4255555555\"}]},\"attributes\":{\"enabled\":true,\"created\":1646178153,\"updated\":1646178153}}",
+        "BODY": "{\"id\":\"https://REDACTED.vault.azure.net/certificates/issuers/issuer02\",\"provider\":\"Test\",\"credentials\":{\"account_id\":\"keyvaultuser\"},\"org_details\":{\"zip\":0,\"admin_details\":[{\"first_name\":\"John\",\"last_name\":\"Doe\",\"email\":\"admin@microsoft.com\",\"phone\":\"4255555555\"}]},\"attributes\":{\"enabled\":true,\"created\":1646178153,\"updated\":1646178153}}",
         "REASON_PHRASE": "OK",
         "STATUS_CODE": "200",
         "cache-control": "no-cache",
