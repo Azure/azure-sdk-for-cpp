@@ -56,14 +56,14 @@ namespace Azure { namespace Core { namespace Credentials {
      * response.
      *
      */
-    Azure::Nullable<Url> AuthorizationUri;
+    Azure::Nullable<Url> AuthorizationUri();
 
     /**
      * @brief Gets the tenant ID from <see cref="AuthorizationUri"/>.
      * end with
      *
      */
-    Azure::Nullable<std::string> TenantId;
+    Azure::Nullable<std::string> TenantId();
   };
 
   /**
