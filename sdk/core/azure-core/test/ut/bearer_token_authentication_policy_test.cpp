@@ -54,7 +54,9 @@ TEST(BearerTokenAuthenticationPolicy, InitialGet)
   policies.emplace_back(
       std::make_unique<Azure::Core::Http::Policies::_internal::BearerTokenAuthenticationPolicy>(
           std::make_shared<TestTokenCredential>(accessToken),
-          Azure::Core::Credentials::TokenRequestContext{{"https://microsoft.com/.default"}}));
+          Azure::Core::Credentials::TokenRequestContext{
+              {"https://microsoft.com/.default"},
+          }));
 
   policies.emplace_back(std::make_unique<TestTransportPolicy>());
 
@@ -87,7 +89,9 @@ TEST(BearerTokenAuthenticationPolicy, ReuseWhileValid)
   policies.emplace_back(
       std::make_unique<Azure::Core::Http::Policies::_internal::BearerTokenAuthenticationPolicy>(
           std::make_shared<TestTokenCredential>(accessToken),
-          Azure::Core::Credentials::TokenRequestContext{{"https://microsoft.com/.default"}}));
+          Azure::Core::Credentials::TokenRequestContext{
+              {"https://microsoft.com/.default"},
+          }));
 
   policies.emplace_back(std::make_unique<TestTransportPolicy>());
 
@@ -129,7 +133,9 @@ TEST(BearerTokenAuthenticationPolicy, RefreshNearExpiry)
   policies.emplace_back(
       std::make_unique<Azure::Core::Http::Policies::_internal::BearerTokenAuthenticationPolicy>(
           std::make_shared<TestTokenCredential>(accessToken),
-          Azure::Core::Credentials::TokenRequestContext{{"https://microsoft.com/.default"}}));
+          Azure::Core::Credentials::TokenRequestContext{
+              {"https://microsoft.com/.default"},
+          }));
 
   policies.emplace_back(std::make_unique<TestTransportPolicy>());
 
@@ -171,7 +177,9 @@ TEST(BearerTokenAuthenticationPolicy, RefreshAfterExpiry)
   policies.emplace_back(
       std::make_unique<Azure::Core::Http::Policies::_internal::BearerTokenAuthenticationPolicy>(
           std::make_shared<TestTokenCredential>(accessToken),
-          Azure::Core::Credentials::TokenRequestContext{{"https://microsoft.com/.default"}}));
+          Azure::Core::Credentials::TokenRequestContext{
+              {"https://microsoft.com/.default"},
+          }));
 
   policies.emplace_back(std::make_unique<TestTransportPolicy>());
 
