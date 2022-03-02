@@ -12,7 +12,7 @@ stages:
       - stage: Release_${{ replace(artifact.Name, '-', '_') }}
         displayName: 'Release ${{artifact.name}}'
         dependsOn: ${{ parameters.DependsOn }}
-        condition:  and(succeeded(), ne(variables['Build.Repository.Name'], 'Azure/azure-sdk-for-cpp'), ne(variables['Skip.AllRelease'], 'true'))
+        condition:  and(succeeded(), not(endsWith(variables['Build.Repository.Name'], '-pr')), ne(variables['Skip.AllRelease'], 'true'))
 
         jobs:
           - deployment: TagRepository

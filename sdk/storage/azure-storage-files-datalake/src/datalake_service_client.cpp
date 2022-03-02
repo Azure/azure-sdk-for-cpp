@@ -4,7 +4,7 @@
 #include "azure/storage/files/datalake/datalake_service_client.hpp"
 
 #include <azure/core/http/policies/policy.hpp>
-#include <azure/storage/blobs/protocol/blob_rest_client.hpp>
+#include <azure/storage/common/crypt.hpp>
 #include <azure/storage/common/internal/constants.hpp>
 #include <azure/storage/common/internal/shared_key_policy.hpp>
 #include <azure/storage/common/internal/storage_per_retry_policy.hpp>
@@ -168,13 +168,9 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
       }
       fileSystem.Details.HasImmutabilityPolicy = item.Details.HasImmutabilityPolicy;
       fileSystem.Details.HasLegalHold = item.Details.HasLegalHold;
-      if (item.Details.LeaseDuration.HasValue())
-      {
-        fileSystem.Details.LeaseDuration
-            = Models::LeaseDuration((item.Details.LeaseDuration.Value().ToString()));
-      }
-      fileSystem.Details.LeaseState = Models::LeaseState(item.Details.LeaseState.ToString());
-      fileSystem.Details.LeaseStatus = Models::LeaseStatus(item.Details.LeaseStatus.ToString());
+      fileSystem.Details.LeaseDuration = std::move(item.Details.LeaseDuration);
+      fileSystem.Details.LeaseState = std::move(item.Details.LeaseState);
+      fileSystem.Details.LeaseStatus = std::move(item.Details.LeaseStatus);
 
       pagedResponse.FileSystems.emplace_back(std::move(fileSystem));
     }

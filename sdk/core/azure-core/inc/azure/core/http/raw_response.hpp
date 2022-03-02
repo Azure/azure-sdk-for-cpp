@@ -76,7 +76,7 @@ namespace Azure { namespace Core { namespace Http {
             response.m_statusCode,
             response.m_reasonPhrase)
     {
-      _azure_ASSERT(m_bodyStream == nullptr);
+      AZURE_ASSERT(m_bodyStream == nullptr);
       // Copy body
       m_body = response.GetBody();
     }

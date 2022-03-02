@@ -3,21 +3,21 @@
     {
       "Headers": {
         "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Linux 5.4.0-1063-azure x86_64 #66~18.04.1-Ubuntu SMP Thu Oct 21 09:59:28 UTC 2021)",
-        "x-ms-client-request-id": "d5483886-8f22-4903-5af6-9e6a84e88277",
+        "x-ms-client-request-id": "25795e6b-f009-474e-4d19-7ba6c79c94cd",
         "x-ms-version": "2020-02-10"
       },
-      "Method": "HEAD",
+      "Method": "GET",
       "Response": {
         "BODY": "",
         "REASON_PHRASE": "OK",
         "STATUS_CODE": "200",
         "content-length": "0",
-        "date": "Thu, 16 Dec 2021 22:03:42 GMT",
+        "date": "Thu, 20 Jan 2022 18:18:30 GMT",
         "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
         "x-ms-account-kind": "StorageV2",
-        "x-ms-client-request-id": "d5483886-8f22-4903-5af6-9e6a84e88277",
+        "x-ms-client-request-id": "25795e6b-f009-474e-4d19-7ba6c79c94cd",
         "x-ms-is-hns-enabled": "false",
-        "x-ms-request-id": "83cd03eb-801e-004f-70c8-f21baa000000",
+        "x-ms-request-id": "020c6700-601e-0007-7f2a-0e88e7000000",
         "x-ms-sku-name": "Standard_RAGRS",
         "x-ms-version": "2020-02-10"
       },
@@ -26,21 +26,21 @@
     {
       "Headers": {
         "user-agent": "azsdk-cpp-storage-blobs/12.2.1 (Linux 5.4.0-1063-azure x86_64 #66~18.04.1-Ubuntu SMP Thu Oct 21 09:59:28 UTC 2021)",
-        "x-ms-client-request-id": "9d591195-9f66-49cf-4ded-d90bc7a0b9d6",
+        "x-ms-client-request-id": "230be2c2-673d-4c9d-4924-61d65421cb80",
         "x-ms-version": "2020-02-10"
       },
-      "Method": "HEAD",
+      "Method": "GET",
       "Response": {
         "BODY": "",
         "REASON_PHRASE": "OK",
         "STATUS_CODE": "200",
         "content-length": "0",
-        "date": "Thu, 16 Dec 2021 22:03:42 GMT",
+        "date": "Thu, 20 Jan 2022 18:18:30 GMT",
         "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
         "x-ms-account-kind": "StorageV2",
-        "x-ms-client-request-id": "9d591195-9f66-49cf-4ded-d90bc7a0b9d6",
+        "x-ms-client-request-id": "230be2c2-673d-4c9d-4924-61d65421cb80",
         "x-ms-is-hns-enabled": "true",
-        "x-ms-request-id": "1b0057ff-801e-0014-31c8-f28d80000000",
+        "x-ms-request-id": "d18be0ed-001e-0061-7b2a-0e9c44000000",
         "x-ms-sku-name": "Standard_RAGRS",
         "x-ms-version": "2020-02-10"
       },

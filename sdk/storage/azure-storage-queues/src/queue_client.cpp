@@ -4,11 +4,13 @@
 #include "azure/storage/queues/queue_client.hpp"
 
 #include <azure/core/http/policies/policy.hpp>
+#include <azure/storage/common/crypt.hpp>
 #include <azure/storage/common/internal/shared_key_policy.hpp>
 #include <azure/storage/common/internal/storage_per_retry_policy.hpp>
 #include <azure/storage/common/internal/storage_service_version_policy.hpp>
 #include <azure/storage/common/internal/storage_switch_to_secondary_policy.hpp>
 #include <azure/storage/common/storage_common.hpp>
+#include <azure/storage/common/storage_exception.hpp>
 
 #include "private/package_version.hpp"
 
@@ -110,10 +112,14 @@ namespace Azure { namespace Storage { namespace Queues {
   {
     try
     {
-      _detail::QueueRestClient::Queue::CreateQueueOptions protocolLayerOptions;
-      protocolLayerOptions.Metadata = options.Metadata;
-      return _detail::QueueRestClient::Queue::Create(
-          *m_pipeline, m_queueUrl, protocolLayerOptions, context);
+      _detail::QueueClient::CreateQueueOptions protocolLayerOptions;
+      protocolLayerOptions.Metadata
+          = std::map<std::string, std::string>(options.Metadata.begin(), options.Metadata.end());
+      auto response
+          = _detail::QueueClient::Create(*m_pipeline, m_queueUrl, protocolLayerOptions, context);
+      response.Value.Created
+          = response.RawResponse->GetStatusCode() == Core::Http::HttpStatusCode::Created;
+      return response;
     }
     catch (StorageException& e)
     {
@@ -134,9 +140,8 @@ namespace Azure { namespace Storage { namespace Queues {
     (void)options;
     try
     {
-      _detail::QueueRestClient::Queue::DeleteQueueOptions protocolLayerOptions;
-      return _detail::QueueRestClient::Queue::Delete(
-          *m_pipeline, m_queueUrl, protocolLayerOptions, context);
+      _detail::QueueClient::DeleteQueueOptions protocolLayerOptions;
+      return _detail::QueueClient::Delete(*m_pipeline, m_queueUrl, protocolLayerOptions, context);
     }
     catch (StorageException& e)
     {
@@ -155,8 +160,8 @@ namespace Azure { namespace Storage { namespace Queues {
       const Azure::Core::Context& context) const
   {
     (void)options;
-    _detail::QueueRestClient::Queue::GetQueuePropertiesOptions protocolLayerOptions;
-    return _detail::QueueRestClient::Queue::GetProperties(
+    _detail::QueueClient::GetQueuePropertiesOptions protocolLayerOptions;
+    return _detail::QueueClient::GetProperties(
         *m_pipeline, m_queueUrl, protocolLayerOptions, context);
   }
 
@@ -166,9 +171,10 @@ namespace Azure { namespace Storage { namespace Queues {
       const Azure::Core::Context& context) const
   {
     (void)options;
-    _detail::QueueRestClient::Queue::SetQueueMetadataOptions protocolLayerOptions;
-    protocolLayerOptions.Metadata = std::move(metadata);
-    return _detail::QueueRestClient::Queue::SetMetadata(
+    _detail::QueueClient::SetQueueMetadataOptions protocolLayerOptions;
+    protocolLayerOptions.Metadata
+        = std::map<std::string, std::string>(metadata.begin(), metadata.end());
+    return _detail::QueueClient::SetMetadata(
         *m_pipeline, m_queueUrl, protocolLayerOptions, context);
   }
 
@@ -177,8 +183,8 @@ namespace Azure { namespace Storage { namespace Queues {
       const Azure::Core::Context& context) const
   {
     (void)options;
-    _detail::QueueRestClient::Queue::GetQueueAccessPolicyOptions protocolLayerOptions;
-    return _detail::QueueRestClient::Queue::GetAccessPolicy(
+    _detail::QueueClient::GetQueueAccessPolicyOptions protocolLayerOptions;
+    return _detail::QueueClient::GetAccessPolicy(
         *m_pipeline, m_queueUrl, protocolLayerOptions, context);
   }
 
@@ -188,9 +194,9 @@ namespace Azure { namespace Storage { namespace Queues {
       const Azure::Core::Context& context) const
   {
     (void)options;
-    _detail::QueueRestClient::Queue::SetQueueAccessPolicyOptions protocolLayerOptions;
-    protocolLayerOptions.SignedIdentifiers = accessPolicy.SignedIdentifiers;
-    return _detail::QueueRestClient::Queue::SetAccessPolicy(
+    _detail::QueueClient::SetQueueAccessPolicyOptions protocolLayerOptions;
+    protocolLayerOptions.QueueAcl = accessPolicy.SignedIdentifiers;
+    return _detail::QueueClient::SetAccessPolicy(
         *m_pipeline, m_queueUrl, protocolLayerOptions, context);
   }
 
@@ -201,11 +207,19 @@ namespace Azure { namespace Storage { namespace Queues {
   {
     auto messagesUrl = m_queueUrl;
     messagesUrl.AppendPath("messages");
-    _detail::QueueRestClient::Queue::EnqueueMessageOptions protocolLayerOptions;
-    protocolLayerOptions.MessageText = std::move(messageText);
-    protocolLayerOptions.TimeToLive = options.TimeToLive;
-    protocolLayerOptions.VisibilityTimeout = options.VisibilityTimeout;
-    return _detail::QueueRestClient::Queue::EnqueueMessage(
+    _detail::QueueClient::EnqueueQueueMessageOptions protocolLayerOptions;
+    protocolLayerOptions.QueueMessage.MessageText = std::move(messageText);
+    if (options.TimeToLive.HasValue())
+    {
+      protocolLayerOptions.MessageTimeToLive
+          = static_cast<int32_t>(options.TimeToLive.Value().count());
+    }
+    if (options.VisibilityTimeout.HasValue())
+    {
+      protocolLayerOptions.Visibilitytimeout
+          = static_cast<int32_t>(options.VisibilityTimeout.Value().count());
+    }
+    return _detail::QueueClient::EnqueueMessage(
         *m_pipeline, messagesUrl, protocolLayerOptions, context);
   }
 
@@ -215,10 +229,14 @@ namespace Azure { namespace Storage { namespace Queues {
   {
     auto messagesUrl = m_queueUrl;
     messagesUrl.AppendPath("messages");
-    _detail::QueueRestClient::Queue::ReceiveMessagesOptions protocolLayerOptions;
-    protocolLayerOptions.MaxMessages = options.MaxMessages;
-    protocolLayerOptions.VisibilityTimeout = options.VisibilityTimeout;
-    return _detail::QueueRestClient::Queue::ReceiveMessages(
+    _detail::QueueClient::ReceiveQueueMessagesOptions protocolLayerOptions;
+    protocolLayerOptions.NumberOfMessages = options.MaxMessages;
+    if (options.VisibilityTimeout.HasValue())
+    {
+      protocolLayerOptions.Visibilitytimeout
+          = static_cast<int32_t>(options.VisibilityTimeout.Value().count());
+    }
+    return _detail::QueueClient::ReceiveMessages(
         *m_pipeline, messagesUrl, protocolLayerOptions, context);
   }
 
@@ -229,9 +247,9 @@ namespace Azure { namespace Storage { namespace Queues {
     (void)options;
     auto messagesUrl = m_queueUrl;
     messagesUrl.AppendPath("messages");
-    _detail::QueueRestClient::Queue::PeekMessagesOptions protocolLayerOptions;
-    protocolLayerOptions.MaxMessages = options.MaxMessages;
-    return _detail::QueueRestClient::Queue::PeekMessages(
+    _detail::QueueClient::PeekQueueMessagesOptions protocolLayerOptions;
+    protocolLayerOptions.NumberOfMessages = options.MaxMessages;
+    return _detail::QueueClient::PeekMessages(
         *m_pipeline, messagesUrl, protocolLayerOptions, context);
   }
 
@@ -247,19 +265,19 @@ namespace Azure { namespace Storage { namespace Queues {
     messageUrl.AppendPath(_internal::UrlEncodePath(messageId));
     if (options.MessageText.HasValue())
     {
-      _detail::QueueRestClient::Queue::UpdateMessageOptions protocolLayerOptions;
-      protocolLayerOptions.MessageText = options.MessageText.Value();
+      _detail::QueueClient::UpdateQueueMessageOptions protocolLayerOptions;
+      protocolLayerOptions.QueueMessage.MessageText = options.MessageText.Value();
       protocolLayerOptions.PopReceipt = popReceipt;
-      protocolLayerOptions.VisibilityTimeout = visibilityTimeout;
-      return _detail::QueueRestClient::Queue::UpdateMessage(
+      protocolLayerOptions.Visibilitytimeout = static_cast<int32_t>(visibilityTimeout.count());
+      return _detail::QueueClient::UpdateMessage(
           *m_pipeline, messageUrl, protocolLayerOptions, context);
     }
     else
     {
-      _detail::QueueRestClient::Queue::UpdateMessageVisibilityOptions protocolLayerOptions;
+      _detail::QueueClient::UpdateQueueMessageVisibilityOptions protocolLayerOptions;
       protocolLayerOptions.PopReceipt = popReceipt;
-      protocolLayerOptions.VisibilityTimeout = visibilityTimeout;
-      return _detail::QueueRestClient::Queue::UpdateMessageVisibility(
+      protocolLayerOptions.Visibilitytimeout = static_cast<int32_t>(visibilityTimeout.count());
+      return _detail::QueueClient::UpdateMessageVisibility(
           *m_pipeline, messageUrl, protocolLayerOptions, context);
     }
   }
@@ -274,9 +292,9 @@ namespace Azure { namespace Storage { namespace Queues {
     auto messageUrl = m_queueUrl;
     messageUrl.AppendPath("messages");
     messageUrl.AppendPath(_internal::UrlEncodePath(messageId));
-    _detail::QueueRestClient::Queue::DeleteMessageOptions protocolLayerOptions;
+    _detail::QueueClient::DeleteQueueMessageOptions protocolLayerOptions;
     protocolLayerOptions.PopReceipt = popReceipt;
-    return _detail::QueueRestClient::Queue::DeleteMessage(
+    return _detail::QueueClient::DeleteMessage(
         *m_pipeline, messageUrl, protocolLayerOptions, context);
   }
 
@@ -287,8 +305,8 @@ namespace Azure { namespace Storage { namespace Queues {
     (void)options;
     auto messagesUrl = m_queueUrl;
     messagesUrl.AppendPath("messages");
-    _detail::QueueRestClient::Queue::ClearMessagesOptions protocolLayerOptions;
-    return _detail::QueueRestClient::Queue::ClearMessages(
+    _detail::QueueClient::ClearQueueMessagesOptions protocolLayerOptions;
+    return _detail::QueueClient::ClearMessages(
         *m_pipeline, messagesUrl, protocolLayerOptions, context);
   }
 

@@ -7,8 +7,8 @@
 #include <string>
 #include <vector>
 
-#include "azure/core/cryptography/hash.hpp"
 #include <azure/core/base64.hpp>
+#include <azure/core/cryptography/hash.hpp>
 
 namespace Azure { namespace Storage {
 

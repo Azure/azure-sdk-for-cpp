@@ -4,7 +4,6 @@
 #include "azure/storage/files/datalake/datalake_file_system_client.hpp"
 
 #include <azure/core/http/policies/policy.hpp>
-#include <azure/storage/blobs/protocol/blob_rest_client.hpp>
 #include <azure/storage/common/crypt.hpp>
 #include <azure/storage/common/internal/constants.hpp>
 #include <azure/storage/common/internal/shared_key_policy.hpp>
@@ -12,6 +11,7 @@
 #include <azure/storage/common/internal/storage_service_version_policy.hpp>
 #include <azure/storage/common/internal/storage_switch_to_secondary_policy.hpp>
 #include <azure/storage/common/storage_common.hpp>
+#include <azure/storage/common/storage_exception.hpp>
 
 #include "azure/storage/files/datalake/datalake_directory_client.hpp"
 #include "azure/storage/files/datalake/datalake_file_client.hpp"
@@ -147,22 +147,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
   {
     Blobs::CreateBlobContainerOptions blobOptions;
     blobOptions.Metadata = options.Metadata;
-    if (options.AccessType == Models::PublicAccessType::FileSystem)
-    {
-      blobOptions.AccessType = Blobs::Models::PublicAccessType::BlobContainer;
-    }
-    else if (options.AccessType == Models::PublicAccessType::Path)
-    {
-      blobOptions.AccessType = Blobs::Models::PublicAccessType::Blob;
-    }
-    else if (options.AccessType == Models::PublicAccessType::None)
-    {
-      blobOptions.AccessType = Blobs::Models::PublicAccessType::None;
-    }
-    else
-    {
-      blobOptions.AccessType = Blobs::Models::PublicAccessType(options.AccessType.ToString());
-    }
+    blobOptions.AccessType = Blobs::Models::PublicAccessType(options.AccessType.ToString());
     auto result = m_blobContainerClient.Create(blobOptions, context);
     Models::CreateFileSystemResult ret;
     ret.ETag = std::move(result.Value.ETag);
@@ -264,11 +249,10 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
       const ListPathsOptions& options,
       const Azure::Core::Context& context) const
   {
-    _detail::DataLakeRestClient::FileSystem::ListPathsOptions protocolLayerOptions;
-    protocolLayerOptions.Resource = _detail::FileSystemResource::Filesystem;
+    _detail::FileSystemClient::ListFileSystemPathsOptions protocolLayerOptions;
     protocolLayerOptions.Upn = options.UserPrincipalName;
     protocolLayerOptions.MaxResults = options.PageSizeHint;
-    protocolLayerOptions.RecursiveRequired = recursive;
+    protocolLayerOptions.Recursive = recursive;
 
     auto clientCopy = *this;
     std::function<ListPathsPagedResponse(std::string, const Azure::Core::Context&)> func;
@@ -279,14 +263,14 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
       {
         protocolLayerOptionsCopy.ContinuationToken = continuationToken;
       }
-      auto response = _detail::DataLakeRestClient::FileSystem::ListPaths(
-          clientCopy.m_fileSystemUrl,
+      auto response = _detail::FileSystemClient::ListPaths(
           *clientCopy.m_pipeline,
-          _internal::WithReplicaStatus(context),
-          protocolLayerOptionsCopy);
+          clientCopy.m_fileSystemUrl,
+          protocolLayerOptionsCopy,
+          _internal::WithReplicaStatus(context));
 
       ListPathsPagedResponse pagedResponse;
-      pagedResponse.Paths = std::move(response.Value.Items);
+      pagedResponse.Paths = std::move(response.Value.Paths);
       pagedResponse.m_onNextPageFunc = func;
       pagedResponse.CurrentPageToken = continuationToken;
       pagedResponse.NextPageToken = response.Value.ContinuationToken;
@@ -306,22 +290,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     blobOptions.AccessConditions.LeaseId = options.AccessConditions.LeaseId;
     auto response = m_blobContainerClient.GetAccessPolicy(blobOptions, context);
     Models::FileSystemAccessPolicy ret;
-    if (response.Value.AccessType == Blobs::Models::PublicAccessType::BlobContainer)
-    {
-      ret.AccessType = Models::PublicAccessType::FileSystem;
-    }
-    else if (response.Value.AccessType == Blobs::Models::PublicAccessType::Blob)
-    {
-      ret.AccessType = Models::PublicAccessType::Path;
-    }
-    else if (response.Value.AccessType == Blobs::Models::PublicAccessType::None)
-    {
-      ret.AccessType = Models::PublicAccessType::None;
-    }
-    else
-    {
-      ret.AccessType = Models::PublicAccessType(response.Value.AccessType.ToString());
-    }
+    ret.AccessType = Models::PublicAccessType(response.Value.AccessType.ToString());
     ret.SignedIdentifiers = std::move(response.Value.SignedIdentifiers);
     return Azure::Response<Models::FileSystemAccessPolicy>(
         std::move(ret), std::move(response.RawResponse));
@@ -337,22 +306,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     blobOptions.AccessConditions.IfUnmodifiedSince = options.AccessConditions.IfUnmodifiedSince;
     blobOptions.AccessConditions.LeaseId = options.AccessConditions.LeaseId;
     blobOptions.SignedIdentifiers = options.SignedIdentifiers;
-    if (options.AccessType == Models::PublicAccessType::FileSystem)
-    {
-      blobOptions.AccessType = Blobs::Models::PublicAccessType::BlobContainer;
-    }
-    else if (options.AccessType == Models::PublicAccessType::Path)
-    {
-      blobOptions.AccessType = Blobs::Models::PublicAccessType::Blob;
-    }
-    else if (options.AccessType == Models::PublicAccessType::None)
-    {
-      blobOptions.AccessType = Blobs::Models::PublicAccessType::None;
-    }
-    else
-    {
-      blobOptions.AccessType = Blobs::Models::PublicAccessType(options.AccessType.ToString());
-    }
+    blobOptions.AccessType = Blobs::Models::PublicAccessType(options.AccessType.ToString());
     auto result = m_blobContainerClient.SetAccessPolicy(blobOptions, context);
     Models::SetFileSystemAccessPolicyResult ret;
 
@@ -386,10 +340,10 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     destinationDfsUrl.SetPath(_internal::UrlEncodePath(destinationFileSystem));
     destinationDfsUrl.AppendPath(_internal::UrlEncodePath(destinationFilePath));
 
-    _detail::DataLakeRestClient::Path::CreateOptions protocolLayerOptions;
-    protocolLayerOptions.Mode = _detail::PathRenameMode::Legacy;
+    _detail::PathClient::CreatePathOptions protocolLayerOptions;
+    protocolLayerOptions.Mode = Models::_detail::PathRenameMode::Legacy.ToString();
     protocolLayerOptions.SourceLeaseId = options.SourceAccessConditions.LeaseId;
-    protocolLayerOptions.LeaseIdOptional = options.AccessConditions.LeaseId;
+    protocolLayerOptions.LeaseId = options.AccessConditions.LeaseId;
     protocolLayerOptions.IfMatch = options.AccessConditions.IfMatch;
     protocolLayerOptions.IfNoneMatch = options.AccessConditions.IfNoneMatch;
     protocolLayerOptions.IfModifiedSince = options.AccessConditions.IfModifiedSince;
@@ -399,8 +353,8 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     protocolLayerOptions.SourceIfModifiedSince = options.SourceAccessConditions.IfModifiedSince;
     protocolLayerOptions.SourceIfUnmodifiedSince = options.SourceAccessConditions.IfUnmodifiedSince;
     protocolLayerOptions.RenameSource = "/" + sourceDfsUrl.GetPath();
-    auto result = _detail::DataLakeRestClient::Path::Create(
-        destinationDfsUrl, *m_pipeline, context, protocolLayerOptions);
+    auto result = _detail::PathClient::Create(
+        *m_pipeline, destinationDfsUrl, protocolLayerOptions, context);
 
     auto renamedBlobClient
         = Blobs::BlobClient(_detail::GetBlobUrlFromUrl(destinationDfsUrl), m_pipeline);
@@ -434,10 +388,10 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     destinationDfsUrl.SetPath(_internal::UrlEncodePath(destinationFileSystem));
     destinationDfsUrl.AppendPath(_internal::UrlEncodePath(destinationDirectoryPath));
 
-    _detail::DataLakeRestClient::Path::CreateOptions protocolLayerOptions;
-    protocolLayerOptions.Mode = _detail::PathRenameMode::Legacy;
+    _detail::PathClient::CreatePathOptions protocolLayerOptions;
+    protocolLayerOptions.Mode = Models::_detail::PathRenameMode::Legacy.ToString();
     protocolLayerOptions.SourceLeaseId = options.SourceAccessConditions.LeaseId;
-    protocolLayerOptions.LeaseIdOptional = options.AccessConditions.LeaseId;
+    protocolLayerOptions.LeaseId = options.AccessConditions.LeaseId;
     protocolLayerOptions.IfMatch = options.AccessConditions.IfMatch;
     protocolLayerOptions.IfNoneMatch = options.AccessConditions.IfNoneMatch;
     protocolLayerOptions.IfModifiedSince = options.AccessConditions.IfModifiedSince;
@@ -447,8 +401,8 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     protocolLayerOptions.SourceIfModifiedSince = options.SourceAccessConditions.IfModifiedSince;
     protocolLayerOptions.SourceIfUnmodifiedSince = options.SourceAccessConditions.IfUnmodifiedSince;
     protocolLayerOptions.RenameSource = "/" + sourceDfsUrl.GetPath();
-    auto result = _detail::DataLakeRestClient::Path::Create(
-        destinationDfsUrl, *m_pipeline, context, protocolLayerOptions);
+    auto result = _detail::PathClient::Create(
+        *m_pipeline, destinationDfsUrl, protocolLayerOptions, context);
 
     auto renamedBlobClient
         = Blobs::BlobClient(_detail::GetBlobUrlFromUrl(destinationDfsUrl), m_pipeline);

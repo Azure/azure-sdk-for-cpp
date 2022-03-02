@@ -201,8 +201,29 @@ std::string GetHeadersAsString(Azure::Core::Http::Request const& request)
 void GetErrorAndThrow(const std::string& exceptionMessage)
 {
   DWORD error = GetLastError();
-  throw Azure::Core::Http::TransportException(
-      exceptionMessage + " Error Code: " + std::to_string(error) + ".");
+  std::string errorMessage = exceptionMessage + " Error Code: " + std::to_string(error);
+
+  char* errorMsg = nullptr;
+  if (FormatMessage(
+          FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_FROM_HMODULE | FORMAT_MESSAGE_ALLOCATE_BUFFER,
+          GetModuleHandle("winhttp.dll"),
+          error,
+          MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),
+          reinterpret_cast<LPSTR>(&errorMsg),
+          0,
+          nullptr)
+      != 0)
+  {
+    // Use a unique_ptr to manage the lifetime of errorMsg.
+    std::unique_ptr<char, decltype(&LocalFree)> errorString(errorMsg, &LocalFree);
+    errorMsg = nullptr;
+
+    errorMessage += ": ";
+    errorMessage += errorString.get();
+  }
+  errorMessage += '.';
+
+  throw Azure::Core::Http::TransportException(errorMessage);
 }
 
 void WinHttpTransport::CreateSessionHandle(std::unique_ptr<_detail::HandleManager>& handleManager)
@@ -282,6 +303,9 @@ void WinHttpTransport::CreateRequestHandle(std::unique_ptr<_detail::HandleManage
 {
   const std::string& path = handleManager->m_request.GetUrl().GetRelativeUrl();
   HttpMethod requestMethod = handleManager->m_request.GetMethod();
+  bool const requestSecureHttp(
+      !Azure::Core::_internal::StringExtensions::LocaleInvariantCaseInsensitiveEqual(
+          handleManager->m_request.GetUrl().GetScheme(), HttpScheme));
 
   // Create an HTTP request handle.
   handleManager->m_requestHandle = WinHttpOpenRequest(
@@ -293,10 +317,7 @@ void WinHttpTransport::CreateRequestHandle(std::unique_ptr<_detail::HandleManage
       NULL, // Use HTTP/1.1
       WINHTTP_NO_REFERER,
       WINHTTP_DEFAULT_ACCEPT_TYPES, // No media types are accepted by the client
-      Azure::Core::_internal::StringExtensions::LocaleInvariantCaseInsensitiveEqual(
-          handleManager->m_request.GetUrl().GetScheme(), HttpScheme)
-          ? 0
-          : WINHTTP_FLAG_SECURE); // Uses secure transaction semantics (SSL/TLS)
+      requestSecureHttp ? WINHTTP_FLAG_SECURE : 0); // Uses secure transaction semantics (SSL/TLS)
 
   if (!handleManager->m_requestHandle)
   {
@@ -308,6 +329,23 @@ void WinHttpTransport::CreateRequestHandle(std::unique_ptr<_detail::HandleManage
     // ERROR_WINHTTP_UNRECOGNIZED_SCHEME
     // ERROR_NOT_ENOUGH_MEMORY
     GetErrorAndThrow("Error while getting a request handle.");
+  }
+
+  if (requestSecureHttp)
+  {
+    // If the service requests TLS client certificates, we want to let the WinHTTP APIs know that
+    // it's ok to initiate the request without a client certificate.
+    //
+    // Note: If/When TLS client certificate support is added to the pipeline, this line may need to
+    // be revisited.
+    if (!WinHttpSetOption(
+            handleManager->m_requestHandle,
+            WINHTTP_OPTION_CLIENT_CERT_CONTEXT,
+            WINHTTP_NO_CLIENT_CERT_CONTEXT,
+            0))
+    {
+      GetErrorAndThrow("Error while setting client cert context to ignore..");
+    }
   }
 }
 

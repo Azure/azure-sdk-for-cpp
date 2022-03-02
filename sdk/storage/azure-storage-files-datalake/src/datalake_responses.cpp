@@ -13,10 +13,10 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     Acl Acl::FromString(const std::string& aclString)
     {
       std::string::const_iterator cur = aclString.begin();
-      std::string str1 = _detail::GetSubstringTillDelimiter(':', aclString, cur);
-      std::string str2 = _detail::GetSubstringTillDelimiter(':', aclString, cur);
-      std::string str3 = _detail::GetSubstringTillDelimiter(':', aclString, cur);
-      std::string str4 = _detail::GetSubstringTillDelimiter(':', aclString, cur);
+      std::string str1 = DataLake::_detail::GetSubstringTillDelimiter(':', aclString, cur);
+      std::string str2 = DataLake::_detail::GetSubstringTillDelimiter(':', aclString, cur);
+      std::string str3 = DataLake::_detail::GetSubstringTillDelimiter(':', aclString, cur);
+      std::string str4 = DataLake::_detail::GetSubstringTillDelimiter(':', aclString, cur);
 
       Acl acl;
       if (str4.empty())
@@ -60,7 +60,8 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
 
       while (cur != aclsString.end())
       {
-        result.emplace_back(FromString(_detail::GetSubstringTillDelimiter(',', aclsString, cur)));
+        result.emplace_back(
+            FromString(DataLake::_detail::GetSubstringTillDelimiter(',', aclsString, cur)));
       }
 
       return result;
@@ -96,22 +97,22 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
       const Azure::Core::Context& context)
   {
     m_operationOptions.ContinuationToken = NextPageToken;
-    if (m_mode == _detail::PathSetAccessControlRecursiveMode::Set)
+    if (m_mode == Models::_detail::PathSetAccessControlListRecursiveMode::Set)
     {
       *this = m_dataLakePathClient->SetAccessControlListRecursive(
           m_acls, m_operationOptions, context);
     }
-    else if (m_mode == _detail::PathSetAccessControlRecursiveMode::Modify)
+    else if (m_mode == Models::_detail::PathSetAccessControlListRecursiveMode::Modify)
     {
       *this = m_dataLakePathClient->UpdateAccessControlListRecursive(
           m_acls, m_operationOptions, context);
     }
-    else if (m_mode == _detail::PathSetAccessControlRecursiveMode::Remove)
+    else if (m_mode == Models::_detail::PathSetAccessControlListRecursiveMode::Remove)
     {
       *this = m_dataLakePathClient->RemoveAccessControlListRecursive(
           m_acls, m_operationOptions, context);
     }
-    _azure_UNREACHABLE_CODE();
+    AZURE_UNREACHABLE_CODE();
   }
 
 }}}} // namespace Azure::Storage::Files::DataLake

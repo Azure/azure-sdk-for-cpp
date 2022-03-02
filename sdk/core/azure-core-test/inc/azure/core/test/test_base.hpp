@@ -64,7 +64,7 @@ namespace Azure { namespace Core { namespace Test {
     // If Playback or Record is not set, no changes will be done to the clientOptions or credential.
     // Call this before creating the SDK client
     void PrepareClientOptions(
-        std::shared_ptr<Core::Credentials::TokenCredential>** credential,
+        std::shared_ptr<Core::Credentials::TokenCredential>& credential,
         Azure::Core::_internal::ClientOptions& options)
     {
       // Set up client options depending on the test-mode
@@ -74,7 +74,7 @@ namespace Azure { namespace Core { namespace Test {
         //  - playback transport adapter to read and return payload from json files
         //  - never-expiring test credential to never require a token
         options.Transport.Transport = m_interceptor->GetPlaybackTransport();
-        **credential = m_interceptor->GetTestCredential();
+        credential = m_interceptor->GetTestCredential();
       }
       else if (!m_testContext.IsLiveMode())
       {
@@ -190,12 +190,12 @@ namespace Azure { namespace Core { namespace Test {
     template <class T, class O>
     std::unique_ptr<T> InitTestClient(
         std::string const& url,
-        std::shared_ptr<Core::Credentials::TokenCredential>* credential,
+        std::shared_ptr<Core::Credentials::TokenCredential>& credential,
         O& options)
     {
       // Run instrumentation before creating the client
-      PrepareClientOptions(&credential, options);
-      return std::make_unique<T>(url, *credential, options);
+      PrepareClientOptions(credential, options);
+      return std::make_unique<T>(url, credential, options);
     }
 
     template <class T> T InitClientOptions()
@@ -243,13 +243,62 @@ namespace Azure { namespace Core { namespace Test {
           "Test Log from: [ " + m_testContext.GetTestPlaybackRecordingName() + " ] - " + message);
     }
 
-    // Util for tests getting env vars
-    std::string GetEnv(const std::string& name)
+    /**
+     * @brief Utility function used by tests to retrieve env vars
+     *
+     * @param name Environment variable name to retrieve.
+     *
+     * @return The value of the environment variable retrieved.
+     *
+     * @note If AZURE_TENANT_ID, AZURE_CLIENT_ID, or AZURE_CLIENT_SECRET are not available in the
+     * environment, the AZURE_SERVICE_DIRECTORY environment variable is used to set those values
+     * with the values emitted by the New-TestResources.ps1 script.
+     *
+     * @note The Azure CI pipeline upper cases all environment variables defined in the pipeline.
+     * Since some operating systems have case sensitive environment variables, on debug builds, this
+     * function ensures that the environment variable being retrieved is all upper case.
+     *
+     */
+    std::string GetEnv(std::string const& name)
     {
-      const auto ret = Azure::Core::_internal::Environment::GetVariable(name.c_str());
-
+#if !defined(NDEBUG)
+      // The azure CI pipeline uppercases all EnvVar values from ci.yml files.
+      // That means that any mixed case strings will not be found when run from the CI
+      // pipeline. Check to make sure that the developer only passed in an upper case environment
+      // variable.
+      {
+        if (name != Azure::Core::_internal::StringExtensions::ToUpper(name))
+        {
+          throw std::runtime_error("All Azure SDK environment variables must be all upper case.");
+        }
+      }
+#endif
+      auto ret = Azure::Core::_internal::Environment::GetVariable(name.c_str());
       if (ret.empty())
       {
+        static const char azurePrefix[] = "AZURE_";
+        if (!m_testContext.IsPlaybackMode() && name.find(azurePrefix) == 0)
+        {
+          std::string serviceDirectory
+              = Azure::Core::_internal::Environment::GetVariable("AZURE_SERVICE_DIRECTORY");
+          if (serviceDirectory.empty())
+          {
+            throw std::runtime_error(
+                "Could not find a value for " + name
+                + " and AZURE_SERVICE_DIRECTORY was not defined. Define either " + name
+                + " or AZURE_SERVICE_DIRECTORY to resolve.");
+          }
+          // Upper case the serviceName environment variable because all ci.yml environment
+          // variables are upper cased.
+          std::string serviceDirectoryEnvVar
+              = Azure::Core::_internal::StringExtensions::ToUpper(serviceDirectory);
+          serviceDirectoryEnvVar += name.substr(sizeof(azurePrefix) - 2);
+          ret = Azure::Core::_internal::Environment::GetVariable(serviceDirectoryEnvVar.c_str());
+          if (!ret.empty())
+          {
+            return ret;
+          }
+        }
         throw std::runtime_error("Missing required environment variable: " + name);
       }
 
@@ -260,6 +309,15 @@ namespace Azure { namespace Core { namespace Test {
 
     /**
      * @brief Run before each test.
+     *
+     * @param baseRecordingPath - the base recording path to be used for this test. Normally this is
+     * `AZURE_TEST_RECORDING_DIR`.
+     *
+     * For example:
+     *
+     * \code{.cpp}
+     *  Azure::Core::Test::TestBase::SetUpTestBase(AZURE_TEST_RECORDING_DIR);
+     * \endcode
      *
      */
     void SetUpTestBase(std::string const& baseRecordingPath)

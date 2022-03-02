@@ -14,16 +14,16 @@
 #include <azure/storage/common/internal/file_io.hpp>
 #include <azure/storage/common/internal/shared_key_policy.hpp>
 
-namespace Azure { namespace Storage { namespace Files { namespace DataLake { namespace Models {
+namespace Azure { namespace Storage { namespace Blobs { namespace Models {
 
-  bool operator==(const PathHttpHeaders& lhs, const PathHttpHeaders& rhs)
+  bool operator==(const BlobHttpHeaders& lhs, const BlobHttpHeaders& rhs)
   {
     return lhs.ContentType == rhs.ContentType && lhs.ContentEncoding == rhs.ContentEncoding
         && lhs.ContentLanguage == rhs.ContentLanguage && lhs.CacheControl == rhs.CacheControl
         && lhs.ContentDisposition == rhs.ContentDisposition;
   }
 
-}}}}} // namespace Azure::Storage::Files::DataLake::Models
+}}}} // namespace Azure::Storage::Blobs::Models
 
 namespace Azure { namespace Storage { namespace Test {
 
@@ -429,7 +429,7 @@ namespace Azure { namespace Storage { namespace Test {
 
   TEST_P(UploadFile, fromBuffer)
   {
-    auto const p = GetParam();
+    UploadFile::ParamType const& p(GetParam());
     std::vector<uint8_t> fileContent(static_cast<size_t>(8_MB), 'x');
     auto fileClient = m_fileSystemClient->GetFileClient(GetTestNameLowerCase());
 
@@ -461,7 +461,7 @@ namespace Azure { namespace Storage { namespace Test {
 
   TEST_P(UploadFile, fromFile)
   {
-    auto const p = GetParam();
+    UploadFile::ParamType const& p(GetParam());
     std::vector<uint8_t> fileContent(static_cast<size_t>(8_MB), 'x');
     auto fileClient = m_fileSystemClient->GetFileClient(GetTestNameLowerCase());
 
@@ -539,7 +539,7 @@ namespace Azure { namespace Storage { namespace Test {
               Azure::Storage::Files::DataLake::DataLakeFileClient::CreateFromConnectionString(
                   AdlsGen2ConnectionString(), m_fileSystemName, "credential")
                   .GetUrl()),
-          &credential,
+          credential,
           options);
 
       EXPECT_NO_THROW(clientSecretClient->Create());

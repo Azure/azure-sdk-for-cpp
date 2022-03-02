@@ -9,7 +9,6 @@
 #include <azure/core/response.hpp>
 #include <azure/storage/common/storage_credential.hpp>
 
-#include "azure/storage/files/shares/protocol/share_rest_client.hpp"
 #include "azure/storage/files/shares/share_options.hpp"
 #include "azure/storage/files/shares/share_responses.hpp"
 #include "azure/storage/files/shares/share_service_client.hpp"

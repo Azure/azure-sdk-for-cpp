@@ -1,16 +1,26 @@
 # Release History
 
-## 12.3.0 (Unreleased)
+## 12.4.0-beta.1 (Unreleased)
 
 ### Features Added
 
-- New API: `BlobClient::CopyFromUri()`.
+- Bumped up API version to `2020-08-04`.
+- Bumped up SAS token version to `2020-08-04`.
+- Added support for immutability policy.
+- New API: `BlobClient::CopyFromUri()`, `BlobClient::SetImmutabilityPolicy()`, `BlobClient::DeleteImmutabilityPolicy()`, `BlobClient::SetLegalHold()`, `BlockBlobClient::UploadFromUri()` and `BlobServiceClient::RenameBlobContainer()`.
+- Added lease access condition support for `BlobClient::SetTags()` and `BlobClient::GetTags()`.
 
 ### Breaking Changes
 
 ### Bugs Fixed
 
 ### Other Changes
+
+## 12.3.0 (2022-02-14)
+
+### Features Added
+
+- Added `VersionId` in `SetBlobMetadataResult`.
 
 ## 12.2.1 (2021-11-08)
 

@@ -103,13 +103,16 @@ TEST(Md5Hash, ExpectThrow)
   const uint8_t* ptr = reinterpret_cast<const uint8_t*>(data.c_str());
   Md5Hash instance;
 
+#if GTEST_HAS_DEATH_TEST
   ASSERT_DEATH(instance.Final(nullptr, 1), "");
   ASSERT_DEATH(instance.Append(nullptr, 1), "");
+#endif
 
   EXPECT_EQ(
       Azure::Core::Convert::Base64Encode(instance.Final(ptr, data.length())),
       "1B2M2Y8AsgTpgAmY7PhCfg==");
 
+#if GTEST_HAS_DEATH_TEST
 #if defined(NDEBUG)
   // Release build won't provide assert msg
   ASSERT_DEATH(instance.Final(), "");
@@ -119,6 +122,7 @@ TEST(Md5Hash, ExpectThrow)
   ASSERT_DEATH(instance.Final(), "Cannot call Final");
   ASSERT_DEATH(instance.Final(ptr, data.length()), "Cannot call Final");
   ASSERT_DEATH(instance.Append(ptr, data.length()), "Cannot call Append after calling Final");
+#endif
 #endif
 }
 

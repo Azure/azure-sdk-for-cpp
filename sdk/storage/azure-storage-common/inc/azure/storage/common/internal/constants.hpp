@@ -16,7 +16,8 @@ namespace Azure { namespace Storage { namespace _internal {
   constexpr static const char* HttpHeaderRequestId = "x-ms-request-id";
   constexpr static const char* HttpHeaderClientRequestId = "x-ms-client-request-id";
   constexpr static const char* HttpHeaderContentType = "content-type";
-  constexpr static const char* DefaultSasVersion = "2020-02-10";
+  constexpr static const char* HttpHeaderContentLength = "content-length";
+  constexpr static const char* HttpHeaderContentRange = "content-range";
 
   constexpr int ReliableStreamRetryCount = 3;
 }}} // namespace Azure::Storage::_internal

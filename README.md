@@ -57,6 +57,12 @@ target_link_libraries(<your project name> PRIVATE Azure::azure-storage-blobs)
 
 You can reference this [vcpkg Quick Start](https://github.com/microsoft/vcpkg#quick-start-windows) for more details.
 
+#### Getting Beta Releases in Vcpkg
+
+Official vcpkg registry may have beta versions of Azure SDK client libraries, up until a given library gets released as stable. After that, we don't publish post-first-stable beta releases of that library in the official registry.
+
+If you are interested in both stable releases and post-first-stable beta releases, see [Azure SDK Beta Vcpkg Registry](https://github.com/Azure/azure-sdk-vcpkg-betas/).
+
 ### Building your Application
 
 In order to use the SDK installed via vcpkg with CMake, you can use the toolchain file from vcpkg:

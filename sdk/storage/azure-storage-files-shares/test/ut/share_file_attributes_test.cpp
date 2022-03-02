@@ -1,9 +1,9 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
 
-#include <azure/storage/files/shares/share_file_attributes.hpp>
-
 #include "test/ut/test_base.hpp"
+
+#include "azure/storage/files/shares/rest_client.hpp"
 
 namespace Azure { namespace Storage { namespace Test {
 

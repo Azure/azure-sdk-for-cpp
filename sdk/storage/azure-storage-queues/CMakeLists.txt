@@ -8,6 +8,7 @@ set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
 
+option(FETCH_SOURCE_DEPS "build source dependencies" OFF)
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/../../../cmake-modules")
 
 include(AzureVcpkg)
@@ -21,10 +22,19 @@ include(AzureBuildTargetForCI)
 
 az_vcpkg_integrate()
 
-if(NOT AZ_ALL_LIBRARIES)
-  find_package(azure-storage-common-cpp "12.2.0" CONFIG QUIET)
+if(FETCH_SOURCE_DEPS)
+    set(AZ_ALL_LIBRARIES ON)
+    include(FolderList)
+    SetCompileOptions(STORAGE_QUEUES)
+    GetFolderList(STORAGE_QUEUES)
+    foreach(oneFolder IN LISTS BUILD_FOLDERS)
+        message("add folder ${oneFolder}")
+        add_subdirectory(${oneFolder} EXCLUDE_FROM_ALL)
+    endforeach()
+elseif(NOT AZ_ALL_LIBRARIES)
+  find_package(azure-storage-common-cpp "12.2.1" CONFIG QUIET)
   if(NOT azure-storage-common-cpp_FOUND)
-    find_package(azure-storage-common-cpp "12.2.0" REQUIRED)
+    find_package(azure-storage-common-cpp "12.2.1" REQUIRED)
   endif()
 endif()
 
@@ -32,12 +42,12 @@ set(
   AZURE_STORAGE_QUEUE_HEADER
     inc/azure/storage/queues.hpp
     inc/azure/storage/queues/dll_import_export.hpp
-    inc/azure/storage/queues/protocol/queue_rest_client.hpp
     inc/azure/storage/queues/queue_client.hpp
     inc/azure/storage/queues/queue_options.hpp
     inc/azure/storage/queues/queue_responses.hpp
     inc/azure/storage/queues/queue_sas_builder.hpp
     inc/azure/storage/queues/queue_service_client.hpp
+    inc/azure/storage/queues/rest_client.hpp
 )
 
 set(
@@ -46,9 +56,9 @@ set(
     src/queue_client.cpp
     src/queue_options.cpp
     src/queue_responses.cpp
-    src/queue_rest_client.cpp
     src/queue_sas_builder.cpp
     src/queue_service_client.cpp
+    src/rest_client.cpp
 )
 
 add_library(azure-storage-queues ${AZURE_STORAGE_QUEUE_HEADER} ${AZURE_STORAGE_QUEUE_SOURCE})

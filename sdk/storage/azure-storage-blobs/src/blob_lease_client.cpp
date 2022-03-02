@@ -3,7 +3,7 @@
 
 #include "azure/storage/blobs/blob_lease_client.hpp"
 
-#include <azure/core/internal/azure_assert.hpp>
+#include <azure/core/azure_assert.hpp>
 #include <azure/core/uuid.hpp>
 
 namespace Azure { namespace Storage { namespace Blobs {
@@ -22,16 +22,16 @@ namespace Azure { namespace Storage { namespace Blobs {
   {
     if (m_blobClient.HasValue())
     {
-      _detail::BlobRestClient::Blob::AcquireBlobLeaseOptions protocolLayerOptions;
+      _detail::BlobClient::AcquireBlobLeaseOptions protocolLayerOptions;
       protocolLayerOptions.ProposedLeaseId = GetLeaseId();
-      protocolLayerOptions.LeaseDuration = duration;
+      protocolLayerOptions.Duration = static_cast<int32_t>(duration.count());
       protocolLayerOptions.IfModifiedSince = options.AccessConditions.IfModifiedSince;
       protocolLayerOptions.IfUnmodifiedSince = options.AccessConditions.IfUnmodifiedSince;
       protocolLayerOptions.IfMatch = options.AccessConditions.IfMatch;
       protocolLayerOptions.IfNoneMatch = options.AccessConditions.IfNoneMatch;
       protocolLayerOptions.IfTags = options.AccessConditions.TagConditions;
 
-      auto response = _detail::BlobRestClient::Blob::AcquireLease(
+      auto response = _detail::BlobClient::AcquireLease(
           *(m_blobClient.Value().m_pipeline),
           m_blobClient.Value().m_blobUrl,
           protocolLayerOptions,
@@ -47,23 +47,23 @@ namespace Azure { namespace Storage { namespace Blobs {
     }
     else if (m_blobContainerClient.HasValue())
     {
-      _detail::BlobRestClient::BlobContainer::AcquireBlobContainerLeaseOptions protocolLayerOptions;
+      _detail::BlobContainerClient::AcquireBlobContainerLeaseOptions protocolLayerOptions;
       protocolLayerOptions.ProposedLeaseId = GetLeaseId();
-      protocolLayerOptions.LeaseDuration = duration;
+      protocolLayerOptions.Duration = static_cast<int32_t>(duration.count());
       protocolLayerOptions.IfModifiedSince = options.AccessConditions.IfModifiedSince;
       protocolLayerOptions.IfUnmodifiedSince = options.AccessConditions.IfUnmodifiedSince;
 
-      _azure_ASSERT_MSG(
+      AZURE_ASSERT_MSG(
           !options.AccessConditions.IfMatch.HasValue(),
           "Blob container lease doesn't support If-Match condition.");
-      _azure_ASSERT_MSG(
+      AZURE_ASSERT_MSG(
           !options.AccessConditions.IfNoneMatch.HasValue(),
           "Blob container lease doesn't support If-None-Match condition.");
-      _azure_ASSERT_MSG(
+      AZURE_ASSERT_MSG(
           !options.AccessConditions.TagConditions.HasValue(),
           "Blob container lease doesn't support tag condition.");
 
-      auto response = _detail::BlobRestClient::BlobContainer::AcquireLease(
+      auto response = _detail::BlobContainerClient::AcquireLease(
           *(m_blobContainerClient.Value().m_pipeline),
           m_blobContainerClient.Value().m_blobContainerUrl,
           protocolLayerOptions,
@@ -79,7 +79,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     }
     else
     {
-      _azure_UNREACHABLE_CODE();
+      AZURE_UNREACHABLE_CODE();
     }
   }
 
@@ -89,7 +89,7 @@ namespace Azure { namespace Storage { namespace Blobs {
   {
     if (m_blobClient.HasValue())
     {
-      _detail::BlobRestClient::Blob::RenewBlobLeaseOptions protocolLayerOptions;
+      _detail::BlobClient::RenewBlobLeaseOptions protocolLayerOptions;
       protocolLayerOptions.LeaseId = GetLeaseId();
       protocolLayerOptions.IfModifiedSince = options.AccessConditions.IfModifiedSince;
       protocolLayerOptions.IfUnmodifiedSince = options.AccessConditions.IfUnmodifiedSince;
@@ -97,7 +97,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       protocolLayerOptions.IfNoneMatch = options.AccessConditions.IfNoneMatch;
       protocolLayerOptions.IfTags = options.AccessConditions.TagConditions;
 
-      auto response = _detail::BlobRestClient::Blob::RenewLease(
+      auto response = _detail::BlobClient::RenewLease(
           *(m_blobClient.Value().m_pipeline),
           m_blobClient.Value().m_blobUrl,
           protocolLayerOptions,
@@ -113,22 +113,22 @@ namespace Azure { namespace Storage { namespace Blobs {
     }
     else if (m_blobContainerClient.HasValue())
     {
-      _detail::BlobRestClient::BlobContainer::RenewBlobContainerLeaseOptions protocolLayerOptions;
+      _detail::BlobContainerClient::RenewBlobContainerLeaseOptions protocolLayerOptions;
       protocolLayerOptions.LeaseId = GetLeaseId();
       protocolLayerOptions.IfModifiedSince = options.AccessConditions.IfModifiedSince;
       protocolLayerOptions.IfUnmodifiedSince = options.AccessConditions.IfUnmodifiedSince;
 
-      _azure_ASSERT_MSG(
+      AZURE_ASSERT_MSG(
           !options.AccessConditions.IfMatch.HasValue(),
           "Blob container lease doesn't support If-Match condition.");
-      _azure_ASSERT_MSG(
+      AZURE_ASSERT_MSG(
           !options.AccessConditions.IfNoneMatch.HasValue(),
           "Blob container lease doesn't support If-None-Match condition.");
-      _azure_ASSERT_MSG(
+      AZURE_ASSERT_MSG(
           !options.AccessConditions.TagConditions.HasValue(),
           "Blob container lease doesn't support tag condition.");
 
-      auto response = _detail::BlobRestClient::BlobContainer::RenewLease(
+      auto response = _detail::BlobContainerClient::RenewLease(
           *(m_blobContainerClient.Value().m_pipeline),
           m_blobContainerClient.Value().m_blobContainerUrl,
           protocolLayerOptions,
@@ -144,7 +144,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     }
     else
     {
-      _azure_UNREACHABLE_CODE();
+      AZURE_UNREACHABLE_CODE();
     }
   }
 
@@ -154,7 +154,7 @@ namespace Azure { namespace Storage { namespace Blobs {
   {
     if (m_blobClient.HasValue())
     {
-      _detail::BlobRestClient::Blob::ReleaseBlobLeaseOptions protocolLayerOptions;
+      _detail::BlobClient::ReleaseBlobLeaseOptions protocolLayerOptions;
       protocolLayerOptions.LeaseId = GetLeaseId();
       protocolLayerOptions.IfModifiedSince = options.AccessConditions.IfModifiedSince;
       protocolLayerOptions.IfUnmodifiedSince = options.AccessConditions.IfUnmodifiedSince;
@@ -162,7 +162,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       protocolLayerOptions.IfNoneMatch = options.AccessConditions.IfNoneMatch;
       protocolLayerOptions.IfTags = options.AccessConditions.TagConditions;
 
-      auto response = _detail::BlobRestClient::Blob::ReleaseLease(
+      auto response = _detail::BlobClient::ReleaseLease(
           *(m_blobClient.Value().m_pipeline),
           m_blobClient.Value().m_blobUrl,
           protocolLayerOptions,
@@ -177,22 +177,22 @@ namespace Azure { namespace Storage { namespace Blobs {
     }
     else if (m_blobContainerClient.HasValue())
     {
-      _detail::BlobRestClient::BlobContainer::ReleaseBlobContainerLeaseOptions protocolLayerOptions;
+      _detail::BlobContainerClient::ReleaseBlobContainerLeaseOptions protocolLayerOptions;
       protocolLayerOptions.LeaseId = GetLeaseId();
       protocolLayerOptions.IfModifiedSince = options.AccessConditions.IfModifiedSince;
       protocolLayerOptions.IfUnmodifiedSince = options.AccessConditions.IfUnmodifiedSince;
 
-      _azure_ASSERT_MSG(
+      AZURE_ASSERT_MSG(
           !options.AccessConditions.IfMatch.HasValue(),
           "Blob container lease doesn't support If-Match condition.");
-      _azure_ASSERT_MSG(
+      AZURE_ASSERT_MSG(
           !options.AccessConditions.IfNoneMatch.HasValue(),
           "Blob container lease doesn't support If-None-Match condition.");
-      _azure_ASSERT_MSG(
+      AZURE_ASSERT_MSG(
           !options.AccessConditions.TagConditions.HasValue(),
           "Blob container lease doesn't support tag condition.");
 
-      auto response = _detail::BlobRestClient::BlobContainer::ReleaseLease(
+      auto response = _detail::BlobContainerClient::ReleaseLease(
           *(m_blobContainerClient.Value().m_pipeline),
           m_blobContainerClient.Value().m_blobContainerUrl,
           protocolLayerOptions,
@@ -207,7 +207,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     }
     else
     {
-      _azure_UNREACHABLE_CODE();
+      AZURE_UNREACHABLE_CODE();
     }
   }
 
@@ -218,7 +218,7 @@ namespace Azure { namespace Storage { namespace Blobs {
   {
     if (m_blobClient.HasValue())
     {
-      _detail::BlobRestClient::Blob::ChangeBlobLeaseOptions protocolLayerOptions;
+      _detail::BlobClient::ChangeBlobLeaseOptions protocolLayerOptions;
       protocolLayerOptions.LeaseId = GetLeaseId();
       protocolLayerOptions.ProposedLeaseId = proposedLeaseId;
       protocolLayerOptions.IfModifiedSince = options.AccessConditions.IfModifiedSince;
@@ -227,7 +227,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       protocolLayerOptions.IfNoneMatch = options.AccessConditions.IfNoneMatch;
       protocolLayerOptions.IfTags = options.AccessConditions.TagConditions;
 
-      auto response = _detail::BlobRestClient::Blob::ChangeLease(
+      auto response = _detail::BlobClient::ChangeLease(
           *(m_blobClient.Value().m_pipeline),
           m_blobClient.Value().m_blobUrl,
           protocolLayerOptions,
@@ -248,23 +248,23 @@ namespace Azure { namespace Storage { namespace Blobs {
     }
     else if (m_blobContainerClient.HasValue())
     {
-      _detail::BlobRestClient::BlobContainer::ChangeBlobContainerLeaseOptions protocolLayerOptions;
+      _detail::BlobContainerClient::ChangeBlobContainerLeaseOptions protocolLayerOptions;
       protocolLayerOptions.LeaseId = GetLeaseId();
       protocolLayerOptions.ProposedLeaseId = proposedLeaseId;
       protocolLayerOptions.IfModifiedSince = options.AccessConditions.IfModifiedSince;
       protocolLayerOptions.IfUnmodifiedSince = options.AccessConditions.IfUnmodifiedSince;
 
-      _azure_ASSERT_MSG(
+      AZURE_ASSERT_MSG(
           !options.AccessConditions.IfMatch.HasValue(),
           "Blob container lease doesn't support If-Match condition.");
-      _azure_ASSERT_MSG(
+      AZURE_ASSERT_MSG(
           !options.AccessConditions.IfNoneMatch.HasValue(),
           "Blob container lease doesn't support If-None-Match condition.");
-      _azure_ASSERT_MSG(
+      AZURE_ASSERT_MSG(
           !options.AccessConditions.TagConditions.HasValue(),
           "Blob container lease doesn't support tag condition.");
 
-      auto response = _detail::BlobRestClient::BlobContainer::ChangeLease(
+      auto response = _detail::BlobContainerClient::ChangeLease(
           *(m_blobContainerClient.Value().m_pipeline),
           m_blobContainerClient.Value().m_blobContainerUrl,
           protocolLayerOptions,
@@ -285,7 +285,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     }
     else
     {
-      _azure_UNREACHABLE_CODE();
+      AZURE_UNREACHABLE_CODE();
     }
   }
 
@@ -295,15 +295,19 @@ namespace Azure { namespace Storage { namespace Blobs {
   {
     if (m_blobClient.HasValue())
     {
-      _detail::BlobRestClient::Blob::BreakBlobLeaseOptions protocolLayerOptions;
-      protocolLayerOptions.BreakPeriod = options.BreakPeriod;
+      _detail::BlobClient::BreakBlobLeaseOptions protocolLayerOptions;
+      if (options.BreakPeriod.HasValue())
+      {
+        protocolLayerOptions.BreakPeriod
+            = static_cast<int32_t>(options.BreakPeriod.Value().count());
+      }
       protocolLayerOptions.IfModifiedSince = options.AccessConditions.IfModifiedSince;
       protocolLayerOptions.IfUnmodifiedSince = options.AccessConditions.IfUnmodifiedSince;
       protocolLayerOptions.IfMatch = options.AccessConditions.IfMatch;
       protocolLayerOptions.IfNoneMatch = options.AccessConditions.IfNoneMatch;
       protocolLayerOptions.IfTags = options.AccessConditions.TagConditions;
 
-      auto response = _detail::BlobRestClient::Blob::BreakLease(
+      auto response = _detail::BlobClient::BreakLease(
           *(m_blobClient.Value().m_pipeline),
           m_blobClient.Value().m_blobUrl,
           protocolLayerOptions,
@@ -318,22 +322,26 @@ namespace Azure { namespace Storage { namespace Blobs {
     }
     else if (m_blobContainerClient.HasValue())
     {
-      _detail::BlobRestClient::BlobContainer::BreakBlobContainerLeaseOptions protocolLayerOptions;
-      protocolLayerOptions.BreakPeriod = options.BreakPeriod;
+      _detail::BlobContainerClient::BreakBlobContainerLeaseOptions protocolLayerOptions;
+      if (options.BreakPeriod.HasValue())
+      {
+        protocolLayerOptions.BreakPeriod
+            = static_cast<int32_t>(options.BreakPeriod.Value().count());
+      }
       protocolLayerOptions.IfModifiedSince = options.AccessConditions.IfModifiedSince;
       protocolLayerOptions.IfUnmodifiedSince = options.AccessConditions.IfUnmodifiedSince;
 
-      _azure_ASSERT_MSG(
+      AZURE_ASSERT_MSG(
           !options.AccessConditions.IfMatch.HasValue(),
           "Blob container lease doesn't support If-Match condition.");
-      _azure_ASSERT_MSG(
+      AZURE_ASSERT_MSG(
           !options.AccessConditions.IfNoneMatch.HasValue(),
           "Blob container lease doesn't support If-None-Match condition.");
-      _azure_ASSERT_MSG(
+      AZURE_ASSERT_MSG(
           !options.AccessConditions.TagConditions.HasValue(),
           "Blob container lease doesn't support tag condition.");
 
-      auto response = _detail::BlobRestClient::BlobContainer::BreakLease(
+      auto response = _detail::BlobContainerClient::BreakLease(
           *(m_blobContainerClient.Value().m_pipeline),
           m_blobContainerClient.Value().m_blobContainerUrl,
           protocolLayerOptions,
@@ -348,7 +356,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     }
     else
     {
-      _azure_UNREACHABLE_CODE();
+      AZURE_UNREACHABLE_CODE();
     }
   }
 }}} // namespace Azure::Storage::Blobs

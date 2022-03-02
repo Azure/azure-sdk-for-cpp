@@ -854,6 +854,7 @@ namespace Azure { namespace Storage { namespace Test {
         {
           EXPECT_FALSE(item.BlobName.empty());
           EXPECT_FALSE(item.BlobContainerName.empty());
+          EXPECT_FALSE(item.Tags.empty());
           findResults.emplace_back(std::move(item));
         }
       }

@@ -4,6 +4,7 @@
 #include "azure/storage/queues/queue_service_client.hpp"
 
 #include <azure/core/http/policies/policy.hpp>
+#include <azure/storage/common/crypt.hpp>
 #include <azure/storage/common/internal/shared_key_policy.hpp>
 #include <azure/storage/common/internal/storage_per_retry_policy.hpp>
 #include <azure/storage/common/internal/storage_service_version_policy.hpp>
@@ -116,15 +117,12 @@ namespace Azure { namespace Storage { namespace Queues {
       const ListQueuesOptions& options,
       const Azure::Core::Context& context) const
   {
-    _detail::QueueRestClient::Service::ListQueuesOptions protocolLayerOptions;
+    _detail::ServiceClient::ListServiceQueuesSegmentOptions protocolLayerOptions;
     protocolLayerOptions.Prefix = options.Prefix;
-    if (options.ContinuationToken.HasValue() && !options.ContinuationToken.Value().empty())
-    {
-      protocolLayerOptions.ContinuationToken = options.ContinuationToken;
-    }
+    protocolLayerOptions.Marker = options.ContinuationToken;
     protocolLayerOptions.MaxResults = options.PageSizeHint;
     protocolLayerOptions.Include = options.Include;
-    auto response = _detail::QueueRestClient::Service::ListQueues(
+    auto response = _detail::ServiceClient::ListQueuesSegment(
         *m_pipeline, m_serviceUrl, protocolLayerOptions, _internal::WithReplicaStatus(context));
 
     ListQueuesPagedResponse pagedResponse;
@@ -146,9 +144,9 @@ namespace Azure { namespace Storage { namespace Queues {
       const Azure::Core::Context& context) const
   {
     (void)options;
-    _detail::QueueRestClient::Service::SetServicePropertiesOptions protocolLayerOptions;
-    protocolLayerOptions.Properties = std::move(properties);
-    return _detail::QueueRestClient::Service::SetProperties(
+    _detail::ServiceClient::SetServicePropertiesOptions protocolLayerOptions;
+    protocolLayerOptions.QueueServiceProperties = std::move(properties);
+    return _detail::ServiceClient::SetProperties(
         *m_pipeline, m_serviceUrl, protocolLayerOptions, context);
   }
 
@@ -157,8 +155,8 @@ namespace Azure { namespace Storage { namespace Queues {
       const Azure::Core::Context& context) const
   {
     (void)options;
-    _detail::QueueRestClient::Service::GetServicePropertiesOptions protocolLayerOptions;
-    return _detail::QueueRestClient::Service::GetProperties(
+    _detail::ServiceClient::GetServicePropertiesOptions protocolLayerOptions;
+    return _detail::ServiceClient::GetProperties(
         *m_pipeline, m_serviceUrl, protocolLayerOptions, _internal::WithReplicaStatus(context));
   }
 
@@ -167,8 +165,8 @@ namespace Azure { namespace Storage { namespace Queues {
       const Azure::Core::Context& context) const
   {
     (void)options;
-    _detail::QueueRestClient::Service::GetServiceStatisticsOptions protocolLayerOptions;
-    return _detail::QueueRestClient::Service::GetStatistics(
+    _detail::ServiceClient::GetServiceStatisticsOptions protocolLayerOptions;
+    return _detail::ServiceClient::GetStatistics(
         *m_pipeline, m_serviceUrl, protocolLayerOptions, context);
   }
 

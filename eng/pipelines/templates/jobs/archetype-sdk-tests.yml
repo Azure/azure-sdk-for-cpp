@@ -83,6 +83,7 @@ jobs:
         Pool: azsdk-pool-mms-win-2019-general
         OSVmImage: MMS2019
         VCPKG_DEFAULT_TRIPLET: 'x86-windows-static'
+        VcpkgInstall: 'openssl'
         CMAKE_GENERATOR: 'Visual Studio 16 2019'
         CMAKE_GENERATOR_PLATFORM: Win32
         CmakeArgs: ' -DBUILD_TESTING=ON -DRUN_LONG_UNIT_TESTS=ON -DBUILD_PERFORMANCE_TESTS=ON '
@@ -91,7 +92,7 @@ jobs:
       Win_x86_no_rtti_whit_unit_test:
         Pool: azsdk-pool-mms-win-2019-general
         OSVmImage: MMS2019
-        VcpkgInstall: 'libxml2'
+        VcpkgInstall: 'libxml2 openssl'
         VCPKG_DEFAULT_TRIPLET: 'x86-windows-static'
         CMAKE_GENERATOR: 'Visual Studio 16 2019'
         CMAKE_GENERATOR_PLATFORM: Win32
@@ -99,6 +100,7 @@ jobs:
         BuildArgs: '-v --parallel 8'
       Win_x64_with_unit_test_winHttp:
         Pool: azsdk-pool-mms-win-2019-general
+        VcpkgInstall: 'openssl'
         OSVmImage: MMS2019
         VCPKG_DEFAULT_TRIPLET: 'x64-windows-static'
         CMAKE_GENERATOR: 'Visual Studio 16 2019'
@@ -110,7 +112,7 @@ jobs:
       Win_x86_with_unit_test_libcurl:
         Pool: azsdk-pool-mms-win-2019-general
         OSVmImage: MMS2019
-        VcpkgInstall: 'curl[winssl]'
+        VcpkgInstall: 'curl[winssl] openssl'
         VCPKG_DEFAULT_TRIPLET: 'x86-windows-static'
         CMAKE_GENERATOR: 'Visual Studio 16 2019'
         CMAKE_GENERATOR_PLATFORM: Win32
@@ -120,7 +122,7 @@ jobs:
       Win_x64_with_unit_test_libcurl:
         Pool: azsdk-pool-mms-win-2019-general
         OSVmImage: MMS2019
-        VcpkgInstall: 'curl[winssl]'
+        VcpkgInstall: 'curl[winssl] openssl'
         VCPKG_DEFAULT_TRIPLET: 'x64-windows-static'
         CMAKE_GENERATOR: 'Visual Studio 16 2019'
         CMAKE_GENERATOR_PLATFORM: x64
@@ -147,6 +149,8 @@ jobs:
     CmakeArgs: ""
     AZURE_TEST_MODE: "LIVE"
     AZURE_LOG_LEVEL: "verbose"
+    # Surface the ServiceDirectory parameter as an environment variable so tests can take advantage of it.
+    AZURE_SERVICE_DIRECTORY: ${{ parameters.ServiceDirectory }}
 
   steps:
   - checkout: self
@@ -216,6 +220,7 @@ jobs:
     # This enables to run tests and samples at the same time as different matrix configuration.
     # Then unit-tests runs, samples should not run.
     condition: and(succeeded(), ne(variables['RunSamples'], '1'))
+      
 
   - task: PublishTestResults@2
     inputs:

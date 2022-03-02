@@ -1,0 +1,54 @@
+# NOTE: Please refer to https://aka.ms/azsdk/engsys/ci-yaml before editing this file.
+trigger:
+  batch: true
+  branches:
+    include:
+      - main
+      - feature/*
+      - release/*
+      - hotfix/*
+  paths:
+    include:
+      - sdk/attestation
+
+pr:
+  branches:
+    include:
+      - main
+      - feature/*
+      - release/*
+      - hotfix/*
+  paths:
+    include:
+      - sdk/attestation
+
+stages:
+  - template: ../../eng/pipelines/templates/stages/archetype-sdk-client.yml
+    parameters:
+      ServiceDirectory: attestation
+      Location: WestUS
+      CtestRegex: azure-security-attestation.*
+      LiveTestCtestRegex: azure-security-attestation.*
+      LineCoverageTarget: 90
+      BranchCoverageTarget: 45
+      Artifacts:
+        - Name: azure-security-attestation
+          Path: azure-security-attestation
+          VcpkgPortName: azure-security-attestation-cpp
+      TestEnv:
+      # NOTE: The CI pipeline uppercases all "Name" values in the TestEnv, so if you
+      # add a mixed case name, be careful to ensure it is read using an upper case
+      # name.
+      - Name: ATTESTATION_ISOLATED_URL
+        Value: https://NotRealAttestationInstanceiso.wus.attest.azure.net
+      - Name: ATTESTATION_AAD_URL
+        Value: https://NotRealAttestationInstanceaad.wus.attest.azure.net
+      - Name: AZURE_TENANT_ID
+        Value: "33333333-3333-3333-3333-333333333333"
+      - Name: AZURE_CLIENT_ID
+        Value: "non-real-client"
+      - Name: AZURE_CLIENT_SECRET
+        Value: "non-real-secret"
+        # NOTE: The LOCATION_SHORT_NAME *must* match the region in which the tests were created.
+      - Name: LOCATION_SHORT_NAME
+        Value: "wus"

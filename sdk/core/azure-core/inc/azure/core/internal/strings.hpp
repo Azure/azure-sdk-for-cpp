@@ -33,8 +33,10 @@ namespace Azure { namespace Core { namespace _internal {
     static bool LocaleInvariantCaseInsensitiveEqual(
         const std::string& lhs,
         const std::string& rhs) noexcept;
-    static std::string const ToLower(const std::string& src) noexcept;
-    static unsigned char ToLower(const unsigned char src) noexcept;
+    static std::string const ToLower(std::string const& src) noexcept;
+    static unsigned char ToLower(unsigned char const src) noexcept;
+    static std::string const ToUpper(std::string const& src) noexcept;
+    static unsigned char ToUpper(unsigned char const src) noexcept;
   };
 
 }}} // namespace Azure::Core::_internal

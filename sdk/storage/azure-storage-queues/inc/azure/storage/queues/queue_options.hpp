@@ -12,8 +12,9 @@
 #include <string>
 
 #include <azure/core/internal/client_options.hpp>
+#include <azure/storage/common/storage_common.hpp>
 
-#include "azure/storage/queues/protocol/queue_rest_client.hpp"
+#include "azure/storage/queues/rest_client.hpp"
 
 namespace Azure { namespace Storage { namespace Queues {
 
