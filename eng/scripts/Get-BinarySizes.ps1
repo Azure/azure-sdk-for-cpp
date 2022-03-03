@@ -1,7 +1,7 @@
 [CmdletBinding()]
 param(
     [Parameter()]
-    [string] $BuildDirectory = "$PSScriptRoot/../../../build/",
+    [string] $BuildDirectory = "$PSScriptRoot/../../build/",
 
     [Parameter()]
     [string] $ServiceDirectory = "*",
