@@ -41,7 +41,7 @@ function setEnvVar($key, $value) {
 }
 
 function getTargetOs {
-    if ($OsVMImage.StartsWith('macos')) {
+    if ($OsVMImage.StartsWith('macOS')) {
         return $OsVMImage
     }
 
