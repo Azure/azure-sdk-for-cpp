@@ -42,20 +42,6 @@ std::unique_ptr<RawResponse> ChallengeBasedAuthenticationPolicy::Send(
   return result;
 }
 
-std::string ChallengeBasedAuthenticationPolicy::GetRequestAuthority(Request request)
-{
-  Url uri = request.GetUrl();
-
-  std::string authority = uri.GetHost();
-  if (!authority.find(":") && uri.GetPort() > 0)
-  {
-    // Append port for complete authority.
-    authority = authority + ":" + std::to_string(uri.GetPort());
-  }
-
-  return authority;
-}
-
 ChallengeParameters::ChallengeParameters(std::string const& rawValue)
 {
   if (rawValue.rfind(_detail::BearerName) == 0)
@@ -92,7 +78,7 @@ void ChallengeParameters::ProcessFragment(std::string const& fragment)
     // authorization or authorization_uri go to authorization field
     if (subParts[0] == _detail::AuthorizationName || subParts[0] == _detail::AuthorizationUriName)
     {
-      AuthorizationUri = Url(subParts[1]);
+      AuthorizationUri =  Url(subParts[1]);
       // auth tenant is part of the authorization uri
       TenantId = AuthorizationUri.GetPath();
       AuthorizationUri.AppendPath("oauth2/v2.0/token");

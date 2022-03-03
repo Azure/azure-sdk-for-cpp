@@ -561,7 +561,6 @@ namespace Azure { namespace Core { namespace Http { namespace Policies {
       const ChallengeParameters GetChallenge() { return _challenge; }
 
     private:
-      static std::string GetRequestAuthority(Request request);
       ChallengeParameters _challenge;
     };
 

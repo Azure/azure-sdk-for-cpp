@@ -4,10 +4,11 @@
 #include "azure/identity/client_secret_credential.hpp"
 
 #include "private/token_credential_impl.hpp"
-
+#include <azure/core/url.hpp>
 #include <sstream>
 
 using namespace Azure::Identity;
+using Azure::Core::Url;
 
 std::string const Azure::Identity::_detail::g_aadGlobalAuthority
     = "https://login.microsoftonline.com/";
@@ -95,7 +96,6 @@ ChallengeClientSecretCredential::ChallengeClientSecretCredential(
     Azure::Core::Credentials::TokenCredentialOptions const& options)
     : m_tokenCredentialImpl(new _detail::TokenCredentialImpl(options)), m_isAdfs(tenantId == "adfs")
 {
-  using Azure::Core::Url;
   m_requestUrl = Url(authorityHost);
   m_requestUrl.AppendPath(tenantId);
   m_requestUrl.AppendPath(m_isAdfs ? "oauth2/token" : "oauth2/v2.0/token");
@@ -137,6 +137,18 @@ ChallengeClientSecretCredential::ChallengeClientSecretCredential(
 
 ChallengeClientSecretCredential::~ChallengeClientSecretCredential() = default;
 
+Azure::Core::Url ChallengeClientSecretCredential::GetRequestAuthority(Azure::Core::Url uri)
+{
+  std::string authority = uri.GetHost();
+  if (!authority.find(":") && uri.GetPort() > 0)
+  {
+    // Append port for complete authority.
+    authority = authority + ":" + std::to_string(uri.GetPort());
+  }
+
+  return Azure::Core::Url(authority);
+}
+
 Azure::Core::Credentials::AccessToken ChallengeClientSecretCredential::GetToken(
     Azure::Core::Credentials::TokenRequestContext const& tokenRequestContext,
     Azure::Core::Context const& context) const
@@ -154,11 +166,6 @@ Azure::Core::Credentials::AccessToken ChallengeClientSecretCredential::GetToken(
       {
         body << "&scope=" << TokenCredentialImpl::FormatScopes(scopes, m_isAdfs);
       }
-
-      /* if (tokenRequestContext.TenantId)
-       {
-         body << "&tenantId=" << tokenRequestContext.TenantId.Value();
-       }*/
     }
 
     auto request = std::make_unique<TokenCredentialImpl::TokenRequest>(

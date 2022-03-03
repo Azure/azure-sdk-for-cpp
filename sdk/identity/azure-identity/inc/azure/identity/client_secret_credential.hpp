@@ -109,7 +109,6 @@ namespace Azure { namespace Identity {
         Core::Context const& context) const override;
   };
 
-  
   /**
    * @brief Client Secret Credential authenticates with the Azure services using a Tenant ID, Client
    * ID and a client secret.
@@ -176,5 +175,8 @@ namespace Azure { namespace Identity {
     Core::Credentials::AccessToken GetToken(
         Core::Credentials::TokenRequestContext const& tokenRequestContext,
         Core::Context const& context) const override;
+
+  private:
+    Azure::Core::Url GetRequestAuthority(Azure::Core::Url uri);
   };
 }} // namespace Azure::Identity

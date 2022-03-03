@@ -10,8 +10,8 @@
 
 #include "azure/core/context.hpp"
 #include "azure/core/datetime.hpp"
-#include "azure/core/url.hpp"
 #include "azure/core/nullable.hpp"
+#include "azure/core/url.hpp"
 
 #include <exception>
 #include <memory>
@@ -56,14 +56,14 @@ namespace Azure { namespace Core { namespace Credentials {
      * response.
      *
      */
-    Azure::Nullable<Url> AuthorizationUri();
+    Azure::Nullable<Url> AuthorizationUri;
 
     /**
      * @brief Gets the tenant ID from <see cref="AuthorizationUri"/>.
      * end with
      *
      */
-    Azure::Nullable<std::string> TenantId();
+    Azure::Nullable<std::string> TenantId;
   };
 
   /**
