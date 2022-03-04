@@ -69,7 +69,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
      *
      * @return A CertificateOperationProperties object.
      */
-    CertificateOperationProperties Value() const override{ return m_value; }
+    CertificateOperationProperties Value() const override { return m_value; }
 
     /**
      * @brief Get an Url as string which can be used to get the status of the
