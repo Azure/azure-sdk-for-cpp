@@ -4,7 +4,7 @@
 
 ### Features Added
 
-- Making the 1.4.0-beta.1 features GA version.
+- Stabilized the beta features and changes.
 
 ## 1.4.0-beta.1 (2022-02-04)
 
