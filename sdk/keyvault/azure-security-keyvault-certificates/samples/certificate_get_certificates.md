@@ -35,7 +35,7 @@ CertificateClient certificateClient(std::getenv("AZURE_KEYVAULT_URL"), credentia
 ## Creating a Certificate
 
 Call StartCreateCertificate to create a new certificate, with specified properties and policy.
-Call PollUntilDone to poll the status of the creation. Once the opperation has completed it will return the certificate.
+Call PollUntilDone to poll the status of the creation. Once the opperation has completed we can continue.
 
 ```cpp Snippet:CertificateSample2Create
 std::string certificateName = "Sample1";
