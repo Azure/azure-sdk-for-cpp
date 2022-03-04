@@ -12,7 +12,7 @@ add_executable (
   policy.cpp
 )
 
-create_per_service_target_build(attestation-policy policy)
+create_per_service_target_build(attestation-policy attestation)
 
 target_link_libraries(attestation-policy PRIVATE azure-security-attestation azure-identity get-env-helper)
 
