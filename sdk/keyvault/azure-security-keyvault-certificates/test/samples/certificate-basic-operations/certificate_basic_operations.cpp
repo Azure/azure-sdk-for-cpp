@@ -68,10 +68,17 @@ int main()
       auto response = certificateClient.StartCreateCertificate(certificateName, options);
       // wait for complete to get the certificate
       auto pollResponse = response.PollUntilDone(defaultWait).Value;
-      // get the certificate
-      auto result = certificateClient.GetCertificate(certificateName).Value;
-
-      std::cout << "Created certificate with policy. Certificate name : " << certificate.Name();
+      // check the status of the poll response
+      if (!pollResponse.Error && pollResponse.Status.Value() == "completed")
+      {
+        // get the certificate
+        auto result = certificateClient.GetCertificate(certificateName).Value;
+        std::cout << "Created certificate with policy. Certificate name : " << certificate.Name();
+      }
+      else
+      {
+        std::cout << "Create certificate with policy result : " << pollResponse.Status.Value();
+      }
     }
     // update certificate
     {
