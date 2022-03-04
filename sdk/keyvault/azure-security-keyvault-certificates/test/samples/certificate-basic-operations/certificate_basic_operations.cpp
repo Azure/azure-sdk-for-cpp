@@ -67,7 +67,9 @@ int main()
       // start the create process
       auto response = certificateClient.StartCreateCertificate(certificateName, options);
       // wait for complete to get the certificate
-      certificate = response.PollUntilDone(defaultWait).Value;
+      auto pollResponse = response.PollUntilDone(defaultWait).Value;
+      // get the certificate
+      auto result = certificateClient.GetCertificate(certificateName).Value;
 
       std::cout << "Created certificate with policy. Certificate name : " << certificate.Name();
     }

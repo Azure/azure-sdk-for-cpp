@@ -176,7 +176,9 @@ namespace Azure {
       options.Policy.LifetimeActions.emplace_back(action);
 
       auto response = client.StartCreateCertificate(name, options);
-      auto result = response.PollUntilDone(defaultWait);
+      auto pollResult = response.PollUntilDone(defaultWait);
+      // get the certificate
+      auto result = client.GetCertificate(name);
 
       EXPECT_EQ(result.Value.Name(), options.Properties.Name);
       EXPECT_EQ(result.Value.Properties.Name, options.Properties.Name);
