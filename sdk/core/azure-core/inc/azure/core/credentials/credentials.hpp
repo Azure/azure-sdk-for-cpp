@@ -43,8 +43,19 @@ namespace Azure { namespace Core { namespace Credentials {
   /**
    * @brief Context for getting token.
    */
-  struct TokenRequestContext final
-  {
+  class TokenRequestContext final {
+  public:
+    /**
+     * @brief Default constructor
+     *
+     */
+    TokenRequestContext() = default;
+    /**
+     * @brief Scopes constructor
+     *
+     */
+    TokenRequestContext(std::vector<std::string> scopes) : Scopes(std::move(scopes)){};
+
     /**
      * @brief Authentication scopes.
      *
