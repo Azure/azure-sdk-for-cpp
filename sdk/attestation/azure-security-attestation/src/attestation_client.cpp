@@ -38,7 +38,7 @@ AttestationClient::AttestationClient(
   {
     m_credentials = credential;
     Azure::Core::Credentials::TokenRequestContext const tokenContext
-        = {{"https://attest.azure.net/.default"},};
+        = {{"https://attest.azure.net/.default"}};
 
     perRetrypolicies.emplace_back(
         std::make_unique<BearerTokenAuthenticationPolicy>(credential, tokenContext));

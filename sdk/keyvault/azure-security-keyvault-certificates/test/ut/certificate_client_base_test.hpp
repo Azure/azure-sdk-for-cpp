@@ -65,7 +65,7 @@ namespace Azure {
     // Runs before every test.
     virtual void SetUp() override
     {
-//      _putenv_s("AZURE_TEST_MODE", "RECORD");
+      //      _putenv_s("AZURE_TEST_MODE", "RECORD");
       Azure::Core::Test::TestBase::SetUpTestBase(AZURE_TEST_RECORDING_DIR);
       m_keyVaultUrl = GetEnv("AZURE_KEYVAULT_URL");
 

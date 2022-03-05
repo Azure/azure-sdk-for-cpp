@@ -78,7 +78,7 @@ void ChallengeParameters::ProcessFragment(std::string const& fragment)
     // authorization or authorization_uri go to authorization field
     if (subParts[0] == _detail::AuthorizationName || subParts[0] == _detail::AuthorizationUriName)
     {
-      AuthorizationUri =  Url(subParts[1]);
+      AuthorizationUri = Url(subParts[1]);
       // auth tenant is part of the authorization uri
       TenantId = AuthorizationUri.GetPath();
       AuthorizationUri.AppendPath("oauth2/v2.0/token");
