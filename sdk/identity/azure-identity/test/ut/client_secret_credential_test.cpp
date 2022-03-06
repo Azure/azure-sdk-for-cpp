@@ -2,8 +2,8 @@
 // SPDX-License-Identifier: MIT
 
 #include "azure/identity/client_secret_credential.hpp"
-
 #include "credential_test_helper.hpp"
+#include <azure/core/credentials/token_credential_options.hpp>
 
 #include <gtest/gtest.h>
 
@@ -484,4 +484,11 @@ TEST(ChallengeClientSecretCredential, Authority)
 
   EXPECT_GE(response2.AccessToken.ExpiresOn, response2.EarliestExpiration + 7200s);
   EXPECT_LE(response2.AccessToken.ExpiresOn, response2.LatestExpiration + 7200s);
+}
+
+TEST(ChallengeClientSecretCredential, Constructor)
+{
+  EXPECT_NO_THROW(
+      auto credential
+      = std::make_shared<Azure::Identity::ChallengeClientSecretCredential>("tid", "cid", "cs"));
 }
