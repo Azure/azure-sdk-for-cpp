@@ -137,18 +137,6 @@ ChallengeClientSecretCredential::ChallengeClientSecretCredential(
 
 ChallengeClientSecretCredential::~ChallengeClientSecretCredential() = default;
 
-Azure::Core::Url ChallengeClientSecretCredential::GetRequestAuthority(Azure::Core::Url uri)
-{
-  std::string authority = uri.GetHost();
-  if (!authority.find(":") && uri.GetPort() > 0)
-  {
-    // Append port for complete authority.
-    authority = authority + ":" + std::to_string(uri.GetPort());
-  }
-
-  return Azure::Core::Url(authority);
-}
-
 Azure::Core::Credentials::AccessToken ChallengeClientSecretCredential::GetToken(
     Azure::Core::Credentials::TokenRequestContext const& tokenRequestContext,
     Azure::Core::Context const& context) const

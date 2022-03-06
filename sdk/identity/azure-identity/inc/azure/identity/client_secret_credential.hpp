@@ -176,7 +176,5 @@ namespace Azure { namespace Identity {
         Core::Credentials::TokenRequestContext const& tokenRequestContext,
         Core::Context const& context) const override;
 
-  private:
-    Azure::Core::Url GetRequestAuthority(Azure::Core::Url uri);
   };
 }} // namespace Azure::Identity
