@@ -137,7 +137,7 @@ namespace Azure { namespace Perf {
 
       // play one test to generate a recording
       this->Run(ctx);
-      // Run twice to alling with how all other SDK perf langs run
+      // Run twice to align with how all other SDK perf langs run
       this->Run(ctx);
 
       // Stop recording

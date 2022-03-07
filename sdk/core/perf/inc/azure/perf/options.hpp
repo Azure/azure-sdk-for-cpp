@@ -97,11 +97,11 @@ namespace Azure { namespace Perf {
     int Warmup = 5;
 
     /**
-     * @brief Redirect test requests thru this server proxy.
+     * @brief Redirect test requests through this server proxy.
      *
      * @details More than one proxy address can be added using semicolon separated format. Do not
      * use spaces after a semicolon as it would be considered as another command argument. When
-     * multiple proxy are set, each server is assigned to a performance test run on round-robin.
+     * multiple proxies are set, each server is assigned to a performance test run on round-robin.
      *
      * @note Only the requests from the test are redirected. Any request from set up won't be
      * redirected.
