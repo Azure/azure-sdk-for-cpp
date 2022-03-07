@@ -126,6 +126,10 @@ int main()
   catch (Azure::Core::RequestFailedException const& e)
   {
     std::cout << "Attestation Client Exception happened:" << std::endl << e.Message << std::endl;
+    std::cout << "Reason:" << e.ErrorCode << std::endl;
+    std::cout << "Reason Phrase:" << e.ReasonPhrase << std::endl;
+    std::cout << "Client Request ID:" << e.ClientRequestId << std::endl;
+    std::cout << "Request ID:" << e.RequestId << std::endl;
     return 1;
   }
   return 0;
