@@ -261,23 +261,15 @@ namespace Azure { namespace Core { namespace Test {
      */
     std::string GetEnv(std::string const& name)
     {
-#if !defined(NDEBUG)
       // The azure CI pipeline uppercases all EnvVar values from ci.yml files.
       // That means that any mixed case strings will not be found when run from the CI
-      // pipeline. Check to make sure that the developer only passed in an upper case environment
-      // variable.
-      {
-        if (name != Azure::Core::_internal::StringExtensions::ToUpper(name))
-        {
-          throw std::runtime_error("All Azure SDK environment variables must be all upper case.");
-        }
-      }
-#endif
-      auto ret = Azure::Core::_internal::Environment::GetVariable(name.c_str());
+      // pipeline. Upper case the name we actually retrieve from the environment.
+      auto nameToGet = Azure::Core::_internal::StringExtensions::ToUpper(name);
+      auto ret = Azure::Core::_internal::Environment::GetVariable(nameToGet.c_str());
       if (ret.empty())
       {
         static const char azurePrefix[] = "AZURE_";
-        if (!m_testContext.IsPlaybackMode() && name.find(azurePrefix) == 0)
+        if (!m_testContext.IsPlaybackMode() && nameToGet.find(azurePrefix) == 0)
         {
           std::string serviceDirectory
               = Azure::Core::_internal::Environment::GetVariable("AZURE_SERVICE_DIRECTORY");
@@ -292,7 +284,7 @@ namespace Azure { namespace Core { namespace Test {
           // variables are upper cased.
           std::string serviceDirectoryEnvVar
               = Azure::Core::_internal::StringExtensions::ToUpper(serviceDirectory);
-          serviceDirectoryEnvVar += name.substr(sizeof(azurePrefix) - 2);
+          serviceDirectoryEnvVar += nameToGet.substr(sizeof(azurePrefix) - 2);
           ret = Azure::Core::_internal::Environment::GetVariable(serviceDirectoryEnvVar.c_str());
           if (!ret.empty())
           {
