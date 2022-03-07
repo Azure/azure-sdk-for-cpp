@@ -44,7 +44,7 @@ CertificateCreateOptions options
 // start the create process
 auto response = certificateClient.StartCreateCertificate(certificateName, options);
 // wait for complete to get the certificate
-auto certificate = response.PollUntilDone(defaultWait).Value;
+auto pollResponse = response.PollUntilDone(defaultWait).Value;
 ```
 
 ## Getting properties of Certificates
