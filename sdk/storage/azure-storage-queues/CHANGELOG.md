@@ -2,13 +2,9 @@
 
 ## 12.0.0-beta.4 (Unreleased)
 
-### Features Added
-
-### Breaking Changes
-
-### Bugs Fixed
-
 ### Other Changes
+
+- Changed SAS token signed version to `2018-03-28`.
 
 ## 12.0.0-beta.3 (2022-02-14)
 
