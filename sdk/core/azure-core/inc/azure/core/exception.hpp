@@ -96,14 +96,14 @@ namespace Azure { namespace Core {
      * @param other The `%RequestFailedException` to be copied.
      */
     RequestFailedException(const RequestFailedException& other)
-        : std::runtime_error(other.Message),
+        : std::runtime_error(other.Message), StatusCode(other.StatusCode),
+          ReasonPhrase(other.ReasonPhrase), ClientRequestId(other.ClientRequestId),
+          RequestId(other.RequestId), ErrorCode(other.ErrorCode), Message(other.Message),
           RawResponse(
               other.RawResponse
                   ? std::make_unique<Azure::Core::Http::RawResponse>(*other.RawResponse)
-                  : nullptr),
-          StatusCode(other.StatusCode), ReasonPhrase(other.ReasonPhrase),
-          ClientRequestId(other.ClientRequestId), RequestId(other.RequestId),
-          ErrorCode(other.ErrorCode), Message(other.Message)
+                  : nullptr)
+
     {
     }
 
@@ -134,8 +134,7 @@ namespace Azure { namespace Core {
 
   private:
     std::string GetRawResponseField(
-        std::unique_ptr<Azure::Core::Http::RawResponse> const& rawResponse,
+        std::unique_ptr<Azure::Core::Http::RawResponse>& rawResponse,
         std::string fieldName);
-
   };
 }} // namespace Azure::Core

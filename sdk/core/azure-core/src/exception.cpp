@@ -34,13 +34,12 @@ namespace Azure { namespace Core {
     ErrorCode = GetRawResponseField(RawResponse, "code");
     Message = GetRawResponseField(RawResponse, "message");
 
-    const auto& headers = RawResponse->GetHeaders();
     ClientRequestId = HttpShared::GetHeaderOrEmptyString(headers, HttpShared::MsClientRequestId);
     RequestId = HttpShared::GetHeaderOrEmptyString(headers, HttpShared::MsRequestId);
   }
 
   std::string RequestFailedException::GetRawResponseField(
-      std::unique_ptr<Azure::Core::Http::RawResponse> const& rawResponse,
+      std::unique_ptr<Azure::Core::Http::RawResponse> & rawResponse,
       std::string fieldName)
   {
     auto& headers = rawResponse->GetHeaders();
