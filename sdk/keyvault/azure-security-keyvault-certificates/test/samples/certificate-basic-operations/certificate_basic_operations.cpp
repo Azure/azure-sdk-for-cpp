@@ -72,7 +72,7 @@ int main()
       if (!pollResponse.Error && pollResponse.Status.Value() == "completed")
       {
         // get the certificate
-        auto result = certificateClient.GetCertificate(certificateName).Value;
+        certificate = certificateClient.GetCertificate(certificateName).Value;
         std::cout << "Created certificate with policy. Certificate name : " << certificate.Name();
       }
       else
