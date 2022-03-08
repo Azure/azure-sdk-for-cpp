@@ -266,7 +266,7 @@ auto adminClient =  std::make_unique<AttestationAdministrationClient>(m_endpoint
 Use the `GetAttestationPolicy` API to retrieve the current attestation policy for a given TEE.
 
 ```cpp readme-sample-getCurrentPolicy
-auto currentPolicy = adminClient->GetAttestationPolicy(AttestationType.OPEN_ENCLAVE);
+auto currentPolicy = adminClient->GetAttestationPolicy(AttestationType::OPEN_ENCLAVE);
 std::cout << "Current policy for OpenEnclave is " << currentPolicy.Value.Body << std::endl;
 ```
 

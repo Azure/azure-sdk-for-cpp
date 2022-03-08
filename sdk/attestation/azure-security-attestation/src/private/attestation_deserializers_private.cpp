@@ -121,7 +121,7 @@ namespace Azure { namespace Security { namespace Attestation { namespace _detail
     JsonOptional::SetIfExists(token, parsedBody, "token");
     if (token)
     {
-      return token.Value();
+      return *token;
     }
 
     throw std::runtime_error("Field 'token' not found in Attestation Service Response");
@@ -159,12 +159,13 @@ namespace Azure { namespace Security { namespace Attestation { namespace _detail
 
     JsonOptional::SetIfExists(result.SgxIsDebuggable, parsedJson, "x-ms-sgx-is-debuggable");
     JsonOptional::SetIfExists(result.SgxProductId, parsedJson, "x-ms-sgx-product-id");
+    JsonOptional::SetIfExists(result.SgxSvn, parsedJson, "x-ms-sgx-svn");
     JsonOptional::SetIfExists<std::string, std::vector<uint8_t>>(
         result.SgxMrEnclave, parsedJson, "x-ms-sgx-mrenclave", JsonHelpers::HexStringToBinary);
     JsonOptional::SetIfExists<std::string, std::vector<uint8_t>>(
         result.SgxMrSigner, parsedJson, "x-ms-sgx-mrsigner", JsonHelpers::HexStringToBinary);
     JsonOptional::SetIfExists<std::string, std::vector<uint8_t>>(
-        result.SgxEnclaveHeldData,
+        result.EnclaveHeldData,
         parsedJson,
         "x-ms-sgx-ehd",
         Azure::Core::_internal::Base64Url::Base64UrlDecode);
@@ -288,6 +289,7 @@ namespace Azure { namespace Security { namespace Attestation { namespace _detail
     JsonOptional::SetIfExists(returnValue.PolicyToken, parsedResult, "x-ms-policy");
     return returnValue;
   }
+
   Models::_detail::StoredAttestationPolicy StoredAttestationPolicySerializer::Deserialize(
       Azure::Core::Json::_internal::json const& parsedResult)
   {
@@ -300,4 +302,19 @@ namespace Azure { namespace Security { namespace Attestation { namespace _detail
 
     return returnValue;
   }
+
+  std::string StoredAttestationPolicySerializer::Serialize(
+      Models::_detail::StoredAttestationPolicy const& storedPolicy)
+  {
+    Azure::Core::Json::_internal::json serializedPolicy;
+
+    JsonOptional::SetFromNullable<std::vector<uint8_t>, std::string>(
+        storedPolicy.AttestationPolicy,
+        serializedPolicy,
+        "AttestationPolicy",
+        Azure::Core::_internal::Base64Url::Base64UrlEncode);
+
+    return serializedPolicy.dump();
+  }
+
 }}}} // namespace Azure::Security::Attestation::_detail
