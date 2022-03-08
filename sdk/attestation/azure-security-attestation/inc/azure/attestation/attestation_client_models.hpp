@@ -24,38 +24,50 @@
 // cspell: words MRSIGNER MRENCLAVE
 namespace Azure { namespace Security { namespace Attestation { namespace Models {
 
-  /**
-   * @brief The AttestationType type represent a Trusted Execution Environment supported by
-   * the attestation service.
-   *
-   */
-  class AttestationType final {
+  template <class T> class ExtendableEnumeration {
   private:
-    std::string m_attestationType;
+    std::string m_enumerationValue;
 
   public:
     /**
-     * @brief Construct a new AttestationType object
+     * @brief Construct a new extensable enumeration object
      *
-     * @param attestationType The string attestationType used for the attestation policy operation.
+     * @param enumerationValue The string enumerationValue used for the value.
      */
-    AttestationType(std::string attestationType) : m_attestationType(std::move(attestationType)) {}
+    ExtendableEnumeration(std::string enumerationValue)
+        : m_enumerationValue(std::move(enumerationValue))
+    {
+    }
 
     /**
      * @brief Enable comparing the ext enum.
      *
      * @param other Another #AttestationType to be compared.
      */
-    bool operator==(AttestationType const& other) const
-    {
-      return m_attestationType == other.m_attestationType;
-    }
+    bool operator==(T const& other) const { return m_enumerationValue == other.m_enumerationValue; }
 
     /**
-     * @brief Return the #AttestationType string representation.
+     * @brief Return the ExtensableEnumeraiton string representation.
      *
      */
-    std::string const& ToString() const { return m_attestationType; }
+    std::string const& ToString() const { return m_enumerationValue; }
+  };
+
+  /**
+   * @brief The AttestationType type represent a Trusted Execution Environment supported by
+   * the attestation service.
+   *
+   */
+  class AttestationType final : public ExtendableEnumeration<AttestationType> {
+  public:
+    /**
+     * @brief Construct a new AttestationType object
+     *
+     * @param attestationType The string attestationType used for the attestation policy operation.
+     */
+    AttestationType(std::string attestationType) : ExtendableEnumeration(std::move(attestationType))
+    {
+    }
 
     /**
      * @brief Specifies that this should apply to SGX enclaves.
@@ -427,10 +439,7 @@ namespace Azure { namespace Security { namespace Attestation { namespace Models 
    * policy modification.
    *
    */
-  class PolicyModification final {
-  private:
-    std::string m_policyModification;
-
+  class PolicyModification final : public ExtendableEnumeration<PolicyModification> {
   public:
     /**
      * @brief Construct a new PolicyResolution object
@@ -438,23 +447,7 @@ namespace Azure { namespace Security { namespace Attestation { namespace Models 
      * @param modification The string resolution used for the result of an attestation policy
      * operation.
      */
-    PolicyModification(std::string modification) : m_policyModification(std::move(modification)) {}
-
-    /**
-     * @brief Enable comparing the ext enum.
-     *
-     * @param other Another #PolicyModification to be compared.
-     */
-    bool operator==(PolicyModification const& other) const
-    {
-      return m_policyModification == other.m_policyModification;
-    }
-
-    /**
-     * @brief Return the #PolicyModification string representation.
-     *
-     */
-    std::string const& ToString() const { return m_policyModification; }
+    PolicyModification(std::string modification) : ExtendableEnumeration(std::move(modification)) {}
 
     /**
      * @brief Specifies that the policy object was updated.
@@ -489,6 +482,58 @@ namespace Azure { namespace Security { namespace Attestation { namespace Models 
      * was unsecured.
      */
     Azure::Nullable<AttestationSigner> PolicySigner;
+  };
+
+  /**
+   * @brief Represents the result of a policy certificate modification.
+   */
+  class PolicyCertificateModification final : ExtendableEnumeration<PolicyCertificateModification> {
+  public:
+    /**
+     * @brief Construct a new PolicyResolution object
+     *
+     * @param modification The string resolution used for the result of an attestation policy
+     * operation.
+     */
+    PolicyCertificateModification(std::string modification)
+        : ExtendableEnumeration(std::move(modification))
+    {
+    }
+
+    /**
+     * @brief After the operation was performed, the certificate is in the set of
+     * certificates.
+     *
+     */
+    AZ_ATTESTATION_DLLEXPORT static const PolicyCertificateModification IsPresent;
+
+    /**
+     * @brief After the operation was performed, the certificate is no longer present in the set of
+     * certificates.
+     *
+     */
+    AZ_ATTESTATION_DLLEXPORT static const PolicyCertificateModification IsAbsent;
+  };
+
+  /**
+   * @brief Represents the result of a policy certificate modification API.
+   */
+  class PolicyCertificateModificationResult final {
+  public:
+    /**
+     */
+    std::string CertificateThumbprint;
+    PolicyCertificateModification CertificateModification;
+  };
+
+  /**
+   * @brief Represents a set of policy management certificates for the current attestation instance.
+   */
+  struct PolicyCertificateListResult final {
+    /**
+     * @brief The current set of policy management certificates.
+     */
+    std::vector<AttestationSigner> Certificates;
   };
 
 }}}} // namespace Azure::Security::Attestation::Models

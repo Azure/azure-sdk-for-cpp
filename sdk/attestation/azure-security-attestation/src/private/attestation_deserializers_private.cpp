@@ -317,4 +317,16 @@ namespace Azure { namespace Security { namespace Attestation { namespace _detail
     return serializedPolicy.dump();
   }
 
+  Models::_detail::GetPolicyCertificatesResult PolicyCertificateGetResultSerializer::Deserialize(
+      Azure::Core::Json::_internal::json const& parsedResult)
+  {
+    Models::_detail::GetPolicyCertificatesResult returnValue;
+    if (parsedResult.contains("x-ms-policy-certificates"))
+    {
+      returnValue.PolicyCertificates
+          = JsonWebKeySetSerializer::Deserialize(parsedResult["x-ms-policy-certificates"]);
+    }
+    return returnValue;
+  }
+
 }}}} // namespace Azure::Security::Attestation::_detail

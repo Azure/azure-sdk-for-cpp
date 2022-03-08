@@ -153,6 +153,11 @@ namespace Azure { namespace Security { namespace Attestation {
         Azure::Nullable<std::string> const& policyToSet,
         Azure::Nullable<AttestationSigningKey> const& signingKey = {}) const;
 
+    Response<Models::AttestationToken<Models::PolicyCertificateListResult>>  GetPolicyManagementCertificates(
+        GetPolicyManagementCertificatesOptions const& options
+        = GetPolicyManagementCertificatesOptions{},
+        Azure::Core::Context const& context = Azure::Core::Context::ApplicationContext) const;
+
   private:
     Azure::Core::Url m_endpoint;
     std::string m_apiVersion;

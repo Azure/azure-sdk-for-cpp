@@ -113,4 +113,10 @@ namespace Azure { namespace Security { namespace Attestation { namespace _detail
     static std::string Serialize(Models::_detail::StoredAttestationPolicy const& policy);
   };
 
+  struct PolicyCertificateGetResultSerializer final
+  {
+    static Models::_detail::GetPolicyCertificatesResult Deserialize(
+        Azure::Core::Json::_internal::json const& json);
+  };
+
 }}}} // namespace Azure::Security::Attestation::_detail

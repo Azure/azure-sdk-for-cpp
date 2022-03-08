@@ -54,8 +54,12 @@ int main()
   }
   catch (Azure::Core::RequestFailedException const& e)
   {
-    std::cout << "Attestation Client Exception happened:" << std::endl << e.Message << std::endl;
-    return 1;
+    std::cout << "Request Failed Exception happened:" << std::endl << e.what() << std::endl;
+    if (e.StatusCode != Azure::Core::Http::HttpStatusCode::None)
+    {
+      std::cout << "Error Code: " << e.ErrorCode << std::endl;
+      std::cout << "Error Message: " << e.Message << std::endl;
+    }
+    return 0;
   }
-  return 0;
 }

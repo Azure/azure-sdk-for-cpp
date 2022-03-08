@@ -275,6 +275,52 @@ AttestationAdministrationClient::ResetAttestationPolicy(
   return Response<AttestationToken<Models::PolicyResult>>(returnedToken, std::move(response));
 }
 
+Azure::Response<Models::AttestationToken<PolicyCertificateListResult>>
+AttestationAdministrationClient::GetPolicyManagementCertificates(
+    GetPolicyManagementCertificatesOptions const& options,
+    Azure::Core::Context const& context) const
+{
+  auto request = AttestationCommonRequest::CreateRequest(
+      m_endpoint, m_apiVersion, HttpMethod::Get, {"certificates"}, nullptr);
+
+  // Send the request to the service.
+  auto response = AttestationCommonRequest::SendRequest(*m_pipeline, request, context);
+
+  // Deserialize the Service response token and return the JSON web token returned by the
+  // service.
+  std::string responseToken = AttestationServiceTokenResponseSerializer::Deserialize(response);
+
+  // Parse the JWT returned by the attestation service.
+  auto resultToken = AttestationTokenInternal<
+      Models::_detail::GetPolicyCertificatesResult,
+      PolicyCertificateGetResultSerializer>(responseToken);
+
+  // Validate the token returned by the service. Use the cached attestation signers in the
+  // validation.
+  std::vector<AttestationSigner> const& signers = GetAttestationSigners(context);
+  resultToken.ValidateToken(
+      options.TokenValidationOptions ? *options.TokenValidationOptions
+                                     : this->m_tokenValidationOptions,
+      signers);
+
+  Models::_detail::JsonWebKeySet jwks(
+      *static_cast<AttestationToken<Models::_detail::GetPolicyCertificatesResult>>(resultToken)
+          .Body.PolicyCertificates);
+  Models::PolicyCertificateListResult returnedResult;
+  for (const auto& certificate : jwks.Keys)
+  {
+    returnedResult.Certificates.push_back(
+        AttestationSignerInternal::AttestationSignerInternal(certificate));
+  }
+
+  // Construct a token whose body is the get policy certificates result, but whose token is the
+  // response from the service.
+  auto returnedToken = AttestationTokenInternal<Models::PolicyCertificateListResult>(
+      responseToken, returnedResult);
+  return Response<AttestationToken<Models::PolicyCertificateListResult>>(
+      returnedToken, std::move(response));
+}
+
 /**
  * @brief Retrieve the attestation signers to validate the attestation token returned from the
  * service.

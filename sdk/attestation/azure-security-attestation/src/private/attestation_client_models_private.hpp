@@ -275,4 +275,15 @@ namespace Azure {
     Azure::Nullable<std::vector<uint8_t>> AttestationPolicy;
   };
 
+  /**
+   * @brief Result of a GetPolicy, SetPolicy, or ResetPolicy operation.
+   */
+  struct GetPolicyCertificatesResult
+  {
+    /**
+     * @brief Result of a modification.
+     */
+    Azure::Nullable<JsonWebKeySet> PolicyCertificates;
+  };
+
 }}}}} // namespace Azure::Security::Attestation::Models::_detail
