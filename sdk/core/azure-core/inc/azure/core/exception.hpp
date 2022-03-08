@@ -23,12 +23,6 @@ namespace Azure { namespace Core {
   class RequestFailedException : public std::runtime_error {
   public:
     /**
-     * @brief The entire HTTP raw response.
-     *
-     */
-    std::unique_ptr<Azure::Core::Http::RawResponse> RawResponse;
-
-    /**
      * @brief The HTTP response code.
      *
      */
@@ -68,6 +62,12 @@ namespace Azure { namespace Core {
     std::string Message;
 
     /**
+     * @brief The entire HTTP raw response.
+     *
+     */
+    std::unique_ptr<Azure::Core::Http::RawResponse> RawResponse;
+
+    /**
      * @brief Constructs a new `%RequestFailedException` with a \p message string.
      *
      * @note An Exception without an HTTP raw response represents an exception that happened
@@ -96,13 +96,14 @@ namespace Azure { namespace Core {
      * @param other The `%RequestFailedException` to be copied.
      */
     RequestFailedException(const RequestFailedException& other)
-        : std::runtime_error(other.Message), StatusCode(other.StatusCode),
-          ReasonPhrase(other.ReasonPhrase), ClientRequestId(other.ClientRequestId),
-          RequestId(other.RequestId), ErrorCode(other.ErrorCode), Message(other.Message),
+        : std::runtime_error(other.Message),
           RawResponse(
               other.RawResponse
                   ? std::make_unique<Azure::Core::Http::RawResponse>(*other.RawResponse)
-                  : nullptr)
+                  : nullptr),
+          StatusCode(other.StatusCode), ReasonPhrase(other.ReasonPhrase),
+          ClientRequestId(other.ClientRequestId), RequestId(other.RequestId),
+          ErrorCode(other.ErrorCode), Message(other.Message)
     {
     }
 
@@ -132,14 +133,9 @@ namespace Azure { namespace Core {
     ~RequestFailedException() = default;
 
   private:
-    static std::string GetRawResponseField(
+    std::string GetRawResponseField(
         std::unique_ptr<Azure::Core::Http::RawResponse> const& rawResponse,
         std::string fieldName);
 
-    /**
-     * @brief Returns a descriptive string for this RawResponse.
-     */
-    static std::string GetRawResponseErrorMessage(
-        std::unique_ptr<Azure::Core::Http::RawResponse> const& rawResponse);
   };
 }} // namespace Azure::Core

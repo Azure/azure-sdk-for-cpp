@@ -21,32 +21,22 @@ namespace Azure { namespace Core {
 
   RequestFailedException::RequestFailedException(
       std::unique_ptr<Azure::Core::Http::RawResponse>& rawResponse)
-      : std::runtime_error(GetRawResponseErrorMessage(rawResponse)),
-        RawResponse(std::move(rawResponse)),
-        // These are guaranteed to always be present in the rawResponse.
-        StatusCode(RawResponse->GetStatusCode()), ReasonPhrase(RawResponse->GetReasonPhrase()),
-        // The response body may or may not have these fields
-        ErrorCode(GetRawResponseField(RawResponse, "code")),
-        Message(GetRawResponseField(RawResponse, "message"))
+      : RequestFailedException("Received an HTTP unsuccessful status code.")
   {
+    const auto& headers = rawResponse->GetHeaders();
+
+    // These are guaranteed to always be present in the rawResponse.
+    StatusCode = rawResponse->GetStatusCode();
+    ReasonPhrase = rawResponse->GetReasonPhrase();
+    RawResponse = std::move(rawResponse);
+
+    // The response body may or may not have these fields
+    ErrorCode = GetRawResponseField(RawResponse, "code");
+    Message = GetRawResponseField(RawResponse, "message");
+
     const auto& headers = RawResponse->GetHeaders();
     ClientRequestId = HttpShared::GetHeaderOrEmptyString(headers, HttpShared::MsClientRequestId);
     RequestId = HttpShared::GetHeaderOrEmptyString(headers, HttpShared::MsRequestId);
-  }
-
-  std::string RequestFailedException::GetRawResponseErrorMessage(
-      std::unique_ptr<Azure::Core::Http::RawResponse> const& rawResponse)
-  {
-    std::string returnValue("Received an HTTP unsuccessful status code: ");
-    // The status code will always be present in the rawResponse.
-    returnValue += std::to_string(static_cast<int>(rawResponse->GetStatusCode()));
-
-    // If there is a Reason phrase in the rawResponse, add it to the message.
-    if (!rawResponse->GetReasonPhrase().empty())
-    {
-      returnValue += " Reason: " + rawResponse->GetReasonPhrase();
-    }
-    return returnValue;
   }
 
   std::string RequestFailedException::GetRawResponseField(
