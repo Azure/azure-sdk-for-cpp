@@ -485,6 +485,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
             "If-Unmodified-Since",
             options.IfUnmodifiedSince.Value().ToString(Azure::DateTime::DateFormat::Rfc1123));
       }
+      request.SetHeader("x-ms-version", "2020-02-10");
       auto pRawResponse = pipeline.Send(request, context);
       auto httpStatusCode = pRawResponse->GetStatusCode();
       if (httpStatusCode != Core::Http::HttpStatusCode::Ok)

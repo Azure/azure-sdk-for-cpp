@@ -5,6 +5,7 @@
 ### Features Added
 
 ### Breaking Changes
+- Updated `CreateCertificateOperation.PollUntilDone()` (returned from `StartCreateCertificate()`)  to return the operation status instead of the newly created certificate.
 
 ### Bugs Fixed
 

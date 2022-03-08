@@ -224,9 +224,23 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @return A BlobContainerClient referencing the undeleted container.
      */
     Azure::Response<BlobContainerClient> UndeleteBlobContainer(
-        const std::string deletedBlobContainerName,
-        const std::string deletedBlobContainerVersion,
+        const std::string& deletedBlobContainerName,
+        const std::string& deletedBlobContainerVersion,
         const UndeleteBlobContainerOptions& options = UndeleteBlobContainerOptions(),
+        const Azure::Core::Context& context = Azure::Core::Context()) const;
+
+    /**
+     * @brief Renames an existing blob container.
+     * @param sourceBlobContainerName The name of the source container.
+     * @param destinationBlobContainerName The name of the destination container.
+     * @param options Optional parameters to execute this function.
+     * @param context Context for cancelling long running operations.
+     * @return A BlobContainerClient referencing the renamed container.
+     */
+    Azure::Response<BlobContainerClient> RenameBlobContainer(
+        const std::string& sourceBlobContainerName,
+        const std::string& destinationBlobContainerName,
+        const RenameBlobContainerOptions& options = RenameBlobContainerOptions(),
         const Azure::Core::Context& context = Azure::Core::Context()) const;
 
   private:

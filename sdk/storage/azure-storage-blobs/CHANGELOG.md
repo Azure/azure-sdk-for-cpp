@@ -4,6 +4,12 @@
 
 ### Features Added
 
+- Bumped up API version to `2020-08-04`.
+- Bumped up SAS token version to `2020-08-04`.
+- Added support for immutability policy.
+- New API: `BlobClient::CopyFromUri()`, `BlobClient::SetImmutabilityPolicy()`, `BlobClient::DeleteImmutabilityPolicy()`, `BlobClient::SetLegalHold()`, `BlockBlobClient::UploadFromUri()` and `BlobServiceClient::RenameBlobContainer()`.
+- Added lease access condition support for `BlobClient::SetTags()` and `BlobClient::GetTags()`.
+
 ### Breaking Changes
 
 ### Bugs Fixed

@@ -5,6 +5,7 @@
 
 #include <algorithm>
 #include <chrono>
+#include <unordered_map>
 
 #include <azure/storage/common/crypt.hpp>
 
@@ -39,7 +40,7 @@ namespace Azure { namespace Storage { namespace Test {
     m_shareClient = std::make_shared<Files::Shares::ShareClient>(
         Files::Shares::ShareClient::CreateFromConnectionString(
             StandardStorageConnectionString(), m_shareName, m_options));
-    m_shareClient->Create();
+    m_shareClient->CreateIfNotExists();
   }
 
   void FileShareClientTest::TearDown()
@@ -155,6 +156,8 @@ namespace Azure { namespace Storage { namespace Test {
       EXPECT_EQ(metadata1, result);
       result = client2.GetProperties().Value.Metadata;
       EXPECT_EQ(metadata2, result);
+      client1.DeleteIfExists();
+      client2.DeleteIfExists();
     }
   }
 
@@ -195,6 +198,8 @@ namespace Azure { namespace Storage { namespace Test {
       EXPECT_EQ(quota32GB, result);
       result = client2.GetProperties().Value.Quota;
       EXPECT_EQ(quota64GB, result);
+      client1.DeleteIfExists();
+      client2.DeleteIfExists();
     }
 
     {
@@ -501,18 +506,15 @@ namespace Azure { namespace Storage { namespace Test {
     {
       EXPECT_NE(shareClients.find(shareItem.Name), shareClients.end());
       properties = shareClients.at(shareItem.Name).GetProperties().Value;
-      EXPECT_EQ(true, shareItem.Details.AccessTier.HasValue() && properties.AccessTier.HasValue());
+      ASSERT_TRUE(shareItem.Details.AccessTier.HasValue());
+      ASSERT_TRUE(properties.AccessTier.HasValue());
       EXPECT_EQ(shareItem.Details.AccessTier.Value(), properties.AccessTier.Value());
-      EXPECT_EQ(
-          true,
-          shareItem.Details.AccessTierChangedOn.HasValue()
-              && properties.AccessTierChangedOn.HasValue());
+      ASSERT_TRUE(shareItem.Details.AccessTierChangedOn.HasValue());
+      ASSERT_TRUE(properties.AccessTierChangedOn.HasValue());
       EXPECT_EQ(
           shareItem.Details.AccessTierChangedOn.Value(), properties.AccessTierChangedOn.Value());
-      EXPECT_EQ(
-          false,
-          shareItem.Details.AccessTierTransitionState.HasValue()
-              || properties.AccessTierTransitionState.HasValue());
+      EXPECT_FALSE(shareItem.Details.AccessTierTransitionState.HasValue());
+      EXPECT_FALSE(properties.AccessTierTransitionState.HasValue());
     }
   }
 
@@ -556,5 +558,6 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_EQ(Files::Shares::Models::AccessTier::Premium, properties.AccessTier.Value());
     EXPECT_FALSE(properties.AccessTierTransitionState.HasValue());
     EXPECT_FALSE(properties.AccessTierChangedOn.HasValue());
+    shareClient.DeleteIfExists();
   }
 }}} // namespace Azure::Storage::Test

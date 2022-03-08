@@ -244,8 +244,8 @@ namespace Azure { namespace Storage { namespace Blobs {
   }
 
   Azure::Response<BlobContainerClient> BlobServiceClient::UndeleteBlobContainer(
-      const std::string deletedBlobContainerName,
-      const std::string deletedBlobContainerVersion,
+      const std::string& deletedBlobContainerName,
+      const std::string& deletedBlobContainerVersion,
       const UndeleteBlobContainerOptions& options,
       const Azure::Core::Context& context) const
   {
@@ -257,6 +257,24 @@ namespace Azure { namespace Storage { namespace Blobs {
     protocolLayerOptions.DeletedContainerName = deletedBlobContainerName;
     protocolLayerOptions.DeletedContainerVersion = deletedBlobContainerVersion;
     auto response = _detail::BlobContainerClient::Undelete(
+        *m_pipeline, Azure::Core::Url(blobContainerClient.GetUrl()), protocolLayerOptions, context);
+
+    return Azure::Response<BlobContainerClient>(
+        std::move(blobContainerClient), std::move(response.RawResponse));
+  }
+
+  Azure::Response<BlobContainerClient> BlobServiceClient::RenameBlobContainer(
+      const std::string& sourceBlobContainerName,
+      const std::string& destinationBlobContainerName,
+      const RenameBlobContainerOptions& options,
+      const Azure::Core::Context& context) const
+  {
+    auto blobContainerClient = GetBlobContainerClient(destinationBlobContainerName);
+
+    _detail::BlobContainerClient::RenameBlobContainerOptions protocolLayerOptions;
+    protocolLayerOptions.SourceContainerName = sourceBlobContainerName;
+    protocolLayerOptions.SourceLeaseId = options.SourceAccessConditions.LeaseId;
+    auto response = _detail::BlobContainerClient::Rename(
         *m_pipeline, Azure::Core::Url(blobContainerClient.GetUrl()), protocolLayerOptions, context);
 
     return Azure::Response<BlobContainerClient>(

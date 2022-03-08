@@ -10,6 +10,8 @@
 
 ### Other Changes
 
+- Deprecated enum `LeaseDuration`, use `LeaseDurationType` instead.
+
 ## 12.2.0 (2021-09-08)
 
 ### Breaking Changes

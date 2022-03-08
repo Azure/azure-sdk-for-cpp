@@ -3,8 +3,6 @@
 
 #include "azure/storage/blobs/blob_client.hpp"
 
-#include <numeric>
-
 #include <azure/core/azure_assert.hpp>
 #include <azure/core/http/policies/policy.hpp>
 #include <azure/storage/common/crypt.hpp>
@@ -641,6 +639,48 @@ namespace Azure { namespace Storage { namespace Blobs {
     return _detail::BlobClient::SetTier(*m_pipeline, m_blobUrl, protocolLayerOptions, context);
   }
 
+  Azure::Response<Models::CopyBlobFromUriResult> BlobClient::CopyFromUri(
+      const std::string& sourceUri,
+      const CopyBlobFromUriOptions& options,
+      const Azure::Core::Context& context) const
+  {
+    _detail::BlobClient::CopyBlobFromUriOptions protocolLayerOptions;
+    protocolLayerOptions.Metadata
+        = std::map<std::string, std::string>(options.Metadata.begin(), options.Metadata.end());
+    protocolLayerOptions.BlobTagsString = _detail::TagsToString(options.Tags);
+    protocolLayerOptions.CopySource = sourceUri;
+    protocolLayerOptions.Tier = options.AccessTier;
+    protocolLayerOptions.LeaseId = options.AccessConditions.LeaseId;
+    protocolLayerOptions.IfModifiedSince = options.AccessConditions.IfModifiedSince;
+    protocolLayerOptions.IfUnmodifiedSince = options.AccessConditions.IfUnmodifiedSince;
+    protocolLayerOptions.IfMatch = options.AccessConditions.IfMatch;
+    protocolLayerOptions.IfNoneMatch = options.AccessConditions.IfNoneMatch;
+    protocolLayerOptions.IfTags = options.AccessConditions.TagConditions;
+    protocolLayerOptions.SourceIfModifiedSince = options.SourceAccessConditions.IfModifiedSince;
+    protocolLayerOptions.SourceIfUnmodifiedSince = options.SourceAccessConditions.IfUnmodifiedSince;
+    protocolLayerOptions.SourceIfMatch = options.SourceAccessConditions.IfMatch;
+    protocolLayerOptions.SourceIfNoneMatch = options.SourceAccessConditions.IfNoneMatch;
+    if (options.TransactionalContentHash.HasValue())
+    {
+      if (options.TransactionalContentHash.Value().Algorithm == HashAlgorithm::Md5)
+      {
+        protocolLayerOptions.SourceContentMD5 = options.TransactionalContentHash.Value().Value;
+      }
+      else if (options.TransactionalContentHash.Value().Algorithm == HashAlgorithm::Crc64)
+      {
+        protocolLayerOptions.SourceContentcrc64 = options.TransactionalContentHash.Value().Value;
+      }
+    }
+    if (options.ImmutabilityPolicy.HasValue())
+    {
+      protocolLayerOptions.ImmutabilityPolicyExpiry = options.ImmutabilityPolicy.Value().ExpiresOn;
+      protocolLayerOptions.ImmutabilityPolicyMode = options.ImmutabilityPolicy.Value().PolicyMode;
+    }
+    protocolLayerOptions.LegalHold = options.HasLegalHold;
+
+    return _detail::BlobClient::CopyFromUri(*m_pipeline, m_blobUrl, protocolLayerOptions, context);
+  }
+
   StartBlobCopyOperation BlobClient::StartCopyFromUri(
       const std::string& sourceUri,
       const StartBlobCopyFromUriOptions& options,
@@ -649,14 +689,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     _detail::BlobClient::StartBlobCopyFromUriOptions protocolLayerOptions;
     protocolLayerOptions.Metadata
         = std::map<std::string, std::string>(options.Metadata.begin(), options.Metadata.end());
-    protocolLayerOptions.BlobTagsString = std::accumulate(
-        options.Tags.begin(),
-        options.Tags.end(),
-        std::string(),
-        [](const std::string& a, const std::pair<std::string, std::string>& b) {
-          return a + (a.empty() ? "" : "&") + _internal::UrlEncodeQueryParameter(b.first) + "="
-              + _internal::UrlEncodeQueryParameter(b.second);
-        });
+    protocolLayerOptions.BlobTagsString = _detail::TagsToString(options.Tags);
     protocolLayerOptions.CopySource = sourceUri;
     protocolLayerOptions.Tier = options.AccessTier;
     protocolLayerOptions.RehydratePriority = options.RehydratePriority;
@@ -673,6 +706,12 @@ namespace Azure { namespace Storage { namespace Blobs {
     protocolLayerOptions.SourceIfNoneMatch = options.SourceAccessConditions.IfNoneMatch;
     protocolLayerOptions.SealBlob = options.ShouldSealDestination;
     protocolLayerOptions.SourceIfTags = options.SourceAccessConditions.TagConditions;
+    if (options.ImmutabilityPolicy.HasValue())
+    {
+      protocolLayerOptions.ImmutabilityPolicyExpiry = options.ImmutabilityPolicy.Value().ExpiresOn;
+      protocolLayerOptions.ImmutabilityPolicyMode = options.ImmutabilityPolicy.Value().PolicyMode;
+    }
+    protocolLayerOptions.LegalHold = options.HasLegalHold;
 
     auto response = _detail::BlobClient::StartCopyFromUri(
         *m_pipeline, m_blobUrl, protocolLayerOptions, context);
@@ -771,6 +810,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     _detail::BlobClient::SetBlobTagsOptions protocolLayerOptions;
     protocolLayerOptions.Tags = std::move(tags);
     protocolLayerOptions.IfTags = options.AccessConditions.TagConditions;
+    protocolLayerOptions.LeaseId = options.AccessConditions.LeaseId;
     return _detail::BlobClient::SetTags(*m_pipeline, m_blobUrl, protocolLayerOptions, context);
   }
 
@@ -780,8 +820,43 @@ namespace Azure { namespace Storage { namespace Blobs {
   {
     _detail::BlobClient::GetBlobTagsOptions protocolLayerOptions;
     protocolLayerOptions.IfTags = options.AccessConditions.TagConditions;
+    protocolLayerOptions.LeaseId = options.AccessConditions.LeaseId;
     return _detail::BlobClient::GetTags(
         *m_pipeline, m_blobUrl, protocolLayerOptions, _internal::WithReplicaStatus(context));
+  }
+
+  Azure::Response<Models::SetBlobImmutabilityPolicyResult> BlobClient::SetImmutabilityPolicy(
+      Models::BlobImmutabilityPolicy immutabilityPolicy,
+      const SetBlobImmutabilityPolicyOptions& options,
+      const Azure::Core::Context& context) const
+  {
+    _detail::BlobClient::SetBlobImmutabilityPolicyOptions protocolLayerOptions;
+    protocolLayerOptions.ImmutabilityPolicyExpiry = immutabilityPolicy.ExpiresOn;
+    protocolLayerOptions.ImmutabilityPolicyMode = immutabilityPolicy.PolicyMode;
+    protocolLayerOptions.IfUnmodifiedSince = options.AccessConditions.IfUnmodifiedSince;
+    return _detail::BlobClient::SetImmutabilityPolicy(
+        *m_pipeline, m_blobUrl, protocolLayerOptions, context);
+  }
+
+  Azure::Response<Models::DeleteBlobImmutabilityPolicyResult> BlobClient::DeleteImmutabilityPolicy(
+      const DeleteBlobImmutabilityPolicyOptions& options,
+      const Azure::Core::Context& context) const
+  {
+    (void)options;
+    _detail::BlobClient::DeleteBlobImmutabilityPolicyOptions protocolLayerOptions;
+    return _detail::BlobClient::DeleteImmutabilityPolicy(
+        *m_pipeline, m_blobUrl, protocolLayerOptions, context);
+  }
+
+  Azure::Response<Models::SetBlobLegalHoldResult> BlobClient::SetLegalHold(
+      bool hasLegalHold,
+      const SetBlobLegalHoldOptions& options,
+      const Azure::Core::Context& context) const
+  {
+    (void)options;
+    _detail::BlobClient::SetBlobLegalHoldOptions protocolLayerOptions;
+    protocolLayerOptions.LegalHold = hasLegalHold;
+    return _detail::BlobClient::SetLegalHold(*m_pipeline, m_blobUrl, protocolLayerOptions, context);
   }
 
 }}} // namespace Azure::Storage::Blobs

@@ -3,8 +3,6 @@
 
 #include "azure/storage/blobs/page_blob_client.hpp"
 
-#include <numeric>
-
 #include <azure/storage/common/crypt.hpp>
 #include <azure/storage/common/internal/concurrent_transfer.hpp>
 #include <azure/storage/common/internal/constants.hpp>
@@ -96,14 +94,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     protocolLayerOptions.Metadata
         = std::map<std::string, std::string>(options.Metadata.begin(), options.Metadata.end());
     protocolLayerOptions.Tier = options.AccessTier;
-    protocolLayerOptions.BlobTagsString = std::accumulate(
-        options.Tags.begin(),
-        options.Tags.end(),
-        std::string(),
-        [](const std::string& a, const std::pair<std::string, std::string>& b) {
-          return a + (a.empty() ? "" : "&") + _internal::UrlEncodeQueryParameter(b.first) + "="
-              + _internal::UrlEncodeQueryParameter(b.second);
-        });
+    protocolLayerOptions.BlobTagsString = _detail::TagsToString(options.Tags);
     protocolLayerOptions.LeaseId = options.AccessConditions.LeaseId;
     protocolLayerOptions.IfModifiedSince = options.AccessConditions.IfModifiedSince;
     protocolLayerOptions.IfUnmodifiedSince = options.AccessConditions.IfUnmodifiedSince;
@@ -117,6 +108,13 @@ namespace Azure { namespace Storage { namespace Blobs {
       protocolLayerOptions.EncryptionAlgorithm = m_customerProvidedKey.Value().Algorithm.ToString();
     }
     protocolLayerOptions.EncryptionScope = m_encryptionScope;
+    if (options.ImmutabilityPolicy.HasValue())
+    {
+      protocolLayerOptions.ImmutabilityPolicyExpiry = options.ImmutabilityPolicy.Value().ExpiresOn;
+      protocolLayerOptions.ImmutabilityPolicyMode = options.ImmutabilityPolicy.Value().PolicyMode;
+    }
+    protocolLayerOptions.LegalHold = options.HasLegalHold;
+
     return _detail::PageBlobClient::Create(*m_pipeline, m_blobUrl, protocolLayerOptions, context);
   }
 

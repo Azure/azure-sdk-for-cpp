@@ -86,6 +86,11 @@ namespace Azure { namespace Storage { namespace Sas {
     DeleteVersion = 128,
 
     /**
+     * @brief Indicates that setting immutability policy is permitted.
+     */
+    SetImmutabilityPolicy = 256,
+
+    /**
      * @brief Indicates that all permissions are set.
      */
     All = ~0,
@@ -149,6 +154,11 @@ namespace Azure { namespace Storage { namespace Sas {
      * @brief Indicates that deleting previous blob version is permitted.
      */
     DeleteVersion = 64,
+
+    /**
+     * @brief Indicates that setting immutability policy is permitted.
+     */
+    SetImmutabilityPolicy = 128,
 
     /**
      * @brief Indicates that all permissions are set.
