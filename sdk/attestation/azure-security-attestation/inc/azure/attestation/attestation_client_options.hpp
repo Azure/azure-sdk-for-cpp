@@ -15,6 +15,8 @@
 
 namespace Azure { namespace Security { namespace Attestation {
 
+  /** @brief Version to be used when communicating with the Attestation service.
+   */
   class ServiceVersion final {
   private:
     std::string m_version;
@@ -111,7 +113,11 @@ namespace Azure { namespace Security { namespace Attestation {
    */
   struct AttestationClientOptions final : public Azure::Core::_internal::ClientOptions
   {
+    /** @brief Version to use when communicating with the attestation service.
+     */
     ServiceVersion Version;
+    /** @brief Options sent when validating tokens received by the attestation service.
+     */
     AttestationTokenValidationOptions TokenValidationOptions;
     /**
      * @brief Construct a new Attestation Client Options object.
@@ -134,7 +140,11 @@ namespace Azure { namespace Security { namespace Attestation {
    */
   struct AttestationAdministrationClientOptions final : public Azure::Core::_internal::ClientOptions
   {
+    /** @brief Version to use when communicating with the attestation service.
+     */
     ServiceVersion Version;
+    /** @brief Options sent when validating tokens received by the attestation service.
+     */
     AttestationTokenValidationOptions TokenValidationOptions;
     /**
      * @brief Construct a new Attestation Client Options object.
@@ -276,6 +286,22 @@ namespace Azure { namespace Security { namespace Attestation {
    */
   struct GetPolicyOptions final
   {
+    /** @brief Specifies the options which should be used to validate the attestation token returned
+     * by the attestation service.
+     * @details If not provided by the caller, the token validation options
+     * specified when the @{link AttestationAdministrationClient} was created will be used.
+     */
+    Azure::Nullable<AttestationTokenValidationOptions> TokenValidationOptions{};
+  };
+
+  /** @brief Parameters sent to the attestation service when setting an attestation policy.
+   */
+  struct SetPolicyOptions final
+  {
+    /** @brief Optional Signing Key which is used to sign the SetPolicy request.
+     */
+    Azure::Nullable<AttestationSigningKey> SigningKey;
+
     /** @brief Specifies the options which should be used to validate the attestation token returned
      * by the attestation service.
      * @details If not provided by the caller, the token validation options
