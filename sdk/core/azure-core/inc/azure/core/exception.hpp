@@ -103,7 +103,6 @@ namespace Azure { namespace Core {
               other.RawResponse
                   ? std::make_unique<Azure::Core::Http::RawResponse>(*other.RawResponse)
                   : nullptr)
-
     {
     }
 
