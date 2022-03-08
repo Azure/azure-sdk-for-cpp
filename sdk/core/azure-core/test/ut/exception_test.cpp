@@ -33,7 +33,7 @@ TEST(RequestFailedException, JSONError)
   EXPECT_EQ(exception.RequestId, "1");
   EXPECT_EQ(exception.ClientRequestId, "2");
   EXPECT_EQ(exception.ReasonPhrase, "retry please :");
-  EXPECT_EQ(std::string(exception.what()).find("Received an HTTP unsuccessful status code"), 0);
+  EXPECT_EQ(exception.what(), std::string("Received an HTTP unsuccessful status code:"));
 }
 
 TEST(RequestFailedException, JSONErrorNoError)
@@ -58,7 +58,7 @@ TEST(RequestFailedException, JSONErrorNoError)
   EXPECT_EQ(exception.RequestId, "1");
   EXPECT_EQ(exception.ClientRequestId, "2");
   EXPECT_EQ(exception.ReasonPhrase, "retry please :");
-  EXPECT_EQ(std::string(exception.what()).find("Received an HTTP unsuccessful status code"), 0);
+  EXPECT_EQ(exception.what(), std::string("Received an HTTP unsuccessful status code:"));
 }
 
 TEST(RequestFailedException, EmptyValues)
@@ -74,5 +74,5 @@ TEST(RequestFailedException, EmptyValues)
   EXPECT_EQ(exception.RequestId, std::string());
   EXPECT_EQ(exception.ClientRequestId, std::string());
   EXPECT_EQ(exception.ReasonPhrase, std::string());
-  EXPECT_EQ(std::string(exception.what()).find("Received an HTTP unsuccessful status code"), 0);
+  EXPECT_EQ(exception.what(), std::string("Received an HTTP unsuccessful status code:"));
 }

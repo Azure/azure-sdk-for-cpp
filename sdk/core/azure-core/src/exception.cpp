@@ -39,7 +39,7 @@ namespace Azure { namespace Core {
   }
 
   std::string RequestFailedException::GetRawResponseField(
-      std::unique_ptr<Azure::Core::Http::RawResponse> & rawResponse,
+      std::unique_ptr<Azure::Core::Http::RawResponse>& rawResponse,
       std::string fieldName)
   {
     auto& headers = rawResponse->GetHeaders();
