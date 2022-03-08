@@ -39,7 +39,9 @@ namespace Azure { namespace Core {
   {
     std::string returnValue("Received an HTTP unsuccessful status code: ");
     // The status code will always be present in the rawResponse.
-    returnValue += std::to_string(static_cast<int>(rawResponse->GetStatusCode()));
+    returnValue += std::to_string(
+        static_cast<typename std::underlying_type<Azure::Core::Http::HttpStatusCode>::type>(
+            rawResponse->GetStatusCode()));
 
     // If there is a Reason phrase in the rawResponse, add it to the message.
     if (!rawResponse->GetReasonPhrase().empty())

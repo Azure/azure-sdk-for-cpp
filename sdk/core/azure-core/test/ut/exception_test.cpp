@@ -34,6 +34,13 @@ TEST(RequestFailedException, JSONError)
   EXPECT_EQ(exception.ClientRequestId, "2");
   EXPECT_EQ(exception.ReasonPhrase, "retry please :");
   EXPECT_EQ(std::string(exception.what()).find("Received an HTTP unsuccessful status code"), 0);
+  EXPECT_NE(
+      std::string(exception.what())
+          .find(std::to_string(
+              static_cast<std::underlying_type<Azure::Core::Http::HttpStatusCode>::type>(
+                  Azure::Core::Http::HttpStatusCode::ServiceUnavailable))),
+      std::string::npos);
+  EXPECT_NE(std::string(exception.what()).find("retry please :"), std::string::npos);
 }
 
 TEST(RequestFailedException, JSONErrorNoError)
@@ -59,6 +66,13 @@ TEST(RequestFailedException, JSONErrorNoError)
   EXPECT_EQ(exception.ClientRequestId, "2");
   EXPECT_EQ(exception.ReasonPhrase, "retry please :");
   EXPECT_EQ(std::string(exception.what()).find("Received an HTTP unsuccessful status code"), 0);
+  EXPECT_NE(
+      std::string(exception.what())
+          .find(std::to_string(
+              static_cast<std::underlying_type<Azure::Core::Http::HttpStatusCode>::type>(
+                  Azure::Core::Http::HttpStatusCode::ServiceUnavailable))),
+      std::string::npos);
+  EXPECT_NE(std::string(exception.what()).find("retry please :"), std::string::npos);
 }
 
 TEST(RequestFailedException, EmptyValues)
@@ -75,4 +89,10 @@ TEST(RequestFailedException, EmptyValues)
   EXPECT_EQ(exception.ClientRequestId, std::string());
   EXPECT_EQ(exception.ReasonPhrase, std::string());
   EXPECT_EQ(std::string(exception.what()).find("Received an HTTP unsuccessful status code"), 0);
+  EXPECT_NE(
+      std::string(exception.what())
+          .find(std::to_string(
+              static_cast<std::underlying_type<Azure::Core::Http::HttpStatusCode>::type>(
+                  Azure::Core::Http::HttpStatusCode::None))),
+      std::string::npos);
 }
