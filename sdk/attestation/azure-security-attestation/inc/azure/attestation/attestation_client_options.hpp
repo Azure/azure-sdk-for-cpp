@@ -15,6 +15,8 @@
 
 namespace Azure { namespace Security { namespace Attestation {
 
+  /** @brief Version to be used when communicating with the Attestation service.
+   */
   class ServiceVersion final {
   private:
     std::string m_version;
@@ -28,7 +30,7 @@ namespace Azure { namespace Security { namespace Attestation {
     ServiceVersion(std::string version) : m_version(std::move(version)) {}
 
     /**
-     * @brief Enable comparing the ext enum.
+     * @brief Enable comparing the extensible enum.
      *
      * @param other Another #ServiceVersion to be compared.
      */
@@ -107,11 +109,15 @@ namespace Azure { namespace Security { namespace Attestation {
   };
 
   /**
-   * @brief Define the options to create an SDK Keys client.
+   * @brief Define the options to create an Attestation client.
    */
   struct AttestationClientOptions final : public Azure::Core::_internal::ClientOptions
   {
+    /** @brief Version to use when communicating with the attestation service.
+     */
     ServiceVersion Version;
+    /** @brief Options sent when validating tokens received by the attestation service.
+     */
     AttestationTokenValidationOptions TokenValidationOptions;
     /**
      * @brief Construct a new Attestation Client Options object.
@@ -121,6 +127,33 @@ namespace Azure { namespace Security { namespace Attestation {
      * the service.
      */
     AttestationClientOptions(
+        ServiceVersion version = ServiceVersion::V2020_10_01,
+        AttestationTokenValidationOptions const& tokenValidationOptions = {})
+        : Azure::Core::_internal::ClientOptions(), Version(version),
+          TokenValidationOptions(tokenValidationOptions)
+    {
+    }
+  };
+
+  /**
+   * @brief Define the options to create an Attestation Administration client.
+   */
+  struct AttestationAdministrationClientOptions final : public Azure::Core::_internal::ClientOptions
+  {
+    /** @brief Version to use when communicating with the attestation service.
+     */
+    ServiceVersion Version;
+    /** @brief Options sent when validating tokens received by the attestation service.
+     */
+    AttestationTokenValidationOptions TokenValidationOptions;
+    /**
+     * @brief Construct a new Attestation Client Options object.
+     *
+     * @param version Optional version for the client.
+     * @param tokenValidationOptions Options applied when validating attestation tokens returned by
+     * the service.
+     */
+    AttestationAdministrationClientOptions(
         ServiceVersion version = ServiceVersion::V2020_10_01,
         AttestationTokenValidationOptions const& tokenValidationOptions = {})
         : Azure::Core::_internal::ClientOptions(), Version(version),
@@ -145,7 +178,7 @@ namespace Azure { namespace Security { namespace Attestation {
     AttestationDataType(std::string dataType) : m_dataType(std::move(dataType)) {}
     AttestationDataType() {}
     /**
-     * @brief Enable comparing the ext enum.
+     * @brief Enable comparing the extensible enum.
      *
      * @param other Another AttestationDataType to be compared.
      */
@@ -247,6 +280,34 @@ namespace Azure { namespace Security { namespace Attestation {
      * key of the SigningPrivateKey.
      */
     std::string PemEncodedX509Certificate;
+  };
+
+  /** @brief Parameters sent to the attestation service when retrieving an attestation policy.
+   */
+  struct GetPolicyOptions final
+  {
+    /** @brief Specifies the options which should be used to validate the attestation token returned
+     * by the attestation service.
+     * @details If not provided by the caller, the token validation options
+     * specified when the @{link AttestationAdministrationClient} was created will be used.
+     */
+    Azure::Nullable<AttestationTokenValidationOptions> TokenValidationOptions{};
+  };
+
+  /** @brief Parameters sent to the attestation service when setting an attestation policy.
+   */
+  struct SetPolicyOptions final
+  {
+    /** @brief Optional Signing Key which is used to sign the SetPolicy request.
+     */
+    Azure::Nullable<AttestationSigningKey> SigningKey;
+
+    /** @brief Specifies the options which should be used to validate the attestation token returned
+     * by the attestation service.
+     * @details If not provided by the caller, the token validation options
+     * specified when the @{link AttestationAdministrationClient} was created will be used.
+     */
+    Azure::Nullable<AttestationTokenValidationOptions> TokenValidationOptions{};
   };
 
 }}} // namespace Azure::Security::Attestation

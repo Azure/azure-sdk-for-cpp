@@ -140,7 +140,7 @@ namespace Azure { namespace Security { namespace Attestation { namespace _detail
       {
         throw OpenSSLException("i2d_X509");
       }
-      if (EVP_DigestUpdate(hash.get(), buf, thumbprintBuffer.size()) != 1)
+      if (EVP_DigestUpdate(hash.get(), thumbprintBuffer.data(), thumbprintBuffer.size()) != 1)
       {
         throw OpenSSLException("EVP_DigestUpdate");
       }
@@ -155,15 +155,8 @@ namespace Azure { namespace Security { namespace Attestation { namespace _detail
       auto hexThumbprint(JsonHelpers::BinaryToHexString(hashedThumbprint));
       // HexString uses an "a"-"f" alphabet, but the CLR hex encoder uses an "A"-"F" alphabet,
       // convert between them.
-      for (auto& ch : hexThumbprint)
-      {
-        if (ch >= 'a' && ch <= 'f')
-        {
-          ch = static_cast<char>(toupper(ch));
-        }
-      }
 
-      return hexThumbprint;
+      return Azure::Core::_internal::StringExtensions::ToUpper(hexThumbprint);
     }
     std::string GetAlgorithm() const override
     {

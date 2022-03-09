@@ -48,7 +48,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys { nam
       return InitTestClient<
           Azure::Security::KeyVault::Keys::Cryptography::CryptographyClient,
           Azure::Security::KeyVault::Keys::Cryptography::CryptographyClientOptions>(
-          keyId, &m_credential, options);
+          keyId, m_credential, options);
     }
 
     // Create
@@ -66,7 +66,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys { nam
       // `InitTestClient` takes care of setting up Record&Playback.
       m_client = InitTestClient<
           Azure::Security::KeyVault::Keys::KeyClient,
-          Azure::Security::KeyVault::Keys::KeyClientOptions>(m_keyVaultUrl, &m_credential, options);
+          Azure::Security::KeyVault::Keys::KeyClientOptions>(m_keyVaultUrl, m_credential, options);
 
       UpdateWaitingTime(m_testPollingIntervalMs);
     }
@@ -77,7 +77,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys { nam
       m_client = InitTestClient<
           Azure::Security::KeyVault::Keys::KeyClient,
           Azure::Security::KeyVault::Keys::KeyClientOptions>(
-          m_keyVaultHsmUrl, &m_credential, options);
+          m_keyVaultHsmUrl, m_credential, options);
     }
 
   public:

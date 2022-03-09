@@ -1,14 +1,10 @@
 # Release History
 
-## 12.3.0-beta.1 (Unreleased)
-
-### Features Added
-
-### Breaking Changes
-
-### Bugs Fixed
+## 12.2.1 (2022-03-09)
 
 ### Other Changes
+
+- Deprecated enum `LeaseDuration`, use `LeaseDurationType` instead.
 
 ## 12.2.0 (2021-09-08)
 

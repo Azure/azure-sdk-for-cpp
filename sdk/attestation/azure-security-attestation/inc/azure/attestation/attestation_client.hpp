@@ -15,102 +15,6 @@ namespace Azure { namespace Core { namespace Http { namespace _internal {
 
 namespace Azure { namespace Security { namespace Attestation {
 
-  /** An AttestationToken represents an RFC 7519 JSON Web Token returned from the attestation
-   * service with the specialized body type.
-   * <typeparam name="T"></typeparam> The type which represents the body of the attestation token.
-   */
-  template <typename T> class AttestationToken final {
-  public:
-    /**
-     * @brief The full RFC 7515 JWS/JWT token returned by the attestation service.
-     */
-    std::string RawToken;
-
-    /**
-     * @brief The elements of the raw token which will be signed by the Signature.
-     */
-    std::string SignedElements;
-
-    /**
-     * @brief  Signature (if present) for the attestation token.
-     */
-    std::vector<uint8_t> Signature;
-
-    /**
-     * @brief RFC 7515 header properties.
-     */
-    Models::AttestationTokenHeader Header;
-
-    // RFC 7519 properties.
-
-    /**
-     *  The Expiration time for this attestation token.
-     *
-     * After this time, the token cannot be considered valid.
-     *
-     * See <a href='https://datatracker.ietf.org/doc/html/rfc7519#section-4.1.4'>RFC 7519
-     * Section 4.1.4</a> for more information.
-     */
-    Azure::Nullable<Azure::DateTime> ExpiresOn;
-
-    /**
-     *  The time at which this token was issued.
-     *
-     *
-     * See <a href='https://datatracker.ietf.org/doc/html/rfc7519#section-4.1.6'>RFC 7519
-     * Section 4.1.6</a> for more information.
-     */
-    Azure::Nullable<Azure::DateTime> IssuedOn;
-
-    /**
-     *  The time before which this token cannot be considered valid.
-     *
-     *
-     * See <a href='https://datatracker.ietf.org/doc/html/rfc7519#section-4.1.5'>RFC 7519
-     * Section 4.1.5</a> for more information.
-     */
-    Azure::Nullable<Azure::DateTime> NotBefore;
-
-    /**
-     *  The issuer of this attestation token
-     *
-     *
-     * See <a href='https://datatracker.ietf.org/doc/html/rfc7519#section-4.1.1'>RFC 7519
-     * Section 4.1.1</a> for more information.
-     */
-    Azure::Nullable<std::string> Issuer;
-
-    /**
-     *  An identifier which uniquely identifies this token.
-     *
-     * See <a href='https://datatracker.ietf.org/doc/html/rfc7519#section-4.1.7'>RFC 7519
-     * Section 4.1.7</a> for more information.
-     */
-    Azure::Nullable<std::string> UniqueIdentifier;
-
-    /**
-     * The subject for this attestation token.
-     *
-     * See <a href='https://datatracker.ietf.org/doc/html/rfc7519#section-4.1.2'>RFC 7519
-     * Section 4.1.2</a> for more information.
-     */
-    Azure::Nullable<std::string> Subject;
-
-    /**
-     * The audience for this attestation token.
-     *
-     * See <a href='https://datatracker.ietf.org/doc/html/rfc7519#section-4.1.3'>RFC 7519
-     * Section 4.1.3</a> for more information.
-     */
-    Azure::Nullable<std::string> Audience;
-
-    /**
-     * @brief     The deserialized body of the attestation token.
-     *
-     */
-    T Body;
-  };
-
   /**
    *
    * The AttestationAsyncClient implements the functionality required by the "Attest" family of
@@ -120,11 +24,9 @@ namespace Azure { namespace Security { namespace Attestation {
    * (think: "encrypted VM" or "encrypted container"). But there's one key attribute of the enclave:
    * It is encrypted.That means that
    * if data is sent from the enclave, there is no way of knowing that the data came from the
-   * enclave.
-   *
-   * And even worse, there is no way of securely communicating with the enclave (since the enclave
-   * is fully isolated from the host, all information passed into the enclave has to go through its
-   * host first).
+   * enclave. And even worse, there is no way of securely communicating with the enclave (since the
+   * enclave is fully isolated from the host, all information passed into the enclave has to go
+   * through its host first).
    *
    * To solve the communication problem, the Attest API can be used to facilitate what is
    * known as the "Secure Key Release" (SKR) protocol.
@@ -138,7 +40,7 @@ namespace Azure { namespace Security { namespace Attestation {
    * - The "relying party" which will interpret the token from the service. For the Secure Key
    * Release Protocol, this is the entity which wishes to communicate with the enclave.
    *
-   *   It's possible that all these parties are on the same computer, it's possible they're on
+   * It's possible that all these parties are on the same computer, it's possible they're on
    * multiple computers.<br> It's possible that the host is also the relying party. It's possible
    * that the relying party is a component like Azure Managed HSM.
    *
@@ -165,12 +67,11 @@ namespace Azure { namespace Security { namespace Attestation {
    * validated indication that the contents of the byte buffer was known inside the enclave.
    *
    * The enclave then hands the byte buffer and the quote to its host. The host sends the quote and
-   * byte buffer as the "RunTime Data" to the via the {@link
-   * AttestationAsyncClient#attestSgxEnclave(BinaryData)}  or
-   * {@link AttestationAsyncClient#attestOpenEnclave} API. Assuming the byte buffer and quote are
+   * byte buffer as the "RunTime Data" to the via the AttestationClient.AttestSgxEnclave  or
+   * AttestationClient.AttestOpenEnclave} API. Assuming the byte buffer and quote are
    * valid, and the quote contains the hash of the byte buffer, the attestation service responds
-   * with an {@link AttestationToken} signed by the attestation service, whose body is an {@link
-   * AttestationResult}.
+   * with an AttestationToken signed by the attestation service, whose body is an
+   * AttestationResult.
    *
    * The token generated also includes the contents of the InitTimeData and/or RunTimeData if it was
    * provided in the Attest API call.
@@ -195,15 +96,14 @@ namespace Azure { namespace Security { namespace Attestation {
    *
    * If you ask for the RunTime data to be included in the token as binary, then it will be
    * base64url encoded in the "x-ms-maa-enclavehelddata" claim in the output token (the
-   * {@link AttestationResult#getEnclaveHeldData()} property).
+   * AttestationResult::EnclaveHeldData property).
    *
    * If you ask for the RunTime data to be included in the token as JSON, then it will be included
-   * in the "x-ms-maa-runtimeClaims" claim in the output token (the {@link
-   * AttestationResult#getRuntimeClaims()} property).
+   * in the "x-ms-maa-runtimeClaims" claim in the output token (the AttestationResult::RuntimeClaims
+   * property).
    *
-   * In addition to the Attest APIs, the {@link AttestationClient} object also contains helper APIs
+   * In addition to the Attest APIs, the AttestationClient object also contains helper APIs
    * which can be used to retrieve the OpenId Metadata document and signing keys from the service.
-   *
    *
    * The OpenId Metadata document contains properties which describe the attestation service.
    *
@@ -214,17 +114,6 @@ namespace Azure { namespace Security { namespace Attestation {
    */
 
   class AttestationClient final {
-  private:
-    Azure::Core::Url m_endpoint;
-    std::string m_apiVersion;
-    std::shared_ptr<Azure::Core::Http::_internal::HttpPipeline> m_pipeline;
-    AttestationTokenValidationOptions m_tokenValidationOptions;
-
-    mutable std::vector<Models::AttestationSigner> m_attestationSigners;
-
-    std::vector<Models::AttestationSigner> const& GetAttestationSigners(
-        Azure::Core::Context const& context) const;
-
   public:
     /**
      * @brief Destructor.
@@ -232,11 +121,10 @@ namespace Azure { namespace Security { namespace Attestation {
      */
     virtual ~AttestationClient() = default;
 
-    /**
-     * @brief Construct a new Attestation Client object
+    /** @brief Construct a new Attestation Client object
      *
      * @param endpoint The URL address where the client will send the requests to.
-     * @param credential OPTIONAL The authentication method to use (required for TPM attestation).
+     * @param credential The authentication method to use (required for TPM attestation).
      * @param options The options to customize the client behavior.
      */
     explicit AttestationClient(
@@ -244,6 +132,13 @@ namespace Azure { namespace Security { namespace Attestation {
         std::shared_ptr<Core::Credentials::TokenCredential const> credential,
         AttestationClientOptions options = AttestationClientOptions());
 
+    /** @brief Construct a new anonymous Attestation Client object
+     *
+     * @param endpoint The URL address where the client will send the requests to.
+     * @param options The options to customize the client behavior.
+     *
+     * @note TPM attestation requires an authenticated attestation client.
+     */
     explicit AttestationClient(
         std::string const& endpoint,
         AttestationClientOptions options = AttestationClientOptions())
@@ -251,15 +146,7 @@ namespace Azure { namespace Security { namespace Attestation {
     {
     }
 
-    /**
-     * @brief Returns the API version the client was configured with.
-     *
-     * @returns The API version used when communicating with the attestation service.
-     */
-    std::string const& ClientVersion() const { return m_apiVersion; }
-
-    /**
-     * @brief Construct a new Attestation Client object from another attestation client.
+    /** @brief Construct a new Attestation Client object from an existing attestation client.
      *
      * @param attestationClient An existing attestation client.
      */
@@ -269,12 +156,19 @@ namespace Azure { namespace Security { namespace Attestation {
           m_tokenValidationOptions(attestationClient.m_tokenValidationOptions){};
 
     /**
+     * @brief Returns the API version the client was configured with.
+     *
+     * @returns The API version used when communicating with the attestation service.
+     */
+    std::string const& ClientVersion() const { return m_apiVersion; }
+
+    /**
      * Retrieves metadata about the attestation signing keys in use by the attestation service.
      *
      * Retrieve the OpenID metadata for this attestation service instance..
      *
-     * @return an {@link AttestationOpenIdMetadata} containing metadata about the specified service
-     * instance.
+     * @return an \ref Models::AttestationOpenIdMetadata object containing metadata about the
+     * specified service instance.
      */
     Response<Models::AttestationOpenIdMetadata> GetOpenIdMetadata(
         Azure::Core::Context const& context = Azure::Core::Context::ApplicationContext) const;
@@ -282,7 +176,8 @@ namespace Azure { namespace Security { namespace Attestation {
     /**
      * @brief Retrieve the attestation signing certificates for this attestation instance.
      *
-     * @returns Attestation Metadata.
+     * @returns A Models::AttestationSigningCertificateResult containing a list of certificates one
+     * of which will be used to validate tokens received by the attestation service.
      */
     Response<Models::AttestationSigningCertificateResult> GetAttestationSigningCertificates(
         Azure::Core::Context const& context = Azure::Core::Context::ApplicationContext) const;
@@ -295,10 +190,14 @@ namespace Azure { namespace Security { namespace Attestation {
      * @param options - Options to the attestation request (runtime data, inittime data, etc).
      * @param context - Context for the operation.
      *
-     * @returns Response<{@link AttestationToken}<{@link AttestationResult}>> - The result of the
+     * @returns Response<AttestationToken<AttestationResult>> - The result of the
      * attestation operation.
+     *
+     * @note \b Note: The GetAttestationSigningCertificates API API \b MUST be called before the
+     * AttestSgxEnclave API is called to retrieve the signing certificates used to validate the
+     * result returned by the service.
      */
-    Response<AttestationToken<Models::AttestationResult>> AttestSgxEnclave(
+    Response<Models::AttestationToken<Models::AttestationResult>> AttestSgxEnclave(
         std::vector<uint8_t> const& sgxQuoteToAttest,
         AttestOptions options = AttestOptions(),
         Azure::Core::Context const& context = Azure::Core::Context::ApplicationContext) const;
@@ -315,10 +214,22 @@ namespace Azure { namespace Security { namespace Attestation {
      * @returns Response<AttestationToken<AttestationResult>> - The result of the attestation
      * operation
      */
-    Response<AttestationToken<Models::AttestationResult>> AttestOpenEnclave(
+    Response<Models::AttestationToken<Models::AttestationResult>> AttestOpenEnclave(
         std::vector<uint8_t> const& openEnclaveReportToAttest,
         AttestOptions options = AttestOptions(),
         Azure::Core::Context const& context = Azure::Core::Context::ApplicationContext) const;
+
+  private:
+    Azure::Core::Url m_endpoint;
+    std::string m_apiVersion;
+    std::shared_ptr<Azure::Core::Credentials::TokenCredential const> m_credentials;
+    std::shared_ptr<Azure::Core::Http::_internal::HttpPipeline> m_pipeline;
+    AttestationTokenValidationOptions m_tokenValidationOptions;
+
+    mutable std::vector<Models::AttestationSigner> m_attestationSigners;
+
+    std::vector<Models::AttestationSigner> const& GetAttestationSigners(
+        Azure::Core::Context const& context) const;
   };
 
 }}} // namespace Azure::Security::Attestation

@@ -394,7 +394,7 @@ namespace Azure { namespace Storage { namespace Test {
                   GetTestName() + "withSecret",
                   InitClientOptions<Files::DataLake::DataLakeClientOptions>())
                   .GetUrl()),
-          &credential,
+          credential,
           options);
 
       EXPECT_NO_THROW(clientSecretClient->Create(Files::DataLake::Models::PathResourceType::File));

@@ -184,6 +184,11 @@ namespace Azure { namespace Storage { namespace Sas {
     Filter = 1024,
 
     /**
+     * @brief Indicates that setting immutability policy is permitted.
+     */
+    SetImmutabilityPolicy = 2048,
+
+    /**
      * @brief Indicates that all permissions are set.
      */
     All = ~0,

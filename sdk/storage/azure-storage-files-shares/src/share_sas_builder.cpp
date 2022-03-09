@@ -11,6 +11,8 @@
 namespace Azure { namespace Storage { namespace Sas {
 
   namespace {
+    constexpr static const char* SasVersion = "2020-02-10";
+
     std::string ShareSasResourceToString(ShareSasResource resource)
     {
       if (resource == ShareSasResource::Share)
@@ -97,16 +99,15 @@ namespace Azure { namespace Storage { namespace Sas {
 
     std::string stringToSign = Permissions + "\n" + startsOnStr + "\n" + expiresOnStr + "\n"
         + canonicalName + "\n" + Identifier + "\n" + (IPRange.HasValue() ? IPRange.Value() : "")
-        + "\n" + protocol + "\n" + _internal::DefaultSasVersion + "\n" + CacheControl + "\n"
-        + ContentDisposition + "\n" + ContentEncoding + "\n" + ContentLanguage + "\n" + ContentType;
+        + "\n" + protocol + "\n" + SasVersion + "\n" + CacheControl + "\n" + ContentDisposition
+        + "\n" + ContentEncoding + "\n" + ContentLanguage + "\n" + ContentType;
 
     std::string signature = Azure::Core::Convert::Base64Encode(_internal::HmacSha256(
         std::vector<uint8_t>(stringToSign.begin(), stringToSign.end()),
         Azure::Core::Convert::Base64Decode(credential.GetAccountKey())));
 
     Azure::Core::Url builder;
-    builder.AppendQueryParameter(
-        "sv", _internal::UrlEncodeQueryParameter(_internal::DefaultSasVersion));
+    builder.AppendQueryParameter("sv", _internal::UrlEncodeQueryParameter(SasVersion));
     builder.AppendQueryParameter("spr", _internal::UrlEncodeQueryParameter(protocol));
     if (!startsOnStr.empty())
     {
