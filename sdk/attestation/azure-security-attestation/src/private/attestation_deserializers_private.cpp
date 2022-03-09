@@ -386,7 +386,7 @@ namespace Azure { namespace Security { namespace Attestation { namespace _detail
     JsonOptional::SetIfExists<json, JsonWebKey>(
         body.policyCertificate, jsonBody, "policyCertificate", JsonWebKeySerializer::Deserialize);
     return body;
-  };
+  }
 
   Models::_detail::ModifyPolicyCertificatesResult
   ModifyPolicyCertificatesResultSerializer::Deserialize(

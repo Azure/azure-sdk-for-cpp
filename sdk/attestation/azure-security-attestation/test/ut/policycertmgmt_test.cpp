@@ -96,11 +96,11 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
 
         if (expectedCertificates)
         {
-          ASSERT_NE(0, certificatesResult.Value.Body.Certificates.size());
+          ASSERT_NE(0ul, certificatesResult.Value.Body.Certificates.size());
         }
         else
         {
-          ASSERT_EQ(0, certificatesResult.Value.Body.Certificates.size());
+          ASSERT_EQ(0ul, certificatesResult.Value.Body.Certificates.size());
         }
 
         // In playback mode, the endpoint is a mocked value so the Issuer in the result will not
