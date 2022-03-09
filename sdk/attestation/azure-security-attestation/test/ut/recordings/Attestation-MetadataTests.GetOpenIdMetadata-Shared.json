@@ -4,7 +4,7 @@
       "Headers": {
         "content-type": "application/json",
         "user-agent": "azsdk-cpp-Attestation/1.0.0-beta.1 (Windows 10 Enterprise 6.3 22000 22000.1.amd64fre.co_release.210604-1628)",
-        "x-ms-client-request-id": "fb641758-583c-4200-60f6-ce95e9ca75c7"
+        "x-ms-client-request-id": "83130b14-0f92-4def-7cb6-2e2ab5accaaa"
       },
       "Method": "GET",
       "Response": {
@@ -13,10 +13,10 @@
         "STATUS_CODE": "200",
         "content-length": "573",
         "content-type": "application/json; charset=utf-8",
-        "date": "Mon, 28 Feb 2022 20:12:03 GMT",
+        "date": "Wed, 09 Mar 2022 19:26:52 GMT",
         "server": "Kestrel",
-        "x-ms-maa-service-version": "1.10.01857.0001",
-        "x-ms-request-id": "00-9450a3e648d5f3759b8380c53a583c4c-0000000000000000-00"
+        "x-ms-maa-service-version": "1.10.01885.0001",
+        "x-ms-request-id": "00-c99ab5c3769e944239ceef244475666b-0000000000000000-00"
       },
       "Url": "https://REDACTED.wus.attest.azure.net/.well-known/openid-configuration"
     }
