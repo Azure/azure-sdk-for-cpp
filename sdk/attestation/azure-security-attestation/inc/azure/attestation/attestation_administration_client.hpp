@@ -153,9 +153,80 @@ namespace Azure { namespace Security { namespace Attestation {
         Azure::Nullable<std::string> const& policyToSet,
         Azure::Nullable<AttestationSigningKey> const& signingKey = {}) const;
 
-    Response<Models::AttestationToken<Models::PolicyCertificateListResult>>  GetPolicyManagementCertificates(
+    /**
+     * @brief Retrieves the list of policy management certificates.
+     *
+     * @details When the attestation service is running in "Isolated" mode, the service maintains a
+     * set of X.509 certificates which must be used to sign all policy operations. The
+     * GetPolicyManagementCertificates API returns the list of certificates which are used for this
+     * attestation service instance.
+     *
+     * @param options Options to be set when retrieving the list of parameters.
+     * @param context Call context for the operation.
+     * @return Response<Models::AttestationToken<Models::PolicyCertificateListResult>> Return value
+     * from the operation, a set of attestation signers. Attestation policy operations on isolated
+     * instances must be signed by one the private key associated with one of the listed
+     * certificates.
+     */
+    Response<Models::AttestationToken<Models::PolicyCertificateListResult>>
+    GetPolicyManagementCertificates(
         GetPolicyManagementCertificatesOptions const& options
         = GetPolicyManagementCertificatesOptions{},
+        Azure::Core::Context const& context = Azure::Core::Context::ApplicationContext) const;
+
+    /**
+     * @brief Adds a new certificate to the list of policy management certificates.
+     *
+     * @details When the attestation service is running in "Isolated" mode, the service maintains a
+     * set of X.509 certificates which must be used to sign all policy operations. The
+     * #AddPolicyManagementCertificates API adds a new certificate to the list of certificates which
+     * are used for this attestation service instance.
+     *
+     * @note The signerForRequest certificate MUST be one of the policy management certificates
+     * returned by #GetPolicyManagementCertificates.
+     *
+     * @param pemEncodedCertificateToAdd The X.509 certificate to add to the service.
+     * @param signerForRequest Private key and certificate pair to be used to sign the request to
+     * the service.
+     * @param options Options to be set when adding the new certificate.
+     * @param context Call context for the operation.
+     * @return Response<Models::AttestationToken<Models::PolicyCertificateListResult>> Return value
+     * from the operation.
+     */
+    Response<Models::AttestationToken<Models::PolicyCertificateModificationResult>>
+    AddPolicyManagementCertificate(
+        std::string const& pemEncodedCertificateToAdd,
+        AttestationSigningKey const& signerForRequest,
+        AddPolicyManagementCertificatesOptions const& options
+        = AddPolicyManagementCertificatesOptions{},
+        Azure::Core::Context const& context = Azure::Core::Context::ApplicationContext) const;
+
+    /**
+     * @brief Removes a certificate from the list of policy management certificates for the
+     * instance.
+     *
+     * @details When the attestation service is running in "Isolated" mode, the service maintains a
+     * set of X.509 certificates which must be used to sign all policy operations. The
+     * #RemovePolicyManagementCertificates API removes a certificate from the list of certificates
+     * which are used for this attestation service instance.
+     *
+     * @note The signerForRequest certificate MUST be one of the policy management certificates
+     * returned by #GetPolicyManagementCertificates.
+     *
+     * @param pemEncodedCertificateToAdd The X.509 certificate to remove from the service instance.
+     * @param signerForRequest Private key and certificate pair to be used to sign the request to
+     * the service.
+     * @param options Options to be set when adding the new certificate.
+     * @param context Call context for the operation.
+     * @return Response<Models::AttestationToken<Models::PolicyCertificateListResult>> Return value
+     * from the operation.
+     */
+    Response<Models::AttestationToken<Models::PolicyCertificateModificationResult>>
+    RemovePolicyManagementCertificate(
+        std::string const& pemEncodedCertificateToAdd,
+        AttestationSigningKey const& signerForRequest,
+        AddPolicyManagementCertificatesOptions const& options
+        = AddPolicyManagementCertificatesOptions{},
         Azure::Core::Context const& context = Azure::Core::Context::ApplicationContext) const;
 
   private:

@@ -26,34 +26,36 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
     Isolated
   };
 
-  class CertificateTests : public Azure::Core::Test::TestBase,
-                           public testing::WithParamInterface<ServiceInstanceType> {
+  class CertificateTests : public Azure::Core::Test::TestBase {
   private:
   protected:
     std::shared_ptr<Azure::Core::Credentials::TokenCredential> m_credential;
-    std::string m_endpoint;
 
     // Create
     virtual void SetUp() override
     {
       Azure::Core::Test::TestBase::SetUpTestBase(AZURE_TEST_RECORDING_DIR);
-      ServiceInstanceType type = GetParam();
+    }
+
+    std::string GetServiceEndpoint(ServiceInstanceType const type)
+    {
       if (type == ServiceInstanceType::Shared)
       {
         std::string const shortLocation(GetEnv("LOCATION_SHORT_NAME"));
-        m_endpoint = "https://shared" + shortLocation + "." + shortLocation + ".attest.azure.net";
+        return "https://shared" + shortLocation + "." + shortLocation + ".attest.azure.net";
       }
       else if (type == ServiceInstanceType::AAD)
       {
-        m_endpoint = GetEnv("ATTESTATION_AAD_URL");
+        return GetEnv("ATTESTATION_AAD_URL");
       }
       else if (type == ServiceInstanceType::Isolated)
       {
-        m_endpoint = GetEnv("ATTESTATION_ISOLATED_URL");
+        return GetEnv("ATTESTATION_ISOLATED_URL");
       }
+      throw std::runtime_error("Invalid instance type.");
     }
 
-    std::unique_ptr<AttestationAdministrationClient> CreateClient()
+    std::unique_ptr<AttestationAdministrationClient> CreateClient(ServiceInstanceType instanceType)
     {
       // `InitTestClient` takes care of setting up Record&Playback.
       Azure::Security::Attestation::AttestationAdministrationClientOptions options;
@@ -70,7 +72,68 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
       return InitTestClient<
           Azure::Security::Attestation::AttestationAdministrationClient,
           Azure::Security::Attestation::AttestationAdministrationClientOptions>(
-          m_endpoint, credential, options);
+          GetServiceEndpoint(instanceType), credential, options);
+    }
+
+    // Get Policy management certificates for each instance type.
+    // The GetPolicyManagementCertificates API can be run against all instance types, but it only
+    // returns values on isolated instances (an isolated instance is defined to be an attestaiton
+    // service instance with policy management certificates).
+    void GetPolicyManagementCertificatesTest(ServiceInstanceType const instanceType)
+    {
+      auto adminClient(CreateClient(instanceType));
+
+      {
+        auto certificatesResult = adminClient->GetPolicyManagementCertificates();
+
+        // Do we expect to get any certificates in the response? AAD and Shared instances will never
+        // have any certificates.
+        bool expectedCertificates = false;
+        if (instanceType == ServiceInstanceType::Isolated)
+        {
+          expectedCertificates = true;
+        }
+
+        if (expectedCertificates)
+        {
+          ASSERT_NE(0, certificatesResult.Value.Body.Certificates.size());
+        }
+        else
+        {
+          ASSERT_EQ(0, certificatesResult.Value.Body.Certificates.size());
+        }
+
+        // In playback mode, the endpoint is a mocked value so the Issuer in the result will not
+        // match.
+        if (!m_testContext.IsPlaybackMode())
+        {
+          EXPECT_EQ(GetServiceEndpoint(instanceType), *certificatesResult.Value.Issuer);
+
+          if (expectedCertificates)
+          {
+            // Scan through the list of policy management certificates - the provisioned certificate
+            // MUST be one of the returned certificates.
+            //
+            // In playback mode, the ISOLATED_SIGNING_CERTIFICATE environment variable is
+            // mocked, so it cannot be parsed.
+
+            bool foundIsolatedCertificate = false;
+            auto isolatedCertificateBase64(GetEnv("ISOLATED_SIGNING_CERTIFICATE"));
+            auto isolatedCertificate(Cryptography::ImportX509Certificate(
+                Cryptography::PemFromBase64(isolatedCertificateBase64, "CERTIFICATE")));
+            for (const auto& signer : certificatesResult.Value.Body.Certificates)
+            {
+              auto signerCertificate
+                  = Cryptography::ImportX509Certificate(((*signer.CertificateChain)[0]));
+              if (signerCertificate->GetThumbprint() == isolatedCertificate->GetThumbprint())
+              {
+                foundIsolatedCertificate = true;
+              }
+            }
+            EXPECT_TRUE(foundIsolatedCertificate);
+          }
+        }
+      }
     }
 
   public:
@@ -80,83 +143,152 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
   // The GetPolicyManagementCertificates API can be run against all instance types, but it only
   // returns values on isolated instances (an isolated instance is defined to be an attestaiton
   // service instance with policy management certificates).
-  TEST_P(CertificateTests, GetPolicyManagementCertificates)
+  TEST_F(CertificateTests, GetPolicyManagementCertificatesAad)
   {
-    auto adminClient(CreateClient());
+    GetPolicyManagementCertificatesTest(ServiceInstanceType::AAD);
+  }
+  TEST_F(CertificateTests, GetPolicyManagementCertificatesIsolated)
+  {
+    GetPolicyManagementCertificatesTest(ServiceInstanceType::Isolated);
+  }
+  TEST_F(CertificateTests, GetPolicyManagementCertificatesShared)
+  {
+    GetPolicyManagementCertificatesTest(ServiceInstanceType::Shared);
+  }
+
+  TEST_F(CertificateTests, AddPolicyManagementCertificate_LIVEONLY_)
+  {
+    CHECK_SKIP_TEST()
+
+    auto adminClient(CreateClient(ServiceInstanceType::Isolated));
+
+    auto isolatedCertificateBase64(GetEnv("ISOLATED_SIGNING_CERTIFICATE"));
+    auto isolatedCertificate(Cryptography::ImportX509Certificate(
+        Cryptography::PemFromBase64(isolatedCertificateBase64, "CERTIFICATE")));
+
+    // Load the preconfigured policy certificate to add.
+    auto certificateToAddBase64(GetEnv("POLICY_SIGNING_CERTIFICATE_0"));
+    auto certificateToAdd(Cryptography::ImportX509Certificate(
+        Cryptography::PemFromBase64(certificateToAddBase64, "CERTIFICATE")));
+    std::string expectedThumbprint = certificateToAdd->GetThumbprint();
 
     {
-      auto certificatesResult = adminClient->GetPolicyManagementCertificates();
+      auto isolatedKeyBase64(GetEnv("ISOLATED_SIGNING_KEY"));
+      std::unique_ptr<Cryptography::AsymmetricKey> isolatedPrivateKey(
+          Cryptography::ImportPrivateKey(
+              Cryptography::PemFromBase64(isolatedKeyBase64, "PRIVATE KEY")));
 
-      // Do we expect to get any certificates in the response? AAD and Shared instances will never
-      // have any certificates.
-      bool expectedCertificates = false;
-      if (GetParam() == ServiceInstanceType::Isolated)
-      {
-        expectedCertificates = true;
-      }
+      // Create a signing key to be used when signing the request to the service.
+      auto isolatedSigningKey(AttestationSigningKey{
+          isolatedPrivateKey->ExportPrivateKey(), isolatedCertificate->ExportAsPEM()});
 
-      if (expectedCertificates)
-      {
-        ASSERT_NE(0, certificatesResult.Value.Body.Certificates.size());
-      }
-      else
-      {
-        ASSERT_EQ(0, certificatesResult.Value.Body.Certificates.size());
-      }
+      auto certificatesResult = adminClient->AddPolicyManagementCertificate(
+          certificateToAdd->ExportAsPEM(), isolatedSigningKey);
 
-      // In playback mode, the endpoint is a mocked value so the Issuer in the result will not
-      // match.
-      if (!m_testContext.IsPlaybackMode())
-      {
-        EXPECT_EQ(m_endpoint, *certificatesResult.Value.Issuer);
+      EXPECT_EQ(
+          Models::PolicyCertificateModification::IsPresent,
+          certificatesResult.Value.Body.CertificateModification);
 
-        if (expectedCertificates)
+      // And the thumbprint indicates which certificate was added.
+      EXPECT_EQ(expectedThumbprint, certificatesResult.Value.Body.CertificateThumbprint);
+    }
+
+    // Make sure that the certificate we just added is included in the enumeration.
+    {
+      auto policyCertificates = adminClient->GetPolicyManagementCertificates();
+      EXPECT_GT(policyCertificates.Value.Body.Certificates.size(), 1);
+
+      bool foundIsolatedCertificate = false;
+      bool foundAddedCertificate = false;
+      for (const auto& signer : policyCertificates.Value.Body.Certificates)
+      {
+        auto signerCertificate
+            = Cryptography::ImportX509Certificate(((*signer.CertificateChain)[0]));
+        if (signerCertificate->GetThumbprint() == isolatedCertificate->GetThumbprint())
         {
-          // Scan through the list of policy management certificates - the provisioned certificate
-          // MUST be one of the returned certificates.
-          //
-          // In playback mode, the ISOLATED_SIGNING_CERTIFICATE environment variable is
-          // mocked, so it cannot be parsed.
-
-          bool foundIsolatedCertificate = false;
-          auto isolatedCertificateBase64(GetEnv("ISOLATED_SIGNING_CERTIFICATE"));
-          auto isolatedCertificate(Cryptography::ImportX509Certificate(
-                  Cryptography::PemFromBase64(isolatedCertificateBase64, "CERTIFICATE")));
-          for (const auto& signer : certificatesResult.Value.Body.Certificates)
-          {
-            auto signerCertificate
-                = Cryptography::ImportX509Certificate(((*signer.CertificateChain)[0]));
-            if (signerCertificate->GetThumbprint() == isolatedCertificate->GetThumbprint())
-            {
-              foundIsolatedCertificate = true;
-            }
-          }
-          EXPECT_TRUE(foundIsolatedCertificate);
+          foundIsolatedCertificate = true;
+        }
+        if (signerCertificate->GetThumbprint() == expectedThumbprint)
+        {
+          foundAddedCertificate = true;
         }
       }
+      EXPECT_TRUE(foundIsolatedCertificate);
+      EXPECT_TRUE(foundAddedCertificate);
     }
   }
 
-  INSTANTIATE_TEST_SUITE_P(
-      PolicyCertificates,
-      CertificateTests,
-      testing::ValuesIn(
-          {ServiceInstanceType::AAD, ServiceInstanceType::Shared, ServiceInstanceType::Isolated}),
-      [](testing::TestParamInfo<CertificateTests::ParamType> const& testInfo) {
-        switch (testInfo.param)
+  TEST_F(CertificateTests, RemovePolicyManagementCertificate_LIVEONLY_)
+  {
+    CHECK_SKIP_TEST()
+
+    auto adminClient(CreateClient(ServiceInstanceType::Isolated));
+
+    auto isolatedCertificateBase64(GetEnv("ISOLATED_SIGNING_CERTIFICATE"));
+    auto isolatedCertificate(Cryptography::ImportX509Certificate(
+        Cryptography::PemFromBase64(isolatedCertificateBase64, "CERTIFICATE")));
+
+    // Load the preconfigured policy certificate to add.
+    auto certificateToRemoveBase64(GetEnv("POLICY_SIGNING_CERTIFICATE_0"));
+    auto certificateToRemove(Cryptography::ImportX509Certificate(
+        Cryptography::PemFromBase64(certificateToRemoveBase64, "CERTIFICATE")));
+    std::string expectedThumbprint = certificateToRemove->GetThumbprint();
+
+    // Create a signing key to be used when signing the request to the service. We use the ISOLATED SIGNING KEY
+    // because we know that it will always be present.
+    auto isolatedKeyBase64(GetEnv("ISOLATED_SIGNING_KEY"));
+    std::unique_ptr<Cryptography::AsymmetricKey> isolatedPrivateKey(Cryptography::ImportPrivateKey(
+        Cryptography::PemFromBase64(isolatedKeyBase64, "PRIVATE KEY")));
+
+    auto isolatedSigningKey(AttestationSigningKey{
+        isolatedPrivateKey->ExportPrivateKey(), isolatedCertificate->ExportAsPEM()});
+
+    // Ensure that POLICY_SIGNING_CERTIFICATE_0 is already present in the list of certificates.
+    {
+      auto certificatesResult = adminClient->AddPolicyManagementCertificate(
+          certificateToRemove->ExportAsPEM(), isolatedSigningKey);
+
+      EXPECT_EQ(
+          Models::PolicyCertificateModification::IsPresent,
+          certificatesResult.Value.Body.CertificateModification);
+    }
+
+    // And now remove that certificate.
+    {
+      auto certificatesResult = adminClient->RemovePolicyManagementCertificate(
+          certificateToRemove->ExportAsPEM(), isolatedSigningKey);
+
+      EXPECT_EQ(
+          Models::PolicyCertificateModification::IsAbsent,
+          certificatesResult.Value.Body.CertificateModification);
+
+      // And the thumbprint indicates which certificate was removed.
+      EXPECT_EQ(expectedThumbprint, certificatesResult.Value.Body.CertificateThumbprint);
+    }
+
+    // Make sure that the certificate we just removed is NOT included in the enumeration.
+    {
+      auto policyCertificates = adminClient->GetPolicyManagementCertificates();
+      EXPECT_GT(policyCertificates.Value.Body.Certificates.size(), 1);
+
+      bool foundIsolatedCertificate = false;
+      bool foundAddedCertificate = false;
+      for (const auto& signer : policyCertificates.Value.Body.Certificates)
+      {
+        auto signerCertificate
+            = Cryptography::ImportX509Certificate(((*signer.CertificateChain)[0]));
+        if (signerCertificate->GetThumbprint() == isolatedCertificate->GetThumbprint())
         {
-          case ServiceInstanceType::AAD:
-            return "AAD";
-            break;
-          case ServiceInstanceType::Isolated:
-            return "Isolated";
-            break;
-          case ServiceInstanceType::Shared:
-            return "Shared";
-            break;
-          default:
-            throw std::runtime_error("Unknown instance type");
+          foundIsolatedCertificate = true;
         }
-      });
+        if (signerCertificate->GetThumbprint() == expectedThumbprint)
+        {
+          foundAddedCertificate = true;
+        }
+      }
+      EXPECT_TRUE(foundIsolatedCertificate);
+      EXPECT_FALSE(foundAddedCertificate);
+    }
+  }
 
 }}}} // namespace Azure::Security::Attestation::Test

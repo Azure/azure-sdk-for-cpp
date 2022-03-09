@@ -70,7 +70,11 @@ namespace Azure { namespace Security { namespace Attestation { namespace _detail
 
   struct JsonWebKeySerializer final
   {
-    static Models::_detail::JsonWebKey Deserialize(const Azure::Core::Json::_internal::json& jwk);
+    static Models::_detail::JsonWebKey Deserialize(Azure::Core::Json::_internal::json const& jwk);
+    static std::string Serialize(
+        Azure::Security::Attestation::Models::_detail::JsonWebKey const& jwk);
+    static Azure::Core::Json::_internal::json SerializeToJson(
+        Azure::Security::Attestation::Models::_detail::JsonWebKey const& jwk);
   };
 
   // cspell: words jwks
@@ -116,6 +120,18 @@ namespace Azure { namespace Security { namespace Attestation { namespace _detail
   struct PolicyCertificateGetResultSerializer final
   {
     static Models::_detail::GetPolicyCertificatesResult Deserialize(
+        Azure::Core::Json::_internal::json const& json);
+  };
+
+  struct PolicyCertificateManagementBodySerializer final
+  {
+    static std::string Serialize(Models::_detail::PolicyCertificateManagementBody const& body);
+    static Models::_detail::PolicyCertificateManagementBody Deserialize(Azure::Core::Json::_internal::json const& jsonBody);
+  };
+
+  struct ModifyPolicyCertificatesResultSerializer
+  {
+    static Models::_detail::ModifyPolicyCertificatesResult Deserialize(
         Azure::Core::Json::_internal::json const& json);
   };
 

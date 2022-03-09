@@ -253,6 +253,45 @@ namespace Azure { namespace Security { namespace Attestation { namespace _detail
     return returnValue;
   }
 
+  std::string JsonWebKeySerializer::Serialize(
+      Azure::Security::Attestation::Models::_detail::JsonWebKey const& jwk)
+  {
+    Azure::Core::Json::_internal::json serialized(SerializeToJson(jwk));
+    return serialized.dump();
+  }
+
+  json JsonWebKeySerializer::SerializeToJson(
+      Azure::Security::Attestation::Models::_detail::JsonWebKey const& jwk)
+  {
+    Azure::Core::Json::_internal::json serialized;
+    JsonOptional::SetFromNullable(jwk.kty, serialized, "kty");
+    JsonOptional::SetFromNullable(jwk.alg, serialized, "alg");
+    JsonOptional::SetFromNullable(jwk.alg, serialized, "alg");
+    JsonOptional::SetFromNullable(jwk.kid, serialized, "kid");
+    JsonOptional::SetFromNullable(jwk.use, serialized, "use");
+    JsonOptional::SetFromNullable(jwk.keyops, serialized, "key_ops");
+    JsonOptional::SetFromNullable(jwk.x5t, serialized, "x5t");
+    JsonOptional::SetFromNullable(jwk.x5t256, serialized, "x5t#S256");
+    JsonOptional::SetFromNullable(jwk.x5u, serialized, "x5u");
+    JsonOptional::SetFromNullable(jwk.x5c, serialized, "x5c");
+
+    // ECDSA key values.
+    JsonOptional::SetFromNullable(jwk.crv, serialized, "crv");
+    JsonOptional::SetFromNullable(jwk.x, serialized, "x");
+    JsonOptional::SetFromNullable(jwk.y, serialized, "y");
+    JsonOptional::SetFromNullable(jwk.d, serialized, "d");
+
+    // RSA key values.
+    JsonOptional::SetFromNullable(jwk.n, serialized, "n");
+    JsonOptional::SetFromNullable(jwk.e, serialized, "e");
+    JsonOptional::SetFromNullable(jwk.q, serialized, "p");
+    JsonOptional::SetFromNullable(jwk.dp, serialized, "dp");
+    JsonOptional::SetFromNullable(jwk.dq, serialized, "dq");
+    JsonOptional::SetFromNullable(jwk.qi, serialized, "qi");
+
+    return serialized;
+  }
+
   // cspell: words jwks
   JsonWebKeySet JsonWebKeySetSerializer::Deserialize(
       std::unique_ptr<Azure::Core::Http::RawResponse>& response)
@@ -326,6 +365,38 @@ namespace Azure { namespace Security { namespace Attestation { namespace _detail
       returnValue.PolicyCertificates
           = JsonWebKeySetSerializer::Deserialize(parsedResult["x-ms-policy-certificates"]);
     }
+    return returnValue;
+  }
+
+  std::string PolicyCertificateManagementBodySerializer::Serialize(
+      Models::_detail::PolicyCertificateManagementBody const& body)
+  {
+    Azure::Core::Json::_internal::json serializedPolicy;
+    serializedPolicy["policyCertificate"]
+        = JsonWebKeySerializer::SerializeToJson(body.policyCertificate);
+
+    return serializedPolicy.dump();
+  }
+
+  Models::_detail::PolicyCertificateManagementBody
+  PolicyCertificateManagementBodySerializer::Deserialize(
+      Azure::Core::Json::_internal::json const& jsonBody)
+  {
+    Models::_detail::PolicyCertificateManagementBody body;
+    JsonOptional::SetIfExists<json, JsonWebKey>(
+        body.policyCertificate, jsonBody, "policyCertificate", JsonWebKeySerializer::Deserialize);
+    return body;
+  };
+
+  Models::_detail::ModifyPolicyCertificatesResult
+  ModifyPolicyCertificatesResultSerializer::Deserialize(
+      Azure::Core::Json::_internal::json const& jsonResult)
+  {
+    Models::_detail::ModifyPolicyCertificatesResult returnValue;
+    JsonOptional::SetIfExists(
+        returnValue.CertificateResolution, jsonResult, "x-ms-policycertificates-result");
+    JsonOptional::SetIfExists(
+        returnValue.CertificateThumbprint, jsonResult, "x-ms-certificate-thumbprint");
     return returnValue;
   }
 

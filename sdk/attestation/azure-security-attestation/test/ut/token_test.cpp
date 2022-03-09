@@ -244,10 +244,11 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
     EXPECT_TRUE(jsonSigner["kid"].is_string());
     EXPECT_EQ(*signer.KeyId, jsonSigner["kid"].get<std::string>());
     EXPECT_TRUE(jsonSigner["x5c"].is_array());
+
     auto x5c = jsonSigner["x5c"].get<std::vector<json>>();
     EXPECT_TRUE(x5c[0].is_string());
-
-    EXPECT_EQ(x5c[0].get<std::string>(), (*signer.CertificateChain)[0]);
+    std::string x5cval(x5c[0].get<std::string>());
+    EXPECT_EQ(x5cval, (*signer.CertificateChain)[0]);
   }
 
   template <typename T> bool CompareNullable(Nullable<T> const& me, Nullable<T> const& them)

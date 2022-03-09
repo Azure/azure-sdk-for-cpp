@@ -310,9 +310,36 @@ namespace Azure { namespace Security { namespace Attestation {
     Azure::Nullable<AttestationTokenValidationOptions> TokenValidationOptions{};
   };
 
-  /** @brief Parameters sent to the attestation service when retrieving the list of policy management certificates.
+  /** @brief Parameters sent to the attestation service when retrieving the list of policy
+   * management certificates.
    */
   struct GetPolicyManagementCertificatesOptions final
+  {
+    /** @brief Specifies the options which should be used to validate the attestation token returned
+     * by the attestation service.
+     * @details If not provided by the caller, the token validation options
+     * specified when the @{link AttestationAdministrationClient} was created will be used.
+     */
+    Azure::Nullable<AttestationTokenValidationOptions> TokenValidationOptions{};
+  };
+
+  /** @brief Parameters sent to the attestation service when adding a new policy
+   * management certificate.
+   */
+  struct AddPolicyManagementCertificatesOptions final
+  {
+    /** @brief Specifies the options which should be used to validate the attestation token returned
+     * by the attestation service.
+     * @details If not provided by the caller, the token validation options
+     * specified when the @{link AttestationAdministrationClient} was created will be used.
+     */
+    Azure::Nullable<AttestationTokenValidationOptions> TokenValidationOptions{};
+  };
+
+  /** @brief Parameters sent to the attestation service when removing a policy
+   * management certificate.
+   */
+  struct RemovePolicyManagementCertificatesOptions final
   {
     /** @brief Specifies the options which should be used to validate the attestation token returned
      * by the attestation service.

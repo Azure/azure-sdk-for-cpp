@@ -40,9 +40,15 @@ namespace Azure { namespace Security { namespace Attestation { namespace Models 
     }
 
     /**
+     * @brief Construct a default extendable enumeration.
+     *
+     */
+    ExtendableEnumeration() = default;
+
+    /**
      * @brief Enable comparing the ext enum.
      *
-     * @param other Another #AttestationType to be compared.
+     * @param other Another extensible enumeration to be compared.
      */
     bool operator==(T const& other) const { return m_enumerationValue == other.m_enumerationValue; }
 
@@ -68,6 +74,12 @@ namespace Azure { namespace Security { namespace Attestation { namespace Models 
     AttestationType(std::string attestationType) : ExtendableEnumeration(std::move(attestationType))
     {
     }
+
+    /** 
+    * @brief Default constructor for an AttestationType.
+    */
+    AttestationType() = default;
+
 
     /**
      * @brief Specifies that this should apply to SGX enclaves.
@@ -487,7 +499,8 @@ namespace Azure { namespace Security { namespace Attestation { namespace Models 
   /**
    * @brief Represents the result of a policy certificate modification.
    */
-  class PolicyCertificateModification final : ExtendableEnumeration<PolicyCertificateModification> {
+  class PolicyCertificateModification final
+      : public ExtendableEnumeration<PolicyCertificateModification> {
   public:
     /**
      * @brief Construct a new PolicyResolution object
@@ -499,6 +512,8 @@ namespace Azure { namespace Security { namespace Attestation { namespace Models 
         : ExtendableEnumeration(std::move(modification))
     {
     }
+
+    PolicyCertificateModification() = default;
 
     /**
      * @brief After the operation was performed, the certificate is in the set of
@@ -518,8 +533,8 @@ namespace Azure { namespace Security { namespace Attestation { namespace Models 
   /**
    * @brief Represents the result of a policy certificate modification API.
    */
-  class PolicyCertificateModificationResult final {
-  public:
+  struct PolicyCertificateModificationResult final
+  {
     /**
      */
     std::string CertificateThumbprint;
@@ -529,7 +544,8 @@ namespace Azure { namespace Security { namespace Attestation { namespace Models 
   /**
    * @brief Represents a set of policy management certificates for the current attestation instance.
    */
-  struct PolicyCertificateListResult final {
+  struct PolicyCertificateListResult final
+  {
     /**
      * @brief The current set of policy management certificates.
      */

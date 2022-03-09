@@ -286,4 +286,15 @@ namespace Azure {
     Azure::Nullable<JsonWebKeySet> PolicyCertificates;
   };
 
+  struct PolicyCertificateManagementBody
+  {
+    JsonWebKey policyCertificate;
+  };
+
+  struct ModifyPolicyCertificatesResult
+  {
+    Azure::Nullable<std::string> CertificateThumbprint;
+    Azure::Nullable<std::string> CertificateResolution;
+  };
+
 }}}}} // namespace Azure::Security::Attestation::Models::_detail
