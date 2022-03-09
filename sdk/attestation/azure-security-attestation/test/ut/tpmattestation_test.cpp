@@ -23,6 +23,7 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
     Isolated
   };
 
+  // cspell: words aikcert
   class TpmAttestationTests : public Azure::Core::Test::TestBase {
   private:
   protected:
