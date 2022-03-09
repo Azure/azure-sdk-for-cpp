@@ -81,6 +81,20 @@ The [Managed identity authentication](https://docs.microsoft.com/azure/active-di
 * [Azure Cloud Shell](https://docs.microsoft.com/azure/cloud-shell/msi-authorization)
 * [Azure Arc](https://docs.microsoft.com/azure/azure-arc/servers/managed-identity-authentication)
 
+## Multi tenant authentication support 
+
+Added support for multi tenant authentication. 
+If the client is enabled for multi tenant authentication to use the feature you will need to pass a Azure::Identity::ChallengeClientSecretCredential at client creation instead of ClientSecretCredential, otherwise the single tenant authentication is used. 
+In order to obtain the challenge for the authentication process the first request made is unauthenticated. 
+Part of the response contains the challenge to be used further in the process. Thus seeing HTTP answer 401(Unauthorized) is expected , as it is part of the auth process. 
+
+```
+auto credential = std::make_shared<Azure::Identity::ChallengeClientSecretCredential>(
+      tenantId, clientId, clientSecret);
+  // create client
+CertificateClient certificateClient(std::getenv("AZURE_KEYVAULT_URL"), credential);
+```
+
 ## Troubleshooting
 Credentials raise exceptions either when they fail to authenticate or cannot execute authentication.
 When credentials fail to authenticate, the `AuthenticationException` is thrown and it has the `what()` functions returning the description why authentication failed.
