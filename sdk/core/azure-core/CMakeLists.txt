@@ -71,6 +71,7 @@ set(
     inc/azure/core/internal/cryptography/sha_hash.hpp
     inc/azure/core/internal/diagnostics/log.hpp
     inc/azure/core/internal/environment.hpp
+    inc/azure/core/internal/extendable_enumeration.hpp
     inc/azure/core/internal/http/pipeline.hpp
     inc/azure/core/internal/io/null_body_stream.hpp
     inc/azure/core/internal/json/json_serializable.hpp
@@ -97,7 +98,7 @@ set(
     inc/azure/core/url.hpp
     inc/azure/core/uuid.hpp
     inc/azure/core.hpp
-)
+ )
 
 set(
   AZURE_CORE_SOURCE
