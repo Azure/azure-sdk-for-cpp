@@ -1,5 +1,15 @@
 # Release History
 
+## 12.0.0-beta.5 (Unreleased)
+
+### Features Added
+
+### Breaking Changes
+
+### Bugs Fixed
+
+### Other Changes
+
 ## 12.0.0-beta.4 (2022-03-09)
 
 ### Other Changes
