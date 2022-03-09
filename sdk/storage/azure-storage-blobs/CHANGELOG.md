@@ -1,6 +1,6 @@
 # Release History
 
-## 12.4.0-beta.1 (Unreleased)
+## 12.4.0-beta.1 (2022-03-09)
 
 ### Features Added
 
@@ -9,12 +9,6 @@
 - Added support for immutability policy.
 - New API: `BlobClient::CopyFromUri()`, `BlobClient::SetImmutabilityPolicy()`, `BlobClient::DeleteImmutabilityPolicy()`, `BlobClient::SetLegalHold()`, `BlockBlobClient::UploadFromUri()` and `BlobServiceClient::RenameBlobContainer()`.
 - Added lease access condition support for `BlobClient::SetTags()` and `BlobClient::GetTags()`.
-
-### Breaking Changes
-
-### Bugs Fixed
-
-### Other Changes
 
 ## 12.3.0 (2022-02-14)
 

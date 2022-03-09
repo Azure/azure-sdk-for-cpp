@@ -352,4 +352,9 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
     return Azure::Core::_internal::Base64Url::Base64UrlDecode(SgxEnclaveHeldData);
     //    return std::vector<uint8_t>(RuntimeJWKClaim.begin(), RuntimeJWKClaim.end());
   }
+
+  std::string AttestationCollateral::GetMinimalPolicy()
+  {
+    return "version=1.0; authorizationrules{=> permit();}; issuancerules{};";
+  }
 }}}} // namespace Azure::Security::Attestation::Test

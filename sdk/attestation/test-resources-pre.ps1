@@ -137,10 +137,10 @@ try {
    $isolatedKey = [RSA]::Create(2048)
    $isolatedCertificate = New-X509Certificate2 $isolatedKey "CN=AttestationIsolatedManagementCertificate"
 
-   $EnvironmentVariables["isolatedSigningCertificate"] = $([Convert]::ToBase64String($isolatedCertificate.RawData, 'None'))
+   $EnvironmentVariables["ISOLATED_SIGNING_CERTIFICATE"] = $([Convert]::ToBase64String($isolatedCertificate.RawData, 'None'))
    $templateFileParameters.isolatedSigningCertificate = $([Convert]::ToBase64String($isolatedCertificate.RawData, 'None'))
 
-   $EnvironmentVariables["isolatedSigningKey"] = $([Convert]::ToBase64String($isolatedKey.ExportPkcs8PrivateKey()))
+   $EnvironmentVariables["ISOLATED_SIGNING_KEY"] = $([Convert]::ToBase64String($isolatedKey.ExportPkcs8PrivateKey()))
    $EnvironmentVariables["serializedIsolatedSigningKey"] = $isolatedKey.ToXmlString($True)
 }
 finally {
@@ -156,13 +156,10 @@ $wrappingFiles = foreach ($i in 0..2) {
         $certificateKey = [RSA]::Create(2048)
         $certificate = New-X509Certificate2 $certificateKey "CN=AttestationCertificate$i"
 
-        $EnvironmentVariables["policySigningCertificate$i"] = $([Convert]::ToBase64String($certificate.RawData))
+        $EnvironmentVariables["POLICY_SIGNING_CERTIFICATE_$i"] = $([Convert]::ToBase64String($certificate.RawData))
 
-        $EnvironmentVariables["policySigningKey$i"] = $([Convert]::ToBase64String($certificateKey.ExportPkcs8PrivateKey()))
+        $EnvironmentVariables["POLICY_SIGNING_KEY_$i"] = $([Convert]::ToBase64String($certificateKey.ExportPkcs8PrivateKey()))
         $EnvironmentVariables["serializedPolicySigningKey$i"] = $certificateKey.ToXmlString($True)
-
-        $baseName = "$PSScriptRoot\attestation-certificate$i"
-        Export-X509Certificate2 "$baseName.pfx" $certificate
     }
     finally {
         $certificateKey.Dispose()

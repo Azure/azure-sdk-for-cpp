@@ -204,6 +204,24 @@ jobs:
             coverageThreshold: ${{ parameters.BranchCoverageTarget }}
           condition: and(succeededOrFailed(), eq(variables['CODE_COVERAGE'], 'enabled'), eq(variables['Skip.BranchCoverageEnforcement'], ''))
 
+      - task: Powershell@2
+        inputs:
+          filePath: $(Build.SourcesDirectory)/eng/scripts/Get-BinarySizes.ps1
+          arguments: >-
+            -ServiceDirectory ${{parameters.ServiceDirectory}}
+            -OsVMImage '$(OSVmImage)'
+            -CmakeEnvArg '$(CmakeEnvArg)'
+            -BuildArgs '$(BuildArgs)'
+            -Job '$(Agent.JobName)'
+            -BuildReason '$(Build.Reason)'
+            -SourceBranch '$(Build.SourceBranch)'
+            -ExtraLabels @{
+              MetricVersion = 1;
+            }
+          pwsh: true
+          workingDirectory: $(Pipeline.Workspace)
+        displayName: Report Binary Sizes
+
       # Use the job name to create the artifact name for MAP file publishing.
       # Attempts are also noted starting with 1
       # "Validate Windows2019_UWP_debug_x86" -> "Windows2019_UWP_debug_x86_attempt_1"

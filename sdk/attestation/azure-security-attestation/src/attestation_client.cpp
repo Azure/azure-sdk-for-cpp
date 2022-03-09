@@ -115,7 +115,7 @@ Azure::Response<AttestationToken<AttestationResult>> AttestationClient::AttestSg
   // validation.
   std::vector<AttestationSigner> const& signers = GetAttestationSigners(context);
   token.ValidateToken(
-      options.TokenValidationOptions ? options.TokenValidationOptions.Value()
+      options.TokenValidationOptions ? *options.TokenValidationOptions
                                      : this->m_tokenValidationOptions,
       signers);
 
@@ -148,7 +148,7 @@ Azure::Response<AttestationToken<AttestationResult>> AttestationClient::AttestOp
       = AttestationTokenInternal<AttestationResult, AttestationResultSerializer>(responseToken);
   std::vector<AttestationSigner> const& signers = GetAttestationSigners(context);
   token.ValidateToken(
-      options.TokenValidationOptions ? options.TokenValidationOptions.Value()
+      options.TokenValidationOptions ? *options.TokenValidationOptions
                                      : this->m_tokenValidationOptions,
       signers);
 

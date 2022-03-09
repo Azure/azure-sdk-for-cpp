@@ -139,6 +139,13 @@
       ]
     },
     {
+      "filename": "**/eng/**",
+      "words": [
+        "TEAMPROJECTID",
+        "issecret"
+      ]
+    },
+    {
       "filename": "**/sdk/keyvault/azure-security-keyvault-keys/inc/azure/keyvault/keys/key_client_models.hpp",
       "words": [
         "SECG",
