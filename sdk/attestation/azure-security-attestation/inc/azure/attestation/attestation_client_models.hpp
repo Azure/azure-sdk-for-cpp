@@ -56,7 +56,7 @@ namespace Azure { namespace Security { namespace Attestation { namespace Models 
     }
 
     /**
-     * @brief Return the ExtensableEnumeraiton string representation.
+     * @brief Return the AttestationType string representation.
      *
      */
     std::string const& ToString() const { return m_enumerationValue; }
@@ -455,7 +455,7 @@ namespace Azure { namespace Security { namespace Attestation { namespace Models 
     }
 
     /**
-     * @brief Return the ExtensableEnumeraiton string representation.
+     * @brief Return the PolicyModification string representation.
      *
      */
     std::string const& ToString() const { return m_enumerationValue; }
@@ -527,7 +527,7 @@ namespace Azure { namespace Security { namespace Attestation { namespace Models 
     }
 
     /**
-     * @brief Return the ExtensableEnumeraiton string representation.
+     * @brief Return the PolicyCertificateModification string representation.
      *
      */
     std::string const& ToString() const { return m_enumerationValue; }

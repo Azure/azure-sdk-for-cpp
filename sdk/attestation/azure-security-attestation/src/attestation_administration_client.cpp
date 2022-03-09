@@ -16,6 +16,7 @@
 
 #include <string>
 
+// cspell: words jwks
 using namespace Azure::Security::Attestation;
 using namespace Azure::Security::Attestation::Models;
 using namespace Azure::Security::Attestation::_detail;

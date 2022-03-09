@@ -77,7 +77,7 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
 
     // Get Policy management certificates for each instance type.
     // The GetPolicyManagementCertificates API can be run against all instance types, but it only
-    // returns values on isolated instances (an isolated instance is defined to be an attestaiton
+    // returns values on isolated instances (an isolated instance is defined to be an attestation
     // service instance with policy management certificates).
     void GetPolicyManagementCertificatesTest(ServiceInstanceType const instanceType)
     {
@@ -141,7 +141,7 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
 
   // Get Policy management certificates for each instance type.
   // The GetPolicyManagementCertificates API can be run against all instance types, but it only
-  // returns values on isolated instances (an isolated instance is defined to be an attestaiton
+  // returns values on isolated instances (an isolated instance is defined to be an attestation
   // service instance with policy management certificates).
   TEST_F(CertificateTests, GetPolicyManagementCertificatesAad)
   {
@@ -196,7 +196,7 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
     // Make sure that the certificate we just added is included in the enumeration.
     {
       auto policyCertificates = adminClient->GetPolicyManagementCertificates();
-      EXPECT_GT(policyCertificates.Value.Body.Certificates.size(), 1);
+      EXPECT_GT(policyCertificates.Value.Body.Certificates.size(), 1ul);
 
       bool foundIsolatedCertificate = false;
       bool foundAddedCertificate = false;
