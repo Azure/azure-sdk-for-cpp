@@ -12,7 +12,7 @@ steps:
       Write-Host "##vso[task.setvariable variable=VCPKG_INSTALLATION_ROOT]$TargetPath"
       Write-Host "##vso[task.setvariable variable=VcpkgCommit]$VcpkgCommit"
       Write-Host "##vso[task.setvariable variable=VCPKG_BINARY_SOURCES]clear;x-azblob,https://cppvcpkgcache.blob.core.windows.net/public-vcpkg-container,,read"
-    displayName: Set Vcpkg Variables
+    displayName: Set Vcpkg aVariables
 
   - pwsh: |
       Write-Host "Setting vcpkg binary cache to read and write"
