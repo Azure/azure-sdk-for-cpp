@@ -24,62 +24,42 @@
 // cspell: words MRSIGNER MRENCLAVE
 namespace Azure { namespace Security { namespace Attestation { namespace Models {
 
-  template <class T> class ExtendableEnumeration {
-  private:
-    std::string m_enumerationValue;
-
-  public:
-    /**
-     * @brief Construct a new extensable enumeration object
-     *
-     * @param enumerationValue The string enumerationValue used for the value.
-     */
-    ExtendableEnumeration(std::string enumerationValue)
-        : m_enumerationValue(std::move(enumerationValue))
-    {
-    }
-
-    /**
-     * @brief Construct a default extendable enumeration.
-     *
-     */
-    ExtendableEnumeration() = default;
-
-    /**
-     * @brief Enable comparing the ext enum.
-     *
-     * @param other Another extensible enumeration to be compared.
-     */
-    bool operator==(T const& other) const { return m_enumerationValue == other.m_enumerationValue; }
-
-    /**
-     * @brief Return the ExtensableEnumeraiton string representation.
-     *
-     */
-    std::string const& ToString() const { return m_enumerationValue; }
-  };
-
   /**
    * @brief The AttestationType type represent a Trusted Execution Environment supported by
    * the attestation service.
-   *
    */
-  class AttestationType final : public ExtendableEnumeration<AttestationType> {
+  class AttestationType final {
+  private:
+    std::string m_enumerationValue;
+
   public:
     /**
      * @brief Construct a new AttestationType object
      *
      * @param attestationType The string attestationType used for the attestation policy operation.
      */
-    AttestationType(std::string attestationType) : ExtendableEnumeration(std::move(attestationType))
-    {
-    }
+    AttestationType(std::string attestationType) : m_enumerationValue(std::move(attestationType)) {}
 
-    /** 
-    * @brief Default constructor for an AttestationType.
-    */
+    /**
+     * @brief Default constructor for an AttestationType.
+     */
     AttestationType() = default;
 
+    /**
+     * @brief Enable comparing the AttestationType.
+     *
+     * @param other Another extensible enumeration to be compared.
+     */
+    bool operator==(AttestationType const& other) const
+    {
+      return m_enumerationValue == other.m_enumerationValue;
+    }
+
+    /**
+     * @brief Return the ExtensableEnumeraiton string representation.
+     *
+     */
+    std::string const& ToString() const { return m_enumerationValue; }
 
     /**
      * @brief Specifies that this should apply to SGX enclaves.
@@ -451,15 +431,34 @@ namespace Azure { namespace Security { namespace Attestation { namespace Models 
    * policy modification.
    *
    */
-  class PolicyModification final : public ExtendableEnumeration<PolicyModification> {
+  class PolicyModification final {
+  private:
+    std::string m_enumerationValue;
+
   public:
     /**
-     * @brief Construct a new PolicyResolution object
+     * @brief Construct a new PolicyModification object
      *
      * @param modification The string resolution used for the result of an attestation policy
      * operation.
      */
-    PolicyModification(std::string modification) : ExtendableEnumeration(std::move(modification)) {}
+    PolicyModification(std::string modification) : m_enumerationValue(std::move(modification)) {}
+
+    /**
+     * @brief Enable comparing the PolicyModification.
+     *
+     * @param other Another PolicyModification to be compared.
+     */
+    bool operator==(PolicyModification const& other) const
+    {
+      return m_enumerationValue == other.m_enumerationValue;
+    }
+
+    /**
+     * @brief Return the ExtensableEnumeraiton string representation.
+     *
+     */
+    std::string const& ToString() const { return m_enumerationValue; }
 
     /**
      * @brief Specifies that the policy object was updated.
@@ -499,8 +498,10 @@ namespace Azure { namespace Security { namespace Attestation { namespace Models 
   /**
    * @brief Represents the result of a policy certificate modification.
    */
-  class PolicyCertificateModification final
-      : public ExtendableEnumeration<PolicyCertificateModification> {
+  class PolicyCertificateModification final {
+  private:
+    std::string m_enumerationValue;
+
   public:
     /**
      * @brief Construct a new PolicyResolution object
@@ -509,11 +510,27 @@ namespace Azure { namespace Security { namespace Attestation { namespace Models 
      * operation.
      */
     PolicyCertificateModification(std::string modification)
-        : ExtendableEnumeration(std::move(modification))
+        : m_enumerationValue(std::move(modification))
     {
     }
 
     PolicyCertificateModification() = default;
+
+    /**
+     * @brief Enable comparing the PolicyCertificateModification.
+     *
+     * @param other Another PolicyCertificateModification to be compared.
+     */
+    bool operator==(PolicyCertificateModification const& other) const
+    {
+      return m_enumerationValue == other.m_enumerationValue;
+    }
+
+    /**
+     * @brief Return the ExtensableEnumeraiton string representation.
+     *
+     */
+    std::string const& ToString() const { return m_enumerationValue; }
 
     /**
      * @brief After the operation was performed, the certificate is in the set of

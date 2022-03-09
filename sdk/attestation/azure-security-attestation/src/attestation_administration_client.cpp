@@ -312,7 +312,7 @@ AttestationAdministrationClient::GetPolicyManagementCertificates(
   for (const auto& certificate : jwks.Keys)
   {
     returnedResult.Certificates.push_back(
-        AttestationSignerInternal::AttestationSignerInternal(certificate));
+        AttestationSignerInternal(certificate));
   }
 
   // Construct a token whose body is the get policy certificates result, but whose token is the
