@@ -30,8 +30,8 @@ int main()
   auto tenantId = std::getenv("AZURE_TENANT_ID");
   auto clientId = std::getenv("AZURE_CLIENT_ID");
   auto clientSecret = std::getenv("AZURE_CLIENT_SECRET");
-  auto credential
-      = std::make_shared<Azure::Identity::ClientSecretCredential>(tenantId, clientId, clientSecret);
+  auto credential = std::make_shared<Azure::Identity::ChallengeClientSecretCredential>(
+      tenantId, clientId, clientSecret);
   std::chrono::milliseconds defaultWait(10s);
   // create client
   CertificateClient certificateClient(std::getenv("AZURE_KEYVAULT_URL"), credential);
@@ -67,18 +67,9 @@ int main()
       // start the create process
       auto response = certificateClient.StartCreateCertificate(certificateName, options);
       // wait for complete to get the certificate
-      auto pollResponse = response.PollUntilDone(defaultWait).Value;
-      // check the status of the poll response
-      if (!pollResponse.Error && pollResponse.Status.Value() == "completed")
-      {
-        // get the certificate
-        certificate = certificateClient.GetCertificate(certificateName).Value;
-        std::cout << "Created certificate with policy. Certificate name : " << certificate.Name();
-      }
-      else
-      {
-        std::cout << "Create certificate with policy result : " << pollResponse.Status.Value();
-      }
+      certificate = response.PollUntilDone(defaultWait).Value;
+
+      std::cout << "Created certificate with policy. Certificate name : " << certificate.Name();
     }
     // update certificate
     {
