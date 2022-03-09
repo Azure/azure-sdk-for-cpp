@@ -234,8 +234,8 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
         Cryptography::PemFromBase64(certificateToRemoveBase64, "CERTIFICATE")));
     std::string expectedThumbprint = certificateToRemove->GetThumbprint();
 
-    // Create a signing key to be used when signing the request to the service. We use the ISOLATED SIGNING KEY
-    // because we know that it will always be present.
+    // Create a signing key to be used when signing the request to the service. We use the ISOLATED
+    // SIGNING KEY because we know that it will always be present.
     auto isolatedKeyBase64(GetEnv("ISOLATED_SIGNING_KEY"));
     std::unique_ptr<Cryptography::AsymmetricKey> isolatedPrivateKey(Cryptography::ImportPrivateKey(
         Cryptography::PemFromBase64(isolatedKeyBase64, "PRIVATE KEY")));

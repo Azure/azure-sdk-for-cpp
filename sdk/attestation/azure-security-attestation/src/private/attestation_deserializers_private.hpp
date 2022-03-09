@@ -126,7 +126,8 @@ namespace Azure { namespace Security { namespace Attestation { namespace _detail
   struct PolicyCertificateManagementBodySerializer final
   {
     static std::string Serialize(Models::_detail::PolicyCertificateManagementBody const& body);
-    static Models::_detail::PolicyCertificateManagementBody Deserialize(Azure::Core::Json::_internal::json const& jsonBody);
+    static Models::_detail::PolicyCertificateManagementBody Deserialize(
+        Azure::Core::Json::_internal::json const& jsonBody);
   };
 
   struct ModifyPolicyCertificatesResultSerializer
