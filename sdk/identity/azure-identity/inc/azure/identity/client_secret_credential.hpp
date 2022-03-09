@@ -130,7 +130,7 @@ namespace Azure { namespace Identity {
 
   public:
     /**
-     * @brief Constructs a Client Secret Credential.
+     * @brief Constructs a ChallengeClientSecretCredential.
      *
      * @param tenantId Tenant ID.
      * @param clientId Client ID.
@@ -144,7 +144,7 @@ namespace Azure { namespace Identity {
         ClientSecretCredentialOptions const& options);
 
     /**
-     * @brief Constructs a Client Secret Credential.
+     * @brief Constructs a ChallengeClientSecretCredential.
      *
      * @param tenantId Tenant ID.
      * @param clientId Client ID.
@@ -159,7 +159,7 @@ namespace Azure { namespace Identity {
         = Core::Credentials::TokenCredentialOptions());
 
     /**
-     * @brief Destructs `%ClientSecretCredential`.
+     * @brief Destructs `%ChallengeClientSecretCredential`.
      *
      */
     ~ChallengeClientSecretCredential() override;

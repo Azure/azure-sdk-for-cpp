@@ -290,12 +290,12 @@ TEST(ChallengeClientSecretCredential, Regular)
       "https://login.microsoftonline.com/01234567-89ab-cdef-fedc-ba8976543210/oauth2/v2.0/token");
 
   {
-    constexpr char expectedBody0[]
+    const char expectedBody0[]
         = "grant_type=client_credentials&client_id=fedcba98-7654-3210-"
           "0123-456789abcdef&client_secret=CLIENTSECRET&response_type="
           "token&scope=https%3A%2F%2Fazure.com%2F.default"; // cspell:disable-line
 
-    constexpr char expectedBody1[]
+    const char expectedBody1[]
         = "grant_type=client_credentials&client_id=fedcba98-7654-3210-0123-456789abcdef&client_"
           "secret=CLIENTSECRET&response_type=token"; // cspell:disable-line
 
@@ -354,11 +354,11 @@ TEST(ChallengeClientSecretCredential, AzureStack)
   EXPECT_EQ(request1.AbsoluteUrl, "https://login.microsoftonline.com/adfs/oauth2/token");
 
   {
-    constexpr char expectedBody0[] = "grant_type=client_credentials&client_id=fedcba98-7654-3210-"
+    const char expectedBody0[] = "grant_type=client_credentials&client_id=fedcba98-7654-3210-"
                                      "0123-456789abcdef&client_secret=CLIENTSECRET&response_type="
                                      "token&scope=https%3A%2F%2Fazure.com"; // cspell:disable-line
 
-    constexpr char expectedBody1[]
+    const char expectedBody1[]
         = "grant_type=client_credentials&client_id=fedcba98-7654-3210-0123-456789abcdef&client_"
           "secret=CLIENTSECRET&response_type=token"; // cspell:disable-line
 
@@ -446,12 +446,12 @@ TEST(ChallengeClientSecretCredential, Authority)
   EXPECT_EQ(request2.AbsoluteUrl, "https://xbox.com/adfs/oauth2/token");
 
   {
-    constexpr char expectedBody1[]
+    const char expectedBody1[]
         = "grant_type=client_credentials&client_id=fedcba98-7654-3210-"
           "0123-456789abcdef&client_secret=CLIENTSECRET1&response_type="
           "token&scope=https%3A%2F%2Fazure.com%2F.default"; // cspell:disable-line
 
-    constexpr char expectedBody2[] = "grant_type=client_credentials"
+    const char expectedBody2[] = "grant_type=client_credentials"
                                      "&client_id=01234567-89ab-cdef-fedc-ba8976543210"
                                      "&client_secret=CLIENTSECRET2"
                                      "&scope=https%3A%2F%2Foutlook.com"; // cspell:disable-line
@@ -525,11 +525,11 @@ TEST(ChallengeClientSecretCredential, RegularADFS)
   EXPECT_EQ(request1.AbsoluteUrl, "https://login.microsoftonline.com/adfs/oauth2/token");
 
   {
-    constexpr char expectedBody0[] = "grant_type=client_credentials&client_id=fedcba98-7654-3210-"
+    const char expectedBody0[] = "grant_type=client_credentials&client_id=fedcba98-7654-3210-"
                                      "0123-456789abcdef&client_secret=CLIENTSECRET&response_type="
                                      "token&scope=https%3A%2F%2Fazure.com"; // cspell:disable-line
 
-    constexpr char expectedBody1[]
+    const char expectedBody1[]
         = "grant_type=client_credentials&client_id=fedcba98-7654-3210-0123-456789abcdef&client_"
           "secret=CLIENTSECRET&response_type=token"; // cspell:disable-line
 
@@ -606,11 +606,11 @@ TEST(ChallengeClientSecretCredential, AuthorityADFS)
   EXPECT_EQ(request2.AbsoluteUrl, "https://xbox.com/adfs/oauth2/token");
 
   {
-    constexpr char expectedBody1[] = "grant_type=client_credentials&client_id=fedcba98-7654-3210-"
+    const char expectedBody1[] = "grant_type=client_credentials&client_id=fedcba98-7654-3210-"
                                      "0123-456789abcdef&client_secret=CLIENTSECRET1&response_type="
                                      "token&scope=https%3A%2F%2Fazure.com"; // cspell:disable-line
 
-    constexpr char expectedBody2[]
+    const char expectedBody2[]
         = "grant_type=client_credentials&client_id=01234567-89ab-cdef-fedc-ba8976543210&client_"
           "secret=CLIENTSECRET2&scope=https%3A%2F%2Foutlook.com"; // cspell:disable-line
 
