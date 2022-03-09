@@ -91,8 +91,8 @@ Part of the response contains the challenge to be used further in the process. T
 ```
 auto credential = std::make_shared<Azure::Identity::ChallengeClientSecretCredential>(
       tenantId, clientId, clientSecret);
-  // create client
-CertificateClient certificateClient(std::getenv("AZURE_KEYVAULT_URL"), credential);
+// create client
+SomeClient someClient(std::getenv("AZURE_KEYVAULT_URL"), credential);
 ```
 
 ## Troubleshooting
