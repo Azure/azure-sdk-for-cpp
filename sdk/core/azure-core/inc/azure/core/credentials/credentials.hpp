@@ -54,7 +54,10 @@ namespace Azure { namespace Core { namespace Credentials {
      * @brief Scopes constructor
      *
      */
-    TokenRequestContext(std::vector<std::string> scopes) : Scopes(std::move(scopes)){};
+    TokenRequestContext(std::vector<std::string> const& scopes)
+    {
+      Scopes.assign(scopes.begin(), scopes.end());
+    };
 
     /**
      * @brief Authentication scopes.

@@ -6,7 +6,7 @@
 
 using namespace Azure::Core;
 using namespace Azure::Core::Http::Policies::_internal;
-
+using namespace Azure::Core::Http::Policies::_detail;
 TEST(ChallengeParameters, emptyString)
 {
   ChallengeParameters challenge("");

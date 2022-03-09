@@ -9,6 +9,7 @@ using Azure::Core::Context;
 using namespace Azure::Core::Http;
 using namespace Azure::Core::Http::Policies;
 using namespace Azure::Core::Http::Policies::_internal;
+using namespace Azure::Core::Http::Policies::_detail;
 
 std::unique_ptr<RawResponse> ChallengeBasedAuthenticationPolicy::Send(
     Request& request,
@@ -69,12 +70,12 @@ void ChallengeParameters::ProcessFragment(std::string const& fragment)
     for (size_t i = 0; i < subParts.size(); i++)
     {
       // some parts (values) have quotes around , thus clean them on quotes
-      auto trimmedParts = GetParts(subParts[i], _detail::QuoteSeparator);
+      auto finalParts = GetParts(subParts[i], _detail::QuoteSeparator);
 
-      if (trimmedParts.size() > 0)
+      if (finalParts.size() > 0)
       {
         // take the first piece that has been trimmed
-        subParts[i] = trimmedParts[0];
+        subParts[i] = finalParts[0];
       }
     }
 

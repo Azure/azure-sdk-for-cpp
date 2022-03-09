@@ -41,15 +41,73 @@ namespace Azure { namespace Core { namespace Http { namespace Policies {
   namespace _detail {
     std::shared_ptr<HttpTransport> GetTransportAdapter();
     AZ_CORE_DLLEXPORT extern Azure::Core::CaseInsensitiveSet const g_defaultAllowedHttpHeaders;
-    static constexpr char const ResourceName[] = "resource";
-    static constexpr char const ScopeName[] = "scope";
-    static constexpr char const AuthorizationName[] = "authorization";
-    static constexpr char const AuthorizationUriName[] = "authorization_uri";
-    static constexpr char const DefaultSuffix[] = "/.default";
-    static constexpr char const BearerName[] = "Bearer";
-    static constexpr char const SpaceSeparator = ' ';
-    static constexpr char const QuoteSeparator = '\"';
-    static constexpr char const EqualSeparator = '=';
+    static char const ResourceName[] = "resource";
+    static char const ScopeName[] = "scope";
+    static char const AuthorizationName[] = "authorization";
+    static char const AuthorizationUriName[] = "authorization_uri";
+    static char const DefaultSuffix[] = "/.default";
+    static char const BearerName[] = "Bearer";
+    static char const SpaceSeparator = ' ';
+    static char const QuoteSeparator = '\"';
+    static char const EqualSeparator = '=';
+
+    /**
+     * @brief Challenge parameters model
+     *
+     */
+    class ChallengeParameters {
+    public:
+      /**
+       * @brief Default constructor
+       *
+       */
+      ChallengeParameters() = default;
+
+      /**
+       * @brief Constructor consuming the header value and parsing it into its components.
+       *
+       * @param rawValue Raw value of the challenge header.
+       */
+      ChallengeParameters(std::string const& rawValue);
+
+      /**
+       * @brief Determines weather there is a challenge.
+       *
+       * @returns challenge present
+       */
+      bool IsEmpty() { return Schema.empty(); }
+      /**
+       * @brief Gets the "authorization" or "authorization_uri" parameter from the challenge
+       * response.
+       *
+       */
+      Url AuthorizationUri;
+
+      /**
+       * @brief Gets the "resource" or "scope" parameter from the challenge response. This should
+       * end with
+       *
+       */
+      std::vector<std::string> Scopes;
+
+      /**
+       * @brief Gets the tenant ID from <see cref="AuthorizationUri"/>.
+       * end with
+       *
+       */
+      std::string TenantId;
+
+      /**
+       * @brief Gets the Schema used for the challenge.
+       * end with
+       *
+       */
+      std::string Schema;
+
+    private:
+      std::vector<std::string> GetParts(std::string const& inputString, char const& separator);
+      void ProcessFragment(std::string const& fragment);
+    };
   } // namespace _detail
 
   /**
@@ -474,64 +532,6 @@ namespace Azure { namespace Core { namespace Http { namespace Policies {
      * @brief Challenge parameters model
      *
      */
-    class ChallengeParameters {
-    public:
-      /**
-       * @brief Default constructor
-       *
-       */
-      ChallengeParameters() = default;
-
-      /**
-       * @brief Constructor consuming the header value and parsing it into its components.
-       *
-       * @param rawValue Raw value of the challenge header.
-       */
-      ChallengeParameters(std::string const& rawValue);
-
-      /**
-       * @brief Determines weather there is a challenge.
-       *
-       * @returns challenge present
-       */
-      bool IsEmpty() { return Schema.empty(); }
-      /**
-       * @brief Gets the "authorization" or "authorization_uri" parameter from the challenge
-       * response.
-       *
-       */
-      Url AuthorizationUri;
-
-      /**
-       * @brief Gets the "resource" or "scope" parameter from the challenge response. This should
-       * end with
-       *
-       */
-      std::vector<std::string> Scopes;
-
-      /**
-       * @brief Gets the tenant ID from <see cref="AuthorizationUri"/>.
-       * end with
-       *
-       */
-      std::string TenantId;
-
-      /**
-       * @brief Gets the Schema used for the challenge.
-       * end with
-       *
-       */
-      std::string Schema;
-
-    private:
-      std::vector<std::string> GetParts(std::string const& inputString, char const& separator);
-      void ProcessFragment(std::string const& fragment);
-    };
-
-    /**
-     * @brief Challenge parameters model
-     *
-     */
     class ChallengeBasedAuthenticationPolicy final : public BearerTokenAuthenticationPolicy {
     public:
       /**
@@ -558,10 +558,10 @@ namespace Azure { namespace Core { namespace Http { namespace Policies {
           NextHttpPolicy nextPolicy,
           Context const& context) const override;
 
-      const ChallengeParameters GetChallenge() { return _challenge; }
+      const _detail::ChallengeParameters& GetChallenge() { return _challenge; }
 
     private:
-      ChallengeParameters _challenge;
+      _detail::ChallengeParameters _challenge;
     };
 
     /**
