@@ -264,7 +264,7 @@ AttestationAdministrationClient::ResetAttestationPolicy(
   }
   // Note that the attestation service currently never returns these values on Reset, even though they are meaningful.
   // Commenting them out to improve code coverage numbers. At some point the attestation service may start returning
-  // these values, at which point they can be uncommented out.
+  // these values, at which point they can be un-commented out.
 //  if (internalResult.PolicySigner)
 //  {
 //    returnedResult.PolicySigner = AttestationSignerInternal(*internalResult.PolicySigner);
