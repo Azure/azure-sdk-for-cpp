@@ -42,9 +42,9 @@ std::unique_ptr<RawResponse> ChallengeBasedAuthenticationPolicy::Send(
   return result;
 }
 /*
-* the raw value ( the value of the "www-authenticate" header is in the following format 
-* "Bearer authorization/authorization_uri=[value] resource/scope=[value]";
-*/
+ * the raw value ( the value of the "www-authenticate" header is in the following format
+ * "Bearer authorization/authorization_uri=[value] resource/scope=[value]";
+ */
 ChallengeParameters::ChallengeParameters(std::string const& rawValue)
 {
   if (rawValue.rfind(_detail::BearerName) == 0)

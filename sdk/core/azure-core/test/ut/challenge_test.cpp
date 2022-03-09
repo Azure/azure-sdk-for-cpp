@@ -58,7 +58,8 @@ TEST(ChallengeParameters, validString)
 TEST(ChallengeParameters, validStringAlt1)
 {
   std::string validData
-      = "Bearer authorization_uri=\"https://login.windows.net/72f988bf-86f1-41af-91ab-2d7cd011db47\", "
+      = "Bearer "
+        "authorization_uri=\"https://login.windows.net/72f988bf-86f1-41af-91ab-2d7cd011db47\", "
         "resource=\"https://vault.azure.net\"";
   ChallengeParameters challenge(validData);
 
@@ -119,7 +120,8 @@ TEST(ChallengeParameters, validString3)
 TEST(ChallengeParameters, validStringPartial1)
 {
   std::string validData
-      = "Bearer authorization=\"https://login.windows.net/72f988bf-86f1-41af-91ab-2d7cd011db47\" apples";
+      = "Bearer authorization=\"https://login.windows.net/72f988bf-86f1-41af-91ab-2d7cd011db47\" "
+        "apples";
   ChallengeParameters challenge(validData);
   EXPECT_EQ(challenge.Schema, Azure::Core::Http::Policies::_detail::BearerName);
   EXPECT_EQ(
@@ -145,7 +147,8 @@ TEST(ChallengeParameters, validStringPartial2)
 TEST(ChallengeParameters, validStringPartial3)
 {
   std::string validData
-      = "Bearer apples authorization=\"https://login.windows.net/72f988bf-86f1-41af-91ab-2d7cd011db47\" "
+      = "Bearer apples "
+        "authorization=\"https://login.windows.net/72f988bf-86f1-41af-91ab-2d7cd011db47\" "
         "apples";
   ChallengeParameters challenge(validData);
   EXPECT_EQ(challenge.Schema, Azure::Core::Http::Policies::_detail::BearerName);
