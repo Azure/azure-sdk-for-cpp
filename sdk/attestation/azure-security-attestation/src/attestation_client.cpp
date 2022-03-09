@@ -155,6 +155,23 @@ Azure::Response<AttestationToken<AttestationResult>> AttestationClient::AttestOp
   return Response<AttestationToken<AttestationResult>>(token, std::move(response));
 }
 
+Azure::Response<std::string> AttestationClient::AttestTpm(
+    std::string const& inputJson,
+    Azure::Core::Context const& context) const
+{
+  std::string jsonToSend = TpmDataSerializer::Serialize(inputJson);
+  auto encodedVector = std::vector<uint8_t>(jsonToSend.begin(), jsonToSend.end());
+  Azure::Core::IO::MemoryBodyStream stream(encodedVector);
+
+  auto request = AttestationCommonRequest::CreateRequest(
+      m_endpoint, m_apiVersion, HttpMethod::Post, {"attest/Tpm"}, &stream);
+
+  // Send the request to the service.
+  auto response = AttestationCommonRequest::SendRequest(*m_pipeline, request, context);
+  std::string returnedBody(TpmDataSerializer::Deserialize(response));
+  return Response<std::string>(returnedBody, std::move(response));
+}
+
 namespace {
 std::shared_timed_mutex SharedStateLock;
 }

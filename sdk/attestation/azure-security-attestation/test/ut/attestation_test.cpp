@@ -136,7 +136,8 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
 
   TEST_P(AttestationTests, AttestWithRuntimeData)
   {
-    auto client(CreateClient());
+    // Attestation clients don't need to be authenticated, but they can be.
+    auto client(CreateAuthenticatedClient());
     auto runtimeData = AttestationCollateral::RuntimeData();
 
     AttestationType type = std::get<1>(GetParam());

@@ -219,6 +219,29 @@ namespace Azure { namespace Security { namespace Attestation {
         AttestOptions options = AttestOptions(),
         Azure::Core::Context const& context = Azure::Core::Context::ApplicationContext) const;
 
+    /**
+    * @brief Perform a single leg
+     *
+     * Processes attestation evidence from a VBS enclave, producing an attestation result.
+     *
+     * The TPM attestation protocol is defined
+    [here](https://docs.microsoft.com/azure/attestation/virtualization-based-security-protocol')
+     *
+     * Unlike OpenEnclave reports and SGX enclave quotes, TPM attestation is implemented using
+     * JSON encoded strings.
+
+     The client formats a string serialized JSON request to the
+     * service, which responds with a JSON response. The serialized JSON object exchange continues
+     * until the service responds with a JSON string with a property named {@code "report"}, whose
+     * value will be an attestation result token.
+     *
+     * @param request Attestation request for Trusted Platform Module (TPM) attestation.
+     * @return attestation response for Trusted Platform Module (TPM) attestation.
+    */
+    Response<std::string> AttestTpm(
+        std::string const& jsonToSend,
+        Azure::Core::Context const& context = Azure::Core::Context::ApplicationContext) const;
+
   private:
     Azure::Core::Url m_endpoint;
     std::string m_apiVersion;

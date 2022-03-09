@@ -399,5 +399,28 @@ namespace Azure { namespace Security { namespace Attestation { namespace _detail
         returnValue.CertificateThumbprint, jsonResult, "x-ms-certificate-thumbprint");
     return returnValue;
   }
+  std::string TpmDataSerializer::Serialize(std::string const& tpmData)
+  {
+    Azure::Core::Json::_internal::json jsonData;
+    jsonData["data"] = Azure::Core::_internal::Base64Url::Base64UrlEncode(std::vector<uint8_t>(tpmData.begin(), tpmData.end()));
+    return jsonData.dump();
+  }
+  std::string TpmDataSerializer::Deserialize(Azure::Core::Json::_internal::json const& jsonData)
+  {
+    std::vector<uint8_t> returnValue;
+    JsonOptional::SetIfExists<std::string, std::vector<uint8_t>>(
+        returnValue,
+        jsonData,
+        "data",
+        Azure::Core::_internal::Base64Url::Base64UrlDecode);
+    return std::string(returnValue.begin(), returnValue.end());
+  }
+  std::string TpmDataSerializer::Deserialize(
+      std::unique_ptr<Azure::Core::Http::RawResponse> const& response)
+  {
+    return TpmDataSerializer::Deserialize(
+        Azure::Core::Json::_internal::json::parse(response->GetBody()));
+  }
 
-}}}} // namespace Azure::Security::Attestation::_detail
+} // namespace _detail
+}}} // namespace Azure::Security::Attestation

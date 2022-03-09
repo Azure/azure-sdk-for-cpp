@@ -136,4 +136,12 @@ namespace Azure { namespace Security { namespace Attestation { namespace _detail
         Azure::Core::Json::_internal::json const& json);
   };
 
+  struct TpmDataSerializer
+  {
+    static std::string Serialize(std::string const& tpmData);
+    static std::string Deserialize(Azure::Core::Json::_internal::json const& jsonData);
+    static std::string Deserialize(std::unique_ptr<Azure::Core::Http::RawResponse>const& response);
+
+  };
+
 }}}} // namespace Azure::Security::Attestation::_detail

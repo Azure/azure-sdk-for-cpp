@@ -55,16 +55,28 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
       throw std::runtime_error("Invalid instance type.");
     }
 
+    Azure::Security::Attestation::AttestationTokenValidationOptions GetTokenValidationOptions() {
+      AttestationTokenValidationOptions returnValue{};
+
+      if (m_testContext.IsPlaybackMode())
+      {
+        // Skip validating time stamps if using recordings.
+        returnValue.ValidateNotBeforeTime = false;
+        returnValue.ValidateExpirationTime = false;
+      }
+      else
+      {
+        returnValue.ValidationTimeSlack = 10s;
+      }
+      return returnValue;
+    }
+
     std::unique_ptr<AttestationAdministrationClient> CreateClient(ServiceInstanceType instanceType)
     {
       // `InitTestClient` takes care of setting up Record&Playback.
       Azure::Security::Attestation::AttestationAdministrationClientOptions options;
-      if (m_testContext.IsPlaybackMode())
-      {
-        // Skip validating time stamps if using recordings.
-        options.TokenValidationOptions.ValidateNotBeforeTime = false;
-        options.TokenValidationOptions.ValidateExpirationTime = false;
-      }
+      options.TokenValidationOptions = GetTokenValidationOptions();
+
       std::shared_ptr<Azure::Core::Credentials::TokenCredential> credential
           = std::make_shared<Azure::Identity::ClientSecretCredential>(
               GetEnv("AZURE_TENANT_ID"), GetEnv("AZURE_CLIENT_ID"), GetEnv("AZURE_CLIENT_SECRET"));
@@ -84,7 +96,8 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
       auto adminClient(CreateClient(instanceType));
 
       {
-        auto certificatesResult = adminClient->GetPolicyManagementCertificates();
+        auto certificatesResult = adminClient->GetPolicyManagementCertificates(
+            GetPolicyManagementCertificatesOptions{GetTokenValidationOptions()});
 
         // Do we expect to get any certificates in the response? AAD and Shared instances will never
         // have any certificates.
