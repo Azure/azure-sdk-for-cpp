@@ -262,7 +262,7 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
     EXPECT_TRUE(jsonSigner["kid"].is_string());
 
     auto kidJson(jsonSigner["kid"]);
-    auto kid=kidJson.get<std::string>();
+    auto kid = kidJson.get<std::string>();
     EXPECT_EQ(signer.KeyId.Value(), kid);
     EXPECT_TRUE(jsonSigner["x5c"].is_array());
 

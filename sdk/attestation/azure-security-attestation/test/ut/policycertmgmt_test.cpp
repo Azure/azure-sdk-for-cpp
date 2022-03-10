@@ -317,9 +317,6 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
     auto fakedIsolatedCertificate(
         Cryptography::CreateX509CertificateForPrivateKey(fakedIsolatedKey, "CN=FakeIsolatedKey"));
 
-
-
-
     // Load the preconfigured policy certificate to add.
     auto keyToAdd(Cryptography::CreateRsaKey(2048));
     auto fakedCertificateToAdd(
