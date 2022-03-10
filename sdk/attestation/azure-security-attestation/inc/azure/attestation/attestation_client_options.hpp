@@ -54,8 +54,9 @@ namespace Azure { namespace Security { namespace Attestation {
    *  to perform additional token validation options beyond the validations performed by the
    * attestation SDK.
    */
-  using TokenValidationCallbackFn = std::function<
-      void(std::string const& rawToken, Models::AttestationSigner const& tokenSigner)>;
+  using TokenValidationCallbackFn = std::function<void(
+      Models::AttestationToken<std::nullptr_t> const& rawToken,
+      Models::AttestationSigner const& tokenSigner)>;
 
   /** @brief The AttestationTokenValidationOptions represents a set of options which control how
    * attestation tokens are validated. */

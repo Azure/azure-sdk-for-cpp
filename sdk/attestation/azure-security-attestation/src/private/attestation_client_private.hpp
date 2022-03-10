@@ -405,12 +405,12 @@ namespace Azure { namespace Security { namespace Attestation { namespace _detail
 
       // If this is a secured token, find a set of possible signers for the token and
       // verify that one of them signed the token.
+      Azure::Nullable<Models::AttestationSigner> tokenSigner;
       if (m_token.Header.Algorithm && *m_token.Header.Algorithm != "none"
           && validationOptions.ValidateSigner)
       {
-        Azure::Nullable<Models::AttestationSigner> foundSigner
-            = VerifyTokenSignature(FindPossibleSigners(signers));
-        if (!foundSigner)
+        tokenSigner = VerifyTokenSignature(FindPossibleSigners(signers));
+        if (!tokenSigner)
         {
           throw std::runtime_error("Unable to verify the attestation token signature.");
         }
@@ -421,6 +421,12 @@ namespace Azure { namespace Security { namespace Attestation { namespace _detail
 
       // And finally check the issuer.
       ValidateTokenIssuer(validationOptions);
+
+      if (validationOptions.ValidationCallback)
+      {
+        AttestationTokenInternal<std::nullptr_t> tokenForCallback(m_token.RawToken);
+        validationOptions.ValidationCallback(tokenForCallback, *tokenSigner);
+      }
     }
 
     /**
