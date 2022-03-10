@@ -125,8 +125,7 @@ AttestationAdministrationClient::GetAttestationPolicy(
   return Response<AttestationToken<std::string>>(returnedToken, std::move(response));
 }
 
-Models::AttestationToken<>
-AttestationAdministrationClient::CreateSetAttestationPolicyToken(
+Models::AttestationToken<> AttestationAdministrationClient::CreateSetAttestationPolicyToken(
     Azure::Nullable<std::string> const& newAttestationPolicy,
     Azure::Nullable<AttestationSigningKey> const& signingKey) const
 {

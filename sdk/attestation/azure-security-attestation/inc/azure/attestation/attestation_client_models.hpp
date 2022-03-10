@@ -250,7 +250,7 @@ namespace Azure { namespace Security { namespace Attestation { namespace Models 
 
   using GenericAttestationToken = std::nullptr_t;
 
-  template <typename T=GenericAttestationToken> class AttestationToken final {
+  template <typename T = GenericAttestationToken> class AttestationToken final {
   public:
     /**
      * @brief The full RFC 7515 JWS/JWT token returned by the attestation service.
