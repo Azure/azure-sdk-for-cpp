@@ -108,7 +108,6 @@
     "stoll",
     "stoull",
     "STREQ",
-    "tpm",
     "uksouth",
     "undeleted",
     "unscoped",
@@ -144,6 +143,12 @@
       "words": [
         "TEAMPROJECTID",
         "issecret"
+      ]
+    },
+    {
+      "filename": "**/sdk/attestation/**",
+      "words": [
+        "tpm"
       ]
     },
     {
