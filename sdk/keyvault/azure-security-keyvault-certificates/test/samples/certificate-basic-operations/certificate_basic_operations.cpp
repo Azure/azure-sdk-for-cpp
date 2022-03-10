@@ -76,6 +76,10 @@ int main()
         certificate = certificateClient.GetCertificate(certificateName).Value;
         std::cout << "Created certificate with policy. Certificate name : " << certificate.Name();
       }
+      else
+      {
+        std::cout << "Create certificate with policy result : " << pollResponse.Status.Value();
+      }
     }
     // update certificate
     {
