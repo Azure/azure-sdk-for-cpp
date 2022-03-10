@@ -6,6 +6,7 @@
  * @brief Internal utility functions for extendable enumerations.
  *
  */
+#include <string>
 
 namespace Azure { namespace Core { namespace _internal {
   /** @brief Template base class helper for implementing extendable enumerations.
@@ -40,7 +41,7 @@ namespace Azure { namespace Core { namespace _internal {
      *
      * @param enumerationValue The string enumerationValue used for the value.
      */
-    ExtendableEnumeration(std::string enumerationValue)
+    explicit ExtendableEnumeration(std::string enumerationValue)
         : m_enumerationValue(std::move(enumerationValue))
     {
     }
@@ -55,7 +56,17 @@ namespace Azure { namespace Core { namespace _internal {
      *
      * @param other Another extensible enumeration to be compared.
      */
-    bool operator==(T const& other) const { return m_enumerationValue == other.m_enumerationValue; }
+    bool operator==(T const& other) const noexcept
+    {
+      return m_enumerationValue == other.m_enumerationValue;
+    }
+
+    /**
+     * @brief Enable comparing the ext enum.
+     *
+     * @param other Another extensible enumeration to be compared.
+     */
+    bool operator!=(T const& other) const noexcept { return !operator==(other); }
 
     /**
      * @brief Return the ExtensableEnumeration string representation.
