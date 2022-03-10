@@ -305,34 +305,33 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
     }
   }
 
-  // Verify that we get an exception if we try to set a policy management certificate on an AAD instance.
-  // THe primary purpose of this test is to increase code coverage numbers.
+  // Verify that we get an exception if we try to set a policy management certificate on an AAD
+  // instance. THe primary purpose of this test is to increase code coverage numbers.
   TEST_F(CertificateTests, VerifyFailedAddCertificate)
   {
     auto adminClient(CreateClient(ServiceInstanceType::AAD));
 
-    auto isolatedCertificateBase64(GetEnv("ISOLATED_SIGNING_CERTIFICATE"));
-    auto isolatedCertificate(Cryptography::ImportX509Certificate(
-        Cryptography::PemFromBase64(isolatedCertificateBase64, "CERTIFICATE")));
-
-    // Load the preconfigured policy certificate to add.
-    auto certificateToRemoveBase64(GetEnv("POLICY_SIGNING_CERTIFICATE_0"));
-    auto certificateToRemove(Cryptography::ImportX509Certificate(
-        Cryptography::PemFromBase64(certificateToRemoveBase64, "CERTIFICATE")));
-
     // Create a signing key to be used when signing the request to the service. We use the ISOLATED
     // SIGNING KEY because we know that it will always be present.
-    auto isolatedKeyBase64(GetEnv("ISOLATED_SIGNING_KEY"));
-    std::unique_ptr<Cryptography::AsymmetricKey> isolatedPrivateKey(Cryptography::ImportPrivateKey(
-        Cryptography::PemFromBase64(isolatedKeyBase64, "PRIVATE KEY")));
+    auto fakedIsolatedKey(Cryptography::CreateRsaKey(2048));
+    auto fakedIsolatedCertificate(
+        Cryptography::CreateX509CertificateForPrivateKey(fakedIsolatedKey, "CN=FakeIsolatedKey"));
+
+
+
+
+    // Load the preconfigured policy certificate to add.
+    auto keyToAdd(Cryptography::CreateRsaKey(2048));
+    auto fakedCertificateToAdd(
+        Cryptography::CreateX509CertificateForPrivateKey(keyToAdd, "CN=FakeIsolatedKey"));
 
     auto isolatedSigningKey(AttestationSigningKey{
-        isolatedPrivateKey->ExportPrivateKey(), isolatedCertificate->ExportAsPEM()});
+        fakedIsolatedKey->ExportPrivateKey(), fakedIsolatedCertificate->ExportAsPEM()});
 
     {
       EXPECT_THROW(
           adminClient->AddPolicyManagementCertificate(
-              certificateToRemove->ExportAsPEM(), isolatedSigningKey),
+              fakedCertificateToAdd->ExportAsPEM(), isolatedSigningKey),
           Azure::Core::RequestFailedException);
     }
   }
@@ -342,28 +341,24 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
   {
     auto adminClient(CreateClient(ServiceInstanceType::AAD));
 
-    auto isolatedCertificateBase64(GetEnv("ISOLATED_SIGNING_CERTIFICATE"));
-    auto isolatedCertificate(Cryptography::ImportX509Certificate(
-        Cryptography::PemFromBase64(isolatedCertificateBase64, "CERTIFICATE")));
-
-    // Load the preconfigured policy certificate to add.
-    auto certificateToRemoveBase64(GetEnv("POLICY_SIGNING_CERTIFICATE_0"));
-    auto certificateToRemove(Cryptography::ImportX509Certificate(
-        Cryptography::PemFromBase64(certificateToRemoveBase64, "CERTIFICATE")));
-
     // Create a signing key to be used when signing the request to the service. We use the ISOLATED
     // SIGNING KEY because we know that it will always be present.
-    auto isolatedKeyBase64(GetEnv("ISOLATED_SIGNING_KEY"));
-    std::unique_ptr<Cryptography::AsymmetricKey> isolatedPrivateKey(Cryptography::ImportPrivateKey(
-        Cryptography::PemFromBase64(isolatedKeyBase64, "PRIVATE KEY")));
+    auto fakedIsolatedKey(Cryptography::CreateRsaKey(2048));
+    auto fakedIsolatedCertificate(
+        Cryptography::CreateX509CertificateForPrivateKey(fakedIsolatedKey, "CN=FakeIsolatedKey"));
+
+    // Load the preconfigured policy certificate to add.
+    auto keyToAdd(Cryptography::CreateRsaKey(2048));
+    auto fakedCertificateToRemove(
+        Cryptography::CreateX509CertificateForPrivateKey(keyToAdd, "CN=FakeIsolatedKey"));
 
     auto isolatedSigningKey(AttestationSigningKey{
-        isolatedPrivateKey->ExportPrivateKey(), isolatedCertificate->ExportAsPEM()});
+        fakedIsolatedKey->ExportPrivateKey(), fakedIsolatedCertificate->ExportAsPEM()});
 
     {
       EXPECT_THROW(
           adminClient->RemovePolicyManagementCertificate(
-              certificateToRemove->ExportAsPEM(), isolatedSigningKey),
+              fakedCertificateToRemove->ExportAsPEM(), isolatedSigningKey),
           Azure::Core::RequestFailedException);
     }
   }
