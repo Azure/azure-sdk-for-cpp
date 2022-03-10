@@ -9,10 +9,10 @@
 
 #pragma once
 
-#include <azure/core/internal/extendable_enumeration.hpp>
 #include "azure/attestation/dll_import_export.hpp"
 #include <azure/core/context.hpp>
 #include <azure/core/http/http.hpp>
+#include <azure/core/internal/extendable_enumeration.hpp>
 #include <azure/core/nullable.hpp>
 #include <azure/core/paged_response.hpp>
 #include <azure/core/response.hpp>
@@ -30,14 +30,17 @@ namespace Azure { namespace Security { namespace Attestation { namespace Models 
    * the attestation service.
    *
    */
-  class AttestationType final : public Azure::Core::_internal::ExtendableEnumeration<AttestationType> {
+  class AttestationType final
+      : public Azure::Core::_internal::ExtendableEnumeration<AttestationType> {
   public:
     /**
      * @brief Construct a new AttestationType object
      *
      * @param attestationType The string attestationType used for the attestation policy operation.
      */
-    AttestationType(std::string attestationType) : ExtendableEnumeration(std::move(attestationType)) {}
+    AttestationType(std::string attestationType) : ExtendableEnumeration(std::move(attestationType))
+    {
+    }
 
     /**
      * @brief Specifies that this should apply to SGX enclaves.
@@ -409,7 +412,8 @@ namespace Azure { namespace Security { namespace Attestation { namespace Models 
    * policy modification.
    *
    */
-  class PolicyModification final : public Azure::Core::_internal::ExtendableEnumeration<PolicyModification> {
+  class PolicyModification final
+      : public Azure::Core::_internal::ExtendableEnumeration<PolicyModification> {
   public:
     /**
      * @brief Construct a new PolicyResolution object
