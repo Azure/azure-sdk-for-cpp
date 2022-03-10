@@ -23,10 +23,11 @@ namespace Azure { namespace Core { namespace _internal {
    * class MyEnumeration final : public ExtendableEnumeration<AttestationType> {
    * public:
    *   MyEnumeration(std::string attestationType) :
-   * ExtendableEnumeration(std::move(attestationType)) {} MyEnumeration() = default;
-   *   AZ_ATTESTATION_DLLEXPORT static const MyEnumeration Enumerator1;
-   *   AZ_ATTESTATION_DLLEXPORT static const MyEnumeration Enumerator2;
-   *   AZ_ATTESTATION_DLLEXPORT static const MyEnumeration Enumerator3;
+   *     ExtendableEnumeration(std::move(attestationType)) {}
+   *   MyEnumeration() = default;
+   *   static const MyEnumeration Enumerator1;
+   *   static const MyEnumeration Enumerator2;
+   *   static const MyEnumeration Enumerator3;
    * };
    * \endcode
    *
@@ -54,7 +55,7 @@ namespace Azure { namespace Core { namespace _internal {
     /**
      * @brief Enable comparing the ext enum.
      *
-     * @param other Another extensible enumeration to be compared.
+     * @param other Another extendable enumeration to be compared.
      */
     bool operator==(T const& other) const noexcept
     {
@@ -64,12 +65,12 @@ namespace Azure { namespace Core { namespace _internal {
     /**
      * @brief Enable comparing the ext enum.
      *
-     * @param other Another extensible enumeration to be compared.
+     * @param other Another extendable enumeration to be compared.
      */
     bool operator!=(T const& other) const noexcept { return !operator==(other); }
 
     /**
-     * @brief Return the ExtensableEnumeration string representation.
+     * @brief Return the ExtendableEnumeration string representation.
      *
      */
     std::string const& ToString() const { return m_enumerationValue; }
