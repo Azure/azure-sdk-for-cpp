@@ -262,17 +262,19 @@ AttestationAdministrationClient::ResetAttestationPolicy(
   {
     returnedResult.PolicyResolution = Models::PolicyModification(*internalResult.PolicyResolution);
   }
-  // Note that the attestation service currently never returns these values on Reset, even though they are meaningful.
-  // Commenting them out to improve code coverage numbers. At some point the attestation service may start returning
-  // these values, at which point they can be un-commented out.
-//  if (internalResult.PolicySigner)
-//  {
-//    returnedResult.PolicySigner = AttestationSignerInternal(*internalResult.PolicySigner);
-//  }
-//  if (internalResult.PolicyTokenHash)
-//  {
-//    returnedResult.PolicyTokenHash = Base64Url::Base64UrlDecode(*internalResult.PolicyTokenHash);
-//  }
+  // Note that the attestation service currently never returns these values on Reset, even though
+  // they are meaningful. Commenting them out to improve code coverage numbers. At some point the
+  // attestation service may start returning these values, at which point they can be un-commented
+  // out.
+  //  if (internalResult.PolicySigner)
+  //  {
+  //    returnedResult.PolicySigner = AttestationSignerInternal(*internalResult.PolicySigner);
+  //  }
+  //  if (internalResult.PolicyTokenHash)
+  //  {
+  //    returnedResult.PolicyTokenHash =
+  //    Base64Url::Base64UrlDecode(*internalResult.PolicyTokenHash);
+  //  }
 
   // Construct a token whose body is the policy result, but whose token is the response from the
   // service.

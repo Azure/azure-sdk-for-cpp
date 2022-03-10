@@ -402,17 +402,15 @@ namespace Azure { namespace Security { namespace Attestation { namespace _detail
   std::string TpmDataSerializer::Serialize(std::string const& tpmData)
   {
     Azure::Core::Json::_internal::json jsonData;
-    jsonData["data"] = Azure::Core::_internal::Base64Url::Base64UrlEncode(std::vector<uint8_t>(tpmData.begin(), tpmData.end()));
+    jsonData["data"] = Azure::Core::_internal::Base64Url::Base64UrlEncode(
+        std::vector<uint8_t>(tpmData.begin(), tpmData.end()));
     return jsonData.dump();
   }
   std::string TpmDataSerializer::Deserialize(Azure::Core::Json::_internal::json const& jsonData)
   {
     std::vector<uint8_t> returnValue;
     JsonOptional::SetIfExists<std::string, std::vector<uint8_t>>(
-        returnValue,
-        jsonData,
-        "data",
-        Azure::Core::_internal::Base64Url::Base64UrlDecode);
+        returnValue, jsonData, "data", Azure::Core::_internal::Base64Url::Base64UrlDecode);
     return std::string(returnValue.begin(), returnValue.end());
   }
   std::string TpmDataSerializer::Deserialize(
@@ -422,5 +420,4 @@ namespace Azure { namespace Security { namespace Attestation { namespace _detail
         Azure::Core::Json::_internal::json::parse(response->GetBody()));
   }
 
-} // namespace _detail
-}}} // namespace Azure::Security::Attestation
+}}}} // namespace Azure::Security::Attestation::_detail

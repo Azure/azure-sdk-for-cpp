@@ -55,7 +55,8 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
       throw std::runtime_error("Invalid instance type.");
     }
 
-    Azure::Security::Attestation::AttestationTokenValidationOptions GetTokenValidationOptions() {
+    Azure::Security::Attestation::AttestationTokenValidationOptions GetTokenValidationOptions()
+    {
       AttestationTokenValidationOptions returnValue{};
 
       if (m_testContext.IsPlaybackMode())
