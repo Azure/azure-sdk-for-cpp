@@ -247,7 +247,10 @@ namespace Azure { namespace Security { namespace Attestation { namespace Models 
    * service with the specialized body type.
    * <typeparam name="T"></typeparam> The type which represents the body of the attestation token.
    */
-  template <typename T> class AttestationToken final {
+
+  using GenericAttestationToken = std::nullptr_t;
+
+  template <typename T=GenericAttestationToken> class AttestationToken final {
   public:
     /**
      * @brief The full RFC 7515 JWS/JWT token returned by the attestation service.

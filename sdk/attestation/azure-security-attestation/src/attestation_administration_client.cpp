@@ -125,7 +125,7 @@ AttestationAdministrationClient::GetAttestationPolicy(
   return Response<AttestationToken<std::string>>(returnedToken, std::move(response));
 }
 
-Models::AttestationToken<std::nullptr_t>
+Models::AttestationToken<>
 AttestationAdministrationClient::CreateSetAttestationPolicyToken(
     Azure::Nullable<std::string> const& newAttestationPolicy,
     Azure::Nullable<AttestationSigningKey> const& signingKey) const
@@ -155,7 +155,7 @@ AttestationAdministrationClient::SetAttestationPolicy(
     Azure::Core::Context const& context) const
 {
   // Calculate a signed (or unsigned) attestation policy token to send to the service.
-  Models::AttestationToken<std::nullptr_t> tokenToSend(
+  Models::AttestationToken<> tokenToSend(
       CreateSetAttestationPolicyToken(newAttestationPolicy, options.SigningKey));
 
   Azure::Core::IO::MemoryBodyStream stream(
@@ -220,7 +220,7 @@ AttestationAdministrationClient::ResetAttestationPolicy(
     Azure::Core::Context const& context) const
 {
   // Calculate a signed (or unsigned) attestation policy token to send to the service.
-  Models::AttestationToken<std::nullptr_t> tokenToSend(
+  Models::AttestationToken<> tokenToSend(
       CreateSetAttestationPolicyToken(Azure::Nullable<std::string>(), options.SigningKey));
 
   Azure::Core::IO::MemoryBodyStream stream(

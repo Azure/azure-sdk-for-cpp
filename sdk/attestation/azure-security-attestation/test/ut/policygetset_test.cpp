@@ -151,7 +151,7 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
         // So skip verifying the PolicyTokenHash in playback mode.
         if (!m_testContext.IsPlaybackMode())
         {
-          AttestationToken<std::nullptr_t> sentToken
+          AttestationToken<> sentToken
               = client->CreateSetAttestationPolicyToken(policyToValidate, signingKey);
 
           Azure::Core::Cryptography::_internal::Sha256Hash hasher;

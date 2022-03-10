@@ -144,12 +144,12 @@ namespace Azure { namespace Security { namespace Attestation {
      *
      * @param policyToSet The policy document to set.
      * @param signingKey Optional Attestation Signing Key to be used to sign the policy.
-     * @return Models::AttestationToken<std::nullptr_t> Attestation token which would be sent to the
+     * @return Models::AttestationToken<> Attestation token which would be sent to the
      * attestation service based on this signing key.
      *
      * @note: If policyToSet is null, then this generates a policy reset token.
      */
-    Models::AttestationToken<std::nullptr_t> CreateSetAttestationPolicyToken(
+    Models::AttestationToken<> CreateSetAttestationPolicyToken(
         Azure::Nullable<std::string> const& policyToSet,
         Azure::Nullable<AttestationSigningKey> const& signingKey = {}) const;
 

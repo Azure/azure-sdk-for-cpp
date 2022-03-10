@@ -177,7 +177,7 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
       options.RuntimeData = data;
       options.TokenValidationOptions = GetTokenValidationOptions();
       (*options.TokenValidationOptions).ValidationCallback
-          = [&](AttestationToken<std::nullptr_t> const& token, AttestationSigner const& signer) {
+          = [&](AttestationToken<> const& token, AttestationSigner const& signer) {
               EXPECT_TRUE(token.Issuer);
               // When running against a live server, the m_endpoint value is mocked, so we cannot
               // compare against it.
