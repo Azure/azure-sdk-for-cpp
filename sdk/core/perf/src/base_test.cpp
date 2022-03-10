@@ -111,6 +111,10 @@ namespace Azure { namespace Perf {
           clientOp, "PerfFw", "na", std::move(policiesRe), std::move(policiesOp));
       Azure::Core::Context ctx;
 
+      //  Make one call to Run() before starting recording, to avoid capturing one-time setup
+      //  like authorization requests.
+      this->Run(ctx);
+
       // Send start-record call
       {
         Azure::Core::Url startRecordReq(m_proxy);
@@ -129,9 +133,7 @@ namespace Azure { namespace Perf {
         m_recordId = findHeader->second;
       }
 
-      // play one test to generate a recording
-      this->Run(ctx);
-      // Run twice to alling with how all other SDK perf langs run
+      // Record one call to re-use response on all test runs
       this->Run(ctx);
 
       // Stop recording
