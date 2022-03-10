@@ -305,4 +305,67 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
     }
   }
 
+  // Verify that we get an exception if we try to set a policy management certificate on an AAD instance.
+  // THe primary purpose of this test is to increase code coverage numbers.
+  TEST_F(CertificateTests, VerifyFailedAddCertificate)
+  {
+    auto adminClient(CreateClient(ServiceInstanceType::AAD));
+
+    auto isolatedCertificateBase64(GetEnv("ISOLATED_SIGNING_CERTIFICATE"));
+    auto isolatedCertificate(Cryptography::ImportX509Certificate(
+        Cryptography::PemFromBase64(isolatedCertificateBase64, "CERTIFICATE")));
+
+    // Load the preconfigured policy certificate to add.
+    auto certificateToRemoveBase64(GetEnv("POLICY_SIGNING_CERTIFICATE_0"));
+    auto certificateToRemove(Cryptography::ImportX509Certificate(
+        Cryptography::PemFromBase64(certificateToRemoveBase64, "CERTIFICATE")));
+
+    // Create a signing key to be used when signing the request to the service. We use the ISOLATED
+    // SIGNING KEY because we know that it will always be present.
+    auto isolatedKeyBase64(GetEnv("ISOLATED_SIGNING_KEY"));
+    std::unique_ptr<Cryptography::AsymmetricKey> isolatedPrivateKey(Cryptography::ImportPrivateKey(
+        Cryptography::PemFromBase64(isolatedKeyBase64, "PRIVATE KEY")));
+
+    auto isolatedSigningKey(AttestationSigningKey{
+        isolatedPrivateKey->ExportPrivateKey(), isolatedCertificate->ExportAsPEM()});
+
+    {
+      EXPECT_THROW(
+          adminClient->AddPolicyManagementCertificate(
+              certificateToRemove->ExportAsPEM(), isolatedSigningKey),
+          Azure::Core::RequestFailedException);
+    }
+  }
+  // Verify that we get an exception if we try to remove a policy management certificate on an AAD
+  // instance. THe primary purpose of this test is to increase code coverage numbers.
+  TEST_F(CertificateTests, VerifyFailedRemoveCertificate)
+  {
+    auto adminClient(CreateClient(ServiceInstanceType::AAD));
+
+    auto isolatedCertificateBase64(GetEnv("ISOLATED_SIGNING_CERTIFICATE"));
+    auto isolatedCertificate(Cryptography::ImportX509Certificate(
+        Cryptography::PemFromBase64(isolatedCertificateBase64, "CERTIFICATE")));
+
+    // Load the preconfigured policy certificate to add.
+    auto certificateToRemoveBase64(GetEnv("POLICY_SIGNING_CERTIFICATE_0"));
+    auto certificateToRemove(Cryptography::ImportX509Certificate(
+        Cryptography::PemFromBase64(certificateToRemoveBase64, "CERTIFICATE")));
+
+    // Create a signing key to be used when signing the request to the service. We use the ISOLATED
+    // SIGNING KEY because we know that it will always be present.
+    auto isolatedKeyBase64(GetEnv("ISOLATED_SIGNING_KEY"));
+    std::unique_ptr<Cryptography::AsymmetricKey> isolatedPrivateKey(Cryptography::ImportPrivateKey(
+        Cryptography::PemFromBase64(isolatedKeyBase64, "PRIVATE KEY")));
+
+    auto isolatedSigningKey(AttestationSigningKey{
+        isolatedPrivateKey->ExportPrivateKey(), isolatedCertificate->ExportAsPEM()});
+
+    {
+      EXPECT_THROW(
+          adminClient->RemovePolicyManagementCertificate(
+              certificateToRemove->ExportAsPEM(), isolatedSigningKey),
+          Azure::Core::RequestFailedException);
+    }
+  }
+
 }}}} // namespace Azure::Security::Attestation::Test

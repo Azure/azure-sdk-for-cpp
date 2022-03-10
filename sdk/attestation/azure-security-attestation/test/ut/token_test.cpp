@@ -135,8 +135,24 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
           *val.n);
       EXPECT_EQ("AQAB", *val.e);
       EXPECT_EQ("2011-04-29", *val.kid);
+
+      // Now serialize the JWK back to JSON.
+      auto serializedKey(JsonWebKeySerializer::Serialize(val));
     }
     // cspell:enable
+  }
+  TEST(SerializationTests, TestPolicyCertificateManagementBody)
+  {
+    PolicyCertificateManagementBody body;
+    body.policyCertificate = JsonWebKeySerializer::Deserialize(json::parse(R"({"kty":"RSA",
+       "n": "0vx7agoebGcQSuuPiLJXZptN9nndrQmbXEps2aiAFbWhM78LhWx4cbbfAAtVT86zwu1RK7aPFFxuhDR1L6tSoc_BJECPebWKRXjBZCiFV4n3oknjhMstn64tZ_2W-5JsGY4Hc5n9yBXArwl93lqt7_RN5w6Cf0h4QyQ5v-65YGjQR0_FDW2QvzqY368QQMicAtaSqzs8KJZgnYb9c7d0zgdAZHzu6qMQvRL5hajrn1n91CbOpbISD08qNLyrdkt-bFTWhAI4vMQFh6WeZu0fM4lFd2NcRwr3XPksINHaQ-G_xBniIqbw0Ls1jF44-csFCur-kEgU8awapJzKnqDKgw",
+       "e":"AQAB",
+       "alg":"RS256",
+       "kid":"2011-04-29"})"));
+    std::string serializedBody = PolicyCertificateManagementBodySerializer::Serialize(body);
+    auto deserializedBody
+        = PolicyCertificateManagementBodySerializer::Deserialize(json::parse(serializedBody));
+    EXPECT_EQ(body.policyCertificate.n.Value(), deserializedBody.policyCertificate.n.Value());
   }
 
   TEST(SerializationTests, TestDeserializeJWKS)
@@ -242,12 +258,16 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
     std::string serializedSigner = AttestationSignerInternal::SerializeToJson(signer);
     auto jsonSigner(json::parse(serializedSigner));
     EXPECT_TRUE(jsonSigner["kid"].is_string());
-    EXPECT_EQ(*signer.KeyId, jsonSigner["kid"].get<std::string>());
+
+    auto kidJson(jsonSigner["kid"]);
+    auto kid=kidJson.get<std::string>();
+    EXPECT_EQ(signer.KeyId.Value(), kid);
     EXPECT_TRUE(jsonSigner["x5c"].is_array());
 
     auto x5c = jsonSigner["x5c"].get<std::vector<json>>();
     EXPECT_TRUE(x5c[0].is_string());
-    std::string x5cval(x5c[0].get<std::string>());
+    auto x5c0(x5c[0]);
+    std::string x5cval(x5c0.get<std::string>());
     EXPECT_EQ(x5cval, (*signer.CertificateChain)[0]);
   }
 

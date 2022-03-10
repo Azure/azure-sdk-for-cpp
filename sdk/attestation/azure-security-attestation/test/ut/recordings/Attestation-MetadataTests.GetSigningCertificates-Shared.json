@@ -4,7 +4,7 @@
       "Headers": {
         "content-type": "application/json",
         "user-agent": "azsdk-cpp-Attestation/1.0.0-beta.1 (Windows 10 Enterprise 6.3 22000 22000.1.amd64fre.co_release.210604-1628)",
-        "x-ms-client-request-id": "c89ed620-0c42-452e-6e67-1d250e20b649"
+        "x-ms-client-request-id": "7d305305-83f5-4ccc-79e7-0b2d1a1e5de4"
       },
       "Method": "GET",
       "Response": {
@@ -13,10 +13,10 @@
         "STATUS_CODE": "200",
         "content-length": "27560",
         "content-type": "application/json; charset=utf-8",
-        "date": "Wed, 09 Mar 2022 23:36:29 GMT",
+        "date": "Thu, 10 Mar 2022 01:38:10 GMT",
         "server": "Kestrel",
         "x-ms-maa-service-version": "1.10.01885.0001",
-        "x-ms-request-id": "00-d5109d4aeb09d4ab904a876bc8a649c7-0000000000000000-00"
+        "x-ms-request-id": "00-4e9b327ceec983e14642155ba555a0a5-0000000000000000-00"
       },
       "Url": "https://REDACTED.wus.attest.azure.net/certs"
     }

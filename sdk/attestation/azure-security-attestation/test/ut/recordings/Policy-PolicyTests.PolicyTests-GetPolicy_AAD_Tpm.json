@@ -4,19 +4,19 @@
       "Headers": {
         "content-type": "application/json",
         "user-agent": "azsdk-cpp-Attestation/1.0.0-beta.1 (Windows 10 Enterprise 6.3 22000 22000.1.amd64fre.co_release.210604-1628)",
-        "x-ms-client-request-id": "ea97b1f3-1f61-474a-6163-8c41a956c6e3"
+        "x-ms-client-request-id": "9d76389e-c1c8-44cb-74d6-c690f8c998b4"
       },
       "Method": "GET",
       "Response": {
-        "BODY": "{\"token\":\"eyJhbGciOiJSUzI1NiIsImprdSI6Imh0dHBzOi8vY3BsYXJyeW9hdHRlc3RhdGlvbmFhZC53dXMuYXR0ZXN0LmF6dXJlLm5ldC9jZXJ0cyIsImtpZCI6InJQdEJHUldUbFBtenM1dTM1TDBRUkQ5V2R5bWVLUFJ4dGVUZVRsd04wRWM9IiwidHlwIjoiSldUIn0.eyJleHAiOjE2NDY4NzI1NjcsImlhdCI6MTY0Njg2ODk2NywiaXNzIjoiaHR0cHM6Ly9jcGxhcnJ5b2F0dGVzdGF0aW9uYWFkLnd1cy5hdHRlc3QuYXp1cmUubmV0IiwibmJmIjoxNjQ2ODY4OTY3LCJ4LW1zLXBvbGljeSI6ImV5SmhiR2NpT2lKdWIyNWxJbjAuZXlKQmRIUmxjM1JoZEdsdmJsQnZiR2xqZVNJNkltUnRWbmxqTW14Mlltb3dlRXhxUVRkSlIwWXhaRWRvZG1OdGJEWlpXRkp3WWpJMWVXUlhlR3hqTTNNNVVHbENkMXBZU25SaFdGRnZTMVIwT1U5NVFuQmpNMDR4V1ZjMWFscFlTakZpUjFaNlpUTXdOeUo5LiJ9.YQV6wHYn-PYvvp7t5GV-lmG9fsQvc0ITPco1i2lWs5Ix2tc0fNXtQowcZ8Q0ErPbPUIWHbXF8SyJfUxWdWJYfrGn1a-1uZ2njZlm9D1bYvdSMRtr7p1ZHKrudMKOcfIGXRw3h23l_RHbITtGVcxSwmOWPCLOCv9V03F4Ay1Yb2AXQafx-Rp-9lyAhYA7WEllBNsd0OPpm5uyaH9dg6Dh9GXJOLrbNYv_foyU0WwFKhDAkp2VDwmd4Ujg2wT1PP-FUr1pLMRkWZrhlTdMyKOrCjKMvMi1yZjedjfXfAFE__bl8jXfl7RuKgeDdGIIghZKlGKPC24JBC-WTPVDOhbZHA\"}",
+        "BODY": "{\"token\":\"eyJhbGciOiJSUzI1NiIsImprdSI6Imh0dHBzOi8vY3BsYXJyeW9hdHRlc3RhdGlvbmFhZC53dXMuYXR0ZXN0LmF6dXJlLm5ldC9jZXJ0cyIsImtpZCI6InJQdEJHUldUbFBtenM1dTM1TDBRUkQ5V2R5bWVLUFJ4dGVUZVRsd04wRWM9IiwidHlwIjoiSldUIn0.eyJleHAiOjE2NDY4Nzk4NzAsImlhdCI6MTY0Njg3NjI3MCwiaXNzIjoiaHR0cHM6Ly9jcGxhcnJ5b2F0dGVzdGF0aW9uYWFkLnd1cy5hdHRlc3QuYXp1cmUubmV0IiwibmJmIjoxNjQ2ODc2MjcwLCJ4LW1zLXBvbGljeSI6ImV5SmhiR2NpT2lKdWIyNWxJbjAuZXlKQmRIUmxjM1JoZEdsdmJsQnZiR2xqZVNJNkltUnRWbmxqTW14Mlltb3dlRXhxUVRkSlIwWXhaRWRvZG1OdGJEWlpXRkp3WWpJMWVXUlhlR3hqTTNNNVVHbENkMXBZU25SaFdGRnZTMVIwT1U5NVFuQmpNMDR4V1ZjMWFscFlTakZpUjFaNlpUTXdOeUo5LiJ9.xsyLRL1A4rpJbr1SJ09KdiJ7lDnrhvP5IpVM8gbtyvAv9hBvKRygkNjO3sTrHYTTeIAQGIUryUOWOSOeKqDJMsgXpsgrTsSd-RVKEJ2jsAsE_fdoXmqjDmLGifnJC6JNSjvr4Mn01HG7Emk2p_PvHAk7q1AK5WtYnYuTg9H7DpSL6KkBT8shNcML3AzzgCEdKouqRKm3f17NDVCpYdMoCzg1Q4o1YWa67yAD9HYwNBOIpfXe6WhuzPnnw00E1_SvNm_fsp5nh5ERkTMNVL1vb1V1UQxRV3_MjBk2rcqetuAQgMoq-jyckqoOgQqYC9qgTCvEsfKikyYI82lbPIjOhg\"}",
         "REASON_PHRASE": "OK",
         "STATUS_CODE": "200",
         "content-length": "943",
         "content-type": "application/json; charset=utf-8",
-        "date": "Wed, 09 Mar 2022 23:36:07 GMT",
+        "date": "Thu, 10 Mar 2022 01:37:50 GMT",
         "server": "Kestrel",
         "x-ms-maa-service-version": "1.10.01885.0001",
-        "x-ms-request-id": "00-bc273d737c56a05cbf6fa0f698f96d45-0000000000000000-00"
+        "x-ms-request-id": "00-d9bd6a4667b1c6ba4cbe7d73cf8e231f-0000000000000000-00"
       },
       "Url": "https://REDACTED.wus.attest.azure.net/policies/Tpm?api-version=2020-10-01"
     },
@@ -24,7 +24,7 @@
       "Headers": {
         "content-type": "application/json",
         "user-agent": "azsdk-cpp-Attestation/1.0.0-beta.1 (Windows 10 Enterprise 6.3 22000 22000.1.amd64fre.co_release.210604-1628)",
-        "x-ms-client-request-id": "e93912d5-8953-43ee-6316-e7cccab41a7c"
+        "x-ms-client-request-id": "bbd961c2-f347-4f48-40e5-ea44ead3e062"
       },
       "Method": "GET",
       "Response": {
@@ -33,10 +33,10 @@
         "STATUS_CODE": "200",
         "content-length": "27632",
         "content-type": "application/json; charset=utf-8",
-        "date": "Wed, 09 Mar 2022 23:36:07 GMT",
+        "date": "Thu, 10 Mar 2022 01:37:50 GMT",
         "server": "Kestrel",
         "x-ms-maa-service-version": "1.10.01885.0001",
-        "x-ms-request-id": "00-7bded7382b6acb4ce37d2c02e37cdddd-0000000000000000-00"
+        "x-ms-request-id": "00-10482bb89cca7800c34fb58b716e161e-0000000000000000-00"
       },
       "Url": "https://REDACTED.wus.attest.azure.net/certs"
     }
