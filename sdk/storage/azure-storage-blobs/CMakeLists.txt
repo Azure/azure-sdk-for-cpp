@@ -8,6 +8,7 @@ set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
 
+option(FETCH_SOURCE_DEPS "build source dependencies" OFF)
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/../../../cmake-modules")
 
 include(AzureVcpkg)
@@ -21,16 +22,24 @@ include(AzureBuildTargetForCI)
 
 az_vcpkg_integrate()
 
-if(NOT AZ_ALL_LIBRARIES)
-  find_package(azure-storage-common-cpp "12.2.0" CONFIG QUIET)
+if(FETCH_SOURCE_DEPS)
+    set(AZ_ALL_LIBRARIES ON)
+    include(FolderList)
+    SetCompileOptions(STORAGE_BLOBS)
+    GetFolderList(STORAGE_BLOBS)
+    foreach(oneFolder IN LISTS BUILD_FOLDERS)
+        message("add folder ${oneFolder}")
+        add_subdirectory(${oneFolder} EXCLUDE_FROM_ALL)
+    endforeach()
+elseif(NOT AZ_ALL_LIBRARIES)
+  find_package(azure-storage-common-cpp "12.2.2" CONFIG QUIET)
   if(NOT azure-storage-common-cpp_FOUND)
-    find_package(azure-storage-common-cpp "12.2.0" REQUIRED)
+    find_package(azure-storage-common-cpp "12.2.2" REQUIRED)
   endif()
 endif()
 
 set(
   AZURE_STORAGE_BLOB_HEADER
-    inc/azure/storage/blobs/protocol/blob_rest_client.hpp
     inc/azure/storage/blobs/append_blob_client.hpp
     inc/azure/storage/blobs/blob_client.hpp
     inc/azure/storage/blobs/blob_container_client.hpp
@@ -42,6 +51,7 @@ set(
     inc/azure/storage/blobs/block_blob_client.hpp
     inc/azure/storage/blobs/dll_import_export.hpp
     inc/azure/storage/blobs/page_blob_client.hpp
+    inc/azure/storage/blobs/rest_client.hpp
     inc/azure/storage/blobs.hpp
 )
 
@@ -53,11 +63,11 @@ set(
     src/blob_container_client.cpp
     src/blob_lease_client.cpp
     src/blob_responses.cpp
-    src/blob_rest_client.cpp
     src/blob_sas_builder.cpp
     src/blob_service_client.cpp
     src/block_blob_client.cpp
     src/page_blob_client.cpp
+    src/rest_client.cpp
 )
 
 add_library(azure-storage-blobs ${AZURE_STORAGE_BLOB_HEADER} ${AZURE_STORAGE_BLOB_SOURCE})

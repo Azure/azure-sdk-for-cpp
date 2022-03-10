@@ -12,7 +12,6 @@
 #include <azure/core/paged_response.hpp>
 
 #include "azure/storage/blobs/blob_options.hpp"
-#include "azure/storage/blobs/protocol/blob_rest_client.hpp"
 
 namespace Azure { namespace Storage {
 
@@ -187,7 +186,7 @@ namespace Azure { namespace Storage {
       ~StartBlobCopyOperation() override {}
 
     private:
-      std::string GetResumeToken() const override { _azure_NOT_IMPLEMENTED(); }
+      std::string GetResumeToken() const override { AZURE_NOT_IMPLEMENTED(); }
 
       std::unique_ptr<Azure::Core::Http::RawResponse> PollInternal(
           const Azure::Core::Context& context) override;

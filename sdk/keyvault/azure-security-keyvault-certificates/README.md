@@ -84,13 +84,18 @@ auto response = certificateClient.StartCreateCertificate(certificateName, option
 
 ### Getting a Certificate once completed
 
-Call PollUntilDone to poll the status of the creation. Once the opperation has completed it will return the certificate.
+Call PollUntilDone to poll the status of the creation. Once the opperation has completed we will call GetCertificate to get the newly created certificate.
 
 ```cpp Snippet:CertificateSample1Get
 // wait for complete to get the certificate
-certificate = response.PollUntilDone(defaultWait).Value;
-
+auto pollResponse = response.PollUntilDone(defaultWait).Value;
+// check the status of the poll response
+if (!pollResponse.Error && pollResponse.Status.Value() == "completed")
+{
+// get the certificate
+certificate = certificateClient.GetCertificate(certificateName).Value;
 std::cout << "Created certificate with policy. Certificate name : " << certificate.Name();
+}
 ```
 
 ### Updating certificate properties

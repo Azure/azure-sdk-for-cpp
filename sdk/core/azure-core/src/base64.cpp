@@ -382,9 +382,15 @@ static void Base64WriteThreeLowOrderBytes(std::vector<uint8_t>::iterator destina
 std::vector<uint8_t> Base64Decode(const std::string& text)
 {
   auto inputSize = text.size();
-  if (inputSize < 4)
+  if (inputSize % 4 != 0)
   {
-    return std::vector<uint8_t>(0);
+    throw std::runtime_error("Unexpected end of Base64 encoded string.");
+  }
+
+  // An empty input should result in an empty output.
+  if (inputSize == 0)
+  {
+    return std::vector<uint8_t>();
   }
 
   size_t sourceIndex = 0;
@@ -406,6 +412,10 @@ std::vector<uint8_t> Base64Decode(const std::string& text)
   while (sourceIndex + 4 < inputSize)
   {
     int64_t result = Base64Decode(inputPtr + sourceIndex);
+    if (result < 0)
+    {
+      throw std::runtime_error("Unexpected character in Base64 encoded string");
+    }
     Base64WriteThreeLowOrderBytes(destinationPtr, result);
     destinationPtr += 3;
     sourceIndex += 4;
@@ -436,6 +446,11 @@ std::vector<uint8_t> Base64Decode(const std::string& text)
     i0 |= i3;
     i0 |= i2;
 
+    if (i0 < 0)
+    {
+      throw std::runtime_error("Unexpected character in Base64 encoded string");
+    }
+
     Base64WriteThreeLowOrderBytes(destinationPtr, i0);
     destinationPtr += 3;
   }
@@ -446,6 +461,10 @@ std::vector<uint8_t> Base64Decode(const std::string& text)
     i2 <<= 6;
 
     i0 |= i2;
+    if (i0 < 0)
+    {
+      throw std::runtime_error("Unexpected character in Base64 encoded string");
+    }
 
     destinationPtr[1] = static_cast<uint8_t>(i0 >> 8);
     destinationPtr[0] = static_cast<uint8_t>(i0 >> 16);
@@ -453,6 +472,11 @@ std::vector<uint8_t> Base64Decode(const std::string& text)
   }
   else
   {
+    if (i0 < 0)
+    {
+      throw std::runtime_error("Unexpected character in Base64 encoded string");
+    }
+
     destinationPtr[0] = static_cast<uint8_t>(i0 >> 16);
     destinationPtr += 1;
   }

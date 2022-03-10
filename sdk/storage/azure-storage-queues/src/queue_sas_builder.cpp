@@ -8,6 +8,10 @@
 
 namespace Azure { namespace Storage { namespace Sas {
 
+  namespace {
+    constexpr static const char* SasVersion = "2018-03-28";
+  }
+
   void QueueSasBuilder::SetPermissions(QueueSasPermissions permissions)
   {
     Permissions.clear();
@@ -47,15 +51,14 @@ namespace Azure { namespace Storage { namespace Sas {
 
     std::string stringToSign = Permissions + "\n" + startsOnStr + "\n" + expiresOnStr + "\n"
         + canonicalName + "\n" + Identifier + "\n" + (IPRange.HasValue() ? IPRange.Value() : "")
-        + "\n" + protocol + "\n" + _internal::DefaultSasVersion;
+        + "\n" + protocol + "\n" + SasVersion;
 
     std::string signature = Azure::Core::Convert::Base64Encode(_internal::HmacSha256(
         std::vector<uint8_t>(stringToSign.begin(), stringToSign.end()),
         Azure::Core::Convert::Base64Decode(credential.GetAccountKey())));
 
     Azure::Core::Url builder;
-    builder.AppendQueryParameter(
-        "sv", _internal::UrlEncodeQueryParameter(_internal::DefaultSasVersion));
+    builder.AppendQueryParameter("sv", _internal::UrlEncodeQueryParameter(SasVersion));
     builder.AppendQueryParameter("spr", _internal::UrlEncodeQueryParameter(protocol));
     if (!startsOnStr.empty())
     {

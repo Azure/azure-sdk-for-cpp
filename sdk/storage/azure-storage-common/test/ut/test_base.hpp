@@ -192,7 +192,7 @@ namespace Azure { namespace Storage {
             Azure::Storage::Blobs::BlobContainerClient::CreateFromConnectionString(
                 StandardStorageConnectionString(), m_containerName)
                 .GetUrl(),
-            &m_credential,
+            m_credential,
             options);
       }
     };

@@ -5,6 +5,7 @@
 
 #include <azure/core/credentials/credentials.hpp>
 #include <azure/core/http/policies/policy.hpp>
+#include <azure/storage/common/crypt.hpp>
 #include <azure/storage/common/internal/constants.hpp>
 #include <azure/storage/common/internal/shared_key_policy.hpp>
 #include <azure/storage/common/internal/storage_per_retry_policy.hpp>
@@ -87,25 +88,25 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       const ListSharesOptions& options,
       const Azure::Core::Context& context) const
   {
-    auto protocolLayerOptions = _detail::ShareRestClient::Service::ListSharesSinglePageOptions();
-    protocolLayerOptions.IncludeFlags = options.ListSharesIncludeFlags;
-    if (options.ContinuationToken.HasValue() && !options.ContinuationToken.Value().empty())
-    {
-      protocolLayerOptions.ContinuationToken = options.ContinuationToken;
-    }
+    auto protocolLayerOptions = _detail::ServiceClient::ListServiceSharesSegmentOptions();
+    protocolLayerOptions.Include = options.ListSharesIncludeFlags;
+    protocolLayerOptions.Marker = options.ContinuationToken;
     protocolLayerOptions.MaxResults = options.PageSizeHint;
     protocolLayerOptions.Prefix = options.Prefix;
-    auto response = _detail::ShareRestClient::Service::ListSharesSinglePage(
-        m_serviceUrl, *m_pipeline, context, protocolLayerOptions);
+    auto response = _detail::ServiceClient::ListSharesSegment(
+        *m_pipeline, m_serviceUrl, protocolLayerOptions, context);
 
     ListSharesPagedResponse pagedResponse;
     pagedResponse.ServiceEndpoint = std::move(response.Value.ServiceEndpoint);
-    pagedResponse.Prefix = std::move(response.Value.Prefix);
-    pagedResponse.Shares = std::move(response.Value.Items);
+    pagedResponse.Prefix = response.Value.Prefix.ValueOr(std::string());
+    pagedResponse.Shares = std::move(response.Value.ShareItems);
     pagedResponse.m_shareServiceClient = std::make_shared<ShareServiceClient>(*this);
     pagedResponse.m_operationOptions = options;
     pagedResponse.CurrentPageToken = options.ContinuationToken.ValueOr(std::string());
-    pagedResponse.NextPageToken = response.Value.ContinuationToken;
+    if (!response.Value.NextMarker.empty())
+    {
+      pagedResponse.NextPageToken = response.Value.NextMarker;
+    }
     pagedResponse.RawResponse = std::move(response.RawResponse);
 
     return pagedResponse;
@@ -117,10 +118,10 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       const Azure::Core::Context& context) const
   {
     (void)options;
-    auto protocolLayerOptions = _detail::ShareRestClient::Service::SetPropertiesOptions();
-    protocolLayerOptions.ServiceProperties = std::move(properties);
-    return _detail::ShareRestClient::Service::SetProperties(
-        m_serviceUrl, *m_pipeline, context, protocolLayerOptions);
+    auto protocolLayerOptions = _detail::ServiceClient::SetServicePropertiesOptions();
+    protocolLayerOptions.ShareServiceProperties = std::move(properties);
+    return _detail::ServiceClient::SetProperties(
+        *m_pipeline, m_serviceUrl, protocolLayerOptions, context);
   }
 
   Azure::Response<Models::ShareServiceProperties> ShareServiceClient::GetProperties(
@@ -128,9 +129,9 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       const Azure::Core::Context& context) const
   {
     (void)options;
-    auto protocolLayerOptions = _detail::ShareRestClient::Service::GetPropertiesOptions();
-    auto result = _detail::ShareRestClient::Service::GetProperties(
-        m_serviceUrl, *m_pipeline, context, protocolLayerOptions);
+    auto protocolLayerOptions = _detail::ServiceClient::GetServicePropertiesOptions();
+    auto result = _detail::ServiceClient::GetProperties(
+        *m_pipeline, m_serviceUrl, protocolLayerOptions, context);
     Models::ShareServiceProperties ret;
     ret.Cors = std::move(result.Value.Cors);
     ret.HourMetrics = std::move(result.Value.HourMetrics);

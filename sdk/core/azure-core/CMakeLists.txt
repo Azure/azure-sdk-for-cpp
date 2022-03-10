@@ -66,7 +66,6 @@ set(
     inc/azure/core/http/raw_response.hpp
     inc/azure/core/http/policies/policy.hpp
     inc/azure/core/http/transport.hpp
-    inc/azure/core/internal/azure_assert.hpp
     inc/azure/core/internal/client_options.hpp
     inc/azure/core/internal/contract.hpp
     inc/azure/core/internal/cryptography/sha_hash.hpp
@@ -78,6 +77,7 @@ set(
     inc/azure/core/internal/json/json.hpp
     inc/azure/core/internal/strings.hpp
     inc/azure/core/io/body_stream.hpp
+    inc/azure/core/azure_assert.hpp
     inc/azure/core/rtti.hpp
     inc/azure/core/base64.hpp
     inc/azure/core/case_insensitive_containers.hpp

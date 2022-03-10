@@ -64,7 +64,7 @@ namespace Azure { namespace Core { namespace IO {
      */
     virtual void Rewind()
     {
-      _azure_ASSERT_MSG(
+      AZURE_ASSERT_MSG(
           false,
           "The specified BodyStream doesn't support Rewind which is required to guarantee fault "
           "tolerance when retrying any operation. Consider creating a MemoryBodyStream or "
@@ -86,7 +86,7 @@ namespace Azure { namespace Core { namespace IO {
         size_t count,
         Azure::Core::Context const& context = Azure::Core::Context())
     {
-      _azure_ASSERT(buffer || count == 0);
+      AZURE_ASSERT(buffer || count == 0);
 
       context.ThrowIfCancelled();
       return OnRead(buffer, count, context);
@@ -152,7 +152,7 @@ namespace Azure { namespace Core { namespace IO {
      */
     explicit MemoryBodyStream(const uint8_t* data, size_t length) : m_data(data), m_length(length)
     {
-      _azure_ASSERT(data || length == 0);
+      AZURE_ASSERT(data || length == 0);
     }
 
     int64_t Length() const override { return this->m_length; }
@@ -199,7 +199,7 @@ namespace Azure { namespace Core { namespace IO {
       RandomAccessFileBodyStream(int fileDescriptor, int64_t offset, int64_t length)
           : m_fileDescriptor(fileDescriptor), m_baseOffset(offset), m_length(length), m_offset(0)
       {
-        _azure_ASSERT(fileDescriptor >= 0 && offset >= 0 && length >= 0);
+        AZURE_ASSERT(fileDescriptor >= 0 && offset >= 0 && length >= 0);
       }
 
       RandomAccessFileBodyStream() : m_fileDescriptor(0), m_baseOffset(0), m_length(0), m_offset(0)
@@ -224,7 +224,7 @@ namespace Azure { namespace Core { namespace IO {
       RandomAccessFileBodyStream(void* fileHandle, int64_t offset, int64_t length)
           : m_filehandle(fileHandle), m_baseOffset(offset), m_length(length), m_offset(0)
       {
-        _azure_ASSERT(fileHandle && offset >= 0 && length >= 0);
+        AZURE_ASSERT(fileHandle && offset >= 0 && length >= 0);
       }
 
       RandomAccessFileBodyStream() : m_filehandle(NULL), m_baseOffset(0), m_length(0), m_offset(0)

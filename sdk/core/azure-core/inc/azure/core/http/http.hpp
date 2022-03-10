@@ -226,7 +226,7 @@ namespace Azure { namespace Core { namespace Http {
         : m_method(std::move(httpMethod)), m_url(std::move(url)), m_bodyStream(bodyStream),
           m_retryModeEnabled(false), m_shouldBufferResponse(shouldBufferResponse)
     {
-      _azure_ASSERT_MSG(bodyStream, "The bodyStream pointer cannot be null.");
+      AZURE_ASSERT_MSG(bodyStream, "The bodyStream pointer cannot be null.");
     }
 
   public:

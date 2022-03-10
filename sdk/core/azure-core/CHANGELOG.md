@@ -1,6 +1,22 @@
 # Release History
 
-## 1.4.0-beta.1 (Unreleased)
+## 1.5.0-beta.1 (Unreleased)
+
+### Features Added
+
+### Breaking Changes
+
+### Bugs Fixed
+
+### Other Changes
+
+## 1.4.0 (2022-03-03)
+
+### Features Added
+
+- Stabilized the beta features and changes.
+
+## 1.4.0-beta.1 (2022-02-04)
 
 ### Features Added
 
@@ -9,11 +25,13 @@
 ### Breaking Changes
 
 - Removed the `AzureNoReturnPath()` function from the global namespace, and deprecated the associated macros, such as `AZURE_ASSERT` since they are meant for internal use only. If your code was using the `AZURE_ASSERT` macro, consider using the standard library's `assert` as an alternative.
+- Removed the two parameter `RequestFailedException` ctor, it has no use case and wasn't intended for public use.
 
 ### Bugs Fixed
 
 - Fixed `Azure::DateTime::Parse()` validation if the result is going to exceed `9999-12-31T23:59:59.9999999` due to time zone, leap second, or fractional digits rounding up adjustments.
 - [[#3224]](https://github.com/Azure/azure-sdk-for-cpp/issues/3224) Fixed intermittent crash on macOS when logging is turned on.
+- The `Base64::Decode` API will throw a `std::runtime_error` exception if presented with invalid inputs.
 
 ### Other Changes
 

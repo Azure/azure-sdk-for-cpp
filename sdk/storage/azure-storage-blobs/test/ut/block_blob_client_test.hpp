@@ -24,7 +24,7 @@ namespace Azure { namespace Storage { namespace Test {
       // Create container
       auto const testName(GetTestNameLowerCase(true));
       auto containerClient = GetBlobContainerTestClient();
-      containerClient.Create();
+      containerClient.CreateIfNotExists();
 
       m_blockBlobClient = std::make_shared<Azure::Storage::Blobs::BlockBlobClient>(
           containerClient.GetBlockBlobClient(blobName));

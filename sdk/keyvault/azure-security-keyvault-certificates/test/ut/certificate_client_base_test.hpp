@@ -77,7 +77,7 @@ namespace Azure {
       m_client = InitTestClient<
           Azure::Security::KeyVault::Certificates::CertificateClient,
           Azure::Security::KeyVault::Certificates::CertificateClientOptions>(
-          m_keyVaultUrl, &m_credential, options);
+          m_keyVaultUrl, m_credential, options);
 
       // Update default time depending on test mode.
       UpdateWaitingTime(m_defaultWait);
@@ -176,7 +176,13 @@ namespace Azure {
       options.Policy.LifetimeActions.emplace_back(action);
 
       auto response = client.StartCreateCertificate(name, options);
-      auto result = response.PollUntilDone(defaultWait);
+      auto pollResult = response.PollUntilDone(defaultWait);
+      EXPECT_EQ(pollResult.Value.Name, name);
+      EXPECT_TRUE(pollResult.Value.Status.HasValue());
+      EXPECT_EQ(pollResult.Value.Status.Value(), "completed");
+      EXPECT_EQ(pollResult.RawResponse->GetStatusCode(), Azure::Core::Http::HttpStatusCode::Ok);
+      // get the certificate
+      auto result = client.GetCertificate(name);
 
       EXPECT_EQ(result.Value.Name(), options.Properties.Name);
       EXPECT_EQ(result.Value.Properties.Name, options.Properties.Name);
