@@ -49,16 +49,15 @@ parameters:
   default: []
 
 stages:
-  - ${{ if eq(variables['System.TeamProject'], 'public') }}:
-    - stage: CMakeGeneration
-      jobs:
-        - template: /eng/pipelines/templates/jobs/archetype-sdk-cmake-generate.yml
-          parameters:
-            ServiceDirectory: ${{ parameters.ServiceDirectory }}
-            Artifacts: ${{ parameters.Artifacts }}
-            ArtifactsSource: ${{ parameters.ArtifactsSource }}
-            CMakeTestOptions: ${{ parameters.CMakeTestOptions }}
-            CMakeSourceTestOptions: ${{ parameters.CMakeSourceTestOptions }}
+  - stage: CMakeGeneration
+    jobs:
+      - template: /eng/pipelines/templates/jobs/archetype-sdk-cmake-generate.yml
+        parameters:
+          ServiceDirectory: ${{ parameters.ServiceDirectory }}
+          Artifacts: ${{ parameters.Artifacts }}
+          ArtifactsSource: ${{ parameters.ArtifactsSource }}
+          CMakeTestOptions: ${{ parameters.CMakeTestOptions }}
+          CMakeSourceTestOptions: ${{ parameters.CMakeSourceTestOptions }}
 
   - stage: Build
     dependsOn: []
