@@ -511,10 +511,8 @@ namespace Azure { namespace Security { namespace Attestation { namespace Models 
   /**
    * @brief Represents the result of a policy certificate modification.
    */
-  class PolicyCertificateModification final {
-  private:
-    std::string m_enumerationValue;
-
+  class PolicyCertificateModification final
+      : public Azure::Core::_internal::ExtendableEnumeration<PolicyCertificateModification> {
   public:
     /**
      * @brief Construct a new PolicyResolution object
@@ -522,28 +520,12 @@ namespace Azure { namespace Security { namespace Attestation { namespace Models 
      * @param modification The string resolution used for the result of an attestation policy
      * operation.
      */
-    PolicyCertificateModification(std::string modification)
-        : m_enumerationValue(std::move(modification))
+    explicit PolicyCertificateModification(std::string modification)
+        : ExtendableEnumeration(std::move(modification))
     {
     }
 
     PolicyCertificateModification() = default;
-
-    /**
-     * @brief Enable comparing the PolicyCertificateModification.
-     *
-     * @param other Another PolicyCertificateModification to be compared.
-     */
-    bool operator==(PolicyCertificateModification const& other) const
-    {
-      return m_enumerationValue == other.m_enumerationValue;
-    }
-
-    /**
-     * @brief Return the PolicyCertificateModification string representation.
-     *
-     */
-    std::string const& ToString() const { return m_enumerationValue; }
 
     /**
      * @brief After the operation was performed, the certificate is in the set of
