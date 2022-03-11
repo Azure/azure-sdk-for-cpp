@@ -14,15 +14,15 @@ namespace Azure { namespace Core { namespace _internal {
    * This template exists to simplify the experience of authoring ["extendable
    * enumerations"](https://azure.github.io/azure-sdk/cpp_implementation.html#cpp-enums).
    *
-   * An extendable enumeration derives from the #ExtendableEnumeration base class passing in the
-   * extendable enumeration type as the template argument.
+   * An extendable enumeration derives publicly from the #ExtendableEnumeration base class passing
+   * in the extendable enumeration type as the template argument.
    *
    * Example:
    *
    * \code{.cpp}
    * class MyEnumeration final : public ExtendableEnumeration<AttestationType> {
    * public:
-   *   MyEnumeration(std::string attestationType) :
+   *   explicit MyEnumeration(std::string attestationType) :
    *     ExtendableEnumeration(std::move(attestationType)) {}
    *   MyEnumeration() = default;
    *   static const MyEnumeration Enumerator1;
