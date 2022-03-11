@@ -12,6 +12,7 @@
 #include "azure/attestation/dll_import_export.hpp"
 #include <azure/core/context.hpp>
 #include <azure/core/http/http.hpp>
+#include <azure/core/internal/extendable_enumeration.hpp>
 #include <azure/core/nullable.hpp>
 #include <azure/core/paged_response.hpp>
 #include <azure/core/response.hpp>
@@ -27,39 +28,20 @@ namespace Azure { namespace Security { namespace Attestation { namespace Models 
   /**
    * @brief The AttestationType type represent a Trusted Execution Environment supported by
    * the attestation service.
+   *
    */
-  class AttestationType final {
-  private:
-    std::string m_enumerationValue;
-
+  class AttestationType final
+      : public Azure::Core::_internal::ExtendableEnumeration<AttestationType> {
   public:
     /**
      * @brief Construct a new AttestationType object
      *
      * @param attestationType The string attestationType used for the attestation policy operation.
      */
-    AttestationType(std::string attestationType) : m_enumerationValue(std::move(attestationType)) {}
-
-    /**
-     * @brief Default constructor for an AttestationType.
-     */
-    AttestationType() = default;
-
-    /**
-     * @brief Enable comparing the AttestationType.
-     *
-     * @param other Another extensible enumeration to be compared.
-     */
-    bool operator==(AttestationType const& other) const
+    explicit AttestationType(std::string attestationType)
+        : ExtendableEnumeration(std::move(attestationType))
     {
-      return m_enumerationValue == other.m_enumerationValue;
     }
-
-    /**
-     * @brief Return the AttestationType string representation.
-     *
-     */
-    std::string const& ToString() const { return m_enumerationValue; }
 
     /**
      * @brief Specifies that this should apply to SGX enclaves.
@@ -476,10 +458,8 @@ namespace Azure { namespace Security { namespace Attestation { namespace Models 
    * policy modification.
    *
    */
-  class PolicyModification final {
-  private:
-    std::string m_enumerationValue;
-
+  class PolicyModification final
+      : public Azure::Core::_internal::ExtendableEnumeration<PolicyModification> {
   public:
     /**
      * @brief Construct a new PolicyModification object
@@ -487,23 +467,11 @@ namespace Azure { namespace Security { namespace Attestation { namespace Models 
      * @param modification The string resolution used for the result of an attestation policy
      * operation.
      */
-    PolicyModification(std::string modification) : m_enumerationValue(std::move(modification)) {}
-
-    /**
-     * @brief Enable comparing the PolicyModification.
-     *
-     * @param other Another PolicyModification to be compared.
-     */
-    bool operator==(PolicyModification const& other) const
+    explicit PolicyModification(std::string modification)
+        : ExtendableEnumeration(std::move(modification))
     {
-      return m_enumerationValue == other.m_enumerationValue;
     }
-
-    /**
-     * @brief Return the PolicyModification string representation.
-     *
-     */
-    std::string const& ToString() const { return m_enumerationValue; }
+    PolicyModification() = default;
 
     /**
      * @brief Specifies that the policy object was updated.
@@ -526,12 +494,12 @@ namespace Azure { namespace Security { namespace Attestation { namespace Models 
     /**
      * @brief Result of a modification.
      */
-    Azure::Nullable<PolicyModification> PolicyResolution;
+    PolicyModification PolicyResolution;
 
     /**
      * @brief The SHA256 hash of the policy object which was received by the service.
      */
-    Azure::Nullable<std::vector<uint8_t>> PolicyTokenHash;
+    std::vector<uint8_t> PolicyTokenHash;
 
     /**
      * @brief A JSON Web Key containing the signer of the policy token. If not present, the token

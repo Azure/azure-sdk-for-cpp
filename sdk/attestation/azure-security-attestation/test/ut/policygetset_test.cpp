@@ -110,10 +110,9 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
       EXPECT_EQ(result.RawResponse->GetStatusCode(), Azure::Core::Http::HttpStatusCode::Ok);
 
       // SetPolicy responses should have updated or reset the policy value.
-      EXPECT_TRUE(result.Value.Body.PolicyResolution);
       if (policyToValidate)
       {
-        EXPECT_EQ(PolicyModification::Updated, *result.Value.Body.PolicyResolution);
+        EXPECT_EQ(PolicyModification::Updated, result.Value.Body.PolicyResolution);
 
         // The attestation service only returns the PolicySigner and PolicySigningHash on
         // SetPolicy calls, not ResetPolicy calls.
@@ -141,8 +140,6 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
           EXPECT_FALSE(result.Value.Body.PolicySigner);
         }
 
-        EXPECT_TRUE(result.Value.Body.PolicyTokenHash);
-
         // The returned PolicyTokenHash value is the hash of the entire policy JWS that was sent
         // to the service. In playback mode, the JWS which is calculated for the tests is
         // different from the JWS which was recorded (because the signing certificate is
@@ -158,12 +155,12 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
           std::vector<uint8_t> rawTokenHash = hasher.Final(
               reinterpret_cast<const uint8_t*>(sentToken.RawToken.data()),
               sentToken.RawToken.size());
-          EXPECT_EQ(*result.Value.Body.PolicyTokenHash, rawTokenHash);
+          EXPECT_EQ(result.Value.Body.PolicyTokenHash, rawTokenHash);
         }
       }
       else
       {
-        EXPECT_EQ(PolicyModification::Removed, *result.Value.Body.PolicyResolution);
+        EXPECT_EQ(PolicyModification::Removed, result.Value.Body.PolicyResolution);
       }
 
       return true;
