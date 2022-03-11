@@ -38,7 +38,8 @@ namespace Azure { namespace Security { namespace Attestation { namespace Models 
      *
      * @param attestationType The string attestationType used for the attestation policy operation.
      */
-    explicit AttestationType(std::string attestationType) : ExtendableEnumeration(std::move(attestationType))
+    explicit AttestationType(std::string attestationType)
+        : ExtendableEnumeration(std::move(attestationType))
     {
     }
 
@@ -421,7 +422,10 @@ namespace Azure { namespace Security { namespace Attestation { namespace Models 
      * @param modification The string resolution used for the result of an attestation policy
      * operation.
      */
-    explicit PolicyModification(std::string modification) : ExtendableEnumeration(std::move(modification)) {}
+    explicit PolicyModification(std::string modification)
+        : ExtendableEnumeration(std::move(modification))
+    {
+    }
     PolicyModification() = default;
 
     /**
