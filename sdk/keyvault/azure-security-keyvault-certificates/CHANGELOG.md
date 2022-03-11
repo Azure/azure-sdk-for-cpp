@@ -1,15 +1,19 @@
 # Release History
 
-## 4.0.0-beta.2 (Unreleased)
+## 4.0.0-beta.3 (Unreleased)
 
 ### Features Added
 
 ### Breaking Changes
-- Updated `CreateCertificateOperation.PollUntilDone()` (returned from `StartCreateCertificate()`)  to return the operation status instead of the newly created certificate.
 
 ### Bugs Fixed
 
 ### Other Changes
+
+## 4.0.0-beta.2 (2022-03-08)
+
+### Breaking Changes
+- Updated `CreateCertificateOperation.PollUntilDone()` (returned from `StartCreateCertificate()`)  to return the operation status instead of the newly created certificate.
 
 ## 4.0.0-beta.1 (2021-11-09)
 

@@ -1,15 +1,11 @@
 # Release History
 
-## 1.4.0-beta.1 (Unreleased)
+## 1.5.0-beta.1 (Unreleased)
 
 ### Features Added
-
 - When a `RequestFailedException` exception is thrown, the `what()` method now includes information about the HTTP request which failed.
 
-### Breaking Changes
-
-### Bugs Fixed
-
+### Other Changes
 
 ## 1.4.0 (2022-03-03)
 

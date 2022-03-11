@@ -4,13 +4,18 @@
 
 ### Features Added
 
-- Bumped up SAS token service version to `2020-08-04`.
-
 ### Breaking Changes
 
 ### Bugs Fixed
 
 ### Other Changes
+
+## 12.2.2 (2022-03-09)
+
+### Features Added
+
+- Added `SetImmutabilityPolicy` permission for account SAS.
+- Bumped up SAS token service version to `2020-08-04`.
 
 ## 12.2.1 (2022-02-14)
 

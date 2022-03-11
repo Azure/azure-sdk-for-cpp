@@ -12,6 +12,7 @@
 #include "azure/attestation/dll_import_export.hpp"
 #include <azure/core/context.hpp>
 #include <azure/core/http/http.hpp>
+#include <azure/core/internal/extendable_enumeration.hpp>
 #include <azure/core/nullable.hpp>
 #include <azure/core/paged_response.hpp>
 #include <azure/core/response.hpp>
@@ -29,33 +30,18 @@ namespace Azure { namespace Security { namespace Attestation { namespace Models 
    * the attestation service.
    *
    */
-  class AttestationType final {
-  private:
-    std::string m_attestationType;
-
+  class AttestationType final
+      : public Azure::Core::_internal::ExtendableEnumeration<AttestationType> {
   public:
     /**
      * @brief Construct a new AttestationType object
      *
      * @param attestationType The string attestationType used for the attestation policy operation.
      */
-    AttestationType(std::string attestationType) : m_attestationType(std::move(attestationType)) {}
-
-    /**
-     * @brief Enable comparing the ext enum.
-     *
-     * @param other Another #AttestationType to be compared.
-     */
-    bool operator==(AttestationType const& other) const
+    explicit AttestationType(std::string attestationType)
+        : ExtendableEnumeration(std::move(attestationType))
     {
-      return m_attestationType == other.m_attestationType;
     }
-
-    /**
-     * @brief Return the #AttestationType string representation.
-     *
-     */
-    std::string const& ToString() const { return m_attestationType; }
 
     /**
      * @brief Specifies that this should apply to SGX enclaves.
@@ -427,10 +413,8 @@ namespace Azure { namespace Security { namespace Attestation { namespace Models 
    * policy modification.
    *
    */
-  class PolicyModification final {
-  private:
-    std::string m_policyModification;
-
+  class PolicyModification final
+      : public Azure::Core::_internal::ExtendableEnumeration<PolicyModification> {
   public:
     /**
      * @brief Construct a new PolicyResolution object
@@ -438,23 +422,11 @@ namespace Azure { namespace Security { namespace Attestation { namespace Models 
      * @param modification The string resolution used for the result of an attestation policy
      * operation.
      */
-    PolicyModification(std::string modification) : m_policyModification(std::move(modification)) {}
-
-    /**
-     * @brief Enable comparing the ext enum.
-     *
-     * @param other Another #PolicyModification to be compared.
-     */
-    bool operator==(PolicyModification const& other) const
+    explicit PolicyModification(std::string modification)
+        : ExtendableEnumeration(std::move(modification))
     {
-      return m_policyModification == other.m_policyModification;
     }
-
-    /**
-     * @brief Return the #PolicyModification string representation.
-     *
-     */
-    std::string const& ToString() const { return m_policyModification; }
+    PolicyModification() = default;
 
     /**
      * @brief Specifies that the policy object was updated.
@@ -477,12 +449,12 @@ namespace Azure { namespace Security { namespace Attestation { namespace Models 
     /**
      * @brief Result of a modification.
      */
-    Azure::Nullable<PolicyModification> PolicyResolution;
+    PolicyModification PolicyResolution;
 
     /**
      * @brief The SHA256 hash of the policy object which was received by the service.
      */
-    Azure::Nullable<std::vector<uint8_t>> PolicyTokenHash;
+    std::vector<uint8_t> PolicyTokenHash;
 
     /**
      * @brief A JSON Web Key containing the signer of the policy token. If not present, the token
