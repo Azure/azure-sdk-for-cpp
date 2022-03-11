@@ -15,7 +15,7 @@ namespace Azure { namespace Core { namespace _internal {
    * enumerations"](https://azure.github.io/azure-sdk/cpp_implementation.html#cpp-enums).
    *
    * An extendable enumeration derives from the #ExtendableEnumeration base class passing in the
-   * extendable enumeration type as the template specialization.
+   * extendable enumeration type as the template argument.
    *
    * Example:
    *
