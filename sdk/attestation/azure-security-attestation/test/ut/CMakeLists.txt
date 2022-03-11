@@ -5,8 +5,12 @@
 cmake_minimum_required (VERSION 3.13)
 
 project (azure-security-attestation-test LANGUAGES CXX)
+
 set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
+
+include(CreateMapFile)
+
 
 add_compile_definitions(AZURE_TEST_DATA_PATH="${CMAKE_BINARY_DIR}")
 
