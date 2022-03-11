@@ -1,0 +1,54 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# SPDX-License-Identifier: MIT
+
+cmake_minimum_required (VERSION 3.13)
+
+project (attestation-basic-operations LANGUAGES CXX)
+set(CMAKE_CXX_STANDARD 14)
+set(CMAKE_CXX_STANDARD_REQUIRED True)
+
+add_executable (
+  attestation-attestsgxenclave
+  attestsgxenclave.cpp
+  attestation_collateral.cpp 
+  attestation_collateral.hpp)
+
+create_per_service_target_build(attestation-attestsgxenclave attestation)
+
+target_link_libraries(attestation-attestsgxenclave PRIVATE azure-security-attestation azure-identity get-env-helper)
+
+add_executable (
+  attestation-attestsgxenclavewithruntimejson
+  attestsgxenclavewithruntimejson.cpp
+  attestation_collateral.cpp 
+  attestation_collateral.hpp)
+
+create_per_service_target_build(attestation-attestsgxenclavewithruntimejson attestation)
+
+target_link_libraries(attestation-attestsgxenclavewithruntimejson PRIVATE azure-security-attestation azure-identity get-env-helper)
+
+add_executable (
+  attestation-attestsgxenclavewithruntimebinary
+  attestsgxenclavewithruntimebinary.cpp
+  attestation_collateral.cpp 
+  attestation_collateral.hpp)
+
+create_per_service_target_build(attestation-attestsgxenclavewithruntimebinary attestation)
+
+target_link_libraries(attestation-attestsgxenclavewithruntimebinary PRIVATE azure-security-attestation azure-identity get-env-helper)
+
+
+add_executable (
+  attestation-attestopenenclavewithdraftpolicy
+  attestopenenclavewithdraftpolicy.cpp
+  attestation_collateral.cpp 
+  attestation_collateral.hpp)
+
+create_per_service_target_build(attestation-attestopenenclavewithdraftpolicy attestation)
+
+target_link_libraries(attestation-attestopenenclavewithdraftpolicy PRIVATE azure-security-attestation azure-identity get-env-helper)
+
+
+# Add the sample to be run on CI. 
+# CI pipeline reads the {service}-samples.txt and runs the binaries listed there.
+file(APPEND ${CMAKE_BINARY_DIR}/attestation-samples.txt "${CMAKE_CURRENT_BINARY_DIR}/attestation-attestation\n")
