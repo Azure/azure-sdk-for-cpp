@@ -98,7 +98,7 @@ set(
     inc/azure/core/url.hpp
     inc/azure/core/uuid.hpp
     inc/azure/core.hpp
- )
+)
 
 set(
   AZURE_CORE_SOURCE
