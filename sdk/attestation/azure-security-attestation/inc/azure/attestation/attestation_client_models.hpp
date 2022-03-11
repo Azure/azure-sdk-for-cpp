@@ -243,15 +243,17 @@ namespace Azure { namespace Security { namespace Attestation { namespace Models 
     std::vector<AttestationSigner> Signers;
   };
 
-  /** An AttestationToken represents an RFC 7519 JSON Web Token returned from the attestation
-   * service with the specialized body type.
-   * <typeparam name="T"></typeparam> The type which represents the body of the attestation token.
+  /** @brief Properties of an Attestation Token which are common to all types.
+   *
+   * The fields in the AttestationResult represent the claims in the AttestationToken returned
+   * by the attestation service.
+   *
+   * An AttestationToken represents an RFC 7519 JSON Web Token returned from the attestation
+   * service with the specialized body type or an RFC 7515 JSON Web Signature passed into the
+   * attestation service.
    */
-
-  using GenericAttestationToken = std::nullptr_t;
-
-  template <typename T = GenericAttestationToken> class AttestationToken final {
-  public:
+  struct AttestationTokenBase
+  {
     /**
      * @brief The full RFC 7515 JWS/JWT token returned by the attestation service.
      */
@@ -334,7 +336,13 @@ namespace Azure { namespace Security { namespace Attestation { namespace Models 
      * Section 4.1.3</a> for more information.
      */
     Azure::Nullable<std::string> Audience;
+  };
 
+  /**
+   * @brief Optional elements when an AttestationToken is specialized on a type.
+   */
+  template <typename T> struct AttestationTokenOptional
+  {
     /**
      * @brief The deserialized body of the attestation token.
      *
@@ -342,11 +350,45 @@ namespace Azure { namespace Security { namespace Attestation { namespace Models 
     T Body;
   };
 
+  template <> struct AttestationTokenOptional<std::nullptr_t>
+  {
+  };
+
   /** @brief An AttestationResult reflects the result of an Attestation operation.
    *
    * The fields in the AttestationResult represent the claims in the AttestationToken returned
    * by the attestation service.
+   *
+   * @details When the attestation service returns a model type to the client, it embeds the
+   * response in an AttestationToken, which is an [RFC7519 JSON Web Token]
+   * (https://www.rfc-editor.org/rfc/rfc7519.html). The AttestationToken type represents both the
+   * token and the embedded model type. In this scenario, the AttestationToken template will be
+   * specialized on the model type (In other words, `AttestationToken<ModelType>`).
+   *
+   * There is another use for an AttestationToken object. That's when the model type for the
+   * attestation token is unknown, or when it is not meaningful in context.
+   *
+   * For example, when the AttestationAdministrationClient::SetAttestationPolicy API returns, the
+   * resulting PolicyResult model type contains a PolicyTokenHash field. This field consists of the
+   * SHA256 hash of the policy document sent to the attestation service.
+   *
+   * In order to verify that the attestation service correctly received the attestation policy sent
+   * by the client, the AttestationAdministrationClient::CreateSetAttestationPolicyToken API can be
+   * used to create an AttestationToken object which is not specialized on any type
+   * (`AttestationToken<>`). The RawToken field in that can be used to calculate the hash which was
+   * sent to the service.
+   *
+   * Similarly, the AttestationTokenValidationOptions object has a TokenValidationCallback method.
+   * This callback is called to allow the client to perform additional validations of the
+   * attestation token beyond those normally performed by the attestation service. This callback
+   * should not know the model type associated with the token, so it receives an AttestationToken<>
+   * object.
    */
+  template <typename T = std::nullptr_t>
+  struct AttestationToken final : public AttestationTokenBase, AttestationTokenOptional<T>
+  {
+  };
+
   struct AttestationResult final
   {
 

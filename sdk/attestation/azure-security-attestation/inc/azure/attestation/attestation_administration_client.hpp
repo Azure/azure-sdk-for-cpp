@@ -100,6 +100,23 @@ namespace Azure { namespace Security { namespace Attestation {
     /**
      * @brief Sets the attestation policy for the specified AttestationType.
      *
+     * @details The SetAttestationPolicy API sets the attestation policy for the specified
+     * attestationType to the value specified.
+     *
+     * The result of a SetAttestationPolicy API call is a PolicyResult object, which contains the
+     * result of the operation, the hash of the AttestationToken object sent to the service, and (if
+     * the SetPolicyOptions contains a `SigningKey` field) the certificate which was used to sign
+     * the attestation policy.
+     *
+     * Note that the hash of the AttestationToken is not immediately derivable from the inputs to
+     * this function - the function calls the CreateAttestationPolicyToken to create the underlying
+     * token which will be sent to the service.
+     *
+     * In order to verify that the attestation service correctly received the attestation policy
+     * sent by the client, the caller of the SetAttestationPolicy can also call
+     * CreateAttestationPolicyToken and calculate the SHA256 hash of the RawToken field and check to
+     * ensure that it matches the value returned by the service.
+     *
      * @param attestationType Sets the policy on the specified AttestationType.
      * @param policyToSet The policy document to set.
      * @param options Options used when setting the policy, including signer.

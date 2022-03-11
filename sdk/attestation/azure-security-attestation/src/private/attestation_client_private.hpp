@@ -204,6 +204,24 @@ namespace Azure { namespace Security { namespace Attestation { namespace _detail
       return Azure::Nullable<Models::AttestationSigner>();
     }
 
+    template <typename Ty>
+    void SetTokenBody(
+        Azure::Core::Json::_internal::json const& jsonBody,
+        Azure::Nullable<Ty> bodyToSet)
+    {
+      if (bodyToSet)
+      {
+        m_token.Body = *bodyToSet;
+      }
+      else
+      {
+        m_token.Body = TDeserializer::Deserialize(jsonBody);
+      }
+    }
+
+    template <>
+    void SetTokenBody(Azure::Core::Json::_internal::json const&, Azure::Nullable<std::nullptr_t>){};
+
   public:
     /** @brief Constructs a new instance of an AttestationToken object from a JSON Web Token or JSON
      * Web Signature.
@@ -291,14 +309,7 @@ namespace Azure { namespace Security { namespace Attestation { namespace _detail
           Azure::Core::Json::_internal::JsonOptional::SetIfExists(
               m_token.UniqueIdentifier, jsonBody, "jti");
 
-          if (preferredBody)
-          {
-            m_token.Body = *preferredBody;
-          }
-          else
-          {
-            m_token.Body = TDeserializer::Deserialize(jsonBody);
-          }
+          SetTokenBody(jsonBody, preferredBody);
         }
         // Remove the body from the token, we've remembered its contents.
         token.erase(0, bodyIndex + 1);
