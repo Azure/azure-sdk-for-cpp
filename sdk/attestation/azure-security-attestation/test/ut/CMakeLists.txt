@@ -33,8 +33,4 @@ create_map_file(azure-security-attestation-test azure-security-attestation-test.
 
 target_link_libraries(azure-security-attestation-test PRIVATE Azure::azure-security-attestation azure-identity azure-core-test-fw gtest_main)
 
-if (MSVC)
-    target_compile_options(azure-security-attestation-test PUBLIC /wd6326 /wd26495 /wd26812)
-endif()
-
 gtest_discover_tests(azure-security-attestation-test TEST_PREFIX azure-security-attestation.)
