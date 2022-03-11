@@ -33,32 +33,6 @@ namespace Azure { namespace Security { namespace Attestation { namespace _detail
     static T Deserialize(Azure::Core::Json::_internal::json const&) { return T(); }
   };
 
-  template <typename T, class TDeserializer = EmptyDeserializer<T>>
-  struct TokenBodySetter {
-
-      template<typename T1>
-static void SetTokenBody(
-      Models::AttestationToken<T1>& token,
-      Azure::Core::Json::_internal::json const& jsonBody,
-      Azure::Nullable<T1> bodyToSet)
-  {
-    if (bodyToSet)
-    {
-      token.Body = *bodyToSet;
-    }
-    else
-    {
-      token.Body = TDeserializer::Deserialize(jsonBody);
-    }
-  }
-
-template<>
-  static void SetTokenBody(
-      Models::AttestationToken<std::nullptr_t>&,
-      Azure::Core::Json::_internal::json const&,
-      Azure::Nullable<std::nullptr_t>){}
-  };
-
   template <class T, class TDeserializer = EmptyDeserializer<T>> class AttestationTokenInternal {
   private:
     Models::AttestationToken<T> m_token;
@@ -230,6 +204,23 @@ template<>
       return Azure::Nullable<Models::AttestationSigner>();
     }
 
+    template <typename Ty>
+    void SetTokenBody(
+        Azure::Core::Json::_internal::json const& jsonBody,
+        Azure::Nullable<Ty> bodyToSet)
+    {
+      if (bodyToSet)
+      {
+        m_token.Body = *bodyToSet;
+      }
+      else
+      {
+        m_token.Body = TDeserializer::Deserialize(jsonBody);
+      }
+    }
+
+    void SetTokenBody(Azure::Core::Json::_internal::json const&, Azure::Nullable<std::nullptr_t>) {}
+
   public:
     /** @brief Constructs a new instance of an AttestationToken object from a JSON Web Token or JSON
      * Web Signature.
@@ -317,7 +308,7 @@ template<>
           Azure::Core::Json::_internal::JsonOptional::SetIfExists(
               m_token.UniqueIdentifier, jsonBody, "jti");
 
-          TokenBodySetter<T, TDeserializer>::SetTokenBody(m_token, jsonBody, preferredBody);
+          SetTokenBody(jsonBody, preferredBody);
         }
         // Remove the body from the token, we've remembered its contents.
         token.erase(0, bodyIndex + 1);
