@@ -12,9 +12,9 @@ public:
   MyEnum(std::string initialValue) : ExtendableEnumeration(std::move(initialValue)) {}
   MyEnum() = default;
 
-  const static MyEnum Value1;
-  const static MyEnum Value2;
-  const static MyEnum Value3;
+  static const MyEnum Value1;
+  static const MyEnum Value2;
+  static const MyEnum Value3;
 };
 
 const MyEnum MyEnum::Value1("Value1");

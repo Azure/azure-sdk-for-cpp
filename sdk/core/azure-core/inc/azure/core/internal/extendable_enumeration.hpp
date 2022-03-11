@@ -36,6 +36,9 @@ namespace Azure { namespace Core { namespace _internal {
   private:
     std::string m_enumerationValue;
 
+  protected:
+    ~ExtendableEnumeration() = default;
+
   public:
     /**
      * @brief Construct a new extensable enumeration object
