@@ -17,10 +17,7 @@ steps:
     displayName: Show current path
 
   - script: |
-      echo "Check value:"
-      echo $VCPKG_BINARY_SOURCES_SECRET
       export VCPKG_BINARY_SOURCES=$VCPKG_BINARY_SOURCES_SECRET
-      echo $VCPKG_BINARY_SOURCES
       ${{ parameters.Env }} cmake ${{ parameters.GenerateArgs }} ..
     workingDirectory: ${{ parameters.CmakeGeneratePath }}/build
     displayName: cmake generate
