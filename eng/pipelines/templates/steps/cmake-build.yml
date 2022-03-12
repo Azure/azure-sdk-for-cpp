@@ -17,6 +17,8 @@ steps:
   - script: ${{ parameters.Env }} cmake ${{ parameters.GenerateArgs }} ..
     workingDirectory: build
     displayName: cmake generate
+    env:
+      VCPKG_BINARY_SOURCES: $(VCPKG_BINARY_SOURCES)
 
 # Core should build all cmake tagets
   - ${{ if and(eq(parameters.Build, true), eq(parameters.ServiceDirectory, 'core')) }}:

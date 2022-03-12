@@ -19,6 +19,8 @@ steps:
   - script: ${{ parameters.Env }} cmake ${{ parameters.GenerateArgs }} ..
     workingDirectory: ${{ parameters.CmakeGeneratePath }}/build
     displayName: cmake generate
+    env:
+      VCPKG_BINARY_SOURCES: $(VCPKG_BINARY_SOURCES)
 
   - script: rm -rf build
     workingDirectory: ${{ parameters.CmakeGeneratePath }}
