@@ -4,6 +4,11 @@
 # We need to know an absolute path to our repo root to do things like referencing ./LICENSE.txt file.
 set(AZ_ROOT_DIR "${CMAKE_CURRENT_LIST_DIR}/..")
 
+message("ENV VARS FOR VCPKG:")
+message("PATH: $ENV{VCPKG_INSTALLATION_ROOT}")
+message("TRIPLET: $ENV{VCPKG_DEFAULT_TRIPLET}")
+message("CACHE: $ENV{VCPKG_BINARY_SOURCES}")
+
 macro(az_vcpkg_integrate)
   # vcpkg Integration
   if(DEFINED ENV{VCPKG_ROOT} AND NOT DEFINED CMAKE_TOOLCHAIN_FILE)
