@@ -11,7 +11,7 @@ steps:
       Write-Host "##vso[task.prependpath]$TargetPath"
       Write-Host "##vso[task.setvariable variable=VCPKG_INSTALLATION_ROOT]$TargetPath"
       Write-Host "##vso[task.setvariable variable=VcpkgCommit]$VcpkgCommit"
-      Write-Host "##vso[task.setvariable variable=VCPKG_BINARY_SOURCES]clear;x-azblob,https://cppvcpkgcache.blob.core.windows.net/public-vcpkg-container,,read"
+      Write-Host "##vso[task.setvariable variable=VCPKG_BINARY_SOURCES_SECRET;issecret=true;]clear;x-azblob,https://cppvcpkgcache.blob.core.windows.net/public-vcpkg-container,,read"
     displayName: Set Vcpkg aVariables
 
   - pwsh: |
@@ -19,7 +19,7 @@ steps:
         throw 'No VCPKG SAS'
       }
       Write-Host "Setting vcpkg binary cache to read and write"
-      Write-Host "##vso[task.setvariable variable=VCPKG_BINARY_SOURCES;issecret=true;]clear;x-azblob,https://cppvcpkgcache.blob.core.windows.net/public-vcpkg-container,$env:VCPKG_CACHE_SAS,readwrite"
+      Write-Host "##vso[task.setvariable variable=VCPKG_BINARY_SOURCES_SECRET;issecret=true;]clear;x-azblob,https://cppvcpkgcache.blob.core.windows.net/public-vcpkg-container,$env:VCPKG_CACHE_SAS,readwrite"
     displayName: Set Vcpkg Write-mode Cache
     env:
       VCPKG_CACHE_SAS: $(cpp-vcpkg-cache-write-sas)
