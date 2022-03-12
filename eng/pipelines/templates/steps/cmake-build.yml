@@ -14,7 +14,9 @@ steps:
     workingDirectory: build
     displayName: cmake --version
 
-  - script: VCPKG_BINARY_SOURCES="$($VCPKG_BINARY_SOURCES_SECRET)" ${{ parameters.Env }} cmake ${{ parameters.GenerateArgs }} ..
+  - script: |
+      export VCPKG_BINARY_SOURCES="$($VCPKG_BINARY_SOURCES_SECRET)"
+      ${{ parameters.Env }} cmake ${{ parameters.GenerateArgs }} ..
     workingDirectory: build
     displayName: cmake generate
     env:
