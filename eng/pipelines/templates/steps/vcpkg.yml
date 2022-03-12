@@ -20,7 +20,7 @@ steps:
       }
       $SasOnly=$env:VCPKG_CACHE_SAS
       if ($env:VCPKG_CACHE_SAS.ToCharArray()[0] -eq "\?") {
-        $SasOnly=($env:VCPKG_CACHE_SAS -split "\?")[1]
+        $SasOnly=($env:VCPKG_CACHE_SAS -split "?")[1]
       }
       Write-Host "Setting vcpkg binary cache to read and write"
       Write-Host "##vso[task.setvariable variable=VCPKG_BINARY_SOURCES_SECRET;issecret=true;]clear;x-azblob,https://cppvcpkgcache.blob.core.windows.net/public-vcpkg-container,$SasOnly,readwrite"
