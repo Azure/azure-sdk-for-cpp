@@ -15,13 +15,16 @@ steps:
     displayName: Set Vcpkg aVariables
 
   - pwsh: |
+      if ([string]::IsNullOrEmpty($env:VCPKG_CACHE_SAS)) {
+        throw 'No VCPKG SAS'
+      }
       Write-Host "Setting vcpkg binary cache to read and write"
       Write-Host "##vso[task.setvariable variable=VCPKG_BINARY_SOURCES;issecret=true]clear;x-azblob,https://cppvcpkgcache.blob.core.windows.net/public-vcpkg-container,$env:VCPKG_CACHE_SAS,readwrite"
     displayName: Set Vcpkg Write-mode Cache
     env:
       VCPKG_CACHE_SAS: $(cpp-vcpkg-cache-write-sas)
     condition: >-
-      and(succeeded(), eq(variables['System.TeamProject'], 'internal'))
+      eq(variables['System.TeamProject'], 'internal')
 
   - task: PowerShell@2
     inputs:
