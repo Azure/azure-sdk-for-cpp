@@ -19,6 +19,34 @@
 namespace Azure { namespace Core {
   /**
    * @brief An error while trying to send a request to Azure service.
+   *
+   * @details
+   * A RequestFailedException is sometimes generated as a result of an HTTP response returned from
+   * the service, and is sometimes generated for other reasons. The contents of the
+   * RequestFailedException depend on whether the exception was thrown as a result of an HTTP
+   * response error or other reasons.
+   *
+   * To determine which form of RequestFailedException has occurred, a client can check the
+   * `RequestFailedException::RawResponse` field - if that value is null, then the request failed
+   * for some reason other than an HTTP response, the reason can be determined by calling
+   * `RequestFailedException::what()`.
+   *
+   * If the request has failed due to an HTTP response code, the client can inspect other fields in
+   * the exception to determine the actual failure returned by the service.
+   * 
+   * \code{c++}
+   *   catch (Azure::Core::RequestFailedException const& e)
+   *   {
+   *     std::cout << "Request Failed Exception happened:" << std::endl << e.what() << std::endl;
+   *     if (e.RawResponse)
+   *     {
+   *       std::cout << "Error Code: " << e.ErrorCode << std::endl;
+   *       std::cout << "Error Message: " << e.Message << std::endl;
+   *     }
+   *     return 0;
+   * \endcode
+  }
+
    */
   class RequestFailedException : public std::runtime_error {
   public:
