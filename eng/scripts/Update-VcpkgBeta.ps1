@@ -2,19 +2,18 @@ param(
     [string] $VcpkgBetaFolder,
     [string] $VcpkgFolder,
     [string] $ReleaseArtifactSourceDirectory,
+    [string] $VcpkgPortName,
     [string] $GitCommitParameters
 )
-
-$portFolder = "azure-$Service-cpp"
 
 # To ensure a clean synchronization remove all files at the destination.
 # This ensures that files no longer present in the build output do not
 # persist in later versions.
-Remove-Item "$VcpkgBetaFolder/ports/$portFolder" -Recurse -Force
+Remove-Item "$VcpkgBetaFolder/ports/$VcpkgPortName" -Recurse -Force
 
 Copy-Item `
     -Path "$ReleaseArtifactSourceDirectory/vcpkg/port/*" `
-    -Destination "$VcpkgBetaFolder/vcpkg/ports/$portFolder"
+    -Destination "$VcpkgBetaFolder/vcpkg/ports/$VcpkgPortName"
 
 $rawPackageInfo = Get-Content -Raw -Path $ReleaseArtifactSourceDirectory/package-info.json
 $packageInfo = ConvertFrom-Json $rawPackageInfo
