@@ -10,6 +10,7 @@ param(
 # This ensures that files no longer present in the build output do not
 # persist in later versions.
 Remove-Item "$VcpkgBetaFolder/ports/$VcpkgPortName" -Recurse -Force
+New-Item -ItemType Directory -Path "$VcpkgBetaFolder/vcpkg/ports/$VcpkgPortName"
 
 Copy-Item `
     -Path "$ReleaseArtifactSourceDirectory/vcpkg/port/*" `
