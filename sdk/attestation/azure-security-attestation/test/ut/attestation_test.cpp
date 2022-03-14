@@ -91,6 +91,7 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
       {
         EXPECT_EQ(m_endpoint, *response.Value.Issuer);
       }
+
       EXPECT_TRUE(response.Value.Body.SgxMrEnclave);
       EXPECT_TRUE(response.Value.Body.SgxMrSigner);
       EXPECT_TRUE(response.Value.Body.SgxSvn);
@@ -128,16 +129,21 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
     auto client(CreateClient());
 
     AttestationType type = std::get<1>(GetParam());
+    auto expectedSigners(client->GetAttestationSigningCertificates().Value);
     if (type == AttestationType::OpenEnclave)
     {
       auto report = AttestationCollateral::OpenEnclaveReport();
-      auto attestResponse = client->AttestOpenEnclave(report);
+      auto attestResponse
+          = client->AttestOpenEnclave(report, client->GetAttestationSigningCertificates().Value);
+      ValidateAttestResponse(attestResponse);
+
+      attestResponse = client->AttestOpenEnclave(report, expectedSigners);
       ValidateAttestResponse(attestResponse);
     }
     else if (type == AttestationType::SgxEnclave)
     {
       auto quote = AttestationCollateral::SgxQuote();
-      auto attestResponse = client->AttestSgxEnclave(quote);
+      auto attestResponse = client->AttestSgxEnclave(quote, expectedSigners);
       ValidateAttestResponse(attestResponse);
     }
   }
@@ -148,18 +154,20 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
     auto runtimeData = AttestationCollateral::RuntimeData();
 
     AttestationType type = std::get<1>(GetParam());
+    AttestOptions options;
+    auto expectedSigners(client->GetAttestationSigningCertificates().Value);
+    AttestationData data{runtimeData, AttestationDataType::Binary};
+    options.RuntimeData = data;
     if (type == AttestationType::OpenEnclave)
     {
       auto report = AttestationCollateral::OpenEnclaveReport();
-      AttestationData data{runtimeData, AttestationDataType::Binary};
-      auto attestResponse = client->AttestOpenEnclave(report, {data});
+      auto attestResponse = client->AttestOpenEnclave(report, expectedSigners, options);
       ValidateAttestResponse(attestResponse, data);
     }
     else if (type == AttestationType::SgxEnclave)
     {
       auto quote = AttestationCollateral::SgxQuote();
-      AttestationData data{runtimeData, AttestationDataType::Binary};
-      auto attestResponse = client->AttestSgxEnclave(quote, {data});
+      auto attestResponse = client->AttestSgxEnclave(quote, expectedSigners, options);
       ValidateAttestResponse(attestResponse, data);
     }
   }
@@ -185,12 +193,13 @@ authorizationrules
 issuancerules {
     c:[type=="x-ms-sgx-mrsigner"] => issue(type="custom-name", value=c.value);
 };)";
-
+    auto expectedSigners(client->GetAttestationSigningCertificates().Value);
     if (type == AttestationType::OpenEnclave)
     {
       auto report = AttestationCollateral::OpenEnclaveReport();
 
-      auto attestResponse = client->AttestOpenEnclave(report, options);
+      auto attestResponse = client->AttestOpenEnclave(report, expectedSigners, options);
+      // Because a draft policy was set, the resulting token is unsigned.
       ValidateAttestResponse(
           attestResponse, Azure::Nullable<AttestationData>(), *options.DraftPolicyForAttestation);
 
@@ -205,13 +214,14 @@ authorizationrules
 issuancerules {
     c:[type=="x-ms-sgx-mrsigner"] => issue(type="custom-name", value=c.value);
 };)";
-      EXPECT_THROW(client->AttestOpenEnclave(report, options), Azure::Core::RequestFailedException);
-
+      EXPECT_THROW(
+          client->AttestOpenEnclave(report, expectedSigners, options),
+          Azure::Core::RequestFailedException);
     }
     else if (type == AttestationType::SgxEnclave)
     {
       auto quote = AttestationCollateral::SgxQuote();
-      auto attestResponse = client->AttestSgxEnclave(quote, options);
+      auto attestResponse = client->AttestSgxEnclave(quote, expectedSigners, options);
       ValidateAttestResponse(
           attestResponse, Azure::Nullable<AttestationData>(), *options.DraftPolicyForAttestation);
 
@@ -226,7 +236,9 @@ authorizationrules
 issuancerules {
     c:[type=="x-ms-sgx-mrsigner"] => issue(type="custom-name", value=c.value);
 };)";
-      EXPECT_THROW(client->AttestSgxEnclave(quote, options), Azure::Core::RequestFailedException);
+      EXPECT_THROW(
+          client->AttestSgxEnclave(quote, expectedSigners, options),
+          Azure::Core::RequestFailedException);
     }
   }
 
@@ -236,18 +248,18 @@ issuancerules {
     auto runtimeData = AttestationCollateral::RuntimeData();
 
     AttestationType type = std::get<1>(GetParam());
+    AttestationData data{runtimeData, AttestationDataType::Json};
+    auto expectedSigners(client->GetAttestationSigningCertificates().Value);
     if (type == AttestationType::OpenEnclave)
     {
       auto report = AttestationCollateral::OpenEnclaveReport();
-      AttestationData data{runtimeData, AttestationDataType::Json};
-      auto attestResponse = client->AttestOpenEnclave(report, {data});
+      auto attestResponse = client->AttestOpenEnclave(report, expectedSigners, {data});
       ValidateAttestResponse(attestResponse, data);
     }
     else if (type == AttestationType::SgxEnclave)
     {
       auto quote = AttestationCollateral::SgxQuote();
-      AttestationData data{runtimeData, AttestationDataType::Json};
-      auto attestResponse = client->AttestSgxEnclave(quote, {data});
+      auto attestResponse = client->AttestSgxEnclave(quote, expectedSigners, {data});
       ValidateAttestResponse(attestResponse, data);
     }
   }
