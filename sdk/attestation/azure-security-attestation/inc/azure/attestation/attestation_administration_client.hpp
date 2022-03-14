@@ -95,7 +95,7 @@ namespace Azure { namespace Security { namespace Attestation {
     Response<Models::AttestationToken<std::string>> GetAttestationPolicy(
         Models::AttestationType const& attestationType,
         GetPolicyOptions const& options = GetPolicyOptions(),
-        Azure::Core::Context const& context = Azure::Core::Context::ApplicationContext) const;
+        Azure::Core::Context const& context = Azure::Core::Context{}) const;
 
     /**
      * @brief Sets the attestation policy for the specified AttestationType.
@@ -128,7 +128,7 @@ namespace Azure { namespace Security { namespace Attestation {
         Models::AttestationType const& attestationType,
         std::string const& policyToSet,
         SetPolicyOptions const& options = SetPolicyOptions(),
-        Azure::Core::Context const& context = Azure::Core::Context::ApplicationContext) const;
+        Azure::Core::Context const& context = Azure::Core::Context{}) const;
 
     /**
      * @brief Resets the attestation policy for the specified AttestationType to its default.
@@ -142,7 +142,7 @@ namespace Azure { namespace Security { namespace Attestation {
     Response<Models::AttestationToken<Models::PolicyResult>> ResetAttestationPolicy(
         Models::AttestationType const& attestationType,
         SetPolicyOptions const& options = SetPolicyOptions(),
-        Azure::Core::Context const& context = Azure::Core::Context::ApplicationContext) const;
+        Azure::Core::Context const& context = Azure::Core::Context{}) const;
 
     /**
      * @brief Returns an Attestation Token object which would be sent to the attestation service to
@@ -189,7 +189,7 @@ namespace Azure { namespace Security { namespace Attestation {
     GetPolicyManagementCertificates(
         GetPolicyManagementCertificatesOptions const& options
         = GetPolicyManagementCertificatesOptions{},
-        Azure::Core::Context const& context = Azure::Core::Context::ApplicationContext) const;
+        Azure::Core::Context const& context = Azure::Core::Context{}) const;
 
     /**
      * @brief Adds a new certificate to the list of policy management certificates.
@@ -216,7 +216,7 @@ namespace Azure { namespace Security { namespace Attestation {
         AttestationSigningKey const& signerForRequest,
         AddPolicyManagementCertificatesOptions const& options
         = AddPolicyManagementCertificatesOptions{},
-        Azure::Core::Context const& context = Azure::Core::Context::ApplicationContext) const;
+        Azure::Core::Context const& context = Azure::Core::Context{}) const;
 
     /**
      * @brief Removes a certificate from the list of policy management certificates for the
@@ -244,7 +244,7 @@ namespace Azure { namespace Security { namespace Attestation {
         AttestationSigningKey const& signerForRequest,
         AddPolicyManagementCertificatesOptions const& options
         = AddPolicyManagementCertificatesOptions{},
-        Azure::Core::Context const& context = Azure::Core::Context::ApplicationContext) const;
+        Azure::Core::Context const& context = Azure::Core::Context{}) const;
 
   private:
     Azure::Core::Url m_endpoint;
@@ -256,6 +256,16 @@ namespace Azure { namespace Security { namespace Attestation {
     mutable std::vector<Models::AttestationSigner> m_attestationSigners;
 
     std::vector<Models::AttestationSigner> const& GetAttestationSigners(
+        Azure::Core::Context const& context) const;
+
+    std::string CreatePolicyCertificateModificationToken(
+        std::string const& pemEncodedX509CertificateToAdd,
+        AttestationSigningKey const& existingSigningKey) const;
+
+    Models::AttestationToken<Models::PolicyCertificateModificationResult>
+    ProcessPolicyCertModificationResult(
+        std::unique_ptr<Azure::Core::Http::RawResponse> const& serverResponse,
+        AttestationTokenValidationOptions const& tokenValidationOptions,
         Azure::Core::Context const& context) const;
   };
 

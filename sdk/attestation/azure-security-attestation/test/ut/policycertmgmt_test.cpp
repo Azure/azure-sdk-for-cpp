@@ -283,7 +283,7 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
     // Make sure that the certificate we just removed is NOT included in the enumeration.
     {
       auto policyCertificates = adminClient->GetPolicyManagementCertificates();
-      EXPECT_GT(policyCertificates.Value.Body.Certificates.size(), 1ul);
+      EXPECT_EQ(policyCertificates.Value.Body.Certificates.size(), 1ul);
 
       bool foundIsolatedCertificate = false;
       bool foundAddedCertificate = false;

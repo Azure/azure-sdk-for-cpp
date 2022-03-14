@@ -128,7 +128,7 @@ namespace Azure { namespace Security { namespace Attestation { namespace _detail
   }
 
   std::string AttestationServiceTokenResponseSerializer::Deserialize(
-      std::unique_ptr<Azure::Core::Http::RawResponse>& response)
+      std::unique_ptr<Azure::Core::Http::RawResponse> const& response)
   {
     auto parsedBody = Azure::Core::Json::_internal::json::parse(response->GetBody());
     return Deserialize(parsedBody);
@@ -222,33 +222,33 @@ namespace Azure { namespace Security { namespace Attestation { namespace _detail
   JsonWebKey JsonWebKeySerializer::Deserialize(const Azure::Core::Json::_internal::json& jwk)
   {
     JsonWebKey returnValue;
-    JsonOptional::SetIfExists(returnValue.kty, jwk, "kty");
-    if (!returnValue.kty)
+    JsonOptional::SetIfExists(returnValue.Kty, jwk, "kty");
+    if (!returnValue.Kty)
     {
       throw std::runtime_error("Could not find required field 'kty' in JSON Web Key");
     }
-    JsonOptional::SetIfExists(returnValue.alg, jwk, "alg");
-    JsonOptional::SetIfExists(returnValue.kid, jwk, "kid");
-    JsonOptional::SetIfExists(returnValue.use, jwk, "use");
-    JsonOptional::SetIfExists(returnValue.keyops, jwk, "key_ops");
-    JsonOptional::SetIfExists(returnValue.x5t, jwk, "x5t");
-    JsonOptional::SetIfExists(returnValue.x5t256, jwk, "x5t#S256");
-    JsonOptional::SetIfExists(returnValue.x5u, jwk, "x5u");
-    JsonOptional::SetIfExists(returnValue.x5c, jwk, "x5c");
+    JsonOptional::SetIfExists(returnValue.Alg, jwk, "alg");
+    JsonOptional::SetIfExists(returnValue.Kid, jwk, "kid");
+    JsonOptional::SetIfExists(returnValue.Use, jwk, "use");
+    JsonOptional::SetIfExists(returnValue.KeyOps, jwk, "key_ops");
+    JsonOptional::SetIfExists(returnValue.X5t, jwk, "x5t");
+    JsonOptional::SetIfExists(returnValue.X5t256, jwk, "x5t#S256");
+    JsonOptional::SetIfExists(returnValue.X5u, jwk, "x5u");
+    JsonOptional::SetIfExists(returnValue.X5c, jwk, "x5c");
 
     // ECDSA key values.
-    JsonOptional::SetIfExists(returnValue.crv, jwk, "crv");
-    JsonOptional::SetIfExists(returnValue.x, jwk, "x");
-    JsonOptional::SetIfExists(returnValue.y, jwk, "y");
-    JsonOptional::SetIfExists(returnValue.d, jwk, "d");
+    JsonOptional::SetIfExists(returnValue.Crv, jwk, "crv");
+    JsonOptional::SetIfExists(returnValue.X, jwk, "x");
+    JsonOptional::SetIfExists(returnValue.Y, jwk, "y");
+    JsonOptional::SetIfExists(returnValue.D, jwk, "d");
 
     // RSA key values.
-    JsonOptional::SetIfExists(returnValue.n, jwk, "n");
-    JsonOptional::SetIfExists(returnValue.e, jwk, "e");
-    JsonOptional::SetIfExists(returnValue.q, jwk, "p");
-    JsonOptional::SetIfExists(returnValue.dp, jwk, "dp");
-    JsonOptional::SetIfExists(returnValue.dq, jwk, "dq");
-    JsonOptional::SetIfExists(returnValue.qi, jwk, "qi");
+    JsonOptional::SetIfExists(returnValue.N, jwk, "n");
+    JsonOptional::SetIfExists(returnValue.E, jwk, "e");
+    JsonOptional::SetIfExists(returnValue.Q, jwk, "p");
+    JsonOptional::SetIfExists(returnValue.Dp, jwk, "dp");
+    JsonOptional::SetIfExists(returnValue.Dq, jwk, "dq");
+    JsonOptional::SetIfExists(returnValue.Qi, jwk, "qi");
 
     return returnValue;
   }
@@ -264,37 +264,36 @@ namespace Azure { namespace Security { namespace Attestation { namespace _detail
       Azure::Security::Attestation::Models::_detail::JsonWebKey const& jwk)
   {
     Azure::Core::Json::_internal::json serialized;
-    JsonOptional::SetFromNullable(jwk.kty, serialized, "kty");
-    JsonOptional::SetFromNullable(jwk.alg, serialized, "alg");
-    JsonOptional::SetFromNullable(jwk.alg, serialized, "alg");
-    JsonOptional::SetFromNullable(jwk.kid, serialized, "kid");
-    JsonOptional::SetFromNullable(jwk.use, serialized, "use");
-    JsonOptional::SetFromNullable(jwk.keyops, serialized, "key_ops");
-    JsonOptional::SetFromNullable(jwk.x5t, serialized, "x5t");
-    JsonOptional::SetFromNullable(jwk.x5t256, serialized, "x5t#S256");
-    JsonOptional::SetFromNullable(jwk.x5u, serialized, "x5u");
-    JsonOptional::SetFromNullable(jwk.x5c, serialized, "x5c");
+    JsonOptional::SetFromNullable(jwk.Kty, serialized, "kty");
+    JsonOptional::SetFromNullable(jwk.Alg, serialized, "alg");
+    JsonOptional::SetFromNullable(jwk.Kid, serialized, "kid");
+    JsonOptional::SetFromNullable(jwk.Use, serialized, "use");
+    JsonOptional::SetFromNullable(jwk.KeyOps, serialized, "key_ops");
+    JsonOptional::SetFromNullable(jwk.X5t, serialized, "x5t");
+    JsonOptional::SetFromNullable(jwk.X5t256, serialized, "x5t#S256");
+    JsonOptional::SetFromNullable(jwk.X5u, serialized, "x5u");
+    JsonOptional::SetFromNullable(jwk.X5c, serialized, "x5c");
 
     // ECDSA key values.
-    JsonOptional::SetFromNullable(jwk.crv, serialized, "crv");
-    JsonOptional::SetFromNullable(jwk.x, serialized, "x");
-    JsonOptional::SetFromNullable(jwk.y, serialized, "y");
-    JsonOptional::SetFromNullable(jwk.d, serialized, "d");
+    JsonOptional::SetFromNullable(jwk.Crv, serialized, "crv");
+    JsonOptional::SetFromNullable(jwk.X, serialized, "x");
+    JsonOptional::SetFromNullable(jwk.Y, serialized, "y");
+    JsonOptional::SetFromNullable(jwk.D, serialized, "d");
 
     // RSA key values.
-    JsonOptional::SetFromNullable(jwk.n, serialized, "n");
-    JsonOptional::SetFromNullable(jwk.e, serialized, "e");
-    JsonOptional::SetFromNullable(jwk.q, serialized, "p");
-    JsonOptional::SetFromNullable(jwk.dp, serialized, "dp");
-    JsonOptional::SetFromNullable(jwk.dq, serialized, "dq");
-    JsonOptional::SetFromNullable(jwk.qi, serialized, "qi");
+    JsonOptional::SetFromNullable(jwk.N, serialized, "n");
+    JsonOptional::SetFromNullable(jwk.E, serialized, "e");
+    JsonOptional::SetFromNullable(jwk.Q, serialized, "p");
+    JsonOptional::SetFromNullable(jwk.Dp, serialized, "dp");
+    JsonOptional::SetFromNullable(jwk.Dq, serialized, "dq");
+    JsonOptional::SetFromNullable(jwk.Qi, serialized, "qi");
 
     return serialized;
   }
 
   // cspell: words jwks
   JsonWebKeySet JsonWebKeySetSerializer::Deserialize(
-      std::unique_ptr<Azure::Core::Http::RawResponse>& response)
+      std::unique_ptr<Azure::Core::Http::RawResponse> const& response)
   {
     auto parsedBody = Azure::Core::Json::_internal::json::parse(response->GetBody());
     return Deserialize(parsedBody);

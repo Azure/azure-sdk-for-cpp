@@ -180,7 +180,7 @@ namespace Azure { namespace Security { namespace Attestation {
      * of which will be used to validate tokens received by the attestation service.
      */
     Response<Models::AttestationSigningCertificateResult> GetAttestationSigningCertificates(
-        Azure::Core::Context const& context = Azure::Core::Context::ApplicationContext) const;
+        Azure::Core::Context const& context = Azure::Core::Context{}) const;
 
     /**
      * @brief Attest an SGX enclave, returning an attestation token representing the result
@@ -200,7 +200,7 @@ namespace Azure { namespace Security { namespace Attestation {
     Response<Models::AttestationToken<Models::AttestationResult>> AttestSgxEnclave(
         std::vector<uint8_t> const& sgxQuoteToAttest,
         AttestOptions options = AttestOptions(),
-        Azure::Core::Context const& context = Azure::Core::Context::ApplicationContext) const;
+        Azure::Core::Context const& context = Azure::Core::Context{}) const;
 
     /**
      * @brief Attest an OpenEnclave report, returning an attestation token representing the result
@@ -217,7 +217,7 @@ namespace Azure { namespace Security { namespace Attestation {
     Response<Models::AttestationToken<Models::AttestationResult>> AttestOpenEnclave(
         std::vector<uint8_t> const& openEnclaveReportToAttest,
         AttestOptions options = AttestOptions(),
-        Azure::Core::Context const& context = Azure::Core::Context::ApplicationContext) const;
+        Azure::Core::Context const& context = Azure::Core::Context{}) const;
 
     /**
     * @brief Perform a single leg

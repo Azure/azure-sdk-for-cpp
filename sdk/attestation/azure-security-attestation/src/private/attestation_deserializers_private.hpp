@@ -58,7 +58,7 @@ namespace Azure { namespace Security { namespace Attestation { namespace _detail
   struct AttestationServiceTokenResponseSerializer final
   {
     static std::string Deserialize(Azure::Core::Json::_internal::json const& parsedBody);
-    static std::string Deserialize(std::unique_ptr<Azure::Core::Http::RawResponse>& response);
+    static std::string Deserialize(std::unique_ptr<Azure::Core::Http::RawResponse> const& response);
   };
 
   struct AttestationResultSerializer final
@@ -81,7 +81,7 @@ namespace Azure { namespace Security { namespace Attestation { namespace _detail
   struct JsonWebKeySetSerializer final
   {
     static Azure::Security::Attestation::Models::_detail::JsonWebKeySet Deserialize(
-        std::unique_ptr<Azure::Core::Http::RawResponse>& response);
+        std::unique_ptr<Azure::Core::Http::RawResponse> const& response);
     static Azure::Security::Attestation::Models::_detail::JsonWebKeySet Deserialize(
         const Azure::Core::Json::_internal::json& jwk);
   };
