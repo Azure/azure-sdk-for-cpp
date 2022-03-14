@@ -49,7 +49,8 @@ int main()
     std::vector<uint8_t> sgxEnclaveQuote = AttestationCollateral::SgxQuote();
 
     Azure::Response<AttestationToken<AttestationResult>> sgxResult
-        = attestationClient.AttestSgxEnclave(sgxEnclaveQuote);
+        = attestationClient.AttestSgxEnclave(
+            sgxEnclaveQuote, attestationClient.GetAttestationSigningCertificates().Value);
 
     std::cout << "SGX Quote MRSIGNER is: "
               << Convert::Base64Encode(*sgxResult.Value.Body.SgxMrSigner) << std::endl;

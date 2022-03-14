@@ -58,15 +58,17 @@ int main()
         = AttestationData{AttestationCollateral::RuntimeData(), AttestationDataType::Binary};
 
     Azure::Response<AttestationToken<AttestationResult>> sgxResult
-        = attestationClient.AttestSgxEnclave(sgxEnclaveQuote, attestOptions);
+        = attestationClient.AttestSgxEnclave(
+            sgxEnclaveQuote,
+            attestationClient.GetAttestationSigningCertificates().Value,
+            attestOptions);
 
     std::cout << "SGX Quote MRSIGNER is: "
               << Convert::Base64Encode(*sgxResult.Value.Body.SgxMrSigner) << std::endl;
     std::cout << "SGX Quote MRENCLAVE is: "
               << Convert::Base64Encode(*sgxResult.Value.Body.SgxMrEnclave) << std::endl;
 
-
-  std::cout << "Attestation Token runtimeData is "
+    std::cout << "Attestation Token runtimeData is "
               << Convert::Base64Encode(*sgxResult.Value.Body.EnclaveHeldData) << std::endl;
   }
   catch (Azure::Core::Credentials::AuthenticationException const& e)

@@ -61,7 +61,10 @@ issuancerules {
     c:[type=="x-ms-sgx-mrsigner"] => issue(type="custom-name", value=c.value);
 };)";
     Azure::Response<AttestationToken<AttestationResult>> sgxResult
-        = attestationClient.AttestOpenEnclave(openEnclaveReport, options);
+        = attestationClient.AttestOpenEnclave(
+            openEnclaveReport,
+            attestationClient.GetAttestationSigningCertificates().Value,
+            options);
 
     std::cout << "SGX Quote MRSIGNER is: "
               << Convert::Base64Encode(*sgxResult.Value.Body.SgxMrSigner) << std::endl;
