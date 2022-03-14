@@ -436,8 +436,8 @@ AttestationAdministrationClient::RemovePolicyManagementCertificate(
 {
   // Calculate a signed (or unsigned) attestation policy token to send to the service.
   // Embed the encoded policy in the StoredAttestationPolicy.
-  auto const policyCertToken(
-      CreatePolicyCertificateModificationToken(pemEncodedX509CertificateToRemove, existingSigningKey));
+  auto const policyCertToken(CreatePolicyCertificateModificationToken(
+      pemEncodedX509CertificateToRemove, existingSigningKey));
 
   Azure::Core::IO::MemoryBodyStream stream(
       reinterpret_cast<uint8_t const*>(policyCertToken.data()), policyCertToken.size());

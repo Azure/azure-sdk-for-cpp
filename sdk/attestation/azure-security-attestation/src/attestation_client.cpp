@@ -96,7 +96,8 @@ Azure::Response<AttestationToken<AttestationResult>> AttestationClient::AttestSg
 
   const std::string serializedRequest(AttestSgxEnclaveRequestSerializer::Serialize(attestRequest));
 
-  const auto encodedVector = std::vector<uint8_t>(serializedRequest.begin(), serializedRequest.end());
+  const auto encodedVector
+      = std::vector<uint8_t>(serializedRequest.begin(), serializedRequest.end());
   Azure::Core::IO::MemoryBodyStream stream(encodedVector);
   auto request = AttestationCommonRequest::CreateRequest(
       m_endpoint, m_apiVersion, HttpMethod::Post, {"attest/SgxEnclave"}, &stream);

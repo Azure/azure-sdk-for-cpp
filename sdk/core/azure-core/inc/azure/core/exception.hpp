@@ -33,7 +33,7 @@ namespace Azure { namespace Core {
    *
    * If the request has failed due to an HTTP response code, the client can inspect other fields in
    * the exception to determine the actual failure returned by the service.
-   * 
+   *
    * \code{c++}
    *   catch (Azure::Core::RequestFailedException const& e)
    *   {
