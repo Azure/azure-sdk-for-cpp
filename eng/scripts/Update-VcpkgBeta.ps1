@@ -9,12 +9,15 @@ param(
 # To ensure a clean synchronization remove all files at the destination.
 # This ensures that files no longer present in the build output do not
 # persist in later versions.
-Remove-Item "$VcpkgBetaFolder/ports/$VcpkgPortName" -Recurse -Force
-New-Item -ItemType Directory -Path "$VcpkgBetaFolder/ports/$VcpkgPortName"
+$portFolder = "$VcpkgBetaFolder/ports/$VcpkgPortName"
+if (Test-Path $portFolder) {
+    Remove-Item $portFolder -Recurse -Force
+}
+New-Item -ItemType Directory -Path $portFolder
 
 Copy-Item `
     -Path "$ReleaseArtifactSourceDirectory/vcpkg/port/*" `
-    -Destination "$VcpkgBetaFolder/ports/$VcpkgPortName"
+    -Destination $portFolder
 
 $rawPackageInfo = Get-Content -Raw -Path $ReleaseArtifactSourceDirectory/package-info.json
 $packageInfo = ConvertFrom-Json $rawPackageInfo
