@@ -21,12 +21,7 @@ steps:
       pwsh: true
     displayName: Initialize vcpkg release ${{ parameters.DisplayNameExtension }}
 
-  # Always update betas on release
-
-  # Release to vcpkg ONLY if:
-  # - GA release or
-  # - Current version on vcpkg is beta
-
+  # On package release vcpkg beta should always be updated
   - ${{ if eq(parameters.UpdateVcpkgBeta, 'true') }}:
     - task: Powershell@2
       inputs:
@@ -41,10 +36,18 @@ steps:
           -GitCommitParameters '-c user.name="azure-sdk" -c user.email="azuresdk@microsoft.com"'
       displayName: Update Vcpkg Betas port ${{ parameters.DisplayNameExtension }}
 
-    - pwsh: git push
+    # Single override to push directly to the target branch. Failure in this
+    # step is likely caused by a race condition. Re-running the pipeline will
+    # succeed if another race condition does not arise.
+    - pwsh: |
+        git remote add azure-sdk-fork "https://$(azuresdk-github-pat)@github.com/Azure/azure-sdk-vcpkg-betas.git"
+        $currentBranch = git branch --show-current
+        git push -u azure-sdk-fork $currentBranch
       workingDirectory: ${{ parameters.Workspace }}/azure-sdk-vcpkg-betas
       displayName: Push changes to vcpkg beta
 
+  # In some cases there should be no release to vcpkg. If vcpkg should be
+  # released, set "PublishToVcpkg" to "true" so we can make changes.
   - task: Powershell@2
     inputs:
       pwsh: true
