@@ -52,8 +52,8 @@ try {
 
     Write-Host "git add -A"
     git add -A
-    Write-Host "git commit --amend --no-edit"
-    git commit --amend --no-edit
+    Write-Host "git $GitCommitParameters commit --amend --no-edit"
+    git $GitCommitParameters commit --amend --no-edit
 
     # TODO: This hash may not be the same unless we push using a method that
     # isn't our normal push process in engsys.
@@ -75,6 +75,11 @@ try {
 
     $vcpkgConfigJson = ConvertTo-Json $vcpkgConfig -Depth 100
     Set-Content -Path $vcpkgConfigPath -Value $vcpkgConfigJson
+
+    Write-Host "git add -A"
+    git add -A
+    Write-Host "git $GitCommitParameters commit -m \"Update vcpkg-configuration.json\""
+    git $GitCommitParameters commit -m "Update vcpkg-configuration.json"
 
 } finally {
     Set-Location $originalLocation
