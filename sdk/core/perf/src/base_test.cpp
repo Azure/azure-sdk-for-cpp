@@ -3,9 +3,9 @@
 
 #include "azure/perf/base_test.hpp"
 
+#include <azure/core/http/curl_transport.hpp>
 #include <azure/core/http/policies/policy.hpp>
 #include <azure/core/internal/http/pipeline.hpp>
-#include <azure/core/http/curl_transport.hpp>
 
 #include <functional>
 #include <string>
