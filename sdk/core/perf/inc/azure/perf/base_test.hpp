@@ -38,8 +38,11 @@ namespace Azure { namespace Perf {
     std::string m_recordId;
     std::string m_proxy;
     bool m_isPlayBackMode = false;
+    bool m_isInsecureEnabled = false;
 
     void SetTestProxy(std::string const& proxy) { m_proxy = proxy; }
+
+    void SetInsecureEnabled(bool value) { m_isInsecureEnabled = value; }
 
     /**
      * @brief Define actions to run after test set up and before the actual test.
@@ -58,6 +61,8 @@ namespace Azure { namespace Perf {
      *
      */
     void PreCleanUp();
+
+    void ConfigureInsecureOptions(Azure::Core::_internal::ClientOptions* clientOptions);
 
     /**
      * @brief Set the client options depending on the test options.

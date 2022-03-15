@@ -2,8 +2,10 @@
 // SPDX-License-Identifier: MIT
 
 #include "azure/perf/base_test.hpp"
-#include "azure/core/http/policies/policy.hpp"
-#include "azure/core/internal/http/pipeline.hpp"
+
+#include <azure/core/http/policies/policy.hpp>
+#include <azure/core/internal/http/pipeline.hpp>
+#include <azure/core/http/curl_transport.hpp>
 
 #include <functional>
 #include <string>
@@ -96,12 +98,28 @@ public:
 
 namespace Azure { namespace Perf {
 
+  void BaseTest::ConfigureInsecureOptions(Azure::Core::_internal::ClientOptions* clientOptions)
+  {
+    if (m_isInsecureEnabled)
+    {
+      // There's currently no way to ask winHTTP to do insecure SSL.
+      // Perf test must use libcurl transport until winHTTP can support this.
+      // NOTE: perf-fm is injecting the SSL config and transport here for the client options
+      //       If the test overrides the options/transport, this can be undone.
+      Azure::Core::Http::CurlTransportOptions curlOptions;
+      curlOptions.SslVerifyPeer = false;
+      clientOptions->Transport.Transport
+          = std::make_shared<Azure::Core::Http::CurlTransport>(curlOptions);
+    }
+  }
+
   void BaseTest::ConfigureCoreClientOptions(Azure::Core::_internal::ClientOptions* clientOptions)
   {
     if (!m_proxy.empty())
     {
       clientOptions->PerRetryPolicies.push_back(std::make_unique<ProxyPolicy>(this));
     }
+    ConfigureInsecureOptions(clientOptions);
   }
 
   void BaseTest::PostSetUp()
@@ -111,6 +129,7 @@ namespace Azure { namespace Perf {
     {
       Azure::Core::_internal::ClientOptions clientOp;
       clientOp.Retry.MaxRetries = 0;
+      ConfigureInsecureOptions(&clientOp);
       std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>> policiesOp;
       std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>> policiesRe;
       Azure::Core::Http::_internal::HttpPipeline pipeline(
@@ -180,6 +199,7 @@ namespace Azure { namespace Perf {
     {
       Azure::Core::_internal::ClientOptions clientOp;
       clientOp.Retry.MaxRetries = 0;
+      ConfigureInsecureOptions(&clientOp);
       std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>> policiesOp;
       std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>> policiesRe;
       Azure::Core::Http::_internal::HttpPipeline pipeline(
