@@ -14,7 +14,7 @@ add_executable (
 
 create_per_service_target_build(attestation-${samplename} attestation)
 
-target_link_libraries(attestation-${samplename} PRIVATE azure-security-attestation get-env-helper)
+target_link_libraries(attestation-${samplename} PRIVATE azure-security-attestation azure-identity get-env-helper)
 
 # Add the sample to be run on CI. 
 # CI pipeline reads the {service}-samples.txt and runs the binaries listed there.
@@ -22,4 +22,7 @@ file(APPEND ${CMAKE_BINARY_DIR}/attestation-samples.txt "${CMAKE_CURRENT_BINARY_
 
 endmacro()
 
-define_sample(basic-operations)
+define_sample(createclient)
+define_sample(createadminclient)
+define_sample(getopenidmetadata)
+define_sample(getsigningcertificates)

@@ -64,42 +64,14 @@ int main()
     // Retrieve attestation response validation collateral before calling into the service.
     adminClient.RetrieveResponseValidationCollateral();
 
-    // Set the attestation policy on this attestation instance.
-    // Note that because this is an AAD mode instance, the caller does not need to sign the policy
-    // being set.
-    std::string policyToSet(R"(version= 1.0;
-authorizationrules 
-{
-	[ type=="x-ms-sgx-is-debuggable", value==true ]&&
-	[ type=="x-ms-sgx-mrsigner", value=="mrsigner1"] => permit(); 
-	[ type=="x-ms-sgx-is-debuggable", value==true ]&& 
-	[ type=="x-ms-sgx-mrsigner", value=="mrsigner2"] => permit(); 
-};)");
-    Azure::Response<AttestationToken<PolicyResult>> setResult
-        = adminClient.SetAttestationPolicy(AttestationType::SgxEnclave, policyToSet);
+    
+    Azure::Response<AttestationToken<PolicyResult>> resetResult
+        = adminClient.ResetAttestationPolicy(AttestationType::SgxEnclave);
 
-    if (setResult.Value.Body.PolicyResolution == PolicyModification::Updated)
+    if (resetResult.Value.Body.PolicyResolution == PolicyModification::Removed)
     {
-      std::cout << "Attestation policy was updated." << std::endl;
+      std::cout << "Attestation policy was reset." << std::endl;
     }
-
-    // To verify that the attestation service received the attestation policy, the service returns
-    // the SHA256 hash of the policy token which was sent ot the service. To simplify the customer
-    // experience of interacting with the SetPolicy APIs, CreateSetAttestationPolicyToken API will
-    // generate the same token that would be send to the service.
-    //
-    // To ensure that the token which was sent from the client matches the token which was received
-    // by the attestation service, the customer can call CreateSetAttestationPolicyToken and then
-    // generate the SHA256 of that token and compare it with the value returned by the service - the
-    // two hash values should be identical.
-    auto setPolicyToken = adminClient.CreateSetAttestationPolicyToken(policyToSet);
-    Sha256Hash shaHasher;
-    std::vector<uint8_t> policyTokenHash = shaHasher.Final(
-        reinterpret_cast<uint8_t const*>(setPolicyToken.RawToken.data()),
-        setPolicyToken.RawToken.size());
-    std::cout << "Expected token hash: " << Convert::Base64Encode(policyTokenHash) << std::endl;
-    std::cout << "Actual token hash:   "
-              << Convert::Base64Encode(setResult.Value.Body.PolicyTokenHash) << std::endl;
   }
   catch (Azure::Core::Credentials::AuthenticationException const& e)
   {

@@ -6,18 +6,20 @@
  * for C++ to create, get, update, delete and purge a certificate.
  *
  * @remark The following environment variables must be set before running the sample.
- * - ATTESTATION_AAD_URL:  Points to an Attestation Service Instance in AAD mode.
  * - ATTESTATION_ISOLATED_URL:  Points to an Attestation Service Instance in Isolated mode.
- * - LOCATION_SHORT_NAME:  Specifies the short name of an Azure region to use for shared mode
- * operations.
  * - AZURE_TENANT_ID:     Tenant ID for the Azure account.
  * - AZURE_CLIENT_ID:     The Client ID to authenticate the request.
  * - AZURE_CLIENT_SECRET: The client secret.
+ * - ISOLATED_SIGNING_KEY: A Base64 encoded DER encoded RSA private key which matches the private
+ * key used when creating the ATTESTATION_ISOLATED_URL.
+ * - ISOLATED_SIGNING_CERTIFICATE: A Base64 encoded X.509 certificate wrapping the public key of the
+ * ISOLATED_SIGNING_KEY
  *
  */
 
 #include "get_env.hpp"
 
+#include "cryptohelpers.hpp"
 #include <azure/attestation.hpp>
 #include <azure/core/base64.hpp>
 #include <azure/core/cryptography/hash.hpp>
@@ -47,7 +49,7 @@ int main()
     // attestation service instance. Update the token validation logic to ensure that
     // the right instance issued the token we received (this protects against a MITM responding
     // with a token issued by a different attestation service instance).
-    std::string endpoint(std::getenv("ATTESTATION_AAD_URL"));
+    std::string endpoint(std::getenv("ATTESTATION_ISOLATED_URL"));
     clientOptions.TokenValidationOptions.ExpectedIssuer = endpoint;
     clientOptions.TokenValidationOptions.ValidateIssuer = true;
 
@@ -64,9 +66,14 @@ int main()
     // Retrieve attestation response validation collateral before calling into the service.
     adminClient.RetrieveResponseValidationCollateral();
 
-    // Set the attestation policy on this attestation instance.
-    // Note that because this is an AAD mode instance, the caller does not need to sign the policy
-    // being set.
+    std::string signingKey(std::getenv("ISOLATED_SIGNING_KEY"));
+    std::string signingCert(std::getenv("ISOLATED_SIGNING_CERTIFICATE"));
+
+    // The attestation APIs expect a PEM encoded key and certificate, so convert the Base64 key and
+    // certificate to PEM encoded equivalents.
+    std::string pemSigningKey(::Cryptography::PemFromBase64(signingKey, "PRIVATE KEY"));
+    std::string pemSigningCert(::Cryptography::PemFromBase64(signingCert, "CERTIFICATE"));
+
     std::string policyToSet(R"(version= 1.0;
 authorizationrules 
 {
@@ -75,8 +82,13 @@ authorizationrules
 	[ type=="x-ms-sgx-is-debuggable", value==true ]&& 
 	[ type=="x-ms-sgx-mrsigner", value=="mrsigner2"] => permit(); 
 };)");
+
+    // When setting attestation policy, use the signing key associated with the isolated instance.
+    SetPolicyOptions setOptions;
+    setOptions.SigningKey = AttestationSigningKey{pemSigningKey, pemSigningCert};
+
     Azure::Response<AttestationToken<PolicyResult>> setResult
-        = adminClient.SetAttestationPolicy(AttestationType::SgxEnclave, policyToSet);
+        = adminClient.SetAttestationPolicy(AttestationType::SgxEnclave, policyToSet, setOptions);
 
     if (setResult.Value.Body.PolicyResolution == PolicyModification::Updated)
     {
@@ -92,7 +104,8 @@ authorizationrules
     // by the attestation service, the customer can call CreateSetAttestationPolicyToken and then
     // generate the SHA256 of that token and compare it with the value returned by the service - the
     // two hash values should be identical.
-    auto setPolicyToken = adminClient.CreateSetAttestationPolicyToken(policyToSet);
+    auto setPolicyToken
+        = adminClient.CreateSetAttestationPolicyToken(policyToSet, setOptions.SigningKey);
     Sha256Hash shaHasher;
     std::vector<uint8_t> policyTokenHash = shaHasher.Final(
         reinterpret_cast<uint8_t const*>(setPolicyToken.RawToken.data()),
