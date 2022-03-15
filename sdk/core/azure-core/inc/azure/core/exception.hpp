@@ -86,6 +86,8 @@ namespace Azure { namespace Core {
      * For more information, see [Azure standards for error condition responses]
      * (https://github.com/microsoft/api-guidelines/blob/vNext/Guidelines.md#7102-error-condition-responses),
      * specifically the handling of the "code" property.
+     * 
+     * Note that the contents of the `ErrorCode` is service dependent.
      *
      */
     std::string ErrorCode;
