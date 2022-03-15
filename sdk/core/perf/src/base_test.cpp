@@ -115,6 +115,7 @@ namespace Azure { namespace Perf {
           = std::make_shared<Azure::Core::Http::CurlTransport>(curlOptions);
     }
 #else
+    // avoid the variable not used warning
     (void)clientOptions;
 #endif
   }
