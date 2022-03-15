@@ -30,24 +30,26 @@ try {
     & $VcpkgFolder/vcpkg format-manifest `
         --all `
         --vcpkg-root=. `
-        --x-scripts-root=$VcpkgFolder/scripts
+        --x-scripts-root=$VcpkgFolder/scripts  # This param is extra
 
     Write-Host "git add -A"
     git add -A
     Write-Host "git $GitCommitParameters commit -m \"$(Get-Date -Format "yyyy-MM-dd" ): $VcpkgPortName $($packageInfo.version)\""
     git $GitCommitParameters commit -m "$(Get-Date -Format "yyyy-MM-dd" ): $VcpkgPortName $($packageInfo.version)"
 
-    Write-Host "$VcpkgFolder/vcpkg x-add-version --all --vcpkg-root=. --x-scripts-root=$VcpkgFolder/scripts"
+    Write-Host "$VcpkgFolder/vcpkg x-add-version $VcpkgPortName --vcpkg-root=. --x-scripts-root=$VcpkgFolder/scripts"
     & $VcpkgFolder/vcpkg x-add-version `
-        --all `
+        $VcpkgPortName `
         --vcpkg-root=. `
-        --x-scripts-root=$VcpkgFolder/scripts
+        --x-scripts-root=$VcpkgFolder/scripts  # This param is extra
 
     Write-Host "git add -A"
     git add -A
     Write-Host "git commit --amend --no-edit"
     git commit --amend --no-edit
 
+    # TODO: This hash may not be the same unless we push using a method that
+    # isn't our normal push process in engsys.
     Write-Host "git log -1 --format=format:%H"
     $baseHash = git log -1 --format=format:%H
     Write-Host "New Baseline: $baseHash"
