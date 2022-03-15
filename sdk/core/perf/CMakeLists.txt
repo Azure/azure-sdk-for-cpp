@@ -56,3 +56,8 @@ create_map_file(azure-perf azure-perf.map)
 set_target_properties(azure-perf PROPERTIES FOLDER "Core")
 
 add_subdirectory(test)
+
+# Give a warning about winHTTP and insecure
+if(BUILD_TRANSPORT_WINHTTP)
+  message(WARNING "Note. WInHTTP does not support running performance tests with `insecure` mode enabled. Use libcurl transport adapter if you want to use insecure mode. ")
+endif()
