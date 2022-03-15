@@ -1,0 +1,23 @@
+{
+  "version": "0.2",
+  "language": "en",
+  "languageId": "cpp",
+  "dictionaries": [
+    "powershell",
+    "cpp"
+  ],
+  "ignorePaths": [
+    "**/test/ut/recordings/*.json"
+  ],
+  // * Unless configured otherwise, these words are not case sensitive
+  // * Alphabetize the list when making changes so the list is easier for future
+  //   users to maintain and reason about.
+  "words": [
+    "ECDS",
+    "jwks",
+    "jwk",
+    "mrenclave",
+    "mrsigner",
+    "shareduks"
+  ]
+}

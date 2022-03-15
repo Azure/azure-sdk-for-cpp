@@ -29,7 +29,6 @@
 #include <string>
 #include <vector>
 
-// cspell: words jwks MrSigner MrEnclave
 namespace Azure { namespace Security { namespace Attestation { namespace _detail {
   using namespace Azure::Security::Attestation::Models;
   using namespace Azure::Security::Attestation::Models::_detail;
@@ -253,7 +252,6 @@ namespace Azure { namespace Security { namespace Attestation { namespace _detail
     return returnValue;
   }
 
-  // cspell: words jwks
   JsonWebKeySet JsonWebKeySetSerializer::Deserialize(
       std::unique_ptr<Azure::Core::Http::RawResponse>& response)
   {

@@ -20,7 +20,6 @@
 #include <memory>
 #include <string>
 
-// cspell: words jwks MrSigner MrEnclave
 namespace Azure { namespace Security { namespace Attestation { namespace _detail {
 
   /***************************************
@@ -73,7 +72,6 @@ namespace Azure { namespace Security { namespace Attestation { namespace _detail
     static Models::_detail::JsonWebKey Deserialize(const Azure::Core::Json::_internal::json& jwk);
   };
 
-  // cspell: words jwks
   struct JsonWebKeySetSerializer final
   {
     static Azure::Security::Attestation::Models::_detail::JsonWebKeySet Deserialize(

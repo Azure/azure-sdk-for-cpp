@@ -6,7 +6,6 @@
 #include <gtest/gtest.h>
 #include <random>
 
-// cspell: words ECDS
 namespace Azure { namespace Security { namespace Attestation { namespace Test {
   using namespace Azure::Security::Attestation::_detail;
   using namespace Azure::Core::Diagnostics::_internal;

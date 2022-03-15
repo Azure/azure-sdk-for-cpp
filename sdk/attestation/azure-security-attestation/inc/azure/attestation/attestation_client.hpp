@@ -183,6 +183,15 @@ namespace Azure { namespace Security { namespace Attestation {
         Azure::Core::Context const& context = Azure::Core::Context::ApplicationContext) const;
 
     /**
+     * @brief Retrieves the information needed to validate a response from the attestation service.
+     *
+     * @note: This method MUST be called before any calls to the attestation service which must be
+     * validated.
+     */
+    void RetrieveResponseValidationCollateral(
+        Azure::Core::Context const& context = Azure::Core::Context{}) const;
+
+    /**
      * @brief Attest an SGX enclave, returning an attestation token representing the result
      * of the attestation operation.
      *
@@ -193,13 +202,12 @@ namespace Azure { namespace Security { namespace Attestation {
      * @returns Response<AttestationToken<AttestationResult>> - The result of the
      * attestation operation.
      *
-     * @note \b Note: The GetAttestationSigningCertificates API API \b MUST be called before the
-     * AttestSgxEnclave API is called to retrieve the signing certificates used to validate the
+     * @note \b Note: The RetrieveResponseValidationCollateral API \b MUST be called before the
+     * AttestSgxEnclave API is called to retrieve the information needed to validate the
      * result returned by the service.
      */
     Response<Models::AttestationToken<Models::AttestationResult>> AttestSgxEnclave(
         std::vector<uint8_t> const& sgxQuoteToAttest,
-        Models::AttestationSigningCertificateResult const& expectedSigners,
         AttestOptions options = AttestOptions(),
         Azure::Core::Context const& context = Azure::Core::Context::ApplicationContext) const;
 
@@ -214,10 +222,13 @@ namespace Azure { namespace Security { namespace Attestation {
      *
      * @returns Response<AttestationToken<AttestationResult>> - The result of the attestation
      * operation
+
+     * @note \b Note: The RetrieveResponseValidationCollateral API \b MUST be called before the
+     * AttestOpenEnclave API is called to retrieve information needed to used to validate the
+     * result returned by the service.
      */
     Response<Models::AttestationToken<Models::AttestationResult>> AttestOpenEnclave(
         std::vector<uint8_t> const& openEnclaveReportToAttest,
-        Models::AttestationSigningCertificateResult const& expectedSigners,
         AttestOptions options = AttestOptions(),
         Azure::Core::Context const& context = Azure::Core::Context::ApplicationContext) const;
 
@@ -229,9 +240,6 @@ namespace Azure { namespace Security { namespace Attestation {
     AttestationTokenValidationOptions m_tokenValidationOptions;
 
     mutable std::vector<Models::AttestationSigner> m_attestationSigners;
-
-    std::vector<Models::AttestationSigner> const& GetAttestationSigners(
-        Azure::Core::Context const& context) const;
   };
 
 }}} // namespace Azure::Security::Attestation
