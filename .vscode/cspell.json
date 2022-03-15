@@ -109,6 +109,7 @@
     "stoull",
     "STREQ",
     "uksouth",
+    "Unauthorized",
     "undeleted",
     "unscoped",
     "unskipped",
