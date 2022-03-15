@@ -72,6 +72,9 @@ AttestationAdministrationClient::GetAttestationPolicy(
     GetPolicyOptions const& options,
     Azure::Core::Context const& context) const
 {
+  AZURE_ASSERT_MSG(
+      !m_attestationSigners.empty(),
+      "RetrieveResponseValidationCollateral must be called before this API.");
   auto request = AttestationCommonRequest::CreateRequest(
       m_endpoint,
       m_apiVersion,
@@ -95,7 +98,8 @@ AttestationAdministrationClient::GetAttestationPolicy(
   // validation.
   resultToken.ValidateToken(
       options.TokenValidationOptions ? *options.TokenValidationOptions
-                                     : this->m_tokenValidationOptions);
+                                     : this->m_tokenValidationOptions,
+      m_attestationSigners);
 
   // Extract the underlying policy token from the response.
   std::string policyTokenValue
@@ -149,6 +153,9 @@ AttestationAdministrationClient::SetAttestationPolicy(
     SetPolicyOptions const& options,
     Azure::Core::Context const& context) const
 {
+  AZURE_ASSERT_MSG(
+      !m_attestationSigners.empty(),
+      "RetrieveResponseValidationCollateral must be called before this API.");
   // Calculate a signed (or unsigned) attestation policy token to send to the service.
   Models::AttestationToken<std::nullptr_t> tokenToSend(
       CreateSetAttestationPolicyToken(newAttestationPolicy, options.SigningKey));
@@ -179,7 +186,8 @@ AttestationAdministrationClient::SetAttestationPolicy(
   // validation.
   resultToken.ValidateToken(
       options.TokenValidationOptions ? *options.TokenValidationOptions
-                                     : this->m_tokenValidationOptions);
+                                     : this->m_tokenValidationOptions,
+      m_attestationSigners);
 
   // Extract the underlying policy token from the response.
   auto internalResult
@@ -212,6 +220,9 @@ AttestationAdministrationClient::ResetAttestationPolicy(
     SetPolicyOptions const& options,
     Azure::Core::Context const& context) const
 {
+  AZURE_ASSERT_MSG(
+      !m_attestationSigners.empty(),
+      "RetrieveResponseValidationCollateral must be called before this API.");
   // Calculate a signed (or unsigned) attestation policy token to send to the service.
   Models::AttestationToken<std::nullptr_t> tokenToSend(
       CreateSetAttestationPolicyToken(Azure::Nullable<std::string>(), options.SigningKey));
@@ -242,7 +253,8 @@ AttestationAdministrationClient::ResetAttestationPolicy(
   // validation.
   resultToken.ValidateToken(
       options.TokenValidationOptions ? *options.TokenValidationOptions
-                                     : this->m_tokenValidationOptions);
+                                     : this->m_tokenValidationOptions,
+      m_attestationSigners);
 
   // Extract the underlying policy token from the response.
   auto internalResult
@@ -267,4 +279,33 @@ AttestationAdministrationClient::ResetAttestationPolicy(
   auto returnedToken
       = AttestationTokenInternal<Models::PolicyResult>(responseToken, returnedResult);
   return Response<AttestationToken<Models::PolicyResult>>(returnedToken, std::move(response));
+}
+
+/**
+ * @brief Retrieves the information needed to validate the response returned from the attestation
+ * service.
+ *
+ * @details Validating the response returned by the attestation service requires a set of
+ * possible signers for the attestation token.
+ *
+ * @param context Client context for the request to the service.
+ */
+void AttestationAdministrationClient::RetrieveResponseValidationCollateral(
+    Azure::Core::Context const& context) const
+{
+  std::unique_lock<std::shared_timed_mutex> stateLock(SharedStateLock);
+
+  if (m_attestationSigners.size() == 0)
+  {
+    auto request
+        = AttestationCommonRequest::CreateRequest(m_endpoint, HttpMethod::Get, {"certs"}, nullptr);
+    auto response = AttestationCommonRequest::SendRequest(*m_pipeline, request, context);
+    auto jsonWebKeySet(JsonWebKeySetSerializer::Deserialize(response));
+    AttestationSigningCertificateResult returnValue;
+    for (const auto& jwk : jsonWebKeySet.Keys)
+    {
+      AttestationSignerInternal internalSigner(jwk);
+      m_attestationSigners.push_back(internalSigner);
+    }
+  }
 }

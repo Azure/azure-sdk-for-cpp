@@ -36,7 +36,6 @@ using namespace Azure::Security::Attestation::Models;
 using namespace Azure::Core;
 
 using namespace std::chrono_literals;
-// cspell: words MRENCLAVE MRSIGNER
 
 int main()
 {
@@ -48,6 +47,10 @@ int main()
     std::string endpoint(std::getenv("ATTESTATION_AAD_URL"));
     AttestationClient attestationClient(endpoint);
 
+    // Retrieve any and all collateral needed to validate the result of APIs calling into the
+    // attestation service..
+    attestationClient.RetrieveResponseValidationCollateral();
+
     std::vector<uint8_t> sgxEnclaveQuote = AttestationCollateral::SgxQuote();
 
     // Set the RuntimeData in the request to the service. Ask the service to interpret the
@@ -58,10 +61,7 @@ int main()
         = AttestationData{AttestationCollateral::RuntimeData(), AttestationDataType::Json};
 
     Azure::Response<AttestationToken<AttestationResult>> sgxResult
-        = attestationClient.AttestSgxEnclave(
-            sgxEnclaveQuote,
-            attestationClient.GetAttestationSigningCertificates().Value,
-            attestOptions);
+        = attestationClient.AttestSgxEnclave(sgxEnclaveQuote, attestOptions);
 
     std::cout << "SGX Quote MRSIGNER is: "
               << Convert::Base64Encode(*sgxResult.Value.Body.SgxMrSigner) << std::endl;

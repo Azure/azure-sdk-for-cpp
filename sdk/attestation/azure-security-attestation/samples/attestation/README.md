@@ -7,7 +7,6 @@ products:
 - azure-attestation
 urlFragment: attestation-samples
 
-#cspell: words mrsigner mrenclave shareduks
 ---
 
 # Attestation Samples for the Microsoft Azure Attestation client library for C++

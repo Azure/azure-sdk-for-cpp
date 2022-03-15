@@ -157,6 +157,8 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
     {
       auto adminClient(CreateClient());
 
+      adminClient->RetrieveResponseValidationCollateral();
+
       std::string policyToSet(AttestationCollateral::GetMinimalPolicy());
       SetPolicyOptions setOptions;
       setOptions.SigningKey = signingKey;
@@ -175,6 +177,7 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
     {
       auto adminClient(CreateClient());
 
+      adminClient->RetrieveResponseValidationCollateral();
       SetPolicyOptions setOptions;
       setOptions.SigningKey = signingKey;
       auto setResponse = adminClient->ResetAttestationPolicy(GetParam().TeeType, setOptions);
@@ -204,6 +207,7 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
     {
       auto adminClient(CreateClient());
 
+      adminClient->RetrieveResponseValidationCollateral();
       EXPECT_FALSE(adminClient->ClientVersion().empty());
 
       AttestationType attestationType(GetParam().TeeType);

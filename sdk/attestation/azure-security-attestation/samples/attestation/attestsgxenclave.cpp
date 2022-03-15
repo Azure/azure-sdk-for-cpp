@@ -36,7 +36,6 @@ using namespace Azure::Security::Attestation::Models;
 using namespace Azure::Core;
 
 using namespace std::chrono_literals;
-// cspell: words MRENCLAVE MRSIGNER
 
 int main()
 {
@@ -48,9 +47,12 @@ int main()
 
     std::vector<uint8_t> sgxEnclaveQuote = AttestationCollateral::SgxQuote();
 
+    attestationClient.RetrieveResponseValidationCollateral();
+
+
     Azure::Response<AttestationToken<AttestationResult>> sgxResult
         = attestationClient.AttestSgxEnclave(
-            sgxEnclaveQuote, attestationClient.GetAttestationSigningCertificates().Value);
+            sgxEnclaveQuote);
 
     std::cout << "SGX Quote MRSIGNER is: "
               << Convert::Base64Encode(*sgxResult.Value.Body.SgxMrSigner) << std::endl;

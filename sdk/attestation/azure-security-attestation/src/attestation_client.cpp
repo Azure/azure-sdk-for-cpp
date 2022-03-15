@@ -84,10 +84,13 @@ AttestationClient::GetAttestationSigningCertificates(Azure::Core::Context const&
 
 Azure::Response<AttestationToken<AttestationResult>> AttestationClient::AttestSgxEnclave(
     std::vector<uint8_t> const& sgxQuote,
-    AttestationSigningCertificateResult const& expectedSigners,
     AttestOptions options,
     Azure::Core::Context const& context) const
 {
+  AZURE_ASSERT_MSG(
+      !m_attestationSigners.empty(),
+      "RetrieveResponseValidationCollateral must be called before this API.");
+
   AttestSgxEnclaveRequest attestRequest{
       sgxQuote,
       options.InittimeData,
@@ -117,7 +120,7 @@ Azure::Response<AttestationToken<AttestationResult>> AttestationClient::AttestSg
   token.ValidateToken(
       options.TokenValidationOptions ? *options.TokenValidationOptions
                                      : this->m_tokenValidationOptions,
-      expectedSigners.Signers);
+      m_attestationSigners);
 
   // And return the attestation result to the caller.
   auto returnedToken = AttestationToken<AttestationResult>(token);
@@ -126,10 +129,13 @@ Azure::Response<AttestationToken<AttestationResult>> AttestationClient::AttestSg
 
 Azure::Response<AttestationToken<AttestationResult>> AttestationClient::AttestOpenEnclave(
     std::vector<uint8_t> const& openEnclaveReport,
-    AttestationSigningCertificateResult const& expectedSigners,
     AttestOptions options,
     Azure::Core::Context const& context) const
 {
+  AZURE_ASSERT_MSG(
+      !m_attestationSigners.empty(),
+      "RetrieveResponseValidationCollateral must be called before this API.");
+
   AttestOpenEnclaveRequest attestRequest{
       openEnclaveReport,
       options.InittimeData,
@@ -150,7 +156,40 @@ Azure::Response<AttestationToken<AttestationResult>> AttestationClient::AttestOp
   token.ValidateToken(
       options.TokenValidationOptions ? *options.TokenValidationOptions
                                      : this->m_tokenValidationOptions,
-      expectedSigners.Signers);
+      m_attestationSigners);
 
   return Response<AttestationToken<AttestationResult>>(token, std::move(response));
+}
+
+namespace {
+std::shared_timed_mutex SharedStateLock;
+}
+
+/**
+ * @brief Retrieves the information needed to validate the response returned from the attestation
+ * service.
+ *
+ * @details Validating the response returned by the attestation service requires a set of
+ * possible signers for the attestation token.
+ *
+ * @param context Client context for the request to the service.
+ */
+void AttestationClient::RetrieveResponseValidationCollateral(
+    Azure::Core::Context const& context) const
+{
+  std::unique_lock<std::shared_timed_mutex> stateLock(SharedStateLock);
+
+  if (m_attestationSigners.size() == 0)
+  {
+    auto request
+        = AttestationCommonRequest::CreateRequest(m_endpoint, HttpMethod::Get, {"certs"}, nullptr);
+    auto response = AttestationCommonRequest::SendRequest(*m_pipeline, request, context);
+    auto jsonWebKeySet(JsonWebKeySetSerializer::Deserialize(response));
+    AttestationSigningCertificateResult returnValue;
+    for (const auto& jwk : jsonWebKeySet.Keys)
+    {
+      AttestationSignerInternal internalSigner(jwk);
+      m_attestationSigners.push_back(internalSigner);
+    }
+  }
 }
