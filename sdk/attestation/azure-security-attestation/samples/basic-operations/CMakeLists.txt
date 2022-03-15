@@ -7,15 +7,19 @@ project (attestation-basic-operations LANGUAGES CXX)
 set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 
+macro (define_sample samplename)
 add_executable (
-  attestation-basic-operations
-  basic-operations.cpp
-)
+  attestation-${samplename}
+  ${samplename}.cpp)
 
-create_per_service_target_build(attestation-basic-operations attestation)
+create_per_service_target_build(attestation-${samplename} attestation)
 
-target_link_libraries(attestation-basic-operations PRIVATE azure-core azure-security-attestation azure-identity get-env-helper)
+target_link_libraries(attestation-${samplename} PRIVATE azure-security-attestation get-env-helper)
 
 # Add the sample to be run on CI. 
 # CI pipeline reads the {service}-samples.txt and runs the binaries listed there.
-file(APPEND ${CMAKE_BINARY_DIR}/attestation-samples.txt "${CMAKE_CURRENT_BINARY_DIR}/attestation-basic-operations\n")
+file(APPEND ${CMAKE_BINARY_DIR}/attestation-samples.txt "${CMAKE_CURRENT_BINARY_DIR}/attestation-${samplename}\n")
+
+endmacro()
+
+define_sample(basic-operations)

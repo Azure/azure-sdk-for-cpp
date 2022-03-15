@@ -7,15 +7,20 @@ project (attestation-policy LANGUAGES CXX)
 set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 
+macro (define_sample samplename)
 add_executable (
-  attestation-policy
-  policy.cpp
-)
+  attestation-${samplename}
+  ${samplename}.cpp)
 
-create_per_service_target_build(attestation-policy attestation)
+create_per_service_target_build(attestation-${samplename} attestation)
 
-target_link_libraries(attestation-policy PRIVATE azure-security-attestation azure-identity azure-core get-env-helper)
+target_link_libraries(attestation-${samplename} PRIVATE azure-security-attestation azure-identity get-env-helper)
 
 # Add the sample to be run on CI. 
 # CI pipeline reads the {service}-samples.txt and runs the binaries listed there.
-file(APPEND ${CMAKE_BINARY_DIR}/attestation-samples.txt "${CMAKE_CURRENT_BINARY_DIR}/attestation-policy\n")
+file(APPEND ${CMAKE_BINARY_DIR}/attestation-samples.txt "${CMAKE_CURRENT_BINARY_DIR}/attestation-${samplename}\n")
+
+endmacro()
+
+DEFINE_SAMPLE(get_policy)
+DEFINE_SAMPLE(set_policy)
