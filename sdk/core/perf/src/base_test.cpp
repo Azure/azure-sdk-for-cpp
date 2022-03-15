@@ -3,7 +3,9 @@
 
 #include "azure/perf/base_test.hpp"
 
+#if defined(BUILD_CURL_HTTP_TRANSPORT_ADAPTER)
 #include <azure/core/http/curl_transport.hpp>
+#endif
 #include <azure/core/http/policies/policy.hpp>
 #include <azure/core/internal/http/pipeline.hpp>
 
@@ -100,6 +102,7 @@ namespace Azure { namespace Perf {
 
   void BaseTest::ConfigureInsecureOptions(Azure::Core::_internal::ClientOptions* clientOptions)
   {
+#if defined(BUILD_CURL_HTTP_TRANSPORT_ADAPTER)
     if (m_isInsecureEnabled)
     {
       // There's currently no way to ask winHTTP to do insecure SSL.
@@ -111,6 +114,9 @@ namespace Azure { namespace Perf {
       clientOptions->Transport.Transport
           = std::make_shared<Azure::Core::Http::CurlTransport>(curlOptions);
     }
+#else
+    (void)clientOptions;
+#endif
   }
 
   void BaseTest::ConfigureCoreClientOptions(Azure::Core::_internal::ClientOptions* clientOptions)
