@@ -6,8 +6,8 @@ parameters:
 
 steps:
   - pwsh: |
-      Write-Host "git clone https://github.com/${{ parameters.RepoOwner }}/${{ parameters.RepoName }} ${{ parameters.Workspace }}/vcpkg"
-      git clone https://github.com/${{ parameters.RepoOwner }}/${{ parameters.RepoName }} ${{ parameters.Workspace }}/vcpkg
+      Write-Host "git clone https://github.com/${{ parameters.RepoOwner }}/${{ parameters.RepoName }} ${{ parameters.Workspace }}/${{ parameters.RepoName }}"
+      git clone https://github.com/${{ parameters.RepoOwner }}/${{ parameters.RepoName }} ${{ parameters.Workspace }}/${{ parameters.RepoName }}
       if ($LASTEXITCODE -ne 0) {
         Write-Error "Unable to check out vcpkg fork repo"
         exit $LASTEXITCODE
