@@ -55,7 +55,7 @@ namespace Azure { namespace Core { namespace Http { namespace Policies {
      * @brief Challenge parameters model
      *
      */
-    class ChallengeParameters {
+    class ChallengeParameters final {
     public:
       /**
        * @brief Default constructor
@@ -66,16 +66,16 @@ namespace Azure { namespace Core { namespace Http { namespace Policies {
       /**
        * @brief Constructor consuming the header value and parsing it into its components.
        *
-       * @param rawValue Raw value of the challenge header.
+       * @param headerValue Raw value of the challenge header.
        */
-      ChallengeParameters(std::string const& rawValue);
+      ChallengeParameters(std::string const& headerValue);
 
       /**
        * @brief Determines weather there is a challenge.
        *
        * @returns challenge present
        */
-      bool IsEmpty() { return Schema.empty(); }
+      bool IsEmpty() const { return Schema.empty(); }
       /**
        * @brief Gets the "authorization" or "authorization_uri" parameter from the challenge
        * response.
@@ -529,7 +529,7 @@ namespace Azure { namespace Core { namespace Http { namespace Policies {
     };
 
     /**
-     * @brief Challenge parameters model
+     * @brief Challenge based authentication policy parameters model
      *
      */
     class ChallengeBasedAuthenticationPolicy final : public BearerTokenAuthenticationPolicy {
@@ -557,11 +557,6 @@ namespace Azure { namespace Core { namespace Http { namespace Policies {
           Request& request,
           NextHttpPolicy nextPolicy,
           Context const& context) const override;
-
-      const _detail::ChallengeParameters& GetChallenge() { return _challenge; }
-
-    private:
-      _detail::ChallengeParameters _challenge;
     };
 
     /**

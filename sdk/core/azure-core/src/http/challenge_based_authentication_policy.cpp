@@ -18,41 +18,40 @@ std::unique_ptr<RawResponse> ChallengeBasedAuthenticationPolicy::Send(
 {
   request.SetHeader("authorization", "Bearer " + m_accessToken.Token);
   auto result = nextPolicy.Send(request, context);
-
-  if (result->GetStatusCode() == HttpStatusCode::Unauthorized)
+  auto const& headers = result->GetHeaders();
+  auto const& rawDataHeader = headers.find("www-authenticate");
+  // Only re-run when Unauthozied AND www-authenticate header in the response
+  if (result->GetStatusCode() == HttpStatusCode::Unauthorized && rawDataHeader != headers.end())
   {
-    auto rawData = result->GetHeaders().find("www-authenticate");
-    if (rawData != result->GetHeaders().end())
+    ChallengeParameters challenge(rawDataHeader->second);
+    Credentials::TokenRequestContext tokenRequestContext;
+
+    tokenRequestContext.TenantId = std::move(challenge.TenantId);
+    tokenRequestContext.AuthorizationUri = std::move(challenge.AuthorizationUri);
+    tokenRequestContext.Scopes = std::move(challenge.Scopes);
+
     {
-      ChallengeParameters challenge(rawData->second);
-      Credentials::TokenRequestContext tokenRequestContext;
-
-      tokenRequestContext.TenantId = std::move(challenge.TenantId);
-      tokenRequestContext.AuthorizationUri = std::move(challenge.AuthorizationUri);
-      tokenRequestContext.Scopes = std::move(m_tokenRequestContext.Scopes);
-
-      {
-        std::lock_guard<std::mutex> lock(m_accessTokenMutex);
-        m_accessToken = m_credential->GetToken(tokenRequestContext, context);
-        request.SetHeader("authorization", "Bearer " + m_accessToken.Token);
-      }
+      std::lock_guard<std::mutex> lock(m_accessTokenMutex);
+      m_accessToken = m_credential->GetToken(tokenRequestContext, context);
+      request.SetHeader("authorization", "Bearer " + m_accessToken.Token);
     }
     return nextPolicy.Send(request, context);
   }
 
+  // Did not re-send on any other case
   return result;
 }
 /*
  * the raw value ( the value of the "www-authenticate" header is in the following format
  * "Bearer authorization/authorization_uri=[value] resource/scope=[value]";
  */
-ChallengeParameters::ChallengeParameters(std::string const& rawValue)
+ChallengeParameters::ChallengeParameters(std::string const& headerValue)
 {
-  if (rawValue.rfind(_detail::BearerName) == 0)
+  if (headerValue.rfind(_detail::BearerName) == 0)
   {
     Schema = _detail::BearerName;
 
-    auto parts = GetParts(rawValue, _detail::SpaceSeparator);
+    std::vector<std::string> const parts = GetParts(headerValue, _detail::SpaceSeparator);
     for (size_t i = 1; i < parts.size(); i++)
     {
       ProcessFragment(parts[i]);
@@ -63,7 +62,7 @@ ChallengeParameters::ChallengeParameters(std::string const& rawValue)
 void ChallengeParameters::ProcessFragment(std::string const& fragment)
 {
   // check that fragment is in the Key=value format
-  if (fragment.rfind(_detail::EqualSeparator) != 0)
+  if (fragment.rfind(_detail::EqualSeparator) != std::string::npos)
   {
     auto subParts = GetParts(fragment, _detail::EqualSeparator);
 
@@ -104,16 +103,24 @@ std::vector<std::string> ChallengeParameters::GetParts(
     char const& separator)
 {
   std::vector<std::string> returnValue;
-  std::istringstream inputStream(inputString);
-  std::string token;
-
-  while (std::getline(inputStream, token, separator))
+  size_t startPosition = 0;
+  size_t endPosition = 0;
+  while (endPosition != std::string::npos)
   {
-    if (!token.empty())
+    endPosition = inputString.find(separator, startPosition);
+    if (endPosition != std::string::npos)
     {
-      returnValue.emplace_back(token);
+      if (endPosition != startPosition)
+      {
+        returnValue.emplace_back(inputString.substr(startPosition, endPosition - startPosition));
+      }
     }
+    else
+    {
+      returnValue.emplace_back(
+          inputString.substr(startPosition, inputString.length() - startPosition));
+    }
+    startPosition = endPosition + 1;
   }
-
   return returnValue;
 }

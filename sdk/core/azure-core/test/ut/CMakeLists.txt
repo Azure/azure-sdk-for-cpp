@@ -39,6 +39,7 @@ add_executable (
     base64_test.cpp
     challenge_test.cpp
     bearer_token_authentication_policy_test.cpp
+    challenge_based_authentication_policy.cpp
     bodystream_test.cpp
     case_insensitive_containers_test.cpp
     client_options_test.cpp
