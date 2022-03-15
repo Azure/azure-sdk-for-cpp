@@ -53,6 +53,10 @@ steps:
       pwsh: true
       targetType: filePath
       filePath: eng/scripts/Test-ShouldReleaseToVcpkg.ps1
+      arguments: >-
+        -ReleaseArtifactSourceDirectory "${{ parameters.Workspace }}/packages/${{ parameters.ArtifactName }}"
+        -VcpkgFolder ${{ parameters.Workspace }}/vcpkg
+        -VcpkgPortName '${{ parameters.VcpkgPortName }}'
     displayName: Check whether to release to vcpkg
 
   - task: Powershell@2
