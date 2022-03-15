@@ -26,7 +26,6 @@
 #include "attestation_collateral.hpp"
 #include <azure/attestation.hpp>
 #include <azure/core/base64.hpp>
-#include <azure/identity.hpp>
 #include <chrono>
 #include <iostream>
 #include <thread>

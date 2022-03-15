@@ -21,7 +21,7 @@
  *
  */
 
-#include "get_env.hpp"
+#include <get_env.hpp>
 
 #include "attestation_collateral.hpp"
 #include <azure/attestation.hpp>
@@ -29,6 +29,7 @@
 #include <chrono>
 #include <iostream>
 #include <thread>
+#include <vector>
 
 using namespace Azure::Security::Attestation;
 using namespace Azure::Security::Attestation::Models;
@@ -42,36 +43,24 @@ int main()
   {
     std::cout << "In function: SampleAttestSgxEnclaveSimple" << std::endl;
     // create client
-    AttestationClient attestationClient(std::getenv("ATTESTATION_AAD_URL"));
+    std::string shortLocation(std::getenv("LOCATION_SHORT_NAME"));
+    std::string endpoint
+        = "https://shared" + shortLocation + "." + shortLocation + ".attest.azure.net";
 
-    // Retrieve any and all collateral needed to validate the result of APIs calling into the attestation service..
+    AttestationClient attestationClient(endpoint);
+
+    // Retrieve and cache the collateral required to validate attestation service responses.
     attestationClient.RetrieveResponseValidationCollateral();
 
-    std::vector<uint8_t> openEnclaveReport = AttestationCollateral::OpenEnclaveReport();
+    std::vector<uint8_t> sgxEnclaveQuote = AttestationCollateral::SgxQuote();
 
-    AttestOptions options;
-    options.DraftPolicyForAttestation = R"(version= 1.0;
-authorizationrules
-{
-    [ type=="x-ms-sgx-is-debuggable", value==true] &&
-    [ type=="x-ms-sgx-product-id", value!=0 ] &&
-    [ type=="x-ms-sgx-svn", value>= 0 ] &&
-    [ type=="x-ms-sgx-mrsigner", value == "4aea5f9a0ed04b11f889aadfe6a1d376213a29a95a85ce7337ae6f7fece6610c"]
-        => permit();
-};
-issuancerules {
-    c:[type=="x-ms-sgx-mrsigner"] => issue(type="custom-name", value=c.value);
-};)";
     Azure::Response<AttestationToken<AttestationResult>> sgxResult
-        = attestationClient.AttestOpenEnclave(openEnclaveReport, options);
+        = attestationClient.AttestSgxEnclave(sgxEnclaveQuote);
 
     std::cout << "SGX Quote MRSIGNER is: "
               << Convert::Base64Encode(*sgxResult.Value.Body.SgxMrSigner) << std::endl;
     std::cout << "SGX Quote MRENCLAVE is: "
               << Convert::Base64Encode(*sgxResult.Value.Body.SgxMrEnclave) << std::endl;
-    std::cout << "Product version: " << *sgxResult.Value.Body.SgxProductId << std::endl;
-
-    std::cout << "Policy claims: " << *sgxResult.Value.Body.PolicyClaims << std::endl;
   }
   catch (Azure::Core::Credentials::AuthenticationException const& e)
   {
