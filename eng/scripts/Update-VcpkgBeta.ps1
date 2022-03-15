@@ -27,6 +27,10 @@ $packageInfo = ConvertFrom-Json $rawPackageInfo
 
 $originalLocation = Get-Location
 try {
+    Set-Location $VcpkgFolder
+    Write-Host "./bootstrap-vcpkg.bat"
+    ./bootstrap-vcpkg.bat
+
     Set-Location $VcpkgBetaFolder
 
     Write-Host "$VcpkgFolder/vcpkg format-manifest --all --vcpkg-root=. --x-scripts-root=$VcpkgFolder/scripts"
