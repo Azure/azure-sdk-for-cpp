@@ -33,47 +33,47 @@ namespace Azure {
      * @brief JWK 'kid'. See <a href='https://datatracker.ietf.org/doc/html/rfc7517#section-4.5'>RFC
      * 7517 section 4.5</a>
      */
-    Azure::Nullable<std::string> kid;
+    Azure::Nullable<std::string> Kid;
     /**
      * @brief JWK 'kty'. See <a href='https://datatracker.ietf.org/doc/html/rfc7517#section-4.1'>RFC
      * 7517 section 4.1</a>
      */
-    Azure::Nullable<std::string> kty;
+    Azure::Nullable<std::string> Kty;
     /**
      * @brief JWK 'alg'. See <a href='https://datatracker.ietf.org/doc/html/rfc7517#section-4.4'>RFC
      * 7517 section 4.4</a>
      */
-    Azure::Nullable<std::string> alg;
+    Azure::Nullable<std::string> Alg;
     /**
      * @brief JWK 'x5c'. See <a href='https://datatracker.ietf.org/doc/html/rfc7517#section-4.7'>RFC
      * 7517 section 4.7</a>
      */
-    Azure::Nullable<std::vector<std::string>> x5c;
+    Azure::Nullable<std::vector<std::string>> X5c;
     /**
      * @brief JWK 'x5t'. See <a href='https://datatracker.ietf.org/doc/html/rfc7517#section-4.8'>RFC
      * 7517 section 4.8</a>
      */
-    Azure::Nullable<std::string> x5t;
+    Azure::Nullable<std::string> X5t;
     /**
      * @brief JWK 'use'. See <a href='https://datatracker.ietf.org/doc/html/rfc7517#section-4.2'>RFC
      * 7517 section 4.2</a>
      */
-    Azure::Nullable<std::string> use;
+    Azure::Nullable<std::string> Use;
     /**
      * @brief JWK 'x5t#S256'. See
      * <a href='https://datatracker.ietf.org/doc/html/rfc7517#section-4.9'>RFC 7517 section 4.9</a>
      */
-    Azure::Nullable<std::string> x5t256;
+    Azure::Nullable<std::string> X5t256;
     /**
      * @brief JWK 'x5u'. See <a href='https://datatracker.ietf.org/doc/html/rfc7517#section-4.6'>RFC
      * 7517 section 4.6</a>
      */
-    Azure::Nullable<std::string> x5u;
+    Azure::Nullable<std::string> X5u;
     /**
      * @brief JWK 'key_ops'. See
      * <a href='https://datatracker.ietf.org/doc/html/rfc7517#section-4.3'>RFC 7517 section 4.3</a>
      */
-    Azure::Nullable<std::vector<std::string>> keyops;
+    Azure::Nullable<std::vector<std::string>> KeyOps;
 
     // RSA Public Keys (alg == 'RS256' | 'RS384' | 'RS512').
     /**
@@ -81,13 +81,13 @@ namespace Azure {
      * <a href='https://rfc-editor.org/rfc/rfc7518#section-6.3.1.1'>RFC 7518 section 6.3.1.1</a>
      *
      */
-    Azure::Nullable<std::string> n;
+    Azure::Nullable<std::string> N;
     /**
      * @brief RFC 7518 "e" (exponent) parameter. See
      * <a href='https://rfc-editor.org/rfc/rfc7518#section-6.3.1.2'>RFC 7518 section 6.3.1.2</a>
      *
      */
-    Azure::Nullable<std::string> e;
+    Azure::Nullable<std::string> E;
     // Private key
 
     /**
@@ -95,50 +95,50 @@ namespace Azure {
      * <a href='https://rfc-editor.org/rfc/rfc7518#section-6.3.2.2'>RFC 7518 section 6.3.2.2</a>
      *
      */
-    Azure::Nullable<std::string> p;
+    Azure::Nullable<std::string> P;
     /**
      * @brief RFC 7518 "q" (Second Prime factor) parameter. See
      * <a href='https://rfc-editor.org/rfc/rfc7518#section-6.3.2.3'>RFC 7518 section 6.3.2.3</a>
      */
-    Azure::Nullable<std::string> q;
+    Azure::Nullable<std::string> Q;
     /**
      * @brief RFC 7518 "dp" (First Factor CRT Exponent) parameter. See
      * <a href='https://rfc-editor.org/rfc/rfc7518#section-6.3.2.4'>RFC 7518 section 6.3.2.4</a>
      *
      */
-    Azure::Nullable<std::string> dp;
+    Azure::Nullable<std::string> Dp;
     /**
      * @brief RFC 7518 "dq" (Second Factor CRT Exponent) parameter. See
      * <a href='https://rfc-editor.org/rfc/rfc7518#section-6.3.2.5'>RFC 7518 section 6.3.2.5</a>
      */
-    Azure::Nullable<std::string> dq;
+    Azure::Nullable<std::string> Dq;
     /**
      * @brief RFC 7518 "qi" (First CRT Coefficient) parameter. See
      * <a href='https://rfc-editor.org/rfc/rfc7518#section-6.3.2.6'>RFC 7518 section 6.3.2.6</a>
      */
-    Azure::Nullable<std::string> qi;
+    Azure::Nullable<std::string> Qi;
     /**
      * @brief RFC 7518 "oth" (First CRT Coefficient) parameter. See
      * <a href='https://rfc-editor.org/rfc/rfc7518#section-6.3.2.7'>RFC 7518 section 6.3.2.7</a>
      */
-    Azure::Nullable<std::string> oth;
+    Azure::Nullable<std::string> Oth;
 
     // ECDSA Public Keys (alg == 'ES256' | 'ES384' | 'ES512').
     /**
      * @brief RFC 7518 "crv" (Curve) parameter. See
      * <a href='https://rfc-editor.org/rfc/rfc7518#section-6.3.1.1'>RFC 7518 section 6.3.1.1</a>
      */
-    Azure::Nullable<std::string> crv;
+    Azure::Nullable<std::string> Crv;
     /**
      * @brief RFC 7518 "x" (X Coordinate) parameter. See
      * <a href='https://rfc-editor.org/rfc/rfc7518#section-6.3.1.2'>RFC 7518 section 6.3.1.2</a>
      */
-    Azure::Nullable<std::string> x;
+    Azure::Nullable<std::string> X;
     /**
      * @brief RFC 7518 "y" (Y Coordinate) parameter. See
      * <a href='https://rfc-editor.org/rfc/rfc7518#section-6.3.1.3'>RFC 7518 section 6.3.1.3</a>
      */
-    Azure::Nullable<std::string> y;
+    Azure::Nullable<std::string> Y;
 
     /**
      * @brief RFC 7518 "d" (Private Exponent) parameter, or (ECC Private Key) parameter
@@ -149,7 +149,7 @@ namespace Azure {
      * <a href='https://rfc-editor.org/rfc/rfc7518#section-6.2.2.1'>RFC 7518 section 6.2.2.1</a>
      *
      */
-    Azure::Nullable<std::string> d; // Shared with RSA Public Key.
+    Azure::Nullable<std::string> D; // Shared with RSA Public Key.
   };
 
   /**
@@ -273,6 +273,28 @@ namespace Azure {
     /** @brief UTF-8 encoded representation of the attestation policy.
      */
     Azure::Nullable<std::vector<uint8_t>> AttestationPolicy;
+  };
+
+  /**
+   * @brief Result of a GetPolicy, SetPolicy, or ResetPolicy operation.
+   */
+  struct GetPolicyCertificatesResult
+  {
+    /**
+     * @brief Result of a modification.
+     */
+    Azure::Nullable<JsonWebKeySet> PolicyCertificates;
+  };
+
+  struct PolicyCertificateManagementBody
+  {
+    JsonWebKey policyCertificate;
+  };
+
+  struct ModifyPolicyCertificatesResult
+  {
+    Azure::Nullable<std::string> CertificateThumbprint;
+    Azure::Nullable<std::string> CertificateResolution;
   };
 
 }}}}} // namespace Azure::Security::Attestation::Models::_detail
