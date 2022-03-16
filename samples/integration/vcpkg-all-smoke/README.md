@@ -1,6 +1,6 @@
-# Integrating the Azure SDK for C++ into your application using vcpkg
+# Smoketest the Azure SDK for C++ into your application using vcpkg
 
-This application shows how to integrate the Azure SDK for C++ in your application. It uses vcpkg to adquire and build the Azure SDK for C++ client libraries. Your CMake project needs to link the libraries from vcpkg by setting the toolchain file to vcpkg (shown below).
+This application instantiates all the sdk clients, and call one API from each in order to check their side by side capabilities
 
 ## Pre-requisites
 
@@ -12,20 +12,6 @@ Install the [Azure SDK for C++ dependencies](https://github.com/Azure/azure-sdk-
 
 - CMake project (min version 3.13).
 - C++ version 14 or greater.
-
-### Container
-
-The sample provides a .devcontainer folder which can be used by VS Code to build and run a docker container with the required C++ build tools and with vcpkg installed.
-
-This method requires VS Code + [Remote Container](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-containers) to be installed in the system. Also make sure to have Docker installed and running. This method works for any operating system where Docker and VSCode is supported like Windows, Linux and macOS. The development environment will be Debian 10.
-
-- Open vcpkg folder in VS Code.
-- VS Code will detect the `devcontainer` configuration and ask you if you would like to re-open the folder in a container. Click Yes.
-- If VS Code did not ask, you can press F1 and type `Reopen in container` option.
-
-Once VS Code builds and run the container, open the terminal and continue to build step.
-
-> Note: The container is set up to automatically link vcpkg to CMake projects by setting env variables that the CMake sample project will use to set the toolchain.
 
 ## Build
 
@@ -63,5 +49,5 @@ Review source code header for `environment variables` that must be set up before
 #
 
 # Run binary (.exe on Windows)
-./application
+./smoketest-vcpkg
 ```
