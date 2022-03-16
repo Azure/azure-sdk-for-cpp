@@ -40,8 +40,27 @@ namespace Azure { namespace Perf {
     bool m_isPlayBackMode = false;
     bool m_isInsecureEnabled = false;
 
+    /**
+     * @brief Updates the performance test to use a test-proxy for running.
+     *
+     * @note A tes-proxy is not a general proxy in the middle of the test and a server. This is an
+     * SDK specific tool https://github.com/Azure/azure-sdk-tools/tree/main/tools/test-proxy that
+     * provides record and playback features to a performance test. Do not use a general purpose
+     * proxy for the test.
+     *
+     * @param proxy
+     */
     void SetTestProxy(std::string const& proxy) { m_proxy = proxy; }
 
+    /**
+     * @brief Set the performance test to run insecure.
+     *
+     * @details Running insecure means that for an SSL connection, the server certificate won't be
+     * validated to be a known certificate. Use this to stablish conversation with Https servers
+     * using self-signed certificates.
+     *
+     * @param value
+     */
     void AllowInsecureConnections(bool value) { m_isInsecureEnabled = value; }
 
     /**
