@@ -9,9 +9,9 @@ urlFragment: attestation-samples
 
 ---
 
-# Attestation Samples for the Microsoft Azure Attestation client library for C++
+# Policy Samples for the Microsoft Azure Attestation client library for C++
 
-These code samples show common scenario operations for the Attestation APIs within the Azure Attestation client library.
+These code samples show how to set and reset attestation policies using the Attestation client library.
 
 ## Sample Requirements
 
@@ -20,20 +20,20 @@ variables have been set by the user:
 
 * ATTESTATION_AAD_URL - the base URL for an attestation service instance in AAD mode.
 * ATTESTATION_ISOLATED_URL - the base URL for an attestation service instance in Isolated mode.
-* ATTESTATION_LOCATION_SHORT_NAME - the short name for the region in which the
-  sample should be run - used to interact with the shared endpoint for that
-  region.
+* ISOLATED_SIGNING_KEY - a Base64 encoded ASN.1 DER representation of a private key used when creating the 
+ATTESTATION_ISOLATED_URL instance.
+* ISOLATED_SIGNING_CERTIFICATE - a Base64 encoded DER X.509 certificate wrapping the public key of the ISOLATED_SIGNING_KEY.
 
 ## Samples descriptions
 
 The samples are structured as separate source files, one per scenario. The are:
 Sample | What it tests | Notes
 -----|-----|-----
-AttestSgxEnclave | The simplest usage of the AttestSgxEnclave API |
-AttestOpenEnclaveShared | Attest an OpenEnclave report using the shared attestation instance |
-AttestSgxEnclaveWithRuntimeBinary | Calling AttestSgxEnclave with RuntimeData sent to the service which should be interpreted as binary data |
-AttestSgxEnclaveWithRuntimeJson | Calling AttestSgxEnclave with RuntimeData sent to the service which should be interpreted as JSON data |
-AttestOpenEnclaveWithDraftPolicy | Calling AttestOpenEnclave with a draft attestation policy which can be used to test attestation policies to determine their effect |
+Get_Policy | Retrieves the attestation policy for a specific attestation instance. |
+Set_Policy | Sets an attestation policy on an AAD attestation instance. | Note: The policy being set in this sample is unsigned.
+Set_Sealed_Policy | Sets an attestation policy on an isolated attestation instance | Note: This sample requires the ISOLATED_ environment variables.
+Reset_Policy | Resets the attestation policy for an AAD instance to the default value for the attestation type. |
+Reset_Sealed_Policy | Resets an attestation policy to the default value on an isolated attestation instance | Note: This sample requires the ISOLATED_ environment variables.
 
 ## Additional Information
 
