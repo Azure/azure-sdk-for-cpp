@@ -44,7 +44,7 @@ int main()
 
   try
   {
-    // call an API from each client
+    // call an API from each client to make sure all is properly initialized
     keyClient.GetPropertiesOfKeys();
     secretClient.GetPropertiesOfSecrets();
     certificateClient.GetPropertiesOfCertificates();
