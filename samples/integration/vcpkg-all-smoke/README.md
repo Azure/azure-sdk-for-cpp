@@ -36,7 +36,7 @@ cmake -build .
 
 ### Windows VS
 
-If you are using Visual Studio, the toolchain to link vcpkg is set with `CMakeSettings.json`. Upate this file and set the vcpkg toolchain file for vcpkg (VCPKG_ROOT\scripts\buildsystems\vcpkg.cmake). After setting the toolchain, VS can generate and build the sample. Use VS to open the sample folder only.
+If you are using Visual Studio, the toolchain to link vcpkg is set with `CMakeSettings.json`. Update this file and set the vcpkg toolchain file for vcpkg (VCPKG_ROOT\scripts\buildsystems\vcpkg.cmake). After setting the toolchain, VS can generate and build the sample. Use VS to open the sample folder only.
 
 ## Run application
 
