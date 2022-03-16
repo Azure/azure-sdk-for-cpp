@@ -125,11 +125,12 @@ int main()
   }
   catch (Azure::Core::RequestFailedException const& e)
   {
-    std::cout << "Attestation Client Exception happened:" << std::endl << e.Message << std::endl;
-    std::cout << "Reason:" << e.ErrorCode << std::endl;
-    std::cout << "Reason Phrase:" << e.ReasonPhrase << std::endl;
-    std::cout << "Client Request ID:" << e.ClientRequestId << std::endl;
-    std::cout << "Request ID:" << e.RequestId << std::endl;
+    std::cout << "Request Failed Exception happened:" << std::endl << e.what() << std::endl;
+    if (e.RawResponse)
+    {
+      std::cout << "Error Code: " << e.ErrorCode << std::endl;
+      std::cout << "Error Message: " << e.Message << std::endl;
+    }
     return 1;
   }
   return 0;

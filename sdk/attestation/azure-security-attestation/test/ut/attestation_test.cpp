@@ -1,6 +1,7 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
 
+#include "../src/private/crypto/inc/crypto.hpp"
 #include "attestation_collateral.hpp"
 #include "azure/attestation/attestation_client.hpp"
 #include <azure/core/internal/json/json.hpp>
@@ -51,28 +52,34 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
       }
     }
 
+    AttestationTokenValidationOptions GetTokenValidationOptions()
+    {
+      AttestationTokenValidationOptions returnValue;
+      if (m_testContext.IsPlaybackMode())
+      {
+        // Skip validating time stamps if using recordings.
+        returnValue.ValidateNotBeforeTime = false;
+        returnValue.ValidateExpirationTime = false;
+      }
+      else
+      {
+        returnValue.ValidationTimeSlack = 10s;
+      }
+      return returnValue;
+    }
+
     std::unique_ptr<AttestationClient> CreateClient()
     {
       // `InitTestClient` takes care of setting up Record&Playback.
       auto options = InitClientOptions<Azure::Security::Attestation::AttestationClientOptions>();
-      if (m_testContext.IsPlaybackMode())
-      {
-        // Skip validating time stamps if using recordings.
-        options.TokenValidationOptions.ValidateNotBeforeTime = false;
-        options.TokenValidationOptions.ValidateExpirationTime = false;
-      }
+      options.TokenValidationOptions = GetTokenValidationOptions();
       return std::make_unique<Azure::Security::Attestation::AttestationClient>(m_endpoint, options);
     }
     std::unique_ptr<AttestationClient> CreateAuthenticatedClient()
     {
       // `InitClientOptions` takes care of setting up Record&Playback.
       AttestationClientOptions options;
-      if (m_testContext.IsPlaybackMode())
-      {
-        // Skip validating time stamps if using recordings.
-        options.TokenValidationOptions.ValidateNotBeforeTime = false;
-        options.TokenValidationOptions.ValidateExpirationTime = false;
-      }
+      options.TokenValidationOptions = GetTokenValidationOptions();
       std::shared_ptr<Azure::Core::Credentials::TokenCredential> credential
           = std::make_shared<Azure::Identity::ClientSecretCredential>(
               GetEnv("AZURE_TENANT_ID"), GetEnv("AZURE_CLIENT_ID"), GetEnv("AZURE_CLIENT_SECRET"));
@@ -136,7 +143,8 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
 
   TEST_P(AttestationTests, AttestWithRuntimeData)
   {
-    auto client(CreateClient());
+    // Attestation clients don't need to be authenticated, but they can be.
+    auto client(CreateAuthenticatedClient());
     auto runtimeData = AttestationCollateral::RuntimeData();
 
     AttestationType type = std::get<1>(GetParam());
@@ -165,7 +173,30 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
     {
       auto report = AttestationCollateral::OpenEnclaveReport();
       AttestationData data{runtimeData, AttestationDataType::Json};
-      auto attestResponse = client->AttestOpenEnclave(report, {data});
+      AttestOptions options;
+      options.RuntimeData = data;
+      options.TokenValidationOptions = GetTokenValidationOptions();
+      (*options.TokenValidationOptions).ValidationCallback
+          = [&](AttestationToken<> const& token, AttestationSigner const& signer) {
+              EXPECT_TRUE(token.Issuer);
+              // When running against a live server, the m_endpoint value is mocked, so we cannot
+              // compare against it.
+              // The signers KeyId MUST match the key ID in the token.
+              EXPECT_TRUE(signer.KeyId);
+              EXPECT_TRUE(token.Header.KeyId);
+              EXPECT_EQ(*signer.KeyId, *token.Header.KeyId);
+              EXPECT_TRUE(signer.CertificateChain);
+              auto cert(Azure::Security::Attestation::_detail::Cryptography::ImportX509Certificate(
+                  (*signer.CertificateChain)[0]));
+              if (!m_testContext.IsPlaybackMode())
+              {
+                // The issuer of an attestation token MUST be the endpoint which we're talking to.
+                EXPECT_EQ(*token.Issuer, m_endpoint);
+                // And the endpoint should be in the subject of hte issuer.
+                EXPECT_NE(cert->GetSubjectName().find(m_endpoint), std::string::npos);
+              }
+            };
+      auto attestResponse = client->AttestOpenEnclave(report, options);
       ValidateAttestResponse(attestResponse, data);
     }
     else if (type == AttestationType::SgxEnclave)
