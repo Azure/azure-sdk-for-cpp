@@ -322,7 +322,7 @@ void Azure::Perf::Program::Run(
     }
     if (options.Insecure)
     {
-      parallelTest[i]->SetInsecureEnabled(true);
+      parallelTest[i]->AllowInsecureConnections(true);
     }
   }
 

@@ -42,7 +42,7 @@ namespace Azure { namespace Perf {
 
     void SetTestProxy(std::string const& proxy) { m_proxy = proxy; }
 
-    void SetInsecureEnabled(bool value) { m_isInsecureEnabled = value; }
+    void AllowInsecureConnections(bool value) { m_isInsecureEnabled = value; }
 
     /**
      * @brief Define actions to run after test set up and before the actual test.
