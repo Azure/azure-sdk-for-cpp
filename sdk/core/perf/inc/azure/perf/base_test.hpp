@@ -48,7 +48,7 @@ namespace Azure { namespace Perf {
      * provides record and playback features to a performance test. Do not use a general purpose
      * proxy for the test.
      *
-     * @param proxy
+     * @param proxy A test-proxy server url.
      */
     void SetTestProxy(std::string const& proxy) { m_proxy = proxy; }
 
@@ -59,7 +59,7 @@ namespace Azure { namespace Perf {
      * validated to be a known certificate. Use this to stablish conversation with Https servers
      * using self-signed certificates.
      *
-     * @param value
+     * @param value Boolean value use to set the insecure mode ON of OFF.
      */
     void AllowInsecureConnections(bool value) { m_isInsecureEnabled = value; }
 
