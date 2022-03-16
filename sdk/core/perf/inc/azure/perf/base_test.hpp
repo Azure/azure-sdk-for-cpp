@@ -62,7 +62,7 @@ namespace Azure { namespace Perf {
      */
     void PreCleanUp();
 
-    void ConfigureInsecureOptions(Azure::Core::_internal::ClientOptions* clientOptions);
+    void ConfigureInsecureConnection(Azure::Core::_internal::ClientOptions* clientOptions);
 
     /**
      * @brief Set the client options depending on the test options.
