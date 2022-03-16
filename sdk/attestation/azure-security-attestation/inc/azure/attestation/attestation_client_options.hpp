@@ -268,7 +268,7 @@ namespace Azure { namespace Security { namespace Attestation {
      * @details If not provided by the caller, the token validation options
      * specified when the @{link AttestationClient} was created will be used.
      */
-    Azure::Nullable<AttestationTokenValidationOptions> TokenValidationOptions;
+    Azure::Nullable<AttestationTokenValidationOptions> TokenValidationOptions{};
   };
 
   /** @brief The AttestationSigningKey represents a tuple of asymmetric private cryptographic key
