@@ -64,7 +64,6 @@ int main()
     // Retrieve attestation response validation collateral before calling into the service.
     adminClient.RetrieveResponseValidationCollateral();
 
-    
     Azure::Response<AttestationToken<PolicyResult>> resetResult
         = adminClient.ResetAttestationPolicy(AttestationType::SgxEnclave);
 

@@ -7,9 +7,9 @@
  *
  * @remark The following environment variables must be set before running the sample.
  * - ATTESTATION_AAD_URL:  Points to an Attestation Service Instance in AAD mode.
- * 
- * AttestationClient instances are not always authenticated. This sample shows unauthenticated access to the
- * client.
+ *
+ * AttestationClient instances are not always authenticated. This sample shows unauthenticated
+ * access to the client.
  *
  */
 
@@ -31,12 +31,12 @@ int main()
   {
     AttestationClientOptions clientOptions;
 
-    // Allow up to 10s of time difference between the attestation client and the attestation service.
+    // Allow up to 10s of time difference between the attestation client and the attestation
+    // service.
     clientOptions.TokenValidationOptions.ValidationTimeSlack = 10s;
 
     // create client
     AttestationClient attestationClient(std::getenv("ATTESTATION_AAD_URL"), clientOptions);
-
   }
   catch (Azure::Core::Credentials::AuthenticationException const& e)
   {

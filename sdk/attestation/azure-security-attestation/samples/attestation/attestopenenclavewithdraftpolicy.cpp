@@ -44,7 +44,8 @@ int main()
     // create client
     AttestationClient attestationClient(std::getenv("ATTESTATION_AAD_URL"));
 
-    // Retrieve any and all collateral needed to validate the result of APIs calling into the attestation service..
+    // Retrieve any and all collateral needed to validate the result of APIs calling into the
+    // attestation service..
     attestationClient.RetrieveResponseValidationCollateral();
 
     std::vector<uint8_t> openEnclaveReport = AttestationCollateral::OpenEnclaveReport();

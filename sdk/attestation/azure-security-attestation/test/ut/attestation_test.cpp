@@ -133,8 +133,7 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
     if (type == AttestationType::OpenEnclave)
     {
       auto report = AttestationCollateral::OpenEnclaveReport();
-      auto attestResponse
-          = client->AttestOpenEnclave(report);
+      auto attestResponse = client->AttestOpenEnclave(report);
       ValidateAttestResponse(attestResponse);
 
       attestResponse = client->AttestOpenEnclave(report);
@@ -215,9 +214,7 @@ authorizationrules
 issuancerules {
     c:[type=="x-ms-sgx-mrsigner"] => issue(type="custom-name", value=c.value);
 };)";
-      EXPECT_THROW(
-          client->AttestOpenEnclave(report, options),
-          Azure::Core::RequestFailedException);
+      EXPECT_THROW(client->AttestOpenEnclave(report, options), Azure::Core::RequestFailedException);
     }
     else if (type == AttestationType::SgxEnclave)
     {
@@ -237,9 +234,7 @@ authorizationrules
 issuancerules {
     c:[type=="x-ms-sgx-mrsigner"] => issue(type="custom-name", value=c.value);
 };)";
-      EXPECT_THROW(
-          client->AttestSgxEnclave(quote, options),
-          Azure::Core::RequestFailedException);
+      EXPECT_THROW(client->AttestSgxEnclave(quote, options), Azure::Core::RequestFailedException);
     }
   }
 

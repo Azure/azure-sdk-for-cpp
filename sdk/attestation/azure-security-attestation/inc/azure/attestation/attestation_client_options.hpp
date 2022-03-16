@@ -163,13 +163,13 @@ namespace Azure { namespace Security { namespace Attestation {
   };
 
   /** @brief Attestation Validation Collateral
-  * 
-  * This structure contains all the information needed to validate the response from the attestation service.
-  * 
-  */
+   *
+   * This structure contains all the information needed to validate the response from the
+   * attestation service.
+   *
+   */
   class AttestationValidationCollateral final {
     std::vector<Models::AttestationSigner> m_attestationSigners;
-
   };
 
   /** @brief The AttestationDataType represents how the attestation service should interpret the

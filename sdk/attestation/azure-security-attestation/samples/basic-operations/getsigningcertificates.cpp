@@ -41,11 +41,11 @@ int main()
 
     std::cout << "There are " << signingCertificates.Value.Signers.size() << "signing certificates."
               << std::endl;
-    for (const auto &certs: signingCertificates.Value.Signers)
+    for (const auto& certs : signingCertificates.Value.Signers)
     {
       std::cout << "Signing certificate chain:" << std::endl;
       int certIndex = 0;
-      for (const auto &cert : *certs.CertificateChain)
+      for (const auto& cert : *certs.CertificateChain)
       {
         std::cout << "Certificate " << certIndex << ": " << cert << std::endl;
         certIndex += 1;
