@@ -322,9 +322,6 @@ void Azure::Perf::Program::Run(
     }
     if (options.Insecure)
     {
-#if defined(BUILD_TRANSPORT_WINHTTP_ADAPTER)
-      std::cout << std::endl << " ERROR !!! winHTTP does not support using insecure mode.";
-#endif
       parallelTest[i]->SetInsecureEnabled(true);
     }
   }

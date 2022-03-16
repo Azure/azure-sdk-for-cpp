@@ -128,7 +128,11 @@ namespace Azure { namespace Core { namespace Http {
    */
   struct WinHttpTransportOptions final
   {
-    // Empty struct reserved for future options.
+    /**
+     * @brief When `true`, allows an invalid certificate authority. If this flag is set, the
+     * application does not receive a WINHTTP_CALLBACK_STATUS_FLAG_INVALID_CA callback.
+     */
+    bool IgnoreUnknownServerCert = false;
   };
 
   /**
