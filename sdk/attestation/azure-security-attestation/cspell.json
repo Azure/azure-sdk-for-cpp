@@ -9,15 +9,17 @@
   "ignorePaths": [
     "**/test/ut/recordings/*.json"
   ],
-  // * Unless configured otherwise, these words are not case sensitive
-  // * Alphabetize the list when making changes so the list is easier for future
-  //   users to maintain and reason about.
   "words": [
     "ECDS",
     "jwks",
     "jwk",
     "mrenclave",
     "mrsigner",
-    "shareduks"
+    "shareduks",
+    "attestsgxenclave",
+    "attestsgxenclavewithruntimejson",
+    "attestsgxenclavewithruntimebinary",
+    "getopenidmetadata"
+      
   ]
 }
