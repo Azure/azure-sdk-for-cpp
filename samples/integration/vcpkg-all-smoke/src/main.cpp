@@ -31,9 +31,9 @@ using namespace Azure::Security::KeyVault::Certificates;
 
 int main()
 {
-  auto tenantId = std::getenv("AZURE_TENANT_ID");
-  auto clientId = std::getenv("AZURE_CLIENT_ID");
-  auto clientSecret = std::getenv("AZURE_CLIENT_SECRET");
+  auto tenantId = "tenant";
+  auto clientId = "client";
+  auto clientSecret = "secret";
   auto credential
       = std::make_shared<Azure::Identity::ClientSecretCredential>(tenantId, clientId, clientSecret);
 
@@ -41,24 +41,6 @@ int main()
   KeyClient keyClient(std::getenv("AZURE_KEYVAULT_URL"), credential);
   SecretClient secretClient(std::getenv("AZURE_KEYVAULT_URL"), credential);
   CertificateClient certificateClient(std::getenv("AZURE_KEYVAULT_URL"), credential);
-
-  try
-  {
-    // call an API from each client to make sure all is properly initialized
-    keyClient.GetPropertiesOfKeys();
-    secretClient.GetPropertiesOfSecrets();
-    certificateClient.GetPropertiesOfCertificates();
-  }
-  catch (Azure::Core::Credentials::AuthenticationException const& e)
-  {
-    std::cout << "Authentication Exception happened:" << std::endl << e.what() << std::endl;
-    return 1;
-  }
-  catch (Azure::Core::RequestFailedException const& e)
-  {
-    std::cout << "Client Exception happened:" << std::endl << e.Message << std::endl;
-    return 1;
-  }
 
   return 0;
 }
