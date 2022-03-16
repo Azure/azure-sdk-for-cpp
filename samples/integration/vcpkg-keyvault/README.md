@@ -1,6 +1,6 @@
 # Integrating the Azure SDK for C++ into your application using vcpkg
 
-This application shows how to integrate the Azure SDK for C++ in your application. It uses vcpkg to aquire and build the Azure SDK for C++ client libraries. Your CMake project needs to link the libraries from vcpkg by setting the toolchain file to vcpkg (shown below).
+This application shows how to integrate the Azure SDK for C++ in your application. It uses vcpkg to acquire and build the Azure SDK for C++ client libraries. Your CMake project needs to link the libraries from vcpkg by setting the toolchain file to vcpkg (shown below).
 
 ## Pre-requisites
 
