@@ -62,14 +62,7 @@ namespace Azure { namespace Perf {
      */
     void PreCleanUp();
 
-    void ConfigureInsecureConnection(Azure::Core::_internal::ClientOptions* clientOptions);
-
-    /**
-     * @brief Set the client options depending on the test options.
-     *
-     * @param clientOptions ref to the client options that contains the http pipeline policies.
-     */
-    void ConfigureCoreClientOptions(Azure::Core::_internal::ClientOptions* clientOptions);
+    void ConfigureInsecureConnection(Azure::Core::_internal::ClientOptions& clientOptions);
 
   protected:
     Azure::Perf::TestOptions m_options;
@@ -132,17 +125,11 @@ namespace Azure { namespace Perf {
     virtual void GlobalCleanup() {}
 
     /**
-     * @brief Update an existing \p clientOptions with the test configuration set by the
-     * environment.
+     * @brief Set the client options depending on the test options.
      *
-     * @note If test proxy env var is set, the proxy policy is added to the \p clientOptions.
-     *
-     * @param clientOptions Ref to the client options that contains the Http client policies.
+     * @param clientOptions ref to the client options that contains the http pipeline policies.
      */
-    template <class T> void ConfigureClientOptions(T* clientOptions)
-    {
-      ConfigureCoreClientOptions(clientOptions);
-    }
+    void ConfigureClientOptions(Azure::Core::_internal::ClientOptions& clientOptions);
 
     /**
      * @brief Create and return client options with test configuration set in the environment.
@@ -152,7 +139,7 @@ namespace Azure { namespace Perf {
     template <class T> T InitClientOptions()
     {
       T options;
-      ConfigureClientOptions(&options);
+      ConfigureClientOptions(options);
       return options;
     }
   };

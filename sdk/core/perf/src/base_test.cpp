@@ -103,7 +103,7 @@ public:
 
 namespace Azure { namespace Perf {
 
-  void BaseTest::ConfigureInsecureConnection(Azure::Core::_internal::ClientOptions* clientOptions)
+  void BaseTest::ConfigureInsecureConnection(Azure::Core::_internal::ClientOptions& clientOptions)
   {
     // NOTE: perf-fm is injecting the SSL config and transport here for the client options
     //       If the test overrides the options/transport, this can be undone.
@@ -112,13 +112,13 @@ namespace Azure { namespace Perf {
     {
       Azure::Core::Http::CurlTransportOptions curlOptions;
       curlOptions.SslVerifyPeer = false;
-      clientOptions->Transport.Transport
+      clientOptions.Transport.Transport
           = std::make_shared<Azure::Core::Http::CurlTransport>(curlOptions);
     }
 #elif defined(BUILD_TRANSPORT_WINHTTP_ADAPTER)
     Azure::Core::Http::WinHttpTransportOptions winHttpOptions;
     winHttpOptions.IgnoreUnknownServerCert = true;
-    clientOptions->Transport.Transport
+    clientOptions.Transport.Transport
         = std::make_shared<Azure::Core::Http::WinHttpTransport>(winHttpOptions);
 #else
     // avoid the variable not used warning
@@ -126,11 +126,11 @@ namespace Azure { namespace Perf {
 #endif
   }
 
-  void BaseTest::ConfigureCoreClientOptions(Azure::Core::_internal::ClientOptions* clientOptions)
+  void BaseTest::ConfigureClientOptions(Azure::Core::_internal::ClientOptions& clientOptions)
   {
     if (!m_proxy.empty())
     {
-      clientOptions->PerRetryPolicies.push_back(std::make_unique<ProxyPolicy>(this));
+      clientOptions.PerRetryPolicies.push_back(std::make_unique<ProxyPolicy>(this));
     }
     ConfigureInsecureConnection(clientOptions);
   }
@@ -142,7 +142,7 @@ namespace Azure { namespace Perf {
     {
       Azure::Core::_internal::ClientOptions clientOp;
       clientOp.Retry.MaxRetries = 0;
-      ConfigureInsecureConnection(&clientOp);
+      ConfigureInsecureConnection(clientOp);
       std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>> policiesOp;
       std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>> policiesRe;
       Azure::Core::Http::_internal::HttpPipeline pipeline(
@@ -212,7 +212,7 @@ namespace Azure { namespace Perf {
     {
       Azure::Core::_internal::ClientOptions clientOp;
       clientOp.Retry.MaxRetries = 0;
-      ConfigureInsecureConnection(&clientOp);
+      ConfigureInsecureConnection(clientOp);
       std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>> policiesOp;
       std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>> policiesRe;
       Azure::Core::Http::_internal::HttpPipeline pipeline(
