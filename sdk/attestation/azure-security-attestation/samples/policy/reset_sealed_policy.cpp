@@ -74,58 +74,16 @@ int main()
     std::string pemSigningKey(::Cryptography::PemFromBase64(signingKey, "PRIVATE KEY"));
     std::string pemSigningCert(::Cryptography::PemFromBase64(signingCert, "CERTIFICATE"));
 
-    std::string policyToSet(R"(version= 1.0;
-authorizationrules 
-{
-	[ type=="x-ms-sgx-is-debuggable", value==true ]&&
-	[ type=="x-ms-sgx-mrsigner", value=="mrsigner1"] => permit(); 
-	[ type=="x-ms-sgx-is-debuggable", value==true ]&& 
-	[ type=="x-ms-sgx-mrsigner", value=="mrsigner2"] => permit(); 
-};)");
-
     // When setting attestation policy, use the signing key associated with the isolated instance.
-    SetPolicyOptions setOptions;
-    setOptions.SigningKey = AttestationSigningKey{pemSigningKey, pemSigningCert};
+    SetPolicyOptions resetOptions;
+    resetOptions.SigningKey = AttestationSigningKey{pemSigningKey, pemSigningCert};
 
-    Azure::Response<AttestationToken<PolicyResult>> setResult
-        = adminClient.SetAttestationPolicy(AttestationType::SgxEnclave, policyToSet, setOptions);
+    Azure::Response<AttestationToken<PolicyResult>> resetResult
+        = adminClient.ResetAttestationPolicy(AttestationType::SgxEnclave, resetOptions);
 
-    if (setResult.Value.Body.PolicyResolution == PolicyModification::Updated)
+    if (resetResult.Value.Body.PolicyResolution == PolicyModification::Updated)
     {
       std::cout << "Attestation policy was updated." << std::endl;
-    }
-
-    // To verify that the attestation service received the attestation policy, the service returns
-    // the SHA256 hash of the policy token which was sent ot the service. To simplify the customer
-    // experience of interacting with the SetPolicy APIs, CreateSetAttestationPolicyToken API will
-    // generate the same token that would be send to the service.
-    //
-    // To ensure that the token which was sent from the client matches the token which was received
-    // by the attestation service, the customer can call CreateSetAttestationPolicyToken and then
-    // generate the SHA256 of that token and compare it with the value returned by the service - the
-    // two hash values should be identical.
-    auto setPolicyToken
-        = adminClient.CreateSetAttestationPolicyToken(policyToSet, setOptions.SigningKey);
-    Sha256Hash shaHasher;
-    std::vector<uint8_t> policyTokenHash = shaHasher.Final(
-        reinterpret_cast<uint8_t const*>(setPolicyToken.RawToken.data()),
-        setPolicyToken.RawToken.size());
-    std::cout << "Expected token hash: " << Convert::Base64Encode(policyTokenHash) << std::endl;
-    std::cout << "Actual token hash:   "
-              << Convert::Base64Encode(setResult.Value.Body.PolicyTokenHash) << std::endl;
-
-    // When a policy signer is specified in the Set request, then the signer will be present in the
-    // response. This allows a caller to verify that the signing certificate has not been tampered
-    // with in transition.
-    assert(setResult.Value.Body.PolicySigner);
-    if (pemSigningCert == (*setResult.Value.Body.PolicySigner->CertificateChain)[0])
-    {
-      std::cout << "Policy signer returned matches policy signer set, the request was not tampered."
-                << std::endl;
-    }
-    else
-    {
-      std::cout << "Policy signer returned DOES NOT match policy signer set." << std::endl;
     }
   }
   catch (Azure::Core::Credentials::AuthenticationException const& e)

@@ -91,7 +91,7 @@ namespace Azure { namespace Security { namespace Attestation {
      * @param options Options to be used when retrieving the policy.
      * @param context User defined context for the operation.
      * @return Response<Models::AttestationToken<std::string>> The returned policy from the service.
-     * 
+     *
      * @note \b Note: The RetrieveResponseValidationCollateral API \b MUST be called before the
      * GetAttestationPolicy API is called to retrieve the information needed to validate the
      * result returned by the service.
@@ -110,7 +110,7 @@ namespace Azure { namespace Security { namespace Attestation {
      * @param context User defined context for the operation.
      * @return Response<Models::AttestationToken<Models::PolicyResult>> The result of the set policy
      * operation.
-     * 
+     *
      * @note \b Note: The RetrieveResponseValidationCollateral API \b MUST be called before the
      * SetAttestationPolicy API is called to retrieve the information needed to validate the
      * result returned by the service.
@@ -129,7 +129,7 @@ namespace Azure { namespace Security { namespace Attestation {
      * @param context User defined context for the operation.
      * @return Response<Models::AttestationToken<Models::PolicyResult>> The result of the reset
      * policy operation.
-     * 
+     *
      * @note \b Note: The RetrieveResponseValidationCollateral API \b MUST be called before the
      * ResetAttestationPolicy API is called to retrieve the information needed to validate the
      * result returned by the service.
@@ -160,7 +160,7 @@ namespace Azure { namespace Security { namespace Attestation {
      * attestation service based on this signing key.
      *
      * @note: If policyToSet is null, then this generates a policy reset token.
-     * 
+     *
      * @note \b Note: The RetrieveResponseValidationCollateral API \b MUST be called before the
      * ResetAttestationPolicy API is called to retrieve the information needed to validate the
      * result returned by the service.
@@ -180,7 +180,6 @@ namespace Azure { namespace Security { namespace Attestation {
     AttestationTokenValidationOptions m_tokenValidationOptions;
 
     mutable std::vector<Models::AttestationSigner> m_attestationSigners;
-
   };
 
 }}} // namespace Azure::Security::Attestation
