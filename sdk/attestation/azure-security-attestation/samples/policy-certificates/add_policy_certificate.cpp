@@ -66,7 +66,8 @@ int main()
     // Retrieve attestation response validation collateral before calling into the service.
     adminClient.RetrieveResponseValidationCollateral();
 
-    // We start this sample by adding a new certificate to the set of policy management certificates.
+    // We start this sample by adding a new certificate to the set of policy management
+    // certificates.
     {
       // Create a PEM encoded X.509 certificate to add based on the POLICY_SIGNING_CERTIFICATE_0
       // certificate.
@@ -109,7 +110,8 @@ int main()
       // Create a PEM encoded X.509 certificate to add based on the POLICY_SIGNING_CERTIFICATE_0
       // certificate.
       std::string certToRemove(std::getenv("POLICY_SIGNING_CERTIFICATE_0"));
-      std::string pemCertificateToRemove(::Cryptography::PemFromBase64(certToRemove, "CERTIFICATE"));
+      std::string pemCertificateToRemove(
+          ::Cryptography::PemFromBase64(certToRemove, "CERTIFICATE"));
 
       // Add the new certificate to the set of policy management certificates for this attestation
       // service instance.
@@ -128,8 +130,8 @@ int main()
                 << addResult.Value.Body.CertificateThumbprint << std::endl;
 
       auto x509Cert(::Cryptography::ImportX509Certificate(pemCertificateToRemove));
-      std::cout << "The thumbprint of the certificate to be removed is: " << x509Cert->GetThumbprint()
-                << std::endl;
+      std::cout << "The thumbprint of the certificate to be removed is: "
+                << x509Cert->GetThumbprint() << std::endl;
 
       if (x509Cert->GetThumbprint() != addResult.Value.Body.CertificateThumbprint)
       {
@@ -137,7 +139,6 @@ int main()
             "Certificate removed was not the requested certificate to be removed.");
       }
     }
-
   }
   catch (Azure::Core::Credentials::AuthenticationException const& e)
   {

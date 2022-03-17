@@ -2,11 +2,12 @@
 // SPDX-License-Identifier: MIT
 
 /**
- * @brief This sample demonstrates using the Attestation Service SDK for C++ to retrieve policy management
- * certificates from an Isolated mode attestation service instance.
- * 
- * Remember that when an attestation service instance is in isolated mode, the service is configured with a set of
- * X.509 certificates. The GetPolicyManagementCertificates API returns a list of the existing certificates.
+ * @brief This sample demonstrates using the Attestation Service SDK for C++ to retrieve policy
+ * management certificates from an Isolated mode attestation service instance.
+ *
+ * Remember that when an attestation service instance is in isolated mode, the service is configured
+ * with a set of X.509 certificates. The GetPolicyManagementCertificates API returns a list of the
+ * existing certificates.
  *
  * @remark The following environment variables must be set before running the sample.
  * - ATTESTATION_ISOLATED_URL:  Points to an Attestation Service Instance in Isolated mode.
@@ -19,9 +20,9 @@
 
 #include "get_env.hpp"
 
+#include "cryptohelpers.hpp"
 #include <azure/attestation.hpp>
 #include <azure/identity.hpp>
-#include "cryptohelpers.hpp"
 
 #include <chrono>
 #include <iomanip>
@@ -44,7 +45,8 @@ int main()
         std::getenv("AZURE_TENANT_ID"),
         std::getenv("AZURE_CLIENT_ID"),
         std::getenv("AZURE_CLIENT_SECRET"));
-    AttestationAdministrationClient adminClient(std::getenv("ATTESTATION_ISOLATED_URL"), credential);
+    AttestationAdministrationClient adminClient(
+        std::getenv("ATTESTATION_ISOLATED_URL"), credential);
 
     // Retrieve attestation response validation collateral before calling into the service.
     adminClient.RetrieveResponseValidationCollateral();
