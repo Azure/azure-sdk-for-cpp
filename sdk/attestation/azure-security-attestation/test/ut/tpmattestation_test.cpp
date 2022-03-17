@@ -98,7 +98,6 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
     // test against an AAD attestation service instance.
     {
       auto adminClient(CreateAdminClient(InstanceType::AAD));
-      adminClient->RetrieveResponseValidationCollateral();
       // Set a minimal policy, which will make the TPM attestation code happy.
       adminClient->SetAttestationPolicy(
           AttestationType::Tpm, "version=1.0; authorizationrules{=> permit();}; issuancerules{};");
