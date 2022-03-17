@@ -19,6 +19,10 @@
 #include <azure/keyvault/keyvault_certificates.hpp>
 #include <azure/keyvault/keyvault_keys.hpp>
 #include <azure/keyvault/keyvault_secrets.hpp>
+#include <azure/storage/blobs.hpp>
+#include <azure/storage/queues.hpp>
+#include <azure/storage/files/datalake.hpp>
+#include <azure/storage/files/shares.hpp>
 
 #include <chrono>
 #include <iostream>
@@ -28,6 +32,10 @@
 using namespace Azure::Security::KeyVault::Keys;
 using namespace Azure::Security::KeyVault::Secrets;
 using namespace Azure::Security::KeyVault::Certificates;
+using namespace Azure::Storage::Blobs;
+using namespace Azure::Storage::Queues;
+using namespace Azure::Storage::Files::DataLake;
+using namespace Azure::Storage::Files::Shares;
 
 int main()
 {
@@ -36,11 +44,16 @@ int main()
   auto clientSecret = "secret";
   auto credential
       = std::make_shared<Azure::Identity::ClientSecretCredential>(tenantId, clientId, clientSecret);
-
+ // auto connString = "DefaultEndpointsProtocol=https;AccountName=notReal;AccountKey="
+ //                   "333333333333333333333333333333333333333333333333333333333333333333333333333333"
+ //                   "3333333333;EndpointSuffix=core.windows.net";
+  auto storageUrl = "https://blob.com";
   // instantiate the clients
   KeyClient keyClient(std::getenv("AZURE_KEYVAULT_URL"), credential);
   SecretClient secretClient(std::getenv("AZURE_KEYVAULT_URL"), credential);
   CertificateClient certificateClient(std::getenv("AZURE_KEYVAULT_URL"), credential);
+  BlobClient blobClient(storageUrl);
+  QueueClient queueClient(storageUrl);
 
   return 0;
 }
