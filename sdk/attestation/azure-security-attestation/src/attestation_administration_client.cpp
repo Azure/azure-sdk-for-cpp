@@ -293,6 +293,10 @@ AttestationAdministrationClient::GetPolicyManagementCertificates(
     GetPolicyManagementCertificatesOptions const& options,
     Azure::Core::Context const& context) const
 {
+  AZURE_ASSERT_MSG(
+      !m_attestationSigners.empty(),
+      "RetrieveResponseValidationCollateral must be called before this API.");
+
   auto request = AttestationCommonRequest::CreateRequest(
       m_endpoint, m_apiVersion, HttpMethod::Get, {"certificates"}, nullptr);
 
@@ -310,11 +314,10 @@ AttestationAdministrationClient::GetPolicyManagementCertificates(
 
   // Validate the token returned by the service. Use the cached attestation signers in the
   // validation.
-  std::vector<AttestationSigner> const& signers = GetAttestationSigners(context);
   resultToken.ValidateToken(
       options.TokenValidationOptions ? *options.TokenValidationOptions
                                      : this->m_tokenValidationOptions,
-      signers);
+      m_attestationSigners);
 
   Models::_detail::JsonWebKeySet jwks(
       *static_cast<AttestationToken<Models::_detail::GetPolicyCertificatesResult>>(resultToken)
@@ -337,6 +340,10 @@ std::string AttestationAdministrationClient::CreatePolicyCertificateModification
     std::string const& pemEncodedX509CertificateToAdd,
     AttestationSigningKey const& existingSigningKey) const
 {
+  AZURE_ASSERT_MSG(
+      !m_attestationSigners.empty(),
+      "RetrieveResponseValidationCollateral must be called before this API.");
+
   // Calculate a signed attestation policy token to send to the service.
   // Embed the encoded policy in the StoredAttestationPolicy.
   const auto x5cToAdd(Cryptography::ImportX509Certificate(pemEncodedX509CertificateToAdd));
@@ -362,11 +369,12 @@ std::string AttestationAdministrationClient::CreatePolicyCertificateModification
 
 Models::AttestationToken<Models::PolicyCertificateModificationResult>
 AttestationAdministrationClient::ProcessPolicyCertModificationResult(
-
     std::unique_ptr<RawResponse> const& serverResponse,
-    AttestationTokenValidationOptions const& tokenValidationOptions,
-    Azure::Core::Context const& context) const
+    AttestationTokenValidationOptions const& tokenValidationOptions) const
 {
+  AZURE_ASSERT_MSG(
+      !m_attestationSigners.empty(),
+      "RetrieveResponseValidationCollateral must be called before this API.");
 
   // Deserialize the Service response token and return the JSON web token returned by the
   // service.
@@ -380,8 +388,7 @@ AttestationAdministrationClient::ProcessPolicyCertModificationResult(
 
   // Validate the token returned by the service. Use the cached attestation signers in the
   // validation.
-  std::vector<AttestationSigner> const& signers = GetAttestationSigners(context);
-  resultToken.ValidateToken(tokenValidationOptions, signers);
+  resultToken.ValidateToken(tokenValidationOptions, m_attestationSigners);
 
   // Extract the underlying policy token from the response.
   auto internalResult
@@ -413,6 +420,10 @@ AttestationAdministrationClient::AddPolicyManagementCertificate(
     AddPolicyManagementCertificatesOptions const& options,
     Azure::Core::Context const& context) const
 {
+  AZURE_ASSERT_MSG(
+      !m_attestationSigners.empty(),
+      "RetrieveResponseValidationCollateral must be called before this API.");
+
   auto const policyCertToken(
       CreatePolicyCertificateModificationToken(pemEncodedX509CertificateToAdd, existingSigningKey));
   Azure::Core::IO::MemoryBodyStream stream(
@@ -427,8 +438,7 @@ AttestationAdministrationClient::AddPolicyManagementCertificate(
       ProcessPolicyCertModificationResult(
           response,
           options.TokenValidationOptions ? *options.TokenValidationOptions
-                                         : this->m_tokenValidationOptions,
-          context));
+                                         : this->m_tokenValidationOptions));
   return Response<AttestationToken<Models::PolicyCertificateModificationResult>>(
       returnValue, std::move(response));
 }
@@ -440,6 +450,10 @@ AttestationAdministrationClient::RemovePolicyManagementCertificate(
     AddPolicyManagementCertificatesOptions const& options,
     Azure::Core::Context const& context) const
 {
+  AZURE_ASSERT_MSG(
+      !m_attestationSigners.empty(),
+      "RetrieveResponseValidationCollateral must be called before this API.");
+
   // Calculate a signed (or unsigned) attestation policy token to send to the service.
   // Embed the encoded policy in the StoredAttestationPolicy.
   auto const policyCertToken(CreatePolicyCertificateModificationToken(
@@ -457,8 +471,7 @@ AttestationAdministrationClient::RemovePolicyManagementCertificate(
       ProcessPolicyCertModificationResult(
           response,
           options.TokenValidationOptions ? *options.TokenValidationOptions
-                                         : this->m_tokenValidationOptions,
-          context));
+                                         : this->m_tokenValidationOptions));
   return Response<AttestationToken<Models::PolicyCertificateModificationResult>>(
       returnValue, std::move(response));
 }

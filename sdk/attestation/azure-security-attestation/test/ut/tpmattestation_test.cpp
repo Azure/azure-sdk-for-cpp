@@ -94,10 +94,11 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
 
   TEST_F(TpmAttestationTests, AttestTpm)
   {
-    // TPM attestation requires a policy document be set.
+    // TPM attestation requires a policy document be set. For simplicity, we only run the
+    // test against an AAD attestation service instance.
     {
       auto adminClient(CreateAdminClient(InstanceType::AAD));
-
+      adminClient->RetrieveResponseValidationCollateral();
       // Set a minimal policy, which will make the TPM attestation code happy.
       adminClient->SetAttestationPolicy(
           AttestationType::Tpm, "version=1.0; authorizationrules{=> permit();}; issuancerules{};");
@@ -113,6 +114,13 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
     EXPECT_TRUE(parsedResponse["payload"].is_object());
     EXPECT_TRUE(parsedResponse["payload"].contains("challenge"));
     EXPECT_TRUE(parsedResponse["payload"].contains("service_context"));
+
+    {
+      auto adminClient(CreateAdminClient(InstanceType::AAD));
+      adminClient->RetrieveResponseValidationCollateral();
+      // Clean up after setting the policy.
+      adminClient->ResetAttestationPolicy(AttestationType::Tpm);
+    }
   }
 
 }}}} // namespace Azure::Security::Attestation::Test

@@ -1,15 +1,25 @@
 {
     "Registrations": [
-        {
-            "Component": {
-                "Type": "git",
-                "git": {
-                    "RepositoryUrl": "https://github.com/google/googletest",
-                    "CommitHash": "703bd9caab50b139428cea1aaff9974ebee5742e"
-                }
-            },
-            "DevelopmentDependency": true
+      {
+        "Component": {
+          "Type": "git",
+          "git": {
+            "RepositoryUrl": "https://github.com/google/googletest",
+            "CommitHash": "703bd9caab50b139428cea1aaff9974ebee5742e"
+          }
         },
+        "DevelopmentDependency": true
+      },
+      {
+        "Component": {
+          "Type": "git",
+          "git": {
+            "RepositoryUrl": "https://github.com/openssl/openssl",
+            "CommitHash": "ac3cef223a4c61d6bee34527b6d4c8c6432494a7"
+          }
+        },
+        "DevelopmentDependency":  false
+      },
         {
             "Component": {
                 "Type": "other",

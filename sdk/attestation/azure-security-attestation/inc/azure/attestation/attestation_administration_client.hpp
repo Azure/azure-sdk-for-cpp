@@ -85,12 +85,25 @@ namespace Azure { namespace Security { namespace Attestation {
           m_tokenValidationOptions(attestationClient.m_tokenValidationOptions){};
 
     /**
+     * @brief Retrieves the information needed to validate the response returned from the
+     * attestation service.
+     *
+     * @details Validating the response returned by the attestation service requires a set of
+     * possible signers for the attestation token.
+     *
+     * @param context Client context for the request to the service.
+     */
+    void RetrieveResponseValidationCollateral(
+        Azure::Core::Context const& context = Azure::Core::Context{}) const;
+
+    /**
      * @brief Retrieves an Attestation Policy from the service.
      *
      * @param attestationType Attestation type to be used when retrieving the policy.
      * @param options Options to be used when retrieving the policy.
      * @param context User defined context for the operation.
-     * @return Response<Models::AttestationToken<std::string>> The returned policy from the service.
+     * @return Response<Models::AttestationToken<std::string>> The returned policy from the
+     * service.
      *
      * @note \b Note: The RetrieveResponseValidationCollateral API \b MUST be called before the
      * GetAttestationPolicy API is called to retrieve the information needed to validate the
@@ -271,9 +284,6 @@ namespace Azure { namespace Security { namespace Attestation {
 
     mutable std::vector<Models::AttestationSigner> m_attestationSigners;
 
-    std::vector<Models::AttestationSigner> const& GetAttestationSigners(
-        Azure::Core::Context const& context) const;
-
     std::string CreatePolicyCertificateModificationToken(
         std::string const& pemEncodedX509CertificateToAdd,
         AttestationSigningKey const& existingSigningKey) const;
@@ -281,8 +291,7 @@ namespace Azure { namespace Security { namespace Attestation {
     Models::AttestationToken<Models::PolicyCertificateModificationResult>
     ProcessPolicyCertModificationResult(
         std::unique_ptr<Azure::Core::Http::RawResponse> const& serverResponse,
-        AttestationTokenValidationOptions const& tokenValidationOptions,
-        Azure::Core::Context const& context) const;
+        AttestationTokenValidationOptions const& tokenValidationOptions) const;
   };
 
 }}} // namespace Azure::Security::Attestation

@@ -136,7 +136,7 @@ authorizationrules
   catch (Azure::Core::RequestFailedException const& e)
   {
     std::cout << "Request Failed Exception happened:" << std::endl << e.what() << std::endl;
-    if (e.StatusCode != Azure::Core::Http::HttpStatusCode::None)
+    if (e.RawResponse)
     {
       std::cout << "Error Code: " << e.ErrorCode << std::endl;
       std::cout << "Error Message: " << e.Message << std::endl;

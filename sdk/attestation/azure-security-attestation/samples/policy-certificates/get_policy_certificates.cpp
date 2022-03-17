@@ -2,11 +2,14 @@
 // SPDX-License-Identifier: MIT
 
 /**
- * @brief This sample demonstrates using the Attestation Service SDK for C++ to retrieve attestation
- * policies from an AAD mode attestation service instance.
+ * @brief This sample demonstrates using the Attestation Service SDK for C++ to retrieve policy management
+ * certificates from an Isolated mode attestation service instance.
+ * 
+ * Remember that when an attestation service instance is in isolated mode, the service is configured with a set of
+ * X.509 certificates. The GetPolicyManagementCertificates API returns a list of the existing certificates.
  *
  * @remark The following environment variables must be set before running the sample.
- * - ATTESTATION_AAD_URL:  Points to an Attestation Service Instance in AAD mode.
+ * - ATTESTATION_ISOLATED_URL:  Points to an Attestation Service Instance in Isolated mode.
  * operations.
  * - AZURE_TENANT_ID:     Tenant ID for the Azure account.
  * - AZURE_CLIENT_ID:     The Client ID to authenticate the request.
@@ -18,6 +21,7 @@
 
 #include <azure/attestation.hpp>
 #include <azure/identity.hpp>
+#include "cryptohelpers.hpp"
 
 #include <chrono>
 #include <iomanip>
@@ -40,15 +44,25 @@ int main()
         std::getenv("AZURE_TENANT_ID"),
         std::getenv("AZURE_CLIENT_ID"),
         std::getenv("AZURE_CLIENT_SECRET"));
-    AttestationAdministrationClient adminClient(std::getenv("ATTESTATION_AAD_URL"), credential);
+    AttestationAdministrationClient adminClient(std::getenv("ATTESTATION_ISOLATED_URL"), credential);
 
     // Retrieve attestation response validation collateral before calling into the service.
     adminClient.RetrieveResponseValidationCollateral();
 
     // Retrieve the SGX Attestation Policy from this attestation service instance.
-    Azure::Response<AttestationToken<std::string>> sgxPolicy
-        = adminClient.GetAttestationPolicy(AttestationType::SgxEnclave);
-    std::cout << "SGX Attestation Policy is: " << sgxPolicy.Value.Body << std::endl;
+    Azure::Response<AttestationToken<PolicyCertificateListResult>> policyCertificates
+        = adminClient.GetPolicyManagementCertificates();
+
+    std::cout << "There are " << policyCertificates.Value.Body.Certificates.size()
+              << " certificates configured on this instance." << std::endl;
+
+    std::cout << "Enumerating policy certificates:" << std::endl;
+    for (const auto& certChain : policyCertificates.Value.Body.Certificates)
+    {
+      auto x509Cert(::Cryptography::ImportX509Certificate((*certChain.CertificateChain)[0]));
+      std::cout << "Subject of signing certificate is: " << x509Cert->GetSubjectName() << std::endl;
+      std::cout << "Issuer of signing certificate is: " << x509Cert->GetIssuerName() << std::endl;
+    }
   }
   catch (Azure::Core::Credentials::AuthenticationException const& e)
   {
