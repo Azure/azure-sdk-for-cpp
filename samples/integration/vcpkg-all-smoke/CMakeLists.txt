@@ -24,7 +24,6 @@ add_executable (
 # Link to Azure SDK
 target_link_libraries(smoketest-vcpkg
      PRIVATE
-     Azure::azure-security-attestation
      Azure::azure-security-keyvault-keys
      Azure::azure-security-keyvault-certificates
      Azure::azure-security-keyvault-secrets
@@ -34,5 +33,4 @@ target_link_libraries(smoketest-vcpkg
 
 # Add the sample to be run on CI. 
 # CI pipeline reads the {service}-samples.txt and runs the binaries listed there.
-file(APPEND ${CMAKE_BINARY_DIR}/attestation-samples.txt "${CMAKE_CURRENT_BINARY_DIR}/smoketest-vcpkg\n")
 file(APPEND ${CMAKE_BINARY_DIR}/keyvault-samples.txt "${CMAKE_CURRENT_BINARY_DIR}/smoketest-vcpkg\n")
