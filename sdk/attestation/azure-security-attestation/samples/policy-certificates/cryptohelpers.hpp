@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: MIT
 #pragma once
 #include <algorithm>
+#include <cstring>
 #include <memory>
 #include <openssl/bio.h>
 #include <openssl/err.h>
