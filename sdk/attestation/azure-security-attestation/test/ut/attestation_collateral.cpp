@@ -315,7 +315,7 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
   std::string RuntimeJWKClaim = R"(
         {
             "jwk" : {
-                "kty":"EC",
+                "Kty":"EC",
                 "use":"sig",
                 "crv":"P-256",
                 "x":"18wHLeIgW9wVN6VD1Txgpqy2LszYkMf6J8njVAibvhM",

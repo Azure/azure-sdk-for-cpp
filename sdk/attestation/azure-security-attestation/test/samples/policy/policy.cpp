@@ -87,7 +87,7 @@ authorizationrules
   Azure::Response<AttestationToken<PolicyResult>> setResult
       = adminClient.SetAttestationPolicy(AttestationType::SgxEnclave, policyToSet);
 
-  if (*setResult.Value.Body.PolicyResolution == PolicyModification::Updated)
+  if (setResult.Value.Body.PolicyResolution == PolicyModification::Updated)
   {
     std::cout << "Attestation policy was updated." << std::endl;
   }
@@ -108,7 +108,7 @@ authorizationrules
       setPolicyToken.RawToken.size());
   std::cout << "Expected token hash: " << Convert::Base64Encode(policyTokenHash) << std::endl;
   std::cout << "Actual token hash:   "
-            << Convert::Base64Encode(*setResult.Value.Body.PolicyTokenHash) << std::endl;
+            << Convert::Base64Encode(setResult.Value.Body.PolicyTokenHash) << std::endl;
 }
 
 int main()
@@ -125,11 +125,12 @@ int main()
   }
   catch (Azure::Core::RequestFailedException const& e)
   {
-    std::cout << "Attestation Client Exception happened:" << std::endl << e.Message << std::endl;
-    std::cout << "Reason:" << e.ErrorCode << std::endl;
-    std::cout << "Reason Phrase:" << e.ReasonPhrase << std::endl;
-    std::cout << "Client Request ID:" << e.ClientRequestId << std::endl;
-    std::cout << "Request ID:" << e.RequestId << std::endl;
+    std::cout << "Request Failed Exception happened:" << std::endl << e.what() << std::endl;
+    if (e.RawResponse)
+    {
+      std::cout << "Error Code: " << e.ErrorCode << std::endl;
+      std::cout << "Error Message: " << e.Message << std::endl;
+    }
     return 1;
   }
   return 0;

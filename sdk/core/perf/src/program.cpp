@@ -84,11 +84,11 @@ inline void PrintOptions(
       try
       {
         optionsAsJson[option.Name]
-            = option.sensitiveData ? "***" : parsedArgs[option.Name].as<std::string>();
+            = option.SensitiveData ? "***" : parsedArgs[option.Name].as<std::string>();
       }
       catch (std::out_of_range const&)
       {
-        if (!option.required)
+        if (!option.Required)
         {
           // arg was not parsed
           optionsAsJson[option.Name] = "default value";
@@ -203,7 +203,8 @@ inline void RunTests(
   uint64_t lastCompleted = 0;
   auto progressThread = std::thread(
       [&title, &completedOperations, &lastCompletionTimes, &lastCompleted, &progresToken]() {
-        std::cout << "=== " << title << " ===" << std::endl
+        std::cout << std::endl
+                  << "=== " << title << " ===" << std::endl
                   << "Current\t\tTotal\t\tAverage" << std::endl;
         while (!progresToken.IsCancelled())
         {
@@ -293,7 +294,7 @@ void Azure::Perf::Program::Run(
   argResults = Azure::Perf::Program::ArgParser::Parse(argc, argv, testOptions);
   // ReCreate Test with parsed results
   test = testGenerator(Azure::Perf::TestOptions(argResults));
-  auto options = Azure::Perf::Program::ArgParser::Parse(argResults);
+  GlobalTestOptions options = Azure::Perf::Program::ArgParser::Parse(argResults);
 
   if (options.JobStatistics)
   {
@@ -313,10 +314,19 @@ void Azure::Perf::Program::Run(
   for (int i = 0; i < parallelTasks; i++)
   {
     parallelTest[i] = testGenerator(Azure::Perf::TestOptions(argResults));
+    // Let the test know it should use a proxy
+    if (!options.TestProxies.empty())
+    {
+      // Take the corresponding proxy from the list in round robin
+      parallelTest[i]->SetTestProxy(options.TestProxies[i % options.TestProxies.size()]);
+    }
   }
 
   /******************** Global Set up ******************************/
+  std::cout << std::endl << "=== Global Setup ===" << std::endl;
   test->GlobalSetup();
+
+  std::cout << std::endl << "=== Test Setup ===" << std::endl;
 
   /******************** Set up ******************************/
   {
@@ -324,6 +334,27 @@ void Azure::Perf::Program::Run(
     for (int i = 0; i < parallelTasks; i++)
     {
       tasks[i] = std::thread([&parallelTest, i]() { parallelTest[i]->Setup(); });
+    }
+    // Wait for all tests to complete setUp
+    for (auto& t : tasks)
+    {
+      t.join();
+    }
+  }
+
+  // instrument test for recordings if the env is set up.
+  std::cout << std::endl << "=== Post Setup ===" << std::endl;
+  {
+    if (!options.TestProxies.empty())
+    {
+      std::cout << " - Creating test recordgins for each test using test-proxies..." << std::endl;
+      std::cout << " - Enabling test-proxy playback" << std::endl;
+    }
+
+    std::vector<std::thread> tasks(parallelTasks);
+    for (int i = 0; i < parallelTasks; i++)
+    {
+      tasks[i] = std::thread([&parallelTest, i]() { parallelTest[i]->PostSetUp(); });
     }
     // Wait for all tests to complete setUp
     for (auto& t : tasks)
@@ -354,6 +385,26 @@ void Azure::Perf::Program::Run(
   catch (std::exception const& error)
   {
     std::cout << "Error: " << error.what();
+  }
+
+  std::cout << std::endl << "=== Pre-Cleanup ===" << std::endl;
+  {
+    if (!options.TestProxies.empty())
+    {
+      std::cout << " - Deleting test recordings from test-proxies..." << std::endl;
+      std::cout << " - Disabling test-proxy playback" << std::endl;
+    }
+
+    std::vector<std::thread> tasks(parallelTasks);
+    for (int i = 0; i < parallelTasks; i++)
+    {
+      tasks[i] = std::thread([&parallelTest, i]() { parallelTest[i]->PreCleanUp(); });
+    }
+    // Wait for all tests to complete setUp
+    for (auto& t : tasks)
+    {
+      t.join();
+    }
   }
 
   /******************** Clean up ******************************/
