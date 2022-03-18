@@ -24,6 +24,7 @@ add_executable (
 # Link to Azure SDK
 target_link_libraries(smoketest-vcpkg
      PRIVATE
+     Azure::azure-security-attestation
      Azure::azure-security-keyvault-keys
      Azure::azure-security-keyvault-certificates
      Azure::azure-security-keyvault-secrets
