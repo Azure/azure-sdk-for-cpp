@@ -3,8 +3,8 @@
 
 #include "azure/core/http/policies/policy.hpp"
 #include <chrono>
-#include <vector>
 #include <sstream>
+#include <vector>
 
 using Azure::Core::Context;
 using namespace Azure::Core::Http;

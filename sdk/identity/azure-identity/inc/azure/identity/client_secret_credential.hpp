@@ -46,8 +46,8 @@ namespace Azure { namespace Identity {
    * ID and a client secret.
    *
    */
-  class ClientSecretCredential : public Core::Credentials::TokenCredential {
-  protected:
+  class ClientSecretCredential final : public Core::Credentials::TokenCredential {
+  private:
     std::unique_ptr<_detail::TokenCredentialImpl> m_tokenCredentialImpl;
     Core::Url m_requestUrl;
     std::string m_requestBody;
@@ -114,8 +114,8 @@ namespace Azure { namespace Identity {
    * ID and a client secret.
    *
    */
-  class ChallengeClientSecretCredential : public Core::Credentials::TokenCredential {
-  protected:
+  class ChallengeClientSecretCredential final : public Core::Credentials::TokenCredential {
+  private:
     std::unique_ptr<_detail::TokenCredentialImpl> m_tokenCredentialImpl;
     Core::Url m_requestUrl;
     std::string m_requestBody;
