@@ -28,20 +28,20 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
   private:
   protected:
     std::shared_ptr<Azure::Core::Credentials::TokenCredential> m_credential;
+    std::unique_ptr<AttestationAdministrationClient> m_adminClient;
 
     // Create
     virtual void SetUp() override
     {
       Azure::Core::Test::TestBase::SetUpTestBase(AZURE_TEST_RECORDING_DIR);
-
-      // TPM attestation requires a policy document be set. For simplicity, we only run the
-      // test against an AAD attestation service instance.
       {
-        auto adminClient(CreateAdminClient(InstanceType::AAD));
+        // TPM attestation requires a policy document be set. For simplicity, we only run the
+        // test against an AAD attestation service instance.
+        m_adminClient = CreateAdminClient(InstanceType::AAD);
         // Retrieve the validation collateral needed when setting TPM attestation policies.
-        adminClient->RetrieveResponseValidationCollateral();
+        m_adminClient->RetrieveResponseValidationCollateral();
         // Set a minimal policy, which will make the TPM attestation code happy.
-        adminClient->SetAttestationPolicy(
+        m_adminClient->SetAttestationPolicy(
             AttestationType::Tpm,
             "version=1.0; authorizationrules{=> permit();}; issuancerules{};");
       }
@@ -49,14 +49,13 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
 
     virtual void TearDown() override
     {
-      // Clear the TPM attestation policy to ensure that we're left in the same state we were at startup.
       {
-        auto adminClient(CreateAdminClient(InstanceType::AAD));
-        // Retrieve the validation collateral needed when setting TPM attestation policies.
-        adminClient->RetrieveResponseValidationCollateral();
-        // Set a minimal policy, which will make the TPM attestation code happy.
-        adminClient->ResetAttestationPolicy(AttestationType::Tpm);
+        // Reset the attestation policy for this instance back to the default.
+        m_adminClient->ResetAttestationPolicy(AttestationType::Tpm);
       }
+
+      // Make sure you call the base classes TearDown method to ensure recordings are made.
+      TestBase::TearDown();
     }
 
     std::string GetInstanceUri(InstanceType instanceType)
@@ -77,16 +76,27 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
       throw std::runtime_error("Unkown instance type.");
     }
 
+    AttestationTokenValidationOptions GetTokenValidationOptions()
+    {
+      AttestationTokenValidationOptions returnValue;
+      if (m_testContext.IsPlaybackMode())
+      {
+        // Skip validating time stamps if using recordings.
+        returnValue.ValidateNotBeforeTime = false;
+        returnValue.ValidateExpirationTime = false;
+      }
+      else
+      {
+        returnValue.ValidationTimeSlack = 10s;
+      }
+      return returnValue;
+    }
+
     std::unique_ptr<AttestationClient> CreateClient(InstanceType instanceType)
     {
       // `InitClientOptions` takes care of setting up Record&Playback.
       AttestationClientOptions options;
-      if (m_testContext.IsPlaybackMode())
-      {
-        // Skip validating time stamps if using recordings.
-        options.TokenValidationOptions.ValidateNotBeforeTime = false;
-        options.TokenValidationOptions.ValidateExpirationTime = false;
-      }
+      options.TokenValidationOptions = GetTokenValidationOptions();
       std::shared_ptr<Azure::Core::Credentials::TokenCredential> credential
           = std::make_shared<Azure::Identity::ClientSecretCredential>(
               GetEnv("AZURE_TENANT_ID"), GetEnv("AZURE_CLIENT_ID"), GetEnv("AZURE_CLIENT_SECRET"));
@@ -98,13 +108,8 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
     std::unique_ptr<AttestationAdministrationClient> CreateAdminClient(InstanceType instanceType)
     {
       // `InitTestClient` takes care of setting up Record&Playback.
-      Azure::Security::Attestation::AttestationAdministrationClientOptions options;
-      if (m_testContext.IsPlaybackMode())
-      {
-        // Skip validating time stamps if using recordings.
-        options.TokenValidationOptions.ValidateNotBeforeTime = false;
-        options.TokenValidationOptions.ValidateExpirationTime = false;
-      }
+      AttestationAdministrationClientOptions options;
+      options.TokenValidationOptions = GetTokenValidationOptions();
       std::shared_ptr<Azure::Core::Credentials::TokenCredential> credential
           = std::make_shared<Azure::Identity::ClientSecretCredential>(
               GetEnv("AZURE_TENANT_ID"), GetEnv("AZURE_CLIENT_ID"), GetEnv("AZURE_CLIENT_SECRET"));
@@ -118,7 +123,6 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
 
   TEST_F(TpmAttestationTests, AttestTpm)
   {
-
     auto client(CreateClient(InstanceType::AAD));
 
     auto response = client->AttestTpm(R"({"payload": { "type": "aikcert" } })");
@@ -129,13 +133,6 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
     EXPECT_TRUE(parsedResponse["payload"].is_object());
     EXPECT_TRUE(parsedResponse["payload"].contains("challenge"));
     EXPECT_TRUE(parsedResponse["payload"].contains("service_context"));
-
-    {
-      auto adminClient(CreateAdminClient(InstanceType::AAD));
-      adminClient->RetrieveResponseValidationCollateral();
-      // Clean up after setting the policy.
-      adminClient->ResetAttestationPolicy(AttestationType::Tpm);
-    }
   }
 
 }}}} // namespace Azure::Security::Attestation::Test
