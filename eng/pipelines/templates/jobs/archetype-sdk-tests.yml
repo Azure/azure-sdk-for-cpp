@@ -258,15 +258,20 @@ jobs:
           echo "**********Running sample: ${sample}"
 
           if [[ $VMImage==*"2019"* ]]; then
-            $sample=$sample+".exe"
+            $sample="${sample}.exe"
           fi
-          bash -c "$sample"
-          status=$?
-          if [[ $status -eq 0 ]]; then
-            echo "*********Sample completed*********"
+
+          if [[ -f "$sample" ]]; then
+              bash -c "$sample"
+              status=$?
+              if [[ $status -eq 0 ]]; then
+                echo "*********Sample completed*********"
+              else
+                echo "*Sample returned a failed code: $status"
+                exit 1
+              fi
           else
-            echo "*Sample returned a failed code: $status"
-            exit 1
+            echo "******Skipping sample ${sample} because it cannot be found.*****"
           fi
         done
       fi
