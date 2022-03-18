@@ -292,6 +292,12 @@ namespace Azure { namespace Security { namespace Attestation {
     ProcessPolicyCertModificationResult(
         std::unique_ptr<Azure::Core::Http::RawResponse> const& serverResponse,
         AttestationTokenValidationOptions const& tokenValidationOptions) const;
+
+    /**
+     * @brief Check the m_AttestationSigners to ensure that RetrieveResponseValidationCollateral has
+     * been called.
+     */
+    void CheckAttestationSigners() const;
   };
 
 }}} // namespace Azure::Security::Attestation

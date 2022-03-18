@@ -75,9 +75,7 @@ AttestationAdministrationClient::GetAttestationPolicy(
     GetPolicyOptions const& options,
     Azure::Core::Context const& context) const
 {
-  AZURE_ASSERT_MSG(
-      !m_attestationSigners.empty(),
-      "RetrieveResponseValidationCollateral must be called before this API.");
+  CheckAttestationSigners();
   auto request = AttestationCommonRequest::CreateRequest(
       m_endpoint,
       m_apiVersion,
@@ -155,9 +153,7 @@ AttestationAdministrationClient::SetAttestationPolicy(
     SetPolicyOptions const& options,
     Azure::Core::Context const& context) const
 {
-  AZURE_ASSERT_MSG(
-      !m_attestationSigners.empty(),
-      "RetrieveResponseValidationCollateral must be called before this API.");
+  CheckAttestationSigners();
   // Calculate a signed (or unsigned) attestation policy token to send to the service.
   Models::AttestationToken<> const tokenToSend(
       CreateSetAttestationPolicyToken(newAttestationPolicy, options.SigningKey));
@@ -222,9 +218,7 @@ AttestationAdministrationClient::ResetAttestationPolicy(
     SetPolicyOptions const& options,
     Azure::Core::Context const& context) const
 {
-  AZURE_ASSERT_MSG(
-      !m_attestationSigners.empty(),
-      "RetrieveResponseValidationCollateral must be called before this API.");
+  CheckAttestationSigners();
   // Calculate a signed (or unsigned) attestation policy token to send to the service.
   Models::AttestationToken<> tokenToSend(
       CreateSetAttestationPolicyToken(Azure::Nullable<std::string>(), options.SigningKey));
@@ -293,9 +287,7 @@ AttestationAdministrationClient::GetPolicyManagementCertificates(
     GetPolicyManagementCertificatesOptions const& options,
     Azure::Core::Context const& context) const
 {
-  AZURE_ASSERT_MSG(
-      !m_attestationSigners.empty(),
-      "RetrieveResponseValidationCollateral must be called before this API.");
+  CheckAttestationSigners();
 
   auto request = AttestationCommonRequest::CreateRequest(
       m_endpoint, m_apiVersion, HttpMethod::Get, {"certificates"}, nullptr);
@@ -340,9 +332,7 @@ std::string AttestationAdministrationClient::CreatePolicyCertificateModification
     std::string const& pemEncodedX509CertificateToAdd,
     AttestationSigningKey const& existingSigningKey) const
 {
-  AZURE_ASSERT_MSG(
-      !m_attestationSigners.empty(),
-      "RetrieveResponseValidationCollateral must be called before this API.");
+  CheckAttestationSigners();
 
   // Calculate a signed attestation policy token to send to the service.
   // Embed the encoded policy in the StoredAttestationPolicy.
@@ -372,9 +362,7 @@ AttestationAdministrationClient::ProcessPolicyCertModificationResult(
     std::unique_ptr<RawResponse> const& serverResponse,
     AttestationTokenValidationOptions const& tokenValidationOptions) const
 {
-  AZURE_ASSERT_MSG(
-      !m_attestationSigners.empty(),
-      "RetrieveResponseValidationCollateral must be called before this API.");
+  CheckAttestationSigners();
 
   // Deserialize the Service response token and return the JSON web token returned by the
   // service.
@@ -420,9 +408,7 @@ AttestationAdministrationClient::AddPolicyManagementCertificate(
     AddPolicyManagementCertificatesOptions const& options,
     Azure::Core::Context const& context) const
 {
-  AZURE_ASSERT_MSG(
-      !m_attestationSigners.empty(),
-      "RetrieveResponseValidationCollateral must be called before this API.");
+  CheckAttestationSigners();
 
   auto const policyCertToken(
       CreatePolicyCertificateModificationToken(pemEncodedX509CertificateToAdd, existingSigningKey));
@@ -450,9 +436,7 @@ AttestationAdministrationClient::RemovePolicyManagementCertificate(
     AddPolicyManagementCertificatesOptions const& options,
     Azure::Core::Context const& context) const
 {
-  AZURE_ASSERT_MSG(
-      !m_attestationSigners.empty(),
-      "RetrieveResponseValidationCollateral must be called before this API.");
+  CheckAttestationSigners();
 
   // Calculate a signed (or unsigned) attestation policy token to send to the service.
   // Embed the encoded policy in the StoredAttestationPolicy.
@@ -490,17 +474,33 @@ void AttestationAdministrationClient::RetrieveResponseValidationCollateral(
 {
   std::unique_lock<std::shared_timed_mutex> stateLock(SharedStateLock);
 
-  if (m_attestationSigners.size() == 0)
+  if (m_attestationSigners.empty())
   {
+    stateLock.unlock();
     auto request
         = AttestationCommonRequest::CreateRequest(m_endpoint, HttpMethod::Get, {"certs"}, nullptr);
     auto response = AttestationCommonRequest::SendRequest(*m_pipeline, request, context);
     auto jsonWebKeySet(JsonWebKeySetSerializer::Deserialize(response));
     AttestationSigningCertificateResult returnValue;
+    std::vector<AttestationSigner> newValue;
     for (const auto& jwk : jsonWebKeySet.Keys)
     {
       AttestationSignerInternal internalSigner(jwk);
-      m_attestationSigners.push_back(internalSigner);
+      newValue.push_back(internalSigner);
+    }
+    stateLock.lock();
+    if (m_attestationSigners.empty())
+    {
+      m_attestationSigners = newValue;
     }
   }
+}
+
+void AttestationAdministrationClient::CheckAttestationSigners() const
+{
+  std::unique_lock<std::shared_timed_mutex> stateLock(SharedStateLock);
+
+  AZURE_ASSERT_MSG(
+      !m_attestationSigners.empty(),
+      "RetrieveResponseValidationCollateral must be called before this API.");
 }

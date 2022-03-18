@@ -263,6 +263,12 @@ namespace Azure { namespace Security { namespace Attestation {
     AttestationTokenValidationOptions m_tokenValidationOptions;
 
     mutable std::vector<Models::AttestationSigner> m_attestationSigners;
+
+    /**
+     * @brief Check the m_AttestationSigners to ensure that RetrieveResponseValidationCollateral has
+     * been called.
+     */
+    void CheckAttestationSigners() const;
   };
 
 }}} // namespace Azure::Security::Attestation

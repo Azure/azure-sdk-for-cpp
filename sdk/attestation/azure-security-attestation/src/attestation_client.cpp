@@ -87,9 +87,7 @@ Azure::Response<AttestationToken<AttestationResult>> AttestationClient::AttestSg
     AttestOptions options,
     Azure::Core::Context const& context) const
 {
-  AZURE_ASSERT_MSG(
-      !m_attestationSigners.empty(),
-      "RetrieveResponseValidationCollateral must be called before this API.");
+  CheckAttestationSigners();
 
   AttestSgxEnclaveRequest attestRequest{
       sgxQuote,
@@ -133,9 +131,7 @@ Azure::Response<AttestationToken<AttestationResult>> AttestationClient::AttestOp
     AttestOptions options,
     Azure::Core::Context const& context) const
 {
-  AZURE_ASSERT_MSG(
-      !m_attestationSigners.empty(),
-      "RetrieveResponseValidationCollateral must be called before this API.");
+  CheckAttestationSigners();
 
   AttestOpenEnclaveRequest attestRequest{
       openEnclaveReport,
@@ -197,17 +193,33 @@ void AttestationClient::RetrieveResponseValidationCollateral(
 {
   std::unique_lock<std::shared_timed_mutex> stateLock(SharedStateLock);
 
-  if (m_attestationSigners.size() == 0)
+  if (m_attestationSigners.empty())
   {
+    stateLock.unlock();
     auto request
         = AttestationCommonRequest::CreateRequest(m_endpoint, HttpMethod::Get, {"certs"}, nullptr);
     auto response = AttestationCommonRequest::SendRequest(*m_pipeline, request, context);
     auto jsonWebKeySet(JsonWebKeySetSerializer::Deserialize(response));
     AttestationSigningCertificateResult returnValue;
+    std::vector<AttestationSigner> newValue;
     for (const auto& jwk : jsonWebKeySet.Keys)
     {
       AttestationSignerInternal internalSigner(jwk);
-      m_attestationSigners.push_back(internalSigner);
+      newValue.push_back(internalSigner);
+    }
+    stateLock.lock();
+    if (m_attestationSigners.empty())
+    {
+      m_attestationSigners = newValue;
     }
   }
+}
+
+void AttestationClient::CheckAttestationSigners() const
+{
+  std::unique_lock<std::shared_timed_mutex> stateLock(SharedStateLock);
+
+  AZURE_ASSERT_MSG(
+      !m_attestationSigners.empty(),
+      "RetrieveResponseValidationCollateral must be called before this API.");
 }
