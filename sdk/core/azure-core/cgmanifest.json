@@ -2,11 +2,10 @@
   "Registrations": [
     {
       "Component": {
-        "Type": "other",
+        "Type": "git",
         "Other": {
-          "Name": "openssl",
-          "Version": "1.1.1n",
-          "DownloadUrl": "https://www.openssl.org/source/openssl-1.1.1n.tar.gz"
+          "RepositoryUrl": "https://github.com/openssl/openssl",
+          "CommitHash": "d82e959e621a3d597f1e0d50ff8c2d8b96915fd7"
         }
       },
       "DevelopmentDependency": false
