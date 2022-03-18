@@ -33,6 +33,30 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
     virtual void SetUp() override
     {
       Azure::Core::Test::TestBase::SetUpTestBase(AZURE_TEST_RECORDING_DIR);
+
+      // TPM attestation requires a policy document be set. For simplicity, we only run the
+      // test against an AAD attestation service instance.
+      {
+        auto adminClient(CreateAdminClient(InstanceType::AAD));
+        // Retrieve the validation collateral needed when setting TPM attestation policies.
+        adminClient->RetrieveResponseValidationCollateral();
+        // Set a minimal policy, which will make the TPM attestation code happy.
+        adminClient->SetAttestationPolicy(
+            AttestationType::Tpm,
+            "version=1.0; authorizationrules{=> permit();}; issuancerules{};");
+      }
+    }
+
+    virtual void TearDown() override
+    {
+      // Clear the TPM attestation policy to ensure that we're left in the same state we were at startup.
+      {
+        auto adminClient(CreateAdminClient(InstanceType::AAD));
+        // Retrieve the validation collateral needed when setting TPM attestation policies.
+        adminClient->RetrieveResponseValidationCollateral();
+        // Set a minimal policy, which will make the TPM attestation code happy.
+        adminClient->ResetAttestationPolicy(AttestationType::Tpm);
+      }
     }
 
     std::string GetInstanceUri(InstanceType instanceType)
@@ -94,14 +118,6 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
 
   TEST_F(TpmAttestationTests, AttestTpm)
   {
-    // TPM attestation requires a policy document be set. For simplicity, we only run the
-    // test against an AAD attestation service instance.
-    {
-      auto adminClient(CreateAdminClient(InstanceType::AAD));
-      // Set a minimal policy, which will make the TPM attestation code happy.
-      adminClient->SetAttestationPolicy(
-          AttestationType::Tpm, "version=1.0; authorizationrules{=> permit();}; issuancerules{};");
-    }
 
     auto client(CreateClient(InstanceType::AAD));
 
