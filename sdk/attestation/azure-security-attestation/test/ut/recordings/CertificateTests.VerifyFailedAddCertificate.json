@@ -1,0 +1,24 @@
+{
+  "networkCallRecords": [
+    {
+      "Headers": {
+        "content-type": "application/json",
+        "user-agent": "azsdk-cpp-Attestation/1.0.0-beta.1 (Windows 10 Enterprise 6.3 22000 22000.1.amd64fre.co_release.210604-1628)",
+        "x-ms-client-request-id": "20bea28e-6872-43d6-46e1-2ed9fd273943"
+      },
+      "Method": "POST",
+      "Response": {
+        "BODY": "{\"error\":{\"code\":\"InvalidOperation\",\"message\":\"Attestation Enclave operation failed with 65530: RETURN_IF_TRUE('(GetPolicyRootCertificates().empty())') failed with 0xfffa:The operation is disallowed.\\r\\nRETURN_IF_ERROR('pEnclave->AddPolicyManagementCertificate( clientApiVersion, policyManagementCertBuffer, *suppliedClaims, policyCertificates)') failed with 0xfffa: 'The operation is disallowed'\\r\\n\",\"innererror\":{\"code\":\"InvalidOperation\",\"message\":\"Attestation Enclave operation failed with 65530: RETURN_IF_TRUE('(GetPolicyRootCertificates().empty())') failed with 0xfffa:The operation is disallowed.\\r\\nRETURN_IF_ERROR('pEnclave->AddPolicyManagementCertificate( clientApiVersion, policyManagementCertBuffer, *suppliedClaims, policyCertificates)') failed with 0xfffa: 'The operation is disallowed'\\r\\n\"}}}",
+        "REASON_PHRASE": "Bad Request",
+        "STATUS_CODE": "400",
+        "content-type": "application/json; charset=utf-8",
+        "date": "Thu, 10 Mar 2022 01:37:40 GMT",
+        "server": "Kestrel",
+        "transfer-encoding": "chunked",
+        "x-ms-maa-service-version": "1.10.01885.0001",
+        "x-ms-request-id": "00-2a815bf02e9e750ab069ab00c48544b9-0000000000000000-00"
+      },
+      "Url": "https://REDACTED.wus.attest.azure.net/certificates:add?api-version=2020-10-01"
+    }
+  ]
+}

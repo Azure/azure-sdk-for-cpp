@@ -9,21 +9,69 @@
 
 #pragma once
 
-#include <azure/core/context.hpp>
-
+#include "azure/perf/options.hpp"
 #include "azure/perf/test_options.hpp"
+#include <azure/core/context.hpp>
+#include <azure/core/internal/client_options.hpp>
+#include <azure/core/url.hpp>
 
 #include <string>
 #include <vector>
 
+namespace {
+class ProxyPolicy;
+}
+
 namespace Azure { namespace Perf {
+  class Program;
 
   /**
    * @brief The base interface for a performance test.
    *
    */
-  struct BaseTest
-  {
+  class BaseTest {
+    // Provides private access so a test program can run PostSetup.
+    friend class Program;
+    friend class ::ProxyPolicy;
+
+  private:
+    std::string m_recordId;
+    std::string m_proxy;
+    bool m_isPlayBackMode = false;
+
+    void SetTestProxy(std::string const& proxy) { m_proxy = proxy; }
+
+    /**
+     * @brief Define actions to run after test set up and before the actual test.
+     *
+     * @details This method enables the performance framework to set the proxy server for recordings
+     * or any other configuration to happen after a test set up definition.
+     *
+     */
+    void PostSetUp();
+
+    /**
+     * @brief Define actions to run after each test run.
+     *
+     * @details This method enabled the performance framework to remove test proxy forwarding before
+     * letting test do clean up.
+     *
+     */
+    void PreCleanUp();
+
+    /**
+     * @brief Set the client options depending on the test options.
+     *
+     * @param clientOptions ref to the client options that contains the http pipeline policies.
+     */
+    void ConfigureCoreClientOptions(Azure::Core::_internal::ClientOptions* clientOptions);
+
+  protected:
+    Azure::Perf::TestOptions m_options;
+
+  public:
+    BaseTest(Azure::Perf::TestOptions options) : m_options(options) {}
+
     /**
      * @brief Run one time at the beggining and before any test.
      *
@@ -77,5 +125,30 @@ namespace Azure { namespace Perf {
      *
      */
     virtual void GlobalCleanup() {}
+
+    /**
+     * @brief Update an existing \p clientOptions with the test configuration set by the
+     * environment.
+     *
+     * @note If test proxy env var is set, the proxy policy is added to the \p clientOptions.
+     *
+     * @param clientOptions Ref to the client options that contains the Http client policies.
+     */
+    template <class T> void ConfigureClientOptions(T* clientOptions)
+    {
+      ConfigureCoreClientOptions(clientOptions);
+    }
+
+    /**
+     * @brief Create and return client options with test configuration set in the environment.
+     *
+     * @note If test proxy env var is set, the proxy policy is added to the \p clientOptions.
+     */
+    template <class T> T InitClientOptions()
+    {
+      T options;
+      ConfigureClientOptions(&options);
+      return options;
+    }
   };
 }} // namespace Azure::Perf

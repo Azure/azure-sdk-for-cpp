@@ -59,11 +59,11 @@ Azure::Core::Http::Request AttestationCommonRequest::CreateRequest(
     request.GetUrl().AppendQueryParameter(ApiVersionQueryParamName, apiVersion);
   }
 
-  for (std::string const& p : path)
+  for (std::string const& P : path)
   {
-    if (!p.empty())
+    if (!P.empty())
     {
-      request.GetUrl().AppendPath(p);
+      request.GetUrl().AppendPath(P);
     }
   }
   return request;

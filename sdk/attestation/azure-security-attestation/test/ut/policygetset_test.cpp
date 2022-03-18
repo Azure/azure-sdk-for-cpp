@@ -68,16 +68,29 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
       }
     }
 
+    Azure::Security::Attestation::AttestationTokenValidationOptions GetTokenValidationOptions()
+    {
+      AttestationTokenValidationOptions returnValue{};
+
+      if (m_testContext.IsPlaybackMode())
+      {
+        // Skip validating time stamps if using recordings.
+        returnValue.ValidateNotBeforeTime = false;
+        returnValue.ValidateExpirationTime = false;
+      }
+      else
+      {
+        returnValue.ValidationTimeSlack = 10s;
+      }
+      return returnValue;
+    }
+
     std::unique_ptr<AttestationAdministrationClient> CreateClient()
     {
       // `InitTestClient` takes care of setting up Record&Playback.
       Azure::Security::Attestation::AttestationAdministrationClientOptions options;
-      if (m_testContext.IsPlaybackMode())
-      {
-        // Skip validating time stamps if using recordings.
-        options.TokenValidationOptions.ValidateNotBeforeTime = false;
-        options.TokenValidationOptions.ValidateExpirationTime = false;
-      }
+      options.TokenValidationOptions = GetTokenValidationOptions();
+
       std::shared_ptr<Azure::Core::Credentials::TokenCredential> credential
           = std::make_shared<Azure::Identity::ClientSecretCredential>(
               GetEnv("AZURE_TENANT_ID"), GetEnv("AZURE_CLIENT_ID"), GetEnv("AZURE_CLIENT_SECRET"));
@@ -97,10 +110,9 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
       EXPECT_EQ(result.RawResponse->GetStatusCode(), Azure::Core::Http::HttpStatusCode::Ok);
 
       // SetPolicy responses should have updated or reset the policy value.
-      EXPECT_TRUE(result.Value.Body.PolicyResolution);
       if (policyToValidate)
       {
-        EXPECT_EQ(PolicyModification::Updated, *result.Value.Body.PolicyResolution);
+        EXPECT_EQ(PolicyModification::Updated, result.Value.Body.PolicyResolution);
 
         // The attestation service only returns the PolicySigner and PolicySigningHash on
         // SetPolicy calls, not ResetPolicy calls.
@@ -128,8 +140,6 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
           EXPECT_FALSE(result.Value.Body.PolicySigner);
         }
 
-        EXPECT_TRUE(result.Value.Body.PolicyTokenHash);
-
         // The returned PolicyTokenHash value is the hash of the entire policy JWS that was sent
         // to the service. In playback mode, the JWS which is calculated for the tests is
         // different from the JWS which was recorded (because the signing certificate is
@@ -138,19 +148,19 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
         // So skip verifying the PolicyTokenHash in playback mode.
         if (!m_testContext.IsPlaybackMode())
         {
-          AttestationToken<std::nullptr_t> sentToken
+          AttestationToken<> sentToken
               = client->CreateSetAttestationPolicyToken(policyToValidate, signingKey);
 
           Azure::Core::Cryptography::_internal::Sha256Hash hasher;
           std::vector<uint8_t> rawTokenHash = hasher.Final(
               reinterpret_cast<const uint8_t*>(sentToken.RawToken.data()),
               sentToken.RawToken.size());
-          EXPECT_EQ(*result.Value.Body.PolicyTokenHash, rawTokenHash);
+          EXPECT_EQ(result.Value.Body.PolicyTokenHash, rawTokenHash);
         }
       }
       else
       {
-        EXPECT_EQ(PolicyModification::Removed, *result.Value.Body.PolicyResolution);
+        EXPECT_EQ(PolicyModification::Removed, result.Value.Body.PolicyResolution);
       }
 
       return true;
@@ -170,7 +180,8 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
 
       // Make sure that the policy we set can be retrieved (we've checked the hash in
       // ValidateSetPolicyResponse, but this doesn't hurt)
-      auto getResponse = adminClient->GetAttestationPolicy(GetParam().TeeType);
+      auto getResponse = adminClient->GetAttestationPolicy(
+          GetParam().TeeType, GetPolicyOptions{GetTokenValidationOptions()});
       EXPECT_EQ(policyToSet, getResponse.Value.Body);
     }
 
@@ -180,6 +191,8 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
 
       SetPolicyOptions setOptions;
       setOptions.SigningKey = signingKey;
+      setOptions.TokenValidationOptions = GetTokenValidationOptions();
+
       auto setResponse = adminClient->ResetAttestationPolicy(GetParam().TeeType, setOptions);
 
       EXPECT_TRUE(ValidateSetPolicyResponse(

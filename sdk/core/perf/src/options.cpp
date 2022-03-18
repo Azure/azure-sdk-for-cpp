@@ -33,6 +33,14 @@ void Azure::Perf::to_json(Azure::Core::Json::_internal::json& j, const GlobalTes
   {
     j["Rate"] = nullptr;
   }
+  if (p.TestProxies.empty())
+  {
+    j["TestProxies"] = "N/A";
+  }
+  else
+  {
+    j["TestProxies"] = p.TestProxies;
+  }
 }
 
 std::vector<Azure::Perf::TestOption> Azure::Perf::GlobalTestOptions::GetOptionMetadata()
@@ -50,6 +58,7 @@ std::vector<Azure::Perf::TestOption> Azure::Perf::GlobalTestOptions::GetOptionMe
     [Option('r', "rate", HelpText = "Target throughput (ops/sec)")]
     [Option("sync", HelpText = "Runs sync version of test")]  -- Not supported
     [Option('w', "warmup", Default = 5, HelpText = "Duration of warmup in seconds")]
+    [Option('x', "proxy", Default = "", HelpText = "Proxy server")]
   */
   return {
       {"Duration",
@@ -75,5 +84,6 @@ std::vector<Azure::Perf::TestOption> Azure::Perf::GlobalTestOptions::GetOptionMe
       {"Port", {"--port"}, "Port to redirect HTTP requests. Default to no redirection.", 1},
       {"Rate", {"-r", "--rate"}, "Target throughput (ops/sec). Default to no throughput.", 1},
       {"Warmup", {"-w", "--warmup"}, "Duration of warmup in seconds. Default to 5 seconds.", 1},
+      {"TestProxies", {"-x", "--test-proxies"}, "URIs of TestProxy Servers (separated by ';')", 1},
       {"help", {"-h", "--help"}, "Display help information.", 0}};
 }
