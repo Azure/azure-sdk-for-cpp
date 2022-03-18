@@ -21,6 +21,9 @@
       "host": true
     },
     {
+      "name": "openssl"
+    },
+    {
       "name": "vcpkg-cmake-config",
       "host": true
     }

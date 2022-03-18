@@ -41,18 +41,18 @@ namespace Azure { namespace Perf {
      * @brief The number of arguments expected after the sentinel for the test option.
      *
      */
-    uint16_t expectedArgs;
+    uint16_t ExpectedArgs;
 
     /**
      * @brief Make an option to be mandatory to run the test.
      *
      */
-    bool required = false;
+    bool Required = false;
 
     /**
      * @brief Make the option to be replaced with **** on all outputs
      *
      */
-    bool sensitiveData = false;
+    bool SensitiveData = false;
   };
 }} // namespace Azure::Perf

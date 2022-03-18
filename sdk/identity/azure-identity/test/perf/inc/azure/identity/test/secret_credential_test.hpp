@@ -43,7 +43,10 @@ namespace Azure { namespace Identity { namespace Test {
       m_secret = m_options.GetMandatoryOption<std::string>("Secret");
       m_tokenRequestContext.Scopes.push_back(m_options.GetMandatoryOption<std::string>("Scope"));
       m_credential = std::make_unique<Azure::Identity::ClientSecretCredential>(
-          m_tenantId, m_clientId, m_secret);
+          m_tenantId,
+          m_clientId,
+          m_secret,
+          InitClientOptions<Azure::Core::Credentials::TokenCredentialOptions>());
     }
 
     /**

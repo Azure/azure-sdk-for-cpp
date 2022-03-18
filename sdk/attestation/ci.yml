@@ -30,7 +30,7 @@ stages:
       CtestRegex: azure-security-attestation.*
       LiveTestCtestRegex: azure-security-attestation.*
       LineCoverageTarget: 90
-      BranchCoverageTarget: 45
+      BranchCoverageTarget: 42
       Artifacts:
         - Name: azure-security-attestation
           Path: azure-security-attestation
