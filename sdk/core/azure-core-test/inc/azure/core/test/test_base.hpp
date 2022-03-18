@@ -338,9 +338,9 @@ namespace Azure { namespace Core { namespace Test {
 
     /**
      * @brief Run after each test
-     * 
-     * @note: If a test case overrides the TearDown method, it MUST call the `TestBase::TearDown` method,
-     * or test recordings will fail to be generated.
+     *
+     * @note: If a test case overrides the TearDown method, it MUST call the `TestBase::TearDown`
+     * method, or test recordings will fail to be generated.
      *
      */
     void TearDown() override;
