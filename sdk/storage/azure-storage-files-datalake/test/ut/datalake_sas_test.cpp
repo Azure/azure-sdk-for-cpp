@@ -245,15 +245,10 @@ namespace Azure { namespace Storage { namespace Test {
       {
         verify_directory_list(sasToken2);
       }
-      (void)verify_file_move;
-      /*
-      don't know why, move doesn't work
-      if ((permissions & Sas::DataLakeSasPermissions::Move)
-          == Sas::DataLakeSasPermissions::Move)
+      if ((permissions & Sas::DataLakeSasPermissions::Move) == Sas::DataLakeSasPermissions::Move)
       {
         verify_file_move(sasToken2);
       }
-      */
       if ((permissions & Sas::DataLakeSasPermissions::Execute)
           == Sas::DataLakeSasPermissions::Execute)
       {
@@ -288,12 +283,8 @@ namespace Azure { namespace Storage { namespace Test {
       if ((permissions & Sas::DataLakeFileSystemSasPermissions::All)
           == Sas::DataLakeFileSystemSasPermissions::All)
       {
-        (void)verify_file_move;
-        /*
-        don't know why, move doesn't work
         verify_file_move(sasToken);
         verify_file_move(sasToken2);
-        */
       }
       if ((permissions & Sas::DataLakeFileSystemSasPermissions::Read)
           == Sas::DataLakeFileSystemSasPermissions::Read)
