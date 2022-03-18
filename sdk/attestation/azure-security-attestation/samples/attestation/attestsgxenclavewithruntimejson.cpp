@@ -36,8 +36,6 @@ using namespace Azure::Core;
 
 using namespace std::chrono_literals;
 
-std::string GetEnv(char const* env);
-
 int main()
 {
   try
@@ -45,14 +43,14 @@ int main()
     std::cout << "In function: SampleAttestSgxEnclaveWithJSONRuntimeData" << std::endl;
 
     // create client
-    std::string endpoint(GetEnv("ATTESTATION_AAD_URL"));
-    AttestationClient attestationClient(endpoint);
+    std::string const endpoint(GetEnvHelper::GetEnv("ATTESTATION_AAD_URL"));
+    AttestationClient const attestationClient(endpoint);
 
     // Retrieve any and all collateral needed to validate the result of APIs calling into the
     // attestation service..
     attestationClient.RetrieveResponseValidationCollateral();
 
-    std::vector<uint8_t> sgxEnclaveQuote = AttestationCollateral::SgxQuote();
+    std::vector<uint8_t> const sgxEnclaveQuote = AttestationCollateral::SgxQuote();
 
     // Set the RuntimeData in the request to the service. Ask the service to interpret the
     // RuntimeData as a JSON object when it is returned in the resulting token.
@@ -61,7 +59,7 @@ int main()
     attestOptions.RuntimeData
         = AttestationData{AttestationCollateral::RuntimeData(), AttestationDataType::Json};
 
-    Azure::Response<AttestationToken<AttestationResult>> sgxResult
+    Azure::Response<AttestationToken<AttestationResult>> const sgxResult
         = attestationClient.AttestSgxEnclave(sgxEnclaveQuote, attestOptions);
 
     std::cout << "SGX Quote MRSIGNER is: "
@@ -88,14 +86,4 @@ int main()
     return 1;
   }
   return 0;
-}
-
-std::string GetEnv(char const* env)
-{
-  auto const val = std::getenv(env);
-  if (val == nullptr)
-  {
-    throw std::runtime_error("Could not find required environment variable: " + std::string(env));
-  }
-  return std::string(val);
 }

@@ -39,19 +39,18 @@ using namespace std::chrono_literals;
 using namespace Azure::Core;
 using namespace Azure::Core::Cryptography::_internal;
 
-std::string GetEnv(char const* env);
-
 int main()
 {
   try
   {
-    AttestationAdministrationClientOptions clientOptions;
 
     // Attestation tokens returned by the service should be issued by the
     // attestation service instance. Update the token validation logic to ensure that
     // the right instance issued the token we received (this protects against a MITM responding
     // with a token issued by a different attestation service instance).
-    std::string endpoint(GetEnv("ATTESTATION_ISOLATED_URL"));
+    std::string const endpoint(GetEnvHelper::GetEnv("ATTESTATION_ISOLATED_URL"));
+
+    AttestationAdministrationClientOptions clientOptions;
     clientOptions.TokenValidationOptions.ExpectedIssuer = endpoint;
     clientOptions.TokenValidationOptions.ValidateIssuer = true;
 
@@ -59,24 +58,24 @@ int main()
     clientOptions.TokenValidationOptions.ValidationTimeSlack = 10s;
 
     // create client
-    auto credential = std::make_shared<Azure::Identity::ClientSecretCredential>(
-        GetEnv("AZURE_TENANT_ID"),
-        GetEnv("AZURE_CLIENT_ID"),
-        GetEnv("AZURE_CLIENT_SECRET"));
-    AttestationAdministrationClient adminClient(endpoint, credential, clientOptions);
+    auto const credential = std::make_shared<Azure::Identity::ClientSecretCredential>(
+        GetEnvHelper::GetEnv("AZURE_TENANT_ID"),
+        GetEnvHelper::GetEnv("AZURE_CLIENT_ID"),
+        GetEnvHelper::GetEnv("AZURE_CLIENT_SECRET"));
+    AttestationAdministrationClient const adminClient(endpoint, credential, clientOptions);
 
     // Retrieve attestation response validation collateral before calling into the service.
     adminClient.RetrieveResponseValidationCollateral();
 
-    std::string signingKey(GetEnv("ISOLATED_SIGNING_KEY"));
-    std::string signingCert(GetEnv("ISOLATED_SIGNING_CERTIFICATE"));
+    std::string const signingKey(GetEnvHelper::GetEnv("ISOLATED_SIGNING_KEY"));
+    std::string const signingCert(GetEnvHelper::GetEnv("ISOLATED_SIGNING_CERTIFICATE"));
 
     // The attestation APIs expect a PEM encoded key and certificate, so convert the Base64 key and
     // certificate to PEM encoded equivalents.
-    std::string pemSigningKey(::Cryptography::PemFromBase64(signingKey, "PRIVATE KEY"));
-    std::string pemSigningCert(::Cryptography::PemFromBase64(signingCert, "CERTIFICATE"));
+    std::string const pemSigningKey(::Cryptography::PemFromBase64(signingKey, "PRIVATE KEY"));
+    std::string const pemSigningCert(::Cryptography::PemFromBase64(signingCert, "CERTIFICATE"));
 
-    std::string policyToSet(R"(version= 1.0;
+    std::string const policyToSet(R"(version= 1.0;
 authorizationrules 
 {
 	[ type=="x-ms-sgx-is-debuggable", value==true ]&&
@@ -89,7 +88,7 @@ authorizationrules
     SetPolicyOptions setOptions;
     setOptions.SigningKey = AttestationSigningKey{pemSigningKey, pemSigningCert};
 
-    Azure::Response<AttestationToken<PolicyResult>> setResult
+    Azure::Response<AttestationToken<PolicyResult>> const setResult
         = adminClient.SetAttestationPolicy(AttestationType::SgxEnclave, policyToSet, setOptions);
 
     if (setResult.Value.Body.PolicyResolution == PolicyModification::Updated)
@@ -106,10 +105,10 @@ authorizationrules
     // by the attestation service, the customer can call CreateSetAttestationPolicyToken and then
     // generate the SHA256 of that token and compare it with the value returned by the service - the
     // two hash values should be identical.
-    auto setPolicyToken
+    auto const setPolicyToken
         = adminClient.CreateSetAttestationPolicyToken(policyToSet, setOptions.SigningKey);
     Sha256Hash shaHasher;
-    std::vector<uint8_t> policyTokenHash = shaHasher.Final(
+    std::vector<uint8_t> const policyTokenHash = shaHasher.Final(
         reinterpret_cast<uint8_t const*>(setPolicyToken.RawToken.data()),
         setPolicyToken.RawToken.size());
     std::cout << "Expected token hash: " << Convert::Base64Encode(policyTokenHash) << std::endl;
@@ -146,14 +145,4 @@ authorizationrules
     return 1;
   }
   return 0;
-}
-
-std::string GetEnv(char const* env)
-{
-  auto const val = std::getenv(env);
-  if (val == nullptr)
-  {
-    throw std::runtime_error("Could not find required environment variable: " + std::string(env));
-  }
-  return std::string(val);
 }

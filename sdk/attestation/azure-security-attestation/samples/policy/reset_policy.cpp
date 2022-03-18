@@ -36,19 +36,18 @@ using namespace Azure::Security::Attestation::Models;
 using namespace std::chrono_literals;
 using namespace Azure::Core;
 using namespace Azure::Core::Cryptography::_internal;
-std::string GetEnv(char const* env);
 
 int main()
 {
   try
   {
-    AttestationAdministrationClientOptions clientOptions;
+    std::string const endpoint(GetEnvHelper::GetEnv("ATTESTATION_AAD_URL"));
 
     // Attestation tokens returned by the service should be issued by the
     // attestation service instance. Update the token validation logic to ensure that
     // the right instance issued the token we received (this protects against a MITM responding
     // with a token issued by a different attestation service instance).
-    std::string endpoint(GetEnv("ATTESTATION_AAD_URL"));
+    AttestationAdministrationClientOptions clientOptions;
     clientOptions.TokenValidationOptions.ExpectedIssuer = endpoint;
     clientOptions.TokenValidationOptions.ValidateIssuer = true;
 
@@ -56,16 +55,16 @@ int main()
     clientOptions.TokenValidationOptions.ValidationTimeSlack = 10s;
 
     // create client
-    auto credential = std::make_shared<Azure::Identity::ClientSecretCredential>(
-        GetEnv("AZURE_TENANT_ID"),
-        GetEnv("AZURE_CLIENT_ID"),
-        GetEnv("AZURE_CLIENT_SECRET"));
-    AttestationAdministrationClient adminClient(endpoint, credential, clientOptions);
+    auto const credential = std::make_shared<Azure::Identity::ClientSecretCredential>(
+        GetEnvHelper::GetEnv("AZURE_TENANT_ID"),
+        GetEnvHelper::GetEnv("AZURE_CLIENT_ID"),
+        GetEnvHelper::GetEnv("AZURE_CLIENT_SECRET"));
+    AttestationAdministrationClient const adminClient(endpoint, credential, clientOptions);
 
     // Retrieve attestation response validation collateral before calling into the service.
     adminClient.RetrieveResponseValidationCollateral();
 
-    Azure::Response<AttestationToken<PolicyResult>> resetResult
+    Azure::Response<AttestationToken<PolicyResult>> const resetResult
         = adminClient.ResetAttestationPolicy(AttestationType::SgxEnclave);
 
     if (resetResult.Value.Body.PolicyResolution == PolicyModification::Removed)
@@ -89,14 +88,4 @@ int main()
     return 1;
   }
   return 0;
-}
-
-std::string GetEnv(char const* env)
-{
-  auto const val = std::getenv(env);
-  if (val == nullptr)
-  {
-    throw std::runtime_error("Could not find required environment variable: " + std::string(env));
-  }
-  return std::string(val);
 }

@@ -125,7 +125,7 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
   {
     auto client(CreateClient(InstanceType::AAD));
 
-    auto response = client->AttestTpm(R"({"payload": { "type": "aikcert" } })");
+    auto response(client->AttestTpm(R"({"payload": { "type": "aikcert" } })"));
 
     Azure::Core::Json::_internal::json parsedResponse(
         Azure::Core::Json::_internal::json::parse(response.Value));

@@ -41,29 +41,27 @@ using namespace Azure::Security::Attestation::Models;
 using namespace std::chrono_literals;
 using namespace Azure::Core;
 
-std::string GetEnv(char const* env);
-
 int main()
 {
   try
   {
     // create an administration client
-    auto credential = std::make_shared<Azure::Identity::ClientSecretCredential>(
-        GetEnv("AZURE_TENANT_ID"),
-        GetEnv("AZURE_CLIENT_ID"),
-        GetEnv("AZURE_CLIENT_SECRET"));
+    auto const credential = std::make_shared<Azure::Identity::ClientSecretCredential>(
+        GetEnvHelper::GetEnv("AZURE_TENANT_ID"),
+        GetEnvHelper::GetEnv("AZURE_CLIENT_ID"),
+        GetEnvHelper::GetEnv("AZURE_CLIENT_SECRET"));
     AttestationAdministrationClient adminClient(
-        GetEnv("ATTESTATION_ISOLATED_URL"), credential);
+        GetEnvHelper::GetEnv("ATTESTATION_ISOLATED_URL"), credential);
 
-    std::string signingKey(GetEnv("ISOLATED_SIGNING_KEY"));
-    std::string signingCert(GetEnv("ISOLATED_SIGNING_CERTIFICATE"));
+    std::string const signingKey(GetEnvHelper::GetEnv("ISOLATED_SIGNING_KEY"));
+    std::string const signingCert(GetEnvHelper::GetEnv("ISOLATED_SIGNING_CERTIFICATE"));
 
     // The attestation APIs expect a PEM encoded key and certificate, so convert the Base64 key and
     // certificate to PEM encoded equivalents.
-    std::string pemSigningKey(::Cryptography::PemFromBase64(signingKey, "PRIVATE KEY"));
-    std::string pemSigningCert(::Cryptography::PemFromBase64(signingCert, "CERTIFICATE"));
+    std::string const pemSigningKey(::Cryptography::PemFromBase64(signingKey, "PRIVATE KEY"));
+    std::string const pemSigningCert(::Cryptography::PemFromBase64(signingCert, "CERTIFICATE"));
 
-    AttestationSigningKey requestSigner{pemSigningKey, pemSigningCert};
+    AttestationSigningKey const requestSigner{pemSigningKey, pemSigningCert};
 
     // Retrieve attestation response validation collateral before calling into the service.
     adminClient.RetrieveResponseValidationCollateral();
@@ -73,12 +71,13 @@ int main()
     {
       // Create a PEM encoded X.509 certificate to add based on the POLICY_SIGNING_CERTIFICATE_0
       // certificate.
-      std::string certToAdd(GetEnv("POLICY_SIGNING_CERTIFICATE_0"));
-      std::string pemCertificateToAdd(::Cryptography::PemFromBase64(certToAdd, "CERTIFICATE"));
+      std::string const certToAdd(GetEnvHelper::GetEnv("POLICY_SIGNING_CERTIFICATE_0"));
+      std::string const pemCertificateToAdd(
+          ::Cryptography::PemFromBase64(certToAdd, "CERTIFICATE"));
 
       // Add the new certificate to the set of policy management certificates for this attestation
       // service instance.
-      Azure::Response<AttestationToken<PolicyCertificateModificationResult>> addResult
+      Azure::Response<AttestationToken<PolicyCertificateModificationResult>> const addResult
           = adminClient.AddPolicyManagementCertificate(pemCertificateToAdd, requestSigner);
 
       std::cout << "The result of the certificate add operation is: "
@@ -92,7 +91,7 @@ int main()
       std::cout << "The thumbprint of the certificate from the result is: "
                 << addResult.Value.Body.CertificateThumbprint << std::endl;
 
-      auto x509Cert(::Cryptography::ImportX509Certificate(pemCertificateToAdd));
+      auto const x509Cert(::Cryptography::ImportX509Certificate(pemCertificateToAdd));
       std::cout << "The thumbprint of the certificate to be added is: " << x509Cert->GetThumbprint()
                 << std::endl;
 
@@ -111,13 +110,13 @@ int main()
     {
       // Create a PEM encoded X.509 certificate to add based on the POLICY_SIGNING_CERTIFICATE_0
       // certificate.
-      std::string certToRemove(GetEnv("POLICY_SIGNING_CERTIFICATE_0"));
-      std::string pemCertificateToRemove(
+      std::string const certToRemove(GetEnvHelper::GetEnv("POLICY_SIGNING_CERTIFICATE_0"));
+      std::string const pemCertificateToRemove(
           ::Cryptography::PemFromBase64(certToRemove, "CERTIFICATE"));
 
       // Add the new certificate to the set of policy management certificates for this attestation
       // service instance.
-      Azure::Response<AttestationToken<PolicyCertificateModificationResult>> addResult
+      Azure::Response<AttestationToken<PolicyCertificateModificationResult>> const addResult
           = adminClient.RemovePolicyManagementCertificate(pemCertificateToRemove, requestSigner);
 
       std::cout << "The result of the certificate remove operation is: "
@@ -131,7 +130,7 @@ int main()
       std::cout << "The thumbprint of the certificate from the result is: "
                 << addResult.Value.Body.CertificateThumbprint << std::endl;
 
-      auto x509Cert(::Cryptography::ImportX509Certificate(pemCertificateToRemove));
+      auto const x509Cert(::Cryptography::ImportX509Certificate(pemCertificateToRemove));
       std::cout << "The thumbprint of the certificate to be removed is: "
                 << x509Cert->GetThumbprint() << std::endl;
 
@@ -158,14 +157,4 @@ int main()
     return 1;
   }
   return 0;
-}
-
-std::string GetEnv(char const* env)
-{
-  auto const val = std::getenv(env);
-  if (val == nullptr)
-  {
-    throw std::runtime_error("Could not find required environment variable: " + std::string(env));
-  }
-  return std::string(val);
 }

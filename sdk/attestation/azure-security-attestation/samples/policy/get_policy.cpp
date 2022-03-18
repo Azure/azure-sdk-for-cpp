@@ -31,24 +31,23 @@ using namespace Azure::Security::Attestation::Models;
 using namespace std::chrono_literals;
 using namespace Azure::Core;
 
-std::string GetEnv(char const* env);
-
 int main()
 {
   try
   {
     // create an administration client
-    auto credential = std::make_shared<Azure::Identity::ClientSecretCredential>(
-        GetEnv("AZURE_TENANT_ID"),
-        GetEnv("AZURE_CLIENT_ID"),
-        GetEnv("AZURE_CLIENT_SECRET"));
-    AttestationAdministrationClient adminClient(GetEnv("ATTESTATION_AAD_URL"), credential);
+    auto const credential = std::make_shared<Azure::Identity::ClientSecretCredential>(
+        GetEnvHelper::GetEnv("AZURE_TENANT_ID"),
+        GetEnvHelper::GetEnv("AZURE_CLIENT_ID"),
+        GetEnvHelper::GetEnv("AZURE_CLIENT_SECRET"));
+    AttestationAdministrationClient const adminClient(
+        GetEnvHelper::GetEnv("ATTESTATION_AAD_URL"), credential);
 
     // Retrieve attestation response validation collateral before calling into the service.
     adminClient.RetrieveResponseValidationCollateral();
 
     // Retrieve the SGX Attestation Policy from this attestation service instance.
-    Azure::Response<AttestationToken<std::string>> sgxPolicy
+    Azure::Response<AttestationToken<std::string>> const sgxPolicy
         = adminClient.GetAttestationPolicy(AttestationType::SgxEnclave);
     std::cout << "SGX Attestation Policy is: " << sgxPolicy.Value.Body << std::endl;
   }
@@ -68,14 +67,4 @@ int main()
     return 1;
   }
   return 0;
-}
-
-std::string GetEnv(char const* env)
-{
-  auto const val = std::getenv(env);
-  if (val == nullptr)
-  {
-    throw std::runtime_error("Could not find required environment variable: " + std::string(env));
-  }
-  return std::string(val);
 }

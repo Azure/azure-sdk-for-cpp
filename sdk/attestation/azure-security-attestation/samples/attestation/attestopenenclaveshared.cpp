@@ -37,26 +37,24 @@ using namespace Azure::Core;
 
 using namespace std::chrono_literals;
 
-std::string GetEnv(char const* env);
-
 int main()
 {
   try
   {
     std::cout << "In function: SampleAttestSgxEnclaveSimple" << std::endl;
     // create client
-    std::string shortLocation(GetEnv("LOCATION_SHORT_NAME"));
-    std::string endpoint
+    std::string const shortLocation(GetEnvHelper::GetEnv("LOCATION_SHORT_NAME"));
+    std::string const endpoint
         = "https://shared" + shortLocation + "." + shortLocation + ".attest.azure.net";
 
-    AttestationClient attestationClient(endpoint);
+    AttestationClient const attestationClient(endpoint);
 
     // Retrieve and cache the collateral required to validate attestation service responses.
     attestationClient.RetrieveResponseValidationCollateral();
 
-    std::vector<uint8_t> sgxEnclaveQuote = AttestationCollateral::SgxQuote();
+    std::vector<uint8_t> const sgxEnclaveQuote = AttestationCollateral::SgxQuote();
 
-    Azure::Response<AttestationToken<AttestationResult>> sgxResult
+    Azure::Response<AttestationToken<AttestationResult>> const sgxResult
         = attestationClient.AttestSgxEnclave(sgxEnclaveQuote);
 
     std::cout << "SGX Quote MRSIGNER is: "
@@ -80,13 +78,4 @@ int main()
     return 1;
   }
   return 0;
-}
-
-
-std::string GetEnv(char const* env) { auto const val = std::getenv(env);
-  if (val == nullptr)
-  {
-    throw std::runtime_error("Could not find required environment variable: " + std::string(env));
-  }
-  return std::string(val);
 }

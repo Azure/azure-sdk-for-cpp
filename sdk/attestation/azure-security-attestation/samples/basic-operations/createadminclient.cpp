@@ -29,18 +29,18 @@
 using namespace Azure::Security::Attestation;
 using namespace Azure::Security::Attestation::Models;
 using namespace std::chrono_literals;
-std::string GetEnv(char const* env);
 
 int main()
 {
   try
   {
     // create client
-    auto credential = std::make_shared<Azure::Identity::ClientSecretCredential>(
-        GetEnv("AZURE_TENANT_ID"),
-        GetEnv("AZURE_CLIENT_ID"),
-        GetEnv("AZURE_CLIENT_SECRET"));
-    AttestationAdministrationClient adminClient(GetEnv("ATTESTATION_AAD_URL"), credential);
+    auto const credential = std::make_shared<Azure::Identity::ClientSecretCredential>(
+        GetEnvHelper::GetEnv("AZURE_TENANT_ID"),
+        GetEnvHelper::GetEnv("AZURE_CLIENT_ID"),
+        GetEnvHelper::GetEnv("AZURE_CLIENT_SECRET"));
+    AttestationAdministrationClient const adminClient(
+        GetEnvHelper::GetEnv("ATTESTATION_AAD_URL"), credential);
 
     std::cout << "Admin client is using API version " << adminClient.ClientVersion() << std::endl;
   }
@@ -60,14 +60,4 @@ int main()
     return 1;
   }
   return 0;
-}
-
-std::string GetEnv(char const* env)
-{
-  auto const val = std::getenv(env);
-  if (val == nullptr)
-  {
-    throw std::runtime_error("Could not find required environment variable: " + std::string(env));
-  }
-  return std::string(val);
 }

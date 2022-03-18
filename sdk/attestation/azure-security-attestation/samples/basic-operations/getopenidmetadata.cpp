@@ -27,18 +27,15 @@ using namespace Azure::Security::Attestation;
 using namespace Azure::Security::Attestation::Models;
 using namespace std::chrono_literals;
 
-std::string GetEnv(char const* env);
-
 int main()
 {
   try
   {
-    AttestationClientOptions clientOptions;
     // create client
-    AttestationClient attestationClient(GetEnv("ATTESTATION_AAD_URL"), clientOptions);
+    AttestationClient const attestationClient(GetEnvHelper::GetEnv("ATTESTATION_AAD_URL"));
 
     // Retrieve the OpenId metadata from this attestation service instance.
-    Azure::Response<AttestationOpenIdMetadata> openIdMetadata
+    Azure::Response<AttestationOpenIdMetadata> const openIdMetadata
         = attestationClient.GetOpenIdMetadata();
     std::cout << "Attestation Certificate Endpoint is: " << *openIdMetadata.Value.JsonWebKeySetUrl
               << std::endl;
@@ -59,14 +56,4 @@ int main()
     return 1;
   }
   return 0;
-}
-
-std::string GetEnv(char const* env)
-{
-  auto const val = std::getenv(env);
-  if (val == nullptr)
-  {
-    throw std::runtime_error("Could not find required environment variable: " + std::string(env));
-  }
-  return std::string(val);
 }

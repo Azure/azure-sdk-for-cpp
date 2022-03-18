@@ -36,21 +36,19 @@ using namespace Azure::Core;
 
 using namespace std::chrono_literals;
 
-std::string GetEnv(char const* env);
-
 int main()
 {
   try
   {
     std::cout << "In function: SampleAttestSgxEnclaveSimple" << std::endl;
     // create client
-    AttestationClient attestationClient(GetEnv("ATTESTATION_AAD_URL"));
+    AttestationClient const attestationClient(GetEnvHelper::GetEnv("ATTESTATION_AAD_URL"));
 
-    std::vector<uint8_t> sgxEnclaveQuote = AttestationCollateral::SgxQuote();
+    std::vector<uint8_t> const sgxEnclaveQuote = AttestationCollateral::SgxQuote();
 
     attestationClient.RetrieveResponseValidationCollateral();
 
-    Azure::Response<AttestationToken<AttestationResult>> sgxResult
+    Azure::Response<AttestationToken<AttestationResult>> const sgxResult
         = attestationClient.AttestSgxEnclave(sgxEnclaveQuote);
 
     std::cout << "SGX Quote MRSIGNER is: "
@@ -74,14 +72,4 @@ int main()
     return 1;
   }
   return 0;
-}
-
-std::string GetEnv(char const* env)
-{
-  auto const val = std::getenv(env);
-  if (val == nullptr)
-  {
-    throw std::runtime_error("Could not find required environment variable: " + std::string(env));
-  }
-  return std::string(val);
 }

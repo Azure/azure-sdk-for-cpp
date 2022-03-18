@@ -36,21 +36,19 @@ using namespace Azure::Core;
 
 using namespace std::chrono_literals;
 
-std::string GetEnv(char const* env);
-
 int main()
 {
   try
   {
     std::cout << "In function: SampleAttestSgxEnclaveSimple" << std::endl;
     // create client
-    AttestationClient attestationClient(GetEnv("ATTESTATION_AAD_URL"));
+    AttestationClient const attestationClient(GetEnvHelper::GetEnv("ATTESTATION_AAD_URL"));
 
     // Retrieve any and all collateral needed to validate the result of APIs calling into the
     // attestation service..
     attestationClient.RetrieveResponseValidationCollateral();
 
-    std::vector<uint8_t> openEnclaveReport = AttestationCollateral::OpenEnclaveReport();
+    std::vector<uint8_t> const openEnclaveReport = AttestationCollateral::OpenEnclaveReport();
 
     AttestOptions options;
     options.DraftPolicyForAttestation = R"(version= 1.0;
@@ -65,8 +63,8 @@ authorizationrules
 issuancerules {
     c:[type=="x-ms-sgx-mrsigner"] => issue(type="custom-name", value=c.value);
 };)";
-    Azure::Response<AttestationToken<AttestationResult>> sgxResult
-        = attestationClient.AttestOpenEnclave(openEnclaveReport, options);
+    Azure::Response<AttestationToken<AttestationResult>> const sgxResult(
+        attestationClient.AttestOpenEnclave(openEnclaveReport, options));
 
     std::cout << "SGX Quote MRSIGNER is: "
               << Convert::Base64Encode(*sgxResult.Value.Body.SgxMrSigner) << std::endl;

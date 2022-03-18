@@ -35,19 +35,17 @@ using namespace std::chrono_literals;
 using namespace Azure::Core;
 using namespace Azure::Core::Cryptography::_internal;
 
-std::string GetEnv(char const* env);
-
 int main()
 {
   try
   {
-    AttestationAdministrationClientOptions clientOptions;
+    std::string const endpoint(GetEnvHelper::GetEnv("ATTESTATION_AAD_URL"));
 
     // Attestation tokens returned by the service should be issued by the
     // attestation service instance. Update the token validation logic to ensure that
     // the right instance issued the token we received (this protects against a MITM responding
     // with a token issued by a different attestation service instance).
-    std::string endpoint(GetEnv("ATTESTATION_AAD_URL"));
+    AttestationAdministrationClientOptions clientOptions;
     clientOptions.TokenValidationOptions.ExpectedIssuer = endpoint;
     clientOptions.TokenValidationOptions.ValidateIssuer = true;
 
@@ -55,9 +53,11 @@ int main()
     clientOptions.TokenValidationOptions.ValidationTimeSlack = 10s;
 
     // create client
-    auto credential = std::make_shared<Azure::Identity::ClientSecretCredential>(
-        GetEnv("AZURE_TENANT_ID"), GetEnv("AZURE_CLIENT_ID"), GetEnv("AZURE_CLIENT_SECRET"));
-    AttestationAdministrationClient adminClient(endpoint, credential, clientOptions);
+    auto const credential = std::make_shared<Azure::Identity::ClientSecretCredential>(
+        GetEnvHelper::GetEnv("AZURE_TENANT_ID"),
+        GetEnvHelper::GetEnv("AZURE_CLIENT_ID"),
+        GetEnvHelper::GetEnv("AZURE_CLIENT_SECRET"));
+    AttestationAdministrationClient const adminClient(endpoint, credential, clientOptions);
 
     // Retrieve attestation response validation collateral before calling into the service.
     adminClient.RetrieveResponseValidationCollateral();
@@ -65,7 +65,7 @@ int main()
     // Set the attestation policy on this attestation instance.
     // Note that because this is an AAD mode instance, the caller does not need to sign the policy
     // being set.
-    std::string policyToSet(R"(version= 1.0;
+    std::string const policyToSet(R"(version= 1.0;
 authorizationrules 
 {
 	[ type=="x-ms-sgx-is-debuggable", value==true ]&&
@@ -73,7 +73,7 @@ authorizationrules
 	[ type=="x-ms-sgx-is-debuggable", value==true ]&& 
 	[ type=="x-ms-sgx-mrsigner", value=="mrsigner2"] => permit(); 
 };)");
-    Azure::Response<AttestationToken<PolicyResult>> setResult
+    Azure::Response<AttestationToken<PolicyResult>> const setResult
         = adminClient.SetAttestationPolicy(AttestationType::SgxEnclave, policyToSet);
 
     if (setResult.Value.Body.PolicyResolution == PolicyModification::Updated)
@@ -90,7 +90,7 @@ authorizationrules
     // by the attestation service, the customer can call CreateSetAttestationPolicyToken and then
     // generate the SHA256 of that token and compare it with the value returned by the service - the
     // two hash values should be identical.
-    auto setPolicyToken = adminClient.CreateSetAttestationPolicyToken(policyToSet);
+    auto const setPolicyToken = adminClient.CreateSetAttestationPolicyToken(policyToSet);
     Sha256Hash shaHasher;
     std::vector<uint8_t> policyTokenHash = shaHasher.Final(
         reinterpret_cast<uint8_t const*>(setPolicyToken.RawToken.data()),
@@ -115,14 +115,4 @@ authorizationrules
     return 1;
   }
   return 0;
-}
-
-std::string GetEnv(char const* env)
-{
-  auto const val = std::getenv(env);
-  if (val == nullptr)
-  {
-    throw std::runtime_error("Could not find required environment variable: " + std::string(env));
-  }
-  return std::string(val);
 }

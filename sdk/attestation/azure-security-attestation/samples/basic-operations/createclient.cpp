@@ -25,8 +25,6 @@ using namespace Azure::Security::Attestation;
 using namespace Azure::Security::Attestation::Models;
 using namespace std::chrono_literals;
 
-std::string GetEnv(char const* env);
-
 int main()
 {
   try
@@ -38,7 +36,7 @@ int main()
     clientOptions.TokenValidationOptions.ValidationTimeSlack = 10s;
 
     // create client
-    AttestationClient attestationClient(GetEnv("ATTESTATION_AAD_URL"), clientOptions);
+    AttestationClient const attestationClient(GetEnvHelper::GetEnv("ATTESTATION_AAD_URL"), clientOptions);
   }
   catch (Azure::Core::Credentials::AuthenticationException const& e)
   {
@@ -56,14 +54,4 @@ int main()
     return 1;
   }
   return 0;
-}
-
-std::string GetEnv(char const* env)
-{
-  auto const val = std::getenv(env);
-  if (val == nullptr)
-  {
-    throw std::runtime_error("Could not find required environment variable: " + std::string(env));
-  }
-  return std::string(val);
 }

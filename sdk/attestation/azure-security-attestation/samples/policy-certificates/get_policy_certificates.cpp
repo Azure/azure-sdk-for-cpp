@@ -43,7 +43,7 @@ int main()
   try
   {
     // create an administration client
-    auto credential = std::make_shared<Azure::Identity::ClientSecretCredential>(
+    auto const credential = std::make_shared<Azure::Identity::ClientSecretCredential>(
         GetEnv("AZURE_TENANT_ID"), GetEnv("AZURE_CLIENT_ID"), GetEnv("AZURE_CLIENT_SECRET"));
     AttestationAdministrationClient adminClient(GetEnv("ATTESTATION_ISOLATED_URL"), credential);
 
@@ -51,7 +51,7 @@ int main()
     adminClient.RetrieveResponseValidationCollateral();
 
     // Retrieve the SGX Attestation Policy from this attestation service instance.
-    Azure::Response<AttestationToken<PolicyCertificateListResult>> policyCertificates
+    Azure::Response<AttestationToken<PolicyCertificateListResult>> const policyCertificates
         = adminClient.GetPolicyManagementCertificates();
 
     std::cout << "There are " << policyCertificates.Value.Body.Certificates.size()
@@ -60,7 +60,7 @@ int main()
     std::cout << "Enumerating policy certificates:" << std::endl;
     for (const auto& certChain : policyCertificates.Value.Body.Certificates)
     {
-      auto x509Cert(::Cryptography::ImportX509Certificate((*certChain.CertificateChain)[0]));
+      auto const x509Cert(::Cryptography::ImportX509Certificate((*certChain.CertificateChain)[0]));
       std::cout << "Subject of signing certificate is: " << x509Cert->GetSubjectName() << std::endl;
       std::cout << "Issuer of signing certificate is: " << x509Cert->GetIssuerName() << std::endl;
     }
