@@ -87,6 +87,7 @@ issuancerules {
       std::cout << "Error Code: " << e.ErrorCode << std::endl;
       std::cout << "Error Message: " << e.Message << std::endl;
     }
-    return 0;
+    return 1;
   }
+  return 0;
 }
