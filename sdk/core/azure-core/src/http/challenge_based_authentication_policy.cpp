@@ -4,6 +4,7 @@
 #include "azure/core/http/policies/policy.hpp"
 #include <chrono>
 #include <vector>
+#include <sstream>
 
 using Azure::Core::Context;
 using namespace Azure::Core::Http;
@@ -20,7 +21,7 @@ std::unique_ptr<RawResponse> ChallengeBasedAuthenticationPolicy::Send(
   auto result = nextPolicy.Send(request, context);
   auto const& headers = result->GetHeaders();
   auto const& rawDataHeader = headers.find("www-authenticate");
-  // Only re-run when Unauthozied AND www-authenticate header in the response
+  // Only re-run when Unauthorized AND www-authenticate header in the response
   if (result->GetStatusCode() == HttpStatusCode::Unauthorized && rawDataHeader != headers.end())
   {
     ChallengeParameters challenge(rawDataHeader->second);
