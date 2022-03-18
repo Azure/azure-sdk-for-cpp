@@ -31,16 +31,18 @@ using namespace Azure::Security::Attestation::Models;
 using namespace std::chrono_literals;
 using namespace Azure::Core;
 
+std::string GetEnv(char const* env);
+
 int main()
 {
   try
   {
     // create an administration client
     auto credential = std::make_shared<Azure::Identity::ClientSecretCredential>(
-        std::getenv("AZURE_TENANT_ID"),
-        std::getenv("AZURE_CLIENT_ID"),
-        std::getenv("AZURE_CLIENT_SECRET"));
-    AttestationAdministrationClient adminClient(std::getenv("ATTESTATION_AAD_URL"), credential);
+        GetEnv("AZURE_TENANT_ID"),
+        GetEnv("AZURE_CLIENT_ID"),
+        GetEnv("AZURE_CLIENT_SECRET"));
+    AttestationAdministrationClient adminClient(GetEnv("ATTESTATION_AAD_URL"), credential);
 
     // Retrieve attestation response validation collateral before calling into the service.
     adminClient.RetrieveResponseValidationCollateral();
@@ -66,4 +68,14 @@ int main()
     return 1;
   }
   return 0;
+}
+
+std::string GetEnv(char const* env)
+{
+  auto const val = std::getenv(env);
+  if (val == nullptr)
+  {
+    throw std::runtime_error("Could not find required environment variable: " + std::string(env));
+  }
+  return std::string(val);
 }

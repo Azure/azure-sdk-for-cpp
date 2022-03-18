@@ -41,20 +41,22 @@ using namespace Azure::Security::Attestation::Models;
 using namespace std::chrono_literals;
 using namespace Azure::Core;
 
+std::string GetEnv(char const* env);
+
 int main()
 {
   try
   {
     // create an administration client
     auto credential = std::make_shared<Azure::Identity::ClientSecretCredential>(
-        std::getenv("AZURE_TENANT_ID"),
-        std::getenv("AZURE_CLIENT_ID"),
-        std::getenv("AZURE_CLIENT_SECRET"));
+        GetEnv("AZURE_TENANT_ID"),
+        GetEnv("AZURE_CLIENT_ID"),
+        GetEnv("AZURE_CLIENT_SECRET"));
     AttestationAdministrationClient adminClient(
-        std::getenv("ATTESTATION_ISOLATED_URL"), credential);
+        GetEnv("ATTESTATION_ISOLATED_URL"), credential);
 
-    std::string signingKey(std::getenv("ISOLATED_SIGNING_KEY"));
-    std::string signingCert(std::getenv("ISOLATED_SIGNING_CERTIFICATE"));
+    std::string signingKey(GetEnv("ISOLATED_SIGNING_KEY"));
+    std::string signingCert(GetEnv("ISOLATED_SIGNING_CERTIFICATE"));
 
     // The attestation APIs expect a PEM encoded key and certificate, so convert the Base64 key and
     // certificate to PEM encoded equivalents.
@@ -71,7 +73,7 @@ int main()
     {
       // Create a PEM encoded X.509 certificate to add based on the POLICY_SIGNING_CERTIFICATE_0
       // certificate.
-      std::string certToAdd(std::getenv("POLICY_SIGNING_CERTIFICATE_0"));
+      std::string certToAdd(GetEnv("POLICY_SIGNING_CERTIFICATE_0"));
       std::string pemCertificateToAdd(::Cryptography::PemFromBase64(certToAdd, "CERTIFICATE"));
 
       // Add the new certificate to the set of policy management certificates for this attestation
@@ -109,7 +111,7 @@ int main()
     {
       // Create a PEM encoded X.509 certificate to add based on the POLICY_SIGNING_CERTIFICATE_0
       // certificate.
-      std::string certToRemove(std::getenv("POLICY_SIGNING_CERTIFICATE_0"));
+      std::string certToRemove(GetEnv("POLICY_SIGNING_CERTIFICATE_0"));
       std::string pemCertificateToRemove(
           ::Cryptography::PemFromBase64(certToRemove, "CERTIFICATE"));
 
@@ -156,4 +158,14 @@ int main()
     return 1;
   }
   return 0;
+}
+
+std::string GetEnv(char const* env)
+{
+  auto const val = std::getenv(env);
+  if (val == nullptr)
+  {
+    throw std::runtime_error("Could not find required environment variable: " + std::string(env));
+  }
+  return std::string(val);
 }

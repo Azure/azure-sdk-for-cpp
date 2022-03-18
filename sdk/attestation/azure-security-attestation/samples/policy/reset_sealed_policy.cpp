@@ -25,7 +25,6 @@
 #include <azure/core/cryptography/hash.hpp>
 #include <azure/core/internal/cryptography/sha_hash.hpp>
 #include <azure/identity.hpp>
-
 #include <chrono>
 #include <iomanip>
 #include <iostream>
@@ -39,6 +38,8 @@ using namespace std::chrono_literals;
 using namespace Azure::Core;
 using namespace Azure::Core::Cryptography::_internal;
 
+std::string GetEnv(char const* env);
+
 int main()
 {
   try
@@ -49,7 +50,7 @@ int main()
     // attestation service instance. Update the token validation logic to ensure that
     // the right instance issued the token we received (this protects against a MITM responding
     // with a token issued by a different attestation service instance).
-    std::string endpoint(std::getenv("ATTESTATION_ISOLATED_URL"));
+    std::string endpoint(GetEnv("ATTESTATION_ISOLATED_URL"));
     clientOptions.TokenValidationOptions.ExpectedIssuer = endpoint;
     clientOptions.TokenValidationOptions.ValidateIssuer = true;
 
@@ -58,16 +59,14 @@ int main()
 
     // create client
     auto credential = std::make_shared<Azure::Identity::ClientSecretCredential>(
-        std::getenv("AZURE_TENANT_ID"),
-        std::getenv("AZURE_CLIENT_ID"),
-        std::getenv("AZURE_CLIENT_SECRET"));
+        GetEnv("AZURE_TENANT_ID"), GetEnv("AZURE_CLIENT_ID"), GetEnv("AZURE_CLIENT_SECRET"));
     AttestationAdministrationClient adminClient(endpoint, credential, clientOptions);
 
     // Retrieve attestation response validation collateral before calling into the service.
     adminClient.RetrieveResponseValidationCollateral();
 
-    std::string signingKey(std::getenv("ISOLATED_SIGNING_KEY"));
-    std::string signingCert(std::getenv("ISOLATED_SIGNING_CERTIFICATE"));
+    std::string signingKey(GetEnv("ISOLATED_SIGNING_KEY"));
+    std::string signingCert(GetEnv("ISOLATED_SIGNING_CERTIFICATE"));
 
     // The attestation APIs expect a PEM encoded key and certificate, so convert the Base64 key and
     // certificate to PEM encoded equivalents.
@@ -102,4 +101,14 @@ int main()
     return 1;
   }
   return 0;
+}
+
+std::string GetEnv(char const* env)
+{
+  auto const val = std::getenv(env);
+  if (val == nullptr)
+  {
+    throw std::runtime_error("Could not find required environment variable: " + std::string(env));
+  }
+  return std::string(val);
 }

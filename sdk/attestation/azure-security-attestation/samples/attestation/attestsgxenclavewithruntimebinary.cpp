@@ -36,6 +36,8 @@ using namespace Azure::Core;
 
 using namespace std::chrono_literals;
 
+std::string GetEnv(char const* env);
+
 int main()
 {
   try
@@ -43,7 +45,7 @@ int main()
     std::cout << "In function: SampleAttestSgxEnclaveWithJSONRuntimeData" << std::endl;
 
     // create client
-    std::string endpoint(std::getenv("ATTESTATION_AAD_URL"));
+    std::string endpoint(GetEnv("ATTESTATION_AAD_URL"));
     AttestationClient attestationClient(endpoint);
 
     // Retrieve any and all collateral needed to validate the result of APIs calling into the
@@ -87,3 +89,14 @@ int main()
   }
   return 0;
 }
+
+std::string GetEnv(char const* env)
+{
+  auto const val = std::getenv(env);
+  if (val == nullptr)
+  {
+    throw std::runtime_error("Could not find required environment variable: " + std::string(env));
+  }
+  return std::string(val);
+}
+

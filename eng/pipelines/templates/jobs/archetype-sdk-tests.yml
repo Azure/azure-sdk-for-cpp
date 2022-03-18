@@ -255,13 +255,13 @@ jobs:
       if [[ -f "./${{ parameters.ServiceDirectory }}-samples.txt" ]]; then
         for sample in `cat ./${{ parameters.ServiceDirectory }}-samples.txt`
         do
-          echo "**********Running sample: ${sample}"
 
           $suffix=""
           if [[ $VMImage==*"2019"* ]]; then
             suffix=".exe"
           fi
 
+          echo "**********Running sample: ${sample}${suffix}"
           if [[ -f "$sample$suffix" ]]; then
               bash -c "$sample$suffix"
               status=$?

@@ -36,13 +36,15 @@ using namespace Azure::Core;
 
 using namespace std::chrono_literals;
 
+std::string GetEnv(char const* env);
+
 int main()
 {
   try
   {
     std::cout << "In function: SampleAttestSgxEnclaveSimple" << std::endl;
     // create client
-    AttestationClient attestationClient(std::getenv("ATTESTATION_AAD_URL"));
+    AttestationClient attestationClient(GetEnv("ATTESTATION_AAD_URL"));
 
     // Retrieve any and all collateral needed to validate the result of APIs calling into the
     // attestation service..
@@ -90,4 +92,14 @@ issuancerules {
     return 1;
   }
   return 0;
+}
+
+std::string GetEnv(char const* env)
+{
+  auto const val = std::getenv(env);
+  if (val == nullptr)
+  {
+    throw std::runtime_error("Could not find required environment variable: " + std::string(env));
+  }
+  return std::string(val);
 }

@@ -37,13 +37,15 @@ using namespace Azure::Core;
 
 using namespace std::chrono_literals;
 
+std::string GetEnv(char const* env);
+
 int main()
 {
   try
   {
     std::cout << "In function: SampleAttestSgxEnclaveSimple" << std::endl;
     // create client
-    std::string shortLocation(std::getenv("LOCATION_SHORT_NAME"));
+    std::string shortLocation(GetEnv("LOCATION_SHORT_NAME"));
     std::string endpoint
         = "https://shared" + shortLocation + "." + shortLocation + ".attest.azure.net";
 
@@ -78,4 +80,13 @@ int main()
     return 1;
   }
   return 0;
+}
+
+
+std::string GetEnv(char const* env) { auto const val = std::getenv(env);
+  if (val == nullptr)
+  {
+    throw std::runtime_error("Could not find required environment variable: " + std::string(env));
+  }
+  return std::string(val);
 }
