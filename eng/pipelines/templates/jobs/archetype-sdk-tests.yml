@@ -258,7 +258,7 @@ jobs:
           echo "**********Running sample: ${sample}"
 
           if [[ $VMImage==*"2019"* ]]; then
-            $sample="${sample}.exe"
+            sample="${sample}.exe"
           fi
 
           if [[ -f "$sample" ]]; then
