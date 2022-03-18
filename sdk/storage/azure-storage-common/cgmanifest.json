@@ -2,6 +2,17 @@
   "Registrations": [
     {
       "Component": {
+        "Type": "other",
+        "Other": {
+          "Name": "openssl",
+          "Version": "1.1.1n",
+          "DownloadUrl": "https://www.openssl.org/source/openssl-1.1.1n.tar.gz"
+        }
+      },
+      "DevelopmentDependency": false
+    },
+    {
+      "Component": {
         "Type": "git",
         "git": {
           "RepositoryUrl": "https://github.com/cpplint/cpplint",

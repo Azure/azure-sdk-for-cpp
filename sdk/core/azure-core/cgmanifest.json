@@ -1,87 +1,98 @@
 {
-    "Registrations": [
-        {
-            "Component": {
-                "Type": "git",
-                "git": {
-                    "RepositoryUrl": "https://github.com/curl/curl",
-                    "CommitHash": "2cfac302fbeec68f1727cba3d1705e16f02220ad"
-                }
-            },
-            "DevelopmentDependency": false
-        },
-        {
-            "Component": {
-                "Type": "git",
-                "git": {
-                    "RepositoryUrl": "https://github.com/nlohmann/json",
-                    "CommitHash": "db78ac1d7716f56fc9f1b030b715f872f93964e4"
-                }
-            },
-            "DevelopmentDependency": false
-        },
-        {
-            "Component": {
-                "Type": "git",
-                "git": {
-                    "RepositoryUrl": "https://github.com/google/googletest",
-                    "CommitHash": "e2239ee6043f73722e7aa812a459f54a28552929"
-                }
-            },
-            "DevelopmentDependency": true
-        },
-        {
-            "Component": {
-                "Type": "other",
-                "Other": {
-                    "Name": "clang-format",
-                    "Version": "9.0.0-2",
-                    "DownloadUrl": "https://ubuntu.pkgs.org/18.04/ubuntu-updates-universe-amd64/clang-format-9_9-2~ubuntu18.04.2_amd64.deb.html"
-                }
-            },
-            "DevelopmentDependency": true
-        },
-        {
-            "Component": {
-                "Type": "other",
-                "Other": {
-                    "Name": "doxygen",
-                    "Version": "1.8.20",
-                    "DownloadUrl": "http://doxygen.nl/files/doxygen-1.8.20-setup.exe"
-                }
-            },
-            "DevelopmentDependency": true
-        },
-        {
-            "Component": {
-                "Type": "git",
-                "git": {
-                    "RepositoryUrl": "https://github.com/CLIUtils/cmake",
-                    "CommitHash": "4e52e4d0bc2e9fd27171926d0b5d9f396dd8637c"
-                }
-            },
-            "DevelopmentDependency": true
-        },
-        {
-            "Component": {
-                "Type": "other",
-                "Other": {
-                    "Name": "gcovr",
-                    "Version": "3.4-1",
-                    "DownloadUrl": "https://ubuntu.pkgs.org/18.04/ubuntu-universe-amd64/gcovr_3.4-1_all.deb.html"
-                }
-            },
-            "DevelopmentDependency": true
-        },
-        {
-            "Component": {
-                "Type": "git",
-                "git": {
-                    "RepositoryUrl": "https://github.com/postmanlabs/httpbin",
-                    "CommitHash": "f8ec666b4d1b654e4ff6aedd356f510dcac09f83"
-                }
-            },
-            "DevelopmentDependency": true
+  "Registrations": [
+    {
+      "Component": {
+        "Type": "other",
+        "Other": {
+          "Name": "openssl",
+          "Version": "1.1.1n",
+          "DownloadUrl": "https://www.openssl.org/source/openssl-1.1.1n.tar.gz"
         }
-    ]
+      },
+      "DevelopmentDependency": false
+    },
+    {
+      "Component": {
+        "Type": "git",
+        "git": {
+          "RepositoryUrl": "https://github.com/curl/curl",
+          "CommitHash": "2cfac302fbeec68f1727cba3d1705e16f02220ad"
+        }
+      },
+      "DevelopmentDependency": false
+    },
+    {
+      "Component": {
+        "Type": "git",
+        "git": {
+          "RepositoryUrl": "https://github.com/nlohmann/json",
+          "CommitHash": "db78ac1d7716f56fc9f1b030b715f872f93964e4"
+        }
+      },
+      "DevelopmentDependency": false
+    },
+    {
+      "Component": {
+        "Type": "git",
+        "git": {
+          "RepositoryUrl": "https://github.com/google/googletest",
+          "CommitHash": "e2239ee6043f73722e7aa812a459f54a28552929"
+        }
+      },
+      "DevelopmentDependency": true
+    },
+    {
+      "Component": {
+        "Type": "other",
+        "Other": {
+          "Name": "clang-format",
+          "Version": "9.0.0-2",
+          "DownloadUrl": "https://ubuntu.pkgs.org/18.04/ubuntu-updates-universe-amd64/clang-format-9_9-2~ubuntu18.04.2_amd64.deb.html"
+        }
+      },
+      "DevelopmentDependency": true
+    },
+    {
+      "Component": {
+        "Type": "other",
+        "Other": {
+          "Name": "doxygen",
+          "Version": "1.8.20",
+          "DownloadUrl": "http://doxygen.nl/files/doxygen-1.8.20-setup.exe"
+        }
+      },
+      "DevelopmentDependency": true
+    },
+    {
+      "Component": {
+        "Type": "git",
+        "git": {
+          "RepositoryUrl": "https://github.com/CLIUtils/cmake",
+          "CommitHash": "4e52e4d0bc2e9fd27171926d0b5d9f396dd8637c"
+        }
+      },
+      "DevelopmentDependency": true
+    },
+    {
+      "Component": {
+        "Type": "other",
+        "Other": {
+          "Name": "gcovr",
+          "Version": "3.4-1",
+          "DownloadUrl": "https://ubuntu.pkgs.org/18.04/ubuntu-universe-amd64/gcovr_3.4-1_all.deb.html"
+        }
+      },
+      "DevelopmentDependency": true
+    },
+    {
+      "Component": {
+        "Type": "git",
+        "git": {
+          "RepositoryUrl": "https://github.com/postmanlabs/httpbin",
+          "CommitHash": "f8ec666b4d1b654e4ff6aedd356f510dcac09f83"
+        }
+      },
+      "DevelopmentDependency": true
+    }
+  ]
 }

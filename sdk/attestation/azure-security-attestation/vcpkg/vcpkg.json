@@ -23,6 +23,11 @@
     {
       "name": "vcpkg-cmake-config",
       "host": true
+    },
+    {
+      "name": "openssl",
+      "platform": "!windows & !uwp",
+      "version": "1.1.1n"
     }
   ]
 }
