@@ -43,7 +43,7 @@ int main()
     for (const auto& certs : signingCertificates.Value.Signers)
     {
       std::cout << "Signing certificate chain:" << std::endl;
-      int certIndex = 0;
+      int certIndex = 1;
       for (const auto& cert : *certs.CertificateChain)
       {
         std::cout << "Certificate " << certIndex << ": " << cert << std::endl;

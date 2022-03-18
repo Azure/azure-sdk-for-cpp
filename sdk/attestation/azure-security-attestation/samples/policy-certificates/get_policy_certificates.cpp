@@ -60,6 +60,8 @@ int main()
     std::cout << "Enumerating policy certificates:" << std::endl;
     for (const auto& certChain : policyCertificates.Value.Body.Certificates)
     {
+      // C++ Arrays are 0 indexed, so retrieve the first entry in the array and parse it as an X.509
+      // certificate.
       auto const x509Cert(::Cryptography::ImportX509Certificate((*certChain.CertificateChain)[0]));
       std::cout << "Subject of signing certificate is: " << x509Cert->GetSubjectName() << std::endl;
       std::cout << "Issuer of signing certificate is: " << x509Cert->GetIssuerName() << std::endl;
