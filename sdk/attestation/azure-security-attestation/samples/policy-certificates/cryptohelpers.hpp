@@ -55,19 +55,6 @@ template <typename T> using openssl_unique_ptr = typename type_map_helper<T>::ty
 using openssl_evp_pkey = openssl_unique_ptr<EVP_PKEY>;
 using openssl_bio = openssl_unique_ptr<BIO>;
 
-#ifdef __cpp_nontype_template_parameter_auto
-// *** Wrapper function that calls a given OpensslApi, and returns the corresponding
-// openssl_unique_ptr<T>:
-template <auto OpensslApi, typename... Args> auto make_openssl_unique(Args&&... args)
-{
-  auto raw = OpensslApi(
-      forward<Args>(args)...); // forwarding is probably unnecessary, could use const Args&...
-  // check raw
-  using T = remove_pointer_t<decltype(raw)>; // no need to request T when we can see
-                                             // what OpensslApi returned
-  return openssl_unique_ptr<T>{raw};
-}
-#else // ^^^ C++17 ^^^ / vvv C++14 vvv
 template <typename Api, typename... Args> auto make_openssl_unique(Api& OpensslApi, Args&&... args)
 {
   auto raw = OpensslApi(
@@ -77,7 +64,6 @@ template <typename Api, typename... Args> auto make_openssl_unique(Api& OpensslA
                                                   // what OpensslApi returned
   return openssl_unique_ptr<T>{raw};
 }
-#endif // ^^^ C++14 ^^^
 
 std::string GetOpenSSLError(std::string const& what)
 {
