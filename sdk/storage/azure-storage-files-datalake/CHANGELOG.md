@@ -8,6 +8,8 @@
 
 ### Bugs Fixed
 
+- Fixed a bug where file/directory renaming cannot be authenticated with SAS.
+
 ### Other Changes
 
 ## 12.3.1 (2022-03-09)
