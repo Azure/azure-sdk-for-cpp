@@ -257,12 +257,13 @@ jobs:
         do
           echo "**********Running sample: ${sample}"
 
+          $suffix=""
           if [[ $VMImage==*"2019"* ]]; then
-            sample="${sample}.exe"
+            suffix=".exe"
           fi
 
-          if [[ -f "$sample" ]]; then
-              bash -c "$sample"
+          if [[ -f "$sample$suffix" ]]; then
+              bash -c "$sample$suffix"
               status=$?
               if [[ $status -eq 0 ]]; then
                 echo "*********Sample completed*********"
