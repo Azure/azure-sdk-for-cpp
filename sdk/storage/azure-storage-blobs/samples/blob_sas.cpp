@@ -2,88 +2,87 @@
 // SPDX-License-Identifier: MIT
 
 #include "get_env.hpp"
+
 #include <cstdio>
 #include <iostream>
 #include <stdexcept>
 
 #include <azure/storage/blobs.hpp>
+#include <azure/storage/common/storage_exception.hpp>
 
-std::string GetConnectionString();
+std::string GetConnectionString()
+{
+  const static std::string ConnectionString = "";
 
-/**
- * @brief Creates a SaS for an specific container with all permissions for an hour.
- *
- * Required env var:
- *
- * - AZURE_CPP_VCPKG_CACHE_ACCOUNT_KEY
- *   - App throws if the env var is not found
- *
- * Default values:
- *
- * - AccountName: cppvcpkgcache
- *   - Override using env var: AZURE_CPP_VCPKG_CACHE_ACCOUNT_NAME
- *
- * - ContainerName: public-vcpkg-container
- *   - Override using env var: AZURE_CPP_VCPKG_CACHE_ACCOUNT_CONTAINER
- *
- * @return int
- */
+  if (!ConnectionString.empty())
+  {
+    return ConnectionString;
+  }
+  const static std::string envConnectionString = std::getenv("AZURE_STORAGE_CONNECTION_STRING");
+  if (!envConnectionString.empty())
+  {
+    return envConnectionString;
+  }
+  throw std::runtime_error("Cannot find connection string.");
+}
+
+std::string GetAccountName()
+{
+  return Azure::Storage::_internal::ParseConnectionString(GetConnectionString()).AccountName;
+}
+
+std::string GetAccountKey()
+{
+  return Azure::Storage::_internal::ParseConnectionString(GetConnectionString()).AccountKey;
+}
+
 int main()
 {
   using namespace Azure::Storage::Blobs;
-  using namespace Azure::Storage::_internal;
 
-  std::string const connectionString(GetConnectionString());
-  ConnectionStringParts const parsedConnectionString(ParseConnectionString(GetConnectionString()));
-  std::string const accountName(parsedConnectionString.AccountName);
-  std::string const accountKey(parsedConnectionString.AccountKey);
+  const std::string containerName = "sample-container";
+  const std::string blobName = "sample-blob";
+  const std::string blobContent = "Hello Azure!";
 
-  std::string containerName = "public-vcpkg-container";
-  auto const containerNamePtr = std::getenv("AZURE_CPP_VCPKG_CACHE_ACCOUNT_CONTAINER");
-  if (containerNamePtr)
+  // Create a container and a blob for test
   {
-    containerName = std::string(containerNamePtr);
+    auto credential = std::make_shared<Azure::Storage::StorageSharedKeyCredential>(
+        GetAccountName(), GetAccountKey());
+    auto containerClient = BlobContainerClient(
+        "https://" + GetAccountName() + ".blob.core.windows.net/" + containerName, credential);
+    containerClient.CreateIfNotExists();
+    BlockBlobClient blobClient = containerClient.GetBlockBlobClient(blobName);
+    blobClient.UploadFrom(reinterpret_cast<const uint8_t*>(blobContent.data()), blobContent.size());
   }
 
   Azure::Storage::Sas::BlobSasBuilder sasBuilder;
   sasBuilder.ExpiresOn = std::chrono::system_clock::now() + std::chrono::minutes(60);
   sasBuilder.BlobContainerName = containerName;
-  sasBuilder.Resource = Azure::Storage::Sas::BlobSasResource::BlobContainer;
-  // All permissions
-  sasBuilder.SetPermissions(Azure::Storage::Sas::BlobContainerSasPermissions::All);
+  sasBuilder.BlobName = blobName;
+  sasBuilder.Resource = Azure::Storage::Sas::BlobSasResource::Blob;
+  // Read permission only
+  sasBuilder.SetPermissions(Azure::Storage::Sas::BlobSasPermissions::Read);
 
   std::string sasToken = sasBuilder.GenerateSasToken(
-      Azure::Storage::StorageSharedKeyCredential(accountName, accountKey));
+      Azure::Storage::StorageSharedKeyCredential(GetAccountName(), GetAccountKey()));
 
-  // display
-  std::cout << sasToken << std::endl;
+  auto blobClient = BlobClient(
+      "https://" + GetAccountName() + ".blob.core.windows.net/" + containerName + "/" + blobName
+      + sasToken);
 
-  // test a simple list operation
-  auto containerClient = BlobContainerClient(
-      "https://" + accountName + ".blob.core.windows.net/" + containerName + sasToken);
-  // will throw for invalid SaS
-  containerClient.ListBlobs();
+  // We can read the blob
+  auto properties = blobClient.GetProperties().Value;
 
-  return 0;
-}
-
-std::string GetConnectionString()
-{
-  auto const envConnectionKeyPtr = std::getenv("AZURE_CPP_VCPKG_CACHE_ACCOUNT_KEY");
-  if (!envConnectionKeyPtr)
+  try
   {
-    throw std::runtime_error("Cannot find AZURE_CPP_VCPKG_CACHE_ACCOUNT_KEY.");
-  }
-  std::string const accountKey(envConnectionKeyPtr);
 
-  std::string accountName("cppvcpkgcache");
-  auto const accountNamePtr = std::getenv("AZURE_CPP_VCPKG_CACHE_ACCOUNT_NAME");
-  if (accountNamePtr)
+    Azure::Storage::Metadata metadata;
+    // But we cannot write, this will throw
+    blobClient.SetMetadata(metadata);
+    // Never reach here
+    std::abort();
+  }
+  catch (const Azure::Storage::StorageException&)
   {
-    accountName = std::string(accountNamePtr);
   }
-
-  return std::string(
-      "DefaultEndpointsProtocol=https;AccountName=" + accountName + ";AccountKey=" + accountKey
-      + ";EndpointSuffix=core.windows.net");
 }
