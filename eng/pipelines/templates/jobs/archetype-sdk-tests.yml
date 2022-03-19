@@ -255,16 +255,9 @@ jobs:
       if [[ -f "./${{ parameters.ServiceDirectory }}-samples.txt" ]]; then
         for sample in `cat ./${{ parameters.ServiceDirectory }}-samples.txt`
         do
-          suffix=""
-          if [[ $VMImage==*"2019"* ]]; then
-            # On Windows, the 'sample' variable has a spurious crlf at the end of the value, so remove it.
-            sample=${sample%?}
-            suffix=".exe"
-          fi
-
-          echo "**********Running sample: ${sample}${suffix}"
-          if [[ -f "$sample$suffix" ]]; then
-              bash -c "$sample$suffix"
+          echo "**********Running sample: ${sample}"
+          if [[ -f "$sample" ]]; then
+              bash -c "$sample"
               status=$?
               if [[ $status -eq 0 ]]; then
                 echo "*********Sample completed*********"
@@ -273,7 +266,7 @@ jobs:
                 exit 1
               fi
           else
-            echo "******Skipping sample ${sample}${suffix} because it cannot be found.*****"
+            echo "******Skipping sample ${sample} because it cannot be found.*****"
           fi
         done
       fi

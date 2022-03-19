@@ -18,10 +18,15 @@ create_per_service_target_build(attestation-${samplename} attestation)
 
 target_link_libraries(attestation-${samplename} PRIVATE azure-security-attestation get-env-helper)
 
-message(STATUS "Adding sample ${CMAKE_CURRENT_BINARY_DIR}/attestation-${samplename} to attestation-samples.txt")
 
 # Add the sample to be run on CI. 
 # CI pipeline reads the {service}-samples.txt and runs the binaries listed there.
+if (WIN32)
+set(exe_suffix ".exe")
+else()
+set(exe_suffix "")
+endif()
+message(STATUS "Adding sample ${CMAKE_CURRENT_BINARY_DIR}/attestation-${samplename}${exe_suffix} to attestation-samples.txt")
 file(APPEND ${CMAKE_BINARY_DIR}/attestation-samples.txt "${CMAKE_CURRENT_BINARY_DIR}/attestation-${samplename}\n")
 
 endmacro()

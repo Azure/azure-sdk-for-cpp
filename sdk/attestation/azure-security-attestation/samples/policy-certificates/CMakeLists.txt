@@ -18,7 +18,13 @@ target_link_libraries(attestation-${samplename} PRIVATE azure-security-attestati
 
 # Add the sample to be run on CI. 
 # CI pipeline reads the {service}-samples.txt and runs the binaries listed there.
-file(APPEND ${CMAKE_BINARY_DIR}/attestation-samples.txt "${CMAKE_CURRENT_BINARY_DIR}/attestation-${samplename}\n")
+if (WIN32)
+set(exe_suffix ".exe")
+else()
+set(exe_suffix "")
+endif()
+
+file(APPEND ${CMAKE_BINARY_DIR}/attestation-samples.txt "${CMAKE_CURRENT_BINARY_DIR}/attestation-${samplename}${exe_suffix}\n")
 
 endmacro()
 
