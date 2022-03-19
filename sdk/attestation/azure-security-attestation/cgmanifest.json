@@ -3,7 +3,7 @@
     {
       "Component": {
         "Type": "git",
-        "Other": {
+        "git": {
           "RepositoryUrl": "https://github.com/openssl/openssl",
           "CommitHash": "d82e959e621a3d597f1e0d50ff8c2d8b96915fd7"
         }
