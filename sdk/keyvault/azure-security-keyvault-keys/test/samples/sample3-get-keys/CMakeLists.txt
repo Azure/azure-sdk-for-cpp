@@ -15,6 +15,6 @@ create_per_service_target_build(sample3-get-keys keyvault)
 
 # Add the sample to be run on CI. 
 # CI pipeline reads the {service}-samples.txt and runs the binaries listed there.
-file(APPEND ${CMAKE_BINARY_DIR}/keyvault-samples.txt "${CMAKE_CURRENT_BINARY_DIR}/sample3-get-keys\n")
+add_sample_for_ci_run(keyvault sample3-get-keys)
 
 target_link_libraries(sample3-get-keys PRIVATE azure-security-keyvault-keys azure-identity get-env-helper)

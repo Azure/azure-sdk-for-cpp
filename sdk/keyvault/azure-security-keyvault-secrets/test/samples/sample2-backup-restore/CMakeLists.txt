@@ -18,4 +18,4 @@ target_link_libraries(sample2-backup-restore PRIVATE azure-security-keyvault-sec
 
 # Add the sample to be run on CI. 
 # CI pipeline reads the {service}-samples.txt and runs the binaries listed there.
-file(APPEND ${CMAKE_BINARY_DIR}/keyvault-samples.txt "${CMAKE_CURRENT_BINARY_DIR}/sample2-backup-restore\n")
+add_sample_for_ci_run(keyvault sample2-backup-restore)

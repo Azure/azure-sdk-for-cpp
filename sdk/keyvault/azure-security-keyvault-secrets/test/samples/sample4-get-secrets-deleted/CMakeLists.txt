@@ -18,4 +18,4 @@ target_link_libraries(sample4-get-secrets-deleted PRIVATE azure-security-keyvaul
 
 # Add the sample to be run on CI. 
 # CI pipeline reads the {service}-samples.txt and runs the binaries listed there.
-file(APPEND ${CMAKE_BINARY_DIR}/keyvault-samples.txt "${CMAKE_CURRENT_BINARY_DIR}/sample4-get-secrets-deleted\n")
+add_sample_for_ci_run(keyvault sample4-get-secrets-deleted)

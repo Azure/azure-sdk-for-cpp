@@ -17,4 +17,4 @@ target_link_libraries(certificate-import-certificate PRIVATE azure-security-keyv
 
 # Add the sample to be run on CI. 
 # CI pipeline reads the {service}-samples.txt and runs the binaries listed there.
-file(APPEND ${CMAKE_BINARY_DIR}/keyvault-samples.txt "${CMAKE_CURRENT_BINARY_DIR}/certificate-import-certificate\n")
+add_sample_for_ci_run(keyvault certificate-import-certificate)
