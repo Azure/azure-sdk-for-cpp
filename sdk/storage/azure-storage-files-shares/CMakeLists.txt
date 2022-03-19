@@ -68,7 +68,7 @@ set(
 )
 
 add_library(azure-storage-files-shares ${AZURE_STORAGE_FILES_SHARES_HEADER} ${AZURE_STORAGE_FILES_SHARES_SOURCE})
-create_per_service_target_build(azure-storage-files-shares storage)
+create_per_service_target_build(azure-storage-files-shares storage false)
 # make sure that users can consume the project as a library.
 add_library(Azure::azure-storage-files-shares ALIAS azure-storage-files-shares)
 

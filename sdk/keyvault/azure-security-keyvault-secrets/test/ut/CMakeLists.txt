@@ -26,7 +26,7 @@ add_executable (
     secret_paged_deserialize_test.hpp
     secret_client_base_test.hpp)
 
-create_per_service_target_build(azure-security-keyvault-secrets-test keyvault)
+create_per_service_target_build(azure-security-keyvault-secrets-test keyvault false)
 create_map_file(azure-security-keyvault-secrets-test azure-security-keyvault-secrets-test.map)
 
 if (MSVC)

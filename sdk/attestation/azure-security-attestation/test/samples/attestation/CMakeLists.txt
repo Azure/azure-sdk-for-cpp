@@ -13,10 +13,6 @@ add_executable (
   attestation_collateral.cpp 
   attestation_collateral.hpp)
 
-create_per_service_target_build(attestation-attestation attestation)
+create_per_service_target_build(attestation-attestation attestation true)
 
 target_link_libraries(attestation-attestation PRIVATE azure-security-attestation azure-identity get-env-helper)
-
-# Add the sample to be run on CI. 
-# CI pipeline reads the {service}-samples.txt and runs the binaries listed there.
-add_sample_for_ci_run(attestation attestation-attestation)

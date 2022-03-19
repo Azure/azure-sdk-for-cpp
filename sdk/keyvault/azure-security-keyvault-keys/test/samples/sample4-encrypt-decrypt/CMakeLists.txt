@@ -11,10 +11,6 @@ add_executable (
   sample4-encrypt-decrypt
   sample4_encrypt_decrypt.cpp
 )
-create_per_service_target_build(sample4-encrypt-decrypt keyvault)
-
-# Add the sample to be run on CI. 
-# CI pipeline reads the {service}-samples.txt and runs the binaries listed there.
-add_sample_for_ci_run(keyvault sample4-encrypt-decrypt)
+create_per_service_target_build(sample4-encrypt-decrypt keyvault true)
 
 target_link_libraries(sample4-encrypt-decrypt PRIVATE azure-security-keyvault-keys azure-identity get-env-helper)

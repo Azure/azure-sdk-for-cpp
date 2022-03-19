@@ -66,7 +66,7 @@ set(
 
 add_library(azure-security-attestation ${AZURE_ATTESTATION_HEADER} ${AZURE_ATTESTATION_SOURCE})
 
-create_per_service_target_build(azure-security-attestation attestation)
+create_per_service_target_build(azure-security-attestation attestation false)
 
 target_include_directories(
   azure-security-attestation

@@ -22,7 +22,7 @@ add_executable (
   azure-security-keyvault-keys-perf
      ${AZURE_KEYVAULT_KEY_PERF_TEST_HEADER} ${AZURE_KEYVAULT_KEY_PERF_TEST_SOURCE}
 )
-create_per_service_target_build(azure-security-keyvault-keys-perf keyvault)
+create_per_service_target_build(azure-security-keyvault-keys-perf keyvault false)
 create_map_file(azure-security-keyvault-keys-perf azure-security-keyvault-keys-perf.map)
 
 # Include the headers from the project.

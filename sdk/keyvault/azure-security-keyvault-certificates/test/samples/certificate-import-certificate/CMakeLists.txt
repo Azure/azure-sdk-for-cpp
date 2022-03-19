@@ -11,10 +11,6 @@ add_executable (
   certificate-import-certificate
   certificate_import_certificate.cpp
 )
-create_per_service_target_build(certificate-import-certificate keyvault)
+create_per_service_target_build(certificate-import-certificate keyvault true)
 
 target_link_libraries(certificate-import-certificate PRIVATE azure-security-keyvault-certificates azure-identity get-env-helper)
-
-# Add the sample to be run on CI. 
-# CI pipeline reads the {service}-samples.txt and runs the binaries listed there.
-add_sample_for_ci_run(keyvault certificate-import-certificate)

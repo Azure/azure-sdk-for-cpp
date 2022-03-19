@@ -12,10 +12,6 @@ add_executable (
   sample3_delete_recover.cpp
 )
 
-create_per_service_target_build(sample3-delete-recover keyvault)
+create_per_service_target_build(sample3-delete-recover keyvault true)
 
 target_link_libraries(sample3-delete-recover PRIVATE azure-security-keyvault-secrets azure-identity get-env-helper)
-
-# Add the sample to be run on CI. 
-# CI pipeline reads the {service}-samples.txt and runs the binaries listed there.
-add_sample_for_ci_run(keyvault sample3-delete-recover)

@@ -66,7 +66,7 @@ set(
 )
 
 add_library(azure-identity ${AZURE_IDENTITY_HEADER} ${AZURE_IDENTITY_SOURCE})
-create_per_service_target_build(azure-identity identity)
+create_per_service_target_build(azure-identity identity false)
 
 # make sure that users can consume the project as a library.
 add_library(Azure::azure-identity ALIAS azure-identity)

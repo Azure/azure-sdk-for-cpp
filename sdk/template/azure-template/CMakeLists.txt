@@ -42,7 +42,7 @@ set(
 )
 
 add_library(azure-template ${AZURE_TEMPLATE_HEADER} ${AZURE_TEMPLATE_SOURCE})
-create_per_service_target_build(azure-template template)
+create_per_service_target_build(azure-template template false)
 
 target_include_directories(
   azure-template

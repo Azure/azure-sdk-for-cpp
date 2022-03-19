@@ -16,7 +16,7 @@ add_executable (
      ut/macro_guard.cpp
      ut/template_test.cpp
      )
-create_per_service_target_build(azure-template-test template)
+create_per_service_target_build(azure-template-test template false)
 create_map_file(azure-template-test azure-template-test.map)
 
 target_link_libraries(azure-template-test PRIVATE Azure::azure-template gtest_main)

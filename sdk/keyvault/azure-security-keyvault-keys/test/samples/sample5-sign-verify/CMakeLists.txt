@@ -11,10 +11,6 @@ add_executable (
   sample5-sign-verify
   sample5_sign_verify.cpp
 )
-create_per_service_target_build(sample5-sign-verify keyvault)
-
-# Add the sample to be run on CI. 
-# CI pipeline reads the {service}-samples.txt and runs the binaries listed there.
-add_sample_for_ci_run(keyvault sample5-sign-verify)
+create_per_service_target_build(sample5-sign-verify keyvault true)
 
 target_link_libraries(sample5-sign-verify PRIVATE azure-security-keyvault-keys azure-identity get-env-helper)

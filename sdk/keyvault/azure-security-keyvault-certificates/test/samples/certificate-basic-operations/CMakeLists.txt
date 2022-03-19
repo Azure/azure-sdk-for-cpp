@@ -12,10 +12,6 @@ add_executable (
   certificate_basic_operations.cpp
 )
 
-create_per_service_target_build(certificate-basic-operations keyvault)
+create_per_service_target_build(certificate-basic-operations keyvault true)
 
 target_link_libraries(certificate-basic-operations PRIVATE azure-security-keyvault-certificates azure-identity get-env-helper)
-
-# Add the sample to be run on CI. 
-# CI pipeline reads the {service}-samples.txt and runs the binaries listed there.
-add_sample_for_ci_run(keyvault certificate-basic-operations)

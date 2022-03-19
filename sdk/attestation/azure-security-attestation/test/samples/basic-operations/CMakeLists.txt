@@ -12,10 +12,6 @@ add_executable (
   basic-operations.cpp
 )
 
-create_per_service_target_build(attestation-basic-operations attestation)
+create_per_service_target_build(attestation-basic-operations attestation true)
 
 target_link_libraries(attestation-basic-operations PRIVATE azure-security-attestation azure-identity get-env-helper)
-
-# Add the sample to be run on CI. 
-# CI pipeline reads the {service}-samples.txt and runs the binaries listed there.
-add_sample_for_ci_run(attestation attestation-basic-operations)

@@ -31,7 +31,7 @@ add_executable (
      policycertmgmt_test.cpp
      tpmattestation_test.cpp)
 
-create_per_service_target_build(azure-security-attestation-test attestation)
+create_per_service_target_build(azure-security-attestation-test attestation false)
 
 create_map_file(azure-security-attestation-test azure-security-attestation-test.map)
 
