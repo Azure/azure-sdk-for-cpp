@@ -16,7 +16,7 @@ macro(add_sample_for_ci_run service sample_binary)
         SET(binary "${sample_binary}.exe")
     endif()
     if(CMAKE_GENERATOR MATCHES "Visual Studio.*")
-        SET(binary "${sample_binary}/Release/${binary}")
+        SET(binary "Release/${binary}")
     endif()
     file(APPEND ${CMAKE_BINARY_DIR}/${service}-samples.txt "${CMAKE_CURRENT_BINARY_DIR}/${binary}\n")
 

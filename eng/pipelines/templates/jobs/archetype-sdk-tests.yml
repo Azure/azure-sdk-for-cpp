@@ -68,7 +68,7 @@ jobs:
         VcpkgInstall: 'curl[ssl] libxml2 openssl'
         VCPKG_DEFAULT_TRIPLET: 'x64-linux'
         # Builds samples and run them against the deployed resources. Samples requires Azure Account, so only works on live tests.
-        CmakeArgs: ' -DBUILD_TESTING=ON -DBUILD_SAMPLES=ON '
+        CmakeArgs: ' -DBUILD_TESTING=ON -DBUILD_SAMPLES=ON -DCMAKE_BUILD_TYPE=Release '
         BuildArgs: '-j 4'
         RunSamples: 1
       Ubuntu20_x64_no_rtti:
@@ -76,7 +76,7 @@ jobs:
         OSVmImage: MMSUbuntu18.04
         VcpkgInstall: 'curl[ssl] libxml2 openssl'
         VCPKG_DEFAULT_TRIPLET: 'x64-linux'
-        CmakeArgs: ' -DBUILD_RTTI=OFF -DCMAKE_BUILD_TYPE=Release'
+        CmakeArgs: ' -DBUILD_RTTI=OFF -DCMAKE_BUILD_TYPE=Release '
         BuildArgs: '-j 4'
       # Not asking for any transport adapter will default to OS -> windows:winHttp or !windows:libcurl
       Win_x86_with_unit_test_winHttp:
@@ -104,8 +104,8 @@ jobs:
         VCPKG_DEFAULT_TRIPLET: 'x64-windows-static'
         CMAKE_GENERATOR: 'Visual Studio 16 2019'
         CMAKE_GENERATOR_PLATFORM: x64
-        CmakeArgs: ' -DBUILD_TESTING=ON -DRUN_LONG_UNIT_TESTS=ON -DBUILD_PERFORMANCE_TESTS=ON -DBUILD_SAMPLES=ON'
-        BuildArgs: '-v --parallel 8'
+        CmakeArgs: ' -DBUILD_TESTING=ON -DRUN_LONG_UNIT_TESTS=ON -DBUILD_PERFORMANCE_TESTS=ON -DBUILD_SAMPLES=ON '
+        BuildArgs: '-v --parallel 8 --config Release '
         AZURE_CORE_ENABLE_JSON_TESTS: 1
         RunSamples: 1
       # specify libcurl to be used on Windows
@@ -117,8 +117,7 @@ jobs:
         CMAKE_GENERATOR: 'Visual Studio 16 2019'
         CMAKE_GENERATOR_PLATFORM: Win32
         CmakeArgs: ' -DBUILD_TRANSPORT_CURL=ON -DBUILD_TESTING=ON -DRUN_LONG_UNIT_TESTS=ON -DBUILD_PERFORMANCE_TESTS=ON '
-        BuildArgs: '-v --parallel 8 --config Release'
-        RunSamples: 1
+        BuildArgs: '-v --parallel 8'
         #AZURE_CORE_ENABLE_JSON_TESTS: 1  # Testing Json lib on Win+WinHttp only, No need to repeat here as it is independent to the http transport adapter.
       Win_x64_with_unit_test_libcurl:
         Pool: azsdk-pool-mms-win-2019-general
@@ -127,8 +126,9 @@ jobs:
         VCPKG_DEFAULT_TRIPLET: 'x64-windows-static'
         CMAKE_GENERATOR: 'Visual Studio 16 2019'
         CMAKE_GENERATOR_PLATFORM: x64
-        CmakeArgs: ' -DBUILD_TRANSPORT_CURL=ON -DBUILD_TESTING=ON -DRUN_LONG_UNIT_TESTS=ON -DBUILD_PERFORMANCE_TESTS=ON '
-        BuildArgs: '-v --parallel 8'
+        CmakeArgs: ' -DBUILD_TRANSPORT_CURL=ON -DBUILD_TESTING=ON -DRUN_LONG_UNIT_TESTS=ON -DBUILD_PERFORMANCE_TESTS=ON  -DBUILD_SAMPLES=ON '
+        BuildArgs: '-v --parallel 8 --config Release '
+        RunSamples: 1
         #AZURE_CORE_ENABLE_JSON_TESTS: 1  # Testing Json lib on Win+WinHttp only, No need to repeat here as it is independent to the http transport adapter.
       MacOS_x64_with_unit_test:
         Pool: Azure Pipelines
