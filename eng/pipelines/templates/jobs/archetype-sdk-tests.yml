@@ -87,8 +87,7 @@ jobs:
         CMAKE_GENERATOR: 'Visual Studio 16 2019'
         CMAKE_GENERATOR_PLATFORM: Win32
         CmakeArgs: ' -DBUILD_TESTING=ON -DRUN_LONG_UNIT_TESTS=ON -DBUILD_PERFORMANCE_TESTS=ON '
-        BuildArgs: '-v --parallel 8'
-        AZURE_CORE_ENABLE_JSON_TESTS: 1
+        BuildArgs: '-v --parallel 8 --config Release'
       Win_x86_no_rtti_whit_unit_test:
         Pool: azsdk-pool-mms-win-2019-general
         OSVmImage: MMS2019
@@ -96,8 +95,8 @@ jobs:
         VCPKG_DEFAULT_TRIPLET: 'x86-windows-static'
         CMAKE_GENERATOR: 'Visual Studio 16 2019'
         CMAKE_GENERATOR_PLATFORM: Win32
-        CmakeArgs: ' -DBUILD_RTTI=OFF -DCMAKE_BUILD_TYPE=Release -DBUILD_TESTING=ON -DBUILD_SAMPLES=ON'
-        BuildArgs: '-v --parallel 8'
+        CmakeArgs: ' -DBUILD_RTTI=OFF -DBUILD_TESTING=ON -DBUILD_SAMPLES=ON'
+        BuildArgs: '-v --parallel 8 --config Release'
       Win_x64_with_unit_test_winHttp:
         Pool: azsdk-pool-mms-win-2019-general
         VcpkgInstall: 'openssl'
@@ -108,6 +107,7 @@ jobs:
         CmakeArgs: ' -DBUILD_TESTING=ON -DRUN_LONG_UNIT_TESTS=ON -DBUILD_PERFORMANCE_TESTS=ON -DBUILD_SAMPLES=ON'
         BuildArgs: '-v --parallel 8'
         AZURE_CORE_ENABLE_JSON_TESTS: 1
+        RunSamples: 1
       # specify libcurl to be used on Windows
       Win_x86_with_unit_test_libcurl:
         Pool: azsdk-pool-mms-win-2019-general
@@ -117,7 +117,8 @@ jobs:
         CMAKE_GENERATOR: 'Visual Studio 16 2019'
         CMAKE_GENERATOR_PLATFORM: Win32
         CmakeArgs: ' -DBUILD_TRANSPORT_CURL=ON -DBUILD_TESTING=ON -DRUN_LONG_UNIT_TESTS=ON -DBUILD_PERFORMANCE_TESTS=ON '
-        BuildArgs: '-v --parallel 8'
+        BuildArgs: '-v --parallel 8 --config Release'
+        RunSamples: 1
         #AZURE_CORE_ENABLE_JSON_TESTS: 1  # Testing Json lib on Win+WinHttp only, No need to repeat here as it is independent to the http transport adapter.
       Win_x64_with_unit_test_libcurl:
         Pool: azsdk-pool-mms-win-2019-general
