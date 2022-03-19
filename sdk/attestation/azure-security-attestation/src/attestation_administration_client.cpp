@@ -76,6 +76,7 @@ AttestationAdministrationClient::GetAttestationPolicy(
     Azure::Core::Context const& context) const
 {
   CheckAttestationSigners();
+
   auto request = AttestationCommonRequest::CreateRequest(
       m_endpoint,
       m_apiVersion,
