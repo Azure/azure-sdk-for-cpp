@@ -352,7 +352,7 @@ void WinHttpTransport::CreateRequestHandle(std::unique_ptr<_detail::HandleManage
     if (!WinHttpSetOption(
             handleManager->m_requestHandle,
             WINHTTP_OPTION_SECURE_PROTOCOLS,
-            tlsOption,
+            &tlsOption,
             sizeof(tlsOption)))
     {
       GetErrorAndThrow("Error while enforcing TLS 1.2 for connection request.");
