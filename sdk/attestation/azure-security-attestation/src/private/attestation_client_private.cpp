@@ -29,13 +29,13 @@ namespace Azure {
 
   AttestationSignerInternal::AttestationSignerInternal(JsonWebKey const& jwk)
   {
-    m_signer.KeyId = jwk.kid;
-    if (jwk.x5c)
+    m_signer.KeyId = jwk.Kid;
+    if (jwk.X5c)
     {
       m_signer.CertificateChain = std::vector<std::string>();
-      for (const auto& x5c : *jwk.x5c)
+      for (const auto& X5c : *jwk.X5c)
       {
-        m_signer.CertificateChain->push_back(Cryptography::PemFromBase64(x5c, "CERTIFICATE"));
+        m_signer.CertificateChain->push_back(Cryptography::PemFromBase64(X5c, "CERTIFICATE"));
       }
     }
   }
@@ -46,11 +46,11 @@ namespace Azure {
 
     if (signer.KeyId)
     {
-      rv["kid"] = *signer.KeyId;
+      rv["Kid"] = *signer.KeyId;
     }
     if (signer.CertificateChain)
     {
-      rv["x5c"] = *signer.CertificateChain;
+      rv["X5c"] = *signer.CertificateChain;
     }
     return rv.dump();
   }
