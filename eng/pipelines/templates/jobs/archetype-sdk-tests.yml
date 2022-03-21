@@ -129,17 +129,6 @@ jobs:
         CmakeArgs: ' -DBUILD_TRANSPORT_CURL=ON -DBUILD_TESTING=ON -DRUN_LONG_UNIT_TESTS=ON -DBUILD_PERFORMANCE_TESTS=ON '
         BuildArgs: '-v --parallel 8'
         #AZURE_CORE_ENABLE_JSON_TESTS: 1  # Testing Json lib on Win+WinHttp only, No need to repeat here as it is independent to the http transport adapter.
-      Win_x64_samples:
-        Pool: azsdk-pool-mms-win-2019-general
-        OSVmImage: MMS2019
-        VcpkgInstall: 'curl[winssl] openssl'
-        VCPKG_DEFAULT_TRIPLET: 'x64-windows-static'
-        CMAKE_GENERATOR: 'Visual Studio 16 2019'
-        CMAKE_GENERATOR_PLATFORM: x64
-        # Builds samples and run them against the deployed resources. Samples requires Azure Account, so only works on live tests.
-        CmakeArgs: ' -DBUILD_TESTING=ON -DBUILD_SAMPLES=ON '
-        BuildArgs: '-v --parallel 8'
-        RunSamples: 1
       MacOS_x64_with_unit_test:
         Pool: Azure Pipelines
         OSVmImage: 'macOS-10.15'
@@ -256,18 +245,13 @@ jobs:
         for sample in `cat ./${{ parameters.ServiceDirectory }}-samples.txt`
         do
           echo "**********Running sample: ${sample}"
-          if [[ -f "$sample" ]]; then
-              bash -c "$sample"
-              status=$?
-              if [[ $status -eq 0 ]]; then
-                echo "*********Sample completed*********"
-              else
-                echo "*Sample returned a failed code: $status"
-                exit 1
-              fi
+          bash -c "$sample"
+          status=$?
+          if [[ $status -eq 0 ]]; then
+            echo "*********Sample completed*********"
           else
-            echo "******Skipping sample ${sample} because it cannot be found.*****"
-          fi
+            echo "*Sample returned a failed code: $status"
+          exit 1
         done
       fi
     workingDirectory: build
