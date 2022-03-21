@@ -8,11 +8,6 @@ param(
 
 Set-StrictMode -Version 3
 
-if ($Test) {
-    Test-Cmdlet
-    exit 0
-}
-
 $packageJsonContents = Get-Content `
     -Path "$ReleaseArtifactSourceDirectory/package-info.json" `
     -Raw
