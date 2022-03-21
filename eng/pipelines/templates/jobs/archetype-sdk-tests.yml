@@ -234,13 +234,12 @@ jobs:
     # this step only makes sense when ctest has run
     condition: and(succeededOrFailed(), ne(variables['RunSamples'], '1'))
 
-    # Running Samples step for Ubuntu
+    # Running Samples step.
     # Will run samples described on a file name [service]-samples.txt within the build directory.
     # For example keyvault-samples.txt.
     # The file is written by CMake during configuration when building samples.
   - bash: |
       IFS=$'\n'
-      VMImage=${{variables.OSVmImage}}
       if [[ -f "./${{ parameters.ServiceDirectory }}-samples.txt" ]]; then
         for sample in `cat ./${{ parameters.ServiceDirectory }}-samples.txt`
         do
@@ -251,7 +250,8 @@ jobs:
             echo "*********Sample completed*********"
           else
             echo "*Sample returned a failed code: $status"
-          exit 1
+            exit 1
+          fi
         done
       fi
     workingDirectory: build
