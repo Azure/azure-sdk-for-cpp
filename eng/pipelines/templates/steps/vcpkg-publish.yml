@@ -21,31 +21,6 @@ steps:
       pwsh: true
     displayName: Initialize vcpkg release ${{ parameters.DisplayNameExtension }}
 
-  # On package release vcpkg beta should always be updated
-  - ${{ if eq(parameters.UpdateVcpkgBeta, 'true') }}:
-    - task: Powershell@2
-      inputs:
-        pwsh: true
-        targetType: filePath
-        filePath: eng/scripts/Update-VcpkgBeta.ps1
-        arguments: >-
-          -VcpkgBetaFolder ${{ parameters.Workspace }}/azure-sdk-vcpkg-betas
-          -VcpkgFolder ${{ parameters.Workspace }}/vcpkg
-          -ReleaseArtifactSourceDirectory "${{ parameters.Workspace }}/packages/${{ parameters.ArtifactName }}"
-          -VcpkgPortName '${{ parameters.VcpkgPortName }}'
-          -GitCommitParameters '-c user.name="azure-sdk" -c user.email="azuresdk@microsoft.com"'
-      displayName: Update Vcpkg Betas port ${{ parameters.DisplayNameExtension }}
-
-    # Single override to push directly to the target branch. Failure in this
-    # step is likely caused by a race condition. Re-running the pipeline will
-    # succeed if another race condition does not arise.
-    - pwsh: |
-        git remote add azure-sdk-fork "https://$(azuresdk-github-pat)@github.com/Azure/azure-sdk-vcpkg-betas.git"
-        $currentBranch = git branch --show-current
-        git push -u azure-sdk-fork $currentBranch
-      workingDirectory: ${{ parameters.Workspace }}/azure-sdk-vcpkg-betas
-      displayName: Push changes to vcpkg beta
-
   # In some cases there should be no release to vcpkg. If vcpkg should be
   # released, set "PublishToVcpkg" to "true" so we can make changes.
   - task: Powershell@2
@@ -73,3 +48,35 @@ steps:
       workingDirectory: ${{ parameters.Workspace }}/vcpkg
       condition: and(succeeded(), eq(variables['PublishToVcpkg'], 'true'))
     displayName: Update vcpkg port ${{ parameters.DisplayNameExtension }}
+
+  # On package release vcpkg beta should always be updated
+  - ${{ if eq(parameters.UpdateVcpkgBeta, 'true') }}:
+    - task: Powershell@2
+      inputs:
+        pwsh: true
+        targetType: filePath
+        filePath: eng/scripts/Update-VcpkgBeta.ps1
+        arguments: >-
+          -VcpkgBetaFolder ${{ parameters.Workspace }}/azure-sdk-vcpkg-betas
+          -VcpkgFolder ${{ parameters.Workspace }}/vcpkg
+          -ReleaseArtifactSourceDirectory "${{ parameters.Workspace }}/packages/${{ parameters.ArtifactName }}"
+          -VcpkgPortName '${{ parameters.VcpkgPortName }}'
+          -GitCommitParameters '-c user.name="azure-sdk" -c user.email="azuresdk@microsoft.com"'
+      displayName: Update Vcpkg Betas port ${{ parameters.DisplayNameExtension }}
+
+    - template: /eng/common/pipelines/templates/steps/set-default-branch.yml
+      parameters:
+        WorkingDirectory: $(Pipeline.Workspace)/azure-sdk-vcpkg-betas
+
+    - template: /eng/common/pipelines/templates/steps/git-push-changes.yml
+      parameters:
+        # TODO: Use default branch
+        BaseRepoBranch: djurek/vcpkg-beta-2
+        CommitMsg: Update vcpkg beta
+        TargetRepoOwner: Azure
+        TargetRepoName: azure-sdk-vcpkg-betas
+        WorkingDirectory: $(Pipeline.Workspace)/azure-sdk-vcpkg-betas
+        ScriptDirectory: $(System.DefaultWorkingDirectory)/eng/common/scripts
+        PushArgs: --atomic --tags
+
+

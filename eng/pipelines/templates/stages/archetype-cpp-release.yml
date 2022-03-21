@@ -144,6 +144,8 @@ stages:
                         parameters:
                           RepoOwner: Azure
                           RepoName: azure-sdk-vcpkg-betas
+                          # TODO: Use default branch, maybe do a normal git
+                          # clone instead of vcpkg-clone...
                           PRBranchName: djurek/vcpkg-beta-2
 
                       - template: /eng/pipelines/templates/steps/vcpkg-publish.yml
@@ -274,6 +276,5 @@ stages:
                 CommitMsg: Daily vcpkg ports for ${{ parameters.ServiceDirectory }}
                 TargetRepoOwner: azure-sdk
                 TargetRepoName: vcpkg
-                PushArgs: --follow-tags
                 WorkingDirectory: $(Pipeline.Workspace)/vcpkg
                 ScriptDirectory: $(System.DefaultWorkingDirectory)/eng/common/scripts
