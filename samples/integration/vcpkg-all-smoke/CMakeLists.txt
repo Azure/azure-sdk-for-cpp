@@ -21,15 +21,15 @@ add_executable (
     src/main
 )
 
-find_package(azure-storage-blobs-cpp CONFIG REQUIRED)
-find_package(azure-storage-files-datalake-cpp CONFIG REQUIRED)
-find_package(azure-storage-files-shares-cpp CONFIG REQUIRED)
-find_package(azure-storage-queues-cpp CONFIG REQUIRED)
-find_package(azure-security-keyvault-keys-cpp CONFIG REQUIRED)
-find_package(azure-security-keyvault-certificates-cpp CONFIG REQUIRED)
-find_package(azure-security-keyvault-secrets-cpp CONFIG REQUIRED)
-find_package(azure-identity-cpp CONFIG REQUIRED)
-find_package(azure-core-cpp CONFIG REQUIRED)
+#find_package(azure-storage-blobs-cpp CONFIG REQUIRED)
+#find_package(azure-storage-files-datalake-cpp CONFIG REQUIRED)
+#find_package(azure-storage-files-shares-cpp CONFIG REQUIRED)
+#find_package(azure-storage-queues-cpp CONFIG REQUIRED)
+#find_package(azure-security-keyvault-keys-cpp CONFIG REQUIRED)
+#find_package(azure-security-keyvault-certificates-cpp CONFIG REQUIRED)
+#find_package(azure-security-keyvault-secrets-cpp CONFIG REQUIRED)
+#find_package(azure-identity-cpp CONFIG REQUIRED)
+#find_package(azure-core-cpp CONFIG REQUIRED)
 # Link to Azure SDK
 target_link_libraries(smoketest-vcpkg
      PRIVATE
