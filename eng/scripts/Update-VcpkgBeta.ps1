@@ -48,7 +48,7 @@ try {
     Write-Host "git add -A"
     git add -A
     Write-Host "git $GitCommitParameters commit -m `"$(Get-Date -Format "yyyy-MM-dd" ): $VcpkgPortName $($packageInfo.version)`""
-    "git $GitCommitParameters commit -m '$(Get-Date -Format "yyyy-MM-dd" ): $VcpkgPortName $($packageInfo.version)'"
+    git $GitCommitParameters commit -m "$(Get-Date -Format "yyyy-MM-dd" ): $VcpkgPortName $($packageInfo.version)"
 
     Write-Host "$VcpkgFolder/vcpkg x-add-version $VcpkgPortName --vcpkg-root=. --x-scripts-root=$VcpkgFolder/scripts"
     & $VcpkgFolder/vcpkg x-add-version `
@@ -75,7 +75,7 @@ try {
     Write-Host "git add -A"
     git add -A
     Write-Host "git $GitCommitParameters commit --amend --no-edit"
-    "git $GitCommitParameters commit --amend --no-edit"
+    git $GitCommitParameters commit --amend --no-edit
 
     Write-Host "git tag $tagName"
     git tag $tagName
