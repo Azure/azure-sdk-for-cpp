@@ -29,6 +29,7 @@ find_package(azure-security-keyvault-keys-cpp CONFIG REQUIRED)
 find_package(azure-security-keyvault-certificates-cpp CONFIG REQUIRED)
 find_package(azure-security-keyvault-secrets-cpp CONFIG REQUIRED)
 find_package(azure-identity-cpp CONFIG REQUIRED)
+find_package(azure-core-cpp CONFIG REQUIRED)
 # Link to Azure SDK
 target_link_libraries(smoketest-vcpkg
      PRIVATE
@@ -40,6 +41,7 @@ target_link_libraries(smoketest-vcpkg
      Azure::azure-security-keyvault-certificates
      Azure::azure-security-keyvault-secrets
      Azure::azure-identity
+     Azure::azure-core
      get-env-helper
 )
 

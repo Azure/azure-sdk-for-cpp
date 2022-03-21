@@ -7,7 +7,6 @@
  */
 
 #include "get_env.hpp"
-
 #include <azure/core.hpp>
 #include <azure/identity.hpp>
 #include <azure/keyvault/keyvault_certificates.hpp>
@@ -17,6 +16,7 @@
 #include <azure/storage/files/datalake.hpp>
 #include <azure/storage/files/shares.hpp>
 #include <azure/storage/queues.hpp>
+#include <iostream>
 
 using namespace Azure::Security::KeyVault::Keys;
 using namespace Azure::Security::KeyVault::Secrets;
@@ -35,31 +35,42 @@ int main()
   const std::string storageUrl = "https://blob.com";
   auto credential
       = std::make_shared<Azure::Identity::ClientSecretCredential>(tenantId, clientId, clientSecret);
-  
+
   // instantiate the clients
-  
-  // keyvault
-  KeyClient keyClient(std::getenv("AZURE_KEYVAULT_URL"), credential);
-  SecretClient secretClient(std::getenv("AZURE_KEYVAULT_URL"), credential);
-  CertificateClient certificateClient(std::getenv("AZURE_KEYVAULT_URL"), credential);
+  try
+  {
+    std::cout << "Creating Keyvault Clients";
+    // keyvault
+    KeyClient keyClient(std::getenv("AZURE_KEYVAULT_URL"), credential);
+    SecretClient secretClient(std::getenv("AZURE_KEYVAULT_URL"), credential);
+    CertificateClient certificateClient(std::getenv("AZURE_KEYVAULT_URL"), credential);
 
-  // Storage
-  BlobClient blobClient(storageUrl);
-  QueueClient queueClient(storageUrl);
+    std::cout << "Creating Storage Clients";
+    // Storage
+    BlobClient blobClient(storageUrl);
+    QueueClient queueClient(storageUrl);
 
-  DataLakeDirectoryClient directoryClient(storageUrl);
-  DataLakeFileClient fileClient(storageUrl);
-  DataLakeFileSystemClient fileSystemClient(storageUrl);
-  DataLakePathClient pathClient(storageUrl);
-  DataLakeLeaseClient leaseClient(pathClient, leaseID);
-  DataLakeServiceClient serviceClient(storageUrl);
+    std::cout << "Creating Storage Datalake Clients";
+    DataLakeDirectoryClient directoryClient(storageUrl);
+    DataLakeFileClient fileClient(storageUrl);
+    DataLakeFileSystemClient fileSystemClient(storageUrl);
+    DataLakePathClient pathClient(storageUrl);
+    DataLakeLeaseClient leaseClient(pathClient, leaseID);
+    DataLakeServiceClient serviceClient(storageUrl);
 
-  ShareClient shareClient(storageUrl);
-  ShareDirectoryClient shareDirectoryClient(storageUrl);
-  ShareFileClient shareFileClient(storageUrl);
-  ShareLeaseClient shareLeaseClient(shareFileClient, leaseID);
-  ShareServiceClient shareServiceClient(storageUrl);
+    std::cout << "Creating Storage Share Clients";
+    ShareClient shareClient(storageUrl);
+    ShareDirectoryClient shareDirectoryClient(storageUrl);
+    ShareFileClient shareFileClient(storageUrl);
+    ShareLeaseClient shareLeaseClient(shareFileClient, leaseID);
+    ShareServiceClient shareServiceClient(storageUrl);
+
+    std::cout << "Successfully Created the Clients";
+  }
+  catch (std::exception exception)
+  {
+    std::cout << "Exception occured: " << exception.what();
+  }
 
   return 0;
 }
-
