@@ -38,8 +38,30 @@ namespace Azure { namespace Perf {
     std::string m_recordId;
     std::string m_proxy;
     bool m_isPlayBackMode = false;
+    bool m_isInsecureEnabled = false;
 
+    /**
+     * @brief Updates the performance test to use a test-proxy for running.
+     *
+     * @note A tes-proxy is not a general proxy in the middle of the test and a server. This is an
+     * SDK specific tool https://github.com/Azure/azure-sdk-tools/tree/main/tools/test-proxy that
+     * provides record and playback features to a performance test. Do not use a general purpose
+     * proxy for the test.
+     *
+     * @param proxy A test-proxy server url.
+     */
     void SetTestProxy(std::string const& proxy) { m_proxy = proxy; }
+
+    /**
+     * @brief Set the performance test to run insecure.
+     *
+     * @details Running insecure means that for an SSL connection, the server certificate won't be
+     * validated to be a known certificate. Use this to stablish conversation with Https servers
+     * using self-signed certificates.
+     *
+     * @param value Boolean value use to set the insecure mode ON of OFF.
+     */
+    void AllowInsecureConnections(bool value) { m_isInsecureEnabled = value; }
 
     /**
      * @brief Define actions to run after test set up and before the actual test.
@@ -59,12 +81,7 @@ namespace Azure { namespace Perf {
      */
     void PreCleanUp();
 
-    /**
-     * @brief Set the client options depending on the test options.
-     *
-     * @param clientOptions ref to the client options that contains the http pipeline policies.
-     */
-    void ConfigureCoreClientOptions(Azure::Core::_internal::ClientOptions* clientOptions);
+    void ConfigureInsecureConnection(Azure::Core::_internal::ClientOptions& clientOptions);
 
   protected:
     Azure::Perf::TestOptions m_options;
@@ -127,17 +144,11 @@ namespace Azure { namespace Perf {
     virtual void GlobalCleanup() {}
 
     /**
-     * @brief Update an existing \p clientOptions with the test configuration set by the
-     * environment.
+     * @brief Set the client options depending on the test options.
      *
-     * @note If test proxy env var is set, the proxy policy is added to the \p clientOptions.
-     *
-     * @param clientOptions Ref to the client options that contains the Http client policies.
+     * @param clientOptions ref to the client options that contains the http pipeline policies.
      */
-    template <class T> void ConfigureClientOptions(T* clientOptions)
-    {
-      ConfigureCoreClientOptions(clientOptions);
-    }
+    void ConfigureClientOptions(Azure::Core::_internal::ClientOptions& clientOptions);
 
     /**
      * @brief Create and return client options with test configuration set in the environment.
@@ -147,7 +158,7 @@ namespace Azure { namespace Perf {
     template <class T> T InitClientOptions()
     {
       T options;
-      ConfigureClientOptions(&options);
+      ConfigureClientOptions(options);
       return options;
     }
   };
