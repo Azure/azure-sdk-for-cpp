@@ -23,7 +23,7 @@ Write-Host "Released package is preview"
 
 # The package does not exist in vcpkg, publish to vcpkg
 $vcpkgJsonPath = "$VcpkgFolder/ports/$VcpkgPortName/vcpkg.json"
-if (!Test-Path $vcpkgJsonPath) {
+if (!(Test-Path $vcpkgJsonPath)) {
     Write-Host "Package ($VcpkgPortName) has not been published, publish to vcpkg"
     Write-Host "##vso[task.setvariable variable=PublishToVcpkg]true"
     exit 0
