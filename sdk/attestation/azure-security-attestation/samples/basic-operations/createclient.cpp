@@ -16,7 +16,6 @@
 #include <get_env.hpp>
 
 #include <azure/attestation.hpp>
-
 #include <chrono>
 #include <iostream>
 #include <thread>
@@ -36,7 +35,8 @@ int main()
     clientOptions.TokenValidationOptions.ValidationTimeSlack = 10s;
 
     // create client
-    AttestationClient const attestationClient(GetEnvHelper::GetEnv("ATTESTATION_AAD_URL"), clientOptions);
+    AttestationClient const attestationClient(
+        GetEnvHelper::GetEnv("ATTESTATION_AAD_URL"), clientOptions);
   }
   catch (Azure::Core::Credentials::AuthenticationException const& e)
   {
