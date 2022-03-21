@@ -24,15 +24,14 @@ macro(create_per_service_target_build_for_sample  service target)
     create_per_service_target_build(${service} ${target})
 
     # Assume the sample to be run on Release mode
-    if(${runAsSample})
-        SET(binary "${target}")
-        if(MSVC)
-            SET(binary "${target}.exe")
-        endif()
-        # Samples are run on Release mode.
-        if(CMAKE_GENERATOR MATCHES "Visual Studio.*")
-            SET(binary "Release/${binary}")
-        endif()
-        file(APPEND ${CMAKE_BINARY_DIR}/${service}-samples.txt "${CMAKE_CURRENT_BINARY_DIR}/${binary}\n")
+    SET(binary "${target}")
+    if(MSVC)
+        SET(binary "${target}.exe")
     endif()
+    # Samples are run on Release mode.
+    if(CMAKE_GENERATOR MATCHES "Visual Studio.*")
+        SET(binary "Release/${binary}")
+    endif()
+    file(APPEND ${CMAKE_BINARY_DIR}/${service}-samples.txt "${CMAKE_CURRENT_BINARY_DIR}/${binary}\n")
+    
 endmacro()
