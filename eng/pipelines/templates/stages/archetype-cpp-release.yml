@@ -144,7 +144,7 @@ stages:
                         parameters:
                           RepoOwner: Azure
                           RepoName: azure-sdk-vcpkg-betas
-                          PRBranchName: djurek/vcpkg-beta
+                          PRBranchName: djurek/vcpkg-beta-2
 
                       - template: /eng/pipelines/templates/steps/vcpkg-publish.yml
                         parameters:
@@ -153,7 +153,9 @@ stages:
 
                       # Set $(HasChanges) to $true so that
                       # create-pull-request.yml completes the push and PR
-                      # submission steps
+                      # submission steps. This is contegnent upon
+                      # `$(PublishToVcpkg)` being `true`. `$(PublishToVcpkg)` is
+                      # set in `vcpkg-publish.yml`
                       - pwsh: Write-Host "##vso[task.setvariable variable=HasChanges]$true"
                         condition: and(succeeded(), eq(variables['PublishToVcpkg'], 'true'))
                         displayName: Set $(HasChanges) to $true for create-pull-request.yml
@@ -272,5 +274,6 @@ stages:
                 CommitMsg: Daily vcpkg ports for ${{ parameters.ServiceDirectory }}
                 TargetRepoOwner: azure-sdk
                 TargetRepoName: vcpkg
+                PushArgs: --follow-tags
                 WorkingDirectory: $(Pipeline.Workspace)/vcpkg
                 ScriptDirectory: $(System.DefaultWorkingDirectory)/eng/common/scripts

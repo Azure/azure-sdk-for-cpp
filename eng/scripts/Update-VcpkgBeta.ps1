@@ -3,8 +3,12 @@ param(
     [string] $VcpkgFolder,
     [string] $ReleaseArtifactSourceDirectory,
     [string] $VcpkgPortName,
-    [string] $GitCommitParameters
+    [string] $GitCommitParameters,
+    [string] $BuildIdentifier = $env:BUILD_BUILDID
 )
+
+."$PSSCriptRoot/../common/scripts/common.ps1"
+Set-StrictMode -Version 3
 
 # To ensure a clean synchronization remove all files at the destination.
 # This ensures that files no longer present in the build output do not
@@ -22,14 +26,16 @@ Copy-Item `
 $rawPackageInfo = Get-Content -Raw -Path $ReleaseArtifactSourceDirectory/package-info.json
 $packageInfo = ConvertFrom-Json $rawPackageInfo
 
-# TODO: test?
-# vcpkg install azure-core-cpp --overlay-ports=../azure-sdk-vcpkg-betas/ports/
-
 $originalLocation = Get-Location
 try {
     Set-Location $VcpkgFolder
-    Write-Host "./bootstrap-vcpkg.bat"
-    ./bootstrap-vcpkg.bat
+    if ($IsWindows) {
+        Write-Host "./bootstrap-vcpkg.bat"
+        ./bootstrap-vcpkg.bat
+    } else {
+        Write-Host "./bootstrap-vcpkg.sh"
+        ./bootstrap-vcpkg.sh
+    }
 
     Set-Location $VcpkgBetaFolder
 
@@ -50,16 +56,7 @@ try {
         --vcpkg-root=. `
         --x-scripts-root=$VcpkgFolder/scripts  # This param is extra
 
-    Write-Host "git add -A"
-    git add -A
-    Write-Host "git $GitCommitParameters commit --amend --no-edit"
-    "git $GitCommitParameters commit --amend --no-edit"
-
-    # TODO: This hash may not be the same unless we push using a method that
-    # isn't our normal push process in engsys.
-    Write-Host "git log -1 --format=format:%H"
-    $baseHash = git log -1 --format=format:%H
-    Write-Host "New Baseline: $baseHash"
+    $tagName = "$(Get-Date -Format "yyyyMMdd" ).$($BuildIdentifier)_$($VcpkgPortName)_$($packageInfo.version)"
 
     # Update vcpkg-configuration.json to include this package and set the
     # baseline
@@ -67,8 +64,7 @@ try {
     $rawVcpkgConfig = Get-Content -Raw -Path $vcpkgConfigPath
     $vcpkgConfig = ConvertFrom-Json $rawVcpkgConfig
 
-
-    $vcpkgConfig.registries[0].baseline = $baseHash
+    $vcpkgConfig.registries[0].baseline = $tagName
     if (!($vcpkgConfig.registries[0].packages -contains $VcpkgPortName)) {
         $vcpkgConfig.registries[0].packages += $VcpkgPortName
     }
@@ -78,9 +74,19 @@ try {
 
     Write-Host "git add -A"
     git add -A
-    Write-Host "git $GitCommitParameters commit -m `"Update vcpkg-configuration.json`""
-    "git $GitCommitParameters commit -m 'Update vcpkg-configuration.json'"
+    Write-Host "git $GitCommitParameters commit --amend --no-edit"
+    "git $GitCommitParameters commit --amend --no-edit"
 
+    Write-Host "git tag $tagName"
+
+    # Validate overlay port installs (may only be possible after a push)
+    Write-Host "$VcpkgFolder/vcpkg" install $VcpkgPortName --overlay-ports=$VcpkgBetaFolder
+    ."$VcpkgFolder/vcpkg" install $VcpkgPortName --overlay-ports=$VcpkgBetaFolder
+
+    if ($LASTEXITCODE) {
+        LogError "Port validation failed. Ensure the port builds properly"
+        exit 1
+    }
 } finally {
     Set-Location $originalLocation
 }
