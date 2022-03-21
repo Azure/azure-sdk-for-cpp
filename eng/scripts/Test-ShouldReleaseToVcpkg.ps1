@@ -6,7 +6,7 @@ param(
 
 ."$PSSCriptRoot/../common/scripts/common.ps1"
 
-# TODO: Use strict mode after importing common
+Set-StrictMode -Version 3
 
 if ($Test) {
     Test-Cmdlet
