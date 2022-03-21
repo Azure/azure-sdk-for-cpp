@@ -1246,8 +1246,8 @@ std::unique_ptr<CurlNetworkConnection> CurlConnectionPool::ExtractOrCreateCurlCo
     bool resetPool)
 {
   uint16_t port = request.GetUrl().GetPort();
-  std::string const& host = request.GetUrl().GetScheme() + request.GetUrl().GetHost()
-      + (port != 0 ? std::to_string(port) : "");
+  std::string const& host = request.GetUrl().GetScheme() + "://" + request.GetUrl().GetHost()
+      + (port != 0 ? ":" + std::to_string(port) : "");
   std::string const connectionKey = GetConnectionKey(host, options);
 
   {
@@ -1418,6 +1418,14 @@ std::unique_ptr<CurlNetworkConnection> CurlConnectionPool::ExtractOrCreateCurlCo
     throw Azure::Core::Http::TransportException(
         _detail::DefaultFailedToGetNewConnectionTemplate + host + ". Failed to set libcurl HTTP/1.1"
         + ". " + std::string(curl_easy_strerror(result)));
+  }
+
+  // Make libcurl to support only TLS v1.2 or later
+  if (!SetLibcurlOption(newHandle, CURLOPT_SSLVERSION, CURL_SSLVERSION_TLSv1_2, &result))
+  {
+    throw Azure::Core::Http::TransportException(
+        _detail::DefaultFailedToGetNewConnectionTemplate + host
+        + ". Failed enforcing TLS v1.2 or greater. " + std::string(curl_easy_strerror(result)));
   }
 
   auto performResult = curl_easy_perform(newHandle);

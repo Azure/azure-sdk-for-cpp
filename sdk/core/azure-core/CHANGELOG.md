@@ -3,9 +3,12 @@
 ## 1.5.0-beta.1 (Unreleased)
 
 ### Features Added
+
 - When a `RequestFailedException` exception is thrown, the `what()` method now includes information about the HTTP request which failed.
 
 ### Other Changes
+
+- Enforce TLS 1.2 or greater for `CurlTransport` and `WinHttpTransport`.
 
 ## 1.4.0 (2022-03-03)
 
