@@ -34,25 +34,25 @@ parameters:
     default: []
 
 jobs:
-  - template: /eng/common/pipelines/templates/jobs/archetype-sdk-tests-generate.yml
-    parameters:
-      MatrixConfigs:
-        - Name: base
-          Path: eng/pipelines/templates/stages/platform-matrix.json
-          Selection: all
-          GenerateVMJobs: true
-      JobTemplatePath: /eng/pipelines/templates/jobs/ci.tests.yml
-      AdditionalParameters:
-        Artifacts: ${{ parameters.Artifacts }}
-        ServiceDirectory: ${{ parameters.ServiceDirectory }}
-        TestPipeline: ${{ parameters.TestPipeline }}
-        CtestRegex: ${{ parameters.CtestRegex }}
-        CtestExcludeRegex: ${{ parameters.CtestExcludeRegex }}
-        CoverageReportPath: ${{ parameters.CoverageReportPath }}
-        CoverageEnabled: ${{ parameters.CoverageEnabled }}
-        LineCoverageTarget: ${{ parameters.LineCoverageTarget }}
-        BranchCoverageTarget: ${{ parameters.BranchCoverageTarget }}
-        TestEnv: ${{ parameters.TestEnv }}
+  # - template: /eng/common/pipelines/templates/jobs/archetype-sdk-tests-generate.yml
+  #   parameters:
+  #     MatrixConfigs:
+  #       - Name: base
+  #         Path: eng/pipelines/templates/stages/platform-matrix.json
+  #         Selection: all
+  #         GenerateVMJobs: true
+  #     JobTemplatePath: /eng/pipelines/templates/jobs/ci.tests.yml
+  #     AdditionalParameters:
+  #       Artifacts: ${{ parameters.Artifacts }}
+  #       ServiceDirectory: ${{ parameters.ServiceDirectory }}
+  #       TestPipeline: ${{ parameters.TestPipeline }}
+  #       CtestRegex: ${{ parameters.CtestRegex }}
+  #       CtestExcludeRegex: ${{ parameters.CtestExcludeRegex }}
+  #       CoverageReportPath: ${{ parameters.CoverageReportPath }}
+  #       CoverageEnabled: ${{ parameters.CoverageEnabled }}
+  #       LineCoverageTarget: ${{ parameters.LineCoverageTarget }}
+  #       BranchCoverageTarget: ${{ parameters.BranchCoverageTarget }}
+  #       TestEnv: ${{ parameters.TestEnv }}
 
   # Disable build for cpp - client
   - ${{ if ne(parameters.ServiceDirectory, 'not-specified' )}}:
