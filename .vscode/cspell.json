@@ -127,8 +127,7 @@
     "Wgnu",
     "Wunused",
     "Xclang",
-    "XSMB",
-    "cppvcpkgcache"
+    "XSMB"
   ],
   "overrides": [
     {
@@ -137,7 +136,8 @@
         "lcov",
         "iname",
         "mspremier",
-        "issecret"
+        "issecret",
+        "cppvcpkgcache"
       ]
     },
     {
