@@ -14,18 +14,13 @@ steps:
       Write-Host "##vso[task.setvariable variable=VCPKG_BINARY_SOURCES_SECRET;issecret=true;]clear;x-azblob,https://cppvcpkgcache.blob.core.windows.net/public-vcpkg-container,,read"
     displayName: Set Vcpkg Variables
 
-  - pwsh: |
-      $ctx = New-AzStorageContext -StorageAccountName 'cppvcpkgcache' -StorageAccountKey $env:VCPKG_CACHE_STORAGE_KEY
-      $token = New-AzStorageAccountSASToken -Service Blob -ResourceType Object -Permission "rwc" -Context $ctx
-      $vcpkgBinarySourceSas = $token.Substring(1)
-
-      Write-Host "Setting vcpkg binary cache to read and write"
-      Write-Host "##vso[task.setvariable variable=VCPKG_BINARY_SOURCES_SECRET;issecret=true;]clear;x-azblob,https://cppvcpkgcache.blob.core.windows.net/public-vcpkg-container,$vcpkgBinarySourceSas,readwrite"
+  - PowerShell@2:
+    inputs:
+      targetType: filePath
+      filePath: eng/scripts/Set-VcpkgWriteModeCache.ps1
+      arguments: -StorageAccountKey '$(cpp-vcpkg-cache-storage-key)'
     displayName: Set Vcpkg Write-mode Cache
-    env:
-      VCPKG_CACHE_STORAGE_KEY: $(cpp-vcpkg-cache-storage-key)
-    condition: >-
-      eq(variables['System.TeamProject'], 'internal')
+    condition: eq(variables['System.TeamProject'], 'internal')
 
   - task: PowerShell@2
     inputs:
