@@ -347,6 +347,16 @@ void WinHttpTransport::CreateRequestHandle(std::unique_ptr<_detail::HandleManage
       GetErrorAndThrow("Error while setting client cert context to ignore..");
     }
   }
+
+  if (m_options.IgnoreUnknownServerCert)
+  {
+    auto option = SECURITY_FLAG_IGNORE_UNKNOWN_CA;
+    if (!WinHttpSetOption(
+            handleManager->m_requestHandle, WINHTTP_OPTION_SECURITY_FLAGS, &option, sizeof(option)))
+    {
+      GetErrorAndThrow("Error while setting ignore unknown server certificate..");
+    }
+  }
 }
 
 // For PUT/POST requests, send additional data using WinHttpWriteData.
