@@ -1246,8 +1246,8 @@ std::unique_ptr<CurlNetworkConnection> CurlConnectionPool::ExtractOrCreateCurlCo
     bool resetPool)
 {
   uint16_t port = request.GetUrl().GetPort();
-  std::string const& host = request.GetUrl().GetScheme() + request.GetUrl().GetHost()
-      + (port != 0 ? std::to_string(port) : "");
+  std::string const& host = request.GetUrl().GetScheme() + "://" + request.GetUrl().GetHost()
+      + (port != 0 ? ":" + std::to_string(port) : "");
   std::string const connectionKey = GetConnectionKey(host, options);
 
   {
