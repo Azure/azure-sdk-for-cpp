@@ -7,6 +7,10 @@
 - When a `RequestFailedException` exception is thrown, the `what()` method now includes information about the HTTP request which failed.
 - Adding option `WinHttpTransportOptions.IgnoreUnknownServerCert`. It can be used to disable verifying server certificate for the `WinHttpTransport`.
 
+### Breaking Changes
+
+- Enforce TLS 1.2 or greater for `CurlTransport` and `WinHttpTransport`.
+
 ### Other Changes
 
 - Improve output message for `Azure::Core::Http::TransportException`.
