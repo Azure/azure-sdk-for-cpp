@@ -114,6 +114,8 @@ jobs:
       brew install $(BrewDependencies) 
     condition: and(succeeded(), ne(variables['BrewDependencies'], ''))
     displayName: Install dependencies from brew
+  
+  - template: /eng/pipelines/templates/steps/vcpkg.yml
 
   - script: cmake --version
     displayName: cmake --version
