@@ -115,7 +115,8 @@ authentication, the documentation for that API will reflect that the attestation
 
 To interact with the authenticated APIs supported by the Azure Attestation service, your client must present an Azure Active Directory bearer token to the service.
 
-The simplest way of providing a bearer token is to use the  `DefaultAzureCredential` authentication method by providing client secret credentials is being used in this getting started section, but you can find more ways to authenticate with [azure-identity][azure_identity].
+The simplest way of providing a bearer token is to use the  `ClientSecretCredential` authentication method by providing client secret credentials is being used in this
+getting started section, but you can find more ways to authenticate with [azure-identity][azure_identity].
 
 ## Key concepts
 
@@ -243,7 +244,7 @@ Normally, this information is not required as the attestation SDK will perform t
 attestation service, however the APIs are provided for completeness and to facilitate customer's independently validating
 attestation results.
 
-```cpp readme-sample-getSigningCertificates
+```cpp
 auto attestationSigners = attestationClient->GetAttestationSigningCertificates();
 // Enumerate the signers.
 for (const auto& signer : attestationSigners.Value.Signers)
@@ -256,7 +257,7 @@ for (const auto& signer : attestationSigners.Value.Signers)
 
 Use the `AttestSgxEnclave` method to attest an SGX enclave.
 
-```cpp readme-sample-attest-sgx-enclave
+```cpp
    Azure::Response<AttestationToken<AttestationResult>> const sgxResult
         = attestationClient.AttestSgxEnclave(sgxEnclaveQuote);
 
@@ -270,7 +271,7 @@ Use the `AttestSgxEnclave` method to attest an SGX enclave.
 
 All administrative clients are authenticated.
 
-```cpp readme-sample-create-synchronous-client
+```cpp
 std::string endpoint = std::getenv("ATTESTATION_AAD_URL");
 std::shared_ptr<Azure::Core::Credentials::TokenCredential> credential
       = std::make_shared<Azure::Identity::ClientSecretCredential>(
@@ -492,7 +493,7 @@ Azure SDK for C++ is licensed under the [MIT](https://github.com/Azure/azure-sdk
 <!-- LINKS -->
 [style-guide-msft]: https://docs.microsoft.com/style-guide/capitalization
 [azure_attestation]: https://docs.microsoft.com/azure/attestation
-[azure_identity]: https://github.com/Azure/azure-sdk-for-java/tree/main/sdk/identity/azure-identity
+[azure_identity]: https://github.com/Azure/azure-sdk-for-cpp/tree/main/sdk/identity/azure-identity
 [azure_subscription]: https://azure.microsoft.com/
 [azure_cli]: https://docs.microsoft.com/cli/azure
 [rest_api]: https://docs.microsoft.com/rest/api/attestation/

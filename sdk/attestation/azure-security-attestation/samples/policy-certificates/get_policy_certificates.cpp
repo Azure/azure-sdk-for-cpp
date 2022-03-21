@@ -62,6 +62,8 @@ int main()
     {
       // Retrieve the leaf certificate from the chain and parse it as an X.509
       // certificate.
+      // RFC 7515 specifies that the leaf certificate of a certificate chain MUST be the first
+      // certificate in the certificate chain, other certificates MAY follow the leaf certificate.
       std::string firstCertificateInChain((*certChain.CertificateChain)[0]);
       std::unique_ptr<::Cryptography::X509Certificate> const x509Cert(
           ::Cryptography::ImportX509Certificate(firstCertificateInChain));
