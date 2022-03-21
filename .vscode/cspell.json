@@ -127,7 +127,8 @@
     "Wgnu",
     "Wunused",
     "Xclang",
-    "XSMB"
+    "XSMB",
+    "cppvcpkgcache"
   ],
   "overrides": [
     {
