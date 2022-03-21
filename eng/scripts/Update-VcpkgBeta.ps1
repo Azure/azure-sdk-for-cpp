@@ -78,6 +78,7 @@ try {
     "git $GitCommitParameters commit --amend --no-edit"
 
     Write-Host "git tag $tagName"
+    git tag $tagName
 
     # Validate overlay port installs (may only be possible after a push)
     Write-Host "$VcpkgFolder/vcpkg" install $VcpkgPortName --overlay-ports=$VcpkgBetaFolder
