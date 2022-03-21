@@ -17,12 +17,11 @@ steps:
     displayName: Show current path
 
   - script: |
-      export VCPKG_BINARY_SOURCES=$VCPKG_BINARY_SOURCES_SECRET
       ${{ parameters.Env }} cmake ${{ parameters.GenerateArgs }} ..
     workingDirectory: ${{ parameters.CmakeGeneratePath }}/build
     displayName: cmake generate
     env:
-      VCPKG_BINARY_SOURCES_SECRET: $(VCPKG_BINARY_SOURCES_SECRET)
+      VCPKG_BINARY_SOURCES: $(VCPKG_BINARY_SOURCES_SECRET)
 
   - script: rm -rf build
     workingDirectory: ${{ parameters.CmakeGeneratePath }}
