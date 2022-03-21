@@ -11,6 +11,6 @@ add_executable (
   certificate-import-certificate
   certificate_import_certificate.cpp
 )
-create_per_service_target_build(certificate-import-certificate keyvault true)
+ccreate_per_service_target_build_for_sample(keyvault certificate-import-certificate)
 
 target_link_libraries(certificate-import-certificate PRIVATE azure-security-keyvault-certificates azure-identity get-env-helper)

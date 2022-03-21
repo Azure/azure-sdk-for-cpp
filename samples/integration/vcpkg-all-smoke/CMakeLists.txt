@@ -31,6 +31,4 @@ target_link_libraries(smoketest-vcpkg
      get-env-helper
 )
 
-# Add the sample to be run on CI. 
-# CI pipeline reads the {service}-samples.txt and runs the binaries listed there.
-create_per_service_target_build(smoketest-vcpkg keyvault true)
+create_per_service_target_build_for_sample(keyvault smoketest-vcpkg)

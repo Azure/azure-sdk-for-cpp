@@ -13,7 +13,7 @@ add_executable (
     macro_guard.cpp
  )
 
-create_per_service_target_build(keyvault-secrets-test-app keyvault false)
+create_per_service_target_build(keyvault keyvault-secrets-test-app)
 
 create_map_file(keyvault-secrets-test-app keyvault-secrets-test-app.map)
 

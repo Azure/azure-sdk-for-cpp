@@ -11,6 +11,6 @@ add_executable (
   sample6-wrap-unwrap
   sample6_wrap_unwrap.cpp
 )
-create_per_service_target_build(sample6-wrap-unwrap keyvault true)
+create_per_service_target_build_for_sample(keyvault sample6-wrap-unwrap)
 
 target_link_libraries(sample6-wrap-unwrap PRIVATE azure-security-keyvault-keys azure-identity get-env-helper)

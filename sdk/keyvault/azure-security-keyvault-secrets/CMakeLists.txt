@@ -77,7 +77,7 @@ set(
 
 add_library(azure-security-keyvault-secrets ${AZURE_SECURITY_KEYVAULT_SECRETS_HEADER} ${AZURE_SECURITY_KEYVAULT_SECRETS_SOURCE})
 add_library(Azure::azure-security-keyvault-secrets ALIAS azure-security-keyvault-secrets)
-create_per_service_target_build(azure-security-keyvault-secrets keyvault false)
+create_per_service_target_build(keyvault azure-security-keyvault-secrets)
 
 target_include_directories(
   azure-security-keyvault-secrets

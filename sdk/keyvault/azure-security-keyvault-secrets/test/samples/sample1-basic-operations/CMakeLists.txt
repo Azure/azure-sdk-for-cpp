@@ -11,6 +11,6 @@ add_executable (
   sample1-basic-operations
   sample1_basic_operations.cpp
 )
-create_per_service_target_build(sample1-basic-operations keyvault true)
+create_per_service_target_build_for_sample(keyvault sample1-basic-operations)
 
 target_link_libraries(sample1-basic-operations PRIVATE azure-security-keyvault-secrets azure-identity get-env-helper)

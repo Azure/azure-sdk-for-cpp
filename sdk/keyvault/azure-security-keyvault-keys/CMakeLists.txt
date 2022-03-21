@@ -105,7 +105,7 @@ set(
 add_library(azure-security-keyvault-keys
   ${AZURE_KEYVAULT_KEYS_HEADER} ${AZURE_KEYVAULT_KEYS_SOURCE}
 )
-create_per_service_target_build(azure-security-keyvault-keys keyvault false)
+create_per_service_target_build(keyvault azure-security-keyvault-keys)
 add_library(Azure::azure-security-keyvault-keys ALIAS azure-security-keyvault-keys)
 
 target_include_directories(

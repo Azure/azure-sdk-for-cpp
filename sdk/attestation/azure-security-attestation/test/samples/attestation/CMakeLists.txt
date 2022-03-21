@@ -13,6 +13,6 @@ add_executable (
   attestation_collateral.cpp 
   attestation_collateral.hpp)
 
-create_per_service_target_build(attestation-attestation attestation true)
+create_per_service_target_build_for_sample(attestation attestation-attestation)
 
 target_link_libraries(attestation-attestation PRIVATE azure-security-attestation azure-identity get-env-helper)

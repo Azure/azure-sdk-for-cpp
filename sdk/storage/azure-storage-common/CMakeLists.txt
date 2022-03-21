@@ -77,7 +77,7 @@ set(
 )
 
 add_library(azure-storage-common ${AZURE_STORAGE_COMMON_HEADER} ${AZURE_STORAGE_COMMON_SOURCE})
-create_per_service_target_build(azure-storage-common storage false)
+create_per_service_target_build(storage azure-storage-common)
 
 # make sure that users can consume the project as a library.
 add_library(Azure::azure-storage-common ALIAS azure-storage-common)

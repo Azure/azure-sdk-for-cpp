@@ -12,6 +12,6 @@ add_executable (
   policy.cpp
 )
 
-create_per_service_target_build(attestation-policy attestation true)
+create_per_service_target_build_for_sample(attestation attestation-policy)
 
 target_link_libraries(attestation-policy PRIVATE azure-security-attestation azure-identity azure-core get-env-helper)
