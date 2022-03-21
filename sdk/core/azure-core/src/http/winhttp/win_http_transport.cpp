@@ -348,7 +348,7 @@ void WinHttpTransport::CreateRequestHandle(std::unique_ptr<_detail::HandleManage
     }
 
     // Enforce TLS version 1.2
-    auto const tlsOption = WINHTTP_FLAG_SECURE_PROTOCOL_TLS1_2;
+    auto tlsOption = WINHTTP_FLAG_SECURE_PROTOCOL_TLS1_2;
     if (!WinHttpSetOption(
             handleManager->m_requestHandle,
             WINHTTP_OPTION_SECURE_PROTOCOLS,
