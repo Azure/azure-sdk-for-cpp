@@ -12,6 +12,6 @@ add_executable (
   basic-operations.cpp
 )
 
-create_per_service_target_build(attestation-basic-operations attestation true)
+create_per_service_target_build_for_sample(attestation attestation-basic-operations)
 
 target_link_libraries(attestation-basic-operations PRIVATE azure-security-attestation azure-identity get-env-helper)

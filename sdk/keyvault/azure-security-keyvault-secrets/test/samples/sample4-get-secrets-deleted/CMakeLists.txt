@@ -12,6 +12,6 @@ add_executable (
   sample4_get_secrets_deleted.cpp
 )
 
-create_per_service_target_build(sample4-get-secrets-deleted keyvault true)
+create_per_service_target_build_for_sample(keyvault sample4-get-secrets-deleted)
 
 target_link_libraries(sample4-get-secrets-deleted PRIVATE azure-security-keyvault-secrets azure-identity get-env-helper)
