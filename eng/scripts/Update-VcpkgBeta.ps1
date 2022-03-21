@@ -4,7 +4,8 @@ param(
     [string] $ReleaseArtifactSourceDirectory,
     [string] $VcpkgPortName,
     [string] $GitCommitParameters,
-    [string] $BuildIdentifier = $env:BUILD_BUILDID
+    [string] $BuildIdentifier = $env:BUILD_BUILDID,
+    [switch] $TestBuildVcpkg
 )
 
 ."$PSSCriptRoot/../common/scripts/common.ps1"
@@ -80,13 +81,15 @@ try {
     Write-Host "git tag $tagName"
     git tag $tagName
 
-    # Validate overlay port installs (may only be possible after a push)
-    Write-Host "$VcpkgFolder/vcpkg" install $VcpkgPortName --overlay-ports=$VcpkgBetaFolder
-    ."$VcpkgFolder/vcpkg" install $VcpkgPortName --overlay-ports=$VcpkgBetaFolder
+    if ($TestBuildVcpkg) {
+        # Validate overlay port installs (may only be possible after a push)
+        Write-Host "$VcpkgFolder/vcpkg" install $VcpkgPortName --overlay-ports=$VcpkgBetaFolder
+        ."$VcpkgFolder/vcpkg" install $VcpkgPortName --overlay-ports=$VcpkgBetaFolder
 
-    if ($LASTEXITCODE) {
-        LogError "Port validation failed. Ensure the port builds properly"
-        exit 1
+        if ($LASTEXITCODE) {
+            LogError "Port validation failed. Ensure the port builds properly"
+            exit 1
+        }
     }
 } finally {
     Set-Location $originalLocation
