@@ -69,7 +69,7 @@ int main()
   }
   catch (std::exception exception)
   {
-    std::cout << "Exception occured: " << exception.what();
+    std::cout << "Exception: " << exception.what();
   }
 
   return 0;
