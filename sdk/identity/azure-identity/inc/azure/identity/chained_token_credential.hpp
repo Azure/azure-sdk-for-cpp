@@ -23,7 +23,7 @@ namespace Azure { namespace Identity {
   class ChainedTokenCredential final : public Core::Credentials::TokenCredential {
   public:
     /**
-     * @brief A container type to store the orderef chain of credentials.
+     * @brief A container type to store the ordered chain of credentials.
      *
      */
     using Sources = std::vector<std::shared_ptr<Core::Credentials::TokenCredential>>;

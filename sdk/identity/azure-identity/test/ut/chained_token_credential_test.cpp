@@ -34,7 +34,9 @@ public:
       throw AuthenticationException("");
     }
 
-    return {m_token};
+    AccessToken token;
+    token.Token = m_token;
+    return token;
   }
 };
 } // namespace
