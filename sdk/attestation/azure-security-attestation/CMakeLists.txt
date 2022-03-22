@@ -83,6 +83,7 @@ add_library(Azure::azure-security-attestation ALIAS azure-security-attestation)
 # coverage. Has no effect if BUILD_CODE_COVERAGE is OFF
 create_code_coverage(attestation azure-security-attestation azure-security-attestation-test "tests?/*;samples?/*")
 
+
 get_az_version("${CMAKE_CURRENT_SOURCE_DIR}/src/private/package_version.hpp")
 generate_documentation(azure-security-attestation ${AZ_LIBRARY_VERSION})
 
@@ -104,5 +105,5 @@ if(BUILD_TESTING)
 endif()
 
 if(BUILD_SAMPLES)
-   add_subdirectory(test/samples)
+   add_subdirectory(samples)
 endif()

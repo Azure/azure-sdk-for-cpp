@@ -22,7 +22,6 @@
 #include <unordered_map>
 #include <vector>
 
-// cspell: words MRSIGNER MRENCLAVE
 namespace Azure { namespace Security { namespace Attestation { namespace Models {
 
   /**
