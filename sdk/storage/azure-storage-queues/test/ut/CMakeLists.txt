@@ -24,7 +24,7 @@ add_executable (
     ${CMAKE_CURRENT_SOURCE_DIR}/../../../azure-storage-common/test/ut/test_base.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/../../../azure-storage-common/test/ut/test_base.hpp
 )
-create_per_service_target_build(azure-storage-queues-test storage)
+create_per_service_target_build(storage azure-storage-queues-test)
 create_map_file(azure-storage-queues-test azure-storage-queues-test.map)
 
 # Include shared test headers
