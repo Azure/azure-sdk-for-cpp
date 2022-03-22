@@ -16,15 +16,15 @@ project(vcpkg-all-smoke LANGUAGES CXX)
 set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 
-find_package(azure-storage-blobs-cpp CONFIG REQUIRED)
-find_package(azure-storage-files-datalake-cpp CONFIG REQUIRED)
-find_package(azure-storage-files-shares-cpp CONFIG REQUIRED)
-find_package(azure-storage-queues-cpp CONFIG REQUIRED)
-find_package(azure-security-keyvault-keys-cpp CONFIG REQUIRED)
-find_package(azure-security-keyvault-certificates-cpp CONFIG REQUIRED)
-find_package(azure-security-keyvault-secrets-cpp CONFIG REQUIRED)
-find_package(azure-identity-cpp CONFIG REQUIRED)
-find_package(azure-core-cpp CONFIG REQUIRED)
+#find_package(azure-storage-blobs-cpp CONFIG REQUIRED)
+#find_package(azure-storage-files-datalake-cpp CONFIG REQUIRED)
+#find_package(azure-storage-files-shares-cpp CONFIG REQUIRED)
+#find_package(azure-storage-queues-cpp CONFIG REQUIRED)
+#find_package(azure-security-keyvault-keys-cpp CONFIG REQUIRED)
+#find_package(azure-security-keyvault-certificates-cpp CONFIG REQUIRED)
+#find_package(azure-security-keyvault-secrets-cpp CONFIG REQUIRED)
+#find_package(azure-identity-cpp CONFIG REQUIRED)
+#find_package(azure-core-cpp CONFIG REQUIRED)
 
 add_executable (
   vcpkg-all-smoke
@@ -34,6 +34,8 @@ add_executable (
 # Link to Azure SDK
 target_link_libraries(vcpkg-all-smoke
      PRIVATE
+     Azure::azure-core
+     Azure::azure-identity
      Azure::azure-storage-blobs
      Azure::azure-storage-files-datalake
      Azure::azure-storage-files-shares
@@ -41,8 +43,6 @@ target_link_libraries(vcpkg-all-smoke
      Azure::azure-security-keyvault-keys
      Azure::azure-security-keyvault-certificates
      Azure::azure-security-keyvault-secrets
-     Azure::azure-identity
-     Azure::azure-core
      get-env-helper
 )
 
