@@ -36,4 +36,5 @@ target_link_libraries(vcpkg-all-smoke
      get-env-helper
 )
 
+
 create_per_service_target_build_for_sample(keyvault vcpkg-all-smoke)
