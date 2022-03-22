@@ -22,7 +22,7 @@ add_executable (
   azure-identity-perf
      ${AZURE_IDENTITY_PERF_TEST_HEADER} ${AZURE_IDENTITY_PERF_TEST_SOURCE}
 )
-create_per_service_target_build(azure-identity-perf identity)
+create_per_service_target_build(identity azure-identity-perf)
 
 create_map_file(azure-identity-perf azure-identity-perf.map)
 

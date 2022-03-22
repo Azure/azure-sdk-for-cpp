@@ -12,10 +12,6 @@ add_executable (
   sample2_backup_restore.cpp
 )
 
-create_per_service_target_build(sample2-backup-restore keyvault)
+create_per_service_target_build_for_sample(keyvault sample2-backup-restore)
 
 target_link_libraries(sample2-backup-restore PRIVATE azure-security-keyvault-secrets azure-identity get-env-helper)
-
-# Add the sample to be run on CI. 
-# CI pipeline reads the {service}-samples.txt and runs the binaries listed there.
-file(APPEND ${CMAKE_BINARY_DIR}/keyvault-samples.txt "${CMAKE_CURRENT_BINARY_DIR}/sample2-backup-restore\n")

@@ -11,10 +11,6 @@ add_executable (
   sample1-basic-operations
   sample1_basic_operations.cpp
 )
-create_per_service_target_build(sample1-basic-operations keyvault)
+create_per_service_target_build_for_sample(keyvault sample1-basic-operations)
 
 target_link_libraries(sample1-basic-operations PRIVATE azure-security-keyvault-secrets azure-identity get-env-helper)
-
-# Add the sample to be run on CI. 
-# CI pipeline reads the {service}-samples.txt and runs the binaries listed there.
-file(APPEND ${CMAKE_BINARY_DIR}/keyvault-samples.txt "${CMAKE_CURRENT_BINARY_DIR}/sample1-basic-operations\n")

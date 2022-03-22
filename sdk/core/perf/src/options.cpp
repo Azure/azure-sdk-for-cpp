@@ -66,7 +66,7 @@ std::vector<Azure::Perf::TestOption> Azure::Perf::GlobalTestOptions::GetOptionMe
        "Duration of the test in seconds. Default to 10 seconds.",
        1},
       {"Host", {"--host"}, "Host to redirect HTTP requests. No redirection by default.", 1},
-      {"Insecure", {"--insecure"}, "Allow untrusted SSL certs. Default to false.", 1},
+      {"Insecure", {"--insecure"}, "Allow untrusted SSL certs. Default to false.", 0},
       {"Iterations",
        {"-i", "--iterations"},
        "Number of iterations of main test loop. Default to 1.",
