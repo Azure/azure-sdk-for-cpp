@@ -79,7 +79,7 @@ int main()
     std::cout << "Successfully Created the Clients"
               << "\n";
   }
-  catch (std::exception exception)
+  catch (std::exception const& exception)
   {
     std::cout << "Exception: " << exception.what() << "\n";
   }
