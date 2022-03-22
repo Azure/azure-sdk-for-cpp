@@ -12,23 +12,28 @@ endif()
 
 # Project set up
 cmake_minimum_required(VERSION 3.13)
-project(smoketest-vcpkg LANGUAGES CXX)
+project(vcpkg-all-smoke LANGUAGES CXX)
 set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 
 add_executable (
-  smoketest-vcpkg
+  vcpkg-all-smoke
     src/main
 )
 
 # Link to Azure SDK
-target_link_libraries(smoketest-vcpkg
+target_link_libraries(vcpkg-all-smoke
      PRIVATE
+     Azure::azure-core
+     Azure::azure-identity
+     Azure::azure-storage-blobs
+     Azure::azure-storage-files-datalake
+     Azure::azure-storage-files-shares
+     Azure::azure-storage-queues
      Azure::azure-security-keyvault-keys
      Azure::azure-security-keyvault-certificates
      Azure::azure-security-keyvault-secrets
-     Azure::azure-identity
      get-env-helper
 )
 
-create_per_service_target_build_for_sample(keyvault smoketest-vcpkg)
+create_per_service_target_build_for_sample(keyvault vcpkg-all-smoke)
