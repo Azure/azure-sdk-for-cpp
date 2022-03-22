@@ -1423,6 +1423,14 @@ std::unique_ptr<CurlNetworkConnection> CurlConnectionPool::ExtractOrCreateCurlCo
         + ". Failed to set libcurl HTTP/1.1" + ". " + std::string(curl_easy_strerror(result)));
   }
 
+  // Make libcurl to support only TLS v1.2 or later
+  if (!SetLibcurlOption(newHandle, CURLOPT_SSLVERSION, CURL_SSLVERSION_TLSv1_2, &result))
+  {
+    throw Azure::Core::Http::TransportException(
+        _detail::DefaultFailedToGetNewConnectionTemplate + hostDisplayName
+        + ". Failed enforcing TLS v1.2 or greater. " + std::string(curl_easy_strerror(result)));
+  }
+
   auto performResult = curl_easy_perform(newHandle);
   if (performResult != CURLE_OK)
   {
