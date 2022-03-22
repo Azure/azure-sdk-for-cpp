@@ -81,6 +81,19 @@ The [Managed identity authentication](https://docs.microsoft.com/azure/active-di
 * [Azure Cloud Shell](https://docs.microsoft.com/azure/cloud-shell/msi-authorization)
 * [Azure Arc](https://docs.microsoft.com/azure/azure-arc/servers/managed-identity-authentication)
 
+## Chained Token Credential
+`ChainedTokenCredential` allows users to customize the credentials considered when authenticating.
+An example below demonstrates using `ChainedTokenCredential` which will attempt to authenticate using `EnvironmentCredential`, and fall back to authenticate using `ManagedIdentityCredential`.
+```
+// Authenticate using environment credential if it is available; otherwise use the managed identity credential to authenticate.
+auto chainedTokenCredential = std::make_shared<Azure::Identity::ChainedTokenCredential>(
+    Azure::Identity::ChainedTokenCredential::Sources{
+        std::make_shared<Azure::Identity::EnvironmentCredential>(),
+        std::make_shared<Azure::Identity::ManagedIdentityCredential>()});
+
+Azure::Service::Client azureServiceClient("some parameter", chainedTokenCredential);
+```
+
 ## Troubleshooting
 Credentials raise exceptions either when they fail to authenticate or cannot execute authentication.
 When credentials fail to authenticate, the `AuthenticationException` is thrown and it has the `what()` functions returning the description why authentication failed.
