@@ -60,7 +60,7 @@ Azure::Perf::GlobalTestOptions Azure::Perf::Program::ArgParser::Parse(
   }
   if (parsedArgs["Insecure"])
   {
-    options.Insecure = parsedArgs["Insecure"].as<bool>();
+    options.Insecure = true;
   }
   if (parsedArgs["Iterations"])
   {

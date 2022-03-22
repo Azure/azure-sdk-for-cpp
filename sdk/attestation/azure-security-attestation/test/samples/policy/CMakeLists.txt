@@ -12,10 +12,6 @@ add_executable (
   policy.cpp
 )
 
-create_per_service_target_build(attestation-policy attestation)
+create_per_service_target_build_for_sample(attestation attestation-policy)
 
 target_link_libraries(attestation-policy PRIVATE azure-security-attestation azure-identity azure-core get-env-helper)
-
-# Add the sample to be run on CI. 
-# CI pipeline reads the {service}-samples.txt and runs the binaries listed there.
-file(APPEND ${CMAKE_BINARY_DIR}/attestation-samples.txt "${CMAKE_CURRENT_BINARY_DIR}/attestation-policy\n")

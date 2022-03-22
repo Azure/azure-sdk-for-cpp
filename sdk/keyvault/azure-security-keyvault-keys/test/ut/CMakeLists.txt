@@ -30,7 +30,7 @@ add_executable (
     mocked_transport_adapter_test.hpp
 )
 
-create_per_service_target_build(azure-security-keyvault-keys-test keyvault)
+create_per_service_target_build(keyvault azure-security-keyvault-keys-test)
 create_map_file(azure-security-keyvault-keys-test azure-security-keyvault-keys-test.map)
 
 if (MSVC)
