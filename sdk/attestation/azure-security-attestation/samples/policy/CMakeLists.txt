@@ -12,7 +12,7 @@ add_executable (
   attestation-${samplename}
   ${samplename}.cpp)
 
-create_per_service_target_build(attestation-${samplename} attestation)
+CREATE_PER_SERVICE_TARGET_BUILD_FOR_SAMPLE(attestation-${samplename} attestation)
 
 target_link_libraries(attestation-${samplename} PRIVATE azure-security-attestation azure-identity get-env-helper)
 
