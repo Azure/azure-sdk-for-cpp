@@ -135,16 +135,15 @@
       "words": [
         "lcov",
         "iname",
-        "mspremier",
-        "issecret",
-        "cppvcpkgcache"
+        "mspremier"
       ]
     },
     {
       "filename": "**/eng/**",
       "words": [
         "TEAMPROJECTID",
-        "issecret"
+        "issecret",
+        "cppvcpkgcache"
       ]
     },
     {
