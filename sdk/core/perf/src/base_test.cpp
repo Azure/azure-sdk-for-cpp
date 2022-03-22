@@ -114,14 +114,14 @@ namespace Azure { namespace Perf {
       curlOptions.SslVerifyPeer = false;
       clientOptions.Transport.Transport
           = std::make_shared<Azure::Core::Http::CurlTransport>(curlOptions);
-#elif defined(BUILD_TRANSPORT_WINHTTP_ADAPTER)          
-    Azure::Core::Http::WinHttpTransportOptions winHttpOptions;
-    winHttpOptions.IgnoreUnknownServerCert = true;
-    clientOptions.Transport.Transport
-        = std::make_shared<Azure::Core::Http::WinHttpTransport>(winHttpOptions);
+#elif defined(BUILD_TRANSPORT_WINHTTP_ADAPTER)
+      Azure::Core::Http::WinHttpTransportOptions winHttpOptions;
+      winHttpOptions.IgnoreUnknownServerCert = true;
+      clientOptions.Transport.Transport
+          = std::make_shared<Azure::Core::Http::WinHttpTransport>(winHttpOptions);
 #else
-    // avoid the variable not used warning
-    (void)clientOptions;
+      // avoid the variable not used warning
+      (void)clientOptions;
 #endif
     }
   }
