@@ -31,7 +31,4 @@ target_link_libraries(smoketest-vcpkg
      get-env-helper
 )
 
-# Add the sample to be run on CI. 
-# CI pipeline reads the {service}-samples.txt and runs the binaries listed there.
-file(APPEND ${CMAKE_BINARY_DIR}/attestation-samples.txt "${CMAKE_CURRENT_BINARY_DIR}/smoketest-vcpkg\n")
-file(APPEND ${CMAKE_BINARY_DIR}/keyvault-samples.txt "${CMAKE_CURRENT_BINARY_DIR}/smoketest-vcpkg\n")
+create_per_service_target_build_for_sample(keyvault smoketest-vcpkg)
