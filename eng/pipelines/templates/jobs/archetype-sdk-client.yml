@@ -73,6 +73,7 @@ jobs:
           parameters:
             Directory: ''
             CheckLinkGuidance: $true
+            Condition: and(succeeded(), ne(variables['Skip.LinkVerification'], 'true'))
 
         - ${{ each artifact in parameters.Artifacts }}: 
           - template: /eng/common/pipelines/templates/steps/set-test-pipeline-version.yml
