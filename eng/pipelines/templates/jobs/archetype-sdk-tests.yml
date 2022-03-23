@@ -245,8 +245,7 @@ jobs:
     condition: and(
       succeeded(),
       ne(variables['RunSamples'], '1'),
-      not(contains(variables['OSVmImage'], 'MMS'))
-    )
+      not(contains(variables['OSVmImage'], 'MMS')))
 
     # Visual Studio generator used in CI is a multi-config generator.
     # As such, it requires the configuration argument for building and invoking ctest
@@ -260,8 +259,7 @@ jobs:
     condition: and(
       succeeded(),
       ne(variables['RunSamples'], '1'),
-      contains(variables['OSVmImage'], 'MMS')
-    )
+      contains(variables['OSVmImage'], 'MMS'))
       
 
   - task: PublishTestResults@2
