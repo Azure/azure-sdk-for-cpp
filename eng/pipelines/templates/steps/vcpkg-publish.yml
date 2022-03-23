@@ -78,7 +78,7 @@ steps:
         TargetRepoName: azure-sdk-vcpkg-betas
         WorkingDirectory: $(Pipeline.Workspace)/azure-sdk-vcpkg-betas
         ScriptDirectory: $(System.DefaultWorkingDirectory)/eng/common/scripts
-        PushArgs: --atomic --tags
+        PushArgs: --tags
         SkipCheckingForChanges: true
 
 
