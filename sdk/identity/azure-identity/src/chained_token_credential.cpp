@@ -26,9 +26,10 @@ Azure::Core::Credentials::AccessToken ChainedTokenCredential::GetToken(
     }
     catch (const Azure::Core::Credentials::AuthenticationException&)
     {
-        // Do nothing, next source will be tried.
+      // Do nothing, next source will be tried.
     }
   }
 
-  throw Azure::Core::Credentials::AuthenticationException("Failed to get token from ChainedTokenCredential.");
+  throw Azure::Core::Credentials::AuthenticationException(
+      "Failed to get token from ChainedTokenCredential.");
 }
