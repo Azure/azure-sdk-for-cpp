@@ -62,7 +62,6 @@ steps:
           -ReleaseArtifactSourceDirectory "${{ parameters.Workspace }}/packages/${{ parameters.ArtifactName }}"
           -VcpkgPortName '${{ parameters.VcpkgPortName }}'
           -GitCommitParameters '-c user.name="azure-sdk" -c user.email="azuresdk@microsoft.com"'
-          -TestBuildVcpkg
       displayName: Update Vcpkg Betas port ${{ parameters.DisplayNameExtension }}
 
     - template: /eng/common/pipelines/templates/steps/set-default-branch.yml
@@ -78,7 +77,10 @@ steps:
         TargetRepoName: azure-sdk-vcpkg-betas
         WorkingDirectory: $(Pipeline.Workspace)/azure-sdk-vcpkg-betas
         ScriptDirectory: $(System.DefaultWorkingDirectory)/eng/common/scripts
-        PushArgs: --tags
         SkipCheckingForChanges: true
+
+    - pwsh: git push --tags
+      condition: and(succeeded())
+      displayName: Push tags
 
 
