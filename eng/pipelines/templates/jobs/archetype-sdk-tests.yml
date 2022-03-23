@@ -165,6 +165,7 @@ jobs:
     CMOCKA_MESSAGE_OUTPUT: "xml"
     AZURE_ENABLE_STATIC_ANALYSIS: 1
     BuildArgs: ""
+    WindowsCtestConfig: "Release"
     CmakeEnvArg: ""
     CmakeArgs: ""
     AZURE_TEST_MODE: "LIVE"
@@ -232,14 +233,35 @@ jobs:
       Location: ${{ parameters.Location }}
       SubscriptionConfiguration: ${{ parameters.SubscriptionConfiguration }}
 
-  - script: ctest -V -C Debug --tests-regex ${{ parameters.CtestRegex }} --no-compress-output -T Test
+    # For non multi-config generator use the same build configuration to run tests
+    # We don't need to set it to invoke ctest 
+  - script: ctest -V --tests-regex ${{ parameters.CtestRegex }} --no-compress-output -T Test
     workingDirectory: build
     displayName: ctest
     # Runs only if test-resources are happly deployed.
     # unit-tests runs for those configs where samples are not ran.
     # This enables to run tests and samples at the same time as different matrix configuration.
     # Then unit-tests runs, samples should not run.
-    condition: and(succeeded(), ne(variables['RunSamples'], '1'))
+    condition: and(
+      succeeded(),
+      ne(variables['RunSamples'], '1'),
+      not(contains(variables['OSVmImage'], 'MMS'))
+    )
+
+    # Visual Studio generator used in CI is a multi-config generator.
+    # As such, it requires the configuration argument for building and invoking ctest
+  - script: ctest -V -C $(WindowsCtestConfig) --tests-regex ${{ parameters.CtestRegex }} --no-compress-output -T Test
+    workingDirectory: build
+    displayName: VisualStudio ctest
+    # Runs only if test-resources are happly deployed.
+    # unit-tests runs for those configs where samples are not ran.
+    # This enables to run tests and samples at the same time as different matrix configuration.
+    # Then unit-tests runs, samples should not run.
+    condition: and(
+      succeeded(),
+      ne(variables['RunSamples'], '1'),
+      contains(variables['OSVmImage'], 'MMS')
+    )
       
 
   - task: PublishTestResults@2
