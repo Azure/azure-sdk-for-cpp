@@ -30,7 +30,7 @@
 ###########
 
 # PRLabel: %Attestation
-/sdk/attestation/        @LarryOsterman
+/sdk/attestation/        @LarryOsterman @gkostal @anilba06 @kroshkina-ms
 
 # PRLabel: %KeyVault
 /sdk/keyvault/           @vhvb1989 @gearama @antkmsft @rickwinter

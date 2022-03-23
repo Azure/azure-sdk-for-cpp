@@ -96,6 +96,8 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
     {
       auto adminClient(CreateClient(instanceType));
 
+      adminClient->RetrieveResponseValidationCollateral();
+
       {
         auto certificatesResult = adminClient->GetPolicyManagementCertificates(
             GetPolicyManagementCertificatesOptions{GetTokenValidationOptions()});
@@ -176,6 +178,8 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
 
     auto adminClient(CreateClient(ServiceInstanceType::Isolated));
 
+    adminClient->RetrieveResponseValidationCollateral();
+
     auto isolatedCertificateBase64(GetEnv("ISOLATED_SIGNING_CERTIFICATE"));
     auto isolatedCertificate(Cryptography::ImportX509Certificate(
         Cryptography::PemFromBase64(isolatedCertificateBase64, "CERTIFICATE")));
@@ -237,6 +241,8 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
     CHECK_SKIP_TEST()
 
     auto adminClient(CreateClient(ServiceInstanceType::Isolated));
+
+    adminClient->RetrieveResponseValidationCollateral();
 
     auto isolatedCertificateBase64(GetEnv("ISOLATED_SIGNING_CERTIFICATE"));
     auto isolatedCertificate(Cryptography::ImportX509Certificate(
@@ -311,6 +317,8 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
   {
     auto adminClient(CreateClient(ServiceInstanceType::AAD));
 
+    adminClient->RetrieveResponseValidationCollateral();
+
     // Create a signing key to be used when signing the request to the service. We use the ISOLATED
     // SIGNING KEY because we know that it will always be present.
     auto fakedIsolatedKey(Cryptography::CreateRsaKey(2048));
@@ -337,6 +345,7 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
   TEST_F(CertificateTests, VerifyFailedRemoveCertificate)
   {
     auto adminClient(CreateClient(ServiceInstanceType::AAD));
+    adminClient->RetrieveResponseValidationCollateral();
 
     // Create a signing key to be used when signing the request to the service. We use the ISOLATED
     // SIGNING KEY because we know that it will always be present.

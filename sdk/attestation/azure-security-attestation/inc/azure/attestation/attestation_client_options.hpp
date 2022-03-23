@@ -173,6 +173,16 @@ namespace Azure { namespace Security { namespace Attestation {
     }
   };
 
+  /** @brief Attestation Validation Collateral
+   *
+   * This structure contains all the information needed to validate the response from the
+   * attestation service.
+   *
+   */
+  class AttestationValidationCollateral final {
+    std::vector<Models::AttestationSigner> m_attestationSigners;
+  };
+
   /** @brief The AttestationDataType represents how the attestation service should interpret the
    * {@link AttestOptions::RuntimeData} and {@link AttestOptions::InittimeData} fields.
    */
@@ -302,7 +312,7 @@ namespace Azure { namespace Security { namespace Attestation {
      * @details If not provided by the caller, the token validation options
      * specified when the @{link AttestationAdministrationClient} was created will be used.
      */
-    Azure::Nullable<AttestationTokenValidationOptions> TokenValidationOptions{};
+    Azure::Nullable<AttestationTokenValidationOptions> TokenValidationOptions;
   };
 
   /** @brief Parameters sent to the attestation service when setting an attestation policy.
@@ -318,7 +328,7 @@ namespace Azure { namespace Security { namespace Attestation {
      * @details If not provided by the caller, the token validation options
      * specified when the @{link AttestationAdministrationClient} was created will be used.
      */
-    Azure::Nullable<AttestationTokenValidationOptions> TokenValidationOptions{};
+    Azure::Nullable<AttestationTokenValidationOptions> TokenValidationOptions;
   };
 
   /** @brief Parameters sent to the attestation service when retrieving the list of policy

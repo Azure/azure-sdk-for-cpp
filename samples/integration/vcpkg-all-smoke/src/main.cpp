@@ -4,43 +4,81 @@
 /**
  * @brief This sample provides smoke test for the sdks to ensure side by side works properly
  *
- * @remark The following environment variables must be set before running the sample.
- * - AZURE_KEYVAULT_URL:  To the Key Vault account URL.
- * - AZURE_TENANT_ID:     Tenant ID for the Azure account.
- * - AZURE_CLIENT_ID:     The Client ID to authenticate the request.
- * - AZURE_CLIENT_SECRET: The client secret.
- *
  */
 
 #include "get_env.hpp"
-
+#include <azure/attestation.hpp>
 #include <azure/core.hpp>
 #include <azure/identity.hpp>
 #include <azure/keyvault/keyvault_certificates.hpp>
 #include <azure/keyvault/keyvault_keys.hpp>
 #include <azure/keyvault/keyvault_secrets.hpp>
-
-#include <chrono>
+#include <azure/storage/blobs.hpp>
+#include <azure/storage/files/datalake.hpp>
+#include <azure/storage/files/shares.hpp>
+#include <azure/storage/queues.hpp>
 #include <iostream>
-#include <memory>
-#include <thread>
 
 using namespace Azure::Security::KeyVault::Keys;
 using namespace Azure::Security::KeyVault::Secrets;
 using namespace Azure::Security::KeyVault::Certificates;
+using namespace Azure::Storage::Blobs;
+using namespace Azure::Storage::Queues;
+using namespace Azure::Storage::Files::DataLake;
+using namespace Azure::Storage::Files::Shares;
+using namespace Azure::Security::Attestation;
 
 int main()
 {
-  auto tenantId = "tenant";
-  auto clientId = "client";
-  auto clientSecret = "secret";
+  const std::string tenantId = "tenant";
+  const std::string clientId = "client";
+  const std::string clientSecret = "secret";
+  const std::string leaseID = "leaseID";
+  const std::string smokeUrl = "https://blob.com";
   auto credential
       = std::make_shared<Azure::Identity::ClientSecretCredential>(tenantId, clientId, clientSecret);
 
   // instantiate the clients
-  KeyClient keyClient(std::getenv("AZURE_KEYVAULT_URL"), credential);
-  SecretClient secretClient(std::getenv("AZURE_KEYVAULT_URL"), credential);
-  CertificateClient certificateClient(std::getenv("AZURE_KEYVAULT_URL"), credential);
+  try
+  {
+    std::cout << "Creating Keyvault Clients" << std::endl;
+    // keyvault
+    KeyClient keyClient(std::getenv("AZURE_KEYVAULT_URL"), credential);
+    SecretClient secretClient(std::getenv("AZURE_KEYVAULT_URL"), credential);
+    CertificateClient certificateClient(std::getenv("AZURE_KEYVAULT_URL"), credential);
+
+    std::cout << "Creating Storage Clients" << std::endl;
+    // Storage
+    BlobClient blobClient(smokeUrl);
+    QueueClient queueClient(smokeUrl);
+
+    std::cout << "Creating Storage Datalake Clients" << std::endl;
+    DataLakeDirectoryClient directoryClient(smokeUrl);
+    DataLakeFileClient fileClient(smokeUrl);
+    DataLakeFileSystemClient fileSystemClient(smokeUrl);
+    DataLakePathClient pathClient(smokeUrl);
+    DataLakeLeaseClient leaseClient(pathClient, leaseID);
+    DataLakeServiceClient serviceClient(smokeUrl);
+
+    std::cout << "Creating Storage Share Clients" << std::endl;
+    ShareClient shareClient(smokeUrl);
+    ShareDirectoryClient shareDirectoryClient(smokeUrl);
+    ShareFileClient shareFileClient(smokeUrl);
+    ShareLeaseClient shareLeaseClient(shareFileClient, leaseID);
+    ShareServiceClient shareServiceClient(smokeUrl);
+
+    //Attestation 
+    std::cout << "Creating Attestation Clients" << std::endl;
+    AttestationClient attestationClient(smokeUrl);
+    AttestationAdministrationClient attestationAdminClient(smokeUrl, credential);
+
+    std::cout << "Successfully Created the Clients" << std::endl;
+  }
+  catch (std::exception const& exception)
+  {
+    std::cout << "Exception: " << exception.what() << std::endl;
+    return 1;
+  }
 
   return 0;
 }

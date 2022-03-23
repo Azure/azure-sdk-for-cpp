@@ -29,7 +29,6 @@
 #include <string>
 #include <vector>
 
-// cspell: words jwks MrSigner MrEnclave
 namespace Azure { namespace Security { namespace Attestation { namespace _detail {
   using namespace Azure::Security::Attestation::Models;
   using namespace Azure::Security::Attestation::Models::_detail;

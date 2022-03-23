@@ -30,7 +30,7 @@ add_executable (
     ${CMAKE_CURRENT_SOURCE_DIR}/../../../azure-storage-common/test/ut/test_base.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/../../../azure-storage-common/test/ut/test_base.hpp
 )
-create_per_service_target_build(azure-storage-files-datalake-test storage)
+create_per_service_target_build(storage azure-storage-files-datalake-test)
 create_map_file(azure-storage-files-datalake-test azure-storage-files-datalake-test.map)
 
 # Include shared test headers
