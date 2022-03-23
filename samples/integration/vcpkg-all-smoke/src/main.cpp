@@ -77,6 +77,7 @@ int main()
   catch (std::exception const& exception)
   {
     std::cout << "Exception: " << exception.what() << std::endl;
+    return 1;
   }
 
   return 0;
