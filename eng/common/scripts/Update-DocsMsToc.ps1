@@ -38,12 +38,8 @@ param(
   [Parameter(Mandatory = $true)]
   [string] $OutputLocation
 )
-. $PSScriptRoot/common.ps1
-. $PSScriptRoot/Helpers/PSModule-Helpers.ps1
 
-Install-ModuleIfNotInstalled "powershell-yaml" "0.4.1" | Import-Module
-
-Set-StrictMode -Version 3
+Install-Module Az.Storage -AllowClobber -Force
 
 function GetClientPackageNode($clientPackage) {
   $packageInfo = &$GetDocsMsTocDataFn `
