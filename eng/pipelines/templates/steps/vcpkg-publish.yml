@@ -80,7 +80,6 @@ steps:
         SkipCheckingForChanges: true
 
     - pwsh: git push --tags
-      condition: and(succeeded())
       displayName: Push tags
 
 
