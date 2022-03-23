@@ -41,21 +41,18 @@ int main()
   // instantiate the clients
   try
   {
-    std::cout << "Creating Keyvault Clients"
-              << "\n";
+    std::cout << "Creating Keyvault Clients" << std::endl;
     // keyvault
     KeyClient keyClient(std::getenv("AZURE_KEYVAULT_URL"), credential);
     SecretClient secretClient(std::getenv("AZURE_KEYVAULT_URL"), credential);
     CertificateClient certificateClient(std::getenv("AZURE_KEYVAULT_URL"), credential);
 
-    std::cout << "Creating Storage Clients"
-              << "\n";
+    std::cout << "Creating Storage Clients" << std::endl;
     // Storage
     BlobClient blobClient(smokeUrl);
     QueueClient queueClient(smokeUrl);
 
-    std::cout << "Creating Storage Datalake Clients"
-              << "\n";
+    std::cout << "Creating Storage Datalake Clients" << std::endl;
     DataLakeDirectoryClient directoryClient(smokeUrl);
     DataLakeFileClient fileClient(smokeUrl);
     DataLakeFileSystemClient fileSystemClient(smokeUrl);
@@ -63,25 +60,23 @@ int main()
     DataLakeLeaseClient leaseClient(pathClient, leaseID);
     DataLakeServiceClient serviceClient(smokeUrl);
 
-    std::cout << "Creating Storage Share Clients"
-              << "\n";
+    std::cout << "Creating Storage Share Clients" << std::endl;
     ShareClient shareClient(smokeUrl);
     ShareDirectoryClient shareDirectoryClient(smokeUrl);
     ShareFileClient shareFileClient(smokeUrl);
     ShareLeaseClient shareLeaseClient(shareFileClient, leaseID);
     ShareServiceClient shareServiceClient(smokeUrl);
 
-    std::cout << "Creating Storage Attestation Clients"
-              << "\n";
+    //Attestation 
+    std::cout << "Creating Attestation Clients" << std::endl;
     AttestationClient attestationClient(smokeUrl);
     AttestationAdministrationClient attestationAdminClient(smokeUrl, credential);
 
-    std::cout << "Successfully Created the Clients"
-              << "\n";
+    std::cout << "Successfully Created the Clients" << std::endl;
   }
   catch (std::exception const& exception)
   {
-    std::cout << "Exception: " << exception.what() << "\n";
+    std::cout << "Exception: " << exception.what() << std::endl;
   }
 
   return 0;
