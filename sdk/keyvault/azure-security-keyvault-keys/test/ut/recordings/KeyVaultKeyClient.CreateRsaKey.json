@@ -25,7 +25,7 @@
         "x-ms-request-id": "a7ae5eff-3bc4-445c-af7b-eb45b4aaa3a3",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/keys/CreateRsaKey/create?api-version=7.2"
+      "Url": "https://REDACTED.vault.azure.net/keys/CreateRsaKey/create?api-version=7.3"
     },
     {
       "Headers": {
@@ -51,7 +51,7 @@
         "x-ms-request-id": "ddc69f2a-829b-469b-84d3-83ca029b9f21",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/keys/CreateRsaKey?api-version=7.2"
+      "Url": "https://REDACTED.vault.azure.net/keys/CreateRsaKey?api-version=7.3"
     }
   ]
 }
