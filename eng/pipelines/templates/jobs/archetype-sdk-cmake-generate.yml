@@ -14,9 +14,6 @@ parameters:
   - name: CMakeSourceTestOptions
     type: object
     default: []
-  - name: CMakeTestDependencies
-    type: string
-    default: ''
 
 jobs:
 - job: CMakeGenerate
@@ -28,19 +25,16 @@ jobs:
         OSVmImage: MMSUbuntu18.04
         CmakeEnvArg: ''
         AptDependencies: 'libcurl4-openssl-dev'
-        VcpkgInstall: ${{ parameters.CMakeTestDependencies }}
         VCPKG_DEFAULT_TRIPLET: 'x64-linux'
       Windows:
         Pool: azsdk-pool-mms-win-2019-general
         OSVmImage: MMS2019
         CmakeEnvArg: ''
-        VcpkgInstall: ${{ parameters.CMakeTestDependencies }}
         VCPKG_DEFAULT_TRIPLET: 'x64-windows'
       Mac:
         Pool: Azure Pipelines
         OSVmImage: macOS-10.15
         CmakeEnvArg: ''
-        VcpkgInstall: 'openssl ${{ parameters.CMakeTestDependencies }}'
         VCPKG_DEFAULT_TRIPLET: 'x64-osx'
   pool:
     name: $(Pool)
@@ -63,8 +57,6 @@ jobs:
     displayName: Install dependencies from apt
 
   - template: /eng/pipelines/templates/steps/vcpkg.yml
-    parameters:
-      DependenciesVariableName: VcpkgInstall
 
   - script: cmake --version
     displayName: cmake --version
@@ -122,6 +114,8 @@ jobs:
       brew install $(BrewDependencies) 
     condition: and(succeeded(), ne(variables['BrewDependencies'], ''))
     displayName: Install dependencies from brew
+  
+  - template: /eng/pipelines/templates/steps/vcpkg.yml
 
   - script: cmake --version
     displayName: cmake --version

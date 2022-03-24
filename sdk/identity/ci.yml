@@ -30,8 +30,6 @@ stages:
       LiveTestCtestRegex: azure-identity.
       LineCoverageTarget: 99
       BranchCoverageTarget: 63
-# Dependencies per package is not supported. List the dependencies for all packages.
-      CMakeTestDependencies: 'azure-core-cpp'
       Artifacts:
         - Name: azure-identity
           Path: azure-identity

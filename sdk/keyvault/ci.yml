@@ -32,8 +32,6 @@ stages:
       SubscriptionConfiguration: $(sub-config-azure-cloud-test-resources)
       LineCoverageTarget: 81
       BranchCoverageTarget: 42
-# Dependencies per package is not supported. List the dependencies for all packages.
-      CMakeTestDependencies: 'azure-core-cpp azure-identity-cpp'
       Artifacts:
         - Name: azure-security-keyvault-keys
           Path: azure-security-keyvault-keys
