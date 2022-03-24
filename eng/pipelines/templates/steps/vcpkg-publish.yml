@@ -83,6 +83,7 @@ steps:
     - pwsh: |
         git remote -v
         git push azure-sdk-fork --tags
+      workingDirectory: $(Pipeline.Workspace)/azure-sdk-vcpkg-betas
       displayName: Push tags
 
 
