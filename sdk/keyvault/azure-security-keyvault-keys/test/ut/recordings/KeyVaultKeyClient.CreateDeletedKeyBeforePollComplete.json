@@ -25,7 +25,7 @@
         "x-ms-request-id": "df402459-c55d-46f1-8ae9-4e57f5255c55",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/keys/CreateDeletedKeyBeforePollComplete/create?api-version=7.3"
+      "Url": "https://REDACTED.vault.azure.net/keys/CreateDeletedKeyBeforePollComplete/create?api-version=7.2"
     },
     {
       "Headers": {
@@ -51,7 +51,7 @@
         "x-ms-request-id": "11ed808e-3f91-418a-a706-ef793db8e9a8",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/keys/CreateDeletedKeyBeforePollComplete?api-version=7.3"
+      "Url": "https://REDACTED.vault.azure.net/keys/CreateDeletedKeyBeforePollComplete?api-version=7.2"
     },
     {
       "Headers": {
@@ -78,7 +78,7 @@
         "x-ms-request-id": "23212ed0-4217-4c29-870c-fdaca4c9ff19",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/keys/CreateDeletedKeyBeforePollComplete/create?api-version=7.3"
+      "Url": "https://REDACTED.vault.azure.net/keys/CreateDeletedKeyBeforePollComplete/create?api-version=7.2"
     }
   ]
 }
