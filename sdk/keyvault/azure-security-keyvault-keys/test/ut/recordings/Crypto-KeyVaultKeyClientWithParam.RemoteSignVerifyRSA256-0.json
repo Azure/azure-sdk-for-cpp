@@ -25,7 +25,7 @@
         "x-ms-request-id": "60cb5e9c-1476-4465-bbcf-b395cdfef447",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/keys/RemoteSignVerifyRSA256-0/create?api-version=7.3"
+      "Url": "https://REDACTED.vault.azure.net/keys/RemoteSignVerifyRSA256-0/create?api-version=7.2"
     },
     {
       "Headers": {
@@ -52,7 +52,7 @@
         "x-ms-request-id": "13730901-a763-43e5-9957-ad28e446c0a5",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/keys/RemoteSignVerifyRSA256-0/fa797b2b1bde4d849019b2504343a7df/sign?api-version=7.3"
+      "Url": "https://REDACTED.vault.azure.net/keys/RemoteSignVerifyRSA256-0/fa797b2b1bde4d849019b2504343a7df/sign?api-version=7.2"
     },
     {
       "Headers": {
@@ -79,7 +79,7 @@
         "x-ms-request-id": "e71a63e0-8ace-484e-a056-6a52e6d3028a",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/keys/RemoteSignVerifyRSA256-0/fa797b2b1bde4d849019b2504343a7df/verify?api-version=7.3"
+      "Url": "https://REDACTED.vault.azure.net/keys/RemoteSignVerifyRSA256-0/fa797b2b1bde4d849019b2504343a7df/verify?api-version=7.2"
     },
     {
       "Headers": {
@@ -106,7 +106,7 @@
         "x-ms-request-id": "395e153f-2493-4ee3-bcb4-66c2bda71589",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/keys/RemoteSignVerifyRSA256-0/fa797b2b1bde4d849019b2504343a7df/sign?api-version=7.3"
+      "Url": "https://REDACTED.vault.azure.net/keys/RemoteSignVerifyRSA256-0/fa797b2b1bde4d849019b2504343a7df/sign?api-version=7.2"
     },
     {
       "Headers": {
@@ -133,7 +133,7 @@
         "x-ms-request-id": "806987d7-e9d1-4b6e-afe1-85297a2b4b90",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/keys/RemoteSignVerifyRSA256-0/fa797b2b1bde4d849019b2504343a7df/verify?api-version=7.3"
+      "Url": "https://REDACTED.vault.azure.net/keys/RemoteSignVerifyRSA256-0/fa797b2b1bde4d849019b2504343a7df/verify?api-version=7.2"
     }
   ]
 }
