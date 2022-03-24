@@ -25,7 +25,7 @@
         "x-ms-request-id": "a21f4718-acf0-45da-a307-f438f6613a2e",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/keys/DoubleDeleteBeforePollComplete/create?api-version=7.3"
+      "Url": "https://REDACTED.vault.azure.net/keys/DoubleDeleteBeforePollComplete/create?api-version=7.2"
     },
     {
       "Headers": {
@@ -51,7 +51,7 @@
         "x-ms-request-id": "938efc7a-fc8b-4243-9237-0c4a9fa83858",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/keys/DoubleDeleteBeforePollComplete?api-version=7.3"
+      "Url": "https://REDACTED.vault.azure.net/keys/DoubleDeleteBeforePollComplete?api-version=7.2"
     },
     {
       "Headers": {
@@ -77,7 +77,7 @@
         "x-ms-request-id": "06a85491-8293-4299-bcf8-19f12bfc726e",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/keys/DoubleDeleteBeforePollComplete?api-version=7.3"
+      "Url": "https://REDACTED.vault.azure.net/keys/DoubleDeleteBeforePollComplete?api-version=7.2"
     }
   ]
 }
