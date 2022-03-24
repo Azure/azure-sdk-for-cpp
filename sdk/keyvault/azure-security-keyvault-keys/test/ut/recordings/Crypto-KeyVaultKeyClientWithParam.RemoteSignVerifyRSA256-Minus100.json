@@ -25,7 +25,7 @@
         "x-ms-request-id": "74faaedb-7fab-48df-8e6e-49104cdb6b6c",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/keys/RemoteSignVerifyRSA256-Minus100/create?api-version=7.2"
+      "Url": "https://REDACTED.vault.azure.net/keys/RemoteSignVerifyRSA256-Minus100/create?api-version=7.3"
     },
     {
       "Headers": {
@@ -52,7 +52,7 @@
         "x-ms-request-id": "6b0b3ebf-a3d0-4b24-95da-ffc22826800a",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/keys/RemoteSignVerifyRSA256-Minus100/c8e1e983bb0e400cbe951d0caf10dc27/sign?api-version=7.2"
+      "Url": "https://REDACTED.vault.azure.net/keys/RemoteSignVerifyRSA256-Minus100/c8e1e983bb0e400cbe951d0caf10dc27/sign?api-version=7.3"
     },
     {
       "Headers": {
@@ -79,7 +79,7 @@
         "x-ms-request-id": "4dca766e-673e-4cef-a3ff-1ae0f2f284f3",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/keys/RemoteSignVerifyRSA256-Minus100/c8e1e983bb0e400cbe951d0caf10dc27/verify?api-version=7.2"
+      "Url": "https://REDACTED.vault.azure.net/keys/RemoteSignVerifyRSA256-Minus100/c8e1e983bb0e400cbe951d0caf10dc27/verify?api-version=7.3"
     },
     {
       "Headers": {
@@ -106,7 +106,7 @@
         "x-ms-request-id": "a9bf9a98-5aac-409b-9f91-1ab6670d4df0",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/keys/RemoteSignVerifyRSA256-Minus100/c8e1e983bb0e400cbe951d0caf10dc27/sign?api-version=7.2"
+      "Url": "https://REDACTED.vault.azure.net/keys/RemoteSignVerifyRSA256-Minus100/c8e1e983bb0e400cbe951d0caf10dc27/sign?api-version=7.3"
     },
     {
       "Headers": {
@@ -133,7 +133,7 @@
         "x-ms-request-id": "90d12fff-1c72-493d-8c8e-2bd6b264987a",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/keys/RemoteSignVerifyRSA256-Minus100/c8e1e983bb0e400cbe951d0caf10dc27/verify?api-version=7.2"
+      "Url": "https://REDACTED.vault.azure.net/keys/RemoteSignVerifyRSA256-Minus100/c8e1e983bb0e400cbe951d0caf10dc27/verify?api-version=7.3"
     }
   ]
 }
