@@ -25,7 +25,7 @@
         "x-ms-request-id": "9bde7232-2d7a-4e0b-9321-58de3ae0ea20",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/keys/BackupKey/create?api-version=7.3"
+      "Url": "https://REDACTED.vault.azure.net/keys/BackupKey/create?api-version=7.2"
     },
     {
       "Headers": {
@@ -51,7 +51,7 @@
         "x-ms-request-id": "34bae6d6-715e-4417-8730-4683e3850b9a",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/keys/BackupKey/backup?api-version=7.3"
+      "Url": "https://REDACTED.vault.azure.net/keys/BackupKey/backup?api-version=7.2"
     },
     {
       "Headers": {
@@ -77,7 +77,7 @@
         "x-ms-request-id": "fb8984d7-8fdc-426a-a5bc-49b2a2462593",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/keys/BackupKey?api-version=7.3"
+      "Url": "https://REDACTED.vault.azure.net/keys/BackupKey?api-version=7.2"
     },
     {
       "Headers": {
@@ -103,7 +103,7 @@
         "x-ms-request-id": "bc57d376-9e07-4747-b8cc-d4414dec042f",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/deletedkeys/BackupKey?api-version=7.3"
+      "Url": "https://REDACTED.vault.azure.net/deletedkeys/BackupKey?api-version=7.2"
     },
     {
       "Headers": {
@@ -129,7 +129,7 @@
         "x-ms-request-id": "c7a70230-3906-497c-9a3f-e601ca1e5665",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/deletedkeys/BackupKey?api-version=7.3"
+      "Url": "https://REDACTED.vault.azure.net/deletedkeys/BackupKey?api-version=7.2"
     },
     {
       "Headers": {
@@ -153,7 +153,7 @@
         "x-ms-request-id": "a30d2418-7153-4fa2-8250-92513f49b18e",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/deletedkeys/BackupKey?api-version=7.3"
+      "Url": "https://REDACTED.vault.azure.net/deletedkeys/BackupKey?api-version=7.2"
     },
     {
       "Headers": {
@@ -179,7 +179,7 @@
         "x-ms-request-id": "5c3c0336-242f-4d17-95fb-30a18a161928",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/keys/BackupKey?api-version=7.3"
+      "Url": "https://REDACTED.vault.azure.net/keys/BackupKey?api-version=7.2"
     },
     {
       "Headers": {
@@ -206,7 +206,7 @@
         "x-ms-request-id": "5c3d4726-531a-4bf2-bbda-d8347077cb79",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/keys/restore?api-version=7.3"
+      "Url": "https://REDACTED.vault.azure.net/keys/restore?api-version=7.2"
     },
     {
       "Headers": {
@@ -232,7 +232,7 @@
         "x-ms-request-id": "56662b3c-2cf4-4d2e-a0d2-18df8bff26f8",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/keys/BackupKey?api-version=7.3"
+      "Url": "https://REDACTED.vault.azure.net/keys/BackupKey?api-version=7.2"
     }
   ]
 }
