@@ -11,19 +11,15 @@
 
 #include "azure/perf/base_test.hpp"
 #include "azure/perf/dynamic_test_options.hpp"
-#include "azure/perf/options.hpp"
 
 #include <memory>
 
 namespace Azure { namespace Perf {
-
   /**
    * @brief Define a performance test with options.
    *
    */
   class PerfTest : public Azure::Perf::BaseTest {
-  protected:
-    Azure::Perf::TestOptions m_options;
 
   public:
     /**
@@ -31,7 +27,7 @@ namespace Azure { namespace Perf {
      *
      * @param options The command-line parsed options.
      */
-    PerfTest(Azure::Perf::TestOptions options) : m_options(options) {}
+    PerfTest(Azure::Perf::TestOptions options) : BaseTest(options) {}
 
     /**
      * @brief Destroy the Performance Test object.

@@ -4,10 +4,6 @@ Param (
     [ValidateNotNullOrEmpty()]
     [string] $Ref = (Get-Content "$PSScriptRoot/../vcpkg-commit.txt"),
 
-    [Parameter(Mandatory = $true)]
-    [ValidateNotNullOrEmpty()]
-    [string] $Dependencies,
-
     [Parameter()]
     [ValidateNotNullOrEmpty()]
     [string] $VcpkgPath = "$PSScriptRoot/../../vcpkg"
@@ -23,10 +19,8 @@ try {
 
     if ($IsWindows) {
         .\bootstrap-vcpkg.bat
-        .\vcpkg.exe install $Dependencies.Split(' ')
     } else {
         ./bootstrap-vcpkg.sh
-        ./vcpkg install $Dependencies.Split(' ')
     }
 } finally {
     Set-Location $initialDirectory

@@ -32,9 +32,9 @@ if(FETCH_SOURCE_DEPS)
         add_subdirectory(${oneFolder} EXCLUDE_FROM_ALL)
     endforeach()
 elseif(NOT AZ_ALL_LIBRARIES)
-  find_package(azure-storage-common-cpp "12.2.1" CONFIG QUIET)
+  find_package(azure-storage-common-cpp "12.2.2" CONFIG QUIET)
   if(NOT azure-storage-common-cpp_FOUND)
-    find_package(azure-storage-common-cpp "12.2.1" REQUIRED)
+    find_package(azure-storage-common-cpp "12.2.2" REQUIRED)
   endif()
 endif()
 
@@ -71,7 +71,7 @@ set(
 )
 
 add_library(azure-storage-blobs ${AZURE_STORAGE_BLOB_HEADER} ${AZURE_STORAGE_BLOB_SOURCE})
-create_per_service_target_build(azure-storage-blobs storage)
+create_per_service_target_build(storage azure-storage-blobs)
 
 # make sure that users can consume the project as a library.
 add_library(Azure::azure-storage-blobs ALIAS azure-storage-blobs)

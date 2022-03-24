@@ -32,20 +32,19 @@ if(FETCH_SOURCE_DEPS)
         add_subdirectory(${oneFolder} EXCLUDE_FROM_ALL)
     endforeach()
 elseif(NOT AZ_ALL_LIBRARIES)
-  find_package(azure-storage-common-cpp "12.2.0" CONFIG QUIET)
+  find_package(azure-storage-common-cpp "12.2.2" CONFIG QUIET)
   if(NOT azure-storage-common-cpp_FOUND)
-    find_package(azure-storage-common-cpp "12.2.0" REQUIRED)
+    find_package(azure-storage-common-cpp "12.2.2" REQUIRED)
   endif()
 endif()
 
 set(
   AZURE_STORAGE_FILES_SHARES_HEADER
-    inc/azure/storage/files/shares/protocol/share_rest_client.hpp
     inc/azure/storage/files/shares/dll_import_export.hpp
+    inc/azure/storage/files/shares/rest_client.hpp
     inc/azure/storage/files/shares/share_client.hpp
     inc/azure/storage/files/shares/share_constants.hpp
     inc/azure/storage/files/shares/share_directory_client.hpp
-    inc/azure/storage/files/shares/share_file_attributes.hpp
     inc/azure/storage/files/shares/share_file_client.hpp
     inc/azure/storage/files/shares/share_lease_client.hpp
     inc/azure/storage/files/shares/share_options.hpp
@@ -58,19 +57,18 @@ set(
 set(
   AZURE_STORAGE_FILES_SHARES_SOURCE
     src/private/package_version.hpp
+    src/rest_client.cpp
     src/share_client.cpp
     src/share_directory_client.cpp
-    src/share_file_attributes.cpp
     src/share_file_client.cpp
     src/share_lease_client.cpp
     src/share_responses.cpp
-    src/share_rest_client.cpp
     src/share_sas_builder.cpp
     src/share_service_client.cpp
 )
 
 add_library(azure-storage-files-shares ${AZURE_STORAGE_FILES_SHARES_HEADER} ${AZURE_STORAGE_FILES_SHARES_SOURCE})
-create_per_service_target_build(azure-storage-files-shares storage)
+create_per_service_target_build(storage azure-storage-files-shares)
 # make sure that users can consume the project as a library.
 add_library(Azure::azure-storage-files-shares ALIAS azure-storage-files-shares)
 

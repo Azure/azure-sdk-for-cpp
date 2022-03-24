@@ -854,6 +854,7 @@ namespace Azure { namespace Storage { namespace Test {
         {
           EXPECT_FALSE(item.BlobName.empty());
           EXPECT_FALSE(item.BlobContainerName.empty());
+          EXPECT_FALSE(item.Tags.empty());
           findResults.emplace_back(std::move(item));
         }
       }
@@ -1137,6 +1138,25 @@ namespace Azure { namespace Storage { namespace Test {
       EXPECT_THROW(blockBlobClient.GetBlockList(options), StorageException);
       options.AccessConditions.TagConditions = successWhereExpression;
       EXPECT_NO_THROW(blockBlobClient.GetBlockList(options));
+    }
+
+    {
+      auto sourceBlobClient = Azure::Storage::Blobs::BlockBlobClient::CreateFromConnectionString(
+          StandardStorageConnectionString(),
+          m_containerName,
+          m_containerName + "sourceBlobClient",
+          InitClientOptions<Azure::Storage::Blobs::BlobClientOptions>());
+      std::vector<uint8_t> buffer;
+      buffer.resize(1024);
+      sourceBlobClient.UploadFrom(buffer.data(), buffer.size());
+
+      Blobs::CopyBlobFromUriOptions options;
+      options.AccessConditions.TagConditions = failWhereExpression;
+      EXPECT_THROW(
+          blockBlobClient.CopyFromUri(sourceBlobClient.GetUrl() + GetSas(), options),
+          StorageException);
+      options.AccessConditions.TagConditions = successWhereExpression;
+      EXPECT_NO_THROW(blockBlobClient.CopyFromUri(sourceBlobClient.GetUrl() + GetSas(), options));
     }
 
     {

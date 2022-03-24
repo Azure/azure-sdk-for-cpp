@@ -487,4 +487,37 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_FALSE(userDelegationKey.SignedVersion.empty());
     EXPECT_FALSE(userDelegationKey.Value.empty());
   }
+
+  TEST_F(BlobServiceClientTest, DISABLED_RenameBlobContainer)
+  {
+    const std::string testName = GetTestNameLowerCase();
+    auto serviceClient = GetClientForTest(testName);
+
+    const std::string srcContainerName = testName + "src";
+    auto srcContainerClient = serviceClient.CreateBlobContainer(srcContainerName).Value;
+
+    const std::string destContainerName = testName + "dest1";
+    auto destContainerClient
+        = serviceClient.RenameBlobContainer(srcContainerName, destContainerName).Value;
+
+    EXPECT_THROW(srcContainerClient.GetProperties(), StorageException);
+    EXPECT_NO_THROW(destContainerClient.GetProperties());
+
+    Blobs::BlobLeaseClient leaseClient(
+        destContainerClient, Blobs::BlobLeaseClient::CreateUniqueLeaseId());
+    leaseClient.Acquire(std::chrono::seconds(60));
+
+    const std::string destContainerName2 = testName + "dest2";
+    Blobs::RenameBlobContainerOptions renameOptions;
+    renameOptions.SourceAccessConditions.LeaseId = Blobs::BlobLeaseClient::CreateUniqueLeaseId();
+    EXPECT_THROW(
+        serviceClient.RenameBlobContainer(destContainerName, destContainerName2, renameOptions),
+        StorageException);
+    renameOptions.SourceAccessConditions.LeaseId = leaseClient.GetLeaseId();
+    EXPECT_NO_THROW(
+        serviceClient.RenameBlobContainer(destContainerName, destContainerName2, renameOptions));
+
+    auto destContainerClient2 = serviceClient.GetBlobContainerClient(destContainerName2);
+    destContainerClient2.Delete();
+  }
 }}} // namespace Azure::Storage::Test

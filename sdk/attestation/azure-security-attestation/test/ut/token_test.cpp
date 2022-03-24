@@ -20,6 +20,7 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
   using namespace Azure::Security::Attestation::_detail;
   using namespace Azure::Security::Attestation::Models;
   using namespace Azure::Security::Attestation::Models::_detail;
+  using namespace Azure::Core::_internal;
 
   TEST(SerializationTests, TestDeserializePrimitivesJsonObject)
   {
@@ -29,15 +30,15 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
 
       JsonHelpers::SetIfExistsJson(
           val, json::parse(R"({ "jsonObjectValue": {"stringField": "SF2"}})"), "jsonObjectValue");
-      EXPECT_TRUE(val.HasValue());
-      EXPECT_EQ(R"({"stringField":"SF2"})", val.Value());
+      EXPECT_TRUE(val);
+      EXPECT_EQ(R"({"stringField":"SF2"})", *val);
     }
     // Not present field.
     {
       Azure::Nullable<std::string> val;
       JsonHelpers::SetIfExistsJson(
           val, json::parse("{ \"objectValue\":{\"String Field\": 27}}"), "intValue");
-      EXPECT_FALSE(val.HasValue());
+      EXPECT_FALSE(val);
     }
   }
 
@@ -54,9 +55,9 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
           val,
           json::parse("{ \"base64Urlfield\": \"" + encodedData + "\"}"),
           "base64Urlfield",
-          Azure::Core::_internal::Base64Url::Base64UrlDecode);
-      EXPECT_EQ(9ul, val.Value().size());
-      EXPECT_EQ(testData, std::string(val.Value().begin(), val.Value().end()));
+          Base64Url::Base64UrlDecode);
+      EXPECT_EQ(9ul, val->size());
+      EXPECT_EQ(testData, std::string(val->begin(), val->end()));
     }
     // Not present field.
     {
@@ -65,9 +66,9 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
           val,
           json::parse("{ \"base64Urlfield\": \"" + encodedData + "\"}"),
           "intValue",
-          Azure::Core::_internal::Base64Url::Base64UrlDecode);
+          Base64Url::Base64UrlDecode);
 
-      EXPECT_FALSE(val.HasValue());
+      EXPECT_FALSE(val);
     }
   }
 
@@ -100,7 +101,7 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
   {
     {
       EXPECT_THROW(
-          JsonWebKeySerializer::Deserialize(json::parse(R"({"alg": "none"})")), std::runtime_error);
+          JsonWebKeySerializer::Deserialize(json::parse(R"({"Alg": "none"})")), std::runtime_error);
     }
     // cspell:disable
     {
@@ -111,12 +112,12 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
        "y":"4Etl6SRW2YiLUrN5vfvVHuhp7x8PxltmWWlbbM4IFyM",
        "use":"enc",
        "kid":"1"})")));
-      EXPECT_EQ("EC", val.kty.Value());
-      EXPECT_EQ("P-256", val.crv.Value());
-      EXPECT_EQ("MKBCTNIcKUSDii11ySs3526iDZ8AiTo7Tu6KPAqv7D4", val.x.Value());
-      EXPECT_EQ("4Etl6SRW2YiLUrN5vfvVHuhp7x8PxltmWWlbbM4IFyM", val.y.Value());
-      EXPECT_EQ("enc", val.use.Value());
-      EXPECT_EQ("1", val.kid.Value());
+      EXPECT_EQ("EC", *val.Kty);
+      EXPECT_EQ("P-256", *val.Crv);
+      EXPECT_EQ("MKBCTNIcKUSDii11ySs3526iDZ8AiTo7Tu6KPAqv7D4", *val.X);
+      EXPECT_EQ("4Etl6SRW2YiLUrN5vfvVHuhp7x8PxltmWWlbbM4IFyM", *val.Y);
+      EXPECT_EQ("enc", *val.Use);
+      EXPECT_EQ("1", *val.Kid);
     }
 
     {
@@ -125,24 +126,42 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
        "e":"AQAB",
        "alg":"RS256",
        "kid":"2011-04-29"})")));
-      EXPECT_EQ("RS256", val.alg.Value());
+      EXPECT_EQ("RS256", *val.Alg);
       EXPECT_EQ(
           "0vx7agoebGcQSuuPiLJXZptN9nndrQmbXEps2aiAFbWhM78LhWx4cbbfAAtVT86zwu1RK7aPFFxuhDR1L6tSoc_"
           "BJECPebWKRXjBZCiFV4n3oknjhMstn64tZ_2W-5JsGY4Hc5n9yBXArwl93lqt7_RN5w6Cf0h4QyQ5v-65YGjQR0_"
           "FDW2QvzqY368QQMicAtaSqzs8KJZgnYb9c7d0zgdAZHzu6qMQvRL5hajrn1n91CbOpbISD08qNLyrdkt-"
           "bFTWhAI4vMQFh6WeZu0fM4lFd2NcRwr3XPksINHaQ-G_xBniIqbw0Ls1jF44-csFCur-kEgU8awapJzKnqDKgw",
-          val.n.Value());
-      EXPECT_EQ("AQAB", val.e.Value());
-      EXPECT_EQ("2011-04-29", val.kid.Value());
+          *val.N);
+      EXPECT_EQ("AQAB", *val.E);
+      EXPECT_EQ("2011-04-29", *val.Kid);
+
+      // Now serialize the JWK back to JSON.
+      auto serializedKey(JsonWebKeySerializer::Serialize(val));
     }
     // cspell:enable
+  }
+  TEST(SerializationTests, TestPolicyCertificateManagementBody)
+  {
+    PolicyCertificateManagementBody body;
+    // cspell: disable
+    body.policyCertificate = JsonWebKeySerializer::Deserialize(json::parse(R"({"kty":"RSA",
+       "n": "0vx7agoebGcQSuuPiLJXZptN9nndrQmbXEps2aiAFbWhM78LhWx4cbbfAAtVT86zwu1RK7aPFFxuhDR1L6tSoc_BJECPebWKRXjBZCiFV4n3oknjhMstn64tZ_2W-5JsGY4Hc5n9yBXArwl93lqt7_RN5w6Cf0h4QyQ5v-65YGjQR0_FDW2QvzqY368QQMicAtaSqzs8KJZgnYb9c7d0zgdAZHzu6qMQvRL5hajrn1n91CbOpbISD08qNLyrdkt-bFTWhAI4vMQFh6WeZu0fM4lFd2NcRwr3XPksINHaQ-G_xBniIqbw0Ls1jF44-csFCur-kEgU8awapJzKnqDKgw",
+       "e":"AQAB",
+       "alg":"RS256",
+       "kid":"2011-04-29"})"));
+    // cspell: enable
+    std::string serializedBody = PolicyCertificateManagementBodySerializer::Serialize(body);
+    auto deserializedBody
+        = PolicyCertificateManagementBodySerializer::Deserialize(json::parse(serializedBody));
+    EXPECT_EQ(body.policyCertificate.N.Value(), deserializedBody.policyCertificate.N.Value());
   }
 
   TEST(SerializationTests, TestDeserializeJWKS)
   {
     {
       EXPECT_THROW(
-          JsonWebKeySetSerializer::Deserialize(json::parse(R"({"keys": [{"alg": "none"}]})")),
+          JsonWebKeySetSerializer::Deserialize(json::parse(R"({"keys": [{"Alg": "none"}]})")),
           std::runtime_error);
     }
     // cspell:disable
@@ -163,31 +182,31 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
        "kid":"2011-04-29"}
     ]})")));
       EXPECT_EQ(2ul, val.Keys.size());
-      EXPECT_EQ("EC", val.Keys[0].kty.Value());
-      EXPECT_EQ("P-256", val.Keys[0].crv.Value());
-      EXPECT_EQ("MKBCTNIcKUSDii11ySs3526iDZ8AiTo7Tu6KPAqv7D4", val.Keys[0].x.Value());
-      EXPECT_EQ("4Etl6SRW2YiLUrN5vfvVHuhp7x8PxltmWWlbbM4IFyM", val.Keys[0].y.Value());
-      EXPECT_EQ("enc", val.Keys[0].use.Value());
-      EXPECT_EQ("1", val.Keys[0].kid.Value());
-      EXPECT_EQ("RS256", val.Keys[1].alg.Value());
+      EXPECT_EQ("EC", *val.Keys[0].Kty);
+      EXPECT_EQ("P-256", *val.Keys[0].Crv);
+      EXPECT_EQ("MKBCTNIcKUSDii11ySs3526iDZ8AiTo7Tu6KPAqv7D4", *val.Keys[0].X);
+      EXPECT_EQ("4Etl6SRW2YiLUrN5vfvVHuhp7x8PxltmWWlbbM4IFyM", *val.Keys[0].Y);
+      EXPECT_EQ("enc", *val.Keys[0].Use);
+      EXPECT_EQ("1", *val.Keys[0].Kid);
+      EXPECT_EQ("RS256", *val.Keys[1].Alg);
       EXPECT_EQ(
           "0vx7agoebGcQSuuPiLJXZptN9nndrQmbXEps2aiAFbWhM78LhWx4cbbfAAtVT86zwu1RK7aPFFxuhDR1L6tSoc_"
           "BJECPebWKRXjBZCiFV4n3oknjhMstn64tZ_2W-5JsGY4Hc5n9yBXArwl93lqt7_RN5w6Cf0h4QyQ5v-65YGjQR0_"
           "FDW2QvzqY368QQMicAtaSqzs8KJZgnYb9c7d0zgdAZHzu6qMQvRL5hajrn1n91CbOpbISD08qNLyrdkt-"
           "bFTWhAI4vMQFh6WeZu0fM4lFd2NcRwr3XPksINHaQ-G_xBniIqbw0Ls1jF44-csFCur-kEgU8awapJzKnqDKgw",
-          val.Keys[1].n.Value());
-      EXPECT_EQ("AQAB", val.Keys[1].e.Value());
-      EXPECT_EQ("2011-04-29", val.Keys[1].kid.Value());
+          *val.Keys[1].N);
+      EXPECT_EQ("AQAB", *val.Keys[1].E);
+      EXPECT_EQ("2011-04-29", *val.Keys[1].Kid);
     }
 
     {
       EXPECT_THROW(
-          JsonWebKeySetSerializer::Deserialize(json::parse(R"({"xxx": [{"alg": "none"}]})")),
+          JsonWebKeySetSerializer::Deserialize(json::parse(R"({"xxx": [{"Alg": "none"}]})")),
           std::runtime_error);
     }
     {
       EXPECT_THROW(
-          JsonWebKeySetSerializer::Deserialize(json::parse(R"({"keys": {"alg": "none"}})")),
+          JsonWebKeySetSerializer::Deserialize(json::parse(R"({"keys": {"Alg": "none"}})")),
           std::runtime_error);
     }
     // cspell:enable
@@ -240,13 +259,18 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
 
     std::string serializedSigner = AttestationSignerInternal::SerializeToJson(signer);
     auto jsonSigner(json::parse(serializedSigner));
-    EXPECT_TRUE(jsonSigner["kid"].is_string());
-    EXPECT_EQ(signer.KeyId.Value(), jsonSigner["kid"].get<std::string>());
-    EXPECT_TRUE(jsonSigner["x5c"].is_array());
-    auto x5c = jsonSigner["x5c"].get<std::vector<json>>();
-    EXPECT_TRUE(x5c[0].is_string());
+    EXPECT_TRUE(jsonSigner["Kid"].is_string());
 
-    EXPECT_EQ(x5c[0].get<std::string>(), signer.CertificateChain.Value()[0]);
+    auto kidJson(jsonSigner["Kid"]);
+    auto Kid = kidJson.get<std::string>();
+    EXPECT_EQ(signer.KeyId.Value(), Kid);
+    EXPECT_TRUE(jsonSigner["X5c"].is_array());
+
+    auto X5c = jsonSigner["X5c"].get<std::vector<json>>();
+    EXPECT_TRUE(X5c[0].is_string());
+    auto x5c0(X5c[0]);
+    std::string x5cval(x5c0.get<std::string>());
+    EXPECT_EQ(x5cval, (*signer.CertificateChain)[0]);
   }
 
   template <typename T> bool CompareNullable(Nullable<T> const& me, Nullable<T> const& them)
@@ -255,9 +279,9 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
     {
       return false;
     }
-    if (me.HasValue())
+    if (me)
     {
-      return (me.Value() == them.Value());
+      return (*me == *them);
     }
     return true;
   }
@@ -269,12 +293,12 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
     {
       return false;
     }
-    if (me.HasValue())
+    if (me)
     {
       Azure::DateTime meTime(Azure::Core::_internal::PosixTimeConverter::PosixTimeToDateTime(
-          Azure::Core::_internal::PosixTimeConverter::DateTimeToPosixTime(me.Value())));
+          PosixTimeConverter::DateTimeToPosixTime(*me)));
       Azure::DateTime themTime(Azure::Core::_internal::PosixTimeConverter::PosixTimeToDateTime(
-          Azure::Core::_internal::PosixTimeConverter::DateTimeToPosixTime(them.Value())));
+          PosixTimeConverter::DateTimeToPosixTime(*them)));
       return (meTime == themTime);
     }
     return true;
@@ -330,7 +354,7 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
     static TestObject Deserialize(json const& serialized)
     {
       TestObject returnValue;
-      JsonOptional::SetIfExists(returnValue.Algorithm, serialized, "alg");
+      JsonOptional::SetIfExists(returnValue.Algorithm, serialized, "Alg");
       JsonOptional::SetIfExists<int64_t, Azure::DateTime>(
           returnValue.ExpiresAt,
           serialized,
@@ -357,7 +381,7 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
     {
       json returnValue;
 
-      JsonOptional::SetFromNullable(testObject.Algorithm, returnValue, "alg");
+      JsonOptional::SetFromNullable(testObject.Algorithm, returnValue, "Alg");
       JsonOptional::SetFromNullable(testObject.Integer, returnValue, "int");
       JsonOptional::SetFromNullable(testObject.IntegerArray, returnValue, "intArray");
       JsonOptional::SetFromNullable<Azure::DateTime, int64_t>(
@@ -432,13 +456,13 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
 
       EXPECT_EQ(testObject, token.Body);
 
-      EXPECT_TRUE(token.ExpiresOn.HasValue());
-      EXPECT_TRUE(token.IssuedOn.HasValue());
-      EXPECT_TRUE(token.NotBefore.HasValue());
-      EXPECT_TRUE(token.Issuer.HasValue());
-      EXPECT_EQ(token.Issuer.Value(), "George");
+      EXPECT_TRUE(token.ExpiresOn);
+      EXPECT_TRUE(token.IssuedOn);
+      EXPECT_TRUE(token.NotBefore);
+      EXPECT_TRUE(token.Issuer);
+      EXPECT_EQ(*token.Issuer, "George");
       EXPECT_TRUE(token.Header.Algorithm);
-      EXPECT_EQ("none", token.Header.Algorithm.Value());
+      EXPECT_EQ("none", *token.Header.Algorithm);
     }
   }
 
@@ -558,11 +582,11 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
     AttestationToken<TestObject> token = testToken;
     EXPECT_EQ(testObject, token.Body);
 
-    EXPECT_TRUE(token.ExpiresOn.HasValue());
-    EXPECT_TRUE(token.IssuedOn.HasValue());
-    EXPECT_TRUE(token.NotBefore.HasValue());
-    EXPECT_TRUE(token.Issuer.HasValue());
-    EXPECT_EQ(token.Issuer.Value(), "George");
+    EXPECT_TRUE(token.ExpiresOn);
+    EXPECT_TRUE(token.IssuedOn);
+    EXPECT_TRUE(token.NotBefore);
+    EXPECT_TRUE(token.Issuer);
+    EXPECT_EQ(*token.Issuer, "George");
   }
   TEST(AttestationTokenTests, CreateSecuredTokenFromObject)
   {

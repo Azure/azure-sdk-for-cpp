@@ -6,7 +6,6 @@ list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/../../../cmake-module
 include(AzureVcpkg)
 az_vcpkg_integrate()
 
-
 # Azure core is compatible with CMake 3.12
 cmake_minimum_required (VERSION 3.12)
 project(azure-core LANGUAGES CXX)
@@ -71,6 +70,7 @@ set(
     inc/azure/core/internal/cryptography/sha_hash.hpp
     inc/azure/core/internal/diagnostics/log.hpp
     inc/azure/core/internal/environment.hpp
+    inc/azure/core/internal/extendable_enumeration.hpp
     inc/azure/core/internal/http/pipeline.hpp
     inc/azure/core/internal/io/null_body_stream.hpp
     inc/azure/core/internal/json/json_serializable.hpp

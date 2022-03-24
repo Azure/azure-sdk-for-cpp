@@ -30,10 +30,7 @@ namespace Azure { namespace Security { namespace Attestation { namespace _detail
 
   template <class T> class EmptyDeserializer {
   public:
-    static std::string Deserialize(Azure::Core::Json::_internal::json const&)
-    {
-      return std::string();
-    }
+    static T Deserialize(Azure::Core::Json::_internal::json const&) { return T(); }
   };
 
   template <class T, class TDeserializer = EmptyDeserializer<T>> class AttestationTokenInternal {
@@ -49,26 +46,25 @@ namespace Azure { namespace Security { namespace Attestation { namespace _detail
      * @throws std::runtime_error Thrown when the time in the token is invalid (the token has
      * expired or is not yet valid).
      */
-    void ValidateTokenTimeElements(AttestationTokenValidationOptions const& validationOptions)
+    void ValidateTokenTimeElements(AttestationTokenValidationOptions const& validationOptions) const
     {
       // Snapshot "now" to provide a base time for subsequent checks. Note that this code
       // round-trips the time through time_t to round to the nearest second.
-      time_t timeNowSeconds
+      const time_t timeNowSeconds
           = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
-      auto timeNow = std::chrono::system_clock::from_time_t(timeNowSeconds);
+      const auto timeNow = std::chrono::system_clock::from_time_t(timeNowSeconds);
 
       if (m_token.ExpiresOn && validationOptions.ValidateExpirationTime)
       {
-        if (timeNow > m_token.ExpiresOn.Value())
+        if (timeNow > *m_token.ExpiresOn)
         {
-          auto expiresOn
-              = static_cast<std::chrono::system_clock::time_point>(m_token.ExpiresOn.Value());
+          auto expiresOn = static_cast<std::chrono::system_clock::time_point>(*m_token.ExpiresOn);
           auto timeDelta = timeNow - expiresOn;
           if (timeDelta > validationOptions.ValidationTimeSlack)
           {
             std::stringstream ss;
             ss << "Attestation token has expired. Token expiration time: "
-               << m_token.ExpiresOn.Value().ToString()
+               << m_token.ExpiresOn->ToString()
                << ". Current time: " << Azure::DateTime(timeNow).ToString();
             throw std::runtime_error(ss.str());
           }
@@ -76,16 +72,15 @@ namespace Azure { namespace Security { namespace Attestation { namespace _detail
       }
       if (m_token.NotBefore && validationOptions.ValidateNotBeforeTime)
       {
-        if (timeNow < m_token.NotBefore.Value())
+        if (timeNow < *m_token.NotBefore)
         {
-          auto notBefore
-              = static_cast<std::chrono::system_clock::time_point>(m_token.NotBefore.Value());
+          auto notBefore = static_cast<std::chrono::system_clock::time_point>(*m_token.NotBefore);
           auto timeDelta = notBefore - timeNow;
           if (timeDelta > validationOptions.ValidationTimeSlack)
           {
             std::stringstream ss;
             ss << "Attestation token is not yet valid. Token becomes valid at time: "
-               << m_token.NotBefore.Value().ToString()
+               << m_token.NotBefore->ToString()
                << ". Current time: " << Azure::DateTime(timeNow).ToString();
             throw std::runtime_error(ss.str());
           }
@@ -98,7 +93,7 @@ namespace Azure { namespace Security { namespace Attestation { namespace _detail
      *
      * @param validationOptions Options controlling the validation
      */
-    void ValidateTokenIssuer(AttestationTokenValidationOptions const& validationOptions)
+    void ValidateTokenIssuer(AttestationTokenValidationOptions const& validationOptions) const
     {
       if (validationOptions.ValidateIssuer)
       {
@@ -107,11 +102,11 @@ namespace Azure { namespace Security { namespace Attestation { namespace _detail
           throw std::runtime_error(
               "Attestation token issuer validation requested but token has no issuer.");
         }
-        if (validationOptions.ExpectedIssuer != m_token.Issuer.Value())
+        if (validationOptions.ExpectedIssuer != *m_token.Issuer)
         {
           std::stringstream ss;
           ss << "Expected issuer (" << validationOptions.ExpectedIssuer
-             << ") does not match actual issuer of token (" << m_token.Issuer.Value() << ")";
+             << ") does not match actual issuer of token (" << *m_token.Issuer << ")";
           throw std::runtime_error(ss.str());
         }
       }
@@ -133,7 +128,7 @@ namespace Azure { namespace Security { namespace Attestation { namespace _detail
      array if none were found.
      */
     std::vector<Models::AttestationSigner> FindPossibleSigners(
-        std::vector<Models::AttestationSigner> const& signers)
+        std::vector<Models::AttestationSigner> const& signers) const
     {
       std::vector<Models::AttestationSigner> returnValue;
       // If signers is provided, then the Signers array provides the complete set of
@@ -145,7 +140,7 @@ namespace Azure { namespace Security { namespace Attestation { namespace _detail
         {
           for (const auto& signer : signers)
           {
-            if (signer.KeyId && m_token.Header.KeyId.Value() == signer.KeyId.Value())
+            if (signer.KeyId && *m_token.Header.KeyId == *signer.KeyId)
             {
               returnValue.push_back(signer);
             }
@@ -165,14 +160,14 @@ namespace Azure { namespace Security { namespace Attestation { namespace _detail
       {
         if (m_token.Header.Key)
         {
-          returnValue.push_back(m_token.Header.Key.Value());
+          returnValue.push_back(*m_token.Header.Key);
         }
         if (m_token.Header.X509CertificateChain)
         {
           std::vector<std::string> pemEncodedChain;
-          for (auto x5c : m_token.Header.X509CertificateChain.Value())
+          for (auto X5c : *m_token.Header.X509CertificateChain)
           {
-            pemEncodedChain.push_back(Models::_detail::AttestationSignerInternal::PemFromX5c(x5c));
+            pemEncodedChain.push_back(_detail::Cryptography::PemFromBase64(X5c, "CERTIFICATE"));
           }
           returnValue.push_back(
               Models::AttestationSigner{Azure::Nullable<std::string>(), pemEncodedChain});
@@ -190,13 +185,13 @@ namespace Azure { namespace Security { namespace Attestation { namespace _detail
      * validated.
      */
     Azure::Nullable<Models::AttestationSigner> VerifyTokenSignature(
-        std::vector<Models::AttestationSigner> const& possibleSigners)
+        std::vector<Models::AttestationSigner> const& possibleSigners) const
     {
       for (const auto& signer : possibleSigners)
       {
-        std::unique_ptr<Azure::Security::Attestation::_detail::Cryptography::X509Certificate>
+        const std::unique_ptr<Azure::Security::Attestation::_detail::Cryptography::X509Certificate>
             certificate(Azure::Security::Attestation::_detail::Cryptography::ImportX509Certificate(
-                signer.CertificateChain.Value()[0]));
+                (*signer.CertificateChain)[0]));
         auto publicKey = certificate->GetPublicKey();
         // If the key associated with this certificate signed the token,
         if (publicKey->VerifySignature(
@@ -209,6 +204,23 @@ namespace Azure { namespace Security { namespace Attestation { namespace _detail
       return Azure::Nullable<Models::AttestationSigner>();
     }
 
+    template <typename Ty>
+    void SetTokenBody(
+        Azure::Core::Json::_internal::json const& jsonBody,
+        Azure::Nullable<Ty> bodyToSet)
+    {
+      if (bodyToSet)
+      {
+        m_token.Body = *bodyToSet;
+      }
+      else
+      {
+        m_token.Body = TDeserializer::Deserialize(jsonBody);
+      }
+    }
+
+    void SetTokenBody(Azure::Core::Json::_internal::json const&, Azure::Nullable<std::nullptr_t>) {}
+
   public:
     /** @brief Constructs a new instance of an AttestationToken object from a JSON Web Token or JSON
      * Web Signature.
@@ -219,9 +231,7 @@ namespace Azure { namespace Security { namespace Attestation { namespace _detail
      *
      * @param jwt - the JSON Web Token/JSON Web Signature to be parsed.
      */
-    AttestationTokenInternal(
-        std::string const& jwt,
-        Azure::Nullable<T> preferredBody = Azure::Nullable<T>())
+    AttestationTokenInternal(std::string const& jwt, Azure::Nullable<T> preferredBody = {})
     {
       m_token.RawToken = jwt;
 
@@ -237,12 +247,12 @@ namespace Azure { namespace Security { namespace Attestation { namespace _detail
         {
           throw Azure::Core::RequestFailedException("Could not find required . in token.");
         }
-        std::string header(token);
-        header.erase(headerIndex);
+
+        const std::string header(token.substr(0, headerIndex));
 
         m_token.SignedElements = header;
 
-        auto jsonHeader(Azure::Core::Json::_internal::json::parse(
+        const auto jsonHeader(Azure::Core::Json::_internal::json::parse(
             Azure::Core::_internal::Base64Url::Base64UrlDecode(header)));
 
         m_token.Header
@@ -258,14 +268,13 @@ namespace Azure { namespace Security { namespace Attestation { namespace _detail
 
       // Parse the second base64url encoded element (the JWS body):
       {
-        size_t bodyIndex = token.find('.');
+        const size_t bodyIndex = token.find('.');
         if (bodyIndex == std::string::npos)
         {
           throw Azure::Core::RequestFailedException("Could not find required second . in token.");
         }
 
-        std::string body(token);
-        body.erase(bodyIndex);
+        const std::string body(token.substr(0, bodyIndex));
 
         // Now add the encoded body to the signed elements.
         m_token.SignedElements += body;
@@ -298,14 +307,7 @@ namespace Azure { namespace Security { namespace Attestation { namespace _detail
           Azure::Core::Json::_internal::JsonOptional::SetIfExists(
               m_token.UniqueIdentifier, jsonBody, "jti");
 
-          if (preferredBody)
-          {
-            m_token.Body = preferredBody.Value();
-          }
-          else
-          {
-            m_token.Body = TDeserializer::Deserialize(jsonBody);
-          }
+          SetTokenBody(jsonBody, preferredBody);
         }
         // Remove the body from the token, we've remembered its contents.
         token.erase(0, bodyIndex + 1);
@@ -327,8 +329,8 @@ namespace Azure { namespace Security { namespace Attestation { namespace _detail
      * @return AttestationTokenInternal<T, TDeserializer> A newly created token object.
      */
     static AttestationTokenInternal<T, TDeserializer> CreateToken(
-        T const& tokenBody,
-        AttestationSigningKey const& tokenSigner = AttestationSigningKey{})
+        Azure::Nullable<T> const& tokenBody,
+        Azure::Nullable<AttestationSigningKey> const& tokenSigner = {})
     {
       bool isUnsecuredToken = false;
       std::unique_ptr<Azure::Security::Attestation::_detail::Cryptography::X509Certificate>
@@ -336,7 +338,19 @@ namespace Azure { namespace Security { namespace Attestation { namespace _detail
       std::unique_ptr<Azure::Security::Attestation::_detail::Cryptography::AsymmetricKey>
           signingKey;
       Models::AttestationTokenHeader tokenHeader;
-      if (tokenSigner.PemEncodedPrivateKey.empty() && tokenSigner.PemEncodedX509Certificate.empty())
+
+      if (tokenSigner)
+      {
+        // Deserialize the signing key and certificate and use them to create the JWS header.
+        signingCert = Azure::Security::Attestation::_detail::Cryptography::ImportX509Certificate(
+            tokenSigner->PemEncodedX509Certificate);
+        signingKey = Azure::Security::Attestation::_detail::Cryptography::ImportPrivateKey(
+            tokenSigner->PemEncodedPrivateKey);
+
+        tokenHeader.Algorithm = signingCert->GetAlgorithm();
+        tokenHeader.X509CertificateChain = std::vector<std::string>{signingCert->ExportAsBase64()};
+      }
+      else
       {
         // If the private key and certificate are empty, it's an unsecured JWS.
         // An unsecured JWS is represented by an "alg" header with a value of "none" and an
@@ -344,23 +358,16 @@ namespace Azure { namespace Security { namespace Attestation { namespace _detail
         isUnsecuredToken = true;
         tokenHeader.Algorithm = "none"; // Specifies an unsecured attestation token.
       }
-      else
-      {
-        // Deserialize the signing key and certificate and use them to create the JWS header.
-        signingCert = Azure::Security::Attestation::_detail::Cryptography::ImportX509Certificate(
-            tokenSigner.PemEncodedX509Certificate);
-        signingKey = Azure::Security::Attestation::_detail::Cryptography::ImportPrivateKey(
-            tokenSigner.PemEncodedPrivateKey);
-
-        tokenHeader.Algorithm = signingCert->GetAlgorithm();
-        tokenHeader.Type = signingCert->GetKeyType();
-        tokenHeader.X509CertificateChain = std::vector<std::string>{signingCert->ExportAsBase64()};
-      }
       std::string serializedHeader(AttestationTokenHeaderSerializer::Serialize(tokenHeader));
-      std::string serializedBody(TDeserializer::Serialize(tokenBody));
-      std::string encodedHeader = Azure::Core::_internal::Base64Url::Base64UrlEncode(
+      std::string serializedBody;
+      if (tokenBody)
+      {
+        serializedBody = TDeserializer::Serialize(*tokenBody);
+      }
+
+      const std::string encodedHeader = Azure::Core::_internal::Base64Url::Base64UrlEncode(
           std::vector<uint8_t>(serializedHeader.begin(), serializedHeader.end()));
-      std::string encodedBody = Azure::Core::_internal::Base64Url::Base64UrlEncode(
+      const std::string encodedBody = Azure::Core::_internal::Base64Url::Base64UrlEncode(
           std::vector<uint8_t>(serializedBody.begin(), serializedBody.end()));
 
       // Start to assemble the JWT from the encoded header and body.
@@ -398,7 +405,7 @@ namespace Azure { namespace Security { namespace Attestation { namespace _detail
     void ValidateToken(
         AttestationTokenValidationOptions const& validationOptions,
         std::vector<Models::AttestationSigner> const& signers
-        = std::vector<Models::AttestationSigner>{})
+        = std::vector<Models::AttestationSigner>{}) const
     {
       if (!validationOptions.ValidateToken)
       {
@@ -407,12 +414,12 @@ namespace Azure { namespace Security { namespace Attestation { namespace _detail
 
       // If this is a secured token, find a set of possible signers for the token and
       // verify that one of them signed the token.
-      if (m_token.Header.Algorithm && m_token.Header.Algorithm.Value() != "none"
+      Azure::Nullable<Models::AttestationSigner> tokenSigner;
+      if (m_token.Header.Algorithm && *m_token.Header.Algorithm != "none"
           && validationOptions.ValidateSigner)
       {
-        Azure::Nullable<Models::AttestationSigner> foundSigner
-            = VerifyTokenSignature(FindPossibleSigners(signers));
-        if (!foundSigner)
+        tokenSigner = VerifyTokenSignature(FindPossibleSigners(signers));
+        if (!tokenSigner)
         {
           throw std::runtime_error("Unable to verify the attestation token signature.");
         }
@@ -423,11 +430,22 @@ namespace Azure { namespace Security { namespace Attestation { namespace _detail
 
       // And finally check the issuer.
       ValidateTokenIssuer(validationOptions);
+
+      if (validationOptions.ValidationCallback)
+      {
+        AttestationTokenInternal<std::nullptr_t> tokenForCallback(m_token.RawToken);
+        validationOptions.ValidationCallback(
+            tokenForCallback, tokenSigner ? *tokenSigner : Models::AttestationSigner());
+      }
     }
 
     /**
      * @brief Convert the internal attestation token to a public AttestationToken object.
      */
     operator Models::AttestationToken<T>&() { return m_token; }
+    /**
+     * @brief Convert the internal attestation token to a public AttestationToken object.
+     */
+    operator Models::AttestationToken<T> const &() const { return m_token; }
   };
 }}}} // namespace Azure::Security::Attestation::_detail

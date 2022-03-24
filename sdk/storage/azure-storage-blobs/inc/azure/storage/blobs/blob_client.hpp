@@ -202,6 +202,23 @@ namespace Azure { namespace Storage { namespace Blobs {
         const Azure::Core::Context& context = Azure::Core::Context()) const;
 
     /**
+     * @brief Copies data from the source to this blob, synchronously.
+     *
+     * @param sourceUri Specifies the URL of the source blob. The value may be a URL of up to 2 KB
+     * in length that specifies a blob. The value should be URL-encoded as it would appear in a
+     * request URI. The source blob must either be public or must be authorized via a shared access
+     * signature. If the size of the source blob is greater than 256 MB, the request will fail with
+     * 409 (Conflict). The blob type of the source blob has to be block blob.
+     * @param options Optional parameters to execute this function.
+     * @param context Context for cancelling long running operations.
+     * @return A CopyBlobFromUriResult describing the copy result.
+     */
+    Azure::Response<Models::CopyBlobFromUriResult> CopyFromUri(
+        const std::string& sourceUri,
+        const CopyBlobFromUriOptions& options = CopyBlobFromUriOptions(),
+        const Azure::Core::Context& context = Azure::Core::Context()) const;
+
+    /**
      * @brief Copies data at from the source to this blob.
      *
      * @param sourceUri
@@ -347,6 +364,48 @@ namespace Azure { namespace Storage { namespace Blobs {
      */
     Azure::Response<std::map<std::string, std::string>> GetTags(
         const GetBlobTagsOptions& options = GetBlobTagsOptions(),
+        const Azure::Core::Context& context = Azure::Core::Context()) const;
+
+    /**
+     * @brief Sets the immutability policy on a blob, snapshot or version. Note that Blob Versioning
+     * must be enabled on your storage account, and the blob must be in a Container with immutable
+     * storage with versioning enabled to call this API.
+     *
+     * @param immutabilityPolicy The blob immutability policy to set.
+     * @param options Optional parameters to execute this function.
+     * @param context Context for cancelling long running operations.
+     * @return The blob's immutability policy.
+     */
+    Azure::Response<Models::SetBlobImmutabilityPolicyResult> SetImmutabilityPolicy(
+        Models::BlobImmutabilityPolicy immutabilityPolicy,
+        const SetBlobImmutabilityPolicyOptions& options = SetBlobImmutabilityPolicyOptions(),
+        const Azure::Core::Context& context = Azure::Core::Context()) const;
+
+    /**
+     * @brief Deletes the Immutability Policy associated with the Blob.
+     *
+     * @param options Optional parameters to execute this function.
+     * @param context Context for cancelling long running operations.
+     * @return A DeleteBlobImmutabilityPolicyResult on successfully deleting immutability policy.
+     */
+    Azure::Response<Models::DeleteBlobImmutabilityPolicyResult> DeleteImmutabilityPolicy(
+        const DeleteBlobImmutabilityPolicyOptions& options = DeleteBlobImmutabilityPolicyOptions(),
+        const Azure::Core::Context& context = Azure::Core::Context()) const;
+
+    /**
+     * @brief Sets a legal hold on the blob. Note that Blob Versioning must be enabled on your
+     * storage account, and the blob must be in a Container with immutable storage with versioning
+     * enabled to call this API.
+     *
+     * @param hasLegalHold Set to true to set a legal hold on the blob. Set to false to remove an
+     * existing legal hold.
+     * @param options Optional parameters to execute this function.
+     * @param context Context for cancelling long running operations.
+     * @return A SetBlobLegalHoldResult on successfully setting legal hold.
+     */
+    Azure::Response<Models::SetBlobLegalHoldResult> SetLegalHold(
+        bool hasLegalHold,
+        const SetBlobLegalHoldOptions& options = SetBlobLegalHoldOptions(),
         const Azure::Core::Context& context = Azure::Core::Context()) const;
 
   protected:

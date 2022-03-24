@@ -4,7 +4,7 @@
 @PACKAGE_INIT@
 
 include(CMakeFindDependencyMacro)
-find_dependency(azure-storage-common-cpp "12.2.1")
+find_dependency(azure-storage-common-cpp "12.2.2")
 
 include("${CMAKE_CURRENT_LIST_DIR}/azure-storage-blobs-cppTargets.cmake")
 

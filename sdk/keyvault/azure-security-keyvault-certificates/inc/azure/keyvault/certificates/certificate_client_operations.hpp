@@ -23,17 +23,16 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
    * @brief Represents a create certificate long running operation
    */
   class CreateCertificateOperation final
-      : public Azure::Core::Operation<KeyVaultCertificateWithPolicy> {
+      : public Azure::Core::Operation<CertificateOperationProperties> {
 
     friend class CertificateClient;
 
   private:
     std::shared_ptr<CertificateClient> m_certificateClient;
-    KeyVaultCertificateWithPolicy m_value;
-    CertificateOperationProperties m_properties;
+    CertificateOperationProperties m_value;
     std::string m_continuationToken;
 
-    Azure::Response<KeyVaultCertificateWithPolicy> PollUntilDoneInternal(
+    Azure::Response<CertificateOperationProperties> PollUntilDoneInternal(
         std::chrono::milliseconds period,
         Azure::Core::Context& context) override;
 
@@ -47,7 +46,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
      */
     CreateCertificateOperation(
         std::shared_ptr<CertificateClient> certificateClient,
-        Azure::Response<KeyVaultCertificateWithPolicy> response);
+        Azure::Response<CertificateOperationProperties> response);
 
     CreateCertificateOperation(
         std::string resumeToken,
@@ -70,9 +69,8 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
      *
      * @return A CertificateOperationProperties object.
      */
-    KeyVaultCertificateWithPolicy Value() const override { return m_value; }
+    CertificateOperationProperties Value() const override { return m_value; }
 
-    CertificateOperationProperties Properties() const { return m_properties; }
     /**
      * @brief Get an Url as string which can be used to get the status of the
      * operation.

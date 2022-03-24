@@ -24,7 +24,7 @@ namespace Azure { namespace Storage { namespace Test {
     {
       // Create container
       auto containerClient = GetBlobContainerTestClient();
-      containerClient.Create();
+      containerClient.CreateIfNotExists();
 
       m_blobContent = std::vector<uint8_t>(static_cast<size_t>(1_KB), 'x');
       m_pageBlobClient = std::make_unique<Azure::Storage::Blobs::PageBlobClient>(

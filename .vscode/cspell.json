@@ -11,6 +11,7 @@
     "*.exe",
     "*.a",
     "*.lib",
+    ".github/CODEOWNERS",
     ".gitignore",
     ".vscode/cspell.json",
     "eng/common/**/*",
@@ -136,6 +137,20 @@
         "lcov",
         "iname",
         "mspremier"
+      ]
+    },
+    {
+      "filename": "**/eng/**",
+      "words": [
+        "TEAMPROJECTID",
+        "issecret",
+        "cppvcpkgcache"
+      ]
+    },
+    {
+      "filename": "**/sdk/attestation/**",
+      "words": [
+        "tpm"
       ]
     },
     {

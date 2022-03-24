@@ -1,0 +1,7 @@
+{
+    "name": "azure-identity-cpp",
+    "version-string": "1.0.0",
+    "dependencies": [
+        "azure-core-cpp"
+    ]
+}

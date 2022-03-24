@@ -12,6 +12,7 @@ namespace Azure { namespace Storage { namespace Test {
   protected:
     void SetUp();
     void TearDown();
+    std::string GetSas();
     void CreateDirectoryList();
 
     std::vector<Files::DataLake::Models::PathItem> ListAllPaths(

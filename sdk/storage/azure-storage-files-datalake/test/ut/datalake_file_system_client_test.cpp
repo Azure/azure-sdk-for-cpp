@@ -18,6 +18,18 @@ namespace Azure { namespace Storage { namespace Test {
 
   const size_t PathTestSize = 5;
 
+  std::string DataLakeFileSystemClientTest::GetSas()
+  {
+    Sas::DataLakeSasBuilder sasBuilder;
+    sasBuilder.Protocol = Sas::SasProtocol::HttpsAndHttp;
+    sasBuilder.ExpiresOn = std::chrono::system_clock::now() + std::chrono::hours(72);
+    sasBuilder.FileSystemName = m_fileSystemName;
+    sasBuilder.Resource = Sas::DataLakeSasResource::FileSystem;
+    sasBuilder.SetPermissions(Sas::DataLakeFileSystemSasPermissions::All);
+    return sasBuilder.GenerateSasToken(
+        *_internal::ParseConnectionString(AdlsGen2ConnectionString()).KeyCredential);
+  }
+
   void DataLakeFileSystemClientTest::CreateDirectoryList()
   {
     std::string const directoryName(GetFileSystemValidName());
@@ -553,6 +565,34 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_NO_THROW(newFileSystem.GetDirectoryClient(newDirectoryName2).GetProperties());
     newFileSystem.Delete();
     EXPECT_THROW(newDirectoryClient.GetProperties(), StorageException);
+  }
+
+  TEST_F(DataLakeFileSystemClientTest, RenameFileSasAuthentication_LIVEONLY_)
+  {
+    const std::string testName(GetTestName());
+    const std::string sourceFilename = testName + "1";
+    const std::string destinationFilename = testName + "2";
+    auto fileClient = m_fileSystemClient->GetFileClient(sourceFilename);
+    fileClient.CreateIfNotExists();
+
+    Files::DataLake::DataLakeFileSystemClient fileSystemClientSas(
+        Files::DataLake::_detail::GetDfsUrlFromUrl(m_fileSystemClient->GetUrl()) + GetSas());
+    fileSystemClientSas.RenameFile(sourceFilename, destinationFilename);
+    EXPECT_THROW(
+        m_fileSystemClient->GetFileClient(sourceFilename).GetProperties(), StorageException);
+    EXPECT_NO_THROW(m_fileSystemClient->GetFileClient(destinationFilename).GetProperties());
+
+    const std::string sourceDirectoryName = testName + "3";
+    const std::string destinationDirectoryName = testName + "4";
+    auto directoryClient = m_fileSystemClient->GetDirectoryClient(sourceDirectoryName);
+    directoryClient.CreateIfNotExists();
+
+    fileSystemClientSas.RenameDirectory(sourceDirectoryName, destinationDirectoryName);
+    EXPECT_THROW(
+        m_fileSystemClient->GetDirectoryClient(sourceDirectoryName).GetProperties(),
+        StorageException);
+    EXPECT_NO_THROW(
+        m_fileSystemClient->GetDirectoryClient(destinationDirectoryName).GetProperties());
   }
 
 }}} // namespace Azure::Storage::Test

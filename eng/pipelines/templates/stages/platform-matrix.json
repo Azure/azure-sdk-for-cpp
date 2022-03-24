@@ -16,7 +16,6 @@
             "StaticConfigs": {
                 "_": {
                     "Pool": "Azure Pipelines",
-                    "VcpkgInstall": "curl[ssl] libxml2 openssl",
                     "BuildArgs": "-j 10",
                     "VCPKG_DEFAULT_TRIPLET": "x64-osx",
                     "CmakeArgs": " -DBUILD_TESTING=ON -DBUILD_PERFORMANCE_TESTS=ON -DRUN_LONG_UNIT_TESTS=ON -DBUILD_TRANSPORT_CURL=ON",
@@ -37,24 +36,21 @@
                 "Windows2019": {
                     "OSVmImage": "MMS2019",
                     "Pool": "azsdk-pool-mms-win-2019-general",
-                    "BuildArgs": "--parallel 8",
                     "CMAKE_GENERATOR": "Visual Studio 16 2019"
                 }
             },
             "TargetPlatform": {
                 "Win32Api_curl": {
-                    "VcpkgInstall": "curl[winssl] openssl",
                     "CmakeArgs": " -DBUILD_TRANSPORT_CURL=ON"
                 },
                 "Win32Api_release_curl": {
-                    "VcpkgInstall": "curl[winssl] openssl",
                     "CmakeArgs": " -DBUILD_TESTING=ON -DBUILD_PERFORMANCE_TESTS=ON -DRUN_LONG_UNIT_TESTS=ON -DBUILD_TRANSPORT_CURL=ON",
-                    "CMAKE_BUILD_TYPE": "Release",
+                    "BuildArgs": "--parallel 8 --config Release",
                     "PublishMapFiles": "true"
                 },
                 "Win32Api_debug_tests": {
-                    "VcpkgInstall": "curl[winssl] openssl",
                     "CmakeArgs": " -DBUILD_TESTING=ON -DBUILD_PERFORMANCE_TESTS=ON -DRUN_LONG_UNIT_TESTS=ON -DBUILD_TRANSPORT_CURL=ON -DBUILD_TRANSPORT_WINHTTP=ON",
+                    "BuildArgs": "--parallel 8 --config Debug",
                     "PublishMapFiles": "true"
                 }
             },
@@ -74,7 +70,6 @@
                 "Windows2019": {
                     "OSVmImage": "MMS2019",
                     "Pool": "azsdk-pool-mms-win-2019-general",
-                    "BuildArgs": "--parallel 8",
                     "CMAKE_GENERATOR": "Visual Studio 16 2019",
                     "CmakeArgs": " -DBUILD_TRANSPORT_WINHTTP=ON ",
                     "PublishMapFiles": "true"
@@ -84,13 +79,14 @@
                 "UWP_debug": {
                     "VcpkgInstall": "openssl",
                     "CMAKE_SYSTEM_NAME": "WindowsStore",
-                    "CMAKE_SYSTEM_VERSION": "10.0"
+                    "CMAKE_SYSTEM_VERSION": "10.0",
+                    "BuildArgs": "--parallel 8 --config Debug"
                 },
                 "UWP_release": {
                     "VcpkgInstall": "openssl",
                     "CMAKE_SYSTEM_NAME": "WindowsStore",
                     "CMAKE_SYSTEM_VERSION": "10.0",
-                    "CMAKE_BUILD_TYPE": "Release"
+                    "BuildArgs": "--parallel 8 --config Release"
                 }
             },
             "TargetArchitecture": {
@@ -108,7 +104,6 @@
                 "Ubuntu18": {
                     "OSVmImage": "MMSUbuntu18.04",
                     "Pool": "azsdk-pool-mms-ubuntu-1804-general",
-                    "VcpkgInstall": "curl[ssl] libxml2 openssl",
                     "VCPKG_DEFAULT_TRIPLET": "x64-linux",
                     "BuildArgs": "-j 10"
                 }
@@ -152,7 +147,6 @@
                 "Ubuntu20": {
                     "OSVmImage": "MMSUbuntu20.04",
                     "Pool": "azsdk-pool-mms-ubuntu-2004-general",
-                    "VcpkgInstall": "curl[ssl] libxml2 openssl",
                     "VCPKG_DEFAULT_TRIPLET": "x64-linux",
                     "BuildArgs": "-j 10",
                     "CC": "/usr/bin/clang-11",

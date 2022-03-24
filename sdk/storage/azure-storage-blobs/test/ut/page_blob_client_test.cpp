@@ -264,62 +264,66 @@ namespace Azure { namespace Storage { namespace Test {
     }
   }
 
-  TEST_F(PageBlobClientTest, ContentMd5)
+  TEST_F(PageBlobClientTest, ContentHash)
   {
     auto const testName(GetTestName());
     auto pageBlobClient = GetPageBlobClient(testName);
 
-    std::vector<uint8_t> blobContent;
-    blobContent.resize(static_cast<size_t>(4_KB));
-    RandomBuffer(reinterpret_cast<char*>(&blobContent[0]), blobContent.size());
+    std::vector<uint8_t> blobContent = RandomBuffer(static_cast<size_t>(4_KB));
+    const std::vector<uint8_t> contentMd5
+        = Azure::Core::Cryptography::Md5Hash().Final(blobContent.data(), blobContent.size());
+    const std::vector<uint8_t> contentCrc64
+        = Azure::Storage::Crc64Hash().Final(blobContent.data(), blobContent.size());
 
-    pageBlobClient.Create(blobContent.size(), m_blobUploadOptions);
-    auto pageContent = Azure::Core::IO::MemoryBodyStream(blobContent.data(), blobContent.size());
+    pageBlobClient.Create(blobContent.size());
+    auto contentStream = Azure::Core::IO::MemoryBodyStream(blobContent.data(), blobContent.size());
+    pageBlobClient.UploadPages(0, contentStream);
 
-    Blobs::UploadPagesOptions options;
-    ContentHash hash;
-    hash.Algorithm = HashAlgorithm::Md5;
+    auto pageBlobClient2 = GetPageBlobClient(testName + "2");
+    pageBlobClient2.Create(blobContent.size());
 
-    {
-      Azure::Core::Cryptography::Md5Hash instance;
-      hash.Value = instance.Final(blobContent.data(), blobContent.size());
-    }
-    options.TransactionalContentHash = hash;
-    EXPECT_NO_THROW(pageBlobClient.UploadPages(0, pageContent, options));
+    Blobs::UploadPagesOptions options1;
+    options1.TransactionalContentHash = ContentHash();
+    options1.TransactionalContentHash.Value().Algorithm = HashAlgorithm::Md5;
+    options1.TransactionalContentHash.Value().Value = Azure::Core::Convert::Base64Decode(DummyMd5);
+    contentStream.Rewind();
+    EXPECT_THROW(pageBlobClient2.UploadPages(0, contentStream, options1), StorageException);
+    options1.TransactionalContentHash.Value().Value = contentMd5;
+    contentStream.Rewind();
+    EXPECT_NO_THROW(pageBlobClient2.UploadPages(0, contentStream, options1));
+    options1.TransactionalContentHash.Value().Algorithm = HashAlgorithm::Crc64;
+    options1.TransactionalContentHash.Value().Value
+        = Azure::Core::Convert::Base64Decode(DummyCrc64);
+    contentStream.Rewind();
+    EXPECT_THROW(pageBlobClient2.UploadPages(0, contentStream, options1), StorageException);
+    options1.TransactionalContentHash.Value().Value = contentCrc64;
+    contentStream.Rewind();
+    EXPECT_NO_THROW(pageBlobClient2.UploadPages(0, contentStream, options1));
 
-    pageContent.Rewind();
-    hash.Value = Azure::Core::Convert::Base64Decode(DummyMd5);
-    options.TransactionalContentHash = hash;
-    EXPECT_THROW(pageBlobClient.UploadPages(0, pageContent, options), StorageException);
-  }
-
-  TEST_F(PageBlobClientTest, ContentCrc64)
-  {
-    auto const testName(GetTestName());
-    auto pageBlobClient = GetPageBlobClient(testName);
-
-    std::vector<uint8_t> blobContent;
-    blobContent.resize(static_cast<size_t>(4_KB));
-    RandomBuffer(reinterpret_cast<char*>(&blobContent[0]), blobContent.size());
-
-    auto pageContent = Azure::Core::IO::MemoryBodyStream(blobContent.data(), blobContent.size());
-    pageBlobClient.Create(blobContent.size(), m_blobUploadOptions);
-
-    Blobs::UploadPagesOptions options;
-    ContentHash hash;
-    hash.Algorithm = HashAlgorithm::Crc64;
-
-    {
-      Crc64Hash instance;
-      hash.Value = instance.Final(blobContent.data(), blobContent.size());
-    }
-    options.TransactionalContentHash = hash;
-    EXPECT_NO_THROW(pageBlobClient.UploadPages(0, pageContent, options));
-
-    pageContent.Rewind();
-    hash.Value = Azure::Core::Convert::Base64Decode(DummyCrc64);
-    options.TransactionalContentHash = hash;
-    EXPECT_THROW(pageBlobClient.UploadPages(0, pageContent, options), StorageException);
+    Blobs::UploadPagesFromUriOptions options2;
+    Azure::Core::Http::HttpRange sourceRange;
+    sourceRange.Offset = 0;
+    sourceRange.Length = blobContent.size();
+    options2.TransactionalContentHash = ContentHash();
+    options2.TransactionalContentHash.Value().Algorithm = HashAlgorithm::Md5;
+    options2.TransactionalContentHash.Value().Value = Azure::Core::Convert::Base64Decode(DummyMd5);
+    EXPECT_THROW(
+        pageBlobClient2.UploadPagesFromUri(
+            0, pageBlobClient.GetUrl() + GetSas(), sourceRange, options2),
+        StorageException);
+    options2.TransactionalContentHash.Value().Value = contentMd5;
+    EXPECT_NO_THROW(pageBlobClient2.UploadPagesFromUri(
+        0, pageBlobClient.GetUrl() + GetSas(), sourceRange, options2));
+    options2.TransactionalContentHash.Value().Algorithm = HashAlgorithm::Crc64;
+    options2.TransactionalContentHash.Value().Value
+        = Azure::Core::Convert::Base64Decode(DummyCrc64);
+    // EXPECT_THROW(
+    //    pageBlobClient2.UploadPagesFromUri(
+    //        0, pageBlobClient.GetUrl() + GetSas(), sourceRange, options2),
+    //    StorageException);
+    options2.TransactionalContentHash.Value().Value = contentCrc64;
+    EXPECT_NO_THROW(pageBlobClient2.UploadPagesFromUri(
+        0, pageBlobClient.GetUrl() + GetSas(), sourceRange, options2));
   }
 
   TEST_F(PageBlobClientTest, CreateIfNotExists)

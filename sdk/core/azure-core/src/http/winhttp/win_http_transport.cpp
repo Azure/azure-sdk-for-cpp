@@ -267,6 +267,17 @@ void WinHttpTransport::CreateSessionHandle(std::unique_ptr<_detail::HandleManage
       &tcp_false_start,
       sizeof(tcp_false_start));
 #endif
+
+  // Enforce TLS version 1.2
+  auto tlsOption = WINHTTP_FLAG_SECURE_PROTOCOL_TLS1_2;
+  if (!WinHttpSetOption(
+          handleManager->m_sessionHandle,
+          WINHTTP_OPTION_SECURE_PROTOCOLS,
+          &tlsOption,
+          sizeof(tlsOption)))
+  {
+    GetErrorAndThrow("Error while enforcing TLS 1.2 for connection request.");
+  }
 }
 
 void WinHttpTransport::CreateConnectionHandle(
@@ -345,6 +356,16 @@ void WinHttpTransport::CreateRequestHandle(std::unique_ptr<_detail::HandleManage
             0))
     {
       GetErrorAndThrow("Error while setting client cert context to ignore..");
+    }
+  }
+
+  if (m_options.IgnoreUnknownServerCert)
+  {
+    auto option = SECURITY_FLAG_IGNORE_UNKNOWN_CA;
+    if (!WinHttpSetOption(
+            handleManager->m_requestHandle, WINHTTP_OPTION_SECURITY_FLAGS, &option, sizeof(option)))
+    {
+      GetErrorAndThrow("Error while setting ignore unknown server certificate..");
     }
   }
 }

@@ -6,7 +6,6 @@
 #include <gtest/gtest.h>
 #include <random>
 
-// cspell: words ECDS
 namespace Azure { namespace Security { namespace Attestation { namespace Test {
   using namespace Azure::Security::Attestation::_detail;
   using namespace Azure::Core::Diagnostics::_internal;
@@ -285,6 +284,9 @@ qQKwhjIj5sw3iOCKAiAUEIuF2ylJk2KDexNEW7t/zGmnBT0FgCRwdvKAh8S2EQ==
 
     std::string certThumbprint(x509cert->GetThumbprint());
     EXPECT_FALSE(certThumbprint.empty());
+
+    EXPECT_EQ("RSA", x509cert->GetKeyType());
+    EXPECT_EQ("RS256", x509cert->GetAlgorithm());
   }
   TEST(CryptoTests, CreateEcdsX509Certificate)
   {
@@ -301,6 +303,8 @@ qQKwhjIj5sw3iOCKAiAUEIuF2ylJk2KDexNEW7t/zGmnBT0FgCRwdvKAh8S2EQ==
 
     std::string certThumbprint(x509cert->GetThumbprint());
     EXPECT_FALSE(certThumbprint.empty());
+    EXPECT_EQ("EC", x509cert->GetKeyType());
+    EXPECT_EQ("EC", x509cert->GetAlgorithm());
   }
 
 }}}} // namespace Azure::Security::Attestation::Test

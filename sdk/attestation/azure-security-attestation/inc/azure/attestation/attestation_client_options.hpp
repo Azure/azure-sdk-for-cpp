@@ -15,6 +15,8 @@
 
 namespace Azure { namespace Security { namespace Attestation {
 
+  /** @brief Version to be used when communicating with the Attestation service.
+   */
   class ServiceVersion final {
   private:
     std::string m_version;
@@ -51,9 +53,12 @@ namespace Azure { namespace Security { namespace Attestation {
    * @brief The TokenValidationCallbackFn represents a callback which is called to allow the caller
    *  to perform additional token validation options beyond the validations performed by the
    * attestation SDK.
+   *
+   * @param token AttestationToken returned by the attestation service.
+   * @param tokenSigner AttestationSigner which signed the AttestationToken.
    */
   using TokenValidationCallbackFn = std::function<
-      void(std::string const& rawToken, Models::AttestationSigner const& tokenSigner)>;
+      void(Models::AttestationToken<> const& token, Models::AttestationSigner const& tokenSigner)>;
 
   /** @brief The AttestationTokenValidationOptions represents a set of options which control how
    * attestation tokens are validated. */
@@ -102,6 +107,14 @@ namespace Azure { namespace Security { namespace Attestation {
 
     /** @brief The TokenValidationCallback specifies a callback function which can perform
      * additional token validation actions.
+     *
+     * This callback is called to allow the client to perform additional validations of the
+     * attestation token beyond those normally performed by the attestation service.
+     *
+     * Possible additional validations include validating the attestation token certificate with the
+     * [oe_verify_attestation_certificate
+     * API](https://openenclave.github.io/openenclave/api/enclave_8h_a3b75c5638360adca181a0d945b45ad86.html#a3b75c5638360adca181a0d945b45ad86),
+     * verifying that the certificate issuer matches the expected certificate issuer, etc.
      */
     TokenValidationCallbackFn ValidationCallback;
   };
@@ -111,7 +124,11 @@ namespace Azure { namespace Security { namespace Attestation {
    */
   struct AttestationClientOptions final : public Azure::Core::_internal::ClientOptions
   {
+    /** @brief Version to use when communicating with the attestation service.
+     */
     ServiceVersion Version;
+    /** @brief Options sent when validating tokens received by the attestation service.
+     */
     AttestationTokenValidationOptions TokenValidationOptions;
     /**
      * @brief Construct a new Attestation Client Options object.
@@ -134,7 +151,11 @@ namespace Azure { namespace Security { namespace Attestation {
    */
   struct AttestationAdministrationClientOptions final : public Azure::Core::_internal::ClientOptions
   {
+    /** @brief Version to use when communicating with the attestation service.
+     */
     ServiceVersion Version;
+    /** @brief Options sent when validating tokens received by the attestation service.
+     */
     AttestationTokenValidationOptions TokenValidationOptions;
     /**
      * @brief Construct a new Attestation Client Options object.
@@ -150,6 +171,16 @@ namespace Azure { namespace Security { namespace Attestation {
           TokenValidationOptions(tokenValidationOptions)
     {
     }
+  };
+
+  /** @brief Attestation Validation Collateral
+   *
+   * This structure contains all the information needed to validate the response from the
+   * attestation service.
+   *
+   */
+  class AttestationValidationCollateral final {
+    std::vector<Models::AttestationSigner> m_attestationSigners;
   };
 
   /** @brief The AttestationDataType represents how the attestation service should interpret the
@@ -275,6 +306,61 @@ namespace Azure { namespace Security { namespace Attestation {
   /** @brief Parameters sent to the attestation service when retrieving an attestation policy.
    */
   struct GetPolicyOptions final
+  {
+    /** @brief Specifies the options which should be used to validate the attestation token returned
+     * by the attestation service.
+     * @details If not provided by the caller, the token validation options
+     * specified when the @{link AttestationAdministrationClient} was created will be used.
+     */
+    Azure::Nullable<AttestationTokenValidationOptions> TokenValidationOptions;
+  };
+
+  /** @brief Parameters sent to the attestation service when setting an attestation policy.
+   */
+  struct SetPolicyOptions final
+  {
+    /** @brief Optional Signing Key which is used to sign the SetPolicy request.
+     */
+    Azure::Nullable<AttestationSigningKey> SigningKey;
+
+    /** @brief Specifies the options which should be used to validate the attestation token returned
+     * by the attestation service.
+     * @details If not provided by the caller, the token validation options
+     * specified when the @{link AttestationAdministrationClient} was created will be used.
+     */
+    Azure::Nullable<AttestationTokenValidationOptions> TokenValidationOptions;
+  };
+
+  /** @brief Parameters sent to the attestation service when retrieving the list of policy
+   * management certificates.
+   */
+  struct GetPolicyManagementCertificatesOptions final
+  {
+    /** @brief Specifies the options which should be used to validate the attestation token returned
+     * by the attestation service.
+     * @details If not provided by the caller, the token validation options
+     * specified when the @{link AttestationAdministrationClient} was created will be used.
+     */
+    Azure::Nullable<AttestationTokenValidationOptions> TokenValidationOptions{};
+  };
+
+  /** @brief Parameters sent to the attestation service when adding a new policy
+   * management certificate.
+   */
+  struct AddPolicyManagementCertificatesOptions final
+  {
+    /** @brief Specifies the options which should be used to validate the attestation token returned
+     * by the attestation service.
+     * @details If not provided by the caller, the token validation options
+     * specified when the @{link AttestationAdministrationClient} was created will be used.
+     */
+    Azure::Nullable<AttestationTokenValidationOptions> TokenValidationOptions{};
+  };
+
+  /** @brief Parameters sent to the attestation service when removing a policy
+   * management certificate.
+   */
+  struct RemovePolicyManagementCertificatesOptions final
   {
     /** @brief Specifies the options which should be used to validate the attestation token returned
      * by the attestation service.

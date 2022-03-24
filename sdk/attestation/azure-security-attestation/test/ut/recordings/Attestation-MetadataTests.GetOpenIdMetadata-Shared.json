@@ -1,0 +1,24 @@
+{
+  "networkCallRecords": [
+    {
+      "Headers": {
+        "content-type": "application/json",
+        "user-agent": "azsdk-cpp-Attestation/1.0.0-beta.1 (Windows 10 Enterprise 6.3 22000 22000.1.amd64fre.co_release.210604-1628)",
+        "x-ms-client-request-id": "1b7269b9-72d6-4af3-5855-b724b595d503"
+      },
+      "Method": "GET",
+      "Response": {
+        "BODY": "{\"response_types_supported\":[\"token\",\"none\"],\"id_token_signing_alg_values_supported\":[\"RS256\"],\"revocation_endpoint\":\"https://sharedwus.wus.attest.azure.net/revoke\",\"issuer\":\"https://sharedwus.wus.attest.azure.net\",\"jwks_uri\":\"https://sharedwus.wus.attest.azure.net/certs\",\"claims_supported\":[\"cnf\",\"nonce\",\"x-ms-ver\",\"x-ms-attestation-type\",\"x-ms-policy-hash\",\"x-ms-policy-signer\",\"x-ms-sgx-is-debuggable\",\"x-ms-sgx-mrenclave\",\"x-ms-sgx-mrsigner\",\"x-ms-sgx-svn\",\"x-ms-sgx-ehd\",\"x-ms-sgx-collateral\",\"is-debuggable\",\"sgx-mrsigner\",\"sgx-mrenclave\",\"product-id\",\"svn\",\"tee\"]}",
+        "REASON_PHRASE": "OK",
+        "STATUS_CODE": "200",
+        "content-length": "573",
+        "content-type": "application/json; charset=utf-8",
+        "date": "Fri, 18 Mar 2022 01:05:11 GMT",
+        "server": "Kestrel",
+        "x-ms-maa-service-version": "1.10.01885.0001",
+        "x-ms-request-id": "00-d2dd922c6951af1d9f8f2c29ee909c8a-0000000000000000-00"
+      },
+      "Url": "https://REDACTED.wus.attest.azure.net/.well-known/openid-configuration"
+    }
+  ]
+}
