@@ -25,7 +25,7 @@
         "x-ms-request-id": "a4cbb007-6ce9-45cf-8926-3fa65be28023",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/keys/GetDeletedKeys0/create?api-version=7.2"
+      "Url": "https://REDACTED.vault.azure.net/keys/GetDeletedKeys0/create?api-version=7.3"
     },
     {
       "Headers": {
@@ -52,7 +52,7 @@
         "x-ms-request-id": "ab782c34-9bd5-44c3-8c9d-aecf6d60630f",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/keys/GetDeletedKeys1/create?api-version=7.2"
+      "Url": "https://REDACTED.vault.azure.net/keys/GetDeletedKeys1/create?api-version=7.3"
     },
     {
       "Headers": {
@@ -79,7 +79,7 @@
         "x-ms-request-id": "9fef4f64-98fb-47b5-b874-7022fdec554b",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/keys/GetDeletedKeys2/create?api-version=7.2"
+      "Url": "https://REDACTED.vault.azure.net/keys/GetDeletedKeys2/create?api-version=7.3"
     },
     {
       "Headers": {
@@ -106,7 +106,7 @@
         "x-ms-request-id": "8a94fdaa-bc29-4652-a59f-49f3c18abcfe",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/keys/GetDeletedKeys3/create?api-version=7.2"
+      "Url": "https://REDACTED.vault.azure.net/keys/GetDeletedKeys3/create?api-version=7.3"
     },
     {
       "Headers": {
@@ -133,7 +133,7 @@
         "x-ms-request-id": "220550ec-f14f-4165-8698-20424fe6a657",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/keys/GetDeletedKeys4/create?api-version=7.2"
+      "Url": "https://REDACTED.vault.azure.net/keys/GetDeletedKeys4/create?api-version=7.3"
     },
     {
       "Headers": {
@@ -160,7 +160,7 @@
         "x-ms-request-id": "f65bf67d-9d86-4396-a870-ddcfaed57bdf",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/keys/GetDeletedKeys5/create?api-version=7.2"
+      "Url": "https://REDACTED.vault.azure.net/keys/GetDeletedKeys5/create?api-version=7.3"
     },
     {
       "Headers": {
@@ -187,7 +187,7 @@
         "x-ms-request-id": "20bed0e2-658d-4ff7-9c9c-0225530f3d6f",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/keys/GetDeletedKeys6/create?api-version=7.2"
+      "Url": "https://REDACTED.vault.azure.net/keys/GetDeletedKeys6/create?api-version=7.3"
     },
     {
       "Headers": {
@@ -214,7 +214,7 @@
         "x-ms-request-id": "4c1df3bf-bd37-48cf-97c5-c43d0b77430f",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/keys/GetDeletedKeys7/create?api-version=7.2"
+      "Url": "https://REDACTED.vault.azure.net/keys/GetDeletedKeys7/create?api-version=7.3"
     },
     {
       "Headers": {
@@ -241,7 +241,7 @@
         "x-ms-request-id": "3aa6a56b-9e34-41bb-82f2-39f0cf5be253",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/keys/GetDeletedKeys8/create?api-version=7.2"
+      "Url": "https://REDACTED.vault.azure.net/keys/GetDeletedKeys8/create?api-version=7.3"
     },
     {
       "Headers": {
@@ -268,7 +268,7 @@
         "x-ms-request-id": "7830cc92-8656-4d12-b323-e49acf091412",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/keys/GetDeletedKeys9/create?api-version=7.2"
+      "Url": "https://REDACTED.vault.azure.net/keys/GetDeletedKeys9/create?api-version=7.3"
     },
     {
       "Headers": {
@@ -295,7 +295,7 @@
         "x-ms-request-id": "3a0eb1a0-9f7b-4861-8024-a513ff0f2bf0",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/keys/GetDeletedKeys10/create?api-version=7.2"
+      "Url": "https://REDACTED.vault.azure.net/keys/GetDeletedKeys10/create?api-version=7.3"
     },
     {
       "Headers": {
@@ -322,7 +322,7 @@
         "x-ms-request-id": "7c385585-fbc6-45ea-b583-41db2512b02d",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/keys/GetDeletedKeys11/create?api-version=7.2"
+      "Url": "https://REDACTED.vault.azure.net/keys/GetDeletedKeys11/create?api-version=7.3"
     },
     {
       "Headers": {
@@ -349,7 +349,7 @@
         "x-ms-request-id": "3d222851-c77c-4777-8547-49ecc6197db0",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/keys/GetDeletedKeys12/create?api-version=7.2"
+      "Url": "https://REDACTED.vault.azure.net/keys/GetDeletedKeys12/create?api-version=7.3"
     },
     {
       "Headers": {
@@ -376,7 +376,7 @@
         "x-ms-request-id": "1445fe1d-a589-4a70-b523-a7154d332ca9",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/keys/GetDeletedKeys13/create?api-version=7.2"
+      "Url": "https://REDACTED.vault.azure.net/keys/GetDeletedKeys13/create?api-version=7.3"
     },
     {
       "Headers": {
@@ -403,7 +403,7 @@
         "x-ms-request-id": "3a6cede8-9243-4071-b465-6a3f561ce84d",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/keys/GetDeletedKeys14/create?api-version=7.2"
+      "Url": "https://REDACTED.vault.azure.net/keys/GetDeletedKeys14/create?api-version=7.3"
     },
     {
       "Headers": {
@@ -430,7 +430,7 @@
         "x-ms-request-id": "a2fb97ec-8fed-4701-8541-94b72deeb20c",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/keys/GetDeletedKeys15/create?api-version=7.2"
+      "Url": "https://REDACTED.vault.azure.net/keys/GetDeletedKeys15/create?api-version=7.3"
     },
     {
       "Headers": {
@@ -457,7 +457,7 @@
         "x-ms-request-id": "f3350444-4d91-4be5-9dc3-df0d270b0c7c",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/keys/GetDeletedKeys16/create?api-version=7.2"
+      "Url": "https://REDACTED.vault.azure.net/keys/GetDeletedKeys16/create?api-version=7.3"
     },
     {
       "Headers": {
@@ -484,7 +484,7 @@
         "x-ms-request-id": "3945e189-3ba9-4f4f-82b3-ae2c2d80ccc3",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/keys/GetDeletedKeys17/create?api-version=7.2"
+      "Url": "https://REDACTED.vault.azure.net/keys/GetDeletedKeys17/create?api-version=7.3"
     },
     {
       "Headers": {
@@ -511,7 +511,7 @@
         "x-ms-request-id": "dc3d4e42-72d5-4190-b420-013b13fe121f",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/keys/GetDeletedKeys18/create?api-version=7.2"
+      "Url": "https://REDACTED.vault.azure.net/keys/GetDeletedKeys18/create?api-version=7.3"
     },
     {
       "Headers": {
@@ -538,7 +538,7 @@
         "x-ms-request-id": "f61a0ffb-9917-4ccc-b117-68f0b0cc5639",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/keys/GetDeletedKeys19/create?api-version=7.2"
+      "Url": "https://REDACTED.vault.azure.net/keys/GetDeletedKeys19/create?api-version=7.3"
     },
     {
       "Headers": {
@@ -565,7 +565,7 @@
         "x-ms-request-id": "5b6f71a9-bb42-45b6-9311-71a6a69d9af1",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/keys/GetDeletedKeys20/create?api-version=7.2"
+      "Url": "https://REDACTED.vault.azure.net/keys/GetDeletedKeys20/create?api-version=7.3"
     },
     {
       "Headers": {
@@ -592,7 +592,7 @@
         "x-ms-request-id": "1c659811-d07a-462f-9a3d-554dd22c23de",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/keys/GetDeletedKeys21/create?api-version=7.2"
+      "Url": "https://REDACTED.vault.azure.net/keys/GetDeletedKeys21/create?api-version=7.3"
     },
     {
       "Headers": {
@@ -619,7 +619,7 @@
         "x-ms-request-id": "3470bde4-f6cb-4969-a5fd-58c669415a95",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/keys/GetDeletedKeys22/create?api-version=7.2"
+      "Url": "https://REDACTED.vault.azure.net/keys/GetDeletedKeys22/create?api-version=7.3"
     },
     {
       "Headers": {
@@ -646,7 +646,7 @@
         "x-ms-request-id": "0a51263f-cc02-4590-a0df-0bacbc0b9495",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/keys/GetDeletedKeys23/create?api-version=7.2"
+      "Url": "https://REDACTED.vault.azure.net/keys/GetDeletedKeys23/create?api-version=7.3"
     },
     {
       "Headers": {
@@ -673,7 +673,7 @@
         "x-ms-request-id": "1ff4d450-dcdb-435d-a982-949e58efa360",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/keys/GetDeletedKeys24/create?api-version=7.2"
+      "Url": "https://REDACTED.vault.azure.net/keys/GetDeletedKeys24/create?api-version=7.3"
     },
     {
       "Headers": {
@@ -700,7 +700,7 @@
         "x-ms-request-id": "e339e568-9993-4dd7-8735-6ac867ee3fb3",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/keys/GetDeletedKeys25/create?api-version=7.2"
+      "Url": "https://REDACTED.vault.azure.net/keys/GetDeletedKeys25/create?api-version=7.3"
     },
     {
       "Headers": {
@@ -727,7 +727,7 @@
         "x-ms-request-id": "e4e71539-208d-4b62-b93b-701be398efb6",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/keys/GetDeletedKeys26/create?api-version=7.2"
+      "Url": "https://REDACTED.vault.azure.net/keys/GetDeletedKeys26/create?api-version=7.3"
     },
     {
       "Headers": {
@@ -754,7 +754,7 @@
         "x-ms-request-id": "164fd5c2-39c9-4e30-84e0-44988098526d",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/keys/GetDeletedKeys27/create?api-version=7.2"
+      "Url": "https://REDACTED.vault.azure.net/keys/GetDeletedKeys27/create?api-version=7.3"
     },
     {
       "Headers": {
@@ -781,7 +781,7 @@
         "x-ms-request-id": "296717c6-8b49-4fdf-b27c-e815ab6f8038",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/keys/GetDeletedKeys28/create?api-version=7.2"
+      "Url": "https://REDACTED.vault.azure.net/keys/GetDeletedKeys28/create?api-version=7.3"
     },
     {
       "Headers": {
@@ -808,7 +808,7 @@
         "x-ms-request-id": "9c75d1b3-3777-43fa-8f7d-fca6626baa47",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/keys/GetDeletedKeys29/create?api-version=7.2"
+      "Url": "https://REDACTED.vault.azure.net/keys/GetDeletedKeys29/create?api-version=7.3"
     },
     {
       "Headers": {
@@ -835,7 +835,7 @@
         "x-ms-request-id": "52a550c0-ecea-4414-b1c4-2cef903c0667",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/keys/GetDeletedKeys30/create?api-version=7.2"
+      "Url": "https://REDACTED.vault.azure.net/keys/GetDeletedKeys30/create?api-version=7.3"
     },
     {
       "Headers": {
@@ -862,7 +862,7 @@
         "x-ms-request-id": "4bfb7fac-fd48-4ad5-9bd3-c7b9d3002ada",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/keys/GetDeletedKeys31/create?api-version=7.2"
+      "Url": "https://REDACTED.vault.azure.net/keys/GetDeletedKeys31/create?api-version=7.3"
     },
     {
       "Headers": {
@@ -889,7 +889,7 @@
         "x-ms-request-id": "663655cc-dbdd-44de-a80c-ba5c72647338",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/keys/GetDeletedKeys32/create?api-version=7.2"
+      "Url": "https://REDACTED.vault.azure.net/keys/GetDeletedKeys32/create?api-version=7.3"
     },
     {
       "Headers": {
@@ -916,7 +916,7 @@
         "x-ms-request-id": "316e53de-148c-4148-848a-1c7010b3032d",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/keys/GetDeletedKeys33/create?api-version=7.2"
+      "Url": "https://REDACTED.vault.azure.net/keys/GetDeletedKeys33/create?api-version=7.3"
     },
     {
       "Headers": {
@@ -943,7 +943,7 @@
         "x-ms-request-id": "43f40fd8-9b9f-424f-a93e-71852b69c8b4",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/keys/GetDeletedKeys34/create?api-version=7.2"
+      "Url": "https://REDACTED.vault.azure.net/keys/GetDeletedKeys34/create?api-version=7.3"
     },
     {
       "Headers": {
@@ -970,7 +970,7 @@
         "x-ms-request-id": "5008b9e2-642c-4645-aa86-50f5b0afe0e8",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/keys/GetDeletedKeys35/create?api-version=7.2"
+      "Url": "https://REDACTED.vault.azure.net/keys/GetDeletedKeys35/create?api-version=7.3"
     },
     {
       "Headers": {
@@ -997,7 +997,7 @@
         "x-ms-request-id": "9f859c46-7ec8-46e1-8b47-116f8d44d360",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/keys/GetDeletedKeys36/create?api-version=7.2"
+      "Url": "https://REDACTED.vault.azure.net/keys/GetDeletedKeys36/create?api-version=7.3"
     },
     {
       "Headers": {
@@ -1024,7 +1024,7 @@
         "x-ms-request-id": "e1c822c3-1f81-4112-9b2b-a4c856b4646b",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/keys/GetDeletedKeys37/create?api-version=7.2"
+      "Url": "https://REDACTED.vault.azure.net/keys/GetDeletedKeys37/create?api-version=7.3"
     },
     {
       "Headers": {
@@ -1051,7 +1051,7 @@
         "x-ms-request-id": "2d0d4bf6-7ad9-4ec4-a75e-e9a5f668a8ef",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/keys/GetDeletedKeys38/create?api-version=7.2"
+      "Url": "https://REDACTED.vault.azure.net/keys/GetDeletedKeys38/create?api-version=7.3"
     },
     {
       "Headers": {
@@ -1078,7 +1078,7 @@
         "x-ms-request-id": "1d73b399-3c67-4eaf-ba3f-c01a04780b59",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/keys/GetDeletedKeys39/create?api-version=7.2"
+      "Url": "https://REDACTED.vault.azure.net/keys/GetDeletedKeys39/create?api-version=7.3"
     },
     {
       "Headers": {
@@ -1105,7 +1105,7 @@
         "x-ms-request-id": "48ae06be-c929-43f1-9cef-56739880cac0",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/keys/GetDeletedKeys40/create?api-version=7.2"
+      "Url": "https://REDACTED.vault.azure.net/keys/GetDeletedKeys40/create?api-version=7.3"
     },
     {
       "Headers": {
@@ -1132,7 +1132,7 @@
         "x-ms-request-id": "2c893367-2794-4105-ba7a-5a1d616dacdf",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/keys/GetDeletedKeys41/create?api-version=7.2"
+      "Url": "https://REDACTED.vault.azure.net/keys/GetDeletedKeys41/create?api-version=7.3"
     },
     {
       "Headers": {
@@ -1159,7 +1159,7 @@
         "x-ms-request-id": "cbc3e319-ab85-4e85-aa6b-39a33b8ea200",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/keys/GetDeletedKeys42/create?api-version=7.2"
+      "Url": "https://REDACTED.vault.azure.net/keys/GetDeletedKeys42/create?api-version=7.3"
     },
     {
       "Headers": {
@@ -1186,7 +1186,7 @@
         "x-ms-request-id": "abcc1953-1f92-4861-8c92-4512f8e6156f",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/keys/GetDeletedKeys43/create?api-version=7.2"
+      "Url": "https://REDACTED.vault.azure.net/keys/GetDeletedKeys43/create?api-version=7.3"
     },
     {
       "Headers": {
@@ -1213,7 +1213,7 @@
         "x-ms-request-id": "a11fcde8-aa6d-465b-a370-340410fd574a",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/keys/GetDeletedKeys44/create?api-version=7.2"
+      "Url": "https://REDACTED.vault.azure.net/keys/GetDeletedKeys44/create?api-version=7.3"
     },
     {
       "Headers": {
@@ -1240,7 +1240,7 @@
         "x-ms-request-id": "49c3b774-ddde-4286-b86b-e572d74bb0c0",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/keys/GetDeletedKeys45/create?api-version=7.2"
+      "Url": "https://REDACTED.vault.azure.net/keys/GetDeletedKeys45/create?api-version=7.3"
     },
     {
       "Headers": {
@@ -1267,7 +1267,7 @@
         "x-ms-request-id": "aff47284-7629-43d3-b878-c263807bf287",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/keys/GetDeletedKeys46/create?api-version=7.2"
+      "Url": "https://REDACTED.vault.azure.net/keys/GetDeletedKeys46/create?api-version=7.3"
     },
     {
       "Headers": {
@@ -1294,7 +1294,7 @@
         "x-ms-request-id": "27c21d80-cd2d-44ec-82ee-b58bcc09b6f4",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/keys/GetDeletedKeys47/create?api-version=7.2"
+      "Url": "https://REDACTED.vault.azure.net/keys/GetDeletedKeys47/create?api-version=7.3"
     },
     {
       "Headers": {
@@ -1321,7 +1321,7 @@
         "x-ms-request-id": "bc137e13-9d7b-423c-95b1-be7c73894abe",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/keys/GetDeletedKeys48/create?api-version=7.2"
+      "Url": "https://REDACTED.vault.azure.net/keys/GetDeletedKeys48/create?api-version=7.3"
     },
     {
       "Headers": {
@@ -1348,7 +1348,7 @@
         "x-ms-request-id": "62ba522e-cf2e-4156-acb3-e04f58afec20",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/keys/GetDeletedKeys49/create?api-version=7.2"
+      "Url": "https://REDACTED.vault.azure.net/keys/GetDeletedKeys49/create?api-version=7.3"
     },
     {
       "Headers": {
@@ -1374,7 +1374,7 @@
         "x-ms-request-id": "38c7f386-81b8-4e83-93b9-2d60380227aa",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/keys/GetDeletedKeys0?api-version=7.2"
+      "Url": "https://REDACTED.vault.azure.net/keys/GetDeletedKeys0?api-version=7.3"
     },
     {
       "Headers": {
@@ -1400,7 +1400,7 @@
         "x-ms-request-id": "d58b3fc2-581d-4554-9396-f18b2ad3f42a",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/keys/GetDeletedKeys1?api-version=7.2"
+      "Url": "https://REDACTED.vault.azure.net/keys/GetDeletedKeys1?api-version=7.3"
     },
     {
       "Headers": {
@@ -1426,7 +1426,7 @@
         "x-ms-request-id": "9b368236-b7af-428f-b865-c14f67ac4116",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/keys/GetDeletedKeys2?api-version=7.2"
+      "Url": "https://REDACTED.vault.azure.net/keys/GetDeletedKeys2?api-version=7.3"
     },
     {
       "Headers": {
@@ -1452,7 +1452,7 @@
         "x-ms-request-id": "f721ad8a-c1d8-4f97-86e2-0c995d993774",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/keys/GetDeletedKeys3?api-version=7.2"
+      "Url": "https://REDACTED.vault.azure.net/keys/GetDeletedKeys3?api-version=7.3"
     },
     {
       "Headers": {
@@ -1478,7 +1478,7 @@
         "x-ms-request-id": "909b4739-2f48-4890-aa4e-450ed9f26acc",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/keys/GetDeletedKeys4?api-version=7.2"
+      "Url": "https://REDACTED.vault.azure.net/keys/GetDeletedKeys4?api-version=7.3"
     },
     {
       "Headers": {
@@ -1504,7 +1504,7 @@
         "x-ms-request-id": "56a96248-5a5d-4ed0-8f45-ca8e9ebc28bb",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/keys/GetDeletedKeys5?api-version=7.2"
+      "Url": "https://REDACTED.vault.azure.net/keys/GetDeletedKeys5?api-version=7.3"
     },
     {
       "Headers": {
@@ -1530,7 +1530,7 @@
         "x-ms-request-id": "f2531d0a-60c3-460f-909a-c2fe4015ca00",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/keys/GetDeletedKeys6?api-version=7.2"
+      "Url": "https://REDACTED.vault.azure.net/keys/GetDeletedKeys6?api-version=7.3"
     },
     {
       "Headers": {
@@ -1556,7 +1556,7 @@
         "x-ms-request-id": "1c38db47-4d91-467a-84da-3e5c7a5a64c5",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/keys/GetDeletedKeys7?api-version=7.2"
+      "Url": "https://REDACTED.vault.azure.net/keys/GetDeletedKeys7?api-version=7.3"
     },
     {
       "Headers": {
@@ -1582,7 +1582,7 @@
         "x-ms-request-id": "7d482408-3499-453e-9838-81b3f1cdfb2b",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/keys/GetDeletedKeys8?api-version=7.2"
+      "Url": "https://REDACTED.vault.azure.net/keys/GetDeletedKeys8?api-version=7.3"
     },
     {
       "Headers": {
@@ -1608,7 +1608,7 @@
         "x-ms-request-id": "292c13e6-5a55-4752-a3bd-669b9df5dfd4",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/keys/GetDeletedKeys9?api-version=7.2"
+      "Url": "https://REDACTED.vault.azure.net/keys/GetDeletedKeys9?api-version=7.3"
     },
     {
       "Headers": {
@@ -1634,7 +1634,7 @@
         "x-ms-request-id": "86c35b22-50c8-44b4-ac33-78b00dcf8e3b",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/keys/GetDeletedKeys10?api-version=7.2"
+      "Url": "https://REDACTED.vault.azure.net/keys/GetDeletedKeys10?api-version=7.3"
     },
     {
       "Headers": {
@@ -1660,7 +1660,7 @@
         "x-ms-request-id": "a3a594c5-671c-4be5-8f85-2842f7daa6cd",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/keys/GetDeletedKeys11?api-version=7.2"
+      "Url": "https://REDACTED.vault.azure.net/keys/GetDeletedKeys11?api-version=7.3"
     },
     {
       "Headers": {
@@ -1686,7 +1686,7 @@
         "x-ms-request-id": "ee71c9c9-39d2-4ff6-9c83-c8af5261a17d",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/keys/GetDeletedKeys12?api-version=7.2"
+      "Url": "https://REDACTED.vault.azure.net/keys/GetDeletedKeys12?api-version=7.3"
     },
     {
       "Headers": {
@@ -1712,7 +1712,7 @@
         "x-ms-request-id": "9085b22d-7990-4a7c-a375-8fcc9e1cbabf",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/keys/GetDeletedKeys13?api-version=7.2"
+      "Url": "https://REDACTED.vault.azure.net/keys/GetDeletedKeys13?api-version=7.3"
     },
     {
       "Headers": {
@@ -1738,7 +1738,7 @@
         "x-ms-request-id": "99055c9d-c459-4874-b52f-1bedb6259851",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/keys/GetDeletedKeys14?api-version=7.2"
+      "Url": "https://REDACTED.vault.azure.net/keys/GetDeletedKeys14?api-version=7.3"
     },
     {
       "Headers": {
@@ -1764,7 +1764,7 @@
         "x-ms-request-id": "6031bad6-a006-44a8-8fda-f240f5e0380d",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/keys/GetDeletedKeys15?api-version=7.2"
+      "Url": "https://REDACTED.vault.azure.net/keys/GetDeletedKeys15?api-version=7.3"
     },
     {
       "Headers": {
@@ -1790,7 +1790,7 @@
         "x-ms-request-id": "1e3b4343-ca98-42ad-bf02-ffb1609cc60f",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/keys/GetDeletedKeys16?api-version=7.2"
+      "Url": "https://REDACTED.vault.azure.net/keys/GetDeletedKeys16?api-version=7.3"
     },
     {
       "Headers": {
@@ -1816,7 +1816,7 @@
         "x-ms-request-id": "bb9d672a-67b1-4773-8049-d591c89c2b4d",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/keys/GetDeletedKeys17?api-version=7.2"
+      "Url": "https://REDACTED.vault.azure.net/keys/GetDeletedKeys17?api-version=7.3"
     },
     {
       "Headers": {
@@ -1842,7 +1842,7 @@
         "x-ms-request-id": "9f0a24bc-f5d2-4f24-90c9-db3ba720a4f6",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/keys/GetDeletedKeys18?api-version=7.2"
+      "Url": "https://REDACTED.vault.azure.net/keys/GetDeletedKeys18?api-version=7.3"
     },
     {
       "Headers": {
@@ -1868,7 +1868,7 @@
         "x-ms-request-id": "7f07464b-01dc-44ec-961f-d67962871b1d",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/keys/GetDeletedKeys19?api-version=7.2"
+      "Url": "https://REDACTED.vault.azure.net/keys/GetDeletedKeys19?api-version=7.3"
     },
     {
       "Headers": {
@@ -1894,7 +1894,7 @@
         "x-ms-request-id": "14f4b462-7f76-47f5-9d4e-81f9085473b1",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/keys/GetDeletedKeys20?api-version=7.2"
+      "Url": "https://REDACTED.vault.azure.net/keys/GetDeletedKeys20?api-version=7.3"
     },
     {
       "Headers": {
@@ -1920,7 +1920,7 @@
         "x-ms-request-id": "72b77ea6-b33d-464d-aff4-aef4b76d08df",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/keys/GetDeletedKeys21?api-version=7.2"
+      "Url": "https://REDACTED.vault.azure.net/keys/GetDeletedKeys21?api-version=7.3"
     },
     {
       "Headers": {
@@ -1946,7 +1946,7 @@
         "x-ms-request-id": "3ad49246-fc73-4011-83f0-c4a754e6e508",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/keys/GetDeletedKeys22?api-version=7.2"
+      "Url": "https://REDACTED.vault.azure.net/keys/GetDeletedKeys22?api-version=7.3"
     },
     {
       "Headers": {
@@ -1972,7 +1972,7 @@
         "x-ms-request-id": "642134ab-5b99-4ba9-b4fc-5e7968f68a0d",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/keys/GetDeletedKeys23?api-version=7.2"
+      "Url": "https://REDACTED.vault.azure.net/keys/GetDeletedKeys23?api-version=7.3"
     },
     {
       "Headers": {
@@ -1998,7 +1998,7 @@
         "x-ms-request-id": "4d6ee928-73a3-4cb0-9ab6-5ff43d5109cd",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/keys/GetDeletedKeys24?api-version=7.2"
+      "Url": "https://REDACTED.vault.azure.net/keys/GetDeletedKeys24?api-version=7.3"
     },
     {
       "Headers": {
@@ -2024,7 +2024,7 @@
         "x-ms-request-id": "bf3ce2b6-6cfb-4deb-b244-6c5e94e079c2",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/keys/GetDeletedKeys25?api-version=7.2"
+      "Url": "https://REDACTED.vault.azure.net/keys/GetDeletedKeys25?api-version=7.3"
     },
     {
       "Headers": {
@@ -2050,7 +2050,7 @@
         "x-ms-request-id": "9ee313d2-ff19-41e7-b4e6-5c1809209d52",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/keys/GetDeletedKeys26?api-version=7.2"
+      "Url": "https://REDACTED.vault.azure.net/keys/GetDeletedKeys26?api-version=7.3"
     },
     {
       "Headers": {
@@ -2076,7 +2076,7 @@
         "x-ms-request-id": "4b3ce8fe-2fb5-4406-bfbc-3f4839508abe",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/keys/GetDeletedKeys27?api-version=7.2"
+      "Url": "https://REDACTED.vault.azure.net/keys/GetDeletedKeys27?api-version=7.3"
     },
     {
       "Headers": {
@@ -2102,7 +2102,7 @@
         "x-ms-request-id": "555ec31b-40b8-47d3-8acc-703302a18b51",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/keys/GetDeletedKeys28?api-version=7.2"
+      "Url": "https://REDACTED.vault.azure.net/keys/GetDeletedKeys28?api-version=7.3"
     },
     {
       "Headers": {
@@ -2128,7 +2128,7 @@
         "x-ms-request-id": "4f21f562-6191-46f2-8c09-f2c5599b6ca0",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/keys/GetDeletedKeys29?api-version=7.2"
+      "Url": "https://REDACTED.vault.azure.net/keys/GetDeletedKeys29?api-version=7.3"
     },
     {
       "Headers": {
@@ -2154,7 +2154,7 @@
         "x-ms-request-id": "75d77c03-5b3f-4e42-82d5-4ea02e9fb729",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/keys/GetDeletedKeys30?api-version=7.2"
+      "Url": "https://REDACTED.vault.azure.net/keys/GetDeletedKeys30?api-version=7.3"
     },
     {
       "Headers": {
@@ -2180,7 +2180,7 @@
         "x-ms-request-id": "1855892f-11d8-4328-b710-f9e0fd4d4b30",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/keys/GetDeletedKeys31?api-version=7.2"
+      "Url": "https://REDACTED.vault.azure.net/keys/GetDeletedKeys31?api-version=7.3"
     },
     {
       "Headers": {
@@ -2206,7 +2206,7 @@
         "x-ms-request-id": "2b37c390-71ff-4e3c-87a3-3c5315888f8d",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/keys/GetDeletedKeys32?api-version=7.2"
+      "Url": "https://REDACTED.vault.azure.net/keys/GetDeletedKeys32?api-version=7.3"
     },
     {
       "Headers": {
@@ -2232,7 +2232,7 @@
         "x-ms-request-id": "d304b3c5-679c-4293-8193-d16387d6c711",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/keys/GetDeletedKeys33?api-version=7.2"
+      "Url": "https://REDACTED.vault.azure.net/keys/GetDeletedKeys33?api-version=7.3"
     },
     {
       "Headers": {
@@ -2258,7 +2258,7 @@
         "x-ms-request-id": "36e6b9c6-c84a-4457-9db3-b464b27cdcff",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/keys/GetDeletedKeys34?api-version=7.2"
+      "Url": "https://REDACTED.vault.azure.net/keys/GetDeletedKeys34?api-version=7.3"
     },
     {
       "Headers": {
@@ -2284,7 +2284,7 @@
         "x-ms-request-id": "60898ae0-aa2e-46c6-9aa2-81c0293b6286",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/keys/GetDeletedKeys35?api-version=7.2"
+      "Url": "https://REDACTED.vault.azure.net/keys/GetDeletedKeys35?api-version=7.3"
     },
     {
       "Headers": {
@@ -2310,7 +2310,7 @@
         "x-ms-request-id": "d09124b0-d06e-4ccd-9140-baf212d78906",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/keys/GetDeletedKeys36?api-version=7.2"
+      "Url": "https://REDACTED.vault.azure.net/keys/GetDeletedKeys36?api-version=7.3"
     },
     {
       "Headers": {
@@ -2336,7 +2336,7 @@
         "x-ms-request-id": "377938f7-37df-460d-b766-001751d4b1aa",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/keys/GetDeletedKeys37?api-version=7.2"
+      "Url": "https://REDACTED.vault.azure.net/keys/GetDeletedKeys37?api-version=7.3"
     },
     {
       "Headers": {
@@ -2362,7 +2362,7 @@
         "x-ms-request-id": "0d42314e-8ffe-4e40-ae34-63a415d09cb0",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/keys/GetDeletedKeys38?api-version=7.2"
+      "Url": "https://REDACTED.vault.azure.net/keys/GetDeletedKeys38?api-version=7.3"
     },
     {
       "Headers": {
@@ -2388,7 +2388,7 @@
         "x-ms-request-id": "bc37a71b-9564-460c-861c-b2e6ccca205c",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/keys/GetDeletedKeys39?api-version=7.2"
+      "Url": "https://REDACTED.vault.azure.net/keys/GetDeletedKeys39?api-version=7.3"
     },
     {
       "Headers": {
@@ -2414,7 +2414,7 @@
         "x-ms-request-id": "bc968df2-6675-4997-b283-815b6a4c3271",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/keys/GetDeletedKeys40?api-version=7.2"
+      "Url": "https://REDACTED.vault.azure.net/keys/GetDeletedKeys40?api-version=7.3"
     },
     {
       "Headers": {
@@ -2440,7 +2440,7 @@
         "x-ms-request-id": "fe489eb7-045c-4e42-b828-fb716b610bae",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/keys/GetDeletedKeys41?api-version=7.2"
+      "Url": "https://REDACTED.vault.azure.net/keys/GetDeletedKeys41?api-version=7.3"
     },
     {
       "Headers": {
@@ -2466,7 +2466,7 @@
         "x-ms-request-id": "e5511c56-22ce-452e-a8bf-e7600caa02af",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/keys/GetDeletedKeys42?api-version=7.2"
+      "Url": "https://REDACTED.vault.azure.net/keys/GetDeletedKeys42?api-version=7.3"
     },
     {
       "Headers": {
@@ -2492,7 +2492,7 @@
         "x-ms-request-id": "49a2f451-5b73-4988-b55d-e6cf59bdc959",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/keys/GetDeletedKeys43?api-version=7.2"
+      "Url": "https://REDACTED.vault.azure.net/keys/GetDeletedKeys43?api-version=7.3"
     },
     {
       "Headers": {
@@ -2518,7 +2518,7 @@
         "x-ms-request-id": "fc75f27a-3419-4ca5-a1c9-523bfa29cf6a",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/keys/GetDeletedKeys44?api-version=7.2"
+      "Url": "https://REDACTED.vault.azure.net/keys/GetDeletedKeys44?api-version=7.3"
     },
     {
       "Headers": {
@@ -2544,7 +2544,7 @@
         "x-ms-request-id": "6b99660d-c467-4512-867f-7dfbbe6454ab",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/keys/GetDeletedKeys45?api-version=7.2"
+      "Url": "https://REDACTED.vault.azure.net/keys/GetDeletedKeys45?api-version=7.3"
     },
     {
       "Headers": {
@@ -2570,7 +2570,7 @@
         "x-ms-request-id": "2e24df19-a361-4aca-b2d1-53939666ae17",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/keys/GetDeletedKeys46?api-version=7.2"
+      "Url": "https://REDACTED.vault.azure.net/keys/GetDeletedKeys46?api-version=7.3"
     },
     {
       "Headers": {
@@ -2596,7 +2596,7 @@
         "x-ms-request-id": "d579ad6e-4bb6-4ed8-8908-fd4299b6fcff",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/keys/GetDeletedKeys47?api-version=7.2"
+      "Url": "https://REDACTED.vault.azure.net/keys/GetDeletedKeys47?api-version=7.3"
     },
     {
       "Headers": {
@@ -2622,7 +2622,7 @@
         "x-ms-request-id": "13a886ed-f941-40d7-9dc8-103cb02b0b5e",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/keys/GetDeletedKeys48?api-version=7.2"
+      "Url": "https://REDACTED.vault.azure.net/keys/GetDeletedKeys48?api-version=7.3"
     },
     {
       "Headers": {
@@ -2648,7 +2648,7 @@
         "x-ms-request-id": "a6bb83c5-4827-4c73-b47a-a787cd98f782",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/keys/GetDeletedKeys49?api-version=7.2"
+      "Url": "https://REDACTED.vault.azure.net/keys/GetDeletedKeys49?api-version=7.3"
     },
     {
       "Headers": {
@@ -2674,7 +2674,7 @@
         "x-ms-request-id": "c2a332f5-9449-491c-b750-658ae68421ef",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/deletedkeys/GetDeletedKeys0?api-version=7.2"
+      "Url": "https://REDACTED.vault.azure.net/deletedkeys/GetDeletedKeys0?api-version=7.3"
     },
     {
       "Headers": {
@@ -2700,7 +2700,7 @@
         "x-ms-request-id": "c11ee309-1ef7-4c94-b1d9-77233c10ad2b",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/deletedkeys/GetDeletedKeys1?api-version=7.2"
+      "Url": "https://REDACTED.vault.azure.net/deletedkeys/GetDeletedKeys1?api-version=7.3"
     },
     {
       "Headers": {
@@ -2726,7 +2726,7 @@
         "x-ms-request-id": "81aac292-66ac-43b5-b4d2-497c225e04ff",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/deletedkeys/GetDeletedKeys2?api-version=7.2"
+      "Url": "https://REDACTED.vault.azure.net/deletedkeys/GetDeletedKeys2?api-version=7.3"
     },
     {
       "Headers": {
@@ -2752,7 +2752,7 @@
         "x-ms-request-id": "094fb508-1e7a-4bb2-b338-c23a35c43dfa",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/deletedkeys/GetDeletedKeys3?api-version=7.2"
+      "Url": "https://REDACTED.vault.azure.net/deletedkeys/GetDeletedKeys3?api-version=7.3"
     },
     {
       "Headers": {
@@ -2778,7 +2778,7 @@
         "x-ms-request-id": "ad013d8c-4729-4851-8036-d541bc0c7eac",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/deletedkeys/GetDeletedKeys4?api-version=7.2"
+      "Url": "https://REDACTED.vault.azure.net/deletedkeys/GetDeletedKeys4?api-version=7.3"
     },
     {
       "Headers": {
@@ -2804,7 +2804,7 @@
         "x-ms-request-id": "1308ce90-5518-469b-a42f-4df606fc3ef1",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/deletedkeys/GetDeletedKeys5?api-version=7.2"
+      "Url": "https://REDACTED.vault.azure.net/deletedkeys/GetDeletedKeys5?api-version=7.3"
     },
     {
       "Headers": {
@@ -2830,7 +2830,7 @@
         "x-ms-request-id": "f030b989-b075-481e-ac9c-ca6b20732264",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/deletedkeys/GetDeletedKeys6?api-version=7.2"
+      "Url": "https://REDACTED.vault.azure.net/deletedkeys/GetDeletedKeys6?api-version=7.3"
     },
     {
       "Headers": {
@@ -2856,7 +2856,7 @@
         "x-ms-request-id": "64300295-ed7b-4655-89f9-9f46f2c8122b",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/deletedkeys/GetDeletedKeys7?api-version=7.2"
+      "Url": "https://REDACTED.vault.azure.net/deletedkeys/GetDeletedKeys7?api-version=7.3"
     },
     {
       "Headers": {
@@ -2882,7 +2882,7 @@
         "x-ms-request-id": "c6eebde8-7443-43c0-878f-73d88f34e511",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/deletedkeys/GetDeletedKeys8?api-version=7.2"
+      "Url": "https://REDACTED.vault.azure.net/deletedkeys/GetDeletedKeys8?api-version=7.3"
     },
     {
       "Headers": {
@@ -2908,7 +2908,7 @@
         "x-ms-request-id": "d1922844-6dcd-4917-8124-6a2df2929de4",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/deletedkeys/GetDeletedKeys9?api-version=7.2"
+      "Url": "https://REDACTED.vault.azure.net/deletedkeys/GetDeletedKeys9?api-version=7.3"
     },
     {
       "Headers": {
@@ -2934,7 +2934,7 @@
         "x-ms-request-id": "fa24d03d-9415-46c6-98f4-f507b167be3e",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/deletedkeys/GetDeletedKeys10?api-version=7.2"
+      "Url": "https://REDACTED.vault.azure.net/deletedkeys/GetDeletedKeys10?api-version=7.3"
     },
     {
       "Headers": {
@@ -2960,7 +2960,7 @@
         "x-ms-request-id": "3dd4c3d3-d148-45bb-a086-04c361014b3f",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/deletedkeys/GetDeletedKeys11?api-version=7.2"
+      "Url": "https://REDACTED.vault.azure.net/deletedkeys/GetDeletedKeys11?api-version=7.3"
     },
     {
       "Headers": {
@@ -2986,7 +2986,7 @@
         "x-ms-request-id": "74a6444e-b4d1-4737-a1a9-8689c5962b2c",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/deletedkeys/GetDeletedKeys12?api-version=7.2"
+      "Url": "https://REDACTED.vault.azure.net/deletedkeys/GetDeletedKeys12?api-version=7.3"
     },
     {
       "Headers": {
@@ -3012,7 +3012,7 @@
         "x-ms-request-id": "d5e77ccd-f30e-499d-a45d-a43271df2b7f",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/deletedkeys/GetDeletedKeys13?api-version=7.2"
+      "Url": "https://REDACTED.vault.azure.net/deletedkeys/GetDeletedKeys13?api-version=7.3"
     },
     {
       "Headers": {
@@ -3038,7 +3038,7 @@
         "x-ms-request-id": "6f8ba8ca-e834-462c-8929-fbfc8d191d26",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/deletedkeys/GetDeletedKeys14?api-version=7.2"
+      "Url": "https://REDACTED.vault.azure.net/deletedkeys/GetDeletedKeys14?api-version=7.3"
     },
     {
       "Headers": {
@@ -3064,7 +3064,7 @@
         "x-ms-request-id": "d96fcbd2-4897-49c0-a8a1-228520303f48",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/deletedkeys/GetDeletedKeys15?api-version=7.2"
+      "Url": "https://REDACTED.vault.azure.net/deletedkeys/GetDeletedKeys15?api-version=7.3"
     },
     {
       "Headers": {
@@ -3090,7 +3090,7 @@
         "x-ms-request-id": "e833b366-659d-4e3b-b578-2dc721b1a2f4",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/deletedkeys/GetDeletedKeys16?api-version=7.2"
+      "Url": "https://REDACTED.vault.azure.net/deletedkeys/GetDeletedKeys16?api-version=7.3"
     },
     {
       "Headers": {
@@ -3116,7 +3116,7 @@
         "x-ms-request-id": "c5e59363-ba36-461a-a783-81d8c97ada65",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/deletedkeys/GetDeletedKeys17?api-version=7.2"
+      "Url": "https://REDACTED.vault.azure.net/deletedkeys/GetDeletedKeys17?api-version=7.3"
     },
     {
       "Headers": {
@@ -3142,7 +3142,7 @@
         "x-ms-request-id": "df82db2c-a265-4498-8fc6-575aa4e5219b",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/deletedkeys/GetDeletedKeys18?api-version=7.2"
+      "Url": "https://REDACTED.vault.azure.net/deletedkeys/GetDeletedKeys18?api-version=7.3"
     },
     {
       "Headers": {
@@ -3168,7 +3168,7 @@
         "x-ms-request-id": "e7d373dc-bb9b-4f58-a5ae-b7e72e8289f6",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/deletedkeys/GetDeletedKeys19?api-version=7.2"
+      "Url": "https://REDACTED.vault.azure.net/deletedkeys/GetDeletedKeys19?api-version=7.3"
     },
     {
       "Headers": {
@@ -3194,7 +3194,7 @@
         "x-ms-request-id": "0faedca8-c045-4570-a341-715d93ff8db1",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/deletedkeys/GetDeletedKeys20?api-version=7.2"
+      "Url": "https://REDACTED.vault.azure.net/deletedkeys/GetDeletedKeys20?api-version=7.3"
     },
     {
       "Headers": {
@@ -3220,7 +3220,7 @@
         "x-ms-request-id": "cec6d370-20d6-4073-9bc1-14bd569322c9",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/deletedkeys/GetDeletedKeys21?api-version=7.2"
+      "Url": "https://REDACTED.vault.azure.net/deletedkeys/GetDeletedKeys21?api-version=7.3"
     },
     {
       "Headers": {
@@ -3246,7 +3246,7 @@
         "x-ms-request-id": "f63686b9-b1f0-42ca-b0e4-30cec248649f",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/deletedkeys/GetDeletedKeys22?api-version=7.2"
+      "Url": "https://REDACTED.vault.azure.net/deletedkeys/GetDeletedKeys22?api-version=7.3"
     },
     {
       "Headers": {
@@ -3272,7 +3272,7 @@
         "x-ms-request-id": "e539bf9b-d9d4-4f94-b639-d509bdc4c6a1",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/deletedkeys/GetDeletedKeys23?api-version=7.2"
+      "Url": "https://REDACTED.vault.azure.net/deletedkeys/GetDeletedKeys23?api-version=7.3"
     },
     {
       "Headers": {
@@ -3298,7 +3298,7 @@
         "x-ms-request-id": "872018e9-ec5e-40cb-beff-63769f67030d",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/deletedkeys/GetDeletedKeys24?api-version=7.2"
+      "Url": "https://REDACTED.vault.azure.net/deletedkeys/GetDeletedKeys24?api-version=7.3"
     },
     {
       "Headers": {
@@ -3324,7 +3324,7 @@
         "x-ms-request-id": "21754813-2c30-4cf8-91a4-f4199ad70c9f",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/deletedkeys/GetDeletedKeys25?api-version=7.2"
+      "Url": "https://REDACTED.vault.azure.net/deletedkeys/GetDeletedKeys25?api-version=7.3"
     },
     {
       "Headers": {
@@ -3350,7 +3350,7 @@
         "x-ms-request-id": "cd795fa7-6c5b-4173-b74d-a5fab8c75701",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/deletedkeys/GetDeletedKeys26?api-version=7.2"
+      "Url": "https://REDACTED.vault.azure.net/deletedkeys/GetDeletedKeys26?api-version=7.3"
     },
     {
       "Headers": {
@@ -3376,7 +3376,7 @@
         "x-ms-request-id": "223035a1-0001-41d0-8e1a-303705c31ff3",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/deletedkeys/GetDeletedKeys27?api-version=7.2"
+      "Url": "https://REDACTED.vault.azure.net/deletedkeys/GetDeletedKeys27?api-version=7.3"
     },
     {
       "Headers": {
@@ -3402,7 +3402,7 @@
         "x-ms-request-id": "572cf0e1-1f02-4d49-a013-91d3254e850c",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/deletedkeys/GetDeletedKeys28?api-version=7.2"
+      "Url": "https://REDACTED.vault.azure.net/deletedkeys/GetDeletedKeys28?api-version=7.3"
     },
     {
       "Headers": {
@@ -3428,7 +3428,7 @@
         "x-ms-request-id": "c81d879f-ba47-4eef-a813-55435a93823e",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/deletedkeys/GetDeletedKeys29?api-version=7.2"
+      "Url": "https://REDACTED.vault.azure.net/deletedkeys/GetDeletedKeys29?api-version=7.3"
     },
     {
       "Headers": {
@@ -3454,7 +3454,7 @@
         "x-ms-request-id": "3af28cfa-91db-44f8-8112-a468902d9a3a",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/deletedkeys/GetDeletedKeys30?api-version=7.2"
+      "Url": "https://REDACTED.vault.azure.net/deletedkeys/GetDeletedKeys30?api-version=7.3"
     },
     {
       "Headers": {
@@ -3480,7 +3480,7 @@
         "x-ms-request-id": "76055881-a1a6-4d8d-8b48-e59514013c77",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/deletedkeys/GetDeletedKeys31?api-version=7.2"
+      "Url": "https://REDACTED.vault.azure.net/deletedkeys/GetDeletedKeys31?api-version=7.3"
     },
     {
       "Headers": {
@@ -3506,7 +3506,7 @@
         "x-ms-request-id": "ccbdc67d-1e7c-438d-96fc-00c5c8b6f09b",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/deletedkeys/GetDeletedKeys32?api-version=7.2"
+      "Url": "https://REDACTED.vault.azure.net/deletedkeys/GetDeletedKeys32?api-version=7.3"
     },
     {
       "Headers": {
@@ -3532,7 +3532,7 @@
         "x-ms-request-id": "f70ea7f7-34bd-4ce0-b9fb-2fb52e8819a9",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/deletedkeys/GetDeletedKeys33?api-version=7.2"
+      "Url": "https://REDACTED.vault.azure.net/deletedkeys/GetDeletedKeys33?api-version=7.3"
     },
     {
       "Headers": {
@@ -3558,7 +3558,7 @@
         "x-ms-request-id": "a074183d-0b32-4332-b0d1-90ed8b1c0423",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/deletedkeys/GetDeletedKeys34?api-version=7.2"
+      "Url": "https://REDACTED.vault.azure.net/deletedkeys/GetDeletedKeys34?api-version=7.3"
     },
     {
       "Headers": {
@@ -3584,7 +3584,7 @@
         "x-ms-request-id": "029b3322-ed5f-4c67-99a7-65f79a6d84f1",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/deletedkeys/GetDeletedKeys35?api-version=7.2"
+      "Url": "https://REDACTED.vault.azure.net/deletedkeys/GetDeletedKeys35?api-version=7.3"
     },
     {
       "Headers": {
@@ -3610,7 +3610,7 @@
         "x-ms-request-id": "feb460e5-c255-4c0c-abd7-c2d3afa7b145",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/deletedkeys/GetDeletedKeys36?api-version=7.2"
+      "Url": "https://REDACTED.vault.azure.net/deletedkeys/GetDeletedKeys36?api-version=7.3"
     },
     {
       "Headers": {
@@ -3636,7 +3636,7 @@
         "x-ms-request-id": "0e24dbb0-6d75-4cf8-85b6-f6089bb7b92a",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/deletedkeys/GetDeletedKeys37?api-version=7.2"
+      "Url": "https://REDACTED.vault.azure.net/deletedkeys/GetDeletedKeys37?api-version=7.3"
     },
     {
       "Headers": {
@@ -3662,7 +3662,7 @@
         "x-ms-request-id": "7e7c0e23-7337-4076-8151-83112d2c1f95",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/deletedkeys/GetDeletedKeys38?api-version=7.2"
+      "Url": "https://REDACTED.vault.azure.net/deletedkeys/GetDeletedKeys38?api-version=7.3"
     },
     {
       "Headers": {
@@ -3688,7 +3688,7 @@
         "x-ms-request-id": "f2b2a936-a53d-4338-8e78-21d6d0e227a7",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/deletedkeys/GetDeletedKeys39?api-version=7.2"
+      "Url": "https://REDACTED.vault.azure.net/deletedkeys/GetDeletedKeys39?api-version=7.3"
     },
     {
       "Headers": {
@@ -3714,7 +3714,7 @@
         "x-ms-request-id": "447ff9c0-b0ff-4b62-9b74-73d812e8e730",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/deletedkeys/GetDeletedKeys40?api-version=7.2"
+      "Url": "https://REDACTED.vault.azure.net/deletedkeys/GetDeletedKeys40?api-version=7.3"
     },
     {
       "Headers": {
@@ -3740,7 +3740,7 @@
         "x-ms-request-id": "a59482ae-14d7-428f-99d8-ac47bd0df456",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/deletedkeys/GetDeletedKeys41?api-version=7.2"
+      "Url": "https://REDACTED.vault.azure.net/deletedkeys/GetDeletedKeys41?api-version=7.3"
     },
     {
       "Headers": {
@@ -3766,7 +3766,7 @@
         "x-ms-request-id": "dcb36552-efd2-4362-a230-4ba3000b023f",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/deletedkeys/GetDeletedKeys42?api-version=7.2"
+      "Url": "https://REDACTED.vault.azure.net/deletedkeys/GetDeletedKeys42?api-version=7.3"
     },
     {
       "Headers": {
@@ -3792,7 +3792,7 @@
         "x-ms-request-id": "cd7884a7-ad93-48f9-8ef7-1f685e5951de",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/deletedkeys/GetDeletedKeys43?api-version=7.2"
+      "Url": "https://REDACTED.vault.azure.net/deletedkeys/GetDeletedKeys43?api-version=7.3"
     },
     {
       "Headers": {
@@ -3818,7 +3818,7 @@
         "x-ms-request-id": "f4a6b5de-2eac-434f-9660-648ec352acf9",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/deletedkeys/GetDeletedKeys44?api-version=7.2"
+      "Url": "https://REDACTED.vault.azure.net/deletedkeys/GetDeletedKeys44?api-version=7.3"
     },
     {
       "Headers": {
@@ -3844,7 +3844,7 @@
         "x-ms-request-id": "b683dd2e-f3f9-4a8a-a366-3308fe17e28e",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/deletedkeys/GetDeletedKeys45?api-version=7.2"
+      "Url": "https://REDACTED.vault.azure.net/deletedkeys/GetDeletedKeys45?api-version=7.3"
     },
     {
       "Headers": {
@@ -3870,7 +3870,7 @@
         "x-ms-request-id": "63be4ac4-589d-47ef-8986-943dbbd75793",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/deletedkeys/GetDeletedKeys46?api-version=7.2"
+      "Url": "https://REDACTED.vault.azure.net/deletedkeys/GetDeletedKeys46?api-version=7.3"
     },
     {
       "Headers": {
@@ -3896,7 +3896,7 @@
         "x-ms-request-id": "0d640eb1-b9b4-4d16-9dd7-ade16fa4e1bf",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/deletedkeys/GetDeletedKeys46?api-version=7.2"
+      "Url": "https://REDACTED.vault.azure.net/deletedkeys/GetDeletedKeys46?api-version=7.3"
     },
     {
       "Headers": {
@@ -3922,7 +3922,7 @@
         "x-ms-request-id": "f84f359f-47ab-42e0-940f-7eb86c73a36c",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/deletedkeys/GetDeletedKeys47?api-version=7.2"
+      "Url": "https://REDACTED.vault.azure.net/deletedkeys/GetDeletedKeys47?api-version=7.3"
     },
     {
       "Headers": {
@@ -3948,7 +3948,7 @@
         "x-ms-request-id": "e2aad4fc-6d62-4d38-a97e-5126cc81bfc9",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/deletedkeys/GetDeletedKeys48?api-version=7.2"
+      "Url": "https://REDACTED.vault.azure.net/deletedkeys/GetDeletedKeys48?api-version=7.3"
     },
     {
       "Headers": {
@@ -3974,7 +3974,7 @@
         "x-ms-request-id": "290eaeef-3dcc-472d-b5a8-bb6987ca0041",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/deletedkeys/GetDeletedKeys49?api-version=7.2"
+      "Url": "https://REDACTED.vault.azure.net/deletedkeys/GetDeletedKeys49?api-version=7.3"
     },
     {
       "Headers": {
@@ -3983,7 +3983,7 @@
       },
       "Method": "GET",
       "Response": {
-        "BODY": "{\"value\":[{\"recoveryId\":\"https://cpp-recordings.vault.azure.net/deletedkeys/CreateDeletedKey\",\"deletedDate\":1638401537,\"scheduledPurgeDate\":1646177537,\"kid\":\"https://cpp-recordings.vault.azure.net/keys/CreateDeletedKey\",\"attributes\":{\"enabled\":true,\"created\":1638401537,\"updated\":1638401537,\"recoveryLevel\":\"Recoverable+Purgeable\",\"recoverableDays\":90}},{\"recoveryId\":\"https://cpp-recordings.vault.azure.net/deletedkeys/CreateDeletedKeyBeforePollComplete\",\"deletedDate\":1638401598,\"scheduledPurgeDate\":1646177598,\"kid\":\"https://cpp-recordings.vault.azure.net/keys/CreateDeletedKeyBeforePollComplete\",\"attributes\":{\"enabled\":true,\"created\":1638401597,\"updated\":1638401597,\"recoveryLevel\":\"Recoverable+Purgeable\",\"recoverableDays\":90}},{\"recoveryId\":\"https://cpp-recordings.vault.azure.net/deletedkeys/DeleteKey\",\"deletedDate\":1638401414,\"scheduledPurgeDate\":1646177414,\"kid\":\"https://cpp-recordings.vault.azure.net/keys/DeleteKey\",\"attributes\":{\"enabled\":true,\"created\":1638401414,\"updated\":1638401414,\"recoveryLevel\":\"Recoverable+Purgeable\",\"recoverableDays\":90}},{\"recoveryId\":\"https://cpp-recordings.vault.azure.net/deletedkeys/DeleteKeyOperationPoll\",\"deletedDate\":1638401475,\"scheduledPurgeDate\":1646177475,\"kid\":\"https://cpp-recordings.vault.azure.net/keys/DeleteKeyOperationPoll\",\"attributes\":{\"enabled\":true,\"created\":1638401475,\"updated\":1638401475,\"recoveryLevel\":\"Recoverable+Purgeable\",\"recoverableDays\":90}},{\"recoveryId\":\"https://cpp-recordings.vault.azure.net/deletedkeys/DeleteOperationResumeToken\",\"deletedDate\":1638401659,\"scheduledPurgeDate\":1646177659,\"kid\":\"https://cpp-recordings.vault.azure.net/keys/DeleteOperationResumeToken\",\"attributes\":{\"enabled\":true,\"created\":1638401659,\"updated\":1638401659,\"recoveryLevel\":\"Recoverable+Purgeable\",\"recoverableDays\":90}},{\"recoveryId\":\"https://cpp-recordings.vault.azure.net/deletedkeys/DoubleDelete\",\"deletedDate\":1638401476,\"scheduledPurgeDate\":1646177476,\"kid\":\"https://cpp-recordings.vault.azure.net/keys/DoubleDelete\",\"attributes\":{\"enabled\":true,\"created\":1638401476,\"updated\":1638401476,\"recoveryLevel\":\"Recoverable+Purgeable\",\"recoverableDays\":90}}],\"nextLink\":\"https://cpp-recordings.vault.azure.net:443/deletedkeys?api-version=7.2&$skiptoken=eyJOZXh0TWFya2VyIjoiMiExMjQhTURBd01EUTVJV3RsZVM5RVQxVkNURVZFUlV4RlZFVXZSRVV5TlRRelJESTJRMFEzTkVKRVJUazVORVpETjBJNE5EZ3dRekZFUWtFaE1EQXdNREk0SVRrNU9Ua3RNVEl0TXpGVU1qTTZOVGs2TlRrdU9UazVPVGs1T1ZvaCIsIlRhcmdldExvY2F0aW9uIjowfQ\"}",
+        "BODY": "{\"value\":[{\"recoveryId\":\"https://cpp-recordings.vault.azure.net/deletedkeys/CreateDeletedKey\",\"deletedDate\":1638401537,\"scheduledPurgeDate\":1646177537,\"kid\":\"https://cpp-recordings.vault.azure.net/keys/CreateDeletedKey\",\"attributes\":{\"enabled\":true,\"created\":1638401537,\"updated\":1638401537,\"recoveryLevel\":\"Recoverable+Purgeable\",\"recoverableDays\":90}},{\"recoveryId\":\"https://cpp-recordings.vault.azure.net/deletedkeys/CreateDeletedKeyBeforePollComplete\",\"deletedDate\":1638401598,\"scheduledPurgeDate\":1646177598,\"kid\":\"https://cpp-recordings.vault.azure.net/keys/CreateDeletedKeyBeforePollComplete\",\"attributes\":{\"enabled\":true,\"created\":1638401597,\"updated\":1638401597,\"recoveryLevel\":\"Recoverable+Purgeable\",\"recoverableDays\":90}},{\"recoveryId\":\"https://cpp-recordings.vault.azure.net/deletedkeys/DeleteKey\",\"deletedDate\":1638401414,\"scheduledPurgeDate\":1646177414,\"kid\":\"https://cpp-recordings.vault.azure.net/keys/DeleteKey\",\"attributes\":{\"enabled\":true,\"created\":1638401414,\"updated\":1638401414,\"recoveryLevel\":\"Recoverable+Purgeable\",\"recoverableDays\":90}},{\"recoveryId\":\"https://cpp-recordings.vault.azure.net/deletedkeys/DeleteKeyOperationPoll\",\"deletedDate\":1638401475,\"scheduledPurgeDate\":1646177475,\"kid\":\"https://cpp-recordings.vault.azure.net/keys/DeleteKeyOperationPoll\",\"attributes\":{\"enabled\":true,\"created\":1638401475,\"updated\":1638401475,\"recoveryLevel\":\"Recoverable+Purgeable\",\"recoverableDays\":90}},{\"recoveryId\":\"https://cpp-recordings.vault.azure.net/deletedkeys/DeleteOperationResumeToken\",\"deletedDate\":1638401659,\"scheduledPurgeDate\":1646177659,\"kid\":\"https://cpp-recordings.vault.azure.net/keys/DeleteOperationResumeToken\",\"attributes\":{\"enabled\":true,\"created\":1638401659,\"updated\":1638401659,\"recoveryLevel\":\"Recoverable+Purgeable\",\"recoverableDays\":90}},{\"recoveryId\":\"https://cpp-recordings.vault.azure.net/deletedkeys/DoubleDelete\",\"deletedDate\":1638401476,\"scheduledPurgeDate\":1646177476,\"kid\":\"https://cpp-recordings.vault.azure.net/keys/DoubleDelete\",\"attributes\":{\"enabled\":true,\"created\":1638401476,\"updated\":1638401476,\"recoveryLevel\":\"Recoverable+Purgeable\",\"recoverableDays\":90}}],\"nextLink\":\"https://cpp-recordings.vault.azure.net:443/deletedkeys?api-version=7.3&$skiptoken=eyJOZXh0TWFya2VyIjoiMiExMjQhTURBd01EUTVJV3RsZVM5RVQxVkNURVZFUlV4RlZFVXZSRVV5TlRRelJESTJRMFEzTkVKRVJUazVORVpETjBJNE5EZ3dRekZFUWtFaE1EQXdNREk0SVRrNU9Ua3RNVEl0TXpGVU1qTTZOVGs2TlRrdU9UazVPVGs1T1ZvaCIsIlRhcmdldExvY2F0aW9uIjowfQ\"}",
         "STATUS_CODE": "200",
         "cache-control": "no-cache",
         "content-length": "2439",
@@ -4000,7 +4000,7 @@
         "x-ms-request-id": "3c5d1cc2-1751-41f7-b185-02fcf3e6a150",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/deletedkeys?api-version=7.2"
+      "Url": "https://REDACTED.vault.azure.net/deletedkeys?api-version=7.3"
     },
     {
       "Headers": {
@@ -4009,7 +4009,7 @@
       },
       "Method": "GET",
       "Response": {
-        "BODY": "{\"value\":[{\"recoveryId\":\"https://cpp-recordings.vault.azure.net/deletedkeys/DoubleDeleteBeforePollComplete\",\"deletedDate\":1638401536,\"scheduledPurgeDate\":1646177536,\"kid\":\"https://cpp-recordings.vault.azure.net/keys/DoubleDeleteBeforePollComplete\",\"attributes\":{\"enabled\":true,\"created\":1638401536,\"updated\":1638401536,\"recoveryLevel\":\"Recoverable+Purgeable\",\"recoverableDays\":90}},{\"recoveryId\":\"https://cpp-recordings.vault.azure.net/deletedkeys/GetDeletedKey\",\"deletedDate\":1638401598,\"scheduledPurgeDate\":1646177598,\"kid\":\"https://cpp-recordings.vault.azure.net/keys/GetDeletedKey\",\"attributes\":{\"enabled\":true,\"created\":1638401598,\"updated\":1638401598,\"recoveryLevel\":\"Recoverable+Purgeable\",\"recoverableDays\":90}},{\"recoveryId\":\"https://cpp-recordings.vault.azure.net/deletedkeys/GetDeletedKeys0\",\"deletedDate\":1638402057,\"scheduledPurgeDate\":1646178057,\"kid\":\"https://cpp-recordings.vault.azure.net/keys/GetDeletedKeys0\",\"attributes\":{\"enabled\":true,\"created\":1638402003,\"updated\":1638402003,\"recoveryLevel\":\"Recoverable+Purgeable\",\"recoverableDays\":90}},{\"recoveryId\":\"https://cpp-recordings.vault.azure.net/deletedkeys/GetDeletedKeys1\",\"deletedDate\":1638402059,\"scheduledPurgeDate\":1646178059,\"kid\":\"https://cpp-recordings.vault.azure.net/keys/GetDeletedKeys1\",\"attributes\":{\"enabled\":true,\"created\":1638402004,\"updated\":1638402004,\"recoveryLevel\":\"Recoverable+Purgeable\",\"recoverableDays\":90}},{\"recoveryId\":\"https://cpp-recordings.vault.azure.net/deletedkeys/GetDeletedKeys10\",\"deletedDate\":1638402068,\"scheduledPurgeDate\":1646178068,\"kid\":\"https://cpp-recordings.vault.azure.net/keys/GetDeletedKeys10\",\"attributes\":{\"enabled\":true,\"created\":1638402014,\"updated\":1638402014,\"recoveryLevel\":\"Recoverable+Purgeable\",\"recoverableDays\":90}},{\"recoveryId\":\"https://cpp-recordings.vault.azure.net/deletedkeys/GetDeletedKeys11\",\"deletedDate\":1638402069,\"scheduledPurgeDate\":1646178069,\"kid\":\"https://cpp-recordings.vault.azure.net/keys/GetDeletedKeys11\",\"attributes\":{\"enabled\":true,\"created\":1638402015,\"updated\":1638402015,\"recoveryLevel\":\"Recoverable+Purgeable\",\"recoverableDays\":90}},{\"recoveryId\":\"https://cpp-recordings.vault.azure.net/deletedkeys/GetDeletedKeys12\",\"deletedDate\":1638402070,\"scheduledPurgeDate\":1646178070,\"kid\":\"https://cpp-recordings.vault.azure.net/keys/GetDeletedKeys12\",\"attributes\":{\"enabled\":true,\"created\":1638402016,\"updated\":1638402016,\"recoveryLevel\":\"Recoverable+Purgeable\",\"recoverableDays\":90}},{\"recoveryId\":\"https://cpp-recordings.vault.azure.net/deletedkeys/GetDeletedKeys13\",\"deletedDate\":1638402072,\"scheduledPurgeDate\":1646178072,\"kid\":\"https://cpp-recordings.vault.azure.net/keys/GetDeletedKeys13\",\"attributes\":{\"enabled\":true,\"created\":1638402017,\"updated\":1638402017,\"recoveryLevel\":\"Recoverable+Purgeable\",\"recoverableDays\":90}},{\"recoveryId\":\"https://cpp-recordings.vault.azure.net/deletedkeys/GetDeletedKeys14\",\"deletedDate\":1638402073,\"scheduledPurgeDate\":1646178073,\"kid\":\"https://cpp-recordings.vault.azure.net/keys/GetDeletedKeys14\",\"attributes\":{\"enabled\":true,\"created\":1638402019,\"updated\":1638402019,\"recoveryLevel\":\"Recoverable+Purgeable\",\"recoverableDays\":90}},{\"recoveryId\":\"https://cpp-recordings.vault.azure.net/deletedkeys/GetDeletedKeys15\",\"deletedDate\":1638402074,\"scheduledPurgeDate\":1646178074,\"kid\":\"https://cpp-recordings.vault.azure.net/keys/GetDeletedKeys15\",\"attributes\":{\"enabled\":true,\"created\":1638402020,\"updated\":1638402020,\"recoveryLevel\":\"Recoverable+Purgeable\",\"recoverableDays\":90}},{\"recoveryId\":\"https://cpp-recordings.vault.azure.net/deletedkeys/GetDeletedKeys16\",\"deletedDate\":1638402075,\"scheduledPurgeDate\":1646178075,\"kid\":\"https://cpp-recordings.vault.azure.net/keys/GetDeletedKeys16\",\"attributes\":{\"enabled\":true,\"created\":1638402021,\"updated\":1638402021,\"recoveryLevel\":\"Recoverable+Purgeable\",\"recoverableDays\":90}},{\"recoveryId\":\"https://cpp-recordings.vault.azure.net/deletedkeys/GetDeletedKeys17\",\"deletedDate\":1638402076,\"scheduledPurgeDate\":1646178076,\"kid\":\"https://cpp-recordings.vault.azure.net/keys/GetDeletedKeys17\",\"attributes\":{\"enabled\":true,\"created\":1638402022,\"updated\":1638402022,\"recoveryLevel\":\"Recoverable+Purgeable\",\"recoverableDays\":90}}],\"nextLink\":\"https://cpp-recordings.vault.azure.net:443/deletedkeys?api-version=7.2&$skiptoken=eyJOZXh0TWFya2VyIjoiMiE4OCFNREF3TURJd0lXdGxlUzlIUlZSRVJVeEZWRVZFUzBWWlV6RTRJVEF3TURBeU9DRTVPVGs1TFRFeUxUTXhWREl6T2pVNU9qVTVMams1T1RrNU9UbGFJUS0tIiwiVGFyZ2V0TG9jYXRpb24iOjB9\"}",
+        "BODY": "{\"value\":[{\"recoveryId\":\"https://cpp-recordings.vault.azure.net/deletedkeys/DoubleDeleteBeforePollComplete\",\"deletedDate\":1638401536,\"scheduledPurgeDate\":1646177536,\"kid\":\"https://cpp-recordings.vault.azure.net/keys/DoubleDeleteBeforePollComplete\",\"attributes\":{\"enabled\":true,\"created\":1638401536,\"updated\":1638401536,\"recoveryLevel\":\"Recoverable+Purgeable\",\"recoverableDays\":90}},{\"recoveryId\":\"https://cpp-recordings.vault.azure.net/deletedkeys/GetDeletedKey\",\"deletedDate\":1638401598,\"scheduledPurgeDate\":1646177598,\"kid\":\"https://cpp-recordings.vault.azure.net/keys/GetDeletedKey\",\"attributes\":{\"enabled\":true,\"created\":1638401598,\"updated\":1638401598,\"recoveryLevel\":\"Recoverable+Purgeable\",\"recoverableDays\":90}},{\"recoveryId\":\"https://cpp-recordings.vault.azure.net/deletedkeys/GetDeletedKeys0\",\"deletedDate\":1638402057,\"scheduledPurgeDate\":1646178057,\"kid\":\"https://cpp-recordings.vault.azure.net/keys/GetDeletedKeys0\",\"attributes\":{\"enabled\":true,\"created\":1638402003,\"updated\":1638402003,\"recoveryLevel\":\"Recoverable+Purgeable\",\"recoverableDays\":90}},{\"recoveryId\":\"https://cpp-recordings.vault.azure.net/deletedkeys/GetDeletedKeys1\",\"deletedDate\":1638402059,\"scheduledPurgeDate\":1646178059,\"kid\":\"https://cpp-recordings.vault.azure.net/keys/GetDeletedKeys1\",\"attributes\":{\"enabled\":true,\"created\":1638402004,\"updated\":1638402004,\"recoveryLevel\":\"Recoverable+Purgeable\",\"recoverableDays\":90}},{\"recoveryId\":\"https://cpp-recordings.vault.azure.net/deletedkeys/GetDeletedKeys10\",\"deletedDate\":1638402068,\"scheduledPurgeDate\":1646178068,\"kid\":\"https://cpp-recordings.vault.azure.net/keys/GetDeletedKeys10\",\"attributes\":{\"enabled\":true,\"created\":1638402014,\"updated\":1638402014,\"recoveryLevel\":\"Recoverable+Purgeable\",\"recoverableDays\":90}},{\"recoveryId\":\"https://cpp-recordings.vault.azure.net/deletedkeys/GetDeletedKeys11\",\"deletedDate\":1638402069,\"scheduledPurgeDate\":1646178069,\"kid\":\"https://cpp-recordings.vault.azure.net/keys/GetDeletedKeys11\",\"attributes\":{\"enabled\":true,\"created\":1638402015,\"updated\":1638402015,\"recoveryLevel\":\"Recoverable+Purgeable\",\"recoverableDays\":90}},{\"recoveryId\":\"https://cpp-recordings.vault.azure.net/deletedkeys/GetDeletedKeys12\",\"deletedDate\":1638402070,\"scheduledPurgeDate\":1646178070,\"kid\":\"https://cpp-recordings.vault.azure.net/keys/GetDeletedKeys12\",\"attributes\":{\"enabled\":true,\"created\":1638402016,\"updated\":1638402016,\"recoveryLevel\":\"Recoverable+Purgeable\",\"recoverableDays\":90}},{\"recoveryId\":\"https://cpp-recordings.vault.azure.net/deletedkeys/GetDeletedKeys13\",\"deletedDate\":1638402072,\"scheduledPurgeDate\":1646178072,\"kid\":\"https://cpp-recordings.vault.azure.net/keys/GetDeletedKeys13\",\"attributes\":{\"enabled\":true,\"created\":1638402017,\"updated\":1638402017,\"recoveryLevel\":\"Recoverable+Purgeable\",\"recoverableDays\":90}},{\"recoveryId\":\"https://cpp-recordings.vault.azure.net/deletedkeys/GetDeletedKeys14\",\"deletedDate\":1638402073,\"scheduledPurgeDate\":1646178073,\"kid\":\"https://cpp-recordings.vault.azure.net/keys/GetDeletedKeys14\",\"attributes\":{\"enabled\":true,\"created\":1638402019,\"updated\":1638402019,\"recoveryLevel\":\"Recoverable+Purgeable\",\"recoverableDays\":90}},{\"recoveryId\":\"https://cpp-recordings.vault.azure.net/deletedkeys/GetDeletedKeys15\",\"deletedDate\":1638402074,\"scheduledPurgeDate\":1646178074,\"kid\":\"https://cpp-recordings.vault.azure.net/keys/GetDeletedKeys15\",\"attributes\":{\"enabled\":true,\"created\":1638402020,\"updated\":1638402020,\"recoveryLevel\":\"Recoverable+Purgeable\",\"recoverableDays\":90}},{\"recoveryId\":\"https://cpp-recordings.vault.azure.net/deletedkeys/GetDeletedKeys16\",\"deletedDate\":1638402075,\"scheduledPurgeDate\":1646178075,\"kid\":\"https://cpp-recordings.vault.azure.net/keys/GetDeletedKeys16\",\"attributes\":{\"enabled\":true,\"created\":1638402021,\"updated\":1638402021,\"recoveryLevel\":\"Recoverable+Purgeable\",\"recoverableDays\":90}},{\"recoveryId\":\"https://cpp-recordings.vault.azure.net/deletedkeys/GetDeletedKeys17\",\"deletedDate\":1638402076,\"scheduledPurgeDate\":1646178076,\"kid\":\"https://cpp-recordings.vault.azure.net/keys/GetDeletedKeys17\",\"attributes\":{\"enabled\":true,\"created\":1638402022,\"updated\":1638402022,\"recoveryLevel\":\"Recoverable+Purgeable\",\"recoverableDays\":90}}],\"nextLink\":\"https://cpp-recordings.vault.azure.net:443/deletedkeys?api-version=7.3&$skiptoken=eyJOZXh0TWFya2VyIjoiMiE4OCFNREF3TURJd0lXdGxlUzlIUlZSRVJVeEZWRVZFUzBWWlV6RTRJVEF3TURBeU9DRTVPVGs1TFRFeUxUTXhWREl6T2pVNU9qVTVMams1T1RrNU9UbGFJUS0tIiwiVGFyZ2V0TG9jYXRpb24iOjB9\"}",
         "STATUS_CODE": "200",
         "cache-control": "no-cache",
         "content-length": "4425",
@@ -4026,7 +4026,7 @@
         "x-ms-request-id": "bf376108-b8e5-498e-a5d0-b47fa27919e1",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/deletedkeys?$skiptoken=eyJOZXh0TWFya2VyIjoiMiExMjQhTURBd01EUTVJV3RsZVM5RVQxVkNURVZFUlV4RlZFVXZSRVV5TlRRelJESTJRMFEzTkVKRVJUazVORVpETjBJNE5EZ3dRekZFUWtFaE1EQXdNREk0SVRrNU9Ua3RNVEl0TXpGVU1qTTZOVGs2TlRrdU9UazVPVGs1T1ZvaCIsIlRhcmdldExvY2F0aW9uIjowfQ&api-version=7.2"
+      "Url": "https://REDACTED.vault.azure.net/deletedkeys?$skiptoken=eyJOZXh0TWFya2VyIjoiMiExMjQhTURBd01EUTVJV3RsZVM5RVQxVkNURVZFUlV4RlZFVXZSRVV5TlRRelJESTJRMFEzTkVKRVJUazVORVpETjBJNE5EZ3dRekZFUWtFaE1EQXdNREk0SVRrNU9Ua3RNVEl0TXpGVU1qTTZOVGs2TlRrdU9UazVPVGs1T1ZvaCIsIlRhcmdldExvY2F0aW9uIjowfQ&api-version=7.3"
     },
     {
       "Headers": {
@@ -4035,7 +4035,7 @@
       },
       "Method": "GET",
       "Response": {
-        "BODY": "{\"value\":[{\"recoveryId\":\"https://cpp-recordings.vault.azure.net/deletedkeys/GetDeletedKeys18\",\"deletedDate\":1638402077,\"scheduledPurgeDate\":1646178077,\"kid\":\"https://cpp-recordings.vault.azure.net/keys/GetDeletedKeys18\",\"attributes\":{\"enabled\":true,\"created\":1638402023,\"updated\":1638402023,\"recoveryLevel\":\"Recoverable+Purgeable\",\"recoverableDays\":90}},{\"recoveryId\":\"https://cpp-recordings.vault.azure.net/deletedkeys/GetDeletedKeys19\",\"deletedDate\":1638402078,\"scheduledPurgeDate\":1646178078,\"kid\":\"https://cpp-recordings.vault.azure.net/keys/GetDeletedKeys19\",\"attributes\":{\"enabled\":true,\"created\":1638402024,\"updated\":1638402024,\"recoveryLevel\":\"Recoverable+Purgeable\",\"recoverableDays\":90}},{\"recoveryId\":\"https://cpp-recordings.vault.azure.net/deletedkeys/GetDeletedKeys2\",\"deletedDate\":1638402060,\"scheduledPurgeDate\":1646178060,\"kid\":\"https://cpp-recordings.vault.azure.net/keys/GetDeletedKeys2\",\"attributes\":{\"enabled\":true,\"created\":1638402005,\"updated\":1638402005,\"recoveryLevel\":\"Recoverable+Purgeable\",\"recoverableDays\":90}},{\"recoveryId\":\"https://cpp-recordings.vault.azure.net/deletedkeys/GetDeletedKeys20\",\"deletedDate\":1638402079,\"scheduledPurgeDate\":1646178079,\"kid\":\"https://cpp-recordings.vault.azure.net/keys/GetDeletedKeys20\",\"attributes\":{\"enabled\":true,\"created\":1638402025,\"updated\":1638402025,\"recoveryLevel\":\"Recoverable+Purgeable\",\"recoverableDays\":90}},{\"recoveryId\":\"https://cpp-recordings.vault.azure.net/deletedkeys/GetDeletedKeys21\",\"deletedDate\":1638402080,\"scheduledPurgeDate\":1646178080,\"kid\":\"https://cpp-recordings.vault.azure.net/keys/GetDeletedKeys21\",\"attributes\":{\"enabled\":true,\"created\":1638402026,\"updated\":1638402026,\"recoveryLevel\":\"Recoverable+Purgeable\",\"recoverableDays\":90}},{\"recoveryId\":\"https://cpp-recordings.vault.azure.net/deletedkeys/GetDeletedKeys22\",\"deletedDate\":1638402081,\"scheduledPurgeDate\":1646178081,\"kid\":\"https://cpp-recordings.vault.azure.net/keys/GetDeletedKeys22\",\"attributes\":{\"enabled\":true,\"created\":1638402027,\"updated\":1638402027,\"recoveryLevel\":\"Recoverable+Purgeable\",\"recoverableDays\":90}},{\"recoveryId\":\"https://cpp-recordings.vault.azure.net/deletedkeys/GetDeletedKeys23\",\"deletedDate\":1638402082,\"scheduledPurgeDate\":1646178082,\"kid\":\"https://cpp-recordings.vault.azure.net/keys/GetDeletedKeys23\",\"attributes\":{\"enabled\":true,\"created\":1638402028,\"updated\":1638402028,\"recoveryLevel\":\"Recoverable+Purgeable\",\"recoverableDays\":90}},{\"recoveryId\":\"https://cpp-recordings.vault.azure.net/deletedkeys/GetDeletedKeys24\",\"deletedDate\":1638402083,\"scheduledPurgeDate\":1646178083,\"kid\":\"https://cpp-recordings.vault.azure.net/keys/GetDeletedKeys24\",\"attributes\":{\"enabled\":true,\"created\":1638402029,\"updated\":1638402029,\"recoveryLevel\":\"Recoverable+Purgeable\",\"recoverableDays\":90}},{\"recoveryId\":\"https://cpp-recordings.vault.azure.net/deletedkeys/GetDeletedKeys25\",\"deletedDate\":1638402084,\"scheduledPurgeDate\":1646178084,\"kid\":\"https://cpp-recordings.vault.azure.net/keys/GetDeletedKeys25\",\"attributes\":{\"enabled\":true,\"created\":1638402030,\"updated\":1638402030,\"recoveryLevel\":\"Recoverable+Purgeable\",\"recoverableDays\":90}},{\"recoveryId\":\"https://cpp-recordings.vault.azure.net/deletedkeys/GetDeletedKeys26\",\"deletedDate\":1638402086,\"scheduledPurgeDate\":1646178086,\"kid\":\"https://cpp-recordings.vault.azure.net/keys/GetDeletedKeys26\",\"attributes\":{\"enabled\":true,\"created\":1638402032,\"updated\":1638402032,\"recoveryLevel\":\"Recoverable+Purgeable\",\"recoverableDays\":90}},{\"recoveryId\":\"https://cpp-recordings.vault.azure.net/deletedkeys/GetDeletedKeys27\",\"deletedDate\":1638402087,\"scheduledPurgeDate\":1646178087,\"kid\":\"https://cpp-recordings.vault.azure.net/keys/GetDeletedKeys27\",\"attributes\":{\"enabled\":true,\"created\":1638402033,\"updated\":1638402033,\"recoveryLevel\":\"Recoverable+Purgeable\",\"recoverableDays\":90}},{\"recoveryId\":\"https://cpp-recordings.vault.azure.net/deletedkeys/GetDeletedKeys28\",\"deletedDate\":1638402088,\"scheduledPurgeDate\":1646178088,\"kid\":\"https://cpp-recordings.vault.azure.net/keys/GetDeletedKeys28\",\"attributes\":{\"enabled\":true,\"created\":1638402034,\"updated\":1638402034,\"recoveryLevel\":\"Recoverable+Purgeable\",\"recoverableDays\":90}},{\"recoveryId\":\"https://cpp-recordings.vault.azure.net/deletedkeys/GetDeletedKeys29\",\"deletedDate\":1638402089,\"scheduledPurgeDate\":1646178089,\"kid\":\"https://cpp-recordings.vault.azure.net/keys/GetDeletedKeys29\",\"attributes\":{\"enabled\":true,\"created\":1638402035,\"updated\":1638402035,\"recoveryLevel\":\"Recoverable+Purgeable\",\"recoverableDays\":90}}],\"nextLink\":\"https://cpp-recordings.vault.azure.net:443/deletedkeys?api-version=7.2&$skiptoken=eyJOZXh0TWFya2VyIjoiMiExMzIhTURBd01EVXpJV3RsZVM5SFJWUkVSVXhGVkVWRVMwVlpVekk1TDBZeE56TTBRVEl4TUVRNU1EUXdNakZCUXpnMk1VRkJSVVJDTnpWQk5rWXlJVEF3TURBeU9DRTVPVGs1TFRFeUxUTXhWREl6T2pVNU9qVTVMams1T1RrNU9UbGFJUS0tIiwiVGFyZ2V0TG9jYXRpb24iOjB9\"}",
+        "BODY": "{\"value\":[{\"recoveryId\":\"https://cpp-recordings.vault.azure.net/deletedkeys/GetDeletedKeys18\",\"deletedDate\":1638402077,\"scheduledPurgeDate\":1646178077,\"kid\":\"https://cpp-recordings.vault.azure.net/keys/GetDeletedKeys18\",\"attributes\":{\"enabled\":true,\"created\":1638402023,\"updated\":1638402023,\"recoveryLevel\":\"Recoverable+Purgeable\",\"recoverableDays\":90}},{\"recoveryId\":\"https://cpp-recordings.vault.azure.net/deletedkeys/GetDeletedKeys19\",\"deletedDate\":1638402078,\"scheduledPurgeDate\":1646178078,\"kid\":\"https://cpp-recordings.vault.azure.net/keys/GetDeletedKeys19\",\"attributes\":{\"enabled\":true,\"created\":1638402024,\"updated\":1638402024,\"recoveryLevel\":\"Recoverable+Purgeable\",\"recoverableDays\":90}},{\"recoveryId\":\"https://cpp-recordings.vault.azure.net/deletedkeys/GetDeletedKeys2\",\"deletedDate\":1638402060,\"scheduledPurgeDate\":1646178060,\"kid\":\"https://cpp-recordings.vault.azure.net/keys/GetDeletedKeys2\",\"attributes\":{\"enabled\":true,\"created\":1638402005,\"updated\":1638402005,\"recoveryLevel\":\"Recoverable+Purgeable\",\"recoverableDays\":90}},{\"recoveryId\":\"https://cpp-recordings.vault.azure.net/deletedkeys/GetDeletedKeys20\",\"deletedDate\":1638402079,\"scheduledPurgeDate\":1646178079,\"kid\":\"https://cpp-recordings.vault.azure.net/keys/GetDeletedKeys20\",\"attributes\":{\"enabled\":true,\"created\":1638402025,\"updated\":1638402025,\"recoveryLevel\":\"Recoverable+Purgeable\",\"recoverableDays\":90}},{\"recoveryId\":\"https://cpp-recordings.vault.azure.net/deletedkeys/GetDeletedKeys21\",\"deletedDate\":1638402080,\"scheduledPurgeDate\":1646178080,\"kid\":\"https://cpp-recordings.vault.azure.net/keys/GetDeletedKeys21\",\"attributes\":{\"enabled\":true,\"created\":1638402026,\"updated\":1638402026,\"recoveryLevel\":\"Recoverable+Purgeable\",\"recoverableDays\":90}},{\"recoveryId\":\"https://cpp-recordings.vault.azure.net/deletedkeys/GetDeletedKeys22\",\"deletedDate\":1638402081,\"scheduledPurgeDate\":1646178081,\"kid\":\"https://cpp-recordings.vault.azure.net/keys/GetDeletedKeys22\",\"attributes\":{\"enabled\":true,\"created\":1638402027,\"updated\":1638402027,\"recoveryLevel\":\"Recoverable+Purgeable\",\"recoverableDays\":90}},{\"recoveryId\":\"https://cpp-recordings.vault.azure.net/deletedkeys/GetDeletedKeys23\",\"deletedDate\":1638402082,\"scheduledPurgeDate\":1646178082,\"kid\":\"https://cpp-recordings.vault.azure.net/keys/GetDeletedKeys23\",\"attributes\":{\"enabled\":true,\"created\":1638402028,\"updated\":1638402028,\"recoveryLevel\":\"Recoverable+Purgeable\",\"recoverableDays\":90}},{\"recoveryId\":\"https://cpp-recordings.vault.azure.net/deletedkeys/GetDeletedKeys24\",\"deletedDate\":1638402083,\"scheduledPurgeDate\":1646178083,\"kid\":\"https://cpp-recordings.vault.azure.net/keys/GetDeletedKeys24\",\"attributes\":{\"enabled\":true,\"created\":1638402029,\"updated\":1638402029,\"recoveryLevel\":\"Recoverable+Purgeable\",\"recoverableDays\":90}},{\"recoveryId\":\"https://cpp-recordings.vault.azure.net/deletedkeys/GetDeletedKeys25\",\"deletedDate\":1638402084,\"scheduledPurgeDate\":1646178084,\"kid\":\"https://cpp-recordings.vault.azure.net/keys/GetDeletedKeys25\",\"attributes\":{\"enabled\":true,\"created\":1638402030,\"updated\":1638402030,\"recoveryLevel\":\"Recoverable+Purgeable\",\"recoverableDays\":90}},{\"recoveryId\":\"https://cpp-recordings.vault.azure.net/deletedkeys/GetDeletedKeys26\",\"deletedDate\":1638402086,\"scheduledPurgeDate\":1646178086,\"kid\":\"https://cpp-recordings.vault.azure.net/keys/GetDeletedKeys26\",\"attributes\":{\"enabled\":true,\"created\":1638402032,\"updated\":1638402032,\"recoveryLevel\":\"Recoverable+Purgeable\",\"recoverableDays\":90}},{\"recoveryId\":\"https://cpp-recordings.vault.azure.net/deletedkeys/GetDeletedKeys27\",\"deletedDate\":1638402087,\"scheduledPurgeDate\":1646178087,\"kid\":\"https://cpp-recordings.vault.azure.net/keys/GetDeletedKeys27\",\"attributes\":{\"enabled\":true,\"created\":1638402033,\"updated\":1638402033,\"recoveryLevel\":\"Recoverable+Purgeable\",\"recoverableDays\":90}},{\"recoveryId\":\"https://cpp-recordings.vault.azure.net/deletedkeys/GetDeletedKeys28\",\"deletedDate\":1638402088,\"scheduledPurgeDate\":1646178088,\"kid\":\"https://cpp-recordings.vault.azure.net/keys/GetDeletedKeys28\",\"attributes\":{\"enabled\":true,\"created\":1638402034,\"updated\":1638402034,\"recoveryLevel\":\"Recoverable+Purgeable\",\"recoverableDays\":90}},{\"recoveryId\":\"https://cpp-recordings.vault.azure.net/deletedkeys/GetDeletedKeys29\",\"deletedDate\":1638402089,\"scheduledPurgeDate\":1646178089,\"kid\":\"https://cpp-recordings.vault.azure.net/keys/GetDeletedKeys29\",\"attributes\":{\"enabled\":true,\"created\":1638402035,\"updated\":1638402035,\"recoveryLevel\":\"Recoverable+Purgeable\",\"recoverableDays\":90}}],\"nextLink\":\"https://cpp-recordings.vault.azure.net:443/deletedkeys?api-version=7.3&$skiptoken=eyJOZXh0TWFya2VyIjoiMiExMzIhTURBd01EVXpJV3RsZVM5SFJWUkVSVXhGVkVWRVMwVlpVekk1TDBZeE56TTBRVEl4TUVRNU1EUXdNakZCUXpnMk1VRkJSVVJDTnpWQk5rWXlJVEF3TURBeU9DRTVPVGs1TFRFeUxUTXhWREl6T2pVNU9qVTVMams1T1RrNU9UbGFJUS0tIiwiVGFyZ2V0TG9jYXRpb24iOjB9\"}",
         "STATUS_CODE": "200",
         "cache-control": "no-cache",
         "content-length": "4809",
@@ -4052,7 +4052,7 @@
         "x-ms-request-id": "94823f0f-a7fe-4493-a76e-dc77f7d7cbdf",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/deletedkeys?$skiptoken=eyJOZXh0TWFya2VyIjoiMiE4OCFNREF3TURJd0lXdGxlUzlIUlZSRVJVeEZWRVZFUzBWWlV6RTRJVEF3TURBeU9DRTVPVGs1TFRFeUxUTXhWREl6T2pVNU9qVTVMams1T1RrNU9UbGFJUS0tIiwiVGFyZ2V0TG9jYXRpb24iOjB9&api-version=7.2"
+      "Url": "https://REDACTED.vault.azure.net/deletedkeys?$skiptoken=eyJOZXh0TWFya2VyIjoiMiE4OCFNREF3TURJd0lXdGxlUzlIUlZSRVJVeEZWRVZFUzBWWlV6RTRJVEF3TURBeU9DRTVPVGs1TFRFeUxUTXhWREl6T2pVNU9qVTVMams1T1RrNU9UbGFJUS0tIiwiVGFyZ2V0TG9jYXRpb24iOjB9&api-version=7.3"
     },
     {
       "Headers": {
@@ -4061,7 +4061,7 @@
       },
       "Method": "GET",
       "Response": {
-        "BODY": "{\"value\":[{\"recoveryId\":\"https://cpp-recordings.vault.azure.net/deletedkeys/GetDeletedKeys3\",\"deletedDate\":1638402061,\"scheduledPurgeDate\":1646178061,\"kid\":\"https://cpp-recordings.vault.azure.net/keys/GetDeletedKeys3\",\"attributes\":{\"enabled\":true,\"created\":1638402006,\"updated\":1638402006,\"recoveryLevel\":\"Recoverable+Purgeable\",\"recoverableDays\":90}},{\"recoveryId\":\"https://cpp-recordings.vault.azure.net/deletedkeys/GetDeletedKeys30\",\"deletedDate\":1638402090,\"scheduledPurgeDate\":1646178090,\"kid\":\"https://cpp-recordings.vault.azure.net/keys/GetDeletedKeys30\",\"attributes\":{\"enabled\":true,\"created\":1638402036,\"updated\":1638402036,\"recoveryLevel\":\"Recoverable+Purgeable\",\"recoverableDays\":90}},{\"recoveryId\":\"https://cpp-recordings.vault.azure.net/deletedkeys/GetDeletedKeys31\",\"deletedDate\":1638402091,\"scheduledPurgeDate\":1646178091,\"kid\":\"https://cpp-recordings.vault.azure.net/keys/GetDeletedKeys31\",\"attributes\":{\"enabled\":true,\"created\":1638402037,\"updated\":1638402037,\"recoveryLevel\":\"Recoverable+Purgeable\",\"recoverableDays\":90}},{\"recoveryId\":\"https://cpp-recordings.vault.azure.net/deletedkeys/GetDeletedKeys32\",\"deletedDate\":1638402092,\"scheduledPurgeDate\":1646178092,\"kid\":\"https://cpp-recordings.vault.azure.net/keys/GetDeletedKeys32\",\"attributes\":{\"enabled\":true,\"created\":1638402038,\"updated\":1638402038,\"recoveryLevel\":\"Recoverable+Purgeable\",\"recoverableDays\":90}},{\"recoveryId\":\"https://cpp-recordings.vault.azure.net/deletedkeys/GetDeletedKeys33\",\"deletedDate\":1638402093,\"scheduledPurgeDate\":1646178093,\"kid\":\"https://cpp-recordings.vault.azure.net/keys/GetDeletedKeys33\",\"attributes\":{\"enabled\":true,\"created\":1638402039,\"updated\":1638402039,\"recoveryLevel\":\"Recoverable+Purgeable\",\"recoverableDays\":90}},{\"recoveryId\":\"https://cpp-recordings.vault.azure.net/deletedkeys/GetDeletedKeys34\",\"deletedDate\":1638402094,\"scheduledPurgeDate\":1646178094,\"kid\":\"https://cpp-recordings.vault.azure.net/keys/GetDeletedKeys34\",\"attributes\":{\"enabled\":true,\"created\":1638402040,\"updated\":1638402040,\"recoveryLevel\":\"Recoverable+Purgeable\",\"recoverableDays\":90}},{\"recoveryId\":\"https://cpp-recordings.vault.azure.net/deletedkeys/GetDeletedKeys35\",\"deletedDate\":1638402095,\"scheduledPurgeDate\":1646178095,\"kid\":\"https://cpp-recordings.vault.azure.net/keys/GetDeletedKeys35\",\"attributes\":{\"enabled\":true,\"created\":1638402041,\"updated\":1638402041,\"recoveryLevel\":\"Recoverable+Purgeable\",\"recoverableDays\":90}},{\"recoveryId\":\"https://cpp-recordings.vault.azure.net/deletedkeys/GetDeletedKeys36\",\"deletedDate\":1638402097,\"scheduledPurgeDate\":1646178097,\"kid\":\"https://cpp-recordings.vault.azure.net/keys/GetDeletedKeys36\",\"attributes\":{\"enabled\":true,\"created\":1638402042,\"updated\":1638402042,\"recoveryLevel\":\"Recoverable+Purgeable\",\"recoverableDays\":90}},{\"recoveryId\":\"https://cpp-recordings.vault.azure.net/deletedkeys/GetDeletedKeys37\",\"deletedDate\":1638402098,\"scheduledPurgeDate\":1646178098,\"kid\":\"https://cpp-recordings.vault.azure.net/keys/GetDeletedKeys37\",\"attributes\":{\"enabled\":true,\"created\":1638402043,\"updated\":1638402043,\"recoveryLevel\":\"Recoverable+Purgeable\",\"recoverableDays\":90}},{\"recoveryId\":\"https://cpp-recordings.vault.azure.net/deletedkeys/GetDeletedKeys38\",\"deletedDate\":1638402099,\"scheduledPurgeDate\":1646178099,\"kid\":\"https://cpp-recordings.vault.azure.net/keys/GetDeletedKeys38\",\"attributes\":{\"enabled\":true,\"created\":1638402044,\"updated\":1638402044,\"recoveryLevel\":\"Recoverable+Purgeable\",\"recoverableDays\":90}},{\"recoveryId\":\"https://cpp-recordings.vault.azure.net/deletedkeys/GetDeletedKeys39\",\"deletedDate\":1638402100,\"scheduledPurgeDate\":1646178100,\"kid\":\"https://cpp-recordings.vault.azure.net/keys/GetDeletedKeys39\",\"attributes\":{\"enabled\":true,\"created\":1638402046,\"updated\":1638402046,\"recoveryLevel\":\"Recoverable+Purgeable\",\"recoverableDays\":90}},{\"recoveryId\":\"https://cpp-recordings.vault.azure.net/deletedkeys/GetDeletedKeys4\",\"deletedDate\":1638402062,\"scheduledPurgeDate\":1646178062,\"kid\":\"https://cpp-recordings.vault.azure.net/keys/GetDeletedKeys4\",\"attributes\":{\"enabled\":true,\"created\":1638402007,\"updated\":1638402007,\"recoveryLevel\":\"Recoverable+Purgeable\",\"recoverableDays\":90}}],\"nextLink\":\"https://cpp-recordings.vault.azure.net:443/deletedkeys?api-version=7.2&$skiptoken=eyJOZXh0TWFya2VyIjoiMiE4OCFNREF3TURJd0lXdGxlUzlIUlZSRVJVeEZWRVZFUzBWWlV6UXdJVEF3TURBeU9DRTVPVGs1TFRFeUxUTXhWREl6T2pVNU9qVTVMams1T1RrNU9UbGFJUS0tIiwiVGFyZ2V0TG9jYXRpb24iOjB9\"}",
+        "BODY": "{\"value\":[{\"recoveryId\":\"https://cpp-recordings.vault.azure.net/deletedkeys/GetDeletedKeys3\",\"deletedDate\":1638402061,\"scheduledPurgeDate\":1646178061,\"kid\":\"https://cpp-recordings.vault.azure.net/keys/GetDeletedKeys3\",\"attributes\":{\"enabled\":true,\"created\":1638402006,\"updated\":1638402006,\"recoveryLevel\":\"Recoverable+Purgeable\",\"recoverableDays\":90}},{\"recoveryId\":\"https://cpp-recordings.vault.azure.net/deletedkeys/GetDeletedKeys30\",\"deletedDate\":1638402090,\"scheduledPurgeDate\":1646178090,\"kid\":\"https://cpp-recordings.vault.azure.net/keys/GetDeletedKeys30\",\"attributes\":{\"enabled\":true,\"created\":1638402036,\"updated\":1638402036,\"recoveryLevel\":\"Recoverable+Purgeable\",\"recoverableDays\":90}},{\"recoveryId\":\"https://cpp-recordings.vault.azure.net/deletedkeys/GetDeletedKeys31\",\"deletedDate\":1638402091,\"scheduledPurgeDate\":1646178091,\"kid\":\"https://cpp-recordings.vault.azure.net/keys/GetDeletedKeys31\",\"attributes\":{\"enabled\":true,\"created\":1638402037,\"updated\":1638402037,\"recoveryLevel\":\"Recoverable+Purgeable\",\"recoverableDays\":90}},{\"recoveryId\":\"https://cpp-recordings.vault.azure.net/deletedkeys/GetDeletedKeys32\",\"deletedDate\":1638402092,\"scheduledPurgeDate\":1646178092,\"kid\":\"https://cpp-recordings.vault.azure.net/keys/GetDeletedKeys32\",\"attributes\":{\"enabled\":true,\"created\":1638402038,\"updated\":1638402038,\"recoveryLevel\":\"Recoverable+Purgeable\",\"recoverableDays\":90}},{\"recoveryId\":\"https://cpp-recordings.vault.azure.net/deletedkeys/GetDeletedKeys33\",\"deletedDate\":1638402093,\"scheduledPurgeDate\":1646178093,\"kid\":\"https://cpp-recordings.vault.azure.net/keys/GetDeletedKeys33\",\"attributes\":{\"enabled\":true,\"created\":1638402039,\"updated\":1638402039,\"recoveryLevel\":\"Recoverable+Purgeable\",\"recoverableDays\":90}},{\"recoveryId\":\"https://cpp-recordings.vault.azure.net/deletedkeys/GetDeletedKeys34\",\"deletedDate\":1638402094,\"scheduledPurgeDate\":1646178094,\"kid\":\"https://cpp-recordings.vault.azure.net/keys/GetDeletedKeys34\",\"attributes\":{\"enabled\":true,\"created\":1638402040,\"updated\":1638402040,\"recoveryLevel\":\"Recoverable+Purgeable\",\"recoverableDays\":90}},{\"recoveryId\":\"https://cpp-recordings.vault.azure.net/deletedkeys/GetDeletedKeys35\",\"deletedDate\":1638402095,\"scheduledPurgeDate\":1646178095,\"kid\":\"https://cpp-recordings.vault.azure.net/keys/GetDeletedKeys35\",\"attributes\":{\"enabled\":true,\"created\":1638402041,\"updated\":1638402041,\"recoveryLevel\":\"Recoverable+Purgeable\",\"recoverableDays\":90}},{\"recoveryId\":\"https://cpp-recordings.vault.azure.net/deletedkeys/GetDeletedKeys36\",\"deletedDate\":1638402097,\"scheduledPurgeDate\":1646178097,\"kid\":\"https://cpp-recordings.vault.azure.net/keys/GetDeletedKeys36\",\"attributes\":{\"enabled\":true,\"created\":1638402042,\"updated\":1638402042,\"recoveryLevel\":\"Recoverable+Purgeable\",\"recoverableDays\":90}},{\"recoveryId\":\"https://cpp-recordings.vault.azure.net/deletedkeys/GetDeletedKeys37\",\"deletedDate\":1638402098,\"scheduledPurgeDate\":1646178098,\"kid\":\"https://cpp-recordings.vault.azure.net/keys/GetDeletedKeys37\",\"attributes\":{\"enabled\":true,\"created\":1638402043,\"updated\":1638402043,\"recoveryLevel\":\"Recoverable+Purgeable\",\"recoverableDays\":90}},{\"recoveryId\":\"https://cpp-recordings.vault.azure.net/deletedkeys/GetDeletedKeys38\",\"deletedDate\":1638402099,\"scheduledPurgeDate\":1646178099,\"kid\":\"https://cpp-recordings.vault.azure.net/keys/GetDeletedKeys38\",\"attributes\":{\"enabled\":true,\"created\":1638402044,\"updated\":1638402044,\"recoveryLevel\":\"Recoverable+Purgeable\",\"recoverableDays\":90}},{\"recoveryId\":\"https://cpp-recordings.vault.azure.net/deletedkeys/GetDeletedKeys39\",\"deletedDate\":1638402100,\"scheduledPurgeDate\":1646178100,\"kid\":\"https://cpp-recordings.vault.azure.net/keys/GetDeletedKeys39\",\"attributes\":{\"enabled\":true,\"created\":1638402046,\"updated\":1638402046,\"recoveryLevel\":\"Recoverable+Purgeable\",\"recoverableDays\":90}},{\"recoveryId\":\"https://cpp-recordings.vault.azure.net/deletedkeys/GetDeletedKeys4\",\"deletedDate\":1638402062,\"scheduledPurgeDate\":1646178062,\"kid\":\"https://cpp-recordings.vault.azure.net/keys/GetDeletedKeys4\",\"attributes\":{\"enabled\":true,\"created\":1638402007,\"updated\":1638402007,\"recoveryLevel\":\"Recoverable+Purgeable\",\"recoverableDays\":90}}],\"nextLink\":\"https://cpp-recordings.vault.azure.net:443/deletedkeys?api-version=7.3&$skiptoken=eyJOZXh0TWFya2VyIjoiMiE4OCFNREF3TURJd0lXdGxlUzlIUlZSRVJVeEZWRVZFUzBWWlV6UXdJVEF3TURBeU9DRTVPVGs1TFRFeUxUTXhWREl6T2pVNU9qVTVMams1T1RrNU9UbGFJUS0tIiwiVGFyZ2V0TG9jYXRpb24iOjB9\"}",
         "STATUS_CODE": "200",
         "cache-control": "no-cache",
         "content-length": "4403",
@@ -4078,7 +4078,7 @@
         "x-ms-request-id": "c2727ea5-9344-4790-8e28-87ce3d0d2955",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/deletedkeys?$skiptoken=eyJOZXh0TWFya2VyIjoiMiExMzIhTURBd01EVXpJV3RsZVM5SFJWUkVSVXhGVkVWRVMwVlpVekk1TDBZeE56TTBRVEl4TUVRNU1EUXdNakZCUXpnMk1VRkJSVVJDTnpWQk5rWXlJVEF3TURBeU9DRTVPVGs1TFRFeUxUTXhWREl6T2pVNU9qVTVMams1T1RrNU9UbGFJUS0tIiwiVGFyZ2V0TG9jYXRpb24iOjB9&api-version=7.2"
+      "Url": "https://REDACTED.vault.azure.net/deletedkeys?$skiptoken=eyJOZXh0TWFya2VyIjoiMiExMzIhTURBd01EVXpJV3RsZVM5SFJWUkVSVXhGVkVWRVMwVlpVekk1TDBZeE56TTBRVEl4TUVRNU1EUXdNakZCUXpnMk1VRkJSVVJDTnpWQk5rWXlJVEF3TURBeU9DRTVPVGs1TFRFeUxUTXhWREl6T2pVNU9qVTVMams1T1RrNU9UbGFJUS0tIiwiVGFyZ2V0TG9jYXRpb24iOjB9&api-version=7.3"
     },
     {
       "Headers": {
@@ -4087,7 +4087,7 @@
       },
       "Method": "GET",
       "Response": {
-        "BODY": "{\"value\":[{\"recoveryId\":\"https://cpp-recordings.vault.azure.net/deletedkeys/GetDeletedKeys40\",\"deletedDate\":1638402101,\"scheduledPurgeDate\":1646178101,\"kid\":\"https://cpp-recordings.vault.azure.net/keys/GetDeletedKeys40\",\"attributes\":{\"enabled\":true,\"created\":1638402047,\"updated\":1638402047,\"recoveryLevel\":\"Recoverable+Purgeable\",\"recoverableDays\":90}},{\"recoveryId\":\"https://cpp-recordings.vault.azure.net/deletedkeys/GetDeletedKeys41\",\"deletedDate\":1638402102,\"scheduledPurgeDate\":1646178102,\"kid\":\"https://cpp-recordings.vault.azure.net/keys/GetDeletedKeys41\",\"attributes\":{\"enabled\":true,\"created\":1638402048,\"updated\":1638402048,\"recoveryLevel\":\"Recoverable+Purgeable\",\"recoverableDays\":90}},{\"recoveryId\":\"https://cpp-recordings.vault.azure.net/deletedkeys/GetDeletedKeys42\",\"deletedDate\":1638402103,\"scheduledPurgeDate\":1646178103,\"kid\":\"https://cpp-recordings.vault.azure.net/keys/GetDeletedKeys42\",\"attributes\":{\"enabled\":true,\"created\":1638402049,\"updated\":1638402049,\"recoveryLevel\":\"Recoverable+Purgeable\",\"recoverableDays\":90}},{\"recoveryId\":\"https://cpp-recordings.vault.azure.net/deletedkeys/GetDeletedKeys43\",\"deletedDate\":1638402104,\"scheduledPurgeDate\":1646178104,\"kid\":\"https://cpp-recordings.vault.azure.net/keys/GetDeletedKeys43\",\"attributes\":{\"enabled\":true,\"created\":1638402050,\"updated\":1638402050,\"recoveryLevel\":\"Recoverable+Purgeable\",\"recoverableDays\":90}},{\"recoveryId\":\"https://cpp-recordings.vault.azure.net/deletedkeys/GetDeletedKeys44\",\"deletedDate\":1638402105,\"scheduledPurgeDate\":1646178105,\"kid\":\"https://cpp-recordings.vault.azure.net/keys/GetDeletedKeys44\",\"attributes\":{\"enabled\":true,\"created\":1638402051,\"updated\":1638402051,\"recoveryLevel\":\"Recoverable+Purgeable\",\"recoverableDays\":90}},{\"recoveryId\":\"https://cpp-recordings.vault.azure.net/deletedkeys/GetDeletedKeys45\",\"deletedDate\":1638402106,\"scheduledPurgeDate\":1646178106,\"kid\":\"https://cpp-recordings.vault.azure.net/keys/GetDeletedKeys45\",\"attributes\":{\"enabled\":true,\"created\":1638402052,\"updated\":1638402052,\"recoveryLevel\":\"Recoverable+Purgeable\",\"recoverableDays\":90}},{\"recoveryId\":\"https://cpp-recordings.vault.azure.net/deletedkeys/GetDeletedKeys46\",\"deletedDate\":1638402107,\"scheduledPurgeDate\":1646178107,\"kid\":\"https://cpp-recordings.vault.azure.net/keys/GetDeletedKeys46\",\"attributes\":{\"enabled\":true,\"created\":1638402053,\"updated\":1638402053,\"recoveryLevel\":\"Recoverable+Purgeable\",\"recoverableDays\":90}},{\"recoveryId\":\"https://cpp-recordings.vault.azure.net/deletedkeys/GetDeletedKeys47\",\"deletedDate\":1638402108,\"scheduledPurgeDate\":1646178108,\"kid\":\"https://cpp-recordings.vault.azure.net/keys/GetDeletedKeys47\",\"attributes\":{\"enabled\":true,\"created\":1638402054,\"updated\":1638402054,\"recoveryLevel\":\"Recoverable+Purgeable\",\"recoverableDays\":90}},{\"recoveryId\":\"https://cpp-recordings.vault.azure.net/deletedkeys/GetDeletedKeys48\",\"deletedDate\":1638402109,\"scheduledPurgeDate\":1646178109,\"kid\":\"https://cpp-recordings.vault.azure.net/keys/GetDeletedKeys48\",\"attributes\":{\"enabled\":true,\"created\":1638402055,\"updated\":1638402055,\"recoveryLevel\":\"Recoverable+Purgeable\",\"recoverableDays\":90}},{\"recoveryId\":\"https://cpp-recordings.vault.azure.net/deletedkeys/GetDeletedKeys49\",\"deletedDate\":1638402111,\"scheduledPurgeDate\":1646178111,\"kid\":\"https://cpp-recordings.vault.azure.net/keys/GetDeletedKeys49\",\"attributes\":{\"enabled\":true,\"created\":1638402056,\"updated\":1638402056,\"recoveryLevel\":\"Recoverable+Purgeable\",\"recoverableDays\":90}},{\"recoveryId\":\"https://cpp-recordings.vault.azure.net/deletedkeys/GetDeletedKeys5\",\"deletedDate\":1638402063,\"scheduledPurgeDate\":1646178063,\"kid\":\"https://cpp-recordings.vault.azure.net/keys/GetDeletedKeys5\",\"attributes\":{\"enabled\":true,\"created\":1638402008,\"updated\":1638402008,\"recoveryLevel\":\"Recoverable+Purgeable\",\"recoverableDays\":90}},{\"recoveryId\":\"https://cpp-recordings.vault.azure.net/deletedkeys/GetDeletedKeys6\",\"deletedDate\":1638402064,\"scheduledPurgeDate\":1646178064,\"kid\":\"https://cpp-recordings.vault.azure.net/keys/GetDeletedKeys6\",\"attributes\":{\"enabled\":true,\"created\":1638402009,\"updated\":1638402009,\"recoveryLevel\":\"Recoverable+Purgeable\",\"recoverableDays\":90}},{\"recoveryId\":\"https://cpp-recordings.vault.azure.net/deletedkeys/GetDeletedKeys7\",\"deletedDate\":1638402065,\"scheduledPurgeDate\":1646178065,\"kid\":\"https://cpp-recordings.vault.azure.net/keys/GetDeletedKeys7\",\"attributes\":{\"enabled\":true,\"created\":1638402010,\"updated\":1638402010,\"recoveryLevel\":\"Recoverable+Purgeable\",\"recoverableDays\":90}}],\"nextLink\":\"https://cpp-recordings.vault.azure.net:443/deletedkeys?api-version=7.2&$skiptoken=eyJOZXh0TWFya2VyIjoiMiExMjghTURBd01EVXlJV3RsZVM5SFJWUkVSVXhGVkVWRVMwVlpVemN2UlRNMVFqQTVORE5FTXpNek5ETTFOems0UWpOQk16ZzFRalExUXpnNE16VWhNREF3TURJNElUazVPVGt0TVRJdE16RlVNak02TlRrNk5Ua3VPVGs1T1RrNU9Wb2giLCJUYXJnZXRMb2NhdGlvbiI6MH0\"}",
+        "BODY": "{\"value\":[{\"recoveryId\":\"https://cpp-recordings.vault.azure.net/deletedkeys/GetDeletedKeys40\",\"deletedDate\":1638402101,\"scheduledPurgeDate\":1646178101,\"kid\":\"https://cpp-recordings.vault.azure.net/keys/GetDeletedKeys40\",\"attributes\":{\"enabled\":true,\"created\":1638402047,\"updated\":1638402047,\"recoveryLevel\":\"Recoverable+Purgeable\",\"recoverableDays\":90}},{\"recoveryId\":\"https://cpp-recordings.vault.azure.net/deletedkeys/GetDeletedKeys41\",\"deletedDate\":1638402102,\"scheduledPurgeDate\":1646178102,\"kid\":\"https://cpp-recordings.vault.azure.net/keys/GetDeletedKeys41\",\"attributes\":{\"enabled\":true,\"created\":1638402048,\"updated\":1638402048,\"recoveryLevel\":\"Recoverable+Purgeable\",\"recoverableDays\":90}},{\"recoveryId\":\"https://cpp-recordings.vault.azure.net/deletedkeys/GetDeletedKeys42\",\"deletedDate\":1638402103,\"scheduledPurgeDate\":1646178103,\"kid\":\"https://cpp-recordings.vault.azure.net/keys/GetDeletedKeys42\",\"attributes\":{\"enabled\":true,\"created\":1638402049,\"updated\":1638402049,\"recoveryLevel\":\"Recoverable+Purgeable\",\"recoverableDays\":90}},{\"recoveryId\":\"https://cpp-recordings.vault.azure.net/deletedkeys/GetDeletedKeys43\",\"deletedDate\":1638402104,\"scheduledPurgeDate\":1646178104,\"kid\":\"https://cpp-recordings.vault.azure.net/keys/GetDeletedKeys43\",\"attributes\":{\"enabled\":true,\"created\":1638402050,\"updated\":1638402050,\"recoveryLevel\":\"Recoverable+Purgeable\",\"recoverableDays\":90}},{\"recoveryId\":\"https://cpp-recordings.vault.azure.net/deletedkeys/GetDeletedKeys44\",\"deletedDate\":1638402105,\"scheduledPurgeDate\":1646178105,\"kid\":\"https://cpp-recordings.vault.azure.net/keys/GetDeletedKeys44\",\"attributes\":{\"enabled\":true,\"created\":1638402051,\"updated\":1638402051,\"recoveryLevel\":\"Recoverable+Purgeable\",\"recoverableDays\":90}},{\"recoveryId\":\"https://cpp-recordings.vault.azure.net/deletedkeys/GetDeletedKeys45\",\"deletedDate\":1638402106,\"scheduledPurgeDate\":1646178106,\"kid\":\"https://cpp-recordings.vault.azure.net/keys/GetDeletedKeys45\",\"attributes\":{\"enabled\":true,\"created\":1638402052,\"updated\":1638402052,\"recoveryLevel\":\"Recoverable+Purgeable\",\"recoverableDays\":90}},{\"recoveryId\":\"https://cpp-recordings.vault.azure.net/deletedkeys/GetDeletedKeys46\",\"deletedDate\":1638402107,\"scheduledPurgeDate\":1646178107,\"kid\":\"https://cpp-recordings.vault.azure.net/keys/GetDeletedKeys46\",\"attributes\":{\"enabled\":true,\"created\":1638402053,\"updated\":1638402053,\"recoveryLevel\":\"Recoverable+Purgeable\",\"recoverableDays\":90}},{\"recoveryId\":\"https://cpp-recordings.vault.azure.net/deletedkeys/GetDeletedKeys47\",\"deletedDate\":1638402108,\"scheduledPurgeDate\":1646178108,\"kid\":\"https://cpp-recordings.vault.azure.net/keys/GetDeletedKeys47\",\"attributes\":{\"enabled\":true,\"created\":1638402054,\"updated\":1638402054,\"recoveryLevel\":\"Recoverable+Purgeable\",\"recoverableDays\":90}},{\"recoveryId\":\"https://cpp-recordings.vault.azure.net/deletedkeys/GetDeletedKeys48\",\"deletedDate\":1638402109,\"scheduledPurgeDate\":1646178109,\"kid\":\"https://cpp-recordings.vault.azure.net/keys/GetDeletedKeys48\",\"attributes\":{\"enabled\":true,\"created\":1638402055,\"updated\":1638402055,\"recoveryLevel\":\"Recoverable+Purgeable\",\"recoverableDays\":90}},{\"recoveryId\":\"https://cpp-recordings.vault.azure.net/deletedkeys/GetDeletedKeys49\",\"deletedDate\":1638402111,\"scheduledPurgeDate\":1646178111,\"kid\":\"https://cpp-recordings.vault.azure.net/keys/GetDeletedKeys49\",\"attributes\":{\"enabled\":true,\"created\":1638402056,\"updated\":1638402056,\"recoveryLevel\":\"Recoverable+Purgeable\",\"recoverableDays\":90}},{\"recoveryId\":\"https://cpp-recordings.vault.azure.net/deletedkeys/GetDeletedKeys5\",\"deletedDate\":1638402063,\"scheduledPurgeDate\":1646178063,\"kid\":\"https://cpp-recordings.vault.azure.net/keys/GetDeletedKeys5\",\"attributes\":{\"enabled\":true,\"created\":1638402008,\"updated\":1638402008,\"recoveryLevel\":\"Recoverable+Purgeable\",\"recoverableDays\":90}},{\"recoveryId\":\"https://cpp-recordings.vault.azure.net/deletedkeys/GetDeletedKeys6\",\"deletedDate\":1638402064,\"scheduledPurgeDate\":1646178064,\"kid\":\"https://cpp-recordings.vault.azure.net/keys/GetDeletedKeys6\",\"attributes\":{\"enabled\":true,\"created\":1638402009,\"updated\":1638402009,\"recoveryLevel\":\"Recoverable+Purgeable\",\"recoverableDays\":90}},{\"recoveryId\":\"https://cpp-recordings.vault.azure.net/deletedkeys/GetDeletedKeys7\",\"deletedDate\":1638402065,\"scheduledPurgeDate\":1646178065,\"kid\":\"https://cpp-recordings.vault.azure.net/keys/GetDeletedKeys7\",\"attributes\":{\"enabled\":true,\"created\":1638402010,\"updated\":1638402010,\"recoveryLevel\":\"Recoverable+Purgeable\",\"recoverableDays\":90}}],\"nextLink\":\"https://cpp-recordings.vault.azure.net:443/deletedkeys?api-version=7.3&$skiptoken=eyJOZXh0TWFya2VyIjoiMiExMjghTURBd01EVXlJV3RsZVM5SFJWUkVSVXhGVkVWRVMwVlpVemN2UlRNMVFqQTVORE5FTXpNek5ETTFOems0UWpOQk16ZzFRalExUXpnNE16VWhNREF3TURJNElUazVPVGt0TVRJdE16RlVNak02TlRrNk5Ua3VPVGs1T1RrNU9Wb2giLCJUYXJnZXRMb2NhdGlvbiI6MH0\"}",
         "STATUS_CODE": "200",
         "cache-control": "no-cache",
         "content-length": "4800",
@@ -4104,7 +4104,7 @@
         "x-ms-request-id": "cc95952e-ef15-415c-b03d-82461c9fd5f7",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/deletedkeys?$skiptoken=eyJOZXh0TWFya2VyIjoiMiE4OCFNREF3TURJd0lXdGxlUzlIUlZSRVJVeEZWRVZFUzBWWlV6UXdJVEF3TURBeU9DRTVPVGs1TFRFeUxUTXhWREl6T2pVNU9qVTVMams1T1RrNU9UbGFJUS0tIiwiVGFyZ2V0TG9jYXRpb24iOjB9&api-version=7.2"
+      "Url": "https://REDACTED.vault.azure.net/deletedkeys?$skiptoken=eyJOZXh0TWFya2VyIjoiMiE4OCFNREF3TURJd0lXdGxlUzlIUlZSRVJVeEZWRVZFUzBWWlV6UXdJVEF3TURBeU9DRTVPVGs1TFRFeUxUTXhWREl6T2pVNU9qVTVMams1T1RrNU9UbGFJUS0tIiwiVGFyZ2V0TG9jYXRpb24iOjB9&api-version=7.3"
     },
     {
       "Headers": {
@@ -4113,7 +4113,7 @@
       },
       "Method": "GET",
       "Response": {
-        "BODY": "{\"value\":[{\"recoveryId\":\"https://cpp-recordings.vault.azure.net/deletedkeys/GetDeletedKeys8\",\"deletedDate\":1638402066,\"scheduledPurgeDate\":1646178066,\"kid\":\"https://cpp-recordings.vault.azure.net/keys/GetDeletedKeys8\",\"attributes\":{\"enabled\":true,\"created\":1638402011,\"updated\":1638402011,\"recoveryLevel\":\"Recoverable+Purgeable\",\"recoverableDays\":90}},{\"recoveryId\":\"https://cpp-recordings.vault.azure.net/deletedkeys/GetDeletedKeys9\",\"deletedDate\":1638402067,\"scheduledPurgeDate\":1646178067,\"kid\":\"https://cpp-recordings.vault.azure.net/keys/GetDeletedKeys9\",\"attributes\":{\"enabled\":true,\"created\":1638402013,\"updated\":1638402013,\"recoveryLevel\":\"Recoverable+Purgeable\",\"recoverableDays\":90}}],\"nextLink\":\"https://cpp-recordings.vault.azure.net:443/deletedkeys?api-version=7.2&$skiptoken=eyJOZXh0TWFya2VyIjoiMiExMDQhTURBd01ETXpJV3RsZVM5SFJWUlFVazlRUlZKVVNVVlRUMFpMUlZsVFFVeE1VRUZIUlZNeE55RXdNREF3TWpnaE9UazVPUzB4TWkwek1WUXlNem8xT1RvMU9TNDVPVGs1T1RrNVdpRS0iLCJUYXJnZXRMb2NhdGlvbiI6MH0\"}",
+        "BODY": "{\"value\":[{\"recoveryId\":\"https://cpp-recordings.vault.azure.net/deletedkeys/GetDeletedKeys8\",\"deletedDate\":1638402066,\"scheduledPurgeDate\":1646178066,\"kid\":\"https://cpp-recordings.vault.azure.net/keys/GetDeletedKeys8\",\"attributes\":{\"enabled\":true,\"created\":1638402011,\"updated\":1638402011,\"recoveryLevel\":\"Recoverable+Purgeable\",\"recoverableDays\":90}},{\"recoveryId\":\"https://cpp-recordings.vault.azure.net/deletedkeys/GetDeletedKeys9\",\"deletedDate\":1638402067,\"scheduledPurgeDate\":1646178067,\"kid\":\"https://cpp-recordings.vault.azure.net/keys/GetDeletedKeys9\",\"attributes\":{\"enabled\":true,\"created\":1638402013,\"updated\":1638402013,\"recoveryLevel\":\"Recoverable+Purgeable\",\"recoverableDays\":90}}],\"nextLink\":\"https://cpp-recordings.vault.azure.net:443/deletedkeys?api-version=7.3&$skiptoken=eyJOZXh0TWFya2VyIjoiMiExMDQhTURBd01ETXpJV3RsZVM5SFJWUlFVazlRUlZKVVNVVlRUMFpMUlZsVFFVeE1VRUZIUlZNeE55RXdNREF3TWpnaE9UazVPUzB4TWkwek1WUXlNem8xT1RvMU9TNDVPVGs1T1RrNVdpRS0iLCJUYXJnZXRMb2NhdGlvbiI6MH0\"}",
         "STATUS_CODE": "200",
         "cache-control": "no-cache",
         "content-length": "986",
@@ -4130,7 +4130,7 @@
         "x-ms-request-id": "b325c0fc-9d5c-4ab2-8e19-c6719c40dd3c",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/deletedkeys?$skiptoken=eyJOZXh0TWFya2VyIjoiMiExMjghTURBd01EVXlJV3RsZVM5SFJWUkVSVXhGVkVWRVMwVlpVemN2UlRNMVFqQTVORE5FTXpNek5ETTFOems0UWpOQk16ZzFRalExUXpnNE16VWhNREF3TURJNElUazVPVGt0TVRJdE16RlVNak02TlRrNk5Ua3VPVGs1T1RrNU9Wb2giLCJUYXJnZXRMb2NhdGlvbiI6MH0&api-version=7.2"
+      "Url": "https://REDACTED.vault.azure.net/deletedkeys?$skiptoken=eyJOZXh0TWFya2VyIjoiMiExMjghTURBd01EVXlJV3RsZVM5SFJWUkVSVXhGVkVWRVMwVlpVemN2UlRNMVFqQTVORE5FTXpNek5ETTFOems0UWpOQk16ZzFRalExUXpnNE16VWhNREF3TURJNElUazVPVGt0TVRJdE16RlVNak02TlRrNk5Ua3VPVGs1T1RrNU9Wb2giLCJUYXJnZXRMb2NhdGlvbiI6MH0&api-version=7.3"
     },
     {
       "Headers": {
@@ -4139,7 +4139,7 @@
       },
       "Method": "GET",
       "Response": {
-        "BODY": "{\"value\":[],\"nextLink\":\"https://cpp-recordings.vault.azure.net:443/deletedkeys?api-version=7.2&$skiptoken=eyJOZXh0TWFya2VyIjoiMiExNDghTURBd01EWTJJV3RsZVM5SFJWUlFVazlRUlZKVVNVVlRUMFpMUlZsVFFVeE1VRUZIUlZNeU9DOHpNMEl3TUVVd09URTBORUUwT0RjNU9EZzBOamd6UTBORlFVVTVOVEE0UWlFd01EQXdNamdoT1RrNU9TMHhNaTB6TVZReU16bzFPVG8xT1M0NU9UazVPVGs1V2lFLSIsIlRhcmdldExvY2F0aW9uIjowfQ\"}",
+        "BODY": "{\"value\":[],\"nextLink\":\"https://cpp-recordings.vault.azure.net:443/deletedkeys?api-version=7.3&$skiptoken=eyJOZXh0TWFya2VyIjoiMiExNDghTURBd01EWTJJV3RsZVM5SFJWUlFVazlRUlZKVVNVVlRUMFpMUlZsVFFVeE1VRUZIUlZNeU9DOHpNMEl3TUVVd09URTBORUUwT0RjNU9EZzBOamd6UTBORlFVVTVOVEE0UWlFd01EQXdNamdoT1RrNU9TMHhNaTB6TVZReU16bzFPVG8xT1M0NU9UazVPVGs1V2lFLSIsIlRhcmdldExvY2F0aW9uIjowfQ\"}",
         "STATUS_CODE": "200",
         "cache-control": "no-cache",
         "content-length": "362",
@@ -4156,7 +4156,7 @@
         "x-ms-request-id": "b8d1b8f9-e936-4b28-841c-4eac92cd4a8e",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/deletedkeys?$skiptoken=eyJOZXh0TWFya2VyIjoiMiExMDQhTURBd01ETXpJV3RsZVM5SFJWUlFVazlRUlZKVVNVVlRUMFpMUlZsVFFVeE1VRUZIUlZNeE55RXdNREF3TWpnaE9UazVPUzB4TWkwek1WUXlNem8xT1RvMU9TNDVPVGs1T1RrNVdpRS0iLCJUYXJnZXRMb2NhdGlvbiI6MH0&api-version=7.2"
+      "Url": "https://REDACTED.vault.azure.net/deletedkeys?$skiptoken=eyJOZXh0TWFya2VyIjoiMiExMDQhTURBd01ETXpJV3RsZVM5SFJWUlFVazlRUlZKVVNVVlRUMFpMUlZsVFFVeE1VRUZIUlZNeE55RXdNREF3TWpnaE9UazVPUzB4TWkwek1WUXlNem8xT1RvMU9TNDVPVGs1T1RrNVdpRS0iLCJUYXJnZXRMb2NhdGlvbiI6MH0&api-version=7.3"
     },
     {
       "Headers": {
@@ -4165,7 +4165,7 @@
       },
       "Method": "GET",
       "Response": {
-        "BODY": "{\"value\":[],\"nextLink\":\"https://cpp-recordings.vault.azure.net:443/deletedkeys?api-version=7.2&$skiptoken=eyJOZXh0TWFya2VyIjoiMiExMDQhTURBd01ETXlJV3RsZVM5SFJWUlFVazlRUlZKVVNVVlRUMFpMUlZsVFFVeE1VRUZIUlZNMElUQXdNREF5T0NFNU9UazVMVEV5TFRNeFZESXpPalU1T2pVNUxqazVPVGs1T1RsYUlRLS0iLCJUYXJnZXRMb2NhdGlvbiI6MH0\"}",
+        "BODY": "{\"value\":[],\"nextLink\":\"https://cpp-recordings.vault.azure.net:443/deletedkeys?api-version=7.3&$skiptoken=eyJOZXh0TWFya2VyIjoiMiExMDQhTURBd01ETXlJV3RsZVM5SFJWUlFVazlRUlZKVVNVVlRUMFpMUlZsVFFVeE1VRUZIUlZNMElUQXdNREF5T0NFNU9UazVMVEV5TFRNeFZESXpPalU1T2pVNUxqazVPVGs1T1RsYUlRLS0iLCJUYXJnZXRMb2NhdGlvbiI6MH0\"}",
         "STATUS_CODE": "200",
         "cache-control": "no-cache",
         "content-length": "303",
@@ -4182,7 +4182,7 @@
         "x-ms-request-id": "da9b6769-729b-49d2-b16f-71b956176269",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/deletedkeys?$skiptoken=eyJOZXh0TWFya2VyIjoiMiExNDghTURBd01EWTJJV3RsZVM5SFJWUlFVazlRUlZKVVNVVlRUMFpMUlZsVFFVeE1VRUZIUlZNeU9DOHpNMEl3TUVVd09URTBORUUwT0RjNU9EZzBOamd6UTBORlFVVTVOVEE0UWlFd01EQXdNamdoT1RrNU9TMHhNaTB6TVZReU16bzFPVG8xT1M0NU9UazVPVGs1V2lFLSIsIlRhcmdldExvY2F0aW9uIjowfQ&api-version=7.2"
+      "Url": "https://REDACTED.vault.azure.net/deletedkeys?$skiptoken=eyJOZXh0TWFya2VyIjoiMiExNDghTURBd01EWTJJV3RsZVM5SFJWUlFVazlRUlZKVVNVVlRUMFpMUlZsVFFVeE1VRUZIUlZNeU9DOHpNMEl3TUVVd09URTBORUUwT0RjNU9EZzBOamd6UTBORlFVVTVOVEE0UWlFd01EQXdNamdoT1RrNU9TMHhNaTB6TVZReU16bzFPVG8xT1M0NU9UazVPVGs1V2lFLSIsIlRhcmdldExvY2F0aW9uIjowfQ&api-version=7.3"
     },
     {
       "Headers": {
@@ -4191,7 +4191,7 @@
       },
       "Method": "GET",
       "Response": {
-        "BODY": "{\"value\":[],\"nextLink\":\"https://cpp-recordings.vault.azure.net:443/deletedkeys?api-version=7.2&$skiptoken=eyJOZXh0TWFya2VyIjoiMiExNDghTURBd01EWTFJV3RsZVM5SFJWUlFVazlRUlZKVVNVVlRUMFpMUlZsVFFVeE1VRUZIUlZNMkx6QTBOVFl4TjBSRE56VkRRVFF4T0ROQ1FVWTFSVEU1T1VFMFJEaEJOVEZHSVRBd01EQXlPQ0U1T1RrNUxURXlMVE14VkRJek9qVTVPalU1TGprNU9UazVPVGxhSVEtLSIsIlRhcmdldExvY2F0aW9uIjowfQ\"}",
+        "BODY": "{\"value\":[],\"nextLink\":\"https://cpp-recordings.vault.azure.net:443/deletedkeys?api-version=7.3&$skiptoken=eyJOZXh0TWFya2VyIjoiMiExNDghTURBd01EWTFJV3RsZVM5SFJWUlFVazlRUlZKVVNVVlRUMFpMUlZsVFFVeE1VRUZIUlZNMkx6QTBOVFl4TjBSRE56VkRRVFF4T0ROQ1FVWTFSVEU1T1VFMFJEaEJOVEZHSVRBd01EQXlPQ0U1T1RrNUxURXlMVE14VkRJek9qVTVPalU1TGprNU9UazVPVGxhSVEtLSIsIlRhcmdldExvY2F0aW9uIjowfQ\"}",
         "STATUS_CODE": "200",
         "cache-control": "no-cache",
         "content-length": "362",
@@ -4208,7 +4208,7 @@
         "x-ms-request-id": "33937e4b-8426-4a71-98a7-0760964bfef6",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/deletedkeys?$skiptoken=eyJOZXh0TWFya2VyIjoiMiExMDQhTURBd01ETXlJV3RsZVM5SFJWUlFVazlRUlZKVVNVVlRUMFpMUlZsVFFVeE1VRUZIUlZNMElUQXdNREF5T0NFNU9UazVMVEV5TFRNeFZESXpPalU1T2pVNUxqazVPVGs1T1RsYUlRLS0iLCJUYXJnZXRMb2NhdGlvbiI6MH0&api-version=7.2"
+      "Url": "https://REDACTED.vault.azure.net/deletedkeys?$skiptoken=eyJOZXh0TWFya2VyIjoiMiExMDQhTURBd01ETXlJV3RsZVM5SFJWUlFVazlRUlZKVVNVVlRUMFpMUlZsVFFVeE1VRUZIUlZNMElUQXdNREF5T0NFNU9UazVMVEV5TFRNeFZESXpPalU1T2pVNUxqazVPVGs1T1RsYUlRLS0iLCJUYXJnZXRMb2NhdGlvbiI6MH0&api-version=7.3"
     },
     {
       "Headers": {
@@ -4234,7 +4234,7 @@
         "x-ms-request-id": "eebf6f51-bad1-4b81-a0d4-4d74aa2422cb",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/deletedkeys?$skiptoken=eyJOZXh0TWFya2VyIjoiMiExNDghTURBd01EWTFJV3RsZVM5SFJWUlFVazlRUlZKVVNVVlRUMFpMUlZsVFFVeE1VRUZIUlZNMkx6QTBOVFl4TjBSRE56VkRRVFF4T0ROQ1FVWTFSVEU1T1VFMFJEaEJOVEZHSVRBd01EQXlPQ0U1T1RrNUxURXlMVE14VkRJek9qVTVPalU1TGprNU9UazVPVGxhSVEtLSIsIlRhcmdldExvY2F0aW9uIjowfQ&api-version=7.2"
+      "Url": "https://REDACTED.vault.azure.net/deletedkeys?$skiptoken=eyJOZXh0TWFya2VyIjoiMiExNDghTURBd01EWTFJV3RsZVM5SFJWUlFVazlRUlZKVVNVVlRUMFpMUlZsVFFVeE1VRUZIUlZNMkx6QTBOVFl4TjBSRE56VkRRVFF4T0ROQ1FVWTFSVEU1T1VFMFJEaEJOVEZHSVRBd01EQXlPQ0U1T1RrNUxURXlMVE14VkRJek9qVTVPalU1TGprNU9UazVPVGxhSVEtLSIsIlRhcmdldExvY2F0aW9uIjowfQ&api-version=7.3"
     }
   ]
 }
