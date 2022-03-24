@@ -14,11 +14,11 @@ TEST(Template, Basic)
   EXPECT_FALSE(templateClient.ClientVersion().empty());
 }
 
-TEST(Template, GetValue)
+TEST(Template, GetValue1)
 {
   TemplateClient templateClient;
 
-  EXPECT_EQ(templateClient.GetValue(-1), 0);
-  EXPECT_EQ(templateClient.GetValue(0), 1);
-  EXPECT_EQ(templateClient.GetValue(1), 2);
+  EXPECT_EQ(templateClient.GetValue1(-1), 0);
+  EXPECT_EQ(templateClient.GetValue1(0), 1);
+  EXPECT_EQ(templateClient.GetValue1(1), 2);
 }
