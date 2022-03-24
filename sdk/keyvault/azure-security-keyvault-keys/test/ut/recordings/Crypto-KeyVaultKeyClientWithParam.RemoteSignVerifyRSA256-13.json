@@ -25,7 +25,7 @@
         "x-ms-request-id": "d78267f2-488d-45a0-bd04-8410a8d6db70",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/keys/RemoteSignVerifyRSA256-13/create?api-version=7.3"
+      "Url": "https://REDACTED.vault.azure.net/keys/RemoteSignVerifyRSA256-13/create?api-version=7.2"
     },
     {
       "Headers": {
@@ -52,7 +52,7 @@
         "x-ms-request-id": "6185faf1-bd51-4c11-9fe2-485a8355fe0d",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/keys/RemoteSignVerifyRSA256-13/11306b6f429d42a38bd1e5f6d15ec997/sign?api-version=7.3"
+      "Url": "https://REDACTED.vault.azure.net/keys/RemoteSignVerifyRSA256-13/11306b6f429d42a38bd1e5f6d15ec997/sign?api-version=7.2"
     },
     {
       "Headers": {
@@ -79,7 +79,7 @@
         "x-ms-request-id": "67a5be98-656e-4e2f-8578-75d1c4ca466d",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/keys/RemoteSignVerifyRSA256-13/11306b6f429d42a38bd1e5f6d15ec997/verify?api-version=7.3"
+      "Url": "https://REDACTED.vault.azure.net/keys/RemoteSignVerifyRSA256-13/11306b6f429d42a38bd1e5f6d15ec997/verify?api-version=7.2"
     },
     {
       "Headers": {
@@ -106,7 +106,7 @@
         "x-ms-request-id": "14725960-8260-4cc6-a40d-8a3713ceb245",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/keys/RemoteSignVerifyRSA256-13/11306b6f429d42a38bd1e5f6d15ec997/sign?api-version=7.3"
+      "Url": "https://REDACTED.vault.azure.net/keys/RemoteSignVerifyRSA256-13/11306b6f429d42a38bd1e5f6d15ec997/sign?api-version=7.2"
     },
     {
       "Headers": {
@@ -133,7 +133,7 @@
         "x-ms-request-id": "04cf3f39-adb6-400e-b53d-120e6ee66382",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/keys/RemoteSignVerifyRSA256-13/11306b6f429d42a38bd1e5f6d15ec997/verify?api-version=7.3"
+      "Url": "https://REDACTED.vault.azure.net/keys/RemoteSignVerifyRSA256-13/11306b6f429d42a38bd1e5f6d15ec997/verify?api-version=7.2"
     }
   ]
 }
