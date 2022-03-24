@@ -116,6 +116,7 @@ set(
     src/http/telemetry_policy.cpp
     src/http/transport_policy.cpp
     src/http/url.cpp
+    src/http/websocket.cpp
     src/io/body_stream.cpp
     src/io/random_access_file_body_stream.cpp
     src/private/environment_log_level_listener.hpp

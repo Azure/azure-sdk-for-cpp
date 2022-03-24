@@ -560,13 +560,13 @@ namespace Azure { namespace Core { namespace Http {
        * @brief Stablish network connection to the websocket server.
        *
        */
-      void Connect();
+      void Connect() { m_client->Connect(); }
 
       /**
        * @brief Request connection to be closed.
        *
        */
-      void Close();
+      void Close() { m_client->Close(); }
 
       /**
        * @brief Send a message to the websocket server.
@@ -574,14 +574,20 @@ namespace Azure { namespace Core { namespace Http {
        * @param message The message to be sent to the server.
        * @param context A context to control the request lifetime.
        */
-      void Send(WebsocketOutMessage& message, Azure::Core::Context const& context);
+      void Send(WebsocketOutMessage& message, Azure::Core::Context const& context)
+      {
+        m_client->Send(message, context);
+      }
 
       /**
        * @brief Set a callback to be called when a message is received from the server.
        *
        * @param handler A callback function which gets the incoming message from network.
        */
-      void OnMessage(std::function<void(WebsocketInMessage const&)> const& handler);
+      void OnMessage(std::function<void(WebsocketInMessage const&)> const& handler)
+      {
+        m_client->OnMessage(handler);
+      }
     };
   } // namespace Websockets
 
