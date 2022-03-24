@@ -25,7 +25,7 @@
         "x-ms-request-id": "12814f8d-d4e4-43b6-9043-de5b1e370276",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/keys/DeleteKeyOperationPoll/create?api-version=7.3"
+      "Url": "https://REDACTED.vault.azure.net/keys/DeleteKeyOperationPoll/create?api-version=7.2"
     },
     {
       "Headers": {
@@ -51,7 +51,7 @@
         "x-ms-request-id": "1629f264-9480-4a8d-b083-b75a756fb180",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/keys/DeleteKeyOperationPoll?api-version=7.3"
+      "Url": "https://REDACTED.vault.azure.net/keys/DeleteKeyOperationPoll?api-version=7.2"
     },
     {
       "Headers": {
@@ -77,7 +77,7 @@
         "x-ms-request-id": "e11ee706-3b3c-433e-b56f-881ce3d294e8",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/deletedkeys/DeleteKeyOperationPoll?api-version=7.3"
+      "Url": "https://REDACTED.vault.azure.net/deletedkeys/DeleteKeyOperationPoll?api-version=7.2"
     }
   ]
 }
