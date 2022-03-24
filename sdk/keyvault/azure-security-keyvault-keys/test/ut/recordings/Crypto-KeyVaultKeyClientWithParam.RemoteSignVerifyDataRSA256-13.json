@@ -25,7 +25,7 @@
         "x-ms-request-id": "c2735b4e-ac83-4104-b2d9-177690da1630",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/keys/RemoteSignVerifyDataRSA256-13/create?api-version=7.3"
+      "Url": "https://REDACTED.vault.azure.net/keys/RemoteSignVerifyDataRSA256-13/create?api-version=7.2"
     },
     {
       "Headers": {
@@ -52,7 +52,7 @@
         "x-ms-request-id": "a0c9cea5-4a56-4fb2-ba2b-48b7ddfa74e8",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/keys/RemoteSignVerifyDataRSA256-13/0eb2710340a242ee87c447dd6abf0a35/sign?api-version=7.3"
+      "Url": "https://REDACTED.vault.azure.net/keys/RemoteSignVerifyDataRSA256-13/0eb2710340a242ee87c447dd6abf0a35/sign?api-version=7.2"
     },
     {
       "Headers": {
@@ -79,7 +79,7 @@
         "x-ms-request-id": "2ee63cf2-f0ed-4389-8713-8fd5bc898d35",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/keys/RemoteSignVerifyDataRSA256-13/0eb2710340a242ee87c447dd6abf0a35/verify?api-version=7.3"
+      "Url": "https://REDACTED.vault.azure.net/keys/RemoteSignVerifyDataRSA256-13/0eb2710340a242ee87c447dd6abf0a35/verify?api-version=7.2"
     },
     {
       "Headers": {
@@ -106,7 +106,7 @@
         "x-ms-request-id": "f5f619c9-8599-4bec-ba1d-3099b24c77d9",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/keys/RemoteSignVerifyDataRSA256-13/0eb2710340a242ee87c447dd6abf0a35/sign?api-version=7.3"
+      "Url": "https://REDACTED.vault.azure.net/keys/RemoteSignVerifyDataRSA256-13/0eb2710340a242ee87c447dd6abf0a35/sign?api-version=7.2"
     },
     {
       "Headers": {
@@ -133,7 +133,7 @@
         "x-ms-request-id": "cf1f570d-de45-4244-9960-b2c07ce959cf",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/keys/RemoteSignVerifyDataRSA256-13/0eb2710340a242ee87c447dd6abf0a35/verify?api-version=7.3"
+      "Url": "https://REDACTED.vault.azure.net/keys/RemoteSignVerifyDataRSA256-13/0eb2710340a242ee87c447dd6abf0a35/verify?api-version=7.2"
     }
   ]
 }

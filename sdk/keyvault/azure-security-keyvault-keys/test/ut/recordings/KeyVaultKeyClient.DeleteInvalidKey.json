@@ -24,7 +24,7 @@
         "x-ms-request-id": "3e2c05f1-125f-4f72-94c3-f7e6958deb82",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/keys/DeleteInvalidKey?api-version=7.3"
+      "Url": "https://REDACTED.vault.azure.net/keys/DeleteInvalidKey?api-version=7.2"
     }
   ]
 }

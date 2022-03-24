@@ -25,7 +25,7 @@
         "x-ms-request-id": "4c3a56c7-ba7b-47a9-8d46-9477b2ff79bc",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/keys/UpdateProperties/create?api-version=7.3"
+      "Url": "https://REDACTED.vault.azure.net/keys/UpdateProperties/create?api-version=7.2"
     },
     {
       "Headers": {
@@ -52,7 +52,7 @@
         "x-ms-request-id": "6168f978-9d48-4e1c-aefa-5fd8df4d7cdb",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/keys/UpdateProperties/bc5aed53aa9d4c7a9f59b15483ced60a?api-version=7.3"
+      "Url": "https://REDACTED.vault.azure.net/keys/UpdateProperties/bc5aed53aa9d4c7a9f59b15483ced60a?api-version=7.2"
     },
     {
       "Headers": {
@@ -78,7 +78,7 @@
         "x-ms-request-id": "6ade48af-27ad-4210-a683-3f075a2bafe2",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/keys/UpdateProperties?api-version=7.3"
+      "Url": "https://REDACTED.vault.azure.net/keys/UpdateProperties?api-version=7.2"
     }
   ]
 }
