@@ -2,8 +2,16 @@
     "name": "azure-sdk-for-cpp",
     "version-string": "1.0.0",
     "dependencies": [
-        "curl",
-        "openssl",
-        "libxml2"
+        {
+            "name": "curl",
+            "platform": "!windows & !uwp"
+        },
+        {
+            "name": "libxml2",
+            "platform": "!windows & !uwp"
+        },
+        {
+            "name": "openssl"
+        }
     ]
 }

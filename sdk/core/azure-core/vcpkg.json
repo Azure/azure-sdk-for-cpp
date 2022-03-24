@@ -10,7 +10,7 @@
     "dependencies": [
         {
             "name": "openssl",
-            "platform": "!windows & !uwp"
+            "platform": "!windows & !uwp",
         },
         {
             "name": "vcpkg-cmake",
