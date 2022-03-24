@@ -1,5 +1,5 @@
 # Operation\<T>
-
+testing
 The Azure SDK for C++ defines an Operation as an abstract class to support a long running operation ([LRO](https://github.com/microsoft/api-guidelines/blob/vNext/Guidelines.md#13-long-running-operations)).
 
 The SDK clients would define a concrete class from the `Operation<T>` which an end users can consume for getting the status of the running operation.
