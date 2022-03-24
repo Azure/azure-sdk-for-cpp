@@ -75,6 +75,8 @@ AttestationAdministrationClient::GetAttestationPolicy(
     GetPolicyOptions const& options,
     Azure::Core::Context const& context) const
 {
+  CheckAttestationSigners();
+
   auto request = AttestationCommonRequest::CreateRequest(
       m_endpoint,
       m_apiVersion,
@@ -96,11 +98,10 @@ AttestationAdministrationClient::GetAttestationPolicy(
 
   // Validate the token returned by the service. Use the cached attestation signers in the
   // validation.
-  std::vector<AttestationSigner> const& signers = GetAttestationSigners(context);
   resultToken.ValidateToken(
       options.TokenValidationOptions ? *options.TokenValidationOptions
                                      : this->m_tokenValidationOptions,
-      signers);
+      m_attestationSigners);
 
   // Extract the underlying policy token from the response.
   std::string policyTokenValue
@@ -153,6 +154,7 @@ AttestationAdministrationClient::SetAttestationPolicy(
     SetPolicyOptions const& options,
     Azure::Core::Context const& context) const
 {
+  CheckAttestationSigners();
   // Calculate a signed (or unsigned) attestation policy token to send to the service.
   Models::AttestationToken<> const tokenToSend(
       CreateSetAttestationPolicyToken(newAttestationPolicy, options.SigningKey));
@@ -181,11 +183,10 @@ AttestationAdministrationClient::SetAttestationPolicy(
 
   // Validate the token returned by the service. Use the cached attestation signers in the
   // validation.
-  std::vector<AttestationSigner> const& signers = GetAttestationSigners(context);
   resultToken.ValidateToken(
       options.TokenValidationOptions ? *options.TokenValidationOptions
                                      : this->m_tokenValidationOptions,
-      signers);
+      m_attestationSigners);
 
   // Extract the underlying policy token from the response.
   auto internalResult
@@ -218,6 +219,7 @@ AttestationAdministrationClient::ResetAttestationPolicy(
     SetPolicyOptions const& options,
     Azure::Core::Context const& context) const
 {
+  CheckAttestationSigners();
   // Calculate a signed (or unsigned) attestation policy token to send to the service.
   Models::AttestationToken<> tokenToSend(
       CreateSetAttestationPolicyToken(Azure::Nullable<std::string>(), options.SigningKey));
@@ -246,11 +248,10 @@ AttestationAdministrationClient::ResetAttestationPolicy(
 
   // Validate the token returned by the service. Use the cached attestation signers in the
   // validation.
-  std::vector<AttestationSigner> const& signers = GetAttestationSigners(context);
   resultToken.ValidateToken(
       options.TokenValidationOptions ? *options.TokenValidationOptions
                                      : this->m_tokenValidationOptions,
-      signers);
+      m_attestationSigners);
 
   // Extract the underlying policy token from the response.
   auto internalResult
@@ -287,6 +288,8 @@ AttestationAdministrationClient::GetPolicyManagementCertificates(
     GetPolicyManagementCertificatesOptions const& options,
     Azure::Core::Context const& context) const
 {
+  CheckAttestationSigners();
+
   auto request = AttestationCommonRequest::CreateRequest(
       m_endpoint, m_apiVersion, HttpMethod::Get, {"certificates"}, nullptr);
 
@@ -304,11 +307,10 @@ AttestationAdministrationClient::GetPolicyManagementCertificates(
 
   // Validate the token returned by the service. Use the cached attestation signers in the
   // validation.
-  std::vector<AttestationSigner> const& signers = GetAttestationSigners(context);
   resultToken.ValidateToken(
       options.TokenValidationOptions ? *options.TokenValidationOptions
                                      : this->m_tokenValidationOptions,
-      signers);
+      m_attestationSigners);
 
   Models::_detail::JsonWebKeySet jwks(
       *static_cast<AttestationToken<Models::_detail::GetPolicyCertificatesResult>>(resultToken)
@@ -331,6 +333,8 @@ std::string AttestationAdministrationClient::CreatePolicyCertificateModification
     std::string const& pemEncodedX509CertificateToAdd,
     AttestationSigningKey const& existingSigningKey) const
 {
+  CheckAttestationSigners();
+
   // Calculate a signed attestation policy token to send to the service.
   // Embed the encoded policy in the StoredAttestationPolicy.
   const auto x5cToAdd(Cryptography::ImportX509Certificate(pemEncodedX509CertificateToAdd));
@@ -356,11 +360,10 @@ std::string AttestationAdministrationClient::CreatePolicyCertificateModification
 
 Models::AttestationToken<Models::PolicyCertificateModificationResult>
 AttestationAdministrationClient::ProcessPolicyCertModificationResult(
-
     std::unique_ptr<RawResponse> const& serverResponse,
-    AttestationTokenValidationOptions const& tokenValidationOptions,
-    Azure::Core::Context const& context) const
+    AttestationTokenValidationOptions const& tokenValidationOptions) const
 {
+  CheckAttestationSigners();
 
   // Deserialize the Service response token and return the JSON web token returned by the
   // service.
@@ -374,8 +377,7 @@ AttestationAdministrationClient::ProcessPolicyCertModificationResult(
 
   // Validate the token returned by the service. Use the cached attestation signers in the
   // validation.
-  std::vector<AttestationSigner> const& signers = GetAttestationSigners(context);
-  resultToken.ValidateToken(tokenValidationOptions, signers);
+  resultToken.ValidateToken(tokenValidationOptions, m_attestationSigners);
 
   // Extract the underlying policy token from the response.
   auto internalResult
@@ -407,6 +409,8 @@ AttestationAdministrationClient::AddPolicyManagementCertificate(
     AddPolicyManagementCertificatesOptions const& options,
     Azure::Core::Context const& context) const
 {
+  CheckAttestationSigners();
+
   auto const policyCertToken(
       CreatePolicyCertificateModificationToken(pemEncodedX509CertificateToAdd, existingSigningKey));
   Azure::Core::IO::MemoryBodyStream stream(
@@ -421,8 +425,7 @@ AttestationAdministrationClient::AddPolicyManagementCertificate(
       ProcessPolicyCertModificationResult(
           response,
           options.TokenValidationOptions ? *options.TokenValidationOptions
-                                         : this->m_tokenValidationOptions,
-          context));
+                                         : this->m_tokenValidationOptions));
   return Response<AttestationToken<Models::PolicyCertificateModificationResult>>(
       returnValue, std::move(response));
 }
@@ -434,6 +437,8 @@ AttestationAdministrationClient::RemovePolicyManagementCertificate(
     AddPolicyManagementCertificatesOptions const& options,
     Azure::Core::Context const& context) const
 {
+  CheckAttestationSigners();
+
   // Calculate a signed (or unsigned) attestation policy token to send to the service.
   // Embed the encoded policy in the StoredAttestationPolicy.
   auto const policyCertToken(CreatePolicyCertificateModificationToken(
@@ -451,41 +456,52 @@ AttestationAdministrationClient::RemovePolicyManagementCertificate(
       ProcessPolicyCertModificationResult(
           response,
           options.TokenValidationOptions ? *options.TokenValidationOptions
-                                         : this->m_tokenValidationOptions,
-          context));
+                                         : this->m_tokenValidationOptions));
   return Response<AttestationToken<Models::PolicyCertificateModificationResult>>(
       returnValue, std::move(response));
 }
 
 /**
- * @brief Retrieve the attestation signers to validate the attestation token returned from the
+ * @brief Retrieves the information needed to validate the response returned from the attestation
  * service.
  *
- * @details Validating attestation tokens returned by the attestation service requires a set of
- * possible signers for the attestation token. Retrieving this can take a significant amount of time
- * (tens or hundreds of milliseconds), so we cache the results for the lifetime of this client.
+ * @details Validating the response returned by the attestation service requires a set of
+ * possible signers for the attestation token.
  *
  * @param context Client context for the request to the service.
- * @return std::vector<AttestationSigner> const& Returns a reference to the private member filled in
- * with the signers returned by the service.
  */
-std::vector<AttestationSigner> const& AttestationAdministrationClient::GetAttestationSigners(
+void AttestationAdministrationClient::RetrieveResponseValidationCollateral(
     Azure::Core::Context const& context) const
 {
   std::unique_lock<std::shared_timed_mutex> stateLock(SharedStateLock);
 
-  if (m_attestationSigners.size() == 0)
+  if (m_attestationSigners.empty())
   {
+    stateLock.unlock();
     auto request
         = AttestationCommonRequest::CreateRequest(m_endpoint, HttpMethod::Get, {"certs"}, nullptr);
     auto response = AttestationCommonRequest::SendRequest(*m_pipeline, request, context);
     auto jsonWebKeySet(JsonWebKeySetSerializer::Deserialize(response));
     AttestationSigningCertificateResult returnValue;
+    std::vector<AttestationSigner> newValue;
     for (const auto& jwk : jsonWebKeySet.Keys)
     {
       AttestationSignerInternal internalSigner(jwk);
-      m_attestationSigners.push_back(internalSigner);
+      newValue.push_back(internalSigner);
+    }
+    stateLock.lock();
+    if (m_attestationSigners.empty())
+    {
+      m_attestationSigners = newValue;
     }
   }
-  return m_attestationSigners;
+}
+
+void AttestationAdministrationClient::CheckAttestationSigners() const
+{
+  std::unique_lock<std::shared_timed_mutex> stateLock(SharedStateLock);
+
+  AZURE_ASSERT_MSG(
+      !m_attestationSigners.empty(),
+      "RetrieveResponseValidationCollateral must be called before this API.");
 }

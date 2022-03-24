@@ -33,6 +33,7 @@ target_link_libraries(vcpkg-all-smoke
      Azure::azure-security-keyvault-keys
      Azure::azure-security-keyvault-certificates
      Azure::azure-security-keyvault-secrets
+     Azure::azure-security-attestation
      get-env-helper
 )
 

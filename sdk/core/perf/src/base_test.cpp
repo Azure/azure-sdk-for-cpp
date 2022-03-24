@@ -107,23 +107,23 @@ namespace Azure { namespace Perf {
   {
     // NOTE: perf-fm is injecting the SSL config and transport here for the client options
     //       If the test overrides the options/transport, this can be undone.
-#if defined(BUILD_CURL_HTTP_TRANSPORT_ADAPTER)
     if (m_isInsecureEnabled)
     {
+#if defined(BUILD_CURL_HTTP_TRANSPORT_ADAPTER)
       Azure::Core::Http::CurlTransportOptions curlOptions;
       curlOptions.SslVerifyPeer = false;
       clientOptions.Transport.Transport
           = std::make_shared<Azure::Core::Http::CurlTransport>(curlOptions);
-    }
 #elif defined(BUILD_TRANSPORT_WINHTTP_ADAPTER)
-    Azure::Core::Http::WinHttpTransportOptions winHttpOptions;
-    winHttpOptions.IgnoreUnknownServerCert = true;
-    clientOptions.Transport.Transport
-        = std::make_shared<Azure::Core::Http::WinHttpTransport>(winHttpOptions);
+      Azure::Core::Http::WinHttpTransportOptions winHttpOptions;
+      winHttpOptions.IgnoreUnknownServerCert = true;
+      clientOptions.Transport.Transport
+          = std::make_shared<Azure::Core::Http::WinHttpTransport>(winHttpOptions);
 #else
-    // avoid the variable not used warning
-    (void)clientOptions;
+      // avoid the variable not used warning
+      (void)clientOptions;
 #endif
+    }
   }
 
   void BaseTest::ConfigureClientOptions(Azure::Core::_internal::ClientOptions& clientOptions)

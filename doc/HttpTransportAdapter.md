@@ -41,6 +41,10 @@ Multiple HTTP transport adapters can be built as part of the project. This is to
 
 Another example is if you want to create your own HTTP transport adapter. In this case, you can build your own HTTP transport adapter and test it by comparing it to the behavior of the libcurl HTTP transport adapter.
 
+## TLS 1.2
+
+The transport adapters from the Azure SDK (libcurl and winHTTP) enforces the use of Transport Layer Security version 1.2. If you need to use an older version, please do it by creating a fork to update the source code. Or consider creating a [custom transport adapter](#building-a-custom-http-transport-adapter) implementation within your application source code.
+
 ## Using the HTTP Transport Adapter
 
 The HTTP transport adapter is set up during service client initialization, for example, when creating an Azure Storage client. The HTTP transport adapter can be specified at client initialization via the client options argument. The example below shows how to use the default HTTP transport adapter when constructing an SDK client:

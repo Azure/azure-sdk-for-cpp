@@ -11,6 +11,7 @@
     "*.exe",
     "*.a",
     "*.lib",
+    ".github/CODEOWNERS",
     ".gitignore",
     ".vscode/cspell.json",
     "eng/common/**/*",

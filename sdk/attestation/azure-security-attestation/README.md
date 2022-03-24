@@ -115,7 +115,8 @@ authentication, the documentation for that API will reflect that the attestation
 
 To interact with the authenticated APIs supported by the Azure Attestation service, your client must present an Azure Active Directory bearer token to the service.
 
-The simplest way of providing a bearer token is to use the  `DefaultAzureCredential` authentication method by providing client secret credentials is being used in this getting started section, but you can find more ways to authenticate with [azure-identity][azure_identity].
+The simplest way of providing a bearer token is to use the  `ClientSecretCredential` authentication method by providing client secret credentials is being used in this
+getting started section, but you can find more ways to authenticate with [azure-identity][azure_identity].
 
 ## Key concepts
 
@@ -202,29 +203,40 @@ clients to add, remove or enumerate the policy management certificates.
 - [List policy management certificates](#list-attestation-signing-certificates)
 - [Add policy management certificate](#add-attestation-signing-certificate)
 
-#### Create a synchronous attestation client
+#### Create an attestation client
 
 The `AttestationClientBuilder` class is used to create instances of the attestation client:
 
-```cpp readme-sample-create-synchronous-client
+```cpp 
     std::string endpoint = std::getenv("ATTESTATION_AAD_URL");
-    AttestationClientOptions options;
-    return std::make_unique<Azure::Security::Attestation::AttestationClient>(m_endpoint, options);
+    return std::make_unique<Azure::Security::Attestation::AttestationClient>(m_endpoint);
 ```
 
 If the attestation APIs require authentication, use the following:
 
-```cpp readme-sample-create-synchronous-client
+```cpp 
 std::string endpoint = std::getenv("ATTESTATION_AAD_URL");
-AttestationClientOptions options;
-    std::shared_ptr<Azure::Core::Credentials::TokenCredential> credential
-        = std::make_shared<Azure::Identity::ClientSecretCredential>(
-            GetEnv("AZURE_TENANT_ID"), GetEnv("AZURE_CLIENT_ID"), GetEnv("AZURE_CLIENT_SECRET"));
-return std::make_unique<Azure::Security::Attestation::AttestationClient>(m_endpoint, credential, options);
+std::shared_ptr<Azure::Core::Credentials::TokenCredential> credential
+    = std::make_shared<Azure::Identity::ClientSecretCredential>(
+      std::getenv("AZURE_TENANT_ID"), std::getenv("AZURE_CLIENT_ID"), std::getenv("AZURE_CLIENT_SECRET"));
+return std::make_unique<Azure::Security::Attestation::AttestationClient>(m_endpoint, credential);
 ```
 
 The same pattern is used to create an `Azure::Security::Attestation::AttestationAdministrationClient`.
 
+#### Retrieve attestation response validation collateral.
+
+Validating the response from the attestation service requires that the client have some additional information tto help it
+validate the responses from the attestation service. Before making most service methods, developers should call the
+`RetrieveResponseValidationCollateral` API to retrieve and cache this information.
+
+This only needs to be called once for each attestation client or attestation administration client instance.
+
+```cpp
+    // Retrieve attestation response validation collateral before calling into the service.
+    adminClient.RetrieveResponseValidationCollateral();
+
+```
 #### Retrieve Token Certificates
 
 Use `GetAttestationSigningCertificates` to retrieve the set of certificates, which can be used to validate the token returned from the attestation service.
@@ -232,7 +244,7 @@ Normally, this information is not required as the attestation SDK will perform t
 attestation service, however the APIs are provided for completeness and to facilitate customer's independently validating
 attestation results.
 
-```cpp readme-sample-getSigningCertificates
+```cpp
 auto attestationSigners = attestationClient->GetAttestationSigningCertificates();
 // Enumerate the signers.
 for (const auto& signer : attestationSigners.Value.Signers)
@@ -245,29 +257,41 @@ for (const auto& signer : attestationSigners.Value.Signers)
 
 Use the `AttestSgxEnclave` method to attest an SGX enclave.
 
-```cpp readme-sample-attest-sgx-enclave
-```
+```cpp
+   Azure::Response<AttestationToken<AttestationResult>> const sgxResult
+        = attestationClient.AttestSgxEnclave(sgxEnclaveQuote);
 
-#### Create a synchronous administrative client
+    std::cout << "SGX Quote MRSIGNER is: "
+              << Convert::Base64Encode(*sgxResult.Value.Body.SgxMrSigner) << std::endl;
+    std::cout << "SGX Quote MRENCLAVE is: "
+              << Convert::Base64Encode(*sgxResult.Value.Body.SgxMrEnclave) << std::endl;
+ ```
+
+#### Create an administrative client
 
 All administrative clients are authenticated.
 
-```cpp readme-sample-create-synchronous-client
+```cpp
 std::string endpoint = std::getenv("ATTESTATION_AAD_URL");
-AttestationClientOptions options;
-  std::shared_ptr<Azure::Core::Credentials::TokenCredential> credential
-        = std::make_shared<Azure::Identity::ClientSecretCredential>(
-            GetEnv("AZURE_TENANT_ID"), GetEnv("AZURE_CLIENT_ID"), GetEnv("AZURE_CLIENT_SECRET"));
-auto adminClient =  std::make_unique<AttestationAdministrationClient>(m_endpoint, credential, options);
+std::shared_ptr<Azure::Core::Credentials::TokenCredential> credential
+      = std::make_shared<Azure::Identity::ClientSecretCredential>(
+          std::getenv("AZURE_TENANT_ID"), std::getenv("AZURE_CLIENT_ID"), std::getenv("AZURE_CLIENT_SECRET"));
+AttestationAdministrationClient adminClient(m_endpoint, credential);
 ```
 
 #### Retrieve current attestation policy for OpenEnclave
 
 Use the `GetAttestationPolicy` API to retrieve the current attestation policy for a given TEE.
 
-```cpp readme-sample-getCurrentPolicy
-auto currentPolicy = adminClient->GetAttestationPolicy(AttestationType::OPEN_ENCLAVE);
-std::cout << "Current policy for OpenEnclave is " << currentPolicy.Value.Body << std::endl;
+```cpp 
+    // Retrieve attestation response validation collateral before calling into the service.
+    adminClient.RetrieveResponseValidationCollateral();
+
+    // Retrieve the SGX Attestation Policy from this attestation service instance.
+    Azure::Response<AttestationToken<std::string>> const sgxPolicy
+        = adminClient.GetAttestationPolicy(AttestationType::SgxEnclave);
+    std::cout << "SGX Attestation Policy is: " << sgxPolicy.Value.Body << std::endl;
+
 ```
 
 #### Set unsigned attestation policy (AAD clients only)
@@ -275,26 +299,67 @@ std::cout << "Current policy for OpenEnclave is " << currentPolicy.Value.Body <<
 When an attestation instance is in AAD mode, the caller can use a convenience method to set an unsigned attestation
 policy on the instance.
 
-```java readme-sample-set-unsigned-policy
-// Set the listed policy on an attestation instance. Please note that this particular policy will deny all
-// attestation requests and should not be used in production.
-PolicyResult policyResult = client.setAttestationPolicy(AttestationType.OPEN_ENCLAVE,
-    "version=1.0; authorizationrules{=> deny();}; issuancerules{};");
-System.out.printf("Policy set for OpenEnclave result: %s\n", policyResult.getPolicyResolution());
-```
+```cpp 
+    // Retrieve attestation response validation collateral before calling into the service.
+    adminClient.RetrieveResponseValidationCollateral();
+
+    // Set the attestation policy on this attestation instance.
+    // Note that because this is an AAD mode instance, the caller does not need to sign the policy
+    // being set.
+    std::string const policyToSet(R"(version= 1.0;
+authorizationrules 
+{
+	[ type=="x-ms-sgx-is-debuggable", value==true ]&&
+	[ type=="x-ms-sgx-mrsigner", value=="mrsigner1"] => permit(); 
+	[ type=="x-ms-sgx-is-debuggable", value==true ]&& 
+	[ type=="x-ms-sgx-mrsigner", value=="mrsigner2"] => permit(); 
+};)");
+    Azure::Response<AttestationToken<PolicyResult>> const setResult
+        = adminClient.SetAttestationPolicy(AttestationType::SgxEnclave, policyToSet);
+
+    if (setResult.Value.Body.PolicyResolution == PolicyModification::Updated)
+    {
+      std::cout << "Attestation policy was updated." << std::endl;
+    }```
 
 #### Set signed attestation policy
 
 For isolated mode attestation instances, the set or reset policy request must be signed using the key that is associated
 with the attestation signing certificates configured on the attestation instance.
 
-```java readme-sample-set-signed-policy
-// Set the listed policy on an attestation instance using a signed policy token.
-PolicyResult policyResult = client.setAttestationPolicy(AttestationType.SGX_ENCLAVE,
-    new AttestationPolicySetOptions()
-        .setAttestationPolicy("version=1.0; authorizationrules{=> permit();}; issuancerules{};")
-            .setAttestationSigner(new AttestationSigningKey(certificate, privateKey)));
-System.out.printf("Policy set for Sgx result: %s\n", policyResult.getPolicyResolution());
+Note that this snippet requires two additional environment variables, ISOLATED_SIGNING_KEY and ISOLATED_SIGNING_CERTIFICATE.
+
+These are the signing key and certificate which were used when creating the attestation service instance.
+
+```cpp
+    std::string const signingKey(std::getenv("ISOLATED_SIGNING_KEY"));
+    std::string const signingCert(std::getenv("ISOLATED_SIGNING_CERTIFICATE"));
+
+    // The attestation APIs expect a PEM encoded key and certificate, so convert the Base64 key and
+    // certificate to PEM encoded equivalents.
+    std::string const pemSigningKey(::Cryptography::PemFromBase64(signingKey, "PRIVATE KEY"));
+    std::string const pemSigningCert(::Cryptography::PemFromBase64(signingCert, "CERTIFICATE"));
+
+    std::string const policyToSet(R"(version= 1.0;
+authorizationrules 
+{
+	[ type=="x-ms-sgx-is-debuggable", value==true ]&&
+	[ type=="x-ms-sgx-mrsigner", value=="mrsigner1"] => permit(); 
+	[ type=="x-ms-sgx-is-debuggable", value==true ]&& 
+	[ type=="x-ms-sgx-mrsigner", value=="mrsigner2"] => permit(); 
+};)");
+
+    // When setting attestation policy, use the signing key associated with the isolated instance.
+    SetPolicyOptions setOptions;
+    setOptions.SigningKey = AttestationSigningKey{pemSigningKey, pemSigningCert};
+
+    Azure::Response<AttestationToken<PolicyResult>> const setResult
+        = adminClient.SetAttestationPolicy(AttestationType::SgxEnclave, policyToSet, setOptions);
+
+    if (setResult.Value.Body.PolicyResolution == PolicyModification::Updated)
+    {
+      std::cout << "Attestation policy was updated." << std::endl;
+    }
 ```
 
 #### List attestation signing certificates
@@ -310,12 +375,16 @@ public key in the token. The set or reset policy operation will only succeed if 
 the policy management tokens. This interaction ensures that the client is in possession of the private key associated with
 one of the policy management certificates and is thus authorized to perform the operation.
 
-```java readme-sample-listPolicyCertificates
-AttestationSignerCollection signers = client.listPolicyManagementCertificates();
-System.out.printf("Instance %s contains %d signers.\n", endpoint, signers.getAttestationSigners().size());
-for (AttestationSigner signer : signers.getAttestationSigners()) {
-    System.out.printf("Certificate Subject: %s", signer.getCertificates().get(0).getSubjectDN().toString());
-}
+```cpp
+// Retrieve attestation response validation collateral before calling into the service.
+adminClient.RetrieveResponseValidationCollateral();
+
+// Retrieve the SGX Attestation Policy from this attestation service instance.
+Azure::Response<AttestationToken<PolicyCertificateListResult>> const policyCertificates
+        = adminClient.GetPolicyManagementCertificates();
+
+std::cout << "There are " << policyCertificates.Value.Body.Certificates.size()
+              << " certificates configured on this instance." << std::endl;
 ```
 
 #### Add attestation signing certificate
@@ -327,14 +396,33 @@ the caller is authorized to update the set of policy certificates).
 Note: Adding the same certificate twice is not considered an error - if the certificate is already present, the addition is
 ignored (this possibly surprising behavior is there because retries could cause the addition to be executed multiple times)
 
-```java readme-sample-addPolicyManagementCertificate
-System.out.printf("Adding new certificate %s\n", certificateToAdd.getSubjectDN().toString());
-PolicyCertificatesModificationResult modificationResult = client.addPolicyManagementCertificate(
-    new PolicyManagementCertificateOptions(certificateToAdd,
-        new AttestationSigningKey(isolatedCertificate, isolatedKey)));
-System.out.printf("Updated policy certificate, certificate add result: %s\n",
-    modificationResult.getCertificateResolution());
-System.out.printf("Added certificate thumbprint: %s\n", modificationResult.getCertificateThumbprint());
+```cpp
+    // The attestation APIs expect a PEM encoded key and certificate, so convert the Base64 key and
+    // certificate to PEM encoded equivalents.
+    std::string const pemSigningKey(::Cryptography::PemFromBase64(signingKey, "PRIVATE KEY"));
+    std::string const pemSigningCert(::Cryptography::PemFromBase64(signingCert, "CERTIFICATE"));
+
+    AttestationSigningKey const requestSigner{pemSigningKey, pemSigningCert};
+
+    // Retrieve attestation response validation collateral before calling into the service.
+    adminClient.RetrieveResponseValidationCollateral();
+
+    // We start this sample by adding a new certificate to the set of policy management
+    // certificates.
+    {
+      // Create a PEM encoded X.509 certificate to add based on the POLICY_SIGNING_CERTIFICATE_0
+      // certificate.
+      std::string const certToAdd(GetEnvHelper::GetEnv("POLICY_SIGNING_CERTIFICATE_0"));
+      std::string const pemCertificateToAdd(
+          ::Cryptography::PemFromBase64(certToAdd, "CERTIFICATE"));
+
+      // Add the new certificate to the set of policy management certificates for this attestation
+      // service instance.
+      Azure::Response<AttestationToken<PolicyCertificateModificationResult>> const addResult
+          = adminClient.AddPolicyManagementCertificate(pemCertificateToAdd, requestSigner);
+
+      std::cout << "The result of the certificate add operation is: "
+                << addResult.Value.Body.CertificateModification.ToString() << std::endl;
 ```
 
 #### Remove attestation signing certificate
@@ -346,14 +434,20 @@ the caller is authorized to update the set of policy certificates).
 Note: Removing a non-existent certificate is not considered an error - if the certificate is not present, the removal is
 ignored (this possibly surprising behavior is there because retries could cause the removal to be executed multiple times)
 
-```java readme-sample-removePolicyManagementCertificate
-System.out.printf("Removing existing certificate %s\n", certificateToRemove.getSubjectDN().toString());
-PolicyCertificatesModificationResult modificationResult = client.deletePolicyManagementCertificate(
-    new PolicyManagementCertificateOptions(certificateToRemove,
-        new AttestationSigningKey(isolatedCertificate, isolatedKey)));
-System.out.printf("Updated policy certificate, certificate remove result: %s\n",
-    modificationResult.getCertificateResolution());
-System.out.printf("Removed certificate thumbprint: %s\n", modificationResult.getCertificateThumbprint());
+```cpp
+// Create a PEM encoded X.509 certificate to add based on the POLICY_SIGNING_CERTIFICATE_0
+// certificate.
+std::string const certToRemove(GetEnvHelper::GetEnv("POLICY_SIGNING_CERTIFICATE_0"));
+std::string const pemCertificateToRemove(
+    ::Cryptography::PemFromBase64(certToRemove, "CERTIFICATE"));
+
+// Add the new certificate to the set of policy management certificates for this attestation
+// service instance.
+Azure::Response<AttestationToken<PolicyCertificateModificationResult>> const addResult
+    = adminClient.RemovePolicyManagementCertificate(pemCertificateToRemove, requestSigner);
+
+std::cout << "The result of the certificate remove operation is: "
+        << addResult.Value.Body.CertificateModification.ToString() << std::endl;
 ```
 
 ## Troubleshooting
@@ -399,7 +493,7 @@ Azure SDK for C++ is licensed under the [MIT](https://github.com/Azure/azure-sdk
 <!-- LINKS -->
 [style-guide-msft]: https://docs.microsoft.com/style-guide/capitalization
 [azure_attestation]: https://docs.microsoft.com/azure/attestation
-[azure_identity]: https://github.com/Azure/azure-sdk-for-java/tree/main/sdk/identity/azure-identity
+[azure_identity]: https://github.com/Azure/azure-sdk-for-cpp/tree/main/sdk/identity/azure-identity
 [azure_subscription]: https://azure.microsoft.com/
 [azure_cli]: https://docs.microsoft.com/cli/azure
 [rest_api]: https://docs.microsoft.com/rest/api/attestation/
