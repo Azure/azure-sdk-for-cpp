@@ -25,7 +25,7 @@
         "x-ms-request-id": "65dbeaa3-5abe-4da1-bfe9-1070ec0f64bd",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/keys/DoubleDelete/create?api-version=7.3"
+      "Url": "https://REDACTED.vault.azure.net/keys/DoubleDelete/create?api-version=7.2"
     },
     {
       "Headers": {
@@ -51,7 +51,7 @@
         "x-ms-request-id": "18a8eb8f-aa35-4e77-885b-412a980e10f2",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/keys/DoubleDelete?api-version=7.3"
+      "Url": "https://REDACTED.vault.azure.net/keys/DoubleDelete?api-version=7.2"
     },
     {
       "Headers": {
@@ -77,7 +77,7 @@
         "x-ms-request-id": "7ffffc4e-b857-4fd6-8931-aabbee2e6dd4",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/deletedkeys/DoubleDelete?api-version=7.3"
+      "Url": "https://REDACTED.vault.azure.net/deletedkeys/DoubleDelete?api-version=7.2"
     },
     {
       "Headers": {
@@ -103,7 +103,7 @@
         "x-ms-request-id": "ade8c3ab-4ca2-4cf7-913f-d9e512eacc48",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/deletedkeys/DoubleDelete?api-version=7.3"
+      "Url": "https://REDACTED.vault.azure.net/deletedkeys/DoubleDelete?api-version=7.2"
     },
     {
       "Headers": {
@@ -129,7 +129,7 @@
         "x-ms-request-id": "61d52a53-db62-4535-8b8e-bfe43d880eb5",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/keys/DoubleDelete?api-version=7.3"
+      "Url": "https://REDACTED.vault.azure.net/keys/DoubleDelete?api-version=7.2"
     }
   ]
 }
