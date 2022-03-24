@@ -80,7 +80,7 @@ steps:
         ScriptDirectory: $(System.DefaultWorkingDirectory)/eng/common/scripts
         SkipCheckingForChanges: true
 
-    - pwsh: git push --tags
+    - pwsh: git push azure-sdk-fork --tags
       displayName: Push tags
 
 
