@@ -25,7 +25,7 @@
         "x-ms-request-id": "b32d3caf-9915-4371-89e8-32fc902b3646",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/keys/CreateKeyWithOptions/create?api-version=7.2"
+      "Url": "https://REDACTED.vault.azure.net/keys/CreateKeyWithOptions/create?api-version=7.3"
     }
   ]
 }

@@ -25,7 +25,7 @@
         "x-ms-request-id": "a7130130-cbd9-4148-bdd1-8f90a5b2dd66",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/keys/DeleteOperationResumeToken/create?api-version=7.2"
+      "Url": "https://REDACTED.vault.azure.net/keys/DeleteOperationResumeToken/create?api-version=7.3"
     },
     {
       "Headers": {
@@ -51,7 +51,7 @@
         "x-ms-request-id": "672ca3a5-4df0-4183-8709-cb391166f118",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/keys/DeleteOperationResumeToken?api-version=7.2"
+      "Url": "https://REDACTED.vault.azure.net/keys/DeleteOperationResumeToken?api-version=7.3"
     },
     {
       "Headers": {
@@ -77,7 +77,7 @@
         "x-ms-request-id": "ebff2d55-f007-47b9-ba52-70e13a27b432",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/deletedkeys/DeleteOperationResumeToken?api-version=7.2"
+      "Url": "https://REDACTED.vault.azure.net/deletedkeys/DeleteOperationResumeToken?api-version=7.3"
     },
     {
       "Headers": {
@@ -103,7 +103,7 @@
         "x-ms-request-id": "872dadce-f4ab-40dd-bdc0-dfa639c7574a",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/deletedkeys/DeleteOperationResumeToken?api-version=7.2"
+      "Url": "https://REDACTED.vault.azure.net/deletedkeys/DeleteOperationResumeToken?api-version=7.3"
     },
     {
       "Headers": {
@@ -129,7 +129,7 @@
         "x-ms-request-id": "dd54f71c-301c-46d0-ba04-e8193a883e7c",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/deletedkeys/DeleteOperationResumeToken?api-version=7.2"
+      "Url": "https://REDACTED.vault.azure.net/deletedkeys/DeleteOperationResumeToken?api-version=7.3"
     }
   ]
 }
