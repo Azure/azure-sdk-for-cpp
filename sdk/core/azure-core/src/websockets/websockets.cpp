@@ -7,6 +7,7 @@
 using namespace Azure::Core;
 using namespace Azure::Core::Http;
 using namespace Azure::Core::Websockets;
+using namespace Azure::Core::Websockets::_detail;
 
 // Client implementation can depend on OS or CMake-options and it becomes an impl detail
 namespace {

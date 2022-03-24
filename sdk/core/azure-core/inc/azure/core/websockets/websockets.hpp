@@ -104,62 +104,65 @@ namespace Azure { namespace Core { namespace Websockets {
     }
   };
 
-  /**
-   * @brief Abstract class which defines the behavior for a websocket client.
-   *
-   */
-  class WebsocketClientImplementation {
-  public:
+  namespace _detail {
     /**
-     * @brief Base constructor for all websocket client implementations.
-     *
-     * @param url A url to the websocket server.
-     * @param clientOptions The configuration for the websocket implementation.
-     */
-    explicit WebsocketClientImplementation(
-        Azure::Core::Url url,
-        WebsocketClientOptions clientOptions)
-        : m_url(std::move(url)), m_clientOptions(std::move(clientOptions))
-    {
-    }
-
-    /**
-     * @brief Destroy the Websocket Client Implementation object
+     * @brief Abstract class which defines the behavior for a websocket client.
      *
      */
-    virtual ~WebsocketClientImplementation() {}
+    class WebsocketClientImplementation {
+    public:
+      /**
+       * @brief Base constructor for all websocket client implementations.
+       *
+       * @param url A url to the websocket server.
+       * @param clientOptions The configuration for the websocket implementation.
+       */
+      explicit WebsocketClientImplementation(
+          Azure::Core::Url url,
+          WebsocketClientOptions clientOptions)
+          : m_url(std::move(url)), m_clientOptions(std::move(clientOptions))
+      {
+      }
 
-    /**
-     * @brief Stablish network connection to the websocket server.
-     *
-     */
-    virtual void Connect() = 0;
+      /**
+       * @brief Destroy the Websocket Client Implementation object
+       *
+       */
+      virtual ~WebsocketClientImplementation() {}
 
-    /**
-     * @brief Request connection to be closed.
-     *
-     */
-    virtual void Close() = 0;
+      /**
+       * @brief Stablish network connection to the websocket server.
+       *
+       */
+      virtual void Connect() = 0;
 
-    /**
-     * @brief Send a message to the websocket server.
-     *
-     * @param message The message to be sent to the server.
-     * @param context A context to control the request lifetime.
-     */
-    virtual void Send(WebsocketOutMessage& message, Azure::Core::Context const& context) = 0;
+      /**
+       * @brief Request connection to be closed.
+       *
+       */
+      virtual void Close() = 0;
 
-    /**
-     * @brief Set a callback to be called when a message is received from the server.
-     *
-     * @param handler A callback function which gets the incoming message from network.
-     */
-    virtual void OnMessage(std::function<void(WebsocketInMessage const&)> const& handler) = 0;
+      /**
+       * @brief Send a message to the websocket server.
+       *
+       * @param message The message to be sent to the server.
+       * @param context A context to control the request lifetime.
+       */
+      virtual void Send(WebsocketOutMessage& message, Azure::Core::Context const& context) = 0;
 
-  protected:
-    Azure::Core::Url m_url;
-    WebsocketClientOptions m_clientOptions;
-  };
+      /**
+       * @brief Set a callback to be called when a message is received from the server.
+       *
+       * @param handler A callback function which gets the incoming message from network.
+       */
+      virtual void OnMessage(std::function<void(WebsocketInMessage const&)> const& handler) = 0;
+
+    protected:
+      Azure::Core::Url m_url;
+      WebsocketClientOptions m_clientOptions;
+    };
+
+  } // namespace _detail
 
   /**
    * @brief Websocket client class provides network communication with a server, using websocket
@@ -168,7 +171,7 @@ namespace Azure { namespace Core { namespace Websockets {
    */
   class WebsocketClient {
   private:
-    std::unique_ptr<WebsocketClientImplementation> m_client;
+    std::unique_ptr<_detail::WebsocketClientImplementation> m_client;
 
   public:
     /**
