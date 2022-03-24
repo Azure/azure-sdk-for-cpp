@@ -25,7 +25,7 @@
         "x-ms-request-id": "55a3813e-d6e1-4658-9851-4c63130075d6",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/keys/ImportKey?api-version=7.3"
+      "Url": "https://REDACTED.vault.azure.net/keys/ImportKey?api-version=7.2"
     }
   ]
 }
