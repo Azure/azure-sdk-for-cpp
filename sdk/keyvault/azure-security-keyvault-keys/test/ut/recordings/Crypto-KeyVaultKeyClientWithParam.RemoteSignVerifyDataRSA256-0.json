@@ -25,7 +25,7 @@
         "x-ms-request-id": "ae01d4d9-ffd9-4f89-b1ac-a0c1b40f5c9e",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/keys/RemoteSignVerifyDataRSA256-0/create?api-version=7.3"
+      "Url": "https://REDACTED.vault.azure.net/keys/RemoteSignVerifyDataRSA256-0/create?api-version=7.2"
     },
     {
       "Headers": {
@@ -52,7 +52,7 @@
         "x-ms-request-id": "2601afe1-3826-4ecd-913d-adde18174c4e",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/keys/RemoteSignVerifyDataRSA256-0/b4ae2d39a797449fbe48c8f7d146e30d/sign?api-version=7.3"
+      "Url": "https://REDACTED.vault.azure.net/keys/RemoteSignVerifyDataRSA256-0/b4ae2d39a797449fbe48c8f7d146e30d/sign?api-version=7.2"
     },
     {
       "Headers": {
@@ -79,7 +79,7 @@
         "x-ms-request-id": "885dac3e-3529-405f-8877-c8c8f435e481",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/keys/RemoteSignVerifyDataRSA256-0/b4ae2d39a797449fbe48c8f7d146e30d/verify?api-version=7.3"
+      "Url": "https://REDACTED.vault.azure.net/keys/RemoteSignVerifyDataRSA256-0/b4ae2d39a797449fbe48c8f7d146e30d/verify?api-version=7.2"
     },
     {
       "Headers": {
@@ -106,7 +106,7 @@
         "x-ms-request-id": "906cf94e-c46f-45d1-9046-8a0c58b9354e",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/keys/RemoteSignVerifyDataRSA256-0/b4ae2d39a797449fbe48c8f7d146e30d/sign?api-version=7.3"
+      "Url": "https://REDACTED.vault.azure.net/keys/RemoteSignVerifyDataRSA256-0/b4ae2d39a797449fbe48c8f7d146e30d/sign?api-version=7.2"
     },
     {
       "Headers": {
@@ -133,7 +133,7 @@
         "x-ms-request-id": "2ad5dc1e-e7e6-4f79-8f86-b3202d9b5d4a",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/keys/RemoteSignVerifyDataRSA256-0/b4ae2d39a797449fbe48c8f7d146e30d/verify?api-version=7.3"
+      "Url": "https://REDACTED.vault.azure.net/keys/RemoteSignVerifyDataRSA256-0/b4ae2d39a797449fbe48c8f7d146e30d/verify?api-version=7.2"
     }
   ]
 }
