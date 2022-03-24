@@ -391,7 +391,7 @@ namespace Azure { namespace Core { namespace Http {
     };
   } // namespace _internal
 
-  namespace websockets {
+  namespace Websockets {
 
     /**
      * @brief Configuration for a websocket client.
@@ -583,6 +583,6 @@ namespace Azure { namespace Core { namespace Http {
        */
       void OnMessage(std::function<void(WebsocketInMessage const&)> const& handler);
     };
-  } // namespace websockets
+  } // namespace Websockets
 
 }}} // namespace Azure::Core::Http
