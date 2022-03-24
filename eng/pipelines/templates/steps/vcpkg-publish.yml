@@ -72,6 +72,7 @@ steps:
       parameters:
         # TODO: Use default branch
         BaseRepoBranch: djurek/vcpkg-beta-2
+        BaseRepoOwner: Azure
         CommitMsg: Update vcpkg beta
         TargetRepoOwner: Azure
         TargetRepoName: azure-sdk-vcpkg-betas
