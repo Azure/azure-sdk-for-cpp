@@ -25,7 +25,7 @@
         "x-ms-request-id": "46b13293-6517-4f83-8db1-0b71e43dea53",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/keys/GetKeysVersions/create?api-version=7.2"
+      "Url": "https://REDACTED.vault.azure.net/keys/GetKeysVersions/create?api-version=7.3"
     },
     {
       "Headers": {
@@ -52,7 +52,7 @@
         "x-ms-request-id": "03ff159a-e39a-4c5a-a00a-3f113c644224",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/keys/GetKeysVersions/create?api-version=7.2"
+      "Url": "https://REDACTED.vault.azure.net/keys/GetKeysVersions/create?api-version=7.3"
     },
     {
       "Headers": {
@@ -79,7 +79,7 @@
         "x-ms-request-id": "29515901-809d-4d48-92eb-f50b120805a7",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/keys/GetKeysVersions/create?api-version=7.2"
+      "Url": "https://REDACTED.vault.azure.net/keys/GetKeysVersions/create?api-version=7.3"
     },
     {
       "Headers": {
@@ -106,7 +106,7 @@
         "x-ms-request-id": "d710b2b9-abda-4cb2-a584-eedf213f7cb8",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/keys/GetKeysVersions/create?api-version=7.2"
+      "Url": "https://REDACTED.vault.azure.net/keys/GetKeysVersions/create?api-version=7.3"
     },
     {
       "Headers": {
@@ -133,7 +133,7 @@
         "x-ms-request-id": "64ce9a2f-41f8-4c91-bb2d-b130d7a763f1",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/keys/GetKeysVersions/create?api-version=7.2"
+      "Url": "https://REDACTED.vault.azure.net/keys/GetKeysVersions/create?api-version=7.3"
     },
     {
       "Headers": {
@@ -160,7 +160,7 @@
         "x-ms-request-id": "fc4e3740-a247-4e0f-a647-6fec7840783d",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/keys/GetKeysVersions/create?api-version=7.2"
+      "Url": "https://REDACTED.vault.azure.net/keys/GetKeysVersions/create?api-version=7.3"
     },
     {
       "Headers": {
@@ -187,7 +187,7 @@
         "x-ms-request-id": "015d3096-5400-44f6-9d6e-33bd1faea4cc",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/keys/GetKeysVersions/create?api-version=7.2"
+      "Url": "https://REDACTED.vault.azure.net/keys/GetKeysVersions/create?api-version=7.3"
     },
     {
       "Headers": {
@@ -214,7 +214,7 @@
         "x-ms-request-id": "e0b67a71-09e2-4e27-a4bd-88f6f5e8bc16",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/keys/GetKeysVersions/create?api-version=7.2"
+      "Url": "https://REDACTED.vault.azure.net/keys/GetKeysVersions/create?api-version=7.3"
     },
     {
       "Headers": {
@@ -241,7 +241,7 @@
         "x-ms-request-id": "bb3375b6-a4d8-4b29-810f-77cae58a7980",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/keys/GetKeysVersions/create?api-version=7.2"
+      "Url": "https://REDACTED.vault.azure.net/keys/GetKeysVersions/create?api-version=7.3"
     },
     {
       "Headers": {
@@ -268,7 +268,7 @@
         "x-ms-request-id": "f4ed10cb-f9a8-4cdd-bd56-75201b83986a",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/keys/GetKeysVersions/create?api-version=7.2"
+      "Url": "https://REDACTED.vault.azure.net/keys/GetKeysVersions/create?api-version=7.3"
     },
     {
       "Headers": {
@@ -295,7 +295,7 @@
         "x-ms-request-id": "aaca6635-cff2-4572-8554-78f75aac7f08",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/keys/GetKeysVersions/create?api-version=7.2"
+      "Url": "https://REDACTED.vault.azure.net/keys/GetKeysVersions/create?api-version=7.3"
     },
     {
       "Headers": {
@@ -322,7 +322,7 @@
         "x-ms-request-id": "5ddab97d-233e-4911-a143-bdc54cbb312d",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/keys/GetKeysVersions/create?api-version=7.2"
+      "Url": "https://REDACTED.vault.azure.net/keys/GetKeysVersions/create?api-version=7.3"
     },
     {
       "Headers": {
@@ -349,7 +349,7 @@
         "x-ms-request-id": "d21535e1-3017-4c0a-a380-e8f47d8a08a1",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/keys/GetKeysVersions/create?api-version=7.2"
+      "Url": "https://REDACTED.vault.azure.net/keys/GetKeysVersions/create?api-version=7.3"
     },
     {
       "Headers": {
@@ -376,7 +376,7 @@
         "x-ms-request-id": "90c2d0bc-b4c5-4d86-bf29-f6eb4d3dbfac",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/keys/GetKeysVersions/create?api-version=7.2"
+      "Url": "https://REDACTED.vault.azure.net/keys/GetKeysVersions/create?api-version=7.3"
     },
     {
       "Headers": {
@@ -403,7 +403,7 @@
         "x-ms-request-id": "7c68ff02-a25b-4a8d-9778-a30e55c5a41d",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/keys/GetKeysVersions/create?api-version=7.2"
+      "Url": "https://REDACTED.vault.azure.net/keys/GetKeysVersions/create?api-version=7.3"
     },
     {
       "Headers": {
@@ -430,7 +430,7 @@
         "x-ms-request-id": "4a7f6013-741c-40b3-97fe-bb0cc5a72510",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/keys/GetKeysVersions/create?api-version=7.2"
+      "Url": "https://REDACTED.vault.azure.net/keys/GetKeysVersions/create?api-version=7.3"
     },
     {
       "Headers": {
@@ -457,7 +457,7 @@
         "x-ms-request-id": "6ebfadba-6389-4de4-bf6a-3e745109469f",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/keys/GetKeysVersions/create?api-version=7.2"
+      "Url": "https://REDACTED.vault.azure.net/keys/GetKeysVersions/create?api-version=7.3"
     },
     {
       "Headers": {
@@ -484,7 +484,7 @@
         "x-ms-request-id": "3a9a84d7-d08b-4ffb-afb2-0f18a0a06ff8",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/keys/GetKeysVersions/create?api-version=7.2"
+      "Url": "https://REDACTED.vault.azure.net/keys/GetKeysVersions/create?api-version=7.3"
     },
     {
       "Headers": {
@@ -511,7 +511,7 @@
         "x-ms-request-id": "06194126-3540-41ee-b75f-8f754ce22a2d",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/keys/GetKeysVersions/create?api-version=7.2"
+      "Url": "https://REDACTED.vault.azure.net/keys/GetKeysVersions/create?api-version=7.3"
     },
     {
       "Headers": {
@@ -538,7 +538,7 @@
         "x-ms-request-id": "ea76944b-4d7a-427d-9a11-adb04572a5de",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/keys/GetKeysVersions/create?api-version=7.2"
+      "Url": "https://REDACTED.vault.azure.net/keys/GetKeysVersions/create?api-version=7.3"
     },
     {
       "Headers": {
@@ -565,7 +565,7 @@
         "x-ms-request-id": "b2ab4679-3f5f-4e04-9836-54d937a57872",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/keys/GetKeysVersions/create?api-version=7.2"
+      "Url": "https://REDACTED.vault.azure.net/keys/GetKeysVersions/create?api-version=7.3"
     },
     {
       "Headers": {
@@ -592,7 +592,7 @@
         "x-ms-request-id": "838bbb6e-36c7-49bf-af99-83abc2cf9274",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/keys/GetKeysVersions/create?api-version=7.2"
+      "Url": "https://REDACTED.vault.azure.net/keys/GetKeysVersions/create?api-version=7.3"
     },
     {
       "Headers": {
@@ -619,7 +619,7 @@
         "x-ms-request-id": "34b8f4b2-8105-48d9-bb2b-54acd58e4f72",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/keys/GetKeysVersions/create?api-version=7.2"
+      "Url": "https://REDACTED.vault.azure.net/keys/GetKeysVersions/create?api-version=7.3"
     },
     {
       "Headers": {
@@ -646,7 +646,7 @@
         "x-ms-request-id": "0f7ee8b9-f2d1-465c-bf3e-d4e02d0c043e",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/keys/GetKeysVersions/create?api-version=7.2"
+      "Url": "https://REDACTED.vault.azure.net/keys/GetKeysVersions/create?api-version=7.3"
     },
     {
       "Headers": {
@@ -673,7 +673,7 @@
         "x-ms-request-id": "a956d4af-5612-4b3c-a251-7bc3d7fde1ee",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/keys/GetKeysVersions/create?api-version=7.2"
+      "Url": "https://REDACTED.vault.azure.net/keys/GetKeysVersions/create?api-version=7.3"
     },
     {
       "Headers": {
@@ -700,7 +700,7 @@
         "x-ms-request-id": "afd604e4-4ff1-4bfa-864a-68717c834952",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/keys/GetKeysVersions/create?api-version=7.2"
+      "Url": "https://REDACTED.vault.azure.net/keys/GetKeysVersions/create?api-version=7.3"
     },
     {
       "Headers": {
@@ -727,7 +727,7 @@
         "x-ms-request-id": "84b013c7-3aab-45f8-b01c-f453e6afabf0",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/keys/GetKeysVersions/create?api-version=7.2"
+      "Url": "https://REDACTED.vault.azure.net/keys/GetKeysVersions/create?api-version=7.3"
     },
     {
       "Headers": {
@@ -754,7 +754,7 @@
         "x-ms-request-id": "c9ea9968-c9d1-4361-b86f-f23afd33ca27",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/keys/GetKeysVersions/create?api-version=7.2"
+      "Url": "https://REDACTED.vault.azure.net/keys/GetKeysVersions/create?api-version=7.3"
     },
     {
       "Headers": {
@@ -781,7 +781,7 @@
         "x-ms-request-id": "a8cdaeed-2aef-4b2c-9919-4b29d6598fbc",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/keys/GetKeysVersions/create?api-version=7.2"
+      "Url": "https://REDACTED.vault.azure.net/keys/GetKeysVersions/create?api-version=7.3"
     },
     {
       "Headers": {
@@ -808,7 +808,7 @@
         "x-ms-request-id": "98f9ce77-c8d7-49a4-a8ed-c9d41601d50d",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/keys/GetKeysVersions/create?api-version=7.2"
+      "Url": "https://REDACTED.vault.azure.net/keys/GetKeysVersions/create?api-version=7.3"
     },
     {
       "Headers": {
@@ -835,7 +835,7 @@
         "x-ms-request-id": "38e5d332-9b3e-4bc4-bf46-22119a1428dd",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/keys/GetKeysVersions/create?api-version=7.2"
+      "Url": "https://REDACTED.vault.azure.net/keys/GetKeysVersions/create?api-version=7.3"
     },
     {
       "Headers": {
@@ -862,7 +862,7 @@
         "x-ms-request-id": "c6dbac6c-793d-4e2e-b865-f76ace9bab82",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/keys/GetKeysVersions/create?api-version=7.2"
+      "Url": "https://REDACTED.vault.azure.net/keys/GetKeysVersions/create?api-version=7.3"
     },
     {
       "Headers": {
@@ -889,7 +889,7 @@
         "x-ms-request-id": "1187c29f-a40d-41b9-94cd-e44aa81f6c85",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/keys/GetKeysVersions/create?api-version=7.2"
+      "Url": "https://REDACTED.vault.azure.net/keys/GetKeysVersions/create?api-version=7.3"
     },
     {
       "Headers": {
@@ -916,7 +916,7 @@
         "x-ms-request-id": "2c9ac234-c160-4843-833b-9ba92a87e063",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/keys/GetKeysVersions/create?api-version=7.2"
+      "Url": "https://REDACTED.vault.azure.net/keys/GetKeysVersions/create?api-version=7.3"
     },
     {
       "Headers": {
@@ -943,7 +943,7 @@
         "x-ms-request-id": "296b4722-1bec-489d-8e52-b7768222d24b",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/keys/GetKeysVersions/create?api-version=7.2"
+      "Url": "https://REDACTED.vault.azure.net/keys/GetKeysVersions/create?api-version=7.3"
     },
     {
       "Headers": {
@@ -970,7 +970,7 @@
         "x-ms-request-id": "e23aeec0-3b23-49f6-975b-8da8f5c065d8",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/keys/GetKeysVersions/create?api-version=7.2"
+      "Url": "https://REDACTED.vault.azure.net/keys/GetKeysVersions/create?api-version=7.3"
     },
     {
       "Headers": {
@@ -997,7 +997,7 @@
         "x-ms-request-id": "0eb73c51-1af1-4777-a6e3-0e9ca7863fe5",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/keys/GetKeysVersions/create?api-version=7.2"
+      "Url": "https://REDACTED.vault.azure.net/keys/GetKeysVersions/create?api-version=7.3"
     },
     {
       "Headers": {
@@ -1024,7 +1024,7 @@
         "x-ms-request-id": "b216a5e6-7684-4c65-a294-29b7a35fd3c6",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/keys/GetKeysVersions/create?api-version=7.2"
+      "Url": "https://REDACTED.vault.azure.net/keys/GetKeysVersions/create?api-version=7.3"
     },
     {
       "Headers": {
@@ -1051,7 +1051,7 @@
         "x-ms-request-id": "d63e1177-79d8-468c-805c-00d683411938",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/keys/GetKeysVersions/create?api-version=7.2"
+      "Url": "https://REDACTED.vault.azure.net/keys/GetKeysVersions/create?api-version=7.3"
     },
     {
       "Headers": {
@@ -1078,7 +1078,7 @@
         "x-ms-request-id": "15aa0969-370f-4d78-9269-a907b30c20c7",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/keys/GetKeysVersions/create?api-version=7.2"
+      "Url": "https://REDACTED.vault.azure.net/keys/GetKeysVersions/create?api-version=7.3"
     },
     {
       "Headers": {
@@ -1105,7 +1105,7 @@
         "x-ms-request-id": "60c7431e-545d-455e-aad0-4ab4504b360b",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/keys/GetKeysVersions/create?api-version=7.2"
+      "Url": "https://REDACTED.vault.azure.net/keys/GetKeysVersions/create?api-version=7.3"
     },
     {
       "Headers": {
@@ -1132,7 +1132,7 @@
         "x-ms-request-id": "38bdc58f-2593-48ca-a617-e9465c71c706",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/keys/GetKeysVersions/create?api-version=7.2"
+      "Url": "https://REDACTED.vault.azure.net/keys/GetKeysVersions/create?api-version=7.3"
     },
     {
       "Headers": {
@@ -1159,7 +1159,7 @@
         "x-ms-request-id": "8cfd3546-ece5-4236-94d6-0abcae55bbbb",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/keys/GetKeysVersions/create?api-version=7.2"
+      "Url": "https://REDACTED.vault.azure.net/keys/GetKeysVersions/create?api-version=7.3"
     },
     {
       "Headers": {
@@ -1186,7 +1186,7 @@
         "x-ms-request-id": "9552a27f-f574-4737-840b-4f338b5c084e",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/keys/GetKeysVersions/create?api-version=7.2"
+      "Url": "https://REDACTED.vault.azure.net/keys/GetKeysVersions/create?api-version=7.3"
     },
     {
       "Headers": {
@@ -1213,7 +1213,7 @@
         "x-ms-request-id": "3ffb6c38-1682-489a-a43c-66aeaf2aa340",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/keys/GetKeysVersions/create?api-version=7.2"
+      "Url": "https://REDACTED.vault.azure.net/keys/GetKeysVersions/create?api-version=7.3"
     },
     {
       "Headers": {
@@ -1240,7 +1240,7 @@
         "x-ms-request-id": "a026ff54-1495-41ad-9958-2cd2578bb6b8",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/keys/GetKeysVersions/create?api-version=7.2"
+      "Url": "https://REDACTED.vault.azure.net/keys/GetKeysVersions/create?api-version=7.3"
     },
     {
       "Headers": {
@@ -1267,7 +1267,7 @@
         "x-ms-request-id": "0dcf718c-89b5-46ec-99e5-46a58d221700",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/keys/GetKeysVersions/create?api-version=7.2"
+      "Url": "https://REDACTED.vault.azure.net/keys/GetKeysVersions/create?api-version=7.3"
     },
     {
       "Headers": {
@@ -1294,7 +1294,7 @@
         "x-ms-request-id": "f2ffd2e3-515e-435a-9fdb-4f0ed1bccc3a",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/keys/GetKeysVersions/create?api-version=7.2"
+      "Url": "https://REDACTED.vault.azure.net/keys/GetKeysVersions/create?api-version=7.3"
     },
     {
       "Headers": {
@@ -1321,7 +1321,7 @@
         "x-ms-request-id": "95e811ab-755f-47db-9207-d0d56e877dd0",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/keys/GetKeysVersions/create?api-version=7.2"
+      "Url": "https://REDACTED.vault.azure.net/keys/GetKeysVersions/create?api-version=7.3"
     },
     {
       "Headers": {
@@ -1348,7 +1348,7 @@
         "x-ms-request-id": "ea4ef9a1-62f3-4e74-b82e-e7a8a34281ef",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/keys/GetKeysVersions/create?api-version=7.2"
+      "Url": "https://REDACTED.vault.azure.net/keys/GetKeysVersions/create?api-version=7.3"
     },
     {
       "Headers": {
@@ -1357,7 +1357,7 @@
       },
       "Method": "GET",
       "Response": {
-        "BODY": "{\"value\":[{\"kid\":\"https://cpp-recordings.vault.azure.net/keys/GetKeysVersions/03e03c00c1bd46fa808c1befaed14a36\",\"attributes\":{\"enabled\":true,\"created\":1638401921,\"updated\":1638401921,\"recoveryLevel\":\"Recoverable+Purgeable\",\"recoverableDays\":90}},{\"kid\":\"https://cpp-recordings.vault.azure.net/keys/GetKeysVersions/043fd11b031c4f38a0c447b11a9ba5d5\",\"attributes\":{\"enabled\":true,\"created\":1638401911,\"updated\":1638401911,\"recoveryLevel\":\"Recoverable+Purgeable\",\"recoverableDays\":90}},{\"kid\":\"https://cpp-recordings.vault.azure.net/keys/GetKeysVersions/0adae59dd92f42b4903abc9071354447\",\"attributes\":{\"enabled\":true,\"created\":1638401937,\"updated\":1638401937,\"recoveryLevel\":\"Recoverable+Purgeable\",\"recoverableDays\":90}},{\"kid\":\"https://cpp-recordings.vault.azure.net/keys/GetKeysVersions/1449e93e34694ddaacc04dd05a49aea8\",\"attributes\":{\"enabled\":true,\"created\":1638401945,\"updated\":1638401945,\"recoveryLevel\":\"Recoverable+Purgeable\",\"recoverableDays\":90}},{\"kid\":\"https://cpp-recordings.vault.azure.net/keys/GetKeysVersions/21b4356c836249c39f3837fddffb01ba\",\"attributes\":{\"enabled\":true,\"created\":1638401909,\"updated\":1638401909,\"recoveryLevel\":\"Recoverable+Purgeable\",\"recoverableDays\":90}},{\"kid\":\"https://cpp-recordings.vault.azure.net/keys/GetKeysVersions/22095c74b8cf4411becebfd46cff9e05\",\"attributes\":{\"enabled\":true,\"created\":1638401922,\"updated\":1638401922,\"recoveryLevel\":\"Recoverable+Purgeable\",\"recoverableDays\":90}},{\"kid\":\"https://cpp-recordings.vault.azure.net/keys/GetKeysVersions/3743695fe8b14e2aa1cace87599de03d\",\"attributes\":{\"enabled\":true,\"created\":1638401906,\"updated\":1638401906,\"recoveryLevel\":\"Recoverable+Purgeable\",\"recoverableDays\":90}},{\"kid\":\"https://cpp-recordings.vault.azure.net/keys/GetKeysVersions/3d242c06f38348a29b8a0613e7ecdfee\",\"attributes\":{\"enabled\":true,\"created\":1638401931,\"updated\":1638401931,\"recoveryLevel\":\"Recoverable+Purgeable\",\"recoverableDays\":90}},{\"kid\":\"https://cpp-recordings.vault.azure.net/keys/GetKeysVersions/3f0a18bb5f244a8bbce57edc5aa17dc8\",\"attributes\":{\"enabled\":true,\"created\":1638401903,\"updated\":1638401903,\"recoveryLevel\":\"Recoverable+Purgeable\",\"recoverableDays\":90}},{\"kid\":\"https://cpp-recordings.vault.azure.net/keys/GetKeysVersions/4115df3d97e24856971454e29c76865f\",\"attributes\":{\"enabled\":true,\"created\":1638401920,\"updated\":1638401920,\"recoveryLevel\":\"Recoverable+Purgeable\",\"recoverableDays\":90}},{\"kid\":\"https://cpp-recordings.vault.azure.net/keys/GetKeysVersions/430c37db8e08447abd5f7cc0ceaa67ce\",\"attributes\":{\"enabled\":true,\"created\":1638401944,\"updated\":1638401944,\"recoveryLevel\":\"Recoverable+Purgeable\",\"recoverableDays\":90}},{\"kid\":\"https://cpp-recordings.vault.azure.net/keys/GetKeysVersions/4627eba9457c4a1588c4a09e87e182b5\",\"attributes\":{\"enabled\":true,\"created\":1638401915,\"updated\":1638401915,\"recoveryLevel\":\"Recoverable+Purgeable\",\"recoverableDays\":90}},{\"kid\":\"https://cpp-recordings.vault.azure.net/keys/GetKeysVersions/4bf35491af894043881f5941c7b2db6f\",\"attributes\":{\"enabled\":true,\"created\":1638401947,\"updated\":1638401947,\"recoveryLevel\":\"Recoverable+Purgeable\",\"recoverableDays\":90}},{\"kid\":\"https://cpp-recordings.vault.azure.net/keys/GetKeysVersions/4f7f289e56014787a3686900a16dfc8d\",\"attributes\":{\"enabled\":true,\"created\":1638401942,\"updated\":1638401942,\"recoveryLevel\":\"Recoverable+Purgeable\",\"recoverableDays\":90}},{\"kid\":\"https://cpp-recordings.vault.azure.net/keys/GetKeysVersions/5a04a01b2c5b41e1a2b50908524b8570\",\"attributes\":{\"enabled\":true,\"created\":1638401923,\"updated\":1638401923,\"recoveryLevel\":\"Recoverable+Purgeable\",\"recoverableDays\":90}},{\"kid\":\"https://cpp-recordings.vault.azure.net/keys/GetKeysVersions/5ae209283e0c4eb8849e8b000ca54c4e\",\"attributes\":{\"enabled\":true,\"created\":1638401902,\"updated\":1638401902,\"recoveryLevel\":\"Recoverable+Purgeable\",\"recoverableDays\":90}},{\"kid\":\"https://cpp-recordings.vault.azure.net/keys/GetKeysVersions/5bf95b8a0782428dbcec263bb8f0a0ce\",\"attributes\":{\"enabled\":true,\"created\":1638401946,\"updated\":1638401946,\"recoveryLevel\":\"Recoverable+Purgeable\",\"recoverableDays\":90}},{\"kid\":\"https://cpp-recordings.vault.azure.net/keys/GetKeysVersions/624fb2afe0da412cb13e7dc2cf39b8e4\",\"attributes\":{\"enabled\":true,\"created\":1638401904,\"updated\":1638401904,\"recoveryLevel\":\"Recoverable+Purgeable\",\"recoverableDays\":90}},{\"kid\":\"https://cpp-recordings.vault.azure.net/keys/GetKeysVersions/632c912c473b4e34b0ce9852e6bbba97\",\"attributes\":{\"enabled\":true,\"created\":1638401925,\"updated\":1638401925,\"recoveryLevel\":\"Recoverable+Purgeable\",\"recoverableDays\":90}},{\"kid\":\"https://cpp-recordings.vault.azure.net/keys/GetKeysVersions/6333e30b0d6542b58b7137bb028f1a68\",\"attributes\":{\"enabled\":true,\"created\":1638401914,\"updated\":1638401914,\"recoveryLevel\":\"Recoverable+Purgeable\",\"recoverableDays\":90}},{\"kid\":\"https://cpp-recordings.vault.azure.net/keys/GetKeysVersions/642d3ee99fd2441591a42b141bbd52d4\",\"attributes\":{\"enabled\":true,\"created\":1638401898,\"updated\":1638401898,\"recoveryLevel\":\"Recoverable+Purgeable\",\"recoverableDays\":90}},{\"kid\":\"https://cpp-recordings.vault.azure.net/keys/GetKeysVersions/65ae16a426094772bfc966336dc9f62e\",\"attributes\":{\"enabled\":true,\"created\":1638401928,\"updated\":1638401928,\"recoveryLevel\":\"Recoverable+Purgeable\",\"recoverableDays\":90}},{\"kid\":\"https://cpp-recordings.vault.azure.net/keys/GetKeysVersions/6a8c6f3695684f25865c5cfb00f19624\",\"attributes\":{\"enabled\":true,\"created\":1638401949,\"updated\":1638401949,\"recoveryLevel\":\"Recoverable+Purgeable\",\"recoverableDays\":90}},{\"kid\":\"https://cpp-recordings.vault.azure.net/keys/GetKeysVersions/6d401a6e911f47c599e8c82623f4a78c\",\"attributes\":{\"enabled\":true,\"created\":1638401929,\"updated\":1638401929,\"recoveryLevel\":\"Recoverable+Purgeable\",\"recoverableDays\":90}},{\"kid\":\"https://cpp-recordings.vault.azure.net/keys/GetKeysVersions/6e600eb0c64e4694b1a6647825f4cf7f\",\"attributes\":{\"enabled\":true,\"created\":1638401938,\"updated\":1638401938,\"recoveryLevel\":\"Recoverable+Purgeable\",\"recoverableDays\":90}}],\"nextLink\":\"https://cpp-recordings.vault.azure.net:443/keys/GetKeysVersions/versions?api-version=7.2&$skiptoken=eyJOZXh0TWFya2VyIjoiMiExMjghTURBd01EVXlJV3RsZVM5SFJWUkxSVmxUVmtWU1UwbFBUbE12TjBWQ1JVSTFPVGxHT0RBNU5FUTBNVGd3UWpjNU1UUTNPREl6UWpVMFFqWWhNREF3TURJNElUazVPVGt0TVRJdE16RlVNak02TlRrNk5Ua3VPVGs1T1RrNU9Wb2giLCJUYXJnZXRMb2NhdGlvbiI6MH0\"}",
+        "BODY": "{\"value\":[{\"kid\":\"https://cpp-recordings.vault.azure.net/keys/GetKeysVersions/03e03c00c1bd46fa808c1befaed14a36\",\"attributes\":{\"enabled\":true,\"created\":1638401921,\"updated\":1638401921,\"recoveryLevel\":\"Recoverable+Purgeable\",\"recoverableDays\":90}},{\"kid\":\"https://cpp-recordings.vault.azure.net/keys/GetKeysVersions/043fd11b031c4f38a0c447b11a9ba5d5\",\"attributes\":{\"enabled\":true,\"created\":1638401911,\"updated\":1638401911,\"recoveryLevel\":\"Recoverable+Purgeable\",\"recoverableDays\":90}},{\"kid\":\"https://cpp-recordings.vault.azure.net/keys/GetKeysVersions/0adae59dd92f42b4903abc9071354447\",\"attributes\":{\"enabled\":true,\"created\":1638401937,\"updated\":1638401937,\"recoveryLevel\":\"Recoverable+Purgeable\",\"recoverableDays\":90}},{\"kid\":\"https://cpp-recordings.vault.azure.net/keys/GetKeysVersions/1449e93e34694ddaacc04dd05a49aea8\",\"attributes\":{\"enabled\":true,\"created\":1638401945,\"updated\":1638401945,\"recoveryLevel\":\"Recoverable+Purgeable\",\"recoverableDays\":90}},{\"kid\":\"https://cpp-recordings.vault.azure.net/keys/GetKeysVersions/21b4356c836249c39f3837fddffb01ba\",\"attributes\":{\"enabled\":true,\"created\":1638401909,\"updated\":1638401909,\"recoveryLevel\":\"Recoverable+Purgeable\",\"recoverableDays\":90}},{\"kid\":\"https://cpp-recordings.vault.azure.net/keys/GetKeysVersions/22095c74b8cf4411becebfd46cff9e05\",\"attributes\":{\"enabled\":true,\"created\":1638401922,\"updated\":1638401922,\"recoveryLevel\":\"Recoverable+Purgeable\",\"recoverableDays\":90}},{\"kid\":\"https://cpp-recordings.vault.azure.net/keys/GetKeysVersions/3743695fe8b14e2aa1cace87599de03d\",\"attributes\":{\"enabled\":true,\"created\":1638401906,\"updated\":1638401906,\"recoveryLevel\":\"Recoverable+Purgeable\",\"recoverableDays\":90}},{\"kid\":\"https://cpp-recordings.vault.azure.net/keys/GetKeysVersions/3d242c06f38348a29b8a0613e7ecdfee\",\"attributes\":{\"enabled\":true,\"created\":1638401931,\"updated\":1638401931,\"recoveryLevel\":\"Recoverable+Purgeable\",\"recoverableDays\":90}},{\"kid\":\"https://cpp-recordings.vault.azure.net/keys/GetKeysVersions/3f0a18bb5f244a8bbce57edc5aa17dc8\",\"attributes\":{\"enabled\":true,\"created\":1638401903,\"updated\":1638401903,\"recoveryLevel\":\"Recoverable+Purgeable\",\"recoverableDays\":90}},{\"kid\":\"https://cpp-recordings.vault.azure.net/keys/GetKeysVersions/4115df3d97e24856971454e29c76865f\",\"attributes\":{\"enabled\":true,\"created\":1638401920,\"updated\":1638401920,\"recoveryLevel\":\"Recoverable+Purgeable\",\"recoverableDays\":90}},{\"kid\":\"https://cpp-recordings.vault.azure.net/keys/GetKeysVersions/430c37db8e08447abd5f7cc0ceaa67ce\",\"attributes\":{\"enabled\":true,\"created\":1638401944,\"updated\":1638401944,\"recoveryLevel\":\"Recoverable+Purgeable\",\"recoverableDays\":90}},{\"kid\":\"https://cpp-recordings.vault.azure.net/keys/GetKeysVersions/4627eba9457c4a1588c4a09e87e182b5\",\"attributes\":{\"enabled\":true,\"created\":1638401915,\"updated\":1638401915,\"recoveryLevel\":\"Recoverable+Purgeable\",\"recoverableDays\":90}},{\"kid\":\"https://cpp-recordings.vault.azure.net/keys/GetKeysVersions/4bf35491af894043881f5941c7b2db6f\",\"attributes\":{\"enabled\":true,\"created\":1638401947,\"updated\":1638401947,\"recoveryLevel\":\"Recoverable+Purgeable\",\"recoverableDays\":90}},{\"kid\":\"https://cpp-recordings.vault.azure.net/keys/GetKeysVersions/4f7f289e56014787a3686900a16dfc8d\",\"attributes\":{\"enabled\":true,\"created\":1638401942,\"updated\":1638401942,\"recoveryLevel\":\"Recoverable+Purgeable\",\"recoverableDays\":90}},{\"kid\":\"https://cpp-recordings.vault.azure.net/keys/GetKeysVersions/5a04a01b2c5b41e1a2b50908524b8570\",\"attributes\":{\"enabled\":true,\"created\":1638401923,\"updated\":1638401923,\"recoveryLevel\":\"Recoverable+Purgeable\",\"recoverableDays\":90}},{\"kid\":\"https://cpp-recordings.vault.azure.net/keys/GetKeysVersions/5ae209283e0c4eb8849e8b000ca54c4e\",\"attributes\":{\"enabled\":true,\"created\":1638401902,\"updated\":1638401902,\"recoveryLevel\":\"Recoverable+Purgeable\",\"recoverableDays\":90}},{\"kid\":\"https://cpp-recordings.vault.azure.net/keys/GetKeysVersions/5bf95b8a0782428dbcec263bb8f0a0ce\",\"attributes\":{\"enabled\":true,\"created\":1638401946,\"updated\":1638401946,\"recoveryLevel\":\"Recoverable+Purgeable\",\"recoverableDays\":90}},{\"kid\":\"https://cpp-recordings.vault.azure.net/keys/GetKeysVersions/624fb2afe0da412cb13e7dc2cf39b8e4\",\"attributes\":{\"enabled\":true,\"created\":1638401904,\"updated\":1638401904,\"recoveryLevel\":\"Recoverable+Purgeable\",\"recoverableDays\":90}},{\"kid\":\"https://cpp-recordings.vault.azure.net/keys/GetKeysVersions/632c912c473b4e34b0ce9852e6bbba97\",\"attributes\":{\"enabled\":true,\"created\":1638401925,\"updated\":1638401925,\"recoveryLevel\":\"Recoverable+Purgeable\",\"recoverableDays\":90}},{\"kid\":\"https://cpp-recordings.vault.azure.net/keys/GetKeysVersions/6333e30b0d6542b58b7137bb028f1a68\",\"attributes\":{\"enabled\":true,\"created\":1638401914,\"updated\":1638401914,\"recoveryLevel\":\"Recoverable+Purgeable\",\"recoverableDays\":90}},{\"kid\":\"https://cpp-recordings.vault.azure.net/keys/GetKeysVersions/642d3ee99fd2441591a42b141bbd52d4\",\"attributes\":{\"enabled\":true,\"created\":1638401898,\"updated\":1638401898,\"recoveryLevel\":\"Recoverable+Purgeable\",\"recoverableDays\":90}},{\"kid\":\"https://cpp-recordings.vault.azure.net/keys/GetKeysVersions/65ae16a426094772bfc966336dc9f62e\",\"attributes\":{\"enabled\":true,\"created\":1638401928,\"updated\":1638401928,\"recoveryLevel\":\"Recoverable+Purgeable\",\"recoverableDays\":90}},{\"kid\":\"https://cpp-recordings.vault.azure.net/keys/GetKeysVersions/6a8c6f3695684f25865c5cfb00f19624\",\"attributes\":{\"enabled\":true,\"created\":1638401949,\"updated\":1638401949,\"recoveryLevel\":\"Recoverable+Purgeable\",\"recoverableDays\":90}},{\"kid\":\"https://cpp-recordings.vault.azure.net/keys/GetKeysVersions/6d401a6e911f47c599e8c82623f4a78c\",\"attributes\":{\"enabled\":true,\"created\":1638401929,\"updated\":1638401929,\"recoveryLevel\":\"Recoverable+Purgeable\",\"recoverableDays\":90}},{\"kid\":\"https://cpp-recordings.vault.azure.net/keys/GetKeysVersions/6e600eb0c64e4694b1a6647825f4cf7f\",\"attributes\":{\"enabled\":true,\"created\":1638401938,\"updated\":1638401938,\"recoveryLevel\":\"Recoverable+Purgeable\",\"recoverableDays\":90}}],\"nextLink\":\"https://cpp-recordings.vault.azure.net:443/keys/GetKeysVersions/versions?api-version=7.3&$skiptoken=eyJOZXh0TWFya2VyIjoiMiExMjghTURBd01EVXlJV3RsZVM5SFJWUkxSVmxUVmtWU1UwbFBUbE12TjBWQ1JVSTFPVGxHT0RBNU5FUTBNVGd3UWpjNU1UUTNPREl6UWpVMFFqWWhNREF3TURJNElUazVPVGt0TVRJdE16RlVNak02TlRrNk5Ua3VPVGs1T1RrNU9Wb2giLCJUYXJnZXRMb2NhdGlvbiI6MH0\"}",
         "STATUS_CODE": "200",
         "cache-control": "no-cache",
         "content-length": "6252",
@@ -1374,7 +1374,7 @@
         "x-ms-request-id": "b37b379f-cd68-482e-9bb8-ead39cfec8f9",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/keys/GetKeysVersions/versions?api-version=7.2"
+      "Url": "https://REDACTED.vault.azure.net/keys/GetKeysVersions/versions?api-version=7.3"
     },
     {
       "Headers": {
@@ -1400,7 +1400,7 @@
         "x-ms-request-id": "a0843454-47d8-4f1f-ba66-35ec42d28f61",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/keys/GetKeysVersions/versions?$skiptoken=eyJOZXh0TWFya2VyIjoiMiExMjghTURBd01EVXlJV3RsZVM5SFJWUkxSVmxUVmtWU1UwbFBUbE12TjBWQ1JVSTFPVGxHT0RBNU5FUTBNVGd3UWpjNU1UUTNPREl6UWpVMFFqWWhNREF3TURJNElUazVPVGt0TVRJdE16RlVNak02TlRrNk5Ua3VPVGs1T1RrNU9Wb2giLCJUYXJnZXRMb2NhdGlvbiI6MH0&api-version=7.2"
+      "Url": "https://REDACTED.vault.azure.net/keys/GetKeysVersions/versions?$skiptoken=eyJOZXh0TWFya2VyIjoiMiExMjghTURBd01EVXlJV3RsZVM5SFJWUkxSVmxUVmtWU1UwbFBUbE12TjBWQ1JVSTFPVGxHT0RBNU5FUTBNVGd3UWpjNU1UUTNPREl6UWpVMFFqWWhNREF3TURJNElUazVPVGt0TVRJdE16RlVNak02TlRrNk5Ua3VPVGs1T1RrNU9Wb2giLCJUYXJnZXRMb2NhdGlvbiI6MH0&api-version=7.3"
     },
     {
       "Headers": {
@@ -1426,7 +1426,7 @@
         "x-ms-request-id": "4f425c89-e3b9-439d-b28e-56aecb9694c5",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/keys/GetKeysVersions/03e03c00c1bd46fa808c1befaed14a36?api-version=7.2"
+      "Url": "https://REDACTED.vault.azure.net/keys/GetKeysVersions/03e03c00c1bd46fa808c1befaed14a36?api-version=7.3"
     },
     {
       "Headers": {
@@ -1452,7 +1452,7 @@
         "x-ms-request-id": "947ed898-e167-45a9-8b5e-19f97b105e9f",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/keys/GetKeysVersions/043fd11b031c4f38a0c447b11a9ba5d5?api-version=7.2"
+      "Url": "https://REDACTED.vault.azure.net/keys/GetKeysVersions/043fd11b031c4f38a0c447b11a9ba5d5?api-version=7.3"
     },
     {
       "Headers": {
@@ -1478,7 +1478,7 @@
         "x-ms-request-id": "98ab17ae-19b8-4303-af65-770bceec496f",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/keys/GetKeysVersions/0adae59dd92f42b4903abc9071354447?api-version=7.2"
+      "Url": "https://REDACTED.vault.azure.net/keys/GetKeysVersions/0adae59dd92f42b4903abc9071354447?api-version=7.3"
     },
     {
       "Headers": {
@@ -1504,7 +1504,7 @@
         "x-ms-request-id": "4fc76dc1-897f-49cc-a694-d9b55f750417",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/keys/GetKeysVersions/1449e93e34694ddaacc04dd05a49aea8?api-version=7.2"
+      "Url": "https://REDACTED.vault.azure.net/keys/GetKeysVersions/1449e93e34694ddaacc04dd05a49aea8?api-version=7.3"
     },
     {
       "Headers": {
@@ -1530,7 +1530,7 @@
         "x-ms-request-id": "52c723ba-e7f5-4055-9413-4922363c9d21",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/keys/GetKeysVersions/21b4356c836249c39f3837fddffb01ba?api-version=7.2"
+      "Url": "https://REDACTED.vault.azure.net/keys/GetKeysVersions/21b4356c836249c39f3837fddffb01ba?api-version=7.3"
     },
     {
       "Headers": {
@@ -1556,7 +1556,7 @@
         "x-ms-request-id": "b1cf2556-d978-4763-ac4e-86cddcd0f6ad",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/keys/GetKeysVersions/22095c74b8cf4411becebfd46cff9e05?api-version=7.2"
+      "Url": "https://REDACTED.vault.azure.net/keys/GetKeysVersions/22095c74b8cf4411becebfd46cff9e05?api-version=7.3"
     },
     {
       "Headers": {
@@ -1582,7 +1582,7 @@
         "x-ms-request-id": "4b80b7f6-e4d3-47e4-b31d-161416ad42a3",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/keys/GetKeysVersions/3743695fe8b14e2aa1cace87599de03d?api-version=7.2"
+      "Url": "https://REDACTED.vault.azure.net/keys/GetKeysVersions/3743695fe8b14e2aa1cace87599de03d?api-version=7.3"
     },
     {
       "Headers": {
@@ -1608,7 +1608,7 @@
         "x-ms-request-id": "8fdfd857-cd53-414a-810d-6dd059089370",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/keys/GetKeysVersions/3d242c06f38348a29b8a0613e7ecdfee?api-version=7.2"
+      "Url": "https://REDACTED.vault.azure.net/keys/GetKeysVersions/3d242c06f38348a29b8a0613e7ecdfee?api-version=7.3"
     },
     {
       "Headers": {
@@ -1634,7 +1634,7 @@
         "x-ms-request-id": "d7ae74c0-d9d1-44f6-adaa-50e6c2a00fe2",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/keys/GetKeysVersions/3f0a18bb5f244a8bbce57edc5aa17dc8?api-version=7.2"
+      "Url": "https://REDACTED.vault.azure.net/keys/GetKeysVersions/3f0a18bb5f244a8bbce57edc5aa17dc8?api-version=7.3"
     },
     {
       "Headers": {
@@ -1660,7 +1660,7 @@
         "x-ms-request-id": "5260fa3f-f640-4d7a-844b-f15c309884fe",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/keys/GetKeysVersions/4115df3d97e24856971454e29c76865f?api-version=7.2"
+      "Url": "https://REDACTED.vault.azure.net/keys/GetKeysVersions/4115df3d97e24856971454e29c76865f?api-version=7.3"
     },
     {
       "Headers": {
@@ -1686,7 +1686,7 @@
         "x-ms-request-id": "dc884e2b-da87-4d38-9af3-896d637a6e10",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/keys/GetKeysVersions/430c37db8e08447abd5f7cc0ceaa67ce?api-version=7.2"
+      "Url": "https://REDACTED.vault.azure.net/keys/GetKeysVersions/430c37db8e08447abd5f7cc0ceaa67ce?api-version=7.3"
     },
     {
       "Headers": {
@@ -1712,7 +1712,7 @@
         "x-ms-request-id": "03bc8f2a-b041-482f-9ac1-ca8c62c8a97b",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/keys/GetKeysVersions/4627eba9457c4a1588c4a09e87e182b5?api-version=7.2"
+      "Url": "https://REDACTED.vault.azure.net/keys/GetKeysVersions/4627eba9457c4a1588c4a09e87e182b5?api-version=7.3"
     },
     {
       "Headers": {
@@ -1738,7 +1738,7 @@
         "x-ms-request-id": "ee603a47-ee44-4ad9-b4c4-07e643f20fd2",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/keys/GetKeysVersions/4bf35491af894043881f5941c7b2db6f?api-version=7.2"
+      "Url": "https://REDACTED.vault.azure.net/keys/GetKeysVersions/4bf35491af894043881f5941c7b2db6f?api-version=7.3"
     },
     {
       "Headers": {
@@ -1764,7 +1764,7 @@
         "x-ms-request-id": "0e1eb6a6-256e-4338-8f88-940042ab9bc4",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/keys/GetKeysVersions/4f7f289e56014787a3686900a16dfc8d?api-version=7.2"
+      "Url": "https://REDACTED.vault.azure.net/keys/GetKeysVersions/4f7f289e56014787a3686900a16dfc8d?api-version=7.3"
     },
     {
       "Headers": {
@@ -1790,7 +1790,7 @@
         "x-ms-request-id": "5d940f9a-b1db-42e9-8c49-21e8f57185bb",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/keys/GetKeysVersions/5a04a01b2c5b41e1a2b50908524b8570?api-version=7.2"
+      "Url": "https://REDACTED.vault.azure.net/keys/GetKeysVersions/5a04a01b2c5b41e1a2b50908524b8570?api-version=7.3"
     },
     {
       "Headers": {
@@ -1816,7 +1816,7 @@
         "x-ms-request-id": "ade537b6-e5f8-4801-b87d-e1524eccece1",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/keys/GetKeysVersions/5ae209283e0c4eb8849e8b000ca54c4e?api-version=7.2"
+      "Url": "https://REDACTED.vault.azure.net/keys/GetKeysVersions/5ae209283e0c4eb8849e8b000ca54c4e?api-version=7.3"
     },
     {
       "Headers": {
@@ -1842,7 +1842,7 @@
         "x-ms-request-id": "8c1b625a-a068-4d89-a9ae-a7a97fef46a6",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/keys/GetKeysVersions/5bf95b8a0782428dbcec263bb8f0a0ce?api-version=7.2"
+      "Url": "https://REDACTED.vault.azure.net/keys/GetKeysVersions/5bf95b8a0782428dbcec263bb8f0a0ce?api-version=7.3"
     },
     {
       "Headers": {
@@ -1868,7 +1868,7 @@
         "x-ms-request-id": "101b6549-9ef9-4272-a8f6-5ea419c2981a",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/keys/GetKeysVersions/624fb2afe0da412cb13e7dc2cf39b8e4?api-version=7.2"
+      "Url": "https://REDACTED.vault.azure.net/keys/GetKeysVersions/624fb2afe0da412cb13e7dc2cf39b8e4?api-version=7.3"
     },
     {
       "Headers": {
@@ -1894,7 +1894,7 @@
         "x-ms-request-id": "c9db514c-55fc-4813-beac-cd4f4f50ae7e",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/keys/GetKeysVersions/632c912c473b4e34b0ce9852e6bbba97?api-version=7.2"
+      "Url": "https://REDACTED.vault.azure.net/keys/GetKeysVersions/632c912c473b4e34b0ce9852e6bbba97?api-version=7.3"
     },
     {
       "Headers": {
@@ -1920,7 +1920,7 @@
         "x-ms-request-id": "9f00420b-fa7f-4b24-a914-6edc146b8b80",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/keys/GetKeysVersions/6333e30b0d6542b58b7137bb028f1a68?api-version=7.2"
+      "Url": "https://REDACTED.vault.azure.net/keys/GetKeysVersions/6333e30b0d6542b58b7137bb028f1a68?api-version=7.3"
     },
     {
       "Headers": {
@@ -1946,7 +1946,7 @@
         "x-ms-request-id": "f6f76711-dfb0-4217-85a3-8b9027ee1467",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/keys/GetKeysVersions/642d3ee99fd2441591a42b141bbd52d4?api-version=7.2"
+      "Url": "https://REDACTED.vault.azure.net/keys/GetKeysVersions/642d3ee99fd2441591a42b141bbd52d4?api-version=7.3"
     },
     {
       "Headers": {
@@ -1972,7 +1972,7 @@
         "x-ms-request-id": "e26e743d-0c5a-44bf-91d2-6384275f2e01",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/keys/GetKeysVersions/65ae16a426094772bfc966336dc9f62e?api-version=7.2"
+      "Url": "https://REDACTED.vault.azure.net/keys/GetKeysVersions/65ae16a426094772bfc966336dc9f62e?api-version=7.3"
     },
     {
       "Headers": {
@@ -1998,7 +1998,7 @@
         "x-ms-request-id": "a780fcfd-33a1-46dc-93e2-8f739628adef",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/keys/GetKeysVersions/6a8c6f3695684f25865c5cfb00f19624?api-version=7.2"
+      "Url": "https://REDACTED.vault.azure.net/keys/GetKeysVersions/6a8c6f3695684f25865c5cfb00f19624?api-version=7.3"
     },
     {
       "Headers": {
@@ -2024,7 +2024,7 @@
         "x-ms-request-id": "9bb2cb2d-be97-4021-898a-bf9fe7be3053",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/keys/GetKeysVersions/6d401a6e911f47c599e8c82623f4a78c?api-version=7.2"
+      "Url": "https://REDACTED.vault.azure.net/keys/GetKeysVersions/6d401a6e911f47c599e8c82623f4a78c?api-version=7.3"
     },
     {
       "Headers": {
@@ -2050,7 +2050,7 @@
         "x-ms-request-id": "f67d7551-3d61-4c45-b65c-bd4c73a02b32",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/keys/GetKeysVersions/6e600eb0c64e4694b1a6647825f4cf7f?api-version=7.2"
+      "Url": "https://REDACTED.vault.azure.net/keys/GetKeysVersions/6e600eb0c64e4694b1a6647825f4cf7f?api-version=7.3"
     },
     {
       "Headers": {
@@ -2076,7 +2076,7 @@
         "x-ms-request-id": "6b33142a-7b6e-4e32-aeb1-3aa1a4d63ecb",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/keys/GetKeysVersions/7ebeb599f8094d4180b79147823b54b6?api-version=7.2"
+      "Url": "https://REDACTED.vault.azure.net/keys/GetKeysVersions/7ebeb599f8094d4180b79147823b54b6?api-version=7.3"
     },
     {
       "Headers": {
@@ -2102,7 +2102,7 @@
         "x-ms-request-id": "43680364-2fe6-42b8-85a8-e958d5871bd7",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/keys/GetKeysVersions/7f227860029a480497fe6c46de62e0bc?api-version=7.2"
+      "Url": "https://REDACTED.vault.azure.net/keys/GetKeysVersions/7f227860029a480497fe6c46de62e0bc?api-version=7.3"
     },
     {
       "Headers": {
@@ -2128,7 +2128,7 @@
         "x-ms-request-id": "960867d5-5180-406a-9447-3776173b7334",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/keys/GetKeysVersions/81fd6bea5ad04123a5d0429e5f75bd73?api-version=7.2"
+      "Url": "https://REDACTED.vault.azure.net/keys/GetKeysVersions/81fd6bea5ad04123a5d0429e5f75bd73?api-version=7.3"
     },
     {
       "Headers": {
@@ -2154,7 +2154,7 @@
         "x-ms-request-id": "6bbd22c1-c81c-42f5-ba77-2df96b79c50f",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/keys/GetKeysVersions/85eb2c111787404bbb878a8a73bc43ab?api-version=7.2"
+      "Url": "https://REDACTED.vault.azure.net/keys/GetKeysVersions/85eb2c111787404bbb878a8a73bc43ab?api-version=7.3"
     },
     {
       "Headers": {
@@ -2180,7 +2180,7 @@
         "x-ms-request-id": "0ae18db2-2c20-4bf8-8496-8b6d061aaa87",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/keys/GetKeysVersions/8ef95e3691924862bb618da2ac0663d9?api-version=7.2"
+      "Url": "https://REDACTED.vault.azure.net/keys/GetKeysVersions/8ef95e3691924862bb618da2ac0663d9?api-version=7.3"
     },
     {
       "Headers": {
@@ -2206,7 +2206,7 @@
         "x-ms-request-id": "1d31196c-1df8-455e-b020-caa421558f0c",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/keys/GetKeysVersions/929c59f668c24282ade49b37e9389591?api-version=7.2"
+      "Url": "https://REDACTED.vault.azure.net/keys/GetKeysVersions/929c59f668c24282ade49b37e9389591?api-version=7.3"
     },
     {
       "Headers": {
@@ -2232,7 +2232,7 @@
         "x-ms-request-id": "cfa5d00b-5eb8-42f3-94ec-d3c653a54c5f",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/keys/GetKeysVersions/95b221f5cea14edaa0797c84b863557a?api-version=7.2"
+      "Url": "https://REDACTED.vault.azure.net/keys/GetKeysVersions/95b221f5cea14edaa0797c84b863557a?api-version=7.3"
     },
     {
       "Headers": {
@@ -2258,7 +2258,7 @@
         "x-ms-request-id": "d575cef9-9417-42d1-9ed4-164d22f5a272",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/keys/GetKeysVersions/9cecc8a56d85404abcd8bd9eb4cdc94e?api-version=7.2"
+      "Url": "https://REDACTED.vault.azure.net/keys/GetKeysVersions/9cecc8a56d85404abcd8bd9eb4cdc94e?api-version=7.3"
     },
     {
       "Headers": {
@@ -2284,7 +2284,7 @@
         "x-ms-request-id": "68633232-6c72-4d26-b4a1-92d46131f7c6",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/keys/GetKeysVersions/9e258b2ee47a4255b65b02292a3a8ea1?api-version=7.2"
+      "Url": "https://REDACTED.vault.azure.net/keys/GetKeysVersions/9e258b2ee47a4255b65b02292a3a8ea1?api-version=7.3"
     },
     {
       "Headers": {
@@ -2310,7 +2310,7 @@
         "x-ms-request-id": "3b60aa2f-4990-43cd-b063-b9a3bf61a2a1",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/keys/GetKeysVersions/9e2ab6cb318e4e78b05e409a5b1359a0?api-version=7.2"
+      "Url": "https://REDACTED.vault.azure.net/keys/GetKeysVersions/9e2ab6cb318e4e78b05e409a5b1359a0?api-version=7.3"
     },
     {
       "Headers": {
@@ -2336,7 +2336,7 @@
         "x-ms-request-id": "32bca43a-0ab2-4788-8a7e-70df874179a1",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/keys/GetKeysVersions/a4526b4a0f7345e49728adf98bd1285f?api-version=7.2"
+      "Url": "https://REDACTED.vault.azure.net/keys/GetKeysVersions/a4526b4a0f7345e49728adf98bd1285f?api-version=7.3"
     },
     {
       "Headers": {
@@ -2362,7 +2362,7 @@
         "x-ms-request-id": "46c5cb31-0bc4-4aa8-9dbb-9201e3e20556",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/keys/GetKeysVersions/ae92a4215b2648d0b9f36aeb3dfbaff7?api-version=7.2"
+      "Url": "https://REDACTED.vault.azure.net/keys/GetKeysVersions/ae92a4215b2648d0b9f36aeb3dfbaff7?api-version=7.3"
     },
     {
       "Headers": {
@@ -2388,7 +2388,7 @@
         "x-ms-request-id": "88af0106-7f23-47ea-82ca-ff041d16d877",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/keys/GetKeysVersions/b226a911e9634ccdba16b60b4d31a94f?api-version=7.2"
+      "Url": "https://REDACTED.vault.azure.net/keys/GetKeysVersions/b226a911e9634ccdba16b60b4d31a94f?api-version=7.3"
     },
     {
       "Headers": {
@@ -2414,7 +2414,7 @@
         "x-ms-request-id": "de9d8656-629f-4cc4-afb5-23b3246a3ed4",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/keys/GetKeysVersions/c6477ed8dfa64cd7ab893511125c150d?api-version=7.2"
+      "Url": "https://REDACTED.vault.azure.net/keys/GetKeysVersions/c6477ed8dfa64cd7ab893511125c150d?api-version=7.3"
     },
     {
       "Headers": {
@@ -2440,7 +2440,7 @@
         "x-ms-request-id": "f0b913ec-d8bd-4b13-b0a1-56ee2769a6e1",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/keys/GetKeysVersions/c7d2a56038e1427dbe54fb425da9c178?api-version=7.2"
+      "Url": "https://REDACTED.vault.azure.net/keys/GetKeysVersions/c7d2a56038e1427dbe54fb425da9c178?api-version=7.3"
     },
     {
       "Headers": {
@@ -2466,7 +2466,7 @@
         "x-ms-request-id": "dc1f4be4-6863-42ab-9756-dbf1bb2e6a94",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/keys/GetKeysVersions/cd1c6980a6e24993b761ee79fde2a0ed?api-version=7.2"
+      "Url": "https://REDACTED.vault.azure.net/keys/GetKeysVersions/cd1c6980a6e24993b761ee79fde2a0ed?api-version=7.3"
     },
     {
       "Headers": {
@@ -2492,7 +2492,7 @@
         "x-ms-request-id": "fef204d2-797d-4aed-9cbd-98c26bec8f1a",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/keys/GetKeysVersions/cf0adf5c23ab4290a7b8d9237ae53ac8?api-version=7.2"
+      "Url": "https://REDACTED.vault.azure.net/keys/GetKeysVersions/cf0adf5c23ab4290a7b8d9237ae53ac8?api-version=7.3"
     },
     {
       "Headers": {
@@ -2518,7 +2518,7 @@
         "x-ms-request-id": "9c67436c-aa25-463b-9421-034b939a663c",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/keys/GetKeysVersions/cf848f9d140e483695a53183f502b942?api-version=7.2"
+      "Url": "https://REDACTED.vault.azure.net/keys/GetKeysVersions/cf848f9d140e483695a53183f502b942?api-version=7.3"
     },
     {
       "Headers": {
@@ -2544,7 +2544,7 @@
         "x-ms-request-id": "5cada3ab-ee7b-4e02-bf08-7e9b579a2604",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/keys/GetKeysVersions/d9ac8a4e7fc142a491e65518d9daf605?api-version=7.2"
+      "Url": "https://REDACTED.vault.azure.net/keys/GetKeysVersions/d9ac8a4e7fc142a491e65518d9daf605?api-version=7.3"
     },
     {
       "Headers": {
@@ -2570,7 +2570,7 @@
         "x-ms-request-id": "e129bce0-61d7-4c66-9cb0-d9a53bddaf70",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/keys/GetKeysVersions/df6f36c7d20449b59323599d8ad7311a?api-version=7.2"
+      "Url": "https://REDACTED.vault.azure.net/keys/GetKeysVersions/df6f36c7d20449b59323599d8ad7311a?api-version=7.3"
     },
     {
       "Headers": {
@@ -2596,7 +2596,7 @@
         "x-ms-request-id": "b3f0242f-4993-4d83-89de-9da8cf356c54",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/keys/GetKeysVersions/e57d0210466f4c73807accfc134775a1?api-version=7.2"
+      "Url": "https://REDACTED.vault.azure.net/keys/GetKeysVersions/e57d0210466f4c73807accfc134775a1?api-version=7.3"
     },
     {
       "Headers": {
@@ -2622,7 +2622,7 @@
         "x-ms-request-id": "f0fa78f5-a208-444d-8d5d-59fa3f0f2b40",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/keys/GetKeysVersions/e8cb043c552e463abf1453be4c4e8ab5?api-version=7.2"
+      "Url": "https://REDACTED.vault.azure.net/keys/GetKeysVersions/e8cb043c552e463abf1453be4c4e8ab5?api-version=7.3"
     },
     {
       "Headers": {
@@ -2648,7 +2648,7 @@
         "x-ms-request-id": "7dfb5565-ce1e-4f66-bc45-4ab5e77341ff",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/keys/GetKeysVersions/ee619dcb6a02417a9a5fc91e99008ef1?api-version=7.2"
+      "Url": "https://REDACTED.vault.azure.net/keys/GetKeysVersions/ee619dcb6a02417a9a5fc91e99008ef1?api-version=7.3"
     },
     {
       "Headers": {
@@ -2674,7 +2674,7 @@
         "x-ms-request-id": "8ce1cd86-50fe-4e86-80a4-8d6c88415348",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/keys/GetKeysVersions/f7d683d7edab46ad8d7f24393477225f?api-version=7.2"
+      "Url": "https://REDACTED.vault.azure.net/keys/GetKeysVersions/f7d683d7edab46ad8d7f24393477225f?api-version=7.3"
     },
     {
       "Headers": {
@@ -2700,7 +2700,7 @@
         "x-ms-request-id": "c187bec4-cd23-4748-96a5-e3670564ce5c",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/keys/GetKeysVersions/fafdbf38f4c6405bada936717269ebdf?api-version=7.2"
+      "Url": "https://REDACTED.vault.azure.net/keys/GetKeysVersions/fafdbf38f4c6405bada936717269ebdf?api-version=7.3"
     }
   ]
 }
