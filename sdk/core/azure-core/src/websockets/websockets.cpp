@@ -1,12 +1,12 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
 
-#include "azure/core/http/http.hpp"
+#include "azure/core/websockets/websockets.hpp"
 #include "azure/core/url.hpp"
 
 using namespace Azure::Core;
 using namespace Azure::Core::Http;
-using namespace Azure::Core::Http::Websockets;
+using namespace Azure::Core::Websockets;
 
 // Client implementation can depend on OS or CMake-options and it becomes an impl detail
 namespace {
@@ -32,11 +32,11 @@ public:
 };
 } // namespace
 
-namespace Azure { namespace Core { namespace Http { namespace Websockets {
+namespace Azure { namespace Core { namespace Websockets {
 
   WebsocketClient::WebsocketClient(Azure::Core::Url url, WebsocketClientOptions clientOptions)
       : m_client(std::make_unique<TestImpl>(url, std::move(clientOptions)))
   {
   }
 
-}}}} // namespace Azure::Core::Http::Websockets
+}}} // namespace Azure::Core::Websockets

@@ -44,6 +44,9 @@
 #include "azure/core/http/raw_response.hpp"
 #include "azure/core/http/transport.hpp"
 
+// azure/core/websockets
+#include "azure/core/websockets/websockets.hpp"
+
 // azure/core/http/policies
 #include "azure/core/http/policies/policy.hpp"
 

@@ -55,6 +55,7 @@ TEST(SimplifiedHeader, core)
     EXPECT_NO_THROW(Azure::Core::IO::MemoryBodyStream mb(buffer));
   }
   EXPECT_NO_THROW(Azure::Core::Http::Policies::_internal::TelemetryPolicy tp("", ""));
+  EXPECT_NO_THROW(Azure::Core::Websockets::WebsocketClient(Azure::Core::Url("ws://foo")));
 }
 
 #ifdef _MSC_VER

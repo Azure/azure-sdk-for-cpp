@@ -3,15 +3,15 @@
 
 #include <gtest/gtest.h>
 
-#include <azure/core/http/http.hpp>
 #include <azure/core/internal/io/null_body_stream.hpp>
+#include <azure/core/websockets/websockets.hpp>
 
 #include <string>
 #include <utility>
 #include <vector>
 
 using namespace Azure::Core;
-using namespace Azure::Core::Http::Websockets;
+using namespace Azure::Core::Websockets;
 using namespace Azure::Core::IO;
 
 namespace Azure { namespace Core { namespace Test {

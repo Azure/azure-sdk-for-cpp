@@ -78,7 +78,7 @@ add_executable (
     url_test.cpp
     uuid_test.cpp
     exception_test.cpp
-    websocket.cpp
+    websockets.cpp
 )
 
 if (MSVC)

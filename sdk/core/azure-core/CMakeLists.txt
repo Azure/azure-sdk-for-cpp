@@ -56,14 +56,23 @@ set(
   AZURE_CORE_HEADER
     ${CURL_TRANSPORT_ADAPTER_INC}
     ${WIN_TRANSPORT_ADAPTER_INC}
+    inc/azure/core.hpp
+    inc/azure/core/azure_assert.hpp
+    inc/azure/core/base64.hpp
+    inc/azure/core/case_insensitive_containers.hpp
+    inc/azure/core/context.hpp
     inc/azure/core/credentials/credentials.hpp
     inc/azure/core/credentials/token_credential_options.hpp
     inc/azure/core/cryptography/hash.hpp
+    inc/azure/core/datetime.hpp
     inc/azure/core/diagnostics/logger.hpp
+    inc/azure/core/dll_import_export.hpp
+    inc/azure/core/etag.hpp
+    inc/azure/core/exception.hpp
     inc/azure/core/http/http_status_code.hpp
     inc/azure/core/http/http.hpp
-    inc/azure/core/http/raw_response.hpp
     inc/azure/core/http/policies/policy.hpp
+    inc/azure/core/http/raw_response.hpp
     inc/azure/core/http/transport.hpp
     inc/azure/core/internal/client_options.hpp
     inc/azure/core/internal/contract.hpp
@@ -77,26 +86,18 @@ set(
     inc/azure/core/internal/json/json.hpp
     inc/azure/core/internal/strings.hpp
     inc/azure/core/io/body_stream.hpp
-    inc/azure/core/azure_assert.hpp
-    inc/azure/core/rtti.hpp
-    inc/azure/core/base64.hpp
-    inc/azure/core/case_insensitive_containers.hpp
-    inc/azure/core/context.hpp
-    inc/azure/core/datetime.hpp
-    inc/azure/core/dll_import_export.hpp
-    inc/azure/core/etag.hpp
-    inc/azure/core/exception.hpp
     inc/azure/core/match_conditions.hpp
     inc/azure/core/modified_conditions.hpp
     inc/azure/core/nullable.hpp
+    inc/azure/core/operation_status.hpp
     inc/azure/core/operation.hpp
     inc/azure/core/paged_response.hpp
-    inc/azure/core/operation_status.hpp
     inc/azure/core/platform.hpp
     inc/azure/core/response.hpp
+    inc/azure/core/rtti.hpp
     inc/azure/core/url.hpp
     inc/azure/core/uuid.hpp
-    inc/azure/core.hpp
+    inc/azure/core/websockets/websockets.hpp
 )
 
 set(
@@ -104,8 +105,15 @@ set(
     ${CURL_TRANSPORT_ADAPTER_SRC}
     ${WIN_TRANSPORT_ADAPTER_SRC}
     src/azure_assert.cpp
+    src/base64.cpp
+    src/context.cpp
     src/cryptography/md5.cpp
     src/cryptography/sha_hash.cpp
+    src/datetime.cpp
+    src/environment_log_level_listener.cpp
+    src/environment.cpp
+    src/etag.cpp
+    src/exception.cpp
     src/http/bearer_token_authentication_policy.cpp
     src/http/http.cpp
     src/http/log_policy.cpp
@@ -116,22 +124,15 @@ set(
     src/http/telemetry_policy.cpp
     src/http/transport_policy.cpp
     src/http/url.cpp
-    src/http/websocket.cpp
     src/io/body_stream.cpp
     src/io/random_access_file_body_stream.cpp
-    src/private/environment_log_level_listener.hpp
-    src/private/package_version.hpp
-    src/base64.cpp
-    src/context.cpp
-    src/datetime.cpp
-    src/environment.cpp
-    src/environment_log_level_listener.cpp
-    src/etag.cpp
-    src/exception.cpp
     src/logger.cpp
     src/operation_status.cpp
+    src/private/environment_log_level_listener.hpp
+    src/private/package_version.hpp
     src/strings.cpp
     src/uuid.cpp
+    src/websockets/websockets.cpp
 )
 
 add_library(azure-core ${AZURE_CORE_HEADER} ${AZURE_CORE_SOURCE})
