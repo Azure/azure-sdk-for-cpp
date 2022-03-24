@@ -25,7 +25,7 @@
         "x-ms-request-id": "295f2a94-743b-4cca-8265-f8e63b65cadb",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/keys/RemoteSignVerifyRSA256-2048/create?api-version=7.3"
+      "Url": "https://REDACTED.vault.azure.net/keys/RemoteSignVerifyRSA256-2048/create?api-version=7.2"
     },
     {
       "Headers": {
@@ -52,7 +52,7 @@
         "x-ms-request-id": "39db46d8-3065-4c7c-b27f-30a954f7a5f9",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/keys/RemoteSignVerifyRSA256-2048/01117651fcb44e4185f84691d4af0738/sign?api-version=7.3"
+      "Url": "https://REDACTED.vault.azure.net/keys/RemoteSignVerifyRSA256-2048/01117651fcb44e4185f84691d4af0738/sign?api-version=7.2"
     },
     {
       "Headers": {
@@ -79,7 +79,7 @@
         "x-ms-request-id": "e80d04f5-f105-4bed-8b8e-2ba700f2c101",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/keys/RemoteSignVerifyRSA256-2048/01117651fcb44e4185f84691d4af0738/verify?api-version=7.3"
+      "Url": "https://REDACTED.vault.azure.net/keys/RemoteSignVerifyRSA256-2048/01117651fcb44e4185f84691d4af0738/verify?api-version=7.2"
     },
     {
       "Headers": {
@@ -106,7 +106,7 @@
         "x-ms-request-id": "a7f8e170-c8ef-404e-9014-6d85694a0fe9",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/keys/RemoteSignVerifyRSA256-2048/01117651fcb44e4185f84691d4af0738/sign?api-version=7.3"
+      "Url": "https://REDACTED.vault.azure.net/keys/RemoteSignVerifyRSA256-2048/01117651fcb44e4185f84691d4af0738/sign?api-version=7.2"
     },
     {
       "Headers": {
@@ -133,7 +133,7 @@
         "x-ms-request-id": "fbbfc972-288f-4d1d-8db9-2a53421b0169",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/keys/RemoteSignVerifyRSA256-2048/01117651fcb44e4185f84691d4af0738/verify?api-version=7.3"
+      "Url": "https://REDACTED.vault.azure.net/keys/RemoteSignVerifyRSA256-2048/01117651fcb44e4185f84691d4af0738/verify?api-version=7.2"
     }
   ]
 }
