@@ -50,7 +50,7 @@ The next options can be used for any test:
 | ---------- | ---        | ---| ---| --- |
 | Duration   | -d, --duration   | Duration of the test in seconds                  | 10    | -d 5
 | Host       | --host           | Host to redirect HTTP requests                   | NA    | --host=https://something.com
-| Insecure   | --insecure       | Allow untrusted SSL certs                        | false | --insecure=true
+| Insecure   | --insecure       | Allow untrusted SSL certs                        | false | --insecure
 | Iterations | -i, --iterations | Number of iterations of main test loop           | 1     | -d 5
 | Statistics | --statistics     | Print job statistics                             | false | --statistics=true
 | Latency    | -l, --latency    | Track and print per-operation latency statistics | false | -l true
