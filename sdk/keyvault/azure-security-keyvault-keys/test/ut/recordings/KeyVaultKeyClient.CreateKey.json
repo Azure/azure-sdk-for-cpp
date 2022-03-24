@@ -25,7 +25,7 @@
         "x-ms-request-id": "1b4215a6-b4f5-46fd-803c-14c00c10cb73",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/keys/CreateKey/create?api-version=7.2"
+      "Url": "https://REDACTED.vault.azure.net/keys/CreateKey/create?api-version=7.3"
     },
     {
       "Headers": {
@@ -51,7 +51,7 @@
         "x-ms-request-id": "6958a7d9-ac87-46ce-94b0-b1f0b4b1b1a6",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/keys/CreateKey?api-version=7.2"
+      "Url": "https://REDACTED.vault.azure.net/keys/CreateKey?api-version=7.3"
     }
   ]
 }
