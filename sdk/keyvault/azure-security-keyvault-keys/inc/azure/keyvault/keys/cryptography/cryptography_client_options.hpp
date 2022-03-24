@@ -53,7 +53,7 @@ namespace Azure {
      * @brief Use to send request to the 7.2 version of Key Vault service.
      *
      */
-    AZ_SECURITY_KEYVAULT_KEYS_DLLEXPORT static const ServiceVersion V7_2;
+    AZ_SECURITY_KEYVAULT_KEYS_DLLEXPORT static const ServiceVersion V7_3;
   };
 
   /**
@@ -76,7 +76,7 @@ namespace Azure {
      *
      * @param version Optional version for the client.
      */
-    CryptographyClientOptions(ServiceVersion version = ServiceVersion::V7_2)
+    CryptographyClientOptions(ServiceVersion version = ServiceVersion::V7_3)
         : Azure::Core::_internal::ClientOptions(), Version(version)
     {
     }
