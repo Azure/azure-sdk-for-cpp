@@ -3,8 +3,7 @@
     "version-string": "1.0.0",
     "dependencies": [
         {
-            "name": "curl",
-            "platform": "!windows & !uwp"
+            "name": "curl"
         },
         {
             "name": "libxml2",
