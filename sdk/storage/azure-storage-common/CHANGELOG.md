@@ -1,16 +1,12 @@
 # Release History
 
-## 12.3.0-beta.1 (Unreleased)
-
-### Features Added
-
-### Breaking Changes
-
-### Bugs Fixed
+## 12.2.3 (2022-04-06)
 
 - Fixed a bug where we got error when XML request body is too big.
 
 ### Other Changes
+
+- No public changes in this release.
 
 ## 12.2.2 (2022-03-09)
 
