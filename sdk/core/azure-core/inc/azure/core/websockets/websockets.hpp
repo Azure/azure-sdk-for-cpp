@@ -3,7 +3,7 @@
 
 /**
  * @file
- * @brief Websockets functionality.
+ * @brief WebSockets functionality.
  */
 
 #pragma once
@@ -17,13 +17,13 @@
 #include <memory>
 #include <string>
 
-namespace Azure { namespace Core { namespace Websockets {
+namespace Azure { namespace Core { namespace WebSockets {
 
   /**
    * @brief Configuration for a websocket client.
    *
    */
-  struct WebsocketClientOptions
+  struct WebSocketClientOptions
   {
   };
 
@@ -34,7 +34,7 @@ namespace Azure { namespace Core { namespace Websockets {
    * application.
    *
    */
-  enum class WebsocketMessageType
+  enum class WebSocketMessageType
   {
     TextMessage,
     BinaryMessage,
@@ -47,24 +47,24 @@ namespace Azure { namespace Core { namespace Websockets {
    * @brief Template class for a websocket message.
    *
    */
-  template <class T> class WebsocketMessage {
+  template <class T> class WebSocketMessage {
   protected:
     Azure::Core::IO::BodyStream& m_bufferStream;
 
     /**
-     * @brief Destroy the Websocket Message object
+     * @brief Destroy the WebSocket Message object
      *
      */
-    ~WebsocketMessage() = default;
+    ~WebSocketMessage() = default;
 
   public:
     /**
-     * @brief Construct a new Websocket Message object
+     * @brief Construct a new WebSocket Message object
      *
      * @param type
      * @param bufferStream
      */
-    explicit WebsocketMessage(WebsocketMessageType type, Azure::Core::IO::BodyStream& bufferStream)
+    explicit WebSocketMessage(WebSocketMessageType type, Azure::Core::IO::BodyStream& bufferStream)
         : m_bufferStream(bufferStream), Type(type)
     {
     }
@@ -73,19 +73,19 @@ namespace Azure { namespace Core { namespace Websockets {
      * @brief Type of message.
      *
      */
-    WebsocketMessageType Type;
+    WebSocketMessageType Type;
   };
 
   /**
    * @brief A websocket message to be sent to a server.
    *
    */
-  class WebsocketOutMessage : public WebsocketMessage<WebsocketOutMessage> {
+  class WebSocketOutMessage : public WebSocketMessage<WebSocketOutMessage> {
   public:
-    explicit WebsocketOutMessage(
-        WebsocketMessageType type,
+    explicit WebSocketOutMessage(
+        WebSocketMessageType type,
         Azure::Core::IO::BodyStream& bufferStream)
-        : WebsocketMessage(type, bufferStream)
+        : WebSocketMessage(type, bufferStream)
     {
     }
   };
@@ -94,12 +94,12 @@ namespace Azure { namespace Core { namespace Websockets {
    * @brief A websocket message received by the server.
    *
    */
-  class WebsocketInMessage : public WebsocketMessage<WebsocketInMessage> {
+  class WebSocketInMessage : public WebSocketMessage<WebSocketInMessage> {
   public:
-    explicit WebsocketInMessage(
-        WebsocketMessageType type,
+    explicit WebSocketInMessage(
+        WebSocketMessageType type,
         Azure::Core::IO::BodyStream& bufferStream)
-        : WebsocketMessage(type, bufferStream)
+        : WebSocketMessage(type, bufferStream)
     {
     }
   };
@@ -109,7 +109,7 @@ namespace Azure { namespace Core { namespace Websockets {
      * @brief Abstract class which defines the behavior for a websocket client.
      *
      */
-    class WebsocketClientImplementation {
+    class WebSocketClientImplementation {
     public:
       /**
        * @brief Base constructor for all websocket client implementations.
@@ -117,18 +117,18 @@ namespace Azure { namespace Core { namespace Websockets {
        * @param url A url to the websocket server.
        * @param clientOptions The configuration for the websocket implementation.
        */
-      explicit WebsocketClientImplementation(
+      explicit WebSocketClientImplementation(
           Azure::Core::Url url,
-          WebsocketClientOptions clientOptions)
+          WebSocketClientOptions clientOptions)
           : m_url(std::move(url)), m_clientOptions(std::move(clientOptions))
       {
       }
 
       /**
-       * @brief Destroy the Websocket Client Implementation object
+       * @brief Destroy the WebSocket Client Implementation object
        *
        */
-      virtual ~WebsocketClientImplementation() {}
+      virtual ~WebSocketClientImplementation() {}
 
       /**
        * @brief Stablish network connection to the websocket server.
@@ -148,40 +148,40 @@ namespace Azure { namespace Core { namespace Websockets {
        * @param message The message to be sent to the server.
        * @param context A context to control the request lifetime.
        */
-      virtual void Send(WebsocketOutMessage& message, Azure::Core::Context const& context) = 0;
+      virtual void Send(WebSocketOutMessage& message, Azure::Core::Context const& context) = 0;
 
       /**
        * @brief Set a callback to be called when a message is received from the server.
        *
        * @param handler A callback function which gets the incoming message from network.
        */
-      virtual void OnMessage(std::function<void(WebsocketInMessage const&)> const& handler) = 0;
+      virtual void OnMessage(std::function<void(WebSocketInMessage const&)> const& handler) = 0;
 
     protected:
       Azure::Core::Url m_url;
-      WebsocketClientOptions m_clientOptions;
+      WebSocketClientOptions m_clientOptions;
     };
 
   } // namespace _detail
 
   /**
-   * @brief Websocket client class provides network communication with a server, using websocket
+   * @brief WebSocket client class provides network communication with a server, using websocket
    * protoccol.
    *
    */
-  class WebsocketClient {
+  class WebSocketClient {
   private:
-    std::unique_ptr<_detail::WebsocketClientImplementation> m_client;
+    std::unique_ptr<_detail::WebSocketClientImplementation> m_client;
 
   public:
     /**
-     * @brief Construct a new Websocket Client object.
+     * @brief Construct a new WebSocket Client object.
      *
      * @param clientOptions Optional configuration used to create the websocket client.
      */
-    explicit WebsocketClient(
+    explicit WebSocketClient(
         Azure::Core::Url url,
-        WebsocketClientOptions clientOptions = WebsocketClientOptions{});
+        WebSocketClientOptions clientOptions = WebSocketClientOptions{});
 
     /**
      * @brief Stablish network connection to the websocket server.
@@ -201,7 +201,7 @@ namespace Azure { namespace Core { namespace Websockets {
      * @param message The message to be sent to the server.
      * @param context A context to control the request lifetime.
      */
-    void Send(WebsocketOutMessage& message, Azure::Core::Context const& context)
+    void Send(WebSocketOutMessage& message, Azure::Core::Context const& context)
     {
       m_client->Send(message, context);
     }
@@ -211,10 +211,10 @@ namespace Azure { namespace Core { namespace Websockets {
      *
      * @param handler A callback function which gets the incoming message from network.
      */
-    void OnMessage(std::function<void(WebsocketInMessage const&)> const& handler)
+    void OnMessage(std::function<void(WebSocketInMessage const&)> const& handler)
     {
       m_client->OnMessage(handler);
     }
   };
 
-}}} // namespace Azure::Core::Websockets
+}}} // namespace Azure::Core::WebSockets

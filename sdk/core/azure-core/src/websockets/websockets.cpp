@@ -6,38 +6,38 @@
 
 using namespace Azure::Core;
 using namespace Azure::Core::Http;
-using namespace Azure::Core::Websockets;
-using namespace Azure::Core::Websockets::_detail;
+using namespace Azure::Core::WebSockets;
+using namespace Azure::Core::WebSockets::_detail;
 
 // Client implementation can depend on OS or CMake-options and it becomes an impl detail
 namespace {
-class TestImpl : public WebsocketClientImplementation {
+class TestImpl : public WebSocketClientImplementation {
 
 public:
-  TestImpl(Azure::Core::Url url, WebsocketClientOptions clientOptions)
-      : WebsocketClientImplementation(std::move(url), std::move(clientOptions))
+  TestImpl(Azure::Core::Url url, WebSocketClientOptions clientOptions)
+      : WebSocketClientImplementation(std::move(url), std::move(clientOptions))
   {
   }
 
   void Connect() override {}
   void Close() override {}
-  void Send(WebsocketOutMessage& message, Azure::Core::Context const& context) override
+  void Send(WebSocketOutMessage& message, Azure::Core::Context const& context) override
   {
     (void)message;
     (void)context;
   }
-  void OnMessage(std::function<void(WebsocketInMessage const&)> const& handler) override
+  void OnMessage(std::function<void(WebSocketInMessage const&)> const& handler) override
   {
     (void)handler;
   }
 };
 } // namespace
 
-namespace Azure { namespace Core { namespace Websockets {
+namespace Azure { namespace Core { namespace WebSockets {
 
-  WebsocketClient::WebsocketClient(Azure::Core::Url url, WebsocketClientOptions clientOptions)
+  WebSocketClient::WebSocketClient(Azure::Core::Url url, WebSocketClientOptions clientOptions)
       : m_client(std::make_unique<TestImpl>(url, std::move(clientOptions)))
   {
   }
 
-}}} // namespace Azure::Core::Websockets
+}}} // namespace Azure::Core::WebSockets
