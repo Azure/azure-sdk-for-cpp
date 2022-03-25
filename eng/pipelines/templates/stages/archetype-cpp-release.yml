@@ -146,7 +146,7 @@ stages:
                           RepoName: azure-sdk-vcpkg-betas
                           # TODO: Use default branch, maybe do a normal git
                           # clone instead of vcpkg-clone...
-                          PRBranchName: djurek/vcpkg-beta-2
+                          PRBranchName: djurek/vcpkg-beta-3
 
                       - template: /eng/pipelines/templates/steps/vcpkg-publish.yml
                         parameters:

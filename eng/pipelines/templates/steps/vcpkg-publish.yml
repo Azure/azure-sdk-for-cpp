@@ -68,22 +68,7 @@ steps:
       parameters:
         WorkingDirectory: $(Pipeline.Workspace)/azure-sdk-vcpkg-betas
 
-    - template: /eng/common/pipelines/templates/steps/git-push-changes.yml
-      parameters:
-        # TODO: Use default branch
-        BaseRepoBranch: djurek/vcpkg-beta-2
-        BaseRepoOwner: Azure
-        CommitMsg: Update vcpkg beta
-        TargetRepoOwner: Azure
-        TargetRepoName: azure-sdk-vcpkg-betas
-        WorkingDirectory: $(Pipeline.Workspace)/azure-sdk-vcpkg-betas
-        ScriptDirectory: $(System.DefaultWorkingDirectory)/eng/common/scripts
-        SkipCheckingForChanges: true
-
     - pwsh: |
-        git remote -v
-        git push azure-sdk-fork --tags
-      workingDirectory: $(Pipeline.Workspace)/azure-sdk-vcpkg-betas
-      displayName: Push tags
-
-
+        git remote add azure-sdk-fork "https://$(azuresdk-github-pat)@github.com/Azure/azure-sdk-vcpkg-betas.git"
+        git push azure-sdk-forkdjurek/vcpkg-beta-3
+      displayName: Push changes back to azure-sdk-vcpkg-betas repo

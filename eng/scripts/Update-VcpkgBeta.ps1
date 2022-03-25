@@ -4,8 +4,7 @@ param(
     [string] $ReleaseArtifactSourceDirectory,
     [string] $VcpkgPortName,
     [string] $GitCommitParameters,
-    [string] $BuildIdentifier = $env:BUILD_BUILDID,
-    [switch] $TestBuildVcpkg
+    [string] $BuildIdentifier = $env:BUILD_BUILDID
 )
 
 ."$PSSCriptRoot/../common/scripts/common.ps1"
@@ -57,7 +56,15 @@ try {
         --vcpkg-root=. `
         --x-scripts-root=$VcpkgFolder/scripts  # This param is extra
 
-    $tagName = "$(Get-Date -Format "yyyyMMdd" ).$($BuildIdentifier)_$($VcpkgPortName)_$($packageInfo.version)"
+    Write-Host "git add -A"
+    git add -A
+    Write-Host "git $GitCommitParameters commit --amend --no-edit"
+    Invoke-Expression "git $GitCommitParameters commit --amend --no-edit"
+
+    # WARNING: You may not use the normal
+    Write-Host "git log -1 --format=format:%H"
+    $baseHash = git log -1 --format=format:%H
+    Write-Host "New Baseline: $baseHash"
 
     # Update vcpkg-configuration.json to include this package and set the
     # baseline
@@ -65,7 +72,7 @@ try {
     $rawVcpkgConfig = Get-Content -Raw -Path $vcpkgConfigPath
     $vcpkgConfig = ConvertFrom-Json $rawVcpkgConfig
 
-    $vcpkgConfig.registries[0].baseline = $tagName
+    $vcpkgConfig.registries[0].baseline = $baseHash
     if (!($vcpkgConfig.registries[0].packages -contains $VcpkgPortName)) {
         $vcpkgConfig.registries[0].packages += $VcpkgPortName
     }
@@ -75,22 +82,8 @@ try {
 
     Write-Host "git add -A"
     git add -A
-    Write-Host "git $GitCommitParameters commit --amend --no-edit"
-    Invoke-Expression "git $GitCommitParameters commit --amend --no-edit"
-
-    Write-Host "git tag $tagName"
-    git tag $tagName
-
-    if ($TestBuildVcpkg) {
-        # Validate overlay port installs (may only be possible after a push)
-        Write-Host "$VcpkgFolder/vcpkg" install $VcpkgPortName --overlay-ports=$VcpkgBetaFolder
-        ."$VcpkgFolder/vcpkg" install $VcpkgPortName --overlay-ports=$VcpkgBetaFolder
-
-        if ($LASTEXITCODE) {
-            LogError "Port validation failed. Ensure the port builds properly"
-            exit 1
-        }
-    }
+    Write-Host "git $GitCommitParameters commit -m `"Update vcpkg-configuration.json`""
+    "git $GitCommitParameters commit -m 'Update vcpkg-configuration.json'"
 } finally {
     Set-Location $originalLocation
 }
