@@ -3,9 +3,13 @@
 
 #include "azure/identity/chained_token_credential.hpp"
 
+#include "azure/core/internal/diagnostics/log.hpp"
+
 #include <utility>
 
 using namespace Azure::Identity;
+using namespace Azure::Core::Credentials;
+using Azure::Core::Context;
 
 ChainedTokenCredential::ChainedTokenCredential(ChainedTokenCredential::Sources sources)
     : m_sources(std::move(sources))
@@ -14,22 +18,57 @@ ChainedTokenCredential::ChainedTokenCredential(ChainedTokenCredential::Sources s
 
 ChainedTokenCredential::~ChainedTokenCredential() = default;
 
-Azure::Core::Credentials::AccessToken ChainedTokenCredential::GetToken(
-    Azure::Core::Credentials::TokenRequestContext const& tokenRequestContext,
-    Azure::Core::Context const& context) const
+AccessToken ChainedTokenCredential::GetToken(
+    TokenRequestContext const& tokenRequestContext,
+    Context const& context) const
 {
+  using Azure::Core::Diagnostics::Logger;
+  using Azure::Core::Diagnostics::_internal::Log;
+
+  auto n = 0;
   for (const auto& source : m_sources)
   {
     try
     {
-      return source->GetToken(tokenRequestContext, context);
+      ++n;
+      auto token = source->GetToken(tokenRequestContext, context);
+
+      {
+        const auto logLevel = Logger::Level::Informational;
+        if (Log::ShouldWrite(logLevel))
+        {
+          Log::Write(
+              logLevel,
+              std::string("ChainedTokenCredential authentication attempt with credential #")
+                  + std::to_string(n) + " did succeed.");
+        }
+      }
+
+      return token;
     }
-    catch (const Azure::Core::Credentials::AuthenticationException&)
+    catch (const AuthenticationException& e)
     {
-      // Do nothing, next source will be tried.
+      const auto logLevel = Logger::Level::Verbose;
+      if (Log::ShouldWrite(logLevel))
+      {
+        Log::Write(
+            logLevel,
+            std::string("ChainedTokenCredential authentication attempt with credential #")
+                + std::to_string(n) + " did not succeed: " + e.what());
+      }
     }
   }
 
-  throw Azure::Core::Credentials::AuthenticationException(
-      "Failed to get token from ChainedTokenCredential.");
+  if (n == 0)
+  {
+    const auto logLevel = Logger::Level::Verbose;
+    if (Log::ShouldWrite(logLevel))
+    {
+      Log::Write(
+          logLevel,
+          "ChainedTokenCredential authentication did not succeed: list of sources is empty.");
+    }
+  }
+
+  throw AuthenticationException("Failed to get token from ChainedTokenCredential.");
 }

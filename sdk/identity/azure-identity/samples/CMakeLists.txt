@@ -10,7 +10,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED True)
 add_executable(chained_token_credential_sample chained_token_credential.cpp)
 target_link_libraries(chained_token_credential_sample PRIVATE azure-identity)
 target_include_directories(chained_token_credential_sample PRIVATE .)
-create_per_service_target_build(chained_token_credential_sample identity)
+create_per_service_target_build_for_sample(identity chained_token_credential_sample)
 
 add_executable(client_secret_credential_sample client_secret_credential.cpp)
 target_link_libraries(client_secret_credential_sample PRIVATE azure-identity)

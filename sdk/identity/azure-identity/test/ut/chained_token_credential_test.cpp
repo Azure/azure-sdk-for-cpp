@@ -3,7 +3,11 @@
 
 #include "azure/identity/chained_token_credential.hpp"
 
+#include <azure/core/diagnostics/logger.hpp>
+
 #include <string>
+#include <utility>
+#include <vector>
 
 #include <gtest/gtest.h>
 
@@ -31,7 +35,7 @@ public:
 
     if (m_token.empty())
     {
-      throw AuthenticationException("");
+      throw AuthenticationException("Test Error");
     }
 
     AccessToken token;
@@ -45,7 +49,7 @@ TEST(ChainedTokenCredential, Success)
 {
   auto c1 = std::make_shared<TestCredential>("Token1");
   auto c2 = std::make_shared<TestCredential>("Token2");
-  ChainedTokenCredential cred(ChainedTokenCredential::Sources{c1, c2});
+  ChainedTokenCredential cred({c1, c2});
 
   EXPECT_FALSE(c1->WasInvoked);
   EXPECT_FALSE(c2->WasInvoked);
@@ -59,7 +63,7 @@ TEST(ChainedTokenCredential, Success)
 
 TEST(ChainedTokenCredential, Empty)
 {
-  ChainedTokenCredential cred(ChainedTokenCredential::Sources{});
+  ChainedTokenCredential cred({});
   EXPECT_THROW(cred.GetToken({}, {}), AuthenticationException);
 }
 
@@ -67,7 +71,7 @@ TEST(ChainedTokenCredential, ErrorThenSuccess)
 {
   auto c1 = std::make_shared<TestCredential>();
   auto c2 = std::make_shared<TestCredential>("Token2");
-  ChainedTokenCredential cred(ChainedTokenCredential::Sources{c1, c2});
+  ChainedTokenCredential cred({c1, c2});
 
   EXPECT_FALSE(c1->WasInvoked);
   EXPECT_FALSE(c2->WasInvoked);
@@ -83,7 +87,7 @@ TEST(ChainedTokenCredential, AllErrors)
 {
   auto c1 = std::make_shared<TestCredential>();
   auto c2 = std::make_shared<TestCredential>();
-  ChainedTokenCredential cred(ChainedTokenCredential::Sources{c1, c2});
+  ChainedTokenCredential cred({c1, c2});
 
   EXPECT_FALSE(c1->WasInvoked);
   EXPECT_FALSE(c2->WasInvoked);
@@ -92,4 +96,49 @@ TEST(ChainedTokenCredential, AllErrors)
 
   EXPECT_TRUE(c1->WasInvoked);
   EXPECT_TRUE(c2->WasInvoked);
+}
+
+TEST(ChainedTokenCredential, Logging)
+{
+  using Azure::Core::Diagnostics::Logger;
+  std::vector<std::pair<Logger::Level, std::string>> log;
+  Logger::SetLevel(Logger::Level::Verbose);
+  Logger::SetListener([&](auto lvl, auto msg) { log.push_back(std::make_pair(lvl, msg)); });
+
+  ChainedTokenCredential c0({});
+  EXPECT_THROW(c0.GetToken({}, {}), AuthenticationException);
+  EXPECT_EQ(log.size(), 1);
+  EXPECT_EQ(log[0].first, Logger::Level::Verbose);
+  EXPECT_EQ(
+      log[0].second,
+      "ChainedTokenCredential authentication did not succeed: list of sources is empty.");
+
+  log.clear();
+  auto c1 = std::make_shared<TestCredential>();
+  auto c2 = std::make_shared<TestCredential>("Token2");
+  ChainedTokenCredential cred({c1, c2});
+
+  EXPECT_FALSE(c1->WasInvoked);
+  EXPECT_FALSE(c2->WasInvoked);
+
+  auto token = cred.GetToken({}, {});
+  EXPECT_EQ(token.Token, "Token2");
+
+  EXPECT_TRUE(c1->WasInvoked);
+  EXPECT_TRUE(c2->WasInvoked);
+
+  EXPECT_EQ(log.size(), 2);
+
+  EXPECT_EQ(log[0].first, Logger::Level::Verbose);
+  EXPECT_EQ(
+      log[0].second,
+      "ChainedTokenCredential authentication attempt with credential #1 did not succeed: "
+      "Test Error");
+
+  EXPECT_EQ(log[1].first, Logger::Level::Informational);
+  EXPECT_EQ(
+      log[1].second,
+      "ChainedTokenCredential authentication attempt with credential #2 did succeed.");
+
+  Logger::SetListener(nullptr);
 }

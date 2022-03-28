@@ -16,8 +16,8 @@
 namespace Azure { namespace Identity {
   /**
    * @brief Chained Token Credential provides a token credential implementation which chains
-   * multiple `%Core::Credentials::TokenCredential` implementations to be tried in order until one
-   * of the `%GetToken()` methods returns an access token.
+   * multiple Azure::Core::Credentials::TokenCredential implementations to be tried in order until
+   * one of the GetToken() methods returns an access token.
    *
    */
   class ChainedTokenCredential final : public Core::Credentials::TokenCredential {
@@ -28,15 +28,11 @@ namespace Azure { namespace Identity {
      */
     using Sources = std::vector<std::shared_ptr<Core::Credentials::TokenCredential>>;
 
-  private:
-    Sources m_sources;
-
-  public:
     /**
      * @brief Constructs a Chained Token Credential.
      *
-     * @param sources The ordered chain of `%Core::Credentials::TokenCredential` implementations to
-     * tried when calling `%GetToken()`
+     * @param sources The ordered chain of Azure::Core::Credentials::TokenCredential implementations
+     * to try when calling GetToken().
      */
     explicit ChainedTokenCredential(Sources sources);
 
@@ -57,6 +53,9 @@ namespace Azure { namespace Identity {
     Core::Credentials::AccessToken GetToken(
         Core::Credentials::TokenRequestContext const& tokenRequestContext,
         Core::Context const& context) const override;
+
+  private:
+    Sources m_sources;
   };
 
 }} // namespace Azure::Identity
