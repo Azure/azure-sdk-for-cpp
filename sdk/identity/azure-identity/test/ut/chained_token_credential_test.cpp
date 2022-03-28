@@ -101,18 +101,18 @@ TEST(ChainedTokenCredential, AllErrors)
 TEST(ChainedTokenCredential, Logging)
 {
   using Azure::Core::Diagnostics::Logger;
-  std::vector<std::pair<Logger::Level, std::string>> log;
+  using LogMsgVec = std::vector<std::pair<Logger::Level, std::string>>;
+  LogMsgVec log;
   Logger::SetLevel(Logger::Level::Verbose);
   Logger::SetListener([&](auto lvl, auto msg) { log.push_back(std::make_pair(lvl, msg)); });
 
   ChainedTokenCredential c0({});
   EXPECT_THROW(c0.GetToken({}, {}), AuthenticationException);
-  EXPECT_EQ(log.size(), 1);
+  EXPECT_EQ(log.size(), LogMsgVec::size_type(1));
   EXPECT_EQ(log[0].first, Logger::Level::Verbose);
   EXPECT_EQ(
       log[0].second,
-      std::string(
-          "ChainedTokenCredential authentication did not succeed: list of sources is empty."));
+      "ChainedTokenCredential authentication did not succeed: list of sources is empty.");
 
   log.clear();
   auto c1 = std::make_shared<TestCredential>();
@@ -128,19 +128,18 @@ TEST(ChainedTokenCredential, Logging)
   EXPECT_TRUE(c1->WasInvoked);
   EXPECT_TRUE(c2->WasInvoked);
 
-  EXPECT_EQ(log.size(), 2);
+  EXPECT_EQ(log.size(), LogMsgVec::size_type(2));
 
   EXPECT_EQ(log[0].first, Logger::Level::Verbose);
   EXPECT_EQ(
       log[0].second,
-      std::string(
-          "ChainedTokenCredential authentication attempt with credential #1 did not succeed: "
-          "Test Error"));
+      "ChainedTokenCredential authentication attempt with credential #1 did not succeed: "
+      "Test Error");
 
   EXPECT_EQ(log[1].first, Logger::Level::Informational);
   EXPECT_EQ(
       log[1].second,
-      std::string("ChainedTokenCredential authentication attempt with credential #2 did succeed."));
+      "ChainedTokenCredential authentication attempt with credential #2 did succeed.");
 
   Logger::SetListener(nullptr);
 }
