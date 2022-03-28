@@ -467,6 +467,31 @@ options.Retry.RetryDelay = std::chrono::milliseconds(delta_backoff);
 options.Retry.MaxRetries = maxAttempts;
 ```
 
+### Asynchronous API
+
+Unfortunately, we don't support asynchronous interface in v12 SDK. You could wrap synchronous functions into asynchronous with some async framework like `std::async`. But note that I/O operations are still performed synchronously under the hood. There's no performance gain with this method.
+
+v7.5
+```C++
+auto task = blob_client.download_text_async().then([](utility::string_t blob_content) {
+  std::wcout << "blob content:" << blob_content << std::endl;
+});
+// Do something else
+task.wait();
+```
+
+v12
+```C++
+auto task = std::async([blobClient]() {
+  auto response = blobClient.Download();
+  std::vector<uint8_t> blobContent = response.Value.BodyStream->ReadToEnd();
+  std::string text(blobContent.begin(), blobContent.end());
+  std::cout << "blob content: " << text << std::endl;
+});
+// Do something else
+task.wait();
+```
+
 ## Additional information
 
 ### Samples

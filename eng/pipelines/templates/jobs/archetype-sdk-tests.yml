@@ -35,7 +35,6 @@ jobs:
       Linux_x64_gcc5_with_unit_test:
         Pool: azsdk-pool-mms-ubuntu-1804-general
         OSVmImage: MMSUbuntu18.04
-        VcpkgInstall: 'curl[ssl] libxml2 openssl'
         VCPKG_DEFAULT_TRIPLET: 'x64-linux'
         # Can't set CC and CXX to env because it would affect VCPKG building which requires g++ > 7
         # So, this conf will set the CXX for cmake inline.
@@ -45,7 +44,6 @@ jobs:
       Linux_x64_with_unit_test:
         Pool: azsdk-pool-mms-ubuntu-1804-general
         OSVmImage: MMSUbuntu18.04
-        VcpkgInstall: 'curl[ssl] libxml2 openssl'
         VCPKG_DEFAULT_TRIPLET: 'x64-linux'
         CmakeArgs: ' -DBUILD_TESTING=ON -DBUILD_PERFORMANCE_TESTS=ON -DRUN_LONG_UNIT_TESTS=ON -DCMAKE_BUILD_TYPE=Debug -DBUILD_CODE_COVERAGE=ON'
         AptDependencies: 'gcovr lcov'
@@ -57,7 +55,6 @@ jobs:
       Ubuntu20_x64_with_unit_test:
         Pool: azsdk-pool-mms-ubuntu-1804-general
         OSVmImage: MMSUbuntu18.04
-        VcpkgInstall: 'curl[ssl] libxml2 openssl'
         VCPKG_DEFAULT_TRIPLET: 'x64-linux'
         CmakeArgs: ' -DBUILD_TESTING=ON -DBUILD_PERFORMANCE_TESTS=ON -DRUN_LONG_UNIT_TESTS=ON -DCMAKE_BUILD_TYPE=Release -DBUILD_SAMPLES=ON'
         AZURE_CORE_ENABLE_JSON_TESTS: 1
@@ -65,7 +62,6 @@ jobs:
       Ubuntu20_samples:
         Pool: azsdk-pool-mms-ubuntu-1804-general
         OSVmImage: MMSUbuntu18.04
-        VcpkgInstall: 'curl[ssl] libxml2 openssl'
         VCPKG_DEFAULT_TRIPLET: 'x64-linux'
         # Builds samples and run them against the deployed resources. Samples requires Azure Account, so only works on live tests.
         CmakeArgs: ' -DBUILD_TESTING=ON -DBUILD_SAMPLES=ON -DCMAKE_BUILD_TYPE=Release '
@@ -74,7 +70,6 @@ jobs:
       Ubuntu20_x64_no_rtti:
         Pool: azsdk-pool-mms-ubuntu-1804-general
         OSVmImage: MMSUbuntu18.04
-        VcpkgInstall: 'curl[ssl] libxml2 openssl'
         VCPKG_DEFAULT_TRIPLET: 'x64-linux'
         CmakeArgs: ' -DBUILD_RTTI=OFF -DCMAKE_BUILD_TYPE=Release '
         BuildArgs: '-j 4'
@@ -88,6 +83,7 @@ jobs:
         CMAKE_GENERATOR_PLATFORM: Win32
         CmakeArgs: ' -DBUILD_TESTING=ON -DRUN_LONG_UNIT_TESTS=ON -DBUILD_PERFORMANCE_TESTS=ON '
         BuildArgs: '-v --parallel 8 --config Release'
+        WindowsCtestConfig: "-C Release"
       Win_x86_no_rtti_whit_unit_test:
         Pool: azsdk-pool-mms-win-2019-general
         OSVmImage: MMS2019
@@ -97,6 +93,7 @@ jobs:
         CMAKE_GENERATOR_PLATFORM: Win32
         CmakeArgs: ' -DBUILD_RTTI=OFF -DBUILD_TESTING=ON -DBUILD_SAMPLES=ON'
         BuildArgs: '-v --parallel 8 --config Release'
+        WindowsCtestConfig: "-C Release"
       Win_x64_with_unit_test_winHttp:
         Pool: azsdk-pool-mms-win-2019-general
         VcpkgInstall: 'openssl'
@@ -107,6 +104,7 @@ jobs:
         CmakeArgs: ' -DBUILD_TESTING=ON -DRUN_LONG_UNIT_TESTS=ON -DBUILD_PERFORMANCE_TESTS=ON '
         BuildArgs: '-v --parallel 8 --config Release '
         AZURE_CORE_ENABLE_JSON_TESTS: 1
+        WindowsCtestConfig: "-C Release"
       Win_x64_with_unit_samples_winHttp:
         Pool: azsdk-pool-mms-win-2019-general
         VcpkgInstall: 'openssl'
@@ -117,12 +115,12 @@ jobs:
         CmakeArgs: ' -DBUILD_TESTING=ON -DRUN_LONG_UNIT_TESTS=ON -DBUILD_PERFORMANCE_TESTS=ON -DBUILD_SAMPLES=ON '
         BuildArgs: '-v --parallel 8 --config Release '
         AZURE_CORE_ENABLE_JSON_TESTS: 1
-        RunSamples: 1        
+        RunSamples: 1
+        WindowsCtestConfig: "-C Release"
       # specify libcurl to be used on Windows
       Win_x86_with_unit_test_libcurl:
         Pool: azsdk-pool-mms-win-2019-general
         OSVmImage: MMS2019
-        VcpkgInstall: 'curl[winssl] openssl'
         VCPKG_DEFAULT_TRIPLET: 'x86-windows-static'
         CMAKE_GENERATOR: 'Visual Studio 16 2019'
         CMAKE_GENERATOR_PLATFORM: Win32
@@ -132,12 +130,12 @@ jobs:
       Win_x64_with_unit_test_libcurl:
         Pool: azsdk-pool-mms-win-2019-general
         OSVmImage: MMS2019
-        VcpkgInstall: 'curl[winssl] openssl'
         VCPKG_DEFAULT_TRIPLET: 'x64-windows-static'
         CMAKE_GENERATOR: 'Visual Studio 16 2019'
         CMAKE_GENERATOR_PLATFORM: x64
         CmakeArgs: ' -DBUILD_TRANSPORT_CURL=ON -DBUILD_TESTING=ON -DRUN_LONG_UNIT_TESTS=ON -DBUILD_PERFORMANCE_TESTS=ON '
         BuildArgs: '-v --parallel 8 --config Release '
+        WindowsCtestConfig: "-C Release"
         #AZURE_CORE_ENABLE_JSON_TESTS: 1  # Testing Json lib on Win+WinHttp only, No need to repeat here as it is independent to the http transport adapter.
       Win_x64_with_unit_samples_libcurl:
         Pool: azsdk-pool-mms-win-2019-general
@@ -148,11 +146,11 @@ jobs:
         CMAKE_GENERATOR_PLATFORM: x64
         CmakeArgs: ' -DBUILD_TRANSPORT_CURL=ON -DBUILD_TESTING=ON -DRUN_LONG_UNIT_TESTS=ON -DBUILD_PERFORMANCE_TESTS=ON  -DBUILD_SAMPLES=ON '
         BuildArgs: '-v --parallel 8 --config Release '
-        RunSamples: 1        
+        RunSamples: 1
+        WindowsCtestConfig: "-C Release"
       MacOS_x64_with_unit_test:
         Pool: Azure Pipelines
         OSVmImage: 'macOS-10.15'
-        VcpkgInstall: 'curl[ssl] libxml2 openssl'
         VCPKG_DEFAULT_TRIPLET: 'x64-osx'
         CmakeArgs: ' -DBUILD_TESTING=ON -DRUN_LONG_UNIT_TESTS=ON -DBUILD_PERFORMANCE_TESTS=ON -DBUILD_SAMPLES=ON'
         AZURE_CORE_ENABLE_JSON_TESTS: 1
@@ -165,6 +163,7 @@ jobs:
     CMOCKA_MESSAGE_OUTPUT: "xml"
     AZURE_ENABLE_STATIC_ANALYSIS: 1
     BuildArgs: ""
+    WindowsCtestConfig: ""
     CmakeEnvArg: ""
     CmakeArgs: ""
     AZURE_TEST_MODE: "LIVE"
@@ -208,8 +207,6 @@ jobs:
     displayName: Install dependencies from apt
 
   - template: /eng/pipelines/templates/steps/vcpkg.yml
-    parameters:
-      DependenciesVariableName: VcpkgInstall
 
   - script: |
       dotnet tool install -g dotnet-reportgenerator-globaltool
@@ -232,15 +229,20 @@ jobs:
       Location: ${{ parameters.Location }}
       SubscriptionConfiguration: ${{ parameters.SubscriptionConfiguration }}
 
-  - script: ctest -V -C Debug --tests-regex ${{ parameters.CtestRegex }} --no-compress-output -T Test
+    # For non multi-config generator use the same build configuration to run tests
+    # We don't need to set it to invoke ctest 
+    # Visual Studio generator used in CI is a multi-config generator.
+    # As such, it requires the configuration argument for building and invoking ctest
+  - script: ctest $(WindowsCtestConfig) -V --tests-regex ${{ parameters.CtestRegex }} --no-compress-output -T Test
     workingDirectory: build
     displayName: ctest
     # Runs only if test-resources are happly deployed.
     # unit-tests runs for those configs where samples are not ran.
     # This enables to run tests and samples at the same time as different matrix configuration.
     # Then unit-tests runs, samples should not run.
-    condition: and(succeeded(), ne(variables['RunSamples'], '1'))
-      
+    condition: and(
+      succeeded(),
+      ne(variables['RunSamples'], '1'))
 
   - task: PublishTestResults@2
     inputs:
