@@ -111,7 +111,8 @@ TEST(ChainedTokenCredential, Logging)
   EXPECT_EQ(log[0].first, Logger::Level::Verbose);
   EXPECT_EQ(
       log[0].second,
-      "ChainedTokenCredential authentication did not succeed: list of sources is empty.");
+      std::string(
+          "ChainedTokenCredential authentication did not succeed: list of sources is empty."));
 
   log.clear();
   auto c1 = std::make_shared<TestCredential>();
@@ -132,13 +133,14 @@ TEST(ChainedTokenCredential, Logging)
   EXPECT_EQ(log[0].first, Logger::Level::Verbose);
   EXPECT_EQ(
       log[0].second,
-      "ChainedTokenCredential authentication attempt with credential #1 did not succeed: "
-      "Test Error");
+      std::string(
+          "ChainedTokenCredential authentication attempt with credential #1 did not succeed: "
+          "Test Error"));
 
   EXPECT_EQ(log[1].first, Logger::Level::Informational);
   EXPECT_EQ(
       log[1].second,
-      "ChainedTokenCredential authentication attempt with credential #2 did succeed.");
+      std::string("ChainedTokenCredential authentication attempt with credential #2 did succeed."));
 
   Logger::SetListener(nullptr);
 }
