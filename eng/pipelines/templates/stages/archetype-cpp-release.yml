@@ -139,6 +139,35 @@ stages:
                           RepoOwner: azure-sdk
                           PRBranchName: $(PrBranchName)
 
+                      - pwsh: |
+                          Write-Host "git clone https://github.com/Azure/azure-sdk-vcpkg-betas $(Pipeline.Workspace)/azure-sdk-vcpkg-betas"
+                          ggit clone https://github.com/Azure/azure-sdk-vcpkg-betas $(Pipeline.Workspace)/azure-sdk-vcpkg-betas
+                          if ($LASTEXITCODE -ne 0) {
+                            Write-Error "Unable to check out vcpkg fork repo"
+                            exit $LASTEXITCODE
+                          }
+
+                      - template: /eng/common/pipelines/templates/steps/set-default-branch.yml
+                        parameters:
+                          WorkingDirectory: $(Pipeline.Workspace)/azure-sdk-vcpkg-betas
+
+                      - pwsh: |
+                          git show-ref --verify --quiet refs/heads/$PRBranchName
+                          if ($LASTEXITCODE -eq 0) {
+                            Write-Host "git checkout $PRBranchName."
+                            git checkout $PRBranchName
+                          }
+                          else {
+                            Write-Host "git checkout -b $PRBranchName."
+                            git checkout -b $PRBranchName
+                          }
+                          if ($LASTEXITCODE -ne 0)
+                          {
+                              Write-Error "Unable to create branch LASTEXITCODE=$($LASTEXITCODE), see command output above."
+                              exit $LASTEXITCODE
+                          }
+                        displayName: Checkout vcpkg betas branch
+
                       # Clone Vcpkg Betas
                       - template: /eng/pipelines/templates/steps/vcpkg-clone.yml
                         parameters:
