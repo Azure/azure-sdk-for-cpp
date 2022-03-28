@@ -22,16 +22,6 @@
     },
     {
       "Component": {
-        "Type": "git",
-        "git": {
-          "RepositoryUrl": "https://github.com/edlund/amalgamate",
-          "CommitHash": "c91f07eea1133aa184f652b8f1398eaf03586208"
-        }
-      },
-      "DevelopmentDependency": true
-    },
-    {
-      "Component": {
         "Type": "other",
         "Other": {
           "Name": "clang-format",
