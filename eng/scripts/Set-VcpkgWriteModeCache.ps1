@@ -2,9 +2,9 @@ param(
     [string] $StorageAccountKey
 )
 
-if (Get-Module Azure.Storage) {
+if (Get-Module "Azure.Storage") {
     Write-Host "Uninstalling Azure.Storage"
-    Uninstall-Module Azure.Storage
+    Uninstall-Module "Azure.Storage"
 }
 
 ."$PSScriptRoot/../common/scripts/Helpers/PSModule-Helpers.ps1"
