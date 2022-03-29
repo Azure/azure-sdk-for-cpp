@@ -17,7 +17,7 @@ int main()
     auto environmentCredential = std::make_shared<Azure::Identity::EnvironmentCredential>();
 
     // Step 2: Pass the credential to an Azure Service Client.
-    Azure::Service::Client azureServiceClient("some parameter", environmentCredential);
+    Azure::Service::Client azureServiceClient("serviceUrl", environmentCredential);
 
     // Step 3: Start using the Azure Service Client.
     azureServiceClient.DoSomething(Azure::Core::Context::ApplicationContext);
@@ -26,8 +26,11 @@ int main()
   }
   catch (const Azure::Core::Credentials::AuthenticationException& exception)
   {
-    // Step 4 (optional/oversimplified): Handle authentication errors
+    // Step 4: Handle authentication errors, if needed
     // (invalid credential parameters, insufficient permissions).
     std::cout << "Authentication error: " << exception.what() << std::endl;
+    return 1;
   }
+
+  return 0;
 }

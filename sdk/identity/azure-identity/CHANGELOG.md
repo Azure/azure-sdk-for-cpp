@@ -4,6 +4,8 @@
 
 ### Features Added
 
+- Added `ChainedTokenCredential`.
+
 ### Breaking Changes
 
 ### Bugs Fixed
