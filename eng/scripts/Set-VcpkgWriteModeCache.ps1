@@ -2,6 +2,9 @@ param(
     [string] $StorageAccountKey
 )
 
+Write-Host "Get-Command Start-CopyAzureStorageBlob"
+Get-Command "Start-CopyAzureStorageBlob"
+
 if (Get-Module "Azure.Storage") {
     Write-Host "Uninstalling Azure.Storage"
     Uninstall-Module "Azure.Storage"
