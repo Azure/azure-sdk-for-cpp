@@ -2,13 +2,10 @@ param(
     [string] $StorageAccountKey
 )
 
-Get-Command Start-CopyAzureStorageBlob
-
-
-if(Test-Path "function:Uninstall-AzureRm") {
-    Write-Host ""
-    Uninstall-AzureRm
+if (Get-Module Azure.Storage) {
+    Uninstall-Module Azure.Storage
 }
+
 ."$PSScriptRoot/../common/scripts/Helpers/PSModule-Helpers.ps1"
 Install-ModuleIfNotInstalled "Az.Storage" "4.3.0" | Import-Module
 
