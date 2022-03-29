@@ -2,12 +2,12 @@ param(
     [string] $StorageAccountKey
 )
 
-Write-Host "Get-Command Start-CopyAzureStorageBlob"
-Get-Command "Start-CopyAzureStorageBlob"
+Write-Host "Get-Command Start-CopyAzureStorageBlob | Format-List"
+try {
+    Get-Command "Start-CopyAzureStorageBlob" | Format-List
 
-if (Get-Module "Azure.Storage") {
-    Write-Host "Uninstalling Azure.Storage"
-    Uninstall-Module "Azure.Storage"
+} catch {
+    Write-Host "Start-CopyAzureStorageBlob does not exist"
 }
 
 ."$PSScriptRoot/../common/scripts/Helpers/PSModule-Helpers.ps1"
