@@ -2,7 +2,7 @@ param(
     [string] $StorageAccountKey
 )
 Uninstall-AzureRm
-Install-Module "Az.Storage" -AllowClobber -Force
+Install-ModuleIfNotInstalled "Az.Storage" "4.3.0" | Import-Module
 
 $ctx = New-AzStorageContext `
     -StorageAccountName 'cppvcpkgcache' `
@@ -12,7 +12,7 @@ $token = New-AzStorageAccountSASToken `
     -ResourceType Object `
     -Permission "rwc" `
     -Context $ctx `
-    -ExpiryTime (Get-Date).AddDay(1)
+    -ExpiryTime (Get-Date).AddDays(1)
 $vcpkgBinarySourceSas = $token.Substring(1)
 
 Write-Host "Setting vcpkg binary cache to read and write"
