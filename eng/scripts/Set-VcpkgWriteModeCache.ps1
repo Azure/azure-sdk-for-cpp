@@ -6,9 +6,9 @@ param(
 try {
     Write-Host "Get-Command Start-CopyAzureStorageBlob | Format-List"
     Get-Command "Start-CopyAzureStorageBlob" | Format-List
-    # It's an alias to Start-AzStorageBlobCopy
-    Write-Host "Get-Command Start-AzStorageBlobCopy | Format-List"
-    Get-Command "Start-AzStorageBlobCopy" | Format-List
+    # It's an alias to Start-AzureStorageBlobCopy
+    Write-Host "Get-Command Start-AzureStorageBlobCopy | Format-List"
+    Get-Command "Start-AzureStorageBlobCopy" | Format-List
 
 } catch {
     Write-Host "Start-CopyAzureStorageBlob does not exist"
