@@ -2,7 +2,11 @@ param(
     [string] $StorageAccountKey
 )
 
+Get-Command Start-CopyAzureStorageBlob
+
+
 if(Test-Path "function:Uninstall-AzureRm") {
+    Write-Host ""
     Uninstall-AzureRm
 }
 ."$PSScriptRoot/../common/scripts/Helpers/PSModule-Helpers.ps1"
