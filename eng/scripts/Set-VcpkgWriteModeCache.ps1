@@ -2,6 +2,7 @@ param(
     [string] $StorageAccountKey
 )
 Uninstall-AzureRm
+."$PSScriptRoot/../common/scripts/Helpers/PSModule-Helpers.ps1"
 Install-ModuleIfNotInstalled "Az.Storage" "4.3.0" | Import-Module
 
 $ctx = New-AzStorageContext `
