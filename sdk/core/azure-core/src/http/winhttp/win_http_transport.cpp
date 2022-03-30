@@ -359,7 +359,7 @@ void WinHttpTransport::CreateRequestHandle(std::unique_ptr<_detail::HandleManage
     }
   }
 
-  if (m_options.IgnoreUnknownServerCert)
+  if (m_options.IgnoreUnknownServerCertificate)
   {
     auto option = SECURITY_FLAG_IGNORE_UNKNOWN_CA;
     if (!WinHttpSetOption(
