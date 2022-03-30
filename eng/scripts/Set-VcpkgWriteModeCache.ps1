@@ -3,6 +3,10 @@ param(
 )
 
 
+."$PSScriptRoot/../common/scripts/Helpers/PSModule-Helpers.ps1"
+
+Write-Host "`$env:PSModulePath = $($env:PSModulePath)"
+
 try {
     Write-Host "Get-Command Start-CopyAzureStorageBlob | Format-List"
     Get-Command "Start-CopyAzureStorageBlob" | Format-List
@@ -14,7 +18,7 @@ try {
     Write-Host "Start-CopyAzureStorageBlob does not exist"
 }
 
-."$PSScriptRoot/../common/scripts/Helpers/PSModule-Helpers.ps1"
+
 Install-ModuleIfNotInstalled "Az.Storage" "4.3.0" | Import-Module
 
 $ctx = New-AzStorageContext `
