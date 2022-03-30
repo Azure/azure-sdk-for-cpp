@@ -4,7 +4,7 @@ parameters:
   ArtifactName: not-set
   VcpkgPortName: not-set
   DisplayNameExtension:
-  DailyReleaseRef: 
+  DailyReleaseRef:
   DailyRelease: false
   UpdateVcpkgBeta: true
 
@@ -63,12 +63,3 @@ steps:
           -VcpkgPortName '${{ parameters.VcpkgPortName }}'
           -GitCommitParameters '-c user.name="azure-sdk" -c user.email="azuresdk@microsoft.com"'
       displayName: Update Vcpkg Betas port ${{ parameters.DisplayNameExtension }}
-
-    - template: /eng/common/pipelines/templates/steps/set-default-branch.yml
-      parameters:
-        WorkingDirectory: $(Pipeline.Workspace)/azure-sdk-vcpkg-betas
-
-    - pwsh: |
-        git remote add azure-sdk-fork "https://$(azuresdk-github-pat)@github.com/Azure/azure-sdk-vcpkg-betas.git"
-        git push azure-sdk-forkdjurek/vcpkg-beta-3
-      displayName: Push changes back to azure-sdk-vcpkg-betas repo
