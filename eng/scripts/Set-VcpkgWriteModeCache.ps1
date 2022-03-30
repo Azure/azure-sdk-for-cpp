@@ -11,18 +11,18 @@ Write-Host "`$env:PSModulePath = $($env:PSModulePath)"
 if ($IsWindows) {
     $hostedAgentModulePath = $env:SystemDrive + "\\Modules"
     $moduleSeperator = ";"
-  } else {
+} else {
     $hostedAgentModulePath = "/usr/share"
     $moduleSeperator = ":"
-  }
-  $modulePaths = $env:PSModulePath -split $moduleSeperator
-  $modulePaths = $modulePaths.Where({ !$_.StartsWith($hostedAgentModulePath) })
-  $AzModuleCachPath = (Get-ChildItem "$hostedAgentModulePath/az_*" -Attributes Directory) -join $moduleSeperator
-  if ($AzModuleCachPath -and $env.PSModulePath -notcontains $AzModuleCachPath) {
+}
+$modulePaths = $env:PSModulePath -split $moduleSeperator
+$modulePaths = $modulePaths.Where({ !$_.StartsWith($hostedAgentModulePath) })
+$AzModuleCachPath = (Get-ChildItem "$hostedAgentModulePath/az_*" -Attributes Directory) -join $moduleSeperator
+if ($AzModuleCachPath -and $env.PSModulePath -notcontains $AzModuleCachPath) {
     $modulePaths += $AzModuleCachPath
-  }
+}
 
-  $env:PSModulePath = $modulePaths -join $moduleSeperator
+$env:PSModulePath = $modulePaths -join $moduleSeperator
 
 try {
     Write-Host "Get-Command Start-CopyAzureStorageBlob | Format-List"
