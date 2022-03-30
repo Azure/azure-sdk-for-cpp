@@ -195,6 +195,17 @@ jobs:
                 sourceFolder: build/sdk/${{ parameters.ServiceDirectory }}/${{ artifact.Path }}/docs/html
                 targetFolder: $(Build.ArtifactStagingDirectory)/docs/${{ artifact.Name }}
               displayName: Copy documentation to artifact staging directory
+             
+            - task: Powershell@2
+              inputs:
+                filePath: $(Build.SourcesDirectory)/eng/common/scripts/Verify-ChangeLog.ps1
+                arguments: >
+                  -ChangeLogLocation $(Pipeline.Workspace)/packages/${{artifact.Name}}/CHANGELOG.md
+                  -VersionString (Get-Content $(Pipeline.Workspace)/packages/${{artifact.Name}}/package-info.json | ConvertFrom-Json).version
+                  -ForRelease $true
+                pwsh: true
+              displayName: Verify CHANGELOG.md contents
+              continueOnError: true
 
         - task: PublishPipelineArtifact@1
           inputs:
@@ -220,14 +231,5 @@ jobs:
             ArtifactPath: '$(Build.SourcesDirectory)/build/_manifest'
             ArtifactName: 'release_artifact_manifest'
 
-        - task: Powershell@2
-          inputs:
-            filePath: $(Build.SourcesDirectory)/eng/common/scripts/Verify-ChangeLog.ps1
-            arguments: >
-              -ChangeLogLocation $(Pipeline.Workspace)/packages/${{Artifacts[0].Name}}/CHANGELOG.md
-              -VersionString (Get-Content $(Pipeline.Workspace)/packages/${{Artifacts[0].Name}}/package-info.json | ConvertFrom-Json).version
-              -ForRelease $true
-            pwsh: true
-          displayName: Verify CHANGELOG.md contents
-          continueOnError: true
+
 
