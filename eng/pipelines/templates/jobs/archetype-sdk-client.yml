@@ -219,3 +219,15 @@ jobs:
           parameters:
             ArtifactPath: '$(Build.SourcesDirectory)/build/_manifest'
             ArtifactName: 'release_artifact_manifest'
+
+        - task: Powershell@2
+          inputs:
+            filePath: $(Build.SourcesDirectory)/eng/common/scripts/Verify-ChangeLog.ps1
+            arguments: >
+              -ChangeLogLocation $(Pipeline.Workspace)/packages/${{artifact.Name}}/CHANGELOG.md
+              -VersionString (Get-Content $(Pipeline.Workspace)/packages/${{artifact.Name}}/package-info.json | ConvertFrom-Json).version
+              -ForRelease $true
+            pwsh: true
+          displayName: Verify CHANGELOG.md contents
+          continueOnError: true
+
