@@ -156,6 +156,7 @@ stages:
                         parameters:
                           WorkingDirectory: $(Pipeline.Workspace)/azure-sdk-vcpkg-betas
                           TargetRepoName: azure-sdk-vcpkg-betas
+                          BaseRepoOwner: Azure
                           BaseRepoBranch: djurek/vcpkg-beta-3
 
                       # Set $(HasChanges) to $true so that
