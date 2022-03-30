@@ -24,18 +24,6 @@ if ($AzModuleCachPath -and $env.PSModulePath -notcontains $AzModuleCachPath) {
 
 $env:PSModulePath = $modulePaths -join $moduleSeperator
 
-try {
-    Write-Host "Get-Command Start-CopyAzureStorageBlob | Format-List"
-    Get-Command "Start-CopyAzureStorageBlob" | Format-List
-    # It's an alias to Start-AzureStorageBlobCopy
-    Write-Host "Get-Command Start-AzureStorageBlobCopy | Format-List"
-    Get-Command "Start-AzureStorageBlobCopy" | Format-List
-
-} catch {
-    Write-Host "Start-CopyAzureStorageBlob does not exist"
-}
-
-
 Install-ModuleIfNotInstalled "Az.Storage" "4.3.0" | Import-Module
 
 $ctx = New-AzStorageContext `
