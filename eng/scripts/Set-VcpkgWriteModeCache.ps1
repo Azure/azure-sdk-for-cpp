@@ -7,6 +7,23 @@ param(
 
 Write-Host "`$env:PSModulePath = $($env:PSModulePath)"
 
+# Work around double backslash
+if ($IsWindows) {
+    $hostedAgentModulePath = $env:SystemDrive + "\\Modules"
+    $moduleSeperator = ";"
+  } else {
+    $hostedAgentModulePath = "/usr/share"
+    $moduleSeperator = ":"
+  }
+  $modulePaths = $env:PSModulePath -split $moduleSeperator
+  $modulePaths = $modulePaths.Where({ !$_.StartsWith($hostedAgentModulePath) })
+  $AzModuleCachPath = (Get-ChildItem "$hostedAgentModulePath/az_*" -Attributes Directory) -join $moduleSeperator
+  if ($AzModuleCachPath -and $env.PSModulePath -notcontains $AzModuleCachPath) {
+    $modulePaths += $AzModuleCachPath
+  }
+
+  $env:PSModulePath = $modulePaths -join $moduleSeperator
+
 try {
     Write-Host "Get-Command Start-CopyAzureStorageBlob | Format-List"
     Get-Command "Start-CopyAzureStorageBlob" | Format-List
