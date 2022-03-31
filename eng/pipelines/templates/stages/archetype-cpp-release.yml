@@ -150,6 +150,11 @@ stages:
                           ArtifactName: ${{ artifact.Name }}
                           VcpkgPortName: ${{ artifact.VcpkgPortName }}
 
+
+                      - template: /eng/common/pipelines/templates/steps/set-default-branch.yml
+                        parameters:
+                          WorkingDirectory: $(Pipeline.Workspace)/azure-sdk-vcpkg-betas
+
                       # Push changes to vcpkg betas
                       - template: /eng/common/pipelines/templates/steps/git-push-changes.yml
                         parameters:
@@ -157,6 +162,7 @@ stages:
                           TargetRepoName: azure-sdk-vcpkg-betas
                           BaseRepoOwner: Azure
                           CommitMsg: Update vcpkg-configuration.json
+                          BaseRepoBranch: $(DefaultBranch)
 
                       # Set $(HasChanges) to $true so that
                       # create-pull-request.yml completes the push and PR
