@@ -17,9 +17,9 @@ if ($IsWindows) {
 }
 $modulePaths = $env:PSModulePath -split $moduleSeperator
 $modulePaths = $modulePaths.Where({ !$_.StartsWith($hostedAgentModulePath) })
-$AzModuleCachPath = (Get-ChildItem "$hostedAgentModulePath/az_*" -Attributes Directory) -join $moduleSeperator
-if ($AzModuleCachPath -and $env.PSModulePath -notcontains $AzModuleCachPath) {
-    $modulePaths += $AzModuleCachPath
+$AzModuleCachePath = (Get-ChildItem "$hostedAgentModulePath/az_*" -Attributes Directory) -join $moduleSeperator
+if ($AzModuleCachePath -and $env.PSModulePath -notcontains $AzModuleCachePath) {
+    $modulePaths += $AzModuleCachePath
 }
 
 $env:PSModulePath = $modulePaths -join $moduleSeperator
