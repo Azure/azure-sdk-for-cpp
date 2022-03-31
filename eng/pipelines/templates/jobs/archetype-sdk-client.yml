@@ -206,7 +206,7 @@ jobs:
                 pwsh: true
               displayName: Verify CHANGELOG.md contents
               continueOnError: true
-              condition: and(succeeded(), eq(variables['VerifyChangeLogForRelease'], 'true')
+              condition: and(succeeded(), eq(variables['VerifyChangeLogForRelease'], 'true'))
 
         - task: PublishPipelineArtifact@1
           inputs:
