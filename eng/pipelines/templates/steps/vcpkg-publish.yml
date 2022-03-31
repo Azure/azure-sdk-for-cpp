@@ -3,10 +3,9 @@ parameters:
   Workspace: $(Pipeline.Workspace)
   ArtifactName: not-set
   VcpkgPortName: not-set
-  DisplayNameExtension:
-  DailyReleaseRef:
+  DisplayNameExtension: 
+  DailyReleaseRef: 
   DailyRelease: false
-  UpdateVcpkgBeta: true
 
 steps:
   - task: Powershell@2
@@ -21,19 +20,6 @@ steps:
       pwsh: true
     displayName: Initialize vcpkg release ${{ parameters.DisplayNameExtension }}
 
-  # In some cases there should be no release to vcpkg. If vcpkg should be
-  # released, set "PublishToVcpkg" to "true" so we can make changes.
-  - task: Powershell@2
-    inputs:
-      pwsh: true
-      targetType: filePath
-      filePath: eng/scripts/Test-ShouldReleaseToVcpkg.ps1
-      arguments: >-
-        -ReleaseArtifactSourceDirectory "${{ parameters.Workspace }}/packages/${{ parameters.ArtifactName }}"
-        -VcpkgFolder ${{ parameters.Workspace }}/vcpkg
-        -VcpkgPortName '${{ parameters.VcpkgPortName }}'
-    displayName: Check whether to release to vcpkg
-
   - task: Powershell@2
     inputs:
       pwsh: true
@@ -46,20 +32,4 @@ steps:
         -GitCommitParameters '-c user.name="azure-sdk" -c user.email="azuresdk@microsoft.com"'
         -DailyRelease:$${{ parameters.DailyRelease }}
       workingDirectory: ${{ parameters.Workspace }}/vcpkg
-      condition: and(succeeded(), eq(variables['PublishToVcpkg'], 'true'))
     displayName: Update vcpkg port ${{ parameters.DisplayNameExtension }}
-
-  # On package release vcpkg beta should always be updated
-  - ${{ if eq(parameters.UpdateVcpkgBeta, 'true') }}:
-    - task: Powershell@2
-      inputs:
-        pwsh: true
-        targetType: filePath
-        filePath: eng/scripts/Update-VcpkgBeta.ps1
-        arguments: >-
-          -VcpkgBetaFolder ${{ parameters.Workspace }}/azure-sdk-vcpkg-betas
-          -VcpkgFolder ${{ parameters.Workspace }}/vcpkg
-          -ReleaseArtifactSourceDirectory "${{ parameters.Workspace }}/packages/${{ parameters.ArtifactName }}"
-          -VcpkgPortName '${{ parameters.VcpkgPortName }}'
-          -GitCommitParameters '-c user.name="azure-sdk" -c user.email="azuresdk@microsoft.com"'
-      displayName: Update Vcpkg Betas port ${{ parameters.DisplayNameExtension }}
