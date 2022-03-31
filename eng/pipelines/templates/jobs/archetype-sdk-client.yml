@@ -231,6 +231,3 @@ jobs:
           parameters:
             ArtifactPath: '$(Build.SourcesDirectory)/build/_manifest'
             ArtifactName: 'release_artifact_manifest'
-
-
-
