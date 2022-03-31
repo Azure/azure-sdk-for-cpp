@@ -95,8 +95,6 @@ jobs:
         displayName: Set Xcode version
 
       - template: /eng/pipelines/templates/steps/vcpkg.yml
-        parameters:
-          DependenciesVariableName: VcpkgInstall
 
       # Validate all the files are formatted correctly according to the
       # .clang-format file. This step runs on linux only only and assumes that

@@ -68,16 +68,29 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
       }
     }
 
+    Azure::Security::Attestation::AttestationTokenValidationOptions GetTokenValidationOptions()
+    {
+      AttestationTokenValidationOptions returnValue{};
+
+      if (m_testContext.IsPlaybackMode())
+      {
+        // Skip validating time stamps if using recordings.
+        returnValue.ValidateNotBeforeTime = false;
+        returnValue.ValidateExpirationTime = false;
+      }
+      else
+      {
+        returnValue.ValidationTimeSlack = 10s;
+      }
+      return returnValue;
+    }
+
     std::unique_ptr<AttestationAdministrationClient> CreateClient()
     {
       // `InitTestClient` takes care of setting up Record&Playback.
       Azure::Security::Attestation::AttestationAdministrationClientOptions options;
-      if (m_testContext.IsPlaybackMode())
-      {
-        // Skip validating time stamps if using recordings.
-        options.TokenValidationOptions.ValidateNotBeforeTime = false;
-        options.TokenValidationOptions.ValidateExpirationTime = false;
-      }
+      options.TokenValidationOptions = GetTokenValidationOptions();
+
       std::shared_ptr<Azure::Core::Credentials::TokenCredential> credential
           = std::make_shared<Azure::Identity::ClientSecretCredential>(
               GetEnv("AZURE_TENANT_ID"), GetEnv("AZURE_CLIENT_ID"), GetEnv("AZURE_CLIENT_SECRET"));
@@ -135,7 +148,7 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
         // So skip verifying the PolicyTokenHash in playback mode.
         if (!m_testContext.IsPlaybackMode())
         {
-          AttestationToken<std::nullptr_t> sentToken
+          AttestationToken<> sentToken
               = client->CreateSetAttestationPolicyToken(policyToValidate, signingKey);
 
           Azure::Core::Cryptography::_internal::Sha256Hash hasher;
@@ -157,6 +170,8 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
     {
       auto adminClient(CreateClient());
 
+      adminClient->RetrieveResponseValidationCollateral();
+
       std::string policyToSet(AttestationCollateral::GetMinimalPolicy());
       SetPolicyOptions setOptions;
       setOptions.SigningKey = signingKey;
@@ -167,7 +182,8 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
 
       // Make sure that the policy we set can be retrieved (we've checked the hash in
       // ValidateSetPolicyResponse, but this doesn't hurt)
-      auto getResponse = adminClient->GetAttestationPolicy(GetParam().TeeType);
+      auto getResponse = adminClient->GetAttestationPolicy(
+          GetParam().TeeType, GetPolicyOptions{GetTokenValidationOptions()});
       EXPECT_EQ(policyToSet, getResponse.Value.Body);
     }
 
@@ -175,8 +191,11 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
     {
       auto adminClient(CreateClient());
 
+      adminClient->RetrieveResponseValidationCollateral();
       SetPolicyOptions setOptions;
       setOptions.SigningKey = signingKey;
+      setOptions.TokenValidationOptions = GetTokenValidationOptions();
+
       auto setResponse = adminClient->ResetAttestationPolicy(GetParam().TeeType, setOptions);
 
       EXPECT_TRUE(ValidateSetPolicyResponse(
@@ -204,6 +223,7 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
     {
       auto adminClient(CreateClient());
 
+      adminClient->RetrieveResponseValidationCollateral();
       EXPECT_FALSE(adminClient->ClientVersion().empty());
 
       AttestationType attestationType(GetParam().TeeType);

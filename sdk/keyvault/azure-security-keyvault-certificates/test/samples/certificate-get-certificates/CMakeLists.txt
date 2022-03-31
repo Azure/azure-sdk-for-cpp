@@ -11,10 +11,6 @@ add_executable (
   certificate-get-certificates
   certificate_get_certificates.cpp
 )
-create_per_service_target_build(certificate-get-certificates keyvault)
+create_per_service_target_build_for_sample(keyvault certificate-get-certificates)
 
 target_link_libraries(certificate-get-certificates PRIVATE azure-security-keyvault-certificates azure-identity get-env-helper)
-
-# Add the sample to be run on CI. 
-# CI pipeline reads the {service}-samples.txt and runs the binaries listed there.
-file(APPEND ${CMAKE_BINARY_DIR}/keyvault-samples.txt "${CMAKE_CURRENT_BINARY_DIR}/certificate-get-certificates\n")

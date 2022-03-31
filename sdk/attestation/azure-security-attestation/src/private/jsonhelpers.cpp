@@ -23,7 +23,6 @@
 #include <string>
 #include <vector>
 
-// cspell: words jwks MrSigner MrEnclave
 namespace Azure { namespace Security { namespace Attestation { namespace _detail {
 
   using namespace Azure::Core::Json::_internal;

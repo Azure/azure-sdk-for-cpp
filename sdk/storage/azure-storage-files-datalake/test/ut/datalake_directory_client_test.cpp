@@ -167,6 +167,36 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_THROW(newFileClient.GetProperties(), StorageException);
   }
 
+  TEST_F(DataLakeDirectoryClientTest, RenameFileSasAuthentication_LIVEONLY_)
+  {
+    const std::string testName(GetTestName());
+    const std::string sourceFilename = testName + "1";
+    const std::string destinationFilename = testName + "2";
+    auto baseDirectoryClient = m_fileSystemClient->GetDirectoryClient("based");
+    baseDirectoryClient.Create();
+    auto fileClient = baseDirectoryClient.GetFileClient(sourceFilename);
+    fileClient.CreateIfNotExists();
+
+    Files::DataLake::DataLakeDirectoryClient directoryClientSas(
+        Files::DataLake::_detail::GetDfsUrlFromUrl(baseDirectoryClient.GetUrl()) + GetSas());
+    directoryClientSas.RenameFile(sourceFilename, destinationFilename);
+    EXPECT_THROW(
+        baseDirectoryClient.GetFileClient(sourceFilename).GetProperties(), StorageException);
+    EXPECT_NO_THROW(m_fileSystemClient->GetFileClient(destinationFilename).GetProperties());
+
+    const std::string sourceDirectoryName = testName + "3";
+    const std::string destinationDirectoryName = testName + "4";
+    auto directoryClient = baseDirectoryClient.GetSubdirectoryClient(sourceDirectoryName);
+    directoryClient.CreateIfNotExists();
+
+    directoryClientSas.RenameSubdirectory(sourceDirectoryName, destinationDirectoryName);
+    EXPECT_THROW(
+        baseDirectoryClient.GetSubdirectoryClient(sourceDirectoryName).GetProperties(),
+        StorageException);
+    EXPECT_NO_THROW(
+        m_fileSystemClient->GetDirectoryClient(destinationDirectoryName).GetProperties());
+  }
+
   TEST_F(DataLakeDirectoryClientTest, RenameFileAccessCondition)
   {
     const std::string testName(GetTestName());

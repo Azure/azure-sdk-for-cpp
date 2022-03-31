@@ -320,6 +320,10 @@ void Azure::Perf::Program::Run(
       // Take the corresponding proxy from the list in round robin
       parallelTest[i]->SetTestProxy(options.TestProxies[i % options.TestProxies.size()]);
     }
+    if (options.Insecure)
+    {
+      parallelTest[i]->AllowInsecureConnections(true);
+    }
   }
 
   /******************** Global Set up ******************************/

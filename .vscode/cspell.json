@@ -11,6 +11,7 @@
     "*.exe",
     "*.a",
     "*.lib",
+    ".github/CODEOWNERS",
     ".gitignore",
     ".vscode/cspell.json",
     "eng/common/**/*",
@@ -144,7 +145,14 @@
         "TEAMPROJECTID",
         "issecret",
         "PSScriptRoot",
-        "BUILDID"
+        "BUILDID",
+        "cppvcpkgcache"
+      ]
+    },
+    {
+      "filename": "**/sdk/attestation/**",
+      "words": [
+        "tpm"
       ]
     },
     {

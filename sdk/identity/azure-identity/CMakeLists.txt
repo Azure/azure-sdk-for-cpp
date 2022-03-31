@@ -46,6 +46,7 @@ endif()
 
 set(
   AZURE_IDENTITY_HEADER
+    inc/azure/identity/chained_token_credential.hpp
     inc/azure/identity/client_secret_credential.hpp
     inc/azure/identity/dll_import_export.hpp
     inc/azure/identity/environment_credential.hpp
@@ -58,6 +59,7 @@ set(
     src/private/managed_identity_source.hpp
     src/private/package_version.hpp
     src/private/token_credential_impl.hpp
+    src/chained_token_credential.cpp
     src/client_secret_credential.cpp
     src/environment_credential.cpp
     src/managed_identity_credential.cpp
@@ -66,7 +68,7 @@ set(
 )
 
 add_library(azure-identity ${AZURE_IDENTITY_HEADER} ${AZURE_IDENTITY_SOURCE})
-create_per_service_target_build(azure-identity identity)
+create_per_service_target_build(identity azure-identity)
 
 # make sure that users can consume the project as a library.
 add_library(Azure::azure-identity ALIAS azure-identity)

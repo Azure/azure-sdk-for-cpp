@@ -180,7 +180,16 @@ namespace Azure { namespace Security { namespace Attestation {
      * of which will be used to validate tokens received by the attestation service.
      */
     Response<Models::AttestationSigningCertificateResult> GetAttestationSigningCertificates(
-        Azure::Core::Context const& context = Azure::Core::Context::ApplicationContext) const;
+        Azure::Core::Context const& context = Azure::Core::Context{}) const;
+
+    /**
+     * @brief Retrieves the information needed to validate a response from the attestation service.
+     *
+     * @note: This method MUST be called before any calls to the attestation service which must be
+     * validated.
+     */
+    void RetrieveResponseValidationCollateral(
+        Azure::Core::Context const& context = Azure::Core::Context{}) const;
 
     /**
      * @brief Attest an SGX enclave, returning an attestation token representing the result
@@ -193,14 +202,14 @@ namespace Azure { namespace Security { namespace Attestation {
      * @returns Response<AttestationToken<AttestationResult>> - The result of the
      * attestation operation.
      *
-     * @note \b Note: The GetAttestationSigningCertificates API API \b MUST be called before the
-     * AttestSgxEnclave API is called to retrieve the signing certificates used to validate the
+     * @note \b Note: The RetrieveResponseValidationCollateral API \b MUST be called before the
+     * AttestSgxEnclave API is called to retrieve the information needed to validate the
      * result returned by the service.
      */
     Response<Models::AttestationToken<Models::AttestationResult>> AttestSgxEnclave(
         std::vector<uint8_t> const& sgxQuoteToAttest,
         AttestOptions options = AttestOptions(),
-        Azure::Core::Context const& context = Azure::Core::Context::ApplicationContext) const;
+        Azure::Core::Context const& context = Azure::Core::Context{}) const;
 
     /**
      * @brief Attest an OpenEnclave report, returning an attestation token representing the result
@@ -213,10 +222,37 @@ namespace Azure { namespace Security { namespace Attestation {
      *
      * @returns Response<AttestationToken<AttestationResult>> - The result of the attestation
      * operation
+
+     * @note \b Note: The RetrieveResponseValidationCollateral API \b MUST be called before the
+     * AttestOpenEnclave API is called to retrieve information needed to used to validate the
+     * result returned by the service.
      */
     Response<Models::AttestationToken<Models::AttestationResult>> AttestOpenEnclave(
         std::vector<uint8_t> const& openEnclaveReportToAttest,
         AttestOptions options = AttestOptions(),
+        Azure::Core::Context const& context = Azure::Core::Context{}) const;
+
+    /**
+    * @brief Perform a single leg
+     *
+     * Processes attestation evidence from a VBS enclave, producing an attestation result.
+     *
+     * The TPM attestation protocol is defined
+    [here](https://docs.microsoft.com/azure/attestation/virtualization-based-security-protocol')
+     *
+     * Unlike OpenEnclave reports and SGX enclave quotes, TPM attestation is implemented using
+     * JSON encoded strings.
+
+     The client formats a string serialized JSON request to the
+     * service, which responds with a JSON response. The serialized JSON object exchange continues
+     * until the service responds with a JSON string with a property named {@code "report"}, whose
+     * value will be an attestation result token.
+     *
+     * @param request Attestation request for Trusted Platform Module (TPM) attestation.
+     * @return attestation response for Trusted Platform Module (TPM) attestation.
+    */
+    Response<std::string> AttestTpm(
+        std::string const& jsonToSend,
         Azure::Core::Context const& context = Azure::Core::Context::ApplicationContext) const;
 
   private:
@@ -228,8 +264,11 @@ namespace Azure { namespace Security { namespace Attestation {
 
     mutable std::vector<Models::AttestationSigner> m_attestationSigners;
 
-    std::vector<Models::AttestationSigner> const& GetAttestationSigners(
-        Azure::Core::Context const& context) const;
+    /**
+     * @brief Check the m_AttestationSigners to ensure that RetrieveResponseValidationCollateral has
+     * been called.
+     */
+    void CheckAttestationSigners() const;
   };
 
 }}} // namespace Azure::Security::Attestation

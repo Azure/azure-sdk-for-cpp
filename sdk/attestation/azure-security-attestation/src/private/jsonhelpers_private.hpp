@@ -21,7 +21,6 @@
 #include <string>
 #include <vector>
 
-// cspell: words jwks MrSigner MrEnclave
 namespace Azure { namespace Security { namespace Attestation { namespace _detail {
   class JsonHelpers {
   private:

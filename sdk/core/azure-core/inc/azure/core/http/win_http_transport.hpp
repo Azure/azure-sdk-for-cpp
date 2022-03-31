@@ -128,7 +128,10 @@ namespace Azure { namespace Core { namespace Http {
    */
   struct WinHttpTransportOptions final
   {
-    // Empty struct reserved for future options.
+    /**
+     * @brief When `true`, allows an invalid certificate authority.
+     */
+    bool IgnoreUnknownCertificateAuthority = false;
   };
 
   /**
