@@ -123,7 +123,7 @@ stages:
                       - pwsh: |
                           $title = "[${{ artifact.VcpkgPortName }}] publish version $(PackageVersion)"
 
-                          if ('$(VcpkgPRTitle)') {
+                          if ('$(VcpkgPRTitle)') { 
                             Write-Host "Using queue time PR title"
                             $title = '$(VcpkgPRTitle)'
                           }
@@ -131,46 +131,22 @@ stages:
                         displayName: Set PR title
 
                       # There are potential race conditions if this script runs
-                      # in parallel against the same branch name. Release only
+                      # in parallel against the same branch name. Release only 
                       # one package at a time.
-                      # Clone main vcpkg repo
                       - template: /eng/pipelines/templates/steps/vcpkg-clone.yml
                         parameters:
                           RepoOwner: azure-sdk
                           PRBranchName: $(PrBranchName)
-
-                      # Clone Vcpkg Betas
-                      - template: /eng/pipelines/templates/steps/vcpkg-clone.yml
-                        parameters:
-                          RepoOwner: Azure
-                          RepoName: azure-sdk-vcpkg-betas
 
                       - template: /eng/pipelines/templates/steps/vcpkg-publish.yml
                         parameters:
                           ArtifactName: ${{ artifact.Name }}
                           VcpkgPortName: ${{ artifact.VcpkgPortName }}
 
-
-                      - template: /eng/common/pipelines/templates/steps/set-default-branch.yml
-                        parameters:
-                          WorkingDirectory: $(Pipeline.Workspace)/azure-sdk-vcpkg-betas
-
-                      # Push changes to vcpkg betas
-                      - template: /eng/common/pipelines/templates/steps/git-push-changes.yml
-                        parameters:
-                          WorkingDirectory: $(Pipeline.Workspace)/azure-sdk-vcpkg-betas
-                          TargetRepoName: azure-sdk-vcpkg-betas
-                          BaseRepoOwner: Azure
-                          CommitMsg: Update vcpkg-configuration.json
-                          BaseRepoBranch: $(DefaultBranch)
-
-                      # Set $(HasChanges) to $true so that
-                      # create-pull-request.yml completes the push and PR
-                      # submission steps. This is contegnent upon
-                      # `$(PublishToVcpkg)` being `true`. `$(PublishToVcpkg)` is
-                      # set in `vcpkg-publish.yml`
+                      # Set $(HasChanges) to $true so that 
+                      # create-pull-request.yml completes the push and PR 
+                      # submission steps
                       - pwsh: Write-Host "##vso[task.setvariable variable=HasChanges]$true"
-                        condition: and(succeeded(), eq(variables['PublishToVcpkg'], 'true'))
                         displayName: Set $(HasChanges) to $true for create-pull-request.yml
 
                       - template: /eng/common/pipelines/templates/steps/set-default-branch.yml
@@ -210,7 +186,6 @@ stages:
                             -RepoName $(VcpkgPrRepoName) `
                             -IssueNumber "$(Submitted.PullRequest.Number)" `
                             -Comment $prComment
-                        condition: and(succeeded(), eq(variables['PublishToVcpkg'], 'true'))
                         displayName: Comment notification to PR
 
           - ${{if ne(artifact.skipUpdatePackageVersion, 'true')}}:
@@ -269,7 +244,7 @@ stages:
             # can be re-run.
             - ${{ each artifact in parameters.Artifacts }}:
               # Only run vcpkg publish if the artifact has a "VcpkgPortName"
-              # property. Absence of VcpkgPortName implies that the artifact
+              # property. Absence of VcpkgPortName implies that the artifact 
               # does not ship to vcpkg.
               - ${{ if ne(artifact.VcpkgPortName, '') }}:
                 - template: /eng/pipelines/templates/steps/vcpkg-publish.yml
@@ -279,7 +254,6 @@ stages:
                     DisplayNameExtension: ${{ artifact.Name }}
                     DailyRelease: true
                     DailyReleaseRef: $(Build.SourceVersion)
-                    UpdateVcpkgBeta: false
 
             - template: /eng/common/pipelines/templates/steps/git-push-changes.yml
               parameters:

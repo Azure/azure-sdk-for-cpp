@@ -29,7 +29,7 @@ if ((Get-Command git | Measure-Object).Count -eq 0) {
     exit 1
 } 
 
-if (!(Test-Path $ReleaseArtifactSourceDirectory/package-info.json)) {
+if (!(Test-Path $ReleaseArtifactSourceDirectory/package-info.json)) { 
     LogError "Could not locate package-info.json in -ReleaseArtifactSourceDirectory"
     exit 1
 }
@@ -42,7 +42,7 @@ if (!(Test-Path $ReleaseArtifactSourceDirectory/vcpkg/port)) {
     LogError "Could not locate vcpkg/port directory in -ReleaseArtifactSourceDirectory"
 }
 
-# Clean out the folder so that template files removed are not inadvertently
+# Clean out the folder so that template files removed are not inadvertently 
 # re-added
 if (Test-Path $PortDestinationDirectory) {
     Remove-Item -v -r $PortDestinationDirectory
@@ -124,7 +124,7 @@ if (!$DailyRelease) {
         | Invoke-Expression -Verbose `
         | Write-Host
 
-    # Set $(HasChanges) to $true so that create-pull-request.yml completes the
+    # Set $(HasChanges) to $true so that create-pull-request.yml completes the 
     # push and PR submission steps
     Write-Host "##vso[task.setvariable variable=HasChanges]$true"
 }
@@ -137,7 +137,7 @@ Uses release artifacts to update a vcpkg port
 .DESCRIPTION
 This script updates a given vcpkg port using C++ release artifacts. It requires 
 that the GitHub repo is tagged and a release is available at that tag for 
-generating the SHA of the vcpkg artifact.
+generating the SHA of the vcpkg artifact. 
 
 This script also uses the contents of the changelog at the release version in 
 the commit message. 
