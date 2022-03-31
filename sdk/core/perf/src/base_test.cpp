@@ -116,7 +116,7 @@ namespace Azure { namespace Perf {
           = std::make_shared<Azure::Core::Http::CurlTransport>(curlOptions);
 #elif defined(BUILD_TRANSPORT_WINHTTP_ADAPTER)
       Azure::Core::Http::WinHttpTransportOptions winHttpOptions;
-      winHttpOptions.IgnoreUnknownServerCertificate = true;
+      winHttpOptions.IgnoreUnknownCertificateAuthority = true;
       clientOptions.Transport.Transport
           = std::make_shared<Azure::Core::Http::WinHttpTransport>(winHttpOptions);
 #else
