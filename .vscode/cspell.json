@@ -142,7 +142,9 @@
       "filename": "**/eng/**",
       "words": [
         "TEAMPROJECTID",
-        "issecret"
+        "issecret",
+        "PSScriptRoot",
+        "BUILDID"
       ]
     },
     {
