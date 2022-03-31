@@ -144,7 +144,6 @@ stages:
                         parameters:
                           RepoOwner: Azure
                           RepoName: azure-sdk-vcpkg-betas
-                          PRBranchName: djurek/vcpkg-beta-3
 
                       - template: /eng/pipelines/templates/steps/vcpkg-publish.yml
                         parameters:
@@ -157,7 +156,7 @@ stages:
                           WorkingDirectory: $(Pipeline.Workspace)/azure-sdk-vcpkg-betas
                           TargetRepoName: azure-sdk-vcpkg-betas
                           BaseRepoOwner: Azure
-                          BaseRepoBranch: djurek/vcpkg-beta-3
+                          CommitMsg: Update vcpkg-configuration.json
 
                       # Set $(HasChanges) to $true so that
                       # create-pull-request.yml completes the push and PR

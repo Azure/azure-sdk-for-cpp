@@ -43,7 +43,7 @@ try {
     & $VcpkgFolder/vcpkg format-manifest `
         --all `
         --vcpkg-root=. `
-        --x-scripts-root=$VcpkgFolder/scripts  # This param is extra
+        --x-scripts-root=$VcpkgFolder/scripts
 
     Write-Host "git add -A"
     git add -A
@@ -54,7 +54,7 @@ try {
     & $VcpkgFolder/vcpkg x-add-version `
         $VcpkgPortName `
         --vcpkg-root=. `
-        --x-scripts-root=$VcpkgFolder/scripts  # This param is extra
+        --x-scripts-root=$VcpkgFolder/scripts
 
     Write-Host "git add -A"
     git add -A
