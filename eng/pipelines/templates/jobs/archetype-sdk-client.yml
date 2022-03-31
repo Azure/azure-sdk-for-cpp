@@ -34,25 +34,25 @@ parameters:
     default: []
 
 jobs:
-  # - template: /eng/common/pipelines/templates/jobs/archetype-sdk-tests-generate.yml
-  #   parameters:
-  #     MatrixConfigs:
-  #       - Name: base
-  #         Path: eng/pipelines/templates/stages/platform-matrix.json
-  #         Selection: all
-  #         GenerateVMJobs: true
-  #     JobTemplatePath: /eng/pipelines/templates/jobs/ci.tests.yml
-  #     AdditionalParameters:
-  #       Artifacts: ${{ parameters.Artifacts }}
-  #       ServiceDirectory: ${{ parameters.ServiceDirectory }}
-  #       TestPipeline: ${{ parameters.TestPipeline }}
-  #       CtestRegex: ${{ parameters.CtestRegex }}
-  #       CtestExcludeRegex: ${{ parameters.CtestExcludeRegex }}
-  #       CoverageReportPath: ${{ parameters.CoverageReportPath }}
-  #       CoverageEnabled: ${{ parameters.CoverageEnabled }}
-  #       LineCoverageTarget: ${{ parameters.LineCoverageTarget }}
-  #       BranchCoverageTarget: ${{ parameters.BranchCoverageTarget }}
-  #       TestEnv: ${{ parameters.TestEnv }}
+  - template: /eng/common/pipelines/templates/jobs/archetype-sdk-tests-generate.yml
+    parameters:
+      MatrixConfigs:
+        - Name: base
+          Path: eng/pipelines/templates/stages/platform-matrix.json
+          Selection: all
+          GenerateVMJobs: true
+      JobTemplatePath: /eng/pipelines/templates/jobs/ci.tests.yml
+      AdditionalParameters:
+        Artifacts: ${{ parameters.Artifacts }}
+        ServiceDirectory: ${{ parameters.ServiceDirectory }}
+        TestPipeline: ${{ parameters.TestPipeline }}
+        CtestRegex: ${{ parameters.CtestRegex }}
+        CtestExcludeRegex: ${{ parameters.CtestExcludeRegex }}
+        CoverageReportPath: ${{ parameters.CoverageReportPath }}
+        CoverageEnabled: ${{ parameters.CoverageEnabled }}
+        LineCoverageTarget: ${{ parameters.LineCoverageTarget }}
+        BranchCoverageTarget: ${{ parameters.BranchCoverageTarget }}
+        TestEnv: ${{ parameters.TestEnv }}
 
   # Disable build for cpp - client
   - ${{ if ne(parameters.ServiceDirectory, 'not-specified' )}}:
@@ -65,15 +65,15 @@ jobs:
         VCPKG_DEFAULT_TRIPLET: 'x64-windows-static'
         Package.EnableSBOMSigning: true
       steps:
-        # - template: /eng/common/pipelines/templates/steps/check-spelling.yml
-        #   parameters:
-        #     ContinueOnError: false
+        - template: /eng/common/pipelines/templates/steps/check-spelling.yml
+          parameters:
+            ContinueOnError: false
 
-        # - template: /eng/common/pipelines/templates/steps/verify-links.yml
-        #   parameters:
-        #     Directory: ''
-        #     CheckLinkGuidance: $true
-        #     Condition: and(succeeded(), ne(variables['Skip.LinkVerification'], 'true'))
+        - template: /eng/common/pipelines/templates/steps/verify-links.yml
+          parameters:
+            Directory: ''
+            CheckLinkGuidance: $true
+            Condition: and(succeeded(), ne(variables['Skip.LinkVerification'], 'true'))
 
         - ${{ each artifact in parameters.Artifacts }}: 
           - template: /eng/common/pipelines/templates/steps/set-test-pipeline-version.yml
@@ -112,8 +112,8 @@ jobs:
               -DBUILD_TRANSPORT_CURL=OFF
               -DBUILD_DOCUMENTATION=YES
 
-        # - pwsh: npm install -g moxygen
-        #   displayName: Install Moxygen to generate markdown for docs.microsoft.com
+        - pwsh: npm install -g moxygen
+          displayName: Install Moxygen to generate markdown for docs.microsoft.com
 
         # Generate package spec JSON files for tagging the repo
         - ${{ each artifact in parameters.Artifacts }}:
@@ -171,17 +171,17 @@ jobs:
               workingDirectory: build
               displayName: Generate docs (${{ artifact.Name }}-docs)
 
-            # - task: PowerShell@2
-            #   inputs:
-            #     targetType: filePath
-            #     filePath: eng/scripts/New-DocsMsArtifact.ps1
-            #     arguments: >-
-            #       -ServiceDirectory ${{ parameters.ServiceDirectory }}
-            #       -PackageName ${{ artifact.Name }}
-            #       -TargetFolder $(Build.ArtifactStagingDirectory)/packages/${{ artifact.Name }}/docs/docs.ms
-            #     ignoreLASTEXITCODE: true
-            #     pwsh: true
-            #   displayName: Generate artifacts for docs.ms
+            - task: PowerShell@2
+              inputs:
+                targetType: filePath
+                filePath: eng/scripts/New-DocsMsArtifact.ps1
+                arguments: >-
+                  -ServiceDirectory ${{ parameters.ServiceDirectory }}
+                  -PackageName ${{ artifact.Name }}
+                  -TargetFolder $(Build.ArtifactStagingDirectory)/packages/${{ artifact.Name }}/docs/docs.ms
+                ignoreLASTEXITCODE: true
+                pwsh: true
+              displayName: Generate artifacts for docs.ms
 
             - pwsh: |
                 New-Item -ItemType directory -Path $(Build.ArtifactStagingDirectory) -Name docs/${{ artifact.Name }}
@@ -211,15 +211,15 @@ jobs:
             artifactName: docs
             path: $(Build.ArtifactStagingDirectory)/docs
 
-        # - template: /eng/common/pipelines/templates/steps/eng-common-workflow-enforcer.yml
+        - template: /eng/common/pipelines/templates/steps/eng-common-workflow-enforcer.yml
 
-        # - task: AzureArtifacts.manifest-generator-task.manifest-generator-task.ManifestGeneratorTask@0
-        #   displayName: 'Generate BOM'
-        #   condition: succeededOrFailed()
-        #   inputs:
-        #     BuildDropPath: $(Build.SourcesDirectory)/build
+        - task: AzureArtifacts.manifest-generator-task.manifest-generator-task.ManifestGeneratorTask@0
+          displayName: 'Generate BOM'
+          condition: succeededOrFailed()
+          inputs:
+            BuildDropPath: $(Build.SourcesDirectory)/build
 
-        # - template: /eng/common/pipelines/templates/steps/publish-artifact.yml
-        #   parameters:
-        #     ArtifactPath: '$(Build.SourcesDirectory)/build/_manifest'
-        #     ArtifactName: 'release_artifact_manifest'
+        - template: /eng/common/pipelines/templates/steps/publish-artifact.yml
+          parameters:
+            ArtifactPath: '$(Build.SourcesDirectory)/build/_manifest'
+            ArtifactName: 'release_artifact_manifest'
