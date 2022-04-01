@@ -4,15 +4,15 @@ parameters:
   RepoName: vcpkg
   PRBranchName: not-set
 
-steps: 
+steps:
   - pwsh: |
-      Write-Host "git clone https://github.com/${{ parameters.RepoOwner }}/${{ parameters.RepoName }} ${{ parameters.Workspace }}/vcpkg"
-      git clone https://github.com/${{ parameters.RepoOwner }}/${{ parameters.RepoName }} ${{ parameters.Workspace }}/vcpkg
+      Write-Host "git clone https://github.com/${{ parameters.RepoOwner }}/${{ parameters.RepoName }} ${{ parameters.Workspace }}/${{ parameters.RepoName }}"
+      git clone https://github.com/${{ parameters.RepoOwner }}/${{ parameters.RepoName }} ${{ parameters.Workspace }}/${{ parameters.RepoName }}
       if ($LASTEXITCODE -ne 0) {
         Write-Error "Unable to check out vcpkg fork repo"
         exit $LASTEXITCODE
       }
-    displayName: Clone vcpkg from upstream
+    displayName: Clone vcpkg (${{ parameters.RepoOwner }}/${{ parameters.RepoName }})
 
   # Check out the PR branch if it's already in remote. Ignore failures.
   - pwsh: |
