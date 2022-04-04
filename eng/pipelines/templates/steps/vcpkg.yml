@@ -21,7 +21,7 @@ steps:
       filePath: eng/scripts/Set-VcpkgWriteModeCache.ps1
       arguments: -StorageAccountKey '$(cpp-vcpkg-cache-storage-key)'
     displayName: Set Vcpkg Write-mode Cache
-    condition: eq(variables['System.TeamProject'], 'internal')
+    condition: and(succeeded(), eq(variables['System.TeamProject'], 'internal'))
 
   - task: PowerShell@2
     inputs:
