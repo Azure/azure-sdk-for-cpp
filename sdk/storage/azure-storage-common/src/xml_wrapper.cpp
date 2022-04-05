@@ -362,18 +362,22 @@ namespace Azure { namespace Storage { namespace _internal {
     auto context = static_cast<XmlWriterContext*>(m_context);
 
     BOOL boolValueTrue = TRUE;
-    WS_XML_WRITER_PROPERTY writerProperty;
-    writerProperty.id = WS_XML_WRITER_PROPERTY_WRITE_DECLARATION;
-    writerProperty.value = &boolValueTrue;
-    writerProperty.valueSize = sizeof(boolValueTrue);
+    WS_XML_WRITER_PROPERTY writerProperty[2];
+    writerProperty[0].id = WS_XML_WRITER_PROPERTY_WRITE_DECLARATION;
+    writerProperty[0].value = &boolValueTrue;
+    writerProperty[0].valueSize = sizeof(boolValueTrue);
+    writerProperty[1].id = WS_XML_WRITER_PROPERTY_BUFFER_MAX_SIZE;
+    ULONG maxBufferSize = 256 * 1024 * 1024UL;
+    writerProperty[1].value = &maxBufferSize;
+    writerProperty[1].valueSize = sizeof(maxBufferSize);
     void* xml = nullptr;
     ULONG xmlLength = 0;
     HRESULT ret = WsWriteXmlBufferToBytes(
         context->writer,
         context->buffer,
         nullptr,
-        &writerProperty,
-        1,
+        writerProperty,
+        sizeof(writerProperty) / sizeof(writerProperty[0]),
         context->heap,
         &xml,
         &xmlLength,
