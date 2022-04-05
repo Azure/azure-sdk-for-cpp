@@ -2,11 +2,9 @@
 
 ## 12.2.3 (2022-04-06)
 
+### Bugs Fixed
+
 - Fixed a bug where we got error when XML request body is too big.
-
-### Other Changes
-
-- No public changes in this release.
 
 ## 12.2.2 (2022-03-09)
 
