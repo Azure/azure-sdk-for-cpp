@@ -494,4 +494,4 @@ Azure::Response<KeyVaultCertificate> CertificateClient::UpdateCertificatePropert
   return Azure::Response<KeyVaultCertificate>(std::move(value), std::move(rawResponse));
 }
 
-const ServiceVersion ServiceVersion::V7_2("7.2");
+const ServiceVersion ServiceVersion::V7_3("7.3");

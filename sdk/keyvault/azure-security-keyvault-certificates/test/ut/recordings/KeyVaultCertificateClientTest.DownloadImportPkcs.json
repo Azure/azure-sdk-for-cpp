@@ -15,7 +15,7 @@
         "content-type": "application/json; charset=utf-8",
         "date": "Thu, 04 Nov 2021 20:54:31 GMT",
         "expires": "-1",
-        "location": "https://REDACTED.vault.azure.net/certificates/DownloadImportPkcs/pending?api-version=7.2&request_id=6e61db829c1c4a699cd90e040459cb93",
+        "location": "https://REDACTED.vault.azure.net/certificates/DownloadImportPkcs/pending?api-version=7.3&request_id=6e61db829c1c4a699cd90e040459cb93",
         "pragma": "no-cache",
         "retry-after": "10",
         "strict-transport-security": "max-age=31536000;includeSubDomains",
@@ -27,7 +27,7 @@
         "x-ms-request-id": "a94fc16e-32ee-4fb5-ab4d-bea6a5c39db7",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/certificates/DownloadImportPkcs/create?api-version=7.2"
+      "Url": "https://REDACTED.vault.azure.net/certificates/DownloadImportPkcs/create?api-version=7.3"
     },
     {
       "Headers": {
@@ -55,7 +55,7 @@
         "x-ms-request-id": "c30b87b4-d2f9-4c0d-baaf-b2b338053501",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/certificates/DownloadImportPkcs/pending?api-version=7.2"
+      "Url": "https://REDACTED.vault.azure.net/certificates/DownloadImportPkcs/pending?api-version=7.3"
     },
     {
       "Headers": {
@@ -82,7 +82,7 @@
         "x-ms-request-id": "8ae8d89f-c39f-45cf-b485-1ae2602fe72e",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/certificates/DownloadImportPkcs/pending?api-version=7.2"
+      "Url": "https://REDACTED.vault.azure.net/certificates/DownloadImportPkcs/pending?api-version=7.3"
     },
     {
       "Headers": {
@@ -109,7 +109,7 @@
         "x-ms-request-id": "62276291-2dc2-41b7-8f99-d5ee615348d9",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/certificates/DownloadImportPkcs?api-version=7.2"
+      "Url": "https://REDACTED.vault.azure.net/certificates/DownloadImportPkcs?api-version=7.3"
     },
     {
       "Headers": {
@@ -136,7 +136,7 @@
         "x-ms-request-id": "b088b2ff-7006-4fee-ba2c-f165ca1226e1",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/certificates/DownloadImportPkcs?api-version=7.2"
+      "Url": "https://REDACTED.vault.azure.net/certificates/DownloadImportPkcs?api-version=7.3"
     },
     {
       "Headers": {
@@ -163,7 +163,7 @@
         "x-ms-request-id": "bbc3f0bc-8992-4bc5-b9d8-4a2f31ee1af8",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/secrets/DownloadImportPkcs/53f7dd3711364168882b48026cb30f80?api-version=7.2"
+      "Url": "https://REDACTED.vault.azure.net/secrets/DownloadImportPkcs/53f7dd3711364168882b48026cb30f80?api-version=7.3"
     },
     {
       "Headers": {
@@ -190,7 +190,7 @@
         "x-ms-request-id": "1b994d58-0926-400f-a762-74f9acc95dd0",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/certificates/DownloadImportPkcs2/import?api-version=7.2"
+      "Url": "https://REDACTED.vault.azure.net/certificates/DownloadImportPkcs2/import?api-version=7.3"
     }
   ]
 }

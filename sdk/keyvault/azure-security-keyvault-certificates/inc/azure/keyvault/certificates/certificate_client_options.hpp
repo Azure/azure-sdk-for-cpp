@@ -51,7 +51,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
      * @brief Use to send request to the 7.2 version of Key Vault service.
      *
      */
-    AZ_SECURITY_KEYVAULT_CERTIFICATES_DLLEXPORT static const ServiceVersion V7_2;
+    AZ_SECURITY_KEYVAULT_CERTIFICATES_DLLEXPORT static const ServiceVersion V7_3;
   };
 
   /**
@@ -67,7 +67,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
      *
      * @param version Optional version for the client.
      */
-    CertificateClientOptions(ServiceVersion version = ServiceVersion::V7_2)
+    CertificateClientOptions(ServiceVersion version = ServiceVersion::V7_3)
         : Azure::Core::_internal::ClientOptions(), Version(version)
     {
     }
