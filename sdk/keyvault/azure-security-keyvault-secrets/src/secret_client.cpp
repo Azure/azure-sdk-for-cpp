@@ -27,7 +27,7 @@ using namespace Azure::Core::Http::Policies;
 using namespace Azure::Core::Http::Policies::_internal;
 using namespace Azure::Security::KeyVault::Secrets::_detail;
 
-const ServiceVersion ServiceVersion::V7_2("7.2");
+const ServiceVersion ServiceVersion::V7_3("7.3");
 
 std::unique_ptr<RawResponse> SecretClient::SendRequest(
     Azure::Core::Http::Request& request,

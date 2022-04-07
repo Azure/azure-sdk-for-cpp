@@ -6,7 +6,7 @@
  * @brief Keyvault Secret actions options
  */
 #pragma once
-#include "azure/keyvault/secrets/dll_import_export.hpp"
+#include "dll_import_export.hpp"
 #include <azure/core/internal/client_options.hpp>
 
 namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
@@ -40,7 +40,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
      * @brief Use to send request to the 7.2 version of Key Vault service.
      *
      */
-    AZURE_SECURITY_KEYVAULT_SECRETS_DLLEXPORT static const ServiceVersion V7_2;
+    AZURE_SECURITY_KEYVAULT_SECRETS_DLLEXPORT static const ServiceVersion V7_3;
   };
 
   /**
@@ -56,7 +56,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
      *
      * @param version Optional version for the client.
      */
-    SecretClientOptions(ServiceVersion version = ServiceVersion::V7_2)
+    SecretClientOptions(ServiceVersion version = ServiceVersion::V7_3)
         : Azure::Core::_internal::ClientOptions(), Version(version)
     {
     }
