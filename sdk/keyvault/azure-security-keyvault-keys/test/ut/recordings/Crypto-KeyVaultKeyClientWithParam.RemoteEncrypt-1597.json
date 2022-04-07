@@ -3,83 +3,86 @@
     {
       "Headers": {
         "content-type": "application/json",
-        "user-agent": "azsdk-cpp-keyvault-keys/4.3.0-beta.1 (Linux 5.4.0-1063-azure x86_64 #66~18.04.1-Ubuntu SMP Thu Oct 21 09:59:28 UTC 2021)",
-        "x-ms-client-request-id": "d42dddfa-f417-4175-6073-5101d7299c68"
+        "user-agent": "azsdk-cpp-keyvault-keys/4.3.0-beta.1 (Windows 10 Enterprise 6.3 22000 22000.1.amd64fre.co_release.210604-1628)",
+        "x-ms-client-request-id": "88976124-91a9-4892-6b8a-51cf0974c1c0"
       },
       "Method": "POST",
       "Response": {
-        "BODY": "{\"key\":{\"kid\":\"https://cpp-recordings.vault.azure.net/keys/RemoteEncrypt-1597/0200cb4247bf49cfbe2083ece4bf4e7a\",\"kty\":\"RSA\",\"key_ops\":[\"encrypt\",\"decrypt\",\"sign\",\"verify\",\"wrapKey\",\"unwrapKey\"],\"n\":\"tfd6TIZ7sEhZ4r1fIIDk51ioO28Pqk3LcJNjvz7S1C4nxB5RroDprIz0MNkX96qdcdbpSSupZ1bzU2eyCPoZDPxJbe3HpN51cOHrhZhRM61QWs7IeqfHNhEpTZT2EJF0ptB5m_Az41gii0doN9Bn_900rx_EE640xxqoB94looAtwrWJFa18mn5sRbcTPtJo67JDgaSj3dRL5wCeHSSV6wx7_2Dg8Qhvd6JhAq5DrMBTUdBNj42oU0AAgClBrxTqembnqdM6Q4Lu1OBkNeNKMod6rNjImsJHJ7Vrx-GiuXs-CAUKEJcx2nA9Ez3YiPYDz8IHT2LT0sjZMUxchI0YNQ\",\"e\":\"AQAB\"},\"attributes\":{\"enabled\":true,\"created\":1638481980,\"updated\":1638481980,\"recoveryLevel\":\"Recoverable+Purgeable\",\"recoverableDays\":90}}",
+        "BODY": "{\"key\":{\"kid\":\"https://REDACTED.vault.azure.net/keys/RemoteEncrypt-1597/7213e4faf8da4f5a9776f7dfb0444010\",\"kty\":\"RSA\",\"key_ops\":[\"encrypt\",\"decrypt\",\"sign\",\"verify\",\"wrapKey\",\"unwrapKey\"],\"n\":\"uqSbR66J-on26vVc-zuFk9FgZCEc1jLzGUuCAiiuwjyn4c5hnOfL9uUqHujdvQXBqyTD1tINmmqyPNSL_I5x8IucVn3CU7JhVtPDpgC_z5tGIgG9jJCm_hC9LpPDhhxpu_RUS5jj4eshi4ViWNiCuKL9--t0i8STvlmOW8O5jXwRT1-Hlp3zwY6xCwTDAr3yKIb1JsX0vJidF6-9IkHdxFrboJr4FZlnTa2nJkC2kR1HnCJbrWBRcTnrPfz9eFXtwrgtju9S_N7sU23B3He_joTEhDVOOdE40cvYDxA6X6DQlzSjJaoGiNnV602S0h7pvSsT-tK0BD_WwTSlgZNAPQ\",\"e\":\"AQAB\"},\"attributes\":{\"enabled\":true,\"created\":1649357757,\"updated\":1649357757,\"recoveryLevel\":\"Recoverable+Purgeable\",\"recoverableDays\":90}}",
+        "REASON_PHRASE": "OK",
         "STATUS_CODE": "200",
         "cache-control": "no-cache",
-        "content-length": "688",
+        "content-length": "684",
         "content-type": "application/json; charset=utf-8",
-        "date": "Thu, 02 Dec 2021 21:53:00 GMT",
+        "date": "Thu, 07 Apr 2022 18:55:57 GMT",
         "expires": "-1",
         "pragma": "no-cache",
         "strict-transport-security": "max-age=31536000;includeSubDomains",
         "x-content-type-options": "nosniff",
-        "x-ms-client-request-id": "d42dddfa-f417-4175-6073-5101d7299c68",
-        "x-ms-keyvault-network-info": "conn_type=Ipv4;addr=20.49.4.206;act_addr_fam=InterNetwork;",
-        "x-ms-keyvault-region": "eastus",
-        "x-ms-keyvault-service-version": "1.9.195.1",
-        "x-ms-request-id": "93680977-9f4b-4b39-ab59-703665fcf980",
+        "x-ms-client-request-id": "88976124-91a9-4892-6b8a-51cf0974c1c0",
+        "x-ms-keyvault-network-info": "conn_type=Ipv4;addr=24.22.157.72;act_addr_fam=InterNetwork;",
+        "x-ms-keyvault-region": "westus3",
+        "x-ms-keyvault-service-version": "1.9.331.5",
+        "x-ms-request-id": "7eb32839-1cae-4fbf-9c27-cd61afc63bfd",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/keys/RemoteEncrypt-1597/create?api-version=7.2"
+      "Url": "https://REDACTED.vault.azure.net/keys/RemoteEncrypt-1597/create?api-version=7.3"
     },
     {
       "Headers": {
         "content-type": "application/json",
-        "user-agent": "azsdk-cpp-KeyVault/4.3.0-beta.1 (Linux 5.4.0-1063-azure x86_64 #66~18.04.1-Ubuntu SMP Thu Oct 21 09:59:28 UTC 2021)",
-        "x-ms-client-request-id": "ecf6c038-b74e-4f0a-6518-7239753d3540"
+        "user-agent": "azsdk-cpp-KeyVault/4.3.0-beta.1 (Windows 10 Enterprise 6.3 22000 22000.1.amd64fre.co_release.210604-1628)",
+        "x-ms-client-request-id": "b4925e97-04d4-4c72-5c7b-caef88a114e3"
       },
       "Method": "POST",
       "Response": {
-        "BODY": "{\"kid\":\"https://cpp-recordings.vault.azure.net/keys/RemoteEncrypt-1597/0200cb4247bf49cfbe2083ece4bf4e7a\",\"value\":\"sogQ0sh0VVci7OAv3asN8zS1zrHobKToNE7cpRO4mCfLcUzbTXLccLZI4pB1-bSUvif8tc4mqQHS5VRYL9QTDTZtm3tLOSWTsaxGAdPZCQR-_VkxdQIXjTs01YIq3Qt5GNFSK_t0rbznjyBnUxKjl7Wry0AyCkbz8P1zcIragAAb7WPQMloeNLAaYZVNTUUsV_52nDSuHrjiO6FTQbubecfbIpURHqPSiAkbtZ2eQTaWKO4zOH63lRWI3c1x1nWsEBD95wojkcRnWXRu1a0fsNcO-6FaVB-n42xTu2cz18kHOTCp8I73tVj0BHlrvkqgAv7WAAvUffcpce4AuFQCXQ\"}",
+        "BODY": "{\"kid\":\"https://REDACTED.vault.azure.net/keys/RemoteEncrypt-1597/7213e4faf8da4f5a9776f7dfb0444010\",\"value\":\"FAx13EoYzSZuCQMXdjz5hLLVAtIFytxJc3FjIOcB912V3KMD7X7mMq1zOdn--00sY833WsFA7phAgyDgeEylgMf2ptK61W2cYtb6FPDRsTRMTtFgFjnR9L5uUJY8Q3VoIC4NdwTd8hqA0EMXH6frhJb_HIbAsf6vlD-NagyqcUl80GlVlhvua_-MXyOcdjs-V6emxOTpK9znpc27uzQhR2R-QA5xxVRaTFLPTEyniERnvGw-a6QAa0t3uCvPEZDC4FOiWcKW0vMbcSTlkiWCl3b7lkaGFxwheoGtUexRod5UN-CReRY_hy10KjsswSSBCoYpB0NurrGwmA0Xm0cVlw\"}",
+        "REASON_PHRASE": "OK",
         "STATUS_CODE": "200",
         "cache-control": "no-cache",
-        "content-length": "458",
+        "content-length": "454",
         "content-type": "application/json; charset=utf-8",
-        "date": "Thu, 02 Dec 2021 21:53:00 GMT",
+        "date": "Thu, 07 Apr 2022 18:55:57 GMT",
         "expires": "-1",
         "pragma": "no-cache",
         "strict-transport-security": "max-age=31536000;includeSubDomains",
         "x-content-type-options": "nosniff",
-        "x-ms-client-request-id": "ecf6c038-b74e-4f0a-6518-7239753d3540",
-        "x-ms-keyvault-network-info": "conn_type=Ipv4;addr=20.49.4.206;act_addr_fam=InterNetwork;",
-        "x-ms-keyvault-region": "eastus",
-        "x-ms-keyvault-service-version": "1.9.195.1",
-        "x-ms-request-id": "3f78c273-8fb7-494b-a401-d758aba263f1",
+        "x-ms-client-request-id": "b4925e97-04d4-4c72-5c7b-caef88a114e3",
+        "x-ms-keyvault-network-info": "conn_type=Ipv4;addr=24.22.157.72;act_addr_fam=InterNetwork;",
+        "x-ms-keyvault-region": "westus3",
+        "x-ms-keyvault-service-version": "1.9.331.5",
+        "x-ms-request-id": "9763a071-5b12-428b-9a38-4a844dd9ae5a",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/keys/RemoteEncrypt-1597/0200cb4247bf49cfbe2083ece4bf4e7a/encrypt?api-version=7.2"
+      "Url": "https://REDACTED.vault.azure.net/keys/RemoteEncrypt-1597/7213e4faf8da4f5a9776f7dfb0444010/encrypt?api-version=7.2"
     },
     {
       "Headers": {
         "content-type": "application/json",
-        "user-agent": "azsdk-cpp-KeyVault/4.3.0-beta.1 (Linux 5.4.0-1063-azure x86_64 #66~18.04.1-Ubuntu SMP Thu Oct 21 09:59:28 UTC 2021)",
-        "x-ms-client-request-id": "394c28f7-a5e9-4bf0-7c21-c222f5a83edf"
+        "user-agent": "azsdk-cpp-KeyVault/4.3.0-beta.1 (Windows 10 Enterprise 6.3 22000 22000.1.amd64fre.co_release.210604-1628)",
+        "x-ms-client-request-id": "cd5623f7-455f-447d-7586-bd82b078a9d5"
       },
       "Method": "POST",
       "Response": {
-        "BODY": "{\"kid\":\"https://cpp-recordings.vault.azure.net/keys/RemoteEncrypt-1597/0200cb4247bf49cfbe2083ece4bf4e7a\",\"value\":\"QSBzaW5nbGUgYmxvY2sgb2YgcGxhaW50ZXh0AA\"}",
+        "BODY": "{\"kid\":\"https://REDACTED.vault.azure.net/keys/RemoteEncrypt-1597/7213e4faf8da4f5a9776f7dfb0444010\",\"value\":\"QSBzaW5nbGUgYmxvY2sgb2YgcGxhaW50ZXh0AA\"}",
+        "REASON_PHRASE": "OK",
         "STATUS_CODE": "200",
         "cache-control": "no-cache",
-        "content-length": "154",
+        "content-length": "150",
         "content-type": "application/json; charset=utf-8",
-        "date": "Thu, 02 Dec 2021 21:53:00 GMT",
+        "date": "Thu, 07 Apr 2022 18:55:57 GMT",
         "expires": "-1",
         "pragma": "no-cache",
         "strict-transport-security": "max-age=31536000;includeSubDomains",
         "x-content-type-options": "nosniff",
-        "x-ms-client-request-id": "394c28f7-a5e9-4bf0-7c21-c222f5a83edf",
-        "x-ms-keyvault-network-info": "conn_type=Ipv4;addr=20.49.4.206;act_addr_fam=InterNetwork;",
-        "x-ms-keyvault-region": "eastus",
-        "x-ms-keyvault-service-version": "1.9.195.1",
-        "x-ms-request-id": "5abf3d9f-096a-4632-ac26-d6fc476b02c2",
+        "x-ms-client-request-id": "cd5623f7-455f-447d-7586-bd82b078a9d5",
+        "x-ms-keyvault-network-info": "conn_type=Ipv4;addr=24.22.157.72;act_addr_fam=InterNetwork;",
+        "x-ms-keyvault-region": "westus3",
+        "x-ms-keyvault-service-version": "1.9.331.5",
+        "x-ms-request-id": "24a56855-e228-4954-907a-97092da52696",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/keys/RemoteEncrypt-1597/0200cb4247bf49cfbe2083ece4bf4e7a/decrypt?api-version=7.2"
+      "Url": "https://REDACTED.vault.azure.net/keys/RemoteEncrypt-1597/7213e4faf8da4f5a9776f7dfb0444010/decrypt?api-version=7.2"
     }
   ]
 }
