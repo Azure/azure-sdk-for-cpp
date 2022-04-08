@@ -20,7 +20,7 @@ namespace Azure { namespace Core { namespace _internal {
    * Example:
    *
    * \code{.cpp}
-   * class MyEnumeration final : public ExtendableEnumeration<AttestationType> {
+   * class MyEnumeration final : public ExtendableEnumeration<MyEnumeration> {
    * public:
    *   explicit MyEnumeration(std::string attestationType) :
    *     ExtendableEnumeration(std::move(attestationType)) {}
