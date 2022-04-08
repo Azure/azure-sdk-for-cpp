@@ -108,6 +108,8 @@ Each client holds an internal copy of the options passed in the arguments. This 
 
 The libcurl and WinHTTP transport adapters can also be initialized with specific options that expose control of features from the HTTP stack underneath them. For example, you can set a proxy or override the default certificate authority (CA) path for libcurl. See the following example:
 ```cpp
+  #include "azure/core/http/curl_transport.hpp"
+  
   /*
   * Customize libcurl HTTP transport adapter.
   */
@@ -119,7 +121,7 @@ The libcurl and WinHTTP transport adapters can also be initialized with specific
   auto curlTransportAdapter = std::make_shared<Azure::Core::Http::CurlTransport>(curlTransportOptions);
 
   BlobClientOptions options;
-  options.TransportOptions.Transport = curlTransportAdapter;
+  options.Transport.Transport = curlTransportAdapter;
   auto storageClient = BlobServiceClient(url, credential, options);
 ```
 
