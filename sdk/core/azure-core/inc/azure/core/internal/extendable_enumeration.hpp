@@ -1,5 +1,10 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
+#if !defined(INCLUDE_AZURE_CORE_EXTENDABLE_ENUMERATION_HPP)
+#pragma once
+
+#define INCLUDE_AZURE_CORE_EXTENDABLE_ENUMERATION_HPP
+
 
 /**
  * @file
@@ -81,3 +86,4 @@ namespace Azure { namespace Core { namespace _internal {
     std::string const& ToString() const { return m_enumerationValue; }
   };
 }}} // namespace Azure::Core::_internal
+#endif // !defined(INCLUDE_AZURE_CORE_EXTENDABLE_ENUMERATION_HPP)
