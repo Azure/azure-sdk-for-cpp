@@ -67,7 +67,7 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
       }
       else
       {
-        returnValue.ValidationTimeSlack = 10s;
+        returnValue.TimeValidationSlack = 10s;
       }
       return returnValue;
     }
@@ -89,18 +89,18 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
     }
 
     // Get Policy management certificates for each instance type.
-    // The GetPolicyManagementCertificates API can be run against all instance types, but it only
+    // The GetIsolatedModeManagementCertificates API can be run against all instance types, but it only
     // returns values on isolated instances (an isolated instance is defined to be an attestation
     // service instance with policy management certificates).
-    void GetPolicyManagementCertificatesTest(ServiceInstanceType const instanceType)
+    void GetIsolatedModeCertificatesTest(ServiceInstanceType const instanceType)
     {
       auto adminClient(CreateClient(instanceType));
 
       adminClient->RetrieveResponseValidationCollateral();
 
       {
-        auto certificatesResult = adminClient->GetPolicyManagementCertificates(
-            GetPolicyManagementCertificatesOptions{GetTokenValidationOptions()});
+        auto certificatesResult = adminClient->GetIsolatedModeCertificates(
+            GetIsolatedModeCertificatesOptions{GetTokenValidationOptions()});
 
         // Do we expect to get any certificates in the response? AAD and Shared instances will never
         // have any certificates.
@@ -156,20 +156,20 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
   }; // namespace Test
 
   // Get Policy management certificates for each instance type.
-  // The GetPolicyManagementCertificates API can be run against all instance types, but it only
+  // The GetIsolatedModeManagementCertificates API can be run against all instance types, but it only
   // returns values on isolated instances (an isolated instance is defined to be an attestation
   // service instance with policy management certificates).
   TEST_F(CertificateTests, GetPolicyManagementCertificatesAad)
   {
-    GetPolicyManagementCertificatesTest(ServiceInstanceType::AAD);
+    GetIsolatedModeCertificatesTest(ServiceInstanceType::AAD);
   }
   TEST_F(CertificateTests, GetPolicyManagementCertificatesIsolated)
   {
-    GetPolicyManagementCertificatesTest(ServiceInstanceType::Isolated);
+    GetIsolatedModeCertificatesTest(ServiceInstanceType::Isolated);
   }
   TEST_F(CertificateTests, GetPolicyManagementCertificatesShared)
   {
-    GetPolicyManagementCertificatesTest(ServiceInstanceType::Shared);
+    GetIsolatedModeCertificatesTest(ServiceInstanceType::Shared);
   }
 
   TEST_F(CertificateTests, AddPolicyManagementCertificate_LIVEONLY_)
@@ -200,7 +200,7 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
       auto isolatedSigningKey(AttestationSigningKey{
           isolatedPrivateKey->ExportPrivateKey(), isolatedCertificate->ExportAsPEM()});
 
-      auto certificatesResult = adminClient->AddPolicyManagementCertificate(
+      auto certificatesResult = adminClient->AddIsolatedModeCertificate(
           certificateToAdd->ExportAsPEM(), isolatedSigningKey);
 
       EXPECT_EQ(
@@ -213,7 +213,7 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
 
     // Make sure that the certificate we just added is included in the enumeration.
     {
-      auto policyCertificates = adminClient->GetPolicyManagementCertificates();
+      auto policyCertificates = adminClient->GetIsolatedModeCertificates();
       EXPECT_GT(policyCertificates.Value.Body.Certificates.size(), 1ul);
 
       bool foundIsolatedCertificate = false;
@@ -265,7 +265,7 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
 
     // Ensure that POLICY_SIGNING_CERTIFICATE_0 is already present in the list of certificates.
     {
-      auto certificatesResult = adminClient->AddPolicyManagementCertificate(
+      auto certificatesResult = adminClient->AddIsolatedModeCertificate(
           certificateToRemove->ExportAsPEM(), isolatedSigningKey);
 
       EXPECT_EQ(
@@ -275,7 +275,7 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
 
     // And now remove that certificate.
     {
-      auto certificatesResult = adminClient->RemovePolicyManagementCertificate(
+      auto certificatesResult = adminClient->RemoveIsolatedModeCertificate(
           certificateToRemove->ExportAsPEM(), isolatedSigningKey);
 
       EXPECT_EQ(
@@ -288,7 +288,7 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
 
     // Make sure that the certificate we just removed is NOT included in the enumeration.
     {
-      auto policyCertificates = adminClient->GetPolicyManagementCertificates();
+      auto policyCertificates = adminClient->GetIsolatedModeCertificates();
       EXPECT_EQ(policyCertificates.Value.Body.Certificates.size(), 1ul);
 
       bool foundIsolatedCertificate = false;
@@ -335,7 +335,7 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
 
     {
       EXPECT_THROW(
-          adminClient->AddPolicyManagementCertificate(
+          adminClient->AddIsolatedModeCertificate(
               fakedCertificateToAdd->ExportAsPEM(), isolatedSigningKey),
           Azure::Core::RequestFailedException);
     }
@@ -363,7 +363,7 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
 
     {
       EXPECT_THROW(
-          adminClient->RemovePolicyManagementCertificate(
+          adminClient->RemoveIsolatedModeCertificate(
               fakedCertificateToRemove->ExportAsPEM(), isolatedSigningKey),
           Azure::Core::RequestFailedException);
     }

@@ -19,7 +19,7 @@
  * by the attestation samples.
  */
 
-namespace detail {
+namespace _detail {
 // Helpers to provide RAII wrappers for OpenSSL types.
 template <typename T, void (&Deleter)(T*)> struct openssl_deleter
 {
@@ -93,7 +93,7 @@ struct OpenSSLException : public std::runtime_error
   OpenSSLException(std::string const& what) : runtime_error(GetOpenSSLError(what)) {}
 };
 
-} // namespace detail
+} // namespace _detail
 
 class Cryptography {
 public:
@@ -103,7 +103,7 @@ public:
    */
   class X509Certificate {
   private:
-    detail::openssl_unique_ptr<X509> m_certificate;
+    ::_detail::openssl_unique_ptr<X509> m_certificate;
     // Delete the copy constructor and assignment operator for this certificate.
     X509Certificate(const X509Certificate&) = delete;
     X509Certificate& operator=(const X509Certificate&) = delete;
@@ -125,13 +125,13 @@ public:
     }
     static std::string GetFormattedDnString(const X509_NAME* dn)
     {
-      detail::openssl_bio bio(detail::make_openssl_unique(BIO_new, BIO_s_mem()));
+      ::_detail::openssl_bio bio(::_detail::make_openssl_unique(BIO_new, BIO_s_mem()));
       // Print the DN in a single line, but don't add spaces around the equals sign (mbedtls
       // doesn't add them, so if we want them to compare properly, we remove the spaces).
       int length = X509_NAME_print_ex(bio.get(), dn, 0, XN_FLAG_ONELINE & ~XN_FLAG_SPC_EQ);
       if (length < 0)
       {
-        throw detail::OpenSSLException("X509_NAME_print_ex");
+        throw ::_detail::OpenSSLException("X509_NAME_print_ex");
       }
 
       // Now extract the data from the BIO and return it as a string.
@@ -145,7 +145,7 @@ public:
 
   private:
     X509Certificate() {}
-    X509Certificate(detail::openssl_unique_ptr<X509>&& x509) : m_certificate(std::move(x509)) {}
+    X509Certificate(::_detail::openssl_unique_ptr<X509>&& x509) : m_certificate(std::move(x509)) {}
 
   public:
     virtual ~X509Certificate() {}
@@ -171,7 +171,7 @@ public:
     virtual std::string GetThumbprint() const
     {
       // X.509 thumbprints are calculated using SHA1, even though SHA1 is insecure.
-      auto hash(detail::make_openssl_unique(EVP_MD_CTX_new));
+      auto hash(::_detail::make_openssl_unique(EVP_MD_CTX_new));
       EVP_DigestInit_ex(hash.get(), EVP_sha1(), nullptr);
 
       int len = i2d_X509(m_certificate.get(), nullptr);
@@ -179,17 +179,17 @@ public:
       unsigned char* buf = thumbprintBuffer.data();
       if (i2d_X509(m_certificate.get(), &buf) < 0)
       {
-        throw detail::OpenSSLException("i2d_X509");
+        throw ::_detail::OpenSSLException("i2d_X509");
       }
       if (EVP_DigestUpdate(hash.get(), thumbprintBuffer.data(), thumbprintBuffer.size()) != 1)
       {
-        throw detail::OpenSSLException("EVP_DigestUpdate");
+        throw ::_detail::OpenSSLException("EVP_DigestUpdate");
       }
       uint32_t hashLength = EVP_MAX_MD_SIZE;
       std::vector<uint8_t> hashedThumbprint(EVP_MAX_MD_SIZE);
       if (EVP_DigestFinal_ex(hash.get(), hashedThumbprint.data(), &hashLength) != 1)
       {
-        throw detail::OpenSSLException("EVP_DigestFinal_ex");
+        throw ::_detail::OpenSSLException("EVP_DigestFinal_ex");
       }
       hashedThumbprint.resize(hashLength);
 
@@ -206,15 +206,15 @@ public:
     static std::unique_ptr<Cryptography::X509Certificate> Import(
         std::string const& pemEncodedString)
     {
-      auto bio(detail::make_openssl_unique(
+      auto bio(::_detail::make_openssl_unique(
           BIO_new_mem_buf, pemEncodedString.data(), static_cast<int>(pemEncodedString.size())));
       X509* raw_x509 = nullptr;
       raw_x509 = PEM_read_bio_X509(bio.get(), nullptr, nullptr, nullptr);
       if (raw_x509 == nullptr)
       {
-        throw detail::OpenSSLException("PEM_read_bio_X509"); // LCOV_EXCL_LINE
+        throw ::_detail::OpenSSLException("PEM_read_bio_X509"); // LCOV_EXCL_LINE
       }
-      detail::openssl_unique_ptr<X509> x509(raw_x509);
+      ::_detail::openssl_unique_ptr<X509> x509(raw_x509);
       raw_x509 = nullptr;
       return std::unique_ptr<X509Certificate>(new X509Certificate(std::move(x509)));
     }

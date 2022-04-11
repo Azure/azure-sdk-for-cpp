@@ -77,8 +77,8 @@ int main()
 
       // Add the new certificate to the set of policy management certificates for this attestation
       // service instance.
-      Azure::Response<AttestationToken<PolicyCertificateModificationResult>> const addResult
-          = adminClient.AddPolicyManagementCertificate(pemCertificateToAdd, requestSigner);
+      Azure::Response<AttestationToken<IsolatedModeCertificateModificationResult>> const addResult
+          = adminClient.AddIsolatedModeCertificate(pemCertificateToAdd, requestSigner);
 
       std::cout << "The result of the certificate add operation is: "
                 << addResult.Value.Body.CertificateModification.ToString() << std::endl;
@@ -116,8 +116,8 @@ int main()
 
       // Add the new certificate to the set of policy management certificates for this attestation
       // service instance.
-      Azure::Response<AttestationToken<PolicyCertificateModificationResult>> const addResult
-          = adminClient.RemovePolicyManagementCertificate(pemCertificateToRemove, requestSigner);
+      Azure::Response<AttestationToken<IsolatedModeCertificateModificationResult>> const addResult
+          = adminClient.RemoveIsolatedModeCertificate(pemCertificateToRemove, requestSigner);
 
       std::cout << "The result of the certificate remove operation is: "
                 << addResult.Value.Body.CertificateModification.ToString() << std::endl;

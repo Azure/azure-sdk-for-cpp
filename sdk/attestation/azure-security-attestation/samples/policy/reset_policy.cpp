@@ -52,7 +52,7 @@ int main()
     clientOptions.TokenValidationOptions.ValidateIssuer = true;
 
     // Ten seconds of clock drift are allowed between this machine and the attestation service.
-    clientOptions.TokenValidationOptions.ValidationTimeSlack = 10s;
+    clientOptions.TokenValidationOptions.TimeValidationSlack = 10s;
 
     // create client
     auto const credential = std::make_shared<Azure::Identity::ClientSecretCredential>(

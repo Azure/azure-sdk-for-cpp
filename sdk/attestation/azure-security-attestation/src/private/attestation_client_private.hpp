@@ -60,7 +60,7 @@ namespace Azure { namespace Security { namespace Attestation { namespace _detail
         {
           auto expiresOn = static_cast<std::chrono::system_clock::time_point>(*m_token.ExpiresOn);
           auto timeDelta = timeNow - expiresOn;
-          if (timeDelta > validationOptions.ValidationTimeSlack)
+          if (timeDelta > validationOptions.TimeValidationSlack)
           {
             std::stringstream ss;
             ss << "Attestation token has expired. Token expiration time: "
@@ -76,7 +76,7 @@ namespace Azure { namespace Security { namespace Attestation { namespace _detail
         {
           auto notBefore = static_cast<std::chrono::system_clock::time_point>(*m_token.NotBefore);
           auto timeDelta = notBefore - timeNow;
-          if (timeDelta > validationOptions.ValidationTimeSlack)
+          if (timeDelta > validationOptions.TimeValidationSlack)
           {
             std::stringstream ss;
             ss << "Attestation token is not yet valid. Token becomes valid at time: "
@@ -204,12 +204,13 @@ namespace Azure { namespace Security { namespace Attestation { namespace _detail
       return Azure::Nullable<Models::AttestationSigner>();
     }
 
+    // Set the token body based on the bodyToSet parameter provided.
     template <typename Ty>
     void SetTokenBody(
         Azure::Core::Json::_internal::json const& jsonBody,
-        Azure::Nullable<Ty> bodyToSet)
+        Ty const* const bodyToSet)
     {
-      if (bodyToSet)
+      if (bodyToSet != nullptr)
       {
         m_token.Body = *bodyToSet;
       }
@@ -219,7 +220,8 @@ namespace Azure { namespace Security { namespace Attestation { namespace _detail
       }
     }
 
-    void SetTokenBody(Azure::Core::Json::_internal::json const&, Azure::Nullable<std::nullptr_t>) {}
+    // Null token body overload - used when the AttestationTokenInternal has no body.
+    void SetTokenBody(Azure::Core::Json::_internal::json const&, void const * const) {}
 
   public:
     /** @brief Constructs a new instance of an AttestationToken object from a JSON Web Token or JSON
@@ -231,7 +233,7 @@ namespace Azure { namespace Security { namespace Attestation { namespace _detail
      *
      * @param jwt - the JSON Web Token/JSON Web Signature to be parsed.
      */
-    AttestationTokenInternal(std::string const& jwt, Azure::Nullable<T> preferredBody = {})
+    AttestationTokenInternal(std::string const& jwt, T const * const preferredBody = nullptr)
     {
       m_token.RawToken = jwt;
 
@@ -433,7 +435,7 @@ namespace Azure { namespace Security { namespace Attestation { namespace _detail
 
       if (validationOptions.ValidationCallback)
       {
-        AttestationTokenInternal<std::nullptr_t> tokenForCallback(m_token.RawToken);
+        AttestationTokenInternal<void> tokenForCallback(m_token.RawToken);
         validationOptions.ValidationCallback(
             tokenForCallback, tokenSigner ? *tokenSigner : Models::AttestationSigner());
       }

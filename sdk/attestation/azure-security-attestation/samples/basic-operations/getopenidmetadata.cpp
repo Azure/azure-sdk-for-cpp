@@ -35,8 +35,7 @@ int main()
     AttestationClient const attestationClient(GetEnvHelper::GetEnv("ATTESTATION_AAD_URL"));
 
     // Retrieve the OpenId metadata from this attestation service instance.
-    Azure::Response<AttestationOpenIdMetadata> const openIdMetadata
-        = attestationClient.GetOpenIdMetadata();
+    Azure::Response<OpenIdMetadata> const openIdMetadata = attestationClient.GetOpenIdMetadata();
     std::cout << "Attestation Certificate Endpoint is: " << *openIdMetadata.Value.JsonWebKeySetUrl
               << std::endl;
   }

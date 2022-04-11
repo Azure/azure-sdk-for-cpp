@@ -42,7 +42,8 @@ int main()
     AttestationAdministrationClient const adminClient(
         GetEnvHelper::GetEnv("ATTESTATION_AAD_URL"), credential);
 
-    std::cout << "Admin client is using API version " << adminClient.ClientVersion() << std::endl;
+    std::cout << "Admin client is Communicating with " << adminClient.Endpoint().GetAbsoluteUrl()
+              << std::endl;
   }
   catch (Azure::Core::Credentials::AuthenticationException const& e)
   {

@@ -87,7 +87,7 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
       }
       else
       {
-        returnValue.ValidationTimeSlack = 10s;
+        returnValue.TimeValidationSlack = 10s;
       }
       return returnValue;
     }
@@ -125,10 +125,10 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
   {
     auto client(CreateClient(InstanceType::AAD));
 
-    auto response(client->AttestTpm(R"({"payload": { "type": "aikcert" } })"));
+    auto response(client->AttestTpm(AttestTpmOptions{R"({"payload": { "type": "aikcert" } })"}));
 
     Azure::Core::Json::_internal::json parsedResponse(
-        Azure::Core::Json::_internal::json::parse(response.Value));
+        Azure::Core::Json::_internal::json::parse(response.Value.TpmResult));
     EXPECT_TRUE(parsedResponse.contains("payload"));
     EXPECT_TRUE(parsedResponse["payload"].is_object());
     EXPECT_TRUE(parsedResponse["payload"].contains("challenge"));

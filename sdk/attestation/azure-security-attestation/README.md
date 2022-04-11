@@ -155,15 +155,15 @@ The following APIs are available in the shared instance:
 - AttestSgxEnclave
 - AttestOpenEnclave
 - GetAttestationPolicy
-- GetPolicyManagementCertificates (always returns an empty set)
+- GetIsolatedModeCertificates (always returns an empty set)
 
 The following APIs are not available in the shared instance:
 
 - AttestTPMEnclave
 - SetAttestationPolicy
 - ResetAttestationPolicy
-- AddPolicyManagementCertificate
-- RemovePolicyManagementCertificate
+- AddIsolatedModeCertificate
+- RemoveIsolatedModeCertificate
 
 The APIs available in the shared instance do not require AAD authentication.
 
@@ -178,18 +178,18 @@ Most responses from the MAA service are expressed in the form of a JSON Web Toke
 issued by the MAA service for the specified instance. If the MAA service instance is running in a region where the service runs in an SGX enclave, then
 the certificate issued by the server can be verified using the [oe_verify_attestation_certificate() API](https://openenclave.github.io/openenclave/api/enclave_8h_a3b75c5638360adca181a0d945b45ad86.html).
 
-### Policy Management
+### Isolated Mode Management
 
 Each attestation service instance has a policy applied to it which defines additional criteria which the customer has defined.
 
 For more information on attestation policies, see [Attestation Policy](https://docs.microsoft.com/azure/attestation/author-sign-policy)
 
-### Policy Management certificate management
+### Isolated Mode certificate management
 
 When an attestation instance is running in "Isolated" mode, the customer who created the instance will have provided
-a policy management certificate at the time the instance is created. All policy modification operations require that the customer sign
-the policy data with one of the existing policy management certificates. The Policy Management Certificate Management APIs enable
-clients to add, remove or enumerate the policy management certificates.
+a certificate at the time the instance is created. All administrative operations (for instance, policy modification operations) 
+require that the customer sign the policy data with one of the existing policy management certificates. The 
+Isolated Mode Certificate Management APIs enable clients to add, remove or enumerate these certificates.
 
 ### Examples
 
@@ -239,15 +239,17 @@ This only needs to be called once for each attestation client or attestation adm
 ```
 #### Retrieve Token Certificates
 
-Use `GetAttestationSigningCertificates` to retrieve the set of certificates, which can be used to validate the token returned from the attestation service.
+Use `GewtTokenValidationCertificates` to retrieve the set of certificates, which can be used to validate the token returned 
+from the attestation service.
+
 Normally, this information is not required as the attestation SDK will perform the validation as a part of the interaction with the
 attestation service, however the APIs are provided for completeness and to facilitate customer's independently validating
 attestation results.
 
 ```cpp
-auto attestationSigners = attestationClient->GetAttestationSigningCertificates();
+auto validationCertificates = attestationClient->GetTokenValidationCertificates();
 // Enumerate the signers.
-for (const auto& signer : attestationSigners.Value.Signers)
+for (const auto& signer : validationCertificates.Value.Signers)
 {
 }
 
@@ -380,8 +382,8 @@ one of the policy management certificates and is thus authorized to perform the 
 adminClient.RetrieveResponseValidationCollateral();
 
 // Retrieve the SGX Attestation Policy from this attestation service instance.
-Azure::Response<AttestationToken<PolicyCertificateListResult>> const policyCertificates
-        = adminClient.GetPolicyManagementCertificates();
+Azure::Response<AttestationToken<IsolatedModeCertificateListResult>> const policyCertificates
+        = adminClient.GetIsolatedModeCertificates();
 
 std::cout << "There are " << policyCertificates.Value.Body.Certificates.size()
               << " certificates configured on this instance." << std::endl;
@@ -418,8 +420,8 @@ ignored (this possibly surprising behavior is there because retries could cause 
 
       // Add the new certificate to the set of policy management certificates for this attestation
       // service instance.
-      Azure::Response<AttestationToken<PolicyCertificateModificationResult>> const addResult
-          = adminClient.AddPolicyManagementCertificate(pemCertificateToAdd, requestSigner);
+      Azure::Response<AttestationToken<IsolatedModeCertificateModificationResult>> const addResult
+          = adminClient.AddIsolatedModeCertificate(pemCertificateToAdd, requestSigner);
 
       std::cout << "The result of the certificate add operation is: "
                 << addResult.Value.Body.CertificateModification.ToString() << std::endl;
@@ -443,8 +445,8 @@ std::string const pemCertificateToRemove(
 
 // Add the new certificate to the set of policy management certificates for this attestation
 // service instance.
-Azure::Response<AttestationToken<PolicyCertificateModificationResult>> const addResult
-    = adminClient.RemovePolicyManagementCertificate(pemCertificateToRemove, requestSigner);
+Azure::Response<AttestationToken<IsolatedModeCertificateModificationResult>> const addResult
+    = adminClient.RemoveIsolatedModeCertificate(pemCertificateToRemove, requestSigner);
 
 std::cout << "The result of the certificate remove operation is: "
         << addResult.Value.Body.CertificateModification.ToString() << std::endl;

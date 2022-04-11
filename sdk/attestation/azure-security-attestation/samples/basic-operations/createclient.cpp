@@ -32,7 +32,7 @@ int main()
 
     // Allow up to 10s of time difference between the attestation client and the attestation
     // service.
-    clientOptions.TokenValidationOptions.ValidationTimeSlack = 10s;
+    clientOptions.TokenValidationOptions.TimeValidationSlack = 10s;
 
     // create client
     AttestationClient const attestationClient(

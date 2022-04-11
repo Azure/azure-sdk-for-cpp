@@ -35,8 +35,8 @@ int main()
     AttestationClient const attestationClient(GetEnvHelper::GetEnv("ATTESTATION_AAD_URL"));
 
     // Retrieve the OpenId metadata from this attestation service instance.
-    Azure::Response<AttestationSigningCertificateResult> const signingCertificates
-        = attestationClient.GetAttestationSigningCertificates();
+    Azure::Response<TokenValidationCertificateResult> const signingCertificates
+        = attestationClient.GetTokenValidationCertificates();
 
     std::cout << "There are " << signingCertificates.Value.Signers.size() << "signing certificates."
               << std::endl;

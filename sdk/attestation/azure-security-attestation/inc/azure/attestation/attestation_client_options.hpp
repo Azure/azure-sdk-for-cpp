@@ -57,8 +57,9 @@ namespace Azure { namespace Security { namespace Attestation {
    * @param token AttestationToken returned by the attestation service.
    * @param tokenSigner AttestationSigner which signed the AttestationToken.
    */
-  using TokenValidationCallbackFn = std::function<
-      void(Models::AttestationToken<> const& token, Models::AttestationSigner const& tokenSigner)>;
+  using TokenValidationCallbackFn = std::function<void(
+      Models::AttestationToken<void> const& token,
+      Models::AttestationSigner const& tokenSigner)>;
 
   /** @brief The AttestationTokenValidationOptions represents a set of options which control how
    * attestation tokens are validated. */
@@ -103,7 +104,7 @@ namespace Azure { namespace Security { namespace Attestation {
 
     /** @brief The slack used when comparing two time elements.
      */
-    std::chrono::seconds ValidationTimeSlack{0};
+    std::chrono::seconds TimeValidationSlack{0};
 
     /** @brief The TokenValidationCallback specifies a callback function which can perform
      * additional token validation actions.
@@ -126,7 +127,7 @@ namespace Azure { namespace Security { namespace Attestation {
   {
     /** @brief Version to use when communicating with the attestation service.
      */
-    ServiceVersion Version;
+    ServiceVersion Version{ServiceVersion::V2020_10_01};
     /** @brief Options sent when validating tokens received by the attestation service.
      */
     AttestationTokenValidationOptions TokenValidationOptions;
@@ -153,7 +154,7 @@ namespace Azure { namespace Security { namespace Attestation {
   {
     /** @brief Version to use when communicating with the attestation service.
      */
-    ServiceVersion Version;
+    ServiceVersion Version{ServiceVersion::V2020_10_01};
     /** @brief Options sent when validating tokens received by the attestation service.
      */
     AttestationTokenValidationOptions TokenValidationOptions;
@@ -173,18 +174,8 @@ namespace Azure { namespace Security { namespace Attestation {
     }
   };
 
-  /** @brief Attestation Validation Collateral
-   *
-   * This structure contains all the information needed to validate the response from the
-   * attestation service.
-   *
-   */
-  class AttestationValidationCollateral final {
-    std::vector<Models::AttestationSigner> m_attestationSigners;
-  };
-
   /** @brief The AttestationDataType represents how the attestation service should interpret the
-   * {@link AttestOptions::RuntimeData} and {@link AttestOptions::InittimeData} fields.
+   * {@link AttestOptions::RunTimeData} and {@link AttestOptions::InitTimeData} fields.
    */
   class AttestationDataType final {
   private:
@@ -250,17 +241,17 @@ namespace Azure { namespace Security { namespace Attestation {
 
   /** @brief Parameters sent to the attestation service to be consumed in an attestation operation.
    */
-  struct AttestOptions final
+  struct AttestEnclaveOptions final
   {
     /**
      * @brief Data created dynamically within the enclave
      */
-    Azure::Nullable<AttestationData> RuntimeData{};
+    Azure::Nullable<AttestationData> RunTimeData{};
 
     /**
      * @brief Data created when the enclave was created. Not supported on Coffeelake processors.
      */
-    Azure::Nullable<AttestationData> InittimeData{};
+    Azure::Nullable<AttestationData> InitTimeData{};
 
     /**
      * @brief Nonce which is sent to the attestation service to allow a caller to prevent replay
@@ -275,18 +266,30 @@ namespace Azure { namespace Security { namespace Attestation {
     Azure::Nullable<std::string> DraftPolicyForAttestation{};
 
     /** @brief Specifies the options which should be used to validate the attestation token returned
-     * by the attestation service.
+     * by the attestation service. Overrides the value specified in the AttestationClient.
      * @details If not provided by the caller, the token validation options
      * specified when the @{link AttestationClient} was created will be used.
      */
-    Azure::Nullable<AttestationTokenValidationOptions> TokenValidationOptions{};
+    Azure::Nullable<AttestationTokenValidationOptions> TokenValidationOptionsOverride{};
+  };
+
+  /** @brief Parameters sent to the attestation service for the AttestTpm API.
+   */
+  struct AttestTpmOptions final
+  {
+    /**
+     * @brief JSON Data to send to the attestation service for TPM attestation.
+     * @details The TPM attestation protocol is defined
+     * [here](https://docs.microsoft.com/azure/attestation/virtualization-based-security-protocol')
+     */
+    std::string ValueToSend;
   };
 
   /** @brief The AttestationSigningKey represents a tuple of asymmetric private cryptographic key
    * and X.509 certificate wrapping the public key contained in the certificate.
    *
    * It is used when signing a value to be sent to the attestation service for the Set Policy,
-   * Reset Policy, Add Policy Management Certificate, and Remove Policy Management Certificate.
+   * Reset Policy, Add Isolated Mode Certificate, and Remove Isolated Mode Certificate.
    */
   struct AttestationSigningKey final
   {
@@ -308,11 +311,11 @@ namespace Azure { namespace Security { namespace Attestation {
   struct GetPolicyOptions final
   {
     /** @brief Specifies the options which should be used to validate the attestation token returned
-     * by the attestation service.
+     * by the attestation service. Overrides the value specified in the AttestationClient.
      * @details If not provided by the caller, the token validation options
-     * specified when the @{link AttestationAdministrationClient} was created will be used.
+     * specified when the @{link AttestationClient} was created will be used.
      */
-    Azure::Nullable<AttestationTokenValidationOptions> TokenValidationOptions;
+    Azure::Nullable<AttestationTokenValidationOptions> TokenValidationOptionsOverride{};
   };
 
   /** @brief Parameters sent to the attestation service when setting an attestation policy.
@@ -324,50 +327,50 @@ namespace Azure { namespace Security { namespace Attestation {
     Azure::Nullable<AttestationSigningKey> SigningKey;
 
     /** @brief Specifies the options which should be used to validate the attestation token returned
-     * by the attestation service.
+     * by the attestation service. Overrides the value specified in the AttestationClient.
      * @details If not provided by the caller, the token validation options
-     * specified when the @{link AttestationAdministrationClient} was created will be used.
+     * specified when the @{link AttestationClient} was created will be used.
      */
-    Azure::Nullable<AttestationTokenValidationOptions> TokenValidationOptions;
+    Azure::Nullable<AttestationTokenValidationOptions> TokenValidationOptionsOverride{};
   };
 
   /** @brief Parameters sent to the attestation service when retrieving the list of policy
    * management certificates.
    */
-  struct GetPolicyManagementCertificatesOptions final
+  struct GetIsolatedModeCertificatesOptions final
   {
     /** @brief Specifies the options which should be used to validate the attestation token returned
-     * by the attestation service.
+     * by the attestation service. Overrides the value specified in the AttestationClient.
      * @details If not provided by the caller, the token validation options
-     * specified when the @{link AttestationAdministrationClient} was created will be used.
+     * specified when the @{link AttestationClient} was created will be used.
      */
-    Azure::Nullable<AttestationTokenValidationOptions> TokenValidationOptions{};
+    Azure::Nullable<AttestationTokenValidationOptions> TokenValidationOptionsOverride{};
   };
 
   /** @brief Parameters sent to the attestation service when adding a new policy
    * management certificate.
    */
-  struct AddPolicyManagementCertificatesOptions final
+  struct AddIsolatedModeCertificatesOptions final
   {
     /** @brief Specifies the options which should be used to validate the attestation token returned
-     * by the attestation service.
+     * by the attestation service. Overrides the value specified in the AttestationClient.
      * @details If not provided by the caller, the token validation options
-     * specified when the @{link AttestationAdministrationClient} was created will be used.
+     * specified when the @{link AttestationClient} was created will be used.
      */
-    Azure::Nullable<AttestationTokenValidationOptions> TokenValidationOptions{};
+    Azure::Nullable<AttestationTokenValidationOptions> TokenValidationOptionsOverride{};
   };
 
   /** @brief Parameters sent to the attestation service when removing a policy
    * management certificate.
    */
-  struct RemovePolicyManagementCertificatesOptions final
+  struct RemoveIsolatedModeCertificatesOptions final
   {
     /** @brief Specifies the options which should be used to validate the attestation token returned
-     * by the attestation service.
+     * by the attestation service. Overrides the value specified in the AttestationClient.
      * @details If not provided by the caller, the token validation options
-     * specified when the @{link AttestationAdministrationClient} was created will be used.
+     * specified when the @{link AttestationClient} was created will be used.
      */
-    Azure::Nullable<AttestationTokenValidationOptions> TokenValidationOptions{};
+    Azure::Nullable<AttestationTokenValidationOptions> TokenValidationOptionsOverride{};
   };
 
 }}} // namespace Azure::Security::Attestation

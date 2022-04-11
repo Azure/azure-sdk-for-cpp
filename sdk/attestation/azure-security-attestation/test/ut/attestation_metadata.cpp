@@ -73,7 +73,7 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
   {
     auto attestationClient(CreateClient());
 
-    EXPECT_FALSE(attestationClient->ClientVersion().empty());
+    EXPECT_FALSE(attestationClient->Endpoint().GetAbsoluteUrl().empty());
 
     auto openIdMetadata = attestationClient->GetOpenIdMetadata();
 
@@ -94,7 +94,7 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
   {
     auto attestationClient(CreateClient());
 
-    auto attestationSigners = attestationClient->GetAttestationSigningCertificates();
+    auto attestationSigners = attestationClient->GetTokenValidationCertificates();
     EXPECT_LE(1UL, attestationSigners.Value.Signers.size());
     for (const auto& signer : attestationSigners.Value.Signers)
     {

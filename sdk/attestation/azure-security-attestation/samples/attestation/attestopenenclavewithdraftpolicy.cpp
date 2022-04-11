@@ -50,7 +50,7 @@ int main()
 
     std::vector<uint8_t> const openEnclaveReport = AttestationCollateral::OpenEnclaveReport();
 
-    AttestOptions options;
+    AttestEnclaveOptions options;
     options.DraftPolicyForAttestation = R"(version= 1.0;
 authorizationrules
 {
