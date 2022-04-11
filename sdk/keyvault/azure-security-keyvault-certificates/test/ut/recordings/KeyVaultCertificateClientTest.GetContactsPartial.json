@@ -25,7 +25,7 @@
         "x-ms-request-id": "a2fd2a19-ffc8-4510-a56a-e33055869567",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/certificates/contacts?api-version=7.2"
+      "Url": "https://REDACTED.vault.azure.net/certificates/contacts?api-version=7.3"
     },
     {
       "Headers": {
@@ -52,7 +52,7 @@
         "x-ms-request-id": "5c72479b-04d4-44ed-b88a-a9ac663493e6",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/certificates/contacts?api-version=7.2"
+      "Url": "https://REDACTED.vault.azure.net/certificates/contacts?api-version=7.3"
     },
     {
       "Headers": {
@@ -79,7 +79,7 @@
         "x-ms-request-id": "9d099504-8ab1-4c0d-a560-4c110c182126",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/certificates/contacts?api-version=7.2"
+      "Url": "https://REDACTED.vault.azure.net/certificates/contacts?api-version=7.3"
     }
   ]
 }
