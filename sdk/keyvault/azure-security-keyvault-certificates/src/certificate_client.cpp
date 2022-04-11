@@ -495,3 +495,4 @@ Azure::Response<KeyVaultCertificate> CertificateClient::UpdateCertificatePropert
 }
 
 const ServiceVersion ServiceVersion::V7_3("7.3");
+const ServiceVersion ServiceVersion::V7_2("7.2");
