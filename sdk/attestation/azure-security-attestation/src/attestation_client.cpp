@@ -65,8 +65,8 @@ Azure::Response<OpenIdMetadata> AttestationClient::GetOpenIdMetadata(
   return Response<OpenIdMetadata>(std::move(openIdMetadata), std::move(response));
 }
 
-Azure::Response<TokenValidationCertificateResult>
-AttestationClient::GetTokenValidationCertificates(Azure::Core::Context const& context) const
+Azure::Response<TokenValidationCertificateResult> AttestationClient::GetTokenValidationCertificates(
+    Azure::Core::Context const& context) const
 {
   auto request
       = AttestationCommonRequest::CreateRequest(m_endpoint, HttpMethod::Get, {"certs"}, nullptr);

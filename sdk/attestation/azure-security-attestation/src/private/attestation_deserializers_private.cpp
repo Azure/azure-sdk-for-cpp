@@ -354,7 +354,8 @@ namespace Azure { namespace Security { namespace Attestation { namespace _detail
     return serializedPolicy.dump();
   }
 
-  Models::_detail::GetIsolatedModeCertificatesResult IsolatedModeCertificateGetResultSerializer::Deserialize(
+  Models::_detail::GetIsolatedModeCertificatesResult
+  IsolatedModeCertificateGetResultSerializer::Deserialize(
       Azure::Core::Json::_internal::json const& parsedResult)
   {
     Models::_detail::GetIsolatedModeCertificatesResult returnValue;
@@ -376,8 +377,7 @@ namespace Azure { namespace Security { namespace Attestation { namespace _detail
     return serializedPolicy.dump();
   }
 
-  Models::_detail::IsolatedModeCertificateBody
-  IsolatedModeCertificateBodySerializer::Deserialize(
+  Models::_detail::IsolatedModeCertificateBody IsolatedModeCertificateBodySerializer::Deserialize(
       Azure::Core::Json::_internal::json const& jsonBody)
   {
     Models::_detail::IsolatedModeCertificateBody body;

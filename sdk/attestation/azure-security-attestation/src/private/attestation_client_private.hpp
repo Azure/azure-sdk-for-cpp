@@ -206,9 +206,7 @@ namespace Azure { namespace Security { namespace Attestation { namespace _detail
 
     // Set the token body based on the bodyToSet parameter provided.
     template <typename Ty>
-    void SetTokenBody(
-        Azure::Core::Json::_internal::json const& jsonBody,
-        Ty const* const bodyToSet)
+    void SetTokenBody(Azure::Core::Json::_internal::json const& jsonBody, Ty const* const bodyToSet)
     {
       if (bodyToSet != nullptr)
       {
@@ -221,7 +219,7 @@ namespace Azure { namespace Security { namespace Attestation { namespace _detail
     }
 
     // Null token body overload - used when the AttestationTokenInternal has no body.
-    void SetTokenBody(Azure::Core::Json::_internal::json const&, void const * const) {}
+    void SetTokenBody(Azure::Core::Json::_internal::json const&, void const* const) {}
 
   public:
     /** @brief Constructs a new instance of an AttestationToken object from a JSON Web Token or JSON
@@ -233,7 +231,7 @@ namespace Azure { namespace Security { namespace Attestation { namespace _detail
      *
      * @param jwt - the JSON Web Token/JSON Web Signature to be parsed.
      */
-    AttestationTokenInternal(std::string const& jwt, T const * const preferredBody = nullptr)
+    AttestationTokenInternal(std::string const& jwt, T const* const preferredBody = nullptr)
     {
       m_token.RawToken = jwt;
 

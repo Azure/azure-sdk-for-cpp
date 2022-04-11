@@ -89,9 +89,9 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
     }
 
     // Get Policy management certificates for each instance type.
-    // The GetIsolatedModeManagementCertificates API can be run against all instance types, but it only
-    // returns values on isolated instances (an isolated instance is defined to be an attestation
-    // service instance with policy management certificates).
+    // The GetIsolatedModeManagementCertificates API can be run against all instance types, but it
+    // only returns values on isolated instances (an isolated instance is defined to be an
+    // attestation service instance with policy management certificates).
     void GetIsolatedModeCertificatesTest(ServiceInstanceType const instanceType)
     {
       auto adminClient(CreateClient(instanceType));
@@ -156,8 +156,8 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
   }; // namespace Test
 
   // Get Policy management certificates for each instance type.
-  // The GetIsolatedModeManagementCertificates API can be run against all instance types, but it only
-  // returns values on isolated instances (an isolated instance is defined to be an attestation
+  // The GetIsolatedModeManagementCertificates API can be run against all instance types, but it
+  // only returns values on isolated instances (an isolated instance is defined to be an attestation
   // service instance with policy management certificates).
   TEST_F(CertificateTests, GetPolicyManagementCertificatesAad)
   {

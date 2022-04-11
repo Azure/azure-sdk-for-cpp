@@ -313,7 +313,8 @@ AttestationAdministrationClient::GetIsolatedModeCertificates(
       m_attestationSigners);
 
   Models::_detail::JsonWebKeySet jwks(
-      *static_cast<AttestationToken<Models::_detail::GetIsolatedModeCertificatesResult>>(resultToken)
+      *static_cast<AttestationToken<Models::_detail::GetIsolatedModeCertificatesResult>>(
+           resultToken)
            .Body.PolicyCertificates);
   Models::IsolatedModeCertificateListResult returnedResult;
   for (const auto& certificate : jwks.Keys)
@@ -347,9 +348,8 @@ std::string AttestationAdministrationClient::CreateIsolatedModeModificationToken
   IsolatedModeCertificateBody bodyToSend{jwkToSend};
 
   auto const internalTokenToSend(
-      AttestationTokenInternal<
-          IsolatedModeCertificateBody,
-          IsolatedModeCertificateBodySerializer>::CreateToken(bodyToSend, existingSigningKey));
+      AttestationTokenInternal<IsolatedModeCertificateBody, IsolatedModeCertificateBodySerializer>::
+          CreateToken(bodyToSend, existingSigningKey));
 
   auto const tokenToSend(
       static_cast<AttestationToken<IsolatedModeCertificateBody>>(internalTokenToSend));
@@ -381,7 +381,8 @@ AttestationAdministrationClient::ProcessIsolatedModeModificationResult(
 
   // Extract the underlying policy token from the response.
   auto internalResult
-      = static_cast<AttestationToken<Models::_detail::ModifyIsolatedModeCertificatesResult>>(resultToken)
+      = static_cast<AttestationToken<Models::_detail::ModifyIsolatedModeCertificatesResult>>(
+            resultToken)
             .Body;
 
   Models::IsolatedModeCertificateModificationResult returnValue;
@@ -397,8 +398,9 @@ AttestationAdministrationClient::ProcessIsolatedModeModificationResult(
 
   // Construct a token whose body is the policy result, but whose token is the response from the
   // service.
-  auto const returnedToken = AttestationTokenInternal<Models::IsolatedModeCertificateModificationResult>(
-      responseToken, &returnValue);
+  auto const returnedToken
+      = AttestationTokenInternal<Models::IsolatedModeCertificateModificationResult>(
+          responseToken, &returnValue);
   return returnedToken;
 }
 
@@ -425,7 +427,7 @@ AttestationAdministrationClient::AddIsolatedModeCertificate(
       ProcessIsolatedModeModificationResult(
           response,
           options.TokenValidationOptionsOverride ? *options.TokenValidationOptionsOverride
-                                                : this->m_tokenValidationOptions));
+                                                 : this->m_tokenValidationOptions));
   return Response<AttestationToken<Models::IsolatedModeCertificateModificationResult>>(
       returnValue, std::move(response));
 }
@@ -441,8 +443,8 @@ AttestationAdministrationClient::RemoveIsolatedModeCertificate(
 
   // Calculate a signed (or unsigned) attestation policy token to send to the service.
   // Embed the encoded policy in the StoredAttestationPolicy.
-  auto const policyCertToken(CreateIsolatedModeModificationToken(
-      pemEncodedX509CertificateToRemove, existingSigningKey));
+  auto const policyCertToken(
+      CreateIsolatedModeModificationToken(pemEncodedX509CertificateToRemove, existingSigningKey));
 
   Azure::Core::IO::MemoryBodyStream stream(
       reinterpret_cast<uint8_t const*>(policyCertToken.data()), policyCertToken.size());
@@ -456,7 +458,7 @@ AttestationAdministrationClient::RemoveIsolatedModeCertificate(
       ProcessIsolatedModeModificationResult(
           response,
           options.TokenValidationOptionsOverride ? *options.TokenValidationOptionsOverride
-                                         : this->m_tokenValidationOptions));
+                                                 : this->m_tokenValidationOptions));
   return Response<AttestationToken<Models::IsolatedModeCertificateModificationResult>>(
       returnValue, std::move(response));
 }

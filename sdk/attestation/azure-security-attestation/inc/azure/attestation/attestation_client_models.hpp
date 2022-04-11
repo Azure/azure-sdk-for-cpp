@@ -67,8 +67,9 @@ namespace Azure { namespace Security { namespace Attestation { namespace Models 
    *
    * The OpenIdMetadata value is retrieved using the [OpenID Connect Discovery
    * Protocol](https://openid.net/specs/openid-connect-discovery-1_0.html#ProviderMetadata).
-   * 
-   * This structure represents the values from that specification which are returned by the attestation service.
+   *
+   * This structure represents the values from that specification which are returned by the
+   * attestation service.
    *
    */
   struct OpenIdMetadata final

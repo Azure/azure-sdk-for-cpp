@@ -191,7 +191,7 @@ namespace Azure { namespace Security { namespace Attestation {
      * attestation service based on this signing key.
      *
      * @note: If policyToSet is null, then this generates a policy reset token.
-     * 
+     *
      */
     Models::AttestationToken<void> CreateAttestationPolicyToken(
         Azure::Nullable<std::string> const& policyToSet,
@@ -214,8 +214,7 @@ namespace Azure { namespace Security { namespace Attestation {
      */
     Response<Models::AttestationToken<Models::IsolatedModeCertificateListResult>>
     GetIsolatedModeCertificates(
-        GetIsolatedModeCertificatesOptions const& options
-        = GetIsolatedModeCertificatesOptions{},
+        GetIsolatedModeCertificatesOptions const& options = GetIsolatedModeCertificatesOptions{},
         Azure::Core::Context const& context = Azure::Core::Context{}) const;
 
     /**
@@ -241,8 +240,7 @@ namespace Azure { namespace Security { namespace Attestation {
     AddIsolatedModeCertificate(
         std::string const& pemEncodedCertificateToAdd,
         AttestationSigningKey const& signerForRequest,
-        AddIsolatedModeCertificatesOptions const& options
-        = AddIsolatedModeCertificatesOptions{},
+        AddIsolatedModeCertificatesOptions const& options = AddIsolatedModeCertificatesOptions{},
         Azure::Core::Context const& context = Azure::Core::Context{}) const;
 
     /**
@@ -269,8 +267,7 @@ namespace Azure { namespace Security { namespace Attestation {
     RemoveIsolatedModeCertificate(
         std::string const& pemEncodedCertificateToAdd,
         AttestationSigningKey const& signerForRequest,
-        AddIsolatedModeCertificatesOptions const& options
-        = AddIsolatedModeCertificatesOptions{},
+        AddIsolatedModeCertificatesOptions const& options = AddIsolatedModeCertificatesOptions{},
         Azure::Core::Context const& context = Azure::Core::Context{}) const;
 
   private:
