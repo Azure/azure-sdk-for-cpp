@@ -40,6 +40,12 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
      * @brief Use to send request to the 7.2 version of Key Vault service.
      *
      */
+    AZURE_SECURITY_KEYVAULT_SECRETS_DLLEXPORT static const ServiceVersion V7_2;
+
+    /**
+     * @brief Use to send request to the 7.2 version of Key Vault service.
+     *
+     */
     AZURE_SECURITY_KEYVAULT_SECRETS_DLLEXPORT static const ServiceVersion V7_3;
   };
 
@@ -49,7 +55,11 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
    */
   struct SecretClientOptions final : public Azure::Core::_internal::ClientOptions
   {
-    ServiceVersion Version;
+    /**
+     * @brief Service Version used.
+     *
+     */
+    const ServiceVersion Version;
 
     /**
      * @brief Construct a new Secret Client Options object.
