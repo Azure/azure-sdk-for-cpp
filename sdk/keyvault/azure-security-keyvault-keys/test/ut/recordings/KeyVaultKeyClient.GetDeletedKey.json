@@ -25,7 +25,7 @@
         "x-ms-request-id": "25b6f185-c78f-436b-b51f-cdf0c6d6ef91",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/keys/GetDeletedKey/create?api-version=7.2"
+      "Url": "https://REDACTED.vault.azure.net/keys/GetDeletedKey/create?api-version=7.3"
     },
     {
       "Headers": {
@@ -51,7 +51,7 @@
         "x-ms-request-id": "247ffd79-b199-4dc9-9396-d6842c292ffe",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/keys/GetDeletedKey?api-version=7.2"
+      "Url": "https://REDACTED.vault.azure.net/keys/GetDeletedKey?api-version=7.3"
     },
     {
       "Headers": {
@@ -77,7 +77,7 @@
         "x-ms-request-id": "df58234c-2c63-4ce8-97a8-1a6e4e2de6eb",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/deletedkeys/GetDeletedKey?api-version=7.2"
+      "Url": "https://REDACTED.vault.azure.net/deletedkeys/GetDeletedKey?api-version=7.3"
     },
     {
       "Headers": {
@@ -103,7 +103,7 @@
         "x-ms-request-id": "37dffd99-c903-48af-a22b-92513253cbd3",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/deletedkeys/GetDeletedKey?api-version=7.2"
+      "Url": "https://REDACTED.vault.azure.net/deletedkeys/GetDeletedKey?api-version=7.3"
     },
     {
       "Headers": {
@@ -129,7 +129,7 @@
         "x-ms-request-id": "4295852e-eed9-4a88-b9a5-249697399409",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/deletedkeys/GetDeletedKey?api-version=7.2"
+      "Url": "https://REDACTED.vault.azure.net/deletedkeys/GetDeletedKey?api-version=7.3"
     }
   ]
 }
