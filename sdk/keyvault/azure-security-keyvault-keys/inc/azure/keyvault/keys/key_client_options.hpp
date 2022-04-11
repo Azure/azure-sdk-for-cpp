@@ -72,6 +72,12 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
      * @brief Use to send request to the 7.2 version of Key Vault service.
      *
      */
+    AZ_SECURITY_KEYVAULT_KEYS_DLLEXPORT static const ServiceVersion V7_2;
+
+    /**
+     * @brief Use to send request to the 7.3 version of Key Vault service.
+     *
+     */
     AZ_SECURITY_KEYVAULT_KEYS_DLLEXPORT static const ServiceVersion V7_3;
   };
 
