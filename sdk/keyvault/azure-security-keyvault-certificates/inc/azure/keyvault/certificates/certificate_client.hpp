@@ -440,8 +440,10 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
      * @brief Imports a certificate into a specified key vault.
      *
      * @details Imports an existing valid certificate, containing a private key, into Azure Key
-     * Vault. The certificate to be imported can be in either PFX or PEM format. If the certificate
-     * is in PEM format the PEM file must contain the key as well as x509 certificates.
+     * Vault. This operation requires the certificates/import permission. The certificate to be
+     * imported can be in either PFX or PEM format. If the certificate is in PEM format the PEM file
+     * must contain the key as well as x509 certificates. Key Vault will only accept a key in PKCS#8
+     * format.
      *
      * @remark This operation requires the certificates/import permission.
      *

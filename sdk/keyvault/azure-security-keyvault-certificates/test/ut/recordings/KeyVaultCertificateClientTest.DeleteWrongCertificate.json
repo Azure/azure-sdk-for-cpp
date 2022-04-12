@@ -25,7 +25,7 @@
         "x-ms-request-id": "1cff9d45-144b-4bca-ba1f-dfe71a2abe11",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/certificates/DeleteWrongCertificate?api-version=7.2"
+      "Url": "https://REDACTED.vault.azure.net/certificates/DeleteWrongCertificate?api-version=7.3"
     },
     {
       "Headers": {
@@ -52,7 +52,7 @@
         "x-ms-request-id": "bfea3a76-c7ff-439d-a4c7-a6cea7ab0523",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/deletedcertificates/DeleteWrongCertificate/recover?api-version=7.2"
+      "Url": "https://REDACTED.vault.azure.net/deletedcertificates/DeleteWrongCertificate/recover?api-version=7.3"
     }
   ]
 }

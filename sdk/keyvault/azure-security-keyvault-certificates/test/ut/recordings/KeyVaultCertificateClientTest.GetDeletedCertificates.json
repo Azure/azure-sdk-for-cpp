@@ -15,7 +15,7 @@
         "content-type": "application/json; charset=utf-8",
         "date": "Thu, 04 Nov 2021 20:53:07 GMT",
         "expires": "-1",
-        "location": "https://REDACTED.vault.azure.net/certificates/GetDeletedCertificates/pending?api-version=7.2&request_id=a278b6a99f1e45fe86022459344badc5",
+        "location": "https://REDACTED.vault.azure.net/certificates/GetDeletedCertificates/pending?api-version=7.3&request_id=a278b6a99f1e45fe86022459344badc5",
         "pragma": "no-cache",
         "retry-after": "10",
         "strict-transport-security": "max-age=31536000;includeSubDomains",
@@ -27,7 +27,7 @@
         "x-ms-request-id": "a5811569-d3b2-44e8-bfeb-40a4bf137cd9",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/certificates/GetDeletedCertificates/create?api-version=7.2"
+      "Url": "https://REDACTED.vault.azure.net/certificates/GetDeletedCertificates/create?api-version=7.3"
     },
     {
       "Headers": {
@@ -55,7 +55,7 @@
         "x-ms-request-id": "3cc2a92c-b946-4079-8b08-6dcd3796eda0",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/certificates/GetDeletedCertificates/pending?api-version=7.2"
+      "Url": "https://REDACTED.vault.azure.net/certificates/GetDeletedCertificates/pending?api-version=7.3"
     },
     {
       "Headers": {
@@ -82,7 +82,7 @@
         "x-ms-request-id": "fa25653e-9151-44af-994b-da33d3e40459",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/certificates/GetDeletedCertificates/pending?api-version=7.2"
+      "Url": "https://REDACTED.vault.azure.net/certificates/GetDeletedCertificates/pending?api-version=7.3"
     },
     {
       "Headers": {
@@ -109,7 +109,7 @@
         "x-ms-request-id": "a7ad12d6-fdc3-4f84-8bd0-89d9e6cf26e9",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/certificates/GetDeletedCertificates?api-version=7.2"
+      "Url": "https://REDACTED.vault.azure.net/certificates/GetDeletedCertificates?api-version=7.3"
     },
     {
       "Headers": {
@@ -126,7 +126,7 @@
         "content-type": "application/json; charset=utf-8",
         "date": "Thu, 04 Nov 2021 20:53:27 GMT",
         "expires": "-1",
-        "location": "https://REDACTED.vault.azure.net/certificates/GetDeletedCertificates2/pending?api-version=7.2&request_id=dec3ba099bec440eb49e191909017840",
+        "location": "https://REDACTED.vault.azure.net/certificates/GetDeletedCertificates2/pending?api-version=7.3&request_id=dec3ba099bec440eb49e191909017840",
         "pragma": "no-cache",
         "retry-after": "10",
         "strict-transport-security": "max-age=31536000;includeSubDomains",
@@ -138,7 +138,7 @@
         "x-ms-request-id": "7d74f699-98ed-499f-9b66-430123b5df0f",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/certificates/GetDeletedCertificates2/create?api-version=7.2"
+      "Url": "https://REDACTED.vault.azure.net/certificates/GetDeletedCertificates2/create?api-version=7.3"
     },
     {
       "Headers": {
@@ -166,7 +166,7 @@
         "x-ms-request-id": "a8fe7f33-4620-4137-b7a1-23fa69545cf5",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/certificates/GetDeletedCertificates2/pending?api-version=7.2"
+      "Url": "https://REDACTED.vault.azure.net/certificates/GetDeletedCertificates2/pending?api-version=7.3"
     },
     {
       "Headers": {
@@ -193,7 +193,7 @@
         "x-ms-request-id": "a11dbf84-79a9-497d-a972-72971a5d2560",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/certificates/GetDeletedCertificates2/pending?api-version=7.2"
+      "Url": "https://REDACTED.vault.azure.net/certificates/GetDeletedCertificates2/pending?api-version=7.3"
     },
     {
       "Headers": {
@@ -220,7 +220,7 @@
         "x-ms-request-id": "d030a93e-24ee-42b6-a6ad-fbfca47d9453",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/certificates/GetDeletedCertificates2?api-version=7.2"
+      "Url": "https://REDACTED.vault.azure.net/certificates/GetDeletedCertificates2?api-version=7.3"
     },
     {
       "Headers": {
@@ -247,7 +247,7 @@
         "x-ms-request-id": "13628ade-a53c-4675-9d30-61fd54742efe",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/certificates/GetDeletedCertificates?api-version=7.2"
+      "Url": "https://REDACTED.vault.azure.net/certificates/GetDeletedCertificates?api-version=7.3"
     },
     {
       "Headers": {
@@ -274,7 +274,7 @@
         "x-ms-request-id": "39655a16-76ae-4a06-a829-0b43aa1768e7",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/deletedcertificates/GetDeletedCertificates?api-version=7.2"
+      "Url": "https://REDACTED.vault.azure.net/deletedcertificates/GetDeletedCertificates?api-version=7.3"
     },
     {
       "Headers": {
@@ -301,7 +301,7 @@
         "x-ms-request-id": "af63cc08-a770-4b63-ac05-507bbd6bdf67",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/deletedcertificates/GetDeletedCertificates?api-version=7.2"
+      "Url": "https://REDACTED.vault.azure.net/deletedcertificates/GetDeletedCertificates?api-version=7.3"
     },
     {
       "Headers": {
@@ -328,7 +328,7 @@
         "x-ms-request-id": "b2d6d594-4c9f-4c11-bc75-6e1b45f35ea9",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/certificates/GetDeletedCertificates2?api-version=7.2"
+      "Url": "https://REDACTED.vault.azure.net/certificates/GetDeletedCertificates2?api-version=7.3"
     },
     {
       "Headers": {
@@ -355,7 +355,7 @@
         "x-ms-request-id": "9e9e91d5-3840-41c9-aed4-cef0f5c0f489",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/deletedcertificates/GetDeletedCertificates2?api-version=7.2"
+      "Url": "https://REDACTED.vault.azure.net/deletedcertificates/GetDeletedCertificates2?api-version=7.3"
     },
     {
       "Headers": {
@@ -382,7 +382,7 @@
         "x-ms-request-id": "94070d20-61f2-4472-9ded-5298b5e187bf",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/deletedcertificates/GetDeletedCertificates2?api-version=7.2"
+      "Url": "https://REDACTED.vault.azure.net/deletedcertificates/GetDeletedCertificates2?api-version=7.3"
     },
     {
       "Headers": {
@@ -409,7 +409,7 @@
         "x-ms-request-id": "1048b4d1-5fa4-4943-b28c-05f5040f64a4",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/deletedcertificates?api-version=7.2"
+      "Url": "https://REDACTED.vault.azure.net/deletedcertificates?api-version=7.3"
     },
     {
       "Headers": {
@@ -434,7 +434,7 @@
         "x-ms-request-id": "a637980b-f28b-457c-974c-e3177600810b",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/deletedcertificates/GetDeletedCertificates?api-version=7.2"
+      "Url": "https://REDACTED.vault.azure.net/deletedcertificates/GetDeletedCertificates?api-version=7.3"
     },
     {
       "Headers": {
@@ -459,7 +459,7 @@
         "x-ms-request-id": "6fa535fd-3d02-4472-a455-43cbe5d1f04f",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/deletedcertificates/GetDeletedCertificates2?api-version=7.2"
+      "Url": "https://REDACTED.vault.azure.net/deletedcertificates/GetDeletedCertificates2?api-version=7.3"
     }
   ]
 }

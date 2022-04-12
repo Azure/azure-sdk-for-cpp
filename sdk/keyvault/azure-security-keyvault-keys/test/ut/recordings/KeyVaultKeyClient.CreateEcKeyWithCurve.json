@@ -25,7 +25,7 @@
         "x-ms-request-id": "e1f4f686-b2d2-4772-b4ef-169fe4b7ebfd",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/keys/CreateEcKeyWithCurve/create?api-version=7.2"
+      "Url": "https://REDACTED.vault.azure.net/keys/CreateEcKeyWithCurve/create?api-version=7.3"
     },
     {
       "Headers": {
@@ -51,7 +51,7 @@
         "x-ms-request-id": "e1ba48ce-5c9d-4be0-bc93-abd786bee0db",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/keys/CreateEcKeyWithCurve?api-version=7.2"
+      "Url": "https://REDACTED.vault.azure.net/keys/CreateEcKeyWithCurve?api-version=7.3"
     }
   ]
 }

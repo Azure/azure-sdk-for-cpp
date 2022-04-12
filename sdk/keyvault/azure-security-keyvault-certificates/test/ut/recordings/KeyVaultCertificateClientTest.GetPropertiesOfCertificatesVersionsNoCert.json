@@ -25,7 +25,7 @@
         "x-ms-request-id": "301c0453-8d33-4876-8838-acb26340fbac",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/certificates/GetPropertiesOfCertificatesVersionsNoCert/versions?api-version=7.2"
+      "Url": "https://REDACTED.vault.azure.net/certificates/GetPropertiesOfCertificatesVersionsNoCert/versions?api-version=7.3"
     }
   ]
 }
