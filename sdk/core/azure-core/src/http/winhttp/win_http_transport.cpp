@@ -342,23 +342,6 @@ void WinHttpTransport::CreateRequestHandle(std::unique_ptr<_detail::HandleManage
     GetErrorAndThrow("Error while getting a request handle.");
   }
 
-  if (requestSecureHttp)
-  {
-    // If the service requests TLS client certificates, we want to let the WinHTTP APIs know that
-    // it's ok to initiate the request without a client certificate.
-    //
-    // Note: If/When TLS client certificate support is added to the pipeline, this line may need to
-    // be revisited.
-    if (!WinHttpSetOption(
-            handleManager->m_requestHandle,
-            WINHTTP_OPTION_CLIENT_CERT_CONTEXT,
-            WINHTTP_NO_CLIENT_CERT_CONTEXT,
-            0))
-    {
-      GetErrorAndThrow("Error while setting client cert context to ignore..");
-    }
-  }
-
   if (m_options.IgnoreUnknownCertificateAuthority)
   {
     auto option = SECURITY_FLAG_IGNORE_UNKNOWN_CA;
