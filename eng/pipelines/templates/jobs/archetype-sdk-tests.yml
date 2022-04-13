@@ -21,11 +21,6 @@ parameters:
   type: number
   default: 60
 
-# This job uses the legacy matrix format (matrix property of the job, one
-# build/test scenario per job). A new format (multiple build/test scenarios per
-# job) may be possible here:
-# https://github.com/Azure/azure-sdk-for-cpp/issues/2944
-
 jobs:
 - template: /eng/common/pipelines/templates/jobs/archetype-sdk-tests-generate.yml
   parameters:
