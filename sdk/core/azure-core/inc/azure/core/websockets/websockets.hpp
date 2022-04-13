@@ -47,7 +47,7 @@ namespace Azure { namespace Core { namespace WebSockets {
    * @brief Template class for a websocket message.
    *
    */
-  template <class T> class WebSocketMessage {
+  class WebSocketMessage {
   protected:
     Azure::Core::IO::BodyStream& m_bufferStream;
 
@@ -80,7 +80,7 @@ namespace Azure { namespace Core { namespace WebSockets {
    * @brief A websocket message to be sent to a server.
    *
    */
-  class WebSocketOutMessage : public WebSocketMessage<WebSocketOutMessage> {
+  class WebSocketOutMessage : public WebSocketMessage {
   public:
     explicit WebSocketOutMessage(
         WebSocketMessageType type,
@@ -94,7 +94,7 @@ namespace Azure { namespace Core { namespace WebSockets {
    * @brief A websocket message received by the server.
    *
    */
-  class WebSocketInMessage : public WebSocketMessage<WebSocketInMessage> {
+  class WebSocketInMessage : public WebSocketMessage {
   public:
     explicit WebSocketInMessage(
         WebSocketMessageType type,
