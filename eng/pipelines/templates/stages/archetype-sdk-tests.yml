@@ -1,7 +1,4 @@
 parameters:
-- name: Location
-  type: string
-  default: ''
 - name: ServiceDirectory
   type: string
   default: not-specified
@@ -19,14 +16,19 @@ parameters:
   default: 60
 - name: CloudConfig
   type: object
-  default:
-    Cloud: Public
+  default: {}
+- name: SupportedClouds
+  type: string
+  default: 'Public'
+- name: UnsupportedClouds
+  type: string
+  default: ''
 
 stages:
 - ${{ each cloud in parameters.CloudConfig }}:
   - ${{ if or(contains(parameters.Clouds, cloud.key), and(contains(variables['Build.DefinitionName'], 'tests-weekly'), contains(parameters.SupportedClouds, cloud.key))) }}:
     - ${{ if not(contains(parameters.UnsupportedClouds, cloud.key)) }}:
-      - stage: ${{ cloud.key }}
+      - stage: LiveTest_${{ cloud.key }}
         dependsOn: []
         jobs:
           - template: /eng/common/pipelines/templates/jobs/archetype-sdk-tests-generate.yml

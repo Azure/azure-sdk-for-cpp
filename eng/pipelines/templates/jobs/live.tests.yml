@@ -103,8 +103,8 @@ jobs:
   - template: /eng/common/TestResources/deploy-test-resources.yml
     parameters:
       ServiceDirectory: ${{ parameters.ServiceDirectory }}
-      Location: ${{ parameters.Location }}
-      SubscriptionConfiguration: ${{ parameters.SubscriptionConfiguration }}
+      Location: ${{ parameters.CloudConfig.Location }}
+      SubscriptionConfiguration: ${{ parameters.CloudConfig.SubscriptionConfiguration }}
 
     # For non multi-config generator use the same build configuration to run tests
     # We don't need to set it to invoke ctest

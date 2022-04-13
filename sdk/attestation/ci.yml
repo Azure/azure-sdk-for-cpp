@@ -26,7 +26,11 @@ stages:
   - template: ../../eng/pipelines/templates/stages/archetype-sdk-client.yml
     parameters:
       ServiceDirectory: attestation
-      Location: WestUS
+      Cloud: Public
+      CloudConfig:
+        Public:
+          SubscriptionConfiguration: $(sub-config-azure-cloud-test-resources)
+          Location: WestUS
       CtestRegex: azure-security-attestation.*
       LiveTestCtestRegex: azure-security-attestation.*
       LineCoverageTarget: 90
