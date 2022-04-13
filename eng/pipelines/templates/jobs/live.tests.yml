@@ -25,6 +25,9 @@ parameters:
   default: ''
 - name: Matrix
   type: string
+- name: MaxParallel
+  type: number
+  default: 0
 - name: CloudConfig
   type: object
   default: {}
