@@ -17,6 +17,9 @@ parameters:
 - name: CloudConfig
   type: object
   default: {}
+- name: Clouds
+  type: string
+  default: Public
 - name: SupportedClouds
   type: string
   default: 'Public'
