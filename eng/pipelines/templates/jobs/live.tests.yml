@@ -127,7 +127,7 @@ jobs:
     # We don't need to set it to invoke ctest
     # Visual Studio generator used in CI is a multi-config generator.
     # As such, it requires the configuration argument for building and invoking ctest
-  - script: ctest $(WindowsCtestConfig) -V --tests-regex ${{ parameters.CtestRegex }} --no-compress-output -T Test
+  - script: ctest $(WindowsCtestConfig) -V --tests-regex "${{ parameters.CtestRegex }}" --no-compress-output -T Test
     workingDirectory: build
     displayName: ctest
     # Runs only if test-resources are happly deployed.
