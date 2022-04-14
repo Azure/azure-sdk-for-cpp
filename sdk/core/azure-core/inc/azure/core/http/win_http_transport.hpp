@@ -150,10 +150,9 @@ namespace Azure { namespace Core { namespace Http {
         WinHttpTransportContextProvider() = delete;
 
         // Creates a set up token to make 
-        Azure::Core::Context GetNoClientCertContext(Azure::Core::Context const& parent){
-          return parent
-        }
-    }
+        static Azure::Core::Context GetNoClientCertificateContext(Azure::Core::Context const& parent);
+        static bool HasNoClientCertificateConfiguration(Azure::Core::Context const& context);
+    };
   } // namespace _internal
 
   /**

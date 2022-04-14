@@ -196,7 +196,19 @@ std::string GetHeadersAsString(Azure::Core::Http::Request const& request)
   return requestHeaderString;
 }
 
+Azure::Core::Context::Key NoClientCertificateConfiguration;
+
 } // namespace
+
+Azure::Core::Context Azure::Core::Http::_internal::WinHttpTransportContextProvider::GetNoClientCertificateContext(Azure::Core::Context const& parent) {
+  return parent.WithValue(NoClientCertificateConfiguration, true);
+}
+
+bool Azure::Core::Http::_internal::WinHttpTransportContextProvider::HasNoClientCertificateConfiguration(Azure::Core::Context const& context) {
+  bool value = false;
+  context.TryGetValue<bool>(NoClientCertificateConfiguration, value);
+  return value;
+}
 
 void GetErrorAndThrow(const std::string& exceptionMessage)
 {
@@ -340,6 +352,23 @@ void WinHttpTransport::CreateRequestHandle(std::unique_ptr<_detail::HandleManage
     // ERROR_WINHTTP_UNRECOGNIZED_SCHEME
     // ERROR_NOT_ENOUGH_MEMORY
     GetErrorAndThrow("Error while getting a request handle.");
+  }
+
+  // Option is set up by context settings only and is only available for SDK clients
+  if(m_noClientCert) {
+    // If the service requests TLS client certificates, we want to let the WinHTTP APIs know that
+    // it's ok to initiate the request without a client certificate.
+    //
+    // Note: If/When TLS client certificate support is added to the pipeline, this line may need to
+    // be revisited.
+    if (!WinHttpSetOption(
+            handleManager->m_requestHandle,
+            WINHTTP_OPTION_CLIENT_CERT_CONTEXT,
+            WINHTTP_NO_CLIENT_CERT_CONTEXT,
+            0))
+    {
+      GetErrorAndThrow("Error while setting client cert context to ignore..");
+    }
   }
 
   if (m_options.IgnoreUnknownCertificateAuthority)
@@ -637,6 +666,9 @@ std::unique_ptr<RawResponse> WinHttpTransport::SendRequestAndGetResponse(
 
 std::unique_ptr<RawResponse> WinHttpTransport::Send(Request& request, Context const& context)
 {
+  using namespace Azure::Core::Http::_internal;
+  m_noClientCert = WinHttpTransportContextProvider::HasNoClientCertificateConfiguration(context);
+
   auto handleManager = std::make_unique<_detail::HandleManager>(request, context);
 
   CreateSessionHandle(handleManager);

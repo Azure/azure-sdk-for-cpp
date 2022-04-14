@@ -26,6 +26,28 @@ using namespace Azure::Core::Http::Policies;
 using namespace Azure::Core::Http::Policies::_internal;
 using namespace Azure::Core::Http::_internal;
 
+#if defined(BUILD_TRANSPORT_WINHTTP_ADAPTER)
+// Whenever winHTTP transport is built, create a policy to make request with no client certificate for attestation requests
+#include "azure/core/http/win_http_transport.hpp"
+
+namespace {
+  class SetNoClientCertificatePolicy : public Azure::Core::Http::Policies::HttpPolicy {
+  public:
+    std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy> Clone() const override
+    {
+      return std::make_unique<SetNoClientCertificatePolicy>();
+    }
+
+    std::unique_ptr<Azure::Core::Http::RawResponse> Send(
+        Azure::Core::Http::Request& request,
+        Azure::Core::Http::Policies::NextHttpPolicy nextHttpPolicy,
+        const Azure::Core::Context& ctx) const override {
+          return nextHttpPolicy.Send(request, Azure::Core::Http::_internal::WinHttpTransportContextProvider::GetNoClientCertificateContext(ctx));
+        }
+  };
+}
+#endif
+
 AttestationClient::AttestationClient(
     std::string const& endpoint,
     std::shared_ptr<Core::Credentials::TokenCredential const> credential,
@@ -45,6 +67,11 @@ AttestationClient::AttestationClient(
   }
   m_apiVersion = options.Version.ToString();
   std::vector<std::unique_ptr<HttpPolicy>> perCallpolicies;
+  
+  #if defined(BUILD_TRANSPORT_WINHTTP_ADAPTER)
+  // This configuration will make winHTTP to disable client certificate for all attestation requests
+  perCallpolicies.emplace_back(std::make_unique<SetNoClientCertificatePolicy>());
+  #endif
 
   m_pipeline = std::make_shared<Azure::Core::Http::_internal::HttpPipeline>(
       options,
