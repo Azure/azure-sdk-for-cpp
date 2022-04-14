@@ -25,8 +25,6 @@ KeyRotationPolicy _detail::KeyRotationPolicySerializer::KeyRotationPolicyDeseria
   auto jsonParser = Azure::Core::Json::_internal::json::parse(body);
   KeyRotationPolicy policy;
 
-  std::string goqu(body.begin(), body.end());
-
   policy.Id = jsonParser[_detail::IdValue].get<std::string>();
 
   if (!jsonParser[_detail::AttributesPropertyName].is_null())

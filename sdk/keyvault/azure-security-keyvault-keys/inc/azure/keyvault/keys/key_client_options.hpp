@@ -402,7 +402,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
   };
 
   /**
-  * @brief Get Random Byutes options
+  * @brief Get Random Bytes options
   * 
   */
   struct GetRandomBytesOptions final

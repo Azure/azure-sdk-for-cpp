@@ -150,12 +150,12 @@ TEST(KeyRotationPolicy, SerializeDeserialize1)
   EXPECT_EQ(action1.Trigger.TimeBeforeExpiry.Value(), "P30D");
   EXPECT_FALSE(action1.Trigger.TimeAfterCreate);
 
-  auto reserialized = KeyRotationPolicySerializer::KeyRotationPolicySerialize(policy);
+  auto serialized = KeyRotationPolicySerializer::KeyRotationPolicySerialize(policy);
 
-  std::string reserializedString
+  std::string serializedString
       = "{\"attributes\":{\"expiryTime\":\"P48M\"},\"lifetimeActions\":[{\"action\":{\"type\":"
         "\"rotate\"},\"trigger\":{\"timeAfterCreate\":\"P18M\"}},{\"action\":{\"type\":\"notify\"},"
         "\"trigger\":{\"timeBeforeExpiry\":\"P30D\"}}]}";
 
-  EXPECT_EQ(reserialized, reserializedString);
+  EXPECT_EQ(serialized, serializedString);
 }
