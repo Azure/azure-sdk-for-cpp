@@ -23,11 +23,11 @@ jobs:
         Path: eng/pipelines/templates/stages/platform-matrix-cmakegenerate.json
         GenerateVMJobs: true
     JobTemplatePath: /eng/pipelines/templates/jobs/cmake-generate.tests.yml
+    GenerateJobName: generate_matrix_cmake
     AdditionalParameters:
       Artifacts: ${{ parameters.Artifacts }}
       ServiceDirectory: ${{ parameters.ServiceDirectory }}
       CMakeTestOptions: ${{ parameters.CMakeTestOptions }}
-      CMakeSourceTestOptions: ${{ parameters.CMakeSourceTestOptions }}
 
 - template: /eng/common/pipelines/templates/jobs/archetype-sdk-tests-generate.yml
   parameters:
@@ -36,6 +36,7 @@ jobs:
         Path: eng/pipelines/templates/stages/platform-matrix-cmakesourcegenerate.json
         GenerateVMJobs: true
     JobTemplatePath: /eng/pipelines/templates/jobs/cmake-source-generate.tests.yml
+    GenerateJobName: generate_matrix_cmake_source
     AdditionalParameters:
       Artifacts: ${{ parameters.ArtifactsSource }}
       ServiceDirectory: ${{ parameters.ServiceDirectory }}
