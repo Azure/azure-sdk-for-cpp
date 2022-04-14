@@ -21,6 +21,7 @@ jobs:
     MatrixConfigs:
       - Name: base
         Path: eng/pipelines/templates/stages/platform-matrix-cmakegenerate.json
+        Selection: all
         GenerateVMJobs: true
     JobTemplatePath: /eng/pipelines/templates/jobs/cmake-generate.tests.yml
     GenerateJobName: generate_matrix_cmake
@@ -34,6 +35,7 @@ jobs:
     MatrixConfigs:
       - Name: base
         Path: eng/pipelines/templates/stages/platform-matrix-cmakesourcegenerate.json
+        Selection: all
         GenerateVMJobs: true
     JobTemplatePath: /eng/pipelines/templates/jobs/cmake-generate.tests.yml
     GenerateJobName: generate_matrix_cmake_source
