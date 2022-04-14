@@ -6,6 +6,7 @@
 #include "../../src/private/key_serializers.hpp"
 #include "key_client_base_test.hpp"
 #include <azure/core/datetime.hpp>
+#include <azure/core/base64.hpp>
 #include <azure/keyvault/keyvault_keys.hpp>
 #include <private/key_constants.hpp>
 
@@ -57,7 +58,7 @@ TEST_F(KeyVaultKeyClient, GetKeyRotationPolicy)
   }
 }
 
-TEST_F(KeyVaultKeyClient, GetRandomBytes) 
+TEST_F(KeyVaultKeyClient, DISABLED_GetRandomBytes) 
 {
   auto const keyName = GetTestName();
   CreateHsmClient("https://gearamamhsm.managedhsm.azure.net/");
@@ -66,6 +67,59 @@ TEST_F(KeyVaultKeyClient, GetRandomBytes)
   options.Count = 4;
   auto result = client.GetRandomBytes(options);
   EXPECT_EQ(result.Value.size(), options.Count);
+}
+
+TEST(GetRandomBytesOptions, Serialize) 
+{ GetRandomBytesOptions options;
+  {
+    options.Count = 0;
+    std::string result = GetRandomBytesSerializer::GetRandomBytesOptionsSerialize(options);
+    EXPECT_EQ(result, "{\"count\":0}");
+  }
+
+  {
+    options.Count = 5;
+    std::string result = GetRandomBytesSerializer::GetRandomBytesOptionsSerialize(options);
+    EXPECT_EQ(result, "{\"count\":5}");
+  }
+
+  {
+    options.Count = -1;
+    std::string result = GetRandomBytesSerializer::GetRandomBytesOptionsSerialize(options);
+    EXPECT_EQ(result, "{\"count\":-1}");
+  }
+}
+
+TEST(GetRandomBytesOptions, Deserialize)
+{
+  std::string inputString = "1234";
+  auto bytes = Azure::Core::Convert::Base64Encode(
+      std::vector<uint8_t>(inputString.begin(), inputString.end()));
+  std::string responseText = "{\"value\": \"" + std::string(bytes.begin(), bytes.end()) + "\" }";
+
+  Azure::Core::Http::RawResponse rawResponse(1, 1, Azure::Core::Http::HttpStatusCode::Ok, "OK");
+  rawResponse.SetBody(std::vector<uint8_t>(responseText.begin(), responseText.end()));
+  
+  auto deserialized = GetRandomBytesSerializer::GetRandomBytesResponseDeserialize(rawResponse);
+  EXPECT_EQ(deserialized.size(), size_t(4));
+  EXPECT_EQ(deserialized[0], uint8_t('1'));
+  EXPECT_EQ(deserialized[1], uint8_t('2'));
+  EXPECT_EQ(deserialized[2], uint8_t('3'));
+  EXPECT_EQ(deserialized[3], uint8_t('4'));
+}
+
+TEST(GetRandomBytesOptions, DeserializeEmpty)
+{
+  std::string inputString = "";
+  auto bytes = Azure::Core::Convert::Base64Encode(
+      std::vector<uint8_t>(inputString.begin(), inputString.end()));
+  std::string responseText = "{\"value\": \"" + std::string(bytes.begin(), bytes.end()) + "\" }";
+
+  Azure::Core::Http::RawResponse rawResponse(1, 1, Azure::Core::Http::HttpStatusCode::Ok, "OK");
+  rawResponse.SetBody(std::vector<uint8_t>(responseText.begin(), responseText.end()));
+
+  auto deserialized = GetRandomBytesSerializer::GetRandomBytesResponseDeserialize(rawResponse);
+  EXPECT_EQ(deserialized.size(), size_t(0));
 }
 
 TEST(KeyRotationPolicy, SerializeDeserialize1)
