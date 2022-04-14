@@ -35,7 +35,7 @@ jobs:
       - Name: base
         Path: eng/pipelines/templates/stages/platform-matrix-cmakesourcegenerate.json
         GenerateVMJobs: true
-    JobTemplatePath: /eng/pipelines/templates/jobs/cmake-source-generate.tests.yml
+    JobTemplatePath: /eng/pipelines/templates/jobs/cmake-generate.tests.yml
     GenerateJobName: generate_matrix_cmake_source
     AdditionalParameters:
       Artifacts: ${{ parameters.ArtifactsSource }}
