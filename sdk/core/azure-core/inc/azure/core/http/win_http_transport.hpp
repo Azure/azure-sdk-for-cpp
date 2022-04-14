@@ -134,6 +134,28 @@ namespace Azure { namespace Core { namespace Http {
     bool IgnoreUnknownCertificateAuthority = false;
   };
 
+  namespace _internal {
+    /**
+     * @brief Factory to produce a context with special settings like no client cert context.
+     *
+     * @details Client SDKs can use this class to create an Azure Context to change the
+     * WinHttpTransport default behavior. This is because a Client SDK doesn't know about the
+     * specifics of a transport adapter. So, on Windows, SDK client can set options and only
+     * WinHTTPTransport will check for those options to be in the context.
+     *
+     */
+    class WinHttpTransportContextProvider {
+      public:
+        // Factory with no constructor
+        WinHttpTransportContextProvider() = delete;
+
+        // Creates a set up token to make 
+        Azure::Core::Context GetNoClientCertContext(Azure::Core::Context const& parent){
+          return parent
+        }
+    }
+  } // namespace _internal
+
   /**
    * @brief Concrete implementation of an HTTP transport that uses WinHTTP when sending and
    * receiving requests and responses over the wire.
@@ -155,6 +177,8 @@ namespace Azure { namespace Core { namespace Http {
     std::unique_ptr<RawResponse> SendRequestAndGetResponse(
         std::unique_ptr<_detail::HandleManager> handleManager,
         HttpMethod requestMethod);
+    // This option can be set only using context option
+    bool m_noClientCert = false;
 
   public:
     /**
