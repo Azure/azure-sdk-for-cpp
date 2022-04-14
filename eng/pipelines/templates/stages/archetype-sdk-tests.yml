@@ -14,6 +14,9 @@ parameters:
 - name: TimeoutInMinutes
   type: number
   default: 60
+- name: Location
+  type: string
+  default: ''
 - name: CloudConfig
   type: object
   default: {}

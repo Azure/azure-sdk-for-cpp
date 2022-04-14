@@ -120,7 +120,8 @@ jobs:
   - template: /eng/common/TestResources/deploy-test-resources.yml
     parameters:
       ServiceDirectory: ${{ parameters.ServiceDirectory }}
-      Location: ${{ parameters.CloudConfig.Location }}
+      ${{ if or(parameters.Location, parameters.CloudConfig.Location) }}:
+        Location: ${{ coalesce(parameters.Location, parameters.CloudConfig.Location) }}
       SubscriptionConfiguration: ${{ parameters.CloudConfig.SubscriptionConfiguration }}
 
     # For non multi-config generator use the same build configuration to run tests
