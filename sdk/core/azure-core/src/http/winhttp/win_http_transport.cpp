@@ -360,7 +360,11 @@ void WinHttpTransport::CreateRequestHandle(std::unique_ptr<_detail::HandleManage
   }
 
   // Option is set up by context settings only and is only available for SDK clients
-  if (m_noClientCert)
+  using namespace Azure::Core::Http::_internal;
+  auto noClientCert = WinHttpTransportContextProvider::HasNoClientCertificateConfiguration(
+      handleManager->m_context);
+
+  if (noClientCert)
   {
     // If the service requests TLS client certificates, we want to let the WinHTTP APIs know that
     // it's ok to initiate the request without a client certificate.
@@ -672,9 +676,6 @@ std::unique_ptr<RawResponse> WinHttpTransport::SendRequestAndGetResponse(
 
 std::unique_ptr<RawResponse> WinHttpTransport::Send(Request& request, Context const& context)
 {
-  using namespace Azure::Core::Http::_internal;
-  m_noClientCert = WinHttpTransportContextProvider::HasNoClientCertificateConfiguration(context);
-
   auto handleManager = std::make_unique<_detail::HandleManager>(request, context);
 
   CreateSessionHandle(handleManager);

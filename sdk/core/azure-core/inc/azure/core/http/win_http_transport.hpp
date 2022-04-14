@@ -176,8 +176,6 @@ namespace Azure { namespace Core { namespace Http {
     std::unique_ptr<RawResponse> SendRequestAndGetResponse(
         std::unique_ptr<_detail::HandleManager> handleManager,
         HttpMethod requestMethod);
-    // This option can be set only using context option
-    bool m_noClientCert = false;
 
   public:
     /**
