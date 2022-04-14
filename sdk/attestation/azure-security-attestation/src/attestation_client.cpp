@@ -26,33 +26,6 @@ using namespace Azure::Core::Http::Policies;
 using namespace Azure::Core::Http::Policies::_internal;
 using namespace Azure::Core::Http::_internal;
 
-#if defined(BUILD_TRANSPORT_WINHTTP_ADAPTER)
-// Whenever winHTTP transport is built, create a policy to make request with no client certificate
-// for attestation requests
-#include "azure/core/http/win_http_transport.hpp"
-
-namespace {
-class SetNoClientCertificatePolicy : public Azure::Core::Http::Policies::HttpPolicy {
-public:
-  std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy> Clone() const override
-  {
-    return std::make_unique<SetNoClientCertificatePolicy>();
-  }
-
-  std::unique_ptr<Azure::Core::Http::RawResponse> Send(
-      Azure::Core::Http::Request& request,
-      Azure::Core::Http::Policies::NextHttpPolicy nextHttpPolicy,
-      const Azure::Core::Context& ctx) const override
-  {
-    return nextHttpPolicy.Send(
-        request,
-        Azure::Core::Http::_internal::WinHttpTransportContextProvider::
-            GetNoClientCertificateContext(ctx));
-  }
-};
-} // namespace
-#endif
-
 AttestationClient::AttestationClient(
     std::string const& endpoint,
     std::shared_ptr<Core::Credentials::TokenCredential const> credential,

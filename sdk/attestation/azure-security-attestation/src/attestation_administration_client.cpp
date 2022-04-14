@@ -57,6 +57,11 @@ AttestationAdministrationClient::AttestationAdministrationClient(
   m_apiVersion = options.Version.ToString();
   std::vector<std::unique_ptr<HttpPolicy>> perCallpolicies;
 
+#if defined(BUILD_TRANSPORT_WINHTTP_ADAPTER)
+  // This configuration will make winHTTP to disable client certificate for all attestation requests
+  perCallpolicies.emplace_back(std::make_unique<SetNoClientCertificatePolicy>());
+#endif
+
   m_pipeline = std::make_shared<Azure::Core::Http::_internal::HttpPipeline>(
       options,
       "Attestation",
