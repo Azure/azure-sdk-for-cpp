@@ -59,8 +59,6 @@ jobs:
     parameters:
       AgentImage: $(OSVmImage)
 
-  - template: /eng/common/pipelines/templates/steps/bypass-local-dns.yml
-
   - pwsh: sudo apt update && sudo apt install -y $(AptDependencies)
     condition: and(succeeded(), ne(variables['AptDependencies'], ''))
     displayName: Install dependencies from apt
