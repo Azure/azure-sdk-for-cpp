@@ -196,6 +196,11 @@ std::string GetHeadersAsString(Azure::Core::Http::Request const& request)
   return requestHeaderString;
 }
 
+/**
+ * @brief A key used to override the default winHTTP transport behavior when a Service requires a
+ * client certificate.
+ *
+ */
 Azure::Core::Context::Key NoClientCertificateConfiguration;
 
 } // namespace

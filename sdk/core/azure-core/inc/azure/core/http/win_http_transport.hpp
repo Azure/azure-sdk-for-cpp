@@ -146,11 +146,29 @@ namespace Azure { namespace Core { namespace Http {
      */
     class WinHttpTransportContextProvider {
     public:
-      // Factory with no constructor
+      /**
+       * @brief Remove constructor. This is a factory only class. Should not be instantiated.
+       *
+       */
       WinHttpTransportContextProvider() = delete;
 
-      // Creates a set up token to make
+      /**
+       * @brief Creates a context child from \p parent that contains a key and value to override the
+       * default winHTTP transport adapter implementation.
+       *
+       * @param parent The parent context is used to create the child context.
+       * @return Azure::Core::Context
+       */
       static Azure::Core::Context GetNoClientCertificateContext(Azure::Core::Context const& parent);
+
+      /**
+       * @brief Validate if \p context containst a key and value for overriding `no client
+       * certificate` default implementation.
+       *
+       * @param context The context represent a list of nodes, and all nodes are evaluated while
+       * looking for the `no client certificate` key.
+       * @return true when the `no client certificate` key is found within the context.
+       */
       static bool HasNoClientCertificateConfiguration(Azure::Core::Context const& context);
     };
   } // namespace _internal
