@@ -42,8 +42,8 @@
             "StaticConfigs": {
                 "_": {
                     "BuildArgs": "-j 4",
-                    "Pool": "azsdk-pool-mms-ubuntu-1804-general",
-                    "OSVmImage": "MMSUbuntu18.04",
+                    "Pool": "azsdk-pool-mms-ubuntu-2004-general",
+                    "OSVmImage": "MMSUbuntu20.04",
                     "VCPKG_DEFAULT_TRIPLET": "x64-linux"
                 }
             },
