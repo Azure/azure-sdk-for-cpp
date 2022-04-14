@@ -43,7 +43,7 @@ parameters:
   default: []
 - name: Location
   type: string
-  value: ''
+  default: ''
 - name: CloudConfig
   type: object
   default:
