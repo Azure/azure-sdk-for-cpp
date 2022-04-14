@@ -145,13 +145,13 @@ namespace Azure { namespace Core { namespace Http {
      *
      */
     class WinHttpTransportContextProvider {
-      public:
-        // Factory with no constructor
-        WinHttpTransportContextProvider() = delete;
+    public:
+      // Factory with no constructor
+      WinHttpTransportContextProvider() = delete;
 
-        // Creates a set up token to make 
-        static Azure::Core::Context GetNoClientCertificateContext(Azure::Core::Context const& parent);
-        static bool HasNoClientCertificateConfiguration(Azure::Core::Context const& context);
+      // Creates a set up token to make
+      static Azure::Core::Context GetNoClientCertificateContext(Azure::Core::Context const& parent);
+      static bool HasNoClientCertificateConfiguration(Azure::Core::Context const& context);
     };
   } // namespace _internal
 

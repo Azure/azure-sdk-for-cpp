@@ -200,11 +200,16 @@ Azure::Core::Context::Key NoClientCertificateConfiguration;
 
 } // namespace
 
-Azure::Core::Context Azure::Core::Http::_internal::WinHttpTransportContextProvider::GetNoClientCertificateContext(Azure::Core::Context const& parent) {
+Azure::Core::Context
+Azure::Core::Http::_internal::WinHttpTransportContextProvider::GetNoClientCertificateContext(
+    Azure::Core::Context const& parent)
+{
   return parent.WithValue(NoClientCertificateConfiguration, true);
 }
 
-bool Azure::Core::Http::_internal::WinHttpTransportContextProvider::HasNoClientCertificateConfiguration(Azure::Core::Context const& context) {
+bool Azure::Core::Http::_internal::WinHttpTransportContextProvider::
+    HasNoClientCertificateConfiguration(Azure::Core::Context const& context)
+{
   bool value = false;
   context.TryGetValue<bool>(NoClientCertificateConfiguration, value);
   return value;
@@ -355,7 +360,8 @@ void WinHttpTransport::CreateRequestHandle(std::unique_ptr<_detail::HandleManage
   }
 
   // Option is set up by context settings only and is only available for SDK clients
-  if(m_noClientCert) {
+  if (m_noClientCert)
+  {
     // If the service requests TLS client certificates, we want to let the WinHTTP APIs know that
     // it's ok to initiate the request without a client certificate.
     //
