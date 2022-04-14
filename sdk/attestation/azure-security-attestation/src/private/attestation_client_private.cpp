@@ -7,8 +7,8 @@
  * This file contains private classes used to support public model types.
  *
  */
-#include "attestation_client_models_private.hpp"
 #include "attestation_client_private.hpp"
+#include "attestation_client_models_private.hpp"
 #include "crypto/inc/crypto.hpp"
 #include <azure/core/internal/json/json.hpp>
 #include <chrono>
@@ -18,22 +18,23 @@
 #include <vector>
 using namespace Azure::Security::Attestation::_detail;
 
-namespace Azure { namespace Security { namespace Attestation { namespace _detail {
+namespace Azure { namespace Security { namespace Attestation {
+  namespace _detail {
 #if defined(BUILD_TRANSPORT_WINHTTP_ADAPTER)
 
-  std::unique_ptr<Azure::Core::Http::RawResponse> SetNoClientCertificatePolicy::Send(
-      Azure::Core::Http::Request& request,
-      Azure::Core::Http::Policies::NextHttpPolicy nextHttpPolicy,
-      const Azure::Core::Context& ctx) const
-  {
-    return nextHttpPolicy.Send(
-        request,
-        Azure::Core::Http::_internal::WinHttpTransportContextProvider::
-            GetNoClientCertificateContext(ctx));
-  }
-};
+    std::unique_ptr<Azure::Core::Http::RawResponse> SetNoClientCertificatePolicy::Send(
+        Azure::Core::Http::Request& request,
+        Azure::Core::Http::Policies::NextHttpPolicy nextHttpPolicy,
+        const Azure::Core::Context& ctx) const
+    {
+      return nextHttpPolicy.Send(
+          request,
+          Azure::Core::Http::_internal::WinHttpTransportContextProvider::
+              GetNoClientCertificateContext(ctx));
+    }
+  };
 #endif
-}}} // namespace Azure::Security::Attestation::_detail
+}}} // namespace Azure::Security::Attestation
 
 namespace Azure {
   namespace Security {
