@@ -23,9 +23,12 @@ parameters:
   - name: CloudConfig
     type: object
     default: {}
+  - name: JobName
+    type: string
+    default: CMakeGenerate
 
 jobs:
-- job: CMakeGenerate
+- job: ${{ parameters.JobName }}
   condition: >-
     and(
       succeededOrFailed(),

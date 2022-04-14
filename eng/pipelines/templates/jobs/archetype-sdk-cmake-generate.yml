@@ -41,3 +41,4 @@ jobs:
       Artifacts: ${{ parameters.ArtifactsSource }}
       ServiceDirectory: ${{ parameters.ServiceDirectory }}
       CMakeTestOptions: ${{ parameters.CMakeSourceTestOptions }}
+      JobName: CMakeSourceGenerate
