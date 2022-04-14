@@ -26,7 +26,7 @@
 #include <string>
 #include <vector>
 
-  #if defined(BUILD_TRANSPORT_WINHTTP_ADAPTER)
+#if defined(BUILD_TRANSPORT_WINHTTP_ADAPTER)
 // Whenever winHTTP transport is built, create a policy to make request with no client certificate
 // for attestation requests
 #include "azure/core/http/win_http_transport.hpp"
@@ -448,27 +448,27 @@ namespace Azure { namespace Security { namespace Attestation { namespace _detail
     /**
      * @brief Convert the internal attestation token to a public AttestationToken object.
      */
-    operator Models::AttestationToken<T>&() { return m_token; }
+    operator Models::AttestationToken<T> &() { return m_token; }
     /**
      * @brief Convert the internal attestation token to a public AttestationToken object.
      */
     operator Models::AttestationToken<T> const &() const { return m_token; }
   };
 
-  #if defined(BUILD_TRANSPORT_WINHTTP_ADAPTER)
+#if defined(BUILD_TRANSPORT_WINHTTP_ADAPTER)
 
-class SetNoClientCertificatePolicy : public Azure::Core::Http::Policies::HttpPolicy {
-public:
-  std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy> Clone() const override
-  {
-    return std::make_unique<SetNoClientCertificatePolicy>();
-  }
+  class SetNoClientCertificatePolicy : public Azure::Core::Http::Policies::HttpPolicy {
+  public:
+    std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy> Clone() const override
+    {
+      return std::make_unique<SetNoClientCertificatePolicy>();
+    }
 
-  std::unique_ptr<Azure::Core::Http::RawResponse> Send(
-      Azure::Core::Http::Request& request,
-      Azure::Core::Http::Policies::NextHttpPolicy nextHttpPolicy,
-      const Azure::Core::Context& ctx) const override;
-};
+    std::unique_ptr<Azure::Core::Http::RawResponse> Send(
+        Azure::Core::Http::Request& request,
+        Azure::Core::Http::Policies::NextHttpPolicy nextHttpPolicy,
+        const Azure::Core::Context& ctx) const override;
+  };
 
 #endif
 }}}} // namespace Azure::Security::Attestation::_detail
