@@ -401,4 +401,17 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
     std::string const& Name() const { return Properties.Name; }
   };
 
+  /**
+  * @brief Get Random Byutes options
+  * 
+  */
+  struct GetRandomBytesOptions final
+  {
+    /**
+    * @brief The requested number of random bytes.
+    * 
+    */
+    int32_t Count;
+  };
+
 }}}} // namespace Azure::Security::KeyVault::Keys

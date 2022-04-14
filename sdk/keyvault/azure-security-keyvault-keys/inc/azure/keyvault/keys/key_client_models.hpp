@@ -120,8 +120,8 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
     AZ_SECURITY_KEYVAULT_KEYS_DLLEXPORT static const KeyOperation WrapKey;
 
     /**
-     * @brief The key can be used to unwrap another key with the UnwrapKey(KeyWrapAlgorithm, Byte[],
-     * CancellationToken) method.
+     * @brief The key can be used to unwrap another key with the UnwrapKey(KeyWrapAlgorithm,
+     * Byte[], CancellationToken) method.
      */
     AZ_SECURITY_KEYVAULT_KEYS_DLLEXPORT static const KeyOperation UnwrapKey;
 
@@ -420,8 +420,8 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
     std::string Version;
 
     /**
-     * @brief Indicate whether the key's lifetime is managed by Key Vault. If this key is backing a
-     * Key Vault certificate, the value will be true.
+     * @brief Indicate whether the key's lifetime is managed by Key Vault. If this key is backing
+     * a Key Vault certificate, the value will be true.
      *
      */
     bool Managed = false;
@@ -505,7 +505,8 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
     virtual ~KeyVaultKey() = default;
 
     /**
-     * @brief The cryptographic key, the key type, and the operations you can perform using the key.
+     * @brief The cryptographic key, the key type, and the operations you can perform using the
+     * key.
      *
      */
     JsonWebKey Key;
@@ -670,7 +671,8 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
      *
      * @param deletedKeyProperties A previously created #DeletedKeyPagedResponse that is used to
      * init this new instance.
-     * @param rawResponse The HTTP raw response from where the #DeletedKeyPagedResponse was parsed.
+     * @param rawResponse The HTTP raw response from where the #DeletedKeyPagedResponse was
+     * parsed.
      * @param keyClient A key client required for getting the next pages.
      */
     DeletedKeyPagedResponse(
@@ -713,8 +715,8 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
     std::string m_continuationToken;
 
     /* This is the implementation for checking the status of a deleted key. The key is considered
-     * deleted if querying /deletedkeys/keyName returns 200 from server. Or whenever soft-delete is
-     * disabled.*/
+     * deleted if querying /deletedkeys/keyName returns 200 from server. Or whenever soft-delete
+     * is disabled.*/
     std::unique_ptr<Azure::Core::Http::RawResponse> PollInternal(
         Azure::Core::Context const& context) override;
 
@@ -776,7 +778,8 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
     Azure::Security::KeyVault::Keys::DeletedKey Value() const override { return m_value; }
 
     /**
-     * @brief Get an Url as string which can be used to get the status of the delete key operation.
+     * @brief Get an Url as string which can be used to get the status of the delete key
+     * operation.
      *
      * @return std::string
      */
@@ -789,7 +792,8 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
      * @remark After the operation is initialized, it is used to poll the last update from the
      * server using the \p context.
      *
-     * @param resumeToken A previously generated token used to resume the polling of the operation.
+     * @param resumeToken A previously generated token used to resume the polling of the
+     * operation.
      * @param client A #KeyClient that is used for getting status updates.
      * @param context A #Azure::Core::Context controlling the request lifetime.
      * @return DeleteKeyOperation
@@ -837,8 +841,8 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
     }
 
     /*
-     * Only friend classes are permitted to construct a RecoverDeletedKeyOperation. This is because
-     * a KeyVaultPipelne is required and it is not exposed to customers.
+     * Only friend classes are permitted to construct a RecoverDeletedKeyOperation. This is
+     * because a KeyVaultPipelne is required and it is not exposed to customers.
      *
      * Since C++ doesn't offer `internal` access, we use friends-only instead.
      */
@@ -875,7 +879,8 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
     Azure::Security::KeyVault::Keys::KeyVaultKey Value() const override { return m_value; }
 
     /**
-     * @brief Get an Url as string which can be used to get the status of the delete key operation.
+     * @brief Get an Url as string which can be used to get the status of the delete key
+     * operation.
      *
      * @return std::string
      */
@@ -888,7 +893,8 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
      * @remark After the operation is initialized, it is used to poll the last update from the
      * server using the \p context.
      *
-     * @param resumeToken A previously generated token used to resume the polling of the operation.
+     * @param resumeToken A previously generated token used to resume the polling of the
+     * operation.
      * @param client A #KeyClient that is used for getting status updates.
      * @param context A #Azure::Core::Context controlling the request lifetime.
      * @return DeleteKeyOperation
@@ -897,6 +903,109 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
         std::string const& resumeToken,
         Azure::Security::KeyVault::Keys::KeyClient const& client,
         Azure::Core::Context const& context = Azure::Core::Context());
+  };
+
+  enum LifetimeActionType
+  {
+    /**
+     * @brief Rotate the key based on the key policy.
+     *
+     */
+    Rotate,
+
+    /**
+     * @brief Trigger event grid events. For preview, the notification time is not configurable
+     * and it is default to 30 days before expiry.
+     *
+     */
+    Notify
+  };
+
+  /**
+   * @brief A condition to be satisfied for an action to be executed.
+   */
+  struct LifetimeActionsTrigger final
+  {
+    /**
+     * @brief Time after creation to attempt to rotate. It only applies to rotate. It will be in
+     * ISO 8601 duration format. Example: 90 days : "P90D"
+     *
+     */
+    Azure::Nullable<std::string> TimeAfterCreate;
+    /**
+     * @brief Time before expiry to attempt to rotate or notify. It will be in ISO 8601 duration
+     * format. Example: 90 days : "P90D"
+     *
+     */
+    Azure::Nullable<std::string> TimeBeforeExpiry;
+  };
+
+  /**
+   * @brief Action and its trigger that will be performed by Key Vault over the lifetime of a key.
+   *
+   */
+  struct LifetimeActions final
+  {
+    /**
+     * @brief The condition that will execute the action.
+     *
+     */
+    LifetimeActionsTrigger Trigger;
+
+    /**
+     * @brief The action that will be executed.
+     */
+    LifetimeActionType Action;
+  };
+
+  /**
+   * @brief The key rotation policy attributes.
+   *
+   */
+  struct KeyRotationPolicyAttributes final
+  {
+    /**
+     * @brief The expiryTime will be applied on the new key version. It should be at least 28
+     * days. It will be in ISO 8601 Format. Examples: 90 days: P90D, 3 months: P3M, 48 hours:
+     * PT48H, 1 year and 10 days: P1Y10D
+     */
+    Azure::Nullable<std::string> ExpiryTime;
+
+    /**
+     * @brief The key rotation policy created time in UTC.
+     *
+     */
+    Azure::Nullable<Azure::DateTime> Created;
+
+    /**
+     * @brief The key rotation policy's last updated time in UTC.
+     *
+     */
+    Azure::Nullable<Azure::DateTime> Updated;
+  };
+
+  /**
+   * @brief Rotation policy for a key.
+   */
+  struct KeyRotationPolicy final
+  {
+    /**
+     * @brief The key policy id.
+     */
+    std::string Id;
+
+    /**
+     * @brief Actions that will be performed by Key Vault over the lifetime of a key. For preview,
+     * lifetimeActions can only have two items at maximum: one for rotate, one for notify.
+     * Notification time would be default to 30 days before expiry and it is not configurable.
+     *
+     */
+    std::vector<LifetimeActions> LifetimeActions;
+
+    /**
+     * @brief The key rotation policy attributes.
+     */
+    KeyRotationPolicyAttributes Attributes;
   };
 
 }}}} // namespace Azure::Security::KeyVault::Keys
