@@ -17,10 +17,22 @@ parameters:
   - name: UsePlatformContainer
     type: boolean
     default: false
+  - name: DependsOn
+    type: string
+    default: not-set
+  - name: CloudConfig
+    type: object
+    default: {}
 
 jobs:
 - job: CMakeGenerate
-  condition: and(succeededOrFailed(), ne(variables['Skip.CMakeGenerate'], 'true'))
+  condition: >-
+    and(
+      succeededOrFailed(),
+      ne(variables['Skip.CMakeGenerate'], 'true'),
+      ne(${{ parameters.Matrix }}, '{}')
+    )
+  dependsOn: ${{ parameters.DependsOn }}
   strategy:
     maxParallel: ${{ parameters.MaxParallel }}
     matrix: $[ ${{ parameters.Matrix }} ]
