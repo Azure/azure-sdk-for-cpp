@@ -124,4 +124,4 @@ std::string _detail::KeyRotationPolicySerializer::KeyRotationPolicySerialize(
   }
 
   return payload.dump();
-};
+}
