@@ -113,9 +113,9 @@ namespace Azure { namespace Core { namespace Tracing { namespace OpenTelemetry {
     m_span->End(options);
   }
 
-  /** 
-  * @brief Add the set of attributes provided to the current span.
-  */
+  /**
+   * @brief Add the set of attributes provided to the current span.
+   */
   void OpenTelemetrySpan::AddAttributes(AttributeSet const& attributesToAdd)
   {
     // Note: We make a huge assumption here: That if you're calling into the OpenTelemetry version

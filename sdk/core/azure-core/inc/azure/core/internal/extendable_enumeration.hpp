@@ -5,7 +5,6 @@
 
 #define INCLUDE_AZURE_CORE_EXTENDABLE_ENUMERATION_HPP
 
-
 /**
  * @file
  * @brief Internal utility functions for extendable enumerations.
@@ -54,6 +53,16 @@ namespace Azure { namespace Core { namespace _internal {
      */
     explicit ExtendableEnumeration(std::string enumerationValue)
         : m_enumerationValue(std::move(enumerationValue))
+    {
+    }
+
+    /**
+     * @brief Construct a new extendable enumeration object from another extendable enumeration
+     *
+     * @param enumerationValue The string enumerationValue used for the value.
+     */
+    explicit ExtendableEnumeration(T& enumerationValue)
+        : m_enumerationValue(enumerationValue.ToString())
     {
     }
 

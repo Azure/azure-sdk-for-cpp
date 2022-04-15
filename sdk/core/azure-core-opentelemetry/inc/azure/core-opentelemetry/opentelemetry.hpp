@@ -10,7 +10,7 @@
 namespace Azure { namespace Core { namespace Tracing { namespace OpenTelemetry {
 
   class OpenTelemetryAttributeSet final : public Azure::Core::Tracing::AttributeSet,
-                                    public opentelemetry::common::KeyValueIterable {
+                                          public opentelemetry::common::KeyValueIterable {
     std::map<std::string, opentelemetry::common::AttributeValue> m_propertySet;
 
     template <typename T> void AddAttributeToSet(std::string const& attributeName, T value)
@@ -39,11 +39,11 @@ namespace Azure { namespace Core { namespace Tracing { namespace OpenTelemetry {
       AddAttributeToSet(attributeName, value);
     }
 
-    void AddAttribute(std::string const& attributeName, std::string const &value) override
+    void AddAttribute(std::string const& attributeName, std::string const& value) override
     {
       AddAttributeToSet<std::string const&>(attributeName, value);
     }
-    void AddAttribute(std::string const& attributeName, const char * value) override
+    void AddAttribute(std::string const& attributeName, const char* value) override
     {
       AddAttributeToSet(attributeName, value);
     }
@@ -79,7 +79,7 @@ namespace Azure { namespace Core { namespace Tracing { namespace OpenTelemetry {
      */
     size_t size() const noexcept override { return m_propertySet.size(); }
 
-    ~OpenTelemetryAttributeSet()  {}
+    ~OpenTelemetryAttributeSet() {}
   };
   /**
    * @brief Span - represents a span in tracing.

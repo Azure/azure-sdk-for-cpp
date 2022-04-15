@@ -43,8 +43,7 @@ namespace Azure { namespace Core { namespace Tracing {
    *
    *
    */
-  class AttributeSet
-  {
+  class AttributeSet {
   public:
     virtual void AddAttribute(std::string const& attributeName, bool value) = 0;
     virtual void AddAttribute(std::string const& attributeName, int32_t value) = 0;
