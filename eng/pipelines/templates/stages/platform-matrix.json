@@ -59,13 +59,11 @@
           "CMAKE_GENERATOR_PLATFORM": "Win32",
           "VCPKG_DEFAULT_TRIPLET": "x86-windows-static",
           "MSVC_USE_STATIC_CRT": "true"
-
         },
         "x64": {
           "CMAKE_GENERATOR_PLATFORM": "x64",
           "VCPKG_DEFAULT_TRIPLET": "x64-windows-static",
           "MSVC_USE_STATIC_CRT": "true"
-
         }
       }
     },
@@ -95,7 +93,9 @@
       },
       "TargetArchitecture": {
         "x86": {
-          "CMAKE_GENERATOR_PLATFORM": "Win32"
+          "CMAKE_GENERATOR_PLATFORM": "Win32",
+          "VCPKG_DEFAULT_TRIPLET": "x86-uwp-static",
+          "MSVC_USE_STATIC_CRT": "true"
         },
         "x64": {
           "CMAKE_GENERATOR_PLATFORM": "x64",

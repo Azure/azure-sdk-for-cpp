@@ -55,7 +55,7 @@ if(MSVC_USE_STATIC_CRT AND MSVC)
   #
   # 5. We "replace with empty string" (i.e. remove) first, then add, so that '/MT'
   # will be present (and present once) even if '/MD' was not.
-
+  message(STATUS "Configuring Static Runtime Library.")
   if(${CMAKE_CXX_FLAGS} MATCHES ".*/MD.*")
   string(REGEX REPLACE "/MD" "" CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}")
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /MT")

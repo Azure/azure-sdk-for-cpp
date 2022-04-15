@@ -580,7 +580,7 @@ TEST_F(OpenTelemetryTests, AddSpanAttributes)
 
     // Make sure that the span we collected looks right.
     EXPECT_EQ("AttributeSpan", spans[0]->GetName());
-    EXPECT_EQ(6l, spans[0]->GetAttributes().size());
+    EXPECT_EQ(6ul, spans[0]->GetAttributes().size());
     EXPECT_NE(spans[0]->GetAttributes().end(), spans[0]->GetAttributes().find("int1"));
     EXPECT_NE(spans[0]->GetAttributes().end(), spans[0]->GetAttributes().find("pi"));
     EXPECT_NE(spans[0]->GetAttributes().end(), spans[0]->GetAttributes().find("int64"));
