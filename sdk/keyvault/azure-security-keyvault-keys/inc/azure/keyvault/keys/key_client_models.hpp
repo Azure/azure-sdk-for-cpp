@@ -944,7 +944,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
    * @brief Action and its trigger that will be performed by Key Vault over the lifetime of a key.
    *
    */
-  struct LifetimeActions final
+  struct LifetimeActionsType final
   {
     /**
      * @brief The condition that will execute the action.
@@ -1000,7 +1000,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
      * Notification time would be default to 30 days before expiry and it is not configurable.
      *
      */
-    std::vector<LifetimeActions> LifetimeActions;
+    std::vector<LifetimeActionsType> LifetimeActions;
 
     /**
      * @brief The key rotation policy attributes.

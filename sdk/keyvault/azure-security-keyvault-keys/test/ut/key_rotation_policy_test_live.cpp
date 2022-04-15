@@ -58,20 +58,17 @@ TEST_F(KeyVaultKeyClient, GetKeyRotationPolicy)
   }
 }
 
-TEST_F(KeyVaultKeyClient, GetRandomBytes)
-{ // NEED TO GUARD AGAINST LIVE TEST FOR THE MOMENT.
+TEST_F(KeyVaultKeyClient, DISABLED_GetRandomBytes)
+{ // NEED TO DISABLE TEST FOR THE MOMENT.
   // DUE TO ISSUE WITH CREATE EC HSM TEST WHICH FAILS WITH ACTUAL HSM BEING SET IN THE ENVIRONMENT
   // VARIABLE FILED BUG 3563 TO FIX IT
-  if (m_testContext.IsPlaybackMode())
-  {
-    auto const keyName = GetTestName();
-    CreateHsmClient();
-    auto const& client = GetClientForTest(keyName);
-    GetRandomBytesOptions options;
-    options.Count = 4;
-    auto result = client.GetRandomBytes(options);
-    EXPECT_EQ(result.Value.size(), options.Count);
-  }
+  auto const keyName = GetTestName();
+  CreateHsmClient();
+  auto const& client = GetClientForTest(keyName);
+  GetRandomBytesOptions options;
+  options.Count = 4;
+  auto result = client.GetRandomBytes(options);
+  EXPECT_EQ(result.Value.size(), size_t(options.Count));
 }
 
 TEST(GetRandomBytesOptions, Serialize)

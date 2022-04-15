@@ -51,7 +51,7 @@ KeyRotationPolicy _detail::KeyRotationPolicySerializer::KeyRotationPolicyDeseria
 
     for (auto action : lifeTimeActions)
     {
-      LifetimeActions currentAction;
+      LifetimeActionsType currentAction;
 
       JsonOptional::SetIfExists(
           currentAction.Trigger.TimeAfterCreate,
@@ -66,11 +66,14 @@ KeyRotationPolicy _detail::KeyRotationPolicySerializer::KeyRotationPolicyDeseria
       auto actionType = action[_detail::ActionActionsValue][TypeActionsValue].get<std::string>();
       actionType = Azure::Core::_internal::StringExtensions::ToLower(actionType);
 
-      if (actionType == Azure::Core::_internal::StringExtensions::ToLower(_detail::RotateActionsValue))
+      if (actionType
+          == Azure::Core::_internal::StringExtensions::ToLower(_detail::RotateActionsValue))
       {
         currentAction.Action = LifetimeActionType::Rotate;
       }
-      else if (actionType == Azure::Core::_internal::StringExtensions::ToLower(_detail::NotifyActionsValue))
+      else if (
+          actionType
+          == Azure::Core::_internal::StringExtensions::ToLower(_detail::NotifyActionsValue))
       {
         currentAction.Action = LifetimeActionType::Notify;
       }
@@ -91,7 +94,7 @@ std::string _detail::KeyRotationPolicySerializer::KeyRotationPolicySerialize(
       rotationPolicy.Attributes.ExpiryTime,
       payload[_detail::AttributesPropertyName],
       _detail::ExpiryTimeValue);
-  payload[_detail::LifeTimeActionsValue].array();
+
   for (auto lifetimeAction : rotationPolicy.LifetimeActions)
   {
     json oneAction;

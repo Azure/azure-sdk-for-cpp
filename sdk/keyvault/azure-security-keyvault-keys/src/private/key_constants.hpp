@@ -137,7 +137,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys { nam
   constexpr static const char TypeActionsValue[] = "type";
   constexpr static const char TBEActionsValue[] = "timeBeforeExpiry";
   constexpr static const char TACActionsValue[] = "timeAfterCreate";
-  
+
   /***************** Get Random Bytes *********/
   constexpr static const char CountPropertiesValue[] = "count";
 
