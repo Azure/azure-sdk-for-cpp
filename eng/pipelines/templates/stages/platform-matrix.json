@@ -94,12 +94,12 @@
       "TargetArchitecture": {
         "x86": {
           "CMAKE_GENERATOR_PLATFORM": "Win32",
-          "VCPKG_DEFAULT_TRIPLET": "x86-uwp-static",
+          "VCPKG_DEFAULT_TRIPLET": "x86-uwp",
           "MSVC_USE_STATIC_CRT": "true"
         },
         "x64": {
           "CMAKE_GENERATOR_PLATFORM": "x64",
-          "VCPKG_DEFAULT_TRIPLET": "x64-uwp-static",
+          "VCPKG_DEFAULT_TRIPLET": "x64-uwp",
           "MSVC_USE_STATIC_CRT": "true"
         }
       }
