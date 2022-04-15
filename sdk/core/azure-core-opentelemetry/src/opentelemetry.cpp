@@ -3,7 +3,7 @@
 #include <azure/core/nullable.hpp>
 #include <azure/core/tracing/tracing.hpp>
 #include <memory>
-#ifdef _MSC_VER
+#if defined(_MSC_VER)
 // The OpenTelemetry headers generate a couple of warnings on MSVC in the OTel 1.2 package, suppress
 // the warnings across the includes.
 #pragma warning(push)

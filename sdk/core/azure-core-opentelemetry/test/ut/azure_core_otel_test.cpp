@@ -4,6 +4,13 @@
 #define USE_MEMORY_EXPORTER 1
 #include "azure/core-opentelemetry/opentelemetry.hpp"
 #include <azure/core/test/test_base.hpp>
+#if defined(_MSC_VER)
+// The OpenTelemetry headers generate a couple of warnings on MSVC in the OTel 1.2 package, suppress
+// the warnings across the includes.
+#pragma warning(push)
+#pragma warning(disable : 4100)
+#pragma warning(disable : 4244)
+#endif
 #include <opentelemetry/exporters/memory/in_memory_span_data.h>
 #include <opentelemetry/exporters/memory/in_memory_span_exporter.h>
 #include <opentelemetry/exporters/ostream/span_exporter.h>
@@ -12,6 +19,9 @@
 #include <opentelemetry/sdk/trace/processor.h>
 #include <opentelemetry/sdk/trace/simple_processor.h>
 #include <opentelemetry/sdk/trace/tracer_provider.h>
+#if defined(_MSC_VER)
+#pragma warning(pop)
+#endif
 
 #include <chrono>
 #include <gtest/gtest.h>
@@ -354,10 +364,10 @@ TEST_F(OpenTelemetryTests, CreateSpanWithOptions)
 
         // Return the collected spans.
         auto spans = m_spanData->GetSpans();
-        EXPECT_EQ(1ul, spans.size());
+        EXPECT_EQ(static_cast<size_t>(1), spans.size());
         // Make sure that the span we collected looks right.
         EXPECT_EQ("Client Span", spans[0]->GetName());
-        EXPECT_EQ(1l, spans[0]->GetAttributes().size());
+        EXPECT_EQ(static_cast<size_t>(1), spans[0]->GetAttributes().size());
         EXPECT_NE(
             spans[0]->GetAttributes().end(),
             spans[0]->GetAttributes().find("SimpleStringAttribute"));
