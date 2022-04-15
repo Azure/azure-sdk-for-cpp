@@ -1,11 +1,20 @@
 #pragma once
 
 #include <azure/core/tracing/tracing.hpp>
+#ifdef _MSC_VER
+// The OpenTelemetry headers generate a couple of warnings on MSVC in the OTel 1.2 package, suppress
+// the warnings across the includes.
+#pragma warning(push)
+#pragma warning(disable : 4100)
+#pragma warning(disable : 4244)
 #include <opentelemetry/common/kv_properties.h>
 #include <opentelemetry/trace/provider.h>
 #include <opentelemetry/trace/span.h>
 #include <opentelemetry/trace/tracer.h>
 #include <opentelemetry/trace/tracer_provider.h>
+#if defined(_MSC_VER)
+#pragma warning(pop)
+#endif
 
 namespace Azure { namespace Core { namespace Tracing { namespace OpenTelemetry {
 
