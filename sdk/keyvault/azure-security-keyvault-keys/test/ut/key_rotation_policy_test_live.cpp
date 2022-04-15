@@ -58,10 +58,10 @@ TEST_F(KeyVaultKeyClient, GetKeyRotationPolicy)
   }
 }
 
-TEST_F(KeyVaultKeyClient, DISABLED_GetRandomBytes) 
+TEST_F(KeyVaultKeyClient, GetRandomBytes) 
 {
   auto const keyName = GetTestName();
-  CreateHsmClient("https://gearamamhsm.managedhsm.azure.net/");
+  CreateHsmClient();
   auto const& client = GetClientForTest(keyName);
   GetRandomBytesOptions options;
   options.Count = 4;
@@ -93,7 +93,7 @@ TEST(GetRandomBytesOptions, Serialize)
 TEST(GetRandomBytesOptions, Deserialize)
 {
   std::string inputString = "1234";
-  auto bytes = Azure::Core::Convert::Base64Encode(
+  auto bytes = Azure::Core::_internal::Base64Url::Base64UrlEncode(
       std::vector<uint8_t>(inputString.begin(), inputString.end()));
   std::string responseText = "{\"value\": \"" + std::string(bytes.begin(), bytes.end()) + "\" }";
 
