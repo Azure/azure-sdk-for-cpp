@@ -64,15 +64,13 @@ KeyRotationPolicy _detail::KeyRotationPolicySerializer::KeyRotationPolicyDeseria
           _detail::TBEActionsValue);
 
       auto actionType = action[_detail::ActionActionsValue][TypeActionsValue].get<std::string>();
-      std::transform(actionType.begin(), actionType.end(), actionType.begin(), [](unsigned char c) {
-        return std::tolower(c);
-      });
+      actionType = Azure::Core::_internal::StringExtensions::ToLower(actionType);
 
-      if (actionType == _detail::RotateActionsValue)
+      if (actionType == Azure::Core::_internal::StringExtensions::ToLower(_detail::RotateActionsValue))
       {
         currentAction.Action = LifetimeActionType::Rotate;
       }
-      else if (actionType == _detail::NotifyActionsValue)
+      else if (actionType == Azure::Core::_internal::StringExtensions::ToLower(_detail::NotifyActionsValue))
       {
         currentAction.Action = LifetimeActionType::Notify;
       }
