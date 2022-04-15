@@ -44,12 +44,12 @@
           "CmakeArgs": " -DBUILD_TRANSPORT_CURL=ON"
         },
         "Win32Api_release_curl": {
-          "CmakeArgs": " -DBUILD_TESTING=ON -DBUILD_PERFORMANCE_TESTS=ON -DRUN_LONG_UNIT_TESTS=ON -DBUILD_TRANSPORT_CURL=ON",
+          "CmakeArgs": " -DBUILD_TESTING=ON -DBUILD_PERFORMANCE_TESTS=ON -DRUN_LONG_UNIT_TESTS=ON -DBUILD_TRANSPORT_CURL=ON -DMSVC_USE_STATIC_CRT=ON",
           "BuildArgs": "--parallel 8 --config Release",
           "PublishMapFiles": "true"
         },
         "Win32Api_debug_tests": {
-          "CmakeArgs": " -DBUILD_TESTING=ON -DBUILD_PERFORMANCE_TESTS=ON -DRUN_LONG_UNIT_TESTS=ON -DBUILD_TRANSPORT_CURL=ON -DBUILD_TRANSPORT_WINHTTP=ON",
+          "CmakeArgs": " -DBUILD_TESTING=ON -DBUILD_PERFORMANCE_TESTS=ON -DRUN_LONG_UNIT_TESTS=ON -DBUILD_TRANSPORT_CURL=ON -DBUILD_TRANSPORT_WINHTTP=ON -DMSVC_USE_STATIC_CRT=ON",
           "BuildArgs": "--parallel 8 --config Debug",
           "PublishMapFiles": "true"
         }
@@ -57,13 +57,11 @@
       "TargetArchitecture": {
         "x86": {
           "CMAKE_GENERATOR_PLATFORM": "Win32",
-          "VCPKG_DEFAULT_TRIPLET": "x86-windows-static",
-          "MSVC_USE_STATIC_CRT": "true"
+          "VCPKG_DEFAULT_TRIPLET": "x86-windows-static"
         },
         "x64": {
           "CMAKE_GENERATOR_PLATFORM": "x64",
-          "VCPKG_DEFAULT_TRIPLET": "x64-windows-static",
-          "MSVC_USE_STATIC_CRT": "true"
+          "VCPKG_DEFAULT_TRIPLET": "x64-windows-static"
         }
       }
     },
@@ -94,13 +92,11 @@
       "TargetArchitecture": {
         "x86": {
           "CMAKE_GENERATOR_PLATFORM": "Win32",
-          "VCPKG_DEFAULT_TRIPLET": "x86-uwp",
-          "MSVC_USE_STATIC_CRT": "true"
+          "VCPKG_DEFAULT_TRIPLET": "x86-uwp"
         },
         "x64": {
           "CMAKE_GENERATOR_PLATFORM": "x64",
-          "VCPKG_DEFAULT_TRIPLET": "x64-uwp",
-          "MSVC_USE_STATIC_CRT": "true"
+          "VCPKG_DEFAULT_TRIPLET": "x64-uwp"
         }
       }
     },
