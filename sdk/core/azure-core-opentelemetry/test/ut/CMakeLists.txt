@@ -18,7 +18,7 @@ include(GoogleTest)
 add_executable (
   azure-core-opentelemetry-test
     azure_core_otel_test.cpp
-    azure_core_test.cpp "opentelemetry/sdk_config.h")
+    azure_core_test.cpp)
 
 if (MSVC)
   # Disable warnings:
@@ -43,6 +43,7 @@ target_link_libraries(azure-core-opentelemetry-test PRIVATE azure-core-opentelem
     azure-core 
     opentelemetry-cpp::ostream_span_exporter
     opentelemetry-cpp::in_memory_span_exporter
+    opentelemetry-cpp::sdk
     azure-core-test-fw 
     gtest 
     gmock)

@@ -57,16 +57,6 @@ namespace Azure { namespace Core { namespace _internal {
     }
 
     /**
-     * @brief Construct a new extendable enumeration object from another extendable enumeration
-     *
-     * @param enumerationValue The string enumerationValue used for the value.
-     */
-    explicit ExtendableEnumeration(T& enumerationValue)
-        : m_enumerationValue(enumerationValue.ToString())
-    {
-    }
-
-    /**
      * @brief Construct a default extendable enumeration.
      */
     ExtendableEnumeration() = default;

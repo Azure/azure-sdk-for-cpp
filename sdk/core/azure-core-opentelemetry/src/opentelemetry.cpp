@@ -49,29 +49,29 @@ namespace Azure { namespace Core { namespace Tracing { namespace OpenTelemetry {
   {
     opentelemetry::trace::StartSpanOptions spanOptions;
     spanOptions.kind = opentelemetry::trace::SpanKind::kInternal;
-    if (options.SpanKind == Azure::Core::Tracing::SpanKind::Client)
+    if (options.Kind == Azure::Core::Tracing::SpanKind::Client)
     {
       spanOptions.kind = opentelemetry::trace::SpanKind::kClient;
     }
-    else if (options.SpanKind == Azure::Core::Tracing::SpanKind::Consumer)
+    else if (options.Kind == Azure::Core::Tracing::SpanKind::Consumer)
     {
       spanOptions.kind = opentelemetry::trace::SpanKind::kConsumer;
     }
-    else if (options.SpanKind == Azure::Core::Tracing::SpanKind::Producer)
+    else if (options.Kind == Azure::Core::Tracing::SpanKind::Producer)
     {
       spanOptions.kind = opentelemetry::trace::SpanKind::kProducer;
     }
-    else if (options.SpanKind == Azure::Core::Tracing::SpanKind::Server)
+    else if (options.Kind == Azure::Core::Tracing::SpanKind::Server)
     {
       spanOptions.kind = opentelemetry::trace::SpanKind::kServer;
     }
-    else if (options.SpanKind == Azure::Core::Tracing::SpanKind::Internal)
+    else if (options.Kind == Azure::Core::Tracing::SpanKind::Internal)
     {
       spanOptions.kind = opentelemetry::trace::SpanKind::kInternal;
     }
     else
     {
-      throw std::runtime_error("Unknown SpanOptions Kind: " + options.SpanKind.ToString());
+      throw std::runtime_error("Unknown SpanOptions Kind: " + options.Kind.ToString());
     }
 
     opentelemetry::nostd::shared_ptr<opentelemetry::trace::Span> newSpan;

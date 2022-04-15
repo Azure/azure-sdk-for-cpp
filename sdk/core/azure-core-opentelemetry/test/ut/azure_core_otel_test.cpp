@@ -273,7 +273,7 @@ TEST_F(OpenTelemetryTests, CreateSpanWithOptions)
     auto tracer = traceProvider->CreateTracer("TracerName");
     {
       Azure::Core::Tracing::CreateSpanOptions options;
-      options.SpanKind = Azure::Core::Tracing::SpanKind::Client;
+      options.Kind = Azure::Core::Tracing::SpanKind::Client;
       auto span = tracer->CreateSpan("Client Span", options);
       EXPECT_TRUE(span);
 
@@ -281,7 +281,7 @@ TEST_F(OpenTelemetryTests, CreateSpanWithOptions)
     }
     {
       Azure::Core::Tracing::CreateSpanOptions options;
-      options.SpanKind = Azure::Core::Tracing::SpanKind::Consumer;
+      options.Kind = Azure::Core::Tracing::SpanKind::Consumer;
       auto span = tracer->CreateSpan("Consumer Span", options);
       EXPECT_TRUE(span);
 
@@ -289,7 +289,7 @@ TEST_F(OpenTelemetryTests, CreateSpanWithOptions)
     }
     {
       Azure::Core::Tracing::CreateSpanOptions options;
-      options.SpanKind = Azure::Core::Tracing::SpanKind::Internal;
+      options.Kind = Azure::Core::Tracing::SpanKind::Internal;
       auto span = tracer->CreateSpan("Internal Span", options);
       EXPECT_TRUE(span);
 
@@ -297,7 +297,7 @@ TEST_F(OpenTelemetryTests, CreateSpanWithOptions)
     }
     {
       Azure::Core::Tracing::CreateSpanOptions options;
-      options.SpanKind = Azure::Core::Tracing::SpanKind::Producer;
+      options.Kind = Azure::Core::Tracing::SpanKind::Producer;
       auto span = tracer->CreateSpan("Producer Span", options);
       EXPECT_TRUE(span);
 
@@ -305,7 +305,7 @@ TEST_F(OpenTelemetryTests, CreateSpanWithOptions)
     }
     {
       Azure::Core::Tracing::CreateSpanOptions options;
-      options.SpanKind = Azure::Core::Tracing::SpanKind::Server;
+      options.Kind = Azure::Core::Tracing::SpanKind::Server;
       auto span = tracer->CreateSpan("Server Span", options);
       EXPECT_TRUE(span);
 
@@ -313,7 +313,7 @@ TEST_F(OpenTelemetryTests, CreateSpanWithOptions)
     }
     {
       Azure::Core::Tracing::CreateSpanOptions options;
-      options.SpanKind = Azure::Core::Tracing::SpanKind("Bogus");
+      options.Kind = Azure::Core::Tracing::SpanKind("Bogus");
       EXPECT_THROW(tracer->CreateSpan("Bogus Span", options), std::runtime_error);
     }
     // Return the collected spans.
@@ -346,7 +346,7 @@ TEST_F(OpenTelemetryTests, CreateSpanWithOptions)
         options.Attributes
             = std::make_unique<Azure::Core::Tracing::OpenTelemetry::OpenTelemetryAttributeSet>();
         options.Attributes->AddAttribute("SimpleStringAttribute", "Simple String");
-        options.SpanKind = Azure::Core::Tracing::SpanKind::Client;
+        options.Kind = Azure::Core::Tracing::SpanKind::Client;
         auto span = tracer->CreateSpan("Client Span", options);
         EXPECT_TRUE(span);
 

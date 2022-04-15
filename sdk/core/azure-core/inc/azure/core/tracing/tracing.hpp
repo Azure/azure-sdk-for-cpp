@@ -113,7 +113,7 @@ namespace Azure { namespace Core { namespace Tracing {
 
   struct CreateSpanOptions final
   {
-    SpanKind SpanKind{SpanKind::Internal};
+    SpanKind Kind{SpanKind::Internal};
     std::unique_ptr<AttributeSet> Attributes;
     // Links
     // Start Timestamp
