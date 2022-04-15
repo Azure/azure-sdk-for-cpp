@@ -9,7 +9,7 @@
 
 namespace Azure { namespace Core { namespace Tracing { namespace OpenTelemetry {
 
-  class OpenTelemetryAttributeSet : public Azure::Core::Tracing::AttributeSet,
+  class OpenTelemetryAttributeSet final : public Azure::Core::Tracing::AttributeSet,
                                     public opentelemetry::common::KeyValueIterable {
     std::map<std::string, opentelemetry::common::AttributeValue> m_propertySet;
 
@@ -82,7 +82,7 @@ namespace Azure { namespace Core { namespace Tracing { namespace OpenTelemetry {
   /**
    * @brief Span - represents a span in tracing.
    */
-  class OpenTelemetrySpan : public Azure::Core::Tracing::Span {
+  class OpenTelemetrySpan final : public Azure::Core::Tracing::Span {
     opentelemetry::trace::Scope m_scope;
     opentelemetry::nostd::shared_ptr<opentelemetry::trace::Span> m_span;
 
@@ -121,7 +121,7 @@ namespace Azure { namespace Core { namespace Tracing { namespace OpenTelemetry {
     virtual void SetStatus(SpanStatus const& status, std::string const& statusMessage) override;
   };
 
-  class OpenTelemetryTracer : public Azure::Core::Tracing::Tracer {
+  class OpenTelemetryTracer final : public Azure::Core::Tracing::Tracer {
     opentelemetry::nostd::shared_ptr<opentelemetry::trace::Tracer> m_tracer;
 
   public:
@@ -131,7 +131,7 @@ namespace Azure { namespace Core { namespace Tracing { namespace OpenTelemetry {
         CreateSpanOptions const& options) const override;
   };
 
-  class OpenTelemetryProvider : public Azure::Core::Tracing::TracerProvider {
+  class OpenTelemetryProvider final : public Azure::Core::Tracing::TracerProvider {
     opentelemetry::nostd::shared_ptr<opentelemetry::trace::TracerProvider> m_tracerProvider;
 
   public:
