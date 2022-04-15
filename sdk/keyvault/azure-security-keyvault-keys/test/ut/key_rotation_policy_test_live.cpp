@@ -5,8 +5,8 @@
 
 #include "../../src/private/key_serializers.hpp"
 #include "key_client_base_test.hpp"
-#include <azure/core/datetime.hpp>
 #include <azure/core/base64.hpp>
+#include <azure/core/datetime.hpp>
 #include <azure/keyvault/keyvault_keys.hpp>
 #include <private/key_constants.hpp>
 
@@ -58,19 +58,25 @@ TEST_F(KeyVaultKeyClient, GetKeyRotationPolicy)
   }
 }
 
-TEST_F(KeyVaultKeyClient, GetRandomBytes) 
-{
-  auto const keyName = GetTestName();
-  CreateHsmClient();
-  auto const& client = GetClientForTest(keyName);
-  GetRandomBytesOptions options;
-  options.Count = 4;
-  auto result = client.GetRandomBytes(options);
-  EXPECT_EQ(result.Value.size(), options.Count);
+TEST_F(KeyVaultKeyClient, GetRandomBytes)
+{ // NEED TO GUARD AGAINST LIVE TEST FOR THE MOMENT.
+  // DUE TO ISSUE WITH CREATE EC HSM TEST WHICH FAILS WITH ACTUAL HSM BEING SET IN THE ENVIRONMENT
+  // VARIABLE FILED BUG 3563 TO FIX IT
+  if (m_testContext.IsPlaybackMode())
+  {
+    auto const keyName = GetTestName();
+    CreateHsmClient();
+    auto const& client = GetClientForTest(keyName);
+    GetRandomBytesOptions options;
+    options.Count = 4;
+    auto result = client.GetRandomBytes(options);
+    EXPECT_EQ(result.Value.size(), options.Count);
+  }
 }
 
-TEST(GetRandomBytesOptions, Serialize) 
-{ GetRandomBytesOptions options;
+TEST(GetRandomBytesOptions, Serialize)
+{
+  GetRandomBytesOptions options;
   {
     options.Count = 0;
     std::string result = GetRandomBytesSerializer::GetRandomBytesOptionsSerialize(options);
@@ -99,7 +105,7 @@ TEST(GetRandomBytesOptions, Deserialize)
 
   Azure::Core::Http::RawResponse rawResponse(1, 1, Azure::Core::Http::HttpStatusCode::Ok, "OK");
   rawResponse.SetBody(std::vector<uint8_t>(responseText.begin(), responseText.end()));
-  
+
   auto deserialized = GetRandomBytesSerializer::GetRandomBytesResponseDeserialize(rawResponse);
   EXPECT_EQ(deserialized.size(), size_t(4));
   EXPECT_EQ(deserialized[0], uint8_t('1'));
