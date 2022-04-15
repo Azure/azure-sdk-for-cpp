@@ -43,8 +43,9 @@ namespace Azure { namespace Core { namespace Tracing {
    *
    *
    */
-  struct AttributeSet
+  class AttributeSet
   {
+  public:
     virtual void AddAttribute(std::string const& attributeName, bool value) = 0;
     virtual void AddAttribute(std::string const& attributeName, int32_t value) = 0;
     virtual void AddAttribute(std::string const& attributeName, int64_t value) = 0;
@@ -52,6 +53,7 @@ namespace Azure { namespace Core { namespace Tracing {
     virtual void AddAttribute(std::string const& attributeName, double value) = 0;
     virtual void AddAttribute(std::string const& attributeName, const char* value) = 0;
     virtual void AddAttribute(std::string const& attributeName, std::string const& value) = 0;
+    virtual ~AttributeSet(){};
   };
 
   class SpanKind final : public Azure::Core::_internal::ExtendableEnumeration<SpanKind> {

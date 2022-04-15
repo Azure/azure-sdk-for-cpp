@@ -78,6 +78,8 @@ namespace Azure { namespace Core { namespace Tracing { namespace OpenTelemetry {
      * @return the number of key-value pairs
      */
     size_t size() const noexcept override { return m_propertySet.size(); }
+
+    ~OpenTelemetryAttributeSet()  {}
   };
   /**
    * @brief Span - represents a span in tracing.
