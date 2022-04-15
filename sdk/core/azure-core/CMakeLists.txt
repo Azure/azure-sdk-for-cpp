@@ -91,13 +91,13 @@ set(
     inc/azure/core/nullable.hpp
     inc/azure/core/operation.hpp
     inc/azure/core/paged_response.hpp
+    inc/azure/core/tracing/tracing.hpp
     inc/azure/core/operation_status.hpp
     inc/azure/core/platform.hpp
     inc/azure/core/response.hpp
     inc/azure/core/url.hpp
     inc/azure/core/uuid.hpp
-    inc/azure/core.hpp
- "inc/azure/core/tracing/tracing.hpp")
+    inc/azure/core.hpp)
 
 set(
   AZURE_CORE_SOURCE
@@ -131,7 +131,7 @@ set(
     src/operation_status.cpp
     src/strings.cpp
     src/uuid.cpp
-)
+    src/tracing/tracing.cpp)
 
 add_library(azure-core ${AZURE_CORE_HEADER} ${AZURE_CORE_SOURCE})
 

@@ -8,6 +8,8 @@
 
 #pragma once
 
+#include "azure/core/context.hpp"
+#include "azure/core/datetime.hpp"
 #include "azure/core/internal/extendable_enumeration.hpp"
 #include "azure/core/nullable.hpp"
 #include "azure/core/url.hpp"
@@ -18,18 +20,38 @@
 
 namespace Azure { namespace Core { namespace Tracing {
 
-  /** An attribute applied to a Span, Event, or TraceContext.
+  /** The set of attributes to be applied to a Span.
+   *
+   * @details
+   * OpenTelemetry property bags can hold:
+   *    - bool
+   *    - int32_t
+   *    - int64_t
+   *    - uint64_t
+   *    - double
+   *    - const char *
+   *    - std::string/std::string_view
+   *    - std::span<const bool>
+   *    - std::span<const int32_t>
+   *    - std::span<const int64_t>
+   *    - std::span<const uint32_t>
+   *    - std::span<const double>
+   *    - std::span<std::string/std::string_view>
+   *    - uint64_t (not fully supported)
+   *    - std::span<uint64_t> (not fully supported)
+   *    - std::span<const uint8_t> (not fully supported).
+   *
+   *
    */
-  struct Attribute final
+  struct AttributeSet
   {
-  };
-  /**
-   */
-  struct Event final
-  {
-    std::string Name;
-    Azure::DateTime Timestamp;
-    std::vector<Attribute> Attributes;
+    virtual void AddAttribute(std::string const& attributeName, bool value) = 0;
+    virtual void AddAttribute(std::string const& attributeName, int32_t value) = 0;
+    virtual void AddAttribute(std::string const& attributeName, int64_t value) = 0;
+    virtual void AddAttribute(std::string const& attributeName, uint64_t value) = 0;
+    virtual void AddAttribute(std::string const& attributeName, double value) = 0;
+    virtual void AddAttribute(std::string const& attributeName, const char* value) = 0;
+    virtual void AddAttribute(std::string const& attributeName, std::string const& value) = 0;
   };
 
   class SpanKind final : public Azure::Core::_internal::ExtendableEnumeration<SpanKind> {
@@ -47,7 +69,7 @@ namespace Azure { namespace Core { namespace Tracing {
   class SpanStatus final : public Azure::Core::_internal::ExtendableEnumeration<SpanStatus> {
 
   public:
-    explicit SpanStatus(SpanStatus const& status) : ExtendableEnumeration(status) {}
+    explicit SpanStatus(std::string const& status) : ExtendableEnumeration(status) {}
     SpanStatus() = default;
 
     AZ_CORE_DLLEXPORT const static SpanStatus Unset;
@@ -55,100 +77,43 @@ namespace Azure { namespace Core { namespace Tracing {
     AZ_CORE_DLLEXPORT const static SpanStatus Error;
   };
 
-  class SpanContext final {
-  public:
-    std::array<uint8_t, 16> m_TraceId;
-    std::array<uint8_t, 8> m_SpanId;
-
-    virtual std::array<uint8_t, 16> TraceIdBinary() const = 0;
-    virtual std::array<uint8_t, 8> SpanIdBinary() const = 0;
-    virtual std::array<char, 32> TraceIdHex() const = 0;
-    virtual std::array<char, 16> SpanIdHex() const = 0;
-    virtual bool IsValid() const = 0;
-    virtual bool IsRemote() const = 0;
-  };
-
-  class SpanLink {
-  public:
-    std::unique_ptr<SpanContext> LinkedSpan;
-    std::vector<Attribute> LinkAttributes;
-  };
-
   /**
    * @brief Span - represents a span in tracing.
    */
-  class Span final {
-    Azure::Core::Context::Key m_contextKey;
-    std::unique_ptr<SpanContext> m_spanContext;
-    std::vector<Event> m_events;
-    SpanStatus m_status{SpanStatus::Unset};
-    std::string m_name;
-    std::vector<Attribute> m_spanAttributes;
-    bool m_isRecording{true};
-
+  class Span {
   public:
-    /**
-     * @brief Retrieves the Span associated with the specified Context.
-     *
-     * @note: This may not be the correct implementation because of the pluggable trace provider
-     * requirement.
-     */
-    static std::shared_ptr<Span> FromContext(Azure::Core::Context const& context);
-
-    /**
-     * @brief Inserts the current Span into the specified context.
-     */
-    void InsertIntoContext(Azure::Core::Context& context);
-
     /**
      * @brief Signals that the span has now ended.
      */
-    void End(Azure::Nullable<Azure::DateTime> endTime);
+    virtual void End(Azure::Nullable<Azure::DateTime> endTime = {}) = 0;
 
-    /**
-     * @brief Returns the SpanContext associated with this span.
-     */
-    std::unique_ptr<SpanContext> const& GetContext() const { return m_spanContext; }
-
-    bool IsRecording() { return m_isRecording; }
-
-    void AddAttribute(Attribute& attributeToAdd);
-    void AddAttributes(std::vector<Attribute>& attributeToAdd);
+    virtual void AddAttributes(AttributeSet const& attributeToAdd) = 0;
 
     /**
      * Add an Event to the span. An event is identified by a name and an optional set of attributes
      * associated with the event.
      */
-    void AddEvent(std::string const& eventName, std::vector<Attribute> eventAttributes);
-    void AddEvent(std::string const& eventName, Attribute eventAttributes);
-    void AddEvent(std::string const& eventName);
-    void AddEvent(Event& eventToAdd) { m_events.push_back(eventToAdd); }
-    std::vector<Event> const& GetEvents() const { return m_events; }
+    virtual void AddEvent(std::string const& eventName, AttributeSet const& eventAttributes) = 0;
+    virtual void AddEvent(std::string const& eventName) = 0;
 
     /**
      * @brief Records an exception.
      *
      * @note This might be better as std::runtime_error instead of std::exception. To be discussed.
      */
-    void RecordException(std::exception const& exceptionToRecord);
-    void RecordException(std::exception const& exceptionToRecord, Attribute eventAttributes);
-    void RecordException(
+    virtual void RecordException(std::exception const& exceptionToRecord) = 0;
+    virtual void RecordException(
         std::exception const& exceptionToRecord,
-        std::vector<Attribute> eventAttributes);
+        AttributeSet const& eventAttributes)
+        = 0;
 
-    void SetStatus(SpanStatus const& status);
-    SpanStatus const& GetStatus() const { return m_status; };
-
-    void UpdateName(std::string const& newName) { m_name = newName; }
-
-    Azure::DateTime StartTime;
-    Azure::DateTime EndTime;
+    virtual void SetStatus(SpanStatus const& status, std::string const& description = "") = 0;
   };
 
   struct CreateSpanOptions final
   {
-    Azure::Nullable<Azure::Core::Context> ParentContext;
-    // Attributes
+    SpanKind SpanKind{SpanKind::Internal};
+    std::unique_ptr<AttributeSet> Attributes;
     // Links
     // Start Timestamp
   };
@@ -157,23 +122,21 @@ namespace Azure { namespace Core { namespace Tracing {
    * @brief Tracer - factory for creating span objects.
    *
    */
-  class Tracer final {
+  class Tracer {
   public:
-    std::shared_ptr<Span> CreateSpan(
+    virtual std::shared_ptr<Azure::Core::Tracing::Span> CreateSpan(
         std::string const& spanName,
-        SpanKind const& spanKind,
-        CreateSpanOptions const& options);
+        CreateSpanOptions const& options = {}) const = 0;
   };
 
   /**
    * @brief Trace Provider - factory for creating Tracer objects.
    */
-  class TracerProvider final {
+  class TracerProvider {
   public:
-    virtual std::shared_ptr<Tracer> CreateTracer(
+    virtual std::shared_ptr<Azure::Core::Tracing::Tracer> CreateTracer(
         std::string const& name,
-        std::string const& version,
-        Azure::Nullable<Azure::Core::Url> const& scheme_url = {})
-        = 0;
+        std::string const& version = "",
+        Azure::Nullable<Azure::Core::Url> const& scheme_url = {}) const = 0;
   };
 }}} // namespace Azure::Core::Tracing
