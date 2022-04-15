@@ -1,7 +1,6 @@
 {
   "name": "azure-sdk-for-cpp",
   "version-string": "1.0.0",
-  "builtin-baseline": "407bc79b391a8e30866c95294babca5b111f6006",
   "dependencies": [
     {
       "name": "curl"
@@ -14,8 +13,7 @@
       "name": "openssl"
     },
     {
-      "name": "opentelemetry-cpp",
-      "version>=": "1.2.0"
+      "name": "opentelemetry-cpp"
     }
   ]
 }
