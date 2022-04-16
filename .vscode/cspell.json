@@ -45,6 +45,7 @@
     "deserializers",
     "Deserializes",
     "DFETCH",
+    "DMSVC",
     "docfx",
     "DPAPI",
     "DRUN",
