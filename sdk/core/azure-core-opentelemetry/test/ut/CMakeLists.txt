@@ -45,15 +45,14 @@ target_link_libraries(azure-core-opentelemetry-test PRIVATE azure-core-opentelem
     opentelemetry-cpp::in_memory_span_exporter
     opentelemetry-cpp::sdk
     azure-core-test-fw 
-    gtest 
-    gmock)
+    gtest_main)
 
+create_per_service_target_build(core azure-core-opentelemetry-test)
 create_map_file(azure-core-opentelemetry-test azure-core-opentelemetry-test.map)
 
-# gtest_discover_tests will scan the test from azure-core-test and call add_test
+# gtest_discover_tests will scan the test from azure-core-opentelemetry-test and call add_test
 # for each test to ctest. This enables `ctest -r` to run specific tests directly.
 gtest_discover_tests(azure-core-opentelemetry-test
-     TEST_PREFIX azure-core-opentelemetry
+     TEST_PREFIX azure-core-opentelemetry.
      NO_PRETTY_TYPES
      NO_PRETTY_VALUES)
-
