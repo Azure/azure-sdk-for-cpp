@@ -1,20 +1,30 @@
 {
   "name": "azure-sdk-for-cpp",
   "version-string": "1.0.0",
+  "builtin-baseline": "f0aa678b7471497f1adedcc99f40e1599ad22f69",
   "dependencies": [
     {
-      "name": "curl"
+      "name": "curl",
+      "version>=": "7.82.0"
     },
     {
       "name": "libxml2",
-      "platform": "!windows & !uwp"
+      "platform": "!windows & !uwp",
+      "version>=": "2.9.1"
     },
     {
       "name": "openssl"
     },
     {
       "name": "opentelemetry-cpp",
-      "platform": "!uwp"
+      "platform": "!uwp",
+      "version>=": "1.3.0"
+    }
+  ],
+  "overrides": [
+    {
+      "name": "openssl",
+      "version-string": "1.1.1n"
     }
   ]
 }
