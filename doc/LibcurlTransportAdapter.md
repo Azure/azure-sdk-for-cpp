@@ -2,24 +2,24 @@
 
 ## Azure SDK for C++
 
-The [azure SDK for C++](https://github.com/Azure/azure-sdk-for-cpp) enables and easy and consistent experience for consuming Azure services.
-Azure services offer customers a simple way to perform many kinds of operations online. As such, the operations work as a client - server communication where the operations are requested by a client (customer) and executed by a server (Azure server). Communication goes from one point to another, typically through a network.
+The [Azure SDK for C++](https://github.com/Azure/azure-sdk-for-cpp) enables an easy and consistent experience for consuming Azure services.
+Azure services offer customers a simple way to perform many kinds of operations online. As such, the operations work as a client/server communication where the operations are requested by a client (customer) and executed by an Azure service over a network.
 
 ### HTTP
 
-Many Azure services use TCP/HTTP protocol to exchange messages with a client. The protocol defines the structure of how a request and a response must look like, so, while Server and a Client both follow the protocol rules, they can establish a channel to interchange messages.
+Most Azure services use the HTTP protocol for client/service communication. The protocol defines the structure of how a request and a response must look like.
  
-Modern programing languages like C#, Java or JS have an HTTP client as part of the language itself.   As a C# developer, I don't need to learn about the specifics of the protocol, the language has already abstracted it all, and all that I need are a few classes to instantiate.
+Modern programming languages like C#, Java, and JS have an HTTP client as part of the language itself.  For these languages, the runtime library provides classes making HTTP easy to use.
  
-For the case of C++, the language does not include any sort of abstraction for HTTP protocol. As a C++ developer, I would either need to write an HTTP implementation for my application, which would depend on the system (Windows, Linux, Mac, RTOS, etc.), or, I could use some third party library which would already provide a multi-platform implementation for the protocol.  Libcurl, for example, is one of the most popular libraries.
+However, for C++, the runtime library does not include any HTTP classes; you either need to write an HTTP implementation yourself or you could use some third-party library.  Keep in mind, that you also have to consider the OSes (Windows, Linux, Mac, RTOS, etc.) you plan to run your application on. Libcurl, for example, is one of the most popular cross-OS libraries.
 
 ### Replaceable HTTP Transport
 
-One of the most interesting features of the Azure SDK for C++ is how, as a user, I can take control and choose the HTTP implementation to be used to communicate to Azure. That implementation is known by the SDK as an HTTP transport adapter. The azure-core library includes an HTTP namespace where it has defined classes to abstract the HTTP components (request, response, send, etc.). While the Request and the Response are well defined based on the HTTP protocol [RFC](https://datatracker.ietf.org/doc/html/rfc7230), the send operation is left as a virtual method in the HttpTransport abstract class. Then, a transport adapter is a derived class that implements the send operation. Learn more about HTTP Transport [here](https://github.com/Azure/azure-sdk-for-cpp/blob/main/doc/HttpTransportAdapter.md#http-transport-adapter).
+One of the more interesting features of the Azure SDK for C++ is that a customer has the ability to choose the HTTP implementation to be used to communicate with Azure services. That implementation is known by the SDK as an HTTP _transport adapter_. The azure-core library includes an HTTP namespace where it defines classes to abstract the HTTP components (request, response, send, etc.). While the Request and the Response are well defined based on the HTTP protocol [RFC](https://datatracker.ietf.org/doc/html/rfc7230), the send operation is left as a virtual method in the HttpTransport abstract class. Then, a transport adapter is a derived class that implements the Send operation. Learn more about HTTP transport adapter [here](https://github.com/Azure/azure-sdk-for-cpp/blob/main/doc/HttpTransportAdapter.md#http-transport-adapter).
 
 ## Libcurl Transport Adapter
 
-The azure-core-cpp library provides a transport adapter implemented with libcurl. The next paragraphs will mention some of the limitations of libcurl and the code that is part of the LibcurlTransportAdatper  (or LTA) that satisfy the expectations for an SDK client.
+The azure-core-cpp library provides a transport adapter implemented with libcurl. The next paragraphs mentions some of the limitations of libcurl and the code that is part of the LibcurlTransportAdatper  (LTA) that satisfy the expectations for an SDK client.
 
 ### Easy handle
 
@@ -29,10 +29,10 @@ An easy handle represents a network request to be performed. For a developer, th
 
 1.	Create an easy handle (as a raw pointer).
 2.	Ask libcurl to init the handle. Libcurl handles memory allocation.
-3.	Configure handle according to what needs to be requested to server.
+3.	Configure the handle according to what needs to be requested to service.
 4.	Tell libcurl to take the easy handle and perform the request.
  
-As simple as that, libcurl is putting away a ton of complexity from developer's hands. If step 3 was done correctly, libcurl would ask the Operating System for a network socket to speak to the network. It will establish a connection. It will even take care of securing the connection with TLS when requested. It will talk to a server following HTTP spec and it will receive and parse a response from the network. It sounds magical! However, it is not enough for the Azure SDK requirements.
+As simple as that, libcurl hides a ton of complexity from you. Libcurl asks the Operating System for a network socket and establishes a connection. It even takes care of securing the connection with TLS when requested. It sends the HTTP request to the service, and it receives the HTTP response. It sounds magical! However, it is not enough for Azure SDK's requirements.
 
 ### Azure SDK requirements
 
@@ -50,7 +50,7 @@ Older versions of the Azure SDK have worked around the libcurl programing model 
  
 Another approach is to be able to request data from the server starting at some specific offset. Then, downloading big content would be equivalent to sending one request after another, asking for data starting on the last downloaded data. However, this strategy adds unnecessary extra messaging.  Each request is parsed by the server to produce a response that is sent back to the client. The client also parses the response. These server and client parsing would be happening one after each other, so it is not efficient.
 
-### Poor man's substitute
+### Manually implementing HTTP protocol
 
 As mentioned before, using libcurl properly means delegating TCP and HTTP entirely to libcurl. In a nutshell, libcurl works as a state machine. Calling [curl_easy_perform(handle)](https://curl.se/libcurl/c/curl_easy_perform.html) is the way to start the machine (step 4 mentioned above). A loop is started and won't be completed until the request (set it up in the handle) is completed. If the request represents a GET operation to download data, and the application is expecting to read the data coming for the server, the handle needs to be configured with a _delegated function_ (a callback) that libcurl will invoke as soon as it has data from the server. Every time the callback is invoked, libcurl will inform how big it is the chunk of data that has arrived from the server, and a pointer to the buffer where data can be read. The next flow would be an approximation summary of what is happening within libcurl while dispatching a GET request:
  
@@ -69,8 +69,6 @@ This flow demonstrates how using libcurl to download data requires developers to
  
 There are valid alternatives for applications, but it might be complex approaches. For example, using a multi-threading strategy, an application can call curl_easy_perform from one thread and use the read callback to copy the data from the response into a memory buffer. Then, another thread can play the media from the buffer. This strategy requires threads synchronization and complicates the debugging experience.
  
-Some other designs might help applications to deal with this. But it is a different story for libraries.  The Azure SDK is a library, and it ensures a consistent experience regardless of the programing language, as such, the API is not shaped by its implementation details. The libcurl implementation details from the Azure SDK is considered a poor man's substitute by [libcurl author](https://github.com/curl/curl/issues/6009#issuecomment-698611402), and it is explained next.
-
 #### Speaking HTTP
 
 Libcurl supports not only the HTTP protocol. It can also be used to speak other protocols. What this means, in short, is that, for any supported protocol, libcurl will translate the configuration from the handle into the specifics of the protocol in a way that a user doesn't need to learn those specific details from the protocol. However, there is an alternative that libcurl offers to speak a custom protocol.  It is indeed a poor man's solution because it is now the customer who will be writing and reading messages to a server. Referring to the seven steps flow mentioned before, about how libcurl dispatches a request, when the handle is set it up for custom protocol, it would be reduced to:
