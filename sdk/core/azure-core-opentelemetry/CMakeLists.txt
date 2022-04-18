@@ -31,7 +31,7 @@ if(NOT AZ_ALL_LIBRARIES)
     find_package(azure-core-cpp "1.5.0" REQUIRED)
   endif()
 endif()
-find_package(opentelemetry-cpp CONFIG REQUIRED)
+find_package(opentelemetry-cpp "1.3.0" CONFIG REQUIRED)
 
 set(
   AZURE_CORE_OPENTELEMETRY_HEADER
