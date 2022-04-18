@@ -31,4 +31,4 @@ steps:
         -Ref $(VcpkgCommit)
         -VcpkgPath $(VCPKG_INSTALLATION_ROOT)
       pwsh: true
-    displayName: Clone Vcpkg at commit $(VcpkgCommit)
+    displayName: Clone Vcpkg.
