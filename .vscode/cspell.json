@@ -144,6 +144,8 @@
       "words": [
         "TEAMPROJECTID",
         "issecret",
+        "PSScriptRoot",
+        "BUILDID",
         "cppvcpkgcache"
       ]
     },

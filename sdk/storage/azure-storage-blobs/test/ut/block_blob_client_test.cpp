@@ -1933,4 +1933,22 @@ namespace Azure { namespace Storage { namespace Test {
     leaseClient.Release();
   }
 
+  TEST_F(BlockBlobClientTest, MaximumBlocks)
+  {
+    auto const testName(GetTestName());
+    auto blobClient = GetBlockBlobClient(testName);
+
+    const std::vector<uint8_t> content(static_cast<size_t>(1), 'a');
+    const std::string blockId = Base64EncodeText(std::string(64, '0'));
+    auto blockContent = Azure::Core::IO::MemoryBodyStream(content.data(), content.size());
+    blobClient.StageBlock(blockId, blockContent);
+
+    std::vector<std::string> blockIds(50000, blockId);
+    EXPECT_NO_THROW(blobClient.CommitBlockList(blockIds));
+
+    EXPECT_EQ(
+        blobClient.GetProperties().Value.BlobSize,
+        static_cast<int64_t>(blockIds.size() * content.size()));
+  }
+
 }}} // namespace Azure::Storage::Test

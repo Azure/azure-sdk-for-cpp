@@ -6,6 +6,8 @@
  * @brief Internal utility functions for extendable enumerations.
  *
  */
+#pragma once
+
 #include <string>
 
 namespace Azure { namespace Core { namespace _internal {
@@ -20,10 +22,10 @@ namespace Azure { namespace Core { namespace _internal {
    * Example:
    *
    * \code{.cpp}
-   * class MyEnumeration final : public ExtendableEnumeration<AttestationType> {
+   * class MyEnumeration final : public ExtendableEnumeration<MyEnumeration> {
    * public:
-   *   explicit MyEnumeration(std::string attestationType) :
-   *     ExtendableEnumeration(std::move(attestationType)) {}
+   *   explicit MyEnumeration(std::string value) :
+   *     ExtendableEnumeration(std::move(value)) {}
    *   MyEnumeration() = default;
    *   static const MyEnumeration Enumerator1;
    *   static const MyEnumeration Enumerator2;

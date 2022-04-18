@@ -1,11 +1,21 @@
 # Release History
 
-## 1.5.0-beta.1 (Unreleased)
+## 1.6.0-beta.1 (Unreleased)
+
+### Features Added
+
+### Breaking Changes
+
+### Bugs Fixed
+
+### Other Changes
+
+## 1.5.0 (2022-03-31)
 
 ### Features Added
 
 - When a `RequestFailedException` exception is thrown, the `what()` method now includes information about the HTTP request which failed.
-- Adding option `WinHttpTransportOptions.IgnoreUnknownServerCert`. It can be used to disable verifying server certificate for the `WinHttpTransport`.
+- Adding option `WinHttpTransportOptions.IgnoreUnknownCertificateAuthority`. It can be used to disable verifying server certificate for the `WinHttpTransport`.
 
 ### Breaking Changes
 

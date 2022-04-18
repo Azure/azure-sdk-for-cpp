@@ -195,6 +195,18 @@ jobs:
                 sourceFolder: build/sdk/${{ parameters.ServiceDirectory }}/${{ artifact.Path }}/docs/html
                 targetFolder: $(Build.ArtifactStagingDirectory)/docs/${{ artifact.Name }}
               displayName: Copy documentation to artifact staging directory
+             
+            - task: Powershell@2
+              inputs:
+                filePath: $(Build.SourcesDirectory)/eng/common/scripts/Verify-ChangeLog.ps1
+                arguments: >
+                  -ChangeLogLocation sdk/${{ parameters.ServiceDirectory }}/${{ artifact.Path }}/CHANGELOG.md
+                  -VersionString (Get-Content build/sdk/${{ parameters.ServiceDirectory }}/${{ artifact.Path }}/docs/html/package-info.json | ConvertFrom-Json).version
+                  -ForRelease $true
+                pwsh: true
+              displayName: Verify CHANGELOG.md contents
+              continueOnError: true
+              condition: and(succeeded(), eq(variables['VerifyChangeLogForRelease'], 'true'))
 
         - task: PublishPipelineArtifact@1
           inputs:
