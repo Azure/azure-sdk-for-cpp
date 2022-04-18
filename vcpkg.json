@@ -10,7 +10,7 @@
     {
       "name": "libxml2",
       "platform": "!windows & !uwp",
-      "version>=": "2.9.1"
+      "version>=": "2.9.12"
     },
     {
       "name": "openssl"
