@@ -2,7 +2,7 @@
     "displayNames": {
         "_": ""
     },
-    "include": [
+    "matrix": [
         {
             "OSConfig": {
                 "Windows": {

@@ -2,9 +2,9 @@
     "displayNames": {
         "_": ""
     },
-    "include": [
+    "matrix": [
         {
-    "CmakeEnvArg": "",
+            "CmakeEnvArg": "",
             "OSConfig": {
                 "Linux": {
                     "Pool": "azsdk-pool-mms-ubuntu-1804-general",
