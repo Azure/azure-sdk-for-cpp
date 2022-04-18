@@ -32,7 +32,6 @@ stages:
       LiveTestCtestRegex: azure-storage
       Clouds: Preview
       SupportedClouds: Preview
-      UnsupportedClouds: Public,Canary,UsGov,China
       Artifacts:
         - Name: azure-storage-common
           Path: azure-storage-common
