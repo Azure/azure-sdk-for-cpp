@@ -13,7 +13,8 @@
       "name": "openssl"
     },
     {
-      "name": "opentelemetry-cpp"
+      "name": "opentelemetry-cpp",
+      "platform": "!uwp"
     }
   ]
 }
