@@ -38,7 +38,49 @@ private:
     {
       GTEST_LOG_(INFO) << "File: " << std::string(file) << " (" << line << "): " << std::string(msg)
                        << std::endl;
-      attributes;
+      if (!attributes.empty())
+      {
+        for (auto & attribute : attributes)
+        {
+          GTEST_LOG_(INFO) << "Attribute " << attribute.first << ": ";
+          switch (attribute.second.index())
+          {
+            case opentelemetry::sdk::common::kTypeBool:
+              GTEST_LOG_(INFO) << opentelemetry::nostd::get<bool>(attribute.second);
+              break;
+            case opentelemetry::sdk::common::kTypeInt:
+              GTEST_LOG_(INFO) << opentelemetry::nostd::get<int>(attribute.second);
+              break;
+            case opentelemetry::sdk::common::kTypeUInt:
+              GTEST_LOG_(INFO) << opentelemetry::nostd::get<uint32_t>(attribute.second);
+              break;
+            case opentelemetry::sdk::common::kTypeInt64:
+              GTEST_LOG_(INFO) << opentelemetry::nostd::get<int64_t>(attribute.second);
+              break;
+            case opentelemetry::sdk::common::kTypeDouble:
+              GTEST_LOG_(INFO) << opentelemetry::nostd::get<double>(attribute.second);
+              break;
+
+            case opentelemetry::sdk::common::kTypeString:
+              GTEST_LOG_(INFO) << opentelemetry::nostd::get<std::string>(attribute.second);
+              break;
+
+            case opentelemetry::sdk::common::kTypeSpanBool:
+            case opentelemetry::sdk::common::kTypeSpanInt:
+            case opentelemetry::sdk::common::kTypeSpanUInt:
+            case opentelemetry::sdk::common::kTypeSpanInt64:
+            case opentelemetry::sdk::common::kTypeSpanDouble:
+            case opentelemetry::sdk::common::kTypeSpanString:
+            case opentelemetry::sdk::common::kTypeUInt64:
+            case opentelemetry::sdk::common::kTypeSpanUInt64:
+            case opentelemetry::sdk::common::kTypeSpanByte:
+              GTEST_LOG_(INFO) << opentelemetry::nostd::get<bool>(attribute.second);
+              GTEST_LOG_(INFO) << "SPAN";
+              break;
+          }
+          GTEST_LOG_(INFO) << std::endl;
+        }
+      }
     }
   };
 
