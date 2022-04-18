@@ -40,7 +40,7 @@ private:
                        << std::endl;
       if (!attributes.empty())
       {
-        for (auto & attribute : attributes)
+        for (auto& attribute : attributes)
         {
           GTEST_LOG_(INFO) << "Attribute " << attribute.first << ": ";
           switch (attribute.second.index())
@@ -606,8 +606,8 @@ TEST_F(OpenTelemetryTests, AddSpanAttributes)
     Azure::Core::Tracing::OpenTelemetry::OpenTelemetryAttributeSet attributeSet;
     attributeSet.AddAttribute("int1", 1);
     attributeSet.AddAttribute("pi", 3.1415926);
-    attributeSet.AddAttribute("int64", 151031ll);
-    attributeSet.AddAttribute("uint64", 1ull);
+    attributeSet.AddAttribute("int64", static_cast<int64_t>(151031ll));
+    attributeSet.AddAttribute("uint64", static_cast<uint64_t>(1ull));
     attributeSet.AddAttribute("charstring", "char * string.");
     // Note that the attribute set doesn't take ownership of the input value, so we need to ensure
     // the lifetime of any std::string values put into the set.
