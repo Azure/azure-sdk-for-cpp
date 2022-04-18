@@ -72,7 +72,7 @@ parameters:
 stages:
   - stage: CMakeGeneration
     jobs:
-      - template: /eng/pipelines/templates/jobs/archetype-sdk-cmake-generate.yml
+      - template: /eng/pipelines/templates/jobs/cmake-generate-jobs.yml
         parameters:
           ServiceDirectory: ${{ parameters.ServiceDirectory }}
           Artifacts: ${{ parameters.Artifacts }}
