@@ -61,8 +61,8 @@ namespace Azure { namespace Core { namespace WebSockets {
     /**
      * @brief Construct a new WebSocket Message object
      *
-     * @param type
-     * @param bufferStream
+     * @param type Defined if the message is for text, binary or something else.
+     * @param bufferStream Defines the content of the message.
      */
     explicit WebSocketMessage(WebSocketMessageType type, Azure::Core::IO::BodyStream& bufferStream)
         : m_bufferStream(bufferStream), Type(type)
