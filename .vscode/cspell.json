@@ -42,6 +42,7 @@
     "cuse",
     "CUSEUAP",
     "DCMAKE",
+    "DDISABLE",
     "deserializers",
     "Deserializes",
     "DFETCH",
