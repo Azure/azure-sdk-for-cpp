@@ -24,7 +24,6 @@ steps:
     condition: and(succeeded(), eq(variables['System.TeamProject'], 'internal'))
 
   - task: PowerShell@2
-    displayName: Clone Vcpkg at commit $(VcpkgCommit)
     inputs:
       targetType: filePath
       filePath: eng/scripts/vcpkg.ps1
@@ -32,3 +31,4 @@ steps:
         -Ref $(VcpkgCommit)
         -VcpkgPath $(VCPKG_INSTALLATION_ROOT)
       pwsh: true
+    displayName: Clone Vcpkg at commit $(VcpkgCommit)

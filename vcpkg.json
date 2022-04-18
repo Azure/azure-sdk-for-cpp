@@ -4,13 +4,11 @@
   "builtin-baseline": "f0aa678b7471497f1adedcc99f40e1599ad22f69",
   "dependencies": [
     {
-      "name": "curl",
-      "version>=": "7.82.0"
+      "name": "curl"
     },
     {
       "name": "libxml2",
-      "platform": "!windows & !uwp",
-      "version>=": "2.9.12"
+      "platform": "!windows & !uwp"
     },
     {
       "name": "openssl"
