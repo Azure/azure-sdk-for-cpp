@@ -44,8 +44,15 @@ Most Azure SDKs use [OpenTelemetry](https://opentelemetry.io/) to support tracin
 ### Enabling tracing using OpenTelemetry
 
 ```cpp
-<TBD>
+// Start by creating an OpenTelemetry Provider.
+// Use the default OpenTelemetry tracer provider.
+std::shared_ptr<Azure::Core::Tracing::TracerProvider> tracerProvider = std::make_shared<Azure::Core::OpenTelemetry::TracerProvider>();
+
+// Connect the tracerProvider to the current application context.
+ApplicationContext().SetTracerProvider(tracerProvider);
 ```
+
+After this, the SDK API implementations will be able to retrieve the tracer provider and produce tracing events automatically.
 
 ### Manual Span Propagation using OpenTelemetry
 

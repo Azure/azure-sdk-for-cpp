@@ -190,7 +190,7 @@ namespace Azure { namespace Core { namespace Tracing {
 
     /**
      * @brief Adds an event to the span.
-     * 
+     *
      * Add an Event to the span. An event is identified by a name
      * @param eventName Name of the event to add.
      */
