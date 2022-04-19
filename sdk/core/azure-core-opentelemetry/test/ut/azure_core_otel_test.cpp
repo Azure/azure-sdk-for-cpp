@@ -631,3 +631,56 @@ TEST_F(OpenTelemetryTests, AddSpanAttributes)
     EXPECT_NE(spans[0]->GetAttributes().end(), spans[0]->GetAttributes().find("stdstring"));
   }
 }
+
+TEST_F(OpenTelemetryTests, AddSpanEvents)
+{
+  {
+    std::shared_ptr<Azure::Core::Tracing::TracerProvider> traceProvider
+        = std::make_shared<Azure::Core::Tracing::OpenTelemetry::OpenTelemetryProvider>(
+            CreateOpenTelemetryProvider());
+
+    auto tracer = traceProvider->CreateTracer("TracerName");
+    auto span = tracer->CreateSpan("SpanWithEvents");
+    EXPECT_TRUE(span);
+
+    span->AddEvent("String Event");
+    span->AddEvent(std::runtime_error("Exception message"));
+
+    {
+      Azure::Core::Tracing::OpenTelemetry::OpenTelemetryAttributeSet attributeSet;
+      attributeSet.AddAttribute("int1", 1);
+      attributeSet.AddAttribute("pi", 3.1415926);
+      attributeSet.AddAttribute("int64", static_cast<int64_t>(151031ll));
+      attributeSet.AddAttribute("uint64", static_cast<uint64_t>(1ull));
+      attributeSet.AddAttribute("charstring", "char * string.");
+      // Note that the attribute set doesn't take ownership of the input value, so we need to ensure
+      // the lifetime of any std::string values put into the set.
+      std::string stringValue("std::string.");
+      attributeSet.AddAttribute("stdstring", stringValue);
+      span->AddEvent("Event With Attributes", attributeSet);
+
+      span->End();
+
+      // Return the collected spans.
+      auto spans = m_spanData->GetSpans();
+      EXPECT_EQ(1ul, spans.size());
+      EXPECT_EQ(3UL, spans[0]->GetEvents().size());
+
+      EXPECT_EQ("String Event", spans[0]->GetEvents()[0].GetName());
+      EXPECT_EQ("Exception message", spans[0]->GetEvents()[1].GetName());
+      EXPECT_EQ("Event With Attributes", spans[0]->GetEvents()[2].GetName());
+
+      const auto &attributes = spans[0]->GetEvents()[2].GetAttributes();
+
+
+      // Make sure that the span we collected looks right.
+      EXPECT_EQ(6ul, attributes.size());
+      EXPECT_NE(attributes.end(), attributes.find("int1"));
+      EXPECT_NE(attributes.end(), attributes.find("pi"));
+      EXPECT_NE(attributes.end(), attributes.find("int64"));
+      EXPECT_NE(attributes.end(), attributes.find("uint64"));
+      EXPECT_NE(attributes.end(), attributes.find("charstring"));
+      EXPECT_NE(attributes.end(), attributes.find("stdstring"));
+    }
+  }
+}

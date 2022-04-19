@@ -30,19 +30,10 @@ namespace Azure { namespace Core { namespace Tracing { namespace OpenTelemetry {
 
   std::shared_ptr<Azure::Core::Tracing::Tracer> OpenTelemetryProvider::CreateTracer(
       std::string const& name,
-      std::string const& version,
-      Azure::Nullable<Azure::Core::Url> const& schema_url) const
+      std::string const& version) const
   {
-    opentelemetry::nostd::shared_ptr<opentelemetry::trace::Tracer> returnTracer;
-    if (schema_url)
-    {
-      returnTracer
-          = m_tracerProvider->GetTracer(name, version, schema_url.Value().GetAbsoluteUrl());
-    }
-    else
-    {
-      returnTracer = m_tracerProvider->GetTracer(name, version);
-    }
+    opentelemetry::nostd::shared_ptr<opentelemetry::trace::Tracer> returnTracer(
+        m_tracerProvider->GetTracer(name, version));
     return std::make_shared<Azure::Core::Tracing::OpenTelemetry::OpenTelemetryTracer>(returnTracer);
   }
 
@@ -145,33 +136,19 @@ namespace Azure { namespace Core { namespace Tracing { namespace OpenTelemetry {
    * associated with the event.
    */
   void OpenTelemetrySpan::AddEvent(
-      std::string const& /* eventName*/,
-      AttributeSet const& /* eventAttributes*/)
+      std::string const& eventName,
+      AttributeSet const& eventAttributes)
   {
-    throw std::runtime_error("Not implemented");
+    Azure::Core::Tracing::OpenTelemetry::OpenTelemetryAttributeSet const& attributes
+        = static_cast<Azure::Core::Tracing::OpenTelemetry::OpenTelemetryAttributeSet const&>(
+            eventAttributes);
+
+    m_span->AddEvent(eventName, attributes);
   }
 
-  void OpenTelemetrySpan::AddEvent(std::string const& /* eventName*/)
-  {
-    throw std::runtime_error("Not implemented");
-  }
+  void OpenTelemetrySpan::AddEvent(std::string const& eventName) { m_span->AddEvent(eventName); }
 
-  /**
-   * @brief Records an exception.
-   *
-   * @note This might be better as std::runtime_error instead of std::exception. To be discussed.
-   */
-  void OpenTelemetrySpan::RecordException(std::exception const& /* exceptionToRecord*/)
-  {
-    throw std::runtime_error("Not implemented");
-  }
-
-  void OpenTelemetrySpan::RecordException(
-      std::exception const& /* exceptionToRecord*/,
-      AttributeSet const& /* eventAttributes*/)
-  {
-    throw std::runtime_error("Not implemented");
-  }
+  void OpenTelemetrySpan::AddEvent(std::exception const& ex) { m_span->AddEvent(ex.what()); }
 
   void OpenTelemetrySpan::SetStatus(SpanStatus const& status, std::string const& statusMessage)
   {

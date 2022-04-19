@@ -120,16 +120,7 @@ namespace Azure { namespace Core { namespace Tracing { namespace OpenTelemetry {
     virtual void AddEvent(std::string const& eventName, AttributeSet const& eventAttributes)
         override;
     virtual void AddEvent(std::string const& eventName) override;
-
-    /**
-     * @brief Records an exception.
-     *
-     * @note This might be better as std::runtime_error instead of std::exception. To be discussed.
-     */
-    virtual void RecordException(std::exception const& exceptionToRecord) override;
-    virtual void RecordException(
-        std::exception const& exceptionToRecord,
-        AttributeSet const& eventAttributes) override;
+    virtual void AddEvent(std::exception const& exception) override;
 
     virtual void SetStatus(SpanStatus const& status, std::string const& statusMessage) override;
   };
@@ -154,7 +145,6 @@ namespace Azure { namespace Core { namespace Tracing { namespace OpenTelemetry {
 
     virtual std::shared_ptr<Azure::Core::Tracing::Tracer> CreateTracer(
         std::string const& name,
-        std::string const& version = "",
-        Azure::Nullable<Azure::Core::Url> const& scheme_url = {}) const override;
+        std::string const& version = "") const override;
   };
 }}}} // namespace Azure::Core::Tracing::OpenTelemetry
