@@ -74,7 +74,8 @@ namespace Azure { namespace Core { namespace Http { namespace _internal {
         std::string const& telemetryServiceName,
         std::string const& telemetryServiceVersion,
         std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>>&& perRetryPolicies,
-        std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>>&& perCallPolicies)
+        std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>>&& perCallPolicies,
+        HttpServiceTransportOptions const& serviceTransportOptions = HttpServiceTransportOptions())
     {
       auto const& perCallClientPolicies = clientOptions.PerOperationPolicies;
       auto const& perRetryClientPolicies = clientOptions.PerRetryPolicies;
@@ -129,9 +130,20 @@ namespace Azure { namespace Core { namespace Http { namespace _internal {
           std::make_unique<Azure::Core::Http::Policies::_internal::LogPolicy>(clientOptions.Log));
 
       // transport
+      // Copy customer's transport policy options. Avoid mutation customer's options
+      // If customer did not set a transport adapter for the `transport policy options` we set it
+      // right now using the `serviceTransportOptions` provided by a service.
+      Azure::Core::Http::Policies::TransportOptions transportPolicyOptions
+          = clientOptions.Transport;
+      if (!transportPolicyOptions.Transport)
+      {
+        transportPolicyOptions.Transport
+            = Azure::Core::Http::Policies::_detail::GetTransportAdapter(serviceTransportOptions);
+      }
+
       m_policies.emplace_back(
           std::make_unique<Azure::Core::Http::Policies::_internal::TransportPolicy>(
-              clientOptions.Transport));
+              transportPolicyOptions));
     }
 
     /**

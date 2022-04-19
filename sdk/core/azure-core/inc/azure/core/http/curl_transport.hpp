@@ -117,6 +117,8 @@ namespace Azure { namespace Core { namespace Http {
      *
      */
     std::chrono::milliseconds ConnectionTimeout = _detail::DefaultConnectionTimeout;
+
+    HttpServiceTransportOptions serviceOptions;
   };
 
   /**

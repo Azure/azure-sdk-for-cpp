@@ -13,6 +13,8 @@
 
 namespace Azure { namespace Core { namespace Http {
 
+  struct HttpServiceTransportOptions { bool Tbd = false; };
+
   /**
    * @brief Base class for all HTTP transport implementations.
    */
