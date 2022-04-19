@@ -14,10 +14,14 @@ parameters:
   - name: CMakeSourceTestOptions
     type: object
     default: []
+  - name: GenerateTimeoutInMinutes
+    type: number
+    default: 90
 
 jobs:
 - job: CMakeGenerate
   condition: and(succeededOrFailed(), ne(variables['Skip.CMakeGenerate'], 'true'))
+  timeoutInMinutes: ${{ parameters.GenerateTimeoutInMinutes }}
   strategy:
     matrix:
       Linux:
@@ -73,6 +77,7 @@ jobs:
 
 - job: CMakeSourceGenerate
   condition: and(succeededOrFailed(), ne(variables['Skip.CMakeGenerate'], 'true'))
+  timeoutInMinutes: ${{ parameters.GenerateTimeoutInMinutes }}
   strategy:
     matrix:
       Windows:
