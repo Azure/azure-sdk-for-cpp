@@ -179,7 +179,7 @@ namespace Azure { namespace Core { namespace Tracing {
     virtual void AddAttributes(AttributeSet const& attributeToAdd) = 0;
 
     /**
-     * @brief
+     * @brief Adds an event to the span.
      *
      * Add an Event to the span. An event is identified by a name and an optional set of attributes
      * associated with the event.
@@ -189,7 +189,8 @@ namespace Azure { namespace Core { namespace Tracing {
     virtual void AddEvent(std::string const& eventName, AttributeSet const& eventAttributes) = 0;
 
     /**
-     * @brief
+     * @brief Adds an event to the span.
+     * 
      * Add an Event to the span. An event is identified by a name
      * @param eventName Name of the event to add.
      */

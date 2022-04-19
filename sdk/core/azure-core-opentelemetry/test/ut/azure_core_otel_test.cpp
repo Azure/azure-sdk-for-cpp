@@ -670,8 +670,7 @@ TEST_F(OpenTelemetryTests, AddSpanEvents)
       EXPECT_EQ("Exception message", spans[0]->GetEvents()[1].GetName());
       EXPECT_EQ("Event With Attributes", spans[0]->GetEvents()[2].GetName());
 
-      const auto &attributes = spans[0]->GetEvents()[2].GetAttributes();
-
+      const auto& attributes = spans[0]->GetEvents()[2].GetAttributes();
 
       // Make sure that the span we collected looks right.
       EXPECT_EQ(6ul, attributes.size());
