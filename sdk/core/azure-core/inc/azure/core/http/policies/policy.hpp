@@ -40,7 +40,7 @@ namespace Azure { namespace Core { namespace Http { namespace Policies {
 
   namespace _detail {
     std::shared_ptr<HttpTransport> CreateTransportAdapter(
-        Azure::Core::Http::_internal::HttpServiceTransportOptions options);
+        Azure::Core::Http::_internal::HttpServiceTransportOptions const& options);
     AZ_CORE_DLLEXPORT extern Azure::Core::CaseInsensitiveSet const g_defaultAllowedHttpHeaders;
   } // namespace _detail
 

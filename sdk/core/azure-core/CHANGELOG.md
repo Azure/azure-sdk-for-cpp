@@ -8,6 +8,8 @@
 
 ### Bugs Fixed
 
+- [3548](https://github.com/Azure/azure-sdk-for-cpp/issues/3548) Fixed performance regression on Windows.
+
 ### Other Changes
 
 ## 1.5.0 (2022-03-31)
