@@ -1,4 +1,5 @@
 #include "azure/core/tracing/tracing.hpp"
+#include "azure/core/internal/tracing/service_tracing.hpp"
 
 namespace Azure { namespace Core { namespace Tracing {
 
@@ -13,3 +14,15 @@ namespace Azure { namespace Core { namespace Tracing {
   const SpanStatus SpanStatus::Error("Error");
 
 }}} // namespace Azure::Core::Tracing
+
+namespace Azure { namespace Core { namespace Tracing { namespace _internal {
+  std::pair<Azure::Core::Context, ServiceSpan> ServiceTracing::CreateSpan(
+      std::string const& methodName,
+      Azure::Core::Context context)
+  {
+    methodName;
+    context;
+    return {};
+  }
+
+}}}} // namespace Azure::Core::Tracing::_internal

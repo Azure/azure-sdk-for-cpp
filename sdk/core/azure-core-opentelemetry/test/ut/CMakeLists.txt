@@ -18,7 +18,7 @@ include(GoogleTest)
 add_executable (
   azure-core-opentelemetry-test
     azure_core_otel_test.cpp
-    azure_core_test.cpp)
+    azure_core_test.cpp service_support_test.cpp)
 
 if (MSVC)
   # Disable warnings:

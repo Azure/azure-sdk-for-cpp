@@ -65,7 +65,7 @@ target_include_directories(
 )
 
 # Disable dependency on azure-core until azure-core has released to vcpkg
-# target_link_libraries(azure-template PUBLIC Azure::azure-core)
+target_link_libraries(azure-template PUBLIC Azure::azure-core)
 
 # make sure that users can consume the project as a library.
 add_library(Azure::azure-template ALIAS azure-template)

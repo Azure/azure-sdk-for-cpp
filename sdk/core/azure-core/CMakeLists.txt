@@ -76,6 +76,7 @@ set(
     inc/azure/core/internal/json/json_serializable.hpp
     inc/azure/core/internal/json/json.hpp
     inc/azure/core/internal/strings.hpp
+    inc/azure/core/internal/tracing/service_tracing.hpp
     inc/azure/core/io/body_stream.hpp
     inc/azure/core/azure_assert.hpp
     inc/azure/core/rtti.hpp

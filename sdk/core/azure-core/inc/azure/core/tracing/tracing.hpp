@@ -8,7 +8,6 @@
 
 #pragma once
 
-#include "azure/core/context.hpp"
 #include "azure/core/datetime.hpp"
 #include "azure/core/internal/extendable_enumeration.hpp"
 #include "azure/core/nullable.hpp"
@@ -101,6 +100,11 @@ namespace Azure { namespace Core { namespace Tracing {
      * @param value Value of attribute.
      */
     virtual void AddAttribute(std::string const& attributeName, std::string const& value) = 0;
+
+    /**
+     * @brief destroys an AttributeSet - virtual destructor to enable base class users to destroy
+     * derived classes.
+     */
     virtual ~AttributeSet(){};
   };
 
