@@ -17,6 +17,10 @@
 
 #include <string>
 
+#if defined(BUILD_TRANSPORT_WINHTTP_ADAPTER)
+#include <azure/core/http/win_http_transport.hpp>
+#endif
+
 using namespace Azure::Security::Attestation;
 using namespace Azure::Security::Attestation::Models;
 using namespace Azure::Security::Attestation::_detail;
