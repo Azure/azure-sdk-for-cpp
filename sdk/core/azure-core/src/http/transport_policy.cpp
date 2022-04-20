@@ -17,21 +17,24 @@ using namespace Azure::Core::Http;
 using namespace Azure::Core::Http::Policies;
 using namespace Azure::Core::Http::Policies::_internal;
 
-std::shared_ptr<HttpTransport> Azure::Core::Http::Policies::_detail::GetTransportAdapter(HttpServiceTransportOptions options)
+std::shared_ptr<HttpTransport> Azure::Core::Http::Policies::_detail::CreateTransportAdapter(
+    Azure::Core::Http::_internal::HttpServiceTransportOptions const& options)
 {
   // The order of these checks is important so that WinHTTP is picked over libcurl on Windows, when
   // both are defined.
 #if defined(BUILD_TRANSPORT_CUSTOM_ADAPTER)
   // Customer must implement this function and handle setting serviceOptions field
-  return ::AzureSdkGetCustomHttpTransport(options);
+  return ::AzureSdkGetCustomHttpTransport();
 #elif defined(BUILD_TRANSPORT_WINHTTP_ADAPTER)
-  Azure::Core::Http::WinHttpTransportOptions op;
-  op.serviceOptions = options;
-  return std::make_shared<Azure::Core::Http::WinHttpTransport>(op);
+
+  if (options.IgnoreClientCertificateAuthenticationOnWinHttp)
+  {
+    Azure::Core::Http::WinHttpTransportOptions op;
+    op.IgnoreClientCertificateAuth = options.IgnoreClientCertificateAuthenticationOnWinHttp;
+    return std::make_shared<Azure::Core::Http::WinHttpTransport>(op);
+  }
 #elif defined(BUILD_CURL_HTTP_TRANSPORT_ADAPTER)
-  Azure::Core::Http::CurlTransportOptions op;
-  op.serviceOptions = options;
-  return std::make_shared<Azure::Core::Http::CurlTransport>(op);
+  return std::make_shared<Azure::Core::Http::CurlTransport>();
 #else
   // compilation error to tell customers there's no transport adapter to be used
   return std::shared_ptr<HttpTransport>();

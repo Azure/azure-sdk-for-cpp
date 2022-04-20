@@ -126,12 +126,14 @@ namespace Azure { namespace Core { namespace Http {
    * @brief Sets the WinHTTP session and connection options used to customize the behavior of the
    * transport.
    */
-  struct WinHttpTransportOptions final : public HttpTransportOptions
+  struct WinHttpTransportOptions final
   {
     /**
      * @brief When `true`, allows an invalid certificate authority.
      */
     bool IgnoreUnknownCertificateAuthority = false;
+
+    bool IgnoreClientCertificate = false;
   };
 
   /**

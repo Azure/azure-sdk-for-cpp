@@ -138,7 +138,7 @@ namespace Azure { namespace Core { namespace Http { namespace _internal {
       if (!transportPolicyOptions.Transport)
       {
         transportPolicyOptions.Transport
-            = Azure::Core::Http::Policies::_detail::GetTransportAdapter(serviceTransportOptions);
+            = Azure::Core::Http::Policies::_detail::CreateTransportAdapter(serviceTransportOptions);
       }
 
       m_policies.emplace_back(

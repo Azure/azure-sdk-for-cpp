@@ -13,7 +13,23 @@
 
 namespace Azure { namespace Core { namespace Http {
 
-  struct HttpServiceTransportOptions { bool Tbd = false; };
+  namespace _internal {
+    /**
+     * @brief A service client can use this options to set up a transport adapter for some specific
+     * needs.
+     *
+     */
+    struct HttpServiceTransportOptions final
+    {
+      /**
+       * @brief Ignores if a service requests a client certificate for a TLS connection.
+       *
+       * @note Only for WinHttp client.
+       *
+       */
+      bool IgnoreClientCertificateAuthenticationOnWinHttp = false;
+    };
+  } // namespace _internal
 
   /**
    * @brief Base class for all HTTP transport implementations.

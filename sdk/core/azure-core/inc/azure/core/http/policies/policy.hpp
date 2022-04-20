@@ -33,15 +33,14 @@
  * @note See
  * https://github.com/Azure/azure-sdk-for-cpp/blob/main/doc/HttpTransportAdapter.md#building-a-custom-http-transport-adapter.
  *
- * @param options Settings for the transport adapter for a specific service.
  */
-extern std::shared_ptr<Azure::Core::Http::HttpTransport> AzureSdkGetCustomHttpTransport(
-    Azure::Core::Http::HttpServiceTransportOptions const& options);
+extern std::shared_ptr<Azure::Core::Http::HttpTransport> AzureSdkGetCustomHttpTransport();
 
 namespace Azure { namespace Core { namespace Http { namespace Policies {
 
   namespace _detail {
-    std::shared_ptr<HttpTransport> GetTransportAdapter(HttpServiceTransportOptions options);
+    std::shared_ptr<HttpTransport> CreateTransportAdapter(
+        Azure::Core::Http::_internal::HttpServiceTransportOptions options);
     AZ_CORE_DLLEXPORT extern Azure::Core::CaseInsensitiveSet const g_defaultAllowedHttpHeaders;
   } // namespace _detail
 
