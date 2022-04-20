@@ -183,7 +183,7 @@ namespace Azure { namespace Core { namespace Tracing {
      *
      * Add an Event to the span. An event is identified by a name and an optional set of attributes
      * associated with the event.
-     * 
+     *
      * @param eventName Name of the event to add.
      * @param eventAttributes Attributes associated with the event.
      */
