@@ -227,6 +227,8 @@ namespace Azure { namespace Core { namespace Tracing {
      *
      */
     std::unique_ptr<AttributeSet> Attributes;
+
+    std::shared_ptr<Span> ParentSpan;
     // Links
     // Start Timestamp
   };

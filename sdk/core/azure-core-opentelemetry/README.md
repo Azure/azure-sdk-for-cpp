@@ -44,8 +44,8 @@ Most Azure SDKs use [OpenTelemetry](https://opentelemetry.io/) to support tracin
 ### Enabling tracing using OpenTelemetry
 
 ```cpp
-// Start by creating an OpenTelemetry Provider.
-// Use the default OpenTelemetry tracer provider.
+// Start by creating an OpenTelemetry Provider using the
+// default OpenTelemetry tracer provider.
 std::shared_ptr<Azure::Core::Tracing::TracerProvider> tracerProvider = std::make_shared<Azure::Core::OpenTelemetry::TracerProvider>();
 
 // Connect the tracerProvider to the current application context.
@@ -53,6 +53,34 @@ ApplicationContext().SetTracerProvider(tracerProvider);
 ```
 
 After this, the SDK API implementations will be able to retrieve the tracer provider and produce tracing events automatically.
+
+### Enabling tracing using a non-default TracerProvider
+
+```cpp
+// Start by creating an OpenTelemetry Provider.
+auto exporter = std::make_unique<opentelemetry::exporter::memory::InMemorySpanExporter>();
+m_spanData = exporter->GetData();
+
+// simple processor
+auto simple_processor = std::unique_ptr<opentelemetry::sdk::trace::SpanProcessor>(
+    new opentelemetry::sdk::trace::SimpleSpanProcessor(std::move(exporter)));
+
+auto always_on_sampler = std::unique_ptr<opentelemetry::sdk::trace::AlwaysOnSampler>(
+    new opentelemetry::sdk::trace::AlwaysOnSampler);
+
+auto resource_attributes = opentelemetry::sdk::resource::ResourceAttributes{
+    {"service.name", "telemetryTest"}, {"service.instance.id", "instance-1"}};
+auto resource = opentelemetry::sdk::resource::Resource::Create(resource_attributes);
+auto openTelemetryProvider = opentelemetry::nostd::shared_ptr<opentelemetry::trace::TracerProvider>(
+        new opentelemetry::sdk::trace::TracerProvider(
+            std::move(simple_processor), resource, std::move(always_on_sampler)));
+
+// Use the default OpenTelemetry tracer provider.
+std::shared_ptr<Azure::Core::Tracing::TracerProvider> tracerProvider = std::make_shared<Azure::Core::OpenTelemetry::TracerProvider>(openTelemetryProvider);
+
+// Connect the tracerProvider to the current application context.
+ApplicationContext().SetTracerProvider(tracerProvider);
+```
 
 ### Manual Span Propagation using OpenTelemetry
 

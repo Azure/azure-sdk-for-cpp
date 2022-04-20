@@ -434,9 +434,14 @@ TEST_F(OpenTelemetryTests, NestSpans)
     auto span = tracer->CreateSpan("SpanOuter");
     EXPECT_TRUE(span);
     {
-      auto span2 = tracer->CreateSpan("SpanInner");
-      auto span3 = tracer->CreateSpan("SpanInner2");
-      auto span4 = tracer->CreateSpan("SpanInner4");
+      Azure::Core::Tracing::CreateSpanOptions so;
+      so.ParentSpan = span;
+      auto span2 = tracer->CreateSpan("SpanInner", so);
+      so.ParentSpan = span2;
+      auto span3 = tracer->CreateSpan("SpanInner2", so);
+      // Span 3's parent is SpanOuter.
+      so.ParentSpan = span;
+      auto span4 = tracer->CreateSpan("SpanInner4", so);
       span2->End();
 
       span->End();
@@ -444,11 +449,11 @@ TEST_F(OpenTelemetryTests, NestSpans)
       span3->End();
     }
     {
-      auto span5 = tracer->CreateSpan("SequentialInner");
+      Azure::Core::Tracing::CreateSpanOptions so;
+      so.ParentSpan = span;
+      auto span5 = tracer->CreateSpan("SequentialInner", so);
+      auto span6 = tracer->CreateSpan("SequentialInner2", so);
       span5->End();
-    }
-    {
-      auto span6 = tracer->CreateSpan("SequentialInner2");
       span6->End();
     }
 
@@ -474,11 +479,11 @@ TEST_F(OpenTelemetryTests, NestSpans)
     // SpanInner should have SpanOuter as a parent.
     EXPECT_EQ(spans[0]->GetParentSpanId(), spans[1]->GetSpanId());
 
-    // SpanInner2 should have SpanInner as a parent.
+    // SpanInner2 should have SpanOuter as a parent.
     EXPECT_EQ(spans[3]->GetParentSpanId(), spans[0]->GetSpanId());
 
     // SpanInner4 should have SpanInner2 as a parent.
-    EXPECT_EQ(spans[2]->GetParentSpanId(), spans[3]->GetSpanId());
+    EXPECT_EQ(spans[2]->GetParentSpanId(), spans[1]->GetSpanId());
 
     // SequentialInner should have SpanOuter as a parent.
     EXPECT_EQ(spans[4]->GetParentSpanId(), spans[1]->GetSpanId());

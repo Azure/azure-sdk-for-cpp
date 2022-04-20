@@ -74,6 +74,11 @@ namespace Azure { namespace Core { namespace Tracing { namespace OpenTelemetry {
       throw std::runtime_error("Unknown SpanOptions Kind: " + options.Kind.ToString());
     }
 
+    if (options.ParentSpan)
+    {
+      spanOptions.parent = static_cast<OpenTelemetrySpan*>(options.ParentSpan.get())->GetContext();
+    }
+
     opentelemetry::nostd::shared_ptr<opentelemetry::trace::Span> newSpan;
     if (options.Attributes)
     {
@@ -89,16 +94,14 @@ namespace Azure { namespace Core { namespace Tracing { namespace OpenTelemetry {
       newSpan = m_tracer->StartSpan(spanName, spanOptions);
     }
 
-    return std::make_shared<Azure::Core::Tracing::OpenTelemetry::OpenTelemetrySpan>(
-        newSpan, m_tracer);
+    return std::make_shared<Azure::Core::Tracing::OpenTelemetry::OpenTelemetrySpan>(newSpan);
   }
 
   OpenTelemetrySpan::~OpenTelemetrySpan() {}
 
   OpenTelemetrySpan::OpenTelemetrySpan(
-      opentelemetry::nostd::shared_ptr<opentelemetry::trace::Span> span,
-      opentelemetry::nostd::shared_ptr<opentelemetry::trace::Tracer> const& tracer)
-      : m_scope(tracer->WithActiveSpan(span)), m_span(span)
+      opentelemetry::nostd::shared_ptr<opentelemetry::trace::Span> span)
+      : m_span(span)
   {
   }
 

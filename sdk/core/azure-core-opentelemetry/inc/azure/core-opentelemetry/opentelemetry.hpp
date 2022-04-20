@@ -96,13 +96,11 @@ namespace Azure { namespace Core { namespace Tracing { namespace OpenTelemetry {
    * @brief Span - represents a span in tracing.
    */
   class OpenTelemetrySpan final : public Azure::Core::Tracing::Span {
-    opentelemetry::trace::Scope m_scope;
     opentelemetry::nostd::shared_ptr<opentelemetry::trace::Span> m_span;
 
   public:
     OpenTelemetrySpan(
-        opentelemetry::nostd::shared_ptr<opentelemetry::trace::Span> span,
-        opentelemetry::nostd::shared_ptr<opentelemetry::trace::Tracer> const& tracer);
+        opentelemetry::nostd::shared_ptr<opentelemetry::trace::Span> span);
 
     ~OpenTelemetrySpan();
 
@@ -123,6 +121,8 @@ namespace Azure { namespace Core { namespace Tracing { namespace OpenTelemetry {
     virtual void AddEvent(std::exception const& exception) override;
 
     virtual void SetStatus(SpanStatus const& status, std::string const& statusMessage) override;
+
+    opentelemetry::trace::SpanContext GetContext() { return m_span->GetContext(); }
   };
 
   class OpenTelemetryTracer final : public Azure::Core::Tracing::Tracer {
