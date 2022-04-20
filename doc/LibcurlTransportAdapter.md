@@ -46,7 +46,7 @@ A simple example to visualize this requirement is to think about a big download 
 
 #### No intermediate buffer
 
-Older versions of the Azure SDK have worked around the libcurl programing model by using an intermediate buffer to fetch the entire response from the server and let the program continue from step 4 (from the steps mentioned above). By doing this, the maximum download size gets limited to what the system memory can handle. Older SDK versions would support 2GB as the maximum download size.
+Older versions of the Azure SDK have worked around the libcurl programming model by using an intermediate buffer to fetch the entire response from the service and let the program continue from step 4 (from the steps mentioned above). By doing this, the maximum download size gets limited to what the system memory can handle. Older SDK versions would support 2GB as the maximum download size.
  
 Another approach is to be able to request data from the server starting at some specific offset. Then, downloading big content would be equivalent to sending one request after another, asking for data starting on the last downloaded data. However, this strategy adds unnecessary extra messaging.  Each request is parsed by the server to produce a response that is sent back to the client. The client also parses the response. These server and client parsing would be happening one after each other, so it is not efficient.
 
