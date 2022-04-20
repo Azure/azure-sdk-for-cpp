@@ -183,6 +183,7 @@ namespace Azure { namespace Core { namespace Tracing {
      *
      * Add an Event to the span. An event is identified by a name and an optional set of attributes
      * associated with the event.
+     * 
      * @param eventName Name of the event to add.
      * @param eventAttributes Attributes associated with the event.
      */
@@ -192,6 +193,7 @@ namespace Azure { namespace Core { namespace Tracing {
      * @brief Adds an event to the span.
      *
      * Add an Event to the span. An event is identified by a name
+     *
      * @param eventName Name of the event to add.
      */
     virtual void AddEvent(std::string const& eventName) = 0;
@@ -228,9 +230,10 @@ namespace Azure { namespace Core { namespace Tracing {
      */
     std::unique_ptr<AttributeSet> Attributes;
 
+    /**
+     * @brief Parent for the newly created span.
+     */
     std::shared_ptr<Span> ParentSpan;
-    // Links
-    // Start Timestamp
   };
 
   /**
@@ -241,6 +244,12 @@ namespace Azure { namespace Core { namespace Tracing {
   public:
     /**
      * @brief Create new Span object.
+     *
+     * @details Creates a new span object.
+     *
+     * @note There is no concept of a "current" span, each span created is a top level span, unless
+     * the CreateSpanOptions has ParentSpan member, in which case the ParentSpan member will be the
+     * parent of the newly created span.
      *
      * @param spanName The name of the span to create.
      * @param options Options to be used when creating the span.
