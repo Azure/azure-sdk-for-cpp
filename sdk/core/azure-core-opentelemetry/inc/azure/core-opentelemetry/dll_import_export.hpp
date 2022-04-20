@@ -43,7 +43,6 @@
  *
  */
 namespace Azure {
-
 /**
  * @brief Azure Identity SDK abstractions.
  *
@@ -56,6 +55,6 @@ namespace Core {
      */
     namespace OpenTelemetry {
     }
-  }
-
+  } // namespace Tracing
+} // namespace Core
 } // namespace Azure

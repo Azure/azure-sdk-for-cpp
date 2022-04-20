@@ -1,4 +1,4 @@
-azure-core
+azure-core-opentelemetry
 
 NOTICES AND INFORMATION
 Do Not Translate or Localize
