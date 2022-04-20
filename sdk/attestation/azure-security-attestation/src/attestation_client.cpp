@@ -50,12 +50,17 @@ AttestationClient::AttestationClient(
   m_apiVersion = options.Version.ToString();
   std::vector<std::unique_ptr<HttpPolicy>> perCallpolicies;
 
+  Azure::Core::Http::_internal::HttpServiceTransportOptions winHttpOptions;
+#if defined(BUILD_TRANSPORT_WINHTTP_ADAPTER)
+  winHttpOptions.IgnoreClientCertificateAuthenticationOnWinHttp = true;
+#endif
   m_pipeline = std::make_shared<Azure::Core::Http::_internal::HttpPipeline>(
       options,
       "Attestation",
       PackageVersion::ToString(),
       std::move(perRetrypolicies),
-      std::move(perCallpolicies));
+      std::move(perCallpolicies),
+      winHttpOptions);
 }
 
 Azure::Response<AttestationOpenIdMetadata> AttestationClient::GetOpenIdMetadata(

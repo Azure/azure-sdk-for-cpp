@@ -16,6 +16,10 @@
 
 #include <string>
 
+#if defined(BUILD_TRANSPORT_WINHTTP_ADAPTER)
+#include <azure/core/http/win_http_transport.hpp>
+#endif
+
 // cspell: words jwks
 using namespace Azure::Security::Attestation;
 using namespace Azure::Security::Attestation::Models;
@@ -57,12 +61,18 @@ AttestationAdministrationClient::AttestationAdministrationClient(
   m_apiVersion = options.Version.ToString();
   std::vector<std::unique_ptr<HttpPolicy>> perCallpolicies;
 
+  Azure::Core::Http::_internal::HttpServiceTransportOptions winHttpOptions;
+#if defined(BUILD_TRANSPORT_WINHTTP_ADAPTER)
+  winHttpOptions.IgnoreClientCertificateAuthenticationOnWinHttp = true;
+#endif
+
   m_pipeline = std::make_shared<Azure::Core::Http::_internal::HttpPipeline>(
       options,
       "Attestation",
       PackageVersion::ToString(),
       std::move(perRetrypolicies),
-      std::move(perCallpolicies));
+      std::move(perCallpolicies),
+      winHttpOptions);
 }
 
 namespace {
