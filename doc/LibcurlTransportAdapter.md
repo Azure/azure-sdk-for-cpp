@@ -36,7 +36,7 @@ As simple as that, libcurl hides a ton of complexity from you. Libcurl asks the 
 
 ### Azure SDK requirements
 
-From all the operations supported by Azure services, there's one that can't be fully completed by following the libcurl typical flow mentioned before. It is the download operation from the Azure Storage service which requires something else. When the size of the downloaded item is bigger than the amount of memory in the system, for example, downloading 1Tb from an Android device with only 8GB of memory, or from a Windows PC with 32 GB of memory, there should be no complications for an SDK client. However, based on the typical libcurl flow, during step 4, libcurl blocks the application until all the bytes from the server have been received, and that's not acceptable from the SDK perspective.
+From all the operations supported by Azure services, there's one that can't be fully completed by following the libcurl typical flow mentioned before. It is the download operation from the Azure Storage service which requires something else. When the size of the downloaded item is bigger than the amount of memory in the system ( i.e. downloading 1Tb to an Android device with only 8GB of memory, or to a Windows PC with 32 GB of memory), there should be no complications for an SDK client. However, based on the typical libcurl flow, during step 4, libcurl blocks the application until all the bytes from the server have been received, and that's not acceptable from the SDK perspective.
 
 #### Stream response on demand
 
