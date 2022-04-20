@@ -11,7 +11,7 @@ Most Azure services use the HTTP protocol for client/service communication. The 
  
 Modern programming languages like C#, Java, and JS have an HTTP client as part of the language itself.  For these languages, the runtime library provides classes making HTTP easy to use.
  
-However, for C++, the runtime library does not include any HTTP classes; you either need to write an HTTP implementation yourself or you could use some third-party library.  Keep in mind, that you also have to consider the OSes (Windows, Linux, Mac, RTOS, etc.) you plan to run your application on. Libcurl, for example, is one of the most popular cross-OS libraries.
+However, for C++, the runtime library does not include any HTTP classes; you either need to write an HTTP implementation yourself or you could use some third-party library.  Keep in mind, that you also have to consider the OSes (Windows, Linux, Mac, etc.) you plan to run your application on. Libcurl, for example, is one of the most popular cross-OS libraries.
 
 ### Replaceable HTTP Transport
 
