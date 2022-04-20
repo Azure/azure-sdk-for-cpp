@@ -95,6 +95,7 @@ set(
     src/key_client_paged_responses.cpp
     src/key_curve_name.cpp
     src/key_operation.cpp
+    src/key_release_options.cpp
     src/key_request_parameters.cpp
     src/key_type.cpp
     src/keyvault_key.cpp

@@ -1,15 +1,20 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
 
-#include "gtest/gtest.h"
-
+#include "../../azure-security-attestation/src/private/crypto/inc/crypto.hpp"
+#include "../src/private/key_serializers.hpp"
 #include "key_client_base_test.hpp"
-
+#include "maasandbox.hpp"
+#include "gtest/gtest.h"
+#include <azure/attestation.hpp>
+#include <azure/core/base64.hpp>
+#include <azure/core/internal/json/json.hpp>
 #include <azure/keyvault/keyvault_keys.hpp>
 #include <private/key_constants.hpp>
-
 #include <string>
 
+using namespace Azure::Core::_internal;
+using namespace Azure::Security::KeyVault::Keys;
 using namespace Azure::Security::KeyVault::Keys::Test;
 
 TEST_F(KeyVaultKeyClient, CreateKey)
@@ -212,4 +217,51 @@ TEST_F(KeyVaultKeyClient, CreateRsaHsmKey)
     auto keyVaultKey = keyResponse.Value;
     EXPECT_EQ(keyVaultKey.Name(), keyName);
   }
+}
+
+TEST_F(KeyVaultKeyClient, ReleaseKey)
+{
+  auto const keyName = GetTestName();
+  Azure::Security::Attestation::AttestationClient attestationClient(
+      "https://sharedwus.wus.attest.azure.net");
+
+  MaaSandboxClient sandboxClient("https://maasandboxsvc.azurewebsites.net");
+
+  auto key(Azure::Security::Attestation::_detail::Cryptography::CreateRsaKey(2048));
+  std::string data = key->ExportPublicKey();
+
+  JsonWebKey jwk;
+  jwk.Id = "release-key";
+  jwk.KeyType = KeyVaultKeyType::Rsa;
+  jwk.SetKeyOperations({KeyOperation::Encrypt});
+  jwk.E = Base64Url::Base64UrlDecode("AQAB");
+  jwk.N = std::vector<uint8_t>(data.begin(), data.end());
+  Azure::Core::Json::_internal::json destJson;
+  Azure::Security::KeyVault::Keys::_detail::JsonWebKeySerializer::JsonWebKeySerialize(
+      jwk, destJson["keys"]);
+
+  std::string result = destJson.dump();
+
+  auto generatedToken = sandboxClient.GenerateQuote(AttestationDataType::Binary, result);
+
+  attestationClient.RetrieveResponseValidationCollateral();
+
+  attestationClient.AttestOpenEnclave(
+      generatedToken.Value,
+      AttestOptions{AttestationData{
+          std::vector<uint8_t>(result.begin(), result.end()), AttestationDataType::Binary}});
+
+  auto const& client = GetClientForTest(keyName);
+
+  auto ecKey = Azure::Security::KeyVault::Keys::CreateEcKeyOptions(keyName);
+  ecKey.CurveName = Azure::Security::KeyVault::Keys::KeyCurveName::P384;
+  auto keyResponse = client.CreateEcKey(ecKey);
+  auto keyVaultKey = keyResponse.Value;
+  KeyReleaseOptions relOpt;
+  relOpt.Target = Base64Url::Base64UrlEncode( generatedToken.Value);
+ // relOpt.Encryption = Azure::Security::KeyVault::Keys::KeyEncryptionAlgorithm::RSA_AES_KEY_WRAP_256;
+
+  //CreateHsmClient("https://gearamamhsm.managedhsm.azure.net/");
+  //auto const& client2 = GetClientForTest("realeasy");
+  auto result2 = client.ReleaseKey(keyVaultKey.Name(), keyVaultKey.Properties.Version, relOpt);
 }

@@ -238,6 +238,25 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
         Azure::Core::Context const& context = Azure::Core::Context()) const;
 
     /**
+     * @brief Releases a key.
+     *
+     * @remark The release key operation is applicable to all key types. The target key must be
+     * marked exportable. This operation requires the keys/release permission.
+     *
+     * @param name The name of the key.
+     * @param version The key version.
+     * @param options The options for the key release operation.
+     * @param context A cancellation token controlling the request lifetime.
+     * @return A JWS containing the key, its attributes, the result of the key release, and
+     * information about the request.
+     */
+    Azure::Response<std::string> ReleaseKey(
+        std::string const& name,
+        std::string const& version,
+        KeyReleaseOptions const& options,
+        Azure::Core::Context const& context = Azure::Core::Context()) const;
+
+    /**
      * @brief Gets the public part of a deleted key.
      *
      * @remark The Get Deleted Key operation is applicable for soft-delete enabled vaults. While

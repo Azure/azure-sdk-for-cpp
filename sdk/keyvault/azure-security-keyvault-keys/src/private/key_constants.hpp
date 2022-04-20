@@ -126,4 +126,13 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys { nam
   /***************** Service *********/
   constexpr static const char ApiVersionValue[] = "api-version";
 
+  /***************** Release *********/
+  constexpr static const char ReleaseValue[] = "release";
+  constexpr static const char CKM_RSA_AES_KEY_WRAP_Value[] = "CKM_RSA_AES_KEY_WRAP";
+  constexpr static const char RSA_AES_KEY_WRAP_256_Value[] = "RSA_AES_KEY_WRAP_256";
+  constexpr static const char RSA_AES_KEY_WRAP_384_Value[] = "RSA_AES_KEY_WRAP_384";
+  constexpr static const char TargetValue[] = "target";
+  constexpr static const char NonceValue[] = "nonce";
+  constexpr static const char EncryptionValue[] = "enc";
+  constexpr static const char PropertiesValue[] = "properties";
 }}}}} // namespace Azure::Security::KeyVault::Keys::_detail

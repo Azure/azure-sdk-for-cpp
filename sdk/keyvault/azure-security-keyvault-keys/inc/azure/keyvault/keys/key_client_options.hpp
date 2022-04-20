@@ -401,4 +401,29 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
     std::string const& Name() const { return Properties.Name; }
   };
 
+  /**
+   * @brief Release key options.
+   *
+   */
+  struct KeyReleaseOptions final
+  {
+    /**
+     * @brief The attestation assertion for the target of the key release.
+     *
+     */
+    std::string Target;
+
+    /**
+     * @brief A client provided nonce for freshness.
+     *
+     */
+    Azure::Nullable<std::string> Nonce;
+
+    /**
+     * @brief The encryption algorithm to use to protected the exported key material
+     *
+     */
+    Azure::Nullable<KeyEncryptionAlgorithm> Encryption;
+  };
+
 }}}} // namespace Azure::Security::KeyVault::Keys
