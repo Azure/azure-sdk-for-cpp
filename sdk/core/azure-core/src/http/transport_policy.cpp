@@ -30,7 +30,7 @@ std::shared_ptr<HttpTransport> Azure::Core::Http::Policies::_detail::CreateTrans
   Azure::Core::Http::WinHttpTransportOptions op;
   if (options.IgnoreClientCertificateAuthenticationOnWinHttp)
   {
-   op.IgnoreClientCertificate = options.IgnoreClientCertificateAuthenticationOnWinHttp; 
+    op.IgnoreClientCertificate = options.IgnoreClientCertificateAuthenticationOnWinHttp;
   }
   return std::make_shared<Azure::Core::Http::WinHttpTransport>(op);
 #elif defined(BUILD_CURL_HTTP_TRANSPORT_ADAPTER)

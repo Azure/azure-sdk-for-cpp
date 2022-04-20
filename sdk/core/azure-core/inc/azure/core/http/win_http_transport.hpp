@@ -134,9 +134,10 @@ namespace Azure { namespace Core { namespace Http {
     bool IgnoreUnknownCertificateAuthority = false;
 
     /**
-     * @brief If the server requests the certificate but does not require it, the application can specify this option to indicate that it does not have a certificate.
-     * The server can choose another authentication scheme or allow anonymous access to the server.
-     * 
+     * @brief If the server requests the certificate but does not require it, the application can
+     * specify this option to indicate that it does not have a certificate. The server can choose
+     * another authentication scheme or allow anonymous access to the server.
+     *
      */
     bool IgnoreClientCertificate = false;
   };
