@@ -51,8 +51,7 @@ namespace Azure { namespace Security { namespace Attestation {
      *
      * @param attestationClient An existing attestation client.
      */
-    AttestationAdministrationClient(
-        AttestationAdministrationClient const& attestationClient)
+    AttestationAdministrationClient(AttestationAdministrationClient const& attestationClient)
         : m_endpoint(attestationClient.m_endpoint), m_apiVersion(attestationClient.m_apiVersion),
           m_pipeline(attestationClient.m_pipeline),
           m_tokenValidationOptions(attestationClient.m_tokenValidationOptions){};
@@ -284,7 +283,6 @@ namespace Azure { namespace Security { namespace Attestation {
     AttestationTokenValidationOptions m_tokenValidationOptions;
 
     mutable std::vector<Models::AttestationSigner> m_attestationSigners;
-
 
     /**
      * @brief Construct a new Attestation Administration Client object.

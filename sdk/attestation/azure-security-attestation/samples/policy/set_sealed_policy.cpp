@@ -62,7 +62,8 @@ int main()
         GetEnvHelper::GetEnv("AZURE_TENANT_ID"),
         GetEnvHelper::GetEnv("AZURE_CLIENT_ID"),
         GetEnvHelper::GetEnv("AZURE_CLIENT_SECRET"));
-    AttestationAdministrationClient const adminClient(AttestationAdministrationClient::Create(endpoint, credential, clientOptions));
+    AttestationAdministrationClient const adminClient(
+        AttestationAdministrationClient::Create(endpoint, credential, clientOptions));
 
     std::string const signingKey(GetEnvHelper::GetEnv("ISOLATED_SIGNING_KEY"));
     std::string const signingCert(GetEnvHelper::GetEnv("ISOLATED_SIGNING_CERTIFICATE"));

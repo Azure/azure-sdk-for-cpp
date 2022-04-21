@@ -44,7 +44,8 @@ int main()
 
     // create client
     std::string endpoint(GetEnvHelper::GetEnv("ATTESTATION_AAD_URL"));
-    std::shared_ptr<AttestationClient> attestationClient(AttestationClient::CreatePointer(endpoint));
+    std::shared_ptr<AttestationClient> attestationClient(
+        AttestationClient::CreatePointer(endpoint));
 
     std::vector<uint8_t> const sgxEnclaveQuote = AttestationCollateral::SgxQuote();
 

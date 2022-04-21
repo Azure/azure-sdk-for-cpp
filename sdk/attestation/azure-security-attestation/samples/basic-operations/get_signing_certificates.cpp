@@ -32,7 +32,8 @@ int main()
   try
   {
     // create client
-    AttestationClient const attestationClient(AttestationClient::Create(GetEnvHelper::GetEnv("ATTESTATION_AAD_URL")));
+    AttestationClient const attestationClient(
+        AttestationClient::Create(GetEnvHelper::GetEnv("ATTESTATION_AAD_URL")));
 
     // Retrieve the OpenId metadata from this attestation service instance.
     Azure::Response<TokenValidationCertificateResult> const signingCertificates

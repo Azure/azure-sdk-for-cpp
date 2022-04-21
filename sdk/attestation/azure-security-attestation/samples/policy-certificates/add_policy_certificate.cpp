@@ -50,8 +50,9 @@ int main()
         GetEnvHelper::GetEnv("AZURE_TENANT_ID"),
         GetEnvHelper::GetEnv("AZURE_CLIENT_ID"),
         GetEnvHelper::GetEnv("AZURE_CLIENT_SECRET"));
-    std::shared_ptr<AttestationAdministrationClient const> adminClient(AttestationAdministrationClient::CreatePointer(
-        GetEnvHelper::GetEnv("ATTESTATION_ISOLATED_URL"), credential));
+    std::shared_ptr<AttestationAdministrationClient const> adminClient(
+        AttestationAdministrationClient::CreatePointer(
+            GetEnvHelper::GetEnv("ATTESTATION_ISOLATED_URL"), credential));
 
     std::string const signingKey(GetEnvHelper::GetEnv("ISOLATED_SIGNING_KEY"));
     std::string const signingCert(GetEnvHelper::GetEnv("ISOLATED_SIGNING_CERTIFICATE"));

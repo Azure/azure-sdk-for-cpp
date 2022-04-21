@@ -76,7 +76,8 @@ AttestationAdministrationClient const AttestationAdministrationClient::Create(
   return returnValue;
 }
 
-std::unique_ptr<AttestationAdministrationClient const> AttestationAdministrationClient::CreatePointer(
+std::unique_ptr<AttestationAdministrationClient const>
+AttestationAdministrationClient::CreatePointer(
     std::string const& endpoint,
     std::shared_ptr<Core::Credentials::TokenCredential const> credential,
     AttestationAdministrationClientOptions const& options,
