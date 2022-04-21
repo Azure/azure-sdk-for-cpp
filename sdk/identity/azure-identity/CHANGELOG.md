@@ -3,6 +3,7 @@
 ## 1.3.0-beta.2 (Unreleased)
 
 ### Features Added
+- Added `ClientCertificateCredential`.
 
 ### Breaking Changes
 
