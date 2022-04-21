@@ -1,6 +1,6 @@
 {
   "name": "azure-sdk-for-cpp",
-  "version-string": "1.0.0",
+  "version": "1.5.0",
   "builtin-baseline": "f0aa678b7471497f1adedcc99f40e1599ad22f69",
   "dependencies": [
     {
