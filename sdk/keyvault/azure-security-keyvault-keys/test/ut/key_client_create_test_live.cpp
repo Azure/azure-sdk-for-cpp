@@ -259,7 +259,7 @@ TEST_F(KeyVaultKeyClient, ReleaseKey)
   auto keyVaultKey = keyResponse.Value;
   KeyReleaseOptions relOpt;
   relOpt.Target = Base64Url::Base64UrlEncode( generatedToken.Value);
- // relOpt.Encryption = Azure::Security::KeyVault::Keys::KeyEncryptionAlgorithm::RSA_AES_KEY_WRAP_256;
+  //relOpt.Encryption = Azure::Security::KeyVault::Keys::KeyEncryptionAlgorithm::RSA_AES_KEY_WRAP_256;
 
   //CreateHsmClient("https://gearamamhsm.managedhsm.azure.net/");
   //auto const& client2 = GetClientForTest("realeasy");

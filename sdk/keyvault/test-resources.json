@@ -142,7 +142,8 @@
                 "wrapKey",
                 "verify",
                 "sign",
-                "purge"
+                "purge",
+                "release"
               ],
               "secrets": [
                 "get",
