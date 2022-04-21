@@ -126,4 +126,20 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys { nam
   /***************** Service *********/
   constexpr static const char ApiVersionValue[] = "api-version";
 
+  /***************** Rotation Policy *********/
+  constexpr static const char IdValue[] = "id";
+  constexpr static const char ExpiryTimeValue[] = "expiryTime";
+  constexpr static const char LifeTimeActionsValue[] = "lifetimeActions";
+  constexpr static const char RotateActionsValue[] = "rotate";
+  constexpr static const char NotifyActionsValue[] = "notify";
+  constexpr static const char ActionActionsValue[] = "action";
+  constexpr static const char TriggerActionsValue[] = "trigger";
+  constexpr static const char TypeActionsValue[] = "type";
+  constexpr static const char TBEActionsValue[] = "timeBeforeExpiry";
+  constexpr static const char TACActionsValue[] = "timeAfterCreate";
+  constexpr static const char RotationPolicyPath[] = "rotationpolicy";
+
+  /***************** Get Random Bytes *********/
+  constexpr static const char CountPropertiesValue[] = "count";
+
 }}}}} // namespace Azure::Security::KeyVault::Keys::_detail

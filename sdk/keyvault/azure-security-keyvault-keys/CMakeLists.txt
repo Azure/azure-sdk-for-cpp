@@ -100,6 +100,8 @@ set(
     src/keyvault_key.cpp
     src/keyvault_protocol.cpp
     src/recover_deleted_key_operation.cpp
+    src/key_rotation_policy.cpp
+    src/key_get_random_bytes.cpp
 )
 
 add_library(azure-security-keyvault-keys
