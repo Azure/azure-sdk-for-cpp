@@ -15,14 +15,13 @@ using Azure::Core::_internal::PosixTimeConverter;
 KeyRotationPolicy _detail::KeyRotationPolicySerializer::KeyRotationPolicyDeserialize(
     Azure::Core::Http::RawResponse const& rawResponse)
 {
-  auto body = rawResponse.GetBody();
-  return KeyRotationPolicyDeserialize(body);
+  return KeyRotationPolicyDeserialize(rawResponse.GetBody());
 }
 
 KeyRotationPolicy _detail::KeyRotationPolicySerializer::KeyRotationPolicyDeserialize(
     std::vector<uint8_t> const& body)
 {
-  auto jsonParser = Azure::Core::Json::_internal::json::parse(body);
+  auto const jsonParser = Azure::Core::Json::_internal::json::parse(body);
   KeyRotationPolicy policy;
 
   policy.Id = jsonParser[_detail::IdValue].get<std::string>();

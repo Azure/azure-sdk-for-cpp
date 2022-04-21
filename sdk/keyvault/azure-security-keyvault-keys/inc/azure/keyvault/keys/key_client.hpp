@@ -448,7 +448,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
      * @param context A #Azure::Core::Context controlling the request lifetime.
      * @return Azure::Response<std::vector<uint8_t>>
      */
-    Azure::Response<std::vector<uint8_t>> GetRandomBytes(
+    Azure::Response<GetRandomBytesResult> GetRandomBytes(
         GetRandomBytesOptions const& options,
         Azure::Core::Context const& context = Azure::Core::Context()) const;
 

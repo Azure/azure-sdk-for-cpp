@@ -386,7 +386,8 @@ Azure::Response<KeyRotationPolicy> KeyClient::GetKeyRotationPolicy(
     Azure::Core::Context const& context) const
 {
   // Request with no payload
-  auto request = CreateRequest(HttpMethod::Get, {_detail::KeysPath, name, "rotationpolicy"});
+  auto request
+      = CreateRequest(HttpMethod::Get, {_detail::KeysPath, name, _detail::RotationPolicyPath});
   request.SetHeader(HttpShared::ContentType, HttpShared::ApplicationJson);
   // Send and parse respone
   auto rawResponse = SendRequest(request, context);
@@ -405,8 +406,8 @@ Azure::Response<KeyRotationPolicy> KeyClient::PutKeyRotationPolicy(
       reinterpret_cast<const uint8_t*>(payload.data()), payload.size());
 
   // Request and settings
-  auto request
-      = CreateRequest(HttpMethod::Put, {_detail::KeysPath, name, "rotationpolicy"}, &payloadStream);
+  auto request = CreateRequest(
+      HttpMethod::Put, {_detail::KeysPath, name, _detail::RotationPolicyPath}, &payloadStream);
   request.SetHeader(HttpShared::ContentType, HttpShared::ApplicationJson);
 
   // Send and parse respone
@@ -415,7 +416,7 @@ Azure::Response<KeyRotationPolicy> KeyClient::PutKeyRotationPolicy(
   return Azure::Response<KeyRotationPolicy>(std::move(value), std::move(rawResponse));
 }
 
-Azure::Response<std::vector<uint8_t>> KeyClient::GetRandomBytes(
+Azure::Response<GetRandomBytesResult> KeyClient::GetRandomBytes(
     GetRandomBytesOptions const& options,
     Azure::Core::Context const& context) const
 {
@@ -429,9 +430,9 @@ Azure::Response<std::vector<uint8_t>> KeyClient::GetRandomBytes(
 
   // Send and parse respone
   auto rawResponse = SendRequest(request, context);
-
-  auto value = _detail::GetRandomBytesSerializer::GetRandomBytesResponseDeserialize(*rawResponse);
-  return Azure::Response<std::vector<uint8_t>>(std::move(value), std::move(rawResponse));
+  auto response = GetRandomBytesResult{
+      _detail::GetRandomBytesSerializer::GetRandomBytesResponseDeserialize(*rawResponse)};
+  return Azure::Response<GetRandomBytesResult>(std::move(response), std::move(rawResponse));
 }
 
 Cryptography::CryptographyClient KeyClient::GetCryptographyClient(

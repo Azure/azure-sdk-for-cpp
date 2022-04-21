@@ -3,8 +3,8 @@
 
 #include "gtest/gtest.h"
 
-#include "../../src/private/key_serializers.hpp"
 #include "key_client_base_test.hpp"
+#include "private/key_serializers.hpp"
 #include <azure/core/base64.hpp>
 #include <azure/core/datetime.hpp>
 #include <azure/keyvault/keyvault_keys.hpp>
@@ -68,7 +68,7 @@ TEST_F(KeyVaultKeyClient, DISABLED_GetRandomBytes)
   GetRandomBytesOptions options;
   options.Count = 4;
   auto result = client.GetRandomBytes(options);
-  EXPECT_EQ(result.Value.size(), size_t(options.Count));
+  EXPECT_EQ(result.Value.RandomBytes.size(), size_t(options.Count));
 }
 
 TEST(GetRandomBytesOptions, Serialize)
