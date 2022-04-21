@@ -230,6 +230,8 @@ namespace Azure { namespace Security { namespace Attestation { namespace _detail
      * information about JWS and JWT objects.
      *
      * @param jwt - the JSON Web Token/JSON Web Signature to be parsed.
+     * @param preferredBody - the body to be used instead of the body contained inside the jwt. This allows creating
+     * an AttestationTokenInternal with a body whose type does not match the value within the JWT.
      */
     AttestationTokenInternal(std::string const& jwt, T const* const preferredBody = nullptr)
     {

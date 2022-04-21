@@ -40,35 +40,19 @@ int main()
 {
   try
   {
-    std::cout << "In function: SampleAttestSgxEnclaveWithJSONRuntimeData" << std::endl;
-
+    std::cout << "In function: SampleAttestSgxEnclaveSimple" << std::endl;
     // create client
-    std::string const endpoint(GetEnvHelper::GetEnv("ATTESTATION_AAD_URL"));
-    AttestationClient const attestationClient(endpoint);
-
-    // Retrieve any and all collateral needed to validate the result of APIs calling into the
-    // attestation service..
-    attestationClient.RetrieveResponseValidationCollateral();
+    AttestationClient const attestationClient(AttestationClient::Create(GetEnvHelper::GetEnv("ATTESTATION_AAD_URL")));
 
     std::vector<uint8_t> const sgxEnclaveQuote = AttestationCollateral::SgxQuote();
 
-    // Set the RunTimeData in the request to the service. Ask the service to interpret the
-    // RunTimeData as a JSON object when it is returned in the resulting token.
-    AttestEnclaveOptions attestOptions;
-
-    attestOptions.RunTimeData
-        = AttestationData{AttestationCollateral::RunTimeData(), AttestationDataType::Json};
-
     Azure::Response<AttestationToken<AttestationResult>> const sgxResult
-        = attestationClient.AttestSgxEnclave(sgxEnclaveQuote, attestOptions);
+        = attestationClient.AttestSgxEnclave(sgxEnclaveQuote);
 
     std::cout << "SGX Quote MRSIGNER is: "
               << Convert::Base64Encode(*sgxResult.Value.Body.SgxMrSigner) << std::endl;
     std::cout << "SGX Quote MRENCLAVE is: "
               << Convert::Base64Encode(*sgxResult.Value.Body.SgxMrEnclave) << std::endl;
-
-    std::cout << "Attestation Token runtimeData is " << *sgxResult.Value.Body.RunTimeClaims
-              << std::endl;
   }
   catch (Azure::Core::Credentials::AuthenticationException const& e)
   {

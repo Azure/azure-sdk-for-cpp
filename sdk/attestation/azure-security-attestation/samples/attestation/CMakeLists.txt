@@ -21,9 +21,9 @@ target_link_libraries(attestation-${samplename} PRIVATE azure-security-attestati
 endmacro()
 
 
-define_sample(attestsgxenclave)
-define_sample(attestsgxenclavewithruntimejson)
-define_sample(attestsgxenclavewithruntimebinary)
-define_sample(attestopenenclavewithdraftpolicy)
-define_sample(attestopenenclaveshared)
+define_sample(attest_sgxenclave)
+define_sample(attest_sgxenclave_with_runtime_json)
+define_sample(attest_sgxenclave_with_runtime_binary)
+define_sample(attest_openenclave_with_draft_policy)
+define_sample(attest_openenclave_shared)
 

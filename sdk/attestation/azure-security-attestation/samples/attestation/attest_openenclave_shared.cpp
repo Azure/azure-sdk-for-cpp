@@ -47,15 +47,12 @@ int main()
     std::string const endpoint
         = "https://shared" + shortLocation + "." + shortLocation + ".attest.azure.net";
 
-    AttestationClient const attestationClient(endpoint);
-
-    // Retrieve and cache the collateral required to validate attestation service responses.
-    attestationClient.RetrieveResponseValidationCollateral();
+    std::unique_ptr<AttestationClient> attestationClient(AttestationClient::CreatePointer(endpoint));
 
     std::vector<uint8_t> const sgxEnclaveQuote = AttestationCollateral::SgxQuote();
 
     Azure::Response<AttestationToken<AttestationResult>> const sgxResult
-        = attestationClient.AttestSgxEnclave(sgxEnclaveQuote);
+        = attestationClient->AttestSgxEnclave(sgxEnclaveQuote);
 
     std::cout << "SGX Quote MRSIGNER is: "
               << Convert::Base64Encode(*sgxResult.Value.Body.SgxMrSigner) << std::endl;

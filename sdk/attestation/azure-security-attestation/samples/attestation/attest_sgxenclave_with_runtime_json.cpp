@@ -40,39 +40,31 @@ int main()
 {
   try
   {
-    std::cout << "In function: SampleAttestSgxEnclaveSimple" << std::endl;
+    std::cout << "In function: SampleAttestSgxEnclaveWithJSONRuntimeData" << std::endl;
+
     // create client
-    AttestationClient const attestationClient(GetEnvHelper::GetEnv("ATTESTATION_AAD_URL"));
+    std::string const endpoint(GetEnvHelper::GetEnv("ATTESTATION_AAD_URL"));
+    AttestationClient const attestationClient(AttestationClient::Create(endpoint));
 
-    // Retrieve any and all collateral needed to validate the result of APIs calling into the
-    // attestation service..
-    attestationClient.RetrieveResponseValidationCollateral();
+    std::vector<uint8_t> const sgxEnclaveQuote = AttestationCollateral::SgxQuote();
 
-    std::vector<uint8_t> const openEnclaveReport = AttestationCollateral::OpenEnclaveReport();
+    // Set the RunTimeData in the request to the service. Ask the service to interpret the
+    // RunTimeData as a JSON object when it is returned in the resulting token.
+    AttestEnclaveOptions attestOptions;
 
-    AttestEnclaveOptions options;
-    options.DraftPolicyForAttestation = R"(version= 1.0;
-authorizationrules
-{
-    [ type=="x-ms-sgx-is-debuggable", value==true] &&
-    [ type=="x-ms-sgx-product-id", value!=0 ] &&
-    [ type=="x-ms-sgx-svn", value>= 0 ] &&
-    [ type=="x-ms-sgx-mrsigner", value == "4aea5f9a0ed04b11f889aadfe6a1d376213a29a95a85ce7337ae6f7fece6610c"]
-        => permit();
-};
-issuancerules {
-    c:[type=="x-ms-sgx-mrsigner"] => issue(type="custom-name", value=c.value);
-};)";
-    Azure::Response<AttestationToken<AttestationResult>> const sgxResult(
-        attestationClient.AttestOpenEnclave(openEnclaveReport, options));
+    attestOptions.RunTimeData
+        = AttestationData{AttestationCollateral::RunTimeData(), AttestationDataType::Json};
+
+    Azure::Response<AttestationToken<AttestationResult>> const sgxResult
+        = attestationClient.AttestSgxEnclave(sgxEnclaveQuote, attestOptions);
 
     std::cout << "SGX Quote MRSIGNER is: "
               << Convert::Base64Encode(*sgxResult.Value.Body.SgxMrSigner) << std::endl;
     std::cout << "SGX Quote MRENCLAVE is: "
               << Convert::Base64Encode(*sgxResult.Value.Body.SgxMrEnclave) << std::endl;
-    std::cout << "Product version: " << *sgxResult.Value.Body.SgxProductId << std::endl;
 
-    std::cout << "Policy claims: " << *sgxResult.Value.Body.PolicyClaims << std::endl;
+    std::cout << "Attestation Token runtimeData is " << *sgxResult.Value.Body.RunTimeClaims
+              << std::endl;
   }
   catch (Azure::Core::Credentials::AuthenticationException const& e)
   {
@@ -90,14 +82,4 @@ issuancerules {
     return 1;
   }
   return 0;
-}
-
-std::string GetEnv(char const* env)
-{
-  auto const val = std::getenv(env);
-  if (val == nullptr)
-  {
-    throw std::runtime_error("Could not find required environment variable: " + std::string(env));
-  }
-  return std::string(val);
 }

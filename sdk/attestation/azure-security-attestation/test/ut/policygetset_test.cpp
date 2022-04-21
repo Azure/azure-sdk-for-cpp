@@ -224,7 +224,7 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
       auto adminClient(CreateClient());
 
       adminClient->RetrieveResponseValidationCollateral();
-      EXPECT_FALSE(adminClient->Endpoint().GetAbsoluteUrl().empty());
+      EXPECT_FALSE(adminClient->Endpoint().empty());
 
       AttestationType attestationType(GetParam().TeeType);
       {

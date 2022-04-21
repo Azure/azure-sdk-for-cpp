@@ -73,19 +73,20 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
       // `InitTestClient` takes care of setting up Record&Playback.
       auto options = InitClientOptions<Azure::Security::Attestation::AttestationClientOptions>();
       options.TokenValidationOptions = GetTokenValidationOptions();
-      return std::make_unique<Azure::Security::Attestation::AttestationClient>(m_endpoint, options);
+      return std::unique_ptr<AttestationClient>(
+          AttestationClient::CreatePointer(m_endpoint, options));
     }
     std::unique_ptr<AttestationClient> CreateAuthenticatedClient()
     {
       // `InitClientOptions` takes care of setting up Record&Playback.
-      AttestationClientOptions options;
+      AttestationClientOptions options = InitClientOptions<AttestationClientOptions>();
       options.TokenValidationOptions = GetTokenValidationOptions();
       std::shared_ptr<Azure::Core::Credentials::TokenCredential> credential
           = std::make_shared<Azure::Identity::ClientSecretCredential>(
               GetEnv("AZURE_TENANT_ID"), GetEnv("AZURE_CLIENT_ID"), GetEnv("AZURE_CLIENT_SECRET"));
 
-      return InitTestClient<AttestationClient, AttestationClientOptions>(
-          m_endpoint, credential, options);
+      return std::unique_ptr<AttestationClient>(
+          AttestationClient::CreatePointer(m_endpoint, credential, options));
     }
 
     void ValidateAttestResponse(
@@ -134,7 +135,6 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
   TEST_P(AttestationTests, SimpleAttest)
   {
     auto client(CreateClient());
-    client->RetrieveResponseValidationCollateral();
 
     AttestationType type = std::get<1>(GetParam());
     if (type == AttestationType::OpenEnclave)
@@ -162,7 +162,6 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
 
     AttestationType type = std::get<1>(GetParam());
     AttestEnclaveOptions options;
-    client->RetrieveResponseValidationCollateral();
     AttestationData data{runtimeData, AttestationDataType::Binary};
     options.RunTimeData = data;
     if (type == AttestationType::OpenEnclave)
@@ -184,8 +183,6 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
     // Attestation clients don't need to be authenticated, but they can be.
     auto client(CreateAuthenticatedClient());
     auto runtimeData = AttestationCollateral::RunTimeData();
-
-    client->RetrieveResponseValidationCollateral();
 
     AttestationType type = std::get<1>(GetParam());
 
@@ -250,7 +247,6 @@ issuancerules {
   {
     auto client(CreateClient());
     auto runtimeData = AttestationCollateral::RunTimeData();
-    client->RetrieveResponseValidationCollateral();
 
     AttestationType type = std::get<1>(GetParam());
     AttestationData data{runtimeData, AttestationDataType::Json};

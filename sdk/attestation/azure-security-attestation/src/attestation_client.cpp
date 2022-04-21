@@ -87,8 +87,6 @@ Azure::Response<AttestationToken<AttestationResult>> AttestationClient::AttestSg
     AttestEnclaveOptions options,
     Azure::Core::Context const& context) const
 {
-  CheckAttestationSigners();
-
   AttestSgxEnclaveRequest attestRequest{
       sgxQuote,
       options.InitTimeData,
@@ -131,8 +129,6 @@ Azure::Response<AttestationToken<AttestationResult>> AttestationClient::AttestOp
     AttestEnclaveOptions options,
     Azure::Core::Context const& context) const
 {
-  CheckAttestationSigners();
-
   AttestOpenEnclaveRequest attestRequest{
       openEnclaveReport,
       options.InitTimeData,
@@ -215,11 +211,68 @@ void AttestationClient::RetrieveResponseValidationCollateral(
   }
 }
 
-void AttestationClient::CheckAttestationSigners() const
+/** @brief Construct a new Attestation Client object
+ *
+ * @param endpoint The URL address where the client will send the requests to.
+ * @param credential The authentication method to use (required for TPM attestation).
+ * @param options The options to customize the client behavior.
+ */
+AttestationClient const AttestationClient::Create(
+    std::string const& endpoint,
+    std::shared_ptr<Core::Credentials::TokenCredential const> credential,
+    AttestationClientOptions options,
+    Azure::Core::Context const& context)
 {
-  std::unique_lock<std::shared_timed_mutex> stateLock(SharedStateLock);
+  AttestationClient returnValue(endpoint, credential, options);
+  returnValue.RetrieveResponseValidationCollateral(context);
+  return returnValue;
+}
 
-  AZURE_ASSERT_MSG(
-      !m_attestationSigners.empty(),
-      "RetrieveResponseValidationCollateral must be called before this API.");
+/** @brief Construct a new anonymous Attestation Client object
+ *
+ * @param endpoint The URL address where the client will send the requests to.
+ * @param options The options to customize the client behavior.
+ *
+ * @note TPM attestation requires an authenticated attestation client.
+ */
+AttestationClient const AttestationClient::Create(
+    std::string const& endpoint,
+    AttestationClientOptions options,
+    Azure::Core::Context const& context)
+{
+  return Create(endpoint, nullptr, options, context);
+}
+
+/** @brief Construct a new Attestation Client object
+ *
+ * @param endpoint The URL address where the client will send the requests to.
+ * @param credential The authentication method to use (required for TPM attestation).
+ * @param options The options to customize the client behavior.
+ */
+AttestationClient* const AttestationClient::CreatePointer(
+    std::string const& endpoint,
+    std::shared_ptr<Core::Credentials::TokenCredential const> credential,
+    AttestationClientOptions options,
+    Azure::Core::Context const& context)
+{
+  std::unique_ptr<AttestationClient> returnValue(
+      new AttestationClient(endpoint, credential, options));
+  returnValue->RetrieveResponseValidationCollateral(context);
+  // Release the client pointer from the unique pointer to let the parent manage it.
+  return returnValue.release();
+}
+
+/** @brief Construct a new anonymous Attestation Client object
+ *
+ * @param endpoint The URL address where the client will send the requests to.
+ * @param options The options to customize the client behavior.
+ *
+ * @note TPM attestation requires an authenticated attestation client.
+ */
+AttestationClient* const AttestationClient::CreatePointer(
+    std::string const& endpoint,
+    AttestationClientOptions options,
+    Azure::Core::Context const& context)
+{
+  return CreatePointer(endpoint, nullptr, options, context);
 }

@@ -36,7 +36,9 @@ int main()
 
     // create client
     AttestationClient const attestationClient(
-        GetEnvHelper::GetEnv("ATTESTATION_AAD_URL"), clientOptions);
+        AttestationClient::Create(GetEnvHelper::GetEnv("ATTESTATION_AAD_URL"), clientOptions));
+
+    attestationClient.GetOpenIdMetadata();
   }
   catch (Azure::Core::Credentials::AuthenticationException const& e)
   {

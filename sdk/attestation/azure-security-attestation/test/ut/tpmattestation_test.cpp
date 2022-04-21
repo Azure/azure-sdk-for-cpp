@@ -95,14 +95,13 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
     std::unique_ptr<AttestationClient> CreateClient(InstanceType instanceType)
     {
       // `InitClientOptions` takes care of setting up Record&Playback.
-      AttestationClientOptions options;
+      AttestationClientOptions options = InitClientOptions<AttestationClientOptions>();
       options.TokenValidationOptions = GetTokenValidationOptions();
       std::shared_ptr<Azure::Core::Credentials::TokenCredential> credential
           = std::make_shared<Azure::Identity::ClientSecretCredential>(
               GetEnv("AZURE_TENANT_ID"), GetEnv("AZURE_CLIENT_ID"), GetEnv("AZURE_CLIENT_SECRET"));
-
-      return InitTestClient<AttestationClient, AttestationClientOptions>(
-          GetInstanceUri(instanceType), credential, options);
+      return std::unique_ptr<AttestationClient>(
+          AttestationClient::CreatePointer(GetInstanceUri(instanceType), credential, options));
     }
 
     std::unique_ptr<AttestationAdministrationClient> CreateAdminClient(InstanceType instanceType)

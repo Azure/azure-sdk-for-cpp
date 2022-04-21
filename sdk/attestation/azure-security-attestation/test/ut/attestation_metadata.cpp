@@ -54,18 +54,19 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
     {
       // `InitTestClient` takes care of setting up Record&Playback.
       auto options = InitClientOptions<Azure::Security::Attestation::AttestationClientOptions>();
-      return std::make_unique<Azure::Security::Attestation::AttestationClient>(m_endpoint, options);
+      return std::unique_ptr<Azure::Security::Attestation::AttestationClient>(
+          AttestationClient::CreatePointer(m_endpoint, options));
     }
     std::unique_ptr<AttestationClient> CreateAuthenticatedClient()
     {
       // `InitClientOptions` takes care of setting up Record&Playback.
-      AttestationClientOptions options;
+      AttestationClientOptions options = InitClientOptions<AttestationClientOptions>();
       std::shared_ptr<Azure::Core::Credentials::TokenCredential> credential
           = std::make_shared<Azure::Identity::ClientSecretCredential>(
               GetEnv("AZURE_TENANT_ID"), GetEnv("AZURE_CLIENT_ID"), GetEnv("AZURE_CLIENT_SECRET"));
 
-      return InitTestClient<AttestationClient, AttestationClientOptions>(
-          m_endpoint, credential, options);
+      return std::unique_ptr<AttestationClient>(
+          AttestationClient::CreatePointer(m_endpoint, credential, options));
     }
   };
 
@@ -73,7 +74,7 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
   {
     auto attestationClient(CreateClient());
 
-    EXPECT_FALSE(attestationClient->Endpoint().GetAbsoluteUrl().empty());
+    EXPECT_FALSE(attestationClient->Endpoint().empty());
 
     auto openIdMetadata = attestationClient->GetOpenIdMetadata();
 
