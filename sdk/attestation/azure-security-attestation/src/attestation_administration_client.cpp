@@ -65,6 +65,29 @@ AttestationAdministrationClient::AttestationAdministrationClient(
       std::move(perCallpolicies));
 }
 
+AttestationAdministrationClient const AttestationAdministrationClient::Create(
+    std::string const& endpoint,
+    std::shared_ptr<Core::Credentials::TokenCredential const> credential,
+    AttestationAdministrationClientOptions const& options,
+    Azure::Core::Context const& context)
+{
+  AttestationAdministrationClient returnValue(endpoint, credential, options);
+  returnValue.RetrieveResponseValidationCollateral(context);
+  return returnValue;
+}
+
+std::unique_ptr<AttestationAdministrationClient const> AttestationAdministrationClient::CreatePointer(
+    std::string const& endpoint,
+    std::shared_ptr<Core::Credentials::TokenCredential const> credential,
+    AttestationAdministrationClientOptions const& options,
+    Azure::Core::Context const& context)
+{
+  std::unique_ptr<AttestationAdministrationClient const> returnValue(
+      new AttestationAdministrationClient(endpoint, credential, options));
+  returnValue->RetrieveResponseValidationCollateral(context);
+  return returnValue;
+}
+
 namespace {
 std::shared_timed_mutex SharedStateLock;
 }
@@ -75,8 +98,6 @@ AttestationAdministrationClient::GetAttestationPolicy(
     GetPolicyOptions const& options,
     Azure::Core::Context const& context) const
 {
-  CheckAttestationSigners();
-
   auto request = AttestationCommonRequest::CreateRequest(
       m_endpoint,
       m_apiVersion,
@@ -154,7 +175,6 @@ AttestationAdministrationClient::SetAttestationPolicy(
     SetPolicyOptions const& options,
     Azure::Core::Context const& context) const
 {
-  CheckAttestationSigners();
   // Calculate a signed (or unsigned) attestation policy token to send to the service.
   Models::AttestationToken<void> const tokenToSend(
       CreateAttestationPolicyToken(newAttestationPolicy, options.SigningKey));
@@ -219,7 +239,6 @@ AttestationAdministrationClient::ResetAttestationPolicy(
     SetPolicyOptions const& options,
     Azure::Core::Context const& context) const
 {
-  CheckAttestationSigners();
   // Calculate a signed (or unsigned) attestation policy token to send to the service.
   Models::AttestationToken<void> tokenToSend(
       CreateAttestationPolicyToken(Azure::Nullable<std::string>(), options.SigningKey));
@@ -288,8 +307,6 @@ AttestationAdministrationClient::GetIsolatedModeCertificates(
     GetIsolatedModeCertificatesOptions const& options,
     Azure::Core::Context const& context) const
 {
-  CheckAttestationSigners();
-
   auto request = AttestationCommonRequest::CreateRequest(
       m_endpoint, m_apiVersion, HttpMethod::Get, {"certificates"}, nullptr);
 
@@ -334,8 +351,6 @@ std::string AttestationAdministrationClient::CreateIsolatedModeModificationToken
     std::string const& pemEncodedX509CertificateToAdd,
     AttestationSigningKey const& existingSigningKey) const
 {
-  CheckAttestationSigners();
-
   // Calculate a signed attestation policy token to send to the service.
   // Embed the encoded policy in the StoredAttestationPolicy.
   const auto x5cToAdd(Cryptography::ImportX509Certificate(pemEncodedX509CertificateToAdd));
@@ -363,8 +378,6 @@ AttestationAdministrationClient::ProcessIsolatedModeModificationResult(
     std::unique_ptr<RawResponse> const& serverResponse,
     AttestationTokenValidationOptions const& tokenValidationOptions) const
 {
-  CheckAttestationSigners();
-
   // Deserialize the Service response token and return the JSON web token returned by the
   // service.
   std::string responseToken
@@ -411,8 +424,6 @@ AttestationAdministrationClient::AddIsolatedModeCertificate(
     AddIsolatedModeCertificatesOptions const& options,
     Azure::Core::Context const& context) const
 {
-  CheckAttestationSigners();
-
   auto const policyCertToken(
       CreateIsolatedModeModificationToken(pemEncodedX509CertificateToAdd, existingSigningKey));
   Azure::Core::IO::MemoryBodyStream stream(
@@ -439,8 +450,6 @@ AttestationAdministrationClient::RemoveIsolatedModeCertificate(
     AddIsolatedModeCertificatesOptions const& options,
     Azure::Core::Context const& context) const
 {
-  CheckAttestationSigners();
-
   // Calculate a signed (or unsigned) attestation policy token to send to the service.
   // Embed the encoded policy in the StoredAttestationPolicy.
   auto const policyCertToken(
@@ -497,13 +506,4 @@ void AttestationAdministrationClient::RetrieveResponseValidationCollateral(
       m_attestationSigners = newValue;
     }
   }
-}
-
-void AttestationAdministrationClient::CheckAttestationSigners() const
-{
-  std::unique_lock<std::shared_timed_mutex> stateLock(SharedStateLock);
-
-  AZURE_ASSERT_MSG(
-      !m_attestationSigners.empty(),
-      "RetrieveResponseValidationCollateral must be called before this API.");
 }

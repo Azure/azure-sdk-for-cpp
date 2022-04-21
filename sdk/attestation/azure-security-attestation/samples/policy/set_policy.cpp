@@ -58,10 +58,7 @@ int main()
         GetEnvHelper::GetEnv("AZURE_TENANT_ID"),
         GetEnvHelper::GetEnv("AZURE_CLIENT_ID"),
         GetEnvHelper::GetEnv("AZURE_CLIENT_SECRET"));
-    AttestationAdministrationClient const adminClient(endpoint, credential, clientOptions);
-
-    // Retrieve attestation response validation collateral before calling into the service.
-    adminClient.RetrieveResponseValidationCollateral();
+    std::unique_ptr<AttestationAdministrationClient const> adminClient(AttestationAdministrationClient::CreatePointer(endpoint, credential, clientOptions));
 
     // Set the attestation policy on this attestation instance.
     // Note that because this is an AAD mode instance, the caller does not need to sign the policy
@@ -75,7 +72,7 @@ authorizationrules
 	[ type=="x-ms-sgx-mrsigner", value=="mrsigner2"] => permit(); 
 };)");
     Azure::Response<AttestationToken<PolicyResult>> const setResult
-        = adminClient.SetAttestationPolicy(AttestationType::SgxEnclave, policyToSet);
+        = adminClient->SetAttestationPolicy(AttestationType::SgxEnclave, policyToSet);
 
     if (setResult.Value.Body.PolicyResolution == PolicyModification::Updated)
     {
@@ -91,7 +88,7 @@ authorizationrules
     // by the attestation service, the customer can call CreateAttestationPolicyToken and then
     // generate the SHA256 of that token and compare it with the value returned by the service - the
     // two hash values should be identical.
-    auto const setPolicyToken = adminClient.CreateAttestationPolicyToken(policyToSet);
+    auto const setPolicyToken = adminClient->CreateAttestationPolicyToken(policyToSet);
     Sha256Hash shaHasher;
     std::vector<uint8_t> policyTokenHash = shaHasher.Final(
         reinterpret_cast<uint8_t const*>(setPolicyToken.RawToken.data()),

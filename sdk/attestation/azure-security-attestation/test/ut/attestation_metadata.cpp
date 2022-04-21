@@ -54,9 +54,9 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
     {
       // `InitTestClient` takes care of setting up Record&Playback.
       auto options = InitClientOptions<Azure::Security::Attestation::AttestationClientOptions>();
-      return std::unique_ptr<Azure::Security::Attestation::AttestationClient>(
-          AttestationClient::CreatePointer(m_endpoint, options));
+      return AttestationClient::CreatePointer(m_endpoint, options);
     }
+
     std::unique_ptr<AttestationClient> CreateAuthenticatedClient()
     {
       // `InitClientOptions` takes care of setting up Record&Playback.
@@ -65,8 +65,7 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
           = std::make_shared<Azure::Identity::ClientSecretCredential>(
               GetEnv("AZURE_TENANT_ID"), GetEnv("AZURE_CLIENT_ID"), GetEnv("AZURE_CLIENT_SECRET"));
 
-      return std::unique_ptr<AttestationClient>(
-          AttestationClient::CreatePointer(m_endpoint, credential, options));
+      return AttestationClient::CreatePointer(m_endpoint, credential, options);
     }
   };
 

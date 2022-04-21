@@ -59,10 +59,7 @@ int main()
         GetEnvHelper::GetEnv("AZURE_TENANT_ID"),
         GetEnvHelper::GetEnv("AZURE_CLIENT_ID"),
         GetEnvHelper::GetEnv("AZURE_CLIENT_SECRET"));
-    AttestationAdministrationClient const adminClient(endpoint, credential, clientOptions);
-
-    // Retrieve attestation response validation collateral before calling into the service.
-    adminClient.RetrieveResponseValidationCollateral();
+    AttestationAdministrationClient const adminClient(AttestationAdministrationClient::Create(endpoint, credential, clientOptions));
 
     Azure::Response<AttestationToken<PolicyResult>> const resetResult
         = adminClient.ResetAttestationPolicy(AttestationType::SgxEnclave);

@@ -72,20 +72,19 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
       return returnValue;
     }
 
-    std::unique_ptr<AttestationAdministrationClient> CreateClient(ServiceInstanceType instanceType)
+    std::unique_ptr<AttestationAdministrationClient const> CreateClient(ServiceInstanceType instanceType)
     {
       // `InitTestClient` takes care of setting up Record&Playback.
-      Azure::Security::Attestation::AttestationAdministrationClientOptions options;
+      AttestationAdministrationClientOptions options
+          = InitClientOptions<AttestationAdministrationClientOptions>();
       options.TokenValidationOptions = GetTokenValidationOptions();
 
       std::shared_ptr<Azure::Core::Credentials::TokenCredential> credential
           = std::make_shared<Azure::Identity::ClientSecretCredential>(
               GetEnv("AZURE_TENANT_ID"), GetEnv("AZURE_CLIENT_ID"), GetEnv("AZURE_CLIENT_SECRET"));
 
-      return InitTestClient<
-          Azure::Security::Attestation::AttestationAdministrationClient,
-          Azure::Security::Attestation::AttestationAdministrationClientOptions>(
-          GetServiceEndpoint(instanceType), credential, options);
+      return std::unique_ptr<AttestationAdministrationClient const>(AttestationAdministrationClient::CreatePointer(
+          GetServiceEndpoint(instanceType), credential, options));
     }
 
     // Get Policy management certificates for each instance type.
@@ -95,8 +94,6 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
     void GetIsolatedModeCertificatesTest(ServiceInstanceType const instanceType)
     {
       auto adminClient(CreateClient(instanceType));
-
-      adminClient->RetrieveResponseValidationCollateral();
 
       {
         auto certificatesResult = adminClient->GetIsolatedModeCertificates(
@@ -178,8 +175,6 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
 
     auto adminClient(CreateClient(ServiceInstanceType::Isolated));
 
-    adminClient->RetrieveResponseValidationCollateral();
-
     auto isolatedCertificateBase64(GetEnv("ISOLATED_SIGNING_CERTIFICATE"));
     auto isolatedCertificate(Cryptography::ImportX509Certificate(
         Cryptography::PemFromBase64(isolatedCertificateBase64, "CERTIFICATE")));
@@ -241,8 +236,6 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
     CHECK_SKIP_TEST()
 
     auto adminClient(CreateClient(ServiceInstanceType::Isolated));
-
-    adminClient->RetrieveResponseValidationCollateral();
 
     auto isolatedCertificateBase64(GetEnv("ISOLATED_SIGNING_CERTIFICATE"));
     auto isolatedCertificate(Cryptography::ImportX509Certificate(
@@ -317,8 +310,6 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
   {
     auto adminClient(CreateClient(ServiceInstanceType::AAD));
 
-    adminClient->RetrieveResponseValidationCollateral();
-
     // Create a signing key to be used when signing the request to the service. We use the ISOLATED
     // SIGNING KEY because we know that it will always be present.
     auto fakedIsolatedKey(Cryptography::CreateRsaKey(2048));
@@ -345,7 +336,6 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
   TEST_F(CertificateTests, VerifyFailedRemoveCertificate)
   {
     auto adminClient(CreateClient(ServiceInstanceType::AAD));
-    adminClient->RetrieveResponseValidationCollateral();
 
     // Create a signing key to be used when signing the request to the service. We use the ISOLATED
     // SIGNING KEY because we know that it will always be present.

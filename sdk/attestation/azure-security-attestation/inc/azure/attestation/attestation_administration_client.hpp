@@ -45,13 +45,6 @@ namespace Azure { namespace Security { namespace Attestation {
    */
   class AttestationAdministrationClient final {
 
-  public:
-    /**
-     * @brief Destructor.
-     *
-     */
-    virtual ~AttestationAdministrationClient() = default;
-
     /**
      * @brief Construct a new Attestation Administration Client object.
      *
@@ -65,36 +58,63 @@ namespace Azure { namespace Security { namespace Attestation {
         AttestationAdministrationClientOptions const& options
         = AttestationAdministrationClientOptions());
 
-    /**
-     * @brief Returns the Endpoint which the client is communicating with.
-     *
-     * @returns The remote endpoint used when communicating with the attestation service.
-     */
-    std::string const Endpoint() const { return m_endpoint.GetAbsoluteUrl(); }
-
+  public:
     /**
      * @brief Construct a new Attestation Administration Client object from another attestation
      * administration client.
      *
      * @param attestationClient An existing attestation client.
      */
-    explicit AttestationAdministrationClient(
+    AttestationAdministrationClient(
         AttestationAdministrationClient const& attestationClient)
         : m_endpoint(attestationClient.m_endpoint), m_apiVersion(attestationClient.m_apiVersion),
           m_pipeline(attestationClient.m_pipeline),
           m_tokenValidationOptions(attestationClient.m_tokenValidationOptions){};
 
     /**
-     * @brief Retrieves the information needed to validate the response returned from the
-     * attestation service.
+     * @brief Destructor.
      *
-     * @details Validating the response returned by the attestation service requires a set of
-     * possible signers for the attestation token.
-     *
-     * @param context Client context for the request to the service.
      */
-    void RetrieveResponseValidationCollateral(
-        Azure::Core::Context const& context = Azure::Core::Context{}) const;
+    virtual ~AttestationAdministrationClient() = default;
+
+    /**
+     * @brief Construct a new Attestation Administration Client object.
+     *
+     * @param endpoint The URL address where the client will send the requests to.
+     * @param credential The authentication token to use.
+     * @param options The options to customize the client behavior.
+     * @return std::unique_ptr<AttestationAdministrationClient> The newly created client.
+     */
+    static AttestationAdministrationClient const Create(
+        std::string const& endpoint,
+        std::shared_ptr<Core::Credentials::TokenCredential const> credential,
+        AttestationAdministrationClientOptions const& options
+        = AttestationAdministrationClientOptions(),
+        Azure::Core::Context const& context = Azure::Core::Context{});
+    /**
+     * @brief Construct a pointer to a new Attestation Administration Client object.
+     *
+     * @note It is the responsibility of the caller to manage the lifetime of the returned
+     * AttestationAdministrationClient object, typically by constructing a std::unique_ptr or
+     * std::shared_ptr from this pointer.
+     *
+     * @param endpoint The URL address where the client will send the requests to.
+     * @param credential The authentication token to use.
+     * @param options The options to customize the client behavior.
+     */
+    static std::unique_ptr<AttestationAdministrationClient const> CreatePointer(
+        std::string const& endpoint,
+        std::shared_ptr<Core::Credentials::TokenCredential const> credential,
+        AttestationAdministrationClientOptions const& options
+        = AttestationAdministrationClientOptions(),
+        Azure::Core::Context const& context = Azure::Core::Context{});
+
+    /**
+     * @brief Returns the Endpoint which the client is communicating with.
+     *
+     * @returns The remote endpoint used when communicating with the attestation service.
+     */
+    std::string const Endpoint() const { return m_endpoint.GetAbsoluteUrl(); }
 
     /**
      * @brief Retrieves an Attestation Policy from the service.
@@ -289,10 +309,16 @@ namespace Azure { namespace Security { namespace Attestation {
         AttestationTokenValidationOptions const& tokenValidationOptions) const;
 
     /**
-     * @brief Check the m_AttestationSigners to ensure that RetrieveResponseValidationCollateral has
-     * been called.
+     * @brief Retrieves the information needed to validate the response returned from the
+     * attestation service.
+     *
+     * @details Validating the response returned by the attestation service requires a set of
+     * possible signers for the attestation token.
+     *
+     * @param context Client context for the request to the service.
      */
-    void CheckAttestationSigners() const;
+    void RetrieveResponseValidationCollateral(
+        Azure::Core::Context const& context = Azure::Core::Context{}) const;
   };
 
 }}} // namespace Azure::Security::Attestation

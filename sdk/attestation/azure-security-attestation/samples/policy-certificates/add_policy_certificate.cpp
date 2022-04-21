@@ -50,8 +50,8 @@ int main()
         GetEnvHelper::GetEnv("AZURE_TENANT_ID"),
         GetEnvHelper::GetEnv("AZURE_CLIENT_ID"),
         GetEnvHelper::GetEnv("AZURE_CLIENT_SECRET"));
-    AttestationAdministrationClient adminClient(
-        GetEnvHelper::GetEnv("ATTESTATION_ISOLATED_URL"), credential);
+    std::shared_ptr<AttestationAdministrationClient const> adminClient(AttestationAdministrationClient::CreatePointer(
+        GetEnvHelper::GetEnv("ATTESTATION_ISOLATED_URL"), credential));
 
     std::string const signingKey(GetEnvHelper::GetEnv("ISOLATED_SIGNING_KEY"));
     std::string const signingCert(GetEnvHelper::GetEnv("ISOLATED_SIGNING_CERTIFICATE"));
@@ -62,9 +62,6 @@ int main()
     std::string const pemSigningCert(::Cryptography::PemFromBase64(signingCert, "CERTIFICATE"));
 
     AttestationSigningKey const requestSigner{pemSigningKey, pemSigningCert};
-
-    // Retrieve attestation response validation collateral before calling into the service.
-    adminClient.RetrieveResponseValidationCollateral();
 
     // We start this sample by adding a new certificate to the set of policy management
     // certificates.
@@ -78,7 +75,7 @@ int main()
       // Add the new certificate to the set of policy management certificates for this attestation
       // service instance.
       Azure::Response<AttestationToken<IsolatedModeCertificateModificationResult>> const addResult
-          = adminClient.AddIsolatedModeCertificate(pemCertificateToAdd, requestSigner);
+          = adminClient->AddIsolatedModeCertificate(pemCertificateToAdd, requestSigner);
 
       std::cout << "The result of the certificate add operation is: "
                 << addResult.Value.Body.CertificateModification.ToString() << std::endl;
@@ -117,7 +114,7 @@ int main()
       // Add the new certificate to the set of policy management certificates for this attestation
       // service instance.
       Azure::Response<AttestationToken<IsolatedModeCertificateModificationResult>> const addResult
-          = adminClient.RemoveIsolatedModeCertificate(pemCertificateToRemove, requestSigner);
+          = adminClient->RemoveIsolatedModeCertificate(pemCertificateToRemove, requestSigner);
 
       std::cout << "The result of the certificate remove operation is: "
                 << addResult.Value.Body.CertificateModification.ToString() << std::endl;

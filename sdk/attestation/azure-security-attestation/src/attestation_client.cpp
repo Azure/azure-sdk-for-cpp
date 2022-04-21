@@ -249,7 +249,7 @@ AttestationClient const AttestationClient::Create(
  * @param credential The authentication method to use (required for TPM attestation).
  * @param options The options to customize the client behavior.
  */
-AttestationClient* const AttestationClient::CreatePointer(
+std::unique_ptr<AttestationClient> AttestationClient::CreatePointer(
     std::string const& endpoint,
     std::shared_ptr<Core::Credentials::TokenCredential const> credential,
     AttestationClientOptions options,
@@ -259,7 +259,7 @@ AttestationClient* const AttestationClient::CreatePointer(
       new AttestationClient(endpoint, credential, options));
   returnValue->RetrieveResponseValidationCollateral(context);
   // Release the client pointer from the unique pointer to let the parent manage it.
-  return returnValue.release();
+  return returnValue;
 }
 
 /** @brief Construct a new anonymous Attestation Client object
@@ -269,7 +269,7 @@ AttestationClient* const AttestationClient::CreatePointer(
  *
  * @note TPM attestation requires an authenticated attestation client.
  */
-AttestationClient* const AttestationClient::CreatePointer(
+std::unique_ptr<AttestationClient> AttestationClient::CreatePointer(
     std::string const& endpoint,
     AttestationClientOptions options,
     Azure::Core::Context const& context)
