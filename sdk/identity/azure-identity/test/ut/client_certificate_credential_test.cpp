@@ -69,18 +69,18 @@ TEST(ClientCertificateCredential, Regular)
       "https://login.microsoftonline.com/01234567-89ab-cdef-fedc-ba8976543210/oauth2/v2.0/token");
 
   {
-    constexpr char expectedBodyStart0[]
+    constexpr char expectedBodyStart0[] // cspell:disable
         = "grant_type=client_credentials"
           "&client_assertion_type=urn%3Aietf%3Aparams%3Aoauth%3Aclient-assertion-type%3Ajwt-bearer"
           "&client_id=fedcba98-7654-3210-0123-456789abcdef"
-          "&scope=https%3A%2F%2Fazure.com%2F.default" // cspell:disable-line
-          "&client_assertion=";
+          "&scope=https%3A%2F%2Fazure.com%2F.default"
+          "&client_assertion="; // cspell:enable
 
-    constexpr char expectedBodyStart1[]
+    constexpr char expectedBodyStart1[] // cspell:disable
         = "grant_type=client_credentials"
           "&client_assertion_type=urn%3Aietf%3Aparams%3Aoauth%3Aclient-assertion-type%3Ajwt-bearer"
           "&client_id=fedcba98-7654-3210-0123-456789abcdef"
-          "&client_assertion=";
+          "&client_assertion="; // cspell:enable
 
     EXPECT_GT(request0.Body.size(), (sizeof(expectedBodyStart0) - 1));
     EXPECT_GT(request1.Body.size(), (sizeof(expectedBodyStart1) - 1));
@@ -183,7 +183,7 @@ TempCertFile::TempCertFile()
 {
   std::ofstream cert(Path, std::ios_base::out | std::ios_base::trunc);
 
-  cert << // cSpell:disable
+  cert << // cspell:disable
       "Bag Attributes\n"
       "    Microsoft Local Key set: <No Values>\n"
       "    localKeyID: 01 00 00 00 \n"
@@ -192,9 +192,9 @@ TempCertFile::TempCertFile()
       "Key Attributes\n"
       "    X509v3 Key Usage: 90 \n"
       "-----BEGIN PRIVATE KEY-----\n";
-  // cSpell:enable
+  // cspell:enable
 
-  cert << // cSpell:disable
+  cert << // cspell:disable
       "MIIEvgIBADANBgkqhkiG9w0BAQEFAASCBKgwggSkAgEAAoIBAQDPdm4pukO7ugEx\n"
       "8wXrmo4VIEoicp7w3QsEJGA2bMx9nHMvwugG54t14QpfqBQYQWLeL1HmpcDeivVD\n"
       "+15ZXeGLCPVZBHhoY8ZWGibfhAAzqQ0P9Ca1kydjvB4uJcEnF/RYtQv6n6OwmdO1\n"
@@ -208,9 +208,9 @@ TempCertFile::TempCertFile()
       "H93cFH5YC/+v5I7qW6ZQe0f7rEKQDybGVzkBlKJyGCVYmPn7Xa/wJriws+FZIfHz\n"
       "f3m0kJigxJd/HwTrnKSg+H8oBgng7lZLdBYWHMGJhA0CgYEA48moW7szegvfLuUF\n"
       "a0sHfyKuNyvOv7Wud4sa0lwdKPHS+atwL6TNUWCAGkomYADEe3qiYgMXDX9U3hlW\n";
-  // cSpell:enable
+  // cspell:enable
 
-  cert << // cSpell:disable
+  cert << // cspell:disable
       "6zktYFj03tnRg4iBjp8nchLBVLf3Wd5TPRw1VKu4ZW43y8BRhYWV+3Z4s1nyMEDA\n"
       "NFbKRmL7LDB05oWHdJMjFK/L6YcCgYEA6ShV4v2RQiXzkW6GHSBZDIVHCeWwvIld\n"
       "OlEfG7wzZW4e8wNDhfSMtXyJrzfbEyXBtVKoESdP6Nnm9W7ftcynW965S94THuy7\n"
@@ -224,9 +224,9 @@ TempCertFile::TempCertFile()
       "bDY0Us943FN91qBmagNqDyozKAAqDoKvdRxM0IlIDnOptj4AfbpJ1JThNOJDYBpU\n"
       "+Azo8UoedANgndtZ2n11RSjmlQ6TE/WGlsirHExqr6y/l71znoQm1y3E2cArbsmy\n"
       "hp0P5v42PKxmAx4pR0EjNKsd\n";
-  // cSpell:enable
+  // cspell:enable
 
-  cert << // cSpell:disable
+  cert << // cspell:disable
       "-----END PRIVATE KEY-----\n"
       "Bag Attributes\n"
       "    localKeyID: 01 00 00 00 \n"
@@ -237,9 +237,9 @@ TempCertFile::TempCertFile()
       "issuer=CN = azure-identity-test\n"
       "\n"
       "-----BEGIN CERTIFICATE-----\n";
-  // cSpell:enable
+  // cspell:enable
 
-  cert << // cSpell:disable
+  cert << // cspell:disable
       "MIIDODCCAiCgAwIBAgIQNqa9U3MBxqBF7ksWk+XRkzANBgkqhkiG9w0BAQsFADAe\n"
       "MRwwGgYDVQQDDBNhenVyZS1pZGVudGl0eS10ZXN0MCAXDTIyMDQyMjE1MDYwNloY\n"
       "DzIyMjIwMTAxMDcwMDAwWjAeMRwwGgYDVQQDDBNhenVyZS1pZGVudGl0eS10ZXN0\n"
@@ -249,9 +249,9 @@ TempCertFile::TempCertFile()
       "EZTLWapp2/0NCJ9n41xG3ZfOfxmZWMzEEXcnyNMq4kkQXGFdpINM3lwsX5grwd62\n"
       "+iNSqaFBR5ZHh7ZHg8JtFR1BLeB8/IIXAdNLSOXktnx9qz5CDUCnOvtEFAtiiAkA\n"
       "vhsybGA28EDmqOVYZPNB+S0bjPTXc7/n1N5S55LWAoF4C/QF+C/0fWeD87bmqP6m\n";
-  // cSpell:enable
+  // cspell:enable
 
-  cert << // cSpell:disable
+  cert << // cspell:disable
       "0QIDAQABo3AwbjAOBgNVHQ8BAf8EBAMCBaAwHQYDVR0lBBYwFAYIKwYBBQUHAwIG\n"
       "CCsGAQUFBwMBMB4GA1UdEQQXMBWCE2F6dXJlLWlkZW50aXR5LXRlc3QwHQYDVR0O\n"
       "BBYEFCoJ5tInmafyNuR0tGxZOz522jlWMA0GCSqGSIb3DQEBCwUAA4IBAQBzLXpw\n"
@@ -262,7 +262,7 @@ TempCertFile::TempCertFile()
       "i9q94DBuzMhe+O9j+Ob2pVQt5akVFJVtIVSfBZzRBAd66u9JeADlT4sxwS4QAUHi\n"
       "RrCsEpJsnJXkx/6O\n"
       "-----END CERTIFICATE-----\n";
-  // cSpell:enable
+  // cspell:enable
 }
 
 std::vector<std::string> SplitString(const std::string& s, char separator)
