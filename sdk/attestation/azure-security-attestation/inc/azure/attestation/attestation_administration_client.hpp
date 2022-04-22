@@ -54,10 +54,7 @@ namespace Azure { namespace Security { namespace Attestation {
     AttestationAdministrationClient(AttestationAdministrationClient const& attestationClient)
         : m_endpoint(attestationClient.m_endpoint), m_apiVersion(attestationClient.m_apiVersion),
           m_pipeline(attestationClient.m_pipeline),
-          m_tokenValidationOptions(attestationClient.m_tokenValidationOptions)
-    {
-      __debugbreak();
-    };
+          m_tokenValidationOptions(attestationClient.m_tokenValidationOptions){};
 
     /**
      * @brief Destructor.
