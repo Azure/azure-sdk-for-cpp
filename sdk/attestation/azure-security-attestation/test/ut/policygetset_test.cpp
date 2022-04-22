@@ -85,7 +85,7 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
       return returnValue;
     }
 
-    std::unique_ptr<AttestationAdministrationClient const> CreateClient()
+    std::unique_ptr<AttestationAdministrationClient> CreateClient()
     {
       // `InitTestClient` takes care of setting up Record&Playback.
       AttestationAdministrationClientOptions options
@@ -96,12 +96,11 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
           = CreateClientSecretCredential(
               GetEnv("AZURE_TENANT_ID"), GetEnv("AZURE_CLIENT_ID"), GetEnv("AZURE_CLIENT_SECRET"));
 
-      return std::unique_ptr<AttestationAdministrationClient const>(
-          AttestationAdministrationClient::CreatePointer(m_endpoint, credential, options));
+      return AttestationAdministrationClient::CreatePointer(m_endpoint, credential, options);
     }
 
     bool ValidateSetPolicyResponse(
-        std::unique_ptr<AttestationAdministrationClient const> const& client,
+        std::unique_ptr<AttestationAdministrationClient> const& client,
         Response<AttestationToken<PolicyResult>> const& result,
         Azure::Nullable<std::string> policyToValidate,
         Azure::Nullable<AttestationSigningKey> const& signingKey = {})

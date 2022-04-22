@@ -45,7 +45,7 @@ int main()
     // create an administration client
     auto const credential = std::make_shared<Azure::Identity::ClientSecretCredential>(
         GetEnv("AZURE_TENANT_ID"), GetEnv("AZURE_CLIENT_ID"), GetEnv("AZURE_CLIENT_SECRET"));
-    std::unique_ptr<AttestationAdministrationClient const> adminClient(
+    std::unique_ptr<AttestationAdministrationClient> adminClient(
         AttestationAdministrationClient::CreatePointer(
             GetEnv("ATTESTATION_ISOLATED_URL"), credential));
 

@@ -251,7 +251,7 @@ namespace Azure { namespace Security { namespace Attestation {
      * @param options The options to customize the client behavior.
      * @return std::unique_ptr<AttestationAdministrationClient> The newly created client.
      */
-    static AttestationAdministrationClient const Create(
+    static AttestationAdministrationClient Create(
         std::string const& endpoint,
         std::shared_ptr<Core::Credentials::TokenCredential const> credential,
         AttestationAdministrationClientOptions const& options
@@ -268,7 +268,7 @@ namespace Azure { namespace Security { namespace Attestation {
      * @param credential The authentication token to use.
      * @param options The options to customize the client behavior.
      */
-    static std::unique_ptr<AttestationAdministrationClient const> CreatePointer(
+    static std::unique_ptr<AttestationAdministrationClient> CreatePointer(
         std::string const& endpoint,
         std::shared_ptr<Core::Credentials::TokenCredential const> credential,
         AttestationAdministrationClientOptions const& options

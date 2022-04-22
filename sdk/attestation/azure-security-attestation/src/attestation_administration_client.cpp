@@ -65,7 +65,7 @@ AttestationAdministrationClient::AttestationAdministrationClient(
       std::move(perCallpolicies));
 }
 
-AttestationAdministrationClient const AttestationAdministrationClient::Create(
+AttestationAdministrationClient AttestationAdministrationClient::Create(
     std::string const& endpoint,
     std::shared_ptr<Core::Credentials::TokenCredential const> credential,
     AttestationAdministrationClientOptions const& options,
@@ -76,14 +76,14 @@ AttestationAdministrationClient const AttestationAdministrationClient::Create(
   return returnValue;
 }
 
-std::unique_ptr<AttestationAdministrationClient const>
+std::unique_ptr<AttestationAdministrationClient>
 AttestationAdministrationClient::CreatePointer(
     std::string const& endpoint,
     std::shared_ptr<Core::Credentials::TokenCredential const> credential,
     AttestationAdministrationClientOptions const& options,
     Azure::Core::Context const& context)
 {
-  std::unique_ptr<AttestationAdministrationClient const> returnValue(
+  std::unique_ptr<AttestationAdministrationClient> returnValue(
       new AttestationAdministrationClient(endpoint, credential, options));
   returnValue->RetrieveResponseValidationCollateral(context);
   return returnValue;

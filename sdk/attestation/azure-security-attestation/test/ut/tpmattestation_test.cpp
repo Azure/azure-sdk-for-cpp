@@ -28,7 +28,7 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
   private:
   protected:
     std::shared_ptr<Azure::Core::Credentials::TokenCredential> m_credential;
-    std::unique_ptr<AttestationAdministrationClient const> m_adminClient;
+    std::unique_ptr<AttestationAdministrationClient> m_adminClient;
 
     // Create
     virtual void SetUp() override
@@ -90,7 +90,7 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
       return returnValue;
     }
 
-    std::unique_ptr<AttestationClient const> CreateClient(InstanceType instanceType)
+    std::unique_ptr<AttestationClient> CreateClient(InstanceType instanceType)
     {
       // `InitClientOptions` takes care of setting up Record&Playback.
       AttestationClientOptions options = InitClientOptions<AttestationClientOptions>();
@@ -98,12 +98,10 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
       std::shared_ptr<Azure::Core::Credentials::TokenCredential> credential
           = CreateClientSecretCredential(
               GetEnv("AZURE_TENANT_ID"), GetEnv("AZURE_CLIENT_ID"), GetEnv("AZURE_CLIENT_SECRET"));
-      return std::unique_ptr<AttestationClient const>(
-          AttestationClient::CreatePointer(GetInstanceUri(instanceType), credential, options));
+      return AttestationClient::CreatePointer(GetInstanceUri(instanceType), credential, options);
     }
 
-    std::unique_ptr<AttestationAdministrationClient const> CreateAdminClient(
-        InstanceType instanceType)
+    std::unique_ptr<AttestationAdministrationClient> CreateAdminClient(InstanceType instanceType)
     {
       // `InitTestClient` takes care of setting up Record&Playback.
       AttestationAdministrationClientOptions options
@@ -112,9 +110,8 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
       std::shared_ptr<Azure::Core::Credentials::TokenCredential> credential
           = CreateClientSecretCredential(
               GetEnv("AZURE_TENANT_ID"), GetEnv("AZURE_CLIENT_ID"), GetEnv("AZURE_CLIENT_SECRET"));
-      return std::unique_ptr<AttestationAdministrationClient const>(
-          AttestationAdministrationClient::CreatePointer(
-              GetInstanceUri(instanceType), credential, options));
+      return AttestationAdministrationClient::CreatePointer(
+          GetInstanceUri(instanceType), credential, options);
     }
   };
 

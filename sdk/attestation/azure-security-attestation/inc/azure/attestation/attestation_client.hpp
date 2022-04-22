@@ -223,7 +223,7 @@ namespace Azure { namespace Security { namespace Attestation {
      * @param options The options to customize the client behavior.
      * @return AttestationClient The newly created client.
      */
-    static AttestationClient const Create(
+    static AttestationClient Create(
         std::string const& endpoint,
         std::shared_ptr<Core::Credentials::TokenCredential const> credential,
         AttestationClientOptions options = AttestationClientOptions(),
@@ -237,7 +237,7 @@ namespace Azure { namespace Security { namespace Attestation {
      *
      * @note TPM attestation requires an authenticated attestation client.
      */
-    static AttestationClient const Create(
+    static AttestationClient Create(
         std::string const& endpoint,
         AttestationClientOptions options = AttestationClientOptions(),
         Azure::Core::Context const& constext = Azure::Core::Context{});
@@ -254,7 +254,7 @@ namespace Azure { namespace Security { namespace Attestation {
      * @param options The options to customize the client behavior.
      * @return std::unique_ptr<AttestationClient> The newly created client.
      */
-    static std::unique_ptr<AttestationClient const> CreatePointer(
+    static std::unique_ptr<AttestationClient> CreatePointer(
         std::string const& endpoint,
         std::shared_ptr<Core::Credentials::TokenCredential const> credential,
         AttestationClientOptions options = AttestationClientOptions(),
@@ -273,7 +273,7 @@ namespace Azure { namespace Security { namespace Attestation {
      * @note TPM attestation requires an authenticated attestation client.
      *
      */
-    static std::unique_ptr<AttestationClient const> CreatePointer(
+    static std::unique_ptr<AttestationClient> CreatePointer(
         std::string const& endpoint,
         AttestationClientOptions options = AttestationClientOptions(),
         Azure::Core::Context const& constext = Azure::Core::Context{});

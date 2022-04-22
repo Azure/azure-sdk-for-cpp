@@ -193,7 +193,7 @@ Isolated Mode Certificate Management APIs enable clients to add, remove or enume
 
 ### Examples
 
-- [Instantiate an attestation client](#create-an-attestation-client)
+- [Create an attestation client](#create-an-attestation-client)
 - [Retrieve token validation certificates](#retrieve-token-certificates)
 - [Attest an SGX enclave](#attest-an-sgx-enclave)
 - [Instantiate an administrative client](#create-an-administrative-client)
@@ -206,38 +206,25 @@ Isolated Mode Certificate Management APIs enable clients to add, remove or enume
 
 #### Create an attestation client
 
-The `AttestationClientBuilder` class is used to create instances of the attestation client:
+The `AttestationClient::Create` method is used to create instances of the attestation client:
 
 ```cpp
     std::string endpoint = std::getenv("ATTESTATION_AAD_URL");
-    return std::make_unique<Azure::Security::Attestation::AttestationClient>(m_endpoint);
+    return Azure::Security::Attestation::AttestationClient::CreatePointer(m_endpoint);
 ```
 
-If the attestation APIs require authentication, use the following:
+If the attestation APIs require authentication, use the following (note that unlike the previous example, 
+which returns a pointer to the client, this returns the client by value):
 
 ```cpp
 std::string endpoint = std::getenv("ATTESTATION_AAD_URL");
 std::shared_ptr<Azure::Core::Credentials::TokenCredential> credential
     = std::make_shared<Azure::Identity::ClientSecretCredential>(
       std::getenv("AZURE_TENANT_ID"), std::getenv("AZURE_CLIENT_ID"), std::getenv("AZURE_CLIENT_SECRET"));
-return std::make_unique<Azure::Security::Attestation::AttestationClient>(m_endpoint, credential);
+return Azure::Security::Attestation::AttestationClient::Create(m_endpoint, credential);
 ```
 
 The same pattern is used to create an `Azure::Security::Attestation::AttestationAdministrationClient`.
-
-#### Retrieve attestation response validation collateral
-
-Validating the response from the attestation service requires that the client have some additional information tto help it
-validate the responses from the attestation service. Before making most service methods, developers should call the
-`RetrieveResponseValidationCollateral` API to retrieve and cache this information.
-
-This only needs to be called once for each attestation client or attestation administration client instance.
-
-```cpp
-    // Retrieve attestation response validation collateral before calling into the service.
-    adminClient.RetrieveResponseValidationCollateral();
-
-```
 
 #### Retrieve Token Certificates
 

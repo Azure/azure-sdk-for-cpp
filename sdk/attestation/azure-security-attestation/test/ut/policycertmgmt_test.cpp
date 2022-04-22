@@ -72,8 +72,7 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
       return returnValue;
     }
 
-    std::unique_ptr<AttestationAdministrationClient const> CreateClient(
-        ServiceInstanceType instanceType)
+    std::unique_ptr<AttestationAdministrationClient> CreateClient(ServiceInstanceType instanceType)
     {
       // `InitTestClient` takes care of setting up Record&Playback.
       AttestationAdministrationClientOptions options
@@ -84,9 +83,8 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
           = CreateClientSecretCredential(
               GetEnv("AZURE_TENANT_ID"), GetEnv("AZURE_CLIENT_ID"), GetEnv("AZURE_CLIENT_SECRET"));
 
-      return std::unique_ptr<AttestationAdministrationClient const>(
-          AttestationAdministrationClient::CreatePointer(
-              GetServiceEndpoint(instanceType), credential, options));
+      return AttestationAdministrationClient::CreatePointer(
+          GetServiceEndpoint(instanceType), credential, options);
     }
 
     // Get Policy management certificates for each instance type.

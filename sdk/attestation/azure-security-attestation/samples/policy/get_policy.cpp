@@ -40,7 +40,7 @@ int main()
         GetEnvHelper::GetEnv("AZURE_TENANT_ID"),
         GetEnvHelper::GetEnv("AZURE_CLIENT_ID"),
         GetEnvHelper::GetEnv("AZURE_CLIENT_SECRET"));
-    AttestationAdministrationClient const adminClient(AttestationAdministrationClient::Create(
+    AttestationAdministrationClient adminClient(AttestationAdministrationClient::Create(
         GetEnvHelper::GetEnv("ATTESTATION_AAD_URL"), credential));
 
     // Retrieve the SGX Attestation Policy from this attestation service instance.
