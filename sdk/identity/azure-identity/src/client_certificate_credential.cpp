@@ -27,9 +27,9 @@ using namespace Azure::Identity;
 namespace {
 template <typename T> std::vector<uint8_t> ToUInt8Vector(T const& in)
 {
-  const auto size = in.size();
+  const size_t size = in.size();
   std::vector<uint8_t> outVec(size);
-  for (auto i = 0; i < size; ++i)
+  for (size_t i = 0; i < size; ++i)
   {
     outVec[i] = static_cast<uint8_t>(in[i]);
   }
