@@ -115,6 +115,24 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys { nam
         Azure::Core::Json::_internal::json const& jsonParser);
   };
 
+  /**************** Key Properties ************/
+  class KeyRotationPolicySerializer final {
+  public:
+    static KeyRotationPolicy KeyRotationPolicyDeserialize(
+        Azure::Core::Http::RawResponse const& rawResponse);
+    static KeyRotationPolicy KeyRotationPolicyDeserialize(std::vector<uint8_t> const& body);
+
+    static std::string KeyRotationPolicySerialize(KeyRotationPolicy const& rotationPolicy);
+  };
+
+  /**************** GetRandomBytes ************/
+  class GetRandomBytesSerializer final {
+  public:
+    static std::string GetRandomBytesOptionsSerialize(GetRandomBytesOptions const& options);
+    static std::vector<uint8_t> GetRandomBytesResponseDeserialize(
+        Azure::Core::Http::RawResponse const& rawResponse);
+  };
+
   /**************** KeyReleaseOptionsSerializer  ************/
   class KeyReleaseOptionsSerializer final {
   public:

@@ -25,6 +25,7 @@ add_executable (
     key_client_test.cpp
     key_client_update_test_live.cpp
     key_cryptographic_client_test_live.cpp
+    key_rotation_policy_test_live.cpp
     macro_guard.cpp
     mocked_client_test.cpp
     mocked_transport_adapter_test.hpp

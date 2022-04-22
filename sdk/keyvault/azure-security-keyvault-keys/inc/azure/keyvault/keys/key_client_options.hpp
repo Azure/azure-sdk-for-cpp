@@ -402,6 +402,19 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
   };
 
   /**
+   * @brief Get Random Bytes options
+   *
+   */
+  struct GetRandomBytesOptions final
+  {
+    /**
+     * @brief The requested number of random bytes.
+     *
+     */
+    int32_t Count;
+  };
+
+  /**
    * @brief Release key options.
    *
    */

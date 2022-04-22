@@ -72,13 +72,13 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys { nam
       UpdateWaitingTime(m_testPollingIntervalMs);
     }
 
-    void CreateHsmClient(std::string alternate = "")
+    void CreateHsmClient(std::string hsmUrl = "")
     {
       KeyClientOptions options;
       m_client = InitTestClient<
           Azure::Security::KeyVault::Keys::KeyClient,
           Azure::Security::KeyVault::Keys::KeyClientOptions>(
-          alternate.length() >0 ?alternate : m_keyVaultHsmUrl, m_credential, options);
+          hsmUrl.length() == 0 ? m_keyVaultHsmUrl : hsmUrl, m_credential, options);
     }
 
   public:
