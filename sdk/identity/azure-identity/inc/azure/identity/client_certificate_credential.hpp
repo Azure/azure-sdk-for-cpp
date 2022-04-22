@@ -3,7 +3,7 @@
 
 /**
  * @file
- * @brief Client Secret Credential and options.
+ * @brief Client Certificate Credential and options.
  */
 
 #pragma once
