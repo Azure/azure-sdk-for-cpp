@@ -107,8 +107,8 @@ TEST(ClientCertificateCredential, Regular)
       const auto assertion0Parts = SplitString(assertion0, '.');
       const auto assertion1Parts = SplitString(assertion1, '.');
 
-      EXPECT_EQ(assertion0Parts.size(), 3);
-      EXPECT_EQ(assertion1Parts.size(), 3);
+      EXPECT_EQ(assertion0Parts.size(), 3U);
+      EXPECT_EQ(assertion1Parts.size(), 3U);
 
       const auto header0Vec = Base64Url::Base64UrlDecode(assertion0Parts[0]);
       const auto header1Vec = Base64Url::Base64UrlDecode(assertion1Parts[0]);

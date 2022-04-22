@@ -143,7 +143,7 @@ ClientCertificateCredential::ClientCertificateCredential(
       std::ostringstream body;
       body << "grant_type=client_credentials"
               "&client_assertion_type="
-              "urn%3Aietf%3Aparams%3Aoauth%3Aclient-assertion-type%3Ajwt-bearer"
+              "urn%3Aietf%3Aparams%3Aoauth%3Aclient-assertion-type%3Ajwt-bearer" // cspell:disable-line
               "&client_id="
            << Url::Encode(clientId);
 
@@ -210,7 +210,7 @@ Azure::Core::Credentials::AccessToken ClientCertificateCredential::GetToken(
     std::string assertion = m_tokenHeaderEncoded;
     {
       using Azure::Core::_internal::Base64Url;
-      // Form the asserion to sign.
+      // Form the assertion to sign.
       {
         std::string payloadStr;
         // Add GUID, current time, and expiration time to the payload
