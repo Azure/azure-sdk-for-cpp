@@ -156,8 +156,8 @@ TEST(ClientCertificateCredential, Regular)
       EXPECT_EQ(payload0.substr(0, (sizeof(ExpectedPayloadStart) - 1)), ExpectedPayloadStart);
       EXPECT_EQ(payload1.substr(0, (sizeof(ExpectedPayloadStart) - 1)), ExpectedPayloadStart);
 
-      EXPECT_EQ(Base64Url::Base64UrlDecode(signature0).size(), 256);
-      EXPECT_EQ(Base64Url::Base64UrlDecode(signature1).size(), 256);
+      EXPECT_EQ(Base64Url::Base64UrlDecode(signature0).size(), 256U);
+      EXPECT_EQ(Base64Url::Base64UrlDecode(signature1).size(), 256U);
     }
   }
 
