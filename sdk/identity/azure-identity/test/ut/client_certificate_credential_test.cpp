@@ -26,6 +26,8 @@ struct TempCertFile final
 };
 
 std::vector<std::string> SplitString(const std::string& s, char separator);
+
+std::string ToString(std::vector<uint8_t> const& vec);
 } // namespace
 
 TEST(ClientCertificateCredential, Regular)
@@ -119,26 +121,11 @@ TEST(ClientCertificateCredential, Regular)
       const auto signature0 = assertion0Parts[2];
       const auto signature1 = assertion1Parts[2];
 
-      static_assert(
-          sizeof(uint8_t) == sizeof(std::string::value_type),
-          "Base64Url decoded vector element type"
-          " should be representable as std::string characters.");
+      const auto header0 = ToString(header0Vec);
+      const auto header1 = ToString(header1Vec);
 
-      const auto header0 = std::string(
-          reinterpret_cast<const std::vector<std::string::value_type>&>(header0Vec).begin(),
-          reinterpret_cast<const std::vector<std::string::value_type>&>(header0Vec).end());
-
-      const auto header1 = std::string(
-          reinterpret_cast<const std::vector<std::string::value_type>&>(header1Vec).begin(),
-          reinterpret_cast<const std::vector<std::string::value_type>&>(header1Vec).end());
-
-      const auto payload0 = std::string(
-          reinterpret_cast<const std::vector<std::string::value_type>&>(payload0Vec).begin(),
-          reinterpret_cast<const std::vector<std::string::value_type>&>(payload0Vec).end());
-
-      const auto payload1 = std::string(
-          reinterpret_cast<const std::vector<std::string::value_type>&>(payload1Vec).begin(),
-          reinterpret_cast<const std::vector<std::string::value_type>&>(payload1Vec).end());
+      const auto payload0 = ToString(payload0Vec);
+      const auto payload1 = ToString(payload1Vec);
 
       constexpr auto ExpectedHeader
           = "{\"x5t\":\"V0pIIQwSzNn6vfSTPv-1f7Vt_Pw\",\"kid\":"
@@ -289,5 +276,17 @@ std::vector<std::string> SplitString(const std::string& s, char separator)
   }
 
   return result;
+}
+
+std::string ToString(std::vector<uint8_t> const& vec)
+{
+  const size_t size = vec.size();
+  std::string str(size, '\0');
+  for (size_t i = 0; i < size; ++i)
+  {
+    str[i] = static_cast<std::string::value_type>(vec[i]);
+  }
+
+  return str;
 }
 } // namespace
