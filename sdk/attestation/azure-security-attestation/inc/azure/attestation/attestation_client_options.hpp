@@ -127,9 +127,11 @@ namespace Azure { namespace Security { namespace Attestation {
   {
     /** @brief Version to use when communicating with the attestation service.
      */
-    ServiceVersion Version{ServiceVersion::V2020_10_01};
+    ServiceVersion Version;
+
     /** @brief Options sent when validating tokens received by the attestation service.
      */
+
     AttestationTokenValidationOptions TokenValidationOptions;
     /**
      * @brief Construct a new Attestation Client Options object.
@@ -154,7 +156,7 @@ namespace Azure { namespace Security { namespace Attestation {
   {
     /** @brief Version to use when communicating with the attestation service.
      */
-    ServiceVersion Version{ServiceVersion::V2020_10_01};
+    ServiceVersion Version;
     /** @brief Options sent when validating tokens received by the attestation service.
      */
     AttestationTokenValidationOptions TokenValidationOptions;

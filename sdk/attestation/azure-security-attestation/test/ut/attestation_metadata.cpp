@@ -50,14 +50,14 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
       }
     }
 
-    std::unique_ptr<AttestationClient> CreateClient()
+    std::unique_ptr<AttestationClient const> CreateClient()
     {
       // `InitTestClient` takes care of setting up Record&Playback.
       auto options = InitClientOptions<Azure::Security::Attestation::AttestationClientOptions>();
       return AttestationClient::CreatePointer(m_endpoint, options);
     }
 
-    std::unique_ptr<AttestationClient> CreateAuthenticatedClient()
+    std::unique_ptr<AttestationClient const> CreateAuthenticatedClient()
     {
       // `InitClientOptions` takes care of setting up Record&Playback.
       AttestationClientOptions options = InitClientOptions<AttestationClientOptions>();
