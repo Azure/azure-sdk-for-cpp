@@ -24,6 +24,20 @@
 
 using namespace Azure::Identity;
 
+namespace {
+template <typename T> std::vector<uint8_t> ToUInt8Vector(T const& in)
+{
+  const auto size = in.size();
+  std::vector<uint8_t> outVec(size);
+  for (auto i = 0; i < size; ++i)
+  {
+    outVec[i] = static_cast<uint8_t>(in[i]);
+  }
+
+  return outVec;
+}
+} // namespace
+
 ClientCertificateCredential::ClientCertificateCredential(
     std::string const& tenantId,
     std::string const& clientId,
@@ -98,28 +112,17 @@ ClientCertificateCredential::ClientCertificateCredential(
             }
 
             // Get thumbprint as Base64:
-            {
-              static_assert(
-                  sizeof(decltype(mdVec)::value_type) == sizeof(uint8_t),
-                  "mdVec value should be representable as uint8_t");
-              thumbprintBase64Str = Base64Url::Base64UrlEncode(
-                  *static_cast<const std::vector<uint8_t>*>(static_cast<const void*>(&mdVec)));
-            }
+            thumbprintBase64Str = Base64Url::Base64UrlEncode(ToUInt8Vector(mdVec));
           }
 
           // Form a JWT token:
           const auto tokenHeader = std::string("{\"x5t\":\"") + thumbprintBase64Str
               + "\",\"kid\":\"" + thumbprintHexStr + "\",\"alg\":\"RS256\",\"typ\":\"JWT\"}";
 
-          static_assert(
-              sizeof(std::string::value_type) == sizeof(uint8_t),
-              "std::string::value_type value should be representable as uint8_t");
-
           const auto tokenHeaderVec
               = std::vector<std::string::value_type>(tokenHeader.begin(), tokenHeader.end());
 
-          m_tokenHeaderEncoded = Base64Url::Base64UrlEncode(
-              *static_cast<const std::vector<uint8_t>*>(static_cast<const void*>(&tokenHeaderVec)));
+          m_tokenHeaderEncoded = Base64Url::Base64UrlEncode(ToUInt8Vector(tokenHeaderVec));
         }
       }
       else
@@ -231,16 +234,11 @@ Azure::Core::Credentials::AccessToken ClientCertificateCredential::GetToken(
           payloadStr = payloadStream.str();
         }
 
-        static_assert(
-            sizeof(std::string::value_type) == sizeof(uint8_t),
-            "std::string::value_type value should be representable as uint8_t");
-
         // Concatenate JWT token header + "." + encoded payload
         const auto payloadVec
             = std::vector<std::string::value_type>(payloadStr.begin(), payloadStr.end());
 
-        assertion += std::string(".")
-            + Base64Url::Base64UrlEncode(reinterpret_cast<const std::vector<uint8_t>&>(payloadVec));
+        assertion += std::string(".") + Base64Url::Base64UrlEncode(ToUInt8Vector(payloadVec));
       }
 
       // Get assertion signature.
@@ -264,12 +262,7 @@ Azure::Core::Credentials::AccessToken ClientCertificateCredential::GetToken(
               std::vector<unsigned char> sigVec(sigLen);
               if (EVP_DigestSign(mdCtx, sigVec.data(), &sigLen, bufToSign, bufToSignLen) == 1)
               {
-                static_assert(
-                    sizeof(unsigned char) == sizeof(uint8_t),
-                    "unsigned char should be representable as uint8_t");
-
-                signature = Base64Url::Base64UrlEncode(
-                    reinterpret_cast<const std::vector<uint8_t>&>(sigVec));
+                signature = Base64Url::Base64UrlEncode(ToUInt8Vector(sigVec));
               }
             }
           }
