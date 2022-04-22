@@ -78,13 +78,11 @@
             },
             "TargetPlatform": {
                 "UWP_debug": {
-                    "VcpkgInstall": "openssl",
-                    "CMAKE_SYSTEM_NAME": "WindowsStore",
+                  "CMAKE_SYSTEM_NAME": "WindowsStore",
                     "CMAKE_SYSTEM_VERSION": "10.0",
                     "BuildArgs": "--parallel 8 --config Debug"
                 },
                 "UWP_release": {
-                    "VcpkgInstall": "openssl",
                     "CMAKE_SYSTEM_NAME": "WindowsStore",
                     "CMAKE_SYSTEM_VERSION": "10.0",
                     "BuildArgs": "--parallel 8 --config Release"
