@@ -103,7 +103,7 @@ ClientCertificateCredential::ClientCertificateCredential(
                   sizeof(decltype(mdVec)::value_type) == sizeof(uint8_t),
                   "mdVec value should be representable as uint8_t");
               thumbprintBase64Str = Base64Url::Base64UrlEncode(
-                  reinterpret_cast<const std::vector<uint8_t>&>(mdVec));
+                  *static_cast<const std::vector<uint8_t>*>(static_cast<const void*>(&mdVec)));
             }
           }
 
@@ -119,7 +119,7 @@ ClientCertificateCredential::ClientCertificateCredential(
               = std::vector<std::string::value_type>(tokenHeader.begin(), tokenHeader.end());
 
           m_tokenHeaderEncoded = Base64Url::Base64UrlEncode(
-              reinterpret_cast<const std::vector<uint8_t>&>(tokenHeaderVec));
+              *static_cast<const std::vector<uint8_t>*>(static_cast<const void*>(&tokenHeaderVec)));
         }
       }
       else
@@ -141,11 +141,12 @@ ClientCertificateCredential::ClientCertificateCredential(
 
     {
       std::ostringstream body;
-      body << "grant_type=client_credentials"
-              "&client_assertion_type="
-              "urn%3Aietf%3Aparams%3Aoauth%3Aclient-assertion-type%3Ajwt-bearer" // cspell:disable-line
-              "&client_id="
-           << Url::Encode(clientId);
+      body
+          << "grant_type=client_credentials"
+             "&client_assertion_type="
+             "urn%3Aietf%3Aparams%3Aoauth%3Aclient-assertion-type%3Ajwt-bearer" // cspell:disable-line
+             "&client_id="
+          << Url::Encode(clientId);
 
       m_requestBody = body.str();
     }
