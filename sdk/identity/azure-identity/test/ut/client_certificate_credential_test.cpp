@@ -89,10 +89,14 @@ TEST(ClientCertificateCredential, Regular)
     EXPECT_EQ(request1.Body.substr(0, (sizeof(expectedBodyStart1) - 1)), expectedBodyStart1);
 
     EXPECT_NE(request0.Headers.find("Content-Length"), request0.Headers.end());
-    EXPECT_GT(std::stoi(request0.Headers.at("Content-Length")), (sizeof(expectedBodyStart0) - 1));
+    EXPECT_GT(
+        std::stoi(request0.Headers.at("Content-Length")),
+        static_cast<int>(sizeof(expectedBodyStart0) - 1));
 
     EXPECT_NE(request1.Headers.find("Content-Length"), request1.Headers.end());
-    EXPECT_GT(std::stoi(request1.Headers.at("Content-Length")), (sizeof(expectedBodyStart1) - 1));
+    EXPECT_GT(
+        std::stoi(request1.Headers.at("Content-Length")),
+        static_cast<int>(sizeof(expectedBodyStart1) - 1));
 
     {
       using Azure::Core::_internal::Base64Url;
