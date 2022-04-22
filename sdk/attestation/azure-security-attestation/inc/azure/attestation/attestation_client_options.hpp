@@ -12,35 +12,24 @@
 #include "azure/attestation/attestation_client_models.hpp"
 #include "dll_import_export.hpp"
 #include <azure/core/internal/client_options.hpp>
+#include <azure/core/internal/extendable_enumeration.hpp>
 
 namespace Azure { namespace Security { namespace Attestation {
 
   /** @brief Version to be used when communicating with the Attestation service.
    */
-  class ServiceVersion final {
-  private:
-    std::string m_version;
-
+  class ServiceVersion final
+      : public Azure::Core::_internal::ExtendableEnumeration<ServiceVersion> {
   public:
     /**
      * @brief Construct a new Service Version object
      *
      * @param version The string version for the Attestation service.
      */
-    ServiceVersion(std::string version) : m_version(std::move(version)) {}
-
-    /**
-     * @brief Enable comparing the extensible enum.
-     *
-     * @param other Another #ServiceVersion to be compared.
-     */
-    bool operator==(ServiceVersion const& other) const { return m_version == other.m_version; }
-
-    /**
-     * @brief Return the #ServiceVersion string representation.
-     *
-     */
-    std::string const& ToString() const { return m_version; }
+    explicit ServiceVersion(std::string version)
+        : Azure::Core::_internal::ExtendableEnumeration<ServiceVersion>(std::move(version))
+    {
+    }
 
     /**
      * @brief Use to send request to the 2020-10-01 version of Attestation service.
@@ -179,9 +168,8 @@ namespace Azure { namespace Security { namespace Attestation {
   /** @brief The AttestationDataType represents how the attestation service should interpret the
    * {@link AttestOptions::RunTimeData} and {@link AttestOptions::InitTimeData} fields.
    */
-  class AttestationDataType final {
-  private:
-    std::string m_dataType;
+  class AttestationDataType final 
+  :public Azure::Core::_internal::ExtendableEnumeration<AttestationDataType> {
 
   public:
     /**
@@ -189,23 +177,7 @@ namespace Azure { namespace Security { namespace Attestation {
      *
      * @param dataType The string version for the Key Vault keys service.
      */
-    AttestationDataType(std::string dataType) : m_dataType(std::move(dataType)) {}
-    AttestationDataType() {}
-    /**
-     * @brief Enable comparing the extensible enum.
-     *
-     * @param other Another AttestationDataType to be compared.
-     */
-    bool operator==(AttestationDataType const& other) const
-    {
-      return m_dataType == other.m_dataType;
-    }
-
-    /**
-     * @brief Return the #AttestationDataType string representation.
-     *
-     */
-    std::string const& ToString() const { return m_dataType; }
+    explicit AttestationDataType(std::string dataType) : Azure::Core::_internal::ExtendableEnumeration<AttestationDataType>(std::move(dataType)) {}
 
     /**
      * @brief When specified, instructs the attestation service to express the runtime data in the
