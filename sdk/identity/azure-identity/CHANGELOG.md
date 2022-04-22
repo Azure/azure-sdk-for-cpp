@@ -3,7 +3,7 @@
 ## 1.3.0-beta.2 (Unreleased)
 
 ### Features Added
-- Added `ClientCertificateCredential`.
+- Added `ClientCertificateCredential`, `EnvironmentCredential` is updated to support client certificate authentication.
 
 ### Breaking Changes
 
