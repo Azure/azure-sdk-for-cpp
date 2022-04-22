@@ -808,6 +808,18 @@ namespace Azure { namespace Storage { namespace Blobs {
       {
       };
       /**
+       * @brief Response type for #Azure::Storage::Blobs::BlobContainerClient::SubmitBatch.
+       */
+      struct SubmitBatchResult final
+      {
+        std::unique_ptr<Core::IO::BodyStream> BodyStream;
+        /**
+         * The media type of the body of the response. For batch requests, this is multipart/mixed;
+         * boundary=batchresponse_GUID.
+         */
+        std::string ContentType;
+      };
+      /**
        * @brief Response type for #Azure::Storage::Blobs::BlobContainerClient::AcquireLease.
        */
       struct AcquireBlobContainerLeaseResult final
@@ -2971,6 +2983,16 @@ namespace Azure { namespace Storage { namespace Blobs {
           const Core::Url& url,
           const GetServiceAccountInfoOptions& options,
           const Core::Context& context);
+      struct SubmitServiceBatchOptions final
+      {
+        std::string MultipartContentType;
+      };
+      static Response<Models::_detail::SubmitBatchResult> SubmitBatch(
+          Core::Http::_internal::HttpPipeline& pipeline,
+          const Core::Url& url,
+          Core::IO::BodyStream& requestBody,
+          const SubmitServiceBatchOptions& options,
+          const Core::Context& context);
       struct FindServiceBlobsByTagsOptions final
       {
         Nullable<std::string> Where;
@@ -3069,6 +3091,16 @@ namespace Azure { namespace Storage { namespace Blobs {
           Core::Http::_internal::HttpPipeline& pipeline,
           const Core::Url& url,
           const RenameBlobContainerOptions& options,
+          const Core::Context& context);
+      struct SubmitBlobContainerBatchOptions final
+      {
+        std::string MultipartContentType;
+      };
+      static Response<Models::_detail::SubmitBatchResult> SubmitBatch(
+          Core::Http::_internal::HttpPipeline& pipeline,
+          const Core::Url& url,
+          Core::IO::BodyStream& requestBody,
+          const SubmitBlobContainerBatchOptions& options,
           const Core::Context& context);
       struct AcquireBlobContainerLeaseOptions final
       {

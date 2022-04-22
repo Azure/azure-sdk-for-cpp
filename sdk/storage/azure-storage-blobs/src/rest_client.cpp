@@ -1188,6 +1188,33 @@ namespace Azure { namespace Storage { namespace Blobs {
           = pRawResponse->GetHeaders().at("x-ms-is-hns-enabled") == std::string("true");
       return Response<Models::AccountInfo>(std::move(response), std::move(pRawResponse));
     }
+    Response<Models::_detail::SubmitBatchResult> ServiceClient::SubmitBatch(
+        Core::Http::_internal::HttpPipeline& pipeline,
+        const Core::Url& url,
+        Core::IO::BodyStream& requestBody,
+        const SubmitServiceBatchOptions& options,
+        const Core::Context& context)
+    {
+      auto request = Core::Http::Request(Core::Http::HttpMethod::Post, url, &requestBody, false);
+      request.GetUrl().AppendQueryParameter("comp", "batch");
+      request.SetHeader("Content-Length", std::to_string(requestBody.Length()));
+      if (!options.MultipartContentType.empty())
+      {
+        request.SetHeader("Content-Type", options.MultipartContentType);
+      }
+      request.SetHeader("x-ms-version", "2020-08-04");
+      auto pRawResponse = pipeline.Send(request, context);
+      auto httpStatusCode = pRawResponse->GetStatusCode();
+      if (httpStatusCode != Core::Http::HttpStatusCode::Ok)
+      {
+        throw StorageException::CreateFromResponse(std::move(pRawResponse));
+      }
+      Models::_detail::SubmitBatchResult response;
+      response.BodyStream = pRawResponse->ExtractBodyStream();
+      response.ContentType = pRawResponse->GetHeaders().at("Content-Type");
+      return Response<Models::_detail::SubmitBatchResult>(
+          std::move(response), std::move(pRawResponse));
+    }
     Response<Models::_detail::FindBlobsByTagsResult> ServiceClient::FindBlobsByTags(
         Core::Http::_internal::HttpPipeline& pipeline,
         const Core::Url& url,
@@ -1767,6 +1794,34 @@ namespace Azure { namespace Storage { namespace Blobs {
       }
       Models::_detail::RenameBlobContainerResult response;
       return Response<Models::_detail::RenameBlobContainerResult>(
+          std::move(response), std::move(pRawResponse));
+    }
+    Response<Models::_detail::SubmitBatchResult> BlobContainerClient::SubmitBatch(
+        Core::Http::_internal::HttpPipeline& pipeline,
+        const Core::Url& url,
+        Core::IO::BodyStream& requestBody,
+        const SubmitBlobContainerBatchOptions& options,
+        const Core::Context& context)
+    {
+      auto request = Core::Http::Request(Core::Http::HttpMethod::Post, url, &requestBody, false);
+      request.GetUrl().AppendQueryParameter("restype", "container");
+      request.GetUrl().AppendQueryParameter("comp", "batch");
+      request.SetHeader("Content-Length", std::to_string(requestBody.Length()));
+      if (!options.MultipartContentType.empty())
+      {
+        request.SetHeader("Content-Type", options.MultipartContentType);
+      }
+      request.SetHeader("x-ms-version", "2020-08-04");
+      auto pRawResponse = pipeline.Send(request, context);
+      auto httpStatusCode = pRawResponse->GetStatusCode();
+      if (httpStatusCode != Core::Http::HttpStatusCode::Accepted)
+      {
+        throw StorageException::CreateFromResponse(std::move(pRawResponse));
+      }
+      Models::_detail::SubmitBatchResult response;
+      response.BodyStream = pRawResponse->ExtractBodyStream();
+      response.ContentType = pRawResponse->GetHeaders().at("Content-Type");
+      return Response<Models::_detail::SubmitBatchResult>(
           std::move(response), std::move(pRawResponse));
     }
     Response<Models::_detail::AcquireBlobContainerLeaseResult> BlobContainerClient::AcquireLease(
