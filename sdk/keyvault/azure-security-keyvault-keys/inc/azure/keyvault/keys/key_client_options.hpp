@@ -154,6 +154,12 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
      *
      */
     std::unordered_map<std::string, std::string> Tags;
+
+    /**
+     * @brief The policy rules under which the key can be exported.
+     *
+     */
+    Azure::Nullable<KeyReleasePolicy> ReleasePolicy;
   };
 
   /**

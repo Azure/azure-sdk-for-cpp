@@ -46,6 +46,12 @@ TEST_F(KeyVaultKeyClient, CreateKeyWithOptions)
   Azure::Security::KeyVault::Keys::CreateKeyOptions options;
   options.KeyOperations.push_back(Azure::Security::KeyVault::Keys::KeyOperation::Sign);
   options.KeyOperations.push_back(Azure::Security::KeyVault::Keys::KeyOperation::Verify);
+  options.ReleasePolicy = KeyReleasePolicy();
+  options.ReleasePolicy.Value().Immutable = true;
+  std::string dataStr = "release policy data";
+  options.ReleasePolicy.Value().Data
+      = Base64Url::Base64UrlEncode(std::vector<uint8_t>(dataStr.begin(), dataStr.end()));
+
   {
     auto keyResponse
         = client.CreateKey(keyName, Azure::Security::KeyVault::Keys::KeyVaultKeyType::Ec, options);
@@ -258,10 +264,11 @@ TEST_F(KeyVaultKeyClient, ReleaseKey)
   auto keyResponse = client.CreateEcKey(ecKey);
   auto keyVaultKey = keyResponse.Value;
   KeyReleaseOptions relOpt;
-  relOpt.Target = Base64Url::Base64UrlEncode( generatedToken.Value);
-  //relOpt.Encryption = Azure::Security::KeyVault::Keys::KeyEncryptionAlgorithm::RSA_AES_KEY_WRAP_256;
+  relOpt.Target = Base64Url::Base64UrlEncode(generatedToken.Value);
+  // relOpt.Encryption =
+  // Azure::Security::KeyVault::Keys::KeyEncryptionAlgorithm::RSA_AES_KEY_WRAP_256;
 
-  //CreateHsmClient("https://gearamamhsm.managedhsm.azure.net/");
-  //auto const& client2 = GetClientForTest("realeasy");
+  // CreateHsmClient("https://gearamamhsm.managedhsm.azure.net/");
+  // auto const& client2 = GetClientForTest("realeasy");
   auto result2 = client.ReleaseKey(keyVaultKey.Name(), keyVaultKey.Properties.Version, relOpt);
 }

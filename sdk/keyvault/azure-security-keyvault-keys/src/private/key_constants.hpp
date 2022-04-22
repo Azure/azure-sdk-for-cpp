@@ -138,6 +138,10 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys { nam
   constexpr static const char TBEActionsValue[] = "timeBeforeExpiry";
   constexpr static const char TACActionsValue[] = "timeAfterCreate";
   constexpr static const char RotationPolicyPath[] = "rotationpolicy";
+  constexpr static const char ContentTypeValue[] = "contentType";
+  constexpr static const char ContentTypeDefaultValue[] = "application/json; charset=utf-8";
+  constexpr static const char ImmutableValue[] = "immutable";
+  constexpr static const char DataValue[] = "data";
 
   /***************** Get Random Bytes *********/
   constexpr static const char CountPropertiesValue[] = "count";

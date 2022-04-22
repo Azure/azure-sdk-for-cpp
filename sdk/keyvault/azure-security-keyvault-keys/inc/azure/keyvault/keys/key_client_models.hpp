@@ -452,6 +452,34 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
   };
 
   /**
+   * @brief Key Release Policy
+   *
+   */
+  struct KeyReleasePolicy final
+  {
+    /**
+     * @brief Content type and version of key release policy.
+     *
+     * @remark Default value: "application/json; charset=utf-8"
+     */
+    Azure::Nullable<std::string> ContentType;
+
+    /**
+     * @brief Defines the mutability state of the policy. Once marked immutable, this flag cannot be
+     * reset and the policy cannot be changed under any circumstances.
+     *
+     */
+    bool Immutable;
+
+    /**
+     * @brief Blob encoding the policy rules under which the key can be released.
+     *
+     * @remark Format: base64url
+     */
+    std::string Data;
+  };
+
+  /**
    * @brief The resource containing all the properties of the KeyVaultKey except JsonWebKey
    * properties.
    *
@@ -540,6 +568,12 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
      *
      */
     std::string RecoveryLevel;
+
+    /**
+     * @brief The policy rules under which the key can be exported.
+     *
+     */
+    Azure::Nullable<KeyReleasePolicy> ReleasePolicy;
 
     /**
      * @brief Construct a new Key Properties object.
@@ -1087,5 +1121,4 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
      */
     std::vector<uint8_t> RandomBytes;
   };
-
 }}}} // namespace Azure::Security::KeyVault::Keys
