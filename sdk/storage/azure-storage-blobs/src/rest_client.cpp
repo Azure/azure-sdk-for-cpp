@@ -1205,7 +1205,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       request.SetHeader("x-ms-version", "2020-08-04");
       auto pRawResponse = pipeline.Send(request, context);
       auto httpStatusCode = pRawResponse->GetStatusCode();
-      if (httpStatusCode != Core::Http::HttpStatusCode::Ok)
+      if (httpStatusCode != Core::Http::HttpStatusCode::Accepted)
       {
         throw StorageException::CreateFromResponse(std::move(pRawResponse));
       }

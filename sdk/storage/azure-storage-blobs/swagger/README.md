@@ -1591,9 +1591,11 @@ directive:
         }
       };
   - from: swagger-document
-    where: $["x-ms-paths"]["/?comp=batch"].post.responses["200"]
+    where: $["x-ms-paths"]["/?comp=batch"].post.responses
     transform: >
-      $.schema =  {"$ref": "#/definitions/SubmitBatchResult"};
+      $["202"] = $["200"];
+      delete $["200"];
+      $["202"].schema =  {"$ref": "#/definitions/SubmitBatchResult"};
   - from: swagger-document
     where: $["x-ms-paths"]["/{containerName}?restype=container&comp=batch"].post.responses["202"]
     transform: >
