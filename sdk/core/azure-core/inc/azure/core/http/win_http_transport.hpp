@@ -39,21 +39,19 @@ namespace Azure { namespace Core { namespace Http {
     {
       Context const& m_context;
       Request& m_request;
-      HINTERNET m_sessionHandle;
       HINTERNET m_connectionHandle;
       HINTERNET m_requestHandle;
 
       HandleManager(Request& request, Context const& context)
           : m_request(request), m_context(context)
       {
-        m_sessionHandle = NULL;
         m_connectionHandle = NULL;
         m_requestHandle = NULL;
       }
 
       ~HandleManager()
       {
-        // Close the handles and set them to null to avoid multiple calls to WinHTT to close the
+        // Close the handles and set them to null to avoid multiple calls to WinHTTP to close the
         // handles.
         if (m_requestHandle)
         {
@@ -65,12 +63,6 @@ namespace Azure { namespace Core { namespace Http {
         {
           WinHttpCloseHandle(m_connectionHandle);
           m_connectionHandle = NULL;
-        }
-
-        if (m_sessionHandle)
-        {
-          WinHttpCloseHandle(m_sessionHandle);
-          m_sessionHandle = NULL;
         }
       }
     };
@@ -141,8 +133,9 @@ namespace Azure { namespace Core { namespace Http {
   class WinHttpTransport final : public HttpTransport {
   private:
     WinHttpTransportOptions m_options;
+    HINTERNET m_sessionHandle;
 
-    void CreateSessionHandle(std::unique_ptr<_detail::HandleManager>& handleManager);
+    void CreateSessionHandle();
     void CreateConnectionHandle(std::unique_ptr<_detail::HandleManager>& handleManager);
     void CreateRequestHandle(std::unique_ptr<_detail::HandleManager>& handleManager);
     void Upload(std::unique_ptr<_detail::HandleManager>& handleManager);
@@ -163,8 +156,9 @@ namespace Azure { namespace Core { namespace Http {
      * @param options Optional parameter to override the default settings.
      */
     WinHttpTransport(WinHttpTransportOptions const& options = WinHttpTransportOptions())
-        : m_options(options)
+        : m_options(options), m_sessionHandle(NULL)
     {
+      // Defer creating the session handle until the first request that is actually sent.
     }
 
     /**
@@ -176,6 +170,17 @@ namespace Azure { namespace Core { namespace Http {
      * @return A unique pointer to an HTTP RawResponse.
      */
     virtual std::unique_ptr<RawResponse> Send(Request& request, Context const& context) override;
+
+    ~WinHttpTransport()
+    {
+      // Close the handles and set them to null to avoid multiple calls to WinHTTP to close the
+      // handles.
+      if (m_sessionHandle)
+      {
+        WinHttpCloseHandle(m_sessionHandle);
+        m_sessionHandle = NULL;
+      }
+    }
   };
 
 }}} // namespace Azure::Core::Http
