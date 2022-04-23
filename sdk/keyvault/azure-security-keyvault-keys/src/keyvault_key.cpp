@@ -56,8 +56,10 @@ void _detail::KeyVaultKeySerializer::KeyVaultKeyDeserialize(
   if (jsonParser.contains(_detail::AttributesPropertyName))
   {
     auto attributes = jsonParser[_detail::AttributesPropertyName];
-
+    auto content = jsonParser.dump();
     JsonOptional::SetIfExists(key.Properties.Enabled, attributes, _detail::EnabledPropertyName);
+    JsonOptional::SetIfExists(
+        key.Properties.Exportable, attributes, _detail::ExportablePropertyName);
 
     JsonOptional::SetIfExists<int64_t, Azure::DateTime>(
         key.Properties.NotBefore,
@@ -80,6 +82,12 @@ void _detail::KeyVaultKeySerializer::KeyVaultKeyDeserialize(
         _detail::UpdatedPropertyName,
         PosixTimeConverter::PosixTimeToDateTime);
   }
+
+  JsonOptional::SetIfExists<json, KeyReleasePolicy>(
+      key.Properties.ReleasePolicy,
+      jsonParser,
+      _detail::ReleasePolicyPropertyName,
+      KeyReleasePolicySerializer::KeyReleasePolicyDeserialize);
 
   // "Tags"
   if (jsonParser.contains(_detail::TagsPropertyName))

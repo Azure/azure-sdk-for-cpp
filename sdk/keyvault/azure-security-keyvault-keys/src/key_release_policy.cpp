@@ -24,22 +24,22 @@ Azure::Security::KeyVault::Keys::_detail::KeyReleasePolicySerializer::KeyRelease
 
   payload[_detail::ContentTypeValue] = policy.ContentType.ValueOr(_detail::ContentTypeDefaultValue);
   payload[_detail::ImmutableValue] = policy.Immutable;
-  payload[_detail::DataValue] = policy.Data;
+  payload[_detail::DataValue]
+      = Base64Url::Base64UrlEncode(std::vector<uint8_t>(policy.Data.begin(), policy.Data.end()));
 
   return payload;
 };
 
 KeyReleasePolicy
 Azure::Security::KeyVault::Keys::_detail::KeyReleasePolicySerializer::KeyReleasePolicyDeserialize(
-    Azure::Core::Http::RawResponse const& rawResponse)
+    Azure::Core::Json::_internal::json const& response)
 {
-  auto body =rawResponse.GetBody();
-  auto const jsonParser = Azure::Core::Json::_internal::json::parse(body);
-  
   KeyReleasePolicy policy;
-  policy.ContentType = jsonParser[_detail::ContentTypeValue].get<std::string>();
-  policy.Immutable = jsonParser[_detail::ImmutableValue].get<bool>();
-  policy.Data = jsonParser[_detail::DataValue].get<std::string>();
+  auto decodedData = Base64Url::Base64UrlDecode(response[_detail::DataValue].get<std::string>());
+
+  policy.ContentType = response[_detail::ContentTypeValue].get<std::string>();
+  policy.Immutable = response[_detail::ImmutableValue].get<bool>();
+  policy.Data = std::string(decodedData.begin(), decodedData.end());
 
   return policy;
 };

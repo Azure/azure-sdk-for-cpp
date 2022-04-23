@@ -130,6 +130,12 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
      * CancellationToken) method.
      */
     AZ_SECURITY_KEYVAULT_KEYS_DLLEXPORT static const KeyOperation Import;
+
+    /**
+     * @brief The key can be exported during creation using the ImportKey(ImportKeyOptions,
+     * CancellationToken) method.
+     */
+    AZ_SECURITY_KEYVAULT_KEYS_DLLEXPORT static const KeyOperation Export;
   };
 
   /**
@@ -574,6 +580,12 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
      *
      */
     Azure::Nullable<KeyReleasePolicy> ReleasePolicy;
+
+    /**
+     * @brief Indicates if the private key can be exported.
+     *
+     */
+    Azure::Nullable<bool> Exportable;
 
     /**
      * @brief Construct a new Key Properties object.

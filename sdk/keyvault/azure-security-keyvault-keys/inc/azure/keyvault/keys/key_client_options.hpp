@@ -144,7 +144,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
     Azure::Nullable<Azure::DateTime> ExpiresOn;
 
     /**
-     * @brief whether the key is enabled and useable for cryptographic operations.
+     * @brief Indicates whether the key is enabled and useable for cryptographic operations.
      *
      */
     Azure::Nullable<bool> Enabled;
@@ -160,6 +160,12 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
      *
      */
     Azure::Nullable<KeyReleasePolicy> ReleasePolicy;
+
+    /**
+     * @brief Indicates if the private key can be exported.
+     *
+     */
+    Azure::Nullable<bool> Exportable;
   };
 
   /**

@@ -28,6 +28,12 @@ std::string KeyRequestParameters::Serialize() const
   JsonOptional::SetFromNullable(
       m_options.Enabled, payload[_detail::AttributesPropertyName], _detail::EnabledPropertyName);
 
+  // exportable attribute
+  JsonOptional::SetFromNullable(
+      m_options.Exportable,
+      payload[_detail::AttributesPropertyName],
+      _detail::ExportablePropertyName);
+
   /* Optional */
   // key_size
   // public_exponent

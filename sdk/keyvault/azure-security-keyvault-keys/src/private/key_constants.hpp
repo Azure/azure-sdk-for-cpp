@@ -23,6 +23,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys { nam
   constexpr static const char TagsPropertyName[] = "tags";
   constexpr static const char ReleasePolicyPropertyName[] = "release_policy";
   constexpr static const char EnabledPropertyName[] = "enabled";
+  constexpr static const char ExportablePropertyName[] = "exportable";
   constexpr static const char NbfPropertyName[] = "nbf";
   constexpr static const char ExpPropertyName[] = "exp";
   constexpr static const char CreatedPropertyName[] = "created";
@@ -122,6 +123,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys { nam
   constexpr static const char SignValue[] = "sign";
   constexpr static const char VerifyValue[] = "verify";
   constexpr static const char ImportValue[] = "import";
+  constexpr static const char ExportValue[] = "export";
 
   /***************** Service *********/
   constexpr static const char ApiVersionValue[] = "api-version";
