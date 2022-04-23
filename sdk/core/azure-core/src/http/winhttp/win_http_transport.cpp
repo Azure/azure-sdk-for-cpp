@@ -253,31 +253,28 @@ void WinHttpTransport::CreateSessionHandle()
 #ifdef WINHTTP_OPTION_TCP_FAST_OPEN
   BOOL tcp_fast_open = TRUE;
   WinHttpSetOption(
-      m_sessionHandle,
-      WINHTTP_OPTION_TCP_FAST_OPEN,
-      &tcp_fast_open,
-      sizeof(tcp_fast_open));
+      m_sessionHandle, WINHTTP_OPTION_TCP_FAST_OPEN, &tcp_fast_open, sizeof(tcp_fast_open));
 #endif
 
 #ifdef WINHTTP_OPTION_TLS_FALSE_START
   BOOL tls_false_start = TRUE;
   WinHttpSetOption(
-      m_sessionHandle,
-      WINHTTP_OPTION_TLS_FALSE_START,
-      &tls_false_start,
-      sizeof(tls_false_start));
+      m_sessionHandle, WINHTTP_OPTION_TLS_FALSE_START, &tls_false_start, sizeof(tls_false_start));
 #endif
 
   // Enforce TLS version 1.2
   auto tlsOption = WINHTTP_FLAG_SECURE_PROTOCOL_TLS1_2;
   if (!WinHttpSetOption(
-          m_sessionHandle,
-          WINHTTP_OPTION_SECURE_PROTOCOLS,
-          &tlsOption,
-          sizeof(tlsOption)))
+          m_sessionHandle, WINHTTP_OPTION_SECURE_PROTOCOLS, &tlsOption, sizeof(tlsOption)))
   {
     GetErrorAndThrow("Error while enforcing TLS 1.2 for connection request.");
   }
+}
+
+WinHttpTransport::WinHttpTransport(WinHttpTransportOptions const& options)
+    : m_options(options), m_sessionHandle(NULL)
+{
+  CreateSessionHandle();
 }
 
 void WinHttpTransport::CreateConnectionHandle(
@@ -656,7 +653,6 @@ std::unique_ptr<RawResponse> WinHttpTransport::Send(Request& request, Context co
 {
   auto handleManager = std::make_unique<_detail::HandleManager>(request, context);
 
-  CreateSessionHandle(a);
   CreateConnectionHandle(handleManager);
   CreateRequestHandle(handleManager);
 

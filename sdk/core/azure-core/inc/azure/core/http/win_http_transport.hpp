@@ -155,11 +155,7 @@ namespace Azure { namespace Core { namespace Http {
      *
      * @param options Optional parameter to override the default settings.
      */
-    WinHttpTransport(WinHttpTransportOptions const& options = WinHttpTransportOptions())
-        : m_options(options), m_sessionHandle(NULL)
-    {
-      // Defer creating the session handle until the first request that is actually sent.
-    }
+    WinHttpTransport(WinHttpTransportOptions const& options = WinHttpTransportOptions());
 
     /**
      * @brief Implements the HTTP transport interface to send an HTTP Request and produce an HTTP
