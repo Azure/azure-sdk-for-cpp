@@ -8,6 +8,8 @@
 
 ### Bugs Fixed
 
+- Updated field type `CurlTransportOptions.Proxy` from `std::string` to `Azure::Nullable<std::string>`. This change allow to se an empty string to make libcurl ignore proxy settings from environment [](https://github.com/Azure/azure-sdk-for-cpp/issues/3537).
+
 ### Other Changes
 
 ## 1.5.0 (2022-03-31)
