@@ -10,6 +10,8 @@
 
 ### Other Changes
 
+- Update log level in retry policy from warning to informational [3581](https://github.com/Azure/azure-sdk-for-cpp/issues/3581).
+
 ## 1.5.0 (2022-03-31)
 
 ### Features Added
