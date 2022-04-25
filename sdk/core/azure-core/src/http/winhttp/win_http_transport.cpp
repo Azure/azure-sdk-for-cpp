@@ -260,12 +260,12 @@ void WinHttpTransport::CreateSessionHandle(std::unique_ptr<_detail::HandleManage
 #endif
 
 #ifdef WINHTTP_OPTION_TLS_FALSE_START
-  BOOL tcp_false_start = TRUE;
+  BOOL tls_false_start = TRUE;
   WinHttpSetOption(
       handleManager->m_sessionHandle,
       WINHTTP_OPTION_TLS_FALSE_START,
-      &tcp_false_start,
-      sizeof(tcp_false_start));
+      &tls_false_start,
+      sizeof(tls_false_start));
 #endif
 
   // Enforce TLS version 1.2
