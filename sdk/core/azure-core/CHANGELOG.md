@@ -10,7 +10,7 @@
 
 ### Other Changes
 
-- Update log level in retry policy from warning to informational [3581](https://github.com/Azure/azure-sdk-for-cpp/issues/3581).
+-  [[#3581]](https://github.com/Azure/azure-sdk-for-cpp/issues/3581) Update log level in retry policy from warning to informational.
 
 ## 1.5.0 (2022-03-31)
 
