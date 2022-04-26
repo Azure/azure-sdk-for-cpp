@@ -39,7 +39,7 @@ elseif(NOT AZ_ALL_LIBRARIES)
 endif()
 
 set(
-  AZURE_STORAGE_BLOB_HEADER
+  AZURE_STORAGE_BLOBS_HEADER
     inc/azure/storage/blobs/append_blob_client.hpp
     inc/azure/storage/blobs/blob_client.hpp
     inc/azure/storage/blobs/blob_container_client.hpp
@@ -53,11 +53,11 @@ set(
     inc/azure/storage/blobs/page_blob_client.hpp
     inc/azure/storage/blobs/rest_client.hpp
     inc/azure/storage/blobs.hpp
+    src/private/package_version.hpp
 )
 
 set(
-  AZURE_STORAGE_BLOB_SOURCE
-    src/private/package_version.hpp
+  AZURE_STORAGE_BLOBS_SOURCE
     src/append_blob_client.cpp
     src/blob_client.cpp
     src/blob_container_client.cpp
@@ -70,7 +70,7 @@ set(
     src/rest_client.cpp
 )
 
-add_library(azure-storage-blobs ${AZURE_STORAGE_BLOB_HEADER} ${AZURE_STORAGE_BLOB_SOURCE})
+add_library(azure-storage-blobs ${AZURE_STORAGE_BLOBS_HEADER} ${AZURE_STORAGE_BLOBS_SOURCE})
 create_per_service_target_build(storage azure-storage-blobs)
 
 # make sure that users can consume the project as a library.

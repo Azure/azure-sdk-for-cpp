@@ -25,8 +25,8 @@ az_vcpkg_integrate()
 if(FETCH_SOURCE_DEPS)
     set(AZ_ALL_LIBRARIES ON)
     include(FolderList)
-    SetCompileOptions(STORAGE_SHARES)
-    GetFolderList(STORAGE_SHARES)
+    SetCompileOptions(STORAGE_FILES_SHARES)
+    GetFolderList(STORAGE_FILES_SHARES)
     foreach(oneFolder IN LISTS BUILD_FOLDERS)
         message("add folder ${oneFolder}")
         add_subdirectory(${oneFolder} EXCLUDE_FROM_ALL)
@@ -52,11 +52,11 @@ set(
     inc/azure/storage/files/shares/share_sas_builder.hpp
     inc/azure/storage/files/shares/share_service_client.hpp
     inc/azure/storage/files/shares.hpp
+    src/private/package_version.hpp
 )
 
 set(
   AZURE_STORAGE_FILES_SHARES_SOURCE
-    src/private/package_version.hpp
     src/rest_client.cpp
     src/share_client.cpp
     src/share_directory_client.cpp
