@@ -25,8 +25,8 @@ az_vcpkg_integrate()
 if(FETCH_SOURCE_DEPS)
     set(AZ_ALL_LIBRARIES ON)
     include(FolderList)
-    SetCompileOptions(STORAGE_DATALAKE)
-    GetFolderList(STORAGE_DATALAKE)
+    SetCompileOptions(STORAGE_FILES_DATALAKE)
+    GetFolderList(STORAGE_FILES_DATALAKE)
     foreach(oneFolder IN LISTS BUILD_FOLDERS)
         message("add folder ${oneFolder}")
         add_subdirectory(${oneFolder} EXCLUDE_FROM_ALL)
@@ -52,13 +52,13 @@ set(
     inc/azure/storage/files/datalake/datalake_service_client.hpp
     inc/azure/storage/files/datalake/dll_import_export.hpp
     inc/azure/storage/files/datalake/rest_client.hpp
+    src/private/package_version.hpp
 )
 
 set(
   AZURE_STORAGE_FILES_DATALAKE_SOURCE
     src/private/datalake_constants.hpp
     src/private/datalake_utilities.hpp
-    src/private/package_version.hpp
     src/datalake_directory_client.cpp
     src/datalake_file_client.cpp
     src/datalake_file_system_client.cpp
