@@ -30,7 +30,8 @@ stages:
       LineCoverageTarget: 76
       BranchCoverageTarget: 41
       LiveTestCtestRegex: azure-storage
-      SubscriptionConfiguration: $(sub-config-azure-cloud-test-resources-preview)
+      Clouds: Preview
+      SupportedClouds: Preview
       Artifacts:
         - Name: azure-storage-common
           Path: azure-storage-common

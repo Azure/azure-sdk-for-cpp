@@ -20,12 +20,6 @@ parameters:
 - name: ArtifactsSource
   type: object
   default: []
-- name: Location
-  type: string
-  default: ''
-- name: SubscriptionConfiguration
-  type: string
-  default: $(sub-config-azure-cloud-test-resources)
 - name: CoverageReportPath
   type: string
   default: 'sdk/*/*/*cov_xml.xml'
@@ -47,11 +41,38 @@ parameters:
 - name: CMakeSourceTestOptions
   type: object
   default: []
+- name: Location
+  type: string
+  default: ''
+- name: CloudConfig
+  type: object
+  default:
+    Public:
+      SubscriptionConfiguration: $(sub-config-azure-cloud-test-resources)
+    Preview:
+      SubscriptionConfiguration: $(sub-config-azure-cloud-test-resources-preview)
+    Canary:
+      SubscriptionConfiguration: $(sub-config-azure-cloud-test-resources)
+      Location: 'eastus2euap'
+    UsGov:
+      SubscriptionConfiguration: $(sub-config-gov-test-resources)
+    China:
+      SubscriptionConfiguration: $(sub-config-cn-test-resources)
+- name: Clouds
+  type: string
+  default: Public
+- name: SupportedClouds
+  type: string
+  default: Public
+- name: UnsupportedClouds
+  type: string
+  default: ''
+
 
 stages:
   - stage: CMakeGeneration
     jobs:
-      - template: /eng/pipelines/templates/jobs/archetype-sdk-cmake-generate.yml
+      - template: /eng/pipelines/templates/jobs/cmake-generate-jobs.yml
         parameters:
           ServiceDirectory: ${{ parameters.ServiceDirectory }}
           Artifacts: ${{ parameters.Artifacts }}
@@ -77,18 +98,18 @@ stages:
           TestEnv: ${{ parameters.TestEnv }}
 
   - ${{ if and(eq(variables['System.TeamProject'], 'internal'), ne(parameters.LiveTestCtestRegex, '')) }}:
-    - stage: LiveTest
-      dependsOn: []
-      jobs:
-        - template: /eng/pipelines/templates/jobs/archetype-sdk-tests.yml
-          # Code coverage is enabled by default for live tests
-          parameters:
-            TimeoutInMinutes: ${{ parameters.LiveTestTimeoutInMinutes }}
-            ServiceDirectory: ${{ parameters.ServiceDirectory }}
-            CtestRegex: ${{ parameters.LiveTestCtestRegex }}
-            Location: ${{ parameters.Location }}
-            SubscriptionConfiguration: ${{ parameters.SubscriptionConfiguration }}
-            CoverageReportPath: ${{ parameters.CoverageReportPath }}
+    - template: /eng/pipelines/templates/stages/archetype-sdk-tests.yml
+      # Code coverage is enabled by default for live tests
+      parameters:
+        TimeoutInMinutes: ${{ parameters.LiveTestTimeoutInMinutes }}
+        ServiceDirectory: ${{ parameters.ServiceDirectory }}
+        CtestRegex: ${{ parameters.LiveTestCtestRegex }}
+        CoverageReportPath: ${{ parameters.CoverageReportPath }}
+        Location: ${{ parameters.Location }}
+        CloudConfig: ${{ parameters.CloudConfig }}
+        Clouds: ${{ parameters.Clouds }}
+        SupportedClouds: ${{ parameters.SupportedClouds }}
+        UnsupportedClouds: ${{ parameters.UnsupportedClouds }}
 
   - ${{ if and(eq(variables['System.TeamProject'], 'internal'), not(endsWith(variables['Build.DefinitionName'], ' - tests'))) }}:
     - template: archetype-cpp-release.yml
@@ -98,7 +119,11 @@ stages:
           - Build
           # Only depend on `LiveTest` if there are live tests to execute
           - ${{ if and(eq(variables['System.TeamProject'], 'internal'), ne(parameters.LiveTestCtestRegex, '')) }}:
-            - LiveTest
+            # Pulled from stages/archetype-sdk-tests.yml to generate 'LiveTest_<cloud>'
+            - ${{ each cloud in parameters.CloudConfig }}:
+              - ${{ if or(contains(parameters.Clouds, cloud.key), and(contains(variables['Build.DefinitionName'], 'tests-weekly'), contains(parameters.SupportedClouds, cloud.key))) }}:
+                - ${{ if not(contains(parameters.UnsupportedClouds, cloud.key)) }}:
+                  - LiveTest_${{ cloud.key }}
         Artifacts: ${{ parameters.Artifacts }}
         ArtifactName: packages
         ${{ if eq(parameters.ServiceDirectory, 'template') }}:
