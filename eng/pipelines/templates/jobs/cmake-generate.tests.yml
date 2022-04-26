@@ -11,6 +11,8 @@ parameters:
   - name: MaxParallel
     type: number
     default: 0
+  # Matrix generation:
+  # https://github.com/Azure/azure-sdk-tools/blob/main/eng/common/scripts/job-matrix/README.md
   - name: Matrix
     type: string
     default: ''
