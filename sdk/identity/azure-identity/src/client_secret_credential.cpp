@@ -18,7 +18,8 @@ ClientSecretCredential::ClientSecretCredential(
     std::string const& clientSecret,
     std::string const& authorityHost,
     Azure::Core::Credentials::TokenCredentialOptions const& options)
-    : m_tokenCredentialImpl(new _detail::TokenCredentialImpl(options)), m_isAdfs(tenantId == "adfs")
+    : m_tokenCredentialImpl(std::make_unique<_detail::TokenCredentialImpl>(options)),
+      m_isAdfs(tenantId == "adfs")
 {
   using Azure::Core::Url;
   m_requestUrl = Url(authorityHost);

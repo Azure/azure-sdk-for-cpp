@@ -54,7 +54,7 @@ The Azure Identity library focuses on OAuth authentication with Azure Active dir
 </table>
 
 ## Environment Variables
-`EnvironmentCredential` can be configured with environment variables. Each type of authentication requires values for specific variables:s
+`EnvironmentCredential` can be configured with environment variables. Each type of authentication requires values for specific variables:
 
 #### Service principal with secret
 <table border="1" width="100%">

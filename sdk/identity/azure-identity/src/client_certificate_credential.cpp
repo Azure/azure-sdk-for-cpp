@@ -43,7 +43,8 @@ ClientCertificateCredential::ClientCertificateCredential(
     std::string const& clientId,
     std::string const& clientCertificatePath,
     Azure::Core::Credentials::TokenCredentialOptions const& options)
-    : m_tokenCredentialImpl(new _detail::TokenCredentialImpl(options)), m_pkey(nullptr)
+    : m_tokenCredentialImpl(std::make_unique<_detail::TokenCredentialImpl>(options)),
+      m_pkey(nullptr)
 {
   BIO* bio = nullptr;
   X509* x509 = nullptr;
@@ -53,81 +54,79 @@ ClientCertificateCredential::ClientCertificateCredential(
       using Azure::Core::Credentials::AuthenticationException;
 
       // Open certificate file, then get private key and X509:
-      if ((bio = BIO_new_file(clientCertificatePath.c_str(), "r")) != nullptr)
+      if ((bio = BIO_new_file(clientCertificatePath.c_str(), "r")) == nullptr)
       {
-        if ((m_pkey = PEM_read_bio_PrivateKey(bio, nullptr, nullptr, nullptr)) == nullptr)
+        throw AuthenticationException("Failed to open certificate file.");
+      }
+
+      if ((m_pkey = PEM_read_bio_PrivateKey(bio, nullptr, nullptr, nullptr)) == nullptr)
+      {
+        throw AuthenticationException("Failed to read certificate private key.");
+      }
+
+      if ((x509 = PEM_read_bio_X509(bio, nullptr, nullptr, nullptr)) == nullptr)
+      {
+        static_cast<void>(BIO_seek(bio, 0));
+        if ((x509 = PEM_read_bio_X509(bio, nullptr, nullptr, nullptr)) == nullptr)
         {
           throw AuthenticationException("Failed to read certificate private key.");
         }
+      }
 
-        if ((x509 = PEM_read_bio_X509(bio, nullptr, nullptr, nullptr)) == nullptr)
+      static_cast<void>(BIO_free(bio));
+      bio = nullptr;
+
+      // Get certificate thumbprint:
+      {
+        using Azure::Core::_internal::Base64Url;
+
+        std::string thumbprintHexStr;
+        std::string thumbprintBase64Str;
         {
-          static_cast<void>(BIO_seek(bio, 0));
-          if ((x509 = PEM_read_bio_X509(bio, nullptr, nullptr, nullptr)) == nullptr)
+          std::vector<unsigned char> mdVec(EVP_MAX_MD_SIZE);
           {
-            throw AuthenticationException("Failed to read certificate private key.");
-          }
-        }
+            unsigned int mdLen = 0;
+            const auto digestResult = X509_digest(x509, EVP_sha1(), mdVec.data(), &mdLen);
 
-        BIO_free(bio);
-        bio = nullptr;
+            X509_free(x509);
+            x509 = nullptr;
 
-        // Get certificate thumbprint:
-        {
-          using Azure::Core::_internal::Base64Url;
-
-          std::string thumbprintHexStr;
-          std::string thumbprintBase64Str;
-          {
-            std::vector<unsigned char> mdVec(EVP_MAX_MD_SIZE);
+            if (!digestResult)
             {
-              unsigned int mdLen = 0;
-              const auto digestResult = X509_digest(x509, EVP_sha1(), mdVec.data(), &mdLen);
-
-              X509_free(x509);
-              x509 = nullptr;
-
-              if (!digestResult)
-              {
-                throw AuthenticationException("Failed to get certificate thumbprint.");
-              }
-
-              // Drop unused buffer space:
-              const auto mdLenSz = static_cast<decltype(mdVec)::size_type>(mdLen);
-              if (mdVec.size() > mdLenSz)
-              {
-                mdVec.resize(mdLenSz);
-              }
-
-              // Get thumbprint as hex string:
-              {
-                std::ostringstream thumbprintStream;
-                for (const auto md : mdVec)
-                {
-                  thumbprintStream << std::uppercase << std::hex << std::setfill('0')
-                                   << std::setw(2) << static_cast<int>(md);
-                }
-                thumbprintHexStr = thumbprintStream.str();
-              }
+              throw AuthenticationException("Failed to get certificate thumbprint.");
             }
 
-            // Get thumbprint as Base64:
-            thumbprintBase64Str = Base64Url::Base64UrlEncode(ToUInt8Vector(mdVec));
+            // Drop unused buffer space:
+            const auto mdLenSz = static_cast<decltype(mdVec)::size_type>(mdLen);
+            if (mdVec.size() > mdLenSz)
+            {
+              mdVec.resize(mdLenSz);
+            }
+
+            // Get thumbprint as hex string:
+            {
+              std::ostringstream thumbprintStream;
+              for (const auto md : mdVec)
+              {
+                thumbprintStream << std::uppercase << std::hex << std::setfill('0') << std::setw(2)
+                                 << static_cast<int>(md);
+              }
+              thumbprintHexStr = thumbprintStream.str();
+            }
           }
 
-          // Form a JWT token:
-          const auto tokenHeader = std::string("{\"x5t\":\"") + thumbprintBase64Str
-              + "\",\"kid\":\"" + thumbprintHexStr + "\",\"alg\":\"RS256\",\"typ\":\"JWT\"}";
-
-          const auto tokenHeaderVec
-              = std::vector<std::string::value_type>(tokenHeader.begin(), tokenHeader.end());
-
-          m_tokenHeaderEncoded = Base64Url::Base64UrlEncode(ToUInt8Vector(tokenHeaderVec));
+          // Get thumbprint as Base64:
+          thumbprintBase64Str = Base64Url::Base64UrlEncode(ToUInt8Vector(mdVec));
         }
-      }
-      else
-      {
-        throw AuthenticationException("Failed to open certificate file.");
+
+        // Form a JWT token:
+        const auto tokenHeader = std::string("{\"x5t\":\"") + thumbprintBase64Str + "\",\"kid\":\""
+            + thumbprintHexStr + "\",\"alg\":\"RS256\",\"typ\":\"JWT\"}";
+
+        const auto tokenHeaderVec
+            = std::vector<std::string::value_type>(tokenHeader.begin(), tokenHeader.end());
+
+        m_tokenHeaderEncoded = Base64Url::Base64UrlEncode(ToUInt8Vector(tokenHeaderVec));
       }
     }
 
@@ -158,7 +157,7 @@ ClientCertificateCredential::ClientCertificateCredential(
   {
     if (bio != nullptr)
     {
-      BIO_free(bio);
+      static_cast<void>(BIO_free(bio));
     }
 
     if (x509 != nullptr)
