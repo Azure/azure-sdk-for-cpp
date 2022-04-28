@@ -355,7 +355,7 @@ void WinHttpTransport::CreateRequestHandle(std::unique_ptr<_detail::HandleManage
             WINHTTP_NO_CLIENT_CERT_CONTEXT,
             0))
     {
-      GetErrorAndThrow("Error while setting client cert context to ignore..");
+      GetErrorAndThrow("Error while setting client cert context to ignore.");
     }
   }
 
@@ -365,7 +365,7 @@ void WinHttpTransport::CreateRequestHandle(std::unique_ptr<_detail::HandleManage
     if (!WinHttpSetOption(
             handleManager->m_requestHandle, WINHTTP_OPTION_SECURITY_FLAGS, &option, sizeof(option)))
     {
-      GetErrorAndThrow("Error while setting ignore unknown server certificate..");
+      GetErrorAndThrow("Error while setting ignore unknown server certificate.");
     }
   }
 }
