@@ -58,11 +58,11 @@ set(
     inc/azure/storage/common/storage_common.hpp
     inc/azure/storage/common/storage_credential.hpp
     inc/azure/storage/common/storage_exception.hpp
+    src/private/package_version.hpp
 )
 
 set(
   AZURE_STORAGE_COMMON_SOURCE
-    src/private/package_version.hpp
     src/account_sas_builder.cpp
     src/crypt.cpp
     src/file_io.cpp

@@ -39,7 +39,7 @@ elseif(NOT AZ_ALL_LIBRARIES)
 endif()
 
 set(
-  AZURE_STORAGE_QUEUE_HEADER
+  AZURE_STORAGE_QUEUES_HEADER
     inc/azure/storage/queues.hpp
     inc/azure/storage/queues/dll_import_export.hpp
     inc/azure/storage/queues/queue_client.hpp
@@ -48,11 +48,11 @@ set(
     inc/azure/storage/queues/queue_sas_builder.hpp
     inc/azure/storage/queues/queue_service_client.hpp
     inc/azure/storage/queues/rest_client.hpp
+    src/private/package_version.hpp
 )
 
 set(
-  AZURE_STORAGE_QUEUE_SOURCE
-    src/private/package_version.hpp
+  AZURE_STORAGE_QUEUES_SOURCE
     src/queue_client.cpp
     src/queue_options.cpp
     src/queue_responses.cpp
@@ -61,7 +61,7 @@ set(
     src/rest_client.cpp
 )
 
-add_library(azure-storage-queues ${AZURE_STORAGE_QUEUE_HEADER} ${AZURE_STORAGE_QUEUE_SOURCE})
+add_library(azure-storage-queues ${AZURE_STORAGE_QUEUES_HEADER} ${AZURE_STORAGE_QUEUES_SOURCE})
 create_per_service_target_build(storage azure-storage-queues)
 # make sure that users can consume the project as a library.
 add_library(Azure::azure-storage-queues ALIAS azure-storage-queues)

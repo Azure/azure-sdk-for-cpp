@@ -1,0 +1,59 @@
+parameters:
+- name: ServiceDirectory
+  type: string
+  default: not-specified
+- name: CtestRegex
+  type: string
+  default: .*
+- name: Coverage
+  type: string
+  default: 'enabled'
+- name: CoverageReportPath
+  type: string
+  default: sdk/*/*/*cov_xml.xml
+- name: TimeoutInMinutes
+  type: number
+  default: 60
+- name: Location
+  type: string
+  default: ''
+- name: CloudConfig
+  type: object
+  default: {}
+- name: Clouds
+  type: string
+  default: Public
+- name: SupportedClouds
+  type: string
+  default: 'Public'
+- name: UnsupportedClouds
+  type: string
+  default: ''
+
+stages:
+- ${{ each cloud in parameters.CloudConfig }}:
+  - ${{ if or(contains(parameters.Clouds, cloud.key), and(contains(variables['Build.DefinitionName'], 'tests-weekly'), contains(parameters.SupportedClouds, cloud.key))) }}:
+    - ${{ if not(contains(parameters.UnsupportedClouds, cloud.key)) }}:
+      - stage: LiveTest_${{ cloud.key }}
+        dependsOn: []
+        jobs:
+          - template: /eng/common/pipelines/templates/jobs/archetype-sdk-tests-generate.yml
+            parameters:
+              MatrixConfigs:
+                - Name: base
+                  Path: eng/pipelines/templates/stages/platform-matrix-live.json
+                  Selection: all
+                  GenerateVMJobs: true
+              JobTemplatePath: /eng/pipelines/templates/jobs/live.tests.yml
+              CloudConfig:
+                SubscriptionConfiguration: ${{ cloud.value.SubscriptionConfiguration }}
+                SubscriptionConfigurations: ${{ cloud.value.SubscriptionConfigurations }}
+                Location: ${{ coalesce(parameters.Location, cloud.value.Location) }}
+                Cloud: ${{ cloud.key }}
+              AdditionalParameters:
+                Location: ${{ parameters.Location}}
+                ServiceDirectory: ${{ parameters.ServiceDirectory}}
+                CtestRegex: ${{ parameters.CtestRegex}}
+                Coverage: ${{ parameters.Coverage}}
+                CoverageReportPath: ${{ parameters.CoverageReportPath}}
+                TimeoutInMinutes: ${{ parameters.TimeoutInMinutes}}
