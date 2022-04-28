@@ -228,7 +228,7 @@ TEST_F(KeyVaultKeyClient, CreateRsaHsmKey)
     EXPECT_FALSE(keyResponse.Value.Properties.ReleasePolicy.HasValue());
   }
 }
-TEST_F(KeyVaultKeyClient, CreateKeyWithRelasePolicyOptions)
+TEST_F(KeyVaultKeyClient, CreateKeyWithReleasePolicyOptions)
 {
   auto const keyName = GetTestName();
   auto const& client = GetClientForTest(keyName);
