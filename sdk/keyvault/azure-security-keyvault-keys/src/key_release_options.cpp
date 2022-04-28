@@ -23,7 +23,7 @@ Azure::Security::KeyVault::Keys::_detail::KeyReleaseOptionsSerializer::KeyReleas
   Azure::Core::Json::_internal::json payload;
 
   payload[_detail::TargetValue] = keyReleaseOptions.Target;
-  
+
   JsonOptional::SetFromNullable<KeyEncryptionAlgorithm, std::string>(
       keyReleaseOptions.Encryption,
       payload,

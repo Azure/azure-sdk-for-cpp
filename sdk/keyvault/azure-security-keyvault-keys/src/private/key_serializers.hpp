@@ -146,6 +146,5 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys { nam
         KeyReleasePolicy const& policy);
     static KeyReleasePolicy KeyReleasePolicyDeserialize(
         Azure::Core::Json::_internal::json const& response);
-    
   };
 }}}}} // namespace Azure::Security::KeyVault::Keys::_detail
