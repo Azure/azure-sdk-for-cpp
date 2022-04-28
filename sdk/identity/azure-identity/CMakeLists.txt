@@ -47,6 +47,7 @@ endif()
 set(
   AZURE_IDENTITY_HEADER
     inc/azure/identity/chained_token_credential.hpp
+    inc/azure/identity/client_certificate_credential.hpp
     inc/azure/identity/client_secret_credential.hpp
     inc/azure/identity/dll_import_export.hpp
     inc/azure/identity/environment_credential.hpp
@@ -60,6 +61,7 @@ set(
     src/private/package_version.hpp
     src/private/token_credential_impl.hpp
     src/chained_token_credential.cpp
+    src/client_certificate_credential.cpp
     src/client_secret_credential.cpp
     src/environment_credential.cpp
     src/managed_identity_credential.cpp
@@ -84,6 +86,9 @@ target_include_directories(
 )
 
 target_link_libraries(azure-identity PUBLIC Azure::azure-core)
+
+find_package(OpenSSL REQUIRED)
+target_link_libraries(azure-identity PRIVATE OpenSSL::Crypto)
 
 get_az_version("${CMAKE_CURRENT_SOURCE_DIR}/src/private/package_version.hpp")
 generate_documentation(azure-identity ${AZ_LIBRARY_VERSION})

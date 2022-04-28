@@ -4,6 +4,8 @@
 
 ### Features Added
 
+- Added `ClientCertificateCredential`, and updated `EnvironmentCredential` to support client certificate authentication.
+
 ### Breaking Changes
 
 ### Bugs Fixed
