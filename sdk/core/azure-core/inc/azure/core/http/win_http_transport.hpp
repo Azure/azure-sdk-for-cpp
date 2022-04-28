@@ -138,7 +138,7 @@ namespace Azure { namespace Core { namespace Http {
     // issues.
     HINTERNET m_sessionHandle = NULL;
 
-    void CreateSessionHandle();
+    HINTERNET CreateSessionHandle();
     void CreateConnectionHandle(std::unique_ptr<_detail::HandleManager>& handleManager);
     void CreateRequestHandle(std::unique_ptr<_detail::HandleManager>& handleManager);
     void Upload(std::unique_ptr<_detail::HandleManager>& handleManager);

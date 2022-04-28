@@ -226,11 +226,11 @@ void GetErrorAndThrow(const std::string& exceptionMessage)
   throw Azure::Core::Http::TransportException(errorMessage);
 }
 
-void WinHttpTransport::CreateSessionHandle()
+HINTERNET WinHttpTransport::CreateSessionHandle()
 {
   // Use WinHttpOpen to obtain a session handle.
   // The dwFlags is set to 0 - all WinHTTP functions are performed synchronously.
-  m_sessionHandle = WinHttpOpen(
+  HINTERNET sessionHandle = WinHttpOpen(
       NULL, // Do not use a fallback user-agent string, and only rely on the header within the
             // request itself.
       WINHTTP_ACCESS_TYPE_NO_PROXY,
@@ -238,7 +238,7 @@ void WinHttpTransport::CreateSessionHandle()
       WINHTTP_NO_PROXY_BYPASS,
       0);
 
-  if (!m_sessionHandle)
+  if (!sessionHandle)
   {
     // Errors include:
     // ERROR_WINHTTP_INTERNAL_ERROR
@@ -253,22 +253,24 @@ void WinHttpTransport::CreateSessionHandle()
 #ifdef WINHTTP_OPTION_TCP_FAST_OPEN
   BOOL tcp_fast_open = TRUE;
   WinHttpSetOption(
-      m_sessionHandle, WINHTTP_OPTION_TCP_FAST_OPEN, &tcp_fast_open, sizeof(tcp_fast_open));
+      sessionHandle, WINHTTP_OPTION_TCP_FAST_OPEN, &tcp_fast_open, sizeof(tcp_fast_open));
 #endif
 
 #ifdef WINHTTP_OPTION_TLS_FALSE_START
   BOOL tls_false_start = TRUE;
   WinHttpSetOption(
-      m_sessionHandle, WINHTTP_OPTION_TLS_FALSE_START, &tls_false_start, sizeof(tls_false_start));
+      sessionHandle, WINHTTP_OPTION_TLS_FALSE_START, &tls_false_start, sizeof(tls_false_start));
 #endif
 
   // Enforce TLS version 1.2
   auto tlsOption = WINHTTP_FLAG_SECURE_PROTOCOL_TLS1_2;
   if (!WinHttpSetOption(
-          m_sessionHandle, WINHTTP_OPTION_SECURE_PROTOCOLS, &tlsOption, sizeof(tlsOption)))
+          sessionHandle, WINHTTP_OPTION_SECURE_PROTOCOLS, &tlsOption, sizeof(tlsOption)))
   {
     GetErrorAndThrow("Error while enforcing TLS 1.2 for connection request.");
   }
+
+  return sessionHandle;
 }
 
 WinHttpTransport::WinHttpTransport(WinHttpTransportOptions const& options)
