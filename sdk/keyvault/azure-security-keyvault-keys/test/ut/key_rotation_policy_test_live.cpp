@@ -17,6 +17,29 @@ using namespace Azure;
 using namespace Azure::Security::KeyVault::Keys;
 using namespace Azure::Security::KeyVault::Keys::_detail;
 
+TEST_F(KeyVaultKeyClient, RotateKey)
+{
+  auto const keyName = GetTestName();
+  auto const& client = GetClientForTest(keyName);
+
+  auto createKeyResponse = client.CreateEcKey(CreateEcKeyOptions(keyName));
+  CheckValidResponse(createKeyResponse);
+
+  std::string input
+      = "{\"id\":\"https://redacted.vault.azure.net/keys/GetKeyRotationPolicy/"
+        "rotationpolicy\",\"lifetimeActions\":[{\"trigger\":{\"timeAfterCreate\":\"P18M\"},"
+        "\"action\":{\"type\":\"Rotate\"}},{\"trigger\":{\"timeBeforeExpiry\":\"P30D\"},\"action\":"
+        "{\"type\":\"Notify\"}}],\"attributes\":{\"expiryTime\":\"P48M\",\"created\":1649797765,"
+        "\"updated\":1649797765}}";
+
+  auto policy = KeyRotationPolicySerializer::KeyRotationPolicyDeserialize(
+      std::vector<uint8_t>(input.begin(), input.end()));
+
+  auto putPolicy = client.UpdateKeyRotationPolicy(keyName, policy).Value;
+  auto originalKey = client.GetKey(keyName);
+  auto rotatedKey = client.RotateKey(keyName);
+  EXPECT_NE(originalKey.Value.Properties.Version, rotatedKey.Value.Properties.Version);
+}
 TEST_F(KeyVaultKeyClient, GetKeyRotationPolicy)
 {
   auto const keyName = GetTestName();
@@ -35,7 +58,7 @@ TEST_F(KeyVaultKeyClient, GetKeyRotationPolicy)
   auto policy = KeyRotationPolicySerializer::KeyRotationPolicyDeserialize(
       std::vector<uint8_t>(input.begin(), input.end()));
 
-  auto putPolicy = client.PutKeyRotationPolicy(keyName, policy).Value;
+  auto putPolicy = client.UpdateKeyRotationPolicy(keyName, policy).Value;
   auto rotationPolicy = client.GetKeyRotationPolicy(keyName).Value;
 
   EXPECT_EQ(rotationPolicy.Attributes.ExpiryTime.Value(), policy.Attributes.ExpiryTime.Value());
