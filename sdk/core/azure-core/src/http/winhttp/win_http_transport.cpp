@@ -272,9 +272,8 @@ void WinHttpTransport::CreateSessionHandle()
 }
 
 WinHttpTransport::WinHttpTransport(WinHttpTransportOptions const& options)
-    : m_options(options), m_sessionHandle(NULL)
+    : m_options(options), m_sessionHandle(CreateSessionHandle())
 {
-  CreateSessionHandle();
 }
 
 void WinHttpTransport::CreateConnectionHandle(

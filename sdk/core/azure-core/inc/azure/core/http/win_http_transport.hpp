@@ -133,7 +133,10 @@ namespace Azure { namespace Core { namespace Http {
   class WinHttpTransport final : public HttpTransport {
   private:
     WinHttpTransportOptions m_options;
-    HINTERNET m_sessionHandle;
+
+    // This should remain immutable and not be modified after calling the ctor, to avoid threading
+    // issues.
+    HINTERNET m_sessionHandle = NULL;
 
     void CreateSessionHandle();
     void CreateConnectionHandle(std::unique_ptr<_detail::HandleManager>& handleManager);
