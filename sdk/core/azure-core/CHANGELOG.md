@@ -11,10 +11,11 @@
 ### Bugs Fixed
 
 - [[#3537]](https://github.com/Azure/azure-sdk-for-cpp/issues/3537) Updated field type `CurlTransportOptions.Proxy` from `std::string` to `Azure::Nullable<std::string>`. This change allow to se an empty string to make libcurl ignore proxy settings from environment.
+- [[#3548]](https://github.com/Azure/azure-sdk-for-cpp/issues/3548), [[#1098]](https://github.com/Azure/azure-sdk-for-cpp/issues/1098) Improve performance of the Http transport on Windows by reusing the same session handle across all requests.
 
 ### Other Changes
 
--  [[#3581]](https://github.com/Azure/azure-sdk-for-cpp/issues/3581) Update log level in retry policy from warning to informational.
+- [[#3581]](https://github.com/Azure/azure-sdk-for-cpp/issues/3581) Update log level in retry policy from warning to informational.
 
 ## 1.5.0 (2022-03-31)
 
