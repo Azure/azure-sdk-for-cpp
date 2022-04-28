@@ -54,11 +54,10 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys { nam
     // Create
     virtual void SetUp() override
     {
-      _putenv_s("AZURE_TEST_MODE", "LIVE");
       Azure::Core::Test::TestBase::SetUpTestBase(AZURE_TEST_RECORDING_DIR);
       m_keyVaultUrl = GetEnv("AZURE_KEYVAULT_URL");
       m_keyVaultHsmUrl = GetEnv("AZURE_KEYVAULT_HSM_URL");
-      
+
       // Options and credential for the client
       KeyClientOptions options;
       m_credential = std::make_shared<Azure::Identity::ClientSecretCredential>(
