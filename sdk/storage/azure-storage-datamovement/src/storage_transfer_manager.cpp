@@ -2,7 +2,8 @@
 
 namespace Azure { namespace Storage { namespace DataMovement {
 
-  StorageTransferManager::StorageTransferManager(const StorageTransferManagerOptions& options) {
+  StorageTransferManager::StorageTransferManager(const StorageTransferManagerOptions& options)
+  {
     (void)options;
   }
 
