@@ -55,7 +55,7 @@ TEST(KeyVaultKeyClientUnitTest, GetUrl)
   EXPECT_EQ(url, keyClient.GetUrl());
 }
 
-TEST(KeyReleaseOptionsUnitTest, Empty)
+TEST(KeyReleaseOptionsUnitTest, None)
 {
   KeyReleaseOptions options;
   auto serialized = _detail::KeyReleaseOptionsSerializer::KeyReleaseOptionsSerialize(options);
@@ -66,7 +66,7 @@ TEST(KeyReleaseOptionsUnitTest, Empty)
   EXPECT_EQ(nullptr, deserialized[_detail::EncryptionValue]);
 }
 
-TEST(KeyReleaseOptionsUnitTest, Target)
+TEST(KeyReleaseOptionsUnitTest, One)
 {
   KeyReleaseOptions options;
   options.Target = "xyz";
@@ -78,7 +78,7 @@ TEST(KeyReleaseOptionsUnitTest, Target)
   EXPECT_EQ(nullptr, deserialized[_detail::EncryptionValue]);
 }
 
-TEST(KeyReleaseOptionsUnitTest, TargetNoonce)
+TEST(KeyReleaseOptionsUnitTest, Most)
 {
   KeyReleaseOptions options;
   options.Target = "xyz";
