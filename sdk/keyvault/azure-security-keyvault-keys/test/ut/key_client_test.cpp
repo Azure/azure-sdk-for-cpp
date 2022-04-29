@@ -3,8 +3,8 @@
 
 #include "gtest/gtest.h"
 
-#include "private/key_serializers.hpp"
 #include "private/key_constants.hpp"
+#include "private/key_serializers.hpp"
 #include <azure/core/context.hpp>
 #include <azure/identity/client_secret_credential.hpp>
 #include <azure/keyvault/keyvault_keys.hpp>
@@ -85,7 +85,7 @@ TEST(KeyReleaseOptionsUnitTest, TargetNoonce)
   options.Nonce = "abc";
   auto serialized = _detail::KeyReleaseOptionsSerializer::KeyReleaseOptionsSerialize(options);
   auto deserialized = Azure::Core::Json::_internal::json::parse(serialized);
-  
+
   EXPECT_EQ(options.Target, deserialized[_detail::TargetValue]);
   EXPECT_EQ(options.Nonce.Value(), deserialized[_detail::NonceValue]);
   EXPECT_EQ(nullptr, deserialized[_detail::EncryptionValue]);
@@ -105,7 +105,7 @@ TEST(KeyReleaseOptionsUnitTest, All)
   EXPECT_EQ(options.Encryption.Value().ToString(), deserialized[_detail::EncryptionValue]);
 }
 
-TEST(KeyEncryptionAlgorithmUnitTest, CheckValues) 
+TEST(KeyEncryptionAlgorithmUnitTest, CheckValues)
 {
   EXPECT_EQ(
       KeyEncryptionAlgorithm::CKM_RSA_AES_KEY_WRAP.ToString(), _detail::CKM_RSA_AES_KEY_WRAP_Value);
