@@ -14,6 +14,7 @@
 #include <azure/core/context.hpp>
 #include <azure/core/datetime.hpp>
 #include <azure/core/http/http.hpp>
+#include <azure/core/internal/extendable_enumeration.hpp>
 #include <azure/core/nullable.hpp>
 #include <azure/core/operation.hpp>
 #include <azure/core/operation_status.hpp>
@@ -302,46 +303,15 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
    * @brief The encryption algorithm to use to protected the exported key material.
    *
    */
-  class KeyEncryptionAlgorithm final {
-  private:
-    std::string m_value;
-
+  class KeyEncryptionAlgorithm final
+      : public Azure::Core::_internal::ExtendableEnumeration<KeyEncryptionAlgorithm> {
   public:
     /**
      * @brief Construct a new KeyEncryptionAlgorithm object.
      *
      * @param value The string value of the instance.
      */
-    explicit KeyEncryptionAlgorithm(std::string value)
-    {
-      if (value.empty())
-      {
-        throw std::invalid_argument("The value for the encryption algorithm can not be empty");
-      }
-      m_value = std::move(value);
-    }
-
-    /**
-     * @brief Construct a default key curve.
-     *
-     */
-    KeyEncryptionAlgorithm() = default;
-
-    /**
-     * @brief Enables using the equal operator for key encryption algorithm.
-     *
-     * @param other A key curve to be compared.
-     */
-    bool operator==(const KeyEncryptionAlgorithm& other) const noexcept
-    {
-      return m_value == other.m_value;
-    }
-
-    /**
-     * @brief Get the string value of the key encryption algorithm.
-     *
-     */
-    std::string const& ToString() const { return m_value; }
+    explicit KeyEncryptionAlgorithm(std::string value) : ExtendableEnumeration(std::move(value)) {}
 
     /**
      * @brief Gets the CKM_RSA_AES_KEY_WRAP algorithm.
@@ -361,6 +331,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
      */
     AZ_SECURITY_KEYVAULT_KEYS_DLLEXPORT static const KeyEncryptionAlgorithm RSA_AES_KEY_WRAP_384;
   };
+
   /**
    * @brief Represents a JSON Web Key as defined in http://tools.ietf.org/html/rfc7517.
    *
