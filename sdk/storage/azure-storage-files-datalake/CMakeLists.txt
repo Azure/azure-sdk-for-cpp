@@ -1,6 +1,10 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # SPDX-License-Identifier: MIT
 
+list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/../../../cmake-modules")
+include(AzureVcpkg)
+az_vcpkg_integrate()
+
 cmake_minimum_required (VERSION 3.13)
 project(azure-storage-files-datalake LANGUAGES CXX)
 
@@ -9,9 +13,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED True)
 set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
 
 option(FETCH_SOURCE_DEPS "build source dependencies" OFF)
-list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/../../../cmake-modules")
 
-include(AzureVcpkg)
 include(AzureVersion)
 include(AzureCodeCoverage)
 include(AzureTransportAdapters)
@@ -19,8 +21,6 @@ include(AzureDoxygen)
 include(AzureGlobalCompileOptions)
 include(AzureConfigRTTI)
 include(AzureBuildTargetForCI)
-
-az_vcpkg_integrate()
 
 if(FETCH_SOURCE_DEPS)
     set(AZ_ALL_LIBRARIES ON)
