@@ -15,7 +15,7 @@ namespace Azure { namespace Storage { namespace DataMovement {
 
   class StorageTransferManager final {
   public:
-    StorageTransferManager(const StorageTransferManagerOptions& options);
+    explicit StorageTransferManager(const StorageTransferManagerOptions& options);
 
     JobProperties ScheduleUpload(
         const std::string& sourceLocalPath,
