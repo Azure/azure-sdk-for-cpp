@@ -45,12 +45,15 @@ set(
   inc/azure/storage/datamovement/dll_import_export.hpp
   inc/azure/storage/datamovement/job_properties.hpp
   inc/azure/storage/datamovement/rtti.hpp
+  inc/azure/storage/datamovement/scheduler.hpp
   inc/azure/storage/datamovement/storage_transfer_manager.hpp
+  inc/azure/storage/datamovement/task.hpp
   src/private/package_version.hpp
 )
 
 set(
   AZURE_STORAGE_DATAMOVEMENT_SOURCE
+  src/scheduler.cpp
   src/storage_transfer_manager.cpp
 )
 
