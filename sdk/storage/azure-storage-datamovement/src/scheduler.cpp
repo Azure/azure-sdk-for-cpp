@@ -36,7 +36,11 @@ namespace Azure { namespace Storage { namespace DataMovement { namespace _intern
         q.pop();
         guard.unlock();
 
-        task.func();
+        task->Execute();
+        if (task->MemoryGiveBack != 0)
+        {
+          m_memoryLeft.fetch_add(task->MemoryGiveBack);
+        }
       }
     };
 
@@ -69,12 +73,12 @@ namespace Azure { namespace Storage { namespace DataMovement { namespace _intern
           std::unique_lock<std::mutex> readyTasksGuard(m_readyDiskIOTasksMutex, std::defer_lock);
           int numScheduledTasks = 0;
           while (!m_pendingDiskIOTasks.empty()
-                 && m_pendingDiskIOTasks.front().MemoryCost
+                 && m_pendingDiskIOTasks.front()->MemoryCost
                      < m_memoryLeft.load(std::memory_order_relaxed))
           {
             auto task = std::move(m_pendingDiskIOTasks.front());
             m_pendingDiskIOTasks.pop();
-            m_memoryLeft.fetch_sub(task.MemoryCost);
+            m_memoryLeft.fetch_sub(task->MemoryCost);
             if (!readyTasksGuard.owns_lock())
             {
               readyTasksGuard.lock();
@@ -161,28 +165,28 @@ namespace Azure { namespace Storage { namespace DataMovement { namespace _intern
 
   void Scheduler::AddTask(Task&& task)
   {
-    if (task.Type == TaskType::DiskIO)
+    if (task->Type == TaskType::DiskIO)
     {
       std::lock_guard<std::mutex> guard(m_pendingTasksMutex);
       m_pendingDiskIOTasks.push(std::move(task));
       m_pendingTasksCv.notify_one();
     }
-    else if (task.Type == TaskType::NetworkUpload)
+    else if (task->Type == TaskType::NetworkUpload)
     {
       std::lock_guard<std::mutex> guard(m_pendingTasksMutex);
       m_pendingNetworkUploadTasks.push(std::move(task));
       m_pendingTasksCv.notify_one();
     }
-    else if (task.Type == TaskType::NetworkDownload)
+    else if (task->Type == TaskType::NetworkDownload)
     {
       std::lock_guard<std::mutex> guard(m_pendingTasksMutex);
       m_pendingNetworkDownloadTasks.push(std::move(task));
       m_pendingTasksCv.notify_one();
     }
-    else if (task.Type == TaskType::Other)
+    else if (task->Type == TaskType::Other)
     {
       std::lock_guard<std::mutex> guard(m_readyTasksMutex);
-      m_memoryLeft.fetch_sub(task.MemoryCost);
+      m_memoryLeft.fetch_sub(task->MemoryCost);
       m_readyTasks.push(std::move(task));
       m_readyTasksCv.notify_one();
     }
@@ -200,7 +204,7 @@ namespace Azure { namespace Storage { namespace DataMovement { namespace _intern
       int numTasksAdded = 0;
       for (int i = 0; i < tasks.size(); ++i)
       {
-        if (tasks[i].Type == TaskType::DiskIO)
+        if (tasks[i]->Type == TaskType::DiskIO)
         {
           if (!guard.owns_lock())
           {
@@ -209,7 +213,7 @@ namespace Azure { namespace Storage { namespace DataMovement { namespace _intern
           m_pendingDiskIOTasks.push(std::move(tasks[i]));
           ++numTasksAdded;
         }
-        else if (tasks[i].Type == TaskType::NetworkUpload)
+        else if (tasks[i]->Type == TaskType::NetworkUpload)
         {
           if (!guard.owns_lock())
           {
@@ -218,7 +222,7 @@ namespace Azure { namespace Storage { namespace DataMovement { namespace _intern
           m_pendingNetworkUploadTasks.push(std::move(tasks[i]));
           ++numTasksAdded;
         }
-        else if (tasks[i].Type == TaskType::NetworkDownload)
+        else if (tasks[i]->Type == TaskType::NetworkDownload)
         {
           if (!guard.owns_lock())
           {
@@ -247,7 +251,7 @@ namespace Azure { namespace Storage { namespace DataMovement { namespace _intern
         {
           continue;
         }
-        if (tasks[i].Type == TaskType::Other)
+        if (tasks[i]->Type == TaskType::Other)
         {
           if (!guard.owns_lock())
           {

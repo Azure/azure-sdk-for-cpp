@@ -10,6 +10,7 @@
 #include "azure/storage/datamovement/blob_folder.hpp"
 #include "azure/storage/datamovement/datamovement_options.hpp"
 #include "azure/storage/datamovement/job_properties.hpp"
+#include "azure/storage/datamovement/scheduler.hpp"
 
 namespace Azure { namespace Storage { namespace DataMovement {
 
@@ -46,6 +47,8 @@ namespace Azure { namespace Storage { namespace DataMovement {
     void CancelAllJobs();
 
   private:
+    StorageTransferManagerOptions m_options;
+    _internal::Scheduler m_scheduler;
   };
 
 }}} // namespace Azure::Storage::DataMovement

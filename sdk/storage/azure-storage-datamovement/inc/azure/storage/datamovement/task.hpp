@@ -4,8 +4,14 @@
 #pragma once
 
 #include <functional>
+#include <memory>
+
+#include <azure/storage/blobs.hpp>
+#include <azure/storage/common/internal/file_io.hpp>
 
 namespace Azure { namespace Storage { namespace DataMovement { namespace _internal {
+  class Scheduler;
+
   enum class TaskType
   {
     DiskIO,
@@ -15,14 +21,25 @@ namespace Azure { namespace Storage { namespace DataMovement { namespace _intern
   };
 
   // Task should be idempotent
-  struct Task
+  // Root task should be serializable and deserializable
+  struct TaskBase
   {
+    TaskBase(TaskType type, Scheduler* scheduler) : Type(type), m_scheduler(scheduler) {}
     TaskType Type;
 
     size_t MemoryCost = 0;
     size_t MemoryGiveBack = 0;
 
-    std::function<void()> func;  // func shouldn't throw
+    virtual ~TaskBase() {}
+    virtual void Execute() = 0;
+    virtual std::string Serialize() { return std::string(); }
+
+  protected:
+    Scheduler* m_scheduler;
   };
+
+  using Task = std::unique_ptr<TaskBase>;
+
+  Task Deserialize(const char*);
 
 }}}} // namespace Azure::Storage::DataMovement::_internal

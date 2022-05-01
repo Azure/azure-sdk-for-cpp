@@ -19,4 +19,5 @@ namespace Azure { namespace Storage { namespace DataMovement {
   struct DownloadBlobOptions final
   {
   };
+
 }}} // namespace Azure::Storage::DataMovement
