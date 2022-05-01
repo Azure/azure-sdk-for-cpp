@@ -22,6 +22,7 @@
 #include <windows.h>
 #endif
 
+#include <algorithm>
 #include <limits>
 #include <stdexcept>
 
@@ -87,6 +88,29 @@ namespace Azure { namespace Storage { namespace _internal {
 
   FileReader::~FileReader() { CloseHandle(static_cast<HANDLE>(m_handle)); }
 
+  size_t FileReader::Read(uint8_t* buffer, size_t length, int64_t offset) const
+  {
+    length = std::min<size_t>(length, m_fileSize - offset);
+    if (length > std::numeric_limits<DWORD>::max())
+    {
+      throw std::runtime_error("Failed to read file.");
+    }
+
+    OVERLAPPED overlapped;
+    std::memset(&overlapped, 0, sizeof(overlapped));
+    overlapped.Offset = static_cast<DWORD>(static_cast<uint64_t>(offset));
+    overlapped.OffsetHigh = static_cast<DWORD>(static_cast<uint64_t>(offset) >> 32);
+
+    DWORD bytesRead;
+    BOOL ret = ReadFile(
+        static_cast<HANDLE>(m_handle), buffer, static_cast<DWORD>(length), &bytesRead, &overlapped);
+    if (!ret)
+    {
+      throw std::runtime_error("Failed to read file.");
+    }
+    return bytesRead;
+  }
+
   FileWriter::FileWriter(const std::string& filename)
   {
     int sizeNeeded = MultiByteToWideChar(
@@ -138,7 +162,7 @@ namespace Azure { namespace Storage { namespace _internal {
 
   FileWriter::~FileWriter() { CloseHandle(static_cast<HANDLE>(m_handle)); }
 
-  void FileWriter::Write(const uint8_t* buffer, size_t length, int64_t offset)
+  void FileWriter::Write(const uint8_t* buffer, size_t length, int64_t offset) const
   {
     if (length > std::numeric_limits<DWORD>::max())
     {
@@ -180,6 +204,21 @@ namespace Azure { namespace Storage { namespace _internal {
 
   FileReader::~FileReader() { close(m_handle); }
 
+  size_t FileReader::Read(uint8_t* buffer, size_t length, int64_t offset) const
+  {
+    if (offset > static_cast<int64_t>(std::numeric_limits<off_t>::max()))
+    {
+      throw std::runtime_error("Failed to read file.");
+    }
+    length = std::min<size_t>(length, m_fileSize - offset);
+    ssize_t bytesRead = pread(m_handle, buffer, length, static_cast<off_t>(offset));
+    if (bytesRead < 0)
+    {
+      throw std::runtime_error("Failed to read file.");
+    }
+    return bytesRead;
+  }
+
   FileWriter::FileWriter(const std::string& filename)
   {
     m_handle = open(
@@ -192,7 +231,7 @@ namespace Azure { namespace Storage { namespace _internal {
 
   FileWriter::~FileWriter() { close(m_handle); }
 
-  void FileWriter::Write(const uint8_t* buffer, size_t length, int64_t offset)
+  void FileWriter::Write(const uint8_t* buffer, size_t length, int64_t offset) const
   {
     if (offset > static_cast<int64_t>(std::numeric_limits<off_t>::max()))
     {
