@@ -6,15 +6,17 @@
 
 #include <azure/core/azure_assert.hpp>
 
+#if defined(_MSC_VER)
 #pragma warning(disable : 26110 26117)
+#endif
 
 namespace Azure { namespace Storage { namespace DataMovement { namespace _internal {
 
   Scheduler::Scheduler(const SchedulerOptions& options) : m_options(options)
   {
-    size_t numThreads = options.NumThreads.HasValue()
+    int numThreads = options.NumThreads.HasValue()
         ? options.NumThreads.Value()
-        : std::max<size_t>(5, std::thread::hardware_concurrency());
+        : std::max<int>(5, std::thread::hardware_concurrency());
     AZURE_ASSERT(numThreads != 0);
     size_t maxMemorySize = options.MaxMemorySize.HasValue() ? options.MaxMemorySize.Value()
                                                             : 128ULL * 1024 * 1024 * numThreads;
@@ -47,7 +49,7 @@ namespace Azure { namespace Storage { namespace DataMovement { namespace _intern
     };
 
     m_workerThreads.reserve(numThreads + 1);
-    for (size_t i = 0; i < numThreads; ++i)
+    for (int i = 0; i < numThreads; ++i)
     {
       m_workerThreads.push_back(std::thread(
           workerFunc,
@@ -207,7 +209,7 @@ namespace Azure { namespace Storage { namespace DataMovement { namespace _intern
     {
       std::unique_lock<std::mutex> guard(m_pendingTasksMutex, std::defer_lock);
       int numTasksAdded = 0;
-      for (int i = 0; i < tasks.size(); ++i)
+      for (size_t i = 0; i < tasks.size(); ++i)
       {
         if (tasks[i]->Type == TaskType::DiskIO)
         {

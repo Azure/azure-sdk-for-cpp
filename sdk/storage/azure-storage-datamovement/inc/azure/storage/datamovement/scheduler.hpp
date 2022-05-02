@@ -3,13 +3,13 @@
 
 #pragma once
 
+#include <atomic>
+#include <condition_variable>
 #include <cstdint>
+#include <mutex>
 #include <queue>
 #include <thread>
-#include <atomic>
 #include <vector>
-#include <mutex>
-#include <condition_variable>
 
 #include <azure/core/nullable.hpp>
 
@@ -21,7 +21,7 @@ namespace Azure { namespace Storage { namespace DataMovement { namespace _intern
 
   struct SchedulerOptions
   {
-    Nullable<size_t> NumThreads; // default: 2 * num cpus
+    Nullable<int> NumThreads; // default: 2 * num cpus
     Nullable<size_t> MaxMemorySize; // default: 128MB * num threads
   };
 
@@ -36,7 +36,7 @@ namespace Azure { namespace Storage { namespace DataMovement { namespace _intern
     void AddTask(Task&& task);
     void AddTasks(std::vector<Task>&& tasks);
 
-    // TODO: Pasue/Suspend and Resume
+    // TODO: Pause/Suspend and Resume
 
   private:
     SchedulerOptions m_options;

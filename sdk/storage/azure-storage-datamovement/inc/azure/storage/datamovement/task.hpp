@@ -21,7 +21,7 @@ namespace Azure { namespace Storage { namespace DataMovement { namespace _intern
   };
 
   // Task should be idempotent
-  // Root task should be serializable and deserializable
+  // Root task should be serializable and de-serializable
   struct TaskBase
   {
     TaskBase(TaskType type, Scheduler* scheduler) : Type(type), m_scheduler(scheduler) {}
