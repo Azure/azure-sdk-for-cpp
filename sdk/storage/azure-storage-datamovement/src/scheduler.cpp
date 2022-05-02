@@ -12,11 +12,12 @@ namespace Azure { namespace Storage { namespace DataMovement { namespace _intern
 
   Scheduler::Scheduler(const SchedulerOptions& options) : m_options(options)
   {
-    size_t numThreads = options.NumThreads.HasValue() ? options.NumThreads.Value()
-                                                      : std::thread::hardware_concurrency() * 2;
+    size_t numThreads = options.NumThreads.HasValue()
+        ? options.NumThreads.Value()
+        : std::max<size_t>(5, std::thread::hardware_concurrency());
     AZURE_ASSERT(numThreads != 0);
     size_t maxMemorySize = options.MaxMemorySize.HasValue() ? options.MaxMemorySize.Value()
-                                                            : 128 * 1024 * 1024 * numThreads;
+                                                            : 128ULL * 1024 * 1024 * numThreads;
     m_options.NumThreads = numThreads;
     m_options.MaxMemorySize = maxMemorySize;
 

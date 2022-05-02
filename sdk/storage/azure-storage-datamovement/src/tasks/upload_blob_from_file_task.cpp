@@ -11,7 +11,7 @@ namespace Azure { namespace Storage { namespace DataMovement { namespace _intern
 
   namespace {
     constexpr uint64_t SingleUploadThreshold = 4 * 1024 * 1024;
-    constexpr uint64_t ChunkSize = 4 * 1024 * 1024;
+    constexpr uint64_t ChunkSize = 8 * 1024 * 1024;
 
     std::string GetBlockId(int64_t id)
     {
