@@ -252,7 +252,7 @@ namespace Azure { namespace Storage { namespace DataMovement { namespace _intern
     {
       std::unique_lock<std::mutex> guard(m_readyTasksMutex, std::defer_lock);
       int numTasksAdded = 0;
-      for (int i = 0; i < tasks.size(); ++i)
+      for (size_t i = 0; i < tasks.size(); ++i)
       {
         if (!validTaskBitmap[i])
         {

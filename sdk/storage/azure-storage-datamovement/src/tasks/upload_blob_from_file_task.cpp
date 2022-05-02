@@ -15,6 +15,8 @@ namespace Azure { namespace Storage { namespace DataMovement { namespace _intern
 
     std::string GetBlockId(int64_t id)
     {
+      // TODO: we want to add identifier in block ID, so that we resuming this job, we can pick up
+      // from where we left off. The identifier may include az-storage-dm and the file size
       constexpr size_t BlockIdLength = 64;
       std::string blockId = std::to_string(id);
       blockId = std::string(BlockIdLength - blockId.length(), '0') + blockId;

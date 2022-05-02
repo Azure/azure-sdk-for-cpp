@@ -21,7 +21,7 @@ namespace Azure { namespace Storage { namespace DataMovement { namespace _intern
 
   struct SchedulerOptions
   {
-    Nullable<int> NumThreads; // default: 2 * num cpus
+    Nullable<int> NumThreads; // default: num cpus, minimum 5
     Nullable<size_t> MaxMemorySize; // default: 128MB * num threads
   };
 

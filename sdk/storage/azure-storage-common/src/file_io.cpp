@@ -90,7 +90,7 @@ namespace Azure { namespace Storage { namespace _internal {
 
   size_t FileReader::Read(uint8_t* buffer, size_t length, int64_t offset) const
   {
-    length = std::min<size_t>(length, std::max(0LL, m_fileSize - offset));
+    length = std::min(length, static_cast<size_t>(std::max(0LL, m_fileSize - offset)));
     if (length > std::numeric_limits<DWORD>::max())
     {
       throw std::runtime_error("Failed to read file.");

@@ -39,7 +39,9 @@ int main()
   blobContainerClient.CreateIfNotExists();
   auto blobClient = blobContainerClient.GetBlobClient(blobName);
 
-  m.ScheduleUpload(localFile, blobClient);
+  auto job = m.ScheduleUpload(localFile, blobClient);
+  std::cout << job.JobId << std::endl;
+  std::cout << job.SourceUrl << " -> " << job.DestinationUrl << std::endl;
 
   getchar();
 
