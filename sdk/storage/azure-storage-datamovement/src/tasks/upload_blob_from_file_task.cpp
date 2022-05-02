@@ -12,6 +12,7 @@ namespace Azure { namespace Storage { namespace DataMovement { namespace _intern
   namespace {
     constexpr uint64_t SingleUploadThreshold = 4 * 1024 * 1024;
     constexpr uint64_t ChunkSize = 8 * 1024 * 1024;
+    static_assert(ChunkSize < static_cast<uint64_t>(std::numeric_limits<size_t>::max()), "");
 
     std::string GetBlockId(int64_t id)
     {
@@ -53,7 +54,8 @@ namespace Azure { namespace Storage { namespace DataMovement { namespace _intern
       readFileRangeTask->Context = Context;
       readFileRangeTask->BlockId = blockId;
       readFileRangeTask->Offset = blockId * ChunkSize;
-      readFileRangeTask->Length = std::min<uint64_t>(ChunkSize, fileSize - blockId * ChunkSize);
+      readFileRangeTask->Length
+          = static_cast<size_t>(std::min(ChunkSize, fileSize - blockId * ChunkSize));
       readFileRangeTask->MemoryCost = readFileRangeTask->Length;
       subtasks.push_back(std::move(readFileRangeTask));
     }
