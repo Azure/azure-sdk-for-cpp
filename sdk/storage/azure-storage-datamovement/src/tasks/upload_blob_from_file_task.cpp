@@ -44,6 +44,7 @@ namespace Azure { namespace Storage { namespace DataMovement { namespace _intern
     }
 
     // TODO: if file is small enough
+    (void)SingleUploadThreshold;
 
     Context->NumBlocks = static_cast<int>((fileSize + ChunkSize - 1) / ChunkSize);
     std::vector<Task> subtasks;
