@@ -55,11 +55,14 @@ namespace Azure { namespace Storage { namespace DataMovement { namespace _intern
           std::ref(m_readyTasksMutex),
           std::ref(m_readyTasksCv)));
     }
-    m_workerThreads.push_back(std::thread(
-        workerFunc,
-        std::ref(m_readyDiskIOTasks),
-        std::ref(m_readyDiskIOTasksMutex),
-        std::ref(m_readyDiskIOTasksCv)));
+    for (size_t i = 0; i < 2; ++i)
+    {
+      m_workerThreads.push_back(std::thread(
+          workerFunc,
+          std::ref(m_readyDiskIOTasks),
+          std::ref(m_readyDiskIOTasksMutex),
+          std::ref(m_readyDiskIOTasksCv)));
+    }
 
     auto schedulerFunc = [this]() {
       std::unique_lock<std::mutex> guard(m_pendingTasksMutex);
