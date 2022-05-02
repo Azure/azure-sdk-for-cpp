@@ -11,6 +11,7 @@
 #endif
 #include <windows.h>
 #else
+#include <climits>
 #include <cstdlib>
 #endif
 
