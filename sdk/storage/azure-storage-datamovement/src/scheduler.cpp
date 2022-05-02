@@ -40,6 +40,7 @@ namespace Azure { namespace Storage { namespace DataMovement { namespace _intern
         if (task->MemoryGiveBack != 0)
         {
           m_memoryLeft.fetch_add(task->MemoryGiveBack);
+          m_pendingTasksCv.notify_one();
         }
       }
     };
