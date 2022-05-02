@@ -53,7 +53,7 @@ namespace Azure { namespace Storage { namespace DataMovement {
       DWORD absPathWLength = GetFullPathNameW(relativePathW.data(), MAX_PATH, absPathW, nullptr);
       if (absPathWLength == 0)
       {
-        throw std::runtime_error("Failed to get absoluate path.");
+        throw std::runtime_error("Failed to get absolute path.");
       }
       std::replace(absPathW, absPathW + absPathWLength, L'\\', L'/');
       sizeNeeded = WideCharToMultiByte(
