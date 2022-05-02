@@ -1,0 +1,25 @@
+{
+  "name": "azure-storage-datamovement-cpp",
+  "version-semver": "1.0.0-beta.1",
+  "description": [
+    "Microsoft Azure Storage Data Movement SDK for C++",
+    "This library provides Azure Storage Data Movement SDK."
+  ],
+  "homepage": "https://github.com/Azure/azure-sdk-for-cpp/tree/main/sdk/storage/azure-storage-datamovement",
+  "license": "MIT",
+  "dependencies": [
+    {
+      "name": "azure-storage-blobs-cpp",
+      "default-features": false,
+      "version>=": "12.4.0"
+    },
+    {
+      "name": "vcpkg-cmake",
+      "host": true
+    },
+    {
+      "name": "vcpkg-cmake-config",
+      "host": true
+    }
+  ]
+}

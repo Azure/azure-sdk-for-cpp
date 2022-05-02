@@ -19,12 +19,15 @@ namespace Azure { namespace Storage { namespace _internal {
   class FileReader final {
   public:
     FileReader(const std::string& filename);
-
+    FileReader(const FileReader&) = delete;
+    FileReader& operator=(const FileReader&) = delete;
     ~FileReader();
 
     FileHandle GetHandle() const { return m_handle; }
 
     int64_t GetFileSize() const { return m_fileSize; }
+
+    size_t Read(uint8_t* buffer, size_t length, int64_t offset) const;
 
   private:
     FileHandle m_handle;
@@ -34,12 +37,13 @@ namespace Azure { namespace Storage { namespace _internal {
   class FileWriter final {
   public:
     FileWriter(const std::string& filename);
-
+    FileWriter(const FileWriter&) = delete;
+    FileWriter& operator=(const FileWriter&) = delete;
     ~FileWriter();
 
     FileHandle GetHandle() const { return m_handle; }
 
-    void Write(const uint8_t* buffer, size_t length, int64_t offset);
+    void Write(const uint8_t* buffer, size_t length, int64_t offset) const;
 
   private:
     FileHandle m_handle;
