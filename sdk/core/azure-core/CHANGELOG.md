@@ -16,6 +16,13 @@
 ### Other Changes
 
 - [[#3581]](https://github.com/Azure/azure-sdk-for-cpp/issues/3581) Update log level in retry policy from warning to informational.
+- Support OpenSSL 3.0.
+
+### Acknowledgments
+
+Thank you to our developer community members who helped to make Azure Core better with their contributions to this release:
+
+- Jeremi Piotrowski _([GitHub](https://github.com/jepio))_
 
 ## 1.5.0 (2022-03-31)
 
