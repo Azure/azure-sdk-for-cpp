@@ -51,17 +51,15 @@ int main()
     clientOptions.TokenValidationOptions.ValidateIssuer = true;
 
     // Ten seconds of clock drift are allowed between this machine and the attestation service.
-    clientOptions.TokenValidationOptions.ValidationTimeSlack = 10s;
+    clientOptions.TokenValidationOptions.TimeValidationSlack = 10s;
 
     // create client
     auto const credential = std::make_shared<Azure::Identity::ClientSecretCredential>(
         GetEnvHelper::GetEnv("AZURE_TENANT_ID"),
         GetEnvHelper::GetEnv("AZURE_CLIENT_ID"),
         GetEnvHelper::GetEnv("AZURE_CLIENT_SECRET"));
-    AttestationAdministrationClient const adminClient(endpoint, credential, clientOptions);
-
-    // Retrieve attestation response validation collateral before calling into the service.
-    adminClient.RetrieveResponseValidationCollateral();
+    std::unique_ptr<AttestationAdministrationClient const> adminClient(
+        AttestationAdministrationClient::CreatePointer(endpoint, credential, clientOptions));
 
     // Set the attestation policy on this attestation instance.
     // Note that because this is an AAD mode instance, the caller does not need to sign the policy
@@ -75,7 +73,7 @@ authorizationrules
 	[ type=="x-ms-sgx-mrsigner", value=="mrsigner2"] => permit(); 
 };)");
     Azure::Response<AttestationToken<PolicyResult>> const setResult
-        = adminClient.SetAttestationPolicy(AttestationType::SgxEnclave, policyToSet);
+        = adminClient->SetAttestationPolicy(AttestationType::SgxEnclave, policyToSet);
 
     if (setResult.Value.Body.PolicyResolution == PolicyModification::Updated)
     {
@@ -84,14 +82,14 @@ authorizationrules
 
     // To verify that the attestation service received the attestation policy, the service returns
     // the SHA256 hash of the policy token which was sent ot the service. To simplify the customer
-    // experience of interacting with the SetPolicy APIs, CreateSetAttestationPolicyToken API will
+    // experience of interacting with the SetPolicy APIs, CreateAttestationPolicyToken API will
     // generate the same token that would be send to the service.
     //
     // To ensure that the token which was sent from the client matches the token which was received
-    // by the attestation service, the customer can call CreateSetAttestationPolicyToken and then
+    // by the attestation service, the customer can call CreateAttestationPolicyToken and then
     // generate the SHA256 of that token and compare it with the value returned by the service - the
     // two hash values should be identical.
-    auto const setPolicyToken = adminClient.CreateSetAttestationPolicyToken(policyToSet);
+    auto const setPolicyToken = adminClient->CreateAttestationPolicyToken(policyToSet);
     Sha256Hash shaHasher;
     std::vector<uint8_t> policyTokenHash = shaHasher.Final(
         reinterpret_cast<uint8_t const*>(setPolicyToken.RawToken.data()),

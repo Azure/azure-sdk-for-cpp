@@ -29,6 +29,7 @@
 #include <chrono>
 #include <iostream>
 #include <thread>
+#include <vector>
 
 using namespace Azure::Security::Attestation;
 using namespace Azure::Security::Attestation::Models;
@@ -40,35 +41,24 @@ int main()
 {
   try
   {
-    std::cout << "In function: SampleAttestSgxEnclaveWithJSONRuntimeData" << std::endl;
-
+    std::cout << "In function: SampleAttestSgxEnclaveSimple" << std::endl;
     // create client
-    std::string endpoint(GetEnvHelper::GetEnv("ATTESTATION_AAD_URL"));
-    AttestationClient const attestationClient(endpoint);
+    std::string const shortLocation(GetEnvHelper::GetEnv("LOCATION_SHORT_NAME"));
+    std::string const endpoint
+        = "https://shared" + shortLocation + "." + shortLocation + ".attest.azure.net";
 
-    // Retrieve any and all collateral needed to validate the result of APIs calling into the
-    // attestation service..
-    attestationClient.RetrieveResponseValidationCollateral();
+    std::unique_ptr<AttestationClient> attestationClient(
+        AttestationClient::CreatePointer(endpoint));
 
     std::vector<uint8_t> const sgxEnclaveQuote = AttestationCollateral::SgxQuote();
 
-    // Set the RuntimeData in the request to the service. Ask the service to interpret the
-    // RuntimeData as a JSON object when it is returned in the resulting token.
-    AttestOptions attestOptions;
-
-    attestOptions.RuntimeData
-        = AttestationData{AttestationCollateral::RuntimeData(), AttestationDataType::Binary};
-
     Azure::Response<AttestationToken<AttestationResult>> const sgxResult
-        = attestationClient.AttestSgxEnclave(sgxEnclaveQuote, attestOptions);
+        = attestationClient->AttestSgxEnclave(sgxEnclaveQuote);
 
     std::cout << "SGX Quote MRSIGNER is: "
               << Convert::Base64Encode(*sgxResult.Value.Body.SgxMrSigner) << std::endl;
     std::cout << "SGX Quote MRENCLAVE is: "
               << Convert::Base64Encode(*sgxResult.Value.Body.SgxMrEnclave) << std::endl;
-
-    std::cout << "Attestation Token runtimeData is "
-              << Convert::Base64Encode(*sgxResult.Value.Body.EnclaveHeldData) << std::endl;
   }
   catch (Azure::Core::Credentials::AuthenticationException const& e)
   {

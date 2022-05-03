@@ -42,15 +42,12 @@ int main()
   {
     std::cout << "In function: SampleAttestSgxEnclaveSimple" << std::endl;
     // create client
-    AttestationClient const attestationClient(GetEnvHelper::GetEnv("ATTESTATION_AAD_URL"));
-
-    // Retrieve any and all collateral needed to validate the result of APIs calling into the
-    // attestation service..
-    attestationClient.RetrieveResponseValidationCollateral();
+    AttestationClient const attestationClient(
+        AttestationClient::Create(GetEnvHelper::GetEnv("ATTESTATION_AAD_URL")));
 
     std::vector<uint8_t> const openEnclaveReport = AttestationCollateral::OpenEnclaveReport();
 
-    AttestOptions options;
+    AttestEnclaveOptions options;
     options.DraftPolicyForAttestation = R"(version= 1.0;
 authorizationrules
 {

@@ -17,8 +17,8 @@ public:
   /// An Sgx Enclave report which can be used to test.
   static std::vector<uint8_t> SgxQuote();
 
-  /// Runtime data which is encapsulated in the quote/reports returned.
-  static std::vector<uint8_t> RuntimeData();
+  /// RunTime data which is encapsulated in the quote/reports returned.
+  static std::vector<uint8_t> RunTimeData();
 
   /// Minimal Attestation Policy.
   static std::string GetMinimalPolicy();
