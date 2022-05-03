@@ -42,6 +42,7 @@ set(
   AZURE_STORAGE_DATAMOVEMENT_HEADER
   inc/azure/storage/datamovement/blob_folder.hpp
   inc/azure/storage/datamovement/datamovement_options.hpp
+  inc/azure/storage/datamovement/directory_iterator.hpp
   inc/azure/storage/datamovement/dll_import_export.hpp
   inc/azure/storage/datamovement/job_properties.hpp
   inc/azure/storage/datamovement/rtti.hpp
@@ -49,14 +50,17 @@ set(
   inc/azure/storage/datamovement/storage_transfer_manager.hpp
   inc/azure/storage/datamovement/task.hpp
   inc/azure/storage/datamovement/tasks/upload_blob_from_file_task.hpp
+  inc/azure/storage/datamovement/tasks/upload_blobs_from_directory_task.hpp
   src/private/package_version.hpp
 )
 
 set(
   AZURE_STORAGE_DATAMOVEMENT_SOURCE
+  src/directory_iterator.cpp
   src/scheduler.cpp
   src/storage_transfer_manager.cpp
   src/tasks/upload_blob_from_file_task.cpp
+  src/tasks/upload_blobs_from_directory_task.cpp
 )
 
 add_library(azure-storage-datamovement ${AZURE_STORAGE_DATAMOVEMENT_HEADER} ${AZURE_STORAGE_DATAMOVEMENT_SOURCE})
