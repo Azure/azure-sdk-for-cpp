@@ -1,16 +1,5 @@
 steps:
   - pwsh: |
-      $TargetPath = "$(Agent.TempDirectory)/vcpkg"
-      Remove-Item -Path $TargetPath -Recurse -Force -ErrorAction Ignore
-      New-Item -ItemType Directory -Path $TargetPath  -Force
-
-      $VcpkgCommit = $(Get-Content eng/vcpkg-commit.txt)
-      Write-Host "Target Path for vcpkg: $TargetPath"
-      Write-Host "Vcpkg SHA: $VcpkgCommit"
-
-      Write-Host "##vso[task.prependpath]$TargetPath"
-      Write-Host "##vso[task.setvariable variable=VCPKG_INSTALLATION_ROOT]$TargetPath"
-      Write-Host "##vso[task.setvariable variable=VcpkgCommit]$VcpkgCommit"
       Write-Host "##vso[task.setvariable variable=VCPKG_BINARY_SOURCES_SECRET;issecret=true;]clear;x-azblob,https://cppvcpkgcache.blob.core.windows.net/public-vcpkg-container,,read"
     displayName: Set Vcpkg Variables
 
@@ -22,12 +11,3 @@ steps:
       arguments: -StorageAccountKey '$(cpp-vcpkg-cache-storage-key)'
     displayName: Set Vcpkg Write-mode Cache
     condition: and(succeeded(), eq(variables['System.TeamProject'], 'internal'))
-
-  - task: PowerShell@2
-    inputs:
-      targetType: filePath
-      filePath: eng/scripts/vcpkg.ps1
-      arguments: >-
-        -Ref $(VcpkgCommit)
-        -VcpkgPath $(VCPKG_INSTALLATION_ROOT)
-      pwsh: true
