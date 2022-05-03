@@ -1,6 +1,6 @@
 # Release History
 
-## 1.0.0-beta.2 (Unreleased)
+## 1.0.0-beta.2 (2022-05-10)
 
 ### Features Added
 
@@ -35,8 +35,6 @@ Breaking Changes from API Review
   - `AttestationAdministrationClient::AddPolicyManagementCertificate` becomes `AttestationAdministrationClient::AddIsolatedModeCertificate`.
   - `AttestationAdministrationClient::RemovePolicyManagementCertificate` becomes `AttestationAdministrationClient::RemoveIsolatedModeCertificate`.
 - Removed `ClientVersion` API from `AttestationClient` and `AttestationAdministrationClient`
-
-### Bugs Fixed
 
 ### Other Changes
 
