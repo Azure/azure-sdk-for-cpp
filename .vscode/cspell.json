@@ -150,7 +150,9 @@
         "issecret",
         "PSScriptRoot",
         "BUILDID",
-        "cppvcpkgcache"
+        "cppvcpkgcache",
+        "cmakegenerate",
+        "cmakesourcegenerate"
       ]
     },
     {

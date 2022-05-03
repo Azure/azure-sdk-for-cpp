@@ -32,13 +32,25 @@ int main()
   try
   {
     // create client
-    AttestationClient const attestationClient(GetEnvHelper::GetEnv("ATTESTATION_AAD_URL"));
+    AttestationClient const attestationClient(
+        AttestationClient::Create(GetEnvHelper::GetEnv("ATTESTATION_AAD_URL")));
 
     // Retrieve the OpenId metadata from this attestation service instance.
-    Azure::Response<AttestationOpenIdMetadata> const openIdMetadata
-        = attestationClient.GetOpenIdMetadata();
-    std::cout << "Attestation Certificate Endpoint is: " << *openIdMetadata.Value.JsonWebKeySetUrl
+    Azure::Response<TokenValidationCertificateResult> const signingCertificates
+        = attestationClient.GetTokenValidationCertificates();
+
+    std::cout << "There are " << signingCertificates.Value.Signers.size() << "signing certificates."
               << std::endl;
+    for (const auto& certs : signingCertificates.Value.Signers)
+    {
+      std::cout << "Signing certificate chain:" << std::endl;
+      int certIndex = 1;
+      for (const auto& cert : *certs.CertificateChain)
+      {
+        std::cout << "Certificate " << certIndex << ": " << cert << std::endl;
+        certIndex += 1;
+      }
+    }
   }
   catch (Azure::Core::Credentials::AuthenticationException const& e)
   {

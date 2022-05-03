@@ -17,6 +17,9 @@
       "version>=": "1.4.0"
     },
     {
+      "name": "openssl"
+    },
+    {
       "name": "vcpkg-cmake",
       "host": true
     },

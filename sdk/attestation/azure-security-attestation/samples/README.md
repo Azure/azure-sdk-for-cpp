@@ -26,7 +26,7 @@ The core difference between the three modes of operation is the operations which
 are permitted on each, and if the customer needs to create an
 instance of the provider.
 
-Service Mode | Instance Creation  | Attestation | Policy Get | Policy Set | Signed Policies| Policy Management Certificate
+Service Mode | Instance Creation  | Attestation | Policy Get | Policy Set | Signed Policies| Isolated Mode Certificate
 ------ | --- | ---- | ----  | --- | --- | ---
 Shared | No | Yes | Yes (default always)| No | No | No
 AAD | Yes | Yes | Yes | Yes | Optional | No
@@ -64,7 +64,7 @@ customer creates an isolated attestation instance, they also need to create an
 RSA asymmetric key pair and an X.509 certificate which contains that asymmetric
 key (the certificate can be self-signed, or it can be issued by a certificate
 authority). Attestation policies MUST be signed with one of the private keys
-associated with the instance (either at instance creation or added with the [AddPolicyManagementCertificate][add_policy_management_cert] API).
+associated with the instance (either at instance creation or added with the [AddIsolatedModeCertificate][add_isolated_mode_cert] API).
 
 ## Sample Requirements
 
@@ -156,3 +156,4 @@ For more information about the Microsoft Azure Attestation service, please see o
 <!-- links are known to be broken, they will be fixed after this initial pull
     request completes. -->
 [readme_md]: https://github.com/Azure/azure-sdk-for-cpp/blob/main/sdk/attestation/azure-security-attestation/README.md
+[add_isolated_mode_cert]https://azuresdkdocs.blob.core.windows.net/$web/cpp/azure-security-attestation/1.0.0-beta.1/class_azure_1_1_security_1_1_attestation_1_1_attestation_administration_client.html#ad5e9fed7924e3fa89a6b23ba12c5cb35

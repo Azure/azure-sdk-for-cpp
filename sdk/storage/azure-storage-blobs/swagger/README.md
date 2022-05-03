@@ -72,8 +72,6 @@ directive:
     transform: >
       delete $["/{containerName}?restype=account&comp=properties"];
       delete $["/{containerName}/{blob}?restype=account&comp=properties"];
-      delete $["/?comp=batch"];
-      delete $["/{containerName}?restype=container&comp=batch"];
       delete $["/{filesystem}/{path}?action=setAccessControl&blob"];
       delete $["/{filesystem}/{path}?action=getAccessControl&blob"];
       delete $["/{filesystem}/{path}?FileRename"];
@@ -1574,4 +1572,32 @@ directive:
     where: $["x-ms-paths"]["/{containerName}/{blob}?comp=legalhold"].put.responses["200"].headers
     transform: >
       $["x-ms-legal-hold"]["x-ms-client-name"] = "HasLegalHold";
+```
+
+
+### SubmitBatch
+
+```yaml
+directive:
+  - from: swagger-document
+    where: $.definitions
+    transform: >
+      $.SubmitBatchResult = {
+        "type": "object",
+        "x-ms-sealed": false,
+        "x-namespace": "_detail",
+        "properties": {
+          "BodyStream": {"type": "object", "format": "file"}
+        }
+      };
+  - from: swagger-document
+    where: $["x-ms-paths"]["/?comp=batch"].post.responses
+    transform: >
+      $["202"] = $["200"];
+      delete $["200"];
+      $["202"].schema =  {"$ref": "#/definitions/SubmitBatchResult"};
+  - from: swagger-document
+    where: $["x-ms-paths"]["/{containerName}?restype=container&comp=batch"].post.responses["202"]
+    transform: >
+      $.schema =  {"$ref": "#/definitions/SubmitBatchResult"};
 ```

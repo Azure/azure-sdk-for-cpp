@@ -1,0 +1,199 @@
+parameters:
+- name: Location
+  type: string
+  default: ''
+- name: SubscriptionConfiguration
+  type: string
+  default: $(sub-config-azure-cloud-test-resources)
+- name: ServiceDirectory
+  type: string
+  default: not-specified
+- name: CtestRegex
+  type: string
+  default: .*
+- name: Coverage
+  type: string
+  default: 'enabled'
+- name: CoverageReportPath
+  type: string
+  default: sdk/*/*/*cov_xml.xml
+- name: TimeoutInMinutes
+  type: number
+  default: 60
+- name: DependsOn
+  type: string
+  default: ''
+# Matrix generation:
+# https://github.com/Azure/azure-sdk-tools/blob/main/eng/common/scripts/job-matrix/README.md
+- name: Matrix
+  type: string
+- name: MaxParallel
+  type: number
+  default: 0
+- name: CloudConfig
+  type: object
+  default: {}
+- name: UsePlatformContainer
+  type: boolean
+  default: false
+
+jobs:
+- job: ValidateLive
+  dependsOn: ${{ parameters.DependsOn }}
+  condition: ne(${{ parameters.Matrix }}, '{}')
+
+  pool:
+    name: $(Pool)
+    vmImage: $(OSVmImage)
+
+  ${{ if eq(parameters.UsePlatformContainer, 'true') }}:
+    # Add a default so the job doesn't fail when the matrix is empty
+    container: $[ variables['Container'] ]
+
+  strategy:
+    maxParallel: ${{ parameters.MaxParallel }}
+    matrix: $[ ${{ parameters.Matrix }} ]
+
+  variables:
+    CMOCKA_XML_FILE: "%g-test-results.xml"
+    CMOCKA_MESSAGE_OUTPUT: "xml"
+    AZURE_ENABLE_STATIC_ANALYSIS: 1
+    BuildArgs: ""
+    WindowsCtestConfig: ""
+    CmakeEnvArg: ""
+    CmakeArgs: ""
+    AZURE_TEST_MODE: "LIVE"
+    AZURE_LOG_LEVEL: "verbose"
+    # Surface the ServiceDirectory parameter as an environment variable so tests can take advantage of it.
+    AZURE_SERVICE_DIRECTORY: ${{ parameters.ServiceDirectory }}
+
+  steps:
+  - checkout: self
+    submodules: recursive
+
+  - template: /eng/common/pipelines/templates/steps/verify-agent-os.yml
+    parameters:
+      AgentImage: $(OSVmImage)
+
+  - template: /eng/common/pipelines/templates/steps/bypass-local-dns.yml
+
+  # Add g++5 repo to ubuntu
+  - bash: sudo sh -c "echo 'deb http://ftp.debian.org/debian/ stretch main' >> /etc/apt/sources.list"
+    displayName: Add g++ 5
+    condition: >-
+      and(
+        succeeded(),
+        contains(variables['OSVmImage'], 'Ubuntu'),
+        contains(variables['CmakeEnvArg'], 'CC=/usr/bin/gcc-5 CXX=/usr/bin/g++-5 cmake')
+      )
+
+  # Install g++5
+  - bash: sudo apt-get update & sudo apt-get install g++-5
+    displayName: Install g++ 5
+    condition: >-
+      and(
+        succeeded(),
+        contains(variables['OSVmImage'], 'Ubuntu'),
+        contains(variables['CmakeEnvArg'], 'CC=/usr/bin/gcc-5 CXX=/usr/bin/g++-5 cmake')
+      )
+
+  # Install apt dependencies (if appropriate)
+  - bash: sudo apt install -y $(AptDependencies)
+    condition: and(succeededOrFailed(), ne(variables['AptDependencies'], ''))
+    displayName: Install dependencies from apt
+
+  - template: /eng/pipelines/templates/steps/vcpkg.yml
+
+  - script: |
+      dotnet tool install -g dotnet-reportgenerator-globaltool
+      dotnet tool install dotnet-reportgenerator-globaltool --tool-path tools
+    displayName: Install coverage tools
+    # CODE_COVERAGE variable is '' (do-not-generate) in all matrix but linux-gcc
+    # It is 'enabled' by default on linux-gcc but it can be opt-out by each pipeline (disabled) 
+    condition: and(succeededOrFailed(), ne(variables['CODE_COVERAGE'], 'disabled'), ne(variables['CODE_COVERAGE'], ''))
+
+  - template: /eng/pipelines/templates/steps/cmake-build.yml
+    parameters:
+      ServiceDirectory: ${{ parameters.ServiceDirectory }}
+      GenerateArgs: $(CmakeArgs)
+      BuildArgs: "$(BuildArgs)"
+      Env: "$(CmakeEnvArg)"
+
+  - template: /eng/common/TestResources/deploy-test-resources.yml
+    parameters:
+      ServiceDirectory: ${{ parameters.ServiceDirectory }}
+      ${{ if or(parameters.Location, parameters.CloudConfig.Location) }}:
+        Location: ${{ coalesce(parameters.Location, parameters.CloudConfig.Location) }}
+      SubscriptionConfiguration: ${{ parameters.CloudConfig.SubscriptionConfiguration }}
+
+    # For non multi-config generator use the same build configuration to run tests
+    # We don't need to set it to invoke ctest
+    # Visual Studio generator used in CI is a multi-config generator.
+    # As such, it requires the configuration argument for building and invoking ctest
+  - script: ctest $(WindowsCtestConfig) -V --tests-regex "${{ parameters.CtestRegex }}" --no-compress-output -T Test
+    workingDirectory: build
+    displayName: ctest
+    # Runs only if test-resources are happly deployed.
+    # unit-tests runs for those configs where samples are not ran.
+    # This enables to run tests and samples at the same time as different matrix configuration.
+    # Then unit-tests runs, samples should not run.
+    condition: and(
+      succeeded(),
+      ne(variables['RunSamples'], '1'))
+
+  - task: PublishTestResults@2
+    inputs:
+      testResultsFormat: cTest
+      testResultsFiles: Testing/*/Test.xml
+      testRunTitle: $(Agent.JobName)
+      searchFolder: build
+      mergeTestResults: true
+      publishRunAttachments: true
+    displayName: Publish test results
+    # this step only makes sense when ctest has run
+    condition: and(succeededOrFailed(), ne(variables['RunSamples'], '1'))
+
+    # Running Samples step.
+    # Will run samples described on a file name [service]-samples.txt within the build directory.
+    # For example keyvault-samples.txt.
+    # The file is written by CMake during configuration when building samples.
+  - bash: |
+      IFS=$'\n'
+      if [[ -f "./${{ parameters.ServiceDirectory }}-samples.txt" ]]; then
+        for sample in `cat ./${{ parameters.ServiceDirectory }}-samples.txt`
+        do
+          echo "**********Running sample: ${sample}"
+          bash -c "$sample"
+          status=$?
+          if [[ $status -eq 0 ]]; then
+            echo "*********Sample completed*********"
+          else
+            echo "*Sample returned a failed code: $status"
+            exit 1
+          fi
+        done
+      fi
+    workingDirectory: build
+    displayName: "Run Samples for : ${{ parameters.ServiceDirectory }}"
+    condition: and(succeeded(), eq(variables['RunSamples'], '1'))
+
+  # Make coverage targets (specified in coverage_targets.txt) and assemble
+  # coverage report
+  - bash: |
+      make `cat ${{ parameters.ServiceDirectory }}-targets-coverage.txt`
+      ../tools/reportgenerator "-reports:${{ parameters.CoverageReportPath }}" "-targetdir:." "-reporttypes:Cobertura"
+    workingDirectory: build
+    displayName: Generate Code Coverage Data
+    condition: and(succeeded(), ne(variables['CODE_COVERAGE'], 'disabled'), ne(variables['CODE_COVERAGE'], ''))
+
+  - task: PublishCodeCoverageResults@1
+    inputs:
+      codeCoverageTool: Cobertura
+      summaryFileLocation: '$(Build.SourcesDirectory)/**/Cobertura.xml'
+    displayName: Publish Code Coverage to DevOps
+    condition: and(succeededOrFailed(), ne(variables['CODE_COVERAGE'], 'disabled'), ne(variables['CODE_COVERAGE'], ''))    
+
+  - template: /eng/common/TestResources/remove-test-resources.yml
+    parameters:
+      ServiceDirectory: ${{ parameters.ServiceDirectory }}
+      SubscriptionConfiguration: ${{ parameters.SubscriptionConfiguration }}

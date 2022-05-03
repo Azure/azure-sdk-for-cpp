@@ -29,7 +29,6 @@ stages:
       CtestRegex: "azure-security-keyvault.*"
       LiveTestCtestRegex: "azure-security-keyvault.*"
       LiveTestTimeoutInMinutes: 120
-      SubscriptionConfiguration: $(sub-config-azure-cloud-test-resources)
       LineCoverageTarget: 81
       BranchCoverageTarget: 42
       Artifacts:

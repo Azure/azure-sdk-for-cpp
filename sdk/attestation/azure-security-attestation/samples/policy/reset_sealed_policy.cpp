@@ -53,17 +53,15 @@ int main()
     clientOptions.TokenValidationOptions.ValidateIssuer = true;
 
     // Ten seconds of clock drift are allowed between this machine and the attestation service.
-    clientOptions.TokenValidationOptions.ValidationTimeSlack = 10s;
+    clientOptions.TokenValidationOptions.TimeValidationSlack = 10s;
 
     // create client
     auto const credential = std::make_shared<Azure::Identity::ClientSecretCredential>(
         GetEnvHelper::GetEnv("AZURE_TENANT_ID"),
         GetEnvHelper::GetEnv("AZURE_CLIENT_ID"),
         GetEnvHelper::GetEnv("AZURE_CLIENT_SECRET"));
-    AttestationAdministrationClient const adminClient(endpoint, credential, clientOptions);
-
-    // Retrieve attestation response validation collateral before calling into the service.
-    adminClient.RetrieveResponseValidationCollateral();
+    AttestationAdministrationClient const adminClient(
+        AttestationAdministrationClient::Create(endpoint, credential, clientOptions));
 
     std::string const signingKey(GetEnvHelper::GetEnv("ISOLATED_SIGNING_KEY"));
     std::string const signingCert(GetEnvHelper::GetEnv("ISOLATED_SIGNING_CERTIFICATE"));

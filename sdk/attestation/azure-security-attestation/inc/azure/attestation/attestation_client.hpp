@@ -99,7 +99,7 @@ namespace Azure { namespace Security { namespace Attestation {
    * AttestationResult::EnclaveHeldData property).
    *
    * If you ask for the RunTime data to be included in the token as JSON, then it will be included
-   * in the "x-ms-maa-runtimeClaims" claim in the output token (the AttestationResult::RuntimeClaims
+   * in the "x-ms-maa-runtimeClaims" claim in the output token (the AttestationResult::RunTimeClaims
    * property).
    *
    * In addition to the Attest APIs, the AttestationClient object also contains helper APIs
@@ -121,46 +121,16 @@ namespace Azure { namespace Security { namespace Attestation {
      */
     virtual ~AttestationClient() = default;
 
-    /** @brief Construct a new Attestation Client object
-     *
-     * @param endpoint The URL address where the client will send the requests to.
-     * @param credential The authentication method to use (required for TPM attestation).
-     * @param options The options to customize the client behavior.
-     */
-    explicit AttestationClient(
-        std::string const& endpoint,
-        std::shared_ptr<Core::Credentials::TokenCredential const> credential,
-        AttestationClientOptions options = AttestationClientOptions());
-
-    /** @brief Construct a new anonymous Attestation Client object
-     *
-     * @param endpoint The URL address where the client will send the requests to.
-     * @param options The options to customize the client behavior.
-     *
-     * @note TPM attestation requires an authenticated attestation client.
-     */
-    explicit AttestationClient(
-        std::string const& endpoint,
-        AttestationClientOptions options = AttestationClientOptions())
-        : AttestationClient(endpoint, nullptr, options)
-    {
-    }
-
     /** @brief Construct a new Attestation Client object from an existing attestation client.
      *
      * @param attestationClient An existing attestation client.
      */
-    explicit AttestationClient(AttestationClient const& attestationClient)
+    AttestationClient(AttestationClient const& attestationClient)
         : m_endpoint(attestationClient.m_endpoint), m_apiVersion(attestationClient.m_apiVersion),
           m_pipeline(attestationClient.m_pipeline),
           m_tokenValidationOptions(attestationClient.m_tokenValidationOptions){};
 
-    /**
-     * @brief Returns the API version the client was configured with.
-     *
-     * @returns The API version used when communicating with the attestation service.
-     */
-    std::string const& ClientVersion() const { return m_apiVersion; }
+    std::string const Endpoint() const { return m_endpoint.GetAbsoluteUrl(); }
 
     /**
      * Retrieves metadata about the attestation signing keys in use by the attestation service.
@@ -170,7 +140,7 @@ namespace Azure { namespace Security { namespace Attestation {
      * @return an \ref Models::AttestationOpenIdMetadata object containing metadata about the
      * specified service instance.
      */
-    Response<Models::AttestationOpenIdMetadata> GetOpenIdMetadata(
+    Response<Models::OpenIdMetadata> GetOpenIdMetadata(
         Azure::Core::Context const& context = Azure::Core::Context::ApplicationContext) const;
 
     /**
@@ -179,16 +149,7 @@ namespace Azure { namespace Security { namespace Attestation {
      * @returns A Models::AttestationSigningCertificateResult containing a list of certificates one
      * of which will be used to validate tokens received by the attestation service.
      */
-    Response<Models::AttestationSigningCertificateResult> GetAttestationSigningCertificates(
-        Azure::Core::Context const& context = Azure::Core::Context{}) const;
-
-    /**
-     * @brief Retrieves the information needed to validate a response from the attestation service.
-     *
-     * @note: This method MUST be called before any calls to the attestation service which must be
-     * validated.
-     */
-    void RetrieveResponseValidationCollateral(
+    Response<Models::TokenValidationCertificateResult> GetTokenValidationCertificates(
         Azure::Core::Context const& context = Azure::Core::Context{}) const;
 
     /**
@@ -208,7 +169,7 @@ namespace Azure { namespace Security { namespace Attestation {
      */
     Response<Models::AttestationToken<Models::AttestationResult>> AttestSgxEnclave(
         std::vector<uint8_t> const& sgxQuoteToAttest,
-        AttestOptions options = AttestOptions(),
+        AttestEnclaveOptions options = AttestEnclaveOptions(),
         Azure::Core::Context const& context = Azure::Core::Context{}) const;
 
     /**
@@ -229,31 +190,93 @@ namespace Azure { namespace Security { namespace Attestation {
      */
     Response<Models::AttestationToken<Models::AttestationResult>> AttestOpenEnclave(
         std::vector<uint8_t> const& openEnclaveReportToAttest,
-        AttestOptions options = AttestOptions(),
+        AttestEnclaveOptions options = AttestEnclaveOptions(),
         Azure::Core::Context const& context = Azure::Core::Context{}) const;
 
     /**
-    * @brief Perform a single leg
+     * @brief Perform a single leg
      *
      * Processes attestation evidence from a VBS enclave, producing an attestation result.
      *
      * The TPM attestation protocol is defined
-    [here](https://docs.microsoft.com/azure/attestation/virtualization-based-security-protocol')
+     * [here](https://docs.microsoft.com/azure/attestation/virtualization-based-security-protocol')
      *
      * Unlike OpenEnclave reports and SGX enclave quotes, TPM attestation is implemented using
      * JSON encoded strings.
-
-     The client formats a string serialized JSON request to the
+     *
+     * The client formats a string serialized JSON request to the
      * service, which responds with a JSON response. The serialized JSON object exchange continues
      * until the service responds with a JSON string with a property named {@code "report"}, whose
      * value will be an attestation result token.
      *
-     * @param request Attestation request for Trusted Platform Module (TPM) attestation.
+     * @param options sent to the service for Trusted Platform Module (TPM) attestation.
      * @return attestation response for Trusted Platform Module (TPM) attestation.
-    */
-    Response<std::string> AttestTpm(
-        std::string const& jsonToSend,
+     */
+    Response<Models::TpmAttestationResult> AttestTpm(
+        AttestTpmOptions const& options,
         Azure::Core::Context const& context = Azure::Core::Context::ApplicationContext) const;
+
+    /** @brief Construct a new Attestation Client object
+     *
+     * @param endpoint The URL address where the client will send the requests to.
+     * @param credential The authentication method to use (required for TPM attestation).
+     * @param options The options to customize the client behavior.
+     * @return AttestationClient The newly created client.
+     */
+    static AttestationClient Create(
+        std::string const& endpoint,
+        std::shared_ptr<Core::Credentials::TokenCredential const> credential,
+        AttestationClientOptions options = AttestationClientOptions(),
+        Azure::Core::Context const& constext = Azure::Core::Context{});
+
+    /** @brief Construct a new anonymous Attestation Client object
+     *
+     * @param endpoint The URL address where the client will send the requests to.
+     * @param options The options to customize the client behavior.
+     * @return AttestationClient The newly created client.
+     *
+     * @note TPM attestation requires an authenticated attestation client.
+     */
+    static AttestationClient Create(
+        std::string const& endpoint,
+        AttestationClientOptions options = AttestationClientOptions(),
+        Azure::Core::Context const& constext = Azure::Core::Context{});
+
+    /** @brief Construct a new Attestation Client object
+     *
+     * @details Constructs a new attestation client. Follows the
+     * factory pattern in [C++ Core Guidelines
+     * C.50](https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines#c50-use-a-factory-function-if-you-need-virtual-behavior-during-initialization)
+     *
+     * @param endpoint The URL address where the client will send the requests to.
+     * @param credential The authentication method to use (required for TPM attestation). If the
+     * credential parameter is not supplied, the connection will be unauthenticated.
+     * @param options The options to customize the client behavior.
+     * @return std::unique_ptr<AttestationClient> The newly created client.
+     */
+    static std::unique_ptr<AttestationClient> CreatePointer(
+        std::string const& endpoint,
+        std::shared_ptr<Core::Credentials::TokenCredential const> credential,
+        AttestationClientOptions options = AttestationClientOptions(),
+        Azure::Core::Context const& constext = Azure::Core::Context{});
+
+    /** @brief Construct a new anonymous Attestation Client object
+     *
+     * @details Constructs a new anonymous (unauthenticated) attestation client. Follows the
+     * factory pattern in [C++ Core Guidelines
+     * C.50](https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines#c50-use-a-factory-function-if-you-need-virtual-behavior-during-initialization)
+     *
+     * @param endpoint The URL address where the client will send the requests to.
+     * @param options The options to customize the client behavior.
+     * @return std::unique_ptr<AttestationClient> The newly created attestation client.
+     *
+     * @note TPM attestation requires an authenticated attestation client.
+     *
+     */
+    static std::unique_ptr<AttestationClient> CreatePointer(
+        std::string const& endpoint,
+        AttestationClientOptions options = AttestationClientOptions(),
+        Azure::Core::Context const& constext = Azure::Core::Context{});
 
   private:
     Azure::Core::Url m_endpoint;
@@ -263,12 +286,25 @@ namespace Azure { namespace Security { namespace Attestation {
     AttestationTokenValidationOptions m_tokenValidationOptions;
 
     mutable std::vector<Models::AttestationSigner> m_attestationSigners;
+    /** @brief Construct a new Attestation Client object
+     *
+     * @param endpoint The URL address where the client will send the requests to.
+     * @param credential The authentication method to use (required for TPM attestation).
+     * @param options The options to customize the client behavior.
+     */
+    AttestationClient(
+        std::string const& endpoint,
+        std::shared_ptr<Core::Credentials::TokenCredential const> credential,
+        AttestationClientOptions options = AttestationClientOptions());
 
     /**
-     * @brief Check the m_AttestationSigners to ensure that RetrieveResponseValidationCollateral has
-     * been called.
+     * @brief Retrieves the information needed to validate a response from the attestation service.
+     *
+     * @note: This method MUST be called before any calls to the attestation service which must be
+     * validated.
      */
-    void CheckAttestationSigners() const;
+    void RetrieveResponseValidationCollateral(
+        Azure::Core::Context const& context = Azure::Core::Context{}) const;
   };
 
 }}} // namespace Azure::Security::Attestation
