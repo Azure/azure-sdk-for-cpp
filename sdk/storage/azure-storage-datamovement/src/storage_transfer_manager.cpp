@@ -19,6 +19,13 @@
 
 #include "azure/storage/datamovement/tasks/upload_blob_from_file_task.hpp"
 
+#if defined(AZ_PLATFORM_WINDOWS)
+namespace Azure { namespace Storage { namespace _internal {
+  std::wstring Utf8ToWide(const std::string& narrow);
+  std::string Utf8ToNarrow(const std::wstring& wide);
+}}} // namespace Azure::Storage::_internal
+#endif
+
 namespace Azure { namespace Storage { namespace DataMovement {
 
   namespace {
@@ -27,29 +34,7 @@ namespace Azure { namespace Storage { namespace DataMovement {
     std::string GetFullPath(const std::string& relativePath)
     {
 #if defined(AZ_PLATFORM_WINDOWS)
-      int sizeNeeded = MultiByteToWideChar(
-          CP_UTF8,
-          MB_ERR_INVALID_CHARS,
-          relativePath.data(),
-          static_cast<int>(relativePath.length()),
-          nullptr,
-          0);
-      if (sizeNeeded == 0)
-      {
-        throw std::runtime_error("Invalid filename.");
-      }
-      std::wstring relativePathW(sizeNeeded, L'\0');
-      if (MultiByteToWideChar(
-              CP_UTF8,
-              MB_ERR_INVALID_CHARS,
-              relativePath.data(),
-              static_cast<int>(relativePath.length()),
-              &relativePathW[0],
-              sizeNeeded)
-          == 0)
-      {
-        throw std::runtime_error("Invalid filename.");
-      }
+      const std::wstring relativePathW = Storage::_internal::Utf8ToWide(relativePath);
       wchar_t absPathW[MAX_PATH];
       DWORD absPathWLength = GetFullPathNameW(relativePathW.data(), MAX_PATH, absPathW, nullptr);
       if (absPathWLength == 0)
@@ -57,27 +42,7 @@ namespace Azure { namespace Storage { namespace DataMovement {
         throw std::runtime_error("Failed to get absolute path.");
       }
       std::replace(absPathW, absPathW + absPathWLength, L'\\', L'/');
-      sizeNeeded = WideCharToMultiByte(
-          CP_UTF8, WC_ERR_INVALID_CHARS, &absPathW[0], absPathWLength, NULL, 0, NULL, NULL);
-      if (sizeNeeded == 0)
-      {
-        throw std::runtime_error("Invalid filename");
-      }
-      std::string absPath(sizeNeeded, '\0');
-      if (WideCharToMultiByte(
-              CP_UTF8,
-              WC_ERR_INVALID_CHARS,
-              &absPathW[0],
-              absPathWLength,
-              &absPath[0],
-              sizeNeeded,
-              NULL,
-              NULL)
-          == 0)
-      {
-        throw std::runtime_error("Invalid filename");
-      }
-      return absPath;
+      return Storage::_internal::Utf8ToNarrow(absPathW);
 #else
       std::string absPath(PATH_MAX + 1, '\0');
       if (realpath(relativePath.data(), &absPath[0]) == nullptr)
