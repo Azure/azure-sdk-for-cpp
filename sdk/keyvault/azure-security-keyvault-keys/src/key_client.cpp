@@ -381,6 +381,20 @@ Azure::Response<KeyVaultKey> KeyClient::ImportKey(
   return Azure::Response<KeyVaultKey>(std::move(value), std::move(rawResponse));
 }
 
+Azure::Response<KeyVaultKey> KeyClient::RotateKey(
+    std::string const& name,
+    Azure::Core::Context const& context) const
+{
+  // Request with no payload
+  auto request
+      = CreateRequest(HttpMethod::Post, {_detail::KeysPath, name, _detail::RotateActionsValue});
+
+  // Send and parse respone
+  auto rawResponse = SendRequest(request, context);
+  auto value = _detail::KeyVaultKeySerializer::KeyVaultKeyDeserialize(name, *rawResponse);
+  return Azure::Response<KeyVaultKey>(std::move(value), std::move(rawResponse));
+}
+
 Azure::Response<KeyRotationPolicy> KeyClient::GetKeyRotationPolicy(
     std::string const& name,
     Azure::Core::Context const& context) const
@@ -395,7 +409,7 @@ Azure::Response<KeyRotationPolicy> KeyClient::GetKeyRotationPolicy(
   return Azure::Response<KeyRotationPolicy>(std::move(value), std::move(rawResponse));
 }
 
-Azure::Response<KeyRotationPolicy> KeyClient::PutKeyRotationPolicy(
+Azure::Response<KeyRotationPolicy> KeyClient::UpdateKeyRotationPolicy(
     std::string const& name,
     KeyRotationPolicy const& rotationPolicy,
     Azure::Core::Context const& context) const

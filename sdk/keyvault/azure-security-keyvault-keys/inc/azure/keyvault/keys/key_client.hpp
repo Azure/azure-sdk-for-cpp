@@ -410,6 +410,21 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
         Azure::Core::Context const& context = Azure::Core::Context()) const;
 
     /**
+     * @brief Creates a new key version, stores it, then returns key parameters, attributes and
+     * policy to the client.
+     *
+     * @remark The operation will rotate the key based on the key policy. It requires the
+     * keys/rotate permission.
+     *
+     * @param name The name of the key
+     * @param context A #Azure::Core::Context controlling the request lifetime.
+     * @return Azure::Response<KeyVaultKey>
+     */
+    Azure::Response<KeyVaultKey> RotateKey(
+        std::string const& name,
+        Azure::Core::Context const& context = Azure::Core::Context()) const;
+
+    /**
      * @brief Lists the policy for a key.
      *
      * @remark The GetKeyRotationPolicy operation returns the specified key policy resources in the
@@ -434,7 +449,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
      * @param context A #Azure::Core::Context controlling the request lifetime.
      * @return Azure::Response<KeyRotationPolicy>
      */
-    Azure::Response<KeyRotationPolicy> PutKeyRotationPolicy(
+    Azure::Response<KeyRotationPolicy> UpdateKeyRotationPolicy(
         std::string const& name,
         KeyRotationPolicy const& rotationPolicy,
         Azure::Core::Context const& context = Azure::Core::Context()) const;
