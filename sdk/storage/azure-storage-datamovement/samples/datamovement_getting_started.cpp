@@ -43,7 +43,8 @@ int main()
   std::cout << job.JobId << std::endl;
   std::cout << job.SourceUrl << " -> " << job.DestinationUrl << std::endl;
 
-  getchar();
+  auto c = getchar();
+  (void)c;
 
   return 0;
 }
