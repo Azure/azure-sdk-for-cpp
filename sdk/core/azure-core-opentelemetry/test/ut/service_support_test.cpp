@@ -2,8 +2,10 @@
 // SPDX-License-Identifier: MIT
 
 #define USE_MEMORY_EXPORTER 1
+#include "azure/core-opentelemetry/opentelemetry.hpp"
 #include "azure/core/internal/tracing/service_tracing.hpp"
 #include <azure/core/test/test_base.hpp>
+
 #if defined(_MSC_VER)
 // The OpenTelemetry headers generate a couple of warnings on MSVC in the OTel 1.2 package, suppress
 // the warnings across the includes.
@@ -132,8 +134,8 @@ protected:
   }
 };
 
-
-TEST_F(OpenTelemetryServiceTests, SimplestTest) {
+TEST_F(OpenTelemetryServiceTests, SimplestTest)
+{
   {
     Azure::Core::Tracing::_internal::ServiceTracing serviceTrace;
   }
@@ -141,15 +143,34 @@ TEST_F(OpenTelemetryServiceTests, SimplestTest) {
     Azure::Core::_internal::ClientOptions clientOptions;
     Azure::Core::Tracing::_internal::ServiceTracing serviceTrace(
         clientOptions, "myservice-cpp", "1.0b2");
-
   }
 
-    {
+  {
     Azure::Core::_internal::ClientOptions clientOptions;
     Azure::Core::Tracing::_internal::ServiceTracing serviceTrace(
         clientOptions, "myservice-cpp", "1.0b2");
 
     auto contextAndSpan = serviceTrace.CreateSpan("My API", {});
+    EXPECT_FALSE(contextAndSpan.first.IsCancelled());
+  }
+  {
+    auto tracerProvider(CreateOpenTelemetryProvider());
+    auto provider(std::make_shared<Azure::Core::Tracing::OpenTelemetry::OpenTelemetryProvider>(
+        tracerProvider));
 
+    Azure::Core::Context rootContext;
+    rootContext.SetTracerProvider(provider);
+
+    {
+      Azure::Core::_internal::ClientOptions clientOptions;
+      clientOptions.Telemetry.ApplicationId = "MyApplication";
+
+      Azure::Core::Tracing::_internal::ServiceTracing serviceTrace(
+          clientOptions, "my-service", "1.0beta-2");
+
+      Azure::Core::Context clientContext(rootContext);
+      auto contextAndSpan = serviceTrace.CreateSpan("My API", clientContext);
+      EXPECT_FALSE(contextAndSpan.first.IsCancelled());
+    }
   }
 }
