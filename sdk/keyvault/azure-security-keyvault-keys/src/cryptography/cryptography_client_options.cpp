@@ -9,4 +9,5 @@ namespace Azure {
       namespace Keys {
         namespace Cryptography {
   const ServiceVersion ServiceVersion::V7_2("7.2");
+  const ServiceVersion ServiceVersion::V7_3("7.3");
 }}}}} // namespace Azure::Security::KeyVault::Keys::Cryptography

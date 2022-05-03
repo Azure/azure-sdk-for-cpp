@@ -1,15 +1,20 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
 
-#include "gtest/gtest.h"
-
+#include "../../azure-security-attestation/src/private/crypto/inc/crypto.hpp"
 #include "key_client_base_test.hpp"
-
+#include "private/key_constants.hpp"
+#include "private/key_serializers.hpp"
+#include "gtest/gtest.h"
+#include <azure/attestation.hpp>
+#include <azure/core/base64.hpp>
+#include <azure/core/internal/json/json.hpp>
 #include <azure/keyvault/keyvault_keys.hpp>
 #include <private/key_constants.hpp>
-
 #include <string>
 
+using namespace Azure::Core::_internal;
+using namespace Azure::Security::KeyVault::Keys;
 using namespace Azure::Security::KeyVault::Keys::Test;
 
 TEST_F(KeyVaultKeyClient, CreateKey)
@@ -41,6 +46,12 @@ TEST_F(KeyVaultKeyClient, CreateKeyWithOptions)
   Azure::Security::KeyVault::Keys::CreateKeyOptions options;
   options.KeyOperations.push_back(Azure::Security::KeyVault::Keys::KeyOperation::Sign);
   options.KeyOperations.push_back(Azure::Security::KeyVault::Keys::KeyOperation::Verify);
+  options.ReleasePolicy = KeyReleasePolicy();
+  options.ReleasePolicy.Value().Immutable = true;
+  std::string dataStr = "release policy data";
+  options.ReleasePolicy.Value().Data
+      = Base64Url::Base64UrlEncode(std::vector<uint8_t>(dataStr.begin(), dataStr.end()));
+
   {
     auto keyResponse
         = client.CreateKey(keyName, Azure::Security::KeyVault::Keys::KeyVaultKeyType::Ec, options);
@@ -188,6 +199,8 @@ TEST_F(KeyVaultKeyClient, CreateEcHsmKey)
     CheckValidResponse(keyResponse);
     auto keyVaultKey = keyResponse.Value;
     EXPECT_EQ(keyVaultKey.Name(), keyName);
+    EXPECT_FALSE(keyResponse.Value.Properties.Exportable.HasValue());
+    EXPECT_FALSE(keyResponse.Value.Properties.ReleasePolicy.HasValue());
   }
 }
 
@@ -211,5 +224,69 @@ TEST_F(KeyVaultKeyClient, CreateRsaHsmKey)
     CheckValidResponse(keyResponse);
     auto keyVaultKey = keyResponse.Value;
     EXPECT_EQ(keyVaultKey.Name(), keyName);
+    EXPECT_FALSE(keyResponse.Value.Properties.Exportable.HasValue());
+    EXPECT_FALSE(keyResponse.Value.Properties.ReleasePolicy.HasValue());
+  }
+}
+TEST_F(KeyVaultKeyClient, CreateKeyWithReleasePolicyOptions)
+{
+  auto const keyName = GetTestName();
+  auto const& client = GetClientForTest(keyName);
+
+  Azure::Security::KeyVault::Keys::CreateKeyOptions options;
+  options.KeyOperations.push_back(Azure::Security::KeyVault::Keys::KeyOperation::Sign);
+  options.KeyOperations.push_back(Azure::Security::KeyVault::Keys::KeyOperation::Verify);
+  options.ReleasePolicy = KeyReleasePolicy();
+  options.ReleasePolicy.Value().Immutable = false;
+  std::string dataStr = "{"
+                        "\"anyOf\" : [ {"
+                        "\"allOf\" : [ {\"claim\" : \"claim\", \"equals\" : \"0123456789\"} ],"
+                        "\"authority\" : \"https://sharedeus.eus.test.attest.azure.net/\""
+                        "} ],"
+                        " \"version\" : \"1.0.0\""
+                        "} ";
+  auto jsonParser = Azure::Core::Json::_internal::json::parse(dataStr);
+  options.ReleasePolicy.Value().Data = jsonParser.dump();
+  options.Exportable = true;
+  {
+    auto keyResponse = client.CreateKey(
+        keyName, Azure::Security::KeyVault::Keys::KeyVaultKeyType::EcHsm, options);
+    CheckValidResponse(keyResponse);
+    auto keyVaultKey = keyResponse.Value;
+
+    EXPECT_EQ(keyVaultKey.Name(), keyName);
+    EXPECT_EQ(
+        keyVaultKey.GetKeyType().ToString(),
+        Azure::Security::KeyVault::Keys::KeyVaultKeyType::EcHsm.ToString());
+    auto& keyOperations = keyVaultKey.KeyOperations();
+    uint16_t expectedSize = 2;
+    EXPECT_EQ(keyOperations.size(), expectedSize);
+
+    auto findOperation = [keyOperations](Azure::Security::KeyVault::Keys::KeyOperation op) {
+      for (Azure::Security::KeyVault::Keys::KeyOperation operation : keyOperations)
+      {
+        if (operation.ToString() == op.ToString())
+        {
+          return true;
+        }
+      }
+      return false;
+    };
+    EXPECT_PRED1(findOperation, Azure::Security::KeyVault::Keys::KeyOperation::Sign);
+    EXPECT_PRED1(findOperation, Azure::Security::KeyVault::Keys::KeyOperation::Verify);
+    EXPECT_TRUE(keyResponse.Value.Properties.Exportable.HasValue());
+    EXPECT_TRUE(keyResponse.Value.Properties.Exportable.Value());
+    EXPECT_TRUE(keyResponse.Value.Properties.ReleasePolicy.HasValue());
+    auto policy = keyResponse.Value.Properties.ReleasePolicy.Value();
+    EXPECT_TRUE(policy.ContentType.HasValue());
+    EXPECT_EQ(
+        policy.ContentType.Value(),
+        Azure::Security::KeyVault::Keys::_detail::ContentTypeDefaultValue);
+    EXPECT_FALSE(policy.Immutable);
+
+    EXPECT_EQ(
+        Azure::Core::Json::_internal::json::parse(options.ReleasePolicy.Value().Data)
+            .dump(1, ' ', true),
+        Azure::Core::Json::_internal::json::parse(policy.Data).dump(1, ' ', true));
   }
 }

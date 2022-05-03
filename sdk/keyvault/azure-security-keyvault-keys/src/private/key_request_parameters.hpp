@@ -54,6 +54,14 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys { nam
       {
         m_options.Tags = std::unordered_map<std::string, std::string>(key.Tags);
       }
+      if (key.ReleasePolicy)
+      {
+        m_options.ReleasePolicy = key.ReleasePolicy;
+      }
+      if (key.Exportable)
+      {
+        m_options.Exportable = key.Exportable.Value();
+      }
       if (operations)
       {
         m_options.KeyOperations = std::vector<KeyOperation>(operations.Value());

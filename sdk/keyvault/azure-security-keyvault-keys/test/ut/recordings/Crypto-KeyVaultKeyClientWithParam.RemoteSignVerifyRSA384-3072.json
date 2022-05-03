@@ -54,7 +54,7 @@
         "x-ms-request-id": "87334389-af25-4929-b022-6943b199ea3e",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/keys/RemoteSignVerifyRSA384-3072/11e76ee0ce5849f4bc50abe442a95177/sign?api-version=7.2"
+      "Url": "https://REDACTED.vault.azure.net/keys/RemoteSignVerifyRSA384-3072/11e76ee0ce5849f4bc50abe442a95177/sign?api-version=7.3"
     },
     {
       "Headers": {
@@ -82,7 +82,7 @@
         "x-ms-request-id": "cde2de23-2fcc-443e-b31c-a71ab5843a96",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/keys/RemoteSignVerifyRSA384-3072/11e76ee0ce5849f4bc50abe442a95177/verify?api-version=7.2"
+      "Url": "https://REDACTED.vault.azure.net/keys/RemoteSignVerifyRSA384-3072/11e76ee0ce5849f4bc50abe442a95177/verify?api-version=7.3"
     },
     {
       "Headers": {
@@ -110,7 +110,7 @@
         "x-ms-request-id": "869f8e9e-543a-4bb3-b6ae-4850529ad7ea",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/keys/RemoteSignVerifyRSA384-3072/11e76ee0ce5849f4bc50abe442a95177/sign?api-version=7.2"
+      "Url": "https://REDACTED.vault.azure.net/keys/RemoteSignVerifyRSA384-3072/11e76ee0ce5849f4bc50abe442a95177/sign?api-version=7.3"
     },
     {
       "Headers": {
@@ -138,7 +138,7 @@
         "x-ms-request-id": "9605c79b-1f20-479c-b5a0-7c7a408c9307",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/keys/RemoteSignVerifyRSA384-3072/11e76ee0ce5849f4bc50abe442a95177/verify?api-version=7.2"
+      "Url": "https://REDACTED.vault.azure.net/keys/RemoteSignVerifyRSA384-3072/11e76ee0ce5849f4bc50abe442a95177/verify?api-version=7.3"
     }
   ]
 }

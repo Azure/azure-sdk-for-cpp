@@ -54,7 +54,7 @@
         "x-ms-request-id": "9bd053f7-e080-4757-812f-26ec138c214f",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/keys/RemoteEncrypt-0/7d25f3ec18ac4314a334d42a4230f1ab/encrypt?api-version=7.2"
+      "Url": "https://REDACTED.vault.azure.net/keys/RemoteEncrypt-0/7d25f3ec18ac4314a334d42a4230f1ab/encrypt?api-version=7.3"
     },
     {
       "Headers": {
@@ -82,7 +82,7 @@
         "x-ms-request-id": "54ea86c1-9152-4aae-b952-3973343d02f6",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/keys/RemoteEncrypt-0/7d25f3ec18ac4314a334d42a4230f1ab/decrypt?api-version=7.2"
+      "Url": "https://REDACTED.vault.azure.net/keys/RemoteEncrypt-0/7d25f3ec18ac4314a334d42a4230f1ab/decrypt?api-version=7.3"
     }
   ]
 }

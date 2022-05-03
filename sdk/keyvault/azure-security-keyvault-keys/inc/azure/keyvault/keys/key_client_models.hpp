@@ -14,6 +14,7 @@
 #include <azure/core/context.hpp>
 #include <azure/core/datetime.hpp>
 #include <azure/core/http/http.hpp>
+#include <azure/core/internal/extendable_enumeration.hpp>
 #include <azure/core/nullable.hpp>
 #include <azure/core/operation.hpp>
 #include <azure/core/operation_status.hpp>
@@ -130,6 +131,12 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
      * CancellationToken) method.
      */
     AZ_SECURITY_KEYVAULT_KEYS_DLLEXPORT static const KeyOperation Import;
+
+    /**
+     * @brief The key can be exported during creation using the ImportKey(ImportKeyOptions,
+     * CancellationToken) method.
+     */
+    AZ_SECURITY_KEYVAULT_KEYS_DLLEXPORT static const KeyOperation Export;
   };
 
   /**
@@ -293,6 +300,39 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
   };
 
   /**
+   * @brief The encryption algorithm to use to protected the exported key material.
+   *
+   */
+  class KeyEncryptionAlgorithm final
+      : public Azure::Core::_internal::ExtendableEnumeration<KeyEncryptionAlgorithm> {
+  public:
+    /**
+     * @brief Construct a new KeyEncryptionAlgorithm object.
+     *
+     * @param value The string value of the instance.
+     */
+    explicit KeyEncryptionAlgorithm(std::string value) : ExtendableEnumeration(std::move(value)) {}
+
+    /**
+     * @brief Gets the CKM_RSA_AES_KEY_WRAP algorithm.
+     *
+     */
+    AZ_SECURITY_KEYVAULT_KEYS_DLLEXPORT static const KeyEncryptionAlgorithm CKM_RSA_AES_KEY_WRAP;
+
+    /**
+     * @brief Gets the RSA_AES_KEY_WRAP_256 algorithm.
+     *
+     */
+    AZ_SECURITY_KEYVAULT_KEYS_DLLEXPORT static const KeyEncryptionAlgorithm RSA_AES_KEY_WRAP_256;
+
+    /**
+     * @brief Gets the RSA_AES_KEY_WRAP_384 algorithm.
+     *
+     */
+    AZ_SECURITY_KEYVAULT_KEYS_DLLEXPORT static const KeyEncryptionAlgorithm RSA_AES_KEY_WRAP_384;
+  };
+
+  /**
    * @brief Represents a JSON Web Key as defined in http://tools.ietf.org/html/rfc7517.
    *
    */
@@ -389,6 +429,34 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
   };
 
   /**
+   * @brief Key Release Policy
+   *
+   */
+  struct KeyReleasePolicy final
+  {
+    /**
+     * @brief Content type and version of key release policy.
+     *
+     * @remark Default value: "application/json; charset=utf-8"
+     */
+    Azure::Nullable<std::string> ContentType;
+
+    /**
+     * @brief Defines the mutability state of the policy. Once marked immutable, this flag cannot be
+     * reset and the policy cannot be changed under any circumstances.
+     *
+     */
+    bool Immutable;
+
+    /**
+     * @brief Blob encoding the policy rules under which the key can be released.
+     *
+     * @remark Format: base64url
+     */
+    std::string Data;
+  };
+
+  /**
    * @brief The resource containing all the properties of the KeyVaultKey except JsonWebKey
    * properties.
    *
@@ -477,6 +545,18 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
      *
      */
     std::string RecoveryLevel;
+
+    /**
+     * @brief The policy rules under which the key can be exported.
+     *
+     */
+    Azure::Nullable<KeyReleasePolicy> ReleasePolicy;
+
+    /**
+     * @brief Indicates if the private key can be exported.
+     *
+     */
+    Azure::Nullable<bool> Exportable;
 
     /**
      * @brief Construct a new Key Properties object.
@@ -1024,5 +1104,4 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
      */
     std::vector<uint8_t> RandomBytes;
   };
-
 }}}} // namespace Azure::Security::KeyVault::Keys

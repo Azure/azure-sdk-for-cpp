@@ -54,7 +54,7 @@
         "x-ms-request-id": "b96c3bec-3ddc-48d4-9bd1-cece416796d0",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/keys/RemoteWrap-13/7b31e1ea51f24187a6197dea5cef6b66/wrapKey?api-version=7.2"
+      "Url": "https://REDACTED.vault.azure.net/keys/RemoteWrap-13/7b31e1ea51f24187a6197dea5cef6b66/wrapKey?api-version=7.3"
     },
     {
       "Headers": {
@@ -82,7 +82,7 @@
         "x-ms-request-id": "77ba8102-cdf2-4e82-a494-b931eccc6952",
         "x-powered-by": "ASP.NET"
       },
-      "Url": "https://REDACTED.vault.azure.net/keys/RemoteWrap-13/7b31e1ea51f24187a6197dea5cef6b66/unwrapKey?api-version=7.2"
+      "Url": "https://REDACTED.vault.azure.net/keys/RemoteWrap-13/7b31e1ea51f24187a6197dea5cef6b66/unwrapKey?api-version=7.3"
     }
   ]
 }

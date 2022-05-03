@@ -69,5 +69,11 @@ Azure::Security::KeyVault::Keys::_detail::ImportKeyOptionsSerializer::ImportKeyO
   }
 
   // release_policy
+  JsonOptional::SetFromNullable<KeyReleasePolicy, Azure::Core::Json::_internal::json>(
+      importKeyOptions.Properties.ReleasePolicy,
+      payload,
+      _detail::ReleasePolicyPropertyName,
+      KeyReleasePolicySerializer::KeyReleasePolicySerialize);
+
   return payload.dump();
 }

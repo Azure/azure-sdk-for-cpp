@@ -3,53 +3,53 @@
     {
       "Headers": {
         "content-type": "application/json",
-        "user-agent": "azsdk-cpp-keyvault-keys/4.3.0-beta.1 (Linux 5.4.0-1063-azure x86_64 #66~18.04.1-Ubuntu SMP Thu Oct 21 09:59:28 UTC 2021)",
-        "x-ms-client-request-id": "e2c342b8-63c6-4c0d-7775-84cb895526ba"
+        "user-agent": "azsdk-cpp-keyvault-keys/4.3.0-beta.1 (Windows 10 Enterprise 6.3 22000 22000.1.amd64fre.co_release.210604-1628)",
+        "x-ms-client-request-id": "4253488d-717b-4589-66dc-6d54c160aef9"
       },
       "Method": "POST",
       "Response": {
-        "BODY": "{\"key\":{\"kid\":\"https://cpp-hsm-recordings.vault.azure.net/keys/CreateRsaHsmKey/11dd5199584c4c4cb053c35984f853cc\",\"kty\":\"RSA-HSM\",\"key_ops\":[\"encrypt\",\"decrypt\",\"sign\",\"verify\",\"wrapKey\",\"unwrapKey\"],\"n\":\"v_8MflM2wjSzGyLL81oWVnXAPzYQvbkcaDiNXgmtHLHMff-NYdDrihNzLanRMsY3t2-R0Ca5LjD8X3kqIs6_VqIorOiQeJJVEyO29SrKkP7zf6P1Eg-CArSXTiUNBQ7a6AwfCXAODprFFIwBnPK6JnU-NsNMc7QOCtHXej5eRMnN2xc_V2rzd-9dbv4GzOnH5Z6o9h-edFvbZJf9_nrGtZaCRqYuW-mvW8a653IMFbgVdSoIHnyZp1FVh3DNOPmNEK_x_Z4Jq9dGZfTat_9fvxTDBKHLXhbfLHtft4X7tivdeeQvaSQw1V0-sGguXW90piJI8tuTCvmR_l3lrgj_YQ\",\"e\":\"AAEAAQ\"},\"attributes\":{\"enabled\":true,\"created\":1638401413,\"updated\":1638401413,\"recoveryLevel\":\"Recoverable+Purgeable\",\"recoverableDays\":90}}",
+        "BODY": "{\"key\":{\"kid\":\"https://REDACTED.vault.azure.net/keys/CreateRsaHsmKey/095403ac2710405593272cf4d7f906ec\",\"kty\":\"RSA-HSM\",\"key_ops\":[\"encrypt\",\"decrypt\",\"sign\",\"verify\",\"wrapKey\",\"unwrapKey\"],\"n\":\"sKKm0idUFMK-WJX1NhfQanxlVy07gRLHJNaIDa06jm9iX48Gm1UbIYZItO2Ln888JaZzuNzCf4DD8yKzkgaykiHHLgMIbGVZOieZaMBcTFujXaLKQt1KYsNT2mjhh9rTNH-RiMzjDniZwkwMcOylJqkRFw2f203Y-RRQXKJIb6Bm779dLWmS6lp3j923GEihMBIb1DRaC2go_IP_tCQGoMbLEEEDh4kBj75viTaGKxcwSXfWbHhtRJRyLIgu4cjwnZ1X0iwOYicXv6vu7usCNrBJvyXMXnyvEaiO26kBE1mRaZ3JzugCpiPYj-FuGpJXK4AgiDn2il8KNJFsFBORTw\",\"e\":\"AAEAAQ\"},\"attributes\":{\"enabled\":true,\"created\":1651169926,\"updated\":1651169926,\"recoveryLevel\":\"Recoverable+Purgeable\",\"recoverableDays\":90}}",
+        "REASON_PHRASE": "OK",
         "STATUS_CODE": "200",
         "cache-control": "no-cache",
-        "content-length": "695",
+        "content-length": "687",
         "content-type": "application/json; charset=utf-8",
-        "date": "Wed, 01 Dec 2021 23:30:14 GMT",
+        "date": "Thu, 28 Apr 2022 18:18:45 GMT",
         "expires": "-1",
         "pragma": "no-cache",
         "strict-transport-security": "max-age=31536000;includeSubDomains",
         "x-content-type-options": "nosniff",
-        "x-ms-client-request-id": "e2c342b8-63c6-4c0d-7775-84cb895526ba",
-        "x-ms-keyvault-network-info": "conn_type=Ipv4;addr=20.49.4.206;act_addr_fam=InterNetwork;",
-        "x-ms-keyvault-region": "eastus",
-        "x-ms-keyvault-service-version": "1.9.195.1",
-        "x-ms-request-id": "3fb4f8b7-7be0-4649-b581-bf68d3f2a04e",
-        "x-powered-by": "ASP.NET"
+        "x-ms-client-request-id": "4253488d-717b-4589-66dc-6d54c160aef9",
+        "x-ms-keyvault-network-info": "conn_type=Ipv4;addr=24.22.157.72;act_addr_fam=InterNetwork;",
+        "x-ms-keyvault-region": "westus3",
+        "x-ms-keyvault-service-version": "1.9.378.1",
+        "x-ms-request-id": "e9d3787d-eb96-46db-8a53-5cf57cc5cc4a"
       },
       "Url": "https://REDACTED.vault.azure.net/keys/CreateRsaHsmKey/create?api-version=7.3"
     },
     {
       "Headers": {
-        "user-agent": "azsdk-cpp-keyvault-keys/4.3.0-beta.1 (Linux 5.4.0-1063-azure x86_64 #66~18.04.1-Ubuntu SMP Thu Oct 21 09:59:28 UTC 2021)",
-        "x-ms-client-request-id": "767733a5-b48a-4f6e-6a55-097ac967130f"
+        "user-agent": "azsdk-cpp-keyvault-keys/4.3.0-beta.1 (Windows 10 Enterprise 6.3 22000 22000.1.amd64fre.co_release.210604-1628)",
+        "x-ms-client-request-id": "315f7a30-4f35-485b-59db-9383f85ad08c"
       },
       "Method": "GET",
       "Response": {
-        "BODY": "{\"key\":{\"kid\":\"https://cpp-hsm-recordings.vault.azure.net/keys/CreateRsaHsmKey/11dd5199584c4c4cb053c35984f853cc\",\"kty\":\"RSA-HSM\",\"key_ops\":[\"encrypt\",\"decrypt\",\"sign\",\"verify\",\"wrapKey\",\"unwrapKey\"],\"n\":\"v_8MflM2wjSzGyLL81oWVnXAPzYQvbkcaDiNXgmtHLHMff-NYdDrihNzLanRMsY3t2-R0Ca5LjD8X3kqIs6_VqIorOiQeJJVEyO29SrKkP7zf6P1Eg-CArSXTiUNBQ7a6AwfCXAODprFFIwBnPK6JnU-NsNMc7QOCtHXej5eRMnN2xc_V2rzd-9dbv4GzOnH5Z6o9h-edFvbZJf9_nrGtZaCRqYuW-mvW8a653IMFbgVdSoIHnyZp1FVh3DNOPmNEK_x_Z4Jq9dGZfTat_9fvxTDBKHLXhbfLHtft4X7tivdeeQvaSQw1V0-sGguXW90piJI8tuTCvmR_l3lrgj_YQ\",\"e\":\"AAEAAQ\"},\"attributes\":{\"enabled\":true,\"created\":1638401413,\"updated\":1638401413,\"recoveryLevel\":\"Recoverable+Purgeable\",\"recoverableDays\":90}}",
+        "BODY": "{\"key\":{\"kid\":\"https://REDACTED.vault.azure.net/keys/CreateRsaHsmKey/095403ac2710405593272cf4d7f906ec\",\"kty\":\"RSA-HSM\",\"key_ops\":[\"encrypt\",\"decrypt\",\"sign\",\"verify\",\"wrapKey\",\"unwrapKey\"],\"n\":\"sKKm0idUFMK-WJX1NhfQanxlVy07gRLHJNaIDa06jm9iX48Gm1UbIYZItO2Ln888JaZzuNzCf4DD8yKzkgaykiHHLgMIbGVZOieZaMBcTFujXaLKQt1KYsNT2mjhh9rTNH-RiMzjDniZwkwMcOylJqkRFw2f203Y-RRQXKJIb6Bm779dLWmS6lp3j923GEihMBIb1DRaC2go_IP_tCQGoMbLEEEDh4kBj75viTaGKxcwSXfWbHhtRJRyLIgu4cjwnZ1X0iwOYicXv6vu7usCNrBJvyXMXnyvEaiO26kBE1mRaZ3JzugCpiPYj-FuGpJXK4AgiDn2il8KNJFsFBORTw\",\"e\":\"AAEAAQ\"},\"attributes\":{\"enabled\":true,\"created\":1651169926,\"updated\":1651169926,\"recoveryLevel\":\"Recoverable+Purgeable\",\"recoverableDays\":90}}",
+        "REASON_PHRASE": "OK",
         "STATUS_CODE": "200",
         "cache-control": "no-cache",
-        "content-length": "695",
+        "content-length": "687",
         "content-type": "application/json; charset=utf-8",
-        "date": "Wed, 01 Dec 2021 23:30:14 GMT",
+        "date": "Thu, 28 Apr 2022 18:18:45 GMT",
         "expires": "-1",
         "pragma": "no-cache",
         "strict-transport-security": "max-age=31536000;includeSubDomains",
         "x-content-type-options": "nosniff",
-        "x-ms-client-request-id": "767733a5-b48a-4f6e-6a55-097ac967130f",
-        "x-ms-keyvault-network-info": "conn_type=Ipv4;addr=20.49.4.206;act_addr_fam=InterNetwork;",
-        "x-ms-keyvault-region": "eastus",
-        "x-ms-keyvault-service-version": "1.9.195.1",
-        "x-ms-request-id": "1d3dc4f1-c92b-46c6-8a5e-042397fc5c9c",
-        "x-powered-by": "ASP.NET"
+        "x-ms-client-request-id": "315f7a30-4f35-485b-59db-9383f85ad08c",
+        "x-ms-keyvault-network-info": "conn_type=Ipv4;addr=24.22.157.72;act_addr_fam=InterNetwork;",
+        "x-ms-keyvault-region": "westus3",
+        "x-ms-keyvault-service-version": "1.9.378.1",
+        "x-ms-request-id": "3ea74b94-d97c-4800-83ba-3c7f66afd6d9"
       },
       "Url": "https://REDACTED.vault.azure.net/keys/CreateRsaHsmKey?api-version=7.3"
     }
