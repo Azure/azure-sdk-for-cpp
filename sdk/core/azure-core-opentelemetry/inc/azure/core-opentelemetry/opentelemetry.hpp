@@ -136,6 +136,8 @@ namespace Azure { namespace Core { namespace Tracing { namespace OpenTelemetry {
     std::shared_ptr<Azure::Core::Tracing::Span> CreateSpan(
         std::string const& spanName,
         CreateSpanOptions const& options) const override;
+
+    std::unique_ptr<Azure::Core::Tracing::AttributeSet> CreateAttributeSet() const override;
   };
 
   class OpenTelemetryProvider final : public Azure::Core::Tracing::TracerProvider {

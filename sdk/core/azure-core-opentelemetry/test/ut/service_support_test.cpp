@@ -27,64 +27,64 @@
 #include <chrono>
 #include <gtest/gtest.h>
 
-class OpenTelemetryServiceTests : public Azure::Core::Test::TestBase {
-private:
-  class CustomLogHandler : public opentelemetry::sdk::common::internal_log::LogHandler {
-    void Handle(
-        opentelemetry::sdk::common::internal_log::LogLevel,
-        const char* file,
-        int line,
-        const char* msg,
-        const opentelemetry::sdk::common::AttributeMap& attributes) noexcept override
+class CustomLogHandler : public opentelemetry::sdk::common::internal_log::LogHandler {
+  void Handle(
+      opentelemetry::sdk::common::internal_log::LogLevel,
+      const char* file,
+      int line,
+      const char* msg,
+      const opentelemetry::sdk::common::AttributeMap& attributes) noexcept override
+  {
+    GTEST_LOG_(INFO) << "File: " << std::string(file) << " (" << line << "): " << std::string(msg)
+                     << std::endl;
+    if (!attributes.empty())
     {
-      GTEST_LOG_(INFO) << "File: " << std::string(file) << " (" << line << "): " << std::string(msg)
-                       << std::endl;
-      if (!attributes.empty())
+      for (auto& attribute : attributes)
       {
-        for (auto& attribute : attributes)
+        GTEST_LOG_(INFO) << "Attribute " << attribute.first << ": ";
+        switch (attribute.second.index())
         {
-          GTEST_LOG_(INFO) << "Attribute " << attribute.first << ": ";
-          switch (attribute.second.index())
-          {
-            case opentelemetry::sdk::common::kTypeBool:
-              GTEST_LOG_(INFO) << opentelemetry::nostd::get<bool>(attribute.second);
-              break;
-            case opentelemetry::sdk::common::kTypeInt:
-              GTEST_LOG_(INFO) << opentelemetry::nostd::get<int>(attribute.second);
-              break;
-            case opentelemetry::sdk::common::kTypeUInt:
-              GTEST_LOG_(INFO) << opentelemetry::nostd::get<uint32_t>(attribute.second);
-              break;
-            case opentelemetry::sdk::common::kTypeInt64:
-              GTEST_LOG_(INFO) << opentelemetry::nostd::get<int64_t>(attribute.second);
-              break;
-            case opentelemetry::sdk::common::kTypeDouble:
-              GTEST_LOG_(INFO) << opentelemetry::nostd::get<double>(attribute.second);
-              break;
+          case opentelemetry::sdk::common::kTypeBool:
+            GTEST_LOG_(INFO) << opentelemetry::nostd::get<bool>(attribute.second);
+            break;
+          case opentelemetry::sdk::common::kTypeInt:
+            GTEST_LOG_(INFO) << opentelemetry::nostd::get<int>(attribute.second);
+            break;
+          case opentelemetry::sdk::common::kTypeUInt:
+            GTEST_LOG_(INFO) << opentelemetry::nostd::get<uint32_t>(attribute.second);
+            break;
+          case opentelemetry::sdk::common::kTypeInt64:
+            GTEST_LOG_(INFO) << opentelemetry::nostd::get<int64_t>(attribute.second);
+            break;
+          case opentelemetry::sdk::common::kTypeDouble:
+            GTEST_LOG_(INFO) << opentelemetry::nostd::get<double>(attribute.second);
+            break;
 
-            case opentelemetry::sdk::common::kTypeString:
-              GTEST_LOG_(INFO) << opentelemetry::nostd::get<std::string>(attribute.second);
-              break;
+          case opentelemetry::sdk::common::kTypeString:
+            GTEST_LOG_(INFO) << opentelemetry::nostd::get<std::string>(attribute.second);
+            break;
 
-            case opentelemetry::sdk::common::kTypeSpanBool:
-            case opentelemetry::sdk::common::kTypeSpanInt:
-            case opentelemetry::sdk::common::kTypeSpanUInt:
-            case opentelemetry::sdk::common::kTypeSpanInt64:
-            case opentelemetry::sdk::common::kTypeSpanDouble:
-            case opentelemetry::sdk::common::kTypeSpanString:
-            case opentelemetry::sdk::common::kTypeUInt64:
-            case opentelemetry::sdk::common::kTypeSpanUInt64:
-            case opentelemetry::sdk::common::kTypeSpanByte:
-              GTEST_LOG_(INFO) << opentelemetry::nostd::get<bool>(attribute.second);
-              GTEST_LOG_(INFO) << "SPAN";
-              break;
-          }
-          GTEST_LOG_(INFO) << std::endl;
+          case opentelemetry::sdk::common::kTypeSpanBool:
+          case opentelemetry::sdk::common::kTypeSpanInt:
+          case opentelemetry::sdk::common::kTypeSpanUInt:
+          case opentelemetry::sdk::common::kTypeSpanInt64:
+          case opentelemetry::sdk::common::kTypeSpanDouble:
+          case opentelemetry::sdk::common::kTypeSpanString:
+          case opentelemetry::sdk::common::kTypeUInt64:
+          case opentelemetry::sdk::common::kTypeSpanUInt64:
+          case opentelemetry::sdk::common::kTypeSpanByte:
+            GTEST_LOG_(INFO) << opentelemetry::nostd::get<bool>(attribute.second);
+            GTEST_LOG_(INFO) << "SPAN";
+            break;
         }
+        GTEST_LOG_(INFO) << std::endl;
       }
     }
-  };
+  }
+};
 
+class OpenTelemetryServiceTests : public Azure::Core::Test::TestBase {
+private:
 protected:
   std::shared_ptr<opentelemetry::exporter::memory::InMemorySpanData> m_spanData;
 
@@ -153,6 +153,14 @@ TEST_F(OpenTelemetryServiceTests, SimplestTest)
     auto contextAndSpan = serviceTrace.CreateSpan("My API", {});
     EXPECT_FALSE(contextAndSpan.first.IsCancelled());
   }
+}
+
+TEST_F(OpenTelemetryServiceTests, CreateWithExplicitProvider)
+{
+  // Create a serviceTrace, set it and retrieve it via a Context object. This verifies that we can
+  // round-trip telemetry providers through a Context (which allows us to hook this up to the
+  // ApplicationContext later).
+  //
   {
     auto tracerProvider(CreateOpenTelemetryProvider());
     auto provider(std::make_shared<Azure::Core::Tracing::OpenTelemetry::OpenTelemetryProvider>(
@@ -160,6 +168,50 @@ TEST_F(OpenTelemetryServiceTests, SimplestTest)
 
     Azure::Core::Context rootContext;
     rootContext.SetTracerProvider(provider);
+    EXPECT_EQ(provider, rootContext.GetTracerProvider());
+  }
+
+  {
+    auto tracerProvider(CreateOpenTelemetryProvider());
+    auto provider(std::make_shared<Azure::Core::Tracing::OpenTelemetry::OpenTelemetryProvider>(
+        tracerProvider));
+
+    // Create a serviceTrace and span using a provider specified in the ClientOptions.
+    {
+      Azure::Core::_internal::ClientOptions clientOptions;
+      clientOptions.Telemetry.TracingProvider = provider;
+      clientOptions.Telemetry.ApplicationId = "MyApplication";
+
+      Azure::Core::Tracing::_internal::ServiceTracing serviceTrace(
+          clientOptions, "my-service", "1.0beta-2");
+
+      Azure::Core::Context clientContext;
+      auto contextAndSpan = serviceTrace.CreateSpan("My API", clientContext);
+      EXPECT_FALSE(contextAndSpan.first.IsCancelled());
+    }
+    // Now let's verify what was logged via OpenTelemetry.
+    auto spans = m_spanData->GetSpans();
+    EXPECT_EQ(1ul, spans.size());
+
+    EXPECT_EQ("My API", spans[0]->GetName());
+    auto attributes = spans[0]->GetAttributes();
+    auto azNamespace = attributes["az.namespace"];
+    auto namespaceVal = opentelemetry::nostd::get<std::string>(azNamespace);
+    EXPECT_EQ("my-service", namespaceVal);
+    auto library = spans[0]->GetInstrumentationLibrary();
+    EXPECT_EQ("my-service", library.GetName());
+    EXPECT_EQ("1.0beta-2", library.GetVersion());
+  }
+}
+
+TEST_F(OpenTelemetryServiceTests, CreateWithImplicitProvider)
+{
+  {
+    auto tracerProvider(CreateOpenTelemetryProvider());
+    auto provider(std::make_shared<Azure::Core::Tracing::OpenTelemetry::OpenTelemetryProvider>(
+        tracerProvider));
+
+    Azure::Core::Context::ApplicationContext.SetTracerProvider(provider);
 
     {
       Azure::Core::_internal::ClientOptions clientOptions;
@@ -168,9 +220,74 @@ TEST_F(OpenTelemetryServiceTests, SimplestTest)
       Azure::Core::Tracing::_internal::ServiceTracing serviceTrace(
           clientOptions, "my-service", "1.0beta-2");
 
-      Azure::Core::Context clientContext(rootContext);
+      Azure::Core::Context clientContext;
       auto contextAndSpan = serviceTrace.CreateSpan("My API", clientContext);
       EXPECT_FALSE(contextAndSpan.first.IsCancelled());
     }
+
+    // Now let's verify what was logged via OpenTelemetry.
+    auto spans = m_spanData->GetSpans();
+    EXPECT_EQ(1ul, spans.size());
+    EXPECT_EQ("My API", spans[0]->GetName());
+    auto attributes = spans[0]->GetAttributes();
+    EXPECT_EQ("my-service", opentelemetry::nostd::get<std::string>(attributes["az.namespace"]));
+    EXPECT_EQ("my-service", spans[0]->GetInstrumentationLibrary().GetName());
+    EXPECT_EQ("1.0beta-2", spans[0]->GetInstrumentationLibrary().GetVersion());
+  }
+
+  // Clear the global tracer provider set earlier in the test.
+  Azure::Core::Context::ApplicationContext.SetTracerProvider(nullptr);
+}
+
+TEST_F(OpenTelemetryServiceTests, NestSpans)
+{
+  {
+    auto tracerProvider(CreateOpenTelemetryProvider());
+    auto provider(std::make_shared<Azure::Core::Tracing::OpenTelemetry::OpenTelemetryProvider>(
+        tracerProvider));
+
+    Azure::Core::Context::ApplicationContext.SetTracerProvider(provider);
+
+    {
+      Azure::Core::_internal::ClientOptions clientOptions;
+      clientOptions.Telemetry.ApplicationId = "MyApplication";
+
+      Azure::Core::Tracing::_internal::ServiceTracing serviceTrace(
+          clientOptions, "my-service", "1.0beta-2");
+
+      Azure::Core::Context parentContext;
+      auto contextAndSpan = serviceTrace.CreateSpan("My API", parentContext);
+      EXPECT_FALSE(contextAndSpan.first.IsCancelled());
+      parentContext = contextAndSpan.first;
+
+      {
+        auto innerContextAndSpan = serviceTrace.CreateSpan("Nested API", parentContext);
+        EXPECT_FALSE(innerContextAndSpan.first.IsCancelled());
+      }
+    }
+    // Now let's verify what was logged via OpenTelemetry.
+    auto spans = m_spanData->GetSpans();
+    EXPECT_EQ(2ul, spans.size());
+    {
+      EXPECT_EQ("My API", spans[0]->GetName());
+      EXPECT_FALSE(spans[0]->GetParentSpanId().IsValid());
+
+      auto attributes = spans[0]->GetAttributes();
+      EXPECT_EQ(1ul, attributes.size());
+      EXPECT_EQ("my-service", opentelemetry::nostd::get<std::string>(attributes["az.namespace"]));
+    }
+
+    {
+      EXPECT_EQ("Nested API", spans[1]->GetName());
+      EXPECT_TRUE(spans[1]->GetParentSpanId().IsValid());
+      // The nested span should have the outer span as a parent.
+      EXPECT_EQ(spans[0]->GetSpanId(), spans[1]->GetParentSpanId());
+
+      auto attributes = spans[0]->GetAttributes();
+      EXPECT_EQ(1ul, attributes.size());
+      EXPECT_EQ("my-service", opentelemetry::nostd::get<std::string>(attributes["az.namespace"]));
+    }
+    EXPECT_EQ("my-service", spans[0]->GetInstrumentationLibrary().GetName());
+    EXPECT_EQ("1.0beta-2", spans[0]->GetInstrumentationLibrary().GetVersion());
   }
 }

@@ -262,6 +262,8 @@ namespace Azure { namespace Core { namespace Tracing {
     virtual std::shared_ptr<Azure::Core::Tracing::Span> CreateSpan(
         std::string const& spanName,
         CreateSpanOptions const& options = {}) const = 0;
+
+    virtual std::unique_ptr<Azure::Core::Tracing::AttributeSet> CreateAttributeSet() const = 0;
   };
 
   /**

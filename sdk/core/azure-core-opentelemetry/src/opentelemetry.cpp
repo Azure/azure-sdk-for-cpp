@@ -37,6 +37,12 @@ namespace Azure { namespace Core { namespace Tracing { namespace OpenTelemetry {
     return std::make_shared<Azure::Core::Tracing::OpenTelemetry::OpenTelemetryTracer>(returnTracer);
   }
 
+  std::unique_ptr<Azure::Core::Tracing::AttributeSet> OpenTelemetryTracer::CreateAttributeSet()
+      const
+  {
+    return std::make_unique<OpenTelemetryAttributeSet>();
+  }
+
   OpenTelemetryTracer::OpenTelemetryTracer(
       opentelemetry::nostd::shared_ptr<opentelemetry::trace::Tracer> tracer)
       : m_tracer(tracer)

@@ -6,7 +6,7 @@
 #include "azure/core/tracing/tracing.hpp"
 
 /**
- * 
+ *
  * @brief Helper classes to enable service client distributed tracing implementations.
  * @remark See #policy.hpp
  */
@@ -27,7 +27,13 @@ namespace Azure { namespace Core { namespace Tracing { namespace _internal {
   private:
     std::shared_ptr<Azure::Core::Tracing::Span> m_span;
 
+    friend class ServiceTracing;
+    ServiceSpan(std::shared_ptr<Azure::Core::Tracing::Span>& span) : m_span(span) {}
+
+    ServiceSpan() = default;
+
   public:
+    ServiceSpan(const ServiceSpan&) = default;
     void End(Azure::Nullable<Azure::DateTime>) override
     {
       if (m_span)
@@ -123,6 +129,7 @@ namespace Azure { namespace Core { namespace Tracing { namespace _internal {
     std::string m_serviceName;
     std::string m_serviceVersion;
     std::shared_ptr<Azure::Core::Tracing::Tracer> m_serviceTracer;
+    Azure::Core::Context::Key SpanKey;
 
   public:
     ServiceTracing(
@@ -130,7 +137,10 @@ namespace Azure { namespace Core { namespace Tracing { namespace _internal {
         std::string serviceName,
         std::string serviceVersion)
         : m_serviceName(serviceName), m_serviceVersion(serviceVersion),
-        m_serviceTracer(options.Telemetry.TracingProvider->CreateTracer(serviceName, serviceVersion))
+          m_serviceTracer(
+              options.Telemetry.TracingProvider
+                  ? options.Telemetry.TracingProvider->CreateTracer(serviceName, serviceVersion)
+                  : nullptr)
     {
     }
 
@@ -138,7 +148,19 @@ namespace Azure { namespace Core { namespace Tracing { namespace _internal {
 
     std::pair<Azure::Core::Context, ServiceSpan> CreateSpan(
         std::string const& spanName,
-        Azure::Core::Context clientContext);
+        Azure::Core::Context const& clientContext);
+  };
+
+  class TracingAttributes : public Azure::Core::_internal::ExtendableEnumeration<TracingAttributes> {
+  public:
+    explicit TracingAttributes(std::string const& that) : ExtendableEnumeration(that) {}
+
+    /**
+     * @brief Represents an "Internal" operation.
+     *
+     */
+    AZ_CORE_DLLEXPORT const static TracingAttributes AzNamespace;
+
   };
 
 }}}} // namespace Azure::Core::Tracing::_internal

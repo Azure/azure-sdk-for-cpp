@@ -40,7 +40,8 @@ endif()
 target_include_directories (azure-core-opentelemetry-test PRIVATE $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/../../src>)
 
 target_link_libraries(azure-core-opentelemetry-test PRIVATE azure-core-opentelemetry 
-    azure-core 
+    azure-core
+    azure-identity
     opentelemetry-cpp::ostream_span_exporter
     opentelemetry-cpp::in_memory_span_exporter
     opentelemetry-cpp::sdk
