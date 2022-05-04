@@ -12,9 +12,11 @@
 #include <windows.h>
 #else
 #include <dirent.h>
+#include <errno.h>
 #include <sys/types.h>
 #endif
 
+#include <cstring>
 #include <cwchar>
 #include <memory>
 #include <stdexcept>
@@ -104,9 +106,59 @@ namespace Azure { namespace Storage { namespace DataMovement { namespace _intern
   }
 
 #else
-  DirectoryIterator::DirectoryIterator(const std::string& rootDirectory) {}
-  DirectoryIterator::~DirectoryIterator() {}
+  struct ListDirectoryContext
+  {
+    DIR* DirectoryPointer = nullptr;
 
-  std::string DirectoryIterator::Next() {}
+    ~ListDirectoryContext()
+    {
+      if (DirectoryPointer != nullptr)
+      {
+        closedir(DirectoryPointer);
+      }
+    }
+  };
+
+  DirectoryIterator::DirectoryIterator(const std::string& rootDirectory)
+  {
+    auto context = std::make_unique<ListDirectoryContext>();
+    context->DirectoryPointer = opendir(rootDirectory.data());
+    if (context->DirectoryPointer == nullptr)
+    {
+      throw std::runtime_error("Failed to open directory.");
+    }
+    m_directroyObject = context.release();
+  }
+  DirectoryIterator::~DirectoryIterator()
+  {
+    if (m_directroyObject)
+    {
+      delete static_cast<ListDirectoryContext*>(m_directroyObject);
+    }
+  }
+
+  DirectoryIterator::DirectoryEntry DirectoryIterator::Next()
+  {
+    auto context = static_cast<ListDirectoryContext*>(m_directroyObject);
+    errno = 0;
+    struct dirent* entry = readdir(context->DirectoryPointer);
+    if (entry == nullptr && errno == 0)
+    {
+      return DirectoryEntry();
+    }
+    else if (entry == nullptr)
+    {
+      throw std::runtime_error("Failed to list directory.");
+    }
+    if (std::strcmp(entry->d_name, ".") == 0 || std::strcmp(entry->d_name, "..") == 0)
+    {
+      return Next();
+    }
+
+    DirectoryEntry e;
+    e.Name = entry->d_name;
+    e.IsDirectory = entry->d_type & DT_DIR;
+    return e;
+  }
 #endif
 }}}} // namespace Azure::Storage::DataMovement::_internal
