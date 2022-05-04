@@ -92,7 +92,7 @@ If the CMake option _-DCMAKE_TOOLCHAIN_FILE=..._ is not defined to generate the 
 </tr>
 <tr>
 <td>VCPKG_ROOT</td>
-<td>Use this varible to set an existing Vcpkg folder from your system to be linked for building. Use this, for example, when working with Vcpkg classic mode, to switch between different Vcpkg folders.</td>
+<td>Use this variable to set an existing Vcpkg folder from your system to be linked for building. Use this, for example, when working with Vcpkg classic mode, to switch between different Vcpkg folders.</td>
 </tr>
 </table>
 

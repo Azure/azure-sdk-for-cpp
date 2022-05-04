@@ -47,7 +47,7 @@ Azure SDK provides a CMake module that you can use for your application. You onl
 The AzureVcpkg module supports three scenarios:
 
 1. Getting and setting up Vcpkg automatically (default case). You can set the env var `AZURE_SDK_DISABLE_AUTO_VCPKG` to disable this bahavior.
-2. Automatically linking your application to an existing Vcpkg folder. Set the enviroment variable `VCPKG_ROOT` to the Vcpkg folder you want to link.
+2. Automatically linking your application to an existing Vcpkg folder. Set the environment variable `VCPKG_ROOT` to the Vcpkg folder you want to link.
 3. Manually setting a toolchain file with cmake command option. `AzureVcpkg.cmake` module will respect the option.
 
 Add the next lines to your root `CMakeLists.txt` to use `AzureVcpkg.cmake` module:
@@ -139,7 +139,7 @@ The only difference from the previous scenario is that you don't need to call `f
 target_link_libraries(quick-sample PRIVATE Azure::azure-identity Azure::azure-storage-blobs)
 ```
 
-> Note: You need to take care of gettig the Azure SDK dependecies on your own. Either manually installing them or by integrating the source code to your project as well.
+> Note: You need to take care of getting the Azure SDK dependencies on your own. Either manually installing them or by integrating the source code to your project as well.
 
 Use step 5 from previous scenario to generate and build your project.
 
@@ -147,7 +147,7 @@ Use step 5 from previous scenario to generate and build your project.
 
 #### Other combinations
 
-It should be possible to create your application without a CMake project. For example, manually cloning Azure SDK, building libraries and finally linking them to your aplication. However, this is considered an advanced scenario and it is not either described or maintained (The other scenarios described below are validated with CI pipelines).
+It should be possible to create your application without a CMake project. For example, manually cloning Azure SDK, building libraries and finally linking them to your application. However, this is considered an advanced scenario and it is not either described or maintained (The other scenarios described below are validated with CI pipelines).
 
 #### Getting Beta Releases in Vcpkg
 
