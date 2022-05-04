@@ -28,12 +28,26 @@ namespace Azure { namespace Core { namespace Tracing { namespace _internal {
     std::shared_ptr<Azure::Core::Tracing::Span> m_span;
 
     friend class ServiceTracing;
-    ServiceSpan(std::shared_ptr<Azure::Core::Tracing::Span>& span) : m_span(span) {}
+    explicit ServiceSpan(std::shared_ptr<Azure::Core::Tracing::Span>& span) : m_span(span) {}
 
     ServiceSpan() = default;
 
+    ServiceSpan(const ServiceSpan&) = delete;
+    ServiceSpan& operator=(ServiceSpan const&) = delete;
+
+    ServiceSpan& operator=(ServiceSpan&&) noexcept = default;
+
   public:
-    ServiceSpan(const ServiceSpan&) = default;
+    ServiceSpan(ServiceSpan&& that) = default;
+
+    ~ServiceSpan()
+    {
+      if (m_span)
+      {
+        m_span->End();
+      }
+    }
+
     void End(Azure::Nullable<Azure::DateTime>) override
     {
       if (m_span)
@@ -108,14 +122,6 @@ namespace Azure { namespace Core { namespace Tracing { namespace _internal {
         m_span->AddEvent(exception);
       }
     }
-
-    ~ServiceSpan()
-    {
-      if (m_span)
-      {
-        m_span->End();
-      }
-    }
   };
 
   /**
@@ -133,7 +139,7 @@ namespace Azure { namespace Core { namespace Tracing { namespace _internal {
 
   public:
     ServiceTracing(
-        Azure::Core::_internal::ClientOptions& options,
+        Azure::Core::_internal::ClientOptions const& options,
         std::string serviceName,
         std::string serviceVersion)
         : m_serviceName(serviceName), m_serviceVersion(serviceVersion),
@@ -151,7 +157,8 @@ namespace Azure { namespace Core { namespace Tracing { namespace _internal {
         Azure::Core::Context const& clientContext);
   };
 
-  class TracingAttributes : public Azure::Core::_internal::ExtendableEnumeration<TracingAttributes> {
+  class TracingAttributes
+      : public Azure::Core::_internal::ExtendableEnumeration<TracingAttributes> {
   public:
     explicit TracingAttributes(std::string const& that) : ExtendableEnumeration(that) {}
 
@@ -160,7 +167,6 @@ namespace Azure { namespace Core { namespace Tracing { namespace _internal {
      *
      */
     AZ_CORE_DLLEXPORT const static TracingAttributes AzNamespace;
-
   };
 
 }}}} // namespace Azure::Core::Tracing::_internal

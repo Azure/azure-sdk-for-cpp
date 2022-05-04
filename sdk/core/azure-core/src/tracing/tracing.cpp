@@ -41,7 +41,7 @@ namespace Azure { namespace Core { namespace Tracing { namespace _internal {
           m_serviceTracer->CreateSpan(methodName, createOptions));
       Azure::Core::Context newContext = context.WithValue(SpanKey, newSpan);
       ServiceSpan newServiceSpan(newSpan);
-      return std::make_pair(newContext, newServiceSpan);
+      return std::make_pair<Azure::Core::Context, ServiceSpan>(std::move(newContext), std::move(newServiceSpan));
     }
     else
     {

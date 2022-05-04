@@ -18,11 +18,5 @@
       "platform": "!uwp",
       "version>=": "1.3.0"
     }
-  ],
-  "overrides": [
-    {
-      "name": "openssl",
-      "version-string": "1.1.1n"
-    }
   ]
 }
