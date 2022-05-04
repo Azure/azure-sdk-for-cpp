@@ -34,3 +34,17 @@ Azure::Security::KeyVault::Keys::_detail::KeyReleaseOptionsSerializer::KeyReleas
 
   return payload.dump();
 }
+
+ReleaseKeyResult
+Azure::Security::KeyVault::Keys::_detail::KeyReleaseOptionsSerializer::KeyReleaseOptionsDeserialize(
+    Azure::Core::Http::RawResponse const& rawResponse)
+{
+  ReleaseKeyResult result;
+
+  auto const& body = rawResponse.GetBody();
+  auto jsonParser = Azure::Core::Json::_internal::json::parse(body);
+
+  result.Value = jsonParser[_detail::ValueParameterValue].get<std::string>();
+
+  return result;
+}

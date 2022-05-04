@@ -249,10 +249,9 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
      * @param version The key version.
      * @param options The options for the key release operation.
      * @param context A cancellation token controlling the request lifetime.
-     * @return A JWS containing the key, its attributes, the result of the key release, and
-     * information about the request.
+     * @return ReleaseKeyResult object.
      */
-    Azure::Response<std::string> ReleaseKey(
+    Azure::Response<ReleaseKeyResult> ReleaseKey(
         std::string const& name,
         std::string const& version,
         KeyReleaseOptions const& options,

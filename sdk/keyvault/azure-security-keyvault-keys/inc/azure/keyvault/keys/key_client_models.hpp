@@ -1133,4 +1133,17 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
      */
     std::vector<uint8_t> RandomBytes;
   };
+
+  /**
+  * @brief The release result, containing the released key.
+  * 
+  */
+  struct ReleaseKeyResult
+  {
+    /**
+    * @brief A signed object containing the released key.
+    * 
+    */
+    std::string Value;
+  };
 }}}} // namespace Azure::Security::KeyVault::Keys

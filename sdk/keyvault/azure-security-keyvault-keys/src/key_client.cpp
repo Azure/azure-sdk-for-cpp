@@ -236,7 +236,7 @@ Azure::Security::KeyVault::Keys::DeleteKeyOperation KeyClient::StartDeleteKey(
       std::make_shared<KeyClient>(*this), std::move(responseT));
 }
 
-Azure::Response<std::string> KeyClient::ReleaseKey(
+Azure::Response<ReleaseKeyResult> KeyClient::ReleaseKey(
     std::string const& name,
     std::string const& version,
     KeyReleaseOptions const& options,    
@@ -252,8 +252,8 @@ Azure::Response<std::string> KeyClient::ReleaseKey(
   request.SetHeader(HttpShared::ContentType, HttpShared::ApplicationJson);
   // Send and parse respone
   auto rawResponse = SendRequest(request, context);
-  auto value = _detail::DeletedKeySerializer::DeletedKeyDeserialize(name, *rawResponse);
-  return Azure::Response<std::string>("", std::move(rawResponse));
+  auto value = _detail::KeyReleaseOptionsSerializer::KeyReleaseOptionsDeserialize(*rawResponse);
+  return Azure::Response<ReleaseKeyResult>(value, std::move(rawResponse));
 }
 
 Azure::Security::KeyVault::Keys::RecoverDeletedKeyOperation KeyClient::StartRecoverDeletedKey(

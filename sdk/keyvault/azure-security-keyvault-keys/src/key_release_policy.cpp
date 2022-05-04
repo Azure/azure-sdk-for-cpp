@@ -32,13 +32,13 @@ Azure::Security::KeyVault::Keys::_detail::KeyReleasePolicySerializer::KeyRelease
 
 KeyReleasePolicy
 Azure::Security::KeyVault::Keys::_detail::KeyReleasePolicySerializer::KeyReleasePolicyDeserialize(
-    Azure::Core::Json::_internal::json const& response)
+    Azure::Core::Json::_internal::json const& rawResponse)
 {
   KeyReleasePolicy policy;
-  auto decodedData = Base64Url::Base64UrlDecode(response[_detail::DataValue].get<std::string>());
+  auto decodedData = Base64Url::Base64UrlDecode(rawResponse[_detail::DataValue].get<std::string>());
 
-  policy.ContentType = response[_detail::ContentTypeValue].get<std::string>();
-  policy.Immutable = response[_detail::ImmutableValue].get<bool>();
+  policy.ContentType = rawResponse[_detail::ContentTypeValue].get<std::string>();
+  policy.Immutable = rawResponse[_detail::ImmutableValue].get<bool>();
   policy.Data = std::string(decodedData.begin(), decodedData.end());
 
   return policy;

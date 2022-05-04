@@ -102,8 +102,8 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys { nam
         Azure::Core::Context const& context = Azure::Core::Context::ApplicationContext) const
     {
       json requestJson;
-      std::string encodedData = Azure::Core::_internal::Base64Url::Base64UrlEncode(
-          std::vector<uint8_t>(data.begin(), data.end()));
+      std::string encodedData = data; // Azure::Core::_internal::Base64Url::Base64UrlEncode(
+                                      // std::vector<uint8_t>(data.begin(), data.end()));
       requestJson["attestedData"]
           = json::object({{"dataType", dataType.ToString()}, {"data", encodedData}});
 

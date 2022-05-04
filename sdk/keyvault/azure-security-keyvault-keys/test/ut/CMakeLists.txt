@@ -15,6 +15,7 @@ add_compile_definitions(AZURE_TEST_RECORDING_DIR="${CMAKE_CURRENT_LIST_DIR}")
 ################## Unit Tests ##########################
 add_executable (
   azure-security-keyvault-keys-test
+    attestation_collateral.cpp
     key_client_backup_test_live.cpp
     key_client_base_test.hpp
     key_client_base_test.hpp
