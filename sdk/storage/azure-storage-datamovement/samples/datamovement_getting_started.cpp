@@ -5,7 +5,7 @@
 
 #include <iostream>
 
-#include <azure/storage/datamovement/storage_transfer_manager.hpp>
+#include <azure/storage/datamovement/blob_transfer_manager.hpp>
 
 std::string GetConnectionString()
 {
@@ -25,7 +25,6 @@ std::string GetConnectionString()
 
 int main()
 {
-  using namespace Azure::Storage::DataMovement;
   using namespace Azure::Storage::Blobs;
 
   const std::string containerName = "sample-container";
@@ -33,7 +32,7 @@ int main()
   const std::string localFile = "sample-localfile";
   const std::string localDirectory = "sample-localdir";
 
-  StorageTransferManager m;
+  BlobTransferManager m;
 
   auto blobContainerClient
       = BlobContainerClient::CreateFromConnectionString(GetConnectionString(), containerName);

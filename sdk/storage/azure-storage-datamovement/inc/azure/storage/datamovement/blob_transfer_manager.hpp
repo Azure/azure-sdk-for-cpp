@@ -13,6 +13,12 @@ namespace Azure { namespace Storage { namespace Blobs {
 
   class BlobTransferManager final : public StorageTransferManager {
   public:
+    explicit BlobTransferManager(
+        const StorageTransferManagerOptions& options = StorageTransferManagerOptions())
+        : StorageTransferManager(options)
+    {
+    }
+
     JobProperties ScheduleUpload(
         const std::string& sourceLocalPath,
         const BlobClient& destinationBlob,

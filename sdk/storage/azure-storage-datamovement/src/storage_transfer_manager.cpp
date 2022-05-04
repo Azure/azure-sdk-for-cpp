@@ -7,4 +7,6 @@ namespace Azure { namespace Storage {
   {
   }
 
+  StorageTransferManager::~StorageTransferManager() {}
+
 }} // namespace Azure::Storage
