@@ -332,12 +332,14 @@ TEST_F(OpenTelemetryServiceTests, ServiceApiImplementation)
 
         // <Call Into Service via an HTTP pipeline>
 
+        // Reflect that the operation was successful.
         contextAndSpan.second.SetStatus(Azure::Core::Tracing::SpanStatus::Ok);
         Azure::Response<std::string> rv(
             inputString,
             std::make_unique<Azure::Core::Http::RawResponse>(
                 1, 1, Azure::Core::Http::HttpStatusCode::Ok, "OK"));
         return rv;
+        // When contextAndSpan.second goes out of scope, it ends the span, which will record it.
       }
     };
 
