@@ -4,13 +4,13 @@
 
 #include "azure/storage/datamovement/scheduler.hpp"
 
-namespace Azure { namespace Storage { namespace DataMovement { namespace _internal {
+namespace Azure { namespace Storage { namespace Blobs { namespace _detail {
   namespace {
     constexpr int ListBatchSize = 1000;
   }
   void UploadBlobsFromDirectoryTask::Execute()
   {
-    std::vector<Task> subtasks;
+    std::vector<_internal::Task> subtasks;
 
     bool hasMoreEntries = true;
     while (subtasks.size() < ListBatchSize)
@@ -24,7 +24,7 @@ namespace Azure { namespace Storage { namespace DataMovement { namespace _intern
       if (entry.IsDirectory)
       {
         auto task = std::make_unique<UploadBlobsFromDirectoryTask>(
-            TaskType::NetworkUpload,
+            _internal::TaskType::NetworkUpload,
             m_scheduler,
             Source + '/' + entry.Name,
             Destination.GetBlobFolder(entry.Name));
@@ -33,7 +33,7 @@ namespace Azure { namespace Storage { namespace DataMovement { namespace _intern
       else
       {
         auto task = std::make_unique<UploadBlobFromFileTask>(
-            TaskType::NetworkUpload,
+            _internal::TaskType::NetworkUpload,
             m_scheduler,
             Source + '/' + entry.Name,
             Destination.GetBlobClient(entry.Name));
@@ -52,4 +52,4 @@ namespace Azure { namespace Storage { namespace DataMovement { namespace _intern
       m_scheduler->AddTasks(std::move(subtasks));
     }
   }
-}}}} // namespace Azure::Storage::DataMovement::_internal
+}}}} // namespace Azure::Storage::Blobs::_detail

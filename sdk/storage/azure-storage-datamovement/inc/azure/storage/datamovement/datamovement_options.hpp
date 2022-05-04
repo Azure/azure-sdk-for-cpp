@@ -5,19 +5,20 @@
 
 #include <string>
 
-namespace Azure { namespace Storage { namespace DataMovement {
-
+namespace Azure { namespace Storage {
   struct StorageTransferManagerOptions final
   {
     std::string TransferStateDirectoryPath;
   };
 
-  struct UploadBlobOptions final
-  {
-  };
+  namespace Blobs {
 
-  struct DownloadBlobOptions final
-  {
-  };
+    struct ScheduleUploadBlobOptions final
+    {
+    };
 
-}}} // namespace Azure::Storage::DataMovement
+    struct ScheduleDownloadBlobOptions final
+    {
+    };
+  } // namespace Blobs
+}} // namespace Azure::Storage

@@ -10,7 +10,7 @@
 #pragma warning(disable : 26110 26117)
 #endif
 
-namespace Azure { namespace Storage { namespace DataMovement { namespace _internal {
+namespace Azure { namespace Storage { namespace _internal {
 
   Scheduler::Scheduler(const SchedulerOptions& options) : m_options(options)
   {
@@ -284,4 +284,4 @@ namespace Azure { namespace Storage { namespace DataMovement { namespace _intern
     }
   }
 
-}}}} // namespace Azure::Storage::DataMovement::_internal
+}}} // namespace Azure::Storage::_internal

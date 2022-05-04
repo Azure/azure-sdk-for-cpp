@@ -14,10 +14,6 @@
 #include "azure/storage/blobs/blob_options.hpp"
 #include "azure/storage/blobs/blob_responses.hpp"
 
-namespace Azure { namespace Storage { namespace DataMovement {
-  class BlobFolder;
-}}} // namespace Azure::Storage::DataMovement
-
 namespace Azure { namespace Storage { namespace Files { namespace DataLake {
   class DataLakeFileSystemClient;
   class DataLakeDirectoryClient;
@@ -30,6 +26,7 @@ namespace Azure { namespace Storage { namespace Blobs {
   class AppendBlobClient;
   class PageBlobClient;
   class BlobLeaseClient;
+  class BlobFolder;
 
   /**
    * @brief The BlobClient allows you to manipulate Azure Storage blobs.
@@ -435,6 +432,6 @@ namespace Azure { namespace Storage { namespace Blobs {
     friend class Files::DataLake::DataLakeDirectoryClient;
     friend class Files::DataLake::DataLakeFileClient;
     friend class BlobLeaseClient;
-    friend class DataMovement::BlobFolder;
+    friend class BlobFolder;
   };
 }}} // namespace Azure::Storage::Blobs

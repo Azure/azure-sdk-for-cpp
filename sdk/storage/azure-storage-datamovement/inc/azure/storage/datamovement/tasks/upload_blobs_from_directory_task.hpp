@@ -12,13 +12,13 @@
 #include "azure/storage/datamovement/directory_iterator.hpp"
 #include "azure/storage/datamovement/task.hpp"
 
-namespace Azure { namespace Storage { namespace DataMovement { namespace _internal {
+namespace Azure { namespace Storage { namespace Blobs { namespace _detail {
 
-  struct UploadBlobsFromDirectoryTask final : public TaskBase
+  struct UploadBlobsFromDirectoryTask final : public Storage::_internal::TaskBase
   {
     explicit UploadBlobsFromDirectoryTask(
-        TaskType type,
-        Scheduler* scheduler,
+        Storage::_internal::TaskType type,
+        Storage::_internal::Scheduler* scheduler,
         const std::string& source,
         const BlobFolder& destination)
         : TaskBase(type, scheduler), Source(source), Destination(destination), Iterator(source)
@@ -32,9 +32,9 @@ namespace Azure { namespace Storage { namespace DataMovement { namespace _intern
 
     std::string Source;
     BlobFolder Destination;
-    DirectoryIterator Iterator;
+    Storage::_internal::DirectoryIterator Iterator;
 
     void Execute() override;
   };
 
-}}}} // namespace Azure::Storage::DataMovement::_internal
+}}}} // namespace Azure::Storage::Blobs::_detail

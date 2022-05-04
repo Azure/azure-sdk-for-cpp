@@ -21,17 +21,13 @@
 #include <memory>
 #include <stdexcept>
 
-#if defined(AZ_PLATFORM_WINDOWS)
 namespace Azure { namespace Storage { namespace _internal {
-  std::wstring Utf8ToWide(const std::string& narrow);
-  std::string Utf8ToNarrow(const std::wstring& wide);
-}}} // namespace Azure::Storage::_internal
-#endif
-
-namespace Azure { namespace Storage { namespace DataMovement { namespace _internal {
 #if defined(AZ_PLATFORM_WINDOWS)
 
   // cSpell:ignore DATAW
+
+  std::wstring Utf8ToWide(const std::string& narrow);
+  std::string Utf8ToNarrow(const std::wstring& wide);
 
   struct ListDirectoryContext
   {
@@ -49,7 +45,7 @@ namespace Azure { namespace Storage { namespace DataMovement { namespace _intern
 
   DirectoryIterator::DirectoryIterator(const std::string& rootDirectory)
   {
-    const std::wstring rootDirectoryW = Storage::_internal::Utf8ToWide(rootDirectory + "/*");
+    const std::wstring rootDirectoryW = Utf8ToWide(rootDirectory + "/*");
 
     auto context = std::make_unique<ListDirectoryContext>();
 
@@ -61,7 +57,7 @@ namespace Azure { namespace Storage { namespace DataMovement { namespace _intern
     }
     if (std::wcscmp(entry.cFileName, L".") != 0 && std::wcscmp(entry.cFileName, L"..") != 0)
     {
-      context->Buffer.Name = Storage::_internal::Utf8ToNarrow(entry.cFileName);
+      context->Buffer.Name = Utf8ToNarrow(entry.cFileName);
       context->Buffer.IsDirectory = entry.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY;
     }
     m_directroyObject = context.release();
@@ -102,7 +98,7 @@ namespace Azure { namespace Storage { namespace DataMovement { namespace _intern
     }
 
     DirectoryEntry e;
-    e.Name = Storage::_internal::Utf8ToNarrow(entry.cFileName);
+    e.Name = Utf8ToNarrow(entry.cFileName);
     e.IsDirectory = entry.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY;
     return e;
   }
@@ -163,4 +159,4 @@ namespace Azure { namespace Storage { namespace DataMovement { namespace _intern
     return e;
   }
 #endif
-}}}} // namespace Azure::Storage::DataMovement::_internal
+}}} // namespace Azure::Storage::_internal

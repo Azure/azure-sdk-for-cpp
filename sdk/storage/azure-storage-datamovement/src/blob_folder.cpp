@@ -10,13 +10,13 @@
 
 #include "private/package_version.hpp"
 
-namespace Azure { namespace Storage { namespace DataMovement {
+namespace Azure { namespace Storage { namespace Blobs {
 
   BlobFolder BlobFolder::CreateFromConnectionString(
       const std::string& connectionString,
       const std::string& blobContainerName,
       const std::string& blobName,
-      const Blobs::BlobClientOptions& options)
+      const BlobClientOptions& options)
   {
     auto parsedConnectionString = _internal::ParseConnectionString(connectionString);
     auto blobUrl = std::move(parsedConnectionString.BlobServiceUrl);
@@ -36,10 +36,10 @@ namespace Azure { namespace Storage { namespace DataMovement {
   BlobFolder::BlobFolder(
       const std::string& blobUrl,
       std::shared_ptr<StorageSharedKeyCredential> credential,
-      const Blobs::BlobClientOptions& options)
+      const BlobClientOptions& options)
       : BlobFolder(blobUrl, options)
   {
-    Blobs::BlobClientOptions newOptions = options;
+    BlobClientOptions newOptions = options;
     newOptions.PerRetryPolicies.emplace_back(
         std::make_unique<_internal::SharedKeyPolicy>(credential));
 
@@ -53,7 +53,7 @@ namespace Azure { namespace Storage { namespace DataMovement {
     m_pipeline = std::make_shared<Azure::Core::Http::_internal::HttpPipeline>(
         newOptions,
         _internal::DataMovementPackageName,
-        _detail::PackageVersion::ToString(),
+        DataMovement::_detail::PackageVersion::ToString(),
         std::move(perRetryPolicies),
         std::move(perOperationPolicies));
   }
@@ -61,7 +61,7 @@ namespace Azure { namespace Storage { namespace DataMovement {
   BlobFolder::BlobFolder(
       const std::string& blobUrl,
       std::shared_ptr<Core::Credentials::TokenCredential> credential,
-      const Blobs::BlobClientOptions& options)
+      const BlobClientOptions& options)
       : BlobFolder(blobUrl, options)
   {
     std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>> perRetryPolicies;
@@ -81,12 +81,12 @@ namespace Azure { namespace Storage { namespace DataMovement {
     m_pipeline = std::make_shared<Azure::Core::Http::_internal::HttpPipeline>(
         options,
         _internal::DataMovementPackageName,
-        _detail::PackageVersion::ToString(),
+        DataMovement::_detail::PackageVersion::ToString(),
         std::move(perRetryPolicies),
         std::move(perOperationPolicies));
   }
 
-  BlobFolder::BlobFolder(const std::string& blobUrl, const Blobs::BlobClientOptions& options)
+  BlobFolder::BlobFolder(const std::string& blobUrl, const BlobClientOptions& options)
       : m_blobUrl(blobUrl), m_customerProvidedKey(options.CustomerProvidedKey),
         m_encryptionScope(options.EncryptionScope)
   {
@@ -100,7 +100,7 @@ namespace Azure { namespace Storage { namespace DataMovement {
     m_pipeline = std::make_shared<Azure::Core::Http::_internal::HttpPipeline>(
         options,
         _internal::DataMovementPackageName,
-        _detail::PackageVersion::ToString(),
+        DataMovement::_detail::PackageVersion::ToString(),
         std::move(perRetryPolicies),
         std::move(perOperationPolicies));
   }
@@ -114,11 +114,10 @@ namespace Azure { namespace Storage { namespace DataMovement {
     return newFolder;
   }
 
-  Blobs::BlobClient BlobFolder::GetBlobClient(const std::string& blobName) const
+  BlobClient BlobFolder::GetBlobClient(const std::string& blobName) const
   {
     auto blobUrl = m_blobUrl;
     blobUrl.AppendPath(_internal::UrlEncodePath(blobName));
-    return Blobs::BlobClient(
-        std::move(blobUrl), m_pipeline, m_customerProvidedKey, m_encryptionScope);
+    return BlobClient(std::move(blobUrl), m_pipeline, m_customerProvidedKey, m_encryptionScope);
   }
-}}} // namespace Azure::Storage::DataMovement
+}}} // namespace Azure::Storage::Blobs

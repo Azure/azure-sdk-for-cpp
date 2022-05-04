@@ -41,6 +41,7 @@ endif()
 set(
   AZURE_STORAGE_DATAMOVEMENT_HEADER
   inc/azure/storage/datamovement/blob_folder.hpp
+  inc/azure/storage/datamovement/blob_transfer_manager.hpp
   inc/azure/storage/datamovement/datamovement_options.hpp
   inc/azure/storage/datamovement/directory_iterator.hpp
   inc/azure/storage/datamovement/dll_import_export.hpp
@@ -57,6 +58,7 @@ set(
 set(
   AZURE_STORAGE_DATAMOVEMENT_SOURCE
   src/blob_folder.cpp
+  src/blob_transfer_manager.cpp
   src/directory_iterator.cpp
   src/scheduler.cpp
   src/storage_transfer_manager.cpp

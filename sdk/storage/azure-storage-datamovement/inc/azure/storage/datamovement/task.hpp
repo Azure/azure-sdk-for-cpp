@@ -9,7 +9,7 @@
 #include <azure/storage/blobs.hpp>
 #include <azure/storage/common/internal/file_io.hpp>
 
-namespace Azure { namespace Storage { namespace DataMovement { namespace _internal {
+namespace Azure { namespace Storage { namespace _internal {
   class Scheduler;
 
   enum class TaskType
@@ -49,4 +49,4 @@ namespace Azure { namespace Storage { namespace DataMovement { namespace _intern
 
   Task Deserialize(const char*);
 
-}}}} // namespace Azure::Storage::DataMovement::_internal
+}}} // namespace Azure::Storage::_internal

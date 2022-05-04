@@ -6,7 +6,7 @@
 #include <string>
 #include <vector>
 
-namespace Azure { namespace Storage { namespace DataMovement { namespace _internal {
+namespace Azure { namespace Storage { namespace _internal {
 
   class DirectoryIterator final {
   public:
@@ -33,4 +33,4 @@ namespace Azure { namespace Storage { namespace DataMovement { namespace _intern
     void* m_directroyObject;
   };
 
-}}}} // namespace Azure::Storage::DataMovement::_internal
+}}} // namespace Azure::Storage::_internal
