@@ -34,10 +34,12 @@ namespace Azure { namespace Storage { namespace DataMovement {
     BlobFolder GetBlobFolder(const std::string& folderName) const;
 
     Blobs::BlobClient GetBlobClient(const std::string& blobName) const;
-  };
 
-  BlobFolder GetBlobFolderFromBlobContainer(
-      const Blobs::BlobContainerClient& blobContainerClient,
-      const std::string& folderName);
+  private:
+    Azure::Core::Url m_blobUrl;
+    std::shared_ptr<Azure::Core::Http::_internal::HttpPipeline> m_pipeline;
+    Azure::Nullable<Blobs::EncryptionKey> m_customerProvidedKey;
+    Azure::Nullable<std::string> m_encryptionScope;
+  };
 
 }}} // namespace Azure::Storage::DataMovement

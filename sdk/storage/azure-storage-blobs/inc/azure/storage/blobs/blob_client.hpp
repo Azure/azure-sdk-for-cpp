@@ -14,6 +14,10 @@
 #include "azure/storage/blobs/blob_options.hpp"
 #include "azure/storage/blobs/blob_responses.hpp"
 
+namespace Azure { namespace Storage { namespace DataMovement {
+  class BlobFolder;
+}}} // namespace Azure::Storage::DataMovement
+
 namespace Azure { namespace Storage { namespace Files { namespace DataLake {
   class DataLakeFileSystemClient;
   class DataLakeDirectoryClient;
@@ -431,5 +435,6 @@ namespace Azure { namespace Storage { namespace Blobs {
     friend class Files::DataLake::DataLakeDirectoryClient;
     friend class Files::DataLake::DataLakeFileClient;
     friend class BlobLeaseClient;
+    friend class DataMovement::BlobFolder;
   };
 }}} // namespace Azure::Storage::Blobs

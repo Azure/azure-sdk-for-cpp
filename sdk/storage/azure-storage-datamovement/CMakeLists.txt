@@ -56,6 +56,7 @@ set(
 
 set(
   AZURE_STORAGE_DATAMOVEMENT_SOURCE
+  src/blob_folder.cpp
   src/directory_iterator.cpp
   src/scheduler.cpp
   src/storage_transfer_manager.cpp
