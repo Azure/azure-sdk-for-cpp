@@ -12,9 +12,9 @@
 
 namespace Azure { namespace Storage { namespace DataMovement { namespace _internal {
 
-  struct UploadBlobFromFileTask : public TaskBase
+  struct UploadBlobFromFileTask final : public TaskBase
   {
-    UploadBlobFromFileTask(
+    explicit UploadBlobFromFileTask(
         TaskType type,
         Scheduler* scheduler,
         const std::string& source,
@@ -23,7 +23,7 @@ namespace Azure { namespace Storage { namespace DataMovement { namespace _intern
     {
     }
 
-    struct TaskContext
+    struct TaskContext final
     {
       explicit TaskContext(std::string source, Blobs::BlobClient destination)
           : Source(std::move(source)), Destination(std::move(destination))
@@ -41,7 +41,7 @@ namespace Azure { namespace Storage { namespace DataMovement { namespace _intern
     void Execute() override;
   };
 
-  struct ReadFileRangeToMemoryTask : public TaskBase
+  struct ReadFileRangeToMemoryTask final : public TaskBase
   {
     using TaskBase::TaskBase;
 
@@ -53,7 +53,7 @@ namespace Azure { namespace Storage { namespace DataMovement { namespace _intern
     void Execute() override;
   };
 
-  struct StageBlockTask : public TaskBase
+  struct StageBlockTask final : public TaskBase
   {
     using TaskBase::TaskBase;
 

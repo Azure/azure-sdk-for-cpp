@@ -19,13 +19,13 @@ namespace Azure { namespace Storage { namespace DataMovement { namespace _intern
 
   using TaskQueue = std::queue<Task>;
 
-  struct SchedulerOptions
+  struct SchedulerOptions final
   {
     Nullable<int> NumThreads; // default: num cpus, minimum 5
     Nullable<size_t> MaxMemorySize; // default: 128MB * num threads
   };
 
-  class Scheduler {
+  class Scheduler final {
   public:
     explicit Scheduler(const SchedulerOptions& options);
     ~Scheduler();

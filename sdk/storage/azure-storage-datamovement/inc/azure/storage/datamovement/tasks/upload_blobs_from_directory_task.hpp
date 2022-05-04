@@ -14,14 +14,19 @@
 
 namespace Azure { namespace Storage { namespace DataMovement { namespace _internal {
 
-  struct UploadBlobsFromDirectoryTask : public TaskBase
+  struct UploadBlobsFromDirectoryTask final : public TaskBase
   {
-    UploadBlobsFromDirectoryTask(
+    explicit UploadBlobsFromDirectoryTask(
         TaskType type,
         Scheduler* scheduler,
         const std::string& source,
         const BlobFolder& destination)
         : TaskBase(type, scheduler), Source(source), Destination(destination), Iterator(source)
+    {
+    }
+    UploadBlobsFromDirectoryTask(UploadBlobsFromDirectoryTask&& other) noexcept
+        : TaskBase(std::move(other)), Source(std::move(other.Source)),
+          Destination(std::move(other.Destination)), Iterator(std::move(other.Iterator))
     {
     }
 

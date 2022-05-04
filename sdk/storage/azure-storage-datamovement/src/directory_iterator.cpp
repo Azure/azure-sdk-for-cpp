@@ -45,7 +45,7 @@ namespace Azure { namespace Storage { namespace DataMovement { namespace _intern
 
   DirectoryIterator::DirectoryIterator(const std::string& rootDirectory)
   {
-    const std::wstring rootDirectoryW = Storage::_internal::Utf8ToWide(rootDirectory);
+    const std::wstring rootDirectoryW = Storage::_internal::Utf8ToWide(rootDirectory + "/*");
 
     auto context = std::make_unique<ListDirectoryContext>();
 
@@ -65,7 +65,10 @@ namespace Azure { namespace Storage { namespace DataMovement { namespace _intern
 
   DirectoryIterator::~DirectoryIterator()
   {
-    delete static_cast<ListDirectoryContext*>(m_directroyObject);
+    if (m_directroyObject)
+    {
+      delete static_cast<ListDirectoryContext*>(m_directroyObject);
+    }
   }
 
   DirectoryIterator::DirectoryEntry DirectoryIterator::Next()
@@ -80,7 +83,11 @@ namespace Azure { namespace Storage { namespace DataMovement { namespace _intern
 
     WIN32_FIND_DATAW entry;
     BOOL ret = FindNextFileW(context->DirectoryHandle, &entry);
-    if (!ret)
+    if (!ret && GetLastError() == ERROR_NO_MORE_FILES)
+    {
+      return DirectoryEntry();
+    }
+    else if (!ret)
     {
       throw std::runtime_error("Failed to list directory.");
     }

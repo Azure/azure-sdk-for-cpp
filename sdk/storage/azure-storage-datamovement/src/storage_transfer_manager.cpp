@@ -18,6 +18,7 @@
 #include <azure/core/uuid.hpp>
 
 #include "azure/storage/datamovement/tasks/upload_blob_from_file_task.hpp"
+#include "azure/storage/datamovement/tasks/upload_blobs_from_directory_task.hpp"
 
 #if defined(AZ_PLATFORM_WINDOWS)
 namespace Azure { namespace Storage { namespace _internal {
@@ -73,6 +74,25 @@ namespace Azure { namespace Storage { namespace DataMovement {
 
     auto task = std::make_unique<_internal::UploadBlobFromFileTask>(
         _internal::TaskType::NetworkUpload, &m_scheduler, sourceLocalPath, destinationBlob);
+    m_scheduler.AddTask(std::move(task));
+
+    return jobProperties;
+  }
+
+  JobProperties StorageTransferManager::ScheduleUploadDirectory(
+      const std::string& sourceLocalPath,
+      const BlobFolder& destinationBlobFolder,
+      const UploadBlobOptions& options)
+  {
+    (void)options;
+    auto jobProperties = JobProperties();
+    jobProperties.JobId = Core::Uuid::CreateUuid().ToString();
+    jobProperties.SourceUrl = FileUrlScheme + GetFullPath(sourceLocalPath);
+    jobProperties.DestinationUrl = destinationBlobFolder.GetUrl();
+    jobProperties.Type = TransferType::DirectoryUpload;
+
+    auto task = std::make_unique<_internal::UploadBlobsFromDirectoryTask>(
+        _internal::TaskType::NetworkUpload, &m_scheduler, sourceLocalPath, destinationBlobFolder);
     m_scheduler.AddTask(std::move(task));
 
     return jobProperties;

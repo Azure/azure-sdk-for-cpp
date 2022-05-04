@@ -8,7 +8,7 @@
 
 namespace Azure { namespace Storage { namespace DataMovement { namespace _internal {
 
-  class DirectoryIterator {
+  class DirectoryIterator final {
   public:
     struct DirectoryEntry
     {
@@ -17,6 +17,12 @@ namespace Azure { namespace Storage { namespace DataMovement { namespace _intern
     };
     explicit DirectoryIterator(const std::string& rootDirectory);
     DirectoryIterator(const DirectoryIterator&) = delete;
+    DirectoryIterator(DirectoryIterator&& other) noexcept
+        : m_rootDirectory(std::move(other.m_rootDirectory)),
+          m_directroyObject(other.m_directroyObject)
+    {
+      other.m_directroyObject = nullptr;
+    }
     DirectoryIterator& operator=(const DirectoryIterator&) = delete;
     ~DirectoryIterator();
 

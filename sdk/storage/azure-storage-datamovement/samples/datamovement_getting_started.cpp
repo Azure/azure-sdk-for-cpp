@@ -31,6 +31,7 @@ int main()
   const std::string containerName = "sample-container";
   const std::string blobName = "sample-blob";
   const std::string localFile = "sample-localfile";
+  const std::string localDirectory = "sample-localdir";
 
   StorageTransferManager m;
 
@@ -43,6 +44,11 @@ int main()
   std::cout << job.JobId << std::endl;
   std::cout << job.SourceUrl << " -> " << job.DestinationUrl << std::endl;
 
+  auto blobFolder = BlobFolder::CreateFromConnectionString(
+      GetConnectionString(), containerName, localDirectory);
+  auto job2 = m.ScheduleUploadDirectory(localDirectory, blobFolder);
+  std::cout << job2.JobId << std::endl;
+  std::cout << job2.SourceUrl << " -> " << job2.DestinationUrl << std::endl;
   auto c = getchar();
   (void)c;
 

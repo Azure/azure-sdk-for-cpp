@@ -31,6 +31,8 @@ namespace Azure { namespace Storage { namespace DataMovement {
         const std::string& blobUrl,
         const Blobs::BlobClientOptions& options = Blobs::BlobClientOptions());
 
+    std::string GetUrl() const { return m_blobUrl.GetAbsoluteUrl(); }
+    
     BlobFolder GetBlobFolder(const std::string& folderName) const;
 
     Blobs::BlobClient GetBlobClient(const std::string& blobName) const;

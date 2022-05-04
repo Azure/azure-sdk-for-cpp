@@ -25,6 +25,10 @@ namespace Azure { namespace Storage { namespace DataMovement { namespace _intern
   struct TaskBase
   {
     TaskBase(TaskType type, Scheduler* scheduler) : Type(type), m_scheduler(scheduler) {}
+    TaskBase(TaskBase&& other) noexcept : TaskBase(other) {}
+    TaskBase& operator=(const TaskBase&) = delete;
+    TaskBase& operator=(TaskBase&&) = delete;
+
     TaskType Type;
 
     size_t MemoryCost = 0;
@@ -36,6 +40,9 @@ namespace Azure { namespace Storage { namespace DataMovement { namespace _intern
 
   protected:
     Scheduler* m_scheduler;
+
+  private:
+    TaskBase(const TaskBase& other) = default;
   };
 
   using Task = std::unique_ptr<TaskBase>;
