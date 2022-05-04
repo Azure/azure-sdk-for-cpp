@@ -31,6 +31,8 @@ namespace Azure { namespace Storage { namespace _internal {
 namespace Azure { namespace Storage { namespace DataMovement { namespace _internal {
 #if defined(AZ_PLATFORM_WINDOWS)
 
+  // cSpell:ignore DATAW
+
   struct ListDirectoryContext
   {
     HANDLE DirectoryHandle = INVALID_HANDLE_VALUE;
