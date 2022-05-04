@@ -28,7 +28,7 @@ Azure::Security::KeyVault::Keys::_detail::KeyReleasePolicySerializer::KeyRelease
       = Base64Url::Base64UrlEncode(std::vector<uint8_t>(policy.Data.begin(), policy.Data.end()));
 
   return payload;
-};
+}
 
 KeyReleasePolicy
 Azure::Security::KeyVault::Keys::_detail::KeyReleasePolicySerializer::KeyReleasePolicyDeserialize(
@@ -42,4 +42,4 @@ Azure::Security::KeyVault::Keys::_detail::KeyReleasePolicySerializer::KeyRelease
   policy.Data = std::string(decodedData.begin(), decodedData.end());
 
   return policy;
-};
+}

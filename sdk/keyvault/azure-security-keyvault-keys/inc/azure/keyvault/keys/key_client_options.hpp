@@ -132,19 +132,19 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
     std::vector<KeyOperation> KeyOperations;
 
     /**
-     * @brief Indicates when the key will be valid and can be used for cryptographic operations.
+     * @brief Indicate when the key will be valid and can be used for cryptographic operations.
      *
      */
     Azure::Nullable<Azure::DateTime> NotBefore;
 
     /**
-     * @brief Indicates when the key will expire and cannot be used for cryptographic operations.
+     * @brief Indicate when the key will expire and cannot be used for cryptographic operations.
      *
      */
     Azure::Nullable<Azure::DateTime> ExpiresOn;
 
     /**
-     * @brief Indicates whether the key is enabled and useable for cryptographic operations.
+     * @brief Indicate whether the key is enabled and useable for cryptographic operations.
      *
      */
     Azure::Nullable<bool> Enabled;
@@ -162,7 +162,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
     Azure::Nullable<KeyReleasePolicy> ReleasePolicy;
 
     /**
-     * @brief Indicates if the private key can be exported.
+     * @brief Indicate if the private key can be exported.
      *
      */
     Azure::Nullable<bool> Exportable;
