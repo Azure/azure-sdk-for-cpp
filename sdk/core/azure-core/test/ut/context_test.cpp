@@ -517,7 +517,7 @@ TEST(Context, KeyTypePairPrecondition)
 
 TEST(Context, SetTracingProvider)
 {
-  class TestTracingProvider : public Azure::Core::Tracing::TracerProvider {
+  class TestTracingProvider final : public Azure::Core::Tracing::TracerProvider {
   public:
     TestTracingProvider() : TracerProvider() {}
     ~TestTracingProvider() {}
