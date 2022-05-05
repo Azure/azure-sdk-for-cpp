@@ -102,8 +102,7 @@ namespace Azure { namespace Core { namespace Tracing { namespace OpenTelemetry {
     opentelemetry::nostd::shared_ptr<opentelemetry::trace::Span> m_span;
 
   public:
-    OpenTelemetrySpan(
-        opentelemetry::nostd::shared_ptr<opentelemetry::trace::Span> span);
+    OpenTelemetrySpan(opentelemetry::nostd::shared_ptr<opentelemetry::trace::Span> span);
 
     ~OpenTelemetrySpan();
 

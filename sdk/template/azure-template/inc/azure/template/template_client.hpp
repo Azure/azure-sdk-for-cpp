@@ -3,13 +3,13 @@
 
 #pragma once
 
-#include <azure/core/internal/tracing/service_tracing.hpp>
 #include <azure/core/internal/client_options.hpp>
+#include <azure/core/internal/tracing/service_tracing.hpp>
 #include <string>
 
 namespace Azure { namespace Template {
 
-    struct TemplateClientOptions : public Azure::Core::_internal::ClientOptions
+  struct TemplateClientOptions : public Azure::Core::_internal::ClientOptions
   {
   };
   class TemplateClient final {
