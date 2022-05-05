@@ -78,7 +78,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys { nam
 
     /** @brief Construct a new Attestation Client object from an existing attestation client.
      *
-     * @param attestationClient An existing attestation client.
+     * @param sandboxClient An existing sandbox client.
      */
     explicit MaaSandboxClient(MaaSandboxClient const& sandboxClient)
         : m_endpoint(sandboxClient.m_endpoint), m_apiVersion(sandboxClient.m_apiVersion),
@@ -119,7 +119,6 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys { nam
 
       auto response = SendRequest(*m_pipeline, request, context);
       json jsonBody = json::parse(response->GetBody());
-      auto jjlkfdslkfj = jsonBody.dump();
       auto returnValue(Azure::Core::_internal::Base64Url::Base64UrlDecode(
           jsonBody["quoteBase64UrlEncoded"].get<std::string>()));
       return Azure::Response<std::vector<uint8_t>>(returnValue, std::move(response));

@@ -14,6 +14,7 @@
 #include <azure/keyvault/keyvault_keys.hpp>
 #include <private/key_constants.hpp>
 #include <string>
+
 using namespace Azure::Core::_internal;
 using namespace Azure::Security::KeyVault::Keys;
 using namespace Azure::Security::KeyVault::Keys::Test;
@@ -225,6 +226,8 @@ TEST_F(KeyVaultKeyClient, CreateRsaHsmKey)
     CheckValidResponse(keyResponse);
     auto keyVaultKey = keyResponse.Value;
     EXPECT_EQ(keyVaultKey.Name(), keyName);
+    EXPECT_FALSE(keyResponse.Value.Properties.Exportable.HasValue());
+    EXPECT_FALSE(keyResponse.Value.Properties.ReleasePolicy.HasValue());
   }
 }
 std::string BinaryToHexString(std::vector<uint8_t> const& src)
@@ -269,9 +272,7 @@ TEST_F(KeyVaultKeyClient, ReleaseKey)
   destJson["keys"].emplace_back(destJson2);
   auto dest = destJson.dump();
   std::string result = Base64Url::Base64UrlEncode(std::vector<uint8_t>(dest.begin(), dest.end()));
-
   auto generatedToken = sandboxClient.GenerateQuote(AttestationDataType::Json, result);
-  auto sdas = Base64Url::Base64UrlEncode(generatedToken.Value);
   attestationClient.RetrieveResponseValidationCollateral();
 
   auto attestResponse = attestationClient.AttestOpenEnclave(
@@ -284,6 +285,7 @@ TEST_F(KeyVaultKeyClient, ReleaseKey)
   options.KeyOperations.push_back(Azure::Security::KeyVault::Keys::KeyOperation::Verify);
   options.ReleasePolicy = KeyReleasePolicy();
   options.ReleasePolicy.Value().Immutable = false;
+  // cspell:disable
   std::string dataStr = "{"
                         "\"anyOf\" : [ {"
                         "\"allOf\" : [{\"claim\" : \"x-ms-sgx-mrsigner\", \"equals\" : \""
@@ -294,6 +296,7 @@ TEST_F(KeyVaultKeyClient, ReleaseKey)
         "} ],"
         " \"version\" : \"1.0.0\""
         "} ";
+  // cspell:enable
   auto jsonParser = json::parse(dataStr);
   options.ReleasePolicy.Value().Data = jsonParser.dump();
   options.Exportable = true;
@@ -308,7 +311,7 @@ TEST_F(KeyVaultKeyClient, ReleaseKey)
   EXPECT_EQ(result2.RawResponse->GetStatusCode(), HttpStatusCode::Ok);
 }
 
-TEST_F(KeyVaultKeyClient, CreateKeyWithRelasePolicyOptions)
+TEST_F(KeyVaultKeyClient, CreateKeyWithReleasePolicyOptions)
 {
   auto const keyName = GetTestName();
   auto const& client = GetClientForTest(keyName);
