@@ -1,7 +1,6 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
 
-#include "azure/core/tracing/tracing.hpp"
 #include <azure/core/http/policies/policy.hpp>
 #include <azure/core/internal/http/pipeline.hpp>
 #include <gtest/gtest.h>
@@ -25,22 +24,6 @@ private:
     (void)request;
     (void)nextPolicy;
 
-    // Exercise the SpanKind and SpanStatus constructors from the distributed tracing header.
-    {
-      Azure::Core::Tracing::SpanKind spanKind = Azure::Core::Tracing::SpanKind::Client;
-      spanKind = Azure::Core::Tracing::SpanKind::Consumer;
-      spanKind = Azure::Core::Tracing::SpanKind::Internal;
-      spanKind = Azure::Core::Tracing::SpanKind::Producer;
-      spanKind = Azure::Core::Tracing::SpanKind::Server;
-      std::string kindValue = spanKind.ToString();
-    }
-    {
-      Azure::Core::Tracing::SpanStatus spanStatus = Azure::Core::Tracing::SpanStatus::Unset;
-      spanStatus = Azure::Core::Tracing::SpanStatus::Error;
-      spanStatus = Azure::Core::Tracing::SpanStatus::Ok;
-      std::string statusValue = spanStatus.ToString();
-    }
-
     return std::unique_ptr<RawResponse>();
   }
 
@@ -48,8 +31,7 @@ private:
 };
 
 } // namespace
-
-TEST(TelemetryPolicy, telemetryString)
+  TEST(TelemetryPolicy, telemetryString)
 {
   std::vector<std::unique_ptr<HttpPolicy>> policy1;
   std::vector<std::unique_ptr<HttpPolicy>> policy2;

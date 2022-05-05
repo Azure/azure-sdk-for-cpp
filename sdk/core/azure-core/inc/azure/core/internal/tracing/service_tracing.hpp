@@ -48,7 +48,7 @@ namespace Azure { namespace Core { namespace Tracing { namespace _internal {
       }
     }
 
-    void End(Azure::Nullable<Azure::DateTime>) override
+    void End(Azure::Nullable<Azure::DateTime> = Azure::Nullable<Azure::DateTime>{}) override
     {
       if (m_span)
       {
