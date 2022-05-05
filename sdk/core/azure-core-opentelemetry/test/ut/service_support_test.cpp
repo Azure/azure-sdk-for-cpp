@@ -351,6 +351,7 @@ TEST_F(OpenTelemetryServiceTests, ServiceApiImplementation)
         // Register that the exception has happened and that the span is now in error.
         contextAndSpan.second.AddEvent(ex);
         contextAndSpan.second.SetStatus(Azure::Core::Tracing::SpanStatus::Error);
+        throw;
       }
 
       // When contextAndSpan.second goes out of scope, it ends the span, which will record it.
