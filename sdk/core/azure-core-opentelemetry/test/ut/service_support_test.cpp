@@ -299,73 +299,107 @@ TEST_F(OpenTelemetryServiceTests, NestSpans)
 
 TEST_F(OpenTelemetryServiceTests, ServiceApiImplementation)
 {
+  // Create a serviceTrace and span using a provider specified in the ClientOptions.
+  class ServiceClientOptions : public Azure::Core::_internal::ClientOptions {
+  public:
+    explicit ServiceClientOptions() : ClientOptions() {}
+  };
+
+  class ServiceClient {
+  private:
+    ServiceClientOptions m_clientOptions;
+    Azure::Core::Tracing::_internal::ServiceTracing m_serviceTrace;
+
+  public:
+    explicit ServiceClient(ServiceClientOptions const& clientOptions = ServiceClientOptions{})
+        : m_serviceTrace(clientOptions, "Azure.Core.OpenTelemetry.Test.Service", "1.0.0.beta-2")
+    {
+    }
+
+    Azure::Response<std::string> GetConfigurationString(
+        std::string const& inputString,
+        Azure::Core::Context const& context = Azure::Core::Context{})
+    {
+      auto contextAndSpan = m_serviceTrace.CreateSpan("GetConfigurationString", context);
+
+      // <Call Into Service via an HTTP pipeline>
+
+      // Reflect that the operation was successful.
+      contextAndSpan.second.SetStatus(Azure::Core::Tracing::SpanStatus::Ok);
+      Azure::Response<std::string> rv(
+          inputString,
+          std::make_unique<Azure::Core::Http::RawResponse>(
+              1, 1, Azure::Core::Http::HttpStatusCode::Ok, "OK"));
+      return rv;
+      // When contextAndSpan.second goes out of scope, it ends the span, which will record it.
+    }
+
+    Azure::Response<std::string> ApiWhichThrows(
+        std::string const& inputString,
+        Azure::Core::Context const& context = Azure::Core::Context{})
+    {
+      auto contextAndSpan = m_serviceTrace.CreateSpan("GetConfigurationString", context);
+
+      try
+      {
+        // <Call Into Service via an HTTP pipeline>
+
+        throw Azure::Core::RequestFailedException("it all goes wrong here.");
+      }
+      catch (std::exception& ex)
+      {
+        // Register that the exception has happened and that the span is now in error.
+        contextAndSpan.second.AddEvent(ex);
+        contextAndSpan.second.SetStatus(Azure::Core::Tracing::SpanStatus::Error);
+      }
+
+      // When contextAndSpan.second goes out of scope, it ends the span, which will record it.
+    }
+  };
+
   {
     auto tracerProvider(CreateOpenTelemetryProvider());
     auto provider(std::make_shared<Azure::Core::Tracing::OpenTelemetry::OpenTelemetryProvider>(
         tracerProvider));
 
-    // Create a serviceTrace and span using a provider specified in the ClientOptions.
-    class ServiceClientOptions : public Azure::Core::_internal::ClientOptions {
-    public:
-      explicit ServiceClientOptions() : ClientOptions() {}
-    };
-
-    class ServiceClient {
-    private:
-      ServiceClientOptions m_clientOptions;
-      Azure::Core::Tracing::_internal::ServiceTracing m_serviceTrace;
-
-    public:
-      explicit ServiceClient(ServiceClientOptions const& clientOptions = ServiceClientOptions{})
-          : m_serviceTrace(
-              clientOptions,
-              "Azure.Core.OpenTelemetry.Test.Service",
-              "1.0.0.beta-2")
-      {
-      }
-
-      Azure::Response<std::string> GetConfigurationString(
-          std::string const& inputString,
-          Azure::Core::Context const& context = Azure::Core::Context{})
-      {
-        auto contextAndSpan = m_serviceTrace.CreateSpan("GetConfigurationString", context);
-
-        // <Call Into Service via an HTTP pipeline>
-
-        // Reflect that the operation was successful.
-        contextAndSpan.second.SetStatus(Azure::Core::Tracing::SpanStatus::Ok);
-        Azure::Response<std::string> rv(
-            inputString,
-            std::make_unique<Azure::Core::Http::RawResponse>(
-                1, 1, Azure::Core::Http::HttpStatusCode::Ok, "OK"));
-        return rv;
-        // When contextAndSpan.second goes out of scope, it ends the span, which will record it.
-      }
-    };
-
-    // Call a simple API.
     {
-      ServiceClientOptions clientOptions;
-      clientOptions.Telemetry.TracingProvider = provider;
-      clientOptions.Telemetry.ApplicationId = "MyApplication";
-      ServiceClient myServiceClient(clientOptions);
+      // Call a simple API and verify telemetry is generated.
+      {
+        ServiceClientOptions clientOptions;
+        clientOptions.Telemetry.TracingProvider = provider;
+        clientOptions.Telemetry.ApplicationId = "MyApplication";
+        ServiceClient myServiceClient(clientOptions);
+
+        myServiceClient.GetConfigurationString("Fred");
+      }
+      // Now let's verify what was logged via OpenTelemetry.
+      auto spans = m_spanData->GetSpans();
+      EXPECT_EQ(1ul, spans.size());
+
+      EXPECT_EQ("GetConfigurationString", spans[0]->GetName());
+      EXPECT_EQ(opentelemetry::trace::SpanKind::kInternal, spans[0]->GetSpanKind());
+      EXPECT_EQ(opentelemetry::trace::StatusCode::kOk, spans[0]->GetStatus());
+
+      auto attributes = spans[0]->GetAttributes();
+      auto azNamespace = attributes["az.namespace"];
+      auto namespaceVal = opentelemetry::nostd::get<std::string>(azNamespace);
+      EXPECT_EQ("Azure.Core.OpenTelemetry.Test.Service", namespaceVal);
+      auto library = spans[0]->GetInstrumentationLibrary();
+      EXPECT_EQ("Azure.Core.OpenTelemetry.Test.Service", library.GetName());
+      EXPECT_EQ("1.0.0.beta-2", library.GetVersion());
+    }
+  }
+
+  // Call into the fake service client ensuring that no telemetry is generated.
+  {
+    // Call a simple API and verify no telemetry is generated.
+    {
+      ServiceClient myServiceClient;
 
       myServiceClient.GetConfigurationString("Fred");
     }
     // Now let's verify what was logged via OpenTelemetry.
     auto spans = m_spanData->GetSpans();
-    EXPECT_EQ(1ul, spans.size());
-
-    EXPECT_EQ("GetConfigurationString", spans[0]->GetName());
-    EXPECT_EQ(opentelemetry::trace::SpanKind::kInternal, spans[0]->GetSpanKind());
-    EXPECT_EQ(opentelemetry::trace::StatusCode::kOk, spans[0]->GetStatus());
-
-    auto attributes = spans[0]->GetAttributes();
-    auto azNamespace = attributes["az.namespace"];
-    auto namespaceVal = opentelemetry::nostd::get<std::string>(azNamespace);
-    EXPECT_EQ("Azure.Core.OpenTelemetry.Test.Service", namespaceVal);
-    auto library = spans[0]->GetInstrumentationLibrary();
-    EXPECT_EQ("Azure.Core.OpenTelemetry.Test.Service", library.GetName());
-    EXPECT_EQ("1.0.0.beta-2", library.GetVersion());
+    EXPECT_EQ(0ul, spans.size());
   }
 }
