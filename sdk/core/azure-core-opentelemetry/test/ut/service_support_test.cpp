@@ -335,10 +335,10 @@ TEST_F(OpenTelemetryServiceTests, ServiceApiImplementation)
     }
 
     Azure::Response<std::string> ApiWhichThrows(
-        std::string const& inputString,
+        std::string const&,
         Azure::Core::Context const& context = Azure::Core::Context{})
     {
-      auto contextAndSpan = m_serviceTrace.CreateSpan("GetConfigurationString", context);
+      auto contextAndSpan = m_serviceTrace.CreateSpan("ApiWhichThrows", context);
 
       try
       {
@@ -396,7 +396,7 @@ TEST_F(OpenTelemetryServiceTests, ServiceApiImplementation)
     {
       ServiceClient myServiceClient;
 
-      myServiceClient.GetConfigurationString("Fred");
+      myServiceClient.GetConfigurationString("George");
     }
     // Now let's verify what was logged via OpenTelemetry.
     auto spans = m_spanData->GetSpans();
