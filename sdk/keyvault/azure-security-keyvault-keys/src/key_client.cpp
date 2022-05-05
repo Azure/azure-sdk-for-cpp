@@ -5,7 +5,6 @@
 #include <azure/core/http/http.hpp>
 #include <azure/core/http/policies/policy.hpp>
 #include <azure/core/internal/http/pipeline.hpp>
-
 #include <azure/keyvault/shared/keyvault_shared.hpp>
 
 #include "azure/keyvault/keys/key_client.hpp"
@@ -239,7 +238,7 @@ Azure::Security::KeyVault::Keys::DeleteKeyOperation KeyClient::StartDeleteKey(
 Azure::Response<ReleaseKeyResult> KeyClient::ReleaseKey(
     std::string const& name,
     std::string const& version,
-    KeyReleaseOptions const& options,    
+    KeyReleaseOptions const& options,
     Azure::Core::Context const& context) const
 {
   auto payload = _detail::KeyReleaseOptionsSerializer::KeyReleaseOptionsSerialize(options);
