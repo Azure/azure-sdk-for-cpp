@@ -2,8 +2,8 @@
 // SPDX-License-Identifier: MIT
 
 /**
- * @brief This sample shows how to instantiate an attestation administration client object using
- * the Attestation SDK client for C++.
+ * @brief This sample provides the code implementation to use the Attestation SDK client
+ * for C++ to retrieve the OpenID metadata for an endpoint..
  *
  * @remark The following environment variables must be set before running the sample.
  * - ATTESTATION_AAD_URL:  Points to an Attestation Service Instance in AAD mode.
@@ -13,17 +13,14 @@
  * - AZURE_CLIENT_ID:     The Client ID to authenticate the request.
  * - AZURE_CLIENT_SECRET: The client secret.
  *
- * Note that the administration client MUST be authenticated.
- *
  */
 
 #include <get_env.hpp>
 
 #include <azure/attestation.hpp>
-#include <azure/identity.hpp>
+
 #include <chrono>
 #include <iostream>
-#include <memory>
 #include <thread>
 
 using namespace Azure::Security::Attestation;
@@ -35,14 +32,13 @@ int main()
   try
   {
     // create client
-    auto const credential = std::make_shared<Azure::Identity::ClientSecretCredential>(
-        GetEnvHelper::GetEnv("AZURE_TENANT_ID"),
-        GetEnvHelper::GetEnv("AZURE_CLIENT_ID"),
-        GetEnvHelper::GetEnv("AZURE_CLIENT_SECRET"));
-    AttestationAdministrationClient const adminClient(
-        GetEnvHelper::GetEnv("ATTESTATION_AAD_URL"), credential);
+    AttestationClient const attestationClient(
+        AttestationClient::Create(GetEnvHelper::GetEnv("ATTESTATION_AAD_URL")));
 
-    std::cout << "Admin client is using API version " << adminClient.ClientVersion() << std::endl;
+    // Retrieve the OpenId metadata from this attestation service instance.
+    Azure::Response<OpenIdMetadata> const openIdMetadata = attestationClient.GetOpenIdMetadata();
+    std::cout << "Attestation Certificate Endpoint is: " << *openIdMetadata.Value.JsonWebKeySetUrl
+              << std::endl;
   }
   catch (Azure::Core::Credentials::AuthenticationException const& e)
   {

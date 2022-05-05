@@ -2,22 +2,28 @@
 // SPDX-License-Identifier: MIT
 
 /**
- * @brief This sample demonstrates creating an attestation client using the Attestation SDK client
- * for C++.
+ * @brief This sample shows how to instantiate an attestation administration client object using
+ * the Attestation SDK client for C++.
  *
  * @remark The following environment variables must be set before running the sample.
  * - ATTESTATION_AAD_URL:  Points to an Attestation Service Instance in AAD mode.
+ * - ATTESTATION_ISOLATED_URL:  Points to an Attestation Service Instance in Isolated mode.
+ * operations.
+ * - AZURE_TENANT_ID:     Tenant ID for the Azure account.
+ * - AZURE_CLIENT_ID:     The Client ID to authenticate the request.
+ * - AZURE_CLIENT_SECRET: The client secret.
  *
- * AttestationClient instances are not always authenticated. This sample shows unauthenticated
- * access to the client.
+ * Note that the administration client MUST be authenticated.
  *
  */
 
 #include <get_env.hpp>
 
 #include <azure/attestation.hpp>
+#include <azure/identity.hpp>
 #include <chrono>
 #include <iostream>
+#include <memory>
 #include <thread>
 
 using namespace Azure::Security::Attestation;
@@ -28,15 +34,15 @@ int main()
 {
   try
   {
-    AttestationClientOptions clientOptions;
-
-    // Allow up to 10s of time difference between the attestation client and the attestation
-    // service.
-    clientOptions.TokenValidationOptions.ValidationTimeSlack = 10s;
-
     // create client
-    AttestationClient const attestationClient(
-        GetEnvHelper::GetEnv("ATTESTATION_AAD_URL"), clientOptions);
+    auto const credential = std::make_shared<Azure::Identity::ClientSecretCredential>(
+        GetEnvHelper::GetEnv("AZURE_TENANT_ID"),
+        GetEnvHelper::GetEnv("AZURE_CLIENT_ID"),
+        GetEnvHelper::GetEnv("AZURE_CLIENT_SECRET"));
+    AttestationAdministrationClient const adminClient(AttestationAdministrationClient::Create(
+        GetEnvHelper::GetEnv("ATTESTATION_AAD_URL"), credential));
+
+    std::cout << "Admin client is Communicating with " << adminClient.Endpoint() << std::endl;
   }
   catch (Azure::Core::Credentials::AuthenticationException const& e)
   {

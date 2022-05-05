@@ -45,5 +45,5 @@ target_include_directories (azure-core-test-fw
 
 # make sure that users can consume the project as a library.
 add_library (Azure::Core::Test ALIAS azure-core-test-fw)
-target_link_libraries(azure-core-test-fw PRIVATE azure-core gtest)
+target_link_libraries(azure-core-test-fw PRIVATE azure-core Azure::azure-identity gtest)
 create_map_file(azure-core-test-fw azure-core-test-fw.map)

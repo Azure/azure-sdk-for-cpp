@@ -48,10 +48,10 @@ namespace Azure { namespace Security { namespace Attestation { namespace _detail
    *
    */
 
-  AttestationOpenIdMetadata OpenIdMetadataSerializer::Deserialize(
+  OpenIdMetadata OpenIdMetadataSerializer::Deserialize(
       std::unique_ptr<Azure::Core::Http::RawResponse>& response)
   {
-    Models::AttestationOpenIdMetadata returnValue;
+    Models::OpenIdMetadata returnValue;
     auto const parsedBody = Azure::Core::Json::_internal::json::parse(response->GetBody());
 
     JsonOptional::SetIfExists(returnValue.Issuer, parsedBody, "issuer");
@@ -140,7 +140,7 @@ namespace Azure { namespace Security { namespace Attestation { namespace _detail
 
     JsonOptional::SetIfExists(result.Nonce, parsedJson, "nonce");
     JsonOptional::SetIfExists(result.Version, parsedJson, "x-ms-ver");
-    JsonHelpers::SetIfExistsJson(result.RuntimeClaims, parsedJson, "x-ms-runtime");
+    JsonHelpers::SetIfExistsJson(result.RunTimeClaims, parsedJson, "x-ms-runtime");
     JsonHelpers::SetIfExistsJson(result.InitTimeClaims, parsedJson, "x-ms-inittime");
     JsonHelpers::SetIfExistsJson(result.PolicyClaims, parsedJson, "x-ms-policy");
     JsonOptional::SetIfExists(result.VerifierType, parsedJson, "x-ms-attestation-type");
@@ -354,10 +354,11 @@ namespace Azure { namespace Security { namespace Attestation { namespace _detail
     return serializedPolicy.dump();
   }
 
-  Models::_detail::GetPolicyCertificatesResult PolicyCertificateGetResultSerializer::Deserialize(
+  Models::_detail::GetIsolatedModeCertificatesResult
+  IsolatedModeCertificateGetResultSerializer::Deserialize(
       Azure::Core::Json::_internal::json const& parsedResult)
   {
-    Models::_detail::GetPolicyCertificatesResult returnValue;
+    Models::_detail::GetIsolatedModeCertificatesResult returnValue;
     if (parsedResult.contains("x-ms-policy-certificates"))
     {
       returnValue.PolicyCertificates
@@ -366,8 +367,8 @@ namespace Azure { namespace Security { namespace Attestation { namespace _detail
     return returnValue;
   }
 
-  std::string PolicyCertificateManagementBodySerializer::Serialize(
-      Models::_detail::PolicyCertificateManagementBody const& body)
+  std::string IsolatedModeCertificateBodySerializer::Serialize(
+      Models::_detail::IsolatedModeCertificateBody const& body)
   {
     Azure::Core::Json::_internal::json serializedPolicy;
     serializedPolicy["policyCertificate"]
@@ -376,21 +377,20 @@ namespace Azure { namespace Security { namespace Attestation { namespace _detail
     return serializedPolicy.dump();
   }
 
-  Models::_detail::PolicyCertificateManagementBody
-  PolicyCertificateManagementBodySerializer::Deserialize(
+  Models::_detail::IsolatedModeCertificateBody IsolatedModeCertificateBodySerializer::Deserialize(
       Azure::Core::Json::_internal::json const& jsonBody)
   {
-    Models::_detail::PolicyCertificateManagementBody body;
+    Models::_detail::IsolatedModeCertificateBody body;
     JsonOptional::SetIfExists<json, JsonWebKey>(
         body.policyCertificate, jsonBody, "policyCertificate", JsonWebKeySerializer::Deserialize);
     return body;
   }
 
-  Models::_detail::ModifyPolicyCertificatesResult
-  ModifyPolicyCertificatesResultSerializer::Deserialize(
+  Models::_detail::ModifyIsolatedModeCertificatesResult
+  ModifyIsolatedModeCertificatesResultSerializer::Deserialize(
       Azure::Core::Json::_internal::json const& jsonResult)
   {
-    Models::_detail::ModifyPolicyCertificatesResult returnValue;
+    Models::_detail::ModifyIsolatedModeCertificatesResult returnValue;
     JsonOptional::SetIfExists(
         returnValue.CertificateResolution, jsonResult, "x-ms-policycertificates-result");
     JsonOptional::SetIfExists(

@@ -10,7 +10,7 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
   public:
     static std::vector<uint8_t> OpenEnclaveReport();
     static std::vector<uint8_t> SgxQuote();
-    static std::vector<uint8_t> RuntimeData();
+    static std::vector<uint8_t> RunTimeData();
 
     static std::string GetMinimalPolicy();
   };
