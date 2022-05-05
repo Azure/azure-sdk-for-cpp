@@ -2,13 +2,7 @@
 
 ## 1.0.0-beta.2 (2022-05-10)
 
-### Features Added
-
-No new features, addressed API Review Feedback.
-
 ### Breaking Changes
-
-Breaking Changes from API Review
 
 - Renamed `AttestationOpenIdMetadata` type to `OpenIdMetadata`.
 - Renamed `AttestationSigningCertificateResult` type to `TokenValidationCertificateResult` to more accurately reflect the
