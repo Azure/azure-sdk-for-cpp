@@ -4,6 +4,7 @@
 #include <gtest/gtest.h>
 
 #include <azure/core/context.hpp>
+#include <azure/core/tracing/tracing.hpp>
 
 #include <chrono>
 #include <memory>
@@ -512,4 +513,34 @@ TEST(Context, KeyTypePairPrecondition)
 
   EXPECT_TRUE(c3.TryGetValue<std::string>(key, strValue));
   EXPECT_TRUE(strValue == s);
+}
+
+TEST(Context, SetTracingProvider)
+{
+  class TestTracingProvider : public Azure::Core::Tracing::TracerProvider {
+  public:
+    TestTracingProvider() : TracerProvider() {}
+    /**
+     * @brief Create a Tracer object
+     *
+     * @param name Name of the tracer object, typically the name of the Service client
+     * (Azure.Storage.Blobs, for example)
+     * @param version Version of the service client.
+     * @return std::shared_ptr<Azure::Core::Tracing::Tracer>
+     */
+    virtual std::shared_ptr<Azure::Core::Tracing::Tracer> CreateTracer(
+        std::string const&,
+        std::string const&) const override
+    {
+      throw std::runtime_error("Not implemented");
+    };
+  };
+
+  Context context;
+  context.SetTracerProvider(nullptr);
+
+  // Verify we can round trip a tracing provider through the context.
+  auto testProvider = std::make_shared<TestTracingProvider>();
+  context.SetTracerProvider(testProvider);
+  EXPECT_EQ(testProvider, context.GetTracerProvider());
 }
