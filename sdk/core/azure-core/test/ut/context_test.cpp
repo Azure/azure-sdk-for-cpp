@@ -520,15 +520,8 @@ TEST(Context, SetTracingProvider)
   class TestTracingProvider : public Azure::Core::Tracing::TracerProvider {
   public:
     TestTracingProvider() : TracerProvider() {}
-    /**
-     * @brief Create a Tracer object
-     *
-     * @param name Name of the tracer object, typically the name of the Service client
-     * (Azure.Storage.Blobs, for example)
-     * @param version Version of the service client.
-     * @return std::shared_ptr<Azure::Core::Tracing::Tracer>
-     */
-    virtual std::shared_ptr<Azure::Core::Tracing::Tracer> CreateTracer(
+    ~TestTracingProvider() {}
+    std::shared_ptr<Azure::Core::Tracing::Tracer> CreateTracer(
         std::string const&,
         std::string const&) const override
     {
