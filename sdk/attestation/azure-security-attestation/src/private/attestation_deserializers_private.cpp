@@ -130,7 +130,7 @@ namespace Azure { namespace Security { namespace Attestation { namespace _detail
       std::unique_ptr<Azure::Core::Http::RawResponse> const& response)
   {
     auto parsedBody = Azure::Core::Json::_internal::json::parse(response->GetBody());
-    auto dasa = parsedBody.dump();
+
     return Deserialize(parsedBody);
   }
 

@@ -1,3 +1,7 @@
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// SPDX-License-Identifier: MIT
+
+// for test purposes only.
 #include "../../../../attestation/azure-security-attestation/src/private/package_version.hpp"
 #include <azure/attestation.hpp>
 #include <azure/attestation/attestation_client_models.hpp>

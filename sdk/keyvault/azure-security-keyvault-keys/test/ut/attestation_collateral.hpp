@@ -1,5 +1,7 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
+
+//for test purposes only
 #pragma once
 
 #include <azure/core/base64.hpp>

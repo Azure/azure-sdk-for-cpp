@@ -1,6 +1,8 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
 
+//  for test purposes only
+
 #include "attestation_collateral.hpp"
 #include <azure/core/base64.hpp>
 
