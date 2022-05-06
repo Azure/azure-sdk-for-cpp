@@ -3,7 +3,7 @@
 
 #pragma once
 
-namespace Azure { namespace Storage { namespace DataMovement {
+namespace Azure { namespace Storage {
 
   enum class TransferType
   {
@@ -21,4 +21,4 @@ namespace Azure { namespace Storage { namespace DataMovement {
     TransferType Type;
   };
 
-}}} // namespace Azure::Storage::DataMovement
+}} // namespace Azure::Storage

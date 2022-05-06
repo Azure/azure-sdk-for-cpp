@@ -26,6 +26,7 @@ namespace Azure { namespace Storage { namespace Blobs {
   class AppendBlobClient;
   class PageBlobClient;
   class BlobLeaseClient;
+  class BlobFolder;
 
   /**
    * @brief The BlobClient allows you to manipulate Azure Storage blobs.
@@ -431,5 +432,6 @@ namespace Azure { namespace Storage { namespace Blobs {
     friend class Files::DataLake::DataLakeDirectoryClient;
     friend class Files::DataLake::DataLakeFileClient;
     friend class BlobLeaseClient;
+    friend class BlobFolder;
   };
 }}} // namespace Azure::Storage::Blobs

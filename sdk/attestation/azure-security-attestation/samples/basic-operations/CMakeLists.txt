@@ -18,7 +18,7 @@ target_link_libraries(attestation-${samplename} PRIVATE azure-security-attestati
 
 endmacro()
 
-define_sample(createclient)
-define_sample(createadminclient)
-define_sample(getopenidmetadata)
-define_sample(getsigningcertificates)
+define_sample(create_client)
+define_sample(create_admin_client)
+define_sample(get_open-id_metadata)
+define_sample(get_signing_certificates)

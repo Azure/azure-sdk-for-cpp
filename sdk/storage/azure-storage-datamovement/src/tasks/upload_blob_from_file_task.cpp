@@ -7,7 +7,7 @@
 
 #include "azure/storage/datamovement/scheduler.hpp"
 
-namespace Azure { namespace Storage { namespace DataMovement { namespace _internal {
+namespace Azure { namespace Storage { namespace Blobs { namespace _detail {
 
   namespace {
     constexpr uint64_t SingleUploadThreshold = 4 * 1024 * 1024;
@@ -47,11 +47,11 @@ namespace Azure { namespace Storage { namespace DataMovement { namespace _intern
     (void)SingleUploadThreshold;
 
     Context->NumBlocks = static_cast<int>((fileSize + ChunkSize - 1) / ChunkSize);
-    std::vector<Task> subtasks;
+    std::vector<_internal::Task> subtasks;
     for (int blockId = 0; blockId < Context->NumBlocks; ++blockId)
     {
       auto readFileRangeTask
-          = std::make_unique<ReadFileRangeToMemoryTask>(TaskType::DiskIO, m_scheduler);
+          = std::make_unique<ReadFileRangeToMemoryTask>(_internal::TaskType::DiskIO, m_scheduler);
       readFileRangeTask->Context = Context;
       readFileRangeTask->BlockId = blockId;
       readFileRangeTask->Offset = blockId * ChunkSize;
@@ -69,7 +69,8 @@ namespace Azure { namespace Storage { namespace DataMovement { namespace _intern
     size_t bytesRead = Context->FileReader->Read(buffer.get(), Length, Offset);
     AZURE_ASSERT(bytesRead == Length);
 
-    auto stageBlockTask = std::make_unique<StageBlockTask>(TaskType::NetworkUpload, m_scheduler);
+    auto stageBlockTask
+        = std::make_unique<StageBlockTask>(_internal::TaskType::NetworkUpload, m_scheduler);
     stageBlockTask->Context = Context;
     stageBlockTask->BlockId = BlockId;
     stageBlockTask->Buffer = std::move(buffer);
@@ -97,4 +98,4 @@ namespace Azure { namespace Storage { namespace DataMovement { namespace _intern
       blockBlobClient.CommitBlockList(blockIds);
     }
   }
-}}}} // namespace Azure::Storage::DataMovement::_internal
+}}}} // namespace Azure::Storage::Blobs::_detail

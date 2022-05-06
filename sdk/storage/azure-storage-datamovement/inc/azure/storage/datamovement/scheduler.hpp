@@ -15,17 +15,17 @@
 
 #include "azure/storage/datamovement/task.hpp"
 
-namespace Azure { namespace Storage { namespace DataMovement { namespace _internal {
+namespace Azure { namespace Storage { namespace _internal {
 
   using TaskQueue = std::queue<Task>;
 
-  struct SchedulerOptions
+  struct SchedulerOptions final
   {
     Nullable<int> NumThreads; // default: num cpus, minimum 5
     Nullable<size_t> MaxMemorySize; // default: 128MB * num threads
   };
 
-  class Scheduler {
+  class Scheduler final {
   public:
     explicit Scheduler(const SchedulerOptions& options);
     ~Scheduler();
@@ -68,4 +68,4 @@ namespace Azure { namespace Storage { namespace DataMovement { namespace _intern
     std::vector<std::thread> m_workerThreads;
   };
 
-}}}} // namespace Azure::Storage::DataMovement::_internal
+}}} // namespace Azure::Storage::_internal

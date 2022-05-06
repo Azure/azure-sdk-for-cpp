@@ -9,7 +9,7 @@
 #include <azure/storage/blobs.hpp>
 #include <azure/storage/common/internal/file_io.hpp>
 
-namespace Azure { namespace Storage { namespace DataMovement { namespace _internal {
+namespace Azure { namespace Storage { namespace _internal {
   class Scheduler;
 
   enum class TaskType
@@ -25,6 +25,10 @@ namespace Azure { namespace Storage { namespace DataMovement { namespace _intern
   struct TaskBase
   {
     TaskBase(TaskType type, Scheduler* scheduler) : Type(type), m_scheduler(scheduler) {}
+    TaskBase(TaskBase&& other) noexcept : TaskBase(other) {}
+    TaskBase& operator=(const TaskBase&) = delete;
+    TaskBase& operator=(TaskBase&&) = delete;
+
     TaskType Type;
 
     size_t MemoryCost = 0;
@@ -36,10 +40,13 @@ namespace Azure { namespace Storage { namespace DataMovement { namespace _intern
 
   protected:
     Scheduler* m_scheduler;
+
+  private:
+    TaskBase(const TaskBase& other) = default;
   };
 
   using Task = std::unique_ptr<TaskBase>;
 
   Task Deserialize(const char*);
 
-}}}} // namespace Azure::Storage::DataMovement::_internal
+}}} // namespace Azure::Storage::_internal

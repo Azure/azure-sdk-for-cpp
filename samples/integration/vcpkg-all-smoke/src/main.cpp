@@ -69,8 +69,8 @@ int main()
 
     //Attestation 
     std::cout << "Creating Attestation Clients" << std::endl;
-    AttestationClient attestationClient(smokeUrl);
-    AttestationAdministrationClient attestationAdminClient(smokeUrl, credential);
+    AttestationClient attestationClient(AttestationClient::Create(smokeUrl));
+    AttestationAdministrationClient attestationAdminClient(AttestationAdministrationClient::Create(smokeUrl, credential));
 
     std::cout << "Successfully Created the Clients" << std::endl;
   }

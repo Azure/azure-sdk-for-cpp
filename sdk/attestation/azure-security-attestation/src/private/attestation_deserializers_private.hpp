@@ -38,7 +38,7 @@ namespace Azure { namespace Security { namespace Attestation { namespace _detail
 
   struct OpenIdMetadataSerializer final
   {
-    static Models::AttestationOpenIdMetadata Deserialize(
+    static Models::OpenIdMetadata Deserialize(
         std::unique_ptr<Azure::Core::Http::RawResponse>& response);
   };
 
@@ -115,22 +115,22 @@ namespace Azure { namespace Security { namespace Attestation { namespace _detail
     static std::string Serialize(Models::_detail::StoredAttestationPolicy const& policy);
   };
 
-  struct PolicyCertificateGetResultSerializer final
+  struct IsolatedModeCertificateGetResultSerializer final
   {
-    static Models::_detail::GetPolicyCertificatesResult Deserialize(
+    static Models::_detail::GetIsolatedModeCertificatesResult Deserialize(
         Azure::Core::Json::_internal::json const& json);
   };
 
-  struct PolicyCertificateManagementBodySerializer final
+  struct IsolatedModeCertificateBodySerializer final
   {
-    static std::string Serialize(Models::_detail::PolicyCertificateManagementBody const& body);
-    static Models::_detail::PolicyCertificateManagementBody Deserialize(
+    static std::string Serialize(Models::_detail::IsolatedModeCertificateBody const& body);
+    static Models::_detail::IsolatedModeCertificateBody Deserialize(
         Azure::Core::Json::_internal::json const& jsonBody);
   };
 
-  struct ModifyPolicyCertificatesResultSerializer
+  struct ModifyIsolatedModeCertificatesResultSerializer
   {
-    static Models::_detail::ModifyPolicyCertificatesResult Deserialize(
+    static Models::_detail::ModifyIsolatedModeCertificatesResult Deserialize(
         Azure::Core::Json::_internal::json const& json);
   };
 
