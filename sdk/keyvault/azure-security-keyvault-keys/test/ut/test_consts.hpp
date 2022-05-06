@@ -1,9 +1,24 @@
+#include <azure/core/internal/environment.hpp>
+#include <string>
+
 // cspell:disable
 namespace Azure { namespace Security { namespace KeyVault { namespace Keys { namespace Test {
-  // region dependent for the moment as i cannot determine the region where the test runs yet.
-  // i need Daniel to come back to see how to do that. I looked through the docs and i could not
-  // figure out a way to determine the region.
-  const std::string AttestationServiceUrl("https://sharedwus.wus.attest.azure.net");
+
+  const std::string AttestationServiceUrl()
+  {
+    // default to wus
+    std::string shortLocation
+        = Azure::Core::_internal::Environment::GetVariable("LOCATION_SHORT_NAME");
+    if (shortLocation.length() == 0)
+    {
+      shortLocation = "wus";
+    }
+
+    std::string const endpoint
+        = "https://shared" + shortLocation + "." + shortLocation + ".attest.azure.net";
+
+    return endpoint;
+  }
 
   const std::string RawBackupKey(
       "JkF6dXJlS2V5VmF1bHRLZXlCYWNrdXBWMS5taWNyb3NvZnQuY29tZXlKcmFXUWlPaUkwTXpnMVlqQTNZaTFrTlRRM0xU"

@@ -271,7 +271,7 @@ TEST_F(KeyVaultKeyClient, ReleaseKey)
   attestationOptions.TokenValidationOptions.ValidationTimeSlack = 10s;
 
   Azure::Security::Attestation::AttestationClient attestationClient(
-      AttestationServiceUrl, attestationOptions);
+      AttestationServiceUrl(), attestationOptions);
   attestationClient.RetrieveResponseValidationCollateral();
 
   auto attestResponse = attestationClient.AttestOpenEnclave(
@@ -292,7 +292,7 @@ TEST_F(KeyVaultKeyClient, ReleaseKey)
       + BinaryToHexString(attestResponse.Value.Body.SgxMrSigner.Value()) + R"("
         }],
         "authority" : ")"
-      + AttestationServiceUrl + R"("
+      + AttestationServiceUrl() + R"("
         }],
          "version" : "1.0.0"
         })";
