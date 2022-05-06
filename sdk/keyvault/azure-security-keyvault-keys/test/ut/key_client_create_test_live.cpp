@@ -2,13 +2,14 @@
 // SPDX-License-Identifier: MIT
 
 #include "../../azure-security-attestation/src/private/crypto/inc/crypto.hpp"
-#include "./attestation_collateral.hpp"
 #include "key_client_base_test.hpp"
-#include "maasandbox.hpp"
+
 #include "private/key_constants.hpp"
 #include "private/key_serializers.hpp"
+#include "test_consts.hpp"
 #include "gtest/gtest.h"
 #include <azure/attestation.hpp>
+#include <azure/attestation/attestation_client_options.hpp>
 #include <azure/core/base64.hpp>
 #include <azure/core/internal/json/json.hpp>
 #include <azure/keyvault/keyvault_keys.hpp>
@@ -18,7 +19,9 @@
 using namespace Azure::Core::_internal;
 using namespace Azure::Security::KeyVault::Keys;
 using namespace Azure::Security::KeyVault::Keys::Test;
-
+using namespace Azure::Security::Attestation;
+using namespace Azure::Core::Http;
+using namespace Azure::Core::Json::_internal;
 TEST_F(KeyVaultKeyClient, CreateKey)
 {
   auto const keyName = GetTestName();
@@ -251,32 +254,18 @@ TEST_F(KeyVaultKeyClient, ReleaseKey)
   auto const keyName = GetTestName() + "2";
   auto const& client = GetClientForTest(keyName);
 
+  AttestationClientOptions attestationOptions;
+  attestationOptions.TokenValidationOptions.ValidationTimeSlack = 10s;
+
   Azure::Security::Attestation::AttestationClient attestationClient(
-      "https://sharedwus.wus.attest.azure.net");
+      AttestationServiceUrl, attestationOptions);
 
-  MaaSandboxClient sandboxClient("https://maasandboxsvc.azurewebsites.net");
-  attestationClient.RetrieveResponseValidationCollateral();
-
-  auto rsaKey = CreateRsaKeyOptions("rsaKeyName");
-  rsaKey.KeySize = 2048;
-  rsaKey.ExpiresOn = std::chrono::system_clock::now() + std::chrono::hours(24 * 365);
-
-  client.CreateRsaKey(rsaKey);
-
-  KeyVaultKey cloudRsaKey = client.GetKey("rsaKeyName").Value;
-  cloudRsaKey.Properties.Id = "rsaKeyName";
-  Azure::Core::Json::_internal::json destJson;
-  Azure::Core::Json::_internal::json destJson2;
-  Azure::Security::KeyVault::Keys::_detail::JsonWebKeySerializer::JsonWebKeySerialize(
-      cloudRsaKey.Key, destJson2);
-  destJson["keys"].emplace_back(destJson2);
-  auto dest = destJson.dump();
-  std::string result = Base64Url::Base64UrlEncode(std::vector<uint8_t>(dest.begin(), dest.end()));
-  auto generatedToken = sandboxClient.GenerateQuote(AttestationDataType::Json, result);
+  auto dest = KeySerializedJWK;
+  auto decodedGeneratedToken = Base64Url::Base64UrlDecode(Base64UrlEncodedGeneratedQuote);
   attestationClient.RetrieveResponseValidationCollateral();
 
   auto attestResponse = attestationClient.AttestOpenEnclave(
-      generatedToken.Value,
+      decodedGeneratedToken,
       AttestOptions{AttestationData{
           std::vector<uint8_t>(dest.begin(), dest.end()), AttestationDataType::Binary}});
 
@@ -286,16 +275,16 @@ TEST_F(KeyVaultKeyClient, ReleaseKey)
   options.ReleasePolicy = KeyReleasePolicy();
   options.ReleasePolicy.Value().Immutable = false;
   // cspell:disable
-  std::string dataStr = "{"
-                        "\"anyOf\" : [ {"
-                        "\"allOf\" : [{\"claim\" : \"x-ms-sgx-mrsigner\", \"equals\" : \""
-      + BinaryToHexString(attestResponse.Value.Body.SgxMrSigner.Value())
-      + "\""
-        "} ],"
-        "\"authority\" : \"https://sharedwus.wus.attest.azure.net\""
-        "} ],"
-        " \"version\" : \"1.0.0\""
-        "} ";
+  std::string dataStr = R"({
+                        "anyOf" : [ {
+                        "allOf" : [{"claim" : "x-ms-sgx-mrsigner", "equals" : ")"
+      + BinaryToHexString(attestResponse.Value.Body.SgxMrSigner.Value()) + R"("
+        }],
+        "authority" : ")"
+      + AttestationServiceUrl + R"(
+        }],
+         "version" : "1.0.0"
+        })";
   // cspell:enable
   auto jsonParser = json::parse(dataStr);
   options.ReleasePolicy.Value().Data = jsonParser.dump();
