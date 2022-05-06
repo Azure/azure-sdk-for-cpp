@@ -1,3 +1,4 @@
+// cspell:disable
 namespace Azure { namespace Security { namespace KeyVault { namespace Keys { namespace Test {
   // region dependent for the moment as i cannot determine the region where the test runs yet.
   // i need Daniel to come back to see how to do that. I looked through the docs and i could not
@@ -150,3 +151,4 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys { nam
       "VORCBD"
       "RVJUSUZJQ0FURS0tLS0tCgA");
 }}}}} // namespace Azure::Security::KeyVault::Keys::Test
+// cspell:enable

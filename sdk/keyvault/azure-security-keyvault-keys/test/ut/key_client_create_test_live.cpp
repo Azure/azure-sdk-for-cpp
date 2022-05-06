@@ -281,7 +281,7 @@ TEST_F(KeyVaultKeyClient, ReleaseKey)
       + BinaryToHexString(attestResponse.Value.Body.SgxMrSigner.Value()) + R"("
         }],
         "authority" : ")"
-      + AttestationServiceUrl + R"(
+      + AttestationServiceUrl + R"("
         }],
          "version" : "1.0.0"
         })";
