@@ -31,7 +31,7 @@ add_executable (
     mocked_client_test.cpp
     mocked_transport_adapter_test.hpp
     test_consts.hpp
-    )
+     )
 
 create_per_service_target_build(keyvault azure-security-keyvault-keys-test)
 create_map_file(azure-security-keyvault-keys-test azure-security-keyvault-keys-test.map)

@@ -22,6 +22,8 @@ using namespace Azure::Security::KeyVault::Keys::Test;
 using namespace Azure::Security::Attestation;
 using namespace Azure::Core::Http;
 using namespace Azure::Core::Json::_internal;
+using namespace Azure::Security::KeyVault::Keys::Cryptography;
+
 TEST_F(KeyVaultKeyClient, CreateKey)
 {
   auto const keyName = GetTestName();
@@ -254,20 +256,29 @@ TEST_F(KeyVaultKeyClient, ReleaseKey)
   auto const keyName = GetTestName() + "2";
   auto const& client = GetClientForTest(keyName);
 
+  auto restored = client.RestoreKeyBackup(Base64Url::Base64UrlDecode(RawBackupKey));
+
+  Azure::Core::Json::_internal::json keysJson;
+  Azure::Core::Json::_internal::json keyJson;
+  Azure::Security::KeyVault::Keys::_detail::JsonWebKeySerializer::JsonWebKeySerialize(
+      restored.Value.Key, keyJson);
+  keysJson["keys"].emplace_back(keyJson);
+  auto keySerializedJWK = keysJson.dump();
+
+  auto decodedGeneratedToken = Base64Url::Base64UrlDecode(Base64UrlEncodedGeneratedQuote);
+
   AttestationClientOptions attestationOptions;
   attestationOptions.TokenValidationOptions.ValidationTimeSlack = 10s;
 
   Azure::Security::Attestation::AttestationClient attestationClient(
       AttestationServiceUrl, attestationOptions);
-
-  auto dest = KeySerializedJWK;
-  auto decodedGeneratedToken = Base64Url::Base64UrlDecode(Base64UrlEncodedGeneratedQuote);
   attestationClient.RetrieveResponseValidationCollateral();
 
   auto attestResponse = attestationClient.AttestOpenEnclave(
       decodedGeneratedToken,
       AttestOptions{AttestationData{
-          std::vector<uint8_t>(dest.begin(), dest.end()), AttestationDataType::Binary}});
+          std::vector<uint8_t>(keySerializedJWK.begin(), keySerializedJWK.end()),
+          AttestationDataType::Binary}});
 
   Azure::Security::KeyVault::Keys::CreateKeyOptions options;
   options.KeyOperations.push_back(Azure::Security::KeyVault::Keys::KeyOperation::Sign);
