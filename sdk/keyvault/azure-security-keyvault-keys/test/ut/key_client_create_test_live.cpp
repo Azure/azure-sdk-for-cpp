@@ -188,10 +188,13 @@ TEST_F(KeyVaultKeyClient, CreateEcHsmKey)
 
   {
     auto ecHsmKey = Azure::Security::KeyVault::Keys::CreateEcKeyOptions(keyName, true);
+    ecHsmKey.Enabled=true;
+    ecHsmKey.KeyOperations = {KeyOperation::Sign};
     auto keyResponse = client.CreateEcKey(ecHsmKey);
     CheckValidResponse(keyResponse);
     auto keyVaultKey = keyResponse.Value;
     EXPECT_EQ(keyVaultKey.Name(), keyName);
+    EXPECT_TRUE(keyVaultKey.Properties.Enabled.Value());
   }
   {
     // Now get the key
@@ -199,8 +202,10 @@ TEST_F(KeyVaultKeyClient, CreateEcHsmKey)
     CheckValidResponse(keyResponse);
     auto keyVaultKey = keyResponse.Value;
     EXPECT_EQ(keyVaultKey.Name(), keyName);
-    EXPECT_FALSE(keyResponse.Value.Properties.Exportable.HasValue());
+    EXPECT_TRUE(keyResponse.Value.Properties.Exportable.HasValue());
+    EXPECT_FALSE(keyResponse.Value.Properties.Exportable.Value());
     EXPECT_FALSE(keyResponse.Value.Properties.ReleasePolicy.HasValue());
+    EXPECT_TRUE(keyVaultKey.Properties.Enabled.Value());
   }
 }
 
@@ -213,6 +218,8 @@ TEST_F(KeyVaultKeyClient, CreateRsaHsmKey)
 
   {
     auto rsaHsmKey = Azure::Security::KeyVault::Keys::CreateRsaKeyOptions(keyName, true);
+    rsaHsmKey.Enabled = true;
+    rsaHsmKey.KeyOperations = {KeyOperation::Sign};
     auto keyResponse = client.CreateRsaKey(rsaHsmKey);
     CheckValidResponse(keyResponse);
     auto keyVaultKey = keyResponse.Value;
@@ -224,8 +231,10 @@ TEST_F(KeyVaultKeyClient, CreateRsaHsmKey)
     CheckValidResponse(keyResponse);
     auto keyVaultKey = keyResponse.Value;
     EXPECT_EQ(keyVaultKey.Name(), keyName);
-    EXPECT_FALSE(keyResponse.Value.Properties.Exportable.HasValue());
+    EXPECT_TRUE(keyResponse.Value.Properties.Exportable.HasValue());
+    EXPECT_FALSE(keyResponse.Value.Properties.Exportable.Value());
     EXPECT_FALSE(keyResponse.Value.Properties.ReleasePolicy.HasValue());
+    EXPECT_TRUE(keyVaultKey.Properties.Enabled.Value());
   }
 }
 TEST_F(KeyVaultKeyClient, CreateKeyWithReleasePolicyOptions)

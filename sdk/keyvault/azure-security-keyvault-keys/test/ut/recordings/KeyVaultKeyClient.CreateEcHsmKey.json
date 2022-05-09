@@ -4,54 +4,51 @@
       "Headers": {
         "content-type": "application/json",
         "user-agent": "azsdk-cpp-keyvault-keys/4.3.0-beta.1 (Windows 10 Enterprise 6.3 22000 22000.1.amd64fre.co_release.210604-1628)",
-        "x-ms-client-request-id": "c2f708f9-421f-4b9f-5e6f-9cb976fdf9aa"
+        "x-ms-client-request-id": "03277438-b825-4d0e-6bff-0726da4ca1e0"
       },
       "Method": "POST",
       "Response": {
-        "BODY": "{\"key\":{\"kid\":\"https://REDACTED.vault.azure.net/keys/CreateEcHsmKey/bf168ef89e874495b30cfbe36ed84b2c\",\"kty\":\"EC-HSM\",\"key_ops\":[\"sign\",\"verify\"],\"crv\":\"P-256\",\"x\":\"5gxakUninQnV905zeNXrHmlveKKPqG1VTGwfALjxotE\",\"y\":\"G83nn5f2IDBzj9MlIVKq7xrJZ7jVTuGJKnhynl2zAnk\"},\"attributes\":{\"enabled\":true,\"created\":1651169961,\"updated\":1651169961,\"recoveryLevel\":\"Recoverable+Purgeable\",\"recoverableDays\":90}}",
+        "BODY": "{\"attributes\":{\"created\":1652124867,\"enabled\":true,\"exportable\":false,\"recoverableDays\":7,\"recoveryLevel\":\"CustomizedRecoverable+Purgeable\",\"updated\":1652124867},\"key\":{\"crv\":\"P-256\",\"key_ops\":[\"sign\"],\"kid\":\"https://REDACTED.managedhsm.azure.net/keys/CreateEcHsmKey/35e07b4fbcdd0260137ee5100b599ff8\",\"kty\":\"EC-HSM\",\"x\":\"kPFWxfwG14icL_Xhy0YB_mlVUgbuxQgS_c9xVlNd-vk\",\"y\":\"G1T3lEneG7ZyQi0gxYJU5ezJt9u8DtKyhJYqxyg78X0\"}}",
         "REASON_PHRASE": "OK",
         "STATUS_CODE": "200",
         "cache-control": "no-cache",
-        "content-length": "395",
+        "content-length": "420",
+        "content-security-policy": "default-src 'self'",
         "content-type": "application/json; charset=utf-8",
-        "date": "Thu, 28 Apr 2022 18:19:23 GMT",
-        "expires": "-1",
-        "pragma": "no-cache",
-        "strict-transport-security": "max-age=31536000;includeSubDomains",
+        "strict-transport-security": "max-age=31536000; includeSubDomains",
         "x-content-type-options": "nosniff",
-        "x-ms-client-request-id": "c2f708f9-421f-4b9f-5e6f-9cb976fdf9aa",
-        "x-ms-keyvault-network-info": "conn_type=Ipv4;addr=24.22.157.72;act_addr_fam=InterNetwork;",
+        "x-frame-options": "SAMEORIGIN",
+        "x-ms-keyvault-network-info": "conn_type=Ipv4;addr=24.22.157.72;act_addr_fam=Ipv4;",
         "x-ms-keyvault-region": "westus3",
-        "x-ms-keyvault-service-version": "1.9.378.1",
-        "x-ms-request-id": "ffa2749b-f8de-4826-a0d1-2c60fbb65d09"
+        "x-ms-request-id": "09f1ca3e-cfcf-11ec-818f-6045bd86d60f",
+        "x-ms-server-latency": "401"
       },
-      "Url": "https://REDACTED.vault.azure.net/keys/CreateEcHsmKey/create?api-version=7.3"
+      "Url": "https://REDACTED.managedhsm.azure.net/keys/CreateEcHsmKey/create?api-version=7.3"
     },
     {
       "Headers": {
         "user-agent": "azsdk-cpp-keyvault-keys/4.3.0-beta.1 (Windows 10 Enterprise 6.3 22000 22000.1.amd64fre.co_release.210604-1628)",
-        "x-ms-client-request-id": "5c1329c6-8796-4931-6794-eb905cb865d6"
+        "x-ms-client-request-id": "dd6d2b02-8254-40f1-48fb-e214b8f7991b"
       },
       "Method": "GET",
       "Response": {
-        "BODY": "{\"key\":{\"kid\":\"https://REDACTED.vault.azure.net/keys/CreateEcHsmKey/bf168ef89e874495b30cfbe36ed84b2c\",\"kty\":\"EC-HSM\",\"key_ops\":[\"sign\",\"verify\"],\"crv\":\"P-256\",\"x\":\"5gxakUninQnV905zeNXrHmlveKKPqG1VTGwfALjxotE\",\"y\":\"G83nn5f2IDBzj9MlIVKq7xrJZ7jVTuGJKnhynl2zAnk\"},\"attributes\":{\"enabled\":true,\"created\":1651169961,\"updated\":1651169961,\"recoveryLevel\":\"Recoverable+Purgeable\",\"recoverableDays\":90}}",
+        "BODY": "{\"attributes\":{\"created\":1652124867,\"enabled\":true,\"exportable\":false,\"recoverableDays\":7,\"recoveryLevel\":\"CustomizedRecoverable+Purgeable\",\"updated\":1652124867},\"key\":{\"crv\":\"P-256\",\"key_ops\":[\"sign\"],\"kid\":\"https://REDACTED.managedhsm.azure.net/keys/CreateEcHsmKey/35e07b4fbcdd0260137ee5100b599ff8\",\"kty\":\"EC-HSM\",\"x\":\"kPFWxfwG14icL_Xhy0YB_mlVUgbuxQgS_c9xVlNd-vk\",\"y\":\"G1T3lEneG7ZyQi0gxYJU5ezJt9u8DtKyhJYqxyg78X0\"}}",
         "REASON_PHRASE": "OK",
         "STATUS_CODE": "200",
         "cache-control": "no-cache",
-        "content-length": "395",
+        "content-length": "420",
+        "content-security-policy": "default-src 'self'",
         "content-type": "application/json; charset=utf-8",
-        "date": "Thu, 28 Apr 2022 18:19:23 GMT",
-        "expires": "-1",
-        "pragma": "no-cache",
-        "strict-transport-security": "max-age=31536000;includeSubDomains",
+        "strict-transport-security": "max-age=31536000; includeSubDomains",
         "x-content-type-options": "nosniff",
-        "x-ms-client-request-id": "5c1329c6-8796-4931-6794-eb905cb865d6",
-        "x-ms-keyvault-network-info": "conn_type=Ipv4;addr=24.22.157.72;act_addr_fam=InterNetwork;",
+        "x-frame-options": "SAMEORIGIN",
+        "x-ms-build-version": "1.0.20220503-3-e1430fa9-1.0.20220430-1-f02155ab-pre-openssl",
+        "x-ms-keyvault-network-info": "conn_type=Ipv4;addr=24.22.157.72;act_addr_fam=Ipv4;",
         "x-ms-keyvault-region": "westus3",
-        "x-ms-keyvault-service-version": "1.9.378.1",
-        "x-ms-request-id": "237db785-85f7-480b-9015-a48dd29b3363"
+        "x-ms-request-id": "0a375036-cfcf-11ec-818f-6045bd86d60f",
+        "x-ms-server-latency": "98"
       },
-      "Url": "https://REDACTED.vault.azure.net/keys/CreateEcHsmKey?api-version=7.3"
+      "Url": "https://REDACTED.managedhsm.azure.net/keys/CreateEcHsmKey?api-version=7.3"
     }
   ]
 }
