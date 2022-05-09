@@ -54,14 +54,17 @@ set(
     inc/azure/storage/blobs/rest_client.hpp
     inc/azure/storage/blobs.hpp
     src/private/package_version.hpp
+    src/private/avro_parser.hpp
 )
 
 set(
   AZURE_STORAGE_BLOBS_SOURCE
     src/append_blob_client.cpp
+    src/private/avro_parser.cpp
     src/blob_client.cpp
     src/blob_container_client.cpp
     src/blob_lease_client.cpp
+    src/blob_options.cpp
     src/blob_responses.cpp
     src/blob_sas_builder.cpp
     src/blob_service_client.cpp

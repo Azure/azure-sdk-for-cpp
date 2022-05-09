@@ -23,6 +23,8 @@
 #include <azure/storage/common/internal/storage_switch_to_secondary_policy.hpp>
 #include <azure/storage/common/storage_common.hpp>
 
+#include "private/avro_parser.hpp"
+
 namespace Azure { namespace Storage { namespace Blobs {
 
   BlockBlobClient BlockBlobClient::CreateFromConnectionString(
@@ -509,6 +511,114 @@ namespace Azure { namespace Storage { namespace Blobs {
     protocolLayerOptions.IfTags = options.AccessConditions.TagConditions;
     return _detail::BlockBlobClient::GetBlockList(
         *m_pipeline, m_blobUrl, protocolLayerOptions, _internal::WithReplicaStatus(context));
+  }
+
+  Azure::Response<Models::QueryBlobResult> BlockBlobClient::Query(
+      const std::string& querySqlExpression,
+      const QueryBlobOptions& options,
+      const Azure::Core::Context& context) const
+  {
+    _detail::BlobClient::QueryBlobOptions protocolLayerOptions;
+    protocolLayerOptions.QueryRequest.QueryType = Models::_detail::QueryRequestQueryType::SQL;
+    protocolLayerOptions.QueryRequest.Expression = querySqlExpression;
+    if (options.InputTextConfiguration.m_format == Models::_detail::QueryFormatType::Delimited)
+    {
+      Models::_detail::DelimitedTextConfiguration c;
+      c.RecordSeparator = options.InputTextConfiguration.m_recordSeparator;
+      c.ColumnSeparator = options.InputTextConfiguration.m_columnSeparator;
+      c.FieldQuote = options.InputTextConfiguration.m_quotationCharacter;
+      c.EscapeChar = options.InputTextConfiguration.m_escapeCharacter;
+      c.HeadersPresent = options.InputTextConfiguration.m_hasHeaders;
+      Models::_detail::QuerySerialization q;
+      q.Format.Type = options.InputTextConfiguration.m_format;
+      q.Format.DelimitedTextConfiguration = std::move(c);
+      protocolLayerOptions.QueryRequest.InputSerialization = std::move(q);
+    }
+    else if (options.InputTextConfiguration.m_format == Models::_detail::QueryFormatType::Json)
+    {
+      Models::_detail::JsonTextConfiguration c;
+      c.RecordSeparator = options.InputTextConfiguration.m_recordSeparator;
+      Models::_detail::QuerySerialization q;
+      q.Format.Type = options.InputTextConfiguration.m_format;
+      q.Format.JsonTextConfiguration = std::move(c);
+      protocolLayerOptions.QueryRequest.InputSerialization = std::move(q);
+    }
+    else if (options.InputTextConfiguration.m_format == Models::_detail::QueryFormatType::Parquet)
+    {
+      Models::_detail::ParquetConfiguration c;
+      Models::_detail::QuerySerialization q;
+      q.Format.Type = options.InputTextConfiguration.m_format;
+      q.Format.ParquetTextConfiguration = std::move(c);
+      protocolLayerOptions.QueryRequest.InputSerialization = std::move(q);
+    }
+    else if (options.InputTextConfiguration.m_format.ToString().empty())
+    {
+    }
+    else
+    {
+      AZURE_UNREACHABLE_CODE();
+    }
+    if (options.OutputTextConfiguration.m_format == Models::_detail::QueryFormatType::Delimited)
+    {
+      Models::_detail::DelimitedTextConfiguration c;
+      c.RecordSeparator = options.OutputTextConfiguration.m_recordSeparator;
+      c.ColumnSeparator = options.OutputTextConfiguration.m_columnSeparator;
+      c.FieldQuote = options.OutputTextConfiguration.m_quotationCharacter;
+      c.EscapeChar = options.OutputTextConfiguration.m_escapeCharacter;
+      c.HeadersPresent = options.OutputTextConfiguration.m_hasHeaders;
+      Models::_detail::QuerySerialization q;
+      q.Format.Type = options.OutputTextConfiguration.m_format;
+      q.Format.DelimitedTextConfiguration = std::move(c);
+      protocolLayerOptions.QueryRequest.OutputSerialization = std::move(q);
+    }
+    else if (options.OutputTextConfiguration.m_format == Models::_detail::QueryFormatType::Json)
+    {
+      Models::_detail::JsonTextConfiguration c;
+      c.RecordSeparator = options.OutputTextConfiguration.m_recordSeparator;
+      Models::_detail::QuerySerialization q;
+      q.Format.Type = options.OutputTextConfiguration.m_format;
+      q.Format.JsonTextConfiguration = std::move(c);
+      protocolLayerOptions.QueryRequest.OutputSerialization = std::move(q);
+    }
+    else if (options.OutputTextConfiguration.m_format == Models::_detail::QueryFormatType::Parquet)
+    {
+      Models::_detail::ParquetConfiguration c;
+      Models::_detail::QuerySerialization q;
+      q.Format.Type = options.OutputTextConfiguration.m_format;
+      q.Format.ParquetTextConfiguration = std::move(c);
+      protocolLayerOptions.QueryRequest.OutputSerialization = std::move(q);
+    }
+    else if (options.OutputTextConfiguration.m_format == Models::_detail::QueryFormatType::Arrow)
+    {
+      Models::_detail::ArrowConfiguration c;
+      c.Schema = options.OutputTextConfiguration.m_schema;
+      Models::_detail::QuerySerialization q;
+      q.Format.Type = options.OutputTextConfiguration.m_format;
+      q.Format.ArrowConfiguration = std::move(c);
+      protocolLayerOptions.QueryRequest.OutputSerialization = std::move(q);
+    }
+    else if (options.InputTextConfiguration.m_format.ToString().empty())
+    {
+    }
+    else
+    {
+      AZURE_UNREACHABLE_CODE();
+    }
+
+    protocolLayerOptions.LeaseId = options.AccessConditions.LeaseId;
+    if (m_customerProvidedKey.HasValue())
+    {
+      protocolLayerOptions.EncryptionKey = m_customerProvidedKey.Value().Key;
+      protocolLayerOptions.EncryptionKeySha256 = m_customerProvidedKey.Value().KeyHash;
+      protocolLayerOptions.EncryptionAlgorithm = m_customerProvidedKey.Value().Algorithm.ToString();
+    }
+    protocolLayerOptions.EncryptionScope = m_encryptionScope;
+    auto response = _detail::BlobClient::Query(
+        *m_pipeline, m_blobUrl, protocolLayerOptions, _internal::WithReplicaStatus(context));
+
+    response.Value.BodyStream
+        = std::make_unique<_detail::AvroStreamParser>(std::move(response.Value.BodyStream));
+    return response;
   }
 
 }}} // namespace Azure::Storage::Blobs

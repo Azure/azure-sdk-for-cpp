@@ -75,7 +75,6 @@ directive:
       delete $["/{filesystem}/{path}?action=setAccessControl&blob"];
       delete $["/{filesystem}/{path}?action=getAccessControl&blob"];
       delete $["/{filesystem}/{path}?FileRename"];
-      delete $["/{containerName}/{blob}?comp=query"];
       
       for (const operation in $) {
         for (const verb in $[operation]) {
@@ -1174,6 +1173,50 @@ directive:
     transform: >
       if ($.ParquetConfiguration) {
         $.ParquetConfiguration.properties = {"__placeHolder" : { "type": "integer"}};
+      }
+      $.QuerySerialization["x-namespace"] = "_detail";
+      $.QueryFormat["x-namespace"] = "_detail";
+      $.QueryType["x-namespace"] = "_detail";
+      $.DelimitedTextConfiguration["x-namespace"] = "_detail";
+      $.JsonTextConfiguration["x-namespace"] = "_detail";
+      $.ArrowConfiguration["x-namespace"] = "_detail";
+      $.ParquetConfiguration["x-namespace"] = "_detail";
+      $.QueryRequest["x-namespace"] = "_detail";
+      $.QueryRequest.properties["QueryType"]["x-namespace"] = "_detail";
+      $.ArrowField["x-ms-client-name"] = "BlobQueryArrowField";
+      $.DelimitedTextConfiguration.properties["HeadersPresent"]["x-ms-xml"] = $.DelimitedTextConfiguration.properties["HeadersPresent"]["xml"];
+  - from: swagger-document
+    where: $["x-ms-paths"]["/{containerName}/{blob}?comp=query"].post.parameters
+    transform: >
+      $.push({"$ref": "#/parameters/EncryptionScope"});
+  - from: swagger-document
+    where: $["x-ms-paths"]["/{containerName}/{blob}?comp=query"].post.responses
+    transform: >  
+      for (const status_code of ["200", "206"]) {
+        delete $[status_code].headers["x-ms-meta"];
+        delete $[status_code].headers["Content-Length"];
+        delete $[status_code].headers["Content-Type"];
+        delete $[status_code].headers["Content-Range"];
+        delete $[status_code].headers["Content-MD5"];
+        delete $[status_code].headers["Content-Encoding"];
+        delete $[status_code].headers["Cache-Control"];
+        delete $[status_code].headers["Content-Disposition"];
+        delete $[status_code].headers["Content-Language"];
+        delete $[status_code].headers["x-ms-blob-sequence-number"];
+        delete $[status_code].headers["x-ms-blob-type"];
+        delete $[status_code].headers["x-ms-copy-completion-time"];
+        delete $[status_code].headers["x-ms-copy-status-description"];
+        delete $[status_code].headers["x-ms-copy-id"];
+        delete $[status_code].headers["x-ms-copy-progress"];
+        delete $[status_code].headers["x-ms-copy-source"];
+        delete $[status_code].headers["x-ms-copy-status"];
+        delete $[status_code].headers["Accept-Ranges"];
+        delete $[status_code].headers["x-ms-blob-committed-block-count"];
+        delete $[status_code].headers["x-ms-encryption-key-sha256"];
+        delete $[status_code].headers["x-ms-encryption-scope"];
+        delete $[status_code].headers["x-ms-blob-content-md5"];
+        delete $[status_code].headers["x-ms-content-crc64"];
+        $[status_code].headers["x-ms-lease-duration"]["x-nullable"] = true;
       }
 ```
 

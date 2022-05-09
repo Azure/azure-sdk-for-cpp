@@ -1042,6 +1042,62 @@ namespace Azure { namespace Storage { namespace Blobs {
     } AccessConditions;
   };
 
+  class BlobQueryInputTextOptions {
+  public:
+    static BlobQueryInputTextOptions CreateCsvTextOptions(
+        const std::string& recordSeparator = std::string(),
+        const std::string& columnSeparator = std::string(),
+        const std::string& quotationCharacter = std::string(),
+        const std::string& escapeCharacter = std::string(),
+        bool hasHeaders = false);
+    static BlobQueryInputTextOptions CreateJsonTextOptions(
+        const std::string& RecordSeparator = std::string());
+    static BlobQueryInputTextOptions CreateParquetTextOptions();
+
+  private:
+    Models::_detail::QueryFormatType m_format;
+    std::string m_recordSeparator;
+    std::string m_columnSeparator;
+    std::string m_quotationCharacter;
+    std::string m_escapeCharacter;
+    bool m_hasHeaders = false;
+
+    friend class BlockBlobClient;
+  };
+
+  class BlobQueryOutputTextOptions {
+  public:
+    static BlobQueryOutputTextOptions CreateCsvTextOptions(
+        const std::string& recordSeparator = std::string(),
+        const std::string& columnSeparator = std::string(),
+        const std::string& quotationCharacter = std::string(),
+        const std::string& escapeCharacter = std::string(),
+        bool hasHeaders = false);
+    static BlobQueryOutputTextOptions CreateJsonTextOptions(
+        const std::string& recordSeparatorc = std::string());
+    static BlobQueryOutputTextOptions CreateParquetTextOptions();
+    static BlobQueryOutputTextOptions CreateArrowTextOptions(
+        std::vector<Models::BlobQueryArrowField> schema);
+
+  private:
+    Models::_detail::QueryFormatType m_format;
+    std::string m_recordSeparator;
+    std::string m_columnSeparator;
+    std::string m_quotationCharacter;
+    std::string m_escapeCharacter;
+    bool m_hasHeaders = false;
+    std::vector<Models::BlobQueryArrowField> m_schema;
+
+    friend class BlockBlobClient;
+  };
+
+  struct QueryBlobOptions final
+  {
+    BlobQueryInputTextOptions InputTextConfiguration;
+    BlobQueryOutputTextOptions OutputTextConfiguration;
+    LeaseAccessConditions AccessConditions;
+  };
+
   /**
    * @brief Optional parameters for #Azure::Storage::Blobs::AppendBlobClient::Create.
    */

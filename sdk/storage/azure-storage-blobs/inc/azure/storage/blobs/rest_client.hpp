@@ -2200,6 +2200,188 @@ namespace Azure { namespace Storage { namespace Blobs {
     struct SetBlobAccessTierResult final
     {
     };
+    namespace _detail {
+      /**
+       * @brief The query type.
+       */
+      class QueryRequestQueryType final {
+      public:
+        QueryRequestQueryType() = default;
+        explicit QueryRequestQueryType(std::string value) : m_value(std::move(value)) {}
+        bool operator==(const QueryRequestQueryType& other) const
+        {
+          return m_value == other.m_value;
+        }
+        bool operator!=(const QueryRequestQueryType& other) const { return !(*this == other); }
+        const std::string& ToString() const { return m_value; }
+        AZ_STORAGE_BLOBS_DLLEXPORT const static QueryRequestQueryType SQL;
+
+      private:
+        std::string m_value;
+      };
+      /**
+       * @brief The quick query format type.
+       */
+      class QueryFormatType final {
+      public:
+        QueryFormatType() = default;
+        explicit QueryFormatType(std::string value) : m_value(std::move(value)) {}
+        bool operator==(const QueryFormatType& other) const { return m_value == other.m_value; }
+        bool operator!=(const QueryFormatType& other) const { return !(*this == other); }
+        const std::string& ToString() const { return m_value; }
+        AZ_STORAGE_BLOBS_DLLEXPORT const static QueryFormatType Delimited;
+        AZ_STORAGE_BLOBS_DLLEXPORT const static QueryFormatType Json;
+        AZ_STORAGE_BLOBS_DLLEXPORT const static QueryFormatType Arrow;
+        AZ_STORAGE_BLOBS_DLLEXPORT const static QueryFormatType Parquet;
+
+      private:
+        std::string m_value;
+      };
+      /**
+       * @brief Delimited text configuration.
+       */
+      struct DelimitedTextConfiguration final
+      {
+        /**
+         * Column separator.
+         */
+        std::string ColumnSeparator;
+        /**
+         * Field quote.
+         */
+        std::string FieldQuote;
+        /**
+         * Record separator.
+         */
+        std::string RecordSeparator;
+        /**
+         * Escape char.
+         */
+        std::string EscapeChar;
+        /**
+         * Has headers.
+         */
+        bool HeadersPresent = bool();
+      };
+      /**
+       * @brief Json text configuration.
+       */
+      struct JsonTextConfiguration final
+      {
+        /**
+         * Record separator.
+         */
+        std::string RecordSeparator;
+      };
+    } // namespace _detail
+    /**
+     * @brief Field of an arrow schema.
+     */
+    struct BlobQueryArrowField final
+    {
+      std::string Type;
+      Nullable<std::string> Name;
+      Nullable<int32_t> Precision;
+      Nullable<int32_t> Scale;
+    };
+    namespace _detail {
+      /**
+       * @brief Arrow configuration.
+       */
+      struct ArrowConfiguration final
+      {
+        /**
+         * Array of BlobQueryArrowField.
+         */
+        std::vector<BlobQueryArrowField> Schema;
+      };
+      /**
+       * @brief Parquet configuration.
+       */
+      struct ParquetConfiguration final
+      {
+      };
+      struct QueryFormat final
+      {
+        /**
+         * The quick query format type.
+         */
+        Nullable<QueryFormatType> Type;
+        /**
+         * Delimited text configuration.
+         */
+        Nullable<_detail::DelimitedTextConfiguration> DelimitedTextConfiguration;
+        /**
+         * Json text configuration.
+         */
+        Nullable<_detail::JsonTextConfiguration> JsonTextConfiguration;
+        /**
+         * Arrow configuration.
+         */
+        Nullable<_detail::ArrowConfiguration> ArrowConfiguration;
+        /**
+         * Parquet configuration.
+         */
+        Nullable<ParquetConfiguration> ParquetTextConfiguration;
+      };
+      struct QuerySerialization final
+      {
+        QueryFormat Format;
+      };
+      /**
+       * @brief The quick query body.
+       */
+      struct QueryRequest final
+      {
+        /**
+         * The query type.
+         */
+        QueryRequestQueryType QueryType;
+        /**
+         * A query statement.
+         */
+        std::string Expression;
+        Nullable<QuerySerialization> InputSerialization;
+        Nullable<QuerySerialization> OutputSerialization;
+      };
+    } // namespace _detail
+    /**
+     * @brief Response type for #Azure::Storage::Blobs::BlobClient::Query.
+     */
+    struct QueryBlobResult final
+    {
+      std::unique_ptr<Core::IO::BodyStream> BodyStream;
+      /**
+       * Returns the date and time the container was last modified. Any operation that modifies the
+       * blob, including an update of the blob's metadata or properties, changes the last-modified
+       * time of the blob.
+       */
+      DateTime LastModified;
+      /**
+       * The ETag contains a value that you can use to perform operations conditionally. If the
+       * request version is 2011-08-18 or newer, the ETag value will be in quotes.
+       */
+      Azure::ETag ETag;
+      /**
+       * When a blob is leased, specifies whether the lease is of infinite or fixed duration.
+       */
+      Nullable<LeaseDurationType> LeaseDuration;
+      /**
+       * Lease state of the blob.
+       */
+      Models::LeaseState LeaseState;
+      /**
+       * The current lease status of the blob.
+       */
+      Models::LeaseStatus LeaseStatus;
+      /**
+       * The value of this header is set to true if the blob data and application metadata are
+       * completely encrypted using the specified algorithm. Otherwise, the value is set to false
+       * (when the blob is unencrypted, or if only parts of the blob/application metadata are
+       * encrypted).
+       */
+      bool IsServerEncrypted = bool();
+    };
     /**
      * @brief Response type for #Azure::Storage::Blobs::BlobClient::SetTags.
      */
@@ -3500,6 +3682,26 @@ namespace Azure { namespace Storage { namespace Blobs {
           Core::Http::_internal::HttpPipeline& pipeline,
           const Core::Url& url,
           const SetBlobTierOptions& options,
+          const Core::Context& context);
+      struct QueryBlobOptions final
+      {
+        Models::_detail::QueryRequest QueryRequest;
+        Nullable<std::string> Snapshot;
+        Nullable<std::string> LeaseId;
+        Nullable<std::string> EncryptionKey;
+        Nullable<std::vector<uint8_t>> EncryptionKeySha256;
+        Nullable<std::string> EncryptionAlgorithm;
+        Nullable<DateTime> IfModifiedSince;
+        Nullable<DateTime> IfUnmodifiedSince;
+        ETag IfMatch;
+        ETag IfNoneMatch;
+        Nullable<std::string> IfTags;
+        Nullable<std::string> EncryptionScope;
+      };
+      static Response<Models::QueryBlobResult> Query(
+          Core::Http::_internal::HttpPipeline& pipeline,
+          const Core::Url& url,
+          const QueryBlobOptions& options,
           const Core::Context& context);
       struct GetBlobTagsOptions final
       {

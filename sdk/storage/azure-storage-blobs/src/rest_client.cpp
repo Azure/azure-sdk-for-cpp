@@ -165,6 +165,13 @@ namespace Azure { namespace Storage { namespace Blobs {
         "RelativeToCreation");
     const ScheduleBlobExpiryOriginType ScheduleBlobExpiryOriginType::RelativeToNow("RelativeToNow");
     const ScheduleBlobExpiryOriginType ScheduleBlobExpiryOriginType::Absolute("Absolute");
+    namespace _detail {
+      const QueryRequestQueryType QueryRequestQueryType::SQL("SQL");
+      const QueryFormatType QueryFormatType::Delimited("delimited");
+      const QueryFormatType QueryFormatType::Json("json");
+      const QueryFormatType QueryFormatType::Arrow("arrow");
+      const QueryFormatType QueryFormatType::Parquet("parquet");
+    } // namespace _detail
     const SequenceNumberAction SequenceNumberAction::Max("max");
     const SequenceNumberAction SequenceNumberAction::Update("update");
     const SequenceNumberAction SequenceNumberAction::Increment("increment");
@@ -4958,6 +4965,321 @@ namespace Azure { namespace Storage { namespace Blobs {
       Models::SetBlobAccessTierResult response;
       return Response<Models::SetBlobAccessTierResult>(
           std::move(response), std::move(pRawResponse));
+    }
+    Response<Models::QueryBlobResult> BlobClient::Query(
+        Core::Http::_internal::HttpPipeline& pipeline,
+        const Core::Url& url,
+        const QueryBlobOptions& options,
+        const Core::Context& context)
+    {
+      std::string xmlBody;
+      {
+        _internal::XmlWriter writer;
+        writer.Write(_internal::XmlNode{_internal::XmlNodeType::StartTag, "QueryRequest"});
+        writer.Write(_internal::XmlNode{
+            _internal::XmlNodeType::StartTag,
+            "QueryType",
+            options.QueryRequest.QueryType.ToString()});
+        writer.Write(_internal::XmlNode{
+            _internal::XmlNodeType::StartTag, "Expression", options.QueryRequest.Expression});
+        if (options.QueryRequest.InputSerialization.HasValue())
+        {
+          writer.Write(_internal::XmlNode{_internal::XmlNodeType::StartTag, "InputSerialization"});
+          writer.Write(_internal::XmlNode{_internal::XmlNodeType::StartTag, "Format"});
+          if (options.QueryRequest.InputSerialization.Value().Format.Type.HasValue())
+          {
+            writer.Write(_internal::XmlNode{
+                _internal::XmlNodeType::StartTag,
+                "Type",
+                options.QueryRequest.InputSerialization.Value().Format.Type.Value().ToString()});
+          }
+          if (options.QueryRequest.InputSerialization.Value()
+                  .Format.DelimitedTextConfiguration.HasValue())
+          {
+            writer.Write(
+                _internal::XmlNode{_internal::XmlNodeType::StartTag, "DelimitedTextConfiguration"});
+            writer.Write(_internal::XmlNode{
+                _internal::XmlNodeType::StartTag,
+                "ColumnSeparator",
+                options.QueryRequest.InputSerialization.Value()
+                    .Format.DelimitedTextConfiguration.Value()
+                    .ColumnSeparator});
+            writer.Write(_internal::XmlNode{
+                _internal::XmlNodeType::StartTag,
+                "FieldQuote",
+                options.QueryRequest.InputSerialization.Value()
+                    .Format.DelimitedTextConfiguration.Value()
+                    .FieldQuote});
+            writer.Write(_internal::XmlNode{
+                _internal::XmlNodeType::StartTag,
+                "RecordSeparator",
+                options.QueryRequest.InputSerialization.Value()
+                    .Format.DelimitedTextConfiguration.Value()
+                    .RecordSeparator});
+            writer.Write(_internal::XmlNode{
+                _internal::XmlNodeType::StartTag,
+                "EscapeChar",
+                options.QueryRequest.InputSerialization.Value()
+                    .Format.DelimitedTextConfiguration.Value()
+                    .EscapeChar});
+            writer.Write(_internal::XmlNode{
+                _internal::XmlNodeType::StartTag,
+                "HasHeaders",
+                options.QueryRequest.InputSerialization.Value()
+                        .Format.DelimitedTextConfiguration.Value()
+                        .HeadersPresent
+                    ? "true"
+                    : "false"});
+            writer.Write(_internal::XmlNode{_internal::XmlNodeType::EndTag});
+          }
+          if (options.QueryRequest.InputSerialization.Value()
+                  .Format.JsonTextConfiguration.HasValue())
+          {
+            writer.Write(
+                _internal::XmlNode{_internal::XmlNodeType::StartTag, "JsonTextConfiguration"});
+            writer.Write(_internal::XmlNode{
+                _internal::XmlNodeType::StartTag,
+                "RecordSeparator",
+                options.QueryRequest.InputSerialization.Value()
+                    .Format.JsonTextConfiguration.Value()
+                    .RecordSeparator});
+            writer.Write(_internal::XmlNode{_internal::XmlNodeType::EndTag});
+          }
+          if (options.QueryRequest.InputSerialization.Value().Format.ArrowConfiguration.HasValue())
+          {
+            writer.Write(
+                _internal::XmlNode{_internal::XmlNodeType::StartTag, "ArrowConfiguration"});
+            writer.Write(_internal::XmlNode{_internal::XmlNodeType::StartTag, "Schema"});
+            for (const auto& i1 : options.QueryRequest.InputSerialization.Value()
+                                      .Format.ArrowConfiguration.Value()
+                                      .Schema)
+            {
+              writer.Write(_internal::XmlNode{_internal::XmlNodeType::StartTag, "Field"});
+              writer.Write(_internal::XmlNode{_internal::XmlNodeType::StartTag, "Type", i1.Type});
+              if (i1.Name.HasValue())
+              {
+                writer.Write(
+                    _internal::XmlNode{_internal::XmlNodeType::StartTag, "Name", i1.Name.Value()});
+              }
+              if (i1.Precision.HasValue())
+              {
+                writer.Write(_internal::XmlNode{
+                    _internal::XmlNodeType::StartTag,
+                    "Precision",
+                    std::to_string(i1.Precision.Value())});
+              }
+              if (i1.Scale.HasValue())
+              {
+                writer.Write(_internal::XmlNode{
+                    _internal::XmlNodeType::StartTag, "Scale", std::to_string(i1.Scale.Value())});
+              }
+              writer.Write(_internal::XmlNode{_internal::XmlNodeType::EndTag});
+            }
+            writer.Write(_internal::XmlNode{_internal::XmlNodeType::EndTag});
+            writer.Write(_internal::XmlNode{_internal::XmlNodeType::EndTag});
+          }
+          if (options.QueryRequest.InputSerialization.Value()
+                  .Format.ParquetTextConfiguration.HasValue())
+          {
+            writer.Write(
+                _internal::XmlNode{_internal::XmlNodeType::StartTag, "ParquetTextConfiguration"});
+            writer.Write(_internal::XmlNode{_internal::XmlNodeType::EndTag});
+          }
+          writer.Write(_internal::XmlNode{_internal::XmlNodeType::EndTag});
+          writer.Write(_internal::XmlNode{_internal::XmlNodeType::EndTag});
+        }
+        if (options.QueryRequest.OutputSerialization.HasValue())
+        {
+          writer.Write(_internal::XmlNode{_internal::XmlNodeType::StartTag, "OutputSerialization"});
+          writer.Write(_internal::XmlNode{_internal::XmlNodeType::StartTag, "Format"});
+          if (options.QueryRequest.OutputSerialization.Value().Format.Type.HasValue())
+          {
+            writer.Write(_internal::XmlNode{
+                _internal::XmlNodeType::StartTag,
+                "Type",
+                options.QueryRequest.OutputSerialization.Value().Format.Type.Value().ToString()});
+          }
+          if (options.QueryRequest.OutputSerialization.Value()
+                  .Format.DelimitedTextConfiguration.HasValue())
+          {
+            writer.Write(
+                _internal::XmlNode{_internal::XmlNodeType::StartTag, "DelimitedTextConfiguration"});
+            writer.Write(_internal::XmlNode{
+                _internal::XmlNodeType::StartTag,
+                "ColumnSeparator",
+                options.QueryRequest.OutputSerialization.Value()
+                    .Format.DelimitedTextConfiguration.Value()
+                    .ColumnSeparator});
+            writer.Write(_internal::XmlNode{
+                _internal::XmlNodeType::StartTag,
+                "FieldQuote",
+                options.QueryRequest.OutputSerialization.Value()
+                    .Format.DelimitedTextConfiguration.Value()
+                    .FieldQuote});
+            writer.Write(_internal::XmlNode{
+                _internal::XmlNodeType::StartTag,
+                "RecordSeparator",
+                options.QueryRequest.OutputSerialization.Value()
+                    .Format.DelimitedTextConfiguration.Value()
+                    .RecordSeparator});
+            writer.Write(_internal::XmlNode{
+                _internal::XmlNodeType::StartTag,
+                "EscapeChar",
+                options.QueryRequest.OutputSerialization.Value()
+                    .Format.DelimitedTextConfiguration.Value()
+                    .EscapeChar});
+            writer.Write(_internal::XmlNode{
+                _internal::XmlNodeType::StartTag,
+                "HasHeaders",
+                options.QueryRequest.OutputSerialization.Value()
+                        .Format.DelimitedTextConfiguration.Value()
+                        .HeadersPresent
+                    ? "true"
+                    : "false"});
+            writer.Write(_internal::XmlNode{_internal::XmlNodeType::EndTag});
+          }
+          if (options.QueryRequest.OutputSerialization.Value()
+                  .Format.JsonTextConfiguration.HasValue())
+          {
+            writer.Write(
+                _internal::XmlNode{_internal::XmlNodeType::StartTag, "JsonTextConfiguration"});
+            writer.Write(_internal::XmlNode{
+                _internal::XmlNodeType::StartTag,
+                "RecordSeparator",
+                options.QueryRequest.OutputSerialization.Value()
+                    .Format.JsonTextConfiguration.Value()
+                    .RecordSeparator});
+            writer.Write(_internal::XmlNode{_internal::XmlNodeType::EndTag});
+          }
+          if (options.QueryRequest.OutputSerialization.Value().Format.ArrowConfiguration.HasValue())
+          {
+            writer.Write(
+                _internal::XmlNode{_internal::XmlNodeType::StartTag, "ArrowConfiguration"});
+            writer.Write(_internal::XmlNode{_internal::XmlNodeType::StartTag, "Schema"});
+            for (const auto& i2 : options.QueryRequest.OutputSerialization.Value()
+                                      .Format.ArrowConfiguration.Value()
+                                      .Schema)
+            {
+              writer.Write(_internal::XmlNode{_internal::XmlNodeType::StartTag, "Field"});
+              writer.Write(_internal::XmlNode{_internal::XmlNodeType::StartTag, "Type", i2.Type});
+              if (i2.Name.HasValue())
+              {
+                writer.Write(
+                    _internal::XmlNode{_internal::XmlNodeType::StartTag, "Name", i2.Name.Value()});
+              }
+              if (i2.Precision.HasValue())
+              {
+                writer.Write(_internal::XmlNode{
+                    _internal::XmlNodeType::StartTag,
+                    "Precision",
+                    std::to_string(i2.Precision.Value())});
+              }
+              if (i2.Scale.HasValue())
+              {
+                writer.Write(_internal::XmlNode{
+                    _internal::XmlNodeType::StartTag, "Scale", std::to_string(i2.Scale.Value())});
+              }
+              writer.Write(_internal::XmlNode{_internal::XmlNodeType::EndTag});
+            }
+            writer.Write(_internal::XmlNode{_internal::XmlNodeType::EndTag});
+            writer.Write(_internal::XmlNode{_internal::XmlNodeType::EndTag});
+          }
+          if (options.QueryRequest.OutputSerialization.Value()
+                  .Format.ParquetTextConfiguration.HasValue())
+          {
+            writer.Write(
+                _internal::XmlNode{_internal::XmlNodeType::StartTag, "ParquetTextConfiguration"});
+            writer.Write(_internal::XmlNode{_internal::XmlNodeType::EndTag});
+          }
+          writer.Write(_internal::XmlNode{_internal::XmlNodeType::EndTag});
+          writer.Write(_internal::XmlNode{_internal::XmlNodeType::EndTag});
+        }
+        writer.Write(_internal::XmlNode{_internal::XmlNodeType::EndTag});
+        writer.Write(_internal::XmlNode{_internal::XmlNodeType::End});
+        xmlBody = writer.GetDocument();
+      }
+      Core::IO::MemoryBodyStream requestBody(
+          reinterpret_cast<const uint8_t*>(xmlBody.data()), xmlBody.length());
+      auto request = Core::Http::Request(Core::Http::HttpMethod::Post, url, &requestBody, false);
+      request.SetHeader("Content-Type", "application/xml; charset=UTF-8");
+      request.SetHeader("Content-Length", std::to_string(requestBody.Length()));
+      request.GetUrl().AppendQueryParameter("comp", "query");
+      if (options.Snapshot.HasValue() && !options.Snapshot.Value().empty())
+      {
+        request.GetUrl().AppendQueryParameter(
+            "snapshot", _internal::UrlEncodeQueryParameter(options.Snapshot.Value()));
+      }
+      if (options.LeaseId.HasValue() && !options.LeaseId.Value().empty())
+      {
+        request.SetHeader("x-ms-lease-id", options.LeaseId.Value());
+      }
+      if (options.EncryptionKey.HasValue() && !options.EncryptionKey.Value().empty())
+      {
+        request.SetHeader("x-ms-encryption-key", options.EncryptionKey.Value());
+      }
+      if (options.EncryptionKeySha256.HasValue()
+          && !Core::Convert::Base64Encode(options.EncryptionKeySha256.Value()).empty())
+      {
+        request.SetHeader(
+            "x-ms-encryption-key-sha256",
+            Core::Convert::Base64Encode(options.EncryptionKeySha256.Value()));
+      }
+      if (options.EncryptionAlgorithm.HasValue() && !options.EncryptionAlgorithm.Value().empty())
+      {
+        request.SetHeader("x-ms-encryption-algorithm", options.EncryptionAlgorithm.Value());
+      }
+      if (options.IfModifiedSince.HasValue())
+      {
+        request.SetHeader(
+            "If-Modified-Since",
+            options.IfModifiedSince.Value().ToString(Azure::DateTime::DateFormat::Rfc1123));
+      }
+      if (options.IfUnmodifiedSince.HasValue())
+      {
+        request.SetHeader(
+            "If-Unmodified-Since",
+            options.IfUnmodifiedSince.Value().ToString(Azure::DateTime::DateFormat::Rfc1123));
+      }
+      if (options.IfMatch.HasValue() && !options.IfMatch.ToString().empty())
+      {
+        request.SetHeader("If-Match", options.IfMatch.ToString());
+      }
+      if (options.IfNoneMatch.HasValue() && !options.IfNoneMatch.ToString().empty())
+      {
+        request.SetHeader("If-None-Match", options.IfNoneMatch.ToString());
+      }
+      if (options.IfTags.HasValue() && !options.IfTags.Value().empty())
+      {
+        request.SetHeader("x-ms-if-tags", options.IfTags.Value());
+      }
+      request.SetHeader("x-ms-version", "2020-08-04");
+      if (options.EncryptionScope.HasValue() && !options.EncryptionScope.Value().empty())
+      {
+        request.SetHeader("x-ms-encryption-scope", options.EncryptionScope.Value());
+      }
+      auto pRawResponse = pipeline.Send(request, context);
+      auto httpStatusCode = pRawResponse->GetStatusCode();
+      if (!(httpStatusCode == Core::Http::HttpStatusCode::Ok
+            || httpStatusCode == Core::Http::HttpStatusCode::PartialContent))
+      {
+        throw StorageException::CreateFromResponse(std::move(pRawResponse));
+      }
+      Models::QueryBlobResult response;
+      response.BodyStream = pRawResponse->ExtractBodyStream();
+      response.LastModified = DateTime::Parse(
+          pRawResponse->GetHeaders().at("Last-Modified"), Azure::DateTime::DateFormat::Rfc1123);
+      response.ETag = ETag(pRawResponse->GetHeaders().at("ETag"));
+      if (pRawResponse->GetHeaders().count("x-ms-lease-duration") != 0)
+      {
+        response.LeaseDuration
+            = Models::LeaseDurationType(pRawResponse->GetHeaders().at("x-ms-lease-duration"));
+      }
+      response.LeaseState = Models::LeaseState(pRawResponse->GetHeaders().at("x-ms-lease-state"));
+      response.LeaseStatus
+          = Models::LeaseStatus(pRawResponse->GetHeaders().at("x-ms-lease-status"));
+      response.IsServerEncrypted
+          = pRawResponse->GetHeaders().at("x-ms-server-encrypted") == std::string("true");
+      return Response<Models::QueryBlobResult>(std::move(response), std::move(pRawResponse));
     }
     Response<std::map<std::string, std::string>> BlobClient::GetTags(
         Core::Http::_internal::HttpPipeline& pipeline,
