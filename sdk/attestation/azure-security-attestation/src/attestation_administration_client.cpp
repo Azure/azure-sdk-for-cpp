@@ -168,12 +168,10 @@ Models::AttestationToken<void> AttestationAdministrationClient::CreateAttestatio
   return AttestationTokenInternal<void>(tokenToSend.RawToken);
 }
 
-Azure::Response<Models::AttestationToken<Models::PolicyResult>>
-AttestationAdministrationClient::SetAttestationPolicy(
+Azure::Core::Http::Request AttestationAdministrationClient::CreateSetPolicyRequest(
     AttestationType const& attestationType,
     std::string const& newAttestationPolicy,
-    SetPolicyOptions const& options,
-    Azure::Core::Context const& context) const
+    SetPolicyOptions const& options) const
 {
   // Calculate a signed (or unsigned) attestation policy token to send to the service.
   Models::AttestationToken<void> const tokenToSend(
@@ -182,12 +180,22 @@ AttestationAdministrationClient::SetAttestationPolicy(
   Azure::Core::IO::MemoryBodyStream stream(
       reinterpret_cast<uint8_t const*>(tokenToSend.RawToken.data()), tokenToSend.RawToken.size());
 
-  auto request = AttestationCommonRequest::CreateRequest(
+  return AttestationCommonRequest::CreateRequest(
       m_endpoint,
       m_apiVersion,
       HttpMethod::Put,
       {"policies/" + attestationType.ToString()},
       &stream);
+}
+
+Azure::Response<Models::AttestationToken<Models::PolicyResult>>
+AttestationAdministrationClient::SetAttestationPolicy(
+    AttestationType const& attestationType,
+    std::string const& newAttestationPolicy,
+    SetPolicyOptions const& options,
+    Azure::Core::Context const& context) const
+{
+  Azure::Core::Http::Request request = CreateSetPolicyRequest(attestationType, newAttestationPolicy, options);
 
   // Send the request to the service.
   auto response = AttestationCommonRequest::SendRequest(*m_pipeline, request, context);
@@ -209,8 +217,8 @@ AttestationAdministrationClient::SetAttestationPolicy(
       m_attestationSigners);
 
   // Extract the underlying policy token from the response.
-  auto internalResult
-      = static_cast<AttestationToken<Models::_detail::PolicyResult>>(resultToken).Body;
+  auto& internalResult
+      = static_cast<AttestationToken<Models::_detail::PolicyResult>&>(resultToken).Body;
 
   Models::PolicyResult returnedResult;
   if (internalResult.PolicyResolution)
@@ -506,4 +514,107 @@ void AttestationAdministrationClient::RetrieveResponseValidationCollateral(
       m_attestationSigners = newValue;
     }
   }
+}
+
+AttestationBatchFactory AttestationAdministrationClient::CreateBatchFactory() const
+{
+  return AttestationBatchFactory();
+}
+
+DeferredOperation<Models::AttestationToken<Models::PolicyResult>>
+AttestationBatchFactory::SetAttestationPolicy(
+    Models::AttestationType const& attestationType,
+    std::string const& policyToSet,
+    SetPolicyOptions const& options) const
+{
+  attestationType;
+  policyToSet;
+  options;
+  throw std::runtime_error("Not implemented");
+}
+
+/**
+ * @brief Resets the attestation policy for the specified AttestationType to its default.
+ *
+ * @param attestationType Sets the policy on the specified AttestationType.
+ * @param options Options used when setting the policy, including signer.
+ * @param context User defined context for the operation.
+ * @return Response<Models::AttestationToken<Models::PolicyResult>> The result of the reset
+ * policy operation.
+ *
+ * @note \b Note: The RetrieveResponseValidationCollateral API \b MUST be called before the
+ * ResetAttestationPolicy API is called to retrieve the information needed to validate the
+ * result returned by the service.
+ */
+DeferredOperation<Models::AttestationToken<Models::PolicyResult>>
+AttestationBatchFactory::ResetAttestationPolicy(
+    Models::AttestationType const& attestationType,
+    SetPolicyOptions const& options) const
+{
+  attestationType;
+  options;
+  throw std::runtime_error("Not implemented");
+}
+
+/**
+ * @brief Adds a new certificate to the list of policy management certificates.
+ *
+ * @details When the attestation service is running in "Isolated" mode, the service maintains a
+ * set of X.509 certificates which must be used to sign all policy operations. The
+ * AddIsolatedModeCertificates API adds a new certificate to the list of certificates which
+ * are used for this attestation service instance.
+ *
+ * @note The signerForRequest certificate MUST be one of the policy management certificates
+ * returned by #GetIsolatedModeCertificates.
+ *
+ * @param pemEncodedCertificateToAdd The X.509 certificate to add to the service.
+ * @param signerForRequest Private key and certificate pair to be used to sign the request to
+ * the service.
+ * @param options Options to be set when adding the new certificate.
+ * @param context Call context for the operation.
+ * @return Response<Models::AttestationToken<Models::PolicyCertificateListResult>> Return value
+ * from the operation.
+ */
+DeferredOperation<Models::AttestationToken<Models::IsolatedModeCertificateModificationResult>>
+AttestationBatchFactory::AddIsolatedModeCertificate(
+    std::string const& pemEncodedCertificateToAdd,
+    AttestationSigningKey const& signerForRequest,
+    AddIsolatedModeCertificatesOptions const& options) const
+{
+  pemEncodedCertificateToAdd;
+  signerForRequest;
+  options;
+  throw std::runtime_error("Not implemented");
+}
+
+/**
+ * @brief Removes a certificate from the list of policy management certificates for the
+ * instance.
+ *
+ * @details When the attestation service is running in "Isolated" mode, the service maintains a
+ * set of X.509 certificates which must be used to sign all policy operations. The
+ * #RemoveIsolatedModeCertificates API removes a certificate from the list of certificates
+ * which are used for this attestation service instance.
+ *
+ * @note The signerForRequest certificate MUST be one of the policy management certificates
+ * returned by #GetIsolatedModeCertificates.
+ *
+ * @param pemEncodedCertificateToAdd The X.509 certificate to remove from the service instance.
+ * @param signerForRequest Private key and certificate pair to be used to sign the request to
+ * the service.
+ * @param options Options to be set when adding the new certificate.
+ * @param context Call context for the operation.
+ * @return Response<Models::AttestationToken<Models::PolicyCertificateListResult>> Return value
+ * from the operation.
+ */
+DeferredOperation<Models::AttestationToken<Models::IsolatedModeCertificateModificationResult>>
+AttestationBatchFactory::RemoveIsolatedModeCertificate(
+    std::string const& pemEncodedCertificateToAdd,
+    AttestationSigningKey const& signerForRequest,
+    AddIsolatedModeCertificatesOptions const& options) const
+{
+  pemEncodedCertificateToAdd;
+  signerForRequest;
+  options;
+  throw std::runtime_error("Not implemented");
 }
