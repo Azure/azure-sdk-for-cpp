@@ -4,6 +4,7 @@
 #define USE_MEMORY_EXPORTER 1
 #include "azure/core-opentelemetry/opentelemetry.hpp"
 #include <azure/core/test/test_base.hpp>
+
 #if defined(_MSC_VER)
 // The OpenTelemetry headers generate a couple of warnings on MSVC in the OTel 1.2 package, suppress
 // the warnings across the includes.
@@ -214,11 +215,11 @@ TEST_F(OpenTelemetryTests, CreateSpanSimple)
 TEST_F(OpenTelemetryTests, TestAttributeSet)
 {
   {
-    Azure::Core::Tracing::OpenTelemetry::OpenTelemetryAttributeSet attributeSet;
+    Azure::Core::Tracing::OpenTelemetry::_internal::OpenTelemetryAttributeSet attributeSet;
   }
 
   {
-    Azure::Core::Tracing::OpenTelemetry::OpenTelemetryAttributeSet attributeSet;
+    Azure::Core::Tracing::OpenTelemetry::_internal::OpenTelemetryAttributeSet attributeSet;
     // Add a C style string.
     attributeSet.AddAttribute("String", "StringValue");
 
@@ -231,7 +232,7 @@ TEST_F(OpenTelemetryTests, TestAttributeSet)
   }
 
   {
-    Azure::Core::Tracing::OpenTelemetry::OpenTelemetryAttributeSet attributeSet;
+    Azure::Core::Tracing::OpenTelemetry::_internal::OpenTelemetryAttributeSet attributeSet;
     attributeSet.AddAttribute("boolTrue", true);
     attributeSet.AddAttribute("boolFalse", false);
 
@@ -253,7 +254,7 @@ TEST_F(OpenTelemetryTests, TestAttributeSet)
         });
   }
   {
-    Azure::Core::Tracing::OpenTelemetry::OpenTelemetryAttributeSet attributeSet;
+    Azure::Core::Tracing::OpenTelemetry::_internal::OpenTelemetryAttributeSet attributeSet;
     attributeSet.AddAttribute("int1", 1);
     attributeSet.AddAttribute("pi", 3.1415926);
     attributeSet.AddAttribute("int64", static_cast<int64_t>(151031ll));
@@ -308,7 +309,7 @@ TEST_F(OpenTelemetryTests, CreateSpanWithOptions)
     Azure::Core::Tracing::OpenTelemetry::OpenTelemetryProvider provider;
     auto tracer = provider.CreateTracer("TracerName", "1.0");
     EXPECT_TRUE(tracer);
-    Azure::Core::Tracing::CreateSpanOptions options;
+    Azure::Core::Tracing::_internal::CreateSpanOptions options;
     auto span = tracer->CreateSpan("My Span", options);
     EXPECT_TRUE(span);
 
@@ -324,48 +325,48 @@ TEST_F(OpenTelemetryTests, CreateSpanWithOptions)
 
     auto tracer = traceProvider->CreateTracer("TracerName");
     {
-      Azure::Core::Tracing::CreateSpanOptions options;
-      options.Kind = Azure::Core::Tracing::SpanKind::Client;
+      Azure::Core::Tracing::_internal::CreateSpanOptions options;
+      options.Kind = Azure::Core::Tracing::_internal::SpanKind::Client;
       auto span = tracer->CreateSpan("Client Span", options);
       EXPECT_TRUE(span);
 
       span->End();
     }
     {
-      Azure::Core::Tracing::CreateSpanOptions options;
-      options.Kind = Azure::Core::Tracing::SpanKind::Consumer;
+      Azure::Core::Tracing::_internal::CreateSpanOptions options;
+      options.Kind = Azure::Core::Tracing::_internal::SpanKind::Consumer;
       auto span = tracer->CreateSpan("Consumer Span", options);
       EXPECT_TRUE(span);
 
       span->End();
     }
     {
-      Azure::Core::Tracing::CreateSpanOptions options;
-      options.Kind = Azure::Core::Tracing::SpanKind::Internal;
+      Azure::Core::Tracing::_internal::CreateSpanOptions options;
+      options.Kind = Azure::Core::Tracing::_internal::SpanKind::Internal;
       auto span = tracer->CreateSpan("Internal Span", options);
       EXPECT_TRUE(span);
 
       span->End();
     }
     {
-      Azure::Core::Tracing::CreateSpanOptions options;
-      options.Kind = Azure::Core::Tracing::SpanKind::Producer;
+      Azure::Core::Tracing::_internal::CreateSpanOptions options;
+      options.Kind = Azure::Core::Tracing::_internal::SpanKind::Producer;
       auto span = tracer->CreateSpan("Producer Span", options);
       EXPECT_TRUE(span);
 
       span->End();
     }
     {
-      Azure::Core::Tracing::CreateSpanOptions options;
-      options.Kind = Azure::Core::Tracing::SpanKind::Server;
+      Azure::Core::Tracing::_internal::CreateSpanOptions options;
+      options.Kind = Azure::Core::Tracing::_internal::SpanKind::Server;
       auto span = tracer->CreateSpan("Server Span", options);
       EXPECT_TRUE(span);
 
       span->End();
     }
     {
-      Azure::Core::Tracing::CreateSpanOptions options;
-      options.Kind = Azure::Core::Tracing::SpanKind("Bogus");
+      Azure::Core::Tracing::_internal::CreateSpanOptions options;
+      options.Kind = Azure::Core::Tracing::_internal::SpanKind("Bogus");
       EXPECT_THROW(tracer->CreateSpan("Bogus Span", options), std::runtime_error);
     }
     // Return the collected spans.
@@ -394,11 +395,11 @@ TEST_F(OpenTelemetryTests, CreateSpanWithOptions)
 
       auto tracer = traceProvider->CreateTracer("TracerName");
       {
-        Azure::Core::Tracing::CreateSpanOptions options;
+        Azure::Core::Tracing::_internal::CreateSpanOptions options;
         options.Attributes
-            = std::make_unique<Azure::Core::Tracing::OpenTelemetry::OpenTelemetryAttributeSet>();
+            = std::make_unique<Azure::Core::Tracing::OpenTelemetry::_internal::OpenTelemetryAttributeSet>();
         options.Attributes->AddAttribute("SimpleStringAttribute", "Simple String");
-        options.Kind = Azure::Core::Tracing::SpanKind::Client;
+        options.Kind = Azure::Core::Tracing::_internal::SpanKind::Client;
         auto span = tracer->CreateSpan("Client Span", options);
         EXPECT_TRUE(span);
 
@@ -434,7 +435,7 @@ TEST_F(OpenTelemetryTests, NestSpans)
     auto span = tracer->CreateSpan("SpanOuter");
     EXPECT_TRUE(span);
     {
-      Azure::Core::Tracing::CreateSpanOptions so;
+      Azure::Core::Tracing::_internal::CreateSpanOptions so;
       so.ParentSpan = span;
       auto span2 = tracer->CreateSpan("SpanInner", so);
       so.ParentSpan = span2;
@@ -449,7 +450,7 @@ TEST_F(OpenTelemetryTests, NestSpans)
       span3->End();
     }
     {
-      Azure::Core::Tracing::CreateSpanOptions so;
+      Azure::Core::Tracing::_internal::CreateSpanOptions so;
       so.ParentSpan = span;
       auto span5 = tracer->CreateSpan("SequentialInner", so);
       auto span6 = tracer->CreateSpan("SequentialInner2", so);
@@ -505,8 +506,8 @@ TEST_F(OpenTelemetryTests, SetStatus)
     auto span = tracer->CreateSpan("StatusSpan");
     EXPECT_TRUE(span);
 
-    span->SetStatus(Azure::Core::Tracing::SpanStatus::Error);
-    span->SetStatus(Azure::Core::Tracing::SpanStatus::Ok);
+    span->SetStatus(Azure::Core::Tracing::_internal::SpanStatus::Error);
+    span->SetStatus(Azure::Core::Tracing::_internal::SpanStatus::Ok);
 
     span->End();
 
@@ -526,7 +527,7 @@ TEST_F(OpenTelemetryTests, SetStatus)
     auto span = tracer->CreateSpan("StatusSpan");
     EXPECT_TRUE(span);
 
-    span->SetStatus(Azure::Core::Tracing::SpanStatus::Error, "Something went wrong.");
+    span->SetStatus(Azure::Core::Tracing::_internal::SpanStatus::Error, "Something went wrong.");
 
     span->End();
 
@@ -548,7 +549,7 @@ TEST_F(OpenTelemetryTests, SetStatus)
     auto span = tracer->CreateSpan("StatusSpan");
     EXPECT_TRUE(span);
 
-    span->SetStatus(Azure::Core::Tracing::SpanStatus::Unset);
+    span->SetStatus(Azure::Core::Tracing::_internal::SpanStatus::Unset);
 
     span->End();
 
@@ -588,7 +589,7 @@ TEST_F(OpenTelemetryTests, SetStatus)
     auto span = tracer->CreateSpan("StatusSpan");
     EXPECT_TRUE(span);
 
-    EXPECT_THROW(span->SetStatus(Azure::Core::Tracing::SpanStatus("Bogus")), std::runtime_error);
+    EXPECT_THROW(span->SetStatus(Azure::Core::Tracing::_internal::SpanStatus("Bogus")), std::runtime_error);
 
     // Return the collected spans.
     auto spans = m_spanData->GetSpans();
@@ -608,7 +609,7 @@ TEST_F(OpenTelemetryTests, AddSpanAttributes)
     auto span = tracer->CreateSpan("AttributeSpan");
     EXPECT_TRUE(span);
 
-    Azure::Core::Tracing::OpenTelemetry::OpenTelemetryAttributeSet attributeSet;
+    Azure::Core::Tracing::OpenTelemetry::_internal::OpenTelemetryAttributeSet attributeSet;
     attributeSet.AddAttribute("int1", 1);
     attributeSet.AddAttribute("pi", 3.1415926);
     attributeSet.AddAttribute("int64", static_cast<int64_t>(151031ll));
@@ -652,7 +653,7 @@ TEST_F(OpenTelemetryTests, AddSpanEvents)
     span->AddEvent(std::runtime_error("Exception message"));
 
     {
-      Azure::Core::Tracing::OpenTelemetry::OpenTelemetryAttributeSet attributeSet;
+      Azure::Core::Tracing::OpenTelemetry::_internal::OpenTelemetryAttributeSet attributeSet;
       attributeSet.AddAttribute("int1", 1);
       attributeSet.AddAttribute("pi", 3.1415926);
       attributeSet.AddAttribute("int64", static_cast<int64_t>(151031ll));

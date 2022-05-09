@@ -23,121 +23,127 @@
 
 namespace Azure { namespace Core { namespace Tracing { namespace OpenTelemetry {
 
-  class OpenTelemetryAttributeSet final : public Azure::Core::Tracing::AttributeSet,
-                                          public opentelemetry::common::KeyValueIterable {
-    std::map<std::string, opentelemetry::common::AttributeValue> m_propertySet;
+    namespace _internal {
+    class OpenTelemetryAttributeSet final : public Azure::Core::Tracing::_internal::AttributeSet,
+                                            public opentelemetry::common::KeyValueIterable {
+      std::map<std::string, opentelemetry::common::AttributeValue> m_propertySet;
 
-    template <typename T> void AddAttributeToSet(std::string const& attributeName, T value)
-    {
-      m_propertySet.emplace(
-          std::make_pair(attributeName, opentelemetry::common::AttributeValue(value)));
-    }
-
-  public:
-    void AddAttribute(std::string const& attributeName, int32_t value) override
-    {
-      AddAttributeToSet(attributeName, value);
-    }
-
-    void AddAttribute(std::string const& attributeName, int64_t value) override
-    {
-      AddAttributeToSet(attributeName, value);
-    }
-
-    void AddAttribute(std::string const& attributeName, uint64_t value) override
-    {
-      AddAttributeToSet(attributeName, value);
-    }
-    void AddAttribute(std::string const& attributeName, double value) override
-    {
-      AddAttributeToSet(attributeName, value);
-    }
-
-    void AddAttribute(std::string const& attributeName, std::string const& value) override
-    {
-      AddAttributeToSet<std::string const&>(attributeName, value);
-    }
-    void AddAttribute(std::string const& attributeName, const char* value) override
-    {
-      AddAttributeToSet(attributeName, value);
-    }
-
-    void AddAttribute(std::string const& attributeName, bool value) override
-    {
-      AddAttributeToSet(attributeName, value);
-    }
-
-    /**
-     * Iterate over key-value pairs
-     * @param callback a callback to invoke for each key-value. If the callback returns false,
-     * the iteration is aborted.
-     * @return true if every key-value pair was iterated over
-     */
-    bool ForEachKeyValue(
-        opentelemetry::nostd::function_ref<
-            bool(opentelemetry::nostd::string_view, opentelemetry::common::AttributeValue)>
-            callback) const noexcept override
-    {
-      for (auto& value : m_propertySet)
+      template <typename T> void AddAttributeToSet(std::string const& attributeName, T value)
       {
-        if (!callback(value.first, value.second))
-        {
-          return false;
-        }
+        m_propertySet.emplace(
+            std::make_pair(attributeName, opentelemetry::common::AttributeValue(value)));
       }
-      return true;
-    }
 
+    public:
+      void AddAttribute(std::string const& attributeName, int32_t value) override
+      {
+        AddAttributeToSet(attributeName, value);
+      }
+
+      void AddAttribute(std::string const& attributeName, int64_t value) override
+      {
+        AddAttributeToSet(attributeName, value);
+      }
+
+      void AddAttribute(std::string const& attributeName, uint64_t value) override
+      {
+        AddAttributeToSet(attributeName, value);
+      }
+      void AddAttribute(std::string const& attributeName, double value) override
+      {
+        AddAttributeToSet(attributeName, value);
+      }
+
+      void AddAttribute(std::string const& attributeName, std::string const& value) override
+      {
+        AddAttributeToSet<std::string const&>(attributeName, value);
+      }
+      void AddAttribute(std::string const& attributeName, const char* value) override
+      {
+        AddAttributeToSet(attributeName, value);
+      }
+
+      void AddAttribute(std::string const& attributeName, bool value) override
+      {
+        AddAttributeToSet(attributeName, value);
+      }
+
+      /**
+       * Iterate over key-value pairs
+       * @param callback a callback to invoke for each key-value. If the callback returns false,
+       * the iteration is aborted.
+       * @return true if every key-value pair was iterated over
+       */
+      bool ForEachKeyValue(
+          opentelemetry::nostd::function_ref<
+              bool(opentelemetry::nostd::string_view, opentelemetry::common::AttributeValue)>
+              callback) const noexcept override
+      {
+        for (auto& value : m_propertySet)
+        {
+          if (!callback(value.first, value.second))
+          {
+            return false;
+          }
+        }
+        return true;
+      }
+
+      /**
+       * @return the number of key-value pairs
+       */
+      size_t size() const noexcept override { return m_propertySet.size(); }
+
+      ~OpenTelemetryAttributeSet() {}
+    };
     /**
-     * @return the number of key-value pairs
+     * @brief Span - represents a span in tracing.
      */
-    size_t size() const noexcept override { return m_propertySet.size(); }
+    class OpenTelemetrySpan final : public Azure::Core::Tracing::_internal::Span {
+      opentelemetry::nostd::shared_ptr<opentelemetry::trace::Span> m_span;
 
-    ~OpenTelemetryAttributeSet() {}
-  };
-  /**
-   * @brief Span - represents a span in tracing.
-   */
-  class OpenTelemetrySpan final : public Azure::Core::Tracing::Span {
-    opentelemetry::nostd::shared_ptr<opentelemetry::trace::Span> m_span;
+    public:
+      OpenTelemetrySpan(opentelemetry::nostd::shared_ptr<opentelemetry::trace::Span> span);
 
-  public:
-    OpenTelemetrySpan(opentelemetry::nostd::shared_ptr<opentelemetry::trace::Span> span);
+      ~OpenTelemetrySpan();
 
-    ~OpenTelemetrySpan();
+      /**
+       * @brief Signals that the span has now ended.
+       */
+      virtual void End(Azure::Nullable<Azure::DateTime> endTime) override;
 
-    /**
-     * @brief Signals that the span has now ended.
-     */
-    virtual void End(Azure::Nullable<Azure::DateTime> endTime) override;
+      virtual void AddAttributes(Azure::Core::Tracing::_internal::AttributeSet const& attributeToAdd) override;
 
-    virtual void AddAttributes(AttributeSet const& attributeToAdd) override;
+      /**
+       * Add an Event to the span. An event is identified by a name and an optional set of
+       * attributes associated with the event.
+       */
+      virtual void AddEvent(
+          std::string const& eventName,
+          Azure::Core::Tracing::_internal::AttributeSet const& eventAttributes)
+          override;
+      virtual void AddEvent(std::string const& eventName) override;
+      virtual void AddEvent(std::exception const& exception) override;
 
-    /**
-     * Add an Event to the span. An event is identified by a name and an optional set of attributes
-     * associated with the event.
-     */
-    virtual void AddEvent(std::string const& eventName, AttributeSet const& eventAttributes)
-        override;
-    virtual void AddEvent(std::string const& eventName) override;
-    virtual void AddEvent(std::exception const& exception) override;
+      virtual void SetStatus(
+          Azure::Core::Tracing::_internal::SpanStatus const& status,
+          std::string const& statusMessage) override;
 
-    virtual void SetStatus(SpanStatus const& status, std::string const& statusMessage) override;
+      opentelemetry::trace::SpanContext GetContext() { return m_span->GetContext(); }
+    };
 
-    opentelemetry::trace::SpanContext GetContext() { return m_span->GetContext(); }
-  };
+    class OpenTelemetryTracer final : public Azure::Core::Tracing::_internal::Tracer {
+      opentelemetry::nostd::shared_ptr<opentelemetry::trace::Tracer> m_tracer;
 
-  class OpenTelemetryTracer final : public Azure::Core::Tracing::Tracer {
-    opentelemetry::nostd::shared_ptr<opentelemetry::trace::Tracer> m_tracer;
+    public:
+      OpenTelemetryTracer(opentelemetry::nostd::shared_ptr<opentelemetry::trace::Tracer> tracer);
+      std::shared_ptr<Azure::Core::Tracing::_internal::Span> CreateSpan(
+          std::string const& spanName,
+          Azure::Core::Tracing::_internal::CreateSpanOptions const& options) const override;
 
-  public:
-    OpenTelemetryTracer(opentelemetry::nostd::shared_ptr<opentelemetry::trace::Tracer> tracer);
-    std::shared_ptr<Azure::Core::Tracing::Span> CreateSpan(
-        std::string const& spanName,
-        CreateSpanOptions const& options) const override;
-
-    std::unique_ptr<Azure::Core::Tracing::AttributeSet> CreateAttributeSet() const override;
-  };
+      std::unique_ptr<Azure::Core::Tracing::_internal::AttributeSet> CreateAttributeSet() const override;
+    };
+  } // namespace _internal
 
   class OpenTelemetryProvider final : public Azure::Core::Tracing::TracerProvider {
     opentelemetry::nostd::shared_ptr<opentelemetry::trace::TracerProvider> m_tracerProvider;
@@ -147,7 +153,7 @@ namespace Azure { namespace Core { namespace Tracing { namespace OpenTelemetry {
         opentelemetry::nostd::shared_ptr<opentelemetry::trace::TracerProvider> tracerProvider);
     OpenTelemetryProvider();
 
-    virtual std::shared_ptr<Azure::Core::Tracing::Tracer> CreateTracer(
+    virtual std::shared_ptr<Azure::Core::Tracing::_internal::Tracer> CreateTracer(
         std::string const& name,
         std::string const& version = "") const override;
   };

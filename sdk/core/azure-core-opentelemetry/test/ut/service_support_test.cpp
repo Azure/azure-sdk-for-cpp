@@ -325,7 +325,7 @@ TEST_F(OpenTelemetryServiceTests, ServiceApiImplementation)
       // <Call Into Service via an HTTP pipeline>
 
       // Reflect that the operation was successful.
-      contextAndSpan.second.SetStatus(Azure::Core::Tracing::SpanStatus::Ok);
+      contextAndSpan.second.SetStatus(Azure::Core::Tracing::_internal::SpanStatus::Ok);
       Azure::Response<std::string> rv(
           inputString,
           std::make_unique<Azure::Core::Http::RawResponse>(
@@ -350,7 +350,7 @@ TEST_F(OpenTelemetryServiceTests, ServiceApiImplementation)
       {
         // Register that the exception has happened and that the span is now in error.
         contextAndSpan.second.AddEvent(ex);
-        contextAndSpan.second.SetStatus(Azure::Core::Tracing::SpanStatus::Error);
+        contextAndSpan.second.SetStatus(Azure::Core::Tracing::_internal::SpanStatus::Error);
         throw;
       }
 

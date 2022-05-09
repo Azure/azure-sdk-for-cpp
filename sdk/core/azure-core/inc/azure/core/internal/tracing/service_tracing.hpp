@@ -5,6 +5,8 @@
 #include "azure/core/internal/client_options.hpp"
 #include "azure/core/tracing/tracing.hpp"
 
+#pragma once
+
 /**
  *
  * @brief Helper classes to enable service client distributed tracing implementations.
@@ -23,12 +25,12 @@ namespace Azure { namespace Core { namespace Tracing { namespace _internal {
    * Azure::Core::Tracing::Span object and ensures that the "End" method is called in the destructor
    * for the span.
    */
-  class ServiceSpan final : public Azure::Core::Tracing::Span {
+  class ServiceSpan final : public Span {
   private:
-    std::shared_ptr<Azure::Core::Tracing::Span> m_span;
+    std::shared_ptr<Span> m_span;
 
     friend class ServiceTracing;
-    explicit ServiceSpan(std::shared_ptr<Azure::Core::Tracing::Span>& span) : m_span(span) {}
+    explicit ServiceSpan(std::shared_ptr<Span>& span) : m_span(span) {}
 
     ServiceSpan() = default;
 
@@ -56,7 +58,7 @@ namespace Azure { namespace Core { namespace Tracing { namespace _internal {
       }
     }
     void SetStatus(
-        Azure::Core::Tracing::SpanStatus const& status,
+        Azure::Core::Tracing::_internal::SpanStatus const& status,
         std::string const& description = "") override
     {
       if (m_span)
@@ -134,7 +136,7 @@ namespace Azure { namespace Core { namespace Tracing { namespace _internal {
   private:
     std::string m_serviceName;
     std::string m_serviceVersion;
-    std::shared_ptr<Azure::Core::Tracing::Tracer> m_serviceTracer;
+    std::shared_ptr<Azure::Core::Tracing::_internal::Tracer> m_serviceTracer;
     Azure::Core::Context::Key SpanKey;
 
   public:

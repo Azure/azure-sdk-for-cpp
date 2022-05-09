@@ -31,7 +31,7 @@ TEST(Context, BasicBool)
 
   // New context from previous
   auto c2 = context.WithValue(key, true);
-  bool value;
+  bool value{};
   EXPECT_TRUE(c2.TryGetValue<bool>(key, value));
   EXPECT_TRUE(value == true);
 
@@ -521,7 +521,7 @@ TEST(Context, SetTracingProvider)
   public:
     TestTracingProvider() : TracerProvider() {}
     ~TestTracingProvider() {}
-    std::shared_ptr<Azure::Core::Tracing::Tracer> CreateTracer(
+    std::shared_ptr<Azure::Core::Tracing::_internal::Tracer> CreateTracer(
         std::string const&,
         std::string const&) const override
     {

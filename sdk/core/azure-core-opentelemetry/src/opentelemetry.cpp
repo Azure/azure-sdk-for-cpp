@@ -16,6 +16,7 @@
 #pragma warning(pop)
 #endif
 namespace Azure { namespace Core { namespace Tracing { namespace OpenTelemetry {
+  using namespace Azure::Core::Tracing::_internal;
 
   OpenTelemetryProvider::OpenTelemetryProvider(
       opentelemetry::nostd::shared_ptr<opentelemetry::trace::TracerProvider> tracerProvider)
@@ -28,158 +29,161 @@ namespace Azure { namespace Core { namespace Tracing { namespace OpenTelemetry {
   {
   }
 
-  std::shared_ptr<Azure::Core::Tracing::Tracer> OpenTelemetryProvider::CreateTracer(
+  std::shared_ptr<Azure::Core::Tracing::_internal::Tracer> OpenTelemetryProvider::CreateTracer(
       std::string const& name,
       std::string const& version) const
   {
     opentelemetry::nostd::shared_ptr<opentelemetry::trace::Tracer> returnTracer(
         m_tracerProvider->GetTracer(name, version));
-    return std::make_shared<Azure::Core::Tracing::OpenTelemetry::OpenTelemetryTracer>(returnTracer);
+    return std::make_shared<Azure::Core::Tracing::OpenTelemetry::_internal::OpenTelemetryTracer>(
+        returnTracer);
   }
+  namespace _internal {
+    std::unique_ptr<Azure::Core::Tracing::_internal::AttributeSet>
+    OpenTelemetryTracer::CreateAttributeSet() const
+    {
+      return std::make_unique<OpenTelemetryAttributeSet>();
+    }
 
-  std::unique_ptr<Azure::Core::Tracing::AttributeSet> OpenTelemetryTracer::CreateAttributeSet()
-      const
-  {
-    return std::make_unique<OpenTelemetryAttributeSet>();
-  }
+    OpenTelemetryTracer::OpenTelemetryTracer(
+        opentelemetry::nostd::shared_ptr<opentelemetry::trace::Tracer> tracer)
+        : m_tracer(tracer)
+    {
+    }
 
-  OpenTelemetryTracer::OpenTelemetryTracer(
-      opentelemetry::nostd::shared_ptr<opentelemetry::trace::Tracer> tracer)
-      : m_tracer(tracer)
-  {
-  }
-
-  std::shared_ptr<Azure::Core::Tracing::Span> OpenTelemetryTracer::CreateSpan(
-      std::string const& spanName,
-      CreateSpanOptions const& options = {}) const
-  {
-    opentelemetry::trace::StartSpanOptions spanOptions;
-    spanOptions.kind = opentelemetry::trace::SpanKind::kInternal;
-    if (options.Kind == Azure::Core::Tracing::SpanKind::Client)
+    std::shared_ptr<Azure::Core::Tracing::_internal::Span> OpenTelemetryTracer::CreateSpan(
+        std::string const& spanName,
+        Azure::Core::Tracing::_internal::CreateSpanOptions const& options = {}) const
     {
-      spanOptions.kind = opentelemetry::trace::SpanKind::kClient;
-    }
-    else if (options.Kind == Azure::Core::Tracing::SpanKind::Consumer)
-    {
-      spanOptions.kind = opentelemetry::trace::SpanKind::kConsumer;
-    }
-    else if (options.Kind == Azure::Core::Tracing::SpanKind::Producer)
-    {
-      spanOptions.kind = opentelemetry::trace::SpanKind::kProducer;
-    }
-    else if (options.Kind == Azure::Core::Tracing::SpanKind::Server)
-    {
-      spanOptions.kind = opentelemetry::trace::SpanKind::kServer;
-    }
-    else if (options.Kind == Azure::Core::Tracing::SpanKind::Internal)
-    {
+      opentelemetry::trace::StartSpanOptions spanOptions;
       spanOptions.kind = opentelemetry::trace::SpanKind::kInternal;
+      if (options.Kind == Azure::Core::Tracing::_internal::SpanKind::Client)
+      {
+        spanOptions.kind = opentelemetry::trace::SpanKind::kClient;
+      }
+      else if (options.Kind == SpanKind::Consumer)
+      {
+        spanOptions.kind = opentelemetry::trace::SpanKind::kConsumer;
+      }
+      else if (options.Kind == SpanKind::Producer)
+      {
+        spanOptions.kind = opentelemetry::trace::SpanKind::kProducer;
+      }
+      else if (options.Kind == SpanKind::Server)
+      {
+        spanOptions.kind = opentelemetry::trace::SpanKind::kServer;
+      }
+      else if (options.Kind == SpanKind::Internal)
+      {
+        spanOptions.kind = opentelemetry::trace::SpanKind::kInternal;
+      }
+      else
+      {
+        throw std::runtime_error("Unknown SpanOptions Kind: " + options.Kind.ToString());
+      }
+
+      if (options.ParentSpan)
+      {
+        spanOptions.parent
+            = static_cast<OpenTelemetrySpan*>(options.ParentSpan.get())->GetContext();
+      }
+
+      opentelemetry::nostd::shared_ptr<opentelemetry::trace::Span> newSpan;
+      if (options.Attributes)
+      {
+        // Note: We make a huge assumption here: That if you're calling into the OpenTelemetry
+        // version of Azure::Core::Tracing, the Attributes passed in will be an
+        // OpenTelemetryAttributeSet
+        OpenTelemetryAttributeSet* attributes
+            = static_cast<OpenTelemetryAttributeSet*>(options.Attributes.get());
+        newSpan = m_tracer->StartSpan(spanName, *attributes, spanOptions);
+      }
+      else
+      {
+        newSpan = m_tracer->StartSpan(spanName, spanOptions);
+      }
+
+      return std::make_shared<Azure::Core::Tracing::OpenTelemetry::_internal::OpenTelemetrySpan>(
+          newSpan);
     }
-    else
+
+    OpenTelemetrySpan::~OpenTelemetrySpan() {}
+
+    OpenTelemetrySpan::OpenTelemetrySpan(
+        opentelemetry::nostd::shared_ptr<opentelemetry::trace::Span> span)
+        : m_span(span)
     {
-      throw std::runtime_error("Unknown SpanOptions Kind: " + options.Kind.ToString());
     }
 
-    if (options.ParentSpan)
+    void OpenTelemetrySpan::End(Azure::Nullable<Azure::DateTime> endTime)
     {
-      spanOptions.parent = static_cast<OpenTelemetrySpan*>(options.ParentSpan.get())->GetContext();
+      opentelemetry::trace::EndSpanOptions options;
+      if (endTime)
+      {
+        options.end_steady_time = opentelemetry::common::SteadyTimestamp(
+            std::chrono::steady_clock::time_point(endTime.Value().time_since_epoch()));
+      }
+      m_span->End(options);
     }
 
-    opentelemetry::nostd::shared_ptr<opentelemetry::trace::Span> newSpan;
-    if (options.Attributes)
+    /**
+     * @brief Add the set of attributes provided to the current span.
+     */
+    void OpenTelemetrySpan::AddAttributes(AttributeSet const& attributesToAdd)
     {
-      // Note: We make a huge assumption here: That if you're calling into the OpenTelemetry version
-      // of Azure::Core::Tracing, the Attributes passed in will be an OpenTelemetryAttributeSet
-      Azure::Core::Tracing::OpenTelemetry::OpenTelemetryAttributeSet* attributes
-          = static_cast<Azure::Core::Tracing::OpenTelemetry::OpenTelemetryAttributeSet*>(
-              options.Attributes.get());
-      newSpan = m_tracer->StartSpan(spanName, *attributes, spanOptions);
+      // Note: We make a huge assumption here: That if you're calling into the OpenTelemetry
+      // version of Azure::Core::Tracing, the Attributes passed in will be an
+      // OpenTelemetryAttributeSet
+      OpenTelemetryAttributeSet const& attributes
+          = static_cast<OpenTelemetryAttributeSet const&>(attributesToAdd);
+      attributes.ForEachKeyValue(
+          [this](
+              opentelemetry::nostd::string_view name, opentelemetry::common::AttributeValue value) {
+            m_span->SetAttribute(name, value);
+            return true;
+          });
     }
-    else
+
+    /**
+     * Add an Event to the span. An event is identified by a name and an optional set of
+     * attributes associated with the event.
+     */
+    void OpenTelemetrySpan::AddEvent(
+        std::string const& eventName,
+        AttributeSet const& eventAttributes)
     {
-      newSpan = m_tracer->StartSpan(spanName, spanOptions);
+      OpenTelemetryAttributeSet const& attributes
+          = static_cast<OpenTelemetryAttributeSet const&>(eventAttributes);
+
+      m_span->AddEvent(eventName, attributes);
     }
 
-    return std::make_shared<Azure::Core::Tracing::OpenTelemetry::OpenTelemetrySpan>(newSpan);
-  }
+    void OpenTelemetrySpan::AddEvent(std::string const& eventName) { m_span->AddEvent(eventName); }
 
-  OpenTelemetrySpan::~OpenTelemetrySpan() {}
+    void OpenTelemetrySpan::AddEvent(std::exception const& ex) { m_span->AddEvent(ex.what()); }
 
-  OpenTelemetrySpan::OpenTelemetrySpan(
-      opentelemetry::nostd::shared_ptr<opentelemetry::trace::Span> span)
-      : m_span(span)
-  {
-  }
-
-  void OpenTelemetrySpan::End(Azure::Nullable<Azure::DateTime> endTime)
-  {
-    opentelemetry::trace::EndSpanOptions options;
-    if (endTime)
+    void OpenTelemetrySpan::SetStatus(SpanStatus const& status, std::string const& statusMessage)
     {
-      options.end_steady_time = opentelemetry::common::SteadyTimestamp(
-          std::chrono::steady_clock::time_point(endTime.Value().time_since_epoch()));
-    }
-    m_span->End(options);
-  }
+      opentelemetry::trace::StatusCode statusCode = opentelemetry::trace::StatusCode::kUnset;
+      if (status == SpanStatus::Error)
+      {
+        statusCode = opentelemetry::trace::StatusCode::kError;
+      }
+      else if (status == SpanStatus::Ok)
+      {
+        statusCode = opentelemetry::trace::StatusCode::kOk;
+      }
+      else if (status == SpanStatus::Unset)
+      {
+        statusCode = opentelemetry::trace::StatusCode::kUnset;
+      }
+      else
+      {
+        throw std::runtime_error("Unknown status code: " + status.ToString());
+      }
 
-  /**
-   * @brief Add the set of attributes provided to the current span.
-   */
-  void OpenTelemetrySpan::AddAttributes(AttributeSet const& attributesToAdd)
-  {
-    // Note: We make a huge assumption here: That if you're calling into the OpenTelemetry version
-    // of Azure::Core::Tracing, the Attributes passed in will be an OpenTelemetryAttributeSet
-    Azure::Core::Tracing::OpenTelemetry::OpenTelemetryAttributeSet const& attributes
-        = static_cast<Azure::Core::Tracing::OpenTelemetry::OpenTelemetryAttributeSet const&>(
-            attributesToAdd);
-    attributes.ForEachKeyValue(
-        [this](
-            opentelemetry::nostd::string_view name, opentelemetry::common::AttributeValue value) {
-          m_span->SetAttribute(name, value);
-          return true;
-        });
-  }
-
-  /**
-   * Add an Event to the span. An event is identified by a name and an optional set of attributes
-   * associated with the event.
-   */
-  void OpenTelemetrySpan::AddEvent(
-      std::string const& eventName,
-      AttributeSet const& eventAttributes)
-  {
-    Azure::Core::Tracing::OpenTelemetry::OpenTelemetryAttributeSet const& attributes
-        = static_cast<Azure::Core::Tracing::OpenTelemetry::OpenTelemetryAttributeSet const&>(
-            eventAttributes);
-
-    m_span->AddEvent(eventName, attributes);
-  }
-
-  void OpenTelemetrySpan::AddEvent(std::string const& eventName) { m_span->AddEvent(eventName); }
-
-  void OpenTelemetrySpan::AddEvent(std::exception const& ex) { m_span->AddEvent(ex.what()); }
-
-  void OpenTelemetrySpan::SetStatus(SpanStatus const& status, std::string const& statusMessage)
-  {
-    opentelemetry::trace::StatusCode statusCode = opentelemetry::trace::StatusCode::kUnset;
-    if (status == Azure::Core::Tracing::SpanStatus::Error)
-    {
-      statusCode = opentelemetry::trace::StatusCode::kError;
-    }
-    else if (status == Azure::Core::Tracing::SpanStatus::Ok)
-    {
-      statusCode = opentelemetry::trace::StatusCode::kOk;
-    }
-    else if (status == Azure::Core::Tracing::SpanStatus::Unset)
-    {
-      statusCode = opentelemetry::trace::StatusCode::kUnset;
-    }
-    else
-    {
-      throw std::runtime_error("Unknown status code: " + status.ToString());
+      m_span->SetStatus(statusCode, statusMessage);
     }
 
-    m_span->SetStatus(statusCode, statusMessage);
-  }
-
+  } // namespace _internal
 }}}} // namespace Azure::Core::Tracing::OpenTelemetry

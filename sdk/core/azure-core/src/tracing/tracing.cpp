@@ -1,7 +1,7 @@
 #include "azure/core/tracing/tracing.hpp"
 #include "azure/core/internal/tracing/service_tracing.hpp"
 
-namespace Azure { namespace Core { namespace Tracing {
+namespace Azure { namespace Core { namespace Tracing { namespace _internal {
 
   const SpanKind SpanKind::Internal("Internal");
   const SpanKind SpanKind::Client("Client");
@@ -13,10 +13,6 @@ namespace Azure { namespace Core { namespace Tracing {
   const SpanStatus SpanStatus::Ok("Ok");
   const SpanStatus SpanStatus::Error("Error");
 
-}}} // namespace Azure::Core::Tracing
-
-namespace Azure { namespace Core { namespace Tracing { namespace _internal {
-
   const TracingAttributes TracingAttributes::AzNamespace("az.namespace");
 
   std::pair<Azure::Core::Context, ServiceSpan> ServiceTracing::CreateSpan(
@@ -25,7 +21,7 @@ namespace Azure { namespace Core { namespace Tracing { namespace _internal {
   {
     if (m_serviceTracer)
     {
-      Azure::Core::Tracing::CreateSpanOptions createOptions;
+      CreateSpanOptions createOptions;
       // Find a span in the context hierarchy.
       if (!context.TryGetValue(SpanKey, createOptions.ParentSpan))
       {
@@ -37,8 +33,7 @@ namespace Azure { namespace Core { namespace Tracing { namespace _internal {
       createOptions.Attributes->AddAttribute(
           TracingAttributes::AzNamespace.ToString(), m_serviceName);
 
-      std::shared_ptr<Azure::Core::Tracing::Span> newSpan(
-          m_serviceTracer->CreateSpan(methodName, createOptions));
+      std::shared_ptr<Span> newSpan(m_serviceTracer->CreateSpan(methodName, createOptions));
       Azure::Core::Context newContext = context.WithValue(SpanKey, newSpan);
       ServiceSpan newServiceSpan(newSpan);
       return std::make_pair<Azure::Core::Context, ServiceSpan>(

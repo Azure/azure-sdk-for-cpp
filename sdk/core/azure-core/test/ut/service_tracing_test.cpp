@@ -13,11 +13,11 @@ TEST(ServiceTracing, ServiceTraceEnums)
 {
   // Exercise the SpanKind and SpanStatus constructors from the distributed tracing header.
   {
-    SpanKind spanKind = Azure::Core::Tracing::SpanKind::Client;
+    SpanKind spanKind = Azure::Core::Tracing::_internal::SpanKind::Client;
     spanKind = SpanKind::Consumer;
     spanKind = SpanKind::Internal;
     spanKind = SpanKind::Producer;
-    spanKind = Azure::Core::Tracing::SpanKind::Server;
+    spanKind = Azure::Core::Tracing::_internal::SpanKind::Server;
     std::string kindValue = spanKind.ToString();
   }
   {
@@ -26,8 +26,8 @@ TEST(ServiceTracing, ServiceTraceEnums)
     spanStatus = SpanStatus::Ok;
     std::string statusValue = spanStatus.ToString();
   }
-  Azure::Core::Tracing::CreateSpanOptions options;
-  options.Kind = Azure::Core::Tracing::SpanKind::Internal;
+  Azure::Core::Tracing::_internal::CreateSpanOptions options;
+  options.Kind = SpanKind::Internal;
 
   std::string tracingAttributeName = TracingAttributes::AzNamespace.ToString();
 }
