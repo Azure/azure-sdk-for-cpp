@@ -178,7 +178,7 @@ TEST_F(KeyVaultKeyClient, CreateRsaKey)
 }
 
 // No tests for octKey since the server does not support it.
-
+// FOR THIS TEST TO WORK MAKE SURE YOU ACTUALLY HAVE A VALID HSM VALUE FOR AZURE_KEYVAULT_HSM_URL
 TEST_F(KeyVaultKeyClient, CreateEcHsmKey)
 {
   auto const keyName = GetTestName();
@@ -188,7 +188,7 @@ TEST_F(KeyVaultKeyClient, CreateEcHsmKey)
 
   {
     auto ecHsmKey = Azure::Security::KeyVault::Keys::CreateEcKeyOptions(keyName, true);
-    ecHsmKey.Enabled=true;
+    ecHsmKey.Enabled = true;
     ecHsmKey.KeyOperations = {KeyOperation::Sign};
     auto keyResponse = client.CreateEcKey(ecHsmKey);
     CheckValidResponse(keyResponse);
@@ -208,7 +208,7 @@ TEST_F(KeyVaultKeyClient, CreateEcHsmKey)
     EXPECT_TRUE(keyVaultKey.Properties.Enabled.Value());
   }
 }
-
+// FOR THIS TEST TO WORK MAKE SURE YOU ACTUALLY HAVE A VALID HSM VALUE FOR AZURE_KEYVAULT_HSM_URL
 TEST_F(KeyVaultKeyClient, CreateRsaHsmKey)
 {
   auto const keyName = GetTestName();
