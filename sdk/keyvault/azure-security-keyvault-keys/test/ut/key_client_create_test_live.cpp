@@ -3,10 +3,13 @@
 
 #include "../../azure-security-attestation/src/private/crypto/inc/crypto.hpp"
 #include "key_client_base_test.hpp"
+
 #include "private/key_constants.hpp"
 #include "private/key_serializers.hpp"
+#include "test_consts.hpp"
 #include "gtest/gtest.h"
 #include <azure/attestation.hpp>
+#include <azure/attestation/attestation_client_options.hpp>
 #include <azure/core/base64.hpp>
 #include <azure/core/internal/json/json.hpp>
 #include <azure/keyvault/keyvault_keys.hpp>
@@ -16,6 +19,10 @@
 using namespace Azure::Core::_internal;
 using namespace Azure::Security::KeyVault::Keys;
 using namespace Azure::Security::KeyVault::Keys::Test;
+using namespace Azure::Security::Attestation;
+using namespace Azure::Core::Http;
+using namespace Azure::Core::Json::_internal;
+using namespace Azure::Security::KeyVault::Keys::Cryptography;
 
 TEST_F(KeyVaultKeyClient, CreateKey)
 {
@@ -228,6 +235,82 @@ TEST_F(KeyVaultKeyClient, CreateRsaHsmKey)
     EXPECT_FALSE(keyResponse.Value.Properties.ReleasePolicy.HasValue());
   }
 }
+std::string BinaryToHexString(std::vector<uint8_t> const& src)
+{
+  static constexpr char hexMap[]
+      = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f'};
+  std::string output(static_cast<size_t>(src.size()) * 2, ' ');
+  const uint8_t* input = src.data();
+
+  for (size_t i = 0; i < src.size(); i++)
+  {
+    output[2 * i] = hexMap[(input[i] & 0xF0) >> 4];
+    output[2 * i + 1] = hexMap[input[i] & 0x0F];
+  }
+
+  return output;
+}
+
+TEST_F(KeyVaultKeyClient, ReleaseKey)
+{
+  auto const keyName = GetTestName() + "2";
+  auto const& client = GetClientForTest(keyName);
+
+  auto restored = client.RestoreKeyBackup(Base64Url::Base64UrlDecode(RawBackupKey));
+
+  Azure::Core::Json::_internal::json keysJson;
+  Azure::Core::Json::_internal::json keyJson;
+  Azure::Security::KeyVault::Keys::_detail::JsonWebKeySerializer::JsonWebKeySerialize(
+      restored.Value.Key, keyJson);
+  keysJson["keys"].emplace_back(keyJson);
+  auto keySerializedJWK = keysJson.dump();
+
+  auto decodedGeneratedToken = Base64Url::Base64UrlDecode(Base64UrlEncodedGeneratedQuote);
+
+  AttestationClientOptions attestationOptions;
+  attestationOptions.TokenValidationOptions.ValidationTimeSlack = 10s;
+
+  Azure::Security::Attestation::AttestationClient attestationClient(
+      AttestationServiceUrl(), attestationOptions);
+  attestationClient.RetrieveResponseValidationCollateral();
+
+  auto attestResponse = attestationClient.AttestOpenEnclave(
+      decodedGeneratedToken,
+      AttestOptions{AttestationData{
+          std::vector<uint8_t>(keySerializedJWK.begin(), keySerializedJWK.end()),
+          AttestationDataType::Binary}});
+
+  Azure::Security::KeyVault::Keys::CreateKeyOptions options;
+  options.KeyOperations.push_back(Azure::Security::KeyVault::Keys::KeyOperation::Sign);
+  options.KeyOperations.push_back(Azure::Security::KeyVault::Keys::KeyOperation::Verify);
+  options.ReleasePolicy = KeyReleasePolicy();
+  options.ReleasePolicy.Value().Immutable = false;
+  // cspell:disable
+  std::string dataStr = R"({
+                        "anyOf" : [ {
+                        "allOf" : [{"claim" : "x-ms-sgx-mrsigner", "equals" : ")"
+      + BinaryToHexString(attestResponse.Value.Body.SgxMrSigner.Value()) + R"("
+        }],
+        "authority" : ")"
+      + AttestationServiceUrl() + R"("
+        }],
+         "version" : "1.0.0"
+        })";
+  // cspell:enable
+  auto jsonParser = json::parse(dataStr);
+  options.ReleasePolicy.Value().Data = jsonParser.dump();
+  options.Exportable = true;
+  auto keyResponse
+      = client.CreateKey(keyName, Azure::Security::KeyVault::Keys::KeyVaultKeyType::EcHsm, options);
+
+  KeyReleaseOptions relOpt;
+  relOpt.Target = attestResponse.Value.RawToken;
+  relOpt.Encryption = KeyEncryptionAlgorithm::RSA_AES_KEY_WRAP_256;
+  auto result2 = client.ReleaseKey(keyName, keyResponse.Value.Properties.Version, relOpt);
+  EXPECT_NE(result2.Value.Value.length(), size_t(0));
+  EXPECT_EQ(result2.RawResponse->GetStatusCode(), HttpStatusCode::Ok);
+}
+
 TEST_F(KeyVaultKeyClient, CreateKeyWithReleasePolicyOptions)
 {
   auto const keyName = GetTestName();
@@ -245,7 +328,7 @@ TEST_F(KeyVaultKeyClient, CreateKeyWithReleasePolicyOptions)
                         "} ],"
                         " \"version\" : \"1.0.0\""
                         "} ";
-  auto jsonParser = Azure::Core::Json::_internal::json::parse(dataStr);
+  auto jsonParser = json::parse(dataStr);
   options.ReleasePolicy.Value().Data = jsonParser.dump();
   options.Exportable = true;
   {
@@ -285,8 +368,7 @@ TEST_F(KeyVaultKeyClient, CreateKeyWithReleasePolicyOptions)
     EXPECT_FALSE(policy.Immutable);
 
     EXPECT_EQ(
-        Azure::Core::Json::_internal::json::parse(options.ReleasePolicy.Value().Data)
-            .dump(1, ' ', true),
-        Azure::Core::Json::_internal::json::parse(policy.Data).dump(1, ' ', true));
+        json::parse(options.ReleasePolicy.Value().Data).dump(1, ' ', true),
+        json::parse(policy.Data).dump(1, ' ', true));
   }
 }

@@ -5,7 +5,6 @@
 #include <azure/core/http/http.hpp>
 #include <azure/core/http/policies/policy.hpp>
 #include <azure/core/internal/http/pipeline.hpp>
-
 #include <azure/keyvault/shared/keyvault_shared.hpp>
 
 #include "azure/keyvault/keys/key_client.hpp"
@@ -234,6 +233,26 @@ Azure::Security::KeyVault::Keys::DeleteKeyOperation KeyClient::StartDeleteKey(
   auto responseT = Azure::Response<DeletedKey>(std::move(value), std::move(rawResponse));
   return Azure::Security::KeyVault::Keys::DeleteKeyOperation(
       std::make_shared<KeyClient>(*this), std::move(responseT));
+}
+
+Azure::Response<ReleaseKeyResult> KeyClient::ReleaseKey(
+    std::string const& name,
+    std::string const& version,
+    KeyReleaseOptions const& options,
+    Azure::Core::Context const& context) const
+{
+  auto payload = _detail::KeyReleaseOptionsSerializer::KeyReleaseOptionsSerialize(options);
+  Azure::Core::IO::MemoryBodyStream payloadStream(
+      reinterpret_cast<const uint8_t*>(payload.data()), payload.size());
+
+  // Request and settings
+  auto request = CreateRequest(
+      HttpMethod::Post, {_detail::KeysPath, name, version, _detail::ReleaseValue}, &payloadStream);
+  request.SetHeader(HttpShared::ContentType, HttpShared::ApplicationJson);
+  // Send and parse respone
+  auto rawResponse = SendRequest(request, context);
+  auto value = _detail::KeyReleaseOptionsSerializer::KeyReleaseOptionsDeserialize(*rawResponse);
+  return Azure::Response<ReleaseKeyResult>(value, std::move(rawResponse));
 }
 
 Azure::Security::KeyVault::Keys::RecoverDeletedKeyOperation KeyClient::StartRecoverDeletedKey(
