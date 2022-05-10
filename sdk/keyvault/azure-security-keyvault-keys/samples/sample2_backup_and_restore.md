@@ -11,7 +11,7 @@ The simplest way of providing a bearer token is to use the `EnvironmentCredentia
 getting started section, but you can find more ways to authenticate with [azure-identity](https://github.com/Azure/azure-sdk-for-cpp/tree/main/sdk/identity/azure-identity).
 
 ```cpp Snippet:KeysSample1CreateCredential
-auto credential = std::make_shared<Azure::Identity::EnvironmentCedential>();
+auto credential = std::make_shared<Azure::Identity::EnvironmentCredential>();
 ```
 
 Then, in the sample below, you can set `keyVaultUrl` based on an environment variable, configuration setting, or any way that works for your application.
