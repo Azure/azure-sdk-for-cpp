@@ -34,8 +34,7 @@ KeyVaultCertificateWithPolicy CreateCertificate(
 
 int main()
 {
-  auto credential
-      = std::make_shared<Azure::Identity::EnvironmentCredential>();
+  auto credential = std::make_shared<Azure::Identity::EnvironmentCredential>();
   std::chrono::milliseconds defaultWait(10s);
   // create client
   CertificateClient certificateClient(std::getenv("AZURE_KEYVAULT_URL"), credential);
