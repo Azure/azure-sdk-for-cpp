@@ -53,15 +53,11 @@ For detailed samples please review the samples provided.
 
 To create a new `CertificateClient` to create, get, update, or delete certificates, you need the endpoint to an Azure Key Vault and credentials.
 
-Key Vault Certificate client for C++ currently supports the `ClientSecretCredential` for authenticating.
-
-In the sample below, you can create a credential by setting the Tenant ID, Client ID and Client Secret as environment variables.
+The simplest way of providing a bearer token is to use the `EnvironmentCredential` authentication method by providing client secret credentials is being used in this
+getting started section, but you can find more ways to authenticate with [azure-identity][azure_identity].
 
 ```cpp Snippet:CertificateSample1CreateCredential
-  auto tenantId = std::getenv("AZURE_TENANT_ID");
-  auto clientId = std::getenv("AZURE_CLIENT_ID");
-  auto clientSecret = std::getenv("AZURE_CLIENT_SECRET");
-  auto credential = std::make_shared<Azure::Identity::ClientSecretCredential>(tenantId, clientId, clientSecret);
+auto credential = std::make_shared<Azure::Identity::EnvironmentCredential>();
 ```
 
 Then, in the sample below, you can set `keyVaultUrl` based on an environment variable, configuration setting, or any way that works for your application.
@@ -334,6 +330,7 @@ Azure SDK for C++ is licensed under the [MIT](https://github.com/Azure/azure-sdk
 
 <!-- LINKS -->
 [api_reference]: https://azure.github.io/azure-sdk-for-cpp/keyvault.html
+[azure_identity]: https://github.com/Azure/azure-sdk-for-cpp/tree/main/sdk/identity/azure-identity
 [certificate_client_src]: https://github.com/Azure/azure-sdk-for-cpp/tree/main/sdk/keyvault/azure-security-keyvault-certificates
 [code_of_conduct]: https://opensource.microsoft.com/codeofconduct/
 [keyvault_docs]: https://docs.microsoft.com/azure/key-vault/

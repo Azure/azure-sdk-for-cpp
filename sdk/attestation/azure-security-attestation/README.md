@@ -115,7 +115,7 @@ authentication, the documentation for that API will reflect that the attestation
 
 To interact with the authenticated APIs supported by the Azure Attestation service, your client must present an Azure Active Directory bearer token to the service.
 
-The simplest way of providing a bearer token is to use the  `ClientSecretCredential` authentication method by providing client secret credentials is being used in this
+The simplest way of providing a bearer token is to use the `EnvironmentCredential` authentication method by providing client secret credentials is being used in this
 getting started section, but you can find more ways to authenticate with [azure-identity][azure_identity].
 
 ## Key concepts
@@ -218,9 +218,7 @@ which returns a pointer to the client, this returns the client by value):
 
 ```cpp
 std::string endpoint = std::getenv("ATTESTATION_AAD_URL");
-std::shared_ptr<Azure::Core::Credentials::TokenCredential> credential
-    = std::make_shared<Azure::Identity::ClientSecretCredential>(
-      std::getenv("AZURE_TENANT_ID"), std::getenv("AZURE_CLIENT_ID"), std::getenv("AZURE_CLIENT_SECRET"));
+auto credential = std::make_shared<Azure::Identity::EnvironmentCredential>();
 return Azure::Security::Attestation::AttestationClient::Create(m_endpoint, credential);
 ```
 
@@ -264,9 +262,7 @@ All administrative clients are authenticated.
 
 ```cpp
 std::string endpoint = std::getenv("ATTESTATION_AAD_URL");
-std::shared_ptr<Azure::Core::Credentials::TokenCredential> credential
-      = std::make_shared<Azure::Identity::ClientSecretCredential>(
-          std::getenv("AZURE_TENANT_ID"), std::getenv("AZURE_CLIENT_ID"), std::getenv("AZURE_CLIENT_SECRET"));
+auto credential = std::make_shared<Azure::Identity::EnvironmentCredential>();
 AttestationAdministrationClient adminClient(m_endpoint, credential);
 ```
 
@@ -404,7 +400,7 @@ ignored (this possibly surprising behavior is there because retries could cause 
     {
       // Create a PEM encoded X.509 certificate to add based on the POLICY_SIGNING_CERTIFICATE_0
       // certificate.
-      std::string const certToAdd(GetEnvHelper::GetEnv("POLICY_SIGNING_CERTIFICATE_0"));
+      std::string const certToAdd(std::getenv("POLICY_SIGNING_CERTIFICATE_0"));
       std::string const pemCertificateToAdd(
           ::Cryptography::PemFromBase64(certToAdd, "CERTIFICATE"));
 
@@ -429,7 +425,7 @@ ignored (this possibly surprising behavior is there because retries could cause 
 ```cpp
 // Create a PEM encoded X.509 certificate to add based on the POLICY_SIGNING_CERTIFICATE_0
 // certificate.
-std::string const certToRemove(GetEnvHelper::GetEnv("POLICY_SIGNING_CERTIFICATE_0"));
+std::string const certToRemove(std::getenv("POLICY_SIGNING_CERTIFICATE_0"));
 std::string const pemCertificateToRemove(
     ::Cryptography::PemFromBase64(certToRemove, "CERTIFICATE"));
 

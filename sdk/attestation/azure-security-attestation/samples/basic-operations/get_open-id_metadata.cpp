@@ -9,9 +9,6 @@
  * - ATTESTATION_AAD_URL:  Points to an Attestation Service Instance in AAD mode.
  * - ATTESTATION_ISOLATED_URL:  Points to an Attestation Service Instance in Isolated mode.
  * operations.
- * - AZURE_TENANT_ID:     Tenant ID for the Azure account.
- * - AZURE_CLIENT_ID:     The Client ID to authenticate the request.
- * - AZURE_CLIENT_SECRET: The client secret.
  *
  */
 
@@ -33,7 +30,7 @@ int main()
   {
     // create client
     AttestationClient const attestationClient(
-        AttestationClient::Create(GetEnvHelper::GetEnv("ATTESTATION_AAD_URL")));
+        AttestationClient::Create(std::getenv("ATTESTATION_AAD_URL")));
 
     // Retrieve the OpenId metadata from this attestation service instance.
     Azure::Response<OpenIdMetadata> const openIdMetadata = attestationClient.GetOpenIdMetadata();

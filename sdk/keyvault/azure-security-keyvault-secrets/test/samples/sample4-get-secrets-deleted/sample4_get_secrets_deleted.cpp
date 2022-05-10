@@ -6,14 +6,14 @@
  * C++ to get secrets, get secret versions, get deleted secrets, get deleted secret.
  *
  * @remark The following environment variables must be set before running the sample.
- * - AZURE_KEYVAULT_URL:  To the Key Vault account URL.
- * - AZURE_TENANT_ID:     Tenant ID for the Azure account.
- * - AZURE_CLIENT_ID:     The Client ID to authenticate the request.
- * - AZURE_CLIENT_SECRET: The client secret.
+ * - AZURE_KEYVAULT_URL: The Key Vault account URL.
+ * - AZURE_TENANT_ID: Tenant ID for the Azure account.
+ * - AZURE_CLIENT_ID: The Client ID to authenticate the request.
+ * - AZURE_CLIENT_SECRET or AZURE_CLIENT_CERTIFICATE_PATH: The client secret or certificate path.
  *
  */
 
-#include "get_env.hpp"
+#include <get_env.hpp>
 
 #include <azure/identity.hpp>
 #include <azure/keyvault/keyvault_secrets.hpp>
@@ -26,11 +26,8 @@ using namespace std::chrono_literals;
 
 int main()
 {
-  auto tenantId = std::getenv("AZURE_TENANT_ID");
-  auto clientId = std::getenv("AZURE_CLIENT_ID");
-  auto clientSecret = std::getenv("AZURE_CLIENT_SECRET");
   auto credential
-      = std::make_shared<Azure::Identity::ClientSecretCredential>(tenantId, clientId, clientSecret);
+      = std::make_shared<Azure::Identity::EnvironmentCredential>();
 
   // create client
   SecretClient secretClient(std::getenv("AZURE_KEYVAULT_URL"), credential);

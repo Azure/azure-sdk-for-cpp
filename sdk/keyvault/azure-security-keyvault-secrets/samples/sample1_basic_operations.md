@@ -12,10 +12,7 @@ Key Vault Secrets client for C++ currently supports the `ClientSecretCredential`
 In the sample below, you can create a credential by setting the Tenant ID, Client ID and Client Secret as environment variables.
 
 ```cpp Snippet:SecretSample1CreateCredential
-  auto tenantId = std::getenv("AZURE_TENANT_ID");
-  auto clientId = std::getenv("AZURE_CLIENT_ID");
-  auto clientSecret = std::getenv("AZURE_CLIENT_SECRET");
-  auto credential = std::make_shared<Azure::Identity::ClientSecretCredential>(tenantId, clientId, clientSecret);
+  auto credential = std::make_shared<Azure::Identity::EnvironmentCredential>();
 ```
 
 Then, in the sample below, you can set `keyVaultUrl` based on an environment variable, configuration setting, or any way that works for your application.

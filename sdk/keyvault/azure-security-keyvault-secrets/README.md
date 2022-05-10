@@ -49,13 +49,10 @@ For detailed samples please review the samples provided.
 
 ### Create a client
 
-First step is to create  a SecretClient.
+First step is to create a SecretClient.
 
 ```cpp Snippet:SecretSample1CreateCredential
-auto tenantId = std::getenv("AZURE_TENANT_ID");
-auto clientId = std::getenv("AZURE_CLIENT_ID");
-auto clientSecret = std::getenv("AZURE_CLIENT_SECRET");
-auto credential = std::make_shared<Azure::Identity::ClientSecretCredential>(tenantId, clientId, clientSecret);
+auto credential = std::make_shared<Azure::Identity::EnvironmentCredential>();
 
 // create client
 SecretClient secretClient(std::getenv("AZURE_KEYVAULT_URL"), credential);

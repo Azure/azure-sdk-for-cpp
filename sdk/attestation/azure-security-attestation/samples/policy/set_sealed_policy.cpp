@@ -6,10 +6,10 @@
  * for C++ to create, get, update, delete and purge a certificate.
  *
  * @remark The following environment variables must be set before running the sample.
- * - ATTESTATION_ISOLATED_URL:  Points to an Attestation Service Instance in Isolated mode.
- * - AZURE_TENANT_ID:     Tenant ID for the Azure account.
- * - AZURE_CLIENT_ID:     The Client ID to authenticate the request.
- * - AZURE_CLIENT_SECRET: The client secret.
+ * - ATTESTATION_ISOLATED_URL: Points to an Attestation Service Instance in Isolated mode.
+ * - AZURE_TENANT_ID: Tenant ID for the Azure account.
+ * - AZURE_CLIENT_ID: The Client ID to authenticate the request.
+ * - AZURE_CLIENT_SECRET or AZURE_CLIENT_CERTIFICATE_PATH: The client secret or certificate path.
  * - ISOLATED_SIGNING_KEY: A Base64 encoded DER encoded RSA private key which matches the private
  * key used when creating the ATTESTATION_ISOLATED_URL.
  * - ISOLATED_SIGNING_CERTIFICATE: A Base64 encoded X.509 certificate wrapping the public key of the
@@ -48,7 +48,7 @@ int main()
     // attestation service instance. Update the token validation logic to ensure that
     // the right instance issued the token we received (this protects against a MITM responding
     // with a token issued by a different attestation service instance).
-    std::string const endpoint(GetEnvHelper::GetEnv("ATTESTATION_ISOLATED_URL"));
+    std::string const endpoint(std::getenv("ATTESTATION_ISOLATED_URL"));
 
     AttestationAdministrationClientOptions clientOptions;
     clientOptions.TokenValidationOptions.ExpectedIssuer = endpoint;
@@ -58,15 +58,13 @@ int main()
     clientOptions.TokenValidationOptions.TimeValidationSlack = 10s;
 
     // create client
-    auto const credential = std::make_shared<Azure::Identity::ClientSecretCredential>(
-        GetEnvHelper::GetEnv("AZURE_TENANT_ID"),
-        GetEnvHelper::GetEnv("AZURE_CLIENT_ID"),
-        GetEnvHelper::GetEnv("AZURE_CLIENT_SECRET"));
+    auto const credential = std::make_shared<Azure::Identity::EnvironmentCredential>();
+
     AttestationAdministrationClient const adminClient(
         AttestationAdministrationClient::Create(endpoint, credential, clientOptions));
 
-    std::string const signingKey(GetEnvHelper::GetEnv("ISOLATED_SIGNING_KEY"));
-    std::string const signingCert(GetEnvHelper::GetEnv("ISOLATED_SIGNING_CERTIFICATE"));
+    std::string const signingKey(std::getenv("ISOLATED_SIGNING_KEY"));
+    std::string const signingCert(std::getenv("ISOLATED_SIGNING_CERTIFICATE"));
 
     // The attestation APIs expect a PEM encoded key and certificate, so convert the Base64 key and
     // certificate to PEM encoded equivalents.

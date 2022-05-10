@@ -34,18 +34,3 @@ char* getenv(const char* name);
 #endif
 
 #endif
-#include <stdexcept>
-#include <string>
-
-struct GetEnvHelper
-{
-  static std::string GetEnv(char const* env)
-  {
-    auto const val = std::getenv(env);
-    if (val == nullptr)
-    {
-      throw std::runtime_error("Could not find required environment variable: " + std::string(env));
-    }
-    return std::string(val);
-  }
-};

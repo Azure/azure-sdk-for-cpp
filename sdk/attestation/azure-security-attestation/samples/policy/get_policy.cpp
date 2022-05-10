@@ -6,11 +6,11 @@
  * policies from an AAD mode attestation service instance.
  *
  * @remark The following environment variables must be set before running the sample.
- * - ATTESTATION_AAD_URL:  Points to an Attestation Service Instance in AAD mode.
+ * - ATTESTATION_AAD_URL: Points to an Attestation Service Instance in AAD mode.
  * operations.
- * - AZURE_TENANT_ID:     Tenant ID for the Azure account.
- * - AZURE_CLIENT_ID:     The Client ID to authenticate the request.
- * - AZURE_CLIENT_SECRET: The client secret.
+ * - AZURE_TENANT_ID: Tenant ID for the Azure account.
+ * - AZURE_CLIENT_ID: The Client ID to authenticate the request.
+ * - AZURE_CLIENT_SECRET or AZURE_CLIENT_CERTIFICATE_PATH: The client secret or certificate path.
  *
  */
 
@@ -36,12 +36,10 @@ int main()
   try
   {
     // create an administration client
-    auto const credential = std::make_shared<Azure::Identity::ClientSecretCredential>(
-        GetEnvHelper::GetEnv("AZURE_TENANT_ID"),
-        GetEnvHelper::GetEnv("AZURE_CLIENT_ID"),
-        GetEnvHelper::GetEnv("AZURE_CLIENT_SECRET"));
-    AttestationAdministrationClient adminClient(AttestationAdministrationClient::Create(
-        GetEnvHelper::GetEnv("ATTESTATION_AAD_URL"), credential));
+    auto const credential = std::make_shared<Azure::Identity::EnvironmentCredential>();
+
+    AttestationAdministrationClient adminClient(
+        AttestationAdministrationClient::Create(std::getenv("ATTESTATION_AAD_URL"), credential));
 
     // Retrieve the SGX Attestation Policy from this attestation service instance.
     Azure::Response<AttestationToken<std::string>> const sgxPolicy

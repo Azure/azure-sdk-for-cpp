@@ -36,7 +36,7 @@ int main()
 
     // create client
     AttestationClient const attestationClient(
-        AttestationClient::Create(GetEnvHelper::GetEnv("ATTESTATION_AAD_URL"), clientOptions));
+        AttestationClient::Create(std::getenv("ATTESTATION_AAD_URL"), clientOptions));
 
     attestationClient.GetOpenIdMetadata();
   }

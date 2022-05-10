@@ -10,16 +10,16 @@
  * certificates.
  *
  * @remark The following environment variables must be set before running the sample.
- * - ATTESTATION_ISOLATED_URL:  Points to an Attestation Service Instance in Isolated mode.
+ * - ATTESTATION_ISOLATED_URL: Points to an Attestation Service Instance in Isolated mode.
  * operations.
  * - ISOLATED_SIGNING_KEY: The private key which was used when creating the isolated attestation
  * instance.
  * - ISOLATED_SIGNING_CERTIFICATE: An X.509 certificate which wraps the ISOLATED_SIGNING_KEY.
  * - POLICY_SIGNING_CERTIFICATE_0: An X.509 certificate which will be added to the set of policy
  * management certificates.
- * - AZURE_TENANT_ID:     Tenant ID for the Azure account.
- * - AZURE_CLIENT_ID:     The Client ID to authenticate the request.
- * - AZURE_CLIENT_SECRET: The client secret.
+ * - AZURE_TENANT_ID: Tenant ID for the Azure account.
+ * - AZURE_CLIENT_ID: The Client ID to authenticate the request.
+ * - AZURE_CLIENT_SECRET or AZURE_CLIENT_CERTIFICATE_PATH: The client secret or certificate path.
  *
  */
 
@@ -46,16 +46,14 @@ int main()
   try
   {
     // create an administration client
-    auto const credential = std::make_shared<Azure::Identity::ClientSecretCredential>(
-        GetEnvHelper::GetEnv("AZURE_TENANT_ID"),
-        GetEnvHelper::GetEnv("AZURE_CLIENT_ID"),
-        GetEnvHelper::GetEnv("AZURE_CLIENT_SECRET"));
+    auto const credential = std::make_shared<Azure::Identity::EnvironmentCredential>();
+
     std::shared_ptr<AttestationAdministrationClient> adminClient(
         AttestationAdministrationClient::CreatePointer(
-            GetEnvHelper::GetEnv("ATTESTATION_ISOLATED_URL"), credential));
+            std::getenv("ATTESTATION_ISOLATED_URL"), credential));
 
-    std::string const signingKey(GetEnvHelper::GetEnv("ISOLATED_SIGNING_KEY"));
-    std::string const signingCert(GetEnvHelper::GetEnv("ISOLATED_SIGNING_CERTIFICATE"));
+    std::string const signingKey(std::getenv("ISOLATED_SIGNING_KEY"));
+    std::string const signingCert(std::getenv("ISOLATED_SIGNING_CERTIFICATE"));
 
     // The attestation APIs expect a PEM encoded key and certificate, so convert the Base64 key and
     // certificate to PEM encoded equivalents.
@@ -69,7 +67,7 @@ int main()
     {
       // Create a PEM encoded X.509 certificate to add based on the POLICY_SIGNING_CERTIFICATE_0
       // certificate.
-      std::string const certToAdd(GetEnvHelper::GetEnv("POLICY_SIGNING_CERTIFICATE_0"));
+      std::string const certToAdd(std::getenv("POLICY_SIGNING_CERTIFICATE_0"));
       std::string const pemCertificateToAdd(
           ::Cryptography::PemFromBase64(certToAdd, "CERTIFICATE"));
 
@@ -108,7 +106,7 @@ int main()
     {
       // Create a PEM encoded X.509 certificate to add based on the POLICY_SIGNING_CERTIFICATE_0
       // certificate.
-      std::string const certToRemove(GetEnvHelper::GetEnv("POLICY_SIGNING_CERTIFICATE_0"));
+      std::string const certToRemove(std::getenv("POLICY_SIGNING_CERTIFICATE_0"));
       std::string const pemCertificateToRemove(
           ::Cryptography::PemFromBase64(certToRemove, "CERTIFICATE"));
 

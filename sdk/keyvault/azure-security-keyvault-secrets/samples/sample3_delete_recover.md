@@ -6,15 +6,11 @@ This sample demonstrates how to delete and recover a deleted secret in Azure Key
 
 To create a new `SecretClient` to create, get, update, or delete secrets, you need the endpoint to an Azure Key Vault and credentials.
 
-Key Vault Secrets client for C++ currently supports the `ClientSecretCredential` for authenticating.
-
-In the sample below, you can create a credential by setting the Tenant ID, Client ID and Client Secret as environment variables.
+The simplest way of providing a bearer token is to use the `EnvironmentCredential` authentication method by providing client secret credentials is being used in this
+getting started section, but you can find more ways to authenticate with [azure-identity](https://github.com/Azure/azure-sdk-for-cpp/tree/main/sdk/identity/azure-identity).
 
 ```cpp Snippet:SecretSample3CreateCredential
-  auto tenantId = std::getenv("AZURE_TENANT_ID");
-  auto clientId = std::getenv("AZURE_CLIENT_ID");
-  auto clientSecret = std::getenv("AZURE_CLIENT_SECRET");
-  auto credential = std::make_shared<Azure::Identity::ClientSecretCredential>(tenantId, clientId, clientSecret);
+  auto credential = std::make_shared<Azure::Identity::EnvironmentCredential>();
 ```
 
 Then, in the sample below, you can set `keyVaultUrl` based on an environment variable, configuration setting, or any way that works for your application.

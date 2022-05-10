@@ -10,11 +10,11 @@
  * existing certificates.
  *
  * @remark The following environment variables must be set before running the sample.
- * - ATTESTATION_ISOLATED_URL:  Points to an Attestation Service Instance in Isolated mode.
+ * - ATTESTATION_ISOLATED_URL: Points to an Attestation Service Instance in Isolated mode.
  * operations.
- * - AZURE_TENANT_ID:     Tenant ID for the Azure account.
- * - AZURE_CLIENT_ID:     The Client ID to authenticate the request.
- * - AZURE_CLIENT_SECRET: The client secret.
+ * - AZURE_TENANT_ID: Tenant ID for the Azure account.
+ * - AZURE_CLIENT_ID: The Client ID to authenticate the request.
+ * - AZURE_CLIENT_SECRET or AZURE_CLIENT_CERTIFICATE_PATH: The client secret or certificate path.
  *
  */
 
@@ -43,8 +43,7 @@ int main()
   try
   {
     // create an administration client
-    auto const credential = std::make_shared<Azure::Identity::ClientSecretCredential>(
-        GetEnv("AZURE_TENANT_ID"), GetEnv("AZURE_CLIENT_ID"), GetEnv("AZURE_CLIENT_SECRET"));
+    auto const credential = std::make_shared<Azure::Identity::EnvironmentCredential>();
     std::unique_ptr<AttestationAdministrationClient> adminClient(
         AttestationAdministrationClient::CreatePointer(
             GetEnv("ATTESTATION_ISOLATED_URL"), credential));

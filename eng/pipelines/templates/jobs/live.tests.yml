@@ -165,7 +165,7 @@ jobs:
           echo "**********Running sample: ${sample}"
           bash -c "$sample"
           status=$?
-          if [[ $status -eq 0 || "$sample" == *"client_certificate_credential_sample"* ]]; then
+          if [[ $status -eq 0 ]]; then
             echo "*********Sample completed*********"
           else
             echo "*Sample returned a failed code: $status"
