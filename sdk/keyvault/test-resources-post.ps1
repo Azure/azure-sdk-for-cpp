@@ -68,12 +68,12 @@ $([Convert]::ToBase64String($Certificate.RawData, 'InsertLineBreaks'))
 }
 
 # Make sure we deployed a Managed HSM.
-if (!$DeploymentOutputs['AZURE_MANAGEDHSM_URL']) {
+if (!$DeploymentOutputs['AZURE_ENABLE_HSM']) {
     Log "Managed HSM not deployed; skipping activation"
     exit
 }
 
-[Uri] $hsmUrl = $DeploymentOutputs['AZURE_MANAGEDHSM_URL']
+[Uri] $hsmUrl = $DeploymentOutputs['AZURE_KEYVAULT_HSM_URL']
 $hsmName = $hsmUrl.Host.Substring(0, $hsmUrl.Host.IndexOf('.'))
 
 Log 'Creating 3 X509 certificates to activate security domain'

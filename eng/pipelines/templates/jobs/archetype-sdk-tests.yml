@@ -228,6 +228,7 @@ jobs:
       ServiceDirectory: ${{ parameters.ServiceDirectory }}
       Location: ${{ parameters.Location }}
       SubscriptionConfiguration: ${{ parameters.SubscriptionConfiguration }}
+      EnableHsm : true
 
     # For non multi-config generator use the same build configuration to run tests
     # We don't need to set it to invoke ctest 

@@ -123,22 +123,33 @@
       "defaultValue": "eastus2",
       "allowedValues": [
         "australiacentral",
+        "australiaeast",
         "canadacentral",
+        "canadaeast",
+        "centralindia",
         "centralus",
         "eastasia",
+        "eastus",
         "eastus2",
+        "francecentral",
+        "japaneast",
         "koreacentral",
+        "northcentralus",
         "northeurope",
         "southafricanorth",
         "southcentralus",
-        "southeastasia",
         "switzerlandnorth",
+        "switzerlandwest",
+        "uaenorth",
         "uksouth",
+        "westcentralus",
         "westeurope",
-        "westus"
+        "westus",
+        "westus2",
+        "westus3"
       ],
       "metadata": {
-        "description": "The location of the Managed HSM. By default, this is 'southcentralus'."
+        "description": "The location of the Managed HSM. By default, this is 'eastus2'."
       }
     }
   },
@@ -267,9 +278,13 @@
       "type": "string",
       "value": "[variables('azureKeyVaultUrl')]"
     },
+    "AZURE_ENABLE_HSM": {
+      "type" "bool",
+      "value": "[parameters('enableHsm')]"
+    }
     "AZURE_KEYVAULT_HSM_URL": {
       "type": "string",
-      "value": "[variables('azureKeyVaultUrl')]"
+      "value": "if([parameters('enableHsm')],[reference(variables('hsmName')).hsmUri],[variables('azureKeyVaultUrl')]"
     },
     "AZURE_TENANT_ID": {
       "type": "string",
