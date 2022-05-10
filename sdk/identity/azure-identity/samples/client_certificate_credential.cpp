@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
 
-#inlcude <get_env.hpp>
+#include <get_env.hpp>
 
 #include <iostream>
 
