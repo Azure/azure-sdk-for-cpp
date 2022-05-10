@@ -10,7 +10,8 @@ set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
 
 add_library(
   service
-      inc/get_env.hpp
+    INTERFACE
+      inc/azure/service/client.hpp
 )
 
 target_include_directories(service PUBLIC inc)
