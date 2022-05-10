@@ -1,17 +1,21 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
 
+#inlcude <get_env.hpp>
+
 #include <iostream>
 
 #include <azure/identity/client_certificate_credential.hpp>
 
 #include <azure/service/client.hpp>
 
-// These functions should be getting the real Tenant ID, Client ID, and the Client Certificate to
-// authenticate.
-std::string GetTenantId() { return std::string(); }
-std::string GetClientId() { return std::string(); }
-std::string GetClientCertificatePath() { return std::string(); }
+// The following environment variables must be set before running the sample.
+// * AZURE_TENANT_ID: Tenant ID for the Azure account.
+// * AZURE_CLIENT_ID: The Client ID to authenticate the request.
+// * AZURE_CLIENT_CERTIFICATE_PATH: The path to a client certificate.
+std::string GetTenantId() { return std::getenv("AZURE_TENANT_ID"); }
+std::string GetClientId() { return std::getenv("AZURE_CLIENT_ID"); }
+std::string GetClientCertificatePath() { return std::getenv("AZURE_CLIENT_CERTIFICATE_PATH"); }
 
 int main()
 {
