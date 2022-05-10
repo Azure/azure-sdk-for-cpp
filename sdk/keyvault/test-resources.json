@@ -279,9 +279,9 @@
       "value": "[variables('azureKeyVaultUrl')]"
     },
     "AZURE_ENABLE_HSM": {
-      "type" "bool",
+      "type": "bool",
       "value": "[parameters('enableHsm')]"
-    }
+    },
     "AZURE_KEYVAULT_HSM_URL": {
       "type": "string",
       "value": "if([parameters('enableHsm')],[reference(variables('hsmName')).hsmUri],[variables('azureKeyVaultUrl')]"
