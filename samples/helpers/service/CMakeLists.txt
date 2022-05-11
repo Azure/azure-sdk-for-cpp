@@ -14,4 +14,4 @@ add_library(
       inc/azure/service/client.hpp
 )
 
-target_include_directories(service PUBLIC inc)
+target_include_directories(service INTERFACE inc)
