@@ -106,8 +106,8 @@ namespace Azure { namespace Storage { namespace Blobs { namespace _detail {
                   field["name"].get<std::string>(), parseSchemaFromJsonObject(field["type"])));
             }
 
-            auto recordSchema = AvroSchema::RecordSchema(std::move(fieldsSchema));
             const std::string recordName = obj["name"].get<std::string>();
+            auto recordSchema = AvroSchema::RecordSchema(recordName, std::move(fieldsSchema));
             nameSchemaMap.insert(std::make_pair(recordName, recordSchema));
             return recordSchema;
           }
@@ -125,8 +125,8 @@ namespace Azure { namespace Storage { namespace Blobs { namespace _detail {
           }
           else if (typeName == "fixed")
           {
-            auto fixedSchema = AvroSchema::FixedSchema(obj["size"].get<int64_t>());
             const std::string fixedName = obj["name"].get<std::string>();
+            auto fixedSchema = AvroSchema::FixedSchema(fixedName, obj["size"].get<int64_t>());
             nameSchemaMap.insert(std::make_pair(fixedName, fixedSchema));
             return fixedSchema;
           }
@@ -227,9 +227,11 @@ namespace Azure { namespace Storage { namespace Blobs { namespace _detail {
   const AvroSchema AvroSchema::NullSchema(AvroDatumType::Null);
 
   AvroSchema AvroSchema::RecordSchema(
+      std::string name,
       const std::vector<std::pair<std::string, AvroSchema>>& fieldsSchema)
   {
     AvroSchema recordSchema(AvroDatumType::Record);
+    recordSchema.m_name = std::move(name);
     recordSchema.m_status = std::make_shared<SharedStatus>();
     for (auto& i : fieldsSchema)
     {
@@ -263,9 +265,10 @@ namespace Azure { namespace Storage { namespace Blobs { namespace _detail {
     return unionSchema;
   }
 
-  AvroSchema AvroSchema::FixedSchema(int64_t size)
+  AvroSchema AvroSchema::FixedSchema(std::string name, int64_t size)
   {
     AvroSchema fixedSchema(AvroDatumType::Fixed);
+    fixedSchema.m_name = std::move(name);
     fixedSchema.m_status = std::make_shared<SharedStatus>();
     fixedSchema.m_status->m_size = size;
     return fixedSchema;
@@ -274,41 +277,41 @@ namespace Azure { namespace Storage { namespace Blobs { namespace _detail {
   void AvroDatum::Fill(AvroStreamReader& reader, const Core::Context& context)
   {
     m_data = reader.m_pos;
-    if (Type() == AvroDatumType::String || Type() == AvroDatumType::Bytes)
+    if (m_schema.Type() == AvroDatumType::String || m_schema.Type() == AvroDatumType::Bytes)
     {
       int64_t stringSize = reader.ParseInt(context);
       reader.Advance(stringSize, context);
     }
     else if (
-        Type() == AvroDatumType::Int || Type() == AvroDatumType::Long
-        || Type() == AvroDatumType::Enum)
+        m_schema.Type() == AvroDatumType::Int || m_schema.Type() == AvroDatumType::Long
+        || m_schema.Type() == AvroDatumType::Enum)
     {
       reader.ParseInt(context);
     }
-    else if (Type() == AvroDatumType::Float)
+    else if (m_schema.Type() == AvroDatumType::Float)
     {
       reader.Advance(4, context);
     }
-    else if (Type() == AvroDatumType::Double)
+    else if (m_schema.Type() == AvroDatumType::Double)
     {
       reader.Advance(8, context);
     }
-    else if (Type() == AvroDatumType::Bool)
+    else if (m_schema.Type() == AvroDatumType::Bool)
     {
       reader.Advance(1, context);
     }
-    else if (Type() == AvroDatumType::Null)
+    else if (m_schema.Type() == AvroDatumType::Null)
     {
       reader.Advance(0, context);
     }
-    else if (Type() == AvroDatumType::Record)
+    else if (m_schema.Type() == AvroDatumType::Record)
     {
       for (const auto& s : m_schema.FieldSchemas())
       {
         AvroDatum(s).Fill(reader, context);
       }
     }
-    else if (Type() == AvroDatumType::Array)
+    else if (m_schema.Type() == AvroDatumType::Array)
     {
       while (true)
       {
@@ -331,7 +334,7 @@ namespace Azure { namespace Storage { namespace Blobs { namespace _detail {
         }
       }
     }
-    else if (Type() == AvroDatumType::Map)
+    else if (m_schema.Type() == AvroDatumType::Map)
     {
       while (true)
       {
@@ -355,12 +358,12 @@ namespace Azure { namespace Storage { namespace Blobs { namespace _detail {
         }
       }
     }
-    else if (Type() == AvroDatumType::Union)
+    else if (m_schema.Type() == AvroDatumType::Union)
     {
       int64_t i = reader.ParseInt(context);
       AvroDatum(m_schema.FieldSchemas()[i]).Fill(reader, context);
     }
-    else if (Type() == AvroDatumType::Fixed)
+    else if (m_schema.Type() == AvroDatumType::Fixed)
     {
       reader.Advance(m_schema.Size(), context);
     }
@@ -373,41 +376,41 @@ namespace Azure { namespace Storage { namespace Blobs { namespace _detail {
   void AvroDatum::Fill(AvroStreamReader::ReaderPos& data)
   {
     m_data = data;
-    if (Type() == AvroDatumType::String || Type() == AvroDatumType::Bytes)
+    if (m_schema.Type() == AvroDatumType::String || m_schema.Type() == AvroDatumType::Bytes)
     {
       int64_t stringSize = parseInt(data);
       data.Offset += stringSize;
     }
     else if (
-        Type() == AvroDatumType::Int || Type() == AvroDatumType::Long
-        || Type() == AvroDatumType::Enum)
+        m_schema.Type() == AvroDatumType::Int || m_schema.Type() == AvroDatumType::Long
+        || m_schema.Type() == AvroDatumType::Enum)
     {
       parseInt(data);
     }
-    else if (Type() == AvroDatumType::Float)
+    else if (m_schema.Type() == AvroDatumType::Float)
     {
       data.Offset += 4;
     }
-    else if (Type() == AvroDatumType::Double)
+    else if (m_schema.Type() == AvroDatumType::Double)
     {
       data.Offset += 8;
     }
-    else if (Type() == AvroDatumType::Bool)
+    else if (m_schema.Type() == AvroDatumType::Bool)
     {
       data.Offset += 1;
     }
-    else if (Type() == AvroDatumType::Null)
+    else if (m_schema.Type() == AvroDatumType::Null)
     {
       data.Offset += 0;
     }
-    else if (Type() == AvroDatumType::Record)
+    else if (m_schema.Type() == AvroDatumType::Record)
     {
       for (const auto& s : m_schema.FieldSchemas())
       {
         AvroDatum(s).Fill(data);
       }
     }
-    else if (Type() == AvroDatumType::Array)
+    else if (m_schema.Type() == AvroDatumType::Array)
     {
       while (true)
       {
@@ -430,7 +433,7 @@ namespace Azure { namespace Storage { namespace Blobs { namespace _detail {
         }
       }
     }
-    else if (Type() == AvroDatumType::Map)
+    else if (m_schema.Type() == AvroDatumType::Map)
     {
       while (true)
       {
@@ -454,12 +457,12 @@ namespace Azure { namespace Storage { namespace Blobs { namespace _detail {
         }
       }
     }
-    else if (Type() == AvroDatumType::Union)
+    else if (m_schema.Type() == AvroDatumType::Union)
     {
       int64_t i = parseInt(data);
       AvroDatum(m_schema.FieldSchemas()[i]).Fill(data);
     }
-    else if (Type() == AvroDatumType::Fixed)
+    else if (m_schema.Type() == AvroDatumType::Fixed)
     {
       data.Offset += m_schema.Size();
     }
@@ -484,7 +487,7 @@ namespace Azure { namespace Storage { namespace Blobs { namespace _detail {
   template <> AvroDatum::StringView AvroDatum::Value() const
   {
     auto data = m_data;
-    if (Type() == AvroDatumType::String || Type() == AvroDatumType::Bytes)
+    if (m_schema.Type() == AvroDatumType::String || m_schema.Type() == AvroDatumType::Bytes)
     {
       const int64_t length = parseInt(data);
       const uint8_t* start = &(*data.BufferPtr)[data.Offset];
@@ -492,7 +495,7 @@ namespace Azure { namespace Storage { namespace Blobs { namespace _detail {
       data.Offset += length;
       return ret;
     }
-    if (Type() == AvroDatumType::Fixed)
+    if (m_schema.Type() == AvroDatumType::Fixed)
     {
       const size_t fixedSize = m_schema.Size();
       const uint8_t* start = &(*data.BufferPtr)[data.Offset];
@@ -557,7 +560,7 @@ namespace Azure { namespace Storage { namespace Blobs { namespace _detail {
   template <> AvroDatum AvroDatum::Value() const
   {
     auto data = m_data;
-    if (Type() == AvroDatumType::Union)
+    if (m_schema.Type() == AvroDatumType::Union)
     {
       int64_t i = parseInt(data);
       auto datum = AvroDatum(m_schema.FieldSchemas()[i]);
@@ -577,16 +580,16 @@ namespace Azure { namespace Storage { namespace Blobs { namespace _detail {
       const Core::Context& context)
   {
     AZURE_ASSERT_FALSE(m_eof);
-    constexpr size_t SyncMarkerSize = 16;
+    static const auto SyncMarkerSchema = AvroSchema::FixedSchema("Sync", 16);
     if (!schema)
     {
-      static AvroSchema FileHeaderSchema = [SyncMarkerSize]() {
+      static AvroSchema FileHeaderSchema = []() {
         std::vector<std::pair<std::string, AvroSchema>> fieldsSchema;
-        fieldsSchema.push_back(std::make_pair("magic", AvroSchema::FixedSchema(4)));
+        fieldsSchema.push_back(std::make_pair("magic", AvroSchema::FixedSchema("Magic", 4)));
         fieldsSchema.push_back(
             std::make_pair("meta", AvroSchema::MapSchema(AvroSchema::BytesSchema)));
-        fieldsSchema.push_back(std::make_pair("sync", AvroSchema::FixedSchema(SyncMarkerSize)));
-        return AvroSchema::RecordSchema(std::move(fieldsSchema));
+        fieldsSchema.push_back(std::make_pair("sync", SyncMarkerSchema));
+        return AvroSchema::RecordSchema("org.apache.avro.file.Header", std::move(fieldsSchema));
       }();
       auto fileHeaderDatum = AvroDatum(FileHeaderSchema);
       fileHeaderDatum.Fill(*m_reader, context);
@@ -623,7 +626,7 @@ namespace Azure { namespace Storage { namespace Blobs { namespace _detail {
     objectDatum.Fill(*m_reader, context);
     if (--m_remainingObjectInCurrentBlock == 0)
     {
-      auto markerDatum = AvroDatum(AvroSchema::FixedSchema(SyncMarkerSize));
+      auto markerDatum = AvroDatum(SyncMarkerSchema);
       markerDatum.Fill(*m_reader, context);
       auto marker = markerDatum.Value<std::string>();
       if (marker != m_syncMarker)
@@ -651,32 +654,33 @@ namespace Azure { namespace Storage { namespace Blobs { namespace _detail {
     while (!m_parser.End())
     {
       auto datum = m_parser.Next(context);
-      if (datum.Type() == AvroDatumType::Union)
+      if (datum.Schema().Type() == AvroDatumType::Union)
       {
         datum = datum.Value<AvroDatum>();
       }
-      if (datum.Type() != AvroDatumType::Record)
+      if (datum.Schema().Type() != AvroDatumType::Record)
       {
         continue;
       }
-      auto record = datum.Value<AvroRecord>();
-      if (record.HasField("data"))
+      if (datum.Schema().Name() == "com.microsoft.azure.storage.queryBlobContents.resultData")
       {
+        auto record = datum.Value<AvroRecord>();
         auto dataDatum = record.Field("data");
         m_parserBuffer = dataDatum.Value<AvroDatum::StringView>();
         return OnRead(buffer, count, context);
       }
-      if (record.HasField("bytesScanned") && record.HasField("totalBytes"))
+      if (datum.Schema().Name() == "com.microsoft.azure.storage.queryBlobContents.progress")
       {
+        auto record = datum.Value<AvroRecord>();
         auto bytesScanned = record.Field("bytesScanned").Value<int64_t>();
         auto totalBytes = record.Field("totalBytes").Value<int64_t>();
         (void)bytesScanned;
         (void)totalBytes;
         // TODO
       }
-      if (record.HasField("fatal") && record.HasField("name") && record.HasField("description")
-          && record.HasField("position"))
+      if (datum.Schema().Name() == "datum.microsoft.azure.storage.queryBlobContents.error")
       {
+        auto record = datum.Value<AvroRecord>();
         auto fatal = record.Field("fatal").Value<bool>();
         auto name = record.Field("name").Value<std::string>();
         auto description = record.Field("description").Value<std::string>();

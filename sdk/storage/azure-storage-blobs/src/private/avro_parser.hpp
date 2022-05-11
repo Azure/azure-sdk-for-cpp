@@ -74,12 +74,14 @@ namespace Azure { namespace Storage { namespace Blobs { namespace _detail {
     static const AvroSchema BoolSchema;
     static const AvroSchema NullSchema;
     static AvroSchema RecordSchema(
+        std::string name,
         const std::vector<std::pair<std::string, AvroSchema>>& fieldsSchema);
     static AvroSchema ArraySchema(AvroSchema elementSchema);
     static AvroSchema MapSchema(AvroSchema elementSchema);
     static AvroSchema UnionSchema(std::vector<AvroSchema> schemas);
-    static AvroSchema FixedSchema(int64_t size);
+    static AvroSchema FixedSchema(std::string name, int64_t size);
 
+    const std::string& Name() const { return m_name; }
     AvroDatumType Type() const { return m_type; }
     const std::vector<std::string>& FieldNames() const { return m_status->m_keys; }
     AvroSchema ItemSchema() const { return m_status->m_schemas[0]; }
@@ -91,6 +93,7 @@ namespace Azure { namespace Storage { namespace Blobs { namespace _detail {
 
   private:
     AvroDatumType m_type;
+    std::string m_name;
 
     struct SharedStatus
     {
@@ -133,7 +136,7 @@ namespace Azure { namespace Storage { namespace Blobs { namespace _detail {
     void Fill(AvroStreamReader& reader, const Core::Context& context);
     void Fill(AvroStreamReader::ReaderPos& data);
 
-    AvroDatumType Type() const { return m_schema.Type(); }
+    const AvroSchema& Schema() const { return m_schema; }
 
     template <class T> T Value() const;
     struct StringView
