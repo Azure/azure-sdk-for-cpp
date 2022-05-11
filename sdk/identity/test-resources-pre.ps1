@@ -51,7 +51,7 @@ function New-X509Certificate2([RSA] $rsa, [string] $SubjectName) {
 
 function Export-X509Certificate2PEMWithPrivateKey([string] $Path, [X509Certificate2] $Certificate) {
     $rsa = [RSACertificateExtensions]::GetRSAPrivateKey($Certificate)
-    $privKey = $rsa.ExportRSAPrivateKey()
+    $privKey = $rsa.ExportPkcs8PrivateKey()
 @"
 -----BEGIN PRIVATE KEY-----
 $([Convert]::ToBase64String($privKey, 'InsertLineBreaks').Replace("=", "").Replace("/", "_").Replace("+", "-"))
