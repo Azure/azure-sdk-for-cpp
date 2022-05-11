@@ -3,123 +3,122 @@
   "contentVersion": "1.0.0.0",
   "parameters": {
     "baseName": {
-      "type": "string",
       "defaultValue": "[resourceGroup().name]",
+      "type": "String",
       "metadata": {
         "description": "The base resource name."
       }
     },
     "keyName": {
-      "type": "string",
       "defaultValue": "testKey",
+      "type": "String",
       "metadata": {
         "description": "The initial key in the keys."
       }
     },
     "secretName": {
-      "type": "string",
       "defaultValue": "testSecret",
+      "type": "String",
       "metadata": {
         "description": "The initial secret in the secrets."
       }
     },
     "tenantId": {
-      "type": "string",
       "defaultValue": "72f988bf-86f1-41af-91ab-2d7cd011db47",
+      "type": "String",
       "metadata": {
         "description": "The tenant ID to which the application and resources belong."
       }
     },
     "testApplicationId": {
-      "type": "string",
+      "type": "String",
       "metadata": {
         "description": "The application client ID used to run tests."
       }
     },
     "testApplicationSecret": {
-      "type": "string",
+      "type": "String",
       "metadata": {
         "description": "The application client secret used to run tests."
       }
     },
     "testApplicationOid": {
-      "type": "string",
       "defaultValue": "b3653439-8136-4cd5-aac3-2a9460871ca6",
+      "type": "String",
       "metadata": {
         "description": "The client OID to grant access to test resources."
       }
     },
     "location": {
-      "type": "string",
       "defaultValue": "[resourceGroup().location]",
+      "type": "String",
       "metadata": {
         "description": "The location of the resource. By default, this is the same as the resource group."
       }
     },
     "enableSoftDelete": {
-      "type": "bool",
       "defaultValue": true,
+      "type": "Bool",
       "metadata": {
         "description": "Whether to enable soft delete for the Key Vault. The default is true."
       }
     },
     "keyVaultDomainSuffix": {
-      "type": "string",
       "defaultValue": ".vault.azure.net",
+      "type": "String",
       "metadata": {
         "description": "Domain suffix for sovereign clouds, requires the preceeding '.'. The default uses the public Azure Cloud (.vault.azure.net)"
       }
     },
     "keyVaultSku": {
-      "type": "string",
       "defaultValue": "premium",
+      "type": "String",
       "metadata": {
         "description": "Key Vault SKU to deploy. The default is 'premium'"
       }
     },
     "keyType": {
-      "type": "string",
       "defaultValue": "RSA",
+      "type": "String",
       "metadata": {
         "description": "The JsonWebKeyType of the key to be created."
       }
     },
     "keyOps": {
-      "type": "array",
       "defaultValue": [],
+      "type": "Array",
       "metadata": {
         "description": "The permitted JSON web key operations of the key to be created."
       }
     },
     "keySize": {
-      "type": "int",
       "defaultValue": 2048,
+      "type": "Int",
       "metadata": {
         "description": "The size in bits of the key to be created."
       }
     },
     "curveName": {
-      "type": "string",
       "defaultValue": "",
+      "type": "String",
       "metadata": {
         "description": "The JsonWebKeyCurveName of the key to be created."
       }
     },
     "provisionerApplicationOid": {
-      "type": "string",
+      "type": "String",
       "metadata": {
         "description": "The provisioner OID to grant access to test resources."
       }
     },
     "enableHsm": {
-      "type": "bool",
       "defaultValue": false,
+      "type": "Bool",
       "metadata": {
         "description": "Whether to enable deployment of Managed HSM. The default is false."
       }
     },
     "hsmLocation": {
-      "type": "string",
       "defaultValue": "eastus2",
       "allowedValues": [
         "australiacentral",
@@ -148,6 +147,7 @@
         "westus2",
         "westus3"
       ],
+      "type": "String",
       "metadata": {
         "description": "The location of the Managed HSM. By default, this is 'eastus2'."
       }
@@ -256,7 +256,6 @@
       "type": "Microsoft.KeyVault/managedHSMs",
       "apiVersion": "[variables('hsmApiVersion')]",
       "name": "[variables('hsmName')]",
-      "condition": "[parameters('enableHsm')]",
       "location": "[parameters('hsmLocation')]",
       "sku": {
         "family": "B",
@@ -270,40 +269,41 @@
         "softDeleteRetentionInDays": 7,
         "publicNetworkAccess": "Enabled",
         "networkAcls": "[variables('networkAcls')]"
-      }
+      },
+      "condition": "[parameters('enableHsm')]"
     }
   ],
   "outputs": {
     "AZURE_KEYVAULT_URL": {
-      "type": "string",
+      "type": "String",
       "value": "[variables('azureKeyVaultUrl')]"
     },
     "AZURE_ENABLE_HSM": {
-      "type": "bool",
+      "type": "Bool",
       "value": "[parameters('enableHsm')]"
     },
     "AZURE_KEYVAULT_HSM_URL": {
-      "type": "string",
-      "value": "if([parameters('enableHsm')],[reference(variables('hsmName')).hsmUri],[variables('azureKeyVaultUrl')]"
+      "type": "String",
+      "value": "[if(bool(parameters('enableHsm')),reference(variables('hsmName')).hsmUri,variables('azureKeyVaultUrl'))]"
     },
     "AZURE_TENANT_ID": {
-      "type": "string",
+      "type": "String",
       "value": "[parameters('tenantId')]"
     },
     "AZURE_CLIENT_ID": {
-      "type": "string",
+      "type": "String",
       "value": "[parameters('testApplicationId')]"
     },
     "AZURE_CLIENT_SECRET": {
-      "type": "string",
+      "type": "String",
       "value": "[parameters('testApplicationSecret')]"
     },
     "KEYVAULT_SKU": {
-      "type": "string",
+      "type": "String",
       "value": "[reference(parameters('baseName')).sku.name]"
     },
     "CLIENT_OBJECTID": {
-      "type": "string",
+      "type": "String",
       "value": "[parameters('testApplicationOid')]"
     }
   }
