@@ -1,16 +1,20 @@
 # Release History
 
-## 1.3.0-beta.2 (Unreleased)
+## 1.3.0-beta.3 (Unreleased)
 
 ### Features Added
-
-- Added `ClientCertificateCredential`, and updated `EnvironmentCredential` to support client certificate authentication.
 
 ### Breaking Changes
 
 ### Bugs Fixed
 
 ### Other Changes
+
+## 1.3.0-beta.2 (2022-05-10)
+
+### Features Added
+
+- Added `ClientCertificateCredential`, and updated `EnvironmentCredential` to support client certificate authentication.
 
 ## 1.3.0-beta.1 (2022-04-05)
 
