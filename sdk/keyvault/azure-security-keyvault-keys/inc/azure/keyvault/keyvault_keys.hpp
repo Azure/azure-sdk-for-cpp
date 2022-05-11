@@ -4,14 +4,11 @@
 /**
  * @brief Includes all public headers from Azure Key Vault Keys SDK library.
  *
+ * @remark This header file does exist for compatibility with prior stable releases.
+ * It is recommended to use `keys.hpp` instead.
+ *
  */
 
 #pragma once
 
-#include "azure/keyvault/keys/cryptography/cryptography_client.hpp"
-#include "azure/keyvault/keys/cryptography/cryptography_client_models.hpp"
-#include "azure/keyvault/keys/cryptography/cryptography_client_options.hpp"
-#include "azure/keyvault/keys/dll_import_export.hpp"
-#include "azure/keyvault/keys/key_client.hpp"
-#include "azure/keyvault/keys/key_client_models.hpp"
-#include "azure/keyvault/keys/key_client_options.hpp"
+#include "azure/keyvault/keys.hpp"

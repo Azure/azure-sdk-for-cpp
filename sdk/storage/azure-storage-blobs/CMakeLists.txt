@@ -52,12 +52,13 @@ set(
     inc/azure/storage/blobs/dll_import_export.hpp
     inc/azure/storage/blobs/page_blob_client.hpp
     inc/azure/storage/blobs/rest_client.hpp
+    inc/azure/storage/blobs/rtti.hpp
     inc/azure/storage/blobs.hpp
-    src/private/package_version.hpp
 )
 
 set(
   AZURE_STORAGE_BLOBS_SOURCE
+    src/private/package_version.hpp
     src/append_blob_client.cpp
     src/blob_client.cpp
     src/blob_container_client.cpp

@@ -12,7 +12,7 @@
 #include "../src/private/certificate_serializers.hpp"
 #include <azure/core/test/test_base.hpp>
 #include <azure/identity/client_secret_credential.hpp>
-#include <azure/keyvault/keyvault_certificates.hpp>
+#include <azure/keyvault/certificates.hpp>
 #include <chrono>
 #include <thread>
 
