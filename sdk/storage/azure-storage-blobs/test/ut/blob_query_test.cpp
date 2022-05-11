@@ -141,4 +141,46 @@ xx
 
     auto data = queryResponse.Value.BodyStream->ReadToEnd();
   }
+
+  TEST_F(BlockBlobClientTest, QueryLargeBlob_LIVEONLY_)
+  {
+    auto const testName(GetTestName());
+    auto client = GetBlockBlobClient(testName);
+
+    const size_t DataSize = 32_MB;
+
+    int recordCounter = 0;
+    std::string csvData;
+    std::string jsonData;
+    while (csvData.size() < DataSize)
+    {
+      std::string counter = std::to_string(recordCounter++);
+      std::string record = RandomString(RandomInt(1, 3000));
+      csvData += counter + "," + record + "\n";
+      jsonData += "{\"_1\":\"" + counter + "\",\"_2\":\"" + record + "\"}\n";
+    }
+
+    client.UploadFrom(reinterpret_cast<const uint8_t*>(csvData.data()), csvData.size());
+
+    Blobs::QueryBlobOptions queryOptions;
+    queryOptions.InputTextConfiguration = Blobs::BlobQueryInputTextOptions::CreateCsvTextOptions();
+    queryOptions.OutputTextConfiguration
+        = Blobs::BlobQueryOutputTextOptions::CreateJsonTextOptions();
+    auto queryResponse = client.Query("SELECT * FROM BlobStorage;", queryOptions);
+
+    size_t comparePos = 0;
+    std::vector<uint8_t> readBuffer(4096);
+    while (true)
+    {
+      auto s = queryResponse.Value.BodyStream->Read(readBuffer.data(), readBuffer.size());
+      if (s == 0)
+      {
+        break;
+      }
+      ASSERT_TRUE(comparePos + s <= jsonData.size());
+      ASSERT_EQ(
+          std::string(readBuffer.begin(), readBuffer.begin() + s), jsonData.substr(comparePos, s));
+      comparePos += s;
+    }
+  }
 }}} // namespace Azure::Storage::Test
