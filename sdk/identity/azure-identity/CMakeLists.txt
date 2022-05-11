@@ -82,7 +82,6 @@ target_include_directories(
     PUBLIC
       $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/inc>
       $<INSTALL_INTERFACE:include>
-      ${azure-core-cpp_INCLUDE_DIRS}
 )
 
 target_link_libraries(azure-identity PUBLIC Azure::azure-core)

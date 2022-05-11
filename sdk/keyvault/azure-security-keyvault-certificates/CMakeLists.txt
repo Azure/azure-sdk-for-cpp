@@ -73,11 +73,9 @@ target_include_directories(
   azure-security-keyvault-certificates
     PUBLIC
       $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/inc>
-      $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/../../../sdk/core/inc>
-      $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/build/sdk/core/azure-core/inc>
       $<INSTALL_INTERFACE:include>
 )
-message($<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/inc)
+
 # Include shared source code
 # NOTE: Use shared-code only within .cpp files. DO NEVER consume the shared-code from header files.
 target_include_directories(

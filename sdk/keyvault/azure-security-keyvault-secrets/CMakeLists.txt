@@ -83,8 +83,6 @@ target_include_directories(
   azure-security-keyvault-secrets
     PUBLIC
       $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/inc>
-      $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/../../../sdk/core/inc>
-      $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/build/sdk/core/azure-core/inc>
       $<INSTALL_INTERFACE:include>
 )
 
