@@ -176,21 +176,20 @@ namespace Azure { namespace Core { namespace Test {
     }
 
     /**
-    * @brief Get test name with suffix if ENV vatiable is set.
-    * 
-    * @param sanitize Sanize the input and remove special characters. Default true.
-    * @param suffixEnvName Env variable containing the siffix. Default AZURE_LIVE_TEST_SUFFIX.
-    * 
-    * @returns Test name. 
-    */
+     * @brief Get test name with suffix if ENV variable is set.
+     *
+     * @param sanitize Sanitize the input and remove special characters. Default true.
+     * @param suffixEnvName Env variable containing the suffix. Default AZURE_LIVE_TEST_SUFFIX.
+     *
+     * @returns Test name.
+     */
     std::string GetTestNameSuffix(
         bool sanitize = true,
         std::string suffixEnvName = "AZURE_LIVE_TEST_SUFFIX")
     {
       std::string baseValue = Azure::Core::Test::TestBase::GetTestName(sanitize);
 
-      std::string suffix
-          = Azure::Core::_internal::Environment::GetVariable(suffixEnvName.c_str());
+      std::string suffix = Azure::Core::_internal::Environment::GetVariable(suffixEnvName.c_str());
 
       if (suffix.length() > 0)
       {

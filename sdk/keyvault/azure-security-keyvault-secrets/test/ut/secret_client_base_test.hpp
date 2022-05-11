@@ -97,7 +97,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets { 
         std::this_thread::sleep_for(std::chrono::minutes(1));
       }
     }
-    
+
     // Reads the current test instance name.
     // Name gets also sanitized (special chars are removed) to avoid issues when recording or
     // creating. This also return the name with suffix if the "AZURE_LIVE_TEST_SUFFIX" exists.
