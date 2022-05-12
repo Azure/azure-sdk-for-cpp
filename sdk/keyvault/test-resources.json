@@ -308,7 +308,7 @@
     },
     "AZURE_LIVE_TEST_SUFFIX": {
       "type": "String",
-      "value": "[concat(resourceGroup().id, substring(uniqueString(resourceGroup().id),0,6))]"
+      "value": "[resourceGroup().id]"
     }
   }
 }
