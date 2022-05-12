@@ -86,7 +86,7 @@ namespace Azure { namespace Core {
         return dateTime.time_since_epoch().count();
       }
 
-      static constexpr DateTime FromDateTimeRepresentation(DateTime::rep dtRepresentation) noexcept
+      static constexpr DateTime FromDateTimeRepresentation(DateTime::rep dtRepresentation)
       {
         return DateTime(DateTime::time_point(DateTime::duration(dtRepresentation)));
       }
@@ -185,7 +185,7 @@ namespace Azure { namespace Core {
      * specified.
      *
      */
-    DateTime GetDeadline() const noexcept;
+    DateTime GetDeadline() const;
 
     /**
      * @brief Gets the value associated with a \p key parameter within this context or the

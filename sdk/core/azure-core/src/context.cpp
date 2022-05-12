@@ -7,7 +7,7 @@ using namespace Azure::Core;
 
 Context Context::ApplicationContext;
 
-Azure::DateTime Azure::Core::Context::GetDeadline() const noexcept
+Azure::DateTime Azure::Core::Context::GetDeadline() const
 {
   // Contexts form a tree. Here, we walk from a node all the way back to the root in order to find
   // the earliest deadline value.
