@@ -255,8 +255,8 @@
     {
       "type": "Microsoft.KeyVault/managedHSMs",
       "apiVersion": "[variables('hsmApiVersion')]",
-      "name": "[variables('hsmName')]",
-      "location": "[parameters('hsmLocation')]",
+      "name": "keyvaultHSM",
+      "location": "eastus2",
       "sku": {
         "family": "B",
         "name": "Standard_B1"
@@ -265,7 +265,7 @@
         "tenantId": "[parameters('tenantId')]",
         "initialAdminObjectIds": "[union(array(parameters('testApplicationOid')), array(parameters('provisionerApplicationOid')))]",
         "enablePurgeProtection": false,
-        "enableSoftDelete": true,
+        "enableSoftDelete": false,
         "softDeleteRetentionInDays": 7,
         "publicNetworkAccess": "Enabled",
         "networkAcls": "[variables('networkAcls')]"
@@ -305,6 +305,10 @@
     "CLIENT_OBJECTID": {
       "type": "String",
       "value": "[parameters('testApplicationOid')]"
+    },
+    "AZURE_LIVE_TEST_SUFFIX" {
+      "type": "String",
+      "value": "[substring(uniqueString(resourceGroup().id, deployment().name),0,6))]"
     }
   }
 }
