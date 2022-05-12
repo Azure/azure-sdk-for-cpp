@@ -305,10 +305,6 @@
     "CLIENT_OBJECTID": {
       "type": "String",
       "value": "[parameters('testApplicationOid')]"
-    },
-    "AZURE_LIVE_TEST_SUFFIX": {
-      "type": "String",
-      "value": "[resourceGroup().id]"
     }
   }
 }
