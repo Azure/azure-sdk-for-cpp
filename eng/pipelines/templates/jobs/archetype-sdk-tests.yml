@@ -20,9 +20,9 @@ parameters:
 - name: TimeoutInMinutes
   type: number
   default: 60
-- name: EnableHSM
-  type: boolean
-  default: false
+#- name: EnableHSM
+#  type: boolean
+#  default: false
 
 # This job uses the legacy matrix format (matrix property of the job, one
 # build/test scenario per job). A new format (multiple build/test scenarios per
@@ -231,7 +231,7 @@ jobs:
       ServiceDirectory: ${{ parameters.ServiceDirectory }}
       Location: ${{ parameters.Location }}
       SubscriptionConfiguration: ${{ parameters.SubscriptionConfiguration }}
-      EnableHSM : ${{ parameters.EnableHSM }}
+      #EnableHSM : ${{ parameters.EnableHSM }}
 
     # For non multi-config generator use the same build configuration to run tests
     # We don't need to set it to invoke ctest 

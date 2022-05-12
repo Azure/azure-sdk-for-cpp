@@ -112,7 +112,7 @@
       }
     },
     "enableHsm": {
-      "defaultValue": false,
+      "defaultValue": true,
       "type": "Bool",
       "metadata": {
         "description": "Whether to enable deployment of Managed HSM. The default is false."
