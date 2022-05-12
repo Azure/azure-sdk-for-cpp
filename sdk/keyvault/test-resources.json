@@ -269,8 +269,7 @@
         "softDeleteRetentionInDays": 7,
         "publicNetworkAccess": "Enabled",
         "networkAcls": "[variables('networkAcls')]"
-      },
-      "condition": "[parameters('enableHsm')]"
+      }
     }
   ],
   "outputs": {
