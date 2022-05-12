@@ -44,8 +44,18 @@ namespace Azure { namespace Security { namespace Attestation {
    *
    */
   class AttestationAdministrationClient final {
-
   public:
+    /**
+     * @brief Construct a new Attestation Administration Client object from another attestation
+     * administration client.
+     *
+     * @param attestationClient An existing attestation client.
+     */
+    AttestationAdministrationClient(AttestationAdministrationClient const& attestationClient)
+        : m_endpoint(attestationClient.m_endpoint), m_apiVersion(attestationClient.m_apiVersion),
+          m_pipeline(attestationClient.m_pipeline),
+          m_tokenValidationOptions(attestationClient.m_tokenValidationOptions){};
+
     /**
      * @brief Destructor.
      *
@@ -53,48 +63,11 @@ namespace Azure { namespace Security { namespace Attestation {
     virtual ~AttestationAdministrationClient() = default;
 
     /**
-     * @brief Construct a new Attestation Administration Client object.
+     * @brief Returns the Endpoint which the client is communicating with.
      *
-     * @param endpoint The URL address where the client will send the requests to.
-     * @param credential The authentication token to use.
-     * @param options The options to customize the client behavior.
+     * @returns The remote endpoint used when communicating with the attestation service.
      */
-    explicit AttestationAdministrationClient(
-        std::string const& endpoint,
-        std::shared_ptr<Core::Credentials::TokenCredential const> credential,
-        AttestationAdministrationClientOptions const& options
-        = AttestationAdministrationClientOptions());
-
-    /**
-     * @brief Returns the API version the client was configured with.
-     *
-     * @returns The API version used when communicating with the attestation service.
-     */
-    std::string const& ClientVersion() const { return m_apiVersion; }
-
-    /**
-     * @brief Construct a new Attestation Administration Client object from another attestation
-     * administration client.
-     *
-     * @param attestationClient An existing attestation client.
-     */
-    explicit AttestationAdministrationClient(
-        AttestationAdministrationClient const& attestationClient)
-        : m_endpoint(attestationClient.m_endpoint), m_apiVersion(attestationClient.m_apiVersion),
-          m_pipeline(attestationClient.m_pipeline),
-          m_tokenValidationOptions(attestationClient.m_tokenValidationOptions){};
-
-    /**
-     * @brief Retrieves the information needed to validate the response returned from the
-     * attestation service.
-     *
-     * @details Validating the response returned by the attestation service requires a set of
-     * possible signers for the attestation token.
-     *
-     * @param context Client context for the request to the service.
-     */
-    void RetrieveResponseValidationCollateral(
-        Azure::Core::Context const& context = Azure::Core::Context{}) const;
+    std::string const Endpoint() const { return m_endpoint.GetAbsoluteUrl(); }
 
     /**
      * @brief Retrieves an Attestation Policy from the service.
@@ -171,13 +144,14 @@ namespace Azure { namespace Security { namespace Attestation {
 
     /**
      * @brief Returns an Attestation Token object which would be sent to the attestation service to
-     * set an attestation policy.
+     * set or reset an attestation policy.
      *
      * @details
      * To verify that the attestation service received the attestation policy, the service returns
      * the SHA256 hash of the policy token which was sent ot the service. To simplify the customer
-     * experience of interacting with the SetPolicy APIs, CreateSetAttestationPolicyToken API will
-     * generate the same token that would be send to the service.
+     * experience of interacting with the SetAttestationPolicy and ResetAttestationPolicy APIs,
+     * CreateSetAttestationPolicyToken API will generate the same token that would be send to the
+     * service.
      *
      * To ensure that the token which was sent from the client matches the token which was received
      * by the attestation service, the customer can call CreateSetAttestationPolicyToken and then
@@ -186,25 +160,22 @@ namespace Azure { namespace Security { namespace Attestation {
      *
      * @param policyToSet The policy document to set.
      * @param signingKey Optional Attestation Signing Key to be used to sign the policy.
-     * @return Models::AttestationToken<> Attestation token which would be sent to the
+     * @return Models::AttestationToken<void> Attestation token which would be sent to the
      * attestation service based on this signing key.
      *
      * @note: If policyToSet is null, then this generates a policy reset token.
      *
-     * @note \b Note: The RetrieveResponseValidationCollateral API \b MUST be called before the
-     * ResetAttestationPolicy API is called to retrieve the information needed to validate the
-     * result returned by the service.
      */
-    Models::AttestationToken<> CreateSetAttestationPolicyToken(
+    Models::AttestationToken<void> CreateAttestationPolicyToken(
         Azure::Nullable<std::string> const& policyToSet,
         Azure::Nullable<AttestationSigningKey> const& signingKey = {}) const;
 
     /**
-     * @brief Retrieves the list of policy management certificates.
+     * @brief Retrieves the list of isolated mode management certificates.
      *
      * @details When the attestation service is running in "Isolated" mode, the service maintains a
      * set of X.509 certificates which must be used to sign all policy operations. The
-     * GetPolicyManagementCertificates API returns the list of certificates which are used for this
+     * GetIsolatedModeCertificates API returns the list of certificates which are used for this
      * attestation service instance.
      *
      * @param options Options to be set when retrieving the list of parameters.
@@ -214,10 +185,9 @@ namespace Azure { namespace Security { namespace Attestation {
      * instances must be signed by one the private key associated with one of the listed
      * certificates.
      */
-    Response<Models::AttestationToken<Models::PolicyCertificateListResult>>
-    GetPolicyManagementCertificates(
-        GetPolicyManagementCertificatesOptions const& options
-        = GetPolicyManagementCertificatesOptions{},
+    Response<Models::AttestationToken<Models::IsolatedModeCertificateListResult>>
+    GetIsolatedModeCertificates(
+        GetIsolatedModeCertificatesOptions const& options = GetIsolatedModeCertificatesOptions{},
         Azure::Core::Context const& context = Azure::Core::Context{}) const;
 
     /**
@@ -225,11 +195,11 @@ namespace Azure { namespace Security { namespace Attestation {
      *
      * @details When the attestation service is running in "Isolated" mode, the service maintains a
      * set of X.509 certificates which must be used to sign all policy operations. The
-     * #AddPolicyManagementCertificates API adds a new certificate to the list of certificates which
+     * AddIsolatedModeCertificates API adds a new certificate to the list of certificates which
      * are used for this attestation service instance.
      *
      * @note The signerForRequest certificate MUST be one of the policy management certificates
-     * returned by #GetPolicyManagementCertificates.
+     * returned by #GetIsolatedModeCertificates.
      *
      * @param pemEncodedCertificateToAdd The X.509 certificate to add to the service.
      * @param signerForRequest Private key and certificate pair to be used to sign the request to
@@ -239,12 +209,11 @@ namespace Azure { namespace Security { namespace Attestation {
      * @return Response<Models::AttestationToken<Models::PolicyCertificateListResult>> Return value
      * from the operation.
      */
-    Response<Models::AttestationToken<Models::PolicyCertificateModificationResult>>
-    AddPolicyManagementCertificate(
+    Response<Models::AttestationToken<Models::IsolatedModeCertificateModificationResult>>
+    AddIsolatedModeCertificate(
         std::string const& pemEncodedCertificateToAdd,
         AttestationSigningKey const& signerForRequest,
-        AddPolicyManagementCertificatesOptions const& options
-        = AddPolicyManagementCertificatesOptions{},
+        AddIsolatedModeCertificatesOptions const& options = AddIsolatedModeCertificatesOptions{},
         Azure::Core::Context const& context = Azure::Core::Context{}) const;
 
     /**
@@ -253,11 +222,11 @@ namespace Azure { namespace Security { namespace Attestation {
      *
      * @details When the attestation service is running in "Isolated" mode, the service maintains a
      * set of X.509 certificates which must be used to sign all policy operations. The
-     * #RemovePolicyManagementCertificates API removes a certificate from the list of certificates
+     * #RemoveIsolatedModeCertificates API removes a certificate from the list of certificates
      * which are used for this attestation service instance.
      *
      * @note The signerForRequest certificate MUST be one of the policy management certificates
-     * returned by #GetPolicyManagementCertificates.
+     * returned by #GetIsolatedModeCertificates.
      *
      * @param pemEncodedCertificateToAdd The X.509 certificate to remove from the service instance.
      * @param signerForRequest Private key and certificate pair to be used to sign the request to
@@ -267,13 +236,44 @@ namespace Azure { namespace Security { namespace Attestation {
      * @return Response<Models::AttestationToken<Models::PolicyCertificateListResult>> Return value
      * from the operation.
      */
-    Response<Models::AttestationToken<Models::PolicyCertificateModificationResult>>
-    RemovePolicyManagementCertificate(
+    Response<Models::AttestationToken<Models::IsolatedModeCertificateModificationResult>>
+    RemoveIsolatedModeCertificate(
         std::string const& pemEncodedCertificateToAdd,
         AttestationSigningKey const& signerForRequest,
-        AddPolicyManagementCertificatesOptions const& options
-        = AddPolicyManagementCertificatesOptions{},
+        AddIsolatedModeCertificatesOptions const& options = AddIsolatedModeCertificatesOptions{},
         Azure::Core::Context const& context = Azure::Core::Context{}) const;
+
+    /**
+     * @brief Construct a new Attestation Administration Client object.
+     *
+     * @param endpoint The URL address where the client will send the requests to.
+     * @param credential The authentication token to use.
+     * @param options The options to customize the client behavior.
+     * @return std::unique_ptr<AttestationAdministrationClient> The newly created client.
+     */
+    static AttestationAdministrationClient Create(
+        std::string const& endpoint,
+        std::shared_ptr<Core::Credentials::TokenCredential const> credential,
+        AttestationAdministrationClientOptions const& options
+        = AttestationAdministrationClientOptions(),
+        Azure::Core::Context const& context = Azure::Core::Context{});
+    /**
+     * @brief Construct a pointer to a new Attestation Administration Client object.
+     *
+     * @note It is the responsibility of the caller to manage the lifetime of the returned
+     * AttestationAdministrationClient object, typically by constructing a std::unique_ptr or
+     * std::shared_ptr from this pointer.
+     *
+     * @param endpoint The URL address where the client will send the requests to.
+     * @param credential The authentication token to use.
+     * @param options The options to customize the client behavior.
+     */
+    static std::unique_ptr<AttestationAdministrationClient> CreatePointer(
+        std::string const& endpoint,
+        std::shared_ptr<Core::Credentials::TokenCredential const> credential,
+        AttestationAdministrationClientOptions const& options
+        = AttestationAdministrationClientOptions(),
+        Azure::Core::Context const& context = Azure::Core::Context{});
 
   private:
     Azure::Core::Url m_endpoint;
@@ -284,20 +284,39 @@ namespace Azure { namespace Security { namespace Attestation {
 
     mutable std::vector<Models::AttestationSigner> m_attestationSigners;
 
-    std::string CreatePolicyCertificateModificationToken(
+    /**
+     * @brief Construct a new Attestation Administration Client object.
+     *
+     * @param endpoint The URL address where the client will send the requests to.
+     * @param credential The authentication token to use.
+     * @param options The options to customize the client behavior.
+     */
+    explicit AttestationAdministrationClient(
+        std::string const& endpoint,
+        std::shared_ptr<Core::Credentials::TokenCredential const> credential,
+        AttestationAdministrationClientOptions const& options
+        = AttestationAdministrationClientOptions());
+
+    std::string CreateIsolatedModeModificationToken(
         std::string const& pemEncodedX509CertificateToAdd,
         AttestationSigningKey const& existingSigningKey) const;
 
-    Models::AttestationToken<Models::PolicyCertificateModificationResult>
-    ProcessPolicyCertModificationResult(
+    Models::AttestationToken<Models::IsolatedModeCertificateModificationResult>
+    ProcessIsolatedModeModificationResult(
         std::unique_ptr<Azure::Core::Http::RawResponse> const& serverResponse,
         AttestationTokenValidationOptions const& tokenValidationOptions) const;
 
     /**
-     * @brief Check the m_AttestationSigners to ensure that RetrieveResponseValidationCollateral has
-     * been called.
+     * @brief Retrieves the information needed to validate the response returned from the
+     * attestation service.
+     *
+     * @details Validating the response returned by the attestation service requires a set of
+     * possible signers for the attestation token.
+     *
+     * @param context Client context for the request to the service.
      */
-    void CheckAttestationSigners() const;
+    void RetrieveResponseValidationCollateral(
+        Azure::Core::Context const& context = Azure::Core::Context{}) const;
   };
 
 }}} // namespace Azure::Security::Attestation

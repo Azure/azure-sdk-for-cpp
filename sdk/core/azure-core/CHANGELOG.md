@@ -1,16 +1,24 @@
 # Release History
 
-## 1.6.0-beta.1 (Unreleased)
+## 1.7.0-beta.1 (Unreleased)
 
 ### Features Added
-
-- Add `Azure::Core::Http::Request` constructor overload to support payload and non-buffered response.
 
 ### Breaking Changes
 
 ### Bugs Fixed
 
-- Updated field type `CurlTransportOptions.Proxy` from `std::string` to `Azure::Nullable<std::string>`. This change allow to se an empty string to make libcurl ignore proxy settings from environment [](https://github.com/Azure/azure-sdk-for-cpp/issues/3537).
+### Other Changes
+
+## 1.6.0 (2022-05-05)
+
+### Features Added
+
+- Add `Azure::Core::Http::Request` constructor overload to support payload and non-buffered response.
+
+### Bugs Fixed
+
+- [[#3537]](https://github.com/Azure/azure-sdk-for-cpp/issues/3537) Updated field type `CurlTransportOptions.Proxy` from `std::string` to `Azure::Nullable<std::string>`. This allows libcurl to ignore the proxy settings from the environment when the string is empty.
 - [[#3548]](https://github.com/Azure/azure-sdk-for-cpp/issues/3548), [[#1098]](https://github.com/Azure/azure-sdk-for-cpp/issues/1098) Improve performance of the Http transport on Windows by reusing the same session handle across all requests.
 
 ### Other Changes

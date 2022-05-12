@@ -343,13 +343,10 @@ std::vector<uint8_t> AttestationCollateral::SgxQuote()
   auto openEnclaveReport = AttestationCollateral::OpenEnclaveReport();
   openEnclaveReport.erase(openEnclaveReport.begin(), openEnclaveReport.begin() + 16);
   return openEnclaveReport;
-  //    return std::vector<uint8_t>(openEnclaveReport.begin() + 0x10,
-  //    openEnclaveReport.end());
 }
-std::vector<uint8_t> AttestationCollateral::RuntimeData()
+std::vector<uint8_t> AttestationCollateral::RunTimeData()
 {
   return Azure::Core::_internal::Base64Url::Base64UrlDecode(SgxEnclaveHeldData);
-  //    return std::vector<uint8_t>(RuntimeJWKClaim.begin(), RuntimeJWKClaim.end());
 }
 
 std::string AttestationCollateral::GetMinimalPolicy()
