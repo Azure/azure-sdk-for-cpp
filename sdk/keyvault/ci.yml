@@ -32,6 +32,7 @@ stages:
       SubscriptionConfiguration: $(sub-config-azure-cloud-test-resources)
       LineCoverageTarget: 81
       BranchCoverageTarget: 42
+      EnableHSM: true
       Artifacts:
         - Name: azure-security-keyvault-keys
           Path: azure-security-keyvault-keys
