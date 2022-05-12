@@ -16,7 +16,7 @@
 ### Other Changes
 
 - [[#3581]](https://github.com/Azure/azure-sdk-for-cpp/issues/3581) Update log level in retry policy from warning to informational.
-- Support OpenSSL 3.0.
+- Updated the MD5 Hash implementation to work on top of OpenSSL 3.0. (A community contribution, courtesy of _[jepio](https://github.com/jepio)_)
 
 ### Acknowledgments
 
