@@ -117,14 +117,14 @@ public:
    * @brief Constructs an instance of `%DateTime` from a `time_point`.
    *
    */
-  constexpr DateTime(time_point const& timePoint) noexcept : time_point(timePoint) {}
+  constexpr DateTime(time_point const& timePoint) : time_point(timePoint) {}
 
   /**
    * @brief Construct an instance of `%DateTime` from `std::chrono::system_clock::time_point`.
    * @param systemTime A value of `std::chrono::system_clock::time_point`.
    *
    */
-  DateTime(std::chrono::system_clock::time_point const& systemTime) noexcept
+  DateTime(std::chrono::system_clock::time_point const& systemTime)
       : DateTime(
           SystemClockEpoch + std::chrono::duration_cast<duration>(systemTime.time_since_epoch()))
   {
