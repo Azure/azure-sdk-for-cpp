@@ -112,7 +112,7 @@
       }
     },
     "enableHsm": {
-      "defaultValue": false,
+      "defaultValue": true,
       "type": "Bool",
       "metadata": {
         "description": "Whether to enable deployment of Managed HSM. The default is false."
@@ -256,7 +256,7 @@
       "type": "Microsoft.KeyVault/managedHSMs",
       "apiVersion": "[variables('hsmApiVersion')]",
       "name": "[variables('hsmName')]",
-      "location": "[parameters('hsmLocation')]",
+      "location": "[parameters('location')]",
       "sku": {
         "family": "B",
         "name": "Standard_B1"
