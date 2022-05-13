@@ -323,12 +323,19 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
   {
     auto client = CreateClient();
 
-    auto batch = client->CreateBatchFactory();
+    AttestationBatchFactory batch = client->GetBatchFactory();
 
-    std::vector<DeferredOperation<AttestationToken<PolicyResult>>> operations;
-    operations.push_back(batch.ResetAttestationPolicy(GetParam().TeeType));
+    auto setOp
+        = batch.SetAttestationPolicy(GetParam().TeeType, AttestationCollateral::GetMinimalPolicy());
+    auto resetOp = batch.ResetAttestationPolicy(GetParam().TeeType);
 
-    client->SubmitBatch(operations);
+    client->SubmitBatch(batch);
+
+    ValidateSetPolicyResponse(
+        client, setOp.GetResponse(), AttestationCollateral::GetMinimalPolicy());
+    auto response = resetOp.GetResponse();
+
+    ValidateSetPolicyResponse(client, resetOp.GetResponse(), Azure::Nullable<std::string>());
   }
 
   namespace {

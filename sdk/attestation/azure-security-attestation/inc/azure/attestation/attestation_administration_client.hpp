@@ -6,6 +6,7 @@
 #include "azure/attestation/attestation_client_models.hpp"
 #include "azure/attestation/attestation_client_options.hpp"
 #include <azure/core/context.hpp>
+#include <azure/core/internal/deferred_operation.hpp>
 #include <azure/core/url.hpp>
 #include <string>
 
@@ -15,25 +16,18 @@ namespace Azure { namespace Core { namespace Http { namespace _internal {
 
 namespace Azure { namespace Security { namespace Attestation {
 
-  template <typename T> class DeferredOperation {
-  public:
-    Response<T> GetResponse() const { throw std::runtime_error("Not Implemented"); }
-  };
+  class AttestationBatchFactory : public Azure::Core::_internal::DeferredOperationFactory {
+    friend class AttestationAdministrationClient;
 
-  /**
-   * \brief A BatchFactor creates DeferredOperation objects which are created from
-   * an HTTP request to be sent to the service.
-   */
-  class BatchFactory {
-  public:
-    /***
-     * \brief Creates a deferred operation from the supplied HTTP request object.
-     */
-    template <typename T>
-    DeferredOperation<T> CreateDeferredOperation(Azure::Core::Http::Request requestToDefer);
-  };
+  private:
+    const AttestationAdministrationClient* m_parentClient;
+    Azure::Core::_internal::DeferredOperationFactory deferredFactory;
 
-  class AttestationBatchFactory : BatchFactory {
+    AttestationBatchFactory(const AttestationAdministrationClient* parentClient)
+        : Azure::Core::_internal::DeferredOperationFactory(), m_parentClient(parentClient)
+    {
+    }
+
   public:
     /**
      * @brief Sets the attestation policy for the specified AttestationType.
@@ -42,34 +36,35 @@ namespace Azure { namespace Security { namespace Attestation {
      * attestationType to the value specified.
      *
      * The result of a SetAttestationPolicy API call is a PolicyResult object, which contains the
-     * result of the operation, the hash of the AttestationToken object sent to the service, and (if
-     * the SetPolicyOptions contains a `SigningKey` field) the certificate which was used to sign
-     * the attestation policy.
+     * result of the operation, the hash of the AttestationToken object sent to the service, and
+     * (if the SetPolicyOptions contains a `SigningKey` field) the certificate which was used to
+     * sign the attestation policy.
      *
      * Note that the hash of the AttestationToken is not immediately derivable from the inputs to
-     * this function - the function calls the CreateAttestationPolicyToken to create the underlying
-     * token which will be sent to the service.
+     * this function - the function calls the CreateAttestationPolicyToken to create the
+     * underlying token which will be sent to the service.
      *
      * In order to verify that the attestation service correctly received the attestation policy
      * sent by the client, the caller of the SetAttestationPolicy can also call
-     * CreateAttestationPolicyToken and calculate the SHA256 hash of the RawToken field and check to
-     * ensure that it matches the value returned by the service.
+     * CreateAttestationPolicyToken and calculate the SHA256 hash of the RawToken field and check
+     * to ensure that it matches the value returned by the service.
      *
      * @param attestationType Sets the policy on the specified AttestationType.
      * @param policyToSet The policy document to set.
      * @param options Options used when setting the policy, including signer.
      * @param context User defined context for the operation.
-     * @return Response<Models::AttestationToken<Models::PolicyResult>> The result of the set policy
-     * operation.
+     * @return Response<Models::AttestationToken<Models::PolicyResult>> The result of the set
+     * policy operation.
      *
      * @note \b Note: The RetrieveResponseValidationCollateral API \b MUST be called before the
      * SetAttestationPolicy API is called to retrieve the information needed to validate the
      * result returned by the service.
      */
-    DeferredOperation<Models::AttestationToken<Models::PolicyResult>> SetAttestationPolicy(
+    Azure::Core::DeferredOperation<Models::AttestationToken<Models::PolicyResult>>
+    SetAttestationPolicy(
         Models::AttestationType const& attestationType,
         std::string const& policyToSet,
-        SetPolicyOptions const& options = SetPolicyOptions()) const;
+        SetPolicyOptions const& options = SetPolicyOptions());
 
     /**
      * @brief Resets the attestation policy for the specified AttestationType to its default.
@@ -84,15 +79,16 @@ namespace Azure { namespace Security { namespace Attestation {
      * ResetAttestationPolicy API is called to retrieve the information needed to validate the
      * result returned by the service.
      */
-    DeferredOperation<Models::AttestationToken<Models::PolicyResult>> ResetAttestationPolicy(
+    Azure::Core::DeferredOperation<Models::AttestationToken<Models::PolicyResult>>
+    ResetAttestationPolicy(
         Models::AttestationType const& attestationType,
-        SetPolicyOptions const& options = SetPolicyOptions()) const;
+        SetPolicyOptions const& options = SetPolicyOptions());
 
     /**
      * @brief Adds a new certificate to the list of policy management certificates.
      *
-     * @details When the attestation service is running in "Isolated" mode, the service maintains a
-     * set of X.509 certificates which must be used to sign all policy operations. The
+     * @details When the attestation service is running in "Isolated" mode, the service maintains
+     * a set of X.509 certificates which must be used to sign all policy operations. The
      * AddIsolatedModeCertificates API adds a new certificate to the list of certificates which
      * are used for this attestation service instance.
      *
@@ -104,42 +100,43 @@ namespace Azure { namespace Security { namespace Attestation {
      * the service.
      * @param options Options to be set when adding the new certificate.
      * @param context Call context for the operation.
-     * @return Response<Models::AttestationToken<Models::PolicyCertificateListResult>> Return value
-     * from the operation.
+     * @return Response<Models::AttestationToken<Models::PolicyCertificateListResult>> Return
+     * value from the operation.
      */
-    DeferredOperation<Models::AttestationToken<Models::IsolatedModeCertificateModificationResult>>
+    Azure::Core::DeferredOperation<
+        Models::AttestationToken<Models::IsolatedModeCertificateModificationResult>>
     AddIsolatedModeCertificate(
         std::string const& pemEncodedCertificateToAdd,
         AttestationSigningKey const& signerForRequest,
-        AddIsolatedModeCertificatesOptions const& options
-        = AddIsolatedModeCertificatesOptions{}) const;
+        AddIsolatedModeCertificatesOptions const& options = AddIsolatedModeCertificatesOptions{});
 
     /**
      * @brief Removes a certificate from the list of policy management certificates for the
      * instance.
      *
-     * @details When the attestation service is running in "Isolated" mode, the service maintains a
-     * set of X.509 certificates which must be used to sign all policy operations. The
+     * @details When the attestation service is running in "Isolated" mode, the service maintains
+     * a set of X.509 certificates which must be used to sign all policy operations. The
      * #RemoveIsolatedModeCertificates API removes a certificate from the list of certificates
      * which are used for this attestation service instance.
      *
      * @note The signerForRequest certificate MUST be one of the policy management certificates
      * returned by #GetIsolatedModeCertificates.
      *
-     * @param pemEncodedCertificateToAdd The X.509 certificate to remove from the service instance.
+     * @param pemEncodedCertificateToAdd The X.509 certificate to remove from the service
+     * instance.
      * @param signerForRequest Private key and certificate pair to be used to sign the request to
      * the service.
      * @param options Options to be set when adding the new certificate.
      * @param context Call context for the operation.
-     * @return Response<Models::AttestationToken<Models::PolicyCertificateListResult>> Return value
-     * from the operation.
+     * @return Response<Models::AttestationToken<Models::PolicyCertificateListResult>> Return
+     * value from the operation.
      */
-    DeferredOperation<Models::AttestationToken<Models::IsolatedModeCertificateModificationResult>>
+    Azure::Core::DeferredOperation<
+        Models::AttestationToken<Models::IsolatedModeCertificateModificationResult>>
     RemoveIsolatedModeCertificate(
         std::string const& pemEncodedCertificateToAdd,
         AttestationSigningKey const& signerForRequest,
-        AddIsolatedModeCertificatesOptions const& options
-        = AddIsolatedModeCertificatesOptions{}) const;
+        AddIsolatedModeCertificatesOptions const& options = AddIsolatedModeCertificatesOptions{});
   };
 
   /**
@@ -171,6 +168,8 @@ namespace Azure { namespace Security { namespace Attestation {
    *
    */
   class AttestationAdministrationClient final {
+    friend AttestationBatchFactory;
+
   public:
     /**
      * @brief Construct a new Attestation Administration Client object from another attestation
@@ -181,7 +180,8 @@ namespace Azure { namespace Security { namespace Attestation {
     AttestationAdministrationClient(AttestationAdministrationClient const& attestationClient)
         : m_endpoint(attestationClient.m_endpoint), m_apiVersion(attestationClient.m_apiVersion),
           m_pipeline(attestationClient.m_pipeline),
-          m_tokenValidationOptions(attestationClient.m_tokenValidationOptions){};
+          m_tokenValidationOptions(attestationClient.m_tokenValidationOptions),
+          m_batchFactory(this){};
 
     /**
      * @brief Destructor.
@@ -189,16 +189,11 @@ namespace Azure { namespace Security { namespace Attestation {
      */
     virtual ~AttestationAdministrationClient() = default;
 
-    AttestationBatchFactory CreateBatchFactory() const;
+    AttestationBatchFactory const& GetBatchFactory() const;
 
-    template<typename T> Response<int> SubmitBatch(T& batchedOperations) {
-      ;
-      for (typename T::iterator it = batchedOperations.begin(); it != batchedOperations.end(); it++)
-      {
-
-      }
-      return Response<int>(3, std::unique_ptr<Azure::Core::Http::RawResponse>(nullptr));
-    }
+    Azure::Response<std::nullptr_t> SubmitBatch(
+        AttestationBatchFactory& batchedOperations,
+        Azure::Core::Context = Azure::Core::Context{});
 
     /**
      * @brief Returns the Endpoint which the client is communicating with.
@@ -419,13 +414,26 @@ namespace Azure { namespace Security { namespace Attestation {
     std::shared_ptr<Azure::Core::Credentials::TokenCredential const> m_credentials;
     std::shared_ptr<Azure::Core::Http::_internal::HttpPipeline> m_pipeline;
     AttestationTokenValidationOptions m_tokenValidationOptions;
+    AttestationBatchFactory m_batchFactory;
 
     mutable std::vector<Models::AttestationSigner> m_attestationSigners;
-    
+
     Azure::Core::Http::Request CreateSetPolicyRequest(
         Models::AttestationType const& attestationType,
         std::string const& policyToSet,
         SetPolicyOptions const& options = SetPolicyOptions()) const;
+
+    Azure::Response<Models::AttestationToken<Models::PolicyResult>> ProcessSetPolicyResponse(
+        AttestationTokenValidationOptions const& options,
+        std::unique_ptr<Azure::Core::Http::RawResponse>& response) const;
+
+    Azure::Core::Http::Request CreateResetPolicyRequest(
+        Models::AttestationType const& attestationType,
+        SetPolicyOptions const& options) const;
+
+    Azure::Response<Models::AttestationToken<Models::PolicyResult>> ProcessResetPolicyResponse(
+        AttestationTokenValidationOptions const& options,
+        std::unique_ptr<Azure::Core::Http::RawResponse>& response) const;
 
     /**
      * @brief Construct a new Attestation Administration Client object.
