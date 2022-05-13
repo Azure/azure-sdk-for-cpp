@@ -19,7 +19,7 @@ parameters:
   default: sdk/*/*/*cov_xml.xml
 - name: TimeoutInMinutes
   type: number
-  default: 60
+  default: 120
 
 # This job uses the legacy matrix format (matrix property of the job, one
 # build/test scenario per job). A new format (multiple build/test scenarios per
