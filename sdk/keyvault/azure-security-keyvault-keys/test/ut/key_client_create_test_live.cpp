@@ -53,7 +53,7 @@ TEST_F(KeyVaultKeyClient, CreateKeyWithOptions)
   Azure::Security::KeyVault::Keys::CreateKeyOptions options;
   options.KeyOperations.push_back(Azure::Security::KeyVault::Keys::KeyOperation::Sign);
   options.KeyOperations.push_back(Azure::Security::KeyVault::Keys::KeyOperation::Verify);
-  
+
   {
     auto keyResponse
         = client.CreateKey(keyName, Azure::Security::KeyVault::Keys::KeyVaultKeyType::Ec, options);
@@ -255,7 +255,7 @@ std::string BinaryToHexString(std::vector<uint8_t> const& src)
   return output;
 }
 
-//temporary while i get the live tests working
+// temporary while i get the live tests working
 TEST_F(KeyVaultKeyClient, DISABLED_ReleaseKey)
 {
   auto const keyName = GetTestName() + "2";
@@ -278,12 +278,13 @@ TEST_F(KeyVaultKeyClient, DISABLED_ReleaseKey)
   Azure::Security::Attestation::AttestationClient attestationClient(
       AttestationServiceUrl(), attestationOptions);
   attestationClient.RetrieveResponseValidationCollateral();
+  AttestationData attestData;
+  attestData.Data = std::vector<uint8_t>(keySerializedJWK.begin(), keySerializedJWK.end());
+  attestData.DataType = AttestationDataType::Binary;
+  AttestOptions attestOptions;
+  attestOptions.RuntimeData = attestData;
 
-  auto attestResponse = attestationClient.AttestOpenEnclave(
-      decodedGeneratedToken,
-      AttestOptions{AttestationData{
-          std::vector<uint8_t>(keySerializedJWK.begin(), keySerializedJWK.end()),
-          AttestationDataType::Binary}});
+  auto attestResponse = attestationClient.AttestOpenEnclave(decodedGeneratedToken, attestOptions);
 
   Azure::Security::KeyVault::Keys::CreateKeyOptions options;
   options.KeyOperations.push_back(Azure::Security::KeyVault::Keys::KeyOperation::Sign);
