@@ -1,5 +1,5 @@
 {
-  "name": "azure-core-opentelemetry-cpp",
+  "name": "azure-core-tracing-opentelemetry-cpp",
   "version-string": "1.0.0-beta.1",
   "dependencies": [
     {

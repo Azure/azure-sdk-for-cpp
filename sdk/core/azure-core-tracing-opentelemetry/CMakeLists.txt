@@ -8,7 +8,7 @@ az_vcpkg_integrate()
 
 # Azure core is compatible with CMake 3.12
 cmake_minimum_required (VERSION 3.12)
-project(azure-core-opentelemetry LANGUAGES CXX)
+project(azure-core-tracing-opentelemetry LANGUAGES CXX)
 
 set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
@@ -35,7 +35,7 @@ find_package(opentelemetry-cpp "1.3.0" CONFIG REQUIRED)
 
 set(
   AZURE_CORE_OPENTELEMETRY_HEADER
-    inc/azure/core-opentelemetry/opentelemetry.hpp
+    inc/azure/core-tracing-opentelemetry/opentelemetry.hpp
 )
 
 set(
@@ -43,24 +43,24 @@ set(
   src/opentelemetry.cpp
 )
 
-add_library(azure-core-opentelemetry ${AZURE_CORE_OPENTELEMETRY_HEADER} ${AZURE_CORE_OPENTELEMETRY_SOURCE})
+add_library(azure-core-tracing-opentelemetry ${AZURE_CORE_OPENTELEMETRY_HEADER} ${AZURE_CORE_OPENTELEMETRY_SOURCE})
 
 target_include_directories(
-  azure-core-opentelemetry
+  azure-core-tracing-opentelemetry
     PUBLIC
       $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/inc>
       $<INSTALL_INTERFACE:include>
 )
 
 # make sure that users can consume the project as a library.
-add_library(Azure::azure-core-opentelemetry ALIAS azure-core-opentelemetry)
+add_library(Azure::azure-core-tracing-opentelemetry ALIAS azure-core-tracing-opentelemetry)
 
 # coverage. Has no effect if BUILD_CODE_COVERAGE is OFF
-create_code_coverage(core-opentelemetry azure-core-opentelemetry azure-core-opentelemetry-test "tests?/*;samples?/*")
+create_code_coverage(core-tracing-opentelemetry azure-core-tracing-opentelemetry azure-core-tracing-opentelemetry-test "tests?/*;samples?/*")
 
-target_link_libraries(azure-core-opentelemetry INTERFACE Threads::Threads)
+target_link_libraries(azure-core-tracing-opentelemetry INTERFACE Threads::Threads)
 
-target_link_libraries(azure-core-opentelemetry PRIVATE azure-core
+target_link_libraries(azure-core-tracing-opentelemetry PRIVATE azure-core
     opentelemetry-cpp::api
     opentelemetry-cpp::ext 
     opentelemetry-cpp::sdk 
@@ -71,15 +71,15 @@ get_az_version("${CMAKE_CURRENT_SOURCE_DIR}/src/private/package_version.hpp")
 generate_documentation(azure-core-opentelemetry ${AZ_LIBRARY_VERSION})
 
 az_vcpkg_export(
-    azure-core-opentelemetry
-    CORE
-    "azure/core-opentelemetry/dll_import_export.hpp"
+    azure-core-tracing-opentelemetry
+    CORE_TRACING_OPENTELEMETRY
+    "azure/core-tracing-opentelemetry/dll_import_export.hpp"
   )
 
 az_rtti_setup(
-  azure-core-opentelemetry
-  CORE
-  "azure/core-opentelemetry/rtti.hpp"
+  azure-core-tracing-opentelemetry
+  CORE_TRACING_OPENTELEMETRY
+  "azure/core-tracing-opentelemetry/rtti.hpp"
 )
 
 if(BUILD_TESTING)
@@ -93,7 +93,3 @@ if(BUILD_TESTING)
   
   add_subdirectory(test/ut)
 endif()
-
-#if (BUILD_PERFORMANCE_TESTS)
-#  add_subdirectory(test/perf)
-#endif()

@@ -16,7 +16,7 @@
 #pragma once
 
 /**
- * @def AZ_CORE_RTTI
+ * @def AZ_CORE_TRACING_OPENTELEMETRY_RTTI
  * @brief A macro indicating whether the code is built with RTTI or not.
  *
  * @details `AZ_RTTI` could be defined while building the Azure SDK with CMake, however, after
@@ -31,6 +31,6 @@
  * condition when it was not.
  */
 
-#if defined(AZ_RTTI) || (0 /*@AZ_CORE_RTTI@*/)
-#define AZ_CORE_RTTI
+#if defined(AZ_RTTI) || (0 /*@AZ_CORE_TRACING_OPENTELEMETRY_RTTI@*/)
+#define AZ_CORE_TRACING_OPENTELEMETRY_RTTI
 #endif

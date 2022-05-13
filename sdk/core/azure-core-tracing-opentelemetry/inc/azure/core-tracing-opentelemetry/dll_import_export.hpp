@@ -11,12 +11,12 @@
 #pragma once
 
 /**
- * @def AZ_IDENTITY_DLLEXPORT
+ * @def AZ_CORE_TRACING_OPENTELEMETRY_DLLEXPORT
  * @brief Applies DLL export attribute, when applicable.
  * @note See https://docs.microsoft.com/cpp/cpp/dllexport-dllimport?view=msvc-160.
  */
 
-#if defined(AZ_CORE_TRACING_OPENTELEMETRY_DLL) || (0 /*@AZ_IDENTITY_DLL_INSTALLED_AS_PACKAGE@*/)
+#if defined(AZ_CORE_TRACING_OPENTELEMETRY_DLL) || (0 /*@AZ_CORE_TRACING_OPENTELEMETRY_DLL_INSTALLED_AS_PACKAGE@*/)
 #define AZ_CORE_TRACING_OPENTELEMETRY_BUILT_AS_DLL 1
 #else
 #define AZ_CORE_TRACING_OPENTELEMETRY_BUILT_AS_DLL 0
@@ -44,7 +44,7 @@
  */
 namespace Azure {
 /**
- * @brief Azure Identity SDK abstractions.
+ * @brief Abstractions commonly used by Azure SDK client libraries.
  *
  */
 namespace Core {

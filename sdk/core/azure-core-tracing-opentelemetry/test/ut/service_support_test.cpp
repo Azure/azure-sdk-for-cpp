@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: MIT
 
 #define USE_MEMORY_EXPORTER 1
-#include "azure/core-opentelemetry/opentelemetry.hpp"
+#include "azure/core-tracing-opentelemetry/opentelemetry.hpp"
 #include "azure/core/internal/tracing/service_tracing.hpp"
 #include <azure/core/test/test_base.hpp>
 
@@ -194,11 +194,11 @@ TEST_F(OpenTelemetryServiceTests, CreateWithExplicitProvider)
     EXPECT_EQ(1ul, spans.size());
 
     EXPECT_EQ("My API", spans[0]->GetName());
-    auto attributes = spans[0]->GetAttributes();
-    auto azNamespace = attributes["az.namespace"];
-    auto namespaceVal = opentelemetry::nostd::get<std::string>(azNamespace);
+    const auto& attributes = spans[0]->GetAttributes();
+    const auto& azNamespace = attributes.at("az.namespace");
+    const auto& namespaceVal = opentelemetry::nostd::get<std::string>(azNamespace);
     EXPECT_EQ("my-service", namespaceVal);
-    auto library = spans[0]->GetInstrumentationLibrary();
+    const auto& library = spans[0]->GetInstrumentationLibrary();
     EXPECT_EQ("my-service", library.GetName());
     EXPECT_EQ("1.0beta-2", library.GetVersion());
   }
@@ -229,8 +229,8 @@ TEST_F(OpenTelemetryServiceTests, CreateWithImplicitProvider)
     auto spans = m_spanData->GetSpans();
     EXPECT_EQ(1ul, spans.size());
     EXPECT_EQ("My API", spans[0]->GetName());
-    auto attributes = spans[0]->GetAttributes();
-    EXPECT_EQ("my-service", opentelemetry::nostd::get<std::string>(attributes["az.namespace"]));
+    const auto& attributes = spans[0]->GetAttributes();
+    EXPECT_EQ("my-service", opentelemetry::nostd::get<std::string>(attributes.at("az.namespace")));
     EXPECT_EQ("my-service", spans[0]->GetInstrumentationLibrary().GetName());
     EXPECT_EQ("1.0beta-2", spans[0]->GetInstrumentationLibrary().GetVersion());
   }
@@ -277,17 +277,17 @@ TEST_F(OpenTelemetryServiceTests, NestSpans)
       // The nested span should have the outer span as a parent.
       EXPECT_EQ(spans[1]->GetSpanId(), spans[0]->GetParentSpanId());
 
-      auto attributes = spans[0]->GetAttributes();
+      const auto& attributes = spans[0]->GetAttributes();
       EXPECT_EQ(1ul, attributes.size());
-      EXPECT_EQ("my-service", opentelemetry::nostd::get<std::string>(attributes["az.namespace"]));
+      EXPECT_EQ("my-service", opentelemetry::nostd::get<std::string>(attributes.at("az.namespace")));
     }
     {
       EXPECT_EQ("My API", spans[1]->GetName());
       EXPECT_FALSE(spans[1]->GetParentSpanId().IsValid());
 
-      auto attributes = spans[1]->GetAttributes();
+      const auto &attributes = spans[1]->GetAttributes();
       EXPECT_EQ(1ul, attributes.size());
-      EXPECT_EQ("my-service", opentelemetry::nostd::get<std::string>(attributes["az.namespace"]));
+      EXPECT_EQ("my-service", opentelemetry::nostd::get<std::string>(attributes.at("az.namespace")));
     }
 
     EXPECT_EQ("my-service", spans[0]->GetInstrumentationLibrary().GetName());
@@ -381,11 +381,11 @@ TEST_F(OpenTelemetryServiceTests, ServiceApiImplementation)
       EXPECT_EQ(opentelemetry::trace::SpanKind::kInternal, spans[0]->GetSpanKind());
       EXPECT_EQ(opentelemetry::trace::StatusCode::kOk, spans[0]->GetStatus());
 
-      auto attributes = spans[0]->GetAttributes();
-      auto azNamespace = attributes["az.namespace"];
-      auto namespaceVal = opentelemetry::nostd::get<std::string>(azNamespace);
+      auto const& attributes = spans[0]->GetAttributes();
+      auto const& azNamespace = attributes.at("az.namespace");
+      auto const& namespaceVal = opentelemetry::nostd::get<std::string>(azNamespace);
       EXPECT_EQ("Azure.Core.OpenTelemetry.Test.Service", namespaceVal);
-      auto library = spans[0]->GetInstrumentationLibrary();
+      auto const& library = spans[0]->GetInstrumentationLibrary();
       EXPECT_EQ("Azure.Core.OpenTelemetry.Test.Service", library.GetName());
       EXPECT_EQ("1.0.0.beta-2", library.GetVersion());
     }

@@ -10,7 +10,7 @@ set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
 
 add_subdirectory(azure-core)
 if (NOT DISABLE_AZURE_CORE_OPENTELEMETRY)
-  add_subdirectory(azure-core-opentelemetry)
+  add_subdirectory(azure-core-tracing-opentelemetry)
 endif()
 
 if (BUILD_PERFORMANCE_TESTS) 

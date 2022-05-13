@@ -1,5 +1,5 @@
 
-#include "azure/core-opentelemetry/opentelemetry.hpp"
+#include "azure/core-tracing-opentelemetry/opentelemetry.hpp"
 #include <azure/core/nullable.hpp>
 #include <azure/core/tracing/tracing.hpp>
 #include <memory>

@@ -3,20 +3,20 @@
 
 cmake_minimum_required (VERSION 3.13)
 
-set(azure-core-opentelemetry-test)
+set(azure-core-tracing-opentelemetry-test)
 
 add_compile_definitions(AZURE_TEST_DATA_PATH="${CMAKE_BINARY_DIR}")
 
 add_compile_definitions(AZURE_TEST_RECORDING_DIR="${CMAKE_CURRENT_LIST_DIR}")
 
-project (azure-core-opentelemetry-test LANGUAGES CXX)
+project (azure-core-tracing-opentelemetry-test LANGUAGES CXX)
 set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 
 include(GoogleTest)
 
 add_executable (
-  azure-core-opentelemetry-test
+  azure-core-tracing-opentelemetry-test
     azure_core_otel_test.cpp
     azure_core_test.cpp service_support_test.cpp)
 
@@ -37,9 +37,9 @@ if (MSVC)
 endif()
 
 # Adding private headers from CORE to the tests so we can test the private APIs with no relative paths include.
-target_include_directories (azure-core-opentelemetry-test PRIVATE $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/../../src>)
+target_include_directories (azure-core-tracing-opentelemetry-test PRIVATE $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/../../src>)
 
-target_link_libraries(azure-core-opentelemetry-test PRIVATE azure-core-opentelemetry 
+target_link_libraries(azure-core-tracing-opentelemetry-test PRIVATE azure-core-tracing-opentelemetry 
     azure-core
     azure-identity
     opentelemetry-cpp::ostream_span_exporter
@@ -48,12 +48,12 @@ target_link_libraries(azure-core-opentelemetry-test PRIVATE azure-core-opentelem
     azure-core-test-fw 
     gtest_main)
 
-create_per_service_target_build(core azure-core-opentelemetry-test)
-create_map_file(azure-core-opentelemetry-test azure-core-opentelemetry-test.map)
+create_per_service_target_build(core azure-core-tracing-opentelemetry-test)
+create_map_file(azure-core-tracing-opentelemetry-test azure-core-tracing-opentelemetry-test.map)
 
 # gtest_discover_tests will scan the test from azure-core-opentelemetry-test and call add_test
 # for each test to ctest. This enables `ctest -r` to run specific tests directly.
-gtest_discover_tests(azure-core-opentelemetry-test
+gtest_discover_tests(azure-core-tracing-opentelemetry-test
      TEST_PREFIX azure-core-opentelemetry.
      NO_PRETTY_TYPES
      NO_PRETTY_VALUES)
