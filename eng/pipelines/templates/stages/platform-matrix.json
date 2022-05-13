@@ -90,10 +90,6 @@
                 }
             },
             "TargetArchitecture": {
-                "x86": {
-                    "CMAKE_GENERATOR_PLATFORM": "Win32",
-                    "VCPKG_DEFAULT_TRIPLET": "x86-uwp"
-                },
                 "x64": {
                     "CMAKE_GENERATOR_PLATFORM": "x64",
                     "VCPKG_DEFAULT_TRIPLET": "x64-uwp"

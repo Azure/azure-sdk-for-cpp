@@ -203,7 +203,7 @@ namespace Azure { namespace Storage { namespace _internal {
       }
       case WS_XML_NODE_TYPE_END_ELEMENT:
         moveToNext();
-        return XmlNode{XmlNodeType::EndTag, std::string()};
+        return XmlNode{XmlNodeType::EndTag};
       case WS_XML_NODE_TYPE_EOF:
         return XmlNode{XmlNodeType::End};
       case WS_XML_NODE_TYPE_CDATA:
@@ -288,7 +288,7 @@ namespace Azure { namespace Storage { namespace _internal {
     auto context = static_cast<XmlWriterContext*>(m_context);
     if (node.Type == XmlNodeType::StartTag)
     {
-      if (!node.Value.empty())
+      if (node.HasValue)
       {
         Write(XmlNode{XmlNodeType::StartTag, std::move(node.Name)});
         Write(XmlNode{XmlNodeType::Text, std::string(), std::move(node.Value)});
@@ -576,7 +576,7 @@ namespace Azure { namespace Storage { namespace _internal {
     xmlTextWriterPtr writer = context->writer;
     if (node.Type == XmlNodeType::StartTag)
     {
-      if (node.Value.empty())
+      if (!node.HasValue)
       {
         xmlTextWriterStartElement(writer, BadCast(node.Name.data()));
       }

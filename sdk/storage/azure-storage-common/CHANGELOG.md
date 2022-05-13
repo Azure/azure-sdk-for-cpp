@@ -8,6 +8,8 @@
 
 ### Bugs Fixed
 
+- Fixed a bug where text of XML element cannot be empty.
+
 ### Other Changes
 
 ## 12.2.3 (2022-04-06)
