@@ -54,7 +54,7 @@ jobs:
         CODE_COVERAGE_COLLECT_ONLY: 1
         AZURE_CORE_ENABLE_JSON_TESTS: 1
         BuildArgs: '-j 4'
-        HsmLocation: 'eastus'
+        HsmLocation: 'westcentralus'
         EnableHsm: true
       Ubuntu20_x64_with_unit_test:
         Pool: azsdk-pool-mms-ubuntu-1804-general
@@ -63,7 +63,7 @@ jobs:
         CmakeArgs: ' -DBUILD_TESTING=ON -DBUILD_PERFORMANCE_TESTS=ON -DRUN_LONG_UNIT_TESTS=ON -DCMAKE_BUILD_TYPE=Release -DBUILD_SAMPLES=ON'
         AZURE_CORE_ENABLE_JSON_TESTS: 1
         BuildArgs: '-j 4'
-        HsmLocation: 'eastus'
+        HsmLocation: 'westus2'
         EnableHsm: true
       Ubuntu20_samples:
         Pool: azsdk-pool-mms-ubuntu-1804-general
@@ -106,7 +106,7 @@ jobs:
         CmakeArgs: ' -DBUILD_RTTI=OFF -DBUILD_TESTING=ON -DBUILD_SAMPLES=ON'
         BuildArgs: '-v --parallel 8 --config Release'
         WindowsCtestConfig: "-C Release"
-        HsmLocation: 'centralus'
+        HsmLocation: 'westus2'
         EnableHsm: true
       Win_x64_with_unit_test_winHttp:
         Pool: azsdk-pool-mms-win-2019-general
@@ -119,7 +119,7 @@ jobs:
         BuildArgs: '-v --parallel 8 --config Release '
         AZURE_CORE_ENABLE_JSON_TESTS: 1
         WindowsCtestConfig: "-C Release"
-        HsmLocation: 'centralus'
+        HsmLocation: 'westus3'
         EnableHsm: true
       Win_x64_with_unit_samples_winHttp:
         Pool: azsdk-pool-mms-win-2019-general
@@ -133,7 +133,7 @@ jobs:
         AZURE_CORE_ENABLE_JSON_TESTS: 1
         RunSamples: 1
         WindowsCtestConfig: "-C Release"
-        HsmLocation: 'centralus'
+        HsmLocation: 'northcentralus'
         EnableHsm: true
       # specify libcurl to be used on Windows
       Win_x86_with_unit_test_libcurl:
@@ -170,7 +170,7 @@ jobs:
         BuildArgs: '-v --parallel 8 --config Release '
         RunSamples: 1
         WindowsCtestConfig: "-C Release"
-        HsmLocation: 'southcentralus'
+        HsmLocation: 'northcentralus'
         EnableHsm: true
       MacOS_x64_with_unit_test:
         Pool: Azure Pipelines
