@@ -112,7 +112,7 @@
       }
     },
     "enableHsm": {
-      "defaultValue": true,
+      "defaultValue": false,
       "type": "Bool",
       "metadata": {
         "description": "Whether to enable deployment of Managed HSM. The default is false."
@@ -255,8 +255,8 @@
     {
       "type": "Microsoft.KeyVault/managedHSMs",
       "apiVersion": "[variables('hsmApiVersion')]",
-      "name": "keyvaultHSM",
-      "location": "eastus2",
+      "name": "[variables('hsmName')]",
+      "location": "[parameters('hsmLocation')]",
       "sku": {
         "family": "B",
         "name": "Standard_B1"
@@ -265,11 +265,12 @@
         "tenantId": "[parameters('tenantId')]",
         "initialAdminObjectIds": "[union(array(parameters('testApplicationOid')), array(parameters('provisionerApplicationOid')))]",
         "enablePurgeProtection": false,
-        "enableSoftDelete": false,
+        "enableSoftDelete": true,
         "softDeleteRetentionInDays": 7,
         "publicNetworkAccess": "Enabled",
         "networkAcls": "[variables('networkAcls')]"
-      }
+      },
+      "condition": "[parameters('enableHsm')]"
     }
   ],
   "outputs": {

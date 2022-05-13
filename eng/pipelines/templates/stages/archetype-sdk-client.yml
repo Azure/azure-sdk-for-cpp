@@ -47,9 +47,6 @@ parameters:
 - name: CMakeSourceTestOptions
   type: object
   default: []
-#- name: EnableHSM
-#  type: boolean
-#  default: false
   
 stages:
   - stage: CMakeGeneration
@@ -92,7 +89,6 @@ stages:
             Location: ${{ parameters.Location }}
             SubscriptionConfiguration: ${{ parameters.SubscriptionConfiguration }}
             CoverageReportPath: ${{ parameters.CoverageReportPath }}
-            #EnableHSM: ${{ parameters.EnableHSM }} 
 
   - ${{ if and(eq(variables['System.TeamProject'], 'internal'), not(endsWith(variables['Build.DefinitionName'], ' - tests'))) }}:
     - template: archetype-cpp-release.yml
