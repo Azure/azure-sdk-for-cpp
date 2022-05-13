@@ -104,6 +104,62 @@ id,name,price
         R"json({"id":"103","name":"apples","price":"99"}|{"id":"106","name":"lemons","price":"69"}|{"id":"110","name":"bananas","price":"39"}|{"id":"112","name":"sapote,mamey","price":"50"}|)json");
   }
 
+  TEST_F(BlockBlobClientTest, QueryCsvInputArrowOutput)
+  {
+    auto const testName(GetTestName());
+    auto client = GetBlockBlobClient(testName);
+
+    client.UploadFrom(
+        reinterpret_cast<const uint8_t*>(CsvQueryTestData.data()), CsvQueryTestData.size());
+
+    Blobs::QueryBlobOptions queryOptions;
+    queryOptions.InputTextConfiguration
+        = Blobs::BlobQueryInputTextOptions::CreateCsvTextOptions("\n", ",", "\"", "\\", true);
+    std::vector<Blobs::Models::BlobQueryArrowField> fields;
+    Blobs::Models::BlobQueryArrowField field;
+    field.Type = Blobs::Models::BlobQueryArrowFieldType::Int64;
+    field.Name = "id";
+    fields.push_back(field);
+    field.Type = Blobs::Models::BlobQueryArrowFieldType::String;
+    field.Name = "name";
+    fields.push_back(field);
+    field.Type = Blobs::Models::BlobQueryArrowFieldType::Decimal;
+    field.Name = "price";
+    field.Precision = 10;
+    field.Scale = 2;
+    fields.push_back(field);
+    queryOptions.OutputTextConfiguration
+        = Blobs::BlobQueryOutputTextOptions::CreateArrowTextOptions(std::move(fields));
+    auto queryResponse
+        = client.Query("SELECT * from BlobStorage WHERE id > 101 AND price < 100;", queryOptions);
+
+    auto data = queryResponse.Value.BodyStream->ReadToEnd();
+    EXPECT_EQ(
+        data,
+        Core::Convert::Base64Decode(
+            "/////"
+            "+gAAAAQAAAAAAAKAAwABgAFAAgACgAAAAABBAAMAAAACAAIAAAABAAIAAAABAAAAAMAAACAAAAAQAAAAAQAAAC"
+            "c////AAABBxAAAAAgAAAABAAAAAAAAAAFAAAAcHJpY2UAAAAIAAwABAAIAAgAAAAKAAAAAgAAANT///"
+            "8AAAEFEAAAABwAAAAEAAAAAAAAAAQAAABuYW1lAAAAAAQABAAEAAAAEAAUAAgABgAHAAwAAAAQABAAAAAAAAEC"
+            "EAAAABwAAAAEAAAAAAAAAAIAAABpZAAACAAMAAgABwAIAAAAAAAAAUAAAAAAAAAA//////"
+            "AAAAAUAAAAAAAAAAwAGgAGAAUACAAMAAwAAAAAAwQAHAAAAAgAAAAAAAAAAAAAAAAACgAMAAAABAAIAAoAAACA"
+            "AAAABAAAAAcAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+            "AAAAQAAAAAAAAACAAAAAAAAAAAAAAAAAAAAAgAAAAAAAAAAAAAAAAAAAAIAAAAAAAAAAAAAAAAAAAAAAAAAAMA"
+            "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAP/////"
+            "4AAAAFAAAAAAAAAAMABYABgAFAAgADAAMAAAAAAMEABgAAACYAAAAAAAAAAAACgAYAAwABAAIAAoAAACMAAAAE"
+            "AAAAAQAAAAAAAAAAAAAAAcAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAgAAAAAAAAACAAAAAAAAAAAAAAAAA"
+            "AAAAgAAAAAAAAABQAAAAAAAAAOAAAAAAAAAAfAAAAAAAAAFgAAAAAAAAAAAAAAAAAAABYAAAAAAAAAEAAAAAAA"
+            "AAAAAAAAAMAAAAEAAAAAAAAAAAAAAAAAAAABAAAAAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAAAAAAAABnAAAAAAA"
+            "AAGoAAAAAAAAAbgAAAAAAAABwAAAAAAAAAAAAAAAGAAAADAAAABMAAAAfAAAAAAAAAGFwcGxlc2xlbW9uc2Jhb"
+            "mFuYXNzYXBvdGUsbWFtZXkAYwAAAAAAAAAAAAAAAAAAAEUAAAAAAAAAAAAAAAAAAAAnAAAAAAAAAAAAAAAAAAA"
+            "AMgAAAAAAAAAAAAAAAAAAAA=="));
+  }
+
+  TEST_F(BlockBlobClientTest, QueryParquetInputParquetOutput)
+  {
+    // TODO: after stg78 is available
+  }
+
   TEST_F(BlockBlobClientTest, QueryWithError)
   {
     auto const testName(GetTestName());

@@ -2275,11 +2275,37 @@ namespace Azure { namespace Storage { namespace Blobs {
       };
     } // namespace _detail
     /**
+     * @brief Type of blob query arrow field.
+     */
+    class BlobQueryArrowFieldType final {
+    public:
+      BlobQueryArrowFieldType() = default;
+      explicit BlobQueryArrowFieldType(std::string value) : m_value(std::move(value)) {}
+      bool operator==(const BlobQueryArrowFieldType& other) const
+      {
+        return m_value == other.m_value;
+      }
+      bool operator!=(const BlobQueryArrowFieldType& other) const { return !(*this == other); }
+      const std::string& ToString() const { return m_value; }
+      AZ_STORAGE_BLOBS_DLLEXPORT const static BlobQueryArrowFieldType Int64;
+      AZ_STORAGE_BLOBS_DLLEXPORT const static BlobQueryArrowFieldType Bool;
+      AZ_STORAGE_BLOBS_DLLEXPORT const static BlobQueryArrowFieldType Timestamp;
+      AZ_STORAGE_BLOBS_DLLEXPORT const static BlobQueryArrowFieldType String;
+      AZ_STORAGE_BLOBS_DLLEXPORT const static BlobQueryArrowFieldType Double;
+      AZ_STORAGE_BLOBS_DLLEXPORT const static BlobQueryArrowFieldType Decimal;
+
+    private:
+      std::string m_value;
+    };
+    /**
      * @brief Field of an arrow schema.
      */
     struct BlobQueryArrowField final
     {
-      std::string Type;
+      /**
+       * Type of blob query arrow field.
+       */
+      BlobQueryArrowFieldType Type;
       Nullable<std::string> Name;
       Nullable<int32_t> Precision;
       Nullable<int32_t> Scale;

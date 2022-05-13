@@ -1171,6 +1171,23 @@ directive:
   - from: swagger-document
     where: $.definitions
     transform: >
+      $.BlobQueryArrowFieldType = {
+        "type": "string",
+        "enum": ["Int64", "Bool", "Timestamp", "String", "Double", "Decimal"],
+        "x-ms-enum": {
+          "name": "BlobQueryArrowFieldType",
+          "modelAsString": false,
+          "values": [
+            {"value": "int64", "name": "Int64"},
+            {"value": "bool", "name": "Bool"},
+            {"value": "timestamp[ms]", "name": "Timestamp"},
+            {"value": "string", "name": "String"},
+            {"value": "double", "name": "Double"},
+            {"value": "decimal", "name": "Decimal"}
+          ]
+        },
+        "description": "Type of blob query arrow field."
+      };
       if ($.ParquetConfiguration) {
         $.ParquetConfiguration.properties = {"__placeHolder" : { "type": "integer"}};
       }
@@ -1184,6 +1201,7 @@ directive:
       $.QueryRequest["x-namespace"] = "_detail";
       $.QueryRequest.properties["QueryType"]["x-namespace"] = "_detail";
       $.ArrowField["x-ms-client-name"] = "BlobQueryArrowField";
+      $.ArrowField.properties["Type"] = {"$ref": "#/definitions/BlobQueryArrowFieldType"};
       $.DelimitedTextConfiguration.properties["HeadersPresent"]["x-ms-xml"] = $.DelimitedTextConfiguration.properties["HeadersPresent"]["xml"];
   - from: swagger-document
     where: $["x-ms-paths"]["/{containerName}/{blob}?comp=query"].post.parameters

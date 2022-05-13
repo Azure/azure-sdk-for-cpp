@@ -172,6 +172,12 @@ namespace Azure { namespace Storage { namespace Blobs {
       const QueryFormatType QueryFormatType::Arrow("arrow");
       const QueryFormatType QueryFormatType::Parquet("parquet");
     } // namespace _detail
+    const BlobQueryArrowFieldType BlobQueryArrowFieldType::Int64("int64");
+    const BlobQueryArrowFieldType BlobQueryArrowFieldType::Bool("bool");
+    const BlobQueryArrowFieldType BlobQueryArrowFieldType::Timestamp("timestamp[ms]");
+    const BlobQueryArrowFieldType BlobQueryArrowFieldType::String("string");
+    const BlobQueryArrowFieldType BlobQueryArrowFieldType::Double("double");
+    const BlobQueryArrowFieldType BlobQueryArrowFieldType::Decimal("decimal");
     const SequenceNumberAction SequenceNumberAction::Max("max");
     const SequenceNumberAction SequenceNumberAction::Update("update");
     const SequenceNumberAction SequenceNumberAction::Increment("increment");
@@ -5055,7 +5061,8 @@ namespace Azure { namespace Storage { namespace Blobs {
                                       .Schema)
             {
               writer.Write(_internal::XmlNode{_internal::XmlNodeType::StartTag, "Field"});
-              writer.Write(_internal::XmlNode{_internal::XmlNodeType::StartTag, "Type", i1.Type});
+              writer.Write(
+                  _internal::XmlNode{_internal::XmlNodeType::StartTag, "Type", i1.Type.ToString()});
               if (i1.Name.HasValue())
               {
                 writer.Write(
@@ -5161,7 +5168,8 @@ namespace Azure { namespace Storage { namespace Blobs {
                                       .Schema)
             {
               writer.Write(_internal::XmlNode{_internal::XmlNodeType::StartTag, "Field"});
-              writer.Write(_internal::XmlNode{_internal::XmlNodeType::StartTag, "Type", i2.Type});
+              writer.Write(
+                  _internal::XmlNode{_internal::XmlNodeType::StartTag, "Type", i2.Type.ToString()});
               if (i2.Name.HasValue())
               {
                 writer.Write(
