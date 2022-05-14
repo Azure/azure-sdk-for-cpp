@@ -1274,4 +1274,25 @@ namespace Azure { namespace Storage { namespace Test {
     blobClient.Delete();
     EXPECT_THROW(blobClient.GetProperties(), StorageException);
   }
+
+  TEST_F(BlobContainerClientTest, ListBlobsDeletedWithActiveVersions)
+  {
+    auto client = GetBlobContainerTestClient();
+    client.Create();
+
+    std::string blobName = "blob" + m_containerName;
+    auto blobClient = client.GetAppendBlobClient(blobName);
+    blobClient.Create();
+
+    auto blobItem
+        = GetBlobItem(blobName, Blobs::Models::ListBlobsIncludeFlags::DeletedWithVersions);
+    ASSERT_TRUE(blobItem.HasVersionsOnly.HasValue());
+    EXPECT_FALSE(blobItem.HasVersionsOnly.Value());
+
+    blobClient.Delete();
+
+    blobItem = GetBlobItem(blobName, Blobs::Models::ListBlobsIncludeFlags::DeletedWithVersions);
+    ASSERT_TRUE(blobItem.HasVersionsOnly.HasValue());
+    EXPECT_TRUE(blobItem.HasVersionsOnly.Value());
+  }
 }}} // namespace Azure::Storage::Test
