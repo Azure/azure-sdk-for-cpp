@@ -1,15 +1,15 @@
 {
   "Registrations": [
     {
-      {
-        "Component": {
-          "Type": "git",
-          "git": {
-            "RepositoryUrl": "https://github.com/open-telemetry/opentelemetry-cpp",
-            "CommitHash": "da2911cf4458c7068f967c17c65d07eeba449a08"
-          }
+      "Component": {
+        "Type": "git",
+        "git": {
+          "RepositoryUrl": "https://github.com/open-telemetry/opentelemetry-cpp",
+          "CommitHash": "da2911cf4458c7068f967c17c65d07eeba449a08"
         }
-      },
+      }
+    },
+    {
       "Component": {
         "Type": "git",
         "git": {
