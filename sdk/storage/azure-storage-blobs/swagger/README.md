@@ -9,7 +9,7 @@ package-name: azure-storage-blobs
 namespace: Azure::Storage::Blobs
 output-folder: generated
 clear-output-folder: true
-input-file: https://raw.githubusercontent.com/Jinming-Hu/azure-storage-api-specs/main/Microsoft.BlobStorage/preview/2020-08-04/blob.json
+input-file: https://raw.githubusercontent.com/Azure/azure-rest-api-specs/main/specification/storage/data-plane/Microsoft.BlobStorage/preview/2020-10-02/blob.json
 ```
 
 ## ModelFour Options
@@ -122,7 +122,7 @@ directive:
       $["/{containerName}?restype=container&comp=undelete"].put.operationId = "BlobContainer_Undelete";
       $["/{containerName}/{blob}?comp=copy"].put.operationId = "Blob_StartCopyFromUri";
       $["/{containerName}/{blob}?comp=copy&sync"].put.operationId = "Blob_CopyFromUri";
-      $["/{containerName}/{blob}?comp=copy&copyid={CopyId}"].put.operationId = "Blob_AbortCopyFromUri";
+      $["/{containerName}/{blob}?comp=copy&copyid"].put.operationId = "Blob_AbortCopyFromUri";
       $["/{containerName}/{blob}?comp=block&fromURL"].put.operationId = "BlockBlob_StageBlockFromUri";
       $["/{containerName}/{blob}?comp=page&update&fromUrl"].put.operationId = "PageBlob_UploadPagesFromUri";
       $["/{containerName}/{blob}?comp=appendblock&fromUrl"].put.operationId = "AppendBlob_AppendBlockFromUri";
@@ -269,7 +269,8 @@ directive:
           {"value": "versions", "name": "Versions"},
           {"value": "tags", "name": "Tags"},
           {"value": "immutabilitypolicy", "name": "ImmutabilityPolicy"},
-          {"value": "legalhold", "name": "LegalHold"}
+          {"value": "legalhold", "name": "LegalHold"},
+          {"value": "deletedwithversions", "name": "DeletedWithVersions"}
       ];
       $.DeleteSnapshots["x-ms-enum"]["name"] = "DeleteSnapshotsOption";
       $.DeleteSnapshots["x-ms-enum"]["values"] = [{"value": "include", "name": "IncludeSnapshots"},{"value":"only", "name": "OnlySnapshots"}];
@@ -351,6 +352,9 @@ directive:
         }
         if (h === "x-ms-meta") {
           $[h]["x-ms-format"] = "caseinsensitivemap";
+        }
+        if (h === "x-ms-lease-id" && $[h].description === "Uniquely identifies a blobs' lease") {
+          $[h].description = "Uniquely identifies a blob's lease";
         }
       }
   - from: swagger-document
@@ -551,8 +555,6 @@ directive:
       delete $.ContainerItem.properties["Metadata"];
       $.ContainerProperties.properties["Metadata"]["x-ms-xml"] = {"name": "../Metadata"};
       $.ContainerProperties.properties["DeletedTime"]["x-ms-client-name"] = "DeletedOn";
-      $.ContainerProperties.properties["ImmutableStorageWithVersioningEnabled"] = $.ContainerProperties.properties["VersionLevelWormEnabled"];
-      delete $.ContainerProperties.properties["VersionLevelWormEnabled"];
       $.ContainerProperties.properties["ImmutableStorageWithVersioningEnabled"]["x-ms-client-name"] = "HasImmutableStorageWithVersioning ";
       $.ContainerProperties.properties["ImmutableStorageWithVersioningEnabled"]["x-ms-client-default"] = false;
       delete $.ContainerProperties.required;
@@ -657,8 +659,6 @@ directive:
       $["x-ms-deny-encryption-scope-override"]["x-nullable"] = true;
       $["x-ms-deny-encryption-scope-override"]["x-ms-client-default"] = "false";
       $["x-ms-meta"].description = "A set of name-value pair associated with this blob container.";
-      $["x-ms-immutable-storage-with-versioning-enabled"] = $["x-ms-version-level-worm-enabled"];
-      delete $["x-ms-version-level-worm-enabled"];
       $["x-ms-immutable-storage-with-versioning-enabled"]["x-ms-client-name"] = "HasImmutableStorageWithVersioning";
       $["x-ms-immutable-storage-with-versioning-enabled"]["x-ms-client-default"] = false;
       $["x-ms-immutable-storage-with-versioning-enabled"]["x-nullable"] = true;
@@ -761,6 +761,7 @@ directive:
       $.BlobItemInternal.properties["VersionId"].description = "A string value that uniquely identifies a blob version.";
       $.BlobItemInternal.properties["IsCurrentVersion"].description = "Indicates if this is the current version of the blob.";
       $.BlobItemInternal.properties["BlobType"].description = "Type of the blob.";
+      $.BlobItemInternal.properties["HasVersionsOnly"].description = "Indicates that this root blob has been deleted, but it has versions that are active.";
 
       $.BlobPropertiesInternal.properties["Etag"]["x-ms-client-name"] = "ETag";
       $.BlobPropertiesInternal["x-ms-client-name"] = "BlobItemDetails";
