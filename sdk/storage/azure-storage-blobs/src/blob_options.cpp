@@ -64,13 +64,6 @@ namespace Azure { namespace Storage { namespace Blobs {
     return options;
   }
 
-  BlobQueryOutputTextOptions BlobQueryOutputTextOptions::CreateParquetTextOptions()
-  {
-    BlobQueryOutputTextOptions options;
-    options.m_format = Models::_detail::QueryFormatType::Parquet;
-    return options;
-  }
-
   BlobQueryOutputTextOptions BlobQueryOutputTextOptions::CreateArrowTextOptions(
       std::vector<Models::BlobQueryArrowField> schema)
   {

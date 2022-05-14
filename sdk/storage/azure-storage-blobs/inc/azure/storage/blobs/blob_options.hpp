@@ -1075,7 +1075,6 @@ namespace Azure { namespace Storage { namespace Blobs {
         bool hasHeaders = false);
     static BlobQueryOutputTextOptions CreateJsonTextOptions(
         const std::string& recordSeparatorc = std::string());
-    static BlobQueryOutputTextOptions CreateParquetTextOptions();
     static BlobQueryOutputTextOptions CreateArrowTextOptions(
         std::vector<Models::BlobQueryArrowField> schema);
 
