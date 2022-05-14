@@ -2598,6 +2598,7 @@ namespace Azure { namespace Storage { namespace Blobs {
          * Array of ClearRange.
          */
         std::vector<Core::Http::HttpRange> ClearRanges;
+        std::string ContinuationToken;
       };
       /**
        * @brief Response type for #Azure::Storage::Blobs::PageBlobClient::GetPageRangesDiff.
@@ -2618,6 +2619,7 @@ namespace Azure { namespace Storage { namespace Blobs {
          * Array of ClearRange.
          */
         std::vector<Core::Http::HttpRange> ClearRanges;
+        std::string ContinuationToken;
       };
     } // namespace _detail
     /**

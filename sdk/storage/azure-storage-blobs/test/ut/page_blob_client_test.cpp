@@ -138,6 +138,33 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_EQ(static_cast<uint64_t>(clearRanges[0].Length.Value()), 1_KB);
   }
 
+  TEST_F(PageBlobClientTest, GetPageRangesContinuation)
+  {
+    auto const testName(GetTestName());
+    auto pageBlobClient = GetPageBlobClient(testName);
+
+    std::vector<uint8_t> blobContent = std::vector<uint8_t>(static_cast<size_t>(512), 'x');
+
+    pageBlobClient.Create(8_KB, m_blobUploadOptions);
+    auto pageContent = Azure::Core::IO::MemoryBodyStream(blobContent.data(), blobContent.size());
+    pageBlobClient.UploadPages(0, pageContent);
+    pageContent.Rewind();
+    pageBlobClient.UploadPages(1024, pageContent);
+    pageContent.Rewind();
+    pageBlobClient.UploadPages(4096, pageContent);
+
+    Blobs::GetPageRangesOptions options;
+    options.PageSizeHint = 1;
+    size_t numRanges = 0;
+    for (auto pageResult = pageBlobClient.GetPageRanges(options); pageResult.HasPage();
+         pageResult.MoveToNextPage())
+    {
+      EXPECT_EQ(pageResult.PageRanges.size(), 1);
+      numRanges += pageResult.PageRanges.size();
+    }
+    EXPECT_EQ(numRanges, 3);
+  }
+
   TEST_F(PageBlobClientTest, UploadFromUri)
   {
     auto const testName(GetTestName());

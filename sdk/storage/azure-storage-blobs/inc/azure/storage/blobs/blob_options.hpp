@@ -1330,6 +1330,22 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @brief Optional conditions that must be met to perform this operation.
      */
     BlobAccessConditions AccessConditions;
+
+    /**
+     * @brief This parameter identifies the portion of the ranges to be returned with the next
+     * operation. The operation returns a marker value within the response body if the ranges
+     * returned were not complete. The marker value may then be used in a subsequent call to request
+     * the next set of ranges.This value is opaque to the client.
+     */
+    Azure::Nullable<std::string> ContinuationToken;
+
+    /**
+     * @brief This parameter specifies the maximum number of page ranges to return. If the request
+     * specifies a value greater than 10000, the server will return up to 10000 items. If there are
+     * additional results to return, the service returns a continuation token in the NextMarker
+     * response element.
+     */
+    Azure::Nullable<int32_t> PageSizeHint;
   };
 
   /**

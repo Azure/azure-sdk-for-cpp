@@ -1362,6 +1362,10 @@ directive:
             "x-ms-client-name": "ClearRanges",
             "x-ms-xml": {"name": "PageList"},
             "items": {"$ref": "#/definitions/ClearRange"}
+          },
+          "ContinuationToken": {
+            "type": "string",
+            "x-ms-xml": {"name": "PageList/NextMarker"}
           }
         }
       }
@@ -1395,6 +1399,10 @@ directive:
             "x-ms-client-name": "ClearRanges",
             "x-ms-xml": {"name": "PageList"},
             "items": {"$ref": "#/definitions/ClearRange"}
+          },
+          "ContinuationToken": {
+            "type": "string",
+            "x-ms-xml": {"name": "PageList/NextMarker"}
           }
         }
       }

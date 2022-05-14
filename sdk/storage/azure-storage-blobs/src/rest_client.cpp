@@ -6091,6 +6091,7 @@ namespace Azure { namespace Storage { namespace Blobs {
           kStart,
           kEnd,
           kClearRange,
+          kNextMarker,
         };
         const std::unordered_map<std::string, XmlTagEnum> XmlTagEnumMap{
             {"PageList", XmlTagEnum::kPageList},
@@ -6098,6 +6099,7 @@ namespace Azure { namespace Storage { namespace Blobs {
             {"Start", XmlTagEnum::kStart},
             {"End", XmlTagEnum::kEnd},
             {"ClearRange", XmlTagEnum::kClearRange},
+            {"NextMarker", XmlTagEnum::kNextMarker},
         };
         std::vector<XmlTagEnum> xmlPath;
         Core::Http::HttpRange vectorElement1;
@@ -6138,6 +6140,12 @@ namespace Azure { namespace Storage { namespace Blobs {
                 && xmlPath[1] == XmlTagEnum::kClearRange && xmlPath[2] == XmlTagEnum::kEnd)
             {
               vectorElement2.Length = std::stoll(node.Value);
+            }
+            else if (
+                xmlPath.size() == 2 && xmlPath[0] == XmlTagEnum::kPageList
+                && xmlPath[1] == XmlTagEnum::kNextMarker)
+            {
+              response.ContinuationToken = node.Value;
             }
           }
           else if (node.Type == _internal::XmlNodeType::Attribute)
@@ -6255,6 +6263,7 @@ namespace Azure { namespace Storage { namespace Blobs {
           kStart,
           kEnd,
           kClearRange,
+          kNextMarker,
         };
         const std::unordered_map<std::string, XmlTagEnum> XmlTagEnumMap{
             {"PageList", XmlTagEnum::kPageList},
@@ -6262,6 +6271,7 @@ namespace Azure { namespace Storage { namespace Blobs {
             {"Start", XmlTagEnum::kStart},
             {"End", XmlTagEnum::kEnd},
             {"ClearRange", XmlTagEnum::kClearRange},
+            {"NextMarker", XmlTagEnum::kNextMarker},
         };
         std::vector<XmlTagEnum> xmlPath;
         Core::Http::HttpRange vectorElement1;
@@ -6302,6 +6312,12 @@ namespace Azure { namespace Storage { namespace Blobs {
                 && xmlPath[1] == XmlTagEnum::kClearRange && xmlPath[2] == XmlTagEnum::kEnd)
             {
               vectorElement2.Length = std::stoll(node.Value);
+            }
+            else if (
+                xmlPath.size() == 2 && xmlPath[0] == XmlTagEnum::kPageList
+                && xmlPath[1] == XmlTagEnum::kNextMarker)
+            {
+              response.ContinuationToken = node.Value;
             }
           }
           else if (node.Type == _internal::XmlNodeType::Attribute)
