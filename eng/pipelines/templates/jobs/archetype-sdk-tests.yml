@@ -27,6 +27,17 @@ parameters:
 # https://github.com/Azure/azure-sdk-for-cpp/issues/2944
 
 jobs:
+
+- job: DeployTestResource 
+  steps:
+  - template: /eng/common/TestResources/deploy-test-resources.yml
+    parameters:
+      ServiceDirectory: ${{ parameters.ServiceDirectory }}
+      Location: "westus3"
+      HsmLocation: "westus3"
+      SubscriptionConfiguration: ${{ parameters.SubscriptionConfiguration }}
+      EnableHSM : "$(EnableHsm)"
+
 - job: ValidateLive
   condition: and(succeededOrFailed(), ne(variables['Skip.LiveTest'], 'true'))
   timeoutInMinutes: ${{ parameters.TimeoutInMinutes }}
@@ -249,14 +260,6 @@ jobs:
       BuildArgs: "$(BuildArgs)"
       Env: "$(CmakeEnvArg)"
 
-  - template: /eng/common/TestResources/deploy-test-resources.yml
-    parameters:
-      ServiceDirectory: ${{ parameters.ServiceDirectory }}
-      Location: "$(HsmLocation)"
-      HsmLocation: "$(HsmLocation)"
-      SubscriptionConfiguration: ${{ parameters.SubscriptionConfiguration }}
-      EnableHSM : "$(EnableHsm)"
-
     # For non multi-config generator use the same build configuration to run tests
     # We don't need to set it to invoke ctest 
     # Visual Studio generator used in CI is a multi-config generator.
@@ -324,6 +327,8 @@ jobs:
     displayName: Publish Code Coverage to DevOps
     condition: and(succeededOrFailed(), ne(variables['CODE_COVERAGE'], 'disabled'), ne(variables['CODE_COVERAGE'], ''))    
 
+- job:
+  steps:
   - template: /eng/common/TestResources/remove-test-resources.yml
     parameters:
       ServiceDirectory: ${{ parameters.ServiceDirectory }}
