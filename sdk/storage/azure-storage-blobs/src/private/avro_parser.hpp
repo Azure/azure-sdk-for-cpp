@@ -9,6 +9,8 @@
 
 #include <azure/core/io/body_stream.hpp>
 
+#include "azure/storage/blobs/blob_options.hpp"
+
 namespace Azure { namespace Storage { namespace Blobs { namespace _detail {
   enum class AvroDatumType
   {
@@ -183,8 +185,12 @@ namespace Azure { namespace Storage { namespace Blobs { namespace _detail {
 
   class AvroStreamParser final : public Core::IO::BodyStream {
   public:
-    explicit AvroStreamParser(std::unique_ptr<Azure::Core::IO::BodyStream> inner)
-        : m_inner(std::move(inner)), m_parser(*m_inner)
+    explicit AvroStreamParser(
+        std::unique_ptr<Azure::Core::IO::BodyStream> inner,
+        std::function<void(int64_t, int64_t)> progressCallback,
+        std::function<void(BlobQueryError)> errorCallback)
+        : m_inner(std::move(inner)), m_parser(*m_inner),
+          m_progressCallback(std::move(progressCallback)), m_errorCallback(std::move(errorCallback))
     {
     }
 
@@ -197,6 +203,8 @@ namespace Azure { namespace Storage { namespace Blobs { namespace _detail {
   private:
     std::unique_ptr<Azure::Core::IO::BodyStream> m_inner;
     AvroObjectContainerReader m_parser;
+    std::function<void(int64_t, int64_t)> m_progressCallback;
+    std::function<void(BlobQueryError)> m_errorCallback;
     AvroDatum::StringView m_parserBuffer;
   };
 

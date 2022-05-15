@@ -22,6 +22,7 @@
 #include <azure/storage/common/internal/file_io.hpp>
 #include <azure/storage/common/internal/storage_switch_to_secondary_policy.hpp>
 #include <azure/storage/common/storage_common.hpp>
+#include <azure/storage/common/storage_exception.hpp>
 
 #include "private/avro_parser.hpp"
 
@@ -616,8 +617,38 @@ namespace Azure { namespace Storage { namespace Blobs {
     auto response = _detail::BlobClient::Query(
         *m_pipeline, m_blobUrl, protocolLayerOptions, _internal::WithReplicaStatus(context));
 
-    response.Value.BodyStream
-        = std::make_unique<_detail::AvroStreamParser>(std::move(response.Value.BodyStream));
+    const auto stautsCode = response.RawResponse->GetStatusCode();
+    const auto reasonPhrase = response.RawResponse->GetReasonPhrase();
+    const auto requestId
+        = response.RawResponse->GetHeaders().count(_internal::HttpHeaderRequestId) != 0
+        ? response.RawResponse->GetHeaders().at(_internal::HttpHeaderRequestId)
+        : std::string();
+
+    const auto clientRequestId
+        = response.RawResponse->GetHeaders().count(_internal::HttpHeaderClientRequestId) != 0
+        ? response.RawResponse->GetHeaders().at(_internal::HttpHeaderClientRequestId)
+        : std::string();
+
+    auto defaultErrorHandler
+        = [stautsCode, reasonPhrase, requestId, clientRequestId](BlobQueryError e) {
+            if (e.IsFatal)
+            {
+              StorageException exception("Fatal " + e.Name + " at " + std::to_string(e.Position));
+              exception.StatusCode = stautsCode;
+              exception.ReasonPhrase = reasonPhrase;
+              exception.RequestId = requestId;
+              exception.ClientRequestId = clientRequestId;
+              exception.ErrorCode = e.Name;
+              exception.Message = e.Description;
+
+              throw exception;
+            }
+          };
+
+    response.Value.BodyStream = std::make_unique<_detail::AvroStreamParser>(
+        std::move(response.Value.BodyStream),
+        options.ProgressHandler,
+        options.ErrorHandler ? options.ErrorHandler : defaultErrorHandler);
     return response;
   }
 

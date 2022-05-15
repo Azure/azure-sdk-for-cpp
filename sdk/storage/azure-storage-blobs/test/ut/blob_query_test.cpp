@@ -244,7 +244,7 @@ id,name,price
     auto const testName(GetTestName());
     auto client = GetBlockBlobClient(testName);
 
-    const std::string mailformedData =
+    const std::string malformedData =
         R"json(
 {"id": 100, "name": "oranges", "price": 100}
 {"id": 101, "name": "limes", "price": "aa"}
@@ -253,8 +253,7 @@ id,name,price
 {"id": 104, "name": "clementines", "price": 399}
 xx
 )json";
-    client.UploadFrom(
-        reinterpret_cast<const uint8_t*>(mailformedData.data()), mailformedData.size());
+    client.UploadFrom(reinterpret_cast<const uint8_t*>(malformedData.data()), malformedData.size());
 
     Blobs::QueryBlobOptions queryOptions;
     queryOptions.InputTextConfiguration = Blobs::BlobQueryInputTextOptions::CreateJsonTextOptions();
@@ -262,7 +261,47 @@ xx
         = Blobs::BlobQueryOutputTextOptions::CreateJsonTextOptions();
     auto queryResponse = client.Query("SELECT * FROM BlobStorage WHERE price > 0;", queryOptions);
 
-    auto data = queryResponse.Value.BodyStream->ReadToEnd();
+    try
+    {
+      auto data = queryResponse.Value.BodyStream->ReadToEnd();
+      FAIL();
+    }
+    catch (StorageException& e)
+    {
+      EXPECT_EQ(e.StatusCode, Core::Http::HttpStatusCode::Ok);
+      EXPECT_EQ(e.ReasonPhrase, "OK");
+      EXPECT_FALSE(e.RequestId.empty());
+      EXPECT_FALSE(e.ClientRequestId.empty());
+      EXPECT_EQ(e.ErrorCode, "ParseError");
+      EXPECT_FALSE(e.Message.empty());
+      EXPECT_FALSE(std::string(e.what()).empty());
+    }
+
+    bool progressCallbackCalled = false;
+    queryOptions.ProgressHandler
+        = [&malformedData, &progressCallbackCalled](int64_t offset, int64_t totalBytes) {
+            EXPECT_EQ(totalBytes, static_cast<int64_t>(malformedData.size()));
+            EXPECT_TRUE(offset >= 0 && offset <= totalBytes);
+            progressCallbackCalled = true;
+          };
+    int numNonFatalErrors = 0;
+    int numFatalErrors = 0;
+    queryOptions.ErrorHandler = [&numNonFatalErrors, &numFatalErrors](Blobs::BlobQueryError e) {
+      if (e.IsFatal)
+      {
+        ++numFatalErrors;
+      }
+      else
+      {
+        ++numNonFatalErrors;
+      }
+    };
+    queryResponse = client.Query("SELECT * FROM BlobStorage WHERE price > 0;", queryOptions);
+    queryResponse.Value.BodyStream->ReadToEnd();
+
+    EXPECT_EQ(numNonFatalErrors, 2);
+    EXPECT_EQ(numFatalErrors, 1);
+    EXPECT_TRUE(progressCallbackCalled);
   }
 
   TEST_F(BlockBlobClientTest, QueryDefaultInputOutput)

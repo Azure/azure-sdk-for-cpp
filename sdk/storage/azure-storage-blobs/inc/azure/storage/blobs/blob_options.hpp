@@ -1042,7 +1042,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     } AccessConditions;
   };
 
-  class BlobQueryInputTextOptions {
+  class BlobQueryInputTextOptions final {
   public:
     static BlobQueryInputTextOptions CreateCsvTextOptions(
         const std::string& recordSeparator = std::string(),
@@ -1065,7 +1065,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     friend class BlockBlobClient;
   };
 
-  class BlobQueryOutputTextOptions {
+  class BlobQueryOutputTextOptions final {
   public:
     static BlobQueryOutputTextOptions CreateCsvTextOptions(
         const std::string& recordSeparator = std::string(),
@@ -1090,11 +1090,21 @@ namespace Azure { namespace Storage { namespace Blobs {
     friend class BlockBlobClient;
   };
 
+  struct BlobQueryError final
+  {
+    std::string Name;
+    std::string Description;
+    bool IsFatal = false;
+    int64_t Position;
+  };
+
   struct QueryBlobOptions final
   {
     BlobQueryInputTextOptions InputTextConfiguration;
     BlobQueryOutputTextOptions OutputTextConfiguration;
     LeaseAccessConditions AccessConditions;
+    std::function<void(int64_t, int64_t)> ProgressHandler;
+    std::function<void(BlobQueryError)> ErrorHandler;
   };
 
   /**

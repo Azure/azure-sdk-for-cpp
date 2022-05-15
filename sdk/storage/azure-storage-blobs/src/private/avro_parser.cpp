@@ -669,27 +669,24 @@ namespace Azure { namespace Storage { namespace Blobs { namespace _detail {
         m_parserBuffer = dataDatum.Value<AvroDatum::StringView>();
         return OnRead(buffer, count, context);
       }
-      if (datum.Schema().Name() == "com.microsoft.azure.storage.queryBlobContents.progress")
+      if (datum.Schema().Name() == "com.microsoft.azure.storage.queryBlobContents.progress"
+          && m_progressCallback)
       {
         auto record = datum.Value<AvroRecord>();
         auto bytesScanned = record.Field("bytesScanned").Value<int64_t>();
         auto totalBytes = record.Field("totalBytes").Value<int64_t>();
-        (void)bytesScanned;
-        (void)totalBytes;
-        // TODO
+        m_progressCallback(bytesScanned, totalBytes);
       }
-      if (datum.Schema().Name() == "datum.microsoft.azure.storage.queryBlobContents.error")
+      if (datum.Schema().Name() == "com.microsoft.azure.storage.queryBlobContents.error"
+          && m_errorCallback)
       {
         auto record = datum.Value<AvroRecord>();
-        auto fatal = record.Field("fatal").Value<bool>();
-        auto name = record.Field("name").Value<std::string>();
-        auto description = record.Field("description").Value<std::string>();
-        auto position = record.Field("position").Value<int64_t>();
-        (void)fatal;
-        (void)name;
-        (void)description;
-        (void)position;
-        // TODO
+        BlobQueryError e;
+        e.Name = record.Field("name").Value<std::string>();
+        e.Description = record.Field("description").Value<std::string>();
+        e.IsFatal = record.Field("fatal").Value<bool>();
+        e.Position = record.Field("position").Value<int64_t>();
+        m_errorCallback(std::move(e));
       }
     }
     return 0;
