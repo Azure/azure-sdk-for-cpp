@@ -358,4 +358,80 @@ xx
     }
   }
 
+  TEST_F(BlockBlobClientTest, QueryBlobAccessConditionLeaseId)
+  {
+    auto const testName(GetTestName());
+    auto client = GetBlockBlobClient(testName);
+    client.UploadFrom(nullptr, 0);
+
+    Blobs::BlobLeaseClient leaseClient(client, Blobs::BlobLeaseClient::CreateUniqueLeaseId());
+    leaseClient.Acquire(Blobs::BlobLeaseClient::InfiniteLeaseDuration);
+
+    Blobs::QueryBlobOptions queryOptions;
+    queryOptions.AccessConditions.LeaseId = Blobs::BlobLeaseClient::CreateUniqueLeaseId();
+    EXPECT_THROW(client.Query("SELECT * FROM BlobStorage;", queryOptions), StorageException);
+
+    queryOptions.AccessConditions.LeaseId = leaseClient.GetLeaseId();
+    EXPECT_NO_THROW(client.Query("SELECT * FROM BlobStorage;", queryOptions));
+  }
+
+  TEST_F(BlockBlobClientTest, QueryBlobAccessConditionTags)
+  {
+    auto const testName(GetTestName());
+    auto client = GetBlockBlobClient(testName);
+    client.UploadFrom(nullptr, 0);
+
+    std::map<std::string, std::string> tags = {{"k1", "value1"}};
+    client.SetTags(tags);
+
+    Blobs::QueryBlobOptions queryOptions;
+    queryOptions.AccessConditions.TagConditions = "k1 = 'value1'";
+    EXPECT_NO_THROW(client.Query("SELECT * FROM BlobStorage;", queryOptions));
+    queryOptions.AccessConditions.TagConditions = "k1 = 'dummy'";
+    EXPECT_THROW(client.Query("SELECT * FROM BlobStorage;", queryOptions), StorageException);
+  }
+
+  TEST_F(BlockBlobClientTest, QueryBlobAccessConditionLastModifiedTime)
+  {
+    auto const testName(GetTestName());
+    auto client = GetBlockBlobClient(testName);
+    client.UploadFrom(nullptr, 0);
+
+    auto lastModifiedTime = client.GetProperties().Value.LastModified;
+    auto timeBeforeStr = lastModifiedTime - std::chrono::seconds(2);
+    auto timeAfterStr = lastModifiedTime + std::chrono::seconds(2);
+
+    Blobs::QueryBlobOptions queryOptions;
+    queryOptions.AccessConditions.IfModifiedSince = timeBeforeStr;
+    EXPECT_NO_THROW(client.Query("SELECT * FROM BlobStorage;", queryOptions));
+    queryOptions.AccessConditions.IfModifiedSince = timeAfterStr;
+    EXPECT_THROW(client.Query("SELECT * FROM BlobStorage;", queryOptions), StorageException);
+
+    queryOptions = Blobs::QueryBlobOptions();
+    queryOptions.AccessConditions.IfUnmodifiedSince = timeBeforeStr;
+    EXPECT_THROW(client.Query("SELECT * FROM BlobStorage;", queryOptions), StorageException);
+    queryOptions.AccessConditions.IfUnmodifiedSince = timeAfterStr;
+    EXPECT_NO_THROW(client.Query("SELECT * FROM BlobStorage;", queryOptions));
+  }
+
+  TEST_F(BlockBlobClientTest, QueryBlobAccessConditionETag)
+  {
+    auto const testName(GetTestName());
+    auto client = GetBlockBlobClient(testName);
+    client.UploadFrom(nullptr, 0);
+
+    auto etag = client.GetProperties().Value.ETag;
+
+    Blobs::QueryBlobOptions queryOptions;
+    queryOptions.AccessConditions.IfMatch = etag;
+    EXPECT_NO_THROW(client.Query("SELECT * FROM BlobStorage;", queryOptions));
+    queryOptions.AccessConditions.IfMatch = DummyETag;
+    EXPECT_THROW(client.Query("SELECT * FROM BlobStorage;", queryOptions), StorageException);
+
+    queryOptions = Blobs::QueryBlobOptions();
+    queryOptions.AccessConditions.IfNoneMatch = DummyETag;
+    EXPECT_NO_THROW(client.Query("SELECT * FROM BlobStorage;", queryOptions));
+    queryOptions.AccessConditions.IfNoneMatch = etag;
+    EXPECT_THROW(client.Query("SELECT * FROM BlobStorage;", queryOptions), StorageException);
+  }
 }}} // namespace Azure::Storage::Test

@@ -1178,7 +1178,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     /**
      * @brief Optional conditions that must be met to perform this operation.
      */
-    LeaseAccessConditions AccessConditions;
+    BlobAccessConditions AccessConditions;
     /**
      * @brief Callback for progress handling.
      */
