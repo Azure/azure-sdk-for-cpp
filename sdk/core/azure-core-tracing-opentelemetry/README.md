@@ -1,6 +1,6 @@
 # Azure SDK Core Tracing Library for C++
 
-Azure::Core::OpenTelemetry (`azure-core-opentelemetry`) provides an implementation
+Azure::Core::Tracing::OpenTelemetry (`azure-core-tracing-opentelemetry`) provides an implementation
 to enable customers to implement tracing in the Azure SDK for C++ libraries.
 
 ## Getting started
@@ -12,31 +12,34 @@ The easiest way to acquire the OpenTelemetry library is leveraging vcpkg package
 To install Azure Core OpenTelemetry package via vcpkg:
 
 ```cmd
-> vcpkg install azure-core-opentelemetry-cpp
+> vcpkg install azure-core-tracing-opentelemetry-cpp
 ```
 
 Then, use in your CMake file:
 
 ```CMake
-find_package(azure-core-opentelemetry-cpp CONFIG REQUIRED)
+find_package(azure-core-tracing-opentelemetry-cpp CONFIG REQUIRED)
 target_link_libraries(<your project name> PRIVATE Azure::azure-core-opentelemetry)
 ```
 
 ## Key concepts
 
-The `azure-core-opentelemetry` package supports enabling tracing for Azure SDK packages, using an [OpenTelemetry](https://opentelemetry.io/) `Tracer`.
+The `azure-core-tracing-opentelemetry` package supports enabling tracing for Azure SDK packages, using an [OpenTelemetry](https://opentelemetry.io/) `Tracer`.
 
 By default, all libraries log with a `NoOpTracer` that takes no action. To enable tracing, you will need to set a global tracer provider following the instructions in the [OpenTelemetry getting started guide](https://opentelemetry-cpp.readthedocs.io/en/latest/api/GettingStarted.html) or the [Enabling Tracing using OpenTelemetry example](#enabling-tracing-using-opentelemetry) below.
 
 ### Span Propagation
 
-Core Tracing supports both automatic and manual span propagation. Automatic propagation is handled using OpenTelemetry's API and will work well in most scenarios when run in `Node.js`.
+Core Tracing supports both automatic and manual span propagation. Automatic propagation is handled using OpenTelemetry's API and will work well in most scenarios.
 
-For customers who require manual propagation, or to provide context propagation in the browser, all client library operations accept an optional options collection where a tracingContext can be passed in and used as the currently active context. Please see the [Manual Span Propagation example](#manual-span-propagation-using-opentelemetry) below for more details.
+For customers who require manual propagation, all client library operations accept an optional field in the `options` parameter where a tracingContext can 
+be passed in and used as the currently active context. Please see the [Manual Span Propagation example](#manual-span-propagation-using-opentelemetry) 
+below for more details.
 
 ### OpenTelemetry Compatibility
 
-Most Azure SDKs use [OpenTelemetry](https://opentelemetry.io/) to support tracing. Specifically, we depend on the [azure-core-opentelemetry](https://github.com/open-telemetry/opentelemetry-cpp/blob/main/docs/building-with-vcpkg.md) VCPKG package.
+Most Azure SDKs use [OpenTelemetry](https://opentelemetry.io/) to support tracing. Specifically, we depend on 
+the [azure-core-opentelemetry](https://github.com/open-telemetry/opentelemetry-cpp/blob/main/docs/building-with-vcpkg.md) VCPKG package.
 
 
 ## Examples
@@ -76,7 +79,8 @@ auto openTelemetryProvider = opentelemetry::nostd::shared_ptr<opentelemetry::tra
             std::move(simple_processor), resource, std::move(always_on_sampler)));
 
 // Use the default OpenTelemetry tracer provider.
-std::shared_ptr<Azure::Core::Tracing::TracerProvider> tracerProvider = std::make_shared<Azure::Core::OpenTelemetry::TracerProvider>(openTelemetryProvider);
+std::shared_ptr<Azure::Core::Tracing::TracerProvider> tracerProvider = 
+    std::make_shared<Azure::Core::OpenTelemetry::TracerProvider>(openTelemetryProvider);
 
 // Connect the tracerProvider to the current application context.
 ApplicationContext().SetTracerProvider(tracerProvider);
@@ -90,7 +94,7 @@ ApplicationContext().SetTracerProvider(tracerProvider);
 
 ## Next steps
 
-You can build and run the tests locally by executing `azure-core-opentelemetry-test`. Explore the `test` folder to see advanced usage and behavior of the public classes.
+You can build and run the tests locally by executing `azure-core-tracing-opentelemetry-test`. Explore the `test` folder to see advanced usage and behavior of the public classes.
 
 ## Troubleshooting
 
