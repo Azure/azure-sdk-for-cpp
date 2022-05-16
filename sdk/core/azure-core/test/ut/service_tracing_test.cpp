@@ -59,16 +59,14 @@ public:
   TestSpan() : Azure::Core::Tracing::_internal::Span() {}
 
   // Inherited via Span
-  virtual void AddAttributes(AttributeSet const& ) override {}
-  virtual void AddEvent(std::string const& , AttributeSet const& ) override
-  {
-  }
-  virtual void AddEvent(std::string const& ) override {}
-  virtual void AddEvent(std::exception const& ) override {}
-  virtual void SetStatus(SpanStatus const& , std::string const& ) override {}
+  virtual void AddAttributes(AttributeSet const&) override {}
+  virtual void AddEvent(std::string const&, AttributeSet const&) override {}
+  virtual void AddEvent(std::string const&) override {}
+  virtual void AddEvent(std::exception const&) override {}
+  virtual void SetStatus(SpanStatus const&, std::string const&) override {}
 
   // Inherited via Span
-  virtual void End(Azure::Nullable<Azure::DateTime> ) override {}
+  virtual void End(Azure::Nullable<Azure::DateTime>) override {}
 };
 
 class TestAttributeSet : public Azure::Core::Tracing::_internal::AttributeSet {
