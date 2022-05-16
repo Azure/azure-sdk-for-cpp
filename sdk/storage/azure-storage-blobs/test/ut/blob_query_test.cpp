@@ -69,7 +69,7 @@ id,name,price
       "b25fY29sdW1ucyI6IFtdfQAYKmZhc3RwYXJxdWV0LXB5dGhvbiB2ZXJzaW9uIDAuOC4xIChidWlsZCAwKQDXAwAAUEFS"
       "MQ==");
 
-  TEST_F(BlockBlobClientTest, QueryJsonInputCsvOutput)
+  TEST_F(BlockBlobClientTest, QueryJsonInputCsvOutput_LIVEONLY_)
   {
     auto const testName(GetTestName());
     auto client = GetBlockBlobClient(testName);
@@ -108,7 +108,7 @@ id,name,price
     }
   }
 
-  TEST_F(BlockBlobClientTest, QueryCsvInputJsonOutput)
+  TEST_F(BlockBlobClientTest, QueryCsvInputJsonOutput_LIVEONLY_)
   {
     auto const testName(GetTestName());
     auto client = GetBlockBlobClient(testName);
@@ -130,7 +130,7 @@ id,name,price
         R"json({"id":"103","name":"apples","price":"99"}|{"id":"106","name":"lemons","price":"69"}|{"id":"110","name":"bananas","price":"39"}|{"id":"112","name":"sapote,mamey","price":"50"}|)json");
   }
 
-  TEST_F(BlockBlobClientTest, QueryCsvInputArrowOutput)
+  TEST_F(BlockBlobClientTest, QueryCsvInputArrowOutput_LIVEONLY_)
   {
     auto const testName(GetTestName());
     auto client = GetBlockBlobClient(testName);
@@ -181,7 +181,7 @@ id,name,price
             "AMgAAAAAAAAAAAAAAAAAAAA=="));
   }
 
-  TEST_F(BlockBlobClientTest, QueryParquetInputArrowOutput)
+  TEST_F(BlockBlobClientTest, QueryParquetInputArrowOutput_LIVEONLY_)
   {
     auto const testName(GetTestName());
     auto client = GetBlockBlobClient(testName);
@@ -241,7 +241,7 @@ id,name,price
             "AAAAAAAADgAAAHNhcG90ZSwibWFtZXkiAAAyAAAAAAAAAP////8AAAAA"));
   }
 
-  TEST_F(BlockBlobClientTest, QueryWithError)
+  TEST_F(BlockBlobClientTest, QueryWithError_LIVEONLY_)
   {
     auto const testName(GetTestName());
     auto client = GetBlockBlobClient(testName);
@@ -306,7 +306,7 @@ xx
     EXPECT_TRUE(progressCallbackCalled);
   }
 
-  TEST_F(BlockBlobClientTest, QueryDefaultInputOutput)
+  TEST_F(BlockBlobClientTest, QueryDefaultInputOutput_LIVEONLY_)
   {
     auto const testName(GetTestName());
     auto client = GetBlockBlobClient(testName);
@@ -360,7 +360,7 @@ xx
     }
   }
 
-  TEST_F(BlockBlobClientTest, QueryBlobAccessConditionLeaseId)
+  TEST_F(BlockBlobClientTest, QueryBlobAccessConditionLeaseId_LIVEONLY_)
   {
     auto const testName(GetTestName());
     auto client = GetBlockBlobClient(testName);
@@ -377,7 +377,7 @@ xx
     EXPECT_NO_THROW(client.Query("SELECT * FROM BlobStorage;", queryOptions));
   }
 
-  TEST_F(BlockBlobClientTest, QueryBlobAccessConditionTags)
+  TEST_F(BlockBlobClientTest, QueryBlobAccessConditionTags_LIVEONLY_)
   {
     auto const testName(GetTestName());
     auto client = GetBlockBlobClient(testName);
@@ -393,7 +393,7 @@ xx
     EXPECT_THROW(client.Query("SELECT * FROM BlobStorage;", queryOptions), StorageException);
   }
 
-  TEST_F(BlockBlobClientTest, QueryBlobAccessConditionLastModifiedTime)
+  TEST_F(BlockBlobClientTest, QueryBlobAccessConditionLastModifiedTime_LIVEONLY_)
   {
     auto const testName(GetTestName());
     auto client = GetBlockBlobClient(testName);
@@ -416,7 +416,7 @@ xx
     EXPECT_NO_THROW(client.Query("SELECT * FROM BlobStorage;", queryOptions));
   }
 
-  TEST_F(BlockBlobClientTest, QueryBlobAccessConditionETag)
+  TEST_F(BlockBlobClientTest, QueryBlobAccessConditionETag_LIVEONLY_)
   {
     auto const testName(GetTestName());
     auto client = GetBlockBlobClient(testName);
