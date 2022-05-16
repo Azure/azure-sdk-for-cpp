@@ -178,10 +178,6 @@ id,name,price
         "mFuYXNzYXBvdGUsbWFtZXkAYwAAAAAAAAAAAAAAAAAAAEUAAAAAAAAAAAAAAAAAAAAnAAAAAAAAAAAAAAAAAAA"
         "AMgAAAAAAAAAAAAAAAAAAAA==");
     EXPECT_EQ(data, expectedData);
-    if (data != expectedData)
-    {
-      std::cout << Core::Convert::Base64Encode(data) << std::endl;
-    }
   }
 
   TEST_F(BlockBlobClientTest, QueryParquetInputArrowOutput_LIVEONLY_)
@@ -241,10 +237,6 @@ id,name,price
         "AAAAAAAAADAAAAAQAAAAAAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAAAAAAABAAAAAAAAAAAAAAAAAAAAcAAAAAAA"
         "AAAAAAAADgAAAHNhcG90ZSwibWFtZXkiAAAyAAAAAAAAAP////8AAAAA");
     EXPECT_EQ(data, expectedData);
-    if (data != expectedData)
-    {
-      std::cout << Core::Convert::Base64Encode(data) << std::endl;
-    }
   }
 
   TEST_F(BlockBlobClientTest, QueryWithError_LIVEONLY_)
