@@ -54,7 +54,7 @@ steps:
         -ServiceDirectory '${{ parameters.ServiceDirectory }}' `
         -Location '${{ parameters.Location }}' `
         -HsmLocation '${{ parameters.HsmLocation }}' `
-        -EnableHsm '${{ parameters.EnableHsm }}' `
+        -EnableHsm ${{ parameters.EnableHsm }} `
         -DeleteAfterHours '${{ parameters.DeleteAfterHours }}' `
         @subscriptionConfiguration `
         -AdditionalParameters ${{ parameters.ArmTemplateParameters }} `
