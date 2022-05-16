@@ -162,7 +162,7 @@ namespace Azure { namespace Storage { namespace Test {
       EXPECT_EQ(pageResult.PageRanges.size(), static_cast<size_t>(1));
       numRanges += pageResult.PageRanges.size();
     }
-    EXPECT_EQ(numRanges, 3);
+    EXPECT_EQ(numRanges, static_cast<size_t>(3));
   }
 
   TEST_F(PageBlobClientTest, UploadFromUri)

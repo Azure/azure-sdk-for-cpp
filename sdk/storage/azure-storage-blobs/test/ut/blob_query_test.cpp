@@ -331,7 +331,7 @@ xx
     while (csvData.size() < DataSize)
     {
       std::string counter = std::to_string(recordCounter++);
-      std::string record = RandomString(RandomInt(1, 3000));
+      std::string record = RandomString(static_cast<size_t>(RandomInt(1, 3000)));
       csvData += counter + "," + record + "\n";
       jsonData += "{\"_1\":\"" + counter + "\",\"_2\":\"" + record + "\"}\n";
     }
