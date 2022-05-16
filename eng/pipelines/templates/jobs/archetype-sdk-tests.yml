@@ -20,7 +20,11 @@ parameters:
 - name: TimeoutInMinutes
   type: number
   default: 120
- 
+
+variables: 
+  EnableHSM: false 
+  HSMLocation: ''
+  KVLocation:  ${{ parameters.Location }}
 # This job uses the legacy matrix format (matrix property of the job, one
 # build/test scenario per job). A new format (multiple build/test scenarios per
 # job) may be possible here:
@@ -41,8 +45,6 @@ jobs:
         CmakeEnvArg: 'CC=/usr/bin/gcc-5 CXX=/usr/bin/g++-5 cmake'
         BuildArgs: '-j 4'
         CmakeArgs: ' -DBUILD_TESTING=ON -DRUN_LONG_UNIT_TESTS=ON'
-        HsmLocation: ''
-        EnableHSM: false
       Linux_x64_with_unit_test:
         Pool: azsdk-pool-mms-ubuntu-1804-general
         OSVmImage: MMSUbuntu18.04
@@ -54,8 +56,6 @@ jobs:
         CODE_COVERAGE_COLLECT_ONLY: 1
         AZURE_CORE_ENABLE_JSON_TESTS: 1
         BuildArgs: '-j 4'
-        HsmLocation: ''
-        EnableHSM: false
       Ubuntu20_HSM_x64_with_unit_test:
         Pool: azsdk-pool-mms-ubuntu-1804-general
         OSVmImage: MMSUbuntu18.04
@@ -63,6 +63,7 @@ jobs:
         CmakeArgs: ' -DBUILD_TESTING=ON -DBUILD_PERFORMANCE_TESTS=ON -DRUN_LONG_UNIT_TESTS=ON -DCMAKE_BUILD_TYPE=Release -DBUILD_SAMPLES=ON'
         AZURE_CORE_ENABLE_JSON_TESTS: 1
         BuildArgs: '-j 4'
+        KVLocation: 'eastus2'
         HsmLocation: 'eastus2'
         EnableHSM: true
       Ubuntu20_samples:
@@ -79,8 +80,6 @@ jobs:
         VCPKG_DEFAULT_TRIPLET: 'x64-linux'
         CmakeArgs: ' -DBUILD_RTTI=OFF -DCMAKE_BUILD_TYPE=Release '
         BuildArgs: '-j 4'
-        HsmLocation: ''
-        EnableHSM: false
       # Not asking for any transport adapter will default to OS -> windows:winHttp or !windows:libcurl
       Win_x86_with_unit_test_winHttp:
         Pool: azsdk-pool-mms-win-2019-general
@@ -92,8 +91,6 @@ jobs:
         CmakeArgs: ' -DBUILD_TESTING=ON -DRUN_LONG_UNIT_TESTS=ON -DBUILD_PERFORMANCE_TESTS=ON '
         BuildArgs: '-v --parallel 8 --config Release'
         WindowsCtestConfig: "-C Release"
-        HsmLocation: ''
-        EnableHSM: false
       Win_x86_no_rtti_whit_unit_test:
         Pool: azsdk-pool-mms-win-2019-general
         OSVmImage: MMS2019
@@ -104,8 +101,6 @@ jobs:
         CmakeArgs: ' -DBUILD_RTTI=OFF -DBUILD_TESTING=ON -DBUILD_SAMPLES=ON'
         BuildArgs: '-v --parallel 8 --config Release'
         WindowsCtestConfig: "-C Release"
-        HsmLocation: ''
-        EnableHSM: false
       Win_x64_with_unit_test_winHttp:
         Pool: azsdk-pool-mms-win-2019-general
         VcpkgInstall: 'openssl'
@@ -117,8 +112,6 @@ jobs:
         BuildArgs: '-v --parallel 8 --config Release '
         AZURE_CORE_ENABLE_JSON_TESTS: 1
         WindowsCtestConfig: "-C Release"
-        HsmLocation: ''
-        EnableHSM: false
       Win_x64_with_unit_samples_winHttp:
         Pool: azsdk-pool-mms-win-2019-general
         VcpkgInstall: 'openssl'
@@ -131,8 +124,6 @@ jobs:
         AZURE_CORE_ENABLE_JSON_TESTS: 1
         RunSamples: 1
         WindowsCtestConfig: "-C Release"
-        HsmLocation: ''
-        EnableHSM: false
       # specify libcurl to be used on Windows
       Win_x86_with_unit_test_libcurl:
         Pool: azsdk-pool-mms-win-2019-general
@@ -142,8 +133,6 @@ jobs:
         CMAKE_GENERATOR_PLATFORM: Win32
         CmakeArgs: ' -DBUILD_TRANSPORT_CURL=ON -DBUILD_TESTING=ON -DRUN_LONG_UNIT_TESTS=ON -DBUILD_PERFORMANCE_TESTS=ON '
         BuildArgs: '-v --parallel 8'
-        HsmLocation: ''
-        EnableHSM: false
         #AZURE_CORE_ENABLE_JSON_TESTS: 1  # Testing Json lib on Win+WinHttp only, No need to repeat here as it is independent to the http transport adapter.
       Win_x64_with_unit_test_libcurl:
         Pool: azsdk-pool-mms-win-2019-general
@@ -154,8 +143,6 @@ jobs:
         CmakeArgs: ' -DBUILD_TRANSPORT_CURL=ON -DBUILD_TESTING=ON -DRUN_LONG_UNIT_TESTS=ON -DBUILD_PERFORMANCE_TESTS=ON '
         BuildArgs: '-v --parallel 8 --config Release '
         WindowsCtestConfig: "-C Release"
-        HsmLocation: ''
-        EnableHSM: false
         #AZURE_CORE_ENABLE_JSON_TESTS: 1  # Testing Json lib on Win+WinHttp only, No need to repeat here as it is independent to the http transport adapter.
       Win_x64_with_unit_samples_libcurl:
         Pool: azsdk-pool-mms-win-2019-general
@@ -168,8 +155,6 @@ jobs:
         BuildArgs: '-v --parallel 8 --config Release '
         RunSamples: 1
         WindowsCtestConfig: "-C Release"
-        HsmLocation: ''
-        EnableHSM: false
       MacOS_x64_with_unit_test:
         Pool: Azure Pipelines
         OSVmImage: 'macOS-10.15'
@@ -177,8 +162,6 @@ jobs:
         CmakeArgs: ' -DBUILD_TESTING=ON -DRUN_LONG_UNIT_TESTS=ON -DBUILD_PERFORMANCE_TESTS=ON -DBUILD_SAMPLES=ON'
         AZURE_CORE_ENABLE_JSON_TESTS: 1
         BuildArgs: '-j 4'
-        HsmLocation: ''
-        EnableHSM: false
   pool:
     name: $(Pool)
     vmImage: $(OSVmImage)
@@ -250,10 +233,10 @@ jobs:
   - template: /eng/common/TestResources/deploy-test-resources.yml
     parameters:
       ServiceDirectory: ${{ parameters.ServiceDirectory }}
-      Location: "$(HsmLocation)"
-      HsmLocation: "$(HsmLocation)"
-      SubscriptionConfiguration: ${{ parameters.SubscriptionConfiguration }}
+      Location: "$(KVLocation)"
+      HsmLocation: "$(HSMLocation)"
       EnableHSM : $(EnableHSM)
+      SubscriptionConfiguration: ${{ parameters.SubscriptionConfiguration }}
 
     # For non multi-config generator use the same build configuration to run tests
     # We don't need to set it to invoke ctest 
