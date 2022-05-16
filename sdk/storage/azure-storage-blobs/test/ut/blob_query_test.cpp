@@ -7,6 +7,8 @@
 #include <random>
 #include <vector>
 
+// cspell:ignore sapote
+
 namespace Azure { namespace Storage { namespace Test {
 
   const std::string JsonQueryTestData =
@@ -321,7 +323,7 @@ xx
     auto const testName(GetTestName());
     auto client = GetBlockBlobClient(testName);
 
-    constexpr size_t DataSize = 32_MB;
+    constexpr size_t DataSize = static_cast<size_t>(32_MB);
 
     int recordCounter = 0;
     std::string csvData;

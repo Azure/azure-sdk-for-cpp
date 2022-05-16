@@ -159,7 +159,7 @@ namespace Azure { namespace Storage { namespace Test {
     for (auto pageResult = pageBlobClient.GetPageRanges(options); pageResult.HasPage();
          pageResult.MoveToNextPage())
     {
-      EXPECT_EQ(pageResult.PageRanges.size(), 1);
+      EXPECT_EQ(pageResult.PageRanges.size(), static_cast<size_t>(1));
       numRanges += pageResult.PageRanges.size();
     }
     EXPECT_EQ(numRanges, 3);

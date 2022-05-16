@@ -30,26 +30,6 @@ namespace Azure { namespace Storage { namespace Blobs { namespace _detail {
       return static_cast<int64_t>(r >> 1) ^ -static_cast<int64_t>(r & 0x01);
     }
 
-    std::string parseString(AvroStreamReader::ReaderPos& data)
-    {
-      const int64_t stringSize = parseInt(data);
-      const uint8_t* start = &(*data.BufferPtr)[data.Offset];
-      const uint8_t* end = start + stringSize;
-      std::string ret(start, end);
-      data.Offset += static_cast<size_t>(stringSize);
-      return ret;
-    }
-
-    std::vector<uint8_t> parseBytes(AvroStreamReader::ReaderPos& data)
-    {
-      const int64_t bytesSize = parseInt(data);
-      const uint8_t* start = &(*data.BufferPtr)[data.Offset];
-      const uint8_t* end = start + bytesSize;
-      std::vector<uint8_t> ret(start, end);
-      data.Offset += static_cast<size_t>(bytesSize);
-      return ret;
-    }
-
     AvroSchema ParseSchemaFromJsonString(const std::string& jsonSchema)
     {
       const static std::map<std::string, AvroSchema> BuiltinNameSchemaMap = {

@@ -65,7 +65,7 @@ namespace Azure { namespace Storage { namespace Blobs { namespace _detail {
     friend class AvroDatum;
   };
 
-  class AvroSchema {
+  class AvroSchema final {
   public:
     static const AvroSchema StringSchema;
     static const AvroSchema BytesSchema;
@@ -169,7 +169,7 @@ namespace Azure { namespace Storage { namespace Blobs { namespace _detail {
 
     bool End() const { return m_eof; }
     // Calling Next() will invalidates the previous AvroDatum returned by this function and all
-    // AvroDatums propogated from there.
+    // AvroDatums propagated from there.
     AvroDatum Next(const Core::Context& context) { return NextImpl(m_objectSchema.get(), context); }
 
   private:
