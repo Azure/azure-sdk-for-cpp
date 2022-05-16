@@ -178,10 +178,17 @@ id,name,price
         "mFuYXNzYXBvdGUsbWFtZXkAYwAAAAAAAAAAAAAAAAAAAEUAAAAAAAAAAAAAAAAAAAAnAAAAAAAAAAAAAAAAAAA"
         "AMgAAAAAAAAAAAAAAAAAAAA==");
     EXPECT_EQ(data, expectedData);
-    ASSERT_EQ(data.size(), expectedData.size());
-    for (size_t i = 0; i < data.size(); ++i)
+    EXPECT_EQ(data.size(), expectedData.size());
+    for (size_t i = 0; i < std::min(data.size(), expectedData.size()); ++i)
     {
       EXPECT_EQ(data[i], expectedData[i]) << i;
+    }
+    if (data.size() != expectedData.size())
+    {
+      size_t minSize = std::min(data.size(), expectedData.size());
+      EXPECT_EQ(
+          std::vector<uint8_t>(data.begin() + minSize, data.end()),
+          std::vector<uint8_t>(expectedData.begin() + minSize, expectedData.end()));
     }
   }
 
