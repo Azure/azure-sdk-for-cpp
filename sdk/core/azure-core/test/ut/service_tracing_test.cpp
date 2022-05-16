@@ -136,6 +136,11 @@ TEST(ServiceTracing, BasicServiceSpanTests)
     span.End();
     span.AddEvent("New Event");
     span.AddEvent(std::runtime_error("Exception"));
+    std::unique_ptr<Azure::Core::Tracing::_internal::AttributeSet> attributeSet
+        = serviceTrace.CreateAttributeSet();
+    attributeSet->AddAttribute("Joe", "Joe'sValue");
+    span.AddEvent("AttributeEvent", *attributeSet);
+    span.AddAttributes(*attributeSet);
     span.SetStatus(SpanStatus::Error);
   }
 }

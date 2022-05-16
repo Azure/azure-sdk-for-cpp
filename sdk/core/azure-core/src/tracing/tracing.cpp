@@ -45,4 +45,10 @@ namespace Azure { namespace Core { namespace Tracing { namespace _internal {
     }
   }
 
+  std::unique_ptr<Azure::Core::Tracing::_internal::AttributeSet>
+  ServiceTracing::CreateAttributeSet()
+  {
+    return m_serviceTracer->CreateAttributeSet();
+  }
+
 }}}} // namespace Azure::Core::Tracing::_internal

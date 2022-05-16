@@ -157,6 +157,8 @@ namespace Azure { namespace Core { namespace Tracing { namespace _internal {
     std::pair<Azure::Core::Context, ServiceSpan> CreateSpan(
         std::string const& spanName,
         Azure::Core::Context const& clientContext);
+
+    std::unique_ptr<Azure::Core::Tracing::_internal::AttributeSet> CreateAttributeSet();
   };
 
   class TracingAttributes
