@@ -231,7 +231,7 @@ jobs:
       Location: ${{ parameters.Location }}
       HsmLocation: "$(HsmLocation)"
       SubscriptionConfiguration: ${{ parameters.SubscriptionConfiguration }}
-      EnableHSM : $(EnableHSM)
+      EnableHSM : "$(EnableHSM)"
 
     # For non multi-config generator use the same build configuration to run tests
     # We don't need to set it to invoke ctest 
