@@ -21,10 +21,6 @@ parameters:
   type: number
   default: 120
 
-variables: 
-  EnableHSM: false 
-  HSMLocation: ''
-  KVLocation:  ${{ parameters.Location }}
 # This job uses the legacy matrix format (matrix property of the job, one
 # build/test scenario per job). A new format (multiple build/test scenarios per
 # job) may be possible here:
@@ -177,6 +173,9 @@ jobs:
     AZURE_LOG_LEVEL: "verbose"
     # Surface the ServiceDirectory parameter as an environment variable so tests can take advantage of it.
     AZURE_SERVICE_DIRECTORY: ${{ parameters.ServiceDirectory }}
+    EnableHSM: false 
+    HSMLocation: ''
+    KVLocation:  ${{ parameters.Location }}
 
   steps:
   - checkout: self
