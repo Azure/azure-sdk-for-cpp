@@ -102,7 +102,7 @@ directive:
           "name": "ApiVersion",
           "modelAsString": false
           },
-        "enum": ["2020-08-04"],
+        "enum": ["2020-10-02"],
         "description": "The version used for the operations to Azure storage services."
       };
 ```
