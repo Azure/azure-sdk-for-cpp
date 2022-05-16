@@ -146,17 +146,6 @@ namespace Azure { namespace Storage { namespace Blobs { namespace _detail {
       const uint8_t* Data = nullptr;
       size_t Length = 0;
     };
-    template <> StringView Value() const;
-    template <> std::string Value() const;
-    template <> std::vector<uint8_t> Value() const;
-    template <> const char* Value() const;
-    template <> int32_t Value() const { return static_cast<int32_t>(Value<int64_t>()); }
-    template <> int64_t Value() const;
-    template <> bool Value() const { return Value<int64_t>(); }
-    template <> std::nullptr_t Value() const { return nullptr; }
-    template <> AvroRecord Value() const;
-    template <> AvroMap Value() const;
-    template <> AvroDatum Value() const;
 
   private:
     AvroSchema m_schema;

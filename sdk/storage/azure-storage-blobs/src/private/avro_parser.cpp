@@ -452,18 +452,6 @@ namespace Azure { namespace Storage { namespace Blobs { namespace _detail {
     }
   }
 
-  template <> std::string AvroDatum::Value() const
-  {
-    auto stringView = Value<StringView>();
-    return std::string(stringView.Data, stringView.Data + stringView.Length);
-  }
-
-  template <> std::vector<uint8_t> AvroDatum::Value() const
-  {
-    auto stringView = Value<StringView>();
-    return std::vector<uint8_t>(stringView.Data, stringView.Data + stringView.Length);
-  }
-
   template <> AvroDatum::StringView AvroDatum::Value() const
   {
     auto data = m_data;
@@ -486,11 +474,29 @@ namespace Azure { namespace Storage { namespace Blobs { namespace _detail {
     AZURE_UNREACHABLE_CODE();
   }
 
+  template <> std::string AvroDatum::Value() const
+  {
+    auto stringView = Value<StringView>();
+    return std::string(stringView.Data, stringView.Data + stringView.Length);
+  }
+
+  template <> std::vector<uint8_t> AvroDatum::Value() const
+  {
+    auto stringView = Value<StringView>();
+    return std::vector<uint8_t>(stringView.Data, stringView.Data + stringView.Length);
+  }
+
   template <> int64_t AvroDatum::Value() const
   {
     auto data = m_data;
     return parseInt(data);
   }
+
+  template <> int32_t AvroDatum::Value() const { return static_cast<int32_t>(Value<int64_t>()); }
+
+  template <> bool AvroDatum::Value() const { return Value<int64_t>(); }
+
+  template <> std::nullptr_t AvroDatum::Value() const { return nullptr; }
 
   template <> AvroRecord AvroDatum::Value() const
   {
