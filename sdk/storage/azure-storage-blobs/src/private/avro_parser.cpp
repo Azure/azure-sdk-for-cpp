@@ -36,7 +36,7 @@ namespace Azure { namespace Storage { namespace Blobs { namespace _detail {
       const uint8_t* start = &(*data.BufferPtr)[data.Offset];
       const uint8_t* end = start + stringSize;
       std::string ret(start, end);
-      data.Offset += stringSize;
+      data.Offset += static_cast<size_t>(stringSize);
       return ret;
     }
 
@@ -46,7 +46,7 @@ namespace Azure { namespace Storage { namespace Blobs { namespace _detail {
       const uint8_t* start = &(*data.BufferPtr)[data.Offset];
       const uint8_t* end = start + bytesSize;
       std::vector<uint8_t> ret(start, end);
-      data.Offset += bytesSize;
+      data.Offset += static_cast<size_t>(bytesSize);
       return ret;
     }
 
@@ -280,7 +280,7 @@ namespace Azure { namespace Storage { namespace Blobs { namespace _detail {
     if (m_schema.Type() == AvroDatumType::String || m_schema.Type() == AvroDatumType::Bytes)
     {
       int64_t stringSize = reader.ParseInt(context);
-      reader.Advance(stringSize, context);
+      reader.Advance(static_cast<size_t>(stringSize), context);
     }
     else if (
         m_schema.Type() == AvroDatumType::Int || m_schema.Type() == AvroDatumType::Long
@@ -323,7 +323,7 @@ namespace Azure { namespace Storage { namespace Blobs { namespace _detail {
         else if (numElementsInBlock < 0)
         {
           int64_t blockSize = reader.ParseInt(context);
-          reader.Advance(blockSize, context);
+          reader.Advance(static_cast<size_t>(blockSize), context);
         }
         else
         {
@@ -346,7 +346,7 @@ namespace Azure { namespace Storage { namespace Blobs { namespace _detail {
         else if (numElementsInBlock < 0)
         {
           int64_t blockSize = reader.ParseInt(context);
-          reader.Advance(blockSize, context);
+          reader.Advance(static_cast<size_t>(blockSize), context);
         }
         else
         {
@@ -361,7 +361,7 @@ namespace Azure { namespace Storage { namespace Blobs { namespace _detail {
     else if (m_schema.Type() == AvroDatumType::Union)
     {
       int64_t i = reader.ParseInt(context);
-      AvroDatum(m_schema.FieldSchemas()[i]).Fill(reader, context);
+      AvroDatum(m_schema.FieldSchemas()[static_cast<size_t>(i)]).Fill(reader, context);
     }
     else if (m_schema.Type() == AvroDatumType::Fixed)
     {
@@ -379,7 +379,7 @@ namespace Azure { namespace Storage { namespace Blobs { namespace _detail {
     if (m_schema.Type() == AvroDatumType::String || m_schema.Type() == AvroDatumType::Bytes)
     {
       int64_t stringSize = parseInt(data);
-      data.Offset += stringSize;
+      data.Offset += static_cast<size_t>(stringSize);
     }
     else if (
         m_schema.Type() == AvroDatumType::Int || m_schema.Type() == AvroDatumType::Long
@@ -422,7 +422,7 @@ namespace Azure { namespace Storage { namespace Blobs { namespace _detail {
         else if (numElementsInBlock < 0)
         {
           int64_t blockSize = parseInt(data);
-          data.Offset += blockSize;
+          data.Offset += static_cast<size_t>(blockSize);
         }
         else
         {
@@ -445,7 +445,7 @@ namespace Azure { namespace Storage { namespace Blobs { namespace _detail {
         else if (numElementsInBlock < 0)
         {
           int64_t blockSize = parseInt(data);
-          data.Offset += blockSize;
+          data.Offset += static_cast<size_t>(blockSize);
         }
         else
         {
@@ -460,7 +460,7 @@ namespace Azure { namespace Storage { namespace Blobs { namespace _detail {
     else if (m_schema.Type() == AvroDatumType::Union)
     {
       int64_t i = parseInt(data);
-      AvroDatum(m_schema.FieldSchemas()[i]).Fill(data);
+      AvroDatum(m_schema.FieldSchemas()[static_cast<size_t>(i)]).Fill(data);
     }
     else if (m_schema.Type() == AvroDatumType::Fixed)
     {
@@ -492,7 +492,7 @@ namespace Azure { namespace Storage { namespace Blobs { namespace _detail {
       const int64_t length = parseInt(data);
       const uint8_t* start = &(*data.BufferPtr)[data.Offset];
       StringView ret{start, static_cast<size_t>(length)};
-      data.Offset += length;
+      data.Offset += static_cast<size_t>(length);
       return ret;
     }
     if (m_schema.Type() == AvroDatumType::Fixed)
@@ -563,7 +563,7 @@ namespace Azure { namespace Storage { namespace Blobs { namespace _detail {
     if (m_schema.Type() == AvroDatumType::Union)
     {
       int64_t i = parseInt(data);
-      auto datum = AvroDatum(m_schema.FieldSchemas()[i]);
+      auto datum = AvroDatum(m_schema.FieldSchemas()[static_cast<size_t>(i)]);
       datum.Fill(data);
       return datum;
     }
@@ -618,8 +618,8 @@ namespace Azure { namespace Storage { namespace Blobs { namespace _detail {
     {
       m_reader->Discard();
       m_remainingObjectInCurrentBlock = m_reader->ParseInt(context);
-      auto ObjectsSize = m_reader->ParseInt(context);
-      m_reader->Preload(ObjectsSize, context);
+      int64_t ObjectsSize = m_reader->ParseInt(context);
+      m_reader->Preload(static_cast<size_t>(ObjectsSize), context);
     }
 
     auto objectDatum = AvroDatum(*m_objectSchema);

@@ -88,7 +88,7 @@ namespace Azure { namespace Storage { namespace Blobs { namespace _detail {
     const std::vector<std::string>& FieldNames() const { return m_status->m_keys; }
     AvroSchema ItemSchema() const { return m_status->m_schemas[0]; }
     const std::vector<AvroSchema>& FieldSchemas() const { return m_status->m_schemas; }
-    size_t Size() const { return m_status->m_size; }
+    size_t Size() const { return static_cast<size_t>(m_status->m_size); }
 
   private:
     explicit AvroSchema(AvroDatumType type) : m_type(type) {}
