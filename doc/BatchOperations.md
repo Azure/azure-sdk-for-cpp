@@ -1,9 +1,16 @@
 # Batched Operations in Azure Core
 
+TL;DR: The batch pattern for storage is highly specific to storage's scenarios and
+does not match the patterns used for other Azure APIs. So batch operations should NOT
+be a part of the Azure Core API surface.
+
+## Discussion
+
 Azure Blob Storage implements a concept called "batched operations" - the
 service client collects a sequence of operations and then applies those separate operations
 in a single REST API call. Currently those operations are limited to "Delete" and
-"Set Blob Access Tier". Interestingly, these operations do NOT have a return value
+"Set Blob Access Tier". Interestingly, these operations do NOT have a return value,
+which significantly simplifies the API surface.
 
 Based on investigation of the existing SDKs, the Storage batch operation appears to be unique.
 While there are other Azure services which implement batching functionality, they do not appear
@@ -118,6 +125,8 @@ what .Net and Java do as well).
 The second issue is that the `T` object in the original proposal needs to be a `Response<T>` object
 which requires double nesting of objects, which is unpleasent - for Java and .Net, the `Batch` object
 returned a `Response<T>` object directly.
+
+And finally, the `Later<T>` proposal
 
 ### Proposed batched API design pattern
 
