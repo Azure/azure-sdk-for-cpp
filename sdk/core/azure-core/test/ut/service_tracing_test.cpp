@@ -57,23 +57,18 @@ TEST(ServiceTracing, SimpleServiceSpanTests)
 class TestSpan final : public Azure::Core::Tracing::_internal::Span {
 public:
   TestSpan() : Azure::Core::Tracing::_internal::Span() {}
-  void Azure::Core::Tracing::_internal::Span::End(Azure::Nullable<Azure::DateTime>) override {}
-  void Azure::Core::Tracing::_internal::Span::AddAttributes(
-      const Azure::Core::Tracing::_internal::AttributeSet&) override
+
+  // Inherited via Span
+  virtual void AddAttributes(AttributeSet const& ) override {}
+  virtual void AddEvent(std::string const& , AttributeSet const& ) override
   {
   }
-  void Azure::Core::Tracing::_internal::Span::AddEvent(const std::exception&) override {}
-  void Azure::Core::Tracing::_internal::Span::AddEvent(const std::string&) override {}
-  void Azure::Core::Tracing::_internal::Span::AddEvent(
-      const std::string&,
-      const Azure::Core::Tracing::_internal::AttributeSet&) override
-  {
-  }
-  void Azure::Core::Tracing::_internal::Span::SetStatus(
-      const Azure::Core::Tracing::_internal::SpanStatus&,
-      const std::string&) override
-  {
-  }
+  virtual void AddEvent(std::string const& ) override {}
+  virtual void AddEvent(std::exception const& ) override {}
+  virtual void SetStatus(SpanStatus const& , std::string const& ) override {}
+
+  // Inherited via Span
+  virtual void End(Azure::Nullable<Azure::DateTime> ) override {}
 };
 
 class TestAttributeSet : public Azure::Core::Tracing::_internal::AttributeSet {
