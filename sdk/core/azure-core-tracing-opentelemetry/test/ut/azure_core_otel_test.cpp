@@ -396,8 +396,8 @@ TEST_F(OpenTelemetryTests, CreateSpanWithOptions)
       auto tracer = traceProvider->CreateTracer("TracerName");
       {
         Azure::Core::Tracing::_internal::CreateSpanOptions options;
-        options.Attributes
-            = std::make_unique<Azure::Core::Tracing::OpenTelemetry::_internal::OpenTelemetryAttributeSet>();
+        options.Attributes = std::make_unique<
+            Azure::Core::Tracing::OpenTelemetry::_internal::OpenTelemetryAttributeSet>();
         options.Attributes->AddAttribute("SimpleStringAttribute", "Simple String");
         options.Kind = Azure::Core::Tracing::_internal::SpanKind::Client;
         auto span = tracer->CreateSpan("Client Span", options);
@@ -589,7 +589,8 @@ TEST_F(OpenTelemetryTests, SetStatus)
     auto span = tracer->CreateSpan("StatusSpan");
     EXPECT_TRUE(span);
 
-    EXPECT_THROW(span->SetStatus(Azure::Core::Tracing::_internal::SpanStatus("Bogus")), std::runtime_error);
+    EXPECT_THROW(
+        span->SetStatus(Azure::Core::Tracing::_internal::SpanStatus("Bogus")), std::runtime_error);
 
     // Return the collected spans.
     auto spans = m_spanData->GetSpans();

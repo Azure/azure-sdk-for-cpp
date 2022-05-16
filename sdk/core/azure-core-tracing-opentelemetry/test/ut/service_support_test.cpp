@@ -279,15 +279,17 @@ TEST_F(OpenTelemetryServiceTests, NestSpans)
 
       const auto& attributes = spans[0]->GetAttributes();
       EXPECT_EQ(1ul, attributes.size());
-      EXPECT_EQ("my-service", opentelemetry::nostd::get<std::string>(attributes.at("az.namespace")));
+      EXPECT_EQ(
+          "my-service", opentelemetry::nostd::get<std::string>(attributes.at("az.namespace")));
     }
     {
       EXPECT_EQ("My API", spans[1]->GetName());
       EXPECT_FALSE(spans[1]->GetParentSpanId().IsValid());
 
-      const auto &attributes = spans[1]->GetAttributes();
+      const auto& attributes = spans[1]->GetAttributes();
       EXPECT_EQ(1ul, attributes.size());
-      EXPECT_EQ("my-service", opentelemetry::nostd::get<std::string>(attributes.at("az.namespace")));
+      EXPECT_EQ(
+          "my-service", opentelemetry::nostd::get<std::string>(attributes.at("az.namespace")));
     }
 
     EXPECT_EQ("my-service", spans[0]->GetInstrumentationLibrary().GetName());

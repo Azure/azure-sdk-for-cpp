@@ -67,7 +67,5 @@ TEST(ServiceTracing, BasicServiceSpanTests)
     span.AddEvent("New Event");
     span.AddEvent(std::runtime_error("Exception"));
     span.SetStatus(SpanStatus::Error);
-
-
   }
 }
