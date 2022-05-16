@@ -130,7 +130,7 @@ id,name,price
         R"json({"id":"103","name":"apples","price":"99"}|{"id":"106","name":"lemons","price":"69"}|{"id":"110","name":"bananas","price":"39"}|{"id":"112","name":"sapote,mamey","price":"50"}|)json");
   }
 
-  TEST_F(BlockBlobClientTest, QueryCsvInputArrowOutput_LIVEONLY_)
+  TEST_F(BlockBlobClientTest, DISABLED_QueryCsvInputArrowOutput_LIVEONLY_)
   {
     auto const testName(GetTestName());
     auto client = GetBlockBlobClient(testName);
@@ -180,7 +180,7 @@ id,name,price
     EXPECT_EQ(data, expectedData);
   }
 
-  TEST_F(BlockBlobClientTest, QueryParquetInputArrowOutput_LIVEONLY_)
+  TEST_F(BlockBlobClientTest, DISABLED_QueryParquetInputArrowOutput_LIVEONLY_)
   {
     auto const testName(GetTestName());
     auto client = GetBlockBlobClient(testName);
