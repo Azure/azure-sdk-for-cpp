@@ -68,7 +68,7 @@ $([Convert]::ToBase64String($Certificate.RawData, 'InsertLineBreaks'))
 }
 
 # Make sure we deployed a Managed HSM.
-if (!$DeploymentOutputs['AZURE_KEYVAULT_HSM_URL']) {
+if (!$DeploymentOutputs['AZURE_ENABLE_HSM']) {
     Log "Managed HSM not deployed; skipping activation"
     exit
 }
