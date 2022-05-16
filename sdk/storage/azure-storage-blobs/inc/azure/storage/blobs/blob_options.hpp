@@ -1117,7 +1117,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @return Json text configuration.
      */
     static BlobQueryOutputTextOptions CreateJsonTextOptions(
-        const std::string& recordSeparatorc = std::string());
+        const std::string& recordSeparator = std::string());
     /**
      * @brief Creates Arrow text configuration.
      *
