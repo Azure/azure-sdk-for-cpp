@@ -60,7 +60,7 @@ jobs:
         AZURE_CORE_ENABLE_JSON_TESTS: 1
         BuildArgs: '-j 4'
         HsmLocation: 'eastus2'
-        EnableHsm: true
+        EnableHSM: true
       Ubuntu20_samples:
         Pool: azsdk-pool-mms-ubuntu-1804-general
         OSVmImage: MMSUbuntu18.04
@@ -231,7 +231,7 @@ jobs:
       Location: ${{ parameters.Location }}
       HsmLocation: "$(HsmLocation)"
       SubscriptionConfiguration: ${{ parameters.SubscriptionConfiguration }}
-      EnableHSM : $(EnableHsm)
+      EnableHSM : $(EnableHSM)
 
     # For non multi-config generator use the same build configuration to run tests
     # We don't need to set it to invoke ctest 
