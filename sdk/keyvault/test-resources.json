@@ -111,7 +111,7 @@
         "description": "The provisioner OID to grant access to test resources."
       }
     },
-    "EnableHSM": {
+    "enableHSM": {
       "defaultValue": false,
       "type": "Bool",
       "metadata": {
@@ -273,7 +273,7 @@
         "publicNetworkAccess": "Enabled",
         "networkAcls": "[variables('networkAcls')]"
       },
-      "condition": "[parameters('EnableHSM')]"
+      "condition": "[parameters('enableHSM')]"
     }
   ],
   "outputs": {
@@ -283,11 +283,11 @@
     },
     "AZURE_ENABLE_HSM": {
       "type": "Bool",
-      "value": "[parameters('EnableHSM')]"
+      "value": "[parameters('enableHSM')]"
     },
     "AZURE_KEYVAULT_HSM_URL": {
       "type": "String",
-      "value": "[if(bool(parameters('EnableHSM')),reference(variables('hsmName')).hsmUri,variables('azureKeyVaultUrl'))]"
+      "value": "[if(bool(parameters('enableHSM')),reference(variables('hsmName')).hsmUri,variables('azureKeyVaultUrl'))]"
     },
     "AZURE_TENANT_ID": {
       "type": "String",

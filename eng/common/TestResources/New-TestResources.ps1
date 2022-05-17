@@ -60,6 +60,9 @@ param (
     [string] $Location = '',
 
     [Parameter()]
+    [bool] $EnableHSM = $false,
+
+    [Parameter()]
     [ValidateSet('AzureCloud', 'AzureUSGovernment', 'AzureChinaCloud', 'Dogfood')]
     [string] $Environment = 'AzureCloud',
 
@@ -667,6 +670,9 @@ try {
     }
     if ($TestApplicationSecret) {
         $templateParameters.Add('testApplicationSecret', $TestApplicationSecret)
+    }
+    if ($EnableHSM){
+        $templateParameters.Add('enableHSM', $EnableHSM)
     }
 
     $defaultCloudParameters = LoadCloudConfig $Environment
