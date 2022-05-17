@@ -235,6 +235,7 @@ jobs:
       Location: "$(KVLocation)"
       HsmLocation: "$(HSMLocation)"
       EnableHSM : $(EnableHSM)
+      ArmTemplateParameters: '{"EnableHSM": $(EnableHSM) }'
       SubscriptionConfiguration: ${{ parameters.SubscriptionConfiguration }}
 
     # For non multi-config generator use the same build configuration to run tests
