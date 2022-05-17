@@ -8,6 +8,8 @@
 
 #pragma once
 
+#include <azure/storage/common/storage_exception.hpp>
+
 #include "azure/storage/files/datalake/datalake_directory_client.hpp"
 #include "azure/storage/files/datalake/datalake_file_client.hpp"
 #include "azure/storage/files/datalake/datalake_file_system_client.hpp"
@@ -20,4 +22,3 @@
 #include "azure/storage/files/datalake/dll_import_export.hpp"
 #include "azure/storage/files/datalake/rest_client.hpp"
 #include "azure/storage/files/datalake/rtti.hpp"
-#include <azure/storage/common/storage_exception.hpp>
