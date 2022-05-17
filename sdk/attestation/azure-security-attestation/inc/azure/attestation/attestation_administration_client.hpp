@@ -289,6 +289,12 @@ namespace Azure { namespace Security { namespace Attestation {
         Azure::Core::Context const& context = Azure::Core::Context{}) const;
   };
 
+  /** @brief Construct a new AttestationAdministrationClient object.
+   *
+   * The AttestationAdministrationClientFactory class is a factory class for instantiating new
+   * AttestationAdministrationClient objects.
+   *
+   */
   class AttestationAdministrationClientFactory final {
   public:
     /**

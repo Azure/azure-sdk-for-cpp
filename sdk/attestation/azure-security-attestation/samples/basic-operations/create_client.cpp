@@ -35,8 +35,8 @@ int main()
     clientOptions.TokenValidationOptions.TimeValidationSlack = 10s;
 
     // create client
-    AttestationClient const attestationClient(
-        AttestationClientFactory::Create(GetEnvHelper::GetEnv("ATTESTATION_AAD_URL"), clientOptions));
+    AttestationClient const attestationClient(AttestationClientFactory::Create(
+        GetEnvHelper::GetEnv("ATTESTATION_AAD_URL"), clientOptions));
 
     attestationClient.GetOpenIdMetadata();
   }

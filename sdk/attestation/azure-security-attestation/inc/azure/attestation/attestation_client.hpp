@@ -249,12 +249,11 @@ namespace Azure { namespace Security { namespace Attestation {
   };
 
   /** @brief Construct a new AttestationClient object.
-  * 
-  * The AttestationClientFactory class is a factory class for instantiating new AttestationClient
-  * objects.
-  * 
-  */
-
+   *
+   * The AttestationClientFactory class is a factory class for instantiating new AttestationClient
+   * objects.
+   *
+   */
   class AttestationClientFactory final {
   public:
     /** @brief Construct a new Attestation Client object
