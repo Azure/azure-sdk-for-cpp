@@ -106,7 +106,46 @@ Start-Sleep -Seconds 30
 $testApplicationOid = $DeploymentOutputs['CLIENT_OBJECTID']
 
 Log "Creating additional required role assignments for '$testApplicationOid'"
+$null = New-AzKeyVaultRoleAssignment -HsmName $hsmName -RoleDefinitionName 'Managed HSM Administrator' -ObjectID $testApplicationOid
 $null = New-AzKeyVaultRoleAssignment -HsmName $hsmName -RoleDefinitionName 'Managed HSM Crypto Officer' -ObjectID $testApplicationOid
 $null = New-AzKeyVaultRoleAssignment -HsmName $hsmName -RoleDefinitionName 'Managed HSM Crypto User' -ObjectID $testApplicationOid
+$null = New-AzKeyVaultRoleAssignment -HsmName $hsmName -RoleDefinitionName 'Managed HSM Policy Administrator' -ObjectID $testApplicationOid
+$null = New-AzKeyVaultRoleAssignment -HsmName $hsmName -RoleDefinitionName 'Managed HSM Crypto Auditor' -ObjectID $testApplicationOid
+$null = New-AzKeyVaultRoleAssignment -HsmName $hsmName -RoleDefinitionName 'Managed HSM Crypto Service Encryption User' -ObjectID $testApplicationOid
+$null = New-AzKeyVaultRoleAssignment -HsmName $hsmName -RoleDefinitionName 'Managed HSM Backup' -ObjectID $testApplicationOid
 
 Log "Role assignments created for '$testApplicationOid'"
+
+$testApplicationId = $DeploymentOutputs['AZURE_CLIENT_ID']
+
+Log "Creating additional required role assignments for '$testApplicationOid'"
+$null = New-AzKeyVaultRoleAssignment -HsmName $hsmName -RoleDefinitionName 'Managed HSM Administrator' -ObjectID $testApplicationId
+$null = New-AzKeyVaultRoleAssignment -HsmName $hsmName -RoleDefinitionName 'Managed HSM Crypto Officer' -ObjectID $testApplicationId
+$null = New-AzKeyVaultRoleAssignment -HsmName $hsmName -RoleDefinitionName 'Managed HSM Crypto User' -ObjectID $testApplicationId
+$null = New-AzKeyVaultRoleAssignment -HsmName $hsmName -RoleDefinitionName 'Managed HSM Policy Administrator' -ObjectID $testApplicationId
+$null = New-AzKeyVaultRoleAssignment -HsmName $hsmName -RoleDefinitionName 'Managed HSM Crypto Auditor' -ObjectID $testApplicationId
+$null = New-AzKeyVaultRoleAssignment -HsmName $hsmName -RoleDefinitionName 'Managed HSM Crypto Service Encryption User' -ObjectID $testApplicationId
+$null = New-AzKeyVaultRoleAssignment -HsmName $hsmName -RoleDefinitionName 'Managed HSM Backup' -ObjectID $testApplicationId
+
+Log "Role assignments created for '$testApplicationId'"
+
+
+Log "Setting up user environment variables"
+
+$null = [Environment]::SetEnvironmentVariable("AZURE_KEYVAULT_URL", $DeploymentOutputs['AZURE_KEYVAULT_URL'], [System.EnvironmentVariableTarget]::User)
+$null = [Environment]::SetEnvironmentVariable("AZURE_KEYVAULT_HSM_URL", $DeploymentOutputs['AZURE_KEYVAULT_HSM_URL'], [System.EnvironmentVariableTarget]::User)
+$null = [Environment]::SetEnvironmentVariable("AZURE_ENABLE_HSM", $DeploymentOutputs['AZURE_ENABLE_HSM'], [System.EnvironmentVariableTarget]::User)
+$null = [Environment]::SetEnvironmentVariable("AZURE_ENABLE_HSM_STR", $DeploymentOutputs['AZURE_ENABLE_HSM_STR'], [System.EnvironmentVariableTarget]::User)
+
+Log "Setting up machine environment variables"
+
+$null = [Environment]::SetEnvironmentVariable("AZURE_KEYVAULT_URL", $DeploymentOutputs['AZURE_KEYVAULT_URL'], [System.EnvironmentVariableTarget]::Machine)
+$null = [Environment]::SetEnvironmentVariable("AZURE_KEYVAULT_HSM_URL", $DeploymentOutputs['AZURE_KEYVAULT_HSM_URL'], [System.EnvironmentVariableTarget]::Machine)
+$null = [Environment]::SetEnvironmentVariable("AZURE_ENABLE_HSM", $DeploymentOutputs['AZURE_ENABLE_HSM'], [System.EnvironmentVariableTarget]::Machine)
+$null = [Environment]::SetEnvironmentVariable("AZURE_ENABLE_HSM_STR", $DeploymentOutputs['AZURE_ENABLE_HSM_STR'], [System.EnvironmentVariableTarget]::Machine)
+
+Log "Done setting up user/machine environment variables"
+Log "KV URL " + $DeploymentOutputs['AZURE_KEYVAULT_URL'] 
+Log "HSM URL " +  $DeploymentOutputs['AZURE_KEYVAULT_HSM_URL']
+Log "ENABLE HSM" + $DeploymentOutputs['AZURE_ENABLE_HSM']
+Log "ENABLE HSM STR" + $DeploymentOutputs['AZURE_ENABLE_HSM_STR']
