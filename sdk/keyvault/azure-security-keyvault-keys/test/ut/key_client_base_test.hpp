@@ -62,10 +62,6 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys { nam
     // Create
     virtual void SetUp() override
     {
-      _putenv_s("AZURE_TEST_MODE", "LIVE");
-      _putenv_s("AZURE_KEYVAULT_HSM_URL", "https://gearamamhsm.managedhsm.azure.net/");
-      _putenv_s("AZURE_KEYVAULT_URL", "https://gearamakv1.vault.azure.net/");
-
       Azure::Core::Test::TestBase::SetUpTestBase(AZURE_TEST_RECORDING_DIR);
       m_keyVaultUrl = GetEnv("AZURE_KEYVAULT_URL");
       m_keyVaultHsmUrl = GetEnv("AZURE_KEYVAULT_HSM_URL");
