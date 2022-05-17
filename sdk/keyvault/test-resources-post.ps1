@@ -95,7 +95,14 @@ if (Test-Path $sdpath) {
     Remove-Item $sdPath -Force
 }
 
-Export-AzKeyVaultSecurityDomain -Name $hsmName -Quorum 2 -Certificates $wrappingFiles -OutputPath $sdPath
+Export-AzKeyVaultSecurityDomain -Name $hsmName -Quorum 2 -Certificates "$PSScriptRoot\$hsmName-certificate0" "$PSScriptRoot\$hsmName-certificate1" "$PSScriptRoot\$hsmName-certificate2" -OutputPath $sdPath -ErrorAction SilentlyContinue -Verbose
+
+if ( !$? ) {
+    Write-Host $Error[0].Exception
+    Write-Error $Error[0]
+
+    exit
+}
 
 Log "Security domain downloaded to '$sdPath'; Managed HSM is now active at '$hsmUrl'"
 
