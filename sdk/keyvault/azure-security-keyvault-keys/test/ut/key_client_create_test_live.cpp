@@ -203,9 +203,6 @@ TEST_F(KeyVaultKeyClient, CreateEcHsmKey)
     auto keyResponse = client.GetKey(keyName);
     CheckValidResponse(keyResponse);
     auto keyVaultKey = keyResponse.Value;
-    EXPECT_EQ(keyVaultKey.Name(), keyName);
-    EXPECT_TRUE(keyResponse.Value.Properties.Exportable.HasValue());
-    EXPECT_FALSE(keyResponse.Value.Properties.Exportable.Value());
     EXPECT_FALSE(keyResponse.Value.Properties.ReleasePolicy.HasValue());
     EXPECT_TRUE(keyVaultKey.Properties.Enabled.Value());
   }
@@ -233,8 +230,6 @@ TEST_F(KeyVaultKeyClient, CreateRsaHsmKey)
     CheckValidResponse(keyResponse);
     auto keyVaultKey = keyResponse.Value;
     EXPECT_EQ(keyVaultKey.Name(), keyName);
-    EXPECT_TRUE(keyResponse.Value.Properties.Exportable.HasValue());
-    EXPECT_FALSE(keyResponse.Value.Properties.Exportable.Value());
     EXPECT_FALSE(keyResponse.Value.Properties.ReleasePolicy.HasValue());
     EXPECT_TRUE(keyVaultKey.Properties.Enabled.Value());
   }

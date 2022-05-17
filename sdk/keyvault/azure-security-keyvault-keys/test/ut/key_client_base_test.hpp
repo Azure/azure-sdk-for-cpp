@@ -37,12 +37,8 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys { nam
     // creating. This also return the name with suffix if the "AZURE_LIVE_TEST_SUFFIX" exists.
     std::string GetTestName(bool sanitize = true)
     {
-      std::cout << "\n Keyvault " << m_keyVaultUrl;
-      std::cout << "\n HSM " << m_keyVaultHsmUrl;
-      std::cout << "\n enableHSM"
-                << Azure::Core::_internal::Environment::GetVariable("AZURE_ENABLE_HSM");
-      std::cout << "\n enableHSMSTR"
-                << Azure::Core::_internal::Environment::GetVariable("AZURE_ENABLE_HSM_STR");
+      auto output = m_keyVaultUrl.compare(m_keyVaultHsmUrl) == 0 ? "Same" : "NotSame";
+      std::cout << "\n Keyvault and HSM are" << output;
       return Azure::Core::Test::TestBase::GetTestNameSuffix(sanitize);
     }
 
