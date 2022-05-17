@@ -68,7 +68,7 @@ $([Convert]::ToBase64String($Certificate.RawData, 'InsertLineBreaks'))
 }
 
 # Make sure we deployed a Managed HSM.
-if (!$DeploymentOutputs['AZURE_ENABLE_HSM']) {
+if ($DeploymentOutputs['AZURE_KEYVAULT_HSM_URL'] -eq $DeploymentOutputs['AZURE_KEYVAULT_URL']) {
     Log "Managed HSM not deployed; skipping activation"
     exit
 }
@@ -130,19 +130,19 @@ $null = New-AzKeyVaultRoleAssignment -HsmName $hsmName -RoleDefinitionName 'Mana
 Log "Role assignments created for '$testApplicationId'"
 
 
-Log "Setting up user environment variables"
+#Log "Setting up user environment variables"
 
-$null = [Environment]::SetEnvironmentVariable("AZURE_KEYVAULT_URL", $DeploymentOutputs['AZURE_KEYVAULT_URL'], [System.EnvironmentVariableTarget]::User)
-$null = [Environment]::SetEnvironmentVariable("AZURE_KEYVAULT_HSM_URL", $DeploymentOutputs['AZURE_KEYVAULT_HSM_URL'], [System.EnvironmentVariableTarget]::User)
-$null = [Environment]::SetEnvironmentVariable("AZURE_ENABLE_HSM", $DeploymentOutputs['AZURE_ENABLE_HSM'], [System.EnvironmentVariableTarget]::User)
-$null = [Environment]::SetEnvironmentVariable("AZURE_ENABLE_HSM_STR", $DeploymentOutputs['AZURE_ENABLE_HSM_STR'], [System.EnvironmentVariableTarget]::User)
+#$null = [Environment]::SetEnvironmentVariable("AZURE_KEYVAULT_URL", $DeploymentOutputs['AZURE_KEYVAULT_URL'], [System.EnvironmentVariableTarget]::User)
+##$null = [Environment]::SetEnvironmentVariable("AZURE_KEYVAULT_HSM_URL", $DeploymentOutputs['AZURE_KEYVAULT_HSM_URL'], [System.EnvironmentVariableTarget]::User)
+#$null = [Environment]::SetEnvironmentVariable("AZURE_ENABLE_HSM", $DeploymentOutputs['AZURE_ENABLE_HSM'], [System.EnvironmentVariableTarget]::User)
+#$null = [Environment]::SetEnvironmentVariable("AZURE_ENABLE_HSM_STR", $DeploymentOutputs['AZURE_ENABLE_HSM_STR'], [System.EnvironmentVariableTarget]::User)
 
-Log "Setting up machine environment variables"
+#Log "Setting up machine environment variables"
 
-$null = [Environment]::SetEnvironmentVariable("AZURE_KEYVAULT_URL", $DeploymentOutputs['AZURE_KEYVAULT_URL'], [System.EnvironmentVariableTarget]::Machine)
-$null = [Environment]::SetEnvironmentVariable("AZURE_KEYVAULT_HSM_URL", $DeploymentOutputs['AZURE_KEYVAULT_HSM_URL'], [System.EnvironmentVariableTarget]::Machine)
-$null = [Environment]::SetEnvironmentVariable("AZURE_ENABLE_HSM", $DeploymentOutputs['AZURE_ENABLE_HSM'], [System.EnvironmentVariableTarget]::Machine)
-$null = [Environment]::SetEnvironmentVariable("AZURE_ENABLE_HSM_STR", $DeploymentOutputs['AZURE_ENABLE_HSM_STR'], [System.EnvironmentVariableTarget]::Machine)
+#$null = [Environment]::SetEnvironmentVariable("AZURE_KEYVAULT_URL", $DeploymentOutputs['AZURE_KEYVAULT_URL'], [System.EnvironmentVariableTarget]::Machine)
+#$null = [Environment]::SetEnvironmentVariable("AZURE_KEYVAULT_HSM_URL", $DeploymentOutputs['AZURE_KEYVAULT_HSM_URL'], [System.EnvironmentVariableTarget]::Machine)
+#$null = [Environment]::SetEnvironmentVariable("AZURE_ENABLE_HSM", $DeploymentOutputs['AZURE_ENABLE_HSM'], [System.EnvironmentVariableTarget]::Machine)
+#$null = [Environment]::SetEnvironmentVariable("AZURE_ENABLE_HSM_STR", $DeploymentOutputs['AZURE_ENABLE_HSM_STR'], [System.EnvironmentVariableTarget]::Machine)
 
 Log "Done setting up user/machine environment variables"
 Log "KV URL " + $DeploymentOutputs['AZURE_KEYVAULT_URL'] 
