@@ -60,7 +60,7 @@ int main()
         GetEnvHelper::GetEnv("AZURE_CLIENT_ID"),
         GetEnvHelper::GetEnv("AZURE_CLIENT_SECRET"));
     AttestationAdministrationClient const adminClient(
-        AttestationAdministrationClient::Create(endpoint, credential, clientOptions));
+        AttestationAdministrationClientFactory::Create(endpoint, credential, clientOptions));
 
     Azure::Response<AttestationToken<PolicyResult>> const resetResult
         = adminClient.ResetAttestationPolicy(AttestationType::SgxEnclave);

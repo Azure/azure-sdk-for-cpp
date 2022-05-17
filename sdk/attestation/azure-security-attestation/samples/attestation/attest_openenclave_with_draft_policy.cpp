@@ -43,7 +43,7 @@ int main()
     std::cout << "In function: SampleAttestSgxEnclaveSimple" << std::endl;
     // create client
     AttestationClient const attestationClient(
-        AttestationClient::Create(GetEnvHelper::GetEnv("ATTESTATION_AAD_URL")));
+        AttestationClientFactory::Create(GetEnvHelper::GetEnv("ATTESTATION_AAD_URL")));
 
     std::vector<uint8_t> const openEnclaveReport = AttestationCollateral::OpenEnclaveReport();
 

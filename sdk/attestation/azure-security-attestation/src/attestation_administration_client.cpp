@@ -65,7 +65,7 @@ AttestationAdministrationClient::AttestationAdministrationClient(
       std::move(perCallpolicies));
 }
 
-AttestationAdministrationClient AttestationAdministrationClient::Create(
+AttestationAdministrationClient AttestationAdministrationClientFactory::Create(
     std::string const& endpoint,
     std::shared_ptr<Core::Credentials::TokenCredential const> credential,
     AttestationAdministrationClientOptions const& options,
@@ -76,7 +76,8 @@ AttestationAdministrationClient AttestationAdministrationClient::Create(
   return returnValue;
 }
 
-std::unique_ptr<AttestationAdministrationClient> AttestationAdministrationClient::CreatePointer(
+std::unique_ptr<AttestationAdministrationClient>
+AttestationAdministrationClientFactory::CreatePointer(
     std::string const& endpoint,
     std::shared_ptr<Core::Credentials::TokenCredential const> credential,
     AttestationAdministrationClientOptions const& options,

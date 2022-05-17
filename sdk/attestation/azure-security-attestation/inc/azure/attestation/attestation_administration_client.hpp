@@ -44,6 +44,8 @@ namespace Azure { namespace Security { namespace Attestation {
    *
    */
   class AttestationAdministrationClient final {
+    friend class AttestationAdministrationClientFactory;
+
   public:
     /**
      * @brief Construct a new Attestation Administration Client object from another attestation
@@ -243,38 +245,6 @@ namespace Azure { namespace Security { namespace Attestation {
         AddIsolatedModeCertificatesOptions const& options = AddIsolatedModeCertificatesOptions{},
         Azure::Core::Context const& context = Azure::Core::Context{}) const;
 
-    /**
-     * @brief Construct a new Attestation Administration Client object.
-     *
-     * @param endpoint The URL address where the client will send the requests to.
-     * @param credential The authentication token to use.
-     * @param options The options to customize the client behavior.
-     * @return std::unique_ptr<AttestationAdministrationClient> The newly created client.
-     */
-    static AttestationAdministrationClient Create(
-        std::string const& endpoint,
-        std::shared_ptr<Core::Credentials::TokenCredential const> credential,
-        AttestationAdministrationClientOptions const& options
-        = AttestationAdministrationClientOptions(),
-        Azure::Core::Context const& context = Azure::Core::Context{});
-    /**
-     * @brief Construct a pointer to a new Attestation Administration Client object.
-     *
-     * @note It is the responsibility of the caller to manage the lifetime of the returned
-     * AttestationAdministrationClient object, typically by constructing a std::unique_ptr or
-     * std::shared_ptr from this pointer.
-     *
-     * @param endpoint The URL address where the client will send the requests to.
-     * @param credential The authentication token to use.
-     * @param options The options to customize the client behavior.
-     */
-    static std::unique_ptr<AttestationAdministrationClient> CreatePointer(
-        std::string const& endpoint,
-        std::shared_ptr<Core::Credentials::TokenCredential const> credential,
-        AttestationAdministrationClientOptions const& options
-        = AttestationAdministrationClientOptions(),
-        Azure::Core::Context const& context = Azure::Core::Context{});
-
   private:
     Azure::Core::Url m_endpoint;
     std::string m_apiVersion;
@@ -317,6 +287,41 @@ namespace Azure { namespace Security { namespace Attestation {
      */
     void RetrieveResponseValidationCollateral(
         Azure::Core::Context const& context = Azure::Core::Context{}) const;
+  };
+
+  class AttestationAdministrationClientFactory final {
+  public:
+    /**
+     * @brief Construct a new Attestation Administration Client object.
+     *
+     * @param endpoint The URL address where the client will send the requests to.
+     * @param credential The authentication token to use.
+     * @param options The options to customize the client behavior.
+     * @return std::unique_ptr<AttestationAdministrationClient> The newly created client.
+     */
+    static AttestationAdministrationClient Create(
+        std::string const& endpoint,
+        std::shared_ptr<Core::Credentials::TokenCredential const> credential,
+        AttestationAdministrationClientOptions const& options
+        = AttestationAdministrationClientOptions(),
+        Azure::Core::Context const& context = Azure::Core::Context{});
+    /**
+     * @brief Construct a pointer to a new Attestation Administration Client object.
+     *
+     * @note It is the responsibility of the caller to manage the lifetime of the returned
+     * AttestationAdministrationClient object, typically by constructing a std::unique_ptr or
+     * std::shared_ptr from this pointer.
+     *
+     * @param endpoint The URL address where the client will send the requests to.
+     * @param credential The authentication token to use.
+     * @param options The options to customize the client behavior.
+     */
+    static std::unique_ptr<AttestationAdministrationClient> CreatePointer(
+        std::string const& endpoint,
+        std::shared_ptr<Core::Credentials::TokenCredential const> credential,
+        AttestationAdministrationClientOptions const& options
+        = AttestationAdministrationClientOptions(),
+        Azure::Core::Context const& context = Azure::Core::Context{});
   };
 
 }}} // namespace Azure::Security::Attestation

@@ -114,6 +114,9 @@ namespace Azure { namespace Security { namespace Attestation {
    */
 
   class AttestationClient final {
+    // Allow client factory to access private methods in the AttestationClient object.
+    friend class AttestationClientFactory;
+
   public:
     /**
      * @brief Destructor.
@@ -216,6 +219,44 @@ namespace Azure { namespace Security { namespace Attestation {
         AttestTpmOptions const& options,
         Azure::Core::Context const& context = Azure::Core::Context::ApplicationContext) const;
 
+  private:
+    Azure::Core::Url m_endpoint;
+    std::string m_apiVersion;
+    std::shared_ptr<Azure::Core::Credentials::TokenCredential const> m_credentials;
+    std::shared_ptr<Azure::Core::Http::_internal::HttpPipeline> m_pipeline;
+    AttestationTokenValidationOptions m_tokenValidationOptions;
+
+    mutable std::vector<Models::AttestationSigner> m_attestationSigners;
+    /** @brief Construct a new Attestation Client object
+     *
+     * @param endpoint The URL address where the client will send the requests to.
+     * @param credential The authentication method to use (required for TPM attestation).
+     * @param options The options to customize the client behavior.
+     */
+    AttestationClient(
+        std::string const& endpoint,
+        std::shared_ptr<Core::Credentials::TokenCredential const> credential,
+        AttestationClientOptions options = AttestationClientOptions());
+
+    /**
+     * @brief Retrieves the information needed to validate a response from the attestation service.
+     *
+     * @note: This method MUST be called before any calls to the attestation service which must be
+     * validated.
+     */
+    void RetrieveResponseValidationCollateral(
+        Azure::Core::Context const& context = Azure::Core::Context{}) const;
+  };
+
+  /** @brief Construct a new AttestationClient object.
+  * 
+  * The AttestationClientFactory class is a factory class for instantiating new AttestationClient
+  * objects.
+  * 
+  */
+
+  class AttestationClientFactory final {
+  public:
     /** @brief Construct a new Attestation Client object
      *
      * @param endpoint The URL address where the client will send the requests to.
@@ -277,34 +318,6 @@ namespace Azure { namespace Security { namespace Attestation {
         std::string const& endpoint,
         AttestationClientOptions options = AttestationClientOptions(),
         Azure::Core::Context const& constext = Azure::Core::Context{});
-
-  private:
-    Azure::Core::Url m_endpoint;
-    std::string m_apiVersion;
-    std::shared_ptr<Azure::Core::Credentials::TokenCredential const> m_credentials;
-    std::shared_ptr<Azure::Core::Http::_internal::HttpPipeline> m_pipeline;
-    AttestationTokenValidationOptions m_tokenValidationOptions;
-
-    mutable std::vector<Models::AttestationSigner> m_attestationSigners;
-    /** @brief Construct a new Attestation Client object
-     *
-     * @param endpoint The URL address where the client will send the requests to.
-     * @param credential The authentication method to use (required for TPM attestation).
-     * @param options The options to customize the client behavior.
-     */
-    AttestationClient(
-        std::string const& endpoint,
-        std::shared_ptr<Core::Credentials::TokenCredential const> credential,
-        AttestationClientOptions options = AttestationClientOptions());
-
-    /**
-     * @brief Retrieves the information needed to validate a response from the attestation service.
-     *
-     * @note: This method MUST be called before any calls to the attestation service which must be
-     * validated.
-     */
-    void RetrieveResponseValidationCollateral(
-        Azure::Core::Context const& context = Azure::Core::Context{}) const;
   };
 
 }}} // namespace Azure::Security::Attestation
