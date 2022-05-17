@@ -11,7 +11,7 @@
 namespace Azure { namespace Storage { namespace Sas {
 
   namespace {
-    constexpr static const char* SasVersion = "2020-08-04";
+    constexpr static const char* SasVersion = Blobs::_detail::ApiVersion;
 
     std::string BlobSasResourceToString(BlobSasResource resource)
     {
