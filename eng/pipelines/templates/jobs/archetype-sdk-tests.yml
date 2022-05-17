@@ -174,7 +174,6 @@ jobs:
     # Surface the ServiceDirectory parameter as an environment variable so tests can take advantage of it.
     AZURE_SERVICE_DIRECTORY: ${{ parameters.ServiceDirectory }}
     EnableHSM: 0 
-    HSMLocation: ''
     KVLocation:  ${{ parameters.Location }}
 
   steps:
@@ -233,8 +232,7 @@ jobs:
     parameters:
       ServiceDirectory: ${{ parameters.ServiceDirectory }}
       Location: "$(KVLocation)"
-      HsmLocation: "$(HSMLocation)"
-      EnableHSM : $(EnableHSM)
+      ArmTemplateParameters: "@{ enableHsm = $(EnableHSM) }"
       SubscriptionConfiguration: ${{ parameters.SubscriptionConfiguration }}
 
     # For non multi-config generator use the same build configuration to run tests

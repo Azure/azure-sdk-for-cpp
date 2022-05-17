@@ -117,40 +117,6 @@
       "metadata": {
         "description": "Whether to enable deployment of Managed HSM. The default is false."
       }
-    },
-    "hsmLocation": {
-      "defaultValue": "eastus2",
-      "allowedValues": [
-        "australiacentral",
-        "australiaeast",
-        "canadacentral",
-        "canadaeast",
-        "centralindia",
-        "centralus",
-        "eastasia",
-        "eastus",
-        "eastus2",
-        "francecentral",
-        "japaneast",
-        "koreacentral",
-        "northcentralus",
-        "northeurope",
-        "southafricanorth",
-        "southcentralus",
-        "switzerlandnorth",
-        "switzerlandwest",
-        "uaenorth",
-        "uksouth",
-        "westcentralus",
-        "westeurope",
-        "westus",
-        "westus2",
-        "westus3"
-      ],
-      "type": "String",
-      "metadata": {
-        "description": "The location of the Managed HSM. By default, this is 'eastus2'."
-      }
     }
   },
   "variables": {

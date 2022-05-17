@@ -3,8 +3,6 @@ parameters:
   ArmTemplateParameters: '@{}'
   DeleteAfterHours: 8
   Location: ''
-  HsmLocation: ''
-  EnableHSM: false
   SubscriptionConfiguration: $(sub-config-azure-cloud-test-resources)
 
 # SubscriptionConfiguration will be splatted into the parameters of the test
@@ -53,8 +51,6 @@ steps:
         -BaseName 'Generated' `
         -ServiceDirectory '${{ parameters.ServiceDirectory }}' `
         -Location '${{ parameters.Location }}' `
-        -HsmLocation '${{ parameters.HsmLocation }}' `
-        -EnableHSM ${{ parameters.EnableHSM }} `
         -DeleteAfterHours '${{ parameters.DeleteAfterHours }}' `
         @subscriptionConfiguration `
         -AdditionalParameters ${{ parameters.ArmTemplateParameters }} `
