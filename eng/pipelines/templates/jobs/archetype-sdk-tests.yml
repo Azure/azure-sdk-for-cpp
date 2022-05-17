@@ -232,7 +232,7 @@ jobs:
     parameters:
       ServiceDirectory: ${{ parameters.ServiceDirectory }}
       Location: "$(KVLocation)"
-      ArmTemplateParameters: "@{ enableHsm = $(EnableHSM) }"
+      ArmTemplateParameters: "@{ enableHsm = [System.Convert]::ToBoolean($(EnableHSM)) }"
       SubscriptionConfiguration: ${{ parameters.SubscriptionConfiguration }}
 
     # For non multi-config generator use the same build configuration to run tests
