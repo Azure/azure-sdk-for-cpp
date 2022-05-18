@@ -239,7 +239,7 @@ namespace Azure { namespace Core {
       {
         return GetDeadline() < std::chrono::system_clock::now();
       }
-      catch (...)
+      catch (std::invalid_argument const&)
       {
         return true;
       }
