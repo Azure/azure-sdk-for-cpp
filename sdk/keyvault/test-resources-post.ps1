@@ -89,7 +89,7 @@ $wrappingFiles = foreach ($i in 0..2) {
 
 Log "Downloading security domain from '$hsmUrl'"
 
-$sdPath = "$PSScriptRoot\$hsmName-security-domain.key"
+$sdPath = "$PSScriptRoot/$hsmName-security-domain.key"
 if (Test-Path $sdpath) {
     Log "Deleting old security domain: $sdPath"
     Remove-Item $sdPath -Force
