@@ -11,8 +11,8 @@
 #include <azure/core/context.hpp>
 #include <azure/core/uuid.hpp>
 #include <azure/identity/client_secret_credential.hpp>
+#include <azure/keyvault/keys.hpp>
 #include <azure/keyvault/keys/cryptography/cryptography_client.hpp>
-#include <azure/keyvault/keyvault_keys.hpp>
 
 #include <azure/core/test/test_base.hpp>
 

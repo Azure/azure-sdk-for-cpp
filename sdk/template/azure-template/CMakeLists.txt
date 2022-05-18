@@ -60,11 +60,8 @@ target_include_directories(
     PUBLIC
       $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/inc>
       $<INSTALL_INTERFACE:include>
-      # Disable dependency on azure-core until azure-core has released to vcpkg
-      # ${azure-core-cpp_INCLUDE_DIRS}
 )
 
-# Disable dependency on azure-core until azure-core has released to vcpkg
 target_link_libraries(azure-template PUBLIC Azure::azure-core)
 
 # make sure that users can consume the project as a library.

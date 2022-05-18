@@ -17,7 +17,7 @@
 
 #include <azure/core.hpp>
 #include <azure/identity.hpp>
-#include <azure/keyvault/keyvault_keys.hpp>
+#include <azure/keyvault/keys.hpp>
 
 #include <chrono>
 #include <iostream>

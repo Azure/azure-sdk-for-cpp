@@ -10,9 +10,9 @@
 #include <azure/attestation.hpp>
 #include <azure/core.hpp>
 #include <azure/identity.hpp>
-#include <azure/keyvault/keyvault_certificates.hpp>
-#include <azure/keyvault/keyvault_keys.hpp>
-#include <azure/keyvault/keyvault_secrets.hpp>
+#include <azure/keyvault/certificates.hpp>
+#include <azure/keyvault/keys.hpp>
+#include <azure/keyvault/secrets.hpp>
 #include <azure/storage/blobs.hpp>
 #include <azure/storage/files/datalake.hpp>
 #include <azure/storage/files/shares.hpp>
@@ -67,10 +67,11 @@ int main()
     ShareLeaseClient shareLeaseClient(shareFileClient, leaseID);
     ShareServiceClient shareServiceClient(smokeUrl);
 
-    //Attestation 
+    // Attestation
     std::cout << "Creating Attestation Clients" << std::endl;
     AttestationClient attestationClient(AttestationClient::Create(smokeUrl));
-    AttestationAdministrationClient attestationAdminClient(AttestationAdministrationClient::Create(smokeUrl, credential));
+    AttestationAdministrationClient attestationAdminClient(
+        AttestationAdministrationClient::Create(smokeUrl, credential));
 
     std::cout << "Successfully Created the Clients" << std::endl;
   }

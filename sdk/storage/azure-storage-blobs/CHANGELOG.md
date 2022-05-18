@@ -4,6 +4,12 @@
 
 ### Features Added
 
+- Bumped up API version to `2020-10-02`.
+- Added new API: `BlockBlobClient::Query()`.
+- Added `ContinuationToken` and `PageSizeHint` in `GetPageRangesOptions`.
+- Added support for listing system containers.
+- Added support for listing deleted root blob with active versions.
+
 ### Breaking Changes
 
 ### Bugs Fixed

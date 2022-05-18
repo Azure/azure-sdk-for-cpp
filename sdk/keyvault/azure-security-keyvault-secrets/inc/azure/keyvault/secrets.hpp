@@ -16,4 +16,5 @@
 #include "azure/keyvault/secrets/keyvault_secret.hpp"
 #include "azure/keyvault/secrets/keyvault_secret_paged_response.hpp"
 #include "azure/keyvault/secrets/keyvault_secret_properties.hpp"
+#include "azure/keyvault/secrets/rtti.hpp"
 #include "azure/keyvault/secrets/secret_client.hpp"

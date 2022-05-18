@@ -6,7 +6,7 @@
 #include "key_client_base_test.hpp"
 
 #include <azure/core/datetime.hpp>
-#include <azure/keyvault/keyvault_keys.hpp>
+#include <azure/keyvault/keys.hpp>
 #include <private/key_constants.hpp>
 
 #include <string>
