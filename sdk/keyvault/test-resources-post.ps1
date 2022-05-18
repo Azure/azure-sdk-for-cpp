@@ -59,7 +59,7 @@ function Export-X509Certificate2([string] $Path, [X509Certificate2] $Certificate
 
 function Export-X509Certificate2PEM([string] $Path, [X509Certificate2] $Certificate) {
 
-    @"
+@"
 -----BEGIN CERTIFICATE-----
 $([Convert]::ToBase64String($Certificate.RawData, 'InsertLineBreaks'))
 -----END CERTIFICATE-----
@@ -80,7 +80,7 @@ Log 'Creating 3 X509 certificates to activate security domain'
 $wrappingFiles = foreach ($i in 0..2) {
     $certificate = New-X509Certificate2 "CN=$($hsmUrl.Host)"
 
-    $baseName = "$PSScriptRoot/$hsmName-certificate$i"
+    $baseName = "$PSScriptRoot\$hsmName-certificate$i"
     Export-X509Certificate2 "$baseName.pfx" $certificate
     Export-X509Certificate2PEM "$baseName.cer" $certificate
 
@@ -89,14 +89,13 @@ $wrappingFiles = foreach ($i in 0..2) {
 
 Log "Downloading security domain from '$hsmUrl'"
 
-$sdPath = "$PSScriptRoot/$hsmName-security-domain.key"
+$sdPath = "$PSScriptRoot\$hsmName-security-domain.key"
 if (Test-Path $sdpath) {
     Log "Deleting old security domain: $sdPath"
     Remove-Item $sdPath -Force
 }
 
-Export-AzKeyVaultSecurityDomain -Name $hsmName -Quorum 2 -Certificates "$PSScriptRoot/$hsmName-certificate0", "$PSScriptRoot/$hsmName-certificate1", "$PSScriptRoot/$hsmName-certificate2" -ErrorAction SilentlyContinue -Verbose -OutputPath ./xyz.sds
-
+Export-AzKeyVaultSecurityDomain -Name $hsmName -Quorum 2 -Certificates $wrappingFiles -OutputPath $sdPath -ErrorAction SilentlyContinue -Verbose
 if ( !$? ) {
     Write-Host $Error[0].Exception
     Write-Error $Error[0]
@@ -114,46 +113,7 @@ Start-Sleep -Seconds 30
 $testApplicationOid = $DeploymentOutputs['CLIENT_OBJECTID']
 
 Log "Creating additional required role assignments for '$testApplicationOid'"
-$null = New-AzKeyVaultRoleAssignment -HsmName $hsmName -RoleDefinitionName 'Managed HSM Administrator' -ObjectID $testApplicationOid
 $null = New-AzKeyVaultRoleAssignment -HsmName $hsmName -RoleDefinitionName 'Managed HSM Crypto Officer' -ObjectID $testApplicationOid
 $null = New-AzKeyVaultRoleAssignment -HsmName $hsmName -RoleDefinitionName 'Managed HSM Crypto User' -ObjectID $testApplicationOid
-$null = New-AzKeyVaultRoleAssignment -HsmName $hsmName -RoleDefinitionName 'Managed HSM Policy Administrator' -ObjectID $testApplicationOid
-$null = New-AzKeyVaultRoleAssignment -HsmName $hsmName -RoleDefinitionName 'Managed HSM Crypto Auditor' -ObjectID $testApplicationOid
-$null = New-AzKeyVaultRoleAssignment -HsmName $hsmName -RoleDefinitionName 'Managed HSM Crypto Service Encryption User' -ObjectID $testApplicationOid
-$null = New-AzKeyVaultRoleAssignment -HsmName $hsmName -RoleDefinitionName 'Managed HSM Backup' -ObjectID $testApplicationOid
 
 Log "Role assignments created for '$testApplicationOid'"
-
-$testApplicationId = $DeploymentOutputs['AZURE_CLIENT_ID']
-
-Log "Creating additional required role assignments for '$testApplicationOid'"
-$null = New-AzKeyVaultRoleAssignment -HsmName $hsmName -RoleDefinitionName 'Managed HSM Administrator' -ObjectID $testApplicationId
-$null = New-AzKeyVaultRoleAssignment -HsmName $hsmName -RoleDefinitionName 'Managed HSM Crypto Officer' -ObjectID $testApplicationId
-$null = New-AzKeyVaultRoleAssignment -HsmName $hsmName -RoleDefinitionName 'Managed HSM Crypto User' -ObjectID $testApplicationId
-$null = New-AzKeyVaultRoleAssignment -HsmName $hsmName -RoleDefinitionName 'Managed HSM Policy Administrator' -ObjectID $testApplicationId
-$null = New-AzKeyVaultRoleAssignment -HsmName $hsmName -RoleDefinitionName 'Managed HSM Crypto Auditor' -ObjectID $testApplicationId
-$null = New-AzKeyVaultRoleAssignment -HsmName $hsmName -RoleDefinitionName 'Managed HSM Crypto Service Encryption User' -ObjectID $testApplicationId
-$null = New-AzKeyVaultRoleAssignment -HsmName $hsmName -RoleDefinitionName 'Managed HSM Backup' -ObjectID $testApplicationId
-
-Log "Role assignments created for '$testApplicationId'"
-
-
-#Log "Setting up user environment variables"
-
-#$null = [Environment]::SetEnvironmentVariable("AZURE_KEYVAULT_URL", $DeploymentOutputs['AZURE_KEYVAULT_URL'], [System.EnvironmentVariableTarget]::User)
-##$null = [Environment]::SetEnvironmentVariable("AZURE_KEYVAULT_HSM_URL", $DeploymentOutputs['AZURE_KEYVAULT_HSM_URL'], [System.EnvironmentVariableTarget]::User)
-#$null = [Environment]::SetEnvironmentVariable("AZURE_ENABLE_HSM", $DeploymentOutputs['AZURE_ENABLE_HSM'], [System.EnvironmentVariableTarget]::User)
-#$null = [Environment]::SetEnvironmentVariable("AZURE_ENABLE_HSM_STR", $DeploymentOutputs['AZURE_ENABLE_HSM_STR'], [System.EnvironmentVariableTarget]::User)
-
-#Log "Setting up machine environment variables"
-
-#$null = [Environment]::SetEnvironmentVariable("AZURE_KEYVAULT_URL", $DeploymentOutputs['AZURE_KEYVAULT_URL'], [System.EnvironmentVariableTarget]::Machine)
-#$null = [Environment]::SetEnvironmentVariable("AZURE_KEYVAULT_HSM_URL", $DeploymentOutputs['AZURE_KEYVAULT_HSM_URL'], [System.EnvironmentVariableTarget]::Machine)
-#$null = [Environment]::SetEnvironmentVariable("AZURE_ENABLE_HSM", $DeploymentOutputs['AZURE_ENABLE_HSM'], [System.EnvironmentVariableTarget]::Machine)
-#$null = [Environment]::SetEnvironmentVariable("AZURE_ENABLE_HSM_STR", $DeploymentOutputs['AZURE_ENABLE_HSM_STR'], [System.EnvironmentVariableTarget]::Machine)
-
-Log "Done setting up user/machine environment variables"
-Log "KV URL " + $DeploymentOutputs['AZURE_KEYVAULT_URL'] 
-Log "HSM URL " +  $DeploymentOutputs['AZURE_KEYVAULT_HSM_URL']
-Log "ENABLE HSM" + $DeploymentOutputs['AZURE_ENABLE_HSM']
-Log "ENABLE HSM STR" + $DeploymentOutputs['AZURE_ENABLE_HSM_STR']
