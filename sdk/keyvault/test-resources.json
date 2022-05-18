@@ -127,12 +127,7 @@
       "bypass": "AzureServices",
       "defaultAction": "Allow",
       "virtualNetworkRules": [],
-      "ipRules": [
-        {
-          "value": "0.0.0.0/0"
-        }
-      ]
-
+      "ipRules": []
     }
   },
   "resources": [
