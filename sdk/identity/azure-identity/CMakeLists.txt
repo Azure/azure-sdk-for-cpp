@@ -52,6 +52,7 @@ set(
     inc/azure/identity/dll_import_export.hpp
     inc/azure/identity/environment_credential.hpp
     inc/azure/identity/managed_identity_credential.hpp
+    inc/azure/identity/rtti.hpp
     inc/azure/identity.hpp
 )
 
