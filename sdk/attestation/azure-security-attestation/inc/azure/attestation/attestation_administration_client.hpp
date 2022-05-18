@@ -215,7 +215,7 @@ namespace Azure { namespace Security { namespace Attestation {
     AddIsolatedModeCertificate(
         std::string const& pemEncodedCertificateToAdd,
         AttestationSigningKey const& signerForRequest,
-        AddIsolatedModeCertificatesOptions const& options = AddIsolatedModeCertificatesOptions{},
+        AddIsolatedModeCertificateOptions const& options = AddIsolatedModeCertificateOptions{},
         Azure::Core::Context const& context = Azure::Core::Context{}) const;
 
     /**
@@ -242,7 +242,7 @@ namespace Azure { namespace Security { namespace Attestation {
     RemoveIsolatedModeCertificate(
         std::string const& pemEncodedCertificateToAdd,
         AttestationSigningKey const& signerForRequest,
-        AddIsolatedModeCertificatesOptions const& options = AddIsolatedModeCertificatesOptions{},
+        RemoveIsolatedModeCertificateOptions const& options = RemoveIsolatedModeCertificateOptions{},
         Azure::Core::Context const& context = Azure::Core::Context{}) const;
 
   private:

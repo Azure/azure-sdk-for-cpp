@@ -172,7 +172,7 @@ namespace Azure { namespace Security { namespace Attestation {
      */
     Response<Models::AttestationToken<Models::AttestationResult>> AttestSgxEnclave(
         std::vector<uint8_t> const& sgxQuoteToAttest,
-        AttestEnclaveOptions options = AttestEnclaveOptions(),
+        AttestSgxEnclaveOptions options = AttestSgxEnclaveOptions(),
         Azure::Core::Context const& context = Azure::Core::Context{}) const;
 
     /**
@@ -193,7 +193,7 @@ namespace Azure { namespace Security { namespace Attestation {
      */
     Response<Models::AttestationToken<Models::AttestationResult>> AttestOpenEnclave(
         std::vector<uint8_t> const& openEnclaveReportToAttest,
-        AttestEnclaveOptions options = AttestEnclaveOptions(),
+        AttestOpenEnclaveOptions options = AttestOpenEnclaveOptions(),
         Azure::Core::Context const& context = Azure::Core::Context{}) const;
 
     /**

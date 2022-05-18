@@ -84,7 +84,7 @@ Azure::Response<TokenValidationCertificateResult> AttestationClient::GetTokenVal
 
 Azure::Response<AttestationToken<AttestationResult>> AttestationClient::AttestSgxEnclave(
     std::vector<uint8_t> const& sgxQuote,
-    AttestEnclaveOptions options,
+    AttestSgxEnclaveOptions options,
     Azure::Core::Context const& context) const
 {
   AttestSgxEnclaveRequest attestRequest{
@@ -126,7 +126,7 @@ Azure::Response<AttestationToken<AttestationResult>> AttestationClient::AttestSg
 
 Azure::Response<AttestationToken<AttestationResult>> AttestationClient::AttestOpenEnclave(
     std::vector<uint8_t> const& openEnclaveReport,
-    AttestEnclaveOptions options,
+    AttestOpenEnclaveOptions options,
     Azure::Core::Context const& context) const
 {
   AttestOpenEnclaveRequest attestRequest{
@@ -158,7 +158,7 @@ Azure::Response<TpmAttestationResult> AttestationClient::AttestTpm(
     AttestTpmOptions const& attestTpmOptions,
     Azure::Core::Context const& context) const
 {
-  std::string jsonToSend = TpmDataSerializer::Serialize(attestTpmOptions.ValueToSend);
+  std::string jsonToSend = TpmDataSerializer::Serialize(attestTpmOptions.Payload);
   auto encodedVector = std::vector<uint8_t>(jsonToSend.begin(), jsonToSend.end());
   Azure::Core::IO::MemoryBodyStream stream(encodedVector);
 

@@ -422,7 +422,7 @@ Azure::Response<Models::AttestationToken<Models::IsolatedModeCertificateModifica
 AttestationAdministrationClient::AddIsolatedModeCertificate(
     std::string const& pemEncodedX509CertificateToAdd,
     AttestationSigningKey const& existingSigningKey,
-    AddIsolatedModeCertificatesOptions const& options,
+    AddIsolatedModeCertificateOptions const& options,
     Azure::Core::Context const& context) const
 {
   auto const policyCertToken(
@@ -448,7 +448,7 @@ Azure::Response<Models::AttestationToken<Models::IsolatedModeCertificateModifica
 AttestationAdministrationClient::RemoveIsolatedModeCertificate(
     std::string const& pemEncodedX509CertificateToRemove,
     AttestationSigningKey const& existingSigningKey,
-    AddIsolatedModeCertificatesOptions const& options,
+    RemoveIsolatedModeCertificateOptions const& options,
     Azure::Core::Context const& context) const
 {
   // Calculate a signed (or unsigned) attestation policy token to send to the service.

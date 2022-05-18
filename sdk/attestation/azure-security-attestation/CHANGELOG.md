@@ -5,6 +5,9 @@
 ### Features Added
 
 ### Breaking Changes
+- `ValueToSend` field in `TpmAttestationOptions` becomes `Payload`.
+- `AddIsolatedModeCertificatesOptions` becomes `AddIsolatedModeCertificateOptions`
+- `RemoveIsolatedModeCertificatesOptions` becomes `RemoveIsolatedModeCertificateOptions`
 
 ### Bugs Fixed
 
