@@ -95,7 +95,7 @@ if (Test-Path $sdpath) {
     Remove-Item $sdPath -Force
 }
 
-Export-AzKeyVaultSecurityDomain -Name $hsmName -Quorum 2 -Certificates "$hsmName-certificate0" "$hsmName-certificate1" "$hsmName-certificate2" -OutputPath $sdPath -ErrorAction SilentlyContinue -Verbose
+Export-AzKeyVaultSecurityDomain -Name $hsmName -Quorum 2 -Certificates "$hsmName-certificate0","$hsmName-certificate1","$hsmName-certificate2" -OutputPath $sdPath -ErrorAction SilentlyContinue -Verbose
 
 if ( !$? ) {
     Write-Host $Error[0].Exception
