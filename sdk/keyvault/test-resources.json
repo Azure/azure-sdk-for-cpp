@@ -125,9 +125,14 @@
     "hsmName": "[concat(parameters('baseName'), 'hsm')]",
     "networkAcls": {
       "bypass": "AzureServices",
+      "defaultAction": "Allow",
       "virtualNetworkRules": [],
-      "ipRules": [],
-      "defaultAction": "Allow"
+      "ipRules": [
+        {
+          "value": "0.0.0.0/0"
+        }
+      ]
+
     }
   },
   "resources": [
@@ -226,6 +231,7 @@
       "apiVersion": "[variables('hsmApiVersion')]",
       "name": "[variables('hsmName')]",
       "location": "[parameters('location')]",
+      "publicNetworkAccess": "Enabled",
       "sku": {
         "family": "B",
         "name": "Standard_B1"

@@ -94,7 +94,7 @@ jobs:
         CmakeArgs: ' -DBUILD_RTTI=OFF -DBUILD_TESTING=ON -DBUILD_SAMPLES=ON'
         BuildArgs: '-v --parallel 8 --config Release'
         WindowsCtestConfig: "-C Release"
-      HSM_Win_x64_with_unit_test_winHttp:
+      Win_x64_with_unit_test_winHttp:
         Pool: azsdk-pool-mms-win-2019-general
         VcpkgInstall: 'openssl'
         OSVmImage: MMS2019
@@ -127,7 +127,7 @@ jobs:
         CmakeArgs: ' -DBUILD_TRANSPORT_CURL=ON -DBUILD_TESTING=ON -DRUN_LONG_UNIT_TESTS=ON -DBUILD_PERFORMANCE_TESTS=ON '
         BuildArgs: '-v --parallel 8'
         #AZURE_CORE_ENABLE_JSON_TESTS: 1  # Testing Json lib on Win+WinHttp only, No need to repeat here as it is independent to the http transport adapter.
-      Win_x64_with_unit_test_libcurl:
+      HSM_Win_x64_with_unit_test_libcurl:
         Pool: azsdk-pool-mms-win-2019-general
         OSVmImage: MMS2019
         VCPKG_DEFAULT_TRIPLET: 'x64-windows-static'
