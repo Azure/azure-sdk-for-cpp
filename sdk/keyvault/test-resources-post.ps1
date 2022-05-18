@@ -59,7 +59,7 @@ function Export-X509Certificate2([string] $Path, [X509Certificate2] $Certificate
 
 function Export-X509Certificate2PEM([string] $Path, [X509Certificate2] $Certificate) {
 
-@"
+    @"
 -----BEGIN CERTIFICATE-----
 $([Convert]::ToBase64String($Certificate.RawData, 'InsertLineBreaks'))
 -----END CERTIFICATE-----
@@ -80,7 +80,7 @@ Log 'Creating 3 X509 certificates to activate security domain'
 $wrappingFiles = foreach ($i in 0..2) {
     $certificate = New-X509Certificate2 "CN=$($hsmUrl.Host)"
 
-    $baseName = "$hsmName-certificate$i"
+    $baseName = "$PSScriptRoot/$hsmName-certificate$i"
     Export-X509Certificate2 "$baseName.pfx" $certificate
     Export-X509Certificate2PEM "$baseName.cer" $certificate
 
@@ -95,12 +95,13 @@ if (Test-Path $sdpath) {
     Remove-Item $sdPath -Force
 }
 
-Export-AzKeyVaultSecurityDomain -Name $hsmName -Quorum 2 -Certificates "$hsmName-certificate0","$hsmName-certificate1","$hsmName-certificate2" -OutputPath $sdPath -ErrorAction SilentlyContinue -Verbose
+Export-AzKeyVaultSecurityDomain -Name $hsmName -Quorum 2 -Certificates "$PSScriptRoot/$hsmName-certificate0", "$PSScriptRoot/$hsmName-certificate1", "$PSScriptRoot/$hsmName-certificate2" -OutputPath $sdPath -ErrorAction SilentlyContinue -Verbose
 
 if ( !$? ) {
     Write-Host $Error[0].Exception
     Write-Error $Error[0]
-
+    Write-Host  ConvertTo-Json -Object $Error
+    Write-Error ConvertTo-Json -Object $Error
     exit
 }
 
