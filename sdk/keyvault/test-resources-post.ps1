@@ -95,7 +95,7 @@ if (Test-Path $sdpath) {
     Remove-Item $sdPath -Force
 }
 
-Export-AzKeyVaultSecurityDomain -Name $hsmName -Quorum 2 -Certificates "$PSScriptRoot/$hsmName-certificate0", "$PSScriptRoot/$hsmName-certificate1", "$PSScriptRoot/$hsmName-certificate2" -ErrorAction SilentlyContinue -Verbose -OutputPath $null
+Export-AzKeyVaultSecurityDomain -Name $hsmName -Quorum 2 -Certificates "$PSScriptRoot/$hsmName-certificate0", "$PSScriptRoot/$hsmName-certificate1", "$PSScriptRoot/$hsmName-certificate2" -ErrorAction SilentlyContinue -Verbose -OutputPath ./xyz.sds
 
 if ( !$? ) {
     Write-Host $Error[0].Exception
