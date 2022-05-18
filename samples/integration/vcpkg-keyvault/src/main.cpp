@@ -28,9 +28,15 @@ using namespace Azure::Security::KeyVault::Keys;
 
 int main()
 {
+  auto keyvaultUrl = std::getenv("AZURE_KEYVAULT_URL");
+  if (!keyvaultUrl)
+  {
+    throw std::exception("The required environment variable (AZURE_KEYVAULT_URL) is not set.");
+  }
+
   auto credential = std::make_shared<Azure::Identity::EnvironmentCredential>();
 
-  KeyClient keyClient(std::getenv("AZURE_KEYVAULT_URL"), credential);
+  KeyClient keyClient(keyvaultUrl, credential);
 
   std::string rsaKeyName("CloudRsaKey" + Azure::Core::Uuid::CreateUuid().ToString());
   try

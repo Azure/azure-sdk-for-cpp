@@ -6,7 +6,6 @@
  *
  */
 
-#include <get_env.hpp>
 #include <azure/attestation.hpp>
 #include <azure/core.hpp>
 #include <azure/identity.hpp>
@@ -17,6 +16,7 @@
 #include <azure/storage/files/datalake.hpp>
 #include <azure/storage/files/shares.hpp>
 #include <azure/storage/queues.hpp>
+#include <get_env.hpp>
 #include <iostream>
 
 using namespace Azure::Security::KeyVault::Keys;
@@ -41,11 +41,17 @@ int main()
   // instantiate the clients
   try
   {
+    auto keyvaultUrl = std::getenv("AZURE_KEYVAULT_URL");
+    if (!keyvaultUrl)
+    {
+      throw std::exception("The required environment variable (AZURE_KEYVAULT_URL) is not set.");
+    }
+
     std::cout << "Creating Keyvault Clients" << std::endl;
     // keyvault
-    KeyClient keyClient(std::getenv("AZURE_KEYVAULT_URL"), credential);
-    SecretClient secretClient(std::getenv("AZURE_KEYVAULT_URL"), credential);
-    CertificateClient certificateClient(std::getenv("AZURE_KEYVAULT_URL"), credential);
+    KeyClient keyClient(keyvaultUrl, credential);
+    SecretClient secretClient(keyvaultUrl, credential);
+    CertificateClient certificateClient(keyvaultUrl, credential);
 
     std::cout << "Creating Storage Clients" << std::endl;
     // Storage
@@ -67,10 +73,11 @@ int main()
     ShareLeaseClient shareLeaseClient(shareFileClient, leaseID);
     ShareServiceClient shareServiceClient(smokeUrl);
 
-    //Attestation 
+    // Attestation
     std::cout << "Creating Attestation Clients" << std::endl;
     AttestationClient attestationClient(AttestationClient::Create(smokeUrl));
-    AttestationAdministrationClient attestationAdminClient(AttestationAdministrationClient::Create(smokeUrl, credential));
+    AttestationAdministrationClient attestationAdminClient(
+        AttestationAdministrationClient::Create(smokeUrl, credential));
 
     std::cout << "Successfully Created the Clients" << std::endl;
   }

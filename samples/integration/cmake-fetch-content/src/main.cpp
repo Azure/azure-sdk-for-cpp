@@ -27,8 +27,15 @@ int main(int argc, char* argv[])
   /****************   Create container  ************************/
   try
   {
-    auto containerClient = BlobContainerClient::CreateFromConnectionString(
-        std::getenv("STORAGE_CONNECTION_STRING"), "sample");
+    auto connectionString = std::getenv("STORAGE_CONNECTION_STRING");
+    if (!connectionString)
+    {
+      throw std::exception(
+          "The required environment variable (STORAGE_CONNECTION_STRING) is not set.");
+    }
+
+    auto containerClient
+        = BlobContainerClient::CreateFromConnectionString(connectionString, "sample");
 
     containerClient.CreateIfNotExists();
 
