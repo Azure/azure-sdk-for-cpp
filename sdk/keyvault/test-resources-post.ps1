@@ -80,7 +80,7 @@ Log 'Creating 3 X509 certificates to activate security domain'
 $wrappingFiles = foreach ($i in 0..2) {
     $certificate = New-X509Certificate2 "CN=$($hsmUrl.Host)"
 
-    $baseName = "$PSScriptRoot\$hsmName-certificate$i"
+    $baseName = "$hsmName-certificate$i"
     Export-X509Certificate2 "$baseName.pfx" $certificate
     Export-X509Certificate2PEM "$baseName.cer" $certificate
 
@@ -95,7 +95,7 @@ if (Test-Path $sdpath) {
     Remove-Item $sdPath -Force
 }
 
-Export-AzKeyVaultSecurityDomain -Name $hsmName -Quorum 2 -Certificates "$PSScriptRoot\$hsmName-certificate0" "$PSScriptRoot\$hsmName-certificate1" "$PSScriptRoot\$hsmName-certificate2" -OutputPath $sdPath -ErrorAction SilentlyContinue -Verbose
+Export-AzKeyVaultSecurityDomain -Name $hsmName -Quorum 2 -Certificates "$hsmName-certificate0" "$hsmName-certificate1" "$hsmName-certificate2" -OutputPath $sdPath -ErrorAction SilentlyContinue -Verbose
 
 if ( !$? ) {
     Write-Host $Error[0].Exception
