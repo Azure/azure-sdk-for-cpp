@@ -231,7 +231,6 @@
       "apiVersion": "[variables('hsmApiVersion')]",
       "name": "[variables('hsmName')]",
       "location": "[parameters('location')]",
-      "publicNetworkAccess": "Enabled",
       "sku": {
         "family": "B",
         "name": "Standard_B1"

@@ -22,8 +22,12 @@ param (
 
 # By default stop for any error.
 if (!$PSBoundParameters.ContainsKey('ErrorAction')) {
-    $ErrorActionPreference = 'Stop'
+    $ErrorActionPreference = 'Stop'   
 }
+#Retry for errors
+$ErrorRetries = 5
+$RetryTimeout = 30;
+
 
 function Log($Message) {
     Write-Host ('{0} - {1}' -f [DateTime]::Now.ToLongTimeString(), $Message)
@@ -59,7 +63,7 @@ function Export-X509Certificate2([string] $Path, [X509Certificate2] $Certificate
 
 function Export-X509Certificate2PEM([string] $Path, [X509Certificate2] $Certificate) {
 
-@"
+    @"
 -----BEGIN CERTIFICATE-----
 $([Convert]::ToBase64String($Certificate.RawData, 'InsertLineBreaks'))
 -----END CERTIFICATE-----
@@ -94,14 +98,14 @@ if (Test-Path $sdpath) {
     Log "Deleting old security domain: $sdPath"
     Remove-Item $sdPath -Force
 }
-
-Export-AzKeyVaultSecurityDomain -Name $hsmName -Quorum 2 -Certificates $wrappingFiles -OutputPath $sdPath -ErrorAction SilentlyContinue -Verbose
-if ( !$? ) {
-    Write-Host $Error[0].Exception
-    Write-Error $Error[0]
-    Write-Host  ConvertTo-Json -Object $Error
-    Write-Error ConvertTo-Json -Object $Error
-    exit
+for($i = 0; $i -lt $ErrorRetries; $i++){
+    Export-AzKeyVaultSecurityDomain -Name $hsmName -Quorum 2 -Certificates $wrappingFiles -OutputPath $sdPath -ErrorAction SilentlyContinue -Verbose
+    
+    if ( !$? ) {
+        Write-Host $Error[0].Exception
+        continue
+    }
+    break
 }
 
 Log "Security domain downloaded to '$sdPath'; Managed HSM is now active at '$hsmUrl'"
