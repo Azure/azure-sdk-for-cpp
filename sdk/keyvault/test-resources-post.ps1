@@ -99,6 +99,8 @@ if (Test-Path $sdpath) {
     Remove-Item $sdPath -Force
 }
 for($i = 0; $i -lt $ErrorRetries; $i++){
+    Log 'Sleeping for 30 seconds to allow resource to become available'
+    Start-Sleep -Seconds 30
     Export-AzKeyVaultSecurityDomain -Name $hsmName -Quorum 2 -Certificates $wrappingFiles -OutputPath $sdPath -ErrorAction SilentlyContinue -Verbose
     
     if ( !$? ) {

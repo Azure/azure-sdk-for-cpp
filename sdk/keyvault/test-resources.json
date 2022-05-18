@@ -121,7 +121,7 @@
   },
   "variables": {
     "azureKeyVaultUrl": "[format('https://{0}{1}/', parameters('baseName'), parameters('keyVaultDomainSuffix'))]",
-    "hsmApiVersion": "2021-04-01-preview",
+    "hsmApiVersion": "2021-11-01-preview",
     "hsmName": "[concat(parameters('baseName'), 'hsm')]",
     "networkAcls": {
       "bypass": "AzureServices",
