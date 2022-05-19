@@ -216,7 +216,8 @@ namespace Azure { namespace Security { namespace Attestation {
     AttestationDataType DataType;
   };
 
-    /** @brief Parameters sent to the attestation service for the AttestationClient::AttestSgxEnclave API.
+  /** @brief Parameters sent to the attestation service for the AttestationClient::AttestSgxEnclave
+   * API.
    */
   struct AttestSgxEnclaveOptions final
   {
@@ -249,7 +250,8 @@ namespace Azure { namespace Security { namespace Attestation {
      */
     Azure::Nullable<AttestationTokenValidationOptions> TokenValidationOptionsOverride{};
   };
-  /** @brief Parameters sent to the attestation service for the AttestationClient::AttestOpenEnclave API.
+  /** @brief Parameters sent to the attestation service for the AttestationClient::AttestOpenEnclave
+   * API.
    */
   struct AttestOpenEnclaveOptions final
   {
