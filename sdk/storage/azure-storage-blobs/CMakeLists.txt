@@ -52,6 +52,7 @@ set(
     inc/azure/storage/blobs/dll_import_export.hpp
     inc/azure/storage/blobs/page_blob_client.hpp
     inc/azure/storage/blobs/rest_client.hpp
+    inc/azure/storage/blobs/rtti.hpp
     inc/azure/storage/blobs.hpp
     src/private/avro_parser.hpp
     src/private/package_version.hpp

@@ -52,6 +52,7 @@ set(
     inc/azure/identity/dll_import_export.hpp
     inc/azure/identity/environment_credential.hpp
     inc/azure/identity/managed_identity_credential.hpp
+    inc/azure/identity/rtti.hpp
     inc/azure/identity.hpp
 )
 
@@ -82,7 +83,6 @@ target_include_directories(
     PUBLIC
       $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/inc>
       $<INSTALL_INTERFACE:include>
-      ${azure-core-cpp_INCLUDE_DIRS}
 )
 
 target_link_libraries(azure-identity PUBLIC Azure::azure-core)
