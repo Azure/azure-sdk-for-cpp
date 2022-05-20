@@ -23,6 +23,7 @@ namespace Azure { namespace Core { namespace Tracing { namespace _internal {
     if (m_serviceTracer)
     {
       Azure::Core::Context contextToUse = context;
+
       // Ensure that the factory is available in the context chain.
       DiagnosticTracingFactory* tracingFactoryFromContext;
       if (!context.TryGetValue(TracingFactoryContextKey, tracingFactoryFromContext))

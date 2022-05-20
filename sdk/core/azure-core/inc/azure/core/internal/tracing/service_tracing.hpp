@@ -157,11 +157,6 @@ namespace Azure { namespace Core { namespace Tracing { namespace _internal {
         Azure::Core::Context const& context);
 
   public:
-    /** @brief A ContextAndSpan provides an updated Context object and a new span object
-     * which can be used to add events and attributes to the span.
-     */
-    using ContextAndSpan = std::pair<Azure::Core::Context, ServiceSpan>;
-
     DiagnosticTracingFactory(
         Azure::Core::_internal::ClientOptions const& options,
         std::string serviceName,
@@ -175,6 +170,11 @@ namespace Azure { namespace Core { namespace Tracing { namespace _internal {
     }
 
     DiagnosticTracingFactory() = default;
+
+    /** @brief A ContextAndSpan provides an updated Context object and a new span object
+     * which can be used to add events and attributes to the span.
+     */
+    using ContextAndSpan = std::pair<Azure::Core::Context, ServiceSpan>;
 
     ContextAndSpan CreateSpan(
         std::string const& spanName,
