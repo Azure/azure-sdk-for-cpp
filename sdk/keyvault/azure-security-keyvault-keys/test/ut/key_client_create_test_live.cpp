@@ -203,6 +203,8 @@ TEST_F(KeyVaultKeyClient, CreateEcHsmKey)
     auto keyResponse = client.GetKey(keyName);
     CheckValidResponse(keyResponse);
     auto keyVaultKey = keyResponse.Value;
+    EXPECT_EQ(keyVaultKey.Name(), keyName);
+    EXPECT_TRUE(keyResponse.Value.Properties.Exportable.HasValue());
     EXPECT_FALSE(keyResponse.Value.Properties.ReleasePolicy.HasValue());
     EXPECT_TRUE(keyVaultKey.Properties.Enabled.Value());
   }
@@ -253,6 +255,9 @@ std::string BinaryToHexString(std::vector<uint8_t> const& src)
 // temporary while i get the live tests working
 TEST_F(KeyVaultKeyClient, DISABLED_ReleaseKey)
 {
+#if __GNUC__ == 5
+  EXPECT_TRUE(true);
+#else
   auto const keyName = GetTestName() + "2";
   auto const& client = GetClientForTest(keyName);
 
@@ -310,6 +315,7 @@ TEST_F(KeyVaultKeyClient, DISABLED_ReleaseKey)
   auto result2 = client.ReleaseKey(keyName, keyResponse.Value.Properties.Version, relOpt);
   EXPECT_NE(result2.Value.Value.length(), size_t(0));
   EXPECT_EQ(result2.RawResponse->GetStatusCode(), HttpStatusCode::Ok);
+#endif
 }
 
 TEST_F(KeyVaultKeyClient, CreateKeyWithReleasePolicyOptions)
