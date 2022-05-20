@@ -23,7 +23,7 @@
 
 namespace Azure { namespace Core { namespace Tracing { namespace OpenTelemetry {
 
-  namespace _internal {
+  namespace _detail {
     class OpenTelemetryAttributeSet final : public Azure::Core::Tracing::_internal::AttributeSet,
                                             public opentelemetry::common::KeyValueIterable {
       std::map<std::string, opentelemetry::common::AttributeValue> m_propertySet;
@@ -144,7 +144,7 @@ namespace Azure { namespace Core { namespace Tracing { namespace OpenTelemetry {
       std::unique_ptr<Azure::Core::Tracing::_internal::AttributeSet> CreateAttributeSet()
           const override;
     };
-  } // namespace _internal
+  } // namespace _detail
 
   class OpenTelemetryProvider final : public Azure::Core::Tracing::TracerProvider {
     opentelemetry::nostd::shared_ptr<opentelemetry::trace::TracerProvider> m_tracerProvider;

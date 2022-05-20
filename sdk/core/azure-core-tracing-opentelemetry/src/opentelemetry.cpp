@@ -35,10 +35,10 @@ namespace Azure { namespace Core { namespace Tracing { namespace OpenTelemetry {
   {
     opentelemetry::nostd::shared_ptr<opentelemetry::trace::Tracer> returnTracer(
         m_tracerProvider->GetTracer(name, version));
-    return std::make_shared<Azure::Core::Tracing::OpenTelemetry::_internal::OpenTelemetryTracer>(
+    return std::make_shared<Azure::Core::Tracing::OpenTelemetry::_detail::OpenTelemetryTracer>(
         returnTracer);
   }
-  namespace _internal {
+  namespace _detail {
     std::unique_ptr<Azure::Core::Tracing::_internal::AttributeSet>
     OpenTelemetryTracer::CreateAttributeSet() const
     {
@@ -103,7 +103,7 @@ namespace Azure { namespace Core { namespace Tracing { namespace OpenTelemetry {
         newSpan = m_tracer->StartSpan(spanName, spanOptions);
       }
 
-      return std::make_shared<Azure::Core::Tracing::OpenTelemetry::_internal::OpenTelemetrySpan>(
+      return std::make_shared<Azure::Core::Tracing::OpenTelemetry::_detail::OpenTelemetrySpan>(
           newSpan);
     }
 
@@ -185,5 +185,5 @@ namespace Azure { namespace Core { namespace Tracing { namespace OpenTelemetry {
       m_span->SetStatus(statusCode, statusMessage);
     }
 
-  } // namespace _internal
+  } // namespace _detail
 }}}} // namespace Azure::Core::Tracing::OpenTelemetry

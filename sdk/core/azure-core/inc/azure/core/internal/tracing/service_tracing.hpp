@@ -10,9 +10,9 @@
 /**
  *
  * @brief Helper classes to enable service client distributed tracing implementations.
+ *
  * @remark See #policy.hpp
  */
-
 namespace Azure { namespace Core { namespace Tracing { namespace _internal {
 
   /**
@@ -29,10 +29,9 @@ namespace Azure { namespace Core { namespace Tracing { namespace _internal {
   private:
     std::shared_ptr<Span> m_span;
 
-    friend class ServiceTracing;
-    explicit ServiceSpan(std::shared_ptr<Span>& span) : m_span(span) {}
-
+    friend class DiagnosticTracingFactory;
     ServiceSpan() = default;
+    explicit ServiceSpan(std::shared_ptr<Span> span) : m_span(span) {}
 
     ServiceSpan(const ServiceSpan&) = delete;
     ServiceSpan& operator=(ServiceSpan const&) = delete;
@@ -129,18 +128,41 @@ namespace Azure { namespace Core { namespace Tracing { namespace _internal {
   /**
    * @brief Helper class to enable distributed tracing for the service.
    *
-   * @details Each service implementation SHOULD have a member variable which aids in managing the
-   * distributed tracing for the service.
+   * @details Each service implementation SHOULD have a member variable which aids in managing
+   * the distributed tracing for the service.
    */
-  class ServiceTracing final {
+  class DiagnosticTracingFactory final {
   private:
     std::string m_serviceName;
     std::string m_serviceVersion;
     std::shared_ptr<Azure::Core::Tracing::_internal::Tracer> m_serviceTracer;
-    Azure::Core::Context::Key SpanKey;
+
+    /** @brief The key used to retrieve the span and tracer associated with a context object.
+     *
+     *  The value stored in the context with this key is a `std::pair<std::shared_ptr<Span>,
+     * std::shared_ptr<Tracer>>`.
+     *
+     * A caller can use the Span and Tracer to create a new span associated with the current
+     * context span.
+     */
+    static Azure::Core::Context::Key ContextSpanKey;
+    static Azure::Core::Context::Key TracingFactoryContextKey;
+    //    using TracingContext = std::pair<std::shared_ptr<Span>, std::shared_ptr<Tracer>>;
+    using TracingContext = std::shared_ptr<Span>;
+
+    static DiagnosticTracingFactory* DiagnosticFactoryFromContext(
+        Azure::Core::Context const& context);
+
+    static Azure::Nullable<TracingContext> TracingContextFromContext(
+        Azure::Core::Context const& context);
 
   public:
-    ServiceTracing(
+    /** @brief A ContextAndSpan provides an updated Context object and a new span object
+     * which can be used to add events and attributes to the span.
+     */
+    using ContextAndSpan = std::pair<Azure::Core::Context, ServiceSpan>;
+
+    DiagnosticTracingFactory(
         Azure::Core::_internal::ClientOptions const& options,
         std::string serviceName,
         std::string serviceVersion)
@@ -152,9 +174,13 @@ namespace Azure { namespace Core { namespace Tracing { namespace _internal {
     {
     }
 
-    ServiceTracing() = default;
+    DiagnosticTracingFactory() = default;
 
-    std::pair<Azure::Core::Context, ServiceSpan> CreateSpan(
+    ContextAndSpan CreateSpan(
+        std::string const& spanName,
+        Azure::Core::Context const& clientContext);
+
+    static ContextAndSpan CreateSpanFromContext(
         std::string const& spanName,
         Azure::Core::Context const& clientContext);
 

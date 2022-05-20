@@ -9,7 +9,7 @@ using namespace Azure::Core;
 using namespace Azure::Core::Tracing;
 using namespace Azure::Core::Tracing::_internal;
 
-TEST(ServiceTracing, ServiceTraceEnums)
+TEST(DiagnosticTracingFactory, ServiceTraceEnums)
 {
   // Exercise the SpanKind and SpanStatus constructors from the distributed tracing header.
   {
@@ -32,20 +32,20 @@ TEST(ServiceTracing, ServiceTraceEnums)
   std::string tracingAttributeName = TracingAttributes::AzNamespace.ToString();
 }
 
-TEST(ServiceTracing, SimpleServiceSpanTests)
+TEST(DiagnosticTracingFactory, SimpleServiceSpanTests)
 {
   {
-    Azure::Core::Tracing::_internal::ServiceTracing serviceTrace;
+    Azure::Core::Tracing::_internal::DiagnosticTracingFactory serviceTrace;
   }
   {
     Azure::Core::_internal::ClientOptions clientOptions;
-    Azure::Core::Tracing::_internal::ServiceTracing serviceTrace(
+    Azure::Core::Tracing::_internal::DiagnosticTracingFactory serviceTrace(
         clientOptions, "my-service-cpp", "1.0b2");
   }
 
   {
     Azure::Core::_internal::ClientOptions clientOptions;
-    Azure::Core::Tracing::_internal::ServiceTracing serviceTrace(
+    Azure::Core::Tracing::_internal::DiagnosticTracingFactory serviceTrace(
         clientOptions, "my-service-cpp", "1.0b2");
 
     auto contextAndSpan = serviceTrace.CreateSpan("My API", {});
@@ -108,11 +108,11 @@ public:
   };
 };
 
-TEST(ServiceTracing, BasicServiceSpanTests)
+TEST(DiagnosticTracingFactory, BasicServiceSpanTests)
 {
   {
     Azure::Core::_internal::ClientOptions clientOptions;
-    Azure::Core::Tracing::_internal::ServiceTracing serviceTrace(
+    Azure::Core::Tracing::_internal::DiagnosticTracingFactory serviceTrace(
         clientOptions, "my-service-cpp", "1.0b2");
 
     auto contextAndSpan = serviceTrace.CreateSpan("My API", {});
@@ -127,7 +127,7 @@ TEST(ServiceTracing, BasicServiceSpanTests)
     Azure::Core::_internal::ClientOptions clientOptions;
     auto testTracer = std::make_shared<TestTracingProvider>();
     clientOptions.Telemetry.TracingProvider = testTracer;
-    Azure::Core::Tracing::_internal::ServiceTracing serviceTrace(
+    Azure::Core::Tracing::_internal::DiagnosticTracingFactory serviceTrace(
         clientOptions, "my-service-cpp", "1.0b2");
 
     auto contextAndSpan = serviceTrace.CreateSpan("My API", {});
