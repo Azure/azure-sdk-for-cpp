@@ -175,6 +175,30 @@ namespace Azure { namespace Core { namespace Test {
       return Azure::Core::_internal::StringExtensions::ToLower(testName);
     }
 
+    /**
+     * @brief Get test name with suffix if ENV variable is set.
+     *
+     * @param sanitize Sanitize the input and remove special characters. Default true.
+     * @param suffixEnvName Env variable containing the suffix. Default AZURE_LIVE_TEST_SUFFIX.
+     *
+     * @returns Test name.
+     */
+    std::string GetTestNameSuffix(
+        bool sanitize = true,
+        std::string suffixEnvName = "AZURE_LIVE_TEST_SUFFIX")
+    {
+      std::string baseValue = Azure::Core::Test::TestBase::GetTestName(sanitize);
+
+      std::string suffix = Azure::Core::_internal::Environment::GetVariable(suffixEnvName.c_str());
+
+      if (suffix.length() > 0)
+      {
+        baseValue = "-" + suffix;
+      }
+
+      return baseValue;
+    }
+
     // Creates the sdk client for testing.
     // The client will be set for record and playback before it is created.
     Azure::Core::Credentials::TokenCredentialOptions GetTokenCredentialOptions()

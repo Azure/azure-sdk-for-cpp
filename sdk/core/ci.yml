@@ -52,7 +52,7 @@ stages:
         - Name: AZURE_KEYVAULT_URL
           Value: "https://non-real-account.vault.azure.net"
         - Name: AZURE_KEYVAULT_HSM_URL
-          Value: "https://non-real-account.vault.azure.net"
+          Value: "https://non-real-account.managedhsm.azure.net/"
 # Key Vault & Identity 
         - Name: AZURE_TENANT_ID
           Value: "33333333-3333-3333-3333-333333333333"

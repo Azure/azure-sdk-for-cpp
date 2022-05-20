@@ -19,7 +19,7 @@ parameters:
   default: sdk/*/*/*cov_xml.xml
 - name: TimeoutInMinutes
   type: number
-  default: 60
+  default: 120
 
 # This job uses the legacy matrix format (matrix property of the job, one
 # build/test scenario per job). A new format (multiple build/test scenarios per
@@ -127,7 +127,7 @@ jobs:
         CmakeArgs: ' -DBUILD_TRANSPORT_CURL=ON -DBUILD_TESTING=ON -DRUN_LONG_UNIT_TESTS=ON -DBUILD_PERFORMANCE_TESTS=ON '
         BuildArgs: '-v --parallel 8'
         #AZURE_CORE_ENABLE_JSON_TESTS: 1  # Testing Json lib on Win+WinHttp only, No need to repeat here as it is independent to the http transport adapter.
-      Win_x64_with_unit_test_libcurl:
+      HSM_Win_x64_with_unit_test_libcurl:
         Pool: azsdk-pool-mms-win-2019-general
         OSVmImage: MMS2019
         VCPKG_DEFAULT_TRIPLET: 'x64-windows-static'
@@ -136,6 +136,8 @@ jobs:
         CmakeArgs: ' -DBUILD_TRANSPORT_CURL=ON -DBUILD_TESTING=ON -DRUN_LONG_UNIT_TESTS=ON -DBUILD_PERFORMANCE_TESTS=ON '
         BuildArgs: '-v --parallel 8 --config Release '
         WindowsCtestConfig: "-C Release"
+        KVLocation: 'eastus2'
+        EnableHSM: 1
         #AZURE_CORE_ENABLE_JSON_TESTS: 1  # Testing Json lib on Win+WinHttp only, No need to repeat here as it is independent to the http transport adapter.
       Win_x64_with_unit_samples_libcurl:
         Pool: azsdk-pool-mms-win-2019-general
@@ -170,6 +172,8 @@ jobs:
     AZURE_LOG_LEVEL: "verbose"
     # Surface the ServiceDirectory parameter as an environment variable so tests can take advantage of it.
     AZURE_SERVICE_DIRECTORY: ${{ parameters.ServiceDirectory }}
+    EnableHSM: 0 
+    KVLocation:  ${{ parameters.Location }}
 
   steps:
   - checkout: self
@@ -226,7 +230,8 @@ jobs:
   - template: /eng/common/TestResources/deploy-test-resources.yml
     parameters:
       ServiceDirectory: ${{ parameters.ServiceDirectory }}
-      Location: ${{ parameters.Location }}
+      Location: "$(KVLocation)"
+      ArmTemplateParameters: "@{ enableHsm = [System.Convert]::ToBoolean($(EnableHSM)) }"
       SubscriptionConfiguration: ${{ parameters.SubscriptionConfiguration }}
 
     # For non multi-config generator use the same build configuration to run tests

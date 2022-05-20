@@ -32,6 +32,7 @@ stages:
       SubscriptionConfiguration: $(sub-config-azure-cloud-test-resources)
       LineCoverageTarget: 81
       BranchCoverageTarget: 42
+      #EnableHSM: true
       Artifacts:
         - Name: azure-security-keyvault-keys
           Path: azure-security-keyvault-keys
@@ -56,7 +57,7 @@ stages:
         - Name: AZURE_KEYVAULT_URL
           Value: "https://non-real-account.vault.azure.net"
         - Name: AZURE_KEYVAULT_HSM_URL
-          Value: "https://non-real-account.vault.azure.net"
+          Value: "https://non-real-account.managedhsm.azure.net/"
         # Tenant ID should use the uniqueID format for playback recordings
         - Name: AZURE_TENANT_ID
           Value: "33333333-3333-3333-3333-333333333333"

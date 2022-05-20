@@ -32,6 +32,16 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys { nam
     int m_testPollingTimeOutMinutes = 20;
     std::chrono::milliseconds m_testPollingIntervalMs = std::chrono::minutes(1);
 
+    // Reads the current test instance name.
+    // Name gets also sanitized (special chars are removed) to avoid issues when recording or
+    // creating. This also return the name with suffix if the "AZURE_LIVE_TEST_SUFFIX" exists.
+    std::string GetTestName(bool sanitize = true)
+    {
+      auto output = m_keyVaultUrl.compare(m_keyVaultHsmUrl) == 0 ? "Same" : "NotSame";
+      std::cout << "\n Keyvault and HSM are" << output;
+      return Azure::Core::Test::TestBase::GetTestNameSuffix(sanitize);
+    }
+
     Azure::Security::KeyVault::Keys::KeyClient const& GetClientForTest(std::string const& testName)
     {
       // set the interceptor for the current test

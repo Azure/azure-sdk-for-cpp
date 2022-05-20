@@ -47,7 +47,7 @@ parameters:
 - name: CMakeSourceTestOptions
   type: object
   default: []
-
+  
 stages:
   - stage: CMakeGeneration
     jobs:
