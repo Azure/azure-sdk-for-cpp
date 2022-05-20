@@ -49,6 +49,7 @@ add_executable (
     environment_log_level_listener_test.cpp
     extendable_enumeration_test.cpp
     etag_test.cpp
+    exception_test.cpp
     http_test.cpp
     http_test.hpp
     http_method_test.cpp
@@ -78,7 +79,7 @@ add_executable (
     transport_adapter_implementation_test.cpp
     url_test.cpp
     uuid_test.cpp
-    exception_test.cpp)
+)
 
 if (MSVC)
   # Disable warnings:
