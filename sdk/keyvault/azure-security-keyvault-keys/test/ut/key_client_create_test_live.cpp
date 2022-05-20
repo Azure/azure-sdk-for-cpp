@@ -204,7 +204,6 @@ TEST_F(KeyVaultKeyClient, CreateEcHsmKey)
     CheckValidResponse(keyResponse);
     auto keyVaultKey = keyResponse.Value;
     EXPECT_EQ(keyVaultKey.Name(), keyName);
-    EXPECT_TRUE(keyResponse.Value.Properties.Exportable.HasValue());
     EXPECT_FALSE(keyResponse.Value.Properties.ReleasePolicy.HasValue());
     EXPECT_TRUE(keyVaultKey.Properties.Enabled.Value());
   }
