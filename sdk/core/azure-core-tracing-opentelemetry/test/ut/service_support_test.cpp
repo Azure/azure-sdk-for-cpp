@@ -507,7 +507,8 @@ public:
 
     try
     {
-      auto response = SendHttpRequest(false, contextAndSpan.first);
+      auto rawResponse = SendHttpRequest(false, contextAndSpan.first);
+      return Azure::Response<std::string>("", std::move(rawResponse));
     }
     catch (std::exception& ex)
     {
