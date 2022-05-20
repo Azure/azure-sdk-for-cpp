@@ -204,7 +204,7 @@ namespace Azure { namespace Core {
      */
     template <class T> bool TryGetValue(Key const& key, T& outputValue) const
     {
-      for (std::shared_ptr<ContextSharedState> ptr = m_contextSharedState; ptr; ptr = ptr->Parent)
+      for (auto ptr = m_contextSharedState; ptr; ptr = ptr->Parent)
       {
         if (ptr->Key == key)
         {

@@ -146,6 +146,14 @@ namespace Azure { namespace Core { namespace Tracing { namespace OpenTelemetry {
     };
   } // namespace _detail
 
+  /**
+   * @brief Trace Provider - factory for creating Tracer objects.
+   *
+   * An OpenTelemetryProvider object wraps an opentelemetry-cpp TracerProvider object
+   * and provides an abstraction of the opentelemetry APIs which can be consumed by Azure Core and
+   * other Azure services.
+   *
+   */
   class OpenTelemetryProvider final : public Azure::Core::Tracing::TracerProvider {
     opentelemetry::nostd::shared_ptr<opentelemetry::trace::TracerProvider> m_tracerProvider;
 
@@ -154,6 +162,14 @@ namespace Azure { namespace Core { namespace Tracing { namespace OpenTelemetry {
         opentelemetry::nostd::shared_ptr<opentelemetry::trace::TracerProvider> tracerProvider);
     OpenTelemetryProvider();
 
+    /**
+     * @brief Create a Tracer object
+     *
+     * @param name Name of the tracer object, typically the name of the Service client
+     * (Azure.Storage.Blobs, for example)
+     * @param version Version of the service client.
+     * @return std::shared_ptr<Azure::Core::Tracing::Tracer>
+     */
     virtual std::shared_ptr<Azure::Core::Tracing::_internal::Tracer> CreateTracer(
         std::string const& name,
         std::string const& version = "") const override;

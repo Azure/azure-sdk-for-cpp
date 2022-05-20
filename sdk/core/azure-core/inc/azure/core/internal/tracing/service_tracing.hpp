@@ -187,16 +187,60 @@ namespace Azure { namespace Core { namespace Tracing { namespace _internal {
     std::unique_ptr<Azure::Core::Tracing::_internal::AttributeSet> CreateAttributeSet();
   };
 
+  /**
+   * @brief Attributes emitted as a part of distributed tracing spans.
+   *
+   * List taken from here:
+   * https://github.com/Azure/azure-sdk/blob/main/docs/tracing/distributed-tracing-conventions.yml
+   *
+   */
   class TracingAttributes
       : public Azure::Core::_internal::ExtendableEnumeration<TracingAttributes> {
   public:
     explicit TracingAttributes(std::string const& that) : ExtendableEnumeration(that) {}
 
     /**
-     * @brief Represents an "Internal" operation.
+     * @brief
+     * [Namespace](https://docs.microsoft.com/azure/azure-resource-manager/management/azure-services-resource-providers)
+     * of Azure service request is made against.
      *
      */
     AZ_CORE_DLLEXPORT const static TracingAttributes AzNamespace;
+
+    /**
+     * @brief HTTP request method.
+     *
+     */
+    AZ_CORE_DLLEXPORT const static TracingAttributes HttpMethod;
+
+    /**
+     * @brief Full HTTP request URL in the form `scheme://host[:port]/path?query[#fragment]`.
+     *
+     */
+    AZ_CORE_DLLEXPORT const static TracingAttributes HttpUrl;
+
+    /**
+     * @brief [HTTP response status code](https://tools.ietf.org/html/rfc7231#section-6).
+     *
+     */
+    AZ_CORE_DLLEXPORT const static TracingAttributes HttpStatusCode;
+
+    /**
+     * @brief Value of the [HTTP User-Agent](https://tools.ietf.org/html/rfc7231#section-5.5.3)
+     * header sent by the client.
+     *
+     */
+    AZ_CORE_DLLEXPORT const static TracingAttributes HttpUserAgent;
+
+    /** @brief  Value of the[x - ms - client - request - id] header(or other request - id header,
+     * depending on the service) sent by the client.
+     */
+    AZ_CORE_DLLEXPORT const static TracingAttributes RequestId;
+
+    /** @brief Value of the [x-ms-request-id]  header (or other request-id header, depending on the
+     * service) sent by the server in response.
+     */
+    AZ_CORE_DLLEXPORT const static TracingAttributes ServiceRequestId;
   };
 
 }}}} // namespace Azure::Core::Tracing::_internal

@@ -88,9 +88,17 @@ ApplicationContext().SetTracerProvider(tracerProvider);
 
 ### Manual Span Propagation using OpenTelemetry
 
+In Azure Service methods, the `Azure::Context` value passed into the tracer optionally has an associated Span.
+
+If there is a span associated with the `Azure::Context`, then calling `DiagnosticTracingFactory::CreateSpanFromContext` will
+cause a new span to be created using the span in the provided `Azure::Context` object as the parent span.
+
 ```cpp
-<TBD>
+    auto contextAndSpan
+        = Azure::Core::Tracing::_internal::DiagnosticTracingFactory::CreateSpanFromContext(
+            "HTTP GET#2", context);
 ```
+
 
 ## Next steps
 
