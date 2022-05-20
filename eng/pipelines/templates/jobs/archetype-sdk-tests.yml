@@ -52,7 +52,7 @@ jobs:
         CODE_COVERAGE_COLLECT_ONLY: 1
         AZURE_CORE_ENABLE_JSON_TESTS: 1
         BuildArgs: '-j 4'
-      Ubuntu20_HSM_x64_with_unit_test:
+      Ubuntu20_x64_with_unit_test:
         Pool: azsdk-pool-mms-ubuntu-1804-general
         OSVmImage: MMSUbuntu18.04
         VCPKG_DEFAULT_TRIPLET: 'x64-linux'
@@ -137,7 +137,6 @@ jobs:
         BuildArgs: '-v --parallel 8 --config Release '
         WindowsCtestConfig: "-C Release"
         KVLocation: 'eastus2'
-        HsmLocation: 'eastus2'
         EnableHSM: 1
         #AZURE_CORE_ENABLE_JSON_TESTS: 1  # Testing Json lib on Win+WinHttp only, No need to repeat here as it is independent to the http transport adapter.
       Win_x64_with_unit_samples_libcurl:
