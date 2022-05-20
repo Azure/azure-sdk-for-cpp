@@ -31,6 +31,7 @@ private:
 };
 
 } // namespace
+
 TEST(TelemetryPolicy, telemetryString)
 {
   std::vector<std::unique_ptr<HttpPolicy>> policy1;
