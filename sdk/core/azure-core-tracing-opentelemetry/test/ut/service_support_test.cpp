@@ -3,7 +3,7 @@
 
 #define USE_MEMORY_EXPORTER 1
 #include "azure/core/internal/tracing/service_tracing.hpp"
-#include "azure/core/tracing-opentelemetry/opentelemetry.hpp"
+#include "azure/core/tracing/opentelemetry/opentelemetry.hpp"
 #include <azure/core/internal/json/json.hpp>
 #include <azure/core/test/test_base.hpp>
 
