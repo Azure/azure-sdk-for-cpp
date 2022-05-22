@@ -5,8 +5,10 @@
 
 #include <atomic>
 #include <memory>
+#include <string>
 
 #include <azure/storage/blobs.hpp>
+#include <azure/storage/common/internal/file_io.hpp>
 
 #include "azure/storage/datamovement/task.hpp"
 
@@ -15,11 +17,10 @@ namespace Azure { namespace Storage { namespace Blobs { namespace _detail {
   struct UploadBlobFromFileTask final : public Storage::_internal::TaskBase
   {
     explicit UploadBlobFromFileTask(
-        Storage::_internal::TaskType type,
-        Storage::_internal::Scheduler* scheduler,
+        _internal::TaskType type,
         const std::string& source,
-        const Blobs::BlobClient& destination)
-        : TaskBase(type, scheduler), Context(std::make_shared<TaskContext>(source, destination))
+        const Blobs::BlobClient& destination) noexcept
+        : TaskBase(type), Context(std::make_shared<TaskContext>(source, destination))
     {
     }
 
@@ -35,10 +36,11 @@ namespace Azure { namespace Storage { namespace Blobs { namespace _detail {
       uint64_t FileSize{0};
       int NumBlocks{0};
       std::atomic<int> NumStagedBlocks{0};
+      std::atomic<bool> Failed{false};
     };
     std::shared_ptr<TaskContext> Context;
 
-    void Execute() override;
+    void Execute() noexcept override;
   };
 
   struct ReadFileRangeToMemoryTask final : public Storage::_internal::TaskBase
@@ -50,7 +52,7 @@ namespace Azure { namespace Storage { namespace Blobs { namespace _detail {
     int64_t Offset;
     size_t Length;
 
-    void Execute() override;
+    void Execute() noexcept override;
   };
 
   struct StageBlockTask final : public Storage::_internal::TaskBase
@@ -62,7 +64,7 @@ namespace Azure { namespace Storage { namespace Blobs { namespace _detail {
     size_t Length;
     std::unique_ptr<uint8_t[]> Buffer;
 
-    void Execute() override;
+    void Execute() noexcept override;
   };
 
 }}}} // namespace Azure::Storage::Blobs::_detail

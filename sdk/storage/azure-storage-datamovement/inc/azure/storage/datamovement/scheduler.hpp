@@ -36,7 +36,34 @@ namespace Azure { namespace Storage { namespace _internal {
     void AddTask(Task&& task);
     void AddTasks(std::vector<Task>&& tasks);
 
-    // TODO: Pause/Suspend and Resume
+    void ResumePausedTasks();
+
+  private:
+    void ReclaimProvisionedResource(const Task& t)
+    {
+      if (!t)
+      {
+        return;
+      }
+      if (t->MemoryCost != 0)
+      {
+        m_memoryLeft.fetch_add(t->MemoryCost);
+        m_pendingTasksCv.notify_one();
+      }
+    }
+
+    void ReclaimAllocatedResource(const Task& t)
+    {
+      if (!t)
+      {
+        return;
+      }
+      if (t->MemoryGiveBack != 0)
+      {
+        m_memoryLeft.fetch_add(t->MemoryGiveBack);
+        m_pendingTasksCv.notify_one();
+      }
+    }
 
   private:
     SchedulerOptions m_options;
@@ -45,7 +72,10 @@ namespace Azure { namespace Storage { namespace _internal {
 
     // resource left
     std::atomic<size_t> m_memoryLeft;
-    // TODO: other resource
+
+    // tasks for paused jobs
+    TaskQueue m_pausedTasks;
+    std::mutex m_pausedTasksMutex;
 
     // pending tasks
     TaskQueue m_pendingDiskIOTasks;
