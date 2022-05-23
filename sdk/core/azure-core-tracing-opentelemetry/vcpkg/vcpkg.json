@@ -1,0 +1,26 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# SPDX-License-Identifier: MIT
+
+{
+  "name": "azure-core-opentelemetry-cpp",
+  "version-semver": "@AZ_LIBRARY_VERSION@",
+  "description": [
+    "Microsoft Azure Core OpenTelemetry SDK for C++",
+    "This library provides support for modern Azure SDK client libraries written in C++ to leverage OpenTelemetry APIs."
+  ],
+  "homepage": "https://github.com/Azure/azure-sdk-for-cpp/tree/main/sdk/core/azure-core-opentelemetry",
+  "license": "MIT",
+  "dependencies": [
+    {
+      "name": "vcpkg-cmake",
+      "host": true
+    },
+    {
+      "name": "vcpkg-cmake-config",
+      "host": true
+    },
+    {
+      "name": "opentelemetry-cpp"
+    }
+  ]
+}

@@ -77,6 +77,7 @@ set(
     inc/azure/core/internal/environment.hpp
     inc/azure/core/internal/extendable_enumeration.hpp
     inc/azure/core/internal/strings.hpp
+    inc/azure/core/internal/tracing/service_tracing.hpp
     inc/azure/core/io/body_stream.hpp
     inc/azure/core/azure_assert.hpp
     inc/azure/core/base64.hpp
@@ -95,10 +96,10 @@ set(
     inc/azure/core/platform.hpp
     inc/azure/core/response.hpp
     inc/azure/core/rtti.hpp
+    inc/azure/core/tracing/tracing.hpp
     inc/azure/core/url.hpp
     inc/azure/core/uuid.hpp
-    inc/azure/core.hpp
-)
+    inc/azure/core.hpp)
 
 set(
   AZURE_CORE_SOURCE
@@ -132,7 +133,7 @@ set(
     src/operation_status.cpp
     src/strings.cpp
     src/uuid.cpp
-)
+    src/tracing/tracing.cpp)
 
 add_library(azure-core ${AZURE_CORE_HEADER} ${AZURE_CORE_SOURCE})
 

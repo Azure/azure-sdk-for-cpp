@@ -14,6 +14,7 @@
 #include "azure/core/dll_import_export.hpp"
 #include "azure/core/http/http.hpp"
 #include "azure/core/http/transport.hpp"
+#include "azure/core/tracing/tracing.hpp"
 #include "azure/core/uuid.hpp"
 
 #include <chrono>
@@ -56,6 +57,13 @@ namespace Azure { namespace Core { namespace Http { namespace Policies {
      *
      */
     std::string ApplicationId;
+
+    /**
+     * @brief Specifies the default distributed tracing provider to use for this client. By default,
+     * this will be the tracing provider specified in the application context.
+     */
+    std::shared_ptr<Azure::Core::Tracing::TracerProvider> TracingProvider{
+        Context::ApplicationContext.GetTracerProvider()};
   };
 
   /**
