@@ -59,7 +59,7 @@ int main()
         GetEnvHelper::GetEnv("AZURE_CLIENT_ID"),
         GetEnvHelper::GetEnv("AZURE_CLIENT_SECRET"));
     std::unique_ptr<AttestationAdministrationClient const> adminClient(
-        AttestationAdministrationClientFactory::CreatePointer(endpoint, credential, clientOptions));
+        AttestationAdministrationClientFactory::Create(endpoint, credential, clientOptions));
 
     // Set the attestation policy on this attestation instance.
     // Note that because this is an AAD mode instance, the caller does not need to sign the policy

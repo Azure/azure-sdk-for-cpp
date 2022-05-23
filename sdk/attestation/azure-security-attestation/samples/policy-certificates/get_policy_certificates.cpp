@@ -46,7 +46,7 @@ int main()
     auto const credential = std::make_shared<Azure::Identity::ClientSecretCredential>(
         GetEnv("AZURE_TENANT_ID"), GetEnv("AZURE_CLIENT_ID"), GetEnv("AZURE_CLIENT_SECRET"));
     std::unique_ptr<AttestationAdministrationClient> adminClient(
-        AttestationAdministrationClientFactory::CreatePointer(
+        AttestationAdministrationClientFactory::Create(
             GetEnv("ATTESTATION_ISOLATED_URL"), credential));
 
     // Retrieve the SGX Attestation Policy from this attestation service instance.

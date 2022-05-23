@@ -217,39 +217,7 @@ void AttestationClient::RetrieveResponseValidationCollateral(
  * @param credential The authentication method to use (required for TPM attestation).
  * @param options The options to customize the client behavior.
  */
-AttestationClient AttestationClientFactory::Create(
-    std::string const& endpoint,
-    std::shared_ptr<Core::Credentials::TokenCredential const> credential,
-    AttestationClientOptions options,
-    Azure::Core::Context const& context)
-{
-  AttestationClient returnValue(endpoint, credential, options);
-  returnValue.RetrieveResponseValidationCollateral(context);
-  return returnValue;
-}
-
-/** @brief Construct a new anonymous Attestation Client object
- *
- * @param endpoint The URL address where the client will send the requests to.
- * @param options The options to customize the client behavior.
- *
- * @note TPM attestation requires an authenticated attestation client.
- */
-AttestationClient AttestationClientFactory::Create(
-    std::string const& endpoint,
-    AttestationClientOptions options,
-    Azure::Core::Context const& context)
-{
-  return Create(endpoint, nullptr, options, context);
-}
-
-/** @brief Construct a new Attestation Client object
- *
- * @param endpoint The URL address where the client will send the requests to.
- * @param credential The authentication method to use (required for TPM attestation).
- * @param options The options to customize the client behavior.
- */
-std::unique_ptr<AttestationClient> AttestationClientFactory::CreatePointer(
+std::unique_ptr<AttestationClient> AttestationClientFactory::Create(
     std::string const& endpoint,
     std::shared_ptr<Core::Credentials::TokenCredential const> credential,
     AttestationClientOptions options,
@@ -269,10 +237,10 @@ std::unique_ptr<AttestationClient> AttestationClientFactory::CreatePointer(
  *
  * @note TPM attestation requires an authenticated attestation client.
  */
-std::unique_ptr<AttestationClient> AttestationClientFactory::CreatePointer(
+std::unique_ptr<AttestationClient> AttestationClientFactory::Create(
     std::string const& endpoint,
     AttestationClientOptions options,
     Azure::Core::Context const& context)
 {
-  return CreatePointer(endpoint, nullptr, options, context);
+  return Create(endpoint, nullptr, options, context);
 }

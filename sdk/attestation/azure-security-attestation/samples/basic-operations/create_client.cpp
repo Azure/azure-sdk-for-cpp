@@ -35,10 +35,10 @@ int main()
     clientOptions.TokenValidationOptions.TimeValidationSlack = 10s;
 
     // create client
-    AttestationClient const attestationClient(AttestationClientFactory::Create(
+    std::unique_ptr<AttestationClient> attestationClient(AttestationClientFactory::Create(
         GetEnvHelper::GetEnv("ATTESTATION_AAD_URL"), clientOptions));
 
-    attestationClient.GetOpenIdMetadata();
+    attestationClient->GetOpenIdMetadata();
   }
   catch (Azure::Core::Credentials::AuthenticationException const& e)
   {

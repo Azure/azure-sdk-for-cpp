@@ -65,19 +65,8 @@ AttestationAdministrationClient::AttestationAdministrationClient(
       std::move(perCallpolicies));
 }
 
-AttestationAdministrationClient AttestationAdministrationClientFactory::Create(
-    std::string const& endpoint,
-    std::shared_ptr<Core::Credentials::TokenCredential const> credential,
-    AttestationAdministrationClientOptions const& options,
-    Azure::Core::Context const& context)
-{
-  AttestationAdministrationClient returnValue(endpoint, credential, options);
-  returnValue.RetrieveResponseValidationCollateral(context);
-  return returnValue;
-}
-
 std::unique_ptr<AttestationAdministrationClient>
-AttestationAdministrationClientFactory::CreatePointer(
+AttestationAdministrationClientFactory::Create(
     std::string const& endpoint,
     std::shared_ptr<Core::Credentials::TokenCredential const> credential,
     AttestationAdministrationClientOptions const& options,

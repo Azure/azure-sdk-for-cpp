@@ -98,8 +98,7 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
       std::shared_ptr<Azure::Core::Credentials::TokenCredential> credential
           = CreateClientSecretCredential(
               GetEnv("AZURE_TENANT_ID"), GetEnv("AZURE_CLIENT_ID"), GetEnv("AZURE_CLIENT_SECRET"));
-      return AttestationClientFactory::CreatePointer(
-          GetInstanceUri(instanceType), credential, options);
+      return AttestationClientFactory::Create(GetInstanceUri(instanceType), credential, options);
     }
 
     std::unique_ptr<AttestationAdministrationClient> CreateAdminClient(InstanceType instanceType)
@@ -111,7 +110,7 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
       std::shared_ptr<Azure::Core::Credentials::TokenCredential> credential
           = CreateClientSecretCredential(
               GetEnv("AZURE_TENANT_ID"), GetEnv("AZURE_CLIENT_ID"), GetEnv("AZURE_CLIENT_SECRET"));
-      return AttestationAdministrationClientFactory::CreatePointer(
+      return AttestationAdministrationClientFactory::Create(
           GetInstanceUri(instanceType), credential, options);
     }
   };
