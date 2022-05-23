@@ -510,7 +510,7 @@ public:
       auto rawResponse = SendHttpRequest(false, contextAndSpan.first);
       return Azure::Response<std::string>("", std::move(rawResponse));
     }
-    catch (std::exception& ex)
+    catch (std::exception const& ex)
     {
       // Register that the exception has happened and that the span is now in error.
       contextAndSpan.second.AddEvent(ex);

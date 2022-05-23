@@ -56,7 +56,7 @@ namespace Azure { namespace Core { namespace Tracing { namespace _internal {
     }
     else
     {
-      return std::make_pair(context, ServiceSpan());
+      return std::make_pair(context, ServiceSpan{});
     }
   }
   DiagnosticTracingFactory::ContextAndSpan DiagnosticTracingFactory::CreateSpanFromContext(
@@ -71,7 +71,7 @@ namespace Azure { namespace Core { namespace Tracing { namespace _internal {
     }
     else
     {
-      return std::make_pair(context, ServiceSpan());
+      return std::make_pair(context, ServiceSpan{});
     }
   }
 
@@ -85,7 +85,7 @@ namespace Azure { namespace Core { namespace Tracing { namespace _internal {
     }
     else
     {
-      return Azure::Nullable<TracingContext>();
+      return Azure::Nullable<TracingContext>{};
     }
   }
 
