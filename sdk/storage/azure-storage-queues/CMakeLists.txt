@@ -48,11 +48,12 @@ set(
     inc/azure/storage/queues/queue_sas_builder.hpp
     inc/azure/storage/queues/queue_service_client.hpp
     inc/azure/storage/queues/rest_client.hpp
-    src/private/package_version.hpp
+    inc/azure/storage/queues/rtti.hpp
 )
 
 set(
   AZURE_STORAGE_QUEUES_SOURCE
+    src/private/package_version.hpp
     src/queue_client.cpp
     src/queue_options.cpp
     src/queue_responses.cpp

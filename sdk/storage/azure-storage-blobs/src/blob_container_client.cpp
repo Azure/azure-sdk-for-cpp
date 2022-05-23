@@ -254,9 +254,16 @@ namespace Azure { namespace Storage { namespace Blobs {
       {
         i.Details.IsAccessTierInferred = false;
       }
-      if (i.VersionId.HasValue() && !i.IsCurrentVersion.HasValue())
+      if (i.VersionId.HasValue())
       {
-        i.IsCurrentVersion = false;
+        if (!i.HasVersionsOnly.HasValue())
+        {
+          i.HasVersionsOnly = false;
+        }
+        if (!i.IsCurrentVersion.HasValue())
+        {
+          i.IsCurrentVersion = false;
+        }
       }
       if (i.BlobType == Models::BlobType::AppendBlob && !i.Details.IsSealed.HasValue())
       {
@@ -327,9 +334,16 @@ namespace Azure { namespace Storage { namespace Blobs {
       {
         i.Details.IsAccessTierInferred = false;
       }
-      if (i.VersionId.HasValue() && !i.IsCurrentVersion.HasValue())
+      if (i.VersionId.HasValue())
       {
-        i.IsCurrentVersion = false;
+        if (!i.HasVersionsOnly.HasValue())
+        {
+          i.HasVersionsOnly = false;
+        }
+        if (!i.IsCurrentVersion.HasValue())
+        {
+          i.IsCurrentVersion = false;
+        }
       }
       if (i.BlobType == Models::BlobType::AppendBlob && !i.Details.IsSealed.HasValue())
       {

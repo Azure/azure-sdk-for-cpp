@@ -1,12 +1,22 @@
 # Release History
 
-## 1.6.0-beta.1 (Unreleased)
+## 1.7.0-beta.1 (Unreleased)
+
+### Features Added
+
+### Breaking Changes
+
+- Removed `noexcept` specification from `Azure::Core::Context::IsCancelled()`.
+
+### Bugs Fixed
+
+### Other Changes
+
+## 1.6.0 (2022-05-05)
 
 ### Features Added
 
 - Add `Azure::Core::Http::Request` constructor overload to support payload and non-buffered response.
-
-### Breaking Changes
 
 ### Bugs Fixed
 
@@ -16,6 +26,13 @@
 ### Other Changes
 
 - [[#3581]](https://github.com/Azure/azure-sdk-for-cpp/issues/3581) Update log level in retry policy from warning to informational.
+- Updated the MD5 Hash implementation to work on top of OpenSSL 3.0. (A community contribution, courtesy of _[jepio](https://github.com/jepio)_)
+
+### Acknowledgments
+
+Thank you to our developer community members who helped to make Azure Core better with their contributions to this release:
+
+- Jeremi Piotrowski _([GitHub](https://github.com/jepio))_
 
 ## 1.5.0 (2022-03-31)
 

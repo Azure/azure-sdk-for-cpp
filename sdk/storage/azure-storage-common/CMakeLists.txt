@@ -55,14 +55,15 @@ set(
     inc/azure/storage/common/internal/storage_service_version_policy.hpp
     inc/azure/storage/common/internal/storage_switch_to_secondary_policy.hpp
     inc/azure/storage/common/internal/xml_wrapper.hpp
+    inc/azure/storage/common/rtti.hpp
     inc/azure/storage/common/storage_common.hpp
     inc/azure/storage/common/storage_credential.hpp
     inc/azure/storage/common/storage_exception.hpp
-    src/private/package_version.hpp
 )
 
 set(
   AZURE_STORAGE_COMMON_SOURCE
+    src/private/package_version.hpp
     src/account_sas_builder.cpp
     src/crypt.cpp
     src/file_io.cpp
