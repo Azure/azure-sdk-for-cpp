@@ -265,7 +265,7 @@ namespace Azure { namespace Security { namespace Attestation { namespace Models 
    * SHA256 hash of the policy document sent to the attestation service.
    *
    * In order to verify that the attestation service correctly received the attestation policy sent
-   * by the client, the AttestationAdministrationClient::CreateSetAttestationPolicyToken API can be
+   * by the client, the AttestationAdministrationClient::CreateAttestationPolicyToken API can be
    * used to create an AttestationToken object which is not specialized on any type
    * (`AttestationToken<>`). The RawToken field in that can be used to calculate the hash which was
    * sent to the service.

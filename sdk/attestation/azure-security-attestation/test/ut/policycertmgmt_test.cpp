@@ -83,7 +83,7 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
           = CreateClientSecretCredential(
               GetEnv("AZURE_TENANT_ID"), GetEnv("AZURE_CLIENT_ID"), GetEnv("AZURE_CLIENT_SECRET"));
 
-      return AttestationAdministrationClient::CreatePointer(
+      return AttestationAdministrationClientFactory::Create(
           GetServiceEndpoint(instanceType), credential, options);
     }
 
