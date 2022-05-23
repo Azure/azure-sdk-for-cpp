@@ -69,9 +69,10 @@ int main()
 
     // Attestation
     std::cout << "Creating Attestation Clients" << std::endl;
-    AttestationClient attestationClient(AttestationClient::Create(smokeUrl));
-    AttestationAdministrationClient attestationAdminClient(
-        AttestationAdministrationClient::Create(smokeUrl, credential));
+    std::unique_ptr<AttestationClient> attestationClient(
+        AttestationClientFactory::Create(std::getenv("ATTESTATION_AAD_URL")));
+    std::unique_ptr<AttestationAdministrationClient> attestationAdminClient(
+        AttestationAdministrationClientFactory::Create(std::getenv("ATTESTATION_AAD_URL"), credential));
 
     std::cout << "Successfully Created the Clients" << std::endl;
   }

@@ -5,6 +5,14 @@
 ### Features Added
 
 ### Breaking Changes
+- `ValueToSend` field in `TpmAttestationOptions` becomes `Payload`.
+- `AddIsolatedModeCertificatesOptions` becomes `AddIsolatedModeCertificateOptions`
+- `RemoveIsolatedModeCertificatesOptions` becomes `RemoveIsolatedModeCertificateOptions`
+- Renamed `AttestEnclaveOptions` to `AttestSgxEnclaveOptions` and `AttestOpenEnclaveOptions`.
+- Split out `AttestationClient::Create` into its own factory class `AttestationClientFactory`.
+    - Note that the `AttestationClientFactory::Create` method returns a `std::unique_ptr` to the client object.
+- Split out `AttestationAdministrationClient::Create` into its own factory class `AttestationAdministrationClientFactory`.
+    - Note that the `AttestationAdministrationClientFactory::Create` method returns a `std::unique_ptr` to the client object.
 
 ### Bugs Fixed
 

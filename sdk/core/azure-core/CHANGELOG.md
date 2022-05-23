@@ -7,6 +7,8 @@ Added implementation for Distributed Tracing.
 
 ### Breaking Changes
 
+- Removed `noexcept` specification from `Azure::Core::Context::IsCancelled()`.
+
 ### Bugs Fixed
 
 ### Other Changes

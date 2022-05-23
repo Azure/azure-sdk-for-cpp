@@ -65,18 +65,7 @@ AttestationAdministrationClient::AttestationAdministrationClient(
       std::move(perCallpolicies));
 }
 
-AttestationAdministrationClient AttestationAdministrationClient::Create(
-    std::string const& endpoint,
-    std::shared_ptr<Core::Credentials::TokenCredential const> credential,
-    AttestationAdministrationClientOptions const& options,
-    Azure::Core::Context const& context)
-{
-  AttestationAdministrationClient returnValue(endpoint, credential, options);
-  returnValue.RetrieveResponseValidationCollateral(context);
-  return returnValue;
-}
-
-std::unique_ptr<AttestationAdministrationClient> AttestationAdministrationClient::CreatePointer(
+std::unique_ptr<AttestationAdministrationClient> AttestationAdministrationClientFactory::Create(
     std::string const& endpoint,
     std::shared_ptr<Core::Credentials::TokenCredential const> credential,
     AttestationAdministrationClientOptions const& options,
@@ -421,7 +410,7 @@ Azure::Response<Models::AttestationToken<Models::IsolatedModeCertificateModifica
 AttestationAdministrationClient::AddIsolatedModeCertificate(
     std::string const& pemEncodedX509CertificateToAdd,
     AttestationSigningKey const& existingSigningKey,
-    AddIsolatedModeCertificatesOptions const& options,
+    AddIsolatedModeCertificateOptions const& options,
     Azure::Core::Context const& context) const
 {
   auto const policyCertToken(
@@ -447,7 +436,7 @@ Azure::Response<Models::AttestationToken<Models::IsolatedModeCertificateModifica
 AttestationAdministrationClient::RemoveIsolatedModeCertificate(
     std::string const& pemEncodedX509CertificateToRemove,
     AttestationSigningKey const& existingSigningKey,
-    AddIsolatedModeCertificatesOptions const& options,
+    RemoveIsolatedModeCertificateOptions const& options,
     Azure::Core::Context const& context) const
 {
   // Calculate a signed (or unsigned) attestation policy token to send to the service.
@@ -482,7 +471,7 @@ AttestationAdministrationClient::RemoveIsolatedModeCertificate(
  * @param context Client context for the request to the service.
  */
 void AttestationAdministrationClient::RetrieveResponseValidationCollateral(
-    Azure::Core::Context const& context) const
+    Azure::Core::Context const& context)
 {
   std::unique_lock<std::shared_timed_mutex> stateLock(SharedStateLock);
 
