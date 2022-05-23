@@ -86,7 +86,7 @@ namespace Azure { namespace Security { namespace Attestation {
      */
     Response<Models::AttestationToken<std::string>> GetAttestationPolicy(
         Models::AttestationType const& attestationType,
-        GetPolicyOptions const& options = GetPolicyOptions(),
+        GetPolicyOptions const& options = GetPolicyOptions{},
         Azure::Core::Context const& context = Azure::Core::Context{}) const;
 
     /**
@@ -123,7 +123,7 @@ namespace Azure { namespace Security { namespace Attestation {
     Response<Models::AttestationToken<Models::PolicyResult>> SetAttestationPolicy(
         Models::AttestationType const& attestationType,
         std::string const& policyToSet,
-        SetPolicyOptions const& options = SetPolicyOptions(),
+        SetPolicyOptions const& options = SetPolicyOptions{},
         Azure::Core::Context const& context = Azure::Core::Context{}) const;
 
     /**
@@ -141,7 +141,7 @@ namespace Azure { namespace Security { namespace Attestation {
      */
     Response<Models::AttestationToken<Models::PolicyResult>> ResetAttestationPolicy(
         Models::AttestationType const& attestationType,
-        SetPolicyOptions const& options = SetPolicyOptions(),
+        SetPolicyOptions const& options = SetPolicyOptions{},
         Azure::Core::Context const& context = Azure::Core::Context{}) const;
 
     /**
@@ -266,7 +266,7 @@ namespace Azure { namespace Security { namespace Attestation {
         std::string const& endpoint,
         std::shared_ptr<Core::Credentials::TokenCredential const> credential,
         AttestationAdministrationClientOptions const& options
-        = AttestationAdministrationClientOptions());
+        = AttestationAdministrationClientOptions{});
 
     std::string CreateIsolatedModeModificationToken(
         std::string const& pemEncodedX509CertificateToAdd,
@@ -310,7 +310,7 @@ namespace Azure { namespace Security { namespace Attestation {
         std::string const& endpoint,
         std::shared_ptr<Core::Credentials::TokenCredential const> credential,
         AttestationAdministrationClientOptions const& options
-        = AttestationAdministrationClientOptions(),
+        = AttestationAdministrationClientOptions{},
         Azure::Core::Context const& context = Azure::Core::Context{});
     /**
      * @brief Construct a pointer to a new Attestation Administration Client object.
@@ -327,7 +327,7 @@ namespace Azure { namespace Security { namespace Attestation {
         std::string const& endpoint,
         std::shared_ptr<Core::Credentials::TokenCredential const> credential,
         AttestationAdministrationClientOptions const& options
-        = AttestationAdministrationClientOptions(),
+        = AttestationAdministrationClientOptions{},
         Azure::Core::Context const& context = Azure::Core::Context{});
   };
 

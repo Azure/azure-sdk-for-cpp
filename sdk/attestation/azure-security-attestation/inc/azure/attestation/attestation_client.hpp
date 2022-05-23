@@ -172,7 +172,7 @@ namespace Azure { namespace Security { namespace Attestation {
      */
     Response<Models::AttestationToken<Models::AttestationResult>> AttestSgxEnclave(
         std::vector<uint8_t> const& sgxQuoteToAttest,
-        AttestSgxEnclaveOptions options = AttestSgxEnclaveOptions(),
+        AttestSgxEnclaveOptions options = AttestSgxEnclaveOptions{},
         Azure::Core::Context const& context = Azure::Core::Context{}) const;
 
     /**
@@ -193,7 +193,7 @@ namespace Azure { namespace Security { namespace Attestation {
      */
     Response<Models::AttestationToken<Models::AttestationResult>> AttestOpenEnclave(
         std::vector<uint8_t> const& openEnclaveReportToAttest,
-        AttestOpenEnclaveOptions options = AttestOpenEnclaveOptions(),
+        AttestOpenEnclaveOptions options = AttestOpenEnclaveOptions{},
         Azure::Core::Context const& context = Azure::Core::Context{}) const;
 
     /**
@@ -217,7 +217,7 @@ namespace Azure { namespace Security { namespace Attestation {
      */
     Response<Models::TpmAttestationResult> AttestTpm(
         AttestTpmOptions const& options,
-        Azure::Core::Context const& context = Azure::Core::Context::ApplicationContext) const;
+        Azure::Core::Context const& context = Azure::Core::Context{}) const;
 
   private:
     Azure::Core::Url m_endpoint;
@@ -236,7 +236,7 @@ namespace Azure { namespace Security { namespace Attestation {
     AttestationClient(
         std::string const& endpoint,
         std::shared_ptr<Core::Credentials::TokenCredential const> credential,
-        AttestationClientOptions options = AttestationClientOptions());
+        AttestationClientOptions options = AttestationClientOptions{});
 
     /**
      * @brief Retrieves the information needed to validate a response from the attestation service.
@@ -266,7 +266,7 @@ namespace Azure { namespace Security { namespace Attestation {
     static AttestationClient Create(
         std::string const& endpoint,
         std::shared_ptr<Core::Credentials::TokenCredential const> credential,
-        AttestationClientOptions options = AttestationClientOptions(),
+        AttestationClientOptions options = AttestationClientOptions{},
         Azure::Core::Context const& constext = Azure::Core::Context{});
 
     /** @brief Construct a new anonymous Attestation Client object
@@ -279,7 +279,7 @@ namespace Azure { namespace Security { namespace Attestation {
      */
     static AttestationClient Create(
         std::string const& endpoint,
-        AttestationClientOptions options = AttestationClientOptions(),
+        AttestationClientOptions options = AttestationClientOptions{},
         Azure::Core::Context const& constext = Azure::Core::Context{});
 
     /** @brief Construct a new Attestation Client object
@@ -297,7 +297,7 @@ namespace Azure { namespace Security { namespace Attestation {
     static std::unique_ptr<AttestationClient> CreatePointer(
         std::string const& endpoint,
         std::shared_ptr<Core::Credentials::TokenCredential const> credential,
-        AttestationClientOptions options = AttestationClientOptions(),
+        AttestationClientOptions options = AttestationClientOptions{},
         Azure::Core::Context const& constext = Azure::Core::Context{});
 
     /** @brief Construct a new anonymous Attestation Client object
@@ -315,7 +315,7 @@ namespace Azure { namespace Security { namespace Attestation {
      */
     static std::unique_ptr<AttestationClient> CreatePointer(
         std::string const& endpoint,
-        AttestationClientOptions options = AttestationClientOptions(),
+        AttestationClientOptions options = AttestationClientOptions{},
         Azure::Core::Context const& constext = Azure::Core::Context{});
   };
 
