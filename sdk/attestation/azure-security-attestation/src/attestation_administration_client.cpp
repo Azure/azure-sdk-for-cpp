@@ -65,8 +65,7 @@ AttestationAdministrationClient::AttestationAdministrationClient(
       std::move(perCallpolicies));
 }
 
-std::unique_ptr<AttestationAdministrationClient>
-AttestationAdministrationClientFactory::Create(
+std::unique_ptr<AttestationAdministrationClient> AttestationAdministrationClientFactory::Create(
     std::string const& endpoint,
     std::shared_ptr<Core::Credentials::TokenCredential const> credential,
     AttestationAdministrationClientOptions const& options,
@@ -472,7 +471,7 @@ AttestationAdministrationClient::RemoveIsolatedModeCertificate(
  * @param context Client context for the request to the service.
  */
 void AttestationAdministrationClient::RetrieveResponseValidationCollateral(
-    Azure::Core::Context const& context) const
+    Azure::Core::Context const& context)
 {
   std::unique_lock<std::shared_timed_mutex> stateLock(SharedStateLock);
 

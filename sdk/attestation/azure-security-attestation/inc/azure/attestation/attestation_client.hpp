@@ -226,7 +226,7 @@ namespace Azure { namespace Security { namespace Attestation {
     std::shared_ptr<Azure::Core::Http::_internal::HttpPipeline> m_pipeline;
     AttestationTokenValidationOptions m_tokenValidationOptions;
 
-    mutable std::vector<Models::AttestationSigner> m_attestationSigners;
+    std::vector<Models::AttestationSigner> m_attestationSigners;
 
     /** @brief Construct a new Attestation Client object
      *
@@ -246,7 +246,7 @@ namespace Azure { namespace Security { namespace Attestation {
      * validated.
      */
     void RetrieveResponseValidationCollateral(
-        Azure::Core::Context const& context = Azure::Core::Context{}) const;
+        Azure::Core::Context const& context = Azure::Core::Context{});
   };
 
   /** @brief Construct a new AttestationClient object.
@@ -274,6 +274,7 @@ namespace Azure { namespace Security { namespace Attestation {
         std::shared_ptr<Core::Credentials::TokenCredential const> credential,
         AttestationClientOptions options = AttestationClientOptions{},
         Azure::Core::Context const& constext = Azure::Core::Context{});
+
     /** @brief Construct a new anonymous Attestation Client object
      *
      * @details Constructs a new anonymous (unauthenticated) attestation client. Follows the

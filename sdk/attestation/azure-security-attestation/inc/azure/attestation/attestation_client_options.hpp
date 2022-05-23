@@ -250,6 +250,7 @@ namespace Azure { namespace Security { namespace Attestation {
      */
     Azure::Nullable<AttestationTokenValidationOptions> TokenValidationOptionsOverride{};
   };
+
   /** @brief Parameters sent to the attestation service for the AttestationClient::AttestOpenEnclave
    * API.
    */

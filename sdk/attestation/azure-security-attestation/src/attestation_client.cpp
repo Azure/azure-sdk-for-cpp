@@ -184,8 +184,7 @@ std::shared_timed_mutex SharedStateLock;
  *
  * @param context Client context for the request to the service.
  */
-void AttestationClient::RetrieveResponseValidationCollateral(
-    Azure::Core::Context const& context) const
+void AttestationClient::RetrieveResponseValidationCollateral(Azure::Core::Context const& context)
 {
   std::unique_lock<std::shared_timed_mutex> stateLock(SharedStateLock);
 

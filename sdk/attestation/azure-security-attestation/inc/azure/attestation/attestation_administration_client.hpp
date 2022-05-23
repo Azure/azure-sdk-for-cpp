@@ -253,7 +253,7 @@ namespace Azure { namespace Security { namespace Attestation {
     std::shared_ptr<Azure::Core::Http::_internal::HttpPipeline> m_pipeline;
     AttestationTokenValidationOptions m_tokenValidationOptions;
 
-    mutable std::vector<Models::AttestationSigner> m_attestationSigners;
+    std::vector<Models::AttestationSigner> m_attestationSigners;
 
     /**
      * @brief Construct a new Attestation Administration Client object.
@@ -287,7 +287,7 @@ namespace Azure { namespace Security { namespace Attestation {
      * @param context Client context for the request to the service.
      */
     void RetrieveResponseValidationCollateral(
-        Azure::Core::Context const& context = Azure::Core::Context{}) const;
+        Azure::Core::Context const& context = Azure::Core::Context{});
   };
 
   /** @brief Construct a new AttestationAdministrationClient object.
