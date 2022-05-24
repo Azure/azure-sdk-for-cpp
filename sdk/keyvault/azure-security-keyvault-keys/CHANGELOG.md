@@ -3,12 +3,7 @@
 ## 4.3.0-beta.1 (Unreleased)
 
 ### Features Added
-
-### Breaking Changes
-
-### Bugs Fixed
-
-### Other Changes
+- Keyvault 7.3 support added for Keys, Certificates and Secrets Keyvault services. 
 
 ## 4.2.0 (2021-10-05)
 
