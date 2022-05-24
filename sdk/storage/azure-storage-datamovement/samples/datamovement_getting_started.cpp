@@ -53,12 +53,21 @@ int main()
   auto job1Status = job1.WaitHandle.get();
   if (job1Status == JobStatus::Succeeded)
   {
-    std::cout << "job1 successful" << std::endl;
+    std::cout << "job1 succeeded" << std::endl;
   }
   auto job2Status = job2.WaitHandle.get();
   if (job2Status == JobStatus::Succeeded)
   {
-    std::cout << "job2 successful" << std::endl;
+    std::cout << "job2 succeeded" << std::endl;
+  }
+
+  auto job3 = m.ScheduleDownload(blobClient, localFile + "_2");
+  std::cout << job3.Id << std::endl;
+  std::cout << job3.SourceUrl << " -> " << job3.DestinationUrl << std::endl;
+  auto job3Status = job3.WaitHandle.get();
+  if (job3Status == JobStatus::Succeeded)
+  {
+    std::cout << "job3 succeeded" << std::endl;
   }
   return 0;
 }

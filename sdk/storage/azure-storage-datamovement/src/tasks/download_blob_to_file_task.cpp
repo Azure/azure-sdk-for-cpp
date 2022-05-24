@@ -1,43 +1,65 @@
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// SPDX-License-Identifier: MIT
+
 #include "azure/storage/datamovement/tasks/download_blob_to_file_task.hpp"
 
+#include "azure/storage/datamovement/job_properties.hpp"
 #include "azure/storage/datamovement/scheduler.hpp"
+#include "azure/storage/datamovement/utilities.hpp"
 
 namespace Azure { namespace Storage { namespace Blobs { namespace _detail {
+
   namespace {
-    constexpr uint64_t ChunkSize = 4 * 1024 * 1024;
+    constexpr uint64_t ChunkSize = 8 * 1024 * 1024;
     static_assert(ChunkSize < static_cast<uint64_t>(std::numeric_limits<size_t>::max()), "");
 
   } // namespace
 
   // TODO: Should not allow expection thrown out from the method, should add some error handling.
-  void DownloadBlobToFileTask::Execute()
+  void DownloadBlobToFileTask::Execute() noexcept
   {
-    // TODO Error handling here
-    auto properties = Context->Source.GetProperties().Value;
-    const uint64_t fileSize = properties.BlobSize;
-    Context->FileSize = fileSize;
+    try
+    {
+      auto properties = Context->Source.GetProperties().Value;
+      Context->FileSize = properties.BlobSize;
+    }
+    catch (std::exception&)
+    {
+      SharedStatus->TaskFailedCallback(
+          1, Context->Source.GetUrl(), _internal::GetFileUrl(Context->Destination));
+      return;
+    }
+
+    const uint64_t fileSize = Context->FileSize;
 
     if (!Context->FileWriter)
     {
-      // TODO before creation, check file existence.
-      // TODO: error handling here, when failed on opening the file.
-      Context->FileWriter = std::make_unique<Storage::_internal::FileWriter>(Context->Destination);
+      // TODO: check if file already exists and last modified time depending on overwrite behavior
+      try
+      {
+        Context->FileWriter
+            = std::make_unique<Storage::_internal::FileWriter>(Context->Destination);
+      }
+      catch (std::exception&)
+      {
+        SharedStatus->TaskFailedCallback(
+            1, Context->Source.GetUrl(), _internal::GetFileUrl(Context->Destination));
+        return;
+      }
     }
 
     if (fileSize == 0)
     {
-      // TODO: completed
+      SharedStatus->TaskTransferedCallback(1, Context->FileSize);
       return;
     }
-
-    // TODO: if file is small enough
 
     Context->NumChunks = static_cast<int>((fileSize + ChunkSize - 1) / ChunkSize);
     std::vector<Storage::_internal::Task> subtasks;
     for (int index = 0; index < Context->NumChunks; ++index)
     {
-      auto downloadRangeTask = std::make_unique<DownloadRangeToMemoryTask>(
-          Storage::_internal::TaskType::NetworkDownload, m_scheduler);
+      auto downloadRangeTask
+          = CreateTask<DownloadRangeToMemoryTask>(Storage::_internal::TaskType::NetworkDownload);
       downloadRangeTask->Context = Context;
       downloadRangeTask->Offset = index * ChunkSize;
       downloadRangeTask->Length
@@ -45,46 +67,79 @@ namespace Azure { namespace Storage { namespace Blobs { namespace _detail {
       downloadRangeTask->MemoryCost = downloadRangeTask->Length;
       subtasks.push_back(std::move(downloadRangeTask));
     }
-    m_scheduler->AddTasks(std::move(subtasks));
+    SharedStatus->Scheduler->AddTasks(std::move(subtasks));
   }
 
-  void DownloadRangeToMemoryTask::Execute()
+  void DownloadRangeToMemoryTask::Execute() noexcept
   {
+    if (Context->Failed.load(std::memory_order_relaxed))
+    {
+      return;
+    }
+
     std::unique_ptr<uint8_t[]> buffer = std::make_unique<uint8_t[]>(Length);
     Azure::Storage::Blobs::DownloadBlobOptions options;
     options.Range = Core::Http::HttpRange();
     options.Range->Offset = this->Offset;
     options.Range->Length = this->Length;
-    // TODO: error handling & retry
-    // TODO: when error happens, memory should be given back, handling MemoryGiveBack.
     // TODO: should check for source blob changing to avoid data corruption.
-    auto downloadResult = Context->Source.Download(options).Value;
-    size_t bytesRead = downloadResult.BodyStream->ReadToCount(buffer.get(), this->Length);
-    if (bytesRead != this->Length)
+    try
     {
-      // TODO: error handling
+      auto downloadResult = Context->Source.Download(options).Value;
+      size_t bytesRead = downloadResult.BodyStream->ReadToCount(buffer.get(), this->Length);
+      if (bytesRead != this->Length)
+      {
+        throw std::runtime_error("Failed to download blob chunk.");
+      }
+    }
+    catch (std::exception&)
+    {
+      bool firstFailure = !Context->Failed.exchange(true, std::memory_order_relaxed);
+      if (firstFailure)
+      {
+        SharedStatus->TaskFailedCallback(
+            1, Context->Source.GetUrl(), _internal::GetFileUrl(Context->Destination));
+      }
+      return;
     }
 
-    auto writeToFileTask
-        = std::make_unique<WriteToFileTask>(_internal::TaskType::DiskIO, m_scheduler);
+    auto writeToFileTask = CreateTask<WriteToFileTask>(_internal::TaskType::DiskIO);
     writeToFileTask->Context = Context;
     writeToFileTask->Buffer = std::move(buffer);
     writeToFileTask->Offset = this->Offset;
     writeToFileTask->Length = Length;
-    writeToFileTask->MemoryGiveBack = MemoryCost;
+    std::swap(writeToFileTask->MemoryGiveBack, this->MemoryGiveBack);
 
-    m_scheduler->AddTask(std::move(writeToFileTask));
+    SharedStatus->Scheduler->AddTask(std::move(writeToFileTask));
   }
 
-  void WriteToFileTask::Execute()
+  void WriteToFileTask::Execute() noexcept
   {
-    Context->FileWriter->Write(this->Buffer.get(), this->Length, this->Offset);
-    Buffer.reset();
+    if (Context->Failed.load(std::memory_order_relaxed))
+    {
+      return;
+    }
+
+    try
+    {
+      Context->FileWriter->Write(this->Buffer.get(), this->Length, this->Offset);
+    }
+    catch (std::exception&)
+    {
+      bool firstFailure = !Context->Failed.exchange(true, std::memory_order_relaxed);
+      if (firstFailure)
+      {
+        SharedStatus->TaskFailedCallback(
+            1, Context->Source.GetUrl(), _internal::GetFileUrl(Context->Destination));
+      }
+      return;
+    }
+
     int numDownloadedBlocks
         = Context->NumDownloadedChunks.fetch_add(1, std::memory_order_relaxed) + 1;
     if (numDownloadedBlocks == Context->NumChunks)
     {
-      // TODO handling complete
+      SharedStatus->TaskTransferedCallback(1, Context->FileSize);
     }
   }
 }}}} // namespace Azure::Storage::Blobs::_detail

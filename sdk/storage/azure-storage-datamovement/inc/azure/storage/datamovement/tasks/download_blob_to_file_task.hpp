@@ -1,4 +1,10 @@
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// SPDX-License-Identifier: MIT
+
 #pragma once
+
+#include <azure/storage/blobs/blob_client.hpp>
+#include <azure/storage/common/internal/file_io.hpp>
 
 #include "azure/storage/datamovement/datamovement_options.hpp"
 #include "azure/storage/datamovement/task.hpp"
@@ -9,10 +15,9 @@ namespace Azure { namespace Storage { namespace Blobs { namespace _detail {
   {
     DownloadBlobToFileTask(
         Storage::_internal::TaskType type,
-        Storage::_internal::Scheduler* scheduler,
         const Blobs::BlobClient& source,
-        const std::string& destination)
-        : TaskBase(type, scheduler), Context(std::make_shared<TaskContext>(source, destination))
+        const std::string& destination) noexcept
+        : TaskBase(type), Context(std::make_shared<TaskContext>(source, destination))
     {
     }
 
@@ -28,10 +33,11 @@ namespace Azure { namespace Storage { namespace Blobs { namespace _detail {
       uint64_t FileSize{0};
       int NumChunks{0};
       std::atomic<int> NumDownloadedChunks{0};
+      std::atomic<bool> Failed{false};
     };
     std::shared_ptr<TaskContext> Context;
 
-    void Execute() override;
+    void Execute() noexcept override;
   };
 
   struct DownloadRangeToMemoryTask final : public Storage::_internal::TaskBase
@@ -42,7 +48,7 @@ namespace Azure { namespace Storage { namespace Blobs { namespace _detail {
     int64_t Offset;
     size_t Length;
 
-    void Execute() override;
+    void Execute() noexcept override;
   };
 
   struct WriteToFileTask final : public Storage::_internal::TaskBase
@@ -54,6 +60,6 @@ namespace Azure { namespace Storage { namespace Blobs { namespace _detail {
     size_t Length;
     std::unique_ptr<uint8_t[]> Buffer;
 
-    void Execute() override;
+    void Execute() noexcept override;
   };
 }}}} // namespace Azure::Storage::Blobs::_detail

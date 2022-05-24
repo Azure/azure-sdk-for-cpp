@@ -1,23 +1,11 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
 
-#include "test/ut/test_base.hpp"
+#include "blob_transfer_manager_test.hpp"
 
-#include <azure/core/platform.hpp>
-
-#if defined(AZ_PLATFORM_WINDOWS)
-#if !defined(WIN32_LEAN_AND_MEAN)
-#define WIN32_LEAN_AND_MEAN
-#endif
-#if !defined(NOMINMAX)
-#define NOMINMAX
-#endif
-#include <windows.h>
-#else
-#include <sys/stat.h>
-#endif
-
+#include <algorithm>
 #include <chrono>
+#include <string>
 #include <thread>
 #include <vector>
 
@@ -26,57 +14,7 @@
 
 namespace Azure { namespace Storage { namespace Test {
 
-  class BlobTransferManagerUploadTest : public Azure::Storage::Test::StorageTest {
-  private:
-    std::unique_ptr<Azure::Storage::Blobs::BlobServiceClient> m_client;
-
-  protected:
-    const Azure::Storage::Blobs::BlobServiceClient& GetClientForTest(const std::string& testName)
-    {
-      m_testContext.RenameTest(testName);
-      return *m_client;
-    }
-
-    void SetUp() override
-    {
-      StorageTest::SetUp();
-
-      auto options = InitClientOptions<Azure::Storage::Blobs::BlobClientOptions>();
-      m_client = std::make_unique<Azure::Storage::Blobs::BlobServiceClient>(
-          Azure::Storage::Blobs::BlobServiceClient::CreateFromConnectionString(
-              StandardStorageConnectionString(), options));
-    }
-
-    static void CreateDir(const std::string& dir)
-    {
-#if defined(AZ_PLATFORM_WINDOWS)
-      CreateDirectory(dir.data(), NULL);
-#else
-      mkdir(dir.data(), 0777);
-#endif
-    }
-
-    static void DeleteDir(const std::string& dir)
-    {
-      _internal::DirectoryIterator iterator(dir);
-      while (true)
-      {
-        auto i = iterator.Next();
-        if (i.Name.empty())
-        {
-          break;
-        }
-        if (i.IsDirectory)
-        {
-          DeleteDir(dir + "/" + i.Name);
-        }
-#undef DeleteFile
-        DeleteFile(i.Name);
-      }
-    }
-  };
-
-  TEST_F(BlobTransferManagerUploadTest, SingleUpload_LIVEONLY_)
+  TEST_F(BlobTransferManagerTest, SingleUpload_LIVEONLY_)
   {
     const auto testName = GetTestNameLowerCase();
     auto blobServiceClient = GetClientForTest(testName);
@@ -105,7 +43,7 @@ namespace Azure { namespace Storage { namespace Test {
     containerClient.DeleteIfExists();
   }
 
-  TEST_F(BlobTransferManagerUploadTest, SingleUploadPauseResume_LIVEONLY_)
+  TEST_F(BlobTransferManagerTest, SingleUploadPauseResume_LIVEONLY_)
   {
     const auto testName = GetTestNameLowerCase();
     auto blobServiceClient = GetClientForTest(testName);
@@ -153,7 +91,7 @@ namespace Azure { namespace Storage { namespace Test {
     containerClient.DeleteIfExists();
   }
 
-  TEST_F(BlobTransferManagerUploadTest, DirectoryUpload_LIVEONLY_)
+  TEST_F(BlobTransferManagerTest, DirectoryUpload_LIVEONLY_)
   {
     const auto testName = GetTestNameLowerCase();
     auto blobServiceClient = GetClientForTest(testName);
