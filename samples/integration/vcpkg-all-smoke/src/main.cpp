@@ -9,6 +9,7 @@
 #include "get_env.hpp"
 #include <azure/attestation.hpp>
 #include <azure/core.hpp>
+#include <azure/core/internal/json/json.hpp>
 #include <azure/identity.hpp>
 #include <azure/keyvault/certificates.hpp>
 #include <azure/keyvault/keys.hpp>
@@ -43,9 +44,9 @@ int main()
   {
     std::cout << "Creating Keyvault Clients" << std::endl;
     // keyvault
-    KeyClient keyClient(std::getenv("AZURE_KEYVAULT_URL"), credential);
-    SecretClient secretClient(std::getenv("AZURE_KEYVAULT_URL"), credential);
-    CertificateClient certificateClient(std::getenv("AZURE_KEYVAULT_URL"), credential);
+    KeyClient keyClient(smokeUrl, credential);
+    SecretClient secretClient(smokeUrl, credential);
+    CertificateClient certificateClient(smokeUrl, credential);
 
     std::cout << "Creating Storage Clients" << std::endl;
     // Storage
@@ -69,10 +70,32 @@ int main()
 
     // Attestation
     std::cout << "Creating Attestation Clients" << std::endl;
-    std::unique_ptr<AttestationClient> attestationClient(
-        AttestationClientFactory::Create(std::getenv("ATTESTATION_AAD_URL")));
-    std::unique_ptr<AttestationAdministrationClient> attestationAdminClient(
-        AttestationAdministrationClientFactory::Create(std::getenv("ATTESTATION_AAD_URL"), credential));
+
+    // we define what the behavior is in certain scenarios.
+    // exception in this case is expected behavior.
+    try
+    {
+      std::unique_ptr<AttestationAdministrationClient> attestationAdminClient(
+          AttestationAdministrationClientFactory::Create(smokeUrl, credential));
+      return 1;
+    }
+    catch (Azure::Core::Credentials::AuthenticationException const& auth)
+    {
+      std::cout << "received exdpected exception " << auth.what();
+    }
+
+    // we define what the behavior is in certain scenarios.
+    // exception in this case is expected behavior.
+    try
+    {
+      std::unique_ptr<AttestationClient> attestationClient(
+          AttestationClientFactory::Create(smokeUrl));
+      return 1;
+    }
+    catch (Azure::Core::Json::_internal::detail::parse_error const& json)
+    {
+      std::cout << "received expected error " << json.what();
+    }
 
     std::cout << "Successfully Created the Clients" << std::endl;
   }
