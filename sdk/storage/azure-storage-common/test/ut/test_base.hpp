@@ -72,13 +72,13 @@ namespace Azure { namespace Storage {
         return Azure::Core::_internal::StringExtensions::ToLower(name);
       }
 
-      std::string GetTestEncryptionScope()
+      static std::string GetTestEncryptionScope()
       {
         static const std::string TestEncryptionScope("EncryptionScopeForTest");
         return TestEncryptionScope;
       }
 
-      std::string AppendQueryParameters(
+      static std::string AppendQueryParameters(
           const Azure::Core::Url& url,
           const std::string& queryParameters);
 
@@ -87,50 +87,52 @@ namespace Azure { namespace Storage {
       /* cspell:disable-next-line */
       constexpr static const char* DummyCrc64 = "+DNR5PON4EM=";
 
-      uint64_t RandomInt(
+      static uint64_t RandomInt(
           uint64_t minNumber = std::numeric_limits<uint64_t>::min(),
           uint64_t maxNumber = std::numeric_limits<uint64_t>::max());
 
-      std::string RandomString(size_t size = 10);
+      static std::string RandomString(size_t size = 10);
 
       std::string GetStringOfSize(size_t size = 10, bool lowercase = false);
 
-      std::string LowercaseRandomString(size_t size = 10);
+      static std::string LowercaseRandomString(size_t size = 10);
 
-      Storage::Metadata GetMetadata(size_t size = 5);
+      static Storage::Metadata GetMetadata(size_t size = 5);
 
-      void RandomBuffer(char* buffer, size_t length);
-      inline void RandomBuffer(uint8_t* buffer, size_t length)
+      static void RandomBuffer(char* buffer, size_t length);
+      static void RandomBuffer(uint8_t* buffer, size_t length)
       {
         RandomBuffer(reinterpret_cast<char*>(buffer), length);
       }
-      std::vector<uint8_t> RandomBuffer(size_t length);
+      static std::vector<uint8_t> RandomBuffer(size_t length);
 
-      inline std::vector<uint8_t> ReadBodyStream(
+      static std::vector<uint8_t> ReadBodyStream(
           std::unique_ptr<Azure::Core::IO::BodyStream>& stream)
       {
         Azure::Core::Context context;
         return stream->ReadToEnd(context);
       }
 
-      inline std::vector<uint8_t> ReadBodyStream(
+      static std::vector<uint8_t> ReadBodyStream(
           std::unique_ptr<Azure::Core::IO::BodyStream>&& stream)
       {
         return ReadBodyStream(stream);
       }
 
-      std::vector<uint8_t> ReadFile(const std::string& filename);
+      static std::vector<uint8_t> ReadFile(const std::string& filename);
 
-      void DeleteFile(const std::string& filename);
+      static void WriteFile(const std::string& filename, const std::vector<uint8_t>& content);
 
-      std::string InferSecondaryUrl(const std::string primaryUri);
+      static void DeleteFile(const std::string& filename);
 
-      inline std::string Base64EncodeText(const std::string& text)
+      static std::string InferSecondaryUrl(const std::string primaryUri);
+
+      static std::string Base64EncodeText(const std::string& text)
       {
         return Azure::Core::Convert::Base64Encode(std::vector<uint8_t>(text.begin(), text.end()));
       }
 
-      virtual void SetUp() override
+      void SetUp() override
       {
         Azure::Core::Test::TestBase::SetUpTestBase(AZURE_TEST_RECORDING_DIR);
       }
@@ -176,7 +178,7 @@ namespace Azure { namespace Storage {
         return *m_client;
       }
 
-      virtual void SetUp() override
+      void SetUp() override
       {
         StorageTest::SetUp();
         m_containerName = Azure::Core::_internal::StringExtensions::ToLower(GetTestName());
