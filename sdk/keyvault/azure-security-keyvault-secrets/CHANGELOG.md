@@ -6,6 +6,8 @@
 
 ### Breaking Changes
 
+- Renamed `keyvault_secrets.hpp` to `secrets.hpp`.
+
 ### Bugs Fixed
 
 ### Other Changes

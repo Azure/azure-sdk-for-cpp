@@ -193,6 +193,28 @@ namespace Azure { namespace Storage { namespace Test {
     }
   }
 
+  TEST_F(BlobServiceClientTest, ListSystemContainers)
+  {
+    const std::string testName = GetTestNameLowerCase();
+    auto client = GetClientForTest(testName);
+    Azure::Storage::Blobs::ListBlobContainersOptions options;
+    options.Include = Blobs::Models::ListBlobContainersIncludeFlags::System;
+    std::vector<std::string> containers;
+    for (auto pageResult = client.ListBlobContainers(options); pageResult.HasPage();
+         pageResult.MoveToNextPage())
+    {
+      for (const auto& c : pageResult.BlobContainers)
+      {
+        if (c.Name[0] == '$')
+        {
+          containers.push_back(c.Name);
+        }
+      }
+    }
+
+    EXPECT_FALSE(containers.empty());
+  }
+
   TEST_F(BlobServiceClientTest, GetProperties)
   {
     const std::string testName = GetTestName();
