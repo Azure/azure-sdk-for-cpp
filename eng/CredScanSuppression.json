@@ -2,10 +2,11 @@
     "tool": "Credential Scanner",
     "suppressions": [
         {
-            "file":[
-                "eng/common/testproxy/dotnet-devcert.pfx"
-            ],
-            "_justification": "File contains private key used by test code."
+          "file": [
+            "sdk/keyvault/azure-security-keyvault-certificates/test/ut/recordings/KeyVaultCertificateClientTest.DownloadImportPem.json",
+            "sdk/keyvault/azure-security-keyvault-certificates/test/ut/recordings/KeyVaultCertificateClientTest.DownloadImportPkcs.json.",
+          ],
+          "_justification": "File contains recording for playback, not valid certificate."
         }
     ]
 }
