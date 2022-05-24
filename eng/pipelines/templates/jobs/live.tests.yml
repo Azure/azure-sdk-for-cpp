@@ -41,7 +41,7 @@ jobs:
 - job: ValidateLive
   dependsOn: ${{ parameters.DependsOn }}
   condition: ne(${{ parameters.Matrix }}, '{}')
-
+  timeoutInMinutes: ${{ parameters.TimeoutInMinutes }}
   pool:
     name: $(Pool)
     vmImage: $(OSVmImage)
