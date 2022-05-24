@@ -19,7 +19,7 @@ parameters:
   default: sdk/*/*/*cov_xml.xml
 - name: TimeoutInMinutes
   type: number
-  default: 60
+  default: 120
 - name: DependsOn
   type: string
   default: ''

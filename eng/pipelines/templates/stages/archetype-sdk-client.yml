@@ -25,7 +25,7 @@ parameters:
   default: 'sdk/*/*/*cov_xml.xml'
 - name: LiveTestTimeoutInMinutes
   type: number
-  default: 90
+  default: 120
 - name: LineCoverageTarget
   type: number
   default: 95
