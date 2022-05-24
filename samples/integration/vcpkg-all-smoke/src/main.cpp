@@ -81,7 +81,7 @@ int main()
     }
     catch (Azure::Core::Credentials::AuthenticationException const& auth)
     {
-      std::cout << "received exdpected exception " << auth.what();
+      std::cout << "Received expected exception " << auth.what();
     }
 
     // we define what the behavior is in certain scenarios.
@@ -94,7 +94,7 @@ int main()
     }
     catch (Azure::Core::Json::_internal::detail::parse_error const& json)
     {
-      std::cout << "received expected error " << json.what();
+      std::cout << "Received expected error " << json.what();
     }
 
     std::cout << "Successfully Created the Clients" << std::endl;
