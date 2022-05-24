@@ -50,6 +50,8 @@ set(
   inc/azure/storage/datamovement/scheduler.hpp
   inc/azure/storage/datamovement/storage_transfer_manager.hpp
   inc/azure/storage/datamovement/task.hpp
+  inc/azure/storage/datamovement/tasks/download_blob_directory_task.hpp
+  inc/azure/storage/datamovement/tasks/download_blob_to_file_task.hpp
   inc/azure/storage/datamovement/tasks/upload_blob_from_file_task.hpp
   inc/azure/storage/datamovement/tasks/upload_blobs_from_directory_task.hpp
   src/private/package_version.hpp
@@ -62,6 +64,8 @@ set(
   src/directory_iterator.cpp
   src/scheduler.cpp
   src/storage_transfer_manager.cpp
+  src/tasks/download_blob_directory_task.cpp
+  src/tasks/download_blob_to_file_task.cpp
   src/tasks/upload_blob_from_file_task.cpp
   src/tasks/upload_blobs_from_directory_task.cpp
 )
