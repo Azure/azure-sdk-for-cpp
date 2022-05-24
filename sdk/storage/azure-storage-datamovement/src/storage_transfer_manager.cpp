@@ -22,7 +22,7 @@ namespace Azure { namespace Storage {
   std::shared_ptr<_internal::TaskSharedStatus> StorageTransferManager::GetJobStatus(
       const std::string& jobId)
   {
-    std::lock_guard<std::mutex> guard(m_jobDetailsLock);
+    std::lock_guard<std::mutex> guard(m_jobDetailsMutex);
     std::shared_ptr<_internal::TaskSharedStatus> jobStatus;
     auto ite = m_jobDetails.find(jobId);
     if (ite != m_jobDetails.end())
@@ -60,7 +60,7 @@ namespace Azure { namespace Storage {
 
   void StorageTransferManager::CancelAllJobs()
   {
-    std::lock_guard<std::mutex> guard(m_jobDetailsLock);
+    std::lock_guard<std::mutex> guard(m_jobDetailsMutex);
     for (auto& p : m_jobDetails)
     {
       auto jobStatus = p.second.SharedStatus.lock();
@@ -109,7 +109,7 @@ namespace Azure { namespace Storage {
 
   void StorageTransferManager::PauseAllJobs()
   {
-    std::lock_guard<std::mutex> guard(m_jobDetailsLock);
+    std::lock_guard<std::mutex> guard(m_jobDetailsMutex);
     for (auto& p : m_jobDetails)
     {
       auto jobStatus = p.second.SharedStatus.lock();
@@ -148,7 +148,7 @@ namespace Azure { namespace Storage {
           + _internal::JobStatusToString(currStatus) + ".");
     }
     m_scheduler.ResumePausedTasks();
-    std::lock_guard<std::mutex> guard(m_jobDetailsLock);
+    std::lock_guard<std::mutex> guard(m_jobDetailsMutex);
     return m_jobDetails.at(jobId).GetJobProperties();
   }
 
@@ -182,7 +182,7 @@ namespace Azure { namespace Storage {
     rootTask->SharedStatus = sharedStatus;
 
     {
-      std::lock_guard<std::mutex> guard(m_jobDetailsLock);
+      std::lock_guard<std::mutex> guard(m_jobDetailsMutex);
       auto insertResult = m_jobDetails.emplace(jobDetails.Id, std::move(jobDetails));
       AZURE_ASSERT(insertResult.second);
     }

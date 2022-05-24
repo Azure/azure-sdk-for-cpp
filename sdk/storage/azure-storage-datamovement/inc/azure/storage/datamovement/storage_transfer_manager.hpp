@@ -46,7 +46,7 @@ namespace Azure { namespace Storage {
 
     // TODO: need some way to clean up finished jobs
     std::map<std::string, _internal::JobDetails> m_jobDetails;
-    std::mutex m_jobDetailsLock;
+    std::mutex m_jobDetailsMutex;
   };
 
 }} // namespace Azure::Storage

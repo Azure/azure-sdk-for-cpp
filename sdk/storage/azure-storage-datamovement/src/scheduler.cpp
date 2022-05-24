@@ -83,7 +83,6 @@ namespace Azure { namespace Storage { namespace _internal {
       }
     };
 
-    m_workerThreads.reserve(numThreads + 1);
     for (int i = 0; i < numThreads; ++i)
     {
       m_workerThreads.push_back(std::thread(
@@ -116,7 +115,6 @@ namespace Azure { namespace Storage { namespace _internal {
         auto scheduleTasksInPendingQueue
             = [this, &pausedTasks, &readyTasks](
                   TaskQueue& pendingQueue, std::function<bool(const Task&)> predicate) {
-                int numScheduledTasks = 0;
                 while (!pendingQueue.empty())
                 {
                   Task& task = pendingQueue.front();
@@ -144,7 +142,6 @@ namespace Azure { namespace Storage { namespace _internal {
 
                     readyTasks.push_back(std::move(task));
                     pendingQueue.pop();
-                    ++numScheduledTasks;
                   }
                   else
                   {
@@ -257,6 +254,7 @@ namespace Azure { namespace Storage { namespace _internal {
       while (!m_readyTasks.empty())
       {
         ReclaimProvisionedResource(m_readyTasks.front());
+        ReclaimAllocatedResource(m_readyTasks.front());
         m_readyTasks.pop();
       }
     }
@@ -265,6 +263,7 @@ namespace Azure { namespace Storage { namespace _internal {
       while (!m_readyDiskIOTasks.empty())
       {
         ReclaimProvisionedResource(m_readyDiskIOTasks.front());
+        ReclaimAllocatedResource(m_readyTasks.front());
         m_readyDiskIOTasks.pop();
       }
     }
@@ -332,42 +331,37 @@ namespace Azure { namespace Storage { namespace _internal {
 
   void Scheduler::AddTasks(std::vector<Task>&& tasks)
   {
-    std::vector<bool> validTaskBitmap(tasks.size(), false);
     {
       std::unique_lock<std::mutex> guard(m_pendingTasksMutex, std::defer_lock);
       int numTasksAdded = 0;
-      for (size_t i = 0; i < tasks.size(); ++i)
+      for (auto& task : tasks)
       {
-        if (tasks[i]->Type == TaskType::DiskIO)
+        if (task->Type == TaskType::DiskIO)
         {
           if (!guard.owns_lock())
           {
             guard.lock();
           }
-          m_pendingDiskIOTasks.push(std::move(tasks[i]));
+          m_pendingDiskIOTasks.push(std::move(task));
           ++numTasksAdded;
         }
-        else if (tasks[i]->Type == TaskType::NetworkUpload)
+        else if (task->Type == TaskType::NetworkUpload)
         {
           if (!guard.owns_lock())
           {
             guard.lock();
           }
-          m_pendingNetworkUploadTasks.push(std::move(tasks[i]));
+          m_pendingNetworkUploadTasks.push(std::move(task));
           ++numTasksAdded;
         }
-        else if (tasks[i]->Type == TaskType::NetworkDownload)
+        else if (task->Type == TaskType::NetworkDownload)
         {
           if (!guard.owns_lock())
           {
             guard.lock();
           }
-          m_pendingNetworkDownloadTasks.push(std::move(tasks[i]));
+          m_pendingNetworkDownloadTasks.push(std::move(task));
           ++numTasksAdded;
-        }
-        else
-        {
-          validTaskBitmap[i] = true;
         }
       }
       if (numTasksAdded > 0)
@@ -379,19 +373,19 @@ namespace Azure { namespace Storage { namespace _internal {
     {
       std::unique_lock<std::mutex> guard(m_readyTasksMutex, std::defer_lock);
       int numTasksAdded = 0;
-      for (size_t i = 0; i < tasks.size(); ++i)
+      for (auto& task : tasks)
       {
-        if (!validTaskBitmap[i])
+        if (!task)
         {
           continue;
         }
-        if (tasks[i]->Type == TaskType::Other)
+        if (task->Type == TaskType::Other)
         {
           if (!guard.owns_lock())
           {
             guard.lock();
           }
-          m_readyTasks.push(std::move(tasks[i]));
+          m_readyTasks.push(std::move(task));
           ++numTasksAdded;
         }
       }

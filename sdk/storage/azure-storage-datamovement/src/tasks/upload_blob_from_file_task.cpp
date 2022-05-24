@@ -17,7 +17,6 @@
 namespace Azure { namespace Storage { namespace Blobs { namespace _detail {
 
   namespace {
-    constexpr uint64_t SingleUploadThreshold = 128 * 1024;
     constexpr uint64_t ChunkSize = 8 * 1024 * 1024;
     static_assert(ChunkSize < static_cast<uint64_t>(std::numeric_limits<size_t>::max()), "");
 
@@ -69,8 +68,7 @@ namespace Azure { namespace Storage { namespace Blobs { namespace _detail {
       return;
     }
 
-    // TODO: if file is small enough
-    (void)SingleUploadThreshold;
+    // TODO: if file is small enough, we'll use single put
 
     Context->NumBlocks = static_cast<int>((fileSize + ChunkSize - 1) / ChunkSize);
     std::vector<_internal::Task> subtasks;
@@ -176,6 +174,7 @@ namespace Azure { namespace Storage { namespace Blobs { namespace _detail {
         SharedStatus->TaskFailedCallback(
             1, _internal::GetFileUrl(Context->Source), Context->Destination.GetUrl());
       }
+      return;
     }
     SharedStatus->TaskTransferedCallback(1, Context->FileSize);
   }
