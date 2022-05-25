@@ -3,7 +3,6 @@
 
 #pragma once
 
-#include <atomic>
 #include <memory>
 
 #include <azure/storage/blobs.hpp>
@@ -17,11 +16,10 @@ namespace Azure { namespace Storage { namespace Blobs { namespace _detail {
   struct UploadBlobsFromDirectoryTask final : public Storage::_internal::TaskBase
   {
     explicit UploadBlobsFromDirectoryTask(
-        Storage::_internal::TaskType type,
-        Storage::_internal::Scheduler* scheduler,
+        _internal::TaskType type,
         const std::string& source,
-        const BlobFolder& destination)
-        : TaskBase(type, scheduler), Source(source), Destination(destination), Iterator(source)
+        const BlobFolder& destination) noexcept
+        : TaskBase(type), Source(source), Destination(destination)
     {
     }
     UploadBlobsFromDirectoryTask(UploadBlobsFromDirectoryTask&& other) noexcept
@@ -32,9 +30,9 @@ namespace Azure { namespace Storage { namespace Blobs { namespace _detail {
 
     std::string Source;
     BlobFolder Destination;
-    Storage::_internal::DirectoryIterator Iterator;
+    std::unique_ptr<Storage::_internal::DirectoryIterator> Iterator;
 
-    void Execute() override;
+    void Execute() noexcept override;
   };
 
 }}}} // namespace Azure::Storage::Blobs::_detail
