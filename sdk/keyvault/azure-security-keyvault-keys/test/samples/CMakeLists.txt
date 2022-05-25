@@ -9,3 +9,5 @@ add_subdirectory(sample3-get-keys)
 add_subdirectory(sample4-encrypt-decrypt)
 add_subdirectory(sample5-sign-verify)
 add_subdirectory(sample6-wrap-unwrap)
+add_subdirectory(sample7-key-rotation)
+

@@ -3,12 +3,7 @@
 ## 4.0.0-beta.3 (Unreleased)
 
 ### Features Added
-
-### Breaking Changes
-
-### Bugs Fixed
-
-### Other Changes
+- Keyvault 7.3 support added for Certificates.
 
 ## 4.0.0-beta.2 (2022-03-08)
 

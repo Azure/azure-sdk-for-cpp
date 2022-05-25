@@ -17,3 +17,4 @@ description: Samples for the azure-security-keyVault-keys client library.
 - Encrypting and decrypt keys
 - Signing and verifying keys
 - Wrapping and unwrap a key
+- Rotating a key
