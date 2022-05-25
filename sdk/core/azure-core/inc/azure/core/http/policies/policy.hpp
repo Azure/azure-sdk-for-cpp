@@ -17,6 +17,7 @@
 #include "azure/core/tracing/tracing.hpp"
 #include "azure/core/uuid.hpp"
 
+#include <atomic>
 #include <chrono>
 #include <cstddef>
 #include <map>
@@ -387,15 +388,11 @@ namespace Azure { namespace Core { namespace Http { namespace Policies {
      *
      * @details Registers an HTTP request with the distributed tracing infrastructure, adding
      * the traceparent header to the request if necessary.
-     * 
+     *
      * This policy is intended to be inserted into the HTTP pipeline *after* the retry policy.
      */
     class RequestActivityPolicy final : public HttpPolicy {
     private:
-      // Count of times the "Send" method has been called on the RequestActivityPolicy.
-      // Because the retry policy is always before this policy in the pipeline, this
-      // is the retry count for the pipeline.
-      mutable unsigned int m_retryCount{0};
 
     public:
       /**

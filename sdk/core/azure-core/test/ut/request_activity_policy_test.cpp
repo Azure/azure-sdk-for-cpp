@@ -16,17 +16,28 @@ using namespace Azure::Core::Tracing;
 
 namespace {
 class NoOpPolicy final : public HttpPolicy {
+  std::function<std::unique_ptr<RawResponse>(Request&)> m_createResponse{};
+
 public:
   std::unique_ptr<HttpPolicy> Clone() const override { return std::make_unique<NoOpPolicy>(*this); }
 
-  std::unique_ptr<RawResponse> Send(Request&, NextHttpPolicy, Azure::Core::Context const&)
+  std::unique_ptr<RawResponse> Send(Request& request, NextHttpPolicy, Azure::Core::Context const&)
       const override
   {
-    return std::make_unique<RawResponse>(1, 1, HttpStatusCode::Ok, "Something");
-
+    if (m_createResponse)
+    {
+      return m_createResponse(request);
+    }
+    else
+    {
+      return std::make_unique<RawResponse>(1, 1, HttpStatusCode::Ok, "Something");
+    }
   }
-};
 
+  NoOpPolicy() = default;
+  NoOpPolicy(std::function<std::unique_ptr<RawResponse>(Request&)> createResponse)
+      : HttpPolicy(), m_createResponse(createResponse){};
+};
 } // namespace
 
 // Dummy service tracing class.
@@ -172,6 +183,7 @@ TEST(RequestActivityPolicy, Basic)
       policies.emplace_back(std::make_unique<RequestIdPolicy>());
       policies.emplace_back(
           std::make_unique<TelemetryPolicy>("my-service-cpp", "1.0b2", clientOptions.Telemetry));
+      policies.emplace_back(std::make_unique<RetryPolicy>(RetryOptions{}));
       policies.emplace_back(std::make_unique<RequestActivityPolicy>());
       // Final policy - equivalent to HTTP policy.
       policies.emplace_back(std::make_unique<NoOpPolicy>());
@@ -185,7 +197,6 @@ TEST(RequestActivityPolicy, Basic)
     EXPECT_EQ("My API", tracer->GetSpans()[0]->GetName());
     EXPECT_EQ("HTTP GET #0", tracer->GetSpans()[1]->GetName());
     EXPECT_EQ("GET", tracer->GetSpans()[1]->GetAttributes().at("http.method"));
-
   }
 }
 
@@ -206,15 +217,31 @@ TEST(RequestActivityPolicy, TryRetries)
 
     {
       std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>> policies;
+
+      policies.emplace_back(std::make_unique<RequestIdPolicy>());
+      policies.emplace_back(std::make_unique<RetryPolicy>(RetryOptions{}));
+
       // Add the request ID policy - this adds the x-ms-request-id attribute to the pipeline.
       policies.emplace_back(std::make_unique<RequestActivityPolicy>());
       // Final policy - equivalent to HTTP policy.
-      policies.emplace_back(std::make_unique<NoOpPolicy>());
+      int retryCount = 0;
+      policies.emplace_back(std::make_unique<NoOpPolicy>([&](Request&) {
+        retryCount += 1;
+        if (retryCount < 3)
+        {
+          // Return a response which should trigger a response.
+          return std::make_unique<RawResponse>(
+              1, 1, *RetryOptions().StatusCodes.begin(), "Something");
+        }
+        else
+        {
+          // Return success.
+          return std::make_unique<RawResponse>(1, 1, HttpStatusCode::Ok, "Something");
+        }
+      }));
 
       Azure::Core::Http::_internal::HttpPipeline pipeline(policies);
       // Simulate retrying an HTTP operation 3 times on the pipeline:
-      pipeline.Send(request, callContext);
-      pipeline.Send(request, callContext);
       pipeline.Send(request, callContext);
     }
 
@@ -226,6 +253,8 @@ TEST(RequestActivityPolicy, TryRetries)
     EXPECT_EQ("HTTP GET #1", tracer->GetSpans()[2]->GetName());
     EXPECT_EQ("HTTP GET #2", tracer->GetSpans()[3]->GetName());
     EXPECT_EQ("GET", tracer->GetSpans()[1]->GetAttributes().at("http.method"));
-    EXPECT_EQ("200", tracer->GetSpans()[1]->GetAttributes().at("http.status_code"));
+    EXPECT_EQ("408", tracer->GetSpans()[1]->GetAttributes().at("http.status_code"));
+    EXPECT_EQ("408", tracer->GetSpans()[2]->GetAttributes().at("http.status_code"));
+    EXPECT_EQ("200", tracer->GetSpans()[3]->GetAttributes().at("http.status_code"));
   }
 }

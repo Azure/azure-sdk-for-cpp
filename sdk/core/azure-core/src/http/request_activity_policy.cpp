@@ -3,6 +3,7 @@
 
 #include "azure/core/http/policies/policy.hpp"
 #include "azure/core/internal/diagnostics/log.hpp"
+#include "azure/core/internal/request_sanitizer.hpp"
 #include "azure/core/internal/tracing/service_tracing.hpp"
 
 #include <algorithm>
@@ -24,7 +25,15 @@ std::unique_ptr<RawResponse> RequestActivityPolicy::Send(
 {
   // Create a tracing span over the HTTP request.
   std::stringstream ss;
-  ss << "HTTP " << request.GetMethod().ToString() << " #" << m_retryCount;
+  // We know that the retry policy MUST be above us in the hierarchy, so ask it for the current
+  // retry count.
+  auto retryCount = RetryPolicy::GetRetryCount(context);
+  if (retryCount == -1)
+  {
+    // We don't have a RetryPolicy in the policy stack - just assume this is request 0.
+    retryCount = 0;
+  }
+  ss << "HTTP " << request.GetMethod().ToString() << " #" << retryCount;
   auto contextAndSpan
       = Azure::Core::Tracing::_internal::DiagnosticTracingFactory::CreateSpanFromContext(
           ss.str(), SpanKind::Client, context);
@@ -33,8 +42,7 @@ std::unique_ptr<RawResponse> RequestActivityPolicy::Send(
   scope.AddAttribute(TracingAttributes::HttpMethod.ToString(), request.GetMethod().ToString());
   scope.AddAttribute(
       "http.url",
-      /* _sanitizer.SanitizeUrl(message.Request.Uri.ToString())*/
-      request.GetUrl().GetAbsoluteUrl());
+      Azure::Core::_internal::InputSanitizer::SanitizeUrl(request.GetUrl()).GetAbsoluteUrl());
   {
     Azure::Nullable<std::string> requestId = request.GetHeader("x-ms-client-request-id");
     if (requestId.HasValue())
@@ -50,6 +58,12 @@ std::unique_ptr<RawResponse> RequestActivityPolicy::Send(
       scope.AddAttribute(TracingAttributes::HttpUserAgent.ToString(), userAgent.Value());
     }
   }
+
+  // Propogate information from the scope to the HTTP headers.
+  //
+  // This will add the "traceparent" header and any other OpenTelemetry related headers.
+  scope.PropagateToHttpHeaders(request);
+
   try
   {
     auto response = nextPolicy.Send(request, contextAndSpan.first);
@@ -58,13 +72,11 @@ std::unique_ptr<RawResponse> RequestActivityPolicy::Send(
         TracingAttributes::HttpStatusCode.ToString(),
         std::to_string(static_cast<int>(response->GetStatusCode())));
     auto& responseHeaders = response->GetHeaders();
-    auto serviceRequestId = responseHeaders.find("serviceRequestId");
+    auto serviceRequestId = responseHeaders.find("x-ms-request-id");
     if (serviceRequestId != responseHeaders.end())
     {
       scope.AddAttribute(TracingAttributes::ServiceRequestId.ToString(), serviceRequestId->second);
     }
-
-    m_retryCount += 1;
 
     return response;
   }

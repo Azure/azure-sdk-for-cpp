@@ -128,7 +128,7 @@ namespace Azure { namespace Core { namespace Http { namespace _internal {
 
       // Add a request activity policy which will generate distributed traces for the pipeline.
       m_policies.emplace_back(
-          std::make_unique < Azure::Core::Http::Policies::_internal::RequestActivityPolicy>());
+          std::make_unique<Azure::Core::Http::Policies::_internal::RequestActivityPolicy>());
 
       // logging - won't update request
       m_policies.emplace_back(

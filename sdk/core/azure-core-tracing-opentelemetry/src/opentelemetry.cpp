@@ -1,5 +1,8 @@
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// SPDX-License-Identifier: MIT
 
 #include "azure/core/tracing/opentelemetry/opentelemetry.hpp"
+#include <azure/core/http/http.hpp>
 #include <azure/core/nullable.hpp>
 #include <azure/core/tracing/tracing.hpp>
 #include <memory>
@@ -194,10 +197,45 @@ namespace Azure { namespace Core { namespace Tracing { namespace OpenTelemetry {
       m_span->SetAttribute(attributeName, opentelemetry::common::AttributeValue(attributeValue));
     }
 
+    class HttpRequestTextMapPropogater
+        : public opentelemetry::context::propagation::TextMapCarrier {
+      Azure::Core::Http::Request& m_request;
+      // Inherited via TextMapCarrier
+      virtual opentelemetry::nostd::string_view Get(
+          opentelemetry::nostd::string_view key) const noexcept override
+      {
+        auto header = m_request.GetHeader(std::string(key));
+        if (header)
+        {
+          return header.Value();
+        }
+        return std::string();
+      }
+
+      virtual void Set(
+          opentelemetry::nostd::string_view key,
+          opentelemetry::nostd::string_view value) noexcept override
+      {
+        m_request.SetHeader(std::string(key), std::string(value));
+      }
+
+    public:
+      HttpRequestTextMapPropogater(Azure::Core::Http::Request& request) : m_request(request) {}
+    };
+
     void OpenTelemetrySpan::PropagateToHttpHeaders(Azure::Core::Http::Request& request)
     {
-      throw std::runtime_error("Not supported");
-      request;
+      if (m_span)
+      {
+        HttpRequestTextMapPropogater propogater(request);
+
+        // Establish the current runtime context from the span.
+        auto scope = opentelemetry::trace::Tracer::WithActiveSpan(m_span);
+        auto currentContext = opentelemetry::context::RuntimeContext::GetCurrent();
+
+        opentelemetry::trace::propagation::HttpTraceContext httpTraceContext;
+        httpTraceContext.Inject(propogater, currentContext);
+      }
     }
 
   } // namespace _detail

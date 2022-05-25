@@ -198,7 +198,7 @@ namespace Azure { namespace Core {
          * @param attributeValue value of the attribute.
          */
         virtual void AddAttribute(
-            std::string const& atributeName,
+            std::string const& attributeName,
             std::string const& attributeValue)
             = 0;
 
