@@ -115,6 +115,8 @@ public:
 
 TEST(DiagnosticTracingFactory, BasicServiceSpanTests)
 {
+  GTEST_LOG_(INFO) << "BasicServiceSpanTests. Create A dummy (nop) span and add a couple of events."
+                   << std::endl;
   {
     Azure::Core::_internal::ClientOptions clientOptions;
     Azure::Core::Tracing::_internal::DiagnosticTracingFactory serviceTrace(
@@ -129,16 +131,23 @@ TEST(DiagnosticTracingFactory, BasicServiceSpanTests)
     span.AddEvent(std::runtime_error("Exception"));
     span.SetStatus(SpanStatus::Error);
   }
+  GTEST_LOG_(INFO)
+      << "BasicServiceSpanTests. Create Span with test tracing provider and add a couple of events."
+      << std::endl;
   {
     Azure::Core::_internal::ClientOptions clientOptions;
     auto testTracer = std::make_shared<TestTracingProvider>();
     clientOptions.Telemetry.TracingProvider = testTracer;
+    GTEST_LOG_(INFO) << "BasicServiceSpanTests. Create ServiceTrace " << std::endl;
     Azure::Core::Tracing::_internal::DiagnosticTracingFactory serviceTrace(
         clientOptions, "my-service-cpp", "1.0b2");
 
+    GTEST_LOG_(INFO) << "BasicServiceSpanTests. Create Span " << std::endl;
     auto contextAndSpan = serviceTrace.CreateSpan(
         "My API", Azure::Core::Tracing::_internal::SpanKind::Internal, {});
     ServiceSpan span = std::move(contextAndSpan.second);
+
+    GTEST_LOG_(INFO) << "BasicServiceSpanTests. End Span" << std::endl;
 
     span.End();
     span.AddEvent("New Event");
@@ -149,5 +158,6 @@ TEST(DiagnosticTracingFactory, BasicServiceSpanTests)
     span.AddEvent("AttributeEvent", *attributeSet);
     span.AddAttributes(*attributeSet);
     span.SetStatus(SpanStatus::Error);
+    GTEST_LOG_(INFO) << "BasicServiceSpanTests. Done." << std::endl;
   }
 }
