@@ -6,6 +6,7 @@
 #include "azure/core/internal/tracing/service_tracing.hpp"
 #include "azure/core/tracing/tracing.hpp"
 #include <gtest/gtest.h>
+#include <list>
 
 using namespace Azure::Core;
 using namespace Azure::Core::Http;
