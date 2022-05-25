@@ -481,7 +481,7 @@ TEST_F(OpenTelemetryServiceTests, NestSpans)
           index += 1;
         }
       }
-      EXPECT_EQ(index, 3);
+      EXPECT_EQ(3ul, index);
       returnedComponents[3] = component;
       return returnedComponents;
     };
