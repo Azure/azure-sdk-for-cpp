@@ -12,7 +12,6 @@
 #include "azure/core/datetime.hpp"
 #include "azure/core/dll_import_export.hpp"
 #include "azure/core/rtti.hpp"
-#include "azure/core/tracing/tracing.hpp"
 #include <atomic>
 #include <chrono>
 #include <memory>
@@ -21,6 +20,10 @@
 #include <type_traits>
 
 namespace Azure { namespace Core {
+  // Forward declare TracerProvider to resolve an include file dependency ordering problem.
+  namespace Tracing {
+    class TracerProvider;
+  }
 
   /**
    * @brief An exception thrown when an operation is cancelled.

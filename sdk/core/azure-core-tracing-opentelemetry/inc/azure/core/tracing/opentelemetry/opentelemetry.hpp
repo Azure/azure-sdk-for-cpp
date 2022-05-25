@@ -114,6 +114,8 @@ namespace Azure { namespace Core { namespace Tracing { namespace OpenTelemetry {
 
       virtual void AddAttributes(
           Azure::Core::Tracing::_internal::AttributeSet const& attributeToAdd) override;
+      virtual void AddAttribute(std::string const& attributeName, std::string const& attributeValue)
+          override;
 
       /**
        * Add an Event to the span. An event is identified by a name and an optional set of
@@ -128,6 +130,8 @@ namespace Azure { namespace Core { namespace Tracing { namespace OpenTelemetry {
       virtual void SetStatus(
           Azure::Core::Tracing::_internal::SpanStatus const& status,
           std::string const& statusMessage) override;
+
+      virtual void PropagateToHttpHeaders(Azure::Core::Http::Request& request) override;
 
       opentelemetry::trace::SpanContext GetContext() { return m_span->GetContext(); }
     };

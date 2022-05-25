@@ -1,0 +1,231 @@
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// SPDX-License-Identifier: MIT
+
+#include "azure/core/http/policies/policy.hpp"
+#include "azure/core/internal/http/pipeline.hpp"
+#include "azure/core/internal/tracing/service_tracing.hpp"
+#include "azure/core/tracing/tracing.hpp"
+#include <gtest/gtest.h>
+
+using namespace Azure::Core;
+using namespace Azure::Core::Http;
+using namespace Azure::Core::Http::Policies;
+using namespace Azure::Core::Http::Policies::_internal;
+using namespace Azure::Core::Tracing::_internal;
+using namespace Azure::Core::Tracing;
+
+namespace {
+class NoOpPolicy final : public HttpPolicy {
+public:
+  std::unique_ptr<HttpPolicy> Clone() const override { return std::make_unique<NoOpPolicy>(*this); }
+
+  std::unique_ptr<RawResponse> Send(Request&, NextHttpPolicy, Azure::Core::Context const&)
+      const override
+  {
+    return std::make_unique<RawResponse>(1, 1, HttpStatusCode::Ok, "Something");
+
+  }
+};
+
+} // namespace
+
+// Dummy service tracing class.
+class TestSpan final : public Azure::Core::Tracing::_internal::Span {
+  std::vector<std::string> m_events;
+  std::map<std::string, std::string> m_stringAttributes;
+  std::string m_spanName;
+
+public:
+  TestSpan(std::string const& spanName)
+      : Azure::Core::Tracing::_internal::Span(), m_spanName(spanName)
+  {
+  }
+
+  // Inherited via Span
+  virtual void AddAttributes(AttributeSet const&) override {}
+  virtual void AddAttribute(std::string const& attributeName, std::string const& attributeValue)
+      override
+  {
+    m_stringAttributes.emplace(std::make_pair(attributeName, attributeValue));
+  }
+  virtual void AddEvent(std::string const& eventName, AttributeSet const&) override
+  {
+    m_events.push_back(eventName);
+  }
+  virtual void AddEvent(std::string const& eventName) override { m_events.push_back(eventName); }
+  virtual void AddEvent(std::exception const& ex) override { m_events.push_back(ex.what()); }
+  virtual void SetStatus(SpanStatus const&, std::string const&) override {}
+
+  // Inherited via Span
+  virtual void End(Azure::Nullable<Azure::DateTime>) override {}
+
+  // Inherited via Span
+  virtual void PropagateToHttpHeaders(Azure::Core::Http::Request&) override {}
+
+  std::string const& GetName() { return m_spanName; }
+  std::vector<std::string> const& GetEvents() { return m_events; }
+  std::map<std::string, std::string> const& GetAttributes() { return m_stringAttributes; }
+};
+
+class TestAttributeSet : public Azure::Core::Tracing::_internal::AttributeSet {
+public:
+  TestAttributeSet() : Azure::Core::Tracing::_internal::AttributeSet() {}
+
+  // Inherited via AttributeSet
+  virtual void AddAttribute(std::string const&, bool) override {}
+  virtual void AddAttribute(std::string const&, int32_t) override {}
+  virtual void AddAttribute(std::string const&, int64_t) override {}
+  virtual void AddAttribute(std::string const&, uint64_t) override {}
+  virtual void AddAttribute(std::string const&, double) override {}
+  virtual void AddAttribute(std::string const&, const char*) override {}
+  virtual void AddAttribute(std::string const&, std::string const&) override {}
+};
+
+class TestTracer final : public Azure::Core::Tracing::_internal::Tracer {
+  mutable std::vector<std::shared_ptr<TestSpan>> m_spans;
+
+public:
+  TestTracer(std::string const&, std::string const&) : Azure::Core::Tracing::_internal::Tracer() {}
+  std::shared_ptr<Span> CreateSpan(std::string const& spanName, CreateSpanOptions const&)
+      const override
+  {
+    auto returnSpan(std::make_shared<TestSpan>(spanName));
+    m_spans.push_back(returnSpan);
+    return returnSpan;
+  }
+
+  std::unique_ptr<AttributeSet> CreateAttributeSet() const override
+  {
+    return std::make_unique<TestAttributeSet>();
+  };
+
+  std::vector<std::shared_ptr<TestSpan>> const& GetSpans() { return m_spans; }
+};
+
+class TestTracingProvider final : public Azure::Core::Tracing::TracerProvider {
+  mutable std::list<std::shared_ptr<TestTracer>> m_tracers;
+
+public:
+  TestTracingProvider() : TracerProvider() {}
+  ~TestTracingProvider() {}
+  std::shared_ptr<Azure::Core::Tracing::_internal::Tracer> CreateTracer(
+      std::string const& serviceName,
+      std::string const& serviceVersion) const override
+  {
+    auto returnTracer = std::make_shared<TestTracer>(serviceName, serviceVersion);
+    m_tracers.push_back(returnTracer);
+    return returnTracer;
+  };
+
+  std::list<std::shared_ptr<TestTracer>> const& GetTracers() { return m_tracers; }
+};
+
+TEST(RequestActivityPolicy, Basic)
+{
+  {
+    auto testTracer = std::make_shared<TestTracingProvider>();
+
+    Azure::Core::_internal::ClientOptions clientOptions;
+    clientOptions.Telemetry.TracingProvider = testTracer;
+    Azure::Core::Tracing::_internal::DiagnosticTracingFactory serviceTrace(
+        clientOptions, "my-service-cpp", "1.0b2");
+
+    auto contextAndSpan = serviceTrace.CreateSpan(
+        "My API", Azure::Core::Tracing::_internal::SpanKind::Internal, {});
+    Azure::Core::Context callContext = std::move(contextAndSpan.first);
+    Request request(HttpMethod::Get, Url("https://www.microsoft.com"));
+
+    {
+      std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>> policies;
+      // Add the request ID policy - this adds the x-ms-request-id attribute to the pipeline.
+      policies.emplace_back(std::make_unique<RequestActivityPolicy>());
+      // Final policy - equivalent to HTTP policy.
+      policies.emplace_back(std::make_unique<NoOpPolicy>());
+
+      Azure::Core::Http::_internal::HttpPipeline(policies).Send(request, callContext);
+    }
+
+    EXPECT_EQ(1ul, testTracer->GetTracers().size());
+    auto tracer = testTracer->GetTracers().front();
+    EXPECT_EQ(2ul, tracer->GetSpans().size());
+    EXPECT_EQ("My API", tracer->GetSpans()[0]->GetName());
+    EXPECT_EQ("HTTP GET #0", tracer->GetSpans()[1]->GetName());
+    EXPECT_EQ("GET", tracer->GetSpans()[1]->GetAttributes().at("http.method"));
+  }
+
+  // Now try with the request ID and telemetry policies (simulating a more complete pipeline).
+  {
+    auto testTracer = std::make_shared<TestTracingProvider>();
+
+    Azure::Core::_internal::ClientOptions clientOptions;
+    clientOptions.Telemetry.TracingProvider = testTracer;
+    Azure::Core::Tracing::_internal::DiagnosticTracingFactory serviceTrace(
+        clientOptions, "my-service-cpp", "1.0b2");
+    auto contextAndSpan = serviceTrace.CreateSpan(
+        "My API", Azure::Core::Tracing::_internal::SpanKind::Internal, {});
+    Azure::Core::Context callContext = std::move(contextAndSpan.first);
+    Request request(HttpMethod::Get, Url("https://www.microsoft.com"));
+
+    {
+      std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>> policies;
+      // Add the request ID policy - this adds the x-ms-request-id attribute to the pipeline.
+      policies.emplace_back(std::make_unique<RequestIdPolicy>());
+      policies.emplace_back(
+          std::make_unique<TelemetryPolicy>("my-service-cpp", "1.0b2", clientOptions.Telemetry));
+      policies.emplace_back(std::make_unique<RequestActivityPolicy>());
+      // Final policy - equivalent to HTTP policy.
+      policies.emplace_back(std::make_unique<NoOpPolicy>());
+
+      Azure::Core::Http::_internal::HttpPipeline(policies).Send(request, callContext);
+    }
+
+    EXPECT_EQ(1ul, testTracer->GetTracers().size());
+    auto tracer = testTracer->GetTracers().front();
+    EXPECT_EQ(2ul, tracer->GetSpans().size());
+    EXPECT_EQ("My API", tracer->GetSpans()[0]->GetName());
+    EXPECT_EQ("HTTP GET #0", tracer->GetSpans()[1]->GetName());
+    EXPECT_EQ("GET", tracer->GetSpans()[1]->GetAttributes().at("http.method"));
+
+  }
+}
+
+TEST(RequestActivityPolicy, TryRetries)
+{
+  {
+    auto testTracer = std::make_shared<TestTracingProvider>();
+
+    Azure::Core::_internal::ClientOptions clientOptions;
+    clientOptions.Telemetry.TracingProvider = testTracer;
+    Azure::Core::Tracing::_internal::DiagnosticTracingFactory serviceTrace(
+        clientOptions, "my-service-cpp", "1.0b2");
+
+    auto contextAndSpan = serviceTrace.CreateSpan(
+        "My API", Azure::Core::Tracing::_internal::SpanKind::Internal, {});
+    Azure::Core::Context callContext = std::move(contextAndSpan.first);
+    Request request(HttpMethod::Get, Url("https://www.microsoft.com"));
+
+    {
+      std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>> policies;
+      // Add the request ID policy - this adds the x-ms-request-id attribute to the pipeline.
+      policies.emplace_back(std::make_unique<RequestActivityPolicy>());
+      // Final policy - equivalent to HTTP policy.
+      policies.emplace_back(std::make_unique<NoOpPolicy>());
+
+      Azure::Core::Http::_internal::HttpPipeline pipeline(policies);
+      // Simulate retrying an HTTP operation 3 times on the pipeline:
+      pipeline.Send(request, callContext);
+      pipeline.Send(request, callContext);
+      pipeline.Send(request, callContext);
+    }
+
+    EXPECT_EQ(1ul, testTracer->GetTracers().size());
+    auto tracer = testTracer->GetTracers().front();
+    EXPECT_EQ(4ul, tracer->GetSpans().size());
+    EXPECT_EQ("My API", tracer->GetSpans()[0]->GetName());
+    EXPECT_EQ("HTTP GET #0", tracer->GetSpans()[1]->GetName());
+    EXPECT_EQ("HTTP GET #1", tracer->GetSpans()[2]->GetName());
+    EXPECT_EQ("HTTP GET #2", tracer->GetSpans()[3]->GetName());
+    EXPECT_EQ("GET", tracer->GetSpans()[1]->GetAttributes().at("http.method"));
+    EXPECT_EQ("200", tracer->GetSpans()[1]->GetAttributes().at("http.status_code"));
+  }
+}

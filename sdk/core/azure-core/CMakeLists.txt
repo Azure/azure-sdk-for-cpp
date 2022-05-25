@@ -99,7 +99,8 @@ set(
     inc/azure/core/tracing/tracing.hpp
     inc/azure/core/url.hpp
     inc/azure/core/uuid.hpp
-    inc/azure/core.hpp)
+    inc/azure/core.hpp 
+    )
 
 set(
   AZURE_CORE_SOURCE
@@ -113,6 +114,7 @@ set(
     src/http/policy.cpp
     src/http/raw_response.cpp
     src/http/request.cpp
+    src/http/request_activity_policy.cpp
     src/http/retry_policy.cpp
     src/http/telemetry_policy.cpp
     src/http/transport_policy.cpp

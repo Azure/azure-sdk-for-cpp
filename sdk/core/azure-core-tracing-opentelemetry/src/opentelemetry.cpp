@@ -9,7 +9,9 @@
 #pragma warning(push)
 #pragma warning(disable : 4100)
 #pragma warning(disable : 4244)
+#pragma warning(disable : 6323)
 #endif
+#include <opentelemetry/trace/propagation/http_trace_context.h>
 #include <opentelemetry/trace/provider.h>
 #include <opentelemetry/trace/tracer_provider.h>
 #if defined(_MSC_VER)
@@ -183,6 +185,19 @@ namespace Azure { namespace Core { namespace Tracing { namespace OpenTelemetry {
       }
 
       m_span->SetStatus(statusCode, statusMessage);
+    }
+
+    void OpenTelemetrySpan::AddAttribute(
+        std::string const& attributeName,
+        std::string const& attributeValue)
+    {
+      m_span->SetAttribute(attributeName, opentelemetry::common::AttributeValue(attributeValue));
+    }
+
+    void OpenTelemetrySpan::PropagateToHttpHeaders(Azure::Core::Http::Request& request)
+    {
+      throw std::runtime_error("Not supported");
+      request;
     }
 
   } // namespace _detail

@@ -65,6 +65,7 @@ namespace Azure { namespace Core { namespace Tracing { namespace _internal {
         m_span->SetStatus(status, description);
       }
     }
+
     /**
      * @brief Adds a set of attributes to the span.
      *
@@ -75,6 +76,21 @@ namespace Azure { namespace Core { namespace Tracing { namespace _internal {
       if (m_span)
       {
         m_span->AddAttributes(attributeToAdd);
+      }
+    }
+
+    /**
+     * @brief Adds a single attributes to the span.
+     *
+     * @param attributeName Name of the attribute to be added.
+     * @param attributeValue Value of the attribute to be added.
+     */
+    virtual void AddAttribute(std::string const& attributeName, std::string const& attributeValue)
+        override
+    {
+      if (m_span)
+      {
+        m_span->AddAttribute(attributeName, attributeValue);
       }
     }
 
@@ -122,6 +138,9 @@ namespace Azure { namespace Core { namespace Tracing { namespace _internal {
       {
         m_span->AddEvent(exception);
       }
+    }
+    virtual void PropagateToHttpHeaders(Azure::Core::Http::Request& ) override {
+      throw std::runtime_error("Not implemented");
     }
   };
 
@@ -178,10 +197,12 @@ namespace Azure { namespace Core { namespace Tracing { namespace _internal {
 
     ContextAndSpan CreateSpan(
         std::string const& spanName,
+        Azure::Core::Tracing::_internal::SpanKind const& spanKind,
         Azure::Core::Context const& clientContext);
 
     static ContextAndSpan CreateSpanFromContext(
         std::string const& spanName,
+        Azure::Core::Tracing::_internal::SpanKind const& spanKind,
         Azure::Core::Context const& clientContext);
 
     std::unique_ptr<Azure::Core::Tracing::_internal::AttributeSet> CreateAttributeSet();

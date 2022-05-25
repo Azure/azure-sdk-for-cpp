@@ -78,14 +78,15 @@ namespace Azure { namespace Core { namespace Http { namespace _internal {
     {
       auto const& perCallClientPolicies = clientOptions.PerOperationPolicies;
       auto const& perRetryClientPolicies = clientOptions.PerRetryPolicies;
-      // Adding 5 for:
+      // Adding 6 for:
       // - TelemetryPolicy
       // - RequestIdPolicy
       // - RetryPolicy
       // - LogPolicy
+      // - RequestActivityPolicy
       // - TransportPolicy
       auto pipelineSize = perCallClientPolicies.size() + perRetryClientPolicies.size()
-          + perRetryPolicies.size() + perCallPolicies.size() + 5;
+          + perRetryPolicies.size() + perCallPolicies.size() + 6;
 
       m_policies.reserve(pipelineSize);
 
@@ -98,6 +99,7 @@ namespace Azure { namespace Core { namespace Http { namespace _internal {
       // Request Id
       m_policies.emplace_back(
           std::make_unique<Azure::Core::Http::Policies::_internal::RequestIdPolicy>());
+
       // Telemetry
       m_policies.emplace_back(
           std::make_unique<Azure::Core::Http::Policies::_internal::TelemetryPolicy>(
@@ -123,6 +125,10 @@ namespace Azure { namespace Core { namespace Http { namespace _internal {
       {
         m_policies.emplace_back(policy->Clone());
       }
+
+      // Add a request activity policy which will generate distributed traces for the pipeline.
+      m_policies.emplace_back(
+          std::make_unique < Azure::Core::Http::Policies::_internal::RequestActivityPolicy>());
 
       // logging - won't update request
       m_policies.emplace_back(

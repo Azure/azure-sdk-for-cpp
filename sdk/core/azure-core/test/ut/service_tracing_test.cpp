@@ -48,7 +48,8 @@ TEST(DiagnosticTracingFactory, SimpleServiceSpanTests)
     Azure::Core::Tracing::_internal::DiagnosticTracingFactory serviceTrace(
         clientOptions, "my-service-cpp", "1.0b2");
 
-    auto contextAndSpan = serviceTrace.CreateSpan("My API", {});
+    auto contextAndSpan = serviceTrace.CreateSpan(
+        "My API", Azure::Core::Tracing::_internal::SpanKind::Internal, {});
     EXPECT_FALSE(contextAndSpan.first.IsCancelled());
   }
 }
@@ -60,6 +61,7 @@ public:
 
   // Inherited via Span
   virtual void AddAttributes(AttributeSet const&) override {}
+  virtual void AddAttribute(std::string const&, std::string const&) override {}
   virtual void AddEvent(std::string const&, AttributeSet const&) override {}
   virtual void AddEvent(std::string const&) override {}
   virtual void AddEvent(std::exception const&) override {}
@@ -67,6 +69,9 @@ public:
 
   // Inherited via Span
   virtual void End(Azure::Nullable<Azure::DateTime>) override {}
+
+  // Inherited via Span
+  virtual void PropagateToHttpHeaders(Azure::Core::Http::Request&) override {}
 };
 
 class TestAttributeSet : public Azure::Core::Tracing::_internal::AttributeSet {
@@ -115,8 +120,9 @@ TEST(DiagnosticTracingFactory, BasicServiceSpanTests)
     Azure::Core::Tracing::_internal::DiagnosticTracingFactory serviceTrace(
         clientOptions, "my-service-cpp", "1.0b2");
 
-    auto contextAndSpan = serviceTrace.CreateSpan("My API", {});
-    auto span = std::move(contextAndSpan.second);
+    auto contextAndSpan = serviceTrace.CreateSpan(
+        "My API", Azure::Core::Tracing::_internal::SpanKind::Internal, {});
+    ServiceSpan span = std::move(contextAndSpan.second);
 
     span.End();
     span.AddEvent("New Event");
@@ -130,8 +136,9 @@ TEST(DiagnosticTracingFactory, BasicServiceSpanTests)
     Azure::Core::Tracing::_internal::DiagnosticTracingFactory serviceTrace(
         clientOptions, "my-service-cpp", "1.0b2");
 
-    auto contextAndSpan = serviceTrace.CreateSpan("My API", {});
-    auto span = std::move(contextAndSpan.second);
+    auto contextAndSpan = serviceTrace.CreateSpan(
+        "My API", Azure::Core::Tracing::_internal::SpanKind::Internal, {});
+    ServiceSpan span = std::move(contextAndSpan.second);
 
     span.End();
     span.AddEvent("New Event");

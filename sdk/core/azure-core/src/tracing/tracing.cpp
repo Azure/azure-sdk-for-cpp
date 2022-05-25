@@ -14,9 +14,16 @@ namespace Azure { namespace Core { namespace Tracing { namespace _internal {
   const SpanStatus SpanStatus::Error("Error");
 
   const TracingAttributes TracingAttributes::AzNamespace("az.namespace");
+  const TracingAttributes TracingAttributes::ServiceRequestId("serviceRequestId");
+  const TracingAttributes TracingAttributes::HttpUserAgent("http.user_agent");
+  const TracingAttributes TracingAttributes::HttpMethod("http.method");
+  const TracingAttributes TracingAttributes::HttpUrl("http.url");
+  const TracingAttributes TracingAttributes::RequestId("requestId");
+  const TracingAttributes TracingAttributes::HttpStatusCode("http.status_code");
 
   DiagnosticTracingFactory::ContextAndSpan DiagnosticTracingFactory::CreateSpan(
       std::string const& methodName,
+      Azure::Core::Tracing::_internal::SpanKind const& spanKind,
       Azure::Core::Context const& context)
   {
     CreateSpanOptions createOptions;
@@ -47,6 +54,8 @@ namespace Azure { namespace Core { namespace Tracing { namespace _internal {
       createOptions.Attributes->AddAttribute(
           TracingAttributes::AzNamespace.ToString(), m_serviceName);
 
+      createOptions.Kind = spanKind;
+
       std::shared_ptr<Span> newSpan(m_serviceTracer->CreateSpan(methodName, createOptions));
       TracingContext tracingContext = newSpan;
       Azure::Core::Context newContext = contextToUse.WithValue(ContextSpanKey, tracingContext);
@@ -61,13 +70,14 @@ namespace Azure { namespace Core { namespace Tracing { namespace _internal {
   }
   DiagnosticTracingFactory::ContextAndSpan DiagnosticTracingFactory::CreateSpanFromContext(
       std::string const& spanName,
+      Azure::Core::Tracing::_internal::SpanKind const& spanKind,
       Azure::Core::Context const& context)
   {
     DiagnosticTracingFactory* tracingFactory
         = DiagnosticTracingFactory::DiagnosticFactoryFromContext(context);
     if (tracingFactory)
     {
-      return tracingFactory->CreateSpan(spanName, context);
+      return tracingFactory->CreateSpan(spanName, spanKind, context);
     }
     else
     {
