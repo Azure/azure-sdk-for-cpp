@@ -197,7 +197,7 @@ namespace Azure { namespace Core { namespace Tracing { namespace OpenTelemetry {
       m_span->SetAttribute(attributeName, opentelemetry::common::AttributeValue(attributeValue));
     }
 
-    class HttpRequestTextMapPropogater
+    class HttpRequestTextMapPropagator
         : public opentelemetry::context::propagation::TextMapCarrier {
       Azure::Core::Http::Request& m_request;
       // Inherited via TextMapCarrier
@@ -220,21 +220,21 @@ namespace Azure { namespace Core { namespace Tracing { namespace OpenTelemetry {
       }
 
     public:
-      HttpRequestTextMapPropogater(Azure::Core::Http::Request& request) : m_request(request) {}
+      HttpRequestTextMapPropagator(Azure::Core::Http::Request& request) : m_request(request) {}
     };
 
     void OpenTelemetrySpan::PropagateToHttpHeaders(Azure::Core::Http::Request& request)
     {
       if (m_span)
       {
-        HttpRequestTextMapPropogater propogater(request);
+        HttpRequestTextMapPropagator propagator(request);
 
         // Establish the current runtime context from the span.
         auto scope = opentelemetry::trace::Tracer::WithActiveSpan(m_span);
         auto currentContext = opentelemetry::context::RuntimeContext::GetCurrent();
 
         opentelemetry::trace::propagation::HttpTraceContext httpTraceContext;
-        httpTraceContext.Inject(propogater, currentContext);
+        httpTraceContext.Inject(propagator, currentContext);
       }
     }
 
