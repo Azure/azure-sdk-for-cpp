@@ -1,3 +1,6 @@
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// SPDX-License-Identifier: MIT
+
 #include "azure/storage/datamovement/directory_iterator.hpp"
 
 #include <azure/core/platform.hpp>

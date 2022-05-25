@@ -54,7 +54,7 @@ set(
   inc/azure/storage/datamovement/tasks/download_blob_to_file_task.hpp
   inc/azure/storage/datamovement/tasks/upload_blob_from_file_task.hpp
   inc/azure/storage/datamovement/tasks/upload_blobs_from_directory_task.hpp
-  src/private/package_version.hpp
+  inc/azure/storage/datamovement/utilities.hpp
 )
 
 set(
@@ -62,12 +62,15 @@ set(
   src/blob_folder.cpp
   src/blob_transfer_manager.cpp
   src/directory_iterator.cpp
+  src/job_properties.cpp
+  src/private/package_version.hpp
   src/scheduler.cpp
   src/storage_transfer_manager.cpp
   src/tasks/download_blob_directory_task.cpp
   src/tasks/download_blob_to_file_task.cpp
   src/tasks/upload_blob_from_file_task.cpp
   src/tasks/upload_blobs_from_directory_task.cpp
+  src/utilities.cpp
 )
 
 add_library(azure-storage-datamovement ${AZURE_STORAGE_DATAMOVEMENT_HEADER} ${AZURE_STORAGE_DATAMOVEMENT_SOURCE})
@@ -104,7 +107,7 @@ az_rtti_setup(
 create_code_coverage(storage azure-storage-datamovement azure-storage-test "tests?/*;samples?/*")
 
 if(BUILD_TESTING)
-  # add_subdirectory(test/ut)
+  add_subdirectory(test/ut)
 endif()
 
 if(BUILD_SAMPLES)

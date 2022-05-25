@@ -3,6 +3,8 @@
 
 #include "azure/storage/datamovement/blob_folder.hpp"
 
+#include <vector>
+
 #include <azure/storage/common/internal/shared_key_policy.hpp>
 #include <azure/storage/common/internal/storage_per_retry_policy.hpp>
 #include <azure/storage/common/internal/storage_service_version_policy.hpp>
