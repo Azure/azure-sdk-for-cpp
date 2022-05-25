@@ -19,11 +19,12 @@
 #include <string>
 #include <type_traits>
 
+// Forward declare TracerProvider to resolve an include file dependency ordering problem.
+namespace Azure { namespace Core { namespace Tracing {
+  class TracerProvider;
+}}} // namespace Azure::Core::Tracing
+
 namespace Azure { namespace Core {
-  // Forward declare TracerProvider to resolve an include file dependency ordering problem.
-  namespace Tracing {
-    class TracerProvider;
-  }
 
   /**
    * @brief An exception thrown when an operation is cancelled.

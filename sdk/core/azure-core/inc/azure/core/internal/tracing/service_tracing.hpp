@@ -139,6 +139,13 @@ namespace Azure { namespace Core { namespace Tracing { namespace _internal {
         m_span->AddEvent(exception);
       }
     }
+
+    /**
+     * @brief Propogate information from the current span to the HTTP request headers.
+     *
+     * @param request HTTP Request to the service. If there is an active tracing span, this will
+     * add required headers to the HTTP Request.
+     */
     virtual void PropagateToHttpHeaders(Azure::Core::Http::Request& request) override
     {
       if (m_span)
