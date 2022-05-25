@@ -393,7 +393,6 @@ namespace Azure { namespace Core { namespace Http { namespace Policies {
      */
     class RequestActivityPolicy final : public HttpPolicy {
     private:
-
     public:
       /**
        * @brief Constructs HTTP Request Activity policy.

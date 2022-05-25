@@ -139,7 +139,8 @@ namespace Azure { namespace Core { namespace Tracing { namespace _internal {
         m_span->AddEvent(exception);
       }
     }
-    virtual void PropagateToHttpHeaders(Azure::Core::Http::Request& request) override {
+    virtual void PropagateToHttpHeaders(Azure::Core::Http::Request& request) override
+    {
       if (m_span)
       {
         m_span->PropagateToHttpHeaders(request);
