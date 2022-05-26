@@ -36,6 +36,8 @@ int main()
   const std::string clientSecret = "secret";
   const std::string leaseID = "leaseID";
   const std::string smokeUrl = "https://blob.com";
+  const std::string attestationUrl = "https://sharedwus.wus.attest.azure.net";
+
   auto credential
       = std::make_shared<Azure::Identity::ClientSecretCredential>(tenantId, clientId, clientSecret);
 
@@ -71,31 +73,11 @@ int main()
     // Attestation
     std::cout << "Creating Attestation Clients" << std::endl;
 
-    // we define what the behavior is in certain scenarios.
-    // exception in this case is expected behavior.
-    try
-    {
-      std::unique_ptr<AttestationAdministrationClient> attestationAdminClient(
-          AttestationAdministrationClientFactory::Create(smokeUrl, credential));
-      return 1;
-    }
-    catch (Azure::Core::Credentials::AuthenticationException const& auth)
-    {
-      std::cout << "Received expected exception " << auth.what();
-    }
+    std::unique_ptr<AttestationAdministrationClient> attestationAdminClient(
+        AttestationAdministrationClientFactory::Create(attestationUrl, credential));
 
-    // we define what the behavior is in certain scenarios.
-    // exception in this case is expected behavior.
-    try
-    {
-      std::unique_ptr<AttestationClient> attestationClient(
-          AttestationClientFactory::Create(smokeUrl));
-      return 1;
-    }
-    catch (Azure::Core::Json::_internal::detail::parse_error const& json)
-    {
-      std::cout << "Received expected error " << json.what();
-    }
+    std::unique_ptr<AttestationClient> attestationClient(
+        AttestationClientFactory::Create(attestationUrl));
 
     std::cout << "Successfully Created the Clients" << std::endl;
   }
