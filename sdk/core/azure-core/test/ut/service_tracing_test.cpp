@@ -53,7 +53,7 @@ TEST(DiagnosticTracingFactory, SimpleServiceSpanTests)
     EXPECT_FALSE(contextAndSpan.first.IsCancelled());
   }
 }
-
+namespace {
 // Dummy service tracing class.
 class TestSpan final : public Azure::Core::Tracing::_internal::Span {
 public:
@@ -89,10 +89,7 @@ public:
 };
 class TestTracer final : public Azure::Core::Tracing::_internal::Tracer {
 public:
-  TestTracer(std::string const&, std::string const&) : Azure::Core::Tracing::_internal::Tracer()
-  {
-    GTEST_LOG_(INFO) << "TestTracer::TestTracer" << std::endl;
-  }
+  TestTracer(std::string const&, std::string const&) : Azure::Core::Tracing::_internal::Tracer() {}
   std::shared_ptr<Span> CreateSpan(std::string const&, CreateSpanOptions const&) const override
   {
     return std::make_shared<TestSpan>();
@@ -112,17 +109,12 @@ public:
       std::string const& serviceName,
       std::string const& serviceVersion) const override
   {
-    GTEST_LOG_(INFO) << "TestTracerProvider::CreateTracer " << serviceName << serviceVersion
-                     << std::endl;
-
     return std::make_shared<TestTracer>(serviceName, serviceVersion);
   };
 };
-
+} // namespace
 TEST(DiagnosticTracingFactory, BasicServiceSpanTests)
 {
-  GTEST_LOG_(INFO) << "BasicServiceSpanTests. Create A dummy (nop) span and add a couple of events."
-                   << std::endl;
   {
     Azure::Core::_internal::ClientOptions clientOptions;
     Azure::Core::Tracing::_internal::DiagnosticTracingFactory serviceTrace(
@@ -137,24 +129,19 @@ TEST(DiagnosticTracingFactory, BasicServiceSpanTests)
     span.AddEvent(std::runtime_error("Exception"));
     span.SetStatus(SpanStatus::Error);
   }
-  GTEST_LOG_(INFO)
-      << "BasicServiceSpanTests. Create Span with test tracing provider and add a couple of events."
-      << std::endl;
+
   {
     Azure::Core::_internal::ClientOptions clientOptions;
     auto testTracer = std::make_shared<TestTracingProvider>();
     clientOptions.Telemetry.TracingProvider = testTracer;
-    GTEST_LOG_(INFO) << "BasicServiceSpanTests. Create ServiceTrace " << std::endl;
     Azure::Core::Tracing::_internal::DiagnosticTracingFactory serviceTrace(
         clientOptions, "my-service-cpp", "1.0b2");
 
-    GTEST_LOG_(INFO) << "BasicServiceSpanTests. Create Span " << std::endl;
     auto contextAndSpan = serviceTrace.CreateSpan(
         "My API", Azure::Core::Tracing::_internal::SpanKind::Internal, {});
     ServiceSpan span = std::move(contextAndSpan.second);
 
-    GTEST_LOG_(INFO) << "BasicServiceSpanTests. End Span" << std::endl;
-
+  
     span.End();
     span.AddEvent("New Event");
     span.AddEvent(std::runtime_error("Exception"));
@@ -164,6 +151,5 @@ TEST(DiagnosticTracingFactory, BasicServiceSpanTests)
     span.AddEvent("AttributeEvent", *attributeSet);
     span.AddAttributes(*attributeSet);
     span.SetStatus(SpanStatus::Error);
-    GTEST_LOG_(INFO) << "BasicServiceSpanTests. Done." << std::endl;
   }
 }

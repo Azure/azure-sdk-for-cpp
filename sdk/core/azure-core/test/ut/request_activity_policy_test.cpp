@@ -39,7 +39,6 @@ public:
   NoOpPolicy(std::function<std::unique_ptr<RawResponse>(Request&)> createResponse)
       : HttpPolicy(), m_createResponse(createResponse){};
 };
-} // namespace
 
 // Dummy service tracing class.
 class TestSpan final : public Azure::Core::Tracing::_internal::Span {
@@ -131,6 +130,7 @@ public:
 
   std::list<std::shared_ptr<TestTracer>> const& GetTracers() { return m_tracers; }
 };
+} // namespace
 
 TEST(RequestActivityPolicy, Basic)
 {
@@ -158,7 +158,7 @@ TEST(RequestActivityPolicy, Basic)
     }
 
     EXPECT_EQ(1ul, testTracer->GetTracers().size());
-    auto &tracer = testTracer->GetTracers().front();
+    auto& tracer = testTracer->GetTracers().front();
     EXPECT_EQ(2ul, tracer->GetSpans().size());
     EXPECT_EQ("My API", tracer->GetSpans()[0]->GetName());
     EXPECT_EQ("HTTP GET #0", tracer->GetSpans()[1]->GetName());
@@ -193,7 +193,7 @@ TEST(RequestActivityPolicy, Basic)
     }
 
     EXPECT_EQ(1ul, testTracer->GetTracers().size());
-    auto &tracer = testTracer->GetTracers().front();
+    auto& tracer = testTracer->GetTracers().front();
     EXPECT_EQ(2ul, tracer->GetSpans().size());
     EXPECT_EQ("My API", tracer->GetSpans()[0]->GetName());
     EXPECT_EQ("HTTP GET #0", tracer->GetSpans()[1]->GetName());
@@ -247,7 +247,7 @@ TEST(RequestActivityPolicy, TryRetries)
     }
 
     EXPECT_EQ(1ul, testTracer->GetTracers().size());
-    auto &tracer = testTracer->GetTracers().front();
+    auto& tracer = testTracer->GetTracers().front();
     EXPECT_EQ(4ul, tracer->GetSpans().size());
     EXPECT_EQ("My API", tracer->GetSpans()[0]->GetName());
     EXPECT_EQ("HTTP GET #0", tracer->GetSpans()[1]->GetName());
