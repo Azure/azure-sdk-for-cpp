@@ -400,7 +400,7 @@ Several Azure Key Vault keys client library samples are available to you in this
 
   - Encrypt and Decrypt data with the CryptographyClient
 
-- [sample5_sign_vVerify.md][sign_verify_sample] - Example code for working with Azure Key Vault keys, including:
+- [sample5_sign_verify.md][sign_verify_sample] - Example code for working with Azure Key Vault keys, including:
 
   - Sign a precalculated digest and verify the signature with Sign and Verify
   - Sign raw data and verify the signature with SignData and VerifyData
