@@ -141,7 +141,6 @@ TEST(DiagnosticTracingFactory, BasicServiceSpanTests)
         "My API", Azure::Core::Tracing::_internal::SpanKind::Internal, {});
     ServiceSpan span = std::move(contextAndSpan.second);
 
-  
     span.End();
     span.AddEvent("New Event");
     span.AddEvent(std::runtime_error("Exception"));
