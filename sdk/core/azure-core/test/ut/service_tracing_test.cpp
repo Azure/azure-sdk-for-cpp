@@ -89,7 +89,10 @@ public:
 };
 class TestTracer final : public Azure::Core::Tracing::_internal::Tracer {
 public:
-  TestTracer(std::string const&, std::string const&) : Azure::Core::Tracing::_internal::Tracer() {}
+  TestTracer(std::string const&, std::string const&) : Azure::Core::Tracing::_internal::Tracer()
+  {
+    GTEST_LOG_(INFO) << "TestTracer::TestTracer" << std::endl;
+  }
   std::shared_ptr<Span> CreateSpan(std::string const&, CreateSpanOptions const&) const override
   {
     return std::make_shared<TestSpan>();
@@ -109,6 +112,9 @@ public:
       std::string const& serviceName,
       std::string const& serviceVersion) const override
   {
+    GTEST_LOG_(INFO) << "TestTracerProvider::CreateTracer " << serviceName << serviceVersion
+                     << std::endl;
+
     return std::make_shared<TestTracer>(serviceName, serviceVersion);
   };
 };
