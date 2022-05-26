@@ -4,11 +4,7 @@
 
 ### Features Added
 
-### Breaking Changes
-
-### Bugs Fixed
-
-### Other Changes
+- Keyvault 7.3 support added for Keys.
 
 ## 4.2.0 (2021-10-05)
 
