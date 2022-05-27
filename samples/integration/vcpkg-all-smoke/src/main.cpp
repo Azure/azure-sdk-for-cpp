@@ -31,9 +31,9 @@ using namespace Azure::Security::Attestation;
 
 int main()
 {
-  const std::string tenantId = "tenant";
-  const std::string clientId = "client";
-  const std::string clientSecret = "secret";
+  auto tenantId = std::getenv("AZURE_TENANT_ID");
+  auto clientId = std::getenv("AZURE_CLIENT_ID");
+  auto clientSecret = std::getenv("AZURE_CLIENT_SECRET");
   const std::string leaseID = "leaseID";
   const std::string smokeUrl = "https://blob.com";
   const std::string attestationUrl = "https://sharedwus.wus.attest.azure.net";
