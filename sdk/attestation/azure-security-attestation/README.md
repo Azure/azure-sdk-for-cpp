@@ -206,11 +206,11 @@ Isolated Mode Certificate Management APIs enable clients to add, remove or enume
 
 #### Create an attestation client
 
-The `AttestationClientFactory::Create` method is used to create instances of the attestation client:
+The `AttestationClient::Create` method is used to create instances of the attestation client:
 
 ```cpp
     std::string endpoint = std::getenv("ATTESTATION_AAD_URL");
-    return Azure::Security::Attestation::AttestationClientFactory::CreatePointer(m_endpoint);
+    return Azure::Security::Attestation::AttestationClient::Create(m_endpoint);
 ```
 
 If the attestation APIs require authentication, use the following (note that unlike the previous example, 
@@ -221,7 +221,7 @@ std::string endpoint = std::getenv("ATTESTATION_AAD_URL");
 std::shared_ptr<Azure::Core::Credentials::TokenCredential> credential
     = std::make_shared<Azure::Identity::ClientSecretCredential>(
       std::getenv("AZURE_TENANT_ID"), std::getenv("AZURE_CLIENT_ID"), std::getenv("AZURE_CLIENT_SECRET"));
-return Azure::Security::Attestation::AttestationClientFactory::Create(m_endpoint, credential);
+Azure::Security::Attestation::AttestationClient client = Azure::Security::Attestation::AttestationClient::Create(m_endpoint, credential);
 ```
 
 The same pattern is used to create an `Azure::Security::Attestation::AttestationAdministrationClient`.
@@ -267,7 +267,7 @@ std::string endpoint = std::getenv("ATTESTATION_AAD_URL");
 std::shared_ptr<Azure::Core::Credentials::TokenCredential> credential
       = std::make_shared<Azure::Identity::ClientSecretCredential>(
           std::getenv("AZURE_TENANT_ID"), std::getenv("AZURE_CLIENT_ID"), std::getenv("AZURE_CLIENT_SECRET"));
-AttestationAdministrationClient adminClient(AttestationAdministrationClientFactory::Create(m_endpoint, credential));
+AttestationAdministrationClient adminClient(AttestationAdministrationClient::Create(m_endpoint, credential));
 ```
 
 #### Retrieve current attestation policy for OpenEnclave
