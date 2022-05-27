@@ -445,10 +445,10 @@ namespace Azure { namespace Security { namespace Attestation { namespace _detail
     /**
      * @brief Convert the internal attestation token to a public AttestationToken object.
      */
-    operator Models::AttestationToken<T> &() { return m_token; }
+    operator Models::AttestationToken<T>&() { return m_token; }
     /**
      * @brief Convert the internal attestation token to a public AttestationToken object.
      */
-    operator Models::AttestationToken<T> const &() const { return m_token; }
+    operator Models::AttestationToken<T> const&() const { return m_token; }
   };
 }}}} // namespace Azure::Security::Attestation::_detail

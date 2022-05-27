@@ -9,14 +9,14 @@
 namespace Azure { namespace Core { namespace _internal {
   class InputSanitizer final {
     /**
-     * @brief HTTP query parameter names that are allowed to be logged.
-     */
-    std::set<std::string> m_allowedHttpQueryParameters;
-
-    /**
      * @brief HTTP header names that are allowed to be logged.
      */
     Azure::Core::CaseInsensitiveSet m_allowedHttpHeaders;
+
+    /**
+     * @brief HTTP query parameter names that are allowed to be logged.
+     */
+    std::set<std::string> m_allowedHttpQueryParameters;
 
     // Manifest constant indicating a field was redacted.
     constexpr static const char* m_RedactedPlaceholder = "REDACTED";
