@@ -36,6 +36,8 @@ int main()
   const std::string clientSecret = "secret";
   const std::string leaseID = "leaseID";
   const std::string smokeUrl = "https://blob.com";
+  // Creating an attestation service instance requires contacting the attestation service (to retrieve validation collateral).
+  // Use the West US Shared client (which should always be available) as an anonymous service instance.
   const std::string attestationUrl = "https://sharedwus.wus.attest.azure.net";
 
   auto credential
