@@ -167,7 +167,8 @@ namespace Azure { namespace Security { namespace Attestation {
     AttestationClient(AttestationClient const& attestationClient)
         : m_endpoint(attestationClient.m_endpoint), m_apiVersion(attestationClient.m_apiVersion),
           m_pipeline(attestationClient.m_pipeline),
-          m_tokenValidationOptions(attestationClient.m_tokenValidationOptions){};
+          m_tokenValidationOptions(attestationClient.m_tokenValidationOptions),
+          m_attestationSigners(attestationClient.m_attestationSigners){};
 
     std::string const Endpoint() const { return m_endpoint.GetAbsoluteUrl(); }
 
@@ -261,7 +262,6 @@ namespace Azure { namespace Security { namespace Attestation {
     std::shared_ptr<Azure::Core::Credentials::TokenCredential const> m_credentials;
     std::shared_ptr<Azure::Core::Http::_internal::HttpPipeline> m_pipeline;
     AttestationTokenValidationOptions m_tokenValidationOptions;
-
     std::vector<Models::AttestationSigner> m_attestationSigners;
 
     /** @brief Construct a new Attestation Client object
