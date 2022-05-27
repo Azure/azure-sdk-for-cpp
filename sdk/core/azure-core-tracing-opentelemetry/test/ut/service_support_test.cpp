@@ -532,12 +532,12 @@ public:
 class ServiceClient {
 private:
   ServiceClientOptions m_clientOptions;
-  Azure::Core::Tracing::_internal::DiagnosticTracingFactory m_serviceTrace;
+  Azure::Core::Tracing::_internal::DiagnosticTracingFactory m_tracingFactory;
   std::unique_ptr<Azure::Core::Http::_internal::HttpPipeline> m_pipeline;
 
 public:
   explicit ServiceClient(ServiceClientOptions const& clientOptions = ServiceClientOptions{})
-      : m_serviceTrace(clientOptions, "Azure.Core.OpenTelemetry.Test.Service", "1.0.0.beta-2")
+      : m_tracingFactory(clientOptions, "Azure.Core.OpenTelemetry.Test.Service", "1.0.0.beta-2")
   {
     std::vector<std::unique_ptr<HttpPolicy>> policies;
     policies.emplace_back(std::make_unique<TelemetryPolicy>(
@@ -566,7 +566,7 @@ public:
       std::string const& inputString,
       Azure::Core::Context const& context = Azure::Core::Context{})
   {
-    auto contextAndSpan = m_serviceTrace.CreateSpan(
+    auto contextAndSpan = m_tracingFactory.CreateSpan(
         "GetConfigurationString", Azure::Core::Tracing::_internal::SpanKind::Internal, context);
 
     // <Call Into Service via an HTTP pipeline>
@@ -587,7 +587,7 @@ public:
       std::string const&,
       Azure::Core::Context const& context = Azure::Core::Context{})
   {
-    auto contextAndSpan = m_serviceTrace.CreateSpan(
+    auto contextAndSpan = m_tracingFactory.CreateSpan(
         "ApiWhichThrows", Azure::Core::Tracing::_internal::SpanKind::Internal, context);
 
     try

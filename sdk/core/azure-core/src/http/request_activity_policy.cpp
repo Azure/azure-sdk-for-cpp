@@ -57,19 +57,21 @@ std::unique_ptr<RawResponse> RequestActivityPolicy::Send(
     }
   }
 
-  // Propogate information from the scope to the HTTP headers.
+  // Propagate information from the scope to the HTTP headers.
   //
   // This will add the "traceparent" header and any other OpenTelemetry related headers.
   scope.PropagateToHttpHeaders(request);
 
   try
   {
+    // Send the request on to the service.
     auto response = nextPolicy.Send(request, contextAndSpan.first);
 
+    // And register the headers we received from the service.
     scope.AddAttribute(
         TracingAttributes::HttpStatusCode.ToString(),
         std::to_string(static_cast<int>(response->GetStatusCode())));
-    auto& responseHeaders = response->GetHeaders();
+    auto const& responseHeaders = response->GetHeaders();
     auto serviceRequestId = responseHeaders.find("x-ms-request-id");
     if (serviceRequestId != responseHeaders.end())
     {
