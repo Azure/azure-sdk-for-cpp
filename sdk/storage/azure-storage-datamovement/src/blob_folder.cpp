@@ -14,112 +14,31 @@
 
 namespace Azure { namespace Storage { namespace Blobs {
 
-  BlobFolder BlobFolder::CreateFromConnectionString(
-      const std::string& connectionString,
-      const std::string& blobContainerName,
-      const std::string& blobName,
-      const BlobClientOptions& options)
+  BlobFolder::BlobFolder(BlobContainerClient blobContainerClient, std::string folderPath)
+      : m_blobContainerClient(std::move(blobContainerClient)), m_folderPath(std::move(folderPath))
   {
-    auto parsedConnectionString = _internal::ParseConnectionString(connectionString);
-    auto blobUrl = std::move(parsedConnectionString.BlobServiceUrl);
-    blobUrl.AppendPath(_internal::UrlEncodePath(blobContainerName));
-    blobUrl.AppendPath(_internal::UrlEncodePath(blobName));
-
-    if (parsedConnectionString.KeyCredential)
+    if (m_folderPath == "/")
     {
-      return BlobFolder(blobUrl.GetAbsoluteUrl(), parsedConnectionString.KeyCredential, options);
-    }
-    else
-    {
-      return BlobFolder(blobUrl.GetAbsoluteUrl(), options);
+      m_folderPath.clear();
     }
   }
 
-  BlobFolder::BlobFolder(
-      const std::string& blobUrl,
-      std::shared_ptr<StorageSharedKeyCredential> credential,
-      const BlobClientOptions& options)
-      : BlobFolder(blobUrl, options)
+  std::string BlobFolder::GetUrl() const
   {
-    BlobClientOptions newOptions = options;
-    newOptions.PerRetryPolicies.emplace_back(
-        std::make_unique<_internal::SharedKeyPolicy>(credential));
-
-    std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>> perRetryPolicies;
-    std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>> perOperationPolicies;
-    perRetryPolicies.emplace_back(std::make_unique<_internal::StorageSwitchToSecondaryPolicy>(
-        m_blobUrl.GetHost(), newOptions.SecondaryHostForRetryReads));
-    perRetryPolicies.emplace_back(std::make_unique<_internal::StoragePerRetryPolicy>());
-    perOperationPolicies.emplace_back(
-        std::make_unique<_internal::StorageServiceVersionPolicy>(newOptions.ApiVersion));
-    m_pipeline = std::make_shared<Azure::Core::Http::_internal::HttpPipeline>(
-        newOptions,
-        _internal::DataMovementPackageName,
-        DataMovement::_detail::PackageVersion::ToString(),
-        std::move(perRetryPolicies),
-        std::move(perOperationPolicies));
-  }
-
-  BlobFolder::BlobFolder(
-      const std::string& blobUrl,
-      std::shared_ptr<Core::Credentials::TokenCredential> credential,
-      const BlobClientOptions& options)
-      : BlobFolder(blobUrl, options)
-  {
-    std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>> perRetryPolicies;
-    std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>> perOperationPolicies;
-    perRetryPolicies.emplace_back(std::make_unique<_internal::StorageSwitchToSecondaryPolicy>(
-        m_blobUrl.GetHost(), options.SecondaryHostForRetryReads));
-    perRetryPolicies.emplace_back(std::make_unique<_internal::StoragePerRetryPolicy>());
-    {
-      Azure::Core::Credentials::TokenRequestContext tokenContext;
-      tokenContext.Scopes.emplace_back(_internal::StorageScope);
-      perRetryPolicies.emplace_back(
-          std::make_unique<Azure::Core::Http::Policies::_internal::BearerTokenAuthenticationPolicy>(
-              credential, tokenContext));
-    }
-    perOperationPolicies.emplace_back(
-        std::make_unique<_internal::StorageServiceVersionPolicy>(options.ApiVersion));
-    m_pipeline = std::make_shared<Azure::Core::Http::_internal::HttpPipeline>(
-        options,
-        _internal::DataMovementPackageName,
-        DataMovement::_detail::PackageVersion::ToString(),
-        std::move(perRetryPolicies),
-        std::move(perOperationPolicies));
-  }
-
-  BlobFolder::BlobFolder(const std::string& blobUrl, const BlobClientOptions& options)
-      : m_blobUrl(blobUrl), m_customerProvidedKey(options.CustomerProvidedKey),
-        m_encryptionScope(options.EncryptionScope)
-  {
-    std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>> perRetryPolicies;
-    std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>> perOperationPolicies;
-    perRetryPolicies.emplace_back(std::make_unique<_internal::StorageSwitchToSecondaryPolicy>(
-        m_blobUrl.GetHost(), options.SecondaryHostForRetryReads));
-    perRetryPolicies.emplace_back(std::make_unique<_internal::StoragePerRetryPolicy>());
-    perOperationPolicies.emplace_back(
-        std::make_unique<_internal::StorageServiceVersionPolicy>(options.ApiVersion));
-    m_pipeline = std::make_shared<Azure::Core::Http::_internal::HttpPipeline>(
-        options,
-        _internal::DataMovementPackageName,
-        DataMovement::_detail::PackageVersion::ToString(),
-        std::move(perRetryPolicies),
-        std::move(perOperationPolicies));
+    auto url = Azure::Core::Url(m_blobContainerClient.GetUrl());
+    url.AppendPath(m_folderPath);
+    return url.GetAbsoluteUrl();
   }
 
   BlobFolder BlobFolder::GetBlobFolder(const std::string& folderName) const
   {
-    auto blobUrl = m_blobUrl;
-    blobUrl.AppendPath(_internal::UrlEncodePath(folderName));
-    auto newFolder = *this;
-    newFolder.m_blobUrl = std::move(blobUrl);
-    return newFolder;
+    return BlobFolder(
+        m_blobContainerClient, m_folderPath + (m_folderPath.empty() ? "" : "/") + folderName);
   }
 
   BlobClient BlobFolder::GetBlobClient(const std::string& blobName) const
   {
-    auto blobUrl = m_blobUrl;
-    blobUrl.AppendPath(_internal::UrlEncodePath(blobName));
-    return BlobClient(std::move(blobUrl), m_pipeline, m_customerProvidedKey, m_encryptionScope);
+    return m_blobContainerClient.GetBlobClient(
+        m_folderPath + (m_folderPath.empty() ? "" : "/") + blobName);
   }
 }}} // namespace Azure::Storage::Blobs

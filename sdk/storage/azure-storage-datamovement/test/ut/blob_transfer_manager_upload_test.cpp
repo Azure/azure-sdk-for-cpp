@@ -100,8 +100,7 @@ namespace Azure { namespace Storage { namespace Test {
     containerClient.CreateIfNotExists();
     const std::string localDir = "dir_l1";
     const std::string serviceDir = "folder1";
-    auto blobFolder = Blobs::BlobFolder::CreateFromConnectionString(
-        StandardStorageConnectionString(), containerName, serviceDir);
+    auto blobFolder = Blobs::BlobFolder(containerClient, serviceDir);
 
     std::vector<std::string> files;
     CreateDir("dir_l1");
