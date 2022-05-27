@@ -6,6 +6,8 @@
 
 namespace Azure { namespace Core { namespace _internal {
 
+  const char* InputSanitizer::m_RedactedPlaceholder = "REDACTED";
+
   Azure::Core::Url InputSanitizer::SanitizeUrl(Azure::Core::Url const& url) const
   {
     std::ostringstream ss;
@@ -83,4 +85,5 @@ namespace Azure { namespace Core { namespace _internal {
     }
     return m_RedactedPlaceholder;
   }
+
 }}} // namespace Azure::Core::_internal

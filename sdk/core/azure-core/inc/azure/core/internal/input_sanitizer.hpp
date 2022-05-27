@@ -19,7 +19,7 @@ namespace Azure { namespace Core { namespace _internal {
     std::set<std::string> m_allowedHttpQueryParameters;
 
     // Manifest constant indicating a field was redacted.
-    constexpr static const char* m_RedactedPlaceholder = "REDACTED";
+    static const char* m_RedactedPlaceholder;
 
   public:
     InputSanitizer() = default;
