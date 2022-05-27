@@ -197,10 +197,22 @@ namespace Azure { namespace Core { namespace Tracing { namespace OpenTelemetry {
       m_span->SetAttribute(attributeName, opentelemetry::common::AttributeValue(attributeValue));
     }
 
+    /**
+     * @brief Text map propagator used to read or write properties from an HTTP request.
+     *
+     * @detail OpenTelemetry defines a `TextMapCarrier` class as a class which allows reading and
+     * writing to a map of text elements. The OpenTelemetry
+     * [HttpTraceContext](https://opentelemetry-cpp.readthedocs.io/en/latest/otel_docs/classopentelemetry_1_1trace_1_1propagation_1_1HttpTraceContext.html)
+     * uses a TextMapCarrier to propogate the required HTTP headers from an OpenTelemetry context
+     * into an HTTP request.
+     */
     class HttpRequestTextMapPropagator
         : public opentelemetry::context::propagation::TextMapCarrier {
       Azure::Core::Http::Request& m_request;
       // Inherited via TextMapCarrier
+
+      /** @brief Retrieves the value of an HTTP header from the request.
+       */
       virtual opentelemetry::nostd::string_view Get(
           opentelemetry::nostd::string_view key) const noexcept override
       {
@@ -212,6 +224,8 @@ namespace Azure { namespace Core { namespace Tracing { namespace OpenTelemetry {
         return std::string();
       }
 
+      /** @brief Sets the value of an HTTP header in the request.
+       */
       virtual void Set(
           opentelemetry::nostd::string_view key,
           opentelemetry::nostd::string_view value) noexcept override
@@ -233,8 +247,8 @@ namespace Azure { namespace Core { namespace Tracing { namespace OpenTelemetry {
         auto scope = opentelemetry::trace::Tracer::WithActiveSpan(m_span);
         auto currentContext = opentelemetry::context::RuntimeContext::GetCurrent();
 
-        opentelemetry::trace::propagation::HttpTraceContext httpTraceContext;
-        httpTraceContext.Inject(propagator, currentContext);
+        // And inject all required headers into the Request.
+        opentelemetry::trace::propagation::HttpTraceContext().Inject(propagator, currentContext);
       }
     }
 

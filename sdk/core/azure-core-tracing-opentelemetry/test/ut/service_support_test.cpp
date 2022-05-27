@@ -641,7 +641,7 @@ TEST_F(OpenTelemetryServiceTests, ServiceApiImplementation)
   "attributes": {
     "az.namespace": "Azure.Core.OpenTelemetry.Test.Service",
     "http.method": "GET",
-    "http.url": "https://REDACTED.microsoft.com",
+    "http.url": "https://www.microsoft.com",
     "requestId": ".*",
     "http.user_agent": "MyApplication azsdk-cpp-Azure.Core.OpenTelemetry.Test.Service/1.0.0.beta-2.*",
     "http.status_code": "200"
