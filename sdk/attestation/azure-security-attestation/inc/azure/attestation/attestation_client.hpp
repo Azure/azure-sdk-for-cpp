@@ -118,6 +118,42 @@ namespace Azure { namespace Security { namespace Attestation {
     friend class AttestationClientFactory;
 
   public:
+    /** @brief Construct a new Attestation Client object
+     *
+     * @details Constructs a new attestation client. Follows the
+     * factory pattern in [C++ Core Guidelines
+     * C.50](https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines#c50-use-a-factory-function-if-you-need-virtual-behavior-during-initialization)
+     *
+     * @param endpoint The URL address where the client will send the requests to.
+     * @param credential The authentication method to use (required for TPM attestation). If the
+     * credential parameter is not supplied, the connection will be unauthenticated.
+     * @param options The options to customize the client behavior.
+     * @return std::unique_ptr<AttestationClient> The newly created client.
+     */
+    static AttestationClient Create(
+        std::string const& endpoint,
+        std::shared_ptr<Core::Credentials::TokenCredential const> credential,
+        AttestationClientOptions options = AttestationClientOptions{},
+        Azure::Core::Context const& constext = Azure::Core::Context{});
+
+    /** @brief Construct a new anonymous Attestation Client object
+     *
+     * @details Constructs a new anonymous (unauthenticated) attestation client. Follows the
+     * factory pattern in [C++ Core Guidelines
+     * C.50](https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines#c50-use-a-factory-function-if-you-need-virtual-behavior-during-initialization)
+     *
+     * @param endpoint The URL address where the client will send the requests to.
+     * @param options The options to customize the client behavior.
+     * @return std::unique_ptr<AttestationClient> The newly created attestation client.
+     *
+     * @note TPM attestation requires an authenticated attestation client.
+     *
+     */
+    static AttestationClient Create(
+        std::string const& endpoint,
+        AttestationClientOptions options = AttestationClientOptions{},
+        Azure::Core::Context const& constext = Azure::Core::Context{});
+
     /**
      * @brief Destructor.
      *
@@ -247,51 +283,6 @@ namespace Azure { namespace Security { namespace Attestation {
      */
     void RetrieveResponseValidationCollateral(
         Azure::Core::Context const& context = Azure::Core::Context{});
-  };
-
-  /** @brief Construct a new AttestationClient object.
-   *
-   * The AttestationClientFactory class is a factory class for instantiating new AttestationClient
-   * objects.
-   *
-   */
-  class AttestationClientFactory final {
-  public:
-    /** @brief Construct a new Attestation Client object
-     *
-     * @details Constructs a new attestation client. Follows the
-     * factory pattern in [C++ Core Guidelines
-     * C.50](https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines#c50-use-a-factory-function-if-you-need-virtual-behavior-during-initialization)
-     *
-     * @param endpoint The URL address where the client will send the requests to.
-     * @param credential The authentication method to use (required for TPM attestation). If the
-     * credential parameter is not supplied, the connection will be unauthenticated.
-     * @param options The options to customize the client behavior.
-     * @return std::unique_ptr<AttestationClient> The newly created client.
-     */
-    static std::unique_ptr<AttestationClient> Create(
-        std::string const& endpoint,
-        std::shared_ptr<Core::Credentials::TokenCredential const> credential,
-        AttestationClientOptions options = AttestationClientOptions{},
-        Azure::Core::Context const& constext = Azure::Core::Context{});
-
-    /** @brief Construct a new anonymous Attestation Client object
-     *
-     * @details Constructs a new anonymous (unauthenticated) attestation client. Follows the
-     * factory pattern in [C++ Core Guidelines
-     * C.50](https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines#c50-use-a-factory-function-if-you-need-virtual-behavior-during-initialization)
-     *
-     * @param endpoint The URL address where the client will send the requests to.
-     * @param options The options to customize the client behavior.
-     * @return std::unique_ptr<AttestationClient> The newly created attestation client.
-     *
-     * @note TPM attestation requires an authenticated attestation client.
-     *
-     */
-    static std::unique_ptr<AttestationClient> Create(
-        std::string const& endpoint,
-        AttestationClientOptions options = AttestationClientOptions{},
-        Azure::Core::Context const& constext = Azure::Core::Context{});
   };
 
 }}} // namespace Azure::Security::Attestation

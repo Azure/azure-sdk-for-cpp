@@ -48,6 +48,21 @@ namespace Azure { namespace Security { namespace Attestation {
 
   public:
     /**
+     * @brief Construct a new Attestation Administration Client object.
+     *
+     * @param endpoint The URL address where the client will send the requests to.
+     * @param credential The authentication token to use.
+     * @param options The options to customize the client behavior.
+     * @return std::unique_ptr<AttestationAdministrationClient> The newly created client.
+     */
+    static AttestationAdministrationClient Create(
+        std::string const& endpoint,
+        std::shared_ptr<Core::Credentials::TokenCredential const> credential,
+        AttestationAdministrationClientOptions const& options
+        = AttestationAdministrationClientOptions{},
+        Azure::Core::Context const& context = Azure::Core::Context{});
+
+    /**
      * @brief Construct a new Attestation Administration Client object from another attestation
      * administration client.
      *
@@ -289,29 +304,4 @@ namespace Azure { namespace Security { namespace Attestation {
     void RetrieveResponseValidationCollateral(
         Azure::Core::Context const& context = Azure::Core::Context{});
   };
-
-  /** @brief Construct a new AttestationAdministrationClient object.
-   *
-   * The AttestationAdministrationClientFactory class is a factory class for instantiating new
-   * AttestationAdministrationClient objects.
-   *
-   */
-  class AttestationAdministrationClientFactory final {
-  public:
-    /**
-     * @brief Construct a new Attestation Administration Client object.
-     *
-     * @param endpoint The URL address where the client will send the requests to.
-     * @param credential The authentication token to use.
-     * @param options The options to customize the client behavior.
-     * @return std::unique_ptr<AttestationAdministrationClient> The newly created client.
-     */
-    static std::unique_ptr<AttestationAdministrationClient> Create(
-        std::string const& endpoint,
-        std::shared_ptr<Core::Credentials::TokenCredential const> credential,
-        AttestationAdministrationClientOptions const& options
-        = AttestationAdministrationClientOptions{},
-        Azure::Core::Context const& context = Azure::Core::Context{});
-  };
-
 }}} // namespace Azure::Security::Attestation

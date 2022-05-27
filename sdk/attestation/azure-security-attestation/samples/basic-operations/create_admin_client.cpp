@@ -39,11 +39,11 @@ int main()
         GetEnvHelper::GetEnv("AZURE_TENANT_ID"),
         GetEnvHelper::GetEnv("AZURE_CLIENT_ID"),
         GetEnvHelper::GetEnv("AZURE_CLIENT_SECRET"));
-    std::unique_ptr<AttestationAdministrationClient const> adminClient(
-        AttestationAdministrationClientFactory::Create(
+    AttestationAdministrationClient const adminClient(
+        AttestationAdministrationClient::Create(
             GetEnvHelper::GetEnv("ATTESTATION_AAD_URL"), credential));
 
-    std::cout << "Admin client is Communicating with " << adminClient->Endpoint() << std::endl;
+    std::cout << "Admin client is Communicating with " << adminClient.Endpoint() << std::endl;
   }
   catch (Azure::Core::Credentials::AuthenticationException const& e)
   {

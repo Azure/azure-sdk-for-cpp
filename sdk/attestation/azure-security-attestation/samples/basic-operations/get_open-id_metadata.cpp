@@ -32,11 +32,11 @@ int main()
   try
   {
     // create client
-    std::unique_ptr<AttestationClient const> attestationClient(
-        AttestationClientFactory::Create(GetEnvHelper::GetEnv("ATTESTATION_AAD_URL")));
+    AttestationClient const attestationClient(
+        AttestationClient::Create(GetEnvHelper::GetEnv("ATTESTATION_AAD_URL")));
 
     // Retrieve the OpenId metadata from this attestation service instance.
-    Azure::Response<OpenIdMetadata> const openIdMetadata = attestationClient->GetOpenIdMetadata();
+    Azure::Response<OpenIdMetadata> const openIdMetadata = attestationClient.GetOpenIdMetadata();
     std::cout << "Attestation Certificate Endpoint is: " << *openIdMetadata.Value.JsonWebKeySetUrl
               << std::endl;
   }

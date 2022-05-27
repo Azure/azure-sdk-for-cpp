@@ -62,8 +62,8 @@ int main()
         GetEnvHelper::GetEnv("AZURE_TENANT_ID"),
         GetEnvHelper::GetEnv("AZURE_CLIENT_ID"),
         GetEnvHelper::GetEnv("AZURE_CLIENT_SECRET"));
-    std::shared_ptr<AttestationAdministrationClient const> adminClient(
-        AttestationAdministrationClientFactory::Create(endpoint, credential, clientOptions));
+    AttestationAdministrationClient const adminClient(
+        AttestationAdministrationClient::Create(endpoint, credential, clientOptions));
 
     std::string const signingKey(GetEnvHelper::GetEnv("ISOLATED_SIGNING_KEY"));
     std::string const signingCert(GetEnvHelper::GetEnv("ISOLATED_SIGNING_CERTIFICATE"));
@@ -87,7 +87,7 @@ authorizationrules
     setOptions.SigningKey = AttestationSigningKey{pemSigningKey, pemSigningCert};
 
     Azure::Response<AttestationToken<PolicyResult>> const setResult
-        = adminClient->SetAttestationPolicy(AttestationType::SgxEnclave, policyToSet, setOptions);
+        = adminClient.SetAttestationPolicy(AttestationType::SgxEnclave, policyToSet, setOptions);
 
     if (setResult.Value.Body.PolicyResolution == PolicyModification::Updated)
     {
@@ -104,7 +104,7 @@ authorizationrules
     // generate the SHA256 of that token and compare it with the value returned by the service - the
     // two hash values should be identical.
     auto const setPolicyToken
-        = adminClient->CreateAttestationPolicyToken(policyToSet, setOptions.SigningKey);
+        = adminClient.CreateAttestationPolicyToken(policyToSet, setOptions.SigningKey);
     Sha256Hash shaHasher;
     std::vector<uint8_t> const policyTokenHash = shaHasher.Final(
         reinterpret_cast<uint8_t const*>(setPolicyToken.RawToken.data()),

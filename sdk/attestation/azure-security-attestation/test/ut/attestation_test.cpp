@@ -68,14 +68,14 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
       return returnValue;
     }
 
-    std::unique_ptr<AttestationClient> CreateClient()
+    AttestationClient CreateClient()
     {
       // `InitTestClient` takes care of setting up Record&Playback.
       auto options = InitClientOptions<Azure::Security::Attestation::AttestationClientOptions>();
       options.TokenValidationOptions = GetTokenValidationOptions();
-      return AttestationClientFactory::Create(m_endpoint, options);
+      return AttestationClient::Create(m_endpoint, options);
     }
-    std::unique_ptr<AttestationClient> CreateAuthenticatedClient()
+    AttestationClient CreateAuthenticatedClient()
     {
       // `InitClientOptions` takes care of setting up Record&Playback.
       AttestationClientOptions options = InitClientOptions<AttestationClientOptions>();
@@ -84,7 +84,7 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
           = CreateClientSecretCredential(
               GetEnv("AZURE_TENANT_ID"), GetEnv("AZURE_CLIENT_ID"), GetEnv("AZURE_CLIENT_SECRET"));
 
-      return AttestationClientFactory::Create(m_endpoint, credential, options);
+      return AttestationClient::Create(m_endpoint, credential, options);
     }
 
     void ValidateAttestResponse(
@@ -138,16 +138,13 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
     if (type == AttestationType::OpenEnclave)
     {
       auto report = AttestationCollateral::OpenEnclaveReport();
-      auto attestResponse = client->AttestOpenEnclave(report);
-      ValidateAttestResponse(attestResponse);
-
-      attestResponse = client->AttestOpenEnclave(report);
+      auto attestResponse = client.AttestOpenEnclave(report);
       ValidateAttestResponse(attestResponse);
     }
     else if (type == AttestationType::SgxEnclave)
     {
       auto quote = AttestationCollateral::SgxQuote();
-      auto attestResponse = client->AttestSgxEnclave(quote);
+      auto attestResponse = client.AttestSgxEnclave(quote);
       ValidateAttestResponse(attestResponse);
     }
   }
@@ -165,7 +162,7 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
       AttestOpenEnclaveOptions options;
       options.RunTimeData = data;
       auto report = AttestationCollateral::OpenEnclaveReport();
-      auto attestResponse = client->AttestOpenEnclave(report, options);
+      auto attestResponse = client.AttestOpenEnclave(report, options);
       ValidateAttestResponse(attestResponse, data);
     }
     else if (type == AttestationType::SgxEnclave)
@@ -173,7 +170,7 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
       AttestSgxEnclaveOptions options;
       options.RunTimeData = data;
       auto quote = AttestationCollateral::SgxQuote();
-      auto attestResponse = client->AttestSgxEnclave(quote, options);
+      auto attestResponse = client.AttestSgxEnclave(quote, options);
       ValidateAttestResponse(attestResponse, data);
     }
   }
@@ -203,7 +200,7 @@ issuancerules {
 };)";
       auto report = AttestationCollateral::OpenEnclaveReport();
 
-      auto attestResponse = client->AttestOpenEnclave(report, options);
+      auto attestResponse = client.AttestOpenEnclave(report, options);
       // Because a draft policy was set, the resulting token is unsigned.
       ValidateAttestResponse(
           attestResponse, Azure::Nullable<AttestationData>(), *options.DraftPolicyForAttestation);
@@ -219,7 +216,7 @@ authorizationrules
 issuancerules {
     c:[type=="x-ms-sgx-mrsigner"] => issue(type="custom-name", value=c.value);
 };)";
-      EXPECT_THROW(client->AttestOpenEnclave(report, options), Azure::Core::RequestFailedException);
+      EXPECT_THROW(client.AttestOpenEnclave(report, options), Azure::Core::RequestFailedException);
     }
     else if (type == AttestationType::SgxEnclave)
     {
@@ -237,7 +234,7 @@ issuancerules {
     c:[type=="x-ms-sgx-mrsigner"] => issue(type="custom-name", value=c.value);
 };)";
       auto quote = AttestationCollateral::SgxQuote();
-      auto attestResponse = client->AttestSgxEnclave(quote, options);
+      auto attestResponse = client.AttestSgxEnclave(quote, options);
       ValidateAttestResponse(
           attestResponse, Azure::Nullable<AttestationData>(), *options.DraftPolicyForAttestation);
 
@@ -252,7 +249,7 @@ authorizationrules
 issuancerules {
     c:[type=="x-ms-sgx-mrsigner"] => issue(type="custom-name", value=c.value);
 };)";
-      EXPECT_THROW(client->AttestSgxEnclave(quote, options), Azure::Core::RequestFailedException);
+      EXPECT_THROW(client.AttestSgxEnclave(quote, options), Azure::Core::RequestFailedException);
     }
   }
 
@@ -289,13 +286,13 @@ issuancerules {
                 EXPECT_NE(cert->GetSubjectName().find(m_endpoint), std::string::npos);
               }
             };
-      auto attestResponse = client->AttestOpenEnclave(report, options);
+      auto attestResponse = client.AttestOpenEnclave(report, options);
       ValidateAttestResponse(attestResponse, data);
     }
     else if (type == AttestationType::SgxEnclave)
     {
       auto quote = AttestationCollateral::SgxQuote();
-      auto attestResponse = client->AttestSgxEnclave(quote, {data});
+      auto attestResponse = client.AttestSgxEnclave(quote, {data});
       ValidateAttestResponse(attestResponse, data);
     }
   }
