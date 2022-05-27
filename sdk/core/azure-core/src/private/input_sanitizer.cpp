@@ -6,7 +6,6 @@
 
 namespace Azure { namespace Core { namespace _internal {
 
-
   Azure::Core::Url InputSanitizer::SanitizeUrl(Azure::Core::Url const& url) const
   {
     std::ostringstream ss;
@@ -25,7 +24,6 @@ namespace Azure { namespace Core { namespace _internal {
     {
       ss << "/" << url.GetPath();
     }
-
 
     {
       auto encodedRequestQueryParams = url.GetQueryParameters();
@@ -76,7 +74,8 @@ namespace Azure { namespace Core { namespace _internal {
     return Azure::Core::Url(ss.str());
   }
 
-  std::string InputSanitizer::SanitizeHeader(std::string const &header, std::string const& value) const
+  std::string InputSanitizer::SanitizeHeader(std::string const& header, std::string const& value)
+      const
   {
     if (m_allowedHttpHeaders.find(header) != m_allowedHttpHeaders.end())
     {

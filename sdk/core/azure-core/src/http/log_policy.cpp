@@ -104,8 +104,7 @@ std::unique_ptr<RawResponse> LogPolicy::Send(
 
   if (Log::ShouldWrite(Logger::Level::Verbose))
   {
-    Log::Write(
-        Logger::Level::Informational, GetRequestLogMessage(m_inputSanitizer, request));
+    Log::Write(Logger::Level::Informational, GetRequestLogMessage(m_inputSanitizer, request));
   }
   else
   {

@@ -40,9 +40,7 @@ std::unique_ptr<RawResponse> RequestActivityPolicy::Send(
   auto scope = std::move(contextAndSpan.second);
 
   scope.AddAttribute(TracingAttributes::HttpMethod.ToString(), request.GetMethod().ToString());
-  scope.AddAttribute(
-      "http.url",
-      m_inputSanitizer.SanitizeUrl(request.GetUrl()).GetAbsoluteUrl());
+  scope.AddAttribute("http.url", m_inputSanitizer.SanitizeUrl(request.GetUrl()).GetAbsoluteUrl());
   {
     Azure::Nullable<std::string> requestId = request.GetHeader("x-ms-client-request-id");
     if (requestId.HasValue())
