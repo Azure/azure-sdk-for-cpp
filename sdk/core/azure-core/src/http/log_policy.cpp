@@ -21,8 +21,8 @@ std::string RedactedPlaceholder = "REDACTED";
 
 inline void AppendHeaders(
     std::ostringstream& log,
-    Azure::Core::CaseInsensitiveMap const& headers,
-    Azure::Core::CaseInsensitiveSet const& allowedHaders)
+    Azure::Core::_internal::InputSanitizer const& inputSanitizer,
+    Azure::Core::CaseInsensitiveMap const& headers)
 {
   for (auto const& header : headers)
   {
@@ -30,90 +30,27 @@ inline void AppendHeaders(
 
     if (!header.second.empty())
     {
-      log
-          << ((allowedHaders.find(header.first) != allowedHaders.end()) ? header.second
-                                                                        : RedactedPlaceholder);
+      log << inputSanitizer.SanitizeHeader(header.first, header.second);
     }
   }
 }
 
-inline void LogUrlWithoutQuery(std::ostringstream& log, Url const& url)
+inline std::string GetRequestLogMessage(
+    Azure::Core::_internal::InputSanitizer const& inputSanitizer,
+    Request const& request)
 {
-  if (!url.GetScheme().empty())
-  {
-    log << url.GetScheme() << "://";
-  }
-  log << url.GetHost();
-  if (url.GetPort() != 0)
-  {
-    log << ":" << url.GetPort();
-  }
-  if (!url.GetPath().empty())
-  {
-    log << "/" << url.GetPath();
-  }
-}
-
-inline std::string GetRequestLogMessage(LogOptions const& options, Request const& request)
-{
-  auto const& requestUrl = request.GetUrl();
-
   std::ostringstream log;
   log << "HTTP Request : " << request.GetMethod().ToString() << " ";
-  LogUrlWithoutQuery(log, requestUrl);
 
-  {
-    auto encodedRequestQueryParams = requestUrl.GetQueryParameters();
+  Azure::Core::Url urlToLog(inputSanitizer.SanitizeUrl(request.GetUrl()));
+  log << urlToLog.GetAbsoluteUrl();
 
-    std::remove_const<std::remove_reference<decltype(encodedRequestQueryParams)>::type>::type
-        loggedQueryParams;
-
-    if (!encodedRequestQueryParams.empty())
-    {
-      auto const& unencodedAllowedQueryParams = options.AllowedHttpQueryParameters;
-      if (!unencodedAllowedQueryParams.empty())
-      {
-        std::remove_const<std::remove_reference<decltype(unencodedAllowedQueryParams)>::type>::type
-            encodedAllowedQueryParams;
-        std::transform(
-            unencodedAllowedQueryParams.begin(),
-            unencodedAllowedQueryParams.end(),
-            std::inserter(encodedAllowedQueryParams, encodedAllowedQueryParams.begin()),
-            [](std::string const& s) { return Url::Encode(s); });
-
-        for (auto const& encodedRequestQueryParam : encodedRequestQueryParams)
-        {
-          if (encodedRequestQueryParam.second.empty()
-              || (encodedAllowedQueryParams.find(encodedRequestQueryParam.first)
-                  != encodedAllowedQueryParams.end()))
-          {
-            loggedQueryParams.insert(encodedRequestQueryParam);
-          }
-          else
-          {
-            loggedQueryParams.insert(
-                std::make_pair(encodedRequestQueryParam.first, RedactedPlaceholder));
-          }
-        }
-      }
-      else
-      {
-        for (auto const& encodedRequestQueryParam : encodedRequestQueryParams)
-        {
-          loggedQueryParams.insert(
-              std::make_pair(encodedRequestQueryParam.first, RedactedPlaceholder));
-        }
-      }
-
-      log << Azure::Core::_detail::FormatEncodedUrlQueryParameters(loggedQueryParams);
-    }
-  }
-  AppendHeaders(log, request.GetHeaders(), options.AllowedHttpHeaders);
+  AppendHeaders(log, inputSanitizer, request.GetHeaders());
   return log.str();
 }
 
 inline std::string GetResponseLogMessage(
-    LogOptions const& options,
+    Azure::Core::_internal::InputSanitizer const& inputSanitizer,
     RawResponse const& response,
     std::chrono::system_clock::duration const& duration)
 {
@@ -124,14 +61,16 @@ inline std::string GetResponseLogMessage(
       << "ms) : " << static_cast<int>(response.GetStatusCode()) << " "
       << response.GetReasonPhrase();
 
-  AppendHeaders(log, response.GetHeaders(), options.AllowedHttpHeaders);
+  AppendHeaders(log, inputSanitizer, response.GetHeaders());
   return log.str();
 }
 } // namespace
 
 Azure::Core::CaseInsensitiveSet const
     Azure::Core::Http::Policies::_detail::g_defaultAllowedHttpHeaders
-    = {"x-ms-request-id",
+    = {"traceparent",
+       "tracestate",
+       "x-ms-request-id",
        "x-ms-client-request-id",
        "x-ms-return-client-request-id",
        "traceparent",
@@ -165,7 +104,8 @@ std::unique_ptr<RawResponse> LogPolicy::Send(
 
   if (Log::ShouldWrite(Logger::Level::Verbose))
   {
-    Log::Write(Logger::Level::Informational, GetRequestLogMessage(m_options, request));
+    Log::Write(
+        Logger::Level::Informational, GetRequestLogMessage(m_inputSanitizer, request));
   }
   else
   {
@@ -177,7 +117,8 @@ std::unique_ptr<RawResponse> LogPolicy::Send(
   auto const end = std::chrono::system_clock::now();
 
   Log::Write(
-      Logger::Level::Informational, GetResponseLogMessage(m_options, *response, end - start));
+      Logger::Level::Informational,
+      GetResponseLogMessage(m_inputSanitizer, *response, end - start));
 
   return response;
 }

@@ -3,7 +3,7 @@
 
 #include "azure/core/http/policies/policy.hpp"
 #include "azure/core/internal/diagnostics/log.hpp"
-#include "azure/core/internal/request_sanitizer.hpp"
+#include "azure/core/internal/input_sanitizer.hpp"
 #include "azure/core/internal/tracing/service_tracing.hpp"
 
 #include <algorithm>
@@ -42,7 +42,7 @@ std::unique_ptr<RawResponse> RequestActivityPolicy::Send(
   scope.AddAttribute(TracingAttributes::HttpMethod.ToString(), request.GetMethod().ToString());
   scope.AddAttribute(
       "http.url",
-      Azure::Core::_internal::InputSanitizer::SanitizeUrl(request.GetUrl()).GetAbsoluteUrl());
+      m_inputSanitizer.SanitizeUrl(request.GetUrl()).GetAbsoluteUrl());
   {
     Azure::Nullable<std::string> requestId = request.GetHeader("x-ms-client-request-id");
     if (requestId.HasValue())

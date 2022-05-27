@@ -112,7 +112,7 @@ namespace Azure { namespace Core { namespace Tracing {
        * @brief destroys an AttributeSet - virtual destructor to enable base class users to
        * destroy derived classes.
        */
-      virtual ~AttributeSet(){};
+      virtual ~AttributeSet() = default;
     };
 
     /** @brief The Type of Span.

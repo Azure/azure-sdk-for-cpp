@@ -87,6 +87,7 @@ set(
     inc/azure/core/internal/json/json_serializable.hpp
     inc/azure/core/internal/strings.hpp
     inc/azure/core/internal/tracing/service_tracing.hpp
+    inc/azure/core/internal/input_sanitizer.hpp
     inc/azure/core/io/body_stream.hpp
     inc/azure/core/match_conditions.hpp
     inc/azure/core/modified_conditions.hpp
@@ -133,10 +134,11 @@ set(
     src/operation_status.cpp
     src/private/environment_log_level_listener.hpp
     src/private/package_version.hpp
+    src/private/input_sanitizer.cpp
     src/strings.cpp
     src/tracing/tracing.cpp
     src/uuid.cpp
- "src/private/request_sanitizer.cpp")
+)
 
 add_library(azure-core ${AZURE_CORE_HEADER} ${AZURE_CORE_SOURCE})
 

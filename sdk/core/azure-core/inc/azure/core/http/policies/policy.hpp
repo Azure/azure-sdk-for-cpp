@@ -14,6 +14,7 @@
 #include "azure/core/dll_import_export.hpp"
 #include "azure/core/http/http.hpp"
 #include "azure/core/http/transport.hpp"
+#include "azure/core/internal/input_sanitizer.hpp"
 #include "azure/core/tracing/tracing.hpp"
 #include "azure/core/uuid.hpp"
 
@@ -393,12 +394,22 @@ namespace Azure { namespace Core { namespace Http { namespace Policies {
      */
     class RequestActivityPolicy final : public HttpPolicy {
     private:
+      Azure::Core::_internal::InputSanitizer m_inputSanitizer;
+
     public:
       /**
        * @brief Constructs HTTP Request Activity policy.
-       *
        */
-      explicit RequestActivityPolicy() {}
+      //      explicit RequestActivityPolicy() = default;
+      /**
+       * @brief Constructs HTTP Request Activity policy.
+       *
+       * @param inputSanitizer for sanitizing data before it is logged.
+       */
+      explicit RequestActivityPolicy(Azure::Core::_internal::InputSanitizer const& inputSanitizer)
+          : m_inputSanitizer(inputSanitizer)
+      {
+      }
 
       std::unique_ptr<HttpPolicy> Clone() const override
       {
@@ -504,13 +515,18 @@ namespace Azure { namespace Core { namespace Http { namespace Policies {
      */
     class LogPolicy final : public HttpPolicy {
       LogOptions m_options;
+      Azure::Core::_internal::InputSanitizer m_inputSanitizer;
 
     public:
       /**
        * @brief Constructs HTTP logging policy.
        *
        */
-      explicit LogPolicy(LogOptions options) : m_options(std::move(options)) {}
+      explicit LogPolicy(LogOptions options)
+          : m_options(std::move(options)),
+            m_inputSanitizer(m_options.AllowedHttpQueryParameters, m_options.AllowedHttpHeaders)
+      {
+      }
 
       std::unique_ptr<HttpPolicy> Clone() const override
       {

@@ -14,6 +14,7 @@
 #pragma warning(push)
 #pragma warning(disable : 4100)
 #pragma warning(disable : 4244)
+#pragma warning(disable : 6323) // Disable "Use of arithmetic operator on Boolean type" warning.
 #endif
 #include <opentelemetry/exporters/memory/in_memory_span_data.h>
 #include <opentelemetry/exporters/memory/in_memory_span_exporter.h>
@@ -545,7 +546,8 @@ public:
     policies.emplace_back(std::make_unique<RetryPolicy>(RetryOptions{}));
 
     // Add the request ID policy - this adds the x-ms-request-id attribute to the pipeline.
-    policies.emplace_back(std::make_unique<RequestActivityPolicy>());
+    policies.emplace_back(
+        std::make_unique<RequestActivityPolicy>(Azure::Core::_internal::InputSanitizer{}));
 
     // Final policy - functions as the HTTP transport policy.
     policies.emplace_back(std::make_unique<NoOpPolicy>([&](Request& request) {

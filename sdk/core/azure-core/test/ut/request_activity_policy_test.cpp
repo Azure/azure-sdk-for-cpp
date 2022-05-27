@@ -150,7 +150,8 @@ TEST(RequestActivityPolicy, Basic)
     {
       std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>> policies;
       // Add the request ID policy - this adds the x-ms-request-id attribute to the pipeline.
-      policies.emplace_back(std::make_unique<RequestActivityPolicy>());
+      policies.emplace_back(
+          std::make_unique<RequestActivityPolicy>(Azure::Core::_internal::InputSanitizer{}));
       // Final policy - equivalent to HTTP policy.
       policies.emplace_back(std::make_unique<NoOpPolicy>());
 
@@ -185,7 +186,8 @@ TEST(RequestActivityPolicy, Basic)
       policies.emplace_back(
           std::make_unique<TelemetryPolicy>("my-service-cpp", "1.0b2", clientOptions.Telemetry));
       policies.emplace_back(std::make_unique<RetryPolicy>(RetryOptions{}));
-      policies.emplace_back(std::make_unique<RequestActivityPolicy>());
+      policies.emplace_back(
+          std::make_unique<RequestActivityPolicy>(Azure::Core::_internal::InputSanitizer{}));
       // Final policy - equivalent to HTTP policy.
       policies.emplace_back(std::make_unique<NoOpPolicy>());
 
@@ -223,7 +225,8 @@ TEST(RequestActivityPolicy, TryRetries)
       policies.emplace_back(std::make_unique<RetryPolicy>(RetryOptions{}));
 
       // Add the request ID policy - this adds the x-ms-request-id attribute to the pipeline.
-      policies.emplace_back(std::make_unique<RequestActivityPolicy>());
+      policies.emplace_back(
+          std::make_unique<RequestActivityPolicy>(Azure::Core::_internal::InputSanitizer{}));
       // Final policy - equivalent to HTTP policy.
       int retryCount = 0;
       policies.emplace_back(std::make_unique<NoOpPolicy>([&](Request&) {
