@@ -40,7 +40,7 @@ int main()
         = "https://shared" + shortLocation + "." + shortLocation + ".attest.azure.net";
 
     std::unique_ptr<AttestationClient> attestationClient(
-        AttestationClient::CreatePointer(endpoint));
+        AttestationClientFactory::Create(endpoint));
 
     std::vector<uint8_t> const sgxEnclaveQuote = AttestationCollateral::SgxQuote();
 

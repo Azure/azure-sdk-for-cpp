@@ -57,7 +57,7 @@ int main()
     auto const credential = std::make_shared<Azure::Identity::EnvironmentCredential>();
 
     std::unique_ptr<AttestationAdministrationClient const> adminClient(
-        AttestationAdministrationClient::CreatePointer(endpoint, credential, clientOptions));
+        AttestationAdministrationClientFactory::Create(endpoint, credential, clientOptions));
 
     // Set the attestation policy on this attestation instance.
     // Note that because this is an AAD mode instance, the caller does not need to sign the policy

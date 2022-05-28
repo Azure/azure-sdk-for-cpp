@@ -10,7 +10,7 @@
 
 #include <azure/core/test/test_base.hpp>
 #include <azure/identity/client_secret_credential.hpp>
-#include <azure/keyvault/keyvault_secrets.hpp>
+#include <azure/keyvault/secrets.hpp>
 
 using namespace std::chrono_literals;
 

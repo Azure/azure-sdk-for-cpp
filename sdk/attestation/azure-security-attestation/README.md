@@ -206,11 +206,11 @@ Isolated Mode Certificate Management APIs enable clients to add, remove or enume
 
 #### Create an attestation client
 
-The `AttestationClient::Create` method is used to create instances of the attestation client:
+The `AttestationClientFactory::Create` method is used to create instances of the attestation client:
 
 ```cpp
     std::string endpoint = std::getenv("ATTESTATION_AAD_URL");
-    return Azure::Security::Attestation::AttestationClient::CreatePointer(m_endpoint);
+    return Azure::Security::Attestation::AttestationClientFactory::CreatePointer(m_endpoint);
 ```
 
 If the attestation APIs require authentication, use the following (note that unlike the previous example, 
@@ -219,7 +219,7 @@ which returns a pointer to the client, this returns the client by value):
 ```cpp
 std::string endpoint = std::getenv("ATTESTATION_AAD_URL");
 auto credential = std::make_shared<Azure::Identity::EnvironmentCredential>();
-return Azure::Security::Attestation::AttestationClient::Create(m_endpoint, credential);
+return Azure::Security::Attestation::AttestationClientFactory::Create(m_endpoint, credential);
 ```
 
 The same pattern is used to create an `Azure::Security::Attestation::AttestationAdministrationClient`.
@@ -263,7 +263,7 @@ All administrative clients are authenticated.
 ```cpp
 std::string endpoint = std::getenv("ATTESTATION_AAD_URL");
 auto credential = std::make_shared<Azure::Identity::EnvironmentCredential>();
-AttestationAdministrationClient adminClient(m_endpoint, credential);
+AttestationAdministrationClient adminClient(AttestationAdministrationClientFactory::Create(m_endpoint, credential));
 ```
 
 #### Retrieve current attestation policy for OpenEnclave
@@ -271,9 +271,6 @@ AttestationAdministrationClient adminClient(m_endpoint, credential);
 Use the `GetAttestationPolicy` API to retrieve the current attestation policy for a given TEE.
 
 ```cpp
-    // Retrieve attestation response validation collateral before calling into the service.
-    adminClient.RetrieveResponseValidationCollateral();
-
     // Retrieve the SGX Attestation Policy from this attestation service instance.
     Azure::Response<AttestationToken<std::string>> const sgxPolicy
         = adminClient.GetAttestationPolicy(AttestationType::SgxEnclave);
@@ -287,9 +284,6 @@ When an attestation instance is in AAD mode, the caller can use a convenience me
 policy on the instance.
 
 ```cpp
-    // Retrieve attestation response validation collateral before calling into the service.
-    adminClient.RetrieveResponseValidationCollateral();
-
     // Set the attestation policy on this attestation instance.
     // Note that because this is an AAD mode instance, the caller does not need to sign the policy
     // being set.
@@ -364,9 +358,6 @@ the policy management tokens. This interaction ensures that the client is in pos
 one of the policy management certificates and is thus authorized to perform the operation.
 
 ```cpp
-// Retrieve attestation response validation collateral before calling into the service.
-adminClient.RetrieveResponseValidationCollateral();
-
 // Retrieve the SGX Attestation Policy from this attestation service instance.
 Azure::Response<AttestationToken<IsolatedModeCertificateListResult>> const policyCertificates
         = adminClient.GetIsolatedModeCertificates();
@@ -391,9 +382,6 @@ ignored (this possibly surprising behavior is there because retries could cause 
     std::string const pemSigningCert(::Cryptography::PemFromBase64(signingCert, "CERTIFICATE"));
 
     AttestationSigningKey const requestSigner{pemSigningKey, pemSigningCert};
-
-    // Retrieve attestation response validation collateral before calling into the service.
-    adminClient.RetrieveResponseValidationCollateral();
 
     // We start this sample by adding a new certificate to the set of policy management
     // certificates.

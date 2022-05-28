@@ -34,12 +34,12 @@ int main()
   {
     std::cout << "In function: SampleAttestSgxEnclaveSimple" << std::endl;
     // create client
-    AttestationClient const attestationClient(
-        AttestationClient::Create(std::getenv("ATTESTATION_AAD_URL")));
+    std::unique_ptr<AttestationClient const> attestationClient(
+        AttestationClientFactory::Create(std::getenv("ATTESTATION_AAD_URL")));
 
     std::vector<uint8_t> const openEnclaveReport = AttestationCollateral::OpenEnclaveReport();
 
-    AttestEnclaveOptions options;
+    AttestOpenEnclaveOptions options;
     options.DraftPolicyForAttestation = R"(version= 1.0;
 authorizationrules
 {
@@ -53,7 +53,7 @@ issuancerules {
     c:[type=="x-ms-sgx-mrsigner"] => issue(type="custom-name", value=c.value);
 };)";
     Azure::Response<AttestationToken<AttestationResult>> const sgxResult(
-        attestationClient.AttestOpenEnclave(openEnclaveReport, options));
+        attestationClient->AttestOpenEnclave(openEnclaveReport, options));
 
     std::cout << "SGX Quote MRSIGNER is: "
               << Convert::Base64Encode(*sgxResult.Value.Body.SgxMrSigner) << std::endl;

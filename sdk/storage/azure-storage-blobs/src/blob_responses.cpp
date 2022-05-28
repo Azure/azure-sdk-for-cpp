@@ -88,11 +88,13 @@ namespace Azure { namespace Storage { namespace Blobs {
 
   void GetPageRangesPagedResponse::OnNextPage(const Azure::Core::Context& context)
   {
+    m_operationOptions.ContinuationToken = NextPageToken;
     *this = m_pageBlobClient->GetPageRanges(m_operationOptions, context);
   }
 
   void GetPageRangesDiffPagedResponse::OnNextPage(const Azure::Core::Context& context)
   {
+    m_operationOptions.ContinuationToken = NextPageToken;
     if (m_previousSnapshot.HasValue())
     {
       *this = m_pageBlobClient->GetPageRangesDiff(

@@ -58,8 +58,8 @@ int main()
     // create client
     auto const credential = std::make_shared<Azure::Identity::EnvironmentCredential>();
 
-    AttestationAdministrationClient const adminClient(
-        AttestationAdministrationClient::Create(endpoint, credential, clientOptions));
+    std::shared_ptr<AttestationAdministrationClient const> adminClient(
+        AttestationAdministrationClientFactory::Create(endpoint, credential, clientOptions));
 
     std::string const signingKey(std::getenv("ISOLATED_SIGNING_KEY"));
     std::string const signingCert(std::getenv("ISOLATED_SIGNING_CERTIFICATE"));
@@ -74,7 +74,7 @@ int main()
     resetOptions.SigningKey = AttestationSigningKey{pemSigningKey, pemSigningCert};
 
     Azure::Response<AttestationToken<PolicyResult>> const resetResult
-        = adminClient.ResetAttestationPolicy(AttestationType::SgxEnclave, resetOptions);
+        = adminClient->ResetAttestationPolicy(AttestationType::SgxEnclave, resetOptions);
 
     if (resetResult.Value.Body.PolicyResolution == PolicyModification::Updated)
     {

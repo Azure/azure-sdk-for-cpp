@@ -38,12 +38,13 @@ int main()
     // create an administration client
     auto const credential = std::make_shared<Azure::Identity::EnvironmentCredential>();
 
-    AttestationAdministrationClient adminClient(
-        AttestationAdministrationClient::Create(std::getenv("ATTESTATION_AAD_URL"), credential));
+    std::unique_ptr<AttestationAdministrationClient> adminClient(
+        AttestationAdministrationClientFactory::Create(
+            std::getenv("ATTESTATION_AAD_URL"), credential));
 
     // Retrieve the SGX Attestation Policy from this attestation service instance.
     Azure::Response<AttestationToken<std::string>> const sgxPolicy
-        = adminClient.GetAttestationPolicy(AttestationType::SgxEnclave);
+        = adminClient->GetAttestationPolicy(AttestationType::SgxEnclave);
     std::cout << "SGX Attestation Policy is: " << sgxPolicy.Value.Body << std::endl;
   }
   catch (Azure::Core::Credentials::AuthenticationException const& e)

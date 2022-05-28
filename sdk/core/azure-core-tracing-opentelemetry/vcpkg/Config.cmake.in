@@ -1,0 +1,13 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# SPDX-License-Identifier: MIT
+
+@PACKAGE_INIT@
+
+include(CMakeFindDependencyMacro)
+find_dependency(Threads)
+
+find_dependency(opentelemetry-cpp@CURL_MIN_REQUIRED_VERSION@)
+
+include("${CMAKE_CURRENT_LIST_DIR}/azure-core-opentelemetry-cppTargets.cmake")
+
+check_required_components("azure-core-opentelemetry-cpp")

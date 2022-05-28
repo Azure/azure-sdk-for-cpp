@@ -37,10 +37,11 @@ int main()
     // create client
     auto const credential = std::make_shared<Azure::Identity::EnvironmentCredential>();
 
-    AttestationAdministrationClient const adminClient(
-        AttestationAdministrationClient::Create(std::getenv("ATTESTATION_AAD_URL"), credential));
+    std::unique_ptr<AttestationAdministrationClient const> adminClient(
+        AttestationAdministrationClientFactory::Create(
+            std::getenv("ATTESTATION_AAD_URL"), credential));
 
-    std::cout << "Admin client is Communicating with " << adminClient.Endpoint() << std::endl;
+    std::cout << "Admin client is Communicating with " << adminClient->Endpoint() << std::endl;
   }
   catch (Azure::Core::Credentials::AuthenticationException const& e)
   {

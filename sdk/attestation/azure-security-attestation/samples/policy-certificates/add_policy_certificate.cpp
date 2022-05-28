@@ -49,7 +49,7 @@ int main()
     auto const credential = std::make_shared<Azure::Identity::EnvironmentCredential>();
 
     std::shared_ptr<AttestationAdministrationClient> adminClient(
-        AttestationAdministrationClient::CreatePointer(
+        AttestationAdministrationClientFactory::Create(
             std::getenv("ATTESTATION_ISOLATED_URL"), credential));
 
     std::string const signingKey(std::getenv("ISOLATED_SIGNING_KEY"));

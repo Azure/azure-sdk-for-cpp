@@ -12,7 +12,7 @@
 #include "azure/core/datetime.hpp"
 #include "azure/core/dll_import_export.hpp"
 #include "azure/core/rtti.hpp"
-
+#include "azure/core/tracing/tracing.hpp"
 #include <atomic>
 #include <chrono>
 #include <memory>
@@ -76,6 +76,7 @@ namespace Azure { namespace Core {
     {
       std::shared_ptr<ContextSharedState> Parent;
       std::atomic<DateTime::rep> Deadline;
+      std::shared_ptr<Azure::Core::Tracing::TracerProvider> TraceProvider;
       Context::Key Key;
       std::shared_ptr<void> Value;
 #if defined(AZ_CORE_RTTI)
@@ -233,7 +234,7 @@ namespace Azure { namespace Core {
      * @brief Checks if the context is cancelled.
      * @return `true` if this context is cancelled; otherwise, `false`.
      */
-    bool IsCancelled() const noexcept { return GetDeadline() < std::chrono::system_clock::now(); }
+    bool IsCancelled() const { return GetDeadline() < std::chrono::system_clock::now(); }
 
     /**
      * @brief Checks if the context is cancelled.
@@ -246,6 +247,22 @@ namespace Azure { namespace Core {
       {
         throw OperationCancelledException("Request was cancelled by context.");
       }
+    }
+
+    /**
+     * @brief Returns the tracer provider for the current context.
+     */
+    std::shared_ptr<Tracing::TracerProvider> GetTracerProvider()
+    {
+      return m_contextSharedState->TraceProvider;
+    }
+
+    /**
+     * @brief Sets the tracer provider for the current context.
+     */
+    void SetTracerProvider(std::shared_ptr<Tracing::TracerProvider> tracerProvider)
+    {
+      m_contextSharedState->TraceProvider = tracerProvider;
     }
 
     /**

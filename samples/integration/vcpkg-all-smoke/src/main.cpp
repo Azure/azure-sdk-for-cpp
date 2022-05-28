@@ -8,10 +8,11 @@
 
 #include <azure/attestation.hpp>
 #include <azure/core.hpp>
+#include <azure/core/internal/json/json.hpp>
 #include <azure/identity.hpp>
-#include <azure/keyvault/keyvault_certificates.hpp>
-#include <azure/keyvault/keyvault_keys.hpp>
-#include <azure/keyvault/keyvault_secrets.hpp>
+#include <azure/keyvault/certificates.hpp>
+#include <azure/keyvault/keys.hpp>
+#include <azure/keyvault/secrets.hpp>
 #include <azure/storage/blobs.hpp>
 #include <azure/storage/files/datalake.hpp>
 #include <azure/storage/files/shares.hpp>
@@ -30,28 +31,23 @@ using namespace Azure::Security::Attestation;
 
 int main()
 {
-  const std::string tenantId = "tenant";
-  const std::string clientId = "client";
-  const std::string clientSecret = "secret";
   const std::string leaseID = "leaseID";
   const std::string smokeUrl = "https://blob.com";
-  auto credential
-      = std::make_shared<Azure::Identity::ClientSecretCredential>(tenantId, clientId, clientSecret);
+  // Creating an attestation service instance requires contacting the attestation service (to
+  // retrieve validation collateral). Use the West US Shared client (which should always be
+  // available) as an anonymous service instance.
+  const std::string attestationUrl = "https://sharedwus.wus.attest.azure.net";
+
+  auto credential = std::make_shared<Azure::Identity::EnvironmentCredential>();
 
   // instantiate the clients
   try
   {
-    auto keyvaultUrl = std::getenv("AZURE_KEYVAULT_URL");
-    if (!keyvaultUrl)
-    {
-      throw std::exception("The required environment variable (AZURE_KEYVAULT_URL) is not set.");
-    }
-
     std::cout << "Creating Keyvault Clients" << std::endl;
     // keyvault
-    KeyClient keyClient(keyvaultUrl, credential);
-    SecretClient secretClient(keyvaultUrl, credential);
-    CertificateClient certificateClient(keyvaultUrl, credential);
+    KeyClient keyClient(smokeUrl, credential);
+    SecretClient secretClient(smokeUrl, credential);
+    CertificateClient certificateClient(smokeUrl, credential);
 
     std::cout << "Creating Storage Clients" << std::endl;
     // Storage
@@ -75,9 +71,12 @@ int main()
 
     // Attestation
     std::cout << "Creating Attestation Clients" << std::endl;
-    AttestationClient attestationClient(AttestationClient::Create(smokeUrl));
-    AttestationAdministrationClient attestationAdminClient(
-        AttestationAdministrationClient::Create(smokeUrl, credential));
+
+    std::unique_ptr<AttestationAdministrationClient> attestationAdminClient(
+        AttestationAdministrationClientFactory::Create(attestationUrl, credential));
+
+    std::unique_ptr<AttestationClient> attestationClient(
+        AttestationClientFactory::Create(attestationUrl));
 
     std::cout << "Successfully Created the Clients" << std::endl;
   }

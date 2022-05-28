@@ -1,0 +1,18 @@
+{
+  "name": "azure-core-tracing-opentelemetry-cpp",
+  "version-string": "1.0.0-beta.1",
+  "dependencies": [
+    {
+      "name": "opentelemetry-cpp",
+      "platform": "!uwp"
+    },
+    {
+      "name": "vcpkg-cmake",
+      "host": true
+    },
+    {
+      "name": "vcpkg-cmake-config",
+      "host": true
+    }
+  ]
+}

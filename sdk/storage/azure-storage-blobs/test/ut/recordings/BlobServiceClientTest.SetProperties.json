@@ -2,32 +2,32 @@
   "networkCallRecords": [
     {
       "Headers": {
-        "user-agent": "azsdk-cpp-storage-blobs/12.4.0-beta.1 (Windows 10 Pro 6.3 19041 19041.1.amd64fre.vb_release.191206-1406)",
-        "x-ms-client-request-id": "dcd6fe54-0c7e-4e74-5b20-f839a7d7d241",
-        "x-ms-version": "2020-08-04"
+        "user-agent": "azsdk-cpp-storage-blobs/12.5.0-beta.1 (Windows 10 Pro 6.3 19044 19041.1.amd64fre.vb_release.191206-1406)",
+        "x-ms-client-request-id": "35419e25-3165-4f93-51f9-5bab0eaec1ae",
+        "x-ms-version": "2020-10-02"
       },
       "Method": "GET",
       "Response": {
-        "BODY": "﻿<?xml version=\"1.0\" encoding=\"utf-8\"?><StorageServiceProperties><Logging><Version>1.0</Version><Read>true</Read><Write>true</Write><Delete>true</Delete><RetentionPolicy><Enabled>true</Enabled><Days>3</Days></RetentionPolicy></Logging><HourMetrics><Version>1.0</Version><Enabled>true</Enabled><IncludeAPIs>true</IncludeAPIs><RetentionPolicy><Enabled>true</Enabled><Days>4</Days></RetentionPolicy></HourMetrics><MinuteMetrics><Version>1.0</Version><Enabled>true</Enabled><IncludeAPIs>true</IncludeAPIs><RetentionPolicy><Enabled>true</Enabled><Days>4</Days></RetentionPolicy></MinuteMetrics><Cors><CorsRule><AllowedMethods>GET,PUT</AllowedMethods><AllowedOrigins>http://www.example1.com</AllowedOrigins><AllowedHeaders>x-ms-header1,x-ms-header2</AllowedHeaders><ExposedHeaders>x-ms-header3</ExposedHeaders><MaxAgeInSeconds>10</MaxAgeInSeconds></CorsRule><CorsRule><AllowedMethods>DELETE</AllowedMethods><AllowedOrigins>http://www.example2.com</AllowedOrigins><AllowedHeaders>x-ms-header1</AllowedHeaders><ExposedHeaders>x-ms-header2,x-ms-header3</ExposedHeaders><MaxAgeInSeconds>20</MaxAgeInSeconds></CorsRule></Cors><DeleteRetentionPolicy><Enabled>true</Enabled><Days>1</Days><AllowPermanentDelete>false</AllowPermanentDelete></DeleteRetentionPolicy><StaticWebsite><Enabled>true</Enabled><IndexDocument>index.html</IndexDocument><ErrorDocument404Path>404.html</ErrorDocument404Path></StaticWebsite><DefaultServiceVersion>2019-12-12</DefaultServiceVersion></StorageServiceProperties>",
+        "BODY": "﻿<?xml version=\"1.0\" encoding=\"utf-8\"?><StorageServiceProperties><Logging><Version>1.0</Version><Read>true</Read><Write>true</Write><Delete>true</Delete><RetentionPolicy><Enabled>true</Enabled><Days>3</Days></RetentionPolicy></Logging><HourMetrics><Version>1.0</Version><Enabled>true</Enabled><IncludeAPIs>true</IncludeAPIs><RetentionPolicy><Enabled>true</Enabled><Days>4</Days></RetentionPolicy></HourMetrics><MinuteMetrics><Version>1.0</Version><Enabled>true</Enabled><IncludeAPIs>true</IncludeAPIs><RetentionPolicy><Enabled>true</Enabled><Days>4</Days></RetentionPolicy></MinuteMetrics><Cors><CorsRule><AllowedMethods>GET,PUT</AllowedMethods><AllowedOrigins>http://www.example1.com</AllowedOrigins><AllowedHeaders>x-ms-header1,x-ms-header2</AllowedHeaders><ExposedHeaders>x-ms-header3</ExposedHeaders><MaxAgeInSeconds>10</MaxAgeInSeconds></CorsRule><CorsRule><AllowedMethods>DELETE</AllowedMethods><AllowedOrigins>http://www.example2.com</AllowedOrigins><AllowedHeaders>x-ms-header1</AllowedHeaders><ExposedHeaders>x-ms-header2,x-ms-header3</ExposedHeaders><MaxAgeInSeconds>20</MaxAgeInSeconds></CorsRule></Cors><DeleteRetentionPolicy><Enabled>true</Enabled><Days>7</Days><AllowPermanentDelete>false</AllowPermanentDelete></DeleteRetentionPolicy><StaticWebsite><Enabled>true</Enabled><IndexDocument>index.html</IndexDocument><ErrorDocument404Path>404.html</ErrorDocument404Path></StaticWebsite><DefaultServiceVersion>2020-02-10</DefaultServiceVersion></StorageServiceProperties>",
         "REASON_PHRASE": "OK",
         "STATUS_CODE": "200",
         "content-type": "application/xml",
-        "date": "Sun, 20 Feb 2022 05:27:42 GMT",
+        "date": "Mon, 16 May 2022 12:49:31 GMT",
         "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
         "transfer-encoding": "chunked",
         "vary": "Origin",
-        "x-ms-client-request-id": "dcd6fe54-0c7e-4e74-5b20-f839a7d7d241",
-        "x-ms-request-id": "9fced8f8-d01e-0015-121a-26dbe6000000",
-        "x-ms-version": "2020-08-04"
+        "x-ms-client-request-id": "35419e25-3165-4f93-51f9-5bab0eaec1ae",
+        "x-ms-request-id": "da10e09f-c01e-0082-5723-699b7c000000",
+        "x-ms-version": "2020-10-02"
       },
       "Url": "https://REDACTED.blob.core.windows.net?comp=properties&restype=service"
     },
     {
       "Headers": {
         "content-type": "application/xml; charset=UTF-8",
-        "user-agent": "azsdk-cpp-storage-blobs/12.4.0-beta.1 (Windows 10 Pro 6.3 19041 19041.1.amd64fre.vb_release.191206-1406)",
-        "x-ms-client-request-id": "2f4337b3-0234-44ab-7609-8d9a59404ede",
-        "x-ms-version": "2020-08-04"
+        "user-agent": "azsdk-cpp-storage-blobs/12.5.0-beta.1 (Windows 10 Pro 6.3 19044 19041.1.amd64fre.vb_release.191206-1406)",
+        "x-ms-client-request-id": "6944decb-5ada-41b4-6365-2f9b90220ebe",
+        "x-ms-version": "2020-10-02"
       },
       "Method": "PUT",
       "Response": {
@@ -35,42 +35,42 @@
         "REASON_PHRASE": "Accepted",
         "STATUS_CODE": "202",
         "content-length": "0",
-        "date": "Sun, 20 Feb 2022 05:27:43 GMT",
+        "date": "Mon, 16 May 2022 12:49:33 GMT",
         "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
-        "x-ms-client-request-id": "2f4337b3-0234-44ab-7609-8d9a59404ede",
-        "x-ms-request-id": "9fced97e-d01e-0015-091a-26dbe6000000",
-        "x-ms-version": "2020-08-04"
+        "x-ms-client-request-id": "6944decb-5ada-41b4-6365-2f9b90220ebe",
+        "x-ms-request-id": "da10e162-c01e-0082-1423-699b7c000000",
+        "x-ms-version": "2020-10-02"
       },
       "Url": "https://REDACTED.blob.core.windows.net?comp=properties&restype=service"
     },
     {
       "Headers": {
-        "user-agent": "azsdk-cpp-storage-blobs/12.4.0-beta.1 (Windows 10 Pro 6.3 19041 19041.1.amd64fre.vb_release.191206-1406)",
-        "x-ms-client-request-id": "8103e424-9d4d-46eb-6c22-2adc1c5a81c4",
-        "x-ms-version": "2020-08-04"
+        "user-agent": "azsdk-cpp-storage-blobs/12.5.0-beta.1 (Windows 10 Pro 6.3 19044 19041.1.amd64fre.vb_release.191206-1406)",
+        "x-ms-client-request-id": "a72f237f-cb76-4e90-52a6-eea437169f93",
+        "x-ms-version": "2020-10-02"
       },
       "Method": "GET",
       "Response": {
-        "BODY": "﻿<?xml version=\"1.0\" encoding=\"utf-8\"?><StorageServiceProperties><Logging><Version>1.0</Version><Read>false</Read><Write>false</Write><Delete>false</Delete><RetentionPolicy><Enabled>true</Enabled><Days>3</Days></RetentionPolicy></Logging><HourMetrics><Version>1.0</Version><Enabled>true</Enabled><IncludeAPIs>true</IncludeAPIs><RetentionPolicy><Enabled>true</Enabled><Days>4</Days></RetentionPolicy></HourMetrics><MinuteMetrics><Version>1.0</Version><Enabled>true</Enabled><IncludeAPIs>true</IncludeAPIs><RetentionPolicy><Enabled>true</Enabled><Days>4</Days></RetentionPolicy></MinuteMetrics><Cors><CorsRule><AllowedMethods>GET,PUT</AllowedMethods><AllowedOrigins>http://www.example1.com</AllowedOrigins><AllowedHeaders>x-ms-header1,x-ms-header2</AllowedHeaders><ExposedHeaders>x-ms-header3</ExposedHeaders><MaxAgeInSeconds>10</MaxAgeInSeconds></CorsRule><CorsRule><AllowedMethods>DELETE</AllowedMethods><AllowedOrigins>http://www.example2.com</AllowedOrigins><AllowedHeaders>x-ms-header1</AllowedHeaders><ExposedHeaders>x-ms-header2,x-ms-header3</ExposedHeaders><MaxAgeInSeconds>20</MaxAgeInSeconds></CorsRule><CorsRule><AllowedMethods>GET,PUT</AllowedMethods><AllowedOrigins>http://www.example1.com</AllowedOrigins><AllowedHeaders>x-ms-header1,x-ms-header2</AllowedHeaders><ExposedHeaders>x-ms-header3</ExposedHeaders><MaxAgeInSeconds>10</MaxAgeInSeconds></CorsRule><CorsRule><AllowedMethods>DELETE</AllowedMethods><AllowedOrigins>http://www.example2.com</AllowedOrigins><AllowedHeaders>x-ms-header1</AllowedHeaders><ExposedHeaders>x-ms-header2,x-ms-header3</ExposedHeaders><MaxAgeInSeconds>20</MaxAgeInSeconds></CorsRule></Cors><DeleteRetentionPolicy><Enabled>true</Enabled><Days>7</Days><AllowPermanentDelete>false</AllowPermanentDelete></DeleteRetentionPolicy><StaticWebsite><Enabled>true</Enabled><IndexDocument>index.html</IndexDocument><ErrorDocument404Path>404.html</ErrorDocument404Path></StaticWebsite><DefaultServiceVersion>2020-08-04</DefaultServiceVersion></StorageServiceProperties>",
+        "BODY": "﻿<?xml version=\"1.0\" encoding=\"utf-8\"?><StorageServiceProperties><Logging><Version>1.0</Version><Read>false</Read><Write>false</Write><Delete>false</Delete><RetentionPolicy><Enabled>true</Enabled><Days>3</Days></RetentionPolicy></Logging><HourMetrics><Version>1.0</Version><Enabled>true</Enabled><IncludeAPIs>true</IncludeAPIs><RetentionPolicy><Enabled>true</Enabled><Days>4</Days></RetentionPolicy></HourMetrics><MinuteMetrics><Version>1.0</Version><Enabled>true</Enabled><IncludeAPIs>true</IncludeAPIs><RetentionPolicy><Enabled>true</Enabled><Days>4</Days></RetentionPolicy></MinuteMetrics><Cors><CorsRule><AllowedMethods>GET,PUT</AllowedMethods><AllowedOrigins>http://www.example1.com</AllowedOrigins><AllowedHeaders>x-ms-header1,x-ms-header2</AllowedHeaders><ExposedHeaders>x-ms-header3</ExposedHeaders><MaxAgeInSeconds>10</MaxAgeInSeconds></CorsRule><CorsRule><AllowedMethods>DELETE</AllowedMethods><AllowedOrigins>http://www.example2.com</AllowedOrigins><AllowedHeaders>x-ms-header1</AllowedHeaders><ExposedHeaders>x-ms-header2,x-ms-header3</ExposedHeaders><MaxAgeInSeconds>20</MaxAgeInSeconds></CorsRule><CorsRule><AllowedMethods>GET,PUT</AllowedMethods><AllowedOrigins>http://www.example1.com</AllowedOrigins><AllowedHeaders>x-ms-header1,x-ms-header2</AllowedHeaders><ExposedHeaders>x-ms-header3</ExposedHeaders><MaxAgeInSeconds>10</MaxAgeInSeconds></CorsRule><CorsRule><AllowedMethods>DELETE</AllowedMethods><AllowedOrigins>http://www.example2.com</AllowedOrigins><AllowedHeaders>x-ms-header1</AllowedHeaders><ExposedHeaders>x-ms-header2,x-ms-header3</ExposedHeaders><MaxAgeInSeconds>20</MaxAgeInSeconds></CorsRule></Cors><DeleteRetentionPolicy><Enabled>true</Enabled><Days>7</Days><AllowPermanentDelete>false</AllowPermanentDelete></DeleteRetentionPolicy><StaticWebsite><Enabled>true</Enabled><IndexDocument>index.html</IndexDocument><ErrorDocument404Path>404.html</ErrorDocument404Path></StaticWebsite><DefaultServiceVersion>2020-10-02</DefaultServiceVersion></StorageServiceProperties>",
         "REASON_PHRASE": "OK",
         "STATUS_CODE": "200",
         "content-type": "application/xml",
-        "date": "Sun, 20 Feb 2022 05:27:53 GMT",
+        "date": "Mon, 16 May 2022 12:49:43 GMT",
         "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
         "transfer-encoding": "chunked",
         "vary": "Origin",
-        "x-ms-client-request-id": "8103e424-9d4d-46eb-6c22-2adc1c5a81c4",
-        "x-ms-request-id": "9fceee3a-d01e-0015-751a-26dbe6000000",
-        "x-ms-version": "2020-08-04"
+        "x-ms-client-request-id": "a72f237f-cb76-4e90-52a6-eea437169f93",
+        "x-ms-request-id": "da10fdaf-c01e-0082-1623-699b7c000000",
+        "x-ms-version": "2020-10-02"
       },
       "Url": "https://REDACTED.blob.core.windows.net?comp=properties&restype=service"
     },
     {
       "Headers": {
         "content-type": "application/xml; charset=UTF-8",
-        "user-agent": "azsdk-cpp-storage-blobs/12.4.0-beta.1 (Windows 10 Pro 6.3 19041 19041.1.amd64fre.vb_release.191206-1406)",
-        "x-ms-client-request-id": "251ae95b-e55f-40ce-7935-edc2ecf28444",
-        "x-ms-version": "2020-08-04"
+        "user-agent": "azsdk-cpp-storage-blobs/12.5.0-beta.1 (Windows 10 Pro 6.3 19044 19041.1.amd64fre.vb_release.191206-1406)",
+        "x-ms-client-request-id": "ff874718-2fc2-479f-6308-fe94f0c824c9",
+        "x-ms-version": "2020-10-02"
       },
       "Method": "PUT",
       "Response": {
@@ -78,11 +78,11 @@
         "REASON_PHRASE": "Accepted",
         "STATUS_CODE": "202",
         "content-length": "0",
-        "date": "Sun, 20 Feb 2022 05:27:53 GMT",
+        "date": "Mon, 16 May 2022 12:49:43 GMT",
         "server": "Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0",
-        "x-ms-client-request-id": "251ae95b-e55f-40ce-7935-edc2ecf28444",
-        "x-ms-request-id": "9fceeec3-d01e-0015-771a-26dbe6000000",
-        "x-ms-version": "2020-08-04"
+        "x-ms-client-request-id": "ff874718-2fc2-479f-6308-fe94f0c824c9",
+        "x-ms-request-id": "da10fe3e-c01e-0082-1b23-699b7c000000",
+        "x-ms-version": "2020-10-02"
       },
       "Url": "https://REDACTED.blob.core.windows.net?comp=properties&restype=service"
     }

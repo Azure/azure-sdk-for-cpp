@@ -429,10 +429,7 @@ namespace Azure { namespace Storage { namespace Test {
     options.Metadata = GetMetadata();
 
     std::string tempFilename(m_testName);
-    {
-      Azure::Storage::_internal::FileWriter fileWriter(tempFilename);
-      fileWriter.Write(fileContent.data(), static_cast<size_t>(p.FileSize), 0);
-    }
+    WriteFile(tempFilename, fileContent);
 
     auto res = fileClient.UploadFrom(tempFilename, options);
 

@@ -16,7 +16,7 @@
 #include <get_env.hpp>
 
 #include <azure/identity.hpp>
-#include <azure/keyvault/keyvault_secrets.hpp>
+#include <azure/keyvault/secrets.hpp>
 
 #include <assert.h>
 #include <chrono>

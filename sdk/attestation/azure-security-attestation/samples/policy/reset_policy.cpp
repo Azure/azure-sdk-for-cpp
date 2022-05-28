@@ -57,11 +57,11 @@ int main()
     // create client
     auto const credential = std::make_shared<Azure::Identity::EnvironmentCredential>();
 
-    AttestationAdministrationClient const adminClient(
-        AttestationAdministrationClient::Create(endpoint, credential, clientOptions));
+    std::unique_ptr<AttestationAdministrationClient const> adminClient(
+        AttestationAdministrationClientFactory::Create(endpoint, credential, clientOptions));
 
     Azure::Response<AttestationToken<PolicyResult>> const resetResult
-        = adminClient.ResetAttestationPolicy(AttestationType::SgxEnclave);
+        = adminClient->ResetAttestationPolicy(AttestationType::SgxEnclave);
 
     if (resetResult.Value.Body.PolicyResolution == PolicyModification::Removed)
     {
