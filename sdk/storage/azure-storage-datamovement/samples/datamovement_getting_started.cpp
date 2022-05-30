@@ -44,8 +44,7 @@ int main()
   std::cout << job1.Id << std::endl;
   std::cout << job1.SourceUrl << " -> " << job1.DestinationUrl << std::endl;
 
-  auto blobFolder = BlobFolder::CreateFromConnectionString(
-      GetConnectionString(), containerName, localDirectory);
+  auto blobFolder = BlobFolder(blobContainerClient, localDirectory);
   auto job2 = m.ScheduleUploadDirectory(localDirectory, blobFolder);
   std::cout << job2.Id << std::endl;
   std::cout << job2.SourceUrl << " -> " << job2.DestinationUrl << std::endl;
