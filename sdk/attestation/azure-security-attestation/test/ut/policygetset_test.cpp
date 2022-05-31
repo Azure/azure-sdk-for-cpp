@@ -389,7 +389,8 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
   TEST_P(PolicyTests, CreateAdministrationClients)
   {
     // `InitTestClient` takes care of setting up Record&Playback.
-    auto options = InitClientOptions<Azure::Security::Attestation::AttestationAdministrationClientOptions>();
+    auto options
+        = InitClientOptions<Azure::Security::Attestation::AttestationAdministrationClientOptions>();
     {
       AttestationAdministrationClient client
           = AttestationAdministrationClient::Create(this->m_endpoint, m_credential, options);
