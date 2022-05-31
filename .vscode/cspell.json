@@ -19,6 +19,7 @@
     "Dockerfile",
     "*nlohmann-json*",
     "eng/docs/api/assets/**/*",
+    "eng/CredScanSuppression.json",
     "**/test/ut/recordings/*.json"
   ],
   // * Unless configured otherwise, these words are not case sensitive
