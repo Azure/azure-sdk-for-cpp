@@ -210,18 +210,17 @@ The `AttestationClient::Create` method is used to create instances of the attest
 
 ```cpp
     std::string endpoint = std::getenv("ATTESTATION_AAD_URL");
-    std::unique_ptr<Azure::Security::Attestation::AttestationClient> client = Azure::Security::Attestation::AttestationClient::Create(m_endpoint);
+    Azure::Security::Attestation::AttestationClient client = Azure::Security::Attestation::AttestationClient::Create(m_endpoint);
 ```
 
-If the attestation APIs require authentication, use the following (note that unlike the previous example, 
-which returns a pointer to the client, this returns the client by value):
+If the attestation APIs require authentication, use the following:
 
 ```cpp
 std::string endpoint = std::getenv("ATTESTATION_AAD_URL");
 std::shared_ptr<Azure::Core::Credentials::TokenCredential> credential
     = std::make_shared<Azure::Identity::ClientSecretCredential>(
       std::getenv("AZURE_TENANT_ID"), std::getenv("AZURE_CLIENT_ID"), std::getenv("AZURE_CLIENT_SECRET"));
-Azure::Security::Attestation::AttestationClient client = Azure::Security::Attestation::AttestationClient::Create(m_endpoint, credential);
+auto client = Azure::Security::Attestation::AttestationClient::Create(m_endpoint, credential);
 ```
 
 The same pattern is used to create an `Azure::Security::Attestation::AttestationAdministrationClient`.
@@ -236,7 +235,7 @@ attestation service, however the APIs are provided for completeness and to facil
 attestation results.
 
 ```cpp
-auto validationCertificates = attestationClient->GetTokenValidationCertificates();
+auto validationCertificates = attestationClient.GetTokenValidationCertificates();
 // Enumerate the signers.
 for (const auto& signer : validationCertificates.Value.Signers)
 {
