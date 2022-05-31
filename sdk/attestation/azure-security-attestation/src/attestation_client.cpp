@@ -240,7 +240,6 @@ Azure::Security::Attestation::AttestationClient::AttestationClientCreator Attest
   return Create(endpoint, nullptr, options, context);
 }
 
-
 /** @brief Construct a new Attestation Client object
  *
  * @param endpoint The URL address where the client will send the requests to.
@@ -259,7 +258,6 @@ AttestationClient AttestationClient::CreateConcrete(
   return returnValue;
 }
 
-
 /** @brief Construct a new Attestation Client object
  *
  * @param endpoint The URL address where the client will send the requests to.
@@ -272,7 +270,8 @@ std::unique_ptr<AttestationClient> AttestationClient::CreatePointer(
     AttestationClientOptions const& options,
     Azure::Core::Context const& context)
 {
-  std::unique_ptr<AttestationClient> returnValue(new AttestationClient(endpoint, credential, options));
+  std::unique_ptr<AttestationClient> returnValue(
+      new AttestationClient(endpoint, credential, options));
   returnValue->RetrieveResponseValidationCollateral(context);
   // Release the client pointer from the unique pointer to let the parent manage it.
   return returnValue;
