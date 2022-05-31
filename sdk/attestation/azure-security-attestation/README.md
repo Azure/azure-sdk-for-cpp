@@ -210,7 +210,7 @@ The `AttestationClient::Create` method is used to create instances of the attest
 
 ```cpp
     std::string endpoint = std::getenv("ATTESTATION_AAD_URL");
-    return Azure::Security::Attestation::AttestationClient::Create(m_endpoint);
+    std::unique_ptr<Azure::Security::Attestation::AttestationClient> client = Azure::Security::Attestation::AttestationClient::Create(m_endpoint);
 ```
 
 If the attestation APIs require authentication, use the following (note that unlike the previous example, 

@@ -50,7 +50,7 @@ int main()
         GetEnvHelper::GetEnv("AZURE_TENANT_ID"),
         GetEnvHelper::GetEnv("AZURE_CLIENT_ID"),
         GetEnvHelper::GetEnv("AZURE_CLIENT_SECRET"));
-    AttestationAdministrationClient adminClient(AttestationAdministrationClient::Create(
+    std::shared_ptr<AttestationAdministrationClient> adminClient(AttestationAdministrationClient::Create(
         GetEnvHelper::GetEnv("ATTESTATION_ISOLATED_URL"), credential));
 
     std::string const signingKey(GetEnvHelper::GetEnv("ISOLATED_SIGNING_KEY"));
@@ -75,7 +75,7 @@ int main()
       // Add the new certificate to the set of policy management certificates for this attestation
       // service instance.
       Azure::Response<AttestationToken<IsolatedModeCertificateModificationResult>> const addResult
-          = adminClient.AddIsolatedModeCertificate(pemCertificateToAdd, requestSigner);
+          = adminClient->AddIsolatedModeCertificate(pemCertificateToAdd, requestSigner);
 
       std::cout << "The result of the certificate add operation is: "
                 << addResult.Value.Body.CertificateModification.ToString() << std::endl;
@@ -114,7 +114,7 @@ int main()
       // Add the new certificate to the set of policy management certificates for this attestation
       // service instance.
       Azure::Response<AttestationToken<IsolatedModeCertificateModificationResult>> const addResult
-          = adminClient.RemoveIsolatedModeCertificate(pemCertificateToRemove, requestSigner);
+          = adminClient->RemoveIsolatedModeCertificate(pemCertificateToRemove, requestSigner);
 
       std::cout << "The result of the certificate remove operation is: "
                 << addResult.Value.Body.CertificateModification.ToString() << std::endl;

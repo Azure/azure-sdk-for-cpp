@@ -28,6 +28,7 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
   private:
   protected:
     std::shared_ptr<Azure::Core::Credentials::TokenCredential> m_credential;
+    std::unique_ptr<AttestationAdministrationClient> m_adminClient;
 
     // Create
     virtual void SetUp() override
@@ -36,9 +37,9 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
       {
         // TPM attestation requires a policy document be set. For simplicity, we only run the
         // test against an AAD attestation service instance.
-        auto adminClient(CreateAdminClient(InstanceType::AAD));
+        m_adminClient = CreateAdminClient(InstanceType::AAD);
         // Set a minimal policy, which will make the TPM attestation code happy.
-        adminClient.SetAttestationPolicy(
+        m_adminClient->SetAttestationPolicy(
             AttestationType::Tpm,
             "version=1.0; authorizationrules{=> permit();}; issuancerules{};");
       }
@@ -47,11 +48,8 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
     virtual void TearDown() override
     {
       {
-        // TPM attestation requires a policy document be set. For simplicity, we only run the
-        // test against an AAD attestation service instance.
-        auto adminClient(CreateAdminClient(InstanceType::AAD));
         // Reset the attestation policy for this instance back to the default.
-        adminClient.ResetAttestationPolicy(AttestationType::Tpm);
+        m_adminClient->ResetAttestationPolicy(AttestationType::Tpm);
       }
 
       // Make sure you call the base classes TearDown method to ensure recordings are made.
@@ -92,7 +90,7 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
       return returnValue;
     }
 
-    AttestationClient CreateClient(InstanceType instanceType)
+    std::unique_ptr<AttestationClient> CreateClient(InstanceType instanceType)
     {
       // `InitClientOptions` takes care of setting up Record&Playback.
       AttestationClientOptions options = InitClientOptions<AttestationClientOptions>();
@@ -103,7 +101,7 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
       return AttestationClient::Create(GetInstanceUri(instanceType), credential, options);
     }
 
-    AttestationAdministrationClient CreateAdminClient(InstanceType instanceType)
+    std::unique_ptr<AttestationAdministrationClient> CreateAdminClient(InstanceType instanceType)
     {
       // `InitTestClient` takes care of setting up Record&Playback.
       AttestationAdministrationClientOptions options
@@ -121,7 +119,7 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
   {
     auto client(CreateClient(InstanceType::AAD));
 
-    auto response(client.AttestTpm(AttestTpmOptions{R"({"payload": { "type": "aikcert" } })"}));
+    auto response(client->AttestTpm(AttestTpmOptions{R"({"payload": { "type": "aikcert" } })"}));
 
     Azure::Core::Json::_internal::json parsedResponse(
         Azure::Core::Json::_internal::json::parse(response.Value.TpmResult));

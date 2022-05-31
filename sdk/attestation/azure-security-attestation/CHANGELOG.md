@@ -9,6 +9,10 @@
 - `AddIsolatedModeCertificatesOptions` becomes `AddIsolatedModeCertificateOptions`
 - `RemoveIsolatedModeCertificatesOptions` becomes `RemoveIsolatedModeCertificateOptions`
 - Renamed `AttestEnclaveOptions` to `AttestSgxEnclaveOptions` and `AttestOpenEnclaveOptions`.
+- AttestationClient and AttestationAdministrationClient creation is now done using
+the factory method `AttestationClient::Create` and `AttestationAdministrationClient::Create`. 
+This factory can be used to create either a concrete client instance or a pointer depending on
+usage.
 
 ### Bugs Fixed
 
