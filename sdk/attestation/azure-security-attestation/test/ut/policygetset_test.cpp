@@ -386,6 +386,40 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
     }
   } // namespace Test
 
+  TEST_P(PolicyTests, CreateAdministrationClients)
+  {
+    {
+      AttestationAdministrationClient client
+          = AttestationAdministrationClient::Create(this->m_endpoint, m_credential);
+      EXPECT_EQ(m_endpoint, client.Endpoint());
+    }
+    {
+      AttestationAdministrationClient const client
+          = AttestationAdministrationClient::Create(this->m_endpoint, m_credential);
+      EXPECT_EQ(m_endpoint, client.Endpoint());
+    }
+    {
+      std::unique_ptr<AttestationAdministrationClient> client
+          = AttestationAdministrationClient::Create(this->m_endpoint, m_credential);
+      EXPECT_EQ(m_endpoint, client->Endpoint());
+    }
+    {
+      std::unique_ptr<AttestationAdministrationClient const> client
+          = AttestationAdministrationClient::Create(this->m_endpoint, m_credential);
+      EXPECT_EQ(m_endpoint, client->Endpoint());
+    }
+    {
+      std::shared_ptr<AttestationAdministrationClient> client
+          = AttestationAdministrationClient::Create(this->m_endpoint, m_credential);
+      EXPECT_EQ(m_endpoint, client->Endpoint());
+    }
+    {
+      std::shared_ptr<AttestationAdministrationClient const> client
+          = AttestationAdministrationClient::Create(this->m_endpoint, m_credential);
+      EXPECT_EQ(m_endpoint, client->Endpoint());
+    }
+  }
+
   namespace {
     std::string GetTestName(testing::TestParamInfo<PolicyTests::ParamType> const& testInfo)
     {

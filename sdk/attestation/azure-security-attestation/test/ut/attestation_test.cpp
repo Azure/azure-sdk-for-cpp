@@ -297,6 +297,33 @@ issuancerules {
     }
   }
 
+  TEST_P(AttestationTests, CreateAttestationClients) {
+    {
+      AttestationClient client = AttestationClient::Create(this->m_endpoint);
+      EXPECT_EQ(m_endpoint, client.Endpoint());
+    }
+    {
+      AttestationClient const client = AttestationClient::Create(this->m_endpoint);
+      EXPECT_EQ(m_endpoint, client.Endpoint());
+    }
+    {
+      std::unique_ptr<AttestationClient> client = AttestationClient::Create(this->m_endpoint);
+      EXPECT_EQ(m_endpoint, client->Endpoint());
+    }
+    {
+      std::unique_ptr<AttestationClient const> client = AttestationClient::Create(this->m_endpoint);
+      EXPECT_EQ(m_endpoint, client->Endpoint());
+    }
+    {
+      std::shared_ptr<AttestationClient> client = AttestationClient::Create(this->m_endpoint);
+      EXPECT_EQ(m_endpoint, client->Endpoint());
+    }
+    {
+      std::shared_ptr<AttestationClient const> client = AttestationClient::Create(this->m_endpoint);
+      EXPECT_EQ(m_endpoint, client->Endpoint());
+    }
+  }
+
   namespace {
     static std::string GetSuffix(const testing::TestParamInfo<AttestationTests::ParamType>& info)
     {
