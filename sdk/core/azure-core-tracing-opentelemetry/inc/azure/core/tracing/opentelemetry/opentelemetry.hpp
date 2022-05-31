@@ -11,6 +11,7 @@
 #pragma warning(push)
 #pragma warning(disable : 4100)
 #pragma warning(disable : 4244)
+#pragma warning(disable : 6323) // Disable "Use of arithmetic operator on Boolean type" warning.
 #endif
 #include <opentelemetry/common/kv_properties.h>
 #include <opentelemetry/trace/provider.h>
@@ -114,6 +115,8 @@ namespace Azure { namespace Core { namespace Tracing { namespace OpenTelemetry {
 
       virtual void AddAttributes(
           Azure::Core::Tracing::_internal::AttributeSet const& attributeToAdd) override;
+      virtual void AddAttribute(std::string const& attributeName, std::string const& attributeValue)
+          override;
 
       /**
        * Add an Event to the span. An event is identified by a name and an optional set of
@@ -128,6 +131,14 @@ namespace Azure { namespace Core { namespace Tracing { namespace OpenTelemetry {
       virtual void SetStatus(
           Azure::Core::Tracing::_internal::SpanStatus const& status,
           std::string const& statusMessage) override;
+
+      /**
+       * @brief Propogate information from the current span to the HTTP request headers.
+       *
+       * @param request HTTP Request to the service. If there is an active tracing span, this will
+       * add required headers to the HTTP Request.
+       */
+      virtual void PropagateToHttpHeaders(Azure::Core::Http::Request& request) override;
 
       opentelemetry::trace::SpanContext GetContext() { return m_span->GetContext(); }
     };

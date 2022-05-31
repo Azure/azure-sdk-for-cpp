@@ -66,6 +66,7 @@ add_executable (
     operation_status_test.cpp
     pipeline_test.cpp
     policy_test.cpp
+    request_activity_policy_test.cpp
     request_id_policy_test.cpp
     response_t_test.cpp
     retry_policy_test.cpp

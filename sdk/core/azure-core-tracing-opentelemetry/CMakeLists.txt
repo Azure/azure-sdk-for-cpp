@@ -56,7 +56,7 @@ target_include_directories(
 add_library(Azure::azure-core-tracing-opentelemetry ALIAS azure-core-tracing-opentelemetry)
 
 # coverage. Has no effect if BUILD_CODE_COVERAGE is OFF
-create_code_coverage(core-tracing-opentelemetry azure-core-tracing-opentelemetry azure-core-tracing-opentelemetry-test "tests?/*;samples?/*")
+create_code_coverage(core azure-core-tracing-opentelemetry azure-core-tracing-opentelemetry-test "tests?/*;samples?/*")
 
 target_link_libraries(azure-core-tracing-opentelemetry INTERFACE Threads::Threads)
 

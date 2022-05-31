@@ -4,6 +4,7 @@
 #define USE_MEMORY_EXPORTER 1
 #include "azure/core/internal/tracing/service_tracing.hpp"
 #include "azure/core/tracing/opentelemetry/opentelemetry.hpp"
+#include <azure/core/internal/http/pipeline.hpp>
 #include <azure/core/internal/json/json.hpp>
 #include <azure/core/test/test_base.hpp>
 
@@ -13,6 +14,7 @@
 #pragma warning(push)
 #pragma warning(disable : 4100)
 #pragma warning(disable : 4244)
+#pragma warning(disable : 6323) // Disable "Use of arithmetic operator on Boolean type" warning.
 #endif
 #include <opentelemetry/exporters/memory/in_memory_span_data.h>
 #include <opentelemetry/exporters/memory/in_memory_span_exporter.h>
@@ -22,11 +24,17 @@
 #include <opentelemetry/sdk/trace/processor.h>
 #include <opentelemetry/sdk/trace/simple_processor.h>
 #include <opentelemetry/sdk/trace/tracer_provider.h>
+#include <opentelemetry/trace/propagation/http_trace_context.h>
 #if defined(_MSC_VER)
 #pragma warning(pop)
 #endif
 #include <chrono>
 #include <gtest/gtest.h>
+#include <regex>
+
+using namespace Azure::Core::Http::Policies;
+using namespace Azure::Core::Http::Policies::_internal;
+using namespace Azure::Core::Http;
 
 class CustomLogHandler : public opentelemetry::sdk::common::internal_log::LogHandler {
   void Handle(
@@ -165,7 +173,7 @@ protected:
       switch (span->GetSpanKind())
       {
         case opentelemetry::trace::SpanKind::kClient:
-          EXPECT_EQ(expectedKind, "internal");
+          EXPECT_EQ(expectedKind, "client");
           break;
         case opentelemetry::trace::SpanKind::kConsumer:
           EXPECT_EQ(expectedKind, "consumer");
@@ -207,7 +215,11 @@ protected:
           case opentelemetry::common::kTypeString: {
             EXPECT_TRUE(expectedAttributes[foundAttribute.first].is_string());
             const auto& actualVal = opentelemetry::nostd::get<std::string>(foundAttribute.second);
-            EXPECT_EQ(expectedAttributes[foundAttribute.first].get<std::string>(), actualVal);
+            std::string expectedVal(expectedAttributes[foundAttribute.first].get<std::string>());
+            std::regex expectedRegex(expectedVal);
+            GTEST_LOG_(INFO) << "expected Regex: " << expectedVal << std::endl;
+            GTEST_LOG_(INFO) << "actual val: " << actualVal << std::endl;
+            EXPECT_TRUE(std::regex_match(actualVal, expectedRegex));
             break;
           }
           case opentelemetry::common::kTypeDouble: {
@@ -275,7 +287,8 @@ TEST_F(OpenTelemetryServiceTests, SimplestTest)
     Azure::Core::Tracing::_internal::DiagnosticTracingFactory serviceTrace(
         clientOptions, "my-service-cpp", "1.0b2");
 
-    auto contextAndSpan = serviceTrace.CreateSpan("My API", {});
+    auto contextAndSpan = serviceTrace.CreateSpan(
+        "My API", Azure::Core::Tracing::_internal::SpanKind::Internal, {});
     EXPECT_FALSE(contextAndSpan.first.IsCancelled());
   }
 }
@@ -311,7 +324,8 @@ TEST_F(OpenTelemetryServiceTests, CreateWithExplicitProvider)
           clientOptions, "my-service", "1.0beta-2");
 
       Azure::Core::Context clientContext;
-      auto contextAndSpan = serviceTrace.CreateSpan("My API", clientContext);
+      auto contextAndSpan = serviceTrace.CreateSpan(
+          "My API", Azure::Core::Tracing::_internal::SpanKind::Internal, clientContext);
       EXPECT_FALSE(contextAndSpan.first.IsCancelled());
     }
     // Now let's verify what was logged via OpenTelemetry.
@@ -321,6 +335,7 @@ TEST_F(OpenTelemetryServiceTests, CreateWithExplicitProvider)
     VerifySpan(spans[0], R"(
 {
   "name": "My API",
+  "kind": "internal",
   "attributes": {
      "az.namespace": "my-service"
   },
@@ -349,7 +364,8 @@ TEST_F(OpenTelemetryServiceTests, CreateWithImplicitProvider)
           clientOptions, "my-service", "1.0beta-2");
 
       Azure::Core::Context clientContext;
-      auto contextAndSpan = serviceTrace.CreateSpan("My API", clientContext);
+      auto contextAndSpan = serviceTrace.CreateSpan(
+          "My API", Azure::Core::Tracing::_internal::SpanKind::Internal, clientContext);
       EXPECT_FALSE(contextAndSpan.first.IsCancelled());
     }
 
@@ -360,6 +376,7 @@ TEST_F(OpenTelemetryServiceTests, CreateWithImplicitProvider)
     VerifySpan(spans[0], R"(
 {
   "name": "My API",
+  "kind": "internal",
   "attributes": {
      "az.namespace": "my-service"
   },
@@ -383,6 +400,10 @@ TEST_F(OpenTelemetryServiceTests, NestSpans)
 
     Azure::Core::Context::ApplicationContext.SetTracerProvider(provider);
 
+    Azure::Core::Http::Request outerRequest(
+        HttpMethod::Post, Azure::Core::Url("https://www.microsoft.com"));
+    Azure::Core::Http::Request innerRequest(
+        HttpMethod::Post, Azure::Core::Url("https://www.microsoft.com"));
     {
       Azure::Core::_internal::ClientOptions clientOptions;
       clientOptions.Telemetry.ApplicationId = "MyApplication";
@@ -391,13 +412,17 @@ TEST_F(OpenTelemetryServiceTests, NestSpans)
           clientOptions, "my-service", "1.0beta-2");
 
       Azure::Core::Context parentContext;
-      auto contextAndSpan = serviceTrace.CreateSpan("My API", parentContext);
+      auto contextAndSpan = serviceTrace.CreateSpan(
+          "My API", Azure::Core::Tracing::_internal::SpanKind::Client, parentContext);
       EXPECT_FALSE(contextAndSpan.first.IsCancelled());
       parentContext = contextAndSpan.first;
+      contextAndSpan.second.PropagateToHttpHeaders(outerRequest);
 
       {
-        auto innerContextAndSpan = serviceTrace.CreateSpan("Nested API", parentContext);
+        auto innerContextAndSpan = serviceTrace.CreateSpan(
+            "Nested API", Azure::Core::Tracing::_internal::SpanKind::Server, parentContext);
         EXPECT_FALSE(innerContextAndSpan.first.IsCancelled());
+        innerContextAndSpan.second.PropagateToHttpHeaders(innerRequest);
       }
     }
     // Now let's verify what was logged via OpenTelemetry.
@@ -431,8 +456,72 @@ TEST_F(OpenTelemetryServiceTests, NestSpans)
     EXPECT_EQ("my-service", spans[1]->GetInstrumentationLibrary().GetName());
     EXPECT_EQ("1.0beta-2", spans[0]->GetInstrumentationLibrary().GetVersion());
     EXPECT_EQ("1.0beta-2", spans[1]->GetInstrumentationLibrary().GetVersion());
+
+    // The trace ID for the inner and outer requests must be the same, the parent-id/span-id must be
+    // different.
+    //
+    // Returns a 4 element array.
+    // Array[0] is the version of the TraceParent header.
+    // Array[1] is the trace-id of the TraceParent header.
+    // Array[2] is the parent-id/span-id of the TraceParent header.
+    // Array[3] is the trace-flags of the TraceParent header.
+    auto ParseTraceParent = [](const std::string& traceParent) -> std::array<std::string, 4> {
+      std::array<std::string, 4> returnedComponents;
+      std::string component;
+      size_t index = 0;
+      for (auto ch : traceParent)
+      {
+        if (ch != '-')
+        {
+          component.push_back(ch);
+        }
+        else
+        {
+          returnedComponents[index] = component;
+          component.clear();
+          index += 1;
+        }
+      }
+      EXPECT_EQ(3ul, index);
+      returnedComponents[3] = component;
+      return returnedComponents;
+    };
+    auto outerTraceId = ParseTraceParent(outerRequest.GetHeader("traceparent").Value());
+    auto innerTraceId = ParseTraceParent(innerRequest.GetHeader("traceparent").Value());
+    // Version should always match.
+    EXPECT_EQ(outerTraceId[0], innerTraceId[0]);
+    // Trace ID should always match.
+    EXPECT_EQ(outerTraceId[1], innerTraceId[1]);
+    // Span-Id should never match.
+    EXPECT_NE(outerTraceId[2], innerTraceId[2]);
   }
 }
+
+namespace {
+class NoOpPolicy final : public HttpPolicy {
+  std::function<std::unique_ptr<RawResponse>(Request&)> m_createResponse{};
+
+public:
+  std::unique_ptr<HttpPolicy> Clone() const override { return std::make_unique<NoOpPolicy>(*this); }
+
+  std::unique_ptr<RawResponse> Send(Request& request, NextHttpPolicy, Azure::Core::Context const&)
+      const override
+  {
+    if (m_createResponse)
+    {
+      return m_createResponse(request);
+    }
+    else
+    {
+      return std::make_unique<RawResponse>(1, 1, HttpStatusCode::Ok, "Something");
+    }
+  }
+
+  NoOpPolicy() = default;
+  NoOpPolicy(std::function<std::unique_ptr<RawResponse>(Request&)> createResponse)
+      : HttpPolicy(), m_createResponse(createResponse){};
+};
+} // namespace
 
 // Create a serviceTrace and span using a provider specified in the ClientOptions.
 class ServiceClientOptions : public Azure::Core::_internal::ClientOptions {
@@ -443,23 +532,49 @@ public:
 class ServiceClient {
 private:
   ServiceClientOptions m_clientOptions;
-  Azure::Core::Tracing::_internal::DiagnosticTracingFactory m_serviceTrace;
+  Azure::Core::Tracing::_internal::DiagnosticTracingFactory m_tracingFactory;
+  std::unique_ptr<Azure::Core::Http::_internal::HttpPipeline> m_pipeline;
 
 public:
   explicit ServiceClient(ServiceClientOptions const& clientOptions = ServiceClientOptions{})
-      : m_serviceTrace(clientOptions, "Azure.Core.OpenTelemetry.Test.Service", "1.0.0.beta-2")
+      : m_tracingFactory(clientOptions, "Azure.Core.OpenTelemetry.Test.Service", "1.0.0.beta-2")
   {
+    std::vector<std::unique_ptr<HttpPolicy>> policies;
+    policies.emplace_back(std::make_unique<TelemetryPolicy>(
+        "Azure.Core.OpenTelemetry.Test.Service", "1.0.0.beta-2", clientOptions.Telemetry));
+    policies.emplace_back(std::make_unique<RequestIdPolicy>());
+    policies.emplace_back(std::make_unique<RetryPolicy>(RetryOptions{}));
+
+    // Add the request ID policy - this adds the x-ms-request-id attribute to the pipeline.
+    policies.emplace_back(
+        std::make_unique<RequestActivityPolicy>(Azure::Core::_internal::InputSanitizer{}));
+
+    // Final policy - functions as the HTTP transport policy.
+    policies.emplace_back(std::make_unique<NoOpPolicy>([&](Request& request) {
+      // If the request is for port 12345, throw an exception.
+      if (request.GetUrl().GetPort() == 12345)
+      {
+        throw Azure::Core::RequestFailedException("it all goes wrong here.");
+      }
+      return std::make_unique<RawResponse>(1, 1, HttpStatusCode::Ok, "Something");
+    }));
+
+    m_pipeline = std::make_unique<Azure::Core::Http::_internal::HttpPipeline>(policies);
   }
 
   Azure::Response<std::string> GetConfigurationString(
       std::string const& inputString,
       Azure::Core::Context const& context = Azure::Core::Context{})
   {
-    auto contextAndSpan = m_serviceTrace.CreateSpan("GetConfigurationString", context);
+    auto contextAndSpan = m_tracingFactory.CreateSpan(
+        "GetConfigurationString", Azure::Core::Tracing::_internal::SpanKind::Internal, context);
 
     // <Call Into Service via an HTTP pipeline>
+    Azure::Core::Http::Request requestToSend(
+        HttpMethod::Get, Azure::Core::Url("https://www.microsoft.com/"));
+
     std::unique_ptr<Azure::Core::Http::RawResponse> response
-        = SendHttpRequest(false, contextAndSpan.first);
+        = m_pipeline->Send(requestToSend, contextAndSpan.first);
 
     // Reflect that the operation was successful.
     contextAndSpan.second.SetStatus(Azure::Core::Tracing::_internal::SpanStatus::Ok);
@@ -468,47 +583,22 @@ public:
     // When contextAndSpan.second goes out of scope, it ends the span, which will record it.
   }
 
-  std::unique_ptr<Azure::Core::Http::RawResponse> ActuallySendHttpRequest(
-      Azure::Core::Context const& context)
-  {
-    auto contextAndSpan
-        = Azure::Core::Tracing::_internal::DiagnosticTracingFactory::CreateSpanFromContext(
-            "HTTP GET#2", context);
-
-    return std::make_unique<Azure::Core::Http::RawResponse>(
-        1, 1, Azure::Core::Http::HttpStatusCode::Ok, "OK");
-  }
-
-  std::unique_ptr<Azure::Core::Http::RawResponse> SendHttpRequest(
-      bool throwException,
-      Azure::Core::Context const& context)
-  {
-    if (throwException)
-    {
-      throw Azure::Core::RequestFailedException("it all goes wrong here.");
-    }
-
-    auto contextAndSpan
-        = Azure::Core::Tracing::_internal::DiagnosticTracingFactory::CreateSpanFromContext(
-            "HTTP GET#1", context);
-
-    std::unique_ptr<Azure::Core::Http::RawResponse> response
-        = ActuallySendHttpRequest(contextAndSpan.first);
-
-    return std::make_unique<Azure::Core::Http::RawResponse>(
-        1, 1, Azure::Core::Http::HttpStatusCode::Ok, "OK");
-  }
-
   Azure::Response<std::string> ApiWhichThrows(
       std::string const&,
       Azure::Core::Context const& context = Azure::Core::Context{})
   {
-    auto contextAndSpan = m_serviceTrace.CreateSpan("ApiWhichThrows", context);
+    auto contextAndSpan = m_tracingFactory.CreateSpan(
+        "ApiWhichThrows", Azure::Core::Tracing::_internal::SpanKind::Internal, context);
 
     try
     {
-      auto rawResponse = SendHttpRequest(false, contextAndSpan.first);
-      return Azure::Response<std::string>("", std::move(rawResponse));
+      // <Call Into Service via an HTTP pipeline>
+      Azure::Core::Http::Request requestToSend(
+          HttpMethod::Get, Azure::Core::Url("https://www.microsoft.com/:12345/index.html"));
+
+      std::unique_ptr<Azure::Core::Http::RawResponse> response
+          = m_pipeline->Send(requestToSend, contextAndSpan.first);
+      return Azure::Response<std::string>("", std::move(response));
     }
     catch (std::exception const& ex)
     {
@@ -541,15 +631,20 @@ TEST_F(OpenTelemetryServiceTests, ServiceApiImplementation)
       }
       // Now let's verify what was logged via OpenTelemetry.
       auto spans = m_spanData->GetSpans();
-      EXPECT_EQ(3ul, spans.size());
+      EXPECT_EQ(2ul, spans.size());
 
       VerifySpan(spans[0], R"(
 {
-  "name": "HTTP GET#2",
-  "kind": "internal",
+  "name": "HTTP GET #0",
+  "kind": "client",
   "statusCode": "unset",
   "attributes": {
-    "az.namespace": "Azure.Core.OpenTelemetry.Test.Service"
+    "az.namespace": "Azure.Core.OpenTelemetry.Test.Service",
+    "http.method": "GET",
+    "http.url": "https://www.microsoft.com",
+    "requestId": ".*",
+    "http.user_agent": "MyApplication azsdk-cpp-Azure.Core.OpenTelemetry.Test.Service/1.0.0.beta-2.*",
+    "http.status_code": "200"
   },
   "library": {
     "name": "Azure.Core.OpenTelemetry.Test.Service",
@@ -558,20 +653,6 @@ TEST_F(OpenTelemetryServiceTests, ServiceApiImplementation)
 })");
 
       VerifySpan(spans[1], R"(
-{
-  "name": "HTTP GET#1",
-  "kind": "internal",
-  "statusCode": "unset",
-  "attributes": {
-    "az.namespace": "Azure.Core.OpenTelemetry.Test.Service"
-  },
-  "library": {
-    "name": "Azure.Core.OpenTelemetry.Test.Service",
-    "version": "1.0.0.beta-2"
-  }
-})");
-
-      VerifySpan(spans[2], R"(
 {
   "name": "GetConfigurationString",
   "kind": "internal",

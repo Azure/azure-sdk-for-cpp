@@ -3,7 +3,8 @@
 ## 1.7.0-beta.1 (Unreleased)
 
 ### Features Added
-Added implementation for Distributed Tracing.
+
+- Added prototypes and initial service support for Distributed Tracing.
 
 ### Breaking Changes
 

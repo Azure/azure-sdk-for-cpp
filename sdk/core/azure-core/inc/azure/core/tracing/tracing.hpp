@@ -17,6 +17,11 @@
 #include <string>
 #include <vector>
 
+// Forward declare Azure::Core::Http::Request to resolve an include file ordering problem.
+namespace Azure { namespace Core { namespace Http {
+  class Request;
+}}} // namespace Azure::Core::Http
+
 namespace Azure { namespace Core { namespace Tracing {
 
   namespace _internal {
@@ -104,10 +109,10 @@ namespace Azure { namespace Core { namespace Tracing {
       virtual void AddAttribute(std::string const& attributeName, std::string const& value) = 0;
 
       /**
-       * @brief destroys an AttributeSet - virtual destructor to enable base class users to destroy
-       * derived classes.
+       * @brief destroys an AttributeSet - virtual destructor to enable base class users to
+       * destroy derived classes.
        */
-      virtual ~AttributeSet(){};
+      virtual ~AttributeSet() = default;
     };
 
     /** @brief The Type of Span.
@@ -185,6 +190,15 @@ namespace Azure { namespace Core { namespace Tracing {
       virtual void AddAttributes(AttributeSet const& attributeToAdd) = 0;
 
       /**
+       * @brief Adds a single string valued attribute to the span.
+       *
+       * @param attributeName Name of the attribute to add.
+       * @param attributeValue value of the attribute.
+       */
+      virtual void AddAttribute(std::string const& attributeName, std::string const& attributeValue)
+          = 0;
+
+      /**
        * @brief Adds an event to the span.
        *
        * Add an Event to the span. An event is identified by a name and an optional set of
@@ -217,6 +231,14 @@ namespace Azure { namespace Core { namespace Tracing {
        * @param description A description associated with the Status.
        */
       virtual void SetStatus(SpanStatus const& status, std::string const& description = "") = 0;
+
+      /**
+       * @brief Propogate information from the current span to the HTTP request headers.
+       *
+       * @param request HTTP Request to the service. If there is an active tracing span, this will
+       * add required headers to the HTTP Request.
+       */
+      virtual void PropagateToHttpHeaders(Azure::Core::Http::Request& request) = 0;
     };
 
     /**

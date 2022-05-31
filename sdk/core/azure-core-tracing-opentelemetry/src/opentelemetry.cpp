@@ -1,5 +1,8 @@
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// SPDX-License-Identifier: MIT
 
 #include "azure/core/tracing/opentelemetry/opentelemetry.hpp"
+#include <azure/core/http/http.hpp>
 #include <azure/core/nullable.hpp>
 #include <azure/core/tracing/tracing.hpp>
 #include <memory>
@@ -9,7 +12,9 @@
 #pragma warning(push)
 #pragma warning(disable : 4100)
 #pragma warning(disable : 4244)
+#pragma warning(disable : 6323)
 #endif
+#include <opentelemetry/trace/propagation/http_trace_context.h>
 #include <opentelemetry/trace/provider.h>
 #include <opentelemetry/trace/tracer_provider.h>
 #if defined(_MSC_VER)
@@ -183,6 +188,68 @@ namespace Azure { namespace Core { namespace Tracing { namespace OpenTelemetry {
       }
 
       m_span->SetStatus(statusCode, statusMessage);
+    }
+
+    void OpenTelemetrySpan::AddAttribute(
+        std::string const& attributeName,
+        std::string const& attributeValue)
+    {
+      m_span->SetAttribute(attributeName, opentelemetry::common::AttributeValue(attributeValue));
+    }
+
+    /**
+     * @brief Text map propagator used to read or write properties from an HTTP request.
+     *
+     * @details OpenTelemetry defines a `TextMapCarrier` class as a class which allows reading and
+     * writing to a map of text elements. The OpenTelemetry
+     * [HttpTraceContext](https://opentelemetry-cpp.readthedocs.io/en/latest/otel_docs/classopentelemetry_1_1trace_1_1propagation_1_1HttpTraceContext.html)
+     * uses a TextMapCarrier to propogate the required HTTP headers from an OpenTelemetry context
+     * into an HTTP request.
+     */
+    class HttpRequestTextMapPropagator
+        : public opentelemetry::context::propagation::TextMapCarrier {
+      Azure::Core::Http::Request& m_request;
+      // Inherited via TextMapCarrier
+
+      /** @brief Retrieves the value of an HTTP header from the request.
+       */
+      virtual opentelemetry::nostd::string_view Get(
+          opentelemetry::nostd::string_view key) const noexcept override
+      {
+        auto header = m_request.GetHeader(std::string(key));
+        if (header)
+        {
+          return header.Value();
+        }
+        return std::string();
+      }
+
+      /** @brief Sets the value of an HTTP header in the request.
+       */
+      virtual void Set(
+          opentelemetry::nostd::string_view key,
+          opentelemetry::nostd::string_view value) noexcept override
+      {
+        m_request.SetHeader(std::string(key), std::string(value));
+      }
+
+    public:
+      HttpRequestTextMapPropagator(Azure::Core::Http::Request& request) : m_request(request) {}
+    };
+
+    void OpenTelemetrySpan::PropagateToHttpHeaders(Azure::Core::Http::Request& request)
+    {
+      if (m_span)
+      {
+        HttpRequestTextMapPropagator propagator(request);
+
+        // Establish the current runtime context from the span.
+        auto scope = opentelemetry::trace::Tracer::WithActiveSpan(m_span);
+        auto currentContext = opentelemetry::context::RuntimeContext::GetCurrent();
+
+        // And inject all required headers into the Request.
+        opentelemetry::trace::propagation::HttpTraceContext().Inject(propagator, currentContext);
+      }
     }
 
   } // namespace _detail

@@ -65,6 +65,7 @@ namespace Azure { namespace Core { namespace Tracing { namespace _internal {
         m_span->SetStatus(status, description);
       }
     }
+
     /**
      * @brief Adds a set of attributes to the span.
      *
@@ -75,6 +76,21 @@ namespace Azure { namespace Core { namespace Tracing { namespace _internal {
       if (m_span)
       {
         m_span->AddAttributes(attributeToAdd);
+      }
+    }
+
+    /**
+     * @brief Adds a single attributes to the span.
+     *
+     * @param attributeName Name of the attribute to be added.
+     * @param attributeValue Value of the attribute to be added.
+     */
+    virtual void AddAttribute(std::string const& attributeName, std::string const& attributeValue)
+        override
+    {
+      if (m_span)
+      {
+        m_span->AddAttribute(attributeName, attributeValue);
       }
     }
 
@@ -121,6 +137,20 @@ namespace Azure { namespace Core { namespace Tracing { namespace _internal {
       if (m_span)
       {
         m_span->AddEvent(exception);
+      }
+    }
+
+    /**
+     * @brief Propogate information from the current span to the HTTP request headers.
+     *
+     * @param request HTTP Request to the service. If there is an active tracing span, this will
+     * add required headers to the HTTP Request.
+     */
+    virtual void PropagateToHttpHeaders(Azure::Core::Http::Request& request) override
+    {
+      if (m_span)
+      {
+        m_span->PropagateToHttpHeaders(request);
       }
     }
   };
@@ -178,10 +208,12 @@ namespace Azure { namespace Core { namespace Tracing { namespace _internal {
 
     ContextAndSpan CreateSpan(
         std::string const& spanName,
+        Azure::Core::Tracing::_internal::SpanKind const& spanKind,
         Azure::Core::Context const& clientContext);
 
     static ContextAndSpan CreateSpanFromContext(
         std::string const& spanName,
+        Azure::Core::Tracing::_internal::SpanKind const& spanKind,
         Azure::Core::Context const& clientContext);
 
     std::unique_ptr<Azure::Core::Tracing::_internal::AttributeSet> CreateAttributeSet();

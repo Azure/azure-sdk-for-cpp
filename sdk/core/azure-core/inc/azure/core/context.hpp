@@ -12,13 +12,17 @@
 #include "azure/core/datetime.hpp"
 #include "azure/core/dll_import_export.hpp"
 #include "azure/core/rtti.hpp"
-#include "azure/core/tracing/tracing.hpp"
 #include <atomic>
 #include <chrono>
 #include <memory>
 #include <stdexcept>
 #include <string>
 #include <type_traits>
+
+// Forward declare TracerProvider to resolve an include file dependency ordering problem.
+namespace Azure { namespace Core { namespace Tracing {
+  class TracerProvider;
+}}} // namespace Azure::Core::Tracing
 
 namespace Azure { namespace Core {
 
