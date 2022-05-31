@@ -388,34 +388,36 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
 
   TEST_P(PolicyTests, CreateAdministrationClients)
   {
+    // `InitTestClient` takes care of setting up Record&Playback.
+    auto options = InitClientOptions<Azure::Security::Attestation::AttestationAdministrationClientOptions>();
     {
       AttestationAdministrationClient client
-          = AttestationAdministrationClient::Create(this->m_endpoint, m_credential);
+          = AttestationAdministrationClient::Create(this->m_endpoint, m_credential, options);
       EXPECT_EQ(m_endpoint, client.Endpoint());
     }
     {
       AttestationAdministrationClient const client
-          = AttestationAdministrationClient::Create(this->m_endpoint, m_credential);
+          = AttestationAdministrationClient::Create(this->m_endpoint, m_credential, options);
       EXPECT_EQ(m_endpoint, client.Endpoint());
     }
     {
       std::unique_ptr<AttestationAdministrationClient> client
-          = AttestationAdministrationClient::Create(this->m_endpoint, m_credential);
+          = AttestationAdministrationClient::Create(this->m_endpoint, m_credential, options);
       EXPECT_EQ(m_endpoint, client->Endpoint());
     }
     {
       std::unique_ptr<AttestationAdministrationClient const> client
-          = AttestationAdministrationClient::Create(this->m_endpoint, m_credential);
+          = AttestationAdministrationClient::Create(this->m_endpoint, m_credential, options);
       EXPECT_EQ(m_endpoint, client->Endpoint());
     }
     {
       std::shared_ptr<AttestationAdministrationClient> client
-          = AttestationAdministrationClient::Create(this->m_endpoint, m_credential);
+          = AttestationAdministrationClient::Create(this->m_endpoint, m_credential, options);
       EXPECT_EQ(m_endpoint, client->Endpoint());
     }
     {
       std::shared_ptr<AttestationAdministrationClient const> client
-          = AttestationAdministrationClient::Create(this->m_endpoint, m_credential);
+          = AttestationAdministrationClient::Create(this->m_endpoint, m_credential, options);
       EXPECT_EQ(m_endpoint, client->Endpoint());
     }
   }

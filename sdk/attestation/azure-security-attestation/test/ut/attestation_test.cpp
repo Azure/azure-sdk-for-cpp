@@ -297,29 +297,37 @@ issuancerules {
     }
   }
 
-  TEST_P(AttestationTests, CreateAttestationClients) {
+  TEST_P(AttestationTests, CreateAttestationClients)
+  {
+    // `InitTestClient` takes care of setting up Record&Playback.
+    auto options = InitClientOptions<Azure::Security::Attestation::AttestationClientOptions>();
+
     {
-      AttestationClient client = AttestationClient::Create(this->m_endpoint);
+      AttestationClient client = AttestationClient::Create(this->m_endpoint, options);
       EXPECT_EQ(m_endpoint, client.Endpoint());
     }
     {
-      AttestationClient const client = AttestationClient::Create(this->m_endpoint);
+      AttestationClient const client = AttestationClient::Create(this->m_endpoint, options);
       EXPECT_EQ(m_endpoint, client.Endpoint());
     }
     {
-      std::unique_ptr<AttestationClient> client = AttestationClient::Create(this->m_endpoint);
+      std::unique_ptr<AttestationClient> client
+          = AttestationClient::Create(this->m_endpoint, options);
       EXPECT_EQ(m_endpoint, client->Endpoint());
     }
     {
-      std::unique_ptr<AttestationClient const> client = AttestationClient::Create(this->m_endpoint);
+      std::unique_ptr<AttestationClient const> client
+          = AttestationClient::Create(this->m_endpoint, options);
       EXPECT_EQ(m_endpoint, client->Endpoint());
     }
     {
-      std::shared_ptr<AttestationClient> client = AttestationClient::Create(this->m_endpoint);
+      std::shared_ptr<AttestationClient> client
+          = AttestationClient::Create(this->m_endpoint, options);
       EXPECT_EQ(m_endpoint, client->Endpoint());
     }
     {
-      std::shared_ptr<AttestationClient const> client = AttestationClient::Create(this->m_endpoint);
+      std::shared_ptr<AttestationClient const> client
+          = AttestationClient::Create(this->m_endpoint, options);
       EXPECT_EQ(m_endpoint, client->Endpoint());
     }
   }
