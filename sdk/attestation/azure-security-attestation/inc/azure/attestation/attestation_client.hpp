@@ -114,87 +114,8 @@ namespace Azure { namespace Security { namespace Attestation {
    */
 
   class AttestationClient final {
-    // Allow client factory to access private methods in the AttestationClient object.
-    friend class AttestationClientCreator;
 
   public:
-    /** @brief Intermediate factory result that allows factory methods to return both a pointer and
-     * a concrete class implementation.
-     *
-     * See [Raymond Chen's Blob
-     * Post](https://devblogs.microsoft.com/oldnewthing/20191106-00/?p=103066) for more information.
-     */
-    class AttestationClientCreator {
-      std::string m_endpoint;
-      std::shared_ptr<Core::Credentials::TokenCredential const> m_credential;
-      AttestationClientOptions m_options;
-      Azure::Core::Context m_context;
-
-    public:
-      /** @brief Construct a new ClientCreator object.
-       *
-       * @param endpoint Endpoint to connect to
-       * @param credential Credentials to use when communicating with the service.
-       * @param options Client options.
-       * @param context Client request context.
-       *
-       */
-      AttestationClientCreator(
-          std::string const& endpoint,
-          std::shared_ptr<Core::Credentials::TokenCredential const> credential,
-          AttestationClientOptions const& options,
-          Azure::Core::Context const& context)
-          : m_endpoint(endpoint), m_credential(credential), m_options(options), m_context(context)
-      {
-      }
-
-      /** @brief Returns an AttestationClient
-       *
-       * @returns Newly constructed attestation client.
-       *
-       */
-      operator AttestationClient()
-      {
-        return AttestationClient::CreateConcrete(m_endpoint, m_credential, m_options, m_context);
-      }
-      /** @brief Returns a pointer to an AttestationClient
-       *
-       * @returns Newly constructed attestation client.
-       *
-       */
-      operator std::unique_ptr<AttestationClient>()
-      {
-        return AttestationClient::CreatePointer(m_endpoint, m_credential, m_options, m_context);
-      }
-      /** @brief Returns a pointer to an AttestationClient
-       *
-       * @returns Newly constructed attestation client.
-       *
-       */
-      operator std::unique_ptr<AttestationClient const>()
-      {
-        return AttestationClient::CreatePointer(m_endpoint, m_credential, m_options, m_context);
-      }
-      /** @brief Returns a pointer to an AttestationClient
-       *
-       * @returns Newly constructed attestation client.
-       *
-       */
-      operator std::shared_ptr<AttestationClient const>()
-      {
-        return AttestationClient::CreatePointer(m_endpoint, m_credential, m_options, m_context);
-      }
-      /** @brief Returns a pointer to an AttestationClient
-       *
-       * @returns Newly constructed attestation client.
-       *
-       */
-      operator std::shared_ptr<AttestationClient>()
-      {
-        return AttestationClient::CreatePointer(m_endpoint, m_credential, m_options, m_context);
-      }
-    };
-
     /** @brief Construct a new Attestation Client object
      *
      * @details Constructs a new attestation client. Follows the
@@ -207,7 +128,7 @@ namespace Azure { namespace Security { namespace Attestation {
      * @param options The options to customize the client behavior.
      * @return The newly created client.
      */
-    static AttestationClientCreator Create(
+    static AttestationClient Create(
         std::string const& endpoint,
         std::shared_ptr<Core::Credentials::TokenCredential const> credential,
         AttestationClientOptions const& options = AttestationClientOptions{},
@@ -226,7 +147,7 @@ namespace Azure { namespace Security { namespace Attestation {
      * @note TPM attestation requires an authenticated attestation client.
      *
      */
-    static AttestationClientCreator Create(
+    static AttestationClient Create(
         std::string const& endpoint,
         AttestationClientOptions options = AttestationClientOptions{},
         Azure::Core::Context const& constext = Azure::Core::Context{});

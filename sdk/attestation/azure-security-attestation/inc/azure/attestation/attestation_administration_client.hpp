@@ -44,93 +44,8 @@ namespace Azure { namespace Security { namespace Attestation {
    *
    */
   class AttestationAdministrationClient final {
-    friend class AttestationAdministrationClientCreator;
 
   public:
-    /** @brief Intermediate factory result that allows factory methods to return both a pointer and
-     * a concrete class implementation.
-     *
-     * See [Raymond Chen's Blob
-     * Post](https://devblogs.microsoft.com/oldnewthing/20191106-00/?p=103066) for more information.
-     */
-    class AttestationAdministrationClientCreator {
-      std::string m_endpoint;
-      std::shared_ptr<Core::Credentials::TokenCredential const> m_credential;
-      AttestationAdministrationClientOptions m_options;
-      Azure::Core::Context m_context;
-
-    public:
-      /** @brief Construct a new ClientCreator object.
-       *
-       * @param endpoint Endpoint to connect to
-       * @param credential Credentials to use when communicating with the service.
-       * @param options Client options.
-       * @param context Client request context.
-       *
-       */
-      AttestationAdministrationClientCreator(
-          std::string const& endpoint,
-          std::shared_ptr<Core::Credentials::TokenCredential const> credential,
-          AttestationAdministrationClientOptions options,
-          Azure::Core::Context const& context)
-          : m_endpoint(endpoint), m_credential(credential), m_options(options), m_context(context)
-      {
-      }
-
-      /** @brief Returns a concrete implementation of an AttestationClient
-       *
-       * @returns Newly constructed attestation client.
-       *
-       */
-      operator AttestationAdministrationClient()
-      {
-        return AttestationAdministrationClient::CreateConcrete(
-            m_endpoint, m_credential, m_options, m_context);
-      }
-      /** @brief Returns a pointer to an AttestationClient
-       *
-       * @returns Newly constructed attestation client.
-       *
-       */
-      operator std::unique_ptr<AttestationAdministrationClient>()
-      {
-        return AttestationAdministrationClient::CreatePointer(
-            m_endpoint, m_credential, m_options, m_context);
-      }
-      /** @brief Returns a pointer to an AttestationClient
-       *
-       * @returns Newly constructed attestation client.
-       *
-       */
-      operator std::unique_ptr<AttestationAdministrationClient const>()
-      {
-        return AttestationAdministrationClient::CreatePointer(
-            m_endpoint, m_credential, m_options, m_context);
-      }
-      /** @brief Returns a pointer to an AttestationClient
-       *
-       * @returns Newly constructed attestation client.
-       *
-       * We need to provide a separate overload for std::shared_ptr because the C++ compiler cannot
-       * implicitly construct a std::shared_ptr from a std::unique_ptr from a *ClientCreator class.
-       */
-      operator std::shared_ptr<AttestationAdministrationClient>()
-      {
-        return AttestationAdministrationClient::CreatePointer(
-            m_endpoint, m_credential, m_options, m_context);
-      }
-      /** @brief Returns a pointer to an AttestationClient
-       *
-       * @returns Newly constructed attestation client.
-       *
-       */
-      operator std::shared_ptr<AttestationAdministrationClient const>()
-      {
-        return AttestationAdministrationClient::CreatePointer(
-            m_endpoint, m_credential, m_options, m_context);
-      }
-    };
-
     /**
      * @brief Construct a new Attestation Administration Client object.
      *
@@ -139,7 +54,7 @@ namespace Azure { namespace Security { namespace Attestation {
      * @param options The options to customize the client behavior.
      * @return The newly created client.
      */
-    static AttestationAdministrationClientCreator Create(
+    static AttestationAdministrationClient Create(
         std::string const& endpoint,
         std::shared_ptr<Core::Credentials::TokenCredential const> credential,
         AttestationAdministrationClientOptions const& options

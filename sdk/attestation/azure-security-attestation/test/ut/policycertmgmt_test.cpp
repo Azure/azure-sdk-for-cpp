@@ -72,7 +72,7 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
       return returnValue;
     }
 
-    std::unique_ptr<AttestationAdministrationClient> CreateClient(ServiceInstanceType instanceType)
+    AttestationAdministrationClient CreateClient(ServiceInstanceType instanceType)
     {
       // `InitTestClient` takes care of setting up Record&Playback.
       AttestationAdministrationClientOptions options
@@ -96,7 +96,7 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
       auto adminClient(CreateClient(instanceType));
 
       {
-        auto certificatesResult = adminClient->GetIsolatedModeCertificates(
+        auto certificatesResult = adminClient.GetIsolatedModeCertificates(
             GetIsolatedModeCertificatesOptions{GetTokenValidationOptions()});
 
         // Do we expect to get any certificates in the response? AAD and Shared instances will never
@@ -195,7 +195,7 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
       auto isolatedSigningKey(AttestationSigningKey{
           isolatedPrivateKey->ExportPrivateKey(), isolatedCertificate->ExportAsPEM()});
 
-      auto certificatesResult = adminClient->AddIsolatedModeCertificate(
+      auto certificatesResult = adminClient.AddIsolatedModeCertificate(
           certificateToAdd->ExportAsPEM(), isolatedSigningKey);
 
       EXPECT_EQ(
@@ -208,7 +208,7 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
 
     // Make sure that the certificate we just added is included in the enumeration.
     {
-      auto policyCertificates = adminClient->GetIsolatedModeCertificates();
+      auto policyCertificates = adminClient.GetIsolatedModeCertificates();
       EXPECT_GT(policyCertificates.Value.Body.Certificates.size(), 1ul);
 
       bool foundIsolatedCertificate = false;
@@ -258,7 +258,7 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
 
     // Ensure that POLICY_SIGNING_CERTIFICATE_0 is already present in the list of certificates.
     {
-      auto certificatesResult = adminClient->AddIsolatedModeCertificate(
+      auto certificatesResult = adminClient.AddIsolatedModeCertificate(
           certificateToRemove->ExportAsPEM(), isolatedSigningKey);
 
       EXPECT_EQ(
@@ -268,7 +268,7 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
 
     // And now remove that certificate.
     {
-      auto certificatesResult = adminClient->RemoveIsolatedModeCertificate(
+      auto certificatesResult = adminClient.RemoveIsolatedModeCertificate(
           certificateToRemove->ExportAsPEM(), isolatedSigningKey);
 
       EXPECT_EQ(
@@ -281,7 +281,7 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
 
     // Make sure that the certificate we just removed is NOT included in the enumeration.
     {
-      auto policyCertificates = adminClient->GetIsolatedModeCertificates();
+      auto policyCertificates = adminClient.GetIsolatedModeCertificates();
       EXPECT_EQ(policyCertificates.Value.Body.Certificates.size(), 1ul);
 
       bool foundIsolatedCertificate = false;
@@ -326,7 +326,7 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
 
     {
       EXPECT_THROW(
-          adminClient->AddIsolatedModeCertificate(
+          adminClient.AddIsolatedModeCertificate(
               fakedCertificateToAdd->ExportAsPEM(), isolatedSigningKey),
           Azure::Core::RequestFailedException);
     }
@@ -353,7 +353,7 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
 
     {
       EXPECT_THROW(
-          adminClient->RemoveIsolatedModeCertificate(
+          adminClient.RemoveIsolatedModeCertificate(
               fakedCertificateToRemove->ExportAsPEM(), isolatedSigningKey),
           Azure::Core::RequestFailedException);
     }

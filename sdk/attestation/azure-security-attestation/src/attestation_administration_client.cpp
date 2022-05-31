@@ -65,23 +65,7 @@ AttestationAdministrationClient::AttestationAdministrationClient(
       std::move(perCallpolicies));
 }
 
-AttestationAdministrationClient::AttestationAdministrationClientCreator
-AttestationAdministrationClient::Create(
-    std::string const& endpoint,
-    std::shared_ptr<Core::Credentials::TokenCredential const> credential,
-    AttestationAdministrationClientOptions const& options,
-    Azure::Core::Context const& context)
-{
-  return AttestationAdministrationClientCreator{endpoint, credential, options, context};
-}
-
-/** @brief Construct a new Attestation Client object
- *
- * @param endpoint The URL address where the client will send the requests to.
- * @param credential The authentication method to use (required for TPM attestation).
- * @param options The options to customize the client behavior.
- */
-AttestationAdministrationClient AttestationAdministrationClient::CreateConcrete(
+AttestationAdministrationClient AttestationAdministrationClient::Create(
     std::string const& endpoint,
     std::shared_ptr<Core::Credentials::TokenCredential const> credential,
     AttestationAdministrationClientOptions const& options,
@@ -89,25 +73,6 @@ AttestationAdministrationClient AttestationAdministrationClient::CreateConcrete(
 {
   AttestationAdministrationClient returnValue(endpoint, credential, options);
   returnValue.RetrieveResponseValidationCollateral(context);
-  return returnValue;
-}
-
-/** @brief Construct a new Attestation Client object
- *
- * @param endpoint The URL address where the client will send the requests to.
- * @param credential The authentication method to use (required for TPM attestation).
- * @param options The options to customize the client behavior.
- */
-std::unique_ptr<AttestationAdministrationClient> AttestationAdministrationClient::CreatePointer(
-    std::string const& endpoint,
-    std::shared_ptr<Core::Credentials::TokenCredential const> credential,
-    AttestationAdministrationClientOptions const& options,
-    Azure::Core::Context const& context)
-{
-  std::unique_ptr<AttestationAdministrationClient> returnValue{
-      new AttestationAdministrationClient(endpoint, credential, options)};
-  returnValue->RetrieveResponseValidationCollateral(context);
-  // Release the client pointer from the unique pointer to let the parent manage it.
   return returnValue;
 }
 

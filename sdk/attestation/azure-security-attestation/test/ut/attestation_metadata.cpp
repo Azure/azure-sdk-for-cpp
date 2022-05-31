@@ -50,14 +50,14 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
       }
     }
 
-    std::unique_ptr<AttestationClient> CreateClient()
+    AttestationClient CreateClient()
     {
       // `InitTestClient` takes care of setting up Record&Playback.
       auto options = InitClientOptions<Azure::Security::Attestation::AttestationClientOptions>();
       return AttestationClient::Create(m_endpoint, options);
     }
 
-    std::unique_ptr<AttestationClient> CreateAuthenticatedClient()
+    AttestationClient CreateAuthenticatedClient()
     {
       // `InitClientOptions` takes care of setting up Record&Playback.
       AttestationClientOptions options = InitClientOptions<AttestationClientOptions>();
@@ -73,9 +73,7 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
   {
     auto attestationClient(CreateClient());
 
-    EXPECT_FALSE(attestationClient->Endpoint().empty());
-
-    auto openIdMetadata = attestationClient->GetOpenIdMetadata();
+    auto openIdMetadata = attestationClient.GetOpenIdMetadata();
 
     EXPECT_TRUE(openIdMetadata.Value.Issuer);
     EXPECT_TRUE(openIdMetadata.Value.JsonWebKeySetUrl);
@@ -94,7 +92,7 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
   {
     auto attestationClient(CreateClient());
 
-    auto attestationSigners = attestationClient->GetTokenValidationCertificates();
+    auto attestationSigners = attestationClient.GetTokenValidationCertificates();
     EXPECT_LE(1UL, attestationSigners.Value.Signers.size());
     for (const auto& signer : attestationSigners.Value.Signers)
     {
