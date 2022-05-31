@@ -1,6 +1,6 @@
 # Release History
 
-## 1.7.0-beta.1 (Unreleased)
+## 1.7.0-beta.1 (2022-06-02)
 
 ### Features Added
 
@@ -9,10 +9,6 @@
 ### Breaking Changes
 
 - Removed `noexcept` specification from `Azure::Core::Context::IsCancelled()`.
-
-### Bugs Fixed
-
-### Other Changes
 
 ## 1.6.0 (2022-05-05)
 
