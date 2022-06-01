@@ -47,13 +47,12 @@ int main()
     std::string const endpoint
         = "https://shared" + shortLocation + "." + shortLocation + ".attest.azure.net";
 
-    std::unique_ptr<AttestationClient> attestationClient(
-        AttestationClientFactory::Create(endpoint));
+    AttestationClient const attestationClient(AttestationClient::Create(endpoint));
 
     std::vector<uint8_t> const sgxEnclaveQuote = AttestationCollateral::SgxQuote();
 
     Azure::Response<AttestationToken<AttestationResult>> const sgxResult
-        = attestationClient->AttestSgxEnclave(sgxEnclaveQuote);
+        = attestationClient.AttestSgxEnclave(sgxEnclaveQuote);
 
     std::cout << "SGX Quote MRSIGNER is: "
               << Convert::Base64Encode(*sgxResult.Value.Body.SgxMrSigner) << std::endl;

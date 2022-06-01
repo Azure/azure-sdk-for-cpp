@@ -7,10 +7,11 @@
 - `AddIsolatedModeCertificatesOptions` becomes `AddIsolatedModeCertificateOptions`
 - `RemoveIsolatedModeCertificatesOptions` becomes `RemoveIsolatedModeCertificateOptions`
 - Renamed `AttestEnclaveOptions` to `AttestSgxEnclaveOptions` and `AttestOpenEnclaveOptions`.
-- Split out `AttestationClient::Create` into its own factory class `AttestationClientFactory`.
-    - Note that the `AttestationClientFactory::Create` method returns a `std::unique_ptr` to the client object.
-- Split out `AttestationAdministrationClient::Create` into its own factory class `AttestationAdministrationClientFactory`.
-    - Note that the `AttestationAdministrationClientFactory::Create` method returns a `std::unique_ptr` to the client object.
+- `AttestationClient` and `AttestationAdministrationClient` creation is now done using the factory method `AttestationClient::Create()` and `AttestationAdministrationClient::Create()`. 
+
+### Bugs Fixed
+
+### Other Changes
 
 ## 1.0.0-beta.2 (2022-05-10)
 
