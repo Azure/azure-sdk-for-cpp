@@ -115,7 +115,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     protocolLayerOptions.SourceIfNoneMatch = options.SourceAccessConditions.IfNoneMatch;
     protocolLayerOptions.SourceIfModifiedSince = options.SourceAccessConditions.IfModifiedSince;
     protocolLayerOptions.SourceIfUnmodifiedSince = options.SourceAccessConditions.IfUnmodifiedSince;
-    protocolLayerOptions.RenameSource = "/" + sourceDfsUrl.GetPath();
+    protocolLayerOptions.RenameSource = "/" + sourceDfsUrl.GetRelativeUrl();
     auto response = _detail::PathClient::Create(
         *m_pipeline, destinationDfsUrl, protocolLayerOptions, context);
 
@@ -163,7 +163,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     protocolLayerOptions.SourceIfNoneMatch = options.SourceAccessConditions.IfNoneMatch;
     protocolLayerOptions.SourceIfModifiedSince = options.SourceAccessConditions.IfModifiedSince;
     protocolLayerOptions.SourceIfUnmodifiedSince = options.SourceAccessConditions.IfUnmodifiedSince;
-    protocolLayerOptions.RenameSource = "/" + sourceDfsUrl.GetPath();
+    protocolLayerOptions.RenameSource = "/" + sourceDfsUrl.GetRelativeUrl();
     auto response = _detail::PathClient::Create(
         *m_pipeline, destinationDfsUrl, protocolLayerOptions, context);
 

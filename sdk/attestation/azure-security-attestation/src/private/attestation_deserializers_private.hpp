@@ -20,7 +20,6 @@
 #include <memory>
 #include <string>
 
-// cspell: words jwks MrSigner MrEnclave
 namespace Azure { namespace Security { namespace Attestation { namespace _detail {
 
   /***************************************
@@ -39,7 +38,7 @@ namespace Azure { namespace Security { namespace Attestation { namespace _detail
 
   struct OpenIdMetadataSerializer final
   {
-    static Models::AttestationOpenIdMetadata Deserialize(
+    static Models::OpenIdMetadata Deserialize(
         std::unique_ptr<Azure::Core::Http::RawResponse>& response);
   };
 
@@ -58,7 +57,7 @@ namespace Azure { namespace Security { namespace Attestation { namespace _detail
   struct AttestationServiceTokenResponseSerializer final
   {
     static std::string Deserialize(Azure::Core::Json::_internal::json const& parsedBody);
-    static std::string Deserialize(std::unique_ptr<Azure::Core::Http::RawResponse>& response);
+    static std::string Deserialize(std::unique_ptr<Azure::Core::Http::RawResponse> const& response);
   };
 
   struct AttestationResultSerializer final
@@ -70,14 +69,17 @@ namespace Azure { namespace Security { namespace Attestation { namespace _detail
 
   struct JsonWebKeySerializer final
   {
-    static Models::_detail::JsonWebKey Deserialize(const Azure::Core::Json::_internal::json& jwk);
+    static Models::_detail::JsonWebKey Deserialize(Azure::Core::Json::_internal::json const& jwk);
+    static std::string Serialize(
+        Azure::Security::Attestation::Models::_detail::JsonWebKey const& jwk);
+    static Azure::Core::Json::_internal::json SerializeToJson(
+        Azure::Security::Attestation::Models::_detail::JsonWebKey const& jwk);
   };
 
-  // cspell: words jwks
   struct JsonWebKeySetSerializer final
   {
     static Azure::Security::Attestation::Models::_detail::JsonWebKeySet Deserialize(
-        std::unique_ptr<Azure::Core::Http::RawResponse>& response);
+        std::unique_ptr<Azure::Core::Http::RawResponse> const& response);
     static Azure::Security::Attestation::Models::_detail::JsonWebKeySet Deserialize(
         const Azure::Core::Json::_internal::json& jwk);
   };
@@ -111,6 +113,32 @@ namespace Azure { namespace Security { namespace Attestation { namespace _detail
     static Models::_detail::StoredAttestationPolicy Deserialize(
         Azure::Core::Json::_internal::json const& json);
     static std::string Serialize(Models::_detail::StoredAttestationPolicy const& policy);
+  };
+
+  struct IsolatedModeCertificateGetResultSerializer final
+  {
+    static Models::_detail::GetIsolatedModeCertificatesResult Deserialize(
+        Azure::Core::Json::_internal::json const& json);
+  };
+
+  struct IsolatedModeCertificateBodySerializer final
+  {
+    static std::string Serialize(Models::_detail::IsolatedModeCertificateBody const& body);
+    static Models::_detail::IsolatedModeCertificateBody Deserialize(
+        Azure::Core::Json::_internal::json const& jsonBody);
+  };
+
+  struct ModifyIsolatedModeCertificatesResultSerializer
+  {
+    static Models::_detail::ModifyIsolatedModeCertificatesResult Deserialize(
+        Azure::Core::Json::_internal::json const& json);
+  };
+
+  struct TpmDataSerializer
+  {
+    static std::string Serialize(std::string const& tpmData);
+    static std::string Deserialize(Azure::Core::Json::_internal::json const& jsonData);
+    static std::string Deserialize(std::unique_ptr<Azure::Core::Http::RawResponse> const& response);
   };
 
 }}}} // namespace Azure::Security::Attestation::_detail

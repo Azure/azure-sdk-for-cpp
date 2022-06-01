@@ -54,7 +54,7 @@ AttestationClient::AttestationClient(
       std::move(perCallpolicies));
 }
 
-Azure::Response<AttestationOpenIdMetadata> AttestationClient::GetOpenIdMetadata(
+Azure::Response<OpenIdMetadata> AttestationClient::GetOpenIdMetadata(
     Azure::Core::Context const& context) const
 {
   auto request = AttestationCommonRequest::CreateRequest(
@@ -62,41 +62,42 @@ Azure::Response<AttestationOpenIdMetadata> AttestationClient::GetOpenIdMetadata(
 
   auto response = AttestationCommonRequest::SendRequest(*m_pipeline, request, context);
   auto openIdMetadata(OpenIdMetadataSerializer::Deserialize(response));
-  return Response<AttestationOpenIdMetadata>(std::move(openIdMetadata), std::move(response));
+  return Response<OpenIdMetadata>(std::move(openIdMetadata), std::move(response));
 }
 
-Azure::Response<AttestationSigningCertificateResult>
-AttestationClient::GetAttestationSigningCertificates(Azure::Core::Context const& context) const
+Azure::Response<TokenValidationCertificateResult> AttestationClient::GetTokenValidationCertificates(
+    Azure::Core::Context const& context) const
 {
   auto request
       = AttestationCommonRequest::CreateRequest(m_endpoint, HttpMethod::Get, {"certs"}, nullptr);
 
   auto response = AttestationCommonRequest::SendRequest(*m_pipeline, request, context);
   auto jsonWebKeySet(JsonWebKeySetSerializer::Deserialize(response));
-  AttestationSigningCertificateResult returnValue;
+  TokenValidationCertificateResult returnValue;
   for (const auto& jwk : jsonWebKeySet.Keys)
   {
     AttestationSignerInternal internalSigner(jwk);
     returnValue.Signers.push_back(internalSigner);
   }
-  return Response<AttestationSigningCertificateResult>(returnValue, std::move(response));
+  return Response<TokenValidationCertificateResult>(returnValue, std::move(response));
 }
 
 Azure::Response<AttestationToken<AttestationResult>> AttestationClient::AttestSgxEnclave(
     std::vector<uint8_t> const& sgxQuote,
-    AttestOptions options,
+    AttestSgxEnclaveOptions options,
     Azure::Core::Context const& context) const
 {
   AttestSgxEnclaveRequest attestRequest{
       sgxQuote,
-      options.InittimeData,
-      options.RuntimeData,
+      options.InitTimeData,
+      options.RunTimeData,
       options.DraftPolicyForAttestation,
       options.Nonce};
 
-  std::string serializedRequest(AttestSgxEnclaveRequestSerializer::Serialize(attestRequest));
+  const std::string serializedRequest(AttestSgxEnclaveRequestSerializer::Serialize(attestRequest));
 
-  auto encodedVector = std::vector<uint8_t>(serializedRequest.begin(), serializedRequest.end());
+  const auto encodedVector
+      = std::vector<uint8_t>(serializedRequest.begin(), serializedRequest.end());
   Azure::Core::IO::MemoryBodyStream stream(encodedVector);
   auto request = AttestationCommonRequest::CreateRequest(
       m_endpoint, m_apiVersion, HttpMethod::Post, {"attest/SgxEnclave"}, &stream);
@@ -108,16 +109,15 @@ Azure::Response<AttestationToken<AttestationResult>> AttestationClient::AttestSg
   std::string responseToken = AttestationServiceTokenResponseSerializer::Deserialize(response);
 
   // Parse the JWT returned by the attestation service.
-  auto token
+  auto const token
       = AttestationTokenInternal<AttestationResult, AttestationResultSerializer>(responseToken);
 
   // Validate the token returned by the service. Use the cached attestation signers in the
   // validation.
-  std::vector<AttestationSigner> const& signers = GetAttestationSigners(context);
   token.ValidateToken(
-      options.TokenValidationOptions ? options.TokenValidationOptions.Value()
-                                     : this->m_tokenValidationOptions,
-      signers);
+      options.TokenValidationOptionsOverride ? *options.TokenValidationOptionsOverride
+                                             : this->m_tokenValidationOptions,
+      m_attestationSigners);
 
   // And return the attestation result to the caller.
   auto returnedToken = AttestationToken<AttestationResult>(token);
@@ -126,13 +126,13 @@ Azure::Response<AttestationToken<AttestationResult>> AttestationClient::AttestSg
 
 Azure::Response<AttestationToken<AttestationResult>> AttestationClient::AttestOpenEnclave(
     std::vector<uint8_t> const& openEnclaveReport,
-    AttestOptions options,
+    AttestOpenEnclaveOptions options,
     Azure::Core::Context const& context) const
 {
   AttestOpenEnclaveRequest attestRequest{
       openEnclaveReport,
-      options.InittimeData,
-      options.RuntimeData,
+      options.InitTimeData,
+      options.RunTimeData,
       options.DraftPolicyForAttestation,
       options.Nonce};
   std::string serializedRequest(AttestOpenEnclaveRequestSerializer::Serialize(attestRequest));
@@ -146,27 +146,100 @@ Azure::Response<AttestationToken<AttestationResult>> AttestationClient::AttestOp
   std::string responseToken = AttestationServiceTokenResponseSerializer::Deserialize(response);
   auto token
       = AttestationTokenInternal<AttestationResult, AttestationResultSerializer>(responseToken);
-  std::vector<AttestationSigner> const& signers = GetAttestationSigners(context);
   token.ValidateToken(
-      options.TokenValidationOptions ? options.TokenValidationOptions.Value()
-                                     : this->m_tokenValidationOptions,
-      signers);
+      options.TokenValidationOptionsOverride ? *options.TokenValidationOptionsOverride
+                                             : this->m_tokenValidationOptions,
+      m_attestationSigners);
 
   return Response<AttestationToken<AttestationResult>>(token, std::move(response));
+}
+
+Azure::Response<TpmAttestationResult> AttestationClient::AttestTpm(
+    AttestTpmOptions const& attestTpmOptions,
+    Azure::Core::Context const& context) const
+{
+  std::string jsonToSend = TpmDataSerializer::Serialize(attestTpmOptions.Payload);
+  auto encodedVector = std::vector<uint8_t>(jsonToSend.begin(), jsonToSend.end());
+  Azure::Core::IO::MemoryBodyStream stream(encodedVector);
+
+  auto request = AttestationCommonRequest::CreateRequest(
+      m_endpoint, m_apiVersion, HttpMethod::Post, {"attest/Tpm"}, &stream);
+
+  // Send the request to the service.
+  auto response = AttestationCommonRequest::SendRequest(*m_pipeline, request, context);
+  std::string returnedBody(TpmDataSerializer::Deserialize(response));
+  return Response<TpmAttestationResult>(TpmAttestationResult{returnedBody}, std::move(response));
 }
 
 namespace {
 std::shared_timed_mutex SharedStateLock;
 }
 
-std::vector<AttestationSigner> const& AttestationClient::GetAttestationSigners(
-    Azure::Core::Context const& context) const
+/**
+ * @brief Retrieves the information needed to validate the response returned from the attestation
+ * service.
+ *
+ * @details Validating the response returned by the attestation service requires a set of
+ * possible signers for the attestation token.
+ *
+ * @param context Client context for the request to the service.
+ */
+void AttestationClient::RetrieveResponseValidationCollateral(Azure::Core::Context const& context)
 {
   std::unique_lock<std::shared_timed_mutex> stateLock(SharedStateLock);
 
-  if (m_attestationSigners.size() == 0)
+  if (m_attestationSigners.empty())
   {
-    m_attestationSigners = GetAttestationSigningCertificates(context).Value.Signers;
+    stateLock.unlock();
+    auto request
+        = AttestationCommonRequest::CreateRequest(m_endpoint, HttpMethod::Get, {"certs"}, nullptr);
+    auto response = AttestationCommonRequest::SendRequest(*m_pipeline, request, context);
+    auto jsonWebKeySet(JsonWebKeySetSerializer::Deserialize(response));
+    TokenValidationCertificateResult returnValue;
+    std::vector<AttestationSigner> newValue;
+    for (const auto& jwk : jsonWebKeySet.Keys)
+    {
+      AttestationSignerInternal internalSigner(jwk);
+      newValue.push_back(internalSigner);
+    }
+    stateLock.lock();
+    if (m_attestationSigners.empty())
+    {
+      m_attestationSigners = newValue;
+    }
   }
-  return m_attestationSigners;
+}
+
+/** @brief Construct a new Attestation Client object
+ *
+ * @param endpoint The URL address where the client will send the requests to.
+ * @param credential The authentication method to use (required for TPM attestation).
+ * @param options The options to customize the client behavior.
+ */
+std::unique_ptr<AttestationClient> AttestationClientFactory::Create(
+    std::string const& endpoint,
+    std::shared_ptr<Core::Credentials::TokenCredential const> credential,
+    AttestationClientOptions options,
+    Azure::Core::Context const& context)
+{
+  std::unique_ptr<AttestationClient> returnValue(
+      new AttestationClient(endpoint, credential, options));
+  returnValue->RetrieveResponseValidationCollateral(context);
+  // Release the client pointer from the unique pointer to let the parent manage it.
+  return returnValue;
+}
+
+/** @brief Construct a new anonymous Attestation Client object
+ *
+ * @param endpoint The URL address where the client will send the requests to.
+ * @param options The options to customize the client behavior.
+ *
+ * @note TPM attestation requires an authenticated attestation client.
+ */
+std::unique_ptr<AttestationClient> AttestationClientFactory::Create(
+    std::string const& endpoint,
+    AttestationClientOptions options,
+    Azure::Core::Context const& context)
+{
+  return Create(endpoint, nullptr, options, context);
 }

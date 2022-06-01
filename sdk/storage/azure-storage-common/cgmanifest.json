@@ -4,18 +4,18 @@
       "Component": {
         "Type": "git",
         "git": {
-          "RepositoryUrl": "https://github.com/cpplint/cpplint",
-          "CommitHash": "8456631ba3a12842da08238362a90d33fcf47062"
+          "RepositoryUrl": "https://github.com/openssl/openssl",
+          "CommitHash": "d82e959e621a3d597f1e0d50ff8c2d8b96915fd7"
         }
       },
-      "DevelopmentDependency": true
+      "DevelopmentDependency": false
     },
     {
       "Component": {
         "Type": "git",
         "git": {
-          "RepositoryUrl": "https://github.com/edlund/amalgamate",
-          "CommitHash": "c91f07eea1133aa184f652b8f1398eaf03586208"
+          "RepositoryUrl": "https://github.com/cpplint/cpplint",
+          "CommitHash": "8456631ba3a12842da08238362a90d33fcf47062"
         }
       },
       "DevelopmentDependency": true

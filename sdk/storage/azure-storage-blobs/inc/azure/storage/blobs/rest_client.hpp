@@ -31,7 +31,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     /**
      * The version used for the operations to Azure storage services.
      */
-    constexpr static const char* ApiVersion = "2020-08-04";
+    constexpr static const char* ApiVersion = "2020-10-02";
   } // namespace _detail
   namespace Models {
     /**
@@ -403,6 +403,10 @@ namespace Azure { namespace Storage { namespace Blobs {
        */
       Nullable<int32_t> RemainingRetentionDays;
       /**
+       * Indicates if version level worm is enabled on this container.
+       */
+      bool HasImmutableStorageWithVersioning = false;
+      /**
        * A set of name-value pairs associated with this blob or blob container.
        */
       std::map<
@@ -410,10 +414,6 @@ namespace Azure { namespace Storage { namespace Blobs {
           std::string,
           Core::_internal::StringExtensions::CaseInsensitiveComparator>
           Metadata;
-      /**
-       * Indicates if version level worm is enabled on this container.
-       */
-      bool HasImmutableStorageWithVersioning = false;
     };
     /**
      * @brief An Azure Storage container.
@@ -446,6 +446,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       None = 0,
       Metadata = 1,
       Deleted = 2,
+      System = 4,
     };
     inline ListBlobContainersIncludeFlags operator|(
         ListBlobContainersIncludeFlags lhs,
@@ -808,6 +809,18 @@ namespace Azure { namespace Storage { namespace Blobs {
       {
       };
       /**
+       * @brief Response type for #Azure::Storage::Blobs::BlobContainerClient::SubmitBatch.
+       */
+      struct SubmitBatchResult final
+      {
+        std::unique_ptr<Core::IO::BodyStream> BodyStream;
+        /**
+         * The media type of the body of the response. For batch requests, this is multipart/mixed;
+         * boundary=batchresponse_GUID.
+         */
+        std::string ContentType;
+      };
+      /**
        * @brief Response type for #Azure::Storage::Blobs::BlobContainerClient::AcquireLease.
        */
       struct AcquireBlobContainerLeaseResult final
@@ -954,6 +967,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       AZ_STORAGE_BLOBS_DLLEXPORT const static AccessTier Hot;
       AZ_STORAGE_BLOBS_DLLEXPORT const static AccessTier Cool;
       AZ_STORAGE_BLOBS_DLLEXPORT const static AccessTier Archive;
+      AZ_STORAGE_BLOBS_DLLEXPORT const static AccessTier Premium;
 
     private:
       std::string m_value;
@@ -1330,6 +1344,10 @@ namespace Azure { namespace Storage { namespace Blobs {
        */
       BlobItemDetails Details;
       /**
+       * Indicates that this root blob has been deleted, but it has versions that are active.
+       */
+      Nullable<bool> HasVersionsOnly;
+      /**
        * Size in bytes.
        */
       int64_t BlobSize = int64_t();
@@ -1353,6 +1371,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       Tags = 64,
       ImmutabilityPolicy = 128,
       LegalHold = 256,
+      DeletedWithVersions = 512,
     };
     inline ListBlobsIncludeFlags operator|(ListBlobsIncludeFlags lhs, ListBlobsIncludeFlags rhs)
     {
@@ -1977,7 +1996,7 @@ namespace Azure { namespace Storage { namespace Blobs {
          */
         DateTime LastModified;
         /**
-         * Uniquely identifies a blobs's lease.
+         * Uniquely identifies a blob's lease.
          */
         std::string LeaseId;
       };
@@ -2015,7 +2034,7 @@ namespace Azure { namespace Storage { namespace Blobs {
          */
         DateTime LastModified;
         /**
-         * Uniquely identifies a blobs's lease.
+         * Uniquely identifies a blob's lease.
          */
         std::string LeaseId;
       };
@@ -2036,7 +2055,7 @@ namespace Azure { namespace Storage { namespace Blobs {
          */
         DateTime LastModified;
         /**
-         * Uniquely identifies a blobs's lease.
+         * Uniquely identifies a blob's lease.
          */
         std::string LeaseId;
       };
@@ -2187,6 +2206,218 @@ namespace Azure { namespace Storage { namespace Blobs {
      */
     struct SetBlobAccessTierResult final
     {
+    };
+    namespace _detail {
+      /**
+       * @brief Required. The type of the provided query expression.
+       */
+      class QueryRequestQueryType final {
+      public:
+        QueryRequestQueryType() = default;
+        explicit QueryRequestQueryType(std::string value) : m_value(std::move(value)) {}
+        bool operator==(const QueryRequestQueryType& other) const
+        {
+          return m_value == other.m_value;
+        }
+        bool operator!=(const QueryRequestQueryType& other) const { return !(*this == other); }
+        const std::string& ToString() const { return m_value; }
+        AZ_STORAGE_BLOBS_DLLEXPORT const static QueryRequestQueryType SQL;
+
+      private:
+        std::string m_value;
+      };
+      /**
+       * @brief The quick query format type.
+       */
+      class QueryFormatType final {
+      public:
+        QueryFormatType() = default;
+        explicit QueryFormatType(std::string value) : m_value(std::move(value)) {}
+        bool operator==(const QueryFormatType& other) const { return m_value == other.m_value; }
+        bool operator!=(const QueryFormatType& other) const { return !(*this == other); }
+        const std::string& ToString() const { return m_value; }
+        AZ_STORAGE_BLOBS_DLLEXPORT const static QueryFormatType Delimited;
+        AZ_STORAGE_BLOBS_DLLEXPORT const static QueryFormatType Json;
+        AZ_STORAGE_BLOBS_DLLEXPORT const static QueryFormatType Arrow;
+        AZ_STORAGE_BLOBS_DLLEXPORT const static QueryFormatType Parquet;
+
+      private:
+        std::string m_value;
+      };
+      /**
+       * @brief Groups the settings used for interpreting the blob data if the blob is delimited
+       * text formatted.
+       */
+      struct DelimitedTextConfiguration final
+      {
+        /**
+         * The string used to separate columns.
+         */
+        std::string ColumnSeparator;
+        /**
+         * The string used to quote a specific field.
+         */
+        std::string FieldQuote;
+        /**
+         * The string used to separate records.
+         */
+        std::string RecordSeparator;
+        /**
+         * The string used as an escape character.
+         */
+        std::string EscapeChar;
+        /**
+         * Represents whether the data has headers.
+         */
+        bool HeadersPresent = bool();
+      };
+      /**
+       * @brief Json text configuration.
+       */
+      struct JsonTextConfiguration final
+      {
+        /**
+         * The string used to separate records.
+         */
+        std::string RecordSeparator;
+      };
+    } // namespace _detail
+    /**
+     * @brief Type of blob query arrow field.
+     */
+    class BlobQueryArrowFieldType final {
+    public:
+      BlobQueryArrowFieldType() = default;
+      explicit BlobQueryArrowFieldType(std::string value) : m_value(std::move(value)) {}
+      bool operator==(const BlobQueryArrowFieldType& other) const
+      {
+        return m_value == other.m_value;
+      }
+      bool operator!=(const BlobQueryArrowFieldType& other) const { return !(*this == other); }
+      const std::string& ToString() const { return m_value; }
+      AZ_STORAGE_BLOBS_DLLEXPORT const static BlobQueryArrowFieldType Int64;
+      AZ_STORAGE_BLOBS_DLLEXPORT const static BlobQueryArrowFieldType Bool;
+      AZ_STORAGE_BLOBS_DLLEXPORT const static BlobQueryArrowFieldType Timestamp;
+      AZ_STORAGE_BLOBS_DLLEXPORT const static BlobQueryArrowFieldType String;
+      AZ_STORAGE_BLOBS_DLLEXPORT const static BlobQueryArrowFieldType Double;
+      AZ_STORAGE_BLOBS_DLLEXPORT const static BlobQueryArrowFieldType Decimal;
+
+    private:
+      std::string m_value;
+    };
+    /**
+     * @brief Groups settings regarding specific field of an arrow schema.
+     */
+    struct BlobQueryArrowField final
+    {
+      /**
+       * Type of blob query arrow field.
+       */
+      BlobQueryArrowFieldType Type;
+      Nullable<std::string> Name;
+      Nullable<int32_t> Precision;
+      Nullable<int32_t> Scale;
+    };
+    namespace _detail {
+      /**
+       * @brief Groups the settings used for formatting the response if the response should be Arrow
+       * formatted.
+       */
+      struct ArrowConfiguration final
+      {
+        /**
+         * Array of BlobQueryArrowField.
+         */
+        std::vector<BlobQueryArrowField> Schema;
+      };
+      /**
+       * @brief Parquet configuration.
+       */
+      struct ParquetConfiguration final
+      {
+      };
+      struct QueryFormat final
+      {
+        /**
+         * The quick query format type.
+         */
+        QueryFormatType Type;
+        /**
+         * Groups the settings used for interpreting the blob data if the blob is delimited text
+         * formatted.
+         */
+        Nullable<_detail::DelimitedTextConfiguration> DelimitedTextConfiguration;
+        /**
+         * Json text configuration.
+         */
+        Nullable<_detail::JsonTextConfiguration> JsonTextConfiguration;
+        /**
+         * Groups the settings used for formatting the response if the response should be Arrow
+         * formatted.
+         */
+        Nullable<_detail::ArrowConfiguration> ArrowConfiguration;
+        /**
+         * Parquet configuration.
+         */
+        Nullable<ParquetConfiguration> ParquetTextConfiguration;
+      };
+      struct QuerySerialization final
+      {
+        QueryFormat Format;
+      };
+      /**
+       * @brief Groups the set of query request settings.
+       */
+      struct QueryRequest final
+      {
+        /**
+         * Required. The type of the provided query expression.
+         */
+        QueryRequestQueryType QueryType;
+        /**
+         * The query expression in SQL. The maximum size of the query expression is 256KiB.
+         */
+        std::string Expression;
+        Nullable<QuerySerialization> InputSerialization;
+        Nullable<QuerySerialization> OutputSerialization;
+      };
+    } // namespace _detail
+    /**
+     * @brief Response type for #Azure::Storage::Blobs::BlobClient::Query.
+     */
+    struct QueryBlobResult final
+    {
+      std::unique_ptr<Core::IO::BodyStream> BodyStream;
+      /**
+       * Returns the date and time the container was last modified. Any operation that modifies the
+       * blob, including an update of the blob's metadata or properties, changes the last-modified
+       * time of the blob.
+       */
+      DateTime LastModified;
+      /**
+       * The ETag contains a value that you can use to perform operations conditionally. If the
+       * request version is 2011-08-18 or newer, the ETag value will be in quotes.
+       */
+      Azure::ETag ETag;
+      /**
+       * When a blob is leased, specifies whether the lease is of infinite or fixed duration.
+       */
+      Nullable<LeaseDurationType> LeaseDuration;
+      /**
+       * Lease state of the blob.
+       */
+      Models::LeaseState LeaseState;
+      /**
+       * The current lease status of the blob.
+       */
+      Models::LeaseStatus LeaseStatus;
+      /**
+       * The value of this header is set to true if the blob data and application metadata are
+       * completely encrypted using the specified algorithm. Otherwise, the value is set to false
+       * (when the blob is unencrypted, or if only parts of the blob/application metadata are
+       * encrypted).
+       */
+      bool IsServerEncrypted = bool();
     };
     /**
      * @brief Response type for #Azure::Storage::Blobs::BlobClient::SetTags.
@@ -2367,6 +2598,7 @@ namespace Azure { namespace Storage { namespace Blobs {
          * Array of ClearRange.
          */
         std::vector<Core::Http::HttpRange> ClearRanges;
+        std::string ContinuationToken;
       };
       /**
        * @brief Response type for #Azure::Storage::Blobs::PageBlobClient::GetPageRangesDiff.
@@ -2387,6 +2619,7 @@ namespace Azure { namespace Storage { namespace Blobs {
          * Array of ClearRange.
          */
         std::vector<Core::Http::HttpRange> ClearRanges;
+        std::string ContinuationToken;
       };
     } // namespace _detail
     /**
@@ -2971,6 +3204,16 @@ namespace Azure { namespace Storage { namespace Blobs {
           const Core::Url& url,
           const GetServiceAccountInfoOptions& options,
           const Core::Context& context);
+      struct SubmitServiceBatchOptions final
+      {
+        std::string MultipartContentType;
+      };
+      static Response<Models::_detail::SubmitBatchResult> SubmitBatch(
+          Core::Http::_internal::HttpPipeline& pipeline,
+          const Core::Url& url,
+          Core::IO::BodyStream& requestBody,
+          const SubmitServiceBatchOptions& options,
+          const Core::Context& context);
       struct FindServiceBlobsByTagsOptions final
       {
         Nullable<std::string> Where;
@@ -3069,6 +3312,16 @@ namespace Azure { namespace Storage { namespace Blobs {
           Core::Http::_internal::HttpPipeline& pipeline,
           const Core::Url& url,
           const RenameBlobContainerOptions& options,
+          const Core::Context& context);
+      struct SubmitBlobContainerBatchOptions final
+      {
+        std::string MultipartContentType;
+      };
+      static Response<Models::_detail::SubmitBatchResult> SubmitBatch(
+          Core::Http::_internal::HttpPipeline& pipeline,
+          const Core::Url& url,
+          Core::IO::BodyStream& requestBody,
+          const SubmitBlobContainerBatchOptions& options,
           const Core::Context& context);
       struct AcquireBlobContainerLeaseOptions final
       {
@@ -3438,6 +3691,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         Nullable<DateTime> ImmutabilityPolicyExpiry;
         Nullable<Models::BlobImmutabilityPolicyMode> ImmutabilityPolicyMode;
         Nullable<bool> LegalHold;
+        Nullable<std::string> CopySourceAuthorization;
         Nullable<std::vector<uint8_t>> SourceContentcrc64;
       };
       static Response<Models::CopyBlobFromUriResult> CopyFromUri(
@@ -3468,6 +3722,26 @@ namespace Azure { namespace Storage { namespace Blobs {
           Core::Http::_internal::HttpPipeline& pipeline,
           const Core::Url& url,
           const SetBlobTierOptions& options,
+          const Core::Context& context);
+      struct QueryBlobOptions final
+      {
+        Models::_detail::QueryRequest QueryRequest;
+        Nullable<std::string> Snapshot;
+        Nullable<std::string> LeaseId;
+        Nullable<std::string> EncryptionKey;
+        Nullable<std::vector<uint8_t>> EncryptionKeySha256;
+        Nullable<std::string> EncryptionAlgorithm;
+        Nullable<DateTime> IfModifiedSince;
+        Nullable<DateTime> IfUnmodifiedSince;
+        ETag IfMatch;
+        ETag IfNoneMatch;
+        Nullable<std::string> IfTags;
+        Nullable<std::string> EncryptionScope;
+      };
+      static Response<Models::QueryBlobResult> Query(
+          Core::Http::_internal::HttpPipeline& pipeline,
+          const Core::Url& url,
+          const QueryBlobOptions& options,
           const Core::Context& context);
       struct GetBlobTagsOptions final
       {
@@ -3601,6 +3875,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         Nullable<DateTime> SourceIfUnmodifiedSince;
         ETag SourceIfMatch;
         ETag SourceIfNoneMatch;
+        Nullable<std::string> CopySourceAuthorization;
       };
       static Response<Models::UploadPagesFromUriResult> UploadPagesFromUri(
           Core::Http::_internal::HttpPipeline& pipeline,
@@ -3617,6 +3892,8 @@ namespace Azure { namespace Storage { namespace Blobs {
         ETag IfMatch;
         ETag IfNoneMatch;
         Nullable<std::string> IfTags;
+        Nullable<std::string> Marker;
+        Nullable<int32_t> MaxResults;
       };
       static Response<Models::_detail::GetPageRangesResult> GetPageRanges(
           Core::Http::_internal::HttpPipeline& pipeline,
@@ -3635,6 +3912,8 @@ namespace Azure { namespace Storage { namespace Blobs {
         ETag IfMatch;
         ETag IfNoneMatch;
         Nullable<std::string> IfTags;
+        Nullable<std::string> Marker;
+        Nullable<int32_t> MaxResults;
       };
       static Response<Models::_detail::GetPageRangesDiffResult> GetPageRangesDiff(
           Core::Http::_internal::HttpPipeline& pipeline,
@@ -3768,6 +4047,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         Nullable<DateTime> SourceIfUnmodifiedSince;
         ETag SourceIfMatch;
         ETag SourceIfNoneMatch;
+        Nullable<std::string> CopySourceAuthorization;
       };
       static Response<Models::AppendBlockFromUriResult> AppendBlockFromUri(
           Core::Http::_internal::HttpPipeline& pipeline,
@@ -3853,6 +4133,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         Nullable<std::string> BlobTagsString;
         std::string CopySource;
         Nullable<bool> CopySourceBlobProperties;
+        Nullable<std::string> CopySourceAuthorization;
         Nullable<std::vector<uint8_t>> SourceContentcrc64;
       };
       static Response<Models::UploadBlockBlobFromUriResult> UploadFromUri(
@@ -3893,6 +4174,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         Nullable<DateTime> SourceIfUnmodifiedSince;
         ETag SourceIfMatch;
         ETag SourceIfNoneMatch;
+        Nullable<std::string> CopySourceAuthorization;
       };
       static Response<Models::StageBlockFromUriResult> StageBlockFromUri(
           Core::Http::_internal::HttpPipeline& pipeline,

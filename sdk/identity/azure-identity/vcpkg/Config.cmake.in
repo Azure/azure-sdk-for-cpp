@@ -4,7 +4,9 @@
 @PACKAGE_INIT@
 
 include(CMakeFindDependencyMacro)
-find_dependency(azure-core-cpp "1.4.0-beta.1")
+find_dependency(azure-core-cpp "1.4.0")
+
+find_dependency(OpenSSL)
 
 include("${CMAKE_CURRENT_LIST_DIR}/azure-identity-cppTargets.cmake")
 

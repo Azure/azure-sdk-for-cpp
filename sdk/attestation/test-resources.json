@@ -23,6 +23,25 @@
     "locationShortName": {
       "type": "string",
       "defaultValue": ""
+    },
+    "tenantId": {
+      "type": "string",
+      "defaultValue": "72f988bf-86f1-41af-91ab-2d7cd011db47",
+      "metadata": {
+        "description": "The tenant ID to which the application and resources belong."
+      }
+    },
+    "testApplicationId": {
+      "type": "string",
+      "metadata": {
+        "description": "The application client ID used to run tests."
+      }
+    },
+    "testApplicationSecret": {
+      "type": "string",
+      "metadata": {
+        "description": "The application client secret used to run tests."
+      }
     }
   },
   "variables": {
@@ -47,7 +66,7 @@
       "type": "Microsoft.Attestation/attestationProviders",
       "apiVersion": "2020-10-01",
       "name": "[variables('aadTenantName')]",
-      "location": "[parameters('location')]",
+      "location": "[parameters('location')]"
     },
     {
       "type": "Microsoft.Attestation/attestationProviders",
@@ -65,6 +84,18 @@
     "ATTESTATION_AAD_URL": {
       "type": "string",
       "value": "[variables('aadUri')]"
+    },
+    "AZURE_TENANT_ID": {
+      "type": "string",
+      "value": "[parameters('tenantId')]"
+    },
+    "AZURE_CLIENT_ID": {
+      "type": "string",
+      "value": "[parameters('testApplicationId')]"
+    },
+    "AZURE_CLIENT_SECRET": {
+      "type": "string",
+      "value": "[parameters('testApplicationSecret')]"
     }
   }
 }

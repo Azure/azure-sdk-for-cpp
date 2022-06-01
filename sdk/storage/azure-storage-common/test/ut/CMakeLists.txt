@@ -21,7 +21,7 @@ add_executable (
     test_base.cpp
     test_base.hpp
 )
-create_per_service_target_build(azure-storage-common-test storage)
+create_per_service_target_build(storage azure-storage-common-test)
 create_map_file(azure-storage-common-test azure-storage-common-test.map)
 
 if (MSVC)

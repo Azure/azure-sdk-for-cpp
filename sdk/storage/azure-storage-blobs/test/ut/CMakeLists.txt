@@ -18,6 +18,7 @@ add_executable (
     append_blob_client_test.hpp
     blob_container_client_test.cpp
     blob_container_client_test.hpp
+    blob_query_test.cpp
     blob_sas_test.cpp
     blob_service_client_test.cpp
     block_blob_client_test.cpp
@@ -32,7 +33,7 @@ add_executable (
     ${CMAKE_CURRENT_SOURCE_DIR}/../../../azure-storage-common/test/ut/test_base.hpp
 )
 
-create_per_service_target_build(azure-storage-blobs-test storage)
+create_per_service_target_build(storage azure-storage-blobs-test)
 
 create_map_file(azure-storage-blobs-test azure-storage-blobs-test.map)
 

@@ -5,6 +5,7 @@
 #include "azure/perf/program.hpp"
 
 #include <stdexcept>
+#include <string>
 #include <vector>
 
 #define GET_ARG(Name, Is)
@@ -20,12 +21,12 @@ argagg::parser_results Azure::Perf::Program::ArgParser::Parse(
   for (auto option : testOptions)
   {
     argParser.definitions.push_back(
-        {option.Name, option.Activators, option.DisplayMessage, option.expectedArgs});
+        {option.Name, option.Activators, option.DisplayMessage, option.ExpectedArgs});
   }
   for (auto option : optionsMetadata)
   {
     argParser.definitions.push_back(
-        {option.Name, option.Activators, option.DisplayMessage, option.expectedArgs});
+        {option.Name, option.Activators, option.DisplayMessage, option.ExpectedArgs});
   }
 
   // Will throw on fail
@@ -59,7 +60,7 @@ Azure::Perf::GlobalTestOptions Azure::Perf::Program::ArgParser::Parse(
   }
   if (parsedArgs["Insecure"])
   {
-    options.Insecure = parsedArgs["Insecure"].as<bool>();
+    options.Insecure = true;
   }
   if (parsedArgs["Iterations"])
   {
@@ -92,6 +93,15 @@ Azure::Perf::GlobalTestOptions Azure::Perf::Program::ArgParser::Parse(
   if (parsedArgs["Warmup"])
   {
     options.Warmup = parsedArgs["Warmup"];
+  }
+  if (parsedArgs["TestProxies"])
+  {
+    std::string proxy;
+    std::istringstream fullArg(parsedArgs["TestProxies"].as<std::string>());
+    while (std::getline(fullArg, proxy, ';'))
+    {
+      options.TestProxies.push_back(proxy);
+    }
   }
 
   return options;

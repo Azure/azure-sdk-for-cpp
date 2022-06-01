@@ -21,10 +21,11 @@ function(generate_documentation PROJECT_NAME PROJECT_VERSION)
         # Setting the INLINE_SOURCES tag to YES will include the body of functions,
         # classes and enums directly into the documentation.
         set(DOXYGEN_INLINE_SOURCES NO)
-        # Skip generating docs for json, test and private files.
+        # Skip generating docs for json, test, samples, and private files.
         set(DOXYGEN_EXCLUDE_PATTERNS
             json.hpp
             test
+            samples
             *private*)
         # Skip documenting internal and private symbols (all from ::_detail/_::internal namespaces)
         set(DOXYGEN_EXCLUDE_SYMBOLS _detail _internal)

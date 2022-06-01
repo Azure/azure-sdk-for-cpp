@@ -11,10 +11,6 @@ add_executable (
   sample6-wrap-unwrap
   sample6_wrap_unwrap.cpp
 )
-create_per_service_target_build(sample6-wrap-unwrap keyvault)
-
-# Add the sample to be run on CI. 
-# CI pipeline reads the {service}-samples.txt and runs the binaries listed there.
-file(APPEND ${CMAKE_BINARY_DIR}/keyvault-samples.txt "${CMAKE_CURRENT_BINARY_DIR}/sample6-wrap-unwrap\n")
+create_per_service_target_build_for_sample(keyvault sample6-wrap-unwrap)
 
 target_link_libraries(sample6-wrap-unwrap PRIVATE azure-security-keyvault-keys azure-identity get-env-helper)

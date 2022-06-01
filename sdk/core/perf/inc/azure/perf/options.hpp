@@ -97,6 +97,19 @@ namespace Azure { namespace Perf {
     int Warmup = 5;
 
     /**
+     * @brief Redirect test requests through this server proxy.
+     *
+     * @details More than one proxy address can be added using semicolon separated format. Do not
+     * use spaces after a semicolon as it would be considered as another command argument. When
+     * multiple proxies are set, each server is assigned to a performance test run on round-robin.
+     *
+     * @note Only the requests from the test are redirected. Any request from set up won't be
+     * redirected.
+     *
+     */
+    std::vector<std::string> TestProxies;
+
+    /**
      * @brief Create an array of the performance framework options.
      *
      * @return An array of the options as #Azure::Perf::TestOption.

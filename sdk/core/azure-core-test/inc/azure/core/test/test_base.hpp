@@ -7,15 +7,15 @@
 
 #include <gtest/gtest.h>
 
+#include "azure/core/test/interceptor_manager.hpp"
+#include "azure/core/test/network_models.hpp"
+#include "azure/core/test/test_context_manager.hpp"
 #include <azure/core/credentials/credentials.hpp>
 #include <azure/core/credentials/token_credential_options.hpp>
 #include <azure/core/internal/client_options.hpp>
 #include <azure/core/internal/diagnostics/log.hpp>
 #include <azure/core/internal/environment.hpp>
-
-#include "azure/core/test/interceptor_manager.hpp"
-#include "azure/core/test/network_models.hpp"
-#include "azure/core/test/test_context_manager.hpp"
+#include <azure/identity/client_secret_credential.hpp>
 
 #include <chrono>
 #include <memory>
@@ -51,11 +51,27 @@ namespace Azure { namespace Core { namespace Test {
       // Set up client options depending on the test-mode
       if (m_testContext.IsPlaybackMode())
       {
+        // Playback mode uses:
+        //  - playback transport adapter to read and return payload from json files
         options.Transport.Transport = m_interceptor->GetPlaybackTransport();
       }
       else if (!m_testContext.IsLiveMode())
       {
+        // Record mode uses:
+        //  - curl or winhttp transport adapter
+        //  - Recording policy. Intercept server responses to create json files
+        // AZURE_TEST_RECORDING_DIR is exported by CMAKE
         options.PerRetryPolicies.push_back(m_interceptor->GetRecordPolicy());
+      }
+    }
+
+    void PrepareClientCredential(std::shared_ptr<Core::Credentials::TokenCredential>& credential)
+    {
+      if (m_testContext.IsPlaybackMode())
+      {
+        // Playback mode uses:
+        //  - never-expiring test credential to never require a token
+        credential = m_interceptor->GetTestCredential();
       }
     }
 
@@ -68,22 +84,8 @@ namespace Azure { namespace Core { namespace Test {
         Azure::Core::_internal::ClientOptions& options)
     {
       // Set up client options depending on the test-mode
-      if (m_testContext.IsPlaybackMode())
-      {
-        // Playback mode uses:
-        //  - playback transport adapter to read and return payload from json files
-        //  - never-expiring test credential to never require a token
-        options.Transport.Transport = m_interceptor->GetPlaybackTransport();
-        credential = m_interceptor->GetTestCredential();
-      }
-      else if (!m_testContext.IsLiveMode())
-      {
-        // Record mode uses:
-        //  - curl or winhttp transport adapter
-        //  - Recording policy. Intercept server responses to create json files
-        // AZURE_TEST_RECORDING_DIR is exported by CMAKE
-        options.PerRetryPolicies.push_back(m_interceptor->GetRecordPolicy());
-      }
+      PrepareOptions(options);
+      PrepareClientCredential(credential);
     }
 
     std::string Sanitize(std::string const& src)
@@ -204,6 +206,24 @@ namespace Azure { namespace Core { namespace Test {
       T options;
       PrepareOptions(options);
       return options;
+    }
+
+    std::shared_ptr<Azure::Core::Credentials::TokenCredential> CreateClientSecretCredential(
+        std::string const& tenantId,
+        std::string const& clientId,
+        std::string const& clientSecret)
+    {
+      if (m_testContext.IsPlaybackMode())
+      {
+        // Playback mode uses:
+        //  - never-expiring test credential to never require a token
+        return m_interceptor->GetTestCredential();
+      }
+      else
+      {
+        return std::make_shared<Azure::Identity::ClientSecretCredential>(
+            tenantId, clientId, clientSecret);
+      }
     }
 
     // Updates the time when test is on playback
@@ -338,6 +358,9 @@ namespace Azure { namespace Core { namespace Test {
 
     /**
      * @brief Run after each test
+     *
+     * @note: If a test case overrides the TearDown method, it MUST call the `TestBase::TearDown`
+     * method, or test recordings will fail to be generated.
      *
      */
     void TearDown() override;

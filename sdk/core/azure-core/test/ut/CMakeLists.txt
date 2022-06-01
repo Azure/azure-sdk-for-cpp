@@ -47,7 +47,9 @@ add_executable (
     ${CURL_SESSION_TESTS}
     datetime_test.cpp
     environment_log_level_listener_test.cpp
+    extendable_enumeration_test.cpp
     etag_test.cpp
+    exception_test.cpp
     http_test.cpp
     http_test.hpp
     http_method_test.cpp
@@ -64,9 +66,11 @@ add_executable (
     operation_status_test.cpp
     pipeline_test.cpp
     policy_test.cpp
+    request_activity_policy_test.cpp
     request_id_policy_test.cpp
     response_t_test.cpp
     retry_policy_test.cpp
+    service_tracing_test.cpp
     sha_test.cpp
     simplified_header_test.cpp
     string_test.cpp
@@ -76,7 +80,6 @@ add_executable (
     transport_adapter_implementation_test.cpp
     url_test.cpp
     uuid_test.cpp
-    exception_test.cpp
 )
 
 if (MSVC)

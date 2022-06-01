@@ -4,7 +4,8 @@
 @PACKAGE_INIT@
 
 include(CMakeFindDependencyMacro)
-find_dependency(azure-core-cpp "1.2.0")
+find_dependency(azure-core-cpp "1.5.0")
+find_dependency(OpenSSL)
 
 include("${CMAKE_CURRENT_LIST_DIR}/azure-security-attestation-cppTargets.cmake")
 

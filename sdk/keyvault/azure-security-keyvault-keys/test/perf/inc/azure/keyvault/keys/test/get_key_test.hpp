@@ -12,7 +12,7 @@
 #include <azure/perf.hpp>
 
 #include <azure/identity.hpp>
-#include <azure/keyvault/keyvault_keys.hpp>
+#include <azure/keyvault/keys.hpp>
 
 #include <memory>
 #include <string>
@@ -48,8 +48,10 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys { nam
       m_secret = m_options.GetMandatoryOption<std::string>("Secret");
       m_credential = std::make_shared<Azure::Identity::ClientSecretCredential>(
           m_tenantId, m_clientId, m_secret);
-      m_client
-          = std::make_unique<Azure::Security::KeyVault::Keys::KeyClient>(m_vaultUrl, m_credential);
+      m_client = std::make_unique<Azure::Security::KeyVault::Keys::KeyClient>(
+          m_vaultUrl,
+          m_credential,
+          InitClientOptions<Azure::Security::KeyVault::Keys::KeyClientOptions>());
     }
 
     /**

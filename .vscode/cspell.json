@@ -11,6 +11,7 @@
     "*.exe",
     "*.a",
     "*.lib",
+    ".github/CODEOWNERS",
     ".gitignore",
     ".vscode/cspell.json",
     "eng/common/**/*",
@@ -18,6 +19,7 @@
     "Dockerfile",
     "*nlohmann-json*",
     "eng/docs/api/assets/**/*",
+    "eng/CredScanSuppression.json",
     "**/test/ut/recordings/*.json"
   ],
   // * Unless configured otherwise, these words are not case sensitive
@@ -41,9 +43,11 @@
     "cuse",
     "CUSEUAP",
     "DCMAKE",
+    "DDISABLE",
     "deserializers",
     "Deserializes",
     "DFETCH",
+    "DMSVC",
     "docfx",
     "DPAPI",
     "DRUN",
@@ -66,6 +70,8 @@
     "Intel",
     "itfactor",
     "iusg",
+    "jepio",
+    "Jeremi",
     "Kirilov",
     "lcov",
     "LIBCMTD",
@@ -78,6 +84,7 @@
     "ncus",
     "Niels",
     "nlohmann",
+    "nostd",
     "noclean",
     "NOCLOSE",
     "NOCRLF",
@@ -86,8 +93,11 @@
     "northcentralus",
     "NTSTATUS",
     "okhttp",
+    "opentelemetry",
+    "otel",
     "PBYTE",
     "pdbs",
+    "Piotrowski",
     "PUCHAR",
     "pwsh",
     "Ragrs",
@@ -136,6 +146,24 @@
         "lcov",
         "iname",
         "mspremier"
+      ]
+    },
+    {
+      "filename": "**/eng/**",
+      "words": [
+        "TEAMPROJECTID",
+        "issecret",
+        "PSScriptRoot",
+        "BUILDID",
+        "cppvcpkgcache",
+        "cmakegenerate",
+        "cmakesourcegenerate"
+      ]
+    },
+    {
+      "filename": "**/sdk/attestation/**",
+      "words": [
+        "tpm"
       ]
     },
     {

@@ -14,6 +14,7 @@
 #include "azure/core/http/policies/policy.hpp"
 #include "azure/core/http/transport.hpp"
 #include "azure/core/internal/client_options.hpp"
+#include "azure/core/internal/input_sanitizer.hpp"
 
 #include <memory>
 #include <vector>
@@ -76,16 +77,20 @@ namespace Azure { namespace Core { namespace Http { namespace _internal {
         std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>>&& perRetryPolicies,
         std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>>&& perCallPolicies)
     {
+      Azure::Core::_internal::InputSanitizer inputSanitizer(
+          clientOptions.Log.AllowedHttpQueryParameters, clientOptions.Log.AllowedHttpHeaders);
+
       auto const& perCallClientPolicies = clientOptions.PerOperationPolicies;
       auto const& perRetryClientPolicies = clientOptions.PerRetryPolicies;
-      // Adding 5 for:
+      // Adding 6 for:
       // - TelemetryPolicy
       // - RequestIdPolicy
       // - RetryPolicy
       // - LogPolicy
+      // - RequestActivityPolicy
       // - TransportPolicy
       auto pipelineSize = perCallClientPolicies.size() + perRetryClientPolicies.size()
-          + perRetryPolicies.size() + perCallPolicies.size() + 5;
+          + perRetryPolicies.size() + perCallPolicies.size() + 6;
 
       m_policies.reserve(pipelineSize);
 
@@ -98,6 +103,7 @@ namespace Azure { namespace Core { namespace Http { namespace _internal {
       // Request Id
       m_policies.emplace_back(
           std::make_unique<Azure::Core::Http::Policies::_internal::RequestIdPolicy>());
+
       // Telemetry
       m_policies.emplace_back(
           std::make_unique<Azure::Core::Http::Policies::_internal::TelemetryPolicy>(
@@ -123,6 +129,11 @@ namespace Azure { namespace Core { namespace Http { namespace _internal {
       {
         m_policies.emplace_back(policy->Clone());
       }
+
+      // Add a request activity policy which will generate distributed traces for the pipeline.
+      m_policies.emplace_back(
+          std::make_unique<Azure::Core::Http::Policies::_internal::RequestActivityPolicy>(
+              inputSanitizer));
 
       // logging - won't update request
       m_policies.emplace_back(

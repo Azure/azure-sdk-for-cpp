@@ -4,13 +4,26 @@
 
 ### Features Added
 
-- Bumped up SAS token service version to `2020-08-04`.
-
 ### Breaking Changes
 
 ### Bugs Fixed
 
+- Fixed a bug where text of XML element cannot be empty.
+
 ### Other Changes
+
+## 12.2.3 (2022-04-06)
+
+### Bugs Fixed
+
+- Fixed a bug where we got error when XML request body is too big.
+
+## 12.2.2 (2022-03-09)
+
+### Features Added
+
+- Added `SetImmutabilityPolicy` permission for account SAS.
+- Bumped up SAS token service version to `2020-08-04`.
 
 ## 12.2.1 (2022-02-14)
 

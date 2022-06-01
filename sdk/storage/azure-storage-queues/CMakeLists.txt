@@ -1,6 +1,10 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # SPDX-License-Identifier: MIT
 
+list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/../../../cmake-modules")
+include(AzureVcpkg)
+az_vcpkg_integrate()
+
 cmake_minimum_required (VERSION 3.13)
 project(azure-storage-queues LANGUAGES CXX)
 
@@ -9,9 +13,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED True)
 set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
 
 option(FETCH_SOURCE_DEPS "build source dependencies" OFF)
-list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/../../../cmake-modules")
 
-include(AzureVcpkg)
 include(AzureVersion)
 include(AzureCodeCoverage)
 include(AzureTransportAdapters)
@@ -19,8 +21,6 @@ include(AzureDoxygen)
 include(AzureGlobalCompileOptions)
 include(AzureConfigRTTI)
 include(AzureBuildTargetForCI)
-
-az_vcpkg_integrate()
 
 if(FETCH_SOURCE_DEPS)
     set(AZ_ALL_LIBRARIES ON)
@@ -32,14 +32,14 @@ if(FETCH_SOURCE_DEPS)
         add_subdirectory(${oneFolder} EXCLUDE_FROM_ALL)
     endforeach()
 elseif(NOT AZ_ALL_LIBRARIES)
-  find_package(azure-storage-common-cpp "12.2.1" CONFIG QUIET)
+  find_package(azure-storage-common-cpp "12.2.3" CONFIG QUIET)
   if(NOT azure-storage-common-cpp_FOUND)
-    find_package(azure-storage-common-cpp "12.2.1" REQUIRED)
+    find_package(azure-storage-common-cpp "12.2.3" REQUIRED)
   endif()
 endif()
 
 set(
-  AZURE_STORAGE_QUEUE_HEADER
+  AZURE_STORAGE_QUEUES_HEADER
     inc/azure/storage/queues.hpp
     inc/azure/storage/queues/dll_import_export.hpp
     inc/azure/storage/queues/queue_client.hpp
@@ -48,10 +48,11 @@ set(
     inc/azure/storage/queues/queue_sas_builder.hpp
     inc/azure/storage/queues/queue_service_client.hpp
     inc/azure/storage/queues/rest_client.hpp
+    inc/azure/storage/queues/rtti.hpp
 )
 
 set(
-  AZURE_STORAGE_QUEUE_SOURCE
+  AZURE_STORAGE_QUEUES_SOURCE
     src/private/package_version.hpp
     src/queue_client.cpp
     src/queue_options.cpp
@@ -61,8 +62,8 @@ set(
     src/rest_client.cpp
 )
 
-add_library(azure-storage-queues ${AZURE_STORAGE_QUEUE_HEADER} ${AZURE_STORAGE_QUEUE_SOURCE})
-create_per_service_target_build(azure-storage-queues storage)
+add_library(azure-storage-queues ${AZURE_STORAGE_QUEUES_HEADER} ${AZURE_STORAGE_QUEUES_SOURCE})
+create_per_service_target_build(storage azure-storage-queues)
 # make sure that users can consume the project as a library.
 add_library(Azure::azure-storage-queues ALIAS azure-storage-queues)
 

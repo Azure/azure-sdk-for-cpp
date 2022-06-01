@@ -9,7 +9,7 @@
 
 using namespace Azure::Security::KeyVault::Certificates;
 
-Azure::Response<KeyVaultCertificateWithPolicy> CreateCertificateOperation::PollUntilDoneInternal(
+Azure::Response<CertificateOperationProperties> CreateCertificateOperation::PollUntilDoneInternal(
     std::chrono::milliseconds period,
     Azure::Core::Context& context)
 {
@@ -23,19 +23,7 @@ Azure::Response<KeyVaultCertificateWithPolicy> CreateCertificateOperation::PollU
     std::this_thread::sleep_for(period);
   }
 
-  if (!m_properties.Error)
-  {
-    auto response = m_certificateClient->GetCertificate(m_properties.Name);
-    m_value = response.Value;
-    m_rawResponse = std::move(response.RawResponse);
-  }
-  else
-  {
-    // the raw response here is from the pending operation thus contains the Properties.
-    throw Azure::Core::RequestFailedException(m_rawResponse);
-  }
-
-  return Azure::Response<KeyVaultCertificateWithPolicy>(
+  return Azure::Response<CertificateOperationProperties>(
       m_value, std::make_unique<Azure::Core::Http::RawResponse>(*m_rawResponse));
 }
 
@@ -71,7 +59,7 @@ std::unique_ptr<Azure::Core::Http::RawResponse> CreateCertificateOperation::Poll
 
   if (m_status == Azure::Core::OperationStatus::Succeeded)
   {
-    m_properties = _detail::CertificateOperationSerializer::Deserialize(*rawResponse);
+    m_value = _detail::CertificateOperationSerializer::Deserialize(*rawResponse);
   }
 
   return rawResponse;
@@ -79,14 +67,14 @@ std::unique_ptr<Azure::Core::Http::RawResponse> CreateCertificateOperation::Poll
 
 CreateCertificateOperation::CreateCertificateOperation(
     std::shared_ptr<CertificateClient> certificateClient,
-    Azure::Response<KeyVaultCertificateWithPolicy> response)
+    Azure::Response<CertificateOperationProperties> response)
     : m_certificateClient(certificateClient)
 {
   m_value = response.Value;
   m_rawResponse = std::move(response.RawResponse);
-  m_continuationToken = m_value.Name();
+  m_continuationToken = m_value.Name;
 
-  if (!m_value.Name().empty())
+  if (!m_value.Name.empty())
   {
     m_status = Azure::Core::OperationStatus::Succeeded;
   }
@@ -113,26 +101,26 @@ void CreateCertificateOperation::Cancel(Azure::Core::Context const& context)
 {
   auto response
       = m_certificateClient->CancelPendingCertificateOperation(m_continuationToken, context);
-  m_properties = response.Value;
+  m_value = response.Value;
 }
 void CreateCertificateOperation::Delete(Azure::Core::Context const& context)
 {
   auto response
       = m_certificateClient->DeletePendingCertificateOperation(m_continuationToken, context);
-  m_properties = response.Value;
+  m_value = response.Value;
 }
 
 bool CreateCertificateOperation::IsCompleted() const
 {
   bool completed = false;
 
-  if (m_properties.Status
-      && (m_properties.Status.Value() == _detail::CompletedValue
-          || m_properties.Status.Value() == _detail::DeletedValue))
+  if (m_value.Status
+      && (m_value.Status.Value() == _detail::CompletedValue
+          || m_value.Status.Value() == _detail::DeletedValue))
   {
     completed = true;
   }
-  if (m_properties.Error.HasValue())
+  if (m_value.Error.HasValue())
   {
     completed = true;
   }

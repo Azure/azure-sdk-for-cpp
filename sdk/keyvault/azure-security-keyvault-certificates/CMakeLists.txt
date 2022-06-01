@@ -52,32 +52,37 @@ set(
     inc/azure/keyvault/certificates/certificate_client_models.hpp
     inc/azure/keyvault/certificates/certificate_client_options.hpp
     inc/azure/keyvault/certificates/certificate_client_operations.hpp
+    inc/azure/keyvault/certificates/dll_import_export.hpp
+    inc/azure/keyvault/certificates/rtti.hpp
 )
 
 set(
   AZURE_KEYVAULT_CERTIFICATES_SOURCE
+    src/private/certificate_constants.hpp
+    src/private/certificate_key_usage.hpp
+    src/private/certificate_serializers.hpp
+    src/private/keyvault_certificates_common_request.hpp
+    src/private/package_version.hpp
     src/certificate_client.cpp
-    src/certificate_serializers.cpp
-    src/keyvault_certificates_common_request.cpp
     src/certificate_client_operations.cpp
     src/certificate_client_paged_response.cpp
+    src/certificate_serializers.cpp
+    src/keyvault_certificates_common_request.cpp
 )
 
 add_library(azure-security-keyvault-certificates
   ${AZURE_KEYVAULT_CERTIFICATES_HEADER} ${AZURE_KEYVAULT_CERTIFICATES_SOURCE}
 )
 add_library(Azure::azure-security-keyvault-certificates ALIAS azure-security-keyvault-certificates)
-create_per_service_target_build(azure-security-keyvault-certificates keyvault)
+create_per_service_target_build(keyvault azure-security-keyvault-certificates)
 
 target_include_directories(
   azure-security-keyvault-certificates
     PUBLIC
       $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/inc>
-      $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/../../../sdk/core/inc>
-      $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/build/sdk/core/azure-core/inc>
       $<INSTALL_INTERFACE:include>
 )
-message($<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/inc)
+
 # Include shared source code
 # NOTE: Use shared-code only within .cpp files. DO NEVER consume the shared-code from header files.
 target_include_directories(

@@ -12,7 +12,7 @@
 #include "../src/private/certificate_serializers.hpp"
 #include <azure/core/test/test_base.hpp>
 #include <azure/identity/client_secret_credential.hpp>
-#include <azure/keyvault/keyvault_certificates.hpp>
+#include <azure/keyvault/certificates.hpp>
 #include <chrono>
 #include <thread>
 
@@ -176,7 +176,13 @@ namespace Azure {
       options.Policy.LifetimeActions.emplace_back(action);
 
       auto response = client.StartCreateCertificate(name, options);
-      auto result = response.PollUntilDone(defaultWait);
+      auto pollResult = response.PollUntilDone(defaultWait);
+      EXPECT_EQ(pollResult.Value.Name, name);
+      EXPECT_TRUE(pollResult.Value.Status.HasValue());
+      EXPECT_EQ(pollResult.Value.Status.Value(), "completed");
+      EXPECT_EQ(pollResult.RawResponse->GetStatusCode(), Azure::Core::Http::HttpStatusCode::Ok);
+      // get the certificate
+      auto result = client.GetCertificate(name);
 
       EXPECT_EQ(result.Value.Name(), options.Properties.Name);
       EXPECT_EQ(result.Value.Properties.Name, options.Properties.Name);

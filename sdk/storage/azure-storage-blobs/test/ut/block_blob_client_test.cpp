@@ -9,7 +9,6 @@
 
 #include <azure/core/cryptography/hash.hpp>
 #include <azure/storage/common/crypt.hpp>
-#include <azure/storage/common/internal/file_io.hpp>
 
 namespace Azure { namespace Storage { namespace Blobs { namespace Models {
 
@@ -191,10 +190,7 @@ namespace Azure { namespace Storage { namespace Test {
       }
       {
         const std::string tempFilename = "file" + testName;
-        {
-          Azure::Storage::_internal::FileWriter fileWriter(tempFilename);
-          fileWriter.Write(blobContent.data(), blobContent.size(), 0);
-        }
+        WriteFile(tempFilename, blobContent);
         client.UploadFrom(tempFilename, options);
         EXPECT_EQ(client.GetTags().Value, tags);
         client.Delete();
@@ -1122,9 +1118,7 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_NO_THROW(blockBlobClient.Delete());
 
     std::string emptyFilename(testName);
-    {
-      _internal::FileWriter writer(emptyFilename);
-    }
+    WriteFile(emptyFilename, std::vector<uint8_t>{});
     blockBlobClient.UploadFrom(emptyFilename);
     EXPECT_NO_THROW(blockBlobClient.Delete());
 
@@ -1281,7 +1275,7 @@ namespace Azure { namespace Storage { namespace Test {
     SetOptions();
     UploadBlockBlob::ParamType const& p(GetParam());
     auto const blobSize = p.Size;
-    std::vector<uint8_t> blobContent(static_cast<size_t>(8_MB), 'x');
+    std::vector<uint8_t> blobContent(static_cast<size_t>(p.Size), 'x');
 
     Azure::Storage::Blobs::UploadBlockBlobFromOptions options;
     options.TransferOptions.ChunkSize = 1_MB;
@@ -1292,10 +1286,7 @@ namespace Azure { namespace Storage { namespace Test {
     options.AccessTier = m_blobUploadOptions.AccessTier;
 
     std::string tempFilename(testName);
-    {
-      Azure::Storage::_internal::FileWriter fileWriter(tempFilename);
-      fileWriter.Write(blobContent.data(), static_cast<size_t>(blobSize), 0);
-    }
+    WriteFile(tempFilename, blobContent);
     auto res = blockBlobClient.UploadFrom(tempFilename, options);
     EXPECT_TRUE(res.Value.ETag.HasValue());
     EXPECT_TRUE(IsValidTime(res.Value.LastModified));
@@ -1931,6 +1922,24 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_NO_THROW(blobClient.GetTags(getTagsOptions));
 
     leaseClient.Release();
+  }
+
+  TEST_F(BlockBlobClientTest, MaximumBlocks)
+  {
+    auto const testName(GetTestName());
+    auto blobClient = GetBlockBlobClient(testName);
+
+    const std::vector<uint8_t> content(static_cast<size_t>(1), 'a');
+    const std::string blockId = Base64EncodeText(std::string(64, '0'));
+    auto blockContent = Azure::Core::IO::MemoryBodyStream(content.data(), content.size());
+    blobClient.StageBlock(blockId, blockContent);
+
+    std::vector<std::string> blockIds(50000, blockId);
+    EXPECT_NO_THROW(blobClient.CommitBlockList(blockIds));
+
+    EXPECT_EQ(
+        blobClient.GetProperties().Value.BlobSize,
+        static_cast<int64_t>(blockIds.size() * content.size()));
   }
 
 }}} // namespace Azure::Storage::Test
