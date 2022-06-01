@@ -1,6 +1,6 @@
 {
   "name": "azure-security-attestation-cpp",
-  "version-semver": "1.0.0-beta.1",
+  "version": "1.0.0-beta.1",
   "dependencies": [
     {
       "name": "azure-core-cpp"

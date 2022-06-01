@@ -322,6 +322,8 @@ namespace Azure { namespace Storage { namespace Blobs {
     protocolLayerOptions.IfMatch = options.AccessConditions.IfMatch;
     protocolLayerOptions.IfNoneMatch = options.AccessConditions.IfNoneMatch;
     protocolLayerOptions.IfTags = options.AccessConditions.TagConditions;
+    protocolLayerOptions.Marker = options.ContinuationToken;
+    protocolLayerOptions.MaxResults = options.PageSizeHint;
     auto response = _detail::PageBlobClient::GetPageRanges(
         *m_pipeline, m_blobUrl, protocolLayerOptions, _internal::WithReplicaStatus(context));
 
@@ -333,8 +335,8 @@ namespace Azure { namespace Storage { namespace Blobs {
     pagedResponse.PageRanges = std::move(response.Value.PageRanges);
     pagedResponse.m_pageBlobClient = std::make_shared<PageBlobClient>(*this);
     pagedResponse.m_operationOptions = options;
-    pagedResponse.CurrentPageToken = std::string();
-    pagedResponse.NextPageToken = std::string();
+    pagedResponse.CurrentPageToken = options.ContinuationToken.ValueOr(std::string());
+    pagedResponse.NextPageToken = response.Value.ContinuationToken;
     pagedResponse.RawResponse = std::move(response.RawResponse);
 
     return pagedResponse;
@@ -363,6 +365,8 @@ namespace Azure { namespace Storage { namespace Blobs {
     protocolLayerOptions.IfMatch = options.AccessConditions.IfMatch;
     protocolLayerOptions.IfNoneMatch = options.AccessConditions.IfNoneMatch;
     protocolLayerOptions.IfTags = options.AccessConditions.TagConditions;
+    protocolLayerOptions.Marker = options.ContinuationToken;
+    protocolLayerOptions.MaxResults = options.PageSizeHint;
     auto response = _detail::PageBlobClient::GetPageRangesDiff(
         *m_pipeline, m_blobUrl, protocolLayerOptions, _internal::WithReplicaStatus(context));
 
@@ -376,8 +380,8 @@ namespace Azure { namespace Storage { namespace Blobs {
     pagedResponse.m_pageBlobClient = std::make_shared<PageBlobClient>(*this);
     pagedResponse.m_operationOptions = options;
     pagedResponse.m_previousSnapshot = previousSnapshot;
-    pagedResponse.CurrentPageToken = std::string();
-    pagedResponse.NextPageToken = std::string();
+    pagedResponse.CurrentPageToken = options.ContinuationToken.ValueOr(std::string());
+    pagedResponse.NextPageToken = response.Value.ContinuationToken;
     pagedResponse.RawResponse = std::move(response.RawResponse);
 
     return pagedResponse;
@@ -406,6 +410,8 @@ namespace Azure { namespace Storage { namespace Blobs {
     protocolLayerOptions.IfMatch = options.AccessConditions.IfMatch;
     protocolLayerOptions.IfNoneMatch = options.AccessConditions.IfNoneMatch;
     protocolLayerOptions.IfTags = options.AccessConditions.TagConditions;
+    protocolLayerOptions.Marker = options.ContinuationToken;
+    protocolLayerOptions.MaxResults = options.PageSizeHint;
     auto response = _detail::PageBlobClient::GetPageRangesDiff(
         *m_pipeline, m_blobUrl, protocolLayerOptions, _internal::WithReplicaStatus(context));
 
@@ -419,8 +425,8 @@ namespace Azure { namespace Storage { namespace Blobs {
     pagedResponse.m_pageBlobClient = std::make_shared<PageBlobClient>(*this);
     pagedResponse.m_operationOptions = options;
     pagedResponse.m_previousSnapshotUrl = previousSnapshotUrl;
-    pagedResponse.CurrentPageToken = std::string();
-    pagedResponse.NextPageToken = std::string();
+    pagedResponse.CurrentPageToken = options.ContinuationToken.ValueOr(std::string());
+    pagedResponse.NextPageToken = response.Value.ContinuationToken;
     pagedResponse.RawResponse = std::move(response.RawResponse);
 
     return pagedResponse;

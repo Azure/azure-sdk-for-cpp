@@ -48,31 +48,32 @@ endif()
 set(
   AZURE_SECURITY_KEYVAULT_SECRETS_HEADER
     inc/azure/keyvault/secrets/dll_import_export.hpp
-    inc/azure/keyvault/secrets/keyvault_secret.hpp
-    inc/azure/keyvault/secrets/keyvault_secret_properties.hpp
-    inc/azure/keyvault/secrets/secret_client.hpp
-    inc/azure/keyvault/keyvault_secrets.hpp
-    inc/azure/keyvault/secrets/keyvault_deleted_secret.hpp
-    inc/azure/keyvault/secrets/keyvault_secret_paged_response.hpp
     inc/azure/keyvault/secrets/keyvault_backup_secret.hpp
+    inc/azure/keyvault/secrets/keyvault_deleted_secret.hpp
     inc/azure/keyvault/secrets/keyvault_operations.hpp
     inc/azure/keyvault/secrets/keyvault_options.hpp
+    inc/azure/keyvault/secrets/keyvault_secret.hpp
+    inc/azure/keyvault/secrets/keyvault_secret_paged_response.hpp
+    inc/azure/keyvault/secrets/keyvault_secret_properties.hpp
+    inc/azure/keyvault/secrets/rtti.hpp
+    inc/azure/keyvault/secrets/secret_client.hpp
+    inc/azure/keyvault/secrets.hpp
 )
 
 set(
   AZURE_SECURITY_KEYVAULT_SECRETS_SOURCE
-    src/private/package_version.hpp
     src/private/keyvault_protocol.hpp
+    src/private/keyvault_secrets_common_request.hpp
+    src/private/package_version.hpp
     src/private/secret_constants.hpp
     src/private/secret_serializers.hpp
-    src/private/keyvault_secrets_common_request.hpp
-    src/keyvault_protocol.cpp
-    src/secret_client.cpp
-    src/secret_serializers.cpp
     src/keyvault_operations.cpp
+    src/keyvault_protocol.cpp
     src/keyvault_secret_paged_response.cpp
     src/keyvault_secret_properties.cpp
     src/keyvault_secrets_common_request.cpp
+    src/secret_client.cpp
+    src/secret_serializers.cpp
 )
 
 add_library(azure-security-keyvault-secrets ${AZURE_SECURITY_KEYVAULT_SECRETS_HEADER} ${AZURE_SECURITY_KEYVAULT_SECRETS_SOURCE})
@@ -83,8 +84,6 @@ target_include_directories(
   azure-security-keyvault-secrets
     PUBLIC
       $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/inc>
-      $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/../../../sdk/core/inc>
-      $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/build/sdk/core/azure-core/inc>
       $<INSTALL_INTERFACE:include>
 )
 

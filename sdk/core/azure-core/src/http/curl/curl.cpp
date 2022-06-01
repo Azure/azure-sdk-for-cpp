@@ -1225,7 +1225,7 @@ inline std::string GetConnectionKey(std::string const& host, CurlTransportOption
 {
   std::string key(host);
   key.append(!options.CAInfo.empty() ? options.CAInfo : "0");
-  key.append(!options.Proxy.empty() ? options.Proxy : "0");
+  key.append(options.Proxy ? (options.Proxy->empty() ? "NoProxy" : options.Proxy.Value()) : "0");
   key.append(!options.SslOptions.EnableCertificateRevocationListCheck ? "1" : "0");
   key.append(options.SslVerifyPeer ? "1" : "0");
   key.append(options.NoSignal ? "1" : "0");
@@ -1356,13 +1356,13 @@ std::unique_ptr<CurlNetworkConnection> CurlConnectionPool::ExtractOrCreateCurlCo
   /******************** Curl handle options apply to all connections created
    * The keepAlive option is managed by the session directly.
    */
-  if (!options.Proxy.empty())
+  if (options.Proxy)
   {
-    if (!SetLibcurlOption(newHandle, CURLOPT_PROXY, options.Proxy.c_str(), &result))
+    if (!SetLibcurlOption(newHandle, CURLOPT_PROXY, options.Proxy->c_str(), &result))
     {
       throw Azure::Core::Http::TransportException(
           _detail::DefaultFailedToGetNewConnectionTemplate + hostDisplayName
-          + ". Failed to set proxy to:" + options.Proxy + ". "
+          + ". Failed to set proxy to:" + options.Proxy.Value() + ". "
           + std::string(curl_easy_strerror(result)));
     }
   }

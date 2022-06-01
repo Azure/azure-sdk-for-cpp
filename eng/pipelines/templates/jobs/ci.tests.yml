@@ -20,6 +20,8 @@ parameters:
   - name: CoverageEnabled
     type: boolean
     default: true
+    # Matrix generation:
+    # https://github.com/Azure/azure-sdk-tools/blob/main/eng/common/scripts/job-matrix/README.md
   - name: Matrix
     type: string
   - name: LineCoverageTarget

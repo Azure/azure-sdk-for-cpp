@@ -6,7 +6,7 @@
  * management certificates from an Isolated mode attestation service instance.
  *
  * Remember that when an attestation service instance is in isolated mode, the service is configured
- * with a set of X.509 certificates. The GetPolicyManagementCertificates API returns a list of the
+ * with a set of X.509 certificates. The GetIsolatedModeCertificates API returns a list of the
  * existing certificates.
  *
  * @remark The following environment variables must be set before running the sample.
@@ -45,14 +45,12 @@ int main()
     // create an administration client
     auto const credential = std::make_shared<Azure::Identity::ClientSecretCredential>(
         GetEnv("AZURE_TENANT_ID"), GetEnv("AZURE_CLIENT_ID"), GetEnv("AZURE_CLIENT_SECRET"));
-    AttestationAdministrationClient adminClient(GetEnv("ATTESTATION_ISOLATED_URL"), credential);
-
-    // Retrieve attestation response validation collateral before calling into the service.
-    adminClient.RetrieveResponseValidationCollateral();
+    AttestationAdministrationClient adminClient(
+        AttestationAdministrationClient::Create(GetEnv("ATTESTATION_ISOLATED_URL"), credential));
 
     // Retrieve the SGX Attestation Policy from this attestation service instance.
-    Azure::Response<AttestationToken<PolicyCertificateListResult>> const policyCertificates
-        = adminClient.GetPolicyManagementCertificates();
+    Azure::Response<AttestationToken<IsolatedModeCertificateListResult>> const policyCertificates
+        = adminClient.GetIsolatedModeCertificates();
 
     std::cout << "There are " << policyCertificates.Value.Body.Certificates.size()
               << " certificates configured on this instance." << std::endl;

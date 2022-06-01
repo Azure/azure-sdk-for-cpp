@@ -9,9 +9,9 @@ urlFragment: attestation-samples
 
 ---
 
-# Policy Management Certificate Samples for the Microsoft Azure Attestation client library for C++
+# Isolated Mode Certificate Samples for the Microsoft Azure Attestation client library for C++
 
-These code samples show how to enumerate, add and remove attestation policy management certificates using the Attestation client library.
+These code samples show how to enumerate, add and remove isolated mode management certificates using the Attestation client library.
 
 ## Sample Requirements
 
@@ -24,7 +24,7 @@ variables have been set by the user:
 ATTESTATION_ISOLATED_URL instance.
 * ISOLATED_SIGNING_CERTIFICATE - a Base64 encoded DER X.509 certificate wrapping the public key of the ISOLATED_SIGNING_KEY.
 
-Note: The Policy Management Certificate samples depend on the OpenSSL library to perform basic cryptographic 
+Note: The Isolated Mode Certificate samples depend on the OpenSSL library to perform basic cryptographic 
 operations on X.509 certificates.
 
 ## Samples descriptions

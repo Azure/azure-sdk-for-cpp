@@ -14,8 +14,11 @@
 #include "azure/core/dll_import_export.hpp"
 #include "azure/core/http/http.hpp"
 #include "azure/core/http/transport.hpp"
+#include "azure/core/internal/input_sanitizer.hpp"
+#include "azure/core/tracing/tracing.hpp"
 #include "azure/core/uuid.hpp"
 
+#include <atomic>
 #include <chrono>
 #include <cstddef>
 #include <map>
@@ -56,6 +59,13 @@ namespace Azure { namespace Core { namespace Http { namespace Policies {
      *
      */
     std::string ApplicationId;
+
+    /**
+     * @brief Specifies the default distributed tracing provider to use for this client. By default,
+     * this will be the tracing provider specified in the application context.
+     */
+    std::shared_ptr<Azure::Core::Tracing::TracerProvider> TracingProvider{
+        Context::ApplicationContext.GetTracerProvider()};
   };
 
   /**
@@ -375,6 +385,44 @@ namespace Azure { namespace Core { namespace Http { namespace Policies {
     };
 
     /**
+     * @brief HTTP Request Activity policy.
+     *
+     * @details Registers an HTTP request with the distributed tracing infrastructure, adding
+     * the traceparent header to the request if necessary.
+     *
+     * This policy is intended to be inserted into the HTTP pipeline *after* the retry policy.
+     */
+    class RequestActivityPolicy final : public HttpPolicy {
+    private:
+      Azure::Core::_internal::InputSanitizer m_inputSanitizer;
+
+    public:
+      /**
+       * @brief Constructs HTTP Request Activity policy.
+       */
+      //      explicit RequestActivityPolicy() = default;
+      /**
+       * @brief Constructs HTTP Request Activity policy.
+       *
+       * @param inputSanitizer for sanitizing data before it is logged.
+       */
+      explicit RequestActivityPolicy(Azure::Core::_internal::InputSanitizer const& inputSanitizer)
+          : m_inputSanitizer(inputSanitizer)
+      {
+      }
+
+      std::unique_ptr<HttpPolicy> Clone() const override
+      {
+        return std::make_unique<RequestActivityPolicy>(*this);
+      }
+
+      std::unique_ptr<RawResponse> Send(
+          Request& request,
+          NextHttpPolicy nextPolicy,
+          Context const& context) const override;
+    };
+
+    /**
      * @brief HTTP telemetry policy.
      *
      * @details Applies an HTTP header with a component name and version to each HTTP request,
@@ -467,13 +515,18 @@ namespace Azure { namespace Core { namespace Http { namespace Policies {
      */
     class LogPolicy final : public HttpPolicy {
       LogOptions m_options;
+      Azure::Core::_internal::InputSanitizer m_inputSanitizer;
 
     public:
       /**
        * @brief Constructs HTTP logging policy.
        *
        */
-      explicit LogPolicy(LogOptions options) : m_options(std::move(options)) {}
+      explicit LogPolicy(LogOptions options)
+          : m_options(std::move(options)),
+            m_inputSanitizer(m_options.AllowedHttpQueryParameters, m_options.AllowedHttpHeaders)
+      {
+      }
 
       std::unique_ptr<HttpPolicy> Clone() const override
       {

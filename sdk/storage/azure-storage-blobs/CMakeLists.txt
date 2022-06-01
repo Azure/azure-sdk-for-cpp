@@ -1,6 +1,10 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # SPDX-License-Identifier: MIT
 
+list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/../../../cmake-modules")
+include(AzureVcpkg)
+az_vcpkg_integrate()
+
 cmake_minimum_required (VERSION 3.13)
 project(azure-storage-blobs LANGUAGES CXX)
 
@@ -9,9 +13,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED True)
 set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
 
 option(FETCH_SOURCE_DEPS "build source dependencies" OFF)
-list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/../../../cmake-modules")
 
-include(AzureVcpkg)
 include(AzureVersion)
 include(AzureCodeCoverage)
 include(AzureTransportAdapters)
@@ -19,8 +21,6 @@ include(AzureDoxygen)
 include(AzureGlobalCompileOptions)
 include(AzureConfigRTTI)
 include(AzureBuildTargetForCI)
-
-az_vcpkg_integrate()
 
 if(FETCH_SOURCE_DEPS)
     set(AZ_ALL_LIBRARIES ON)
@@ -39,7 +39,7 @@ elseif(NOT AZ_ALL_LIBRARIES)
 endif()
 
 set(
-  AZURE_STORAGE_BLOB_HEADER
+  AZURE_STORAGE_BLOBS_HEADER
     inc/azure/storage/blobs/append_blob_client.hpp
     inc/azure/storage/blobs/blob_client.hpp
     inc/azure/storage/blobs/blob_container_client.hpp
@@ -52,25 +52,29 @@ set(
     inc/azure/storage/blobs/dll_import_export.hpp
     inc/azure/storage/blobs/page_blob_client.hpp
     inc/azure/storage/blobs/rest_client.hpp
+    inc/azure/storage/blobs/rtti.hpp
     inc/azure/storage/blobs.hpp
+    src/private/avro_parser.hpp
+    src/private/package_version.hpp
 )
 
 set(
-  AZURE_STORAGE_BLOB_SOURCE
-    src/private/package_version.hpp
+  AZURE_STORAGE_BLOBS_SOURCE
     src/append_blob_client.cpp
     src/blob_client.cpp
     src/blob_container_client.cpp
     src/blob_lease_client.cpp
+    src/blob_options.cpp
     src/blob_responses.cpp
     src/blob_sas_builder.cpp
     src/blob_service_client.cpp
     src/block_blob_client.cpp
     src/page_blob_client.cpp
+    src/private/avro_parser.cpp
     src/rest_client.cpp
 )
 
-add_library(azure-storage-blobs ${AZURE_STORAGE_BLOB_HEADER} ${AZURE_STORAGE_BLOB_SOURCE})
+add_library(azure-storage-blobs ${AZURE_STORAGE_BLOBS_HEADER} ${AZURE_STORAGE_BLOBS_SOURCE})
 create_per_service_target_build(storage azure-storage-blobs)
 
 # make sure that users can consume the project as a library.

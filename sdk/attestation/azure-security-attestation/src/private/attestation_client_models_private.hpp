@@ -278,7 +278,7 @@ namespace Azure {
   /**
    * @brief Result of a GetPolicy, SetPolicy, or ResetPolicy operation.
    */
-  struct GetPolicyCertificatesResult
+  struct GetIsolatedModeCertificatesResult
   {
     /**
      * @brief Result of a modification.
@@ -286,12 +286,12 @@ namespace Azure {
     Azure::Nullable<JsonWebKeySet> PolicyCertificates;
   };
 
-  struct PolicyCertificateManagementBody
+  struct IsolatedModeCertificateBody
   {
     JsonWebKey policyCertificate;
   };
 
-  struct ModifyPolicyCertificatesResult
+  struct ModifyIsolatedModeCertificatesResult
   {
     Azure::Nullable<std::string> CertificateThumbprint;
     Azure::Nullable<std::string> CertificateResolution;

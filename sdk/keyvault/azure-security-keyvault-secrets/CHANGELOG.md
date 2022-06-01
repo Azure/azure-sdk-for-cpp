@@ -6,6 +6,10 @@
 
 - Keyvault 7.3 support added for Secrets.
 
+### Breaking Changes
+
+- Renamed `keyvault_secrets.hpp` to `secrets.hpp`.
+
 ## 4.0.0-beta.2 (2022-03-08)
 
 - Second preview.

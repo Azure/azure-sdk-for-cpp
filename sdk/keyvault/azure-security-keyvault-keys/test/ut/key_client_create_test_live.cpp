@@ -12,7 +12,7 @@
 #include <azure/attestation/attestation_client_options.hpp>
 #include <azure/core/base64.hpp>
 #include <azure/core/internal/json/json.hpp>
-#include <azure/keyvault/keyvault_keys.hpp>
+#include <azure/keyvault/keys.hpp>
 #include <private/key_constants.hpp>
 #include <string>
 

@@ -9,6 +9,7 @@
 #include <cstdio>
 #include <cstdlib>
 #include <ctime>
+#include <fstream>
 #include <iomanip>
 #include <limits>
 #include <random>
@@ -294,13 +295,22 @@ namespace Azure { namespace Storage { namespace Test {
     return fileContent;
   }
 
+  void StorageTest::WriteFile(const std::string& filename, const std::vector<uint8_t>& content)
+  {
+    std::ofstream f(filename, std::ofstream::binary);
+    f.write(reinterpret_cast<const char*>(content.data()), content.size());
+  }
+
   void StorageTest::DeleteFile(const std::string& filename) { std::remove(filename.data()); }
 
   std::vector<uint8_t> StorageTest::RandomBuffer(size_t length)
   {
     std::vector<uint8_t> result(length);
-    char* dataPtr = reinterpret_cast<char*>(&result[0]);
-    RandomBuffer(dataPtr, length);
+    if (length != 0)
+    {
+      char* dataPtr = reinterpret_cast<char*>(&result[0]);
+      RandomBuffer(dataPtr, length);
+    }
     return result;
   }
 
