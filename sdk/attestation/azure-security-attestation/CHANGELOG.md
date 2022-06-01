@@ -2,8 +2,6 @@
 
 ## 1.0.0-beta.3 (Unreleased)
 
-### Features Added
-
 ### Breaking Changes
 - `ValueToSend` field in `TpmAttestationOptions` becomes `Payload`.
 - `AddIsolatedModeCertificatesOptions` becomes `AddIsolatedModeCertificateOptions`
