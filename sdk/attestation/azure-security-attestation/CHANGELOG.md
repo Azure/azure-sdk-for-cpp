@@ -9,8 +9,7 @@
 - `AddIsolatedModeCertificatesOptions` becomes `AddIsolatedModeCertificateOptions`
 - `RemoveIsolatedModeCertificatesOptions` becomes `RemoveIsolatedModeCertificateOptions`
 - Renamed `AttestEnclaveOptions` to `AttestSgxEnclaveOptions` and `AttestOpenEnclaveOptions`.
-- AttestationClient and AttestationAdministrationClient creation is now done using
-the factory method `AttestationClient::Create` and `AttestationAdministrationClient::Create`. 
+- `AttestationClient` and `AttestationAdministrationClient` creation is now done using the factory method `AttestationClient::Create()` and `AttestationAdministrationClient::Create()`. 
 
 ### Bugs Fixed
 
