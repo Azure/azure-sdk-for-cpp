@@ -15,7 +15,7 @@ std::string GetConnectionString()
   {
     return ConnectionString;
   }
-  const static std::string envConnectionString = std::getenv("AZURE_STORAGE_CONNECTION_STRING");
+  const static std::string envConnectionString = "DefaultEndpointsProtocol=https;AccountName=emmahktest;AccountKey=9J/G/orROAbao1ujMkn4+5l+ZosLXtcY9YXnuX+urcw5tqtkPBm/jf+7w7rb5zvBVdxo1T8DW/vkf6o4KgZgiw==;EndpointSuffix=core.windows.net";
   if (!envConnectionString.empty())
   {
     return envConnectionString;
@@ -28,9 +28,9 @@ int main()
   using namespace Azure::Storage;
   using namespace Azure::Storage::Blobs;
 
-  const std::string containerName = "sample-container";
-  const std::string blobName = "sample-blob";
-  const std::string localFile = "sample-localfile";
+  const std::string containerName = "dmcontainer";
+  const std::string blobName = "blockblob";
+  const std::string localFile = "D:\\work\\tempfile";
   const std::string localDirectory = "sample-localdir";
 
   BlobTransferManager m;

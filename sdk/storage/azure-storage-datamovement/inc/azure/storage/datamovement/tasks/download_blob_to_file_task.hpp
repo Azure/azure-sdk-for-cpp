@@ -10,6 +10,7 @@
 #include "azure/storage/datamovement/task.hpp"
 
 namespace Azure { namespace Storage { namespace Blobs { namespace _detail {
+  struct WriteToFileTask;
 
   struct DownloadBlobToFileTask final : public Storage::_internal::TaskBase
   {
@@ -33,7 +34,10 @@ namespace Azure { namespace Storage { namespace Blobs { namespace _detail {
       uint64_t FileSize{0};
       int NumChunks{0};
       std::atomic<int> NumDownloadedChunks{0};
+      int64_t OffsetToWrite{0};
       std::atomic<bool> Failed{false};
+      std::mutex m_writeTasksMutex;
+      std::map <int64_t, std::unique_ptr<WriteToFileTask>> subtasks;
     };
     std::shared_ptr<TaskContext> Context;
 
