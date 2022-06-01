@@ -90,27 +90,13 @@ namespace Azure { namespace Core { namespace Tracing { namespace _internal {
     }
   }
 
-  Azure::Nullable<DiagnosticTracingFactory::TracingContext>
-  DiagnosticTracingFactory::TracingContextFromContext(Azure::Core::Context const& context)
-  {
-    TracingContext traceContext;
-    if (context.TryGetValue(ContextSpanKey, traceContext))
-    {
-      return traceContext;
-    }
-    else
-    {
-      return Azure::Nullable<TracingContext>{};
-    }
-  }
-
-  DiagnosticTracingFactory* DiagnosticTracingFactory::DiagnosticFactoryFromContext(
+  std::unique_ptr<DiagnosticTracingFactory> DiagnosticTracingFactory::DiagnosticFactoryFromContext(
       Azure::Core::Context const& context)
   {
     DiagnosticTracingFactory* factory;
     if (context.TryGetValue(TracingFactoryContextKey, factory))
     {
-      return factory;
+      return std::make_unique<DiagnosticTracingFactory>(*factory);
     }
     else
     {
@@ -121,7 +107,11 @@ namespace Azure { namespace Core { namespace Tracing { namespace _internal {
   std::unique_ptr<Azure::Core::Tracing::_internal::AttributeSet>
   DiagnosticTracingFactory::CreateAttributeSet()
   {
-    return m_serviceTracer->CreateAttributeSet();
+    if (m_serviceTracer)
+    {
+      return m_serviceTracer->CreateAttributeSet();
+    }
+    return nullptr;
   }
 
   Azure::Core::Context::Key DiagnosticTracingFactory::ContextSpanKey;
