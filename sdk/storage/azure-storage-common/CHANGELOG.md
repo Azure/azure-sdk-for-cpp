@@ -1,16 +1,10 @@
 # Release History
 
-## 12.3.0-beta.1 (Unreleased)
-
-### Features Added
-
-### Breaking Changes
+## 12.2.4 (2022-06-07)
 
 ### Bugs Fixed
 
 - Fixed a bug where text of XML element cannot be empty.
-
-### Other Changes
 
 ## 12.2.3 (2022-04-06)
 
