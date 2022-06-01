@@ -1,12 +1,22 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
 
+#include "azure/core/platform.hpp"
+
+#if defined(AZ_PLATFORM_WINDOWS)
+#if !defined(WIN32_LEAN_AND_MEAN)
+#define WIN32_LEAN_AND_MEAN
+#endif
+#if !defined(NOMINMAX)
+#define NOMINMAX
+#endif
+#endif
+
 #include "azure/core/http/curl_transport.hpp"
 #include "azure/core/http/http.hpp"
 #include "azure/core/http/policies/policy.hpp"
 #include "azure/core/http/transport.hpp"
 #include "azure/core/internal/diagnostics/log.hpp"
-#include "azure/core/platform.hpp"
 
 // Private include
 #include "curl_connection_pool_private.hpp"
@@ -17,16 +27,11 @@
 #include <poll.h> // for poll()
 #include <sys/socket.h> // for socket shutdown
 #elif defined(AZ_PLATFORM_WINDOWS)
-#if !defined(WIN32_LEAN_AND_MEAN)
-#define WIN32_LEAN_AND_MEAN
-#endif
-#if !defined(NOMINMAX)
-#define NOMINMAX
-#endif
 #include <winsock2.h> // for WSAPoll();
 #endif
 
 #include <algorithm>
+#include <chrono>
 #include <string>
 #include <thread>
 
@@ -94,25 +99,35 @@ int pollSocketUntilEventOrTimeout(
   // we use 1 as arg.
 
   // Cancelation is possible by calling poll() with small time intervals instead of using the
-  // requested timeout. Default interval for calling poll() is 1 sec whenever arg timeout is
-  // greater than 1 sec. Otherwise the interval is set to timeout
-  long interval = 1000; // 1 second
-  if (timeout < interval)
-  {
-    interval = timeout;
-  }
+  // requested timeout. The polling interval is 1 second.
+  static constexpr std::chrono::milliseconds pollInterval(1000); // 1 second
   int result = 0;
-  for (long counter = 0; counter < timeout && result == 0; counter = counter + interval)
+  auto now = std::chrono::steady_clock::now();
+  auto deadline = now + std::chrono::milliseconds(timeout);
+  while (now < deadline)
   {
     // check cancelation
     context.ThrowIfCancelled();
+    int pollTimeoutMs = static_cast<int>(
+        std::min(
+            pollInterval, std::chrono::duration_cast<std::chrono::milliseconds>(deadline - now))
+            .count());
 #if defined(AZ_PLATFORM_POSIX)
-    result = poll(&poller, 1, interval);
+    result = poll(&poller, 1, pollTimeoutMs);
+    if (result < 0 && EINTR == errno)
+    {
+      continue;
+    }
 #elif defined(AZ_PLATFORM_WINDOWS)
-    result = WSAPoll(&poller, 1, interval);
+    result = WSAPoll(&poller, 1, pollTimeoutMs);
 #endif
+    if (result != 0)
+    {
+      return result;
+    }
+    now = std::chrono::steady_clock::now();
   }
-  // result can be either 0 (timeout) or > 1 (socket ready)
+  // result can be 0 (timeout), > 0 (socket ready), or < 0 (error)
   return result;
 }
 
