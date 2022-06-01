@@ -180,9 +180,6 @@ namespace Azure { namespace Core { namespace Tracing { namespace _internal {
     //    using TracingContext = std::pair<std::shared_ptr<Span>, std::shared_ptr<Tracer>>;
     using TracingContext = std::shared_ptr<Span>;
 
-    static DiagnosticTracingFactory* DiagnosticFactoryFromContext(
-        Azure::Core::Context const& context);
-
     static Azure::Nullable<TracingContext> TracingContextFromContext(
         Azure::Core::Context const& context);
 
@@ -211,12 +208,15 @@ namespace Azure { namespace Core { namespace Tracing { namespace _internal {
         Azure::Core::Tracing::_internal::SpanKind const& spanKind,
         Azure::Core::Context const& clientContext);
 
-    static ContextAndSpan CreateSpanFromContext(
+    ContextAndSpan CreateSpan(
         std::string const& spanName,
-        Azure::Core::Tracing::_internal::SpanKind const& spanKind,
+        Azure::Core::Tracing::_internal::CreateSpanOptions &spanOptions,
         Azure::Core::Context const& clientContext);
 
     std::unique_ptr<Azure::Core::Tracing::_internal::AttributeSet> CreateAttributeSet();
+ 
+    static DiagnosticTracingFactory* DiagnosticFactoryFromContext(
+        Azure::Core::Context const& context);
   };
 
   /**
