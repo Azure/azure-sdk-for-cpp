@@ -36,8 +36,9 @@ int main()
   auto clientSecret = std::getenv("AZURE_CLIENT_SECRET");
   const std::string leaseID = "leaseID";
   const std::string smokeUrl = "https://blob.com";
-  // Creating an attestation service instance requires contacting the attestation service (to retrieve validation collateral).
-  // Use the West US Shared client (which should always be available) as an anonymous service instance.
+  // Creating an attestation service instance requires contacting the attestation service (to
+  // retrieve validation collateral). Use the West US Shared client (which should always be
+  // available) as an anonymous service instance.
   const std::string attestationUrl = "https://sharedwus.wus.attest.azure.net";
 
   auto credential
@@ -75,11 +76,10 @@ int main()
     // Attestation
     std::cout << "Creating Attestation Clients" << std::endl;
 
-    std::unique_ptr<AttestationAdministrationClient> attestationAdminClient(
-        AttestationAdministrationClientFactory::Create(attestationUrl, credential));
+    AttestationAdministrationClient attestationAdminClient(
+        AttestationAdministrationClient::Create(attestationUrl, credential));
 
-    std::unique_ptr<AttestationClient> attestationClient(
-        AttestationClientFactory::Create(attestationUrl));
+    AttestationClient attestationClient(AttestationClient::Create(attestationUrl));
 
     std::cout << "Successfully Created the Clients" << std::endl;
   }

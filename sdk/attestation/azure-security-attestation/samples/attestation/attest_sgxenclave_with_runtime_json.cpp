@@ -44,8 +44,7 @@ int main()
 
     // create client
     std::string const endpoint(GetEnvHelper::GetEnv("ATTESTATION_AAD_URL"));
-    std::unique_ptr<AttestationClient const> attestationClient(
-        AttestationClientFactory::Create(endpoint));
+    AttestationClient const attestationClient(AttestationClient::Create(endpoint));
 
     std::vector<uint8_t> const sgxEnclaveQuote = AttestationCollateral::SgxQuote();
 
@@ -57,7 +56,7 @@ int main()
         = AttestationData{AttestationCollateral::RunTimeData(), AttestationDataType::Json};
 
     Azure::Response<AttestationToken<AttestationResult>> const sgxResult
-        = attestationClient->AttestSgxEnclave(sgxEnclaveQuote, attestOptions);
+        = attestationClient.AttestSgxEnclave(sgxEnclaveQuote, attestOptions);
 
     std::cout << "SGX Quote MRSIGNER is: "
               << Convert::Base64Encode(*sgxResult.Value.Body.SgxMrSigner) << std::endl;
