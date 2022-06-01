@@ -210,11 +210,11 @@ namespace Azure { namespace Core { namespace Tracing { namespace _internal {
 
     ContextAndSpan CreateSpan(
         std::string const& spanName,
-        Azure::Core::Tracing::_internal::CreateSpanOptions &spanOptions,
+        Azure::Core::Tracing::_internal::CreateSpanOptions& spanOptions,
         Azure::Core::Context const& clientContext);
 
     std::unique_ptr<Azure::Core::Tracing::_internal::AttributeSet> CreateAttributeSet();
- 
+
     static DiagnosticTracingFactory* DiagnosticFactoryFromContext(
         Azure::Core::Context const& context);
   };

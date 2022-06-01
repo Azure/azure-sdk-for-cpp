@@ -412,8 +412,7 @@ TEST_F(OpenTelemetryServiceTests, CreateSpanWithOptions)
       createOptions.Kind = Azure::Core::Tracing::_internal::SpanKind::Internal;
       createOptions.Attributes = serviceTrace.CreateAttributeSet();
       createOptions.Attributes->AddAttribute("TestAttribute", 3);
-      auto contextAndSpan = serviceTrace.CreateSpan(
-          "My API", createOptions, clientContext);
+      auto contextAndSpan = serviceTrace.CreateSpan("My API", createOptions, clientContext);
       EXPECT_FALSE(contextAndSpan.first.IsCancelled());
     }
 
@@ -439,7 +438,6 @@ TEST_F(OpenTelemetryServiceTests, CreateSpanWithOptions)
   // Clear the global tracer provider set earlier in the test.
   Azure::Core::Context::ApplicationContext.SetTracerProvider(nullptr);
 }
-
 
 TEST_F(OpenTelemetryServiceTests, NestSpans)
 {
@@ -470,9 +468,7 @@ TEST_F(OpenTelemetryServiceTests, NestSpans)
 
       {
         auto innerContextAndSpan = serviceTrace.CreateSpan(
-            "Nested API",
-            Azure::Core::Tracing::_internal::SpanKind::Server,
-            parentContext);
+            "Nested API", Azure::Core::Tracing::_internal::SpanKind::Server, parentContext);
         EXPECT_FALSE(innerContextAndSpan.first.IsCancelled());
         innerContextAndSpan.second.PropagateToHttpHeaders(innerRequest);
       }

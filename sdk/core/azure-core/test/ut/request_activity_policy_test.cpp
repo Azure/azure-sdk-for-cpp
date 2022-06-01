@@ -52,7 +52,7 @@ public:
   virtual void AddAttribute(std::string const&, int64_t) override {}
   virtual void AddAttribute(std::string const&, uint64_t) override {}
   virtual void AddAttribute(std::string const&, double) override {}
-  virtual void AddAttribute(std::string const&key, const char*val) override
+  virtual void AddAttribute(std::string const& key, const char* val) override
   {
     m_attributes.emplace(std::make_pair(key, std::string(val)));
   }
@@ -62,10 +62,7 @@ public:
     m_attributes.emplace(std::make_pair(key, val));
   }
 
-  std::map<std::string, std::string> const& GetAttributes()
-  {
-    return m_attributes;
-  }
+  std::map<std::string, std::string> const& GetAttributes() { return m_attributes; }
 };
 
 // Dummy service tracing class.
