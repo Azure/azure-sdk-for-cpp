@@ -152,7 +152,8 @@ TEST(DiagnosticTracingFactory, BasicServiceSpanTests)
     span.SetStatus(SpanStatus::Error);
   }
 
-  // Now run all the previous tests on a DiagnosticTracingFactory created *without* a tracing provider.
+  // Now run all the previous tests on a DiagnosticTracingFactory created *without* a tracing
+  // provider.
   {
     Azure::Core::_internal::ClientOptions clientOptions;
     Azure::Core::Tracing::_internal::DiagnosticTracingFactory serviceTrace(
