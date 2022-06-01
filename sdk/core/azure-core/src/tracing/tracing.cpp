@@ -24,7 +24,7 @@ namespace Azure { namespace Core { namespace Tracing { namespace _internal {
   DiagnosticTracingFactory::ContextAndSpan DiagnosticTracingFactory::CreateSpan(
       std::string const& methodName,
       Azure::Core::Tracing::_internal::SpanKind const& spanKind,
-      Azure::Core::Context const& context)
+      Azure::Core::Context const& context) const
   {
     CreateSpanOptions createOptions;
     if (m_serviceTracer)
@@ -68,6 +68,7 @@ namespace Azure { namespace Core { namespace Tracing { namespace _internal {
       return std::make_pair(context, ServiceSpan{});
     }
   }
+
   DiagnosticTracingFactory::ContextAndSpan DiagnosticTracingFactory::CreateSpanFromContext(
       std::string const& spanName,
       Azure::Core::Tracing::_internal::SpanKind const& spanKind,

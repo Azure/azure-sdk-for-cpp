@@ -15,9 +15,11 @@ namespace Azure { namespace Template {
   class TemplateClient final {
 
   public:
-    TemplateClient(TemplateClientOptions options = TemplateClientOptions());
-    std::string ClientVersion() const;
-    int GetValue(int key) const;
+    TemplateClient(TemplateClientOptions const& options = TemplateClientOptions{});
+    int GetValue(int key, Azure::Core::Context const& context = Azure::Core::Context{}) const;
+
+  private:
+    Azure::Core::Tracing::_internal::DiagnosticTracingFactory m_tracingFactory;
   };
 
 }} // namespace Azure::Template

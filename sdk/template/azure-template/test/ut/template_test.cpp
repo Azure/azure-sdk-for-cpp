@@ -11,7 +11,6 @@ TEST(Template, Basic)
 {
   TemplateClient templateClient;
 
-  EXPECT_FALSE(templateClient.ClientVersion().empty());
 }
 
 TEST(Template, GetValue)

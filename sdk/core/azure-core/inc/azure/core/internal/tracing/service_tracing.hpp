@@ -209,7 +209,7 @@ namespace Azure { namespace Core { namespace Tracing { namespace _internal {
     ContextAndSpan CreateSpan(
         std::string const& spanName,
         Azure::Core::Tracing::_internal::SpanKind const& spanKind,
-        Azure::Core::Context const& clientContext);
+        Azure::Core::Context const& clientContext) const;
 
     static ContextAndSpan CreateSpanFromContext(
         std::string const& spanName,

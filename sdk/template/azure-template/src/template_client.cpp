@@ -10,16 +10,29 @@
 using namespace Azure::Template;
 using namespace Azure::Template::_detail;
 
-std::string TemplateClient::ClientVersion() const { return PackageVersion::ToString(); }
-
-TemplateClient::TemplateClient(TemplateClientOptions) {}
-
-int TemplateClient::GetValue(int key) const
+TemplateClient::TemplateClient(TemplateClientOptions const& options)
+    : m_tracingFactory(options, "Template", PackageVersion::ToString())
 {
-  if (key < 0)
-  {
-    return 0;
-  }
+}
 
-  return key + 1;
+int TemplateClient::GetValue(int key, Azure::Core::Context const& context) const
+{
+  auto contextAndSpan = m_tracingFactory.CreateSpan(
+      "GetValue", Azure::Core::Tracing::_internal::SpanKind::Internal, context);
+
+  try
+  {
+
+    if (key < 0)
+    {
+      return 0;
+    }
+
+    return key + 1;
+  }
+  catch (std::exception const& e)
+  {
+    contextAndSpan.second.AddEvent(e);
+    contextAndSpan.second.SetStatus(Azure::Core::Tracing::_internal::SpanStatus::Error);
+  }
 }
