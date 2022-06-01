@@ -127,7 +127,7 @@
               "BuildArgs": "-v --parallel 8 --config Release",
               "RunSamples": 1,
               "WindowsCtestConfig": "-C Release"
-            },
+            } ,
             "HSM_Win_x64_with_unit_test_libcurl": {
               "VCPKG_DEFAULT_TRIPLET": "x64-windows-static",
               "CMAKE_GENERATOR_PLATFORM": "x64",
