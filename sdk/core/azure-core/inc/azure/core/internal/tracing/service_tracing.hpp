@@ -194,12 +194,19 @@ namespace Azure { namespace Core { namespace Tracing { namespace _internal {
     TracingContextFactory() = default;
     TracingContextFactory(TracingContextFactory const&) = default;
 
-    /** @brief A ContextAndSpan provides an updated Context object and a new span object
+    /** @brief A TracingContext provides an updated Context object and a new span object
      * which can be used to add events and attributes to the span.
      */
     struct TracingContext
     {
+      /**
+       * @brief New Context to be used for subsequent methods which take a Context parameter.
+       */
       Azure::Core::Context Context;
+      /**
+       * @brief Distributed Tracing Span which can be used to update status if the API succeeds or
+       * fails.
+       */
       ServiceSpan Span;
     };
 
@@ -236,7 +243,8 @@ namespace Azure { namespace Core { namespace Tracing { namespace _internal {
 
     std::unique_ptr<Azure::Core::Tracing::_internal::AttributeSet> CreateAttributeSet() const;
 
-    static std::unique_ptr<TracingContextFactory> FromContext(Azure::Core::Context const& context);
+    static std::unique_ptr<TracingContextFactory> CreateFromContext(
+        Azure::Core::Context const& context);
   };
 
   /**

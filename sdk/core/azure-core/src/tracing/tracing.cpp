@@ -87,7 +87,7 @@ namespace Azure { namespace Core { namespace Tracing { namespace _internal {
     }
   }
 
-  std::unique_ptr<TracingContextFactory> TracingContextFactory::FromContext(
+  std::unique_ptr<TracingContextFactory> TracingContextFactory::CreateFromContext(
       Azure::Core::Context const& context)
   {
     TracingContextFactory const* factory;
