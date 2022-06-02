@@ -234,7 +234,7 @@ namespace Azure { namespace Core { namespace Tracing { namespace _internal {
 
     std::unique_ptr<Azure::Core::Tracing::_internal::AttributeSet> CreateAttributeSet() const;
 
-    static std::unique_ptr<ContextAndSpanFactory> DiagnosticFactoryFromContext(
+    static std::unique_ptr<ContextAndSpanFactory> ContextAndSpanFactoryFromContext(
         Azure::Core::Context const& context);
   };
 

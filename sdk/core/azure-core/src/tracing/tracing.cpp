@@ -89,7 +89,7 @@ namespace Azure { namespace Core { namespace Tracing { namespace _internal {
     }
   }
 
-  std::unique_ptr<ContextAndSpanFactory> ContextAndSpanFactory::DiagnosticFactoryFromContext(
+  std::unique_ptr<ContextAndSpanFactory> ContextAndSpanFactory::ContextAndSpanFactoryFromContext(
       Azure::Core::Context const& context)
   {
     ContextAndSpanFactory const* factory;

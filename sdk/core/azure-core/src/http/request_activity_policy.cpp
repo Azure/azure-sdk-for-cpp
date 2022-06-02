@@ -25,7 +25,7 @@ std::unique_ptr<RawResponse> RequestActivityPolicy::Send(
 {
   // Find a tracing factory from our context. Note that the factory value is owned by the
   // context chain so we can manage a raw pointer to the factory.
-  auto tracingFactory = ContextAndSpanFactory::DiagnosticFactoryFromContext(context);
+  auto tracingFactory = ContextAndSpanFactory::ContextAndSpanFactoryFromContext(context);
   if (tracingFactory)
   {
     // Create a tracing span over the HTTP request.
