@@ -208,21 +208,20 @@ namespace Azure { namespace Core { namespace Tracing { namespace _internal {
      * a SpanKind::Internal span and context.
      *
      * @param spanName Name for the span to be created.
-     * @param clientContext parent context object.
+     * @param context parent context object for the newly created span.
      *
      * @returns Newly allocated context and Span object.
      *
      */
-    ContextAndSpan CreateSpan(
-        std::string const& spanName,
-        Azure::Core::Context const& clientContext) const;
+    ContextAndSpan CreateSpan(std::string const& spanName, Azure::Core::Context const& context)
+        const;
 
     /**
      * @brief Create a span with the specified span name and create options.
      *
      * @param spanName Name for the span to be created.
      * @param spanOptions Options for the newly created span.
-     * @param clientContext parent context object.
+     * @param context parent context object for the newly created span.
      *
      * @returns Newly allocated context and Span object.
      *
@@ -230,7 +229,7 @@ namespace Azure { namespace Core { namespace Tracing { namespace _internal {
     ContextAndSpan CreateSpan(
         std::string const& spanName,
         Azure::Core::Tracing::_internal::CreateSpanOptions& spanOptions,
-        Azure::Core::Context const& clientContext) const;
+        Azure::Core::Context const& context) const;
 
     std::unique_ptr<Azure::Core::Tracing::_internal::AttributeSet> CreateAttributeSet() const;
 
