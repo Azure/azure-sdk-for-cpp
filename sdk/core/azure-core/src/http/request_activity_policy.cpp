@@ -45,7 +45,8 @@ std::unique_ptr<RawResponse> RequestActivityPolicy::Send(
     createOptions.Attributes->AddAttribute(
         TracingAttributes::HttpMethod.ToString(), request.GetMethod().ToString());
 
-    const std::string sanitizedUrl = m_inputSanitizer.SanitizeUrl(request.GetUrl()).GetAbsoluteUrl();
+    const std::string sanitizedUrl
+        = m_inputSanitizer.SanitizeUrl(request.GetUrl()).GetAbsoluteUrl();
     createOptions.Attributes->AddAttribute("http.url", sanitizedUrl);
     const Azure::Nullable<std::string> requestId = request.GetHeader("x-ms-client-request-id");
     if (requestId.HasValue())
