@@ -9,7 +9,7 @@ using namespace Azure::Core;
 using namespace Azure::Core::Tracing;
 using namespace Azure::Core::Tracing::_internal;
 
-TEST(DiagnosticContextAndSpanFactory, ServiceTraceEnums)
+TEST(TracingContextFactory, ServiceTraceEnums)
 {
   // Exercise the SpanKind and SpanStatus constructors from the distributed tracing header.
   {
@@ -32,24 +32,24 @@ TEST(DiagnosticContextAndSpanFactory, ServiceTraceEnums)
   std::string tracingAttributeName = TracingAttributes::AzNamespace.ToString();
 }
 
-TEST(DiagnosticContextAndSpanFactory, SimpleServiceSpanTests)
+TEST(TracingContextFactory, SimpleServiceSpanTests)
 {
   {
-    Azure::Core::Tracing::_internal::ContextAndSpanFactory serviceTrace;
+    Azure::Core::Tracing::_internal::TracingContextFactory serviceTrace;
   }
   {
     Azure::Core::_internal::ClientOptions clientOptions;
-    Azure::Core::Tracing::_internal::ContextAndSpanFactory serviceTrace(
+    Azure::Core::Tracing::_internal::TracingContextFactory serviceTrace(
         clientOptions, "my-service-cpp", "1.0b2");
   }
 
   {
     Azure::Core::_internal::ClientOptions clientOptions;
-    Azure::Core::Tracing::_internal::ContextAndSpanFactory serviceTrace(
+    Azure::Core::Tracing::_internal::TracingContextFactory serviceTrace(
         clientOptions, "my-service-cpp", "1.0b2");
 
-    auto contextAndSpan = serviceTrace.CreateSpan("My API", {});
-    EXPECT_FALSE(contextAndSpan.first.IsCancelled());
+    auto contextAndSpan = serviceTrace.CreateTracingContext("My API", {});
+    EXPECT_FALSE(contextAndSpan.Context.IsCancelled());
   }
 }
 namespace {
@@ -112,15 +112,15 @@ public:
   };
 };
 } // namespace
-TEST(DiagnosticContextAndSpanFactory, BasicServiceSpanTests)
+TEST(TracingContextFactory, BasicServiceSpanTests)
 {
   {
     Azure::Core::_internal::ClientOptions clientOptions;
-    Azure::Core::Tracing::_internal::ContextAndSpanFactory serviceTrace(
+    Azure::Core::Tracing::_internal::TracingContextFactory serviceTrace(
         clientOptions, "my-service-cpp", "1.0b2");
 
-    auto contextAndSpan = serviceTrace.CreateSpan("My API", {});
-    ServiceSpan span = std::move(contextAndSpan.second);
+    auto contextAndSpan = serviceTrace.CreateTracingContext("My API", {});
+    ServiceSpan span = std::move(contextAndSpan.Span);
 
     span.End();
     span.AddEvent("New Event");
@@ -132,11 +132,11 @@ TEST(DiagnosticContextAndSpanFactory, BasicServiceSpanTests)
     Azure::Core::_internal::ClientOptions clientOptions;
     auto testTracer = std::make_shared<TestTracingProvider>();
     clientOptions.Telemetry.TracingProvider = testTracer;
-    Azure::Core::Tracing::_internal::ContextAndSpanFactory serviceTrace(
+    Azure::Core::Tracing::_internal::TracingContextFactory serviceTrace(
         clientOptions, "my-service-cpp", "1.0b2");
 
-    auto contextAndSpan = serviceTrace.CreateSpan("My API", {});
-    ServiceSpan span = std::move(contextAndSpan.second);
+    auto contextAndSpan = serviceTrace.CreateTracingContext("My API", {});
+    ServiceSpan span = std::move(contextAndSpan.Span);
 
     span.End();
     span.AddEvent("New Event");
@@ -149,15 +149,15 @@ TEST(DiagnosticContextAndSpanFactory, BasicServiceSpanTests)
     span.SetStatus(SpanStatus::Error);
   }
 
-  // Now run all the previous tests on a DiagnosticContextAndSpanFactory created *without* a tracing
+  // Now run all the previous tests on a TracingContextFactory created *without* a tracing
   // provider.
   {
     Azure::Core::_internal::ClientOptions clientOptions;
-    Azure::Core::Tracing::_internal::ContextAndSpanFactory serviceTrace(
+    Azure::Core::Tracing::_internal::TracingContextFactory serviceTrace(
         clientOptions, "my-service-cpp", "1.0b2");
 
-    auto contextAndSpan = serviceTrace.CreateSpan("My API", {});
-    ServiceSpan span = std::move(contextAndSpan.second);
+    auto contextAndSpan = serviceTrace.CreateTracingContext("My API", {});
+    ServiceSpan span = std::move(contextAndSpan.Span);
 
     span.End();
     span.AddEvent("New Event");

@@ -25,7 +25,7 @@ std::unique_ptr<RawResponse> RequestActivityPolicy::Send(
 {
   // Find a tracing factory from our context. Note that the factory value is owned by the
   // context chain so we can manage a raw pointer to the factory.
-  auto tracingFactory = ContextAndSpanFactory::ContextAndSpanFactoryFromContext(context);
+  auto tracingFactory = TracingContextFactory::FromContext(context);
   if (tracingFactory)
   {
     // Create a tracing span over the HTTP request.
@@ -62,8 +62,8 @@ std::unique_ptr<RawResponse> RequestActivityPolicy::Send(
           TracingAttributes::HttpUserAgent.ToString(), userAgent.Value());
     }
 
-    auto contextAndSpan = tracingFactory->CreateSpan(ss.str(), createOptions, context);
-    auto scope = std::move(contextAndSpan.second);
+    auto contextAndSpan = tracingFactory->CreateTracingContext(ss.str(), createOptions, context);
+    auto scope = std::move(contextAndSpan.Span);
 
     // Propagate information from the scope to the HTTP headers.
     //
@@ -73,7 +73,7 @@ std::unique_ptr<RawResponse> RequestActivityPolicy::Send(
     try
     {
       // Send the request on to the service.
-      auto response = nextPolicy.Send(request, contextAndSpan.first);
+      auto response = nextPolicy.Send(request, contextAndSpan.Context);
 
       // And register the headers we received from the service.
       scope.AddAttribute(

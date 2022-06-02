@@ -29,7 +29,7 @@ namespace Azure { namespace Core { namespace Tracing { namespace _internal {
   private:
     std::shared_ptr<Span> m_span;
 
-    friend class ContextAndSpanFactory;
+    friend class TracingContextFactory;
     ServiceSpan() = default;
     explicit ServiceSpan(std::shared_ptr<Span> span) : m_span(span) {}
 
@@ -161,7 +161,7 @@ namespace Azure { namespace Core { namespace Tracing { namespace _internal {
    * @details Each service implementation SHOULD have a member variable which aids in managing
    * the distributed tracing for the service.
    */
-  class ContextAndSpanFactory final {
+  class TracingContextFactory final {
   private:
     std::string m_serviceName;
     std::string m_serviceVersion;
@@ -177,11 +177,9 @@ namespace Azure { namespace Core { namespace Tracing { namespace _internal {
      */
     static Azure::Core::Context::Key ContextSpanKey;
     static Azure::Core::Context::Key TracingFactoryContextKey;
-    //    using TracingContext = std::pair<std::shared_ptr<Span>, std::shared_ptr<Tracer>>;
-    using TracingContext = std::shared_ptr<Span>;
 
   public:
-    ContextAndSpanFactory(
+    TracingContextFactory(
         Azure::Core::_internal::ClientOptions const& options,
         std::string serviceName,
         std::string serviceVersion)
@@ -193,13 +191,17 @@ namespace Azure { namespace Core { namespace Tracing { namespace _internal {
     {
     }
 
-    ContextAndSpanFactory() = default;
-    ContextAndSpanFactory(ContextAndSpanFactory const&) = default;
+    TracingContextFactory() = default;
+    TracingContextFactory(TracingContextFactory const&) = default;
 
     /** @brief A ContextAndSpan provides an updated Context object and a new span object
      * which can be used to add events and attributes to the span.
      */
-    using ContextAndSpan = std::pair<Azure::Core::Context, ServiceSpan>;
+    struct TracingContext
+    {
+      Azure::Core::Context Context;
+      ServiceSpan Span;
+    };
 
     /**
      * @brief Create a span with the specified span name.
@@ -213,8 +215,9 @@ namespace Azure { namespace Core { namespace Tracing { namespace _internal {
      * @returns Newly allocated context and Span object.
      *
      */
-    ContextAndSpan CreateSpan(std::string const& spanName, Azure::Core::Context const& context)
-        const;
+    TracingContext CreateTracingContext(
+        std::string const& spanName,
+        Azure::Core::Context const& context) const;
 
     /**
      * @brief Create a span with the specified span name and create options.
@@ -226,15 +229,14 @@ namespace Azure { namespace Core { namespace Tracing { namespace _internal {
      * @returns Newly allocated context and Span object.
      *
      */
-    ContextAndSpan CreateSpan(
+    TracingContext CreateTracingContext(
         std::string const& spanName,
         Azure::Core::Tracing::_internal::CreateSpanOptions& spanOptions,
         Azure::Core::Context const& context) const;
 
     std::unique_ptr<Azure::Core::Tracing::_internal::AttributeSet> CreateAttributeSet() const;
 
-    static std::unique_ptr<ContextAndSpanFactory> ContextAndSpanFactoryFromContext(
-        Azure::Core::Context const& context);
+    static std::unique_ptr<TracingContextFactory> FromContext(Azure::Core::Context const& context);
   };
 
   /**

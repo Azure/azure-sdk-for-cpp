@@ -21,7 +21,7 @@ namespace Azure { namespace Core { namespace Tracing { namespace _internal {
   const TracingAttributes TracingAttributes::RequestId("requestId");
   const TracingAttributes TracingAttributes::HttpStatusCode("http.status_code");
 
-  ContextAndSpanFactory::ContextAndSpan ContextAndSpanFactory::CreateSpan(
+  TracingContextFactory::TracingContext TracingContextFactory::CreateTracingContext(
       std::string const& methodName,
       Azure::Core::Context const& context) const
   {
@@ -32,15 +32,15 @@ namespace Azure { namespace Core { namespace Tracing { namespace _internal {
 
       createOptions.Kind = SpanKind::Internal;
       createOptions.Attributes = m_serviceTracer->CreateAttributeSet();
-      return CreateSpan(methodName, createOptions, context);
+      return CreateTracingContext(methodName, createOptions, context);
     }
     else
     {
-      return std::make_pair(context, ServiceSpan{});
+      return TracingContext{context, ServiceSpan{}};
     }
   }
 
-  ContextAndSpanFactory::ContextAndSpan ContextAndSpanFactory::CreateSpan(
+  TracingContextFactory::TracingContext TracingContextFactory::CreateTracingContext(
       std::string const& methodName,
       Azure::Core::Tracing::_internal::CreateSpanOptions& createOptions,
       Azure::Core::Context const& context) const
@@ -50,13 +50,13 @@ namespace Azure { namespace Core { namespace Tracing { namespace _internal {
       Azure::Core::Context contextToUse = context;
 
       // Ensure that the factory is available in the context chain.
-      ContextAndSpanFactory const* tracingFactoryFromContext;
+      TracingContextFactory const* tracingFactoryFromContext;
       if (!context.TryGetValue(TracingFactoryContextKey, tracingFactoryFromContext))
       {
         contextToUse = context.WithValue(TracingFactoryContextKey, this);
       }
 
-      TracingContext traceContext;
+      std::shared_ptr<Span> traceContext;
       // Find a span in the context hierarchy.
       if (contextToUse.TryGetValue(ContextSpanKey, traceContext))
       {
@@ -77,25 +77,23 @@ namespace Azure { namespace Core { namespace Tracing { namespace _internal {
           TracingAttributes::AzNamespace.ToString(), m_serviceName);
 
       std::shared_ptr<Span> newSpan(m_serviceTracer->CreateSpan(methodName, createOptions));
-      TracingContext tracingContext = newSpan;
-      Azure::Core::Context newContext = contextToUse.WithValue(ContextSpanKey, tracingContext);
+      Azure::Core::Context newContext = contextToUse.WithValue(ContextSpanKey, newSpan);
       ServiceSpan newServiceSpan(newSpan);
-      return std::make_pair<Azure::Core::Context, ServiceSpan>(
-          std::move(newContext), std::move(newServiceSpan));
+      return TracingContext{std::move(newContext), std::move(newServiceSpan)};
     }
     else
     {
-      return std::make_pair(context, ServiceSpan{});
+      return TracingContext{context, ServiceSpan{}};
     }
   }
 
-  std::unique_ptr<ContextAndSpanFactory> ContextAndSpanFactory::ContextAndSpanFactoryFromContext(
+  std::unique_ptr<TracingContextFactory> TracingContextFactory::FromContext(
       Azure::Core::Context const& context)
   {
-    ContextAndSpanFactory const* factory;
+    TracingContextFactory const* factory;
     if (context.TryGetValue(TracingFactoryContextKey, factory))
     {
-      return std::make_unique<ContextAndSpanFactory>(*factory);
+      return std::make_unique<TracingContextFactory>(*factory);
     }
     else
     {
@@ -104,7 +102,7 @@ namespace Azure { namespace Core { namespace Tracing { namespace _internal {
   }
 
   std::unique_ptr<Azure::Core::Tracing::_internal::AttributeSet>
-  ContextAndSpanFactory::CreateAttributeSet() const
+  TracingContextFactory::CreateAttributeSet() const
   {
     if (m_serviceTracer)
     {
@@ -113,6 +111,6 @@ namespace Azure { namespace Core { namespace Tracing { namespace _internal {
     return nullptr;
   }
 
-  Azure::Core::Context::Key ContextAndSpanFactory::ContextSpanKey;
-  Azure::Core::Context::Key ContextAndSpanFactory::TracingFactoryContextKey;
+  Azure::Core::Context::Key TracingContextFactory::ContextSpanKey;
+  Azure::Core::Context::Key TracingContextFactory::TracingFactoryContextKey;
 }}}} // namespace Azure::Core::Tracing::_internal
