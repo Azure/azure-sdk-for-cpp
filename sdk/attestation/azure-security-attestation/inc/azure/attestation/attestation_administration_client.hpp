@@ -267,36 +267,6 @@ namespace Azure { namespace Security { namespace Attestation {
      * @param endpoint The URL address where the client will send the requests to.
      * @param credential The authentication token to use.
      * @param options The options to customize the client behavior.
-     * @return The newly created client.
-     */
-    static AttestationAdministrationClient CreateConcrete(
-        std::string const& endpoint,
-        std::shared_ptr<Core::Credentials::TokenCredential const> credential,
-        AttestationAdministrationClientOptions const& options
-        = AttestationAdministrationClientOptions{},
-        Azure::Core::Context const& context = Azure::Core::Context{});
-
-    /**
-     * @brief Construct a new Attestation Administration Client object.
-     *
-     * @param endpoint The URL address where the client will send the requests to.
-     * @param credential The authentication token to use.
-     * @param options The options to customize the client behavior.
-     * @return The newly created client.
-     */
-    static std::unique_ptr<AttestationAdministrationClient> CreatePointer(
-        std::string const& endpoint,
-        std::shared_ptr<Core::Credentials::TokenCredential const> credential,
-        AttestationAdministrationClientOptions const& options
-        = AttestationAdministrationClientOptions{},
-        Azure::Core::Context const& context = Azure::Core::Context{});
-
-    /**
-     * @brief Construct a new Attestation Administration Client object.
-     *
-     * @param endpoint The URL address where the client will send the requests to.
-     * @param credential The authentication token to use.
-     * @param options The options to customize the client behavior.
      */
     explicit AttestationAdministrationClient(
         std::string const& endpoint,
