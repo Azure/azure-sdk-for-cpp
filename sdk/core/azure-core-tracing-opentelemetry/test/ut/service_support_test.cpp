@@ -436,54 +436,6 @@ TEST_F(OpenTelemetryServiceTests, CreateSpanWithOptions)
   Azure::Core::Context::ApplicationContext.SetTracerProvider(nullptr);
 }
 
-TEST_F(OpenTelemetryServiceTests, CreateSpanWithOptions)
-{
-  {
-    auto tracerProvider(CreateOpenTelemetryProvider());
-    auto provider(std::make_shared<Azure::Core::Tracing::OpenTelemetry::OpenTelemetryProvider>(
-        tracerProvider));
-
-    Azure::Core::Context::ApplicationContext.SetTracerProvider(provider);
-
-    {
-      Azure::Core::_internal::ClientOptions clientOptions;
-      clientOptions.Telemetry.ApplicationId = "MyApplication";
-
-      Azure::Core::Tracing::_internal::DiagnosticTracingFactory serviceTrace(
-          clientOptions, "my-service", "1.0beta-2");
-
-      Azure::Core::Context clientContext;
-      Azure::Core::Tracing::_internal::CreateSpanOptions createOptions;
-      createOptions.Kind = Azure::Core::Tracing::_internal::SpanKind::Internal;
-      createOptions.Attributes = serviceTrace.CreateAttributeSet();
-      createOptions.Attributes->AddAttribute("TestAttribute", 3);
-      auto contextAndSpan = serviceTrace.CreateSpan("My API", createOptions, clientContext);
-      EXPECT_FALSE(contextAndSpan.first.IsCancelled());
-    }
-
-    // Now let's verify what was logged via OpenTelemetry.
-    auto spans = m_spanData->GetSpans();
-    EXPECT_EQ(1ul, spans.size());
-
-    VerifySpan(spans[0], R"(
-{
-  "name": "My API",
-  "kind": "internal",
-  "attributes": {
-     "az.namespace": "my-service",
-     "TestAttribute": 3
-  },
-  "library": {
-    "name": "my-service",
-    "version": "1.0beta-2"
-  }
-})");
-  }
-
-  // Clear the global tracer provider set earlier in the test.
-  Azure::Core::Context::ApplicationContext.SetTracerProvider(nullptr);
-}
-
 TEST_F(OpenTelemetryServiceTests, NestSpans)
 {
   {
