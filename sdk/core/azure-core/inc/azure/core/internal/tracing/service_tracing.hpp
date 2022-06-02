@@ -29,7 +29,7 @@ namespace Azure { namespace Core { namespace Tracing { namespace _internal {
   private:
     std::shared_ptr<Span> m_span;
 
-    friend class DiagnosticTracingFactory;
+    friend class ContextAndSpanFactory;
     ServiceSpan() = default;
     explicit ServiceSpan(std::shared_ptr<Span> span) : m_span(span) {}
 
@@ -161,7 +161,7 @@ namespace Azure { namespace Core { namespace Tracing { namespace _internal {
    * @details Each service implementation SHOULD have a member variable which aids in managing
    * the distributed tracing for the service.
    */
-  class DiagnosticTracingFactory final {
+  class ContextAndSpanFactory final {
   private:
     std::string m_serviceName;
     std::string m_serviceVersion;
@@ -181,7 +181,7 @@ namespace Azure { namespace Core { namespace Tracing { namespace _internal {
     using TracingContext = std::shared_ptr<Span>;
 
   public:
-    DiagnosticTracingFactory(
+    ContextAndSpanFactory(
         Azure::Core::_internal::ClientOptions const& options,
         std::string serviceName,
         std::string serviceVersion)
@@ -193,27 +193,48 @@ namespace Azure { namespace Core { namespace Tracing { namespace _internal {
     {
     }
 
-    DiagnosticTracingFactory() = default;
-    DiagnosticTracingFactory(DiagnosticTracingFactory const&) = default;
+    ContextAndSpanFactory() = default;
+    ContextAndSpanFactory(ContextAndSpanFactory const&) = default;
 
     /** @brief A ContextAndSpan provides an updated Context object and a new span object
      * which can be used to add events and attributes to the span.
      */
     using ContextAndSpan = std::pair<Azure::Core::Context, ServiceSpan>;
 
+    /**
+     * @brief Create a span with the specified span name.
+     *
+     * @details This method is a convenience method intended for use by service clients, it creates
+     * a SpanKind::Internal span and context.
+     *
+     * @param spanName Name for the span to be created.
+     * @param clientContext parent context object.
+     *
+     * @returns Newly allocated context and Span object.
+     *
+     */
     ContextAndSpan CreateSpan(
         std::string const& spanName,
-        Azure::Core::Tracing::_internal::SpanKind const& spanKind,
-        Azure::Core::Context const& clientContext);
+        Azure::Core::Context const& clientContext) const;
 
+    /**
+     * @brief Create a span with the specified span name and create options.
+     *
+     * @param spanName Name for the span to be created.
+     * @param spanOptions Options for the newly created span.
+     * @param clientContext parent context object.
+     *
+     * @returns Newly allocated context and Span object.
+     *
+     */
     ContextAndSpan CreateSpan(
         std::string const& spanName,
         Azure::Core::Tracing::_internal::CreateSpanOptions& spanOptions,
-        Azure::Core::Context const& clientContext);
+        Azure::Core::Context const& clientContext) const;
 
-    std::unique_ptr<Azure::Core::Tracing::_internal::AttributeSet> CreateAttributeSet();
+    std::unique_ptr<Azure::Core::Tracing::_internal::AttributeSet> CreateAttributeSet() const;
 
-    static std::unique_ptr<DiagnosticTracingFactory> DiagnosticFactoryFromContext(
+    static std::unique_ptr<ContextAndSpanFactory> DiagnosticFactoryFromContext(
         Azure::Core::Context const& context);
   };
 

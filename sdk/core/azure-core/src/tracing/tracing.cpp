@@ -21,17 +21,16 @@ namespace Azure { namespace Core { namespace Tracing { namespace _internal {
   const TracingAttributes TracingAttributes::RequestId("requestId");
   const TracingAttributes TracingAttributes::HttpStatusCode("http.status_code");
 
-  DiagnosticTracingFactory::ContextAndSpan DiagnosticTracingFactory::CreateSpan(
+  ContextAndSpanFactory::ContextAndSpan ContextAndSpanFactory::CreateSpan(
       std::string const& methodName,
-      Azure::Core::Tracing::_internal::SpanKind const& spanKind,
-      Azure::Core::Context const& context)
+      Azure::Core::Context const& context) const
   {
     if (m_serviceTracer)
     {
       Azure::Core::Context contextToUse = context;
       CreateSpanOptions createOptions;
 
-      createOptions.Kind = spanKind;
+      createOptions.Kind = SpanKind::Internal;
       createOptions.Attributes = m_serviceTracer->CreateAttributeSet();
       return CreateSpan(methodName, createOptions, context);
     }
@@ -41,17 +40,17 @@ namespace Azure { namespace Core { namespace Tracing { namespace _internal {
     }
   }
 
-  DiagnosticTracingFactory::ContextAndSpan DiagnosticTracingFactory::CreateSpan(
+  ContextAndSpanFactory::ContextAndSpan ContextAndSpanFactory::CreateSpan(
       std::string const& methodName,
       Azure::Core::Tracing::_internal::CreateSpanOptions& createOptions,
-      Azure::Core::Context const& context)
+      Azure::Core::Context const& context) const
   {
     if (m_serviceTracer)
     {
       Azure::Core::Context contextToUse = context;
 
       // Ensure that the factory is available in the context chain.
-      DiagnosticTracingFactory* tracingFactoryFromContext;
+      ContextAndSpanFactory const* tracingFactoryFromContext;
       if (!context.TryGetValue(TracingFactoryContextKey, tracingFactoryFromContext))
       {
         contextToUse = context.WithValue(TracingFactoryContextKey, this);
@@ -90,13 +89,13 @@ namespace Azure { namespace Core { namespace Tracing { namespace _internal {
     }
   }
 
-  std::unique_ptr<DiagnosticTracingFactory> DiagnosticTracingFactory::DiagnosticFactoryFromContext(
+  std::unique_ptr<ContextAndSpanFactory> ContextAndSpanFactory::DiagnosticFactoryFromContext(
       Azure::Core::Context const& context)
   {
-    DiagnosticTracingFactory* factory;
+    ContextAndSpanFactory const* factory;
     if (context.TryGetValue(TracingFactoryContextKey, factory))
     {
-      return std::make_unique<DiagnosticTracingFactory>(*factory);
+      return std::make_unique<ContextAndSpanFactory>(*factory);
     }
     else
     {
@@ -105,7 +104,7 @@ namespace Azure { namespace Core { namespace Tracing { namespace _internal {
   }
 
   std::unique_ptr<Azure::Core::Tracing::_internal::AttributeSet>
-  DiagnosticTracingFactory::CreateAttributeSet()
+  ContextAndSpanFactory::CreateAttributeSet() const
   {
     if (m_serviceTracer)
     {
@@ -114,6 +113,6 @@ namespace Azure { namespace Core { namespace Tracing { namespace _internal {
     return nullptr;
   }
 
-  Azure::Core::Context::Key DiagnosticTracingFactory::ContextSpanKey;
-  Azure::Core::Context::Key DiagnosticTracingFactory::TracingFactoryContextKey;
+  Azure::Core::Context::Key ContextAndSpanFactory::ContextSpanKey;
+  Azure::Core::Context::Key ContextAndSpanFactory::TracingFactoryContextKey;
 }}}} // namespace Azure::Core::Tracing::_internal

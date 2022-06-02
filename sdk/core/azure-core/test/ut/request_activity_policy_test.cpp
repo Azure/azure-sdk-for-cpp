@@ -159,11 +159,10 @@ TEST(RequestActivityPolicy, Basic)
 
     Azure::Core::_internal::ClientOptions clientOptions;
     clientOptions.Telemetry.TracingProvider = testTracer;
-    Azure::Core::Tracing::_internal::DiagnosticTracingFactory serviceTrace(
+    Azure::Core::Tracing::_internal::ContextAndSpanFactory serviceTrace(
         clientOptions, "my-service-cpp", "1.0b2");
 
-    auto contextAndSpan = serviceTrace.CreateSpan(
-        "My API", Azure::Core::Tracing::_internal::SpanKind::Internal, {});
+    auto contextAndSpan = serviceTrace.CreateSpan("My API", {});
     Azure::Core::Context callContext = std::move(contextAndSpan.first);
     Request request(HttpMethod::Get, Url("https://www.microsoft.com"));
 
@@ -192,10 +191,9 @@ TEST(RequestActivityPolicy, Basic)
 
     Azure::Core::_internal::ClientOptions clientOptions;
     clientOptions.Telemetry.TracingProvider = testTracer;
-    Azure::Core::Tracing::_internal::DiagnosticTracingFactory serviceTrace(
+    Azure::Core::Tracing::_internal::ContextAndSpanFactory serviceTrace(
         clientOptions, "my-service-cpp", "1.0b2");
-    auto contextAndSpan = serviceTrace.CreateSpan(
-        "My API", Azure::Core::Tracing::_internal::SpanKind::Internal, {});
+    auto contextAndSpan = serviceTrace.CreateSpan("My API", {});
     Azure::Core::Context callContext = std::move(contextAndSpan.first);
     Request request(HttpMethod::Get, Url("https://www.microsoft.com"));
 
@@ -230,11 +228,10 @@ TEST(RequestActivityPolicy, TryRetries)
 
     Azure::Core::_internal::ClientOptions clientOptions;
     clientOptions.Telemetry.TracingProvider = testTracer;
-    Azure::Core::Tracing::_internal::DiagnosticTracingFactory serviceTrace(
+    Azure::Core::Tracing::_internal::ContextAndSpanFactory serviceTrace(
         clientOptions, "my-service-cpp", "1.0b2");
 
-    auto contextAndSpan = serviceTrace.CreateSpan(
-        "My API", Azure::Core::Tracing::_internal::SpanKind::Internal, {});
+    auto contextAndSpan = serviceTrace.CreateSpan("My API", {});
     Azure::Core::Context callContext = std::move(contextAndSpan.first);
     Request request(HttpMethod::Get, Url("https://www.microsoft.com"));
 

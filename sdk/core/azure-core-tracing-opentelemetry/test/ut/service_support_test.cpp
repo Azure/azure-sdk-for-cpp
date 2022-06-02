@@ -274,21 +274,20 @@ protected:
 TEST_F(OpenTelemetryServiceTests, SimplestTest)
 {
   {
-    Azure::Core::Tracing::_internal::DiagnosticTracingFactory serviceTrace;
+    Azure::Core::Tracing::_internal::ContextAndSpanFactory serviceTrace;
   }
   {
     Azure::Core::_internal::ClientOptions clientOptions;
-    Azure::Core::Tracing::_internal::DiagnosticTracingFactory serviceTrace(
+    Azure::Core::Tracing::_internal::ContextAndSpanFactory serviceTrace(
         clientOptions, "my-service-cpp", "1.0b2");
   }
 
   {
     Azure::Core::_internal::ClientOptions clientOptions;
-    Azure::Core::Tracing::_internal::DiagnosticTracingFactory serviceTrace(
+    Azure::Core::Tracing::_internal::ContextAndSpanFactory serviceTrace(
         clientOptions, "my-service-cpp", "1.0b2");
 
-    auto contextAndSpan = serviceTrace.CreateSpan(
-        "My API", Azure::Core::Tracing::_internal::SpanKind::Internal, {});
+    auto contextAndSpan = serviceTrace.CreateSpan("My API", {});
     EXPECT_FALSE(contextAndSpan.first.IsCancelled());
   }
 }
@@ -320,12 +319,11 @@ TEST_F(OpenTelemetryServiceTests, CreateWithExplicitProvider)
       clientOptions.Telemetry.TracingProvider = provider;
       clientOptions.Telemetry.ApplicationId = "MyApplication";
 
-      Azure::Core::Tracing::_internal::DiagnosticTracingFactory serviceTrace(
+      Azure::Core::Tracing::_internal::ContextAndSpanFactory serviceTrace(
           clientOptions, "my-service", "1.0beta-2");
 
       Azure::Core::Context clientContext;
-      auto contextAndSpan = serviceTrace.CreateSpan(
-          "My API", Azure::Core::Tracing::_internal::SpanKind::Internal, clientContext);
+      auto contextAndSpan = serviceTrace.CreateSpan("My API", clientContext);
       EXPECT_FALSE(contextAndSpan.first.IsCancelled());
     }
     // Now let's verify what was logged via OpenTelemetry.
@@ -360,12 +358,11 @@ TEST_F(OpenTelemetryServiceTests, CreateWithImplicitProvider)
       Azure::Core::_internal::ClientOptions clientOptions;
       clientOptions.Telemetry.ApplicationId = "MyApplication";
 
-      Azure::Core::Tracing::_internal::DiagnosticTracingFactory serviceTrace(
+      Azure::Core::Tracing::_internal::ContextAndSpanFactory serviceTrace(
           clientOptions, "my-service", "1.0beta-2");
 
       Azure::Core::Context clientContext;
-      auto contextAndSpan = serviceTrace.CreateSpan(
-          "My API", Azure::Core::Tracing::_internal::SpanKind::Internal, clientContext);
+      auto contextAndSpan = serviceTrace.CreateSpan("My API", clientContext);
       EXPECT_FALSE(contextAndSpan.first.IsCancelled());
     }
 
@@ -404,7 +401,7 @@ TEST_F(OpenTelemetryServiceTests, CreateSpanWithOptions)
       Azure::Core::_internal::ClientOptions clientOptions;
       clientOptions.Telemetry.ApplicationId = "MyApplication";
 
-      Azure::Core::Tracing::_internal::DiagnosticTracingFactory serviceTrace(
+      Azure::Core::Tracing::_internal::ContextAndSpanFactory serviceTrace(
           clientOptions, "my-service", "1.0beta-2");
 
       Azure::Core::Context clientContext;
@@ -456,19 +453,22 @@ TEST_F(OpenTelemetryServiceTests, NestSpans)
       Azure::Core::_internal::ClientOptions clientOptions;
       clientOptions.Telemetry.ApplicationId = "MyApplication";
 
-      Azure::Core::Tracing::_internal::DiagnosticTracingFactory serviceTrace(
+      Azure::Core::Tracing::_internal::ContextAndSpanFactory serviceTrace(
           clientOptions, "my-service", "1.0beta-2");
 
       Azure::Core::Context parentContext;
-      auto contextAndSpan = serviceTrace.CreateSpan(
-          "My API", Azure::Core::Tracing::_internal::SpanKind::Client, parentContext);
+      Azure::Core::Tracing::_internal::CreateSpanOptions createOptions;
+      createOptions.Kind = Azure::Core::Tracing::_internal::SpanKind::Client;
+      auto contextAndSpan = serviceTrace.CreateSpan("My API", createOptions, parentContext);
       EXPECT_FALSE(contextAndSpan.first.IsCancelled());
       parentContext = contextAndSpan.first;
       contextAndSpan.second.PropagateToHttpHeaders(outerRequest);
 
       {
-        auto innerContextAndSpan = serviceTrace.CreateSpan(
-            "Nested API", Azure::Core::Tracing::_internal::SpanKind::Server, parentContext);
+        Azure::Core::Tracing::_internal::CreateSpanOptions innerOptions;
+        innerOptions.Kind = Azure::Core::Tracing::_internal::SpanKind::Server;
+        auto innerContextAndSpan
+            = serviceTrace.CreateSpan("Nested API", innerOptions, parentContext);
         EXPECT_FALSE(innerContextAndSpan.first.IsCancelled());
         innerContextAndSpan.second.PropagateToHttpHeaders(innerRequest);
       }
@@ -580,7 +580,7 @@ public:
 class ServiceClient {
 private:
   ServiceClientOptions m_clientOptions;
-  Azure::Core::Tracing::_internal::DiagnosticTracingFactory m_tracingFactory;
+  Azure::Core::Tracing::_internal::ContextAndSpanFactory m_tracingFactory;
   std::unique_ptr<Azure::Core::Http::_internal::HttpPipeline> m_pipeline;
 
 public:
@@ -612,10 +612,9 @@ public:
 
   Azure::Response<std::string> GetConfigurationString(
       std::string const& inputString,
-      Azure::Core::Context const& context = Azure::Core::Context{})
+      Azure::Core::Context const& context = Azure::Core::Context{}) const
   {
-    auto contextAndSpan = m_tracingFactory.CreateSpan(
-        "GetConfigurationString", Azure::Core::Tracing::_internal::SpanKind::Internal, context);
+    auto contextAndSpan = m_tracingFactory.CreateSpan("GetConfigurationString", context);
 
     // <Call Into Service via an HTTP pipeline>
     Azure::Core::Http::Request requestToSend(
@@ -633,10 +632,9 @@ public:
 
   Azure::Response<std::string> ApiWhichThrows(
       std::string const&,
-      Azure::Core::Context const& context = Azure::Core::Context{})
+      Azure::Core::Context const& context = Azure::Core::Context{}) const
   {
-    auto contextAndSpan = m_tracingFactory.CreateSpan(
-        "ApiWhichThrows", Azure::Core::Tracing::_internal::SpanKind::Internal, context);
+    auto contextAndSpan = m_tracingFactory.CreateSpan("ApiWhichThrows", context);
 
     try
     {
