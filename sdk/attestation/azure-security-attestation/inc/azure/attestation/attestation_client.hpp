@@ -201,9 +201,6 @@ namespace Azure { namespace Security { namespace Attestation {
      * @returns Response<AttestationToken<AttestationResult>> - The result of the
      * attestation operation.
      *
-     * @note \b Note: The RetrieveResponseValidationCollateral API \b MUST be called before the
-     * AttestSgxEnclave API is called to retrieve the information needed to validate the
-     * result returned by the service.
      */
     Response<Models::AttestationToken<Models::AttestationResult>> AttestSgxEnclave(
         std::vector<uint8_t> const& sgxQuoteToAttest,
@@ -222,9 +219,6 @@ namespace Azure { namespace Security { namespace Attestation {
      * @returns Response<AttestationToken<AttestationResult>> - The result of the attestation
      * operation
 
-     * @note \b Note: The RetrieveResponseValidationCollateral API \b MUST be called before the
-     * AttestOpenEnclave API is called to retrieve information needed to used to validate the
-     * result returned by the service.
      */
     Response<Models::AttestationToken<Models::AttestationResult>> AttestOpenEnclave(
         std::vector<uint8_t> const& openEnclaveReportToAttest,
