@@ -76,18 +76,6 @@ AttestationAdministrationClient AttestationAdministrationClient::Create(
   return returnValue;
 }
 
-std::unique_ptr<AttestationAdministrationClient> AttestationAdministrationClient::CreatePointer(
-    std::string const& endpoint,
-    std::shared_ptr<Core::Credentials::TokenCredential const> credential,
-    AttestationAdministrationClientOptions const& options,
-    Azure::Core::Context const& context)
-{
-  std::unique_ptr<AttestationAdministrationClient> returnValue(
-      new AttestationAdministrationClient(endpoint, credential, options));
-  returnValue->RetrieveResponseValidationCollateral(context);
-  return returnValue;
-}
-
 namespace {
 std::shared_timed_mutex SharedStateLock;
 }
@@ -421,7 +409,7 @@ Azure::Response<Models::AttestationToken<Models::IsolatedModeCertificateModifica
 AttestationAdministrationClient::AddIsolatedModeCertificate(
     std::string const& pemEncodedX509CertificateToAdd,
     AttestationSigningKey const& existingSigningKey,
-    AddIsolatedModeCertificatesOptions const& options,
+    AddIsolatedModeCertificateOptions const& options,
     Azure::Core::Context const& context) const
 {
   auto const policyCertToken(
@@ -447,7 +435,7 @@ Azure::Response<Models::AttestationToken<Models::IsolatedModeCertificateModifica
 AttestationAdministrationClient::RemoveIsolatedModeCertificate(
     std::string const& pemEncodedX509CertificateToRemove,
     AttestationSigningKey const& existingSigningKey,
-    AddIsolatedModeCertificatesOptions const& options,
+    RemoveIsolatedModeCertificateOptions const& options,
     Azure::Core::Context const& context) const
 {
   // Calculate a signed (or unsigned) attestation policy token to send to the service.
@@ -482,7 +470,7 @@ AttestationAdministrationClient::RemoveIsolatedModeCertificate(
  * @param context Client context for the request to the service.
  */
 void AttestationAdministrationClient::RetrieveResponseValidationCollateral(
-    Azure::Core::Context const& context) const
+    Azure::Core::Context const& context)
 {
   std::unique_lock<std::shared_timed_mutex> stateLock(SharedStateLock);
 

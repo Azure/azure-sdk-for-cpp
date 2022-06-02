@@ -19,11 +19,11 @@ namespace Azure { namespace Service {
 
   public:
     explicit Client(
-        const std::string& someParameter,
+        const std::string& serviceUrl,
         std::shared_ptr<Core::Credentials::TokenCredential> credential)
         : m_credential(std::move(credential))
     {
-      static_cast<void>(someParameter); // to suppress the "unused variable" warning.
+      static_cast<void>(serviceUrl); // to suppress the "unused variable" warning.
     }
 
     void DoSomething(const Core::Context& context) const

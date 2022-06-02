@@ -6,6 +6,8 @@
 
 ### Breaking Changes
 
+- Renamed `keyvault_certificates.hpp` to `certificates.hpp`.
+
 ### Bugs Fixed
 
 ### Other Changes

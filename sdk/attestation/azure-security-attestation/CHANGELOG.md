@@ -1,14 +1,21 @@
 # Release History
 
-## 1.0.0-beta.2 (Unreleased)
-
-### Features Added
-
-No new features, addressed API Review Feedback.
+## 1.0.0-beta.3 (2022-06-07)
 
 ### Breaking Changes
+- `ValueToSend` field in `TpmAttestationOptions` becomes `Payload`.
+- `AddIsolatedModeCertificatesOptions` becomes `AddIsolatedModeCertificateOptions`
+- `RemoveIsolatedModeCertificatesOptions` becomes `RemoveIsolatedModeCertificateOptions`
+- Renamed `AttestEnclaveOptions` to `AttestSgxEnclaveOptions` and `AttestOpenEnclaveOptions`.
+- `AttestationClient` and `AttestationAdministrationClient` creation is now done using the factory method `AttestationClient::Create()` and `AttestationAdministrationClient::Create()`. 
 
-Breaking Changes from API Review
+### Bugs Fixed
+
+### Other Changes
+
+## 1.0.0-beta.2 (2022-05-10)
+
+### Breaking Changes
 
 - Renamed `AttestationOpenIdMetadata` type to `OpenIdMetadata`.
 - Renamed `AttestationSigningCertificateResult` type to `TokenValidationCertificateResult` to more accurately reflect the
@@ -35,8 +42,6 @@ Breaking Changes from API Review
   - `AttestationAdministrationClient::AddPolicyManagementCertificate` becomes `AttestationAdministrationClient::AddIsolatedModeCertificate`.
   - `AttestationAdministrationClient::RemovePolicyManagementCertificate` becomes `AttestationAdministrationClient::RemoveIsolatedModeCertificate`.
 - Removed `ClientVersion` API from `AttestationClient` and `AttestationAdministrationClient`
-
-### Bugs Fixed
 
 ### Other Changes
 

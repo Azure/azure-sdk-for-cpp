@@ -11,7 +11,6 @@
 
 #include <azure/identity/client_secret_credential.hpp>
 #include <azure/storage/blobs.hpp>
-#include <azure/storage/common/internal/file_io.hpp>
 #include <azure/storage/common/internal/shared_key_policy.hpp>
 
 namespace Azure { namespace Storage { namespace Blobs { namespace Models {
@@ -462,7 +461,7 @@ namespace Azure { namespace Storage { namespace Test {
   TEST_P(UploadFile, fromFile)
   {
     UploadFile::ParamType const& p(GetParam());
-    std::vector<uint8_t> fileContent(static_cast<size_t>(8_MB), 'x');
+    std::vector<uint8_t> fileContent(static_cast<size_t>(p.FileSize), 'x');
     auto fileClient = m_fileSystemClient->GetFileClient(GetTestNameLowerCase());
 
     Azure::Storage::Files::DataLake::UploadFileFromOptions options;
@@ -472,10 +471,7 @@ namespace Azure { namespace Storage { namespace Test {
     options.Metadata = GetMetadata();
 
     std::string tempFilename = GetTestNameLowerCase();
-    {
-      Azure::Storage::_internal::FileWriter fileWriter(tempFilename);
-      fileWriter.Write(fileContent.data(), static_cast<size_t>(p.FileSize), 0);
-    }
+    WriteFile(tempFilename, fileContent);
     auto res = fileClient.UploadFrom(tempFilename, options);
     auto lastModified = fileClient.GetProperties().Value.LastModified;
     EXPECT_TRUE(res.Value.ETag.HasValue());
@@ -495,9 +491,7 @@ namespace Azure { namespace Storage { namespace Test {
             fileContent.begin(), fileContent.begin() + static_cast<size_t>(p.FileSize)));
     std::string tempFileDestinationName = RandomString();
     fileClient.DownloadTo(tempFileDestinationName);
-    Azure::Storage::_internal::FileReader fileReader(tempFileDestinationName);
-    auto size = fileReader.GetFileSize();
-    EXPECT_EQ(p.FileSize, size);
+    EXPECT_EQ(ReadFile(tempFileDestinationName), fileContent);
     DeleteFile(tempFileDestinationName);
     DeleteFile(tempFilename);
     fileClient.Delete();

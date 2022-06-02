@@ -50,7 +50,7 @@ int main()
 
     // Set the RunTimeData in the request to the service. Ask the service to interpret the
     // RunTimeData as a JSON object when it is returned in the resulting token.
-    AttestEnclaveOptions attestOptions;
+    AttestSgxEnclaveOptions attestOptions;
 
     attestOptions.RunTimeData
         = AttestationData{AttestationCollateral::RunTimeData(), AttestationDataType::Json};
