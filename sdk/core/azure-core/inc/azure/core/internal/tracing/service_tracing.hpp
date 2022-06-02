@@ -180,12 +180,6 @@ namespace Azure { namespace Core { namespace Tracing { namespace _internal {
     //    using TracingContext = std::pair<std::shared_ptr<Span>, std::shared_ptr<Tracer>>;
     using TracingContext = std::shared_ptr<Span>;
 
-    static DiagnosticTracingFactory* DiagnosticFactoryFromContext(
-        Azure::Core::Context const& context);
-
-    static Azure::Nullable<TracingContext> TracingContextFromContext(
-        Azure::Core::Context const& context);
-
   public:
     DiagnosticTracingFactory(
         Azure::Core::_internal::ClientOptions const& options,
@@ -200,6 +194,7 @@ namespace Azure { namespace Core { namespace Tracing { namespace _internal {
     }
 
     DiagnosticTracingFactory() = default;
+    DiagnosticTracingFactory(DiagnosticTracingFactory const&) = default;
 
     /** @brief A ContextAndSpan provides an updated Context object and a new span object
      * which can be used to add events and attributes to the span.
@@ -211,12 +206,15 @@ namespace Azure { namespace Core { namespace Tracing { namespace _internal {
         Azure::Core::Tracing::_internal::SpanKind const& spanKind,
         Azure::Core::Context const& clientContext);
 
-    static ContextAndSpan CreateSpanFromContext(
+    ContextAndSpan CreateSpan(
         std::string const& spanName,
-        Azure::Core::Tracing::_internal::SpanKind const& spanKind,
+        Azure::Core::Tracing::_internal::CreateSpanOptions& spanOptions,
         Azure::Core::Context const& clientContext);
 
     std::unique_ptr<Azure::Core::Tracing::_internal::AttributeSet> CreateAttributeSet();
+
+    static std::unique_ptr<DiagnosticTracingFactory> DiagnosticFactoryFromContext(
+        Azure::Core::Context const& context);
   };
 
   /**
