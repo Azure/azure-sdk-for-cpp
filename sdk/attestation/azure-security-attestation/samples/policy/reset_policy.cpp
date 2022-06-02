@@ -59,11 +59,11 @@ int main()
         GetEnvHelper::GetEnv("AZURE_TENANT_ID"),
         GetEnvHelper::GetEnv("AZURE_CLIENT_ID"),
         GetEnvHelper::GetEnv("AZURE_CLIENT_SECRET"));
-    std::unique_ptr<AttestationAdministrationClient const> adminClient(
-        AttestationAdministrationClientFactory::Create(endpoint, credential, clientOptions));
+    AttestationAdministrationClient const adminClient(
+        AttestationAdministrationClient::Create(endpoint, credential, clientOptions));
 
     Azure::Response<AttestationToken<PolicyResult>> const resetResult
-        = adminClient->ResetAttestationPolicy(AttestationType::SgxEnclave);
+        = adminClient.ResetAttestationPolicy(AttestationType::SgxEnclave);
 
     if (resetResult.Value.Body.PolicyResolution == PolicyModification::Removed)
     {
