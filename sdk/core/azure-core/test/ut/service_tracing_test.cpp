@@ -151,4 +151,29 @@ TEST(DiagnosticTracingFactory, BasicServiceSpanTests)
     span.AddAttributes(*attributeSet);
     span.SetStatus(SpanStatus::Error);
   }
+
+  // Now run all the previous tests on a DiagnosticTracingFactory created *without* a tracing
+  // provider.
+  {
+    Azure::Core::_internal::ClientOptions clientOptions;
+    Azure::Core::Tracing::_internal::DiagnosticTracingFactory serviceTrace(
+        clientOptions, "my-service-cpp", "1.0b2");
+
+    auto contextAndSpan = serviceTrace.CreateSpan(
+        "My API", Azure::Core::Tracing::_internal::SpanKind::Internal, {});
+    ServiceSpan span = std::move(contextAndSpan.second);
+
+    span.End();
+    span.AddEvent("New Event");
+    span.AddEvent(std::runtime_error("Exception"));
+    std::unique_ptr<Azure::Core::Tracing::_internal::AttributeSet> attributeSet
+        = serviceTrace.CreateAttributeSet();
+    if (attributeSet)
+    {
+      attributeSet->AddAttribute("Joe", "Joe'sValue");
+      span.AddEvent("AttributeEvent", *attributeSet);
+      span.AddAttributes(*attributeSet);
+    }
+    span.SetStatus(SpanStatus::Error);
+  }
 }
