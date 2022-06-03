@@ -49,16 +49,13 @@ AttestationClient::AttestationClient(
   std::vector<std::unique_ptr<HttpPolicy>> perCallpolicies;
 
   m_pipeline = std::make_shared<Azure::Core::Http::_internal::HttpPipeline>(
-      options,
-      std::move(perRetrypolicies),
-      std::move(perCallpolicies));
+      options, std::move(perRetrypolicies), std::move(perCallpolicies));
 }
 
 Azure::Response<OpenIdMetadata> AttestationClient::GetOpenIdMetadata(
     Azure::Core::Context const& context) const
 {
-  auto tracingContext(
-      m_tracingFactory.CreateTracingContext("GetOpenIdMetadata", context));
+  auto tracingContext(m_tracingFactory.CreateTracingContext("GetOpenIdMetadata", context));
   try
   {
     auto request = AttestationCommonRequest::CreateRequest(
@@ -81,8 +78,8 @@ Azure::Response<OpenIdMetadata> AttestationClient::GetOpenIdMetadata(
 Azure::Response<TokenValidationCertificateResult> AttestationClient::GetTokenValidationCertificates(
     Azure::Core::Context const& context) const
 {
-  auto tracingContext(m_tracingFactory.CreateTracingContext(
-      "GetTokenValidationCertificates", context));
+  auto tracingContext(
+      m_tracingFactory.CreateTracingContext("GetTokenValidationCertificates", context));
   try
   {
 
@@ -113,8 +110,7 @@ Azure::Response<AttestationToken<AttestationResult>> AttestationClient::AttestSg
     AttestSgxEnclaveOptions options,
     Azure::Core::Context const& context) const
 {
-  auto tracingContext(
-      m_tracingFactory.CreateTracingContext("AttestSgxEnclave", context));
+  auto tracingContext(m_tracingFactory.CreateTracingContext("AttestSgxEnclave", context));
   try
   {
 
@@ -169,8 +165,7 @@ Azure::Response<AttestationToken<AttestationResult>> AttestationClient::AttestOp
     AttestOpenEnclaveOptions options,
     Azure::Core::Context const& context) const
 {
-  auto tracingContext(
-      m_tracingFactory.CreateTracingContext("AttestOpenEnclave", context));
+  auto tracingContext(m_tracingFactory.CreateTracingContext("AttestOpenEnclave", context));
   try
   {
     AttestOpenEnclaveRequest attestRequest{
@@ -210,8 +205,7 @@ Azure::Response<TpmAttestationResult> AttestationClient::AttestTpm(
     AttestTpmOptions const& attestTpmOptions,
     Azure::Core::Context const& context) const
 {
-  auto tracingContext(
-      m_tracingFactory.CreateTracingContext("AttestTpm", context));
+  auto tracingContext(m_tracingFactory.CreateTracingContext("AttestTpm", context));
   try
   {
     std::string jsonToSend = TpmDataSerializer::Serialize(attestTpmOptions.Payload);
@@ -250,8 +244,7 @@ std::shared_timed_mutex SharedStateLock;
  */
 void AttestationClient::RetrieveResponseValidationCollateral(Azure::Core::Context const& context)
 {
-  auto tracingContext(
-      m_tracingFactory.CreateTracingContext("Create", context));
+  auto tracingContext(m_tracingFactory.CreateTracingContext("Create", context));
   try
   {
     std::unique_lock<std::shared_timed_mutex> stateLock(SharedStateLock);
@@ -261,7 +254,8 @@ void AttestationClient::RetrieveResponseValidationCollateral(Azure::Core::Contex
       stateLock.unlock();
       auto request = AttestationCommonRequest::CreateRequest(
           m_endpoint, HttpMethod::Get, {"certs"}, nullptr);
-      auto response = AttestationCommonRequest::SendRequest(*m_pipeline, request, tracingContext.Context);
+      auto response
+          = AttestationCommonRequest::SendRequest(*m_pipeline, request, tracingContext.Context);
       auto jsonWebKeySet(JsonWebKeySetSerializer::Deserialize(response));
       TokenValidationCertificateResult returnValue;
       std::vector<AttestationSigner> newValue;

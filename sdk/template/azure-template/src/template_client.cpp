@@ -33,5 +33,6 @@ int TemplateClient::GetValue(int key, Azure::Core::Context const& context) const
   {
     tracingContext.Span.AddEvent(e);
     tracingContext.Span.SetStatus(Azure::Core::Tracing::_internal::SpanStatus::Error);
+    throw;
   }
 }

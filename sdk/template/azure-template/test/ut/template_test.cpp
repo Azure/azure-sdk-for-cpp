@@ -7,11 +7,7 @@
 
 using namespace Azure::Template;
 
-TEST(Template, Basic)
-{
-  TemplateClient templateClient;
-
-}
+TEST(Template, Basic) { TemplateClient templateClient; }
 
 TEST(Template, GetValue)
 {

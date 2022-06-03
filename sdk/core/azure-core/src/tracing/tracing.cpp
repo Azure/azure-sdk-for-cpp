@@ -199,8 +199,8 @@ namespace Azure { namespace Core { namespace Tracing { namespace _internal {
 
     // Ensure that the factory is available in the context chain.
     // Note that we do this even if we don't have distributed tracing enabled, that's because
-    // the tracing context factory is also responsible for creating the User-Agent HTTP header, so it
-    // needs to be available for all requests.
+    // the tracing context factory is also responsible for creating the User-Agent HTTP header, so
+    // it needs to be available for all requests.
     TracingContextFactory const* tracingFactoryFromContext;
     if (!context.TryGetValue(TracingFactoryContextKey, tracingFactoryFromContext))
     {
