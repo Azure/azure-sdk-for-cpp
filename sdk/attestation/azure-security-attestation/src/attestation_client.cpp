@@ -33,7 +33,7 @@ AttestationClient::AttestationClient(
     AttestationClientOptions options)
     : m_endpoint(endpoint), m_credentials(credential),
       m_tokenValidationOptions(options.TokenValidationOptions),
-      m_diagnosticTracingFactory(options, "Security.Attestation", PackageVersion::ToString())
+      m_tracingFactory(options, "Security.Attestation", PackageVersion::ToString())
 {
   std::vector<std::unique_ptr<HttpPolicy>> perRetrypolicies;
   if (credential)
@@ -59,23 +59,23 @@ AttestationClient::AttestationClient(
 Azure::Response<OpenIdMetadata> AttestationClient::GetOpenIdMetadata(
     Azure::Core::Context const& context) const
 {
-  auto spanAndContext(
-      m_diagnosticTracingFactory.CreateSpan("GetOpenIdMetadata", SpanKind::Internal, context));
+  auto tracingContext(
+      m_tracingFactory.CreateTracingContext("GetOpenIdMetadata", context));
   try
   {
     auto request = AttestationCommonRequest::CreateRequest(
         m_endpoint, HttpMethod::Get, {".well-known/openid-configuration"}, nullptr);
 
     auto response
-        = AttestationCommonRequest::SendRequest(*m_pipeline, request, spanAndContext.first);
+        = AttestationCommonRequest::SendRequest(*m_pipeline, request, tracingContext.Context);
     auto openIdMetadata(OpenIdMetadataSerializer::Deserialize(response));
 
     return Response<OpenIdMetadata>(std::move(openIdMetadata), std::move(response));
   }
   catch (std::runtime_error const& ex)
   {
-    spanAndContext.second.AddEvent(ex);
-    spanAndContext.second.SetStatus(SpanStatus::Error);
+    tracingContext.Span.AddEvent(ex);
+    tracingContext.Span.SetStatus(SpanStatus::Error);
     throw;
   }
 }
@@ -83,8 +83,8 @@ Azure::Response<OpenIdMetadata> AttestationClient::GetOpenIdMetadata(
 Azure::Response<TokenValidationCertificateResult> AttestationClient::GetTokenValidationCertificates(
     Azure::Core::Context const& context) const
 {
-  auto spanAndContext(m_diagnosticTracingFactory.CreateSpan(
-      "GetTokenValidationCertificates", SpanKind::Internal, context));
+  auto tracingContext(m_tracingFactory.CreateTracingContext(
+      "GetTokenValidationCertificates", context));
   try
   {
 
@@ -92,7 +92,7 @@ Azure::Response<TokenValidationCertificateResult> AttestationClient::GetTokenVal
         = AttestationCommonRequest::CreateRequest(m_endpoint, HttpMethod::Get, {"certs"}, nullptr);
 
     auto response
-        = AttestationCommonRequest::SendRequest(*m_pipeline, request, spanAndContext.first);
+        = AttestationCommonRequest::SendRequest(*m_pipeline, request, tracingContext.Context);
     auto jsonWebKeySet(JsonWebKeySetSerializer::Deserialize(response));
     TokenValidationCertificateResult returnValue;
     for (const auto& jwk : jsonWebKeySet.Keys)
@@ -104,8 +104,8 @@ Azure::Response<TokenValidationCertificateResult> AttestationClient::GetTokenVal
   }
   catch (std::runtime_error const& ex)
   {
-    spanAndContext.second.AddEvent(ex);
-    spanAndContext.second.SetStatus(SpanStatus::Error);
+    tracingContext.Span.AddEvent(ex);
+    tracingContext.Span.SetStatus(SpanStatus::Error);
     throw;
   }
 }
@@ -115,8 +115,8 @@ Azure::Response<AttestationToken<AttestationResult>> AttestationClient::AttestSg
     AttestSgxEnclaveOptions options,
     Azure::Core::Context const& context) const
 {
-  auto spanAndContext(
-      m_diagnosticTracingFactory.CreateSpan("AttestSgxEnclave", SpanKind::Internal, context));
+  auto tracingContext(
+      m_tracingFactory.CreateTracingContext("AttestSgxEnclave", context));
   try
   {
 
@@ -138,7 +138,7 @@ Azure::Response<AttestationToken<AttestationResult>> AttestationClient::AttestSg
 
     // Send the request to the service.
     auto response
-        = AttestationCommonRequest::SendRequest(*m_pipeline, request, spanAndContext.first);
+        = AttestationCommonRequest::SendRequest(*m_pipeline, request, tracingContext.Context);
 
     // Deserialize the Service response token and return the JSON web token returned by the service.
     std::string responseToken = AttestationServiceTokenResponseSerializer::Deserialize(response);
@@ -160,8 +160,8 @@ Azure::Response<AttestationToken<AttestationResult>> AttestationClient::AttestSg
   }
   catch (std::runtime_error const& ex)
   {
-    spanAndContext.second.AddEvent(ex);
-    spanAndContext.second.SetStatus(SpanStatus::Error);
+    tracingContext.Span.AddEvent(ex);
+    tracingContext.Span.SetStatus(SpanStatus::Error);
     throw;
   }
 }
@@ -171,8 +171,8 @@ Azure::Response<AttestationToken<AttestationResult>> AttestationClient::AttestOp
     AttestOpenEnclaveOptions options,
     Azure::Core::Context const& context) const
 {
-  auto spanAndContext(
-      m_diagnosticTracingFactory.CreateSpan("AttestOpenEnclave", SpanKind::Internal, context));
+  auto tracingContext(
+      m_tracingFactory.CreateTracingContext("AttestOpenEnclave", context));
   try
   {
     AttestOpenEnclaveRequest attestRequest{
@@ -189,7 +189,7 @@ Azure::Response<AttestationToken<AttestationResult>> AttestationClient::AttestOp
         m_endpoint, m_apiVersion, HttpMethod::Post, {"attest/OpenEnclave"}, &stream);
 
     auto response
-        = AttestationCommonRequest::SendRequest(*m_pipeline, request, spanAndContext.first);
+        = AttestationCommonRequest::SendRequest(*m_pipeline, request, tracingContext.Context);
     std::string responseToken = AttestationServiceTokenResponseSerializer::Deserialize(response);
     auto token
         = AttestationTokenInternal<AttestationResult, AttestationResultSerializer>(responseToken);
@@ -202,8 +202,8 @@ Azure::Response<AttestationToken<AttestationResult>> AttestationClient::AttestOp
   }
   catch (std::runtime_error const& ex)
   {
-    spanAndContext.second.AddEvent(ex);
-    spanAndContext.second.SetStatus(SpanStatus::Error);
+    tracingContext.Span.AddEvent(ex);
+    tracingContext.Span.SetStatus(SpanStatus::Error);
     throw;
   }
 }
@@ -212,8 +212,8 @@ Azure::Response<TpmAttestationResult> AttestationClient::AttestTpm(
     AttestTpmOptions const& attestTpmOptions,
     Azure::Core::Context const& context) const
 {
-  auto spanAndContext(
-      m_diagnosticTracingFactory.CreateSpan("AttestTpm", SpanKind::Internal, context));
+  auto tracingContext(
+      m_tracingFactory.CreateTracingContext("AttestTpm", context));
   try
   {
     std::string jsonToSend = TpmDataSerializer::Serialize(attestTpmOptions.Payload);
@@ -225,14 +225,14 @@ Azure::Response<TpmAttestationResult> AttestationClient::AttestTpm(
 
     // Send the request to the service.
     auto response
-        = AttestationCommonRequest::SendRequest(*m_pipeline, request, spanAndContext.first);
+        = AttestationCommonRequest::SendRequest(*m_pipeline, request, tracingContext.Context);
     std::string returnedBody(TpmDataSerializer::Deserialize(response));
     return Response<TpmAttestationResult>(TpmAttestationResult{returnedBody}, std::move(response));
   }
   catch (std::runtime_error const& ex)
   {
-    spanAndContext.second.AddEvent(ex);
-    spanAndContext.second.SetStatus(SpanStatus::Error);
+    tracingContext.Span.AddEvent(ex);
+    tracingContext.Span.SetStatus(SpanStatus::Error);
     throw;
   }
 }
@@ -252,8 +252,8 @@ std::shared_timed_mutex SharedStateLock;
  */
 void AttestationClient::RetrieveResponseValidationCollateral(Azure::Core::Context const& context)
 {
-  auto spanAndContext(
-      m_diagnosticTracingFactory.CreateSpan("Create", SpanKind::Internal, context));
+  auto tracingContext(
+      m_tracingFactory.CreateTracingContext("Create", context));
   try
   {
     std::unique_lock<std::shared_timed_mutex> stateLock(SharedStateLock);
@@ -263,7 +263,7 @@ void AttestationClient::RetrieveResponseValidationCollateral(Azure::Core::Contex
       stateLock.unlock();
       auto request = AttestationCommonRequest::CreateRequest(
           m_endpoint, HttpMethod::Get, {"certs"}, nullptr);
-      auto response = AttestationCommonRequest::SendRequest(*m_pipeline, request, spanAndContext.first);
+      auto response = AttestationCommonRequest::SendRequest(*m_pipeline, request, tracingContext.Context);
       auto jsonWebKeySet(JsonWebKeySetSerializer::Deserialize(response));
       TokenValidationCertificateResult returnValue;
       std::vector<AttestationSigner> newValue;
@@ -277,12 +277,13 @@ void AttestationClient::RetrieveResponseValidationCollateral(Azure::Core::Contex
       {
         m_attestationSigners = newValue;
       }
+      tracingContext.Span.SetStatus(SpanStatus::Ok);
     }
   }
   catch (std::runtime_error const& ex)
   {
-    spanAndContext.second.AddEvent(ex);
-    spanAndContext.second.SetStatus(SpanStatus::Error);
+    tracingContext.Span.AddEvent(ex);
+    tracingContext.Span.SetStatus(SpanStatus::Error);
     throw;
   }
 }

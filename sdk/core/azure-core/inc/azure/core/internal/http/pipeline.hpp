@@ -146,6 +146,88 @@ namespace Azure { namespace Core { namespace Http { namespace _internal {
     }
 
     /**
+     * @brief Construct a new HTTP Pipeline object from clientOptions.
+     *
+     * @remark The client options includes per retry and per call policies which are merged with the
+     * service-specific per retry policies.
+     *
+     * @remark This specialization of the HttpPipeline constructor constructs an HTTP pipeline
+     * *without* a telemetry policy. It is intended for use by service clients which have converted
+     * to use distributed tracing - the distributed tracing policy adds the User-Agent header to the
+     * request.
+     *
+     * @param clientOptions The SDK client options.
+     * @param perRetryPolicies The service-specific per retry policies.
+     * @param perCallPolicies The service-specific per call policies.
+     */
+    explicit HttpPipeline(
+        Azure::Core::_internal::ClientOptions const& clientOptions,
+        std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>>&& perRetryPolicies,
+        std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>>&& perCallPolicies)
+    {
+      Azure::Core::_internal::InputSanitizer inputSanitizer(
+          clientOptions.Log.AllowedHttpQueryParameters, clientOptions.Log.AllowedHttpHeaders);
+
+      auto const& perCallClientPolicies = clientOptions.PerOperationPolicies;
+      auto const& perRetryClientPolicies = clientOptions.PerRetryPolicies;
+      // Adding 5 for:
+      // - RequestIdPolicy
+      // - RetryPolicy
+      // - LogPolicy
+      // - RequestActivityPolicy
+      // - TransportPolicy
+      auto pipelineSize = perCallClientPolicies.size() + perRetryClientPolicies.size()
+          + perRetryPolicies.size() + perCallPolicies.size() + 5;
+
+      m_policies.reserve(pipelineSize);
+
+      // service-specific per call policies
+      for (auto& policy : perCallPolicies)
+      {
+        m_policies.emplace_back(policy->Clone());
+      }
+
+      // Request Id
+      m_policies.emplace_back(
+          std::make_unique<Azure::Core::Http::Policies::_internal::RequestIdPolicy>());
+
+      // client-options per call policies.
+      for (auto& policy : perCallClientPolicies)
+      {
+        m_policies.emplace_back(policy->Clone());
+      }
+
+      // Retry policy
+      m_policies.emplace_back(std::make_unique<Azure::Core::Http::Policies::_internal::RetryPolicy>(
+          clientOptions.Retry));
+
+      // service-specific per retry policies.
+      for (auto& policy : perRetryPolicies)
+      {
+        m_policies.emplace_back(policy->Clone());
+      }
+      // client options per retry policies.
+      for (auto& policy : perRetryClientPolicies)
+      {
+        m_policies.emplace_back(policy->Clone());
+      }
+
+      // Add a request activity policy which will generate distributed traces for the pipeline.
+      m_policies.emplace_back(
+          std::make_unique<Azure::Core::Http::Policies::_internal::RequestActivityPolicy>(
+              inputSanitizer, clientOptions.Telemetry));
+
+      // logging - won't update request
+      m_policies.emplace_back(
+          std::make_unique<Azure::Core::Http::Policies::_internal::LogPolicy>(clientOptions.Log));
+
+      // transport
+      m_policies.emplace_back(
+          std::make_unique<Azure::Core::Http::Policies::_internal::TransportPolicy>(
+              clientOptions.Transport));
+    }
+
+    /**
      * @brief Construct HTTP pipeline with the sequence of HTTP policies provided.
      *
      * @param policies A sequence of #Azure::Core::Http::Policies::HttpPolicy

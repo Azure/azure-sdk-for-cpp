@@ -19,7 +19,7 @@ namespace Azure { namespace Template {
     int GetValue(int key, Azure::Core::Context const& context = Azure::Core::Context{}) const;
 
   private:
-    Azure::Core::Tracing::_internal::DiagnosticTracingFactory m_tracingFactory;
+    Azure::Core::Tracing::_internal::TracingContextFactory m_tracingFactory;
   };
 
 }} // namespace Azure::Template

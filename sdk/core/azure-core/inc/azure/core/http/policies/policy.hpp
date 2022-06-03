@@ -395,6 +395,7 @@ namespace Azure { namespace Core { namespace Http { namespace Policies {
     class RequestActivityPolicy final : public HttpPolicy {
     private:
       Azure::Core::_internal::InputSanitizer m_inputSanitizer;
+      std::string m_applicationId;
 
     public:
       /**
@@ -406,8 +407,10 @@ namespace Azure { namespace Core { namespace Http { namespace Policies {
        *
        * @param inputSanitizer for sanitizing data before it is logged.
        */
-      explicit RequestActivityPolicy(Azure::Core::_internal::InputSanitizer const& inputSanitizer)
-          : m_inputSanitizer(inputSanitizer)
+      explicit RequestActivityPolicy(
+          Azure::Core::_internal::InputSanitizer const& inputSanitizer,
+          TelemetryOptions const& options = TelemetryOptions{})
+          : m_inputSanitizer(inputSanitizer), m_applicationId(options.ApplicationId)
       {
       }
 

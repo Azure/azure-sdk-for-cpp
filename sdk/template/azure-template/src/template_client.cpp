@@ -17,8 +17,7 @@ TemplateClient::TemplateClient(TemplateClientOptions const& options)
 
 int TemplateClient::GetValue(int key, Azure::Core::Context const& context) const
 {
-  auto contextAndSpan = m_tracingFactory.CreateSpan(
-      "GetValue", Azure::Core::Tracing::_internal::SpanKind::Internal, context);
+  auto tracingContext = m_tracingFactory.CreateTracingContext("GetValue", context);
 
   try
   {
@@ -32,7 +31,7 @@ int TemplateClient::GetValue(int key, Azure::Core::Context const& context) const
   }
   catch (std::exception const& e)
   {
-    contextAndSpan.second.AddEvent(e);
-    contextAndSpan.second.SetStatus(Azure::Core::Tracing::_internal::SpanStatus::Error);
+    tracingContext.Span.AddEvent(e);
+    tracingContext.Span.SetStatus(Azure::Core::Tracing::_internal::SpanStatus::Error);
   }
 }

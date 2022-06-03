@@ -252,7 +252,7 @@ namespace Azure { namespace Security { namespace Attestation {
     std::shared_ptr<Azure::Core::Http::_internal::HttpPipeline> m_pipeline;
     AttestationTokenValidationOptions m_tokenValidationOptions;
     std::vector<Models::AttestationSigner> m_attestationSigners;
-    Azure::Core::Tracing::_internal::DiagnosticTracingFactory m_diagnosticTracingFactory;
+    Azure::Core::Tracing::_internal::TracingContextFactory m_tracingFactory;
 
     /** @brief Construct a new Attestation Client object
      *
