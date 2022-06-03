@@ -23,68 +23,83 @@ std::unique_ptr<RawResponse> RequestActivityPolicy::Send(
     NextHttpPolicy nextPolicy,
     Context const& context) const
 {
-  // Create a tracing span over the HTTP request.
-  std::stringstream ss;
-  // We know that the retry policy MUST be above us in the hierarchy, so ask it for the current
-  // retry count.
-  auto retryCount = RetryPolicy::GetRetryCount(context);
-  if (retryCount == -1)
+  // Find a tracing factory from our context. Note that the factory value is owned by the
+  // context chain so we can manage a raw pointer to the factory.
+  auto tracingFactory = TracingContextFactory::CreateFromContext(context);
+  if (tracingFactory)
   {
-    // We don't have a RetryPolicy in the policy stack - just assume this is request 0.
-    retryCount = 0;
-  }
-  ss << "HTTP " << request.GetMethod().ToString() << " #" << retryCount;
-  auto contextAndSpan
-      = Azure::Core::Tracing::_internal::DiagnosticTracingFactory::CreateSpanFromContext(
-          ss.str(), SpanKind::Client, context);
-  auto scope = std::move(contextAndSpan.second);
+    // Create a tracing span over the HTTP request.
+    std::stringstream ss;
+    ss << "HTTP " << request.GetMethod().ToString();
 
-  scope.AddAttribute(TracingAttributes::HttpMethod.ToString(), request.GetMethod().ToString());
-  scope.AddAttribute("http.url", m_inputSanitizer.SanitizeUrl(request.GetUrl()).GetAbsoluteUrl());
-  {
-    Azure::Nullable<std::string> requestId = request.GetHeader("x-ms-client-request-id");
+    CreateSpanOptions createOptions;
+    createOptions.Kind = SpanKind::Client;
+    createOptions.Attributes = tracingFactory->CreateAttributeSet();
+    // Note that the AttributeSet takes a *reference* to the values passed into the AttributeSet.
+    // This means that all the values passed into the AttributeSet MUST be stabilized across the
+    // lifetime of the AttributeSet.
+
+    // Note that request.GetMethod() returns an HttpMethod object, which is always a static
+    // object, and thus its lifetime is constant. That is not the case for the other values
+    // stored in the attributes.
+    createOptions.Attributes->AddAttribute(
+        TracingAttributes::HttpMethod.ToString(), request.GetMethod().ToString());
+
+    const std::string sanitizedUrl
+        = m_inputSanitizer.SanitizeUrl(request.GetUrl()).GetAbsoluteUrl();
+    createOptions.Attributes->AddAttribute("http.url", sanitizedUrl);
+    const Azure::Nullable<std::string> requestId = request.GetHeader("x-ms-client-request-id");
     if (requestId.HasValue())
     {
-      scope.AddAttribute(TracingAttributes::RequestId.ToString(), requestId.Value());
+      createOptions.Attributes->AddAttribute(
+          TracingAttributes::RequestId.ToString(), requestId.Value());
     }
-  }
 
-  {
-    auto userAgent = request.GetHeader("User-Agent");
+    const auto userAgent = request.GetHeader("User-Agent");
     if (userAgent.HasValue())
     {
-      scope.AddAttribute(TracingAttributes::HttpUserAgent.ToString(), userAgent.Value());
+      createOptions.Attributes->AddAttribute(
+          TracingAttributes::HttpUserAgent.ToString(), userAgent.Value());
     }
-  }
 
-  // Propagate information from the scope to the HTTP headers.
-  //
-  // This will add the "traceparent" header and any other OpenTelemetry related headers.
-  scope.PropagateToHttpHeaders(request);
+    auto contextAndSpan = tracingFactory->CreateTracingContext(ss.str(), createOptions, context);
+    auto scope = std::move(contextAndSpan.Span);
 
-  try
-  {
-    // Send the request on to the service.
-    auto response = nextPolicy.Send(request, contextAndSpan.first);
+    // Propagate information from the scope to the HTTP headers.
+    //
+    // This will add the "traceparent" header and any other OpenTelemetry related headers.
+    scope.PropagateToHttpHeaders(request);
 
-    // And register the headers we received from the service.
-    scope.AddAttribute(
-        TracingAttributes::HttpStatusCode.ToString(),
-        std::to_string(static_cast<int>(response->GetStatusCode())));
-    auto const& responseHeaders = response->GetHeaders();
-    auto serviceRequestId = responseHeaders.find("x-ms-request-id");
-    if (serviceRequestId != responseHeaders.end())
+    try
     {
-      scope.AddAttribute(TracingAttributes::ServiceRequestId.ToString(), serviceRequestId->second);
+      // Send the request on to the service.
+      auto response = nextPolicy.Send(request, contextAndSpan.Context);
+
+      // And register the headers we received from the service.
+      scope.AddAttribute(
+          TracingAttributes::HttpStatusCode.ToString(),
+          std::to_string(static_cast<int>(response->GetStatusCode())));
+      auto const& responseHeaders = response->GetHeaders();
+      auto serviceRequestId = responseHeaders.find("x-ms-request-id");
+      if (serviceRequestId != responseHeaders.end())
+      {
+        scope.AddAttribute(
+            TracingAttributes::ServiceRequestId.ToString(), serviceRequestId->second);
+      }
+
+      return response;
     }
+    catch (const TransportException& e)
+    {
+      scope.AddEvent(e);
+      scope.SetStatus(SpanStatus::Error);
 
-    return response;
+      // Rethrow the exception.
+      throw;
+    }
   }
-  catch (const TransportException& e)
+  else
   {
-    scope.AddEvent(e);
-
-    // Rethrow the exception.
-    throw;
+    return nextPolicy.Send(request, context);
   }
 }
