@@ -161,7 +161,6 @@ namespace Azure { namespace Storage {
     {
       using TaskBase::TaskBase;
       void Execute() noexcept override { AZURE_UNREACHABLE_CODE(); }
-      std::string Serialize() noexcept override { AZURE_UNREACHABLE_CODE(); }
     };
 
     auto jobId = Core::Uuid::CreateUuid().ToString();

@@ -49,14 +49,11 @@ namespace Azure { namespace Storage { namespace _internal {
 
     virtual ~TaskBase() {}
     virtual void Execute() noexcept = 0;
-    virtual std::string Serialize() noexcept { return std::string(); }
 
   private:
     TaskBase(const TaskBase& other) = default;
   };
 
   using Task = std::unique_ptr<TaskBase>;
-
-  Task Deserialize(const char*);
 
 }}} // namespace Azure::Storage::_internal
