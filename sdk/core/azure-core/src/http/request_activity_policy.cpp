@@ -29,8 +29,8 @@ std::unique_ptr<RawResponse> RequestActivityPolicy::Send(
   if (tracingFactory)
   {
     // Create a tracing span over the HTTP request.
-    std::stringstream ss;
-    ss << "HTTP " << request.GetMethod().ToString();
+    std::string spanName("HTTP ");
+    spanName.append(request.GetMethod().ToString());
 
     CreateSpanOptions createOptions;
     createOptions.Kind = SpanKind::Client;
@@ -55,14 +55,20 @@ std::unique_ptr<RawResponse> RequestActivityPolicy::Send(
           TracingAttributes::RequestId.ToString(), requestId.Value());
     }
 
-    const auto userAgent = request.GetHeader("User-Agent");
-    if (userAgent.HasValue())
+    // Determine the value of the "User-Agent" header.
+    // 
+    // If nobody has previously set a user agent header, then set the user agent header
+    // based on the value calculated by the tracing factory.
+    auto userAgent = request.GetHeader("User-Agent");
+    if (!userAgent.HasValue())
     {
-      createOptions.Attributes->AddAttribute(
-          TracingAttributes::HttpUserAgent.ToString(), userAgent.Value());
+      userAgent = tracingFactory->GetUserAgent();
+      request.SetHeader("User-Agent", userAgent.Value());
     }
+    createOptions.Attributes->AddAttribute(
+        TracingAttributes::HttpUserAgent.ToString(), userAgent.Value());
 
-    auto contextAndSpan = tracingFactory->CreateTracingContext(ss.str(), createOptions, context);
+    auto contextAndSpan = tracingFactory->CreateTracingContext(spanName, createOptions, context);
     auto scope = std::move(contextAndSpan.Span);
 
     // Propagate information from the scope to the HTTP headers.

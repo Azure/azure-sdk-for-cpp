@@ -590,8 +590,6 @@ public:
       : m_tracingFactory(clientOptions, "Azure.Core.OpenTelemetry.Test.Service", "1.0.0.beta-2")
   {
     std::vector<std::unique_ptr<HttpPolicy>> policies;
-    policies.emplace_back(std::make_unique<TelemetryPolicy>(
-        "Azure.Core.OpenTelemetry.Test.Service", "1.0.0.beta-2", clientOptions.Telemetry));
     policies.emplace_back(std::make_unique<RequestIdPolicy>());
     policies.emplace_back(std::make_unique<RetryPolicy>(RetryOptions{}));
 

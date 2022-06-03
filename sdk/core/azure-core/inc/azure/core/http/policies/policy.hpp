@@ -395,7 +395,6 @@ namespace Azure { namespace Core { namespace Http { namespace Policies {
     class RequestActivityPolicy final : public HttpPolicy {
     private:
       Azure::Core::_internal::InputSanitizer m_inputSanitizer;
-      std::string m_applicationId;
 
     public:
       /**
@@ -407,10 +406,8 @@ namespace Azure { namespace Core { namespace Http { namespace Policies {
        *
        * @param inputSanitizer for sanitizing data before it is logged.
        */
-      explicit RequestActivityPolicy(
-          Azure::Core::_internal::InputSanitizer const& inputSanitizer,
-          TelemetryOptions const& options = TelemetryOptions{})
-          : m_inputSanitizer(inputSanitizer), m_applicationId(options.ApplicationId)
+      explicit RequestActivityPolicy(Azure::Core::_internal::InputSanitizer const& inputSanitizer)
+          : m_inputSanitizer(inputSanitizer)
       {
       }
 
@@ -431,6 +428,12 @@ namespace Azure { namespace Core { namespace Http { namespace Policies {
      * @details Applies an HTTP header with a component name and version to each HTTP request,
      * includes Azure SDK version information, and operating system information.
      * @remark See https://azure.github.io/azure-sdk/general_azurecore.html#telemetry-policy.
+     *
+     * @remark Note that for clients which are using distributed tracing, this functionality is
+     * merged into the RequestActivityPolicy policy.
+     *
+     * Eventually, when all service have converted to using distributed tracing, this policy can be
+     * deprecated.
      */
     class TelemetryPolicy final : public HttpPolicy {
     private:
