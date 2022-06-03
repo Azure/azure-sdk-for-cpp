@@ -44,7 +44,7 @@ AttestationAdministrationClient::AttestationAdministrationClient(
     AttestationAdministrationClientOptions const& options)
     : m_endpoint(endpoint), m_apiVersion(options.Version.ToString()),
       m_tokenValidationOptions(options.TokenValidationOptions),
-      m_tracingFactory(options, "security.sttestation", PackageVersion::ToString())
+      m_tracingFactory(options, "security.attestation", PackageVersion::ToString())
 {
   std::vector<std::unique_ptr<HttpPolicy>> perRetrypolicies;
   if (credential)

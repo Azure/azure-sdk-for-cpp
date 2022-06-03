@@ -165,8 +165,8 @@ namespace Azure { namespace Core { namespace Tracing { namespace _internal {
   private:
     std::string m_serviceName;
     std::string m_serviceVersion;
-    std::shared_ptr<Azure::Core::Tracing::_internal::Tracer> m_serviceTracer;
     std::string m_userAgent;
+    std::shared_ptr<Azure::Core::Tracing::_internal::Tracer> m_serviceTracer;
 
     /** @brief The key used to retrieve the span and tracer associated with a context object.
      *
@@ -252,7 +252,11 @@ namespace Azure { namespace Core { namespace Tracing { namespace _internal {
 
     /** @brief Retrieves the User-Agent header value for this tracing context factory.
      */
-    std::string const& GetUserAgent() { return m_userAgent; }
+    std::string const& GetUserAgent() const { return m_userAgent; }
+
+    /** @brief Returns true if this TracingContextFactory is connected to a service tracer.
+     */
+    bool HasTracer() const { return static_cast<bool>(m_serviceTracer); }
 
     static std::unique_ptr<TracingContextFactory> CreateFromContext(
         Azure::Core::Context const& context);

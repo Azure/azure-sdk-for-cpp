@@ -179,19 +179,15 @@ namespace Azure { namespace Core { namespace Tracing { namespace _internal {
       std::string const& methodName,
       Azure::Core::Context const& context) const
   {
-    if (m_serviceTracer)
-    {
-      Azure::Core::Context contextToUse = context;
-      CreateSpanOptions createOptions;
+    Azure::Core::Context contextToUse = context;
+    CreateSpanOptions createOptions;
 
-      createOptions.Kind = SpanKind::Internal;
-      createOptions.Attributes = m_serviceTracer->CreateAttributeSet();
-      return CreateTracingContext(methodName, createOptions, context);
-    }
-    else
+    createOptions.Kind = SpanKind::Internal;
+    if (HasTracer())
     {
-      return TracingContext{context, ServiceSpan{}};
+      createOptions.Attributes = m_serviceTracer->CreateAttributeSet();
     }
+    return CreateTracingContext(methodName, createOptions, context);
   }
 
   TracingContextFactory::TracingContext TracingContextFactory::CreateTracingContext(
@@ -199,17 +195,20 @@ namespace Azure { namespace Core { namespace Tracing { namespace _internal {
       Azure::Core::Tracing::_internal::CreateSpanOptions& createOptions,
       Azure::Core::Context const& context) const
   {
-    if (m_serviceTracer)
+    Azure::Core::Context contextToUse = context;
+
+    // Ensure that the factory is available in the context chain.
+    // Note that we do this even if we don't have distributed tracing enabled, that's because
+    // the tracing context factory is also responsible for creating the User-Agent HTTP header, so it
+    // needs to be available for all requests.
+    TracingContextFactory const* tracingFactoryFromContext;
+    if (!context.TryGetValue(TracingFactoryContextKey, tracingFactoryFromContext))
     {
-      Azure::Core::Context contextToUse = context;
+      contextToUse = context.WithValue(TracingFactoryContextKey, this);
+    }
 
-      // Ensure that the factory is available in the context chain.
-      TracingContextFactory const* tracingFactoryFromContext;
-      if (!context.TryGetValue(TracingFactoryContextKey, tracingFactoryFromContext))
-      {
-        contextToUse = context.WithValue(TracingFactoryContextKey, this);
-      }
-
+    if (HasTracer())
+    {
       std::shared_ptr<Span> traceContext;
       // Find a span in the context hierarchy.
       if (contextToUse.TryGetValue(ContextSpanKey, traceContext))
@@ -237,7 +236,7 @@ namespace Azure { namespace Core { namespace Tracing { namespace _internal {
     }
     else
     {
-      return TracingContext{context, ServiceSpan{}};
+      return TracingContext{contextToUse, ServiceSpan{}};
     }
   }
 

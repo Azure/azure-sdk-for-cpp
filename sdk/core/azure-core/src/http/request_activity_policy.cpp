@@ -23,11 +23,28 @@ std::unique_ptr<RawResponse> RequestActivityPolicy::Send(
     NextHttpPolicy nextPolicy,
     Context const& context) const
 {
+  Azure::Nullable<std::string> userAgent;
   // Find a tracing factory from our context. Note that the factory value is owned by the
   // context chain so we can manage a raw pointer to the factory.
   auto tracingFactory = TracingContextFactory::CreateFromContext(context);
   if (tracingFactory)
   {
+    // Determine the value of the "User-Agent" header.
+    //
+    // If nobody has previously set a user agent header, then set the user agent header
+    // based on the value calculated by the tracing factory.
+    userAgent = request.GetHeader("User-Agent");
+    if (!userAgent.HasValue())
+    {
+      userAgent = tracingFactory->GetUserAgent();
+      request.SetHeader("User-Agent", userAgent.Value());
+    }
+  }
+
+  // If our tracing factory has a tracer attached to it, register the request with the tracer.
+  if (tracingFactory && tracingFactory->HasTracer())
+  {
+
     // Create a tracing span over the HTTP request.
     std::string spanName("HTTP ");
     spanName.append(request.GetMethod().ToString());
@@ -35,9 +52,9 @@ std::unique_ptr<RawResponse> RequestActivityPolicy::Send(
     CreateSpanOptions createOptions;
     createOptions.Kind = SpanKind::Client;
     createOptions.Attributes = tracingFactory->CreateAttributeSet();
-    // Note that the AttributeSet takes a *reference* to the values passed into the AttributeSet.
-    // This means that all the values passed into the AttributeSet MUST be stabilized across the
-    // lifetime of the AttributeSet.
+    // Note that the AttributeSet takes a *reference* to the values passed into the
+    // AttributeSet. This means that all the values passed into the AttributeSet MUST be
+    // stabilized across the lifetime of the AttributeSet.
 
     // Note that request.GetMethod() returns an HttpMethod object, which is always a static
     // object, and thus its lifetime is constant. That is not the case for the other values
@@ -55,16 +72,7 @@ std::unique_ptr<RawResponse> RequestActivityPolicy::Send(
           TracingAttributes::RequestId.ToString(), requestId.Value());
     }
 
-    // Determine the value of the "User-Agent" header.
-    // 
-    // If nobody has previously set a user agent header, then set the user agent header
-    // based on the value calculated by the tracing factory.
-    auto userAgent = request.GetHeader("User-Agent");
-    if (!userAgent.HasValue())
-    {
-      userAgent = tracingFactory->GetUserAgent();
-      request.SetHeader("User-Agent", userAgent.Value());
-    }
+    // We retrieved the value of the user-agent header above.
     createOptions.Attributes->AddAttribute(
         TracingAttributes::HttpUserAgent.ToString(), userAgent.Value());
 
