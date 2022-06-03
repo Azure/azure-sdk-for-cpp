@@ -159,12 +159,11 @@ TEST(RequestActivityPolicy, Basic)
 
     Azure::Core::_internal::ClientOptions clientOptions;
     clientOptions.Telemetry.TracingProvider = testTracer;
-    Azure::Core::Tracing::_internal::DiagnosticTracingFactory serviceTrace(
+    Azure::Core::Tracing::_internal::TracingContextFactory serviceTrace(
         clientOptions, "my-service-cpp", "1.0b2");
 
-    auto contextAndSpan = serviceTrace.CreateSpan(
-        "My API", Azure::Core::Tracing::_internal::SpanKind::Internal, {});
-    Azure::Core::Context callContext = std::move(contextAndSpan.first);
+    auto contextAndSpan = serviceTrace.CreateTracingContext("My API", {});
+    Azure::Core::Context callContext = std::move(contextAndSpan.Context);
     Request request(HttpMethod::Get, Url("https://www.microsoft.com"));
 
     {
@@ -192,11 +191,10 @@ TEST(RequestActivityPolicy, Basic)
 
     Azure::Core::_internal::ClientOptions clientOptions;
     clientOptions.Telemetry.TracingProvider = testTracer;
-    Azure::Core::Tracing::_internal::DiagnosticTracingFactory serviceTrace(
+    Azure::Core::Tracing::_internal::TracingContextFactory serviceTrace(
         clientOptions, "my-service-cpp", "1.0b2");
-    auto contextAndSpan = serviceTrace.CreateSpan(
-        "My API", Azure::Core::Tracing::_internal::SpanKind::Internal, {});
-    Azure::Core::Context callContext = std::move(contextAndSpan.first);
+    auto contextAndSpan = serviceTrace.CreateTracingContext("My API", {});
+    Azure::Core::Context callContext = std::move(contextAndSpan.Context);
     Request request(HttpMethod::Get, Url("https://www.microsoft.com"));
 
     {
@@ -230,12 +228,11 @@ TEST(RequestActivityPolicy, TryRetries)
 
     Azure::Core::_internal::ClientOptions clientOptions;
     clientOptions.Telemetry.TracingProvider = testTracer;
-    Azure::Core::Tracing::_internal::DiagnosticTracingFactory serviceTrace(
+    Azure::Core::Tracing::_internal::TracingContextFactory serviceTrace(
         clientOptions, "my-service-cpp", "1.0b2");
 
-    auto contextAndSpan = serviceTrace.CreateSpan(
-        "My API", Azure::Core::Tracing::_internal::SpanKind::Internal, {});
-    Azure::Core::Context callContext = std::move(contextAndSpan.first);
+    auto contextAndSpan = serviceTrace.CreateTracingContext("My API", {});
+    Azure::Core::Context callContext = std::move(contextAndSpan.Context);
     Request request(HttpMethod::Get, Url("https://www.microsoft.com"));
 
     {

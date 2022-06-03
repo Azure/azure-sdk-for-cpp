@@ -25,7 +25,7 @@ std::unique_ptr<RawResponse> RequestActivityPolicy::Send(
 {
   // Find a tracing factory from our context. Note that the factory value is owned by the
   // context chain so we can manage a raw pointer to the factory.
-  auto tracingFactory = DiagnosticTracingFactory::DiagnosticFactoryFromContext(context);
+  auto tracingFactory = TracingContextFactory::CreateFromContext(context);
   if (tracingFactory)
   {
     // Create a tracing span over the HTTP request.
@@ -38,27 +38,32 @@ std::unique_ptr<RawResponse> RequestActivityPolicy::Send(
     // Note that the AttributeSet takes a *reference* to the values passed into the AttributeSet.
     // This means that all the values passed into the AttributeSet MUST be stabilized across the
     // lifetime of the AttributeSet.
-    std::string httpMethod = request.GetMethod().ToString();
-    createOptions.Attributes->AddAttribute(TracingAttributes::HttpMethod.ToString(), httpMethod);
 
-    std::string sanitizedUrl = m_inputSanitizer.SanitizeUrl(request.GetUrl()).GetAbsoluteUrl();
+    // Note that request.GetMethod() returns an HttpMethod object, which is always a static
+    // object, and thus its lifetime is constant. That is not the case for the other values
+    // stored in the attributes.
+    createOptions.Attributes->AddAttribute(
+        TracingAttributes::HttpMethod.ToString(), request.GetMethod().ToString());
+
+    const std::string sanitizedUrl
+        = m_inputSanitizer.SanitizeUrl(request.GetUrl()).GetAbsoluteUrl();
     createOptions.Attributes->AddAttribute("http.url", sanitizedUrl);
-    Azure::Nullable<std::string> requestId = request.GetHeader("x-ms-client-request-id");
+    const Azure::Nullable<std::string> requestId = request.GetHeader("x-ms-client-request-id");
     if (requestId.HasValue())
     {
       createOptions.Attributes->AddAttribute(
           TracingAttributes::RequestId.ToString(), requestId.Value());
     }
 
-    auto userAgent = request.GetHeader("User-Agent");
+    const auto userAgent = request.GetHeader("User-Agent");
     if (userAgent.HasValue())
     {
       createOptions.Attributes->AddAttribute(
           TracingAttributes::HttpUserAgent.ToString(), userAgent.Value());
     }
 
-    auto contextAndSpan = tracingFactory->CreateSpan(ss.str(), createOptions, context);
-    auto scope = std::move(contextAndSpan.second);
+    auto contextAndSpan = tracingFactory->CreateTracingContext(ss.str(), createOptions, context);
+    auto scope = std::move(contextAndSpan.Span);
 
     // Propagate information from the scope to the HTTP headers.
     //
@@ -68,7 +73,7 @@ std::unique_ptr<RawResponse> RequestActivityPolicy::Send(
     try
     {
       // Send the request on to the service.
-      auto response = nextPolicy.Send(request, contextAndSpan.first);
+      auto response = nextPolicy.Send(request, contextAndSpan.Context);
 
       // And register the headers we received from the service.
       scope.AddAttribute(
