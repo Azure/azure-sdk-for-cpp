@@ -12,6 +12,7 @@ namespace Azure { namespace Template {
   struct TemplateClientOptions : public Azure::Core::_internal::ClientOptions
   {
   };
+
   class TemplateClient final {
 
   public:

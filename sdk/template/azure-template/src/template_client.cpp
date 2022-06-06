@@ -101,7 +101,6 @@ int TemplateClient::GetValue(int p1, int p2, int d) const
     return 0;
   }
 
-
   auto p = p1 + p2;
 
   if (p == 11)
