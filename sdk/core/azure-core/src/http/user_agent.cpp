@@ -30,43 +30,43 @@
 #if !defined(WINAPI_PARTITION_DESKTOP) \
     || WINAPI_PARTITION_DESKTOP // See azure/core/platform.hpp for explanation.
 
-namespace Azure { namespace Core { namespace Http { namespace _internal {
+namespace {
 
-  /**
-   * @brief HkeyHolder ensures native handle resource is released.
-   *
-   */
-  class HkeyHolder final {
-  private:
-    HKEY m_value = nullptr;
+/**
+ * @brief HkeyHolder ensures native handle resource is released.
+ *
+ */
+class HkeyHolder final {
+private:
+  HKEY m_value = nullptr;
 
-  public:
-    explicit HkeyHolder() noexcept : m_value(nullptr) {}
+public:
+  explicit HkeyHolder() noexcept : m_value(nullptr) {}
 
-    ~HkeyHolder() noexcept
+  ~HkeyHolder() noexcept
+  {
+    if (m_value != nullptr)
     {
-      if (m_value != nullptr)
-      {
-        ::RegCloseKey(m_value);
-      }
+      ::RegCloseKey(m_value);
     }
+  }
 
-    void operator=(HKEY p) noexcept
+  void operator=(HKEY p) noexcept
+  {
+    if (p != nullptr)
     {
-      if (p != nullptr)
-      {
-        m_value = p;
-      }
+      m_value = p;
     }
+  }
 
-    operator HKEY() noexcept { return m_value; }
+  operator HKEY() noexcept { return m_value; }
 
-    operator HKEY*() noexcept { return &m_value; }
+  operator HKEY*() noexcept { return &m_value; }
 
-    HKEY* operator&() noexcept { return &m_value; }
-  };
+  HKEY* operator&() noexcept { return &m_value; }
+};
 
-}}}} // namespace Azure::Core::Http::_internal
+} // namespace
 
 #endif
 
@@ -83,7 +83,7 @@ std::string GetOSVersion()
 #if !defined(WINAPI_PARTITION_DESKTOP) \
     || WINAPI_PARTITION_DESKTOP // See azure/core/platform.hpp for explanation.
   {
-    Azure::Core::Http::_internal::HkeyHolder regKey;
+    HkeyHolder regKey;
     if (RegOpenKeyExA(
             HKEY_LOCAL_MACHINE,
             "SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion",
@@ -143,7 +143,7 @@ std::string TrimString(std::string s)
 }
 } // namespace
 
-namespace Azure { namespace Core { namespace Http { namespace _internal {
+namespace Azure { namespace Core { namespace Http { namespace _detail {
 
   std::string UserAgentGenerator::GenerateUserAgent(
       std::string const& componentName,
@@ -163,4 +163,4 @@ namespace Azure { namespace Core { namespace Http { namespace _internal {
 
     return telemetryId.str();
   }
-}}}} // namespace Azure::Core::Http::_internal
+}}}} // namespace Azure::Core::Http::_detail

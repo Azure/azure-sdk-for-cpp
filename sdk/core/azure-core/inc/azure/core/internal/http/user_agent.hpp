@@ -11,7 +11,7 @@
 
 #include <string>
 
-namespace Azure { namespace Core { namespace Http { namespace _internal {
+namespace Azure { namespace Core { namespace Http { namespace _detail {
   class UserAgentGenerator {
   public:
     static std::string GenerateUserAgent(

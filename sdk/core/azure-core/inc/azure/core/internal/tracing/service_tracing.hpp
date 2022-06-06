@@ -188,7 +188,7 @@ namespace Azure { namespace Core { namespace Tracing { namespace _internal {
         std::string serviceName,
         std::string serviceVersion)
         : m_serviceName(serviceName), m_serviceVersion(serviceVersion),
-          m_userAgent(Azure::Core::Http::_internal::UserAgentGenerator::GenerateUserAgent(
+          m_userAgent(Azure::Core::Http::_detail::UserAgentGenerator::GenerateUserAgent(
               serviceName,
               serviceVersion,
               options.Telemetry.ApplicationId)),

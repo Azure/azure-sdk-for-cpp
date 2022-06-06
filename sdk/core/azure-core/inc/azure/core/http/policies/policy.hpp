@@ -451,7 +451,7 @@ namespace Azure { namespace Core { namespace Http { namespace Policies {
           std::string const& componentName,
           std::string const& componentVersion,
           TelemetryOptions options = TelemetryOptions())
-          : m_telemetryId(Azure::Core::Http::_internal::UserAgentGenerator::GenerateUserAgent(
+          : m_telemetryId(Azure::Core::Http::_detail::UserAgentGenerator::GenerateUserAgent(
               componentName,
               componentVersion,
               options.ApplicationId))
