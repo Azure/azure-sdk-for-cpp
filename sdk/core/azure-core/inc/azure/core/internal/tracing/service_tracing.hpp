@@ -129,7 +129,8 @@ namespace Azure { namespace Core { namespace Tracing { namespace _internal {
     }
 
     /**
-     * @brief Records an exception occurring in the span.
+     * @brief Records an exception occurring in the span. Also marks the status of the span as
+     * SpanStatus::Error
      *
      * @param exception Exception which has occurred.
      */
@@ -138,6 +139,7 @@ namespace Azure { namespace Core { namespace Tracing { namespace _internal {
       if (m_span)
       {
         m_span->AddEvent(exception);
+        m_span->SetStatus(SpanStatus::Error);
       }
     }
 

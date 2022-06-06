@@ -70,7 +70,6 @@ Azure::Response<OpenIdMetadata> AttestationClient::GetOpenIdMetadata(
   catch (std::runtime_error const& ex)
   {
     tracingContext.Span.AddEvent(ex);
-    tracingContext.Span.SetStatus(SpanStatus::Error);
     throw;
   }
 }
@@ -100,7 +99,6 @@ Azure::Response<TokenValidationCertificateResult> AttestationClient::GetTokenVal
   catch (std::runtime_error const& ex)
   {
     tracingContext.Span.AddEvent(ex);
-    tracingContext.Span.SetStatus(SpanStatus::Error);
     throw;
   }
 }
@@ -155,7 +153,6 @@ Azure::Response<AttestationToken<AttestationResult>> AttestationClient::AttestSg
   catch (std::runtime_error const& ex)
   {
     tracingContext.Span.AddEvent(ex);
-    tracingContext.Span.SetStatus(SpanStatus::Error);
     throw;
   }
 }
@@ -196,7 +193,6 @@ Azure::Response<AttestationToken<AttestationResult>> AttestationClient::AttestOp
   catch (std::runtime_error const& ex)
   {
     tracingContext.Span.AddEvent(ex);
-    tracingContext.Span.SetStatus(SpanStatus::Error);
     throw;
   }
 }
@@ -224,7 +220,6 @@ Azure::Response<TpmAttestationResult> AttestationClient::AttestTpm(
   catch (std::runtime_error const& ex)
   {
     tracingContext.Span.AddEvent(ex);
-    tracingContext.Span.SetStatus(SpanStatus::Error);
     throw;
   }
 }
@@ -275,7 +270,6 @@ void AttestationClient::RetrieveResponseValidationCollateral(Azure::Core::Contex
   catch (std::runtime_error const& ex)
   {
     tracingContext.Span.AddEvent(ex);
-    tracingContext.Span.SetStatus(SpanStatus::Error);
     throw;
   }
 }

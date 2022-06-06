@@ -8,7 +8,6 @@
 #include <cctype>
 #include <sstream>
 
-
 namespace Azure { namespace Core { namespace Tracing { namespace _internal {
 
   const SpanKind SpanKind::Internal("Internal");

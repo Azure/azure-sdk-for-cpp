@@ -140,7 +140,6 @@ AttestationAdministrationClient::GetAttestationPolicy(
   catch (std::runtime_error const& ex)
   {
     tracingContext.Span.AddEvent(ex);
-    tracingContext.Span.SetStatus(SpanStatus::Error);
     throw;
   }
 }
@@ -237,7 +236,6 @@ AttestationAdministrationClient::SetAttestationPolicy(
   catch (std::runtime_error const& ex)
   {
     tracingContext.Span.AddEvent(ex);
-    tracingContext.Span.SetStatus(SpanStatus::Error);
     throw;
   }
 }
@@ -318,7 +316,6 @@ AttestationAdministrationClient::ResetAttestationPolicy(
   catch (std::runtime_error const& ex)
   {
     tracingContext.Span.AddEvent(ex);
-    tracingContext.Span.SetStatus(SpanStatus::Error);
     throw;
   }
 }
@@ -374,7 +371,6 @@ AttestationAdministrationClient::GetIsolatedModeCertificates(
   catch (std::runtime_error const& ex)
   {
     tracingContext.Span.AddEvent(ex);
-    tracingContext.Span.SetStatus(SpanStatus::Error);
     throw;
   }
 }
@@ -480,7 +476,6 @@ AttestationAdministrationClient::AddIsolatedModeCertificate(
   catch (std::runtime_error const& ex)
   {
     tracingContext.Span.AddEvent(ex);
-    tracingContext.Span.SetStatus(SpanStatus::Error);
     throw;
   }
 }
@@ -520,7 +515,6 @@ AttestationAdministrationClient::RemoveIsolatedModeCertificate(
   catch (std::runtime_error const& ex)
   {
     tracingContext.Span.AddEvent(ex);
-    tracingContext.Span.SetStatus(SpanStatus::Error);
     throw;
   }
 }
@@ -566,7 +560,6 @@ void AttestationAdministrationClient::RetrieveResponseValidationCollateral(
   catch (std::runtime_error const& ex)
   {
     tracingContext.Span.AddEvent(ex);
-    tracingContext.Span.SetStatus(SpanStatus::Error);
     throw;
   }
 }

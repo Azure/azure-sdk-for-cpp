@@ -11,12 +11,14 @@ using namespace Azure::Template;
 using namespace Azure::Template::_detail;
 
 TemplateClient::TemplateClient(TemplateClientOptions const& options)
+    // LCOV_EXCL_LINE
     : m_tracingFactory(options, "Template", PackageVersion::ToString())
 {
 }
 
 int TemplateClient::GetValue(int key, Azure::Core::Context const& context) const
 {
+  // LCOV_EXCL_LINE
   auto tracingContext = m_tracingFactory.CreateTracingContext("GetValue", context);
 
   try
@@ -32,7 +34,6 @@ int TemplateClient::GetValue(int key, Azure::Core::Context const& context) const
   catch (std::exception const& e)
   {
     tracingContext.Span.AddEvent(e);
-    tracingContext.Span.SetStatus(Azure::Core::Tracing::_internal::SpanStatus::Error);
     throw;
   }
 }

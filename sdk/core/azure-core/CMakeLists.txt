@@ -81,6 +81,7 @@ set(
     inc/azure/core/internal/environment.hpp
     inc/azure/core/internal/extendable_enumeration.hpp
     inc/azure/core/internal/http/pipeline.hpp
+    inc/azure/core/internal/http/user_agent.hpp
     inc/azure/core/internal/io/null_body_stream.hpp
     inc/azure/core/internal/json/json.hpp
     inc/azure/core/internal/json/json_optional.hpp
@@ -128,6 +129,7 @@ set(
     src/http/telemetry_policy.cpp
     src/http/transport_policy.cpp
     src/http/url.cpp
+    src/http/user_agent.cpp
     src/io/body_stream.cpp
     src/io/random_access_file_body_stream.cpp
     src/logger.cpp
@@ -138,7 +140,7 @@ set(
     src/strings.cpp
     src/tracing/tracing.cpp
     src/uuid.cpp
- "src/http/user_agent.cpp")
+    )
 
 add_library(azure-core ${AZURE_CORE_HEADER} ${AZURE_CORE_SOURCE})
 
