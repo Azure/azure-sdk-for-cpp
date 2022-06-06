@@ -6,7 +6,7 @@
 # Or: Get-ApiViewCommandLine.ps1 ..\.. azure-security-attestation
 # Or: c:\src\azure-sdk-for-cpp\eng\scripts\Get-ApiViewCommandLine.ps1 c:\src\azure-sdk-for-cpp azure-identity
 
-param($RepoPath, $LibName)
+param([String]$RepoPath, [String]$LibName)
 
 [String]$SdkRoot = Resolve-Path ($RepoPath + "\sdk")
 
