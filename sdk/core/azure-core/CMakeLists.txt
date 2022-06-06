@@ -138,7 +138,7 @@ set(
     src/strings.cpp
     src/tracing/tracing.cpp
     src/uuid.cpp
-)
+ "src/http/user_agent.cpp")
 
 add_library(azure-core ${AZURE_CORE_HEADER} ${AZURE_CORE_SOURCE})
 

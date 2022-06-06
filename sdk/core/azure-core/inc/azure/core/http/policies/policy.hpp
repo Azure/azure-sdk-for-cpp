@@ -14,8 +14,8 @@
 #include "azure/core/dll_import_export.hpp"
 #include "azure/core/http/http.hpp"
 #include "azure/core/http/transport.hpp"
+#include "azure/core/internal/http/user_agent.hpp"
 #include "azure/core/internal/input_sanitizer.hpp"
-#include "azure/core/tracing/tracing.hpp"
 #include "azure/core/uuid.hpp"
 
 #include <atomic>
@@ -439,11 +439,6 @@ namespace Azure { namespace Core { namespace Http { namespace Policies {
     private:
       std::string const m_telemetryId;
 
-      static std::string BuildTelemetryId(
-          std::string const& componentName,
-          std::string const& componentVersion,
-          std::string const& applicationId);
-
     public:
       /**
        * @brief Construct HTTP telemetry policy.
@@ -456,7 +451,10 @@ namespace Azure { namespace Core { namespace Http { namespace Policies {
           std::string const& componentName,
           std::string const& componentVersion,
           TelemetryOptions options = TelemetryOptions())
-          : m_telemetryId(BuildTelemetryId(componentName, componentVersion, options.ApplicationId))
+          : m_telemetryId(Azure::Core::Http::_internal::UserAgentGenerator::GenerateUserAgent(
+              componentName,
+              componentVersion,
+              options.ApplicationId))
       {
       }
 

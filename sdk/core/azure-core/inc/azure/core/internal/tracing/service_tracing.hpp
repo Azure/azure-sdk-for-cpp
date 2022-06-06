@@ -3,6 +3,7 @@
 
 #include "azure/core/context.hpp"
 #include "azure/core/internal/client_options.hpp"
+#include "azure/core/internal/http/user_agent.hpp"
 #include "azure/core/tracing/tracing.hpp"
 
 #pragma once
@@ -179,18 +180,16 @@ namespace Azure { namespace Core { namespace Tracing { namespace _internal {
     static Azure::Core::Context::Key ContextSpanKey;
     static Azure::Core::Context::Key TracingFactoryContextKey;
 
-    std::string BuildUserAgent(
-        std::string const& componentName,
-        std::string const& componentVersion,
-        std::string const& applicationId);
-
   public:
     TracingContextFactory(
         Azure::Core::_internal::ClientOptions const& options,
         std::string serviceName,
         std::string serviceVersion)
         : m_serviceName(serviceName), m_serviceVersion(serviceVersion),
-          m_userAgent(BuildUserAgent(serviceName, serviceVersion, options.Telemetry.ApplicationId)),
+          m_userAgent(Azure::Core::Http::_internal::UserAgentGenerator::GenerateUserAgent(
+              serviceName,
+              serviceVersion,
+              options.Telemetry.ApplicationId)),
           m_serviceTracer(
               options.Telemetry.TracingProvider
                   ? options.Telemetry.TracingProvider->CreateTracer(serviceName, serviceVersion)
