@@ -69,10 +69,7 @@ namespace Azure { namespace Security { namespace Attestation {
      * @param attestationClient An existing attestation client.
      */
     AttestationAdministrationClient(AttestationAdministrationClient const& attestationClient)
-        : m_endpoint(attestationClient.m_endpoint), m_apiVersion(attestationClient.m_apiVersion),
-          m_pipeline(attestationClient.m_pipeline),
-          m_tokenValidationOptions(attestationClient.m_tokenValidationOptions),
-          m_attestationSigners(attestationClient.m_attestationSigners){};
+        = default;
 
     /**
      * @brief Destructor.
