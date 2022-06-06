@@ -19,4 +19,4 @@ namespace Azure { namespace Core { namespace Http { namespace _detail {
         std::string const& componentVersion,
         std::string const& applicationId);
   };
-}}}} // namespace Azure::Core::Http::_internal
+}}}} // namespace Azure::Core::Http::_detail
