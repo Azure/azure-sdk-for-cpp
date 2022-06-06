@@ -17,7 +17,7 @@ namespace Azure { namespace Template {
   public:
     TemplateClient(TemplateClientOptions options = TemplateClientOptions());
     std::string ClientVersion() const;
-    int GetValue(int key) const;
+    int GetValue(int p1, int p2, int d) const;
   };
 
 }} // namespace Azure::Template
