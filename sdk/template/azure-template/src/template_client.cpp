@@ -11,15 +11,15 @@ using namespace Azure::Template;
 using namespace Azure::Template::_detail;
 
 TemplateClient::TemplateClient(TemplateClientOptions const& options)
-    // LCOV_EXCL_LINE
-    : m_tracingFactory(options, "Template", PackageVersion::ToString())
+    : m_tracingFactory(options, "Template", PackageVersion::ToString()) // LCOV_EXCL_LINE
+
 {
 }
 
 int TemplateClient::GetValue(int key, Azure::Core::Context const& context) const
 {
-  // LCOV_EXCL_LINE
-  auto tracingContext = m_tracingFactory.CreateTracingContext("GetValue", context);
+  auto tracingContext
+      = m_tracingFactory.CreateTracingContext("GetValue", context); // LCOV_EXCL_LINE
 
   try
   {
