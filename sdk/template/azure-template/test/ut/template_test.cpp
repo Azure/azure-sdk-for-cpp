@@ -14,6 +14,6 @@ TEST(Template, GetValue)
   TemplateClient templateClient;
 
   EXPECT_EQ(templateClient.GetValue(-1), 0);
-  EXPECT_EQ(templateClient.GetValue(0), 1);
-  EXPECT_EQ(templateClient.GetValue(1), 2);
+  EXPECT_EQ(templateClient.GetValue(0), 0);
+  EXPECT_EQ(templateClient.GetValue(1), 10);
 }
