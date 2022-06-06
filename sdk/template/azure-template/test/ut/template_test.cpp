@@ -43,6 +43,7 @@ TEST(Template, GetValue)
 
   EXPECT_EQ(templateClient.GetValue(11, 4, 4), 3);
   EXPECT_EQ(templateClient.GetValue(11, 4, 3), 1);
+  EXPECT_EQ(templateClient.GetValue(11, 5, 3), 1);
 
   EXPECT_EQ(templateClient.GetValue(11, 6, 3), 3);
   EXPECT_EQ(templateClient.GetValue(11, 6, 2), 1);
