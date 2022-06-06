@@ -10,8 +10,6 @@
 using namespace Azure::Template;
 using namespace Azure::Template::_detail;
 
-std::string TemplateClient::ClientVersion() const { return PackageVersion::ToString(); }
-
 TemplateClient::TemplateClient(TemplateClientOptions) {}
 
 int TemplateClient::GetValue(int p1, int p2, int d) const
@@ -35,14 +33,14 @@ int TemplateClient::GetValue(int p1, int p2, int d) const
       return 4;
     }
 
-    if (p == 6 && d < 7)
+    if (p == 6 && d == 7)
     {
-      return 4;
+      return 1;
     }
 
-    if (p == 4 && d <= 6)
+    if (p == 4)
     {
-      return (d >= 5) ? 4 : 1;
+      return (d == 5 || d == 6) ? 4 : 1;
     }
 
     if (p != 5 && p != 10 && d < 8)
