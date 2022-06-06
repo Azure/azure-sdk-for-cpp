@@ -40,9 +40,9 @@ int TemplateClient::GetValue(int p1, int p2, int d) const
       return 4;
     }
 
-    if (p == 4 && (d == 5 || d == 6))
+    if (p == 4 && d <= 6)
     {
-      return 4;
+      return (d >= 5) ? 4 : 1;
     }
 
     if (p != 5 && p != 10 && d < 8)
