@@ -8,7 +8,8 @@
       "default-features": false
     },
     {
-      "name": "opentelemetry-cpp"
+      "name": "opentelemetry-cpp",
+      "platform": "!(windows & !static)"
     },
     {
       "name": "vcpkg-cmake",

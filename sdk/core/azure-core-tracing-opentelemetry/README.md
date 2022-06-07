@@ -19,7 +19,7 @@ Then, use in your CMake file:
 
 ```CMake
 find_package(azure-core-tracing-opentelemetry-cpp CONFIG REQUIRED)
-target_link_libraries(<your project name> PRIVATE Azure::azure-core-opentelemetry)
+target_link_libraries(<your project name> PRIVATE Azure::azure-core-tracing-opentelemetry)
 ```
 
 ## Key concepts
@@ -39,7 +39,7 @@ below for more details.
 ### OpenTelemetry Compatibility
 
 Most Azure SDKs use [OpenTelemetry](https://opentelemetry.io/) to support tracing. Specifically, we depend on 
-the [azure-core-opentelemetry](https://github.com/open-telemetry/opentelemetry-cpp/blob/main/docs/building-with-vcpkg.md) VCPKG package.
+the [opentelemetry-cpp](https://github.com/open-telemetry/opentelemetry-cpp/blob/main/docs/building-with-vcpkg.md) VCPKG package.
 
 
 ## Examples
