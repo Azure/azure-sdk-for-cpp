@@ -10,10 +10,6 @@ az_vcpkg_integrate()
 cmake_minimum_required (VERSION 3.12)
 project(azure-core-tracing-opentelemetry LANGUAGES CXX)
 
-if (NOT VCPKG_TARGET_TRIPLET MATCHES "windows" OR VCPKG_TARGET_TRIPLET MATCHES "static" OR NOT WIN32)
-    set(BUILD_AZURE_CORE_TRACING_OPENTELEMETRY ON)
-endif()
-
 set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
@@ -27,7 +23,7 @@ include(AzureConfigRTTI)
 # Add create_map_file function
 include(CreateMapFile)
 
-if (BUILD_AZURE_CORE_TRACING_OPENTELEMETRY)
+if (NOT DISABLE_AZURE_CORE_OPENTELEMETRY)
     find_package(Threads REQUIRED)
 
     if(NOT AZ_ALL_LIBRARIES)
@@ -75,7 +71,7 @@ endif()
 get_az_version("${CMAKE_CURRENT_SOURCE_DIR}/src/private/package_version.hpp")
 generate_documentation(azure-core-tracing-opentelemetry ${AZ_LIBRARY_VERSION})
 
-if(BUILD_AZURE_CORE_TRACING_OPENTELEMETRY)
+if(NOT DISABLE_AZURE_CORE_OPENTELEMETRY)
   az_vcpkg_export(
     azure-core-tracing-opentelemetry
     CORE_TRACING_OPENTELEMETRY
@@ -89,7 +85,7 @@ if(BUILD_AZURE_CORE_TRACING_OPENTELEMETRY)
   )
 endif()
 
-if(BUILD_AZURE_CORE_TRACING_OPENTELEMETRY AND BUILD_TESTING)
+if(NOT DISABLE_AZURE_CORE_OPENTELEMETRY AND BUILD_TESTING)
   # define a symbol that enables some test hooks in code
   add_compile_definitions(TESTING_BUILD)
   
