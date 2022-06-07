@@ -40,6 +40,31 @@ public:
       : HttpPolicy(), m_createResponse(createResponse){};
 };
 
+class TestAttributeSet : public Azure::Core::Tracing::_internal::AttributeSet {
+  std::map<std::string, std::string> m_attributes;
+
+public:
+  TestAttributeSet() : Azure::Core::Tracing::_internal::AttributeSet() {}
+
+  // Inherited via AttributeSet
+  virtual void AddAttribute(std::string const&, bool) override {}
+  virtual void AddAttribute(std::string const&, int32_t) override {}
+  virtual void AddAttribute(std::string const&, int64_t) override {}
+  virtual void AddAttribute(std::string const&, uint64_t) override {}
+  virtual void AddAttribute(std::string const&, double) override {}
+  virtual void AddAttribute(std::string const& key, const char* val) override
+  {
+    m_attributes.emplace(std::make_pair(key, std::string(val)));
+  }
+
+  virtual void AddAttribute(std::string const& key, std::string const& val) override
+  {
+    m_attributes.emplace(std::make_pair(key, val));
+  }
+
+  std::map<std::string, std::string> const& GetAttributes() { return m_attributes; }
+};
+
 // Dummy service tracing class.
 class TestSpan final : public Azure::Core::Tracing::_internal::Span {
   std::vector<std::string> m_events;
@@ -47,9 +72,18 @@ class TestSpan final : public Azure::Core::Tracing::_internal::Span {
   std::string m_spanName;
 
 public:
-  TestSpan(std::string const& spanName)
+  TestSpan(std::string const& spanName, CreateSpanOptions const& options)
       : Azure::Core::Tracing::_internal::Span(), m_spanName(spanName)
   {
+    if (options.Attributes)
+    {
+      TestAttributeSet* testAttributes = static_cast<TestAttributeSet*>(options.Attributes.get());
+
+      for (auto const& attribute : testAttributes->GetAttributes())
+      {
+        m_stringAttributes.emplace(attribute);
+      }
+    }
   }
 
   // Inherited via Span
@@ -78,29 +112,15 @@ public:
   std::map<std::string, std::string> const& GetAttributes() { return m_stringAttributes; }
 };
 
-class TestAttributeSet : public Azure::Core::Tracing::_internal::AttributeSet {
-public:
-  TestAttributeSet() : Azure::Core::Tracing::_internal::AttributeSet() {}
-
-  // Inherited via AttributeSet
-  virtual void AddAttribute(std::string const&, bool) override {}
-  virtual void AddAttribute(std::string const&, int32_t) override {}
-  virtual void AddAttribute(std::string const&, int64_t) override {}
-  virtual void AddAttribute(std::string const&, uint64_t) override {}
-  virtual void AddAttribute(std::string const&, double) override {}
-  virtual void AddAttribute(std::string const&, const char*) override {}
-  virtual void AddAttribute(std::string const&, std::string const&) override {}
-};
-
 class TestTracer final : public Azure::Core::Tracing::_internal::Tracer {
   mutable std::vector<std::shared_ptr<TestSpan>> m_spans;
 
 public:
   TestTracer(std::string const&, std::string const&) : Azure::Core::Tracing::_internal::Tracer() {}
-  std::shared_ptr<Span> CreateSpan(std::string const& spanName, CreateSpanOptions const&)
+  std::shared_ptr<Span> CreateSpan(std::string const& spanName, CreateSpanOptions const& options)
       const override
   {
-    auto returnSpan(std::make_shared<TestSpan>(spanName));
+    auto returnSpan(std::make_shared<TestSpan>(spanName, options));
     m_spans.push_back(returnSpan);
     return returnSpan;
   }
@@ -139,12 +159,11 @@ TEST(RequestActivityPolicy, Basic)
 
     Azure::Core::_internal::ClientOptions clientOptions;
     clientOptions.Telemetry.TracingProvider = testTracer;
-    Azure::Core::Tracing::_internal::DiagnosticTracingFactory serviceTrace(
+    Azure::Core::Tracing::_internal::TracingContextFactory serviceTrace(
         clientOptions, "my-service-cpp", "1.0b2");
 
-    auto contextAndSpan = serviceTrace.CreateSpan(
-        "My API", Azure::Core::Tracing::_internal::SpanKind::Internal, {});
-    Azure::Core::Context callContext = std::move(contextAndSpan.first);
+    auto contextAndSpan = serviceTrace.CreateTracingContext("My API", {});
+    Azure::Core::Context callContext = std::move(contextAndSpan.Context);
     Request request(HttpMethod::Get, Url("https://www.microsoft.com"));
 
     {
@@ -162,7 +181,7 @@ TEST(RequestActivityPolicy, Basic)
     auto& tracer = testTracer->GetTracers().front();
     EXPECT_EQ(2ul, tracer->GetSpans().size());
     EXPECT_EQ("My API", tracer->GetSpans()[0]->GetName());
-    EXPECT_EQ("HTTP GET #0", tracer->GetSpans()[1]->GetName());
+    EXPECT_EQ("HTTP GET", tracer->GetSpans()[1]->GetName());
     EXPECT_EQ("GET", tracer->GetSpans()[1]->GetAttributes().at("http.method"));
   }
 
@@ -172,11 +191,10 @@ TEST(RequestActivityPolicy, Basic)
 
     Azure::Core::_internal::ClientOptions clientOptions;
     clientOptions.Telemetry.TracingProvider = testTracer;
-    Azure::Core::Tracing::_internal::DiagnosticTracingFactory serviceTrace(
+    Azure::Core::Tracing::_internal::TracingContextFactory serviceTrace(
         clientOptions, "my-service-cpp", "1.0b2");
-    auto contextAndSpan = serviceTrace.CreateSpan(
-        "My API", Azure::Core::Tracing::_internal::SpanKind::Internal, {});
-    Azure::Core::Context callContext = std::move(contextAndSpan.first);
+    auto contextAndSpan = serviceTrace.CreateTracingContext("My API", {});
+    Azure::Core::Context callContext = std::move(contextAndSpan.Context);
     Request request(HttpMethod::Get, Url("https://www.microsoft.com"));
 
     {
@@ -198,7 +216,7 @@ TEST(RequestActivityPolicy, Basic)
     auto& tracer = testTracer->GetTracers().front();
     EXPECT_EQ(2ul, tracer->GetSpans().size());
     EXPECT_EQ("My API", tracer->GetSpans()[0]->GetName());
-    EXPECT_EQ("HTTP GET #0", tracer->GetSpans()[1]->GetName());
+    EXPECT_EQ("HTTP GET", tracer->GetSpans()[1]->GetName());
     EXPECT_EQ("GET", tracer->GetSpans()[1]->GetAttributes().at("http.method"));
   }
 }
@@ -210,12 +228,11 @@ TEST(RequestActivityPolicy, TryRetries)
 
     Azure::Core::_internal::ClientOptions clientOptions;
     clientOptions.Telemetry.TracingProvider = testTracer;
-    Azure::Core::Tracing::_internal::DiagnosticTracingFactory serviceTrace(
+    Azure::Core::Tracing::_internal::TracingContextFactory serviceTrace(
         clientOptions, "my-service-cpp", "1.0b2");
 
-    auto contextAndSpan = serviceTrace.CreateSpan(
-        "My API", Azure::Core::Tracing::_internal::SpanKind::Internal, {});
-    Azure::Core::Context callContext = std::move(contextAndSpan.first);
+    auto contextAndSpan = serviceTrace.CreateTracingContext("My API", {});
+    Azure::Core::Context callContext = std::move(contextAndSpan.Context);
     Request request(HttpMethod::Get, Url("https://www.microsoft.com"));
 
     {
@@ -253,9 +270,9 @@ TEST(RequestActivityPolicy, TryRetries)
     auto& tracer = testTracer->GetTracers().front();
     EXPECT_EQ(4ul, tracer->GetSpans().size());
     EXPECT_EQ("My API", tracer->GetSpans()[0]->GetName());
-    EXPECT_EQ("HTTP GET #0", tracer->GetSpans()[1]->GetName());
-    EXPECT_EQ("HTTP GET #1", tracer->GetSpans()[2]->GetName());
-    EXPECT_EQ("HTTP GET #2", tracer->GetSpans()[3]->GetName());
+    EXPECT_EQ("HTTP GET", tracer->GetSpans()[1]->GetName());
+    EXPECT_EQ("HTTP GET", tracer->GetSpans()[2]->GetName());
+    EXPECT_EQ("HTTP GET", tracer->GetSpans()[3]->GetName());
     EXPECT_EQ("GET", tracer->GetSpans()[1]->GetAttributes().at("http.method"));
     EXPECT_EQ("408", tracer->GetSpans()[1]->GetAttributes().at("http.status_code"));
     EXPECT_EQ("408", tracer->GetSpans()[2]->GetAttributes().at("http.status_code"));

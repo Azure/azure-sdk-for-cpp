@@ -28,7 +28,7 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
   private:
   protected:
     std::shared_ptr<Azure::Core::Credentials::TokenCredential> m_credential;
-
+    std::unique_ptr<AttestationAdministrationClient> m_adminClient;
     // Create
     virtual void SetUp() override
     {
@@ -36,9 +36,11 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
       {
         // TPM attestation requires a policy document be set. For simplicity, we only run the
         // test against an AAD attestation service instance.
-        auto adminClient = CreateAdminClient(InstanceType::AAD);
+        m_adminClient = std::make_unique<AttestationAdministrationClient>(
+            CreateAdminClient(InstanceType::AAD));
+
         // Set a minimal policy, which will make the TPM attestation code happy.
-        adminClient.SetAttestationPolicy(
+        m_adminClient->SetAttestationPolicy(
             AttestationType::Tpm,
             "version=1.0; authorizationrules{=> permit();}; issuancerules{};");
       }
@@ -46,11 +48,8 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
 
     virtual void TearDown() override
     {
-      {
-        auto adminClient = CreateAdminClient(InstanceType::AAD);
-        // Reset the attestation policy for this instance back to the default.
-        adminClient.ResetAttestationPolicy(AttestationType::Tpm);
-      }
+      // Reset the attestation policy for this instance back to the default.
+      m_adminClient->ResetAttestationPolicy(AttestationType::Tpm);
 
       // Make sure you call the base classes TearDown method to ensure recordings are made.
       TestBase::TearDown();

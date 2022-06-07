@@ -322,6 +322,17 @@ issuancerules {
       auto const client = AttestationClient::Create(this->m_endpoint, options);
       EXPECT_EQ(m_endpoint, client.Endpoint());
     }
+
+    {
+      std::unique_ptr<AttestationClient> client = std::make_unique<AttestationClient>(
+          AttestationClient::Create(this->m_endpoint, options));
+      EXPECT_EQ(m_endpoint, client->Endpoint());
+    }
+    {
+      std::unique_ptr<AttestationClient const> client = std::make_unique<AttestationClient>(
+          AttestationClient::Create(this->m_endpoint, options));
+      EXPECT_EQ(m_endpoint, client->Endpoint());
+    }
   }
 
   namespace {
