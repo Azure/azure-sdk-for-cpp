@@ -77,17 +77,19 @@ endif()
 get_az_version("${CMAKE_CURRENT_SOURCE_DIR}/src/private/package_version.hpp")
 generate_documentation(azure-core-tracing-opentelemetry ${AZ_LIBRARY_VERSION})
 
-az_vcpkg_export(
+if(BUILD_AZURE_CORE_TRACING_OPENTELEMETRY)
+  az_vcpkg_export(
     azure-core-tracing-opentelemetry
     CORE_TRACING_OPENTELEMETRY
     "azure/core/tracing/opentelemetry/dll_import_export.hpp"
   )
 
-az_rtti_setup(
-  azure-core-tracing-opentelemetry
-  CORE_TRACING_OPENTELEMETRY
-  "azure/core/tracing/opentelemetry/rtti.hpp"
-)
+  az_rtti_setup(
+    azure-core-tracing-opentelemetry
+    CORE_TRACING_OPENTELEMETRY
+    "azure/core/tracing/opentelemetry/rtti.hpp"
+  )
+endif()
 
 if(BUILD_AZURE_CORE_TRACING_OPENTELEMETRY AND BUILD_TESTING)
   # define a symbol that enables some test hooks in code
