@@ -55,6 +55,7 @@ set(
   inc/azure/storage/datamovement/tasks/upload_blob_from_file_task.hpp
   inc/azure/storage/datamovement/tasks/upload_blobs_from_directory_task.hpp
   inc/azure/storage/datamovement/utilities.hpp
+  inc/azure/storage/datamovement/local_utils.hpp
 )
 
 set(
@@ -71,6 +72,7 @@ set(
   src/tasks/upload_blob_from_file_task.cpp
   src/tasks/upload_blobs_from_directory_task.cpp
   src/utilities.cpp
+  src/local_utils.cpp
 )
 
 add_library(azure-storage-datamovement ${AZURE_STORAGE_DATAMOVEMENT_HEADER} ${AZURE_STORAGE_DATAMOVEMENT_SOURCE})

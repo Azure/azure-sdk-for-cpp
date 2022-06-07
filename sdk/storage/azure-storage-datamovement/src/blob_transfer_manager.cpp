@@ -4,6 +4,7 @@
 #include "azure/storage/datamovement/blob_transfer_manager.hpp"
 
 #include "azure/storage/datamovement/tasks/download_blob_to_file_task.hpp"
+#include "azure/storage/datamovement/tasks/download_blob_directory_task.hpp"
 #include "azure/storage/datamovement/tasks/upload_blob_from_file_task.hpp"
 #include "azure/storage/datamovement/tasks/upload_blobs_from_directory_task.hpp"
 #include "azure/storage/datamovement/utilities.hpp"
@@ -71,6 +72,28 @@ namespace Azure { namespace Storage { namespace Blobs {
 
     auto task = rootTask->CreateTask<_detail::DownloadBlobToFileTask>(
         _internal::TaskType::NetworkDownload, sourceBlob, destinationLocalPath);
+
+    m_scheduler.AddTask(std::move(task));
+
+    return std::move(jobProperties);
+  }
+
+  JobProperties BlobTransferManager::ScheduleDownloadDirectory(
+      const BlobFolder& sourceBlobFolder,
+      const std::string& destinationLocalPath,
+      const ScheduleDownloadBlobOptions& options)
+  {
+    (void)options;
+
+    auto pair = CreateJob(
+        TransferType::DirectoryDownload,
+        sourceBlobFolder.GetUrl(),
+        _internal::GetFileUrl(destinationLocalPath));
+    auto& jobProperties = pair.first;
+    auto& rootTask = pair.second;
+
+    auto task = rootTask->CreateTask<_detail::DownloadBlobDirectoryTask>(
+        _internal::TaskType::NetworkDownload, sourceBlobFolder, destinationLocalPath);
 
     m_scheduler.AddTask(std::move(task));
 

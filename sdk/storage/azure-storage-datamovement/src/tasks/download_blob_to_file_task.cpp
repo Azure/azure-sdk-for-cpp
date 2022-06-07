@@ -25,6 +25,7 @@ namespace Azure { namespace Storage { namespace Blobs { namespace _detail {
     }
     catch (std::exception&)
     {
+      //TODO: add detailed error message
       SharedStatus->TaskFailedCallback(
           1, Context->Source.GetUrl(), _internal::GetFileUrl(Context->Destination));
       return;
@@ -110,7 +111,24 @@ namespace Azure { namespace Storage { namespace Blobs { namespace _detail {
     writeToFileTask->Length = Length;
     std::swap(writeToFileTask->MemoryGiveBack, this->MemoryGiveBack);
 
-    SharedStatus->Scheduler->AddTask(std::move(writeToFileTask));
+    std::lock_guard<std::mutex> guard(Context->m_writeTasksMutex);
+    if (writeToFileTask->Offset != Context->OffsetToWrite)
+    {
+      Context->subtasks.insert({writeToFileTask->Offset, std::move(writeToFileTask)});
+    }
+    else
+    {
+      SharedStatus->Scheduler->AddTask(std::move(writeToFileTask));
+      Context->OffsetToWrite += Length;
+      auto iterator = Context->subtasks.begin();
+      while (iterator != Context->subtasks.end() && iterator->first == Context->OffsetToWrite)
+      {
+        SharedStatus->Scheduler->AddTask(std::move(iterator->second));
+        Context->OffsetToWrite += Length;
+        Context->subtasks.erase(iterator);
+        iterator = Context->subtasks.begin();
+      }
+    }
   }
 
   void WriteToFileTask::Execute() noexcept

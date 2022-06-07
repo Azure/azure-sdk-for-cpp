@@ -8,7 +8,7 @@
 
 namespace Azure { namespace Storage { namespace Blobs { namespace _detail {
 
-  struct DownloadBlobDirectoryTask final : public _internal::TaskBase
+  struct DownloadBlobDirectoryTask final : public Storage::_internal::TaskBase
   {
     DownloadBlobDirectoryTask(
         _internal::TaskType type,
@@ -26,11 +26,7 @@ namespace Azure { namespace Storage { namespace Blobs { namespace _detail {
       }
       Blobs::BlobFolder Source;
       std::string Destination;
-      bool ListCompleted{false};
-      size_t NumFiles{0};
-      std::atomic<int> NumDownloadedFileCounts{0};
-
-      std::mutex m_subTasksMutex;
+      Azure::Nullable<std::string> ContinuationToken;
     };
     std::shared_ptr<TaskContext> Context;
 

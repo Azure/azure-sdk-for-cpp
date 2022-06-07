@@ -21,6 +21,12 @@ namespace Azure { namespace Storage { namespace Blobs {
     {
       m_folderPath.clear();
     }
+
+    if (!m_folderPath.empty()
+      && m_folderPath[m_folderPath.length() - 1] != '/')
+    {
+      m_folderPath += '/';
+    }
   }
 
   std::string BlobFolder::GetUrl() const
