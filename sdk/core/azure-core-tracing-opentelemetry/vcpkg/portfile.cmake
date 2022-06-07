@@ -4,14 +4,13 @@
 vcpkg_from_github(
     OUT_SOURCE_PATH SOURCE_PATH
     REPO Azure/azure-sdk-for-cpp
-    REF azure-core_coretracing@AZ_LIBRARY_VERSION@
+    REF azure-core-tracing-opentelemetry_@AZ_LIBRARY_VERSION@
     SHA512 0
 )
 
 vcpkg_cmake_configure(
-    SOURCE_PATH ${SOURCE_PATH}/sdk/core/azure-core/
+    SOURCE_PATH ${SOURCE_PATH}/sdk/core/azure-core-tracing-opentelemetry/
     OPTIONS
-        ${FEATURE_OPTIONS}
         -DWARNINGS_AS_ERRORS=OFF
 )
 
