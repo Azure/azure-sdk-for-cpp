@@ -13,6 +13,7 @@ project (azure-core-tracing-opentelemetry-test LANGUAGES CXX)
 set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 
+include(AzureBuildTargetForCI)
 include(GoogleTest)
 
 add_executable (
