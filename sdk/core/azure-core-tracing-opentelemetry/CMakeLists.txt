@@ -1,7 +1,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # SPDX-License-Identifier: MIT
 
-if ((WINDOWS OR UWP) AND BUILD_SHARED_LIBS)
+if (WIN32 AND BUILD_SHARED_LIBS)
     set(BUILD_AZURE_CORE_TRACING_OPENTELEMETRY OFF)
 else()
     set(BUILD_AZURE_CORE_TRACING_OPENTELEMETRY ON)
