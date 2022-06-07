@@ -9,10 +9,6 @@
 - Renamed `AttestEnclaveOptions` to `AttestSgxEnclaveOptions` and `AttestOpenEnclaveOptions`.
 - `AttestationClient` and `AttestationAdministrationClient` creation is now done using the factory method `AttestationClient::Create()` and `AttestationAdministrationClient::Create()`. 
 
-### Bugs Fixed
-
-### Other Changes
-
 ## 1.0.0-beta.2 (2022-05-10)
 
 ### Breaking Changes
