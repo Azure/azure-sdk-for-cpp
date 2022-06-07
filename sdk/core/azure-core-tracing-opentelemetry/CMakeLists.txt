@@ -10,9 +10,7 @@ az_vcpkg_integrate()
 cmake_minimum_required (VERSION 3.12)
 project(azure-core-tracing-opentelemetry LANGUAGES CXX)
 
-if (WIN32 AND BUILD_SHARED_LIBS)
-    set(BUILD_AZURE_CORE_TRACING_OPENTELEMETRY OFF)
-else()
+if (NOT WIN32 OR NOT BUILD_SHARED_LIBS)
     set(BUILD_AZURE_CORE_TRACING_OPENTELEMETRY ON)
 endif()
 
