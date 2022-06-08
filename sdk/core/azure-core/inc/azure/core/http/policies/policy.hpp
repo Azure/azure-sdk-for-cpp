@@ -14,8 +14,8 @@
 #include "azure/core/dll_import_export.hpp"
 #include "azure/core/http/http.hpp"
 #include "azure/core/http/transport.hpp"
+#include "azure/core/internal/http/user_agent.hpp"
 #include "azure/core/internal/input_sanitizer.hpp"
-#include "azure/core/tracing/tracing.hpp"
 #include "azure/core/uuid.hpp"
 
 #include <atomic>
@@ -428,15 +428,16 @@ namespace Azure { namespace Core { namespace Http { namespace Policies {
      * @details Applies an HTTP header with a component name and version to each HTTP request,
      * includes Azure SDK version information, and operating system information.
      * @remark See https://azure.github.io/azure-sdk/general_azurecore.html#telemetry-policy.
+     *
+     * @remark Note that for clients which are using distributed tracing, this functionality is
+     * merged into the RequestActivityPolicy policy.
+     *
+     * Eventually, when all service have converted to using distributed tracing, this policy can be
+     * deprecated.
      */
     class TelemetryPolicy final : public HttpPolicy {
     private:
       std::string const m_telemetryId;
-
-      static std::string BuildTelemetryId(
-          std::string const& componentName,
-          std::string const& componentVersion,
-          std::string const& applicationId);
 
     public:
       /**
@@ -450,7 +451,10 @@ namespace Azure { namespace Core { namespace Http { namespace Policies {
           std::string const& componentName,
           std::string const& componentVersion,
           TelemetryOptions options = TelemetryOptions())
-          : m_telemetryId(BuildTelemetryId(componentName, componentVersion, options.ApplicationId))
+          : m_telemetryId(Azure::Core::Http::_detail::UserAgentGenerator::GenerateUserAgent(
+              componentName,
+              componentVersion,
+              options.ApplicationId))
       {
       }
 

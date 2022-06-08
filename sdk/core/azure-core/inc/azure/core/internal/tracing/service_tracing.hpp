@@ -3,6 +3,7 @@
 
 #include "azure/core/context.hpp"
 #include "azure/core/internal/client_options.hpp"
+#include "azure/core/internal/http/user_agent.hpp"
 #include "azure/core/tracing/tracing.hpp"
 
 #pragma once
@@ -128,7 +129,8 @@ namespace Azure { namespace Core { namespace Tracing { namespace _internal {
     }
 
     /**
-     * @brief Records an exception occurring in the span.
+     * @brief Records an exception occurring in the span. Also marks the status of the span as
+     * SpanStatus::Error
      *
      * @param exception Exception which has occurred.
      */
@@ -137,6 +139,7 @@ namespace Azure { namespace Core { namespace Tracing { namespace _internal {
       if (m_span)
       {
         m_span->AddEvent(exception);
+        m_span->SetStatus(SpanStatus::Error);
       }
     }
 
@@ -165,6 +168,7 @@ namespace Azure { namespace Core { namespace Tracing { namespace _internal {
   private:
     std::string m_serviceName;
     std::string m_serviceVersion;
+    std::string m_userAgent;
     std::shared_ptr<Azure::Core::Tracing::_internal::Tracer> m_serviceTracer;
 
     /** @brief The key used to retrieve the span and tracer associated with a context object.
@@ -184,6 +188,10 @@ namespace Azure { namespace Core { namespace Tracing { namespace _internal {
         std::string serviceName,
         std::string serviceVersion)
         : m_serviceName(serviceName), m_serviceVersion(serviceVersion),
+          m_userAgent(Azure::Core::Http::_detail::UserAgentGenerator::GenerateUserAgent(
+              serviceName,
+              serviceVersion,
+              options.Telemetry.ApplicationId)),
           m_serviceTracer(
               options.Telemetry.TracingProvider
                   ? options.Telemetry.TracingProvider->CreateTracer(serviceName, serviceVersion)
@@ -242,6 +250,14 @@ namespace Azure { namespace Core { namespace Tracing { namespace _internal {
         Azure::Core::Context const& context) const;
 
     std::unique_ptr<Azure::Core::Tracing::_internal::AttributeSet> CreateAttributeSet() const;
+
+    /** @brief Retrieves the User-Agent header value for this tracing context factory.
+     */
+    std::string const& GetUserAgent() const { return m_userAgent; }
+
+    /** @brief Returns true if this TracingContextFactory is connected to a service tracer.
+     */
+    bool HasTracer() const { return static_cast<bool>(m_serviceTracer); }
 
     static std::unique_ptr<TracingContextFactory> CreateFromContext(
         Azure::Core::Context const& context);
