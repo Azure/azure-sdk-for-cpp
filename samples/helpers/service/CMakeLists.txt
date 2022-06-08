@@ -10,8 +10,11 @@ set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
 
 add_library(
   service
-    INTERFACE
+    OBJECT
       inc/azure/service/client.hpp
-)
+      src/client.cpp
+ )
 
-target_include_directories(service INTERFACE inc)
+ target_link_libraries(service PUBLIC azure-core)
+
+target_include_directories(service PUBLIC inc)
