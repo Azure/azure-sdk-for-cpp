@@ -42,6 +42,7 @@ set(
   AZURE_STORAGE_FILES_SHARES_HEADER
     inc/azure/storage/files/shares/dll_import_export.hpp
     inc/azure/storage/files/shares/rest_client.hpp
+    inc/azure/storage/files/shares/rtti.hpp
     inc/azure/storage/files/shares/share_client.hpp
     inc/azure/storage/files/shares/share_constants.hpp
     inc/azure/storage/files/shares/share_directory_client.hpp
@@ -52,11 +53,11 @@ set(
     inc/azure/storage/files/shares/share_sas_builder.hpp
     inc/azure/storage/files/shares/share_service_client.hpp
     inc/azure/storage/files/shares.hpp
-    src/private/package_version.hpp
 )
 
 set(
   AZURE_STORAGE_FILES_SHARES_SOURCE
+    src/private/package_version.hpp
     src/rest_client.cpp
     src/share_client.cpp
     src/share_directory_client.cpp

@@ -84,7 +84,7 @@ Azure::Response<TokenValidationCertificateResult> AttestationClient::GetTokenVal
 
 Azure::Response<AttestationToken<AttestationResult>> AttestationClient::AttestSgxEnclave(
     std::vector<uint8_t> const& sgxQuote,
-    AttestEnclaveOptions options,
+    AttestSgxEnclaveOptions options,
     Azure::Core::Context const& context) const
 {
   AttestSgxEnclaveRequest attestRequest{
@@ -126,7 +126,7 @@ Azure::Response<AttestationToken<AttestationResult>> AttestationClient::AttestSg
 
 Azure::Response<AttestationToken<AttestationResult>> AttestationClient::AttestOpenEnclave(
     std::vector<uint8_t> const& openEnclaveReport,
-    AttestEnclaveOptions options,
+    AttestOpenEnclaveOptions options,
     Azure::Core::Context const& context) const
 {
   AttestOpenEnclaveRequest attestRequest{
@@ -158,7 +158,7 @@ Azure::Response<TpmAttestationResult> AttestationClient::AttestTpm(
     AttestTpmOptions const& attestTpmOptions,
     Azure::Core::Context const& context) const
 {
-  std::string jsonToSend = TpmDataSerializer::Serialize(attestTpmOptions.ValueToSend);
+  std::string jsonToSend = TpmDataSerializer::Serialize(attestTpmOptions.Payload);
   auto encodedVector = std::vector<uint8_t>(jsonToSend.begin(), jsonToSend.end());
   Azure::Core::IO::MemoryBodyStream stream(encodedVector);
 
@@ -184,8 +184,7 @@ std::shared_timed_mutex SharedStateLock;
  *
  * @param context Client context for the request to the service.
  */
-void AttestationClient::RetrieveResponseValidationCollateral(
-    Azure::Core::Context const& context) const
+void AttestationClient::RetrieveResponseValidationCollateral(Azure::Core::Context const& context)
 {
   std::unique_lock<std::shared_timed_mutex> stateLock(SharedStateLock);
 
@@ -217,47 +216,14 @@ void AttestationClient::RetrieveResponseValidationCollateral(
  * @param credential The authentication method to use (required for TPM attestation).
  * @param options The options to customize the client behavior.
  */
-AttestationClient AttestationClient::Create(
+Azure::Security::Attestation::AttestationClient AttestationClient::Create(
     std::string const& endpoint,
     std::shared_ptr<Core::Credentials::TokenCredential const> credential,
-    AttestationClientOptions options,
+    AttestationClientOptions const& options,
     Azure::Core::Context const& context)
 {
   AttestationClient returnValue(endpoint, credential, options);
   returnValue.RetrieveResponseValidationCollateral(context);
-  return returnValue;
-}
-
-/** @brief Construct a new anonymous Attestation Client object
- *
- * @param endpoint The URL address where the client will send the requests to.
- * @param options The options to customize the client behavior.
- *
- * @note TPM attestation requires an authenticated attestation client.
- */
-AttestationClient AttestationClient::Create(
-    std::string const& endpoint,
-    AttestationClientOptions options,
-    Azure::Core::Context const& context)
-{
-  return Create(endpoint, nullptr, options, context);
-}
-
-/** @brief Construct a new Attestation Client object
- *
- * @param endpoint The URL address where the client will send the requests to.
- * @param credential The authentication method to use (required for TPM attestation).
- * @param options The options to customize the client behavior.
- */
-std::unique_ptr<AttestationClient> AttestationClient::CreatePointer(
-    std::string const& endpoint,
-    std::shared_ptr<Core::Credentials::TokenCredential const> credential,
-    AttestationClientOptions options,
-    Azure::Core::Context const& context)
-{
-  std::unique_ptr<AttestationClient> returnValue(
-      new AttestationClient(endpoint, credential, options));
-  returnValue->RetrieveResponseValidationCollateral(context);
   // Release the client pointer from the unique pointer to let the parent manage it.
   return returnValue;
 }
@@ -269,10 +235,10 @@ std::unique_ptr<AttestationClient> AttestationClient::CreatePointer(
  *
  * @note TPM attestation requires an authenticated attestation client.
  */
-std::unique_ptr<AttestationClient> AttestationClient::CreatePointer(
+Azure::Security::Attestation::AttestationClient AttestationClient::Create(
     std::string const& endpoint,
     AttestationClientOptions options,
     Azure::Core::Context const& context)
 {
-  return CreatePointer(endpoint, nullptr, options, context);
+  return Create(endpoint, nullptr, options, context);
 }

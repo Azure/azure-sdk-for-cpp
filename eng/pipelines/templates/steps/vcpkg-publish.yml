@@ -46,7 +46,7 @@ steps:
         -GitCommitParameters '-c user.name="azure-sdk" -c user.email="azuresdk@microsoft.com"'
         -DailyRelease:$${{ parameters.DailyRelease }}
       workingDirectory: ${{ parameters.Workspace }}/vcpkg
-      condition: and(succeeded(), eq(variables['PublishToVcpkg'], 'true'))
+    condition: and(succeeded(), eq(variables['PublishToVcpkg'], 'true'))
     displayName: Update vcpkg port ${{ parameters.DisplayNameExtension }}
 
   # On package release vcpkg beta should always be updated

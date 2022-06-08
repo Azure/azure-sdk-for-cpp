@@ -1,18 +1,21 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
 
+#include <get_env.hpp>
+
 #include <iostream>
 
 #include <azure/identity/client_secret_credential.hpp>
 
 #include <azure/service/client.hpp>
 
-// These functions should be getting the real Tenant ID, Client ID, and the Client Secret to
-// authenticate. It is recommended to NOT hardcode the secret in the code, but to get it from the
-// environment or read it from a secure location.
-std::string GetTenantId() { return std::string(); }
-std::string GetClientId() { return std::string(); }
-std::string GetClientSecret() { return std::string(); }
+// The following environment variables must be set before running the sample.
+// * AZURE_TENANT_ID: Tenant ID for the Azure account.
+// * AZURE_CLIENT_ID: The Client ID to authenticate the request.
+// * AZURE_CLIENT_SECRET: The client secret.
+std::string GetTenantId() { return std::getenv("AZURE_TENANT_ID"); }
+std::string GetClientId() { return std::getenv("AZURE_CLIENT_ID"); }
+std::string GetClientSecret() { return std::getenv("AZURE_CLIENT_SECRET"); }
 
 int main()
 {
