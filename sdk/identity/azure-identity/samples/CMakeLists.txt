@@ -46,7 +46,6 @@ create_per_service_target_build_for_sample(identity environment_credential_sampl
 add_executable(managed_identity_credential_sample managed_identity_credential.cpp)
 target_link_libraries(managed_identity_credential_sample PRIVATE azure-identity)
 target_include_directories(managed_identity_credential_sample PRIVATE .)
-message("---------------------${CMAKE_CURRENT_SOURCE_DIR}")
 target_include_directories(
     managed_identity_credential_sample PRIVATE
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/../../../../samples/helpers/service/inc>
