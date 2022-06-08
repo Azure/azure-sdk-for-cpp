@@ -58,20 +58,18 @@ Codespaces is new technology that allows you to use a container as your developm
 
 ## Full Local Setup
 
-### ** Pre-requisites **
+### Pre-requisites
 
-#### -> CMake
+#### CMake
 
 CMake version 3.13 or higher is required to build these libraries. Download and install CMake from the project's
 [website](https://cmake.org/download/).
 
 ### Third Party Dependencies
 
-Azure SDK use Vcpkg manifest mode to declare the [list of required dependencies](https://github.com/Azure/azure-sdk-for-cpp/blob/main/vcpkg.json) for building the SDK service libraries. It will also get and set up Vcpkg automatically. You can move on to [Building the project](#building-the-project) and skip next part if you are not interested in learning the alternatives for setting up dependencies.
+Azure SDK uses Vcpkg manifest mode to declare the [list of required 3rd party dependencies](https://github.com/Azure/azure-sdk-for-cpp/blob/main/vcpkg.json) for building the SDK service libraries. It will also get and set up Vcpkg automatically. **You can move on to [Building the project](#building-the-project)** and skip the next part if you are not interested in learning about alternatives for setting up dependencies.
 
-If you didn't jump to `Build the project`, you will now learn about how you can control Vcpkg and dependencies integration.
-
-#### Setting up Vcpkg automatic integration
+#### Customize the Vcpkg dependency integration
 
 If the CMake option _-DCMAKE_TOOLCHAIN_FILE=..._ is not defined to generate the project, the Azure SDK project will automatically get Vcpkg and link it to get its dependencies. You can use the next environment variables to change this behavior:
 
@@ -84,7 +82,7 @@ If the CMake option _-DCMAKE_TOOLCHAIN_FILE=..._ is not defined to generate the 
 </tr>
 <tr>
 <td>AZURE_SDK_DISABLE_AUTO_VCPKG</td>
-<td>When defined, Vcpkg won't be automatically cloned and linked. Use this setting, for example, if your dependencies are installed in the system and you don't need to get them.</td>
+<td>When defined, Vcpkg won't be automatically cloned and linked. Use this setting, for example, if your dependencies are installed on the system and you don't need to get them.</td>
 </tr>
 <tr>
 <td>AZURE_SDK_VCPKG_COMMIT</td>
