@@ -10,7 +10,7 @@ set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
 
 add_library(
   service
-    INTERFACE
+    OBJECT
       inc/azure/service/client.hpp
 )
 
