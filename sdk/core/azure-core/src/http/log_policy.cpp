@@ -89,7 +89,7 @@ Azure::Core::CaseInsensitiveSet const
         "traceparent",
         "tracestate",
         "Transfer-Encoding",
-        "User-Agent"
+        "User-Agent",
         "x-ms-client-request-id",
         "x-ms-request-id",
         "x-ms-return-client-request-id",
