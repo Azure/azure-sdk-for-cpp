@@ -93,9 +93,6 @@ jobs:
           workingDirectory: $(Agent.TempDirectory)
           displayName: Download and Install Doxygen
 
-        # Install dependencies required for build from vcpkg
-        # TODO: We should be able to generate docs without having to install these
-        # prerequisites:
         - template: /eng/pipelines/templates/steps/vcpkg.yml
 
         - template: /eng/pipelines/templates/steps/cmake-build.yml
