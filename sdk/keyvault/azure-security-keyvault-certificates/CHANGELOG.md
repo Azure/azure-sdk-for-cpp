@@ -1,16 +1,10 @@
 # Release History
 
-## 4.0.0-beta.3 (Unreleased)
-
-### Features Added
+## 4.0.0 (2022-06-07)
 
 ### Breaking Changes
 
 - Renamed `keyvault_certificates.hpp` to `certificates.hpp`.
-
-### Bugs Fixed
-
-### Other Changes
 
 ## 4.0.0-beta.2 (2022-03-08)
 
