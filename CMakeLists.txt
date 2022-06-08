@@ -101,7 +101,6 @@ include(AzureVersion)
 
 if(BUILD_SAMPLES)
   add_subdirectory(samples/helpers/get-env)
-  add_subdirectory(samples/helpers/service)
 endif()
 
 # sub-projects

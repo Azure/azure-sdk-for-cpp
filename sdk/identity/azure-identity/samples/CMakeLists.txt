@@ -8,26 +8,47 @@ set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 
 add_executable(chained_token_credential_sample chained_token_credential.cpp)
-target_link_libraries(chained_token_credential_sample PRIVATE azure-identity service)
+target_link_libraries(chained_token_credential_sample PRIVATE azure-identity)
 target_include_directories(chained_token_credential_sample PRIVATE .)
+target_include_directories(
+    chained_token_credential_sample PRIVATE
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/../../../../samples/helpers/service/inc>
+)
 create_per_service_target_build_for_sample(identity chained_token_credential_sample)
 
 add_executable(client_certificate_credential_sample client_certificate_credential.cpp)
-target_link_libraries(client_certificate_credential_sample PRIVATE azure-identity service get-env-helper)
+target_link_libraries(client_certificate_credential_sample PRIVATE azure-identity get-env-helper)
 target_include_directories(client_certificate_credential_sample PRIVATE .)
+target_include_directories(
+    client_certificate_credential_sample PRIVATE
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/../../../../samples/helpers/service/inc>
+)
 create_per_service_target_build_for_sample(identity client_certificate_credential_sample)
 
 add_executable(client_secret_credential_sample client_secret_credential.cpp)
-target_link_libraries(client_secret_credential_sample PRIVATE azure-identity service get-env-helper)
+target_link_libraries(client_secret_credential_sample PRIVATE azure-identity get-env-helper)
 target_include_directories(client_secret_credential_sample PRIVATE .)
+target_include_directories(
+    client_secret_credential_sample PRIVATE
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/../../../../samples/helpers/service/inc>
+)
 create_per_service_target_build_for_sample(identity client_secret_credential_sample)
 
 add_executable(environment_credential_sample environment_credential.cpp)
-target_link_libraries(environment_credential_sample PRIVATE azure-identity service)
+target_link_libraries(environment_credential_sample PRIVATE azure-identity)
 target_include_directories(environment_credential_sample PRIVATE .)
+target_include_directories(
+    environment_credential_sample PRIVATE
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/../../../../samples/helpers/service/inc>
+)
 create_per_service_target_build_for_sample(identity environment_credential_sample)
 
 add_executable(managed_identity_credential_sample managed_identity_credential.cpp)
-target_link_libraries(managed_identity_credential_sample PRIVATE azure-identity service)
+target_link_libraries(managed_identity_credential_sample PRIVATE azure-identity)
 target_include_directories(managed_identity_credential_sample PRIVATE .)
+message("---------------------${CMAKE_CURRENT_SOURCE_DIR}")
+target_include_directories(
+    managed_identity_credential_sample PRIVATE
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/../../../../samples/helpers/service/inc>
+)
 create_per_service_target_build_for_sample(identity managed_identity_credential_sample)
