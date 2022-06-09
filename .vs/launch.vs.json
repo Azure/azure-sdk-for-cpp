@@ -1,0 +1,34 @@
+{
+  "version": "0.2.1",
+  "defaults": {},
+  "configurations": [
+    {
+      "type": "default",
+      "project": "CMakeLists.txt",
+      "projectTarget": "azure-security-keyvault-keys-perf.exe (sdk\\keyvault\\azure-security-keyvault-keys\\test\\perf\\azure-security-keyvault-keys-perf.exe)",
+      "name": "azure-security-keyvault-keys-perf.exe (sdk\\keyvault\\azure-security-keyvault-keys\\test\\perf\\azure-security-keyvault-keys-perf.exe)",
+      "args": [
+        "GetKey",
+        "--vaultUrl=https://gearamakv1.vault.azure.net/",
+        "--keyName=CreateEcKey",
+        "--tenantId=72f988bf-86f1-41af-91ab-2d7cd011db47",
+        "--clientId=1be2562c-52c4-4a9c-9b63-c310936d00d6",
+        "--secret=Ntz7Q~4Qhstd6pcUrsyrvJgXHBRlVnbqwsyCm"
+      ]
+    },
+    {
+      "type": "default",
+      "project": "CMakeLists.txt",
+      "projectTarget": "azure-security-keyvault-certificates-perf.exe (sdk\\keyvault\\azure-security-keyvault-certificates\\test\\perf\\azure-security-keyvault-certificates-perf.exe)",
+      "name": "azure-security-keyvault-certificates-perf.exe (sdk\\keyvault\\azure-security-keyvault-certificates\\test\\perf\\azure-security-keyvault-certificates-perf.exe)",
+      "args": [
+        "GetCertificate",
+        "--vaultUrl=https://gearamakv1.vault.azure.net/",
+        "--certName=testCert",
+        "--tenantId=72f988bf-86f1-41af-91ab-2d7cd011db47",
+        "--clientId=1be2562c-52c4-4a9c-9b63-c310936d00d6",
+        "--secret=Ntz7Q~4Qhstd6pcUrsyrvJgXHBRlVnbqwsyCm"
+      ]
+    }
+  ]
+}
