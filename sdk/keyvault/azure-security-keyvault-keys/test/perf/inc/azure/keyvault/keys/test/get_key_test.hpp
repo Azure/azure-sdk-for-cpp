@@ -42,7 +42,6 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys { nam
     void Setup() override
     {
       m_vaultUrl = m_options.GetMandatoryOption<std::string>("vaultUrl");
-      m_keyName = m_options.GetMandatoryOption<std::string>("keyName");
       m_tenantId = m_options.GetMandatoryOption<std::string>("TenantId");
       m_clientId = m_options.GetMandatoryOption<std::string>("ClientId");
       m_secret = m_options.GetMandatoryOption<std::string>("Secret");
@@ -52,6 +51,29 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys { nam
           m_vaultUrl,
           m_credential,
           InitClientOptions<Azure::Security::KeyVault::Keys::KeyClientOptions>());
+    }
+
+    /**
+     * @brief Create a random named certificate.
+     *
+     */
+    void PostSetUp() override
+    {
+      std::string name("perf");
+      int suffixLen = 10;
+      static const char alphanum[]
+          = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
+      std::string suffix;
+      suffix.reserve(suffixLen);
+
+      for (int i = 0; i < suffixLen; ++i)
+      {
+        suffix += alphanum[rand() % (sizeof(alphanum) - 1)];
+      }
+
+      m_keyName = name + suffix;
+      auto ecKey = Azure::Security::KeyVault::Keys::CreateEcKeyOptions(m_keyName);
+      auto keyResponse = m_client->CreateEcKey(ecKey);
     }
 
     /**
@@ -76,7 +98,6 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys { nam
     {
       return {
           {"vaultUrl", {"--vaultUrl"}, "The Key Vault Account.", 1, true},
-          {"keyName", {"--keyName"}, "The Key name to get.", 1, true},
           {"TenantId", {"--tenantId"}, "The tenant Id for the authentication.", 1, true},
           {"ClientId", {"--clientId"}, "The client Id for the authentication.", 1, true},
           {"Secret", {"--secret"}, "The secret for authentication.", 1, true, true}};
