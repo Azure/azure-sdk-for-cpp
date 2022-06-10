@@ -42,7 +42,8 @@ namespace Azure { namespace Core { namespace Http { namespace Policies {
 
   namespace _detail {
     std::shared_ptr<HttpTransport> GetTransportAdapter();
-    AZ_CORE_DLLEXPORT extern Azure::Core::CaseInsensitiveSet const g_defaultAllowedHttpHeaders;
+    AZ_CORE_DLLEXPORT extern std::set<std::string> const g_defaultAllowedHttpQueryParameters;
+    AZ_CORE_DLLEXPORT extern CaseInsensitiveSet const g_defaultAllowedHttpHeaders;
   } // namespace _detail
 
   /**
@@ -120,13 +121,13 @@ namespace Azure { namespace Core { namespace Http { namespace Policies {
      * @brief HTTP query parameter names that are allowed to be logged.
      *
      */
-    std::set<std::string> AllowedHttpQueryParameters;
+    std::set<std::string> AllowedHttpQueryParameters = _detail::g_defaultAllowedHttpQueryParameters;
 
     /**
      * @brief HTTP header names that are allowed to be logged.
      *
      */
-    Azure::Core::CaseInsensitiveSet AllowedHttpHeaders = _detail::g_defaultAllowedHttpHeaders;
+    CaseInsensitiveSet AllowedHttpHeaders = _detail::g_defaultAllowedHttpHeaders;
   };
 
   /**

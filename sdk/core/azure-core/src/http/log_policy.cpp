@@ -66,33 +66,35 @@ inline std::string GetResponseLogMessage(
 }
 } // namespace
 
-Azure::Core::CaseInsensitiveSet const
-    Azure::Core::Http::Policies::_detail::g_defaultAllowedHttpHeaders
-    = {
-        "Accept",
-        "Cache-Control",
-        "Connection",
-        "Content-Length",
-        "Content-Type",
-        "Date",
-        "ETag",
-        "Expires",
-        "If-Match",
-        "If-Modified-Since",
-        "If-None-Match",
-        "If-Unmodified-Since",
-        "Last-Modified",
-        "Pragma",
-        "Request-Id",
-        "Retry-After",
-        "Server",
-        "traceparent",
-        "tracestate",
-        "Transfer-Encoding",
-        "User-Agent",
-        "x-ms-client-request-id",
-        "x-ms-request-id",
-        "x-ms-return-client-request-id",
+std::set<std::string> const Policies::_detail::g_defaultAllowedHttpQueryParameters = {
+    "api-version",
+};
+
+CaseInsensitiveSet const Policies::_detail::g_defaultAllowedHttpHeaders = {
+    "Accept",
+    "Cache-Control",
+    "Connection",
+    "Content-Length",
+    "Content-Type",
+    "Date",
+    "ETag",
+    "Expires",
+    "If-Match",
+    "If-Modified-Since",
+    "If-None-Match",
+    "If-Unmodified-Since",
+    "Last-Modified",
+    "Pragma",
+    "Request-Id",
+    "Retry-After",
+    "Server",
+    "traceparent",
+    "tracestate",
+    "Transfer-Encoding",
+    "User-Agent",
+    "x-ms-client-request-id",
+    "x-ms-request-id",
+    "x-ms-return-client-request-id",
 };
 
 std::unique_ptr<RawResponse> LogPolicy::Send(
