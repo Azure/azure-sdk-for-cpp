@@ -36,7 +36,11 @@ namespace Azure { namespace Storage { namespace _internal {
     void AddTask(Task&& task);
     void AddTasks(std::vector<Task>&& tasks);
 
-    void ResumePausedTasks();
+    void Stop();
+
+    // status and counters
+    std::atomic<bool> m_stopped{false};
+    std::atomic<size_t> m_numTasks{0};
 
   private:
     void ReclaimProvisionedResource(const Task& t)
@@ -68,14 +72,8 @@ namespace Azure { namespace Storage { namespace _internal {
   private:
     TransferEngineOptions m_options;
 
-    std::atomic<bool> m_stopped{false};
-
     // resource left
     std::atomic<size_t> m_memoryLeft;
-
-    // tasks for paused jobs
-    TaskQueue m_pausedTasks;
-    std::mutex m_pausedTasksMutex;
 
     // pending tasks
     TaskQueue m_pendingDiskIOTasks;

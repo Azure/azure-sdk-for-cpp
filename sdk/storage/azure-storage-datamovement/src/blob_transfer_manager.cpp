@@ -14,6 +14,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       const BlobClient& destinationBlob,
       const ScheduleUploadBlobOptions& options)
   {
+    // TODO: verify source and destination
     _internal::JobModel jobModel;
     jobModel.Source = _internal::TransferEnd::CreateFromLocalFile(sourceLocalPath);
     jobModel.Destination = _internal::TransferEnd::CreateFromAzureBlob(destinationBlob);
@@ -44,6 +45,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       const std::string& destinationLocalPath,
       const ScheduleDownloadBlobOptions& options)
   {
+    // TODO: check destination is dir or file
     _internal::JobModel jobModel;
     jobModel.Source = _internal::TransferEnd::CreateFromAzureBlob(sourceBlob);
     jobModel.Destination = _internal::TransferEnd::CreateFromLocalFile(destinationLocalPath);

@@ -35,7 +35,6 @@ namespace Azure { namespace Storage {
 
   struct TransferError final
   {
-    std::string JobId;
     std::string SourceUrl;
     std::string DestinationUrl;
     // TODO: error information: std::exception_ptr or descriptive string?

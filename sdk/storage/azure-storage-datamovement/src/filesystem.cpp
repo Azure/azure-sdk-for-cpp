@@ -231,11 +231,14 @@ namespace Azure { namespace Storage { namespace _internal {
 
   void* MemoryMap::Map(size_t offset, size_t size)
   {
-    constexpr size_t Granularity = 64 * 1024;
+    static const size_t Granularity = []() -> size_t {
+      SYSTEM_INFO info;
+      GetSystemInfo(&info);
+      return static_cast<size_t>(info.dwAllocationGranularity);
+    }();
 
     size_t alignedOffset = offset / Granularity * Granularity;
     size += offset - alignedOffset;
-    size = (size + Granularity - 1) / Granularity * Granularity;
 
     HANDLE handle = CreateFileMappingW(m_fileHandle, NULL, PAGE_READWRITE, 0, 0, NULL);
     if (handle == NULL)

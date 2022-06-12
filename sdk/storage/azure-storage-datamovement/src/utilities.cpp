@@ -132,24 +132,31 @@ namespace Azure { namespace Storage { namespace _internal {
     return fileUrl.substr(FilrUrlSchemeLen);
   }
 
-  std::string RemoveSasToken(const std::string& azureStorageUrl)
+  std::string RemoveSasToken(const std::string& url)
   {
-    Core::Url url(azureStorageUrl);
-    for (const auto& k : {
-             "sv",    "ss",    "srt", "sp",  "se",  "st",  "spr",  "sig",  "sip",  "si",   "sr",
-             "skoid", "sktid", "skt", "ske", "sks", "skv", "rscc", "rscd", "rsce", "rscl", "rsct",
-         })
+    if (url.substr(0, 8) == "https://" || url.substr(0, 7) == "http://")
     {
-      url.RemoveQueryParameter(k);
+      Core::Url url2(url);
+      for (const auto& k : {
+               "sv",    "ss",    "srt", "sp",  "se",  "st",  "spr",  "sig",  "sip",  "si",   "sr",
+               "skoid", "sktid", "skt", "ske", "sks", "skv", "rscc", "rscd", "rsce", "rscl", "rsct",
+           })
+      {
+        url2.RemoveQueryParameter(k);
+      }
+      return url2.GetAbsoluteUrl();
     }
-    return url.GetAbsoluteUrl();
+    else
+    {
+      return url;
+    }
   }
 
   std::string ApplySasToken(const std::string& url, const std::string& sasToken)
   {
     Core::Url newUrl(url);
 
-    std::string dummyUrl = "http://www.microsoft.com/?";
+    std::string dummyUrl = "https://www.microsoft.com/?";
     if (sasToken.length() > 0 && sasToken[0] == '?')
     {
       dummyUrl += sasToken.substr(1);
@@ -166,4 +173,8 @@ namespace Azure { namespace Storage { namespace _internal {
     return newUrl.GetAbsoluteUrl();
   }
 
+#if defined(AZ_PLATFORM_WINDOWS)
+  int64_t AtomicFetchAdd(int64_t* arg, int64_t value) { return InterlockedAdd64(arg, value); }
+  int64_t AtomicLoad(int64_t* arg) { return InterlockedOr64(arg, 0); }
+#endif
 }}} // namespace Azure::Storage::_internal

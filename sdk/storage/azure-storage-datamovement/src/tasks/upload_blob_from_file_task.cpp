@@ -49,7 +49,7 @@ namespace Azure { namespace Storage { namespace Blobs { namespace _detail {
     }
     catch (std::exception&)
     {
-      SharedStatus->TaskFailedCallback(1, _internal::GetPathUrl(Source), Destination.GetUrl());
+      TransferFailed(_internal::GetPathUrl(Source), Destination.GetUrl());
       return;
     }
 
@@ -61,10 +61,10 @@ namespace Azure { namespace Storage { namespace Blobs { namespace _detail {
     }
     catch (std::exception&)
     {
-      SharedStatus->TaskFailedCallback(1, _internal::GetPathUrl(Source), Destination.GetUrl());
+      TransferFailed(_internal::GetPathUrl(Source), Destination.GetUrl());
       return;
     }
-    SharedStatus->TaskTransferedCallback(1, fileSize);
+    TransferSucceeded(fileSize);
   }
 
   void ReadFileRangeToMemoryTask::Execute() noexcept
@@ -96,8 +96,7 @@ namespace Azure { namespace Storage { namespace Blobs { namespace _detail {
       bool firstFailure = !Context->Failed.exchange(true, std::memory_order_relaxed);
       if (firstFailure)
       {
-        SharedStatus->TaskFailedCallback(
-            1, _internal::GetPathUrl(Context->Source), Context->Destination.GetUrl());
+        TransferFailed(_internal::GetPathUrl(Context->Source), Context->Destination.GetUrl());
       }
       return;
     }
@@ -108,6 +107,7 @@ namespace Azure { namespace Storage { namespace Blobs { namespace _detail {
     stageBlockTask->Buffer = std::move(buffer);
     stageBlockTask->Length = Length;
     std::swap(stageBlockTask->MemoryGiveBack, this->MemoryGiveBack);
+    stageBlockTask->JournalContext = std::move(JournalContext);
 
     SharedStatus->TransferEngine->AddTask(std::move(stageBlockTask));
   }
@@ -125,6 +125,7 @@ namespace Azure { namespace Storage { namespace Blobs { namespace _detail {
     try
     {
       blockBlobClient.StageBlock(blockId, contentStream);
+      TransferSucceeded(Length, 0);
     }
     catch (std::exception&)
     {
@@ -132,8 +133,7 @@ namespace Azure { namespace Storage { namespace Blobs { namespace _detail {
       bool firstFailure = !Context->Failed.exchange(true, std::memory_order_relaxed);
       if (firstFailure)
       {
-        SharedStatus->TaskFailedCallback(
-            1, _internal::GetPathUrl(Context->Source), Context->Destination.GetUrl());
+        TransferFailed(_internal::GetPathUrl(Context->Source), Context->Destination.GetUrl());
       }
       return;
     }
@@ -159,11 +159,10 @@ namespace Azure { namespace Storage { namespace Blobs { namespace _detail {
       bool firstFailure = !Context->Failed.exchange(true, std::memory_order_relaxed);
       if (firstFailure)
       {
-        SharedStatus->TaskFailedCallback(
-            1, _internal::GetPathUrl(Context->Source), Context->Destination.GetUrl());
+        TransferFailed(_internal::GetPathUrl(Context->Source), Context->Destination.GetUrl());
       }
       return;
     }
-    SharedStatus->TaskTransferedCallback(1, Context->FileSize);
+    TransferSucceeded(0, 1);
   }
 }}}} // namespace Azure::Storage::Blobs::_detail

@@ -51,6 +51,7 @@ set(
   inc/azure/storage/datamovement/storage_transfer_manager.hpp
   inc/azure/storage/datamovement/task.hpp
   inc/azure/storage/datamovement/task_shared_status.hpp
+  inc/azure/storage/datamovement/tasks/download_blob_to_file_task.hpp
   inc/azure/storage/datamovement/tasks/upload_blob_from_file_task.hpp
   inc/azure/storage/datamovement/transfer_engine.hpp
   inc/azure/storage/datamovement/utilities.hpp
@@ -68,6 +69,7 @@ set(
   src/private/package_version.hpp
   src/storage_transfer_manager.cpp
   src/task_shared_status.cpp
+  src/tasks/download_blob_to_file_task.cpp
   src/tasks/upload_blob_from_file_task.cpp
   src/transfer_engine.cpp
   src/utilities.cpp

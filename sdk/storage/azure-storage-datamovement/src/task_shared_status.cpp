@@ -3,59 +3,28 @@
 
 #include "azure/storage/datamovement/task_shared_status.hpp"
 
+#include "azure/storage/datamovement/task.hpp"
+
 namespace Azure { namespace Storage { namespace _internal {
-  void TaskSharedStatus::TaskTransferedCallback(int64_t numFiles, int64_t bytes) noexcept
+
+  void TaskBase::TransferSucceeded(int64_t bytesTransferred, int64_t numFiles) const
   {
-    NumFilesTransferred.fetch_add(numFiles, std::memory_order_relaxed);
-    TotalBytesTransferred.fetch_add(bytes, std::memory_order_relaxed);
-    if (ProgressHandler)
-    {
-      TransferProgress progress;
-      progress.NumFilesTransferred = NumFilesTransferred.load(std::memory_order_relaxed);
-      progress.NumFilesSkipped = NumFilesSkipped.load(std::memory_order_relaxed);
-      progress.NumFilesFailed = NumFilesFailed.load(std::memory_order_relaxed);
-      progress.TotalBytesTransferred = TotalBytesTransferred.load(std::memory_order_relaxed);
-      ProgressHandler(progress);
-    }
+    SharedStatus->WriteJournal(JournalContext, numFiles, 0, 0, bytesTransferred);
   }
 
-  void TaskSharedStatus::TaskSkippedCallback(int64_t numFiles) noexcept
+  void TaskBase::TransferFailed(std::string sourceUrl, std::string destinationUrl, int64_t numFiles)
+      const
   {
-    NumFilesSkipped.fetch_add(numFiles, std::memory_order_relaxed);
-    if (ProgressHandler)
-    {
-      TransferProgress progress;
-      progress.NumFilesTransferred = NumFilesTransferred.load(std::memory_order_relaxed);
-      progress.NumFilesSkipped = NumFilesSkipped.load(std::memory_order_relaxed);
-      progress.NumFilesFailed = NumFilesFailed.load(std::memory_order_relaxed);
-      progress.TotalBytesTransferred = TotalBytesTransferred.load(std::memory_order_relaxed);
-      ProgressHandler(progress);
-    }
+    TransferError e;
+    e.SourceUrl = std::move(sourceUrl);
+    e.DestinationUrl = std::move(destinationUrl);
+    SharedStatus->ErrorHandler(e);
+    SharedStatus->WriteJournal(JournalContext, 0, 0, numFiles, 0);
   }
 
-  void TaskSharedStatus::TaskFailedCallback(
-      int64_t numFiles,
-      std::string sourceUrl,
-      std::string destinationUrl) noexcept
+  void TaskBase::Transferkipped(int64_t numFiles) const
   {
-    NumFilesFailed.fetch_add(numFiles, std::memory_order_relaxed);
-    if (ProgressHandler)
-    {
-      TransferProgress progress;
-      progress.NumFilesTransferred = NumFilesTransferred.load(std::memory_order_relaxed);
-      progress.NumFilesSkipped = NumFilesSkipped.load(std::memory_order_relaxed);
-      progress.NumFilesFailed = NumFilesFailed.load(std::memory_order_relaxed);
-      progress.TotalBytesTransferred = TotalBytesTransferred.load(std::memory_order_relaxed);
-      ProgressHandler(progress);
-    }
-    if (ErrorHandler)
-    {
-      TransferError e;
-      e.JobId = JobId;
-      e.SourceUrl = std::move(sourceUrl);
-      e.DestinationUrl = std::move(destinationUrl);
-      ErrorHandler(e);
-    }
+    SharedStatus->WriteJournal(JournalContext, 0, numFiles, 0, 0);
   }
 
   TaskSharedStatus::~TaskSharedStatus()
@@ -68,14 +37,11 @@ namespace Azure { namespace Storage { namespace _internal {
     }
     else if (Status == JobStatus::InProgress)
     {
-      if (NumFilesFailed.load(std::memory_order_relaxed) == 0)
+      if (!HasFailure.load(std::memory_order_relaxed))
       {
         Status = JobStatus::Succeeded;
       }
-      else if (
-          NumFilesSkipped.load(std::memory_order_relaxed)
-              + NumFilesTransferred.load(std::memory_order_relaxed)
-          != 0)
+      else if (HasSuccess.load(std::memory_order_relaxed))
       {
         Status = JobStatus::PartiallySucceeded;
       }

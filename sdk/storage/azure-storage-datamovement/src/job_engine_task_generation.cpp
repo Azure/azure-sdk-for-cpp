@@ -5,10 +5,12 @@
 
 #include "azure/storage/datamovement/job_engine.hpp"
 
+#include <algorithm>
 #include <vector>
 
 #include <azure/core/azure_assert.hpp>
 
+#include "azure/storage/datamovement/tasks/download_blob_to_file_task.hpp"
 #include "azure/storage/datamovement/tasks/upload_blob_from_file_task.hpp"
 #include "azure/storage/datamovement/utilities.hpp"
 
@@ -61,10 +63,7 @@ namespace Azure { namespace Storage { namespace _detail {
       task.ObjectSize = fileSize;
       task.ChunkSize = UploadBlockSize;
       task.NumSubTasks = static_cast<int32_t>((fileSize + UploadBlockSize - 1) / UploadBlockSize);
-      if (task.NumSubTasks == 0)
-      {
-        task.NumSubTasks = 1;
-      }
+      task.NumSubTasks = std::max(task.NumSubTasks, 1);
       taskGenerated(std::move(task));
     }
     else if (m_model.Source.m_type == _internal::TransferEnd::EndType::LocalDirectory)
@@ -95,10 +94,7 @@ namespace Azure { namespace Storage { namespace _detail {
             task.ChunkSize = UploadBlockSize;
             task.NumSubTasks
                 = static_cast<int32_t>((entry.Size + UploadBlockSize - 1) / UploadBlockSize);
-            if (task.NumSubTasks == 0)
-            {
-              task.NumSubTasks = 1;
-            }
+            task.NumSubTasks = std::max(task.NumSubTasks, 1);
             taskGenerated(std::move(task));
           }
           else
@@ -114,7 +110,20 @@ namespace Azure { namespace Storage { namespace _detail {
     }
     else if (m_model.Source.m_type == _internal::TransferEnd::EndType::AzureBlob)
     {
-      AZURE_NOT_IMPLEMENTED();
+      AZURE_ASSERT(gen.Source.empty());
+      AZURE_ASSERT(gen.Destination.empty());
+      AZURE_ASSERT(gen.ContinuationToken.empty());
+      // TODO: It's not a good idea to invoke a network request when generating tasks, as this
+      // function is executed in single thread so it's likely to become a bottleneck. Find some way
+      // to optimize this. This also applies to downloading directory, downloading page blob etc.
+      int64_t fileSize = m_model.Source.m_blobClient.Value().GetProperties().Value.BlobSize;
+
+      TaskModel task;
+      task.ObjectSize = fileSize;
+      task.ChunkSize = DownloadBlockSize;
+      task.NumSubTasks = static_cast<int32_t>((fileSize + UploadBlockSize - 1) / DownloadBlockSize);
+      task.NumSubTasks = std::max(task.NumSubTasks, 1);
+      taskGenerated(std::move(task));
     }
     else if (m_model.Source.m_type == _internal::TransferEnd::EndType::AzureBlobFolder)
     {
@@ -126,12 +135,17 @@ namespace Azure { namespace Storage { namespace _detail {
     }
 
     flushNewTasks();
+    std::reverse(partGens.begin(), partGens.end());
     AppendPartGenerators(partGens);
   }
 
-  std::vector<_internal::Task> JobPlan::HydrateTasks(const std::vector<TaskModel>& taskModels)
+  std::vector<_internal::Task> JobPlan::HydrateTasks(
+      std::shared_ptr<JobPart>& jobPart,
+      const std::vector<TaskModel>& taskModels)
   {
+    size_t bitmapOffset = 0;
     std::vector<_internal::Task> tasks;
+
     if ((m_model.Source.m_type == _internal::TransferEnd::EndType::LocalFile
          && m_model.Destination.m_type == _internal::TransferEnd::EndType::AzureBlob)
         || (m_model.Source.m_type == _internal::TransferEnd::EndType::LocalDirectory
@@ -141,14 +155,17 @@ namespace Azure { namespace Storage { namespace _detail {
       {
         std::string source = _internal::JoinPath(
             _internal::GetPathFromUrl(m_model.Source.m_url), taskModel.Source);
-        auto destination = m_model.Destination.m_blobClient.Value();
+        auto destination = m_model.Destination.m_type == _internal::TransferEnd::EndType::AzureBlob
+            ? m_model.Destination.m_blobClient.Value()
+            : m_model.Destination.m_blobFolder.Value().GetBlobClient(taskModel.Destination);
         if (taskModel.NumSubTasks == 1)
         {
-          // TODO: this should be uploaded with single put
           auto task = m_rootTask->CreateTask<Blobs::_detail::UploadBlobFromFileTask>(
               _internal::TaskType::NetworkUpload, source, destination);
           task->MemoryCost = taskModel.ObjectSize;
+          task->JournalContext = JournalContext{jobPart, bitmapOffset};
           tasks.emplace_back(std::move(task));
+          ++bitmapOffset;
         }
         else if (taskModel.NumSubTasks > 1)
         {
@@ -166,9 +183,10 @@ namespace Azure { namespace Storage { namespace _detail {
           }
           for (int i = 0; i < context->NumBlocks; ++i)
           {
-            if (!doneBits.empty() && doneBits[i])
+            if (!doneBits.empty() && doneBits[i] != '0')
             {
               context->NumStagedBlocks.fetch_add(1, std::memory_order_relaxed);
+              ++bitmapOffset;
               continue;
             }
             auto task = m_rootTask->CreateTask<Blobs::_detail::ReadFileRangeToMemoryTask>(
@@ -178,12 +196,56 @@ namespace Azure { namespace Storage { namespace _detail {
             task->Offset = i * taskModel.ChunkSize;
             task->Length = std::min<int64_t>(context->FileSize - task->Offset, taskModel.ChunkSize);
             task->MemoryCost = task->Length;
+            task->JournalContext = JournalContext{jobPart, bitmapOffset};
             tasks.emplace_back(std::move(task));
+            ++bitmapOffset;
           }
         }
-        else
+      }
+    }
+    else if (
+        (m_model.Source.m_type == _internal::TransferEnd::EndType::AzureBlob
+         && m_model.Destination.m_type == _internal::TransferEnd::EndType::LocalFile)
+        || (m_model.Source.m_type == _internal::TransferEnd::EndType::AzureBlobFolder
+            && m_model.Destination.m_type == _internal::TransferEnd::EndType::LocalDirectory))
+    {
+      for (auto& taskModel : taskModels)
+      {
+        auto source = m_model.Source.m_type == _internal::TransferEnd::EndType::AzureBlob
+            ? m_model.Source.m_blobClient.Value()
+            : m_model.Source.m_blobFolder.Value().GetBlobClient(taskModel.Destination);
+        std::string destination = _internal::JoinPath(
+            _internal::GetPathFromUrl(m_model.Destination.m_url), taskModel.Source);
+
+        auto context = std::make_shared<Blobs::_detail::DownloadRangeToMemoryTask::TaskContext>(
+            source, destination);
+        context->FileSize = taskModel.ObjectSize;
+        context->NumChunks = static_cast<int>(
+            (taskModel.ObjectSize + taskModel.ChunkSize - 1) / taskModel.ChunkSize);
+        context->NumDownloadedChunks = 0;
+        std::string doneBits;
+
+        if (taskModel.ExtendedAttributes.count("_subtasks") != 0)
         {
-          AZURE_UNREACHABLE_CODE();
+          doneBits = taskModel.ExtendedAttributes.at("_subtasks");
+        }
+        for (int i = 0; i < context->NumChunks; ++i)
+        {
+          if (!doneBits.empty() && doneBits[i] != '0')
+          {
+            context->NumDownloadedChunks.fetch_add(1, std::memory_order_relaxed);
+            ++bitmapOffset;
+            continue;
+          }
+          auto task = m_rootTask->CreateTask<Blobs::_detail::DownloadRangeToMemoryTask>(
+              _internal::TaskType::NetworkDownload);
+          task->Context = context;
+          task->Offset = i * taskModel.ChunkSize;
+          task->Length = std::min<int64_t>(context->FileSize - task->Offset, taskModel.ChunkSize);
+          task->MemoryCost = task->Length;
+          task->JournalContext = JournalContext{jobPart, bitmapOffset};
+          tasks.emplace_back(std::move(task));
+          ++bitmapOffset;
         }
       }
     }

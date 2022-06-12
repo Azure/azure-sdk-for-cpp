@@ -10,7 +10,7 @@
 #include <vector>
 
 #include <azure/storage/datamovement/blob_transfer_manager.hpp>
-#include <azure/storage/datamovement/directory_iterator.hpp>
+#include <azure/storage/datamovement/filesystem.hpp>
 
 namespace Azure { namespace Storage { namespace Test {
 

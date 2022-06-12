@@ -3,20 +3,14 @@
 
 #include "azure/storage/datamovement/job_engine.hpp"
 
+#include <chrono>
+
 #include <azure/core/azure_assert.hpp>
 #include <azure/core/uuid.hpp>
 
 #include "azure/storage/datamovement/utilities.hpp"
 
 namespace Azure { namespace Storage {
-  namespace {
-    struct DummyTask final : public Storage::_internal::TaskBase
-    {
-      using TaskBase::TaskBase;
-      void Execute() noexcept override { AZURE_UNREACHABLE_CODE(); }
-    };
-
-  } // namespace
 
   namespace _internal {
 
@@ -57,6 +51,96 @@ namespace Azure { namespace Storage {
   } // namespace _internal
   namespace _detail {
 
+    JobPart::~JobPart()
+    {
+      if (m_jobPlan)
+      {
+        m_jobPlan->m_numAliveParts->fetch_sub(1, std::memory_order_relaxed);
+      }
+    }
+
+    void JobPlan::TaskFinishCallback(
+        const JournalContext& context,
+        int64_t fileTransferred,
+        int64_t fileSkipped,
+        int64_t fileFailed,
+        int64_t bytesTransferred)
+    {
+      auto jobPart = context.JobPart.lock();
+      if (!jobPart)
+      {
+        return;
+      }
+      jobPart->m_doneBitmap[context.BitmapOffset] = 1;
+      jobPart->m_numUndoneBits->fetch_sub(1, std::memory_order_relaxed);
+      if (fileTransferred != 0)
+      {
+        _internal::AtomicFetchAdd(m_numFilesTransferred, fileTransferred);
+      }
+      if (fileFailed != 0)
+      {
+        _internal::AtomicFetchAdd(m_numFilesFailed, fileFailed);
+      }
+      if (fileSkipped != 0)
+      {
+        _internal::AtomicFetchAdd(m_numFilesSkipped, fileSkipped);
+      }
+      if (bytesTransferred != 0)
+      {
+        _internal::AtomicFetchAdd(m_totalBytesTransferred, bytesTransferred);
+      }
+      if (m_hydrateParameters.ProgressHandler)
+      {
+        const uint64_t ProgressInvokedMinumumIntervalMs = 100;
+        auto curr = std::chrono::duration_cast<std::chrono::milliseconds>(
+                        std::chrono::steady_clock::now().time_since_epoch())
+                        .count();
+        auto last = m_progressLastInvokedTime->load(std::memory_order_relaxed);
+        if (curr - last >= ProgressInvokedMinumumIntervalMs)
+        {
+          bool successfullyExchanged
+              = m_progressLastInvokedTime->compare_exchange_strong(last, curr);
+          if (successfullyExchanged)
+          {
+            TransferProgress progress;
+            progress.NumFilesTransferred = _internal::AtomicLoad(m_numFilesTransferred);
+            progress.NumFilesFailed = _internal::AtomicLoad(m_numFilesFailed);
+            progress.NumFilesSkipped = _internal::AtomicLoad(m_numFilesSkipped);
+            progress.TotalBytesTransferred = _internal::AtomicLoad(m_totalBytesTransferred);
+            m_hydrateParameters.ProgressHandler(progress);
+          }
+        }
+      }
+      if (jobPart->m_numUndoneBits->load(std::memory_order_relaxed) == 0)
+      {
+        uint32_t partId = jobPart->m_id;
+        jobPart.reset();
+        m_engine->PartDone(m_jobId, partId);
+      }
+    }
+
+    JobPlan::~JobPlan()
+    {
+      if (m_rootTask)
+      {
+        auto currStatus = m_rootTask->SharedStatus->Status.load(std::memory_order_relaxed);
+        if (currStatus == JobStatus::InProgress)
+        {
+          m_rootTask->SharedStatus->Status.compare_exchange_strong(
+              currStatus, JobStatus::Paused, std::memory_order_relaxed, std::memory_order_relaxed);
+        }
+      }
+      m_jobParts.clear();
+
+      if (m_numAliveParts)
+      {
+        while (m_numAliveParts->load(std::memory_order_relaxed) != 0)
+        {
+          std::this_thread::yield();
+        }
+      }
+    }
+
     JobEngine::JobEngine(const std::string& plansDir, _internal::TransferEngine* transferEngine)
         : m_plansDir(plansDir), m_transferEngine(transferEngine)
     {
@@ -83,7 +167,16 @@ namespace Azure { namespace Storage {
             break;
           }
 
-          // TODO: check scheduler, add tasks
+          const size_t RefillQueueThreshold = 5000;
+          if (m_transferEngine->m_numTasks.load(std::memory_order_relaxed) < RefillQueueThreshold
+              && !m_transferEngine->m_stopped.load(std::memory_order_relaxed))
+          {
+            auto tasks = GetMoreTasks();
+            if (!tasks.empty())
+            {
+              m_transferEngine->AddTasks(std::move(tasks));
+            }
+          }
         }
       });
     }
@@ -99,8 +192,9 @@ namespace Azure { namespace Storage {
 
     JobProperties JobEngine::CraeteJob(
         _internal::JobModel model,
-        _internal::HydrationParameters hydrateOptions)
+        _internal::HydrationParameters hydrateParameters)
     {
+      // TODO: exception handling during job creation/resumption
       auto uuid = Core::Uuid::CreateUuid().ToString();
       EngineOperation op;
       op.JobId = uuid;
@@ -110,7 +204,8 @@ namespace Azure { namespace Storage {
       EngineOperation op2;
       op2.JobId = uuid;
       op2.Type = decltype(op.Type)::ResumeJob;
-      op2.HydrationParameters = std::move(hydrateOptions);
+      op2.Model = op.Model;
+      op2.HydrationParameters = std::move(hydrateParameters);
       auto f = op2.Promise.get_future();
 
       {
@@ -155,48 +250,88 @@ namespace Azure { namespace Storage {
       (void)useless;
     }
 
+    void JobEngine::PartDone(const std::string& jobId, uint32_t partId)
+    {
+      EngineOperation op;
+      op.Type = decltype(op.Type)::JobPartDone;
+      op.JobId = jobId;
+      op.PartId = partId;
+      {
+        std::lock_guard<std::mutex> guard(m_messageMutex);
+        m_messages.push_back(std::move(op));
+      }
+      m_messageCond.notify_one();
+    }
+
     std::vector<_internal::Task> JobEngine::GetMoreTasks()
     {
-      std::vector<TaskModel> taskModels;
-      for (auto& job : m_jobs)
+      auto jobIte = m_loadPos.first;
+      if (jobIte == m_jobs.end())
       {
-        while (true)
+        return {};
+      }
+      auto partIte = jobIte->m_jobParts.lower_bound(m_loadPos.second);
+      while (true)
+      {
+        if (partIte != jobIte->m_jobParts.end())
         {
-          for (auto& p1 : job.m_jobParts)
+          m_loadPos.second = partIte->first + 1;
+          if (partIte->second != nullptr)
           {
-            uint32_t partId = p1.first;
-            auto& jobPart = p1.second;
-            if (!jobPart)
+            ++partIte;
+            continue;
+          }
+          else // if (partIte->second == nullptr)
+          {
+            auto p = JobPart::LoadTasks(&*jobIte, partIte->first, jobIte->m_jobPlanDir);
+            partIte->second = std::make_shared<JobPart>(std::move(p.first));
+            std::vector<TaskModel> taskModels = std::move(p.second);
+            if (!taskModels.empty())
             {
-              auto p2 = JobPart::LoadTasks(partId, job.m_jobPlanDir);
-              jobPart = std::make_unique<JobPart>(std::move(p2.first));
-              taskModels = std::move(p2.second);
-              break;
+              std::vector<_internal::Task> tasks
+                  = jobIte->HydrateTasks(partIte->second, taskModels);
+              return tasks;
+            }
+            if (partIte->second->m_numUndoneBits->load(std::memory_order_relaxed) == 0)
+            {
+              PartDone(jobIte->m_jobId, partIte->second->m_id);
             }
           }
-          if (taskModels.empty() && job.m_hasMoreParts)
+        }
+        else // if (partIte == jobIte->m_jobParts.end())
+        {
+          if (jobIte->m_hasMoreParts)
           {
-            job.GenerateParts();
+            jobIte->GenerateParts();
+            partIte = jobIte->m_jobParts.lower_bound(m_loadPos.second);
           }
           else
           {
-            break;
+            ++jobIte;
+            m_loadPos.first = jobIte;
+            m_loadPos.second = 0;
+            if (jobIte == m_jobs.end())
+            {
+              return {};
+            }
+            partIte = jobIte->m_jobParts.begin();
           }
         }
-        if (!taskModels.empty())
-        {
-          std::vector<_internal::Task> tasks = job.HydrateTasks(taskModels);
-          return tasks;
-        }
       }
-      return {};
+      AZURE_UNREACHABLE_CODE();
     }
 
     void JobEngine::ProcessMessage(EngineOperation& op)
     {
+      struct DummyTask final : public Storage::_internal::TaskBase
+      {
+        using TaskBase::TaskBase;
+        void Execute() noexcept override { AZURE_UNREACHABLE_CODE(); }
+      };
+
       if (op.Type == decltype(op.Type)::CreateJob)
       {
-        JobPlan::CreateJobPlan(std::move(op.Model), m_plansDir + "/" + op.JobId);
+        JobPlan::CreateJobPlan(std::move(op.Model), _internal::JoinPath(m_plansDir, op.JobId));
       }
       else if (op.Type == decltype(op.Type)::ResumeJob)
       {
@@ -210,13 +345,28 @@ namespace Azure { namespace Storage {
           JobProperties properties;
           properties.Id = op.JobId;
 
-          auto existingJobPlan = JobPlan::LoadJobPlan(std::move(op.HydrationParameters), op.JobId);
+          auto existingJobPlan = JobPlan::LoadJobPlan(
+              std::move(op.HydrationParameters), _internal::JoinPath(m_plansDir, op.JobId));
+          existingJobPlan.m_engine = this;
+          existingJobPlan.m_jobId = op.JobId;
+          if (op.Model.Source.m_type != decltype(op.Model.Source.m_type)::Unintialized
+              && op.Model.Destination.m_type != decltype(op.Model.Source.m_type)::Unintialized)
+          {
+            existingJobPlan.m_model = std::move(op.Model);
+          }
           auto sharedStatus = std::make_shared<_internal::TaskSharedStatus>();
-          sharedStatus->ProgressHandler = existingJobPlan.m_hydrateOptions.ProgressHandler;
-          sharedStatus->ErrorHandler = existingJobPlan.m_hydrateOptions.ErrorHandler;
+          sharedStatus->ErrorHandler = existingJobPlan.m_hydrateParameters.ErrorHandler;
           sharedStatus->TransferEngine = m_transferEngine;
           sharedStatus->JobId = op.JobId;
-          // TODO: restore counters
+          if (*existingJobPlan.m_numFilesFailed != 0)
+          {
+            sharedStatus->HasFailure = true;
+          }
+          if (*existingJobPlan.m_numFilesTransferred != 0
+              || *existingJobPlan.m_numFilesSkipped != 0)
+          {
+            sharedStatus->HasSuccess = true;
+          }
           existingJobPlan.m_rootTask = std::make_unique<DummyTask>(_internal::TaskType::Other);
           existingJobPlan.m_rootTask->SharedStatus = sharedStatus;
           if (existingJobPlan.m_model.Source.m_type == _internal::TransferEnd::EndType::LocalFile)
@@ -244,32 +394,65 @@ namespace Azure { namespace Storage {
           {
             AZURE_NOT_IMPLEMENTED();
           }
-          properties.SourceUrl = existingJobPlan.m_model.Source.m_url;
-          properties.DestinationUrl = existingJobPlan.m_model.Destination.m_url;
+          properties.SourceUrl = _internal::RemoveSasToken(existingJobPlan.m_model.Source.m_url);
+          properties.DestinationUrl
+              = _internal::RemoveSasToken(existingJobPlan.m_model.Destination.m_url);
           properties.WaitHandle = sharedStatus->WaitHandle;
 
           m_jobs.push_back(std::move(existingJobPlan));
           auto jobIndex = m_jobs.end();
           --jobIndex;
           m_jobsIndex[op.JobId] = jobIndex;
+          if (m_loadPos.first == m_jobs.end())
+          {
+            m_loadPos = std::make_pair(jobIndex, 0);
+          }
+          JobPlan* jobPlanPtr = &*jobIndex;
+          sharedStatus->WriteJournal = [jobPlanPtr, this](
+                                           const _detail::JournalContext& context,
+                                           int64_t numFileTransferred,
+                                           int64_t numFileSkipped,
+                                           int64_t numFileFailed,
+                                           int64_t bytesTransferred) {
+            auto jobPartPtr = context.JobPart.lock();
+            if (jobPartPtr)
+            {
+              jobPlanPtr->TaskFinishCallback(
+                  context, numFileTransferred, numFileSkipped, numFileFailed, bytesTransferred);
+            }
+          };
           op.Promise.set_value(std::move(properties));
         }
       }
       else if (op.Type == decltype(op.Type)::RemoveJob)
       {
-        m_jobs.erase(m_jobsIndex[op.JobId]);
+        auto jobIndex = m_jobsIndex[op.JobId];
+        if (m_loadPos.first == jobIndex)
+        {
+          auto nextJobIndex = jobIndex;
+          m_loadPos = std::make_pair(++nextJobIndex, 0);
+        }
+        m_jobs.erase(jobIndex);
         m_jobsIndex.erase(op.JobId);
         op.Promise.set_value({});
       }
       else if (op.Type == decltype(op.Type)::JobPartDone)
       {
         auto& jobPlan = *m_jobsIndex[op.JobId];
-        jobPlan.PartDone(op.PartId);
+        jobPlan.RemoveDonePart(op.PartId);
         if (jobPlan.m_jobParts.empty() && !jobPlan.m_hasMoreParts)
         {
-          m_jobs.erase(m_jobsIndex[op.JobId]);
+          jobPlan.m_rootTask.reset();
+          const std::string jobPlanDir = jobPlan.m_jobPlanDir;
+          auto jobIndex = m_jobsIndex[op.JobId];
+          if (m_loadPos.first == jobIndex)
+          {
+            auto nextJobIndex = jobIndex;
+            m_loadPos = std::make_pair(++nextJobIndex, 0);
+          }
+          m_jobs.erase(jobIndex);
           m_jobsIndex.erase(op.JobId);
-          _internal::Rename(jobPlan.m_jobPlanDir, jobPlan.m_jobPlanDir + ".delete");
+          _internal::Rename(jobPlanDir, jobPlanDir + ".delete");
         }
       }
     }

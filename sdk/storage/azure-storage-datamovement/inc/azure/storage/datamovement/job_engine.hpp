@@ -26,10 +26,11 @@
 #include "azure/storage/datamovement/task.hpp"
 #include "azure/storage/datamovement/task_shared_status.hpp"
 #include "azure/storage/datamovement/transfer_engine.hpp"
+#include "azure/storage/datamovement/utilities.hpp"
 
 namespace Azure { namespace Storage {
   namespace _detail {
-    class JobPlan;
+    struct JobPlan;
     class JobEngine;
   } // namespace _detail
   namespace _internal {
@@ -38,6 +39,7 @@ namespace Azure { namespace Storage {
     public:
       enum class EndType
       {
+        Unintialized,
         LocalFile,
         LocalDirectory,
         AzureBlob,
@@ -52,12 +54,12 @@ namespace Azure { namespace Storage {
       static TransferEnd CreateFromAzureBlobFolder(Blobs::BlobFolder blobFolder);
 
     private:
-      EndType m_type = static_cast<EndType>(0);
+      EndType m_type = EndType::Unintialized;
       std::string m_url;
       Nullable<Blobs::BlobClient> m_blobClient;
       Nullable<Blobs::BlobFolder> m_blobFolder;
 
-      friend class _detail::JobPlan;
+      friend struct _detail::JobPlan;
       friend class _detail::JobEngine;
     };
 
@@ -71,7 +73,7 @@ namespace Azure { namespace Storage {
     {
       TransferCredential SourceCredential;
       TransferCredential DestinationCredential;
-      std::function<void(const TransferProgress&)> ProgressHandler;
+      std::function<void(TransferProgress&)> ProgressHandler;
       std::function<void(TransferError&)> ErrorHandler;
     };
   } // namespace _internal
@@ -100,9 +102,14 @@ namespace Azure { namespace Storage {
       static PartGenerator FromString(const std::string& str);
     };
 
-    class JobPart {
-    public:
+    struct JobPart
+    {
+      JobPart() = default;
+      JobPart(JobPart&&) = default;
+      ~JobPart();
+
       static std::pair<JobPart, std::vector<TaskModel>> LoadTasks(
+          JobPlan* plan,
           uint32_t id,
           std::string jobPlanDir);
 
@@ -111,45 +118,69 @@ namespace Azure { namespace Storage {
           const std::string& jobPlanDir,
           const std::vector<TaskModel>& tasks);
 
-    private:
+      _internal::MovablePtr<JobPlan> m_jobPlan;
       uint32_t m_id = 0;
       std::string m_jobPlanDir;
       int32_t m_numDoneBits = 0;
+      std::unique_ptr<std::atomic<size_t>> m_numUndoneBits
+          = std::make_unique<std::atomic<size_t>>(0);
       std::unique_ptr<_internal::MemoryMap> m_mappedFile;
       bool* m_doneBitmap = nullptr;
-
-      friend class JobPlan;
     };
 
-    class JobPlan {
-    public:
+    struct JobPlan
+    {
+      JobPlan() = default;
+      JobPlan(JobPlan&&) = default;
+      ~JobPlan();
+
       static void CreateJobPlan(const _internal::JobModel& model, const std::string& jobPlanDir);
       static JobPlan LoadJobPlan(
-          _internal::HydrationParameters hydrateOptions,
+          _internal::HydrationParameters hydrateParameters,
           const std::string& jobPlanDir);
 
       void AppendPartGenerators(const std::vector<PartGenerator>& gens);
       void GenerateParts();
-      std::vector<_internal::Task> HydrateTasks(const std::vector<TaskModel>& taskModels);
+      std::vector<_internal::Task> HydrateTasks(
+          std::shared_ptr<JobPart>& jobPart,
+          const std::vector<TaskModel>& taskModels);
 
-    private:
-      JobPlan() = default;
       void GeneratePart(const PartGenerator& gen);
-      void PartDone(uint32_t id);
+      void RemoveDonePart(uint32_t id);
+      void TaskFinishCallback(
+          const JournalContext& context,
+          int64_t fileTransferred,
+          int64_t fileSkipped,
+          int64_t fileFailed,
+          int64_t bytesTransferred);
 
+      // job related
+      JobEngine* m_engine = nullptr;
+      std::string m_jobId;
       _internal::JobModel m_model;
-      _internal::HydrationParameters m_hydrateOptions;
+      _internal::HydrationParameters m_hydrateParameters;
+      _internal::Task m_rootTask;
+      std::unique_ptr<std::atomic<uint64_t>> m_progressLastInvokedTime;
+
+      // plan file related
       std::string m_jobPlanDir;
       size_t m_generatorFileInOffset = 0;
       size_t m_generatorFileOutOffset = 0;
-      bool m_hasMoreParts = false;
       std::fstream m_partGens;
-      std::map<uint32_t, std::unique_ptr<JobPart>> m_jobParts;
+
+      // job info file
+      std::unique_ptr<_internal::MemoryMap> m_jobInfoMappedFile;
+      int64_t* m_numFilesTransferred = nullptr;
+      int64_t* m_numFilesSkipped = nullptr;
+      int64_t* m_numFilesFailed = nullptr;
+      int64_t* m_totalBytesTransferred = nullptr;
+
+      // parts
+      std::map<uint32_t, std::shared_ptr<JobPart>> m_jobParts;
+      std::unique_ptr<std::atomic<size_t>> m_numAliveParts
+          = std::make_unique<std::atomic<size_t>>(0);
+      bool m_hasMoreParts = false;
       uint32_t m_maxPartId = 0;
-
-      _internal::Task m_rootTask;
-
-      friend class JobEngine;
     };
 
     class JobEngine {
@@ -164,6 +195,7 @@ namespace Azure { namespace Storage {
           const std::string& jobId,
           _internal::HydrationParameters hydrateOptions);
       void RemoveJob(const std::string& jobId);
+      void PartDone(const std::string& jobId, uint32_t partId);
       std::vector<_internal::Task> GetMoreTasks();
 
     private:
@@ -191,7 +223,7 @@ namespace Azure { namespace Storage {
 
       std::list<JobPlan> m_jobs;
       std::map<std::string, decltype(m_jobs)::iterator> m_jobsIndex;
-      // TODO: optimization: last scan pos for GetMoreTasks()
+      std::pair<decltype(m_jobs)::iterator, uint32_t> m_loadPos = std::make_pair(m_jobs.end(), 0);
 
       std::vector<EngineOperation> m_messages;
       std::mutex m_messageMutex;

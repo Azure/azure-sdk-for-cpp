@@ -3,6 +3,7 @@
 
 #include "azure/storage/datamovement/job_engine.hpp"
 
+#include <algorithm>
 #include <fstream>
 
 #include <azure/core/azure_assert.hpp>
@@ -13,6 +14,10 @@
 
 namespace Azure { namespace Storage {
   namespace {
+    constexpr static int PlanFileVersion = 1;
+    constexpr size_t JobInfoFileHeaderSize = 32;
+    constexpr size_t JobPartFileHeaderSize = 8;
+
     template <class T> T ReadFixedInt(std::fstream& in);
 
     template <> int8_t ReadFixedInt<int8_t>(std::fstream& in)
@@ -30,18 +35,13 @@ namespace Azure { namespace Storage {
       return value;
     }
 
-    void WriteFixedInt(std::fstream& out, int8_t value)
+    template <class T> void WriteFixedInt(std::fstream& out, T value)
     {
-      out.write(reinterpret_cast<char*>(&value), sizeof(value));
-    }
-
-    void WriteFixedInt(std::fstream& out, int32_t value)
-    {
-      uint8_t v[4];
-      v[0] = value & 0xff;
-      v[1] = (value >> 8) & 0xff;
-      v[2] = (value >> 16) & 0xff;
-      v[3] = (value >> 24) & 0xff;
+      uint8_t v[sizeof(value)];
+      for (int i = 0; i < sizeof(value); ++i)
+      {
+        v[i] = (value >> (8 * i)) & 0xff;
+      }
       out.write(reinterpret_cast<char*>(v), sizeof(v));
     }
 
@@ -117,7 +117,17 @@ namespace Azure { namespace Storage {
       in.seekg(in.tellg() + length);
     }
 
-    constexpr static int PlanFileVersion = 1;
+    void WriteZeros(std::fstream& out, size_t numZeros)
+    {
+      const static std::string zeroMemory(4096, '\x00');
+      while (numZeros)
+      {
+        size_t n = std::min(numZeros, zeroMemory.size());
+        out.write(zeroMemory.data(), n);
+        numZeros -= n;
+      }
+    }
+
     static const char* HexDigits = "0123456789abcdef";
     std::string PartIdToString(uint32_t partId)
     {
@@ -196,6 +206,7 @@ namespace Azure { namespace Storage {
           {
             ret.m_blobClient = Blobs::BlobClient(blobUrl);
           }
+          break;
         }
         case EndType::AzureBlobFolder: {
           auto folderUrl = object["url"].get<std::string>();
@@ -223,6 +234,7 @@ namespace Azure { namespace Storage {
             blobContainerClient = Blobs::BlobContainerClient(blobContainerUrl);
           }
           ret.m_blobFolder = Blobs::BlobFolder(std::move(blobContainerClient.Value()), folderPath);
+          break;
         }
       }
       return ret;
@@ -238,7 +250,10 @@ namespace Azure { namespace Storage {
       object["destination"] = Destination;
       object["object_size"] = ObjectSize;
       object["chunk_size"] = ChunkSize;
-      object["extended"] = ExtendedAttributes;
+      if (!ExtendedAttributes.empty())
+      {
+        object["extended"] = ExtendedAttributes;
+      }
       return object.dump();
     }
 
@@ -287,24 +302,28 @@ namespace Azure { namespace Storage {
     }
 
     std::pair<JobPart, std::vector<TaskModel>> JobPart::LoadTasks(
+        JobPlan* plan,
         uint32_t id,
         std::string jobPlanDir)
     {
-      const std::string partFilename = jobPlanDir + "/" + PartIdToString(id);
+      const std::string partFilename = _internal::JoinPath(jobPlanDir, PartIdToString(id));
       std::fstream fin(partFilename, std::fstream::in | std::fstream::binary);
       fin.exceptions(std::fstream::failbit | std::fstream::badbit);
       int32_t planFileVersion = ReadFixedInt<int32_t>(fin);
       AZURE_ASSERT(planFileVersion == PlanFileVersion);
       JobPart jobPart;
+      jobPart.m_jobPlan = plan;
+      jobPart.m_jobPlan->m_numAliveParts->fetch_add(1, std::memory_order_relaxed);
       jobPart.m_id = id;
       jobPart.m_jobPlanDir = std::move(jobPlanDir);
       jobPart.m_numDoneBits = ReadFixedInt<int32_t>(fin);
-      const size_t doneBitmapOffset = fin.tellg();
+      AZURE_ASSERT(static_cast<size_t>(fin.tellg()) == JobPartFileHeaderSize);
       std::vector<char> doneBits(jobPart.m_numDoneBits);
       fin.read(doneBits.data(), jobPart.m_numDoneBits);
 
       std::vector<TaskModel> tasks;
       size_t currDoneBit = 0;
+      size_t numUndoneBits = 0;
       while (currDoneBit < jobPart.m_numDoneBits)
       {
         auto numSubTasks = static_cast<int32_t>(ReadVarInt(fin));
@@ -315,27 +334,36 @@ namespace Azure { namespace Storage {
           {
             auto task = TaskModel::FromString(ReadString(fin));
             tasks.push_back(std::move(task));
+            ++numUndoneBits;
           }
         }
         else
         {
-          auto subtasksDoneBitMap = std::string(
-              doneBits.begin() + currDoneBit, doneBits.begin() + currDoneBit + numSubTasks);
-          if (std::any_of(subtasksDoneBitMap.begin(), subtasksDoneBitMap.end(), [](char b) {
-                return b == 0;
-              }))
+          bool hasUndoneSubtask = false;
+          std::string subtasksDoneBitMap(numSubTasks, '\x00');
+          for (size_t i = 0; i < numSubTasks; ++i)
+          {
+            subtasksDoneBitMap[i] = char(doneBits[currDoneBit + i] + '0');
+            if (subtasksDoneBitMap[i] == '0')
+            {
+              hasUndoneSubtask = true;
+              ++numUndoneBits;
+            }
+          }
+          if (hasUndoneSubtask)
           {
             auto task = TaskModel::FromString(ReadString(fin));
             task.ExtendedAttributes["_subtasks"] = subtasksDoneBitMap;
+            tasks.push_back(std::move(task));
           }
         }
         currDoneBit += numSubTasks;
       }
       fin.close();
       jobPart.m_mappedFile = std::make_unique<_internal::MemoryMap>(partFilename);
-      jobPart.m_doneBitmap
-          = static_cast<bool*>(jobPart.m_mappedFile->Map(doneBitmapOffset, jobPart.m_numDoneBits));
-
+      jobPart.m_doneBitmap = static_cast<bool*>(
+          jobPart.m_mappedFile->Map(JobPartFileHeaderSize, jobPart.m_numDoneBits));
+      jobPart.m_numUndoneBits->store(numUndoneBits, std::memory_order_relaxed);
       return std::make_pair(std::move(jobPart), std::move(tasks));
     }
 
@@ -344,7 +372,7 @@ namespace Azure { namespace Storage {
         const std::string& jobPlanDir,
         const std::vector<TaskModel>& tasks)
     {
-      const std::string partFilename = jobPlanDir + "/" + PartIdToString(id);
+      const std::string partFilename = _internal::JoinPath(jobPlanDir, PartIdToString(id));
       std::fstream fout(
           partFilename + ".tmp", std::fstream::out | std::fstream::trunc | std::fstream::binary);
       fout.exceptions(std::fstream::failbit | std::fstream::badbit);
@@ -354,13 +382,7 @@ namespace Azure { namespace Storage {
               return s + t.NumSubTasks;
             });
       WriteFixedInt(fout, numDoneBits);
-      std::string zeroArray(4096, '\x00');
-      while (numDoneBits != 0)
-      {
-        int32_t writeCount = std::min(static_cast<int32_t>(zeroArray.length()), numDoneBits);
-        fout.write(zeroArray.data(), writeCount);
-        numDoneBits -= writeCount;
-      }
+      WriteZeros(fout, numDoneBits);
       for (const auto& t : tasks)
       {
         WriteVarInt(fout, t.NumSubTasks);
@@ -375,8 +397,9 @@ namespace Azure { namespace Storage {
       AZURE_ASSERT(!_internal::PathExists(jobPlanDir));
       _internal::CreateDirectory(jobPlanDir);
       {
+        const std::string partGensFilename = _internal::JoinPath(jobPlanDir, "part_gens");
         std::fstream fout(
-            jobPlanDir + "/part_gens.tmp",
+            partGensFilename + ".tmp",
             std::fstream::out | std::fstream::trunc | std::fstream::binary);
         fout.exceptions(std::fstream::failbit | std::fstream::badbit);
         PartGenerator rootGenerator;
@@ -384,21 +407,22 @@ namespace Azure { namespace Storage {
         WriteFixedInt(fout, int8_t(0));
         WriteString(fout, serializedGenerator);
         fout.close();
-        _internal::Rename(jobPlanDir + "/part_gens.tmp", jobPlanDir + "/part_gens");
+        _internal::Rename(partGensFilename + ".tmp", partGensFilename);
       }
       {
+        const std::string jobInfoFilename = _internal::JoinPath(jobPlanDir, "job_info");
         std::fstream fout(
-            jobPlanDir + "/job_info.tmp",
+            jobInfoFilename + ".tmp",
             std::fstream::out | std::fstream::trunc | std::fstream::binary);
         fout.exceptions(std::fstream::failbit | std::fstream::badbit);
-        // TODO: progress and header length
+        WriteZeros(fout, JobInfoFileHeaderSize);
         Core::Json::_internal::json object;
         object["source"] = Core::Json::_internal::json::parse(model.Source.ToString());
         object["destination"] = Core::Json::_internal::json::parse(model.Destination.ToString());
         std::string serializedJobInfo = object.dump();
         WriteString(fout, serializedJobInfo);
         fout.close();
-        _internal::Rename(jobPlanDir + "/job_info.tmp", jobPlanDir + "/job_info");
+        _internal::Rename(jobInfoFilename + ".tmp", jobInfoFilename);
       }
     }
 
@@ -407,18 +431,34 @@ namespace Azure { namespace Storage {
         const std::string& jobPlanDir)
     {
       JobPlan jobPlan;
-      jobPlan.m_hydrateOptions = std::move(hydrateOptions);
+      jobPlan.m_hydrateParameters = std::move(hydrateOptions);
       jobPlan.m_jobPlanDir = jobPlanDir;
 
       AZURE_ASSERT(_internal::PathExists(jobPlanDir));
-      std::fstream fin(jobPlanDir + "/job_info", std::fstream::in | std::fstream::binary);
+      std::fstream fin(
+          _internal::JoinPath(jobPlanDir, "job_info"), std::fstream::in | std::fstream::binary);
       fin.exceptions(std::fstream::failbit | std::fstream::badbit);
+      fin.seekg(JobInfoFileHeaderSize);
       auto serializedJobInfo = ReadString(fin);
       auto object = Core::Json::_internal::json::parse(serializedJobInfo);
       jobPlan.m_model.Source = _internal::TransferEnd::FromString(
-          object["source"].get<std::string>(), jobPlan.m_hydrateOptions.SourceCredential);
+          object["source"].dump(), jobPlan.m_hydrateParameters.SourceCredential);
       jobPlan.m_model.Destination = _internal::TransferEnd::FromString(
-          object["destination"].get<std::string>(), jobPlan.m_hydrateOptions.DestinationCredential);
+          object["destination"].dump(),
+          jobPlan.m_hydrateParameters.DestinationCredential);
+      fin.close();
+
+      jobPlan.m_jobInfoMappedFile
+          = std::make_unique<_internal::MemoryMap>(_internal::JoinPath(jobPlanDir, "job_info"));
+      void* jobInfoFileHeader = jobPlan.m_jobInfoMappedFile->Map(0, JobInfoFileHeaderSize);
+      jobPlan.m_numFilesTransferred = static_cast<int64_t*>(jobInfoFileHeader);
+      jobPlan.m_numFilesSkipped = static_cast<int64_t*>(jobInfoFileHeader) + 1;
+      jobPlan.m_numFilesFailed = static_cast<int64_t*>(jobInfoFileHeader) + 2;
+      jobPlan.m_totalBytesTransferred = static_cast<int64_t*>(jobInfoFileHeader) + 3;
+      if (jobPlan.m_hydrateParameters.ProgressHandler)
+      {
+        jobPlan.m_progressLastInvokedTime = std::make_unique<std::atomic<uint64_t>>(0);
+      }
 
       _internal::DirectoryIterator dir(jobPlan.m_jobPlanDir);
       while (true)
@@ -435,7 +475,7 @@ namespace Azure { namespace Storage {
         if (entry.Name == "part_gens")
         {
           auto fio = std::fstream(
-              jobPlan.m_jobPlanDir + "/part_gens",
+              _internal::JoinPath(jobPlan.m_jobPlanDir, "part_gens"),
               std::fstream::in | std::fstream::out | std::fstream::binary);
           fio.exceptions(std::fstream::failbit | std::fstream::badbit);
           jobPlan.m_generatorFileOutOffset = entry.Size;
@@ -504,9 +544,10 @@ namespace Azure { namespace Storage {
       {
         if (m_generatorFileInOffset == m_generatorFileOutOffset)
         {
-          _internal::Rename(m_jobPlanDir + "/part_gens", m_jobPlanDir + "/part_gens.delete");
           m_hasMoreParts = false;
           m_partGens.close();
+          const std::string partGensFilename = _internal::JoinPath(m_jobPlanDir, "part_gens");
+          _internal::Rename(partGensFilename, partGensFilename + ".delete");
           break;
         }
         m_partGens.seekg(m_generatorFileInOffset);
@@ -529,7 +570,7 @@ namespace Azure { namespace Storage {
       }
     }
 
-    void JobPlan::PartDone(uint32_t id)
+    void JobPlan::RemoveDonePart(uint32_t id)
     {
       auto ite = m_jobParts.find(id);
       AZURE_ASSERT(ite != m_jobParts.end());
@@ -539,9 +580,9 @@ namespace Azure { namespace Storage {
         AZURE_ASSERT(jobPart.m_doneBitmap[i]);
       }
       m_jobParts.erase(ite);
-      _internal::Rename(
-          m_jobPlanDir + "/" + PartIdToString(id),
-          m_jobPlanDir + "/" + PartIdToString(id) + ".delete");
+      const std::string jobPlanDirectoryName
+          = _internal::JoinPath(m_jobPlanDir, PartIdToString(id));
+      _internal::Rename(jobPlanDirectoryName, jobPlanDirectoryName + ".delete");
     }
   } // namespace _detail
 }} // namespace Azure::Storage

@@ -3,6 +3,10 @@
 
 #pragma once
 
+#include <memory>
+#include <mutex>
+#include <string>
+
 #include <azure/storage/blobs/blob_client.hpp>
 #include <azure/storage/common/internal/file_io.hpp>
 
@@ -11,15 +15,9 @@
 
 namespace Azure { namespace Storage { namespace Blobs { namespace _detail {
 
-  struct DownloadBlobToFileTask final : public Storage::_internal::TaskBase
+  struct DownloadRangeToMemoryTask final : public Storage::_internal::TaskBase
   {
-    DownloadBlobToFileTask(
-        Storage::_internal::TaskType type,
-        const Blobs::BlobClient& source,
-        const std::string& destination) noexcept
-        : TaskBase(type), Context(std::make_shared<TaskContext>(source, destination))
-    {
-    }
+    using TaskBase::TaskBase;
 
     struct TaskContext final
     {
@@ -29,22 +27,15 @@ namespace Azure { namespace Storage { namespace Blobs { namespace _detail {
       }
       Blobs::BlobClient Source;
       std::string Destination;
+      std::mutex FileWriterMutex; // TODO: optimize this if it becomes a bottleneck
       std::unique_ptr<Storage::_internal::FileWriter> FileWriter;
       uint64_t FileSize{0};
       int NumChunks{0};
       std::atomic<int> NumDownloadedChunks{0};
       std::atomic<bool> Failed{false};
     };
+
     std::shared_ptr<TaskContext> Context;
-
-    void Execute() noexcept override;
-  };
-
-  struct DownloadRangeToMemoryTask final : public Storage::_internal::TaskBase
-  {
-    using TaskBase::TaskBase;
-
-    std::shared_ptr<DownloadBlobToFileTask::TaskContext> Context;
     int64_t Offset;
     size_t Length;
 
@@ -55,7 +46,7 @@ namespace Azure { namespace Storage { namespace Blobs { namespace _detail {
   {
     using TaskBase::TaskBase;
 
-    std::shared_ptr<DownloadBlobToFileTask::TaskContext> Context;
+    std::shared_ptr<DownloadRangeToMemoryTask::TaskContext> Context;
     int64_t Offset;
     size_t Length;
     std::unique_ptr<uint8_t[]> Buffer;
