@@ -13,14 +13,13 @@
 namespace Azure { namespace Storage {
   struct StorageTransferManagerOptions final
   {
-    std::string TransferStateDirectoryPath;
+    std::string TransferStateDirectoryPath = ".";
     Nullable<int> NumThreads;
     Nullable<size_t> MaxMemorySize;
   };
 
   struct TransferCredential final
   {
-    std::string ConnectionString;
     std::string SasCredential; // TODO: or Azure SAS credential?
     std::shared_ptr<StorageSharedKeyCredential> SharedKeyCredential;
     std::shared_ptr<Core::Credentials::TokenCredential> TokenCredential;

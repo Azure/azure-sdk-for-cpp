@@ -1,0 +1,197 @@
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// SPDX-License-Identifier: MIT
+
+#pragma once
+
+#include "azure/storage/datamovement/job_engine.hpp"
+
+#include <vector>
+
+#include <azure/core/azure_assert.hpp>
+
+#include "azure/storage/datamovement/tasks/upload_blob_from_file_task.hpp"
+#include "azure/storage/datamovement/utilities.hpp"
+
+namespace Azure { namespace Storage { namespace _detail {
+
+  namespace {
+    constexpr size_t UploadBlockSize = 8 * 1024 * 1024;
+    constexpr size_t DownloadBlockSize = 8 * 1024 * 1024;
+    constexpr size_t NumSubtasksPerPart = 50000;
+    constexpr size_t MaxTasksGenerated = 1000000;
+  } // namespace
+
+  void JobPlan::GeneratePart(const PartGenerator& gen)
+  {
+    std::vector<TaskModel> newTasks;
+    size_t numNewSubtasks = 0;
+    size_t totalNumNewSubtasks = 0;
+    auto flushNewTasks = [&]() {
+      if (newTasks.empty())
+      {
+        return;
+      }
+      const uint32_t partId = ++m_maxPartId;
+      JobPart::CreateJobPart(partId, m_jobPlanDir, newTasks);
+      m_jobParts[partId] = nullptr;
+      newTasks.clear();
+      numNewSubtasks = 0;
+    };
+    auto taskGenerated = [&](TaskModel&& newTask) {
+      AZURE_ASSERT(newTask.NumSubTasks > 0);
+      numNewSubtasks += newTask.NumSubTasks;
+      totalNumNewSubtasks += newTask.NumSubTasks;
+      newTasks.push_back(std::move(newTask));
+      if (numNewSubtasks >= NumSubtasksPerPart)
+      {
+        flushNewTasks();
+      }
+    };
+    std::vector<PartGenerator> partGens;
+
+    if (m_model.Source.m_type == _internal::TransferEnd::EndType::LocalFile)
+    {
+      AZURE_ASSERT(gen.Source.empty());
+      AZURE_ASSERT(gen.Destination.empty());
+      AZURE_ASSERT(gen.ContinuationToken.empty());
+      const std::string filePath = _internal::GetPathFromUrl(m_model.Source.m_url);
+      int64_t fileSize = _internal::GetFileSize(filePath);
+
+      TaskModel task;
+      task.ObjectSize = fileSize;
+      task.ChunkSize = UploadBlockSize;
+      task.NumSubTasks = static_cast<int32_t>((fileSize + UploadBlockSize - 1) / UploadBlockSize);
+      if (task.NumSubTasks == 0)
+      {
+        task.NumSubTasks = 1;
+      }
+      taskGenerated(std::move(task));
+    }
+    else if (m_model.Source.m_type == _internal::TransferEnd::EndType::LocalDirectory)
+    {
+      AZURE_ASSERT(gen.ContinuationToken.empty());
+      const std::string jobRootPath = _internal::GetPathFromUrl(m_model.Source.m_url);
+
+      partGens.push_back(gen);
+      do
+      {
+        PartGenerator currGen = std::move(partGens.back());
+        partGens.pop_back();
+
+        _internal::DirectoryIterator dirIterator(_internal::JoinPath(jobRootPath, currGen.Source));
+        while (true)
+        {
+          auto entry = dirIterator.Next();
+          if (entry.Name.empty())
+          {
+            break;
+          }
+          if (!entry.IsDirectory)
+          {
+            TaskModel task;
+            task.Source = _internal::JoinPath(currGen.Source, entry.Name);
+            task.Destination = _internal::JoinPath(currGen.Destination, entry.Name);
+            task.ObjectSize = entry.Size;
+            task.ChunkSize = UploadBlockSize;
+            task.NumSubTasks
+                = static_cast<int32_t>((entry.Size + UploadBlockSize - 1) / UploadBlockSize);
+            if (task.NumSubTasks == 0)
+            {
+              task.NumSubTasks = 1;
+            }
+            taskGenerated(std::move(task));
+          }
+          else
+          {
+            PartGenerator newGen;
+            newGen.Source = _internal::JoinPath(currGen.Source, entry.Name);
+            newGen.Destination = _internal::JoinPath(currGen.Destination, entry.Name);
+            partGens.push_back(std::move(newGen));
+          }
+        }
+
+      } while (!partGens.empty() && totalNumNewSubtasks < MaxTasksGenerated);
+    }
+    else if (m_model.Source.m_type == _internal::TransferEnd::EndType::AzureBlob)
+    {
+      AZURE_NOT_IMPLEMENTED();
+    }
+    else if (m_model.Source.m_type == _internal::TransferEnd::EndType::AzureBlobFolder)
+    {
+      AZURE_NOT_IMPLEMENTED();
+    }
+    else
+    {
+      AZURE_NOT_IMPLEMENTED();
+    }
+
+    flushNewTasks();
+    AppendPartGenerators(partGens);
+  }
+
+  std::vector<_internal::Task> JobPlan::HydrateTasks(const std::vector<TaskModel>& taskModels)
+  {
+    std::vector<_internal::Task> tasks;
+    if ((m_model.Source.m_type == _internal::TransferEnd::EndType::LocalFile
+         && m_model.Destination.m_type == _internal::TransferEnd::EndType::AzureBlob)
+        || (m_model.Source.m_type == _internal::TransferEnd::EndType::LocalDirectory
+            && m_model.Destination.m_type == _internal::TransferEnd::EndType::AzureBlobFolder))
+    {
+      for (auto& taskModel : taskModels)
+      {
+        std::string source = _internal::JoinPath(
+            _internal::GetPathFromUrl(m_model.Source.m_url), taskModel.Source);
+        auto destination = m_model.Destination.m_blobClient.Value();
+        if (taskModel.NumSubTasks == 1)
+        {
+          // TODO: this should be uploaded with single put
+          auto task = m_rootTask->CreateTask<Blobs::_detail::UploadBlobFromFileTask>(
+              _internal::TaskType::NetworkUpload, source, destination);
+          task->MemoryCost = taskModel.ObjectSize;
+          tasks.emplace_back(std::move(task));
+        }
+        else if (taskModel.NumSubTasks > 1)
+        {
+          auto context = std::make_shared<Blobs::_detail::ReadFileRangeToMemoryTask::TaskContext>(
+              source, destination);
+          context->FileSize = taskModel.ObjectSize;
+          context->NumBlocks = static_cast<int>(
+              (taskModel.ObjectSize + taskModel.ChunkSize - 1) / taskModel.ChunkSize);
+          context->NumStagedBlocks = 0;
+          std::string doneBits;
+
+          if (taskModel.ExtendedAttributes.count("_subtasks") != 0)
+          {
+            doneBits = taskModel.ExtendedAttributes.at("_subtasks");
+          }
+          for (int i = 0; i < context->NumBlocks; ++i)
+          {
+            if (!doneBits.empty() && doneBits[i])
+            {
+              context->NumStagedBlocks.fetch_add(1, std::memory_order_relaxed);
+              continue;
+            }
+            auto task = m_rootTask->CreateTask<Blobs::_detail::ReadFileRangeToMemoryTask>(
+                _internal::TaskType::DiskIO);
+            task->Context = context;
+            task->BlockId = i;
+            task->Offset = i * taskModel.ChunkSize;
+            task->Length = std::min<int64_t>(context->FileSize - task->Offset, taskModel.ChunkSize);
+            task->MemoryCost = task->Length;
+            tasks.emplace_back(std::move(task));
+          }
+        }
+        else
+        {
+          AZURE_UNREACHABLE_CODE();
+        }
+      }
+    }
+    else
+    {
+      AZURE_NOT_IMPLEMENTED();
+    }
+    return tasks;
+  }
+
+}}} // namespace Azure::Storage::_detail

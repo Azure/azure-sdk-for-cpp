@@ -15,6 +15,7 @@
 #include <azure/core/azure_assert.hpp>
 
 #include "azure/storage/datamovement/job_properties.hpp"
+#include "azure/storage/datamovement/task_shared_status.hpp"
 
 #if defined(_MSC_VER)
 #pragma warning(disable : 26110 26117)

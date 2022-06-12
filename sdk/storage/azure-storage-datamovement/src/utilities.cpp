@@ -19,8 +19,13 @@
 #endif
 
 #include <algorithm>
+#include <cstring>
 #include <stdexcept>
+#include <string>
 #include <vector>
+
+#include <azure/core/azure_assert.hpp>
+#include <azure/core/url.hpp>
 
 #if defined(AZ_PLATFORM_WINDOWS)
 namespace Azure { namespace Storage { namespace _internal {
@@ -31,9 +36,25 @@ namespace Azure { namespace Storage { namespace _internal {
 
 namespace Azure { namespace Storage { namespace _internal {
 
-  constexpr static const char* FileUrlScheme = "file://";
+  std::string JoinPath(const std::initializer_list<std::string>& paths)
+  {
+    std::string res;
+    for (const auto& p : paths)
+    {
+      if (p.empty())
+      {
+        continue;
+      }
+      if (!res.empty() && res.back() != '/' && res.back() != '\\')
+      {
+        res += '/';
+      }
+      res += p;
+    }
+    return res;
+  }
 
-  std::string GetFileUrl(const std::string& relativePath)
+  std::string GetPathUrl(const std::string& relativePath)
   {
 #if defined(AZ_PLATFORM_WINDOWS)
     const std::wstring relativePathW = Storage::_internal::Utf8ToWide(relativePath);
@@ -102,6 +123,47 @@ namespace Azure { namespace Storage { namespace _internal {
 
     return FileUrlScheme + absPath;
 #endif
+  }
+
+  std::string GetPathFromUrl(const std::string& fileUrl)
+  {
+    static const size_t FilrUrlSchemeLen = std::strlen(FileUrlScheme);
+    AZURE_ASSERT(fileUrl.substr(0, FilrUrlSchemeLen) == FileUrlScheme);
+    return fileUrl.substr(FilrUrlSchemeLen);
+  }
+
+  std::string RemoveSasToken(const std::string& azureStorageUrl)
+  {
+    Core::Url url(azureStorageUrl);
+    for (const auto& k : {
+             "sv",    "ss",    "srt", "sp",  "se",  "st",  "spr",  "sig",  "sip",  "si",   "sr",
+             "skoid", "sktid", "skt", "ske", "sks", "skv", "rscc", "rscd", "rsce", "rscl", "rsct",
+         })
+    {
+      url.RemoveQueryParameter(k);
+    }
+    return url.GetAbsoluteUrl();
+  }
+
+  std::string ApplySasToken(const std::string& url, const std::string& sasToken)
+  {
+    Core::Url newUrl(url);
+
+    std::string dummyUrl = "http://www.microsoft.com/?";
+    if (sasToken.length() > 0 && sasToken[0] == '?')
+    {
+      dummyUrl += sasToken.substr(1);
+    }
+    else
+    {
+      dummyUrl += sasToken;
+    }
+    Core::Url sasTokenUrl(dummyUrl);
+    for (const auto& pair : sasTokenUrl.GetQueryParameters())
+    {
+      newUrl.AppendQueryParameter(pair.first, pair.second);
+    }
+    return newUrl.GetAbsoluteUrl();
   }
 
 }}} // namespace Azure::Storage::_internal

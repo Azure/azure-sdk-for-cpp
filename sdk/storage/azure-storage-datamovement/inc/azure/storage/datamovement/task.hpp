@@ -7,7 +7,6 @@
 #include <string>
 
 namespace Azure { namespace Storage { namespace _internal {
-  class Scheduler;
   class TaskSharedStatus;
 
   enum class TaskType
@@ -19,7 +18,6 @@ namespace Azure { namespace Storage { namespace _internal {
   };
 
   // Task should be idempotent
-  // Task should be serializable and de-serializable
   struct TaskBase
   {
     explicit TaskBase(TaskType type) noexcept : Type(type) {}
