@@ -48,11 +48,11 @@ set(
   inc/azure/storage/datamovement/job_engine.hpp
   inc/azure/storage/datamovement/job_properties.hpp
   inc/azure/storage/datamovement/rtti.hpp
-  inc/azure/storage/datamovement/scheduler.hpp
   inc/azure/storage/datamovement/storage_transfer_manager.hpp
   inc/azure/storage/datamovement/task.hpp
   inc/azure/storage/datamovement/task_shared_status.hpp
   inc/azure/storage/datamovement/tasks/upload_blob_from_file_task.hpp
+  inc/azure/storage/datamovement/transfer_engine.hpp
   inc/azure/storage/datamovement/utilities.hpp
 )
 
@@ -66,10 +66,10 @@ set(
   src/job_engine_task_generation.cpp
   src/job_properties.cpp
   src/private/package_version.hpp
-  src/scheduler.cpp
   src/storage_transfer_manager.cpp
   src/task_shared_status.cpp
   src/tasks/upload_blob_from_file_task.cpp
+  src/transfer_engine.cpp
   src/utilities.cpp
 )
 

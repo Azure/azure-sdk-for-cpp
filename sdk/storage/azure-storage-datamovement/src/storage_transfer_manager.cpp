@@ -6,8 +6,10 @@
 namespace Azure { namespace Storage {
 
   StorageTransferManager::StorageTransferManager(const StorageTransferManagerOptions& options)
-      : m_scheduler(_internal::SchedulerOptions{options.NumThreads, options.MaxMemorySize}),
-        m_jobEngine(options.TransferStateDirectoryPath + "/plan", &m_scheduler), m_options(options)
+      : m_transferEngine(
+          _internal::TransferEngineOptions{options.NumThreads, options.MaxMemorySize}),
+        m_jobEngine(options.TransferStateDirectoryPath + "/plan", &m_transferEngine),
+        m_options(options)
   {
   }
 

@@ -19,19 +19,19 @@ namespace Azure { namespace Storage { namespace _internal {
 
   using TaskQueue = std::queue<Task>;
 
-  struct SchedulerOptions final
+  struct TransferEngineOptions final
   {
     Nullable<int> NumThreads; // default: num cpus, minimum 5
     Nullable<size_t> MaxMemorySize; // default: 128MB * num threads
   };
 
-  class Scheduler final {
+  class TransferEngine final {
   public:
-    explicit Scheduler(const SchedulerOptions& options);
-    ~Scheduler();
+    explicit TransferEngine(const TransferEngineOptions& options);
+    ~TransferEngine();
 
-    Scheduler(const Scheduler&) = delete;
-    Scheduler& operator=(const Scheduler&) = delete;
+    TransferEngine(const TransferEngine&) = delete;
+    TransferEngine& operator=(const TransferEngine&) = delete;
 
     void AddTask(Task&& task);
     void AddTasks(std::vector<Task>&& tasks);
@@ -66,7 +66,7 @@ namespace Azure { namespace Storage { namespace _internal {
     }
 
   private:
-    SchedulerOptions m_options;
+    TransferEngineOptions m_options;
 
     std::atomic<bool> m_stopped{false};
 

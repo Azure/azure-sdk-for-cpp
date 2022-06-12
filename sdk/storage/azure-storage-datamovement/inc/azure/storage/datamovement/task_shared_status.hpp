@@ -12,7 +12,7 @@
 #include "azure/storage/datamovement/job_properties.hpp"
 
 namespace Azure { namespace Storage { namespace _internal {
-  class Scheduler;
+  class TransferEngine;
 
   class TaskSharedStatus final {
   private:
@@ -29,7 +29,7 @@ namespace Azure { namespace Storage { namespace _internal {
     std::function<void(const TransferProgress&)> ProgressHandler{};
     std::function<void(TransferError&)> ErrorHandler{};
     std::shared_future<JobStatus> WaitHandle = m_notificationHandle.get_future().share();
-    Scheduler* Scheduler = nullptr;
+    TransferEngine* TransferEngine = nullptr;
 
     std::atomic<int64_t> NumFilesTransferred{0};
     std::atomic<int64_t> NumFilesSkipped{0};

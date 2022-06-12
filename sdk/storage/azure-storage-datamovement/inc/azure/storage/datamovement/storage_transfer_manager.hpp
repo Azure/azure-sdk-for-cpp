@@ -8,7 +8,7 @@
 #include "azure/storage/datamovement/datamovement_options.hpp"
 #include "azure/storage/datamovement/job_engine.hpp"
 #include "azure/storage/datamovement/job_properties.hpp"
-#include "azure/storage/datamovement/scheduler.hpp"
+#include "azure/storage/datamovement/transfer_engine.hpp"
 
 namespace Azure { namespace Storage {
 
@@ -24,7 +24,7 @@ namespace Azure { namespace Storage {
         const ResumeJobOptions& options = ResumeJobOptions());
 
   protected:
-    _internal::Scheduler m_scheduler;
+    _internal::TransferEngine m_transferEngine;
     _detail::JobEngine m_jobEngine;
 
   private:

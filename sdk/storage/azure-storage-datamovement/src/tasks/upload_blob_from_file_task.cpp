@@ -13,8 +13,8 @@
 #include <azure/core/azure_assert.hpp>
 #include <azure/core/base64.hpp>
 
-#include "azure/storage/datamovement/scheduler.hpp"
 #include "azure/storage/datamovement/task_shared_status.hpp"
+#include "azure/storage/datamovement/transfer_engine.hpp"
 #include "azure/storage/datamovement/utilities.hpp"
 
 namespace Azure { namespace Storage { namespace Blobs { namespace _detail {
@@ -109,7 +109,7 @@ namespace Azure { namespace Storage { namespace Blobs { namespace _detail {
     stageBlockTask->Length = Length;
     std::swap(stageBlockTask->MemoryGiveBack, this->MemoryGiveBack);
 
-    SharedStatus->Scheduler->AddTask(std::move(stageBlockTask));
+    SharedStatus->TransferEngine->AddTask(std::move(stageBlockTask));
   }
 
   void StageBlockTask::Execute() noexcept

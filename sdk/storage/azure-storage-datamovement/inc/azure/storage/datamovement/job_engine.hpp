@@ -23,9 +23,9 @@
 #include "azure/storage/datamovement/datamovement_options.hpp"
 #include "azure/storage/datamovement/filesystem.hpp"
 #include "azure/storage/datamovement/job_properties.hpp"
-#include "azure/storage/datamovement/scheduler.hpp"
 #include "azure/storage/datamovement/task.hpp"
 #include "azure/storage/datamovement/task_shared_status.hpp"
+#include "azure/storage/datamovement/transfer_engine.hpp"
 
 namespace Azure { namespace Storage {
   namespace _detail {
@@ -154,7 +154,7 @@ namespace Azure { namespace Storage {
 
     class JobEngine {
     public:
-      explicit JobEngine(const std::string& plansDir, _internal::Scheduler* scheduler);
+      explicit JobEngine(const std::string& plansDir, _internal::TransferEngine* transferEngine);
       ~JobEngine();
 
       JobProperties CraeteJob(
@@ -187,7 +187,7 @@ namespace Azure { namespace Storage {
 
     private:
       std::string m_plansDir;
-      _internal::Scheduler* m_scheduler;
+      _internal::TransferEngine* m_transferEngine;
 
       std::list<JobPlan> m_jobs;
       std::map<std::string, decltype(m_jobs)::iterator> m_jobsIndex;

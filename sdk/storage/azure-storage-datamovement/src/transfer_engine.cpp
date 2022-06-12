@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
 
-#include "azure/storage/datamovement/scheduler.hpp"
+#include "azure/storage/datamovement/transfer_engine.hpp"
 
 #include <algorithm>
 #include <chrono>
@@ -23,7 +23,7 @@
 
 namespace Azure { namespace Storage { namespace _internal {
 
-  Scheduler::Scheduler(const SchedulerOptions& options) : m_options(options)
+  TransferEngine::TransferEngine(const TransferEngineOptions& options) : m_options(options)
   {
     int numThreads = options.NumThreads.HasValue()
         ? options.NumThreads.Value()
@@ -239,7 +239,7 @@ namespace Azure { namespace Storage { namespace _internal {
     m_schedulerThread = std::thread(schedulerFunc);
   }
 
-  Scheduler::~Scheduler()
+  TransferEngine::~TransferEngine()
   {
     m_stopped.store(true, std::memory_order_relaxed);
     m_pendingTasksCv.notify_one();
@@ -297,7 +297,7 @@ namespace Azure { namespace Storage { namespace _internal {
     AZURE_ASSERT(m_memoryLeft == m_options.MaxMemorySize.Value());
   }
 
-  void Scheduler::AddTask(Task&& task)
+  void TransferEngine::AddTask(Task&& task)
   {
     if (task->Type == TaskType::DiskIO)
     {
@@ -330,7 +330,7 @@ namespace Azure { namespace Storage { namespace _internal {
     }
   }
 
-  void Scheduler::AddTasks(std::vector<Task>&& tasks)
+  void TransferEngine::AddTasks(std::vector<Task>&& tasks)
   {
     {
       std::unique_lock<std::mutex> guard(m_pendingTasksMutex, std::defer_lock);
@@ -406,7 +406,7 @@ namespace Azure { namespace Storage { namespace _internal {
     }
   }
 
-  void Scheduler::ResumePausedTasks()
+  void TransferEngine::ResumePausedTasks()
   {
     TaskQueue stillPausedTasks;
     std::vector<Task> resumedTasks;

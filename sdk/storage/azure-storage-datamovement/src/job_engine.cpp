@@ -57,8 +57,8 @@ namespace Azure { namespace Storage {
   } // namespace _internal
   namespace _detail {
 
-    JobEngine::JobEngine(const std::string& plansDir, _internal::Scheduler* scheduler)
-        : m_plansDir(plansDir), m_scheduler(scheduler)
+    JobEngine::JobEngine(const std::string& plansDir, _internal::TransferEngine* transferEngine)
+        : m_plansDir(plansDir), m_transferEngine(transferEngine)
     {
       _internal::CreateDirectory(m_plansDir);
 
@@ -214,7 +214,7 @@ namespace Azure { namespace Storage {
           auto sharedStatus = std::make_shared<_internal::TaskSharedStatus>();
           sharedStatus->ProgressHandler = existingJobPlan.m_hydrateOptions.ProgressHandler;
           sharedStatus->ErrorHandler = existingJobPlan.m_hydrateOptions.ErrorHandler;
-          sharedStatus->Scheduler = m_scheduler;
+          sharedStatus->TransferEngine = m_transferEngine;
           sharedStatus->JobId = op.JobId;
           // TODO: restore counters
           existingJobPlan.m_rootTask = std::make_unique<DummyTask>(_internal::TaskType::Other);
