@@ -15,7 +15,7 @@ using Azure::Core::Http::HttpStatusCode;
 using Azure::Identity::ManagedIdentityCredential;
 using Azure::Identity::Test::_detail::CredentialTestHelper;
 
-TEST(ManagedIdentityCredential, AppService)
+TEST(ManagedIdentityCredential, AppServiceV2017)
 {
   auto const actual = CredentialTestHelper::SimulateTokenRequest(
       [](auto transport) {
@@ -24,10 +24,10 @@ TEST(ManagedIdentityCredential, AppService)
 
         CredentialTestHelper::EnvironmentOverride const env({
             {"MSI_ENDPOINT", "https://microsoft.com/"},
-            {"MSI_SECRET", "CLIENTSECRET"},
+            {"MSI_SECRET", "CLIENTSECRET1"},
             {"IDENTITY_ENDPOINT", "https://visualstudio.com/"},
             {"IMDS_ENDPOINT", "https://xbox.com/"},
-            {"IDENTITY_HEADER", "CLIENTSECRET"},
+            {"IDENTITY_HEADER", "CLIENTSECRET2"},
             {"IDENTITY_SERVER_THUMBPRINT", "0123456789abcdef0123456789abcdef01234567"},
         });
 
@@ -77,13 +77,13 @@ TEST(ManagedIdentityCredential, AppService)
 
   {
     EXPECT_NE(request0.Headers.find("secret"), request0.Headers.end());
-    EXPECT_EQ(request0.Headers.at("secret"), "CLIENTSECRET");
+    EXPECT_EQ(request0.Headers.at("secret"), "CLIENTSECRET1");
 
     EXPECT_NE(request1.Headers.find("secret"), request1.Headers.end());
-    EXPECT_EQ(request1.Headers.at("secret"), "CLIENTSECRET");
+    EXPECT_EQ(request1.Headers.at("secret"), "CLIENTSECRET1");
 
     EXPECT_NE(request2.Headers.find("secret"), request2.Headers.end());
-    EXPECT_EQ(request2.Headers.at("secret"), "CLIENTSECRET");
+    EXPECT_EQ(request2.Headers.at("secret"), "CLIENTSECRET1");
   }
 
   EXPECT_EQ(response0.AccessToken.Token, "ACCESSTOKEN1");
@@ -101,7 +101,7 @@ TEST(ManagedIdentityCredential, AppService)
   EXPECT_LE(response2.AccessToken.ExpiresOn, response2.LatestExpiration + 9999s);
 }
 
-TEST(ManagedIdentityCredential, AppServiceClientId)
+TEST(ManagedIdentityCredential, AppServiceV2017ClientId)
 {
   auto const actual = CredentialTestHelper::SimulateTokenRequest(
       [](auto transport) {
@@ -110,10 +110,10 @@ TEST(ManagedIdentityCredential, AppServiceClientId)
 
         CredentialTestHelper::EnvironmentOverride const env({
             {"MSI_ENDPOINT", "https://microsoft.com/"},
-            {"MSI_SECRET", "CLIENTSECRET"},
+            {"MSI_SECRET", "CLIENTSECRET1"},
             {"IDENTITY_ENDPOINT", "https://visualstudio.com/"},
             {"IMDS_ENDPOINT", "https://xbox.com/"},
-            {"IDENTITY_HEADER", "CLIENTSECRET"},
+            {"IDENTITY_HEADER", "CLIENTSECRET2"},
             {"IDENTITY_SERVER_THUMBPRINT", "0123456789abcdef0123456789abcdef01234567"},
         });
 
@@ -167,13 +167,13 @@ TEST(ManagedIdentityCredential, AppServiceClientId)
 
   {
     EXPECT_NE(request0.Headers.find("secret"), request0.Headers.end());
-    EXPECT_EQ(request0.Headers.at("secret"), "CLIENTSECRET");
+    EXPECT_EQ(request0.Headers.at("secret"), "CLIENTSECRET1");
 
     EXPECT_NE(request1.Headers.find("secret"), request1.Headers.end());
-    EXPECT_EQ(request1.Headers.at("secret"), "CLIENTSECRET");
+    EXPECT_EQ(request1.Headers.at("secret"), "CLIENTSECRET1");
 
     EXPECT_NE(request2.Headers.find("secret"), request2.Headers.end());
-    EXPECT_EQ(request2.Headers.at("secret"), "CLIENTSECRET");
+    EXPECT_EQ(request2.Headers.at("secret"), "CLIENTSECRET1");
   }
 
   EXPECT_EQ(response0.AccessToken.Token, "ACCESSTOKEN1");
@@ -191,7 +191,7 @@ TEST(ManagedIdentityCredential, AppServiceClientId)
   EXPECT_LE(response2.AccessToken.ExpiresOn, response2.LatestExpiration + 9999s);
 }
 
-TEST(ManagedIdentityCredential, AppServiceInvalidUrl)
+TEST(ManagedIdentityCredential, AppServiceV2017InvalidUrl)
 {
   using Azure::Core::Credentials::AccessToken;
   using Azure::Core::Credentials::AuthenticationException;
@@ -204,26 +204,26 @@ TEST(ManagedIdentityCredential, AppServiceInvalidUrl)
 
         CredentialTestHelper::EnvironmentOverride const env({
             {"MSI_ENDPOINT", "https://microsoft.com:INVALID/"},
-            {"MSI_SECRET", "CLIENTSECRET"},
+            {"MSI_SECRET", "CLIENTSECRET1"},
             {"IDENTITY_ENDPOINT", "https://visualstudio.com/"},
             {"IMDS_ENDPOINT", "https://xbox.com/"},
-            {"IDENTITY_HEADER", "CLIENTSECRET"},
+            {"IDENTITY_HEADER", "CLIENTSECRET2"},
             {"IDENTITY_SERVER_THUMBPRINT", "0123456789abcdef0123456789abcdef01234567"},
         });
 
-        std::unique_ptr<ManagedIdentityCredential const> appServiceManagedIdentityCredential;
+        std::unique_ptr<ManagedIdentityCredential const> appServiceV2017ManagedIdentityCredential;
         EXPECT_THROW(
-            appServiceManagedIdentityCredential
+            appServiceV2017ManagedIdentityCredential
             = std::make_unique<ManagedIdentityCredential>(options),
             AuthenticationException);
 
-        return appServiceManagedIdentityCredential;
+        return appServiceV2017ManagedIdentityCredential;
       },
       {},
       {"{\"expires_in\":3600, \"access_token\":\"ACCESSTOKEN1\"}"}));
 }
 
-TEST(ManagedIdentityCredential, AppServiceUnsupportedUrl)
+TEST(ManagedIdentityCredential, AppServiceV2017UnsupportedUrl)
 {
   using Azure::Core::Credentials::AccessToken;
   using Azure::Core::Credentials::AuthenticationException;
@@ -236,20 +236,260 @@ TEST(ManagedIdentityCredential, AppServiceUnsupportedUrl)
 
         CredentialTestHelper::EnvironmentOverride const env({
             {"MSI_ENDPOINT", "https://microsoft.com:65536/"},
-            {"MSI_SECRET", "CLIENTSECRET"},
+            {"MSI_SECRET", "CLIENTSECRET1"},
             {"IDENTITY_ENDPOINT", "https://visualstudio.com/"},
             {"IMDS_ENDPOINT", "https://xbox.com/"},
-            {"IDENTITY_HEADER", "CLIENTSECRET"},
+            {"IDENTITY_HEADER", "CLIENTSECRET2"},
             {"IDENTITY_SERVER_THUMBPRINT", "0123456789abcdef0123456789abcdef01234567"},
         });
 
-        std::unique_ptr<ManagedIdentityCredential const> appServiceManagedIdentityCredential;
+        std::unique_ptr<ManagedIdentityCredential const> appServiceV2017ManagedIdentityCredential;
         EXPECT_THROW(
-            appServiceManagedIdentityCredential
+            appServiceV2017ManagedIdentityCredential
             = std::make_unique<ManagedIdentityCredential>(options),
             AuthenticationException);
 
-        return appServiceManagedIdentityCredential;
+        return appServiceV2017ManagedIdentityCredential;
+      },
+      {},
+      {"{\"expires_in\":3600, \"access_token\":\"ACCESSTOKEN1\"}"}));
+}
+
+TEST(ManagedIdentityCredential, AppServiceV2019)
+{
+  auto const actual = CredentialTestHelper::SimulateTokenRequest(
+      [](auto transport) {
+        TokenCredentialOptions options;
+        options.Transport.Transport = transport;
+
+        CredentialTestHelper::EnvironmentOverride const env({
+            {"MSI_ENDPOINT", "https://microsoft.com/"},
+            {"MSI_SECRET", ""},
+            {"IDENTITY_ENDPOINT", "https://visualstudio.com/"},
+            {"IMDS_ENDPOINT", "https://xbox.com/"},
+            {"IDENTITY_HEADER", "CLIENTSECRET2"},
+            {"IDENTITY_SERVER_THUMBPRINT", "0123456789abcdef0123456789abcdef01234567"},
+        });
+
+        return std::make_unique<ManagedIdentityCredential>(options);
+      },
+      {{{"https://azure.com/.default"}}, {{"https://outlook.com/.default"}}, {{}}},
+      std::vector<std::string>{
+          "{\"expires_in\":3600, \"access_token\":\"ACCESSTOKEN1\"}",
+          "{\"expires_in\":7200, \"access_token\":\"ACCESSTOKEN2\"}",
+          "{\"expires_in\":9999, \"access_token\":\"ACCESSTOKEN3\"}"});
+
+  EXPECT_EQ(actual.Requests.size(), 3U);
+  EXPECT_EQ(actual.Responses.size(), 3U);
+
+  auto const& request0 = actual.Requests.at(0);
+  auto const& request1 = actual.Requests.at(1);
+  auto const& request2 = actual.Requests.at(2);
+
+  auto const& response0 = actual.Responses.at(0);
+  auto const& response1 = actual.Responses.at(1);
+  auto const& response2 = actual.Responses.at(2);
+
+  EXPECT_EQ(request0.HttpMethod, HttpMethod::Get);
+  EXPECT_EQ(request1.HttpMethod, HttpMethod::Get);
+  EXPECT_EQ(request2.HttpMethod, HttpMethod::Get);
+
+  EXPECT_EQ(
+      request0.AbsoluteUrl,
+      "https://visualstudio.com"
+      "?api-version=2019-08-01"
+      "&resource=https%3A%2F%2Fazure.com"); // cspell:disable-line
+
+  EXPECT_EQ(
+      request1.AbsoluteUrl,
+      "https://visualstudio.com"
+      "?api-version=2019-08-01"
+      "&resource=https%3A%2F%2Foutlook.com"); // cspell:disable-line
+
+  EXPECT_EQ(
+      request2.AbsoluteUrl,
+      "https://visualstudio.com"
+      "?api-version=2019-08-01");
+
+  EXPECT_TRUE(request0.Body.empty());
+  EXPECT_TRUE(request1.Body.empty());
+  EXPECT_TRUE(request2.Body.empty());
+
+  {
+    EXPECT_NE(request0.Headers.find("X-IDENTITY-HEADER"), request0.Headers.end());
+    EXPECT_EQ(request0.Headers.at("X-IDENTITY-HEADER"), "CLIENTSECRET2");
+
+    EXPECT_NE(request1.Headers.find("X-IDENTITY-HEADER"), request1.Headers.end());
+    EXPECT_EQ(request1.Headers.at("X-IDENTITY-HEADER"), "CLIENTSECRET2");
+
+    EXPECT_NE(request2.Headers.find("X-IDENTITY-HEADER"), request2.Headers.end());
+    EXPECT_EQ(request2.Headers.at("X-IDENTITY-HEADER"), "CLIENTSECRET2");
+  }
+
+  EXPECT_EQ(response0.AccessToken.Token, "ACCESSTOKEN1");
+  EXPECT_EQ(response1.AccessToken.Token, "ACCESSTOKEN2");
+  EXPECT_EQ(response2.AccessToken.Token, "ACCESSTOKEN3");
+
+  using namespace std::chrono_literals;
+  EXPECT_GE(response0.AccessToken.ExpiresOn, response0.EarliestExpiration + 3600s);
+  EXPECT_LE(response0.AccessToken.ExpiresOn, response0.LatestExpiration + 3600s);
+
+  EXPECT_GE(response1.AccessToken.ExpiresOn, response1.EarliestExpiration + 7200s);
+  EXPECT_LE(response1.AccessToken.ExpiresOn, response1.LatestExpiration + 7200s);
+
+  EXPECT_GE(response2.AccessToken.ExpiresOn, response2.EarliestExpiration + 9999s);
+  EXPECT_LE(response2.AccessToken.ExpiresOn, response2.LatestExpiration + 9999s);
+}
+
+TEST(ManagedIdentityCredential, AppServiceV2019ClientId)
+{
+  auto const actual = CredentialTestHelper::SimulateTokenRequest(
+      [](auto transport) {
+        TokenCredentialOptions options;
+        options.Transport.Transport = transport;
+
+        CredentialTestHelper::EnvironmentOverride const env({
+            {"MSI_ENDPOINT", ""},
+            {"MSI_SECRET", "CLIENTSECRET1"},
+            {"IDENTITY_ENDPOINT", "https://visualstudio.com/"},
+            {"IMDS_ENDPOINT", "https://xbox.com/"},
+            {"IDENTITY_HEADER", "CLIENTSECRET2"},
+            {"IDENTITY_SERVER_THUMBPRINT", "0123456789abcdef0123456789abcdef01234567"},
+        });
+
+        return std::make_unique<ManagedIdentityCredential>(
+            "fedcba98-7654-3210-0123-456789abcdef", options);
+      },
+      {{{"https://azure.com/.default"}}, {{"https://outlook.com/.default"}}, {{}}},
+      std::vector<std::string>{
+          "{\"expires_in\":3600, \"access_token\":\"ACCESSTOKEN1\"}",
+          "{\"expires_in\":7200, \"access_token\":\"ACCESSTOKEN2\"}",
+          "{\"expires_in\":9999, \"access_token\":\"ACCESSTOKEN3\"}"});
+
+  EXPECT_EQ(actual.Requests.size(), 3U);
+  EXPECT_EQ(actual.Responses.size(), 3U);
+
+  auto const& request0 = actual.Requests.at(0);
+  auto const& request1 = actual.Requests.at(1);
+  auto const& request2 = actual.Requests.at(2);
+
+  auto const& response0 = actual.Responses.at(0);
+  auto const& response1 = actual.Responses.at(1);
+  auto const& response2 = actual.Responses.at(2);
+
+  EXPECT_EQ(request0.HttpMethod, HttpMethod::Get);
+  EXPECT_EQ(request1.HttpMethod, HttpMethod::Get);
+  EXPECT_EQ(request2.HttpMethod, HttpMethod::Get);
+
+  EXPECT_EQ(
+      request0.AbsoluteUrl,
+      "https://visualstudio.com"
+      "?api-version=2019-08-01"
+      "&client_id=fedcba98-7654-3210-0123-456789abcdef"
+      "&resource=https%3A%2F%2Fazure.com"); // cspell:disable-line
+
+  EXPECT_EQ(
+      request1.AbsoluteUrl,
+      "https://visualstudio.com"
+      "?api-version=2019-08-01"
+      "&client_id=fedcba98-7654-3210-0123-456789abcdef"
+      "&resource=https%3A%2F%2Foutlook.com"); // cspell:disable-line
+
+  EXPECT_EQ(
+      request2.AbsoluteUrl,
+      "https://visualstudio.com"
+      "?api-version=2019-08-01"
+      "&client_id=fedcba98-7654-3210-0123-456789abcdef");
+
+  EXPECT_TRUE(request0.Body.empty());
+  EXPECT_TRUE(request1.Body.empty());
+  EXPECT_TRUE(request2.Body.empty());
+
+  {
+    EXPECT_NE(request0.Headers.find("X-IDENTITY-HEADER"), request0.Headers.end());
+    EXPECT_EQ(request0.Headers.at("X-IDENTITY-HEADER"), "CLIENTSECRET2");
+
+    EXPECT_NE(request1.Headers.find("X-IDENTITY-HEADER"), request1.Headers.end());
+    EXPECT_EQ(request1.Headers.at("X-IDENTITY-HEADER"), "CLIENTSECRET2");
+
+    EXPECT_NE(request2.Headers.find("X-IDENTITY-HEADER"), request2.Headers.end());
+    EXPECT_EQ(request2.Headers.at("X-IDENTITY-HEADER"), "CLIENTSECRET2");
+  }
+
+  EXPECT_EQ(response0.AccessToken.Token, "ACCESSTOKEN1");
+  EXPECT_EQ(response1.AccessToken.Token, "ACCESSTOKEN2");
+  EXPECT_EQ(response2.AccessToken.Token, "ACCESSTOKEN3");
+
+  using namespace std::chrono_literals;
+  EXPECT_GE(response0.AccessToken.ExpiresOn, response0.EarliestExpiration + 3600s);
+  EXPECT_LE(response0.AccessToken.ExpiresOn, response0.LatestExpiration + 3600s);
+
+  EXPECT_GE(response1.AccessToken.ExpiresOn, response1.EarliestExpiration + 7200s);
+  EXPECT_LE(response1.AccessToken.ExpiresOn, response1.LatestExpiration + 7200s);
+
+  EXPECT_GE(response2.AccessToken.ExpiresOn, response2.EarliestExpiration + 9999s);
+  EXPECT_LE(response2.AccessToken.ExpiresOn, response2.LatestExpiration + 9999s);
+}
+
+TEST(ManagedIdentityCredential, AppServiceV2019InvalidUrl)
+{
+  using Azure::Core::Credentials::AccessToken;
+  using Azure::Core::Credentials::AuthenticationException;
+
+  using Azure::Core::Credentials::AuthenticationException;
+  static_cast<void>(CredentialTestHelper::SimulateTokenRequest(
+      [](auto transport) {
+        TokenCredentialOptions options;
+        options.Transport.Transport = transport;
+
+        CredentialTestHelper::EnvironmentOverride const env({
+            {"MSI_ENDPOINT", ""},
+            {"MSI_SECRET", "CLIENTSECRET1"},
+            {"IDENTITY_ENDPOINT", "https://visualstudio.com:INVALID/"},
+            {"IMDS_ENDPOINT", "https://xbox.com/"},
+            {"IDENTITY_HEADER", "CLIENTSECRET2"},
+            {"IDENTITY_SERVER_THUMBPRINT", "0123456789abcdef0123456789abcdef01234567"},
+        });
+
+        std::unique_ptr<ManagedIdentityCredential const> appServiceV2019ManagedIdentityCredential;
+        EXPECT_THROW(
+            appServiceV2019ManagedIdentityCredential
+            = std::make_unique<ManagedIdentityCredential>(options),
+            AuthenticationException);
+
+        return appServiceV2019ManagedIdentityCredential;
+      },
+      {},
+      {"{\"expires_in\":3600, \"access_token\":\"ACCESSTOKEN1\"}"}));
+}
+
+TEST(ManagedIdentityCredential, AppServiceV2019UnsupportedUrl)
+{
+  using Azure::Core::Credentials::AccessToken;
+  using Azure::Core::Credentials::AuthenticationException;
+
+  using Azure::Core::Credentials::AuthenticationException;
+  static_cast<void>(CredentialTestHelper::SimulateTokenRequest(
+      [](auto transport) {
+        TokenCredentialOptions options;
+        options.Transport.Transport = transport;
+
+        CredentialTestHelper::EnvironmentOverride const env({
+            {"MSI_ENDPOINT", "https://microsoft.com/"},
+            {"MSI_SECRET", ""},
+            {"IDENTITY_ENDPOINT", "https://visualstudio.com:65536/"},
+            {"IMDS_ENDPOINT", "https://xbox.com/"},
+            {"IDENTITY_HEADER", "CLIENTSECRET2"},
+            {"IDENTITY_SERVER_THUMBPRINT", "0123456789abcdef0123456789abcdef01234567"},
+        });
+
+        std::unique_ptr<ManagedIdentityCredential const> appServiceV2019ManagedIdentityCredential;
+        EXPECT_THROW(
+            appServiceV2019ManagedIdentityCredential
+            = std::make_unique<ManagedIdentityCredential>(options),
+            AuthenticationException);
+
+        return appServiceV2019ManagedIdentityCredential;
       },
       {},
       {"{\"expires_in\":3600, \"access_token\":\"ACCESSTOKEN1\"}"}));
@@ -265,9 +505,9 @@ TEST(ManagedIdentityCredential, CloudShell)
         CredentialTestHelper::EnvironmentOverride const env({
             {"MSI_ENDPOINT", "https://microsoft.com/"},
             {"MSI_SECRET", ""},
-            {"IDENTITY_ENDPOINT", "https://visualstudio.com/"},
+            {"IDENTITY_ENDPOINT", ""},
             {"IMDS_ENDPOINT", "https://xbox.com/"},
-            {"IDENTITY_HEADER", "CLIENTSECRET"},
+            {"IDENTITY_HEADER", "SECRET2"},
             {"IDENTITY_SERVER_THUMBPRINT", "0123456789abcdef0123456789abcdef01234567"},
         });
 
@@ -340,7 +580,7 @@ TEST(ManagedIdentityCredential, CloudShellClientId)
             {"MSI_SECRET", ""},
             {"IDENTITY_ENDPOINT", "https://visualstudio.com/"},
             {"IMDS_ENDPOINT", "https://xbox.com/"},
-            {"IDENTITY_HEADER", "CLIENTSECRET"},
+            {"IDENTITY_HEADER", ""},
             {"IDENTITY_SERVER_THUMBPRINT", "0123456789abcdef0123456789abcdef01234567"},
         });
 
@@ -423,7 +663,7 @@ TEST(ManagedIdentityCredential, CloudShellInvalidUrl)
             {"MSI_SECRET", ""},
             {"IDENTITY_ENDPOINT", "https://visualstudio.com/"},
             {"IMDS_ENDPOINT", "https://xbox.com/"},
-            {"IDENTITY_HEADER", "CLIENTSECRET"},
+            {"IDENTITY_HEADER", ""},
             {"IDENTITY_SERVER_THUMBPRINT", "0123456789abcdef0123456789abcdef01234567"},
         });
 
@@ -472,7 +712,7 @@ TEST(ManagedIdentityCredential, AzureArc)
             {"MSI_SECRET", ""},
             {"IDENTITY_ENDPOINT", "https://visualstudio.com/"},
             {"IMDS_ENDPOINT", "https://xbox.com/"},
-            {"IDENTITY_HEADER", "CLIENTSECRET"},
+            {"IDENTITY_HEADER", ""},
             {"IDENTITY_SERVER_THUMBPRINT", "0123456789abcdef0123456789abcdef01234567"},
         });
 
@@ -606,7 +846,7 @@ TEST(ManagedIdentityCredential, AzureArcClientId)
             {"MSI_SECRET", ""},
             {"IDENTITY_ENDPOINT", "https://visualstudio.com/"},
             {"IMDS_ENDPOINT", "https://xbox.com/"},
-            {"IDENTITY_HEADER", "CLIENTSECRET"},
+            {"IDENTITY_HEADER", ""},
             {"IDENTITY_SERVER_THUMBPRINT", "0123456789abcdef0123456789abcdef01234567"},
         });
 
@@ -637,7 +877,7 @@ TEST(ManagedIdentityCredential, AzureArcAuthHeaderMissing)
             {"MSI_SECRET", ""},
             {"IDENTITY_ENDPOINT", "https://visualstudio.com/"},
             {"IMDS_ENDPOINT", "https://xbox.com/"},
-            {"IDENTITY_HEADER", "CLIENTSECRET"},
+            {"IDENTITY_HEADER", ""},
             {"IDENTITY_SERVER_THUMBPRINT", "0123456789abcdef0123456789abcdef01234567"},
         });
 
@@ -676,7 +916,7 @@ TEST(ManagedIdentityCredential, AzureArcUnexpectedHttpStatusCode)
             {"MSI_SECRET", ""},
             {"IDENTITY_ENDPOINT", "https://visualstudio.com/"},
             {"IMDS_ENDPOINT", "https://xbox.com/"},
-            {"IDENTITY_HEADER", "CLIENTSECRET"},
+            {"IDENTITY_HEADER", ""},
             {"IDENTITY_SERVER_THUMBPRINT", "0123456789abcdef0123456789abcdef01234567"},
         });
 
@@ -710,7 +950,7 @@ TEST(ManagedIdentityCredential, AzureArcAuthHeaderNoEquals)
             {"MSI_SECRET", ""},
             {"IDENTITY_ENDPOINT", "https://visualstudio.com/"},
             {"IMDS_ENDPOINT", "https://xbox.com/"},
-            {"IDENTITY_HEADER", "CLIENTSECRET"},
+            {"IDENTITY_HEADER", ""},
             {"IDENTITY_SERVER_THUMBPRINT", "0123456789abcdef0123456789abcdef01234567"},
         });
 
@@ -742,7 +982,7 @@ TEST(ManagedIdentityCredential, AzureArcAuthHeaderTwoEquals)
             {"MSI_SECRET", ""},
             {"IDENTITY_ENDPOINT", "https://visualstudio.com/"},
             {"IMDS_ENDPOINT", "https://xbox.com/"},
-            {"IDENTITY_HEADER", "CLIENTSECRET"},
+            {"IDENTITY_HEADER", ""},
             {"IDENTITY_SERVER_THUMBPRINT", "0123456789abcdef0123456789abcdef01234567"},
         });
 
@@ -774,7 +1014,7 @@ TEST(ManagedIdentityCredential, AzureArcInvalidUrl)
             {"MSI_SECRET", ""},
             {"IDENTITY_ENDPOINT", "https://visualstudio.com:INVALID/"},
             {"IMDS_ENDPOINT", "https://xbox.com/"},
-            {"IDENTITY_HEADER", "CLIENTSECRET"},
+            {"IDENTITY_HEADER", ""},
             {"IDENTITY_SERVER_THUMBPRINT", "0123456789abcdef0123456789abcdef01234567"},
         });
 
