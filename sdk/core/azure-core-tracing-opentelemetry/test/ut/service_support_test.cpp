@@ -595,7 +595,7 @@ public:
 
     // Add the request ID policy - this adds the x-ms-request-id attribute to the pipeline.
     policies.emplace_back(
-        std::make_unique<RequestActivityPolicy>(Azure::Core::_internal::InputSanitizer{}));
+        std::make_unique<RequestActivityPolicy>(Azure::Core::Http::_internal::HttpSanitizer{}));
 
     // Final policy - functions as the HTTP transport policy.
     policies.emplace_back(std::make_unique<NoOpPolicy>([&](Request& request) {
