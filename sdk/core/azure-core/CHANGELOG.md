@@ -4,6 +4,8 @@
 
 ### Features Added
 
+- Added support for `"*"` (disable all redacting) in `Azure::Core::Http::Policies::LogOptions`.
+
 ### Breaking Changes
 
 ### Bugs Fixed

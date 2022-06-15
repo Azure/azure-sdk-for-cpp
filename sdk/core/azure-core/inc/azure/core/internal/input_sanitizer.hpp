@@ -21,15 +21,15 @@ namespace Azure { namespace Core { namespace _internal {
     // Manifest constant indicating a field was redacted.
     static const char* m_RedactedPlaceholder;
 
+    bool m_redactHeaders = true;
+    bool m_redactQueryParameters = true;
+
   public:
     InputSanitizer() = default;
     InputSanitizer(
         std::set<std::string> const& allowedHttpQueryParameters,
-        Azure::Core::CaseInsensitiveSet const& allowedHttpHeaders)
-        : m_allowedHttpHeaders(allowedHttpHeaders),
-          m_allowedHttpQueryParameters(allowedHttpQueryParameters)
-    {
-    }
+        Azure::Core::CaseInsensitiveSet const& allowedHttpHeaders);
+
     /**
      * @brief Sanitizes the specified URL according to the sanitization rules configured.
      *

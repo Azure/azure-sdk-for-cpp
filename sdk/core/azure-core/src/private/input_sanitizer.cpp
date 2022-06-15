@@ -4,9 +4,25 @@
 #include <regex>
 #include <sstream>
 
+namespace {
+std::string const LogAllValue = "*";
+}
+
 namespace Azure { namespace Core { namespace _internal {
 
   const char* InputSanitizer::m_RedactedPlaceholder = "REDACTED";
+
+  InputSanitizer::InputSanitizer(
+      std::set<std::string> const& allowedHttpQueryParameters,
+      Azure::Core::CaseInsensitiveSet const& allowedHttpHeaders)
+      : m_allowedHttpHeaders(allowedHttpHeaders),
+        m_allowedHttpQueryParameters(allowedHttpQueryParameters)
+  {
+    m_redactHeaders = m_allowedHttpHeaders.find(LogAllValue) == m_allowedHttpHeaders.end();
+
+    m_redactQueryParameters
+        = m_allowedHttpQueryParameters.find(LogAllValue) == m_allowedHttpQueryParameters.end();
+  }
 
   Azure::Core::Url InputSanitizer::SanitizeUrl(Azure::Core::Url const& url) const
   {
@@ -35,42 +51,49 @@ namespace Azure { namespace Core { namespace _internal {
 
       if (!encodedRequestQueryParams.empty())
       {
-        auto const& unencodedAllowedQueryParams = m_allowedHttpQueryParameters;
-        if (!unencodedAllowedQueryParams.empty())
+        if (m_redactQueryParameters)
         {
-          std::remove_const<std::remove_reference<decltype(unencodedAllowedQueryParams)>::type>::
-              type encodedAllowedQueryParams;
-          std::transform(
-              unencodedAllowedQueryParams.begin(),
-              unencodedAllowedQueryParams.end(),
-              std::inserter(encodedAllowedQueryParams, encodedAllowedQueryParams.begin()),
-              [](std::string const& s) { return Url::Encode(s); });
-
-          for (auto const& encodedRequestQueryParam : encodedRequestQueryParams)
+          auto const& unencodedAllowedQueryParams = m_allowedHttpQueryParameters;
+          if (!unencodedAllowedQueryParams.empty())
           {
-            if (encodedRequestQueryParam.second.empty()
-                || (encodedAllowedQueryParams.find(encodedRequestQueryParam.first)
-                    != encodedAllowedQueryParams.end()))
+            std::remove_const<std::remove_reference<decltype(unencodedAllowedQueryParams)>::type>::
+                type encodedAllowedQueryParams;
+            std::transform(
+                unencodedAllowedQueryParams.begin(),
+                unencodedAllowedQueryParams.end(),
+                std::inserter(encodedAllowedQueryParams, encodedAllowedQueryParams.begin()),
+                [](std::string const& s) { return Url::Encode(s); });
+
+            for (auto const& encodedRequestQueryParam : encodedRequestQueryParams)
             {
-              loggedQueryParams.insert(encodedRequestQueryParam);
+              if (encodedRequestQueryParam.second.empty()
+                  || (encodedAllowedQueryParams.find(encodedRequestQueryParam.first)
+                      != encodedAllowedQueryParams.end()))
+              {
+                loggedQueryParams.insert(encodedRequestQueryParam);
+              }
+              else
+              {
+                loggedQueryParams.insert(
+                    std::make_pair(encodedRequestQueryParam.first, m_RedactedPlaceholder));
+              }
             }
-            else
+          }
+          else
+          {
+            for (auto const& encodedRequestQueryParam : encodedRequestQueryParams)
             {
               loggedQueryParams.insert(
                   std::make_pair(encodedRequestQueryParam.first, m_RedactedPlaceholder));
             }
           }
+
+          ss << Azure::Core::_detail::FormatEncodedUrlQueryParameters(loggedQueryParams);
         }
         else
         {
-          for (auto const& encodedRequestQueryParam : encodedRequestQueryParams)
-          {
-            loggedQueryParams.insert(
-                std::make_pair(encodedRequestQueryParam.first, m_RedactedPlaceholder));
-          }
+          ss << Azure::Core::_detail::FormatEncodedUrlQueryParameters(encodedRequestQueryParams);
         }
-
-        ss << Azure::Core::_detail::FormatEncodedUrlQueryParameters(loggedQueryParams);
       }
     }
     return Azure::Core::Url(ss.str());
@@ -79,7 +102,7 @@ namespace Azure { namespace Core { namespace _internal {
   std::string InputSanitizer::SanitizeHeader(std::string const& header, std::string const& value)
       const
   {
-    if (m_allowedHttpHeaders.find(header) != m_allowedHttpHeaders.end())
+    if (!m_redactHeaders || m_allowedHttpHeaders.find(header) != m_allowedHttpHeaders.end())
     {
       return value;
     }

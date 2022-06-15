@@ -252,6 +252,40 @@ TEST(LogPolicy, Headers)
   EXPECT_TRUE(EndsWith(entry2.Message, "ms) : 200 OKAY"));
 }
 
+TEST(LogPolicy, UnredactedHeaders)
+{
+  TestLogger const Log;
+
+  {
+    auto logOptions = LogOptions();
+    logOptions.AllowedHttpHeaders.insert({"HeAder1", "*"});
+    SendRequest(logOptions, false);
+  }
+
+  EXPECT_EQ(Log.Entries.size(), 2);
+
+  auto const entry1 = Log.Entries.at(0);
+  auto const entry2 = Log.Entries.at(1);
+
+  EXPECT_EQ(entry1.Level, Logger::Level::Informational);
+  EXPECT_EQ(entry2.Level, Logger::Level::Informational);
+
+  EXPECT_EQ(
+      entry1.Message,
+      "HTTP Request : GET https://www.microsoft.com"
+      "?Qparam2=REDACTED"
+      "&qParam3=REDACTED"
+      "&qparam%204=REDACTED"
+      "&qparam%25204=REDACTED"
+      "&qparam1=REDACTED"
+      "\nheader1 : HvAlUe1"
+      "\nheader2 : hVaLuE2"
+      "\nx-ms-request-id : 6c536700-4c36-4e22-9161-76e7b3bf8269");
+
+  EXPECT_TRUE(StartsWith(entry2.Message, "HTTP Response ("));
+  EXPECT_TRUE(EndsWith(entry2.Message, "ms) : 200 OKAY"));
+}
+
 TEST(LogPolicy, DefaultHeaders)
 {
   TestLogger const Log;
@@ -399,6 +433,35 @@ TEST(LogPolicy, QueryParamsEncoded)
       "&qparam%204=REDACTED"
       "&qparam%25204=QVAL%25204"
       "&qparam1=REDACTED"
+      "\nheader1 : REDACTED"
+      "\nheader2 : REDACTED"
+      "\nx-ms-request-id : REDACTED");
+
+  EXPECT_TRUE(StartsWith(entry2.Message, "HTTP Response ("));
+  EXPECT_TRUE(EndsWith(entry2.Message, "ms) : 200 OKAY"));
+}
+
+TEST(LogPolicy, UnredactedQueryParams)
+{
+  TestLogger const Log;
+  SendRequest(LogOptions({{"qparam1", "*", "qParam3"}, {}}));
+
+  EXPECT_EQ(Log.Entries.size(), 2);
+
+  auto const entry1 = Log.Entries.at(0);
+  auto const entry2 = Log.Entries.at(1);
+
+  EXPECT_EQ(entry1.Level, Logger::Level::Informational);
+  EXPECT_EQ(entry2.Level, Logger::Level::Informational);
+
+  EXPECT_EQ(
+      entry1.Message,
+      "HTTP Request : GET https://www.microsoft.com"
+      "?Qparam2=Qval2"
+      "&qParam3=qval3"
+      "&qparam%204=qval%204"
+      "&qparam%25204=QVAL%25204"
+      "&qparam1=qVal1"
       "\nheader1 : REDACTED"
       "\nheader2 : REDACTED"
       "\nx-ms-request-id : REDACTED");
