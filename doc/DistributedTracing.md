@@ -245,4 +245,4 @@ Generated traces have the following attributes:
 | `http.status_code` | HTTP status code returned by the service | HTTP Spans.
 | `http.user_agent` | The value of the `User-Agent` HTTP header sent to the service | HTTP Spans.
 | `requestId` | The value of the `x-ms-client-request-id` header sent by the client | HTTP Spans.
-| `serviceRequestId` | The value -f the `x-ms-request-id` sent by the server | HTTP Spans.
+| `serviceRequestId` | The value of the `x-ms-request-id` sent by the server | HTTP Spans.
