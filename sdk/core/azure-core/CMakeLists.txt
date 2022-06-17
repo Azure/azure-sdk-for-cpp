@@ -42,9 +42,11 @@ if(BUILD_TRANSPORT_CURL)
     src/http/curl/curl_connection_pool_private.hpp
     src/http/curl/curl_connection_private.hpp
     src/http/curl/curl_session_private.hpp
-  )
+    src/http/curl/curl_websockets.cpp
+   )
   SET(CURL_TRANSPORT_ADAPTER_INC
     inc/azure/core/http/curl_transport.hpp
+    inc/azure/core/http/websockets/curl_websockets_transport.hpp
   )
 endif()
 if(BUILD_TRANSPORT_WINHTTP)
@@ -74,6 +76,8 @@ set(
     inc/azure/core/http/policies/policy.hpp
     inc/azure/core/http/raw_response.hpp
     inc/azure/core/http/transport.hpp
+    inc/azure/core/http/websockets/websockets.hpp
+    inc/azure/core/http/websockets/websockets_transport.hpp
     inc/azure/core/internal/client_options.hpp
     inc/azure/core/internal/contract.hpp
     inc/azure/core/internal/cryptography/sha_hash.hpp
@@ -82,13 +86,13 @@ set(
     inc/azure/core/internal/extendable_enumeration.hpp
     inc/azure/core/internal/http/pipeline.hpp
     inc/azure/core/internal/http/user_agent.hpp
+    inc/azure/core/internal/input_sanitizer.hpp
     inc/azure/core/internal/io/null_body_stream.hpp
     inc/azure/core/internal/json/json.hpp
     inc/azure/core/internal/json/json_optional.hpp
     inc/azure/core/internal/json/json_serializable.hpp
     inc/azure/core/internal/strings.hpp
     inc/azure/core/internal/tracing/service_tracing.hpp
-    inc/azure/core/internal/input_sanitizer.hpp
     inc/azure/core/io/body_stream.hpp
     inc/azure/core/match_conditions.hpp
     inc/azure/core/modified_conditions.hpp
@@ -130,13 +134,15 @@ set(
     src/http/transport_policy.cpp
     src/http/url.cpp
     src/http/user_agent.cpp
-    src/io/body_stream.cpp
+    src/http/websockets/websockets.cpp
+    src/http/websockets/websocketsimpl.cpp
+     src/io/body_stream.cpp
     src/io/random_access_file_body_stream.cpp
     src/logger.cpp
     src/operation_status.cpp
     src/private/environment_log_level_listener.hpp
-    src/private/package_version.hpp
     src/private/input_sanitizer.cpp
+    src/private/package_version.hpp
     src/strings.cpp
     src/tracing/tracing.cpp
     src/uuid.cpp

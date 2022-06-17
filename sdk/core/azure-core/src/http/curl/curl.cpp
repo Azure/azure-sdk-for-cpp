@@ -321,6 +321,14 @@ std::unique_ptr<RawResponse> CurlTransport::Send(Request& request, Context const
     throw Azure::Core::Http::TransportException(
         "Error while sending request. " + std::string(curl_easy_strerror(performing)));
   }
+  else
+  {
+    std::unique_ptr<CurlNetworkConnection> upgradedConnection(session->GetUpgradedConnection());
+    if (upgradedConnection)
+    {
+        OnUpgradedConnection(upgradedConnection);
+    }
+  }
 
   Log::Write(
       Logger::Level::Verbose,
@@ -419,6 +427,18 @@ CURLcode CurlSession::Perform(Context const& context)
   // If any throw happened before this point, the state will remain as PERFORM.
   m_sessionState = SessionState::STREAMING;
   return result;
+}
+
+std::unique_ptr<CurlNetworkConnection>&& CurlSession::GetUpgradedConnection()
+{
+  if (m_connectionUpgraded)
+  {
+    return std::move(m_connection);
+  }
+  else
+  {
+    return std::move(std::unique_ptr<CurlNetworkConnection>());
+  }
 }
 
 // Creates an HTTP Response with specific bodyType
@@ -719,10 +739,18 @@ void CurlSession::ReadStatusLineAndHeadersFromRawResponse(
   auto connectionHeader = headers.find("connection");
   if (connectionHeader != headers.end())
   {
-    if (connectionHeader->second == "close")
+    if (Azure::Core::_internal::StringExtensions::LocaleInvariantCaseInsensitiveEqual(
+            connectionHeader->second, "close"))
     {
       // Use connection shut-down so it won't be moved it back to the connection pool.
       m_connection->Shutdown();
+    }
+    // If the server indicated that the connection header is "upgrade", it means that this
+    // is a WebSocket connection so the caller will may be upgrading the connection.
+    if (Azure::Core::_internal::StringExtensions::LocaleInvariantCaseInsensitiveEqual(
+            connectionHeader->second, "upgrade"))
+    {
+      m_connectionUpgraded = true;
     }
   }
 
@@ -1294,7 +1322,8 @@ std::unique_ptr<CurlNetworkConnection> CurlConnectionPool::ExtractOrCreateCurlCo
         return connection;
       }
     }
-    lock.unlock();
+    lock.unlock(); // Why is this line here? std::unique_lock releases the lock when it leaves
+                   // scope.
   }
 
   // Creating a new connection is thread safe. No need to lock mutex here.

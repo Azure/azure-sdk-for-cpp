@@ -13,6 +13,7 @@
 #include "azure/core/http/transport.hpp"
 
 namespace Azure { namespace Core { namespace Http {
+  class CurlNetworkConnection;
 
   namespace _detail {
     /**
@@ -123,12 +124,16 @@ namespace Azure { namespace Core { namespace Http {
     std::chrono::milliseconds ConnectionTimeout = _detail::DefaultConnectionTimeout;
   };
 
+
   /**
    * @brief Concrete implementation of an HTTP Transport that uses libcurl.
    */
-  class CurlTransport final : public HttpTransport {
+  class CurlTransport : public HttpTransport {
   private:
     CurlTransportOptions m_options;
+
+  protected:
+    virtual void OnUpgradedConnection(std::unique_ptr<CurlNetworkConnection>&){};
 
   public:
     /**

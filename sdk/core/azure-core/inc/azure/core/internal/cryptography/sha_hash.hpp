@@ -21,6 +21,57 @@ namespace Azure { namespace Core { namespace Cryptography { namespace _internal 
    * @brief Defines #Sha256Hash.
    *
    */
+  class Sha1Hash final : public Azure::Core::Cryptography::Hash {
+  public:
+    /**
+     * @brief Construct a default instance of #Sha256Hash.
+     *
+     */
+    Sha1Hash();
+
+    /**
+     * @brief Cleanup any state when destroying the instance of #Sha256Hash.
+     *
+     */
+    ~Sha1Hash() {}
+
+  private:
+    /**
+     * @brief Underline implementation based on the OS.
+     *
+     */
+    std::unique_ptr<Azure::Core::Cryptography::Hash> m_portableImplementation;
+
+    /**
+     * @brief Computes the hash value of the specified binary input data, including any previously
+     * appended.
+     * @param data The pointer to binary data to compute the hash value for.
+     * @param length The size of the data provided.
+     * @return The computed SHA256 hash value corresponding to the input provided including any
+     * previously appended.
+     */
+    std::vector<uint8_t> OnFinal(const uint8_t* data, size_t length) override
+    {
+      return m_portableImplementation->Final(data, length);
+    }
+
+    /**
+     * @brief Used to append partial binary input data to compute the SHA256 hash in a streaming
+     * fashion.
+     * @remark Once all the data has been added, call #Final() to get the computed hash value.
+     * @param data The pointer to the current block of binary data that is used for hash
+     * calculation.
+     * @param length The size of the data provided.
+     */
+    void OnAppend(const uint8_t* data, size_t length) override
+    {
+      return m_portableImplementation->Append(data, length);
+    }
+  };
+  /**
+   * @brief Defines #Sha256Hash.
+   *
+   */
   class Sha256Hash final : public Azure::Core::Cryptography::Hash {
   public:
     /**

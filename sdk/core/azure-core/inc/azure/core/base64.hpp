@@ -13,6 +13,7 @@
 #include <stdexcept>
 #include <string>
 #include <vector>
+#include <array>
 
 namespace Azure { namespace Core {
 
@@ -37,6 +38,20 @@ namespace Azure { namespace Core {
      * @return The UTF-8 encoded text in Base64.
      */
     static std::string Base64Encode(const std::vector<uint8_t>& data);
+
+    /**
+     * @brief Encodes the vector of binary data into UTF-8 encoded text represented as Base64.
+     *
+     * @param data The binary data to be encoded.
+     * @param length The length of the binaryData parameter.
+     * @return The UTF-8 encoded text in Base64.
+     */
+    static std::string Base64Encode(uint8_t const* const data, size_t length);
+
+    template <size_t length> static std::string Base64Encode(std::array<uint8_t, length> const& data)
+    {
+      return Base64Encode(data.data(), data.size());
+    }
 
     /**
      * @brief Decodes the UTF-8 encoded text represented as Base64 into binary data.

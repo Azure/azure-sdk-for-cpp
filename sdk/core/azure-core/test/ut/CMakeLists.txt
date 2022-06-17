@@ -80,7 +80,7 @@ add_executable (
     transport_adapter_implementation_test.cpp
     url_test.cpp
     uuid_test.cpp
-)
+ "websocket_test.cpp")
 
 if (MSVC)
   # Disable warnings:
