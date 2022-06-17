@@ -36,8 +36,8 @@ namespace Azure { namespace Storage {
       std::shared_future<JobStatus> WaitHandle = m_notificationHandle.get_future().share();
       TransferEngine* TransferEngine = nullptr;
 
-      std::atomic<bool> HasFailure = false;
-      std::atomic<bool> HasSuccess = false;
+      std::atomic<bool> HasFailure{false};
+      std::atomic<bool> HasSuccess{false};
     };
 
   } // namespace _internal

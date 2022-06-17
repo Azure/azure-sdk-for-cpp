@@ -408,7 +408,7 @@ namespace Azure { namespace Storage {
             m_loadPos = std::make_pair(jobIndex, 0);
           }
           JobPlan* jobPlanPtr = &*jobIndex;
-          sharedStatus->WriteJournal = [jobPlanPtr, this](
+          sharedStatus->WriteJournal = [jobPlanPtr](
                                            const _detail::JournalContext& context,
                                            int64_t numFileTransferred,
                                            int64_t numFileSkipped,

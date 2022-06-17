@@ -38,7 +38,7 @@ namespace Azure { namespace Storage {
     template <class T> void WriteFixedInt(std::fstream& out, T value)
     {
       uint8_t v[sizeof(value)];
-      for (int i = 0; i < sizeof(value); ++i)
+      for (size_t i = 0; i < sizeof(value); ++i)
       {
         v[i] = (value >> (8 * i)) & 0xff;
       }
@@ -169,6 +169,8 @@ namespace Azure { namespace Storage {
           object["url"] = _internal::RemoveSasToken(m_blobFolder.Value().GetUrl());
           object["folder_path"] = m_blobFolder.Value().m_folderPath;
           break;
+        default:
+          AZURE_UNREACHABLE_CODE();
       }
       return object.dump();
     }
@@ -236,6 +238,8 @@ namespace Azure { namespace Storage {
           ret.m_blobFolder = Blobs::BlobFolder(std::move(blobContainerClient.Value()), folderPath);
           break;
         }
+        default:
+          AZURE_UNREACHABLE_CODE();
       }
       return ret;
     }
@@ -341,7 +345,7 @@ namespace Azure { namespace Storage {
         {
           bool hasUndoneSubtask = false;
           std::string subtasksDoneBitMap(numSubTasks, '\x00');
-          for (size_t i = 0; i < numSubTasks; ++i)
+          for (size_t i = 0; i < static_cast<size_t>(numSubTasks); ++i)
           {
             subtasksDoneBitMap[i] = char(doneBits[currDoneBit + i] + '0');
             if (subtasksDoneBitMap[i] == '0')

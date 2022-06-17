@@ -17,11 +17,14 @@
 #include <climits>
 #include <dirent.h>
 #include <errno.h>
+#include <fcntl.h>
+#include <sys/mman.h>
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <unistd.h>
 #endif
 
+#include <cstdio>
 #include <cstring>
 #include <cwchar>
 #include <memory>
@@ -207,15 +210,6 @@ namespace Azure { namespace Storage { namespace _internal {
     m_fileHandle = fileHandle;
   }
 
-  MemoryMap& MemoryMap::operator=(MemoryMap&& other) noexcept
-  {
-    m_fileHandle = other.m_fileHandle;
-    other.m_fileHandle = nullptr;
-    m_mapped = std::move(other.m_mapped);
-    other.m_mapped.clear();
-    return *this;
-  }
-
   MemoryMap::~MemoryMap()
   {
     for (const auto& pair : m_mapped)
@@ -259,6 +253,36 @@ namespace Azure { namespace Storage { namespace _internal {
 
 #else
 
+  bool IsDirectory(const std::string& path)
+  {
+    struct stat statbuf;
+    if (stat(path.data(), &statbuf) == 0 && S_ISDIR(statbuf.st_mode))
+    {
+      return true;
+    }
+    return false;
+  }
+
+  bool IsRegularFile(const std::string& path)
+  {
+    struct stat statbuf;
+    if (stat(path.data(), &statbuf) == 0 && S_ISREG(statbuf.st_mode))
+    {
+      return true;
+    }
+    return false;
+  }
+
+  bool PathExists(const std::string& path)
+  {
+    struct stat statbuf;
+    if (stat(path.data(), &statbuf) == 0)
+    {
+      return true;
+    }
+    return false;
+  }
+
   void CreateDirectory(const std::string& directoryPath)
   {
     int ret = mkdir(directoryPath.data(), 0755);
@@ -266,6 +290,42 @@ namespace Azure { namespace Storage { namespace _internal {
     {
       throw std::runtime_error("Failed to create directory " + directoryPath + ".");
     }
+  }
+
+  void Rename(const std::string& oldPath, const std::string& newPath)
+  {
+    int ret = rename(oldPath.data(), newPath.data());
+    if (ret != 0)
+    {
+      throw std::runtime_error("Failed to move " + oldPath + " to " + newPath);
+    }
+  }
+
+  void Remove(const std::string& path)
+  {
+    struct stat statbuf;
+    if (stat(path.data(), &statbuf) != 0)
+    {
+      return;
+    }
+    if (S_ISDIR(statbuf.st_mode))
+    {
+      rmdir(path.data());
+    }
+    else
+    {
+      remove(path.data());
+    }
+  }
+
+  int64_t GetFileSize(const std::string& path)
+  {
+    struct stat statbuf;
+    if (stat(path.data(), &statbuf) != 0)
+    {
+      throw std::runtime_error("Failed to get file size.");
+    }
+    return statbuf.st_size;
   }
 
   struct ListDirectoryContext
@@ -320,8 +380,73 @@ namespace Azure { namespace Storage { namespace _internal {
     DirectoryEntry e;
     e.Name = entry->d_name;
     e.IsDirectory = entry->d_type & DT_DIR;
-    // TODO: size
+    e.Size = -1;
+    struct stat statbuf;
+    int ret = fstatat(dirfd(context->DirectoryPointer), entry->d_name, &statbuf, 0);
+    if (ret == 0)
+    {
+      e.Size = statbuf.st_size;
+    }
     return e;
   }
+
+  MemoryMap::MemoryMap(const std::string& filename)
+  {
+    int fd = open(filename.data(), O_RDWR);
+    if (fd < 0)
+    {
+      throw std::runtime_error("Failed to open file.");
+    }
+    m_fileHandle = reinterpret_cast<void*>(fd);
+  }
+
+  namespace {
+    int PointerCastToInt(void* ptr) { return static_cast<int>(reinterpret_cast<uintptr_t>(ptr)); }
+  } // namespace
+
+  MemoryMap::~MemoryMap()
+  {
+    for (const auto& pair : m_mapped)
+    {
+      munmap(pair.first, pair.second);
+    }
+    if (m_fileHandle)
+    {
+      close(PointerCastToInt(m_fileHandle));
+    }
+  }
+
+  void* MemoryMap::Map(size_t offset, size_t size)
+  {
+    static size_t Granularity = []() -> size_t { return sysconf(_SC_PAGE_SIZE); }();
+
+    size_t alignedOffset = offset / Granularity * Granularity;
+    size += offset - alignedOffset;
+
+    void* ptr = mmap(
+        nullptr,
+        size,
+        PROT_READ | PROT_WRITE,
+        MAP_SHARED,
+        PointerCastToInt(m_fileHandle),
+        alignedOffset);
+    if (ptr == reinterpret_cast<void*>(-1))
+    {
+      throw std::runtime_error("Failed to map file.");
+    }
+    m_mapped.push_back(std::make_pair(ptr, size));
+    return static_cast<char*>(ptr) + (offset - alignedOffset);
+  }
+
 #endif
+
+  MemoryMap& MemoryMap::operator=(MemoryMap&& other) noexcept
+  {
+    m_fileHandle = other.m_fileHandle;
+    other.m_fileHandle = nullptr;
+    m_mapped = std::move(other.m_mapped);
+    other.m_mapped.clear();
+    return *this;
+  }
+
 }}} // namespace Azure::Storage::_internal

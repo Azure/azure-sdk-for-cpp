@@ -8,6 +8,7 @@
 #include <fstream>
 #include <functional>
 #include <future>
+#include <list>
 #include <map>
 #include <memory>
 #include <mutex>
@@ -121,7 +122,7 @@ namespace Azure { namespace Storage {
       _internal::MovablePtr<JobPlan> m_jobPlan;
       uint32_t m_id = 0;
       std::string m_jobPlanDir;
-      int32_t m_numDoneBits = 0;
+      size_t m_numDoneBits = 0;
       std::unique_ptr<std::atomic<size_t>> m_numUndoneBits
           = std::make_unique<std::atomic<size_t>>(0);
       std::unique_ptr<_internal::MemoryMap> m_mappedFile;

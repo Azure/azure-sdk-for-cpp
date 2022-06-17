@@ -176,5 +176,11 @@ namespace Azure { namespace Storage { namespace _internal {
 #if defined(AZ_PLATFORM_WINDOWS)
   int64_t AtomicFetchAdd(int64_t* arg, int64_t value) { return InterlockedAdd64(arg, value); }
   int64_t AtomicLoad(int64_t* arg) { return InterlockedOr64(arg, 0); }
+#else
+  int64_t AtomicFetchAdd(int64_t* arg, int64_t value)
+  {
+    return __atomic_add_fetch(arg, value, __ATOMIC_RELAXED);
+  }
+  int64_t AtomicLoad(int64_t* arg) { return __atomic_load_n(arg, __ATOMIC_RELAXED); }
 #endif
 }}} // namespace Azure::Storage::_internal
