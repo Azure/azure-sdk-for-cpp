@@ -43,7 +43,7 @@ namespace Azure { namespace Storage { namespace Test {
     containerClient.DeleteIfExists();
   }
 
-  TEST_F(BlobTransferManagerTest, SingleUploadFailed)
+  TEST_F(BlobTransferManagerTest, SingleUploadFailed_LIVEONLY_)
   {
     const auto testName = GetTestNameLowerCase();
     auto blobServiceClient = GetClientForTest(testName);

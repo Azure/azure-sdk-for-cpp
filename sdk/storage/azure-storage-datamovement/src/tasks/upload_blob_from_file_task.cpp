@@ -40,8 +40,8 @@ namespace Azure { namespace Storage { namespace Blobs { namespace _detail {
     {
       Storage::_internal::FileReader fileReader(Source);
       fileSize = fileReader.GetFileSize();
-      buffer = std::make_unique<uint8_t[]>(fileSize);
-      size_t bytesRead = fileReader.Read(buffer.get(), fileSize, 0);
+      buffer = std::make_unique<uint8_t[]>(static_cast<size_t>(fileSize));
+      size_t bytesRead = fileReader.Read(buffer.get(), static_cast<size_t>(fileSize), 0);
       if (static_cast<int64_t>(bytesRead) != fileSize)
       {
         throw std::runtime_error("Failed to read file.");
@@ -53,7 +53,7 @@ namespace Azure { namespace Storage { namespace Blobs { namespace _detail {
       return;
     }
 
-    Core::IO::MemoryBodyStream bodyStream(buffer.get(), fileSize);
+    Core::IO::MemoryBodyStream bodyStream(buffer.get(), static_cast<size_t>(fileSize));
     auto blockBlobClient = Destination.AsBlockBlobClient();
     try
     {

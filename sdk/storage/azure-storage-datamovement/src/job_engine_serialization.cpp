@@ -90,7 +90,7 @@ namespace Azure { namespace Storage {
         throw std::runtime_error("Failed to parse plan file.");
       }
       std::string ret;
-      ret.resize(length);
+      ret.resize(static_cast<size_t>(length));
       if (length != 0)
       {
         in.read(&ret[0], length);
@@ -482,7 +482,8 @@ namespace Azure { namespace Storage {
               _internal::JoinPath(jobPlan.m_jobPlanDir, "part_gens"),
               std::fstream::in | std::fstream::out | std::fstream::binary);
           fio.exceptions(std::fstream::failbit | std::fstream::badbit);
-          jobPlan.m_generatorFileOutOffset = entry.Size;
+          AZURE_ASSERT(entry.Size >= 0);
+          jobPlan.m_generatorFileOutOffset = static_cast<size_t>(entry.Size);
           while (static_cast<size_t>(fio.tellg()) < jobPlan.m_generatorFileOutOffset)
           {
             bool doneBit = ReadFixedInt<int8_t>(fio);
@@ -492,7 +493,7 @@ namespace Azure { namespace Storage {
             }
             else
             {
-              size_t offset = fio.tellg();
+              size_t offset = static_cast<size_t>(fio.tellg());
               --offset;
               fio.seekg(offset);
               jobPlan.m_partGens = std::move(fio);
@@ -536,7 +537,7 @@ namespace Azure { namespace Storage {
         WriteFixedInt(m_partGens, int8_t(0));
         WriteString(m_partGens, gen.ToString());
       }
-      m_generatorFileOutOffset = m_partGens.tellp();
+      m_generatorFileOutOffset = static_cast<size_t>(m_partGens.tellp());
       m_partGens.flush();
     }
 
@@ -555,12 +556,12 @@ namespace Azure { namespace Storage {
           break;
         }
         m_partGens.seekg(m_generatorFileInOffset);
-        size_t doneBitOffset = m_partGens.tellg();
+        size_t doneBitOffset = static_cast<size_t>(m_partGens.tellg());
         bool doneBit = ReadFixedInt<int8_t>(m_partGens);
         if (doneBit)
         {
           SkipString(m_partGens);
-          m_generatorFileInOffset = m_partGens.tellg();
+          m_generatorFileInOffset = static_cast<size_t>(m_partGens.tellg());
         }
         else
         {

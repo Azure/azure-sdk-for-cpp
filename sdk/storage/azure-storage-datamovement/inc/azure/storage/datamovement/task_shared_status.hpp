@@ -34,7 +34,7 @@ namespace Azure { namespace Storage {
           WriteJournal;
       std::function<void(TransferError&)> ErrorHandler;
       std::shared_future<JobStatus> WaitHandle = m_notificationHandle.get_future().share();
-      TransferEngine* TransferEngine = nullptr;
+      _internal::TransferEngine* TransferEngine = nullptr;
 
       std::atomic<bool> HasFailure{false};
       std::atomic<bool> HasSuccess{false};

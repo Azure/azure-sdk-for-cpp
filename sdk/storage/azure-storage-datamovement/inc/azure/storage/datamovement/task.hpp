@@ -11,7 +11,7 @@ namespace Azure { namespace Storage {
     struct JobPart;
     struct JournalContext
     {
-      std::weak_ptr<JobPart> JobPart;
+      std::weak_ptr<_detail::JobPart> JobPart;
       size_t BitmapOffset = 0;
     };
   } // namespace _detail
