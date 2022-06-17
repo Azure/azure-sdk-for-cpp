@@ -26,8 +26,8 @@ namespace Azure { namespace Storage { namespace _internal {
     constexpr MovablePtr() noexcept {}
     constexpr MovablePtr(std::nullptr_t) noexcept {}
     explicit MovablePtr(T* ptr) noexcept : m_pointer(ptr) {}
-    
-    MovablePtr(const MovablePtr<T>&) noexcept  = default;
+
+    MovablePtr(const MovablePtr<T>&) noexcept = default;
     MovablePtr(MovablePtr<T>&& other) noexcept
     {
       m_pointer = other.m_pointer;

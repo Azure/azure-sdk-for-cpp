@@ -402,30 +402,30 @@ namespace Azure { namespace Storage {
       _internal::CreateDirectory(jobPlanDir);
       {
         const std::string partGensFilename = _internal::JoinPath(jobPlanDir, "part_gens");
-        std::fstream fout(
+        std::fstream fOut(
             partGensFilename + ".tmp",
             std::fstream::out | std::fstream::trunc | std::fstream::binary);
-        fout.exceptions(std::fstream::failbit | std::fstream::badbit);
+        fOut.exceptions(std::fstream::failbit | std::fstream::badbit);
         PartGenerator rootGenerator;
         std::string serializedGenerator = rootGenerator.ToString();
-        WriteFixedInt(fout, int8_t(0));
-        WriteString(fout, serializedGenerator);
-        fout.close();
+        WriteFixedInt(fOut, int8_t(0));
+        WriteString(fOut, serializedGenerator);
+        fOut.close();
         _internal::Rename(partGensFilename + ".tmp", partGensFilename);
       }
       {
         const std::string jobInfoFilename = _internal::JoinPath(jobPlanDir, "job_info");
-        std::fstream fout(
+        std::fstream fOut(
             jobInfoFilename + ".tmp",
             std::fstream::out | std::fstream::trunc | std::fstream::binary);
-        fout.exceptions(std::fstream::failbit | std::fstream::badbit);
-        WriteZeros(fout, JobInfoFileHeaderSize);
+        fOut.exceptions(std::fstream::failbit | std::fstream::badbit);
+        WriteZeros(fOut, JobInfoFileHeaderSize);
         Core::Json::_internal::json object;
         object["source"] = Core::Json::_internal::json::parse(model.Source.ToString());
         object["destination"] = Core::Json::_internal::json::parse(model.Destination.ToString());
         std::string serializedJobInfo = object.dump();
-        WriteString(fout, serializedJobInfo);
-        fout.close();
+        WriteString(fOut, serializedJobInfo);
+        fOut.close();
         _internal::Rename(jobInfoFilename + ".tmp", jobInfoFilename);
       }
     }
@@ -448,8 +448,7 @@ namespace Azure { namespace Storage {
       jobPlan.m_model.Source = _internal::TransferEnd::FromString(
           object["source"].dump(), jobPlan.m_hydrateParameters.SourceCredential);
       jobPlan.m_model.Destination = _internal::TransferEnd::FromString(
-          object["destination"].dump(),
-          jobPlan.m_hydrateParameters.DestinationCredential);
+          object["destination"].dump(), jobPlan.m_hydrateParameters.DestinationCredential);
       fin.close();
 
       jobPlan.m_jobInfoMappedFile
@@ -566,7 +565,7 @@ namespace Azure { namespace Storage {
         else
         {
           auto partGen = PartGenerator::FromString(ReadString(m_partGens));
-          m_generatorFileInOffset = m_partGens.tellg();
+          m_generatorFileInOffset = static_cast<size_t>(m_partGens.tellg());
           GeneratePart(partGen);
           m_partGens.seekp(doneBitOffset);
           WriteFixedInt(m_partGens, int8_t(1));

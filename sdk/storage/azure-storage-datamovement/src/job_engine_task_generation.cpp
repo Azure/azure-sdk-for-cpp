@@ -192,7 +192,8 @@ namespace Azure { namespace Storage { namespace _detail {
             task->Context = context;
             task->BlockId = i;
             task->Offset = i * taskModel.ChunkSize;
-            task->Length = std::min<uint64_t>(context->FileSize - task->Offset, taskModel.ChunkSize);
+            task->Length = static_cast<size_t>(
+                std::min<uint64_t>(context->FileSize - task->Offset, taskModel.ChunkSize));
             task->MemoryCost = task->Length;
             task->JournalContext = JournalContext{jobPart, bitmapOffset};
             tasks.emplace_back(std::move(task));
@@ -241,7 +242,8 @@ namespace Azure { namespace Storage { namespace _detail {
               _internal::TaskType::NetworkDownload);
           task->Context = context;
           task->Offset = i * taskModel.ChunkSize;
-          task->Length = std::min<uint64_t>(context->FileSize - task->Offset, taskModel.ChunkSize);
+          task->Length = static_cast<size_t>(
+              std::min<uint64_t>(context->FileSize - task->Offset, taskModel.ChunkSize));
           task->MemoryCost = task->Length;
           task->JournalContext = JournalContext{jobPart, bitmapOffset};
           tasks.emplace_back(std::move(task));

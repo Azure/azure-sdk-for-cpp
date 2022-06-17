@@ -65,7 +65,8 @@ namespace Azure { namespace Storage { namespace Blobs { namespace _detail {
         std::lock_guard<std::mutex> guard(Context->FileWriterMutex);
         if (!Context->FileWriter)
         {
-          Context->FileWriter = std::make_unique<Storage::_internal::FileWriter>(Context->Destination);
+          Context->FileWriter
+              = std::make_unique<Storage::_internal::FileWriter>(Context->Destination);
         }
       }
       Context->FileWriter->Write(this->Buffer.get(), this->Length, this->Offset);

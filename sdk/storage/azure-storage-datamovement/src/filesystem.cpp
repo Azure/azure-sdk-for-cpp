@@ -240,8 +240,16 @@ namespace Azure { namespace Storage { namespace _internal {
       throw std::runtime_error("Failed to create file mapping.");
     }
 
-    void* ptr = MapViewOfFileEx(
-        handle, FILE_MAP_ALL_ACCESS, alignedOffset >> 32, alignedOffset & 0xffffffff, size, NULL);
+#if defined(_WIN64)
+    DWORD offsetHigh = alignedOffset >> 32;
+    DWORD offsetLow = alignedOffset & 0xffffffff;
+#else
+    DWORD offsetHigh = 0;
+    DWORD offsetLow = alignedOffset;
+#endif
+
+    void* ptr = MapViewOfFileEx(handle, FILE_MAP_ALL_ACCESS, offsetHigh, offsetLow, size, NULL);
+
     CloseHandle(handle);
     if (!ptr)
     {
