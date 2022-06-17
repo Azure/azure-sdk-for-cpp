@@ -111,6 +111,7 @@ namespace Azure { namespace Storage { namespace _internal {
                   {
                     ReclaimAllocatedResource(task);
                     pendingQueue.pop();
+                    m_numTasks.fetch_sub(1, std::memory_order_relaxed);
                   }
                   else if (jobStatus == JobStatus::InProgress)
                   {
@@ -219,7 +220,7 @@ namespace Azure { namespace Storage { namespace _internal {
   {
     Stop();
     m_numTasks.fetch_sub(
-        m_readyTasks.size() + m_readyDiskIOTasks.size() + +m_pendingDiskIOTasks.size()
+        m_readyTasks.size() + m_readyDiskIOTasks.size() + m_pendingDiskIOTasks.size()
             + m_pendingNetworkUploadTasks.size() + m_pendingNetworkDownloadTasks.size(),
         std::memory_order_relaxed);
     {
@@ -236,7 +237,7 @@ namespace Azure { namespace Storage { namespace _internal {
       while (!m_readyDiskIOTasks.empty())
       {
         ReclaimProvisionedResource(m_readyDiskIOTasks.front());
-        ReclaimAllocatedResource(m_readyTasks.front());
+        ReclaimAllocatedResource(m_readyDiskIOTasks.front());
         m_readyDiskIOTasks.pop();
       }
     }

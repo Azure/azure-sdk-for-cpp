@@ -222,6 +222,8 @@ namespace Azure { namespace Storage { namespace _detail {
         context->FileSize = taskModel.ObjectSize;
         context->NumChunks = static_cast<int>(
             (taskModel.ObjectSize + taskModel.ChunkSize - 1) / taskModel.ChunkSize);
+        context->NumChunks = std::max(context->NumChunks, 1);
+
         context->NumDownloadedChunks = 0;
         std::string doneBits;
 

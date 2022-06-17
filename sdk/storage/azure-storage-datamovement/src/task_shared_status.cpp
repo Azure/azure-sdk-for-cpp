@@ -9,21 +9,27 @@ namespace Azure { namespace Storage { namespace _internal {
 
   void TaskBase::TransferSucceeded(int64_t bytesTransferred, int64_t numFiles) const
   {
+    SharedStatus->HasSuccess = true;
     SharedStatus->WriteJournal(JournalContext, numFiles, 0, 0, bytesTransferred);
   }
 
   void TaskBase::TransferFailed(std::string sourceUrl, std::string destinationUrl, int64_t numFiles)
       const
   {
+    SharedStatus->HasFailure = true;
     TransferError e;
     e.SourceUrl = std::move(sourceUrl);
     e.DestinationUrl = std::move(destinationUrl);
-    SharedStatus->ErrorHandler(e);
+    if (SharedStatus->ErrorHandler)
+    {
+      SharedStatus->ErrorHandler(e);
+    }
     SharedStatus->WriteJournal(JournalContext, 0, 0, numFiles, 0);
   }
 
   void TaskBase::Transferkipped(int64_t numFiles) const
   {
+    SharedStatus->HasSuccess = true;
     SharedStatus->WriteJournal(JournalContext, 0, numFiles, 0, 0);
   }
 

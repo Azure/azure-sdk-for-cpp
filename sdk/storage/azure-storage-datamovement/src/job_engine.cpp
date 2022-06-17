@@ -426,15 +426,23 @@ namespace Azure { namespace Storage {
       }
       else if (op.Type == decltype(op.Type)::RemoveJob)
       {
-        auto jobIndex = m_jobsIndex[op.JobId];
-        if (m_loadPos.first == jobIndex)
+        auto ite = m_jobsIndex.find(op.JobId);
+        if (ite == m_jobsIndex.end())
         {
-          auto nextJobIndex = jobIndex;
-          m_loadPos = std::make_pair(++nextJobIndex, 0);
+          op.Promise.set_exception(std::make_exception_ptr(std::runtime_error("Cannot find job.")));
         }
-        m_jobs.erase(jobIndex);
-        m_jobsIndex.erase(op.JobId);
-        op.Promise.set_value({});
+        else
+        {
+          auto jobIndex = ite->second;
+          if (m_loadPos.first == jobIndex)
+          {
+            auto nextJobIndex = jobIndex;
+            m_loadPos = std::make_pair(++nextJobIndex, 0);
+          }
+          m_jobs.erase(jobIndex);
+          m_jobsIndex.erase(op.JobId);
+          op.Promise.set_value({});
+        }
       }
       else if (op.Type == decltype(op.Type)::JobPartDone)
       {
