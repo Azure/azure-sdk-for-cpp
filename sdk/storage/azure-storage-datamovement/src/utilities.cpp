@@ -127,9 +127,9 @@ namespace Azure { namespace Storage { namespace _internal {
 
   std::string GetPathFromUrl(const std::string& fileUrl)
   {
-    static const size_t FilrUrlSchemeLen = std::strlen(FileUrlScheme);
-    AZURE_ASSERT(fileUrl.substr(0, FilrUrlSchemeLen) == FileUrlScheme);
-    return fileUrl.substr(FilrUrlSchemeLen);
+    static const size_t FileUrlSchemeLen = std::strlen(FileUrlScheme);
+    AZURE_ASSERT(fileUrl.substr(0, FileUrlSchemeLen) == FileUrlScheme);
+    return fileUrl.substr(FileUrlSchemeLen);
   }
 
   std::string RemoveSasToken(const std::string& url)
@@ -138,8 +138,10 @@ namespace Azure { namespace Storage { namespace _internal {
     {
       Core::Url url2(url);
       for (const auto& k : {
+               /* cSpell:disable */
                "sv",    "ss",    "srt", "sp",  "se",  "st",  "spr",  "sig",  "sip",  "si",   "sr",
                "skoid", "sktid", "skt", "ske", "sks", "skv", "rscc", "rscd", "rsce", "rscl", "rsct",
+               /* cSpell:enable */
            })
       {
         url2.RemoveQueryParameter(k);

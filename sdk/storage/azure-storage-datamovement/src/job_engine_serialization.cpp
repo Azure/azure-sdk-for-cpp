@@ -148,7 +148,7 @@ namespace Azure { namespace Storage {
 
     uint32_t PartIdFromString(const std::string& partId)
     {
-      return stoul("0x" + partId, nullptr, 16);
+      return std::stoul("0x" + partId, nullptr, 16);
     }
   } // namespace
   namespace _internal {
@@ -377,22 +377,22 @@ namespace Azure { namespace Storage {
         const std::vector<TaskModel>& tasks)
     {
       const std::string partFilename = _internal::JoinPath(jobPlanDir, PartIdToString(id));
-      std::fstream fout(
+      std::fstream fOut(
           partFilename + ".tmp", std::fstream::out | std::fstream::trunc | std::fstream::binary);
-      fout.exceptions(std::fstream::failbit | std::fstream::badbit);
-      WriteFixedInt(fout, PlanFileVersion);
+      fOut.exceptions(std::fstream::failbit | std::fstream::badbit);
+      WriteFixedInt(fOut, PlanFileVersion);
       int32_t numDoneBits
           = std::accumulate(tasks.begin(), tasks.end(), 0, [](int32_t s, const TaskModel& t) {
               return s + t.NumSubTasks;
             });
-      WriteFixedInt(fout, numDoneBits);
-      WriteZeros(fout, numDoneBits);
+      WriteFixedInt(fOut, numDoneBits);
+      WriteZeros(fOut, numDoneBits);
       for (const auto& t : tasks)
       {
-        WriteVarInt(fout, t.NumSubTasks);
-        WriteString(fout, t.ToString());
+        WriteVarInt(fOut, t.NumSubTasks);
+        WriteString(fOut, t.ToString());
       }
-      fout.close();
+      fOut.close();
       _internal::Rename(partFilename + ".tmp", partFilename);
     }
 

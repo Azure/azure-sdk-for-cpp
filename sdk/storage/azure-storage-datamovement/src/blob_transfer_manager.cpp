@@ -22,7 +22,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     _internal::HydrationParameters hydrateOptions;
     hydrateOptions.ErrorHandler = options.ErrorHandler;
     hydrateOptions.ProgressHandler = options.ProgressHandler;
-    return m_jobEngine.CraeteJob(std::move(jobModel), std::move(hydrateOptions));
+    return m_jobEngine.CreateJob(std::move(jobModel), std::move(hydrateOptions));
   }
 
   JobProperties BlobTransferManager::ScheduleUploadDirectory(
@@ -37,7 +37,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     _internal::HydrationParameters hydrateOptions;
     hydrateOptions.ErrorHandler = options.ErrorHandler;
     hydrateOptions.ProgressHandler = options.ProgressHandler;
-    return m_jobEngine.CraeteJob(std::move(jobModel), std::move(hydrateOptions));
+    return m_jobEngine.CreateJob(std::move(jobModel), std::move(hydrateOptions));
   }
 
   JobProperties BlobTransferManager::ScheduleDownload(
@@ -53,7 +53,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     _internal::HydrationParameters hydrateOptions;
     hydrateOptions.ErrorHandler = options.ErrorHandler;
     hydrateOptions.ProgressHandler = options.ProgressHandler;
-    return m_jobEngine.CraeteJob(std::move(jobModel), std::move(hydrateOptions));
+    return m_jobEngine.CreateJob(std::move(jobModel), std::move(hydrateOptions));
   }
 
   JobProperties BlobTransferManager::ScheduleDownloadDirectory(
@@ -68,7 +68,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     _internal::HydrationParameters hydrateOptions;
     hydrateOptions.ErrorHandler = options.ErrorHandler;
     hydrateOptions.ProgressHandler = options.ProgressHandler;
-    return m_jobEngine.CraeteJob(std::move(jobModel), std::move(hydrateOptions));
+    return m_jobEngine.CreateJob(std::move(jobModel), std::move(hydrateOptions));
   }
 
 }}} // namespace Azure::Storage::Blobs

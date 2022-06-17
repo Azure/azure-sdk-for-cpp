@@ -40,7 +40,7 @@ namespace Azure { namespace Storage {
     public:
       enum class EndType
       {
-        Unintialized,
+        Uninitialized,
         LocalFile,
         LocalDirectory,
         AzureBlob,
@@ -55,7 +55,7 @@ namespace Azure { namespace Storage {
       static TransferEnd CreateFromAzureBlobFolder(Blobs::BlobFolder blobFolder);
 
     private:
-      EndType m_type = EndType::Unintialized;
+      EndType m_type = EndType::Uninitialized;
       std::string m_url;
       Nullable<Blobs::BlobClient> m_blobClient;
       Nullable<Blobs::BlobFolder> m_blobFolder;
@@ -189,7 +189,7 @@ namespace Azure { namespace Storage {
       explicit JobEngine(const std::string& plansDir, _internal::TransferEngine* transferEngine);
       ~JobEngine();
 
-      JobProperties CraeteJob(
+      JobProperties CreateJob(
           _internal::JobModel model,
           _internal::HydrationParameters hydrateOptions);
       JobProperties ResumeJob(

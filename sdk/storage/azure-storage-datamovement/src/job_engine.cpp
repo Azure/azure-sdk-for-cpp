@@ -190,7 +190,7 @@ namespace Azure { namespace Storage {
       }
     }
 
-    JobProperties JobEngine::CraeteJob(
+    JobProperties JobEngine::CreateJob(
         _internal::JobModel model,
         _internal::HydrationParameters hydrateParameters)
     {
@@ -349,8 +349,8 @@ namespace Azure { namespace Storage {
               std::move(op.HydrationParameters), _internal::JoinPath(m_plansDir, op.JobId));
           existingJobPlan.m_engine = this;
           existingJobPlan.m_jobId = op.JobId;
-          if (op.Model.Source.m_type != decltype(op.Model.Source.m_type)::Unintialized
-              && op.Model.Destination.m_type != decltype(op.Model.Source.m_type)::Unintialized)
+          if (op.Model.Source.m_type != decltype(op.Model.Source.m_type)::Uninitialized
+              && op.Model.Destination.m_type != decltype(op.Model.Source.m_type)::Uninitialized)
           {
             existingJobPlan.m_model = std::move(op.Model);
           }
