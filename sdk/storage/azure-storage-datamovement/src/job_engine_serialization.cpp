@@ -148,6 +148,7 @@ namespace Azure { namespace Storage {
 
     uint32_t PartIdFromString(const std::string& partId)
     {
+      /* cSpell:ignore stoul */
       return std::stoul("0x" + partId, nullptr, 16);
     }
   } // namespace
