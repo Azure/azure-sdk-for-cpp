@@ -99,7 +99,6 @@ namespace Azure { namespace Storage { namespace Test {
         m.reset();
         m = std::make_unique<Blobs::BlobTransferManager>(options);
         atLeaseDestructedOnce = true;
-        EXPECT_EQ(job.WaitHandle.get(), JobStatus::Paused);
       }
       else
       {
@@ -107,12 +106,17 @@ namespace Azure { namespace Storage { namespace Test {
         {
           m->PauseJob(job.Id);
           atLeasePausedOnce = true;
-          EXPECT_EQ(job.WaitHandle.get(), JobStatus::Paused);
         }
         catch (std::exception&)
         {
           break;
         }
+      }
+      auto status = job.WaitHandle.get();
+      EXPECT_TRUE(status == JobStatus::Succeeded || status == JobStatus::Paused);
+      if (status == JobStatus::Succeeded)
+      {
+        break;
       }
 
       std::this_thread::sleep_for(std::chrono::milliseconds(500));
