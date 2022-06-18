@@ -125,7 +125,6 @@ namespace Azure { namespace Storage { namespace Blobs { namespace _detail {
     try
     {
       blockBlobClient.StageBlock(blockId, contentStream);
-      TransferSucceeded(Length, 0);
     }
     catch (std::exception&)
     {
@@ -143,6 +142,7 @@ namespace Azure { namespace Storage { namespace Blobs { namespace _detail {
     int numStagedBlocks = Context->NumStagedBlocks.fetch_add(1, std::memory_order_relaxed) + 1;
     if (numStagedBlocks != Context->NumBlocks)
     {
+      TransferSucceeded(Length, 0);
       return;
     }
     std::vector<std::string> blockIds;
