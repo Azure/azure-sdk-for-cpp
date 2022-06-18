@@ -10,15 +10,15 @@
 using namespace Azure::Template;
 using namespace Azure::Template::_detail;
 
-TemplateClient::TemplateClient(TemplateClientOptions const& options)
-    : m_tracingFactory(options, "Template", PackageVersion::ToString())
+// TemplateClient::TemplateClient(TemplateClientOptions const& options)
+//     : m_tracingFactory(options, "Template", PackageVersion::ToString())
 
-{
-}
+// {
+// }
 
-int TemplateClient::GetValue(int key, Azure::Core::Context const& context) const
+int TemplateClient::GetValue(int key, Azure::Core::Context const&) const
 {
-  auto tracingContext = m_tracingFactory.CreateTracingContext("GetValue", context);
+  // auto tracingContext = m_tracingFactory.CreateTracingContext("GetValue", context);
 
   try
   {
@@ -60,7 +60,7 @@ int TemplateClient::GetValue(int key, Azure::Core::Context const& context) const
   }
   catch (std::exception const& e)
   {
-    tracingContext.Span.AddEvent(e);
+    // tracingContext.Span.AddEvent(e);
     throw;
   }
 }

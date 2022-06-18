@@ -6,6 +6,9 @@
       "name": "azure-core-cpp"
     },
     {
+      "name": "azure-storage-common-cpp"
+    },
+    {
       "name": "vcpkg-cmake",
       "host": true
     },
