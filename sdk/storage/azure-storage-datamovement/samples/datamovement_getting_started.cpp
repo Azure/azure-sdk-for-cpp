@@ -3,6 +3,8 @@
 
 #include "get_env.hpp"
 
+#undef CreateDirectory
+
 #include <iostream>
 
 #include <azure/storage/datamovement/blob_transfer_manager.hpp>
@@ -32,6 +34,16 @@ int main()
   const std::string blobName = "sample-blob";
   const std::string localFile = "sample-localfile";
   const std::string localDirectory = "sample-localdir";
+
+  // create local file for testing
+  const std::string fileContent = "Hello Azure!";
+  std::ofstream fOut(localFile, std::ofstream::binary);
+  fOut.write(fileContent.data(), fileContent.length());
+  fOut.close();
+  _internal::CreateDirectory(localDirectory);
+  fOut.open(localDirectory + "/" + localFile, std::ofstream::binary);
+  fOut.write(fileContent.data(), fileContent.length());
+  fOut.close();
 
   BlobTransferManager m;
 
