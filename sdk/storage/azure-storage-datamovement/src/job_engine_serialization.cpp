@@ -14,9 +14,9 @@
 
 namespace Azure { namespace Storage {
   namespace {
-    constexpr static int PlanFileVersion = 1;
-    constexpr size_t JobInfoFileHeaderSize = 32;
-    constexpr size_t JobPartFileHeaderSize = 8;
+    constexpr static int g_PlanFileVersion = 1;
+    constexpr size_t g_JobInfoFileHeaderSize = 36;
+    constexpr size_t g_JobPartFileHeaderSize = 8;
 
     template <class T> T ReadFixedInt(std::fstream& in);
 
@@ -311,13 +311,13 @@ namespace Azure { namespace Storage {
       std::fstream fin(partFilename, std::fstream::in | std::fstream::binary);
       fin.exceptions(std::fstream::failbit | std::fstream::badbit);
       int32_t planFileVersion = ReadFixedInt<int32_t>(fin);
-      AZURE_ASSERT(planFileVersion == PlanFileVersion);
+      AZURE_ASSERT(planFileVersion == g_PlanFileVersion);
       JobPart jobPart;
       jobPart.m_jobPlan = plan;
       jobPart.m_jobPlan->m_numAliveParts->fetch_add(1, std::memory_order_relaxed);
       jobPart.m_id = id;
       jobPart.m_numDoneBits = ReadFixedInt<int32_t>(fin);
-      AZURE_ASSERT(static_cast<size_t>(fin.tellg()) == JobPartFileHeaderSize);
+      AZURE_ASSERT(static_cast<size_t>(fin.tellg()) == g_JobPartFileHeaderSize);
       std::vector<char> doneBits(jobPart.m_numDoneBits);
       fin.read(doneBits.data(), jobPart.m_numDoneBits);
 
@@ -362,7 +362,7 @@ namespace Azure { namespace Storage {
       fin.close();
       jobPart.m_mappedFile = std::make_unique<_internal::MemoryMap>(partFilename);
       jobPart.m_doneBitmap = static_cast<bool*>(
-          jobPart.m_mappedFile->Map(JobPartFileHeaderSize, jobPart.m_numDoneBits));
+          jobPart.m_mappedFile->Map(g_JobPartFileHeaderSize, jobPart.m_numDoneBits));
       jobPart.m_numUndoneBits->store(numUndoneBits, std::memory_order_relaxed);
       return std::make_pair(std::move(jobPart), std::move(tasks));
     }
@@ -376,7 +376,7 @@ namespace Azure { namespace Storage {
       std::fstream fOut(
           partFilename + ".tmp", std::fstream::out | std::fstream::trunc | std::fstream::binary);
       fOut.exceptions(std::fstream::failbit | std::fstream::badbit);
-      WriteFixedInt(fOut, PlanFileVersion);
+      WriteFixedInt(fOut, g_PlanFileVersion);
       int32_t numDoneBits
           = std::accumulate(tasks.begin(), tasks.end(), 0, [](int32_t s, const TaskModel& t) {
               return s + t.NumSubtasks;
@@ -402,6 +402,7 @@ namespace Azure { namespace Storage {
             partGensFilename + ".tmp",
             std::fstream::out | std::fstream::trunc | std::fstream::binary);
         fOut.exceptions(std::fstream::failbit | std::fstream::badbit);
+        WriteFixedInt(fOut, g_PlanFileVersion);
         PartGenerator rootGenerator;
         std::string serializedGenerator = rootGenerator.ToString();
         WriteFixedInt(fOut, int8_t(0));
@@ -415,7 +416,8 @@ namespace Azure { namespace Storage {
             jobInfoFilename + ".tmp",
             std::fstream::out | std::fstream::trunc | std::fstream::binary);
         fOut.exceptions(std::fstream::failbit | std::fstream::badbit);
-        WriteZeros(fOut, JobInfoFileHeaderSize);
+        WriteFixedInt(fOut, g_PlanFileVersion);
+        WriteZeros(fOut, g_JobInfoFileHeaderSize - sizeof(g_PlanFileVersion));
         Core::Json::_internal::json object;
         object["source"] = Core::Json::_internal::json::parse(model.Source.ToString());
         object["destination"] = Core::Json::_internal::json::parse(model.Destination.ToString());
@@ -438,7 +440,9 @@ namespace Azure { namespace Storage {
       std::fstream fin(
           _internal::JoinPath(jobPlanDir, "job_info"), std::fstream::in | std::fstream::binary);
       fin.exceptions(std::fstream::failbit | std::fstream::badbit);
-      fin.seekg(JobInfoFileHeaderSize);
+      int32_t planFileVersion = ReadFixedInt<int32_t>(fin);
+      AZURE_ASSERT(planFileVersion == g_PlanFileVersion);
+      fin.seekg(g_JobInfoFileHeaderSize);
       auto serializedJobInfo = ReadString(fin);
       auto object = Core::Json::_internal::json::parse(serializedJobInfo);
       jobPlan.m_model.Source = _internal::TransferEnd::FromString(
@@ -449,7 +453,8 @@ namespace Azure { namespace Storage {
 
       jobPlan.m_jobInfoMappedFile
           = std::make_unique<_internal::MemoryMap>(_internal::JoinPath(jobPlanDir, "job_info"));
-      void* jobInfoFileHeader = jobPlan.m_jobInfoMappedFile->Map(0, JobInfoFileHeaderSize);
+      void* jobInfoFileHeader = jobPlan.m_jobInfoMappedFile->Map(
+          sizeof(g_PlanFileVersion), g_JobInfoFileHeaderSize - sizeof(g_PlanFileVersion));
       jobPlan.m_numFilesTransferred = static_cast<int64_t*>(jobInfoFileHeader);
       jobPlan.m_numFilesSkipped = static_cast<int64_t*>(jobInfoFileHeader) + 1;
       jobPlan.m_numFilesFailed = static_cast<int64_t*>(jobInfoFileHeader) + 2;
@@ -477,7 +482,9 @@ namespace Azure { namespace Storage {
               _internal::JoinPath(jobPlan.m_jobPlanDir, "part_gens"),
               std::fstream::in | std::fstream::out | std::fstream::binary);
           fio.exceptions(std::fstream::failbit | std::fstream::badbit);
-          AZURE_ASSERT(entry.Size >= 0);
+          int32_t planFileVersion = ReadFixedInt<int32_t>(fin);
+          AZURE_ASSERT(planFileVersion == g_PlanFileVersion);
+          jobPlan.m_generatorFileInOffset = static_cast<size_t>(fin.tellg());
           jobPlan.m_generatorFileOutOffset = static_cast<size_t>(entry.Size);
           while (static_cast<size_t>(fio.tellg()) < jobPlan.m_generatorFileOutOffset)
           {
