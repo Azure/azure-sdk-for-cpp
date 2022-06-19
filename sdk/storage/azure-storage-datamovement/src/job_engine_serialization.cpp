@@ -482,7 +482,7 @@ namespace Azure { namespace Storage {
               _internal::JoinPath(jobPlan.m_jobPlanDir, "part_gens"),
               std::fstream::in | std::fstream::out | std::fstream::binary);
           fio.exceptions(std::fstream::failbit | std::fstream::badbit);
-          planFileVersion = ReadFixedInt<int32_t>(fin);
+          planFileVersion = ReadFixedInt<int32_t>(fio);
           AZURE_ASSERT(planFileVersion == g_PlanFileVersion);
           jobPlan.m_generatorFileInOffset = static_cast<size_t>(fin.tellg());
           jobPlan.m_generatorFileOutOffset = static_cast<size_t>(entry.Size);
