@@ -326,9 +326,9 @@ namespace Azure { namespace Storage {
       size_t numUndoneBits = 0;
       while (currDoneBit < jobPart.m_numDoneBits)
       {
-        auto numSubTasks = static_cast<int32_t>(ReadVarInt(fin));
-        AZURE_ASSERT(numSubTasks > 0);
-        if (numSubTasks == 1)
+        auto numSubtasks = static_cast<int32_t>(ReadVarInt(fin));
+        AZURE_ASSERT(numSubtasks > 0);
+        if (numSubtasks == 1)
         {
           if (!doneBits[currDoneBit])
           {
@@ -340,8 +340,8 @@ namespace Azure { namespace Storage {
         else
         {
           bool hasUndoneSubtask = false;
-          std::string subtasksDoneBitMap(numSubTasks, '\x00');
-          for (size_t i = 0; i < static_cast<size_t>(numSubTasks); ++i)
+          std::string subtasksDoneBitMap(numSubtasks, '\x00');
+          for (size_t i = 0; i < static_cast<size_t>(numSubtasks); ++i)
           {
             subtasksDoneBitMap[i] = char(doneBits[currDoneBit + i] + '0');
             if (subtasksDoneBitMap[i] == '0')
@@ -357,7 +357,7 @@ namespace Azure { namespace Storage {
             tasks.push_back(std::move(task));
           }
         }
-        currDoneBit += numSubTasks;
+        currDoneBit += numSubtasks;
       }
       fin.close();
       jobPart.m_mappedFile = std::make_unique<_internal::MemoryMap>(partFilename);

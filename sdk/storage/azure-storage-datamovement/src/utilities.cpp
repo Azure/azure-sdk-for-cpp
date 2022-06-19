@@ -121,7 +121,7 @@ namespace Azure { namespace Storage { namespace _internal {
       absPath += "/" + p;
     }
 
-    return FileUrlScheme + absPath;
+    return g_FileUrlScheme + absPath;
 #endif
   }
 
@@ -180,7 +180,14 @@ namespace Azure { namespace Storage { namespace _internal {
   {
     return InterlockedAddNoFence64(arg, value);
   }
-  int64_t AtomicLoad(int64_t* arg) { return InterlockedOr64NoFence(arg, 0); }
+  int64_t AtomicLoad(int64_t* arg)
+  {
+#if defined(InterlockedOr64NoFence)
+    return InterlockedOr64NoFence(arg, 0);
+#else
+    return InterlockedOr64(arg, 0);
+#endif
+  }
 #else
   int64_t AtomicFetchAdd(int64_t* arg, int64_t value)
   {
