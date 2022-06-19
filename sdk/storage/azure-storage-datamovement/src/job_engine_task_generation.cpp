@@ -15,10 +15,10 @@
 namespace Azure { namespace Storage { namespace _detail {
 
   namespace {
-    constexpr size_t UploadBlockSize = 8 * 1024 * 1024;
-    constexpr size_t DownloadBlockSize = 8 * 1024 * 1024;
-    constexpr size_t NumSubtasksPerPart = 50000;
-    constexpr size_t MaxTasksGenerated = 1000000;
+    constexpr size_t g_UploadBlockSize = 8 * 1024 * 1024;
+    constexpr size_t g_DownloadBlockSize = 8 * 1024 * 1024;
+    constexpr size_t g_NumSubtasksPerPart = 50000;
+    constexpr size_t g_MaxTasksGenerated = 1000000;
   } // namespace
 
   void JobPlan::GeneratePartImpl(const PartGenerator& gen)
@@ -42,7 +42,7 @@ namespace Azure { namespace Storage { namespace _detail {
       numNewSubtasks += newTask.NumSubtasks;
       totalNumNewSubtasks += newTask.NumSubtasks;
       newTasks.push_back(std::move(newTask));
-      if (numNewSubtasks >= NumSubtasksPerPart)
+      if (numNewSubtasks >= g_NumSubtasksPerPart)
       {
         flushNewTasks();
       }
@@ -59,8 +59,9 @@ namespace Azure { namespace Storage { namespace _detail {
 
       TaskModel task;
       task.ObjectSize = fileSize;
-      task.ChunkSize = UploadBlockSize;
-      task.NumSubtasks = static_cast<int32_t>((fileSize + UploadBlockSize - 1) / UploadBlockSize);
+      task.ChunkSize = g_UploadBlockSize;
+      task.NumSubtasks
+          = static_cast<int32_t>((fileSize + g_UploadBlockSize - 1) / g_UploadBlockSize);
       task.NumSubtasks = std::max(task.NumSubtasks, 1);
       taskGenerated(std::move(task));
     }
@@ -89,9 +90,9 @@ namespace Azure { namespace Storage { namespace _detail {
             task.Source = _internal::JoinPath(currGen.Source, entry.Name);
             task.Destination = _internal::JoinPath(currGen.Destination, entry.Name);
             task.ObjectSize = entry.Size;
-            task.ChunkSize = UploadBlockSize;
+            task.ChunkSize = g_UploadBlockSize;
             task.NumSubtasks
-                = static_cast<int32_t>((entry.Size + UploadBlockSize - 1) / UploadBlockSize);
+                = static_cast<int32_t>((entry.Size + g_UploadBlockSize - 1) / g_UploadBlockSize);
             task.NumSubtasks = std::max(task.NumSubtasks, 1);
             taskGenerated(std::move(task));
           }
@@ -104,7 +105,7 @@ namespace Azure { namespace Storage { namespace _detail {
           }
         }
 
-      } while (!partGens.empty() && totalNumNewSubtasks < MaxTasksGenerated);
+      } while (!partGens.empty() && totalNumNewSubtasks < g_MaxTasksGenerated);
     }
     else if (m_model.Source.m_type == _internal::TransferEnd::EndType::AzureBlob)
     {
@@ -118,8 +119,9 @@ namespace Azure { namespace Storage { namespace _detail {
 
       TaskModel task;
       task.ObjectSize = fileSize;
-      task.ChunkSize = DownloadBlockSize;
-      task.NumSubtasks = static_cast<int32_t>((fileSize + UploadBlockSize - 1) / DownloadBlockSize);
+      task.ChunkSize = g_DownloadBlockSize;
+      task.NumSubtasks
+          = static_cast<int32_t>((fileSize + g_UploadBlockSize - 1) / g_DownloadBlockSize);
       task.NumSubtasks = std::max(task.NumSubtasks, 1);
       taskGenerated(std::move(task));
     }
@@ -212,9 +214,9 @@ namespace Azure { namespace Storage { namespace _detail {
       {
         auto source = m_model.Source.m_type == _internal::TransferEnd::EndType::AzureBlob
             ? m_model.Source.m_blobClient.Value()
-            : m_model.Source.m_blobFolder.Value().GetBlobClient(taskModel.Destination);
+            : m_model.Source.m_blobFolder.Value().GetBlobClient(taskModel.Source);
         std::string destination = _internal::JoinPath(
-            _internal::PathFromUrl(m_model.Destination.m_url), taskModel.Source);
+            _internal::PathFromUrl(m_model.Destination.m_url), taskModel.Destination);
 
         auto context = std::make_shared<Blobs::_detail::DownloadRangeToMemoryTask::TaskContext>(
             source, destination);
