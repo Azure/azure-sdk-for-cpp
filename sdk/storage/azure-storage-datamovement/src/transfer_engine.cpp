@@ -137,7 +137,8 @@ namespace Azure { namespace Storage { namespace _internal {
         {
           // schedule disk IO tasks
           scheduleTasksInPendingQueue(m_pendingDiskIOTasks, [this](const Task& t) {
-            return t->MemoryCost <= m_memoryLeft.load(std::memory_order_relaxed);
+            return static_cast<int64_t>(t->MemoryCost)
+                <= m_memoryLeft.load(std::memory_order_relaxed);
           });
           if (!readyTasks.empty())
           {
@@ -156,11 +157,13 @@ namespace Azure { namespace Storage { namespace _internal {
         {
           // schedule network tasks
           scheduleTasksInPendingQueue(m_pendingNetworkUploadTasks, [this](const Task& t) {
-            return t->MemoryCost <= m_memoryLeft.load(std::memory_order_relaxed);
+            return static_cast<int64_t>(t->MemoryCost)
+                <= m_memoryLeft.load(std::memory_order_relaxed);
           });
           size_t n1 = readyTasks.size();
           scheduleTasksInPendingQueue(m_pendingNetworkDownloadTasks, [this](const Task& t) {
-            return t->MemoryCost <= m_memoryLeft.load(std::memory_order_relaxed);
+            return static_cast<int64_t>(t->MemoryCost)
+                <= m_memoryLeft.load(std::memory_order_relaxed);
           });
           size_t n2 = readyTasks.size();
 
@@ -259,7 +262,7 @@ namespace Azure { namespace Storage { namespace _internal {
         m_pendingNetworkDownloadTasks.pop();
       }
     }
-    AZURE_ASSERT(m_memoryLeft == m_options.MaxMemorySize.Value());
+    AZURE_ASSERT(m_memoryLeft == static_cast<int64_t>(m_options.MaxMemorySize.Value()));
     AZURE_ASSERT(m_numTasks == 0);
   }
 

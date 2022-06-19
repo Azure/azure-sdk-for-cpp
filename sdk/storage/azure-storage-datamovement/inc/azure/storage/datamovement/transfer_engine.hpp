@@ -73,7 +73,7 @@ namespace Azure { namespace Storage { namespace _internal {
     TransferEngineOptions m_options;
 
     // resource left
-    std::atomic<size_t> m_memoryLeft;
+    std::atomic<int64_t> m_memoryLeft;
 
     // pending tasks
     TaskQueue m_pendingDiskIOTasks;
