@@ -72,7 +72,7 @@ namespace Azure { namespace Storage {
         return;
       }
       jobPart->m_doneBitmap[context.BitmapOffset] = 1;
-      jobPart->m_numUndoneBits->fetch_sub(1, std::memory_order_relaxed);
+      size_t currNumUndone = jobPart->m_numUndoneBits->fetch_sub(1, std::memory_order_relaxed) - 1;
       if (fileTransferred != 0)
       {
         _internal::AtomicFetchAdd(m_numFilesTransferred, fileTransferred);
@@ -111,7 +111,7 @@ namespace Azure { namespace Storage {
           }
         }
       }
-      if (jobPart->m_numUndoneBits->load(std::memory_order_relaxed) == 0)
+      if (currNumUndone == 0)
       {
         uint32_t partId = jobPart->m_id;
         jobPart.reset();
