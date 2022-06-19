@@ -8,12 +8,12 @@
 
 namespace Azure { namespace Storage { namespace _internal {
 
-  constexpr static const char* FileUrlScheme = "file://";
+  constexpr static const char* g_FileUrlScheme = "file://";
 
   std::string JoinPath(const std::initializer_list<std::string>& paths);
   template <class... Args> std::string JoinPath(Args&&... paths) { return JoinPath({paths...}); }
-  std::string GetPathUrl(const std::string& relativePath);
-  std::string GetPathFromUrl(const std::string& fileUrl);
+  std::string PathToUrl(const std::string& relativePath);
+  std::string PathFromUrl(const std::string& fileUrl);
   std::string RemoveSasToken(const std::string& url);
   std::string ApplySasToken(const std::string& url, const std::string& sasToken);
 
@@ -21,16 +21,15 @@ namespace Azure { namespace Storage { namespace _internal {
   int64_t AtomicFetchAdd(int64_t* arg, int64_t value);
   int64_t AtomicLoad(int64_t* arg);
 
-  template <class T> class MovablePtr {
+  template <class T> class MovablePtr final {
   public:
     constexpr MovablePtr() noexcept {}
     constexpr MovablePtr(std::nullptr_t) noexcept {}
     explicit MovablePtr(T* ptr) noexcept : m_pointer(ptr) {}
 
     MovablePtr(const MovablePtr<T>&) noexcept = default;
-    MovablePtr(MovablePtr<T>&& other) noexcept
+    MovablePtr(MovablePtr<T>&& other) noexcept : m_pointer(other.m_pointer)
     {
-      m_pointer = other.m_pointer;
       other.m_pointer = nullptr;
     }
     MovablePtr<T>& operator=(T* ptr) noexcept

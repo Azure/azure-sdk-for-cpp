@@ -18,7 +18,7 @@ namespace Azure { namespace Storage {
     {
       TransferEnd ret;
       ret.m_type = EndType::LocalFile;
-      ret.m_url = _internal::GetPathUrl(path);
+      ret.m_url = _internal::PathToUrl(path);
       return ret;
     }
 
@@ -26,7 +26,7 @@ namespace Azure { namespace Storage {
     {
       TransferEnd ret;
       ret.m_type = EndType::LocalDirectory;
-      ret.m_url = _internal::GetPathUrl(path);
+      ret.m_url = _internal::PathToUrl(path);
       return ret;
     }
 
@@ -199,12 +199,12 @@ namespace Azure { namespace Storage {
       EngineOperation op;
       op.JobId = uuid;
       op.Type = decltype(op.Type)::CreateJob;
-      op.Model = std::move(model);
+      op.Model = model;
 
       EngineOperation op2;
       op2.JobId = uuid;
       op2.Type = decltype(op.Type)::ResumeJob;
-      op2.Model = op.Model;
+      op2.Model = std::move(model);
       op2.HydrationParameters = std::move(hydrateParameters);
       auto f = op2.Promise.get_future();
 
@@ -283,7 +283,7 @@ namespace Azure { namespace Storage {
           }
           else // if (partIte->second == nullptr)
           {
-            auto p = JobPart::LoadTasks(&*jobIte, partIte->first, jobIte->m_jobPlanDir);
+            auto p = JobPart::LoadTasks(&*jobIte, partIte->first);
             partIte->second = std::make_shared<JobPart>(std::move(p.first));
             std::vector<TaskModel> taskModels = std::move(p.second);
             if (!taskModels.empty())
@@ -400,8 +400,7 @@ namespace Azure { namespace Storage {
           properties.WaitHandle = sharedStatus->WaitHandle;
 
           m_jobs.push_back(std::move(existingJobPlan));
-          auto jobIndex = m_jobs.end();
-          --jobIndex;
+          auto jobIndex = --m_jobs.end();
           m_jobsIndex[op.JobId] = jobIndex;
           if (m_loadPos.first == m_jobs.end())
           {
@@ -436,8 +435,7 @@ namespace Azure { namespace Storage {
           auto jobIndex = ite->second;
           if (m_loadPos.first == jobIndex)
           {
-            auto nextJobIndex = jobIndex;
-            m_loadPos = std::make_pair(++nextJobIndex, 0);
+            m_loadPos = std::make_pair(++decltype(jobIndex)(jobIndex), 0);
           }
           m_jobs.erase(jobIndex);
           m_jobsIndex.erase(op.JobId);
@@ -455,8 +453,7 @@ namespace Azure { namespace Storage {
           auto jobIndex = m_jobsIndex[op.JobId];
           if (m_loadPos.first == jobIndex)
           {
-            auto nextJobIndex = jobIndex;
-            m_loadPos = std::make_pair(++nextJobIndex, 0);
+            m_loadPos = std::make_pair(++decltype(jobIndex)(jobIndex), 0);
           }
           m_jobs.erase(jobIndex);
           m_jobsIndex.erase(op.JobId);

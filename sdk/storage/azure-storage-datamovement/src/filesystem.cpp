@@ -145,6 +145,7 @@ namespace Azure { namespace Storage { namespace _internal {
     {
       context->Buffer.Name = Utf8ToNarrow(entry.cFileName);
       context->Buffer.IsDirectory = entry.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY;
+      context->Buffer.Size = (static_cast<int64_t>(entry.nFileSizeHigh) << 32) | entry.nFileSizeLow;
     }
     m_directroyObject = context.release();
   }

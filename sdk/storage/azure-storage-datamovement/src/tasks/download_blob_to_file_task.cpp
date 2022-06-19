@@ -36,7 +36,7 @@ namespace Azure { namespace Storage { namespace Blobs { namespace _detail {
       bool firstFailure = !Context->Failed.exchange(true, std::memory_order_relaxed);
       if (firstFailure)
       {
-        TransferFailed(Context->Source.GetUrl(), _internal::GetPathUrl(Context->Destination));
+        TransferFailed(Context->Source.GetUrl(), _internal::PathToUrl(Context->Destination));
       }
       return;
     }
@@ -76,7 +76,7 @@ namespace Azure { namespace Storage { namespace Blobs { namespace _detail {
       bool firstFailure = !Context->Failed.exchange(true, std::memory_order_relaxed);
       if (firstFailure)
       {
-        TransferFailed(Context->Source.GetUrl(), _internal::GetPathUrl(Context->Destination));
+        TransferFailed(Context->Source.GetUrl(), _internal::PathToUrl(Context->Destination));
       }
       return;
     }

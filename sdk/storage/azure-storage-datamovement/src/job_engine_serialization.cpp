@@ -131,7 +131,6 @@ namespace Azure { namespace Storage {
     static const char* HexDigits = "0123456789abcdef";
     std::string PartIdToString(uint32_t partId)
     {
-
       std::string ret;
       while (partId)
       {
@@ -250,7 +249,7 @@ namespace Azure { namespace Storage {
     std::string TaskModel::ToString() const
     {
       Core::Json::_internal::json object;
-      object["num_subtasks"] = NumSubTasks;
+      object["num_subtasks"] = NumSubtasks;
       object["source"] = Source;
       object["destination"] = Destination;
       object["object_size"] = ObjectSize;
@@ -266,7 +265,7 @@ namespace Azure { namespace Storage {
     {
       auto object = Core::Json::_internal::json::parse(str);
       TaskModel ret;
-      ret.NumSubTasks = object["num_subtasks"].get<int32_t>();
+      ret.NumSubtasks = object["num_subtasks"].get<int32_t>();
       ret.Source = object["source"].get<std::string>();
       ret.Destination = object["destination"].get<std::string>();
       ret.ObjectSize = object["object_size"].get<int64_t>();
@@ -306,12 +305,9 @@ namespace Azure { namespace Storage {
       return ret;
     }
 
-    std::pair<JobPart, std::vector<TaskModel>> JobPart::LoadTasks(
-        JobPlan* plan,
-        uint32_t id,
-        std::string jobPlanDir)
+    std::pair<JobPart, std::vector<TaskModel>> JobPart::LoadTasks(JobPlan* plan, uint32_t id)
     {
-      const std::string partFilename = _internal::JoinPath(jobPlanDir, PartIdToString(id));
+      const std::string partFilename = _internal::JoinPath(plan->m_jobPlanDir, PartIdToString(id));
       std::fstream fin(partFilename, std::fstream::in | std::fstream::binary);
       fin.exceptions(std::fstream::failbit | std::fstream::badbit);
       int32_t planFileVersion = ReadFixedInt<int32_t>(fin);
@@ -320,7 +316,6 @@ namespace Azure { namespace Storage {
       jobPart.m_jobPlan = plan;
       jobPart.m_jobPlan->m_numAliveParts->fetch_add(1, std::memory_order_relaxed);
       jobPart.m_id = id;
-      jobPart.m_jobPlanDir = std::move(jobPlanDir);
       jobPart.m_numDoneBits = ReadFixedInt<int32_t>(fin);
       AZURE_ASSERT(static_cast<size_t>(fin.tellg()) == JobPartFileHeaderSize);
       std::vector<char> doneBits(jobPart.m_numDoneBits);
@@ -384,13 +379,13 @@ namespace Azure { namespace Storage {
       WriteFixedInt(fOut, PlanFileVersion);
       int32_t numDoneBits
           = std::accumulate(tasks.begin(), tasks.end(), 0, [](int32_t s, const TaskModel& t) {
-              return s + t.NumSubTasks;
+              return s + t.NumSubtasks;
             });
       WriteFixedInt(fOut, numDoneBits);
       WriteZeros(fOut, numDoneBits);
       for (const auto& t : tasks)
       {
-        WriteVarInt(fOut, t.NumSubTasks);
+        WriteVarInt(fOut, t.NumSubtasks);
         WriteString(fOut, t.ToString());
       }
       fOut.close();
@@ -567,7 +562,7 @@ namespace Azure { namespace Storage {
         {
           auto partGen = PartGenerator::FromString(ReadString(m_partGens));
           m_generatorFileInOffset = static_cast<size_t>(m_partGens.tellg());
-          GeneratePart(partGen);
+          GeneratePartImpl(partGen);
           m_partGens.seekp(doneBitOffset);
           WriteFixedInt(m_partGens, int8_t(1));
           m_partGens.flush();

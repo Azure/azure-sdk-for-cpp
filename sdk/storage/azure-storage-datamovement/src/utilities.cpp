@@ -54,7 +54,7 @@ namespace Azure { namespace Storage { namespace _internal {
     return res;
   }
 
-  std::string GetPathUrl(const std::string& relativePath)
+  std::string PathToUrl(const std::string& relativePath)
   {
 #if defined(AZ_PLATFORM_WINDOWS)
     const std::wstring relativePathW = Storage::_internal::Utf8ToWide(relativePath);
@@ -65,7 +65,7 @@ namespace Azure { namespace Storage { namespace _internal {
       throw std::runtime_error("Failed to get absolute path.");
     }
     std::replace(absPathW, absPathW + absPathWLength, L'\\', L'/');
-    return FileUrlScheme + Storage::_internal::Utf8ToNarrow(absPathW);
+    return g_FileUrlScheme + Storage::_internal::Utf8ToNarrow(absPathW);
 #else
     if (relativePath.empty())
     {
@@ -125,10 +125,10 @@ namespace Azure { namespace Storage { namespace _internal {
 #endif
   }
 
-  std::string GetPathFromUrl(const std::string& fileUrl)
+  std::string PathFromUrl(const std::string& fileUrl)
   {
-    static const size_t FileUrlSchemeLen = std::strlen(FileUrlScheme);
-    AZURE_ASSERT(fileUrl.substr(0, FileUrlSchemeLen) == FileUrlScheme);
+    static const size_t FileUrlSchemeLen = std::strlen(g_FileUrlScheme);
+    AZURE_ASSERT(fileUrl.substr(0, FileUrlSchemeLen) == g_FileUrlScheme);
     return fileUrl.substr(FileUrlSchemeLen);
   }
 
@@ -176,8 +176,11 @@ namespace Azure { namespace Storage { namespace _internal {
   }
 
 #if defined(AZ_PLATFORM_WINDOWS)
-  int64_t AtomicFetchAdd(int64_t* arg, int64_t value) { return InterlockedAdd64(arg, value); }
-  int64_t AtomicLoad(int64_t* arg) { return InterlockedOr64(arg, 0); }
+  int64_t AtomicFetchAdd(int64_t* arg, int64_t value)
+  {
+    return InterlockedAddNoFence64(arg, value);
+  }
+  int64_t AtomicLoad(int64_t* arg) { return InterlockedOr64NoFence(arg, 0); }
 #else
   int64_t AtomicFetchAdd(int64_t* arg, int64_t value)
   {

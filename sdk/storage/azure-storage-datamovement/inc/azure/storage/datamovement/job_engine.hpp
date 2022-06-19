@@ -36,7 +36,7 @@ namespace Azure { namespace Storage {
   } // namespace _detail
   namespace _internal {
 
-    class TransferEnd {
+    class TransferEnd final {
     public:
       enum class EndType
       {
@@ -64,13 +64,13 @@ namespace Azure { namespace Storage {
       friend class _detail::JobEngine;
     };
 
-    struct JobModel
+    struct JobModel final
     {
       TransferEnd Source;
       TransferEnd Destination;
     };
 
-    struct HydrationParameters
+    struct HydrationParameters final
     {
       TransferCredential SourceCredential;
       TransferCredential DestinationCredential;
@@ -80,9 +80,9 @@ namespace Azure { namespace Storage {
   } // namespace _internal
 
   namespace _detail {
-    struct TaskModel
+    struct TaskModel final
     {
-      int32_t NumSubTasks = 0;
+      int32_t NumSubtasks = 0;
       std::string Source;
       std::string Destination;
       int64_t ObjectSize = -1;
@@ -93,7 +93,7 @@ namespace Azure { namespace Storage {
       static TaskModel FromString(const std::string& str);
     };
 
-    struct PartGenerator
+    struct PartGenerator final
     {
       std::string Source;
       std::string Destination;
@@ -103,16 +103,13 @@ namespace Azure { namespace Storage {
       static PartGenerator FromString(const std::string& str);
     };
 
-    struct JobPart
+    struct JobPart final
     {
       JobPart() = default;
       JobPart(JobPart&&) = default;
       ~JobPart();
 
-      static std::pair<JobPart, std::vector<TaskModel>> LoadTasks(
-          JobPlan* plan,
-          uint32_t id,
-          std::string jobPlanDir);
+      static std::pair<JobPart, std::vector<TaskModel>> LoadTasks(JobPlan* plan, uint32_t id);
 
       static void CreateJobPart(
           uint32_t id,
@@ -121,7 +118,6 @@ namespace Azure { namespace Storage {
 
       _internal::MovablePtr<JobPlan> m_jobPlan;
       uint32_t m_id = 0;
-      std::string m_jobPlanDir;
       size_t m_numDoneBits = 0;
       std::unique_ptr<std::atomic<size_t>> m_numUndoneBits
           = std::make_unique<std::atomic<size_t>>(0);
@@ -129,7 +125,7 @@ namespace Azure { namespace Storage {
       bool* m_doneBitmap = nullptr;
     };
 
-    struct JobPlan
+    struct JobPlan final
     {
       JobPlan() = default;
       JobPlan(JobPlan&&) = default;
@@ -146,7 +142,7 @@ namespace Azure { namespace Storage {
           std::shared_ptr<JobPart>& jobPart,
           const std::vector<TaskModel>& taskModels);
 
-      void GeneratePart(const PartGenerator& gen);
+      void GeneratePartImpl(const PartGenerator& gen);
       void RemoveDonePart(uint32_t id);
       void TaskFinishCallback(
           const JournalContext& context,
@@ -184,7 +180,7 @@ namespace Azure { namespace Storage {
       uint32_t m_maxPartId = 0;
     };
 
-    class JobEngine {
+    class JobEngine final {
     public:
       explicit JobEngine(const std::string& plansDir, _internal::TransferEngine* transferEngine);
       ~JobEngine();
@@ -200,7 +196,7 @@ namespace Azure { namespace Storage {
       std::vector<_internal::Task> GetMoreTasks();
 
     private:
-      struct EngineOperation
+      struct EngineOperation final
       {
         enum class OperationType
         {

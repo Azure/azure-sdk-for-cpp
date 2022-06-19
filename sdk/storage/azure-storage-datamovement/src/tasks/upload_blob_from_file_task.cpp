@@ -49,7 +49,7 @@ namespace Azure { namespace Storage { namespace Blobs { namespace _detail {
     }
     catch (std::exception&)
     {
-      TransferFailed(_internal::GetPathUrl(Source), Destination.GetUrl());
+      TransferFailed(_internal::PathToUrl(Source), Destination.GetUrl());
       return;
     }
 
@@ -61,7 +61,7 @@ namespace Azure { namespace Storage { namespace Blobs { namespace _detail {
     }
     catch (std::exception&)
     {
-      TransferFailed(_internal::GetPathUrl(Source), Destination.GetUrl());
+      TransferFailed(_internal::PathToUrl(Source), Destination.GetUrl());
       return;
     }
     TransferSucceeded(fileSize);
@@ -96,7 +96,7 @@ namespace Azure { namespace Storage { namespace Blobs { namespace _detail {
       bool firstFailure = !Context->Failed.exchange(true, std::memory_order_relaxed);
       if (firstFailure)
       {
-        TransferFailed(_internal::GetPathUrl(Context->Source), Context->Destination.GetUrl());
+        TransferFailed(_internal::PathToUrl(Context->Source), Context->Destination.GetUrl());
       }
       return;
     }
@@ -132,7 +132,7 @@ namespace Azure { namespace Storage { namespace Blobs { namespace _detail {
       bool firstFailure = !Context->Failed.exchange(true, std::memory_order_relaxed);
       if (firstFailure)
       {
-        TransferFailed(_internal::GetPathUrl(Context->Source), Context->Destination.GetUrl());
+        TransferFailed(_internal::PathToUrl(Context->Source), Context->Destination.GetUrl());
       }
       return;
     }
@@ -159,7 +159,7 @@ namespace Azure { namespace Storage { namespace Blobs { namespace _detail {
       bool firstFailure = !Context->Failed.exchange(true, std::memory_order_relaxed);
       if (firstFailure)
       {
-        TransferFailed(_internal::GetPathUrl(Context->Source), Context->Destination.GetUrl());
+        TransferFailed(_internal::PathToUrl(Context->Source), Context->Destination.GetUrl());
       }
       return;
     }

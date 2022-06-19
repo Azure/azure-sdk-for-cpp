@@ -37,7 +37,7 @@ namespace Azure { namespace Storage { namespace _internal {
     void* m_directroyObject;
   };
 
-  class MemoryMap {
+  class MemoryMap final {
   public:
     explicit MemoryMap(const std::string& filename);
     MemoryMap(const MemoryMap&) = delete;
