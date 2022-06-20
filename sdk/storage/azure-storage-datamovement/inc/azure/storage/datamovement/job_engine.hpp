@@ -65,7 +65,7 @@ namespace Azure { namespace Storage {
     };
 
     /**
-     * @brief On-disk data representation of a job. It connsists of absolute paths of source and
+     * @brief On-disk data representation of a job. It consists of absolute paths of source and
      * destination. Credentials are not stored here, so it needs to be used in conjunction with
      * HydrationParameters after being loaded into memory.
      */
@@ -86,7 +86,7 @@ namespace Azure { namespace Storage {
 
   namespace _detail {
     /**
-     * On-disk data respsentation of a task. Only relatvie paths of source and destination are
+     * On-disk data respsentation of a task. Only relative paths of source and destination are
      * stored so it needs to be used in conjunction with JobModel.
      */
     struct TaskModel final
