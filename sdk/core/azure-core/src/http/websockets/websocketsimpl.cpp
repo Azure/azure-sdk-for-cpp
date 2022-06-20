@@ -259,6 +259,10 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets { names
       uint8_t payloadByte;
       // Read the first byte from the socket (the opcode and final bit).
       auto bytesRead = m_transport->ReadFromSocket(&payloadByte, sizeof(payloadByte), context);
+      if (bytesRead == 0)
+      {
+        return nullptr;
+      }
       if (bytesRead != sizeof(payloadByte))
       {
         throw std::runtime_error("Could not read opcode from socket.");

@@ -100,16 +100,16 @@ TEST(WebSocketTests, SimpleEcho)
 TEST(WebSocketTests, CloseDuringEcho)
 {
   {
-    WebSocket testSocket(Azure::Core::Url("http://localhost:8000/echotest"));
+    WebSocket testSocket(Azure::Core::Url("http://localhost:8000/closeduringecho"));
 
     testSocket.Open();
 
     testSocket.SendFrame("Test message", true);
 
     auto response = testSocket.ReceiveFrame();
-    EXPECT_EQ(WebSocketResultType::TextFrameReceived, response->ResultType);
-    auto textResult = response->AsTextFrame();
-    EXPECT_EQ("Test message", textResult->Text);
+    EXPECT_EQ(WebSocketResultType::PeerClosed, response->ResultType);
+    auto peerClosed = response->AsPeerCloseFrame();
+    EXPECT_EQ(1001, peerClosed->RemoteStatusCode);
 
     // Close the socket gracefully.
     testSocket.Close();
